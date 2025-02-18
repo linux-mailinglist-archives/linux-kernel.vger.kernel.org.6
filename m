@@ -1,573 +1,823 @@
-Return-Path: <linux-kernel+bounces-520316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61C5CA3A871
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 21:12:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1C85A3A876
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 21:12:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B61D16D176
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:12:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BE583A5D30
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:12:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 877351BC07B;
-	Tue, 18 Feb 2025 20:12:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F9791C8618;
+	Tue, 18 Feb 2025 20:12:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="joK4XNFQ"
-Received: from MA0PR01CU012.outbound.protection.outlook.com (mail-southindiaazolkn19011032.outbound.protection.outlook.com [52.103.67.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F9ekSoSs"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0ED321B9C6
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 20:12:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.67.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739909552; cv=fail; b=jV29iegrXLs5XkMFEEdHsuz+Ra6rrX+/A9Nmt/8RUOtD9we8tRZrt6k/qBQPrYdyDGVaIpnQICANTaTbsPwGsDYxS8f7faFNt8r8yh8mn2CHlIEPlkv3jUi6/UqVt7Die83I8CtbPCxWUhDEq1mpeaASi8ZzrKd9eVuHEzqXbKU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739909552; c=relaxed/simple;
-	bh=qxq+sd7e7jhINM3rQFC+BKVI7qNO25jVhtmdWBhpChg=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=DZhjO/iGrwtf2PfhcUJenhMZhdth1uRgvrowOeS8eI+SUXp9j+jEooQEc7gjMcrIFOtQYbme1bUv3TWvxwH0yBFk/MidoEaR4MkOJNHgA7PVZi2Y0d9D+Yw4eETtFyWSQySdZIbMExJBEslLnZBH6jVwegOg02BoRvvHoRSRzik=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=joK4XNFQ; arc=fail smtp.client-ip=52.103.67.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mW7KRIQika0yWjC1c8QUdxxiW19ETFsAYdDeiqQYw8SnmNbX1XkQlfsNOfgMrVtycxIKxWAxaX0b+Pmns5qIMstKIIEuyM/e3UYl1hFYx/aMMctw9x1oPqkuJRQDHYt0pOxxWSfyradiRiLCfm/loZBlzPEx4LUx0P/fMt2HnUiyn37bGTaujFZfiWsdCdEnjoz3VQ4WKZB76n2dHyJfrMs3zFEQjpdGGRyDjP9ZT7m12NSHViON3rn5TkUnXHhL7USkHC57TifLtVpJPt5sAR3/PLexnNBtTHMBHk3hN0uMUx6lbiU+NSfBufLozHNYoEj8b7EDokCBTNwBY+ElbA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qxq+sd7e7jhINM3rQFC+BKVI7qNO25jVhtmdWBhpChg=;
- b=TEUWp91uYaS4kum2TPetaDGuagh4zLzKeJbGARwA3vzoxeZr3JpgUztpc6WMY2/a2Uoyeu9TiefYd7dGhL1IJpF0C8SSiUwCnu2YXRZZVPF032jOXgjoCCvi+OowXhG8n3tA3dBS/5TKkwL87oedUTy0exdXy44D4vJrXHpRevlcmllUd8dcTEs8Cl587KjzkdL9NfvYfcDLBNDOImReNSZvIXJgelJbIcfklYERMonf7iQTc1B3OrJ7Rv0GDxFoRWpeLd+ANOl/KuL13HW6XV1h5KyB2SJUII87R0ONlD0M2IxliSbT32oFlUSEclpMRS9kR48fBXkIrQSltz3f7w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qxq+sd7e7jhINM3rQFC+BKVI7qNO25jVhtmdWBhpChg=;
- b=joK4XNFQevqzPtlkydjc185JjhncFeX4W8ccBvtu4NI2MKpznmOcXjgEF3Vx/baOpMGTPWMdN1J1T9P0cD2DZFKXKpgbqUY2v9502CUfb1S6XEyjHANVzXuNFWGidh4I0uMNDD7AAzaTtx1Ulh3UezoQ4jcfzzLGNiMDcLr+gBFsJcEc4yrB3WuoD5dkYptJQ1l2d9UuW2PR4t2BeyOKYm60eUlk08JU23nEqaIPDqtbOvVjeXv4IrBwP608l+VxYTolobg8scGITlJ2DK/1VBC1uZIuLyYXVpmEA6cp1cV1d/OkHMJAnjB9bU3WxENPmbUE4tGtHRrHQcfsCtxTVg==
-Received: from PNZPR01MB4478.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:1d::9)
- by PNZPR01MB10749.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:247::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.22; Tue, 18 Feb
- 2025 20:12:23 +0000
-Received: from PNZPR01MB4478.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::27a3:3d7e:30be:e1d1]) by PNZPR01MB4478.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::27a3:3d7e:30be:e1d1%3]) with mapi id 15.20.8445.022; Tue, 18 Feb 2025
- 20:12:22 +0000
-From: Aditya Garg <gargaditya08@live.com>
-To: Thomas Zimmermann <tzimmermann@suse.de>
-CC: "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-	"mripard@kernel.org" <mripard@kernel.org>, "airlied@gmail.com"
-	<airlied@gmail.com>, "simona@ffwll.ch" <simona@ffwll.ch>, Kerem Karabay
-	<kekrby@gmail.com>, Atharva Tiwari <evepolonium@gmail.com>, Linux Kernel
- Mailing List <linux-kernel@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH 2/2] drm/tiny: add driver for Apple Touch Bars in x86 Macs
-Thread-Topic: [PATCH 2/2] drm/tiny: add driver for Apple Touch Bars in x86
- Macs
-Thread-Index: AQHbgW0jg2AkJlVClEWW91xnm1SunLNM14qAgACoYwA=
-Date: Tue, 18 Feb 2025 20:12:22 +0000
-Message-ID: <BC25CBDD-D101-49DA-B10B-F47F1CAE2A6F@live.com>
-References: <4BAFD886-84E0-4C4C-94B3-90BF911ED0E7@live.com>
- <F16BB9EB-632C-4BC4-A8BA-492BF32E43C1@live.com>
- <d9304ed0-911b-4877-a15c-981b3335bbf9@suse.de>
-In-Reply-To: <d9304ed0-911b-4877-a15c-981b3335bbf9@suse.de>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PNZPR01MB4478:EE_|PNZPR01MB10749:EE_
-x-ms-office365-filtering-correlation-id: 483a17b3-bbcc-4ea0-40ea-08dd50588e0e
-x-microsoft-antispam:
- BCL:0;ARA:14566002|7092599003|461199028|15080799006|8062599003|8060799006|19110799003|12121999004|102099032|1602099012|3412199025|4302099013|440099028|10035399004|12091999003|41001999003;
-x-microsoft-antispam-message-info:
- =?utf-8?B?eXVsTDFOSXhhZ1N4eG5aRU9JbTBpNjFHemlOdHlRYVArNkt4TFhLOWNHMitS?=
- =?utf-8?B?R0hHQU5PNlVKeFNGNkpFM3ZyUlJFb0dpc3ZXRzNmT2hmK3NiSlMvQXpOSExQ?=
- =?utf-8?B?N1Y4Ly9RalpQQml3b0J2b0lsK2dnUkEvN3hzb2NkZVNXUWFhdGV3ckJIaWoz?=
- =?utf-8?B?TE5oU2JQWGxYY3FOVXl2REpJYnlBdlFNN3JFTFlXc2x4cm9LNTZ5cGVjbjM4?=
- =?utf-8?B?YStKYUJ1TktlQi9yeWU0Vkt4NEJ0emdMSDRoM1p5b3kwdU90a1RHQXNSaUFr?=
- =?utf-8?B?S01ZeEl5VGlpV1BIM1pMOWI0bXBYRSs4YTFVOFFORENHdVhaM1c1eXgzY05C?=
- =?utf-8?B?NVpnK0RMTHgxWTdsSzdmaVlKcWVGN2kweWNCYWJCZmNkejZOUEJOVnhXVHZC?=
- =?utf-8?B?ZFE2UVJ1dHR3S3VwM0FlZE9sZ0pidXNKWlJMZmduWUZRUzFEU00xMVdEM2VH?=
- =?utf-8?B?N0s5TzZPUVJnemROK3RNWSsvN05uTWJyTG4wd2tNbGE0c25PeUd2Umh6K3lB?=
- =?utf-8?B?aE5nNkJqMGhHenhXbGFQMkVVUS9JckxTVWdTc2s3a0FyVGNHell1Snh6dE85?=
- =?utf-8?B?SFZGWThhOUIwQzFRb29NTG8yeVhTNmY1UUoyY0dBbGtKL1E3SjhRN1FiSzBV?=
- =?utf-8?B?cE9ObS9KTHF6aVFJY05pYzlSOEpaNGJZampQb203aFFTckhKT0h2YzR4V1pX?=
- =?utf-8?B?WHlQa0JIRVpJMHFWSnN4WXE0VW1oWjV3TFVoY1FPYnJXUkVFRUYxVWFGTnRX?=
- =?utf-8?B?UDVnbFNTWkdCN1FrcFM5NEpLMkZlMFBNTDUxWlQ3bXZhQllWQnNhdTY0WjhH?=
- =?utf-8?B?L05Ua0NLRUFNTDhBL2p2bW9XK2s2N1BVUXpid1hPKzNGMGlXbENRa3VNYUhD?=
- =?utf-8?B?WGFiMDQ0aVE3ZDBvbitUQ3JCTU9YNkI3N0ZTN3FOdmcxYUs2dkhjSGZaUFlx?=
- =?utf-8?B?bEdHTEpITnF3Vk1OMnd6Mmd2cEphajhhQ2NncUliemNLWmdXOHFISjhZU0hi?=
- =?utf-8?B?N1d1TFZXS3JEclJtd1YzbnVlRnorMmVGdEFoTjlJeU9VbDBxMUU3R1IzcXhh?=
- =?utf-8?B?MlJFWkZ6UC9mcDJ4UndaVFRIVjkzU1FYWGVKak1DWlJjYkVxbm51aUhjMVRv?=
- =?utf-8?B?c0hvbU5ZUzFodVJFVXNJL3RDbnh3SGxlSkRYcHJieVVNbE8wR01EMUZEcGM0?=
- =?utf-8?B?K1JseXN2QmFocnl5QTVzaWZRZ3FONzV1TkhUbmxCVUMzRTR6c2pGWTdaY2VX?=
- =?utf-8?B?YzQ3TDBoTHdHYjdPSG11K096S011djMvbkdQdFAxenpmczZQSk9wNkhXQVBx?=
- =?utf-8?B?RjF5bU1sNXd1QmNycStOeit1RjNwQXFKVDhIWnJFTloyRVFlbWsrM2dMRnl3?=
- =?utf-8?B?SXJrZThjdFNtK09YY2xGVHpzVW1CNW5hWGd5VTRZajRlSVRqU0FYNmdGUXVu?=
- =?utf-8?B?L0NvcDBEMkpXYWZiTkVkTzQ1OXhLdWtnWHNjV0s5dktZdmpvZzZGcXZUTXpP?=
- =?utf-8?B?eFhRcUdCazNGUmxtdkNCUDNwdjlNTDZFWUh1YUFxRWs1SXFzSDNZcU1jMlJH?=
- =?utf-8?B?Tld6cnJjWjFBVVB4MGZqV2xWQ3lGcWJCMkJ0RHFBS1ZzSjZ5R0l3aXphL09w?=
- =?utf-8?B?ODgySG1vck44UjZWVzk3N3V0bm44MmhFUXVmMTZuL25mT0Y1OVh3allUdmh5?=
- =?utf-8?B?WXhBU3hzSnNJZkRkZUR2aThCU1I3ODl0enJLbVJ6c0g1R1UzcUlnSnVXaGVJ?=
- =?utf-8?Q?cp/wujUWVZNFRQtQsM=3D?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?VWJ4MERkMS9iMmdEZ3VqM01HRit1YkR4Ym5kV0Z0c1NJNmVzdjF3MGlmemRO?=
- =?utf-8?B?M0JmeGszdEdMN1RpcFhneHJ2clFPTnBSeDhvazlNcWd0cFdPclpvZVEzcGly?=
- =?utf-8?B?RC80QVY1T2NZYVJuaVo2QzhRR3o5cFIvc1dKWTlldFl0ci9vN1ZhSkJHOVBa?=
- =?utf-8?B?Z0duTUN1b21IMGpBbGNrUzBXT3pBUnA2OHJscDZBWEpuNjI4WHhaaEduVUpZ?=
- =?utf-8?B?b1p6WENRZDhlRjc1K05yUmNjeGwvY0daZmYwQkc2N2hRVUFwbGxKZXVUbHNF?=
- =?utf-8?B?ZjR0SUNhL3M2elE3b0g5aGFuWVBIdG9qVnJVK0lTRk40VHlvKy9MdDRQdEhG?=
- =?utf-8?B?L3RROE44UlJwQzUzM1l5cWI3b2Q4RVBicFVGc202TEg2dGtvZUR1Nkh3djYx?=
- =?utf-8?B?NDd1d2lyMU4yWEhHTldNR1JtVkZzS0l3VVZUcGlSaTdZR2NNSXQ2UGhxSnBu?=
- =?utf-8?B?b2xhdzZMSkRwaHdaZSswTnByZFRGMjk0NXJZRXFqNUoxTG1sWXR1TmxkQW5F?=
- =?utf-8?B?TTNtbXdCYWREdEFPc3YvM1dFR3V5Z3RMellxSC84VGZNSzhOZmRpWk5IZTRv?=
- =?utf-8?B?bkNzVzRuMVFiQ1QydzhRWVhFSHc2U1hnaGZybzZDNVp3ckFoSzdkcGlER2JF?=
- =?utf-8?B?bWtST3pxUFlBYmJlVUZWUXNVem05T0pSL1FwSVBaNUJWcTFxWlBHNlA3RmlS?=
- =?utf-8?B?cUo5b0hzdElCNU1lWGxDcStlcEs3azVadEQ1akpWUGovV2ZqZGhBbHFYTmdy?=
- =?utf-8?B?RW9Jd0diOEJsNFE1RzRJSGNJb1QxUzM5UE5kc0F0YXlsVmlvaVlJcmVUcjM5?=
- =?utf-8?B?ZDVXV3ZmKzBHejk3TjVjejM3T0ZNSGVHcVludHltY2dqR0I1YUk5OFNGWDVO?=
- =?utf-8?B?dUJ6RmtzYnBLaEdpRmRNdFo5WDlqcjdSR1dHUHgxUVNRVDY2RE11UmVFY0ZX?=
- =?utf-8?B?ZnpzYW1SZERSZWUySTJ4SmVHMWdFcXNRSG9nQTBwWlV0QUpFRmRpSkJLYW1q?=
- =?utf-8?B?anAraHR3eXRiYkF2NHNCQUVhNlFoak92bTlCaWVxVVNTclg2MVJNMUNORFZU?=
- =?utf-8?B?VmJuOEMxMDBpVXdyRWFpOEN0SlErWCtTVlc0QmJzckxVcW5WbE5BK2NoTjlE?=
- =?utf-8?B?eks2NkFJL1QvUVB2bkdzM1JvSjJaUndhNGM3RzU3Ujk1b0RFamFoQUJQYlhQ?=
- =?utf-8?B?d05HK0pSWmpQYllBTG5HdUJkTFF6VU4vdll1YW00eFFwamphMTNZOUFINEVy?=
- =?utf-8?B?Ty9ERFZtdE1NS2hXc3hCNDJkR3BSR1lqOFdQZnpmTXREazV3QThmTmVSbkhS?=
- =?utf-8?B?Zmlka09RM0NaUGMrem83WFF6S2RQUE1tUXdnQTFRQzcwa2ZNcnVVeHlXaUoy?=
- =?utf-8?B?Z0toMXo3QzB0NGtjaFBNaWE4U1ZTRkFJWTY0bUtsR09vTzNEc3BlZ1lYaWpV?=
- =?utf-8?B?WkI5Ny8xdVR4blVpbUlkQUJaOGFVekRoUGdSWk0xRlBHUTJVcWJXMGxsRU5I?=
- =?utf-8?B?NkNXdU9RL1ViTFNNSzEzOHBMSWtJUkFHV1dHUHRmMm9INnp2VVJ3QlZVcE5E?=
- =?utf-8?B?a3p4OVNPd04rZ3VMUnlBMFpMcHArODNDQmpnbkloYU9JcFFPanRuYlJEOTVv?=
- =?utf-8?B?QSt0bU04a3MvdUpRZy9rNGVaTFZMUFdXT0orMng3VVpSNDBRbkRGWWRobjJr?=
- =?utf-8?B?eUhuMDk2dVVVWEN0NFg1ZXowd3NIckJzdUlPM1piRW9tYk8wWStTN1NNOHhP?=
- =?utf-8?Q?aHNotArMYhX/23Rxi6Fy+/zNW+hnoFsxnu3ilkP?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <5599DA0F13FF424BB370DF86CC346745@INDPRD01.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AE3F1BEF74;
+	Tue, 18 Feb 2025 20:12:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739909560; cv=none; b=oFnnyFtl2BqbjHLfGT5dYqFFQ9ASrwCyDnywHrKyjB1+hGqSLsFMjj0wr/i6LuHgblS4F+VyAjGXyaJxjZ88PSXLyYeBHSiIKhjlijVAD0aVo+8c/mz/KOViTQBS66+aiS1Tf5rIc4tW07Ju3zkI2QAd3m+Xs6Gb5djzKWBzQOc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739909560; c=relaxed/simple;
+	bh=0AoQatx4YtcUq1oXRVnTE0N2R05KRbQfRRefbtKz938=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jEk9IQI6/V0FjR8s7jS/f35PSBM+TrYfz0f7FcFZbf7k+ih+Ir8W8cp09NxYcbTSj7uBNDE45lpZSf+mEFqJ09LcLqp8dh0LoPcjSO3pIJ5m7OtmnILMF8AcjQPoTBeB7Yu9eQuBagmRmkRnMARsiHiVv8UdKiDYiIlLr61xIM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F9ekSoSs; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-439350f1a0bso951935e9.0;
+        Tue, 18 Feb 2025 12:12:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739909556; x=1740514356; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OlAtET8FJ44EqiQ/t+/uQaYWgC/gd1N7S2IVwpWqp9M=;
+        b=F9ekSoSsxDXyuziIMbVj7Z+G08ipO9/u0nGKd9Ym/riQj1KOQxcwqakESbkIfm/+OZ
+         nJSIoxxOEiVOoEBeiyOUExizTazamB9ax1YKbbM4t2WykTVOxwn4cyqs7YNXLr/O6Z5/
+         JklSE+AsqAXIMYvdVT+u5Dvaa5d/Vwpt6WwPgjEzGG/ja99tU9mGr33SxfYwfMAfIFKi
+         Iw8qv7Ik0f2FejFtqJwqvoEY3DNinPrqkad2lv0MVP4IO6MDS5Ty8B+tMQaTBANMzpTQ
+         lMlRS6Siefnx4z06NivbiMQ3fhbE57FmqjreHpMExwQIXl4r1M7mfJ3I3Q4JirOaHUOB
+         rnIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739909556; x=1740514356;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OlAtET8FJ44EqiQ/t+/uQaYWgC/gd1N7S2IVwpWqp9M=;
+        b=DAE2RB9k5iMLOaFjvIOVzTo3Q6litoog4OeXkU10/RWgtyvrxbhw7Ek6kNG3Zc1QFZ
+         VXBzI18IfFEU9J2D5OH7CbNHSUbF6H4cbN3n60KgdhZfVMGxEuc/fQ1EfkOFKYFPtdWp
+         X/mM7y3MpJU8pEhPus0cnJRaMv+plJWHCxbTwZwXRkojYABv9AoFQKhLLQpx/7sQ5GfE
+         FnlrzQCZkaKq0zXJh2mFF7L9luPjVMVrNhpUPgjknmx1zAdxt4nCXLnwlhreA1fNLSaa
+         xNN6tv0akUHjr7zQmrO+YB30GnzD5KaAMyMKtLlSGlxVESRHMZWttBjcr9K01gAMvJGY
+         uCKg==
+X-Forwarded-Encrypted: i=1; AJvYcCUgOKoUSnxhdI8z+itNr1tR0w3Ci+XwwnlaTVL4ggm7nFIwzzxNu9f5NNVp/ha2hCbU5lbwsDfiIMAI@vger.kernel.org, AJvYcCVsQfvx6EBSfWXozSNN7DpmXrlsAlWYmGidK93IfrbNhyAy6SONjheelaIjs5a+3M0SdDKy34DrOfBC@vger.kernel.org, AJvYcCWdMhFGujGuXkaHmvR1lIAKVz8G6skoG3JIUAHfwvvpy083pNakOmUn2YPldY25DhYLsngvQxoIYEOydtJN@vger.kernel.org
+X-Gm-Message-State: AOJu0YzebbUlhWIelYLiXi33i+4tyz9NgubX0HkEMO6XJwDrdwfKAyDZ
+	2m1zJoCDNPnB7gcHwydLPrOD+FaI6+vY9zxyq+d2euFUsEt+8S0I
+X-Gm-Gg: ASbGnctRfdhzmNn26QJVx+DVeSq2/qLbJ737Dk/lVtfMe5rIQcaXrs/R5Wi3qTQu3xz
+	hclunzTsKg/6eZM1h3+EGVejVoYRg9MBwzWM1GBKOQ2OXQsxzqrPaYHvM7vb/k1BdlfpbDBs6bH
+	e2jBAnuczmfJGt64+i+MhQ7X/N/MIZi4dS49kCP9xRddtiMDYg3rOGYiipUxcvUkwHo7cS03Kyw
+	O47M8FWCeHXcl+Dy+QMBaGH0p87UFcZUx49wIvrNfp1Yli1iXI3k5E0aXoaDC6bAN4omrt720bC
+	O0deUpzfsQ+tYG1V1TfkPFkmkm7iLID+QQrPQmMj2lmAdVz70LdkqsR1A9vl/Epevfw=
+X-Google-Smtp-Source: AGHT+IGj+jYYqfznq/NYL9hfkvAUIlTYP8oSl/S0KauaO3h2XQfa3/hLLYu4Ilo/RZ7PqysXjg2MFw==
+X-Received: by 2002:a05:600c:1547:b0:439:8878:5029 with SMTP id 5b1f17b1804b1-43999acdff3mr10526715e9.2.1739909555476;
+        Tue, 18 Feb 2025 12:12:35 -0800 (PST)
+Received: from jernej-laptop.localnet (86-58-6-171.dynamic.telemach.net. [86.58.6.171])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439892aaf13sm56147625e9.21.2025.02.18.12.12.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2025 12:12:34 -0800 (PST)
+From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Chen-Yu Tsai <wens@csie.org>, Samuel Holland <samuel@sholland.org>,
+ Andre Przywara <andre.przywara@arm.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 12/15] clk: sunxi-ng: a523: add bus clock gates
+Date: Tue, 18 Feb 2025 21:12:33 +0100
+Message-ID: <869956354.0ifERbkFSE@jernej-laptop>
+In-Reply-To: <20250214125359.5204-13-andre.przywara@arm.com>
+References:
+ <20250214125359.5204-1-andre.przywara@arm.com>
+ <20250214125359.5204-13-andre.przywara@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-ae5c4.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PNZPR01MB4478.INDPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 483a17b3-bbcc-4ea0-40ea-08dd50588e0e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Feb 2025 20:12:22.6776
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PNZPR01MB10749
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-SGkNCg0KSW4gY29udGludWF0aW9uIHRvIG15IHByZXZpb3VzIG1haWwuDQoNCj4+ICsNCj4+ICtz
-dGF0aWMgaW50IGFwcGxldGJkcm1fc2VuZF9tc2coc3RydWN0IGFwcGxldGJkcm1fZGV2aWNlICph
-ZGV2LCB1MzIgbXNnKQ0KPj4gK3sNCj4+ICsgc3RydWN0IGFwcGxldGJkcm1fbXNnX3NpbXBsZV9y
-ZXF1ZXN0ICpyZXF1ZXN0Ow0KPj4gKyBpbnQgcmV0Ow0KPj4gKw0KPj4gKyByZXF1ZXN0ID0ga3ph
-bGxvYyhzaXplb2YoKnJlcXVlc3QpLCBHRlBfS0VSTkVMKTsNCj4+ICsgaWYgKCFyZXF1ZXN0KQ0K
-Pj4gKyByZXR1cm4gLUVOT01FTTsNCj4+ICsNCj4+ICsgcmVxdWVzdC0+aGVhZGVyLnVua18wMCA9
-IGNwdV90b19sZTE2KDIpOw0KPj4gKyByZXF1ZXN0LT5oZWFkZXIudW5rXzAyID0gY3B1X3RvX2xl
-MTYoMHgxNTEyKTsNCj4+ICsgcmVxdWVzdC0+aGVhZGVyLnNpemUgPSBjcHVfdG9fbGUzMihzaXpl
-b2YoKnJlcXVlc3QpIC0gc2l6ZW9mKHJlcXVlc3QtPmhlYWRlcikpOw0KPj4gKyByZXF1ZXN0LT5t
-c2cgPSBtc2c7DQo+PiArIHJlcXVlc3QtPnNpemUgPSByZXF1ZXN0LT5oZWFkZXIuc2l6ZTsNCj4+
-ICsNCj4+ICsgcmV0ID0gYXBwbGV0YmRybV9zZW5kX3JlcXVlc3QoYWRldiwgJnJlcXVlc3QtPmhl
-YWRlciwgc2l6ZW9mKCpyZXF1ZXN0KSk7DQo+PiArDQo+PiArIGtmcmVlKHJlcXVlc3QpOw0KPiAN
-Cj4gVGhpcyBpcyB0ZW1wb3JhcnkgZGF0YSBmb3IgdGhlIHNlbmQgb3BlcmF0aW9uIGFuZCBzYXZl
-IHRvIGZyZWUgaGVyZT8NCg0KUHJvYmFibHkgeWVzLiBJZiBJIHVuZGVyc3RhbmQgY29ycmVjdGx5
-LCBpdOKAmXMgbmVlZGVkIHRvIG1ha2UgdGhlIHRvdWNoYmFyIGdvIGludG8gdGhlIGRpc3BsYXkg
-bW9kZSwgZnJvbSB0aGUgaGlkIGtleWJvYXJkIG1vZGUuDQoNCldlIGhlcmUgYXJlIGRvaW5nIHRo
-ZSBzYW1lIGFzIHRoZSBXaW5kb3dzIGRyaXZlciBbMV0gZm9yIHRoaXMgZG9lcy4NCg0KWzFdIGh0
-dHBzOi8vZ2l0aHViLmNvbS9pbWJ1c2h1by9ERlJEaXNwbGF5S20vYmxvYi9tYXN0ZXIvc3JjL0RG
-UkRpc3BsYXlLbS9pbmNsdWRlL0Rmci5oI0wzDQo+IA0KPj4gKw0KPj4gKyByZXR1cm4gcmV0Ow0K
-Pj4gK30NCj4+ICsNCj4+ICtzdGF0aWMgaW50IGFwcGxldGJkcm1fY2xlYXJfZGlzcGxheShzdHJ1
-Y3QgYXBwbGV0YmRybV9kZXZpY2UgKmFkZXYpDQo+PiArew0KPj4gKyByZXR1cm4gYXBwbGV0YmRy
-bV9zZW5kX21zZyhhZGV2LCBBUFBMRVRCRFJNX01TR19DTEVBUl9ESVNQTEFZKTsNCj4+ICt9DQo+
-PiArDQo+PiArc3RhdGljIGludCBhcHBsZXRiZHJtX3NpZ25hbF9yZWFkaW5lc3Moc3RydWN0IGFw
-cGxldGJkcm1fZGV2aWNlICphZGV2KQ0KPj4gK3sNCj4+ICsgcmV0dXJuIGFwcGxldGJkcm1fc2Vu
-ZF9tc2coYWRldiwgQVBQTEVUQkRSTV9NU0dfU0lHTkFMX1JFQURJTkVTUyk7DQo+PiArfQ0KPj4g
-Kw0KPj4gK3N0YXRpYyBpbnQgYXBwbGV0YmRybV9nZXRfaW5mb3JtYXRpb24oc3RydWN0IGFwcGxl
-dGJkcm1fZGV2aWNlICphZGV2KQ0KPj4gK3sNCj4+ICsgc3RydWN0IGFwcGxldGJkcm1fbXNnX2lu
-Zm9ybWF0aW9uICppbmZvOw0KPj4gKyBzdHJ1Y3QgZHJtX2RldmljZSAqZHJtID0gJmFkZXYtPmRy
-bTsNCj4+ICsgdTggYml0c19wZXJfcGl4ZWw7DQo+PiArIHUzMiBwaXhlbF9mb3JtYXQ7DQo+PiAr
-IGludCByZXQ7DQo+PiArDQo+PiArIGluZm8gPSBremFsbG9jKHNpemVvZigqaW5mbyksIEdGUF9L
-RVJORUwpOw0KPj4gKyBpZiAoIWluZm8pDQo+PiArIHJldHVybiAtRU5PTUVNOw0KPj4gKw0KPj4g
-KyByZXQgPSBhcHBsZXRiZHJtX3NlbmRfbXNnKGFkZXYsIEFQUExFVEJEUk1fTVNHX0dFVF9JTkZP
-Uk1BVElPTik7DQo+PiArIGlmIChyZXQpDQo+PiArIHJldHVybiByZXQ7DQo+PiArDQo+PiArIHJl
-dCA9IGFwcGxldGJkcm1fcmVhZF9yZXNwb25zZShhZGV2LCAmaW5mby0+aGVhZGVyLCBzaXplb2Yo
-KmluZm8pLA0KPj4gKyAgICAgICAgQVBQTEVUQkRSTV9NU0dfR0VUX0lORk9STUFUSU9OKTsNCj4+
-ICsgaWYgKHJldCkNCj4+ICsgZ290byBmcmVlX2luZm87DQo+PiArDQo+PiArIGJpdHNfcGVyX3Bp
-eGVsID0gaW5mby0+Yml0c19wZXJfcGl4ZWw7DQo+PiArIHBpeGVsX2Zvcm1hdCA9IGdldF91bmFs
-aWduZWQoJmluZm8tPnBpeGVsX2Zvcm1hdCk7DQo+PiArDQo+PiArIGFkZXYtPndpZHRoID0gZ2V0
-X3VuYWxpZ25lZF9sZTMyKCZpbmZvLT53aWR0aCk7DQo+PiArIGFkZXYtPmhlaWdodCA9IGdldF91
-bmFsaWduZWRfbGUzMigmaW5mby0+aGVpZ2h0KTsNCj4+ICsNCj4+ICsgaWYgKGJpdHNfcGVyX3Bp
-eGVsICE9IEFQUExFVEJEUk1fQklUU19QRVJfUElYRUwpIHsNCj4+ICsgZHJtX2Vycihkcm0sICJF
-bmNvdW50ZXJlZCB1bmV4cGVjdGVkIGJpdHMgcGVyIHBpeGVsIHZhbHVlICglZClcbiIsIGJpdHNf
-cGVyX3BpeGVsKTsNCj4+ICsgcmV0ID0gLUVJTlZBTDsNCj4+ICsgZ290byBmcmVlX2luZm87DQo+
-PiArIH0NCj4+ICsNCj4+ICsgaWYgKHBpeGVsX2Zvcm1hdCAhPSBBUFBMRVRCRFJNX1BJWEVMX0ZP
-Uk1BVCkgew0KPj4gKyBkcm1fZXJyKGRybSwgIkVuY291bnRlcmVkIHVua25vd24gcGl4ZWwgZm9y
-bWF0ICglcDRjaClcbiIsICZwaXhlbF9mb3JtYXQpOw0KPj4gKyByZXQgPSAtRUlOVkFMOw0KPj4g
-KyBnb3RvIGZyZWVfaW5mbzsNCj4+ICsgfQ0KPj4gKw0KPj4gK2ZyZWVfaW5mbzoNCj4+ICsga2Zy
-ZWUoaW5mbyk7DQo+PiArDQo+PiArIHJldHVybiByZXQ7DQo+PiArfQ0KPj4gKw0KPj4gK3N0YXRp
-YyB1MzIgcmVjdF9zaXplKHN0cnVjdCBkcm1fcmVjdCAqcmVjdCkNCj4+ICt7DQo+PiArIHJldHVy
-biBkcm1fcmVjdF93aWR0aChyZWN0KSAqIGRybV9yZWN0X2hlaWdodChyZWN0KSAqIChBUFBMRVRC
-RFJNX0JJVFNfUEVSX1BJWEVMIC8gOCk7DQo+PiArfQ0KPj4gKw0KPj4gK3N0YXRpYyBpbnQgYXBw
-bGV0YmRybV9mbHVzaF9kYW1hZ2Uoc3RydWN0IGFwcGxldGJkcm1fZGV2aWNlICphZGV2LA0KPj4g
-KyAgICBzdHJ1Y3QgZHJtX3BsYW5lX3N0YXRlICpvbGRfc3RhdGUsDQo+PiArICAgIHN0cnVjdCBk
-cm1fcGxhbmVfc3RhdGUgKnN0YXRlKQ0KPj4gK3sNCj4+ICsgc3RydWN0IGRybV9zaGFkb3dfcGxh
-bmVfc3RhdGUgKnNoYWRvd19wbGFuZV9zdGF0ZSA9IHRvX2RybV9zaGFkb3dfcGxhbmVfc3RhdGUo
-c3RhdGUpOw0KPj4gKyBzdHJ1Y3QgYXBwbGV0YmRybV9mYl9yZXF1ZXN0X3Jlc3BvbnNlICpyZXNw
-b25zZTsNCj4+ICsgc3RydWN0IGFwcGxldGJkcm1fZmJfcmVxdWVzdF9mb290ZXIgKmZvb3RlcjsN
-Cj4+ICsgc3RydWN0IGRybV9hdG9taWNfaGVscGVyX2RhbWFnZV9pdGVyIGl0ZXI7DQo+PiArIHN0
-cnVjdCBkcm1fZnJhbWVidWZmZXIgKmZiID0gc3RhdGUtPmZiOw0KPj4gKyBzdHJ1Y3QgYXBwbGV0
-YmRybV9mYl9yZXF1ZXN0ICpyZXF1ZXN0Ow0KPj4gKyBzdHJ1Y3QgZHJtX2RldmljZSAqZHJtID0g
-JmFkZXYtPmRybTsNCj4+ICsgc3RydWN0IGFwcGxldGJkcm1fZnJhbWUgKmZyYW1lOw0KPj4gKyB1
-NjQgdGltZXN0YW1wID0ga3RpbWVfZ2V0X25zKCk7DQo+PiArIHN0cnVjdCBkcm1fcmVjdCBkYW1h
-Z2U7DQo+PiArIHNpemVfdCBmcmFtZXNfc2l6ZSA9IDA7DQo+PiArIHNpemVfdCByZXF1ZXN0X3Np
-emU7DQo+PiArIGludCByZXQ7DQo+PiArDQo+PiArIGRybV9hdG9taWNfaGVscGVyX2RhbWFnZV9p
-dGVyX2luaXQoJml0ZXIsIG9sZF9zdGF0ZSwgc3RhdGUpOw0KPj4gKyBkcm1fYXRvbWljX2Zvcl9l
-YWNoX3BsYW5lX2RhbWFnZSgmaXRlciwgJmRhbWFnZSkgew0KPj4gKyBmcmFtZXNfc2l6ZSArPSBz
-dHJ1Y3Rfc2l6ZShmcmFtZSwgYnVmLCByZWN0X3NpemUoJmRhbWFnZSkpOw0KPj4gKyB9DQo+PiAr
-DQo+PiArIGlmICghZnJhbWVzX3NpemUpDQo+PiArIHJldHVybiAwOw0KPj4gKw0KPj4gKyByZXF1
-ZXN0X3NpemUgPSBBTElHTihzaXplb2YoKnJlcXVlc3QpICsgZnJhbWVzX3NpemUgKyBzaXplb2Yo
-KmZvb3RlciksIDE2KTsNCj4+ICsNCj4+ICsgcmVxdWVzdCA9IGt6YWxsb2MocmVxdWVzdF9zaXpl
-LCBHRlBfS0VSTkVMKTsNCj4+ICsgaWYgKCFyZXF1ZXN0KQ0KPj4gKyByZXR1cm4gLUVOT01FTTsN
-Cj4+ICsNCj4+ICsgcmVzcG9uc2UgPSBremFsbG9jKHNpemVvZigqcmVzcG9uc2UpLCBHRlBfS0VS
-TkVMKTsNCj4+ICsgaWYgKCFyZXNwb25zZSkgew0KPj4gKyByZXQgPSAtRU5PTUVNOw0KPj4gKyBn
-b3RvIGZyZWVfcmVxdWVzdDsNCj4+ICsgfQ0KPiANCj4gVGhpcyBjb2RlIHJ1bnMgaW4gdGhlIG1p
-ZGRsZSBvZiB0aGUgYXRvbWljIHVwZGF0ZS4gSXQncyB0aGVuIHRvbyBsYXRlIHRvIGRvIGVycm9y
-IGhhbmRsaW5nLiBJZiB0aGVzZSBhbGxvY3MgZmFpbCwgdGhlIGRpc3BsYXkgaGFyZHdhcmUgd2ls
-bCByZW1haW4gaW4gdW5kZWZpbmVkIHN0YXRlLg0KPiANCj4gSXQgaXMgbXVjaCBwcmVmZXJhYmxl
-IHRvIGFsbG9jYXRlIHRoaXMgbWVtb3J5IGluIHRoZSBhdG9taWNfY2hlY2suIFRvIGRvIHNvLCB5
-b3UgbmVlZCBhIHBsYW5lLXN0YXRlIHN0cnVjdHVyZS4gQWxsb2NhdGUgdGhlIG1lbW9yeSBmb3Ig
-cmVxdWVzdCBhbmQgcmVzcG9uc2UgaW4gdGhlIHBsYW5lJ3MgYXRvbWljLWNoZWNrIGhlbHBlci4g
-SWYgdGhhdCBmYWlscywgeW91IGNhbiByZXR1cm4gYW4gZXJyb3IgdGhlcmUuIFN0b3JlIHRoZSBw
-b2ludGVycyBhbmQgdGhlIHJlcXVlc3Qgc2l6ZSBpbiB5b3VyIHBsYW5lLXN0YXRlIHN0cnVjdHVy
-ZSBhbmQgZmV0Y2ggdGhlbSBoZXJlLiAgVGhlIG1lbW9yeSBzaG91bGQgbGF0ZXIgYmUgZnJlZWQg
-aW4gdGhlIHBsYW5lJ3MgZGVzdHJveSBjYWxsYmFjay4gRm9yIGFuIGV4YW1wbGUsIHNlZSBob3cg
-dGhlIHNzZDEzMHggZHJpdmVyIHRyZWF0cyBhIGJ1ZmZlciBmb3IgYSBzaW1pbGFyIHVzZSBjYXNl
-IGF0IFsxXS4NCj4gDQo+IFsxXSBodHRwczovL2VsaXhpci5ib290bGluLmNvbS9saW51eC92Ni4x
-My4yL3NvdXJjZS9kcml2ZXJzL2dwdS9kcm0vc29sb21vbi9zc2QxMzB4LmMjTDExMzYNCj4gDQo+
-IA0KPj4gKw0KPj4gKyByZXQgPSBkcm1fZ2VtX2ZiX2JlZ2luX2NwdV9hY2Nlc3MoZmIsIERNQV9G
-Uk9NX0RFVklDRSk7DQo+PiArIGlmIChyZXQpIHsNCj4+ICsgZHJtX2Vycihkcm0sICJGYWlsZWQg
-dG8gc3RhcnQgQ1BVIGZyYW1lYnVmZmVyIGFjY2VzcyAoJWQpXG4iLCByZXQpOw0KPj4gKyBnb3Rv
-IGZyZWVfcmVzcG9uc2U7DQo+PiArIH0NCj4+ICsNCj4+ICsgcmVxdWVzdC0+aGVhZGVyLnVua18w
-MCA9IGNwdV90b19sZTE2KDIpOw0KPj4gKyByZXF1ZXN0LT5oZWFkZXIudW5rXzAyID0gY3B1X3Rv
-X2xlMTYoMHgxMik7DQo+PiArIHJlcXVlc3QtPmhlYWRlci51bmtfMDQgPSBjcHVfdG9fbGUzMig5
-KTsNCj4+ICsgcmVxdWVzdC0+aGVhZGVyLnNpemUgPSBjcHVfdG9fbGUzMihyZXF1ZXN0X3NpemUg
-LSBzaXplb2YocmVxdWVzdC0+aGVhZGVyKSk7DQo+PiArIHJlcXVlc3QtPnVua18xMCA9IGNwdV90
-b19sZTE2KDEpOw0KPj4gKyByZXF1ZXN0LT5tc2dfaWQgPSB0aW1lc3RhbXAgJiAweGZmOw0KPj4g
-Kw0KPj4gKyBmcmFtZSA9IChzdHJ1Y3QgYXBwbGV0YmRybV9mcmFtZSAqKXJlcXVlc3QtPmRhdGE7
-DQo+PiArDQo+PiArIGRybV9hdG9taWNfaGVscGVyX2RhbWFnZV9pdGVyX2luaXQoJml0ZXIsIG9s
-ZF9zdGF0ZSwgc3RhdGUpOw0KPj4gKyBkcm1fYXRvbWljX2Zvcl9lYWNoX3BsYW5lX2RhbWFnZSgm
-aXRlciwgJmRhbWFnZSkgew0KPj4gKyBzdHJ1Y3QgaW9zeXNfbWFwIGRzdCA9IElPU1lTX01BUF9J
-TklUX1ZBRERSKGZyYW1lLT5idWYpOw0KPj4gKyB1MzIgYnVmX3NpemUgPSByZWN0X3NpemUoJmRh
-bWFnZSk7DQo+PiArDQo+PiArIC8qDQo+PiArICAqIFRoZSBjb29yZGluYXRlcyBuZWVkIHRvIGJl
-IHRyYW5zbGF0ZWQgdG8gdGhlIGNvb3JkaW5hdGUNCj4+ICsgICogc3lzdGVtIHRoZSBkZXZpY2Ug
-ZXhwZWN0cywgc2VlIHRoZSBjb21tZW50IGluDQo+PiArICAqIGFwcGxldGJkcm1fc2V0dXBfbW9k
-ZV9jb25maWcNCj4+ICsgICovDQo+PiArIGZyYW1lLT5iZWdpbl94ID0gY3B1X3RvX2xlMTYoZGFt
-YWdlLnkxKTsNCj4+ICsgZnJhbWUtPmJlZ2luX3kgPSBjcHVfdG9fbGUxNihhZGV2LT5oZWlnaHQg
-LSBkYW1hZ2UueDIpOw0KPj4gKyBmcmFtZS0+d2lkdGggPSBjcHVfdG9fbGUxNihkcm1fcmVjdF9o
-ZWlnaHQoJmRhbWFnZSkpOw0KPj4gKyBmcmFtZS0+aGVpZ2h0ID0gY3B1X3RvX2xlMTYoZHJtX3Jl
-Y3Rfd2lkdGgoJmRhbWFnZSkpOw0KPj4gKyBmcmFtZS0+YnVmX3NpemUgPSBjcHVfdG9fbGUzMihi
-dWZfc2l6ZSk7DQo+PiArDQo+PiArIHJldCA9IGRybV9mYl9ibGl0KCZkc3QsIE5VTEwsIERSTV9G
-T1JNQVRfQkdSODg4LA0KPj4gKyAgICZzaGFkb3dfcGxhbmVfc3RhdGUtPmRhdGFbMF0sIGZiLCAm
-ZGFtYWdlLCAmc2hhZG93X3BsYW5lX3N0YXRlLT5mbXRjbnZfc3RhdGUpOw0KPiANCj4gQ2FuIHdl
-IHZvaWQgdGhlIHVzZSBvZiBkcm1fZmJfYmxpdCgpPyBTaW5jZSB5b3Uga25vdyBhbGwgZm9ybWF0
-cyBpbiBhZHZhbmNlLCBqdXN0IGRvDQo+IA0KPiBzd2l0Y2ggKGZvcm1hdCkNCj4gY2FzZSBYUkdC
-ODg4ODogZHJtX2ZiX3hyZ2I4ODhfdG9fYmdyODg4KCkgYnJlYWsgZGVmYXVsdDoNCj4gICAgZHJt
-X2ZiX21lbWNweSgpIGJyZWFrIH1XZSB1c2UgYmxpdCBpbiBzaW1wbGVkcm0gYW5kIG9mZHJtLCB3
-aGVyZSB3ZSBkb24ndCBrbm93IHRoZSBmb3JtYXRzIGFuZCBvdXRwdXQgYnVmZmVycyBpbiBhZHZh
-bmNlLiBCdXQgaXQncyByZWFsbHkgbm90IHNvIGdyZWF0IGluIG90aGVyIGRyaXZlcnMsIEkgdGhp
-bmsuDQoNCkkgdGhpbmsgeW91IG1lYW4gdGhpczoNCg0KI2luY2x1ZGUgPGRybS9kcm1fZnJhbWVi
-dWZmZXIuaD4NCg0KCQlzd2l0Y2ggKGZiLT5mb3JtYXQtPmZvcm1hdCkgew0KCQljYXNlIERSTV9G
-T1JNQVRfWFJHQjg4ODg6DQoJCQlkcm1fZmJfeHJnYjg4ODhfdG9fYmdyODg4KCZkc3QsIE5VTEws
-ICZzaGFkb3dfcGxhbmVfc3RhdGUtPmRhdGFbMF0sIGZiLCAmZGFtYWdlLCAmc2hhZG93X3BsYW5l
-X3N0YXRlLT5mbXRjbnZfc3RhdGUpOw0KCQkJYnJlYWs7DQoJCWRlZmF1bHQ6DQoJCQlkcm1fZmJf
-bWVtY3B5KCZkc3QsIE5VTEwsICZzaGFkb3dfcGxhbmVfc3RhdGUtPmRhdGFbMF0sIGZiLCAmZGFt
-YWdlKTsNCgkJCWJyZWFrOw0KCQl9DQo+PiArIGlmIChyZXQpIHsNCj4+ICsgZHJtX2Vycihkcm0s
-ICJGYWlsZWQgdG8gY29weSBkYW1hZ2UgY2xpcCAoJWQpXG4iLCByZXQpOw0KPj4gKyBnb3RvIGVu
-ZF9mYl9jcHVfYWNjZXNzOw0KPj4gKyB9DQo+PiArDQo+PiArIGZyYW1lID0gKHZvaWQgKilmcmFt
-ZSArIHN0cnVjdF9zaXplKGZyYW1lLCBidWYsIGJ1Zl9zaXplKTsNCj4+ICsgfQ0KPj4gKw0KPj4g
-KyBmb290ZXIgPSAoc3RydWN0IGFwcGxldGJkcm1fZmJfcmVxdWVzdF9mb290ZXIgKikmcmVxdWVz
-dC0+ZGF0YVtmcmFtZXNfc2l6ZV07DQo+PiArDQo+PiArIGZvb3Rlci0+dW5rXzBjID0gY3B1X3Rv
-X2xlMzIoMHhmZmZlKTsNCj4+ICsgZm9vdGVyLT51bmtfMWMgPSBjcHVfdG9fbGUzMigweDgwMDAx
-KTsNCj4+ICsgZm9vdGVyLT51bmtfMzQgPSBjcHVfdG9fbGUzMigweDgwMDAyKTsNCj4+ICsgZm9v
-dGVyLT51bmtfNGMgPSBjcHVfdG9fbGUzMigweGZmZmYpOw0KPj4gKyBmb290ZXItPnRpbWVzdGFt
-cCA9IGNwdV90b19sZTY0KHRpbWVzdGFtcCk7DQo+PiArDQo+PiArIHJldCA9IGFwcGxldGJkcm1f
-c2VuZF9yZXF1ZXN0KGFkZXYsICZyZXF1ZXN0LT5oZWFkZXIsIHJlcXVlc3Rfc2l6ZSk7DQo+PiAr
-IGlmIChyZXQpDQo+PiArIGdvdG8gZW5kX2ZiX2NwdV9hY2Nlc3M7DQo+PiArDQo+PiArIHJldCA9
-IGFwcGxldGJkcm1fcmVhZF9yZXNwb25zZShhZGV2LCAmcmVzcG9uc2UtPmhlYWRlciwgc2l6ZW9m
-KCpyZXNwb25zZSksDQo+PiArICAgICAgICBBUFBMRVRCRFJNX01TR19VUERBVEVfQ09NUExFVEUp
-Ow0KPj4gKyBpZiAocmV0KQ0KPj4gKyBnb3RvIGVuZF9mYl9jcHVfYWNjZXNzOw0KPj4gKw0KPj4g
-KyBpZiAocmVzcG9uc2UtPnRpbWVzdGFtcCAhPSBmb290ZXItPnRpbWVzdGFtcCkgew0KPj4gKyBk
-cm1fZXJyKGRybSwgIlJlc3BvbnNlIHRpbWVzdGFtcCAoJWxsdSkgZG9lc24ndCBtYXRjaCByZXF1
-ZXN0IHRpbWVzdGFtcCAoJWxsdSlcbiIsDQo+PiArIGxlNjRfdG9fY3B1KHJlc3BvbnNlLT50aW1l
-c3RhbXApLCB0aW1lc3RhbXApOw0KPj4gKyBnb3RvIGVuZF9mYl9jcHVfYWNjZXNzOw0KPj4gKyB9
-DQo+PiArDQo+PiArZW5kX2ZiX2NwdV9hY2Nlc3M6DQo+PiArIGRybV9nZW1fZmJfZW5kX2NwdV9h
-Y2Nlc3MoZmIsIERNQV9GUk9NX0RFVklDRSk7DQo+PiArZnJlZV9yZXNwb25zZToNCj4+ICsga2Zy
-ZWUocmVzcG9uc2UpOw0KPj4gK2ZyZWVfcmVxdWVzdDoNCj4+ICsga2ZyZWUocmVxdWVzdCk7DQo+
-PiArDQo+PiArIHJldHVybiByZXQ7DQo+PiArfQ0KPj4gKw0KPj4gK3N0YXRpYyBpbnQgYXBwbGV0
-YmRybV9jb25uZWN0b3JfaGVscGVyX2dldF9tb2RlcyhzdHJ1Y3QgZHJtX2Nvbm5lY3RvciAqY29u
-bmVjdG9yKQ0KPj4gK3sNCj4+ICsgc3RydWN0IGFwcGxldGJkcm1fZGV2aWNlICphZGV2ID0gZHJt
-X3RvX2FkZXYoY29ubmVjdG9yLT5kZXYpOw0KPj4gKw0KPj4gKyByZXR1cm4gZHJtX2Nvbm5lY3Rv
-cl9oZWxwZXJfZ2V0X21vZGVzX2ZpeGVkKGNvbm5lY3RvciwgJmFkZXYtPm1vZGUpOw0KPj4gK30N
-Cj4+ICsNCj4+ICtzdGF0aWMgY29uc3QgdTMyIGFwcGxldGJkcm1fcHJpbWFyeV9wbGFuZV9mb3Jt
-YXRzW10gPSB7DQo+PiArIERSTV9GT1JNQVRfQkdSODg4LA0KPj4gKyBEUk1fRk9STUFUX1hSR0I4
-ODg4LCAvKiBlbXVsYXRlZCAqLw0KPj4gK307DQo+PiArDQo+PiArc3RhdGljIGludCBhcHBsZXRi
-ZHJtX3ByaW1hcnlfcGxhbmVfaGVscGVyX2F0b21pY19jaGVjayhzdHJ1Y3QgZHJtX3BsYW5lICpw
-bGFuZSwNCj4+ICsgICAgc3RydWN0IGRybV9hdG9taWNfc3RhdGUgKnN0YXRlKQ0KPj4gK3sNCj4+
-ICsgc3RydWN0IGRybV9wbGFuZV9zdGF0ZSAqbmV3X3BsYW5lX3N0YXRlID0gZHJtX2F0b21pY19n
-ZXRfbmV3X3BsYW5lX3N0YXRlKHN0YXRlLCBwbGFuZSk7DQo+PiArIHN0cnVjdCBkcm1fY3J0YyAq
-bmV3X2NydGMgPSBuZXdfcGxhbmVfc3RhdGUtPmNydGM7DQo+PiArIHN0cnVjdCBkcm1fY3J0Y19z
-dGF0ZSAqbmV3X2NydGNfc3RhdGUgPSBOVUxMOw0KPj4gKyBpbnQgcmV0Ow0KPj4gKw0KPj4gKyBp
-ZiAobmV3X2NydGMpDQo+PiArIG5ld19jcnRjX3N0YXRlID0gZHJtX2F0b21pY19nZXRfbmV3X2Ny
-dGNfc3RhdGUoc3RhdGUsIG5ld19jcnRjKTsNCj4+ICsNCj4+ICsgcmV0ID0gZHJtX2F0b21pY19o
-ZWxwZXJfY2hlY2tfcGxhbmVfc3RhdGUobmV3X3BsYW5lX3N0YXRlLCBuZXdfY3J0Y19zdGF0ZSwN
-Cj4+ICsgICBEUk1fUExBTkVfTk9fU0NBTElORywNCj4+ICsgICBEUk1fUExBTkVfTk9fU0NBTElO
-RywNCj4+ICsgICBmYWxzZSwgZmFsc2UpOw0KPj4gKyBpZiAocmV0KQ0KPj4gKyByZXR1cm4gcmV0
-Ow0KPj4gKyBlbHNlIGlmICghbmV3X3BsYW5lX3N0YXRlLT52aXNpYmxlKQ0KPj4gKyByZXR1cm4g
-MDsNCj4+ICsNCj4+ICsgcmV0dXJuIDA7DQo+PiArfQ0KPj4gKw0KPj4gK3N0YXRpYyB2b2lkIGFw
-cGxldGJkcm1fcHJpbWFyeV9wbGFuZV9oZWxwZXJfYXRvbWljX3VwZGF0ZShzdHJ1Y3QgZHJtX3Bs
-YW5lICpwbGFuZSwNCj4+ICsgICAgICBzdHJ1Y3QgZHJtX2F0b21pY19zdGF0ZSAqb2xkX3N0YXRl
-KQ0KPj4gK3sNCj4+ICsgc3RydWN0IGFwcGxldGJkcm1fZGV2aWNlICphZGV2ID0gZHJtX3RvX2Fk
-ZXYocGxhbmUtPmRldik7DQo+PiArIHN0cnVjdCBkcm1fZGV2aWNlICpkcm0gPSBwbGFuZS0+ZGV2
-Ow0KPj4gKyBzdHJ1Y3QgZHJtX3BsYW5lX3N0YXRlICpwbGFuZV9zdGF0ZSA9IHBsYW5lLT5zdGF0
-ZTsNCj4+ICsgc3RydWN0IGRybV9wbGFuZV9zdGF0ZSAqb2xkX3BsYW5lX3N0YXRlID0gZHJtX2F0
-b21pY19nZXRfb2xkX3BsYW5lX3N0YXRlKG9sZF9zdGF0ZSwgcGxhbmUpOw0KPj4gKyBpbnQgaWR4
-Ow0KPiANCj4gcGxhbmVfc3RhdGUtPmZiIGNhbiBiZSBOVUxMIGlmIHRoZSBwbGFuZSdzIGF0b21p
-Y19kaXNhYmxlIGlzIG5vdCBzZXQuIEF0IGEgbWluaW11bSB5b3Ugc2hvdWxkIGNoZWNrIHRoaXMg
-Zmlyc3QgYW5kIHJldHVybiBpZiBzby4NCj4gDQo+IEEgYmV0dGVyIGlkZWEgaXMgdG8gaW1wbGVt
-ZW50IGF0b21pY19kaXNhYmxlLiBZb3UgY2FuIHRyeSB0byBtb3ZlIHRoZSBjb2RlIGZyb20gYXBw
-bGV0YmRybV9jcnRjX2hlbHBlcl9hdG9taWNfZGlzYWJsZSgpIHRvIHRoZSBwbGFuZSdzIGF0b21p
-YyBkaXNhYmxlIGFuZCByZW1vdmUgdGhlIENSVEMgaGVscGVyLiBUaGF0IHdvdWxkIHB1dCBhbGwg
-ZHJhd2luZyBjb2RlIGludG8gdGhlIHBsYW5lLiBUaGUgQ1JUQyBpcyBtb3JlIGFib3V0IHByb2dy
-YW1taW5nIGEgZGlzcGxheSBtb2RlLg0KPj4gKw0KPj4gKyBpZiAoIWRybV9kZXZfZW50ZXIoZHJt
-LCAmaWR4KSkNCj4+ICsgcmV0dXJuOw0KPj4gKw0KPj4gKyBhcHBsZXRiZHJtX2ZsdXNoX2RhbWFn
-ZShhZGV2LCBvbGRfcGxhbmVfc3RhdGUsIHBsYW5lX3N0YXRlKTsNCj4+ICsNCj4+ICsgZHJtX2Rl
-dl9leGl0KGlkeCk7DQo+PiArfQ0KPj4gKw0KPj4gK3N0YXRpYyBjb25zdCBzdHJ1Y3QgZHJtX3Bs
-YW5lX2hlbHBlcl9mdW5jcyBhcHBsZXRiZHJtX3ByaW1hcnlfcGxhbmVfaGVscGVyX2Z1bmNzID0g
-ew0KPj4gKyBEUk1fR0VNX1NIQURPV19QTEFORV9IRUxQRVJfRlVOQ1MsDQo+PiArIC5hdG9taWNf
-Y2hlY2sgPSBhcHBsZXRiZHJtX3ByaW1hcnlfcGxhbmVfaGVscGVyX2F0b21pY19jaGVjaywNCj4+
-ICsgLmF0b21pY191cGRhdGUgPSBhcHBsZXRiZHJtX3ByaW1hcnlfcGxhbmVfaGVscGVyX2F0b21p
-Y191cGRhdGUsDQo+PiArfTsNCj4+ICsNCj4+ICtzdGF0aWMgY29uc3Qgc3RydWN0IGRybV9wbGFu
-ZV9mdW5jcyBhcHBsZXRiZHJtX3ByaW1hcnlfcGxhbmVfZnVuY3MgPSB7DQo+PiArIC51cGRhdGVf
-cGxhbmUgPSBkcm1fYXRvbWljX2hlbHBlcl91cGRhdGVfcGxhbmUsDQo+PiArIC5kaXNhYmxlX3Bs
-YW5lID0gZHJtX2F0b21pY19oZWxwZXJfZGlzYWJsZV9wbGFuZSwNCj4+ICsgLmRlc3Ryb3kgPSBk
-cm1fcGxhbmVfY2xlYW51cCwNCj4+ICsgRFJNX0dFTV9TSEFET1dfUExBTkVfRlVOQ1MsDQo+PiAr
-fTsNCj4+ICsNCj4+ICtzdGF0aWMgZW51bSBkcm1fbW9kZV9zdGF0dXMgYXBwbGV0YmRybV9jcnRj
-X2hlbHBlcl9tb2RlX3ZhbGlkKHN0cnVjdCBkcm1fY3J0YyAqY3J0YywNCj4+ICsgICBjb25zdCBz
-dHJ1Y3QgZHJtX2Rpc3BsYXlfbW9kZSAqbW9kZSkNCj4+ICt7DQo+PiArIHN0cnVjdCBhcHBsZXRi
-ZHJtX2RldmljZSAqYWRldiA9IGRybV90b19hZGV2KGNydGMtPmRldik7DQo+PiArDQo+PiArIHJl
-dHVybiBkcm1fY3J0Y19oZWxwZXJfbW9kZV92YWxpZF9maXhlZChjcnRjLCBtb2RlLCAmYWRldi0+
-bW9kZSk7DQo+PiArfQ0KPj4gKw0KPj4gK3N0YXRpYyB2b2lkIGFwcGxldGJkcm1fY3J0Y19oZWxw
-ZXJfYXRvbWljX2Rpc2FibGUoc3RydWN0IGRybV9jcnRjICpjcnRjLA0KPj4gKyAgICAgIHN0cnVj
-dCBkcm1fYXRvbWljX3N0YXRlICpjcnRjX3N0YXRlKQ0KPj4gK3sNCj4+ICsgc3RydWN0IGFwcGxl
-dGJkcm1fZGV2aWNlICphZGV2ID0gZHJtX3RvX2FkZXYoY3J0Yy0+ZGV2KTsNCj4+ICsgaW50IGlk
-eDsNCj4+ICsNCj4+ICsgaWYgKCFkcm1fZGV2X2VudGVyKCZhZGV2LT5kcm0sICZpZHgpKQ0KPj4g
-KyByZXR1cm47DQo+PiArDQo+PiArIGFwcGxldGJkcm1fY2xlYXJfZGlzcGxheShhZGV2KTsNCj4+
-ICsNCj4+ICsgZHJtX2Rldl9leGl0KGlkeCk7DQo+PiArfQ0KPj4gKw0KPj4gK3N0YXRpYyBjb25z
-dCBzdHJ1Y3QgZHJtX21vZGVfY29uZmlnX2Z1bmNzIGFwcGxldGJkcm1fbW9kZV9jb25maWdfZnVu
-Y3MgPSB7DQo+PiArIC5mYl9jcmVhdGUgPSBkcm1fZ2VtX2ZiX2NyZWF0ZV93aXRoX2RpcnR5LA0K
-Pj4gKyAuYXRvbWljX2NoZWNrID0gZHJtX2F0b21pY19oZWxwZXJfY2hlY2ssDQo+PiArIC5hdG9t
-aWNfY29tbWl0ID0gZHJtX2F0b21pY19oZWxwZXJfY29tbWl0LA0KPj4gK307DQo+PiArDQo+PiAr
-c3RhdGljIGNvbnN0IHN0cnVjdCBkcm1fY29ubmVjdG9yX2Z1bmNzIGFwcGxldGJkcm1fY29ubmVj
-dG9yX2Z1bmNzID0gew0KPj4gKyAucmVzZXQgPSBkcm1fYXRvbWljX2hlbHBlcl9jb25uZWN0b3Jf
-cmVzZXQsDQo+PiArIC5kZXN0cm95ID0gZHJtX2Nvbm5lY3Rvcl9jbGVhbnVwLA0KPj4gKyAuZmls
-bF9tb2RlcyA9IGRybV9oZWxwZXJfcHJvYmVfc2luZ2xlX2Nvbm5lY3Rvcl9tb2RlcywNCj4+ICsg
-LmF0b21pY19kZXN0cm95X3N0YXRlID0gZHJtX2F0b21pY19oZWxwZXJfY29ubmVjdG9yX2Rlc3Ry
-b3lfc3RhdGUsDQo+PiArIC5hdG9taWNfZHVwbGljYXRlX3N0YXRlID0gZHJtX2F0b21pY19oZWxw
-ZXJfY29ubmVjdG9yX2R1cGxpY2F0ZV9zdGF0ZSwNCj4+ICt9Ow0KPj4gKw0KPj4gK3N0YXRpYyBj
-b25zdCBzdHJ1Y3QgZHJtX2Nvbm5lY3Rvcl9oZWxwZXJfZnVuY3MgYXBwbGV0YmRybV9jb25uZWN0
-b3JfaGVscGVyX2Z1bmNzID0gew0KPj4gKyAuZ2V0X21vZGVzID0gYXBwbGV0YmRybV9jb25uZWN0
-b3JfaGVscGVyX2dldF9tb2RlcywNCj4+ICt9Ow0KPj4gKw0KPj4gK3N0YXRpYyBjb25zdCBzdHJ1
-Y3QgZHJtX2NydGNfaGVscGVyX2Z1bmNzIGFwcGxldGJkcm1fY3J0Y19oZWxwZXJfZnVuY3MgPSB7
-DQo+PiArIC5tb2RlX3ZhbGlkID0gYXBwbGV0YmRybV9jcnRjX2hlbHBlcl9tb2RlX3ZhbGlkLA0K
-Pj4gKyAuYXRvbWljX2Rpc2FibGUgPSBhcHBsZXRiZHJtX2NydGNfaGVscGVyX2F0b21pY19kaXNh
-YmxlLA0KPj4gK307DQo+PiArDQo+PiArc3RhdGljIGNvbnN0IHN0cnVjdCBkcm1fY3J0Y19mdW5j
-cyBhcHBsZXRiZHJtX2NydGNfZnVuY3MgPSB7DQo+PiArIC5yZXNldCA9IGRybV9hdG9taWNfaGVs
-cGVyX2NydGNfcmVzZXQsDQo+PiArIC5kZXN0cm95ID0gZHJtX2NydGNfY2xlYW51cCwNCj4+ICsg
-LnNldF9jb25maWcgPSBkcm1fYXRvbWljX2hlbHBlcl9zZXRfY29uZmlnLA0KPj4gKyAucGFnZV9m
-bGlwID0gZHJtX2F0b21pY19oZWxwZXJfcGFnZV9mbGlwLA0KPj4gKyAuYXRvbWljX2R1cGxpY2F0
-ZV9zdGF0ZSA9IGRybV9hdG9taWNfaGVscGVyX2NydGNfZHVwbGljYXRlX3N0YXRlLA0KPj4gKyAu
-YXRvbWljX2Rlc3Ryb3lfc3RhdGUgPSBkcm1fYXRvbWljX2hlbHBlcl9jcnRjX2Rlc3Ryb3lfc3Rh
-dGUsDQo+PiArfTsNCj4+ICsNCj4+ICtzdGF0aWMgY29uc3Qgc3RydWN0IGRybV9lbmNvZGVyX2Z1
-bmNzIGFwcGxldGJkcm1fZW5jb2Rlcl9mdW5jcyA9IHsNCj4+ICsgLmRlc3Ryb3kgPSBkcm1fZW5j
-b2Rlcl9jbGVhbnVwLA0KPj4gK307DQo+PiArDQo+PiArREVGSU5FX0RSTV9HRU1fRk9QUyhhcHBs
-ZXRiZHJtX2RybV9mb3BzKTsNCj4+ICsNCj4+ICtzdGF0aWMgY29uc3Qgc3RydWN0IGRybV9kcml2
-ZXIgYXBwbGV0YmRybV9kcm1fZHJpdmVyID0gew0KPj4gKyBEUk1fR0VNX1NITUVNX0RSSVZFUl9P
-UFMsDQo+IA0KPiBGb3IgVVNCIGRldmljZXMsIHdlIG5lZWQgc3BlY2lhbCB3aXJpbmcgdG8gbWFr
-ZSBQUklNRSB3b3JrLiBUaGUgUFJJTUUgZGV2aWNlIG11c3Qgc3VwcG9ydCBETUEsIGJ1dCBhIFVT
-QiBkZXZpY2UgZG9lc24ndC4gU28gd2UgcGFzcyB0aGUgVVNCIGNvbnRyb2xsZXIgZGV2aWNlIGlu
-c3RlYWQuIFNlZSBbMl0gZm9yIHdoYXQgdWRsIGRvZXMgYW5kIGhvdyBpdCBvYnRhaW5zIGRtYWRl
-di4NCj4gDQo+IFsyXSBodHRwczovL2VsaXhpci5ib290bGluLmNvbS9saW51eC92Ni4xNC1yYzMv
-c291cmNlL2RyaXZlcnMvZ3B1L2RybS91ZGwvdWRsX2Rydi5jI0w3Ng0KDQpEaXNyZWdhcmQgbXkg
-cHJldmlvdXMgcmVwbHkgZm9yIHRoaXMuIEkgYmVsaWV2ZSB5b3UgbWVhbnQgYnkgdGhpcz86DQoN
-CuKAlD444oCUDQpGcm9tIGI2ZmRhNzMwOTk1YjdmMjgzNzRjMWZmMzg3NzhhNmYzZTZkYTY1ZGEg
-TW9uIFNlcCAxNyAwMDowMDowMCAyMDAxDQpGcm9tOiBBZGl0eWEgR2FyZyA8Z2FyZ2FkaXR5YTA4
-QGxpdmUuY29tPg0KRGF0ZTogVHVlLCAxOCBGZWIgMjAyNSAyMjo0Nzo0NCArMDUzMA0KU3ViamVj
-dDogW1BBVENIXSBwcmltZQ0KDQotLS0NCmRyaXZlcnMvZ3B1L2RybS90aW55L2FwcGxldGJkcm0u
-YyB8IDEzICsrKysrKysrKysrKysNCjEgZmlsZSBjaGFuZ2VkLCAxMyBpbnNlcnRpb25zKCspDQoN
-CmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdGlueS9hcHBsZXRiZHJtLmMgYi9kcml2ZXJz
-L2dwdS9kcm0vdGlueS9hcHBsZXRiZHJtLmMNCmluZGV4IGYyZDkxMTMyNS4uYjgzNTA2M2MyIDEw
-MDY0NA0KLS0tIGEvZHJpdmVycy9ncHUvZHJtL3RpbnkvYXBwbGV0YmRybS5jDQorKysgYi9kcml2
-ZXJzL2dwdS9kcm0vdGlueS9hcHBsZXRiZHJtLmMNCkBAIC0xMTgsNiArMTE4LDcgQEAgc3RydWN0
-IGFwcGxldGJkcm1fZmJfcmVxdWVzdF9yZXNwb25zZSB7DQoNCnN0cnVjdCBhcHBsZXRiZHJtX2Rl
-dmljZSB7DQoJc3RydWN0IGRldmljZSAqZGV2Ow0KKwlzdHJ1Y3QgZGV2aWNlICpkbWFkZXY7DQoN
-Cgl1bnNpZ25lZCBpbnQgaW5fZXA7DQoJdW5zaWduZWQgaW50IG91dF9lcDsNCkBAIC01MjEsMTAg
-KzUyMiwyMiBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IGRybV9lbmNvZGVyX2Z1bmNzIGFwcGxldGJk
-cm1fZW5jb2Rlcl9mdW5jcyA9IHsNCgkuZGVzdHJveSA9IGRybV9lbmNvZGVyX2NsZWFudXAsDQp9
-Ow0KDQorc3RhdGljIHN0cnVjdCBkcm1fZ2VtX29iamVjdCAqYXBwbGV0YmRybV9kcml2ZXJfZ2Vt
-X3ByaW1lX2ltcG9ydChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LA0KKwkJCQkJCQkJIHN0cnVjdCBk
-bWFfYnVmICpkbWFfYnVmKQ0KK3sNCisJc3RydWN0IGFwcGxldGJkcm1fZGV2aWNlICphZGV2ID0g
-ZHJtX3RvX2FkZXYoZGV2KTsNCisNCisJaWYgKCFhZGV2LT5kbWFkZXYpDQorCQlyZXR1cm4gRVJS
-X1BUUigtRU5PREVWKTsNCisNCisJcmV0dXJuIGRybV9nZW1fcHJpbWVfaW1wb3J0X2RldihkZXYs
-IGRtYV9idWYsIGFkZXYtPmRtYWRldik7DQorfQ0KKw0KREVGSU5FX0RSTV9HRU1fRk9QUyhhcHBs
-ZXRiZHJtX2RybV9mb3BzKTsNCg0Kc3RhdGljIGNvbnN0IHN0cnVjdCBkcm1fZHJpdmVyIGFwcGxl
-dGJkcm1fZHJtX2RyaXZlciA9IHsNCglEUk1fR0VNX1NITUVNX0RSSVZFUl9PUFMsDQorCS5nZW1f
-cHJpbWVfaW1wb3J0CT0gYXBwbGV0YmRybV9kcml2ZXJfZ2VtX3ByaW1lX2ltcG9ydCwNCgkubmFt
-ZQkJCT0gImFwcGxldGJkcm0iLA0KCS5kZXNjCQkJPSAiQXBwbGUgVG91Y2ggQmFyIERSTSBEcml2
-ZXIiLA0KCS5tYWpvcgkJCT0gMSwNCi0tIA0KMi40My4wDQoNCuKAlD44LS0NCj4gDQo+PiArIC5u
-YW1lID0gImFwcGxldGJkcm0iLA0KPj4gKyAuZGVzYyA9ICJBcHBsZSBUb3VjaCBCYXIgRFJNIERy
-aXZlciIsDQo+PiArIC5kYXRlID0gIjIwMjMwOTEwIiwNCj4gDQo+IFRoZSBkYXRlIGZpZWxkIGhh
-cyBiZWVuIHJlbW92ZWQgcmVjZW50bHkuDQo+IA0KPj4gKyAubWFqb3IgPSAxLA0KPj4gKyAubWlu
-b3IgPSAwLA0KPj4gKyAuZHJpdmVyX2ZlYXR1cmVzID0gRFJJVkVSX01PREVTRVQgfCBEUklWRVJf
-R0VNIHwgRFJJVkVSX0FUT01JQywNCj4+ICsgLmZvcHMgPSAmYXBwbGV0YmRybV9kcm1fZm9wcywN
-Cj4+ICt9Ow0KPj4gKw0KPj4gK3N0YXRpYyBpbnQgYXBwbGV0YmRybV9zZXR1cF9tb2RlX2NvbmZp
-ZyhzdHJ1Y3QgYXBwbGV0YmRybV9kZXZpY2UgKmFkZXYpDQo+PiArew0KPj4gKyBzdHJ1Y3QgZHJt
-X2Nvbm5lY3RvciAqY29ubmVjdG9yID0gJmFkZXYtPmNvbm5lY3RvcjsNCj4+ICsgc3RydWN0IGRy
-bV9wbGFuZSAqcHJpbWFyeV9wbGFuZTsNCj4+ICsgc3RydWN0IGRybV9jcnRjICpjcnRjOw0KPj4g
-KyBzdHJ1Y3QgZHJtX2VuY29kZXIgKmVuY29kZXI7DQo+PiArIHN0cnVjdCBkcm1fZGV2aWNlICpk
-cm0gPSAmYWRldi0+ZHJtOw0KPj4gKyBzdHJ1Y3QgZGV2aWNlICpkZXYgPSBhZGV2LT5kZXY7DQo+
-PiArIGludCByZXQ7DQo+PiArDQo+PiArIHJldCA9IGRybW1fbW9kZV9jb25maWdfaW5pdChkcm0p
-Ow0KPj4gKyBpZiAocmV0KQ0KPj4gKyByZXR1cm4gZGV2X2Vycl9wcm9iZShkZXYsIHJldCwgIkZh
-aWxlZCB0byBpbml0aWFsaXplIG1vZGUgY29uZmlndXJhdGlvblxuIik7DQo+PiArDQo+PiArIHBy
-aW1hcnlfcGxhbmUgPSAmYWRldi0+cHJpbWFyeV9wbGFuZTsNCj4+ICsgcmV0ID0gZHJtX3VuaXZl
-cnNhbF9wbGFuZV9pbml0KGRybSwgcHJpbWFyeV9wbGFuZSwgMCwNCj4+ICsgICAgICAgICZhcHBs
-ZXRiZHJtX3ByaW1hcnlfcGxhbmVfZnVuY3MsDQo+PiArICAgICAgICBhcHBsZXRiZHJtX3ByaW1h
-cnlfcGxhbmVfZm9ybWF0cywNCj4+ICsgICAgICAgIEFSUkFZX1NJWkUoYXBwbGV0YmRybV9wcmlt
-YXJ5X3BsYW5lX2Zvcm1hdHMpLA0KPj4gKyAgICAgICAgTlVMTCwNCj4+ICsgICAgICAgIERSTV9Q
-TEFORV9UWVBFX1BSSU1BUlksIE5VTEwpOw0KPj4gKyBpZiAocmV0KQ0KPj4gKyByZXR1cm4gZGV2
-X2Vycl9wcm9iZShkZXYsIHJldCwgIkZhaWxlZCB0byBpbml0aWFsaXplIHVuaXZlcnNhbCBwbGFu
-ZSBvYmplY3RcbiIpOw0KPj4gKyBkcm1fcGxhbmVfaGVscGVyX2FkZChwcmltYXJ5X3BsYW5lLCAm
-YXBwbGV0YmRybV9wcmltYXJ5X3BsYW5lX2hlbHBlcl9mdW5jcyk7DQo+PiArIGRybV9wbGFuZV9l
-bmFibGVfZmJfZGFtYWdlX2NsaXBzKHByaW1hcnlfcGxhbmUpOw0KPj4gKw0KPj4gKyBjcnRjID0g
-JmFkZXYtPmNydGM7DQo+PiArIHJldCA9IGRybV9jcnRjX2luaXRfd2l0aF9wbGFuZXMoZHJtLCBj
-cnRjLCBwcmltYXJ5X3BsYW5lLCBOVUxMLA0KPj4gKyAmYXBwbGV0YmRybV9jcnRjX2Z1bmNzLCBO
-VUxMKTsNCj4+ICsgaWYgKHJldCkNCj4+ICsgcmV0dXJuIGRldl9lcnJfcHJvYmUoZGV2LCByZXQs
-ICJGYWlsZWQgdG8gaW5pdGlhbGl6ZSBDUlRDIG9iamVjdFxuIik7DQo+PiArIGRybV9jcnRjX2hl
-bHBlcl9hZGQoY3J0YywgJmFwcGxldGJkcm1fY3J0Y19oZWxwZXJfZnVuY3MpOw0KPj4gKw0KPj4g
-KyBlbmNvZGVyID0gJmFkZXYtPmVuY29kZXI7DQo+PiArIHJldCA9IGRybV9lbmNvZGVyX2luaXQo
-ZHJtLCBlbmNvZGVyLCAmYXBwbGV0YmRybV9lbmNvZGVyX2Z1bmNzLA0KPj4gKyAgICAgICAgRFJN
-X01PREVfRU5DT0RFUl9EQUMsIE5VTEwpOw0KPj4gKyBpZiAocmV0KQ0KPj4gKyByZXR1cm4gZGV2
-X2Vycl9wcm9iZShkZXYsIHJldCwgIkZhaWxlZCB0byBpbml0aWFsaXplIGVuY29kZXJcbiIpOw0K
-Pj4gKyBlbmNvZGVyLT5wb3NzaWJsZV9jcnRjcyA9IGRybV9jcnRjX21hc2soY3J0Yyk7DQo+PiAr
-DQo+PiArIC8qDQo+PiArICAqIFRoZSBjb29yZGluYXRlIHN5c3RlbSB1c2VkIGJ5IHRoZSBkZXZp
-Y2UgaXMgZGlmZmVyZW50IGZyb20gdGhlDQo+PiArICAqIGNvb3JkaW5hdGUgc3lzdGVtIG9mIHRo
-ZSBmcmFtZWJ1ZmZlciBpbiB0aGF0IHRoZSB4IGFuZCB5IGF4ZXMgYXJlDQo+PiArICAqIHN3YXBw
-ZWQsIGFuZCB0aGF0IHRoZSB5IGF4aXMgaXMgaW52ZXJ0ZWQ7IHNvIHdoYXQgdGhlIGRldmljZSBy
-ZXBvcnRzDQo+PiArICAqIGFzIHRoZSBoZWlnaHQgaXMgYWN0dWFsbHkgdGhlIHdpZHRoIG9mIHRo
-ZSBmcmFtZWJ1ZmZlciBhbmQgdmljZQ0KPj4gKyAgKiB2ZXJzYQ0KPj4gKyAgKi8NCj4+ICsgZHJt
-LT5tb2RlX2NvbmZpZy5taW5fd2lkdGggPSAwOw0KPj4gKyBkcm0tPm1vZGVfY29uZmlnLm1pbl9o
-ZWlnaHQgPSAwOw0KPiANCj4+ICsgZHJtLT5tb2RlX2NvbmZpZy5tYXhfd2lkdGggPSBtYXgoYWRl
-di0+aGVpZ2h0LCBEUk1fU0hBRE9XX1BMQU5FX01BWF9XSURUSCk7DQo+PiArIGRybS0+bW9kZV9j
-b25maWcubWF4X2hlaWdodCA9IG1heChhZGV2LT53aWR0aCwgRFJNX1NIQURPV19QTEFORV9NQVhf
-SEVJR0hUKTsNCj4gDQo+IFRoaXMgbWlnaHQgbm90IHdvcmsgY29ycmVjdGx5LiBUbyB1c2UgdGhv
-c2UgU0hBRE9XX1BMQU5FX01BWCBjb25zdGFudHMsIHlvdSBoYXZlIHRvIGZpeHVwIHRoZSBkYW1h
-Z2UgY29vcmRpbmF0ZXMgdG8gYWNjb3VudCBmb3IgY2hhbmdlcyB0byB0aGUgcGxhbmUgY29vcmRp
-bmF0ZXMuIFNpbXBsZWRybSBkb2VzIHRoYXQgYnkgaW50ZXJzZWN0aW5nIGRhbWFnZSB3aXRoIGRz
-dF9jbGlwLiBbM10gWW91IGFsc28gaGF2ZSB0byBwdXQgdGhlIHJlc3VsdCBhdCB0aGUgcmlnaHQg
-cGxhY2Ugd2l0aGluIHRoZSBkaXNwbGF5Lg0KPiANCj4gWzNdIGh0dHBzOi8vZWxpeGlyLmJvb3Rs
-aW4uY29tL2xpbnV4L3Y2LjE0LXJjMy9zb3VyY2UvZHJpdmVycy9ncHUvZHJtL3Rpbnkvc2ltcGxl
-ZHJtLmMjTDY0Ng0KDQpUaGlzIG9uZSBpcyBjb25mdXNpbmcgZm9yIG1lLiBDb3VsZCB5b3UgY2xh
-cmlmeSBhIGJpdCBtb3JlIGhlcmU/DQo+IA0KPj4gKyBkcm0tPm1vZGVfY29uZmlnLnByZWZlcnJl
-ZF9kZXB0aCA9IEFQUExFVEJEUk1fQklUU19QRVJfUElYRUw7DQo+PiArIGRybS0+bW9kZV9jb25m
-aWcuZnVuY3MgPSAmYXBwbGV0YmRybV9tb2RlX2NvbmZpZ19mdW5jczsNCj4+ICsNCj4+ICsgYWRl
-di0+bW9kZSA9IChzdHJ1Y3QgZHJtX2Rpc3BsYXlfbW9kZSkgew0KPj4gKyBEUk1fTU9ERV9JTklU
-KDYwLCBhZGV2LT5oZWlnaHQsIGFkZXYtPndpZHRoLA0KPj4gKyAgICAgICBEUk1fTU9ERV9SRVNf
-TU0oYWRldi0+aGVpZ2h0LCAyMTgpLA0KPj4gKyAgICAgICBEUk1fTU9ERV9SRVNfTU0oYWRldi0+
-d2lkdGgsIDIxOCkpDQo+PiArIH07DQo+PiArDQo+PiArIHJldCA9IGRybV9jb25uZWN0b3JfaW5p
-dChkcm0sIGNvbm5lY3RvciwNCj4+ICsgICZhcHBsZXRiZHJtX2Nvbm5lY3Rvcl9mdW5jcywgRFJN
-X01PREVfQ09OTkVDVE9SX1VTQik7DQo+PiArIGlmIChyZXQpDQo+PiArIHJldHVybiBkZXZfZXJy
-X3Byb2JlKGRldiwgcmV0LCAiRmFpbGVkIHRvIGluaXRpYWxpemUgY29ubmVjdG9yXG4iKTsNCj4+
-ICsNCj4+ICsgZHJtX2Nvbm5lY3Rvcl9oZWxwZXJfYWRkKGNvbm5lY3RvciwgJmFwcGxldGJkcm1f
-Y29ubmVjdG9yX2hlbHBlcl9mdW5jcyk7DQo+PiArDQo+PiArIHJldCA9IGRybV9jb25uZWN0b3Jf
-c2V0X3BhbmVsX29yaWVudGF0aW9uKGNvbm5lY3RvciwNCj4+ICsgICBEUk1fTU9ERV9QQU5FTF9P
-UklFTlRBVElPTl9SSUdIVF9VUCk7DQo+PiArIGlmIChyZXQpDQo+PiArIHJldHVybiBkZXZfZXJy
-X3Byb2JlKGRldiwgcmV0LCAiRmFpbGVkIHRvIHNldCBwYW5lbCBvcmllbnRhdGlvblxuIik7DQo+
-PiArDQo+PiArIGNvbm5lY3Rvci0+ZGlzcGxheV9pbmZvLm5vbl9kZXNrdG9wID0gdHJ1ZTsNCj4+
-ICsgcmV0ID0gZHJtX29iamVjdF9wcm9wZXJ0eV9zZXRfdmFsdWUoJmNvbm5lY3Rvci0+YmFzZSwN
-Cj4+ICsgICAgIGRybS0+bW9kZV9jb25maWcubm9uX2Rlc2t0b3BfcHJvcGVydHksIHRydWUpOw0K
-Pj4gKyBpZiAocmV0KQ0KPj4gKyByZXR1cm4gZGV2X2Vycl9wcm9iZShkZXYsIHJldCwgIkZhaWxl
-ZCB0byBzZXQgbm9uLWRlc2t0b3AgcHJvcGVydHlcbiIpOw0KPj4gKw0KPj4gKyByZXQgPSBkcm1f
-Y29ubmVjdG9yX2F0dGFjaF9lbmNvZGVyKGNvbm5lY3RvciwgZW5jb2Rlcik7DQo+PiArDQo+PiAr
-IGlmIChyZXQpDQo+PiArIHJldHVybiBkZXZfZXJyX3Byb2JlKGRldiwgcmV0LCAiRmFpbGVkIHRv
-IGluaXRpYWxpemUgc2ltcGxlIGRpc3BsYXkgcGlwZVxuIik7DQo+PiArDQo+PiArIGRybV9tb2Rl
-X2NvbmZpZ19yZXNldChkcm0pOw0KPj4gKw0KPiANCj4gDQo+PiArIHJldCA9IGRybV9kZXZfcmVn
-aXN0ZXIoZHJtLCAwKTsNCj4+ICsgaWYgKHJldCkNCj4+ICsgcmV0dXJuIGRldl9lcnJfcHJvYmUo
-ZGV2LCByZXQsICJGYWlsZWQgdG8gcmVnaXN0ZXIgRFJNIGRldmljZVxuIik7DQo+IA0KPiBUaGlz
-IGNhbGwgZG9lcyBub3QgYmVsb25nIHRvIHRoZSBtb2RlLXNldHRpbmcgcGlwZWxpbmUgYW5kIGJl
-bG9uZ3MgaW50byBhcHBsZXRiZHJtX3Byb2JlKCkuDQoNCk1vdmluZyB0aGlzIHRvIGFwcGxldGJk
-cm1fcHJvYmUoKSBhZ2FpbiBsZWFkcyB0byBhIGZyZWV6aW5nIFRvdWNoIEJhci4gTWF5YmUgSSBh
-bSBwbGFjaW5nIGl0IGF0IHRoZSB3cm9uZyBwbGFjZT8NCj4gDQo+IA0KPj4gKw0KPj4gKyByZXR1
-cm4gMDsNCj4+ICt9DQo+PiArDQo+PiArc3RhdGljIGludCBhcHBsZXRiZHJtX3Byb2JlKHN0cnVj
-dCB1c2JfaW50ZXJmYWNlICppbnRmLA0KPj4gKyAgICAgY29uc3Qgc3RydWN0IHVzYl9kZXZpY2Vf
-aWQgKmlkKQ0KPj4gK3sNCj4+ICsgc3RydWN0IHVzYl9lbmRwb2ludF9kZXNjcmlwdG9yICpidWxr
-X2luLCAqYnVsa19vdXQ7DQo+PiArIHN0cnVjdCBkZXZpY2UgKmRldiA9ICZpbnRmLT5kZXY7DQo+
-PiArIHN0cnVjdCBhcHBsZXRiZHJtX2RldmljZSAqYWRldjsNCj4+ICsgaW50IHJldDsNCj4+ICsN
-Cj4+ICsgcmV0ID0gdXNiX2ZpbmRfY29tbW9uX2VuZHBvaW50cyhpbnRmLT5jdXJfYWx0c2V0dGlu
-ZywgJmJ1bGtfaW4sICZidWxrX291dCwgTlVMTCwgTlVMTCk7DQo+PiArIGlmIChyZXQpDQo+PiAr
-IHJldHVybiBkZXZfZXJyX3Byb2JlKGRldiwgcmV0LCAiRmFpbGVkIHRvIGZpbmQgYnVsayBlbmRw
-b2ludHNcbiIpOw0KPj4gKw0KPj4gKyBhZGV2ID0gZGV2bV9kcm1fZGV2X2FsbG9jKGRldiwgJmFw
-cGxldGJkcm1fZHJtX2RyaXZlciwgc3RydWN0IGFwcGxldGJkcm1fZGV2aWNlLCBkcm0pOw0KPj4g
-KyBpZiAoSVNfRVJSKGFkZXYpKQ0KPj4gKyByZXR1cm4gUFRSX0VSUihhZGV2KTsNCj4+ICsNCj4+
-ICsgYWRldi0+ZGV2ID0gZGV2Ow0KPj4gKyBhZGV2LT5pbl9lcCA9IGJ1bGtfaW4tPmJFbmRwb2lu
-dEFkZHJlc3M7DQo+PiArIGFkZXYtPm91dF9lcCA9IGJ1bGtfb3V0LT5iRW5kcG9pbnRBZGRyZXNz
-Ow0KPj4gKw0KPj4gKyB1c2Jfc2V0X2ludGZkYXRhKGludGYsIGFkZXYpOw0KPiANCj4gUmF0aGVy
-IHNldCB0aGUgRFJNIGRldmljZSBoZXJlIGFuZCBmZXRjaCBpdCBpbiB0aGUgY2FsbGJhY2tzIGJl
-bG93LiBBdCBzb21lIHBvaW50LCB3ZSBtaWdodCBiZSBhYmxlIHRvIHNoYXJlIHNvbWUgb2YgdGhv
-c2UgaGVscGVycyBhbW9uZyBkcml2ZXJzLg0KPiANCj4+ICsNCj4+ICsgcmV0ID0gYXBwbGV0YmRy
-bV9nZXRfaW5mb3JtYXRpb24oYWRldik7DQo+PiArIGlmIChyZXQpDQo+PiArIHJldHVybiBkZXZf
-ZXJyX3Byb2JlKGRldiwgcmV0LCAiRmFpbGVkIHRvIGdldCBkaXNwbGF5IGluZm9ybWF0aW9uXG4i
-KTsNCj4+ICsNCj4+ICsgcmV0ID0gYXBwbGV0YmRybV9zaWduYWxfcmVhZGluZXNzKGFkZXYpOw0K
-Pj4gKyBpZiAocmV0KQ0KPj4gKyByZXR1cm4gZGV2X2Vycl9wcm9iZShkZXYsIHJldCwgIkZhaWxl
-ZCB0byBzaWduYWwgcmVhZGluZXNzXG4iKTsNCj4+ICsNCj4gDQo+PiArIHJldCA9IGFwcGxldGJk
-cm1fY2xlYXJfZGlzcGxheShhZGV2KTsNCj4+ICsgaWYgKHJldCkNCj4+ICsgcmV0dXJuIGRldl9l
-cnJfcHJvYmUoZGV2LCByZXQsICJGYWlsZWQgdG8gY2xlYXIgZGlzcGxheVxuIik7DQo+IA0KPiBD
-bGVhcmluZyB0aGUgZGlzcGxheSBpcyBub3Qgc29tZXRoaW5nIHVzdWFsbHkgZG9uZSBpbiBwcm9i
-ZS4gQnV0IEkgZ3Vlc3MgdGhlcmUncyBubyBiZXR0ZXIgcGxhY2UuIEknZCBkbyB0aGlzIGFzIHRo
-ZSBmaW5hbCBjYWxsIGluIHByb2JlOyBhZnRlciByZWdpc3RlcmluZyB0aGUgZGV2aWNlLiAgVGhh
-dCB3YXksIGl0IGFjdHMgYSBiaXQgbGlrZSBhbiBpbi1rZXJuZWwgRFJNIGNsaWVudC4NCj4gDQo+
-IEJlc3QgcmVnYXJkcw0KPiBUaG9tYXMNCj4gDQo+PiArDQo+PiArIHJldHVybiBhcHBsZXRiZHJt
-X3NldHVwX21vZGVfY29uZmlnKGFkZXYpOw0KPj4gK30NCj4+ICsNCj4+ICtzdGF0aWMgdm9pZCBh
-cHBsZXRiZHJtX2Rpc2Nvbm5lY3Qoc3RydWN0IHVzYl9pbnRlcmZhY2UgKmludGYpDQo+PiArew0K
-Pj4gKyBzdHJ1Y3QgYXBwbGV0YmRybV9kZXZpY2UgKmFkZXYgPSB1c2JfZ2V0X2ludGZkYXRhKGlu
-dGYpOw0KPj4gKyBzdHJ1Y3QgZHJtX2RldmljZSAqZHJtID0gJmFkZXYtPmRybTsNCj4+ICsNCj4+
-ICsgZHJtX2Rldl91bnBsdWcoZHJtKTsNCj4+ICsgZHJtX2F0b21pY19oZWxwZXJfc2h1dGRvd24o
-ZHJtKTsNCj4+ICt9DQo+PiArDQo+PiArc3RhdGljIHZvaWQgYXBwbGV0YmRybV9zaHV0ZG93bihz
-dHJ1Y3QgdXNiX2ludGVyZmFjZSAqaW50ZikNCj4+ICt7DQo+PiArIHN0cnVjdCBhcHBsZXRiZHJt
-X2RldmljZSAqYWRldiA9IHVzYl9nZXRfaW50ZmRhdGEoaW50Zik7DQo+PiArDQo+PiArIC8qDQo+
-PiArICAqIFRoZSBmcmFtZWJ1ZmZlciBuZWVkcyB0byBiZSBjbGVhcmVkIG9uIHNodXRkb3duIHNp
-bmNlIGl0cyBjb250ZW50DQo+PiArICAqIHBlcnNpc3RzIGFjcm9zcyBib290cw0KPj4gKyAgKi8N
-Cj4+ICsgZHJtX2F0b21pY19oZWxwZXJfc2h1dGRvd24oJmFkZXYtPmRybSk7DQo+PiArfQ0KPj4g
-Kw0KPj4gK3N0YXRpYyBjb25zdCBzdHJ1Y3QgdXNiX2RldmljZV9pZCBhcHBsZXRiZHJtX3VzYl9p
-ZF90YWJsZVtdID0gew0KPj4gKyB7IFVTQl9ERVZJQ0VfSU5URVJGQUNFX0NMQVNTKDB4MDVhYywg
-MHg4MzAyLCBVU0JfQ0xBU1NfQVVESU9fVklERU8pIH0sDQo+PiArIHt9DQo+PiArfTsNCj4+ICtN
-T0RVTEVfREVWSUNFX1RBQkxFKHVzYiwgYXBwbGV0YmRybV91c2JfaWRfdGFibGUpOw0KPj4gKw0K
-Pj4gK3N0YXRpYyBzdHJ1Y3QgdXNiX2RyaXZlciBhcHBsZXRiZHJtX3VzYl9kcml2ZXIgPSB7DQo+
-PiArIC5uYW1lID0gImFwcGxldGJkcm0iLA0KPj4gKyAucHJvYmUgPSBhcHBsZXRiZHJtX3Byb2Jl
-LA0KPj4gKyAuZGlzY29ubmVjdCA9IGFwcGxldGJkcm1fZGlzY29ubmVjdCwNCj4+ICsgLnNodXRk
-b3duID0gYXBwbGV0YmRybV9zaHV0ZG93biwNCj4+ICsgLmlkX3RhYmxlID0gYXBwbGV0YmRybV91
-c2JfaWRfdGFibGUsDQo+PiArfTsNCj4+ICttb2R1bGVfdXNiX2RyaXZlcihhcHBsZXRiZHJtX3Vz
-Yl9kcml2ZXIpOw0KPj4gKw0KPj4gK01PRFVMRV9BVVRIT1IoIktlcmVtIEthcmFiYXkgPGtla3Ji
-eUBnbWFpbC5jb20+Iik7DQo+PiArTU9EVUxFX0RFU0NSSVBUSU9OKCJBcHBsZSBUb3VjaCBCYXIg
-RFJNIERyaXZlciIpOw0KPj4gK01PRFVMRV9MSUNFTlNFKCJHUEwiKTsNCj4gDQo+IC0tIA0KPiAt
-LQ0KPiBUaG9tYXMgWmltbWVybWFubg0KPiBHcmFwaGljcyBEcml2ZXIgRGV2ZWxvcGVyDQo+IFNV
-U0UgU29mdHdhcmUgU29sdXRpb25zIEdlcm1hbnkgR21iSA0KPiBGcmFua2Vuc3RyYXNzZSAxNDYs
-IDkwNDYxIE51ZXJuYmVyZywgR2VybWFueQ0KPiBHRjogSXZvIFRvdGV2LCBBbmRyZXcgTXllcnMs
-IEFuZHJldyBNY0RvbmFsZCwgQm91ZGllbiBNb2VybWFuDQo+IEhSQiAzNjgwOSAoQUcgTnVlcm5i
-ZXJnKQ0KDQoNCg==
+Dne petek, 14. februar 2025 ob 13:53:56 Srednjeevropski standardni =C4=8Das=
+ je Andre Przywara napisal(a):
+> Add the various bus clock gates that control access to the devices'
+> register interface.
+> These clocks are each just one bit, typically the lower bits in some "BGR"
+> (Bus Gate / Reset) registers, for each device group: one for all UARTs,
+> one for all SPI interfaces, and so on.
+>=20
+> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> ---
+>  drivers/clk/sunxi-ng/ccu-sun55i-a523.c | 295 ++++++++++++++++++++++++-
+>  1 file changed, 294 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c b/drivers/clk/sunxi-n=
+g/ccu-sun55i-a523.c
+> index 6a4340f1fd041..fbed9b2b3b2f9 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
+> @@ -350,6 +350,8 @@ static SUNXI_CCU_M_DATA_WITH_MUX(ahb_clk, "ahb", ahb_=
+apb0_parents, 0x510,
+>  				 0, 5,		/* M */
+>  				 24, 2,		/* mux */
+>  				 0);
+> +static const struct clk_hw *ahb_hws[] =3D { &ahb_clk.common.hw };
+> +
+>  static SUNXI_CCU_M_DATA_WITH_MUX(apb0_clk, "apb0", ahb_apb0_parents, 0x5=
+20,
+>  				 0, 5,		/* M */
+>  				 24, 2,	/* mux */
+> @@ -367,10 +369,11 @@ static SUNXI_CCU_M_DATA_WITH_MUX(apb1_clk, "apb1", =
+apb1_parents, 0x524,
+>  				 0, 5,		/* M */
+>  				 24, 3,		/* mux */
+>  				 0);
+> +static const struct clk_hw *apb1_hws[] =3D { &apb1_clk.common.hw };
+> =20
+> =20
+>  /***********************************************************************=
+***
+> - *                          mod clocks                                  =
+  *
+> + *                          mod clocks with gates                       =
+  *
+>   ***********************************************************************=
+***/
+> =20
+>  static const struct clk_hw *de_parents[] =3D {
+> @@ -386,6 +389,8 @@ static SUNXI_CCU_M_HW_WITH_MUX_GATE(de_clk, "de", de_=
+parents, 0x600,
+>  				    BIT(31),	/* gate */
+>  				    CLK_SET_RATE_PARENT);
+> =20
+> +static SUNXI_CCU_GATE_HWS(bus_de_clk, "bus-de", ahb_hws, 0x60c, BIT(0), =
+0);
+> +
+>  static const struct clk_hw *di_parents[] =3D {
+>  	&pll_periph0_300M_clk.hw,
+>  	&pll_periph0_400M_clk.hw,
+> @@ -399,6 +404,8 @@ static SUNXI_CCU_M_HW_WITH_MUX_GATE(di_clk, "di", di_=
+parents, 0x620,
+>  				    BIT(31),	/* gate */
+>  				    CLK_SET_RATE_PARENT);
+> =20
+> +static SUNXI_CCU_GATE_HWS(bus_di_clk, "bus-di", ahb_hws, 0x62c, BIT(0), =
+0);
+> +
+>  static const struct clk_hw *g2d_parents[] =3D {
+>  	&pll_periph0_400M_clk.hw,
+>  	&pll_periph0_300M_clk.hw,
+> @@ -412,6 +419,8 @@ static SUNXI_CCU_M_HW_WITH_MUX_GATE(g2d_clk, "g2d", g=
+2d_parents, 0x630,
+>  				    BIT(31),	/* gate */
+>  				    0);
+> =20
+> +static SUNXI_CCU_GATE_HWS(bus_g2d_clk, "bus-g2d", ahb_hws, 0x63c, BIT(0)=
+, 0);
+> +
+>  static const struct clk_hw *gpu_parents[] =3D {
+>  	&pll_gpu_clk.common.hw,
+>  	&pll_periph0_800M_clk.common.hw,
+> @@ -427,6 +436,8 @@ static SUNXI_CCU_M_HW_WITH_MUX_GATE(gpu_clk, "gpu", g=
+pu_parents, 0x670,
+>  				    BIT(31),	/* gate */
+>  				    0);
+> =20
+> +static SUNXI_CCU_GATE_HWS(bus_gpu_clk, "bus-gpu", ahb_hws, 0x67c, BIT(0)=
+, 0);
+> +
+>  static const struct clk_parent_data ce_parents[] =3D {
+>  	{ .fw_name =3D "hosc" },
+>  	{ .hw =3D &pll_periph0_480M_clk.common.hw },
+> @@ -439,6 +450,10 @@ static SUNXI_CCU_M_DATA_WITH_MUX_GATE(ce_clk, "ce", =
+ce_parents, 0x680,
+>  				       BIT(31),	/* gate */
+>  				       0);
+> =20
+> +static SUNXI_CCU_GATE_HWS(bus_ce_clk, "bus-ce", ahb_hws, 0x68c, BIT(0), =
+0);
+> +static SUNXI_CCU_GATE_HWS(bus_ce_sys_clk, "bus-ce-sys", ahb_hws, 0x68c,
+> +			  BIT(1), 0);
+> +
+>  static const struct clk_hw *ve_parents[] =3D {
+>  	&pll_ve_clk.common.hw,
+>  	&pll_periph0_480M_clk.common.hw,
+> @@ -451,6 +466,16 @@ static SUNXI_CCU_M_HW_WITH_MUX_GATE(ve_clk, "ve", ve=
+_parents, 0x690,
+>  				    BIT(31),	/* gate */
+>  				    CLK_SET_RATE_PARENT);
+> =20
+> +static SUNXI_CCU_GATE_HWS(bus_ve_clk, "bus-ve", ahb_hws, 0x69c, BIT(0), =
+0);
+> +
+> +static SUNXI_CCU_GATE_HWS(bus_dma_clk, "bus-dma", ahb_hws, 0x70c, BIT(0)=
+, 0);
+> +
+> +static SUNXI_CCU_GATE_HWS(bus_msgbox_clk, "bus-msgbox", ahb_hws, 0x71c,
+> +			  BIT(0), 0);
+> +
+> +static SUNXI_CCU_GATE_HWS(bus_spinlock_clk, "bus-spinlock", ahb_hws, 0x7=
+2c,
+> +			  BIT(0), 0);
+
+msgbox and spinlock probably needs to be marked as critical? Crust needs th=
+at
+for communication with TF-A.
+
+> +
+>  static const struct clk_parent_data hstimer_parents[] =3D {
+>  	{ .fw_name =3D "hosc" },
+>  	{ .fw_name =3D "iosc" },
+> @@ -510,6 +535,15 @@ static SUNXI_CCU_MP_DATA_WITH_MUX_GATE(hstimer5_clk,=
+ "hstimer5",
+>  				       BIT(31),	/* gate */
+>  				       CLK_SET_RATE_PARENT);
+> =20
+> +static SUNXI_CCU_GATE_HWS(bus_hstimer_clk, "bus-hstimer", ahb_hws, 0x74c,
+> +			  BIT(0), 0);
+> +
+> +static SUNXI_CCU_GATE_HWS(bus_dbg_clk, "bus-dbg", ahb_hws, 0x78c,
+> +			  BIT(0), 0);
+> +
+> +static SUNXI_CCU_GATE_HWS(bus_pwm0_clk, "bus-pwm0", apb1_hws, 0x7ac, BIT=
+(0), 0);
+> +static SUNXI_CCU_GATE_HWS(bus_pwm1_clk, "bus-pwm1", apb1_hws, 0x7ac, BIT=
+(1), 0);
+> +
+>  static const struct clk_parent_data iommu_parents[] =3D {
+>  	{ .hw =3D &pll_periph0_600M_clk.hw },
+>  	{ .hw =3D &pll_ddr0_clk.common.hw },
+> @@ -525,6 +559,9 @@ static SUNXI_CCU_M_DATA_WITH_MUX_GATE(iommu_clk, "iom=
+mu", iommu_parents, 0x7b0,
+>  				      BIT(31),	/* gate */
+>  				      CLK_SET_RATE_PARENT);
+> =20
+> +static SUNXI_CCU_GATE_HWS(bus_iommu_clk, "bus-iommu", apb0_hws, 0x7bc,
+> +			  BIT(0), 0);
+> +
+>  static const struct clk_hw *dram_parents[] =3D {
+>  	&pll_ddr0_clk.common.hw,
+>  	&pll_periph0_600M_clk.hw,
+> @@ -541,6 +578,22 @@ static SUNXI_CCU_M_HW_WITH_MUX_GATE(dram_clk, "dram"=
+, dram_parents, 0x800,
+>  static CLK_FIXED_FACTOR_HW(mbus_clk, "mbus",
+>  			   &dram_clk.common.hw, 4, 1, 0);
+> =20
+> +static SUNXI_CCU_GATE_HW(mbus_dma_clk, "mbus-dma", &mbus_clk.hw,
+> +			 0x804, BIT(0), 0);
+> +static SUNXI_CCU_GATE_HW(mbus_ve_clk, "mbus-ve", &mbus_clk.hw,
+> +			 0x804, BIT(1), 0);
+> +static SUNXI_CCU_GATE_HW(mbus_ce_clk, "mbus-ce", &mbus_clk.hw,
+> +			 0x804, BIT(2), 0);
+> +static SUNXI_CCU_GATE_HW(mbus_nand_clk, "mbus-nand", &mbus_clk.hw,
+> +			 0x804, BIT(5), 0);
+> +static SUNXI_CCU_GATE_HW(mbus_usb3_clk, "mbus-usb3", &mbus_clk.hw,
+> +			 0x804, BIT(6), 0);
+> +static SUNXI_CCU_GATE_HW(mbus_csi_clk, "mbus-csi", &mbus_clk.hw,
+> +			 0x804, BIT(8), 0);
+
+Missing several MBUS gates. Check T527 manual.
+
+> +
+> +static SUNXI_CCU_GATE_HWS(bus_dram_clk, "bus-dram", ahb_hws, 0x80c,
+> +			  BIT(0), CLK_IS_CRITICAL);
+> +
+>  static const struct clk_parent_data nand_mmc_parents[] =3D {
+>  	{ .fw_name =3D "hosc" },
+>  	{ .hw =3D &pll_periph0_400M_clk.hw },
+> @@ -563,6 +616,9 @@ static SUNXI_CCU_M_DATA_WITH_MUX_GATE(nand1_clk, "nan=
+d1", nand_mmc_parents,
+>  				    BIT(31),	/* gate */
+>  				    0);
+> =20
+> +static SUNXI_CCU_GATE_HWS(bus_nand_clk, "bus-nand", ahb_hws, 0x82c,
+> +			  BIT(0), 0);
+> +
+>  static SUNXI_CCU_MP_MUX_GATE_POSTDIV_FEAT(mmc0_clk, "mmc0", nand_mmc_par=
+ents,
+>  					   0x830,
+>  					   0, 5,	/* M */
+> @@ -598,6 +654,39 @@ static SUNXI_CCU_MP_MUX_GATE_POSTDIV_FEAT(mmc2_clk, =
+"mmc2", mmc2_parents,
+>  					   2,		/* post div */
+>  					   0, CCU_FEATURE_DUAL_DIV);
+> =20
+> +static SUNXI_CCU_GATE_HWS(bus_mmc0_clk, "bus-mmc0", ahb_hws, 0x84c, BIT(=
+0), 0);
+> +static SUNXI_CCU_GATE_HWS(bus_mmc1_clk, "bus-mmc1", ahb_hws, 0x84c, BIT(=
+1), 0);
+> +static SUNXI_CCU_GATE_HWS(bus_mmc2_clk, "bus-mmc2", ahb_hws, 0x84c, BIT(=
+2), 0);
+> +
+> +static SUNXI_CCU_GATE_HWS(bus_sysdap_clk, "bus-sysdap", apb1_hws, 0x88c,
+> +			  BIT(0), 0);
+> +
+> +static SUNXI_CCU_GATE_HWS(bus_uart0_clk, "bus-uart0", apb1_hws, 0x90c,
+> +			  BIT(0), 0);
+> +static SUNXI_CCU_GATE_HWS(bus_uart1_clk, "bus-uart1", apb1_hws, 0x90c,
+> +			  BIT(1), 0);
+> +static SUNXI_CCU_GATE_HWS(bus_uart2_clk, "bus-uart2", apb1_hws, 0x90c,
+> +			  BIT(2), 0);
+> +static SUNXI_CCU_GATE_HWS(bus_uart3_clk, "bus-uart3", apb1_hws, 0x90c,
+> +			  BIT(3), 0);
+> +static SUNXI_CCU_GATE_HWS(bus_uart4_clk, "bus-uart4", apb1_hws, 0x90c,
+> +			  BIT(4), 0);
+> +static SUNXI_CCU_GATE_HWS(bus_uart5_clk, "bus-uart5", apb1_hws, 0x90c,
+> +			  BIT(5), 0);
+> +static SUNXI_CCU_GATE_HWS(bus_uart6_clk, "bus-uart6", apb1_hws, 0x90c,
+> +			  BIT(6), 0);
+> +static SUNXI_CCU_GATE_HWS(bus_uart7_clk, "bus-uart7", apb1_hws, 0x90c,
+> +			  BIT(7), 0);
+> +
+> +static SUNXI_CCU_GATE_HWS(bus_i2c0_clk, "bus-i2c0", apb1_hws, 0x91c, BIT=
+(0), 0);
+> +static SUNXI_CCU_GATE_HWS(bus_i2c1_clk, "bus-i2c1", apb1_hws, 0x91c, BIT=
+(1), 0);
+> +static SUNXI_CCU_GATE_HWS(bus_i2c2_clk, "bus-i2c2", apb1_hws, 0x91c, BIT=
+(2), 0);
+> +static SUNXI_CCU_GATE_HWS(bus_i2c3_clk, "bus-i2c3", apb1_hws, 0x91c, BIT=
+(3), 0);
+> +static SUNXI_CCU_GATE_HWS(bus_i2c4_clk, "bus-i2c4", apb1_hws, 0x91c, BIT=
+(4), 0);
+> +static SUNXI_CCU_GATE_HWS(bus_i2c5_clk, "bus-i2c5", apb1_hws, 0x91c, BIT=
+(5), 0);
+> +
+> +static SUNXI_CCU_GATE_HWS(bus_can_clk, "bus-can", apb1_hws, 0x92c, BIT(0=
+), 0);
+> +
+>  static const struct clk_parent_data spi_parents[] =3D {
+>  	{ .fw_name =3D "hosc" },
+>  	{ .hw =3D &pll_periph0_300M_clk.hw },
+> @@ -630,6 +719,11 @@ static SUNXI_CCU_MP_DATA_WITH_MUX_GATE(spifc_clk, "s=
+pifc", nand_mmc_parents,
+>  				       24, 3,	/* mux */
+>  				       BIT(31),	/* gate */
+>  				       0);
+> +static SUNXI_CCU_GATE_HWS(bus_spi0_clk, "bus-spi0", ahb_hws, 0x96c, BIT(=
+0), 0);
+> +static SUNXI_CCU_GATE_HWS(bus_spi1_clk, "bus-spi1", ahb_hws, 0x96c, BIT(=
+1), 0);
+> +static SUNXI_CCU_GATE_HWS(bus_spi2_clk, "bus-spi2", ahb_hws, 0x96c, BIT(=
+2), 0);
+> +static SUNXI_CCU_GATE_HWS(bus_spifc_clk, "bus-spifc", ahb_hws, 0x96c,
+> +			  BIT(3), 0);
+> =20
+>  static SUNXI_CCU_GATE_HWS_WITH_PREDIV(emac0_25M_clk, "emac0-25M",
+>  				      pll_periph0_150M_hws,
+> @@ -637,6 +731,10 @@ static SUNXI_CCU_GATE_HWS_WITH_PREDIV(emac0_25M_clk,=
+ "emac0-25M",
+>  static SUNXI_CCU_GATE_HWS_WITH_PREDIV(emac1_25M_clk, "emac1-25M",
+>  				      pll_periph0_150M_hws,
+>  				      0x974, BIT(31) | BIT(30), 6, 0);
+> +static SUNXI_CCU_GATE_HWS(bus_emac0_clk, "bus-emac0", ahb_hws, 0x97c,
+> +			  BIT(0), 0);
+> +static SUNXI_CCU_GATE_HWS(bus_emac1_clk, "bus-emac1", ahb_hws, 0x98c,
+> +			  BIT(0), 0);
+> =20
+>  static const struct clk_parent_data ir_rx_parents[] =3D {
+>  	{ .fw_name =3D "losc" },
+> @@ -648,6 +746,9 @@ static SUNXI_CCU_M_DATA_WITH_MUX_GATE(ir_rx_clk, "ir-=
+rx", ir_rx_parents, 0x990,
+>  				      24, 1,	/* mux */
+>  				      BIT(31),	/* gate */
+>  				      0);
+> +static SUNXI_CCU_GATE_HWS(bus_ir_rx_clk, "bus-ir-rx", apb0_hws, 0x99c,
+> +			  BIT(0), 0);
+> +
+>  static const struct clk_parent_data ir_tx_ledc_parents[] =3D {
+>  	{ .fw_name =3D "hosc" },
+>  	{ .hw =3D &pll_periph1_600M_clk.hw },
+> @@ -658,6 +759,8 @@ static SUNXI_CCU_M_DATA_WITH_MUX_GATE(ir_tx_clk, "ir-=
+tx", ir_tx_ledc_parents,
+>  				      24, 1,	/* mux */
+>  				      BIT(31),	/* gate */
+>  				      0);
+> +static SUNXI_CCU_GATE_HWS(bus_ir_tx_clk, "bus-ir-tx", apb0_hws, 0x9cc,
+> +			  BIT(0), 0);
+> =20
+>  static SUNXI_CCU_M_WITH_GATE(gpadc0_clk, "gpadc0", "hosc", 0x9e0,
+>  				 0, 5,		/* M */
+> @@ -667,6 +770,12 @@ static SUNXI_CCU_M_WITH_GATE(gpadc1_clk, "gpadc1", "=
+hosc", 0x9e4,
+>  				 0, 5,		/* M */
+>  				 BIT(31),	/* gate */
+>  				 0);
+> +static SUNXI_CCU_GATE_HWS(bus_gpadc0_clk, "bus-gpadc0", ahb_hws, 0x9ec,
+> +			  BIT(0), 0);
+> +static SUNXI_CCU_GATE_HWS(bus_gpadc1_clk, "bus-gpadc1", ahb_hws, 0x9ec,
+> +			  BIT(1), 0);
+> +
+> +static SUNXI_CCU_GATE_HWS(bus_ths_clk, "bus-ths", apb0_hws, 0x9fc, BIT(0=
+), 0);
+> =20
+>  /*
+>   * The first parent is a 48 MHz input clock divided by 4. That 48 MHz cl=
+ock is
+> @@ -720,6 +829,18 @@ static struct ccu_mux usb_ohci1_clk =3D {
+>  	},
+>  };
+> =20
+> +static SUNXI_CCU_GATE_HWS(bus_ohci0_clk, "bus-ohci0", ahb_hws, 0xa8c,
+> +			  BIT(0), 0);
+> +static SUNXI_CCU_GATE_HWS(bus_ohci1_clk, "bus-ohci1", ahb_hws, 0xa8c,
+> +			  BIT(1), 0);
+> +static SUNXI_CCU_GATE_HWS(bus_ehci0_clk, "bus-ehci0", ahb_hws, 0xa8c,
+> +			  BIT(4), 0);
+> +static SUNXI_CCU_GATE_HWS(bus_ehci1_clk, "bus-ehci1", ahb_hws, 0xa8c,
+> +			  BIT(5), 0);
+> +static SUNXI_CCU_GATE_HWS(bus_otg_clk, "bus-otg", ahb_hws, 0xa8c, BIT(8)=
+, 0);
+> +
+> +static SUNXI_CCU_GATE_HWS(bus_lradc_clk, "bus-lradc", apb0_hws, 0xa9c,
+> +			  BIT(0), 0);
+> =20
+>  static const struct clk_parent_data losc_hosc_parents[] =3D {
+>  	{ .fw_name =3D "hosc" },
+> @@ -733,6 +854,9 @@ static SUNXI_CCU_M_DATA_WITH_MUX_GATE(pcie_aux_clk, "=
+pcie-aux",
+>  				      BIT(31),	/* gate */
+>  				      0);
+> =20
+> +static SUNXI_CCU_GATE_HWS(bus_dpss_top_clk, "bus-dpss-top", ahb_hws, 0xa=
+bc,
+> +			  BIT(0), 0);
+> +
+>  static SUNXI_CCU_GATE_DATA(hdmi_24M_clk, "hdmi-24M", osc24M, 0xb04, BIT(=
+31), 0);
+> =20
+>  /* TODO: add mux between 32kOSC and PERIPH0/18750 */
+> @@ -750,6 +874,8 @@ static SUNXI_CCU_MUX_DATA_WITH_GATE(hdmi_cec_clk, "hd=
+mi-cec", hdmi_cec_parents,
+>  				    BIT(31),	/* gate */
+>  				    0);
+> =20
+> +static SUNXI_CCU_GATE_HWS(bus_hdmi_clk, "bus-hdmi", ahb_hws, 0xb1c, BIT(=
+0), 0);
+> +
+>  static const struct clk_parent_data mipi_dsi_parents[] =3D {
+>  	{ .fw_name =3D "hosc" },
+>  	{ .hw =3D &pll_periph0_200M_clk.hw },
+> @@ -769,6 +895,12 @@ static SUNXI_CCU_M_DATA_WITH_MUX_GATE(mipi_dsi1_clk,=
+ "mipi-dsi1",
+>  				      BIT(31),	/* gate */
+>  				      CLK_SET_RATE_PARENT);
+> =20
+> +static SUNXI_CCU_GATE_HWS(bus_mipi_dsi0_clk, "bus-mipi-dsi0", ahb_hws, 0=
+xb4c,
+> +			  BIT(0), 0);
+> +
+> +static SUNXI_CCU_GATE_HWS(bus_mipi_dsi1_clk, "bus-mipi-dsi1", ahb_hws, 0=
+xb4c,
+> +			  BIT(1), 0);
+> +
+>  static const struct clk_hw *tcon_parents[] =3D {
+>  	&pll_video0_4x_clk.common.hw,
+>  	&pll_video1_4x_clk.common.hw,
+> @@ -806,6 +938,11 @@ static SUNXI_CCU_M_HW_WITH_MUX_GATE(combophy_dsi1_cl=
+k, "combophy-dsi1",
+>  				    BIT(31),	/* gate */
+>  				    CLK_SET_RATE_PARENT);
+> =20
+> +static SUNXI_CCU_GATE_HWS(bus_tcon_lcd0_clk, "bus-tcon-lcd0", ahb_hws, 0=
+xb7c,
+> +			  BIT(0), 0);
+> +static SUNXI_CCU_GATE_HWS(bus_tcon_lcd1_clk, "bus-tcon-lcd1", ahb_hws, 0=
+xb7c,
+> +			  BIT(1), 0);
+
+Missing gate for bus-tcon-lcd2.
+
+> +
+>  static SUNXI_CCU_M_HW_WITH_MUX_GATE(tcon_tv0_clk, "tcon-tv0", tcon_paren=
+ts,
+>  				    0xb80,
+>  				    0, 4,	/* M */
+> @@ -820,6 +957,11 @@ static SUNXI_CCU_M_HW_WITH_MUX_GATE(tcon_tv1_clk, "t=
+con-tv1", tcon_parents,
+>  				    BIT(31),	/* gate */
+>  				    CLK_SET_RATE_PARENT);
+> =20
+> +static SUNXI_CCU_GATE_HWS(bus_tcon_tv0_clk, "bus-tcon-tv0", ahb_hws, 0xb=
+9c,
+> +			  BIT(0), 0);
+> +static SUNXI_CCU_GATE_HWS(bus_tcon_tv1_clk, "bus-tcon-tv1", ahb_hws, 0xb=
+9c,
+> +			  BIT(1), 0);
+> +
+>  static const struct clk_hw *edp_parents[] =3D {
+>  	&pll_video0_4x_clk.common.hw,
+>  	&pll_video1_4x_clk.common.hw,
+> @@ -833,6 +975,8 @@ static SUNXI_CCU_M_HW_WITH_MUX_GATE(edp_clk, "edp", e=
+dp_parents, 0xbb0,
+>  				    BIT(31),	/* gate */
+>  				    0);
+> =20
+> +static SUNXI_CCU_GATE_HWS(bus_edp_clk, "bus-edp", ahb_hws, 0xbbc, BIT(0)=
+, 0);
+> +
+>  static SUNXI_CCU_M_DATA_WITH_MUX_GATE(ledc_clk, "ledc", ir_tx_ledc_paren=
+ts,
+>  				      0xbf0,
+>  				      0, 4,	/* M */
+> @@ -840,6 +984,8 @@ static SUNXI_CCU_M_DATA_WITH_MUX_GATE(ledc_clk, "ledc=
+", ir_tx_ledc_parents,
+>  				      BIT(31),	/* gate */
+>  				      0);
+> =20
+> +static SUNXI_CCU_GATE_HWS(bus_ledc_clk, "bus-ledc", apb0_hws, 0xbfc, BIT=
+(0), 0);
+> +
+>  static const struct clk_hw *csi_top_parents[] =3D {
+>  	&pll_periph0_300M_clk.hw,
+>  	&pll_periph0_400M_clk.hw,
+> @@ -893,6 +1039,8 @@ static SUNXI_CCU_MP_DATA_WITH_MUX_GATE(csi_mclk3_clk=
+, "csi-mclk3",
+>  				       BIT(31),	/* gate */
+>  				       0);
+> =20
+> +static SUNXI_CCU_GATE_HWS(bus_csi_clk, "bus-csi", ahb_hws, 0xc1c, BIT(0)=
+, 0);
+> +
+>  static const struct clk_hw *isp_parents[] =3D {
+>  	&pll_periph0_300M_clk.hw,
+>  	&pll_periph0_400M_clk.hw,
+> @@ -918,6 +1066,9 @@ static SUNXI_CCU_M_DATA_WITH_MUX_GATE(dsp_clk, "dsp"=
+, dsp_parents, 0xc70,
+>  				      BIT(31),	/* gate */
+>  				      0);
+> =20
+> +static SUNXI_CCU_GATE_HWS(bus_dsp_cfg_clk, "bus-dsp-cfg", ahb_hws, 0xc7c,
+> +			  BIT(1), 0);
+
+I don't see 0xc7c register.
+
+Best regards,
+Jernej
+
+> +
+>  static SUNXI_CCU_GATE_DATA(fanout_24M_clk, "fanout-24M", osc24M,
+>  			   0xf30, BIT(0), 0);
+>  static SUNXI_CCU_GATE_DATA_WITH_PREDIV(fanout_12M_clk, "fanout-12M", osc=
+24M,
+> @@ -1011,55 +1162,128 @@ static struct ccu_common *sun55i_a523_ccu_clks[]=
+ =3D {
+>  	&apb0_clk.common,
+>  	&apb1_clk.common,
+>  	&de_clk.common,
+> +	&bus_de_clk.common,
+>  	&di_clk.common,
+> +	&bus_di_clk.common,
+>  	&g2d_clk.common,
+> +	&bus_g2d_clk.common,
+>  	&gpu_clk.common,
+> +	&bus_gpu_clk.common,
+>  	&ce_clk.common,
+> +	&bus_ce_clk.common,
+> +	&bus_ce_sys_clk.common,
+>  	&ve_clk.common,
+> +	&bus_ve_clk.common,
+> +	&bus_dma_clk.common,
+> +	&bus_msgbox_clk.common,
+> +	&bus_spinlock_clk.common,
+>  	&hstimer0_clk.common,
+>  	&hstimer1_clk.common,
+>  	&hstimer2_clk.common,
+>  	&hstimer3_clk.common,
+>  	&hstimer4_clk.common,
+>  	&hstimer5_clk.common,
+> +	&bus_hstimer_clk.common,
+> +	&bus_dbg_clk.common,
+> +	&bus_pwm0_clk.common,
+> +	&bus_pwm1_clk.common,
+>  	&iommu_clk.common,
+> +	&bus_iommu_clk.common,
+>  	&dram_clk.common,
+> +	&mbus_dma_clk.common,
+> +	&mbus_ve_clk.common,
+> +	&mbus_ce_clk.common,
+> +	&mbus_nand_clk.common,
+> +	&mbus_usb3_clk.common,
+> +	&mbus_csi_clk.common,
+> +	&bus_dram_clk.common,
+>  	&nand0_clk.common,
+>  	&nand1_clk.common,
+> +	&bus_nand_clk.common,
+>  	&mmc0_clk.common,
+>  	&mmc1_clk.common,
+>  	&mmc2_clk.common,
+> +	&bus_sysdap_clk.common,
+> +	&bus_mmc0_clk.common,
+> +	&bus_mmc1_clk.common,
+> +	&bus_mmc2_clk.common,
+> +	&bus_uart0_clk.common,
+> +	&bus_uart1_clk.common,
+> +	&bus_uart2_clk.common,
+> +	&bus_uart3_clk.common,
+> +	&bus_uart4_clk.common,
+> +	&bus_uart5_clk.common,
+> +	&bus_uart6_clk.common,
+> +	&bus_uart7_clk.common,
+> +	&bus_i2c0_clk.common,
+> +	&bus_i2c1_clk.common,
+> +	&bus_i2c2_clk.common,
+> +	&bus_i2c3_clk.common,
+> +	&bus_i2c4_clk.common,
+> +	&bus_i2c5_clk.common,
+> +	&bus_can_clk.common,
+>  	&spi0_clk.common,
+>  	&spi1_clk.common,
+>  	&spi2_clk.common,
+>  	&spifc_clk.common,
+> +	&bus_spi0_clk.common,
+> +	&bus_spi1_clk.common,
+> +	&bus_spi2_clk.common,
+> +	&bus_spifc_clk.common,
+>  	&emac0_25M_clk.common,
+>  	&emac1_25M_clk.common,
+> +	&bus_emac0_clk.common,
+> +	&bus_emac1_clk.common,
+>  	&ir_rx_clk.common,
+> +	&bus_ir_rx_clk.common,
+>  	&ir_tx_clk.common,
+> +	&bus_ir_tx_clk.common,
+>  	&gpadc0_clk.common,
+>  	&gpadc1_clk.common,
+> +	&bus_gpadc0_clk.common,
+> +	&bus_gpadc1_clk.common,
+> +	&bus_ths_clk.common,
+>  	&usb_ohci0_clk.common,
+>  	&usb_ohci1_clk.common,
+> +	&bus_ohci0_clk.common,
+> +	&bus_ohci1_clk.common,
+> +	&bus_ehci0_clk.common,
+> +	&bus_ehci1_clk.common,
+> +	&bus_otg_clk.common,
+> +	&bus_lradc_clk.common,
+>  	&pcie_aux_clk.common,
+> +	&bus_dpss_top_clk.common,
+>  	&hdmi_24M_clk.common,
+>  	&hdmi_cec_32k_clk.common,
+>  	&hdmi_cec_clk.common,
+> +	&bus_hdmi_clk.common,
+>  	&mipi_dsi0_clk.common,
+>  	&mipi_dsi1_clk.common,
+> +	&bus_mipi_dsi0_clk.common,
+> +	&bus_mipi_dsi1_clk.common,
+>  	&tcon_lcd0_clk.common,
+>  	&tcon_lcd1_clk.common,
+> +	&combophy_dsi0_clk.common,
+> +	&combophy_dsi1_clk.common,
+> +	&bus_tcon_lcd0_clk.common,
+> +	&bus_tcon_lcd1_clk.common,
+>  	&tcon_tv0_clk.common,
+>  	&tcon_tv1_clk.common,
+> +	&bus_tcon_tv0_clk.common,
+> +	&bus_tcon_tv1_clk.common,
+>  	&edp_clk.common,
+> +	&bus_edp_clk.common,
+>  	&ledc_clk.common,
+> +	&bus_ledc_clk.common,
+>  	&csi_top_clk.common,
+>  	&csi_mclk0_clk.common,
+>  	&csi_mclk1_clk.common,
+>  	&csi_mclk2_clk.common,
+>  	&csi_mclk3_clk.common,
+> +	&bus_csi_clk.common,
+>  	&isp_clk.common,
+>  	&dsp_clk.common,
+> +	&bus_dsp_cfg_clk.common,
+>  	&fanout_24M_clk.common,
+>  	&fanout_12M_clk.common,
+>  	&fanout_16M_clk.common,
+> @@ -1119,57 +1343,126 @@ static struct clk_hw_onecell_data sun55i_a523_hw=
+_clks =3D {
+>  		[CLK_APB1]		=3D &apb1_clk.common.hw,
+>  		[CLK_MBUS]		=3D &mbus_clk.hw,
+>  		[CLK_DE]		=3D &de_clk.common.hw,
+> +		[CLK_BUS_DE]		=3D &bus_de_clk.common.hw,
+>  		[CLK_DI]		=3D &di_clk.common.hw,
+> +		[CLK_BUS_DI]		=3D &bus_di_clk.common.hw,
+>  		[CLK_G2D]		=3D &g2d_clk.common.hw,
+> +		[CLK_BUS_G2D]		=3D &bus_g2d_clk.common.hw,
+>  		[CLK_GPU]		=3D &gpu_clk.common.hw,
+> +		[CLK_BUS_GPU]		=3D &bus_gpu_clk.common.hw,
+>  		[CLK_CE]		=3D &ce_clk.common.hw,
+> +		[CLK_BUS_CE]		=3D &bus_ce_clk.common.hw,
+> +		[CLK_BUS_CE_SYS]	=3D &bus_ce_sys_clk.common.hw,
+>  		[CLK_VE]		=3D &ve_clk.common.hw,
+> +		[CLK_BUS_VE]		=3D &bus_ve_clk.common.hw,
+> +		[CLK_BUS_DMA]		=3D &bus_dma_clk.common.hw,
+> +		[CLK_BUS_MSGBOX]	=3D &bus_msgbox_clk.common.hw,
+> +		[CLK_BUS_SPINLOCK]	=3D &bus_spinlock_clk.common.hw,
+>  		[CLK_HSTIMER0]		=3D &hstimer0_clk.common.hw,
+>  		[CLK_HSTIMER1]		=3D &hstimer1_clk.common.hw,
+>  		[CLK_HSTIMER2]		=3D &hstimer2_clk.common.hw,
+>  		[CLK_HSTIMER3]		=3D &hstimer3_clk.common.hw,
+>  		[CLK_HSTIMER4]		=3D &hstimer4_clk.common.hw,
+>  		[CLK_HSTIMER5]		=3D &hstimer5_clk.common.hw,
+> +		[CLK_BUS_HSTIMER]	=3D &bus_hstimer_clk.common.hw,
+> +		[CLK_BUS_DBG]		=3D &bus_dbg_clk.common.hw,
+> +		[CLK_BUS_PWM0]		=3D &bus_pwm0_clk.common.hw,
+> +		[CLK_BUS_PWM1]		=3D &bus_pwm1_clk.common.hw,
+>  		[CLK_IOMMU]		=3D &iommu_clk.common.hw,
+> +		[CLK_BUS_IOMMU]		=3D &bus_iommu_clk.common.hw,
+>  		[CLK_DRAM]		=3D &dram_clk.common.hw,
+> +		[CLK_MBUS_DMA]		=3D &mbus_dma_clk.common.hw,
+> +		[CLK_MBUS_VE]		=3D &mbus_ve_clk.common.hw,
+> +		[CLK_MBUS_CE]		=3D &mbus_ce_clk.common.hw,
+> +		[CLK_MBUS_CSI]		=3D &mbus_csi_clk.common.hw,
+> +		[CLK_BUS_DRAM]		=3D &bus_dram_clk.common.hw,
+>  		[CLK_NAND0]		=3D &nand0_clk.common.hw,
+>  		[CLK_NAND1]		=3D &nand1_clk.common.hw,
+> +		[CLK_BUS_NAND]		=3D &bus_nand_clk.common.hw,
+>  		[CLK_MMC0]		=3D &mmc0_clk.common.hw,
+>  		[CLK_MMC1]		=3D &mmc1_clk.common.hw,
+>  		[CLK_MMC2]		=3D &mmc2_clk.common.hw,
+> +		[CLK_BUS_SYSDAP]	=3D &bus_sysdap_clk.common.hw,
+> +		[CLK_BUS_MMC0]		=3D &bus_mmc0_clk.common.hw,
+> +		[CLK_BUS_MMC1]		=3D &bus_mmc1_clk.common.hw,
+> +		[CLK_BUS_MMC2]		=3D &bus_mmc2_clk.common.hw,
+> +		[CLK_BUS_UART0]		=3D &bus_uart0_clk.common.hw,
+> +		[CLK_BUS_UART1]		=3D &bus_uart1_clk.common.hw,
+> +		[CLK_BUS_UART2]		=3D &bus_uart2_clk.common.hw,
+> +		[CLK_BUS_UART3]		=3D &bus_uart3_clk.common.hw,
+> +		[CLK_BUS_UART4]		=3D &bus_uart4_clk.common.hw,
+> +		[CLK_BUS_UART5]		=3D &bus_uart5_clk.common.hw,
+> +		[CLK_BUS_UART6]		=3D &bus_uart6_clk.common.hw,
+> +		[CLK_BUS_UART7]		=3D &bus_uart7_clk.common.hw,
+> +		[CLK_BUS_I2C0]		=3D &bus_i2c0_clk.common.hw,
+> +		[CLK_BUS_I2C1]		=3D &bus_i2c1_clk.common.hw,
+> +		[CLK_BUS_I2C2]		=3D &bus_i2c2_clk.common.hw,
+> +		[CLK_BUS_I2C3]		=3D &bus_i2c3_clk.common.hw,
+> +		[CLK_BUS_I2C4]		=3D &bus_i2c4_clk.common.hw,
+> +		[CLK_BUS_I2C5]		=3D &bus_i2c5_clk.common.hw,
+> +		[CLK_BUS_CAN]		=3D &bus_can_clk.common.hw,
+>  		[CLK_SPI0]		=3D &spi0_clk.common.hw,
+>  		[CLK_SPI1]		=3D &spi1_clk.common.hw,
+>  		[CLK_SPI2]		=3D &spi2_clk.common.hw,
+>  		[CLK_SPIFC]		=3D &spifc_clk.common.hw,
+> +		[CLK_BUS_SPI0]		=3D &bus_spi0_clk.common.hw,
+> +		[CLK_BUS_SPI1]		=3D &bus_spi1_clk.common.hw,
+> +		[CLK_BUS_SPI2]		=3D &bus_spi2_clk.common.hw,
+> +		[CLK_BUS_SPIFC]		=3D &bus_spifc_clk.common.hw,
+>  		[CLK_EMAC0_25M]		=3D &emac0_25M_clk.common.hw,
+>  		[CLK_EMAC1_25M]		=3D &emac1_25M_clk.common.hw,
+> +		[CLK_BUS_EMAC0]		=3D &bus_emac0_clk.common.hw,
+> +		[CLK_BUS_EMAC1]		=3D &bus_emac1_clk.common.hw,
+>  		[CLK_IR_RX]		=3D &ir_rx_clk.common.hw,
+> +		[CLK_BUS_IR_RX]		=3D &bus_ir_rx_clk.common.hw,
+>  		[CLK_IR_TX]		=3D &ir_tx_clk.common.hw,
+> +		[CLK_BUS_IR_TX]		=3D &bus_ir_tx_clk.common.hw,
+>  		[CLK_GPADC0]		=3D &gpadc0_clk.common.hw,
+>  		[CLK_GPADC1]		=3D &gpadc1_clk.common.hw,
+> +		[CLK_BUS_GPADC0]	=3D &bus_gpadc0_clk.common.hw,
+> +		[CLK_BUS_GPADC1]	=3D &bus_gpadc1_clk.common.hw,
+> +		[CLK_BUS_THS]		=3D &bus_ths_clk.common.hw,
+>  		[CLK_USB_OHCI0]		=3D &usb_ohci0_clk.common.hw,
+>  		[CLK_USB_OHCI1]		=3D &usb_ohci1_clk.common.hw,
+> +		[CLK_BUS_OHCI0]		=3D &bus_ohci0_clk.common.hw,
+> +		[CLK_BUS_OHCI1]		=3D &bus_ohci1_clk.common.hw,
+> +		[CLK_BUS_EHCI0]		=3D &bus_ehci0_clk.common.hw,
+> +		[CLK_BUS_EHCI1]		=3D &bus_ehci1_clk.common.hw,
+> +		[CLK_BUS_OTG]		=3D &bus_otg_clk.common.hw,
+> +		[CLK_BUS_LRADC]		=3D &bus_lradc_clk.common.hw,
+>  		[CLK_PCIE_AUX]		=3D &pcie_aux_clk.common.hw,
+> +		[CLK_BUS_DPSS_TOP]	=3D &bus_dpss_top_clk.common.hw,
+>  		[CLK_HDMI_24M]		=3D &hdmi_24M_clk.common.hw,
+>  		[CLK_HDMI_CEC_32K]	=3D &hdmi_cec_32k_clk.common.hw,
+>  		[CLK_HDMI_CEC]		=3D &hdmi_cec_clk.common.hw,
+> +		[CLK_BUS_HDMI]		=3D &bus_hdmi_clk.common.hw,
+>  		[CLK_MIPI_DSI0]		=3D &mipi_dsi0_clk.common.hw,
+>  		[CLK_MIPI_DSI1]		=3D &mipi_dsi1_clk.common.hw,
+> +		[CLK_BUS_MIPI_DSI0]	=3D &bus_mipi_dsi0_clk.common.hw,
+> +		[CLK_BUS_MIPI_DSI1]	=3D &bus_mipi_dsi1_clk.common.hw,
+>  		[CLK_TCON_LCD0]		=3D &tcon_lcd0_clk.common.hw,
+>  		[CLK_TCON_LCD1]		=3D &tcon_lcd1_clk.common.hw,
+>  		[CLK_COMBOPHY_DSI0]	=3D &combophy_dsi0_clk.common.hw,
+>  		[CLK_COMBOPHY_DSI1]	=3D &combophy_dsi1_clk.common.hw,
+> +		[CLK_BUS_TCON_LCD0]	=3D &bus_tcon_lcd0_clk.common.hw,
+> +		[CLK_BUS_TCON_LCD1]	=3D &bus_tcon_lcd1_clk.common.hw,
+>  		[CLK_TCON_TV0]		=3D &tcon_tv0_clk.common.hw,
+>  		[CLK_TCON_TV1]		=3D &tcon_tv1_clk.common.hw,
+> +		[CLK_BUS_TCON_TV0]	=3D &bus_tcon_tv0_clk.common.hw,
+> +		[CLK_BUS_TCON_TV1]	=3D &bus_tcon_tv1_clk.common.hw,
+>  		[CLK_EDP]		=3D &edp_clk.common.hw,
+> +		[CLK_BUS_EDP]		=3D &bus_edp_clk.common.hw,
+>  		[CLK_LEDC]		=3D &ledc_clk.common.hw,
+> +		[CLK_BUS_LEDC]		=3D &bus_ledc_clk.common.hw,
+>  		[CLK_CSI_TOP]		=3D &csi_top_clk.common.hw,
+>  		[CLK_CSI_MCLK0]		=3D &csi_mclk0_clk.common.hw,
+>  		[CLK_CSI_MCLK1]		=3D &csi_mclk1_clk.common.hw,
+>  		[CLK_CSI_MCLK2]		=3D &csi_mclk2_clk.common.hw,
+>  		[CLK_CSI_MCLK3]		=3D &csi_mclk3_clk.common.hw,
+> +		[CLK_BUS_CSI]		=3D &bus_csi_clk.common.hw,
+>  		[CLK_ISP]		=3D &isp_clk.common.hw,
+>  		[CLK_DSP]		=3D &dsp_clk.common.hw,
+> +		[CLK_BUS_DSP_CFG]	=3D &bus_dsp_cfg_clk.common.hw,
+>  		[CLK_FANOUT_24M]	=3D &fanout_24M_clk.common.hw,
+>  		[CLK_FANOUT_12M]	=3D &fanout_12M_clk.common.hw,
+>  		[CLK_FANOUT_16M]	=3D &fanout_16M_clk.common.hw,
+>=20
+
+
+
+
 
