@@ -1,95 +1,75 @@
-Return-Path: <linux-kernel+bounces-519587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BFB8A39E56
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:11:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32B1FA39E5B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:11:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C07616B3BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:10:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 890423AA1D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:11:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49D0B269D12;
-	Tue, 18 Feb 2025 14:10:16 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97F5A269CF3;
+	Tue, 18 Feb 2025 14:10:29 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15EC6269B02
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 14:10:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3713E269B05;
+	Tue, 18 Feb 2025 14:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739887815; cv=none; b=L/vjj+pVbtxc/vBgX/7NhYZCArQGTlhA9SFHGOwmKDpCZ67UxGVai25T0hPbqzUalJQJrPHxpmlObD1FuQPpAlJ/efndRCpThEdc2Cs1pxJXSbjXEfJyFPdkt0WEip0F36w2WU1fe128mRHOPdKVSiT7RB+y9Iu1sI3LlbPMVDw=
+	t=1739887829; cv=none; b=g+Y4Y85cF+AKtYmprU5cp7kBNDNNfQ2sYgUGwHDrwAQFzw5Q2afNs+EQZSPu6zMa/ZS8lfuSz1XftFiEDTIqXMTKEgAqqKhUcQK7I5Ovtskobma9ofTcn+1O4COUc6I11fyAoV8HuDbFk7+ojjCv/aej/vtisQ2noH9SZVlCnqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739887815; c=relaxed/simple;
-	bh=LRl8TxXKYLKQOTgJsRcLmBgOSWF1FAn4AnP32fxf0tY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H4hOqSsLnJTVSQ2MOPBGc4UrXd6xFe4jKWs7tZ55Fqk1nIFFw9sr7pshmxVYQbto2AX4pwUWg1Rb+/ZJLxZOZqeQJ+gVSe5aEmVmFwoCGRvWcf4liovf+sxA/ucvD4Zv+lYyUxybjBS6DJ5tVQKx4P/UdI7Z3oL3AKxg813Zh4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4Yy1dY4T6SzpkCN;
-	Tue, 18 Feb 2025 22:10:41 +0800 (CST)
-Received: from kwepemd200014.china.huawei.com (unknown [7.221.188.8])
-	by mail.maildlp.com (Postfix) with ESMTPS id EA2EF1401F1;
-	Tue, 18 Feb 2025 22:10:10 +0800 (CST)
-Received: from localhost.localdomain (10.50.165.33) by
- kwepemd200014.china.huawei.com (7.221.188.8) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Tue, 18 Feb 2025 22:10:09 +0800
-From: Yicong Yang <yangyicong@huawei.com>
-To: <catalin.marinas@arm.com>, <will@kernel.org>, <sudeep.holla@arm.com>,
-	<tglx@linutronix.de>, <peterz@infradead.org>, <mpe@ellerman.id.au>,
-	<linux-arm-kernel@lists.infradead.org>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>, <pierre.gondois@arm.com>,
-	<dietmar.eggemann@arm.com>
-CC: <linuxppc-dev@lists.ozlabs.org>, <x86@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <morten.rasmussen@arm.com>,
-	<msuchanek@suse.de>, <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
-	<jonathan.cameron@huawei.com>, <prime.zeng@hisilicon.com>,
-	<linuxarm@huawei.com>, <yangyicong@hisilicon.com>, <xuwei5@huawei.com>,
-	<guohanjun@huawei.com>, <sshegde@linux.ibm.com>
-Subject: [PATCH v11 4/4] arm64: Kconfig: Enable HOTPLUG_SMT
-Date: Tue, 18 Feb 2025 22:10:18 +0800
-Message-ID: <20250218141018.18082-5-yangyicong@huawei.com>
-X-Mailer: git-send-email 2.31.0
-In-Reply-To: <20250218141018.18082-1-yangyicong@huawei.com>
-References: <20250218141018.18082-1-yangyicong@huawei.com>
+	s=arc-20240116; t=1739887829; c=relaxed/simple;
+	bh=sj/vBVH65NaJzCv7LRq0fKLXDDi6r4BjGZj0GIUVTjQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EaZ51LjQ+5wMOak2QVc7x0fv6dcuc+vNiS+uMtDNJYuDQjSsBwwxZZ2HGGMKj92As3es2svidFrtAvSZpwdo4KDlSMuR29eIln/7SqOspwD7eGfbLgwAn9Qr0UF2NRveIgZ5HIfKTafIwh5YMZ9JCQCW7Ut+gwgL5K1ocU3VDhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 795F3C4CEE2;
+	Tue, 18 Feb 2025 14:10:27 +0000 (UTC)
+Date: Tue, 18 Feb 2025 14:10:25 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Beata Michalska <beata.michalska@arm.com>,
+	Yury Norov <yury.norov@gmail.com>, Will Deacon <will@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the bitmap tree
+Message-ID: <Z7SU0THZ6bSG9BKT@arm.com>
+References: <20250218160742.49d6ab76@canb.auug.org.au>
+ <Z7RiVtunqI9edfK4@arm.com>
+ <20250219004934.46ace766@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemd200014.china.huawei.com (7.221.188.8)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250219004934.46ace766@canb.auug.org.au>
 
-From: Yicong Yang <yangyicong@hisilicon.com>
+Hi Stephen,
 
-Enable HOTPLUG_SMT for SMT control.
+On Wed, Feb 19, 2025 at 12:49:34AM +1100, Stephen Rothwell wrote:
+> On Tue, 18 Feb 2025 11:35:02 +0100 Beata Michalska <beata.michalska@arm.com> wrote:
+> > I'm currently testing a proper fix for that one.
+> > Should I just send it over as a diff to apply or rather a proper 'fixes' patch?
+> 
+> Maybe a proper 'fixes' patch, please, if easy - otherwise a diff is
+> fine.
 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
----
- arch/arm64/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+I just talked to Beata off-list. I think she'll try to use the current
+for_each_cpu_wrap() API and avoid conflicts with the cpumask_next_wrap()
+API change.
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index fcdd0ed3eca8..947616d37e0c 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -251,6 +251,7 @@ config ARM64
- 	select HAVE_KRETPROBES
- 	select HAVE_GENERIC_VDSO
- 	select HOTPLUG_CORE_SYNC_DEAD if HOTPLUG_CPU
-+	select HOTPLUG_SMT if HOTPLUG_CPU
- 	select IRQ_DOMAIN
- 	select IRQ_FORCED_THREADING
- 	select KASAN_VMALLOC if KASAN
+If that doesn't work, you either carry a patch in -next until both
+branches end up upstream or I merge a stable bitmap branch from Yury
+with a fix on top.
+
+Thanks.
+
 -- 
-2.24.0
-
+Catalin
 
