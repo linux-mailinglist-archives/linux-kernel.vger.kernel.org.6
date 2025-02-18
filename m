@@ -1,175 +1,122 @@
-Return-Path: <linux-kernel+bounces-519905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40AC0A3A372
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:01:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74A4EA3A365
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:59:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C1DB175057
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:58:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A172B1893A22
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:59:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A94C26F47F;
-	Tue, 18 Feb 2025 16:58:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E1D26F46B;
+	Tue, 18 Feb 2025 16:58:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b="OIkztm9I";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="lW8oanri"
-Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="TY0hx9Kb"
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCDEB26F46A;
-	Tue, 18 Feb 2025 16:58:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D70D26E177
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 16:58:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739897901; cv=none; b=HfimXFa8sBEyNdxYFYxKVMhjOK2oaGra25YXbWarXT3cpViMGEVHn65QnAQ5kLluNubZ9XEcd7lEQJrWr2TcluCJ9cCs1XFBcbiVdA6lv9t3/8XnYO/iTTNGXiSnmD15reYunZ7QxFvXVnmYywoGcgtbdDqL/AGYqFF/gQ+q7Hc=
+	t=1739897935; cv=none; b=eOQtB1zLYCUQIU7hEVPuDEBZdsAHzC57NDcpt5Rn+o+M47FTmIgFoYB2F9Iz9UF3uqKhCyjsZDU54MeJk4xspfak1r0XOJFLyp7KKxT5yUcYWhax9tsSEh05fo/YuiPEI6zuTn45mOzV90r11YQ+7+JJ8eD/WL2HIC+Fh+bP6Oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739897901; c=relaxed/simple;
-	bh=CGmdvdDU/PynLCC51mKFw/25ge/gsTJ3wantBbxOtPA=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=Mby2cF2dGnYkK/1SdK3wGdK8Fy4Govy+dwlDex2qcTPeN/i2cBtk83Xzu3cNXHwLKjn0/9Ab4uL9lT4em9jm4sEnahJwoII6Xu8zfzh7uO3M2hVMaR6h/NM6ALWdCM7xa6Pg40P4vJI0PKTW/1tBA+3OyyeCRbzZI4H61RfKI8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca; spf=pass smtp.mailfrom=squebb.ca; dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b=OIkztm9I; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=lW8oanri; arc=none smtp.client-ip=103.168.172.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfout.phl.internal (Postfix) with ESMTP id CDCF413808BC;
-	Tue, 18 Feb 2025 11:58:16 -0500 (EST)
-Received: from phl-imap-10 ([10.202.2.85])
-  by phl-compute-04.internal (MEProxy); Tue, 18 Feb 2025 11:58:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1739897896;
-	 x=1739984296; bh=aNAlA8hxRpyCp2MQ3TxnR2uvSEYOdSCvL4wn3IpX5pI=; b=
-	OIkztm9IINN51EQQpkqZjo+t1/Hu5t+iIAZJRPTxBdjwHrX/Nl+4IarLUdcuhrmG
-	VH72YWC/ZJL0M2cV9ZpvVE2achxvR2nowtGujzYCfCOBmUau2yW7TSVYT/peeiMw
-	9JUXhHlW/2MkxsSllk6dqR8A9GPHEW/B7VMqwmaJdH8CQr5DTfmFMx7qaXQqa+3I
-	099jRNWIXQu/Lw2Hn24IWeD95C0NkMy+z59v3FvnaC3MlxtSIuSDZhmxrG25WqL0
-	KC63urPDqb11zN8NJnFoFoq/e2J8hlB1RhJDp8wZr5fuYfHNY8S2xJP4MOUavhzH
-	EzVXXy3aZtomSlQBbi1jxA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1739897896; x=
-	1739984296; bh=aNAlA8hxRpyCp2MQ3TxnR2uvSEYOdSCvL4wn3IpX5pI=; b=l
-	W8oanriWgtsuobHLGPS2P2UseU45uRT5mKqNdYrPq7Pi2XjhpQLKw2tl7E13TKhP
-	o4FHb0+00mr1EprMJfOs9kYJ/bIDCpImVbciWMz3ttpXsA61MQqDvNNG4hH0OCMN
-	PpiyEC7cPuBTTmZ8r1C54VBD6q9XZWbdXew5BPC1IpEVLo8EyViZ7gDzyOyt7xPC
-	dY/EUly9EWC4HE/stByuOEuR2Vql8k7U8utHKsd6cLXqS8gR3EGSMLTBSSDql30i
-	SNvafbPJbilXRcRfwvqDyUPr9WS662lOOL8xcWeC2mEVcc+6G/stT3npite5Sz7q
-	NRazv9OK0lmDbGAdk/p4g==
-X-ME-Sender: <xms:KLy0ZyywSJdNf-UFpG4wDImNB8Fd46hYu5kGcHPU851eqbQHpzQoNg>
-    <xme:KLy0Z-SmwJCw8mePwjAqJyp-Tb7SbJ5yz7tjcdQEwMVirbEKFlhEfBlj_CaXrYnH8
-    DunanqS2NXOsZTI-CU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeiudekhecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdforghrkhcurfgvrghrshhonhdfuceomhhpvggrrhhsohhnqdhlvg
-    hnohhvohesshhquhgvsggsrdgtrgeqnecuggftrfgrthhtvghrnhephfeuvdehteeghedt
-    hedtveehuddvjeejgffgieejvdegkefhfeelheekhedvffehnecuvehluhhsthgvrhfuih
-    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhhpvggrrhhsohhnqdhlvghnohhv
-    ohesshhquhgvsggsrdgtrgdpnhgspghrtghpthhtohepuddupdhmohguvgepshhmthhpoh
-    huthdprhgtphhtthhopehlkhestgdqqdgvrdguvgdprhgtphhtthhopegslhgvuhhnghes
-    tghhrhhomhhiuhhmrdhorhhgpdhrtghpthhtohepsghouggurghhkeejleegsehgmhgrih
-    hlrdgtohhmpdhrtghpthhtohepjhhthhhivghssehgohhoghhlvgdrtghomhdprhgtphht
-    thhopehsrghrrghnhigrrdhgohhprghlsehinhhtvghlrdgtohhmpdhrtghpthhtohepug
-    hmihhtrhihrdgsrghrhihshhhkohhvsehlihhnrghrohdrohhrghdprhgtphhtthhopehh
-    vghikhhkihdrkhhrohhgvghruhhssehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpth
-    htohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthht
-    oheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:KLy0Z0U_iEENkeePDPy9VGPg0xnWzlZQN3uWL9yLN0d8CjYLCL_04A>
-    <xmx:KLy0Z4haWr5l3EfZrp56aqFTrfiZLZ4vxk0O4CNo_DkRy9k4dNcPVA>
-    <xmx:KLy0Z0CActtgex7uX4rDqBg7wLBhZueRFQHL0n5ANF7_pboNJS2uGA>
-    <xmx:KLy0Z5K34IqwNwssrKiMbeauqUMP8q3gCwQYUYDaeDHesg_rbCpiww>
-    <xmx:KLy0Z46ieUoqvemKyVBHYKX7EvblXx1hxkUTWFp-9Zg6auIHdEaxwJ2d>
-Feedback-ID: ibe194615:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id F101B3C0066; Tue, 18 Feb 2025 11:58:15 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1739897935; c=relaxed/simple;
+	bh=BMZY1iGkOcpWnMwum+lF2s3plu5xKA2Zvd2spNjY7uU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DbB9eC1M6s8Rpk/FVwu0GeWDh70Y88afPRWsF6Q3rZd0UQN2zqax+50T77BBDP+X4gbxOHq++PtB3MlbsS7wGADVXON+s6Zn29BGUzuTOq2+/5NEEZwUplH+XA3N3rRGtr9NQXx4JMANotcV1iHLts1aEdPbjyBwYOfCdoJn0gc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=TY0hx9Kb; arc=none smtp.client-ip=209.85.222.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7c08fc20194so495698085a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 08:58:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1739897931; x=1740502731; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9nG7ps9pZjk+cRNHuDiESfiMPlAFCR7OyfOCSsFqItQ=;
+        b=TY0hx9Kb3sqNo43no2MoiEnSXezheVPlGUP2r6DINUpOQIDmB9CgKE9vYsszDTHrY+
+         GWqkDPxxo08c62yamRAOzymJG3lbGDvTIJOz6o7SINEpj75n8YPgKr8AgZo7a13pxnr9
+         gnb6UQ5OLsRa3kN70BO30Vq9ofqnh2L0ZLYviDwbq5qw79naYBY5Ejb5RSLYej4385CH
+         DSlhqDkVHvpCxZbL5BicYo3Be06Nm0kQzvCmwcQUCDS/3KAqU0kDryX38NhxO9VbReSL
+         uhtrP2EN1YgkKhfRxOxZKDdhf3WkFwdRqhBBD6CIevx1H8cvb8MDFY76wYc73bsgmUDU
+         qwgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739897931; x=1740502731;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9nG7ps9pZjk+cRNHuDiESfiMPlAFCR7OyfOCSsFqItQ=;
+        b=RLjN4tbncIzhodBQQORW4Fm9qSfYelfpDlwrJr+Bt1S2eFXxEzrv/cqbP7b4VP8Epa
+         bKe/BTbfRe97YTGK5KXHcU64MWt97GI1aP1jgevAfBornLkahZ0qhUF+Gp+zk1xO3UOg
+         8NkU3TT7Agv3Qb5AsW4IJGqJ9CSz4UpVbOUycYbCIdewaOIFQb8JJOUzkNkcNoyxTzqG
+         MjZ/9ucHjgAcHGZQRS+7Xd5F8ODa2T7v9U6giKEpx0gNdVVVra11MgfP1q8sPSUeaq0i
+         X9cpx1fWhbc0QM97pRqcDFmBZ3dmk6R9IYIfMgPfYRfaZjZdAlu4KJbEFnOoxvuczxJZ
+         g2Hw==
+X-Forwarded-Encrypted: i=1; AJvYcCXiKcngYirEoXCuRGeGL++ZAlz98WBOy4OJ2vozut2SrBwzcJxUeHrBvzle8BytbK/TivkZhp56vAcUOzs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyD3btI57eaGYceOgKwelXQ442bcenza6JyT024qDg0kU2Q7Bfq
+	JdspRWKf3JZhBF5MrzS2WzYrNCFB/y6ZJslfdeaI4C6rEraKCdaONvrWDAKMG10=
+X-Gm-Gg: ASbGnct5jpfpVbvqyjHjmt8muPYC3rz6q4EMQEPSMRYmmC8Zk/pQZUkn3OOvHSNoP19
+	99zWh3b2QX6LKpBMayVQLUAV6Wu8J0/RVBVAJbYCsmvRCIPV6cJspphP9Xwc+1fO4hk4QkQBHcR
+	CyYqjQrUulPG90ZW6JFoqR/UJ75ZcoxFlmGfhQtOgdwuCkN+HEQwKIXQPJQafY0tCIbzj7628Kn
+	ALBtPa8w6ykFI229yyGZXMahhUFMPXthoQqHoXYsIjQCbR/KGEFpB2C0mAQpjJbse0yB/6nlpr0
+	2tDsGxfazosRrkzhTKUAvtcGdd+L7Z3Ts3raj2ksa7JjRjWsQKWde3fslqdEseE6AcXCuLOjTQ=
+	=
+X-Google-Smtp-Source: AGHT+IHsBiwiK4eN3gQARQDDEqdcIkGCIsdPX3m6mCWYTOycPIzgRNn8NPdgnw7C0XC4etKjOZZAaw==
+X-Received: by 2002:a05:620a:2406:b0:7b6:e47a:8e14 with SMTP id af79cd13be357-7c08aa8a421mr2134500985a.35.1739897930985;
+        Tue, 18 Feb 2025 08:58:50 -0800 (PST)
+Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e65d78640fsm65527946d6.48.2025.02.18.08.58.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2025 08:58:50 -0800 (PST)
+Date: Tue, 18 Feb 2025 11:58:48 -0500
+From: Gregory Price <gourry@gourry.net>
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: krisman@collabora.com, tglx@linutronix.de, luto@kernel.org,
+	peterz@infradead.org, keescook@chromium.org,
+	gregory.price@memverge.com, Marco Elver <elver@google.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] syscall_user_dispatch: Allow allowed range
+ wrap-around
+Message-ID: <Z7S8SAGt8blFiFTg@gourry-fedora-PF4VCD3F>
+References: <cover.1739894594.git.dvyukov@google.com>
+ <607562bf50ddc81ebd404e8dc1710e5221f80342.1739894594.git.dvyukov@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 18 Feb 2025 11:57:55 -0500
-From: "Mark Pearson" <mpearson-lenovo@squebb.ca>
-To: "Fedor Pchelkin" <boddah8794@gmail.com>,
- "Heikki Krogerus" <heikki.krogerus@linux.intel.com>,
- "Christian A. Ehrhardt" <lk@c--e.de>
-Cc: "Greg KH" <gregkh@linuxfoundation.org>,
- "Dmitry Baryshkov" <dmitry.baryshkov@linaro.org>,
- "Benson Leung" <bleung@chromium.org>, "Jameson Thies" <jthies@google.com>,
- "Saranya Gopal" <saranya.gopal@intel.com>, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Message-Id: <c48d6d73-73d6-4df6-8e9c-c8f2ecdd654a@app.fastmail.com>
-In-Reply-To: <20250206184327.16308-3-boddah8794@gmail.com>
-References: <20250206184327.16308-1-boddah8794@gmail.com>
- <20250206184327.16308-3-boddah8794@gmail.com>
-Subject: Re: [PATCH RFC 2/2] usb: typec: ucsi: increase timeout for PPM reset
- operations
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <607562bf50ddc81ebd404e8dc1710e5221f80342.1739894594.git.dvyukov@google.com>
 
-Hi  Fedor,
+On Tue, Feb 18, 2025 at 05:04:34PM +0100, Dmitry Vyukov wrote:
+> There are two possible scenarios for syscall filtering:
+>  - having a trusted/allowed range of PCs, and intercepting everything else
+>  - or the opposite: a single untrusted/intercepted range and allowing
+>    everything else
+> The current implementation only allows the former use case due to
+> allowed range wrap-around check. Allow the latter use case as well
+> by removing the wrap-around check.
+> The latter use case is relevant for any kind of sandboxing scenario,
+> or monitoring behavior of a single library. If a program wants to
+> intercept syscalls for PC range [START, END) then it needs to call:
+> prctl(..., END, -(END-START), ...);
 
-On Thu, Feb 6, 2025, at 1:43 PM, Fedor Pchelkin wrote:
-> It is observed that on some systems an initial PPM reset during the boot
-> phase can trigger a timeout:
->
-> [    6.482546] ucsi_acpi USBC000:00: failed to reset PPM!
-> [    6.482551] ucsi_acpi USBC000:00: error -ETIMEDOUT: PPM init failed
->
-> Still, increasing the timeout value, albeit being the most straightforward
-> solution, eliminates the problem: the initial PPM reset may take up to
-> ~8000-10000ms on some Lenovo laptops. When it is reset after the above
-> period of time (or even if ucsi_reset_ppm() is not called overall), UCSI
-> works as expected.
->
-> Moreover, if the ucsi_acpi module is loaded/unloaded manually after the
-> system has booted, reading the CCI values and resetting the PPM works
-> perfectly, without any timeout. Thus it's only a boot-time issue.
->
-> The reason for this behavior is not clear but it may be the consequence
-> of some tricks that the firmware performs or be an actual firmware bug.
-> As a workaround, increase the timeout to avoid failing the UCSI
-> initialization prematurely.
->
+I don't necessarily disagree with the idea, but this sounds like using
+the wrong tool for the job.  The purpose of SUD was for emulating
+foreign OS system calls of entire programs - not a single library.
 
-Could you let me know which Lenovo platform(s) you see the issue on?
+The point being that it's very difficult to sandbox an individual
+library when you can't ensure it won't allocate resources outside the
+monitored bounds (this would be very difficult to guarantee, at least).
 
-I don't have any concerns with the patch below, but if the platform is in the Linux program I can reach out to the FW team and try to determine if there's an expected time needed (and how close we are to it).
+If the intent is to load and re-use a single foreign-OS library, this
+change seems to be the question of "why not allow multiple ranges?",
+and you'd be on your way to reimplementing seccomp or BPF.
 
-Thanks
-
-Mark
-
-> Fixes: b1b59e16075f ("usb: typec: ucsi: Increase command completion 
-> timeout value")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Fedor Pchelkin <boddah8794@gmail.com>
-> ---
->  drivers/usb/typec/ucsi/ucsi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/usb/typec/ucsi/ucsi.c 
-> b/drivers/usb/typec/ucsi/ucsi.c
-> index 0fe1476f4c29..7a56d3f840d7 100644
-> --- a/drivers/usb/typec/ucsi/ucsi.c
-> +++ b/drivers/usb/typec/ucsi/ucsi.c
-> @@ -25,7 +25,7 @@
->   * difficult to estimate the time it takes for the system to process 
-> the command
->   * before it is actually passed to the PPM.
->   */
-> -#define UCSI_TIMEOUT_MS		5000
-> +#define UCSI_TIMEOUT_MS		10000
-> 
->  /*
->   * UCSI_SWAP_TIMEOUT_MS - Timeout for role swap requests
-> -- 
-> 2.48.1
+~Gregory
 
