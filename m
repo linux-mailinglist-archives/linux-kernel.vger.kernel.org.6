@@ -1,197 +1,181 @@
-Return-Path: <linux-kernel+bounces-520604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0CCEA3AC10
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 23:55:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1FC7A3AC23
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 23:56:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7CA33B20ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 22:55:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC2387A46C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 22:55:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA591DDC21;
-	Tue, 18 Feb 2025 22:55:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EB021DE3D6;
+	Tue, 18 Feb 2025 22:55:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aiOZcO7g"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 930811D8A0D;
-	Tue, 18 Feb 2025 22:55:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="lV/aK3RH"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6EF61DB92E;
+	Tue, 18 Feb 2025 22:55:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739919301; cv=none; b=kbLCz0MTw9i4aK2RbcNaskftyB7Eb5Pypv7jpT8mTOFZnr141vuqt4erjQOHV0SLQHLJ+lwVaTZgOz46MqH40X2mC4b0JRQ29ZZXh3aTT70l8xYY8+j6TCi0pOLOOFIrQKomhlIy7cvqGGXTQ4VariEDJ94Cbnj+8gRArYp+WHs=
+	t=1739919312; cv=none; b=LOIVN1I7KnCq7mT2ydtEa1wqm6cpj+vLsNmtxksZVGxRpJc7BRJxzmZ4GrECguNoecNawgHx+uKKPOrin8VbAnCXx43QivCVOKh1gE4bsrT+2/9JEfRztzokIIqnyys6f5p7PLWf6G6Z19lwuLXTz5m22moHBd2DzbNX7ENBNLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739919301; c=relaxed/simple;
-	bh=JfZZ5wVAOe/Y1NihNftjYuYbwLi7XmW8eEZlPrqPMd4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AtgLHhWS2qFYesAWal7ExFsAez1OBW0cB1j2SQvKVZCUuTaKFT+IW9DhOw+tGXpqgbmc4Zyqdim5rsGBDwa+09ctw+aDDKCfksoBg8ng1nObxQAWwMQWeIk2045a6WD22wq0nQ636c1L2roOs/ctLY+aTEn4GLpTMZl/bxomZl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aiOZcO7g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75F80C4CEE2;
-	Tue, 18 Feb 2025 22:55:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739919301;
-	bh=JfZZ5wVAOe/Y1NihNftjYuYbwLi7XmW8eEZlPrqPMd4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aiOZcO7gz+YKbzy7UfmkDhU3tc1GP77KXGgqZvo8QBWC5vgpTgTrmRki8TY27KEG9
-	 8HqF/60pEH5UBgtSchm3Se6wqh0dZaDowr6l0b6r0YUl+j0tajI/QC2mEqdWnL1GnL
-	 LiqABVRTk5NWk1BgguBFuStYX4r6uCiugCD746iyvxydi45/2eBqxBVJGd1AGnfWRG
-	 ylD6MnyNRCoHpbpVjxW/FVxP8oPsdm4slgSekZk/4aRmRIPRkFjtlJborqm0BF8/oW
-	 GCSKlZDlRTb1JiQ+9Nn3ndwQV91qYjgd4h0D3IG0l3MLO6jxlYtY1qBAyD9YDZ6pGA
-	 E6dhuaXIuBhyA==
-Date: Tue, 18 Feb 2025 22:54:57 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Oliver Upton <oliver.upton@linux.dev>, Joey Gouly <joey.gouly@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Will Deacon <will@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	Dave Martin <Dave.Martin@arm.com>, Fuad Tabba <tabba@google.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v4 00/27] KVM: arm64: Implement support for SME in
- non-protected guests
-Message-ID: <Z7UPwXVqkaKZDtGk@finisterre.sirena.org.uk>
-References: <20250214-kvm-arm64-sme-v4-0-d64a681adcc2@kernel.org>
- <86pljkswuk.wl-maz@kernel.org>
- <Z69dsGn1JVWPCqAi@finisterre.sirena.org.uk>
- <86h64ssyi1.wl-maz@kernel.org>
+	s=arc-20240116; t=1739919312; c=relaxed/simple;
+	bh=GJxjZhz46/qgi9xEbXAu0aLCvhuw2uAWnGBPnJrPI3k=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=mYM4y9U6UnqZp8Jz0LL2pcvv14U9752YSwFTcNK5zdCjt1ET9Sc5g8Dxm0U8IYEFYOHD66198PBDDYX6sMu/+JnMouTyX3u6tzeMbNn7QiQuHLEQ5q7AcJuL1PT+Z8VdfEJ638QAO/XnmBGZsKTfVkjCt7o34rU81q85vfWE/00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=lV/aK3RH; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from localhost.localdomain (unknown [167.220.59.4])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 2542420376EF;
+	Tue, 18 Feb 2025 14:55:10 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2542420376EF
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1739919310;
+	bh=eZuPxuKzh6GIya1FAK/uc/NqhhaYVTOtHG78GCKDMxk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=lV/aK3RHjmQABFBHbdEifZ0yPFAiTXcX8oQyw/rnPoeuBaK0RJFRySAwDBxEmjxBq
+	 jSZHXk03qNLr0PYUu+O+DFGi7Nn866dbgYo+97Ha8/bEQLwQM5WVl8M86DSdX9cW+d
+	 wr3ypzrcW3iyDz5ebFDzZEtNpTXnKnCcqDbn6dbU=
+From: steven chen <chenste@linux.microsoft.com>
+To: zohar@linux.ibm.com,
+	stefanb@linux.ibm.com,
+	roberto.sassu@huaweicloud.com,
+	roberto.sassu@huawei.com,
+	eric.snowberg@oracle.com,
+	ebiederm@xmission.com,
+	paul@paul-moore.com,
+	code@tyhicks.com,
+	bauermann@kolabnow.com,
+	linux-integrity@vger.kernel.org,
+	kexec@lists.infradead.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: madvenka@linux.microsoft.com,
+	nramas@linux.microsoft.com,
+	James.Bottomley@HansenPartnership.com,
+	bhe@redhat.com,
+	vgoyal@redhat.com,
+	dyoung@redhat.com
+Subject: [PATCH v8 3/7] ima: kexec: skip IMA segment validation after kexec soft reboot
+Date: Tue, 18 Feb 2025 14:54:58 -0800
+Message-Id: <20250218225502.747963-4-chenste@linux.microsoft.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250218225502.747963-1-chenste@linux.microsoft.com>
+References: <20250218225502.747963-1-chenste@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="S0+W34M0g75qMnHY"
-Content-Disposition: inline
-In-Reply-To: <86h64ssyi1.wl-maz@kernel.org>
-X-Cookie: Editing is a rewording activity.
+Content-Transfer-Encoding: 8bit
 
+kexec_calculate_store_digests() calculates and stores the digest of the
+segment at kexec_file_load syscall where the IMA segment is also
+allocated.  With this series, the IMA segment will be updated with the
+measurement log at kexec execute stage when soft reboot is initiated. 
+Therefore, it may fail digest verification in verify_sha256_digest() 
+after kexec soft reboot into the new kernel. Therefore, the digest 
+calculation/verification of the IMA segment needs to be skipped.
 
---S0+W34M0g75qMnHY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Skip the calculating and storing digest of the IMA segment in
+kexec_calculate_store_digests() so that it is not added to the
+'purgatory_sha_regions'.
 
-On Mon, Feb 17, 2025 at 09:37:26AM +0000, Marc Zyngier wrote:
-> Mark Brown <broonie@kernel.org> wrote:
-> > On Fri, Feb 14, 2025 at 09:24:03AM +0000, Marc Zyngier wrote:
+Since verify_sha256_digest() only verifies 'purgatory_sha_regions',
+no change is needed in verify_sha256_digest() in this context.
 
-> > > Why SVCR? This isn't a register, just an architected accessor to
-> > > PSTATE.{ZA,SM}. Userspace already has direct access to PSTATE, so I
-> > > don't understand this requirement.
+With this change, the IMA segment is not included in the digest
+calculation, storage, and verification.
 
-> > Could you be more explicit as to what you mean by direct access to
-> > PSTATE here?  The direct access to these PSTATE fields is in the form of
+Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+Signed-off-by: steven chen <chenste@linux.microsoft.com>
+Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+---
+ include/linux/kexec.h              |  3 +++
+ kernel/kexec_file.c                | 22 ++++++++++++++++++++++
+ security/integrity/ima/ima_kexec.c |  3 +++
+ 3 files changed, 28 insertions(+)
 
-> I'm painfully aware of the architecture limitations.
+diff --git a/include/linux/kexec.h b/include/linux/kexec.h
+index 4dbf806bccef..bd554ced9fb2 100644
+--- a/include/linux/kexec.h
++++ b/include/linux/kexec.h
+@@ -362,6 +362,9 @@ struct kimage {
+ 
+ 	phys_addr_t ima_buffer_addr;
+ 	size_t ima_buffer_size;
++
++	unsigned long ima_segment_index;
++	bool is_ima_segment_index_set;
+ #endif
+ 
+ 	/* Core ELF header buffer */
+diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+index 3eedb8c226ad..606132253c79 100644
+--- a/kernel/kexec_file.c
++++ b/kernel/kexec_file.c
+@@ -38,6 +38,21 @@ void set_kexec_sig_enforced(void)
+ }
+ #endif
+ 
++#ifdef CONFIG_IMA_KEXEC
++static bool check_ima_segment_index(struct kimage *image, int i)
++{
++	if (image->is_ima_segment_index_set && i == image->ima_segment_index)
++		return true;
++	else
++		return false;
++}
++#else
++static bool check_ima_segment_index(struct kimage *image, int i)
++{
++	return false;
++}
++#endif
++
+ static int kexec_calculate_store_digests(struct kimage *image);
+ 
+ /* Maximum size in bytes for kernel/initrd files. */
+@@ -764,6 +779,13 @@ static int kexec_calculate_store_digests(struct kimage *image)
+ 		if (ksegment->kbuf == pi->purgatory_buf)
+ 			continue;
+ 
++		/*
++		 * Skip the segment if ima_segment_index is set and matches
++		 * the current index
++		 */
++		if (check_ima_segment_index(image, i))
++			continue;
++
+ 		ret = crypto_shash_update(desc, ksegment->kbuf,
+ 					  ksegment->bufsz);
+ 		if (ret)
+diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
+index 89088f1fa989..704676fa6615 100644
+--- a/security/integrity/ima/ima_kexec.c
++++ b/security/integrity/ima/ima_kexec.c
+@@ -160,6 +160,7 @@ void ima_add_kexec_buffer(struct kimage *image)
+ 	kbuf.buffer = kexec_buffer;
+ 	kbuf.bufsz = kexec_buffer_size;
+ 	kbuf.memsz = kexec_segment_size;
++	image->is_ima_segment_index_set = false;
+ 	ret = kexec_add_buffer(&kbuf);
+ 	if (ret) {
+ 		pr_err("Error passing over kexec measurement buffer.\n");
+@@ -170,6 +171,8 @@ void ima_add_kexec_buffer(struct kimage *image)
+ 	image->ima_buffer_addr = kbuf.mem;
+ 	image->ima_buffer_size = kexec_segment_size;
+ 	image->ima_buffer = kexec_buffer;
++	image->ima_segment_index = image->nr_segments - 1;
++	image->is_ima_segment_index_set = true;
+ 
+ 	/*
+ 	 * kexec owns kexec_buffer after kexec_add_buffer() is called
+-- 
+2.25.1
 
-> However, I don't get your mention of SPSR here. The architecture is
-> quite clear that PSTATE is where these bits are held, that they are
-> not propagated anywhere else, and that's where userspace should expect
-> to find them.
-
-> The fact that SW must use SVCR to alter PSTATE.{ZA,SM} doesn't matter.
-> We save/restore registers, not accessors. If this means we need to
-> play a dance when the VMM accesses PSTATE to reconciliate KVM's
-> internal view with the userspace view, so be it.
-
-Could you please clarify what you're referring to as the VMM accessing
-PSTATE here?  The KVM API documentation defines it's concept of PSTATE
-as:
-
- 0x6030 0000 0010 0042 PSTATE      64  regs.pstate
-
-in api.rst but does not futher elaborate.  Looking at the code the
-values that appear there seem to be mapped fairly directly to SPSR
-values, this is why I was talking about them above.
-
-It's not clear to me that PSTATE in the architecture is a register
-exactly.  DDI0487 L.a D1.4 defines the PSTATE bits as being stored in a
-ProcState pseudocode structure (ProcState is defined in J1.3.3.457, the
-pseudocode maps PSTATE in J1.3.3.454) but has an explicit comment that
-"There is no significace in the field order".  I can't seem to locate an
-architectural definition of the layout of PSTATE as a whole.  I also
-can't find any direct observability of PSTATE as a whole which would
-require a layout definition for PSTATE itself from the architecture. =20
-
-There *is* a statement in R_DQXFW that "The contents of PSTATE
-immediately before the exception was taken are written to SPSR_ELx"
-which is somewhat in conflict with the absence of SM and ZA fields in
-any of SPSR_ELx.  There's also R_BWCFK similarly for exception return,
-though that also already has some additional text for PSTATE.{IT,T} for
-returns to AArch32.  If everything in PSTATE ends up getting written to
-SPSR then we can use SPSR as our representation of PSTATE.
-
-> It probably means you need to obtain a clarification of the
-> architecture to define *where* these bits are stored in PSTATE,
-> because that's not currently defined.
-
-I will raise the issue with R_DQXFW and friends with the architects but
-I'm not convinced that at this point the clarification wouldn't be an
-adjustment to those rules rather than the addition of fields for SM and
-ZA in the SPSRs.  Without any additions the only access we have is via
-SVCR.
-
-> > > Isn't it that there is simply a dependency between restoring PSTATE
-> > > and any of the vector stuff? Also, how do you preserve the current ABI
-> > > that do not have this requirement?
-
-> > Yes, that's the dependency - I'm spelling out explicitly what changes in
-> > the register view when PSTATE.{SM,ZA} are restored.  This ABI is what
-> > you appeared to be asking for the last time we discussed this.
-
-=2E..
-
-> > Would you prefer:
-
-> >  - Changing the register view based on the current value of PSTATE.SM.
-> >  - Exposing streaming mode Z and P as separate registers.
-> >  - Exposing the existing Z and P registers with the maximum S?E VL.
-
-> > or some other option?
-
-> My take on this hasn't changed. I want to see something that behaves
-> *exactly* like the architecture defines the expected behaviour of a
-> CPU.
-
-> But you still haven't answered my question: How is the *current* ABI
-> preserved? Does it require *not* selecting SME? Does it require
-> anything else? I'm expecting simple answers to simple questions, not a
-
-Yes, it requires not selecting SME and only that.  If the VMM does not
-enable SME then it should see no change.
-
-> wall of text describing something that is not emulating the
-> architecture.
-
-I'm not clear what you're referring to as not emulating the architecture
-here, I *think* it's the issues with PSTATE.{SM,ZA} not appearing in
-SPSR_ELx and hence KVM's pstate?
-
-Your general style of interaction means that it is not always altogether
-clear when your intent is to just ask a simple question or when it is to
-point out some problem you have seen.
-
---S0+W34M0g75qMnHY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAme1D8EACgkQJNaLcl1U
-h9Ag7Af9FSno1GEtP2DysLSKInBllL4rhNcN+6z7D0oMeZYX+CbjmeedfMLNVwdd
-quEjDrrV5PN76cyP3s35ABkWOUUUWyrUMYt3sP6vVesfNuMhjb54DETOj71CTEaW
-wt8TicvFuN6erEuz85tgB5CPng+CEGwJRhu6STP7/gBEfPou7y/9dH6xj++i/ueD
-Affm1jdtJAtdk6lDgtqjF0K9Tkawu8SM/0MkoITsCRK3R05LpSLBiCvr3S0e/rUv
-r616LswXOvPnYxuJ3Cr2phgx5ZTGgSo+IH/KQUOdK9lM1E6YkqXDtNQtw5qXldu+
-NYjTRYepfepTBCUZ6GVhkP7IEmi+tQ==
-=qowg
------END PGP SIGNATURE-----
-
---S0+W34M0g75qMnHY--
 
