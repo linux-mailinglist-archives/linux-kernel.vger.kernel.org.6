@@ -1,158 +1,125 @@
-Return-Path: <linux-kernel+bounces-519085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAFC5A397B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:56:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15F81A397BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:56:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EDE51896B0F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:55:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 447481893E26
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:56:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A80B22FF4F;
-	Tue, 18 Feb 2025 09:55:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="X3SCfEdK"
-Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.8])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A76E918E743;
-	Tue, 18 Feb 2025 09:54:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61665231C8D;
+	Tue, 18 Feb 2025 09:55:48 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89178200111;
+	Tue, 18 Feb 2025 09:55:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739872499; cv=none; b=l9H3gbxYdb6Icz6TAu3G0EF0XXhn8fKkERVzsNhXg1lXB+wx93raAmzfy1bHdzZS0hDiAJ842NnbBxklxBt+5yysclV0hKoRnL57vXKOxdyekBS7lfk3f+dTMGl9DpgReLzHwt89aKZ8GwS/G+bYRdwS8qHk0FcS2W0e1DzzL54=
+	t=1739872548; cv=none; b=HeVONXgTDu7lm+TjIf347xyj/UhIVqDAu5qK/BgY7q+LIS//j0GeuKoIxoQwQ/viz5xxb107oiq06a3tbztg8gAj77dehh8a0n2j8A737TgWQnAgiQTC1iuR8YgymVvipTS9fjDTjKahnnwOKtOr7DwjE9jBe4MVTonhixwychE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739872499; c=relaxed/simple;
-	bh=gFSWcrMkC4dUJaxmtDlc24YW8vTxH37vRAIJtvX96Mo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JnnCVeIepfTrif8r65oYNp929CBF3qXWnxZj7hGpQ7IQ8bLVU5xycRIFmmceyyNr1J9vYpd3kQst8olZRHDfG+Y7kP2TiZHm0Joe4ezEWO8pt/P4/9L5hTVV8cZice67djCxDLYO9njMiy062tD64BpQwWeuQVID/wsoog5+Igo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=X3SCfEdK; arc=none smtp.client-ip=220.197.31.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=kJ6LrcISp0pEkzAuJFI1bnjTPAQybpsNr4hJemU74dE=;
-	b=X3SCfEdKvPHkA7JUkBDmTbJYQRPt9fSlp1zFsQHUqkYwt/cZV9znesLsBdpUC6
-	lrfcQP+Xs8swe3MqwUYKbp3h5sCIjyYHk84V9hhbLIzu+tH+EF+t/A83X0anSXra
-	E6ZJ6BA3LjYDwWH5D+P63WP0lawRoHrNpgGMD57KeYX/g=
-Received: from [172.19.20.199] (unknown [])
-	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wDn1zHQWLRnR_lCBA--.40367S2;
-	Tue, 18 Feb 2025 17:54:25 +0800 (CST)
-Message-ID: <a78dcef7-b9bf-46a7-b786-43c77015c72a@126.com>
-Date: Tue, 18 Feb 2025 17:54:23 +0800
+	s=arc-20240116; t=1739872548; c=relaxed/simple;
+	bh=WuqhpzqD0eQ2AsQvz5im5Ud+8fEJv2LS6d10sJfVpis=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MXvfftGMkZY4Nc6nVBQFkiI+DBxGywtt334oMucoHtOI9tHQkZ4evhnmlxZb9bYcgLdV0xgrvtFqvWlBuueQmgvrWjGJkZl0pcQ0ABwQzg/Nu8o2Y+iof1eZ1VPgvdZEh4F4iLz/BAYyoYcD+XXnJCSahognh83XcoSItQ0nsAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [180.172.76.141])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 0DE22343022;
+	Tue, 18 Feb 2025 09:55:44 +0000 (UTC)
+Date: Tue, 18 Feb 2025 09:55:40 +0000
+From: Yixun Lan <dlan@gentoo.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, Olof Johansson <olof@lixom.net>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>, Yangyu Chen <cyy@cyyself.name>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Jesse Taube <mr.bossman075@gmail.com>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Icenowy Zheng <uwu@icenowy.me>,
+	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v4 1/4] dt-bindings: gpio: spacemit: add support for K1
+ SoC
+Message-ID: <20250218095540-GYA29065@gentoo>
+References: <20250123113042-GYA38135@gentoo>
+ <Z5LOdh-4UxRtteOy@chonkvm.lixom.net>
+ <20250127181726.GA538260-robh@kernel.org>
+ <20250128031712-GYB47737@gentoo>
+ <CACRpkdYbSOHD9UH5=+qjztxS3Cq_rxaoOT9tFtD8ZWm9zQGnPw@mail.gmail.com>
+ <CACRpkdZa887vx4Lmxk1U_8w5n7AxMnyzGexeYzhsxNGT-DTYcQ@mail.gmail.com>
+ <20250206133156-GYA5687@gentoo>
+ <CACRpkdZYYZ5tUR4gJXuCrix0k56rPPB2TUGP3KpwqMgjs_Vd5w@mail.gmail.com>
+ <20250214115410-GYA21743@gentoo>
+ <CACRpkdaQZ5wJ0S=FfTzBkZOfCE7zvTPQ-wn53rHcZztbHLC8xQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/hugetlb: wait for hugepage folios to be freed
-To: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org,
- 21cnbao@gmail.com, baolin.wang@linux.alibaba.com, muchun.song@linux.dev,
- osalvador@suse.de, liuzixing@hygon.cn
-References: <1739514729-21265-1-git-send-email-yangge1116@126.com>
- <37363b17-88b0-4ccc-a115-8c9f1d83a1b5@redhat.com>
- <d043bdd2-a978-4a09-869e-b6e43f5ce409@126.com>
- <2d0b01c5-a736-41d5-a0f7-db0da065d049@redhat.com>
- <406c6713-356b-4acf-bcd0-e5a6c1e9adcf@126.com>
- <048ca765-bf44-46ab-87d4-328dc0979159@redhat.com>
-From: Ge Yang <yangge1116@126.com>
-In-Reply-To: <048ca765-bf44-46ab-87d4-328dc0979159@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDn1zHQWLRnR_lCBA--.40367S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxGr1xWF1ktr43ZrWfZw4Utwb_yoW5trWUpr
-	W3Ga17KrWDJrySyrnFqwn09r10yrWUXrW8Wr1Yqr17Crs0yr17KF42yw15uFW5Zr10kF40
-	qr4YvwnrZF1UA3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jUo7tUUUUU=
-X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbifgP3G2e0TMW1YgAAsc
+In-Reply-To: <CACRpkdaQZ5wJ0S=FfTzBkZOfCE7zvTPQ-wn53rHcZztbHLC8xQ@mail.gmail.com>
 
+Hi Linus:
 
-
-在 2025/2/18 17:41, David Hildenbrand 写道:
-> On 18.02.25 10:22, Ge Yang wrote:
->>
->>
->> 在 2025/2/18 16:55, David Hildenbrand 写道:
->>> On 15.02.25 06:50, Ge Yang wrote:
->>>>
->>>>
->>>> 在 2025/2/14 16:08, David Hildenbrand 写道:
->>>>> On 14.02.25 07:32, yangge1116@126.com wrote:
->>>>>> From: Ge Yang <yangge1116@126.com>
->>>>>>
->>>>>> Since the introduction of commit b65d4adbc0f0 ("mm: hugetlb: defer
->>>>>> freeing
->>>>>> of HugeTLB pages"), which supports deferring the freeing of HugeTLB
->>>>>> pages,
->>>>>> the allocation of contiguous memory through cma_alloc() may fail
->>>>>> probabilistically.
->>>>>>
->>>>>> In the CMA allocation process, if it is found that the CMA area is
->>>>>> occupied
->>>>>> by in-use hugepage folios, these in-use hugepage folios need to be
->>>>>> migrated
->>>>>> to another location. When there are no available hugepage folios 
->>>>>> in the
->>>>>> free HugeTLB pool during the migration of in-use HugeTLB pages, new
->>>>>> folios
->>>>>> are allocated from the buddy system. A temporary state is set on the
->>>>>> newly
->>>>>> allocated folio. Upon completion of the hugepage folio migration, the
->>>>>> temporary state is transferred from the new folios to the old folios.
->>>>>> Normally, when the old folios with the temporary state are freed, 
->>>>>> it is
->>>>>> directly released back to the buddy system. However, due to the
->>>>>> deferred
->>>>>> freeing of HugeTLB pages, the PageBuddy() check fails, ultimately
->>>>>> leading
->>>>>> to the failure of cma_alloc().
->>>>>>
->>>>>> Here is a simplified call trace illustrating the process:
->>>>>> cma_alloc()
->>>>>>        ->__alloc_contig_migrate_range() // Migrate in-use hugepage
->>>>>>            ->unmap_and_move_huge_page()
->>>>>>                ->folio_putback_hugetlb() // Free old folios
->>>>>>        ->test_pages_isolated()
->>>>>>            ->__test_page_isolated_in_pageblock()
->>>>>>                 ->PageBuddy(page) // Check if the page is in buddy
->>>>>>
->>>>>> To resolve this issue, we have implemented a function named
->>>>>> wait_for_hugepage_folios_freed(). This function ensures that the
->>>>>> hugepage
->>>>>> folios are properly released back to the buddy system after their
->>>>>> migration
->>>>>> is completed. By invoking wait_for_hugepage_folios_freed() following
->>>>>> the
->>>>>> migration process, we guarantee that when test_pages_isolated() is
->>>>>> executed, it will successfully pass.
->>>>>
->>>>> Okay, so after every successful migration -> put of src, we wait 
->>>>> for the
->>>>> src to actually get freed.
->>>>>
->>>>> When migrating multiple hugetlb folios, we'd wait once per folio.
->>>>>
->>>>> It reminds me a bit about pcp caches, where folios are !buddy until 
->>>>> the
->>>>> pcp was drained.
->>>>>
->>>> It seems that we only track unmovable, reclaimable, and movable 
->>>> pages on
->>>> the pcp lists. For specific details, please refer to the
->>>> free_frozen_pages() function.
->>>
->>> It reminded me about PCP caches, because we effectively also have to
->>> wait for some stuck folios to properly get freed to the buddy.
->>>
->> It seems that when an isolated page is freed, it won't be placed back
->> into the PCP caches.
+On 10:44 Tue 18 Feb     , Linus Walleij wrote:
+> On Fri, Feb 14, 2025 at 12:54 PM Yixun Lan <dlan@gentoo.org> wrote:
 > 
-> I recall there are cases when the page was in the pcp before the 
-> isolation started, which is why we drain the pcp at some point (IIRC).
+> > thanks for this very detail prototype! it works mostly, with one problem:
+> >
+> > how to map gpio correctly to the pin from pinctrl subsystem?
+> >
+> > for example, I specify gpio-ranges in dts, then
+> >                 gpio0: gpio@d4019000 {
+> >                         compatible = "spacemit,k1-gpio";
+> >                         reg = <0x0 0xd4019000 0x0 0x100>;
+> >                         ...
+> >                         gpio-ranges = <&pinctrl 0 0 96>;
+> >                 };
+> >
+> >                 foo-gpios = <&gpio0 2 28 GPIO_ACTIVE_LOW>;
+> >
+> > It should get GPIO_92 ( 92 = 2 * 32 + 28), but turns out GPIO_28
+> >
+> > Probably there is something I missed...
 > 
-Yes, indeed, drain_all_pages(cc.zone) is currently executed before 
-__alloc_contig_migrate_range().
+> No it's just me missing the complexity!
+> 
+> > to make the gpio part work, we need additional custom gpio-ranges parser,
+> > which should similar to of_gpiochip_add_pin_range() in gpiolib-of.c
+> > (at least gpio core need to adjust to call custom this function)
+> 
+> Let me send a patch set to bring threecell into the core instead,
+> and see if it works for you!
+> 
+> I will post it real soon.
+> 
+can you check the v5 of the patch here [1]? which I just sent out yesterday
+it does 1) implement xlate() 2) instroduce custom add_pin_page()
+the gpio part works as I tested, the gpio irq probably need more testing
 
+> Yours,
+> Linus Walleij
+
+[1] https://lore.kernel.org/spacemit/20250217-03-k1-gpio-v5-0-2863ec3e7b67@gentoo.org/
+
+-- 
+Yixun Lan (dlan)
+Gentoo Linux Developer
+GPG Key ID AABEFD55
 
