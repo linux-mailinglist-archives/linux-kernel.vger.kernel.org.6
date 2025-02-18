@@ -1,121 +1,106 @@
-Return-Path: <linux-kernel+bounces-520169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44A34A3A697
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:00:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15061A3A683
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:58:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD7283A3083
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:56:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F44E1781EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:55:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFD581E5212;
-	Tue, 18 Feb 2025 18:55:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 205F21E51EF;
+	Tue, 18 Feb 2025 18:55:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="azCDGikT"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="m4o2vYKw"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAA86271294;
-	Tue, 18 Feb 2025 18:55:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 015A31E51E1;
+	Tue, 18 Feb 2025 18:55:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739904930; cv=none; b=kd7rI2rISauV5m1kdSb289EEgt8NtrJp9VSs/I9gv7CMDvg/ocwH98BnIz+wDPdw8dZEcNCC1lcgtuI05A558qI2iunhm5NbpCm/X+H9lhrn6TPcL6N3TG7zH/Vmnz6YYeGA5dsKEyYjRZ504JqoPS8gglbrqp0aZA9C5NcMdQw=
+	t=1739904916; cv=none; b=jnrlZl/NhYmhqXQFNz+8ih7o1B76qF5BhH02GRUa1aFe2GLhhr4YzfvhWsp09pNrWTIOcloYIdGIzi/D588RfY3HIB0deirBZqF8zyq13tatkl8IxtXU9LlcBZs3pIcz3RAZNGCfbc83kXbo5Ung6ZYTMwN0zYw+eqfUV2wGtpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739904930; c=relaxed/simple;
-	bh=2uuzNDF6TRQwOUmOokoBVZvzfGe6+SMZJha/nrslQoE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JzwKjrWFpGltV7RJvi3iahiLNpF2hXn59UE6seQQix1u4e7DCwyRxFY1vpzWM1bYtIWMjF7lD6qu8vLkF+r7aIZrnkxzjnP7gHP6LR1z7uK/kgiqjOIwKQyn4CR0PWufLRVAZcaBzeLKnC9XnVU9zk2WPLfHWyNO25eh+fSg5jI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=azCDGikT; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 681BD25F43;
-	Tue, 18 Feb 2025 19:55:27 +0100 (CET)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id 3Rq9FsMmw4DF; Tue, 18 Feb 2025 19:55:23 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1739904923; bh=2uuzNDF6TRQwOUmOokoBVZvzfGe6+SMZJha/nrslQoE=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=azCDGikTTOkVBEfcJtHreO+htcsv5WBdSgcF6PRV89z0jw1y33AINRxQLcvgioa55
-	 N3VrauH9Fwqt4ee3cEKwXNSSa0fYkbg6ljdNVpPz88ioti+qsnjqw0Nx8BMNyKTgk4
-	 lVchcJLYwGXAlZ/yF/spzfdZd+JUMTcHczCux8N59YoAc4H9R2AQ1jE04yV1G2iSP5
-	 12bvg/EJU6Py8pZdI54DYyeFXWG5ANHnXtJZvDdMFbRK3RyNUel4qBjqzJqvE8/Z+2
-	 UVUZlK6BsVcL9eUUDhnuQN+oSUC26Dz6ZXM3xFELhZ/jFt17IXqE8nx24TtM5hYJI8
-	 9xuC/9veOrBIw==
-From: Kaustabh Chakraborty <kauschluss@disroot.org>
-Date: Wed, 19 Feb 2025 00:24:43 +0530
-Subject: [PATCH v2 2/2] usb: dwc3: exynos: add support for exynos7870
+	s=arc-20240116; t=1739904916; c=relaxed/simple;
+	bh=StQmRH1Emk+mZWakl93uljiJjxjeVM7AlESiVXef0Ng=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=H0jK1Karz2EblzvIatrM7WM/Hw+KzDQctNJbBO/6/SX2aUQfxNAgQ3zJ3FQLfNKXLeBcpK+CtInXVM+4HZzF6QBRv7yXKNBSIQ31QhdHs9ojDHiwNVykb3RjzmCroenhBoHTb3e5f2f1ZbYbmK1pUZSksw+cMZXnU25ClXCOnbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=m4o2vYKw; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51IIsv1L1601132
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 18 Feb 2025 12:54:57 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1739904897;
+	bh=l5l755ruyNtPADHoOrFA6bFojSmArHIdny0GJW4lNQI=;
+	h=From:To:CC:Subject:Date;
+	b=m4o2vYKwiqUJ+OYW+cGctshgQ4uJb3sxGP/VCh337zZgspeJwnlEaJccwJXW0dz/2
+	 fOiI7vDR2Oo7Pw1bHXaegEDNvGzPOJyQOtIVlyYEnC4jim2sseIR3EvOnuyMhyBnUZ
+	 h63lRG1YKXzsuqEPTyPqm+PS4oPuGpBK6nlejSGc=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51IIsvBM000686
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 18 Feb 2025 12:54:57 -0600
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 18
+ Feb 2025 12:54:56 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 18 Feb 2025 12:54:56 -0600
+Received: from uda0490681.. ([10.24.69.142])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51IIsrxY123821;
+	Tue, 18 Feb 2025 12:54:53 -0600
+From: Vaishnav Achath <vaishnav.a@ti.com>
+To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: <linux-kernel@vger.kernel.org>, <jai.luthra@linux.dev>,
+        <y-abhilashchandra@ti.com>, <vaishnav.a@ti.com>
+Subject: [PATCH 0/5] Add J722S CSI support
+Date: Wed, 19 Feb 2025 00:24:47 +0530
+Message-ID: <20250218185452.600797-1-vaishnav.a@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250219-exynos7870-usb-v2-2-1de41a89c9d4@disroot.org>
-References: <20250219-exynos7870-usb-v2-0-1de41a89c9d4@disroot.org>
-In-Reply-To: <20250219-exynos7870-usb-v2-0-1de41a89c9d4@disroot.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-usb@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Kaustabh Chakraborty <kauschluss@disroot.org>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1739904902; l=1429;
- i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
- bh=2uuzNDF6TRQwOUmOokoBVZvzfGe6+SMZJha/nrslQoE=;
- b=RayIfUsA56+Ryke4XCCdqVp80lSZQhMVZho+Q5GWcSVGnEVaHCG08SN1ccbileBjBWOf0+2yb
- gtyygrTFZYqDz/UbxyQhze2XgO8e3Rhw0d6n5Es9bVbD/wZDFLvjnhx
-X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
- pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Exynos7870 devices have a DWC3 compatible USB 2.0 controller.
-Add support in the driver by:
- - Adding its own compatible string, "samsung,exynos7870-dwusb3".
- - Adding three USBDRD clocks named "bus_early", "ctrl", and "ref", to
-   be controlled by the driver.
+This series adds support for CSI2RX capture on J722S EVM
+and enables IMX219 and OV5640 overlays to enables
+4 sensors on EVM, this provides a reference for a user to
+enable a different sensor on any of the ports.
 
-Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
----
- drivers/usb/dwc3/dwc3-exynos.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Test logs:
+IMX219: https://gist.github.com/vaishnavachath/60cc2ef257601f27f28a315f8cf669c4
+OV5640: https://gist.github.com/vaishnavachath/648202286d4d34d4d25f7c8c9db8b8bd
 
-diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
-index f5d963fae9e069e1bd145ff5bd1b704da89fb74c..ca8d2955303c589ea03a261944aadb6582c9cb9f 100644
---- a/drivers/usb/dwc3/dwc3-exynos.c
-+++ b/drivers/usb/dwc3/dwc3-exynos.c
-@@ -163,6 +163,12 @@ static const struct dwc3_exynos_driverdata exynos7_drvdata = {
- 	.suspend_clk_idx = 1,
- };
- 
-+static const struct dwc3_exynos_driverdata exynos7870_drvdata = {
-+	.clk_names = { "bus_early", "ctrl", "ref" },
-+	.num_clks = 3,
-+	.suspend_clk_idx = -1,
-+};
-+
- static const struct dwc3_exynos_driverdata exynos850_drvdata = {
- 	.clk_names = { "bus_early", "ref" },
- 	.num_clks = 2,
-@@ -185,6 +191,9 @@ static const struct of_device_id exynos_dwc3_match[] = {
- 	}, {
- 		.compatible = "samsung,exynos7-dwusb3",
- 		.data = &exynos7_drvdata,
-+	}, {
-+		.compatible = "samsung,exynos7870-dwusb3",
-+		.data = &exynos7870_drvdata,
- 	}, {
- 		.compatible = "samsung,exynos850-dwusb3",
- 		.data = &exynos850_drvdata,
+Vaishnav Achath (5):
+  arm64: dts: ti: k3-j722s-main: Add BCDMA CSI overrides
+  arm64: dts: ti: k3-j722s-main: Add CSI2RX nodes
+  arm64: dts: ti: k3-j722s-evm: Add camera peripherals
+  arm64: dts: ti: k3-j722s-evm: Add overlay for quad IMX219
+  arm64: dts: ti: k3-j722s-evm: Add overlay for TEVI OV5640
+
+ arch/arm64/boot/dts/ti/Makefile               |   9 +
+ ...k3-j722s-evm-csi2-quad-rpi-cam-imx219.dtso | 304 +++++++++++++++++
+ .../k3-j722s-evm-csi2-quad-tevi-ov5640.dtso   | 319 ++++++++++++++++++
+ arch/arm64/boot/dts/ti/k3-j722s-evm.dts       |  28 ++
+ arch/arm64/boot/dts/ti/k3-j722s-main.dtsi     | 193 +++++++++++
+ 5 files changed, 853 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/ti/k3-j722s-evm-csi2-quad-rpi-cam-imx219.dtso
+ create mode 100644 arch/arm64/boot/dts/ti/k3-j722s-evm-csi2-quad-tevi-ov5640.dtso
 
 -- 
-2.48.1
+2.34.1
 
 
