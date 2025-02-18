@@ -1,120 +1,253 @@
-Return-Path: <linux-kernel+bounces-519393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B6A3A39C56
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:38:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20D7AA39C4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:38:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8172176E64
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:34:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 448051898149
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:35:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30951244E88;
-	Tue, 18 Feb 2025 12:33:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9ECE24503D;
+	Tue, 18 Feb 2025 12:35:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="k4Ivd2Io";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="tdRnouMm"
-Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="RDWoyVWf"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D1FC244E85;
-	Tue, 18 Feb 2025 12:33:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B66124338C;
+	Tue, 18 Feb 2025 12:35:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739881989; cv=none; b=f4TLsCsv7owz2Hn1t5op1RwjGAj1buaFEYwu1aF2RhLXIn74az6jXCya4TcI/ka3/J6LNZUzqWXZV21v89aPCnL9XGHEXl4qJUtxo6+bvH3wPWSyfdoWrDzHO20x7872VQCRfqae1Lx2WOoxkhBo1p6PvqKt8ppxFGZGePNLvZs=
+	t=1739882123; cv=none; b=frgoilVT5DIzyCy+2enZzeobUhrnV17vcW2ZpyVFzRtT0PyRkc0L9oD+mGzvf0iQD1uJ75hk8iryRqfW2bwIsMZEZNLD+lSyO9JIR4CRxPc3wvSWTkc9rQsu/xipNTtvR1ZoAmh2XHVmw0quYFXcPdOsAV/n5m5Am25Mv2B7sgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739881989; c=relaxed/simple;
-	bh=0Lvv7rtjOdQIk9QQKm3hZYHB/EymOiAhSR+n77bEeKA=;
+	s=arc-20240116; t=1739882123; c=relaxed/simple;
+	bh=DrNseaTwlu1baj9FfFrUyEuRbOY0WkAbyg7rLHvq8/I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lg22o78QH1+whxfxsU1swWvw41sXCTD9qU2ENd2ol5Xsmxqnvcx/UpH4EpihPXEED5VcrNIfjkWW+fisc8EIDRx4bf2gAFQb3ItaTIqDLVgBe4EMN3x/ttdQwGvqwGkKQdw51zoHqhi4baF6owov8uHl99xY6hX/qlCWtU2szWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=k4Ivd2Io; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=tdRnouMm; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailfout.phl.internal (Postfix) with ESMTP id 26FAA1380A30;
-	Tue, 18 Feb 2025 07:33:06 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-06.internal (MEProxy); Tue, 18 Feb 2025 07:33:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1739881986; x=
-	1739968386; bh=28yRX83oWy8XKbFVALI7tpeopwOBxQY89HUmWnOuufI=; b=k
-	4Ivd2Io2ISFOMlEcM6QW8uX1W04uRBe6cyikRg1yUumcQzqIQKxDFZuDM3S3ENt9
-	QrxMJ4urvbq/3dsGzV1M7Gs4+55sp5a3EF2vXEV+iAkdqUa6FW6YtJfD1MSIlzi6
-	zP/Gb58aU4fH93xuvJaZVMhba+bKggoMRDNJkCqGmvTWS2DYjFjO8zuFL+9BFhGd
-	bfGr6vtVvZhcodPIiRh9rimPbA2/9zYratr+2J9QnaFkEFNNNtBsvJPnkZUM65wb
-	11HYRfy0jexD/n2Ts+kF1Wj9gsXfp8fw5jL+PVD3aP7APvxNdQYOlCIr4BP3YJSB
-	todkdMyoMGZ5uxw4vKKhA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1739881986; x=1739968386; bh=28yRX83oWy8XKbFVALI7tpeopwOBxQY89HU
-	mWnOuufI=; b=tdRnouMmvB00wKWqqjIfD9DuQjO1oPw2Euvos6aajrdecbNZCks
-	ZiEstQOTbaeD2ts7kF7fGpXNmaIPGPCW5muIZac3Nn068IQdam4FUYyE/KPaDY4j
-	DgXoEMiDTadTsfVe7+6LzZ9M265Ep4YzjcrTAU6XGDUT7zSW+xsf2VdHZ2Hb66Xm
-	SYxvvlEeVeG6OpZ9/+ru3x0HC2ICXaSCfh8P05OBWcpc0Y2hNT41aC86UFF3oGLy
-	6d07wHJTJ0JkVWaNgWEjeTJZXwOdH0r7EXLF+162ZXsopY1rsX9dQQrL+hSXaFzD
-	l5Oa4eL1BnJ8hkpqG8pG4BD0jGsGY7mwjyw==
-X-ME-Sender: <xms:AX60Z8zE8KDmzrnCl3nk1830oGBrYLwQcLVt8VBVrT8QfTifn8FRIQ>
-    <xme:AX60ZwQvWXPjSiMwJ-KBYHDIONj6M1gfO7hWaWmVyar_K6IM5qstWCkg5xQZxUR48
-    Khj2reA5mm584D8V5Y>
-X-ME-Received: <xmr:AX60Z-X0RgTueMH-lLTArY6O9tRixe0R1vRnLPG8ky2FuFVmsCece7o0hh12Cf3qQJPgXw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeiudefvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecunecujfgurhepfffhvf
-    evuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepfdfmihhrihhllhcutedrucfu
-    hhhuthgvmhhovhdfuceokhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvqeenucggtf
-    frrghtthgvrhhnpeffvdevueetudfhhfffveelhfetfeevveekleevjeduudevvdduvdel
-    teduvefhkeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
-    hmpehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgdpnhgspghrtghpthhtohepjedp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepjhgvfhhflhgvgihusehlihhnuhigrd
-    grlhhisggrsggrrdgtohhmpdhrtghpthhtoheprgigsghovgeskhgvrhhnvghlrdgukhdp
-    rhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorh
-    hgpdhrtghpthhtoheplhhinhhugidqmhhmsehkvhgrtghkrdhorhhgpdhrtghpthhtohep
-    sghrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrh
-    hnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvhhirhhoseiivghn
-    ihhvrdhlihhnuhigrdhorhhgrdhukh
-X-ME-Proxy: <xmx:AX60Z6hvOzDvTKjjo4hu8MTnw7ZCG6U2AF5ALuu6UxBYPDkvIJjtHg>
-    <xmx:AX60Z-A-w8qSRRQl11N-UZGsf_1qY0K4-0xWw1Y0halL9_ieu0K68A>
-    <xmx:AX60Z7KhBXcyKYN_r-p7NaTYx2XE2dHyg8FEhl0dAVNtDZpLrk2GCg>
-    <xmx:AX60Z1BWYZvQDOoJdB0v9rlbOZYkvxxnf-_EBXk19-5wprydt9hhhQ>
-    <xmx:An60Z0CCPLyLLkg6_RC_81gZx8NtsUt_qYQk3IvyS9GpFHYhx5gDvWPf>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 18 Feb 2025 07:33:02 -0500 (EST)
-Date: Tue, 18 Feb 2025 14:32:58 +0200
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: Jingbo Xu <jefflexu@linux.alibaba.com>
-Cc: axboe@kernel.dk, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	brauner@kernel.org, linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk
-Subject: Re: [PATCH 2/2] mm/truncate: don't skip dirty page in
- folio_unmap_invalidate()
-Message-ID: <cedbmhuivcr2imkzuqebrrihdkfsmgqmplqqn7s2fusk3v4ezq@7jbz26dds76d>
-References: <20250218120209.88093-1-jefflexu@linux.alibaba.com>
- <20250218120209.88093-3-jefflexu@linux.alibaba.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gcTU0AwkkoE1pCgs5IztYu8uQHFjtpql86KeIt5sO70Q6U8UrqPw6hFiOZk1gU/57dktXptJrc/e3Rau32g5WxY9CelvAEtJRrB9tN99n8I23ikzTAqa76Q+b+MwPZPyODq8AvJUANCARWPm5D/dMut5u/lHNMxlGw0HzFYe4sU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=RDWoyVWf; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 217FA18D;
+	Tue, 18 Feb 2025 13:33:56 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1739882036;
+	bh=DrNseaTwlu1baj9FfFrUyEuRbOY0WkAbyg7rLHvq8/I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RDWoyVWfPkTI6hWbn9tcBiYgdqyOC+z4fW6AC72LZdNWHWe4TPU7G48gaWoyZU2Ar
+	 bB4lDbJSUfYzT7vPiMNX0ip5QrJeodVJP5wj9WCAS7J/rIvL/M4RS5HPMOIypn2Lzh
+	 oinUo7VUDuoekFT/TK1yN0vjKDqc3Xi3KdiIh5qA=
+Date: Tue, 18 Feb 2025 14:35:03 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Cc: Tommaso Merciai <tomm.merciai@gmail.com>,
+	linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+	biju.das.jz@bp.renesas.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/8] media: dt-bindings: renesas,rzg2l-csi2: Document
+ Renesas RZ/V2H(P) SoC
+Message-ID: <20250218123503.GC20695@pendragon.ideasonboard.com>
+References: <20250210114540.524790-1-tommaso.merciai.xr@bp.renesas.com>
+ <20250210114540.524790-3-tommaso.merciai.xr@bp.renesas.com>
+ <20250214002951.GB8393@pendragon.ideasonboard.com>
+ <Z7R1KiIBqPcR06hP@tom-desktop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250218120209.88093-3-jefflexu@linux.alibaba.com>
+In-Reply-To: <Z7R1KiIBqPcR06hP@tom-desktop>
 
-On Tue, Feb 18, 2025 at 08:02:09PM +0800, Jingbo Xu wrote:
-> ... otherwise this is a behavior change for the previous callers of
-> invalidate_complete_folio2(), e.g. the page invalidation routine.
+On Tue, Feb 18, 2025 at 12:55:22PM +0100, Tommaso Merciai wrote:
+> On Fri, Feb 14, 2025 at 02:29:51AM +0200, Laurent Pinchart wrote:
+> > On Mon, Feb 10, 2025 at 12:45:34PM +0100, Tommaso Merciai wrote:
+> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > 
+> > > The MIPI CSI-2 block on the Renesas RZ/V2H(P) SoC is similar to the one
+> > > found on the Renesas RZ/G2L SoC, with the following differences:
+> > > - A different D-PHY
+> > > - Additional registers for the MIPI CSI-2 link
+> > > - Only two clocks
+> > > 
+> > > Add a new compatible string, `renesas,r9a09g057-csi2`, for the RZ/V2H(P)
+> > > SoC.
+> > > 
+> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+> > > ---
+> > >  .../bindings/media/renesas,rzg2l-csi2.yaml    | 63 ++++++++++++++-----
+> > >  1 file changed, 48 insertions(+), 15 deletions(-)
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/media/renesas,rzg2l-csi2.yaml b/Documentation/devicetree/bindings/media/renesas,rzg2l-csi2.yaml
+> > > index 7faa12fecd5b..0d07c55a3f35 100644
+> > > --- a/Documentation/devicetree/bindings/media/renesas,rzg2l-csi2.yaml
+> > > +++ b/Documentation/devicetree/bindings/media/renesas,rzg2l-csi2.yaml
+> > > @@ -17,12 +17,15 @@ description:
+> > >  
+> > >  properties:
+> > >    compatible:
+> > > -    items:
+> > > -      - enum:
+> > > -          - renesas,r9a07g043-csi2       # RZ/G2UL
+> > > -          - renesas,r9a07g044-csi2       # RZ/G2{L,LC}
+> > > -          - renesas,r9a07g054-csi2       # RZ/V2L
+> > > -      - const: renesas,rzg2l-csi2
+> > > +    oneOf:
+> > > +      - items:
+> > > +          - enum:
+> > > +              - renesas,r9a07g043-csi2 # RZ/G2UL
+> > > +              - renesas,r9a07g044-csi2 # RZ/G2{L,LC}
+> > > +              - renesas,r9a07g054-csi2 # RZ/V2L
+> > > +          - const: renesas,rzg2l-csi2
+> > > +
+> > 
+> > I'd drop the empty line.
+> 
+> I'll drop this line in v2, thanks.
+> 
+> > > +      - const: renesas,r9a09g057-csi2 # RZ/V2H(P)
+> > >  
+> > >    reg:
+> > >      maxItems: 1
+> > > @@ -31,16 +34,24 @@ properties:
+> > >      maxItems: 1
+> > >  
+> > >    clocks:
+> > > -    items:
+> > > -      - description: Internal clock for connecting CRU and MIPI
+> > > -      - description: CRU Main clock
+> > > -      - description: CRU Register access clock
+> > > +    oneOf:
+> > > +      - items:
+> > > +          - description: Internal clock for connecting CRU and MIPI
+> > > +          - description: CRU Main clock
+> > > +          - description: CRU Register access clock
+> > > +      - items:
+> > > +          - description: CRU Main clock
+> > > +          - description: CRU Register access clock
+> > >  
+> > >    clock-names:
+> > > -    items:
+> > > -      - const: system
+> > > -      - const: video
+> > > -      - const: apb
+> > > +    oneOf:
+> > > +      - items:
+> > > +          - const: system
+> > > +          - const: video
+> > > +          - const: apb
+> > > +      - items:
+> > > +          - const: video
+> > > +          - const: apb
+> > 
+> > I would move the clocks and clock-names definitions to the conditional
+> > below. Otherwise I think a device tree that has two clocks only but
+> > incorrectly uses "system" and "video" instead of "video" and "apb" will
+> > validate.
+> 
+> Agreed. Taking as reference your work done on renesas,fcp.yaml.
+> What about the following?
+> 
+>   clocks: true
+>   clock-names: true
+> 
+> Then move the clocks and clock-names below as you suggested
+> into the conditional block:
+> 
+> allOf:
+>   - if:
+>       properties:
+>         compatible:
+>           contains:
+>             const: renesas,r9a09g057-csi2
+>     then:
+>       properties:
+>         clocks:
+>           items:
+>             - description: CRU Main clock
+>             - description: CRU Register access clock
+>         clock-names:
+>           items:
+>             - const: video
+>             - const: apb
+> 
+>     else:
+>       properties:
+>         clocks:
+>           items:
+>             - description: Internal clock for connecting CRU and MIPI
+>             - description: CRU Main clock
+>             - description: CRU Register access clock
+>         clock-names:
+>           items:
+>             - const: system
+>             - const: video
+>             - const: apb
+> 
+> Thanks in advance.
 
-Hm. Shouldn't the check be moved to caller of the helper in mm/filemap.c?
+I do like that, but I think Krzysztof wasn't entirely happy with it (it
+could be a separate but similar issue though, I don't recall the
+details). I'd recommend checking with him (he's on CC, so he will
+probably reply unless the mail gets buried in a mailbox that I am sure
+fills up quite quickly).
 
-Otherwise we would drop pages without writing them back. And lose user's
-data.
+> > >  
+> > >    power-domains:
+> > >      maxItems: 1
+> > > @@ -48,7 +59,7 @@ properties:
+> > >    resets:
+> > >      items:
+> > >        - description: CRU_PRESETN reset terminal
+> > > -      - description: CRU_CMN_RSTB reset terminal
+> > > +      - description: CRU_CMN_RSTB reset terminal or D-PHY reset
+> > >  
+> > >    reset-names:
+> > >      items:
+> > > @@ -101,6 +112,28 @@ required:
+> > >    - reset-names
+> > >    - ports
+> > >  
+> > > +allOf:
+> > > +  - if:
+> > > +      properties:
+> > > +        compatible:
+> > > +          contains:
+> > > +            const: renesas,r9a09g057-csi2
+> > > +    then:
+> > > +      properties:
+> > > +        clocks:
+> > > +          maxItems: 2
+> > > +
+> > > +        clock-names:
+> > > +          maxItems: 2
+> > > +
+> > > +    else:
+> > > +      properties:
+> > > +        clocks:
+> > > +          maxItems: 3
+> > > +
+> > > +        clock-names:
+> > > +          maxItems: 3
+> > > +
+> > >  additionalProperties: false
+> > >  
+> > >  examples:
 
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+Regards,
+
+Laurent Pinchart
 
