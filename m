@@ -1,89 +1,109 @@
-Return-Path: <linux-kernel+bounces-519705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FB48A3A0DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:13:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5672A3A0E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:15:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A60287A4828
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:12:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A0D71679E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:13:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD2D526B95A;
-	Tue, 18 Feb 2025 15:13:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03DD926B2DC;
+	Tue, 18 Feb 2025 15:13:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="BSCCx7cK"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uijAGsxg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F18326B946;
-	Tue, 18 Feb 2025 15:13:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B9F026B2BF;
+	Tue, 18 Feb 2025 15:13:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739891584; cv=none; b=BY9lqt92CexgNEhVBCCrWjwAoll5PN5Y/1qLuORP+ZbIpy/9iZwAz6HQKIIh1XO5M73/SdsuHRtq/v3XKY0CR7Qi9Xahp+gKKgXfpi4XwK90iL6ek6XknULP114pLKXYyAMyJ6D49Xni3I517yqd9s2nYKYwXlwQ0BMZIs2bCdU=
+	t=1739891603; cv=none; b=PGXHFx79vADoe6xMFnCHFKkz+RUFedVTl3ZKZ12jvuQsa7UlnAcPb6aCR5GYryk3h5N0vzDC1m3XDC9hZM6JdversnVorz8GQZyk/X2VMagZnoTe8/JURMIW0JQVPG03RfYvCOkgBqh1sLQ51H4KJidy26/a8mQSCRMQRoEalf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739891584; c=relaxed/simple;
-	bh=yiYQkJmgh5KtX1ybp9e1CiAvqpnog8wemHUJ2Xt488Q=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=dbAMU2CJsKQ5RXKXb8TBItNnzQgRiIYo66Fb+952Ukv4UIPJE3j6AzIXBjJe1Dle1HNP/g3BKieDzFAwNV4OrZlebHM8CEjNX89OGJlFlsAbSUEvvFsErLjdWJK7VgzReRwWw+w3SVFvMrFnqg1zfW8OTiWV7qj1dJI3bzNt5yY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=BSCCx7cK; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net A136148EB5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1739891575; bh=4gf5JdbgJWegtB585WY5Jp56LsHto1xmDBzp2Fqa8v0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=BSCCx7cK49Kn1pvuV+I9DV34ixb7LKT49Spj38gRNQ2XHyXe+DbirbKJhTPV5Mvgh
-	 Gftaz49wzgWVZ/ykRsKqqJaqAl9QuqYtG++sHCCOVMEl/0qHdU8IMcdhKq3KRtokiT
-	 Wkslxb3+t01SkEl04yCIDqtx6wok895urhwx7gdZBh1L20tsBgTHZqwFFoWlRBpL4v
-	 c4rUaTCk5EKr9qzAY3x5vCljOjnubayb7wPx0bF/I4bmRcfK23B5AaeNQf3ZsYUCli
-	 21zJYAg60egK/qA34n5A8Gfm7t7BnIF4Nf6JvTqI3ey+bDwc20grnad66PsKmTmQU3
-	 XP+xSjEdKmXrQ==
-Received: from localhost (unknown [IPv6:2601:280:4600:2d7f::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id A136148EB5;
-	Tue, 18 Feb 2025 15:12:55 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Armin Mahdilou <armin.mahdilou@gmail.com>
-Cc: shuah@kernel.org, skhan@linuxfoundation.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, rdunlap@infradead.org
-Subject: Re: [PATCH v2] Documentation: proofreading Documentation
-In-Reply-To: <b45c5b7c1ec72697005afbbf870100cc4a175572.camel@gmail.com>
-References: <87bjv91yi3.fsf@trenco.lwn.net>
- <20250210192754.30283-1-Armin.Mahdilou@gmail.com>
- <b45c5b7c1ec72697005afbbf870100cc4a175572.camel@gmail.com>
-Date: Tue, 18 Feb 2025 08:12:54 -0700
-Message-ID: <87tt8rqoax.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1739891603; c=relaxed/simple;
+	bh=DX3TX+7yJwABho/ydv17BCgSzeruh7GiPooXHU5WanQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QhCacMWZ02NHVM6h9D0V1LfDdiSZnggkNgSWIHbmgF0JFGg8HnrzFo8mRZmKKk+eC41QdByHwD9LXa1qLivNSLlD63M/LbEplQCRPLksHx4CMSBoot4VBpgYeQcY3/wXFB9MkrxLZ5T3WettVKA5TAZVJvRVa3RhDl+8qx3VA0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uijAGsxg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FEB4C4CEE7;
+	Tue, 18 Feb 2025 15:13:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739891602;
+	bh=DX3TX+7yJwABho/ydv17BCgSzeruh7GiPooXHU5WanQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uijAGsxggthweKXyPm/uxvm0uOSini4ZBCRBw7EG19jwesyfixSqWpCn+xEH0Zgx7
+	 rOe1mORnbp5za5HsPstp/jYp+ahEZQJFB6q9Ow/wu4dYUNSqTfypD9/mttXEz40gTU
+	 JXZNPt1aoJMyKJW6eDb7T4/HVromP+HqEE+HoYTZbFmCEPC3kup3p4alAcT/0poAUo
+	 wWLatex/+CpTqhEH4oycuQ5YEhpJ0h55+C5YgwXgEY9ci2PMmM8F9b95jwh9gP39DX
+	 RyPHNVWF9jATpPw6bzMvgYCzyyHmmcwBO0Zxeyl3DunOKkzQiVTcXJnRFFpj/CXFDn
+	 TvUetn4i2iz0Q==
+Date: Tue, 18 Feb 2025 15:13:17 +0000
+From: Mark Brown <broonie@kernel.org>
+To: James Calligeros <jcalligeros99@gmail.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>, Shenghao Ding <shenghao-ding@ti.com>,
+	Kevin Lu <kevin-lu@ti.com>, Baojun Xu <baojun.xu@ti.com>,
+	Dan Murphy <dmurphy@ti.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shi Fu <shifu0704@thundersoft.com>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Martin =?utf-8?Q?Povi=C5=A1er?= <povik+lin@cutebit.org>,
+	Hector Martin <marcan@marcan.st>, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	asahi@lists.linux.dev, linux-hwmon@vger.kernel.org,
+	Neal Gompa <neal@gompa.dev>
+Subject: Re: [PATCH v2 02/29] ASoC: tas2770: Fix volume scale
+Message-ID: <Z7SjjcaJNfFnQ2e4@finisterre.sirena.org.uk>
+References: <20250218-apple-codec-changes-v2-0-932760fd7e07@gmail.com>
+ <20250218-apple-codec-changes-v2-2-932760fd7e07@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="2ZYleMwCcuejHCJU"
+Content-Disposition: inline
+In-Reply-To: <20250218-apple-codec-changes-v2-2-932760fd7e07@gmail.com>
+X-Cookie: Editing is a rewording activity.
 
-Armin Mahdilou <armin.mahdilou@gmail.com> writes:
 
-> On Mon, 2025-02-10 at 20:25 +0100, Armin Mahdilou wrote:
->> Fixed some spelling issues in documentations.
->> 
->> Signed-off-by: Armin Mahdilou <Armin.Mahdilou@gmail.com>
-> Hi all,
->
-> Just a kind reminder about this patch.
-> I would like to know the status of it and as it's my first patch,
-> I want to know how can I track if it's merged or not.
-> Thanks in advance.
+--2ZYleMwCcuejHCJU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-It's in my queue, please be patient.
+On Tue, Feb 18, 2025 at 06:35:36PM +1000, James Calligeros wrote:
+> From: Hector Martin <marcan@marcan.st>
+>=20
+> The scale starts at -100dB, not -128dB.
 
-It would have been good for you to add Randy's ack when you reposted it;
-I can fix that when I apply it.
+As mentioned on your prior posting:
 
-Thanks,
+   https://patch.msgid.link/20250208-asoc-tas2770-v1-1-cf50ff1d59a3@kernel.=
+org
 
-jon
+--2ZYleMwCcuejHCJU
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAme0o40ACgkQJNaLcl1U
+h9CVjwf9Gbd2/n4+ovKr3KT3qVVMZdcuraD+qN1dgJ1bCMcQCSRk+JCVmiysFY6B
+H8gAIoQVrZg5f5fHJ0YkysipvuupoW8yng6Ja/WQThPxtVLkUQ2iXkX/LVsZnqr9
+XdJmvT5j7b89qzBTU2opj8pS/v2Y0KzvHMRhABFlsprr9wy2vHWOS7mttN16VviU
+h7F9UYtdCNIEQVVhm7SjeiMMrQQqpSq1rCCElqpIA2ZzyWMdDR9/jDs38ZGmMLzm
+PMFakD82X/xRK1AuMK8YM/mldl7P+pLpIQgHmkg26j0b0qcIwZSy5pTIoe+p20nr
+8ULOrHg9L29ZtEMdD8jl1XzacCbxBA==
+=XhYq
+-----END PGP SIGNATURE-----
+
+--2ZYleMwCcuejHCJU--
 
