@@ -1,94 +1,278 @@
-Return-Path: <linux-kernel+bounces-519295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23025A39B28
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:41:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F07E3A39B2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:41:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 201343A659C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:41:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 831DE7A3C82
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:40:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A77523F260;
-	Tue, 18 Feb 2025 11:41:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBC0723ED47;
+	Tue, 18 Feb 2025 11:41:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s7pg+p81"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DZLU75sp"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 846151AED5C;
-	Tue, 18 Feb 2025 11:41:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DDFF1AED5C;
+	Tue, 18 Feb 2025 11:41:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739878872; cv=none; b=qyPUkJDdascEDk7SVCsGqbnnwQpzqK6j/pHWF6gomcUDap7cjT2e+9yE89UCJVk4S51BzqkXqMVnbNX5EfP6c3DbNWL23WRhZN/wSa9hK+RSrGx7YOYxmvAsya3GWxREqDUCWyRoG7rsXP8G4gGzZRao7UQZUAy2gBDAvc2V2aE=
+	t=1739878878; cv=none; b=RtI4tfGn0QRN1yTkAGK2PwPhiZGh1OkuocecJjtrHvolF7qgWtplxnQ5UMA7rcHT5tDsV3wOAPI2hWy45Bihk1ak8CNd4RoVQ/AuxfUo7wGtNymvC28gKHdza2lSxct7YPVkEVizL2J0ULaXfIx6sHLePTNkYLH0zGAs3t7dLrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739878872; c=relaxed/simple;
-	bh=i88/DAhPDp0DA1eD5zdWXBqGIYBq8cyjbmbzVlj9+dg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=eA1SdolxBTB+coTSBaeom8t8Usxemr5ZIejDE2YBJ+nv8BScBUTSbXLu3WEtZxnbmceOBQRpSKU2KvySi6b0HRxbinElj7dLxLt7HP1oThUmXxZeh7ha6NVGIoFabQ7xTqXrGcqqXB7WanSQ/7WFKQxzNQyaOYqqzKELaNT82Z0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s7pg+p81; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F02E3C4CEE2;
-	Tue, 18 Feb 2025 11:41:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739878872;
-	bh=i88/DAhPDp0DA1eD5zdWXBqGIYBq8cyjbmbzVlj9+dg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=s7pg+p81nDT2hsjUcvU/KWZlBXw4yv2lAE4WeA2QpR8IAo4VR/fHs5nHqV9UQoUCs
-	 ROnzKSlqFV1JCdH7v1waIcz2S8SsdR0wRJEMA3tPlIqB05VbC/Mrw2h/RmZeovvkS9
-	 qiHra2R87iYBHazSTRwI1xnyPkztQCLF6arVZqEBpeXxtZTpXZ07YkUoQj6IzNiCNc
-	 OS1gZf+x6kMhxjdVdnkytqoHU9JByV5dgWII2cgMRedhCCn+zq2d27DI9LtJttZWMR
-	 E1MVV0MEsHzQDKERMkwya11bDxLO9+ojB8JorCgC1qJ9O5IzuruFIEz5G5PnvcfB+6
-	 NfGks7mUUQ9Iw==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "John Garry" <john.g.garry@oracle.com>
-Cc: "Jens Axboe" <axboe@kernel.dk>,  "Oliver Mangold"
- <oliver.mangold@pm.me>,  <linux-block@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] block: set bi_vcnt when cloning bio
-In-Reply-To: <f4f4fff4-5055-47f7-9f24-6b1780920f4d@oracle.com> (John Garry's
-	message of "Tue, 18 Feb 2025 10:40:35 +0000")
-References: <20250215-clone-bi_vcnt-v1-1-5d00c95fd53a@kernel.org>
-	<KP4HxjAbrINQTT05XxqLFD7bPj5ONsT3hTQJYUyXtoHBYc7-xFNDZUN3R8pWT-Cd1Q5fguKy97Oy8UJv5Nj1Cw==@protonmail.internalid>
-	<f4f4fff4-5055-47f7-9f24-6b1780920f4d@oracle.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Tue, 18 Feb 2025 12:40:57 +0100
-Message-ID: <87r03vfpkm.fsf@kernel.org>
+	s=arc-20240116; t=1739878878; c=relaxed/simple;
+	bh=wF8rXvzN2yvfBgACuiO5axNOTcqJ+PdAG+r1ZQvjVUQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ejmpqHTFWpGiXE4KpXt96PirQKRA9QD7YqcSYlBKXHo8cwcOMjF7l6mT7Px2mxSpn4A+HvmLKoeP6YS/PHXtmDDfv0N9OHu1m0sHeEkbnwKYgbL/IGDnqO7bVvddPsCD1dyDCg1s7efIQTaJwc99yrNRBS87YKf2RGq4ePZctw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DZLU75sp; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-546267ed92fso1646265e87.2;
+        Tue, 18 Feb 2025 03:41:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739878874; x=1740483674; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zkRhz6gX6MLEeIL6pMAG4TwyhUjxdr2UTt5I4grD+Dc=;
+        b=DZLU75spzw7pM7Tje+Xk01cP23ygESy476YzWccZm6cleKnWdakBo8CQ9DMYoFd0Yz
+         PrW5oIIuk1v4Tkxp2V+isc04Vykv+siwfXGSbiKO3tDU1mpfEHlALrrUJM2K5EXKO+Gp
+         4blY+tldFAgcYmRssmc093TSEMFQlAjsfX3LbeY5Nr0AE3/gCZxAyKnHut26Vh9R44si
+         bMXOUUXvzdKEw1CyB0c99R86gHGCwG1iV7qfNrwowmVqQOl1Qr5kGz8w3bPnk45Mw2Tk
+         MNgfQjg39iW5ic/HJu1FhNAyc7MnJEkW/9urwY8uDgkXcnlQHDMFGoMdoYwF009ZF7gP
+         bEPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739878874; x=1740483674;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zkRhz6gX6MLEeIL6pMAG4TwyhUjxdr2UTt5I4grD+Dc=;
+        b=sluu7rPAkmlcJPja/Sm4RwnsP9iNEstQIYeWWlGv2uNc22jb3lLOsawpfM9QkXCN3+
+         ygLuLmgePZ3f5RUs0G4i0iVXc/BU83NQAyYSMTmBmNdrJujr/dmYtR3nuHrj9llZcIZ1
+         K839yyHX5Dcfw+W5EbaCaYDD2mjHqP5JTvKw/mjYhzVsvsdiGpWwY10x3vFGFW5MnW/q
+         oyKF0iv7Jytyi4SGYrMm6iFsc+MLLRP8op3zg2mRdn8jPCoMq0UzGJ58aAfiLOYi4Kkm
+         VMtr7Pu1Ip8AfeR0CgfAWu08m+aY+ApHpsoJLhAySrrJBZoNZe0D1Nq42ekPY+W9IlPE
+         ++Yg==
+X-Forwarded-Encrypted: i=1; AJvYcCWaIvnNjtRsdq1qvw+vBBQHgX+ZL9+cAYBlRZmrIXjiZdbe4SO5uoisUEShnDz7cTZH/7HKFvVSdDd2qsZDrg==@vger.kernel.org, AJvYcCXI57g8pAM/NXNN7n/iCOvEPdT+vz5bt5kiswskRcHTMMgwbctA7eYtWIg/Ji3s6G4RhCmUKLCQ0BV/brMD@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVwbKtYWsmJ+p67FpRpY4oM6Z1UKaNQC7tGFAsJ3vwgPkM8zSD
+	H/Y673Y7LTi9E3qpWpX4ybPBypG1hcBTvBL4ySbBN1Mb57Jm/qbUaiw6Dxa+wjytla3ny/asFUv
+	IHAEuqBy6VqCsIfM+XDXtf2GHOrQ=
+X-Gm-Gg: ASbGncuTTLTVd68SlCgxBuD7A1KmpfVPVbemv1qesysFRr5kzFaWbaAATlR2N/aY7Ip
+	i/MTXy9KS4BH9Rqiawt0Xylrp5Hr/BTvLr1NPpgFw14veYsvOiLAkegWuWTCbeiSHzojdVU2h
+X-Google-Smtp-Source: AGHT+IGf4ANLxy5KQQuY+Wbv1CB1BHfHQsZz/lDGDTtONoXmNg2q/oI/TCf+rvuDA1oJCA6DyZcKA4jogZXi2QHu1GM=
+X-Received: by 2002:a05:6512:308d:b0:545:1db5:f224 with SMTP id
+ 2adb3069b0e04-5452fe26543mr2582500e87.11.1739878873716; Tue, 18 Feb 2025
+ 03:41:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <675d01e9.050a0220.37aaf.00be.GAE@google.com> <67af8747.050a0220.21dd3.004c.GAE@google.com>
+ <20250214152358.7ba29d10229e2155c0899774@linux-foundation.org>
+ <CAMgjq7DQm+nwTWMdWQ66WW84O6YnhRQvZEjaY3EeXZ5-iKXo-A@mail.gmail.com>
+ <CAMgjq7AqZaRuu+udJd7MyU2n3eF7wKX8bjDugFrdHYd2Lq=EXQ@mail.gmail.com> <751557A5-5417-497D-95FF-62E7CFCCDC59@gmail.com>
+In-Reply-To: <751557A5-5417-497D-95FF-62E7CFCCDC59@gmail.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Tue, 18 Feb 2025 19:40:57 +0800
+X-Gm-Features: AWEUYZl-n6u-EOjdwmIjdS9USIOkjoSfEwMG28SkMsxrFVmfCq0SfOMnmQUsVQA
+Message-ID: <CAMgjq7D_gf6Kcp3e0wLDCboHUHXpjzMsFagC83gqmAn_dvuejQ@mail.gmail.com>
+Subject: Re: [syzbot] [mm?] [bcachefs?] WARNING in lock_list_lru_of_memcg
+To: Alan Huang <mmpgouride@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, kent.overstreet@linux.dev, 
+	syzbot <syzbot+38a0cbd267eff2d286ff@syzkaller.appspotmail.com>, 
+	chengming.zhou@linux.dev, hannes@cmpxchg.org, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhocko@suse.com, 
+	muchun.song@linux.dev, roman.gushchin@linux.dev, sashal@kernel.org, 
+	shakeel.butt@linux.dev, syzkaller-bugs@googlegroups.com, willy@infradead.org, 
+	yuzhao@google.com, zhengqi.arch@bytedance.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-"John Garry" <john.g.garry@oracle.com> writes:
-
-> On 15/02/2025 10:58, Andreas Hindborg wrote:
->> When cloning a bio, the `bio.bi_vcnt` field is not cloned. This is a
->> problem if users want to perform bounds checks on the `bio.bi_io_vec`
->> field.
+On Tue, Feb 18, 2025 at 2:09=E2=80=AFAM Alan Huang <mmpgouride@gmail.com> w=
+rote:
 >
-> Is this fixing a potential problem? Or fixing a real issue?
+> On Feb 18, 2025, at 01:12, Kairui Song <ryncsn@gmail.com> wrote:
+> >
+> > On Mon, Feb 17, 2025 at 12:13=E2=80=AFAM Kairui Song <ryncsn@gmail.com>=
+ wrote:
+> >>
+> >> On Sat, Feb 15, 2025 at 7:24=E2=80=AFAM Andrew Morton <akpm@linux-foun=
+dation.org> wrote:
+> >>>
+> >>> On Fri, 14 Feb 2025 10:11:19 -0800 syzbot <syzbot+38a0cbd267eff2d286f=
+f@syzkaller.appspotmail.com> wrote:
+> >>>
+> >>>> syzbot has found a reproducer for the following issue on:
+> >>>
+> >>> Thanks.  I doubt if bcachefs is implicated in this?
+> >>>
+> >>>> HEAD commit:    128c8f96eb86 Merge tag 'drm-fixes-2025-02-14' of htt=
+ps://g..
+> >>>> git tree:       upstream
+> >>>> console output: https://syzkaller.appspot.com/x/log.txt?x=3D148019a4=
+580000
+> >>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dc776e555=
+cfbdb82d
+> >>>> dashboard link: https://syzkaller.appspot.com/bug?extid=3D38a0cbd267=
+eff2d286ff
+> >>>> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils fo=
+r Debian) 2.40
+> >>>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D12328b=
+f8580000
+> >>>>
+> >>>> Downloadable assets:
+> >>>> disk image (non-bootable): https://storage.googleapis.com/syzbot-ass=
+ets/7feb34a89c2a/non_bootable_disk-128c8f96.raw.xz
+> >>>> vmlinux: https://storage.googleapis.com/syzbot-assets/a97f78ac821e/v=
+mlinux-128c8f96.xz
+> >>>> kernel image: https://storage.googleapis.com/syzbot-assets/f451cf16f=
+c9f/bzImage-128c8f96.xz
+> >>>> mounted in repro: https://storage.googleapis.com/syzbot-assets/a7da7=
+83f97cf/mount_3.gz
+> >>>>
+> >>>> IMPORTANT: if you fix the issue, please add the following tag to the=
+ commit:
+> >>>> Reported-by: syzbot+38a0cbd267eff2d286ff@syzkaller.appspotmail.com
+> >>>>
+> >>>> ------------[ cut here ]------------
+> >>>> WARNING: CPU: 0 PID: 5459 at mm/list_lru.c:96 lock_list_lru_of_memcg=
++0x39e/0x4d0 mm/list_lru.c:96
+> >>>
+> >>>        VM_WARN_ON(!css_is_dying(&memcg->css));
+> >>
+> >> I'm checking this, when last time this was triggered, it was caused by
+> >> a list_lru user did not initialize the memcg list_lru properly before
+> >> list_lru reclaim started, and fixed by:
+> >> https://lore.kernel.org/all/20241222122936.67501-1-ryncsn@gmail.com/T/
+> >>
+> >> This shouldn't be a big issue, maybe there are leaks that will be
+> >> fixed upon reparenting, and this new added sanity check might be too
+> >> lenient, I'm not 100% sure though.
+> >>
+> >> Unfortunately I couldn't reproduce the issue locally with the
+> >> reproducer yet. will keep the test running and see if it can hit this
+> >> WARN_ON.
+> >
+> > So far I am still unable to trigger this VM_WARN_ON using the
+> > reproducer, and I'm seeing many other random crashes.
+> >
+> > But after I changed the .config a bit adding more debug configs
+> > (SLAB_FREELIST_HARDENED, DEBUG_PAGEALLOC), following crash showed up
+> > and will be triggered immediately after I start the test:
+> >
+> > [ T1242] BUG: unable to handle page fault for address: ffff888054c60000
+> > [ T1242] #PF: supervisor read access in kernel mode
+> > [ T1242] #PF: error_code(0x0000) - not-present page
+> > [ T1242] PGD 19e01067 P4D 19e01067 PUD 19e04067 PMD 7fc5c067 PTE
+> > 800fffffab39f060
+> > [ T1242] Oops: Oops: 0000 [#1] PREEMPT SMP DEBUG_PAGEALLOC KASAN PTI
+> > [ T1242] CPU: 1 UID: 0 PID: 1242 Comm: kworker/1:1H Not tainted
+> > 6.14.0-rc2-00185-g128c8f96eb86 #2
+> > [ T1242] Hardware name: Red Hat KVM/RHEL-AV, BIOS
+> > 1.16.0-4.module+el8.8.0+664+0a3d6c83 04/01/2014
+> > [ T1242] Workqueue: bcachefs_btree_read_complete btree_node_read_work
+> > [ T1242] RIP: 0010:validate_bset_keys+0xae3/0x14f0
+> > [ T6058] bcachefs (loop2): empty btree root xattrs
+> > [ T1242] Code: 49 39 df 0f 87 fc 09 00 00 e8 79 54 a8 fd 41 0f b7 c6
+> > 48 8b 4c 24 68 48 8d 04 c1 4c 29 f8 48 c1 e8 03 89 c1 48 89 de 4c 89
+> > ff <f3> 48 a5 48 8b bc 24 c8 00 00 08
+> > [ T1242] RSP: 0018:ffffc900070a72c0 EFLAGS: 00010206
+> > [ T1242] RAX: 000000000000ec0f RBX: ffff888054c20110 RCX: 0000000000006=
+c31
+> > [ T1242] RDX: 0000000000000000 RSI: ffff888054c60000 RDI: ffff888054c5f=
+f90
+> > [ T1242] RBP: ffffc900070a7570 R08: ffff888065e001af R09: 1ffff1100cbc0=
+035
+> > [ T1242] R10: dffffc0000000000 R11: ffffed100cbc0036 R12: ffff888054c20=
+09e
+> > [ T1242] R13: dffffc0000000000 R14: 000000000000ec0f R15: ffff888054c20=
+0a0
+> > [ T1242] FS:  0000000000000000(0000) GS:ffff88807ea00000(0000)
+> > knlGS:0000000000000000
+> > [ T1242] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > [ T1242] CR2: ffff888054c60000 CR3: 000000006cea6000 CR4: 0000000000000=
+6f0
+> > [ T1242] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000=
+000
+> > [ T1242] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000=
+400
+> > [ T1242] Call Trace:
+> > [ T1242]  <TASK>
+> > [ T1242]  bch2_btree_node_read_done+0x1d20/0x53a0
+> > [ T1242]  btree_node_read_work+0x54d/0xdc0
+> > [ T1242]  process_scheduled_works+0xaf8/0x17f0
+> > [ T1242]  worker_thread+0x89d/0xd60
+> > [ T1242]  kthread+0x722/0x890
+> > [ T1242]  ret_from_fork+0x4e/0x80
+> > [ T1242]  ret_from_fork_asm+0x1a/0x30
+> > [ T1242]  </TASK>
+> > [ T1242] Modules linked in:
+> > [ T1242] ---[ end trace 0000000000000000 ]---
+> > [ T1242] RIP: 0010:validate_bset_keys+0xae3/0x14f0
+> > [ T1242] Code: 49 39 df 0f 87 fc 09 00 00 e8 79 54 a8 fd 41 0f b7 c6
+> > 48 8b 4c 24 68 48 8d 04 c1 4c 29 f8 48 c1 e8 03 89 c1 48 89 de 4c 89
+> > ff <f3> 48 a5 48 8b bc 24 c8 00 00 08
+> > [ T1242] RSP: 0018:ffffc900070a72c0 EFLAGS: 00010206
+> > [ T1242] RAX: 000000000000ec0f RBX: ffff888054c20110 RCX: 0000000000006=
+c31
+> > [ T1242] RDX: 0000000000000000 RSI: ffff888054c60000 RDI: ffff888054c5f=
+f90
+> > [ T1242] RBP: ffffc900070a7570 R08: ffff888065e001af R09: 1ffff1100cbc0=
+035
+> > [ T1242] R10: dffffc0000000000 R11: ffffed100cbc0036 R12: ffff888054c20=
+09e
+> > [ T1242] R13: dffffc0000000000 R14: 000000000000ec0f R15: ffff888054c20=
+0a0
+> > [ T1242] FS:  0000000000000000(0000) GS:ffff88807ea00000(0000)
+> > knlGS:0000000000000000
+> > [ T1242] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > [ T1242] CR2: ffff888054c60000 CR3: 000000006cea6000 CR4: 0000000000000=
+6f0
+> > [ T1242] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000=
+000
+> > [ T1242] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000=
+400
+> > [ T1242] Kernel panic - not syncing: Fatal exception
+> > [ T1242] Kernel Offset: disabled
+> > [ T1242] Rebooting in 86400 seconds..
+> >
+> > It's caused by the memmove_u64s_down in validate_bset_keys of
+> > fs/bcachefs/btree_io.c:
+> > -> memmove_u64s_down(k, bkey_p_next(k), (u64 *) vstruct_end(i) - (u64 *=
+) k);
+>
+>
+> Might need this.
+>
+> diff --git a/fs/bcachefs/btree_io.c b/fs/bcachefs/btree_io.c
+> index e71b278672b6..fb53174cb735 100644
+> --- a/fs/bcachefs/btree_io.c
+> +++ b/fs/bcachefs/btree_io.c
+> @@ -997,7 +997,7 @@ static int validate_bset_keys(struct bch_fs *c, struc=
+t btree *b,
+>                 }
+>  got_good_key:
+>                 le16_add_cpu(&i->u64s, -next_good_key);
+> -               memmove_u64s_down(k, bkey_p_next(k), (u64 *) vstruct_end(=
+i) - (u64 *) k);
+> +               memmove_u64s_down(k, bkey_p_next(k), (u64 *) vstruct_end(=
+i) - (u64 *) bkey_p_next(k));
+>                 set_btree_node_need_rewrite(b);
+>         }
+>  fsck_err:
+>
 
-It is fixing a problem I ran into in rnull, the rust null block
-implementation. When running with debug assertions enabled, a bound
-check on `bi_io_vec` fails for split bio, because `bio_vcnt` becomes
-zero in the cloned bio.
+Thanks, but this didn't fix everything. I think the problem is more
+complex, syzbot seems to be trying to mount damaged bcachefs (on
+purpose I think), so the vstruct_end(i) is already returning an offset
+that is out of border.
 
-I can work around this by not using a slice type to represent
-`bi_io_vec` in rust, not a big deal.
-
-But I am genuinely curious if there is a reason for not setting
-`bi_vcnt` during a clone. As far as I can tell, it should be safe to
-set. `bi_vcnt` being zero does not seem to have any effect other than to
-puzzle developers debugging the code.
-
-Maybe I missed something?
-
-
-Best regards,
-Andreas Hindborg
-
-
+I retriggered it and print some more debug info: i->_data is
+ffff88806d5c00a0, i->u64s is 60928, and the faulting address is
+ffff88806d600000.
 
