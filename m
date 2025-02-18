@@ -1,119 +1,452 @@
-Return-Path: <linux-kernel+bounces-519474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D1C3A39D33
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:18:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE896A39D4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:24:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D2937A1D91
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:17:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40480165203
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:18:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CE9126770F;
-	Tue, 18 Feb 2025 13:18:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98B8E2673B4;
+	Tue, 18 Feb 2025 13:18:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="LVJB6exv"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="NEXXYBrl"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8324D22F155;
-	Tue, 18 Feb 2025 13:18:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739884704; cv=none; b=PdKyNB+OO48QfT1d0T+q33/6Jd5iwK908xxDvE9139PbN8tGcvmBtk0T2Pu5fLf+jljKdQrghPyqRqqflKeUzvRl2dYhipW1Jehjf4e7UjXV18uE8eptTEgVhUcn3WgIKWrKgrtxxboB527ep81aKFDNKCWQv3k6U/Ayq+vOGzA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739884704; c=relaxed/simple;
-	bh=kA2fNkwc5OPwz2/SzwDsSIfywB8B4X2oTdGgdzJp50M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=teyXKR6Jex/Ojtkp6ORhCZEe4mPpv1+egRbXjnV3sBp7B6GvbZzE4Nmg9wIFi7YNA2OUzk/k8qiAgnb50AT5HWFdcj2VUvyn0tyKj+XapDpe/UvxwlW6dty8YqCOR+hyoeId07u/Rnvwpuznvb2f2dz0c+k1RsB9zU08JPA3API=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=LVJB6exv; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 29EF840E0176;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5E2A14E2E2;
 	Tue, 18 Feb 2025 13:18:20 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 8jD86xlP2WPL; Tue, 18 Feb 2025 13:18:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1739884695; bh=Yk6zcbDKLG3prX/xnIegA4Rq9Tk3/+CrjBLDfzcnems=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LVJB6exvo+MT16YysdP91iU2FZ0VWnfLJXQAD4cEzMW9B4T10f441F3zItxv9+yDt
-	 iCyjFo+bRq630mvyVn5DzdEC2UzvDYdi6Ad69e0XmUY428vUEQycMFpyzU3QcYyQUK
-	 vHBaWQo/KgIJUVS5hwC93VJkQWajSnjkpzxvehebjzj5r8lTThwAxXaAsN22w5DN4b
-	 EjT/gd4cRJZ5i9AUOZubsX4m6ytFxx40BQJL5O0t8piYeLxJvN5BTtR9lnP7tYWS21
-	 fs0e9uzlMzrUumi7jRaJKQBTYA2g+IuAHus7JULZCBFrypI+xZTjQv5xqMl4Z3Brgl
-	 KckUF1PktjfbqT54m3IlqAMD4c0p70hM1bQ/tDTnLUxN7/DPo6/xOFP6+/nOvuBaZc
-	 DlQmXVg1Ef+/w9pRMqTcU5In/KdZZ77agV12OLj/Aj1kD9Uq/aBVybCaoWbJO8ucAN
-	 qg54WoavkVj/V2OR2B8cgPzGIhGJRtkbfOkgw71Y8oPlx1MrLgc7hovwlaUot1PPut
-	 3ni0H4vPGpvVn/XG0StcbggJxvP8zyAia3esp2ErlDWfCUonCvIvYI15JcEYkzeHjY
-	 AI4taU2lAMMmZOizUYEMOMhGwGDCLsOYeNMfxuRwZtKwgldtyzOvTAKtaGqXss3F59
-	 jEHZ8Cx0gmdsmXeIuN0ALbfE=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739884702; cv=none; b=AZd370b2jb6dJ4qlacQPGoYLlWBeA9/EjeVvV4UmV2qxBzEQPvZZ3+FxDuYwbHcQdciV+9ZAR/d4fxbYIs/z9p2oSDz9UKCNt5pGo5g3stWJeqmS73vvG+EWA5XZWXw3zbgz5JTtkExjRwAW/iLUvuqXhwwGR0rl7NOZEIxLooM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739884702; c=relaxed/simple;
+	bh=qRk4j53lVB7FEHXKltoWq+UEMmzfmhZUgATQ1zdoUhA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Tk0pfZrXasuz5rIVD47pal0EgSJ4YIbz0m8mAVzfGxJ4xFQnghMEJHOb+i9AyMXxKsChJLTmnA1z4VZL/Gr2mlHRowItefR42zZsG7QNFHU/yBSJAWYoVntxk4b2gWRQh1gPeqtiaH16xlN6smJ7T+Mth1k9Om6gi3biTk/NDso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=NEXXYBrl; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1739884698;
+	bh=qRk4j53lVB7FEHXKltoWq+UEMmzfmhZUgATQ1zdoUhA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=NEXXYBrlzizv19XYV6v6Mk7Kh6oUFjKcuqHZxeuwMjrxx5KkiHPaKs2Tftp9OS7oe
+	 11M0LwsI7OPyhzIsB2CPUi/VCZrsEjWJ5v9mCDbbyx7ap/s3wIdHcDm6iLgYXeYsDi
+	 RzsY0TX3IF8MJQglqvkoBzMITXMcnzJZdMZUujC3anU70NBUDNM8LitTPubbecl/dN
+	 Xp4372euwvf9D7rpGTjviR4neFS2T80Fu7CDMFsDIQc3A3xyAm6Bg1VBbLr1K0nPnD
+	 zh3gg4nT4ojSX4SFP4xIYoyrkGSt35hxGFm13h32GGypz/+Fd7aL06yUyvE9hW3fbH
+	 YjyxuEHyBBAUg==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6707640E01A1;
-	Tue, 18 Feb 2025 13:17:58 +0000 (UTC)
-Date: Tue, 18 Feb 2025 14:17:53 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-Cc: tony.luck@intel.com, nao.horiguchi@gmail.com, tglx@linutronix.de,
-	mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org,
-	hpa@zytor.com, linmiaohe@huawei.com, akpm@linux-foundation.org,
-	peterz@infradead.org, jpoimboe@kernel.org,
-	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, baolin.wang@linux.alibaba.com,
-	tianruidong@linux.alibaba.com
-Subject: Re: [PATCH v2 0/5] mm/hwpoison: Fix regressions in memory failure
- handling
-Message-ID: <20250218131753.GIZ7SIgRZBJokysBeX@fat_crate.local>
-References: <20250217063335.22257-1-xueshuai@linux.alibaba.com>
- <20250218082727.GCZ7REb7OG6NTAY-V-@fat_crate.local>
- <7393bcfb-fe94-4967-b664-f32da19ae5f9@linux.alibaba.com>
- <20250218122417.GHZ7R78fPm32jKYUlx@fat_crate.local>
- <02164ab7-c65b-4b2e-8686-5539bdcb8f43@linux.alibaba.com>
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id DF03517E0657;
+	Tue, 18 Feb 2025 14:18:17 +0100 (CET)
+Message-ID: <89fb495b-0171-49b3-a34b-022ba04f54df@collabora.com>
+Date: Tue, 18 Feb 2025 14:18:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <02164ab7-c65b-4b2e-8686-5539bdcb8f43@linux.alibaba.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/13] ASoC: dt-bindings: Add document for mt6359-accdet
+To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>, Sen Chu <sen.chu@mediatek.com>,
+ Sean Wang <sean.wang@mediatek.com>, Macpaul Lin <macpaul.lin@mediatek.com>,
+ Lee Jones <lee@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>
+Cc: kernel@collabora.com, linux-sound@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ linux-pm@vger.kernel.org
+References: <20250214-mt6359-accdet-dts-v1-0-677a151b9b4c@collabora.com>
+ <20250214-mt6359-accdet-dts-v1-1-677a151b9b4c@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250214-mt6359-accdet-dts-v1-1-677a151b9b4c@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 18, 2025 at 09:08:25PM +0800, Shuai Xue wrote:
-> Yes, the poison is found on user pages.
+Il 14/02/25 18:18, Nícolas F. R. A. Prado ha scritto:
+> Add dt-binding for the MT6359 ACCDET hardware block.
 > 
-> Form commit log, the mechanism is added by Tony and suggested by you.
-> https://lkml.kernel.org/r/20210818002942.1607544-3-tony.luck@intel.com
-
-I'm not talking about how it is detected - I'm asking about *what* you're
-doing exactly. I want to figure out what and why you're doing what you're
-doing.
-
-> It's the same as with real issue. There's no magic to it.
-
-Magic or not, doesn't matter. The only question is whether this can happen in
-real life and it is not just you using some tools and "fixing" things that
-ain't broke.
-
-> > What do futexes have to do with copying user memory?
+> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+> ---
+>   .../bindings/sound/mediatek,mt6359-accdet.yaml     | 293 +++++++++++++++++++++
+>   1 file changed, 293 insertions(+)
 > 
-> Return -EFAULT to userspace.
+> diff --git a/Documentation/devicetree/bindings/sound/mediatek,mt6359-accdet.yaml b/Documentation/devicetree/bindings/sound/mediatek,mt6359-accdet.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..8922003d3b9d039d2a0355add7a90cf42b1a9da6
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/mediatek,mt6359-accdet.yaml
+> @@ -0,0 +1,293 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/sound/mediatek,mt6359-accdet.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: MT6359 Accessory Detection
+> +
+> +maintainers:
+> +  - Nícolas F. R. A. Prado <nfraprado@collabora.com>
+> +
+> +description: |
+> +  The MT6359 Accessory Detection block is part of the MT6359 PMIC and allows
+> +  detecting audio jack insertion and removal, as well as identifying the type of
+> +  events connected to the jack.
+> +
+> +properties:
+> +  compatible:
+> +    const: mediatek,mt6359-accdet
+> +
+> +  mediatek,mic-vol:
 
-This doesn't even begin to answer my question so I'll ask again:
+mediatek,micbias1-microvolts = <1700000>;
 
-"What do futexes have to do with copying user memory?"
+enum: [1700000, 1800000 ... etc ]
 
--- 
-Regards/Gruss,
-    Boris.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: MIC bias1 output voltage setting
+> +    enum:
+> +      - 0 # 1.7V
+> +      - 1 # 1.8V
+> +      - 2 # 1.9V
+> +      - 3 # 2.0V
+> +      - 4 # 2.1V
+> +      - 5 # 2.5V
+> +      - 6 # 2.6V
+> +      - 7 # 2.7V
+> +      - 8 # 2.8V
+> +      - 9 # 2.85V
+> +
+> +  mediatek,mic-mode:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: Mic mode setting
+> +    enum:
+> +      - 1 # ACC
+> +      - 2 # DCC mode. Low cost mode without internal bias
+> +      - 6 # DCC mode. Low cost mode with internal bias
 
-https://people.kernel.org/tglx/notes-about-netiquette
+This is already defined in mt6359.yaml....?!
+
+> +
+> +  mediatek,eint-cmpmen-pwm-width:
+
+mediatek,eint-cmpm-pwm-width-ms:
+
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: EINT CMPMEN PWM width
+
+P.S.: CMPMEN = CoMParator Monitor ENable
+
+description: EINT Comparator Monitor PWM Width
+
+enum: [50, 80, 100, 200, 400, 500, 800, 1000]
+
+> +    enum:
+> +      - 0 # 50ms
+> +      - 1 # 80ms
+> +      - 2 # 100ms
+> +      - 3 # 200ms
+> +      - 4 # 400ms
+> +      - 5 # 500ms
+> +      - 6 # 800ms
+> +      - 7 # 1000ms
+> +
+> +  mediatek,eint-cmpmen-pwm-thresh:
+
+mediatek,eint-cmpm-pwm-threshold-ms:
+
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: EINT CMPMEN PWM threshold
+
+description: EINT Comparator Monitor PWM Threshold
+
+enum: [1, 2, 3, 4, 5, 8, 10, 20, 30]
+
+> +    enum:
+> +      - 0 # 1ms
+> +      - 1 # 2ms
+> +      - 2 # 4ms
+> +      - 3 # 5ms
+> +      - 4 # 8ms
+> +      - 5 # 10ms
+> +      - 6 # 20ms
+> +      - 7 # 30ms
+> +
+> +  mediatek,pwm-width:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: PWM width
+> +    minimum: 0
+> +    maximum: 65535
+> +
+> +  mediatek,pwm-thresh:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: PWM threshold
+> +    minimum: 0
+> +    maximum: 65535
+
+You can simplify those two with one param "mediatek,pwm-duty-cycle", I think.
+But then, regardless, you still need to express this in decent units...
+
+make a few calculations - but the equation is...
+
+PWM Width      = (32768 / (mediatek,pwm-width + 1)) [hertz]
+PWM Duty Cycle = ((mediatek,pwm-thresh + 1) / (mediatek,pwm-width + 1)) [ns?]
+PWM High Time  = (mediatek,pwm-thresh + 1) / 32768 [seconds]
+
+> +
+> +  mediatek,pwm-rise-delay:
+
+mediatek,pwm-rise-delay-cycle:
+
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: Rise delay for PWM
+
+description: Rising delay of PWM waveform in cycles
+
+> +    minimum: 0
+> +    maximum: 65535
+> +
+> +  mediatek,pwm-fall-delay:
+
+same for the falling one
+
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: Fall delay for PWM
+> +    minimum: 0
+> +    maximum: 65535
+> +
+> +  mediatek,debounce0:
+
+mediatek,adc-debounce-ns = < debounce0 debounce1 debounce2 debounce3 >
+
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: Debounce time for state 0
+> +    minimum: 0
+> +    maximum: 65535
+> +
+> +  mediatek,debounce1:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: Debounce time for state 1
+> +    minimum: 0
+> +    maximum: 65535
+> +
+> +  mediatek,debounce3:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: Debounce time for state 3
+> +    minimum: 0
+> +    maximum: 65535
+> +
+> +  mediatek,debounce-auxadc:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: Debounce time for AUXADC
+> +    minimum: 0
+> +    maximum: 65535
+> +
+
+mediatek,eint-debounce-ns = < same as adc-debounce-ns >
+
+> +  mediatek,eint-debounce0:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: Debounce time for EINT state 0
+> +    enum:
+> +      - 0 # 0ms
+> +      - 1 # 0.12ms
+> +      - 2 # 0.25ms
+> +      - 3 # 0.5ms
+> +      - 4 # 0.75ms
+> +      - 5 # 1ms
+> +      - 6 # 2ms
+> +      - 7 # 4ms
+> +      - 8 # 8ms
+> +      - 9 # 16ms
+> +      - 10 # 32ms
+> +      - 11 # 48ms
+> +      - 12 # 64ms
+> +      - 13 # 128ms
+> +      - 14 # 256ms
+> +      - 15 # 512ms
+> +
+> +  mediatek,eint-debounce1:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: Debounce time for EINT state 1
+> +    enum:
+> +      - 0 # 0ms
+> +      - 1 # 0.5ms
+> +      - 2 # 0.75ms
+> +      - 3 # 0.9ms
+> +      - 4 # 1.5ms
+> +      - 5 # 1.8ms
+> +      - 6 # 3ms
+> +      - 7 # 3.5ms
+> +      - 8 # 3.8ms
+> +      - 9 # 16ms
+> +      - 10 # 32ms
+> +      - 11 # 48ms
+> +      - 12 # 64ms
+> +      - 13 # 128ms
+> +      - 14 # 256ms
+> +      - 15 # 512ms
+> +
+> +  mediatek,eint-debounce2:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: Debounce time for EINT state 2
+> +    enum:
+> +      - 0 # 0ms
+> +      - 1 # 0.5ms
+> +      - 2 # 0.75ms
+> +      - 3 # 0.9ms
+> +      - 4 # 1.5ms
+> +      - 5 # 1.8ms
+> +      - 6 # 3ms
+> +      - 7 # 3.5ms
+> +      - 8 # 3.8ms
+> +      - 9 # 4ms
+> +      - 10 # 4.5ms
+> +      - 11 # 5ms
+> +      - 12 # 7ms
+> +      - 13 # 9ms
+> +      - 14 # 19ms
+> +      - 15 # 25ms
+> +
+> +  mediatek,eint-debounce3:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: Debounce time for EINT state 3
+> +    enum:
+> +      - 0 # 0ms
+> +      - 1 # 0.12ms
+> +      - 2 # 0.25ms
+> +      - 3 # 0.5ms
+> +      - 4 # 0.75ms
+> +      - 5 # 1ms
+> +      - 6 # 2ms
+> +      - 7 # 4ms
+> +      - 8 # 8ms
+> +      - 9 # 16ms
+> +      - 10 # 32ms
+> +      - 11 # 48ms
+> +      - 12 # 64ms
+> +      - 13 # 128ms
+> +      - 14 # 256ms
+> +      - 15 # 512ms
+> +
+> +  mediatek,eint-inverter-debounce:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: Debounce time for EINT inverter
+> +    enum:
+> +      - 0 # 0ms
+> +      - 1 # 0.12ms
+> +      - 2 # 0.25ms
+> +      - 3 # 0.5ms
+> +      - 4 # 0.75ms
+> +      - 5 # 1ms
+> +      - 6 # 2ms
+> +      - 7 # 4ms
+> +      - 8 # 8ms
+> +      - 9 # 16ms
+> +      - 10 # 32ms
+> +      - 11 # 48ms
+> +      - 12 # 64ms
+> +      - 13 # 128ms
+> +      - 14 # 256ms
+> +      - 15 # 512ms
+> +
+> +  mediatek,eint-detect-mode:
+
+This is fine, I think.
+
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: EINT detection mode
+> +    enum:
+> +      - 0 # Higher detection power
+> +      - 1 # Lower detection power
+> +      - 2 # SW moisture detection mode1
+> +      - 3 # HW moisture detection mode1
+> +      - 4 # HW moisture detection mode2
+> +
+> +  mediatek,eint-num:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: EINT interrupt that should be enabled
+> +    enum:
+> +      - 0 # EINT0
+> +      - 1 # EINT1
+> +      - 2 # EINT0 | EINT1
+> +
+> +  mediatek,eint-use-ext-res:
+> +    type: boolean
+> +    description:
+> +      Whether an external resistor should be used for the HP_EINT signal.
+> +      By default an internal pull-up resistor is used.
+> +
+> +  mediatek,eint-comp-vth:
+
+mediatek,eint-comp-vth-microvolts = ....
+
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: EINT comparator threshold
+> +    enum:
+> +      - 0 # 2.4V
+> +      - 1 # 2V
+> +      - 2 # 1.6V
+> +      - 3 # 1.2V
+> +      - 4 # 0.8V
+> +
+
+...and that's more or less it....
+
+Cheers,
+Angelo
+
+> +  mediatek,eint-level-pol:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: EINT interrupt polarity
+> +
+> +required:
+> +  - compatible
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    accdet: accdet {
+> +        compatible = "mediatek,mt6359-accdet";
+> +        mediatek,mic-vol = <8>;
+> +        mediatek,mic-mode = <2>;
+> +        mediatek,pwm-width = <0x500>;
+> +        mediatek,pwm-thresh = <0x500>;
+> +        mediatek,pwm-fall-delay = <1>;
+> +        mediatek,pwm-rise-delay = <0x1f0>;
+> +        mediatek,debounce0 = <0x800>;
+> +        mediatek,debounce1 = <0x800>;
+> +        mediatek,debounce3 = <0x20>;
+> +        mediatek,debounce-auxadc = <0x44>;
+> +        mediatek,eint-cmpmen-pwm-width = <4>;
+> +        mediatek,eint-cmpmen-pwm-thresh = <1>;
+> +        mediatek,eint-debounce0 = <5>;
+> +        mediatek,eint-debounce1 = <3>;
+> +        mediatek,eint-debounce2 = <3>;
+> +        mediatek,eint-debounce3 = <5>;
+> +        mediatek,eint-inverter-debounce = <0xe>;
+> +        mediatek,eint-detect-mode = <4>;
+> +        mediatek,eint-num = <0>;
+> +        mediatek,eint-comp-vth = <2>;
+> +        mediatek,eint-level-pol = <IRQ_TYPE_LEVEL_LOW>;
+> +    };
+> 
+
 
