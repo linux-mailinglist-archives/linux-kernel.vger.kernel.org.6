@@ -1,112 +1,181 @@
-Return-Path: <linux-kernel+bounces-518649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C34D2A39291
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 06:24:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EB9DA3928D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 06:23:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0D823B4352
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 05:23:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F36C7A2775
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 05:22:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 689391B4140;
-	Tue, 18 Feb 2025 05:23:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 161E81922D4;
+	Tue, 18 Feb 2025 05:23:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Cc5/0kro"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jEAN0Y2N"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9EC11AF0C0;
-	Tue, 18 Feb 2025 05:23:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE72F1B042A;
+	Tue, 18 Feb 2025 05:23:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739856204; cv=none; b=cJp7xOspFhGxL3kRUW1CEAyrBGHXjS9O4qstoSzVgEJ9Dt9iLpzao002VsuEgvomwkpvotAHkjHAcjFtbJjOXWjvUhq2aaJzScy492n9r6b9/NXg7BPl30n+pFeR6hGc77k4svw//7YTpz+fKMuIW8VOm1EfaYCv9B+8FW5Nviw=
+	t=1739856201; cv=none; b=pDHKyqIBfPgX5XyFXmf2Sm4ox8hAbciu8AA7LYPyg8ZKZN0xH3dl+Zz75RYavFao8gLCDFnC0c8g4Vb5sxINNpPkobmRlrfk+M0+404V0+EtXmXXiBsKOvcfHXKJJi2sOryJ3AEvekG9wifwJRbPKSaGGstsH5bhgHGsGNUltSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739856204; c=relaxed/simple;
-	bh=77tZbCXU0gOTWWDTG0Q2sa76sq1j0rrk/C0uaK6xB5w=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rLfRXfXY+eXPqTBhHT2RRUo8HcDLkN1s+Pnigw0MGK2CENOPzVwgvZ71AiMPj7q+RpQLrEnwJPgdJamG+Ara9D62VLi+twBRfPxBw07oJ2mligF1SYuayfD5vnPNn+B+Fcth5N2GKC6weMiGEr/RcSzp2mVO6tVR11dAxvFt4ho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Cc5/0kro; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51I5N5Q1647929
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Mon, 17 Feb 2025 23:23:05 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1739856185;
-	bh=5/r3Cd3a5F8RDl+gpGHajtVIDh7k0BuAfKXauxlaFPE=;
-	h=From:To:CC:Subject:Date;
-	b=Cc5/0krozeeWVCsdf1M4B+5WhdBjTJbBb5QQErFBuYQ7t9e0NLAKdPLAnAxUqFtsn
-	 ftrUba56WmO2YUpjDnT1M/DNaiGbgCEi3vsWVZvtK6KbivB/fFQ+p7k1oIp0wW5zNq
-	 w9ajz8QEF44/DO+UH4Woe/vWolZQwUkGC14LVf0g=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51I5N5Cg079664;
-	Mon, 17 Feb 2025 23:23:05 -0600
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 17
- Feb 2025 23:23:04 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 17 Feb 2025 23:23:04 -0600
-Received: from ubuntu.myguest.virtualbox.org (ltpw09g681.dhcp.ti.com [172.24.29.106])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51I5N0Zb109957;
-	Mon, 17 Feb 2025 23:23:01 -0600
-From: Keerthy <j-keerthy@ti.com>
-To: <robh+dt@kernel.org>, <nm@ti.com>, <vigneshr@ti.com>,
-        <conor+dt@kernel.org>, <kristo@kernel.org>, <krzk+dt@kernel.org>
-CC: <j-keerthy@ti.com>, <u-kumar1@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: [PATCH v2] arm64: dts: ti: k3-j784s4-j742s2-main-common: Correct the GICD size
-Date: Tue, 18 Feb 2025 10:52:48 +0530
-Message-ID: <20250218052248.4734-1-j-keerthy@ti.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1739856201; c=relaxed/simple;
+	bh=mC5Eya+d05zLAwz/V6r20dwxLOZDD6wms97Rf5Ryo1E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=lXIRFusPyfYe0I8KbBK6S1e2scsfHUJyVgfINJ9kfBP7a2Or9aiLOmLjd2sbU//j6CEDyElN5ET6zD1tpRcC7UKbj9t23P+/EZdSUymCzI0k70nN+Gecs7Mqg/FEnUYMhkgCJ0IP652IqRuQkkjl60ImawrLf0EHHeAZebNEGlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jEAN0Y2N; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51HLrlG4005929;
+	Tue, 18 Feb 2025 05:23:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	e8lsoWpvtNk9BqgA0uweAnSJzppunK4d0+Z7XDw8AQk=; b=jEAN0Y2NmKMuB+6d
+	dcuPkcm1JwRizmsBvvDQVO+2Fyuh3aNcJMgFRoYuGQWGPl/wU6Ri8DBMvce5eTLi
+	8bSIKoB115Uy1wGhYePMkkRhrppVqBGEYVIIpptpH3iTx98fbxiw8i50KU49QTUa
+	Bg2D+6P06CbwuKUfNyfuz4HjmAflUxqCzktGX2wvHgNuRX+WjTmvNza+XCp1z82j
+	oTqptjuG+6L4/5wiBuJKzBuaeAkqW5o3rIFgmJtRlrbCt8RaWYJmLcpfMzD35nEp
+	nL+BfztYkGHzxHbxHcTQYf+JVDTPUSZGnQfPnW/G3IRwaKvOf19wycStwUWcj0IB
+	SUWRrw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44ut7uupfe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Feb 2025 05:23:14 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51I5NDel002068
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Feb 2025 05:23:13 GMT
+Received: from [10.217.216.53] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 17 Feb
+ 2025 21:23:08 -0800
+Message-ID: <30e84d27-6047-492a-8602-8822b5d492fe@quicinc.com>
+Date: Tue, 18 Feb 2025 10:53:05 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/4] clk: qcom: lpassaudiocc-sc7280: Add support for
+ LPASS resets for QCM6490
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Ajit Pandey
+	<quic_ajipan@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        "Jagadeesh Kona" <quic_jkona@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250212-lpass_qcm6490_resets-v3-0-0b1cfb35b38e@quicinc.com>
+ <20250212-lpass_qcm6490_resets-v3-2-0b1cfb35b38e@quicinc.com>
+ <exyxni7td5vow2n6jarav5euje6dnbue5f5yxzu6az554dthfe@zn5yd2byvkoj>
+ <ccc87c55-d157-4ffc-8081-1a5900752931@quicinc.com>
+ <CAA8EJpp7e5q36jGmB-TZX5A=XVGKsDtmBF8kJmxoga8NqGZP1A@mail.gmail.com>
+ <c820c697-c3ec-4ae3-9720-fb80cb3a0450@quicinc.com>
+ <CAA8EJpon5+R5s0HXUmoikjtuyEf3sQUqBVYvWrxuh14h2DvjQg@mail.gmail.com>
+Content-Language: en-US
+From: Taniya Das <quic_tdas@quicinc.com>
+In-Reply-To: <CAA8EJpon5+R5s0HXUmoikjtuyEf3sQUqBVYvWrxuh14h2DvjQg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: zSNxUH2V1gOBfCfc3ZXUsMfssq3VeSDc
+X-Proofpoint-ORIG-GUID: zSNxUH2V1gOBfCfc3ZXUsMfssq3VeSDc
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-18_01,2025-02-18_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ mlxlogscore=999 spamscore=0 clxscore=1015 malwarescore=0 bulkscore=0
+ mlxscore=0 impostorscore=0 lowpriorityscore=0 phishscore=0 adultscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502180038
 
-Currently we get the warning:
 
-"GICv3: [Firmware Bug]: GICR region 0x0000000001900000 has
-overlapping address"
 
-As per TRM GICD is 64 KB. Fix it by correcting the size of GICD.
+On 2/13/2025 7:58 PM, Dmitry Baryshkov wrote:
+>>>>>>  static const struct qcom_cc_desc lpass_audio_cc_reset_sc7280_desc = {
+>>>>>> -    .config = &lpass_audio_cc_sc7280_regmap_config,
+>>>>>> +    .config = &lpass_audio_cc_sc7280_reset_regmap_config,
+>>>>>>      .resets = lpass_audio_cc_sc7280_resets,
+>>>>>>      .num_resets = ARRAY_SIZE(lpass_audio_cc_sc7280_resets),
+>>>>>>  };
+>>>>>>
+>>>>>>  static const struct of_device_id lpass_audio_cc_sc7280_match_table[] = {
+>>>>>> -    { .compatible = "qcom,sc7280-lpassaudiocc" },
+>>>>>> +    { .compatible = "qcom,qcm6490-lpassaudiocc", .data = &lpass_audio_cc_reset_sc7280_desc },
+>>>>>> +    { .compatible = "qcom,sc7280-lpassaudiocc", .data = &lpass_audio_cc_sc7280_desc },
+>>>>>>      { }
+>>>>>>  };
+>>>>>>  MODULE_DEVICE_TABLE(of, lpass_audio_cc_sc7280_match_table);
+>>>>>> @@ -752,13 +763,17 @@ static int lpass_audio_cc_sc7280_probe(struct platform_device *pdev)
+>>>>>>      struct regmap *regmap;
+>>>>>>      int ret;
+>>>>>>
+>>>>>> +    desc = device_get_match_data(&pdev->dev);
+>>>>>> +
+>>>>>> +    if (desc->num_resets)
+>>>>>> +            return qcom_cc_probe_by_index(pdev, 1, desc);
+>>>>> Won't this break SC7280 support by causing an early return?
+>>>>>
+>>>> The resets are not defined for SC7280.
+>>>> static const struct qcom_cc_desc lpass_audio_cc_sc7280_desc = {
+>>>>         .config = &lpass_audio_cc_sc7280_regmap_config,
+>>>>         .clks = lpass_audio_cc_sc7280_clocks,
+>>>>         .num_clks = ARRAY_SIZE(lpass_audio_cc_sc7280_clocks),
+>>>> };
+>>>>
+>>>> The reset get registered for SC7280 after the clocks are registered.
+>>>> qcom_cc_probe_by_index(pdev, 1,  &lpass_audio_cc_reset_sc7280_desc);
+>>> Could you please make this condition more obvious and error-prone
+>>> rather than checking one particular non-obvious property?
+>>>
+>> Dmitry, we had earlier tried [1], but seems like we could not align on
+>> this patchset.
+>>
+>> If you are aligned, please let me know I can fall back on the approach.
+> You have been using of_device_is_compatible(). Krzysztof suggested
+> using mach data. Both approaches are fine with me (I'm sorry,
+> Krzysztof, this is a clock driver for a single platform, it doesn't
+> need to scale).
+> 
+> You've settled on the second one. So far so good.
 
-Fixes: 9cc161a4509c ("arm64: dts: ti: Refactor J784s4 SoC files to a common file")
-Signed-off-by: Keerthy <j-keerthy@ti.com>
-Cc: stable@vger.kernel.org
----
+Sure, I will go ahead with the existing approach, but ensure I replace
+the num_resets check with the of_device_is_compatible(), so it is more
+readable. Hope this aligns with your thoughts as well.
 
-Changes in V2:
+> 
+> But! The problem is in readability. Checking for desc->num_resets is a
+> _hidden_ or cryptic way of checking whether to register only a first
+> controller or both.
+> 
+> BTW: the commit message also tells nothing about the dropped power
+> domain and skipped PM code. Is it not required anymore? Is it handled
+> automatically by the firmware? But I see that audio codecs still use
+> that power domain.
+Yes, it will be taken care in the firmware and I will update in the
+commit text.
 
-	* Added the fixes tag
-	* Cc: stable
 
- arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
-index 83bbf94b58d1..3b72fca158ad 100644
---- a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
-@@ -193,7 +193,7 @@
- 		ranges;
- 		#interrupt-cells = <3>;
- 		interrupt-controller;
--		reg = <0x00 0x01800000 0x00 0x200000>, /* GICD */
-+		reg = <0x00 0x01800000 0x00 0x10000>, /* GICD */
- 		      <0x00 0x01900000 0x00 0x100000>, /* GICR */
- 		      <0x00 0x6f000000 0x00 0x2000>,   /* GICC */
- 		      <0x00 0x6f010000 0x00 0x1000>,   /* GICH */
--- 
-2.17.1
-
+Thanks,
+Taniya.
 
