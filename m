@@ -1,160 +1,137 @@
-Return-Path: <linux-kernel+bounces-519901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F37EA3A351
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:57:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A835A3A367
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:59:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C44EA1890FAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:57:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AC911639E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:58:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D1CE26F474;
-	Tue, 18 Feb 2025 16:57:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01C9226F47F;
+	Tue, 18 Feb 2025 16:57:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cigFeCEP"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uo8m9ikV";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HLAufBvu"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3878C26F462
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 16:57:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20EB26D5C9;
+	Tue, 18 Feb 2025 16:57:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739897833; cv=none; b=Dm+3nECP2OVR+tj985z47yx2fwCbtivCD8JcT6MqMPGMorstqGjdgYwX0YEPZg4Z+72EOAbx0g4ecwix9ynH1VAhxiu/h2zzJ064OK7Yt2+TVKpFn4zxQKXT5l1fJrU2V3HxuUiMB5oYZW4Huic/jGkDc+GlejP+XDKd5oix0hk=
+	t=1739897865; cv=none; b=OY5iqonSOu8yPJTqAbQV93QFwhotcUrNT1pMJVA9sQ/8tPwrWjXqhlDSjaTP6lGuMcbPC0akIoafGqFrjIUS4Kg6DKa9C/APnfmdeZPLyJyi37/B7R8680Tf1tFKAiefV7hBolAOzpFHBba1QJlS/uHiTr0gzyyOpziFvwbP6K8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739897833; c=relaxed/simple;
-	bh=PqMYuwvNoD2QFbaMOpBA5T477dJJDd98A7yQHVkqIX4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QK15pHEwF59GUuhRWq8IH5UGHDYeFnA1DP+bdcWeU2ubk9NacdfJCnal7hA8usGpvsQtNIZcIYr8na05uWal3IOyDMoZc2YXypS7qZ30TyVE8TT/BnA2g06shix6KQM+UrcUA7u7n/BfU+5D5kyQnwoVwj5bB8mmCmDPhxnj0EQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cigFeCEP; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739897833; x=1771433833;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=PqMYuwvNoD2QFbaMOpBA5T477dJJDd98A7yQHVkqIX4=;
-  b=cigFeCEPyPjxiwye1eygffr1ColbZQIXK2JxrhEBEX7HQmxRGFJdcryV
-   1hQlY0TUIeaqdRf+x2pixX/h95/y1GO2PNrBIbsWiZmb0xCB5DEwFpyuT
-   KeoHAL5dcef6BMPq8h1QgaZfr8ttCOo1uonMP33q5zrJ/muUz/V7Rnoq4
-   h8Q1IKlkIaF8Qfd6W0U1pg2h7biN7g+y2L2TZrCi9qLaQ8Zw8nqlndGd8
-   V9lzggw0oU9dhtTHobLpaXJMQuqkpaOny3HlVNHebqYftvZMxMd8tmELf
-   q1ipy8WX5vmllofOQjCvQmY5jMNUC9J7hTZwIuNTezs32/JcivD7JCNQv
-   w==;
-X-CSE-ConnectionGUID: 37aA66HwQ+af5ihWe1NOlg==
-X-CSE-MsgGUID: STj/exAmSbGgw7ACE50rSg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="40727019"
-X-IronPort-AV: E=Sophos;i="6.13,296,1732608000"; 
-   d="scan'208";a="40727019"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 08:57:12 -0800
-X-CSE-ConnectionGUID: kO9ZVHIURWemqWdP1vM+0w==
-X-CSE-MsgGUID: VByiUNWpTp2BjlfnJZTltw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,296,1732608000"; 
-   d="scan'208";a="115106316"
-Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.109.167]) ([10.125.109.167])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 08:57:11 -0800
-Message-ID: <f4d344de-70c2-4fd4-bb18-2912cf0f3f98@intel.com>
-Date: Tue, 18 Feb 2025 08:57:14 -0800
+	s=arc-20240116; t=1739897865; c=relaxed/simple;
+	bh=mtgxC4vv/uPostSGVmC2q3fbbZIeC8MuEF7cg3N/JkU=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=Io0CeHvi/fvmmRO0IK2hY/NjYvmG3JHM69oktDSXVWaY5ITYwXCtT6P0IVDNXlKnNCA7LZNMjKxlZzBvcAYxGTLgWW5gySP3fH2dz1OPhlhu2MP3UIVBy42wwtQzECdUypJFbci7JmYSV9iHChjIdpRa1PF0l59ALcHENS/Ey5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uo8m9ikV; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HLAufBvu; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 18 Feb 2025 16:57:38 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1739897861;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=J6XWHFTDarrp9hq29SXb9FJuB5lv/DVhlk1bMYuKlVE=;
+	b=uo8m9ikV3Ra/EsBlGGoOy9yxuy/gbuKB3R3bSJvG8qKWprVAt6AHYHjG3ZmvRpOAI+mx5a
+	48K6tg6415tBE27hkdPWk/de0lMhGOye25TnNvvXmB9LRDIflqBSeTqt2OpCrtBSVrEo/U
+	bnoiGfefQdBB77XqawemJAIIpA9Vp/jc4ADdXLowqCyTgydPjbz3a1qItG0XeTd/8ABGDg
+	2mVjOtUTgoEf7RK66oJqjr9PgOR4sOX6TDTYz6DgD82OhvB/KjgcFsIt9YfxO+tj2lIvhl
+	G0Znk2He2yO10VxINP8XWWgIQQNtJHwqwXTpTXhTfYVlwUFcYuP7yP3gWBxNTQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1739897861;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=J6XWHFTDarrp9hq29SXb9FJuB5lv/DVhlk1bMYuKlVE=;
+	b=HLAufBvu2aSG8FR4Ub40RC9oP+3xQB4wHu/Jv+HJ3IzPJBWqjzzCXuRqU0rDE+fCxM2Oot
+	hHW5mbpEKTccR/Aw==
+From: "tip-bot2 for Nam Cao" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: timers/cleanups] wifi: rt2x00: Switch to use hrtimer_update_function()
+Cc: Nam Cao <namcao@linutronix.de>, Thomas Gleixner <tglx@linutronix.de>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: =?utf-8?q?=3C82dcc0eae40bb84e6452f242751c0650e79bd87e=2E17387?=
+ =?utf-8?q?46927=2Egit=2Enamcao=40linutronix=2Ede=3E?=
+References: =?utf-8?q?=3C82dcc0eae40bb84e6452f242751c0650e79bd87e=2E173874?=
+ =?utf-8?q?6927=2Egit=2Enamcao=40linutronix=2Ede=3E?=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] tsm: Unified Measurement Register ABI for TVMs
-To: Dan Middleton <dan.middleton@linux.intel.com>,
- "Xing, Cedric" <cedric.xing@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev,
- Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-References: <20250212-tdx-rtmr-v1-0-9795dc49e132@intel.com>
- <15c69d57-4ffb-4ea1-8cbc-0ba6d3d7b14f@intel.com>
- <be7e3c9d-208a-4bda-b8cf-9119f3e0c4ce@intel.com>
- <015cdddb-7f74-4205-af8a-b15cad7ddc22@intel.com>
- <d8f3eb33-d902-4391-adc7-005e4895b471@intel.com>
- <c7894df2-2b27-4f67-b428-3eca312503f9@intel.com>
- <c2cf2184-7753-454e-ac99-8c4f3c9c3d16@intel.com>
- <01fc0997-a0e7-4086-b0aa-67b4a51b328a@intel.com>
- <12ed2ab1-e97d-4a20-8370-8c60cabffc77@intel.com>
- <ab2036d5-5b6f-4fa9-995a-fba63c0a5209@linux.intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <ab2036d5-5b6f-4fa9-995a-fba63c0a5209@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
+Message-ID: <173989785856.10177.15234202593281922434.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-On 2/18/25 08:25, Dan Middleton wrote:
-> One common reason is to _identify the workload_ running in the VM.
-> Typically a VM attestation tells you that you booted to a clean state.
-> It is much more valuable to a Relying Party to know that they are
-> interacting
-> with a trusted application / workload.
-> Projects like CNCF Confidential Containers [1] and Attested Containers
-> [2] would like to do this.
+The following commit has been merged into the timers/cleanups branch of tip:
 
-That's a _bit_ of a different story than the series author mentioned here:
+Commit-ID:     86a578e780a9fb0e1a1b6f3f3aa847c29b5255b9
+Gitweb:        https://git.kernel.org/tip/86a578e780a9fb0e1a1b6f3f3aa847c29b5255b9
+Author:        Nam Cao <namcao@linutronix.de>
+AuthorDate:    Wed, 05 Feb 2025 11:55:15 +01:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Tue, 18 Feb 2025 17:41:35 +01:00
 
+wifi: rt2x00: Switch to use hrtimer_update_function()
 
-https://lore.kernel.org/all/be7e3c9d-208a-4bda-b8cf-9119f3e0c4ce@intel.com/
+The field 'function' of struct hrtimer should not be changed directly, as
+the write is lockless and a concurrent timer expiry might end up using the
+wrong function pointer.
 
-It would be great to see a solid, consistent story about what the
-purpose of this series is when v2 is posted. As always, it would be even
-better if it was obvious that this is not tied to one vendor or one
-architecture.
+Switch to use hrtimer_update_function() which also performs runtime checks
+that it is safe to modify the callback.
 
-If there are actual end users who care about this, it would be great to
-see their acks on it as well.
+Signed-off-by: Nam Cao <namcao@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/all/82dcc0eae40bb84e6452f242751c0650e79bd87e.1738746927.git.namcao@linutronix.de
+
+---
+ drivers/net/wireless/ralink/rt2x00/rt2800mmio.c | 2 +-
+ drivers/net/wireless/ralink/rt2x00/rt2800usb.c  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/wireless/ralink/rt2x00/rt2800mmio.c b/drivers/net/wireless/ralink/rt2x00/rt2800mmio.c
+index 5323acf..45775ec 100644
+--- a/drivers/net/wireless/ralink/rt2x00/rt2800mmio.c
++++ b/drivers/net/wireless/ralink/rt2x00/rt2800mmio.c
+@@ -842,7 +842,7 @@ int rt2800mmio_probe_hw(struct rt2x00_dev *rt2x00dev)
+ 	/*
+ 	 * Set txstatus timer function.
+ 	 */
+-	rt2x00dev->txstatus_timer.function = rt2800mmio_tx_sta_fifo_timeout;
++	hrtimer_update_function(&rt2x00dev->txstatus_timer, rt2800mmio_tx_sta_fifo_timeout);
+ 
+ 	/*
+ 	 * Overwrite TX done handler
+diff --git a/drivers/net/wireless/ralink/rt2x00/rt2800usb.c b/drivers/net/wireless/ralink/rt2x00/rt2800usb.c
+index 160bef7..b51a233 100644
+--- a/drivers/net/wireless/ralink/rt2x00/rt2800usb.c
++++ b/drivers/net/wireless/ralink/rt2x00/rt2800usb.c
+@@ -618,7 +618,7 @@ static int rt2800usb_probe_hw(struct rt2x00_dev *rt2x00dev)
+ 	/*
+ 	 * Set txstatus timer function.
+ 	 */
+-	rt2x00dev->txstatus_timer.function = rt2800usb_tx_sta_fifo_timeout;
++	hrtimer_update_function(&rt2x00dev->txstatus_timer, rt2800usb_tx_sta_fifo_timeout);
+ 
+ 	/*
+ 	 * Overwrite TX done handler
 
