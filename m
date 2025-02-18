@@ -1,229 +1,996 @@
-Return-Path: <linux-kernel+bounces-519608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0285BA39E94
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:20:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2E30A39EA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:21:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A38C1897396
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:19:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08173168401
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:21:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6658426A0A0;
-	Tue, 18 Feb 2025 14:18:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96481269D1E;
+	Tue, 18 Feb 2025 14:20:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bRXlK96h"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MgZ0OL8d"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E01A2269D1B
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 14:18:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38122500CD
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 14:20:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739888327; cv=none; b=uDzHK5XGgnw7HFHhesgOOIbQ0aWlrrYY7BCkiIsdhz0m89/gxOqDKuYMJaNyZhlZhEbvRUZUC/uu7Yt2Wm7wCKQKx8Ad3pI0UeNrnXP613FntDAEg8ZQmkoeV5PJD3Hs6Sm+2qB7kALmr8EukPCoVMIT1T7ii+VEqmH151zPGOA=
+	t=1739888455; cv=none; b=exAVAoHBNzbt/Ju47rYeZw+xaf4JxOj7tgVbfoCRt6DHIWSpkIq/2gVnYYMyog9DK0Qf/HNkrD3n0DWWYRnR7r6asi5ZC/6Fq01+tQbvmDsHs97H7ePBI7pwKbwhqoYJpbsA8s0tEnsQhX3B5/suDU/5TxeACr4TkWL9/miuAWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739888327; c=relaxed/simple;
-	bh=Ylh6BzLP55i04wVfiFq0UdGu/ctOqdofDLlmv68+FsI=;
+	s=arc-20240116; t=1739888455; c=relaxed/simple;
+	bh=Qp3lcuCEUfGzAw9PsiIrzgNbiIvNdQc76VnpP7Kp/pw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZgTrphHSJAnf2s3rFsczQMuhUDJescQj9t7u2Hpfuae2rZUEoNwOeKhIcS+hk5FEslgGoGyBQMzo2HU0mDU3Eq6kTY8WaiXcErGcozWkWzCwuGLzg1zWsWJqFcijgrATa7PWs+4R8AD/BOFE2i33jCEyLDo9zrshX1Ul3kCM4Jo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bRXlK96h; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739888324;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DBhsPO91wIOuIx7V5POaYr34tBMgM6YIQ+GqBqORH08=;
-	b=bRXlK96hUDR5bzmcPbOPpjiXxn2RIpXJlb7bM/p0Aw9YMVXB5V7wKn2n7KRKLLyp7INYLY
-	dLpBojmaqZ6GdarV6hRZRp0DqixPpddOWnv5vUkc7SSFfurS4uPzPiVOWTI+qY2IA/U1OQ
-	6lRdEjDAmB1rWZbJI3caa+lXYHaBzd4=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-568-RNr94hMnPU6g3ntB6LjTUQ-1; Tue, 18 Feb 2025 09:18:43 -0500
-X-MC-Unique: RNr94hMnPU6g3ntB6LjTUQ-1
-X-Mimecast-MFC-AGG-ID: RNr94hMnPU6g3ntB6LjTUQ_1739888322
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-439385b08d1so48560445e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 06:18:42 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=fq7ruZZvGmQfsWQ69PNP+heMa8k7k+jBIMzfl4N44yf+AsvlLqJCRfO+Kdv34JUuEoGZHvNtacshlfS/vlYK0Ht506jTRRRC6gsvh2TsAtWYSzhuw8QApXsuR3LVSwd+pP/K8s67ZsY/Fdj/LRDcr55IbIZ0kAYcNZagb+rfRLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MgZ0OL8d; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30762598511so52780281fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 06:20:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739888451; x=1740493251; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=VdfrjQ3o22mQv8VP4myP91YZS0gXkqljQSTiYJ3+7LU=;
+        b=MgZ0OL8d27OLgjTl/98DuSrw2E8feXvM6zex61fUqVV4qJT/ih5z7XY38sBpf8k8mq
+         Dv6c9gNJUSONMCmzSTrgFNmP44522SNdKQJXzGiIfcIUocb0HT3l0f8hrpHryoP8xgvt
+         8ue6Ihn0sepgpTicFjH2MZLldkmIHFbXaLl0LB5t0PJv0xqQNVzRgwwNjgKo1RRFCGGg
+         +qGxAq4cAE5B9DCwFl14xIxxIWFAMCGVZcFB89LNjno/UUoJP/KEFc/3c1GMYEiwSXUL
+         +ftJv5PJD5aMpRjY95swnVI/dX7n0FKvOU1hLAcvKqwyfaEmoujP5WDVT7ttR9sAKj31
+         3yfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739888322; x=1740493122;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DBhsPO91wIOuIx7V5POaYr34tBMgM6YIQ+GqBqORH08=;
-        b=MWEpbaid4FeHZSxSX0oHqU6zyqGXBLTH4AY/ZPcACUasyvPnmU5ZrarNDbrcW8MshS
-         0Ow9LK9vF/XWlnG4AjAwSjT8f02xFl2jC4QdPc42yFlEShqpx1E3FolrZs+jTurLs2sT
-         EpZZRA9V3RL8ww24nHxu8s/1AXnIDnUz00cubrtEKIw+x+AdqIC2YmzNxjgKflsTGWKM
-         sp2y5aQDzUpPb6vVX+c+/WJgTtrhttp6WIoEOvPvIus9JXpcojLZrHIpwKgOfBo3GhCz
-         pgjoFFy/3+StqzpO8EpNpkC+9ljKs7/NTsqjK+ZyJp7MFf8MnmREmdn6WpzPrYbcRbha
-         qUWg==
-X-Forwarded-Encrypted: i=1; AJvYcCXLQJKWNyunHMau4lJpz/pf9CqVnkI6SYcOaTeT+CvoaZ/yhTp9nCc3YLz0byuvAc07p+4N31c76i9noIs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqxLLAgaln734jelWf3RSNJtK6LnDtvIoVp/Xe8YY0+psfbuPa
-	k7Ezb26sH17WykWrT4HdVf+TaFRlp0aEzbbydATIfN8svVNBWHn20LDcuv/sAggi+yyupwmWwv2
-	v0i2Kcm8cEputSuzzl3DnhOvmCVgTBNpoKofImga9GRlX8lf20O0cfIECiBlkeg==
-X-Gm-Gg: ASbGncvdcdSE2RwbUzflyDisQb5rgtpWN93GGrcRZqMB3l1N0CWVZMi/5nPFXy3b6yD
-	RF3kxN4rjfu4U040ehvMg5aaL2r/9YeFO4nCZQTKn+OabAceTCqhvVOKK0sdUaFcwo4FC95lh4F
-	0633uW8IUT4BM0my0nI1kvlpDzcAKH/TrzVjuAYiMYMdg9LOHD99p6OR8S7dtbpWuIMKXBm1uKA
-	ihZydMrIWEqPVhzisMd1vbNXGO50sLybX3yEh+z14i7H5I1br1KKXJ6JraI02cGI9RwbKAnB8Es
-	Ho8/LPFaIUCgnQfLZjP41CWUsE76qiXOTg==
-X-Received: by 2002:a05:600c:4f03:b0:438:a240:c63 with SMTP id 5b1f17b1804b1-4396e6978f1mr108096635e9.2.1739888321808;
-        Tue, 18 Feb 2025 06:18:41 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHz+8srgi2drXTmMyM1NYHrwhlKtyRHpPGxtjZL4L3zCFR0eLaPU7DhmwvLMH2MoF6LIUl/tw==
-X-Received: by 2002:a05:600c:4f03:b0:438:a240:c63 with SMTP id 5b1f17b1804b1-4396e6978f1mr108096425e9.2.1739888321363;
-        Tue, 18 Feb 2025 06:18:41 -0800 (PST)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.34.42])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a1b8471sm185070475e9.37.2025.02.18.06.18.39
+        d=1e100.net; s=20230601; t=1739888451; x=1740493251;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VdfrjQ3o22mQv8VP4myP91YZS0gXkqljQSTiYJ3+7LU=;
+        b=LXTGCm61w289xBVAVMY0ujYwpDVR+aIBpOfkGi+6Sczzaaeze3+6iiXN9hO87pnebA
+         J3Nr56Psfv17cpAvTiJ6XL0/hiACGEq483aY2YArKVvzCrEgv9OAugf6kEicsW11iiXM
+         TID5IHZrs8KbtRSVdIaCzTLo2+syAHJiD36R5DhfpFkCMCmf3VMnvahcpMgBo4TQY0Tk
+         SsGuv3fyDOv5bzFOtVMigEdUTBeSQd3xvqw2HU0s/TYLfRfWmuV/sWxQQDm3Hd5OlOfU
+         bBJfs+B4mHE7UYG9oapA6J4f7sWLPSSTEpKSRfTsg5sPgxYFvGeiR7CtbBUPavScILUx
+         Xx5A==
+X-Forwarded-Encrypted: i=1; AJvYcCURdk+xj8v2t4RiVZDyl4HFfPRv0nqHrR47H8yDBWC/FCX/suzRzY0i8YFal8sHkV1Vp73O4i3nhF/XDmQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeahoPBKi45qnTUqvorD7sLREFdwYhnWZrYS0ZRwph7gmIJLy5
+	ftTN0dEbubtGAAmQ1AHH0OlcmAjXLYrUCivlo4Xn8Ndd9P84EiKkP1AcSc8nJLQ=
+X-Gm-Gg: ASbGncsg3cPiyiB9JL88Ok8eAFL3h6U2+EbjLyXQtobudqBAkOgdd8HcNBoTKP32Glo
+	FKsuvISPKvOTsPwj0j7wsnAxoKw0FrWNTmVEsZpNOROaDg/S5ppUD4akr2OBF/dIlhRBtgUGPpG
+	t6sOiDVG/8w6gxynnPIWok3p3RfdpIzZG0BRgpEd8NYo8qozgO7bA4GyNTy+Qzb0xQa5D23W+4D
+	Jbo8sZHhJwEUelRuhm4afGnx/J4XAR35wSZKy4Ktu8a2Y1HK/Gwgb3DCHQP1bsDlUKP33ZvQEQ4
+	HVEe9Fpxi7mAJTn4gM8Q+JUzcEhtyJODtCT44gHVmBvoJAKz1wVpp3M7uD63m17b1hcDA+k=
+X-Google-Smtp-Source: AGHT+IHfkEmevVuZUH6Q5hRBzO7staU4vmqWQCMw/1rxJtX7XTny+0eaQlQin/3795GnLxFvdF622A==
+X-Received: by 2002:a05:6512:3055:b0:545:2e90:8dd7 with SMTP id 2adb3069b0e04-5452fe72fcbmr4291873e87.45.1739888450591;
+        Tue, 18 Feb 2025 06:20:50 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54618f83486sm1028781e87.140.2025.02.18.06.20.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 06:18:40 -0800 (PST)
-Date: Tue, 18 Feb 2025 15:18:38 +0100
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>,
-	Christian Loehle <christian.loehle@arm.com>,
-	Thierry Reding <treding@nvidia.com>,
-	Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Koutny <mkoutny@suse.com>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Phil Auld <pauld@redhat.com>, Qais Yousef <qyousef@layalina.io>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
-	Suleiman Souhlal <suleiman@google.com>,
-	Aashish Sharma <shraash@google.com>,
-	Shin Kawamura <kawasin@google.com>,
-	Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v2 3/2] sched/deadline: Check bandwidth overflow earlier
- for hotplug
-Message-ID: <Z7SWvr86RXlBbJlw@jlelli-thinkpadt14gen4.remote.csb>
-References: <Z6oysfyRKM_eUHlj@jlelli-thinkpadt14gen4.remote.csb>
- <dbd2af63-e9ac-44c8-8bbf-84358e30bf0b@arm.com>
- <Z6spnwykg6YSXBX_@jlelli-thinkpadt14gen4.remote.csb>
- <78f627fe-dd1e-4816-bbf3-58137fdceda6@nvidia.com>
- <Z62ONLX4OLisCLKw@jlelli-thinkpadt14gen4.remote.csb>
- <30a8cda5-0fd0-4e47-bafe-5deefc561f0c@nvidia.com>
- <151884eb-ad6d-458e-a325-92cbe5b8b33f@nvidia.com>
- <Z7Ne49MSXS2I06jW@jlelli-thinkpadt14gen4.remote.csb>
- <Z7RZ4141H-FnoQPW@jlelli-thinkpadt14gen4.remote.csb>
- <d7cc3a3c-155e-4872-a426-cbd239d79cac@arm.com>
+        Tue, 18 Feb 2025 06:20:50 -0800 (PST)
+Date: Tue, 18 Feb 2025 16:20:48 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] drm: bridge: Add support for Solomon SSD2825
+ RGB/DSI bridge
+Message-ID: <hemnpzzz3ddibdbqwkazwuoalmvuc2mekebqxfrnxiod6futni@sgdjgtrbcwza>
+References: <20250217140910.108175-1-clamor95@gmail.com>
+ <20250217140910.108175-3-clamor95@gmail.com>
+ <zmwn3dnnmwhms2qxqwb6ksshx27fcq2i4wujz5utuldaiqs6oz@idvy3dirrmuo>
+ <CAPVz0n3bqLhuC0gxXD-=L0ETMmhOv1Ku0PrWUb_Yn09v3UNuOA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <d7cc3a3c-155e-4872-a426-cbd239d79cac@arm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPVz0n3bqLhuC0gxXD-=L0ETMmhOv1Ku0PrWUb_Yn09v3UNuOA@mail.gmail.com>
 
-On 18/02/25 15:12, Dietmar Eggemann wrote:
-> On 18/02/2025 10:58, Juri Lelli wrote:
-> > Hi!
-> > 
-> > On 17/02/25 17:08, Juri Lelli wrote:
-> >> On 14/02/25 10:05, Jon Hunter wrote:
-> > 
-> > ...
-> > 
-> >> At this point I believe you triggered suspend.
-> >>
-> >>> [   57.290150] Freezing remaining freezable tasks completed (elapsed 0.001 seconds)
-> >>> [   57.335619] tegra-xusb 3530000.usb: Firmware timestamp: 2020-07-06 13:39:28 UTC
-> >>> [   57.353364] dwc-eth-dwmac 2490000.ethernet eth0: Link is Down
-> >>> [   57.397022] Disabling non-boot CPUs ...
-> >>
-> >> Offlining CPU5.
-> >>
-> >>> [   57.400904] dl_bw_manage: cpu=5 cap=3072 fair_server_bw=52428 total_bw=209712 dl_bw_cpus=4 type=DYN span=0,3-5
-> >>> [   57.400949] CPU0 attaching NULL sched-domain.
-> >>> [   57.415298] span=1-2
-> >>> [   57.417483] __dl_sub: cpus=3 tsk_bw=52428 total_bw=157284 span=0,3-5 type=DYN
-> >>> [   57.417487] __dl_server_detach_root: cpu=0 rd_span=0,3-5 total_bw=157284
-> >>> [   57.417496] rq_attach_root: cpu=0 old_span=NULL new_span=1-2
-> >>> [   57.417501] __dl_add: cpus=3 tsk_bw=52428 total_bw=157284 span=0-2 type=DEF
-> >>> [   57.417504] __dl_server_attach_root: cpu=0 rd_span=0-2 total_bw=157284
-> >>> [   57.417507] CPU3 attaching NULL sched-domain.
-> >>> [   57.454804] span=0-2
-> >>> [   57.456987] __dl_sub: cpus=2 tsk_bw=52428 total_bw=104856 span=3-5 type=DYN
-> >>> [   57.456990] __dl_server_detach_root: cpu=3 rd_span=3-5 total_bw=104856
-> >>> [   57.456998] rq_attach_root: cpu=3 old_span=NULL new_span=0-2
-> >>> [   57.457000] __dl_add: cpus=4 tsk_bw=52428 total_bw=209712 span=0-3 type=DEF
-> >>> [   57.457003] __dl_server_attach_root: cpu=3 rd_span=0-3 total_bw=209712
-> >>> [   57.457006] CPU4 attaching NULL sched-domain.
-> >>> [   57.493964] span=0-3
-> >>> [   57.496152] __dl_sub: cpus=1 tsk_bw=52428 total_bw=52428 span=4-5 type=DYN
-> >>> [   57.496156] __dl_server_detach_root: cpu=4 rd_span=4-5 total_bw=52428
-> >>> [   57.496162] rq_attach_root: cpu=4 old_span=NULL new_span=0-3
-> >>> [   57.496165] __dl_add: cpus=5 tsk_bw=52428 total_bw=262140 span=0-4 type=DEF
-> >>> [   57.496168] __dl_server_attach_root: cpu=4 rd_span=0-4 total_bw=262140
-> >>> [   57.496171] CPU5 attaching NULL sched-domain.
-> >>> [   57.532952] span=0-4
-> >>> [   57.535143] rq_attach_root: cpu=5 old_span= new_span=0-4
-> >>> [   57.535147] __dl_add: cpus=5 tsk_bw=52428 total_bw=314568 span=0-5 type=DEF
-> >>
-> >> Maybe we shouldn't add the dl_server contribution of a CPU that is going
-> >> to be offline.
-> > 
-> > I tried to implement this idea and ended up with the following. As usual
-> > also pushed it to the branch on github. Could you please update and
-> > re-test?
-> > 
-> > Another thing that I noticed is that in my case an hotplug operation
-> > generating a sched/root domain rebuild ends up calling dl_rebuild_
-> > rd_accounting() (from partition_and_rebuild_sched_domains()) which
-> > resets accounting for def and dyn domains. In your case (looking again
-> > at the last dmesg you shared) I don't see this call, so I wonder if for
-> > some reason related to your setup we do the rebuild by calling partition_
-> > sched_domains() (instead of partition_and_rebuild_) and this doesn't
-> > call dl_rebuild_rd_accounting() after partition_sched_domains_locked() -
-> > maybe it should? Dietmar, Christian, Peter, what do you think?
+On Tue, Feb 18, 2025 at 02:45:19PM +0200, Svyatoslav Ryhel wrote:
+> вт, 18 лют. 2025 р. о 14:31 Dmitry Baryshkov <dmitry.baryshkov@linaro.org> пише:
+> >
+> > On Mon, Feb 17, 2025 at 04:09:10PM +0200, Svyatoslav Ryhel wrote:
+> > > SSD2825 is a cost-effective MIPI Bridge Chip solution targeting mainly
+> > > smartphones. It can convert 24bit RGB interface into 4-lane MIPI-DSI
+> > > interface to drive display modules of up to 800 x 1366, while supporting
+> > > AMOLED, a-si LCD or LTPS panel technologies for smartphone applications.
+> > >
+> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > ---
+> > >  drivers/gpu/drm/bridge/Kconfig   |  14 +
+> > >  drivers/gpu/drm/bridge/Makefile  |   1 +
+> > >  drivers/gpu/drm/bridge/ssd2825.c | 824 +++++++++++++++++++++++++++++++
+> > >  3 files changed, 839 insertions(+)
+> > >  create mode 100644 drivers/gpu/drm/bridge/ssd2825.c
+> > >
+> > > diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+> > > index 6b4664d91faa..a6eca3aef258 100644
+> > > --- a/drivers/gpu/drm/bridge/Kconfig
+> > > +++ b/drivers/gpu/drm/bridge/Kconfig
+> > > @@ -306,6 +306,20 @@ config DRM_SIMPLE_BRIDGE
+> > >         Support for non-programmable DRM bridges, such as ADI ADV7123, TI
+> > >         THS8134 and THS8135 or passive resistor ladder DACs.
+> > >
+> > > +config DRM_SOLOMON_SSD2825
+> > > +     tristate "SSD2825 RGB/DSI bridge"
+> > > +     depends on SPI_MASTER && OF
+> > > +     select DRM_MIPI_DSI
+> > > +     select DRM_KMS_HELPER
+> > > +     select DRM_PANEL
+> > > +     select VIDEOMODE_HELPERS
+> > > +     help
+> > > +       Say Y here if you want support for the Solomon SSD2825 RGB/DSI
+> > > +       SPI bridge driver.
+> > > +
+> > > +       Say M here if you want to support this hardware as a module.
+> > > +       The module will be named "solomon-ssd2825".
+> > > +
+> > >  config DRM_THINE_THC63LVD1024
+> > >       tristate "Thine THC63LVD1024 LVDS decoder bridge"
+> > >       depends on OF
+> > > diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
+> > > index 97304b429a53..c621ab3fa3a9 100644
+> > > --- a/drivers/gpu/drm/bridge/Makefile
+> > > +++ b/drivers/gpu/drm/bridge/Makefile
+> > > @@ -23,6 +23,7 @@ obj-$(CONFIG_DRM_SIL_SII8620) += sil-sii8620.o
+> > >  obj-$(CONFIG_DRM_SII902X) += sii902x.o
+> > >  obj-$(CONFIG_DRM_SII9234) += sii9234.o
+> > >  obj-$(CONFIG_DRM_SIMPLE_BRIDGE) += simple-bridge.o
+> > > +obj-$(CONFIG_DRM_SOLOMON_SSD2825) += ssd2825.o
+> > >  obj-$(CONFIG_DRM_THINE_THC63LVD1024) += thc63lvd1024.o
+> > >  obj-$(CONFIG_DRM_TOSHIBA_TC358762) += tc358762.o
+> > >  obj-$(CONFIG_DRM_TOSHIBA_TC358764) += tc358764.o
+> > > diff --git a/drivers/gpu/drm/bridge/ssd2825.c b/drivers/gpu/drm/bridge/ssd2825.c
+> > > new file mode 100644
+> > > index 000000000000..cc6f5d480812
+> > > --- /dev/null
+> > > +++ b/drivers/gpu/drm/bridge/ssd2825.c
+> > > @@ -0,0 +1,824 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +#include <linux/clk.h>
+> > > +#include <linux/delay.h>
+> > > +#include <linux/device.h>
+> > > +#include <linux/err.h>
+> > > +#include <linux/kernel.h>
+> > > +#include <linux/module.h>
+> > > +#include <linux/mod_devicetable.h>
+> > > +#include <linux/mutex.h>
+> > > +#include <linux/of.h>
+> > > +#include <linux/regulator/consumer.h>
+> > > +#include <linux/spi/spi.h>
+> > > +
+> > > +#include <drm/drm_atomic_helper.h>
+> > > +#include <drm/drm_bridge.h>
+> > > +#include <drm/drm_drv.h>
+> > > +#include <drm/drm_mipi_dsi.h>
+> > > +#include <drm/drm_of.h>
+> > > +#include <drm/drm_panel.h>
+> > > +#include <video/mipi_display.h>
+> > > +#include <video/videomode.h>
+> > > +
+> > > +#define SSD2825_DEVICE_ID_REG                        0xb0
+> > > +#define SSD2825_RGB_INTERFACE_CTRL_REG_1     0xb1
+> > > +#define SSD2825_RGB_INTERFACE_CTRL_REG_2     0xb2
+> > > +#define SSD2825_RGB_INTERFACE_CTRL_REG_3     0xb3
+> > > +#define SSD2825_RGB_INTERFACE_CTRL_REG_4     0xb4
+> > > +#define SSD2825_RGB_INTERFACE_CTRL_REG_5     0xb5
+> > > +#define SSD2825_RGB_INTERFACE_CTRL_REG_6     0xb6
+> > > +#define   SSD2825_NON_BURST_EV                       BIT(2)
+> > > +#define   SSD2825_BURST                              BIT(3)
+> > > +#define   SSD2825_PCKL_HIGH                  BIT(13)
+> > > +#define   SSD2825_HSYNC_HIGH                 BIT(14)
+> > > +#define   SSD2825_VSYNC_HIGH                 BIT(15)
+> > > +#define SSD2825_CONFIGURATION_REG            0xb7
+> > > +#define   SSD2825_CONF_REG_HS                        BIT(0)
+> > > +#define   SSD2825_CONF_REG_CKE                       BIT(1)
+> > > +#define   SSD2825_CONF_REG_SLP                       BIT(2)
+> > > +#define   SSD2825_CONF_REG_VEN                       BIT(3)
+> > > +#define   SSD2825_CONF_REG_HCLK                      BIT(4)
+> > > +#define   SSD2825_CONF_REG_CSS                       BIT(5)
+> > > +#define   SSD2825_CONF_REG_DCS                       BIT(6)
+> > > +#define   SSD2825_CONF_REG_REN                       BIT(7)
+> > > +#define   SSD2825_CONF_REG_ECD                       BIT(8)
+> > > +#define   SSD2825_CONF_REG_EOT                       BIT(9)
+> > > +#define   SSD2825_CONF_REG_LPE                       BIT(10)
+> > > +#define SSD2825_VC_CTRL_REG                  0xb8
+> > > +#define SSD2825_PLL_CTRL_REG                 0xb9
+> > > +#define SSD2825_PLL_CONFIGURATION_REG                0xba
+> > > +#define SSD2825_CLOCK_CTRL_REG                       0xbb
+> > > +#define SSD2825_PACKET_SIZE_CTRL_REG_1               0xbc
+> > > +#define SSD2825_PACKET_SIZE_CTRL_REG_2               0xbd
+> > > +#define SSD2825_PACKET_SIZE_CTRL_REG_3               0xbe
+> > > +#define SSD2825_PACKET_DROP_REG                      0xbf
+> > > +#define SSD2825_OPERATION_CTRL_REG           0xc0
+> > > +#define SSD2825_MAX_RETURN_SIZE_REG          0xc1
+> > > +#define SSD2825_RETURN_DATA_COUNT_REG                0xc2
+> > > +#define SSD2825_ACK_RESPONSE_REG             0xc3
+> > > +#define SSD2825_LINE_CTRL_REG                        0xc4
+> > > +#define SSD2825_INTERRUPT_CTRL_REG           0xc5
+> > > +#define SSD2825_INTERRUPT_STATUS_REG         0xc6
+> > > +#define SSD2825_ERROR_STATUS_REG             0xc7
+> > > +#define SSD2825_DATA_FORMAT_REG                      0xc8
+> > > +#define SSD2825_DELAY_ADJ_REG_1                      0xc9
+> > > +#define SSD2825_DELAY_ADJ_REG_2                      0xca
+> > > +#define SSD2825_DELAY_ADJ_REG_3                      0xcb
+> > > +#define SSD2825_DELAY_ADJ_REG_4                      0xcc
+> > > +#define SSD2825_DELAY_ADJ_REG_5                      0xcd
+> > > +#define SSD2825_DELAY_ADJ_REG_6                      0xce
+> > > +#define SSD2825_HS_TX_TIMER_REG_1            0xcf
+> > > +#define SSD2825_HS_TX_TIMER_REG_2            0xd0
+> > > +#define SSD2825_LP_RX_TIMER_REG_1            0xd1
+> > > +#define SSD2825_LP_RX_TIMER_REG_2            0xd2
+> > > +#define SSD2825_TE_STATUS_REG                        0xd3
+> > > +#define SSD2825_SPI_READ_REG                 0xd4
+> > > +#define   SSD2825_SPI_READ_REG_RESET         0xfa
+> > > +#define SSD2825_PLL_LOCK_REG                 0xd5
+> > > +#define SSD2825_TEST_REG                     0xd6
+> > > +#define SSD2825_TE_COUNT_REG                 0xd7
+> > > +#define SSD2825_ANALOG_CTRL_REG_1            0xd8
+> > > +#define SSD2825_ANALOG_CTRL_REG_2            0xd9
+> > > +#define SSD2825_ANALOG_CTRL_REG_3            0xda
+> > > +#define SSD2825_ANALOG_CTRL_REG_4            0xdb
+> > > +#define SSD2825_INTERRUPT_OUT_CTRL_REG               0xdc
+> > > +#define SSD2825_RGB_INTERFACE_CTRL_REG_7     0xdd
+> > > +#define SSD2825_LANE_CONFIGURATION_REG               0xde
+> > > +#define SSD2825_DELAY_ADJ_REG_7                      0xdf
+> > > +#define SSD2825_INPUT_PIN_CTRL_REG_1         0xe0
+> > > +#define SSD2825_INPUT_PIN_CTRL_REG_2         0xe1
+> > > +#define SSD2825_BIDIR_PIN_CTRL_REG_1         0xe2
+> > > +#define SSD2825_BIDIR_PIN_CTRL_REG_2         0xe3
+> > > +#define SSD2825_BIDIR_PIN_CTRL_REG_3         0xe4
+> > > +#define SSD2825_BIDIR_PIN_CTRL_REG_4         0xe5
+> > > +#define SSD2825_BIDIR_PIN_CTRL_REG_5         0xe6
+> > > +#define SSD2825_BIDIR_PIN_CTRL_REG_6         0xe7
+> > > +#define SSD2825_BIDIR_PIN_CTRL_REG_7         0xe8
+> > > +#define SSD2825_CABC_BRIGHTNESS_CTRL_REG_1   0xe9
+> > > +#define SSD2825_CABC_BRIGHTNESS_CTRL_REG_2   0xea
+> > > +#define SSD2825_CABC_BRIGHTNESS_STATUS_REG   0xeb
+> > > +#define SSD2825_READ_REG                     0xff
+> > > +
+> > > +#define SSD2825_COM_BYTE                     0x00
+> > > +#define SSD2825_DAT_BYTE                     0x01
+> > > +
+> > > +#define      SSD2828_LP_CLOCK_DIVIDER(n)             (((n) - 1) & 0x3f)
+> > > +#define SSD2825_LP_MIN_CLK                   5000 /* KHz */
+> > > +#define SSD2825_REF_MIN_CLK                  2000 /* KHz */
+> > > +
+> > > +static const struct regulator_bulk_data ssd2825_supplies[] = {
+> > > +     { .supply = "dvdd" },
+> > > +     { .supply = "avdd" },
+> > > +     { .supply = "vddio" },
+> > > +};
+> > > +
+> > > +struct ssd2825_dsi_output {
+> > > +     struct mipi_dsi_device *dev;
+> > > +     struct drm_panel *panel;
+> > > +     struct drm_bridge *bridge;
+> > > +};
+> > > +
+> > > +struct ssd2825_priv {
+> > > +     struct spi_device *spi;
+> > > +     struct device *dev;
+> > > +
+> > > +     struct gpio_desc *reset_gpio;
+> > > +     struct regulator_bulk_data *supplies;
+> > > +
+> > > +     struct clk *tx_clk;
+> > > +
+> > > +     int enabled;
+> > > +
+> > > +     struct mipi_dsi_host dsi_host;
+> > > +     struct drm_bridge bridge;
+> > > +     struct ssd2825_dsi_output output;
+> > > +
+> > > +     struct mutex mlock;     /* for host transfer operations */
+> > > +
+> > > +     u32 pd_lines;           /* number of Parallel Port Input Data Lines */
+> > > +     u32 dsi_lanes;          /* number of DSI Lanes */
+> > > +
+> > > +     /* Parameters for PLL programming */
+> > > +     u32 pll_freq_kbps;      /* PLL in kbps */
+> > > +     u32 nibble_freq_khz;    /* PLL div by 4 */
+> > > +
+> > > +     u32 hzd;                /* HS Zero Delay in ns*/
+> > > +     u32 hpd;                /* HS Prepare Delay is ns */
+> > > +};
+> > > +
+> > > +static inline struct ssd2825_priv *dsi_host_to_ssd2825(struct mipi_dsi_host
+> > > +                                                      *host)
+> > > +{
+> > > +     return container_of(host, struct ssd2825_priv, dsi_host);
+> > > +}
+> > > +
+> > > +static inline struct ssd2825_priv *bridge_to_ssd2825(struct drm_bridge
+> > > +                                                  *bridge)
+> > > +{
+> > > +     return container_of(bridge, struct ssd2825_priv, bridge);
+> > > +}
+> > > +
+> > > +static int ssd2825_write_raw(struct ssd2825_priv *priv, u8 high_byte, u8 low_byte)
+> > > +{
+> > > +     struct spi_device *spi = priv->spi;
+> > > +     u8 tx_buf[2];
+> > > +
+> > > +     /*
+> > > +      * Low byte is the value, high byte defines type of
+> > > +      * write cycle, 0 for command and 1 for data.
+> > > +      */
+> > > +     tx_buf[0] = low_byte;
+> > > +     tx_buf[1] = high_byte;
+> > > +
+> > > +     return spi_write(spi, tx_buf, 2);
+> > > +}
+> > > +
+> > > +static int ssd2825_write_reg(struct ssd2825_priv *priv, u8 reg, u16 command)
+> > > +{
+> > > +     u8 datal = (command & 0x00FF);
+> > > +     u8 datah = (command & 0xFF00) >> 8;
+> > > +     int ret;
+> > > +
+> > > +     /* Command write cycle */
+> > > +     ret = ssd2825_write_raw(priv, SSD2825_COM_BYTE, reg);
+> > > +     if (ret)
+> > > +             return ret;
+> > > +
+> > > +     /* Data write cycle bits 7-0 */
+> > > +     ret = ssd2825_write_raw(priv, SSD2825_DAT_BYTE, datal);
+> > > +     if (ret)
+> > > +             return ret;
+> > > +
+> > > +     /* Data write cycle bits 15-8 */
+> > > +     ret = ssd2825_write_raw(priv, SSD2825_DAT_BYTE, datah);
+> > > +     if (ret)
+> > > +             return ret;
+> > > +
+> > > +     return 0;
+> > > +}
+> > > +
+> > > +static int ssd2825_write_dsi(struct ssd2825_priv *priv, const u8 *command, int len)
+> > > +{
+> > > +     int ret, i;
+> > > +
+> > > +     ret = ssd2825_write_reg(priv, SSD2825_PACKET_SIZE_CTRL_REG_1, len);
+> > > +     if (ret)
+> > > +             return ret;
+> > > +
+> > > +     ret = ssd2825_write_raw(priv, SSD2825_COM_BYTE, SSD2825_PACKET_DROP_REG);
+> > > +     if (ret)
+> > > +             return ret;
+> > > +
+> > > +     for (i = 0; i < len; i++) {
+> > > +             ret = ssd2825_write_raw(priv, SSD2825_DAT_BYTE, command[i]);
+> > > +             if (ret)
+> > > +                     return ret;
+> > > +     }
+> > > +
+> > > +     return 0;
+> > > +}
+> > > +
+> > > +static int ssd2825_read_raw(struct ssd2825_priv *priv, u8 cmd, u16 *data)
+> > > +{
+> > > +     struct spi_device *spi = priv->spi;
+> > > +     struct spi_message msg;
+> > > +     struct spi_transfer xfer[2];
+> > > +     u8 tx_buf[2];
+> > > +     u8 rx_buf[2];
+> > > +     int ret;
+> > > +
+> > > +     memset(&xfer, 0, sizeof(xfer));
+> > > +
+> > > +     tx_buf[1] = (cmd & 0xFF00) >> 8;
+> > > +     tx_buf[0] = (cmd & 0x00FF);
+> > > +
+> > > +     xfer[0].tx_buf = tx_buf;
+> > > +     xfer[0].bits_per_word = 9;
+> > > +     xfer[0].len = 2;
+> > > +
+> > > +     xfer[1].rx_buf = rx_buf;
+> > > +     xfer[1].bits_per_word = 16;
+> > > +     xfer[1].len = 2;
+> > > +
+> > > +     spi_message_init(&msg);
+> > > +     spi_message_add_tail(&xfer[0], &msg);
+> > > +     spi_message_add_tail(&xfer[1], &msg);
+> > > +
+> > > +     ret = spi_sync(spi, &msg);
+> > > +     if (ret)
+> > > +             dev_err(&spi->dev, "spi_sync_read failed %d\n", ret);
+> > > +
+> > > +     *data = rx_buf[1] | (rx_buf[0] << 8);
+> > > +
+> > > +     return 0;
+> > > +}
+> > > +
+> > > +static int ssd2825_read_reg(struct ssd2825_priv *priv, u8 reg, u16 *data)
+> > > +{
+> > > +     int ret;
+> > > +
+> > > +     /* Reset the read register */
+> > > +     ret = ssd2825_write_reg(priv, SSD2825_SPI_READ_REG, SSD2825_SPI_READ_REG_RESET);
+> > > +     if (ret)
+> > > +             return ret;
+> > > +
+> > > +     /* Push the address to read */
+> > > +     ret = ssd2825_write_raw(priv, SSD2825_COM_BYTE, reg);
+> > > +     if (ret)
+> > > +             return ret;
+> > > +
+> > > +     /* Perform a reading cycle */
+> > > +     ret = ssd2825_read_raw(priv, SSD2825_SPI_READ_REG_RESET, data);
+> > > +     if (ret)
+> > > +             return ret;
+> > > +
+> > > +     return 0;
+> > > +}
+> > > +
+> > > +static int ssd2825_dsi_host_attach(struct mipi_dsi_host *host,
+> > > +                                struct mipi_dsi_device *dev)
+> > > +{
+> > > +     struct ssd2825_priv *priv = dsi_host_to_ssd2825(host);
+> > > +     struct drm_bridge *bridge;
+> > > +     struct drm_panel *panel;
+> > > +     struct device_node *ep;
+> > > +     int ret;
+> > > +
+> > > +     if (dev->lanes > 4) {
+> > > +             dev_err(priv->dev, "unsupported number of data lanes(%u)\n",
+> > > +                     dev->lanes);
+> > > +             return -EINVAL;
+> > > +     }
+> > > +
+> > > +     /*
+> > > +      * ssd2825 supports both Video and Pulse mode, but the driver only
+> > > +      * implements Video (event) mode currently
+> > > +      */
+> > > +     if (!(dev->mode_flags & MIPI_DSI_MODE_VIDEO)) {
+> > > +             dev_err(priv->dev, "Only MIPI_DSI_MODE_VIDEO is supported\n");
+> > > +             return -EOPNOTSUPP;
+> > > +     }
+> > > +
+> > > +     ret = drm_of_find_panel_or_bridge(host->dev->of_node, 1, 0, &panel,
+> > > +                                       &bridge);
+> > > +     if (ret)
+> > > +             return ret;
+> > > +
+> > > +     if (panel) {
+> > > +             bridge = drm_panel_bridge_add_typed(panel,
+> > > +                                                 DRM_MODE_CONNECTOR_DSI);
+> > > +             if (IS_ERR(bridge))
+> > > +                     return PTR_ERR(bridge);
+> > > +     }
+> > > +
+> > > +     priv->output.dev = dev;
+> > > +     priv->output.bridge = bridge;
+> > > +     priv->output.panel = panel;
+> > > +
+> > > +     priv->dsi_lanes = dev->lanes;
+> > > +
+> > > +     /* get input ep (port0/endpoint0) */
+> > > +     ret = -EINVAL;
+> > > +     ep = of_graph_get_endpoint_by_regs(host->dev->of_node, 0, 0);
+> > > +     if (ep) {
+> > > +             ret = of_property_read_u32(ep, "bus-width", &priv->pd_lines);
+> > > +
+> > > +             of_node_put(ep);
+> > > +     }
+> > > +
+> > > +     if (ret)
+> > > +             priv->pd_lines = mipi_dsi_pixel_format_to_bpp(dev->format);
+> > > +
+> > > +     drm_bridge_add(&priv->bridge);
+> > > +
+> > > +     return 0;
+> > > +}
+> > > +
+> > > +static int ssd2825_dsi_host_detach(struct mipi_dsi_host *host,
+> > > +                                struct mipi_dsi_device *dev)
+> > > +{
+> > > +     struct ssd2825_priv *priv = dsi_host_to_ssd2825(host);
+> > > +
+> > > +     drm_bridge_remove(&priv->bridge);
+> > > +     if (priv->output.panel)
+> > > +             drm_panel_bridge_remove(priv->output.bridge);
+> > > +
+> > > +     return 0;
+> > > +}
+> > > +
+> > > +static ssize_t ssd2825_dsi_host_transfer(struct mipi_dsi_host *host,
+> > > +                                      const struct mipi_dsi_msg *msg)
+> > > +{
+> > > +     struct ssd2825_priv *priv = dsi_host_to_ssd2825(host);
+> > > +     u8 buf = *(u8 *)msg->tx_buf;
+> > > +     u16 config;
+> > > +     int ret;
+> > > +
+> > > +     if (!priv->enabled) {
+> > > +             dev_err(priv->dev, "Bridge is not enabled\n");
+> > > +             return -ENODEV;
+> > > +     }
+> >
+> > Same comment as v1:
+> >
+> > No. See include/drm/drm_mipi_dsi.h:
+> >
+> >  * Also note that those callbacks can be called no matter the state the
+> >  * host is in. Drivers that need the underlying device to be powered to
+> >  * perform these operations will first need to make sure it's been
+> >  * properly enabled.
+> >
 > 
-> Yeah, looks like suspend/resume behaves differently compared to CPU hotplug.
-> 
-> On my Juno [L b b L L L]
->                 ^^^
->                 isolcpus=[2,3]
-> 
-> # ps2 | grep DLN
->    98    98 S 140      0   - DLN sugov:0
->    99    99 S 140      0   - DLN sugov:1
-> 
-> # taskset -p 98; taskset -p 99
-> pid 98's current affinity mask: 39
-> pid 99's current affinity mask: 6
-> 
-> 
-> [   87.679282] partition_sched_domains() called
-> ...
-> [   87.684013] partition_sched_domains() called
-> ...
-> [   87.687961] partition_sched_domains() called
-> ...
-> [   87.689419] psci: CPU3 killed (polled 0 ms)
-> [   87.689715] __dl_bw_capacity() mask=2-5 cap=1024
-> [   87.689739] dl_bw_cpus() cpu=6 rd->span=2-5 cpu_active_mask=0-2 cpus=1
-> [   87.689757] dl_bw_manage: cpu=2 cap=0 fair_server_bw=52428
-> total_bw=209712 dl_bw_cpus=1 type=DEF span=2-5
-> [   87.689775] dl_bw_cpus() cpu=6 rd->span=2-5 cpu_active_mask=0-2 cpus=1
-> [   87.689789] dl_bw_manage() cpu=2 cap=0 overflow=1 return=-16
-> [   87.689864] Error taking CPU2 down: -16                       <-- !!!
-> ...
-> [   87.690674] partition_sched_domains() called
-> ...
-> [   87.691496] partition_sched_domains() called
-> ...
-> [   87.693702] partition_sched_domains() called
-> ...
-> [   87.695819] partition_and_rebuild_sched_domains() called
-> 
+> Yes, I am checking if bridge id enabled. How to check it more? Please
+> explain in detail, I do not quite understand this place. Thank you.
 
-Ah, OK. Did you try with my last proposed change?
+It is "make sure", not "check". So you have to wake up the DSI host,
+make a transfer, then shut it down. As far as I remember, that was the
+agreed implementation.
 
+> 
+> > > +
+> > > +     if (msg->rx_len) {
+> > > +             dev_warn(priv->dev, "MIPI rx is not supported\n");
+> > > +             return -EOPNOTSUPP;
+> > > +     }
+> > > +
+> > > +     mutex_lock(&priv->mlock);
+> >
+> > guard(mutex)(&priv->mlock); would simplify the code here.
+> >
+> 
+> Fair
+> 
+> > > +
+> > > +     ret = ssd2825_read_reg(priv, SSD2825_CONFIGURATION_REG, &config);
+> > > +     if (ret)
+> > > +             goto out_unlock;
+> > > +
+> > > +     switch (msg->type) {
+> > > +     case MIPI_DSI_DCS_SHORT_WRITE:
+> > > +     case MIPI_DSI_DCS_SHORT_WRITE_PARAM:
+> > > +     case MIPI_DSI_DCS_LONG_WRITE:
+> > > +             config |= SSD2825_CONF_REG_DCS;
+> > > +             break;
+> > > +     case MIPI_DSI_GENERIC_SHORT_WRITE_0_PARAM:
+> > > +     case MIPI_DSI_GENERIC_SHORT_WRITE_1_PARAM:
+> > > +     case MIPI_DSI_GENERIC_SHORT_WRITE_2_PARAM:
+> > > +     case MIPI_DSI_GENERIC_LONG_WRITE:
+> > > +             config &= ~SSD2825_CONF_REG_DCS;
+> > > +             break;
+> > > +     case MIPI_DSI_DCS_READ:
+> > > +     case MIPI_DSI_GENERIC_READ_REQUEST_0_PARAM:
+> > > +     case MIPI_DSI_GENERIC_READ_REQUEST_1_PARAM:
+> > > +     case MIPI_DSI_GENERIC_READ_REQUEST_2_PARAM:
+> > > +     default:
+> > > +             goto out_unlock;
+> > > +     }
+> > > +
+> > > +     ret = ssd2825_write_reg(priv, SSD2825_CONFIGURATION_REG, config);
+> > > +     if (ret)
+> > > +             goto out_unlock;
+> > > +
+> > > +     ret = ssd2825_write_reg(priv, SSD2825_VC_CTRL_REG, 0x0000);
+> > > +     if (ret)
+> > > +             goto out_unlock;
+> > > +
+> > > +     ret = ssd2825_write_dsi(priv, msg->tx_buf, msg->tx_len);
+> > > +     if (ret)
+> > > +             goto out_unlock;
+> > > +
+> > > +     if (buf == MIPI_DCS_SET_DISPLAY_ON) {
+> > > +             ssd2825_write_reg(priv, SSD2825_CONFIGURATION_REG,
+> > > +                               SSD2825_CONF_REG_HS | SSD2825_CONF_REG_VEN |
+> > > +                               SSD2825_CONF_REG_DCS | SSD2825_CONF_REG_ECD |
+> > > +                               SSD2825_CONF_REG_EOT);
+> >
+> > From v1:
+> >
+> > Most of these flags should be set depending on the
+> > mipi_dsi_device.mode_flags.
+> >
+> > > +             ssd2825_write_reg(priv, SSD2825_PLL_CTRL_REG, 0x0001);
+> > > +             ssd2825_write_reg(priv, SSD2825_VC_CTRL_REG, 0x0000);
+> >
+> > Why? Why do you need this special handling for the
+> > MIPI_DCS_SET_DISPLAY_ON? Why can't it just go to .atomic_enable()?
+> >
+> 
+> This has to be called after panel init dsi sequence completes, is
+> atomic_enable called after panel init dsi seq is completed? Maybe you
+> can suggest where to place it.
+
+That depends on a panel. Significant number of panel drivers call all
+DSI programming in .prepare because some DSI hosts can not transfer
+commands after starting DSI video stream.
+
+So these commands should go to your .enable().
+
+But what is the case for these calls? Are you manually implementing the
+MIPI_DSI_MODE_LPM flag? What exactly do they do? What happens if the
+panel driver asks for the MIPI_DCS_SET_DISPLAY_ON command after you've
+programmed those registers? What happens if the panel asks for the
+backlight control?
+
+> 
+> > > +     }
+> > > +
+> > > +out_unlock:
+> > > +     mutex_unlock(&priv->mlock);
+> > > +
+> > > +     return 0;
+> > > +}
+> > > +
+> > > +static const struct mipi_dsi_host_ops ssd2825_dsi_host_ops = {
+> > > +     .attach = ssd2825_dsi_host_attach,
+> > > +     .detach = ssd2825_dsi_host_detach,
+> > > +     .transfer = ssd2825_dsi_host_transfer,
+> > > +};
+> > > +
+> > > +static void ssd2825_hw_reset(struct ssd2825_priv *priv)
+> > > +{
+> > > +     gpiod_set_value_cansleep(priv->reset_gpio, 1);
+> > > +     usleep_range(5000, 6000);
+> > > +     gpiod_set_value_cansleep(priv->reset_gpio, 0);
+> > > +     usleep_range(5000, 6000);
+> > > +}
+> > > +
+> > > +/*
+> > > + * PLL configuration register settings.
+> > > + *
+> > > + * See the "PLL Configuration Register Description" in the SSD2825 datasheet.
+> > > + */
+> > > +static u16 construct_pll_config(struct ssd2825_priv *priv,
+> > > +                             u32 desired_pll_freq_kbps, u32 reference_freq_khz)
+> > > +{
+> > > +     u32 div_factor = 1, mul_factor, fr = 0;
+> > > +
+> > > +     while (reference_freq_khz / (div_factor + 1) >= SSD2825_REF_MIN_CLK)
+> > > +             div_factor++;
+> > > +     if (div_factor > 31)
+> > > +             div_factor = 31;
+> > > +
+> > > +     mul_factor = DIV_ROUND_UP(desired_pll_freq_kbps * div_factor,
+> > > +                               reference_freq_khz);
+> > > +
+> > > +     priv->pll_freq_kbps = reference_freq_khz * mul_factor / div_factor;
+> > > +     priv->nibble_freq_khz = priv->pll_freq_kbps / 4;
+> > > +
+> > > +     if (priv->pll_freq_kbps >= 501000)
+> > > +             fr = 3;
+> > > +     else if (priv->pll_freq_kbps >= 251000)
+> > > +             fr = 2;
+> > > +     else if (priv->pll_freq_kbps >= 126000)
+> > > +             fr = 1;
+> > > +
+> > > +     return (fr << 14) | (div_factor << 8) | mul_factor;
+> > > +}
+> > > +
+> > > +static u32 ssd2825_to_ns(u32 khz)
+> > > +{
+> > > +     return (1000 * 1000 / khz);
+> > > +}
+> > > +
+> > > +static int ssd2825_setup_pll(struct ssd2825_priv *priv,
+> > > +                          const struct drm_display_mode *mode)
+> > > +{
+> > > +     u16 pll_config, lp_div;
+> > > +     u32 nibble_delay, pclk_mult, tx_freq_khz;
+> > > +     u8 hzd, hpd;
+> > > +
+> > > +     tx_freq_khz = clk_get_rate(priv->tx_clk) / 1000;
+> > > +     if (!tx_freq_khz)
+> > > +             tx_freq_khz = SSD2825_REF_MIN_CLK;
+> > > +
+> > > +     pclk_mult = priv->pd_lines / priv->dsi_lanes + 1;
+> > > +     pll_config = construct_pll_config(priv, pclk_mult * mode->clock,
+> > > +                                       tx_freq_khz);
+> > > +
+> > > +     lp_div = priv->pll_freq_kbps / (SSD2825_LP_MIN_CLK * 8);
+> > > +
+> > > +     nibble_delay = ssd2825_to_ns(priv->nibble_freq_khz);
+> > > +
+> > > +     hzd = priv->hzd / nibble_delay;
+> > > +     hpd = (priv->hpd - 4 * nibble_delay) / nibble_delay;
+> > > +
+> > > +     /* Disable PLL */
+> > > +     ssd2825_write_reg(priv, SSD2825_PLL_CTRL_REG, 0x0000);
+> > > +     ssd2825_write_reg(priv, SSD2825_LINE_CTRL_REG, 0x0001);
+> > > +
+> > > +     /* Set delays */
+> > > +     dev_dbg(priv->dev, "SSD2825_DELAY_ADJ_REG_1 0x%x\n", (hzd << 8) | hpd);
+> >
+> > From v1:
+> >
+> > drm_dbg_driver() ?
+> >
+> 
+> Not sure if drm_dbg_driver is needed, dev_dbg is not enough?
+
+It's a DRM driver, so it's better to use drm-specific debug prints.
+
+> 
+> >
+> > > +     ssd2825_write_reg(priv, SSD2825_DELAY_ADJ_REG_1, (hzd << 8) | hpd);
+> > > +
+> > > +     /* Set PLL coeficients */
+> > > +     dev_dbg(priv->dev, "SSD2825_PLL_CONFIGURATION_REG 0x%x\n", pll_config);
+> > > +     ssd2825_write_reg(priv, SSD2825_PLL_CONFIGURATION_REG, pll_config);
+> > > +
+> > > +     /* Clock Control Register */
+> > > +     dev_dbg(priv->dev, "SSD2825_CLOCK_CTRL_REG 0x%x\n",
+> > > +             SSD2828_LP_CLOCK_DIVIDER(lp_div));
+> > > +     ssd2825_write_reg(priv, SSD2825_CLOCK_CTRL_REG,
+> > > +                       SSD2828_LP_CLOCK_DIVIDER(lp_div));
+> > > +
+> > > +     /* Enable PLL */
+> > > +     ssd2825_write_reg(priv, SSD2825_PLL_CTRL_REG, 0x0001);
+> > > +     ssd2825_write_reg(priv, SSD2825_VC_CTRL_REG, 0);
+> > > +
+> > > +     return 0;
+> > > +}
+> > > +
+> > > +static void ssd2825_bridge_atomic_pre_enable(struct drm_bridge *bridge,
+> > > +                                          struct drm_bridge_state *old_bridge_state)
+> > > +{
+> > > +     struct ssd2825_priv *priv = bridge_to_ssd2825(bridge);
+> > > +     int ret;
+> > > +
+> > > +     if (priv->enabled)
+> > > +             return;
+> > > +
+> > > +     /* Power Sequence */
+> > > +     ret = clk_prepare_enable(priv->tx_clk);
+> > > +     if (ret < 0)
+> > > +             dev_err(priv->dev, "error enabling tx_clk (%d)\n", ret);
+> > > +
+> > > +     ret = regulator_bulk_enable(ARRAY_SIZE(ssd2825_supplies), priv->supplies);
+> > > +     if (ret < 0)
+> > > +             dev_err(priv->dev, "error enabling regulators (%d)\n", ret);
+> > > +
+> > > +     usleep_range(1000, 2000);
+> > > +
+> > > +     ssd2825_hw_reset(priv);
+> > > +
+> > > +     priv->enabled = true;
+> > > +}
+> > > +
+> > > +static void ssd2825_bridge_atomic_enable(struct drm_bridge *bridge,
+> > > +                                      struct drm_bridge_state *old_bridge_state)
+> > > +{
+> > > +     struct ssd2825_priv *priv = bridge_to_ssd2825(bridge);
+> > > +     struct device *dev = priv->dev;
+> > > +     struct mipi_dsi_device *dsi_dev = priv->output.dev;
+> > > +     struct drm_atomic_state *state = old_bridge_state->base.state;
+> > > +     const struct drm_crtc_state *crtc_state;
+> > > +     const struct drm_display_mode *mode;
+> > > +     struct drm_connector *connector;
+> > > +     struct drm_crtc *crtc;
+> > > +     u32 input_bus_flags = bridge->timings->input_bus_flags;
+> > > +     u16 flags = 0;
+> > > +     u8 pixel_format;
+> > > +
+> > > +     /* Filter unimplemeted modes before RGB control registers configuration */
+> > > +     if (dsi_dev->mode_flags & MIPI_DSI_CLOCK_NON_CONTINUOUS) {
+> > > +             dev_warn_once(dev,
+> > > +                           "Non-continuous mode unimplemented, falling back to continuous\n");
+> > > +             dsi_dev->mode_flags &= ~MIPI_DSI_CLOCK_NON_CONTINUOUS;
+> > > +     }
+> > > +
+> > > +     if (dsi_dev->mode_flags & MIPI_DSI_MODE_VIDEO_BURST) {
+> > > +             dev_warn_once(dev,
+> > > +                           "Burst mode unimplemented, falling back to simple\n");
+> > > +             dsi_dev->mode_flags &= ~MIPI_DSI_MODE_VIDEO_BURST;
+> > > +     }
+> >
+> >
+> > But you have implemented it already, several lines below.
+> >
+> 
+> Fair
+> 
+> > Also such checks should really go to .atomic_check() or
+> > ssd2825_dsi_host_attach().
+> >
+> 
+> Fair, but RGB control registers configuration is done in this function
+> and there is a need to know DSI video mode for correct configuration.
+
+It's necessary to know it, it's true. However you should reject invalid
+configurations instead of manually patching those.
+
+> 
+> > > +
+> > > +     /* Perform SW reset */
+> > > +     ssd2825_write_reg(priv, SSD2825_OPERATION_CTRL_REG, 0x0100);
+> > > +
+> > > +     /* Set pixel format */
+> > > +     switch (dsi_dev->format) {
+> > > +     case MIPI_DSI_FMT_RGB565:
+> > > +             pixel_format = 0x00;
+> > > +             break;
+> > > +     case MIPI_DSI_FMT_RGB666_PACKED:
+> > > +             pixel_format = 0x01;
+> > > +             break;
+> > > +     case MIPI_DSI_FMT_RGB666:
+> > > +             pixel_format = 0x02;
+> > > +             break;
+> > > +     case MIPI_DSI_FMT_RGB888:
+> > > +     default:
+> > > +             pixel_format = 0x03;
+> > > +             break;
+> > > +     }
+> > > +
+> > > +     connector = drm_atomic_get_new_connector_for_encoder(state,
+> > > +                                                          bridge->encoder);
+> > > +     crtc = drm_atomic_get_new_connector_state(state, connector)->crtc;
+> > > +     crtc_state = drm_atomic_get_new_crtc_state(state, crtc);
+> > > +     mode = &crtc_state->adjusted_mode;
+> > > +
+> > > +     /* Set panel timings */
+> > > +     ssd2825_write_reg(priv, SSD2825_RGB_INTERFACE_CTRL_REG_1,
+> > > +                       ((mode->vtotal - mode->vsync_end) << 8) |
+> > > +                       (mode->htotal - mode->hsync_end));
+> > > +     ssd2825_write_reg(priv, SSD2825_RGB_INTERFACE_CTRL_REG_2,
+> > > +                       ((mode->vtotal - mode->vsync_start) << 8) |
+> > > +                       (mode->htotal - mode->hsync_start));
+> > > +     ssd2825_write_reg(priv, SSD2825_RGB_INTERFACE_CTRL_REG_3,
+> > > +                       ((mode->vsync_start - mode->vdisplay) << 8) |
+> > > +                       (mode->hsync_start - mode->hdisplay));
+> > > +     ssd2825_write_reg(priv, SSD2825_RGB_INTERFACE_CTRL_REG_4, mode->hdisplay);
+> > > +     ssd2825_write_reg(priv, SSD2825_RGB_INTERFACE_CTRL_REG_5, mode->vdisplay);
+> > > +
+> > > +     if (mode->flags & DRM_MODE_FLAG_PHSYNC)
+> > > +             flags |= SSD2825_HSYNC_HIGH;
+> > > +
+> > > +     if (mode->flags & DRM_MODE_FLAG_PVSYNC)
+> > > +             flags |= SSD2825_VSYNC_HIGH;
+> > > +
+> > > +     if (dsi_dev->mode_flags & MIPI_DSI_MODE_VIDEO)
+> > > +             flags |= SSD2825_NON_BURST_EV;
+> > > +
+> > > +     if (dsi_dev->mode_flags & MIPI_DSI_MODE_VIDEO_BURST)
+> > > +             flags |= SSD2825_BURST;
+> > > +
+> > > +     if (input_bus_flags & DRM_BUS_FLAG_PIXDATA_SAMPLE_POSEDGE)
+> > > +             flags |= SSD2825_PCKL_HIGH;
+> > > +
+> > > +     ssd2825_write_reg(priv, SSD2825_RGB_INTERFACE_CTRL_REG_6, flags | pixel_format);
+> > > +     ssd2825_write_reg(priv, SSD2825_LANE_CONFIGURATION_REG, dsi_dev->lanes - 1);
+> > > +     ssd2825_write_reg(priv, SSD2825_TEST_REG, 0x0004);
+> > > +
+> > > +     /* Call PLL configuration */
+> > > +     ssd2825_setup_pll(priv, mode);
+> > > +
+> > > +     usleep_range(10000, 11000);
+> > > +
+> > > +     /* Initial DSI configuration register set */
+> > > +     ssd2825_write_reg(priv, SSD2825_CONFIGURATION_REG,
+> > > +                       SSD2825_CONF_REG_CKE | SSD2825_CONF_REG_DCS |
+> > > +                       SSD2825_CONF_REG_ECD | SSD2825_CONF_REG_EOT);
+> > > +     ssd2825_write_reg(priv, SSD2825_VC_CTRL_REG, 0);
+> > > +}
+> > > +
+> > > +static void ssd2825_bridge_atomic_disable(struct drm_bridge *bridge,
+> > > +                                       struct drm_bridge_state *old_bridge_state)
+> > > +{
+> > > +     struct ssd2825_priv *priv = bridge_to_ssd2825(bridge);
+> > > +     int ret;
+> > > +
+> > > +     if (!priv->enabled)
+> > > +             return;
+> > > +
+> > > +     msleep(100);
+> > > +
+> > > +     /* Exit DSI configuration register set */
+> > > +     ssd2825_write_reg(priv, SSD2825_CONFIGURATION_REG,
+> > > +                       SSD2825_CONF_REG_ECD | SSD2825_CONF_REG_EOT);
+> > > +     ssd2825_write_reg(priv, SSD2825_VC_CTRL_REG, 0);
+> > > +
+> > > +     /* HW disable */
+> > > +     gpiod_set_value_cansleep(priv->reset_gpio, 1);
+> > > +     usleep_range(5000, 6000);
+> > > +
+> > > +     ret = regulator_bulk_disable(ARRAY_SIZE(ssd2825_supplies),
+> > > +                                  priv->supplies);
+> > > +     if (ret < 0)
+> > > +             dev_err(priv->dev, "error disabling regulators (%d)\n", ret);
+> > > +
+> > > +     clk_disable_unprepare(priv->tx_clk);
+> > > +
+> > > +     priv->enabled = false;
+> > > +}
+> > > +
+> > > +static int ssd2825_bridge_attach(struct drm_bridge *bridge,
+> > > +                              enum drm_bridge_attach_flags flags)
+> > > +{
+> > > +     struct ssd2825_priv *priv = bridge_to_ssd2825(bridge);
+> > > +
+> > > +     return drm_bridge_attach(bridge->encoder, priv->output.bridge, bridge,
+> > > +                              flags);
+> > > +}
+> > > +
+> > > +static enum drm_mode_status
+> > > +ssd2825_bridge_mode_valid(struct drm_bridge *bridge,
+> > > +                       const struct drm_display_info *info,
+> > > +                       const struct drm_display_mode *mode)
+> > > +{
+> > > +     struct videomode vm;
+> > > +
+> > > +     drm_display_mode_to_videomode(mode, &vm);
+> > > +
+> > > +     /* maximum bit field size is 0xff apart active area which is 0xffff */
+> > > +     if (vm.hsync_len > 0xff || vm.hback_porch > 0xff ||
+> > > +         vm.hfront_porch > 0xff || vm.hactive > 0xffff)
+> >
+> > Some of these limitations are artificial or don't match the specs:
+> >
+> > Maximum pixels per display row  1366    2560
+> >
+> > etc.
+> >
+> 
+> 1366 and 2560 still fit into u16 which is maximum size of v/hactive. I
+> took those bit field  sizes from datasheet.
+
+Yes. It's other way around: according to the web site modes above 1366x
+(or 2560x for ssd2828) should be rejected, while the driver doesn't do
+it.
+
+> 
+> > > +             return MODE_H_ILLEGAL;
+> > > +
+> > > +     if (vm.vsync_len > 0xff || vm.vback_porch > 0xff ||
+> > > +         vm.vfront_porch > 0xff || vm.vactive > 0xffff)
+> > > +             return MODE_V_ILLEGAL;
+> > > +
+> > > +     return MODE_OK;
+> > > +}
+> > > +
+> > > +static bool ssd2825_mode_fixup(struct drm_bridge *bridge,
+> > > +                            const struct drm_display_mode *mode,
+> > > +                            struct drm_display_mode *adjusted_mode)
+> > > +{
+> > > +     /* Default to positive sync */
+> > > +
+> > > +     if (!(adjusted_mode->flags &
+> > > +           (DRM_MODE_FLAG_PHSYNC | DRM_MODE_FLAG_NHSYNC)))
+> > > +             adjusted_mode->flags |= DRM_MODE_FLAG_PHSYNC;
+> > > +
+> > > +     if (!(adjusted_mode->flags &
+> > > +           (DRM_MODE_FLAG_PVSYNC | DRM_MODE_FLAG_NVSYNC)))
+> > > +             adjusted_mode->flags |= DRM_MODE_FLAG_PVSYNC;
+> >
+> > Why? I think that it is an error for the mode not to have one of those
+> > flags. Do you have an actual usecase?
+> >
+> 
+> Yes, LG Optimus 4G P880 and Optimus Vu P895 both use this bridge and
+> require positive v/hsync to work. I am not sure if it is a good idea
+> to add those flags to panel driver.
+
+Okay, so you are setting the flags for the DPI host. I'd suggest you to
+drop the conditionals (as the DSI sync flags are of no concern to your
+host-bridge link) and set the PVSYNC / PHSYNC unconditionally. Add a
+comment, describing the reason.
+
+> > > +
+> > > +     return true;
+> > > +}
+> > > +
+
+-- 
+With best wishes
+Dmitry
 
