@@ -1,156 +1,162 @@
-Return-Path: <linux-kernel+bounces-519264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11962A39A85
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:20:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9D61A39A8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:20:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A726D3A280B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:16:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E242C175A7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:17:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30D2F2417F5;
-	Tue, 18 Feb 2025 11:15:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 571BA241106;
+	Tue, 18 Feb 2025 11:16:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sandisk.com header.i=@sandisk.com header.b="XDJpg2we"
-Received: from esa3.hgst.iphmx.com (esa3.hgst.iphmx.com [216.71.153.141])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OgfonteP"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD08023F295;
-	Tue, 18 Feb 2025 11:15:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.71.153.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1464522B8CD;
+	Tue, 18 Feb 2025 11:16:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739877334; cv=none; b=Rjieg3bJhV9L6+ZT5v633U9skDNEl4lYEOAYgolQvdwSE6sssffsrasof26zQlIm58gVH7WzQvRYNxv5udo8IweHODu1BA4YidgCKZNir6O8SbJQ9NJgZJUtndDY9+pKixhViyFrHQmk3NSg80WnZ4qaJZJSkvonEOWbfwcWIQ0=
+	t=1739877412; cv=none; b=j35JN/2tzcsEb9wz1KznibXuw3WkVbKd2BRmwSrAoJJvnHp6z4jw3cpce5/FTwKdMW7h2Bj/g6tumWDwnPE0Y2W9X6jcbN643o6VcEQfqOkZENDscsPuguHBPIX0+Ze4upvLqFTllNrxvIDcmUfNI62PTQ+Iscnx5gqChg2qYyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739877334; c=relaxed/simple;
-	bh=ufqG7XoGOJZCg/c36vHLg/i8bJImksgJs7KeU/+b6mc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=h1FsxIqtg6WKZF9djgvwQY3odwE9lNoBxxQuEbppqXPai0t3sM2/5W5iCky3oimeJ+v1DQLuNZhUBM8aa/oDIDmNLX3DHno1tYP4ldVeUXKDfMCScib55ZnzpeASwHJ8yogGseqIs+hG0GUW2TflleuhAZgBrPMPDV4XGArTScE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sandisk.com; spf=pass smtp.mailfrom=sandisk.com; dkim=pass (2048-bit key) header.d=sandisk.com header.i=@sandisk.com header.b=XDJpg2we; arc=none smtp.client-ip=216.71.153.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sandisk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sandisk.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=sandisk.com; i=@sandisk.com; q=dns/txt;
-  s=dkim.sandisk.com; t=1739877333; x=1771413333;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=ufqG7XoGOJZCg/c36vHLg/i8bJImksgJs7KeU/+b6mc=;
-  b=XDJpg2we9L+/sn4/ZTEMepa0rD9URkTPlFLwmHamman19pM/ppzWwR7g
-   b7V8+nOXxMsoWoqDucD9eh9x6GdthyFXXaQpPtnSTNqzRxkDLdfaZLrRT
-   1nVdJ9XaMBGIGN6Yq/7X2ezFN10EuvHRG3jC8AiBPevWcCn3qBG6Poi2G
-   UtiamyIdTD+MZ8rdMdnMeWaW0gs1hfujCi4hfES373cvr6cG53Kd8Kev1
-   Ws1L+jhzunEnhHSTS80OGsonhWHjdbWw8eu2GTr75+hAxH/3DiXM+gFbg
-   jINfz2XhcTCNv3QiE8Zp/PTO57Lsg/d+1mA+j7Qxcp8mWBrMCMoFCTj89
-   w==;
-X-CSE-ConnectionGUID: kzPNWm4vQnmc3ihwnCQ3sA==
-X-CSE-MsgGUID: zrwzFhjOTyuPPdnDXwNx9w==
-X-IronPort-AV: E=Sophos;i="6.13,295,1732550400"; 
-   d="scan'208";a="38739768"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 18 Feb 2025 19:15:32 +0800
-IronPort-SDR: 67b45e1a_qx6JGEbPkJxRdaa7oidkw1zvzA+ND3kGszbPapWhSdzZY2B
- KlcdaH1raNkRltGWuH8/FL0dzNwCR8EHwVUS1Mw==
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 18 Feb 2025 02:16:58 -0800
-WDCIronportException: Internal
-Received: from unknown (HELO WDAP-ez2C89klLd.corp.sandisk.com) ([10.112.13.179])
-  by uls-op-cesaip02.wdc.com with ESMTP; 18 Feb 2025 03:15:29 -0800
-From: Arthur Simchaev <arthur.simchaev@sandisk.com>
-To: martin.petersen@oracle.com
-Cc: avri.altman@sandisk.com,
-	Avi.Shchislowski@sandisk.com,
-	beanhuo@micron.com,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bvanassche@acm.org,
-	Arthur Simchaev <arthur.simchaev@sandisk.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] ufs: core: bsg: Fix memory crash in case arpmb command failed
-Date: Tue, 18 Feb 2025 13:15:27 +0200
-Message-Id: <20250218111527.246506-1-arthur.simchaev@sandisk.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1739877412; c=relaxed/simple;
+	bh=Foto82THQt7AoFetZJgUldbW5IPLxQNH5/iotlNg39c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=fdUFOLz3Rsfg3CX2E7vcmj4KQsfZ1TCe+pERuYnDoIN2LobPW9pR8wdSUYfU4efRMLSeDxIISCcVPjHICfEsAipm7+z3ctOhhlGD4Hdhlh0UldIuPAIZj7khEVylXklIy/J0MuhbsgE/CH4m4Glg+BLkJWN3bAesG8cB0my1GRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OgfonteP; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51HNnfg5029727;
+	Tue, 18 Feb 2025 11:16:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	j+yT3U+MRUAjHIURYyEXwVn1rwgWVAj6QAOByxnDqtE=; b=OgfontePzTrddn1G
+	YfAptMiGzT4d1XDeJ8Kmn0jn6MEdeu6DLcMJdRyjtmON1MIiXfeTXo8qkorv1TjH
+	OlOY5HFrFDQ5OzX0EvuvgnsDJWa/0SNDfdrN2TIw0Z4rUcrB8P+72biR0xXNh2HY
+	584bmCfmyEyTgUvTqZqaIUyXTRoyRhK6FGrlexCKRvQGXAFY5nsBFtXIW7ZS+gzm
+	UKDIbHnWe64upk34jVkp0QgVGd1bnOymlCtwFJ48eFmu4s5VO3owlEVTocF1mDBa
+	JmBlpxiqNYCGimyRYVGT/m3RBrJq3pMNW93CgjTX4vCkFwGAupRIr14/ctJSBO3L
+	F5TtBg==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44v3mg34b8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Feb 2025 11:16:33 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51IBGWIx026728
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Feb 2025 11:16:32 GMT
+Received: from [10.253.35.15] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 18 Feb
+ 2025 03:16:26 -0800
+Message-ID: <92d5f50d-efc0-462b-8cd2-e73ba77222e5@quicinc.com>
+Date: Tue, 18 Feb 2025 19:16:24 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v3 13/14] net: ethernet: qualcomm: Add PPE
+ debugfs support for PPE counters
+To: Andrew Lunn <andrew@lunn.ch>
+CC: Andrew Lunn <andrew+netdev@lunn.ch>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>, Lei Wei <quic_leiwei@quicinc.com>,
+        Suruchi Agarwal
+	<quic_suruchia@quicinc.com>,
+        Pavithra R <quic_pavir@quicinc.com>,
+        "Simon
+ Horman" <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook
+	<kees@kernel.org>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        "Philipp
+ Zabel" <p.zabel@pengutronix.de>,
+        <linux-arm-msm@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
+        <quic_kkumarcs@quicinc.com>, <quic_linchen@quicinc.com>,
+        <srinivas.kandagatla@linaro.org>, <bartosz.golaszewski@linaro.org>,
+        <john@phrozen.org>
+References: <20250209-qcom_ipq_ppe-v3-0-453ea18d3271@quicinc.com>
+ <20250209-qcom_ipq_ppe-v3-13-453ea18d3271@quicinc.com>
+ <5a53333b-e94c-4fb7-b23d-e1d38d2dad8e@lunn.ch>
+ <a455a2f6-ca0b-43e0-b18c-53f73344981f@quicinc.com>
+ <72171304-9a98-4734-85a3-d1302d053602@lunn.ch>
+Content-Language: en-US
+From: Jie Luo <quic_luoj@quicinc.com>
+In-Reply-To: <72171304-9a98-4734-85a3-d1302d053602@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 9U6kD39eKAHav1EnDr6Oxigpqs9BUhT3
+X-Proofpoint-ORIG-GUID: 9U6kD39eKAHav1EnDr6Oxigpqs9BUhT3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-18_04,2025-02-18_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ bulkscore=0 clxscore=1015 adultscore=0 priorityscore=1501 mlxscore=0
+ phishscore=0 spamscore=0 mlxlogscore=982 impostorscore=0 malwarescore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502180088
 
-In case the device doesn't support arpmb, the kernel get memory crash
-due to copy user data in bsg_transport_sg_io_fn level. So in case
-ufs_bsg_exec_advanced_rpmb_req returned error, do not set the job's
-reply_len.
 
-Memory crash backtrace:
-3,1290,531166405,-;ufshcd 0000:00:12.5: ARPMB OP failed: error code -22
 
-4,1308,531166555,-;Call Trace:
+On 2/14/2025 10:02 PM, Andrew Lunn wrote:
+>>>> +/* The number of packets dropped because of no buffer available, no PPE
+>>>> + * buffer assigned to these packets.
+>>>> + */
+>>>> +static void ppe_port_rx_drop_counter_get(struct ppe_device *ppe_dev,
+>>>> +					 struct seq_file *seq)
+>>>> +{
+>>>> +	u32 reg, drop_cnt = 0;
+>>>> +	int ret, i, tag = 0;
+>>>> +
+>>>> +	PRINT_COUNTER_PREFIX("PRX_DROP_CNT", "SILENT_DROP:");
+>>>> +	for (i = 0; i < PPE_DROP_CNT_TBL_ENTRIES; i++) {
+>>>> +		reg = PPE_DROP_CNT_TBL_ADDR + i * PPE_DROP_CNT_TBL_INC;
+>>>> +		ret = ppe_pkt_cnt_get(ppe_dev, reg, PPE_PKT_CNT_SIZE_1WORD,
+>>>> +				      &drop_cnt, NULL);
+>>>> +		if (ret) {
+>>>> +			seq_printf(seq, "ERROR %d\n", ret);
+>>>> +			return;
+>>>> +		}
+>>>
+>>> This is an error getting the value from the hardware? You should not
+>>> put that into the debugfs itself, you want the read() call to return
+>>> it.
+>>>
+>>
+>> Yes, this error code is returned by regmap read functions in
+>> ppe_pkt_cnt_get() when the hardware counter read fails. I will
+>> remove it from debugfs file and instead log the error to the
+>> console (dev_info).
+> 
+> and return it to user space via the read() call. These functions
+> normally return the number of bytes put into the buffer. But you can
+> also return a negative error code which gets passed back to user space
+> instead.
+> 
+> 	Andrew
 
-4,1309,531166559,-; <TASK>
-
-4,1310,531166565,-; ? show_regs+0x6d/0x80
-
-4,1311,531166575,-; ? die+0x37/0xa0
-
-4,1312,531166583,-; ? do_trap+0xd4/0xf0
-
-4,1313,531166593,-; ? do_error_trap+0x71/0xb0
-
-4,1314,531166601,-; ? usercopy_abort+0x6c/0x80
-
-4,1315,531166610,-; ? exc_invalid_op+0x52/0x80
-
-4,1316,531166622,-; ? usercopy_abort+0x6c/0x80
-
-4,1317,531166630,-; ? asm_exc_invalid_op+0x1b/0x20
-
-4,1318,531166643,-; ? usercopy_abort+0x6c/0x80
-
-4,1319,531166652,-; __check_heap_object+0xe3/0x120
-
-4,1320,531166661,-; check_heap_object+0x185/0x1d0
-
-4,1321,531166670,-; __check_object_size.part.0+0x72/0x150
-
-4,1322,531166679,-; __check_object_size+0x23/0x30
-
-4,1323,531166688,-; bsg_transport_sg_io_fn+0x314/0x3b0
-
-Fixes: 6ff265fc5ef6 ("scsi: ufs: core: bsg: Add advanced RPMB support in ufs_bsg")
-Cc: stable@vger.kernel.org
-Signed-off-by: Arthur Simchaev <arthur.simchaev@sandisk.com>
-
----
-Changes in v2:
-  - Add Fixes tag
-  - Elaborate commit log
-
-Signed-off-by: Arthur Simchaev <arthur.simchaev@sandisk.com>
----
- drivers/ufs/core/ufs_bsg.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/ufs/core/ufs_bsg.c b/drivers/ufs/core/ufs_bsg.c
-index 8d4ad0a3f2cf..a8ed9bc6e4f1 100644
---- a/drivers/ufs/core/ufs_bsg.c
-+++ b/drivers/ufs/core/ufs_bsg.c
-@@ -194,10 +194,12 @@ static int ufs_bsg_request(struct bsg_job *job)
- 	ufshcd_rpm_put_sync(hba);
- 	kfree(buff);
- 	bsg_reply->result = ret;
--	job->reply_len = !rpmb ? sizeof(struct ufs_bsg_reply) : sizeof(struct ufs_rpmb_reply);
- 	/* complete the job here only if no error */
--	if (ret == 0)
-+	if (ret == 0) {
-+		job->reply_len = !rpmb ? sizeof(struct ufs_bsg_reply) :
-+					 sizeof(struct ufs_rpmb_reply);
- 		bsg_job_done(job, ret, bsg_reply->reply_payload_rcv_len);
-+	}
- 
- 	return ret;
- }
--- 
-2.34.1
-
+OK, I will return the negative error code returned by the read() to the
+user space, thanks.
 
