@@ -1,81 +1,80 @@
-Return-Path: <linux-kernel+bounces-520179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F552A3A6AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:03:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 55040A3A6AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:03:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4032D3ACF5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:59:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C567B3AC4BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:59:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEF291E5213;
-	Tue, 18 Feb 2025 18:59:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9537D1EB5DF;
+	Tue, 18 Feb 2025 18:59:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZgA3qEvQ"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Sf3o3ICE"
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680E41E51EB
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 18:59:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 303821E51FA
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 18:59:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739905191; cv=none; b=jKb5PlDovNkyLHsz3QUpYlpOsVpYAedZq+198VMKNdUPiEUKlchKVgUZjUXVmQcfN/f0Ou8lFm9J2mp3stuIWBNCLj0mIdqxsiQrUf0RH4/VS+NmdurEhd+NVxtdn0px2w7ycFLQkKABqKTaC+j5VyVTVp8uSQ6nydV452pUxBc=
+	t=1739905192; cv=none; b=Wk1XYWbZUFRukpapJ5cvpzEiAekzqwjBeDTk4J9j54bM6Z0pbWhlycE6w1N4mBPsAXQR1hCJUv/x7xweQTJO+IcPZWEVnQWXLJJUhYY3bfeHd6E4OFemwWPu/tPGhORnpqqVIqbQVqYcEttaLj9HcArI1PZneuHbs05/BW0jQt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739905191; c=relaxed/simple;
-	bh=sgcMCXHcqmLD2fAN4moy0mYEbl/nVo/5UuzQ5yvUtoE=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=VrFuqlMb83Fi5SYaOCQJr3jVPA70y6ne2Ff80Ke6+K9Wo1UFi1pFL/Zh5THHk569nWeUCSzpeJ0juJhCgLwmekh5F46JbUlur8oEnOK4lndvFK3r2PoQrqda9JttYULDiLri9dHqiSakarSUY8mKuKsowPjMqlJWQCpbE1qLMB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZgA3qEvQ; arc=none smtp.client-ip=209.85.128.74
+	s=arc-20240116; t=1739905192; c=relaxed/simple;
+	bh=lOnH/mKyx1+Del/vxG0+xdTDX0A6bFVlFWfN1vk4eS8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=GVVogYB6c12lOoEQOYRZU8L6Dpk2MZI0/XhxrP++rJ89yL+aOClVllMLeJ/zi4jluJP3lWjI6jnbwG6YsvDcpsH9Qn9VnVBafyp50C7BBDsucMVMERJ78a6C912v8qWRsjH93wQ6tdc2GMOYJyk9zIVqKJQARdmPeExakgjYVqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Sf3o3ICE; arc=none smtp.client-ip=209.85.221.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4394c0a58e7so41989955e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 10:59:49 -0800 (PST)
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-38f4bf0d5faso1156869f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 10:59:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739905188; x=1740509988; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=uLokahsRp/1HhhIeL1ZdoIvCr2+1AW9MZ/zEnvPpzB0=;
-        b=ZgA3qEvQsc/IqTB9qmckEKwZBrimrQqNVCszrAtvZuU/eVE6A83EpHQWBc3Ci2r0+0
-         SRysxNK2fAD8Ff9D9ow2UytiYw+lIzQTACOmD0GsTNi4T9j/yxrWAgrjBkfUrO34eWLG
-         lXiKrf0oC9p3+KM3p1QqqV2tdQv4S9dlzm2xUESjXY8Gf+gOenH3/0YssnyYWQf9enAP
-         L6U+V78r23Gtz93AnAREcAcMZgOQDrPa7tzBsu+CVXIG600X4q12tGpbNW6Gs8W0b/Qy
-         JMs4BNTUx7n6JpDLuwLsQADUr4/WezEtp9gRhOP2RALaZ6tXgUlN28Uihd6xLobNuUde
-         Pubg==
+        d=google.com; s=20230601; t=1739905189; x=1740509989; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=49VdnZqF35jWIGgVq9B0arGE7pdVdeiBK4kpJ+YCfcM=;
+        b=Sf3o3ICE14ZrxJgSjc81zDMEfiI0JSSqI/oJZjAG2BICgrxrSslVE4KiLl54eeoY4o
+         JHCwW/4OL/h9Jo6QN6mp8IEnib6yWyw5uehgl1ZInE+8q0SrQJq6mairPud87dJ8vSKx
+         Ooio1N1hb2Pz5SZhiHUfRSgXokzHlUjijoFWh3xJukKdCNAKesT4oGRohbEYAfc3La6l
+         gWOoRoO3UfnYUJvM+uu+3+LJ90fZv5r3kt+YtC2DakCXnUjVpo5ERyumJ7RUVQ+DLsmh
+         yI5zGkmmEBvEHf8luMCGwgmsFp+4ZwTgLLQugdgat0AKEoTsJNezsbKF6IrH3KBqQGQ5
+         YOXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739905188; x=1740509988;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uLokahsRp/1HhhIeL1ZdoIvCr2+1AW9MZ/zEnvPpzB0=;
-        b=LqcHGbewek3+NEi1+oiqWvL5lp8umIEaKxIAR2WS8PcM3A/pCgExZCxgjTypae23NX
-         secadPQifKYi3OkgAQhTcq5l1zta+m2o0uXGWxcxQUXBHsW2kHme2Ecv3gpkT8vsNHPe
-         LMfN8ID5fDSvzXgAsP6hnhrSnc6YzV0dcKMwx6FbU7ewYr2kfEMtFhNHEXF8n5+l0lQX
-         fJc3Bz5pHgSrQTxRo/866dgNfRSVDbNcRvCXn+Ppg+D5CNCNMtTtJH8QBwGn3uItP3Fk
-         tt42QfN77dRisSprKetsHx4eKiVwyQ7LF6BbP6l0Cgz8jyqM3Ys909SOb6YfkXpjU7A2
-         OD2A==
-X-Forwarded-Encrypted: i=1; AJvYcCUbpZwwfhE44f1AStmexazAxMfJ9DCk3kCOuy4TFcWOyUvjPerEa2MDWNuOwdkdRxxh513HLNYIqyA7FL0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTmPgVgVgN/OuXy6QzmCE7LlrnLqoFtXl8ZiLBlneb+9IPHGrI
-	S3iOHb0JVNxn8kfQRWQlm7hyp1w8O7myA4ArSL5G0iHKz2SP0i/Hp9hAd5zc82SoWzAolRegNR0
-	TbjEkzriwrw==
-X-Google-Smtp-Source: AGHT+IEdNjds1zwEO5M8N/CATJUdsJrMJ0qVNyBBx+DQb42yFggeDOcnhYT/2H2JfwJy3O1KbANvYtULINPbQA==
-X-Received: from wmqe5.prod.google.com ([2002:a05:600c:4e45:b0:439:8333:1efb])
+        d=1e100.net; s=20230601; t=1739905189; x=1740509989;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=49VdnZqF35jWIGgVq9B0arGE7pdVdeiBK4kpJ+YCfcM=;
+        b=dSCxrMatqBWAosIZgco+ezXcLI38RY4x86mb6Sas3G6elNwsPpzuyHlfWIBLzgabnS
+         dKZrTwuSQHH7ihO9OfFBtzolBg5aqwxuB4csDRsjyKytAnCm8I+sAhvo3q3jxoFXeeUh
+         Zt0kZU9h+4aEHRDNhbZjY0JTNTnuK3TT0aFwh08pXQxtCziNG2rmJbTpDqwa0lriGean
+         M2dbJjOj1UKeLzXxTwV+ZdBZ01+UTsCPu/tmp95FE5pYx0I0kroyhGmFGrmmf8R9PBcm
+         ILEvt1jaVF50oYAamVLsiyPJQlzUClHje5NfsF3GFkYPNWQNVYnaFJA58JqLGY4ZtZ1J
+         9zUg==
+X-Forwarded-Encrypted: i=1; AJvYcCVEUP4wZyGIS1eMVMQpVSrsb6J/R07Zz0XN4gqYlfS93lTIXIH5/jcWGtR4V81KkJWuQPt1sS+5+lqY/4E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0j3sPLkloHsa9EoE8iWA0z99BZntKDyq60LlPpkCPZZ4KR7od
+	u6Q2IhQuKhAAUQS5ucP8Oxbj5PYq9puOYmFDDm2cfZDGlg1VRv0Z+uj2dinpnfy1K5tPRM6LKeL
+	5xzIB5+xYPQ==
+X-Google-Smtp-Source: AGHT+IHhKLqwSGAXXWpulCb43w7vxvu09Mncf89xWZhzkOuqLQF9FZl2NnsYRFUe7O9y/YtAfJq7psH2VIQSag==
+X-Received: from wmbbi18.prod.google.com ([2002:a05:600c:3d92:b0:439:7d73:d8fc])
  (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:3b1b:b0:439:9595:c8e7 with SMTP id 5b1f17b1804b1-4399595cbb1mr41194365e9.0.1739905187848;
- Tue, 18 Feb 2025 10:59:47 -0800 (PST)
-Date: Tue, 18 Feb 2025 18:59:38 +0000
+ 2002:adf:e6c8:0:b0:38d:eaee:3b32 with SMTP id ffacd0b85a97d-38f58796874mr416328f8f.26.1739905189680;
+ Tue, 18 Feb 2025 10:59:49 -0800 (PST)
+Date: Tue, 18 Feb 2025 18:59:39 +0000
+In-Reply-To: <20250218-force-cpu-bug-v3-0-da3df43d1936@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIAJrYtGcC/3WMQQ6CMBAAv0J6dk13ISKe/IfxUJa2NFFKWmk0h
- L9buBhNPM4kM7OIOjgdxamYRdDJReeHDOWuENyrwWpwXWZBkipEbMD4wBp4nKCdLDSVkkfVSio
- bI3IzBm3cc/tdrpl7Fx8+vLZ9wtX+OyUEBFKqRD4wMpuz9d7e9J79XayrRJ+cSP7mBBLqjmtsW dcVqa98WZY33aEwQeoAAAA=
-X-Change-Id: 20241119-force-cpu-bug-94a08ab0239f
+References: <20250218-force-cpu-bug-v3-0-da3df43d1936@google.com>
 X-Mailer: b4 0.15-dev-42535
-Message-ID: <20250218-force-cpu-bug-v3-0-da3df43d1936@google.com>
-Subject: [PATCH v3 0/4] x86/cpu: Add facility to force-enable CPU caps and bugs
+Message-ID: <20250218-force-cpu-bug-v3-1-da3df43d1936@google.com>
+Subject: [PATCH v3 1/4] x86/cpu: Remove some macros about feature names
 From: Brendan Jackman <jackmanb@google.com>
 To: Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
 	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
@@ -84,56 +83,77 @@ Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Brendan Jackman <jackmanb@google.com>
 Content-Type: text/plain; charset="utf-8"
 
-For testing, development, and experimentation, add the ability to force
-the kernel to behave as if the CPU has a bug, even if it doesn't, using
-a command-line param.
-
-Also do this in general for CPU flags, since:
-
- - The infrastructure is the same so there is almost no extra
-   implementation complexity.
-
- - While setting random CPU flags is certain to break the kernel in
-   mysterious and horrifying ways, this is not dramatically worse than
-   setting CPU bugs. Although CPU bug mitigations don't have any very
-   obvious ways to break the system if run on the wrong hardware, it's
-   still very much an unsupported configuration, even beyond the
-   security concern implied breaking mitigation logic.
-
-   Since a taint and scary docs are necessary regardless, supporting
-   arbitrary CPU flags doesn't add significant maintenance/support
-   burden either.
+These macros used to abstract over CONFIG_X86_FEATURE_NAMES, but that
+was removed in commit 7583e8fbdc49 ("x86/cpu: Remove
+X86_FEATURE_NAMES"). Now they are just unnecessary indirection, remove
+them.
 
 Signed-off-by: Brendan Jackman <jackmanb@google.com>
 ---
-Changes in v3:
-- Added pre-patch to cleanup some unnecessary macro usage.
-- More cleanups to commentary & commit messages.
-- Link to v2: https://lore.kernel.org/r/20241220-force-cpu-bug-v2-0-7dc71bce742a@google.com
+ arch/x86/include/asm/cpufeature.h |  5 -----
+ arch/x86/kernel/cpu/common.c      | 12 ++++++------
+ 2 files changed, 6 insertions(+), 11 deletions(-)
 
-Changes in v2:
-- Switched from a bugs-only force_cpu_bug= to a more general setcpuid=.
-- Made it taint the kernel.
-- Made docs sound scarier.
-- Spellchecked and avoided new usage of personal pronouns.
-- Link to v1: https://lore.kernel.org/r/20241119-force-cpu-bug-v1-1-2aa31c6c1ccf@google.com
+diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpufeature.h
+index de1ad09fe8d7..f23942108b85 100644
+--- a/arch/x86/include/asm/cpufeature.h
++++ b/arch/x86/include/asm/cpufeature.h
+@@ -37,13 +37,8 @@ enum cpuid_leafs
+ 	NR_CPUID_WORDS,
+ };
+ 
+-#define X86_CAP_FMT_NUM "%d:%d"
+-#define x86_cap_flag_num(flag) ((flag) >> 5), ((flag) & 31)
+-
+ extern const char * const x86_cap_flags[NCAPINTS*32];
+ extern const char * const x86_power_flags[32];
+-#define X86_CAP_FMT "%s"
+-#define x86_cap_flag(flag) x86_cap_flags[flag]
+ 
+ /*
+  * In order to save room, we index into this array by doing
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 76598a93a8fa..f96a3a4829bd 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -667,8 +667,8 @@ static void filter_cpuid_features(struct cpuinfo_x86 *c, bool warn)
+ 		if (!warn)
+ 			continue;
+ 
+-		pr_warn("CPU: CPU feature " X86_CAP_FMT " disabled, no CPUID level 0x%x\n",
+-			x86_cap_flag(df->feature), df->level);
++		pr_warn("CPU: CPU feature %s disabled, no CPUID level 0x%x\n",
++			x86_cap_flags[df->feature], df->level);
+ 	}
+ }
+ 
+@@ -1539,9 +1539,9 @@ static void __init cpu_parse_early_param(void)
+ 
+ 				/* empty-string, i.e., ""-defined feature flags */
+ 				if (!x86_cap_flags[bit])
+-					pr_cont(" " X86_CAP_FMT_NUM, x86_cap_flag_num(bit));
++					pr_cont(" %d:%d", bit >> 5, bit & 31);
+ 				else
+-					pr_cont(" " X86_CAP_FMT, x86_cap_flag(bit));
++					pr_cont(" %s", x86_cap_flags[bit]);
+ 
+ 				setup_clear_cpu_cap(bit);
+ 				taint++;
+@@ -1554,10 +1554,10 @@ static void __init cpu_parse_early_param(void)
+ 		}
+ 
+ 		for (bit = 0; bit < 32 * NCAPINTS; bit++) {
+-			if (!x86_cap_flag(bit))
++			if (!x86_cap_flags[bit])
+ 				continue;
+ 
+-			if (strcmp(x86_cap_flag(bit), opt))
++			if (strcmp(x86_cap_flags[bit], opt))
+ 				continue;
+ 
+ 			pr_cont(" %s", opt);
 
----
-Brendan Jackman (4):
-      x86/cpu: Remove some macros about feature names
-      x86/cpu: Create helper to parse clearcpuid param
-      x86/cpu: Add setcpuid cmdline param
-      x86/cpu: Enable modifying bug flags with {clear,set}cpuid
-
- arch/x86/include/asm/cpufeature.h |   6 +-
- arch/x86/kernel/cpu/common.c      | 147 +++++++++++++++++++++++---------------
- 2 files changed, 91 insertions(+), 62 deletions(-)
----
-base-commit: 83f8eec51fc484fe20f8d20171f6d450080c04ea
-change-id: 20241119-force-cpu-bug-94a08ab0239f
-
-Best regards,
 -- 
-Brendan Jackman <jackmanb@google.com>
+2.48.1.601.g30ceb7b040-goog
 
 
