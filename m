@@ -1,196 +1,100 @@
-Return-Path: <linux-kernel+bounces-519820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4779DA3A241
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:12:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5362CA3A252
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:15:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A67AC3A9B83
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:12:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F686160C21
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:13:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 345C926E645;
-	Tue, 18 Feb 2025 16:12:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC15D26E636;
+	Tue, 18 Feb 2025 16:13:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hr/ywwtv"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Jlil5M0o"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E84D526E16A
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 16:12:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF91B26A1A5;
+	Tue, 18 Feb 2025 16:13:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739895156; cv=none; b=oH/oOcYGDbLqnUNWJ0TGwdnyUel6GYiFjRfBuieyywsLIzkCfC2bs6HH7RgPS+IPLTztnNi6ShBiJWxJgJZP6Rlnxk9fIxtgeYWca6OZkX3hZeqXFwNDY9CJ4xYoMKiNRlntUJqUBb6iBfHqCUViRA2BzVa6zr8QjYA9fQmIOgw=
+	t=1739895232; cv=none; b=Tz0CQGrLWawq7UgLXnElRTZm9EcRUEsVpCbWQaLLX5OF0OXmOuXzFw0DW9BsJmkw61/fBLjg86M57bmWorgN9MQiLCWZPtSD8ApStLJQI8hdjHLrAl0KOq0WpCDt1eWpO55jSYBd/MHe+EQ4IX8kvMxFvhLDG4IB6JmA8nh3XFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739895156; c=relaxed/simple;
-	bh=bhgPQFSELaI350GW+yyUY2g30cWw1ue+kK9U/gBGJ+k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VwqpQ8PCLbZKTD0kw7GccWGS9PTvOu/cGnS15p1v9bZJ8HE6A0L+jUA36JuXg7vLbkhHC/7fZl2ZjigjptFAJVnBbA/pTifv+VFNwGeu9Czbz7xuxnjxvaM51G2YZjjacHCyZ8tRThFFzWCRyjcNZppU8xk/M4syPHj7ikfgIJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hr/ywwtv; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739895153;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=qPrl3VBWVHIaEvfm5FHekwOGQkEzqzqF8ZKou2UTYEw=;
-	b=hr/ywwtv5e4EfBC3b1q/45VtXDwFd8n3TaNQQ4E2pQfO/WNx/c4ov4ZbId2VZAimjq/XnG
-	vkNVh+Iqgz+HgN5KKCF3NMwSNtxDA5PpbOhEubfJG0arRVUWOP/5GI3/S5C/zaPcFooRgX
-	PMtl2dzjW4y4GhgJz3nOLXLw9y6GPGE=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-653-bG4aQa-wPWO5QYe33EF6Aw-1; Tue, 18 Feb 2025 11:12:32 -0500
-X-MC-Unique: bG4aQa-wPWO5QYe33EF6Aw-1
-X-Mimecast-MFC-AGG-ID: bG4aQa-wPWO5QYe33EF6Aw_1739895151
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43933bdcce0so47351365e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 08:12:32 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739895151; x=1740499951;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=qPrl3VBWVHIaEvfm5FHekwOGQkEzqzqF8ZKou2UTYEw=;
-        b=Bg2Qzzf46xEG10tyLeDid7SwrkTk6DcymDhKpcDSNXjAW1q25LrsFzAOEPErjsV+R9
-         t07FQsPDq/XqKOyowCUyvJuTA/iwQw44nHoEuRADehzLCetX4a5gQ6vKksUPs0juEQ2S
-         yt6I8dzDnnDwwMiOV0K5lRkjAf1b35DmQCXS/cw5D6FunryizaYxGWIcWYuW9bHRlFEt
-         PT+eCbTqDHSKixGhWYznInMap70pZuCC4fMHu473WPH4q+4EXDB4YQunlCmc5EahJs5/
-         gKdqxRh6iyPcNCX/i/fHeas+gIbSiVJMubIYqcxpL+wOv4tENoOKvHqXpk5v9vpnm5c5
-         bqgA==
-X-Forwarded-Encrypted: i=1; AJvYcCXqN7Q31bZvBijJKHoCVWxVjYcnyOlUPAxrGxD+l73Bth42KM1R2dnzLcbtrR5dEfnsIM9xTav1YRfF1NU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzs5/KA7uxiHQ3XS8qipN6M9Qv4mOqVuFAN8JPEZs9ShN2A42dE
-	5DKwzjuez0MgZSzIiIXxKFCN1NVKbqcx6c7rt8lETWYrzPOviNcCSdC31FxTdwW63DeojA79x0v
-	pwNPvvj6WpEvDPz2iL1Bk4dkZDHUGUWN93MhU0/XTJZkszmiKEfm9EWuiDMAmSw==
-X-Gm-Gg: ASbGncs7+3n1AX5MqYJT/tAlcMKueWwrEvizep88ddhAKc+rkr4lqCprkKuxYxw010U
-	GN5GzWM/Q0DvAMZHNzwYjfCRxuoMYRvvEyRTaICzcBULU9pLuu+E7JgxmCJtAU+mvDLD60DLYqQ
-	GtrTvMb2rTK4idH/FhwXAxzzsQKqNVVUbd+pOIAW//ZFIfYFikfiMgsqLIEmwc6s4FmnCCTQBT/
-	xZ4/VGqPFADnHFO4YATSv1Q61V+KT2Qa+QW57JKixvkOd1ofNToMKwKWVbyMUkqyPEeaYBAE7k8
-	gB5/blt+KtJUki3tkV2supo86TYo3qYs5w==
-X-Received: by 2002:a05:600c:3ba6:b0:439:91dd:cfaf with SMTP id 5b1f17b1804b1-43999da55damr2421585e9.18.1739895151237;
-        Tue, 18 Feb 2025 08:12:31 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH92K++cC6xDJY2j/PMK6R78q23skDZQsnW1aMpOh6cHc3xvEiDq38ZeyklE0eZ+XCX3RGQFw==
-X-Received: by 2002:a05:600c:3ba6:b0:439:91dd:cfaf with SMTP id 5b1f17b1804b1-43999da55damr2421325e9.18.1739895150812;
-        Tue, 18 Feb 2025 08:12:30 -0800 (PST)
-Received: from [192.168.3.141] (p5b0c61a2.dip0.t-ipconnect.de. [91.12.97.162])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259fdce7sm15527728f8f.96.2025.02.18.08.12.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Feb 2025 08:12:29 -0800 (PST)
-Message-ID: <a99f132c-4e92-4755-9ba6-d28d9d168971@redhat.com>
-Date: Tue, 18 Feb 2025 17:12:27 +0100
+	s=arc-20240116; t=1739895232; c=relaxed/simple;
+	bh=gvszVN3gXjDeLF2eKyqbBWxAngG9+KqNtkhPbzdlorw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pIZGeH6N0YyTpImw63hmuUkXnO9l0rC/Y227/9G3eMTBAcDQk3/Kxtn6DrSPlv1tjQM/Y2MmV1OHuApH0SoLmSDc29h1Lr9tbBgHaPngNdctAykmoRSzuEfu3uJ531Cn2m6/ZO5abOm72Z0ltCZ9vkHGIky91RIp3ETWJKbEb4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Jlil5M0o; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=/v+sG3TD6jlERhEZjj4JDFveXDMRMidR1SaMnbjck9w=; b=Jlil5M0o3R9rb3t3PBPnDyNjWf
+	rwe6CYWwux1Fnga6sHKoWl84G7d8BUb3Q3ShtwqBUTFhP/AkvdSAnT0ng5LzjovAGacDbnMRfo7WS
+	2mzW28ZKoVORAWY77+8Dx89RqD86A3RKjMCuWDUsCQSHAUWOJVU3g4pRHOBb7PV3xikg=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tkQDy-00FLX1-UW; Tue, 18 Feb 2025 17:13:30 +0100
+Date: Tue, 18 Feb 2025 17:13:30 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Philipp Stanner <phasta@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Yanteng Si <si.yanteng@linux.dev>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Yinggang Gu <guyinggang@loongson.cn>,
+	Feiyang Chen <chenfeiyang@loongson.cn>, netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Philipp Stanner <pstanner@redhat.com>
+Subject: Re: [PATCH v2] stmmac: Replace deprecated PCI functions
+Message-ID: <c88920f3-ec6f-4ee9-a1d6-8423668480d0@lunn.ch>
+References: <20250218132120.124038-2-phasta@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 1/8] xarray: add xas_try_split() to split a multi-index
- entry.
-To: Zi Yan <ziy@nvidia.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
- "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Ryan Roberts <ryan.roberts@arm.com>, Hugh Dickins <hughd@google.com>,
- Yang Shi <yang@os.amperecomputing.com>, Miaohe Lin <linmiaohe@huawei.com>,
- Kefeng Wang <wangkefeng.wang@huawei.com>, Yu Zhao <yuzhao@google.com>,
- John Hubbard <jhubbard@nvidia.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250211155034.268962-1-ziy@nvidia.com>
- <20250211155034.268962-2-ziy@nvidia.com>
- <0bb75517-9418-4145-8aa8-b05373010711@redhat.com>
- <F5D2A2F4-34DC-4967-A149-A4D5578B5DB2@nvidia.com>
- <af3b230c-7aeb-44bf-8db3-3538dfb1b93c@redhat.com>
- <DA7491B4-7794-4F86-AFBC-BB8BFBD1D9B3@nvidia.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <DA7491B4-7794-4F86-AFBC-BB8BFBD1D9B3@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250218132120.124038-2-phasta@kernel.org>
 
->>
->> Now, can it happen that xas_try_split() would ever perform a partial split in any way, when invoked from __split_unmapped_folio(), such that we run into the do { } while(); loop and fail with -ENOMEM after already having performed changes -- xas_update().
->>
->> Or is that simply impossible?
+On Tue, Feb 18, 2025 at 02:21:21PM +0100, Philipp Stanner wrote:
+> From: Philipp Stanner <pstanner@redhat.com>
 > 
-> Right. It is impossible. xas_try_split() either splits by copying @entry
-> to all the replacement entries, or is trying to allocate a new xa_node,
-> which can result in -ENOMEM. These two will not be mixed.
+> The PCI functions
+>   - pcim_iomap_regions()
+>   - pcim_iomap_table() and
+>   - pcim_iounmap_regions()
+> have been deprecated.
 > 
->>
->> Maybe it's just the do { } while(); loop in there that is confusing me. (again, no expert)
+> The usage of pcim_* cleanup functions in the driver detach path (remove
+> callback) is actually not necessary, since they perform that cleanup
+> automatically.
 > 
-> Yeah, that the do while loop is confusing. Let me restructure the code
-> so that the do while loop only runs in the @entry copy case not the
-> xa_node allocation case.
+> Furthermore, loongson_dwmac_probe() contains a surplus loop. That loop
+> does not use index i in pcim_iomap_regions(), but costantly attempts to
+> request and ioremap BAR 0. This would actually fail (since you cannot
+> request the same BAR more than once), but presumably never fails because
+> the preceding length check detects that all BARs except for 0 do not
+> exist.
 
-Great!
+Thanks for the extended commit message.
 
-> 
->>
->>> xas_try_split() imposes what kind of split it does and is usually used to
->>> split from order N to order N-1:
->>
->> You mean that old_order -> split_order will in the case of __split_unmapped_folio() always be a difference of 1?
-> 
-> Yes for !uniform_split case. For uniform_split case (split_huge_page*() uses),
-> xas_split() is used and all required new xa_node are preallocated by
-> xas_split_alloc() in __folio_split().
+It would be nice if the loongson Maintainers comment about the removal
+of the loop. I will leave it a couple of days before adding a
+Reviewed-by.
 
-Got it, thanks!
-
--- 
-Cheers,
-
-David / dhildenb
-
+	Andrew
 
