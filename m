@@ -1,77 +1,49 @@
-Return-Path: <linux-kernel+bounces-519239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0E60A3999E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:51:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41753A3998C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:50:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FC9216401F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:51:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D1E0162F83
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:50:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BDC6239595;
-	Tue, 18 Feb 2025 10:50:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56B0223875A;
+	Tue, 18 Feb 2025 10:50:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="uc6tII9z"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fIxcbpYC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F1E239066;
-	Tue, 18 Feb 2025 10:50:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB59913D51E;
+	Tue, 18 Feb 2025 10:50:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739875855; cv=none; b=G83GzGyF9Yi4tkGs3hLUZfCZyMJdzZK8Zs5qxZV+lJMVQhEM5EdcB2KMDaOMLKhqPRLG3gOzCVD17fe1HnQIKvSjRcdtcMgrTgv3KnIwb2l5rhC49818EIvAV4ZH9aU9W15CDLr9nfFQ6U++CaIBqEMzNoQtj2MW4ipbOiyHhYI=
+	t=1739875807; cv=none; b=p3At9qfW3WdakmnV8mwGivYNDNKQ05cOdjMVtDzw4PcblsxKv2Gm+vnG9SLKp0ylm3I9cIJBvyZorAvTrMpQXFW+0M0WGokf+PBLvkb7o0BpPiINbcjMNWCM+7WCJQEIUvpxtgpyGbGmS5BiElALkJIVOH8Gt/WKuxKZvWpnA98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739875855; c=relaxed/simple;
-	bh=oCwNWZI/n6K/e0KeD0KECH58mj3BowZrbon38IxBlxQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=acMqIJtAmiHXBIkJb4ofdRf7y5AU/F1fVVcsayyMk8rPtWASM/wfvxZH4YXLPqrnaXSowFu253lMF2A3H1iSx/cPdSHz4IczO3L+AXI0TfJqorzHShWa08VHzHxe2PbkOYTMJgJP61RtapEmwPGUgfhFBKEeqzrFvDnlQfw0RQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=uc6tII9z; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51IAonM1841376
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Tue, 18 Feb 2025 04:50:49 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1739875849;
-	bh=TDl/MlAWM7RZZrWvhYbB3Rt/Ey4V28+9NkFSVKszwOI=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=uc6tII9z0D4gFcudlm0OtGDthvVmRegD5YtEy/WZZX3S16wU67C2EsKKPtZ8ACBEh
-	 2SC8HE6KHCMR9V7lJoq2bjLL3GM0cemJQFT0WCZzsP7HKEx8zDG0ax4Oi0rBtVI7qN
-	 OZbBlLHHWlJvFDS4XcuajbcvZgu5YXEjtIvVJdFI=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51IAonnI034528;
-	Tue, 18 Feb 2025 04:50:49 -0600
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 18
- Feb 2025 04:50:48 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 18 Feb 2025 04:50:49 -0600
-Received: from pratham-Workstation-PC (pratham-workstation-pc.dhcp.ti.com [172.24.227.40])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51IAolbJ095035;
-	Tue, 18 Feb 2025 04:50:48 -0600
-From: T Pratham <t-pratham@ti.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller"
-	<davem@davemloft.net>, T Pratham <t-pratham@ti.com>
-CC: <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Vignesh
- Raghavendra <vigneshr@ti.com>,
-        Praneeth Bajjuri <praneeth@ti.com>,
-        Kamlesh
- Gurudasani <kamlesh@ti.com>,
-        Manorit Chawdhry <m-chawdhry@ti.com>
-Subject: [PATCH RFC 2/2] crypto: ti: Add support for MD5 in DTHE V2 Hashing Engine driver
-Date: Tue, 18 Feb 2025 16:19:43 +0530
-Message-ID: <20250218104943.2304730-3-t-pratham@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250218104943.2304730-1-t-pratham@ti.com>
-References: <20250218104943.2304730-1-t-pratham@ti.com>
+	s=arc-20240116; t=1739875807; c=relaxed/simple;
+	bh=0ta9iRqvOL/XyCbfOk5/m0s+WL02GRT3CgMUuEb8Y2A=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=EpQ3ylAsyzrPJwGpuknQvEDM1y8BOq/4wY62O0fOfjl/gN7xzxOhd+QtTk2hNALi0mN+bDJ9OiiRW8b2ZSpd66r3vLwJ7/1KBFmwaYl6TC37VLCiyri4Elry2MG1TJf86tBC1Zn9J04POOOT4pC6Zan8rBu9JsjmT0FQGJoACVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fIxcbpYC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11FDFC4CEE2;
+	Tue, 18 Feb 2025 10:50:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739875805;
+	bh=0ta9iRqvOL/XyCbfOk5/m0s+WL02GRT3CgMUuEb8Y2A=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=fIxcbpYCIDGn3q2a5S2PyQ2TbijgrIPq+T0vunKI52/8Xnl0DRBv1gAWtUGBUhz2A
+	 D/qHkQ/1X6NlGIjkm3/zN1aa3RU9WpcKP9s8Z+uFuwg1RXbrkxOzh0AZ6b/TbdSkqk
+	 nhHErV+inkIK9/lLX5O4LTnMLfLHpna6X5qHGy59QlquCQkCquvDeceJG2QUOqM5js
+	 osgliYXLHRsAqnKI4XvO6pSVfDtwcP3na3CLOpIKwzKrpjqiQDQ4BT47b8c+LLS38J
+	 x7kf5QoyFVSerSJBh30TQfO1rY13FjsajbGdT5jnpmbnCquHOO7p5ri3Uam7sx31bP
+	 SN0b7i3GqS9+A==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 714B8380AA7E;
+	Tue, 18 Feb 2025 10:50:36 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,140 +51,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Subject: Re: [net-next PATCH v6 0/6] Add af_xdp support for cn10k
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173987583526.4038826.3171177356659390982.git-patchwork-notify@kernel.org>
+Date: Tue, 18 Feb 2025 10:50:35 +0000
+References: <20250213053141.2833254-1-sumang@marvell.com>
+In-Reply-To: <20250213053141.2833254-1-sumang@marvell.com>
+To: Suman Ghosh <sumang@marvell.com>
+Cc: horms@kernel.org, sgoutham@marvell.com, gakula@marvell.com,
+ sbhatta@marvell.com, hkelam@marvell.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, lcherian@marvell.com,
+ jerinj@marvell.com, john.fastabend@gmail.com, bbhushan2@marvell.com,
+ hawk@kernel.org, andrew+netdev@lunn.ch, ast@kernel.org, daniel@iogearbox.net,
+ bpf@vger.kernel.org, larysa.zaremba@intel.com
 
-Add support for MD5 algorithm of the hashing engine of DTHE V2 crypto
-accelerator driver.
+Hello:
 
-Signed-off-by: T Pratham <t-pratham@ti.com>
----
- drivers/crypto/ti/Kconfig  |  1 +
- drivers/crypto/ti/dthev2.c | 56 ++++++++++++++++++++++++++++++++++++++
- 2 files changed, 57 insertions(+)
+This series was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-diff --git a/drivers/crypto/ti/Kconfig b/drivers/crypto/ti/Kconfig
-index 39d9d8cb6b78..ab4da73dffc4 100644
---- a/drivers/crypto/ti/Kconfig
-+++ b/drivers/crypto/ti/Kconfig
-@@ -6,6 +6,7 @@ config CRYPTO_DEV_TI_DTHE_V2
- 	select CRYPTO_SKCIPHER
- 	select CRYPTO_SHA256
- 	select CRYPTO_SHA512
-+	select CRYPTO_MD5
- 	help
- 	  This enables support for the TI DTHE V2 hw crypto accelerator
- 	  which can be found on TI K3 SOCs. Selecting this enables use
-diff --git a/drivers/crypto/ti/dthev2.c b/drivers/crypto/ti/dthev2.c
-index d5ed0f4621f5..ff2d5ef47c2a 100644
---- a/drivers/crypto/ti/dthev2.c
-+++ b/drivers/crypto/ti/dthev2.c
-@@ -25,6 +25,7 @@
- #include <crypto/internal/aead.h>
- #include <crypto/internal/hash.h>
- #include <crypto/internal/skcipher.h>
-+#include <crypto/md5.h>
- #include <crypto/sha2.h>
- 
- #include <linux/delay.h>
-@@ -363,6 +364,25 @@ static int dthe_sha224_cra_init(struct crypto_tfm *tfm)
- 	return 0;
- }
- 
-+static int dthe_md5_cra_init(struct crypto_tfm *tfm)
-+{
-+	struct dthe_tfm_ctx *ctx = crypto_tfm_ctx(tfm);
-+	struct dthe_data *dev_data = dthe_get_dev(ctx);
-+
-+	if (!dev_data)
-+		return -ENODEV;
-+
-+	ctx->ctx_info.hash_ctx = kzalloc(sizeof(*ctx->ctx_info.hash_ctx), GFP_KERNEL);
-+	if (!ctx->ctx_info.hash_ctx)
-+		return -ENOMEM;
-+
-+	ctx->ctx_info.hash_ctx->mode = DTHE_HASH_MD5;
-+	ctx->ctx_info.hash_ctx->block_size = MD5_BLOCK_WORDS * 4;
-+	ctx->ctx_info.hash_ctx->digest_size = MD5_DIGEST_SIZE;
-+	ctx->ctx_info.hash_ctx->phash_size = MD5_DIGEST_SIZE;
-+	return 0;
-+}
-+
- static void dthe_hash_cra_exit(struct crypto_tfm *tfm)
- {
- 	struct dthe_tfm_ctx *ctx = crypto_tfm_ctx(tfm);
-@@ -602,6 +622,8 @@ static int dthe_hash_update(struct ahash_request *req)
- 				memcpy(sctx->phash, sha256_zero_message_hash, sctx->digest_size);
- 			else if (sctx->mode == DTHE_HASH_SHA224)
- 				memcpy(sctx->phash, sha224_zero_message_hash, sctx->digest_size);
-+			else if (sctx->mode == DTHE_HASH_MD5)
-+				memcpy(sctx->phash, md5_zero_message_hash, sctx->digest_size);
- 		}
- 
- 		return 0;
-@@ -736,6 +758,8 @@ static int dthe_hash_final(struct ahash_request *req)
- 			memcpy(req->result, sha256_zero_message_hash, sctx->digest_size);
- 		else if (sctx->mode == DTHE_HASH_SHA224)
- 			memcpy(req->result, sha224_zero_message_hash, sctx->digest_size);
-+		else if (sctx->mode == DTHE_HASH_MD5)
-+			memcpy(req->result, md5_zero_message_hash, sctx->digest_size);
- 	}
- 
- 	memcpy(req->result, sctx->phash, sctx->digest_size);
-@@ -774,6 +798,8 @@ static int dthe_hash_finup(struct ahash_request *req)
- 				memcpy(req->result, sha256_zero_message_hash, sctx->digest_size);
- 			else if (sctx->mode == DTHE_HASH_SHA224)
- 				memcpy(req->result, sha224_zero_message_hash, sctx->digest_size);
-+			else if (sctx->mode == DTHE_HASH_MD5)
-+				memcpy(req->result, md5_zero_message_hash, sctx->digest_size);
- 		}
- 		return 0;
- 	}
-@@ -870,6 +896,8 @@ static int dthe_hash_digest(struct ahash_request *req)
- 			memcpy(req->result, sha256_zero_message_hash, sctx->digest_size);
- 		else if (sctx->mode == DTHE_HASH_SHA224)
- 			memcpy(req->result, sha224_zero_message_hash, sctx->digest_size);
-+		else if (sctx->mode == DTHE_HASH_MD5)
-+			memcpy(req->result, md5_zero_message_hash, sctx->digest_size);
- 		return 0;
- 	}
- 
-@@ -1366,6 +1394,34 @@ static struct ahash_alg hash_algs[] = {
- 			}
- 		}
- 	},
-+	{
-+		.init	= dthe_hash_init,
-+		.update	= dthe_hash_update,
-+		.final	= dthe_hash_final,
-+		.finup	= dthe_hash_finup,
-+		.digest	= dthe_hash_digest,
-+		.export = dthe_hash_export,
-+		.import = dthe_hash_import,
-+		.halg	= {
-+			.digestsize = MD5_DIGEST_SIZE,
-+			.statesize = sizeof(struct dthe_hash_ctx),
-+			.base = {
-+				.cra_name	 = "md5",
-+				.cra_driver_name = "md5-dthe_v2",
-+				.cra_priority	 = 400,
-+				.cra_flags	 = CRYPTO_ALG_TYPE_AHASH |
-+						   CRYPTO_ALG_ASYNC |
-+						   CRYPTO_ALG_OPTIONAL_KEY |
-+						   CRYPTO_ALG_KERN_DRIVER_ONLY |
-+						   CRYPTO_ALG_ALLOCATES_MEMORY,
-+				.cra_blocksize	 = MD5_BLOCK_WORDS * 4,
-+				.cra_ctxsize	 = sizeof(struct dthe_tfm_ctx),
-+				.cra_module	 = THIS_MODULE,
-+				.cra_init	 = dthe_md5_cra_init,
-+				.cra_exit	 = dthe_hash_cra_exit,
-+			}
-+		}
-+	},
- };
- 
- static struct skcipher_alg cipher_algs[] = {
+On Thu, 13 Feb 2025 11:01:35 +0530 you wrote:
+> This patchset includes changes to support AF_XDP for cn10k chipsets. Both
+> non-zero copy and zero copy will be supported after these changes. Also,
+> the RSS will be reconfigured once a particular receive queue is
+> added/removed to/from AF_XDP support.
+> 
+> Patch #1: octeontx2-pf: use xdp_return_frame() to free xdp buffers
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next,v6,1/6] octeontx2-pf: use xdp_return_frame() to free xdp buffers
+    https://git.kernel.org/netdev/net-next/c/94c80f748873
+  - [net-next,v6,2/6] octeontx2-pf: Add AF_XDP non-zero copy support
+    https://git.kernel.org/netdev/net-next/c/b4164de5041b
+  - [net-next,v6,3/6] octeontx2-pf: AF_XDP zero copy receive support
+    https://git.kernel.org/netdev/net-next/c/efabce290151
+  - [net-next,v6,4/6] octeontx2-pf: Reconfigure RSS table after enabling AF_XDP zerocopy on rx queue
+    https://git.kernel.org/netdev/net-next/c/25b07c1a8694
+  - [net-next,v6,5/6] octeontx2-pf: Prepare for AF_XDP
+    https://git.kernel.org/netdev/net-next/c/c5c2398eb88b
+  - [net-next,v6,6/6] octeontx2-pf: AF_XDP zero copy transmit support
+    https://git.kernel.org/netdev/net-next/c/53616af09b5a
+
+You are awesome, thank you!
 -- 
-2.34.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
