@@ -1,174 +1,214 @@
-Return-Path: <linux-kernel+bounces-518863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE438A3958D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:37:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33401A3958F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:38:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E4FA3A2E65
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:32:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C1003A4338
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:32:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15DCA22B8A7;
-	Tue, 18 Feb 2025 08:32:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E4EE174EE4;
+	Tue, 18 Feb 2025 08:32:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="IFyFAolF"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="qayb8qvK"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2070.outbound.protection.outlook.com [40.107.237.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA6CE1991B8
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 08:32:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739867547; cv=none; b=EKf1jBVW9Olwjl54TjGb+tRzigNaTMauwURmlpi5wALQCbFqt+McXIOGk9/47u3UiPHUanS6g2Ye2ZttXYHBGfUOJCH5KJtrELCdm0O9o/RDVyt3dKo5JCT8b3ADHwzHVHGlUMTaK6+lP3kIv0nL8Zmocc2qjuLjoOIX5H9wreM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739867547; c=relaxed/simple;
-	bh=0vz42sgw/7vv4ncPas+Jn/NJdwKEOXuXcw+s0NaMgOw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ri1Ao7xsX/W1ZR1kV5HDqbDjANafsgGCo3Yg6lj3Ih0Mb12Ao7gzClFXKsGDrnec2yPnQ+8ht2nkKE5sa+Pvov9XMLjptU7f5VrP9Q+segVXc1kFHR4yFfJ17WIc3k1BgXLg1kO3Spk4myKOWiAVjIN4F3m6vXH+yf1ixmYJ4tM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=IFyFAolF; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 18 Feb 2025 14:02:03 +0530
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1739867533;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Q8sEo/j0+/IxHJzaY5ssMwAnQ6lNXaOwOy/RizOMoOY=;
-	b=IFyFAolFyygDm3vXzeAKCORgZ0D61una1O8W6GvhtQbIUK1pGdEdrBiqsXn9fLVXm+d1i/
-	37r2Eqwqthy/PV1vUULJx9NtTFw+v+jawVIrCnFbikwe+biYki+rhN6Unvs3UCkWc01xaV
-	zV8ODsG+2N4y34n7iCMMGnPTy9lWC5Q=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Jai Luthra <jai.luthra@linux.dev>
-To: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>, mripard@kernel.org
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, devarsht@ti.com, vaishnav.a@ti.com, r-donadkar@ti.com, 
-	u-kumar1@ti.com, Changhuang Liang <changhuang.liang@starfivetech.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: media: cdns,csi2rx.yaml: Add
- optional interrupts for cdns-csi2rx
-Message-ID: <m6ijg5colbev6lyhiobblecb4wlvwezpccibnso26gd3dadrfh@twgul4eel6hg>
-X-PGP-Key: http://jailuthra.in/files/public-key.asc
-References: <20250217130013.2802293-1-y-abhilashchandra@ti.com>
- <20250217130013.2802293-2-y-abhilashchandra@ti.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE04214A614
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 08:32:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739867564; cv=fail; b=STItIZjCXV7tLHVvOwjUtthpF4rF54juygnnm282+v0wmzYh7Wd2ciTVuNcmJercmvCiRYp2tU81aCWPj0s1xEv2oYKl8cBmsQ0Cd5PJZpK8VneBh9xUqSmE8SnFTuJKxdq4ZnVS/ncc5tnsngUHArus9jDcT1dy3HNPdD+h8mQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739867564; c=relaxed/simple;
+	bh=C4Oz9EikZ/sVl3e4vU36XFot71HmgXsrORdcuy2Ms8s=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=X4JhTfMKpsUTl5mpvC3R4moBs+J7Gnrqy+Eqj8yahnkRVPjhjoab/MFV0LVj+IFJN+ElprlLBiB3f8Lgw0iWDMPtNGWLZMniIMrbaATZ0CUKhzCn+yuLB4Vtr00jPmsMs7/WbtJUp4Wpw20Qj3cefrBvHARclkWqO/oFPhtPwis=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=qayb8qvK; arc=fail smtp.client-ip=40.107.237.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=sGRfXdA3WSCKqfFHKKfyS2g1U/mxPSta2yGFHnDTMsC14EK/r4IDeydVGOSnUMESyTKm6N588IZyHUEvHEV7wT/ErgYGeLgVsdT1GXziCPkTtzTz2CK/fC1s/Ur80XpHsCS5XIWpwl59F/buYdLG1yOTPrKfrcNkmZtUA57Q7ohZpcOVeSadIH6xxThEQ7n/3IZdp20Kbvh6SVENLjPyzFL4pgbI4PRbUFibh1Rdr3XTAdzyyL1DW8wRSkZ7HSzUl5XLpCKTkqblqfAv+EOv4ZTNX2ZtIWW0qdM48Ad7gIsjj9lwJuM1VkFpWQU2vUsE1jYDD43MpmlzXRR9nkJGNA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=oraP/SVZibgmjwmEEToPiTukrB6deOESfgKiwhwbmgo=;
+ b=seE2GIrzrT22UuxOpgTpwiFyq4TPxQTIi0gXKRFSMTOW1K336whJVCtwy8B6sbiYbjLpIhRfPK9buuZat8P6qXoIngIYmwy2xglsfOdQBHjEhgsWb0GAOQovvNoOaNmmfdwX1sCqaO8yYEFc92UtSgHAVAXNr/Lqi2aM++AeIbJZZAlcfyro4v/SY/2HB7BIRqodkPwhI2Y4OJOG5unt/H8g42ZJyNv6nn0beJ4OdDtpgSHbcTfhNBd7SMNCVZK7riwg3Mx/zMeiAvMsi1E2pSrcQ44aWJk0Bx2ER3gdP6+jUGMrkAlbo1zaFWQpAugamqgQiVicHABkjMDC39Yl/w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oraP/SVZibgmjwmEEToPiTukrB6deOESfgKiwhwbmgo=;
+ b=qayb8qvKwrDFqmd+Fvr9f1v3qbRLEx5iYNMeLleqDBPLVIm7g5DZjoBZxPutVNrEPIythyY4fWfmPPAx2vwXufb/So7E2iRPlghTieua/IBkVr8h39HX7B86ZoxjOBZn7QNrLxQ/zrERiTrROe1PWiFX2woAC64VIqnWu3RUU37zZb7UqDc6zcrXXvuTMzFT6xjq5tkCdSaOB0roQtWeuu0VH36ga4ZlDgyHBgMgH+p9l2JO2mi+k3kzTgIqC1BUWfxvzLouI8wyiAQKuWZ0C3J13UehjAvbDkDvgE0S0VtHRjuxoqdJUm3SWKDbyt6fqP5/2KmpObv3xE9Bj6C/Sg==
+Received: from BN9PR03CA0858.namprd03.prod.outlook.com (2603:10b6:408:13d::23)
+ by PH7PR12MB6954.namprd12.prod.outlook.com (2603:10b6:510:1b7::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.13; Tue, 18 Feb
+ 2025 08:32:37 +0000
+Received: from BN3PEPF0000B36E.namprd21.prod.outlook.com
+ (2603:10b6:408:13d:cafe::76) by BN9PR03CA0858.outlook.office365.com
+ (2603:10b6:408:13d::23) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8445.20 via Frontend Transport; Tue,
+ 18 Feb 2025 08:32:37 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ BN3PEPF0000B36E.mail.protection.outlook.com (10.167.243.165) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8489.2 via Frontend Transport; Tue, 18 Feb 2025 08:32:37 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 18 Feb
+ 2025 00:32:25 -0800
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Tue, 18 Feb 2025 00:32:25 -0800
+Received: from localhost (10.127.8.11) by mail.nvidia.com (10.126.190.182)
+ with Microsoft SMTP Server id 15.2.1544.14 via Frontend Transport; Tue, 18
+ Feb 2025 00:32:23 -0800
+Date: Tue, 18 Feb 2025 10:32:22 +0200
+From: Zhi Wang <zhiw@nvidia.com>
+To: Aaron Kling <webgeek1234@gmail.com>
+CC: Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>, "Danilo
+ Krummrich" <dakr@kernel.org>, David Airlie <airlied@gmail.com>, "Simona
+ Vetter" <simona@ffwll.ch>, Ben Skeggs <bskeggs@redhat.com>,
+	<dri-devel@lists.freedesktop.org>, <nouveau@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drm/nouveau/pmu: Fix gp10b firmware guard
+Message-ID: <20250218103222.0000313b@nvidia.com>
+In-Reply-To: <CALHNRZ99cs=rcR07jqsZE7Q3ndLqteKG8K8zpAm4vaEhsYwTLw@mail.gmail.com>
+References: <20250217-nouveau-gm10b-guard-v1-1-0d96f0068570@gmail.com>
+	<CALHNRZ99cs=rcR07jqsZE7Q3ndLqteKG8K8zpAm4vaEhsYwTLw@mail.gmail.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.38; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="sr4ldtn435nab4uz"
-Content-Disposition: inline
-In-Reply-To: <20250217130013.2802293-2-y-abhilashchandra@ti.com>
-X-Migadu-Flow: FLOW_OUT
-
-
---sr4ldtn435nab4uz
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 1/2] dt-bindings: media: cdns,csi2rx.yaml: Add
- optional interrupts for cdns-csi2rx
-MIME-Version: 1.0
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN3PEPF0000B36E:EE_|PH7PR12MB6954:EE_
+X-MS-Office365-Filtering-Correlation-Id: 22d4f0ea-0c18-4341-3d67-08dd4ff6cced
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|376014|7416014|36860700013|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RDBiTGphUzJDWWJ0NEpFeDA3YmlCdUdYL1BMdGZZRTd0Y1B2VFZucFBOa3VG?=
+ =?utf-8?B?bkxvMjFETTdGeWV4QzNFeHRTSVpVMThpOGVSanUvakJTbmdKUmE5UlpOc3pn?=
+ =?utf-8?B?MTFqZFBCaVRnMHFvV3FZd1p4RmNVQTc3MzdnU2trZERackJ2c2NRYWc3M3Q3?=
+ =?utf-8?B?TEozZ3ZTZnY2eTlPWkpKZS9IOEtwMlp6Y0lteG1ueDZ1UFN0TG54MFNKb1FC?=
+ =?utf-8?B?QVFWdElKU2wvalYyQTF4RUVvYTZnWmZ6M0dMcHdCTno5a0h1YW5HeE83Yzll?=
+ =?utf-8?B?VU1md3dHSXBuVE9xUHR3M1g1VTR0M3RyaUJ4OUZoUzdFODlyb2ZnVXlFZHpv?=
+ =?utf-8?B?RGxQamtjeFAxZWNtY3ZhQ1p0MEJKai8vRXJPaWlBdktLVk1TdHFOUFhLSVo1?=
+ =?utf-8?B?RTUwNzJ1YnRqYks3UkkxN2p5VDc5SFFPTkZCWDB3MGgvQnhWZ0JGMWVRT0xy?=
+ =?utf-8?B?UHdFNTgxakRlSlBKWGppOHNmZmgvR29GTE1FVU0zS2FIam5sMHdKYkpKOU5M?=
+ =?utf-8?B?TndnV3N4eGliN3o3TFhlY0pmL240M3hWeFY1MVRlbXQyL3NkZWZ1TGR4NklH?=
+ =?utf-8?B?MkN5QkVtYy94RkZ2Q2hWeEJPMm9WTThaTE51T3NVSzlXbnp6clNpU09FQkpx?=
+ =?utf-8?B?WHRyWFNsNGdSU2lMdmk1TDdsY1JGWGZsQnZIcDFiTWVsK0dlbkFYK0RTUHFP?=
+ =?utf-8?B?TjBlL2psVkJYQXptdTNIZWxsTDRWTHJpNW5TZG50WWhjd01uenRiUkN3WFho?=
+ =?utf-8?B?d2Z6VlVxOXBoZ1JzRTFYTjVrc0NDTzZJU2FZckZwbk5QaW1XbDZTNUtrWWJN?=
+ =?utf-8?B?NEM3UUJJODQvdVFyNGpXWWQrdjRpNWVEaFIyQkYxZU5EWERCTjRVdHJLYk5B?=
+ =?utf-8?B?dldmcGMzbkVaN2E1SGNsYWpxU3dxaFBOYXB3elp3SklVT0h2K0U0dUJPNzlL?=
+ =?utf-8?B?ZS9rb2VHeHc3N002dUlYeXIzL2dPQU0zdGIxNWpTNUNhQTNZUE5ZZDNiZDYr?=
+ =?utf-8?B?bkYxc3pBZGVLK3BOU0lXSFo2aTBobUVZVjZlVmFtL3NXTi9rRUQ5NkNZdW1s?=
+ =?utf-8?B?c2tsbGU2SFlGbzZYYU5pbnlwcER6MWdFaXNtZ1djcHEyWHJuUjdRY25SSThE?=
+ =?utf-8?B?Ynd4anRKSmQwT1RidkdWcEk0TEl6Vng4ajRqdnlDM1h3blhWeE1Fdzh5SDlE?=
+ =?utf-8?B?Q3p0enFOM2did2o3Rk1UNmFWVkNSNTdSUVkvM3hNaFE5NW9hTDBvaFpIOHFN?=
+ =?utf-8?B?c0Vaemo5TFk0WVIwYnRhRlh0WCs1UUtZaGIwN3dKVEhWNVAyQThQNk5WWU9t?=
+ =?utf-8?B?eGF4YXQ0RGNvbEo3SHBnSFBpbUpOWHNnay9EaXMwNWpuN2xraUZHRkIrY1Nk?=
+ =?utf-8?B?T3FPbk9mK1c2d1V3TEtuWWNhcVF3bzV0OVFRZzVJQnJUOHBaQzZoeU11dHZy?=
+ =?utf-8?B?MTJ1a2ZMN0NTQ1A0MGpOdHNjNWllQkxGaWRMK3RjMVd2Nk0zV0QwM1dWZUhG?=
+ =?utf-8?B?QjhTVWcyTXBUYTl5aWRxdXQ2bFdjQmRZOVN0eVhIeC82M2VMZlJmUjQwZk54?=
+ =?utf-8?B?aFlYVFJvdG13RXF1Wk05alhIZWllYk5lU2gvRVhPZWtieHYrZ1h4N0JOcmJ1?=
+ =?utf-8?B?aXhIcWdFR05hQnVid2pSbUpIamZpMGNoYW5oU3orRm15R1o3YzlNeC9wbk0y?=
+ =?utf-8?B?QVZpQisyckZTcHYraUZJM1B0T1A4d2p1K256MGI5aE1LZkwvY0ZwZ2thLzBF?=
+ =?utf-8?B?cHVxcXpISkFEUi9vdkRiYVRKcVFyRjkvL0U2S29ycGJ3YkE2WFp5V2J5YjVK?=
+ =?utf-8?B?WTJDTG5wdTI3c3I4OHhkOFpQVVVDaEE3bHlrcGNwNkR3WEVKdWRURVZxbTl3?=
+ =?utf-8?B?OStkZjh4dzFMTUd0NXhsVU5PZWVLbkhXMTByTDBjRnBBZEN0T2w3ai9WVGcw?=
+ =?utf-8?B?SW54OC9XV2NzNWgwdjhyeE9TbWtwNTBYR3VTM1FKa1BFT3RMd2tweFFsZGVL?=
+ =?utf-8?Q?cmIVIfGffCnCmQpzI6q+OgtlG2GJCM=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(7416014)(36860700013)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Feb 2025 08:32:37.3096
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 22d4f0ea-0c18-4341-3d67-08dd4ff6cced
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN3PEPF0000B36E.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6954
 
-Hi Abhilash,
+On Mon, 17 Feb 2025 17:46:41 -0600
+Aaron Kling <webgeek1234@gmail.com> wrote:
 
-On Mon, Feb 17, 2025 at 06:30:12PM +0530, Yemike Abhilash Chandra wrote:
-> The Cadence CSI2RX IP exposes 3 interrupts [0] 12.7 camera subsystem.
-> Enabling these interrupts will provide additional information about a CSI
-> packet or an individual frame. So, add support for optional interrupts
-> and interrupt-names properties.
+> On Mon, Feb 17, 2025 at 5:43=E2=80=AFPM Aaron Kling via B4 Relay
+> <devnull+webgeek1234.gmail.com@kernel.org> wrote:
+> >
+> > From: Aaron Kling <webgeek1234@gmail.com>
+> >
+> > Fixes: 989863d7cbe5 ("drm/nouveau/pmu: select implementation based on a=
+vailable firmware")
+> > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> > ---
+> >  drivers/gpu/drm/nouveau/nvkm/subdev/pmu/gp10b.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/gp10b.c b/drivers/=
+gpu/drm/nouveau/nvkm/subdev/pmu/gp10b.c
+> > index a6f410ba60bc94ec9d52fc78868acddfc6770e19..d393bc540f8628812990dff=
+e4c2f7e9014be07c5 100644
+> > --- a/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/gp10b.c
+> > +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/gp10b.c
+> > @@ -75,7 +75,7 @@ gp10b_pmu_acr =3D {
+> >         .bootstrap_multiple_falcons =3D gp10b_pmu_acr_bootstrap_multipl=
+e_falcons,
+> >  };
+> >
+> > -#if IS_ENABLED(CONFIG_ARCH_TEGRA_210_SOC)
+> > +#if IS_ENABLED(CONFIG_ARCH_TEGRA_186_SOC)
+> >  MODULE_FIRMWARE("nvidia/gp10b/pmu/desc.bin");
+> >  MODULE_FIRMWARE("nvidia/gp10b/pmu/image.bin");
+> >  MODULE_FIRMWARE("nvidia/gp10b/pmu/sig.bin");
+> >
+> > ---
+> > base-commit: 2408a807bfc3f738850ef5ad5e3fd59d66168996
+> > change-id: 20250217-nouveau-gm10b-guard-a438402b5022
+> >
+> > Best regards,
+> > --
+> > Aaron Kling <webgeek1234@gmail.com>
+> >
+> >
 >=20
-> [0]: http://www.ti.com/lit/pdf/spruil1
->=20
-> Signed-off-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
-> ---
->=20
-> Changes in v2:
-> - Address Krzysztof's review comment to remove flexibility while adding
->   interrupts.
->=20
->  .../devicetree/bindings/media/cdns,csi2rx.yaml         | 10 ++++++++++
->  1 file changed, 10 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml b/D=
-ocumentation/devicetree/bindings/media/cdns,csi2rx.yaml
-> index 2008a47c0580..f335429cbde9 100644
-> --- a/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml
-> +++ b/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml
-> @@ -24,6 +24,16 @@ properties:
->    reg:
->      maxItems: 1
-> =20
-> +  interrupts:
-> +    minItems: 3
-> +    maxItems: 3
-> +
-> +  interrupt-names:
-> +    items:
-> +      - const: info
-> +      - const: error
-> +      - const: monitor
-> +
-
-How many interrupt lines are actually exposed by the Cadence IP?
-
-It is not clear to me from the TRM [0]. From the "Table 12-1524. CSI_RX_IF=
-=20
-Hardware Requests" it looks like there are three separate interrupt lines=
-=20
-CSI_ERR_IRQ, CSI_IRQ and CSI_LEVEL, which are routed to the Arm core/GIC. A=
-nd=20
-four lines for the ASF submodule (?) that are not routed to GIC.
-
-This does not match with the error, info and monitor line names mentioned=
-=20
-here.
-
-In my understanding which interrupt lines are actually integrated will vary=
-=20
-=66rom SoC to SoC, so please check what are the actual interrupt line names=
-=20
-exposed by the Cadence IP. Maybe Maxime knows more.
-
-But I don't think it is correct to make all 3 mandatory together, as some=
-=20
-vendors may only integrate the error interrupt ignoring the rest.
-
-CC: Changhuang Liang <changhuang.liang@starfivetech.com>
-
->    clocks:
->      items:
->        - description: CSI2Rx system clock
-> --=20
-> 2.34.1
+> Apologies to the maintainers for the multiple resends. For some reason
+> the lists weren't accepting my submissions. Looks like it went through
+> with b4, so hopefully I won't have more trouble in the future.
 >=20
 
-Thanks,
-Jai
+It seems like this version doesn't have a comment body. Might need to
+double check the b4 setup.
 
---sr4ldtn435nab4uz
-Content-Type: application/pgp-signature; name="signature.asc"
+> Sincerely,
+> Aaron Kling
+>=20
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEETeDYGOXVdejUWq/FQ96R+SSacUUFAme0RYMACgkQQ96R+SSa
-cUXdNBAAvlJSdV/EmJzBACqQuS7J9cW/g3lobP1lUOO8QviUZnB6Dk2LKP0FDBjH
-Y+/F+/HzgOqppHGn/hZx9+BSDBih8i5Vt/X5X3GlusRYxbCPoURk2D0Q+C4Aq/Q5
-/riVnZzhF/8BA0YQcuPXuMLv9+3Mt5gDlKwMLiEpzOrOwXAM5/JLYqyofCsMkd6X
-Yu8Rpr0uEQQ8kioSQwgwGDzvkpqPFcfhsS+jww/Gimtn4dKAgJQDZ+wlWvQMXZNC
-ug81y5Nr3s5dvzcBs/Jb+rhH3ZzctiYFJNPQI/ISHtoFx1HH3BMekTyEScBZZ3/i
-PRTtgUMzflXys/EBB8vCQwZILPM14WhKKwhmxjv+AAZr8qcMnM+cLs+XzZV1/PiK
-lsSs5KdPdsVw1qDMfXtI/dhbGp2Z7zaxsPTD4rOvdGKWThEIGWvr+GurJOt4a2v0
-q4aOfag1uAz8e+3ICx+636f80BlwL2omB8zSZw85sHTmybFLB9Nk4vqe/tPo6Ut1
-nvJB5iCg8wGnrcLVkU7lQAw1O1YndShy76eHlb63HuzF1jyuwFLhVVCYiHHraQKF
-AGiB7p8SpquuOCRBnHqFqJD9rCwWOS1/oCTWNFxgKqo/aULKjYjNXn1/9/gRhmeD
-wxeg06OsQMv8CyJoHyP5BC+6MMXiG88Ik01EYfg6Nj0uvF8B/Es=
-=ZXoX
------END PGP SIGNATURE-----
-
---sr4ldtn435nab4uz--
 
