@@ -1,104 +1,169 @@
-Return-Path: <linux-kernel+bounces-520287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1633A3A7FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:50:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF936A3A804
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:51:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 828B51738E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:50:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 204A83B17DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:51:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC59C1E835C;
-	Tue, 18 Feb 2025 19:50:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AF041EB5C9;
+	Tue, 18 Feb 2025 19:50:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mVv+dzha"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="km8mgscc"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9224521B9E8;
-	Tue, 18 Feb 2025 19:50:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E0C71EFFB3
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 19:50:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739908241; cv=none; b=LU5UvKIOchV2bCACDIBNgJqjpHAB4aTOHpavEvx2lkDpd9xyT+sZDvigIeDEFchLpjwCeUo5d54rZFeysJ0/7K6lM2MTH0Y/JCbK4032v3x0CuUKO9R9PCr3cbSALJlFfR0AbbITAGNqPNSl0BIrdk0/KLMDtEqH6YbbiiCTfc8=
+	t=1739908257; cv=none; b=D5YKGaCN1eOF+Lv0cmw8JZnuUZxYy09fTHxwhqx+Y8gKpfcfDknaedOyd7ByJqewvyJNLIAYprJwv6gwKZ8PuFyLoOtcFq8hYr8CE3QBbLF2ThGCJ9OLjhrBNLlUrxzKlAGzr+iqf27J4HIB2/28K2YuSpF2ikEbLQopjMCeugo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739908241; c=relaxed/simple;
-	bh=vRF9TEvwV6fSl/fkAGhEb8RPPyMhw3ol/kslpsH1PWE=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=P6wyNDFSmC5FwJF/dgJJzSvIoNxsF4RIsjLG9XrtH/uLMtUR3JpcGDmW5yhKKHiLt1Cj19b6TJ/iokkrk1t1U73FoPaMTX/swBCPyu4z0U4i5f51xiUfkjUzGu6P0LnxMbZ8/61NSgZfFt7IBPF/KOOM55+VMFbVMifg2ZUFkGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=mVv+dzha; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-	MIME-Version:Message-ID:References:In-Reply-To:Subject:CC:To:From:Date:Sender
-	:Reply-To:Content-ID:Content-Description;
-	bh=c1sk8iljrl1m+r2dZCO0bLxoLdDjULSghW51Pq9XZ8I=; b=mVv+dzhazLyTBT6qAVaBuUYO67
-	GhNT4+pUyh9zgctX/oq1m2G4kaxj+lO1tvSttqF3+4HB3lRA7esgcE5J3Fjk/WtQoBrvOOvmFSYd5
-	5RHY3YJt1VeAG6S0CJFn3nHSeiaTYBZrNiz3jw1W3+AKtnHjVcJttEuYFckcK5UNEtF56A7ig793R
-	nbXOKPtJiHigSxxOKsWm8e2pi5GKbH/G5oPAri+sHeg1YRWFfHDZ0Umim8aZb4qUOOwb8pNb0z6Dt
-	mvwmi2+vOZJok+7kgoI40HSzgZc2hIDnpSZZjM4Vxldy1OiNVZiY8ztDnpw0GCsSjIUyGyZQJZK6K
-	V/VPM9qg==;
-Received: from [129.95.238.77] (helo=[127.0.0.1])
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tkTc1-00000003jhW-3ca4;
-	Tue, 18 Feb 2025 19:50:34 +0000
-Date: Tue, 18 Feb 2025 11:50:32 -0800
-From: Randy Dunlap <rdunlap@infradead.org>
-To: Mike Rapoport <rppt@kernel.org>, Jonathan Corbet <corbet@lwn.net>
-CC: Steven Rostedt <rostedt@goodmis.org>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH=5D_Documentation/kernel-paramete?=
- =?US-ASCII?Q?rs=3A_fix_typo_in_description_of_reserve=5Fmem?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20250218070845.3769520-1-rppt@kernel.org>
-References: <20250218070845.3769520-1-rppt@kernel.org>
-Message-ID: <98FDFEF0-7CED-41AF-88DD-590A9846C03F@infradead.org>
+	s=arc-20240116; t=1739908257; c=relaxed/simple;
+	bh=qm85aHAJ3fEWNO0k9VcImWfuicbCKbW9BAl+6MjlbyA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cHjBvhXKTOVypVyUj1T+4cA9KaYcJlpI4ndlyHZKCaozTTU1Dz57vPVrOWgUh8fkkK00qoWutnlfQtqbGqbQO5aDkIhjpp1kqbn9s/dpguOP0WU8b1QSp+Rhp26hKePyZODCibToWpgmRFubJeWA8Yg6n6RhDNNsTxXN1TGXLCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=km8mgscc; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1739908252;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Vk8coug+FRo/5jdUZgRpW7dUVKkTDmTjAi05VADtXHc=;
+	b=km8mgsccdl4aUB+LLwGy+ZUpUnhPFBvZQVo+FlhnXIBQS+NdfRdBKEIQu8f2At2QX6JYtL
+	YB3ZQwfVQnp71lR4xTMgCI/ImAawzp7w1+PWcKznFyVt3bc6V2XTmnNRv5GMdtJOictbJj
+	5ERD9JSQ36XR3CITfPFj+Re0hQliRV4=
+From: Sean Anderson <sean.anderson@linux.dev>
+To: Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	netdev@vger.kernel.org
+Cc: Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	"David S . Miller" <davem@davemloft.net>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Sean Anderson <sean.anderson@linux.dev>
+Subject: [PATCH net] net: cadence: macb: Synchronize stats calculations
+Date: Tue, 18 Feb 2025 14:50:36 -0500
+Message-Id: <20250218195036.37137-1-sean.anderson@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On February 17, 2025 11:08:45 PM PST, Mike Rapoport <rppt@kernel=2Eorg> wro=
-te:
->From: "Mike Rapoport (Microsoft)" <rppt@kernel=2Eorg>
->
->The format description of reserve_mem uses [KNG] as units, rather than
->[KMG]=2E
->
->Fix it=2E
->
->Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel=2Eorg>
+Stats calculations involve a RMW to add the stat update to the existing
+value. This is currently not protected by any synchronization mechanism,
+so data races are possible. Add a spinlock to protect the update. The
+reader side could be protected using u64_stats, but we would still need
+a spinlock for the update side anyway. And we always do an update
+immediately before reading the stats anyway.
 
-Acked-by: Randy Dunlap <rdunlap@infradead=2Eorg>
+Fixes: 89e5785fc8a6 ("[PATCH] Atmel MACB ethernet driver")
+Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+---
 
-Thanks=2E
+ drivers/net/ethernet/cadence/macb.h      |  2 ++
+ drivers/net/ethernet/cadence/macb_main.c | 12 ++++++++++--
+ 2 files changed, 12 insertions(+), 2 deletions(-)
 
->---
-> Documentation/admin-guide/kernel-parameters=2Etxt | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
->
->diff --git a/Documentation/admin-guide/kernel-parameters=2Etxt b/Document=
-ation/admin-guide/kernel-parameters=2Etxt
->index fb8752b42ec8=2E=2Ebf00552908bc 100644
->--- a/Documentation/admin-guide/kernel-parameters=2Etxt
->+++ b/Documentation/admin-guide/kernel-parameters=2Etxt
->@@ -6082,7 +6082,7 @@
-> 			is assumed to be I/O ports; otherwise it is memory=2E
->=20
-> 	reserve_mem=3D	[RAM]
->-			Format: nn[KNG]:<align>:<label>
->+			Format: nn[KMG]:<align>:<label>
-> 			Reserve physical memory and label it with a name that
-> 			other subsystems can use to access it=2E This is typically
-> 			used for systems that do not wipe the RAM, and this command
+diff --git a/drivers/net/ethernet/cadence/macb.h b/drivers/net/ethernet/cadence/macb.h
+index 5740c98d8c9f..2847278d9cd4 100644
+--- a/drivers/net/ethernet/cadence/macb.h
++++ b/drivers/net/ethernet/cadence/macb.h
+@@ -1279,6 +1279,8 @@ struct macb {
+ 	struct clk		*rx_clk;
+ 	struct clk		*tsu_clk;
+ 	struct net_device	*dev;
++	/* Protects hw_stats and ethtool_stats */
++	spinlock_t		stats_lock;
+ 	union {
+ 		struct macb_stats	macb;
+ 		struct gem_stats	gem;
+diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+index 48496209fb16..990a3863c6e1 100644
+--- a/drivers/net/ethernet/cadence/macb_main.c
++++ b/drivers/net/ethernet/cadence/macb_main.c
+@@ -1978,10 +1978,12 @@ static irqreturn_t macb_interrupt(int irq, void *dev_id)
+ 
+ 		if (status & MACB_BIT(ISR_ROVR)) {
+ 			/* We missed at least one packet */
++			spin_lock(&bp->stats_lock);
+ 			if (macb_is_gem(bp))
+ 				bp->hw_stats.gem.rx_overruns++;
+ 			else
+ 				bp->hw_stats.macb.rx_overruns++;
++			spin_unlock(&bp->stats_lock);
+ 
+ 			if (bp->caps & MACB_CAPS_ISR_CLEAR_ON_WRITE)
+ 				queue_writel(queue, ISR, MACB_BIT(ISR_ROVR));
+@@ -3102,6 +3104,7 @@ static struct net_device_stats *gem_get_stats(struct macb *bp)
+ 	if (!netif_running(bp->dev))
+ 		return nstat;
+ 
++	spin_lock(&bp->stats_lock);
+ 	gem_update_stats(bp);
+ 
+ 	nstat->rx_errors = (hwstat->rx_frame_check_sequence_errors +
+@@ -3131,6 +3134,7 @@ static struct net_device_stats *gem_get_stats(struct macb *bp)
+ 	nstat->tx_aborted_errors = hwstat->tx_excessive_collisions;
+ 	nstat->tx_carrier_errors = hwstat->tx_carrier_sense_errors;
+ 	nstat->tx_fifo_errors = hwstat->tx_underrun;
++	spin_unlock(&bp->stats_lock);
+ 
+ 	return nstat;
+ }
+@@ -3138,12 +3142,13 @@ static struct net_device_stats *gem_get_stats(struct macb *bp)
+ static void gem_get_ethtool_stats(struct net_device *dev,
+ 				  struct ethtool_stats *stats, u64 *data)
+ {
+-	struct macb *bp;
++	struct macb *bp = netdev_priv(dev);
+ 
+-	bp = netdev_priv(dev);
++	spin_lock(&bp->stats_lock);
+ 	gem_update_stats(bp);
+ 	memcpy(data, &bp->ethtool_stats, sizeof(u64)
+ 			* (GEM_STATS_LEN + QUEUE_STATS_LEN * MACB_MAX_QUEUES));
++	spin_unlock(&bp->stats_lock);
+ }
+ 
+ static int gem_get_sset_count(struct net_device *dev, int sset)
+@@ -3193,6 +3198,7 @@ static struct net_device_stats *macb_get_stats(struct net_device *dev)
+ 		return gem_get_stats(bp);
+ 
+ 	/* read stats from hardware */
++	spin_lock(&bp->stats_lock);
+ 	macb_update_stats(bp);
+ 
+ 	/* Convert HW stats into netdevice stats */
+@@ -3226,6 +3232,7 @@ static struct net_device_stats *macb_get_stats(struct net_device *dev)
+ 	nstat->tx_carrier_errors = hwstat->tx_carrier_errors;
+ 	nstat->tx_fifo_errors = hwstat->tx_underruns;
+ 	/* Don't know about heartbeat or window errors... */
++	spin_unlock(&bp->stats_lock);
+ 
+ 	return nstat;
+ }
+@@ -5097,6 +5104,7 @@ static int macb_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 	spin_lock_init(&bp->lock);
++	spin_lock_init(&bp->stats_lock);
+ 
+ 	/* setup capabilities */
+ 	macb_configure_caps(bp, macb_config);
+-- 
+2.35.1.1320.gc452695387.dirty
 
-
-~Randy
 
