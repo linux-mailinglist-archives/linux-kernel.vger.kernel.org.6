@@ -1,168 +1,226 @@
-Return-Path: <linux-kernel+bounces-519784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61B00A3A1D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:56:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65BBAA3A1E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:58:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22593166574
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:56:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84B657A40CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:57:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F9B26E16C;
-	Tue, 18 Feb 2025 15:56:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1986126E15F;
+	Tue, 18 Feb 2025 15:58:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="orOvZGbL"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="cqlo6SaF"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11013028.outbound.protection.outlook.com [52.101.67.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B2A26E157
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 15:56:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739894175; cv=none; b=FTUg8Cp6q8oaQpwXxldwbp5rqgZg+0wYK6FoLwyzAsF62k8L/GiBZDk8jELChwimzbZQbz5jebtCoxoeC3O9QreLr96tzkuqwudHKKZ6u5slqlxpNalkxreRQzg0Y6gclBmY2Dd4slLCkMCymCod/+lu2G+TOLnmolHtXe4DQO8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739894175; c=relaxed/simple;
-	bh=OxwXkUwfdd9O2efR81hHEid3P6MZbMOImo0mqZ4pV7k=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=V2HDqEl/n6gQwCF+PBZpSyI/u7QRhS0BlgtF9fAsFg3x1FyZ2qK6BD746oNJkQu9mVGLS9Zgy4BrzM5/Wen3IxvcMAZfcgHYPN6weGMqAKhBKxX3/ftrLIm23p+9TExQxDbF3516DMZrGLC2mWw1DhFTTrii04Rlaiumlz6mbRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=orOvZGbL; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-220e62c4fc2so80463655ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 07:56:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739894173; x=1740498973; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=amAiEH9p0JjjlIoDG8vUk3rwkUw6ePiV6D4s+4AzIhM=;
-        b=orOvZGbLM+7JZ9GKfGoj0TXDsRDvdotK5RssVMwnnaVmGZi5NOywhDK7S+46xcFWJi
-         Vfz2DHLl99gWNAOx65qT/vgEY6HFTFGjMCnQiAiaUzYyZIgRfkFrNnBswGeR897uhP33
-         1e3lxix99c0zp/jSRQjVCxWXL9/eWGJ49vf7P48QAjlDVLt3a87oIBddYv7v3c7vYgsv
-         vsr0+/MQ2aGaN/eOY4ygo+Q8VWqALzFbQF6pB6D1FTxOx7TDhPCu12wHqUQSzl4bFfl5
-         EK9PHje4HERedn9LxBH9FLz/tW3hF9zjQik43CsvA9gIK45W+u0i2bxjfphdF8lzKThN
-         0f9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739894173; x=1740498973;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=amAiEH9p0JjjlIoDG8vUk3rwkUw6ePiV6D4s+4AzIhM=;
-        b=M5cXCbfQ7Gb9+QsxWzI6QdBB27Uf48Q4Dc3I47vodXBzXT1V61FW0LVLoyFz/36YsV
-         1WYqBtMaJtyfITOLDwkUF3G4hkzTFBTIZKzXr2o/5qoYri3V0Iqu69W99Ce7gw3MA/nN
-         tcOUeOWj4T2H/U9B1zp+xk8LC1KoyyUl1t3xMXpkQ4wpk4fHZtCFxVSIAT0hUtD5kx9r
-         V8U8b3M+RSLKkpTJ4JsYFgQgK0WRo3VJ3eYGxLl+MFf5QWGJpT3t7aHD4dg5Pq9T2TO7
-         xbHNKj96hmz0btZQ8gbzEp6+Kl8IrQ4LB1LAn0B9+tzFLCt2CZGKxFQYRPehek2InpZu
-         KbdA==
-X-Forwarded-Encrypted: i=1; AJvYcCUKd4z/UIosldeQQFLFhoQgG+9rbyjbgMV79ayKWYB+ZCLz5LQ16Eyrh++utt2N50lFIqh42DzP0N1TPdk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/bRRr5lbg5kUfsx32jBKfnfH8YJDbmLeh7XSv1OPy4DBDJoNh
-	aaG2GYG1N4+B4EJ0Zk1ss5SlGY8osDavXL6mUuzC0iLEZnHcBP8T8r2j7UtZriYkdGO8+7NdL5f
-	5Qg==
-X-Google-Smtp-Source: AGHT+IFPqhKGvpTcG3WvR15xNdlmCcTHSx2dYyPg7ppYF/3/HBUysYafNH489eXc+eCO/BIvXlJ+wjUhZ0c=
-X-Received: from pghb5.prod.google.com ([2002:a63:d805:0:b0:ad6:992d:5743])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:999f:b0:1ee:6ec3:e82e
- with SMTP id adf61e73a8af0-1ee8cbf7ac0mr26906261637.29.1739894173031; Tue, 18
- Feb 2025 07:56:13 -0800 (PST)
-Date: Tue, 18 Feb 2025 07:56:11 -0800
-In-Reply-To: <cf013079-ad8a-4b07-bbcf-6f35d1126a92@linux.intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78F4826E154;
+	Tue, 18 Feb 2025 15:58:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.28
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739894304; cv=fail; b=MKlcbtUUXhEyhyiLSnn5dl3CMz/7btcpD3c2j2xFZ1SGVOoedw6cp4Wsi0aWuhKl8+7mQaCHFjF7VPHBELox+SqnDgVW6oue+0PbGkJENaxxg5fCsEwdK64QpQ+iINfTNQRJXGJDGXs+c4yr+gQJ85ab5SA1NaOBweylNbZclpU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739894304; c=relaxed/simple;
+	bh=iEvtsUNcL5Wm32nbDXyZtNScG37at24HeQV7zfVSXfE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=NutTf3VdrDZeYguj+dlnmYy2yBguldLK6q+sVmaPREsY2/FhTBFBKzsTzhG92Svdt9euJukzZR2CQeI+I7MMIaVzGAlZ5vMk0bf2wIRbiO4NAKe/6zld7r5dKtT1z4EXWW711Ozd/G+jE3rbJL+MGLfAMF7Qgo/hc9Z8zxAGGaM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=cqlo6SaF; arc=fail smtp.client-ip=52.101.67.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mAMZUZd+9tXtTZCFuTprnrROBjJFRTJ5NtcQgian/FETCt9XCt9STIie/Y+oS6+BWDn2OUx4P70LcTc9wTjoDwtUO+EhMhm2zDAPmVCwqCr0/iU+PNffelpkPqMPqdWUT5ES7EcS+rPCzNBuXOg+1oxT4uNHJr9JHETjeHgH30xSKv9Fs7rTcE9mWdEcXcOEGreEFaOLQAzYNWbuzfTQ9tdkvr77ZXNAI+wpNqQjG6Oyd6mtbZ86BWHQ5J5bGWS4lXWCglADmoHXQMQitax8fiiKWiYFM+SH7FbEw4RJ0gNyO5WEgm8Zj9MtmXCyzYTpCWefyphNN8DZd0wS2pKlpg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Yd2+Rcob8VDALPdZdJ73+F7BbDtFFiuB6K9eOHYWrlo=;
+ b=RLx5MGiGv5Q8hJEJqzpHMtaG/OeywDdX7rvCrLnDQEhJxrkRR9Bg2lsMaMUDnWGrNActUHoP4cHuX98YJTxX5/yzpufJdh9lyHaXYXNy/1oKsTAwlChcbnefmVuQEERKQCAf5ffl1JZPjQCd6XrUDvXupRdPaKANx8MXy74wDIZ/Qr1xPCOc9RW05GxmbClL7W3Hoo5FETJGcEIsVNrkhpk74gdxGneiN53ML8k9YLGMiIKtJ5ae5XFvriL9dO/VGPLfZ4J6P7pf5ZlV2VrtP5eI+FrtdSJ45lez8HTEXlYGFABRcZ3zTPNLFvOc+M31lqI0qudlgDFgyAOq0Oc2mw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Yd2+Rcob8VDALPdZdJ73+F7BbDtFFiuB6K9eOHYWrlo=;
+ b=cqlo6SaFnZ62Y+GFTHBs9dI2qfj/S1Msrbj8VXGb4boRkPIPzC3o5zxntO2KZsm1VNqdb3eeDwtxHmGV1yV/z0uWNc2Uj4o+Yk9xM0m8jO8OdxS4Ad2Ptj/gZyyHI2G2O4Uyj1r/yUhAxsEWLUbzxk/R+vMAL1nRDQKkuET0AHDnkpR47py24RuzaN0tMKceX/1fFTItwqFftvLHMEtM9ZFrp4A5sMqT2ge6mWRjt042oomfVxtMIYlh+wDTxOPAuBquzZ15ebdfLqU6oPMPIgy0uOrUfGCuTcAGEjonIB/xarVtlZgWSwuPmShNQkY20ft1IKEjMzPlnCezLQXO5A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by DU0PR04MB9299.eurprd04.prod.outlook.com (2603:10a6:10:356::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.16; Tue, 18 Feb
+ 2025 15:58:19 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8445.017; Tue, 18 Feb 2025
+ 15:58:18 +0000
+Date: Tue, 18 Feb 2025 10:58:08 -0500
+From: Frank Li <Frank.li@nxp.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Daniel Baluta <daniel.baluta@nxp.com>, shawnguo@kernel.org,
+	mathieu.poirier@linaro.org, s.hauer@pengutronix.de,
+	kernel@pengutronix.de, festevam@gmail.com, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	andersson@kernel.org, linux-remoteproc@vger.kernel.org,
+	iuliana.prodan@nxp.com, laurentiu.mihalcea@nxp.com,
+	shengjiu.wang@nxp.com, krzk@kernel.org
+Subject: Re: [PATCH 3/5] reset: imx8mp-audiomix: Introduce active_low
+ configuration option
+Message-ID: <Z7SuEF143A7vEQNr@lizhi-Precision-Tower-5810>
+References: <20250218085712.66690-1-daniel.baluta@nxp.com>
+ <20250218085712.66690-4-daniel.baluta@nxp.com>
+ <be4e8fe598f8a56210154c40d8a6d973a3fbeee1.camel@pengutronix.de>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <be4e8fe598f8a56210154c40d8a6d973a3fbeee1.camel@pengutronix.de>
+X-ClientProxiedBy: SJ0PR05CA0176.namprd05.prod.outlook.com
+ (2603:10b6:a03:339::31) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240914101728.33148-1-dapeng1.mi@linux.intel.com>
- <20240914101728.33148-6-dapeng1.mi@linux.intel.com> <Z6-wbu7KFqFDLTLH@google.com>
- <cf013079-ad8a-4b07-bbcf-6f35d1126a92@linux.intel.com>
-Message-ID: <Z7Stmz1VUE-cZUzq@google.com>
-Subject: Re: [kvm-unit-tests patch v6 05/18] x86: pmu: Enlarge cnt[] length to
- 48 in check_counters_many()
-From: Sean Christopherson <seanjc@google.com>
-To: Dapeng Mi <dapeng1.mi@linux.intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jim Mattson <jmattson@google.com>, Mingwei Zhang <mizhang@google.com>, 
-	Xiong Zhang <xiong.y.zhang@intel.com>, Zhenyu Wang <zhenyuw@linux.intel.com>, 
-	Like Xu <like.xu.linux@gmail.com>, Jinrong Liang <cloudliang@tencent.com>, 
-	Yongwei Ma <yongwei.ma@intel.com>, Dapeng Mi <dapeng1.mi@intel.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DU0PR04MB9299:EE_
+X-MS-Office365-Filtering-Correlation-Id: f4f71cc6-664b-49ea-15ac-08dd50350f4e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|52116014|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?a9pNtSmBMdkMl/v0Z1OETVbJ83zZjNnyJx9n9gBlAHTAuMPQmpWUeJxFd2OA?=
+ =?us-ascii?Q?IggL1sxSP9ibxiQAv+YV4lYDcTPCI2vg/hL3fvUh1KU0UJrr42/pXpPICqzE?=
+ =?us-ascii?Q?Whd31yZ6Bnw+aWwONLUwZM3x32bFLyDNcj899xzA8X4y/eipNGx6lg3fT2wu?=
+ =?us-ascii?Q?X8VaiG7EI+yXMzxbLmSHjEZT4+P7XeYHsJas70xMqCmz48ioHLbMWOXK+1rF?=
+ =?us-ascii?Q?YoAzNd0GZtJB+WZV8b0oOGZ/NnrLJHU8dXA0Nw3z0ZhHb/+6UK34vhCaZ5lQ?=
+ =?us-ascii?Q?G8FFJPvAmWnF1N3UUTYfdY4IFSEU8E1vEJECpBM4Y/n1HijXOKGnW3FCPRiQ?=
+ =?us-ascii?Q?8xYCc4JQRdFfUiZshKqBxYnmLYKJSplL4rwj2db8Cz3PDVzjsvSS9wsx0VoT?=
+ =?us-ascii?Q?+kY1twBQI+5aK0+0smP4wTYWH/7zYoc1EtQp6tSsORq2utVs3Dfc34z8y+lZ?=
+ =?us-ascii?Q?IvqDbgbeF/ZrLoqnvFTJ1Vp+dvaJP5vccb/K3xaGCg01JNNf2sc8H8CyIFjb?=
+ =?us-ascii?Q?I6Gl6AC+PS2eTKt0Qmq9/KRNf+al1TLtwylRgkQ74AijvDgcQdhnRY8F7epa?=
+ =?us-ascii?Q?AlnfcTFFf+YJR3usBiL/9eaL4LMAD/EOSUSjiP52xEvFMgOcbeQHKlE2ePwN?=
+ =?us-ascii?Q?ZUDFhbyLhrA97+BKzVlgb+VQbrwqfyZXtvVqBuFlz1j18lDvNpvrVeCJ90Mc?=
+ =?us-ascii?Q?O08FxA63qdcBXfBEEf7aVhruDO7Dx/0h9GM2rkNF5ukvS4Q00P+/OWT/EEpM?=
+ =?us-ascii?Q?bAC6GLdhPrOy/THf4yUJHFuxISGSLwsD5qUEqervnKOkZa1izNCYs7kF+xiS?=
+ =?us-ascii?Q?dDxY+QUmsE9DGzJpqnksqpG0q5zyWjHxUHzTuMF0m1/ZVhuDfmUEC6blkLVo?=
+ =?us-ascii?Q?DYlDwFMii4wWwMexTQB/O8xoWZ5PcgHfknDpz70ktolQwhmgdsxp2uIytlDS?=
+ =?us-ascii?Q?9gUffGXo4rPRtbW+7lt5QcW877B7E6wFb96X4t9i8k22SIu6NcjKZZhQiT+3?=
+ =?us-ascii?Q?aePvq5LpGxqiOTHU2vkb/hQLWR1yXu4mFADjLmaHdztNOgS+BdSXoUMwDKDl?=
+ =?us-ascii?Q?b7ptQIjOK4SiiTUly5qcLzk/ZZ4Zj/MUhP0YAzaI9YzGkYTlXNL+p/H2uIMq?=
+ =?us-ascii?Q?4tLoIAIbtTnOGaHXDu7zKa5syCQtNbloD3fDB8idgNJlTo3XPUQwSDSzEe4G?=
+ =?us-ascii?Q?4FE5E73at5pKyWJZXWhqvK0BNWSXq2WeWEgrZLSS5xEVAC6sHz2oIa9VXDmW?=
+ =?us-ascii?Q?q69o8+qi8crVhXrxKle+V2gSNFQOfy5iGNs0gzETUSg+I+FtplISUWZjO7//?=
+ =?us-ascii?Q?ylBpoS7RDcroqotlGBIRtZutx+V18XRRdRuydIPUb0258SOhgWOH18lViRsS?=
+ =?us-ascii?Q?lYYyJyItYwWO/b0u3flKxVShZJ6UBKj7xTBDtWc5zjGrOQ8OAcQkbB3sEBR/?=
+ =?us-ascii?Q?Nk7l3YdYsDSO2R/3VBrl+s81eDk8m65z?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(52116014)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?hxC913zvLYjqb+rarKiBw88PNwXS/Rug50rwc73fEdv26F6MoGCcatsl/R+L?=
+ =?us-ascii?Q?uEk8i9ocewWrUIrX7Du9/7+Sg5FAYpYF+9bhkkGk5CZjVwy0bVZxnOXq9oCV?=
+ =?us-ascii?Q?7g4q2BwIGalKAub8yON8e9lqrFDDFQDgHHTnOPkYW/WgOm33o+gLirtmRUT7?=
+ =?us-ascii?Q?bGH0TW8v4wMunt56hZkFzs+XWextK4gCzaokhLGRc/dEJEsJW/BeAIltLp4L?=
+ =?us-ascii?Q?UT57m2C3j0QRsOl9/Sr0b0cA2MpClZsg5B44Yi2yi1rMwwg3/+feE4NElzAX?=
+ =?us-ascii?Q?Vk5qDq6vtbR/UqDnEOpUCEQM2ozcFKbriPUlqMRixo9rZigSdml8wLRzRcF2?=
+ =?us-ascii?Q?15f3TKTesZ3hZFc/WUvwYzxk7CIWGV2aC0sIijP5pa97KQNv6r6q7/V+GsBj?=
+ =?us-ascii?Q?bPVbH1fSUgPxXZDQM0yEz+yvux4F6IcBa+BD4DnywJg/Y1SU7Tp9DdWZ+/z2?=
+ =?us-ascii?Q?m7IDIuq27EFH8e+UGKZngpyW2sYYbmab6xGVJWvZ4rXN2NSbw2auYh+fbBxy?=
+ =?us-ascii?Q?YWymqBoG4Urp8WTNRSgSsew641fqZYvG/C4QbI+G7pzw5T/7ghtgKENZ6Nma?=
+ =?us-ascii?Q?6rVRi8CNCgSm74BQaclzrPV/5m8O2FEVHN7Q4HYstaq06ck/dpxdsYgqLY8b?=
+ =?us-ascii?Q?NluAGddow94FsFBny8oai1XfkrhiuA9M5Imc60BbHo2rAe1nRFEKOhGExbZp?=
+ =?us-ascii?Q?tkdzGOepvbqy+TGr3/HPifOjTC3e0qiBwvGCVxN8rU1RySY85r6jV/feLtAz?=
+ =?us-ascii?Q?wmcug0pCUNC8ihJaXVO9w0y69p25PjqCc4HQomGgYUDxq64YbM0aNBVwyrA4?=
+ =?us-ascii?Q?AbVlgvN6Jk9+TGjyJfzdLL4lmwjmUs0cI5lsXe1fWM4EzvWWuVJSL6s5rK+g?=
+ =?us-ascii?Q?Mv/U28dRhGT2BJcvL7OG/H3W2nQEshXHC+WuSn8JsZmui5yVF0dfMtr0Rtup?=
+ =?us-ascii?Q?Glnah7hvCiKJzuk+MvibdxuDT3N6DTZBF5MvLRy641/aJpQ74wxdsEakgImc?=
+ =?us-ascii?Q?YRNgXS11zuAfK/s5AZc7dzn7BadvWWSVUgcPeAnhEdGbD7la/KjU2QOzX4bj?=
+ =?us-ascii?Q?XN+Ww08jV5APwzDbE+gsH+G7PjxXdrOc5B0IgyBp0wThburhrr2po5xjE9WW?=
+ =?us-ascii?Q?VoHOooA7V7maVVqOeg2CfZYFcv1qGZ6Eo755LSv6VvbnAupGXCAx52T9LaHH?=
+ =?us-ascii?Q?uMVxuswp/GRPqRajgMzhGCen7abiIaRrCnOUoovQyMAJC3HkCk97q9nkN8rY?=
+ =?us-ascii?Q?HR0nB4vQY2usyerKeR4mTe4e5N4gG29S56zIbiL3BWpeqPNCbyitqB9eqVpG?=
+ =?us-ascii?Q?sn1lP7JgRpI6wpI5+aXj+yj10SwEXzDx4KYgeQj6/K7GosL4LfPuS5yVqowe?=
+ =?us-ascii?Q?Ltvcwr1OpGsI8anm2EHkmHCVcFD3SMyfcnO1dtiT8GjMRYxCDaRblzV41TYQ?=
+ =?us-ascii?Q?pDmDUzhBR1ZaWBorcnK1LW8+Pb30x+cYJzBHrhXNcz1VcSFwqFIc2VOOHFJB?=
+ =?us-ascii?Q?/CzBsgQFarPovpA4mth+gXA9W95xEQKFLG2NjWzarSWk5MKON7pQGI66rZoW?=
+ =?us-ascii?Q?1zhezX/R37TZyEKfJbh6BI/VUqNUO0e8mfUUMbBs?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f4f71cc6-664b-49ea-15ac-08dd50350f4e
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Feb 2025 15:58:17.9313
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 3hzhjTbQ+nvPcYteN8v/eVfFf78y5FtKP+euMIfRPEwA7yarGaw7sh+fOt4kypx0cxDFh/4Taz+yFzoZN0ODkg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR04MB9299
 
-On Tue, Feb 18, 2025, Dapeng Mi wrote:
-> On 2/15/2025 5:06 AM, Sean Christopherson wrote:
-> > On Sat, Sep 14, 2024, Dapeng Mi wrote:
-> >> Considering there are already 8 GP counters and 4 fixed counters on
-> >> latest Intel processors, like Sapphire Rapids. The original cnt[] arra=
-y
-> >> length 10 is definitely not enough to cover all supported PMU counters=
- on
-> >> these new processors even through currently KVM only supports 3 fixed
-> >> counters at most. This would cause out of bound memory access and may =
-trigger
-> >> false alarm on PMU counter validation
-> >>
-> >> It's probably more and more GP and fixed counters are introduced in th=
-e
-> >> future and then directly extends the cnt[] array length to 48 once and
-> >> for all. Base on the layout of IA32_PERF_GLOBAL_CTRL and
-> >> IA32_PERF_GLOBAL_STATUS, 48 looks enough in near feature.
-> >>
-> >> Reviewed-by: Jim Mattson <jmattson@google.com>
-> >> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-> >> ---
-> >>  x86/pmu.c | 2 +-
-> >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/x86/pmu.c b/x86/pmu.c
-> >> index a0268db8..b4de2680 100644
-> >> --- a/x86/pmu.c
-> >> +++ b/x86/pmu.c
-> >> @@ -255,7 +255,7 @@ static void check_fixed_counters(void)
-> >> =20
-> >>  static void check_counters_many(void)
-> >>  {
-> >> -	pmu_counter_t cnt[10];
-> >> +	pmu_counter_t cnt[48];
-> > ARGH.  Since the *entire* purpose of increasing the size is to guard ag=
-ainst
-> > buffer overflow, add an assert that the loop doesn't overflow.
->=20
-> This is not only for ensuring no buffer overflow.
+On Tue, Feb 18, 2025 at 10:30:21AM +0100, Philipp Zabel wrote:
+> On Di, 2025-02-18 at 10:57 +0200, Daniel Baluta wrote:
+> > For EARC and EARC PHY the reset happens when clearing the reset bits.
+> > Refactor assert/deassert function in order to take into account
+> > the active_low configuratin option.
+>                             ^
+>                             missing 'o'.
 
-In practice, it is.  As is, there are *zero* sanity checks or restrictions =
-on the
-number of possible counters.  Yes, the net effect is that the test doesn't =
-work
-if a CPU supports more than ARRAY_SIZE(cnt) counters, but the reason the te=
-st
-doesn't work is because such a CPU would cause buffer overflow.
+run ./scripts/checkpatch.pl -g HEAD --strict --codespell
 
-Yes, there are more nuanced reasons for using a large, statically sized arr=
-ay.
-If the goal was to support any theoretical CPU, the array would be dynamica=
-lly
-allocated, but that's not worth the complexity.  If the goal just was to su=
-pport
-SPR, the size would have been set to 12, but that would incur additional ma=
-intenance
-in the not-too-distant future.
-
-> As the commit message says,=C2=A0 the counter number has already exceeded=
- 10, such
-> as SPR has 12 counters (8 GP + 4 fixed),
-
-I am well aware.
-
-> and there would be more counters in later platfroms. The aim of enlarging=
- the
-> array size is to ensure these counters can be enabled and verified
-> simultaneously. =C2=A048 may be too large and 32 should be fair enough. T=
-hanks.
-
-No.  Just no.  Unless there is an architecturally defined limit, and even t=
-hen a
-sanity check is strongly encourage, KVM-related software should never, ever=
- blindly
-assume a buffer size is "good enough".
+Frank
+>
+> >
+> > Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+> > ---
+> >  drivers/reset/reset-imx8mp-audiomix.c | 45 ++++++++++++++-------------
+> >  1 file changed, 23 insertions(+), 22 deletions(-)
+> >
+> > diff --git a/drivers/reset/reset-imx8mp-audiomix.c b/drivers/reset/reset-imx8mp-audiomix.c
+> > index 6b1666c4e069..8cc0a6b58cbc 100644
+> > --- a/drivers/reset/reset-imx8mp-audiomix.c
+> > +++ b/drivers/reset/reset-imx8mp-audiomix.c
+> > @@ -23,16 +23,19 @@
+> >  struct imx8mp_reset_map {
+> >  	unsigned int offset;
+> >  	unsigned int mask;
+> > +	bool active_low;
+> >  };
+> >
+> >  static const struct imx8mp_reset_map reset_map[IMX8MP_AUDIOMIX_RESET_NUM] = {
+> >  	[IMX8MP_AUDIOMIX_EARC] = {
+> >  		.offset	= IMX8MP_AUDIOMIX_EARC_OFFSET,
+> >  		.mask	= IMX8MP_AUDIOMIX_EARC_RESET_MASK,
+> > +		.active_low = true,
+> >  	},
+> >  	[IMX8MP_AUDIOMIX_EARC_PHY] = {
+> >  		.offset	= IMX8MP_AUDIOMIX_EARC_OFFSET,
+> >  		.mask	= IMX8MP_AUDIOMIX_EARC_PHY_RESET_MASK,
+> > +		.active_low = true,
+> >  	},
+> >
+> >  };
+> > @@ -48,48 +51,46 @@ static struct imx8mp_audiomix_reset *to_imx8mp_audiomix_reset(struct reset_contr
+> >  	return container_of(rcdev, struct imx8mp_audiomix_reset, rcdev);
+> >  }
+> >
+> > -static int imx8mp_audiomix_reset_assert(struct reset_controller_dev *rcdev,
+> > -					unsigned long id)
+> > +static int imx8mp_audiomix_update(struct reset_controller_dev *rcdev,
+> > +				  unsigned long id, bool assert)
+> >  {
+> >  	struct imx8mp_audiomix_reset *priv = to_imx8mp_audiomix_reset(rcdev);
+> >  	void __iomem *reg_addr = priv->base;
+> > -	unsigned int mask, offset, reg;
+> > -	unsigned long flags;
+> > +	unsigned int mask, offset, active_low;
+> > +	unsigned long reg, flags;
+>
+> Nitpick, I would make active_low bool, like assert. Otherwise,
+>
+> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+>
+> regards
+> Philipp
 
