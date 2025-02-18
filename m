@@ -1,247 +1,104 @@
-Return-Path: <linux-kernel+bounces-519528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80031A39DC6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:44:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BFA7A39D9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:36:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0E503AFBAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:35:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2028C188B14E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:34:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B486270ED2;
-	Tue, 18 Feb 2025 13:29:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED3926FD98;
+	Tue, 18 Feb 2025 13:29:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="T1XgF5GJ"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d4hpbTSP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7C39270EB9;
-	Tue, 18 Feb 2025 13:29:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C58B26FA44;
+	Tue, 18 Feb 2025 13:29:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739885362; cv=none; b=T5NW9eox9U0IRGHTuC+d6UARaUbCcjjgGqvksdZmw1OgolKRPlUUzlgvhoeu3CNkjdXtuVjG2fDfE126deURcBPpyqm7NCsLP8QmFlvZA3yvoRSkh5Mt6YNH/Rcj1Raq0g/jlMwXXHzZpBcHKTayLdBkWWovC3GX4Lese/F9Ibc=
+	t=1739885350; cv=none; b=uXz95558ODBy5MR1dGEjGLI453Y7yLFFilS22g6PRcwvC0XF7Q8QmZzDpSBZpcmtMtu4qGG5lqQfgefDCkyLgfmZ6diqpR9ZPYUd5YxCmns9a/s98WdkUvEQfhm6tq8C1CEdNqyV9yhbIUOSzEE3bNrEl1OP4bHtERQBVNdeWQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739885362; c=relaxed/simple;
-	bh=rYjXngdQ0dbFzgwgn7WGaRs5H4t0BPJlZAYlLdGZ3MY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=cvFmZD4WCHPzE+mC7m5yydKvLYb/acwmS96vG67uRBh0ppsKOlDlsxkMIK0NkPbWNcL9khAwnJxL+w6ff9Pe7+B0MYdgWpp84OOpmU+UZ9AX2NaI+b+pdA8R6Og7NXsnTs6OodpIJtl/CVnHWaPQQyt5J/cvLFqJUo8vqPkTpyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=T1XgF5GJ; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=R9zhQrQxExKFJv3fYFW1IElfhSiSEpY6hem10hrKIVc=; b=T1XgF5GJTFc7sFp9yg3KuIyNhu
-	MhzngxTkzJPcwWXf2K7zTycetZEIxkXJTrC65pGlgkQVN75mFxiKkqqT/ofRZ/5sV3bqjOXlQokOM
-	ZSJIRtb4yEfo8w0o0/ssCp5l//pqLNpL0f3OZugQlNqHKrmBQ87KwpcT6osG30gddCPKTxKNsvrUt
-	FZYVxaZs3XZKj7w86gVIswcvr8z0pjXnu77b1pb+MG5m21FSuzERou+6LEKQSa6uor22L0XgfhkMI
-	rEqJI8LL6cMDcrooDk974GXUBpJDWyLcnWuCwzCEd/Vo9Y/d5qzbEjcXZ0yx7ZBJjEuvBgXctDaN6
-	ASIDVTeA==;
-Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1tkNeg-00AOyU-AF; Tue, 18 Feb 2025 14:29:00 +0100
-From: Luis Henriques <luis@igalia.com>
-To: Jan Kara <jack@suse.cz>
-Cc: Bernd Schubert <bschubert@ddn.com>,  Miklos Szeredi <miklos@szeredi.hu>,
-  Dave Chinner <david@fromorbit.com>,  Alexander Viro
- <viro@zeniv.linux.org.uk>,  Christian Brauner <brauner@kernel.org>,  Matt
- Harvey <mharvey@jumptrading.com>,  "linux-fsdevel@vger.kernel.org"
- <linux-fsdevel@vger.kernel.org>,  "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 2/2] fuse: add new function to invalidate cache for
- all inodes
-In-Reply-To: <bpevrif4k5h2l4pscsnsj3flwmwdw6w5nge5n7ji2yshk5pz6z@tngefti6stld>
-	(Jan Kara's message of "Tue, 18 Feb 2025 12:57:28 +0100")
-References: <20250216165008.6671-1-luis@igalia.com>
-	<20250216165008.6671-3-luis@igalia.com>
-	<3fac8c84-2c41-461d-92f1-255903fc62a9@ddn.com>
-	<87r03wx4th.fsf@igalia.com>
-	<847288fa-b66a-4f3d-9f50-52fa293a1189@ddn.com>
-	<87ldu4x076.fsf@igalia.com>
-	<bpevrif4k5h2l4pscsnsj3flwmwdw6w5nge5n7ji2yshk5pz6z@tngefti6stld>
-Date: Tue, 18 Feb 2025 13:28:59 +0000
-Message-ID: <877c5n8jqc.fsf@igalia.com>
+	s=arc-20240116; t=1739885350; c=relaxed/simple;
+	bh=D+giwnx2fldVt2NPCnwByiTTAhof1N0hesdxo6LjBJA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cQsQ2hI/fUD5LIOEdezEzyGf/nT6xaIcaraYh1xSL9OoYQk7fxno6bN827V4wGk7dwYCcmSMYNUkyc6TTzYtpG09fv8KxsHcbiFh0O01uIFckjrS1KyGgmOUpHfY8ijVupU3cUCmaj9N0Kdk3+msdXwURIi5QT1W4LFzos65t8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d4hpbTSP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD522C4CEE6;
+	Tue, 18 Feb 2025 13:29:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739885350;
+	bh=D+giwnx2fldVt2NPCnwByiTTAhof1N0hesdxo6LjBJA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d4hpbTSPtTh3MMtyZt88Vf46BaWKT+sSyPtxQJOZqD89A4ZQO8FsNVncvcAR0Lhz5
+	 /nFUVxvSTo1BXCTN23SgZDvUOE33B2Li0fZsPelUexQlviKxP/aM8oaeY5FcY/Y2FM
+	 lf8s495WAAbSt7lBcgTW2XhIfbFQtbSyWMu9yveB1RQvJboxBzdfYNFArpytp079Cn
+	 DP8Z1sJSYTZnrqRbuUn9DPsNn+HxZhx4abMPO+6QvN689nHDFsuS56VcmBVokRu55C
+	 s/PMGVlT6YzQkJKAsNQ9l5+2ZEDWFnLSjwoVV2MQBw15SaHVzcZuP2+X6TFXOj2Qu8
+	 GCs/vV5uSsDvg==
+Date: Tue, 18 Feb 2025 13:29:05 +0000
+From: Simon Horman <horms@kernel.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Peter Seiderer <ps.report@gmx.net>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Artem Chernyshev <artem.chernyshev@red-soft.ru>,
+	Nam Cao <namcao@linutronix.de>,
+	Frederic Weisbecker <frederic@kernel.org>
+Subject: Re: [PATCH net-next v5 8/8] net: pktgen: use defines for the various
+ dec/hex number parsing digits lengths
+Message-ID: <20250218132905.GV1615191@kernel.org>
+References: <20250213110025.1436160-1-ps.report@gmx.net>
+ <20250213110025.1436160-9-ps.report@gmx.net>
+ <20250214201145.2f824428@kernel.org>
+ <20250216091739.GW1615191@kernel.org>
+ <20250217094740.76a25671@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250217094740.76a25671@kernel.org>
 
-On Tue, Feb 18 2025, Jan Kara wrote:
+On Mon, Feb 17, 2025 at 09:47:40AM -0800, Jakub Kicinski wrote:
+> On Sun, 16 Feb 2025 09:17:39 +0000 Simon Horman wrote:
+> > On Fri, Feb 14, 2025 at 08:11:45PM -0800, Jakub Kicinski wrote:
+> > > On Thu, 13 Feb 2025 12:00:25 +0100 Peter Seiderer wrote:  
+> > > > Use defines for the various dec/hex number parsing digits lengths
+> > > > (hex32_arg/num_arg calls).  
+> > > 
+> > > I don't understand the value of this patch, TBH.
+> > > 
+> > > Example:
+> > > 
+> > > +#define HEX_2_DIGITS 2
+> > > 
+> > > -		len = hex32_arg(&user_buffer[i], 2, &tmp_value);
+> > > +		len = hex32_arg(&user_buffer[i], HEX_2_DIGITS, &tmp_value);
+> > > 
+> > > The word hex is already there.
+> > > There is still a two.
+> > > I don't think the new define has any explanatory power?
+> > > 
+> > > Previous 7 patches look ready indeed.  
+> > 
+> > This one is on me. I felt the magic number 2 and so on
+> > was unclear. But if you prefer the code as-is that is fine by me too.
+> 
+> I agree that it's a bit hard to guess what the call does and what 
+> the arguments are. To me at least, the constants as named don't help. 
+> We can get a third opinion, or if none is provided skip the patch for
+> now?
 
-> On Mon 17-02-25 11:47:09, Luis Henriques wrote:
->> On Mon, Feb 17 2025, Bernd Schubert wrote:
->> > On 2/17/25 11:07, Luis Henriques wrote:
->> >> On Mon, Feb 17 2025, Bernd Schubert wrote:
->> >>=20
->> >>> On 2/16/25 17:50, Luis Henriques wrote:
->> >>>> Currently userspace is able to notify the kernel to invalidate the =
-cache
->> >>>> for an inode.  This means that, if all the inodes in a filesystem n=
-eed to
->> >>>> be invalidated, then userspace needs to iterate through all of them=
- and do
->> >>>> this kernel notification separately.
->> >>>>
->> >>>> This patch adds a new option that allows userspace to invalidate al=
-l the
->> >>>> inodes with a single notification operation.  In addition to invali=
-date
->> >>>> all the inodes, it also shrinks the sb dcache.
->> >>>>
->> >>>> Signed-off-by: Luis Henriques <luis@igalia.com>
->> >>>> ---
->> >>>>  fs/fuse/inode.c           | 33 +++++++++++++++++++++++++++++++++
->> >>>>  include/uapi/linux/fuse.h |  3 +++
->> >>>>  2 files changed, 36 insertions(+)
->> >>>>
->> >>>> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
->> >>>> index e9db2cb8c150..01a4dc5677ae 100644
->> >>>> --- a/fs/fuse/inode.c
->> >>>> +++ b/fs/fuse/inode.c
->> >>>> @@ -547,6 +547,36 @@ struct inode *fuse_ilookup(struct fuse_conn *f=
-c, u64 nodeid,
->> >>>>  	return NULL;
->> >>>>  }
->> >>>>=20=20
->> >>>> +static int fuse_reverse_inval_all(struct fuse_conn *fc)
->> >>>> +{
->> >>>> +	struct fuse_mount *fm;
->> >>>> +	struct inode *inode;
->> >>>> +
->> >>>> +	inode =3D fuse_ilookup(fc, FUSE_ROOT_ID, &fm);
->> >>>> +	if (!inode || !fm)
->> >>>> +		return -ENOENT;
->> >>>> +
->> >>>> +	/* Remove all possible active references to cached inodes */
->> >>>> +	shrink_dcache_sb(fm->sb);
->> >>>> +
->> >>>> +	/* Remove all unreferenced inodes from cache */
->> >>>> +	invalidate_inodes(fm->sb);
->> >>>> +
->> >>>> +	return 0;
->> >>>> +}
->> >>>> +
->> >>>> +/*
->> >>>> + * Notify to invalidate inodes cache.  It can be called with @node=
-id set to
->> >>>> + * either:
->> >>>> + *
->> >>>> + * - An inode number - Any pending writebacks within the rage [@of=
-fset @len]
->> >>>> + *   will be triggered and the inode will be validated.  To invali=
-date the whole
->> >>>> + *   cache @offset has to be set to '0' and @len needs to be <=3D =
-'0'; if @offset
->> >>>> + *   is negative, only the inode attributes are invalidated.
->> >>>> + *
->> >>>> + * - FUSE_INVAL_ALL_INODES - All the inodes in the superblock are =
-invalidated
->> >>>> + *   and the whole dcache is shrinked.
->> >>>> + */
->> >>>>  int fuse_reverse_inval_inode(struct fuse_conn *fc, u64 nodeid,
->> >>>>  			     loff_t offset, loff_t len)
->> >>>>  {
->> >>>> @@ -555,6 +585,9 @@ int fuse_reverse_inval_inode(struct fuse_conn *=
-fc, u64 nodeid,
->> >>>>  	pgoff_t pg_start;
->> >>>>  	pgoff_t pg_end;
->> >>>>=20=20
->> >>>> +	if (nodeid =3D=3D FUSE_INVAL_ALL_INODES)
->> >>>> +		return fuse_reverse_inval_all(fc);
->> >>>> +
->> >>>>  	inode =3D fuse_ilookup(fc, nodeid, NULL);
->> >>>>  	if (!inode)
->> >>>>  		return -ENOENT;
->> >>>> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
->> >>>> index 5e0eb41d967e..e5852b63f99f 100644
->> >>>> --- a/include/uapi/linux/fuse.h
->> >>>> +++ b/include/uapi/linux/fuse.h
->> >>>> @@ -669,6 +669,9 @@ enum fuse_notify_code {
->> >>>>  	FUSE_NOTIFY_CODE_MAX,
->> >>>>  };
->> >>>>=20=20
->> >>>> +/* The nodeid to request to invalidate all inodes */
->> >>>> +#define FUSE_INVAL_ALL_INODES 0
->> >>>> +
->> >>>>  /* The read buffer is required to be at least 8k, but may be much =
-larger */
->> >>>>  #define FUSE_MIN_READ_BUFFER 8192
->> >>>>=20=20
->> >>>
->> >>>
->> >>> I think this version might end up in=20
->> >>>
->> >>> static void fuse_evict_inode(struct inode *inode)
->> >>> {
->> >>> 	struct fuse_inode *fi =3D get_fuse_inode(inode);
->> >>>
->> >>> 	/* Will write inode on close/munmap and in all other dirtiers */
->> >>> 	WARN_ON(inode->i_state & I_DIRTY_INODE);
->> >>>
->> >>>
->> >>> if the fuse connection has writeback cache enabled.
->> >>>
->> >>>
->> >>> Without having it tested, reproducer would probably be to run
->> >>> something like passthrough_hp (without --direct-io), opening
->> >>> and writing to a file and then sending FUSE_INVAL_ALL_INODES.
->> >>=20
->> >> Thanks, Bernd.  So far I couldn't trigger this warning.  But I just f=
-ound
->> >> that there's a stupid bug in the code: a missing iput() after doing t=
-he
->> >> fuse_ilookup().
->> >>=20
->> >> I'll spend some more time trying to understand how (or if) the warnin=
-g you
->> >> mentioned can triggered before sending a new revision.
->> >>=20
->> >
->> > Maybe I'm wrong, but it calls=20
->> >
->> >    invalidate_inodes()
->> >       dispose_list()
->> >         evict(inode)
->> >            fuse_evict_inode()
->> >
->> > and if at the same time something writes to inode page cache, the
->> > warning would be triggered?=20
->> > There are some conditions in evict, like inode_wait_for_writeback()
->> > that might protect us, but what is if it waited and then just
->> > in the right time the another write comes and dirties the inode
->> > again?
->>=20
->> Right, I have looked into that too but my understanding is that this can
->> not happen because, before doing that wait, the code does:
->>=20
->> 	inode_sb_list_del(inode);
->>=20
->> and the inode state will include I_FREEING.
->>=20
->> Thus, before writing to it again, the inode will need to get added back =
-to
->> the sb list.  Also, reading the comments on evict(), if something writes
->> into the inode at that point that's likely a bug.  But this is just my
->> understanding, and I may be missing something.
->
-> Yes. invalidate_inodes() checks i_count =3D=3D 0 and sets I_FREEING. Once
-> I_FREEING is set nobody can acquire inode reference until the inode is
-> fully destroyed. So nobody should be writing to the inode or anything like
-> that.
-
-Awesome, it's good to have that confirmed.  Thank you, Jan!
-
-Cheers,
---=20
-Lu=C3=ADs
+Yes, I see your point.
+No objections from me to skipping this patch.
 
