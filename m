@@ -1,214 +1,225 @@
-Return-Path: <linux-kernel+bounces-518864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33401A3958F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:38:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E621A39580
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:34:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C1003A4338
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:32:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9077A7A129E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:33:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E4EE174EE4;
-	Tue, 18 Feb 2025 08:32:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF4D322B8C1;
+	Tue, 18 Feb 2025 08:34:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="qayb8qvK"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2070.outbound.protection.outlook.com [40.107.237.70])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TRb3c/EY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE04214A614
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 08:32:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739867564; cv=fail; b=STItIZjCXV7tLHVvOwjUtthpF4rF54juygnnm282+v0wmzYh7Wd2ciTVuNcmJercmvCiRYp2tU81aCWPj0s1xEv2oYKl8cBmsQ0Cd5PJZpK8VneBh9xUqSmE8SnFTuJKxdq4ZnVS/ncc5tnsngUHArus9jDcT1dy3HNPdD+h8mQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739867564; c=relaxed/simple;
-	bh=C4Oz9EikZ/sVl3e4vU36XFot71HmgXsrORdcuy2Ms8s=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=X4JhTfMKpsUTl5mpvC3R4moBs+J7Gnrqy+Eqj8yahnkRVPjhjoab/MFV0LVj+IFJN+ElprlLBiB3f8Lgw0iWDMPtNGWLZMniIMrbaATZ0CUKhzCn+yuLB4Vtr00jPmsMs7/WbtJUp4Wpw20Qj3cefrBvHARclkWqO/oFPhtPwis=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=qayb8qvK; arc=fail smtp.client-ip=40.107.237.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sGRfXdA3WSCKqfFHKKfyS2g1U/mxPSta2yGFHnDTMsC14EK/r4IDeydVGOSnUMESyTKm6N588IZyHUEvHEV7wT/ErgYGeLgVsdT1GXziCPkTtzTz2CK/fC1s/Ur80XpHsCS5XIWpwl59F/buYdLG1yOTPrKfrcNkmZtUA57Q7ohZpcOVeSadIH6xxThEQ7n/3IZdp20Kbvh6SVENLjPyzFL4pgbI4PRbUFibh1Rdr3XTAdzyyL1DW8wRSkZ7HSzUl5XLpCKTkqblqfAv+EOv4ZTNX2ZtIWW0qdM48Ad7gIsjj9lwJuM1VkFpWQU2vUsE1jYDD43MpmlzXRR9nkJGNA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oraP/SVZibgmjwmEEToPiTukrB6deOESfgKiwhwbmgo=;
- b=seE2GIrzrT22UuxOpgTpwiFyq4TPxQTIi0gXKRFSMTOW1K336whJVCtwy8B6sbiYbjLpIhRfPK9buuZat8P6qXoIngIYmwy2xglsfOdQBHjEhgsWb0GAOQovvNoOaNmmfdwX1sCqaO8yYEFc92UtSgHAVAXNr/Lqi2aM++AeIbJZZAlcfyro4v/SY/2HB7BIRqodkPwhI2Y4OJOG5unt/H8g42ZJyNv6nn0beJ4OdDtpgSHbcTfhNBd7SMNCVZK7riwg3Mx/zMeiAvMsi1E2pSrcQ44aWJk0Bx2ER3gdP6+jUGMrkAlbo1zaFWQpAugamqgQiVicHABkjMDC39Yl/w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oraP/SVZibgmjwmEEToPiTukrB6deOESfgKiwhwbmgo=;
- b=qayb8qvKwrDFqmd+Fvr9f1v3qbRLEx5iYNMeLleqDBPLVIm7g5DZjoBZxPutVNrEPIythyY4fWfmPPAx2vwXufb/So7E2iRPlghTieua/IBkVr8h39HX7B86ZoxjOBZn7QNrLxQ/zrERiTrROe1PWiFX2woAC64VIqnWu3RUU37zZb7UqDc6zcrXXvuTMzFT6xjq5tkCdSaOB0roQtWeuu0VH36ga4ZlDgyHBgMgH+p9l2JO2mi+k3kzTgIqC1BUWfxvzLouI8wyiAQKuWZ0C3J13UehjAvbDkDvgE0S0VtHRjuxoqdJUm3SWKDbyt6fqP5/2KmpObv3xE9Bj6C/Sg==
-Received: from BN9PR03CA0858.namprd03.prod.outlook.com (2603:10b6:408:13d::23)
- by PH7PR12MB6954.namprd12.prod.outlook.com (2603:10b6:510:1b7::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.13; Tue, 18 Feb
- 2025 08:32:37 +0000
-Received: from BN3PEPF0000B36E.namprd21.prod.outlook.com
- (2603:10b6:408:13d:cafe::76) by BN9PR03CA0858.outlook.office365.com
- (2603:10b6:408:13d::23) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8445.20 via Frontend Transport; Tue,
- 18 Feb 2025 08:32:37 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- BN3PEPF0000B36E.mail.protection.outlook.com (10.167.243.165) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8489.2 via Frontend Transport; Tue, 18 Feb 2025 08:32:37 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 18 Feb
- 2025 00:32:25 -0800
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Tue, 18 Feb 2025 00:32:25 -0800
-Received: from localhost (10.127.8.11) by mail.nvidia.com (10.126.190.182)
- with Microsoft SMTP Server id 15.2.1544.14 via Frontend Transport; Tue, 18
- Feb 2025 00:32:23 -0800
-Date: Tue, 18 Feb 2025 10:32:22 +0200
-From: Zhi Wang <zhiw@nvidia.com>
-To: Aaron Kling <webgeek1234@gmail.com>
-CC: Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>, "Danilo
- Krummrich" <dakr@kernel.org>, David Airlie <airlied@gmail.com>, "Simona
- Vetter" <simona@ffwll.ch>, Ben Skeggs <bskeggs@redhat.com>,
-	<dri-devel@lists.freedesktop.org>, <nouveau@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] drm/nouveau/pmu: Fix gp10b firmware guard
-Message-ID: <20250218103222.0000313b@nvidia.com>
-In-Reply-To: <CALHNRZ99cs=rcR07jqsZE7Q3ndLqteKG8K8zpAm4vaEhsYwTLw@mail.gmail.com>
-References: <20250217-nouveau-gm10b-guard-v1-1-0d96f0068570@gmail.com>
-	<CALHNRZ99cs=rcR07jqsZE7Q3ndLqteKG8K8zpAm4vaEhsYwTLw@mail.gmail.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.38; x86_64-w64-mingw32)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC8B14A614;
+	Tue, 18 Feb 2025 08:34:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739867682; cv=none; b=WoPLceaFPTKdP5b4HO5sQ2B7XfnmHiikhKVStXnGplfnMTg6X3TbSjvxaltIF5mMT4BwRJE6pQ5Xdi/NT54BrLPUWGhAmblgn+dn6GH+3mY3Cft1a3ao2Y5vwrQZ+CG7tsDrLfgRGk2CmTZ/8Dk5IxRBEuwWQOWmCsiDD+vD+0U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739867682; c=relaxed/simple;
+	bh=eq2r3EqfURpJDfyUrO6e7ReKUX5wIYAdUMSspXkp1uc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=W0rfeZEOwbYmEfwXPhdModvLLBd8bAEnk737EuasDtMsEJC2p+ggJxElNPsf+G/qW+eS2bTEuPiWmHUXKqxCEOeF/iuCYuFIspQpHdqGgBIDE3iGrBYkS3Idy8lqe92Z1tjHUXBtE38ArcPEyTysijcShrFugi5XLn95ymAwzvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TRb3c/EY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 209BBC4CEE2;
+	Tue, 18 Feb 2025 08:34:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739867681;
+	bh=eq2r3EqfURpJDfyUrO6e7ReKUX5wIYAdUMSspXkp1uc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TRb3c/EY/sJVCKw71472WLrZ4IEMuF8E8vTFPp4HbRW9WZO88B7ruAIJPTIrVy64z
+	 N1GPzNO+6ef9OaJDenL1YYP9DE2aNb9fkoBDh6C9iA86Caoa8O7iFNBfBowPTLeBK9
+	 BjFwJ56Qo9zL1vyTduZmFrRtZg7sns95U0oJ/DnPuMRjHORsim0gx311cauOTMJjHW
+	 t8K/Ql/2sQFPhaazeBqsy+nS/mbSVFTTrEMRHw1fdpq5OflgFlupFy7e+Kr6lNbq3t
+	 xWYuxx8DRjWXg7VLp1T27oDj7HndVV9ZAbt/uMQDvJD5QsBM+rllQQ7e11U4ehwudk
+	 H1/5fel3iKPSA==
+Message-ID: <29a8e7ec-dabc-4cc1-a262-676ebd838dfd@kernel.org>
+Date: Tue, 18 Feb 2025 09:34:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PEPF0000B36E:EE_|PH7PR12MB6954:EE_
-X-MS-Office365-Filtering-Correlation-Id: 22d4f0ea-0c18-4341-3d67-08dd4ff6cced
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|376014|7416014|36860700013|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RDBiTGphUzJDWWJ0NEpFeDA3YmlCdUdYL1BMdGZZRTd0Y1B2VFZucFBOa3VG?=
- =?utf-8?B?bkxvMjFETTdGeWV4QzNFeHRTSVpVMThpOGVSanUvakJTbmdKUmE5UlpOc3pn?=
- =?utf-8?B?MTFqZFBCaVRnMHFvV3FZd1p4RmNVQTc3MzdnU2trZERackJ2c2NRYWc3M3Q3?=
- =?utf-8?B?TEozZ3ZTZnY2eTlPWkpKZS9IOEtwMlp6Y0lteG1ueDZ1UFN0TG54MFNKb1FC?=
- =?utf-8?B?QVFWdElKU2wvalYyQTF4RUVvYTZnWmZ6M0dMcHdCTno5a0h1YW5HeE83Yzll?=
- =?utf-8?B?VU1md3dHSXBuVE9xUHR3M1g1VTR0M3RyaUJ4OUZoUzdFODlyb2ZnVXlFZHpv?=
- =?utf-8?B?RGxQamtjeFAxZWNtY3ZhQ1p0MEJKai8vRXJPaWlBdktLVk1TdHFOUFhLSVo1?=
- =?utf-8?B?RTUwNzJ1YnRqYks3UkkxN2p5VDc5SFFPTkZCWDB3MGgvQnhWZ0JGMWVRT0xy?=
- =?utf-8?B?UHdFNTgxakRlSlBKWGppOHNmZmgvR29GTE1FVU0zS2FIam5sMHdKYkpKOU5M?=
- =?utf-8?B?TndnV3N4eGliN3o3TFhlY0pmL240M3hWeFY1MVRlbXQyL3NkZWZ1TGR4NklH?=
- =?utf-8?B?MkN5QkVtYy94RkZ2Q2hWeEJPMm9WTThaTE51T3NVSzlXbnp6clNpU09FQkpx?=
- =?utf-8?B?WHRyWFNsNGdSU2lMdmk1TDdsY1JGWGZsQnZIcDFiTWVsK0dlbkFYK0RTUHFP?=
- =?utf-8?B?TjBlL2psVkJYQXptdTNIZWxsTDRWTHJpNW5TZG50WWhjd01uenRiUkN3WFho?=
- =?utf-8?B?d2Z6VlVxOXBoZ1JzRTFYTjVrc0NDTzZJU2FZckZwbk5QaW1XbDZTNUtrWWJN?=
- =?utf-8?B?NEM3UUJJODQvdVFyNGpXWWQrdjRpNWVEaFIyQkYxZU5EWERCTjRVdHJLYk5B?=
- =?utf-8?B?dldmcGMzbkVaN2E1SGNsYWpxU3dxaFBOYXB3elp3SklVT0h2K0U0dUJPNzlL?=
- =?utf-8?B?ZS9rb2VHeHc3N002dUlYeXIzL2dPQU0zdGIxNWpTNUNhQTNZUE5ZZDNiZDYr?=
- =?utf-8?B?bkYxc3pBZGVLK3BOU0lXSFo2aTBobUVZVjZlVmFtL3NXTi9rRUQ5NkNZdW1s?=
- =?utf-8?B?c2tsbGU2SFlGbzZYYU5pbnlwcER6MWdFaXNtZ1djcHEyWHJuUjdRY25SSThE?=
- =?utf-8?B?Ynd4anRKSmQwT1RidkdWcEk0TEl6Vng4ajRqdnlDM1h3blhWeE1Fdzh5SDlE?=
- =?utf-8?B?Q3p0enFOM2did2o3Rk1UNmFWVkNSNTdSUVkvM3hNaFE5NW9hTDBvaFpIOHFN?=
- =?utf-8?B?c0Vaemo5TFk0WVIwYnRhRlh0WCs1UUtZaGIwN3dKVEhWNVAyQThQNk5WWU9t?=
- =?utf-8?B?eGF4YXQ0RGNvbEo3SHBnSFBpbUpOWHNnay9EaXMwNWpuN2xraUZHRkIrY1Nk?=
- =?utf-8?B?T3FPbk9mK1c2d1V3TEtuWWNhcVF3bzV0OVFRZzVJQnJUOHBaQzZoeU11dHZy?=
- =?utf-8?B?MTJ1a2ZMN0NTQ1A0MGpOdHNjNWllQkxGaWRMK3RjMVd2Nk0zV0QwM1dWZUhG?=
- =?utf-8?B?QjhTVWcyTXBUYTl5aWRxdXQ2bFdjQmRZOVN0eVhIeC82M2VMZlJmUjQwZk54?=
- =?utf-8?B?aFlYVFJvdG13RXF1Wk05alhIZWllYk5lU2gvRVhPZWtieHYrZ1h4N0JOcmJ1?=
- =?utf-8?B?aXhIcWdFR05hQnVid2pSbUpIamZpMGNoYW5oU3orRm15R1o3YzlNeC9wbk0y?=
- =?utf-8?B?QVZpQisyckZTcHYraUZJM1B0T1A4d2p1K256MGI5aE1LZkwvY0ZwZ2thLzBF?=
- =?utf-8?B?cHVxcXpISkFEUi9vdkRiYVRKcVFyRjkvL0U2S29ycGJ3YkE2WFp5V2J5YjVK?=
- =?utf-8?B?WTJDTG5wdTI3c3I4OHhkOFpQVVVDaEE3bHlrcGNwNkR3WEVKdWRURVZxbTl3?=
- =?utf-8?B?OStkZjh4dzFMTUd0NXhsVU5PZWVLbkhXMTByTDBjRnBBZEN0T2w3ai9WVGcw?=
- =?utf-8?B?SW54OC9XV2NzNWgwdjhyeE9TbWtwNTBYR3VTM1FKa1BFT3RMd2tweFFsZGVL?=
- =?utf-8?Q?cmIVIfGffCnCmQpzI6q+OgtlG2GJCM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(7416014)(36860700013)(7053199007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Feb 2025 08:32:37.3096
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 22d4f0ea-0c18-4341-3d67-08dd4ff6cced
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN3PEPF0000B36E.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6954
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] media: dt-bindings: Add dt bindings for
+ m2m-deinterlace device
+To: Matthew Majewski <mattwmajewski@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>,
+ "Dr. David Alan Gilbert" <linux@treblig.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Uwe Kleine-Konig <u.kleine-koenig@baylibre.com>,
+ Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250212170901.3881838-1-mattwmajewski@gmail.com>
+ <20250212170901.3881838-2-mattwmajewski@gmail.com>
+ <5e9432d7-0be1-4d98-9a61-cd288e53e772@kernel.org>
+ <91fbc8f06f4d57f5e3d25dfec99e2fdb76b0a4cb.camel@gmail.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <91fbc8f06f4d57f5e3d25dfec99e2fdb76b0a4cb.camel@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, 17 Feb 2025 17:46:41 -0600
-Aaron Kling <webgeek1234@gmail.com> wrote:
+On 12/02/2025 23:29, Matthew Majewski wrote:
+> Hi Krzysztof, thanks for the quick feedback. 
+> 
+> On Wed, 2025-02-12 at 18:22 +0100, Krzysztof Kozlowski wrote:
+>> On 12/02/2025 18:09, Matthew Majewski wrote:
+>>> Create a new yaml schema file to describe the device tree bindings
+>>> for
+>>> the generic m2m-deinterlace driver.
+>>
+>>
+>> Bindings are for hardware, not drivers, and usually not generic.
+>>
+> 
+> Ok, I'll change the wording from "driver" to "device" in V2.
+> 
+>> Please describe here exemplary devices.
+> 
+> The m2m-deinterlace device can be used on any hardware that provides a
+> MEM_TO_MEM and interleaved capable dma channel. I'll note that in the
+> commit message for V2 as well.
 
-> On Mon, Feb 17, 2025 at 5:43=E2=80=AFPM Aaron Kling via B4 Relay
-> <devnull+webgeek1234.gmail.com@kernel.org> wrote:
-> >
-> > From: Aaron Kling <webgeek1234@gmail.com>
-> >
-> > Fixes: 989863d7cbe5 ("drm/nouveau/pmu: select implementation based on a=
-vailable firmware")
-> > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> > ---
-> >  drivers/gpu/drm/nouveau/nvkm/subdev/pmu/gp10b.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/gp10b.c b/drivers/=
-gpu/drm/nouveau/nvkm/subdev/pmu/gp10b.c
-> > index a6f410ba60bc94ec9d52fc78868acddfc6770e19..d393bc540f8628812990dff=
-e4c2f7e9014be07c5 100644
-> > --- a/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/gp10b.c
-> > +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/gp10b.c
-> > @@ -75,7 +75,7 @@ gp10b_pmu_acr =3D {
-> >         .bootstrap_multiple_falcons =3D gp10b_pmu_acr_bootstrap_multipl=
-e_falcons,
-> >  };
-> >
-> > -#if IS_ENABLED(CONFIG_ARCH_TEGRA_210_SOC)
-> > +#if IS_ENABLED(CONFIG_ARCH_TEGRA_186_SOC)
-> >  MODULE_FIRMWARE("nvidia/gp10b/pmu/desc.bin");
-> >  MODULE_FIRMWARE("nvidia/gp10b/pmu/image.bin");
-> >  MODULE_FIRMWARE("nvidia/gp10b/pmu/sig.bin");
-> >
-> > ---
-> > base-commit: 2408a807bfc3f738850ef5ad5e3fd59d66168996
-> > change-id: 20250217-nouveau-gm10b-guard-a438402b5022
-> >
-> > Best regards,
-> > --
-> > Aaron Kling <webgeek1234@gmail.com>
-> >
-> >
->=20
-> Apologies to the maintainers for the multiple resends. For some reason
-> the lists weren't accepting my submissions. Looks like it went through
-> with b4, so hopefully I won't have more trouble in the future.
->=20
+I asked to give names of actual hardware you are writing bindings for.
 
-It seems like this version doesn't have a comment body. Might need to
-double check the b4 setup.
+> 
+>>>
+>>> +description: |
+>>> +  A generic memory2memory device for deinterlacing video
+>>> +  using dmaengine.
+>>
+>> And what is this generic device supposed to do? What fits to generic
+>> device?
+>>
+> 
+> The term "generic" was taken from the driver description. It's generic
+> insofar as it only relies on the dmaengine API for processing (and
+> hence is relatively platform agnostic).
+> 
+> I will add more information about the device in the description for V2.
+> I'll also mention that it's intended for converting between interlaced
+> and non-interlaced formats by line-doubling. 
+> 
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    const: m2m-deinterlace
+>>> +
+>>> +  dma-names:
+>>> +    items:
+>>> +      - const: rxtx
+>>> +
+>>> +  dmas:
+>>> +    items:
+>>> +      - description: mem-to-mem capable DMA channel
+>>> +
+>>> +required:
+>>> +  - compatible
+>>> +  - dma-names
+>>> +  - dmas
+>>> +
+>>> +additionalProperties: false
+>>> +
+>>> +examples:
+>>> +  - |
+>>> +    m2m-deinterlace {
+>>> +        compatible = "m2m-deinterlace";
+>>> +        dma-names = "rxtx";
+>>> +        dmas = <&edma 20 0>;
+>>
+>>
+>> This all looks rather like bindings for driver and not even quite
+>> generic because looks quite simple. I guess media folks will provide
+>> more input, but anyway it looks a bit not-DT-enough.
+>>
+>>> +    };
+> 
+> Yes, the bindings are much simpler than a typical media device, but
+> that is because the m2m-deinterlace device only needs to be provided a
+> handle to a dma channel to function properly. My reasoning for adding 
 
-> Sincerely,
-> Aaron Kling
->=20
+Really only this? How do you reset the device? How do you clock it (or
+does it come with internal oscillator?) How do you program anything
+there if there are no resources?
 
+
+> dt-bindings for this device is because it is a consumer of a dma-
+> channel and the dt bindings are a platform-agnostic way to be able to
+> provide a specific dma channel to the device.
+> 
+> As an example, say on an embedded device I have a dma controller which
+> provides multiple interleaved MEM_TO_MEM capable channels. I want the
+
+I asked about the names already, still nothing.
+
+> m2m-deinterlace device to consume one particular channel because it is
+> higher-priority than the others. With these dt-bindings I can simply
+> specify the correct dma channel that should be used. Without the
+> device-tree bindings I would have to manually edit the driver to filter
+> for the correct dma channel to be used, but then the device is no
+> longer "generic".
+> 
+> It would be helpful to hear what the media people have to say about it.
+
+Then wait before sending new version.
+
+
+
+Best regards,
+Krzysztof
 
