@@ -1,646 +1,195 @@
-Return-Path: <linux-kernel+bounces-520617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F551A3AC54
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 00:05:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 71963A3AC55
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 00:06:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A59017562A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 23:05:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D2EB175680
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 23:06:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1CE01C7019;
-	Tue, 18 Feb 2025 23:05:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D2031D63EF;
+	Tue, 18 Feb 2025 23:06:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vOYN1I7x"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PUI0K/j7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F8F1D9A49
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 23:05:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28A592862B7
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 23:06:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739919918; cv=none; b=UAjusk0K2EFtnHglQZNUOl6XybBNLqtNVymS4JmrqL2tBmDlR+XxRKorM1vWJiz2hb73W58c52sdRXqUXz/RnEGRbxrDFLdTAz6VkI83bhjHBgu2l9BaJU1gJ8eJAFiUtGYWUOwTPKWKAwvnLbhc9jN/WKFC9880dB1jU9F4VF4=
+	t=1739919976; cv=none; b=kh6NflqDxfaLZt6ee/wIPSXXMMdhy/a3qLIcE9CIOmTjfo/onnHi+8Fisky6HmCiXsuFa98hBfkEBWn2jGIc1SZ0GhpImpxTx6ZnaoTgf6qQpaP/YLz/bKrF0Mbk0xlBHqYJUXmSLaAYbIBuUXus8PR+rUuDcrTlKxV3yqpoB1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739919918; c=relaxed/simple;
-	bh=l1t6xOjjw4ST6JrF2W9lpZqktavnffEAFlcO6k+M1UY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hf3ZcN4xu8HZRAQhcdbCapNmd0QRtQDrxvTz5XGdnlRWHx+473oLzR+xsqdX8CGSZs9y+IBVm/Uzvbj9hBW52bU0n7nEXTy5rb65EunCD21w1i2g9EMSlJBf2eLsRyC+aoiqHY8tJC0kYjEQz9p4Zy3XLcw9SnhgyJVHxd38sko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vOYN1I7x; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4396d2e32b7so28170945e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 15:05:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739919913; x=1740524713; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=jLDKqZsb0sHmC5gGBkO49T8v4fJ5I/JV4YEMzP14vTM=;
-        b=vOYN1I7x5qkqxeW9vAlB5Rx4Se+0Ot/m7hILFMybBH8ZN02N1MGTpn0Bxen8HH5jX2
-         QJsYoZW1s896AN+2z0lE5nBB8T7JUNVR286ASQdrocR4qI/erpsGmUAQp8q2WIF9cn6B
-         TW8xMRXtfbuHUNwFoZCN/umUABZmynxYJE8HAq2gwXiSSBUCgslmWpiJSzAAzcHNO/Sn
-         NUwg5c+OEiUPt8yEsHYaaP2R53mQUlYRZZkbBBhI8qxBMi34/gd7/CwhU9KeXY/BmRYW
-         Pf2d30V3TYiMYv33V1/PRmbrm2NF+oJSARvkdtEdVymBLCfo9nEJh4gDRtM2KSmk+/Ql
-         oJhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739919913; x=1740524713;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jLDKqZsb0sHmC5gGBkO49T8v4fJ5I/JV4YEMzP14vTM=;
-        b=FQ8/1zILhlSkAliYMeItIcaRM857o4JH+mqi3FImdFlmJiD0h7jgK9jaWuDqcV0rXC
-         IekKdKnvoe0Zv24yC2AD/fyozHn3lk+pi86zLWlPx840uwTYp7/XF+EuhMeVs0L9/Hl3
-         Wi3RS/JbkLDYabLsidOOdvIAQRRPptnZ5JhB+yWiRHpjQ+90dxvIXV8iRA6zVDq69w/R
-         qzYg7eyHN3g+2EcZCWkp7zsIe0wenJnk6Q0qrDt5Ji4QyvObAtNBW7pg+HQNysXd869F
-         NFWN8PtU9EYV9eAAqqZOqKOsbrPLuG7jZR14fzXoZHo4PrO28xjP/gP+7y9CDibYcs0Z
-         M/sA==
-X-Forwarded-Encrypted: i=1; AJvYcCXkYVOKlU0olTsxvkio4m5jzYV2UNr/tXQdODnnavLffvncoGtdxPCG8Ih8dYiAHSJbM6BBQmmAwDN1w98=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/M5Rv+kKrpC5muZfVj0r5ideVcyGjkBv3aYBZx38ZT3xnkCmt
-	k9Lt0xlt+XPCN7tMcNjDo+RUx1eHFfxME7QAU4RbqknGFtrA3bKESS885kxTIiM=
-X-Gm-Gg: ASbGncvM+3YVTdXfis/01AA6KmmWf5Hf3ys2ZW4ToIah+3lHwe/ySIBKZ24qJwpKHQx
-	suAsfru28giJ8P7LQkkm61vFV1dm0s/GMaQBHels12skDQSAGhPmVp54qY0da6Tp5O9E9RCX3m4
-	Tv3fGuiydbxVEng864vQ/VVlULPzNaSRPUOnRgkHHaxZnwryKH6etmND41OUTSvxUe2EFyyQjrQ
-	QEdhJXeMsnkUPQ19wR6a3D/sS4C/5JZKrrHxk2i2ErccdukKt2stDJG/AQy3KcXfF8nnEXmgs5v
-	w/0TuRUPbNUAg3POOrkWBmArcKATaIYm448FN73xZlhBuuH2gI5T3Q==
-X-Google-Smtp-Source: AGHT+IGY5eAqoezhrV1gEeScvhW225gmjwj55Ke2qPE/hKfq2ySyn5Abm16zY6AnYk0L65hslpRURA==
-X-Received: by 2002:a05:600c:3594:b0:439:448c:6132 with SMTP id 5b1f17b1804b1-4396e74b902mr139384675e9.22.1739919913050;
-        Tue, 18 Feb 2025 15:05:13 -0800 (PST)
-Received: from mai.linaro.org (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439872b5a46sm63054005e9.32.2025.02.18.15.05.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 15:05:12 -0800 (PST)
-Date: Wed, 19 Feb 2025 00:05:10 +0100
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Pengfei Li <pengfei.li_1@nxp.com>,
-	Marco Felsch <m.felsch@pengutronix.de>, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	ye.li@nxp.com, joy.zou@nxp.com, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH v5 2/2] thermal: imx91: Add support for i.MX91 thermal
- monitoring unit
-Message-ID: <Z7USJpQLj-RI1ZyA@mai.linaro.org>
-References: <20250218-imx91tmu-v5-0-76c0b27673e6@nxp.com>
- <20250218-imx91tmu-v5-2-76c0b27673e6@nxp.com>
+	s=arc-20240116; t=1739919976; c=relaxed/simple;
+	bh=HIBrD9px7WJYxJXgOj/5KWYxNLodgWlGkpEONOLdN9A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oNkgPb+W9hfGhHZsD7JXuFVPKM/t2uGz3dplmCen2WLqiTUuDodspiTUSueXPWAppDWzIx7Mq7v8znP1GpPlHep+2QuAvHPHgY2CbZP7gVG/Vd86LSz0DHh8dPyGQHznITYH8qlrAqICjUJ0mt6zIegu/ZHyuJ17VSx5D8bUQA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PUI0K/j7; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739919974;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EQizAtyudSg2VONquWG4yvx/pUzf9ud3Ib65veJ3B1s=;
+	b=PUI0K/j7A+M2Sc02i0ld2W+Jkf+0np68X62AdROQTPoeAx4+pwZN85m6xuorizRrIHIy5S
+	W6gJz63lfShWwJCeT48yuELo+bKUoLdPMIyjCshmdTg2xp/o4nYpJhqn8+zdj9rbwa70OU
+	fX9QSk3m/fa1sph/WNDbye5PZqi1qNU=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-215-SFbXYeMYNXChmxdV8F5fXw-1; Tue,
+ 18 Feb 2025 18:06:10 -0500
+X-MC-Unique: SFbXYeMYNXChmxdV8F5fXw-1
+X-Mimecast-MFC-AGG-ID: SFbXYeMYNXChmxdV8F5fXw_1739919969
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1011318EB2C6;
+	Tue, 18 Feb 2025 23:06:09 +0000 (UTC)
+Received: from [10.22.65.116] (unknown [10.22.65.116])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 41ACE30001A6;
+	Tue, 18 Feb 2025 23:06:06 +0000 (UTC)
+Message-ID: <9495391f-eb31-4da5-95bf-e5f8eaafee38@redhat.com>
+Date: Tue, 18 Feb 2025 18:06:05 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250218-imx91tmu-v5-2-76c0b27673e6@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] nvme: remove multipath module parameter
+To: Keith Busch <kbusch@kernel.org>
+Cc: hch@lst.de, sagi@grimberg.me, bmarzins@redhat.com,
+ Bryan Gurney <bgurney@redhat.com>, linux-nvme@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Marco Patalano <mpatalan@redhat.com>,
+ axboe@kernel.dk, Randy Jennings <randyj@purestorage.com>
+References: <20250204211158.43126-1-bgurney@redhat.com>
+ <7c588344-f019-4939-8a93-0a450481d4bc@redhat.com>
+ <Z7Sh-3yHbXVmRbNL@kbusch-mbp>
+ <8a1730a1-1faf-4722-99e1-c3a85257b6f4@redhat.com>
+ <Z7TARX-tFY3mnuU7@kbusch-mbp>
+Content-Language: en-US
+From: John Meneghini <jmeneghi@redhat.com>
+Organization: RHEL Core Storge Team
+In-Reply-To: <Z7TARX-tFY3mnuU7@kbusch-mbp>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Tue, Feb 18, 2025 at 12:22:59PM -0500, Frank Li wrote:
-> From: Pengfei Li <pengfei.li_1@nxp.com>
+On 2/18/25 12:15 PM, Keith Busch wrote:
+> On Tue, Feb 18, 2025 at 11:31:58AM -0500, John Meneghini wrote:
+>> On 2/18/25 10:06 AM, Keith Busch wrote:
+>>> On Thu, Feb 13, 2025 at 03:37:28PM -0500, John Meneghini wrote:
+>>>> Keith, Christoph and Sagi,
+>>>>
+>>>> This patch has been fully tested and analyzed by Red Hat's QA group and no
+>>>> unexpected side effects or regressions have been found. Both NVMe/FC and NVMe/TCP
+>>>> have been tested. Our QE engineer has asked me to report this upstream.
+>>>
+>>> What's the harm in leaving the parameter? *I* use it so I can test both
+>>> ways without needing to compile multiple kernels.
+>>
+>> LOL.  We've been talking about this since 2017. The goal has always been to remove support for DMMP with NVMe.
 > 
-> Introduce support for the i.MX91 thermal monitoring unit, which features a
-> single sensor for the CPU. The register layout differs from other chips,
-> necessitating the creation of a dedicated file for this.
-> 
-> This sensor provides a resolution of 1/64°C (6-bit fraction). For actual
-> accuracy, refer to the datasheet, as it varies depending on the chip grade.
-> Provide an interrupt for end of measurement and threshold violation and
-> Contain temperature threshold comparators, in normal and secure address
-> space, with direction and threshold programmability.
-> 
-> Datasheet Link: https://www.nxp.com/docs/en/data-sheet/IMX91CEC.pdf
-> 
-> Signed-off-by: Pengfei Li <pengfei.li_1@nxp.com>
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> Reviewed-by: Marco Felsch <m.felsch@pengutronix.de>
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
-> Change from v4 to v5
-> - add irq support
-> - use period mode
-> - Marco, if need drop review tag, let me know
-> 
-> Change from v3 to v4
-> - Add Macro's review tag
-> - Use devm_add_action()
-> - Move pm_runtim_put before thermal_of_zone_register()
-> 
-> change from v2 to v3
-> - add IMX91_TMU_ prefix for register define
-> - remove unused register define
-> - fix missed pm_runtime_put() at error path in imx91_tmu_get_temp()
-> - use dev variable in probe function
-> - use pm_runtime_set_active() in probe
-> - move START to imx91_tmu_get_temp()
-> - use DEFINE_RUNTIME_DEV_PM_OPS()
-> - keep set reset value because there are not sw "reset" bit in controller,
-> uboot may change and enable tmu.
-> 
-> change from v1 to v2
-> - use low case for hexvalue
-> - combine struct imx91_tmu and tmu_sensor
-> - simplify imx91_tmu_start() and imx91_tmu_enable()
-> - use s16 for imx91_tmu_get_temp(), which may negative value
-> - use reverse christmas tree style
-> - use run time pm
-> - use oneshot to sample temp
-> - register thermal zone after hardware init
-> ---
->  drivers/thermal/Kconfig         |  10 +
->  drivers/thermal/Makefile        |   1 +
->  drivers/thermal/imx91_thermal.c | 422 ++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 433 insertions(+)
-> 
-> diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
-> index d3f9686e26e71..78a05d1030882 100644
-> --- a/drivers/thermal/Kconfig
-> +++ b/drivers/thermal/Kconfig
-> @@ -296,6 +296,16 @@ config IMX8MM_THERMAL
->  	  cpufreq is used as the cooling device to throttle CPUs when the passive
->  	  trip is crossed.
->  
-> +config IMX91_THERMAL
-> +	tristate "Temperature sensor driver for NXP i.MX91 SoC"
-> +	depends on ARCH_MXC || COMPILE_TEST
-> +	depends on OF
-> +	help
-> +	  Include one sensor and six comparators. Each of them compares the
-> +	  temperature value (from the sensor) against the programmable
-> +	  threshold values. The direction of the comparison is configurable
-> +	  (greater / lesser than).
-> +
->  config K3_THERMAL
->  	tristate "Texas Instruments K3 thermal support"
->  	depends on ARCH_K3 || COMPILE_TEST
-> diff --git a/drivers/thermal/Makefile b/drivers/thermal/Makefile
-> index 9abf43a74f2bb..08da241e6a598 100644
-> --- a/drivers/thermal/Makefile
-> +++ b/drivers/thermal/Makefile
-> @@ -50,6 +50,7 @@ obj-$(CONFIG_ARMADA_THERMAL)	+= armada_thermal.o
->  obj-$(CONFIG_IMX_THERMAL)	+= imx_thermal.o
->  obj-$(CONFIG_IMX_SC_THERMAL)	+= imx_sc_thermal.o
->  obj-$(CONFIG_IMX8MM_THERMAL)	+= imx8mm_thermal.o
-> +obj-$(CONFIG_IMX91_THERMAL)	+= imx91_thermal.o
->  obj-$(CONFIG_MAX77620_THERMAL)	+= max77620_thermal.o
->  obj-$(CONFIG_QORIQ_THERMAL)	+= qoriq_thermal.o
->  obj-$(CONFIG_DA9062_THERMAL)	+= da9062-thermal.o
-> diff --git a/drivers/thermal/imx91_thermal.c b/drivers/thermal/imx91_thermal.c
-> new file mode 100644
-> index 0000000000000..da2e01aa6f281
-> --- /dev/null
-> +++ b/drivers/thermal/imx91_thermal.c
-> @@ -0,0 +1,422 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright 2025 NXP.
-> + */
-> +
-> +#include <linux/bitfield.h>
-> +#include <linux/clk.h>
-> +#include <linux/err.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/iopoll.h>
-> +#include <linux/nvmem-consumer.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_device.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pm_runtime.h>
-> +#include <linux/thermal.h>
-> +#include <linux/units.h>
-> +
-> +#define REG_SET					0x4
-> +#define REG_CLR					0x8
-> +#define REG_TOG					0xc
-> +
-> +#define IMX91_TMU_CTRL0				0x0
-> +#define   IMX91_TMU_CTRL0_THR1_IE		BIT(9)
-> +#define   IMX91_TMU_CTRL0_THR1_MASK		GENMASK(3, 2)
-> +#define   IMX91_TMU_CTRL0_CLR_FLT1		BIT(21)
-> +
-> +#define IMX91_TMU_THR_MODE_LE			0
-> +#define IMX91_TMU_THR_MODE_GE			1
-> +
-> +#define IMX91_TMU_STAT0				0x10
-> +#define   IMX91_TMU_STAT0_THR1_IF		BIT(9)
-> +#define   IMX91_TMU_STAT0_THR1_STAT		BIT(13)
-> +#define   IMX91_TMU_STAT0_DRDY0_IF_MASK		BIT(16)
-> +
-> +#define IMX91_TMU_DATA0				0x20
-> +
-> +#define IMX91_TMU_CTRL1				0x200
-> +#define IMX91_TMU_CTRL1_EN			BIT(31)
-> +#define IMX91_TMU_CTRL1_START			BIT(30)
-> +#define IMX91_TMU_CTRL1_STOP			BIT(29)
-> +#define IMX91_TMU_CTRL1_RES_MASK		GENMASK(19, 18)
-> +#define IMX91_TMU_CTRL1_MEAS_MODE_MASK		GENMASK(25, 24)
-> +#define   IMX91_TMU_CTRL1_MEAS_MODE_SINGLE	0
-> +#define   IMX91_TMU_CTRL1_MEAS_MODE_CONTINUES	1
-> +#define   IMX91_TMU_CTRL1_MEAS_MODE_PERIODIC	2
-> +
-> +#define IMX91_TMU_THR_CTRL01			0x30
-> +#define   IMX91_TMU_THR_CTRL01_THR1_MASK	GENMASK(31, 16)
-> +
-> +#define IMX91_TMU_REF_DIV			0x280
-> +#define IMX91_TMU_DIV_EN			BIT(31)
-> +#define IMX91_TMU_DIV_MASK			GENMASK(23, 16)
-> +#define IMX91_TMU_DIV_MAX			255
-> +
-> +#define IMX91_TMU_PUD_ST_CTRL			0x2b0
-> +#define IMX91_TMU_PUDL_MASK			GENMASK(23, 16)
-> +
-> +#define IMX91_TMU_TRIM1				0x2e0
-> +#define IMX91_TMU_TRIM2				0x2f0
-> +
-> +#define IMX91_TMU_TEMP_LOW_LIMIT		-40000
-> +#define IMX91_TMU_TEMP_HIGH_LIMIT		125000
-> +
-> +#define IMX91_TMU_DEFAULT_TRIM1_CONFIG		0xb561bc2d
-> +#define IMX91_TMU_DEFAULT_TRIM2_CONFIG		0x65d4
-> +
-> +#define IMX91_TMU_PERIOD_CTRL			0x270
-> +#define   IMX91_TMU_PERIOD_CTRL_MEAS_MASK	GENMASK(23, 0)
-> +
-> +#define IMX91_TMP_FRAC				64
-> +
-> +struct imx91_tmu {
-> +	void __iomem *base;
-> +	struct clk *clk;
-> +	struct device *dev;
-> +	struct thermal_zone_device *tzd;
-> +	struct mutex lock; /* sync with irq thread */
+> I understand that disabling nvme native mp it is required for device
+> mapper, and I get you want to prevent the possibility of anyone using
+> dm-mp with nvme, but that isn't the only user that wants to see all
+> namespace paths.
 
-The lock should not be needed. Please see the comment below about the set_trips
-callback.
+OK, maybe you have a use case in mind. I'll assume you do: some
+applications want to disable native nvme multipathing and to see
+all namespace paths in user space, and they are using this parameter
+to do it. These are ostensibly user space MP applications.
 
-> +	int trip;
-> +	int hysteresis;
-> +	bool enable;
-> +};
-> +
-> +static void imx91_tmu_start(struct imx91_tmu *tmu, bool start)
-> +{
-> +	u32 val = start ? IMX91_TMU_CTRL1_START : IMX91_TMU_CTRL1_STOP;
-> +
-> +	writel_relaxed(val, tmu->base + IMX91_TMU_CTRL1 + REG_SET);
-> +}
-> +
-> +static void imx91_tmu_enable(struct imx91_tmu *tmu, bool enable)
-> +{
-> +	u32 reg = IMX91_TMU_CTRL1;
-> +
-> +	reg += enable ? REG_SET : REG_CLR;
-> +
-> +	writel_relaxed(IMX91_TMU_CTRL1_EN, tmu->base + reg);
-> +}
-> +
-> +static int imx91_tmu_to_mcelsius(int x)
-> +{
-> +	return x * MILLIDEGREE_PER_DEGREE / IMX91_TMP_FRAC;
-> +}
-> +
-> +static int imx91_tmu_from_mcelsius(int x)
-> +{
-> +	return x * IMX91_TMP_FRAC / MILLIDEGREE_PER_DEGREE;
-> +}
-> +
-> +static int imx91_tmu_get_temp(struct thermal_zone_device *tz, int *temp)
-> +{
-> +	struct imx91_tmu *tmu = thermal_zone_device_priv(tz);
-> +	s16 data;
-> +	int ret;
-> +
-> +	ret = pm_runtime_resume_and_get(tmu->dev);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	guard(mutex)(&tmu->lock);
-> +
-> +	/* DATA0 is 16bit signed number */
-> +	data = readw_relaxed(tmu->base + IMX91_TMU_DATA0);
-> +	*temp = imx91_tmu_to_mcelsius(data);
-> +	if (*temp < IMX91_TMU_TEMP_LOW_LIMIT || *temp > IMX91_TMU_TEMP_HIGH_LIMIT)
-> +		ret = -EAGAIN;
-> +
-> +	if (*temp <= tmu->trip - tmu->hysteresis && tmu->enable) {
-> +		writel_relaxed(IMX91_TMU_STAT0_THR1_IF, tmu->base + IMX91_TMU_STAT0 + REG_CLR);
-> +		writel_relaxed(IMX91_TMU_CTRL0_THR1_IE, tmu->base + IMX91_TMU_CTRL0 + REG_SET);
-> +	}
-> +
-> +	pm_runtime_put(tmu->dev);
-> +
-> +	return ret;
-> +}
-> +
-> +static int imx91_tmu_set_trip_temp(struct thermal_zone_device *tz, const struct thermal_trip *trip,
-> +				   int temp)
-> +{
-> +	struct imx91_tmu *tmu = thermal_zone_device_priv(tz);
-> +	int val;
-> +	int ret;
-> +
-> +	ret = pm_runtime_resume_and_get(tmu->dev);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	if (temp < 0)
-> +		return -EINVAL;
-> +
-> +	guard(mutex)(&tmu->lock);
-> +
-> +	writel_relaxed(IMX91_TMU_CTRL0_THR1_IE, tmu->base + IMX91_TMU_CTRL0 + REG_CLR);
-> +
-> +	/* Comparator1 for temperature threshold */
-> +	writel_relaxed(IMX91_TMU_THR_CTRL01_THR1_MASK, tmu->base + IMX91_TMU_THR_CTRL01 + REG_CLR);
-> +	val = FIELD_PREP(IMX91_TMU_THR_CTRL01_THR1_MASK, imx91_tmu_from_mcelsius(temp));
-> +	writel_relaxed(val, tmu->base + IMX91_TMU_THR_CTRL01 + REG_SET);
-> +
-> +	writel_relaxed(IMX91_TMU_STAT0_THR1_IF, tmu->base + IMX91_TMU_STAT0 + REG_CLR);
-> +
-> +	tmu->trip = temp;
-> +	tmu->hysteresis = trip->hysteresis;
-> +
-> +	writel_relaxed(IMX91_TMU_CTRL0_THR1_IE, tmu->base + IMX91_TMU_CTRL0 + REG_SET);
-> +	pm_runtime_put(tmu->dev);
-> +
-> +	return 0;
-> +}
-> +
-> +static int imx91_tmu_trip_walk_cb(struct thermal_trip *trip, void *arg)
-> +{
-> +	struct imx91_tmu *tmu = arg;
-> +
-> +	return imx91_tmu_set_trip_temp(tmu->tzd, trip, trip->temperature);
-> +}
-
-The 'set_trip' callback should not be used but 'set_trips' to set the thresholds.
-
-As the sensor supports multiple thresholds and direction, it is simple to
-implement the 'set_trips' callback by setting the low and high boundaries.
-
-The imx91_tmu_trip_walk_cb() will go away.
-
-> +static int imx91_init_from_nvmem_cells(struct imx91_tmu *tmu)
-> +{
-> +	struct device *dev = tmu->dev;
-> +	u32 trim1, trim2;
-> +	int ret;
-> +
-> +	ret = nvmem_cell_read_u32(dev, "trim1", &trim1);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = nvmem_cell_read_u32(dev, "trim2", &trim2);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (trim1 == 0 || trim2 == 0)
-> +		return -EINVAL;
-> +
-> +	writel_relaxed(trim1, tmu->base + IMX91_TMU_TRIM1);
-> +	writel_relaxed(trim2, tmu->base + IMX91_TMU_TRIM2);
-> +
-> +	return 0;
-> +}
-> +
-> +static void imx91_tmu_action_remove(void *data)
-> +{
-> +	struct imx91_tmu *tmu = data;
-> +
-> +	/* disable tmu */
-> +	imx91_tmu_enable(tmu, false);
-> +}
-> +
-> +static irqreturn_t imx91_tmu_alarm_irq_thread(int irq, void *dev)
-> +{
-> +	struct imx91_tmu *tmu = dev;
-> +	int val;
-> +	int ret;
-> +
-> +	ret = pm_runtime_resume_and_get(tmu->dev);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	thermal_zone_device_update(tmu->tzd, THERMAL_EVENT_UNSPECIFIED);
-> +
-> +	scoped_guard(mutex, &tmu->lock) {
-> +		val = readl_relaxed(tmu->base + IMX91_TMU_STAT0);
-> +		/* Have to use CLR register to clean up w1c bits */
-> +		writel_relaxed(val, tmu->base + IMX91_TMU_STAT0 + REG_CLR);
-> +
-> +		writel_relaxed(IMX91_TMU_CTRL0_THR1_IE, tmu->base + IMX91_TMU_CTRL0 + REG_CLR);
-> +	}
-> +
-> +	pm_runtime_put(tmu->dev);
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +static int imx91_tmu_change_mode(struct thermal_zone_device *tz, enum thermal_device_mode mode)
-> +{
-> +	struct imx91_tmu *tmu = thermal_zone_device_priv(tz);
-> +	int ret;
-> +
-> +	if (mode == THERMAL_DEVICE_ENABLED) {
-> +		ret = pm_runtime_get(tmu->dev);
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		guard(mutex)(&tmu->lock);
-> +		imx91_tmu_start(tmu, true);
-> +		writel_relaxed(IMX91_TMU_CTRL0_THR1_IE, tmu->base + IMX91_TMU_CTRL0 + REG_SET);
-> +		tmu->enable = true;
-> +	} else {
-> +		guard(mutex)(&tmu->lock);
-> +
-> +		writel_relaxed(IMX91_TMU_CTRL0_THR1_IE, tmu->base + IMX91_TMU_CTRL0 + REG_CLR);
-> +		imx91_tmu_start(tmu, false);
-> +		pm_runtime_put(tmu->dev);
-> +		tmu->enable = false;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static struct thermal_zone_device_ops tmu_tz_ops = {
-> +	.get_temp = imx91_tmu_get_temp,
-> +	.change_mode = imx91_tmu_change_mode,
-> +	.set_trip_temp = imx91_tmu_set_trip_temp,
-> +};
-> +
-> +static int imx91_tmu_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct imx91_tmu *tmu;
-> +	unsigned long rate;
-> +	int irq, ret;
-> +	u32 div;
-> +
-> +	tmu = devm_kzalloc(dev, sizeof(struct imx91_tmu), GFP_KERNEL);
-> +	if (!tmu)
-> +		return -ENOMEM;
-> +
-> +	tmu->dev = dev;
-> +
-> +	tmu->base = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(tmu->base))
-> +		return dev_err_probe(dev, PTR_ERR(tmu->base), "failed to get io resource");
-> +
-> +	tmu->clk = devm_clk_get_enabled(dev, NULL);
-> +	if (IS_ERR(tmu->clk))
-> +		return dev_err_probe(dev, PTR_ERR(tmu->clk), "failed to get tmu clock\n");
-> +
-> +	platform_set_drvdata(pdev, tmu);
-> +
-> +	devm_mutex_init(dev, &tmu->lock);
-> +
-> +	/* disable the monitor during initialization */
-> +	imx91_tmu_enable(tmu, false);
-> +	imx91_tmu_start(tmu, false);
-> +
-> +	ret = imx91_init_from_nvmem_cells(tmu);
-> +	if (ret) {
-> +		writel_relaxed(IMX91_TMU_DEFAULT_TRIM1_CONFIG, tmu->base + IMX91_TMU_TRIM1);
-> +		writel_relaxed(IMX91_TMU_DEFAULT_TRIM2_CONFIG, tmu->base + IMX91_TMU_TRIM2);
-> +	}
-> +
-> +	/* The typical conv clk is 4MHz, the output freq is 'rate / (div + 1)' */
-> +	rate = clk_get_rate(tmu->clk);
-> +	div = (rate / (4 * HZ_PER_MHZ)) - 1;
-> +	if (div > IMX91_TMU_DIV_MAX)
-> +		return dev_err_probe(dev, -EINVAL, "clock divider exceed hardware limitation");
-> +
-> +	/* Set divider value and enable divider */
-> +	writel_relaxed(IMX91_TMU_DIV_EN | FIELD_PREP(IMX91_TMU_DIV_MASK, div),
-> +		       tmu->base + IMX91_TMU_REF_DIV);
-> +
-> +	/* Set max power up delay: 'Tpud(ms) = 0xFF * 1000 / 4000000' */
-> +	writel_relaxed(FIELD_PREP(IMX91_TMU_PUDL_MASK, 100U), tmu->base + IMX91_TMU_PUD_ST_CTRL);
-> +
-> +	/*
-> +	 * Set resolution mode
-> +	 * 00b - Conversion time = 0.59325 ms
-> +	 * 01b - Conversion time = 1.10525 ms
-> +	 * 10b - Conversion time = 2.12925 ms
-> +	 * 11b - Conversion time = 4.17725 ms
-> +	 */
-> +	writel_relaxed(FIELD_PREP(IMX91_TMU_CTRL1_RES_MASK, 0x3),
-> +		       tmu->base + IMX91_TMU_CTRL1 + REG_CLR);
-> +	writel_relaxed(FIELD_PREP(IMX91_TMU_CTRL1_RES_MASK, 0x1),
-> +		       tmu->base + IMX91_TMU_CTRL1 + REG_SET);
-> +
-> +	writel_relaxed(IMX91_TMU_CTRL1_MEAS_MODE_MASK, tmu->base + IMX91_TMU_CTRL1 + REG_CLR);
-> +	writel_relaxed(FIELD_PREP(IMX91_TMU_CTRL1_MEAS_MODE_MASK,
-> +				  IMX91_TMU_CTRL1_MEAS_MODE_PERIODIC),
-> +		       tmu->base + IMX91_TMU_CTRL1 + REG_SET);
-> +
-> +	/*
-> +	 * Set Periodic Measurement Frequency to 25Hz:
-> +	 * tMEAS_FREQ = tCONV_CLK * PERIOD_CTRL[MEAS_FREQ]
-> +	 */
-> +	writel_relaxed(FIELD_PREP(IMX91_TMU_PERIOD_CTRL_MEAS_MASK, 4 * HZ_PER_MHZ / 25),
-> +		       tmu->base + IMX91_TMU_PERIOD_CTRL);
-> +
-> +	writel_relaxed(IMX91_TMU_CTRL0_THR1_IE | IMX91_TMU_CTRL0_THR1_MASK,
-> +		       tmu->base + IMX91_TMU_CTRL0 + REG_CLR);
-> +
-> +	writel_relaxed(FIELD_PREP(IMX91_TMU_CTRL0_THR1_MASK, IMX91_TMU_THR_MODE_GE),
-> +		       tmu->base + IMX91_TMU_CTRL0 + REG_SET);
-> +
-> +	pm_runtime_set_active(dev);
-> +	devm_pm_runtime_enable(dev);
-> +	pm_runtime_suspend(dev);
-> +
-> +	tmu->tzd = devm_thermal_of_zone_register(dev, 0, tmu, &tmu_tz_ops);
-> +	if (IS_ERR(tmu->tzd))
-> +		return dev_err_probe(dev, PTR_ERR(tmu->tzd),
-> +				     "failed to register thermal zone sensor\n");
-> +
-> +	thermal_zone_for_each_trip(tmu->tzd, imx91_tmu_trip_walk_cb, tmu);
-> +
-> +	ret = devm_add_action(dev, imx91_tmu_action_remove, tmu);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failure to add action imx91_tmu_action_remove()\n");
-> +
-> +	irq = platform_get_irq(pdev, 0);
-> +	if (irq < 0)
-> +		return irq;
-> +
-> +	ret = devm_request_threaded_irq(dev, irq, NULL, imx91_tmu_alarm_irq_thread,
-> +					IRQF_ONESHOT, "imx91_thermal", tmu);
-> +
-> +	if (ret < 0)
-> +		return dev_err_probe(dev, ret, "failed to request alarm irq\n");
-> +
-> +	return 0;
-> +}
-> +
-> +static int imx91_tmu_runtime_suspend(struct device *dev)
-> +{
-> +	struct imx91_tmu *tmu = dev_get_drvdata(dev);
-> +
-> +	/* disable tmu */
-> +	imx91_tmu_enable(tmu, false);
-> +
-> +	clk_disable_unprepare(tmu->clk);
-> +
-> +	return 0;
-> +}
-> +
-> +static int imx91_tmu_runtime_resume(struct device *dev)
-> +{
-> +	struct imx91_tmu *tmu = dev_get_drvdata(dev);
-> +	int ret;
-> +
-> +	ret = clk_prepare_enable(tmu->clk);
-> +	if (ret)
-> +		return ret;
-> +
-> +	imx91_tmu_enable(tmu, true);
-> +
-> +	return 0;
-> +}
-> +
-> +static DEFINE_RUNTIME_DEV_PM_OPS(imx91_tmu_pm_ops, imx91_tmu_runtime_suspend,
-> +				 imx91_tmu_runtime_resume, NULL);
-> +
-> +static const struct of_device_id imx91_tmu_table[] = {
-> +	{ .compatible = "fsl,imx91-tmu", },
-> +	{ },
-> +};
-> +MODULE_DEVICE_TABLE(of, imx91_tmu_table);
-> +
-> +static struct platform_driver imx91_tmu = {
-> +	.driver = {
-> +		.name	= "imx91_thermal",
-> +		.pm	= pm_ptr(&imx91_tmu_pm_ops),
-> +		.of_match_table = imx91_tmu_table,
-> +	},
-> +	.probe = imx91_tmu_probe,
-> +};
-> +module_platform_driver(imx91_tmu);
-> +
-> +MODULE_AUTHOR("Peng Fan <peng.fan@nxp.com>");
-> +MODULE_DESCRIPTION("i.MX91 Thermal Monitor Unit driver");
-> +MODULE_LICENSE("GPL");
+So what happens when one of these user space MP applications needs
+a change or a bug bug fix in the kernel?  Are those patches being
+merged into the kernel under a different auspices... is it just
+DMMP that we don't want to enable support for?
+    >> We want to remove this parameter because it is causing confusion with users and customers who keep trying to use
+>> DMMP with their multipath NVMe devices.
+>>
+>> We want to remove this parameter because:
+>>
+>> 1) the upstream kernel does not support multipath nvme devices without CONFIG_NVME_MULTIPATH enabled
 > 
-> -- 
-> 2.34.1
+> What do you mean by "support"? I assume you mean no one upstream will
+> help you debug your problems if you've set yourself up that way, and
+> that's probably true. The kernel currently doesn't stop you from doing
+> this though, so it's supported in that sense. Some people are fine doing
+> this on their own, they're not seeking upstream help. Changing this
+What I mean by "no support" is: Red Hat has proposed multiple patches that were needed
+to support core.nvme_multipath=N with DMMP. Those patches have all been NAKed because
+"we don't support anything but native nvme multipath with NVMe".
+
+And we are perfectly capable of debugging and supporting all of this w/out any upstream
+help. The fact is we had to patch nvme/host/core.c and multipath.c to support DMMP with
+nvme.core_multipath=N, and we've carried those out-of-tree patches in RHEL for almost 6
+years because they were NAKed upstream.
+
+> would break userspace because it makes the driver fail to create device
+> nodes that used to show up.
+
+User space has already been broken. I think we crossed that bridge long ago. Long before
+multipath.c was implemented people were using user space MP applications (like DMMP) to support
+nvme devices with multiple paths. We took that away as a supported feature a long time ago.
+
+The reason I am saying this is because Red Hat wants to support DMMP with NVMe. We have many customers
+who are very upset and unhappy that we are taking this away. Red Hat would much rather use DMMP
+with NVMe, than not, and we have been working diligently to close the feature gap between native
+nvme multipath and DMMP multipath (e.g. the queue-depth patches).
+
+>> 2) the upstream kernel does not support multipath nvme devices when core.nvme_multipath is set to N
+>> 3) Non-multipath nvme devies are supported just fine with core.nvme_multipath is set to Y
+>>
+>> You don't need set core.nvme_multipath to N to test your devices both ways w/o recompiling the kernel.
+>> All of the code paths involved here are controlled by NVME_CTRL_CMIC_MULTI_CTRL and setting core.nvme_multipath
+>> to N doesn't do anything to help your single path NVMe devices. It doesn't remove multipath.c, reduce the code
+>> path length or do anything else to optimize your non-NVME_CTRL_CMIC_MULTI_CTRL devices.  All it does is provide
+>> an escape hatch to disable the incore multipath scheduler start creating multiple /dev/nvme%d/n%d entries so
+>> that DMMP can be used with multipath capable NVMe devices.
+>>
+>> Personally, I'd like to remove CONFIG_NVME_MULTIPATH as well. It's just another source of confusion. Most users
+>> are running Linux with the the default settings for NVME_MULTIPATH. This is what Red Hat customers use and that's
+>> what's used upstream.  So what's the point?
 > 
+> There are devices that report CMIC and NMIC despite being single path,
+> perhaps as some vestigial sr-iov feature. That adds an unnecessary layer
+> for all IO to go through. Having the param makes it easy to test both
+> possible driver paths. In production though, I'd expect to just disable
+> the CONFIG option if that's the behavior someoone wants, so I think the
+> config option ought to stay.
 
--- 
+I get it... that's fine... I have no problem if we want to keep support for CONFIG_NVME_MULTIPATH=N.
+That's what we originally agreed to and it was my mistake to send a patch the tried to remove it.
 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+As it turns out, user space MP may be supportable with both CONFIG_NVME_MULTIPATH on or off.
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Maybe we should just remove all of these dev_warnings from the code and let the users do what
+they want. That's what they are going to do anyways. Just don't tell me we won't take patches
+to support my user space MP application and not yours.
+
+I am not trying to be a jerk here. Seriously. It's just that our duplicity about this subject
+upstream is a little too much. We have these configurable options and parameters... if we don't
+want to support them all then let's take them out. People who want continued support for user
+space MP with core.nvme_multipath=N can take *this patch* out of their own out-of-tree repository.
+
+This all comes down to who gets to carry the out-of-tree patch. If you don't want to take this patch,
+then please take our DMMP multipath support patches. They are not big or invasive, they haven't
+changed in years, and they are all controlled by core.nvme_multipath=N. My customers will thank
+you if you do.
+
+I just need the upstream maintainers to make up their mind. This is a change we've talked about
+for years. I thought you'd want this change. I thought this would be a final end of the
+"only native nvme multipath is supported" debate.
+
+/John
+
 
