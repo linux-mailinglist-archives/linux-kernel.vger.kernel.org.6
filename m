@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-518881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB58AA395C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:43:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F835A395A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:40:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A45C166C08
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:39:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4ECAB188B064
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:39:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C84A232377;
-	Tue, 18 Feb 2025 08:37:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3CC4233D7B;
+	Tue, 18 Feb 2025 08:37:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gppSJDx4"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LlwoYqIy"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4565C22CBC0;
-	Tue, 18 Feb 2025 08:37:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEF82233136;
+	Tue, 18 Feb 2025 08:37:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739867858; cv=none; b=UK6d7N0Hzhs7ZbIyky2mGRy1Tu1yW27H/X4ca29f9bnWUMDll+mAZherBiL4m7RlNemkh0YmHaMtTcRXOLV6FAd1ni6wZ0O2KCHEchVLAa6X8i3ra4WObGIS9p1/l2UVBUE3m3dWos/FUIYKdualshCLzHIHLDePV3eftm/fGSw=
+	t=1739867866; cv=none; b=hKcZ6+ELkT9mUYtZDkcydwX5/XDQO8TZSKzYtm64q++6pV/hI2rTT6i0TqaWgTcQu10TwGgOciVBn0hK7ljkEq3pnXHu8wM4k1qLrWU+5IeHJz9qv3/k5AzzGNlfw8XMeeOme9xk29/Agw8KaEGt3dJQQqq4lfHcBVeccP3b31Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739867858; c=relaxed/simple;
-	bh=R5CGUebK2zAj6O9/HHLGD450zIPtVaFw1f+T6NWzFVo=;
+	s=arc-20240116; t=1739867866; c=relaxed/simple;
+	bh=C+X0x7uIf65/mbXTMCE86W3v0h9GaMeMdchW1VENrnc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fkw6/VWH4Y6rlgNX6GvcXpcIxieD/ytJs+3qx/sDDci2ub2RjpFN9knvPwV3ULqJNHQYPRxfK6ERs48snZ/yccwPzRNf/UvAggK7CIdjrqKJD6N4hVO4OIsauJ0A5+sw9aGbhkxybrNQdCQkl2ZXypw3T+Mon0T1kSNSLnbHeOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gppSJDx4; arc=none smtp.client-ip=209.85.214.172
+	 In-Reply-To:To:Cc; b=Z/JXx7GF0MM5xKGmKs8WJd2VmRVhmz5DLL4WlrNNN1MnNBT0KNUDuCRWTDDqUIDlZN6btGPCmDJxfpHrY9EQQ+KvaTfZ3uoufflnF6aS2RRK91d3do5/1l/31DpW8rCHZrBMn+4API/mgEHEIPwGgsDlELjesXgMFuTe1kCl7fI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LlwoYqIy; arc=none smtp.client-ip=209.85.214.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-220f048c038so63338595ad.2;
-        Tue, 18 Feb 2025 00:37:37 -0800 (PST)
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-221057b6ac4so43958115ad.2;
+        Tue, 18 Feb 2025 00:37:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739867856; x=1740472656; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1739867864; x=1740472664; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=BSGUP3m54FlOrzw+5tfDV1Rd46XpJOc9r57P1WtoieI=;
-        b=gppSJDx4vyQtWa6Kxe3HwDdEl6jBdF5K5J8/xoya+a0muvM2XdYoIm6H2R+yJ2jnKZ
-         ayohuTecRLcnRMYMCPBfjtYcslk0eoY1WfNBmqOn9mmNqTpWaeEOPdsaYtAPXCaLWsaU
-         fNQYdtfdipE1cEkRSVYE6bRpKTdhQeWIrUY6nepL6q105qBJhYxWpP4GuG3A9VWnmSgQ
-         wv8m90Yy4kVVQ8TU4saLFclK2+i/3PrFLV79fnX1bmIrpTWAkLDnJIp8G0iwKig7juIi
-         NNs6DHaRIDCDYUkTX81mCoo/C6uUEvxvQP0N9CtFHboaNfJYHX9WzCxilUzUW2mXSTwH
-         C8Dg==
+        bh=sZkZf98xzuFsPo9rZYpEWNft19Sn7WJ32Cdi1OtVNJs=;
+        b=LlwoYqIyjh1GCrnfz46vMI6s9+faY5PD2PKxakkJTJD90zsFtpzx6wqugkPRryaoTd
+         cE9hcJNHVxaF5NFxYUTuAMyAckCixWnALOoXmdRPaW7kA0i/suqOu2NEHlTZpv8k+sdG
+         eIeNESiLibfWaxGFNQDaaYlqt/xm1iaOFkKckd8TezEyT9kGVmNxjm8tvsuXOwQRjLXF
+         w7U+GJ7oLlqcBofKI+YBQhZTDBcTvd2XJL/Ptx1c0dSJWBuqJ+77dJc3M5M3ql7ISjEb
+         gz7k46r8mAb8xiFFXU0OlZnyHLSAkGmY9r+ZhP7JC4lzOHcia47LLtwE7WTJvmz6E78j
+         5qug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739867856; x=1740472656;
+        d=1e100.net; s=20230601; t=1739867864; x=1740472664;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=BSGUP3m54FlOrzw+5tfDV1Rd46XpJOc9r57P1WtoieI=;
-        b=CfFEw9jUlunR64CKjLTzkoXs0rdacDMVxGEPQAQnOYsujbSs39/CmtmOUeN+X1MIUz
-         29kSV7JrjTMY591yaFfY0eYDf3pKA69HZF8MZ3yZYinlpys8NkQj7X3bl4Lrv9kwKXof
-         ZvdXoTFkfZYVcqAZ/CNTpamxYmE6QsCCWxh/VQF8hr5lW6E4Q1DxuVLcDZCpgy1JmR7I
-         kSPmU5/q8vAmLaYKE67f3WtQMENqT6IUEj8+OKV49e+D8h/EKdtVy7xd4e3npDfs4qAz
-         e73hAgpj4uGNNWCjhFhCWsDayHXPcNOmVY2oJuuJYf0kYs0rBtH+al1uMHYiDKtFSwAu
-         oCUg==
-X-Forwarded-Encrypted: i=1; AJvYcCUPbBmLIl8OEg0w6+twoIihnNWW1rYVGtwznFEHcwtPrE5MKxHO3H29UqUMKfACFa82seJNCstRCynKtoY=@vger.kernel.org, AJvYcCVAy2nDur4HZg7kRfyzeW8OEG5filTW7TXLb04G4d0mbPFtaxQCyZZlPkyU55rM+4TBSmCOTYIOtegTlAo=@vger.kernel.org, AJvYcCVk9U/3JqqLBoSCl3TkvKmMVJGrDRlP7GWBj70SZ/nosHh6BXUJO6AjOIssIypLURSi1EeaASsl1OncD/uw@vger.kernel.org, AJvYcCWuG2TRyVqZijTeEVzRwnD9g9O899BqJvAXRuPBEAnyUZkiihDlm4yY4NH9mvxXIdnF9cTCUJuUcJnx@vger.kernel.org
-X-Gm-Message-State: AOJu0YxafVN91TNlYuVF6ZUouH4o/01KFqHdnAeYmONtEfH/cc1pnlt8
-	SOyjFeqkTWdL5zboaKIr2VWWUXxP23etKOsQOgEGnATE9FgNzqFTfZLShc20
-X-Gm-Gg: ASbGncs+ee/1seGb0Ot+uxqXHzhZY6xrsj378sR7yrfulF4yMmAcofj0lyM+mrh8hup
-	JessTDRfsFH7Npm26VXBqvFX7sDPznSsQIT66T3hKYL6rSX10BU2epKFv+YFvPTk42Gmltg1ORE
-	CdYHEI9mTfRMGzE+98rBRorEcwIxz7ga8hZvHJrwtZ6jEDj7fYmkrOXZnhdXASb0Hzgm4d1XAY2
-	NID+bvMXo5HURBCJZNoh+SynBOPgBEiHT8Melx+M/ja6VIZTWNVgokY7DjrWHtTbrwaeq9HHnYG
-	BuVX3uxuOxo7voIsB0M29IQfOvhPdNn0NP0f5fml7ECDz5Wr5SSgrlfwLzjWCuz7Dn82ZkhyKtL
-	IlsrgpJRw2g==
-X-Google-Smtp-Source: AGHT+IHinlUcJdepADETZgWdF6xVxTtPe3RJzl3iDPZR0TLKLeGYJs4/jm5yYrUcmNhdKp0WMMDrJQ==
-X-Received: by 2002:a05:6a20:72a6:b0:1e1:9ba5:80d8 with SMTP id adf61e73a8af0-1ee8cc162e9mr20405530637.33.1739867856345;
-        Tue, 18 Feb 2025 00:37:36 -0800 (PST)
+        bh=sZkZf98xzuFsPo9rZYpEWNft19Sn7WJ32Cdi1OtVNJs=;
+        b=RwpjjOh3oPVPnU7g6b7buyMSJaWAUKGwZgl4jAChAe6IMIJN9lmKf+s5+nj0d5VgzD
+         pE/sRwEuOwkndgTdl8s2PBbU2rxK+foCqsFbcl9dzEaFjSLxXBhxiANW1K1TkiUfG3lP
+         f71FhEM1m8Od7Hw8Vh2ZpRsyF5x/NTw3/wAKVJuOiN734ux0xMSUpRZsKEeK+CpCQ71Z
+         uEy51GrmZiK5mIGl6kdFVUJcn1KaZV3VjLMlEBTUdTW2so8B1j1eUWxhqyFFdHQ7oVWz
+         093iI4Qlb2f2oCONCvUYQTIgXIQGfqwX+DKeJH+bl0v8ClBFEJ0qo40UNpvdnquGHMwx
+         mRlA==
+X-Forwarded-Encrypted: i=1; AJvYcCUwuMfmwc5s16zqWl1kvQKaj64aJfkp+84ZHplXLp2ElWP7aNq6VI/MHTp5KUV3vyTRQP682a7WQtRw6iU=@vger.kernel.org, AJvYcCWfc1TLYLgC46MrHM8+aX0elFMLtevCKnFfd40YSgnnhBI7SsrA6jl3T2QN9Un+rxT2uqTkz2VUUQYXsiM=@vger.kernel.org, AJvYcCXC5AQiHfHBacnqXwfhd1sekz7B2rB/RSgyz8OSFqbmNtSItlgcSV01frisr49U8RNFvSTe8hb36vYL@vger.kernel.org, AJvYcCXPjnuTIxbFpn0GHtFd72O6EiqUNf8Tl5HlIBoHhiWfte+rLKZ1B45yh7gWA7GekZod5J6GZxm0wlkNS5/v@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNqZau/F+QTz9h9Rbi75wV37mHHXvfNIC8xl/7JqAnTjxayXUY
+	W0zJ5hrekZdbBr1T+6LWWayDXrB/WuqcMU6vazknHf7ZZyAjknY8fJCZvlAy
+X-Gm-Gg: ASbGncvVb4X3HJhZ6bO7O/4MkHefu5uAWnejkT8bdTG2AfxqziEcaH0M2MWW2A3/vEE
+	Tf61SuNEbZlvAjixFPzhvdmY+35hSRNqeBg3qCuK3ZHgX7uN2OA9qmB+QnEt7bmA+D1Ad6WVmCC
+	clfAnCPqiB+Hg33es1EYVLg953rf3+Q5tcnChejVrK+FzoSYoHjmAamgjExGDp3R2KE39j0jGdW
+	wBgCthp3/EzCa+RqV1jUzGb7jes0ZsXwyLwSxRHSVLPkP4eyXIZJJJBv1riWkrFKZjGudwNsIwT
+	yuk3BDml2jNdB9Nxw5XXWt8Lf9Xv8AQGFh4uCzFh4tvPv/LNsjYhIB2KtQNrCMBS4WlhihCyO9D
+	9YpevzL9sow==
+X-Google-Smtp-Source: AGHT+IHnEmsdRs0QDQNqmFf6dAJT6iEkiGCVIADqflKn44jjikjLxu6ge9+xE6rbdfiUgc1uqiS8dg==
+X-Received: by 2002:a05:6a21:3287:b0:1ee:66ce:16f4 with SMTP id adf61e73a8af0-1ee8cbfe3f6mr23976267637.36.1739867863817;
+        Tue, 18 Feb 2025 00:37:43 -0800 (PST)
 Received: from [192.168.2.3] (2403-580a-80ed-0-4835-5a07-49e7-f115.ip6.aussiebb.net. [2403:580a:80ed:0:4835:5a07:49e7:f115])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ae1ee4febb2sm787325a12.51.2025.02.18.00.37.28
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ae1ee4febb2sm787325a12.51.2025.02.18.00.37.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 00:37:36 -0800 (PST)
+        Tue, 18 Feb 2025 00:37:43 -0800 (PST)
 From: James Calligeros <jcalligeros99@gmail.com>
-Date: Tue, 18 Feb 2025 18:35:47 +1000
-Subject: [PATCH v2 13/29] ASoC: tas2770: Export 'die_temp' to sysfs
+Date: Tue, 18 Feb 2025 18:35:48 +1000
+Subject: [PATCH v2 14/29] ASoC: tas2770: expose die temp to hwmon
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,8 +82,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250218-apple-codec-changes-v2-13-932760fd7e07@gmail.com>
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250218-apple-codec-changes-v2-14-932760fd7e07@gmail.com>
 References: <20250218-apple-codec-changes-v2-0-932760fd7e07@gmail.com>
 In-Reply-To: <20250218-apple-codec-changes-v2-0-932760fd7e07@gmail.com>
 To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
@@ -98,123 +98,120 @@ Cc: Alyssa Rosenzweig <alyssa@rosenzweig.io>,
  Hector Martin <marcan@marcan.st>, linux-sound@vger.kernel.org, 
  linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
  asahi@lists.linux.dev, linux-hwmon@vger.kernel.org, 
- Neal Gompa <neal@gompa.dev>, James Calligeros <jcalligeros99@gmail.com>
+ James Calligeros <jcalligeros99@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3106;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2665;
  i=jcalligeros99@gmail.com; h=from:subject:message-id;
- bh=lkuBo6XHksMD5HcdiK6pdh1/+6wNjBzUXd1OHHJ/WQM=;
- b=owGbwMvMwCV2xczoYuD3ygTG02pJDOlb3BLn7Z+4VtPB4N2MnK1OF0NPLuWc+UvU9ssedktF5
- 9ZLWY49HaUsDGJcDLJiiiwbmoQ8Zhux3ewXqdwLM4eVCWQIAxenAExk7g1Ghve2jpuUrMUa408u
- Dp+ns168O37VVnkxv4eaWQnte5M0bBkZHn3e3WO+V+gM59xMkZfJD1qr57+P287hljx36Zsrd9g
- beAE=
+ bh=C+X0x7uIf65/mbXTMCE86W3v0h9GaMeMdchW1VENrnc=;
+ b=owGbwMvMwCV2xczoYuD3ygTG02pJDOlb3BLPuG0q9yy6/fZmd3+EAu+GtU/Dbj682L5v0QV31
+ j+H4pfpdJSyMIhxMciKKbJsaBLymG3EdrNfpHIvzBxWJpAhDFycAjARYTOG/x7tj36wGtt9vjnr
+ 6e8XtYfTOY4EnTacpTwnrt7+wgn/w7oMf+Xc35/MLVDkbjiW6Bx9z3pt3LuKlozZ57b71rBZvRK
+ 7xAIA
 X-Developer-Key: i=jcalligeros99@gmail.com; a=openpgp;
  fpr=B08212489B3206D98F1479BDD43632D151F77960
 
-From: Martin Povišer <povik+lin@cutebit.org>
+Create and register a hwmon device to export the die temperature
+to the hwmon interface
 
-Export a file for the readout of die temperature measurements.
-As per the datasheet, the temperature can be calculated by
-dividing the register value by 16 and then subtracting 93.
-
-Reviewed-by: Neal Gompa <neal@gompa.dev>
-Signed-off-by: Martin Povišer <povik+lin@cutebit.org>
 Signed-off-by: James Calligeros <jcalligeros99@gmail.com>
 ---
- sound/soc/codecs/tas2770.c | 57 +++++++++++++++++++++++++
- 1 file changed, 57 insertions(+)
+ sound/soc/codecs/tas2770.c | 69 +++++++++++++++++++++++++
+ 1 file changed, 69 insertions(+)
 
 diff --git a/sound/soc/codecs/tas2770.c b/sound/soc/codecs/tas2770.c
-index 7f219df8be7046912bf3ef452f75c17b5118bcf6..84066884d36be8d41d83bca5680e9f683c420d78 100644
+index 84066884d36be8d41d83bca5680e9f683c420d78..fee99db904a5885d740c1cfe8ce2645a963c6e1d 100644
 --- a/sound/soc/codecs/tas2770.c
 +++ b/sound/soc/codecs/tas2770.c
-@@ -20,6 +20,7 @@
- #include <linux/regmap.h>
- #include <linux/of.h>
- #include <linux/slab.h>
-+#include <linux/sysfs.h>
- #include <sound/soc.h>
- #include <sound/pcm.h>
- #include <sound/pcm_params.h>
-@@ -491,6 +492,51 @@ static struct snd_soc_dai_driver tas2770_dai_driver[] = {
- 	},
+@@ -12,6 +12,7 @@
+ #include <linux/err.h>
+ #include <linux/init.h>
+ #include <linux/delay.h>
++#include <linux/hwmon.h>
+ #include <linux/pm.h>
+ #include <linux/i2c.h>
+ #include <linux/gpio/consumer.h>
+@@ -537,6 +538,61 @@ static struct attribute *tas2770_sysfs_attrs[] = {
  };
+ ATTRIBUTE_GROUPS(tas2770_sysfs);
  
-+static int tas2770_read_die_temp(struct tas2770_priv *tas2770, int *result)
++#if defined(CONFIG_HWMON)
++static umode_t tas2770_hwmon_is_visible(const void *data,
++					enum hwmon_sensor_types type, u32 attr,
++					int channel)
 +{
-+	int ret, reading;
++	if (type != hwmon_temp)
++		return 0;
 +
-+	ret = snd_soc_component_read(tas2770->component, TAS2770_TEMP_MSB);
-+	if (ret < 0)
-+		return ret;
-+	reading = ret << 4;
++	switch (attr) {
++	case hwmon_temp_input:
++		return 0444;
++	default:
++		break;
++	}
 +
-+	ret = snd_soc_component_read(tas2770->component, TAS2770_TEMP_LSB);
-+	if (ret < 0)
-+		return ret;
-+	reading |= ret >> 4;
-+
-+	/*
-+	 * As per datasheet: divide register by 16 and subtract 93. We don't
-+	 * want to divide just yet though.
-+	 */
-+	*result = reading - (93 * 16);
 +	return 0;
 +}
 +
-+static ssize_t die_temp_show(struct device *dev,
-+			 struct device_attribute *attr, char *buf)
++static int tas2770_hwmon_read(struct device *dev,
++			      enum hwmon_sensor_types type,
++			      u32 attr, int channel, long *val)
 +{
 +	struct tas2770_priv *tas2770 = i2c_get_clientdata(to_i2c_client(dev));
-+	int ret, temp;
++	int ret;
 +
-+	ret = tas2770_read_die_temp(tas2770, &temp);
++	switch (attr) {
++	case hwmon_temp_input:
++		ret = tas2770_read_die_temp(tas2770, (int *)val);
++		if (!ret)
++			*val *= 1000;
++		break;
++	default:
++		ret = -EOPNOTSUPP;
++		break;
++	}
 +
-+	if (ret < 0)
-+		return ret;
-+
-+	return sysfs_emit(buf, "%d.%03d C\n", temp / 16,
-+			  (temp * 1000 / 16) % 1000);
++	return ret;
 +}
 +
-+static DEVICE_ATTR_RO(die_temp);
-+
-+static struct attribute *tas2770_sysfs_attrs[] = {
-+	&dev_attr_die_temp.attr,
++static const struct hwmon_channel_info *const tas2770_hwmon_info[] = {
++	HWMON_CHANNEL_INFO(temp, HWMON_T_INPUT),
 +	NULL
 +};
-+ATTRIBUTE_GROUPS(tas2770_sysfs);
++
++static const struct hwmon_ops tas2770_hwmon_ops = {
++	.is_visible	= tas2770_hwmon_is_visible,
++	.read		= tas2770_hwmon_read,
++};
++
++static const struct hwmon_chip_info tas2770_hwmon_chip_info = {
++	.ops	= &tas2770_hwmon_ops,
++	.info	= tas2770_hwmon_info,
++};
++#endif
 +
  static const struct regmap_config tas2770_i2c_regmap;
  
  static int tas2770_codec_probe(struct snd_soc_component *component)
-@@ -517,9 +563,19 @@ static int tas2770_codec_probe(struct snd_soc_component *component)
- 			return ret;
- 	}
+@@ -768,6 +824,19 @@ static int tas2770_i2c_probe(struct i2c_client *client)
+ 	if (result)
+ 		dev_err(tas2770->dev, "Register codec failed.\n");
  
-+	ret = sysfs_create_groups(&component->dev->kobj, tas2770_sysfs_groups);
++	if (IS_REACHABLE(CONFIG_HWMON)) {
++		struct device *hwmon;
 +
-+	if (ret < 0)
-+		return ret;
++		hwmon = devm_hwmon_device_register_with_info(&client->dev, "tas2770",
++							tas2770,
++							&tas2770_hwmon_chip_info,
++							NULL);
++		if (IS_ERR(hwmon)) {
++			return dev_err_probe(&client->dev, PTR_ERR(hwmon),
++					     "Failed to register temp sensor\n");
++		}
++	}
 +
- 	return 0;
+ 	return result;
  }
  
-+static void tas2770_codec_remove(struct snd_soc_component *component)
-+{
-+	sysfs_remove_groups(&component->dev->kobj, tas2770_sysfs_groups);
-+}
-+
- static DECLARE_TLV_DB_SCALE(tas2770_digital_tlv, 1100, 50, 0);
- static DECLARE_TLV_DB_SCALE(tas2770_playback_volume, -10050, 50, 0);
- 
-@@ -532,6 +588,7 @@ static const struct snd_kcontrol_new tas2770_snd_controls[] = {
- 
- static const struct snd_soc_component_driver soc_component_driver_tas2770 = {
- 	.probe			= tas2770_codec_probe,
-+	.remove			= tas2770_codec_remove,
- 	.suspend		= tas2770_codec_suspend,
- 	.resume			= tas2770_codec_resume,
- 	.controls		= tas2770_snd_controls,
 
 -- 
 2.48.1
