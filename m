@@ -1,52 +1,90 @@
-Return-Path: <linux-kernel+bounces-520596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1301DA3ABF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 23:46:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37650A3ABF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 23:46:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CED6B1897FDA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 22:46:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28C4F3AC475
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 22:46:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0D531DB37B;
-	Tue, 18 Feb 2025 22:46:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34BC1D934B;
+	Tue, 18 Feb 2025 22:46:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XDArOd59"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ANuAXFyd"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24B662862B7;
-	Tue, 18 Feb 2025 22:46:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1E21BD4E5
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 22:46:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739918764; cv=none; b=IjsgszNkTt6VnUFyo1T2TcpTfs4FQqf6Y80UZaaMa4FecymiG6ScncxowmiA5+TUJ+9VtIKy8NRXgHhWJdE8tmwT6IGy6TDDY0kkXmHQ49mf9yfMLnJE9HANy4D7TYediyyjBGYywYjDCkOt/SbS/DcSbF320PH9dMDNUWjSaEQ=
+	t=1739918781; cv=none; b=oVZAWcYRF+hnGObRSPWzb/Xbi+YUPUwMmQw9/Ljroq4/IZ042N+Gdafq5MdzSgRUlmrhKE6cwEPBV+rP/bNKk8VXg6OuVQLi869v8KPuQLGCXnJfpWNmswGda8TVuJG0SyYmXsBwFo4V7SBmAnA4lkEQhmvOltxN65k3YKiaVeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739918764; c=relaxed/simple;
-	bh=letCvaV1jqhQZFktQQueCdQ3ndWTH/7syDKJLMYcFow=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=XzfTB+91bUKBoa7HJny39T5NFrHysXk2fVjI7ozeTQ3M8oaJNx6JsmmNhytbMIrlI6ELECaR9gYLirD07VoQu9LYBxQe5YllleXBJYc6fPqeAAKF3Ne9oS/9/k3fl/nAIyMX9ctqCB8DZM0dSmdIEM+G1qOAn0wDUjQG8rWJZgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XDArOd59; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BF9FC4CEE2;
-	Tue, 18 Feb 2025 22:46:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739918763;
-	bh=letCvaV1jqhQZFktQQueCdQ3ndWTH/7syDKJLMYcFow=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=XDArOd59vmDswSOel36BhVsWJu59U0+Qn4VOTXSwNqeK0H60F7p5QOIJkO6uOzTMC
-	 uvoVrm3j6Rolz+xNArseRL+UIi7JOXalupHSSGi2YsbrWtbD9voRG1I/o+9yupIb5S
-	 m2G9AHD25yrRAJP0EbPPnof9VxsLhweo2/xozrtYfDO5Ql0HMGtU6I4RrkXbBAGKn5
-	 o5euf72/umt2wKPLy+70WK4zvueCOMu7rRZHgfATaErt4qOQwV3cFmqLZTw6X9d/pK
-	 UgsC0uJwWXY6VewUMacebdv0VRg3mtwjz40mGtEp52+PDU4eFQ6V9jv5ImiVOK3c2d
-	 Ci4YrX8wRsChQ==
-Date: Tue, 18 Feb 2025 16:46:02 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] PCI: shpchp: Debug & logging cleanup
-Message-ID: <20250218224602.GA198344@bhelgaas>
+	s=arc-20240116; t=1739918781; c=relaxed/simple;
+	bh=y1fqN5GbYRykCGi1zwcfHTkU/ZfRpFRIPo+3x+cnynk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RUKiJFlWgccRkKjMg4Cn2D+7QIWc9bipq2N6ZEcQlgrEJi/g1tbMLbUkXX9AkVvHqtsYT11OIGtRxH7EVif6DBkdfiQTttvx14i4n1H7KpaRruyI3orKOL1qLCnyxQG8X/Tx6dD+ZOu5jXRnZLOxge6aLLIPChrzYlBYggqzfig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ANuAXFyd; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739918778;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iZQ+x7hOq3PQQbEiSyLtN+TOyYxHPYGDMm2XpmalGJM=;
+	b=ANuAXFyd3/6QpsTWGPykMR75iEIiGETyr45ufSYA0gSgARz6kZASAhvXg7AIuiGYFwDprS
+	GoHPDr+T1+R9KVjuoKdpY0LMb5RWu+tFHgXjxAWvemicvncofiQtirVoYra4jCiWlZKF/d
+	n1iddgPDoN+9pCj7YyQnOIGb2rQXrkE=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-144-YIy0jK6sNYi-irDyI0sF7A-1; Tue, 18 Feb 2025 17:46:15 -0500
+X-MC-Unique: YIy0jK6sNYi-irDyI0sF7A-1
+X-Mimecast-MFC-AGG-ID: YIy0jK6sNYi-irDyI0sF7A_1739918774
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7c0834ace1dso1068582885a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 14:46:15 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739918774; x=1740523574;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iZQ+x7hOq3PQQbEiSyLtN+TOyYxHPYGDMm2XpmalGJM=;
+        b=n9ssarmteHi2X4R/iL275Uhr9m3gwywGx1zUZb0gmysGpBtKO3GqHQX9d+SUn3euw1
+         As4FVr9zRfSUjPnf6aqTmqBHvZAbB15aB2+XWLtgXBodcsn+adzwyewXiE8LipMHRE4W
+         Du5TBjrCfbqbXToiZQ6oHNzBtORwSHxbbg0WHfFRgA5jkbQ1pkd+ohVwdbZInrtNDOOx
+         GtP+gvneJk/BQ87MrJFiXL1jMEiYgaZWlhjfw+PTQ17IFe0W87judO7dv79oIdexS01J
+         4e+bSr4j4DtTYR6KRmEOI82jKzpWO8aBu4RHvLqxPKUzoz5GiWiD7x8NN5DoIL6R0N20
+         MV0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXxFb5petaiu1pggUAj/j3tfgRKiq7Gjoh/efEGFGcYlF2YXtFNRNbxFy4dLQEq9Mxwo+gfTg9B7pnDt2Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOn6AHZM6oOm1q2l2lX1gxZ96cw/k5Hk4skvgq7JuDKdtx5Nin
+	V3lUoyZbz9MTivUqJ7OGQP2tSNWvVaUkoP1nU/a7OXD690YKet3dRh65WlHcAqypxCtfOMXvfLb
+	fahKi5HAxT5oUKM3H+IWM/b7OxNYGdnma2OR1Eo9ZTH6+m5dxblyYpnAdcZDHpQ==
+X-Gm-Gg: ASbGncsonD7B6fvW/TZQ1S2vDr9zhJ4l0qcOR+WIDl/BHhKk5s9Wxa57ZUj1nmGUaZF
+	LvK1Npkdn7odbCXQqKGSMjCF5DqWLsrXZsM/w2Xfp3G3UQeHrhbPkcM3+CHE03sA8Rpaqmznb6i
+	XESNIchQF0Q3iK0VEgv+o09ECrRtktjp94Z0Jr2/srtMFIliw8bE2aarc5/d8vzfMQSfkmG3fpx
+	llTkQgN9jEXXqCv+TduThVB5LteQF/eGkEwD9d3TK1RdWQzDW3oxeFc0lA=
+X-Received: by 2002:a05:620a:2989:b0:7c0:5fff:210a with SMTP id af79cd13be357-7c08a9aaa8dmr2285348485a.23.1739918774553;
+        Tue, 18 Feb 2025 14:46:14 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF9aYa7xb0jSy10KYfjbvxeGabOuqZLuvs7LaEOm/AXuBMyqdCDraAKcVyHKcDCqvuv8zIW6g==
+X-Received: by 2002:a05:620a:2989:b0:7c0:5fff:210a with SMTP id af79cd13be357-7c08a9aaa8dmr2285346185a.23.1739918774251;
+        Tue, 18 Feb 2025 14:46:14 -0800 (PST)
+Received: from x1.local ([2604:7a40:2041:2b00::1000])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e660f65c5csm62704546d6.117.2025.02.18.14.46.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2025 14:46:13 -0800 (PST)
+Date: Tue, 18 Feb 2025 17:46:10 -0500
+From: Peter Xu <peterx@redhat.com>
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mitchell.augustin@canonical.com, clg@redhat.com, jgg@nvidia.com
+Subject: Re: [PATCH v2 4/6] vfio/type1: Use consistent types for page counts
+Message-ID: <Z7UNsiRfdOWfZWuq@x1.local>
+References: <20250218222209.1382449-1-alex.williamson@redhat.com>
+ <20250218222209.1382449-5-alex.williamson@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,31 +93,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250217095550.2789-1-ilpo.jarvinen@linux.intel.com>
+In-Reply-To: <20250218222209.1382449-5-alex.williamson@redhat.com>
 
-On Mon, Feb 17, 2025 at 11:55:48AM +0200, Ilpo Järvinen wrote:
-> Hi all,
+On Tue, Feb 18, 2025 at 03:22:04PM -0700, Alex Williamson wrote:
+> Page count should more consistently be an unsigned long when passed as
+> an argument while functions returning a number of pages should use a
+> signed long to allow for -errno.
 > 
-> This series cleans up debug/logging in shpchp driver.
+> vaddr_get_pfns() can therefore be upgraded to return long, though in
+> practice it's currently limited by the batch capacity.  In fact, the
+> batch indexes are noted to never hold negative values, so while it
+> doesn't make sense to bloat the structure with unsigned longs in this
+> case, it does make sense to specify these as unsigned.
 > 
-> The series is an update for the only remaining patch in the pci_printk()
-> removal series. To avoid breaking build, pci_printk() itself will only
-> be removed in the next kernel release because both AER and shpchp used
-> it and are in different topic branches.
+> No change in behavior expected.
 > 
-> v2:
-> - Split removal of logging wrappers and module parameter removal to
->   own patches
-> - Explain how dynamic debugging can be enabled
-> 
-> Ilpo Järvinen (2):
->   PCI: shpchp: Remove unused logging wrappers
->   PCI: shpchp: Remove "shpchp_debug" module parameter
-> 
->  drivers/pci/hotplug/shpchp.h      | 18 +-----------------
->  drivers/pci/hotplug/shpchp_core.c |  3 ---
->  2 files changed, 1 insertion(+), 20 deletions(-)
+> Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
 
-Applied to pci/hotplug for v6.15, thanks, Ilpo!
+Reviewed-by: Peter Xu <peterx@redhat.com>
+
+-- 
+Peter Xu
+
 
