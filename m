@@ -1,135 +1,93 @@
-Return-Path: <linux-kernel+bounces-518822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC4A2A39506
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:21:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E13FA39517
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:23:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CC183B2A7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:19:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A62E3ACF4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:21:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E3D022D4F1;
-	Tue, 18 Feb 2025 08:15:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 770FB2417C7;
+	Tue, 18 Feb 2025 08:15:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="f4mC4+xj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="fOjh5k2v"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB57749A;
-	Tue, 18 Feb 2025 08:15:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F256241122;
+	Tue, 18 Feb 2025 08:15:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739866503; cv=none; b=F9ycMRELl+Rsb7jZfDH79A0+JXBMmfXoPxPZejS2OFi1ft+yoTFhCi2P5yymo8zoEonFrvCyyXTf7If8+4PbEf1a699N8gdIGD4lWpmNtXK/J7O9pz7HaEXjOdRhvWw2FT32J+TAQSgTXV4OTDyn2SQEvbCPmZOdwTji4GfLqVk=
+	t=1739866527; cv=none; b=qsQypNVAQBvWGFVwhM7AW4zvEXGq2t7k/SmObbmXDrcuANdDz5r6C5icl1moxh2krDOu9AYgYbp5DGSqNh0YxSTvX1e7vS0BCcd07uPv3qi82Cbu+7iK4QvjiofAEoLNH9EN35BJU3rvu4YrWFV9q9jAeFSLf3R39W9YGJJ3kIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739866503; c=relaxed/simple;
-	bh=UFdR7IbguGl7iKpceVwoQo+fFJc+Ocd7Dgzg0nOOeAE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QR0TTmQpVg9VULZAspdn3kAXaCZJChPkVIgXhsTYTZbzZVqgBBNZoz0wAp3d7nmjlQNxnAR0aYXJhD8IWKBH+ur1iKiUOBz2XASSXQVyfPO1LB6oe+AwzwMqPB4q2W9x1nJZa+Az6/z5rPiZqgOKYUn2m6kp347tvTIBHSeLW6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=f4mC4+xj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 303D0C4CEE2;
-	Tue, 18 Feb 2025 08:15:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1739866502;
-	bh=UFdR7IbguGl7iKpceVwoQo+fFJc+Ocd7Dgzg0nOOeAE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=f4mC4+xjy8+3Ap3+zmCq4f4juZVPx3MmLXCA2pN+OuMHab5gaVtMq0RgIb/vmcIt4
-	 5pomyFm6UrsvIjuGwEbtdC0Cnn6HgTkNdbLBGtu/S6H3634IT4Qh8f1TMWeYpsxTMx
-	 HEiie4JkezV19OJAsaovd47Bq7gU0JDqjGhlceHw=
-Date: Tue, 18 Feb 2025 09:14:59 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Douglas Anderson <dianders@chromium.org>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
-	Gregory CLEMENT <gregory.clement@bootlin.com>,
-	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	dri-devel@lists.freedesktop.org,
-	platform-driver-x86@vger.kernel.org, linux-mips@vger.kernel.org,
-	linux-clk@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org
-Subject: Re: [PATCH v3 1/7] driver core: auxiliary bus: add device creation
- helpers
-Message-ID: <2025021826-smile-batting-e52f@gregkh>
-References: <20250211-aux-device-create-helper-v3-0-7edb50524909@baylibre.com>
- <20250211-aux-device-create-helper-v3-1-7edb50524909@baylibre.com>
- <2025021437-washout-stonewall-d13e@gregkh>
- <1jwmdsxugx.fsf@starbuckisacylon.baylibre.com>
- <2025021501-tamer-sank-142a@gregkh>
- <1jikp8xx01.fsf@starbuckisacylon.baylibre.com>
+	s=arc-20240116; t=1739866527; c=relaxed/simple;
+	bh=kIzCi96nV3/q5JwgPyMeC5hhqR1+he9F7aU3vXLhIJg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ZDIto8KfuxXsbkhEeeri6rt0mT1RtGuY4QE+l+WYLOYvNHKVRcD2PTaR/vcRyRDj7i3xkHyUimpVZd/04NsIch3JSqnlZSBhTmTakV3iXCyTjkXx5aWEr2GJ24/qsM91YzOblaJwJQ5wb3+g1gf1QfQkIG+mI91t2+oliELj21I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=fOjh5k2v; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=72etSD4IW1fdoCqIDb0MAOspZxQRpcvYAHDUFcZyj8M=;
+	t=1739866526; x=1741076126; b=fOjh5k2vwuLnhfGIpqmLuB2M2Od+0kK9+kemXTGaWyMFPdg
+	67SDUfqQWHyf0U/vvqcE7ABYEvg2IFMAR0ABNB9M5NoYvnsVRfWNuBwfB7c1sEDmkDH9vo8Lw+/VZ
+	T8pVDaSBZSDrgC+irJ/zkdWiIhEJ0oh44x8u/DpoEJtMiPX0eZXuUOIGtt6ypgcu+oHxxyETX+kyV
+	LDUqikhcDfs9t5nBc6tceVebCKXpsf6tik2LJmafVMnKwO00k1uR84CpArv4ZlwV+XwC1Dt7fEdst
+	HR3KW0SE3K4sx7mTur+fUL3QzKd9cAIydNCahAtsOoqyVEN5bP2vd/DlP0yoN1Ww==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1tkIlF-00000001HxQ-1ViY;
+	Tue, 18 Feb 2025 09:15:21 +0100
+Message-ID: <6a5eb58c06cc1d5bdeb67fe877ef3a98520627ed.camel@sipsolutions.net>
+Subject: Re: unknow Network controller: Intel Corporation Device 093c (rev
+ 3a)
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Corentin Labbe <clabbe.montjoie@gmail.com>, kvalo@kernel.org, 
+	linux-wireless@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Date: Tue, 18 Feb 2025 09:15:16 +0100
+In-Reply-To: <Z7N7AvQvv8k4OY-o@Red>
+References: <Z7N7AvQvv8k4OY-o@Red>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1jikp8xx01.fsf@starbuckisacylon.baylibre.com>
+X-malware-bazaar: not-scanned
 
-On Mon, Feb 17, 2025 at 07:10:54PM +0100, Jerome Brunet wrote:
-> On Sat 15 Feb 2025 at 07:53, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-> 
-> [...]
-> 
-> >> 
-> >> >
-> >> >> +							int id)
-> >> >> +{
-> >> >> +	struct auxiliary_device *auxdev;
-> >> >> +	int ret;
-> >> >> +
-> >> >> +	auxdev = kzalloc(sizeof(*auxdev), GFP_KERNEL);
-> >> >> +	if (!auxdev)
-> >> >> +		return ERR_PTR(-ENOMEM);
-> >> >
-> >> > Ick, who cares what the error value really is?  Why not just do NULL or
-> >> > a valid pointer?  That makes the caller much simpler to handle, right?
-> >> >
-> >> 
-> >> Sure why not
-> 
-> I have tried the 'NULL or valid' approach. In the consumers,
-> which mostly return an integer from their various init function, I got
-> this weird to come up with one from NULL. EINVAL, ENOMEM, etc ... can't
-> really pick one.
-> 
-> It is actually easier to pass something along.
+On Mon, 2025-02-17 at 19:08 +0100, Corentin Labbe wrote:
+> Hello
+>=20
+> I have a thinkpad t460s laptop with an unknow network device.
 
-Ok, fair enough, thanks for trying.  But I would have returned just
--ENODEV in all cases, as that's what the end result was :)
+According to ifixit teardown images, that came with an 8260 WiFi NIC.
 
-thanks,
+> Since the laptop does not have wifi, I suspect it is the wifi card.
+>=20
+> The laptop is running Debian bookworm, and I tried to update pci.ids, no =
+more information.
+>=20
+> lspci -vx give:
+> 03:00.0 Network controller: Intel Corporation Device 093c (rev 3a)
+> 	Subsystem: Intel Corporation Device 2181
 
-greg k-h
+But that doesn't match at all, not even close.
+
+I cannot find any record for WiFi of these numbers, so either the device
+is not WiFi or is malfunctioning. You could try to open it up, take a
+picture so we can see what the WiFi NIC is, and also maybe re-seat the
+NIC while at is, occasionally that fixes such issues.
+
+johannes
 
