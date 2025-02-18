@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-518742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81B15A393F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:43:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 628C3A39401
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:45:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6063A165257
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 07:43:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BC473B521C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 07:43:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8985C1D5AD3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 897DC1D5ACD;
 	Tue, 18 Feb 2025 07:42:49 +0000 (UTC)
 Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F25A1B87D3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8082C1CEAD3;
 	Tue, 18 Feb 2025 07:42:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739864569; cv=none; b=W6FFW50vxiNz+QdqJeH3o86Jt2awYv42Tx4MnO2S2DnqwVNoq+fME/6hoKy5ZpBhPJ4wsNJFOiUZ1mDgPPsnbbO36QliH/tRYovYt1CbusDA1v/GYPQkrGDlfhmoyNKWVJruAjkvoo8esM/BAz2Cm4PxAhIizZAVpYaXXrvbiTk=
+	t=1739864569; cv=none; b=QerN3YW1+G0rpjdJQNMcG/XIy5muFeEQigFSSvK9k0hx/WAOQj5WbuxNUWsQvZlFnSv/3FUqLi80YNpB5XwvOm/JaCF5hDQKzwfZchBPftGpYub1bXVwS9AyT4I+/qAo76oXtB1DYv6A5S3zpwLbnTYDxx31ahsUZwZX0pvA424=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1739864569; c=relaxed/simple;
-	bh=9Y5xqlji3QcnjPR1iWTgZUWuGo15XrO/7x06Glzq6qg=;
+	bh=0DXTL1IPm6qXY4ykIm4VAQ4Aa8K1rUuptSLtaYfs968=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DlIumwCqs4QaDG0gPL067LUjouGWQlEaczTs7U0Aj23EU1sq7sYp7ErZ3AgqlpjtqKAPwaKeCGCTqqSJSgfrpGAD9ySTeGH+nm1SWF+1LxOXtNZNuAr0eOfi19lFdruek5kefjjPAqtwk2/KfHnZTb4lv5KVZ+95TMkG//jK6o8=
+	 MIME-Version; b=pEGzVLyEPmZ9UOac3xLYHvLF2heBFBRsrcfVYS4YU3gcWvmZJcdGFxsV6cUBXddRTl4tnBcbN9EHPl4VPi3i7hG3nTmusH84arKxxlpDtZ7B0kU7gU/2cYhwtRPHdZY/q2V46lry2O1hOzTDDzcCQrCcQh1nAVf+NBnhlSsvNMY=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; arc=none smtp.client-ip=46.19.9.99
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
@@ -32,8 +32,8 @@ Received: from 89-212-21-243.static.t-2.net ([89.212.21.243]:52604 helo=and-HP-Z
 	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96.2)
 	(envelope-from <andrej.picej@norik.com>)
-	id 1tkIFd-00G0MD-0q;
-	Tue, 18 Feb 2025 08:42:40 +0100
+	id 1tkIFi-00G0MD-1a;
+	Tue, 18 Feb 2025 08:42:46 +0100
 From: Andrej Picej <andrej.picej@norik.com>
 To: shawnguo@kernel.org,
 	s.hauer@pengutronix.de,
@@ -47,9 +47,9 @@ Cc: imx@lists.linux.dev,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	upstream@lists.phytec.de
-Subject: [PATCH v3 04/15] arm64: dts: imx8mm-phycore-som: Assign regulator for dsi to lvds bridge
-Date: Tue, 18 Feb 2025 08:41:45 +0100
-Message-Id: <20250218074156.807214-5-andrej.picej@norik.com>
+Subject: [PATCH v3 05/15] arm64: dts: imx8mm-phycore-som: add descriptions to nodes
+Date: Tue, 18 Feb 2025 08:41:46 +0100
+Message-Id: <20250218074156.807214-6-andrej.picej@norik.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250218074156.807214-1-andrej.picej@norik.com>
 References: <20250218074156.807214-1-andrej.picej@norik.com>
@@ -71,34 +71,49 @@ X-Source:
 X-Source-Args: 
 X-Source-Dir: 
 
-From: Yashwanth Varakala <y.varakala@phytec.de>
+From: Yannic Moog <y.moog@phytec.de>
 
-Add a missing voltage regulator of 1.8v to the sn65dsi83
-(dsi_lvds bridge) node. Due to the absence of this regulator, a fallback
-dummy regulator is used and that triggers a warning message from the
-kernel. Assigning the appropriate regulator avoids the warning.
+Add missing EEPROM and RTC descriptions. Also use eMMC with
+lower-case "e".
 
-Signed-off-by: Yashwanth Varakala <y.varakala@phytec.de>
+Signed-off-by: Yannic Moog <y.moog@phytec.de>
 Signed-off-by: Andrej Picej <andrej.picej@norik.com>
 ---
 Changes in v3:
 - no change
 ---
- arch/arm64/boot/dts/freescale/imx8mm-phycore-som.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/freescale/imx8mm-phycore-som.dtsi | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/arch/arm64/boot/dts/freescale/imx8mm-phycore-som.dtsi b/arch/arm64/boot/dts/freescale/imx8mm-phycore-som.dtsi
-index 8de5a46512b0..7e859c65317a 100644
+index 7e859c65317a..cced82226c6d 100644
 --- a/arch/arm64/boot/dts/freescale/imx8mm-phycore-som.dtsi
 +++ b/arch/arm64/boot/dts/freescale/imx8mm-phycore-som.dtsi
-@@ -286,6 +286,7 @@ sn65dsi83: bridge@2d {
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&pinctrl_sn65dsi83>;
- 		reg = <0x2d>;
-+		vcc-supply = <&reg_vdd_1v8>;
+@@ -290,6 +290,7 @@ sn65dsi83: bridge@2d {
  		status = "disabled";
  	};
  
++	/* EEPROM */
+ 	eeprom@51 {
+ 		compatible = "atmel,24c32";
+ 		pagesize = <32>;
+@@ -297,6 +298,7 @@ eeprom@51 {
+ 		vcc-supply = <&reg_vdd_3v3_s>;
+ 	};
+ 
++	/* RTC */
+ 	rv3028: rtc@52 {
+ 		compatible = "microcrystal,rv3028";
+ 		interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
+@@ -307,7 +309,7 @@ rv3028: rtc@52 {
+ 	};
+ };
+ 
+-/* EMMC */
++/* eMMC */
+ &usdhc3 {
+ 	assigned-clocks = <&clk IMX8MM_CLK_USDHC3_ROOT>;
+ 	assigned-clock-rates = <400000000>;
 -- 
 2.34.1
 
