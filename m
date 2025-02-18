@@ -1,112 +1,130 @@
-Return-Path: <linux-kernel+bounces-518719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06528A393BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:24:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2857DA393BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:25:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1A27188ACD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 07:24:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FE25188ADF7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 07:25:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D1331B4250;
-	Tue, 18 Feb 2025 07:24:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C6171B85CC;
+	Tue, 18 Feb 2025 07:25:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="DlmEPedK"
-Received: from m16.mail.126.com (m16.mail.126.com [117.135.210.6])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C71D7E1
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 07:24:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.6
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PU+SGjVE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86EF41B423D;
+	Tue, 18 Feb 2025 07:25:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739863483; cv=none; b=NlJGZVlUr37ynxpGp0j5D+EdUpuGP8WFWMspB057EWJT2LZaZEqTU6jsnEmJB0Ay45KAipWZTBVWzBOQh1LbhkbVvwXl3g2vCWKoiLFxcdLettbtCPIbukXB+/Jy3Ht4x3r4U+kv+NjLgnysXMviF9Jvkpk3hIS8RcWtx3ywDl0=
+	t=1739863506; cv=none; b=t9s/Dd66s6Gf6CrIcmxva0V766Rf6raCpc5mPQ6wO3DZccJRfnnPrk7Yk1ciZreJiG40nyWahrBhAK2NH3ogufOLhWkJEwG74ANQqcfbDuR+7uyh0xCleMR/TJ+dbfWhcGICoGRfSqH3m1cSkxJDKq0jL7Q+GYPlHSG5TKndo4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739863483; c=relaxed/simple;
-	bh=GW/AhHzTMNJXQYgjELxH20WtXeMjZHvfL6S/q87rwHQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JFomksWdqo7aMnABVurmpFS6k5x+lsxN98DglT88rUpJshPRG3eDkmpkNTkpQSY0NbZXB2IM+NUpENBMB4EQgx0uH/BSkl6MmPz5xI0PTdgVLdt+d281r+Kor8A95uSRr4Bm8x+/AE9ddjcL1qbwzNLNLFEs1BQgs3VXGZ/82+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=DlmEPedK; arc=none smtp.client-ip=117.135.210.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=ZJscg99EXRdekigVGw2UnRJFfVqZBq30pvvZtMt7gLg=;
-	b=DlmEPedKd1MgySe1dQhnY1hyC8nAYKX/Haiu/nGNY+nkDGsrjZ1dZe7iYVGMaT
-	qMm5oT9Bz4npiZjA9JwCTy132xPlw8Xcin82DQR0SsYLdCHehSSU9N6GrzH8A6jW
-	etZxIC5V+NeZCovSPHLLFWyle2nmtd6Af5uoD7adnRRWM=
-Received: from [172.19.20.199] (unknown [])
-	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wD3twWSNbRnMZhbBA--.38403S2;
-	Tue, 18 Feb 2025 15:24:03 +0800 (CST)
-Message-ID: <1ea2c7b0-790c-4f60-a713-9029252a0837@126.com>
-Date: Tue, 18 Feb 2025 15:24:01 +0800
+	s=arc-20240116; t=1739863506; c=relaxed/simple;
+	bh=8vw7qjOHRzJxuFb5HuECnMEs8o0UACpysBm5oKep0Pk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qiehsMSq7Fk7U2ElkjSpCi7uy47zGxi5xDpt7PU1e/1PZ07W9eWqYQKlOVc2osG0giMOOeVSCmF9XROYwTR9ssRTBtqTjtd/DafSovvQNDyBpoHdD9AMgxFx3fBDji/yIO2nkIyKrqxzRv2izmAbZTz+MUsb2KH5VHkTND2vxuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PU+SGjVE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2050C4CEE2;
+	Tue, 18 Feb 2025 07:25:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739863506;
+	bh=8vw7qjOHRzJxuFb5HuECnMEs8o0UACpysBm5oKep0Pk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PU+SGjVEoG9Xd0pBqFf+epTcdZXj9L5oj+iOVYQHPSZApDubU3lgURgN2/QTfzbNp
+	 l9hFx9H03Km4EQbcqstzjODnRRn81x0VMWjUY7KZDVHIZjAW3lLiMrx98WUtRKejLS
+	 yB8XfmiVUKFWcKLha0cHLagEzt3oDOpmoj2Ks9TikzfVNpXf9v2ltgQncXjbeHlQZt
+	 LCHOTs8RcRIphxW6SPGS6JQ9kQOQVfYK7LZ4U4ZFl0AjPKkse1Ekpuq08xIEWtDQzF
+	 i9z0hTa5Oma6iAdmQQNjtNe6iHQOpsSQ8uz/ETjERHL+fd90iNVP+0LfVuGfPmBQb1
+	 +xiyg8WHFsr2Q==
+Date: Tue, 18 Feb 2025 09:24:53 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v3 1/2] mm/memblock: Add reserved memory release function
+Message-ID: <Z7Q1xY3jhWjaSdeh@kernel.org>
+References: <173928521419.906035.17750338150436695675.stgit@devnote2>
+ <173928522350.906035.5626965043208329135.stgit@devnote2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] mm/hugetlb: wait for hugepage folios to be freed
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 21cnbao@gmail.com,
- david@redhat.com, baolin.wang@linux.alibaba.com, muchun.song@linux.dev,
- osalvador@suse.de, liuzixing@hygon.cn
-References: <1739604026-2258-1-git-send-email-yangge1116@126.com>
- <20250217203417.9689a271f792a4e23da322aa@linux-foundation.org>
-From: Ge Yang <yangge1116@126.com>
-In-Reply-To: <20250217203417.9689a271f792a4e23da322aa@linux-foundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3twWSNbRnMZhbBA--.38403S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Ar48uF4UCrWUArWDWrW3Jrb_yoW8tr1rpF
-	WUKr47GFWDJr9akrnrXwnY9r10krZ8ZrW5Gr1Iqw13uan8Jr1xKFyIywn0qay5Cr10krWI
-	qrWjvw1DZF1UA37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jjOJ5UUUUU=
-X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbifhn3G2e0I135pQACs4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <173928522350.906035.5626965043208329135.stgit@devnote2>
 
+Hi Masami,
 
-
-在 2025/2/18 12:34, Andrew Morton 写道:
-> On Sat, 15 Feb 2025 15:20:26 +0800 yangge1116@126.com wrote:
+On Tue, Feb 11, 2025 at 11:47:03PM +0900, Masami Hiramatsu (Google) wrote:
+> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 > 
->> From: Ge Yang <yangge1116@126.com>
->>
->> Since the introduction of commit b65d4adbc0f0 ("mm: hugetlb: defer freeing
->> of HugeTLB pages"), which supports deferring the freeing of HugeTLB pages,
->> the allocation of contiguous memory through cma_alloc() may fail
->> probabilistically.
->>
->> In the CMA allocation process, if it is found that the CMA area is occupied
->> by in-use hugepage folios, these in-use hugepage folios need to be migrated
->> to another location. When there are no available hugepage folios in the
->> free HugeTLB pool during the migration of in-use HugeTLB pages, new folios
->> are allocated from the buddy system. A temporary state is set on the newly
->> allocated folio. Upon completion of the hugepage folio migration, the
->> temporary state is transferred from the new folios to the old folios.
->> Normally, when the old folios with the temporary state are freed, it is
->> directly released back to the buddy system. However, due to the deferred
->> freeing of HugeTLB pages, the PageBuddy() check fails, ultimately leading
->> to the failure of cma_alloc().
->>
->> Here is a simplified call trace illustrating the process:
->> cma_alloc()
->>      ->__alloc_contig_migrate_range() // Migrate in-use hugepage
->>          ->unmap_and_move_huge_page()
->>              ->folio_putback_hugetlb() // Free old folios
->>      ->test_pages_isolated()
->>          ->__test_page_isolated_in_pageblock()
->>               ->PageBuddy(page) // Check if the page is in buddy
->>
->> To resolve this issue, we have implemented a function named
->> wait_for_hugepage_folios_freed(). This function ensures that the hugepage
->> folios are properly released back to the buddy system after their migration
->> is completed. By invoking wait_for_hugepage_folios_freed() before calling
->> PageBuddy(), we ensure that PageBuddy() will succeed.
->>
->> Fixes: b65d4adbc0f0 ("mm: hugetlb: defer freeing of HugeTLB pages")
+> Add reserve_mem_release_by_name() to release a reserved memory region
+> with a given name. This allows us to release reserved memory which is
+> defined by kernel cmdline, after boot.
 > 
-> Do you feel that this issue is serious enough to justify a -stable
-> backport of the fix?
-Yes, I will add 'CC: stable@vger.kernel.org' in the next patch, thanks.
+> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Mike Rapoport <rppt@kernel.org>
+> Cc: linux-mm@kvack.org
 
+...
+
+> +/**
+> + * reserve_mem_release_by_name - Release reserved memory region with a given name
+> + * @name: The name that is attatched to a reserved memory region
+> + *
+> + * Forcibly release the pages in the reserved memory region so that those memory
+> + * can be used as free memory. After released the reserved region size becomes 0.
+> + *
+> + * Returns: 1 if released or 0 if not found.
+> + */
+> +int reserve_mem_release_by_name(const char *name)
+> +{
+> +	struct reserve_mem_table *map;
+> +	unsigned int page_count;
+> +	phys_addr_t start;
+> +
+> +	guard(mutex)(&reserve_mem_lock);
+> +	map = reserve_mem_find_by_name_nolock(name);
+> +	if (!map)
+> +		return 0;
+> +
+> +	start = map->start;
+> +	page_count = DIV_ROUND_UP(map->size, PAGE_SIZE);
+> +
+> +	for (int i = 0; i < page_count; i++) {
+> +		phys_addr_t addr = start + i * PAGE_SIZE;
+> +		struct page *page = pfn_to_page(addr >> PAGE_SHIFT);
+> +
+> +		page->flags &= ~BIT(PG_reserved);
+> +		__free_page(page);
+> +	}
+
+We have free_reserved_area(), please use it here.
+Otherwise
+
+Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+
+> +	map->size = 0;
+> +
+> +	return 1;
+> +}
+> +
+>  /*
+>   * Parse reserve_mem=nn:align:name
+>   */
+> 
+
+-- 
+Sincerely yours,
+Mike.
 
