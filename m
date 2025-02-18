@@ -1,107 +1,126 @@
-Return-Path: <linux-kernel+bounces-518517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA451A39052
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 02:22:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CC5EA39059
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 02:24:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3B923B443F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 01:21:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9885C188A59F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 01:24:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F1661FF2;
-	Tue, 18 Feb 2025 01:21:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D910A76026;
+	Tue, 18 Feb 2025 01:23:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="cvWQP1rD"
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="I9SHbfJd"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E4A7175BF;
-	Tue, 18 Feb 2025 01:21:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C6AE196;
+	Tue, 18 Feb 2025 01:23:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739841686; cv=none; b=lDyzX0pHvBeyRCT9nFrC3zGGAeCISxi3wMUGMsWmgy9rdBC1JkzSRuFL1Ul1y9gVK7zwan1rUB2mhwx8uxK1CTcBJIt9zJ4EV3Ffjmt48ZJj/5ZGKVT6tBmGA1ZGL2q0HcdFeqU6D7tY7u36CszJu01q+y+vbFcYoIh1mGIXmpI=
+	t=1739841839; cv=none; b=WFI7mugFpSYlaLbZ6B1wjpJFMyffFNGzPtTrUsK0hX/h4h2UVyJDsmTbNjBqphHlZqPcd9N87WX6JhkkbJh85cmxkgZcQCOuec9i4c4nAA2hiXSENLs7lGPOk7RB4ROU8ZcQieDMETDmAlpRPP478bT5DTLEDEhS2Cs6WDn8pwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739841686; c=relaxed/simple;
-	bh=42wuwLzT7FUmwwcFugm5CFe50Sm4EzCJF++OL//MtqQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WFfseqqw5a39+aNhkVLRfuA3HfJ8EAz8R8mmfZ14NRlu9FERqdP/aNVbNI5OtGMV4HOqgzsgTJy+uogg5vy6iLBqDfiv1NUGcYsKHQNxHQU7SiHO0heYvFC11C2SOAuwuqSz5ELya4483f/abMxiyGPr9jujsXBWaeyfZEEgD2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=cvWQP1rD; arc=none smtp.client-ip=115.124.30.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1739841675; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=FuF6m3leXUa/vGlA8F/tyoZFS3UM+jds6W3yZp2fFyA=;
-	b=cvWQP1rD57v6zw9WVFpGbqTJXUFFUOc2yqbv+TmP9CdV0c7LcTY7VcRqQvb1Uzj4JJgIiLrptBGkV6nbWSwvA2PvSKjfydz5QBQo10KrZvSn0VGtdfKIoaovY3PFEzfqQQfH0G6MAkCsuPcvqXIOMGp7TQQ5ZiWXV2CedyvOexY=
-Received: from localhost.localdomain(mailfrom:fengwei_yin@linux.alibaba.com fp:SMTPD_---0WPjc6Hf_1739841673 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 18 Feb 2025 09:21:14 +0800
-From: Yin Fengwei <fengwei_yin@linux.alibaba.com>
-To: robin.murphy@arm.com,
-	will@kernel.org,
-	mark.rutland@arm.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: jie.li.linux@linux.alibaba.com,
-	Yin Fengwei <fengwei_yin@linux.alibaba.com>
-Subject: [PATCH] perf/arm-cmn: don't claim resource during ioremap() for CMN700 with ACPI
-Date: Tue, 18 Feb 2025 09:21:11 +0800
-Message-Id: <20250218012111.30068-1-fengwei_yin@linux.alibaba.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+	s=arc-20240116; t=1739841839; c=relaxed/simple;
+	bh=9oVGiwMKiW7/YtFEjLui8oLPBFncpYRUwuXpmJFIbVI=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bd/Wki1HqZPY69fd6gyT/D/jiPyTi+ivnPVn9NFs6+YX/KRsUyCnStIKzuVcHqppXcVKN6etEFghkflGKn4MSKyy879FUob4fYsYaclZ9/+AaZV80lqpGF9UkQaJ1QLRwH1JqouzrCNkwguoTDO7O7uBo7oxqkWkCfG43sfI/gE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=I9SHbfJd; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51HAg5va014197;
+	Tue, 18 Feb 2025 01:23:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	qMEutTQVuGjBpi2D26yi/Ff62sncQlmCdz6+YwL3Rkw=; b=I9SHbfJdDRfxLLcQ
+	OMZcaeo+ERBKdhronzl3b40hibxW9hzXFr4YrUFXV9qxfIF+Gz4ypbTl5UPVXXCB
+	JZ5TA7t9cVlPSghFYLGTwJGKVJ3NXaLP9cExGAp//XvLKNN4YQAD9SOSF2QZK8xe
+	ImNo1n/HfgpX3H9gzuFY7kwLvkj4FaOMblasU/DcMm0Hx6PqVio3VNZjEWvpAaiz
+	AXhF/CC2bD+lXt4nvF/h6Lc0puPOikI96C2NV4P5AnFo1lOQ9iGfhZIJ1TxfnqAp
+	iBXmmNccpQqCe81YbNzgUKMWmhazLJIH+DY1xFizh0QPedOYiGNJCTNJPdZIjaT3
+	NLfLrg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44ut7tu7xd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Feb 2025 01:23:41 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51I1NebU007543
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Feb 2025 01:23:40 GMT
+Received: from abhinavk-linux1.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 17 Feb 2025 17:23:40 -0800
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+To: Rob Clark <robdclark@gmail.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Simona
+ Vetter" <simona@ffwll.ch>,
+        Jonathan Marek <jonathan@marek.ca>,
+        "Krzysztof
+ Kozlowski" <krzysztof.kozlowski@linaro.org>
+CC: Abhinav Kumar <quic_abhinavk@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>, Rob Clark
+	<robdclark@chromium.org>
+Subject: Re: (subset) [PATCH v3 0/4] drm/msm/dsi/phy: Improvements around concurrent PHY_CMN_CLK_CFG[01]
+Date: Mon, 17 Feb 2025 17:23:29 -0800
+Message-ID: <173984160581.1759776.15253644637290957859.b4-ty@quicinc.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250214-drm-msm-phy-pll-cfg-reg-v3-0-0943b850722c@linaro.org>
+References: <20250214-drm-msm-phy-pll-cfg-reg-v3-0-0943b850722c@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: yik5yCM9l82EwYzBK7JPIH-3VsrL1uxf
+X-Proofpoint-ORIG-GUID: yik5yCM9l82EwYzBK7JPIH-3VsrL1uxf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-17_09,2025-02-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 spamscore=0
+ suspectscore=0 lowpriorityscore=0 malwarescore=0 impostorscore=0
+ mlxscore=0 mlxlogscore=782 clxscore=1015 phishscore=0 priorityscore=1501
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502180006
 
-Currently, arm-cmn PMU driver assumes ACPI claim resource
-for CMN600 + ACPI. But with CMN700 + ACPI, the device probe
-failed because of resource claim failes when ioremap() is
-called:
-[   10.837300] arm-cmn ARMHC700:00: error -EBUSY: can't request region for resource [mem 0x40000000-0x4fffffff]
-[   10.847310] arm-cmn ARMHC700:00: probe with driver arm-cmn failed with error -16
-[   10.854726] arm-cmn ARMHC700:02: error -EBUSY: can't request region for resource [mem 0x40040000000-0x4004fffffff]
-[   10.865085] arm-cmn ARMHC700:02: probe with driver arm-cmn failed with error -16
 
-Let CMN700 + ACPI do same as CMN600 + ACPI to allow CMN700
-work in ACPI env.
+On Fri, 14 Feb 2025 16:08:40 +0100, Krzysztof Kozlowski wrote:
+> Changes in v3:
+> - Define bitfields in patches 1-3, so move there parts from patch #4
+> - Use FIELD_GET
+> - Keep separate cached->bit_clk_div and pix_clk_div
+> - I think this implements entire feedback from Dmitry
+> - Link to v2: https://lore.kernel.org/r/20250203-drm-msm-phy-pll-cfg-reg-v2-0-862b136c5d22@linaro.org
+> 
+> [...]
 
-Signed-off-by: Yin Fengwei <fengwei_yin@linux.alibaba.com>
----
-I am also wondering whether we could just drop the CMN600 part id
-check here if ACPI companion device claimed the resource?
+Applied to msm-fixes, thanks!
 
- drivers/perf/arm-cmn.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+[1/4] drm/msm/dsi/phy: Protect PHY_CMN_CLK_CFG0 updated from driver side
+      https://gitlab.freedesktop.org/drm/msm/-/commit/588257897058
+[2/4] drm/msm/dsi/phy: Protect PHY_CMN_CLK_CFG1 against clock driver
+      https://gitlab.freedesktop.org/drm/msm/-/commit/5a97bc924ae0
+[3/4] drm/msm/dsi/phy: Do not overwite PHY_CMN_CLK_CFG1 when choosing bitclk source
+      https://gitlab.freedesktop.org/drm/msm/-/commit/73f69c6be2a9
 
-diff --git a/drivers/perf/arm-cmn.c b/drivers/perf/arm-cmn.c
-index ef959e66db7c..8b5322a2aa6e 100644
---- a/drivers/perf/arm-cmn.c
-+++ b/drivers/perf/arm-cmn.c
-@@ -2559,7 +2559,8 @@ static int arm_cmn_probe(struct platform_device *pdev)
- 	cmn->part = (unsigned long)device_get_match_data(cmn->dev);
- 	platform_set_drvdata(pdev, cmn);
- 
--	if (cmn->part == PART_CMN600 && has_acpi_companion(cmn->dev)) {
-+	if (((cmn->part == PART_CMN600) || (cmn->part == PART_CMN700)) &&
-+			has_acpi_companion(cmn->dev)) {
- 		rootnode = arm_cmn600_acpi_probe(pdev, cmn);
- 	} else {
- 		rootnode = 0;
-@@ -2649,7 +2650,7 @@ MODULE_DEVICE_TABLE(of, arm_cmn_of_match);
- static const struct acpi_device_id arm_cmn_acpi_match[] = {
- 	{ "ARMHC600", PART_CMN600 },
- 	{ "ARMHC650" },
--	{ "ARMHC700" },
-+	{ "ARMHC700", PART_CMN700 },
- 	{}
- };
- MODULE_DEVICE_TABLE(acpi, arm_cmn_acpi_match);
+Best regards,
 -- 
-2.43.5
-
+Abhinav Kumar <quic_abhinavk@quicinc.com>
 
