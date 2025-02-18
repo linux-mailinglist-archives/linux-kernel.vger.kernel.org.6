@@ -1,348 +1,98 @@
-Return-Path: <linux-kernel+bounces-519097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 450FBA397E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:00:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B789FA397E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:00:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B69771887D8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:59:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98E9B165356
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:00:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 550B423FC6A;
-	Tue, 18 Feb 2025 09:56:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB9623645F;
+	Tue, 18 Feb 2025 09:58:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t1O7vfVv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="Bt6naX0M"
+Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4C48233D89;
-	Tue, 18 Feb 2025 09:56:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97BCA23496F
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 09:58:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.132.163.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739872606; cv=none; b=pLKfARksbFjwyC5REsk7oCcHwQbt37rRhs+il/vF8SmSPXaWMJcSvLThxe/QR/XrLG0n7lC8mVWr8L/Oo/trd87mIYI/CeC53NYveD6f7Tjy+2CBy1DErXUAD+uSEKqNPiuvTqU0nwVzoAPXAMYTPi3oKxaERbaiwd5sLe5mF5o=
+	t=1739872738; cv=none; b=pz54jJSFqJgPcIwusrCJeTrr3ZcfS9TIBUgOKWEIoxVwz9Z4offbcPtFJO3hGLY0t9ESH3Mk941wIXrTAdeS6s0ODfLnSJvhmKfDEf8+tgovK0WX6p8X5JISQ15Eg3dc4cmDx4y/ePdXFfKwi8LneKf7a6MBM1nHLosI54Mvhsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739872606; c=relaxed/simple;
-	bh=25VrcofxjXYiWPL+NpeDoZmrthXGZql9I+TZr94WN1U=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Pde5P+kYfohFQH6MFmjEQcD358p2v7hyGzVj+amk9/QRolL7Eyrw6OAD8KpMlhn3Ot+UZz8zd3pMlX0b4aa7NhmhLeC0eUhiG7NsKw9ZM8jKc3CCwFviWZEEGYetwqJ7vvXVrI39linE0PQhRY5S5nF1prShHZOiD5wBmniAEcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t1O7vfVv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 35171C4AF51;
-	Tue, 18 Feb 2025 09:56:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739872606;
-	bh=25VrcofxjXYiWPL+NpeDoZmrthXGZql9I+TZr94WN1U=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=t1O7vfVvEjL21CvHAqne4UhEdRzvJaXiNYil7mgmm9x44BZBd1W6Y1uCfPBOnqhwL
-	 1RFaRWdenTWu8GUoprIpS7nV8zMJ3DM+2u7Tdt/5e90/ohrHQkg5bq/i1L8K3IKsHs
-	 ZuPWSJQi/BU8DGF6WZhFTIqiaMBGORw9tCHtc+U8tgifRHAPvJV7EVvm/nydcmmS01
-	 4ecEs5J6pYRVkakXmLzie9sopp5t0ShkVU65fznUq7weu8CX36AXhHBOLkX+Qoc6fO
-	 j1xT1AGV+Jdl789v3OoweOkkLbWovTxvUu+GmWuzgkmyltkm31lg2OSCPBGJ9p/b3R
-	 6BL9WgBr2+VHw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 240A9C021AD;
-	Tue, 18 Feb 2025 09:56:46 +0000 (UTC)
-From: Joel Granados <joel.granados@kernel.org>
-Date: Tue, 18 Feb 2025 10:56:24 +0100
-Subject: [PATCH 8/8] x86: Move sysctls into arch/x86
+	s=arc-20240116; t=1739872738; c=relaxed/simple;
+	bh=YILd5b+WgEImMcZvqFh77mCVPV+v4tIi2NThn8rfhcA=;
+	h=From:To:Cc:Subject:Mime-Version:Content-Type:Date:Message-ID:
+	 References:In-Reply-To; b=M/9rMEON30oi5ChzEM8SuTslxuAT93VAqxN3lUL+tsZtuIGGAj2MrADvNrvof9uSBSty11X2wgBiaMC7e180XK36OltIhaMowZ+t6kbykO2F68JyRFOH71luAxSydUVNceQF1YHQ200I5Tl0S72oCGn7gjNbayTI+shL7OEqJpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=Bt6naX0M; arc=none smtp.client-ip=18.132.163.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1739872695;
+	bh=YILd5b+WgEImMcZvqFh77mCVPV+v4tIi2NThn8rfhcA=;
+	h=From:To:Subject:Mime-Version:Date:Message-ID;
+	b=Bt6naX0M4i7q7GznIk18ekhWhKkiorMO9gzotdjRmirA8qvQNhGvmDxM2s8JWFNyP
+	 hcAyKaOh7QeNZ5B3mRticLBrBCxB2bhm7Pefmg+lh7+yizeoGkvSgzQndvGucjoD6O
+	 fZ5HuVYe/3B1BOoOfkO5IrDStqwfqPrVKVLsZb7M=
+X-QQ-GoodBg: 1
+X-QQ-SSF: 00420000000000F0
+X-QQ-FEAT: LmkY14RBebTc565ZtoBk0Us/CMUSuxshwwpAIO79bxs=
+X-QQ-BUSINESS-ORIGIN: 2
+X-QQ-Originating-IP: gXDe23XLI9Uj5W8jpWSvhFtd7dLLcl8OOXB+/KUXF+s=
+X-QQ-STYLE: 
+X-QQ-mid: v3sz3a-6t1739872657t6316258
+From: "=?utf-8?B?V2VudGFvIEd1YW4=?=" <guanwentao@uniontech.com>
+To: "=?utf-8?B?546L5pix5Yqb?=" <wangyuli@uniontech.com>, "=?utf-8?B?Y2hlbmh1YWNhaQ==?=" <chenhuacai@kernel.org>, "=?utf-8?B?V0FORyBYdWVydWk=?=" <kernel@xen0n.name>
+Cc: "=?utf-8?B?bG9vbmdhcmNo?=" <loongarch@lists.linux.dev>, "=?utf-8?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>, "=?utf-8?B?546L5pix5Yqb?=" <wangyuli@uniontech.com>, "=?utf-8?B?eWFuZ3RpZXpodQ==?=" <yangtiezhu@loongson.cn>, "=?utf-8?B?bWFvYmlibw==?=" <maobibo@loongson.cn>, "=?utf-8?B?5Y2g5L+K?=" <zhanjun@uniontech.com>, "=?utf-8?B?6IGC6K+a?=" <niecheng1@uniontech.com>, "=?utf-8?B?6ZmI6bqf6L2p?=" <chenlinxuan@uniontech.com>
+Subject: Re:[PATCH] LoongArch: acpi: Make parse_acpi_topology() return void
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250218-jag-mv_ctltables-v1-8-cd3698ab8d29@kernel.org>
-References: <20250218-jag-mv_ctltables-v1-0-cd3698ab8d29@kernel.org>
-In-Reply-To: <20250218-jag-mv_ctltables-v1-0-cd3698ab8d29@kernel.org>
-To: Kees Cook <kees@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
- Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
- Arnaldo Carvalho de Melo <acme@kernel.org>, 
- Namhyung Kim <namhyung@kernel.org>, 
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
- Adrian Hunter <adrian.hunter@intel.com>, 
- "Liang, Kan" <kan.liang@linux.intel.com>, 
- "David S. Miller" <davem@davemloft.net>, 
- Andreas Larsson <andreas@gaisler.com>, Heiko Carstens <hca@linux.ibm.com>, 
- Vasily Gorbik <gor@linux.ibm.com>, 
- Alexander Gordeev <agordeev@linux.ibm.com>, 
- Christian Borntraeger <borntraeger@linux.ibm.com>, 
- Sven Schnelle <svens@linux.ibm.com>, 
- Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
- Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
- "H. Peter Anvin" <hpa@zytor.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
- Len Brown <lenb@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
- sparclinux@vger.kernel.org, linux-s390@vger.kernel.org, 
- linux-acpi@vger.kernel.org, Joel Granados <joel.granados@kernel.org>
-X-Mailer: b4 0.15-dev-64da2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6910;
- i=joel.granados@kernel.org; h=from:subject:message-id;
- bh=25VrcofxjXYiWPL+NpeDoZmrthXGZql9I+TZr94WN1U=;
- b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGe0WVumUM7VC3nkKjqPjxD72KDdRR6LD1mMS
- aDvYqAAB3iMY4kBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJntFlbAAoJELqXzVK3
- lkFPVIIL/izMcYoC1vEgjhYCHqFpAP7CLDIpIwXauJG2W7wUCFoIwUCBuPHBZj6KYSXDyNu8X7T
- G07ju4giBhkZofL8eCOhuasU8ZN+at3aFEXf5fICqFDRS3TvXik4Z6yK43mTYZXs9MVRThtZRxf
- PaKruze8Nn89HxOdekRSpFl6UYsufRMHOA+nJ0EaATUd/X62cOvDvsysHXG+HFVz/gU1359eNU7
- Cpj/W39YNxVDAJPM0xOYuoQmFd0U6iBBrxwxq6aN3VAZLJzLpYzuL+4ZUrmw6aaZZPm8MnCY9dl
- bq8q1h6VKx/CzaUT0KoCAc63XIjmywKIdO/UOm723JUAdqttspUYzcemKmhLYblQWbDCA+TIRc3
- XIp586nZ2T+iHo5+Dr63JwJFPd3FjJEP4e9nQhyv6xnKUUCyMDwM/Rm4rqblg8A+ixRIIh0GzOC
- 0/m2pTkTNc06RWRYqOj5WGwYe5koNsO/aCDJQqN+3HSkJahp8yLHPFCUeAsegkvcgTqKbKzlco7
- XA=
-X-Developer-Key: i=joel.granados@kernel.org; a=openpgp;
- fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
-X-Endpoint-Received: by B4 Relay for joel.granados@kernel.org/default with
- auth_id=239
+Mime-Version: 1.0
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Date: Tue, 18 Feb 2025 17:57:36 +0800
+X-Priority: 3
+Message-ID: <tencent_46D6C2824357C42E11A3C9CD@qq.com>
+X-QQ-MIME: TCMime 1.0 by Tencent
+X-Mailer: QQMail 2.x
+X-QQ-Mailer: QQMail 2.x
+References: <C832CAEC20DE4FC4+20250218094027.482396-1-wangyuli@uniontech.com>
+In-Reply-To: <C832CAEC20DE4FC4+20250218094027.482396-1-wangyuli@uniontech.com>
+X-QQ-ReplyHash: 3688260371
+X-BIZMAIL-ID: 17015835246629524927
+X-QQ-SENDSIZE: 520
+Received: from qq.com (unknown [127.0.0.1])
+	by smtp.qq.com (ESMTP) with SMTP
+	id ; Tue, 18 Feb 2025 17:57:38 +0800 (CST)
+Feedback-ID: v:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: NZiJZo0DdgPmxvZZTzlawGMhJn451se/jIMXPnEqCNIhtx6dp51YW8xB
+	cEFIhRLlD7oTutopgNi/8bSRNBsZeXxh3qGKI3L3mBOqnZwan6S6XiT6osrgUOMHOIsQahw
+	+f9UK7p3L/kLO5Y8BVdRUHQjxEu1xiwXuWFG2Vu3s79S7411gKc4KIzC/RVA9u29dBqry43
+	/UPwpO4xBCrmGmSLyTsi4N4Malgx2HFSNHf0sEj/q0TsVeaiYKBSvyy+0yOa0e6KqjvJTNS
+	StmvIV/qclG21VH3MGQNFek0xg+AfMXTKw0bythQ1Z/tpC503djyUHQmOS0aj/IC/ubx2zu
+	tgFah6ZNVZEkj14QQuj+z5UkE79ocp3uW1hXZHIXHnNiSAqpyhytGQNgF9A64KLT/0LXpTi
+	Y+P90qIh84d5ntT6IQ71mNRuxj+v5CPyHiyX0lMQz9UWxfXdp5kg6GrtFu2os9AAk62RKYm
+	gB7ka76aKPg3uWx8a+8PEzj3HaZeyjG4wGTxvSJ6YF7aq36Q4h/pX+c9DwJJxT6LDQCaQ1S
+	7QsS21JQExnmb75BZZ9W8PVs0TPFkwUSTlVzO8D+Er2qtPTxuAxyqXk39c0KN4asw5HG2C6
+	B1/5spbZJBZs9zsyunw3u7ugx0a2p1g4jIiQY8ZsnAlP9EVF/O/VSkurvCwURmxUvv6amqb
+	Me04HFju/sOpoefAf7y/IaZuaIonSOeexsHSvDW6Kv7fjLBv/pYTAUhKB5Da3/Y3X1W1Pwk
+	DH3P/uxad3hTeU/DEXG+0AxHLSRLCqemaVDiKrtCUu/OQPaIpOFPH2GU42p8AS9ta/wrSEv
+	+4xikqW1d1cNG2bLr3pwQbxVkgmXSCy4KQbnbKQDpIrNZG5I3Dx+GUYE1ZnVEzjIufOhAvB
+	kTrrfjQs13Fc4Y4JbjWhm1dpEeR9FObH8YktkspJ4bCfTRe5PPFfyjtIA2H7WMsqMD4lZfK
+	eoSRfey71MpAFMaST3kFYHP+yhf5HysMjQgdkQfzwA6r+xYZBFq0OWr6pNQX1uhAUYEdbHW
+	FcxiLDbv9mixrQx0TF4MIa86ugw9LsFvvst0El7pRasjJQuisY1nAmICP8w7PyVhjUeqJG9
+	w0PWAwBvz3H5KmQRmIZ1xUeySwcaAkmV/NBBLH+Tc5M
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+X-QQ-RECHKSPAM: 0
 
-Move the following sysctl tables into arch/x86/kernel/setup.c:
-panic_on_{unrecoverable_nmi,io_nmi}, bootloader_{type,version},
-io_delay_type, unknown_nmi_panic, acpi_realmode_flags.
-
-Variables moved from include/linux to arch/x86/include/asm because there
-is no longer need for them outside arch/x86/kernel: acpi_realmode_flags,
-panic_on_{unrecoverable_nmi,io_nmi}.
-
-Include asm/nmi.h in arch/s86/kernel/setup.h in order to bring in
-panic_on_{io_nmi,unrecovered_nmi}
-
-Remove the asm/{nmi.h,io.h} includes from sysctl.c
-
-This is part of a greater effort to move ctl tables into their
-respective subsystems which will reduce the merge conflicts in
-kerenel/sysctl.c.
-
-Signed-off-by: Joel Granados <joel.granados@kernel.org>
----
- arch/x86/include/asm/setup.h |  1 +
- arch/x86/include/asm/traps.h |  2 --
- arch/x86/kernel/setup.c      | 66 ++++++++++++++++++++++++++++++++++++++++++++
- include/linux/acpi.h         |  1 -
- kernel/sysctl.c              | 60 ----------------------------------------
- 5 files changed, 67 insertions(+), 63 deletions(-)
-
-diff --git a/arch/x86/include/asm/setup.h b/arch/x86/include/asm/setup.h
-index 85f4fde3515c..a8d676bba5de 100644
---- a/arch/x86/include/asm/setup.h
-+++ b/arch/x86/include/asm/setup.h
-@@ -46,6 +46,7 @@ void setup_bios_corruption_check(void);
- void early_platform_quirks(void);
- 
- extern unsigned long saved_video_mode;
-+extern unsigned long acpi_realmode_flags;
- 
- extern void reserve_standard_io_resources(void);
- extern void i386_reserve_resources(void);
-diff --git a/arch/x86/include/asm/traps.h b/arch/x86/include/asm/traps.h
-index 1f1deaecd364..869b88061801 100644
---- a/arch/x86/include/asm/traps.h
-+++ b/arch/x86/include/asm/traps.h
-@@ -35,8 +35,6 @@ static inline int get_si_code(unsigned long condition)
- 		return TRAP_BRKPT;
- }
- 
--extern int panic_on_unrecovered_nmi;
--
- void math_emulate(struct math_emu_info *);
- 
- bool fault_in_kernel_space(unsigned long address);
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index cebee310e200..9f8ff3aad4f4 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -56,6 +56,9 @@
- #include <asm/unwind.h>
- #include <asm/vsyscall.h>
- #include <linux/vmalloc.h>
-+#if defined(CONFIG_X86_LOCAL_APIC)
-+#include <asm/nmi.h>
-+#endif
- 
- /*
-  * max_low_pfn_mapped: highest directly mapped pfn < 4 GB
-@@ -146,6 +149,69 @@ static size_t ima_kexec_buffer_size;
- /* Boot loader ID and version as integers, for the benefit of proc_dointvec */
- int bootloader_type, bootloader_version;
- 
-+static const struct ctl_table x86_sysctl_table[] = {
-+	{
-+		.procname	= "panic_on_unrecovered_nmi",
-+		.data		= &panic_on_unrecovered_nmi,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec,
-+	},
-+	{
-+		.procname	= "panic_on_io_nmi",
-+		.data		= &panic_on_io_nmi,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec,
-+	},
-+	{
-+		.procname	= "bootloader_type",
-+		.data		= &bootloader_type,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0444,
-+		.proc_handler	= proc_dointvec,
-+	},
-+	{
-+		.procname	= "bootloader_version",
-+		.data		= &bootloader_version,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0444,
-+		.proc_handler	= proc_dointvec,
-+	},
-+	{
-+		.procname	= "io_delay_type",
-+		.data		= &io_delay_type,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec,
-+	},
-+#if defined(CONFIG_X86_LOCAL_APIC)
-+	{
-+		.procname       = "unknown_nmi_panic",
-+		.data           = &unknown_nmi_panic,
-+		.maxlen         = sizeof(int),
-+		.mode           = 0644,
-+		.proc_handler   = proc_dointvec,
-+	},
-+#endif
-+#if defined(CONFIG_ACPI_SLEEP)
-+	{
-+		.procname	= "acpi_video_flags",
-+		.data		= &acpi_realmode_flags,
-+		.maxlen		= sizeof(unsigned long),
-+		.mode		= 0644,
-+		.proc_handler	= proc_doulongvec_minmax,
-+	},
-+#endif
-+};
-+
-+static int __init init_x86_sysctl(void)
-+{
-+	register_sysctl_init("kernel", x86_sysctl_table);
-+	return 0;
-+}
-+arch_initcall(init_x86_sysctl);
-+
- /*
-  * Setup options
-  */
-diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-index 4e495b29c640..a70e62d69dc7 100644
---- a/include/linux/acpi.h
-+++ b/include/linux/acpi.h
-@@ -330,7 +330,6 @@ static inline bool acpi_sci_irq_valid(void)
- }
- 
- extern int sbf_port;
--extern unsigned long acpi_realmode_flags;
- 
- int acpi_register_gsi (struct device *dev, u32 gsi, int triggering, int polarity);
- int acpi_gsi_to_irq (u32 gsi, unsigned int *irq);
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 7f505f9ace87..bf098028ba68 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -65,10 +65,6 @@
- #include <linux/uaccess.h>
- #include <asm/processor.h>
- 
--#ifdef CONFIG_X86
--#include <asm/nmi.h>
--#include <asm/io.h>
--#endif
- #ifdef CONFIG_RT_MUTEXES
- #include <linux/rtmutex.h>
- #endif
-@@ -1716,16 +1712,6 @@ static const struct ctl_table kern_table[] = {
- 		.mode		= 0444,
- 		.proc_handler	= proc_dointvec,
- 	},
--#if defined(CONFIG_X86_LOCAL_APIC) && defined(CONFIG_X86)
--	{
--		.procname       = "unknown_nmi_panic",
--		.data           = &unknown_nmi_panic,
--		.maxlen         = sizeof (int),
--		.mode           = 0644,
--		.proc_handler   = proc_dointvec,
--	},
--#endif
--
- #if (defined(CONFIG_X86_32) || defined(CONFIG_PARISC)) && \
- 	defined(CONFIG_DEBUG_STACKOVERFLOW)
- 	{
-@@ -1736,43 +1722,6 @@ static const struct ctl_table kern_table[] = {
- 		.proc_handler	= proc_dointvec,
- 	},
- #endif
--#if defined(CONFIG_X86)
--	{
--		.procname	= "panic_on_unrecovered_nmi",
--		.data		= &panic_on_unrecovered_nmi,
--		.maxlen		= sizeof(int),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
--	},
--	{
--		.procname	= "panic_on_io_nmi",
--		.data		= &panic_on_io_nmi,
--		.maxlen		= sizeof(int),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
--	},
--	{
--		.procname	= "bootloader_type",
--		.data		= &bootloader_type,
--		.maxlen		= sizeof (int),
--		.mode		= 0444,
--		.proc_handler	= proc_dointvec,
--	},
--	{
--		.procname	= "bootloader_version",
--		.data		= &bootloader_version,
--		.maxlen		= sizeof (int),
--		.mode		= 0444,
--		.proc_handler	= proc_dointvec,
--	},
--	{
--		.procname	= "io_delay_type",
--		.data		= &io_delay_type,
--		.maxlen		= sizeof(int),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
--	},
--#endif
- #if defined(CONFIG_MMU)
- 	{
- 		.procname	= "randomize_va_space",
-@@ -1782,15 +1731,6 @@ static const struct ctl_table kern_table[] = {
- 		.proc_handler	= proc_dointvec,
- 	},
- #endif
--#if	defined(CONFIG_ACPI_SLEEP) && defined(CONFIG_X86)
--	{
--		.procname	= "acpi_video_flags",
--		.data		= &acpi_realmode_flags,
--		.maxlen		= sizeof (unsigned long),
--		.mode		= 0644,
--		.proc_handler	= proc_doulongvec_minmax,
--	},
--#endif
- #ifdef CONFIG_SYSCTL_ARCH_UNALIGN_NO_WARN
- 	{
- 		.procname	= "ignore-unaligned-usertrap",
-
--- 
-2.44.2
-
+TkFLLCBNVVNUIGFkZCAicmV0dXJuOyIgYWZ0ZXIgInByX3dhcm4oIkludmFsaWQgQklPUyBQ
+UFRUXG4iKTsiIHR3aWNlLg==
 
 
