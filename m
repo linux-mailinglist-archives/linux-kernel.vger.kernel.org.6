@@ -1,224 +1,120 @@
-Return-Path: <linux-kernel+bounces-519976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C55CEA3A449
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:27:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57E2CA3A448
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:27:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E67753A9770
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:26:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2740F166747
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:27:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BD1722B5B1;
-	Tue, 18 Feb 2025 17:25:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BBCA26FA61;
+	Tue, 18 Feb 2025 17:27:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J2t1UKTm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="MELFlR/1"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D389226FA79
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 17:25:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF5E326B97A;
+	Tue, 18 Feb 2025 17:27:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739899543; cv=none; b=mBF00uYgSV0YpYZSYaMUS/iarCGw2cGW87+P+lq/E3I1nMYTpfUJ6WcMq0C3jI3bsjgTQoeOU+8tWInNJkkCBIEVNdMUmS2Oz6bqXvSkC9+VkJt5UpS0jXESuKmbe8MFGZPrHrAVgQP+J4zr6tyktsJfvlCMxb0+u+gW0WznJCI=
+	t=1739899654; cv=none; b=n+6PIp3otnjaeH+iyMTVG7r06DIBxlFpHRVbiW37NtqR9FRAfNF+1NkmikbBQthm2KnuK0MubJLfriwlWTwmc9KLThq2ZZGNGp3tdR16ydXtmT09wFSJYuso4UKwnXzBx0M25QdS7OFHPKmZx1EmdvrMuK7IKkd6lZ+qvcR/+QU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739899543; c=relaxed/simple;
-	bh=ZBmNuh8e+hGXc2RihpyjnpMDMZycLEQxzdeZb3blLC4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KgP2tUWiowVBVAw/E4T5uC0w5x7bEu6JHp2b5qSBuGZ7AOAhj809FnJIVlJYQTmIHBycXq8E4tGAF9LWftv2YBUkkEjNCUcr2BqnZW2Wm8+XHzYqfHBl994kT+BUGares+8Ds9d5kthCXTfMCpmR21ods2hWuHh8TTOgcyCnT24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J2t1UKTm; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739899540;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=z2KIThAKSXbMAxXKkxhdA+pi6hkhBcx5GYzFEyXYhOs=;
-	b=J2t1UKTmGdHgEjJXWIjGnMXt6M+INOzkQgbYoZzqdDi/B5YeFCvbJlXntF1bpfWUlOm9xc
-	TbdgZgErzUDaRFo09VaNp7eLYiHvEyK/EuWr9sHLzc/aw3xIxjQJ5+9CJtFRUVLKxbmhw6
-	lxIltwJ5Ir0z/1lR9vZslDYwjoomIpY=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-97-GntWn2lmNKCAabLiD-QSVg-1; Tue, 18 Feb 2025 12:25:38 -0500
-X-MC-Unique: GntWn2lmNKCAabLiD-QSVg-1
-X-Mimecast-MFC-AGG-ID: GntWn2lmNKCAabLiD-QSVg_1739899537
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4394b2c19ccso47293095e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 09:25:38 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739899537; x=1740504337;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=z2KIThAKSXbMAxXKkxhdA+pi6hkhBcx5GYzFEyXYhOs=;
-        b=k5lTO0gA5sPsra9cuEtxTCwDbrcOwYxF8LO3qjWBGCdulo505N0dZlSJDZMvWyDFhO
-         IL7HpZcpY8GohOHBgmQvOrEterwaYMSNOPh46ExVWsSvGEn5YMFHJicDl37+nU71ujsw
-         oHuzMRski/SH+/NPq4deKekxCZFYX8PjO7ebQrSG2WC+Du077Ym689XzuDe9e4BkLT0s
-         hd5nCw0jfC7EagXykb/N8JboV3pFOg3/xCls5tHj2u2i7BpT8vpICw6pqZlu6EAGFERw
-         quCZWZaZQYH/uNjeFT8Dx64xJFVwkpwK+V7uer/Rl2nNtjVOwr7IAmQEYlJ5Cx3lH5hK
-         8RJw==
-X-Forwarded-Encrypted: i=1; AJvYcCVtfd3FYNMi5VQvADEixaP8Awrbslbztpv8rpiJYXqURSrYvxaNulBbgqgwzobSuX3ENVX8M5al2z8mo84=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkHjOcuvHUri5g71NV0rtD0btNHdjp1jSJsJYid9r21umRsefg
-	yCpzbxm925aCbhLC3ubsKFreDl3C3z7tcr+K2a40TZBXiAfFTHHBT0Y7klHVjp65KIJ4/OCJWh9
-	Gq5yuVyBUzMEyDv6r4vVb/GHhTUI0OalmQlxRdRjK8XuqMcmjY230Qf8rR9l9rg==
-X-Gm-Gg: ASbGncuFwJbTLyGyiE/i5SumAKUSjLhKYfHurTUNz33h97IfzUQw/NgfXQFZalMOHIu
-	vLJS63G54FrT4yi2UDvtqSyluHsqBkHklEB+CDxeTjrVBnWEAPTs119XejL0viH92/eV9z2rXxD
-	q9d7b0eHQ8xtDpOM++siN89ZVWZ/GN0oQ2gzQOfouBqLIOlxqER23+tk3SBAZv+OgJ+LgZRn8zQ
-	RoE4ZU/UdyIOFDBFZAAeG5sjHbC+f/c5aD7gXK4w+SEuNSgQVrEAkCQZE/TQu4iy396UTINeQTW
-	hnngBrRH3sbDA89SKcDn0p2Bytbkz7bCUfnZV+K/iEyOTq6ishBRfDO7Ma3R4J89URnaE91lkxY
-	OsVDOTLXnFso76CyHZfk8e5OKo9VZlNv3
-X-Received: by 2002:a05:600d:8:b0:439:86c4:a8ec with SMTP id 5b1f17b1804b1-43986c4ac03mr88049265e9.15.1739899537311;
-        Tue, 18 Feb 2025 09:25:37 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEGZhYvbDq2WUizrszTM8iYX04G2U/dqlmU+WV7dwgdizkRY2Js8nAXYnoDUJFl5Cc3yTHEsA==
-X-Received: by 2002:a05:600d:8:b0:439:86c4:a8ec with SMTP id 5b1f17b1804b1-43986c4ac03mr88049015e9.15.1739899536896;
-        Tue, 18 Feb 2025 09:25:36 -0800 (PST)
-Received: from ?IPV6:2003:cb:c70d:fb00:d3ed:5f44:1b2d:12af? (p200300cbc70dfb00d3ed5f441b2d12af.dip0.t-ipconnect.de. [2003:cb:c70d:fb00:d3ed:5f44:1b2d:12af])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43995391824sm21752235e9.23.2025.02.18.09.25.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Feb 2025 09:25:36 -0800 (PST)
-Message-ID: <b30a6306-d62b-4515-add8-4550d044501c@redhat.com>
-Date: Tue, 18 Feb 2025 18:25:35 +0100
+	s=arc-20240116; t=1739899654; c=relaxed/simple;
+	bh=y+ZJhN7cpCMY1NqHSQ85BW/kzeO13CqDDWrCmla8GbU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KB0+JUO3RYHPdO4jSI6+/myeuqGQsT9S8bLmZMkJNYGhaUkdS3QCNlCF2qGLqjyGgeuKDvsdAXYp/D3V8CsWxLrwzgT5pcvSjiwx+7iG6zEvXHvJtcuwXdDprOYGYxC+WrHGZaGREmyMBsd1wTbmQh3nA0BUOCliAaeHwKE/sqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=MELFlR/1; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D3A9140E01A1;
+	Tue, 18 Feb 2025 17:27:29 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 6AkQQoTT4_i9; Tue, 18 Feb 2025 17:27:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1739899645; bh=Y6l26zakd0qr5x+UfVU6l/SEd51HbajlWRpTRHIZo0o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MELFlR/1TPAb9F1YEuWm8zv5UBrwEbnoQN3iUpfknIf9hDXFJCiS1q7hLJrNsYJBW
+	 Q1MFxA2Squ/FTDM1QpsOM3qOxg/P5S4psD6NHQcigFIyJFs6QMm51mYF2ITQmEJopZ
+	 bH/vIrppCu2WnZNptZCcVw6tiwvwwpoevyGo1/OwXDx0Rc4uKELGZ6z1H6YoW5mnXD
+	 SRcNa7f9nXtobH1bDReaUmKp4rC7QX4ZFYiO00qciv8TlWVFKI9V4j9eE2077PjCRQ
+	 hQqRzMb5Any0KikitnOlF4sQZMc7sd/W09C38HONF5ddxqaXIhez0ZDn6Ca8ze0i4h
+	 0O0XbWWEhJH1XEFNabHbfUIfvhQXQ8Tqujl8CtLgfbUsV7eSumOOLOS+zJAqVsPFaP
+	 a+tfW08I7f8a/c1twuB3gu4YGsaQ7BzS6v7cf6S0EofztZ/hAdjn7lkhF6hTFiQD72
+	 A2sAFRsE7Ds8VC+Q+eNkX2COso1uHGXm+wOj8d2JesZnsQ8kjAZ+vqbUvSXzLW52Z2
+	 nUsbUZ3THA0eRCrFAdSQdmbEtS8457vlkIxO9Gae0J09CR6GPHbB2x8OXpraLEmfiR
+	 3JyPccNGlT5SH7VUQIzueLxPfVVieWhM3AH+d9mHuAw2rEvOCz78K1USubvM18XFU9
+	 Z/bD/NjdvTJsZnG0dXTHORyo=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 47B1E40E020E;
+	Tue, 18 Feb 2025 17:26:57 +0000 (UTC)
+Date: Tue, 18 Feb 2025 18:26:50 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Mario Limonciello <superm1@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>, Yazen Ghannam <yazen.ghannam@amd.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+	Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Jeff Johnson <quic_jjohnson@quicinc.com>,
+	Venkata Prasad Potturu <venkataprasad.potturu@amd.com>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	"open list:AMD NODE DRIVER" <linux-kernel@vger.kernel.org>,
+	"open list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." <linux-sound@vger.kernel.org>,
+	"moderated list:SOUND - SOUND OPEN FIRMWARE (SOF) DRIVERS" <sound-open-firmware@alsa-project.org>
+Subject: Re: [PATCH 0/7] Adjust all AMD audio drivers to use AMD_NODE
+Message-ID: <20250218172650.GOZ7TC2mHXJdO7_iAd@fat_crate.local>
+References: <20250217231747.1656228-1-superm1@kernel.org>
+ <Z7SjI-NIZbMEgz2y@finisterre.sirena.org.uk>
+ <b2876489-7bd5-4c38-b1f8-2d2fcb5a9aba@kernel.org>
+ <20250218152649.GKZ7SmubM_YWhDqaPo@fat_crate.local>
+ <f037a5a9-7e5a-4582-9a35-90e8442c6ed6@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] mm: permit guard regions for file-backed/shmem
- mappings
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>,
- Andrew Morton <akpm@linux-foundation.org>,
- Suren Baghdasaryan <surenb@google.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Matthew Wilcox <willy@infradead.org>, "Paul E . McKenney"
- <paulmck@kernel.org>, Jann Horn <jannh@google.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
- linux-kselftest@vger.kernel.org, linux-api@vger.kernel.org,
- John Hubbard <jhubbard@nvidia.com>, Juan Yescas <jyescas@google.com>,
- Kalesh Singh <kaleshsingh@google.com>
-References: <cover.1739469950.git.lorenzo.stoakes@oracle.com>
- <fbfae348-909b-48fa-9083-67696b02f15e@suse.cz>
- <8d643393-ddc0-490d-8fad-ad0b2720afb1@lucifer.local>
- <37b606be-f1ef-4abf-83ff-c1f34567568e@redhat.com>
- <b5b9cfcb-341d-4a5a-a6b7-59526643ad71@lucifer.local>
- <0db666da-10d3-4b2c-9b33-781fb265343f@redhat.com>
- <62c0ba1c-7724-4033-b1de-d62a59751ca5@lucifer.local>
- <a49d277e-128c-4853-bdeb-3a94134acbf6@redhat.com>
- <6eb33b5d-3040-4637-b627-48f8f78e4e28@lucifer.local>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <6eb33b5d-3040-4637-b627-48f8f78e4e28@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <f037a5a9-7e5a-4582-9a35-90e8442c6ed6@kernel.org>
 
->>
->> QEMU, for example, will issue an mlockall(MCL_CURRENT | MCL_FUTURE); when
->> requested to then exit(); if it fails.
-> 
-> Hm under what circumstances? I use qemu extensively to test this stuff with
-> no issues. Unless you mean it's using it in the 'host' code somehow.
+On Tue, Feb 18, 2025 at 09:33:03AM -0600, Mario Limonciello wrote:
+> Yeah; please get that ready and I'll rebase the series and send out a v2 on
+> that branch.
 
+There it is:
 
--overcommit mem-lock=on
-
-or (legacy)
-
--realtime mlock=on
-
-I think.
-
-[...]
-
->>>
->>> It fails because it tries to 'touch' the memory, but 'touching' guard
->>> region memory causes a segfault. This kind of breaks the idea of
->>> mlock()'ing guard regions.
->>>
->>> I think adding workarounds to make this possible in any way is not really
->>> worth it (and would probably be pretty gross).
->>>
->>> We already document that 'mlock()ing lightweight guard regions will fail'
->>> as per man page so this is all in line with that.
->>
->> Right, and I claim that supporting VM_LOCKONFAULT might likely be as easy as
->> allowing install/remove of guard regions when that flag is set.
-> 
-> We already allow this flag! VM_LOCKED and VM_HUGETLB are the only flags we
-> disallow.
-
-
-See mlock2();
-
-SYSCALL_DEFINE3(mlock2, unsigned long, start, size_t, len, int, flags)
-{
-	vm_flags_t vm_flags = VM_LOCKED;
-
-	if (flags & ~MLOCK_ONFAULT)
-		return -EINVAL;
-
-	if (flags & MLOCK_ONFAULT)
-		vm_flags |= VM_LOCKONFAULT;
-
-	return do_mlock(start, len, vm_flags);
-}
-
-
-VM_LOCKONFAULT always as VM_LOCKED set as well.
+https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/log/?h=x86/misc
 
 -- 
-Cheers,
+Regards/Gruss,
+    Boris.
 
-David / dhildenb
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
