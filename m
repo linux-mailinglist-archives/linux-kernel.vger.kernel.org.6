@@ -1,144 +1,282 @@
-Return-Path: <linux-kernel+bounces-519366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B51FA39C14
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:24:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FBB5A39C19
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:26:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0EFE1891623
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:25:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14D973A4FA3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:25:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C27292417F8;
-	Tue, 18 Feb 2025 12:24:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 267AE24337F;
+	Tue, 18 Feb 2025 12:25:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="BkBOoiME"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lXdsh8/h"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C52462417E3;
-	Tue, 18 Feb 2025 12:24:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 880D42417F5
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 12:25:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739881489; cv=none; b=RZoXE80abRfoTQ4G6ebnnMVtUH/JjSL4pL5hd6l7oZ1ZwOGHmVevJM7Bl02gSydRF0BrW8SivCELsGXd9w62wYJdkMSq77oV9lrrRM+sJtbFMx9JyGj8veRx/AcWeWDusvkR/b8AcLqdzmzLf9JS8KEM6orJgmOMq+/xpeXqriQ=
+	t=1739881518; cv=none; b=HOAJ4WxN4UAT4UWshjBTuv322V8Fl9iPbP/IToN/qRNYU/7MZyO297EJVoH2X3sEB/et9kz6uFcE6CylN/qD4Hc8cQBzishjMsSADuJF9Iq4n1/qMO5lWrWF7lvef/D1A4fXsSngaIukgU4enr9P0ON/feTwIxIJNZvw1P7o93Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739881489; c=relaxed/simple;
-	bh=B/22zPRyJLkyFbsyzQOg7F8j5yKKchLBj1RL06SOF5I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ajDgjbyF7M+1/Y8hHibnFIftOy79ubuP8S2xbbrU+gkFjN3I+0kH4iqpxiOmTrBdzFHqyNb+lRWq04CRCDPYs7zDp1OXv53EKZzv3xudx/QM1+zKR/bK4nrUxctgmLCyrGErNHAR15ECnrvr9Qf9RYOXGtOZk2KypOlo9CoLGxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=BkBOoiME; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 2B39A40E020E;
-	Tue, 18 Feb 2025 12:24:44 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id OyDvPaUDwoWc; Tue, 18 Feb 2025 12:24:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1739881480; bh=WI+Uaqm9Cw9dVESJ3i25x12Uq0b4Q9A8IQaKBTE93+M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BkBOoiMEQp6jcZIbbtwagiV/Mkd09m070ochMoIyiIdzrc9aMIoMIojtiuuG8zQt9
-	 /s9Haq1pxtO1MK7+24L43rHDcxwkmNJSUc29w73lHdosqGzk9MxQVNBl7hAZVay6Rx
-	 dnRjIvKIKdU/RfFELDlLTcHuxdGGffIEhhAp/I1wNai5wu5fXHwQdDwLxdkcOA48r2
-	 qcHErggIqF59QrohnLog0FS4ToJqWLHu+4lJi2HM6klQvErzfoP/0uF5HetDWxwcj6
-	 CVI7ELi7ASFOtnflUUDpXBqT83ckeh5Qy4iyQtoB/2ebxvX0LKL4R61EBy3uEdd6HB
-	 aLyHalxJ2Ic6SFTCXI/vEvaMrw4TuuS9bttqco4L6Xb5ArZWwt8UL57GuwCYYelXYs
-	 FoaERsjklDv4B2LECzgWgiSBclaQU41VEcHCgIfj3ay4FtYrkyQyQUWPurWdkE47Dr
-	 bJcjxcS1r6ux2S11bCClbdymi+5JGgNPv9WRqDbxxpLs0EtAeYR3nYJSbzVgwWTABt
-	 6biRjIRtGzIsQILJsuU/HZSa7iHML0NOAA4yMmWdxCGA0vv2XO/URUBd2ZRmm7nQYW
-	 tfBayKNLv5JtlE05eBSMhVN07wZC/qkIrMUVZoS5x25k4USRwTnt7BkS0v9/cCM8Ls
-	 S2DhYoqaZrkYwY7YKX3XlVQM=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C2CD140E01A1;
-	Tue, 18 Feb 2025 12:24:22 +0000 (UTC)
-Date: Tue, 18 Feb 2025 13:24:17 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Shuai Xue <xueshuai@linux.alibaba.com>, tony.luck@intel.com
-Cc: nao.horiguchi@gmail.com, tglx@linutronix.de, mingo@redhat.com,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	linmiaohe@huawei.com, akpm@linux-foundation.org,
-	peterz@infradead.org, jpoimboe@kernel.org,
-	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, baolin.wang@linux.alibaba.com,
-	tianruidong@linux.alibaba.com
-Subject: Re: [PATCH v2 0/5] mm/hwpoison: Fix regressions in memory failure
- handling
-Message-ID: <20250218122417.GHZ7R78fPm32jKYUlx@fat_crate.local>
-References: <20250217063335.22257-1-xueshuai@linux.alibaba.com>
- <20250218082727.GCZ7REb7OG6NTAY-V-@fat_crate.local>
- <7393bcfb-fe94-4967-b664-f32da19ae5f9@linux.alibaba.com>
+	s=arc-20240116; t=1739881518; c=relaxed/simple;
+	bh=5d/yfDMx+vbAdrc9Pxu6YpWSrcaSDQaBtCbMVdYGCTA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZvVTu9N5AuqEumtcn4QFJCFDIrVj/ZYaK0YvgrdDfYBEdVNA8m7o9aflfi4b2Eof3WZ250cbSd99d02ES9XvY1BjruboXWP+44ldCG1lIganARIQ7bORFZzNwUTlvs8Ix1RboSlHOY9fK4+RSPlggBNrqZDxvcAweZGQorCHFw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lXdsh8/h; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e5df8468d6eso1147234276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 04:25:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739881515; x=1740486315; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=89QAT0ZhfsEc4yXc1OMv7rDWxt18UAYuhIx/I7+65G4=;
+        b=lXdsh8/haC1odNmMO2Ia/IlA3ESjSR+1gA2K7jAo/9XNRCRJO5e7aL3DvxKksE4Bsr
+         XeDptL+ITTZg/yc1/NYXlGHT970xyM8eSRNzSWB5tnKqcVSeR6njTPOitTdPotmJMP9e
+         PQu2OY/0NlArG/tlY9fg1NsYVHTIRth3FMBvYt/bXU+FUBSHJj4VqSIHBuucUyWSr8Gj
+         lc9C/BnYva7VrTV77bHq8zJG6qQSyMfFByptTdYKqKWa14quGvz9NOiLvqDTu5jKO+yP
+         eLc7UFkdZuOUcIkj6TLciX83Z7Z6qJ9GmC2q3B0BHQjfAIFmWXdIu0LEeNjUrMh7v4gE
+         y6HA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739881515; x=1740486315;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=89QAT0ZhfsEc4yXc1OMv7rDWxt18UAYuhIx/I7+65G4=;
+        b=QFPLZwi0gpfp1pOlIGjc3Yf5DhfYlcBbwRlyMe+sUhD9pvSQPUhyoafM/newJ5w7f6
+         Fnm98x5raQ1ip6ZFWuZuk6Cj2CPYFS/cAYfqT8LN2HT/K3Sobh2GA1v+5TpB2/fWIHeL
+         i9CEmX/yQX9QQP269JKgC3FEQFcPr8ZXV9IvGvChbsQgJ1ggJ38W2C3Dg618G4gmfSoN
+         5ZrI9HAgZFg5XeWzrVhGjWXfRxC4DAyRClYE4zuQR46ZPZHaVqTOfmjKq5G/TJAnN/fl
+         aq43pI5cTPR0d4hzkycWNerop1pbfCEIuiYh1HsBzTTu9hqq/YowSF5qwdbBYojuMsZl
+         S0uA==
+X-Forwarded-Encrypted: i=1; AJvYcCUZWSTNCvHKruR+l2khOGeixiP+50vG6Ugl261TxV+hDgxDjhrgwA0pa2iMvUlC+u/h2bPRGYxEUyKgAfA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyjm8HXLelIC5MxtfTPQ3kvt5S6buQVnxozDBjLm74pTlKkVU7E
+	meDsIorby52NDcBH4Zk+4TSMWx5oXPmVDMuAYXykrINCQ3wSxuC6/YVtlWgSc8xyTvI2Wxt8P5e
+	xHfmu2i5U8fzScuLsK1jRDB4SiunJQYXuu+wT
+X-Gm-Gg: ASbGncsBndMD9lm5/HHdaQjIEcQMgvWTDP/rsminPqxRVR2hb2Ulk5Tb6A10kIgvF3W
+	jX9Q4VPBK32X9VbtuYTqqg0uQK9IlXjnZs14Jf8Ddswkn/qJ89B2AiFR7Qt3+CLxC5/yCMms=
+X-Google-Smtp-Source: AGHT+IGTTTUXyz28p5IfFjpKS7EaFa3iqQsYzhp4ew646h9Vw7naGgFckbLjKSjQKEaJ99JXYQSsdA1dcvpnP+uh+SM=
+X-Received: by 2002:a05:6902:1283:b0:e38:c0ed:8128 with SMTP id
+ 3f1490d57ef6-e5dc900e95bmr10444153276.3.1739881515290; Tue, 18 Feb 2025
+ 04:25:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <7393bcfb-fe94-4967-b664-f32da19ae5f9@linux.alibaba.com>
+References: <20250214191615.v5.1.If6f14aa2512336173a53fc3552756cd8a332b0a3@changeid>
+ <2025021425-surgical-wackiness-0940@gregkh> <CADg1FFd3H0DLV-WX8jTB1VGyOZYEzchP99QvYxWmg1XCOo1ttg@mail.gmail.com>
+ <2025021717-prepay-sharpener-37fb@gregkh> <CADg1FFf7fONc+HJT8rq55rVFRnS_UxnEPnAGQ476WVe+208_pA@mail.gmail.com>
+ <2025021829-clamor-lavish-9126@gregkh> <CADg1FFd=PbnNSBWk4KGV85jvvRQBBGG4QD2VHM6ABY-mqC8+Lg@mail.gmail.com>
+ <2025021807-ultimate-ascent-f5e0@gregkh> <CADg1FFdLA8LCafbQA=x5onSj6FKS=0ihpYPpSjQmDpGG2iOb5A@mail.gmail.com>
+ <2025021812-expedited-fanning-d5d0@gregkh>
+In-Reply-To: <2025021812-expedited-fanning-d5d0@gregkh>
+From: Hsin-chen Chuang <chharry@google.com>
+Date: Tue, 18 Feb 2025 20:24:48 +0800
+X-Gm-Features: AWEUYZnWnBW8G7TexUswPhHo_H7wI3bUymhYmNj3r2t0V9rNgx_L5eAPQ8uKEK8
+Message-ID: <CADg1FFdXNEDN7hXX2bw91YKbJzpk4ZiLP+ut9QBRkuK=vDmDJw@mail.gmail.com>
+Subject: Re: [PATCH v5] Bluetooth: Fix possible race with userspace of sysfs isoc_alt
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: linux-bluetooth@vger.kernel.org, luiz.dentz@gmail.com, 
+	chromeos-bluetooth-upstreaming@chromium.org, 
+	Hsin-chen Chuang <chharry@chromium.org>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Johan Hedberg <johan.hedberg@gmail.com>, Marcel Holtmann <marcel@holtmann.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Ying Hsu <yinghsu@chromium.org>, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 18, 2025 at 07:31:34PM +0800, Shuai Xue wrote:
-> Kernel can recover from poison found while copying from user space.
+Hi Greg,
 
-Where was that poison found? On user pages? So reading them consumes the
-poison?
+On Tue, Feb 18, 2025 at 6:56=E2=80=AFPM Greg KH <gregkh@linuxfoundation.org=
+> wrote:
+>
+> On Tue, Feb 18, 2025 at 06:01:42PM +0800, Hsin-chen Chuang wrote:
+> > Hi Greg,
+> >
+> > On Tue, Feb 18, 2025 at 5:21=E2=80=AFPM Greg KH <gregkh@linuxfoundation=
+.org> wrote:
+> > >
+> > > On Tue, Feb 18, 2025 at 04:57:38PM +0800, Hsin-chen Chuang wrote:
+> > > > Hi Greg,
+> > > >
+> > > > On Tue, Feb 18, 2025 at 4:23=E2=80=AFPM Greg KH <gregkh@linuxfounda=
+tion.org> wrote:
+> > > > >
+> > > > > On Tue, Feb 18, 2025 at 12:24:07PM +0800, Hsin-chen Chuang wrote:
+> > > > > > Hi Greg,
+> > > > > >
+> > > > > > On Mon, Feb 17, 2025 at 4:53=E2=80=AFPM Greg KH <gregkh@linuxfo=
+undation.org> wrote:
+> > > > > > >
+> > > > > > > On Mon, Feb 17, 2025 at 04:44:35PM +0800, Hsin-chen Chuang wr=
+ote:
+> > > > > > > > On Fri, Feb 14, 2025 at 7:37=E2=80=AFPM Greg KH <gregkh@lin=
+uxfoundation.org> wrote:
+> > > > > > > > >
+> > > > > > > > > On Fri, Feb 14, 2025 at 07:16:17PM +0800, Hsin-chen Chuan=
+g wrote:
+> > > > > > > > > > From: Hsin-chen Chuang <chharry@chromium.org>
+> > > > > > > > > >
+> > > > > > > > > > Expose the isoc_alt attr with device group to avoid the=
+ racing.
+> > > > > > > > > >
+> > > > > > > > > > Now we create a dev node for btusb. The isoc_alt attr b=
+elongs to it and
+> > > > > > > > > > it also becomes the parent device of hci dev.
+> > > > > > > > > >
+> > > > > > > > > > Fixes: b16b327edb4d ("Bluetooth: btusb: add sysfs attri=
+bute to control USB alt setting")
+> > > > > > > > >
+> > > > > > > > > Wait, step back, why is this commit needed if you can cha=
+nge the alt
+> > > > > > > > > setting already today through usbfs/libusb without needin=
+g to mess with
+> > > > > > > > > the bluetooth stack at all?
+> > > > > > > >
+> > > > > > > > In short: We want to configure the alternate settings witho=
+ut
+> > > > > > > > detaching the btusb driver, while detaching seems necessary=
+ for
+> > > > > > > > libusb_set_interface_alt_setting to work (Please correct me=
+ if I'm
+> > > > > > > > wrong!)
+> > > > > > >
+> > > > > > > I think changing the alternate setting should work using usbf=
+s as you
+> > > > > > > would send that command to the device, not the interface, so =
+the driver
+> > > > > > > bound to the existing interface would not need to be removed.
+> > > > > >
+> > > > > > I thought USBDEVFS_SETINTERFACE was the right command to begin =
+with,
+> > > > > > but it seems not working in this case.
+> > > > > > The command itself attempts to claim the interface, but the int=
+erface
+> > > > > > is already claimed by btusb so it failed with Device or resourc=
+e busy
+> > > > > >
+> > > > > > drivers/usb/core/devio.c:
+> > > > > >   USBDEVFS_SETINTERFACE -> proc_setintf -> checkintf -> claimin=
+tf
+> > > > >
+> > > > > Ah, ok, thanks for checking.  So as you control this device, why =
+not
+> > > > > just disconnect it, change the setting, and then reconnect it?
+> > > >
+> > > > After dis/reconnecting, a Bluetooth chipset would lose all its stat=
+e:
+> > > > Existing connections/scanners/advertisers are all dropped.
+> > >
+> > > If you are changing the alternate USB configuration, all state should=
+ be
+> > > dropped, right?  If not, huh how does the device know to keep that
+> > > state?
+> >
+> > No, the Bluetooth chip doesn't drop any info when the alt is changed.
+> > It only affects the data transfer bandwidth on that interface.
+> >
+> > >
+> > > > This is as bad as (just an analogy) "Whenever you access a http web
+> > > > page, you need to bring your ethernet interface down and up, and af=
+ter
+> > > > the page is downloaded, do that again".
+> > >
+> > > Your ethernet interface does not contain state like this, we handle
+> > > chainging IP addresses and devices all the time, so perhaps wrong
+> > > analogy :)
+> > >
+> > > > > Also, see my other review comment, how does BlueZ do this today?
+> > > >
+> > > > BlueZ handles that in their MGMT command, that is, through Control
+> > > > channel -> BlueZ kernel space code -> driver callbacks.
+> > > > Once a Bluetooth chipset is opened with the User channel, it can't =
+be
+> > > > used with the Control channel simultaneously, and vice versa.
+> > >
+> > > So why not use that same control channel in your code?  Why are you
+> >
+> > Because we're using the User channel, and they can't be used at the sam=
+e time.
+>
+> This doesn't make sense.  Either BlueZ has this same problem, or it
+> doesn't.  As you say it does not, then again, why can't you use the
+> exact same user/kernel api to achieve this?
+>
+> The user/kernel api is "fixed" right now, if you wish to replace the
+> userspace side of the BlueZ code with your own, then you should/must use
+> that same user/kernel api.  Don't go adding duplicate interfaces please.
 
-So you're not really seeing real issues on real hw - you're using ras tools to
-trigger those, correct?
+I would say the kernel provides 2 sets of the API, Control and User,
+and now the User channel is missing something.
+I think it makes sense to add support for it.
 
-If so, what guarantees ras tools are doing the right thing?
+>
+> > > reinventing a new control channel for something that is obviously the=
+re
+> > > already?
+> >
+> > Not quite the same as "reinventing". The Control channel command does
+> > much more than just setting the alt; It just doesn't work with the
+> > User channel.
+> >
+> > >
+> > > So in short, what's preventing you from using the same exact driver
+> > > callbacks, OR the same exact kernel api.  Surely you all are not
+> >
+> > The answer is the same as the above. This feature is missing in the
+> > User channel, and I'm completing it with this patch.
+>
+> Again, that seems to be your userspace's issue, not the kernel's.  Just
+> use the same api that bluez uses here.
+>
+> > > replacing all of the in-kernel BlueZ code with an external kernel dri=
+ver
+> > > just for this, right?  If so, that's not ok at all.
+> >
+> > Sorry I don't quite get it. What do you mean by the external kernel dri=
+ver?
+>
+> You said you are not using the bluez kernel code, right?  So you must
+> have some kernel code to implement this instead for the same
+> functionality.  Otherwise you are using the bluez kernel api here.
 
-> MCE check the fixup handler type to decide whether an in kernel #MC can be
-> recovered.  When EX_TYPE_UACCESS is found,
+No, we don't have kernel code for Bluetooth. We have everything in user spa=
+ce.
 
-Sounds like poison on user memory...
+>
+> Again, just use the same api please, don't go adding new one-off apis
+> through sysfs for this when it is not needed.
+>
+> I'll also step back further and say, why not use bluez?  What is so
+> wrong with that that you all need a totally different bluetooth stack?
+> Why not just fix the bluez code for anything that is currently missing
+> or lacking there that required you to write a new one.
 
-> the PC jumps to recovery code specified in _ASM_EXTABLE_FAULT() and return
-> a -EFAULT to user space.
+I think the main purpose is moving the stack to the user space.
+When the user hits a Bluetooth issue, it's much easier to reset the stack.
+Also, a simple Bluetooth bug just won't crash your kernel and we could
+even crash MORE to detect an incorrect chipset behavior earlier.
+Of course BlueZ has its own advantages, but it's just all trade-offs.
 
-> For instr case:
-> 
-> If a poison found while instruction fetching in user space, full recovery is
-> possible. User process takes #PF, Linux allocates a new page and fills by
-> reading from storage.
-> 
-> > 3. What actually happens and why
-> 
-> For copyin case: kernel panic since v5.17
-> 
-> Commit 4c132d1d844a ("x86/futex: Remove .fixup usage") introduced a new extable
-> fixup type, EX_TYPE_EFAULT_REG, and later patches updated the extable fixup
-> type for copy-from-user operations, changing it from EX_TYPE_UACCESS to
-> EX_TYPE_EFAULT_REG.
+>
+> And yes, I know the inclination of Android to constantly rewrite the
+> bluetooth stack, it's on the what, third or fourth iteration already?
+> What's to guarantee that this really will be the last one?  :)
 
-What do futexes have to do with copying user memory?
+That's incorrect. Android is still using and maintaining the same
+stack since it left BlueZ.
 
-> For instr case: user process is killed by a SIGBUS signal
-> 
-> Commit 046545a661af ("mm/hwpoison: fix error page recovered but reported "not
-> recovered"") introduced a bug that kill_accessing_process() return -EHWPOISON
-> for instr case, as result, kill_me_maybe() send a SIGBUS to user process.
-
-This makes my head hurt... a race between the CMCI reporting an uncorrected
-error... why does the CMCI report uncorrected errors? This sounds like some
-nasty confusion.
-
-And you've basically reused the format and wording of 046545a661af for your
-commit message and makes staring at those a PITA.
-
-Tony, what's going on with that CMCI and SRAR race?
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+--=20
+Best Regards,
+Hsin-chen
 
