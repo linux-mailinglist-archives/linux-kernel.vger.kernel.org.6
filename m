@@ -1,208 +1,246 @@
-Return-Path: <linux-kernel+bounces-520009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FCC2A3A4AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:52:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A79C7A3A4AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:53:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 233CD188B49A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:52:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D18BF7A1BC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:52:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1873270EB0;
-	Tue, 18 Feb 2025 17:51:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE19D270EB9;
+	Tue, 18 Feb 2025 17:53:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="cx1GEg9M"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="dLsweDJC"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2048.outbound.protection.outlook.com [40.107.93.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2305226A089;
-	Tue, 18 Feb 2025 17:51:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739901118; cv=none; b=NcM6ahwipaPGkrgVI2LX5NthUxHlilcdQwo/q2XZDD9hAhNmrwFyQGLrpGLg8fMkr9Lu+47zc5H42qXLOcZsvRLUxAjzbU0ZB08/O5x40SOd3rmO3xtcUSEJzZYgjLhfZ/Dzn+jXS73HiO/D/HKpRkwD2/FLftupWfB1ZPLDos8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739901118; c=relaxed/simple;
-	bh=kem0UMxxiJfZRDKqlYL4LpFrCW1ZiWjp0diJ1183J70=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=iJa/G42Yeo8UGlaT8x/yVv4BafBcw2H4JmFS5gTEd+j+mkgs1jIqHSt6CZEyGEtppobf53EZnRkPDoHAHy684MP6UuNqESpSli4LP2g1OvKZ6ppcp1QiA0qudxV5mdLi4Qx+SLG42/hXG+Jol0+eP9mfKuO0BdmfpQOfJ6Ewlaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=cx1GEg9M; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51IHpmv0051957
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 18 Feb 2025 11:51:49 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1739901109;
-	bh=F3jGz9dTOI3zjTp+FWv3GOetS4aavIzrIh1eri2pQa4=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=cx1GEg9MnkBeyrIVntzsS73hLqty3ydz9iZdHuzoq16cpWcIuxF8aPcM4UFgYSsFJ
-	 dGjDgynGhNwMyHfsQwB4IdLQ6FlkiRx3Mz8FLeZXPNtA+5tnbAS9j0Wsao5X+1IaqK
-	 23RV3ohSPkY6EJ4yx5PrG9dFcSrI3LlYi3R44C9E=
-Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51IHpmsY105306
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 18 Feb 2025 11:51:48 -0600
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 18
- Feb 2025 11:51:48 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 18 Feb 2025 11:51:48 -0600
-Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51IHpmBe092458;
-	Tue, 18 Feb 2025 11:51:48 -0600
-Message-ID: <787f9d24-25bc-4171-bd8a-88fe9cef694d@ti.com>
-Date: Tue, 18 Feb 2025 11:51:48 -0600
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DAD626AAB6;
+	Tue, 18 Feb 2025 17:53:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739901219; cv=fail; b=p/m5NqUwqzieA4G1ubKkwC3/0nYKPmtgp6vyWI+kv46L02yj+yiswwfftAqVkLTERtD0IW0Nd66aP7ns6Xfw8pk0IV+hKThE/sFfLMU9uiwHt7l1fAE9svqIxx+7YGOuovl6d0lXca6JweZLuaexiVq+o+cByoQkYmIwRrZsfBE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739901219; c=relaxed/simple;
+	bh=jguEL4JwcOGbu5bV0nVr3wo3AKAWPqYiWZuDCt/qYkw=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NuCWdIoWvlC+0a+8A7WDlzUwYnqjP+gN7QtXIPJpRQv0okIbRTM2t/tMNlp/xDz+W0X76rQ8O7SF1FJTuqKxXUGdpqdfiDRuF1mCNCes982/wE7z4vOR89uO6gVLDpiwGEbRY+h6kSkF+78Vk6Dyo0VRRYLfWK8YxeND47SmjLo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=dLsweDJC; arc=fail smtp.client-ip=40.107.93.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qMbkSio/kpcocyKSgibZ9+AOHaoeRsYFQ2nT+tLDeDxedkPJTjOlEaY6Bm1UbkCsoh9S8LVK0NnOvwIB0mcQQl+x8OWZCaCoy22KjOGBQ8cNqXFtyVCfgfbpzxVa6Q9yw6Pms3iQ8CUjx3yCyv/De/9lssi24fX5Am7mxAVQCRnxwmWQqY7HYJknzGNUWpYcA4PLXckxZWbhep175mSdEZgAbogEMQ7LbU9X6KWL26NcokzY59Q+ZegApSksCAKl21pmtkdaQSPpXK9Gnp+fk310GfE1MNtOBJxBFwEknQq2cOGuioudZvclMOApHhi7scTtydh7fgr8bKw+pGsejQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DZCW+S7G2JMThDj+eO4XgY1UgjhwsskO3ZzuQiIcqQA=;
+ b=ndiuYcEJaHCW5iXPjsSk6wcRVc+Bb37u+BNaU3xy3+huombIYwX4ucYDn8L4amzAYx98OfaJXklAf9AX/1XMySyLBG3GlUuuBa+/Ojmzx5mPY/abD+t3SfEcl+ZUzH5VYFmLWCyZsLQv3bK2gFP8nbgVYvQyjVOtXS8a48wLw+9vgR7iodMw9RjXCP3iBg97Pw9Zctf/Vse+HcNNaIrFofGsSzv0ayMktgn7PB3/F3LqWfGeyn1gEVapcwRElLxFZjW4wVnSP66q9EJekeyiboZWn0GP8Mc8I0mb0U+rGA6GnoXLGNP08+ygQgahQ8YqqnGF12lg2JHKP+fAZAOPuw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DZCW+S7G2JMThDj+eO4XgY1UgjhwsskO3ZzuQiIcqQA=;
+ b=dLsweDJCrbjPPWejoY2BdHfYQquOKPGZhL8s9YS2ZcShES36qjIfwzy2YvICb17WYJJSNcAZnyfdyBNK90pCVfCvo31173E/izIdF0Fk8LDS/aN01IpsNBx5Ce4qsak3wbcVMQ/0JtowxLxtHtZTVqWOfWenu7xynz1N2KxGU9531017bFQQA4Nr/LT5oINap70fC3VXtaZoNQm0+gCr1MOERC1lnjOK/hoVRJ6/EIYJ7o3JbgX/CbcO0EFIfhuXNshkFw8VFnhk7Seu5qEo56UUj6pAG86Htv3PA5TdPa6v7IynB9Bmj3H9OptmI57wJwEu+QfEpDZ1m6s8OGOqbA==
+Received: from MN2PR02CA0027.namprd02.prod.outlook.com (2603:10b6:208:fc::40)
+ by CYYPR12MB8892.namprd12.prod.outlook.com (2603:10b6:930:be::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Tue, 18 Feb
+ 2025 17:53:34 +0000
+Received: from BL02EPF00021F6E.namprd02.prod.outlook.com
+ (2603:10b6:208:fc:cafe::a5) by MN2PR02CA0027.outlook.office365.com
+ (2603:10b6:208:fc::40) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8445.17 via Frontend Transport; Tue,
+ 18 Feb 2025 17:53:33 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ BL02EPF00021F6E.mail.protection.outlook.com (10.167.249.10) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8466.11 via Frontend Transport; Tue, 18 Feb 2025 17:53:33 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 18 Feb
+ 2025 09:53:17 -0800
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 18 Feb
+ 2025 09:53:16 -0800
+Received: from nvidia.com (10.127.8.13) by mail.nvidia.com (10.129.68.8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Tue, 18 Feb 2025 09:53:15 -0800
+Date: Tue, 18 Feb 2025 09:53:13 -0800
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: "Tian, Kevin" <kevin.tian@intel.com>
+CC: "jgg@nvidia.com" <jgg@nvidia.com>, "corbet@lwn.net" <corbet@lwn.net>,
+	"will@kernel.org" <will@kernel.org>, "joro@8bytes.org" <joro@8bytes.org>,
+	"suravee.suthikulpanit@amd.com" <suravee.suthikulpanit@amd.com>,
+	"robin.murphy@arm.com" <robin.murphy@arm.com>, "dwmw2@infradead.org"
+	<dwmw2@infradead.org>, "baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>,
+	"shuah@kernel.org" <shuah@kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "iommu@lists.linux.dev"
+	<iommu@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kselftest@vger.kernel.org"
+	<linux-kselftest@vger.kernel.org>, "linux-doc@vger.kernel.org"
+	<linux-doc@vger.kernel.org>, "eric.auger@redhat.com" <eric.auger@redhat.com>,
+	"jean-philippe@linaro.org" <jean-philippe@linaro.org>, "mdf@kernel.org"
+	<mdf@kernel.org>, "mshavit@google.com" <mshavit@google.com>,
+	"shameerali.kolothum.thodi@huawei.com"
+	<shameerali.kolothum.thodi@huawei.com>, "smostafa@google.com"
+	<smostafa@google.com>, "ddutile@redhat.com" <ddutile@redhat.com>, "Liu, Yi L"
+	<yi.l.liu@intel.com>, "patches@lists.linux.dev" <patches@lists.linux.dev>
+Subject: Re: [PATCH v6 05/14] iommufd: Add IOMMUFD_OBJ_VEVENTQ and
+ IOMMUFD_CMD_VEVENTQ_ALLOC
+Message-ID: <Z7TJCcH9iFvcEDuO@nvidia.com>
+References: <cover.1737754129.git.nicolinc@nvidia.com>
+ <2fb8d9c7b01ad36b42849283cd33d931f11092cb.1737754129.git.nicolinc@nvidia.com>
+ <BN9PR11MB527614EB9CBA3BAB951B0DDD8CFA2@BN9PR11MB5276.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 06/10] arm64: dts: ti: k3-am62p5-sk: Enable IPC with
- remote processors
-To: Andrew Davis <afd@ti.com>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>
-CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Hari Nagalla
-	<hnagalla@ti.com>
-References: <20250210221530.1234009-1-jm@ti.com>
- <20250210221530.1234009-7-jm@ti.com>
- <04e77daf-e775-44fa-82bf-8b6ebf73bcef@ti.com>
-Content-Language: en-US
-From: Judith Mendez <jm@ti.com>
-In-Reply-To: <04e77daf-e775-44fa-82bf-8b6ebf73bcef@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <BN9PR11MB527614EB9CBA3BAB951B0DDD8CFA2@BN9PR11MB5276.namprd11.prod.outlook.com>
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL02EPF00021F6E:EE_|CYYPR12MB8892:EE_
+X-MS-Office365-Filtering-Correlation-Id: a3157010-4a63-4aba-537a-08dd5045296f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|82310400026|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?tYNFHut0zxAigKZKWPnVONghERivqmPI9KaaMcoO2BbcqQwNKC8Ytp8jy39u?=
+ =?us-ascii?Q?HnBUr4RAku/pf0PlgUB2j8Xzy6Zf1FHO4elAYwBCJ8IBTQ9zdzTCf1gFxnxj?=
+ =?us-ascii?Q?1DsWgaJ2u7MFM7lKkCDL88j5L+H38I6PiF6Ovy0WKb/PAviN8I6E3QWn462s?=
+ =?us-ascii?Q?gZbQzK5Fh6ggBZgpLjq5FiVUiDHoLeXbdgMhMkCKxkZntaSnVHxAxqBBxDWL?=
+ =?us-ascii?Q?bZQGbjPCuLPXg4Ohs/2aouZEyNd97/Ugq9g+xSznbiDmx+Xls31OUlBKPjCd?=
+ =?us-ascii?Q?SrqZH1HUHL2ygJ1guIYNg3XT4YHrq5QoozZx+mMtIFg+Fsuu014YCGt1uewA?=
+ =?us-ascii?Q?lY+nhxjH5XDAqC9skyi+dpsABIrKjp8sFrEHRoRvM35oKt55C81JtnCBW0bc?=
+ =?us-ascii?Q?8i51hG5RSNiJeBsbwR4s1UBrxL4F2TCER0nEznmDO1NHmFdO1smIMelB3plV?=
+ =?us-ascii?Q?WFLxW/HdUNNL3FzTa6ZZWiX1sq+KXcJnzp4s0odbGYB48448La5qrhxdmGtQ?=
+ =?us-ascii?Q?Yl5E8YRufkgJMzLV6gORTuA+ViDvGJG7/nz8IBnD6M6fOYZnqJJnhorPWceH?=
+ =?us-ascii?Q?gmTFLxoiSAKiWyo9Q9O9KifToJPU3a3AKzUMd40fO15gVT7FZS2acVdJr4cP?=
+ =?us-ascii?Q?gJQOSDa980XyzoU16gVdmvaILQa5kXdO7FNouOHkWGUAu0y1KconqomKJKdc?=
+ =?us-ascii?Q?QMdoUAlhFyOTV/ti8fHrAESffA7ou56NpZpUWqOvuHBIFBrJj/5dDqmjZucC?=
+ =?us-ascii?Q?w4F7I7j5USm2h1ewSw55Utt88uyZkgkPDWrmx6nM/JZwJItsTNQSII5yKuXu?=
+ =?us-ascii?Q?E3c2I5DBmHunhoFcwE2TNhTTTuz0aNZs//CU3td7TLWVryCneTMjBulJ5otz?=
+ =?us-ascii?Q?6dBaODkX3YqpcJA4Xc42Dmf8za/Aw8cFIM/WnT8qBzEQUoQcPPcsmiTU5whL?=
+ =?us-ascii?Q?1Ee6ORqwphWjmIuqiR9bzbsRx/zDOrPjeZF2acir7vrtmG0hhrXt0z0/HPNT?=
+ =?us-ascii?Q?NozTDWYEKsPjqdc8buGITR0i/LWNag3pomwhkRZGLJ7/ngR2Dfx/ZFC58gge?=
+ =?us-ascii?Q?LNWuM8B5UGGH/IjeEnLyLFPIUJohJ/WAFc0WOA8uoSx9pmITGiZBD66uB3cl?=
+ =?us-ascii?Q?X4oYizzS3ApjO2gNKNG51pQLzMAd6qlQJ4maX/WcPG8EmspW6yFXi1/Prdx5?=
+ =?us-ascii?Q?GqTnsGW4Jqae4kl0g0v8KLzoCHTVA/oCkGcfI5Xv5Vszvof7W4f06d+J5H2o?=
+ =?us-ascii?Q?mW/D0NkA+St/57KsF/1aj25sO/ZYlgWsgVgB6mtLSVMOjrJ+4ZQmroOFLNu1?=
+ =?us-ascii?Q?fB9tJOx6Up8twqISAoTo1SDMkxi3Uw1DTV222E3FUUwbTA5zOaYBon2ROJ+n?=
+ =?us-ascii?Q?DrOWEiDT0N4ZWqHPENkdc+4DG/bWZbZ8irKqzuPKD4kyKx0iahAXqZZl0XsX?=
+ =?us-ascii?Q?mwqzOC1TNpyDVcdh2vhDi6XxVudxGH1LL7aAkLutSDAl8402SoClvGTLxrXU?=
+ =?us-ascii?Q?jS//ENRwu0RrCgE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Feb 2025 17:53:33.2730
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a3157010-4a63-4aba-537a-08dd5045296f
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL02EPF00021F6E.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB8892
 
-Hi Andrew,
-
-
-On 2/18/25 10:38 AM, Andrew Davis wrote:
-> On 2/10/25 4:15 PM, Judith Mendez wrote:
->> From: Devarsh Thakkar <devarsht@ti.com>
->>
->> For each remote proc, reserve memory for IPC and bind the mailbox
->> assignments. Two memory regions are reserved for each remote processor.
->> The first region of 1MB of memory is used for Vring shared buffers
->> and the second region is used as external memory to the remote processor
->> for the resource table and for tracebuffer allocations.
->>
->> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
->> Signed-off-by: Hari Nagalla <hnagalla@ti.com>
->> Signed-off-by: Judith Mendez <jm@ti.com>
->> ---
->> Changes since v4:
->> - Drop SRAM node for am62px MCU R5fSS0 core0
->> ---
->>   arch/arm64/boot/dts/ti/k3-am62p5-sk.dts | 50 ++++++++++++++++++++++---
->>   1 file changed, 44 insertions(+), 6 deletions(-)
->>
->> diff --git a/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts 
->> b/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
->> index ad71d2f27f538..9609727d042d3 100644
->> --- a/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
->> +++ b/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
->> @@ -48,6 +48,30 @@ reserved-memory {
->>           #size-cells = <2>;
->>           ranges;
->> +        mcu_r5fss0_core0_dma_memory_region: 
->> mcu-r5fss-dma-memory-region@9b800000 {
->> +            compatible = "shared-dma-pool";
->> +            reg = <0x00 0x9b800000 0x00 0x100000>;
->> +            no-map;
->> +        };
->> +
->> +        mcu_r5fss0_core0_memory_region: 
->> mcu-r5fss-memory-region@9b900000 {
->> +            compatible = "shared-dma-pool";
->> +            reg = <0x00 0x9b900000 0x00 0xf00000>;
->> +            no-map;
->> +        };
->> +
->> +        wkup_r5fss0_core0_dma_memory_region: r5f-dma-memory@9c800000 {
->> +            compatible = "shared-dma-pool";
->> +            reg = <0x00 0x9c800000 0x00 0x100000>;
->> +            no-map;
->> +        };
->> +
->> +        wkup_r5fss0_core0_memory_region: r5f-memory@9c900000 {
->> +            compatible = "shared-dma-pool";
->> +            reg = <0x00 0x9c900000 0x00 0x1e00000>;
+On Tue, Feb 18, 2025 at 05:13:47AM +0000, Tian, Kevin wrote:
+> > From: Nicolin Chen <nicolinc@nvidia.com>
+> > Sent: Saturday, January 25, 2025 8:31 AM
+> > +
+> > +/*
+> > + * An iommufd_veventq object represents an interface to deliver vIOMMU
+> > events to
+> > + * the user space. It is created/destroyed by the user space and associated
+> > with
+> > + * vIOMMU object(s) during the allocations.
 > 
-> 0x1e00000?
-> 
-> Yes I know you didn't add this and are just coping it from below, but it
-> is still an issue. I see the same problem for the next patch, the R5F 
-> memory
-> size is 0xc00000??
-> 
-> Every remote core gets 15MB (0xf00000), this has been true for all K3, and
-> all cores, DSP, R5F, M4, etc.. You even do it correct for the MCU R5F 
-> above,
-> but the WKUP R5F on AM62P and AM62 are just randomly given 30M and 12MB?
+> s/object(s)/object/, given the eventq cannot be shared between vIOMMUs.
 
-Not sure why FW requires 30MB here, I have reached out to FW team to
-investigate this, will respond back here soon.
+Done. Adding an "a" too.
 
-~ Judith
+> > +static inline void iommufd_vevent_handler(struct iommufd_veventq
+> > *veventq,
+> > +					  struct iommufd_vevent *vevent)
+> > +{
+> > +	struct iommufd_eventq *eventq = &veventq->common;
+> > +
+> > +	/*
+> > +	 * Remove the overflow node and add the new node at the same
+> > time. Note
+> > +	 * it is possible that vevent == &veventq->overflow for sequence
+> > update
+> > +	 */
+> > +	spin_lock(&eventq->lock);
+> > +	if (veventq->overflow.on_list) {
+> > +		list_del(&veventq->overflow.node);
+> > +		veventq->overflow.on_list = false;
+> > +	}
+> 
+> We can save one field 'on_list' in every entry by:
+> 
+> 	if (list_is_last(&veventq->overflow.node, &eventq->deliver))
+> 		list_del(&veventq->overflow.node);
+
+Hmm. Given that the overflow node, if being on the list, should be
+always the last one... yes!
+
+> > +struct iommufd_vevent_header {
+> > +	__aligned_u64 flags;
+> > +	__u32 sequence;
+> > +	__u32 __reserved;
+> > +};
+> 
+> Is there a reason that flags must be u64? At a glance all flags fields
+> (except the one in iommu_hwpt_vtd_s1) in iommufd uAPIs are u32
+> which can cut the size of the header by half...
+
+Not having a particular reason yet. Just thought that a 64-bit
+could make the uAPI more expandable. It's true that u32 would
+be cleaner. I will make a change.
 
 > 
-> Andrew
+> > +void iommufd_veventq_abort(struct iommufd_object *obj)
+> > +{
+> > +	struct iommufd_eventq *eventq =
+> > +		container_of(obj, struct iommufd_eventq, obj);
+> > +	struct iommufd_veventq *veventq = eventq_to_veventq(eventq);
+> > +	struct iommufd_viommu *viommu = veventq->viommu;
+> > +	struct iommufd_vevent *cur, *next;
+> > +
+> > +	lockdep_assert_held_write(&viommu->veventqs_rwsem);
+> > +
+> > +	list_for_each_entry_safe(cur, next, &eventq->deliver, node) {
+> > +		list_del(&cur->node);
+> > +		kfree(cur);
 > 
->> +            no-map;
->> +        };
->> +
->>           secure_tfa_ddr: tfa@9e780000 {
->>               reg = <0x00 0x9e780000 0x00 0x80000>;
->>               no-map;
->> @@ -57,12 +81,6 @@ secure_ddr: optee@9e800000 {
->>               reg = <0x00 0x9e800000 0x00 0x01800000>; /* for OP-TEE */
->>               no-map;
->>           };
->> -
->> -        wkup_r5fss0_core0_memory_region: r5f-dma-memory@9c900000 {
->> -            compatible = "shared-dma-pool";
->> -            reg = <0x00 0x9c900000 0x00 0x01e00000>;
->> -            no-map;
->> -        };
->>       };
->>       vmain_pd: regulator-0 {
->> @@ -638,6 +656,26 @@ mbox_mcu_r5_0: mbox-mcu-r5-0 {
->>       };
->>   };
->> +&wkup_r5fss0 {
->> +    status = "okay";
->> +};
->> +
->> +&wkup_r5fss0_core0 {
->> +    mboxes = <&mailbox0_cluster0 &mbox_r5_0>;
->> +    memory-region = <&wkup_r5fss0_core0_dma_memory_region>,
->> +            <&wkup_r5fss0_core0_memory_region>;
->> +};
->> +
->> +&mcu_r5fss0 {
->> +    status = "okay";
->> +};
->> +
->> +&mcu_r5fss0_core0 {
->> +    mboxes = <&mailbox0_cluster1 &mbox_mcu_r5_0>;
->> +    memory-region = <&mcu_r5fss0_core0_dma_memory_region>,
->> +            <&mcu_r5fss0_core0_memory_region>;
->> +};
->> +
->>   &main_uart0 {
->>       pinctrl-names = "default";
->>       pinctrl-0 = <&main_uart0_pins_default>;
+> kfree() doesn't apply to the overflow node.
 
+Oh right, that's missed.
+
+> otherwise it looks good to me:
+> 
+> Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+
+Thanks!
+Nicolin
 
