@@ -1,129 +1,124 @@
-Return-Path: <linux-kernel+bounces-518496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53502A38FFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 01:39:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 61C6DA39003
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 01:40:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22375171541
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 00:39:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36BBC171E99
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 00:40:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86768C8EB;
-	Tue, 18 Feb 2025 00:39:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BFAF18E20;
+	Tue, 18 Feb 2025 00:40:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="k1GS52qJ"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UOd7vDmm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D918579E1
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 00:39:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72094EEC3;
+	Tue, 18 Feb 2025 00:40:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739839169; cv=none; b=VisXXFOhdTgLjqI6o9OCgWiH3+cVvcRVpK9e4dQVrmRwjgd/7tlXnzLne0FNPf46RFm/hRO+TNexLAldRGEezLlbYuVzuzcdlk59HbcUF0envoPosgaRmvV3cpKoJrWxrVFfSukldylmJ2yz880+S6Xfcc1bdbiRUEvdsCwBKKo=
+	t=1739839203; cv=none; b=t7Jq8qaBvlvdEovYVgrpcqWKwogBY9GLeslZS6Dkjh9xP6fJOF5dJvayKHf3JRoQmTfR1aFWYIWJPLFRVJZ+i6dEuCIC6f/lW8smlQZia0U+ro5Gkdla/PqMibTPxbKa70JZ7bZ0BUVXoV2WeV5x3BCfWA2ROug64h2fdCpSg/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739839169; c=relaxed/simple;
-	bh=kkCI+MIWkW4j32PzOZgwC/VBvKTSy5hkrZazhISQnyA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZIB0NBQyITP3s9ymDG/h0qbdAS1Q50zAnabTtcoU4qalyDEy86H4HXg1+EAzo48CZANWnCx6GObkNUkVMQ9oEOdchCJI1OCUDctAUtSACslHf6QgUY3Mnryqo3REdhjmolUJMB8yxUOR8msHbRvSsd3nO8BMnOtNNXnWFX3hBEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=k1GS52qJ; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2fbf77b2b64so9077065a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 16:39:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1739839167; x=1740443967; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=De5WQOe6k2skbiipS+ducGoEsMfnwQochicbgjZO/bs=;
-        b=k1GS52qJLD7N4uAHd5fk/ayrA96CBRnX5ctEd2XqncPJyMjG7587yJlJxkyClL4HLN
-         HzwfOUsOg9t9IHcIdhaTTA0BuMfd5bQu+4HBfFl+kg4OjV1M0h6ewm9/Cn5KBDqK7Y7O
-         5oaUV7WWs9iHTyXz3FcLfboRrPQIT3u2ouZbVm9RdzN/7wJIpPdZKHbpO6NxI7xvAq2k
-         tkf0WnPYxcRIiQb3wv3XaBt9lQ7bRFsSa5uvViu0RFfChvBExBkojtRlqH8l+6UW0Dnx
-         yj/zDid2x5nFHo0zJHZXfD9Pex2SFAXJUnCpUdnQK7CFy5CkYLTEgXyhVY9sBt28ik5Q
-         ECVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739839167; x=1740443967;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=De5WQOe6k2skbiipS+ducGoEsMfnwQochicbgjZO/bs=;
-        b=ZQMRu6Jgje5mzsYyktjpnlN5oR2EbVswNtBZH6l6rfW9hQ49MEaCJqdpSCC9kbrapF
-         hj5jNF9koY30mYCG2jC2s8zSW1XjCuPc8BDAQzZTvY058Ik6S7E7Hs/yV1bvMVpM+4f1
-         Gvj9zdEenOBXmuqPUnxpvlTVu2e164JSD6CCVVUFi6shepRQ0LbfFwnz2vC2Fffe3LO+
-         1hnq1HhJj10JiVoW4axwKwuihEvlEE4jRQ40Bksy2M51k4RP7OF7QNw9nG9a7A/FKKys
-         xIYzNGGunwAXp8kUP30YbR7l0XdkAwbDi/fLzxHYRdG85axe1Z4UPi2ctN2LAetZ4Bnw
-         YjPw==
-X-Forwarded-Encrypted: i=1; AJvYcCXnwzoszAG3KAbIoUFdNAEBNTPq4ykNA3Kit3S5F9R2eJgf0SJgQ0CEkqo8JatXbIzUt0wxZuKi3g/VXnQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyB9xC+TjFAZCRSRjJMLgIF2sMuS9g/5OLYh1Z+T+IS/8c55CTk
-	UUH5+ItffBQ+EzK3/Hn+H0DknCRnUoqItvhQZY2MB+fDG9bks+L3JuE6MjeBFYs=
-X-Gm-Gg: ASbGncvTpp7zuqPHmI2eIL65E6BPnQwJ6admQAcMZk190/r052cbT64hDon/vBECNAg
-	4gTMVKi5Ta58c5E796xHB3T/81vtGpuRLmm16PV1LkWcmiIZMe0jX5FkQ+xOxURFGM8lpLd5ijX
-	KWUSsctibZuedu5YJNkBiY+dKe9yeuOKRNuLxA34vF5gjE4nQf3d6tMFyq7t0EI1TClB2hZeip8
-	o0v+5zfnEDi28BAvN/86vtBZFQZoJhdUq1i+L7wYUv4lxqyi2CIT+kqGotnRv0ZyZtUwzWEOngS
-	GnV9V7GGu5gFCgd70whe5n1uZui87cXWM00Xp5uASNoSA4LlivEAiGrnm9gtGwwphCg=
-X-Google-Smtp-Source: AGHT+IEeMGa7xPwEtMlpXZafvTTjPq0Al51DL+lbvh4II9Auk36aN41MyoHA6pK5zQJ2LCv7QhzaMA==
-X-Received: by 2002:a05:6a00:2d9d:b0:730:95a6:3761 with SMTP id d2e1a72fcca58-7326177e484mr22261738b3a.3.1739839167098;
-        Mon, 17 Feb 2025 16:39:27 -0800 (PST)
-Received: from dread.disaster.area (pa49-186-89-135.pa.vic.optusnet.com.au. [49.186.89.135])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73242568961sm8750148b3a.38.2025.02.17.16.39.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 16:39:26 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.98)
-	(envelope-from <david@fromorbit.com>)
-	id 1tkBdz-00000002bHy-1hQn;
-	Tue, 18 Feb 2025 11:39:23 +1100
-Date: Tue, 18 Feb 2025 11:39:23 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Luis Henriques <luis@igalia.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Matt Harvey <mharvey@jumptrading.com>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 1/2] vfs: export invalidate_inodes()
-Message-ID: <Z7PWuwQApEWI8b06@dread.disaster.area>
-References: <20250217133228.24405-1-luis@igalia.com>
- <20250217133228.24405-2-luis@igalia.com>
+	s=arc-20240116; t=1739839203; c=relaxed/simple;
+	bh=V1WexgkaHOBQikIRrkTSn+Mq8VWyzkcWlkPtjI+FmYo=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=a0nZbAHjaoIJDIL/zUcohFqxgJ4XCy5X7J1NVoijGYqEYvLuVE0JQx3KC72LwrNyMohiaX6gqXgc1QiiOMw9ooznrC2fgckNFJ3s1uh5i1idu1dLAITmKgDnpxCjJ/dfdxhet8aeez+TymiWvItZwQAv42zby7aob8SQ6tCxbbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UOd7vDmm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBCD7C4CED1;
+	Tue, 18 Feb 2025 00:40:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739839202;
+	bh=V1WexgkaHOBQikIRrkTSn+Mq8VWyzkcWlkPtjI+FmYo=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=UOd7vDmmrtglsNxb5yzLz0WBcyZLNT25SO++ONfXoBEGn9fWi0Y6UK9Q7n9O+J8R+
+	 nlTo04rSl2sLPrI2rbfj4Tp2RI+AmVNOX0WvJ7PncUmztX9pUJm3V4Djh5y5SBPtLi
+	 cTBIfpt87CkDHN5Jtg6VDYinPb0HjM2Id0DbOuzhzkOsHMYPw9BLvLwiyGM4YMQ3S0
+	 eXtXV1EXEwSZK01z9Wpr3Jp2BRX1zsxKptDsOhUk23/mTCVNaCr6oXQ4J9ia+IjmnU
+	 eJ2SInEpCqiVpR/txeQe6Y5xgnvEMyvU+JceMnkaPGNluWhzj97NPsxuU6yCVbmFFU
+	 L9uvGfB+LECqQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 3496D380CEE2;
+	Tue, 18 Feb 2025 00:40:34 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250217133228.24405-2-luis@igalia.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net v2] drop_monitor: fix incorrect initialization order
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173983923302.3583210.2597018228565274704.git-patchwork-notify@kernel.org>
+Date: Tue, 18 Feb 2025 00:40:33 +0000
+References: <20250213152054.2785669-1-Ilia.Gavrilov@infotecs.ru>
+In-Reply-To: <20250213152054.2785669-1-Ilia.Gavrilov@infotecs.ru>
+To: Gavrilov Ilia <Ilia.Gavrilov@infotecs.ru>
+Cc: nhorman@tuxdriver.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org,
+ stable@vger.kernel.org
 
-On Mon, Feb 17, 2025 at 01:32:27PM +0000, Luis Henriques wrote:
-> Signed-off-by: Luis Henriques <luis@igalia.com>
-> ---
->  fs/inode.c         | 1 +
->  fs/internal.h      | 1 -
->  include/linux/fs.h | 1 +
->  3 files changed, 2 insertions(+), 1 deletion(-)
+Hello:
+
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Thu, 13 Feb 2025 15:20:55 +0000 you wrote:
+> Syzkaller reports the following bug:
 > 
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 5587aabdaa5e..88387ecb2c34 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -939,6 +939,7 @@ void invalidate_inodes(struct super_block *sb)
->  
->  	dispose_list(&dispose);
->  }
-> +EXPORT_SYMBOL(invalidate_inodes);
+> BUG: spinlock bad magic on CPU#1, syz-executor.0/7995
+>  lock: 0xffff88805303f3e0, .magic: 00000000, .owner: <none>/-1, .owner_cpu: 0
+> CPU: 1 PID: 7995 Comm: syz-executor.0 Tainted: G            E     5.10.209+ #1
+> Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 11/12/2020
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0x119/0x179 lib/dump_stack.c:118
+>  debug_spin_lock_before kernel/locking/spinlock_debug.c:83 [inline]
+>  do_raw_spin_lock+0x1f6/0x270 kernel/locking/spinlock_debug.c:112
+>  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:117 [inline]
+>  _raw_spin_lock_irqsave+0x50/0x70 kernel/locking/spinlock.c:159
+>  reset_per_cpu_data+0xe6/0x240 [drop_monitor]
+>  net_dm_cmd_trace+0x43d/0x17a0 [drop_monitor]
+>  genl_family_rcv_msg_doit+0x22f/0x330 net/netlink/genetlink.c:739
+>  genl_family_rcv_msg net/netlink/genetlink.c:783 [inline]
+>  genl_rcv_msg+0x341/0x5a0 net/netlink/genetlink.c:800
+>  netlink_rcv_skb+0x14d/0x440 net/netlink/af_netlink.c:2497
+>  genl_rcv+0x29/0x40 net/netlink/genetlink.c:811
+>  netlink_unicast_kernel net/netlink/af_netlink.c:1322 [inline]
+>  netlink_unicast+0x54b/0x800 net/netlink/af_netlink.c:1348
+>  netlink_sendmsg+0x914/0xe00 net/netlink/af_netlink.c:1916
+>  sock_sendmsg_nosec net/socket.c:651 [inline]
+>  __sock_sendmsg+0x157/0x190 net/socket.c:663
+>  ____sys_sendmsg+0x712/0x870 net/socket.c:2378
+>  ___sys_sendmsg+0xf8/0x170 net/socket.c:2432
+>  __sys_sendmsg+0xea/0x1b0 net/socket.c:2461
+>  do_syscall_64+0x30/0x40 arch/x86/entry/common.c:46
+>  entry_SYSCALL_64_after_hwframe+0x62/0xc7
+> RIP: 0033:0x7f3f9815aee9
+> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007f3f972bf0c8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+> RAX: ffffffffffffffda RBX: 00007f3f9826d050 RCX: 00007f3f9815aee9
+> RDX: 0000000020000000 RSI: 0000000020001300 RDI: 0000000000000007
+> RBP: 00007f3f981b63bd R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 000000000000006e R14: 00007f3f9826d050 R15: 00007ffe01ee6768
+> 
+> [...]
 
-Oh, I didn't realise the FUSE core wasn't built in. That makes me
-even less enthusiastic about this....
+Here is the summary with links:
+  - [net,v2] drop_monitor: fix incorrect initialization order
+    https://git.kernel.org/netdev/net/c/07b598c0e6f0
 
-Ok, if this is going to happen, you need to pull in the change I
-made to get rid of invalidate_inodes() because it is now a duplicate of
-evict_inodes(). evict_inodes() is already EXPORT_SYMBOL_GPL(), so
-then this patch goes away.
-
--Dave.
+You are awesome, thank you!
 -- 
-Dave Chinner
-david@fromorbit.com
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
