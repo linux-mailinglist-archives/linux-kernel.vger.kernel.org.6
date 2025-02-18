@@ -1,152 +1,107 @@
-Return-Path: <linux-kernel+bounces-519550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EFCBA39DFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:54:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CE23A39E01
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:54:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A453C3AB86A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:49:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 318AB3AE054
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:49:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D647E269897;
-	Tue, 18 Feb 2025 13:49:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0BD5269B10;
+	Tue, 18 Feb 2025 13:49:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OXJCbQKi"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="fekQPKrh"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6383E22B8B9
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 13:49:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 386E1238D42;
+	Tue, 18 Feb 2025 13:49:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739886580; cv=none; b=dqBTdv3CkOCJM8LmAD5Usq77wA2fPkGc15m6niZC63/55kBsQVNyF13wuhVzjQBEYQMcSAZfWFvYnp3FMb04peswOZfk5P3zI1la5NLvfi8SeM1ltNSl184L8j72BLDIoNryLmgpbepFlvWCokfgvgTqfjHLaxVbviZKDsnSgAk=
+	t=1739886583; cv=none; b=fEp7nkM5SJwgSsPmwRMYTHug9IGPu8+n0YR+8jjKQq4zM7MLXSzlUM8rFo+lvqjYJ9tO0SOXGCq72qySRc15LY3aVGICnyDdwfsrspliCJtUj0hqDb6/lG4taDPEcVzw1eFIzIPg86zQQjgxSGkN0yIj9m/Tes/gM6g+dOS3Jec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739886580; c=relaxed/simple;
-	bh=YbtsSYh/zjlj40vi9mvsj1cNjf+xfEc6mak2FCLWzYw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=FYRpdv0dx92LVd41DUYZZ1DsP/DnQC9z/XGlzbFnc8yO1uyqe9bL0qDUmW3wiStnr0U2XD1TPtjZ1BiZNi+lrVJrzxaD+zfOa26cONcZ+0Kr79zN/1qZk2nXSnQ21ZAcMR2oEGJZscyI1WEce9rmKZ2x022MT+B+v1HFdScjurg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OXJCbQKi; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739886577;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=YbtsSYh/zjlj40vi9mvsj1cNjf+xfEc6mak2FCLWzYw=;
-	b=OXJCbQKiwUYB/gm/qQScCU3CMOri5nDseN2qJ5BMwjuc57DNnXJp7NTP3+V7yYe18e9btv
-	Jr+046G249LLU0qKXq38EH+z5OJ4lbc1WSBmUmqc4iNfLxsMJ2LMX34d3Ok2lShmPKB4Kn
-	0/X1Ri6Y/+7RUKa8KrfeyrLZR1buZjc=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-675-NN3Wf9DoPZuW5MSgFlFKWQ-1; Tue, 18 Feb 2025 08:49:36 -0500
-X-MC-Unique: NN3Wf9DoPZuW5MSgFlFKWQ-1
-X-Mimecast-MFC-AGG-ID: NN3Wf9DoPZuW5MSgFlFKWQ_1739886575
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43941ad86d4so32781135e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 05:49:35 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739886575; x=1740491375;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YbtsSYh/zjlj40vi9mvsj1cNjf+xfEc6mak2FCLWzYw=;
-        b=L1e0xYDX8o/Y4xOWDPV2ZSlweYGjLoC8jvlXMxve+nkH6psQ3Y59V70UY8EnqErKlh
-         ATbcMt0tGGY1UTl+Mtg7Z7iWFX1tPhZPrp5yKwvzQf4N2rNr2fSSsmVUVBNj4t9Ue9ad
-         5GgABBPRQASc0cK5r/T9JqHXkTrT1k4OKle93q5PGLq4OP/a4zCRMVjr1ynUkebwkKrG
-         fIylwwP+wL4V8Zw3ohql0HDh5rz+HW7ZRKqpqjRvejx1G5qzklPehdk/uhQevHP2Kf8Y
-         tEioc1xiLG+sjNFsWoJJvU81ClDUho1rYC3/U+OMbOuXSucHgg5DKCy81EAowfOj/0OM
-         Wuwg==
-X-Forwarded-Encrypted: i=1; AJvYcCVswSh3FXYLsLG20oBVRzdhrrSKHJTLd1WFBTS1RmVSLkDhkICM1sKpokw0XRYJHq42ZjfagikzfROwLp0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwezXJDXKUD1Vz2QYdTpTfjgRDGgBU38Mt5azBYVBtYgXDfkwrF
-	VYFtAxU5xfl5znldn6qELJex/U417MbKAkJ6kocxnU7T+VBPBnCTae3aouUkN0M0708LRWhriBC
-	DsmRsjvLq+boOzlfBke1q08dJgoSSuwDxx30X+F5dKabihhb4zdcelnAmFMmUvC7599ntpxNh
-X-Gm-Gg: ASbGncvmK9t3SMpi/o/azmIM04IDf6psa1TuqMWILWnndI+1y/4iAQ4RqquKxLcx71n
-	6Ohw11RPXnhBuRzqaot5YUyVqN9SG2cbkXN5i4xN36xEyy/6IdjqFIjWLaj8nN2V/DhYxkjDrXa
-	tDxpvamAJXwj28bRMTA0SzAHdVMjHQs1ywSao/7KSaPoAnyUsM1PZ2ytJAA3uYZ6qevQy8cVH7u
-	eJkpWvtRzUAlqKfgh8hT5M8WXmFzlNOjI+JOxTlgnFbVmcMjW+7Lc2gVlQd/UlmDaxWvk8OThVm
-	aBI9jdUIHR3T/7Q5KgMRTN8GniOT+kI=
-X-Received: by 2002:a05:600c:5253:b0:439:9274:81d0 with SMTP id 5b1f17b1804b1-439927483edmr22745365e9.1.1739886574931;
-        Tue, 18 Feb 2025 05:49:34 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHEbIbgUGTdKs4RbLRMUHgyS3KswQNUpYKHj2Muk5ABoJ1TDHXwhjXdXpH6iqPKRDpy3fOCyQ==
-X-Received: by 2002:a05:600c:5253:b0:439:9274:81d0 with SMTP id 5b1f17b1804b1-439927483edmr22745175e9.1.1739886574551;
-        Tue, 18 Feb 2025 05:49:34 -0800 (PST)
-Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.35])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439880fbd6fsm49857355e9.18.2025.02.18.05.49.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 05:49:34 -0800 (PST)
-Message-ID: <8c5cdd12a0ec80d43fe737f5d2c4600d5933ba87.camel@redhat.com>
-Subject: Re: [PATCH 2/2] rseq/selftests: Add test for mm_cid compaction
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	linux-kernel@vger.kernel.org
-Cc: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
- "Paul E. McKenney"
-	 <paulmck@kernel.org>
-Date: Tue, 18 Feb 2025 14:49:32 +0100
-In-Reply-To: <e9ef4c7b2b979aec73f948cab33b5b4c0af4a804.camel@redhat.com>
-References: <20250217112317.258716-1-gmonaco@redhat.com>
-		 <20250217112317.258716-3-gmonaco@redhat.com>
-		 <822a9d2b-a9f3-45b4-8cad-077489015301@efficios.com>
-	 <e9ef4c7b2b979aec73f948cab33b5b4c0af4a804.camel@redhat.com>
-Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
- keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
- 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
- Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
- Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
- xyhmqeUWOzFx5P43S1E1dhsrLWgP
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1739886583; c=relaxed/simple;
+	bh=vRF8JzY74YazteXKwI2mCLdrMdSGMAdrzF1hKbK8Oo8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MWkPCuntn0bPVIUtVV32ckM1hUgfsiMd66P8K9ICmbD3ql0mY6+omLPxPiMulEX1q8wfcUJ1eTAFZOMGaWkZkpWRcrpyKDhTXNSKp9tpnEw+CIpYphTvQKnb/Hfp9oz5G0n7l2IXtiqbc1g4Y9/DIZzoiDLDd4fPwQvmI0TD+D0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=fekQPKrh; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1739886576;
+	bh=vRF8JzY74YazteXKwI2mCLdrMdSGMAdrzF1hKbK8Oo8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=fekQPKrhIX/5GWCwIXA86FBsps+grinbeUQ87+y38B51FJELe0ca78Th5kBfqedjq
+	 Fbr5MZDFxAACtcjYrIvf4RMDKF+hpGxdinpAqMxQSwqUNtTJddRx2VWyi223xeiZL1
+	 eV+fXNyTng9SzzjylUlK3W55evWbC705aFKSHSbrSk0YVuZhofAMaaUAmzM4BV6Rn9
+	 voOmowWhVb9t2pnU3oqssJReGj8k/GYPGYq0QKzr+pJbRctZuc+s+5xcuWglSLGxIl
+	 J9J0TghQLGlBb4Ax2YbF1zCdTQ/VkzoS1//3lto6g8Sk4JCOnfAtOpZ8FXhoWLnjQ9
+	 3YIH/Il6KEecw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Yy19D2lskz4wbp;
+	Wed, 19 Feb 2025 00:49:36 +1100 (AEDT)
+Date: Wed, 19 Feb 2025 00:49:34 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Beata Michalska <beata.michalska@arm.com>
+Cc: Yury Norov <yury.norov@gmail.com>, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the bitmap tree
+Message-ID: <20250219004934.46ace766@canb.auug.org.au>
+In-Reply-To: <Z7RiVtunqI9edfK4@arm.com>
+References: <20250218160742.49d6ab76@canb.auug.org.au>
+	<Z7RiVtunqI9edfK4@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/9X/Z_Q_W0TZ01fGC.JTefxJ";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
+--Sig_/9X/Z_Q_W0TZ01fGC.JTefxJ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi Beata,
 
-On Tue, 2025-02-18 at 09:13 +0100, Gabriele Monaco wrote:
->=20
-> However, I'm still not particularly fond of running stuff there at
-> all.
-> If a periodic task needs to run now, it preempts everything else and
-> should be on its way as soon as possible. A task work is always going
-> to delay this, although by a tiny bit.
->=20
-> Again, for now I cannot think of a better way without bringing
-> workqueues into the picture, and in this specific case we have a
-> valid
-> workaround to reduce the latency.
->=20
+On Tue, 18 Feb 2025 11:35:02 +0100 Beata Michalska <beata.michalska@arm.com=
+> wrote:
+>
+> I'm currently testing a proper fix for that one.
+> Should I just send it over as a diff to apply or rather a proper 'fixes' =
+patch?
 
-Been thinking about this for a while, what about getting the best from
-both worlds?
-MMs already have a dependency on workqueues (async_put_work) they
-simply don't wildly schedule them like I was doing, essentially, the
-whole periodic delayed_work thing was the issue.
-Substituting what is currently a task_work with a plain work_struct (on
-the mm) doesn't look too bad to me.
+Maybe a proper 'fixes' patch, please, if easy - otherwise a diff is
+fine.
 
-We still keep the mechanism to trigger and regulate its frequency and,
-instead of doing it from a tick, we do it from
-__rseq_handle_notify_resume.
-This way we won't have it scheduled for sleeping, never running or
-whatever exotic threads (which was a potential issue with the
-delayed_work) but we also keep it in a preemptible context with
-frequency comparable to the task_work.
+--=20
+Cheers,
+Stephen Rothwell
 
-Running it in a work_struct would probably make the batch scan
-superfluous, since we are talking about some 30us which can run
-perfectly fine in a kworker.
+--Sig_/9X/Z_Q_W0TZ01fGC.JTefxJ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-What do you think?
+-----BEGIN PGP SIGNATURE-----
 
-Thanks,
-Gabriele
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAme0j+4ACgkQAVBC80lX
+0GwXMwgAjDpwWkSJwD9hoUF3HJO8eMHIesZMOJqwSLiNFspJHxiSsB6RHiiBJQVC
+9Xz4mUh+VPEQnjshBMpHUyOBkIp+UybxJbgGGnSUhnIoJFmizige5DmheilyCvHA
+cZd47lBGTVSdLN/GBEs5tODxjraHnXSCw9bqLgZKYS1GZSpQ7S5CNUGpGB81UkKd
+bs1EQ+cdeuyX8o0XTJw2izkzZpunFhwFi7pRxu/7lS57g3SU/+eCzhIBLZAXH3Vt
+NRIbtV5aVTFHRFF0RcpuSMNOsRz/VLnVl04/doWZxA5B+6smyssz/IfA8dX8yo6v
+k3FqxTSuq3ZiSDKHp+8IlyBot3MTIw==
+=1bS+
+-----END PGP SIGNATURE-----
 
+--Sig_/9X/Z_Q_W0TZ01fGC.JTefxJ--
 
