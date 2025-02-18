@@ -1,219 +1,218 @@
-Return-Path: <linux-kernel+bounces-518591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DA86A39160
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 04:40:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A8127A3916F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 04:45:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57526168972
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 03:40:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5116316F16D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 03:45:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD58C15C15F;
-	Tue, 18 Feb 2025 03:39:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F7591A08B1;
+	Tue, 18 Feb 2025 03:45:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="ZkWrKaEZ"
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=damenly.org header.i=@damenly.org header.b="V88Qynw7"
+Received: from mail-108-mta0.mxroute.com (mail-108-mta0.mxroute.com [136.175.108.0])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 548091714C0
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 03:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F1CE74040
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 03:45:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.175.108.0
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739849992; cv=none; b=Q5oTq0QdthV4wRh6gqoNopvllMhyGXMKKOOoxSg6zcy4808MCf13nTE0GlO80JCjAigyNELat2AciqQyoyDHGDd6K0IRHj54CL7RcgWOWVIop4/IGPUvuCs4DZ2zVAFloEt3pDsC98/IExw/GNzFJG8lvOh1jneJbn5GD5gI57Q=
+	t=1739850336; cv=none; b=tI1XQimjc1X3ivcCofVDQfwxz2lowkXLO1sIbUZOPVNYlY+BIDcBz0d/2efhPuP/20usNlGNviXh8zyu+bwgkcqYIznnUb1SvmwlddSR+E5y8l3AmeaySipYSYHVstEhgIQkwcEyTIUcGFjWPmEG7CvUQ7l8f8pMRyXC4QujgZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739849992; c=relaxed/simple;
-	bh=FMJG7CoaYHU6n/hN5eIopR2EjNEo7XjFlVEn7N4HaZA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oHr+qQOFvmYyeICrYD+jANUZ7LDPkFCZrZugb/IUfpYgBsr142Iggd0ZDhoFYnEzdUiQxfc1kI1YS0J9x73qPLSjN8x/hpWMPVFnGPu+S/V2IDEqOAOJL/gozVJ1UC5Cm8you8taOoDQBFJZpuDuyzmGiCYaTV7rdLIDQPiIgBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=ZkWrKaEZ; arc=none smtp.client-ip=209.85.221.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-520b9dc56afso420020e0c.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 19:39:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1739849988; x=1740454788; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=sauKSPYZL9hyAMIScy42u0j0As6Q6IuyMrAZ0BlvIRE=;
-        b=ZkWrKaEZaAN07Aryw0ZzsQpwGUxWrmNbJwoNWlLTmkprXBHHTDMpyxAPf2gLBpioJs
-         k6JIUIeMDENEmM4/UvW7guhSS09bVq+uRhYNI3faEIjgnniQ1gacqwQ8LG4/mJbHSsjI
-         s7UJMpfRrebVaKEoX87AU/1Yw3uZiK4fxNnR0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739849988; x=1740454788;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sauKSPYZL9hyAMIScy42u0j0As6Q6IuyMrAZ0BlvIRE=;
-        b=DBNdHRGC4hfSiU+9HnO9m6T6U7z8S05X4yPK8vJd3627iorOoXTn9Q8htrIHyNQICC
-         NyfCVZom3Qv9PZ++hX2QUu3v9nqrdy9R+xVC33cMn4gp5R7D/JaAIKyJ8Ml1AxMxQ77t
-         PqM5iaaGsRJBxnIqDqRBsAWYCLMxBQ6OGevuBLrY7u8i62bmCTfIGbePA5ZJJAGQDaVa
-         LhAYWh8Jyq5BkmBHClx4q1ZOVSOYZRzyspC3s1TbkKEkMqQOMA+LbsBFcunZPg/e9VFz
-         6BU6B3cfxTZD7YzeKhFxIufXwdx9S+DHMl60xViIIIKy8tME8e2WBjJuxPfsq8vVgzXz
-         krDg==
-X-Forwarded-Encrypted: i=1; AJvYcCX6Q0QIQNgIw7TysQCmxw6zDVzrOTcrne9MeuGKhCNBep3Ez7umMTdcR7V4yiIOxOEVqV+Ih2bhP6kwgFo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNgHDKf8nIHTjKkDIpAm1EmlxwLXEmLFA3Lay09pEG45b/An9x
-	D5n2cDbuCCpnbR5WI8OTmIW8I5oVdg6Pf7bbXnu6YSGHeKDma499x4pcMWAi9/zfoFlEBx/FfQV
-	caxhwq7s2XIdY5gUFTbWDI27pItdeSKWYXTJA
-X-Gm-Gg: ASbGncuzaEA+8lgPJrhTGJn4TIeG4HP5GuyTJeGGuCK+Lu7JKSoTMgYNwOu74+g0k2a
-	ODcqa/jPMmMPndEHtTFO0wyTuAIXm8SGf7OLvco+v0STjlYF/gmJ9vXP0rJPdyh+lx/L4Uy9uSQ
-	==
-X-Google-Smtp-Source: AGHT+IGGfqQH2vJHuqpI3ZMLBNLypMfkPudXXq+FQ9pZyzdAjlk/phz14/ygY0ILOg03U7l1Rfseilm3e+SRIb5L3IY=
-X-Received: by 2002:a05:6122:338b:b0:520:5f0a:b5a5 with SMTP id
- 71dfb90a1353d-5209dd94048mr6299968e0c.6.1739849987974; Mon, 17 Feb 2025
- 19:39:47 -0800 (PST)
+	s=arc-20240116; t=1739850336; c=relaxed/simple;
+	bh=Z/LHmpug6mo4aeB94Ypuiu6MxuP5hkW76yjodYvxPcY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=N2ThM/86vwYwdeYyY7OT3iftQdLvjOxcD6tQC60ARh4+yDawltcwg3FOVZR+WTyuxEtSbsI8LR6CH5LHqNAqhRQofYVlgGjLMZgLQfsQe64wmD6rD+wyhXOKipWoLAWjawjwFfAXXQ9Y20a+fX/ytyerf48YyR9bVCYIQmiA83o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=damenly.org; spf=pass smtp.mailfrom=damenly.org; dkim=pass (2048-bit key) header.d=damenly.org header.i=@damenly.org header.b=V88Qynw7; arc=none smtp.client-ip=136.175.108.0
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=damenly.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=damenly.org
+Received: from filter006.mxroute.com ([136.175.111.3] filter006.mxroute.com)
+ (Authenticated sender: mN4UYu2MZsgR)
+ by mail-108-mta0.mxroute.com (ZoneMTA) with ESMTPSA id 19517248a3e000310e.007
+ for <linux-kernel@vger.kernel.org>
+ (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+ Tue, 18 Feb 2025 03:40:25 +0000
+X-Zone-Loop: b412b0f20f6490980fd52aed3b914108e12a7f473481
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=damenly.org
+	; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:
+	References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=d24NILsFbm5QEOjhOdI0kZQA7pO2m1fI1x27Z+Eryls=; b=V88Qynw7M1t27hMhlyFvTDccXj
+	k81RcP3UWajvLVNeA7B8iGu8kpiNE4rD4SQ42kozeLysFctPG/LRYp5xQkj33Eu4e+bG0SmaVlQJq
+	NZrHl7wdBjWhLWeQbMXSGDDaP2r/EkCH6oIgbF8mA4SpGg7ON6zK9IcbtbIijzAtNYxtdlVjWGHt7
+	iSsZvy9i/dKyqhaOdB7FpwC+P4LZL8/DHt/tskfAWabLJxIyx51vXq+7Ub+/u5soCl4jUUKHOl/EH
+	NQQa73xWMesyWxvetglyInYWHrIIZqpAjgulflysP6wJyemgksTGOuATExgY0VVqBME+WlobyGZ9u
+	B2BYpryA==;
+From: Su Yue <l@damenly.org>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: Glass Su <glass.su@suse.com>,  song@kernel.org,
+  linux-raid@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  yi.zhang@huawei.com,  yangerkun@huawei.com,  "yukuai (C)"
+ <yukuai3@huawei.com>
+Subject: Re: [PATCH md-6.15 2/7] md: only include md-cluster.h if necessary
+In-Reply-To: <c8cd970f-8b2a-bb7c-b0ad-4e11fd6bae9d@huaweicloud.com> (Yu Kuai's
+	message of "Tue, 18 Feb 2025 10:40:55 +0800")
+References: <20250215092225.2427977-1-yukuai1@huaweicloud.com>
+	<20250215092225.2427977-3-yukuai1@huaweicloud.com>
+	<E136E905-430C-40B4-B69A-7FC9B8CF3C47@suse.com>
+	<c8cd970f-8b2a-bb7c-b0ad-4e11fd6bae9d@huaweicloud.com>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Tue, 18 Feb 2025 11:40:16 +0800
+Message-ID: <h64r6hun.fsf@damenly.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250218030409.2425798-1-haoxiang_li2024@163.com>
-In-Reply-To: <20250218030409.2425798-1-haoxiang_li2024@163.com>
-From: Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>
-Date: Tue, 18 Feb 2025 09:09:35 +0530
-X-Gm-Features: AWEUYZmCS5ROY9SnA4yvR_D28IBkvxGjovMHfqichKVoslhSPwH890y6meTGNRk
-Message-ID: <CAH-L+nNhDaGLPbA5hLNjbRw2m8aF5BP8-P3rURxoGRJTrVYdiA@mail.gmail.com>
-Subject: Re: [PATCH net v3] nfp: bpf: Add check for nfp_app_ctrl_msg_alloc()
-To: Haoxiang Li <haoxiang_li2024@163.com>
-Cc: kuba@kernel.org, louis.peens@corigine.com, andrew+netdev@lunn.ch, 
-	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com, qmo@kernel.org, 
-	daniel@iogearbox.net, bpf@vger.kernel.org, oss-drivers@corigine.com, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="0000000000008699c2062e6264c3"
-
---0000000000008699c2062e6264c3
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
+X-Authenticated-Id: l@damenly.org
 
-On Tue, Feb 18, 2025 at 8:56=E2=80=AFAM Haoxiang Li <haoxiang_li2024@163.co=
-m> wrote:
->
-> Add check for the return value of nfp_app_ctrl_msg_alloc() in
-> nfp_bpf_cmsg_alloc() to prevent null pointer dereference.
->
-> Fixes: ff3d43f7568c ("nfp: bpf: implement helpers for FW map ops")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
-> ---
-> Changes in v3:
-> - modify a spell error. Thanks, Kalesh!
-> Changes in v2:
-> - remove the bracket for one single-statement. Thanks, Guru!
-> ---
->  drivers/net/ethernet/netronome/nfp/bpf/cmsg.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/net/ethernet/netronome/nfp/bpf/cmsg.c b/drivers/net/=
-ethernet/netronome/nfp/bpf/cmsg.c
-> index 2ec62c8d86e1..59486fe2ad18 100644
-> --- a/drivers/net/ethernet/netronome/nfp/bpf/cmsg.c
-> +++ b/drivers/net/ethernet/netronome/nfp/bpf/cmsg.c
-> @@ -20,6 +20,8 @@ nfp_bpf_cmsg_alloc(struct nfp_app_bpf *bpf, unsigned in=
-t size)
->         struct sk_buff *skb;
->
->         skb =3D nfp_app_ctrl_msg_alloc(bpf->app, size, GFP_KERNEL);
-> +       if (!skb)
-> +               return NULL;
->         skb_put(skb, size);
->
->         return skb;
-> --
-> 2.25.1
->
->
-You should wait 24 hours before posting a new version of the patch.
+On Tue 18 Feb 2025 at 10:40, Yu Kuai <yukuai1@huaweicloud.com>=20
+wrote:
 
-https://docs.kernel.org/process/maintainer-netdev.html#resending-after-revi=
-ew
+> Hi,
+>
+> =E5=9C=A8 2025/02/17 18:20, Glass Su =E5=86=99=E9=81=93:
+>>
+>>> On Feb 15, 2025, at 17:22, Yu Kuai <yukuai1@huaweicloud.com>=20
+>>> wrote:
+>>>
+>>> From: Yu Kuai <yukuai3@huawei.com>
+>>>
+>>> md-cluster is only supportted by raid1 and raid10, there is no=20
+>>> need to
+>>> include md-cluster.h for other personalities.
+>>>
+>>> Also move APIs that is only used in md-cluster.c from md.h to
+>>> md-cluster.h.
+>>>
+>>> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+>> Reviewed-by: Su Yue <glass.su@suse.com>
+>
+> Thanks for the review! Any ideas for the remaining patches?
+>
+Just did slight tests for md cluster. Sent RVB for remaining=20
+patches.
+Thanks for taking care of md cluster.
 
---=20
-Regards,
-Kalesh AP
-
---0000000000008699c2062e6264c3
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-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
-riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
-QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
-UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
-M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
-Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
-14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
-a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
-XzCCBWowggRSoAMCAQICDDfBRQmwNSI92mit0zANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
-RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
-UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAwODI5NTZaFw0yNTA5MTAwODI5NTZaMIGi
-MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
-BgNVBAoTDUJyb2FkY29tIEluYy4xHzAdBgNVBAMTFkthbGVzaCBBbmFra3VyIFB1cmF5aWwxMjAw
-BgkqhkiG9w0BCQEWI2thbGVzaC1hbmFra3VyLnB1cmF5aWxAYnJvYWRjb20uY29tMIIBIjANBgkq
-hkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxnv1Reaeezfr6NEmg3xZlh4cz9m7QCN13+j4z1scrX+b
-JfnV8xITT5yvwdQv3R3p7nzD/t29lTRWK3wjodUd2nImo6vBaH3JbDwleIjIWhDXLNZ4u7WIXYwx
-aQ8lYCdKXRsHXgGPY0+zSx9ddpqHZJlHwcvas3oKnQN9WgzZtsM7A8SJefWkNvkcOtef6bL8Ew+3
-FBfXmtsPL9I2vita8gkYzunj9Nu2IM+MnsP7V/+Coy/yZDtFJHp30hDnYGzuOhJchDF9/eASvE8T
-T1xqJODKM9xn5xXB1qezadfdgUs8k8QAYyP/oVBafF9uqDudL6otcBnziyDBQdFCuAQN7wIDAQAB
-o4IB5DCCAeAwDgYDVR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZC
-aHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJj
-YTIwMjAuY3J0MEEGCCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3Iz
-cGVyc29uYWxzaWduMmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcC
-ARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNV
-HR8EQjBAMD6gPKA6hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNp
-Z24yY2EyMDIwLmNybDAuBgNVHREEJzAlgSNrYWxlc2gtYW5ha2t1ci5wdXJheWlsQGJyb2FkY29t
-LmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGP
-zzAdBgNVHQ4EFgQUI3+tdStI+ABRGSqksMsiCmO9uDAwDQYJKoZIhvcNAQELBQADggEBAGfe1o9b
-4wUud0FMjb/FNdc433meL15npjdYWUeioHdlCGB5UvEaMGu71QysfoDOfUNeyO9YKp0h0fm7clvo
-cBqeWe4CPv9TQbmLEtXKdEpj5kFZBGmav69mGTlu1A9KDQW3y0CDzCPG2Fdm4s73PnkwvemRk9E2
-u9/kcZ8KWVeS+xq+XZ78kGTKQ6Wii3dMK/EHQhnDfidadoN/n+x2ySC8yyDNvy81BocnblQzvbuB
-a30CvRuhokNO6Jzh7ZFtjKVMzYas3oo6HXgA+slRszMu4pc+fRPO41FHjeDM76e6P5OnthhnD+NY
-x6xokUN65DN1bn2MkeNs0nQpizDqd0QxggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYD
-VQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25h
-bFNpZ24gMiBDQSAyMDIwAgw3wUUJsDUiPdpordMwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcN
-AQkEMSIEIMD7ApcbSV+YDQnhB0wthBkvSD31B2OQyXY35ZeriZiEMBgGCSqGSIb3DQEJAzELBgkq
-hkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDIxODAzMzk0OFowaQYJKoZIhvcNAQkPMVwwWjAL
-BglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG
-9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQA7cRO/xZwq
-VI5PcZfvfXEhsJic39ggLPUU85V8ZKgBpKqGugiRF6MknudPC9/DFrPyF046LLWxA5wkWFUbf1Du
-7dwvz8JWRP+dnGef6EoGPHaeKkmTRJusHXAfBNihoa+1zdTUOuKAJK5QuMXvZKTN09lJrx+HUGaN
-UEwkyi66aLnOf6sBc5DeumnRH2e5XF4diqr/htHPZIU1SJT4mJ5EXTpS/YdtWUSSi2SffSdOKXNx
-X2GWNt/GdXR4wj1D7e39Q6Ybwkxftit9qz5eto1HqYAomnjv1Y0jNUy/TMiGDI/fnJGMTzpozLid
-Nqx+eyfQI2sG1AjElR6eSLff11mV
---0000000000008699c2062e6264c3--
+--
+Su
+> Kuai
+>
+>>> ---
+>>> drivers/md/md-bitmap.c  | 2 ++
+>>> drivers/md/md-cluster.h | 7 +++++++
+>>> drivers/md/md.h         | 7 -------
+>>> drivers/md/raid1.c      | 1 +
+>>> drivers/md/raid10.c     | 1 +
+>>> 5 files changed, 11 insertions(+), 7 deletions(-)
+>>>
+>>> diff --git a/drivers/md/md-bitmap.c b/drivers/md/md-bitmap.c
+>>> index 23c09d22fcdb..71aa7dc80e26 100644
+>>> --- a/drivers/md/md-bitmap.c
+>>> +++ b/drivers/md/md-bitmap.c
+>>> @@ -29,8 +29,10 @@
+>>> #include <linux/buffer_head.h>
+>>> #include <linux/seq_file.h>
+>>> #include <trace/events/block.h>
+>>> +
+>>> #include "md.h"
+>>> #include "md-bitmap.h"
+>>> +#include "md-cluster.h"
+>>>
+>>> #define BITMAP_MAJOR_LO 3
+>>> /* version 4 insists the bitmap is in little-endian order
+>>> diff --git a/drivers/md/md-cluster.h b/drivers/md/md-cluster.h
+>>> index 470bf18ffde5..6c7aad00f5da 100644
+>>> --- a/drivers/md/md-cluster.h
+>>> +++ b/drivers/md/md-cluster.h
+>>> @@ -35,4 +35,11 @@ struct md_cluster_operations {
+>>> void (*update_size)(struct mddev *mddev, sector_t=20
+>>> old_dev_sectors);
+>>> };
+>>>
+>>> +extern int register_md_cluster_operations(const struct=20
+>>> md_cluster_operations *ops,
+>>> + struct module *module);
+>>> +extern int unregister_md_cluster_operations(void);
+>>> +extern int md_setup_cluster(struct mddev *mddev, int nodes);
+>>> +extern void md_cluster_stop(struct mddev *mddev);
+>>> +extern void md_reload_sb(struct mddev *mddev, int raid_disk);
+>>> +
+>>> #endif /* _MD_CLUSTER_H */
+>>> diff --git a/drivers/md/md.h b/drivers/md/md.h
+>>> index def808064ad8..c9bc70e6d5b4 100644
+>>> --- a/drivers/md/md.h
+>>> +++ b/drivers/md/md.h
+>>> @@ -19,7 +19,6 @@
+>>> #include <linux/wait.h>
+>>> #include <linux/workqueue.h>
+>>> #include <trace/events/block.h>
+>>> -#include "md-cluster.h"
+>>>
+>>> #define MaxSector (~(sector_t)0)
+>>>
+>>> @@ -845,11 +844,6 @@ static inline void safe_put_page(struct=20
+>>> page *p)
+>>>
+>>> extern int register_md_personality(struct md_personality *p);
+>>> extern int unregister_md_personality(struct md_personality=20
+>>> *p);
+>>> -extern int register_md_cluster_operations(const struct=20
+>>> md_cluster_operations *ops,
+>>> - struct module *module);
+>>> -extern int unregister_md_cluster_operations(void);
+>>> -extern int md_setup_cluster(struct mddev *mddev, int nodes);
+>>> -extern void md_cluster_stop(struct mddev *mddev);
+>>> extern struct md_thread *md_register_thread(
+>>> void (*run)(struct md_thread *thread),
+>>> struct mddev *mddev,
+>>> @@ -906,7 +900,6 @@ extern void md_idle_sync_thread(struct=20
+>>> mddev *mddev);
+>>> extern void md_frozen_sync_thread(struct mddev *mddev);
+>>> extern void md_unfrozen_sync_thread(struct mddev *mddev);
+>>>
+>>> -extern void md_reload_sb(struct mddev *mddev, int raid_disk);
+>>> extern void md_update_sb(struct mddev *mddev, int force);
+>>> extern void mddev_create_serial_pool(struct mddev *mddev,=20
+>>> struct md_rdev *rdev);
+>>> extern void mddev_destroy_serial_pool(struct mddev *mddev,
+>>> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+>>> index 9d57a88dbd26..e55db07e43d4 100644
+>>> --- a/drivers/md/raid1.c
+>>> +++ b/drivers/md/raid1.c
+>>> @@ -36,6 +36,7 @@
+>>> #include "md.h"
+>>> #include "raid1.h"
+>>> #include "md-bitmap.h"
+>>> +#include "md-cluster.h"
+>>>
+>>> #define UNSUPPORTED_MDDEV_FLAGS \
+>>> ((1L << MD_HAS_JOURNAL) | \
+>>> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+>>> index efe93b979167..3df39b2399b2 100644
+>>> --- a/drivers/md/raid10.c
+>>> +++ b/drivers/md/raid10.c
+>>> @@ -24,6 +24,7 @@
+>>> #include "raid10.h"
+>>> #include "raid0.h"
+>>> #include "md-bitmap.h"
+>>> +#include "md-cluster.h"
+>>>
+>>> /*
+>>>   * RAID10 provides a combination of RAID0 and RAID1=20
+>>>   functionality.
+>>> -- 2.39.2
+>>>
+>>>
+>> .
+>>
 
