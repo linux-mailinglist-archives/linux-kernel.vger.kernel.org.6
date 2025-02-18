@@ -1,129 +1,227 @@
-Return-Path: <linux-kernel+bounces-519889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99BDAA3A330
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:50:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46341A3A332
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:51:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8873A188E468
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:50:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3794E3A514B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:50:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A1026F452;
-	Tue, 18 Feb 2025 16:50:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 718B522A80F;
+	Tue, 18 Feb 2025 16:50:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qDqc9Ukk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b="H3lqZn73";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Ns7jMGRP"
+Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3567322A80F;
-	Tue, 18 Feb 2025 16:50:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF2F726E658;
+	Tue, 18 Feb 2025 16:50:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739897435; cv=none; b=AYa9BHUXzaaZGrhBk7kTFVebiYeHaUYPykb2BuivW9ovDv8oVN3PV56lRCq4u4wo362nH/fAHpgcb2mXSCZ9cLyAQZth+8sFip/urz9wVlZWMWtjCuFeVV7sAHnfmy7yT1+T5rAW3x4J4VwGok+MqCokEpswoy4ySTQUWivpxPc=
+	t=1739897457; cv=none; b=h0Fw7fKh/obhMgrE83gM123BA9KmDZYZe8ad+qx14a0fC8ay1SggjHoLDhLaskbnO72/A7w1BKsrjjslqyuru5s3O6dPROXQ1wMoH0/wy/DPy7lR6oxjDIUqnyK7ZRAXBfQlaq/TwVIDdt8eKDTYdAC1HocLaFIIb0s4IZyarSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739897435; c=relaxed/simple;
-	bh=/YVHQ+p5V3VCdn+u9aKhlu71S03saM0vo09sgG79sWU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y7x5Q5fayr5u26qdMsAsNXGZVqccfXWQhU5wtx3Cs0V6nHE412vaiyQ7vel7XkOqcvrDbmBzJB1imoKCqe6IDQ9UyYyYuftTK6CSIkJ4YQVnSkwSL+gfKTmcd9pPAM2U8sdqPwF3ADBY3lLZMkRndS9WA154/tAQRFrjYOYCc60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qDqc9Ukk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61C74C4CEE2;
-	Tue, 18 Feb 2025 16:50:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739897434;
-	bh=/YVHQ+p5V3VCdn+u9aKhlu71S03saM0vo09sgG79sWU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qDqc9UkkxW2nMEk503wToA7FM1ONqMLx5RxYYa0YBCAQy+2Uxgtk2qJ7veH03JWTM
-	 JeNXodB/0x36gmhoNiS5jDt0pUodg8nlD+P0K9gzwp5hOdld34yotKzi8cPR5acJem
-	 /gWw33X4Fzt1czqg5v5AJOcXhNlkRAb+1ZqgAaC+RqhiXAaz1Iiuv0XHfJcAMxlinS
-	 8esBOwlcuxaK2Jd5ctgNIS6QT0TwCGIgXUfECcMSodmFqesrREcU8ExwGw4ENrgVHn
-	 ePwfCtEVUozIlhZQN4+liIK+LbtQJjQl3N/acjqWIpXbu2RRZ6xr1Ca82dFEudnGxH
-	 I9irZQomDOdqg==
-Date: Tue, 18 Feb 2025 16:50:29 +0000
-From: Conor Dooley <conor@kernel.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: sboyd@kernel.org, mturquette@baylibre.com, matthias.bgg@gmail.com,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	geert+renesas@glider.be, u.kleine-koenig@baylibre.com,
-	amergnat@baylibre.com, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
-	kernel@collabora.com, macpaul.lin@mediatek.com,
-	pablo.sun@mediatek.com
-Subject: Re: [PATCH v2 1/2] dt-bindings: clock: mediatek,mt8188: Add
- VDO1_DPI1_HDMI clock
-Message-ID: <20250218-ferry-glorifier-e10b0ae13371@spud>
-References: <20250212100342.33618-1-angelogioacchino.delregno@collabora.com>
- <20250212-arming-gyration-103e42b94ed6@spud>
- <906ed1df-3c63-4028-ae7d-97e086acca32@collabora.com>
+	s=arc-20240116; t=1739897457; c=relaxed/simple;
+	bh=K0dOOSCcf94N/kUXiJglyQYe2jYwQNYoUshwExfewuI=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=NZWfDaqCHT8JYe8bxBnsJdE7xMEFeCuU1ksorgG+tWUvW3ZgldtAOw32IGgY41f+FaXPxGb8Zv+bpFT+5JpCZBub3wfmQubUpzZ59Rv9s/tyseCWR3ZiEvYUqK3RT/Am5JaGsY6VhOgYTTADJmhTwhJAassi30GmbfQNfEzGyjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca; spf=pass smtp.mailfrom=squebb.ca; dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b=H3lqZn73; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Ns7jMGRP; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailfout.phl.internal (Postfix) with ESMTP id 9E39013808BC;
+	Tue, 18 Feb 2025 11:50:53 -0500 (EST)
+Received: from phl-imap-10 ([10.202.2.85])
+  by phl-compute-04.internal (MEProxy); Tue, 18 Feb 2025 11:50:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1739897453;
+	 x=1739983853; bh=p7pvXcz+nJelHwX+jlHgdJlucSENiNqsN9eSnjiFOGY=; b=
+	H3lqZn73VbEoh2Z0DGBhKZuAmPfJ+5QuMsL5EGEcHwtJmLkE8DKqXnn2nRw/fyjc
+	dcBDsgTZ40faqO5uTn7x7iYw68Fg/lK/VLgN7tuVaZNgz9VqSMB80yLA293id279
+	2puoy3SyMqOThgO52N7LB80w3ebaUwoyTzi2UMOUCZDheXYMoDsECat/IrwO0OnU
+	T2PyHfBCdJ6bLdc4vB/eQwOL8WyALYb7osQrpXzYDYY6GHGmgIRhPFuz1Ag9b3gp
+	SMY++Du4AABp1SqEzRWwQ7do8tB+fHvmzgVm3mmLBgvu4eF2manFrtSjK821G3dZ
+	p+E06GoTAUewq0MLTrHnrg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1739897453; x=
+	1739983853; bh=p7pvXcz+nJelHwX+jlHgdJlucSENiNqsN9eSnjiFOGY=; b=N
+	s7jMGRPobdgS4aEFzfzaBqiS9ZqCjsyj7XPigoQWcPoXrpJeGwuhW5GHsVZS6dQL
+	RwGWShS74AM4RCSEcPWpDzYGZasVpNw0EFMVVx8wAZA++Q7+NxDYZgVZTkKslY3d
+	NlXrvPma5X2TSsb7I1xw8jAmkHyYd+2gvK3pbwezwigLdEJOD8xVL+WXKxW88E5a
+	GS/VWNwkJXwX9Bfn4lGIaO3THPd8T3USozhL4HdFY4ImD9BQVfIC0fvpiXkrALrb
+	Pxdy9UeZ/YLPptpQ+YSE54yHjcRfWfw64YXAadD/0uUvj7JTnJ3StRkVfVNDnAsp
+	r4amFw2OCCPCHAKutm+og==
+X-ME-Sender: <xms:bLq0Z_TFqWy4luisCgu6g7OFQJaZpLiJRHg5-l-712P753jihdgTGw>
+    <xme:bLq0ZwydCCksIpB2soONEf6EAx6s9kwCGn5_Ui778bWM9RPGwAZuIqfL_j9DY5kM-
+    EZP3AAnSO-CMT9QXO0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeiudekgecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdforghrkhcurfgvrghrshhonhdfuceomhhpvggrrhhsohhnqdhlvg
+    hnohhvohesshhquhgvsggsrdgtrgeqnecuggftrfgrthhtvghrnhephfeuvdehteeghedt
+    hedtveehuddvjeejgffgieejvdegkefhfeelheekhedvffehnecuvehluhhsthgvrhfuih
+    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhhpvggrrhhsohhnqdhlvghnohhv
+    ohesshhquhgvsggsrdgtrgdpnhgspghrtghpthhtohepjedpmhhouggvpehsmhhtphhouh
+    htpdhrtghpthhtohepkhhuuhhrthgssehgmhgrihhlrdgtohhmpdhrtghpthhtohephhhm
+    hheshhhmhhdrvghnghdrsghrpdhrtghpthhtohepihhlphhordhjrghrvhhinhgvnheslh
+    hinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehisghmqdgrtghpihdquggvvhgv
+    lheslhhishhtshdrshhouhhrtggvfhhorhhgvgdrnhgvthdprhgtphhtthhopehhuggvgh
+    hovgguvgesrhgvughhrghtrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghl
+    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphhlrghtfhhorhhmqdgurh
+    hivhgvrhdqgiekieesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:bLq0Z03-M1xLYhtyPXO3WYHtckHRmS0IqiRlAwEo6KcEb7ndGUgffA>
+    <xmx:bLq0Z_Dge3JsCwLVN07g3g8A_GCYbqI68HDPpO1JIf1BA07QFAe2qQ>
+    <xmx:bLq0Z4gqWsR96iWR-tQOaIedAeSTGBz2lp5EKFCdDmZBijrk__fIbg>
+    <xmx:bLq0Zzro4EK5bTCbU_Le_BgySoGEWVwNtNULEzWkMlVuZOqs-FRrGw>
+    <xmx:bbq0ZzWQpMh-EbHDoGpO14cj1SKPcZkrSxtr4W6jpT5tZemA0DYVTPbP>
+Feedback-ID: ibe194615:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 3660F3C0066; Tue, 18 Feb 2025 11:50:52 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="koIZKDiabKMrvHLl"
-Content-Disposition: inline
-In-Reply-To: <906ed1df-3c63-4028-ae7d-97e086acca32@collabora.com>
+Date: Tue, 18 Feb 2025 11:50:31 -0500
+From: "Mark Pearson" <mpearson-lenovo@squebb.ca>
+To: "Kurt Borja" <kuurtb@gmail.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: "Hans de Goede" <hdegoede@redhat.com>,
+ "Henrique de Moraes Holschuh" <hmh@hmh.eng.br>,
+ ibm-acpi-devel@lists.sourceforge.net,
+ "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
+ linux-kernel@vger.kernel.org
+Message-Id: <9a98e10c-dd14-45a9-96ec-6ebca8b68616@app.fastmail.com>
+In-Reply-To: <20250215000302.19753-3-kuurtb@gmail.com>
+References: <20250215000302.19753-1-kuurtb@gmail.com>
+ <20250215000302.19753-3-kuurtb@gmail.com>
+Subject: Re: [PATCH 2/2] platform/x86: thinkpad_acpi: Move HWMON initialization to
+ tpacpi_hwmon_pdriver's probe
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
+Hi Kurt,
 
---koIZKDiabKMrvHLl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Feb 14, 2025, at 7:03 PM, Kurt Borja wrote:
+> Let the driver core manage the lifetime of the HWMON device, by
+> registering it inside tpacpi_hwmon_pdriver's probe and using
+> devm_hwmon_device_register_with_groups().
+>
+> Signed-off-by: Kurt Borja <kuurtb@gmail.com>
+> ---
+>  drivers/platform/x86/thinkpad_acpi.c | 44 +++++++++++-----------------
+>  1 file changed, 17 insertions(+), 27 deletions(-)
+>
+> diff --git a/drivers/platform/x86/thinkpad_acpi.c 
+> b/drivers/platform/x86/thinkpad_acpi.c
+> index ad9de48cc122..a7e82157bd67 100644
+> --- a/drivers/platform/x86/thinkpad_acpi.c
+> +++ b/drivers/platform/x86/thinkpad_acpi.c
+> @@ -367,7 +367,6 @@ static struct {
+>  	u32 beep_needs_two_args:1;
+>  	u32 mixer_no_level_control:1;
+>  	u32 battery_force_primary:1;
+> -	u32 sensors_pdrv_registered:1;
+>  	u32 hotkey_poll_active:1;
+>  	u32 has_adaptive_kbd:1;
+>  	u32 kbd_lang:1;
+> @@ -11815,12 +11814,10 @@ static void thinkpad_acpi_module_exit(void)
+>  {
+>  	tpacpi_lifecycle = TPACPI_LIFE_EXITING;
+> 
+> -	if (tpacpi_hwmon)
+> -		hwmon_device_unregister(tpacpi_hwmon);
+> -	if (tp_features.sensors_pdrv_registered)
+> +	if (tpacpi_sensors_pdev) {
+>  		platform_driver_unregister(&tpacpi_hwmon_pdriver);
+> -	if (tpacpi_sensors_pdev)
+>  		platform_device_unregister(tpacpi_sensors_pdev);
+> +	}
+> 
+>  	if (tpacpi_pdev) {
+>  		platform_driver_unregister(&tpacpi_pdriver);
+> @@ -11891,6 +11888,17 @@ static int __init tpacpi_pdriver_probe(struct 
+> platform_device *pdev)
+>  	return ret;
+>  }
+> 
+> +static int __init tpacpi_hwmon_pdriver_probe(struct platform_device *pdev)
+> +{
+> +	tpacpi_hwmon = devm_hwmon_device_register_with_groups(
+> +		&tpacpi_sensors_pdev->dev, TPACPI_NAME, NULL, tpacpi_hwmon_groups);
+> +
+> +	if (IS_ERR(tpacpi_hwmon))
+> +		pr_err("unable to register hwmon device\n");
+> +
+> +	return PTR_ERR_OR_ZERO(tpacpi_hwmon);
+> +}
+> +
+>  static int __init thinkpad_acpi_module_init(void)
+>  {
+>  	const struct dmi_system_id *dmi_id;
+> @@ -11964,37 +11972,19 @@ static int __init thinkpad_acpi_module_init(void)
+>  		return ret;
+>  	}
+> 
+> -	tpacpi_sensors_pdev = platform_device_register_simple(
+> -						TPACPI_HWMON_DRVR_NAME,
+> -						PLATFORM_DEVID_NONE, NULL, 0);
+> +	tpacpi_sensors_pdev = platform_create_bundle(&tpacpi_hwmon_pdriver,
+> +						     tpacpi_hwmon_pdriver_probe,
+> +						     NULL, 0, NULL, 0);
+>  	if (IS_ERR(tpacpi_sensors_pdev)) {
+>  		ret = PTR_ERR(tpacpi_sensors_pdev);
+>  		tpacpi_sensors_pdev = NULL;
+> -		pr_err("unable to register hwmon platform device\n");
+> +		pr_err("unable to register hwmon platform device/driver bundle\n");
+>  		thinkpad_acpi_module_exit();
+>  		return ret;
+>  	}
+> 
+>  	tpacpi_lifecycle = TPACPI_LIFE_RUNNING;
+> 
+> -	ret = platform_driver_register(&tpacpi_hwmon_pdriver);
+> -	if (ret) {
+> -		pr_err("unable to register hwmon platform driver\n");
+> -		thinkpad_acpi_module_exit();
+> -		return ret;
+> -	}
+> -	tp_features.sensors_pdrv_registered = 1;
+> -
+> -	tpacpi_hwmon = hwmon_device_register_with_groups(
+> -		&tpacpi_sensors_pdev->dev, TPACPI_NAME, NULL, tpacpi_hwmon_groups);
+> -	if (IS_ERR(tpacpi_hwmon)) {
+> -		ret = PTR_ERR(tpacpi_hwmon);
+> -		tpacpi_hwmon = NULL;
+> -		pr_err("unable to register hwmon device\n");
+> -		thinkpad_acpi_module_exit();
+> -		return ret;
+> -	}
+> -
+>  	return 0;
+>  }
+> 
+> -- 
+> 2.48.1
 
-On Tue, Feb 18, 2025 at 02:22:25PM +0100, AngeloGioacchino Del Regno wrote:
-> Il 12/02/25 20:17, Conor Dooley ha scritto:
-> > On Wed, Feb 12, 2025 at 11:03:41AM +0100, AngeloGioacchino Del Regno wr=
-ote:
-> > > Add binding for the HDMI TX clock found in the VDO1 controller.
-> > > While at it, also remove the unused CLK_VDO1_NR_CLK.
-> > >=20
-> > > Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@=
-collabora.com>
-> > > ---
-> > >   include/dt-bindings/clock/mediatek,mt8188-clk.h | 2 +-
-> > >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > >=20
-> > > diff --git a/include/dt-bindings/clock/mediatek,mt8188-clk.h b/includ=
-e/dt-bindings/clock/mediatek,mt8188-clk.h
-> > > index bd5cd100b796..0e87f61c90f4 100644
-> > > --- a/include/dt-bindings/clock/mediatek,mt8188-clk.h
-> > > +++ b/include/dt-bindings/clock/mediatek,mt8188-clk.h
-> > > @@ -721,6 +721,6 @@
-> > >   #define CLK_VDO1_DPINTF				58
-> > >   #define CLK_VDO1_DISP_MONITOR_DPINTF		59
-> > >   #define CLK_VDO1_26M_SLOW			60
-> > > -#define CLK_VDO1_NR_CLK				61
-> > > +#define CLK_VDO1_DPI1_HDMI			61
-> >=20
-> > Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> >=20
-> > btw, I see the mt8195 has this same CLK_VDO1_NR_CLK define in it, if you
-> > fancy getting rid of that too.
->=20
-> Thanks Conor, yeah I'll do that asap... one commit for each NR_CLK is a b=
-it
-> too much... I should just clean them all up :-)
->=20
-> That requires a bit of work though, so it's not something that I can do in
-> a few minutes; let's see if I can make it for this cycle, but no promises.
+Thanks for doing this.
 
-Yah, no worries. Was just pointing it out, don't need to let this
-particular patch wait around for it by any means.
+For the series - all looks good and I tested on a X1 Carbon 12 and confirmed the Thinkpad devices are there under /sys/devices/thinkpad_acpi and /sys/class/hwmon. Didn't find any issues.
 
---koIZKDiabKMrvHLl
-Content-Type: application/pgp-signature; name="signature.asc"
+Reviewed-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+Tested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ7S6VAAKCRB4tDGHoIJi
-0menAPwMIMl/Yz8zjCE/wgQtTGuMlk04Porrv7GFsIP8l1gNMQEArAqwMMdmP2j1
-yXgjRkIPaKsOrL54hlT7KowOxubhEAo=
-=hGQS
------END PGP SIGNATURE-----
-
---koIZKDiabKMrvHLl--
+Mark
 
