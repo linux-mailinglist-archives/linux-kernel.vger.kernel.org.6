@@ -1,144 +1,235 @@
-Return-Path: <linux-kernel+bounces-518522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5BA1A39065
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 02:33:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34D13A3906B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 02:35:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97DB9189004D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 01:33:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2561B1720C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 01:33:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 158A584D34;
-	Tue, 18 Feb 2025 01:32:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E8412CD96;
+	Tue, 18 Feb 2025 01:33:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GQOPeFUT"
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="aQSumd+W"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0144BE545
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 01:32:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A05EE1D52B
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 01:33:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739842378; cv=none; b=Gfy4k5Zy5byB7WSPu02tfzOdVTBFmSb3JG4BItmZdO4vMheETIHH8nVXsIMbucgtZQGAft18R9O90/s36HDLNexKyHybH6f0ILh5vUX4xFEDfo1J7cRFUO93CGP1JlK0QHyiYyz9iyd/CPgm9gb80zFfr00WI7w/TbVByU0FbTo=
+	t=1739842421; cv=none; b=Z2U/sNfsVeVHQ5erBXcuWvxsEv4iLnpVzqwBIaOqRWUl700kuLtjjM8oy4ZPJ2AZxevRq45AyBT5JQwrcG/WOBDbJ3OdfcU7SumG0H4hvo1MzMqbKuYY9CsU/jP2cTINgnd8lQWvD3C+EFIIKHn/o3rAGMEv34NeysHG0F1/05I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739842378; c=relaxed/simple;
-	bh=XthJhyBKWxl5/8OfBCYvrSGWTL6qBx3i8n+seWfPPvY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FAkbMxMVeP9H26//W0DdJ/2A8o6kPdh/d2YDlMVtgnnv1XMbPRLrl57Mlq1Q4Ftuiid2/lPQJalMRnHXEiOXnch4RK8vzLJuDmIYgAjr0zk4XhWPiOCA6uuN1waaomtVcuoNrE1LgAJABtUhIELxWNDtOeQUh4N31MkukhUDrW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GQOPeFUT; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e5dab3f372aso3882264276.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 17:32:56 -0800 (PST)
+	s=arc-20240116; t=1739842421; c=relaxed/simple;
+	bh=PqldUid8b28osb9ruzZdoEBTz6JRlxB54ChBBiDaolI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cs4ZoVUBTLOjKiYBvi+VGlVDAzMLTFPLuJ65JRU86kdeOUAlY36RbFzXKVXotI+MPU6+kwowt7lbPtqag8hBZB7TGQHteX3PpOsJXN9oxLgGhK3VfRCcmOQLyAJRHWh2MMipBgTfW+QEdLcKIfyCDba6wzdR3mlz6PsygSPZbf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=aQSumd+W; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-220e6028214so80477165ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 17:33:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739842376; x=1740447176; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oT9cTQ7SYk8M4XCMQJFfLhAN63w/VesJCF78+3guBLg=;
-        b=GQOPeFUTtCtqiXkDV99eJN+HpAbSKrPe3/Nhj+u3BeLaHHuo5Tt8MrAYjEl7Yh+neH
-         yQ4SxDGdEWFkq7kgPmh/bnjxIMJwMxxWy6FsrKyygGRlQ8dUxxKwDUJW2V4JvJf8sONb
-         764HtU2NGzQZaGzfvNM4u3o3+S/m3XOIUHlPQutw4zq90AFBj86qsELYYdXnF0+VUa8q
-         QykWOgTWp0A7xUGUe2XROEwlwNX13z7bH+gfEQD8qItOvyjbI/8mQ8GBEg7u22WHstpe
-         33M8r7zgxCCMlOcBuW7OeMLzJuwLwwMjh8ov4SEgnm4F55PjUnBk+FGvkzSeQvb5sxWb
-         jbBg==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1739842419; x=1740447219; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=UmpmFjzx9bUrYvZxoU2dK5gnUuqgFd21wJOsMgZc0Ns=;
+        b=aQSumd+WtyWu3MtKdTAvVIWEStWO9g01MpjM8dVceX6Y62HG+inQ3I5/gYcYEv5tSB
+         K27maldMzqmaGIOCf80oE86gA2SEhc75fFq6H/TcuSwBWS9EvMVu/twDqvLycCf4Ixfz
+         6A+ErNrvAyPcjpMbmvw/YSxWOH1rrsKJtzKzKFjbXZm3uvDhD2h79irMJ8BFsk7QQ8lu
+         JG7GCIGQuoUa4oNHEmLcAEl9bRZ0hPc3IjJXUAEy9NlHrdxcZ856KTqgkklMOtBl7Ltf
+         xaTQFe0ANPw/0fhFGsJbI25vk9sraUDwQ/U5ITD1Ml/YHhkuqX4VnopPg69w3VErw+PZ
+         a+uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739842376; x=1740447176;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oT9cTQ7SYk8M4XCMQJFfLhAN63w/VesJCF78+3guBLg=;
-        b=THeihEPWfb0IOFCcClx6cg8GVUJEGdV8CYVqdMBOWPW1SuNm5XxaDG8AzTrILJdvX1
-         ZiDs0lWNtCvK4eptLXIbOLa58YJ1IsYUKeog1jwE9hpw7hWvlC5H5AIzaFH61CvmLZXt
-         5c7n9Xc31TbdQHDEt1PHfNtpILXffGvgI2aXkijZuxNNDIyfNwODrLaDoofQwsbjg6kq
-         IjmMlt3ksaH5YkP+zA4JBxwzoFA9AzW9FHdr/e6w/XDDeOZ/ee6Jg7pocsPRVkI8xmMl
-         Y7fSMlx+/RB3vDjVHoTRlQ33XigIddhIPwosIC+lQU0eclMS0D4VxoVK7shVGPIIuzHB
-         4ZyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWuPgIhFycxO6B2tQOhdN6yXD+SPyy1ZP9Sla0A+xExRJl3b5EjjFdJboNa0PlxglwuKR5h5mnS7Z+YGU0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyVO9xLuVs3HKWLOCNR5hojHrKNDweAicE1qLCV8H0d8+qtksc
-	rhDZwZqmipDh+CJ82+ZicUpSVFIVBcO8t1cPcWG6hHGrXOYTdAHdeUCWGOGIllfRn50qybMjp2W
-	o9/9kTexzsZ792aaw1bNbTtpMuGB5G+UEdp4j
-X-Gm-Gg: ASbGncvn3xGMjTKEQz6IFI0avZiCW+sWZ+BW3yqXBULwrPwh3qJL3gUr9q6T95jm7aR
-	1S5VvsonrTzSjV2JNHd64Ht84Anth8L6YPv/aUxsUdGv1xLm9CxKNVrjKdLOr3tcHZSmAO39pHw
-	==
-X-Google-Smtp-Source: AGHT+IEOxbyZXlsmNukXxVXTJcKreG9LC/L/7hgVrzCaKIT85E/ITWgBLUIONugofALgdPoRDTUarfoslMrxDTHm6AA=
-X-Received: by 2002:a05:6902:2492:b0:e5b:1351:ccdd with SMTP id
- 3f1490d57ef6-e5dc98df5fcmr8836972276.24.1739842375577; Mon, 17 Feb 2025
- 17:32:55 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739842419; x=1740447219;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UmpmFjzx9bUrYvZxoU2dK5gnUuqgFd21wJOsMgZc0Ns=;
+        b=niVUZ8IEVvpVjCXiqf0mH54PnFdlQpr9qKUlwqvUgGSQuAODWuNsaviyg8+tQCcdGi
+         umZSdKKtEqmYcwnOxRkl2iqKk6oJdwCy0OQsWa7Kj+58Z51B7TOKkunEwNWUP5fW5FL2
+         u+NLJeIYC9hMGg+babM/SuSQbxG+QLsGi0K/5jH7IYpcPhBUFT2/FQQDgsYwfLVCuUxz
+         5jpXfDBityrUFEPH+tnVSRp1hg7c1Lzi7J3v5IKP3wQyNDu+YrGmuPq8Fm2uqZNWzx3c
+         tfy4l90G2HhpOB2lm8W8Z/+GOHE3KHdSwav9kY81BaMRZ0OTBUkujhviiYtl1ScCmyO1
+         xcug==
+X-Forwarded-Encrypted: i=1; AJvYcCVUUx1XC+B4NTQDA3wOBsxl66HeDBC8tolRAkWNwIPOyaihWcHEcXs/7wcrzJFdyfsybFZf5uIDyJ9PF+I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2DwMI1JUwK48RadDpWT8X6ypmmH4VlfRl2tjMV3aoFqc8DrXk
+	rDMJ2i9uSoRNbIzgCTu1cokPKYJoFTmJQPS5ff2WQG46BnuSKV3HA835+9Yy6QI=
+X-Gm-Gg: ASbGncvlYUEIIQ+yiXTNW9/Y+wUpjOy/KZcoyyRMQU14oBkU4BTnxkrWFOyhsst1Rwk
+	bNYhSKdQhaKMcdma6ekD+UDPbXNtpflelFqQO915sKtTwspQfec0heZUX1+lpsO9F8HCGZsHqKz
+	Zbq1257p9HG6I4jlFEB9n/KTJiYslpxK6mzd06v2nebHWpgMWcT/FMYB18oB8+TBgPnd/cdQXhj
+	fq4mwfPlUFucmcuwK5mfHSPDjHHadrN8b+v3i4TAz3CeGWGRZJKqeJJW7gNYcL0F6OIKnqyFQdu
+	haMY/lSdKkCwfS8Rm+FnGTY96Lxcx/zxLtuQFEpxVhIUfNmuSanBREg+
+X-Google-Smtp-Source: AGHT+IHh0FY+Jv7gaSRcfnfFJ7EpcQsaZBH/WADBW2TP7ttlwXE5cmoU6puqsc/FMsvUfWC2fhP2Rg==
+X-Received: by 2002:a05:6a21:1fc8:b0:1ee:be05:1e2 with SMTP id adf61e73a8af0-1eebe05953emr5291079637.15.1739842418940;
+        Mon, 17 Feb 2025 17:33:38 -0800 (PST)
+Received: from dread.disaster.area (pa49-186-89-135.pa.vic.optusnet.com.au. [49.186.89.135])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73274bdf0aasm3434763b3a.125.2025.02.17.17.33.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Feb 2025 17:33:38 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.98)
+	(envelope-from <david@fromorbit.com>)
+	id 1tkCUR-00000002cJb-3K4F;
+	Tue, 18 Feb 2025 12:33:35 +1100
+Date: Tue, 18 Feb 2025 12:33:35 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
+	Eric Biggers <ebiggers@kernel.org>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	ronnie sahlberg <ronniesahlberg@gmail.com>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Steve French <sfrench@samba.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 1/4] fs: Add FS_XFLAG_COMPRESSED & FS_XFLAG_ENCRYPTED
+ for FS_IOC_FS[GS]ETXATTR API
+Message-ID: <Z7Pjb5tI6jJDlFZn@dread.disaster.area>
+References: <20250216164029.20673-1-pali@kernel.org>
+ <20250216164029.20673-2-pali@kernel.org>
+ <20250216183432.GA2404@sol.localdomain>
+ <CAOQ4uxigYpzpttfaRc=xAxJc=f2bz89_eCideuftf3egTiE+3A@mail.gmail.com>
+ <20250216202441.d3re7lfky6bcozkv@pali>
+ <CAOQ4uxj4urR70FmLB_4Qwbp1O5TwvHWSW6QPTCuq7uXp033B7Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250214191709.1.I6e9e94dcded65e4a9ed42ad23ca8a5d81f680382@changeid>
-In-Reply-To: <20250214191709.1.I6e9e94dcded65e4a9ed42ad23ca8a5d81f680382@changeid>
-From: Hsin-chen Chuang <chharry@google.com>
-Date: Tue, 18 Feb 2025 09:32:29 +0800
-X-Gm-Features: AWEUYZkHkNh3wnRYDK_q8m5NNmkXTYr9xtET5ubclWQGd7UFDiTqCDTESnOuPUU
-Message-ID: <CADg1FFf8aPk-urK9RUn2pdKQ+=f+9X8K8+nqEA_1g3qUO2ugZQ@mail.gmail.com>
-Subject: Re: [PATCH] Bluetooth: Always allow SCO packets for user channel
-To: linux-bluetooth@vger.kernel.org, luiz.dentz@gmail.com
-Cc: chromeos-bluetooth-upstreaming@chromium.org, 
-	Hsin-chen Chuang <chharry@chromium.org>, Marcel Holtmann <marcel@holtmann.org>, 
-	Ying Hsu <yinghsu@chromium.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxj4urR70FmLB_4Qwbp1O5TwvHWSW6QPTCuq7uXp033B7Q@mail.gmail.com>
 
-Hi Luiz,
+On Sun, Feb 16, 2025 at 09:43:02PM +0100, Amir Goldstein wrote:
+> On Sun, Feb 16, 2025 at 9:24 PM Pali Rohár <pali@kernel.org> wrote:
+> >
+> > On Sunday 16 February 2025 21:17:55 Amir Goldstein wrote:
+> > > On Sun, Feb 16, 2025 at 7:34 PM Eric Biggers <ebiggers@kernel.org> wrote:
+> > > >
+> > > > On Sun, Feb 16, 2025 at 05:40:26PM +0100, Pali Rohár wrote:
+> > > > > This allows to get or set FS_COMPR_FL and FS_ENCRYPT_FL bits via FS_IOC_FSGETXATTR/FS_IOC_FSSETXATTR API.
+> > > > >
+> > > > > Signed-off-by: Pali Rohár <pali@kernel.org>
+> > > >
+> > > > Does this really allow setting FS_ENCRYPT_FL via FS_IOC_FSSETXATTR, and how does
+> > > > this interact with the existing fscrypt support in ext4, f2fs, ubifs, and ceph
+> > > > which use that flag?
+> > >
+> > > As far as I can tell, after fileattr_fill_xflags() call in
+> > > ioctl_fssetxattr(), the call
+> > > to ext4_fileattr_set() should behave exactly the same if it came some
+> > > FS_IOC_FSSETXATTR or from FS_IOC_SETFLAGS.
+> > > IOW, EXT4_FL_USER_MODIFIABLE mask will still apply.
+> > >
+> > > However, unlike the legacy API, we now have an opportunity to deal with
+> > > EXT4_FL_USER_MODIFIABLE better than this:
+> > >         /*
+> > >          * chattr(1) grabs flags via GETFLAGS, modifies the result and
+> > >          * passes that to SETFLAGS. So we cannot easily make SETFLAGS
+> > >          * more restrictive than just silently masking off visible but
+> > >          * not settable flags as we always did.
+> > >          */
+> > >
+> > > if we have the xflags_mask in the new API (not only the xflags) then
+> > > chattr(1) can set EXT4_FL_USER_MODIFIABLE in xflags_mask
+> > > ext4_fileattr_set() can verify that
+> > > (xflags_mask & ~EXT4_FL_USER_MODIFIABLE == 0).
+> > >
+> > > However, Pali, this is an important point that your RFC did not follow -
+> > > AFAICT, the current kernel code of ext4_fileattr_set() and xfs_fileattr_set()
+> > > (and other fs) does not return any error for unknown xflags, it just
+> > > ignores them.
+> > >
+> > > This is why a new ioctl pair FS_IOC_[GS]ETFSXATTR2 is needed IMO
+> > > before adding support to ANY new xflags, whether they are mapped to
+> > > existing flags like in this patch or are completely new xflags.
+> > >
+> > > Thanks,
+> > > Amir.
+> >
+> > But xflags_mask is available in this new API. It is available if the
+> > FS_XFLAG_HASEXTFIELDS flag is set. So I think that the ext4 improvement
+> > mentioned above can be included into this new API.
+> >
+> > Or I'm missing something?
+> 
+> Yes, you are missing something very fundamental to backward compat API -
+> You cannot change the existing kernels.
+> 
+> You should ask yourself one question:
+> What happens if I execute the old ioctl FS_IOC_FSSETXATTR
+> on an existing old kernel with the new extended flags?
 
-On Fri, Feb 14, 2025 at 7:17=E2=80=AFPM Hsin-chen Chuang <chharry@google.co=
-m> wrote:
->
-> From: Hsin-chen Chuang <chharry@chromium.org>
->
-> The SCO packets from Bluetooth raw socket are now rejected because
-> hci_conn_num is left 0. This patch allows such the usecase to enable
-> the userspace SCO support.
->
-> Fixes: b16b327edb4d ("Bluetooth: btusb: add sysfs attribute to control US=
-B alt setting")
-> Signed-off-by: Hsin-chen Chuang <chharry@chromium.org>
-> ---
->
->  drivers/bluetooth/btusb.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-> index 1caf7a071a73..de3fa725d210 100644
-> --- a/drivers/bluetooth/btusb.c
-> +++ b/drivers/bluetooth/btusb.c
-> @@ -2130,7 +2130,8 @@ static int btusb_send_frame(struct hci_dev *hdev, s=
-truct sk_buff *skb)
->                 return submit_or_queue_tx_urb(hdev, urb);
->
->         case HCI_SCODATA_PKT:
-> -               if (hci_conn_num(hdev, SCO_LINK) < 1)
-> +               if (!hci_dev_test_flag(hdev, HCI_USER_CHANNEL) &&
-> +                   hci_conn_num(hdev, SCO_LINK) < 1)
->                         return -ENODEV;
->
->                 urb =3D alloc_isoc_urb(hdev, skb);
-> @@ -2604,7 +2605,8 @@ static int btusb_send_frame_intel(struct hci_dev *h=
-dev, struct sk_buff *skb)
->                 return submit_or_queue_tx_urb(hdev, urb);
->
->         case HCI_SCODATA_PKT:
-> -               if (hci_conn_num(hdev, SCO_LINK) < 1)
-> +               if (!hci_dev_test_flag(hdev, HCI_USER_CHANNEL) &&
-> +                   hci_conn_num(hdev, SCO_LINK) < 1)
->                         return -ENODEV;
->
->                 urb =3D alloc_isoc_urb(hdev, skb);
-> --
-> 2.48.1.601.g30ceb7b040-goog
->
+It should ignore all the things it does not know about.
 
-Friendly ping for review, thanks.
+But the correct usage of FS_IOC_FSSETXATTR is to call
+FS_IOC_FSGETXATTR to initialise the structure with all the current
+inode state. In this situation, the fsx.fsx_xflags field needs to
+return a flag that says "FS_XFLAGS_HAS_WIN_ATTRS" and now userspace
+knows that it can set/clear the MS windows attr flags.  Hence if the
+filesystem supports windows attributes, we can require them to
+-support the entire set-.
 
---=20
-Best Regards,
-Hsin-chen
+i.e. if an attempt to set a win attr that the filesystem cannot
+implement (e.g. compression) then it returns an error (-EINVAL),
+otherwise it will store the attr and perform whatever operation it
+requires.
+
+IMO, the whole implementation in the patchset is wrong - there is no
+need for a new xflags2 field, and there is no need for whacky field
+masks or anything like that. All it needs is a single bit to
+indicate if the windows attributes are supported, and they are all
+implemented as normal FS_XFLAG fields in the fsx_xflags field.
+
+> The answer, to the best of my code emulation abilities is that
+> old kernel will ignore the new xflags including FS_XFLAG_HASEXTFIELDS
+> and this is suboptimal, because it would be better for the new chattr tool
+> to get -EINVAL when trying to set new xflags and mask on an old kernel.
+
+What new chattr tool? I would expect that xfs_io -c "chattr ..."
+will be extended to support all these new fields because that is the
+historical tool we use for FS_IOC_FS{GS}ETXATTR regression test
+support in fstests. I would also expect that the e2fsprogs chattr(1)
+program to grow support for the new FS_XFLAGS bits as well...
+
+> It is true that the new chattr can call the old FS_IOC_FSGETXATTR
+> ioctl and see that it has no FS_XFLAG_HASEXTFIELDS,
+> so I agree that a new ioctl is not absolutely necessary,
+> but I still believe that it is a better API design.
+
+This is how FS{GS}ETXATTR interface has always worked. You *must*
+do a GET before a SET so that the fsx structure has been correctly
+initialised so the SET operation makes only the exact change being
+asked for.
+
+This makes the -API pair- backwards compatible by allowing struct
+fsxattr feature bits to be reported in the GET operation. If the
+feature bit is set, then those optional fields can be set. If the
+feature bit is not set by the GET operation, then if you try to use
+it on a SET operation you'll either get an error or it will be
+silently ignored.
+
+> Would love to hear what other fs developers prefer.
+
+Do not overcomplicate the problem. Use the interface as intended:
+GET then SET, and GET returns feature bits in the xflags field to
+indicate what is valid in the overall struct fsxattr. It's trivial
+to probe for native fs support of windows attributes like this. It
+also allows filesystems to be converted one at a time to support the
+windows attributes (e.g. as they have on-disk format support for
+them added). Applications like Samba can then switch behaviours
+based on what they probe from the underlying filesystem...
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
