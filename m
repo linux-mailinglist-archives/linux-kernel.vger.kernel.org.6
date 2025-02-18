@@ -1,91 +1,59 @@
-Return-Path: <linux-kernel+bounces-519860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F35CA3A2DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:31:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA919A3A2E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:32:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5997D165375
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:31:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EB0B3AA87B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DD9B241CA9;
-	Tue, 18 Feb 2025 16:31:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67A6026E64F;
+	Tue, 18 Feb 2025 16:31:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XayWf85V"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MUUJk25I"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6A7A243387
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 16:31:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A698E26D5CA;
+	Tue, 18 Feb 2025 16:31:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739896269; cv=none; b=E1kCUyTLgMUUctORIa1WpHzH4/7LrNBHVR0z7oUMlGbYMUyabkTyK5JOdxEQUCdaBwf+bWdtlQF13k2pK1moPS7HHoLu4fZoOUUC1MNyro7Wqsyo9zkN2ecyEk7GtdierLeZM8px/ZC0oLI2rF1M8rVC6QHIJnoLOSJFIBZMyeg=
+	t=1739896317; cv=none; b=NngXYE0pbsg5LVJeFZsKEJAiLKLkBGT3TNV2yS7hRLFYGfDV4o9FFIeuobieQQXvNtO+bzg9cYQ9h/ERLo6XB6EfP8y6faJaNcJYshOLFPTalumcYAg0vJQsCwnQCfIaRAYKb0ujVHRZBYdyU1jktwivsK5Dqjmyu3WWNDR1seU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739896269; c=relaxed/simple;
-	bh=AgSMuhax1w6whyYc2kxg5rDY9Pznuy/Epu/NPsXVlq8=;
+	s=arc-20240116; t=1739896317; c=relaxed/simple;
+	bh=O1WcDjlB4uYgZf8hrYXTcaBSbG3qW5jv7r+ScLddb9M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LBnc3lgcgz9XXQSD2XzqNHE2iJVF4yEONNlY0Ppm37TFaOMIIOf1VaftF/POi7x6Z2FV9PKDEriM28PGWYYR4FtbbSCNKo9Krc3RbuPZv4+qCloeAyDc3MgnUNQYn6BND/Ak68clB2x6qipNyQc6vFFAiHo98pvWJE9e232vRz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XayWf85V; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-54622940ef7so2347105e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 08:31:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739896266; x=1740501066; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=btU0w+uNVFHY2e6nf/JYninIaoVDv7TVqnoTKzlZWZc=;
-        b=XayWf85Vz30Wf06EYnqPteeypPfCzj3OhFe08je6wBhg7knDlV4bCwce/Bv6a8UpXe
-         LI3X4ZkPExChYNt+xNzKDnsZUoqEljioqVW4XS3tenah0iur8zqss//My1EepQbcjlFk
-         fISPxalOeJB0GzH+iS2ghg0SSFcykabQ1KRMjwfON+8UhguSCbt6pO7pbPPuBxNSIUnB
-         rHlpB47+BMfJPkzLP6wxMqhsUxs3oXH86CsXp8gJo+riXVfVP2UTBuL+ZJ5EoGWVH3Ry
-         Mz+gMrdSjrXfTSz1Gy0/5SMYVQejOaPvOu9SK5Daq5WH2iCOcFyd2CHYRbiPdq6HjVOI
-         z+jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739896266; x=1740501066;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=btU0w+uNVFHY2e6nf/JYninIaoVDv7TVqnoTKzlZWZc=;
-        b=UpL+yOXFxX0lXvgA+2VKeqyqvkjTbfIfSgNQnBTfddv/XJvjWD/yfke4wWdyQgj57i
-         xtmV/Asn2GA5bcBh4PY0wHem24xqM0QpLC30pYWx/1mcZcBCSGAE+x72gcOgLnwobOz9
-         JigQfQh7fFqHbZiHVixFyixYzSDSo2/u6wpofK4Z0pwXEnzFcoPKYFRrxJdz8aVrz3j9
-         PY643Mr80zi3bCPdSaJkM2c1QoeHt3DKVj20OM/Iw07cAVTzcBGyR+4ok32s8hWbB41f
-         0bnwWwdOQavuzUB6bfm7t91bFPRqZJ/wCFdscTY5jecezMFd8cBt6Rw1QOufTTwZpXat
-         dMQA==
-X-Forwarded-Encrypted: i=1; AJvYcCV6KvstTFt5p7tjDnJwkESZD4A614LAcQp9WC77Qw0eiNsHpELL67QnjvmKXlo5fdG9BQa/NBPoXMIz0Z4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQPp6ZHgJBIi/9VKm8i1VRzLlHr845dWKta9/X1PrSilXQ1gk1
-	hsD+L+623EU++bTnlGwMAlQ2Yha0Ses04bk3byOqMR0x+8bKx/hS8cHLjXt/m4w=
-X-Gm-Gg: ASbGncuR3q3M3v4ouODo6ljYh82HIF29x8qBdpK/kDiMvV8ECv+spvf0feWVa+bYhn8
-	gfI6b2k59mBt/SNXo3ISEYPQDKrra6jZwlCSjxXrG5IJ4ZIYQvdxehuVoEQpKYBZHaXHZvUPyfH
-	1pHyhk6OB7HBiaFgw52NlstplfruG97AhfFRMYq+luY4waEPP9IFFKKINtwFXrmtQwkdzPs/lL6
-	Ova292N1Tz9XJd0oob0CbpLtZALW8KeGvAK9vhYzyyZAiLOCYU3E8xo76O95hrvqWgIqDSXI7BE
-	YZTLic8NfrCz9YMMAQxh+4tbHctEFWK7KkjOUVS87QF3JwMFS9jxui4MSwLsO2yYWHZoGI8=
-X-Google-Smtp-Source: AGHT+IEtC0aFiCVfXRyL9SzdaH9Q4MvJkCVZReT3BK5AY1Ni+JC9UVla9+Vl5hHTO/rCaSOKR4FQqA==
-X-Received: by 2002:a05:6512:130b:b0:545:e19:ba12 with SMTP id 2adb3069b0e04-5462ef20f0dmr90751e87.51.1739896265862;
-        Tue, 18 Feb 2025 08:31:05 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5452fa00e6esm1360335e87.162.2025.02.18.08.31.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 08:31:04 -0800 (PST)
-Date: Tue, 18 Feb 2025 18:31:02 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: manivannan.sadhasivam@linaro.org
-Cc: Shuai Xue <xueshuai@linux.alibaba.com>, 
-	Jing Zhang <renyu.zj@linux.alibaba.com>, Will Deacon <will@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Jingoo Han <jingoohan1@gmail.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Rob Herring <robh@kernel.org>, 
-	Shradha Todi <shradha.t@samsung.com>, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 1/4] perf/dwc_pcie: Move common DWC struct definitions to
- 'pcie-dwc.h'
-Message-ID: <4nnikepf7ay4ml3audn34gmq5jttjcfz3syfnxeowmjb4no2cj@lyawl4saa3sa>
-References: <20250218-pcie-qcom-ptm-v1-0-16d7e480d73e@linaro.org>
- <20250218-pcie-qcom-ptm-v1-1-16d7e480d73e@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KhtJFAnShief694wPU+6k1cd02UpBiHeQgkYxVNdWN41vZZcLSQU3qrhGjeV2mjyQ6qT8W15HHTA9rvqSd9JpVdUT9srEnNhrfuFsUKoMJjfbRjHm519+yhXuCq9gOna7JOduEhmkEJDzDiEYiO1Pw7aJ56JFzzIUnHsKWL8GGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MUUJk25I; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=DIGo/JNUq06ew0K8FogdXyJj75K+wZ/XtC8vHgqRE+I=; b=MUUJk25IITKibdWYLiOfwJTNHF
+	jTYjZVF0QmUp8zd6mO646+shdzHM+236nm5n5810nL19RjB92XEBaeLj2KOVmo6/7jnEinXumlSeW
+	3tY5oa5JILGbGc2/iSIrfxErQ3284MDTCqGQb3QmioR2zTB/6qz8ZmNOZSNZD6uy5fzS1GYpQ19nd
+	2Aj8wymGQNblO/HLafe28admo3zzYBxSTXWcoJoMyC8X+XHvSvz0pNb1g4NS/OswGPyrkDnDxW/WD
+	snhiObaj4iRIYvhIo24Gqq8tffJcBH5GoXteww5rCfQaNX5otmaYcHCPoGWCMl5nGxAK+H23ROvYt
+	QdTjmYQA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tkQVi-00000008ywd-3kxk;
+	Tue, 18 Feb 2025 16:31:50 +0000
+Date: Tue, 18 Feb 2025 08:31:50 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Dan Schatzberg <schatzberg.dan@gmail.com>,
+	Ming Lei <ming.lei@redhat.com>, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Zhaoyang Huang <huangzhaoyang@gmail.com>, steve.kang@unisoc.com
+Subject: Re: [PATCH] Revert "driver: block: release the lo_work_lock before
+ queue_work"
+Message-ID: <Z7S19ulXMAs7qy1H@infradead.org>
+References: <20250218065835.19503-1-zhaoyang.huang@unisoc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,135 +62,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250218-pcie-qcom-ptm-v1-1-16d7e480d73e@linaro.org>
+In-Reply-To: <20250218065835.19503-1-zhaoyang.huang@unisoc.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Tue, Feb 18, 2025 at 08:06:40PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
-> From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+On Tue, Feb 18, 2025 at 02:58:35PM +0800, zhaoyang.huang wrote:
+> From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
 > 
-> Since these are common to all Desginware PCIe IPs, move them to a new
-> header, 'pcie-dwc.h' so that other drivers could make use of them.
+> This reverts commit ad934fc1784802fd1408224474b25ee5289fadfc.
+> 
+> loop_queue_work should be strictly serialized to loop_process_work since
+> the lo_worker could be freed without noticing new work has been queued
+> again.
 
-Which drivers are going to use it? Please provide an explanation.
+Btw, if you care about the lock contention you might want to split out
+the trivial non-cgroup version into a separate helper or at least
+branch and reduce the lock hold time there.
 
-> 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
->  MAINTAINERS                 |  1 +
->  drivers/perf/dwc_pcie_pmu.c | 23 ++---------------------
->  include/linux/pcie-dwc.h    | 34 ++++++++++++++++++++++++++++++++++
->  3 files changed, 37 insertions(+), 21 deletions(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 896a307fa065..b4d09d52a750 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -18123,6 +18123,7 @@ S:	Maintained
->  F:	Documentation/devicetree/bindings/pci/snps,dw-pcie-ep.yaml
->  F:	Documentation/devicetree/bindings/pci/snps,dw-pcie.yaml
->  F:	drivers/pci/controller/dwc/*designware*
-> +F:	include/linux/pcie-dwc.h
->  
->  PCI DRIVER FOR TI DRA7XX/J721E
->  M:	Vignesh Raghavendra <vigneshr@ti.com>
-> diff --git a/drivers/perf/dwc_pcie_pmu.c b/drivers/perf/dwc_pcie_pmu.c
-> index cccecae9823f..05b37ea7cf16 100644
-> --- a/drivers/perf/dwc_pcie_pmu.c
-> +++ b/drivers/perf/dwc_pcie_pmu.c
-> @@ -13,6 +13,7 @@
->  #include <linux/errno.h>
->  #include <linux/kernel.h>
->  #include <linux/list.h>
-> +#include <linux/pcie-dwc.h>
->  #include <linux/perf_event.h>
->  #include <linux/pci.h>
->  #include <linux/platform_device.h>
-> @@ -99,26 +100,6 @@ struct dwc_pcie_dev_info {
->  	struct list_head dev_node;
->  };
->  
-> -struct dwc_pcie_pmu_vsec_id {
-> -	u16 vendor_id;
-> -	u16 vsec_id;
-> -	u8 vsec_rev;
-> -};
-> -
-> -/*
-> - * VSEC IDs are allocated by the vendor, so a given ID may mean different
-> - * things to different vendors.  See PCIe r6.0, sec 7.9.5.2.
-> - */
-> -static const struct dwc_pcie_pmu_vsec_id dwc_pcie_pmu_vsec_ids[] = {
-> -	{ .vendor_id = PCI_VENDOR_ID_ALIBABA,
-> -	  .vsec_id = 0x02, .vsec_rev = 0x4 },
-> -	{ .vendor_id = PCI_VENDOR_ID_AMPERE,
-> -	  .vsec_id = 0x02, .vsec_rev = 0x4 },
-> -	{ .vendor_id = PCI_VENDOR_ID_QCOM,
-> -	  .vsec_id = 0x02, .vsec_rev = 0x4 },
-> -	{} /* terminator */
-> -};
-> -
->  static ssize_t cpumask_show(struct device *dev,
->  					 struct device_attribute *attr,
->  					 char *buf)
-> @@ -529,7 +510,7 @@ static void dwc_pcie_unregister_pmu(void *data)
->  
->  static u16 dwc_pcie_des_cap(struct pci_dev *pdev)
->  {
-> -	const struct dwc_pcie_pmu_vsec_id *vid;
-> +	const struct dwc_pcie_vsec_id *vid;
->  	u16 vsec;
->  	u32 val;
->  
-> diff --git a/include/linux/pcie-dwc.h b/include/linux/pcie-dwc.h
-> new file mode 100644
-> index 000000000000..261ae11d75a4
-> --- /dev/null
-> +++ b/include/linux/pcie-dwc.h
-> @@ -0,0 +1,34 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright (C) 2021-2023 Alibaba Inc.
-> + *
-> + * Copyright 2025 Linaro Ltd.
-> + * Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> + */
-> +
-> +#ifndef LINUX_PCIE_DWC_H
-> +#define LINUX_PCIE_DWC_H
-> +
-> +#include <linux/pci_ids.h>
-> +
-> +struct dwc_pcie_vsec_id {
-> +	u16 vendor_id;
-> +	u16 vsec_id;
-> +	u8 vsec_rev;
-> +};
-> +
-> +/*
-> + * VSEC IDs are allocated by the vendor, so a given ID may mean different
-> + * things to different vendors.  See PCIe r6.0, sec 7.9.5.2.
-> + */
-> +static const struct dwc_pcie_vsec_id dwc_pcie_pmu_vsec_ids[] = {
-
-Having it in the header means that there are going to be several
-copies of this data. Is that expected?
-
-> +	{ .vendor_id = PCI_VENDOR_ID_ALIBABA,
-> +	  .vsec_id = 0x02, .vsec_rev = 0x4 },
-> +	{ .vendor_id = PCI_VENDOR_ID_AMPERE,
-> +	  .vsec_id = 0x02, .vsec_rev = 0x4 },
-> +	{ .vendor_id = PCI_VENDOR_ID_QCOM,
-> +	  .vsec_id = 0x02, .vsec_rev = 0x4 },
-> +	{} /* terminator */
-> +};
-> +
-> +#endif /* LINUX_PCIE_DWC_H */
-> 
-> -- 
-> 2.25.1
-> 
-> 
-
--- 
-With best wishes
-Dmitry
 
