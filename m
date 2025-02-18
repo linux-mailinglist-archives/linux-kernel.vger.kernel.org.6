@@ -1,182 +1,171 @@
-Return-Path: <linux-kernel+bounces-518652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E5B6A3929E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 06:27:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E69C5A392AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 06:31:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EEDD7A3A9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 05:26:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B741C188F1AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 05:31:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CDD11B043C;
-	Tue, 18 Feb 2025 05:27:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7EB81B3922;
+	Tue, 18 Feb 2025 05:31:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KP5IbQr2"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="bxfBc9hl"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2077.outbound.protection.outlook.com [40.107.92.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8DC51B0439
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 05:27:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739856458; cv=none; b=Hf5MF40LWPHIKnt5LNw8yyE6Hkx54P0Gd+aGDL5hEKTx8M4qQp28m5IstKwM4yfrSm2PVYg+Dubq3Co6x/JQQmhpM7ZdyvXg6mlSjTfqirE4W7CUcVQ9PfFLXGceouh11aL6C3FgYyx97CtZAk58o3l4TnOVV9kF1Y+Y0UtGWeg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739856458; c=relaxed/simple;
-	bh=+9uCyGXOAJ0ZSD5E3hkk/2H2EZqIk3JHrGCiuf0AfgE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WvdMbWEjgkisvf5ZJJC7Nc/tUYOsLfWUX7a8kpC1fyuq1wnEzbTNfmKNSFwPPjOiUWXLu8YFz5ldyo4n9hPd4acl3K5c2bejvt/ly6EjJVDN9yl0DoMhMiPXoicS3uxtdYXQgCBqu7SxXvCgs4m1CX6IlTYMgG7FY27UqDN1REg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KP5IbQr2; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-22100006bc8so48496505ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 21:27:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739856456; x=1740461256; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HxqZOLsj7jsOonVVaVaqp826M8Lpw89ZMq77OrIZj20=;
-        b=KP5IbQr2NZvlCvlF1gFqjwdPfHrhNId3+nQKw0vn76P/YcPWXA7iJW8Q9eke1W4Js9
-         zGDUI11dAK/YzywzzQhiZNn+2kDaZ+rBSVyBSlmUsk3vbnf4koxpEu38OS3nlHmPIO77
-         mkn2/dIHy5arkyXRNO/y1K1YGTJXnbx25zDQD1ZG7pT7Hkew+ax3iXYn7U2JdnnqkKRR
-         fsRVmD70wsQDcCDIn46DBWCgudNH3PFljq0AZVg1AG3WBRrJzuSKRNzvxf+z/e7nPFP2
-         O/+xdJimk12XQtRAWzmj1NeNhhgB8SEYB7Dc9sexo6hZdv62pfE8tnVaYZEoHhYoXwC7
-         kAZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739856456; x=1740461256;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HxqZOLsj7jsOonVVaVaqp826M8Lpw89ZMq77OrIZj20=;
-        b=nLqgbKdPOcKLuDXqG1pSm0bYoC+1l01GVYRMPYF9GykXM9d2TxIfhAcYKGzAoQdA3S
-         6bEf8Dg+IBtmuPwvBEn2D9DsVnP056ZjItteCCEqZsaiblTQkgWhrxcqjb4L+EPtHFlp
-         Hbm4a301a6T7c33gjO6Auf2fz1MERfBd8BWQUdTynDGCyjnKQzB54DgRAVOtCZDKA47V
-         KxJtxDru1wo6QZmKq5PsVQ+SP8SxBU/5oQgQtIVq0j8LnFih3caLuiQ4FSJ/vIqw+URM
-         VyLt/65BmcxyrxjIfvGkmJlwMpyUnUv41KpNUuTUZwQn+7pJD17BJxb0MP4v7cCMw3Dz
-         blTA==
-X-Gm-Message-State: AOJu0YwFmy1Dp6fOBAx15X9IZe7ojB3O0vG20nuAe2iSn9CrSyvqTK5S
-	MW5Z7kcpvQ+f3uGSREQZb/VDp0usQ2wJk/JtMHlycHSVA0FXPcYZ
-X-Gm-Gg: ASbGncuMy8/3WI/4Wa7Ko/JsH65PkLB3Z2wl0dWpKtmrCZR3uS3AXhD99S2rpQK88hP
-	XvuWcEzLmJrkBBSWl3lHRxwZf0BjMNIuZzNCJXo96zAH7uWlZ8D2JOgUhiRSHciIsyfBzpL9o9/
-	XTbNyMgt71UYg9kWPAbx8I8KYCXtNR3wXZAEsnAaVA/khZFvKjEL+DCFOwLhXPwEgWjKTllKo9Z
-	ULexMfunn9vJzDeF8i30KvKsS1rcMtl21iJI/5JShCB3o7p3NFFgYvRFV9iOXKX3KPeizpEfQ22
-	T9VxWP+mmnFmR8qjjIgu1thKnh6UbLSUQD2WozD20KZCiFI=
-X-Google-Smtp-Source: AGHT+IF5VyxzzJu90hZ1mhaq1UwHE6K8UC73LdsXtYWXKAJmnEPRpcOlHz7oLZrH6QhnpDCgjbTr1A==
-X-Received: by 2002:a17:903:1ce:b0:220:cd61:c03b with SMTP id d9443c01a7336-2210404bf14mr167296225ad.21.1739856455858;
-        Mon, 17 Feb 2025 21:27:35 -0800 (PST)
-Received: from MacBook-Air-5.local ([2001:2d8:f03b:2a87:480c:6184:1db1:ca0b])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d545d453sm79029535ad.115.2025.02.17.21.27.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 21:27:35 -0800 (PST)
-Date: Tue, 18 Feb 2025 14:27:27 +0900
-From: "Harry Yoo (Oracle)" <42.hyeyoo@gmail.com>
-To: Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>
-Cc: linux-kernel@vger.kernel.org, osalvador@suse.de, byungchul@sk.com,
-	dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-	akpm@linux-foundation.org, max.byungchul.park@sk.com,
-	max.byungchul.park@gmail.com
-Subject: Re: [PATCH 1/1] x86/vmemmap: Use direct-mapped VA instead of
- vmemmap-based VA
-Message-ID: <Z7QaPwI1eMPEwHii@MacBook-Air-5.local>
-References: <20250217114133.400063-1-gwan-gyeong.mun@intel.com>
- <20250217114133.400063-2-gwan-gyeong.mun@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B4F41B043C;
+	Tue, 18 Feb 2025 05:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.77
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739856684; cv=fail; b=K2D5SZVqZX7LZ8mXUxG7gGldL3os4wKSHWuJB5CrZuwOqugtq3fF7qtdo16ANOmAGEtEe8G3gTL3rckY5C7iiVIDOV2PQ5+h74UVG8ZK3EzYG4o55aaqkMePe5Gtjx60Pd+5x5MzWOWCnwZzMhlhCBvlzIQq9kPi+4ZPFYBYwLw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739856684; c=relaxed/simple;
+	bh=FXky1Qyc32vLOVLg0L5U0S0y7ADNyW4x2lKgbV3Kqkw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OSbXso0sh0D7lGLbm6XGkQzdVcKxDqGPpczqpx52uSAVIvWCjXQPbWhWbo0q0d2fS3lREOU7z+Y9AIyyQKA6wtyWCJhFuKNbp6Pm3f82gCTYrNIlMtl1iKI4PsKI8NlddW4R4bzxeXtwCoyf8HSVz9a83TWrXXd4tzwhYuAoi6Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=bxfBc9hl; arc=fail smtp.client-ip=40.107.92.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=di+Uu1w1QOdTqHTmdhC9ufVkuDC92/INcfKrknz9jYq7aMwjtxF5eILWuMgcuO1eznmvr9PM9Sz9iz9unolxEeVU/1G7A/sj7asZvoWU6avUb/DGMrmbdg31SCmxkO+hDlBXOtRYLsRrPFTIQ2Gtcv6M2/Twk17tQ9itgUy9CIwvRy142to0r5sWwOip5kmvrEGM96ifTSkHxz09qY8zc7BDcKOaJg97IhxLVbBYBdlFJr9eIbNuMqxAp+HnOCKEIDlscFk+QqJiLt8Nfa8YFN94nnOZtAjmqshhfv3BwxgAxRmHYDW0wBofQnN25yI8QFFPn2LH4E62gtAI4bsAjg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hYzDeX9vCvIS2ejx86tozZm8ISL8uq5mTO+oyjKA8Os=;
+ b=JoqDV7V69AsG4jgSSxCSPzBBiPCmtTm6k+pN3HfUW5ZFkoXcOshCoiRNpfDy/iuHuUUap6NBoA0sFEGDpQasHK5WoZziSBlD0FCysNwxVYNcMCDc7GJY/JSz9vbzfM7vHilMtd/ZteSFhkWCTBGpARgEQyBbnFfh3Mqxx+e+7ygbRh8hH/plXrAtweEPC0m5LdPCvuSw/x+zuz7x9s8Ms6Z/hOn9w7q331ApAPSt2JwrrLDDbTOi0UX284/z1rtm2JHPBttih/Q/CQjyw4EQcEmRZF9c8M2FP2Onf5Cig0zvdqAtyy8GRLGXRKg1VjCuG/uzaVRRWCZGtnPzokFCAQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hYzDeX9vCvIS2ejx86tozZm8ISL8uq5mTO+oyjKA8Os=;
+ b=bxfBc9hlEa7LBpgrSiabq5qmcb1SrH3qc86Vcp7r7IdK7cxrfwao29qyiayEbcOucN37BLVTPwMFeyoGf5EBcAA36QwAeOm5zh0hjllw7fEbRuvNyH/qZZv3JFgCzR9KVPW9kjpVhLMe2B3VSrCNqbE11NkSzS5GsAQYHHIdv8Y=
+Received: from PH7PR03CA0019.namprd03.prod.outlook.com (2603:10b6:510:339::22)
+ by SN7PR12MB6838.namprd12.prod.outlook.com (2603:10b6:806:266::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.14; Tue, 18 Feb
+ 2025 05:31:18 +0000
+Received: from CO1PEPF000044F4.namprd05.prod.outlook.com
+ (2603:10b6:510:339:cafe::a8) by PH7PR03CA0019.outlook.office365.com
+ (2603:10b6:510:339::22) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8445.20 via Frontend Transport; Tue,
+ 18 Feb 2025 05:31:18 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ CO1PEPF000044F4.mail.protection.outlook.com (10.167.241.74) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8466.11 via Frontend Transport; Tue, 18 Feb 2025 05:31:17 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 17 Feb
+ 2025 23:31:14 -0600
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 17 Feb
+ 2025 23:30:45 -0600
+Received: from xhdthippesw40.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Mon, 17 Feb 2025 23:30:41 -0600
+From: Thippeswamy Havalige <thippeswamy.havalige@amd.com>
+To: <bhelgaas@google.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
+	<manivannan.sadhasivam@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>
+CC: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <michal.simek@amd.com>,
+	<bharat.kumar.gogada@amd.com>, <jingoohan1@gmail.com>, Thippeswamy Havalige
+	<thippeswamy.havalige@amd.com>
+Subject: [PATCH v12 0/3] Add support for AMD MDB IP as Root Port
+Date: Tue, 18 Feb 2025 11:00:36 +0530
+Message-ID: <20250218053039.714208-1-thippeswamy.havalige@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250217114133.400063-2-gwan-gyeong.mun@intel.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB05.amd.com: thippeswamy.havalige@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000044F4:EE_|SN7PR12MB6838:EE_
+X-MS-Office365-Filtering-Correlation-Id: 860904f2-172e-4dc2-af57-08dd4fdd7842
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?2FKKxinZwK6lKS3kDTi34rogS/XL14lwT/9giGd5PCEYWkENRp/LEdml5yET?=
+ =?us-ascii?Q?ig/RVJOf/+SKO8Gs9/yS2xddMNEs6gXebzpj8G9heC4ePJO7GnRmWO35nDj5?=
+ =?us-ascii?Q?KDv1sDZka8Ix7Ez4SZ/ukhpTbBcsbQ0sRbr2VtZYu5g+VB9SK0vuJXxOn6sC?=
+ =?us-ascii?Q?XikibLBavIw0jXXD+cVNGDyZbAykOHbCPXDyDsE+jfxxW8Bt/1XOtJ5/EPPi?=
+ =?us-ascii?Q?QwfGYPi2yzx2WqqAqfL1uKDfoI20pDtX+bgd4mdkTEiwvarWXqGwq+T3WNKP?=
+ =?us-ascii?Q?/M+ptFUiRphVz4qlwT7IreqMB2HtxNNfTPi7ZUaZ78WJp3BnjdrphWBdKdxC?=
+ =?us-ascii?Q?zEFRDRDykBimv+Jxb+65kvLAYsTeAAMp2C1LWLFD90sXiWc/aDGkBhK03jtt?=
+ =?us-ascii?Q?MxnxYS1x3XQCXNOaZm0FgytzRfJ7AwpuTntkEFU4tQWkmtYN9WYNJi2TsOyB?=
+ =?us-ascii?Q?i4T97wVNYsLCr8L++L6QUxbG7fcDz+0EWfX41eLQ69jaXj9R7BVE8KhdfEMn?=
+ =?us-ascii?Q?7DNqoDKvFIDIYByEIOHrjwYJB1rLDVVx+mQnb8TfAv+QNPvN+aFPOBQ9POeh?=
+ =?us-ascii?Q?6JBbwSidg7zOpoIN4rF/Y10scbLWm6QHS8c0QdC06+/3J4E0fLo3PTk+FMyM?=
+ =?us-ascii?Q?otZRXY/DUhIjk8VxjyraxPneUaypxiM7pl6xPf86SOEs0T3169oKovLpq7um?=
+ =?us-ascii?Q?qJZtwBrV1Z/e/smFIDSkRSYr6Lfzzl9P+PS/OQACExsxEr/fr93WTx5tM6Zf?=
+ =?us-ascii?Q?yzJkbCyGWXdirz1HNRj6zuexy8/CEPWJpUY3J6E+Nh/L9/zq1dkB9Rk3nH04?=
+ =?us-ascii?Q?hWDtcO8soaTWU57E2QDXyxPZh48yrNBL82FnuwnwGil2lclNnjr4W/DhzmUt?=
+ =?us-ascii?Q?k8b8nPK7TbNyPZOHwYAhLvUvknkeJs7cg4w3u8Osde9FZz8kbtvFxyWEDeLs?=
+ =?us-ascii?Q?pBGxI/WvI2pTSazqmiCMURm7u0j2W6c/b9QtFxrqG42dLrVjktIrRe3V9lnO?=
+ =?us-ascii?Q?0Q4EwzzdHVpAxyJbwICMRsTF4PMTP35tZztJPj/GvdNdwwjPBFVIjw1bXKu/?=
+ =?us-ascii?Q?8LEJOBTJ9G3hF59VLgkXf07LSDMWjBNnbFZb81A93RbSU9IXsysyMJhA0lR+?=
+ =?us-ascii?Q?uExUUENn1l64PFdHbWe/SLi5gm6ljts4Nb8FK88dNzHCuiEVaUgkWdD93vwr?=
+ =?us-ascii?Q?eQycnO31pYurljr/n7lu9YNXMwxkDX41rb+i2u390po6lpUy/RA8VhPI/nKw?=
+ =?us-ascii?Q?kjKRTzuxsV5Hiqn4K+UKxMURe2AFPex9OOhAXn0mpmcxn5EfX6rubpOr7hMN?=
+ =?us-ascii?Q?ILiw8PIrvAduTwa/E0P49kK89AvO0ops79AggdsCxfiDAFbizPsqDdIwY2mm?=
+ =?us-ascii?Q?Yhd0hpPvkPBNNMwVwavD9TDJsbe365HpOw8NCXKo9uadPmlEWduz12h0kKdu?=
+ =?us-ascii?Q?HVuOMTj0wKRoBh3wnvYhIe6TozDmN/WKoTTLv1NP53F8jvuvJSkNO4NrEB5m?=
+ =?us-ascii?Q?vB2dfSRQlAG5ibs=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Feb 2025 05:31:17.8918
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 860904f2-172e-4dc2-af57-08dd4fdd7842
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000044F4.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6838
 
-On Mon, Feb 17, 2025 at 01:41:33PM +0200, Gwan-gyeong Mun wrote:
-> When a process leads the addition of a struct page to vmemmap
-> (e.g. hot-plug), the page table update for the newly added vmemmap-based
-> virtual address is updated first in init_mm's page table and then
-> synchronized later.
->
-> If the vmemmap-based virtual address is accessed through the process's
-> page table before this sync, a page fault will occur.
-> 
-> This translates vmemmap-based virtual address to direct-mapped virtual
-> address and use it, if the current top-level page table is not init_mm's
-> page table when accessing a vmemmap-based virtual address before this sync.
-> 
-> Fixes: faf1c0008a33 ("x86/vmemmap: optimize for consecutive sections in partial populated PMDs")
-> Signed-off-by: Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>
-> Cc: Oscar Salvador <osalvador@suse.de>
-> Cc: Hyeonggon Yoo <42.hyeyoo@gmail.com>
+This series of patch add support for AMD MDB IP as Root Port.
 
-I think this fix is reasonable without changing existing code too much.
-Any thoughts from x86 folks?
+The AMD MDB IP support's 32 bit and 64bit BAR's at Gen5 speed.
+As Root Port it supports MSI and legacy interrupts.
 
-> Cc: Byungchul Park <byungchul@sk.com>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
+Thippeswamy Havalige (3):
+  dt-bindings: PCI: dwc: Add AMD Versal2 mdb slcr support
+  dt-bindings: PCI: amd-mdb: Add AMD Versal2 MDB PCIe Root Port Bridge
+  PCI: amd-mdb: Add AMD MDB Root Port driver
 
-Shouldn't we add Cc: <stable@vger.kernel.org>?
+ .../bindings/pci/amd,versal2-mdb-host.yaml    | 121 +++++
+ .../devicetree/bindings/pci/snps,dw-pcie.yaml |   2 +
+ drivers/pci/controller/dwc/Kconfig            |  11 +
+ drivers/pci/controller/dwc/Makefile           |   1 +
+ drivers/pci/controller/dwc/pcie-amd-mdb.c     | 469 ++++++++++++++++++
+ 5 files changed, 604 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pci/amd,versal2-mdb-host.yaml
+ create mode 100644 drivers/pci/controller/dwc/pcie-amd-mdb.c
 
 -- 
-Harry
+2.43.0
 
-> ---
->  arch/x86/mm/init_64.c | 17 ++++++++++++++---
->  1 file changed, 14 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-> index 01ea7c6df303..1cb26f692831 100644
-> --- a/arch/x86/mm/init_64.c
-> +++ b/arch/x86/mm/init_64.c
-> @@ -844,6 +844,17 @@ void __init paging_init(void)
->   */
->  static unsigned long unused_pmd_start __meminitdata;
->  
-> +static void * __meminit vmemmap_va_to_kaddr(unsigned long vmemmap_va)
-> +{
-> +	void *kaddr = (void *)vmemmap_va;
-> +	pgd_t *pgd = __va(read_cr3_pa());
-> +
-> +	if (init_mm.pgd != pgd)
-> +		kaddr = __va(slow_virt_to_phys(kaddr));
-> +
-> +	return kaddr;
-> +}
-> +
->  static void __meminit vmemmap_flush_unused_pmd(void)
->  {
->  	if (!unused_pmd_start)
-> @@ -851,7 +862,7 @@ static void __meminit vmemmap_flush_unused_pmd(void)
->  	/*
->  	 * Clears (unused_pmd_start, PMD_END]
->  	 */
-> -	memset((void *)unused_pmd_start, PAGE_UNUSED,
-> +	memset(vmemmap_va_to_kaddr(unused_pmd_start), PAGE_UNUSED,
->  	       ALIGN(unused_pmd_start, PMD_SIZE) - unused_pmd_start);
->  	unused_pmd_start = 0;
->  }
-> @@ -882,7 +893,7 @@ static void __meminit __vmemmap_use_sub_pmd(unsigned long start)
->  	 * case the first memmap never gets initialized e.g., because the memory
->  	 * block never gets onlined).
->  	 */
-> -	memset((void *)start, 0, sizeof(struct page));
-> +	memset(vmemmap_va_to_kaddr(start), 0, sizeof(struct page));
->  }
->  
->  static void __meminit vmemmap_use_sub_pmd(unsigned long start, unsigned long end)
-> @@ -924,7 +935,7 @@ static void __meminit vmemmap_use_new_sub_pmd(unsigned long start, unsigned long
->  	 * Mark with PAGE_UNUSED the unused parts of the new memmap range
->  	 */
->  	if (!IS_ALIGNED(start, PMD_SIZE))
-> -		memset((void *)page, PAGE_UNUSED, start - page);
-> +		memset(vmemmap_va_to_kaddr(page), PAGE_UNUSED, start - page);
->  
->  	/*
->  	 * We want to avoid memset(PAGE_UNUSED) when populating the vmemmap of
-> -- 
-> 2.48.1
-> 
 
