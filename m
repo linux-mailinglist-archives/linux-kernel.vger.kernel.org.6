@@ -1,176 +1,115 @@
-Return-Path: <linux-kernel+bounces-519739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC484A3A13D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:30:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D843A3A145
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:32:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E27E7A36DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:29:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40D011892B22
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:32:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F07152698B9;
-	Tue, 18 Feb 2025 15:30:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F50A26D5CB;
+	Tue, 18 Feb 2025 15:32:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Bn4GlOK2"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="PeXt2gJB"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84203184540
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 15:30:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83AE26D5AD;
+	Tue, 18 Feb 2025 15:32:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739892649; cv=none; b=earRQBro+AwJz+eaR55pmf0l0Qhpl5K6XuSY4ECYlywvRyRwzboVpvvnTLzby6vCgj7vkffoCAdczep7mRZ3Xyk4vphGnIAclWVHsS6pGZa2Eh38kVN67Zxy8f0LHKCx02SSwNrVqT5/BLVtVCDXYaW8vvg4NGVh0YiGR28IEMk=
+	t=1739892724; cv=none; b=CAddlF4ABiOr+DNNjp5XB5wDl/cvLRhjKihs7p3HIQ6BDsXgtcsAI0JbJByPpGiTCtcWFSnpomw1iPKxLwcsdYNLvk769B6+yXZf1H1MMox6mkts5I5Kbne/nxZ7fGg1MZObLF4kWzIWhxlc0rM2sdA0Cjo6UDkpMtxnS7TGk9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739892649; c=relaxed/simple;
-	bh=nxBrbwjri3cqV9XGSKQo7soJOnW7riNcAguwV+I8KpE=;
+	s=arc-20240116; t=1739892724; c=relaxed/simple;
+	bh=4A2sXShPAtHWuMnR6v0hXy6n/Ate9VWgRnyzmHJ6E/o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EWDu8m6/qBvov4+rQQpD4BiTNWXOpQvH2U97UxmobWx5eUFHN6bJOD+Sg8QgSCwpmmN2KWz9nidgJ/L01EXWNUKGJq5+8PNCyajpRusmjJIbBWSPBpHLfZ7NbCZA1VUZLSEVsA2e275aq2HKcdnqgNN90crYa5ILoh1HRhu9bf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Bn4GlOK2; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739892646;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3UfOukCgz2FlU+RlDSbK4eKrjF3sFq4YwqIDDe9+QQ4=;
-	b=Bn4GlOK2AqvV116EH405f3SV++Xlu9nT7d3DsBKZGDsrKA+GaKKqSoGdi5LGULDhFFiKiK
-	VZieO/H/EEq4tAS2+aJupDFK0C1nz8RL0nDHudtdgAwGXMnpOd5jUdu15URrtjZ5Wn6QSL
-	GfqfQngmJ5swtrohReyhWefQvVm46Mk=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-2-HFY92sswNCGnGDhbWHN25A-1; Tue,
- 18 Feb 2025 10:30:45 -0500
-X-MC-Unique: HFY92sswNCGnGDhbWHN25A-1
-X-Mimecast-MFC-AGG-ID: HFY92sswNCGnGDhbWHN25A_1739892643
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	 Content-Type:Content-Disposition:In-Reply-To; b=i7WDThiwVmarjyEsZR9Dfry6Dibo8fjpLcz9DuesZH4MwnSrrzClmv1QMBeGgP5r0ALqHcgJVk4Oyp5pBUCJ4sgxghuC2Pv5ja8hNimk49H7EMSCXJCCdoDaDudgW4h0SW8JJtkX9OkujVKkTokyrvaYJASRSB/+VY3F9PHpncw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=PeXt2gJB; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 50F4740E0212;
+	Tue, 18 Feb 2025 15:32:00 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id h5b8z9JULs8g; Tue, 18 Feb 2025 15:31:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1739892716; bh=xqGUt4GM0NYMO1Cjv7SB68App5WCIDQNnSBWsuJvqx8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PeXt2gJBSP+HzBUrHGbRTmyDh/Nx1jkQ1fgufGgT+d6SLqfZxp1g9qQ75UhMLeNUA
+	 fFTpCFgLJCOCBQ/QFdmyvcXFAub/CUSwCMT0FfT1GU+ZReFElWWxAwZXUdpiWKqbJh
+	 vF7q0KhWFc7xj1lgykE8PbNeEDn8/Anewg+jQN1zgWREXT0aGZe1A4sPd+9YE2ihOU
+	 2Kllps77Q5o9WulkTcwOzyRy/e6oBbcdOBwF+IaeKJBx0DYi3rruV48v7Ubpyhx8eE
+	 0s6te/veXswH7EJw72xtcLbjQ1MBHokKgHE9HOiacqJqqvRcNwoBPUUsEWrud83eUR
+	 VeknBeYWrFiSyIILFxHSJIemWal0QKUeYd0D+sgGIMMyoP1qU922eU/NYcvArp45hK
+	 4u2drsQ4mgHDWAnN/yRStjb+tzvlzT7fysiUdksocItfpPdNxQaH7rdMfJJmmh5fr6
+	 m4hfeqq6A2XMHZyPs+9XSkzCJ/358iMWoM8mQjgXPzxHaxQPLdv4z+AfKNkQIGiRS6
+	 TBSiD3eM4oIPEuqHNh5g2Fi/5bCeovCl7waX82i6x8i0Sg2yGJ9i5TIcub9kkG1KWK
+	 XNSsszHEIgoyutt5VzsAfBLvkvHF1Z8vnDFiJ2fEhgNvkby2+YO1I04xyq9GmFxAgl
+	 L2C7uFBUaPDeI9F8J4NAAE9s=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A0BBE18D95F3;
-	Tue, 18 Feb 2025 15:30:43 +0000 (UTC)
-Received: from pauld.westford.csb (unknown [10.22.89.54])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AECE3180034D;
-	Tue, 18 Feb 2025 15:30:41 +0000 (UTC)
-Date: Tue, 18 Feb 2025 10:30:39 -0500
-From: Phil Auld <pauld@redhat.com>
-To: Waiman Long <llong@redhat.com>
-Cc: Vishal Chourasia <vishalc@linux.ibm.com>,
-	Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [CHANGE 1/2] sched/isolation: Make use of more than one
- housekeeping cpu
-Message-ID: <20250218153039.GD547103@pauld.westford.csb>
-References: <20250211140104.420739-1-pauld@redhat.com>
- <4a8d54e7-fa29-4ce4-9023-3cdffa0807e6@linux.ibm.com>
- <20250213142653.GA472203@pauld.westford.csb>
- <Z67Wy9Jjn0BZa01A@linux.ibm.com>
- <20250218150059.GC547103@pauld.westford.csb>
- <12775fc3-1575-4bdd-8d1e-056915d95e3d@redhat.com>
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 670F440E0220;
+	Tue, 18 Feb 2025 15:31:39 +0000 (UTC)
+Date: Tue, 18 Feb 2025 16:31:38 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Shuai Xue <xueshuai@linux.alibaba.com>
+Cc: tony.luck@intel.com, nao.horiguchi@gmail.com, tglx@linutronix.de,
+	mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org,
+	hpa@zytor.com, linmiaohe@huawei.com, akpm@linux-foundation.org,
+	peterz@infradead.org, jpoimboe@kernel.org,
+	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, baolin.wang@linux.alibaba.com,
+	tianruidong@linux.alibaba.com
+Subject: Re: [PATCH v2 0/5] mm/hwpoison: Fix regressions in memory failure
+ handling
+Message-ID: <20250218153138.GLZ7Sn2inSAgMo1aAM@fat_crate.local>
+References: <20250217063335.22257-1-xueshuai@linux.alibaba.com>
+ <20250218082727.GCZ7REb7OG6NTAY-V-@fat_crate.local>
+ <7393bcfb-fe94-4967-b664-f32da19ae5f9@linux.alibaba.com>
+ <20250218122417.GHZ7R78fPm32jKYUlx@fat_crate.local>
+ <02164ab7-c65b-4b2e-8686-5539bdcb8f43@linux.alibaba.com>
+ <20250218131753.GIZ7SIgRZBJokysBeX@fat_crate.local>
+ <4b52e6cd-1315-4b0b-8b6e-95a3d4ed96cc@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <12775fc3-1575-4bdd-8d1e-056915d95e3d@redhat.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+In-Reply-To: <4b52e6cd-1315-4b0b-8b6e-95a3d4ed96cc@linux.alibaba.com>
 
-On Tue, Feb 18, 2025 at 10:23:50AM -0500 Waiman Long wrote:
-> 
-> On 2/18/25 10:00 AM, Phil Auld wrote:
-> > Hi Vishal.
-> > 
-> > On Fri, Feb 14, 2025 at 11:08:19AM +0530 Vishal Chourasia wrote:
-> > > Hi Phil, Vineeth
-> > > 
-> > > On Thu, Feb 13, 2025 at 09:26:53AM -0500, Phil Auld wrote:
-> > > > On Thu, Feb 13, 2025 at 10:14:04AM +0530 Madadi Vineeth Reddy wrote:
-> > > > > Hi Phil Auld,
-> > > > > 
-> > > > > On 11/02/25 19:31, Phil Auld wrote:
-> > > > > > The exising code uses housekeeping_any_cpu() to select a cpu for
-> > > > > > a given housekeeping task. However, this often ends up calling
-> > > > > > cpumask_any_and() which is defined as cpumask_first_and() which has
-> > > > > > the effect of alyways using the first cpu among those available.
-> > > > > > 
-> > > > > > The same applies when multiple NUMA nodes are involved. In that
-> > > > > > case the first cpu in the local node is chosen which does provide
-> > > > > > a bit of spreading but with multiple HK cpus per node the same
-> > > > > > issues arise.
-> > > > > > 
-> > > > > > Spread the HK work out by having housekeeping_any_cpu() and
-> > > > > > sched_numa_find_closest() use cpumask_any_and_distribute()
-> > > > > > instead of cpumask_any_and().
-> > > > > > 
-> > > > > Got the overall intent of the patch for better load distribution on
-> > > > > housekeeping tasks. However, one potential drawback could be that by
-> > > > > spreading HK work across multiple CPUs might reduce the time that
-> > > > > some cores can spend in deeper idle states which can be beneficial for
-> > > > > power-sensitive systems.
-> > > > > 
-> > > > > Thoughts?
-> > > > NOHZ_full setups are not generally used in power sensitive systems I think.
-> > > > They aren't in our use cases at least.
-> > > > 
-> > > > In cases with many cpus a single housekeeping cpu can not keep up. Having
-> > > > other HK cpus in deep idle states while the one in use is overloaded is
-> > > > not a win.
-> > > To me, an overloaded CPU sounds like where more than one tasks are ready
-> > > to run, and a HK CPU is one receiving periodic scheduling clock
-> > > ticks, so HP CPU is bound to comes out of any power-saving state it is in.
-> > If the overload is caused by HK and interrupts there is nothing in the
-> > system to help. Tasks, sure, can get load balanced.
-> > 
-> > And as you say, the HK cpus will have generally ticks happening anyway.
-> > 
-> > > > If your single HK cpu can keep up then only configure that one HK cpu.
-> > > > The others will go idle and stay there.  And since they are nohz_full
-> > > > might get to stay idle even longer.
-> > > While it is good to distribute the load across each HK CPU in the HK
-> > > cpumask (queuing jobs on different CPUs each time), this can cause
-> > > jitter in virtualized environments. Unnecessaryily evicting other
-> > > tenants, when it's better to overload a VP than to wake up other VPs of a
-> > > tenant.
-> > > 
-> > Sorry I'm not sure I understand your setup. Are your running virtual
-> > tenants on the HK cpus?  nohz_full in the guests? Maybe you only need
-> > on HK then it won't matter.
-> > 
-> > My concern is that currently there is no point in having more than
-> > one HK cpu (per node in a NUMA case). The code as currently implemented
-> > is just not doing what it needs to.
-> > 
-> > We have numerous cases where a single HK cpu just cannot keep up and
-> > the remote_tick warning fires. It also can lead to the other things
-> > (orchastration sw, HA keepalives etc) on the HK cpus getting starved
-> > which leads to other issues.  In these cases we recommend increasing
-> > the number of HK cpus.  But... that only helps the userspace tasks
-> > somewhat. It does not help the actual housekeeping part.
-> 
-> That is the part that should go into the commit log as well as it is the
-> rationale behind your patch.
->
+On Tue, Feb 18, 2025 at 09:53:17PM +0800, Shuai Xue wrote:
+> The regression is reported by end user and we also observed in the production.
 
-Sure, I can add that piece and resend.
+Where is that report? How many times do I have to ask about different aspects
+of your patches until you explain the *whole* picture?
 
+> [5056863.064239] task: ffff8837d2a2a0c0 task.stack: ffffc90065814000
+> [5056863.137299] RIP: 0010:[<ffffffff813ad231>]  [<ffffffff813ad231>] __get_user_8+0x21/0x2b
+> ...
+> [5056864.512018] Call Trace:
 
-Cheers,
-Phil
+This tells me exactly 0 - I see some truncated stack trace.
 
+> Sorry, I did not get your point.
 
-> Cheers,
-> Longman
-> 
+I don't get your text either. Until this is explained and debugged properly,
+it is not going anywhere.
 
 -- 
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
