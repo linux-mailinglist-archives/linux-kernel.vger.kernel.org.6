@@ -1,171 +1,132 @@
-Return-Path: <linux-kernel+bounces-520129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93F84A3A606
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:48:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id ECFA4A3A602
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:47:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE2E8189662D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:48:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F30C918921B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:47:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17CB11EB5D2;
-	Tue, 18 Feb 2025 18:47:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A52417A2EF;
+	Tue, 18 Feb 2025 18:47:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="sOsCCaBE"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="loCelom+"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29952356D3;
-	Tue, 18 Feb 2025 18:47:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDEBA2356D3;
+	Tue, 18 Feb 2025 18:47:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739904465; cv=none; b=rwN99vodwhtDuMEa3Ca/cbrVq2TWcTgerDRL0V5I5qRwQho1do1F+YbE/U4MZoVGCLh8C9xT9kP4qRxRnc8hCEtfaERAcvNYtlmgNN+BXjVY7vIuJwDTTNsAgGdQ6Izd3kj8OXlKrHpl12/toZccvpt26+bcGMEria4Oj/qmP0Q=
+	t=1739904455; cv=none; b=dszXA7BMnxcXKS/xFc5o8bzdtRfcFq4JotvhCxhHhFsIvRVNgUuwhtdzrFT+XOChrZCLYn1qUIMwQpC3stCCw/oi+APmr3vuwaIkNY6iCxVAJM9wpSALjB3wqC0ptWgWQxvzFCx5uCfqZb1bWGPVfabBE2Pgm6hiyeeObrWuX/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739904465; c=relaxed/simple;
-	bh=yw5Yt4kfnWERkfl4Lpwd2pjTeIDCOFTVFKwXTHQRVwY=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LVtxaN6e436Q/PGv3H9W3II/b1j269TKZXWzDfIPMSN7TOtoGqxj6IsyuzU+liu5flPjZ68eGbw5qOaxlRVgEz3JsjJ0ePAaEHlkigf38tfEWKpWj91q3Q42mZ3AJiE8gZ4oSZoTCbtWO3Xv56m7igMGkmj5YfIH6oTb7QJXyMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=sOsCCaBE; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51IIkxib1730394
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 18 Feb 2025 12:46:59 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1739904419;
-	bh=VaGTcSN1wD5Urnyf0YoZkBhWlJQc2yOqVlder5VljG4=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=sOsCCaBENHWTqHe1BgBE9MgQbPYGYDmRraShvvUgyIbXKunywcEi1FN28QD2/dCXZ
-	 8OmRn+3ExhwDBlnS8+jN32fV67Meb3xUaksUfA+zO0rFQDb88GFHH+qC6cnVeKx0u6
-	 Rmn0BpWzQeN8m3mbomvXXwoliFGN81j0WUsKWhRQ=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51IIkxcI057016
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 18 Feb 2025 12:46:59 -0600
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 18
- Feb 2025 12:46:58 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 18 Feb 2025 12:46:58 -0600
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51IIkw9t116037;
-	Tue, 18 Feb 2025 12:46:58 -0600
-Date: Tue, 18 Feb 2025 12:46:58 -0600
-From: Nishanth Menon <nm@ti.com>
-To: Sebastian LaVine <slavine@d3embedded.com>
-CC: <devicetree@vger.kernel.org>, <imx@lists.linux.dev>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-media@vger.kernel.org>,
-        =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado
-	<nfraprado@collabora.com>,
-        Abel Vesa <abel.vesa@linaro.org>, Achath Vaishnav
-	<vaishnav.a@ti.com>,
-        AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
-        Biju Das
-	<biju.das.jz@bp.renesas.com>,
-        Bjorn Andersson <quic_bjorande@quicinc.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Elinor
- Montmasson <elinor.montmasson@savoirfairelinux.com>,
-        Fabio Estevam
-	<festevam@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Hans
- Verkuil <hverkuil@xs4all.nl>,
-        Javier Carrasco
-	<javier.carrasco@wolfvision.net>,
-        Jianzhong Xu <xuj@ti.com>,
-        Julien Massot
-	<julien.massot@collabora.com>,
-        Kieran Bingham
-	<kieran.bingham@ideasonboard.com>,
-        Kory Maincent <kory.maincent@bootlin.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Laurent Pinchart
-	<laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab
-	<mchehab@kernel.org>,
-        Mikhail Rudenko <mike.rudenko@gmail.com>,
-        Pengutronix
- Kernel Team <kernel@pengutronix.de>,
-        Rob Herring <robh@kernel.org>,
-        Sakari
- Ailus <sakari.ailus@linux.intel.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
-        Stuart Burtner <sburtner@d3embedded.com>,
-        Tero Kristo <kristo@kernel.org>, Thakkar Devarsh <devarsht@ti.com>,
-        Tomi
- Valkeinen <tomi.valkeinen@ideasonboard.com>,
-        Umang Jain
-	<umang.jain@ideasonboard.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>, Will
- Deacon <will@kernel.org>,
-        Zhi Mao <zhi.mao@mediatek.com>
-Subject: Re: [PATCH 4/4] arm64: dts: ti: Add overlays for IMX728 RCM
-Message-ID: <20250218184658.sgtrrwpltgrcnlr4@smugness>
-References: <20250212195656.69528-1-slavine@d3embedded.com>
- <20250212195656.69528-5-slavine@d3embedded.com>
+	s=arc-20240116; t=1739904455; c=relaxed/simple;
+	bh=kgS821ZvzlP2dxTaoeNLI5ioJyRwNqun+19UmhCW1u8=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=MwLV+J+QV4KjrHCx/GT2FYJddG5uO4kLW72QIlpPIB94laknChUQy0TKQCTeAh3Y7Eirf/HbfbcRZkQ1NbQfWqILSpxwGVXwxHu5gboAtTwWHRG0OibG5l6rjnmrukj15eSQEV5pwr6kVopCAnqCYRHWQz7lu522IuoICCAwT90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=loCelom+; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:MIME-Version:Message-ID:References:In-Reply-To:Subject:CC:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=pEhBnu7IjxegZyI8flpkEhAnooxMPcthAGKgdF/zgLM=; b=loCelom+fJGGA1oNRk+AQI7Er9
+	pLNjceLkq3ijPryR0QFAHzUgMCTlEJr+QwKufL34ERUznAiqHOHgEenPTTQnsyL+8Q3rqtJp7258p
+	jBICA1RsPHQkl7wIuRiwurokwbSyjNtYyU9mhsBo+yHaQvF/7JojcsPk6NML9sNX3FMfhs3TMVMdK
+	IG6nJ1xcf6/Zhy3UJLQaMqunHrA2cBIm6XSG9h7QX+szW3eTraeeDapQXDzqYcdjb7Hp6YshMWLbc
+	UPRce3gk3+7px1gcOUYl9mbBRsYh4wPMxOPD9zEnE4oBDU4s3wzlLCpHJwnZPsinonqkyM2i8+2TC
+	sLNLi2UA==;
+Received: from [2a01:cb15:834c:4100:cee8:77e5:e34e:6bff] (helo=[IPv6:::1])
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tkScz-000000022C5-3vT0;
+	Tue, 18 Feb 2025 18:47:30 +0000
+Date: Tue, 18 Feb 2025 19:47:27 +0100
+From: David Woodhouse <dwmw2@infradead.org>
+To: Sean Christopherson <seanjc@google.com>
+CC: Paolo Bonzini <pbonzini@redhat.com>, Paul Durrant <paul@xen.org>,
+ kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Joao Martins <joao.m.martins@oracle.com>,
+ David Woodhouse <dwmw@amazon.co.uk>
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v2_1/5=5D_KVM=3A_x86/xen=3A_Restrict_?=
+ =?US-ASCII?Q?hypercall_MSR_to_unofficial_synthetic_range?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <Z7S2SpH3CtqCVlBc@google.com>
+References: <20250215011437.1203084-1-seanjc@google.com> <20250215011437.1203084-2-seanjc@google.com> <DC438DC0-CC4B-4EE2-ABA8-8E0F9D15DD46@infradead.org> <Z7S2SpH3CtqCVlBc@google.com>
+Message-ID: <CB09D020-703C-41D2-8F1F-32BF776BE1DB@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250212195656.69528-5-slavine@d3embedded.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
 
-On 14:56-20250212, Sebastian LaVine wrote:
-> Adds overlays for the D3 IMX728 RCM.
-> 
-> Only a connection on port 0 is currently supported.
-> 
-> Signed-off-by: Sebastian LaVine <slavine@d3embedded.com>
-> Mentored-by: Stuart Burtner <sburtner@d3embedded.com>
-> ---
->  MAINTAINERS                                   |   1 +
->  arch/arm64/boot/dts/ti/Makefile               |   3 +
->  .../dts/ti/k3-fpdlink-imx728-rcm-0-0.dtso     | 108 ++++++++++++++++++
->  3 files changed, 112 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/ti/k3-fpdlink-imx728-rcm-0-0.dtso
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index bf6a48da0887..f109b5dc8fa5 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -21891,6 +21891,7 @@ L:      linux-media@vger.kernel.org
->  S:     Odd Fixes
->  F:     Documentation/devicetree/bindings/media/i2c/sony,imx728.yaml
->  F:     arch/arm64/boot/dts/ti/k3-am62a7-sk-fusion-2.dtso
-> +F:     arch/arm64/boot/dts/ti/k3-fpdlink-imx728-rcm-0-0.dtso
+On 18 February 2025 17:33:14 CET, Sean Christopherson <seanjc@google=2Ecom>=
+ wrote:
+>On Sat, Feb 15, 2025, David Woodhouse wrote:
+>> On 15 February 2025 02:14:33 CET, Sean Christopherson <seanjc@google=2E=
+com> wrote:
+>> >diff --git a/arch/x86/kvm/xen=2Ec b/arch/x86/kvm/xen=2Ec
+>> >index a909b817b9c0=2E=2E5b94825001a7 100644
+>> >--- a/arch/x86/kvm/xen=2Ec
+>> >+++ b/arch/x86/kvm/xen=2Ec
+>> >@@ -1324,6 +1324,15 @@ int kvm_xen_hvm_config(struct kvm *kvm, struct =
+kvm_xen_hvm_config *xhc)
+>> > 	     xhc->blob_size_32 || xhc->blob_size_64))
+>> > 		return -EINVAL;
+>> >=20
+>> >+	/*
+>> >+	 * Restrict the MSR to the range that is unofficially reserved for
+>> >+	 * synthetic, virtualization-defined MSRs, e=2Eg=2E to prevent confu=
+sing
+>> >+	 * KVM by colliding with a real MSR that requires special handling=
+=2E
+>> >+	 */
+>> >+	if (xhc->msr &&
+>> >+	    (xhc->msr < KVM_XEN_MSR_MIN_INDEX || xhc->msr > KVM_XEN_MSR_MAX_=
+INDEX))
+>> >+		return -EINVAL;
+>> >+
+>> > 	mutex_lock(&kvm->arch=2Exen=2Exen_lock);
+>> >=20
+>> > 	if (xhc->msr && !kvm->arch=2Exen_hvm_config=2Emsr)
+>>=20
+>> I'd still like to restrict this to ensure it doesn't collide with MSRs =
+that
+>> KVM expects to emulate=2E But that can be a separate patch, as discusse=
+d=2E
+>
+>I think that has to go in userspace=2E  If KVM adds on-by-default, i=2Ee=
+=2E unguarded,
+>conflicting MSR emulation, then KVM will have broken userspace regardless=
+ of
+>whether or not KVM explicitly rejects KVM_XEN_HVM_CONFIG based on emulate=
+d MSRs=2E
+>
+>If we assume future us are somewhat competent and guard new MSR emulation=
+ with a
+>feature bit, capability, etc=2E, then rejecting KVM_XEN_HVM_CONFIG isn't =
+obviously
+>better, or even feasible in some cases=2E  E=2Eg=2E if the opt-in is done=
+ via guest
+>CPUID, then KVM is stuck because KVM_XEN_HVM_CONFIG can (and generally sh=
+ould?)
+>be called before vCPUs are even created=2E  Even if the opt-in is VM-scop=
+ed, e=2Eg=2E
+>a capabilitiy, there are still ordering issues as userpace would see diff=
+erent
+>behavior depending on the order between KVM_XEN_HVM_CONFIG and the capabi=
+lity=2E
 
-Please route dts via SoC tree.
-
->  F:     drivers/media/i2c/imx728.c
-> 
->  SONY MEMORYSTICK SUBSYSTEM
-> diff --git a/arch/arm64/boot/dts/ti/Makefile b/arch/arm64/boot/dts/ti/Makefile
-> index fcd8d11e5678..6c8bbea246f1 100644
-> --- a/arch/arm64/boot/dts/ti/Makefile
-> +++ b/arch/arm64/boot/dts/ti/Makefile
-> @@ -240,6 +240,9 @@ dtb- += k3-am625-beagleplay-csi2-ov5640.dtb \
-[...]
-
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+Well, I just changed QEMU to do KVM_XEN_HVM_CONFIG from the first vCPU ini=
+t because QEMU doesn't know if it needs to avoid the Hyper-V MSR space at k=
+vm_xen_init() time=2E But yes, we don't want to depend on ordering either w=
+ay=2E
 
