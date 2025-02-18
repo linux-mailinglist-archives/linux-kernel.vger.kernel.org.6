@@ -1,128 +1,131 @@
-Return-Path: <linux-kernel+bounces-519668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58A61A3A065
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:50:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2967CA3A076
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:52:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FEAC1887646
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:46:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C4AD18853F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:49:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B0FD26A0D2;
-	Tue, 18 Feb 2025 14:46:36 +0000 (UTC)
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B156826A0FE;
+	Tue, 18 Feb 2025 14:49:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h0iZJQxN"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A4F161310
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 14:46:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD3D262D1C
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 14:49:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739889995; cv=none; b=T0Dcxr+OacdD4oFsYzsa3+UKyTDw1nQzhkAhQlEnan8HxOJsnJQuq9zfpRPq1MPu4si7IDNrObUQbgU4RDB7sCkgWGcHI/yPU6Xbz1MaVKjk40gzoU0LO/VkEOl/D5ffjs5M8dKtEmLyD79lBydz+unmLzM1aHWRToRS4cIkYEY=
+	t=1739890172; cv=none; b=OcrtMPJAWlRSWOIze6xAcKJmNjrLwcMVTgY1899TOzGBMEU6lGew+F4IwSxRg9BVUhY6jkSNhRbNlyafEfDrdAdcCYeGBald1GkpBckmzOVbRj/uozmHu4Bk71a7ZiYabhGetPHFgFSAW+g1HztHlFZubsc72qVs6c3YtnyKlOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739889995; c=relaxed/simple;
-	bh=vzaGpdLNX9OLuU+R9yufw9PuZi+mKKQ3x8jQJ0RfnxY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CzyXuJf5BQiRwphkPG8lhGVc5TM+Zk+GaeDe39ThJ8xfFq9LSm4Klh/AdQD5LkVFKLknVyaQgiEcKJiTy5MUGJWQlfT1CAgXawTK4IfdI7xMxtBstCtoJ74Rd6H9vNf0NM9bBLGHCXsRfFxJDcKOXfLF7f3cfA4kdJVBEFFnADY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id EB4C844196;
-	Tue, 18 Feb 2025 14:46:23 +0000 (UTC)
-Message-ID: <52e0c3d1-239b-475e-8ddd-932a460c6da1@ghiti.fr>
-Date: Tue, 18 Feb 2025 15:46:23 +0100
+	s=arc-20240116; t=1739890172; c=relaxed/simple;
+	bh=UVGVBuu6e33jMGeyfiLTBPJGjbrgPrDhUZRv5B1e3oo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ce0SrjR9NfQ4O3Fy3eLfOPMCph3cgeWW29VTFoIZxS/OE3XHgSddbLM5rhusolz2o/cepQ+jD/N6FwyiumO77DG0jQYVLvEPLuwZNiTrHDreFAv1qZCuDr54sQOHaQoWSN6su30gaJwdZ4mzG5liHykwXuR5nI0O3AwOLCBphgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h0iZJQxN; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739890171; x=1771426171;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=UVGVBuu6e33jMGeyfiLTBPJGjbrgPrDhUZRv5B1e3oo=;
+  b=h0iZJQxNgGPKd5HI5Xk2dV5Iq7r+4/cHAoiiGOtsieH7mAujNU3gsJmO
+   qYDL9alRBh2RdLsMPtjqQl62RE/1ZAz0y0AMZE2plQ1vfi3j3v/HxRoZb
+   6Xb90ZdC44Ks78IJWCdahKyitp/AqT1h5oBWKlsAlVXPOnZUkVLDHHmew
+   GbaPPvSyYQcexUL5mm9UNx/UTUZOOpYqQljc18R+04OXt5OlFXCW05odw
+   LIHgTpKend+wL/TEPc4yyrjrCIsaXoYH/CJeEsPe1B4S0ti4hnpA8zBVE
+   j1O5clviPqLiKLMM4plVxA8ow7YLsqbi+MayiihzneR/XKZOGlXS9973m
+   A==;
+X-CSE-ConnectionGUID: dS0zmsI/QuWBjbD14zmPoQ==
+X-CSE-MsgGUID: B5tGiOz5T9WbHwI7SchCAw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="51227841"
+X-IronPort-AV: E=Sophos;i="6.13,296,1732608000"; 
+   d="scan'208";a="51227841"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 06:49:30 -0800
+X-CSE-ConnectionGUID: IzJFd+DHSfumLx2XFcJAZg==
+X-CSE-MsgGUID: MS49BogmTkSPwqIUagHD6w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="114884797"
+Received: from sosterlu-desk.ger.corp.intel.com (HELO himmelriiki) ([10.245.245.44])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 06:49:23 -0800
+Date: Tue, 18 Feb 2025 16:49:12 +0200
+From: Mikko Ylinen <mikko.ylinen@linux.intel.com>
+To: "Xing, Cedric" <cedric.xing@intel.com>
+Cc: Dave Hansen <dave.hansen@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+	linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+Subject: Re: [PATCH 0/4] tsm: Unified Measurement Register ABI for TVMs
+Message-ID: <Z7Sd6FuDDMgExEna@himmelriiki>
+References: <20250212-tdx-rtmr-v1-0-9795dc49e132@intel.com>
+ <15c69d57-4ffb-4ea1-8cbc-0ba6d3d7b14f@intel.com>
+ <be7e3c9d-208a-4bda-b8cf-9119f3e0c4ce@intel.com>
+ <015cdddb-7f74-4205-af8a-b15cad7ddc22@intel.com>
+ <d8f3eb33-d902-4391-adc7-005e4895b471@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: fs/xfs/xfs_buf.c:1534 xfs_buf_submit_bio() warn: unsigned '_x' is
- never less than zero.
-Content-Language: en-US
-To: Dan Carpenter <dan.carpenter@linaro.org>, Philip Li <philip.li@intel.com>
-Cc: David Laight <david.laight.linux@gmail.com>,
- Christoph Hellwig <hch@lst.de>, kernel test robot <lkp@intel.com>,
- oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
- Carlos Maiolino <cem@kernel.org>, "Darrick J. Wong" <djwong@kernel.org>,
- linux-riscv@lists.infradead.org
-References: <202502171326.j4Xd3I0j-lkp@intel.com>
- <20250217092445.GA29568@lst.de>
- <a14347d2-6189-49bc-a1cc-e5959e76e6c2@ghiti.fr>
- <20250217131203.2657cc4b@pumpkin> <Z7PWuSA4jtZnxp5J@rli9-mobl>
- <78ff844a-0fb4-42f6-b54f-4d19e14cfd05@stanley.mountain>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <78ff844a-0fb4-42f6-b54f-4d19e14cfd05@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeiudehlecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnhepuefffedvleetleetjefhjeehudejteetvedtvddvtdfhieetffelvdffgefgieeinecuffhomhgrihhnpehinhhfrhgruggvrggurdhorhhgnecukfhppeduleefrdeffedrheejrdduleelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelfedrfeefrdehjedrudelledphhgvlhhopegludelvddrudeikedrvddurddvhegnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepuddtpdhrtghpthhtohepuggrnhdrtggrrhhpvghnthgvrheslhhinhgrrhhordhorhhgpdhrtghpthhtohepphhhihhlihhprdhlihesihhnthgvlhdrtghomhdprhgtphhtthhopegurghvihgurdhlrghighhhthdrlhhinhhugiesghhmrghilhdrtghomhdprhgtphhtthhopehhtghhsehlshhtrdguvgdprhgtphhtthhopehlkhhpsehinhhtvghlrdgtohhmpdhrtghpthhtohepohgvq
- dhksghuihhlugdqrghllheslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegtvghmsehkvghrnhgvlhdrohhrgh
-X-GND-Sasl: alex@ghiti.fr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d8f3eb33-d902-4391-adc7-005e4895b471@intel.com>
 
-Hi Dan,
+On Thu, Feb 13, 2025 at 03:50:19PM -0600, Xing, Cedric wrote:
+> On 2/13/2025 10:58 AM, Dave Hansen wrote:
+> > On 2/13/25 08:21, Xing, Cedric wrote:
+> > > On 2/12/2025 10:50 PM, Dave Hansen wrote:
+> > > > On 2/12/25 18:23, Cedric Xing wrote:
+> > > > > NOTE: This patch series introduces the Measurement Register (MR) ABI,
+> > > > > and
+> > > > > is a continuation of the RFC series on the same topic [1].
+> > > > 
+> > > > Could you please explain how the benefits of this series are helpful to
+> > > > end users?
+> > > 
+> > > This series exposes MRs as sysfs attributes, allowing end users to
+> > > access them effortlessly without needing to write any code. This
+> > > simplifies the process of debugging and diagnosing measurement-related
+> > > issues. Additionally, it makes the CC architecture more intuitive for
+> > > newcomers.
+> > 
+> > Wait a sec, so there's already ABI for manipulating these? This just
+> > adds a parallel sysfs interface to the existing ABI?
+> > 
+> No, this is new. There's no existing ABI for accessing measurement registers
+> from within a TVM (TEE VM). Currently, on TDX for example, reading TDX
+> measurement registers (MRs) must be done by getting a TD quote. And there's
+> no way to extend any RTMRs. Therefore, it would be much easier end users to
 
-On 18/02/2025 15:21, Dan Carpenter wrote:
-> On Tue, Feb 18, 2025 at 08:39:21AM +0800, Philip Li wrote:
->> + Dan
->>
->> Hi Dan,
->>
->> On Mon, Feb 17, 2025 at 01:12:03PM +0000, David Laight wrote:
->>> On Mon, 17 Feb 2025 13:06:49 +0100
->>> Alexandre Ghiti <alex@ghiti.fr> wrote:
->>>
->>>> Hi Christoph,
->>>>
->>>> On 17/02/2025 10:24, Christoph Hellwig wrote:
->>>>> On Mon, Feb 17, 2025 at 01:53:08PM +0800, kernel test robot wrote:
->>>>>> New smatch warnings:
->>>>>> fs/xfs/xfs_buf.c:1534 xfs_buf_submit_bio() warn: unsigned '_x' is never less than zero.
->>>>> Looks like this is an issue in the riscv virt_to_page implementation
->>>>> which also shows up in various other places.  Any chance this could get
->>>>> fixed in the riscv code?
->>>>
->>>> To me, the only test that could give rise to this warning is the last
->>>> part of:
->>>>
->>>> #define is_linear_mapping(x) \
->>>>           ((x) >= PAGE_OFFSET && (!IS_ENABLED(CONFIG_64BIT) || (x) <
->>>> PAGE_OFFSET + KERN_VIRT_SIZE))
->>>>
->>>> But given that the config is a 32-bit config, it should not be evaluated
->>>> at all.
->>>>
->>>> Could that be a false-positive and then an issue in smatch?
->>> Why is smatch even looking.
->>> The equivalent check in gcc has been moved to -W2 because of all false positives.
-> The Smatch check is a bit more sophisticated than the GCC check...
-> I think if you removed the (!IS_ENABLED(CONFIG_64BIT) condition then
-> Smatch wouldn't trigger a warning here.  How would I duplicate this
-> warning?  The "ARCH=riscv make.cross" command does a 64bit build.
+TD reports *are* available through the tdx_guest ioctl so there's overlap
+with the suggested reportdata/report0 entries at least. Since configfs-tsm
+provides the generic transport for TVM reports, the best option to make report0
+available is through configfs-tsm reports.
 
+The use case on MRCONFIGID mentioned later in this thread does not depend
+on this series. It's easy for the user-space to interprete the full report
+to find MRCONFIGID or any other register value (the same is true for HOSTDATA
+on SNP).
 
-riscv uses the same toolchain for both 32 and 64-bit, if you look at the 
-faulty config, you can see that CONFIG_32BIT is enabled so it actually 
-is a 32-bit build.
+The question here is whether there's any real benefit for the kernel to
+expose the provider specific report details through sysfs or could we focus on
+the RTMR extend capability only.
 
-Thanks for jumping in,
-
-Alex
-
-
->
-> Screw it, I can just silence this warning based on that it's a kernel
-> build and the variable is called "_x".
->
-> regards,
-> dan carpenter
->
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+-- 
+Regards, Mikko
 
