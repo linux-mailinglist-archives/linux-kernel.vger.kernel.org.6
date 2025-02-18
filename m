@@ -1,106 +1,104 @@
-Return-Path: <linux-kernel+bounces-518989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D291A396F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:25:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DF94A396D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:20:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACCD83B8138
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:18:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80DE7188BC78
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:20:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE972309B6;
-	Tue, 18 Feb 2025 09:18:25 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8522230274;
+	Tue, 18 Feb 2025 09:19:53 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07BD922FF55;
-	Tue, 18 Feb 2025 09:18:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247A11FFC48
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 09:19:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739870305; cv=none; b=dxut68Kv88Z/Eon1OAYWEdBHrwXFR9k2KCEVWFg0/3ftrfgluIkj5p/zBPrpeAis+lqQQipDpBmOvrIAXvIdiRe/VvJyneYZq+MLHAHDHM1zCl416GfXMTJeqjUQPt+bsVkay6zhbhl91fB6R9yExU6MA48QKgJGiy+OQSl3rbA=
+	t=1739870393; cv=none; b=tp3l5VFQe8Sdw0jw+dUMhncez9H4c2Ix7c6Dyj51r/wICkbMujEVyEkTDklhRZXRcqINJNjop+M53KleTCQbHXRS3c6F9C1LGr/UjnHQCSzHAybiKN2pHM+3uygLNmUZFgqvumJefUprx5ZNJbx5+hT8U9BEusQ1HHAzdE23uCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739870305; c=relaxed/simple;
-	bh=vfuQjd/8LgaGZuh/Qvb8dlDpyh9HdnmRmMB5nk3IgHY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KrKkviiJmhZXMKJ46i2dXozrLr3pmGLCy5J7m31eWHcMQg7j8c2wJAFwm0CZfg1V67gIhwmptm6AyAB53CGk0j0wJvG8s8lgTYIbnhzpdpu3NGLw2//506A7IbPixw54dUZhoLNaqtj+GekYrjYy2lLXhx4uoK57cF4xBayHzUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BC84C4CEE4;
-	Tue, 18 Feb 2025 09:18:20 +0000 (UTC)
-Date: Tue, 18 Feb 2025 09:18:18 +0000
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Beata Michalska <beata.michalska@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-pm@vger.kernel.org, ionela.voinescu@arm.com,
-	sudeep.holla@arm.com, will@kernel.org, rafael@kernel.org,
-	viresh.kumar@linaro.org, sumitg@nvidia.com,
-	yang@os.amperecomputing.com, vanshikonda@os.amperecomputing.com,
-	lihuisong@huawei.com, zhanjie9@hisilicon.com,
-	ptsm@linux.microsoft.com, Jonathan Corbet <corbet@lwn.net>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H . Peter Anvin" <hpa@zytor.com>, Phil Auld <pauld@redhat.com>,
-	x86@kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v10 0/4] Add support for AArch64 AMUv1-based average freq
-Message-ID: <Z7RQWgLksl4bBksr@arm.com>
-References: <20250131162439.3843071-1-beata.michalska@arm.com>
- <173982791748.4020779.2848639862581042284.b4-ty@arm.com>
- <Z7PNlFv2995pDARQ@arm.com>
+	s=arc-20240116; t=1739870393; c=relaxed/simple;
+	bh=bm8fDjPIeiOH7fCF+lKeJZJ4f6L8udgW786BkS51F4U=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=je3R/KD+b+b2m3d2ttEim8/8gOs3kV/078lPHmQa6wJqNBsopi+sTEUqfCG8Lg3imepyBIfS9vaIucfjPI5SjZpxSiYmSuDpnwLmSQHi5w05I/TenKK4flH5Aozu5OFIQp+m8xmWY5/35GoOwH3lRQ2pV1MUokquyzLA046GX5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4YxvBV1QbSzpk8m;
+	Tue, 18 Feb 2025 17:20:18 +0800 (CST)
+Received: from kwepemd200014.china.huawei.com (unknown [7.221.188.8])
+	by mail.maildlp.com (Postfix) with ESMTPS id 87F84140259;
+	Tue, 18 Feb 2025 17:19:47 +0800 (CST)
+Received: from localhost.localdomain (10.50.165.33) by
+ kwepemd200014.china.huawei.com (7.221.188.8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Tue, 18 Feb 2025 17:19:46 +0800
+From: Yicong Yang <yangyicong@huawei.com>
+To: <will@kernel.org>, <mark.rutland@arm.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+CC: <jonathan.cameron@huawei.com>, <prime.zeng@hisilicon.com>,
+	<linuxarm@huawei.com>, <yangyicong@hisilicon.com>, <wangyushan12@huawei.com>
+Subject: [PATCH 0/9] General updates and two new drivers for HiSilicon Uncore PMU
+Date: Tue, 18 Feb 2025 17:19:51 +0800
+Message-ID: <20250218092000.41641-1-yangyicong@huawei.com>
+X-Mailer: git-send-email 2.31.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z7PNlFv2995pDARQ@arm.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemd200014.china.huawei.com (7.221.188.8)
 
-On Tue, Feb 18, 2025 at 01:00:20AM +0100, Beata Michalska wrote:
-> On Mon, Feb 17, 2025 at 09:32:06PM +0000, Catalin Marinas wrote:
-> > On Fri, 31 Jan 2025 16:24:35 +0000, Beata Michalska wrote:
-> > > This series adds support for obtaining an average CPU frequency based on
-> > > a hardware provided feedback. The average frequency is being exposed via
-> > > dedicated yet optional cpufreq sysfs attribute - cpuinfo_avg_freq.
-> > > The architecture specific bits are being provided for AArch64, caching on
-> > > existing implementation for FIE and AMUv1 support: the frequency scale
-> > > factor, updated on each sched tick, serving as a base for retrieving
-> > > the frequency for a given CPU, representing an average frequency
-> > > reported between the ticks.
-> > > 
-> > > [...]
-> >
-> Thank you for that.
-> 
-> There is still a (not so) small issue with patch
-> [3/4] arm64: Provide an AMU-based version of arch_freq_get_on_cpu.
-> It did not come up while testing, sadly.
-> No idea how I could have missed that, nor why I made the mistake
-> in the first place.
-> 
-> The fix is pretty straightforward:
-> 
-> diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
-> index 6f0cab8e746b..4bac26d8e29c 100644
-> --- a/arch/arm64/kernel/topology.c
-> +++ b/arch/arm64/kernel/topology.c
-> @@ -268,7 +268,7 @@ int arch_freq_get_on_cpu(int cpu)
->  
->                         do {
->                                 ref_cpu = cpumask_next_wrap(ref_cpu, policy->cpus,
-> -                                                           start_cpu, false);
-> +                                                           start_cpu, true);
-> 
-> Please let me know if you want me to send new version with the fix applied.
+From: Yicong Yang <yangyicong@hisilicon.com>
 
-Usually we apply another patch on top with a Fixes tag or just fold it
-in if no-one relies on this branch being stable. I'll do the latter, no
-need to resend.
+Support new version of DDRC/SLLC PMU identified with updated ACPI HID and
+register definition. In order to support this, we do a preliminary refactor
+to initialize device of each version by using driver data of each HID
+rather than checking the version. This will also make the driver easier to
+maintain and extend, since only the HID specific information along
+with the new HID will be added to support the new version without touching
+the common logic.
 
-Thanks.
+Two new Uncore PMU drivers is also added to support the monitoring the
+events of the system bus (by NoC PMU) and the DVM opertaions (by MN PMU).
+
+Junhao He (7):
+  drivers/perf: hisi: Extend struct hisi_pmu_dev_info
+  drivers/perf: hisi: Simplify the probe process for each DDRC version
+  drivers/perf: hisi: Add support for HiSilicon DDRC v3 PMU driver
+  drivers/perf: hisi: Use ACPI driver_data to retrieve SLLC PMU
+    information
+  drivers/perf: hisi: Add support for HiSilicon SLLC v3 PMU driver
+  drivers/perf: hisi: Relax the event number check of v2 PMUs
+  drivers/perf: hisi: Add support for HiSilicon MN PMU driver
+
+Yicong Yang (2):
+  drivers/perf: hisi: Support PMUs with no interrupt
+  drivers/perf: hisi: Add support for HiSilicon NoC PMU
+
+ Documentation/admin-guide/perf/hisi-pmu.rst   |  11 +
+ drivers/perf/hisilicon/Makefile               |   3 +-
+ drivers/perf/hisilicon/hisi_uncore_ddrc_pmu.c | 354 ++++++++--------
+ drivers/perf/hisilicon/hisi_uncore_hha_pmu.c  |   7 +-
+ drivers/perf/hisilicon/hisi_uncore_mn_pmu.c   | 355 ++++++++++++++++
+ drivers/perf/hisilicon/hisi_uncore_noc_pmu.c  | 391 ++++++++++++++++++
+ drivers/perf/hisilicon/hisi_uncore_pa_pmu.c   |   2 +-
+ drivers/perf/hisilicon/hisi_uncore_pmu.c      |  11 +-
+ drivers/perf/hisilicon/hisi_uncore_pmu.h      |   2 +
+ drivers/perf/hisilicon/hisi_uncore_sllc_pmu.c | 234 ++++++++---
+ 10 files changed, 1104 insertions(+), 266 deletions(-)
+ create mode 100644 drivers/perf/hisilicon/hisi_uncore_mn_pmu.c
+ create mode 100644 drivers/perf/hisilicon/hisi_uncore_noc_pmu.c
 
 -- 
-Catalin
+2.24.0
+
 
