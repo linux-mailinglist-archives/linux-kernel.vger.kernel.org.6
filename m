@@ -1,328 +1,237 @@
-Return-Path: <linux-kernel+bounces-520278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2004A3A7DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:43:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06EACA3A7E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:43:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3243418954DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:43:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 838E33AAFB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:43:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D63551E8331;
-	Tue, 18 Feb 2025 19:42:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 834961E834E;
+	Tue, 18 Feb 2025 19:43:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vd5YEMk6"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="pMQkxeI4"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2072.outbound.protection.outlook.com [40.107.93.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 290401E835D;
-	Tue, 18 Feb 2025 19:42:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739907774; cv=none; b=rjeZtyepyXNQ1Sdx6K+sjvhQcDIpjr/wocL34pUPlUOuk2ng3LoZNr9yAmBGGmqP7Bs0aedPDudAcoJhqrWD8+cbpqfSUmG/MBXb4P+jSTEg5rfS94GTMsSCwQcTAxErrUGqUIwLw63cVhqo+kYujf+zB8vamqsqBbexpg13gAs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739907774; c=relaxed/simple;
-	bh=JVDAb2/wbhF3ydZ1Jo4lZCTcWIRQXA3iNvferXgyxx0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eXRzQeTAC9swoAxZVTMFt5a6YnaGwVgl0mL0QytubvqRcW/30jl3oeXb0IDfMsoC6HNsvxfcnYDcrQX4F9bxrJVmmdwXX54Gn9aA5FzYBh82GzvTeonVzHQjHWGhWjD74qCWohALleb5TDQ/mTDUoTwfS+isWk87s1KD/Tx7dS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vd5YEMk6; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4398c8c8b2cso23490445e9.2;
-        Tue, 18 Feb 2025 11:42:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739907770; x=1740512570; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jl7U1zRTmSliSaba3R9gS9qlysQX6pYP+zWE+Yu6Uvk=;
-        b=Vd5YEMk6h3xcZuR6m585JR5fXrKw/8c7ziOnl18SjzX1gV9UpMMoASyHAzwED+5zIB
-         QAMYRPzK8Ubrze8KWjuN9mMZFBm45Lwa/+YfRoXrSroyxNY4GQ1AUjXt7rJ84/u8PzDM
-         xNmxGbik/C4zGljUXeCcuwZGmb81sNVoyR+6DLdTQOf5ZTUSEkn8v1rDllUAqS5HS2D6
-         2VwjIsQtcKn1+dSg4DulH4E4/HnQK+UI9PyRZY6CXuKmuC90fBszER15LejXUm1lVM6T
-         0XRAQ5BBKtRAuib6CXeG4cmGZP7AjZzveqxXmwVCALTzv7VqBtGsNglKhGLQAwxYOkKz
-         hjDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739907770; x=1740512570;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jl7U1zRTmSliSaba3R9gS9qlysQX6pYP+zWE+Yu6Uvk=;
-        b=EJcsTHTrPVPdJqP2FY57rptjT4jx6QTjNC34rv2OE45htRY2ZU8b4gze4d7EEzOPRG
-         njsoRe+n/+OvPA9cHyiwUfm9R8oJIXuTJDfJgzHrIvMQsi/vDuh6zUzU1PSXOrZO/uaC
-         KBigVxy8LGBalTgCYvgF7036bVP7imB1zYo6ptorh9mGa+KJFTHIoTtqMFHJlVoLG35W
-         TlXwH65eFRTDcSZVWlH9nwQ63lX3bs2c6/LL3K1Ep5bgCuKEaxnMvSTptiol7Vsdx+VH
-         2FlzT2Inehm1T4VfI7XyLLnAEoTSiDTwFIpZme0PTxTrTDzd/k/YEPk1j+YajcI9wnvY
-         jehw==
-X-Forwarded-Encrypted: i=1; AJvYcCUN7T5Hv4MvAQI0N3D5wdPGBfJd2ok+ygDCIUKU8gSrcaNjL7ElC0gecaF3ULCh/R1hzXDxpR8E8FijTnTa@vger.kernel.org, AJvYcCVFuYfphm1Kg9msWIS0VmrwBhNSxvcj/Kbz4yubhdxR8aph7xJp2EfmkkaiMjElUelTQcGBPjJH3jyP@vger.kernel.org, AJvYcCXmzqtRaMYhgRRRMYQDRIIvHIJ0fjzkfJoG3g84ite3o8opXyxHr5wW7V35j7j4ulsWrd+3wr6KSKGN@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPy8cgsqU2sFUx1qv3inaXu7m09cRAH73HU9ndtFlROYIvTBX/
-	lZu2Jhrk6+LGWR9lyE/jjN7jPt9cFgxlpJ46/0K2j8t5JdE4obtN
-X-Gm-Gg: ASbGncuGP+6wwLakjdI/blGrjJdlgs+lWFsP+9V3p4Xsl8oXb4hKvHMYUIyCa4AIHGA
-	eFUHId2+fKmwKYuwQzm+CsOBJzCWR7LVQ4oFa1Cl6MsYY4WZMEo1Xm4x93fqiB3GOyvXnA9r+8O
-	kTRGXe1h6g2WyvEX2ubPNdq2qpR23KTQ9cbkhpJ4BmWtXX08pXJoJKrHFEifGob5iy8JbPWK7V3
-	Ll7Iu9NxdqSVTmgXVv/IPnJZ45Q8XCcRzMORRSz3z2GX9k79nZ6EM5rh7sUk5e4s0mifK27dtgI
-	Spzx7B8bLIUlMDgEi0tdCo5W4kA3mAV0GhDhCn4f7PvheMpDDkZ+Nu1JxdXCY9MMszw=
-X-Google-Smtp-Source: AGHT+IGUZTP9Mx+RmuM36MdYWx5EMbKHtaqxdPPdwHgNaovkF0uIkKf3zl23uWEwqGtbHZ3m2biocA==
-X-Received: by 2002:a05:6000:1785:b0:38d:d6ef:f8 with SMTP id ffacd0b85a97d-38f33f38d23mr16417610f8f.30.1739907770231;
-        Tue, 18 Feb 2025 11:42:50 -0800 (PST)
-Received: from jernej-laptop.localnet (86-58-6-171.dynamic.telemach.net. [86.58.6.171])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4398937341csm54963525e9.24.2025.02.18.11.42.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 11:42:49 -0800 (PST)
-From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Chen-Yu Tsai <wens@csie.org>, Samuel Holland <samuel@sholland.org>,
- Andre Przywara <andre.przywara@arm.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 09/15] clk: sunxi-ng: a523: add interface mod clocks
-Date: Tue, 18 Feb 2025 20:42:48 +0100
-Message-ID: <2641802.Lt9SDvczpP@jernej-laptop>
-In-Reply-To: <20250214125359.5204-10-andre.przywara@arm.com>
-References:
- <20250214125359.5204-1-andre.przywara@arm.com>
- <20250214125359.5204-10-andre.przywara@arm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA92B1B3937;
+	Tue, 18 Feb 2025 19:43:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.72
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739907802; cv=fail; b=XWP5gLQDiGZWHemjFbXAi7YIsH9vg718D3sDwKPHPlbEnci6aryFS1xxYeL1Jmv2m22Owp8gEbY2jlNe8yj90rbLXqPfbM6EbuErLyOjFUFzf8Gt9q8aQuD0ze/6C10pM0KF48eyzqoZhPoReQNuigvOqQ7CTJaW+rtnKxAaWPA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739907802; c=relaxed/simple;
+	bh=npkRLcd32Tp/1UEtClkBEf7isUXxnwjgCTroOYTwE0w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=SPIjc8SAyTlT7jp0XoPPRwfd+mCz1hbLyr9Yz0E7olaXnDw6goIqiV418RL/5F28jGJyxeJcjUKyvx86e38LLSupYg2/cBuY0Sdz0DfhjHeJsx5zAvkmcWjIZu/OHiIq0gl6JVwxj6jZkguKSmQvdJepK0AdaOONb3dDiKxreT0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=pMQkxeI4; arc=fail smtp.client-ip=40.107.93.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=prkIN0DKb3fS0uAOQDhC+BZgpaw/4A2ML2bqY0v2kmlKWbWCcVVmZBXDHYv+0f99Tdkh1Yk2Iyud3H9APVVVhEosIYXRB+mXt1xwqklo6tXeXqHtOhV8oCqItZAuVd7XRCeV90Z/z6kgvkoI/mL0pDf+vH8d8gT0kWxnQozUfwnzodwPqTns68qEBnesYYLzZJeTGJJrhyLlvc61nNNcfKr+1TSn8aL8LTz4TWQkn40M0eJhVgc6MPnrRVQ7eD9+hvEbxgj/us7X4vBv9tbB4khJAqO8IyzqqxUbyYsiL+4MsDCeGFoFDpnW0/kiG7ezBMnGtpkX8M2PZTX/lvQoNQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=AfwLymLwvUcEicgD7bWfClVhfv9DRQtOXk8ul/y5JcY=;
+ b=D407wikYbI6tZGQ3AAOkS7FtlDEtQ3nZmSSo2pDt6pfV4e+QKIwPgL1pZKyLk41XG7L3eM2k/qDndkk7OA+QSt3a5+c7bO8233npYssSUUFUnP6vsElG2krpvtzpidNHiCbEYUMy64TmsPhM4tPAxoJpSL5WvARhU/qmkGDCqGPbdgTkHsB4/aL5071dW1AK29uPFc72cQkqV58Z6Dw9Yw0Mk3PjGpr2nPsDRc+C2D7O6NTseW2NyVFmuTRpPItKork9r3ICc7JVNRTtAaBX0zqhgjCy+kKnvAcm1Kc4oc4kyjbvR7+v+anJ9P4yu1mzWh9vAr1nijO/yy6D151cEQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AfwLymLwvUcEicgD7bWfClVhfv9DRQtOXk8ul/y5JcY=;
+ b=pMQkxeI4B2kREobvm9SRJW52c+/yrSV/kTcDQzAF2qi9zPel0W6c635ClrghCWturoSLaaCuVFXPi0jxS7+Tkbt+X9m3pkx+493B7Jbd/RJ/e8EwVRvstb6QCqO5OgZXuBflZl2kVlkwUMQovyg9VT89mtE3zSSywTWzm5QoTiyoQobZVa0oknF96cJnpXupjpkyjIxXTbQKreRClR1RZhv5VX0i85YrsBz6wDApIHzYpJDklNyoMkdy8J4uzqORUEUwf1i8f5EwNj8CtANxVC+5M3l/zng5lDz9xTFJE9lXisNmMUQz4zuOnOIimH0pdSb3hNLo03FQuXQboGb8rQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from IA1PR12MB9031.namprd12.prod.outlook.com (2603:10b6:208:3f9::19)
+ by MN2PR12MB4271.namprd12.prod.outlook.com (2603:10b6:208:1d7::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.13; Tue, 18 Feb
+ 2025 19:43:15 +0000
+Received: from IA1PR12MB9031.namprd12.prod.outlook.com
+ ([fe80::1fb7:5076:77b5:559c]) by IA1PR12MB9031.namprd12.prod.outlook.com
+ ([fe80::1fb7:5076:77b5:559c%4]) with mapi id 15.20.8445.017; Tue, 18 Feb 2025
+ 19:43:15 +0000
+Date: Tue, 18 Feb 2025 19:43:09 +0000
+From: Dragos Tatulea <dtatulea@nvidia.com>
+To: Eugenio Perez Martin <eperezma@redhat.com>
+Cc: "Michael S . Tsirkin" <mst@redhat.com>, virtualization@lists.linux.dev, 
+	Jason Wang <jasowang@redhat.com>, Si-Wei Liu <si-wei.liu@oracle.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Gal Pressman <gal@nvidia.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, stable@vger.kernel.org
+Subject: Re: [PATCH vhost] vdpa/mlx5: Fix oversized null mkey longer than
+ 32bit
+Message-ID: <ow7bhl3dfvllmgbasaemdmkcbj3odxkxslvra2kyrb6uev4n3e@sylpfadz7cpu>
+References: <20250217194443.145601-1-dtatulea@nvidia.com>
+ <CAJaqyWcXcW9U7a1bMAngG-eEjw6t5T3XPUdn_hai5OWWTQW85Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJaqyWcXcW9U7a1bMAngG-eEjw6t5T3XPUdn_hai5OWWTQW85Q@mail.gmail.com>
+X-ClientProxiedBy: FR4P281CA0412.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:d0::20) To IA1PR12MB9031.namprd12.prod.outlook.com
+ (2603:10b6:208:3f9::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA1PR12MB9031:EE_|MN2PR12MB4271:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2ca55c4a-3be6-4703-6f54-08dd50547c8e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cTZSc0dLOERkZnlvSktHQmIvTFo0UFVKWU50cVVpRzI5TjB1S01icTNiRkNP?=
+ =?utf-8?B?bUdUa3QvS2h5UmZ2cXI3bE9lSVd0dnlWV2pralVTOGI0ZTZLTmFob1NEVndv?=
+ =?utf-8?B?MjdUdDQyeWN0YUJ2Y3I1anlrV1JUNEVqdENIWWdRZ1J6SEkrQ1FKMkdjSWVR?=
+ =?utf-8?B?NnVmQW9MUVRPWCtLalRRdkN0TkxFSGVZZmpBS2VReFFyOXBnenN2SWZSL1ov?=
+ =?utf-8?B?ay96L1F6WU9BaGM1a1V6N1grbXA1a2R5bWtTVDBISlF1cHZqVUI0V3p4d3hw?=
+ =?utf-8?B?VjlvRHF4WEpFS0kxcEhPcmpNWDlwYUhBcGRPSm55MCtsYllqWWhHUUxTbUUz?=
+ =?utf-8?B?Tzh4YWYrVGNYZ3JJa280VmYwL3VjNkROcHBnZVZHa0JQQlhva0FBa0ZKRDk3?=
+ =?utf-8?B?OHZOd0dONUkweEdhd25yT0pJMTA1MkN2UThzbmJqU2pHRi93SXNWYTUya0hh?=
+ =?utf-8?B?NU5EY3V5dXFTdEh2S1VyQ21ySUxEbnBsR3hNTS9DZFJsZUMveW5YcFBkbGZi?=
+ =?utf-8?B?b0U4K2dCRUpRd2R3Y3AzNnV2NERWcHZqMW1Rc1o1SHR5NDk0SXNQM04wRHdo?=
+ =?utf-8?B?SDdLVUorVnF2YnowT0RiNG4yVzFUekRzOHN5NHlvbTNyUDZVK1ZCbWNOL3o2?=
+ =?utf-8?B?V3ZMQTQ1NGp0MnBDSC9MaFludGo5dXF2d0dJQnFSSStqQXNzUmxGd0dGN3gv?=
+ =?utf-8?B?M2pOdms5YTJHZEZYdFJySjlMaGMva0pUQ3Ryc05xQVhhRkJ5QWZqMFN6OVor?=
+ =?utf-8?B?c2ZZZnZEYmNOd2kyZDJGL254R3BWTkpTcm13UEdsMHdBWW9PTmtxWXUxbUlN?=
+ =?utf-8?B?Ly9UMW1tL2FNUWk0S1ZzSm9EbVNteVN4QXd1MEFJRGwwdlZHRUwwQUJXSHlz?=
+ =?utf-8?B?Z1V6YnVUbUFIQitIWTlVZmRXTzdaa1p0L09ESEowdU42RVNsR2tVUUVkZ20y?=
+ =?utf-8?B?RDhCVW02YVI1ME5hZ2NzZ2hldUxtalZ2TEFMUlNvcGNUUi9oNkx0T0pDaUJo?=
+ =?utf-8?B?SDcyWU1NbEMvdENwV2FKQXZSTXZ5b3FBTWVsSEdkL0U2RXVGd3BmaUNKcWhT?=
+ =?utf-8?B?U3IrNUxIK3FFeFNBWmR1R1BmbXRVNzFaZExiWEhLQjVFVHZsdFdPU1dQakNO?=
+ =?utf-8?B?VUtoNnFWRTJLQWlydVpIano3WG1QTDJ3cEhvVW0rU1NjeDhzdlhHRjB3SExZ?=
+ =?utf-8?B?RVF1WU5qanlEMmVtWFp1UjVGdDZweFNuL054OWw3bGp6T00vRHE4N1QvU0RW?=
+ =?utf-8?B?cHk1YzZ6SXBnbnhud2JiSlBkSFBIbWhTUmJ5aVJVeExMYlZVZlJpYU1HOG8w?=
+ =?utf-8?B?NlNaKzdDdWdZV2xqOUZIckRYclNJN2xoTDJqc0VMTk5oazZZNS95Uk9HV01E?=
+ =?utf-8?B?T2xxejl5aS9kN3JQN0N2VE5NWnhiUm5RMTkwRStjVnZ4TUVRUkkxSzM3UGVG?=
+ =?utf-8?B?MG9CcFo3Z0w3S21BT1VkMFZZb2R0M0xVd3VVaUJVZnBiSUI1ZVE0OFJhWlVO?=
+ =?utf-8?B?OUhyOHRVUWpsU1plQVVhMUlwK3FrelVBRWQrNjFZY0ROdFVuMTZ5NXcrWWYr?=
+ =?utf-8?B?WXNBZGtCbm13TjA4dkVnb3ozaENrLzJuK01oMXRsQi9QaWMvSml4eVltUm1C?=
+ =?utf-8?B?QlN6cWRHVTI2eVRENWwvRlZLL2FCRW9YZmszTzJtYnlQRlVSTnl3UGdzRFh0?=
+ =?utf-8?B?KytGMllCNC9NMk5FYmJDRUs4S0dzV0ZCRElKSGRPOHFzOXBtL3RTTWVLQzVC?=
+ =?utf-8?B?eDEzd0FuaHd0ZmhxQVI2cGdkN2drQTlRQ0xqd0J2UXMvUWhEYm1HcFhqZzJN?=
+ =?utf-8?B?N1BNVmx1MlRINGw5djArQkFSRTJBa2pvSDBzQXlpWVRZZ3o5UEN6K0lRdkd3?=
+ =?utf-8?Q?cs2Dd/P1KwoVM?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR12MB9031.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UDFxUDRmR3crNkt5YTFLeURSVkVxVklMSjJDS0VaU1M1dmV4SzNVeG5xcndQ?=
+ =?utf-8?B?WkN4Y2JGaVVUNlNVQ0MxSG9ZN0JBL1JzN1ZyYmJ0U0o2TEtjQlRlcFRIMUdR?=
+ =?utf-8?B?RERwNmxPc01DWlNZNFArN2UyOFhKOE5IVlcxU09oeVUyTFpxZHpzdUtYb3Rm?=
+ =?utf-8?B?VzNJVGtxdjM4SU0zcmhVY0l6d0ZUNTVzZ3FXUW5lWGVKTUhydFNOVmp1ZVRF?=
+ =?utf-8?B?MzhYMUxkYmN4UVB5a1JwcXZEYXlHTE5KMzB4alFWR3Fvd09sU0thREwzVXc0?=
+ =?utf-8?B?QkozaTVpM3gxTVhtaVhETEdSTFQ5Yy8rb2t0ZmZNV05TWDVTUUFiMExjR0dB?=
+ =?utf-8?B?Q01ISit2bHJqWGZtWWI3K25UMmRqbitaS0Z5Y0pOa0NyeklZS3NSUHcxZmlV?=
+ =?utf-8?B?TGFLcy85WjZsRnVCekNRZ3ZQK3Y4NHkrMEJ0Y0E5b1RraTZLL1cwWW1ZeG14?=
+ =?utf-8?B?dUFzODdQTkowQ2p6dkFtWnNrOGtGMk83elFSdSt4MHMvakVUUTZ4MlZqU1VM?=
+ =?utf-8?B?eWFjWHM1UFd2b09aNHpURlJuQ1FKeUFKWVZWMHNxMDBGN0VBbURWWUdLOXZR?=
+ =?utf-8?B?SzJKL3lselgyd3VnZENqb2hTbzNaV1dkZ21pMlc4WmVPMGw1M3RIRjFqZVBO?=
+ =?utf-8?B?NG1CbFNEMDl4SjRkWjdpOElPbGdkWFJoME9IYkVuUmVpcFRUekx0YnZMM0s2?=
+ =?utf-8?B?VW9FTEo3WXhQclkySzVjR2p3aHhqSXZpSEwwQytoV0k5ZUw2aEl6QjNZd3Bm?=
+ =?utf-8?B?bDJxQjg0MmY4Y2YwaUMxV3oweDQyVE5neGhhc2w3bFUxWTZrZnZ2ZWZwRkpG?=
+ =?utf-8?B?L3R1bDdpc0NpMEtGOVdwMWlSSjBvRVJ1QnFBRXpsVkkwZTJBU3ZxUGpFaG15?=
+ =?utf-8?B?ZmFScHdNd0lXUytIRFhHbnIwbjhyLzdkRkxhQU9XdEw4N1ZQSURRSUx6cjUx?=
+ =?utf-8?B?NjB2cm5NWnA5TlordC9mRDN3a1Fyd1R6czRlUmxwSCtzd1l4R3lwUFpLLzVp?=
+ =?utf-8?B?TFU2VjFxTGFuWHFQT0Z5VnZ5Y2RQelRKSlVuN3ZxU1N2RWw1RGtTMXVSWlVV?=
+ =?utf-8?B?K09XUStZQldnSHV1L1IyakJSbllkZEpHbGtISWMyUFZIU1lEMENTT0NRNHU3?=
+ =?utf-8?B?ZWtPUXZGVklXUk9wampMUHV6NCtNZWQ1TC9sY0tYcDdjZU1SalJuWnl1K0NU?=
+ =?utf-8?B?RWM4eGJHenFJaEkxV21Db1RablJuUnNHR3IwOHZYRHNzdXNNTUpQb216Q3pr?=
+ =?utf-8?B?V0g2UC83ZldTUHlnT0FXeEtzaHh2ZXJiL1p3V2djR2oxZnVOazJIQUxMY0sr?=
+ =?utf-8?B?d1Q3WWRuYmtZN1VvRXVCKy9JcHBKWjRTMi9MbVdCS0VBTEFXYUdNOVlWS0hh?=
+ =?utf-8?B?YklNWkgxYzYvVkVzdUNFcTFKcjZEaFNJY0ZkblF6Ymd4a3lTS0FqUHRQWjhv?=
+ =?utf-8?B?dlpDRDJYM25zeTYwUWV4YUFIRDhndVRidVg0bzRyYWpxTGlmcWRrUnI5ZG8r?=
+ =?utf-8?B?Z0dMd3Q2MjY2eEtwanBETWNoN25hTTcrTjd0UTZhYkowU3VHWHdwWkRFMkpZ?=
+ =?utf-8?B?bGFMNy8zUEdOMFlDNXJJT2FHN2NpbFBjVEVtZkZnemRENmJzZFl6TDlZK3hZ?=
+ =?utf-8?B?S09YN2MwZXd6YlhFNVFsSFByWGQrQXBydmRQRTBPRWdOYXdOZkNKcFF5Nmwz?=
+ =?utf-8?B?cXRQbkxLNWZCRjBkUDlNVytjRm1BOFA1Mkttd29lZGFIaUMwcWtSYngxcG43?=
+ =?utf-8?B?ZDRTZHpWQWF6c0hPZDk2MGc2bGRJcDkxbkNkd3lTby8rSHhyWTQ0MlV5N2pq?=
+ =?utf-8?B?SnFHeDZwQ1ZjY2VDZThVWVl2NlQ4bk5tbG8zRTdTczB4U2R0dXVCK1B6Zzl1?=
+ =?utf-8?B?amtRNmMrcmdzTUJnTmx2N3BIVXlqTkxMYlFBR1V0WEhwUEU2Q0NvNC81cC9t?=
+ =?utf-8?B?SDM5KzZCR1dyVis4MFVlREFHaEVsMzd5ZUk2TVY3WWNTZGo3empoWFVqQ3ZY?=
+ =?utf-8?B?VHZqUDlqY1RiaFNVWWFiZkNOS2hIWk5jbmFYTnpiaDZCZ3lNMUxOYTIydHNv?=
+ =?utf-8?B?SmJqMldDS3dwVjJLajVQZHB5VldZbVFwbU14dkZ3YTFnQ04zQ2Z1TXpKNzlU?=
+ =?utf-8?Q?I9AL1mPRthTR68h+pQKmYA7Bu?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2ca55c4a-3be6-4703-6f54-08dd50547c8e
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR12MB9031.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Feb 2025 19:43:15.6639
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1bsyfqOSIKxvAGMQGwbv2RqTO8W/FsUKzxLSigRPO9GPxcXHmbqc8Dm4rymYQrGPQNbtgKpmV22H/TJ9qF5ZSQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4271
 
-Dne petek, 14. februar 2025 ob 13:53:53 Srednjeevropski standardni =C4=8Das=
- je Andre Przywara napisal(a):
-> Add the clocks driving what the user manual summarises under "interface"
-> devices: raw NAND flash, MMC, SPI, EMAC, "IR" infrared, and the "GPADC"
-> general purpose analogue/digital converter.
->=20
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-> ---
->  drivers/clk/sunxi-ng/ccu-sun55i-a523.c | 160 +++++++++++++++++++++++++
->  1 file changed, 160 insertions(+)
->=20
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c b/drivers/clk/sunxi-n=
-g/ccu-sun55i-a523.c
-> index b68c44bce825f..14d13fb16dfbb 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
-> @@ -113,6 +113,9 @@ static CLK_FIXED_FACTOR_HWS(pll_periph0_150M_clk, "pl=
-l-periph0-150M",
->  			    pll_periph0_2x_hws, 8, 1, 0);
->  static CLK_FIXED_FACTOR_HWS(pll_periph0_160M_clk, "pll-periph0-160M",
->  			    pll_periph0_480M_hws, 3, 1, 0);
-> +static const struct clk_hw *pll_periph0_150M_hws[] =3D {
-> +	&pll_periph0_150M_clk.hw
-> +};
-> =20
->  #define SUN55I_A523_PLL_PERIPH1_REG	0x028
->  static struct ccu_nm pll_periph1_4x_clk =3D {
-> @@ -537,6 +540,133 @@ static SUNXI_CCU_M_HW_WITH_MUX_GATE(dram_clk, "dram=
-", dram_parents, 0x800,
->  static CLK_FIXED_FACTOR_HW(mbus_clk, "mbus",
->  			   &dram_clk.common.hw, 4, 1, 0);
-> =20
-> +static const struct clk_parent_data nand_mmc_parents[] =3D {
-> +	{ .fw_name =3D "hosc" },
-> +	{ .hw =3D &pll_periph0_400M_clk.hw },
-> +	{ .hw =3D &pll_periph0_300M_clk.hw },
-> +	{ .hw =3D &pll_periph1_400M_clk.hw },
-> +	{ .hw =3D &pll_periph1_300M_clk.hw },
-> +};
-> +
-> +static SUNXI_CCU_M_DATA_WITH_MUX_GATE(nand0_clk, "nand0", nand_mmc_paren=
-ts,
-> +				    0x810,
-> +				    0, 5,	/* M */
-> +				    24, 3,	/* mux */
-> +				    BIT(31),	/* gate */
-> +				    0);
-> +
-> +static SUNXI_CCU_M_DATA_WITH_MUX_GATE(nand1_clk, "nand1", nand_mmc_paren=
-ts,
-> +				    0x814,
-> +				    0, 5,	/* M */
-> +				    24, 3,	/* mux */
-> +				    BIT(31),	/* gate */
-> +				    0);
-> +
-> +static SUNXI_CCU_MP_MUX_GATE_POSTDIV_FEAT(mmc0_clk, "mmc0", nand_mmc_par=
-ents,
-> +					   0x830,
-> +					   0, 5,	/* M */
-> +					   8, 5,	/* P */
-> +					   24, 3,	/* mux */
-> +					   BIT(31),	/* gate */
-> +					   2,		/* post div */
-> +					   0, CCU_FEATURE_DUAL_DIV);
-> +
-> +static SUNXI_CCU_MP_MUX_GATE_POSTDIV_FEAT(mmc1_clk, "mmc1", nand_mmc_par=
-ents,
-> +					   0x834,
-> +					   0, 5,	/* M */
-> +					   8, 5,	/* P */
-> +					   24, 3,	/* mux */
-> +					   BIT(31),	/* gate */
-> +					   2,		/* post div */
-> +					   0, CCU_FEATURE_DUAL_DIV);
-> +
-> +static const struct clk_parent_data mmc2_parents[] =3D {
-> +	{ .fw_name =3D "hosc" },
-> +	{ .hw =3D &pll_periph0_800M_clk.common.hw },
-> +	{ .hw =3D &pll_periph0_600M_clk.hw },
-> +	{ .hw =3D &pll_periph1_800M_clk.common.hw },
-> +	{ .hw =3D &pll_periph1_600M_clk.hw },
-> +};
-> +
-> +static SUNXI_CCU_MP_MUX_GATE_POSTDIV_FEAT(mmc2_clk, "mmc2", mmc2_parents,
-> +					   0x838,
-> +					   0, 5,	/* M */
-> +					   8, 5,	/* P */
-> +					   24, 3,	/* mux */
-> +					   BIT(31),	/* gate */
-> +					   2,		/* post div */
-> +					   0, CCU_FEATURE_DUAL_DIV);
-> +
-> +static const struct clk_parent_data spi_parents[] =3D {
-> +	{ .fw_name =3D "hosc" },
-> +	{ .hw =3D &pll_periph0_300M_clk.hw },
-> +	{ .hw =3D &pll_periph0_200M_clk.hw },
-> +	{ .hw =3D &pll_periph1_300M_clk.hw },
-> +	{ .hw =3D &pll_periph1_200M_clk.hw },
-> +};
-> +static SUNXI_CCU_MP_DATA_WITH_MUX_GATE(spi0_clk, "spi0", spi_parents, 0x=
-940,
-> +				       0, 5,	/* M */
-> +				       8, 5,	/* P */
-> +				       24, 3,	/* mux */
-> +				       BIT(31),	/* gate */
-> +				       0);
-> +static SUNXI_CCU_MP_DATA_WITH_MUX_GATE(spi1_clk, "spi1", spi_parents, 0x=
-944,
-> +				       0, 5,	/* M */
-> +				       8, 5,	/* P */
-> +				       24, 3,	/* mux */
-> +				       BIT(31),	/* gate */
-> +				       0);
-> +static SUNXI_CCU_MP_DATA_WITH_MUX_GATE(spi2_clk, "spi2", spi_parents, 0x=
-948,
-> +				       0, 5,	/* M */
-> +				       8, 5,	/* P */
-> +				       24, 3,	/* mux */
-> +				       BIT(31),	/* gate */
-> +				       0);
-> +static SUNXI_CCU_MP_DATA_WITH_MUX_GATE(spifc_clk, "spifc", nand_mmc_pare=
-nts,
-> +				       0x950,
-> +				       0, 5,	/* M */
-> +				       8, 5,	/* P */
-> +				       24, 3,	/* mux */
-> +				       BIT(31),	/* gate */
-> +				       0);
+On 02/18, Eugenio Perez Martin wrote:
+> On Mon, Feb 17, 2025 at 8:45 PM Dragos Tatulea <dtatulea@nvidia.com> wrote:
+> >
+> > From: Si-Wei Liu <si-wei.liu@oracle.com>
+> >
+> > create_user_mr() has correct code to count the number of null keys
+> > used to fill in a hole for the memory map. However, fill_indir()
+> > does not follow the same to cap the range up to the 1GB limit
+> > correspondinly.
+> 
+> s/correspondinly/correspondingly/g
+>
+Will fix in v2.
 
-Missing CCU_FEATURE_DUAL_DIV flag.
+> Sounds to me the logic can be merged in a helper?
+>
+Not sure if possible in a useful way: the logic in create_user_mr() is
+different.
 
-Best regards,
-Jernej
+Also: this patch is kept small for stable tre.
 
-> +
-> +static SUNXI_CCU_GATE_HWS_WITH_PREDIV(emac0_25M_clk, "emac0-25M",
-> +				      pll_periph0_150M_hws,
-> +				      0x970, BIT(31) | BIT(30), 6, 0);
-> +static SUNXI_CCU_GATE_HWS_WITH_PREDIV(emac1_25M_clk, "emac1-25M",
-> +				      pll_periph0_150M_hws,
-> +				      0x974, BIT(31) | BIT(30), 6, 0);
-> +
-> +static const struct clk_parent_data ir_rx_parents[] =3D {
-> +	{ .fw_name =3D "losc" },
-> +	{ .fw_name =3D "hosc" },
-> +};
-> +
-> +static SUNXI_CCU_M_DATA_WITH_MUX_GATE(ir_rx_clk, "ir-rx", ir_rx_parents,=
- 0x990,
-> +				      0, 5,	/* M */
-> +				      24, 1,	/* mux */
-> +				      BIT(31),	/* gate */
-> +				      0);
-> +static const struct clk_parent_data ir_tx_ledc_parents[] =3D {
-> +	{ .fw_name =3D "hosc" },
-> +	{ .hw =3D &pll_periph1_600M_clk.hw },
-> +};
-> +static SUNXI_CCU_M_DATA_WITH_MUX_GATE(ir_tx_clk, "ir-tx", ir_tx_ledc_par=
-ents,
-> +				      0x9c0,
-> +				      0, 5,	/* M */
-> +				      24, 1,	/* mux */
-> +				      BIT(31),	/* gate */
-> +				      0);
-> +
-> +static SUNXI_CCU_M_WITH_GATE(gpadc0_clk, "gpadc0", "hosc", 0x9e0,
-> +				 0, 5,		/* M */
-> +				 BIT(31),	/* gate */
-> +				 0);
-> +static SUNXI_CCU_M_WITH_GATE(gpadc1_clk, "gpadc1", "hosc", 0x9e4,
-> +				 0, 5,		/* M */
-> +				 BIT(31),	/* gate */
-> +				 0);
-> +
->  static const struct clk_parent_data losc_hosc_parents[] =3D {
->  	{ .fw_name =3D "hosc" },
->  	{ .fw_name =3D "losc" },
-> @@ -693,6 +823,21 @@ static struct ccu_common *sun55i_a523_ccu_clks[] =3D=
- {
->  	&hstimer5_clk.common,
->  	&iommu_clk.common,
->  	&dram_clk.common,
-> +	&nand0_clk.common,
-> +	&nand1_clk.common,
-> +	&mmc0_clk.common,
-> +	&mmc1_clk.common,
-> +	&mmc2_clk.common,
-> +	&spi0_clk.common,
-> +	&spi1_clk.common,
-> +	&spi2_clk.common,
-> +	&spifc_clk.common,
-> +	&emac0_25M_clk.common,
-> +	&emac1_25M_clk.common,
-> +	&ir_rx_clk.common,
-> +	&ir_tx_clk.common,
-> +	&gpadc0_clk.common,
-> +	&gpadc1_clk.common,
->  	&pcie_aux_clk.common,
->  	&hdmi_24M_clk.common,
->  	&hdmi_cec_32k_clk.common,
-> @@ -767,6 +912,21 @@ static struct clk_hw_onecell_data sun55i_a523_hw_clk=
-s =3D {
->  		[CLK_HSTIMER5]		=3D &hstimer5_clk.common.hw,
->  		[CLK_IOMMU]		=3D &iommu_clk.common.hw,
->  		[CLK_DRAM]		=3D &dram_clk.common.hw,
-> +		[CLK_NAND0]		=3D &nand0_clk.common.hw,
-> +		[CLK_NAND1]		=3D &nand1_clk.common.hw,
-> +		[CLK_MMC0]		=3D &mmc0_clk.common.hw,
-> +		[CLK_MMC1]		=3D &mmc1_clk.common.hw,
-> +		[CLK_MMC2]		=3D &mmc2_clk.common.hw,
-> +		[CLK_SPI0]		=3D &spi0_clk.common.hw,
-> +		[CLK_SPI1]		=3D &spi1_clk.common.hw,
-> +		[CLK_SPI2]		=3D &spi2_clk.common.hw,
-> +		[CLK_SPIFC]		=3D &spifc_clk.common.hw,
-> +		[CLK_EMAC0_25M]		=3D &emac0_25M_clk.common.hw,
-> +		[CLK_EMAC1_25M]		=3D &emac1_25M_clk.common.hw,
-> +		[CLK_IR_RX]		=3D &ir_rx_clk.common.hw,
-> +		[CLK_IR_TX]		=3D &ir_tx_clk.common.hw,
-> +		[CLK_GPADC0]		=3D &gpadc0_clk.common.hw,
-> +		[CLK_GPADC1]		=3D &gpadc1_clk.common.hw,
->  		[CLK_PCIE_AUX]		=3D &pcie_aux_clk.common.hw,
->  		[CLK_HDMI_24M]		=3D &hdmi_24M_clk.common.hw,
->  		[CLK_HDMI_CEC_32K]	=3D &hdmi_cec_32k_clk.common.hw,
->=20
+> Either way,
+> 
+> Acked-by: Eugenio Pérez <eperezma@redhat.com>
+> 
+Thanks!
 
-
-
-
+> 
+> > Fill in more null keys for the gaps in between,
+> > so that null keys are correctly populated.
+> >
+> > Fixes: 94abbccdf291 ("vdpa/mlx5: Add shared memory registration code")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Si-Wei Liu <si-wei.liu@oracle.com>
+> > Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
+> > ---
+> >  drivers/vdpa/mlx5/core/mr.c | 7 +++++--
+> >  1 file changed, 5 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/vdpa/mlx5/core/mr.c b/drivers/vdpa/mlx5/core/mr.c
+> > index 8455f08f5d40..61424342c096 100644
+> > --- a/drivers/vdpa/mlx5/core/mr.c
+> > +++ b/drivers/vdpa/mlx5/core/mr.c
+> > @@ -190,9 +190,12 @@ static void fill_indir(struct mlx5_vdpa_dev *mvdev, struct mlx5_vdpa_mr *mkey, v
+> >                         klm->bcount = cpu_to_be32(klm_bcount(dmr->end - dmr->start));
+> >                         preve = dmr->end;
+> >                 } else {
+> > +                       u64 bcount = min_t(u64, dmr->start - preve, MAX_KLM_SIZE);
+> > +
+> >                         klm->key = cpu_to_be32(mvdev->res.null_mkey);
+> > -                       klm->bcount = cpu_to_be32(klm_bcount(dmr->start - preve));
+> > -                       preve = dmr->start;
+> > +                       klm->bcount = cpu_to_be32(klm_bcount(bcount));
+> > +                       preve += bcount;
+> > +
+> >                         goto again;
+> >                 }
+> >         }
+> > --
+> > 2.43.0
+> >
+> 
 
