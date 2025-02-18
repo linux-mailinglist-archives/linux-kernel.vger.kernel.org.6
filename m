@@ -1,268 +1,235 @@
-Return-Path: <linux-kernel+bounces-519830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02595A3A266
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:18:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9302A3A26A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:18:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D59807A5070
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:16:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D41B21884E37
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:17:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 331A726E644;
-	Tue, 18 Feb 2025 16:17:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E9D926D5CF;
+	Tue, 18 Feb 2025 16:17:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="SElPE48f"
-Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2076.outbound.protection.outlook.com [40.107.103.76])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T5X4f7z6"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E76BB26E63D;
-	Tue, 18 Feb 2025 16:17:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.103.76
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739895437; cv=fail; b=dNbrNbP/es871KRgyfD2HppmLHp1psKRY5VJ4hsqzUBQ7Qooz1g8hAqQhKssZXLiEd0e+Z6ihzGx0qsDEGZ0uCbYv0AAso7j8vV6BBP4TP3qb/Q5KcI6feLCbuL1qo916vjdCmtIJuOcYE1N7Gbkw113GVgxY8LYuRbU7m9Cl60=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739895437; c=relaxed/simple;
-	bh=R6X22SsNIXD4ANRdj7NCLNnMKxsE81qG6kfBYIdbrY8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=cX6IApUtkVcf8NJ/RdPNfYkThHLhp1ebIqOE2okye9DBjbsujOK702XwQUtBf4sDwWfntkotNTfjZKYCCiytdUpO/h/EfP+IOBK6b5tDSbdNcnUAkz6ZkYd/INBDXm5lsUiveINO7AKRWzDEJRdn38TRYdgx6htBn19wAFJCzio=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=SElPE48f; arc=fail smtp.client-ip=40.107.103.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YzOyxgPbmkKbX7W1rAD1ivIaesg1OH8K1ZaYeC2mqxAqjXXSWwSrp94ru3rKROIBt18EIMH3XFRjXMKbGCDvwsKE2mTFvrbGXbgRShgI5clmA8yfWuoJt86s3PzLwCD8BtqWdepxhi8Q98t0l9XIYRl+cBU2GEMnKfGTq2Abco8EvTrU2QwQ8VGA5zPV0V8EoDAiUVfjcN3ygH9Vaw1eXzmn6DqdAgoWLHSW6oAo+lLlX139E7SAec8sF2AtcjTWsSqUH6hmgdq0p3SNp6IKNf36ryphYRxAXPkOiSQykfJS12ybo93vxcj+dCyH3zmbk7Myrp/wT2xbY42GXM44yQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=V1vThkdBPgcHHuEQmu6EhAbhAfs7hFVsFJCal9gjR/E=;
- b=SNw9I006F0hn2RP6qFGwar2I9nT7xgL18mZG+JIGkusrB8Ot55GxRswUcquU4voa6stwv2Q99jdnbBcDkSHAqueZIBE8kBXZ00Cu4uHnah/NgKtrM8c+tUY4v1DFreT9zN4z5bV34ZiTscI0vC2jesQ2tONnoH9L+g+BYeybbxQR7pT9d1pRbe11Hpg5wH/W9H5dmI63LHZwR3/2zsOJLKvufVPxtMEULKjqXTQTndVp8UqQ91f79U2GCJc58TtqeJ/O1Mtxxn7hTrgEf9798t2DsVMRGzYSZLfmF4Fo1KTHkyx5ma4/3g5qTBY9gGcmCrzNkUTQS7BH+Ybkp35heQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=V1vThkdBPgcHHuEQmu6EhAbhAfs7hFVsFJCal9gjR/E=;
- b=SElPE48f42nkjbv9uwdFcloXXJsoMlLytKGGPS9Gtgolo1IIUkwgcga6rkQCQL7tkmLSu+uCrP0VR0HeLHhfcYisnLulrWifAdOTsps5tT+fwscce1ELdfF+Rq1+dCgTj8iAMYjR99Xcg6Ltns2msgjxO/q/XIcy9dPJDBn5uc2tTe3+eSRxySLHUNJ/OTiczrPaPAXnjso4970UWM5cANMP1xKoh4zgRCI3YOdKTUiPtgxp1NE5pOK8MFlGeZDAWVpv3hLqrj0lhrodh2xnyE+P4RI5rfMJRDX1J4Q6ZQ1d43P+AToYYtPu9U+tf5Ij9jqOmLCgw4UrkR+w7FsHpg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by DB9PR04MB8187.eurprd04.prod.outlook.com (2603:10a6:10:24a::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Tue, 18 Feb
- 2025 16:17:12 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8445.017; Tue, 18 Feb 2025
- 16:17:12 +0000
-Date: Tue, 18 Feb 2025 11:17:03 -0500
-From: Frank Li <Frank.li@nxp.com>
-To: manivannan.sadhasivam@linaro.org
-Cc: Shuai Xue <xueshuai@linux.alibaba.com>,
-	Jing Zhang <renyu.zj@linux.alibaba.com>,
-	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Shradha Todi <shradha.t@samsung.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 0/4] PCI: dwc: Add PTM sysfs support
-Message-ID: <Z7Syf2LXEuKFToV4@lizhi-Precision-Tower-5810>
-References: <20250218-pcie-qcom-ptm-v1-0-16d7e480d73e@linaro.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250218-pcie-qcom-ptm-v1-0-16d7e480d73e@linaro.org>
-X-ClientProxiedBy: SJ0PR05CA0196.namprd05.prod.outlook.com
- (2603:10b6:a03:330::21) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FC0B26E621
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 16:17:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739895449; cv=none; b=rRSLiZaElAfEU8smCgMHZsMXzaRMeD44RdkVLH0tn2shXOTt/xzjvMS93WdP1sbu2+cCp8s3CAg2I2f5wnhnjlkxEdfKEZbJwGYFzm+wG/tBtRG584WoXOfpRdW3InE6U2Mv6ZrOpyFgPO31RlnSBL0qIUHzaUQNlc7E3reAsog=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739895449; c=relaxed/simple;
+	bh=gMNXeKXfGJGpSLe7hk9zBDvoqpHd9qta3Kra/mOHGWM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NBp5SdL6XrfOsNl8HLV/4CnyQKCvywApdo6Fc8TXpqGSLoBWEcINXH2AVQlsnonm74G2CCD2NEirydhyH83rE21SukFJICSmhEkVw/pJx77HsePMKLigUsnQmDOWLzvKi/kEO1Mh+57sDCGDRk4oHHrXIqn8parFeQYbSdfa8lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T5X4f7z6; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739895447;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=+zX8vDm6losC/6+HQlwhAMeERFE1g3IHX/DgdG0yftY=;
+	b=T5X4f7z6uEHetg0WcoNFS6D6MMCgfdYr586dnAHX2aJPf3UJDuPZxVi/OTXHwtAEE7XEkx
+	12h5zX8bMIe8sGKeTh/YlJbefydfNcY9mDZa+RKATQDnyE4kaxQUyZHS94Npl5CHAOoawK
+	9ly5GPMcVu/+fqnrh7V7oj2NccR6a+o=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-164-L1SOTg1xOMS_f9LpPJbfYg-1; Tue, 18 Feb 2025 11:17:25 -0500
+X-MC-Unique: L1SOTg1xOMS_f9LpPJbfYg-1
+X-Mimecast-MFC-AGG-ID: L1SOTg1xOMS_f9LpPJbfYg_1739895445
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-38f2726c0faso5325604f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 08:17:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739895444; x=1740500244;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=+zX8vDm6losC/6+HQlwhAMeERFE1g3IHX/DgdG0yftY=;
+        b=sxrZ49gm01+GpxDyn10c0uT/ub8TxiTHTjK9f1vawVod6uOv60ZnA4STWbmO/6ZjFX
+         todn7r8rKwbUcjRtt4B9xMmVmFBDmPQzIyO6WrXOUA1suJ1DrjNy/CvnBUnLIw4jL342
+         XpDHczfpFdfLF0kB+T8+8HONMLDNdNUyOPClmN9JmSmYxKUcl8gItq9mBOJZUnp2RkXm
+         ZBfMoJuRHw3Zw5TkYBZol6pKzsLglpYbPQ+Qrm2oejjpuz8t3zc+8ZBUWesv4MF//Qao
+         xKoZ1/qUmcoPzXKmcG4A73WmwezhFp9viTkU2OLPQ52KriWKPsaSvEuXAguV0htt/J4i
+         sk6A==
+X-Forwarded-Encrypted: i=1; AJvYcCUMIj3e+ms5S3wczuqxStZ1stOVLaN6cJUPO7NyJMTx4zrHjuR8YxBxN8UYkaJbLoSjM/xhbAQGmBtDNdE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnXWtd3JOAiQ/uggw6i5yeKQvgY4C1esHcP6fGfoo9YrxfsEIj
+	j9GiL4X0h6JN5HyxBEHe7+fczQwv7PvD67o1s+6B1ZiGkQ2mIXIEgqYaI2DphENAfKDZZPBCiTL
+	w5gidq3lK2vL5jgJfmepu1sJIiWDbC+9qRpYme+JKWYNXjBlmT7UnPfRpibFXyw==
+X-Gm-Gg: ASbGncsbouzeZ+qpoNaa0y6cHJS0QqIZSW/awgLYYLb1cY2irGjQ0mRQkuMqXM8rYkx
+	az6Q2gyOSs0qen6llYhWotw23OGggIckd2jRZx0lVVwvGJaVnm/lHnRuKSUUA2ysZgP4/qH6bUa
+	dMyiLjZ2UcFEAwUb0wvqd7wZJRX+zbA4VgicAVgYHzRQLA6MMYIxlozOtcAnIFOvCLxdsxd7F3r
+	torQ2mvYJQSe4HFQ54lyTLjUSmyh9qV0wo0qrQvRKaBNgDI4lNtT5EDe4MchtM0jBkJp+objwrJ
+	j3C5+DBiSaq3n280f4xv/K3ijLR/GtusF7v/+TiyuzUyu6AmjB8Fjt6d+TyvB45lKFlwfbR/EE4
+	O7S4liNacdRoH5b9UV8Y5m6NscmcetIjx
+X-Received: by 2002:adf:ed48:0:b0:38d:d5af:29b4 with SMTP id ffacd0b85a97d-38f33f565b6mr12666012f8f.45.1739895444602;
+        Tue, 18 Feb 2025 08:17:24 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEggc/z/NkvkoSqpYbRnyzbugIdCUlVVI8F8Qnaw5coeupOpTLWVK06VHLWuhVQarriChoZsA==
+X-Received: by 2002:adf:ed48:0:b0:38d:d5af:29b4 with SMTP id ffacd0b85a97d-38f33f565b6mr12665975f8f.45.1739895444156;
+        Tue, 18 Feb 2025 08:17:24 -0800 (PST)
+Received: from ?IPV6:2003:cb:c70d:fb00:d3ed:5f44:1b2d:12af? (p200300cbc70dfb00d3ed5f441b2d12af.dip0.t-ipconnect.de. [2003:cb:c70d:fb00:d3ed:5f44:1b2d:12af])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439948eb34esm22389965e9.38.2025.02.18.08.17.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Feb 2025 08:17:22 -0800 (PST)
+Message-ID: <90a00957-02b5-440a-9168-de93c760fea7@redhat.com>
+Date: Tue, 18 Feb 2025 17:17:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DB9PR04MB8187:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6995882b-2c30-4efa-52bb-08dd5037b344
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|376014|7416014|1800799024|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?zyaWrR2VI6VUrlT1luu0oUBMAOVua5caOztYxf+aGGne+eaW81QG5Uv2X1kI?=
- =?us-ascii?Q?ZBpUj/stT/DxSOVmbJwrbXTojLabdVL3zscq1pAesYT6hpUaVM+bbSLlal/9?=
- =?us-ascii?Q?v/4wz0vvLqDZ4PhpwXD/L7jkukeSqHDJMxiZaTTon4mv5Ujg39PH35Fm8nY0?=
- =?us-ascii?Q?nPQdWtpMNjf4Qf7dWFgofnnZBh/QYbEbzP0jTfOK1QrRUaQMsqTO/HmTGtWY?=
- =?us-ascii?Q?3FXLaR57m+x8Gfe5SUgc/Kj/BDoDIXdXj7dvvPZrPetMHqk5UY/isxEUPCQy?=
- =?us-ascii?Q?5nqsmNTbyQogPWqwQpGk7ahmhjLHWu5WMRCG0H54ejSpa5ZggjCVxZluoklM?=
- =?us-ascii?Q?egfRzOm1L4r9KaIPJipCEUXSSYZd2wsXrf1x+44FG4bCRCHFR3HY4zHF3b6L?=
- =?us-ascii?Q?oRY7I4/wtSxlp/eVZDxEhuTY5YJ/c9uDavrpKsNUait4zTiN9SSOpmkUaRoF?=
- =?us-ascii?Q?NtmP6ixPVqD8EEeHOoi4wLgVqqSCfTn+H2XEW1vqchHlflUWtddMCna0kSSZ?=
- =?us-ascii?Q?vZibdNEQWEFfsrAsR9YIlXpjDYaDytGZa5SLX9vIzmw59fA8ycVdro1cz9NQ?=
- =?us-ascii?Q?OWr5yjdzSdzTE2pFObkHCa9qn6GS+7CPKftAs8rXutYIL2jgmXysp5Hpj3EM?=
- =?us-ascii?Q?/fBYp3gz3ZR8HVkKUgrfJE6F7drpK0UnL3Bh2/5/dq3NucYcB3jdraQXXCOZ?=
- =?us-ascii?Q?xI8mC5h2WMB2G1LPZwYufqsI3LoY2BmO5bvivDJijqhF/6LwQFHueIn+FE83?=
- =?us-ascii?Q?rAWsiNtQrIM2ghZor9kMiTWNV5yYtMliQ3tfuDFSGgdkY5aXxbKXmBxtackp?=
- =?us-ascii?Q?NrK7lhhx/Yvmbyy6Wuq/IsR46EjWM2qvniFheTqwXnp9NsExoCLufGp4N8CD?=
- =?us-ascii?Q?ea1t0ONZSt7uDNEDsGoy9qgYcOTzc7bPcFpd7F9BdSjeDsQ1byYQY8Z2reUE?=
- =?us-ascii?Q?7Rb0iznkbwBKMuDPliJGYj9u9piwRsH8Q/wYDFXUVeBKdGH8IaKTvGJxmqSc?=
- =?us-ascii?Q?4jPExN52Vq9iWa4sX67XqDGVySi1/6eZJT93UgEljWY9mI5FnCDbJdle+Tik?=
- =?us-ascii?Q?wILoAqtBabus3pLV5cl0ultT31Wmygt+XSgp9F7iOyYttA53mzZi7uOybEse?=
- =?us-ascii?Q?rosykq2LoPt4bBu1h/oCp4/Ybu0GmxMDg5Iq7tttWGc7BhaTkJWdRQO468gI?=
- =?us-ascii?Q?lD2oC74eddp620/jpnlJi/8xKUbeOdJXeEbl7fI0BK7H5rkWJEVW/t6quK8R?=
- =?us-ascii?Q?xxKWNlepMuLe8vJ+ohodn4FQ/E8ftEanf5g0LobeRNmorHwMXLdk9uz6bHHr?=
- =?us-ascii?Q?7cY4zd6HTyoI6gK8QD+rXVDacXQpzadGJReaETABUqAdDHbo8O6nnFGrF/zU?=
- =?us-ascii?Q?YYWlq84Kb8dG+NmJnnpRbsgh7nLTavwJIllVJkzQOcyPxKxrh2YHxdCKvH2H?=
- =?us-ascii?Q?jfN1mjtXZ9/1V+qN3X+osNle4pVglYgX?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(7416014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Sl1vjzay/g1jru8sJAL0PRvL3do1tcOT5ZR4GSW6zFVJ8qsx4Sa5b131fonz?=
- =?us-ascii?Q?Vbu4KuYzef5s2tPTXNfUtO8+phZCgNDKOQ+QvkCLGtaCnwp/I2kbJ0zbmkk3?=
- =?us-ascii?Q?KRrSV7QosvKVmbmd9wUVE8xyotNM9L4QyI5lpnI6Lxa6vHQKlkqacW2YhiHF?=
- =?us-ascii?Q?CD2l1s7BXsETZVmB5W+hIypqkACRwASnoTyFGk5zaCUZiWr8zNudwd2J/vkS?=
- =?us-ascii?Q?Lp72t8Gz0M4sidSdLTkr8W1+hX/d5OBnc8NyZSwWTNNqr9olyVKg7oaxiym6?=
- =?us-ascii?Q?k++vK3EZGuoKsYw+a0IBOAl/FnZAoVfxSlIvW6BRnwK6KFrdDGr+jUsJ7TPU?=
- =?us-ascii?Q?3o1FBbdXyYouka1DT0VvhjSkKCZ4xogOyc1OTdyXDf5YSsvLjUGA6KUZW5UU?=
- =?us-ascii?Q?gNg92YTsEsjeoGbDJ6U/gpc+Uu4WQ4+mB0o9dqREB7d/5Zb11fRceHeMXNSa?=
- =?us-ascii?Q?jE689Jk420pm+bzsRPTosqCCHO6HmLTvIfUFc/KBF3cYfTUJ8ykuk8WgEfZX?=
- =?us-ascii?Q?b4DLcf31uJ5YgTM4zQvjtdIZYdBqs5b+gJa31ZxpZxroZtvbQ+mzuuH1DuEN?=
- =?us-ascii?Q?TLKhBua+LFFOF/TX7ed9Cq6xLxEglIvH7CKRvDYQJB41u5rhxHEzdv0LbB9X?=
- =?us-ascii?Q?oERvWebjE2bVbapoQ1qSsWZ3s372qDRniTCjQLM4dDGvSzML2s9NEzN/Q4Th?=
- =?us-ascii?Q?j8w8/IC9WSo2JSTSWqoQjE49/bEW6Deg3EFg1RKTXWAHlqE9w5fyRMlC2Spi?=
- =?us-ascii?Q?ved5COFucfwUs4X9SEyaHI4TREqTCsr9XCzjpIXfcZ05z406mZYNSrPotC+c?=
- =?us-ascii?Q?p9zGc1ufpihmOSwF9SSJBq4dk50ULf3Wut0LrsSgbpVBA7deUj2oTVw7hV6U?=
- =?us-ascii?Q?nLs0H/S1DDiJaplIbKN1gsGx2S2ib60PC2+jhYOgX7y9hp84jqWh10cUAKy+?=
- =?us-ascii?Q?peyvmcWx94nZGMb6vcpSiMyLX2chZdEfgbO/J9tUKRAhUwJq5fdDGsKPTJlN?=
- =?us-ascii?Q?fPZDn8vLfxPKfb8QePb3ZZst3gauI1dswXQ7ge1Ku36JqhTk2dTCladKnyqx?=
- =?us-ascii?Q?h5q/S1t9cC91YoFFpfalHcBkXOSpdd6w/le1zHL1xDKkv63+h6F93siYR5R2?=
- =?us-ascii?Q?xkJv9ysC59MF2TmwRiw3x/8i1rljc0XYuk2ryeW1Z6LdW85RKcxzLZNte3zw?=
- =?us-ascii?Q?PVC6PfFurfvLtscJdshuz5krgD/X2ud8AfwXwQqsop+krC8hmVuWOcVZ5Ea6?=
- =?us-ascii?Q?/Jy9QTR9mPa+U9fncQ2w8hz+xvi4SnJy5PUtqGZV9305uRt2aPyba16pvgfL?=
- =?us-ascii?Q?yy1l73GfQf9ShTIQArhNDvSo6IuEjfAxWqC0XnuPe6zlBMo5maJaPoyGs74A?=
- =?us-ascii?Q?ter3Ql9gTJoG4JILv0eveaxgAMOFJzA/ANtaBGekfF7ZhQ6d8lH6FFUZNEkF?=
- =?us-ascii?Q?0UEEZfhm5lrWn7AI/Tx0p0zWVRGCWUTCMda0Can82BYDkWtq25cLPOUR48O6?=
- =?us-ascii?Q?Wqbo9gkbRD0uzDPuEFvaphlgb668mhcYng6Bmdpppuy5QhbtS7AjasykhU2s?=
- =?us-ascii?Q?NlUU/oHi/1Um5cdgvnmOFGX84EjAF+bGAiy6ipl6?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6995882b-2c30-4efa-52bb-08dd5037b344
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Feb 2025 16:17:11.9280
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gtC2DkRdyG3tSUP4V59H7V0wtxEh4wh2ulVxE7JB35/+iVn7DlFSgmaqn2Meub8sF5d7DAnJ4WHb+Jklzrq4kQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB8187
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] mm: allow guard regions in file-backed and read-only
+ mappings
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Suren Baghdasaryan <surenb@google.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>,
+ "Paul E . McKenney" <paulmck@kernel.org>, Jann Horn <jannh@google.com>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
+ linux-api@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>,
+ Juan Yescas <jyescas@google.com>, Kalesh Singh <kaleshsingh@google.com>
+References: <cover.1739469950.git.lorenzo.stoakes@oracle.com>
+ <d885cb259174736c2830a5dfe07f81b214ef3faa.1739469950.git.lorenzo.stoakes@oracle.com>
+ <6500a93f-aad1-4b21-a94e-feb493c344a3@redhat.com>
+ <4d6d2942-10a1-46e8-93a6-7ce52b6af3ad@lucifer.local>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <4d6d2942-10a1-46e8-93a6-7ce52b6af3ad@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Feb 18, 2025 at 08:06:39PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
-> Hi,
->
-> This series adds sysfs support for PCIe PTM in Synopsys Designware IPs.
->
-> First patch moves the common DWC struct definitions (dwc_pcie_vsec_id) to
-> include/pci/pcie-dwc.h from dwc-pcie-pmu driver. This allows reusing the same
-> definitions in pcie-designware-sysfs driver introduced in this series and also
-> in the debugfs series by Shradha [1].
->
-> Second patch adds support for searching the Vendor Specific Extended Capability
-> (VSEC) in the pcie-designware driver. This patch was originally based on
-> Shradha's patch [2], but modified to accept 'struct dwc_pcie_vsec_id' to avoid
-> iterating through the vsec_ids in the driver.
->
-> Third patch adds the actual sysfs support for PTM in a new file
-> pcie-designware-sysfs.c built along with pcie-designware.c.
->
-> Finally, fourth patch masks the PTM_UPDATING interrupt in the pcie-qcom-ep
-> driver to avoid processing the interrupt for each PTM context update.
->
-> Testing
-> =======
->
-> This series is tested on Qcom SA8775p Ride Mx platform where one SA8775p acts as
-> RC and another as EP with following instructions:
->
-> RC
-> --
->
-> $ echo 1 > /sys/devices/platform/1c10000.pcie/dwc/ptm/ptm_context_valid
->
-> EP
-> --
->
-> $ echo auto > /sys/devices/platform/1c10000.pcie-ep/dwc/ptm/ptm_context_update
->
-> $ cat /sys/devices/platform/1c10000.pcie-ep/dwc/ptm/ptm_local_clock
-> 159612570424
->
-> $ cat /sys/devices/platform/1c10000.pcie-ep/dwc/ptm/ptm_master_clock
-> 159609466232
->
-> $ cat /sys/devices/platform/1c10000.pcie-ep/dwc/ptm/ptm_t1
-> 159609466112
->
-> $ cat /sys/devices/platform/1c10000.pcie-ep/dwc/ptm/ptm_t4
-> 159609466518
+On 18.02.25 17:12, Lorenzo Stoakes wrote:
+> On Tue, Feb 18, 2025 at 05:01:16PM +0100, David Hildenbrand wrote:
+>> On 13.02.25 19:17, Lorenzo Stoakes wrote:
+>>> There is no reason to disallow guard regions in file-backed mappings -
+>>> readahead and fault-around both function correctly in the presence of PTE
+>>> markers, equally other operations relating to memory-mapped files function
+>>> correctly.
+>>>
+>>> Additionally, read-only mappings if introducing guard-regions, only
+>>> restrict the mapping further, which means there is no violation of any
+>>> access rights by permitting this to be so.
+>>>
+>>> Removing this restriction allows for read-only mapped files (such as
+>>> executable files) correctly which would otherwise not be permitted.
+>>>
+>>> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>>> ---
+>>>    mm/madvise.c | 8 +-------
+>>>    1 file changed, 1 insertion(+), 7 deletions(-)
+>>>
+>>> diff --git a/mm/madvise.c b/mm/madvise.c
+>>> index 6ecead476a80..e01e93e179a8 100644
+>>> --- a/mm/madvise.c
+>>> +++ b/mm/madvise.c
+>>> @@ -1051,13 +1051,7 @@ static bool is_valid_guard_vma(struct vm_area_struct *vma, bool allow_locked)
+>>>    	if (!allow_locked)
+>>>    		disallowed |= VM_LOCKED;
+>>> -	if (!vma_is_anonymous(vma))
+>>> -		return false;
+>>> -
+>>> -	if ((vma->vm_flags & (VM_MAYWRITE | disallowed)) != VM_MAYWRITE)
+>>> -		return false;
+>>> -
+>>> -	return true;
+>>> +	return !(vma->vm_flags & disallowed);
+>>>    }
+>>>    static bool is_guard_pte_marker(pte_t ptent)
+>>
+>> Acked-by: David Hildenbrand <david@redhat.com>
+> 
+> Thanks!
+> 
+>>
+>> I assume these markers cannot completely prevent us from allocating
+>> pages/folios for these underlying file/pageache ranges of these markers in
+>> case of shmem during page faults, right?
+> 
+> If the markers are in place, then page faulting will result in a
+> segfault. If we faulted in a shmem page then installed markers (which would
+> zap the range), then the page cache will be populated, but obviously
+> subject to standard reclaim.
 
+Well, yes, (a) if there is swap and (b), if the noswap option was not 
+specified for tmpfs.
 
-I am not sure what real means by only show these number. It is quite
-similar to network 1588, ptp. There were already linux-ptp
-https://www.kernel.org/doc/html/v5.5/driver-api/ptp.html
+Okay, so installing a guard entry might require punshing a hole to get 
+rid of any already-existing memory. But readahead (below) might mess it up.
 
-Can we use similar method to sync local timer to master? I think it is real
-purpuse of PTM.
+> 
+> If we perform synchronous readahead prior to a guard region that includes
+> (partially or fully) a guard region we might major fault entries into the
+> page cache that are then not accessable _from that mapping_, this is rather
+> unavoidable as this doesn't account for page table mappings and should be
+> largely trivial overhead (also these folios are reclaimable).
 
-Frank
+Right, that's what I had in mind: assume I have a single marker in a 
+PMD, shmem might allocate a PMD THP to back that region, ignoring the 
+marker hint. (so I think)
 
->
-> NOTE: To make use of the PTM feature, the host PCIe client driver has to call
-> 'pci_enable_ptm()' API during probe. This series was tested with enabling PTM in
-> the MHI host driver with a local change (which will be upstreamed later).
-> Technically, PTM could also be enabled in the pci_endpoint_test driver, but I
-> didn't add the change as I'm not sure we'd want to add random PCIe features in
-> the test driver without corresponding code in pci-epf-test driver.
->
-> Merging Strategy
-> ================
->
-> I'd like to have an ACK from the perf maintainers to take the whole series
-> through PCI tree.
->
-> [1] https://lore.kernel.org/linux-pci/20250214105007.97582-1-shradha.t@samsung.com
-> [2] https://lore.kernel.org/linux-pci/20250214105007.97582-2-shradha.t@samsung.com
->
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
-> Manivannan Sadhasivam (4):
->       perf/dwc_pcie: Move common DWC struct definitions to 'pcie-dwc.h'
->       PCI: dwc: Add helper to find the Vendor Specific Extended Capability (VSEC)
->       PCI: dwc: Add sysfs support for PTM
->       PCI: qcom-ep: Mask PTM_UPDATING interrupt
->
->  Documentation/ABI/testing/sysfs-platform-dwc-pcie  |  70 ++++++
->  MAINTAINERS                                        |   2 +
->  drivers/pci/controller/dwc/Makefile                |   2 +-
->  drivers/pci/controller/dwc/pcie-designware-ep.c    |   3 +
->  drivers/pci/controller/dwc/pcie-designware-host.c  |   4 +
->  drivers/pci/controller/dwc/pcie-designware-sysfs.c | 278 +++++++++++++++++++++
->  drivers/pci/controller/dwc/pcie-designware.c       |  46 ++++
->  drivers/pci/controller/dwc/pcie-designware.h       |  22 ++
->  drivers/pci/controller/dwc/pcie-qcom-ep.c          |   8 +
->  drivers/perf/dwc_pcie_pmu.c                        |  23 +-
->  include/linux/pcie-dwc.h                           |  42 ++++
->  11 files changed, 478 insertions(+), 22 deletions(-)
-> ---
-> base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
-> change-id: 20250218-pcie-qcom-ptm-bf6952f5c4e5
->
-> Best regards,
-> --
-> Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
->
->
+Thanks!
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
