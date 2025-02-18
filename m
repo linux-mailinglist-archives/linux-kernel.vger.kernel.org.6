@@ -1,105 +1,110 @@
-Return-Path: <linux-kernel+bounces-519236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41753A3998C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:50:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C8A6A399C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:59:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D1E0162F83
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:50:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FB643A6CE3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:57:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56B0223875A;
-	Tue, 18 Feb 2025 10:50:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 100B9239563;
+	Tue, 18 Feb 2025 10:57:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fIxcbpYC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H9wXWx9N"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB59913D51E;
-	Tue, 18 Feb 2025 10:50:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 990B8239070
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 10:57:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739875807; cv=none; b=p3At9qfW3WdakmnV8mwGivYNDNKQ05cOdjMVtDzw4PcblsxKv2Gm+vnG9SLKp0ylm3I9cIJBvyZorAvTrMpQXFW+0M0WGokf+PBLvkb7o0BpPiINbcjMNWCM+7WCJQEIUvpxtgpyGbGmS5BiElALkJIVOH8Gt/WKuxKZvWpnA98=
+	t=1739876240; cv=none; b=WVuy26qeXUomhiCz05rZJvrJMzyEkX93SLEmthKUCj37jrvxl0yb4j0XRQZ6cbIM9N2t52YyiFMqR++jXjiWPCMSSHXT43nLzXnX17qXDS1oP9n7QDP8cDy9q5sDtE5X1c2f30r2mm/10NQxzuMGqkQvBVko9mF8h1GaGG4qxsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739875807; c=relaxed/simple;
-	bh=0ta9iRqvOL/XyCbfOk5/m0s+WL02GRT3CgMUuEb8Y2A=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=EpQ3ylAsyzrPJwGpuknQvEDM1y8BOq/4wY62O0fOfjl/gN7xzxOhd+QtTk2hNALi0mN+bDJ9OiiRW8b2ZSpd66r3vLwJ7/1KBFmwaYl6TC37VLCiyri4Elry2MG1TJf86tBC1Zn9J04POOOT4pC6Zan8rBu9JsjmT0FQGJoACVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fIxcbpYC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11FDFC4CEE2;
-	Tue, 18 Feb 2025 10:50:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739875805;
-	bh=0ta9iRqvOL/XyCbfOk5/m0s+WL02GRT3CgMUuEb8Y2A=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=fIxcbpYCIDGn3q2a5S2PyQ2TbijgrIPq+T0vunKI52/8Xnl0DRBv1gAWtUGBUhz2A
-	 D/qHkQ/1X6NlGIjkm3/zN1aa3RU9WpcKP9s8Z+uFuwg1RXbrkxOzh0AZ6b/TbdSkqk
-	 nhHErV+inkIK9/lLX5O4LTnMLfLHpna6X5qHGy59QlquCQkCquvDeceJG2QUOqM5js
-	 osgliYXLHRsAqnKI4XvO6pSVfDtwcP3na3CLOpIKwzKrpjqiQDQ4BT47b8c+LLS38J
-	 x7kf5QoyFVSerSJBh30TQfO1rY13FjsajbGdT5jnpmbnCquHOO7p5ri3Uam7sx31bP
-	 SN0b7i3GqS9+A==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 714B8380AA7E;
-	Tue, 18 Feb 2025 10:50:36 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1739876240; c=relaxed/simple;
+	bh=LubX0t00PQZ2oEXPO0X6RXTaLNq7dbPQv2kl6z90L44=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=TUbuIrO5xpih65iOYRHrgUXlzSFHvFhGx6GmsuYXoZX+slH9FVfvqU+Pe4ZcBENWZk8MH4SCcu0NJjVmdUhlwfzwQONhgMBy4103+OzuTeGESScmXNVLXZmw46gVw4/roRGhdmRxcoD0f73WGIEsdtekBOAr/7D3DbKdbn1KMSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H9wXWx9N; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739876239; x=1771412239;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=LubX0t00PQZ2oEXPO0X6RXTaLNq7dbPQv2kl6z90L44=;
+  b=H9wXWx9NkrmMjMwy0+FaFmGB+JWCRZy0u0zL8fXadGEGO3FXTZSufRrm
+   4VhxuOLlWlnqGWQy5k2b5CiMQTCR7HbUtJ/EKMBq+C2PrPHgvsi8iLcl3
+   v4WCqK4BfXLAite84vIUurE/16unM2bjkG8kdnPw4fq/2D728K56fXc/F
+   oRUO7J0/ux6T4Q5/XT8mB/AeLhvn6PmKdMJR0RfT7BMjPN2eKVODdu3/+
+   Fw8bBJ2WZP4vtsDGX5k7H8DoD4EnhkVG30R7CgvfR7VbZKmEp8IF158ex
+   k+DmWmkilb6soM6+h/D2TGqNs7zdtNBkP2c64I0N6dm0Okg6emAkllkvu
+   Q==;
+X-CSE-ConnectionGUID: rrjzttH0TOiOiw4aWBu0iw==
+X-CSE-MsgGUID: 6hOOy6c2QZSSDiYU/IjAlA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="40271251"
+X-IronPort-AV: E=Sophos;i="6.13,295,1732608000"; 
+   d="scan'208";a="40271251"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 02:57:18 -0800
+X-CSE-ConnectionGUID: oYdwd7vTQ2OOgWKLc2logQ==
+X-CSE-MsgGUID: UkuJdeyrREK5cjP4SJ+Hxg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="137603166"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa002.fm.intel.com with ESMTP; 18 Feb 2025 02:57:16 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tkLFp-0000Qx-10;
+	Tue, 18 Feb 2025 10:55:52 +0000
+Date: Tue, 18 Feb 2025 18:54:23 +0800
+From: kernel test robot <lkp@intel.com>
+To: Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Lee Jones <lee@kernel.org>
+Subject: drivers/leds/leds-st1202.c:194:66-71: WARNING: conversion to bool
+ not needed here
+Message-ID: <202502181845.xESVrC61-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [net-next PATCH v6 0/6] Add af_xdp support for cn10k
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173987583526.4038826.3171177356659390982.git-patchwork-notify@kernel.org>
-Date: Tue, 18 Feb 2025 10:50:35 +0000
-References: <20250213053141.2833254-1-sumang@marvell.com>
-In-Reply-To: <20250213053141.2833254-1-sumang@marvell.com>
-To: Suman Ghosh <sumang@marvell.com>
-Cc: horms@kernel.org, sgoutham@marvell.com, gakula@marvell.com,
- sbhatta@marvell.com, hkelam@marvell.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, lcherian@marvell.com,
- jerinj@marvell.com, john.fastabend@gmail.com, bbhushan2@marvell.com,
- hawk@kernel.org, andrew+netdev@lunn.ch, ast@kernel.org, daniel@iogearbox.net,
- bpf@vger.kernel.org, larysa.zaremba@intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hello:
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   2408a807bfc3f738850ef5ad5e3fd59d66168996
+commit: 939757aafeb9c266dda37657ee5f7a73ffd35ae2 leds: Add LED1202 I2C driver
+date:   6 weeks ago
+config: x86_64-randconfig-103-20250218 (https://download.01.org/0day-ci/archive/20250218/202502181845.xESVrC61-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
 
-This series was applied to netdev/net-next.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502181845.xESVrC61-lkp@intel.com/
 
-On Thu, 13 Feb 2025 11:01:35 +0530 you wrote:
-> This patchset includes changes to support AF_XDP for cn10k chipsets. Both
-> non-zero copy and zero copy will be supported after these changes. Also,
-> the RSS will be reconfigured once a particular receive queue is
-> added/removed to/from AF_XDP support.
-> 
-> Patch #1: octeontx2-pf: use xdp_return_frame() to free xdp buffers
-> 
-> [...]
+cocci warnings: (new ones prefixed by >>)
+>> drivers/leds/leds-st1202.c:194:66-71: WARNING: conversion to bool not needed here
 
-Here is the summary with links:
-  - [net-next,v6,1/6] octeontx2-pf: use xdp_return_frame() to free xdp buffers
-    https://git.kernel.org/netdev/net-next/c/94c80f748873
-  - [net-next,v6,2/6] octeontx2-pf: Add AF_XDP non-zero copy support
-    https://git.kernel.org/netdev/net-next/c/b4164de5041b
-  - [net-next,v6,3/6] octeontx2-pf: AF_XDP zero copy receive support
-    https://git.kernel.org/netdev/net-next/c/efabce290151
-  - [net-next,v6,4/6] octeontx2-pf: Reconfigure RSS table after enabling AF_XDP zerocopy on rx queue
-    https://git.kernel.org/netdev/net-next/c/25b07c1a8694
-  - [net-next,v6,5/6] octeontx2-pf: Prepare for AF_XDP
-    https://git.kernel.org/netdev/net-next/c/c5c2398eb88b
-  - [net-next,v6,6/6] octeontx2-pf: AF_XDP zero copy transmit support
-    https://git.kernel.org/netdev/net-next/c/53616af09b5a
+vim +194 drivers/leds/leds-st1202.c
 
-You are awesome, thank you!
+   188	
+   189	static int st1202_led_set(struct led_classdev *ldev, enum led_brightness value)
+   190	{
+   191		struct st1202_led *led = cdev_to_st1202_led(ldev);
+   192		struct st1202_chip *chip = led->chip;
+   193	
+ > 194		return st1202_channel_set(chip, led->led_num, value == LED_OFF ? false : true);
+   195	}
+   196	
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
