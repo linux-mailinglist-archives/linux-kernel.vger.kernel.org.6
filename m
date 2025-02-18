@@ -1,117 +1,131 @@
-Return-Path: <linux-kernel+bounces-520223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51C19A3A72F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:17:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BB16A3A729
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:15:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F8BC1895D6C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:14:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C88D3AE7C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:14:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFCDF1E8341;
-	Tue, 18 Feb 2025 19:12:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E882221B9DA;
+	Tue, 18 Feb 2025 19:13:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="apNO0xT7"
-Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dDASz/CG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4BFE1E51F8;
-	Tue, 18 Feb 2025 19:12:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F91921B9CE;
+	Tue, 18 Feb 2025 19:13:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739905972; cv=none; b=i1nCF5DMW5aKhNtVfEv1aphdfIRdqNWbqu40IGNasMNJglGOv4BaqGUCBBe1qhJJr85OGi3FbCpGP5/iy1G5ZZrpiMyVKS8KFw6LFQA3BM1QLMw/5Wf25wtmI9+E2S8DtVP8SzEAUHatUOtnK2YeTUMkJhqqRa4UHAtatq46ykk=
+	t=1739906012; cv=none; b=ESsRl4WzYr6ztWgzEHkZlL7f7UPMzhb/dpMwHIEghv7sT59rxQPYEpn2VULZuLvunhgEZX42hQHG2Y7k2WzxRZtWq5b+3TLLq2reb4KeG8vWhK/qPmyQWLp2lKA/iY9TPN5W28lFd/UkaqJG+B851i0x9TcqhhytSDIwe9pRYkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739905972; c=relaxed/simple;
-	bh=WoUKh5c/vDRm4FlNeCNrkzPuHxYE4Y4scX3UMvAd5O4=;
+	s=arc-20240116; t=1739906012; c=relaxed/simple;
+	bh=mqFua839X3otW9mntlMXXTriKw26cBoTyCvBh+BPcG4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fioGpGPolYM914iknbFRtJ0u9gqlEC6SD3us8tx6TlqUat4gL0F90Jl2Ui6HB9GydmhxODILHEYPDFLSvwG8T+l0a7R1hin9pnunamFZrdQ9Nr2p+rDVwmsaSKVP0U211btmWssZKVO8iITXyOGl1iCXNbQ8GqHEv4CinIG7gPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=apNO0xT7; arc=none smtp.client-ip=209.85.167.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3f40ad1574fso512515b6e.0;
-        Tue, 18 Feb 2025 11:12:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739905970; x=1740510770; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=oF3IZ5dNlMyYD63Wzfa4O0wknfeiB+PfksPMCxVRCig=;
-        b=apNO0xT7oS8blITVvU5AA+T6WNsY+6TwmxVVmJRMLlKjITvOGyzXNV7ZnRjY12n/8b
-         sMJWFNdPaNXVlPzMZWB6U5F6Opyl+gZQHTxSTo/Fgrowe/jPQdueQ7NR1ifl1z9Zxzjk
-         hFCO8ojfy8FxDfiZWnE9IQoZeQ6d1YVf2Dls+BvEQLWtLrJ/QTxs/NZpG7TcT+/H90Qu
-         ZYKB92vz5Kbdwue+BNKAu5MSL8qEwx09PWD0vtsDFjWdA0XYRw9KEBnMTVZSYNQF4WVX
-         CnU1a+3ASEdd+J+GWhNrWVSEB2s8GZUXx0uwnBtvECB/caEGaKRxMnVP3WKF3TM0MnMw
-         WIGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739905970; x=1740510770;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oF3IZ5dNlMyYD63Wzfa4O0wknfeiB+PfksPMCxVRCig=;
-        b=kw47hKfXSdmyC37aW96kZ5iqrwRJkY8gBsp4+1MPc2H5ov6jKtx/zhmh4Iw91DCF9v
-         JJsID0Tl7uqW17LGwQxIKDYfWvjyJSSuSq/2G1MbQcvvAie+ik70PLDTscOAKl717oDH
-         fzujy0RAa68bU4Au3YfU6w6OLDMdiVY/UssXDKWaPK+xCbe5DXZpxD+z0yNCSyjCStWv
-         65CqgyZUN+1xnV+2h085IfFzQkfFnjBnD+/J2PaT5/5O63FPmZOQUH0UEQY9l3CDhfNY
-         qZFcT5W2ytGaurNVwCA+42UCfzBibjnVWz/ixnTL6h1OwJaVSYPJlASVAwACPATIheMw
-         s8yw==
-X-Forwarded-Encrypted: i=1; AJvYcCVTKu8iA+qY5X1X6M2J9L6SEwWwhC429l/9D0Y9NsszCEXu527ToCd6lr7RgxORdZTVIKOPMRVHPwF/vYM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiBwb81mg7OYyYtQR+77/HGgaABTeiS5pzXuMxM3w9QHoptY38
-	H/5JTOWrRWSCdvadf2SVVfMBlqOGufqcXU1Z98ioAn8NWxi/IHKw1ARmM9QwzSzLiVvpU2GDws6
-	Ob+60ohipHazBWnCFFrFNsK1RBk0=
-X-Gm-Gg: ASbGncsjiVtgW8YqwVTOyf5N3JSGDOT8wAPs1o7H3QD0kfz9VsSRz0yQ8Zu3WkE3tFS
-	aWFYWLntHcUoOsN37aUVl32zn4usUzfOH2ztjUdr3DWvI10uCFTCHvr3SPIJp+inGrHhWf6XYmM
-	G73ok/iI0BTNiKpA==
-X-Google-Smtp-Source: AGHT+IFb4knJMi3AOcDr6zaVeojXvLaFJxcBcDyvpUv4oVbjmkI7Mm6ZZOndeOhxjCi1+zyZXOxXG+rYjRuy9gA1yt0=
-X-Received: by 2002:a05:6808:181e:b0:3f3:d742:c2bd with SMTP id
- 5614622812f47-3f40f1e5799mr776743b6e.13.1739905969652; Tue, 18 Feb 2025
- 11:12:49 -0800 (PST)
+	 To:Cc:Content-Type; b=q4WCXkU5gM1iUeAyhalwsgv8JxaUVWPh+qAplUySWsDK8CqFATBHSFfPjlZzuKlM2pTE0c3FjunUpXI6ZOuuxdYFVxNqwI9ezFyz29lbtrqV7Eq7x4hXOlf+/GUQmRHMXq4WgXVcHSuJFgPtrbkaGa+TyWXVkw0lyBoc36NQ/pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dDASz/CG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B25E2C4CEE2;
+	Tue, 18 Feb 2025 19:13:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739906011;
+	bh=mqFua839X3otW9mntlMXXTriKw26cBoTyCvBh+BPcG4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=dDASz/CGzfE96rfuNz1QoRf/LY+Bf6+Cf+xQ8NHIhwECu0wMo2GTcOnIToISZMoGH
+	 Hc7YzzrlnrT/OGTfB4X+ZKTHCGZuHIPtn+shN+p4u6WoeHCIYiBYJfr7Cr2z8szd3K
+	 SxamnLYoQU19uaCHOm5B9vrbADg/SkninvbIPNqlLDiR+8JyrKUrG/KR8ag/aMM+lN
+	 FN1zZD8QIp/byZRVE1q9XsNTmOva48HNUew7/ViZ+jxE16Y6Jbg+gvv9i1kZfAfQdG
+	 ulx69Tk7R13XvRXrR8tz1kpU6sSqa57BBO1KigB/wnMqd82BmhEa5eidmPnlcq7Td/
+	 A7pMl05G95igA==
+Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5f4d935084aso2964263eaf.2;
+        Tue, 18 Feb 2025 11:13:31 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVn9EOLgP26tslRNFug2qu8ke3GE+tgbKg/SoBaIcX95d5ImsXfBE7HZdx2X7RO0B44RWn/ZsbPxDgv@vger.kernel.org, AJvYcCXCNxDhEl9QrZJUgfuamxCDTEwS+b8Acb/TM0c2MR9knM1nPTCJJCab0xWDJLkfwx9yRnLr7i6ygdBG7V9C@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzi0IjM5PEaz7dx2yAQ8Svfvz7L2uXtIOUBVl+2KFXXke8Ym0ql
+	MTEf6DkVrcGe+ggxq0XVdMkb/yvMun4NiZ9mpc2a9t0IbW7nzE2tb3Zghti2SuV7C/FsYPUNuM8
+	6ueHX8UIJKsyVpChEktBOpNJ3Iw4=
+X-Google-Smtp-Source: AGHT+IHnT542pbaCPG4GXoYXSOJu6BNO8e0j15N0WsfLQU3GP/0+KK12Mdcizit7/qc6zh7QTnS+szc4hw29M+p2vh0=
+X-Received: by 2002:a05:6808:448d:b0:3f4:b29:2407 with SMTP id
+ 5614622812f47-3f40b29264bmr2346593b6e.17.1739906011002; Tue, 18 Feb 2025
+ 11:13:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250218165923.20740-1-suchitkarunakaran@gmail.com> <d194435e-88bf-49f6-bb6f-b52f77248965@kernel.org>
-In-Reply-To: <d194435e-88bf-49f6-bb6f-b52f77248965@kernel.org>
-From: Suchit K <suchitkarunakaran@gmail.com>
-Date: Wed, 19 Feb 2025 00:42:38 +0530
-X-Gm-Features: AWEUYZkoRmcxpgXd1SyCu20aEGPfydJydoqEvXvTkpjbLGDJXP09KIF_zfs0pMk
-Message-ID: <CAO9wTFhVx9nCPyMzHKCTnuBfrTmvA2QADg8La0z6KcYWpsxnEg@mail.gmail.com>
-Subject: Re: [PATCH REPOST] selftests: net: Fix minor typos in MPTCP and psock tests
-To: Matthieu Baerts <matttbe@kernel.org>
-Cc: netdev@vger.kernel.org, kuba@kernel.org, horms@kernel.org, 
-	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev, 
+References: <20250213181610.718343-1-colin.i.king@gmail.com>
+In-Reply-To: <20250213181610.718343-1-colin.i.king@gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 18 Feb 2025 20:13:20 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0i6m6B4D_TGCkNu69SJbTdQ5vq0QzjYtHqKZpiaCnGSOA@mail.gmail.com>
+X-Gm-Features: AWEUYZk8YxcXHsGtwZwM3R4unEYqEb0x8puCnbA4smAOkWgzZEhgNRyHTXuHt8Y
+Message-ID: <CAJZ5v0i6m6B4D_TGCkNu69SJbTdQ5vq0QzjYtHqKZpiaCnGSOA@mail.gmail.com>
+Subject: Re: [PATCH][next] ACPI: OSL: ratelimit ACPICA kernel messages
+To: Colin Ian King <colin.i.king@gmail.com>, Saket Dumbre <saket.dumbre@intel.com>
+Cc: Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for the feedback!
++Saket Dumbre
 
-On Wed, 19 Feb 2025 at 00:12, Matthieu Baerts <matttbe@kernel.org> wrote:
+On Thu, Feb 13, 2025 at 7:16=E2=80=AFPM Colin Ian King <colin.i.king@gmail.=
+com> wrote:
 >
-> Hi Suchit,
+> In cases where the ACPI AML contains errors there can be quite a large
+> amount of ACPICA kernel log spamming.
+
+Except when someone wants to see them all which also happens.
+
+And wouldn't this also rate limit debug messages from ACPICA
+specifically enabled via the kernel command line?
+
+If so, I'd rather find a way to tell ACPICA to be less verbose.
+
+> Reduce this by rate limiting the messages.
 >
-> On 18/02/2025 17:59, Suchit K wrote:
-> > From: Suchit <suchitkarunakaran@gmail.com>
-> >
-> > Fixes minor spelling errors:
-> > - `simult_flows.sh`: "al testcases" -> "all testcases"
-> > - `psock_tpacket.c`: "accross" -> "across"
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/acpi/osl.c | 20 ++++++++++++--------
+>  1 file changed, 12 insertions(+), 8 deletions(-)
 >
-> Thank you, the patch is no longer corrupted.
->
-> Reviewed-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
->
-> This patch can be directly applied in net-next.
->
-> Note: please next time don't repost your patches within one 24h period,
-> and use the [PATCH net-next] prefix, see:
->
->   https://docs.kernel.org/process/maintainer-netdev.html
->
-> Cheers,
-> Matt
+> diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
+> index 5ff343096ece..d4ece68e0fd6 100644
+> --- a/drivers/acpi/osl.c
+> +++ b/drivers/acpi/osl.c
+> @@ -159,17 +159,21 @@ void __printf(1, 0) acpi_os_vprintf(const char *fmt=
+, va_list args)
+>         if (acpi_in_debugger) {
+>                 kdb_printf("%s", buffer);
+>         } else {
+> -               if (printk_get_level(buffer))
+> -                       printk("%s", buffer);
+> -               else
+> -                       printk(KERN_CONT "%s", buffer);
+> +               if (printk_ratelimit()) {
+> +                       if (printk_get_level(buffer))
+> +                               printk("%s", buffer);
+> +                       else
+> +                               printk(KERN_CONT "%s", buffer);
+> +               }
+>         }
+>  #else
+>         if (acpi_debugger_write_log(buffer) < 0) {
+> -               if (printk_get_level(buffer))
+> -                       printk("%s", buffer);
+> -               else
+> -                       printk(KERN_CONT "%s", buffer);
+> +               if (printk_ratelimit()) {
+> +                       if (printk_get_level(buffer))
+> +                               printk("%s", buffer);
+> +                       else
+> +                               printk(KERN_CONT "%s", buffer);
+> +               }
+>         }
+>  #endif
+>  }
 > --
-> Sponsored by the NGI0 Core fund.
->
 
