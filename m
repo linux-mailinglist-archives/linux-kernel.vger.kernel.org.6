@@ -1,149 +1,126 @@
-Return-Path: <linux-kernel+bounces-518908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2253A395ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:47:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79DF5A39614
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:52:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B38FB1899AF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:45:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EE9E1793C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:45:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CF9E232384;
-	Tue, 18 Feb 2025 08:43:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA00233134;
+	Tue, 18 Feb 2025 08:43:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lSY8zTlL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fXlExSU3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A74FD232373;
-	Tue, 18 Feb 2025 08:43:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A85232787;
+	Tue, 18 Feb 2025 08:43:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739868180; cv=none; b=uDoFzFTb6bzntzDcnAf2UUWOtAO1rYb1WLdOode2c7o38kkzDdSzIL55nUJTahnk+zbN9PWkTDDdM7dtDn/Oj2ckqdybfitmxdZuu+ct7Kk+EETyIXar6CDGX75lWd518ddXfmtOLV7oPl3yQnmRL/7atW2Wqi4T8vGzvA1xnq8=
+	t=1739868206; cv=none; b=dRbCkisTu4HMhBsXklu9bEMYJlhtRI1UukXA5jL3tALFuOCRZ7bTgLJYu3FNrk2BDRY6ag+j9nB2827KnTX30El1KgL1ng6jzeQTGGi0i/Aalv921uKnxC081dCs5PUpMzSTU8Oc0E18h+4kEQ5Tmk6vzJtuhVFGfO7wRjHjrwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739868180; c=relaxed/simple;
-	bh=dZj4WZKT+DPeEny8O4y/kHznbdhmpc4YiiO8vAgv9xQ=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=DYD5+J4ZYyTt1QBvYQI6gDJEdrz/3jytQFoklYLvT1JcVgeGHrqdOBoGQBVsj7DS7ojGqlEKZlyQv6jIJjEbITUfKpgfgJUMHkMQb8Mi6Jefq2sRxetd/iMOItSoT2UO5rtn+n7pymAqmXXZmv1ySqYUxxf7R3tEnsTQV7eclYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lSY8zTlL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18E96C4CEE2;
-	Tue, 18 Feb 2025 08:42:58 +0000 (UTC)
+	s=arc-20240116; t=1739868206; c=relaxed/simple;
+	bh=A/CCR/2WH1cVpTRVUOEEmzgqWCrL/UskAPkmJyUs57o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XZrmzzVHT6KXHrBMgWsM/5B+S/vlcQxW4ixITqsA+L0Vjcq4HjjONcO+Bo3IfG0OEEr2YqAzlQpYBI5PobZvyPGz+o7Sng43KxjswU2sxkCCYSjqvEGamyWXXl8X6O0n7ljyIPcfMjntzyzWclF8ThhfeTp2/dpfUhqBcN8vToM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fXlExSU3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 173BDC4CEE2;
+	Tue, 18 Feb 2025 08:43:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739868180;
-	bh=dZj4WZKT+DPeEny8O4y/kHznbdhmpc4YiiO8vAgv9xQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=lSY8zTlLGGME3fNBQLvfB4Hhhq/C9RBpdnk1C4vnK1mlkKk8JSg9qbE4kbKAqAPIw
-	 c3IBQnAhRK+wDwwbMyYBUjrsqWIWIShBYj0bonDHAY3W3u5gFHHA/x2gHgXj/IprXA
-	 XZMtNsNjLO4wyrw8vEWagbn6XqLJYJcm28A3u8wl5eLPx7BqpxRxLlWsAiIOEuq5FC
-	 UfsBH9IN6dpb/OeEs5QlrHD/GzRMR4ze1ecuX/xwQxr5aDWKOHkOXYLDpwmi+T6tz0
-	 9idnNcB69/mYFp8LoR6dmRVsGYs261+RP5J4+sUncMtkqF1bZokm/y7q8SBmDPq9nH
-	 Xj2BzxsQbFHPA==
-Date: Tue, 18 Feb 2025 17:42:57 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>
-Subject: Re: [PATCH v3 1/2] mm/memblock: Add reserved memory release
- function
-Message-Id: <20250218174257.61018735a30268b5e21e50e3@kernel.org>
-In-Reply-To: <Z7Q1xY3jhWjaSdeh@kernel.org>
-References: <173928521419.906035.17750338150436695675.stgit@devnote2>
-	<173928522350.906035.5626965043208329135.stgit@devnote2>
-	<Z7Q1xY3jhWjaSdeh@kernel.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=k20201202; t=1739868205;
+	bh=A/CCR/2WH1cVpTRVUOEEmzgqWCrL/UskAPkmJyUs57o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fXlExSU35b/UGYNbHeSAfWSDYpsi0rB8E9f+BtZwpg2CNz8OF3qakh2T0+OIVCMN/
+	 9IpHSzw7YQ0zOij0fB+4l6GPPOCFopjnGFj4YLuNZoRaQDnfVLO/x7syRfB0Rzt4nh
+	 Dadog/0C2QShMa/Y/g38Qd3jUuX+Q+ngKIMCyUpGU0X9SJ3IXplgq4u2+o7JqZFKhN
+	 Qcb202Ygyq/s4J/ggKs6W1qOT1pu4/7QST13Du/cyv9agb8/dwzI9IIc4IFjh9O8so
+	 DY/20ZLAg7fmL3cYxjqILn6VUT2kjUyGG2hr7ygB8pcXn8XkJbKjy7a+NAWL8RczGm
+	 Zg4p3TGRXp8vw==
+Date: Tue, 18 Feb 2025 09:43:15 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+	linux-crypto@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH] x86/crc: add ANNOTATE_NOENDBR to suppress objtool
+ warnings
+Message-ID: <Z7RII_fnk1d2nB3r@gmail.com>
+References: <20250217193230.100443-1-ebiggers@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250217193230.100443-1-ebiggers@kernel.org>
 
-Hi Mike,
 
-On Tue, 18 Feb 2025 09:24:53 +0200
-Mike Rapoport <rppt@kernel.org> wrote:
+* Eric Biggers <ebiggers@kernel.org> wrote:
 
-> Hi Masami,
+> From: Eric Biggers <ebiggers@google.com>
 > 
-> On Tue, Feb 11, 2025 at 11:47:03PM +0900, Masami Hiramatsu (Google) wrote:
-> > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > 
-> > Add reserve_mem_release_by_name() to release a reserved memory region
-> > with a given name. This allows us to release reserved memory which is
-> > defined by kernel cmdline, after boot.
-> > 
-> > Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > Cc: Mike Rapoport <rppt@kernel.org>
-> > Cc: linux-mm@kvack.org
+> The assembly functions generated by crc-pclmul-template.S are called
+> only via static_call, so they do not need to begin with an endbr
+> instruction.  But objtool still warns about a missing endbr by default.
+> Add ANNOTATE_NOENDBR to suppress these warnings:
 > 
-> ...
+>     vmlinux.o: warning: objtool: crc32_x86_init+0x1c0: relocation to !ENDBR: crc32_lsb_vpclmul_avx10_256+0x0
+>     vmlinux.o: warning: objtool: crc64_x86_init+0x183: relocation to !ENDBR: crc64_msb_vpclmul_avx10_256+0x0
+>     vmlinux.o: warning: objtool: crc_t10dif_x86_init+0x183: relocation to !ENDBR: crc16_msb_vpclmul_avx10_256+0x0
+>     vmlinux.o: warning: objtool: __SCK__crc32_lsb_pclmul+0x0: data relocation to !ENDBR: crc32_lsb_pclmul_sse+0x0
+>     vmlinux.o: warning: objtool: __SCK__crc64_lsb_pclmul+0x0: data relocation to !ENDBR: crc64_lsb_pclmul_sse+0x0
+>     vmlinux.o: warning: objtool: __SCK__crc64_msb_pclmul+0x0: data relocation to !ENDBR: crc64_msb_pclmul_sse+0x0
+>     vmlinux.o: warning: objtool: __SCK__crc16_msb_pclmul+0x0: data relocation to !ENDBR: crc16_msb_pclmul_sse+0x0
 > 
-> > +/**
-> > + * reserve_mem_release_by_name - Release reserved memory region with a given name
-> > + * @name: The name that is attatched to a reserved memory region
-> > + *
-> > + * Forcibly release the pages in the reserved memory region so that those memory
-> > + * can be used as free memory. After released the reserved region size becomes 0.
-> > + *
-> > + * Returns: 1 if released or 0 if not found.
-> > + */
-> > +int reserve_mem_release_by_name(const char *name)
-> > +{
-> > +	struct reserve_mem_table *map;
-> > +	unsigned int page_count;
-> > +	phys_addr_t start;
-> > +
-> > +	guard(mutex)(&reserve_mem_lock);
-> > +	map = reserve_mem_find_by_name_nolock(name);
-> > +	if (!map)
-> > +		return 0;
-> > +
-> > +	start = map->start;
-> > +	page_count = DIV_ROUND_UP(map->size, PAGE_SIZE);
-> > +
-> > +	for (int i = 0; i < page_count; i++) {
-> > +		phys_addr_t addr = start + i * PAGE_SIZE;
-> > +		struct page *page = pfn_to_page(addr >> PAGE_SHIFT);
-> > +
-> > +		page->flags &= ~BIT(PG_reserved);
-> > +		__free_page(page);
-> > +	}
+> Fixes: 8d2d3e72e35b ("x86/crc: add "template" for [V]PCLMULQDQ based CRC functions")
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Closes: https://lore.kernel.org/r/20250217170555.3d14df62@canb.auug.org.au/
+> Suggested-by: Peter Zijlstra <peterz@infradead.org>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
 > 
-> We have free_reserved_area(), please use it here.
-> Otherwise
+> This applies to
+> https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/log/?h=crc-next
 > 
-> Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-
-Thanks! but I can not use free_reserved_area() here because it uses
-virt_to_page(). Here we only know the physical address in the map.
-I think we can use free_reserved_page() instead. Is that OK?
-
-Thank you,
-
-
+>  arch/x86/lib/crc-pclmul-template.S | 5 +++++
+>  1 file changed, 5 insertions(+)
 > 
-> > +	map->size = 0;
-> > +
-> > +	return 1;
-> > +}
-> > +
-> >  /*
-> >   * Parse reserve_mem=nn:align:name
-> >   */
-> > 
-> 
-> -- 
-> Sincerely yours,
-> Mike.
+> diff --git a/arch/x86/lib/crc-pclmul-template.S b/arch/x86/lib/crc-pclmul-template.S
+> index dc91cc074b300..a19b730b642d3 100644
+> --- a/arch/x86/lib/crc-pclmul-template.S
+> +++ b/arch/x86/lib/crc-pclmul-template.S
+> @@ -5,10 +5,11 @@
+>  // Copyright 2025 Google LLC
+>  //
+>  // Author: Eric Biggers <ebiggers@google.com>
+>  
+>  #include <linux/linkage.h>
+> +#include <linux/objtool.h>
+>  
+>  // Offsets within the generated constants table
+>  .set OFFSETOF_BSWAP_MASK,			-5*16	// msb-first CRCs only
+>  .set OFFSETOF_FOLD_ACROSS_2048_BITS_CONSTS,	-4*16	// must precede next
+>  .set OFFSETOF_FOLD_ACROSS_1024_BITS_CONSTS,	-3*16	// must precede next
+> @@ -270,10 +271,14 @@
+>  	.set	BSWAP_MASK_XMM,	%xmm6
+>  	.set	CONSTS,		V7
+>  	.set	CONSTS_YMM,	%ymm7
+>  	.set	CONSTS_XMM,	%xmm7
+>  
+> +	// Use ANNOTATE_NOENDBR to suppress an objtool warning, since the
+> +	// functions generated by this macro are called only by static_call.
+> +	ANNOTATE_NOENDBR
 
+Acked-by: Ingo Molnar <mingo@kernel.org>
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Thanks,
+
+	Ingo
 
