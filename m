@@ -1,120 +1,249 @@
-Return-Path: <linux-kernel+bounces-520505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD356A3AACB
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 22:23:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32AD5A3AACE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 22:24:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC3DD3A4B0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 21:22:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC55F188B9E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 21:24:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1E441C8636;
-	Tue, 18 Feb 2025 21:22:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3453B1CAA79;
+	Tue, 18 Feb 2025 21:24:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jMRfW8mV"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cnFH17Lk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074141C6FF8;
-	Tue, 18 Feb 2025 21:22:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 728781C861A;
+	Tue, 18 Feb 2025 21:24:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739913770; cv=none; b=aci43Mvbjf9P1Az5w2SzSzmuayqlaZqf3N69X1LWYRXfup2Ryokh7tatqisoJ2swqbNOP7TIimvfnadAXCcTf5cmdFimmnGBh9gozKrGcjQ1Fp4TttLAUqiFmx1Y/bL/yTCH3ZIniLqEmc2rimV/+bf0UkyqTl0jaTHHqcr4FeI=
+	t=1739913859; cv=none; b=PBOqveyS0U3Sg25q7dBU+B6JkQacS5jL4xnCx06J+rVmXjpQFVfX9qW6SxxAFWc3uAbicQEoeOKK37mMJZWUyEMUYLSQ5j7iTLN/0D9rVZTGyhJacWl7iWV287YlehnEi00mB4mNcDoJbe1XwofVt/wpObUjL2rNZHprPtLWmrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739913770; c=relaxed/simple;
-	bh=mO8/OX+TtD76PNCNMzPQnEVym+SvzLwOvgdAPrx2c0o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cWqH2JcUWRHMEs8DzAB+32gOd6KL0CHcRvBQ0WB8cguR6C6jLFFZw95OalS6UEcQJ9DF0GHnmwKkCFWrbZWE3XNU2bZ+0IbDR8JMTxkfZDT5ivhycc17dR1MDQ3LaEgCe4nePRF98bgTbawGEfwKAVi6OvXyobS3HhRXdqu/yGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jMRfW8mV; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-220e989edb6so120581425ad.1;
-        Tue, 18 Feb 2025 13:22:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739913768; x=1740518568; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MCGLcaBsKIeSx5CrPCdbLx3FeDWUDA+FDmgXn6o6EGw=;
-        b=jMRfW8mVacTmPJChXGxt9gj4vDwAZcFsKXMFXBCDaVFByjyQeESdpy62umQ0/4P1pT
-         GkXWj+Lq/CkAlL+5taXmUHOjKw2MTXVG4f6DRidAtN58nm7L1TaV1aomAobkdJDLYOFS
-         UlgOBE7K0bfNyaxMKFYhlp/SAPRwPPC12S+z6aB3tKPDmx0x9joDtEIb4Z1OGfNyJYRc
-         EGkwhy0jN/lQezjP4ynCUPqTKp+SRVhi50jhWL3azJtzM8tBvjaaesYXyEa5TFAw7B/b
-         ItOjjEHLSzQAQ2LF3rqvnAAKPJWWzhAfuz7bj663A24O7LfY+C7weqHr5uT3zloKiJSc
-         A4WQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739913768; x=1740518568;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MCGLcaBsKIeSx5CrPCdbLx3FeDWUDA+FDmgXn6o6EGw=;
-        b=uA9Fqz5oHW5Dsh2pD1maehY57yB3+2iu6ZNI42zjQeAvGX76ZJyDoroPZtUYNPQGe4
-         /GscLHZwUaIkYbZWg2uaVL1nl2LsKip+2vdqoZ3rp0BHjmdIHxz8h1+3/c1tsZy43EPd
-         lgff80lVo+gN+dzaHaYbttDcUhi5elnlqA41ImB0KuN8c7/wtDanKZmWwwjnc+e7CaTx
-         PM6Nd4+rN8dRrL0ZMAIcH53H1w9h1YLeMDHffwgRHcTYTh0U5+2LfiVMmd4WdP7R1u9U
-         aJjRz0n5nL1Elm71Wwx2xJsRx2GJ8wpByaDrJ34zqfQiDSICryWCd98U7Tc89hmZNbpU
-         Xblw==
-X-Forwarded-Encrypted: i=1; AJvYcCVBu7/w2h/6MC3MJD6dzRmVcg2rYGY8VKlK6EsICxJ+gNttqtvrJyDy8HWN0ZOiw+v+ZAY=@vger.kernel.org, AJvYcCVWQnlpHZIZeVvDl9pfztkwQML+NQo1Z11b9frdT8IkUdQN+HuHrGmTdTQy5lu3nLsSHK3DaONXD+63tQ0r@vger.kernel.org, AJvYcCWyIizNYZZ5qi31qq3fl1PejoH2IrfPdmZKmaLL89tKZ109ZvONDIeC8BFgKZkBgwKaYTo/q915yFPmjqawhRtX@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOt5o+UrYjxMmgdBPo6btHf5QHlgA3S8QZTbu7nD5m/0c6ERe7
-	T+yVmLOMGuVx+nlb5KmVmLue2K6cOy0LYZQ/i9+7DPx7P1hzXFM=
-X-Gm-Gg: ASbGncvqYtWkwT8kZEhhvPD2KHbnBskYvek9WEjiUj6N5U+Mkg0oMmODGiuAaGvPtWK
-	tflIYBBkLS8pzPlp9J4KtqDIhfD2wWiZDhFXl8Nk97pNI/Cq3HfXdkwwZ0kjfsKeWT6c9Uh2D0U
-	16aV66H4wyjYMjj2jwJgGMEmJiizmJXtWp6ioADwpcyG8uT9BgAd9K7SeFpoWUdJuilNGtKbV2Q
-	6FoEfoWT2D/gMeCv3Ca7qp6Q3OjOY0QePvnczZLyL1Crwtt/QcSQdYFiYHs+1JAaWn/tlAQ8/IK
-	ZLyqRsAp/tSsq/s=
-X-Google-Smtp-Source: AGHT+IFvRiZC16m7YP1vm9kCqjs9N5vCdVDj1JD3GUfBrBolSBWqxE9kNWL7zcEGz/Ex8QCXBrSg4A==
-X-Received: by 2002:a17:902:f54f:b0:216:4d1f:5c83 with SMTP id d9443c01a7336-221040bf8dfmr257329635ad.47.1739913768239;
-        Tue, 18 Feb 2025 13:22:48 -0800 (PST)
-Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-220d5348f1esm93375405ad.51.2025.02.18.13.22.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 13:22:47 -0800 (PST)
-Date: Tue, 18 Feb 2025 13:22:47 -0800
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Alexis Lothore <alexis.lothore@bootlin.com>, bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next 0/3] selftests/bpf: tc_links/tc_opts:
- Unserialize tests
-Message-ID: <Z7T6J4BpIrBcsWPM@mini-arch>
-References: <20250217-tc_links-v1-0-27f7965e3dcd@bootlin.com>
+	s=arc-20240116; t=1739913859; c=relaxed/simple;
+	bh=wx7D8VpPf7IjLab4q2shP+SjBbJcxvKfZvq8kyxl2Gk=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cyy4mT4yvLC6f0YhFFa1wN10XwkQxF+HSaAiVUky7lIsLfUOErEHgi1zjH500kQIm2IO7z5UVJHrfArhfyY3FdpTZkqwi/JLuB+V9ukjeeIC+BeGKbUlYC7b6zgU15lm5DE7KnV7vW30Kqs8D5fWuMh7Ta1wW6mBa1p/G2QtrGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cnFH17Lk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEEDEC4CEE2;
+	Tue, 18 Feb 2025 21:24:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739913858;
+	bh=wx7D8VpPf7IjLab4q2shP+SjBbJcxvKfZvq8kyxl2Gk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cnFH17Lk1g/+oi9wQQ55O48Kl6n5U4RnvyVh0gfxeObrmCk8hy7Y8cD8j/JzfYw69
+	 TrhXY0WJoiglBCHAKTrOXpe5LYABp8smOgtkn4MBWOptkCMw/hGY4IG9yldVqsw3hb
+	 FauCOON+agE5mjDFH8WYBh6fYq1R2HkSnE+Zo6a+4fDnhRHvUvyh91q3wMKaeEb2DQ
+	 1w5QWtfnr7evr2nJJ0JbsgniTQDNPwPT1qMnnAHSWOF5g7qwzm7SytvDH0xMIhXd/G
+	 ev4Z4h9oBSVdIB05hTb+aaVvBPb6K5qHeVX9hQ6o/WGXJq4IGgEIzTAdbf+2axo6+l
+	 4Jh36CISPbzHg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tkV4i-005bzR-Gy;
+	Tue, 18 Feb 2025 21:24:16 +0000
+Date: Tue, 18 Feb 2025 21:24:16 +0000
+Message-ID: <86cyffrlof.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+Cc: Eric Auger <eauger@redhat.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	kvmarm <kvmarm@lists.linux.dev>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	christoffer.dall@arm.com,
+	suzuki.poulose@arm.com,
+	will@kernel.org,
+	catalin.marinas@arm.com,
+	coltonlewis@google.com,
+	joey.gouly@arm.com,
+	yuzenghui@huawei.com,
+	darren@os.amperecomputing.com,
+	vishnu@os.amperecomputing.com
+Subject: Re: [PATCH] KVM: arm64: nv: Set ISTATUS for emulated timers, If timer expired
+In-Reply-To: <1a19dacc-72ca-4631-bce8-7426b3de0b47@os.amperecomputing.com>
+References: <bcb4289b-507c-4ea1-afc7-6febd34d88db@redhat.com>
+	<86y10osr19.wl-maz@kernel.org>
+	<4d443db1-85b1-4071-acd5-3187deb9cb17@redhat.com>
+	<2f6b2cb1-3d32-480a-9801-9b993ae74e2d@os.amperecomputing.com>
+	<152d262e-641d-4bb1-9656-a13e049d62c4@redhat.com>
+	<86h661wje4.wl-maz@kernel.org>
+	<4a9fbdd9-ad23-44bc-8ba5-399f08068db4@redhat.com>
+	<86cygpwfy0.wl-maz@kernel.org>
+	<b22d5916-8b55-43bc-a256-2136d66ad25f@redhat.com>
+	<86frkptzr6.wl-maz@kernel.org>
+	<Z6ZMdv8jJUvYwQzT@linux.dev>
+	<86bjvdtxb5.wl-maz@kernel.org>
+	<8da22249-eedb-477b-98d8-f50dee56f1f7@redhat.com>
+	<87tt8v14j2.wl-maz@kernel.org>
+	<1a19dacc-72ca-4631-bce8-7426b3de0b47@os.amperecomputing.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250217-tc_links-v1-0-27f7965e3dcd@bootlin.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: gankulkarni@os.amperecomputing.com, eauger@redhat.com, oliver.upton@linux.dev, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, christoffer.dall@arm.com, suzuki.poulose@arm.com, will@kernel.org, catalin.marinas@arm.com, coltonlewis@google.com, joey.gouly@arm.com, yuzenghui@huawei.com, darren@os.amperecomputing.com, vishnu@os.amperecomputing.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On 02/17, Bastien Curutchet (eBPF Foundation) wrote:
-> Hi all,
+On Tue, 18 Feb 2025 07:33:11 +0000,
+Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com> wrote:
 > 
-> Both tc_links.c and tc_opts.c do their tests on the loopback interface.
-> It prevents from parallelizing their executions.
 > 
-> Use namespaces and the new append_tid() helper to allow this
-> parallelization.
+> Hi Marc,
 > 
-> Signed-off-by: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
+> On 15-02-2025 11:20 pm, Marc Zyngier wrote:
+> > On Mon, 10 Feb 2025 18:26:48 +0000,
+> > Eric Auger <eauger@redhat.com> wrote:
+> >> 
+> >> Hi Marc,
+> >> 
+> >> On 2/7/25 7:38 PM, Marc Zyngier wrote:
+> >>> On Fri, 07 Feb 2025 18:09:58 +0000,
+> >>> Oliver Upton <oliver.upton@linux.dev> wrote:
+> >>>> 
+> >>>> Hey,
+> >>>> 
+> >>>> On Fri, Feb 07, 2025 at 05:45:33PM +0000, Marc Zyngier wrote:
+> >>>>> I found at least one issue that could fail the migration. Before the
+> >>>>> VM starts running, we limit the feature set to the subset we actually
+> >>>>> support with NV.
+> >>>>> 
+> >>>>> By doing this, we also change the value of IDreg fields that are not
+> >>>>> writable, because they describe features that we don't support.
+> >>>>> Obviously, that fails on restore.
+> >>>>> 
+> >>>>> I need to have a think...
+> >>>> 
+> >>>> We spoke about this a while ago (and I forgot til now), but I was
+> >>>> wondering if we could use vCPU feature flags to describe NV, including
+> >>>> the selection between FEAT_E2H0 and FEAT_VHE.
+> >>>> 
+> >>>> I think this might match userspace expectations a bit more closely where
+> >>>> the state of the ID registers after init gives the actual feature set
+> >>>> supported by the VM.
+> >>> 
+> >>> I'm not sure that's enough. Let me give you an example:
+> >>> 
+> >>> My host has FEAT_XNX, described in ID_AA64MMFR1_EL1.XNX. For whatever
+> >>> reason, we don't allow this field to be written to, even out of NV
+> >>> context. This is odd, because for an EL1 VM, this field means nothing
+> >>> at all.
+> >> So the curprit fields for me look like
+> >> 
+> >> - ID_AA64MMFR1_EL1.XNX
+> >> - ID_AA64DFR0_EL1.DoubleLock
+> >> - ID_AA64PFR0_EL1.RAS
+> >> 
+> >> This is still based on your nv-next branch from Jan 9
+> >> https://github.com/eauger/linux/tree/nv_next_jan9_2025
+> > 
+> > I have now pushed out a new nv-next branch with the new and improved
+> > UAPI. I expect migration to work a bit better, or at least not to
+> > explode on ID register restore. You will notice that things have
+> > changed a bit (extra flag and cap for FEAT_E2H0), but nothing really
+> > major.
+> > 
+> 
+> Tried nv-next branch and it is breaking(kernel Oops) for normal VM
+> boot itself with qemu. Looks like this is happening since qemu is
+> trying to write to ID_UNALLOCATED mapped registers as part of
+> save-restore of registers.
 
-Acked-by: Stanislav Fomichev <sdf@fomichev.me>
+My take on this problem ends up being more consolidation, and make
+sure that the individual macros only override the default callbacks
+for idregs.
 
-LGTM, thank you! Optionally, if there is more to convert, we can think
-about moving create_and_open_tid_ns to the test_progs itself. For example,
-if the test name starts with ns_, test_progs can probably do the
-create_and_open_tid_ns/netns_free part?
+Additionally, ID_UNALLOCATED gets a name matching the architectural
+encoding.
+
+	M.
+
+diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
+index e6f4599dca48e..2e14562b5841f 100644
+--- a/arch/arm64/kvm/sys_regs.c
++++ b/arch/arm64/kvm/sys_regs.c
+@@ -2261,24 +2261,26 @@ static bool bad_redir_trap(struct kvm_vcpu *vcpu,
+  * from userspace.
+  */
+ 
+-#define ID_DESC(name)				\
+-	SYS_DESC(SYS_##name),			\
++#define ID_DESC_DEFAULT_CALLBACKS		\
+ 	.access	= access_id_reg,		\
+ 	.get_user = get_id_reg,			\
++	.set_user = set_id_reg,			\
++	.visibility = id_visibility,		\
+ 	.reset = kvm_read_sanitised_id_reg
+ 
++#define ID_DESC(name)				\
++	SYS_DESC(SYS_##name),			\
++	ID_DESC_DEFAULT_CALLBACKS
++
+ /* sys_reg_desc initialiser for known cpufeature ID registers */
+ #define ID_SANITISED(name) {			\
+ 	ID_DESC(name),				\
+-	.set_user = set_id_reg,			\
+-	.visibility = id_visibility,		\
+ 	.val = 0,				\
+ }
+ 
+ /* sys_reg_desc initialiser for known cpufeature ID registers */
+ #define AA32_ID_SANITISED(name) {		\
+ 	ID_DESC(name),				\
+-	.set_user = set_id_reg,			\
+ 	.visibility = aa32_id_visibility,	\
+ 	.val = 0,				\
+ }
+@@ -2286,8 +2288,6 @@ static bool bad_redir_trap(struct kvm_vcpu *vcpu,
+ /* sys_reg_desc initialiser for writable ID registers */
+ #define ID_WRITABLE(name, mask) {		\
+ 	ID_DESC(name),				\
+-	.set_user = set_id_reg,			\
+-	.visibility = id_visibility,		\
+ 	.val = mask,				\
+ }
+ 
+@@ -2295,7 +2295,6 @@ static bool bad_redir_trap(struct kvm_vcpu *vcpu,
+ #define ID_FILTERED(sysreg, name, mask) {	\
+ 	ID_DESC(sysreg),				\
+ 	.set_user = set_##name,				\
+-	.visibility = id_visibility,			\
+ 	.val = (mask),					\
+ }
+ 
+@@ -2305,10 +2304,9 @@ static bool bad_redir_trap(struct kvm_vcpu *vcpu,
+  * (1 <= crm < 8, 0 <= Op2 < 8).
+  */
+ #define ID_UNALLOCATED(crm, op2) {			\
++	.name = "S3_0_0_" #crm "_" #op2,		\
+ 	Op0(3), Op1(0), CRn(0), CRm(crm), Op2(op2),	\
+-	.access = access_id_reg,			\
+-	.get_user = get_id_reg,				\
+-	.set_user = set_id_reg,				\
++	ID_DESC_DEFAULT_CALLBACKS,			\
+ 	.visibility = raz_visibility,			\
+ 	.val = 0,					\
+ }
+@@ -2320,7 +2318,6 @@ static bool bad_redir_trap(struct kvm_vcpu *vcpu,
+  */
+ #define ID_HIDDEN(name) {			\
+ 	ID_DESC(name),				\
+-	.set_user = set_id_reg,			\
+ 	.visibility = raz_visibility,		\
+ 	.val = 0,				\
+ }
+
+-- 
+Without deviation from the norm, progress is not possible.
 
