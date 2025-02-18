@@ -1,109 +1,107 @@
-Return-Path: <linux-kernel+bounces-520502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30427A3AAC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 22:21:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD7ECA3AAC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 22:21:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73A7F188B8C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 21:21:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0308016AA92
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 21:21:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5A871C84DA;
-	Tue, 18 Feb 2025 21:21:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DF641C8617;
+	Tue, 18 Feb 2025 21:21:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rRRl3Oft"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MGqbSZ7r"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F21DA1BEF78;
-	Tue, 18 Feb 2025 21:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297EB1C5D7C
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 21:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739913700; cv=none; b=l39U38WOcO0oMDwQd7bNJiJyQNL35F89zG94IzV/QGXb05rj7Aj0SAbXR3L+eS7EBpPsupr1X/630U804go03Vc3/9Mwb/NyJoNFCqT5pnKdghT+ib7IQUuqrKbCR0YvigD7OgmwbXHNy9e3gzcyWskjwCYYvSvsdenbIxnc2Lo=
+	t=1739913708; cv=none; b=o7GwYIzkRTZrdUgg3XfFmU/x2u0mB93NWC5lkq/nVwWYEW/wf4ShZb6EFzxid4G9UmXR17tX9OaWNzsU68Ps/v2oy8/pr6SvgTde/GYXrMc1hH/WCyvCnhsFVwI3o8R4hwz9mymVmGepcvR2J1ltvqsiiuHTBGCXhI0sa7GhPF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739913700; c=relaxed/simple;
-	bh=B9lSIUKtKaBWlF14BOO6dZrB7G6K1Zk063vl/H8dksY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pgwkSLI5UjhF13xNdq2IENMFpZ9CFemuPPugX6kDEidnchz3tHTxUlf6ulEBOPvUupBIx/6pX4EZ9wfIBcwoVprYFMpYAmrP16NU3nYP25YVzCse1vLw8xpICKQiqXPIM4zVyi9MQNTdyy6ECqQoXg9upSyC1ogdvcR9vweNAxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rRRl3Oft; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E6D0C4CEE2;
-	Tue, 18 Feb 2025 21:21:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739913699;
-	bh=B9lSIUKtKaBWlF14BOO6dZrB7G6K1Zk063vl/H8dksY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rRRl3Oft5D1yNq8A/9GdXQlhT4a0/layZcEr6m168EFyUt483vukkReL1VrsLfdVW
-	 zOO6npRBlyNM4X9gkvxRqfp6wI453gdsRZlmJofmiL8zFsCY0YRhJuey7zQfw9fWFU
-	 xogFI9TFgXaaOcQZYVUhiS3aMAEuqHwyWwWSH0Dzt2B5hsdZV/dN0urTVADAhSk6G0
-	 V9Ut2rkKOCfMDY7wY1cEm2cEiHavDVfRO2cvjELFHVIb0Z+e80RwGR/n6Z2ptYlHVt
-	 r5EzUyJauBdauhOBLVtjpVAvKiMVdxIfXO/TXeUhmiYpot8O+xydOproUw8+D0zbPb
-	 GGcv6XBWrNaOQ==
-Date: Tue, 18 Feb 2025 15:21:38 -0600
-From: Rob Herring <robh@kernel.org>
-To: patrice.chotard@foss.st.com
-Cc: Mark Brown <broonie@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	christophe.kerello@foss.st.com
-Subject: Re: [PATCH v4 0/8] Add STM32MP25 SPI NOR support
-Message-ID: <20250218212138.GA1092771-robh@kernel.org>
-References: <20250218130000.87889-1-patrice.chotard@foss.st.com>
+	s=arc-20240116; t=1739913708; c=relaxed/simple;
+	bh=9ZXR/UegNSYFkVyBV3mAl6h0OC8oO7OjCk7UEoajhQc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nLIvqZheHchxdU9mXRveCF0gvI3jFd0ieyD4Dz4aemIPZNk9lsPPyLJfd2wbjsvMZPnITmsvtqJhLhIcxJ4A2fcaSVvz9PAs+2JneEtRnDTdcY5dWhbXDDxZlka/p0BvNTghQmNov/QXY6uf1glBkYpzLCO47BTDyB2qEYYdnhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MGqbSZ7r; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-21f2339dcfdso3098885ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 13:21:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739913706; x=1740518506; darn=vger.kernel.org;
+        h=content-transfer-encoding:signed-off-by:mime-version:message-id
+         :date:subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0YgGSnITBh/OY5xM1TqoNGaQf6WlJBBaRc6tj0P3/bI=;
+        b=MGqbSZ7rB3OUglyY1BmM8iw1gIXY+ejJhKUW5YMOZR5EnLMzNxO7qQQ7/9ScwxsANT
+         Bkol0442vJAaAppO/CfYUpkKxbE17mc/9ALpboXzmmm1BV8wrff6LpIuN2GMKT8Taws4
+         IH7WAUKGvnwk59SG2IiVx8Mql1seKPFpu3MxwApFrn4g0yqXyhAwjKjevFSWcaCW/3RY
+         uADEuuhTTcFFBKj74w5IowNDOwrxtfQ4XPrXd1KFhwm4/oIz1q3NRkf4N+oXrreFskmh
+         kDSYlg3YqbjWdEF+HIYmOto9atXINuJwFVOCgNqm9qLQyqcc3etAr2kdb9/Eb/pYRBTf
+         iHRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739913706; x=1740518506;
+        h=content-transfer-encoding:signed-off-by:mime-version:message-id
+         :date:subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0YgGSnITBh/OY5xM1TqoNGaQf6WlJBBaRc6tj0P3/bI=;
+        b=v1AkxRFPOttkG/O/mNL2xqYJPQ+73Siyi52MgsG6ZIxhL/M0KhZlXyQLhRk/u15wct
+         Fy8Z9hRI+mG4i+XUxJPqgFRCckkLvlCYJSNoxnHAU4hWfthE411uFc5Lw7Btass6IAW7
+         4SKIjDqgzdaFcrvVCnYsP01keBu66xI/inGCAgMcxYv8B5OqEkKHscjKyQxLvW5PExbv
+         31nUe144dk7gcF7e9awo71OZDZ4jNhMy+S0LZuwWL4MOCdmP7yeGEg03lUZ6eQBH/e3I
+         quorNC/UEXat5H4h5lC2e17btB85EJ+J5/Trm70p7jYBY1IMW1mwdr82DBfNmM53CTMS
+         6+Pw==
+X-Forwarded-Encrypted: i=1; AJvYcCVnkuTXQ5xGCiB2MG4vre0rz364aRDcr7DJHiypzaZtray/+uk+mScwFsAEAUWCbXiG2T02r+JMghRCsuw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzplhWYKfVJQCJ5YiEPr9XOPgciCD2G2bEono02muwJVfbgoyWx
+	XyaKcB63mz9iWQygcew1++29xWyP00NxqCzOdAvSxVrGcMd7WbE6
+X-Gm-Gg: ASbGncs4qB53DO82kSUyO4TlLxfwp7VDb2CYvkTV7rLhJVUxG7bLOUmv+v/UclK99C/
+	VC8FDVsWDfDgzcaXr2wUf1boK4rQQC9ConHhkCV3cS8V3B6sYkAcXImqkQvS2WRrvFBBsg8bAhk
+	EL8nL8KhJkDkNdaPQ+lB+SIkazsWZveTn0ptmwlsOIMLJOvpckSAG7KAc18MN8kVW39J/pZFAhB
+	cHpZL9ET467rREMkEmvcFtWkFDJm5HR9Z2qUhtrcyshhFf5d+9H0u6WHn+1pYcM7FsaFncAzvbs
+	E62O8IHYHhn7oprQf2MJf88H3Ts7YEjJmu0srUhyCGPh2K/Cyp3JJTi3FQFDbNezwvxhAzt74w=
+	=
+X-Google-Smtp-Source: AGHT+IF2W1k1ssg9MXvqdUOe3nsa1g98vCJTND8J+en8nWqJOgcrQ9879nPUGUgQic8mHvktCGTP+g==
+X-Received: by 2002:a17:902:ce0f:b0:220:fe36:650c with SMTP id d9443c01a7336-2216f11a1eemr22367835ad.23.1739913706310;
+        Tue, 18 Feb 2025 13:21:46 -0800 (PST)
+Received: from node0.suho-242436.threadtune-pg0.utah.cloudlab.us ([128.110.217.182])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d545cf6bsm93394715ad.123.2025.02.18.13.21.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2025 13:21:45 -0800 (PST)
+From: Sumya Hoque <sumyahoque2012@gmail.com>
+To: skhan@linuxfoundation.org
+Cc: linux-kernel-mentees@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Sumya Hoque <sumyahoque2012@gmail.com>
+Subject: [PATCH] Documentation:FS:Fix minor typos in filesystems/f2fs.rst
+Date: Tue, 18 Feb 2025 21:21:42 +0000
+Message-Id: <20250218212142.557462-1-sumyahoque2012@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250218130000.87889-1-patrice.chotard@foss.st.com>
+Signed-off-by: Sumya Hoque <sumyahoque2012@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 18, 2025 at 01:59:52PM +0100, patrice.chotard@foss.st.com wrote:
-> From: Patrice Chotard <patrice.chotard@foss.st.com>
-> 
-> This series adds SPI NOR support for STM32MP25 SoCs from STMicroelectronics.
-> 
-> On STM32MP25 SoCs family, an Octo Memory Manager block manages the muxing,
-> the memory area split, the chip select override and the time constraint 
-> between its 2 Octo SPI children.
-> 
-> Due to these depedencies, this series adds support for: 
->   - Octo Memory Manager driver.
->   - Octo SPI driver.
->   - yaml schema for Octo Memory Manager and Octo SPI drivers.
-> 
-> The device tree files adds Octo Memory Manager and its 2 associated Octo 
-> SPI chidren in stm32mp251.dtsi and adds SPI NOR support in stm32mp257f-ev1
-> board.
-> 
-> Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
-> 
-> Changes in v4:
->   - Add default value requested by Krzysztof for st,omm-req2ack-ns, 
->     st,omm-cssel-ovr and st,omm-mux properties in st,stm32mp25-omm.yaml
->   - Remove constraint in free form test for st,omm-mux property.
->   - Fix drivers/memory/Kconfig by replacing TEST_COMPILE_ by COMPILE_TEST.
->   - Fix SPDX-License-Identifier for stm32-omm.c.
->   - Fix Kernel test robot by fixing dev_err() format in stm32-omm.c.
->   - Add missing pm_runtime_disable() in the error handling path in
->     stm32-omm.c.
->   - Replace an int by an unsigned int in stm32-omm.c
->   - Remove uneeded "," after terminator in stm32-omm.c.
->   - Update cover letter description to explain dependecies between 
->     Octo Memory Manager and its 2 Octo SPI children.
->   - Add Reviewed-by Krzysztof Kozlowski for patch 1 and 3.
+diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
+index fb7d2ee022bc..412b0949143b 100644
+--- a/Documentation/filesystems/f2fs.rst
++++ b/Documentation/filesystems/f2fs.rst
+@@ -310,7 +310,7 @@ nocompress_extension=%s	 Support adding specified extension, so that f2fs can di
+ 			 nocompress extension will be treated as special cases and will not be compressed.
+ 			 Don't allow use '*' to specifie all file in nocompress extension.
+ 			 After add nocompress_extension, the priority should be:
+-			 dir_flag < comp_extention,nocompress_extension < comp_file_flag,no_comp_file_flag.
++			 dir_flag < comp_extension,nocompress_extension < comp_file_flag,no_comp_file_flag.
+ 			 See more in compression sections.
+ 
+ compress_chksum		 Support verifying chksum of raw data in compressed cluster.
+-- 
+2.34.1
 
-No, you didn't.
 
