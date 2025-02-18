@@ -1,72 +1,63 @@
-Return-Path: <linux-kernel+bounces-518790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C96EEA39492
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:11:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46346A3949C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:12:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC920188A2B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:11:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63DDC171993
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:12:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00A6922AE6D;
-	Tue, 18 Feb 2025 08:11:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A997722B5AA;
+	Tue, 18 Feb 2025 08:12:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FBPd4RUa";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BftFmJ+D"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sEJ2K1NS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6EE8228CA5
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 08:11:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0705322B586;
+	Tue, 18 Feb 2025 08:12:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739866274; cv=none; b=mnmlRSovPeCJN0H0Jb7I1imiZlFTJ/LMXFA84IK54jhtP4+wYiP1xbtDcEY317dThbcfXS3K6K0JzpMWunK8embUFar+IfRGcWl0Z3/szzhnojLYZXVjhHCMwuPxNuk9jwFGdX/KUWkmVmfh/T3SK96rX4qQX8o05WrdTHqsjIE=
+	t=1739866326; cv=none; b=nweQkhuU3yXNGz14mzwMSWlAZ4s8V8hgzcp/ZKzdA5wiU5whQrNFnPfh6ZMdp5qag7KWctdOGkRaho69mQt0XtsD8xxr8cFQvGkvuwRio9Wuh/HEpdQiu38EQq0wp0k1t7h9uX1+m+ZdK2IswLFzI+ifDR5sm7AquRBLkgmy2Vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739866274; c=relaxed/simple;
-	bh=sMyD5WghmQkPvsBnt8DB05/niNVQXB+q56W3spPtS8U=;
+	s=arc-20240116; t=1739866326; c=relaxed/simple;
+	bh=0S9pjfmZRz2PUUj+HKdqPYrF8EUJ9z8pul6F4UlafVw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d9KglXiXRCAm32ZQV6dO19rDSwzQiI5kA5VAFf8vtvj76D/dfLRB+76f3Z8MVh5eb5D0RRiof1aQxlK6k711vTudGowsM3q+gEhA55i+hkbk9OVNM7kFwGqOuQDnlla+5p673TAI00iJx2iZ1/ZoI3ZBWtRTuuFbKgkfGKw6ERQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FBPd4RUa; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BftFmJ+D; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 18 Feb 2025 09:11:09 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1739866271;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sMyD5WghmQkPvsBnt8DB05/niNVQXB+q56W3spPtS8U=;
-	b=FBPd4RUa4dPnYHRnJWsoa2szcs4AWOdIFdm7A3EDEDEhxql+Xguo1uhjhhXYKyHyPsWqRc
-	5AauyORi/ZPNt6MtV5ZXYcFanWNzFL5g1mZTWFK5iT49pdrYlwe1JeUK0cdsLu7w2UDop5
-	8Zsvj5tGxoxpAHhEWGxYQHSXMLcnMAfamWZH+VwKV+mptUpuK6ItYzPi9QLjUWI2dw8EF/
-	HcHOeN3eRn8JMFqiYwXgD2XV2juVpl0fryzPTt1J2plMYymsfyDp6IGTeOxGYX9kGbISz6
-	UZGMaLQuANy4Wlrbqezb4Ta6tXHE0z4m+7G+6AAbr7zucbuTGROEFwl4pLPeoQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1739866271;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sMyD5WghmQkPvsBnt8DB05/niNVQXB+q56W3spPtS8U=;
-	b=BftFmJ+DlYsBMqvagP//ConIXq0lavqv4rZXbYwqyHEgTxu27y8BDI56xFc9R44+FnMQgJ
-	w+kQzUuwTkQMhaDQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Waiman Long <longman@redhat.com>
-Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Alexander Potapenko <glider@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>, kasan-dev@googlegroups.com,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev, Nico Pache <npache@redhat.com>
-Subject: Re: [PATCH v4] kasan: Don't call find_vm_area() in a PREEMPT_RT
- kernel
-Message-ID: <20250218081109.Hz-r4tkL@linutronix.de>
-References: <20250217204402.60533-1-longman@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ahw9GUUNxJsBWPUB2N40HCyALlGyn41J0sPaX2Tbm8xpQrQO+58tHzuHE6J5qdo/fMoOzqiMuee/EoPi/VApRwJYzBOkJP9ItIo2zzKzIGIfL4qZDTUh7BC33wIqeI/DdW1Nh/SBvRpVwH5pZAXtW6K9g9f5Y/3EVT/qWCbqAiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sEJ2K1NS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1BDCC4CEE9;
+	Tue, 18 Feb 2025 08:12:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739866325;
+	bh=0S9pjfmZRz2PUUj+HKdqPYrF8EUJ9z8pul6F4UlafVw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sEJ2K1NS1AMoQ1boOZkuPFTxcg5vfdt2ZAxl5BFbOiA12zOuTdv7tYrnJzsczKLFH
+	 EcrvkKg2ONY6OJSmsJ6rnbbQZVWMvzchQWoDkb00zHXc/ihHTJfHndFDgY1FEO07Gk
+	 yOEb7mM823okMgDDdhR3xnmjbrClWRhhnbyhPncGZE2Rxb5ITma30rM98g3S3Dm2MV
+	 QHNZrsPpLg9r7Se5eB+An3jMvDCzwqxeXwYBTSydSA1xMgMeYSux3GoVQLrguLE3ht
+	 IvAE4x2YiFGWap8xXXfsUd8q/N+TCDaBjV2MY+Po5O1twc1B3vJz/g+PxNx39oRtW/
+	 uRzsOCDxn4Xmg==
+Date: Tue, 18 Feb 2025 09:12:02 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>, Matti Vaittinen <mazziesaccount@gmail.com>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Emil Gedenryd <emil.gedenryd@axis.com>, 
+	Arthur Becker <arthur.becker@sentec.com>, Mudit Sharma <muditsharma.info@gmail.com>, 
+	Per-Daniel Olsson <perdaniel.olsson@axis.com>, Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>, 
+	Ivan Orlov <ivan.orlov0322@gmail.com>, David Heidelberg <david@ixit.cz>, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v4 1/3] dt-bindings: iio: light: al3010: add al3000a
+ support
+Message-ID: <20250218-rainbow-holistic-locust-8f3615@krzk-bin>
+References: <20250217140336.107476-1-clamor95@gmail.com>
+ <20250217140336.107476-2-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,14 +66,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250217204402.60533-1-longman@redhat.com>
+In-Reply-To: <20250217140336.107476-2-clamor95@gmail.com>
 
-On 2025-02-17 15:44:02 [-0500], Waiman Long wrote:
-> The following bug report was found when running a PREEMPT_RT debug kernel.
+On Mon, Feb 17, 2025 at 04:03:34PM +0200, Svyatoslav Ryhel wrote:
+> AL3000a is an ambient light sensor quite closely related to
+> exising AL3010 and can reuse exising schema for AL3010.
+> 
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> Reviewed-by: David Heidelberg <david@ixit.cz>
+> ---
+>  .../devicetree/bindings/iio/light/dynaimage,al3010.yaml     | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 
-Thank you.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Best regards,
+Krzysztof
 
-Sebastian
 
