@@ -1,243 +1,228 @@
-Return-Path: <linux-kernel+bounces-518934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BD47A39659
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:02:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 556C6A39643
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:59:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39830161440
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:58:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34233188BCA3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:59:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 771592309A1;
-	Tue, 18 Feb 2025 08:57:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2300F22F169;
+	Tue, 18 Feb 2025 08:58:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="d6HdmiVZ"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="RWZNkcZl"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2066.outbound.protection.outlook.com [40.107.21.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7659F22FAF4
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 08:57:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739869040; cv=none; b=F4EnXHKSpnC+rWrI6F1cr8lv6kn5B97zT8/RhoTXt882Z4jpMJhi7Lf7x+KDYWAIBS/k3/HKtEsgAYtQ95pYkpi22yk6t2GWI/+Zh3aW4cuLg9lau4SC0TuDIhTeu9xH1W08AoXh/yRoulh4kZJO6FDy+UZ1SQpvSUP8MC2bhG4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739869040; c=relaxed/simple;
-	bh=hlErsFV9V7vbfjbxZQu67cLb5ITsC3CKvDimUBSUYxc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bK4leQano1vXulRZ0xSDd/+o54Y4A0X2GWv9LD2pXzters3Y3RgqJ+dXDhHnM2AnnmPvQN3CGTFr6/Evx0Q2Pk1vAEl0Y594L2BCEqRxOd/GVRPdQocddqUKB8+gdS8lfamTYbk3p6vhT0xQlew4w3MQYSWmD7jwx+PLN+1kX3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=d6HdmiVZ; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-30613802a59so54595281fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 00:57:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1739869036; x=1740473836; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hlErsFV9V7vbfjbxZQu67cLb5ITsC3CKvDimUBSUYxc=;
-        b=d6HdmiVZf4LqzxiA17GacLhqDeoZKeHjBYckuFRwoJRYbxOv9H7oxK+wdfosbgD7to
-         EjPvB6RRk0VQfaIem7U1Qbybd5EiFr4B+gXeVZUf3e66krZuKL2rzRQcgZFcDxMQjztA
-         YFBWemTxjZJaZz3S2dahsMbOjv0dzISwWCw+Xr4SZOeXh1/YOwBK+ByCCF1cASE3wJ1Q
-         dHhKYS+NLeTO7slojfC1+iSJE7sWSSDq5a0p/1FEKX/hQNvYcSEANcb9aSSzvSlnAOWM
-         ArUWR0QWY4lM8ztNV3ccwm1t/Nd+EyP7wCS2OZLe6Sn6PBsGXOioV18NUOmS+XOvqN2S
-         CXew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739869036; x=1740473836;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hlErsFV9V7vbfjbxZQu67cLb5ITsC3CKvDimUBSUYxc=;
-        b=nviHHg9aFJ64y7JhGQwijmLYPxG9r6j0tV+uyAcWkCZusIReiHKTR24gRv8MA6SRub
-         eI5moCOOsngJ3BSv9xQ94oC6Kpip849adfnvwxgJvaGFvzRaJgie+qo02IvCjhxSaSsP
-         ydFAWDaEO4MCF89YyrTMrRkjkAw+o4lWVsPlCv6pS3ZKRMSYRtWgm3urpydmPhrcdN7K
-         XQUlSZuJqzZhXt/b3Ay9WSnlt72+boS9Gb/pHsNWvXx5fwQo3+4WKW2oO5E5jE5miyCX
-         PmpfWwu1UXBg44kuHZz5gyxDZpRoAtcKfqU0GCMbgNzoChvaeAk9DHTxVjLeq/eBSmOs
-         O+bQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV+vSsYXpl8NaW4YpHOpSaAOT0gca9Ffj7UIg7JkQFV8MQUV7j22k92uCm9/4SCzHdHbYVPUboaFSh3Blo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9J4cUZKawOGGI4oV2Ym5KD1kTRC56Rk5uOat9nzGHFJ8Awgls
-	53+CfuJ7f54sNgm0tFA2yInWmERrE0n0uUSL43OQcO6UI63tWzQgA/oxcXeA0mIrR1wVi4BNw+i
-	r3ZW9bkhYUsZVYRiEiEARMm0cbHBF2fRIookYAg==
-X-Gm-Gg: ASbGncuyK2b2GZCIAiAbz7pwZAt1TXcUQB9U25T0nEOKG4By1ILqLSvPCnl9319q626
-	6aO+G71g69CZPRMHu87In3BgRMljW2L10mpWLjevl7JCJJuWlrgviCGM5Piw0IGqZ6Zrm0s0Ze8
-	3Dx5BOrkwWhmgNQY3y7LAnvuVHrFD1
-X-Google-Smtp-Source: AGHT+IFAY6Xns+/Ob9unwK3yUiO5P96UI8GY5KEOai6Gz8IDG+X5xZzrb4DaYRMJSIXmR6ytPjyR2Hb7Fmg8G2ZxrWs=
-X-Received: by 2002:a05:6512:104e:b0:545:c23:9a94 with SMTP id
- 2adb3069b0e04-5452fea6dcemr4513084e87.48.1739869036236; Tue, 18 Feb 2025
- 00:57:16 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A59122E40E;
+	Tue, 18 Feb 2025 08:58:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739869082; cv=fail; b=NVaqp1lbIAexcosorTImlD95k44uHelRqtg8ME4AXcnfuei136USDzfROqkNXC2Jkj3k0zl8yq8nMLwmTqvpzi/4PcDRfI9sI/uPi/nt7H9Egh3E0hVWbLeZ1Qlrab3nX02UN6fjt8seIbJwKbK30JnN1npZ4SV5BCdjVLPu0hs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739869082; c=relaxed/simple;
+	bh=3pQUmdQFac0Fh+WNY7acYRrP67tRCEqVJs7jhVNrmaI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=DGKkC5xkFjpaX0sEN6UJnALhv9IJof8Hd8fjYVWCLhNSeHhkPbyz+zS3AgKR/cXIAA7qabFk6Tf/sa+jCvnnJAxkfzIYhONciM+bFIhkLnh4yeUfNp8RXAJsok1E8/y1ui5QTK91hq2y7Jtz1x4/OAd03vAxqKpI1Fce0OQ9AUo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=RWZNkcZl; arc=fail smtp.client-ip=40.107.21.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=X07EvDnoAsJ94h+4MI7t4ivc8WRWyeQBVceTNUfJW9EhXx6gYiO/m/EMrMTKR+f0BqwUNIVXJskbVVC6bybvyiTB2kbqe7wrTEg3YvzKOxgm6iMxpIgTN2f6GxCf9TbNhWyV2TKqD72qDwCJFnFKZMDxuZm+rP54oxySVOa6NdGHCPNuFolQXgdSd34XwjYr27oCeM3o7vGmO4jpC92ofxCZOw7DzwYZMKwlRfb/Ef7PYqBbZ/IoXNEdy/NkoGCco5i/qjGOr4s0Mt4ISLF6/oFUMSPjCelQXSp+pOVFk61bImGts9FQtivFO18Qe6AQz8h/uWTJXCqtOh0PKiaiow==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vLGCak/e/d7wgy18Oz5BexielpgJfmnmXgnHx0MQkjA=;
+ b=EyE2s3Y+Pt8BK0E+vhuGgC/wd6x1gGcWuEWN70IhdwuUZWSFEbYnSh0uw7SFmwF8gJeX0InXfPbPoZACfJOwQI6+ddI1S+PpgAfZ6+kjF9/N/+m9TbA2nyORMBtGnGZ5OnOy2bBUXzy8mDQh/vLtwra7zHN8oiGNfEjg/DjNN7n2Q5cjPS7UgArqAsod2Rl1+nPTo0lW3UiCn9s32oDmuwuyD3oasqRhjB+tzMSQWKYagYIAK3RPVGlveU+Ke9S6ziqkJ9xseEDeY0vU+0VYwJz2yeS4z8/+7iHhy/mdnSTSYl7W7VFMA7Z6ObZcaaTH/wBLy59PLcl/IAPMdJvcjw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vLGCak/e/d7wgy18Oz5BexielpgJfmnmXgnHx0MQkjA=;
+ b=RWZNkcZltncP81X24sx8xADzNGDjYj0CIsnMw2aTHQq46mIEIN/tNcH1FKKenLvX3+cg+21R01lG1KP50h5JNxGy/ti15UHAlFki+SoIgpbI93PKZ7jg4NLjrpUVl6tn02gtb4Rii31uQmVlkvZyuRCRXsrJixVfiWOz8b56o8gajNtfti1bNU5DnhuAMLF05fX1Qlv1rIuizNfjN0zJf/RMxzEJ2VpCfAnchO8UCqGTu87vLgrBClNwyqS3KKfP5DGib4jdsNTwRVHj3IY77tBLP1zvFx71QYO9U2+veiALZGgoEDWKXyoNUKMORM0YSVpE2PBvSpWVZznM2HEBTg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS8PR04MB8247.eurprd04.prod.outlook.com (2603:10a6:20b:3f2::13)
+ by AS5PR04MB10057.eurprd04.prod.outlook.com (2603:10a6:20b:67d::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.18; Tue, 18 Feb
+ 2025 08:57:56 +0000
+Received: from AS8PR04MB8247.eurprd04.prod.outlook.com
+ ([fe80::84f7:e2c3:ceed:c0a6]) by AS8PR04MB8247.eurprd04.prod.outlook.com
+ ([fe80::84f7:e2c3:ceed:c0a6%5]) with mapi id 15.20.8445.017; Tue, 18 Feb 2025
+ 08:57:56 +0000
+From: Daniel Baluta <daniel.baluta@nxp.com>
+To: p.zabel@pengutronix.de,
+	shawnguo@kernel.org,
+	mathieu.poirier@linaro.org
+Cc: s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	andersson@kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	iuliana.prodan@nxp.com,
+	laurentiu.mihalcea@nxp.com,
+	shengjiu.wang@nxp.com,
+	Frank.Li@nxp.com,
+	krzk@kernel.org,
+	Daniel Baluta <daniel.baluta@nxp.com>
+Subject: [PATCH 1/5] reset: imx8mp-audiomix: Add prefix for internal macro
+Date: Tue, 18 Feb 2025 10:57:08 +0200
+Message-Id: <20250218085712.66690-2-daniel.baluta@nxp.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250218085712.66690-1-daniel.baluta@nxp.com>
+References: <20250218085712.66690-1-daniel.baluta@nxp.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: VI1PR07CA0286.eurprd07.prod.outlook.com
+ (2603:10a6:800:130::14) To AS8PR04MB8247.eurprd04.prod.outlook.com
+ (2603:10a6:20b:3f2::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250217142758.540601-1-koichiro.den@canonical.com>
- <20250217142758.540601-2-koichiro.den@canonical.com> <CAMRc=McB0bcG4jERmUyrQ=eTP+kcfLBBAOaT7mCMKbgUB1W5nw@mail.gmail.com>
- <d2qdoq3f3jk6gzgsjeqszgaqk7z523r7cfnopxfq4ghsbsqgp3@zjw67ewqzi5u>
- <uogv4ckqo2e2byspffvfayu44v6fl46sxtu7eudweoye62sofi@5iwsumpttpca>
- <CAMRc=MdNtDW_Gbd6dsG345110SCWe1vD_rNd_QaWBYRApHBoxQ@mail.gmail.com> <saszavmizjwhzechspy6otune2xwtgjjygaitxminzclgj7zep@ofwfb5jdfcam>
-In-Reply-To: <saszavmizjwhzechspy6otune2xwtgjjygaitxminzclgj7zep@ofwfb5jdfcam>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 18 Feb 2025 09:57:05 +0100
-X-Gm-Features: AWEUYZlXaLy29umfWhy-dvc45_tPOq-Fj9punVFoIZsBxonlMFUOsDQYUkbAzxU
-Message-ID: <CAMRc=MdDi6_neGThU3wq_uq2VA=DUHzTwvrv_wivj26ksNSnNA@mail.gmail.com>
-Subject: Re: [PATCH 1/3] gpio: pseudo: common helper functions for pseudo gpio devices
-To: Koichiro Den <koichiro.den@canonical.com>
-Cc: linux-gpio@vger.kernel.org, geert+renesas@glider.be, 
-	linus.walleij@linaro.org, maciej.borzecki@canonical.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR04MB8247:EE_|AS5PR04MB10057:EE_
+X-MS-Office365-Filtering-Correlation-Id: 013b4ba8-6034-4b8f-3562-08dd4ffa5645
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|52116014|7416014|1800799024|10070799003;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?WddgqdECqPHBN6CFl8SUA6XXqd2YY1etfL11sGq5QcmABGRXNNfkC+0Gz64w?=
+ =?us-ascii?Q?1hdy0EZii+jhiZkd1irYJZCkbHu4kmjShZdjPpX6qaBE8Gu1qvY4ZXwYmBvK?=
+ =?us-ascii?Q?W56yGj2HslXwJfe5ZNNCNjD81T65eDhP4Tg3kn5kTa0xm43qqAyxPK53LMMl?=
+ =?us-ascii?Q?yMlpCGSgPnovDDuEqbrSsWS9G1qrMh+llGL49ZZ+fgzUeH665CLa9Zb9nSvc?=
+ =?us-ascii?Q?NMOcWjPhmOEpgV+rePK1n56enl5wGgTuuxIQkzHgjic2mRReLB8K3U172J9A?=
+ =?us-ascii?Q?4vVZlUUG1NOQDliq+FfhqLGsau/cQ57O1MWhZHKntYvnwnBNoVqJvwbScVEP?=
+ =?us-ascii?Q?m0dMXKYsRPJ7XnwZ5vOMb+2pNH0O85mVC348acRp6RFXylZ/RRBn/KRwz0FX?=
+ =?us-ascii?Q?yLxjVLerdCEOUBzPLEFNGmZc5ay5o5nwAdPdPIl4s+VTashPWJMTPrbzOah/?=
+ =?us-ascii?Q?mxmbLxej5LkMjhhAfs7CesmCnOXcIcMocYHkTvO+WpnBM6wfI+9kac6Csbnd?=
+ =?us-ascii?Q?JfHLo4+drbUfPyBIadYi5H9GFeiZMqYQ1HX9WzLmvVRk1n13BSMeWpD9z0aN?=
+ =?us-ascii?Q?Sb3KVvb4SFK1US/qYPb/+KTvNN7pb+R6+pJY/V7LW84E8u1Nr9J8xiPoKh4F?=
+ =?us-ascii?Q?mxksrNbUI1M/68pCswngzw4U7ltN769MqIMULlaWQujfERLUkHqPvwQzto93?=
+ =?us-ascii?Q?QLNuwGt52JNPbl9zYLhyS61+ANu/8BuXve15+TbArZXxcVbTcDbspWVbXYBy?=
+ =?us-ascii?Q?SXAbvJeQiu9z9MrUDrb+g9qjwnyq4JPg9uIo+OCtozS3FrqjSDkJcBeY4hpG?=
+ =?us-ascii?Q?NwkBvPFx/0+pyLqvnSymIzetP4AwqVOvTrRzzE22QblSPbbPwAafKC1QlGfZ?=
+ =?us-ascii?Q?GfqdYQvkLG9mPWLzDoiPil+CNfYyLzJkqBesd5ShE985LzBYvkEvwx4c7IQn?=
+ =?us-ascii?Q?ItYcbfWkeQSCaXnfo9gzx7sExmQnybYqHtGeZhFH+GxGkzbqmTRU+09RT7wF?=
+ =?us-ascii?Q?3U4EHsyUOc30k0X2v6Q89/4EzdzAtk59h1+aCwDTlTNLWRleTiST3uKx6V6f?=
+ =?us-ascii?Q?ES9Lb9iAtLLAWrsmw1mo5O0/+On1ZCuPEU5ze2sD2HM2OCH6on6IIgpkB5mx?=
+ =?us-ascii?Q?yvLhbOiWglekPjtYvbaB5izazMwAsNPvaShDixtaDy9UcZ2qHiHgWBq/mgTZ?=
+ =?us-ascii?Q?KR4uI9WfMx6BPDADyU5lSRkNwEmsJs1Dy5bB5rR8Frmi0JWXU/uy5Th4tUuE?=
+ =?us-ascii?Q?2OHKEaMJnRj0GmxtTXMmGuNcEspiRxrVKikrOwRRpreL5P/GF6tsqgp8RjjI?=
+ =?us-ascii?Q?hND3C2R4MArgr0DO19hcXl0z19aivSVRGauPVRAGmbXaz3LqEA/a7eHpBii3?=
+ =?us-ascii?Q?KCI7WoE4agZOlAyU1fSPjFOCj41V?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8247.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(52116014)(7416014)(1800799024)(10070799003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?L+Y5HPI/OVVecZdm7EDxkdW+ii20DKfx/b/DGJB2TosrowOFacuoAzFqcj2W?=
+ =?us-ascii?Q?2Sb4NIhmOxZ8C9MuSiPzT+2IrJfPP2hOjWIUoK/sXN4tiy9COITB5e1Pi8kL?=
+ =?us-ascii?Q?RGXX3NLgJ0iAli+wRuCBaHaWnvE6BxY2OoKQuc+W9uwkiNinpu9ui7fC/66Y?=
+ =?us-ascii?Q?XTZGqUcB6/n6RIy8KFQjOWYKIfcC0idAoS6BUJrjPYmtbECX/2sj82SnOwuu?=
+ =?us-ascii?Q?8O437tSJySo2LOe9gOCkn1LriCgMQ1SiPUgHzCs6/HpxVSEggilSDhxdTMx2?=
+ =?us-ascii?Q?4WSHohVBddRzmR3NA7ETnA6Bdu/FLfHwq867gN2al5gVTwlKepSfgP6N+4DY?=
+ =?us-ascii?Q?o8KsbkNqcZIwP9yO2gmYcqdJtgKlydlP8epAxBGe3rA94zRMC9pq+j0Ux7so?=
+ =?us-ascii?Q?q5lAeIxfhHD3t4ZnHIvWSSHKqBeS1B25Y/CA+NmLO50+7Gjpj4pp+E+lQv+u?=
+ =?us-ascii?Q?0rPsMChK0S6Xi3X1kq+4BDIirXiLfagdO0RUaIZR8mbm4TbRdoZZL/rGHEou?=
+ =?us-ascii?Q?SBzzdqTQkHnOV2l33k3Eyqhye3Dw61hTR83N+hGOtG2zWAgyddlkL5Gy0Ktx?=
+ =?us-ascii?Q?Gj9A6cCYl+nF9mCrF//iwuC88pyKrVmgXl0pcinYko9W39B22sCIBHWatvWS?=
+ =?us-ascii?Q?zD95NOEV6y5hhCCyvk7Cj6OgcSeggPtgL20FuAzQnXK6Xs4AFtltx4fMROVk?=
+ =?us-ascii?Q?2WVK8b5ua7Uip4Vn7MhMRxgrns2gmOdrVG9zsomTFVs49IenCTz2DLYKSy4t?=
+ =?us-ascii?Q?3y926BQQYi0rY9Rj1+kspKyFeJMRE+d1PN3Um8vdCkA7AZPpL89YTrooOkGx?=
+ =?us-ascii?Q?wfQgBmtER8vggr+Ma+NQ2pBHwciBa5B09rY9i0N3dNlj9c3SwmBwdK9f2sqm?=
+ =?us-ascii?Q?d4B26RsElPp5jltKGV8hiqQhFjl+wywPeUlSuPxqxqZy9h/z9pQF6zlTMhUl?=
+ =?us-ascii?Q?DGT0ITFknxXMjMDP/Oi6X2dtkFl7UOtjK4m+aWs+i1lha9EXpdt1d/ta9Ynk?=
+ =?us-ascii?Q?LYqDG2t+bQKSSQMJZkZVXPdbH9gw0J2SWSa3+JcDL0ygv5wa6ckFH5ahnIy1?=
+ =?us-ascii?Q?l8F7vXuxeTw+TkFX/DJ75Yu6TYpPPgVYBKIy57McRHMo/3VuxklxzcJg53ak?=
+ =?us-ascii?Q?cjLTmuQkawtJX6GKWmdbFszYogBCx5TAFcIwI1clbdhoDUGJSIVYquqvcuO7?=
+ =?us-ascii?Q?IDcL6Yxr28gRII/NKcPw2Ou1xPFW/MULnIi3gaBAvbypZylWROmqCg0ZS/++?=
+ =?us-ascii?Q?dDMfroLxWeIzsP2EniUGoIpetc/gPTAnxQ1FgDbtCQxSQRD7EY9dg1u+4G+B?=
+ =?us-ascii?Q?233orWWls7YfDOlbMUDxQTmK6zCremt82UDXqcBEkuCUnVwnpl2OcwF8nf/m?=
+ =?us-ascii?Q?d5G/R0qQHO7XajTWyqCXfklnRm5L58wJvn043Kp9ril/aStqkL8YghcryZ++?=
+ =?us-ascii?Q?qjQ1QOexNz3Zj3yf9mH76n3CVgAKKG8UiT5DdWqGJfBSveEElAzwEWeL136O?=
+ =?us-ascii?Q?xLbI4+8qGuGn2fFNKpXmd290pmOpvuj2bLT0WxLmEZisviQBQMsng5T8zhmz?=
+ =?us-ascii?Q?GE1Bz/FeR8p2fJbowfTdZO1mEvUe3zK0kkbw4xSG+eYVpd8FQ45/FSQ00xwv?=
+ =?us-ascii?Q?N81/lsBg9Gt4SC86p5YUgzkMP/IRRL+h+Tvtk06PFeDuMnTkusZxxKYsNxVm?=
+ =?us-ascii?Q?pA8hrg=3D=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 013b4ba8-6034-4b8f-3562-08dd4ffa5645
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8247.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Feb 2025 08:57:56.6158
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: UWGAHBNuwZao1Js+2jSc3aVOKn93ksCoSi+fvCFtSF8sU5SshpG3BjY8RAQ5TRRnpQ1HvaHAErUlBjQXy2krog==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS5PR04MB10057
 
-On Tue, Feb 18, 2025 at 6:01=E2=80=AFAM Koichiro Den <koichiro.den@canonica=
-l.com> wrote:
->
-> On Mon, Feb 17, 2025 at 06:29:27PM GMT, Bartosz Golaszewski wrote:
-> > On Mon, Feb 17, 2025 at 5:21=E2=80=AFPM Koichiro Den <koichiro.den@cano=
-nical.com> wrote:
-> > >
-> > > On Tue, Feb 18, 2025 at 01:12:17AM GMT, Koichiro Den wrote:
-> > > > On Mon, Feb 17, 2025 at 04:46:30PM GMT, Bartosz Golaszewski wrote:
-> > > > > On Mon, Feb 17, 2025 at 3:28=E2=80=AFPM Koichiro Den <koichiro.de=
-n@canonical.com> wrote:
-> > > > > >
-> > > > > > Both gpio-sim and gpio-virtuser share a mechanism to instantiat=
-e a
-> > > > > > platform device and wait synchronously for probe completion.
-> > > > > > With gpio-aggregator adopting the same approach in a later comm=
-it for
-> > > > > > its configfs interface, it's time to factor out the common code=
-.
-> > > > > >
-> > > > > > Add gpio-pseudo.[ch] to house helper functions used by all the =
-pseudo
-> > > > > > GPIO device implementations.
-> > > > > >
-> > > > > > No functional change.
-> > > > > >
-> > > > > > Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
-> > > > > > ---
-> > > > >
-> > > >
-> > > > Thanks for the review.
-> > > >
-> > > > > Looking at this patch now, I've realized that there is nothing
-> > > > > GPIO-specific here. It's a mechanism for synchronous platform dev=
-ice
-> > > > > probing. I don't think its place is in drivers/gpio/ if we're mak=
-ing
-> > > > > it a set of library functions. Can I suggest moving it to lib/ an=
-d
-> > > > > renaming the module as pdev_sync_probe or something else that's
-> > > > > expressive enough to tell users what it does? You can make me the
-> > > > > maintainer of that module if you wish (feel free to add yourself
-> > > > > too!).
-> > > >
-> > > > I had vaguely envisioned that this might eventually contain some
-> > > > GPIO-specific code for some reason, and also it's just a tiny utili=
-ty to
-> > > > reduce code duplication, which is why I placed it in the neighborho=
-od,
-> > > > drivers/gpio/. However, of course you=E2=80=99re right, there=E2=80=
-=99s nothing
-> > > > GPIO-specific here, so moving it to lib/ makes sense.
-> > > >
-> > > > I'm not really sure if this method for synchronous platform device =
-probing
-> > > > can be broadly accepted as a general solution, but I have no object=
-ions to
-> > > > making the change. I'll move it as you suggested and send v2, setti=
-ng you
-> > > > as its maintainer.
-> > >
-> > > Regarding this series, I feel that it might make discussions smoother=
- if
-> > > you submit it directly. So if you're okay with it, please go ahead. I=
-n
-> > > that case, there's even no need to mention me or CC me - I can track =
-it on
-> > > ML :)
-> >
-> > I'm not sure I'm following. Why would I submit it myself? You did most
-> > of the work already. If you want the changes to gpio-aggregator
-> > merged, then I think that it's time to refactor this code before we do
-> > that because repeating it three times is just bad programming. I
-> > probably wouldn't have done it otherwise at this point.
->
-> As I mentioned earlier, I'm not really sure if this particular usage of
-> platform devices will be generally acceptable. gpio-pseudo was intended
-> solely to reduce code duplication in methods already accepted by the GPIO
-> subsystem. Moving it to lib/ would shift the approach, effectively trying
-> to promote this method as a standard solution.
->
+This adds IMX8MP_AUDIOMIX_ prefix to internal macros
+in order to show that specific macros are related to
+audiomix.
 
-Promote it as a solution for this specific use-case - the need to
-probe "faux" platform devices synchonously.
+Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+---
+ drivers/reset/reset-imx8mp-audiomix.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-> For example, if for any reason drivers_autoprobe is set to 0 on the
-> platform bus, the synchronous mechanism might be blocked indefinitely.
-> Moreover, in the first place, I'm not sure whether employing the platform
-> bus in this way is appropriate.
->
+diff --git a/drivers/reset/reset-imx8mp-audiomix.c b/drivers/reset/reset-imx8mp-audiomix.c
+index 6e3f3069f727..1fe21980a66c 100644
+--- a/drivers/reset/reset-imx8mp-audiomix.c
++++ b/drivers/reset/reset-imx8mp-audiomix.c
+@@ -11,8 +11,8 @@
+ #include <linux/of_address.h>
+ #include <linux/reset-controller.h>
+ 
+-#define EARC			0x200
+-#define EARC_RESET_MASK		0x3
++#define IMX8MP_AUDIOMIX_EARC_OFFSET		0x200
++#define IMX8MP_AUDIOMIX_EARC_RESET_MASK		0x3
+ 
+ struct imx8mp_audiomix_reset {
+ 	struct reset_controller_dev rcdev;
+@@ -35,8 +35,8 @@ static int imx8mp_audiomix_reset_assert(struct reset_controller_dev *rcdev,
+ 
+ 	mask = BIT(id);
+ 	spin_lock_irqsave(&priv->lock, flags);
+-	reg = readl(reg_addr + EARC);
+-	writel(reg & ~mask, reg_addr + EARC);
++	reg = readl(reg_addr + IMX8MP_AUDIOMIX_EARC_OFFSET);
++	writel(reg & ~mask, reg_addr + IMX8MP_AUDIOMIX_EARC_OFFSET);
+ 	spin_unlock_irqrestore(&priv->lock, flags);
+ 
+ 	return 0;
+@@ -52,8 +52,8 @@ static int imx8mp_audiomix_reset_deassert(struct reset_controller_dev *rcdev,
+ 
+ 	mask = BIT(id);
+ 	spin_lock_irqsave(&priv->lock, flags);
+-	reg = readl(reg_addr + EARC);
+-	writel(reg | mask, reg_addr + EARC);
++	reg = readl(reg_addr + IMX8MP_AUDIOMIX_EARC_OFFSET);
++	writel(reg | mask, reg_addr + IMX8MP_AUDIOMIX_EARC_OFFSET);
+ 	spin_unlock_irqrestore(&priv->lock, flags);
+ 
+ 	return 0;
+@@ -78,7 +78,7 @@ static int imx8mp_audiomix_reset_probe(struct auxiliary_device *adev,
+ 	spin_lock_init(&priv->lock);
+ 
+ 	priv->rcdev.owner     = THIS_MODULE;
+-	priv->rcdev.nr_resets = fls(EARC_RESET_MASK);
++	priv->rcdev.nr_resets = fls(IMX8MP_AUDIOMIX_EARC_RESET_MASK);
+ 	priv->rcdev.ops       = &imx8mp_audiomix_reset_ops;
+ 	priv->rcdev.of_node   = dev->parent->of_node;
+ 	priv->rcdev.dev	      = dev;
+-- 
+2.25.1
 
-It's sketchy, I know. Back in the day I was advised by Greg to use the
-auxiliary bus but I realized very fast that if I want to support
-device-tree too, then I would end up reimplementing all the code that
-already exists for supporting the platform bus. He eventually agreed
-that it's better to use the platform bus. We had the same issue with
-PCI pwrctrl recently and also ended up using the platform bus.
-
-> For drivers like gpio-virtuser, which we can define virtual GPIO consumer=
-s
-> via DT, or for gpio-aggregator, which we can use as a generic GPIO driver=
-,
-> the expectation is to use the platform bus/device mechanism as usual. In
-> those cases, adding a synchronous mechanism via the platform bus notifier
-> to piggyback on the existing platform bus probe implementation is
-> understandable and obviously has already been accepted in the GPIO
-> subsystem. However, moving just the synchronous mechanism into lib/ can
-> potentially be perceived as an abuse of the platform device concept?
-
-That's actually a good point. I guess this code could be reworked to
-work with any bus (that would be specified by the user).
-
->
-> Incidentally, Greg K-H=E2=80=99s faux bus work was recently merged into m=
-ainline:
-> commit 35fa2d88ca94 ("driver core: add a faux bus for use when a simple
-> device/bus is needed").
->
-
-Thanks for bringing this to my attention, I wasn't aware this existed.
-However it's not useful here - I still want to support OF.
-
-> Correct me where I'm wrong. And I'd appreciate if you could share your
-> thoughts.
->
-
-I don't want to block the aggregator work but I also don't want to
-have code triplication under drivers/gpio/. Let's do the following: I
-don't like the sound of the word "gpio-pseudo" in this context. Let's
-keep it under drivers/gpio/ but rename the module already to
-"dev-sync-probe.c" and use the
-dev_sync_probe_init/register/unregister/data naming scheme. Stick to
-supporting platform devices exclusively for now. I don't have the time
-just yet but maybe in the next release cycle, I'll try to make it more
-generic (work for all device types) and move it out of drivers/gpio/.
-How does it sound?
-
-Bartosz
-
-> Koichiro
->
-> >
-> > The code looks good other than that, just put it under lib/, rename
-> > functions to pdev_sync_probe_init/register/unregister() and send it to
-> > the list as usual. With that it's good to go. Just make sure to
-> > mention to Andrew Morton the need for this to go through the GPIO
-> > tree, I don't think he'll mind.
-> >
-> > Bart
 
