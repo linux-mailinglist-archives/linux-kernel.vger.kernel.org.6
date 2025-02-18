@@ -1,159 +1,136 @@
-Return-Path: <linux-kernel+bounces-519619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D937BA39F9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:29:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D50AAA39F89
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:29:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1C6F1896A5D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:28:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9ACA3188E10E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:28:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8E7E26AA87;
-	Tue, 18 Feb 2025 14:27:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 221A926B95F;
+	Tue, 18 Feb 2025 14:27:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hRq1BfKI"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DHSy1I3B"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9972226A0DA;
-	Tue, 18 Feb 2025 14:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFE6226A1C7
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 14:26:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739888840; cv=none; b=YYQpFURAr7kV4QK6y0YhidrIBuveawfmkMHNP0f82q1mNFZUmaZZ/Ct4oKHN9M2mS+ONk+ifpgGcY7U/GpxMNCEeJIfuSPc+QPD1LlkpYpgB3p2JZ509+DdhsU4eBW/JlLzuJ12541FAm0+LYDS3tAPyvY4QsNXe6Lv3RaLdjpQ=
+	t=1739888820; cv=none; b=rqjSpLm3FM9DGTgOyS2c2MCQvw48xq67zIM320Ng0Xh0uhZNPabCpfNfJmo7Bq6cebfVOPAA41Jb3CR4fZhBwn5a3XW9g6+74SLIO1qpAgd224wHxlOoRleXZ8ozwJp06S8pTi44p2LFuc+PVfbSHuGpepAi1FcNfDWJ0iS7H50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739888840; c=relaxed/simple;
-	bh=QH903NIb9GJyvYyKPIRRFqRFCxhLcmgmnr5XXY1E+CY=;
-	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=rbDemHJdFmFTcs2QxAPr4HJbNIf52iM4zMruvmhGtYdp0mH1GBv+bl/I0Ui3W876ZkANoKSH1BI9xTj7zeQfJqFOIE8GdQHAvFVV9cZ+XZLVQMqsb+hMDUyu/pGG3fyay0uVVFlR6cBlSym3kYmg2qqp9IP9f7xYqWGxVOpkz1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hRq1BfKI; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51IAmPmW020884;
-	Tue, 18 Feb 2025 14:27:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=9iwfL+tR5+6OVjLiIJa571
-	ZpVFtFKi21lmL2m7+nQz0=; b=hRq1BfKIBzarL8E3t4zsaSaBsLbWg0p0rrHbce
-	vcubzs4rPrh1MiDWKJa4856Gq73/0W669++cF+Xs751vZq8zq40c3TvCNtxQ0MVx
-	XmieVMPtA3+cgr0zAP2Kc9TBPHyeySdUl+2sGY1ASiHSxzgwtzH/brJeP4l2xw/J
-	BdO8LBqxq34DZuOyyRPK1e1Wbwvjv60ZugrrKVvJivyUjpLz8x7jIDZyOzMZPv5H
-	xSEwn437/GdGCytR2zqQ28wMz5qtIukCf8PUAhHCTXLbalLOe6kdIEnJxHWgz6tW
-	Lw8O6H/KG8rN2iZegMH2+GW1IsrvmwDbyxoTvT9uAvYY61yw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44ut7sw530-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Feb 2025 14:27:14 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51IERD4Y012465
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Feb 2025 14:27:13 GMT
-Received: from [10.213.98.28] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 18 Feb
- 2025 06:27:09 -0800
-From: Jagadeesh Kona <quic_jkona@quicinc.com>
-Subject: [PATCH 0/5] clk: qcom: Add support to attach multiple power
- domains in cc probe
-Date: Tue, 18 Feb 2025 19:56:45 +0530
-Message-ID: <20250218-videocc-pll-multi-pd-voting-v1-0-cfe6289ea29b@quicinc.com>
+	s=arc-20240116; t=1739888820; c=relaxed/simple;
+	bh=fAs3dRD0u6BFc+urwpqRLW7N8APiGaj+bD3c4M7v0yQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sI6THg3MFycEg1feVZup/hLe4tXQQ0eObp3iBF8E2IBMAZnARPjiK5C/h1q3Fy+Dhlqcf9tnKEXVnFxEy/WPDdm+eb/zYm6SRCIpiD+2eJ1eO4O1ZZlJ63t3zUuv81jEmo00sxm/DVAaLAqCnjlnMntswM5wuD7f9L8sza6vACY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DHSy1I3B; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739888816;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=b9YdB2lf/xAULty1c3rpqiX1ztJ6KQXsmrrMcR64c6s=;
+	b=DHSy1I3Bj5mFh3WY/cPpfT37ZXxN1Q0SO9/cdmYv5U38ICbjZlvDaVlDcIT9RXVQU6aa8Y
+	PQ4VwGL09/GvkF7GSyOvqGra3VoQFrE+9eB2NqQMcpgM/J9DdSFKxLvJG0tqc2zOAVPg/t
+	6M+8fp3X8E7rgjoTM2psvIoe7CIcHIQ=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-141-ONeTPkMZNVmZOCsw6QROjg-1; Tue,
+ 18 Feb 2025 09:26:51 -0500
+X-MC-Unique: ONeTPkMZNVmZOCsw6QROjg-1
+X-Mimecast-MFC-AGG-ID: ONeTPkMZNVmZOCsw6QROjg_1739888810
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A79C219030AC;
+	Tue, 18 Feb 2025 14:26:49 +0000 (UTC)
+Received: from [10.22.65.116] (unknown [10.22.65.116])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7AA5F19560A3;
+	Tue, 18 Feb 2025 14:26:47 +0000 (UTC)
+Message-ID: <b37a4f6c-95a9-430d-89f9-141b72fd6be8@redhat.com>
+Date: Tue, 18 Feb 2025 09:26:46 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] nvme: remove multipath module parameter
+To: Bryan Gurney <bgurney@redhat.com>, linux-kernel@vger.kernel.org,
+ linux-nvme@lists.infradead.org, kbusch@kernel.org, hch@lst.de,
+ sagi@grimberg.me, axboe@kernel.dk
+Cc: bmarzins@redhat.com
+References: <20250204211158.43126-1-bgurney@redhat.com>
+Content-Language: en-US
+From: John Meneghini <jmeneghi@redhat.com>
+Organization: RHEL Core Storge Team
+In-Reply-To: <20250204211158.43126-1-bgurney@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAKWYtGcC/x3MQQqDMBAAwK/InruQBKu2XykeJLvqQkxCEkNB/
- HtDj3OZCzIn4Qzv7oLEVbIE36AfHdh98RujUDMYZZ7K6AmrEAdrMTqHx+mKYCSsoYjfkAbdk+W
- XVjxCG2LiVb7//TPf9w/GonXMbQAAAA==
-X-Change-ID: 20250218-videocc-pll-multi-pd-voting-d614dce910e7
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-CC: Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        "Satya Priya
- Kakitapalli" <quic_skakitap@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: DyjMi4cZoWxtEdqa8PrD4YZOxeKRWxC1
-X-Proofpoint-ORIG-GUID: DyjMi4cZoWxtEdqa8PrD4YZOxeKRWxC1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-18_07,2025-02-18_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 mlxlogscore=975 phishscore=0 spamscore=0 clxscore=1011
- mlxscore=0 suspectscore=0 adultscore=0 priorityscore=1501 bulkscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502180108
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-During boot-up, the PLL configuration might be missed even after
-calling pll_configure() from the clock controller probe. This can
-happen because the PLL is connected to one or more rails that
-are turned off, and the current clock controller code cannot
-enable multiple rails during probe. Consequently, the PLL may
-be activated with suboptimal settings, causing functional issues.
+Bryan, since we are re-spinning this patch please make the changes below.
 
-The support to attach multiple power domains to clock controllers
-was recently added in Bryan's series[1] but it currently doesn't
-enable all clock controller power domains during probe which are
-needed for PLL configuration.
+On 2/4/25 4:11 PM, Bryan Gurney wrote:
+> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+> index 2bcd9f710cb6..b07cd482fbc1 100644
+> --- a/drivers/nvme/host/core.c
+> +++ b/drivers/nvme/host/core.c
+> @@ -3809,14 +3809,6 @@ static int nvme_init_ns_head(struct nvme_ns *ns, struct nvme_ns_info *info)
+>   					info->nsid);
+>   			goto out_put_ns_head;
+>   		}
+> -
+> -		if (!multipath) {
+> -			dev_warn(ctrl->device,
+> -				"Found shared namespace %d, but multipathing not supported.\n",
+> -				info->nsid);
+> -			dev_warn_once(ctrl->device,
+> -				"Support for shared namespaces without CONFIG_NVME_MULTIPATH is deprecated and will be removed in Linux 6.0.\n");
+> -		}
 
-This series adds required support to enable the multiple power
-domains during clock controllers probe and adds support to enable
-both MMCX & MXC rails during probe for videocc on SM8450, SM8475,
-SM8550 and SM8650 platforms to configure the video PLLs properly.
+I think we want to keep a similar warning like the above, only move it down below.
 
-This fixes the below warning reported in SM8550 venus testing due
-to video_cc_pll0 not properly getting configured during videocc probe
+Let's wait for Sagi's approval of the exact message.
 
-[   46.535132] Lucid PLL latch failed. Output may be unstable!
+>   	}
+>   
+>   	list_add_tail_rcu(&ns->siblings, &head->list);
+> @@ -3915,12 +3907,14 @@ static void nvme_alloc_ns(struct nvme_ctrl *ctrl, struct nvme_ns_info *info)
+>   		sprintf(disk->disk_name, "nvme%dc%dn%d", ctrl->subsys->instance,
+>   			ctrl->instance, ns->head->instance);
+>   		disk->flags |= GENHD_FL_HIDDEN;
+> -	} else if (multipath) {
+> +	} else {
+> +#ifdef CONFIG_NVME_MULTIPATH
+>   		sprintf(disk->disk_name, "nvme%dn%d", ctrl->subsys->instance,
+>   			ns->head->instance);
+> -	} else {
+ > +#else
 
-[1]: https://lore.kernel.org/all/20250117-b4-linux-next-24-11-18-clock-multiple-power-domains-v10-0-13f2bb656dad@linaro.org/ 
+You don't need the this #ifdef conditional statement because the nvme_ns_head_multipath() function checks CONFIG_NVME_MULTIPATH
+for you and the sprintf(disk->disk_name, "nvme%dn%d" statement is kind of redundant.
 
-Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
----
-Jagadeesh Kona (4):
-      dt-bindings: clock: qcom,sm8450-videocc: Add MXC power domain
-      clk: qcom: common: Attach clock power domains conditionally
-      clk: qcom: videocc: Add support to attach multiple power domains
-      arm64: dts: qcom: Add MXC power domain to videocc nodes
 
-Taniya Das (1):
-      clk: qcom: common: Add support to attach multiple power domains
+>   		sprintf(disk->disk_name, "nvme%dn%d", ctrl->instance,
+>   			ns->head->instance);
+> +#endif
+>   	}
+>   
+>   	if (nvme_update_ns_info(ns, info))
 
- .../bindings/clock/qcom,sm8450-videocc.yaml         |  9 ++++++---
- arch/arm64/boot/dts/qcom/sm8450.dtsi                |  3 ++-
- arch/arm64/boot/dts/qcom/sm8550.dtsi                |  3 ++-
- arch/arm64/boot/dts/qcom/sm8650.dtsi                |  3 ++-
- drivers/clk/qcom/common.c                           | 21 ++++++++++++++++++---
- drivers/clk/qcom/common.h                           |  2 ++
- drivers/clk/qcom/videocc-sm8450.c                   |  4 ++++
- drivers/clk/qcom/videocc-sm8550.c                   |  4 ++++
- 8 files changed, 40 insertions(+), 9 deletions(-)
----
-base-commit: e5d3fd687aac5eceb1721fa92b9f49afcf4c3717
-change-id: 20250218-videocc-pll-multi-pd-voting-d614dce910e7
+Thanks,
 
-Best regards,
--- 
-Jagadeesh Kona <quic_jkona@quicinc.com>
+/John
 
 
