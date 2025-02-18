@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-519687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B33AAA3A0B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:01:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FF37A3A0B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:02:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A7003A7440
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:00:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37D171723D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:00:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3352D26D5B2;
-	Tue, 18 Feb 2025 14:59:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5889926D5C8;
+	Tue, 18 Feb 2025 14:59:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JBEQlNGl"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eghRKEYZ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3B1326BD92
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 14:59:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01DB426AA96
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 14:59:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739890774; cv=none; b=gSBNkyiEYQdEJj3GCux95N46vuBCqjQh616UMZljF4Ziwz4CGqiDu+IQHhuFIxB18lem8zDhuTP/LIS54rbOG5+UdQVy1ckTq3/6ElLuxRUFnGhlM0A2A1FHqggLHvQwefvk6iJbNURw+DQFZphEOpCnsDiq23nJNi7ZtEFm/Zo=
+	t=1739890775; cv=none; b=pA9T/rsPGoCc+lVJv76ihXZF/d7lCrYb2yrVVjeOSJvAFdAJRvlaIjKlC/xOMQrxArXKWo8JLwScmg63k+U1kLVGOX0wC0bmLNmB1YJXXWdvDdzqCa1mDDnKIMiq3j80KJ/IGsmO/4mLDnT1w9qBcbKpPSeklvJrfS4WwBhMWFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739890774; c=relaxed/simple;
-	bh=8maZ8ngfpRwK9OX04kzRSRNwfNn0i2geSTo2U3OMBl4=;
+	s=arc-20240116; t=1739890775; c=relaxed/simple;
+	bh=7uNRLTQ3uWkRnThODNQ0fc1z3GnmXe9tVNeGNklUfmg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sMgE2Rgrrnz2/hEWsAueb8/iU7hXrcSrOGIWRg1SifzB6FOV/3X2/Waax8RE6pd0hWdlQP+F3BF8kbzzyY3sKOGM4tVjMatvnS46QsQbONcy1v70YxLmne/Cq57VPZbaMi4hHT8bTaZCNVrqkLTGYjD1WN0pfBfCM5Sw7g7Pyeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JBEQlNGl; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=OrTZmz6Kj5ckyUGdebpXKQjKdz55o4BNKL0KIJUgiCrIh3sJhI+VA2/HpycL5b1VvupPs3e/4/5HOdZU+ydqC4uha78KjfahSfF4Uqin/VR9flLC1IVV0dtWpaT/9Y35o7A3pPfWo3QcXjTW4v8vQsBqSPTMwOTm/LzLaUoKrlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eghRKEYZ; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739890771;
+	s=mimecast20190719; t=1739890772;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=n810GFXYQhwEoh4Yo+l+JzkxPLVdP78/c81nrCjM8sA=;
-	b=JBEQlNGljIxhd22XyZhWO6VWMO9IRGkoY5HYLS3RC7wNmmAUy7wn9kyMmt0uvxKQbvzY1B
-	KpQgY+8QieV8LyxNk/69lnJxZXwq5PYI1FfMsgdAL+PBboX2tB7k7kSgKOeJMZ5PFB3+80
-	AjEo7Xohdzpe0p8xuJnoOo8Cfy5ha6c=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+	bh=/J80FVqXNQwlCdEIWRRbi6goB9rCCrTSPaR3g2A4nBM=;
+	b=eghRKEYZmy3FltZ4HUlG18CQwc1B26mQbN+BYEqSquf96SOnnRe7Unfu0y3251fzQh/41T
+	uOaanjZKWZp+75i+CaA+YViEI8E7i9ls8Tjo07R5ZG4g9WRM2wpJa8Apgn98G/yhLSgfJO
+	4YJ9DadsZqQyqs2GMzyxqB5+snD13Pw=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-617-VAh_CnwqNcmb3J8pFKgasg-1; Tue,
- 18 Feb 2025 09:59:28 -0500
-X-MC-Unique: VAh_CnwqNcmb3J8pFKgasg-1
-X-Mimecast-MFC-AGG-ID: VAh_CnwqNcmb3J8pFKgasg_1739890767
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-494-szaUpkO-OV-lW4cdmk3lIg-1; Tue,
+ 18 Feb 2025 09:59:31 -0500
+X-MC-Unique: szaUpkO-OV-lW4cdmk3lIg-1
+X-Mimecast-MFC-AGG-ID: szaUpkO-OV-lW4cdmk3lIg_1739890770
 Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 90EEC1800984;
-	Tue, 18 Feb 2025 14:59:27 +0000 (UTC)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6AB171800872;
+	Tue, 18 Feb 2025 14:59:30 +0000 (UTC)
 Received: from fedora.brq.redhat.com (unknown [10.43.17.52])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D3DC11800366;
-	Tue, 18 Feb 2025 14:59:24 +0000 (UTC)
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 25CD11800357;
+	Tue, 18 Feb 2025 14:59:27 +0000 (UTC)
 From: Tomas Glozar <tglozar@redhat.com>
 To: Steven Rostedt <rostedt@goodmis.org>
 Cc: linux-trace-kernel@vger.kernel.org,
@@ -65,9 +65,9 @@ Cc: linux-trace-kernel@vger.kernel.org,
 	Gabriele Monaco <gmonaco@redhat.com>,
 	Clark Williams <williams@redhat.com>,
 	Tomas Glozar <tglozar@redhat.com>
-Subject: [PATCH 5/8] rtla/timerlat_hist: Use BPF to collect samples
-Date: Tue, 18 Feb 2025 15:58:56 +0100
-Message-ID: <20250218145859.27762-6-tglozar@redhat.com>
+Subject: [PATCH 6/8] rtla/timerlat_top: Move divisor to update
+Date: Tue, 18 Feb 2025 15:58:57 +0100
+Message-ID: <20250218145859.27762-7-tglozar@redhat.com>
 In-Reply-To: <20250218145859.27762-1-tglozar@redhat.com>
 References: <20250218145859.27762-1-tglozar@redhat.com>
 Precedence: bulk
@@ -79,243 +79,148 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Collect samples using BPF program instead of pulling them from tracefs.
+Unlike timerlat-hist, timerlat-top applies the output divisor used to
+set ns/us mode when printing results instead of applying it when
+collecting the samples.
 
-If the osnoise:timerlat_sample tracepoint is unavailable or the BPF
-program fails to load for whatever reason, rtla falls back to the old
-implementation.
-
-The collection of samples using the BPF program is fully self-contained
-and requires no activity of the userspace part of rtla during the
-measurement. Thus, instead of waking up every second to collect samples,
-rtla simply sleeps until woken up by a signal or threshold overflow.
+Move the application of the divisor from timerlat_top_print into
+timerlat_top_update to make it consistent with timerlat-hist.
 
 Signed-off-by: Tomas Glozar <tglozar@redhat.com>
 ---
- tools/tracing/rtla/src/timerlat_hist.c | 167 +++++++++++++++++++++----
- 1 file changed, 146 insertions(+), 21 deletions(-)
+ tools/tracing/rtla/src/timerlat_top.c | 54 +++++++++++++--------------
+ 1 file changed, 25 insertions(+), 29 deletions(-)
 
-diff --git a/tools/tracing/rtla/src/timerlat_hist.c b/tools/tracing/rtla/src/timerlat_hist.c
-index fe683a20b0e2..202d99a598ba 100644
---- a/tools/tracing/rtla/src/timerlat_hist.c
-+++ b/tools/tracing/rtla/src/timerlat_hist.c
-@@ -17,6 +17,7 @@
- #include "timerlat.h"
- #include "timerlat_aa.h"
- #include "timerlat_u.h"
-+#include "timerlat_bpf.h"
+diff --git a/tools/tracing/rtla/src/timerlat_top.c b/tools/tracing/rtla/src/timerlat_top.c
+index 97eead91decc..a3d9e8f67a4f 100644
+--- a/tools/tracing/rtla/src/timerlat_top.c
++++ b/tools/tracing/rtla/src/timerlat_top.c
+@@ -127,9 +127,13 @@ timerlat_top_update(struct osnoise_tool *tool, int cpu,
+ 		    unsigned long long thread,
+ 		    unsigned long long latency)
+ {
++	struct timerlat_params *params = tool->params;
+ 	struct timerlat_top_data *data = tool->data;
+ 	struct timerlat_top_cpu *cpu_data = &data->cpu_data[cpu];
  
- struct timerlat_hist_cpu {
- 	int			*irq;
-@@ -193,6 +194,89 @@ timerlat_hist_handler(struct trace_seq *s, struct tep_record *record,
- 	return 0;
- }
++	if (params->output_divisor)
++		latency = latency / params->output_divisor;
++
+ 	if (!thread) {
+ 		cpu_data->irq_count++;
+ 		cpu_data->cur_irq = latency;
+@@ -231,12 +235,8 @@ static void timerlat_top_print(struct osnoise_tool *top, int cpu)
+ 	struct timerlat_params *params = top->params;
+ 	struct timerlat_top_data *data = top->data;
+ 	struct timerlat_top_cpu *cpu_data = &data->cpu_data[cpu];
+-	int divisor = params->output_divisor;
+ 	struct trace_seq *s = top->trace.seq;
  
-+/*
-+ * timerlat_hist_bpf_pull_data - copy data from BPF maps into userspace
-+ */
-+static int timerlat_hist_bpf_pull_data(struct osnoise_tool *tool)
-+{
-+	struct timerlat_hist_data *data = tool->data;
-+	int i, j, err;
-+	long long value_irq[data->nr_cpus],
-+		  value_thread[data->nr_cpus],
-+		  value_user[data->nr_cpus];
-+
-+	/* Pull histogram */
-+	for (i = 0; i < data->entries; i++) {
-+		err = timerlat_bpf_get_hist_value(i, value_irq, value_thread,
-+						  value_user, data->nr_cpus);
-+		if (err)
-+			return err;
-+		for (j = 0; j < data->nr_cpus; j++) {
-+			data->hist[j].irq[i] = value_irq[j];
-+			data->hist[j].thread[i] = value_thread[j];
-+			data->hist[j].user[i] = value_user[j];
-+		}
-+	}
-+
-+	/* Pull summary */
-+	err = timerlat_bpf_get_summary_value(SUMMARY_COUNT,
-+					     value_irq, value_thread, value_user,
-+					     data->nr_cpus);
-+	if (err)
-+		return err;
-+	for (i = 0; i < data->nr_cpus; i++) {
-+		data->hist[i].irq_count = value_irq[i];
-+		data->hist[i].thread_count = value_thread[i];
-+		data->hist[i].user_count = value_user[i];
-+	}
-+
-+	err = timerlat_bpf_get_summary_value(SUMMARY_MIN,
-+					     value_irq, value_thread, value_user,
-+					     data->nr_cpus);
-+	if (err)
-+		return err;
-+	for (i = 0; i < data->nr_cpus; i++) {
-+		data->hist[i].min_irq = value_irq[i];
-+		data->hist[i].min_thread = value_thread[i];
-+		data->hist[i].min_user = value_user[i];
-+	}
-+
-+	err = timerlat_bpf_get_summary_value(SUMMARY_MAX,
-+					     value_irq, value_thread, value_user,
-+					     data->nr_cpus);
-+	if (err)
-+		return err;
-+	for (i = 0; i < data->nr_cpus; i++) {
-+		data->hist[i].max_irq = value_irq[i];
-+		data->hist[i].max_thread = value_thread[i];
-+		data->hist[i].max_user = value_user[i];
-+	}
-+
-+	err = timerlat_bpf_get_summary_value(SUMMARY_SUM,
-+					     value_irq, value_thread, value_user,
-+					     data->nr_cpus);
-+	if (err)
-+		return err;
-+	for (i = 0; i < data->nr_cpus; i++) {
-+		data->hist[i].sum_irq = value_irq[i];
-+		data->hist[i].sum_thread = value_thread[i];
-+		data->hist[i].sum_user = value_user[i];
-+	}
-+
-+	err = timerlat_bpf_get_summary_value(SUMMARY_OVERFLOW,
-+					     value_irq, value_thread, value_user,
-+					     data->nr_cpus);
-+	if (err)
-+		return err;
-+	for (i = 0; i < data->nr_cpus; i++) {
-+		data->hist[i].irq[data->entries] = value_irq[i];
-+		data->hist[i].thread[data->entries] = value_thread[i];
-+		data->hist[i].user[data->entries] = value_user[i];
-+	}
-+
-+	return 0;
-+}
-+
- /*
-  * timerlat_hist_header - print the header of the tracer to the output
-  */
-@@ -1152,6 +1236,7 @@ int timerlat_hist_main(int argc, char *argv[])
- 	pthread_t timerlat_u;
- 	int retval;
- 	int nr_cpus, i;
-+	bool no_bpf = false;
- 
- 	params = timerlat_hist_parse_args(argc, argv);
- 	if (!params)
-@@ -1177,6 +1262,24 @@ int timerlat_hist_main(int argc, char *argv[])
+-	if (divisor == 0)
+-		return;
+-
+ 	/*
+ 	 * Skip if no data is available: is this cpu offline?
  	 */
- 	hist_inst = trace;
- 
-+	if (getenv("RTLA_NO_BPF") && strncmp(getenv("RTLA_NO_BPF"), "1", 2) == 0) {
-+		debug_msg("RTLA_NO_BPF set, disabling BPF\n");
-+		no_bpf = true;
-+	}
-+
-+	if (!no_bpf && !tep_find_event_by_name(trace->tep, "osnoise", "timerlat_sample")) {
-+		debug_msg("osnoise:timerlat_sample missing, disabling BPF\n");
-+		no_bpf = true;
-+	}
-+
-+	if (!no_bpf) {
-+		retval = timerlat_bpf_init(params);
-+		if (retval) {
-+			debug_msg("Could not enable BPF\n");
-+			no_bpf = true;
-+		}
-+	}
-+
- 	retval = enable_timerlat(trace);
- 	if (retval) {
- 		err_msg("Failed to enable timerlat tracer\n");
-@@ -1304,35 +1407,55 @@ int timerlat_hist_main(int argc, char *argv[])
- 		trace_instance_start(&record->trace);
- 	if (!params->no_aa)
- 		trace_instance_start(&aa->trace);
--	trace_instance_start(trace);
-+	if (no_bpf) {
-+		trace_instance_start(trace);
-+	} else {
-+		retval = timerlat_bpf_attach();
-+		if (retval) {
-+			err_msg("Error attaching BPF program\n");
-+			goto out_hist;
-+		}
-+	}
- 
- 	tool->start_time = time(NULL);
- 	timerlat_hist_set_signals(params);
- 
--	while (!stop_tracing) {
--		sleep(params->sleep_time);
--
--		retval = tracefs_iterate_raw_events(trace->tep,
--						    trace->inst,
--						    NULL,
--						    0,
--						    collect_registered_events,
--						    trace);
--		if (retval < 0) {
--			err_msg("Error iterating on events\n");
--			goto out_hist;
--		}
--
--		if (osnoise_trace_is_off(tool, record))
--			break;
-+	if (no_bpf) {
-+		while (!stop_tracing) {
-+			sleep(params->sleep_time);
-+
-+			retval = tracefs_iterate_raw_events(trace->tep,
-+							    trace->inst,
-+							    NULL,
-+							    0,
-+							    collect_registered_events,
-+							    trace);
-+			if (retval < 0) {
-+				err_msg("Error iterating on events\n");
-+				goto out_hist;
-+			}
- 
--		/* is there still any user-threads ? */
--		if (params->user_workload) {
--			if (params_u.stopped_running) {
--				debug_msg("timerlat user-space threads stopped!\n");
-+			if (osnoise_trace_is_off(tool, record))
- 				break;
-+
-+			/* is there still any user-threads ? */
-+			if (params->user_workload) {
-+				if (params_u.stopped_running) {
-+					debug_msg("timerlat user-space threads stopped!\n");
-+					break;
-+				}
- 			}
- 		}
-+	} else
-+		timerlat_bpf_wait(-1);
-+
-+	if (!no_bpf) {
-+		timerlat_bpf_detach();
-+		retval = timerlat_hist_bpf_pull_data(tool);
-+		if (retval) {
-+			err_msg("Error pulling BPF data\n");
-+			goto out_hist;
-+		}
+@@ -251,20 +251,20 @@ static void timerlat_top_print(struct osnoise_tool *top, int cpu)
+ 	if (!cpu_data->irq_count) {
+ 		trace_seq_printf(s, "%s %s %s %s |", no_value, no_value, no_value, no_value);
+ 	} else {
+-		trace_seq_printf(s, "%9llu ", cpu_data->cur_irq / params->output_divisor);
+-		trace_seq_printf(s, "%9llu ", cpu_data->min_irq / params->output_divisor);
+-		trace_seq_printf(s, "%9llu ", (cpu_data->sum_irq / cpu_data->irq_count) / divisor);
+-		trace_seq_printf(s, "%9llu |", cpu_data->max_irq / divisor);
++		trace_seq_printf(s, "%9llu ", cpu_data->cur_irq);
++		trace_seq_printf(s, "%9llu ", cpu_data->min_irq);
++		trace_seq_printf(s, "%9llu ", cpu_data->sum_irq / cpu_data->irq_count);
++		trace_seq_printf(s, "%9llu |", cpu_data->max_irq);
  	}
  
- 	if (params->user_workload && !params_u.stopped_running) {
-@@ -1376,6 +1499,8 @@ int timerlat_hist_main(int argc, char *argv[])
- 	osnoise_destroy_tool(tool);
- 	free(params);
- 	free_cpu_idle_disable_states();
-+	if (!no_bpf)
-+		timerlat_bpf_destroy();
- out_exit:
- 	exit(return_value);
+ 	if (!cpu_data->thread_count) {
+ 		trace_seq_printf(s, "%s %s %s %s", no_value, no_value, no_value, no_value);
+ 	} else {
+-		trace_seq_printf(s, "%9llu ", cpu_data->cur_thread / divisor);
+-		trace_seq_printf(s, "%9llu ", cpu_data->min_thread / divisor);
++		trace_seq_printf(s, "%9llu ", cpu_data->cur_thread);
++		trace_seq_printf(s, "%9llu ", cpu_data->min_thread);
+ 		trace_seq_printf(s, "%9llu ",
+-				(cpu_data->sum_thread / cpu_data->thread_count) / divisor);
+-		trace_seq_printf(s, "%9llu", cpu_data->max_thread / divisor);
++				cpu_data->sum_thread / cpu_data->thread_count);
++		trace_seq_printf(s, "%9llu", cpu_data->max_thread);
+ 	}
+ 
+ 	if (!params->user_top) {
+@@ -277,11 +277,11 @@ static void timerlat_top_print(struct osnoise_tool *top, int cpu)
+ 	if (!cpu_data->user_count) {
+ 		trace_seq_printf(s, "%s %s %s %s\n", no_value, no_value, no_value, no_value);
+ 	} else {
+-		trace_seq_printf(s, "%9llu ", cpu_data->cur_user / divisor);
+-		trace_seq_printf(s, "%9llu ", cpu_data->min_user / divisor);
++		trace_seq_printf(s, "%9llu ", cpu_data->cur_user);
++		trace_seq_printf(s, "%9llu ", cpu_data->min_user);
+ 		trace_seq_printf(s, "%9llu ",
+-				(cpu_data->sum_user / cpu_data->user_count) / divisor);
+-		trace_seq_printf(s, "%9llu\n", cpu_data->max_user / divisor);
++				cpu_data->sum_user / cpu_data->user_count);
++		trace_seq_printf(s, "%9llu\n", cpu_data->max_user);
+ 	}
  }
+ 
+@@ -294,13 +294,9 @@ timerlat_top_print_sum(struct osnoise_tool *top, struct timerlat_top_cpu *summar
+ 	const char *split = "----------------------------------------";
+ 	struct timerlat_params *params = top->params;
+ 	unsigned long long count = summary->irq_count;
+-	int divisor = params->output_divisor;
+ 	struct trace_seq *s = top->trace.seq;
+ 	int e = 0;
+ 
+-	if (divisor == 0)
+-		return;
+-
+ 	/*
+ 	 * Skip if no data is available: is this cpu offline?
+ 	 */
+@@ -323,19 +319,19 @@ timerlat_top_print_sum(struct osnoise_tool *top, struct timerlat_top_cpu *summar
+ 		trace_seq_printf(s, "          %s %s %s |", no_value, no_value, no_value);
+ 	} else {
+ 		trace_seq_printf(s, "          ");
+-		trace_seq_printf(s, "%9llu ", summary->min_irq / params->output_divisor);
+-		trace_seq_printf(s, "%9llu ", (summary->sum_irq / summary->irq_count) / divisor);
+-		trace_seq_printf(s, "%9llu |", summary->max_irq / divisor);
++		trace_seq_printf(s, "%9llu ", summary->min_irq);
++		trace_seq_printf(s, "%9llu ", summary->sum_irq / summary->irq_count);
++		trace_seq_printf(s, "%9llu |", summary->max_irq);
+ 	}
+ 
+ 	if (!summary->thread_count) {
+ 		trace_seq_printf(s, "%s %s %s %s", no_value, no_value, no_value, no_value);
+ 	} else {
+ 		trace_seq_printf(s, "          ");
+-		trace_seq_printf(s, "%9llu ", summary->min_thread / divisor);
++		trace_seq_printf(s, "%9llu ", summary->min_thread);
+ 		trace_seq_printf(s, "%9llu ",
+-				(summary->sum_thread / summary->thread_count) / divisor);
+-		trace_seq_printf(s, "%9llu", summary->max_thread / divisor);
++				summary->sum_thread / summary->thread_count);
++		trace_seq_printf(s, "%9llu", summary->max_thread);
+ 	}
+ 
+ 	if (!params->user_top) {
+@@ -349,10 +345,10 @@ timerlat_top_print_sum(struct osnoise_tool *top, struct timerlat_top_cpu *summar
+ 		trace_seq_printf(s, "          %s %s %s |", no_value, no_value, no_value);
+ 	} else {
+ 		trace_seq_printf(s, "          ");
+-		trace_seq_printf(s, "%9llu ", summary->min_user / divisor);
++		trace_seq_printf(s, "%9llu ", summary->min_user);
+ 		trace_seq_printf(s, "%9llu ",
+-				(summary->sum_user / summary->user_count) / divisor);
+-		trace_seq_printf(s, "%9llu\n", summary->max_user / divisor);
++				summary->sum_user / summary->user_count);
++		trace_seq_printf(s, "%9llu\n", summary->max_user);
+ 	}
+ }
+ 
 -- 
 2.48.1
 
