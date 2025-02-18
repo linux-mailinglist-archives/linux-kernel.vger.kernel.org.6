@@ -1,44 +1,46 @@
-Return-Path: <linux-kernel+bounces-519533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EC20A39DC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:42:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D40FA39DA8
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:38:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 559A2176700
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:36:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54A8B18983DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:36:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C362D269CFA;
-	Tue, 18 Feb 2025 13:32:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6934326AA8E;
+	Tue, 18 Feb 2025 13:32:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Lz62ZmZg"
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="nYWcyrtA"
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 464A82698BE
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 13:32:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DE9526AA80
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 13:32:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739885541; cv=none; b=NbgHNXOIAnLxorfxDqp8OhHD8r3kBsSCKc0z0EN3NoGVV2XM+GVL8QyY2UWIhZfwXASAaGwl9JnOMMzn0LH1vtHNE7qydKPKMR6wnTeMSPY9dR0tJ0f3bsfFnyFJW5fAdU2U4ZWsfjLyy6u5aKkeipd2qKfgYAQCEmptTf+Qh48=
+	t=1739885539; cv=none; b=J+E4fJFkUUkxmdVG1Zla4tYJ8OCTxM3oqvzcQuT4wHBAvPKt+SmCsMCWhcsfRbw8e9urWTwpgPNpCnrOfVMzghocNNAb4MhpiK4yAivryaNllJJI+grh2hkmkvkgh+qaO/IBF/mAgVGXCrthFq5zKSOOhNmrXnBcUYEP+fIO/pg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739885541; c=relaxed/simple;
-	bh=N4g6QUKBv0hrbd2d5K+Izcwtyx7UVmTbogTjheFSivA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TDO4CeToGJHkZCZMTG9j6Ptdzkrd5W6RwvHr2FroTHYtE6eurT/vxwTn6tn5mndrlvikVHv8z4A80RSC0QlhtnyFnwCvm3U9utGOWZa2Pzfl6BkR3ZwzrncyWFcz8nFfywczQWeLZsFKkan5t+SImv2KY/TedckQrIV499KEu68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Lz62ZmZg; arc=none smtp.client-ip=91.218.175.174
+	s=arc-20240116; t=1739885539; c=relaxed/simple;
+	bh=Y4bb2gMg2fhQX3UumMqYLIY1mVeZXXRdQb69m4+STL4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=TAnAMfoeGeyBIgFf7PA8s95VgH4FX80Yy8QyWp0lKzi5082RXwl5N80YX33Yaiwkx2ASslrDptjELTCg3fDtP0DqEThAMXOII7mrT1no/+1LM/7A26nPh6fThNIZmDKqOCD00R81VGPlfGqttTnxWUOksMnKgdCCrUxNYpbET/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=nYWcyrtA; arc=none smtp.client-ip=91.218.175.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1739885527;
+	t=1739885535;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=1owyGoVG+hJEAVjlb29HvV4RQGKZjOiBR9fNEU4IJr4=;
-	b=Lz62ZmZg3QSh0KoZZwM44daV9czYvRMFJ+A0rEcLTqoVZYwUlbZhHmnfWyvN3z0GK3nkEg
-	H0XZjzUDTJxj3R/YLmui5jkFB4ShzJqVIe/QhDMYOXDUm/9p3ZGg8bIz5wA4PfNq/FVGZk
-	s1612+SxahwBJsB83LhhT4EBWxZTsWs=
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HYjio39CMFV+Mh6EEVWTUj22Y7RBm4Gi+VVLarh3BvE=;
+	b=nYWcyrtAK2xqFBLaFB3HRZ2IxF6NVcxEUBcKDh3zyZQWxiykNSn8cdkIATx4O8gqFXFcFO
+	zQKPogA0Fqj2JT0l8VZq+u17y2o8/NEq4uWXQJ9xvnpmCf5lliRWyiM+q2CHGn2pLml/s7
+	zOpGSd8FzsLEdoNwn75vLxGoPb6NK8Q=
 From: Jiayuan Chen <jiayuan.chen@linux.dev>
 To: bpf@vger.kernel.org,
 	netdev@vger.kernel.org
@@ -55,10 +57,13 @@ Cc: andrew+netdev@lunn.ch,
 	aleksander.lobakin@intel.com,
 	linux-ppp@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	mrpre@163.com
-Subject: [PATCH net-next v1 0/1] ppp: Fix KMSAN uninit-value warning
-Date: Tue, 18 Feb 2025 21:31:43 +0800
-Message-ID: <20250218133145.265313-1-jiayuan.chen@linux.dev>
+	mrpre@163.com,
+	syzbot+853242d9c9917165d791@syzkaller.appspotmail.com
+Subject: [PATCH net-next v1 1/1] ppp: Fix KMSAN warning by initializing 2-byte header
+Date: Tue, 18 Feb 2025 21:31:44 +0800
+Message-ID: <20250218133145.265313-2-jiayuan.chen@linux.dev>
+In-Reply-To: <20250218133145.265313-1-jiayuan.chen@linux.dev>
+References: <20250218133145.265313-1-jiayuan.chen@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,73 +73,41 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-Syzbot caught an "KMSAN: uninit-value" warning [1], which is caused by the
-ppp driver not initializing a 2-byte header when using socket filters.
+The ppp program adds a 2-byte pseudo-header for socket filters, which is
+normally skipped by regular BPF programs, causing no issues.
 
-Here's a detailed explanation:
+However, for abnormal BPF programs that use these uninitialized 2 bytes,
+a KMSAN warning is triggered.
 
-1. PPP protocol format
-The PPP protocol format looks like this:
-
-|<--------------------------      7 - 1508 bytes      --------------------------->|
-+---0x7E---+---0xFF---+---0x03---+----------+---------------+----------+---0x7E----
-|   Flag   | Address  | Control  | Protocol | Information   |   FCS    |   Flag   |
-| 01111110 | 11111111 | 00000011 | 8/16bits |      *        | 16 bits  | 01111110 |
-+----------+----------+----------+----------+---------------+----------+-----------
-
-
-2. Normal BPF program
-For example, when filtering IP over PPP, libpcap generates BPF
-instructions like this:
-
-(000) ldh [2]
-(001) jeq #0x21 jt 2 jf 3
-(002) ret #65535
-(003) ret #0
-
-2 bytes data are skipped by bpf program and then bpf program reads the
-'Protocol' field to determine if it's an IP packet. Clearly, libpcap
-assumes the packet starts from the Address field, just like the comment in
-'drivers/net/ppp/ppp_generic.c':
-/* the filter instructions are constructed assuming
-   a four-byte PPP header on each packet */
-
-Corresponding libpcap code is here:
-https://github.com/the-tcpdump-group/libpcap/blob/master/gencode.c#L1421
-
-
-3. Current problem
-The problem is that the skb->data generated by ppp_write() starts from the
-'Protocol' field.
-
-To correctly use the BPF filter program, a 2-byte header is added to
-simulate the presence of Address and Control fields. And then, after
-running the socket filter, it's restored:
-
-1768 *(u8 *)skb_push(skb, 2) = 1;
-1770 bpf_prog_run()
-1782 skb_pull(skb, 2);
-
-The thing is, only one byte of the new 2-byte header is initialized. For
-normal BPF programs generated by libpcap, uninitialized data won't be
-used, so it's not a problem.
-
-However, for carefully crafted BPF programs, such as those generated by
-syzkaller [2], which start reading from offset 0, the uninitialized data
-will be used and caught by KMSAN.
-
-4. Fix
-The fix is simple: initialize the entire 2-byte header.
-
-[1] https://syzkaller.appspot.com/bug?extid=853242d9c9917165d791
-[2] https://syzkaller.appspot.com/text?tag=ReproC&x=11994913980000
-
-Jiayuan Chen (1):
-  ppp: Fix KMSAN warning by initializing 2-byte header
-
+Reported-by: syzbot+853242d9c9917165d791@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/bpf/000000000000dea025060d6bc3bc@google.com/
+Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
+---
  drivers/net/ppp/ppp_generic.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/net/ppp/ppp_generic.c b/drivers/net/ppp/ppp_generic.c
+index 4583e15ad03a..a913403d5847 100644
+--- a/drivers/net/ppp/ppp_generic.c
++++ b/drivers/net/ppp/ppp_generic.c
+@@ -1765,7 +1765,7 @@ ppp_send_frame(struct ppp *ppp, struct sk_buff *skb)
+ 		/* check if we should pass this packet */
+ 		/* the filter instructions are constructed assuming
+ 		   a four-byte PPP header on each packet */
+-		*(u8 *)skb_push(skb, 2) = 1;
++		*(u16 *)skb_push(skb, 2) = 1;
+ 		if (ppp->pass_filter &&
+ 		    bpf_prog_run(ppp->pass_filter, skb) == 0) {
+ 			if (ppp->debug & 1)
+@@ -2489,7 +2489,7 @@ ppp_receive_nonmp_frame(struct ppp *ppp, struct sk_buff *skb)
+ 			if (skb_unclone(skb, GFP_ATOMIC))
+ 				goto err;
+ 
+-			*(u8 *)skb_push(skb, 2) = 0;
++			*(u16 *)skb_push(skb, 2) = 0;
+ 			if (ppp->pass_filter &&
+ 			    bpf_prog_run(ppp->pass_filter, skb) == 0) {
+ 				if (ppp->debug & 1)
 -- 
 2.47.1
 
