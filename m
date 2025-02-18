@@ -1,111 +1,94 @@
-Return-Path: <linux-kernel+bounces-518592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66692A39164
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 04:41:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD20FA3916D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 04:45:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DFA13B2870
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 03:41:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B8A316F0BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 03:43:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06C1118C907;
-	Tue, 18 Feb 2025 03:41:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3C261A5BA4;
+	Tue, 18 Feb 2025 03:42:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="MaC0YGeN"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A91EF1487F6;
-	Tue, 18 Feb 2025 03:41:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="aFOI1FU6"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 172CF1714C0;
+	Tue, 18 Feb 2025 03:42:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739850078; cv=none; b=dSaiVWnuypl0cNo2BB2dj184Ho+WcXjMtB0iccZ1L+W0yaTSdvgj5FbwYWiDLWJ407JGg4LgGeNN+1S+POq5pPSUnnMuVeUXb/F6DErKw40Vt6Bt7UOcptixE01ChB8tIYy16yg8QzVU2nIdUe2L4gju+S4C3QmRlJfBtV4chkY=
+	t=1739850179; cv=none; b=PyZqbBuxUtjw2XAZMle0GWPl3fpewGkTKKrciAv1rjGfkP45sncEclHnO3SqzGSPXQ5PulMCLzepnO06/Fz11Qq5i6CZQi5/eZR2n7bPL4v+lc25+o0YC3VdqH409oYpgSy8O/Spd7g/hvGZERLwGNId7BTmW9AjEc8T4hQUDmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739850078; c=relaxed/simple;
-	bh=ievi5V7ymy8Kxe+ga7GFwE2aypNQq5i+fAHtUgio86E=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Mmqu5pcWBGzNxsbicdYvv5DJ0z/yCl1lSj9rD8J/jd+u0KhtI+uViQXeSZ91FBZQjBDDth0waskE7KilkLsnhBF9oHOFQVmUWlZPZtagXGfB05PLAy4Xx/uqpD6lyByoNlM4RLdFdsRwBSBOOi3sAaPonXn7VgUC0qjbf90JtV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=MaC0YGeN; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=1txZt
-	33yFZE+rx3Zu10ikaUc47KcCwWtOpqWiiC44Ik=; b=MaC0YGeN6R7n5BzFUHT7c
-	ZVkrO11HqUDqfyotqaUBj3jV7Wvh5MYSxcSN6CU7//SvnBbtY7UKYSyZVqfVcmL7
-	2LN18OGRHnAoPrwRmFZd6JMyEEbdPbUHdFBm5d6Ofcgs7DqVQ0UOsTN10VMTlgDK
-	dbSDP3HafX0uj3QVYtro08=
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [])
-	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wDXZaRSAbRnZsPdMw--.41856S4;
-	Tue, 18 Feb 2025 11:41:08 +0800 (CST)
-From: Haoxiang Li <haoxiang_li2024@163.com>
-To: hca@linux.ibm.com,
-	gor@linux.ibm.com,
-	agordeev@linux.ibm.com,
-	borntraeger@linux.ibm.com,
-	svens@linux.ibm.com,
-	haoxiang_li2024@163.com
-Cc: linux-s390@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH] s390/tty: Fix a potential memory leak bug
-Date: Tue, 18 Feb 2025 11:41:04 +0800
-Message-Id: <20250218034104.2436469-1-haoxiang_li2024@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1739850179; c=relaxed/simple;
+	bh=oxnmzV0u7YLeSdOMcjT0XG/CoG1KcOL8BTBtJhEF4gk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QieapwRs1szyLapSnfN0Tt9JcuiRQCNC2kcSa3BasVGINOD5/k/Pp2coWsR//6kNElfMv5JIOX0ZdMltwhnPUnpLQuwbKyXK39LbnB7R1ZtcFSQuTV/V7bJa6jN6VbfUcoPqP/nNLIBxlw1KoNxa099L0hv8lIHVym0R+WWVRqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=aFOI1FU6; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=vyRhLFHRB6fmclm1Piz9ZAXQjUujdHyc/1CCpu4kda0=; b=aFOI1FU6shtJerIQ7DxiFI+Ewt
+	neYE/ji6PhieKsTYzsfnrOIyHGle3ecc8D/lsYZjcRB3ZTlju51sq+UzE1cNTkIUNAWD9aJX0aHU6
+	FkCq5fgTjmknPu6V+aWzQ4nimBemr84uYqb4SNiODjzJAQggytL4AXm5q6Ujdz5pGb3sJbrfhT5Pj
+	QNBUo/kShIgx7+0rrhrOQxr8Ndt+m7t9dT9Ye7skKBgUpGiN9gH5qvrCyJolhV3Yr8WO694bOTNf2
+	cdqRkjUXjZXH47/5bas+iIhxf0+HsIuyEIjs78jtZKjjPxHIQ2Dz7TYfZUmvATqV1uj7lY6kx8yoq
+	2Z09xE0g==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1tkEIa-0018pK-04;
+	Tue, 18 Feb 2025 11:42:49 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 18 Feb 2025 11:42:48 +0800
+Date: Tue, 18 Feb 2025 11:42:48 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Eric Biggers <ebiggers@kernel.org>, fsverity@lists.linux.dev,
+	linux-crypto@vger.kernel.org, dm-devel@lists.linux.dev,
+	x86@kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Mikulas Patocka <mpatocka@redhat.com>,
+	David Howells <dhowells@redhat.com>, netdev@vger.kernel.org
+Subject: Re: [PATCH v8 0/7] Optimize dm-verity and fsverity using multibuffer
+ hashing
+Message-ID: <Z7QBuIvr4Asiezgc@gondor.apana.org.au>
+References: <20250212154718.44255-1-ebiggers@kernel.org>
+ <Z61yZjslWKmDGE_t@gondor.apana.org.au>
+ <20250213063304.GA11664@sol.localdomain>
+ <20250215090412.46937c11@kernel.org>
+ <Z7FM9rhEA7n476EJ@gondor.apana.org.au>
+ <20250217094032.3cbe64c7@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDXZaRSAbRnZsPdMw--.41856S4
-X-Coremail-Antispam: 1Uf129KBjvJXoWrur18uw4UCw47WF4fZr1DKFg_yoW8JF1UpF
-	s8KrWYy3WUJ39rZF13J3WDCrWfCan7WrW2gay29345Wr15ZFyjy34ftFyIqF4DJry8Xay3
-	JrW5Kr13tFs0yrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pim9aDUUUUU=
-X-CM-SenderInfo: xkdr5xpdqjszblsqjki6rwjhhfrp/1tbiqAv3bmez-ES6CgAAsm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250217094032.3cbe64c7@kernel.org>
 
-The check for get_zeroed_page() leads to a direct return
-and overlooked the memory leak caused by loop allocation.
-Add a free helper to free spaces allocated by get_zeroed_page().
+On Mon, Feb 17, 2025 at 09:40:32AM -0800, Jakub Kicinski wrote:
+>
+> Yes, that's true for tunnels and for IPsec.
+> TLS does crypto in sendmsg/recvmsg, process context.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Cc: stable@vger.kernel.org
-Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
----
- drivers/s390/char/sclp_tty.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+OK that's good to know.  So whether SIMD is always allowed or
+not won't impact TLS at least.
 
-diff --git a/drivers/s390/char/sclp_tty.c b/drivers/s390/char/sclp_tty.c
-index 892c18d2f87e..99de33694fe3 100644
---- a/drivers/s390/char/sclp_tty.c
-+++ b/drivers/s390/char/sclp_tty.c
-@@ -490,6 +490,17 @@ static const struct tty_operations sclp_ops = {
- 	.flush_buffer = sclp_tty_flush_buffer,
- };
- 
-+/* Release allocated pages. */
-+static void __init __sclp_tty_free_pages(void)
-+{
-+	struct list_head *page, *p;
-+
-+	list_for_each_safe(page, p, &sclp_tty_pages) {
-+		list_del(page);
-+		free_page((unsigned long) page);
-+	}
-+}
-+
- static int __init
- sclp_tty_init(void)
- {
-@@ -516,6 +527,7 @@ sclp_tty_init(void)
- 	for (i = 0; i < MAX_KMEM_PAGES; i++) {
- 		page = (void *) get_zeroed_page(GFP_KERNEL | GFP_DMA);
- 		if (page == NULL) {
-+			__sclp_tty_free_pages();
- 			tty_driver_kref_put(driver);
- 			return -ENOMEM;
- 		}
+Cheers,
 -- 
-2.25.1
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
