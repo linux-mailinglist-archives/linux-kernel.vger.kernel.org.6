@@ -1,79 +1,120 @@
-Return-Path: <linux-kernel+bounces-518858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEE8DA39577
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:34:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1FFDA3955E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:30:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53BAC3B700F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:27:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF20418995F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:28:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 751BC22CBE9;
-	Tue, 18 Feb 2025 08:26:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6773422AE7F;
+	Tue, 18 Feb 2025 08:28:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bh6WoHHs"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="UoKlHSOz"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E77749A;
-	Tue, 18 Feb 2025 08:26:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF58F1B87CF;
+	Tue, 18 Feb 2025 08:27:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739867187; cv=none; b=CwmBBD5+Zb2JDzBcSrgIQ50wgWgw9PBs7aQr+7YJhRmX/ZVWmvw+VblV6KC4SPT+Ws9GgvyDR1m/upOO5VTfQpgDTdmDZY7zl8O1y6pBEEOxWlXXOV9SospOQHvfKI6X48P//pw9l4bg9ECiZVfVuZ1OGop+oGsNFNbdCSGJbrg=
+	t=1739867280; cv=none; b=qRlPMq8LF6N+ksEagqDfQM5IZvRCDzNw50PmVrotcpsFxKNyE46BQHu0Z+yRT29iu9oYtMQIMYVaaExHg22e33Eldo0uKXM0F0kvTSsnFJjjW2WpWT7xTfV6eMuNrtxKemLGRIQg22OO6BtDpVx3mTNVbtR2CdQP6LjqxsKeH6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739867187; c=relaxed/simple;
-	bh=vw8VUAUqd1LTDPrqZW2pq0bIjio3+TrURyjC/H9+pJ0=;
+	s=arc-20240116; t=1739867280; c=relaxed/simple;
+	bh=1hbGrgaPb6b6ENR44HlCCVsM2gp2+PClw4vmk3z4fsE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hN1aTPuj4qhOyYZ7S1UVaOQNW7cz/Pgw0P5vVaa6PzFrXKldqp4hZpyqzb/IJUpL/mj93UXnhBWlLozA+wuyiIlZpMaAwOtfPDiAMDnOektTvaQMHn4W6F1r/lRv8gtWS+DjtLb8LdDN3qioFgTj6fj72igcBxd6inHPfhA5apU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=bh6WoHHs; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=vw8VUAUqd1LTDPrqZW2pq0bIjio3+TrURyjC/H9+pJ0=; b=bh6WoHHsvHllgvyNgEjPnv7jOv
-	Gvnz4nl3mQlat0BS86DYJiXUPixN/nzmhnS2BJ+RYRMGqoKSqIi8RJS4czXq57hzIkP8JLe2S/lkl
-	90Rd5Ofhm2BcgD+gyzquBhVYThB5CBZj8rwPzEsOFwayPj2uXfDzzbvfXSjqR5s5H0Sb3jgIJWxDn
-	Kvz5CVSiWxOsYGr3+5Ds1pI0piIT+iv3wVbOKQ8WjG+RKoyG5G6YPLvAAHGEPKO8X8qnn9H9p4yTo
-	9i3kN9rMAmSSAAlzOBAKpAUBHG1LXj8Mq7rKiwBkaP8ErPXJHZKR9q/TRN6qCrkUn8yTTN8H/e0/u
-	qnq+GOvQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tkIvu-00000007Gow-2uJl;
-	Tue, 18 Feb 2025 08:26:22 +0000
-Date: Tue, 18 Feb 2025 00:26:22 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Eugen Hristev <eugen.hristev@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-hardening@vger.kernel.org,
-	kees@kernel.org, linux-kernel@vger.kernel.org,
-	johannes@sipsolutions.net, gregkh@linuxfoundation.org,
-	rafael@kernel.org, dakr@kernel.org, andersson@kernel.org,
-	konradybcio@kernel.org, tony.luck@intel.com, gpiccoli@igalia.com,
-	pmladek@suse.com, rostedt@goodmis.org, john.ogness@linutronix.de,
-	senozhatsky@chromium.org, quic_mojha@quicinc.com,
-	linux-arm-kernel@lists.infradead.org, kernel@quicinc.com
-Subject: Re: [RFC][PATCH 07/10] printk: export symbols for buffer address and
- length functions
-Message-ID: <Z7RELnyWRLietj9b@infradead.org>
-References: <20250217101706.2104498-1-eugen.hristev@linaro.org>
- <20250217101706.2104498-8-eugen.hristev@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lcdJQ/YuGgJ/uZEGSpsx9qVvZIwqsV7iMrZ/QPVLXCwvtZpQ8rzvIB17820sKuzWbgysQDNIFA+oXYPQfKUArVX15NQKAEdD1AFy69dJ1JbIB+/s9EDcV2DTXmbedyo+wCcwSJpMX6Ql0YNGG1exNupp7tcarDlBbPQy6xUnewc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=UoKlHSOz; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 33B3940E01A1;
+	Tue, 18 Feb 2025 08:27:56 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 1jdlKZXk4JKo; Tue, 18 Feb 2025 08:27:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1739867270; bh=jAn/HNcN37jbOxycChzF/f77JjKiI97PDWxT1WP+ZdQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UoKlHSOzJAu0JSvQFqfJYA9VfpBnBpdcy+1rmxWYA5pGqGdTKar0S7NRvWfUYgf/P
+	 0mjWPnZOClBlKipV5IspJBaBhQCiFkgLcAY64SB6Cj+JTs3cUeQ3EcDoAasH6jwalU
+	 Mn3IXfZNCeAH553uN2iZ0RGWFqHYl5oIO0TTyt+Oxtly+ARdyMV4Uz0/0ZWiVGFn9S
+	 SvbvuFlVnawHGcn4p6qSG0g3gZjkRgLrRt5FnfI0TgIKqQWFAC8r3zfZ/O475kYvGZ
+	 lRJKn1gtrHf5j4nrrC8zOFoTAtZ7CnID06cVx3k4a2R//Yu3jIYqYYDpEAtZvWqQaN
+	 5wLQ3bb2BiuamJ6xpV2Ki69A1oZk3yEiTLv+k/9pzD18A/b0nUyza17Fa5wIZyjLsI
+	 LKfOSsWXZ/hqJtPFo8EdBhGZKAWCMdbwu+TFsWFFF+GK8K64XO3XjiyysD0XoDeoaS
+	 dQefxl0K3X22C1JDh+lhx8TJa8Op8GG/uvxyfhE1iuuEYkoB5auo+57Hi7mLS87cmu
+	 YCsbhTWtA8ovVjif1o/Uk0k+3yRqvapxFmJjEG9SgUYwZII5KxqInIw7QZgTZNBhYe
+	 UcV0Ip+LOSpb5b8oCelDUcgZH8EaWxkWiYm+PY9m+VYXPGtVExwVAIWplbO+yj9x7Y
+	 ySs9TH3AjydRhA609hjHzfUY=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C000F40E021F;
+	Tue, 18 Feb 2025 08:27:32 +0000 (UTC)
+Date: Tue, 18 Feb 2025 09:27:27 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Shuai Xue <xueshuai@linux.alibaba.com>
+Cc: tony.luck@intel.com, nao.horiguchi@gmail.com, tglx@linutronix.de,
+	mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org,
+	hpa@zytor.com, linmiaohe@huawei.com, akpm@linux-foundation.org,
+	peterz@infradead.org, jpoimboe@kernel.org,
+	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, baolin.wang@linux.alibaba.com,
+	tianruidong@linux.alibaba.com
+Subject: Re: [PATCH v2 0/5] mm/hwpoison: Fix regressions in memory failure
+ handling
+Message-ID: <20250218082727.GCZ7REb7OG6NTAY-V-@fat_crate.local>
+References: <20250217063335.22257-1-xueshuai@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250217101706.2104498-8-eugen.hristev@linaro.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20250217063335.22257-1-xueshuai@linux.alibaba.com>
 
-On Mon, Feb 17, 2025 at 12:17:03PM +0200, Eugen Hristev wrote:
-> log_buf_addr_get() and log_buf_len_get() can be reused in another module,
-> export the symbols.
+On Mon, Feb 17, 2025 at 02:33:30PM +0800, Shuai Xue wrote:
+> changes singce v1:
+> - Patch 1: Fix cur_sev and sev type to `int` per Tony
+> - Patch 4: Fix return value to 0 for clean pages per Miaohe
+> - Patch 5: pick return value comments of memory-failure()
+> 
+> This patch addresses three regressions identified in memory failure
+> handling, as discovered using ras-tools[1]:
+> 
+> - `./einj_mem_uc copyin -f`
+> - `./einj_mem_uc futex -f`
+> - `./einj_mem_uc instr`
 
-Err, no way.
+This is not how you write a problem statement and explain why your patches
+exist.
 
+You need to state:
+
+1. What are you trying to do
+2. What is the expected outcome and why
+3. What actually happens and why
+4. The fix, in your opinion, should be X or Y
+
+Not quote some ras tools commands. Show me that you actually know what you're
+doing and explain the problem in human understandable way.  And then we can
+talk fixes.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
