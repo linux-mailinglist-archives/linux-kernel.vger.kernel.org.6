@@ -1,122 +1,105 @@
-Return-Path: <linux-kernel+bounces-519291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C360EA39B18
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:37:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 017F3A39B19
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:37:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6EA0D7A1FD2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:36:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 115A63A29E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:36:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AFA323C8BC;
-	Tue, 18 Feb 2025 11:37:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="PJFkzvwc"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93875238D25
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 11:36:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24B3A23C8BC;
+	Tue, 18 Feb 2025 11:36:49 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 210451AED5C
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 11:36:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739878620; cv=none; b=T69/LPLAE2EUYYxD3mvVI2C9l051rirYk7DI46nN/zaBXEX9aFaMD56LZ3TjahKQSBn0LcMEAYI2YQaL8wLbC8i7anXAJFgkqgv3e8DKV6FsH0lBX3SAAmiQAQQo0wSQiOoQgUorHdsR8o4O37rbHiINBwUP8KhWJ3eMOluKMCA=
+	t=1739878608; cv=none; b=ZLEdxnYq8ED5aayYC5k+kaE7TtKZrHFwQHkqSI1tslysU3LD2DWLbo9w+jEELSOq9KYxp0hBeO3mytBP3i87uNde4H///FYy3ZpFe+3NT8AkkPeU+Ozp1vEv7VbOS57l6o++GpyJgZCLf+gHeQb90HTM+oaLRDLX3wOyMj8L49E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739878620; c=relaxed/simple;
-	bh=zbCiU9Ae4FzHrM4w/GC4ChZbQpszLPXwmWbje8AgkMk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AQIK8Bm7dK+NVgpK0EPB4hps/DjBOfbM1kt/qjWuApq2arz7GGCAVrivjvEy3w/99XZkZdknNclRQTkbgNWC7EQzDljspwhx+biiUjZ/cWR+RX72VO/kdlEbNDKP548BlwUdXKHF4cPXXQ1NjJegZ47C2vjvuCzVLDm30ITFRaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=PJFkzvwc; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A3B7340E020E;
-	Tue, 18 Feb 2025 11:36:54 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id krXcJ8Zp-lUt; Tue, 18 Feb 2025 11:36:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1739878610; bh=7LVGqdCM1nGr83QwOVulbhapn9Q1bwYRVVa/tyMpSMo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PJFkzvwcSbbzUJpMNXgeITMRMXGJxXLsdaTnPwqqQ/WxEh7uEYEPKM0d2jwAezlxo
-	 zbECcXfLRqypx0Ozm/4mDlN9GRRUIalXqs217d1/9pbpOeeRlfNkZCvNilQCA2LVfq
-	 48vJDuwSwYercp2b3h/TsHSr6wDquGHFgkLm+MQbnhPy0etz9tK6bEbEsDHOeOQliO
-	 AKQZbAuKEJmoDxKWagqPB5E7l92Fujrvah4lq4yOTr31fr6oZA75hLFUXRMqdNWnP5
-	 38QmbMPb+uYpBXVAtQgEvMRGHYZfvIx1OYmvqqZiJb8DZPAv2ie/dZFHxVWswjo+RA
-	 HqMADEhSG5Pi9H4DoXD9zsJsXzedGAI8wgBwXuXibvcuddILpkEi1686QJVE4WgFPj
-	 loUV3DlQ7ssjtdUzWXr0lZsl3/J2ELDf48I3aaGDmcNTd4Yra8wyCmIvlgsIcEhiBq
-	 qQwmN8o9PT0d51wh1Si/Tuqx6086SfM1HieYGw+7lcSZ/AR/i3IQIerO6xay1Z9CW8
-	 zLkcQQ5P+CSl7IYL6c965iZDnMvL2JYevFF+SetutrhGIwe4XpFj86YQuQuPlPFHxL
-	 pvAxMuRBGZctxZi9Cackym0e00QxqgN5MOZmMGxWjczvjAgYlTxULhkVHTnPPg4Z9B
-	 8C1Cu5utXIHlL0rG+tuAQGn4=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8CC6D40E0192;
-	Tue, 18 Feb 2025 11:36:44 +0000 (UTC)
-Date: Tue, 18 Feb 2025 12:36:34 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: "Chang S. Bae" <chang.seok.bae@intel.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
-	mingo@redhat.com, dave.hansen@linux.intel.com
-Subject: Re: [PATCH 1/6] x86/microcode: Introduce staging option to reduce
- late-loading latency
-Message-ID: <20250218113634.GGZ7RwwkrrXADX0eRo@fat_crate.local>
-References: <20241001161042.465584-1-chang.seok.bae@intel.com>
- <20241211014213.3671-1-chang.seok.bae@intel.com>
- <20241211014213.3671-2-chang.seok.bae@intel.com>
- <20250217133348.GJZ7M6vFdZtXDd0lF0@fat_crate.local>
- <b88227ad-f5ed-4228-be08-29a4110a2478@intel.com>
+	s=arc-20240116; t=1739878608; c=relaxed/simple;
+	bh=nYcoxaCipOJL2FBl2zRSOLBS5Pp3UmN6FcQbRmD2XaQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=t0qQsh2MnhT/WvPBcN2P0AploLxSn9v9fSPVkfNhISk/RY6Gk2/8WmDRJL5MHgcidn2R23hz7KzcjViNiwhP1m2Mb9VxWkBQ1oRYMx0CIXsDzfqLIdvK31oADgsFdcGA2CCXD3+m9e0exAyBKjRPBI3spPbUV+Gp2Ld5ZFS9Lmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 58251152B;
+	Tue, 18 Feb 2025 03:37:05 -0800 (PST)
+Received: from a077893.arm.com (unknown [10.163.37.233])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0C0A63F6A8;
+	Tue, 18 Feb 2025 03:36:43 -0800 (PST)
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: ryan.roberts@arm.com,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH V2] arm64/hugetlb: Consistently use pud_sect_supported()
+Date: Tue, 18 Feb 2025 17:06:39 +0530
+Message-Id: <20250218113639.475947-1-anshuman.khandual@arm.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <b88227ad-f5ed-4228-be08-29a4110a2478@intel.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Feb 17, 2025 at 11:51:28PM -0800, Chang S. Bae wrote:
-> On 2/17/2025 5:33 AM, Borislav Petkov wrote:
-> > 
-> > Why are you even touching this function instead of doing the staging in the
-> > beginning of load_late_stop_cpus()?
-> 
-> I thought staging is logically distinguishable.
+Let's be consistent in using pud_sect_supported() for PUD_SIZE sized pages.
+Hence change hugetlb_mask_last_page() and arch_make_huge_pte() as required.
 
-What does that even mean?
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+---
+This patch applies on v6.14-rc3
 
-> While load_late_stop_cpus() currently performs loading when CPUs are
-> _stopped_,
+Changes in V2:
 
-Not entirely - it does preparatory work and then stops the CPUs. Staging could
-be part of that prep work.
+- Added an warning when PUD_SIZE is requested but not supported per Ryan
 
-> staging occurs on a non-critical path and remains interruptible.
+Changes in V1:
 
-So if you really wanna do that and be really "free", then you should do it
-outside of load_late_locked() because that runs with the hotplug lock taken.
+https://lore.kernel.org/all/20250217065414.49489-1-anshuman.khandual@arm.com/
 
-But then the only thing that matters is, when *exactly* you should stage. If
-->request_microcode_fw() fails, staging would be unnecessary work.
+ arch/arm64/mm/hugetlbpage.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-So instead of trying to too hard, just stick the staging at the beginning of
-load_late_stop_cpus() and be done with it.
-
-Also, if you want to send a patch, don't send it from a mail client which will
-mangle it so that it is inapplicable and no one can play with it.
-
-Thx.
-
+diff --git a/arch/arm64/mm/hugetlbpage.c b/arch/arm64/mm/hugetlbpage.c
+index 98a2a0e64e25..1d89599a20d7 100644
+--- a/arch/arm64/mm/hugetlbpage.c
++++ b/arch/arm64/mm/hugetlbpage.c
+@@ -342,7 +342,9 @@ unsigned long hugetlb_mask_last_page(struct hstate *h)
+ 	switch (hp_size) {
+ #ifndef __PAGETABLE_PMD_FOLDED
+ 	case PUD_SIZE:
+-		return PGDIR_SIZE - PUD_SIZE;
++		if (pud_sect_supported())
++			return PGDIR_SIZE - PUD_SIZE;
++		break;
+ #endif
+ 	case CONT_PMD_SIZE:
+ 		return PUD_SIZE - CONT_PMD_SIZE;
+@@ -364,7 +366,10 @@ pte_t arch_make_huge_pte(pte_t entry, unsigned int shift, vm_flags_t flags)
+ 	switch (pagesize) {
+ #ifndef __PAGETABLE_PMD_FOLDED
+ 	case PUD_SIZE:
+-		entry = pud_pte(pud_mkhuge(pte_pud(entry)));
++		if (pud_sect_supported())
++			entry = pud_pte(pud_mkhuge(pte_pud(entry)));
++		else
++			pr_warn("%s: pud huge page not supported\n", __func__);
+ 		break;
+ #endif
+ 	case CONT_PMD_SIZE:
 -- 
-Regards/Gruss,
-    Boris.
+2.30.2
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
