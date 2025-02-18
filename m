@@ -1,185 +1,115 @@
-Return-Path: <linux-kernel+bounces-519255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D66EA399F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:10:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA05CA399F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:10:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F19741890790
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:10:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC7B016E083
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:10:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67B0C23CF1F;
-	Tue, 18 Feb 2025 11:10:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C02AF23BF9A;
+	Tue, 18 Feb 2025 11:10:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="n0zjKGCf"
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DpItD0sM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E95E223DE85
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 11:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1346B23958C;
+	Tue, 18 Feb 2025 11:10:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739877005; cv=none; b=gWYHeQo77jf946p/oWKKw+PkCAwLDo7iQULNecQQlE/CuLKtS52uXko7nPJgOQDndGfDbBFV4i95OEEIypZBeLc2Ol66PhWR7PuTFjldCrrgQ/JeGf76ZmZTfYhpD7psF1roOnNawOXTNY1emsZJNpNf09wbD8BShPCrh27tb7g=
+	t=1739877001; cv=none; b=N+1SbgJhVnftM8q/DQ0fW0GhWmnjakfRGg1CXreIY1Ydv8zk3sEBEAYENG/ozwRXTfoUkgk+3mBm865PDmQgZNnPVOPO7Xoftsy/MJ7+73Gn00dBsMIUuw2TMaYssuBLDH3Ak6I7rsKlHLf24ypeWZr5KiZvIEOEkID1OntRXEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739877005; c=relaxed/simple;
-	bh=NXHNjkP9fyKMEmNMjHzJ6qYQRe9g0RNuw9w6xp6qFwc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hHuj6XxV8Oe7jo4ClMykZMjQGtStSgBOAjs/x642qh0x3Qn811KsvNKs+CuumZo+vvbprH+LIJsJEQlYeso5upof56PjyFNOuQgdxm/1F7GdRak6q7umWd4+LVCNqUCu9hJOxMXWa8R3I01OXlBRCM1tG72hMj2cUK7UAq0Yyuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=n0zjKGCf; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e4419a47887so3952531276.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 03:10:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739877003; x=1740481803; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=K3ttRw4WtfoPQJNKd0VXXYu2qHT5cqSTvGY4bcJ3Gyo=;
-        b=n0zjKGCfm4ANVdrKJbV9RSg+1EQiBH9XYQ47w86fWBvbvPFUOf/2x8+SUlsXybi24I
-         xyPZieCloAQXW9gFi9w5pHgNMOmtKyAtdzIOVBgI2DNSTLRkHBW6csUEol2WWMbgMaYG
-         ti5qPrp92TGyDpQscThp84kxHttZy8pda5QNGh1j9meBQWYTpTHjJjlZz4iD9XOJBQJ8
-         rYt6JvmBb711Ig1wI/yI8P2ZNuFUZC3rzyGK2Dh1u0r0VCaNEFlLXXomTtbs5MZCFh/N
-         xMZoJMWmkF9cQCBEE4urLrqLpMcq69rikqCTY8AUzC3XHqtKTauzUMroZqw1u3hgSxrX
-         isPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739877003; x=1740481803;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=K3ttRw4WtfoPQJNKd0VXXYu2qHT5cqSTvGY4bcJ3Gyo=;
-        b=DYG+fPrBZHA/e+cuaf8GI3LX8jpw3GMYTImgLrITeOakckh2o+WQ7lVBx4LrYQV2ew
-         SKeV62Dtg+Zvie3oLtAoibNSu1qE+WOo/h3JQs0p+niuaIxWVBPTkUecZpjGDp08GYtd
-         X6gWrPn4Z0idUjtsndnmaFyGKTYlqVIkRV0Z3vEJUdgK4yFMk1EokHYXfU1PnXExEy/e
-         xc3Fm+opmBsm3/FoBuRz7myHrh9/ymKIgQfUiYjD+A2gTAdVgxpjkcnF23RPHUIB7ujt
-         hJ4c7tNHOJKnSjxSvOIcLB3kEArSWniR5S8jGJ+11shDjP0QzL2zY3SUom8IOVdqrj+1
-         1UqA==
-X-Forwarded-Encrypted: i=1; AJvYcCV3U1uDmOjpBY5LjR8adi1poQMRrnJ/Y0j6Yingj78TqjSkv7wHlXnBXJAmzjO3vy45V/os8Mzo5h5N48I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykhYLrqqKy5mzSSlQFdZ/VbUDe2TecnSQzAEODaXtFgUmfc1wF
-	TNjofe6x57RFi18CQKUYAOmfYnHFbKoCjpPL0V0ZVRzJft/OJFAyjv03Fl58eMzHWpkNvZFo/on
-	xJ4359ZyDwfvdm+A0nliytNW6PkPSIvnVV07egQ==
-X-Gm-Gg: ASbGncucrycn3XQIbcmA+yV/7hoTeTEu/hVJ+tsSh6g9LSIIeruCUv0CD8tmuzcGLUq
-	IP3kKXujrv1tgQU8Imq98lWd6faBFgxDq++Hg5XkzCnuMgrMlbsoL+9PK7sH7NFl/YHkIU2py4w
-	==
-X-Google-Smtp-Source: AGHT+IHPKubHAH0Pi1Zg45U5aQK5z2M6ravRhS4x0dWo2wjj+DHKeqdoUN3K55NfHWX9cETDd8ABYa9nLLFDw4SD/PU=
-X-Received: by 2002:a05:6902:200e:b0:e57:f841:949f with SMTP id
- 3f1490d57ef6-e5dc904c46bmr9500103276.19.1739877002844; Tue, 18 Feb 2025
- 03:10:02 -0800 (PST)
+	s=arc-20240116; t=1739877001; c=relaxed/simple;
+	bh=yxYYlJBoiZm+umfoO+u20ai1V04G+CgdbT+PHgCEfM8=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=nfeMLl1TttbAsdwVCMxX02USOCiUjN6KtxozRbEYvd4L9uD8uHorHzqYL3p5rGkXLZZiYOXlILyFpw6IBLBuP9P/zfaoyb+QqA4lBTR5tG97YXEPeD6XTslFnR068U4IdfCYL/0BxngjbzU3XW55c4RfB+NoPTxkUGF+z8ofIPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DpItD0sM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75F11C4CEE2;
+	Tue, 18 Feb 2025 11:10:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739877000;
+	bh=yxYYlJBoiZm+umfoO+u20ai1V04G+CgdbT+PHgCEfM8=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=DpItD0sMWHXYQNVy/EjKjs76cbZCsDuh9CDiri4uN4Ds6S+fYWRqlMmR5M1XKVxQf
+	 xGHxZ/4gGYHpLsw8+hr8Svn8sjsa0J1xjrxs1FIxiYjBELDBqNvNw9qzzsV1fw25AQ
+	 RRc1nJqHGK4nA1t5CJjvNCsxf5fsDrpHaUCEZ/HgNcckkOSIVRcJn9utGI4sOoknH/
+	 +PMGrnA2mTjzjSTCw5ko/s5aUumDemFkslTWJAy/jxCPs49cGcDDdpobzn75nQwbcC
+	 I+ATTEvyBngsenxjVzg59qPQmPX7PPQ46I8XW7wRP12705bpGpgiwR7/HC5QRRBL4g
+	 qF99VaZh4kEEQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB759380AA7E;
+	Tue, 18 Feb 2025 11:10:31 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <12617588.O9o76ZdvQC@rjwysocki.net>
-In-Reply-To: <12617588.O9o76ZdvQC@rjwysocki.net>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 18 Feb 2025 12:09:26 +0100
-X-Gm-Features: AWEUYZnJEpLOxgFTwflcJJSgimkNtFIn9NlT1KBJUKUK1WBE1F1P0_LpZGuyeGw
-Message-ID: <CAPDyKFrEv_DV=zZ57S==pZHQt1oeArYHWNrwthenRbP+VhLoHA@mail.gmail.com>
-Subject: Re: [PATCH v1] PM: Rearrange documentation related to __pm_runtime_disable()
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Alan Stern <stern@rowland.harvard.edu>, Johan Hovold <johan@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net 0/4] sockmap, vsock: For connectible sockets allow only
+ connected
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173987703076.4044275.12767164064897444183.git-patchwork-notify@kernel.org>
+Date: Tue, 18 Feb 2025 11:10:30 +0000
+References: <20250213-vsock-listen-sockmap-nullptr-v1-0-994b7cd2f16b@rbox.co>
+In-Reply-To: <20250213-vsock-listen-sockmap-nullptr-v1-0-994b7cd2f16b@rbox.co>
+To: Michal Luczaj <mhal@rbox.co>
+Cc: john.fastabend@gmail.com, jakub@cloudflare.com, edumazet@google.com,
+ kuniyu@amazon.com, pabeni@redhat.com, willemb@google.com,
+ davem@davemloft.net, kuba@kernel.org, horms@kernel.org, sgarzare@redhat.com,
+ mst@redhat.com, bobby.eshleman@bytedance.com, ast@kernel.org,
+ daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev,
+ eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev,
+ kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
+ mykolal@fb.com, shuah@kernel.org, netdev@vger.kernel.org,
+ bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
 
-On Mon, 17 Feb 2025 at 21:03, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
->
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->
-> There are only two callers of __pm_runtime_disable(), one of which is
-> device_suspend_late() and the other is pm_runtime_disable() that has
-> its own kerneldoc comment and there are no plans to add any more of
-> them.  Since they use different values of the __pm_runtime_disable()
-> second parameter, the actual code behavior is different in each case,
-> but it is all documented in the __pm_runtime_disable() kerneldoc comment
-> which is not particularly straightforward.
->
-> For this reason, move the information from the __pm_runtime_disable()
-> kerneldoc comment to the pm_runtime_disable() one and into a separate
-> comment in device_suspend_late() and remove the __pm_runtime_disable()
-> kerneldoc comment altogether.
->
-> No functional impact.
->
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Hello:
 
-Much better!
+This series was applied to netdev/net.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+On Thu, 13 Feb 2025 12:58:48 +0100 you wrote:
+> Series deals with one more case of vsock surprising BPF/sockmap by being
+> inconsistency about (having an) assigned transport.
+> 
+> KASAN: null-ptr-deref in range [0x0000000000000120-0x0000000000000127]
+> CPU: 7 UID: 0 PID: 56 Comm: kworker/7:0 Not tainted 6.14.0-rc1+
+> Workqueue: vsock-loopback vsock_loopback_work
+> RIP: 0010:vsock_read_skb+0x4b/0x90
+> Call Trace:
+>  sk_psock_verdict_data_ready+0xa4/0x2e0
+>  virtio_transport_recv_pkt+0x1ca8/0x2acc
+>  vsock_loopback_work+0x27d/0x3f0
+>  process_one_work+0x846/0x1420
+>  worker_thread+0x5b3/0xf80
+>  kthread+0x35a/0x700
+>  ret_from_fork+0x2d/0x70
+>  ret_from_fork_asm+0x1a/0x30
+> 
+> [...]
 
-Kind regards
-Uffe
+Here is the summary with links:
+  - [net,1/4] sockmap, vsock: For connectible sockets allow only connected
+    https://git.kernel.org/netdev/net/c/8fb5bb169d17
+  - [net,2/4] vsock/bpf: Warn on socket without transport
+    https://git.kernel.org/netdev/net/c/857ae05549ee
+  - [net,3/4] selftest/bpf: Adapt vsock_delete_on_close to sockmap rejecting unconnected
+    https://git.kernel.org/netdev/net/c/8350695bfb16
+  - [net,4/4] selftest/bpf: Add vsock test for sockmap rejecting unconnected
+    https://git.kernel.org/netdev/net/c/85928e9c4363
 
-> ---
->  drivers/base/power/main.c    |    4 ++++
->  drivers/base/power/runtime.c |   14 --------------
->  include/linux/pm_runtime.h   |   15 +++++++++++----
->  3 files changed, 15 insertions(+), 18 deletions(-)
->
-> --- a/drivers/base/power/main.c
-> +++ b/drivers/base/power/main.c
-> @@ -1404,6 +1404,10 @@
->         TRACE_DEVICE(dev);
->         TRACE_SUSPEND(0);
->
-> +       /*
-> +        * Disable runtime PM for the device without checking if there is a
-> +        * pending resume request for it.
-> +        */
->         __pm_runtime_disable(dev, false);
->
->         dpm_wait_for_subordinate(dev, async);
-> --- a/drivers/base/power/runtime.c
-> +++ b/drivers/base/power/runtime.c
-> @@ -1460,20 +1460,6 @@
->  }
->  EXPORT_SYMBOL_GPL(pm_runtime_barrier);
->
-> -/**
-> - * __pm_runtime_disable - Disable runtime PM of a device.
-> - * @dev: Device to handle.
-> - * @check_resume: If set, check if there's a resume request for the device.
-> - *
-> - * Increment power.disable_depth for the device and if it was zero previously,
-> - * cancel all pending runtime PM requests for the device and wait for all
-> - * operations in progress to complete.  The device can be either active or
-> - * suspended after its runtime PM has been disabled.
-> - *
-> - * If @check_resume is set and there's a resume request pending when
-> - * __pm_runtime_disable() is called and power.disable_depth is zero, the
-> - * function will wake up the device before disabling its runtime PM.
-> - */
->  void __pm_runtime_disable(struct device *dev, bool check_resume)
->  {
->         spin_lock_irq(&dev->power.lock);
-> --- a/include/linux/pm_runtime.h
-> +++ b/include/linux/pm_runtime.h
-> @@ -556,11 +556,18 @@
->   * pm_runtime_disable - Disable runtime PM for a device.
->   * @dev: Target device.
->   *
-> - * Prevent the runtime PM framework from working with @dev (by incrementing its
-> - * "blocking" counter).
-> + * Prevent the runtime PM framework from working with @dev by incrementing its
-> + * "disable" counter.
->   *
-> - * For each invocation of this function for @dev there must be a matching
-> - * pm_runtime_enable() call in order for runtime PM to be enabled for it.
-> + * If the counter is zero when this function runs and there is a pending runtime
-> + * resume request for @dev, it will be resumed.  If the counter is still zero at
-> + * that point, all of the pending runtime PM requests for @dev will be canceled
-> + * and all runtime PM operations in progress involving it will be waited for to
-> + * complete.
-> + *
-> + * For each invocation of this function for @dev, there must be a matching
-> + * pm_runtime_enable() call, so that runtime PM is eventually enabled for it
-> + * again.
->   */
->  static inline void pm_runtime_disable(struct device *dev)
->  {
->
->
->
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
