@@ -1,42 +1,42 @@
-Return-Path: <linux-kernel+bounces-519279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC8FCA39AF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:31:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 556A4A39AE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:30:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B28C4171C96
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:31:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AEB418949EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:29:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 551EB24060E;
-	Tue, 18 Feb 2025 11:30:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 492C423FC7A;
+	Tue, 18 Feb 2025 11:29:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="cZJUjtrU"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A86923FC4B;
-	Tue, 18 Feb 2025 11:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="hhLpsffq"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D387723C8A4;
+	Tue, 18 Feb 2025 11:29:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739878237; cv=none; b=J/dO6UaD4GCMvHzJ3NNhHEZ9t4SVQcUR/nsNjoILFdsNbQrr7hOkBWuQrFjAxuIyn4qg6CjJiKb9zHr3dVWrol1lURnvo6L/+Yle1/PiGqDx9N2EC5u5eUA/rhzGQneVjBxTzDDnpPRVfHzcNQnqMOn85J93BBJXGqh1WNyC1yU=
+	t=1739878146; cv=none; b=IjKhTILPfXl/3zEgm9kvgU+eGBn8K7ZIZ+5d45d4QZRTKaiINnWyIRBpPoPi5VRWsc+qmMWAPQPsbBUnheBdF4V42u5RMGtIt1Ee0IIZ/ZTJM4KCQNpc/lZNl51zfsj4LpZ5ZjeXd/LAR0cmOHnGpEQEAXSa5hPWcfU2Nk41g5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739878237; c=relaxed/simple;
-	bh=LQe5GuawzBnnz3/E+Z3RzWysXp2pvbKU1RqSY6Le0pc=;
+	s=arc-20240116; t=1739878146; c=relaxed/simple;
+	bh=Eh8krLpDs9sUJ+pEpy8Kpyl8U9L/En4zU0UE6JR+Y6c=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QREBqlO07RuVW/RrJYJTY1UBTbremXcVWvgmve0JVABewuHCZ2uOTf+6N8t2zO4UAmXoX6H2sjzwz4IBWI+31i1LHe76K8zMjvLOWJxlWFUe7o8ObaBJeusMkb+pZETFP+NRRHDOD/YpnEg2PH+waSDUPSJAkZWWj7POC5X8fcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=cZJUjtrU; arc=none smtp.client-ip=117.135.210.2
+	 MIME-Version; b=L6jd5NM97/1hFx92Fajr35x5by4D1KtAeQ37b6xjukEvyG8qv+lm8cTRa+cvL196SjvgyR6W0xHgQgWGX2c1YymFk3Cvzhw210pOvPe+eKEgAed8GKq4UIT1wmBu6FcFz+/aJgq7BE/CZWrLmjWr/Ihq9iQoSLER0PAv8x0CvzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=hhLpsffq; arc=none smtp.client-ip=117.135.210.5
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=d0dLU
-	mQ/SZsMZv+9oBNfUWjAlyGRPbs7a7RCXjujakY=; b=cZJUjtrUdU8zpp9SJL6Cm
-	hPbkCC1QbdsFrCxaBJluBzaS+78+vJlR/JiMlSZUxSE+ht8voCbD16D8TSquOifo
-	CCRwCmsck1DV7Mie0QolDuyi5/OqdN9xW73JBOAh39nxjCl2GYXXo3JhOUgzfJbu
-	n4jenrGUrustUC5FoJ1LXc=
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=rgwQw
+	aW4CJVO+djgR5oP+BuVMz8oTfdlefD5MBuPc3c=; b=hhLpsffquMWDF9Q51nhhE
+	+AEBWdOEncdlEf8d5bjOEvQwKE5eamuHd1tnKn0lU59IhfJ3U8sQgqEfiT3i+/+Y
+	MS2eSQTg4m6Iks69dECVkCWEiBoWRXr2Nc/04dkSURcnuQmvG5fjHcP3YvRv+D03
+	B1mKy2M0VVrAu4qzAgDL5s=
 Received: from ProDesk.. (unknown [])
-	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wD333uybrRnLIPUMQ--.34107S3;
-	Tue, 18 Feb 2025 19:27:51 +0800 (CST)
+	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wD333uybrRnLIPUMQ--.34107S4;
+	Tue, 18 Feb 2025 19:27:52 +0800 (CST)
 From: Andy Yan <andyshrk@163.com>
 To: heiko@sntech.de
 Cc: hjc@rock-chips.com,
@@ -52,9 +52,9 @@ Cc: hjc@rock-chips.com,
 	robh@kernel.org,
 	sebastian.reichel@collabora.com,
 	Andy Yan <andy.yan@rock-chips.com>
-Subject: [PATCH v15 01/13] drm/rockchip: vop2: use devm_regmap_field_alloc for cluster-regs
-Date: Tue, 18 Feb 2025 19:27:28 +0800
-Message-ID: <20250218112744.34433-2-andyshrk@163.com>
+Subject: [PATCH v15 02/13] drm/rockchip: vop2: Remove AFBC from TRANSFORM_OFFSET register macro
+Date: Tue, 18 Feb 2025 19:27:29 +0800
+Message-ID: <20250218112744.34433-3-andyshrk@163.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250218112744.34433-1-andyshrk@163.com>
 References: <20250218112744.34433-1-andyshrk@163.com>
@@ -65,136 +65,93 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD333uybrRnLIPUMQ--.34107S3
-X-Coremail-Antispam: 1Uf129KBjvJXoWxGFW7GFWUWrykJr4fGF17Wrg_yoWrCw4fpF
-	4rGwnxuF45Grn29rWkArn8AF1Fk39rta1rCFn7uwnI9r1qgr97C3Wqk3Wjyrs0kryv9FZr
-	tFsxt3y3ua4Ygr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UXYFZUUUUU=
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbBkBT3Xme0bEsvuAABsP
+X-CM-TRANSID:_____wD333uybrRnLIPUMQ--.34107S4
+X-Coremail-Antispam: 1Uf129KBjvJXoWxCrWxKr4rurWrCFyxArykuFg_yoWrZrWDpr
+	W3JayDWF4UKFs2gF48Ar15AF4rJan7K3yfGanxJrnIqFyagryDG342kFyDJr47tas29FZ2
+	q3saqrW7urWftr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jUTmhUUUUU=
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbBkBT3Xme0bEsvuAACsM
 
-From: Heiko Stuebner <heiko@sntech.de>
+From: Andy Yan <andy.yan@rock-chips.com>
 
-Right now vop2_cluster_init() copies the base vop2_cluster_regs
-and adapts the reg value with the current window's offset before
-adding the fields to the regmap.
+This TRANSFORM_OFFSET register needs to be configured not only in
+AFBC mode, but also in tile mode, so remove the AFBC/AFBCD prefix.
 
-This conflicts with the notion of reg_fields being const, see
-https://lore.kernel.org/all/20240706-regmap-const-structs-v1-1-d08c776da787@weissschuh.net/
-for reference, which now causes checkpatch to actually warn about that.
+This also help avoid "exceeds 100 columns" warning from checkpatch.
 
-So instead of creating one big copy and changing it afterwards,
-add the reg_fields individually using devm_regmap_field_alloc().
-
-Functional it is the same, just that the reg_field we're handling
-can stay const.
-
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
 
 ---
 
- drivers/gpu/drm/rockchip/rockchip_drm_vop2.c | 66 +++++++++-----------
- 1 file changed, 31 insertions(+), 35 deletions(-)
+Changes in v15:
+- Remove AFBC/AFBCD prefix of TRANSFORM_OFFSET register
+
+ drivers/gpu/drm/rockchip/rockchip_drm_vop2.c | 8 ++++----
+ drivers/gpu/drm/rockchip/rockchip_drm_vop2.h | 4 ++--
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-index afc946ead870..ebc9cb93073c 100644
+index ebc9cb93073c..19125ab6f3f3 100644
 --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
 +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-@@ -3400,7 +3400,7 @@ static int vop2_find_rgb_encoder(struct vop2 *vop2)
- 	return -ENOENT;
- }
+@@ -1524,7 +1524,7 @@ static void vop2_plane_atomic_update(struct drm_plane *plane,
+ 		transform_offset = vop2_afbc_transform_offset(pstate, half_block_en);
+ 		vop2_win_write(win, VOP2_WIN_AFBC_HDR_PTR, yrgb_mst);
+ 		vop2_win_write(win, VOP2_WIN_AFBC_PIC_SIZE, act_info);
+-		vop2_win_write(win, VOP2_WIN_AFBC_TRANSFORM_OFFSET, transform_offset);
++		vop2_win_write(win, VOP2_WIN_TRANSFORM_OFFSET, transform_offset);
+ 		vop2_win_write(win, VOP2_WIN_AFBC_PIC_OFFSET, ((src->x1 >> 16) | src->y1));
+ 		vop2_win_write(win, VOP2_WIN_AFBC_DSP_OFFSET, (dest->x1 | (dest->y1 << 16)));
+ 		vop2_win_write(win, VOP2_WIN_AFBC_PIC_VIR_WIDTH, stride);
+@@ -1535,7 +1535,7 @@ static void vop2_plane_atomic_update(struct drm_plane *plane,
+ 	} else {
+ 		if (vop2_cluster_window(win)) {
+ 			vop2_win_write(win, VOP2_WIN_AFBC_ENABLE, 0);
+-			vop2_win_write(win, VOP2_WIN_AFBC_TRANSFORM_OFFSET, 0);
++			vop2_win_write(win, VOP2_WIN_TRANSFORM_OFFSET, 0);
+ 		}
  
--static struct reg_field vop2_cluster_regs[VOP2_WIN_MAX_REG] = {
-+static const struct reg_field vop2_cluster_regs[VOP2_WIN_MAX_REG] = {
- 	[VOP2_WIN_ENABLE] = REG_FIELD(RK3568_CLUSTER_WIN_CTRL0, 0, 0),
- 	[VOP2_WIN_FORMAT] = REG_FIELD(RK3568_CLUSTER_WIN_CTRL0, 1, 5),
- 	[VOP2_WIN_RB_SWAP] = REG_FIELD(RK3568_CLUSTER_WIN_CTRL0, 14, 14),
-@@ -3471,28 +3471,26 @@ static struct reg_field vop2_cluster_regs[VOP2_WIN_MAX_REG] = {
- static int vop2_cluster_init(struct vop2_win *win)
- {
- 	struct vop2 *vop2 = win->vop2;
--	struct reg_field *cluster_regs;
--	int ret, i;
--
--	cluster_regs = kmemdup(vop2_cluster_regs, sizeof(vop2_cluster_regs),
--			       GFP_KERNEL);
--	if (!cluster_regs)
--		return -ENOMEM;
--
--	for (i = 0; i < ARRAY_SIZE(vop2_cluster_regs); i++)
--		if (cluster_regs[i].reg != 0xffffffff)
--			cluster_regs[i].reg += win->offset;
-+	int i;
- 
--	ret = devm_regmap_field_bulk_alloc(vop2->dev, vop2->map, win->reg,
--					   cluster_regs,
--					   ARRAY_SIZE(vop2_cluster_regs));
-+	for (i = 0; i < ARRAY_SIZE(vop2_cluster_regs); i++) {
-+		const struct reg_field field = {
-+			.reg = (vop2_cluster_regs[i].reg != 0xffffffff) ?
-+					vop2_cluster_regs[i].reg + win->offset :
-+					vop2_cluster_regs[i].reg,
-+			.lsb = vop2_cluster_regs[i].lsb,
-+			.msb = vop2_cluster_regs[i].msb
-+		};
- 
--	kfree(cluster_regs);
-+		win->reg[i] = devm_regmap_field_alloc(vop2->dev, vop2->map, field);
-+		if (IS_ERR(win->reg[i]))
-+			return PTR_ERR(win->reg[i]);
-+	}
- 
--	return ret;
-+	return 0;
- };
- 
--static struct reg_field vop2_esmart_regs[VOP2_WIN_MAX_REG] = {
-+static const struct reg_field vop2_esmart_regs[VOP2_WIN_MAX_REG] = {
- 	[VOP2_WIN_ENABLE] = REG_FIELD(RK3568_SMART_REGION0_CTRL, 0, 0),
- 	[VOP2_WIN_FORMAT] = REG_FIELD(RK3568_SMART_REGION0_CTRL, 1, 5),
- 	[VOP2_WIN_DITHER_UP] = REG_FIELD(RK3568_SMART_REGION0_CTRL, 12, 12),
-@@ -3559,26 +3557,24 @@ static struct reg_field vop2_esmart_regs[VOP2_WIN_MAX_REG] = {
- static int vop2_esmart_init(struct vop2_win *win)
- {
- 	struct vop2 *vop2 = win->vop2;
--	struct reg_field *esmart_regs;
--	int ret, i;
--
--	esmart_regs = kmemdup(vop2_esmart_regs, sizeof(vop2_esmart_regs),
--			      GFP_KERNEL);
--	if (!esmart_regs)
--		return -ENOMEM;
--
--	for (i = 0; i < ARRAY_SIZE(vop2_esmart_regs); i++)
--		if (esmart_regs[i].reg != 0xffffffff)
--			esmart_regs[i].reg += win->offset;
-+	int i;
- 
--	ret = devm_regmap_field_bulk_alloc(vop2->dev, vop2->map, win->reg,
--					   esmart_regs,
--					   ARRAY_SIZE(vop2_esmart_regs));
-+	for (i = 0; i < ARRAY_SIZE(vop2_esmart_regs); i++) {
-+		const struct reg_field field = {
-+			.reg = (vop2_esmart_regs[i].reg != 0xffffffff) ?
-+				vop2_esmart_regs[i].reg + win->offset :
-+				vop2_esmart_regs[i].reg,
-+			.lsb = vop2_esmart_regs[i].lsb,
-+			.msb = vop2_esmart_regs[i].msb
-+		};
- 
--	kfree(esmart_regs);
-+		win->reg[i] = devm_regmap_field_alloc(vop2->dev, vop2->map, field);
-+		if (IS_ERR(win->reg[i]))
-+			return PTR_ERR(win->reg[i]);
-+	}
- 
--	return ret;
--};
-+	return 0;
-+}
- 
- static int vop2_win_init(struct vop2 *vop2)
- {
+ 		vop2_win_write(win, VOP2_WIN_YRGB_VIR, DIV_ROUND_UP(fb->pitches[0], 4));
+@@ -3448,7 +3448,7 @@ static const struct reg_field vop2_cluster_regs[VOP2_WIN_MAX_REG] = {
+ 	[VOP2_WIN_AFBC_TILE_NUM] = REG_FIELD(RK3568_CLUSTER_WIN_AFBCD_VIR_WIDTH, 16, 31),
+ 	[VOP2_WIN_AFBC_PIC_OFFSET] = REG_FIELD(RK3568_CLUSTER_WIN_AFBCD_PIC_OFFSET, 0, 31),
+ 	[VOP2_WIN_AFBC_DSP_OFFSET] = REG_FIELD(RK3568_CLUSTER_WIN_AFBCD_DSP_OFFSET, 0, 31),
+-	[VOP2_WIN_AFBC_TRANSFORM_OFFSET] = REG_FIELD(RK3568_CLUSTER_WIN_AFBCD_TRANSFORM_OFFSET, 0, 31),
++	[VOP2_WIN_TRANSFORM_OFFSET] = REG_FIELD(RK3568_CLUSTER_WIN_TRANSFORM_OFFSET, 0, 31),
+ 	[VOP2_WIN_AFBC_ROTATE_90] = REG_FIELD(RK3568_CLUSTER_WIN_AFBCD_ROTATE_MODE, 0, 0),
+ 	[VOP2_WIN_AFBC_ROTATE_270] = REG_FIELD(RK3568_CLUSTER_WIN_AFBCD_ROTATE_MODE, 1, 1),
+ 	[VOP2_WIN_XMIRROR] = REG_FIELD(RK3568_CLUSTER_WIN_AFBCD_ROTATE_MODE, 2, 2),
+@@ -3547,7 +3547,7 @@ static const struct reg_field vop2_esmart_regs[VOP2_WIN_MAX_REG] = {
+ 	[VOP2_WIN_AFBC_PIC_OFFSET] = { .reg = 0xffffffff },
+ 	[VOP2_WIN_AFBC_PIC_SIZE] = { .reg = 0xffffffff },
+ 	[VOP2_WIN_AFBC_DSP_OFFSET] = { .reg = 0xffffffff },
+-	[VOP2_WIN_AFBC_TRANSFORM_OFFSET] = { .reg = 0xffffffff },
++	[VOP2_WIN_TRANSFORM_OFFSET] = { .reg = 0xffffffff },
+ 	[VOP2_WIN_AFBC_HDR_PTR] = { .reg = 0xffffffff },
+ 	[VOP2_WIN_AFBC_HALF_BLOCK_EN] = { .reg = 0xffffffff },
+ 	[VOP2_WIN_AFBC_ROTATE_270] = { .reg = 0xffffffff },
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
+index 29cc7fb8f6d8..156a272480f3 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
+@@ -118,7 +118,7 @@ enum vop2_win_regs {
+ 	VOP2_WIN_AFBC_PIC_OFFSET,
+ 	VOP2_WIN_AFBC_PIC_SIZE,
+ 	VOP2_WIN_AFBC_DSP_OFFSET,
+-	VOP2_WIN_AFBC_TRANSFORM_OFFSET,
++	VOP2_WIN_TRANSFORM_OFFSET,
+ 	VOP2_WIN_AFBC_HDR_PTR,
+ 	VOP2_WIN_AFBC_HALF_BLOCK_EN,
+ 	VOP2_WIN_AFBC_ROTATE_270,
+@@ -335,7 +335,7 @@ enum dst_factor_mode {
+ #define RK3568_CLUSTER_WIN_DSP_INFO		0x24
+ #define RK3568_CLUSTER_WIN_DSP_ST		0x28
+ #define RK3568_CLUSTER_WIN_SCL_FACTOR_YRGB	0x30
+-#define RK3568_CLUSTER_WIN_AFBCD_TRANSFORM_OFFSET	0x3C
++#define RK3568_CLUSTER_WIN_TRANSFORM_OFFSET	0x3C
+ #define RK3568_CLUSTER_WIN_AFBCD_OUTPUT_CTRL	0x50
+ #define RK3568_CLUSTER_WIN_AFBCD_ROTATE_MODE	0x54
+ #define RK3568_CLUSTER_WIN_AFBCD_HDR_PTR	0x58
 -- 
 2.34.1
 
