@@ -1,174 +1,179 @@
-Return-Path: <linux-kernel+bounces-519919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15063A3A390
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:07:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A565AA3A39D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:08:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DCB9188BE6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:07:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D213F166EDC
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:08:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B39726FA57;
-	Tue, 18 Feb 2025 17:07:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1FFC26FA5D;
+	Tue, 18 Feb 2025 17:08:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="OqWu0HRh"
-Received: from smtp-fw-6002.amazon.com (smtp-fw-6002.amazon.com [52.95.49.90])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VVupZAFl"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB51A26F464;
-	Tue, 18 Feb 2025 17:07:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.49.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5774326F464
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 17:08:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739898432; cv=none; b=bZszXXowE0+8XNp8LJRpRvme2epU/6fAxjS46iS0/H2AVRSIWlAf23Oujt9V5CxDqiaYsy9TgrGohffC4qYAkaROJar/LWDUqi6vsoN5GknKpR8pSlEEojhY37Uu+3UPYh2kBdEI4c1YosL07lTC4dsE0Nwag3voIeCm71FVQA0=
+	t=1739898499; cv=none; b=OStJ3art1eRqFX87iJyCUnGk+P6zmpOooqIWBoRmonXNA1m3Fv9ps+bhOd8kL4TyyDPcCevk06jpl9rFIiAQrUgqU1yGjlFDMxCNDSQRrACiWNQpnDHjskYIjQAexsIIRrXvMlEqBuDxsMYnhSNDC0XJxtGEvozXkyEVQKtFnPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739898432; c=relaxed/simple;
-	bh=z2W1klaC4NrqrdesRaJJCmZ5n84Sqox4d0Ii0u9BNx8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=cPg8XuLq1jR4JF/OghlZZdk/PmVQODmUv/G1YKGpYgqBGFofvyMefx9XcQalOTBimyMKOeOBFISYFew02IR6enHrLf2Kej8LhbDgfq6Z1hdF/vrQiWIXm0cplPFrM36vxEnadKQfHFYU3FjgR1lJLclBxbq/G5YlsfmXa3u/Dy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=OqWu0HRh; arc=none smtp.client-ip=52.95.49.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+	s=arc-20240116; t=1739898499; c=relaxed/simple;
+	bh=Ahl+0Q/BXgttFJvc69RV+BRmdC6VjUNLeevamdi0Wi8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Cj/JTeqy3GLQF8crmKp8NBzfuAlZtDkskU4FnbkdgdncLkM/pFc3NMGMg6R2spQQSd+q+F2eNNz6yNIxLrPIjPa8qcagst3aRsBgVTCHYKH8iA2911CpPfwZT6PeUZnPpoeeyFfpWIY43iOzS0bT3WRnSb+6YI1OxNuGSdF6y10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VVupZAFl; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4398738217aso21092585e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 09:08:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1739898432; x=1771434432;
-  h=message-id:date:mime-version:reply-to:subject:to:cc:
-   references:from:in-reply-to:content-transfer-encoding;
-  bh=EkRdFMxzr88qlSnaM0L16SDNRKu0/9NO/91zT99To3c=;
-  b=OqWu0HRhii20JUcXd6ERwSAtOC6ZpOwPkyi4ccQqkUHr3KaruVjrXTBe
-   uCOVNYpwt8D0RisR/N6GwiHldP3kEKGUQYiXQGy8rHq4t/5Py8/mDWltJ
-   slGLx+K2M3r2xyMA4ICUfqnFSGDF6ZZCQqIVZEr1BgEr0yDnaR2jFLWJp
-   Y=;
-X-IronPort-AV: E=Sophos;i="6.13,296,1732579200"; 
-   d="scan'208";a="473228396"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-6002.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 17:07:06 +0000
-Received: from EX19MTAEUC001.ant.amazon.com [10.0.17.79:52643]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.23.222:2525] with esmtp (Farcaster)
- id b9484c5d-2f40-4fcd-8dcf-fd02932115e9; Tue, 18 Feb 2025 17:07:04 +0000 (UTC)
-X-Farcaster-Flow-ID: b9484c5d-2f40-4fcd-8dcf-fd02932115e9
-Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
- EX19MTAEUC001.ant.amazon.com (10.252.51.155) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
- Tue, 18 Feb 2025 17:07:02 +0000
-Received: from [192.168.22.162] (10.106.83.18) by
- EX19D022EUC002.ant.amazon.com (10.252.51.137) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Tue, 18 Feb 2025 17:07:02 +0000
-Message-ID: <5078ebfd-c81e-4f2f-95a8-5da48c659dc2@amazon.com>
-Date: Tue, 18 Feb 2025 17:07:01 +0000
+        d=gmail.com; s=20230601; t=1739898494; x=1740503294; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RcINKfr4lNxFYF9r6nCx7oKwteN5FJxyS4A/b+jWADQ=;
+        b=VVupZAFl67rAh9YUHAACVQPDA2EvIG++UfoduIA53rQAKiBTxAfWl53RiT8HwVDrnz
+         dj3Z5sK2Ul+PvwWwGXqirtvCf6Mt13TmXcAezYIexvZQeTNAgY6nAsW0LUak1wdj+l1m
+         S88F2CGaSZB8KdGr4uLzj5c/pcWaH/g3SARAy708bf0tigc+U0p+T41phen+oxGGA7qu
+         0W7elxrbStjiuvKOoxiIXgbarE51B3lL3pIWaaGHtNe/T54vAsNp4v0uHRsEJ6LYjsbQ
+         RaZ0Q+IHbZBa8DidTUXBS0ZLFuVJbgl4Y3U4YyZlDXpMWEuAzlXvEDuLrYVxim9AW3ic
+         h5Yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739898494; x=1740503294;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RcINKfr4lNxFYF9r6nCx7oKwteN5FJxyS4A/b+jWADQ=;
+        b=FkKQJkFzOGJJ4D7OCWp8s47T3avit2P8r69uoHzGQRYFY25J7GOg6LZYPdWqAZS9Vf
+         hL5BnlJQMcBLq+fXRGDmQpWhXcHrT0ub8t31vZkkO6bFWvc6p2W2OpNGjzaiO9c4TPMp
+         HS7tUG2NZuY24voMLRwtxPBDWjRNXmMTlNvEJ8CizSY37KV0RuDwybivWVwiikP0wPzc
+         OPAY2UL3myHFYBw2LL7d5bXh/A/YwjLH+QuTAVfXcS3cOFqnSetasIomBTLWsVtTN53i
+         JT7tFe3YpuySuHTt25Xy8RJbnNiL1NLY4V8zCQkDBc4nwJNgedBr/nTvCQ94OaHTiGGt
+         SNEA==
+X-Forwarded-Encrypted: i=1; AJvYcCVhSivX+M4hFR/Phf1SVT7aYP6ZOpykk/Pbro3urr+9vg+WjBXMpFZLxHgF5E4O/bUFeKCfZtqhW30LhIU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIWSGvnrl5BiVt3n115bZzJLy0h6r4YyBrFKSLjiIu5eXL3PQc
+	ZrpuXr//VAYa+SobLeDGCIky3y0Orb6RqLIij3tWas9OWf3r3jvB/abWc7y5
+X-Gm-Gg: ASbGncvbdYgoakELALHsAVTtE/O8Y5U4CvVNul6opFFsM9Eez6F6JgUSkBAlfkuwdmj
+	v2NN81f6icT9N0WWdDJ1RcdU36kOcuv2aK+STk98FI9zu5JcFDOZin5NSAJjz/3phMpGJpQ9Ui2
+	owHzwyGq9u4yLl9Ts1uyGU37pvFsi12xJXyG2cf68KeiEaPzHiLaPI/wa1Mc+qwXGAiO1kuhnBo
+	WAPZbCPKkSooQJ9RHcujXg7dtXEsywTyA/ky+qYO4c9oK2rLgOQloqh9/O7nrmVoIAwwvDxVVyo
+	GNuzj/+hKmvG18ZV2Q==
+X-Google-Smtp-Source: AGHT+IG9C3A51BmI5k+8FyoWsU577SQrMSbXBykQTnn69muiTH5WsxRqpQohcGqHEI+4n5L2FDAxAw==
+X-Received: by 2002:a05:600c:5114:b0:439:89d1:30ec with SMTP id 5b1f17b1804b1-43999ddb366mr4539495e9.29.1739898492748;
+        Tue, 18 Feb 2025 09:08:12 -0800 (PST)
+Received: from fedora.. ([213.94.27.232])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439941bd54bsm24680135e9.11.2025.02.18.09.08.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2025 09:08:12 -0800 (PST)
+From: =?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
+To: louis.chauvet@bootlin.com
+Cc: hamohammed.sa@gmail.com,
+	simona@ffwll.ch,
+	melissa.srw@gmail.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
+Subject: [PATCH 00/16] drm/vkms: Add configfs support
+Date: Tue, 18 Feb 2025 18:07:52 +0100
+Message-ID: <20250218170808.9507-1-jose.exposito89@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: <kalyazin@amazon.com>
-Subject: Re: [PATCH 1/2] KVM: x86: async_pf: remove support for
- KVM_ASYNC_PF_SEND_ALWAYS
-To: Sean Christopherson <seanjc@google.com>, Vitaly Kuznetsov
-	<vkuznets@redhat.com>
-CC: <pbonzini@redhat.com>, <corbet@lwn.net>, <tglx@linutronix.de>,
-	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
-	<x86@kernel.org>, <hpa@zytor.com>, <xiaoyao.li@intel.com>,
-	<kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <roypat@amazon.co.uk>, <xmarcalx@amazon.com>
-References: <20241127172654.1024-1-kalyazin@amazon.com>
- <20241127172654.1024-2-kalyazin@amazon.com> <Z6ucl7U79RuBsYJt@google.com>
- <87frkcrab8.fsf@redhat.com> <Z7SkfSRsE5hcsrRe@google.com>
-Content-Language: en-US
-From: Nikita Kalyazin <kalyazin@amazon.com>
-Autocrypt: addr=kalyazin@amazon.com; keydata=
- xjMEY+ZIvRYJKwYBBAHaRw8BAQdA9FwYskD/5BFmiiTgktstviS9svHeszG2JfIkUqjxf+/N
- JU5pa2l0YSBLYWx5YXppbiA8a2FseWF6aW5AYW1hem9uLmNvbT7CjwQTFggANxYhBGhhGDEy
- BjLQwD9FsK+SyiCpmmTzBQJnrNfABQkFps9DAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQr5LK
- IKmaZPOpfgD/exazh4C2Z8fNEz54YLJ6tuFEgQrVQPX6nQ/PfQi2+dwBAMGTpZcj9Z9NvSe1
- CmmKYnYjhzGxzjBs8itSUvWIcMsFzjgEY+ZIvRIKKwYBBAGXVQEFAQEHQCqd7/nb2tb36vZt
- ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
- ZPMFAmes18AFCQWmz0MCGwwACgkQr5LKIKmaZPNTlQEA+q+rGFn7273rOAg+rxPty0M8lJbT
- i2kGo8RmPPLu650A/1kWgz1AnenQUYzTAFnZrKSsXAw5WoHaDLBz9kiO5pAK
-In-Reply-To: <Z7SkfSRsE5hcsrRe@google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EX19D005EUB001.ant.amazon.com (10.252.51.12) To
- EX19D022EUC002.ant.amazon.com (10.252.51.137)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Hi everyone,
+
+This series, to be applied on top of [1], allow to configure one or more VKMS
+instances without having to reload the driver using configfs.
+
+The series is structured in 3 blocks:
+
+  - Patches 1..11: Basic device configuration. For simplicity, I kept the
+    available options as minimal as possible.
+
+  - Patches 12, 13 and 14: Allow to hot-plug and unplug connectors. This is not
+    part of the minimal set of options, but I included in this series so it can
+    be used as a template/example of how new configurations can be added.
+
+  - Patches 15 and 16: New option to skip the default device creation and to-do
+    cleanup.
+
+The process of configuring a VKMS device is documented in "vkms.rst".
+
+Finally, the code is thoroughly tested by a collection of IGT tests [2].
+
+Best wishes,
+José Expósito
+
+[1] https://lore.kernel.org/all/20250218101214.5790-1-jose.exposito89@gmail.com/
+[2] It is not in patchwork yet, but it'll appear here eventually:
+    https://patchwork.freedesktop.org/project/igt/patches/?submitter=19782&state=*&q=&archive=both&delegate=
+
+José Expósito (16):
+  drm/vkms: Expose device creation and destruction
+  drm/vkms: Add and remove VKMS instances via configfs
+  drm/vkms: Allow to configure multiple planes via configfs
+  drm/vkms: Allow to configure the plane type via configfs
+  drm/vkms: Allow to configure multiple CRTCs via configfs
+  drm/vkms: Allow to configure CRTC writeback support via configfs
+  drm/vkms: Allow to attach planes and CRTCs via configfs
+  drm/vkms: Allow to configure multiple encoders via configfs
+  drm/vkms: Allow to attach encoders and CRTCs via configfs
+  drm/vkms: Allow to configure multiple connectors via configfs
+  drm/vkms: Allow to attach connectors and encoders via configfs
+  drm/vkms: Allow to configure connector status
+  drm/vkms: Allow to update the connector status
+  drm/vkms: Allow to configure connector status via configfs
+  drm/vkms: Allow to configure the default device creation
+  drm/vkms: Remove completed task from the TODO list
+
+ Documentation/gpu/vkms.rst                    |  98 +-
+ drivers/gpu/drm/vkms/Kconfig                  |   1 +
+ drivers/gpu/drm/vkms/Makefile                 |   3 +-
+ drivers/gpu/drm/vkms/tests/vkms_config_test.c |  24 +
+ drivers/gpu/drm/vkms/vkms_config.c            |   8 +-
+ drivers/gpu/drm/vkms/vkms_config.h            |  26 +
+ drivers/gpu/drm/vkms/vkms_configfs.c          | 918 ++++++++++++++++++
+ drivers/gpu/drm/vkms/vkms_configfs.h          |   8 +
+ drivers/gpu/drm/vkms/vkms_connector.c         |  26 +-
+ drivers/gpu/drm/vkms/vkms_connector.h         |  18 +-
+ drivers/gpu/drm/vkms/vkms_drv.c               |  18 +-
+ drivers/gpu/drm/vkms/vkms_drv.h               |   4 +
+ drivers/gpu/drm/vkms/vkms_output.c            |   2 +-
+ 13 files changed, 1138 insertions(+), 16 deletions(-)
+ create mode 100644 drivers/gpu/drm/vkms/vkms_configfs.c
+ create mode 100644 drivers/gpu/drm/vkms/vkms_configfs.h
 
 
-
-On 18/02/2025 15:17, Sean Christopherson wrote:
-> On Mon, Feb 17, 2025, Vitaly Kuznetsov wrote:
->> Sean Christopherson <seanjc@google.com> writes:
->>
->>> On Wed, Nov 27, 2024, Nikita Kalyazin wrote:
->>>> 3a7c8fafd1b42adea229fd204132f6a2fb3cd2d9 ("x86/kvm: Restrict
->>>> ASYNC_PF to user space") stopped setting KVM_ASYNC_PF_SEND_ALWAYS in
->>>> Linux guests.  While the flag can still be used by legacy guests, the
->>>> mechanism is best effort so KVM is not obliged to use it.
->>>
->>> What's the actual motivation to remove it from KVM?  I agreed KVM isn't required
->>> to honor KVM_ASYNC_PF_SEND_ALWAYS from a guest/host ABI perspective, but that
->>> doesn't mean that dropping a feature has no impact.  E.g. it's entirely possible
->>> removing this support could negatively affect a workload running on an old kernel.
->>>
->>> Looking back at the discussion[*] where Vitaly made this suggestion, I don't see
->>> anything that justifies dropping this code.  It costs KVM practically nothing to
->>> maintain this code.
->>>
->>> [*] https://lore.kernel.org/all/20241118130403.23184-1-kalyazin@amazon.com
->>>
->>
->> How old is old? :-)
->>
->> Linux stopped using KVM_ASYNC_PF_SEND_ALWAYS in v5.8:
-> 
-> 5.8 is practically a baby.  Maybe a toddler :-)
-> 
->> commit 3a7c8fafd1b42adea229fd204132f6a2fb3cd2d9
->> Author: Thomas Gleixner <tglx@linutronix.de>
->> Date:   Fri Apr 24 09:57:56 2020 +0200
->>
->>      x86/kvm: Restrict ASYNC_PF to user space
->>
->> and I was under the impression other OSes never used KVM asynchronous
->> page-fault in the first place (not sure about *BSDs though but certainly
->> not Windows). As Nikita's motivation for the patch was "to avoid the
->> overhead ... in case of kernel-originated faults" I suggested we start
->> by simplifyign the code to not care about 'send_user_only' at all.
-> 
-> In practice, I don't think it's a meaningful simplification.  There are other
-> scenarios where KVM shouldn't inject an async #PF, so kvm_can_deliver_async_pf()
-> itself isn't going anywhere.
-> 
-> AFAICT, what Nikita actually wants is a way to disable host-side async #PF, e.g.
-
-That's correct.  Just wanted to say that the main intention was to do 
-that for async PF user [1] where the difference in performance is 
-noticeable (at least in my setup).  I'm totally ok with the status quo 
-in the async PF kernel.  If however the mechanism to achieve that turns 
-out to be generic, it's better to support for both, I guess.
-
-[1]: 
-https://lore.kernel.org/kvm/20241118123948.4796-1-kalyazin@amazon.com/T/
-
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index f97d4d435e7f..d461e1b5489c 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -13411,7 +13411,8 @@ bool kvm_can_do_async_pf(struct kvm_vcpu *vcpu)
->                       kvm_is_exception_pending(vcpu)))
->                  return false;
-> 
-> -       if (kvm_hlt_in_guest(vcpu->kvm) && !kvm_can_deliver_async_pf(vcpu))
-> +       if ((kvm_hlt_in_guest(vcpu->kvm) || kvm_only_pv_async_pf(vcpu->kvm)) &&
-> +           !kvm_can_deliver_async_pf(vcpu))
->                  return false;
-> 
->          /*
-> 
->> We can keep the code around, I guess, but with no plans to re-introduce
->> KVM_ASYNC_PF_SEND_ALWAYS usage to Linux I still believe it would be good
->> to set a deprecation date.
+base-commit: 9b6c03cb96b9e19bce2c2764d2c6dd4ccbd06c5d
+prerequisite-patch-id: 1bff7bbc4ef0e29266265ac3dc009011c046f745
+prerequisite-patch-id: 74a284d40a426a0038a7054068192238f7658187
+prerequisite-patch-id: c3e34e88ad6a0acf7d9ded0cdb4745a87cf6fd82
+prerequisite-patch-id: 9cd0dfaf8e21a811edbe5a2da7185b6f9055d42d
+prerequisite-patch-id: f50c41578b639370a5d610af6f25c2077321a886
+prerequisite-patch-id: 5a7219a51e42de002b8dbf94ec8af96320043489
+prerequisite-patch-id: 67ea5d4e21b4ce4acbd6fc3ce83017f55811c49b
+prerequisite-patch-id: 37a7fab113a32581f053c09f45efb137afd75a1b
+prerequisite-patch-id: 475bcdc6267f4b02fb1bb2379145529c33684e4f
+prerequisite-patch-id: d3114f0b3da3d8b5ad64692df761f1cf42fbdf12
+prerequisite-patch-id: d1d9280fb056130df2050a09b7ea7e7ddde007c5
+prerequisite-patch-id: 2c370f3de6d227fa8881212207978cce7bbb18ba
+prerequisite-patch-id: 938b8fe5437e5f7bc22bffc55ae249a27d399d66
+prerequisite-patch-id: ab0a510994fbe9985dc46a3d35e6d0574ddbb633
+-- 
+2.48.1
 
 
