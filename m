@@ -1,63 +1,56 @@
-Return-Path: <linux-kernel+bounces-519767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77675A3A1A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:46:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D569A3A1A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:45:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 452A93B1CA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:44:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 159EC16B7CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:45:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4417526E153;
-	Tue, 18 Feb 2025 15:44:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37C1F26AABB;
+	Tue, 18 Feb 2025 15:45:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="nSmgq1Zp"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zoh1xK9F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45066263F36;
-	Tue, 18 Feb 2025 15:44:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A75C207A06
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 15:45:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739893489; cv=none; b=D6pQKcCxQiU7LCTCLfrINBWxcjwdVumIunyUt7zukDP1Xj8Euo8xWpYYImjmtxhI1Bw+bjqJrAr5vMVpfMI1jw9eGYMeRv1AY74iXWoXgs2yWuP4gSoxxtkUxLvmRZyNEYdkHH6UDRmg5GEua24+WliM2f3pUUot2iWnGsfP2ck=
+	t=1739893541; cv=none; b=o3L+FCBSOPQ6AUcrUfZTssYeGxYsGcJugHp2j8tYmX4kdZl3aPdF+1D3yvtM6aEifJh6Dfd3LjI1pvwVLn+1xJ/PMLbr+k4RRgk/955p8S2YK+mYF6BwlepEIp95dwBWLC7k8bLlABR6lGkPq8FC8TDRxwkJ/y1P6x+g3wkUaZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739893489; c=relaxed/simple;
-	bh=DA5ovtBGbrhX0W3s/JS3ztwML238rN8ZFkY+jw4W/+g=;
+	s=arc-20240116; t=1739893541; c=relaxed/simple;
+	bh=T7hySr5ecqC3x+q85ihTMQrkoCJj4NZdyMJ78ShIj+w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JD9rB7gY58v7krd/RdCgdyInNkgWLikLOml9Xy8VrOG3saSE1YAZv/2/A3MaAynPzO3FC8XHfyJyoejgh9N2SkQqX1sHW5LAA7eXqlZT8iwBJwfI8KOhmgX9pedEA1jFkOkcR2csSAIdXmVRx+pim5AhMg95TdM4N+Dri0+yM/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=nSmgq1Zp; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=0pQ5blC2+8DjxAh5O4SabJyjKzsTsXvGNXutRQEQZcw=; b=nSmgq1Zpt0SXPWsXRoB2EKcrv8
-	f+hoG0nbGcUzTnGs0OGrCucNiZts+RB1Tgs2vIEkOXAlqMMH2VwEZRzNBWsIWJLkOdW1Iv7Ib1V7z
-	Byty+ZJEazvoNsa0JrH+XVv9JmtBVG6ux5qlR8kFHi+TlAcet+OVrVhSLWN9n9yr0f0c=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tkPm3-00FL5R-Ur; Tue, 18 Feb 2025 16:44:39 +0100
-Date: Tue, 18 Feb 2025 16:44:39 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, andrew+netdev@lunn.ch, horms@kernel.org,
-	shenjian15@huawei.com, wangpeiyang1@huawei.com,
-	liuyonglong@huawei.com, chenhao418@huawei.com,
-	sudongming1@huawei.com, xujunsheng@huawei.com,
-	shiyongbang@huawei.com, libaihan@huawei.com,
-	jonathan.cameron@huawei.com, shameerali.kolothum.thodi@huawei.com,
-	salil.mehta@huawei.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 net-next 6/6] net: hibmcge: Add ioctl supported in
- this module
-Message-ID: <d1286c95-95ab-4138-806f-a448dc2f0d78@lunn.ch>
-References: <20250218085829.3172126-1-shaojijie@huawei.com>
- <20250218085829.3172126-7-shaojijie@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LI00m/Fz3gqxunOIqRlD+pwjZmPjuHJNQfhJuEBVXV4Fdo8Bv0OZaqBin3eyMyGO2+G0zCYYrCzzjSFbGQdtTFRwq3wqmC895emFsOAZrH43wYjKcaj6R6fMZSkI0YSmPcVEUfe37nUgfeyArttt714TWXn8FCupmoSRsKDPOZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zoh1xK9F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DBFBC4CEE2;
+	Tue, 18 Feb 2025 15:45:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739893540;
+	bh=T7hySr5ecqC3x+q85ihTMQrkoCJj4NZdyMJ78ShIj+w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Zoh1xK9Fat+HL/1UOMTHYWdt3x+dfkDWbK1m7iXtlUeo6CaY/qncJLmN6Yw+MRLyJ
+	 n+qQNHlqaHBe8+KbEHgZVQ4DMz79KBxRR0x0Xd+iOZY1vhTb/1h4ayJGLEOrajcJnL
+	 y4teGLxkBqF8hJEfILbcwBuc9TEJrxJgFOJMGp8DzvHtClqicSqtUPWb1s4OALhB3Y
+	 Yn1HFIc+FmjvHFZVQctqmIejJuc60PXS53jG7RqzDPpO26G33oEUnzuBhnZ3Ibz/qI
+	 s+5MWpLfkdXCaKatHNrCrPOvjm+X3jcypDE4YCxc9IZh0B4dBeLY5Hp/WX2qDAKZBu
+	 zpAOuZdzUm/0g==
+Date: Tue, 18 Feb 2025 08:45:37 -0700
+From: Keith Busch <kbusch@kernel.org>
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Maurizio Lombardi <mlombard@redhat.com>,
+	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] nvme-tcp: fix connect failure on receiving partial
+ ICResp PDU
+Message-ID: <Z7SrIT9m51w8A4DC@kbusch-mbp>
+References: <20250124184311.1642797-1-csander@purestorage.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,15 +59,16 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250218085829.3172126-7-shaojijie@huawei.com>
+In-Reply-To: <20250124184311.1642797-1-csander@purestorage.com>
 
-On Tue, Feb 18, 2025 at 04:58:29PM +0800, Jijie Shao wrote:
-> This patch implements the .ndo_eth_ioctl() to
-> read and write the PHY register.
+On Fri, Jan 24, 2025 at 11:43:10AM -0700, Caleb Sander Mateos wrote:
+> nvme_tcp_init_connection() attempts to receive an ICResp PDU but only
+> checks that the return value from recvmsg() is non-negative. If the
+> sender closes the TCP connection or sends fewer than 128 bytes, this
+> check will pass even though the full PDU wasn't received.
 > 
-> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
+> Ensure the full ICResp PDU is received by checking that recvmsg()
+> returns the expected 128 bytes.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-
-    Andrew
+Thanks, applied to nvme-6.14.
 
