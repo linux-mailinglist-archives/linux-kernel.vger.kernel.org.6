@@ -1,80 +1,265 @@
-Return-Path: <linux-kernel+bounces-520497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7552A3AA90
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 22:14:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85E4DA3AA98
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 22:14:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF331188B2A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 21:14:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54AB0168D64
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 21:14:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D582F1C07D5;
-	Tue, 18 Feb 2025 21:13:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 997971C8FB4;
+	Tue, 18 Feb 2025 21:14:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZeHqxNc8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="zX4fDzmJ"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EC3E286288;
-	Tue, 18 Feb 2025 21:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC0BD1AF0C0
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 21:14:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739913227; cv=none; b=F3/1snLUfQhdQ48aXLALlpkLWldMqu6Di3vDyOtCkeyREMXXege9nTYDqUjfuu4s52aQeVfKYM5+0zFC7eZNr3pcuCFxBY6mWGbuTp9YpYw6fcWg0AwtevkL7q65Mpd7D+eH3q0XE35oieywJbJ+pfUGnlMgjJRhhIzWIbAV+Vk=
+	t=1739913276; cv=none; b=SAWTxjrNSwRi/183Mi5Aw9Ipfqrm1IjdVB07aWuCKNy3tes5qIEmy+rmMk+sEUjfFVxNTsdte8VGolNCWArq7rbmt4UoiMTXJ65iryn2vDAbyNWj6bYHQ2AHAII0YSaOzUmzwn0cRieY0OMjIHBpEMQbaJwkV43mucfrpHcNXsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739913227; c=relaxed/simple;
-	bh=KATj1qETJsGK0zJSt9LilsCAIoK6W52KCkD9Mf6B7WI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=I4zccrN2eUhGjaR6JfcrVzD+AK4298fr7HHU+z3tt/QW2Jaket2IVqDtgCl7hV/PIfa769hmMKvgcJOsrbcCl/toLzFMAdYpbHUug+lMs5Mh7rPngML088ljYOmhzTQEAAZTGmUT2rWLMOjnNPG2VPcMUGPN8IOlaFfEcMdSFDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZeHqxNc8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AF12C4CEE2;
-	Tue, 18 Feb 2025 21:13:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739913226;
-	bh=KATj1qETJsGK0zJSt9LilsCAIoK6W52KCkD9Mf6B7WI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ZeHqxNc8bB/srOb5IZAdB6hIGh+lIBakxW6jGaleTqmLJtXX/PoU4F5jvduRIBvU7
-	 nNHvDambushh2Xgcz3ERD3Dy4yEUlOdVXVAdWbSg06PYP1iRni9trJXUx4W2MhsNVx
-	 l7ewzbo/g5ITFSXALogYxPbiaOkPpcSpX+gZ7H0wnZpMcoF92sTqT6cid5/782/Fh9
-	 rbN5ATVPkgU4fkDwlB19mCZQj/dm6Awayo7fxAWbX68gLDOSUoMwB28xO9V8olFcrh
-	 mneNxfpK9p96IetlXZ28Nb4R01WQe4PtClMW19c8ShWVdFy4PZmXZuK/OBj6whDUn6
-	 qxj8N6gH+rPrA==
-Date: Tue, 18 Feb 2025 13:13:45 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Tariq Toukan <ttoukan.linux@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, "Gustavo A. R. Silva"
- <gustavo@embeddedor.com>, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
- Tariq Toukan <tariqt@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH][next] net/mlx5e: Avoid a hundred
- -Wflex-array-member-not-at-end warnings
-Message-ID: <20250218131345.6bd558cb@kernel.org>
-In-Reply-To: <59b075bc-f6e6-42f0-bc01-c8921922299d@gmail.com>
-References: <Z6GCJY8G9EzASrwQ@kspp>
-	<4e556977-c7b9-4d37-b874-4f3d60d54429@embeddedor.com>
-	<8d06f07c-5bb4-473d-90af-5f57ce2b068f@gmail.com>
-	<7ce8d318-584f-42c2-b88a-2597acd67029@embeddedor.com>
-	<5f2ca37f-3f6d-44d2-9821-7d6b0655937d@gmail.com>
-	<36ab1f42-b492-497f-a1dc-34631f594da6@lunn.ch>
-	<59b075bc-f6e6-42f0-bc01-c8921922299d@gmail.com>
+	s=arc-20240116; t=1739913276; c=relaxed/simple;
+	bh=oGy55IJcEGgdNiLxbkXY33fp8cTKqWt1BWnOffz4MJM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iKezBkNlg+f7ipc4A1DW6gKnr8qbkd0NBYNEctCG28UQkNjpPWazui+hNjgoJpxiQ+4DntdiOPgo6V4K2uaPjE9t4qOYVLnsAqzSKzbUjCYKnDMy4qXrL5qYGDp6gdNgCnowyoBy7dnfN7tuL98moozo29jXK0TmGe5kHWsi4RA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=zX4fDzmJ; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-220bfdfb3f4so121353795ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 13:14:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1739913273; x=1740518073; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=i/TFjjFVKbDA3nMhW4Nd4g/ebT5hNi/7fITiKNmhUzM=;
+        b=zX4fDzmJf8D3IULJy+9ORjlF9LToVRyBLuE84gl+G8m+Ts4ZSYvbYsLztE09+FfYhF
+         MD8Dsj7cy4xJmTVNsO+dE2gXiDSbgO7tEoXIu7wQl7VW67l3dBAlQxmEO1KGLSNT+obn
+         mgwF5SWNyovCACiopowquMcQAEbntciPJQpQmalkOLFH1mOFOajOXl+5VYNKjq2LM2xo
+         ZhOpXI9tHP+0y2g9BLoFgpAuXgcOuqow8VX7Dy8/VHeu7WUgH1rs5jlQOj/5sbpGkeBt
+         yfLmubUErFF//vGT+rOKzQaXkTTHQ1qVNyO0Yx47UosSny+hfW9O+PR4u6XWibPUvr8f
+         1+Zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739913273; x=1740518073;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=i/TFjjFVKbDA3nMhW4Nd4g/ebT5hNi/7fITiKNmhUzM=;
+        b=mOVs1TPbbIkETZllMSGQCr8Kz7ym5/U04bl4H4a6rX/IPimd5hQtOmjlxvMC/KwaAV
+         lJw0G0DUd1P/HvaJ8EseVusMN8ySxVgJhcz+bF/Vlyq2J7fICQ5fuL0PMWKMwwqihFTN
+         xeUplU8eZoFWXfO72WI3EQFzRt78VGsenT9AD9lHlsqd/ikF8Zv/rKZY4ExNHK8yUgg3
+         5maAMisKmPFnL8kYGK60XjpLmvO+4ZRpfl4c67oH3exKL84pCTTIcIyiiyw6QZjZ94jW
+         BozqiQ2y+9mb3j9nUpFbF0Rle97vRhLlBIi0rW8bjmFaRZpmIhjcdrDFcaPWF4CMY8Ln
+         P27A==
+X-Forwarded-Encrypted: i=1; AJvYcCUoqZI6YDrw2GCinpGEC55mpU0lZcGGg0A1FNauOf95aXYnjcjpAL36kOgwn/1SbAbTqvGwvzJv2JpZFUs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmZ/k2Prr6idzaSRWNYDk87Vg1wxd9JvA8FzDuJVrV7VRBzNoN
+	StUOvEhe0OdxJo5XoIiXq4uhr/hDo0/Nk9uXA+wwUKDTlJYx6PrA9LLDwYvrBi0=
+X-Gm-Gg: ASbGnctT0rYTt9C8/bPkNQzFwnh8npWW74n/eBWNQ6maOEX+5DHIMR9TNhIMU3Nh6YV
+	eQYdyV+soPq90B5+gmrsnCEgUil+Prr0l+YbQ3tWvFBwf/DUsD7r8gpcZnw57Z7AiVhBu6DOTP2
+	C4dxrNlLfgSyd1JEy7p0JE31LV7fFpK1VIme2Bgdc7Z3UnDnvt9UQRge2OXlRqUNJ2Ib6XaIQ0/
+	TzpXVugTpFmr1v7thoBK7donsDXDonlEpcsHtXIRY8+Cz99/2x+sQPka/z239rp6I3+ERymQEnC
+	eRGxVh8UWbWJBchy4A9nuKRCqpU0AFf/9IoZ5iM8hInF4WM09SJM1YrNT17r2ZBgiEk=
+X-Google-Smtp-Source: AGHT+IE4cq05OkjYUSAgnZzqAzKf40dxIlYKr7v+HOFdczvTt57phu0weZ5JY1SWVHQCE16yV/OTUA==
+X-Received: by 2002:a17:902:d50e:b0:221:337:4862 with SMTP id d9443c01a7336-2217086de01mr12977035ad.15.1739913273049;
+        Tue, 18 Feb 2025 13:14:33 -0800 (PST)
+Received: from dread.disaster.area (pa49-186-89-135.pa.vic.optusnet.com.au. [49.186.89.135])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d5348f34sm93829725ad.10.2025.02.18.13.14.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2025 13:14:32 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.98)
+	(envelope-from <david@fromorbit.com>)
+	id 1tkUvF-00000002xpK-2NTA;
+	Wed, 19 Feb 2025 08:14:29 +1100
+Date: Wed, 19 Feb 2025 08:14:29 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Yunsheng Lin <linyunsheng@huawei.com>
+Cc: Yishai Hadas <yishaih@nvidia.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>, Gao Xiang <xiang@kernel.org>,
+	Chao Yu <chao@kernel.org>, Yue Hu <zbestahu@gmail.com>,
+	Jeffle Xu <jefflexu@linux.alibaba.com>,
+	Sandeep Dhavale <dhavale@google.com>,
+	Carlos Maiolino <cem@kernel.org>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
+	Luiz Capitulino <luizcap@redhat.com>,
+	Mel Gorman <mgorman@techsingularity.net>, kvm@vger.kernel.org,
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-btrfs@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+	linux-xfs@vger.kernel.org, linux-mm@kvack.org,
+	netdev@vger.kernel.org, linux-nfs@vger.kernel.org
+Subject: Re: [RFC] mm: alloc_pages_bulk: remove assumption of populating only
+ NULL elements
+Message-ID: <Z7T4NZAn4wD_DLTl@dread.disaster.area>
+References: <20250217123127.3674033-1-linyunsheng@huawei.com>
+ <Z7Oqy2j4xew7FW9Z@dread.disaster.area>
+ <cf270a65-c9fa-453a-b7a0-01708063f73e@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cf270a65-c9fa-453a-b7a0-01708063f73e@huawei.com>
 
-On Tue, 18 Feb 2025 17:53:14 +0200 Tariq Toukan wrote:
-> Maybe it wasn't clear enough.
-> We prefer the original patch, and provided the Reviewed-by tag for it.
+On Tue, Feb 18, 2025 at 05:21:27PM +0800, Yunsheng Lin wrote:
+> On 2025/2/18 5:31, Dave Chinner wrote:
+> 
+> ...
+> 
+> > .....
+> > 
+> >> diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
+> >> index 15bb790359f8..9e1ce0ab9c35 100644
+> >> --- a/fs/xfs/xfs_buf.c
+> >> +++ b/fs/xfs/xfs_buf.c
+> >> @@ -377,16 +377,17 @@ xfs_buf_alloc_pages(
+> >>  	 * least one extra page.
+> >>  	 */
+> >>  	for (;;) {
+> >> -		long	last = filled;
+> >> +		long	alloc;
+> >>  
+> >> -		filled = alloc_pages_bulk(gfp_mask, bp->b_page_count,
+> >> -					  bp->b_pages);
+> >> +		alloc = alloc_pages_bulk(gfp_mask, bp->b_page_count - refill,
+> >> +					 bp->b_pages + refill);
+> >> +		refill += alloc;
+> >>  		if (filled == bp->b_page_count) {
+> >>  			XFS_STATS_INC(bp->b_mount, xb_page_found);
+> >>  			break;
+> >>  		}
+> >>  
+> >> -		if (filled != last)
+> >> +		if (alloc)
+> >>  			continue;
+> > 
+> > You didn't even compile this code - refill is not defined
+> > anywhere.
+> > 
+> > Even if it did complile, you clearly didn't test it. The logic is
+> > broken (what updates filled?) and will result in the first
+> > allocation attempt succeeding and then falling into an endless retry
+> > loop.
+> 
+> Ah, the 'refill' is a typo, it should be 'filled' instead of 'refill'.
+> The below should fix the compile error:
+> --- a/fs/xfs/xfs_buf.c
+> +++ b/fs/xfs/xfs_buf.c
+> @@ -379,9 +379,9 @@ xfs_buf_alloc_pages(
+>         for (;;) {
+>                 long    alloc;
+> 
+> -               alloc = alloc_pages_bulk(gfp_mask, bp->b_page_count - refill,
+> -                                        bp->b_pages + refill);
+> -               refill += alloc;
+> +               alloc = alloc_pages_bulk(gfp_mask, bp->b_page_count - filled,
+> +                                        bp->b_pages + filled);
+> +               filled += alloc;
+>                 if (filled == bp->b_page_count) {
+>                         XFS_STATS_INC(bp->b_mount, xb_page_found);
+>                         break;
+> 
+> > 
+> > i.e. you stepped on the API landmine of your own creation where
+> > it is impossible to tell the difference between alloc_pages_bulk()
+> > returning "memory allocation failed, you need to retry" and
+> > it returning "array is full, nothing more to allocate". Both these
+> > cases now return 0.
+> 
+> As my understanding, alloc_pages_bulk() will not be called when
+> "array is full" as the above 'filled == bp->b_page_count' checking
+> has ensured that if the array is not passed in with holes in the
+> middle for xfs.
 
-Can you explain what do you mean by "cleaner"?
-I like the alternative much more.
+You miss the point entirely. Previously, alloc_pages_bulk() would
+return a value that would tell us the array is full, even if we
+call it with a full array to begin with.
+
+Now it fails to tell us that the array is full, and we have to track
+that precisely ourselves - it is impossible to tell the difference
+between "array is full" and "allocation failed". Not being able to
+determine from the allocation return value whether the array is
+ready for use or whether another go-around to fill it is needed is a
+very poor API choice, regardless of anything else.
+
+You've already demonstrated this: tracking array usage in every
+caller is error-prone and much harder to get right than just having
+alloc_pages_bulk() do everything for us.
+
+> > The existing code returns nr_populated in both cases, so it doesn't
+> > matter why alloc_pages_bulk() returns with nr_populated != full, it
+> > is very clear that we still need to allocate more memory to fill it.
+> 
+> I am not sure if the array will be passed in with holes in the
+> middle for the xfs fs as mentioned above, if not, it seems to be
+> a typical use case like the one in mempolicy.c as below:
+> 
+> https://elixir.bootlin.com/linux/v6.14-rc1/source/mm/mempolicy.c#L2525
+
+That's not "typical" usage. That is implementing "try alloc" fast
+path that avoids memory reclaim with a slow path fallback to fill
+the rest of the array when the fast path fails.
+
+No other users of alloc_pages_bulk() is trying to do this.
+
+Indeed, it looks somewhat pointless to do this here (i.e. premature
+optimisation!), because the only caller of
+alloc_pages_bulk_mempolicy_noprof() has it's own fallback slowpath
+for when alloc_pages_bulk() can't fill the entire request.
+
+> > IOWs, you just demonstrated why the existing API is more desirable
+> > than a highly constrained, slightly faster API that requires callers
+> > to get every detail right. i.e. it's hard to get it wrong with the
+> > existing API, yet it's so easy to make mistakes with the proposed
+> > API that the patch proposing the change has serious bugs in it.
+> 
+> IMHO, if the API is about refilling pages for the only NULL elements,
+> it seems better to add a API like refill_pages_bulk() for that, as
+> the current API seems to be prone to error of not initializing the
+> array to zero before calling alloc_pages_bulk().
+
+How is requiring a well defined initial state for API parameters
+"error prone"?  What code is failing to do the well known, defined
+initialisation before calling alloc_pages_bulk()?
+
+Allowing uninitialised structures in an API (i.e. unknown initial
+conditions) means we cannot make assumptions about the structure
+contents within the API implementation.  We cannot assume that all
+variables are zero on the first use, nor can we assume that anything
+that is zero has a valid state.
+
+Again, this is poor API design - structures passed to interfaces
+-should- have a well defined initial state, either set by a *_init()
+function or by defining the initial state to be all zeros (i.e. via
+memset, kzalloc, etc).
+
+Performance and speed is not an excuse for writing fragile, easy to
+break code and APIs.
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
