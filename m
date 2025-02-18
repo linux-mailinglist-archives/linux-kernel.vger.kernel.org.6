@@ -1,222 +1,132 @@
-Return-Path: <linux-kernel+bounces-520580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 340A9A3ABBE
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 23:34:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9F80A3ABC0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 23:35:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6275F3A74FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 22:33:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 744E116A97F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 22:34:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E8C91D934B;
-	Tue, 18 Feb 2025 22:33:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A68C1D7E5F;
+	Tue, 18 Feb 2025 22:34:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NkuwkLj3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ch6usJ1+"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55B941B87EB;
-	Tue, 18 Feb 2025 22:33:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67CA91B87EB
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 22:34:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739918036; cv=none; b=IAFX4Kkhv7bDmbK6SLgpMTrYSU7Ty26A+ekBbdcB1aubIBW5Mf37n2wjFUYQP4pEwKonnoCH0HdLFV9NT2NQHhyYfcxmWBSUtPh+ukh/Qk0tdpn5ez8zgW6uYXpCvqzUOD/c/TVzzrmQh9zj/GkHf/ShXXlHDUCKc4BNe4lLV/M=
+	t=1739918087; cv=none; b=XiuyelThJQo12dD7ihhOObRqDUC2ef/6CO9UPtIh0P8CRX2ze5la+PLwEqgjY13Rl1dPDRCiQ0kJvYm47WzVROZEm97rtMRTVKIB880jShjXpuYKXd46BbtutPDWznTdf5pra5j1qOOvLhjQK+tfRp+rEuZmSXbaqb7oCkpnJQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739918036; c=relaxed/simple;
-	bh=P6sZ3lNpHHpplB4AD6dWKBij+UC5ODnu6yXG6d0hA9Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=J0g0CHmCOsUgYLVm4igvkjMWR9/Crw5t7pLQumFYN7sidJBAcMhQcPKeJa5nP7shph4umj2O4SnGF9UAPq90QKAVed/qvlmWlo++fJcY+m5ouBMYIIY2BB7QHjBuiCUx/3CxeDLtObf+xSO+snMwu44stKL44GECQfPOejL6D/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NkuwkLj3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9F74C4CEE2;
-	Tue, 18 Feb 2025 22:33:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739918035;
-	bh=P6sZ3lNpHHpplB4AD6dWKBij+UC5ODnu6yXG6d0hA9Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=NkuwkLj3PkFL0Ng4mzbutDA/bj9RAYmBvq1aLtZvMK2HBgh93GVKt20ul8PJTeoJj
-	 oDmXtJOH5LQ6/vj0s6j2A31/Glap7l95tD3NCTTKVrZrUAqKxP8ttLM0GFTBjkdwN4
-	 EJqiOqaNHT9hWZqE4pKSEpZEbjA9mnPvGmFq9x29VkEAiuxlrNHYlPyAIWh7STyOgg
-	 aaCGfWWDKmjRZomOccAL3LhmOrRACl7cjDoYmUbwLooJWgQ/S+r05t2fqkB2blU5cX
-	 7wd61R+vGpdcwP0S5yth+2eMSa3yOUlZH27knbwsAC4KzwGUUkseRGn3TGz9oT1a9v
-	 5ptiZB6XVcg1g==
-Date: Tue, 18 Feb 2025 16:33:54 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Feng Tang <feng.tang@linux.alibaba.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Lukas Wunner <lukas@wunner.de>,
-	Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	Liguang Zhang <zhangliguang@linux.alibaba.com>,
-	Guanghui Feng <guanghuifeng@linux.alibaba.com>, rafael@kernel.org,
-	Markus Elfring <Markus.Elfring@web.de>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	ilpo.jarvinen@linux.intel.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] PCI/portdrv: Add necessary wait for disabling
- hotplug events
-Message-ID: <20250218223354.GA196886@bhelgaas>
+	s=arc-20240116; t=1739918087; c=relaxed/simple;
+	bh=c9MCg23fFw/wwbwFWoLmtmEt2qSX634nqFWl7SGjvXc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=HOd8lpfgvAZS0eGKH1pPRUZM+r5TtO6hsEK+w/askJ+U8LZhazRN45lqvHRHJu7zdNIfns40t8Dc54O7/1NkqVTXb57M3XsfrmiSda6ROJAma8XiaN4yVrAHKlaYLTxxTXfWTU4YIcPFMNW4LS9d1A+V7nKLVytmCCLLTPSHQ1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ch6usJ1+; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2212a930001so69900425ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 14:34:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739918085; x=1740522885; darn=vger.kernel.org;
+        h=mime-version:user-agent:message-id:date:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TZLHuC1Hi4yGX01nX6e056nsAoeCP8oBOZxASCblh0I=;
+        b=Ch6usJ1+X4N0L8bChPSQRO0cWImdkIPIIMscOQvtNIIlTD4Dhu4ldWO8hwbZRYZ3+J
+         wuiHqSVviyzxz49ZLFSvxr22IyWrUDeqy0BOWkEbtdMP0jlPdqSbsUBWej6ZDe2u6EOR
+         6JHp2QB2F2YWjJAJ+dBr/zT3YdXXx1KBxiRwPo2d1B7ZjjiMeoAz7NlmSJTYvX/1Wz8L
+         jva11ybSVLLWZ78b/hu8GX7rweBho5FztvFphcbIo6rAJwwSIafI+9H5luUHJYziAL8M
+         5oE8SQtr05ducUf9HJZDYMsw4wuUX9hjRFSK8K/bBfDVKkqhlvVS3ZJFPxRhzO/WoCj2
+         69gg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739918085; x=1740522885;
+        h=mime-version:user-agent:message-id:date:references:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TZLHuC1Hi4yGX01nX6e056nsAoeCP8oBOZxASCblh0I=;
+        b=WplJub4ZDhL1L2nwv2yVFNNedD5KBSIcZaRmM77twPQJgUsbUlXIEX4VygCZ7sOpJ0
+         c7gtn2y2xLPFjyHrEbYiin3MLBb8d5SyCkKH1zCWgKKYl1SS3853po9nWv/wYUR6sfSI
+         bvo/JWuG1G2bvg89L8rugRlSG1xgmx/0zDHEP5XUWrAcgQj4PWxiKAleGZptsGMcRxs9
+         ZYg9pzUKU2IqmSGAd7v11FAdg8vuyGdeS/nFaop8rKJ5jg1sR2grSGJ5m5vzUjSwLe+I
+         SufvaawOS036vq0h4SAbPkxFCPy3fgDaq/R3xoZm+RG/CNVhWjJwaS/aAMd46XX46MZw
+         B7Ug==
+X-Forwarded-Encrypted: i=1; AJvYcCV9x8SzYLgUsXh5XsYuSvHzmAyUQGzYx5KzCLm6bYSx62q9Jvfngg6SyH4mYifxUXl1uH+Cb9BldY7mSwM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDEmSRSLbKZZiW+w469u3ucDt/N4ODU7fllnDs8NcAb0/2baaN
+	RUsCzCTaDNK/jxhoe30qBFf7kPuNbAxMoQS+LgW+MJd9lMcrAbIXAl0wsvBV1T12yZGr/y7t9AZ
+	hrhMJ
+X-Gm-Gg: ASbGncvs7hODwgvEJqYp67Jea442tu9sCmowwE1Vl9M1ce0Xg4C+y2pzRan1P2O+z0L
+	DZllIWPGYF64K32mXGDFQAfiI1twGWymhk3eRj4zB60DdgO7IKRr+MtRmqqoLcILakU5Ki+SL2P
+	WoOxApZJUfX72CVFdfe1UCCzrKs6gy/Boume2tOBe71t6d9h7WRvTgi4AvFPXTx5/iU+zqrgZnT
+	8UCMdWES0IHgsGhDCme3ZAKJx7pUUMqQIUc2TY9Qpa0Y1LOWsOM0Sdiwam+biZjhA8T2tNJhTMj
+	vt4atMbeHdMUkQ79NyCmxdwVuv/9Hy9WnFiVlkpdOAO+DsknIG7RMID8mIsg/0o1+u03qw==
+X-Google-Smtp-Source: AGHT+IFYKz/EYn7TNybiJj1qW3okUbikhAGX/UJBob0S9X1x6mD9V3eaYo2eIvlon59gvNzDMcxedg==
+X-Received: by 2002:a05:6a00:c9:b0:732:6221:7180 with SMTP id d2e1a72fcca58-732622171dfmr16003879b3a.5.1739918085461;
+        Tue, 18 Feb 2025 14:34:45 -0800 (PST)
+Received: from bsegall-glaptop.localhost (c-73-202-176-14.hsd1.ca.comcast.net. [73.202.176.14])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7324f64a39asm9321541b3a.69.2025.02.18.14.34.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2025 14:34:44 -0800 (PST)
+From: Benjamin Segall <bsegall@google.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>,  Frederic Weisbecker
+ <frederic@kernel.org>,  linux-kernel@vger.kernel.org,  Eric Dumazet
+ <edumazet@google.com>,  Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH] posix-timers: cond_resched() during exit_itimers()
+In-Reply-To: <877c5nk4jw.ffs@tglx> (Thomas Gleixner's message of "Tue, 18 Feb
+	2025 10:03:47 +0100")
+References: <xm2634gg2n23.fsf@google.com> <877c5nk4jw.ffs@tglx>
+Date: Tue, 18 Feb 2025 14:34:43 -0800
+Message-ID: <xm26y0y22870.fsf@google.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250218034859.40397-1-feng.tang@linux.alibaba.com>
+Content-Type: text/plain
 
-On Tue, Feb 18, 2025 at 11:48:58AM +0800, Feng Tang wrote:
-> There was problem reported by firmware developers that they received
-> 2 pcie link control commands in very short intervals on an ARM server,
-> which doesn't comply with pcie spec, and broke their state machine and
-> work flow. According to PCIe 6.1 spec, section 6.7.3.2, software needs
-> to wait at least 1 second for the command-complete event, before
-> resending the cmd or sending a new cmd.
+Thomas Gleixner <tglx@linutronix.de> writes:
 
-s/link control/hotplug/ (also below)
-s/2/two/
-s/pcie/PCIe/ (also below)
+> On Fri, Feb 14 2025 at 14:12, Benjamin Segall wrote:
+>> exit_itimers() loops through every timer in the process to delete it.
+>> This requires taking the system-wide hash_lock for each of these locks,
+>> and contends with other processes trying to create or delete timers.
+>> When a process creates hundreds of thousands of timers, and then exits
+>> while other processes contend with it, this can trigger softlockups on
+>> CONFIG_PREEMPT=n.
+>>
+>> Ideally this will some day be better solved by eliminating the global
+>> hashtable, but until that point mitigate the issue by doing
+>> cond_resched in that loop.
+>
+> It won't help for a PREEMPT_NONE kernel because the loop will be equally
+> long as before. Only the hash lock contention will be smaller, but that
+> does not mean that mopping up 100k timers won't be able to take ages.
 
-> And the first link control command firmware received is from
-> get_port_device_capability(), which sends cmd to disable pcie hotplug
-> interrupts without waiting for its completion.
-> 
-> Fix it by adding the necessary wait to comply with PCIe spec, referring
-> pcie_poll_cmd().
-> 
-> Also make the interrupt disabling not dependent on whether pciehp
-> service driver will be loaded as suggested by Lukas.
+Yeah, it could just run into a new lock or other bottleneck, though it's
+not immediately obvious to me what it would be (hash_lock isn't sharing
+~any of the time in perf tracing, the obvious other locks like hrtimer
+are sharded, etc). Just sharding the lock a bunch (leaving the actual
+hashtable with the same cacheline sharing even) boosts the speed of my
+synthetic contention test freeing 100k timers from 6s to 380ms (with
+uncontended exit at 17ms), so I think it's realistic that avoiding
+the shared lock/table might well do the job.
 
-This sounds like maybe it should be two separate patches.
+Of course nothing is stopping an even buggier application from
+just creating more timers (and at that point starting to notice the
+fixed hashtable size during timer_create)...
 
-> Fixes: 2bd50dd800b5 ("PCI: PCIe: Disable PCIe port services during port initialization")
-> Originally-by: Liguang Zhang <zhangliguang@linux.alibaba.com>
-> Suggested-by: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>
-> Signed-off-by: Feng Tang <feng.tang@linux.alibaba.com>
-> ---
-> Changlog:
-> 
->   since v1:
->     * Add the Originally-by for Liguang. The issue was found on a 5.10 kernel,
->       then 6.6. I was initially given a 5.10 kernel tar bar without git info to
->       debug the issue, and made the patch. Thanks to Guanghui who recently pointed
->       me to tree https://gitee.com/anolis/cloud-kernel which show the wait logic
->       in 5.10 was originally from Liguang, and never hit mainline.
->     * Make the irq disabling not dependent on wthether pciehp service driver
->       will be loaded (Lukas Wunner) 
->     * Use read_poll_timeout() API to simply the waiting logic (Sathyanarayanan
->       Kuppuswamy)
->     * Add logic to skip irq disabling if it is already disabled.
-> 
->  drivers/pci/pci.h          |  2 ++
->  drivers/pci/pcie/portdrv.c | 44 +++++++++++++++++++++++++++++++++-----
->  2 files changed, 41 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> index 01e51db8d285..c1e234d1b81d 100644
-> --- a/drivers/pci/pci.h
-> +++ b/drivers/pci/pci.h
-> @@ -759,12 +759,14 @@ static inline void pcie_ecrc_get_policy(char *str) { }
->  #ifdef CONFIG_PCIEPORTBUS
->  void pcie_reset_lbms_count(struct pci_dev *port);
->  int pcie_lbms_count(struct pci_dev *port, unsigned long *val);
-> +void pcie_disable_hp_interrupts_early(struct pci_dev *dev);
->  #else
->  static inline void pcie_reset_lbms_count(struct pci_dev *port) {}
->  static inline int pcie_lbms_count(struct pci_dev *port, unsigned long *val)
->  {
->  	return -EOPNOTSUPP;
->  }
-> +static inline void pcie_disable_hp_interrupts_early(struct pci_dev *dev) {}
->  #endif
->  
->  struct pci_dev_reset_methods {
-> diff --git a/drivers/pci/pcie/portdrv.c b/drivers/pci/pcie/portdrv.c
-> index 02e73099bad0..2470333bba2f 100644
-> --- a/drivers/pci/pcie/portdrv.c
-> +++ b/drivers/pci/pcie/portdrv.c
-> @@ -18,6 +18,7 @@
->  #include <linux/string.h>
->  #include <linux/slab.h>
->  #include <linux/aer.h>
-> +#include <linux/iopoll.h>
->  
->  #include "../pci.h"
->  #include "portdrv.h"
-> @@ -205,6 +206,40 @@ static int pcie_init_service_irqs(struct pci_dev *dev, int *irqs, int mask)
->  	return 0;
->  }
->  
-> +static int pcie_wait_sltctl_cmd_raw(struct pci_dev *dev)
-> +{
-> +	u16 slot_status = 0;
-> +	int ret, ret1, timeout_us;
-> +
-> +	/* 1 second, according to PCIe spec 6.1, section 6.7.3.2 */
-> +	timeout_us = 1000000;
-> +	ret = read_poll_timeout(pcie_capability_read_word, ret1,
-> +				(slot_status & PCI_EXP_SLTSTA_CC), 10000,
-> +				timeout_us, true, dev, PCI_EXP_SLTSTA,
-> +				&slot_status);
-> +	if (!ret)
-> +		pcie_capability_write_word(dev, PCI_EXP_SLTSTA,
-> +						PCI_EXP_SLTSTA_CC);
-> +
-> +	return  ret;
-
-Ugh.  I really don't like the way this basically duplicates
-pcie_poll_cmd().  I don't have a great suggestion to fix it; maybe we
-need a way to build part of pciehp unconditionally.  At the very least
-we need a comment here pointing to pcie_poll_cmd().
-
-And IIUC this will add a one second delay for ports that don't need
-command completed events.  I don't think that's fair to those ports.
-
-> +}
-> +
-> +void pcie_disable_hp_interrupts_early(struct pci_dev *dev)
-> +{
-> +	u16 slot_ctrl = 0;
-> +
-> +	pcie_capability_read_word(dev, PCI_EXP_SLTCTL, &slot_ctrl);
-> +	/* Bail out early if it is already disabled */
-> +	if (!(slot_ctrl & (PCI_EXP_SLTCTL_CCIE | PCI_EXP_SLTCTL_HPIE)))
-> +		return;
-> +
-> +	pcie_capability_clear_word(dev, PCI_EXP_SLTCTL,
-> +		  PCI_EXP_SLTCTL_CCIE | PCI_EXP_SLTCTL_HPIE);
-> +
-> +	if (pcie_wait_sltctl_cmd_raw(dev))
-> +		pci_info(dev, "Timeout on disabling PCIE hot-plug interrupt\n");
-
-s/PCIE/PCIe/
-
-> +}
-> +
->  /**
->   * get_port_device_capability - discover capabilities of a PCI Express port
->   * @dev: PCI Express port to examine
-> @@ -222,16 +257,15 @@ static int get_port_device_capability(struct pci_dev *dev)
->  
->  	if (dev->is_hotplug_bridge &&
->  	    (pci_pcie_type(dev) == PCI_EXP_TYPE_ROOT_PORT ||
-> -	     pci_pcie_type(dev) == PCI_EXP_TYPE_DOWNSTREAM) &&
-> -	    (pcie_ports_native || host->native_pcie_hotplug)) {
-> -		services |= PCIE_PORT_SERVICE_HP;
-> +	     pci_pcie_type(dev) == PCI_EXP_TYPE_DOWNSTREAM)) {
-> +		if (pcie_ports_native || host->native_pcie_hotplug)
-> +			services |= PCIE_PORT_SERVICE_HP;
->  
->  		/*
->  		 * Disable hot-plug interrupts in case they have been enabled
->  		 * by the BIOS and the hot-plug service driver is not loaded.
->  		 */
-> -		pcie_capability_clear_word(dev, PCI_EXP_SLTCTL,
-> -			  PCI_EXP_SLTCTL_CCIE | PCI_EXP_SLTCTL_HPIE);
-> +		pcie_disable_hp_interrupts_early(dev);
->  	}
->  
->  #ifdef CONFIG_PCIEAER
-> -- 
-> 2.43.5
-> 
+>
+> We really need to get this PREEMPT_LAZY thing going and kill all of this
+> cond_resched() nonsense.
+>
+> Thanks,
+>
+>         tglx
 
