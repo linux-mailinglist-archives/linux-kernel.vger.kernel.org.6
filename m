@@ -1,141 +1,167 @@
-Return-Path: <linux-kernel+bounces-519466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35A8EA39D2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:17:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7127A39D3A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:19:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A58A3A1603
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:11:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9F95165993
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:13:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE4BE14B08E;
-	Tue, 18 Feb 2025 13:11:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C602673A9;
+	Tue, 18 Feb 2025 13:13:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QwsetgF2"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tRzzl3kE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B2F265CDB;
-	Tue, 18 Feb 2025 13:11:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE7332417CF;
+	Tue, 18 Feb 2025 13:13:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739884303; cv=none; b=I8JRid+D9fyIS/f9/mdYgldWQ0PcyrulzkPYJr+tcuD77tsTbRBRV6pF8popTJ10xiO7IECzXHxGcRiBxz0119vbtIfcxvg+ix8eJZUVXI/sH4PQrCd2AYD4TXEhpYE2mgDmmdJ+A0/Jx2wWTp0W8ymfVcKbeCwB8dPpIybHtLc=
+	t=1739884415; cv=none; b=sgMaXR/JlonueHcALOmoJ2m4jly37R3cECQsbYVPygzpparuqYm5gxnirEcJ1vmG7cz6woMBXIiK7Soh9q9kz0dtFZjJ8BP1A3tZYEVrjFOSQOXHeblqariW5Se95suDB7VuZUl+SiVWMY56up8ZFtRvQuxb3ay3lO0ToxLADxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739884303; c=relaxed/simple;
-	bh=8Gxz57Ja5je6U2ZTaisSqkmyjkSmHJX/va3lMls+skk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AarU4TSoSpDxbe1TkP6CmgNaefCG5FEBxUOrik8HFGbDVX3O9smPFbMSu356Kg1CWlvn5+wDexZ7xzIYbYCDguF5S1wNbEZBwXnK9ulhAgF+oPJh6CDksutX7Z3TOVhAa+BjzB7MqGsJwJiiLFxUHLi+/IxEzeBfFLLvBU/ch84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QwsetgF2; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-439946a49e1so4460915e9.0;
-        Tue, 18 Feb 2025 05:11:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739884299; x=1740489099; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8Gxz57Ja5je6U2ZTaisSqkmyjkSmHJX/va3lMls+skk=;
-        b=QwsetgF2BxTXKISDrXJkCinKue0Nd7CVelxCB/WLZwDcaHJc0MKWAiXjyj/6IbVBgK
-         qSX93gMF8Ih3/o1hM60C0stzICMUmNaNvdTaUbOcEPoyPrT/d9rmPZ+I1VBxCQcwuS4P
-         x2zJ3IGmW81hnAqJcWBXo33yHAlIeWPMVIpPtydDv7OIOc8ARnVUMFe9obdrBbWSlu+R
-         Ymm8Z7OCnN2zHwKr0lmnX7rEbqUs9MBPCQBk3qVymNjv+jkyJjrkdyU0/545/j8NiJzX
-         PsLsUWWnAFjpUtVhb4rCCfBwGA2sR3dsUqO6kIZ8OcHM8zBExA5BIKf71qOFM4U2Xvg+
-         AQcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739884299; x=1740489099;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8Gxz57Ja5je6U2ZTaisSqkmyjkSmHJX/va3lMls+skk=;
-        b=JXOK6SpdiKiABbe6eogJ8gHoxUYa7h0a9xg1UCK6CBaIKllCtjLwIBmeTrGgJExqBo
-         fxdZJl7w73FI0d8mrzzSY+i6VZA0AkMatuRs/xvfdY13wU3Yt4o15/JVrFbzvOIYTeLo
-         TPptpFS+zqb0O8xaSkOKXZBEsqi20bX6uRmhS0Ro0HCL8SgYGPfZg4tALOzwNX77bzD4
-         Y7iM2rVKKLUSouOYe4WEzn1PtxqVT/PpUL0heu5PfPykUdnPk5ok0QdOLGPKtRVhGo4b
-         tJ2ApcvW3Pd1S3HHNTa9f/pYO3Ac0G0WItWd7gzBsV9HTZiZZEE8zBLSXMarSiU/RrNO
-         aBrA==
-X-Forwarded-Encrypted: i=1; AJvYcCU+sVD7otSZjL7edJ7vkmWxInOlQkUMUVrpNW0OY95TP1XIsMOBmja+t6doU2kbP/sIQFL9mkLxVnO8xaAj@vger.kernel.org, AJvYcCX4kUFheyS8sn3+Y2vmyQ6k0H5p1cZw6V9CUCTCv7TLzV0pkN2CDRq2aulqyz8l/IC9qP3GNfmV0+Fl@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFJvzcLTkk5pODUv9k/JKpELVxUfny75e+SFrw35kFnPegKWe6
-	YawdTTXyJGBgnOZO+icpRc8bDFhvhkPx0ly2tR3Ms8xizTNYEnzPr+0IcZ0i24vg7ilJa6BDLcu
-	Y94cG+OSqLXmcXNBT54HiL8ByN48=
-X-Gm-Gg: ASbGncuSyPWdHz8ldKEr6OP1z8bZKwlapUqjZc0fnhG3zTYCgO2V8n0FKsYhARRa4ns
-	sRu6eb83sIG9jmxUjO4VXOnJ0vsT59ke5mkmkdQT9Yx5Y/GiTJQe1joiK7w8eWQvsgJWJ6csVaA
-	==
-X-Google-Smtp-Source: AGHT+IGTuZJNQwMJ21Zt/iwu+Lwt8FGFWYP/uZLJHHppf6TYhsiA73LzqKrd96Z1UlFBGMruWLJon5RgYuny/0jUXqk=
-X-Received: by 2002:a5d:64e6:0:b0:38d:e15e:17e9 with SMTP id
- ffacd0b85a97d-38f33f5344bmr15197897f8f.35.1739884299381; Tue, 18 Feb 2025
- 05:11:39 -0800 (PST)
+	s=arc-20240116; t=1739884415; c=relaxed/simple;
+	bh=kZU7I8U85ZLncBIzpH4PI2BU0NUjvVlzYjJ2wuJBoN0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=cjyD75xhGBT5EbckZkQ2qtMgKUFzRrIi9CoHFBQblpRdgwYmzo8ga/nopA2buPeVjOI0/x/CGahp+p0Rj/3x+hoGUA779poZiA/KjkdRf3vgnSlqU0RH6w0NFNHi6H8yIevZbQd4P9JxTlETJTSxgjh+qbzjsPtlKAvpefIcrfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tRzzl3kE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB986C4CEE2;
+	Tue, 18 Feb 2025 13:13:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739884415;
+	bh=kZU7I8U85ZLncBIzpH4PI2BU0NUjvVlzYjJ2wuJBoN0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=tRzzl3kEGSEFrgmlXfoGTQGQQuo3S03l9zYb8BQPMBS/f2tIZPG/iSkYlaEUmWRsr
+	 xIi5fMJKiMS2bOyZIpHU0HNqfBtPsrYf2FbvB0rn3FmDDHvbKo+TFizKvGrTcdGGbi
+	 WfqLaTbgYXC5HMRJgybknEXr4ZpZzi2LgNKTXyp2OTkauNpLzbDl/2rnmL9S630WpT
+	 mbnRq8mFNpIWL/JoodqE/mZtnDroJ11S3RkAQdCuHCnHPJNtha6hZ0Xy+kSCw8Zdrk
+	 kFRhZZM1Wr51LT7DW0bYaNk3NH2ULe4smAm3Y+b2cnGhf22MPFtiImvR6476eGiXVq
+	 VRJOJSTSRChHw==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Benno Lossin" <benno.lossin@proton.me>
+Cc: "Gary Guo" <gary@garyguo.net>,  "Miguel Ojeda" <ojeda@kernel.org>,
+  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Boqun Feng"
+ <boqun.feng@gmail.com>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,
+  "Alice Ryhl" <aliceryhl@google.com>,  "Masahiro Yamada"
+ <masahiroy@kernel.org>,  "Nathan Chancellor" <nathan@kernel.org>,
+  "Nicolas Schier" <nicolas@fjasle.eu>,  "Luis Chamberlain"
+ <mcgrof@kernel.org>,  "Trevor Gross" <tmgross@umich.edu>,  "Adam
+ Bratschi-Kaye" <ark.email@gmail.com>,  <rust-for-linux@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>,  <linux-kbuild@vger.kernel.org>,  "Petr
+ Pavlu" <petr.pavlu@suse.com>,  "Sami Tolvanen" <samitolvanen@google.com>,
+  "Daniel Gomez" <da.gomez@samsung.com>,  "Simona Vetter"
+ <simona.vetter@ffwll.ch>,  "Greg KH" <gregkh@linuxfoundation.org>,
+  <linux-modules@vger.kernel.org>
+Subject: Re: [PATCH v6 2/6] rust: str: implement `Index` for `BStr`
+In-Reply-To: <86474714-24a5-49ff-9767-23e25afee7d3@proton.me> (Benno Lossin's
+	message of "Tue, 18 Feb 2025 12:43:21 +0000")
+References: <20250211-module-params-v3-v6-0-24b297ddc43d@kernel.org>
+	<20250211-module-params-v3-v6-2-24b297ddc43d@kernel.org>
+	<kW0CDyK5M8DuLPr_1HwIXcnVP4x8evlFoq0BOjldchTZqkGiqzNJ-dtpV7s5QHLbbmm6cW529GeDTo_GoDKfdQ==@protonmail.internalid>
+	<20250211164004.6de768c3@eugeo> <87lduc44c3.fsf@kernel.org>
+	<2m_bB1GvgxV0DoM1PIggnkJD83g9AA6EeW5bgH1JmfZBG1P8D_DE966KAg53gCK8KmWgjpdCUPU6T-5xuZ-FYg==@protonmail.internalid>
+	<20250212090914.6ef7e83b@eugeo> <87wmdnfqt0.fsf@kernel.org>
+	<9Ic8rQpAo1asmHGXvfccr37wO_2uU-jYoe8KdY-vUBgTADZOmfz_A7gOt58K42A12FfWzXdMVXK527DZ1kaBkg==@protonmail.internalid>
+	<86474714-24a5-49ff-9767-23e25afee7d3@proton.me>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Tue, 18 Feb 2025 14:13:21 +0100
+Message-ID: <87a5ajflam.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250217140910.108175-1-clamor95@gmail.com> <c19bd9b3-86c4-4f1a-beb9-b6aed32b3ef5@suse.de>
- <CAPVz0n0WG1Q51SONb4fmkzi4q7Q0sZ_aKSLrLnGboNNya6nO+Q@mail.gmail.com> <871pvvqu0i.fsf@minerva.mail-host-address-is-not-set>
-In-Reply-To: <871pvvqu0i.fsf@minerva.mail-host-address-is-not-set>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Tue, 18 Feb 2025 15:11:27 +0200
-X-Gm-Features: AWEUYZmfbcsOHj-xZvsCFi1MGPu06qG3yvCK-zcho_dMe2UGKIBGPZimeQMuN30
-Message-ID: <CAPVz0n1MdCccD5gHK0Z-mMHJ4Erf59_pBSU3+Jenmfr92Fky9g@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] drm: bridge: add ssd2825 RGB/DSI bridge support
-To: Javier Martinez Canillas <javierm@redhat.com>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-=D0=B2=D1=82, 18 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 15:09 Javi=
-er Martinez Canillas <javierm@redhat.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> Svyatoslav Ryhel <clamor95@gmail.com> writes:
->
-> > =D0=B2=D1=82, 18 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 14:36 =
-Thomas Zimmermann <tzimmermann@suse.de> =D0=BF=D0=B8=D1=88=D0=B5:
-> >>
-> >> (cc'ing Javier)
-> >>
-> >> Hi
-> >>
-> >> Am 17.02.25 um 15:09 schrieb Svyatoslav Ryhel:
-> >> > Solomon SSD2825 is a RGB to MIPI DSI bridge used in LG Optimus 4D P8=
-80
-> >> > and LG Optimus Vu P895
-> >>
-> >> There's a driver for Solomon 13xx displays in drm/solomon. Did you che=
-ck
-> >> that this new driver isn't just an extension of the existing code?
-> >>
-> >
-> > Definitely no, ssd2825 is a RGB to DSI bridge in a pure form. While
-> > 13xx as you have said are display controllers family.
-> >
->
-> Exactly. Both chips are from the same vendor (Solomon Systech [0]) and my
-> guess is that the SSD prefix means "Solomon Systech Device" or something
-> like that.
->
-> [0]: https://www.solomon-systech.com
->
+"Benno Lossin" <benno.lossin@proton.me> writes:
 
-You are correct, vendor is the same, I have not denied that, but the
-this device is not related to product drivers which already exist in
-the Linux Kernel.
+> On 18.02.25 12:14, Andreas Hindborg wrote:
+>> "Gary Guo" <gary@garyguo.net> writes:
+>>
+>>> On Tue, 11 Feb 2025 21:24:44 +0100
+>>> Andreas Hindborg <a.hindborg@kernel.org> wrote:
+>>>
+>>>> "Gary Guo" <gary@garyguo.net> writes:
+>>>>
+>>>>> On Tue, 11 Feb 2025 16:57:36 +0100
+>>>>> Andreas Hindborg <a.hindborg@kernel.org> wrote:
+>>>>>
+>>>>>> The `Index` implementation on `BStr` was lost when we switched `BStr` from
+>>>>>> a type alias of `[u8]` to a newtype. This patch adds back `Index` by
+>>>>>> implementing `Index` for `BStr` when `Index` would be implemented for
+>>>>>> `[u8]`.
+>>>>>>
+>>>>>> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+>>>>>> ---
+>>>>>>  rust/kernel/str.rs | 11 +++++++++++
+>>>>>>  1 file changed, 11 insertions(+)
+>>>>>>
+>>>>>> diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
+>>>>>> index 002dcddf7c768..1eb945bed77d6 100644
+>>>>>> --- a/rust/kernel/str.rs
+>>>>>> +++ b/rust/kernel/str.rs
+>>>>>> @@ -114,6 +114,17 @@ fn eq(&self, other: &Self) -> bool {
+>>>>>>      }
+>>>>>>  }
+>>>>>>
+>>>>>> +impl<Idx> Index<Idx> for BStr
+>>>>>> +where
+>>>>>> +    Idx: core::slice::SliceIndex<[u8], Output = [u8]>,
+>>>>>
+>>>>> I think I'd prefer
+>>>>>
+>>>>> 	[T]: Index<Idx>,
+>>>>
+>>>> Is that equivalent?
+>>>
+>>> Sorry, I meant `[u8]: Index<Idx>`. This makes more semantic sense that
+>>> "what ever can index a byte slice, it can also index BStr". This is
+>>> also how our CStr and the array primitive type implements its Index
+>>> operation.
+>>>
+>>> They should be equivalent as libcore does
+>>>
+>>> 	impl<T, I> Index<I> for [T] where I: SliceIndex<[T]> { ... }
+>>>
+>>
+>> What I originally wrote is `Idx` must be usable as an index for `[u8]`,
+>> yielding `[u8]` when indexing.
+>>
+>> The new one you suggest, I parse as `[u8]` should be indexable by `Idx`.
+>> This is less info. The compiler will also complain about the missing info:
+>>
+>> error[E0308]: mismatched types
+>>    --> /home/aeh/src/linux-rust/module-params/rust/kernel/str.rs:141:26
+>>     |
+>> 141 |         BStr::from_bytes(&self.0[index])
+>>     |         ---------------- ^^^^^^^^^^^^^^ expected `&[u8]`, found `&<[u8] as Index<Idx>>::Output`
+>>     |         |
+>>     |         arguments to this function are incorrect
+>>     |
+>>     = note: expected reference `&[u8]`
+>>                found reference `&<[u8] as Index<Idx>>::Output`
+>>     = help: consider constraining the associated type `<[u8] as Index<Idx>>::Output` to `[u8]`
+>>
+>> If I constrain the output it's all fine again:
+>>
+>>     [u8]: Index<Idx, Output = [u8]>,
+>>
+>>
+>> But as I said, I don't think it matters which direction we put this?
+>
+> I think it's better to depend on `Index` compared to `SliceIndex`.
 
-> --
-> Best regards,
->
-> Javier Martinez Canillas
-> Core Platforms
-> Red Hat
->
+I am curious for what reason?
+
+
+Best regards,
+Andreas Hindborg
+
+
+
 
