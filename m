@@ -1,152 +1,128 @@
-Return-Path: <linux-kernel+bounces-519742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEC8CA3A14A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:33:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23FE0A3A161
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:36:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 807F8172DAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:32:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CC1C166367
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:33:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED3A226B976;
-	Tue, 18 Feb 2025 15:32:22 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0133826D5C4;
+	Tue, 18 Feb 2025 15:33:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A9u4tCHt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C885C262811
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 15:32:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E50526B977;
+	Tue, 18 Feb 2025 15:33:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739892742; cv=none; b=uUvb8MOyt5r4J9qqkTQTjLaERAu0fe1oQaKZKOYrNIh9/QJdJnvSnfshHozZk/bnF1mfRaLvcdTpOAMOv3SBE1NQDIDLpmXEOyiFROmIfOsV8unjXIn5fbouOJEi6HsJME4C69pgn9yZZ4stgFEzaHKOCg3Bb78FprOpdJggv18=
+	t=1739892788; cv=none; b=E5BocJp4fu5wrrNHhNld6ZzuTzHlDQ6W7s4kNXgiCWazXeUTg7GwiVvTBgY5p+jazLHLcSwotv+XYTzbxv9HhAdc5ZyGAjOpwxIMCvkRkZG7G+uQGfa/kEHhbVuye5Y8Ht7IokAJ7L1RPbwXRwI64F2Q7vuQsL4OREErBTFyakw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739892742; c=relaxed/simple;
-	bh=QpL/AtEu0RLHanD5578BLOiZ1DfT9IbMpp5qQyl6uFk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=WSgOhm2a1lRSaweACRyM0bQmvHwsLXqxGX89k2sRO+brBj1NFxoSboEgZ25PyfpnRHjMURX2IUytn+oLA0L+13KfwwJeIc9LXlWdpvcQMjeCi0B+gDkE8xtemtEAJi4ULJFvq6vzLX4XfatS2rBh6B/Ldva1GwsQudDQfgg9r9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3d054d79dacso102727275ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 07:32:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739892740; x=1740497540;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=U38C3lDKwbTK17gc2HRI9P8P3TtJlwig/T9P9hd3NCE=;
-        b=h9nfk7IIT/czx6WTWrNyA0/v3OO5DOe6jvHRaxgWi1tBp1xcAT3OKyfo+PLcAVTHRz
-         mksH/GLeR7LE88z0rHI8s6vIqezKb9UdccY3XoMVLoiZNVcYHXSuFqXpO6ECPSvXmtkz
-         bu3Qr3ts7rfxpj9Db95fbwLFGyT0x/FNO4+B7oSNkrXQ5wTKsqMN8fSSHoLbZnt+7a59
-         of1HoNNRIO6Y1dlzfRGfGr6ZflzOvNwyBMdAqTQG5KC4WBXCEnc6PQWWCmRMMK9YRMPw
-         DyTL5knpb4OJS1vN2/i7kt6xzW9Ldz3CBYnPUKRcI062iZy+w9t6Wk1TJ0Lf6rdomLT/
-         T3Ow==
-X-Forwarded-Encrypted: i=1; AJvYcCVBGCmSesyRRww3s60phC7F+4UylcWoOWynj8TgSYzfW3MUTJxB3yHGMrnCw488AvxE/T3c7gIsuLtIROU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQzp/j3Kwj9TcvtmH/0x5dnT5Xvwlp+bm1ORwgdITumZ1+IJQw
-	bO9vicn5pto9e1I9SO8QWVvPVL+80Yya8vcP5ltJivbEmIEM7jjtMAlCAIDpU1DtGsnyBTBJhE6
-	tthzc9HIhNDUgI0hOw/lVa5zUVhHRqSP0dAu/wtn4MFRUzTw/FhaMmgQ=
-X-Google-Smtp-Source: AGHT+IF6n3nUbG7dttcbsl4kRv/GKA8Le7LRdxhlOoo5EIBnOZIj5ufi/JRfI9HsLVyb5scZtoNdR+oUDTC3Rh7Q/9K1eh5LFIjv
+	s=arc-20240116; t=1739892788; c=relaxed/simple;
+	bh=SEcSvGqFeJ11Iq08rF601HaLImuJ1qHcDIFRTq6KKsA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HkeKezPkv8kAGfoAw47g+mMZFnxGYX6NyiO1vDpHQI/QrKv8lu/8JA/EbXbn6yr+s9sxJ7Rh4l9253vDFGGoLxGPCSnFgDqYJ2nGLij0FHwe8zChfHiq5PfwN23EqDKr9h2LcIpc8fgIbqUBqi64am9Cy3mIDCUgdfL8uiziGDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A9u4tCHt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A493C4CEE7;
+	Tue, 18 Feb 2025 15:33:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739892787;
+	bh=SEcSvGqFeJ11Iq08rF601HaLImuJ1qHcDIFRTq6KKsA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=A9u4tCHtAnA1yRYSYs5MGup5zXlFZF2N0RKjFuJWt3+zhjmN/mH3MpqzYXwcXyld7
+	 tDt5MQOM8m4GTC8cibArGv43BFdgt9KoZTJeDxGXxMBEUJeay8fYOKwYDzIg/BoHhi
+	 rdo02+pJKEz5p1f1sc6IDy4rG9SkgxzCXFlEXTJQ+YFeMzXBvX2IEv4iqR7Eo2DahP
+	 E/KJJ7LGbjAcxwCcvC2+dIo4oym6jUrUwnnJI81+VU6/BecYaV4lZBc3esaUOSiews
+	 B7D8A+1pChNWaQlQpwIoreLHOTfG5uNg1MeGhcX7N7zNI6zfGZE1yKXGoO7SkaCif9
+	 /m7o62wiaTkiQ==
+Date: Tue, 18 Feb 2025 15:33:03 +0000
+From: Mark Brown <broonie@kernel.org>
+To: James Calligeros <jcalligeros99@gmail.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>, Shenghao Ding <shenghao-ding@ti.com>,
+	Kevin Lu <kevin-lu@ti.com>, Baojun Xu <baojun.xu@ti.com>,
+	Dan Murphy <dmurphy@ti.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shi Fu <shifu0704@thundersoft.com>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Martin =?utf-8?Q?Povi=C5=A1er?= <povik+lin@cutebit.org>,
+	Hector Martin <marcan@marcan.st>, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	asahi@lists.linux.dev, linux-hwmon@vger.kernel.org,
+	Neal Gompa <neal@gompa.dev>
+Subject: Re: [PATCH v2 20/29] ASoC: tas2764: Add SDZ regulator
+Message-ID: <Z7SoL3HN7Xb3HUTm@finisterre.sirena.org.uk>
+References: <20250218-apple-codec-changes-v2-0-932760fd7e07@gmail.com>
+ <20250218-apple-codec-changes-v2-20-932760fd7e07@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1384:b0:3d0:17d2:a03e with SMTP id
- e9e14a558f8ab-3d2809d97dcmr137102065ab.21.1739892739946; Tue, 18 Feb 2025
- 07:32:19 -0800 (PST)
-Date: Tue, 18 Feb 2025 07:32:19 -0800
-In-Reply-To: <67b44ef3.050a0220.173698.004c.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67b4a803.050a0220.173698.0066.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs] WARNING: locking bug in simple_recursive_removal
-From: syzbot <syzbot+727c886b67040701c448@syzkaller.appspotmail.com>
-To: dakr@kernel.org, gregkh@linuxfoundation.org, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	rafael@kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-syzbot has found a reproducer for the following issue on:
-
-HEAD commit:    2408a807bfc3 Merge tag 'vfs-6.14-rc4.fixes' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=154fb7df980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6cc40dfe827ffb85
-dashboard link: https://syzkaller.appspot.com/bug?extid=727c886b67040701c448
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17982498580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/3bbfce004a48/disk-2408a807.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/0151460c5539/vmlinux-2408a807.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/8dfe7f8b2862/bzImage-2408a807.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/2e6491f4c19e/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+727c886b67040701c448@syzkaller.appspotmail.com
-
-bcachefs (loop0): alloc_read... done
-bcachefs (loop0): stripes_read... done
-bcachefs (loop0): snapshots_read... done
-bcachefs (loop0): done starting filesystem
-bcachefs (loop0): missing subvolume 1
-bcachefs (loop0): inconsistency detected - emergency read only at journal seq 10
-bcachefs (loop0): bch2_fs_get_tree(): error mounting: error getting root inode ENOENT_bkey_type_mismatch
-bcachefs (loop0): shutting down
-------------[ cut here ]------------
-DEBUG_LOCKS_WARN_ON(1)
-WARNING: CPU: 1 PID: 6056 at kernel/locking/lockdep.c:234 hlock_class kernel/locking/lockdep.c:234 [inline]
-WARNING: CPU: 1 PID: 6056 at kernel/locking/lockdep.c:234 check_wait_context kernel/locking/lockdep.c:4852 [inline]
-WARNING: CPU: 1 PID: 6056 at kernel/locking/lockdep.c:234 __lock_acquire+0x564/0x2100 kernel/locking/lockdep.c:5178
-Modules linked in:
-CPU: 1 UID: 0 PID: 6056 Comm: syz.0.18 Not tainted 6.14.0-rc3-syzkaller-00012-g2408a807bfc3 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
-RIP: 0010:hlock_class kernel/locking/lockdep.c:234 [inline]
-RIP: 0010:check_wait_context kernel/locking/lockdep.c:4852 [inline]
-RIP: 0010:__lock_acquire+0x564/0x2100 kernel/locking/lockdep.c:5178
-Code: 00 00 83 3d 81 37 9f 0e 00 75 23 90 48 c7 c7 e0 a2 2a 8c 48 c7 c6 e0 a5 2a 8c e8 07 c2 e4 ff 48 ba 00 00 00 00 00 fc ff df 90 <0f> 0b 90 90 90 31 db 48 81 c3 c4 00 00 00 48 89 d8 48 c1 e8 03 0f
-RSP: 0018:ffffc90003337530 EFLAGS: 00010046
-RAX: 8841e1c411249300 RBX: 0000000000001826 RCX: ffff8880278ebc00
-RDX: dffffc0000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000041826 R08: ffffffff81817d42 R09: 1ffff110170e519a
-R10: dffffc0000000000 R11: ffffed10170e519b R12: ffff8880278ec6d4
-R13: 0000000000000005 R14: 1ffff11004f1d8e7 R15: ffff8880278ec738
-FS:  00007efc242d26c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055efac1c6518 CR3: 000000006cff8000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5851
- down_write+0x99/0x220 kernel/locking/rwsem.c:1577
- inode_lock include/linux/fs.h:877 [inline]
- simple_recursive_removal+0x9a/0x8f0 fs/libfs.c:615
- debugfs_remove+0x49/0x70 fs/debugfs/inode.c:805
- __bch2_fs_stop+0x290/0x5c0 fs/bcachefs/super.c:643
- bch2_fs_get_tree+0xd3a/0x17a0 fs/bcachefs/fs.c:2303
- vfs_get_tree+0x90/0x2b0 fs/super.c:1814
- do_new_mount+0x2be/0xb40 fs/namespace.c:3560
- do_mount fs/namespace.c:3900 [inline]
- __do_sys_mount fs/namespace.c:4111 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4088
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7efc2338e58a
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007efc242d1e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007efc242d1ef0 RCX: 00007efc2338e58a
-RDX: 00004000000058c0 RSI: 0000400000005900 RDI: 00007efc242d1eb0
-RBP: 00004000000058c0 R08: 00007efc242d1ef0 R09: 0000000000010000
-R10: 0000000000010000 R11: 0000000000000246 R12: 0000400000005900
-R13: 00007efc242d1eb0 R14: 0000000000005912 R15: 00004000000001c0
- </TASK>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="pWAmxsziw6n29cMf"
+Content-Disposition: inline
+In-Reply-To: <20250218-apple-codec-changes-v2-20-932760fd7e07@gmail.com>
+X-Cookie: Editing is a rewording activity.
 
 
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+--pWAmxsziw6n29cMf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Feb 18, 2025 at 06:35:54PM +1000, James Calligeros wrote:
+
+> Multiple amps can be connected to the same SDZ GPIO. Using raw GPIOs for
+> this breaks, as there is no concept of refcounting/sharing. In order to
+> model these platforms, introduce support for an SDZ "regulator". This
+> allows us to represent the SDZ GPIO as a simple regulator-fixed, and
+> then the regulator core takes care of refcounting so that all codecs are
+> only powered down once all the driver instances are in the suspend
+> state.
+
+I get that the reference counting that the regulator API does is useful
+here but this isn't a regulator so shouldn't be exposed as such,
+particularly since this winds up being visible in the DT ABI.  I
+could've sworn that someone did some helpers for this case but now I go
+looking I can't find them, we certainly don't use any in the regulator
+core.
+
+> @@ -210,7 +220,7 @@ static const struct snd_soc_dapm_widget tas2764_dapm_=
+widgets[] =3D {
+>  	SND_SOC_DAPM_DAC("DAC", NULL, SND_SOC_NOPM, 0, 0),
+>  	SND_SOC_DAPM_OUTPUT("OUT"),
+>  	SND_SOC_DAPM_SIGGEN("VMON"),
+> -	SND_SOC_DAPM_SIGGEN("IMON")
+> +	SND_SOC_DAPM_SIGGEN("IMON"),
+>  };
+> =20
+Spurious unrelated change.
+
+
+--pWAmxsziw6n29cMf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAme0qC8ACgkQJNaLcl1U
+h9D0zgf5AQykdBizrukXzPnimCpFL/x4jnIllW3wFPfrmEQhfMMZwNMCSS7Vjq/5
+BBAYZry7PEXAVMGVnv2DthOvUrAH7LxyDiZ2p/RGmTSp4+0pujUznfB49hIl3oVQ
+t47FKBghaQKV23zIyzLqRRL/DkP33/jcH2cXg1DKGIuaXtocGvHgAzB7GUEXnKM2
+0X5hYFntNU19CmrW5Z9469/bLwVQMJb16MeoLRhxh0/5Wz3ZF88ReujhUdyVZZMs
+3R9Dxrw4Bfp0V541KOwy6S0Cz/M2XYS1DqA2eIRPE3AmjftI+mnW9xpLXZqglW+D
+D9yoJcQZCmlka3jnqIAdKXjBqe6xqg==
+=IM1z
+-----END PGP SIGNATURE-----
+
+--pWAmxsziw6n29cMf--
 
