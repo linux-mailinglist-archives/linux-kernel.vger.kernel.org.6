@@ -1,53 +1,98 @@
-Return-Path: <linux-kernel+bounces-519502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBE5FA39D65
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:28:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADE83A39D8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:34:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 570DF7A1B4B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:27:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53F12179EF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:29:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11E9A269D10;
-	Tue, 18 Feb 2025 13:27:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D350826A0E9;
+	Tue, 18 Feb 2025 13:27:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="TU/WM7vC"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3B41269AEB;
-	Tue, 18 Feb 2025 13:27:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eEr9545+"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987272686B4;
+	Tue, 18 Feb 2025 13:27:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739885226; cv=none; b=Q7D4gRkb4ryiv7UmDchOAgOy8v9dTe7ZY71IyMzAzA1x7y0P1A2djlvZq3U74w19OONd8+DZrdcBLBV4S4dFJR57W8GOGpdMm6UhqDV39b2CumQKPb/FRmOfPkK4WU0Q33XNfnWVUsQha39yoGtiADr+dKZNNHIVNaIH2SJUSOg=
+	t=1739885245; cv=none; b=PfBuWuM0a8eSvsymXyTRXEpMYbwYL7Vr99mT6fJQ7q2TPdDoOTm6mDRSHUDbyO6guNsK2mW/P9XFAImsUj6uEJ4Jg2LvXXNVJdF3upRYmfgPZ0cthsB951IzSAe4nQjTDT9NSmw0USt1rP/VxBq1tcpXpSqu7yhKNKmfOCD3QfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739885226; c=relaxed/simple;
-	bh=Q5cq18P0XcC2Vl6wgZDytAeWL5PxK8dhgKT/ZZ+mgVI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=D5HaelVyOfa5AjA2rHv6dOgg+nzxtABcE3RiBRW2z3t6DeDfLU3Fqhvx4EF7QOpZBK34Vm1svA3a039FiARfqE+/NGDR1QxxQQVaa5Zcyd4cYwg7NWJM1bYFqFVeUSxip3MELaJQ29RuNN1k+Ux0UeBvZR61G+StBLtHbtacXPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=TU/WM7vC; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=Hz+An
-	7/y8BTdQCJAx4QejdOfO+/Oxf7ZYGLNn21hCHg=; b=TU/WM7vCMgmkgyV84qyI7
-	CqGPLktc6rYskbyXgzIuIW0Yl96CyfRSe1IEd5A90IZhI3HiiZvrdSEBDHTI1FXS
-	Ln66kaxDzj2bgWWkccwqoShjYfVop8kdAf6PnNBfdv6fK9PLuYIEj6jMoYGN3qlP
-	y9/IsP86+E2ijz4aPc/T2g=
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [])
-	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wDXr8iairRnR3jgMw--.2240S4;
-	Tue, 18 Feb 2025 21:26:51 +0800 (CST)
-From: Haoxiang Li <haoxiang_li2024@163.com>
-To: marcel@holtmann.org,
-	johan.hedberg@gmail.com,
-	luiz.dentz@gmail.com
-Cc: linux-bluetooth@vger.kernel.org,
+	s=arc-20240116; t=1739885245; c=relaxed/simple;
+	bh=qfsXYrLmA4AiXHDUztY+1D+cHIvOYpHPfEtByfYz8DY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A068KcT6RgRi/x92czOhUK61QCUrxjp/UyvWG70TAhQl03EPLiSZP0b9I9LGCjKeDpEndxsC1dp2wpa8eFTZknnV4x2ZpPW9n+GYpsSSk7KSPDD1nsvzmQZpw5jXSCmWBwVdGzoN1e/4brxpnjXylagzOGHkT1I5Z9Zgq+5GDL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eEr9545+; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-30613802a6bso56652731fa.1;
+        Tue, 18 Feb 2025 05:27:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739885242; x=1740490042; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QaGZVVe+zRtQUgtJWBlyfhJRB0u+b0GzBi9QAf51pU4=;
+        b=eEr9545+WIYcG58VPJqaW8+YJdY4isqJpQ2Nw+FZqIpf4Ea0ELaf68zwksi03CV3XP
+         Q44umu0ozABwvDx1gMg4bdo++4yzgc8Qk4AS37g1k0QLhb8jn447umSfqZt93GVu3kyW
+         xypyKXpJYv7J/GY598ijkyzeAdmdHHoTGbMU/yw20zLNCmNbbJGAHLp4Jucn1+knuIdB
+         p+DlW/y7JCybxwVwyW9wMsDsCc+l1FQClo8vx7daxGZ02N+arJlNPVetwnMu4xqeDBTc
+         e2JJt8QKo/N1q+HC2ThD52aNmQulGZlL9kNFT/EYHrmtpdosylFbNb+bKDqNeoIiZDr+
+         vFNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739885242; x=1740490042;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QaGZVVe+zRtQUgtJWBlyfhJRB0u+b0GzBi9QAf51pU4=;
+        b=XC006gcp6M7tSpgkatbvo1Pj8Dlq9Ac7bQblPph/AkYySF+I9cBi7ocKdG3T08jE9Q
+         u+fuFQBbJcp7GM6KwCj1N3ig45Wrveq219ABEWJlsVDuTXPUMtvQgCdt3vnm7roayrgQ
+         Th/seP1mYfPnnXmcfnQ7xPlyHKA3+YjyAB3+bzXZzpHR906WQ4YlmbuiVle2zylzpzM4
+         94lndLkmMsQK9u8ooVXyW5skhP1IVLNcs2XAQ56X7zm7pKnMMiVTsCt+bw0e9mXqmhr6
+         1UiD8BYufUTaGXef/ZqzLjDscGT9SFERqWloYVah3gmbPkKnh9hc8044T4/N4YpCCdqq
+         KO2w==
+X-Forwarded-Encrypted: i=1; AJvYcCVBwcnoSpcLMubw6e4h+E/X7FQNwMJJDtzB+HNruxvVa1dxsDOJIuVqFFTQwipLKhSwWH5MvfIUtLSqSg==@vger.kernel.org, AJvYcCVNoItb2Yv5dPnlFN+zUpxF+rNEJK29dD8HBoAR5NpqFLpfIB94u2t5PSBNlV6aYFa8v9uBQwwbf6iw@vger.kernel.org, AJvYcCWF+MeEWmlOVWE6HI8fUu9+xquygu1jU6S8xCgaYgKCsfmXiJh7Ar4pOcPQia7Ak6lNgz3HtnUmxE7/k4bC@vger.kernel.org, AJvYcCX1peET7DUc7teYih5DhLttRJWmeKGVnSzSvNpu3CmPXpMWyJQ+N+jhlr+JLDNgA/dttDqhBtshJkmuwQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdcjDGkUAGd35QRAsbO7SwIcKpaioL4ovkGmA9IySyJx6wajRW
+	ALvVqt3u8mQWQwLWYXay8QGE8UBEueX0jINlBxIFWOTbTbu9NSxVmidrwg==
+X-Gm-Gg: ASbGncth9dB4UK8eieS5i6NIOAnt0KWy4TtdF5JVnAXs4mqOuXCAGiF160mG6KsJ9oY
+	23dFkfqSUuRPJmK4KS2aMwkuSIV5ZGtI+Mr2mLwhEHToVMGO9uPCaDJ+W9AXRLJ1zHEA9M4usvW
+	TFDICqeeBuj+I++CL/ITEQl/y22iaLf84bqpZCOXt42ZbqIFsWSipcJb2Uf9ymmUgNaxhVMauSQ
+	2oB0HEPACyOHUdhuOdSsjNYv6Yop3XBm4K/YUSHNVS+DtcuEd0o8oy3pXwPn8V70q1pY8AJd84E
+	ZHmcZDY=
+X-Google-Smtp-Source: AGHT+IFAsjt/u/YX+5ECDH9HYJb3vXVacCon8EEMKyGHasErL4EtjMCNuy102qVBSFHqh8hGHlzVYA==
+X-Received: by 2002:a2e:8093:0:b0:308:f39c:96b3 with SMTP id 38308e7fff4ca-30927ad5236mr38589591fa.30.1739885241379;
+        Tue, 18 Feb 2025 05:27:21 -0800 (PST)
+Received: from xeon.. ([188.163.112.51])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30917da0e64sm18300851fa.88.2025.02.18.05.27.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2025 05:27:20 -0800 (PST)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Lee Jones <lee@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Pavel Machek <pavel@ucw.cz>,
+	Daniel Thompson <danielt@kernel.org>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Helge Deller <deller@gmx.de>,
+	Svyatoslav Ryhel <clamor95@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Cc: devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Haoxiang Li <haoxiang_li2024@163.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] bluetooth: Add check for mgmt_alloc_skb()
-Date: Tue, 18 Feb 2025 21:26:48 +0800
-Message-Id: <20250218132648.2561862-1-haoxiang_li2024@163.com>
-X-Mailer: git-send-email 2.25.1
+	linux-iio@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-fbdev@vger.kernel.org
+Subject: [PATCH v2 0/2] mfd: lm3533: convert to use OF
+Date: Tue, 18 Feb 2025 15:26:58 +0200
+Message-ID: <20250218132702.114669-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,37 +100,36 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDXr8iairRnR3jgMw--.2240S4
-X-Coremail-Antispam: 1Uf129KBjvdXoW7Xr18JFy7tw48Jw18ZFW3trb_yoWfuFcEgr
-	1vv3s7ur1UJa4kJF10krW3urnxJw1rCrn7WrWaq3s7C3y5Wr1DWr18ZrnxJ397ua1xCr4x
-	Aws8CF4kZw48WjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRXBMtUUUUUU==
-X-CM-SenderInfo: xkdr5xpdqjszblsqjki6rwjhhfrp/1tbiqBv3bme0hThcTwAAsX
 
-Add check for the return value of mgmt_alloc_skb() in
-mgmt_device_connected() to prevent null pointer dereference.
+Add schema and add support for lm3533 mfd to use device
+tree bindings.
 
-Fixes: e96741437ef0 ("Bluetooth: mgmt: Make use of mgmt_send_event_skb in MGMT_EV_DEVICE_CONNECTED")
-Cc: stable@vger.kernel.org
-Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
 ---
- net/bluetooth/mgmt.c | 2 ++
- 1 file changed, 2 insertions(+)
+Changes on switching from v1 to v2:
+- added unit seffix where it is suitable
+- added vendor prefixes where it is suitable
+- light sensor mover out of pattern properties
+- added references to common schemas
+- added detailed descriptions of properties
+- removed platform data use
+- devices bind and configure themself entirely
+  using device tree
+---
 
-diff --git a/net/bluetooth/mgmt.c b/net/bluetooth/mgmt.c
-index f53304cb09db..1f028c5105ca 100644
---- a/net/bluetooth/mgmt.c
-+++ b/net/bluetooth/mgmt.c
-@@ -9660,6 +9660,8 @@ void mgmt_device_connected(struct hci_dev *hdev, struct hci_conn *conn,
- 				     sizeof(*ev) + (name ? eir_precalc_len(name_len) : 0) +
- 				     eir_precalc_len(sizeof(conn->dev_class)));
- 
-+	if (!skb)
-+		return;
- 	ev = skb_put(skb, sizeof(*ev));
- 	bacpy(&ev->addr.bdaddr, &conn->dst);
- 	ev->addr.type = link_to_bdaddr(conn->type, conn->dst_type);
+Svyatoslav Ryhel (2):
+  dt-bindings: mfd: Document TI LM3533 MFD
+  mfd: lm3533: convert to use OF
+
+ .../devicetree/bindings/mfd/ti,lm3533.yaml    | 231 ++++++++++++++++++
+ drivers/iio/light/lm3533-als.c                |  40 ++-
+ drivers/leds/leds-lm3533.c                    |  45 ++--
+ drivers/mfd/lm3533-core.c                     | 199 ++++++---------
+ drivers/video/backlight/lm3533_bl.c           |  68 ++++--
+ include/linux/mfd/lm3533.h                    |  35 +--
+ 6 files changed, 417 insertions(+), 201 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/ti,lm3533.yaml
+
 -- 
-2.25.1
+2.43.0
 
 
