@@ -1,48 +1,86 @@
-Return-Path: <linux-kernel+bounces-519226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28EBAA39950
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:41:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD0A8A39957
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:41:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F355A174011
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:37:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8258F189ADC7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:37:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5DF62417CE;
-	Tue, 18 Feb 2025 10:35:16 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B54A2239082;
-	Tue, 18 Feb 2025 10:35:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 403FE239595;
+	Tue, 18 Feb 2025 10:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="W4Y/EKVP"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E1B61A83E6;
+	Tue, 18 Feb 2025 10:35:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739874916; cv=none; b=Y51SiR2EikILkk5uC7hAG2Lb4ykwiEvEpzGOhULWIsSqOkh07JxGwDe4VNeTctqukWophUaXhcfQfwAze2ExZONJQDukFf+9363trOv/oEJBpl/VGeEDVTa4PXCI4ZKtor9fSwRD44tMBDW/rQ6GUP3gvY1RMRAiHisQk5qQDik=
+	t=1739874928; cv=none; b=DITk07AbNjqeW2m3KdS7Uq0D5T2/6NXjAAlvl7kF+oB86gEN38HhyjaupEvfiNXqYGe84voTYzuPBH0AzMZjSfJEAi5al3QIkvGvwA6TtFjthlFDJk5eL37BIkNwk4Cq4JAcFUIYlKfoUCOJhvUfHGuwjnfAuT6pgEPfv536doo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739874916; c=relaxed/simple;
-	bh=FjYf0HGEpv02FFUr/G+KaX+8fXSmO5gG6iDiBHMtiTc=;
+	s=arc-20240116; t=1739874928; c=relaxed/simple;
+	bh=79AO6bTHkKJw32dqRF2AF+8XNyX9+vCi3Y0PvNk8y84=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gg6jnkp2uryPz/Ut6WmGeFlO8v2qSq7Jpu/yiyvp7kixhb+yGrM1rPyCk/z0fxvM3zWf2L8EMn+3jA+bmYws+txJHGZdHVEvxRge9nPNvzO22CfAZZaEvnZXkKwD4wsBtHGPRp3nJ4QG8FisXnMyxW4PjkRiTPTZ6YsRoob5Kdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E68A913D5;
-	Tue, 18 Feb 2025 02:35:32 -0800 (PST)
-Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 49F6F3F6A8;
-	Tue, 18 Feb 2025 02:35:12 -0800 (PST)
-Date: Tue, 18 Feb 2025 11:35:02 +0100
-From: Beata Michalska <beata.michalska@arm.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Yury Norov <yury.norov@gmail.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the bitmap tree
-Message-ID: <Z7RiVtunqI9edfK4@arm.com>
-References: <20250218160742.49d6ab76@canb.auug.org.au>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RmE99f2X3kqt+DwQ7BwVPeyYWoxRucPT31tv2+u6meqgymYXxDhdfLqM2RPDBVKCzXp9RD6VMA/Dyhcc1S3ooshuBOJ+2pxOF7aXyZOxbljs7/D3gQzwRwCQsfNMR72ZpGt1lpaifSx1htuQbeaU3aVAHgSlJTDrP9wypw3tAGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=W4Y/EKVP; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=q4C/73vH91GCh7UHpZKzP24a0BJc42bSJY2IG/ewQfU=; b=W4Y/EKVPAAtPrMxbuTzp0xSsld
+	bxgXL8V+H54wLt1Tybtjaz5pMBhebgjBl1td2Wkzu4RVhDEja9QxKDHHdLwPeibT11EH+JRMlu1VJ
+	hbjU1v7zAl0+SRTglWnX5DX9C85FRyM+Kfrs5aVQY7L5uSiDbZtoGBiIVwpAauElZiIZAB5v4oYeP
+	/dvRiq5iL7OV0jAVUAzTL+MBAZTP2NBJSG/JQuLCVyWEsSZiWlPtpM6avqld/oS7uAaIBxfUAJzvK
+	4HJ9jcrlxnCD8WDNqUIbg4XW0QDY43U1A2nHbQyp9C0cRpjvZE0HNb6O2pNdEhvYKScVMty3Fq4ub
+	kMocr2hQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tkKwW-00000001yxF-0ipX;
+	Tue, 18 Feb 2025 10:35:08 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 3740030066A; Tue, 18 Feb 2025 11:35:07 +0100 (CET)
+Date: Tue, 18 Feb 2025 11:35:07 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Joel Granados <joel.granados@kernel.org>
+Cc: Kees Cook <kees@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, sparclinux@vger.kernel.org,
+	linux-s390@vger.kernel.org, linux-acpi@vger.kernel.org
+Subject: Re: [PATCH 5/8] events: Move perf_event sysctls into kernel/events
+Message-ID: <20250218103507.GC40464@noisy.programming.kicks-ass.net>
+References: <20250218-jag-mv_ctltables-v1-0-cd3698ab8d29@kernel.org>
+ <20250218-jag-mv_ctltables-v1-5-cd3698ab8d29@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,99 +89,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250218160742.49d6ab76@canb.auug.org.au>
+In-Reply-To: <20250218-jag-mv_ctltables-v1-5-cd3698ab8d29@kernel.org>
 
-Hi,
-On Tue, Feb 18, 2025 at 04:07:42PM +1100, Stephen Rothwell wrote:
-> Hi all,
+On Tue, Feb 18, 2025 at 10:56:21AM +0100, Joel Granados wrote:
+> Move ctl tables to two files:
+> * perf_event_{paranoid,mlock_kb,max_sample_rate} and
+>   perf_cpu_time_max_percent into kernel/events/core.c
+> * perf_event_max_{stack,context_per_stack} into
+>   kernel/events/callchain.c
 > 
-> After merging the bitmap tree, today's linux-next build (arm64 defconfig)
-> failed like this:
+> Make static variables and functions that are fully contained in core.c
+> and callchain.cand remove them from include/linux/perf_event.h.
+> Additionally six_hundred_forty_kb is moved to callchain.c.
 > 
-> arch/arm64/kernel/topology.c: In function 'arch_freq_get_on_cpu':
-> arch/arm64/kernel/topology.c:270:43: error: too many arguments to function 'cpumask_next_wrap'
->   270 |                                 ref_cpu = cpumask_next_wrap(ref_cpu, policy->cpus,
->       |                                           ^~~~~~~~~~~~~~~~~
-> In file included from arch/arm64/include/asm/cpufeature.h:27,
->                  from arch/arm64/include/asm/ptrace.h:11,
->                  from arch/arm64/include/asm/irqflags.h:9,
->                  from include/linux/irqflags.h:18,
->                  from include/linux/spinlock.h:59,
->                  from include/linux/mmzone.h:8,
->                  from include/linux/gfp.h:7,
->                  from include/linux/slab.h:16,
->                  from include/linux/resource_ext.h:11,
->                  from include/linux/acpi.h:13,
->                  from arch/arm64/kernel/topology.c:14:
-> include/linux/cpumask.h:317:14: note: declared here
->   317 | unsigned int cpumask_next_wrap(int n, const struct cpumask *src)
->       |              ^~~~~~~~~~~~~~~~~
+> Two new sysctl tables are added ({callchain,events_core}_sysctl_table)
+> with their respective sysctl registration functions.
 > 
-> Caused by commits
+> This is part of a greater effort to move ctl tables into their
+> respective subsystems which will reduce the merge conflicts in
+> kerenel/sysctl.c.
 > 
->   46ac1bec179d ("cpumask: deprecate cpumask_next_wrap()")
->   43f7f920e14e ("cpumask: re-introduce cpumask_next{,_and}_wrap()")
->   65b98ea8b278 ("cpumask: drop cpumask_next_wrap_old()")
-> 
-> interacting with commit
-> 
->   dd871ac1237f ("arm64: Provide an AMU-based version of arch_freq_get_on_cpu")
-> 
-> from the arm64 tree.
-> 
-> I have applied the following patch for today (which may not be correct).
-Thank you for that.
+> Signed-off-by: Joel Granados <joel.granados@kernel.org>
 
-I'm currently testing a proper fix for that one.
-Should I just send it over as a diff to apply or rather a proper 'fixes' patch?
-
----
-BR
-Beata
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 18 Feb 2025 15:44:06 +1100
-> Subject: [PATCH] fixup for "cpumask: drop cpumask_next_wrap_old()"
-> 
-> interacting with commit
-> 
->   dd871ac1237f ("arm64: Provide an AMU-based version of arch_freq_get_on_cpu")
-> 
-> from the arm64 tree.
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  arch/arm64/kernel/topology.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
-> index 6f0cab8e746b..70db234c41a2 100644
-> --- a/arch/arm64/kernel/topology.c
-> +++ b/arch/arm64/kernel/topology.c
-> @@ -231,7 +231,6 @@ void arch_cpu_idle_enter(void)
->  int arch_freq_get_on_cpu(int cpu)
->  {
->  	struct amu_cntr_sample *amu_sample;
-> -	unsigned int start_cpu = cpu;
->  	unsigned long last_update;
->  	unsigned int freq = 0;
->  	u64 scale;
-> @@ -267,8 +266,7 @@ int arch_freq_get_on_cpu(int cpu)
->  
->  
->  			do {
-> -				ref_cpu = cpumask_next_wrap(ref_cpu, policy->cpus,
-> -							    start_cpu, false);
-> +				ref_cpu = cpumask_next_wrap(ref_cpu, policy->cpus);
->  
->  			} while (ref_cpu < nr_cpu_ids && idle_cpu(ref_cpu));
->  
-> -- 
-> 2.45.2
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
-
-
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
