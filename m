@@ -1,137 +1,150 @@
-Return-Path: <linux-kernel+bounces-520081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CC45A3A56E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:26:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF15AA3A57C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:27:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5270B188A583
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:26:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 655567A30A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:26:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB6492356B4;
-	Tue, 18 Feb 2025 18:26:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q8Z+jwDM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD68617A317;
+	Tue, 18 Feb 2025 18:27:14 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B3872356A8;
-	Tue, 18 Feb 2025 18:26:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6C432356BC
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 18:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739903193; cv=none; b=MyAE7Bdc0knZSWyzM6TDlmIA13brSKfG6q/O6tTmPX5i/YRMTVSg6rRrOd+UYj1JgEka4MYr0guoMtLl5gqdft4+/3NdEfI+kOc4udB1R5mVTLsyBIj9vhdSEvFd9yPANYl5HIWI9mtEJBwcDcnUr2YbDK8aCED5IgyxWdjEEAg=
+	t=1739903234; cv=none; b=pl+Xqu6STEZJ+Cwy8J76KyH3bZ0dwiFB8KIVW5sWzWUtE6RyYEDzd55pJPTmjro06Vdp9jvDjn4uBjQgyoKJbIJfIApisMQ9WejLLkqoSREi2+is4uE7RiAOloL7uf+JP6utRof5kU8D/1nKzNXD9uJ1PXNcmVlFBf3ZPk4SbYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739903193; c=relaxed/simple;
-	bh=gFWPA467fFhdrxcjz8YmJO5wpVcMCxyFzJOhdv74iJQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eASAMKNZeTwaipCdZlQ9nGEaIPaSAQ9lOFHvLGkxMi8UGEX5GwQS1gahnI6P/SvXgUH6Ytrps76W9RvP6/xmAH+Vygq4OADxO1OEUBiHJF56gpO6uIS/YMie2Zvw76wJOZBnthdcUXYNDxX4BfNsdM3EksdpkdGi3oRnpDIoPo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q8Z+jwDM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1402C4CEE4;
-	Tue, 18 Feb 2025 18:26:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739903192;
-	bh=gFWPA467fFhdrxcjz8YmJO5wpVcMCxyFzJOhdv74iJQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Q8Z+jwDMftXQ30oDa75WpBjkYwQU/B6hSvtzqeMcJKLr/29D60MM+Gmc75e3dLtII
-	 3fu161KB0OKHpCU1I20ytqCYZhgD1CgWv4NjgSuW2Im/Oaq/p4VVqACtPC0LEi6fYL
-	 17zPNR+GRLm3vwoSGS2YyRX8qgTRWJMw4ZI+airDPGlkOM5t6e7lB0tTemULKrblTD
-	 If0MYpoMD+utUwXLOHqluF0+ClMlu8q6x4d9iL6zCQ5SHVmog0qV6zqvtQMJlfhyBX
-	 f1owRj597J6Qr4xQYwMqaNcpjDCKWrOdFQjtzTqOfarZvf1LcCa5xblSX4S8spuw/l
-	 7KUot/tWGVYfA==
-Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3f405e2c761so756912b6e.1;
-        Tue, 18 Feb 2025 10:26:32 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUBhTtnXI13Q5pY/09YIh6b58Q39CKwYaTyjLoaAWor9C3VvI5Y+VdPzpYuWJgGaUVLEQe5b4GYzD2I@vger.kernel.org, AJvYcCVWYzz4HHHgd9civBp5rLu76TeYeDt9K3bVhuADS7baVll/7qfuMDn3b+lv9VKCBqgid9VHZDpSAPX5Cl29@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuxvPMQSoF6uGXMZpxiZmBPM47qiWI+YmTBrdbXEkRYFwJNJU9
-	85CuKFj4zHGODrpS0qVOKMtZgVHJz2BVRxp9m+QcLyLxG8OeZYRrJ1MHGcpuyf5/6hgwWWjE2MF
-	gSKz9jckVVLWzOUV40ih9OR7hy0E=
-X-Google-Smtp-Source: AGHT+IEtPSsv1kpfazgkvUXQ/rk/DfLvbYdLEOQIpbLBOwhPffIIamBCRZosp2SHVFVXB/b5zgBE+kurnVhlh8adRTc=
-X-Received: by 2002:a05:6808:10c5:b0:3f3:be96:5113 with SMTP id
- 5614622812f47-3f40f1f8b0amr530337b6e.22.1739903192105; Tue, 18 Feb 2025
- 10:26:32 -0800 (PST)
+	s=arc-20240116; t=1739903234; c=relaxed/simple;
+	bh=GCTzL/xCfB6V2jDS+azd6MV1z1lY7BGs8D0xGHNINRk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=S+GASm2lbkf1jOq1A4BBTi/ZSn3v2xiuIvOn78PQ6TM/7/BAzLaVMFir5OrIRj3rsHGIZLdFtF4rQSujwLFL6NYG2uZwljCR1sshMCAVRhACVni4tfv3ZbUBLcSiyUACjGkU9oy9bfucGxCXlpb6W0W8Bi9+0tef2n9VgzXoGEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <a.fatoum@pengutronix.de>)
+	id 1tkSIy-0006Be-0w; Tue, 18 Feb 2025 19:26:48 +0100
+Received: from dude05.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::54])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <a.fatoum@pengutronix.de>)
+	id 1tkSIx-001dV9-1T;
+	Tue, 18 Feb 2025 19:26:47 +0100
+Received: from localhost ([::1] helo=dude05.red.stw.pengutronix.de)
+	by dude05.red.stw.pengutronix.de with esmtp (Exim 4.96)
+	(envelope-from <a.fatoum@pengutronix.de>)
+	id 1tkSIx-00A9Hm-1A;
+	Tue, 18 Feb 2025 19:26:47 +0100
+From: Ahmad Fatoum <a.fatoum@pengutronix.de>
+Subject: [PATCH v4 0/6] arm64: dts: freescale: imx8mp-skov: switch to
+ nominal drive mode
+Date: Tue, 18 Feb 2025 19:26:40 +0100
+Message-Id: <20250218-imx8m-clk-v4-0-b7697dc2dcd0@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250212063408.927666-1-tanxiaofei@huawei.com>
-In-Reply-To: <20250212063408.927666-1-tanxiaofei@huawei.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 18 Feb 2025 19:26:21 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0hK4fB2oh14L=_qqBAL9vhar-4WuvP1bmnF9XwRrG9+NQ@mail.gmail.com>
-X-Gm-Features: AWEUYZkuAJqmehZnM1wNSSYOgZwMIZcVcCTNW6JrX6wMkKScIQmx0gmwSd65mFY
-Message-ID: <CAJZ5v0hK4fB2oh14L=_qqBAL9vhar-4WuvP1bmnF9XwRrG9+NQ@mail.gmail.com>
-Subject: Re: [PATCH v4] ACPI: HED: Always initialize before evged
-To: Xiaofei Tan <tanxiaofei@huawei.com>
-Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, jonathan.cameron@huawei.com, 
-	mchehab+huawei@kernel.org, roberto.sassu@huawei.com, shiju.jose@huawei.com, 
-	prime.zeng@hisilicon.com, linuxarm@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAODQtGcC/23MTQqDMBCG4atI1k1JokbtqvcoXUyTiYbWH6INF
+ vHujYIQaJffMM+7kBGdxZFckoU49Ha0fRdGdkqIaqCrkVodNhFMZFzwgtp2LluqXk9aZbIoZKq
+ N0iUJ/4NDY+e9dbuH3dhx6t1nT3u+XY9KFVU8p4wqA8YAKwsN8jpgV78n13d2PmskW8qLg+eMM
+ xlzEbgEQNCgZG7wL08jztOYp4EzLbF6aATIfvm6rl///j44JQEAAA==
+X-Change-ID: 20241217-imx8m-clk-9467763dfcd8
+To: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, Frank Li <Frank.li@nxp.com>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Abel Vesa <abel.vesa@linaro.org>, 
+ Marek Vasut <marex@denx.de>
+Cc: linux-clk@vger.kernel.org, imx@lists.linux.dev, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Ahmad Fatoum <a.fatoum@pengutronix.de>
+X-Mailer: b4 0.14.2
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Wed, Feb 12, 2025 at 7:41=E2=80=AFAM Xiaofei Tan <tanxiaofei@huawei.com>=
- wrote:
->
-> When the module HED is built-in, the module HED init is behind EVGED
-> as the driver are in the same initcall level, then the order is determine=
-d
-> by Makefile order. That order violates expectations. Because RAS records
-> can't be handled in the special time window that EVGED has initialized
-> while HED not.
->
-> If the number of such RAS records is more than the APEI HEST error source
-> number, the HEST resources could be occupied all, and then could affect
-> subsequent RAS error reporting.
->
-> Change the initcall level of HED to subsys_init to fix the issue. If buil=
-d
-> HED as a module, the problem remains. To solve this problem completely,
-> change the ACPI_HED from tristate to bool.
->
-> Signed-off-by: Xiaofei Tan <tanxiaofei@huawei.com>
-> ---
->  -v4: Fix register HED device twice issue found by Nathan, and change
-> patch name following Rafael's advice.
-> ---
->  drivers/acpi/Kconfig | 2 +-
->  drivers/acpi/hed.c   | 7 ++++++-
->  2 files changed, 7 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/acpi/Kconfig b/drivers/acpi/Kconfig
-> index d81b55f5068c..7f10aa38269d 100644
-> --- a/drivers/acpi/Kconfig
-> +++ b/drivers/acpi/Kconfig
-> @@ -452,7 +452,7 @@ config ACPI_SBS
->           the modules will be called sbs and sbshc.
->
->  config ACPI_HED
-> -       tristate "Hardware Error Device"
-> +       bool "Hardware Error Device"
->         help
->           This driver supports the Hardware Error Device (PNP0C33),
->           which is used to report some hardware errors notified via
-> diff --git a/drivers/acpi/hed.c b/drivers/acpi/hed.c
-> index 7652515a6be1..3499f86c411e 100644
-> --- a/drivers/acpi/hed.c
-> +++ b/drivers/acpi/hed.c
-> @@ -80,7 +80,12 @@ static struct acpi_driver acpi_hed_driver =3D {
->                 .remove =3D acpi_hed_remove,
->         },
->  };
-> -module_acpi_driver(acpi_hed_driver);
-> +
-> +static int __init acpi_hed_driver_init(void)
-> +{
-> +       return acpi_bus_register_driver(&acpi_hed_driver);
-> +}
-> +subsys_initcall(acpi_hed_driver_init);
->
->  MODULE_AUTHOR("Huang Ying");
->  MODULE_DESCRIPTION("ACPI Hardware Error Device Driver");
-> --
+Unlike the i.MX8MM and i.MX8MN SoCs added earlier, the imx8mp.dtsi
+configures some clocks at frequencies that are only validated for
+overdrive mode, i.e., when VDD_SOC is 950 mV.
 
-Applied as 6.15 material with changelog edits, thanks!
+For the Skov i.MX8MP board, we want to run the SoC at the lower voltage of
+850 mV though to reduce heat generation and power usage. For this to work,
+clock rates need to adhere to the limits of the nominal drive mode.
+
+This is done by this series: A new imx8mp-nominal.dtsi reconfigures
+the imx8mp.dtsi clock tree to be compatible with nominal mode, an adaptation
+to the Linux clock driver makes it sanity check the actual clock rates against
+the SoC operating mode's constraints and finally the Skov DT makes use
+of it.
+
+Actual configuration of the VDD_SOC rail continues to happen prior to Linux
+as well as PLL configuration that needs to happen earlier than the kernel
+running. See the corresponding barebox patch series[1] for details.
+Note that the barebox series didn't yet include VDD_SOC reconfiguration
+to 850mV, that would follow once the kernel changes have been merged.
+
+[1]: https://lore.kernel.org/barebox/20240503103717.1370636-1-a.fatoum@pengutronix.de/
+
+---
+Changes in v4:
+- remove unnecessary oneOf in dt-bindings schema (Frank)
+- rebase on top of DT clock rate change v6.14-rc3
+- Link to v3: https://lore.kernel.org/r/20250113-imx8m-clk-v3-0-0d6e9bdeaa4e@pengutronix.de
+
+Changes in v3:
+- change boolean mode properties to string property, so it's possible to
+  override in overlays (Frank).
+- Dropped Conor's Ack again due to aforementioned binding change.
+- make struct imx8mp_clock_constraints::clkid unsigned (Stephen)
+- Remove comma after sentinel member (Stephen)
+- Link to v2: https://lore.kernel.org/r/20250106-imx8m-clk-v2-0-6aaeadac65fe@pengutronix.de
+
+Changes in v2:
+- Explain in Patch 1/6 why two properties are added instead of one
+  (Conor)
+- Collect Conor's Acked-by
+- Collect Peng's Reviewed-by
+- Link to v1: https://lore.kernel.org/r/20241219-imx8m-clk-v1-0-cfaffa087da6@pengutronix.de
+
+---
+Ahmad Fatoum (6):
+      dt-bindings: clock: imx8m: document nominal/overdrive properties
+      arm64: dts: imx8mp: Add optional nominal drive mode DTSI
+      arm64: dts: imx8mp: add fsl,nominal-mode property into nominal.dtsi
+      arm64: dts: freescale: imx8mp-skov: configure LDB clock automatically
+      arm64: dts: freescale: imx8mp-skov: operate SoC in nominal mode
+      clk: imx8mp: inform CCF of maximum frequency of clocks
+
+ .../devicetree/bindings/clock/imx8m-clock.yaml     |   8 ++
+ arch/arm64/boot/dts/freescale/imx8mp-nominal.dtsi  |  64 +++++++++
+ .../arm64/boot/dts/freescale/imx8mp-skov-reva.dtsi |   5 +-
+ .../freescale/imx8mp-skov-revb-mi1010ait-1cp1.dts  |  19 +--
+ drivers/clk/imx/clk-imx8mp.c                       | 151 +++++++++++++++++++++
+ 5 files changed, 231 insertions(+), 16 deletions(-)
+---
+base-commit: 0ad2507d5d93f39619fc42372c347d6006b64319
+change-id: 20241217-imx8m-clk-9467763dfcd8
+
+Best regards,
+-- 
+Ahmad Fatoum <a.fatoum@pengutronix.de>
+
 
