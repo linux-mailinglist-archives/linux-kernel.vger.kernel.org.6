@@ -1,112 +1,122 @@
-Return-Path: <linux-kernel+bounces-520038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46923A3A503
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:12:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 874E2A3A504
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:13:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53B5D1890AC4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:12:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 417BA1890C79
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:13:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B10C2271277;
-	Tue, 18 Feb 2025 18:11:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8397E270EDF;
+	Tue, 18 Feb 2025 18:13:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OCUakSCA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mn4v/BxG"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A0AB18CC15;
-	Tue, 18 Feb 2025 18:11:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65F4B18CC15;
+	Tue, 18 Feb 2025 18:13:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739902315; cv=none; b=ZNC7f/TxhtcxKNh38YIUFqI7oxGUTy4YTCbQC6KMpL69m78efI8bWTRWdqknxiE00uyShV0lnBe6uq8ITZP3gBRbLYu2+KioyBFjuSggwVjKmY/7hWKmjOjrr1LCTYm7MeIh8KA1DjFwLibS4en63DiMd9BMg+jjRkBVxoIONzM=
+	t=1739902390; cv=none; b=aKJO+XobUrqR2VaUEVCLW2z//4gz/7qDTPvmWTPNDiE6yzl/fWYhPOnTdfDdokDsWlY7hCpOvdF5z75+8ubG2cVhnCJXTfvH0LpFEXWZvY3XtgaihwiIuePXtIhyWLapbZbxk6Q+styR7oxbLkbRO7esmPjsC8YDsQ2Q2z9qs4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739902315; c=relaxed/simple;
-	bh=L6jtfNthTsF7txY6fasnR3MOiegSAMuJbAVTkGdQhZc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=myo4CjlWcjJktqBjO6UXu9dpj9MjF8w0ELxrnFwr+hzuOrdYMWqGmWpm5t+03acNhl6GU3NL0LTiSpXcTk1+ePD0NGxiDgLup9tQppwzpMQ4glMa3qudrUu8XbAp8Zw8mso9JsT6jIXXBBZpPJtExZ1TmfsR6390mHfvlArPobU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OCUakSCA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 866B9C4CEE4;
-	Tue, 18 Feb 2025 18:11:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739902314;
-	bh=L6jtfNthTsF7txY6fasnR3MOiegSAMuJbAVTkGdQhZc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=OCUakSCARiXqgyyR98tTnw+eQVZicfk5wR1CwOqW+mhd8ZwGmQf4N+w8cqxeiK0L0
-	 dFKEiL64XZSPBLYXaJXhFj1YrGT5P7njLITAAepf7lxT/PQKtyisMgpLwEzvgNpcGd
-	 a/LbC26HIg572QH/v4SDI3TgTXHT5bWLa6nI48Nj0BXaZyR3E7f/sEMNQjOuuEI+ZC
-	 h6ev6I3Hb0aEXTX4/JbbLyE8KSAw26g5Pz+Y+4IxU8Saq2Q6qByNueGLNSqyjSjk9T
-	 6sSYUePpgfHHC9c/2MX2NQAzyU4q1l9mzHro3F5PCwUkcLme+ecvMHF/wnJcYHeIto
-	 5qQ9wpr9kHQBA==
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5fa2685c5c0so2858648eaf.3;
-        Tue, 18 Feb 2025 10:11:54 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU+1WZaiq9klDQ1Ka+HsHZx7b2I1CUZIe2fUATtrKDezrNjyy81PTuN7CvGu+qITkB0MJ6H5MmwltBOE+ai@vger.kernel.org, AJvYcCWcSrmBNF3cpihQSCMxGKDZ9V+4vl3J76RWclbEY0XTLkB86w9GPXnFCJnAx8Llkuw/LxJ6D9joeXO2@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBxYNlyX1+4dfxfSQjwYJxuK6OkCwGX1cvJxHoV79fQXq2dpS1
-	kFf8JE2mV5ZIkHprO+UnJx8+0cus65ag4ug67Qgfi3ZxGh/Lo32hPGtQ1m8fpR7dnZCC/MyxjV5
-	0A+STjyLRsH5MQQS+FUuxWe9pHt8=
-X-Google-Smtp-Source: AGHT+IHra6W26CYn3h0Ps8XpOzMvEj6sdAECD9RxyFP9m9PND/S8EZ/XFVkJjJOUlcShUMiDIKUgEvdThbAw+HaSk1E=
-X-Received: by 2002:a05:6808:23d6:b0:3f4:9ae:cd60 with SMTP id
- 5614622812f47-3f409aecf88mr2719780b6e.13.1739902313819; Tue, 18 Feb 2025
- 10:11:53 -0800 (PST)
+	s=arc-20240116; t=1739902390; c=relaxed/simple;
+	bh=Fw1t4/XZPhU/Ym8pt7ckV0tIUpcEQrQMeA8JgR5SvpM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AUxM+8QEhaTLYtLIKYUPfEF0O0iT1vZMIbISAeNKMwrEPzANP+JK5CrflKPvYLOowiHSHaGeK3BBaoZlLTWvq4eW1jDiHlPX9JWvU0mM8aQgYzALalqP/DtgRb/0ntPorKneTcK/PxNfqDt3Vmg+35lMy2RVbUJ06S6+1MYF29w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mn4v/BxG; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-abb7f539c35so674072266b.1;
+        Tue, 18 Feb 2025 10:13:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739902387; x=1740507187; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=TsYeNIQ+FlX/aj9gMCCQxPPx4VgWwYgaeivLd/Q74Vo=;
+        b=Mn4v/BxGIja+zVpWT9GiiWMp3te5mq/uLPf00RU3aVIbfrV3+KIad2V5W2MoGTAT7P
+         lxsedIqtNremfX5L4PxA3OLIxUeD6DEpaEbX85EXXTSByZNS6pkF0jmcmzqlLY+oapFy
+         ZsCzDOMgoomF6NrUztKpp/eYi1i21Zgh92JpZDjRCg8hFsURiTO8OQvu+EHiUsFuPkuB
+         xk4LjTTTDA8hcPN8K9QtVw8GT7P+8BjWaloEIvWZfz+dOgg9t6uPEzl5jOcUBzQtJr3M
+         UkRT5M/h4saBCIpRy7yC1JNmUuZG/5iCNtXoU0oNMs65zyhBmvpi577WbCv0zaWwmuNU
+         fTOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739902387; x=1740507187;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TsYeNIQ+FlX/aj9gMCCQxPPx4VgWwYgaeivLd/Q74Vo=;
+        b=u0H4eHith73WxDehwP4VQlxnXIzFxxe4K7p18fQ9e0K3NTuvZe++HuJy8xHdSacInp
+         BSftzSYLXSdLM/0toqeui4p61O2KcOfm96ivOdw3D/Q+AqVD0n6O1rvaFaY/R10JexMa
+         hs/ZreU/nC9yQ3WdsZsf7rgMa5PhtwUA/aWDBD5WHkGPWdhCjrHRvRJyQmuuhwJO8nrL
+         a0yylua60tdtO/C4z14I0d+R8+F3iybHadiEOceUEuFbeBVb3uUnb7K1Ujv7es2niIiq
+         meYPNhpW+kbRgNYpxs9nwXw0yUOVNCWHzHiZ33iH5mjyDxNN8zk2oPHts+FUafKC1Ltf
+         kkvw==
+X-Forwarded-Encrypted: i=1; AJvYcCX+AuwBdMVNWC+JcWu59Q9qj1c5jI4B1OYGU6gTDR5zjuOqInKcu0YQaDmG+WDm7LFAG1MOCGRDwbcKRA8=@vger.kernel.org, AJvYcCXawM/DBhAICqCIaFjnsW4ptAQN4JngTwCN/gx7Jsm1JE1taYSqsPl6+tBObaw68DTFhGr7wM7E@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnGOrsixUZBNuaENJErnIe97A9qGUgr/2OkapwwlnnmEKZyUNR
+	R1jDSgx+T1xNUhfA9euiCAjRU5W7hHbkq095NsvPWDsMYYiPNiOU
+X-Gm-Gg: ASbGncuCWxntr1/AjxvHu6VBknTNUlGR2gHWoy4CIadGOtQxVl/jMnX/Nqu/kA5HLHi
+	vj3aE+gBe5FpEVapi3w0C79oETk91Mmvp/RHUm3oZynaflvPu+UI5L/+Tdtw+uVZ4jrGOON/sop
+	A7z/1r0uPCOWoMRvgbi74XfWHJV5VwQAsW05zMeWSvWw2URB+IDr6fFzCL7NX/8fUyXFn+NF2Pa
+	skhQYDF5Ka4U5MhcHlhu80O+JnRWlvpSeOZkJ7eP97fq71DkaHFnLBXQ9VAaRRhO0Sw3YvwFpjv
+	AZAgPosBenxB
+X-Google-Smtp-Source: AGHT+IEJHbthkACTR27TV8/8N6o8JA5RJ5EG5u4nvVcnlmLMhwVv/VD/ojGkgystZjEitS83mYV2uA==
+X-Received: by 2002:a17:906:7312:b0:ab7:bcf1:264 with SMTP id a640c23a62f3a-abb70a7a559mr1597792166b.5.1739902386414;
+        Tue, 18 Feb 2025 10:13:06 -0800 (PST)
+Received: from debian ([2a00:79c0:625:3600:3000:d590:6fca:357f])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abba4fc0c29sm334527766b.157.2025.02.18.10.13.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2025 10:13:05 -0800 (PST)
+Date: Tue, 18 Feb 2025 19:13:03 +0100
+From: Dimitri Fedrau <dima.fedrau@gmail.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Marek =?utf-8?B?QmVow7pu?= <marek.behun@nic.cz>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
+	Gregor Herburger <gregor.herburger@ew.tq-group.com>,
+	Stefan Eichenberger <eichest@gmail.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 1/3] net: phy: marvell-88q2xxx: align defines
+Message-ID: <20250218181303.GA3816@debian>
+References: <20250214-marvell-88q2xxx-cleanup-v1-0-71d67c20f308@gmail.com>
+ <20250214-marvell-88q2xxx-cleanup-v1-1-71d67c20f308@gmail.com>
+ <rfcr7sva7vs5vzfncbtrxcaa7ddosnabxu5xhuqsdspbdxwfrg@scl4wgu3m32n>
+ <Z7SuqnfPJD-qQG-c@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250211104532.699124-1-thorsten.blum@linux.dev>
-In-Reply-To: <20250211104532.699124-1-thorsten.blum@linux.dev>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 18 Feb 2025 19:11:42 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0gW6E9hnhYbf+bG_8ERR3PqYQ8tMv_j+-MptZEv3awvnA@mail.gmail.com>
-X-Gm-Features: AWEUYZnoOEG4QxY-6lBGLYpiJHR8wKfKyOA45Iwy_8vxgFE5dL8J_AUKqq5dg0A
-Message-ID: <CAJZ5v0gW6E9hnhYbf+bG_8ERR3PqYQ8tMv_j+-MptZEv3awvnA@mail.gmail.com>
-Subject: Re: [RESEND PATCH] ACPI: video: Use str_yes_no() helper in acpi_video_bus_add()
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z7SuqnfPJD-qQG-c@shell.armlinux.org.uk>
 
-On Tue, Feb 11, 2025 at 11:45=E2=80=AFAM Thorsten Blum <thorsten.blum@linux=
-.dev> wrote:
+Am Tue, Feb 18, 2025 at 04:00:42PM +0000 schrieb Russell King (Oracle):
+> On Tue, Feb 18, 2025 at 12:54:29PM +0100, Marek Behún wrote:
+> > > +#define MDIO_MMD_AN_MV_STAT				32769
+> > 
+> > Why the hell are register addresses in this driver in decimal?
+> 
+> Shocker - some documentation gives driver addresses for PHYs in
+> decimal.
+> 
+> It then becomes a pain to have to manually translate back and
+> forth between hex and decimal if one is reading the driver code and
+> referring back to the documentation.
 >
-> Remove hard-coded strings by using the str_yes_no() helper function.
->
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
->  drivers/acpi/acpi_video.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
-> index a972831dbd66..efdadc74e3f4 100644
-> --- a/drivers/acpi/acpi_video.c
-> +++ b/drivers/acpi/acpi_video.c
-> @@ -27,6 +27,7 @@
->  #include <linux/acpi.h>
->  #include <acpi/video.h>
->  #include <linux/uaccess.h>
-> +#include <linux/string_choices.h>
->
->  #define ACPI_VIDEO_BUS_NAME            "Video Bus"
->  #define ACPI_VIDEO_DEVICE_NAME         "Video Device"
-> @@ -2039,9 +2040,9 @@ static int acpi_video_bus_add(struct acpi_device *d=
-evice)
->
->         pr_info("%s [%s] (multi-head: %s  rom: %s  post: %s)\n",
->                ACPI_VIDEO_DEVICE_NAME, acpi_device_bid(device),
-> -              video->flags.multihead ? "yes" : "no",
-> -              video->flags.rom ? "yes" : "no",
-> -              video->flags.post ? "yes" : "no");
-> +              str_yes_no(video->flags.multihead),
-> +              str_yes_no(video->flags.rom),
-> +              str_yes_no(video->flags.post));
->         mutex_lock(&video_list_lock);
->         list_add_tail(&video->entry, &video_bus_head);
->         mutex_unlock(&video_list_lock);
-> --
+Agreed. Is it worth to change addresses to hexadecimal numbers and use
+BIT and GENMASK for the bits ?
 
-Applied with changelog edits as 6.15 material, thanks!
+Best regards,
+Dimitri Fedrau
 
