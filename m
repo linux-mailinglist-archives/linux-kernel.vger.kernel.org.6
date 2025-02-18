@@ -1,88 +1,129 @@
-Return-Path: <linux-kernel+bounces-519870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0F34A3A2F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:35:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C85EA3A2FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:39:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABEE71651D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:35:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF1E4188BC2F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:38:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B72F71B6D18;
-	Tue, 18 Feb 2025 16:35:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7F5126B0AF;
+	Tue, 18 Feb 2025 16:38:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RibUiXdZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="VEMKe/Zo"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07A1226B0AF;
-	Tue, 18 Feb 2025 16:35:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80BCF24336D;
+	Tue, 18 Feb 2025 16:38:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739896547; cv=none; b=l2ksCnQBVy+kzcONOKbKqPMLoM81c+sDeEqFPVrzQ95m84MrmPby/Z2KM3+mbhMx02NppIxIRshss7RT9bPnAqtMxoDBnz+x8i6sbR+QLgV/F+X1pt8uUQ3TihSCqW4tqvqOzWxT+jC+ER3SMkaFX0dFkLkWoOJl+Mb01AUCPQI=
+	t=1739896723; cv=none; b=Y89r5okxjDYgefXMjy9pmcf8xPmqzeN8DpUU+JXDlBrWUCYHsqTGYpLUZimDE/OROp77TTCapJv0zd/5kNPtqPYxNOYSokfAx1y6OPglLviT+Z1QNa3iQQ2oZ6X8x7nLzQiHx/Aypv/JThioQk3D1mFHVHDOcRpqaRWR3auQHME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739896547; c=relaxed/simple;
-	bh=w7JBv0Itab43P9O0fBMbKgbOx837okF7MY9ILu9zSVo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=utmw0IBVDNZtzAhdnUWN8odvvTvsY1QKPWJcsHdD7J/gCoOC28IzJJ6IYlI6XDMD5wZceqtQ3IPk/ED79HN5T59QBFok47063DEYughPX0zd0yknT12aJQn/G1Qn+P6ELtANfFlJa6+ZE3OVuXJxHktyBWqpSUeAp1zwR9wPKT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RibUiXdZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5EF9C4CEE2;
-	Tue, 18 Feb 2025 16:35:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739896545;
-	bh=w7JBv0Itab43P9O0fBMbKgbOx837okF7MY9ILu9zSVo=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=RibUiXdZ8SKRertBNYUYpQRKLnYvoqzvD6sYy7pHiKkdcT8Ow2URjR7ZR+n7kvl8w
-	 SQgzCRrjBp9HZqldX3MxJEG3TG/58+l/EG+fdoaupfXvc2ZZEAxfhAbftqld/i6KIa
-	 yTAXCwiHbt03f2/2xR6XD3EXLk03dt4fsTPup+sOfEi4cpurxqYoOesJEr9Gv3DU2h
-	 28kk2CycEUwimX78tmIN6PGv/WoRLMcBfHw5fI32tI8Tc9GFa14oTEv9NBxvUhkKen
-	 AZXRFSHuUZMoaBPKQDiStH0mzr2OvZ39/zpQhlwzT4HlEvzQe/UXOFxXHRlE15MtqA
-	 0eAjFF1qJS+Rg==
-Message-ID: <36783d51be7576fcdbf8facc3c94193d78240816.camel@kernel.org>
-Subject: Re: Rust kernel policy
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>, Miguel Ojeda
-	 <miguel.ojeda.sandonis@gmail.com>
-Cc: rust-for-linux <rust-for-linux@vger.kernel.org>, Linus Torvalds	
- <torvalds@linux-foundation.org>, Greg KH <gregkh@linuxfoundation.org>,
- David Airlie <airlied@gmail.com>, linux-kernel@vger.kernel.org,
- ksummit@lists.linux.dev
-Date: Tue, 18 Feb 2025 18:35:40 +0200
-In-Reply-To: <Z7SwcnUzjZYfuJ4-@infradead.org>
-References: <Z7SwcnUzjZYfuJ4-@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1739896723; c=relaxed/simple;
+	bh=Jr2XeqFa7wILBc9ajjjmwJuulxiR+E1gLDxz38v3qMY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QUC5MxBUOwvxtUBsAz7Oj/25doVEQqFIE4Hfk2VmxSkqLUNvwmkL80BZ/+nm/lPmpo8s8VWTRMwtl1LHwy7mkozrkMGcwk7jUicGUIBroJneANagnlVjFRRVAy4YvHOnMW1VApr6AZYNVzwdnkPjVEf1Ej1E1nJ4PSIeLskUIVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=VEMKe/Zo; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51ICsfkP000995;
+	Tue, 18 Feb 2025 16:38:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=5Nl9G0E+MY+LQNb1Fl4PTgZed9Nw1L
+	2PXWSuck02l9w=; b=VEMKe/Zo2B3H4e41q1f6ievffRcJJAgMA14Rse9Uxz8Ask
+	eFIslL/t1QATbfRoceJxlt6Nb8iKeF21hL96rP9YKj8HrK1Je562WxBKFMLsDFew
+	SC55tChO4wolxWYmjTjlD/T+lN/ITQtUG3xXDQDhWRQZTSpFJm9v+6m1mToSLADw
+	5hrCw+tcsGf3YLvGpgQfT8oU1wKMmgAgxqoGvJycx0zSJ15lveBTbiQxcz0LjrVw
+	/37zHdy0OaDpfb7jbiiMIi22oCeyoAys08DwBVZPZ9Z3y8uATg1w5I/H0dpusI0Z
+	k1kBF77mlmImXGIkjW3ix0SBwwf6iIkiJwv6Kcxg==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44vh203rwk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Feb 2025 16:38:14 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51IDQadB001641;
+	Tue, 18 Feb 2025 16:38:13 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44u5myv9d4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Feb 2025 16:38:13 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51IGc96Z47645152
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 18 Feb 2025 16:38:09 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5D00B20043;
+	Tue, 18 Feb 2025 16:38:09 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6B75C20040;
+	Tue, 18 Feb 2025 16:38:08 +0000 (GMT)
+Received: from localhost (unknown [9.179.25.213])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 18 Feb 2025 16:38:08 +0000 (GMT)
+Date: Tue, 18 Feb 2025 17:38:06 +0100
+From: Vasily Gorbik <gor@linux.ibm.com>
+To: Halil Pasic <pasic@linux.ibm.com>
+Cc: Eric Farman <farman@linux.ibm.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        Vineeth Vijayan <vneethv@linux.ibm.com>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Tony Krowiak <akrowiak@linux.ibm.com>,
+        Jason Herne <jjherne@linux.ibm.com>,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Holger Dengler <dengler@linux.ibm.com>, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Thorsten Blum <thorsten.blum@linux.dev>
+Subject: Re: [PATCH 0/2] s390/vfio-*: make mdev_types unlike a fake flex array
+Message-ID: <your-ad-here.call-01739896686-ext-9687@work.hours>
+References: <20250217100614.3043620-1-pasic@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250217100614.3043620-1-pasic@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: pmzFKryF_fYebefZeqqwO3X7z98vGZJn
+X-Proofpoint-ORIG-GUID: pmzFKryF_fYebefZeqqwO3X7z98vGZJn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-18_08,2025-02-18_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 clxscore=1011
+ spamscore=0 impostorscore=0 adultscore=0 bulkscore=0 mlxlogscore=231
+ phishscore=0 mlxscore=0 lowpriorityscore=0 suspectscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502180119
 
-On Tue, 2025-02-18 at 08:08 -0800, Christoph Hellwig wrote:
-> On Sun, Feb 09, 2025 at 09:56:35PM +0100, Miguel Ojeda wrote:
-> > Hi all,
-> >=20
-> > Given the discussions in the last days, I decided to publish this
-> > page
-> > with what our understanding is:
-> >=20
-> > =C2=A0=C2=A0=C2=A0 https://rust-for-linux.com/rust-kernel-policy
-> >=20
-> > I hope it helps to clarify things. I intend to keep it updated as
-> > needed.
->=20
-> I don't think having a web page in any form is useful.=C2=A0 If you want
-> it
-> to be valid it has to be in the kernel tree and widely agreed on.
+On Mon, Feb 17, 2025 at 11:06:12AM +0100, Halil Pasic wrote:
+> 
+> One sized trailing array members can look like fake flex arrays and
+> confuse people. Let us try to make the mdev_types member of the parent
+> devices in vfio-ap and vfio-ccw less confusing.
+> 
+> 
+> Halil Pasic (2):
+>   s390/vfio-ap: make mdev_types not look like a fake flex array
+>   s390/vfio-ccw: make mdev_types not look like a fake flex array
+> 
+>  drivers/s390/cio/vfio_ccw_drv.c       | 6 +++---
+>  drivers/s390/cio/vfio_ccw_private.h   | 2 +-
+>  drivers/s390/crypto/vfio_ap_ops.c     | 4 ++--
+>  drivers/s390/crypto/vfio_ap_private.h | 2 +-
+>  4 files changed, 7 insertions(+), 7 deletions(-)
 
-I'd emphasize here that MUST be in the kernel tree. Otherwise, it by the
-process can be safely ignored without a second thought.
-
-Doing random pointless annoucements is LF thing, not korg thing ;-)
-
-BR, Jarkko
+Applied, thank you!
 
