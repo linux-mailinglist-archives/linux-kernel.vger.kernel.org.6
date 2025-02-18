@@ -1,83 +1,236 @@
-Return-Path: <linux-kernel+bounces-519851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 631B7A3A2C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:27:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48396A3A2C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:27:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 418E33B158B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:26:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1176A177094
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:26:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AF7726E658;
-	Tue, 18 Feb 2025 16:25:43 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A596826E622
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 16:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85D6D26B2D0;
+	Tue, 18 Feb 2025 16:26:14 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 254FC198E60;
+	Tue, 18 Feb 2025 16:26:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739895942; cv=none; b=PJNG3ypaON3Im1AvLbPXt0Y+LMJ0Jp2vKFXJ8uJTSm2UVzxJ925bQDzIK47qCWQxnLYBkNbU1J+KNYXhTx46yYrUW/m8sd/rKePgmK/emnOrD/QDj3Bgy1x/cfsQculp10eYzGHJm7yfIXSd897SWCVALfV32qZ1yp4/mbdh9Gk=
+	t=1739895974; cv=none; b=JZQcu8eLU7JtjJ8hmvQC4y4npmu9OfoB1Zf+asnKVBnFH1cGmLNmBZeuiinzLbe6neuXnT8B/G6Gi4ZuVFwXJrz+LQssYZnC53NRqTr0a4RE5n6GE/ioEvnSNdGil+AhKcisatISAqXJSbOn/4NQZzShxmQXayBCeJ7snn1P7hA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739895942; c=relaxed/simple;
-	bh=s3z020jExDCDiFNOPpL8W4R81Z92L1w2M/kyMLr2Ums=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fJ6o6hxJ3m2pv/bddKDmsM13P2YUWvT+z3Okei6BvVdB0ORSBVnohEiW+EBSzln5QmNdM3xO0nM55VdFGbIS0FEM6hOrTwvXoKi7dHuASWH1xTSH0nilMlYYCW9PaB8XtIy2QeCAb3aRjN6U6/dOezG196gUStIpG6y/Vi7+sTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C571C4CEE8;
-	Tue, 18 Feb 2025 16:25:41 +0000 (UTC)
-Date: Tue, 18 Feb 2025 11:26:02 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Heiko Carstens <hca@linux.ibm.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Linus Torvalds
- <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, Mark
- Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Sven Schnelle <svens@linux.ibm.com>,
- Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
- <agordeev@linux.ibm.com>
-Subject: Re: [GIT PULL] ftrace: Updates for v6.14
-Message-ID: <20250218112602.5611754e@gandalf.local.home>
-In-Reply-To: <20250217133830.25e634d8@gandalf.local.home>
-References: <20250119193134.0ebd56bc@gandalf.local.home>
-	<20250217114918.10397-A-hca@linux.ibm.com>
-	<20250217133830.25e634d8@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1739895974; c=relaxed/simple;
+	bh=mAKKpLK8tkLsblSxhjdkSQA7q+BNXVXYxQw89MAWpxg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YSXExnqZuxjf/g8axdk0ZQIkiJ1cEi0rEabpM17wQ143H+NUi8VSUdvWUcj52T2Sq5YH2Di5KTBklF/LwllyboVPrC4G/9n2rhvNBaYXzfRT928ofZ3xVA8tnXVq7zHNKj3xXRC72ALN/B7+ST78SZORROm/Q2B2827n7Q3UdzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C6C54152B;
+	Tue, 18 Feb 2025 08:26:28 -0800 (PST)
+Received: from [10.1.27.186] (XHFQ2J9959.cambridge.arm.com [10.1.27.186])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 364EB3F59E;
+	Tue, 18 Feb 2025 08:26:04 -0800 (PST)
+Message-ID: <8d1fed22-5ba8-433b-9ef9-478b337b10d5@arm.com>
+Date: Tue, 18 Feb 2025 16:26:02 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC v2 1/9] introduce khugepaged_collapse_single_pmd to unify
+ khugepaged and madvise_collapse
+Content-Language: en-GB
+To: Nico Pache <npache@redhat.com>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org
+Cc: anshuman.khandual@arm.com, catalin.marinas@arm.com, cl@gentwo.org,
+ vbabka@suse.cz, mhocko@suse.com, apopple@nvidia.com,
+ dave.hansen@linux.intel.com, will@kernel.org, baohua@kernel.org,
+ jack@suse.cz, srivatsa@csail.mit.edu, haowenchao22@gmail.com,
+ hughd@google.com, aneesh.kumar@kernel.org, yang@os.amperecomputing.com,
+ peterx@redhat.com, ioworker0@gmail.com, wangkefeng.wang@huawei.com,
+ ziy@nvidia.com, jglisse@google.com, surenb@google.com,
+ vishal.moola@gmail.com, zokeefe@google.com, zhengqi.arch@bytedance.com,
+ jhubbard@nvidia.com, 21cnbao@gmail.com, willy@infradead.org,
+ kirill.shutemov@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+ raquini@redhat.com, dev.jain@arm.com, sunnanyong@huawei.com,
+ usamaarif642@gmail.com, audra@redhat.com, akpm@linux-foundation.org,
+ rostedt@goodmis.org, mathieu.desnoyers@efficios.com, tiwai@suse.de
+References: <20250211003028.213461-1-npache@redhat.com>
+ <20250211003028.213461-2-npache@redhat.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20250211003028.213461-2-npache@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Mon, 17 Feb 2025 13:38:30 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
-
-> On Mon, 17 Feb 2025 12:49:18 +0100
-> Heiko Carstens <hca@linux.ibm.com> wrote:
+On 11/02/2025 00:30, Nico Pache wrote:
+> The khugepaged daemon and madvise_collapse have two different
+> implementations that do almost the same thing.
 > 
-> > $ cat /sys/kernel/debug/tracing/current_tracer
-> > nop
-> > 
-> > Bisected to commit 4346ba160409 ("fprobe: Rewrite fprobe on function-graph
-> > tracer"). Before this commit there were no ftrace enabled functions after the
-> > test suite finished:
-> > 
-> > $ wc -l /sys/kernel/debug/tracing/enabled_functions
-> > 0 /sys/kernel/debug/tracing/enabled_functions
-> > 
-> > This is on s390 with defconfig.  
+> Create khugepaged_collapse_single_pmd to increase code
+> reuse and create an entry point for future khugepaged changes.
 > 
-> Thanks, I can reproduce it on x86 (I didn't check that commit though).
+> Refactor madvise_collapse and khugepaged_scan_mm_slot to use
+> the new khugepaged_collapse_single_pmd function.
 > 
-> I'll take a look.
+> Signed-off-by: Nico Pache <npache@redhat.com>
+> ---
+>  mm/khugepaged.c | 96 +++++++++++++++++++++++++------------------------
+>  1 file changed, 50 insertions(+), 46 deletions(-)
+> 
+> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+> index 5f0be134141e..46faee67378b 100644
+> --- a/mm/khugepaged.c
+> +++ b/mm/khugepaged.c
+> @@ -2365,6 +2365,52 @@ static int hpage_collapse_scan_file(struct mm_struct *mm, unsigned long addr,
+>  }
+>  #endif
+>  
+> +/*
+> + * Try to collapse a single PMD starting at a PMD aligned addr, and return
+> + * the results.
+> + */
+> +static int khugepaged_collapse_single_pmd(unsigned long addr, struct mm_struct *mm,
+> +				   struct vm_area_struct *vma, bool *mmap_locked,
+> +				   struct collapse_control *cc)
 
-I think I found 3 different bugs in the accounting of what is registered
-and what is not. I'll post a patch series shortly. Two in the function
-graph tracer subops accounting, and one in the fprobe accounting.
+nit: given the vma links to the mm is it really neccessary to pass both? Why not
+just pass vma?
 
--- Steve
+> +{
+> +	int result = SCAN_FAIL;
+> +	unsigned long tva_flags = cc->is_khugepaged ? TVA_ENFORCE_SYSFS : 0;
+> +
+> +	if (!*mmap_locked) {
+> +		mmap_read_lock(mm);
+> +		*mmap_locked = true;
+> +	}
+
+AFAICT, the read lock is always held when khugepaged_collapse_single_pmd() is
+called. Perhaps VM_WARN_ON(!*mmap_locked) would be more appropriate?
+
+> +
+> +	if (thp_vma_allowable_order(vma, vma->vm_flags,
+> +					tva_flags, PMD_ORDER)) {
+> +		if (IS_ENABLED(CONFIG_SHMEM) && !vma_is_anonymous(vma)) {
+
+I guess it was like this before, but what's the relevance of CONFIG_SHMEM?
+Surely this should work for any file if CONFIG_READ_ONLY_THP_FOR_FS is enabled?
+
+> +			struct file *file = get_file(vma->vm_file);
+> +			pgoff_t pgoff = linear_page_index(vma, addr);
+> +
+> +			mmap_read_unlock(mm);
+> +			*mmap_locked = false;
+> +			result = hpage_collapse_scan_file(mm, addr, file, pgoff,
+> +							  cc);
+> +			fput(file);
+> +			if (result == SCAN_PTE_MAPPED_HUGEPAGE) {
+> +				mmap_read_lock(mm);
+> +				if (hpage_collapse_test_exit_or_disable(mm))
+> +					goto end;
+> +				result = collapse_pte_mapped_thp(mm, addr,
+> +								 !cc->is_khugepaged);
+> +				mmap_read_unlock(mm);
+> +			}
+> +		} else {
+> +			result = hpage_collapse_scan_pmd(mm, vma, addr,
+> +							 mmap_locked, cc);
+> +		}
+> +		if (result == SCAN_SUCCEED || result == SCAN_PMD_MAPPED)
+> +			++khugepaged_pages_collapsed;
+
+Looks like this counter was previously only incremented for the scan path, not
+for the madvise_collapse path. Not sure if that's a problem?
+
+Thanks,
+Ryan
+
+> +	}
+> +end:
+> +	return result;
+> +}
+> +
+>  static unsigned int khugepaged_scan_mm_slot(unsigned int pages, int *result,
+>  					    struct collapse_control *cc)
+>  	__releases(&khugepaged_mm_lock)
+> @@ -2439,33 +2485,9 @@ static unsigned int khugepaged_scan_mm_slot(unsigned int pages, int *result,
+>  			VM_BUG_ON(khugepaged_scan.address < hstart ||
+>  				  khugepaged_scan.address + HPAGE_PMD_SIZE >
+>  				  hend);
+> -			if (IS_ENABLED(CONFIG_SHMEM) && !vma_is_anonymous(vma)) {
+> -				struct file *file = get_file(vma->vm_file);
+> -				pgoff_t pgoff = linear_page_index(vma,
+> -						khugepaged_scan.address);
+>  
+> -				mmap_read_unlock(mm);
+> -				mmap_locked = false;
+> -				*result = hpage_collapse_scan_file(mm,
+> -					khugepaged_scan.address, file, pgoff, cc);
+> -				fput(file);
+> -				if (*result == SCAN_PTE_MAPPED_HUGEPAGE) {
+> -					mmap_read_lock(mm);
+> -					if (hpage_collapse_test_exit_or_disable(mm))
+> -						goto breakouterloop;
+> -					*result = collapse_pte_mapped_thp(mm,
+> -						khugepaged_scan.address, false);
+> -					if (*result == SCAN_PMD_MAPPED)
+> -						*result = SCAN_SUCCEED;
+> -					mmap_read_unlock(mm);
+> -				}
+> -			} else {
+> -				*result = hpage_collapse_scan_pmd(mm, vma,
+> -					khugepaged_scan.address, &mmap_locked, cc);
+> -			}
+> -
+> -			if (*result == SCAN_SUCCEED)
+> -				++khugepaged_pages_collapsed;
+> +			*result = khugepaged_collapse_single_pmd(khugepaged_scan.address,
+> +						mm, vma, &mmap_locked, cc);
+>  
+>  			/* move to next address */
+>  			khugepaged_scan.address += HPAGE_PMD_SIZE;
+> @@ -2785,36 +2807,18 @@ int madvise_collapse(struct vm_area_struct *vma, struct vm_area_struct **prev,
+>  		mmap_assert_locked(mm);
+>  		memset(cc->node_load, 0, sizeof(cc->node_load));
+>  		nodes_clear(cc->alloc_nmask);
+> -		if (IS_ENABLED(CONFIG_SHMEM) && !vma_is_anonymous(vma)) {
+> -			struct file *file = get_file(vma->vm_file);
+> -			pgoff_t pgoff = linear_page_index(vma, addr);
+>  
+> -			mmap_read_unlock(mm);
+> -			mmap_locked = false;
+> -			result = hpage_collapse_scan_file(mm, addr, file, pgoff,
+> -							  cc);
+> -			fput(file);
+> -		} else {
+> -			result = hpage_collapse_scan_pmd(mm, vma, addr,
+> -							 &mmap_locked, cc);
+> -		}
+> +		result = khugepaged_collapse_single_pmd(addr, mm, vma, &mmap_locked, cc);
+> +
+>  		if (!mmap_locked)
+>  			*prev = NULL;  /* Tell caller we dropped mmap_lock */
+>  
+> -handle_result:
+>  		switch (result) {
+>  		case SCAN_SUCCEED:
+>  		case SCAN_PMD_MAPPED:
+>  			++thps;
+>  			break;
+>  		case SCAN_PTE_MAPPED_HUGEPAGE:
+> -			BUG_ON(mmap_locked);
+> -			BUG_ON(*prev);
+> -			mmap_read_lock(mm);
+> -			result = collapse_pte_mapped_thp(mm, addr, true);
+> -			mmap_read_unlock(mm);
+> -			goto handle_result;
+> -		/* Whitelisted set of results where continuing OK */
+>  		case SCAN_PMD_NULL:
+>  		case SCAN_PTE_NON_PRESENT:
+>  		case SCAN_PTE_UFFD_WP:
+
 
