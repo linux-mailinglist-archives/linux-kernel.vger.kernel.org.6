@@ -1,162 +1,129 @@
-Return-Path: <linux-kernel+bounces-519412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03D2CA39C94
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:55:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FC75A39C93
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:55:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B3F21728C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:54:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6B46188E4A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:55:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EF5626138A;
-	Tue, 18 Feb 2025 12:54:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 056E92627F4;
+	Tue, 18 Feb 2025 12:55:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BUhxIFPN"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="m2Lr2bgg"
+Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B4961DDE9;
-	Tue, 18 Feb 2025 12:54:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 885EC1DDE9;
+	Tue, 18 Feb 2025 12:55:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739883277; cv=none; b=gvNeB9ULODTi8nXlTuWTe12PoYlAHO5nVWtHtkmMqRLRNfyg/fMjUpqsscnTExnjZ6IaF7fn5cLuccznzRRj/0farwsf7gVZ8U86RbYnWegFvkalJdp0ocRQgbeBDbIGLRKEFsVmJavM9slYpJNOuZoql6V9ctLDXPwi1B4NgYo=
+	t=1739883341; cv=none; b=LdZJnc7JG4bwRZosNTmQM9OkhhSRgzPzuydTiGwRY0MGDXJ2GNH2WLPHtLyYMg9/7tJaqR3RtAF9W5hC1QK3AOVZ3qwooTPe+0adgeAaBquNJ47sY3813Z1Ikzh+Mq3q5OxnbB9iy82Agk5w4PkTPv3uPjubo9Q0Q2JB2gUPBjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739883277; c=relaxed/simple;
-	bh=9iLjWenisN+dVaIMgiSEzXpNWoRcY2AAiSCeIH8AZG4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m1YtKOpEDHhxeXxBzPNwfA1LvAZ8sToyBfy9KMALdooOzyTUv8FjhATN4UgfDfdmi1huvlhCcc7hfFxwSAzl+rtI2174p5m9pJItUpQnjnQIm/vhkEMHLgi2NHefNU0X6Jxwhih13SU37sIdqLUMdckSD6bfyH2w21R8npZG85A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BUhxIFPN; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=VVKWP6ytKSkuriXLiOY594dcQpAZqm3RHMrTqM14g2g=; b=BUhxIFPN3HA0SscltiSVAqvCLZ
-	VMvZsqM/qx1AFkRQNuSx0NK+E2BHghzF33a30xyuVkgU5Vrv/TCTQQCB7pbiZvYx48tCXFwEr/vin
-	mg4+dVUWRBwmZPd8VAQvDE2VWZMIC9ZNcir+7KOfrXlegoylzV3Ige9xU5cdZZeZAblfjotS59NHp
-	6yP18R1R1k/ZfV4PMunQW5+NXO+pfpPyRXJOSfKzSjVOPbpcJFKBY57i2E1DT4ILGUA61aOr5Gy2K
-	S0Ua8QZjXuuZUBdcqjKvMargyKVUf1mK3gsjgBSwPgaQO+Mu/GsaQSfcBcjzVGp5/8zO7Pne9CUAQ
-	eCZDUlWw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tkN73-00000002xxp-1FSx;
-	Tue, 18 Feb 2025 12:54:09 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 30E9E30066A; Tue, 18 Feb 2025 13:54:08 +0100 (CET)
-Date: Tue, 18 Feb 2025 13:54:08 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-Cc: tony.luck@intel.com, bp@alien8.de, nao.horiguchi@gmail.com,
-	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-	x86@kernel.org, hpa@zytor.com, linmiaohe@huawei.com,
-	akpm@linux-foundation.org, jpoimboe@kernel.org,
-	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, baolin.wang@linux.alibaba.com,
-	tianruidong@linux.alibaba.com
-Subject: Re: [PATCH v2 3/5] x86/mce: add EX_TYPE_EFAULT_REG as in-kernel
- recovery context to fix copy-from-user operations regression
-Message-ID: <20250218125408.GD40464@noisy.programming.kicks-ass.net>
-References: <20250217063335.22257-1-xueshuai@linux.alibaba.com>
- <20250217063335.22257-4-xueshuai@linux.alibaba.com>
+	s=arc-20240116; t=1739883341; c=relaxed/simple;
+	bh=xJo0Xrc/RxAlepuz1Lr5txeY5Au+59t5wfpVH28jO1M=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eAqznp3OqX5KuVt9ai+7HiORCyElSiUJkk9k5oVhVjsq4Fhc38qprwenr4ZlcN3p3h8YKHkazxq+l2jAB/j/kAGrtrMmC4q3Jpjx3lk6V/1n/d7wMof5U+DJ6+CDrz/mquHCGr5wu+93KkgwP1p+VAt6kQ/kTiS0NW5SL67+PIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=m2Lr2bgg; arc=none smtp.client-ip=54.254.200.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1739883320;
+	bh=PipOO5cc775nKDa2hWJYOG9AUg/xgW40yGEOyGeXg04=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=m2Lr2bggD7DeN/6afpqF9V7wcOW/MfMiafNgCyVCjy2KT0sP/+GbTygFxlQ0Nnh6Y
+	 anJVO4DdYs6X1So77JK5GccjgLPqjwHMRE8ZcoZIBc9FRwWXdhCHKFT5iKb3q9CnI5
+	 Q7dz7yEiHOgl1B56u9vHcrJiGkvJRcsMTM2cQoUY=
+X-QQ-mid: bizesmtpip3t1739883276tz850aw
+X-QQ-Originating-IP: gSkUCH2fWVWVmCCXxhwuSOHKSjJQRY5yL9/DnoUs2VM=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 18 Feb 2025 20:54:34 +0800 (CST)
+X-QQ-SSF: 0002000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 6309835871196480234
+From: WangYuli <wangyuli@uniontech.com>
+To: wangyuli@uniontech.com
+Cc: chenlinxuan@uniontech.com,
+	guanwentao@uniontech.com,
+	linux-kernel@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	macro@orcam.me.uk,
+	niecheng1@uniontech.com,
+	tsbogend@alpha.franken.de,
+	zhanjun@uniontech.com
+Subject: [PATCH 1/7] MIPS: dec: Declare which_prom() as static
+Date: Tue, 18 Feb 2025 20:54:31 +0800
+Message-ID: <22CF8506E42636AF+20250218125431.665670-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <487CE8AA937621E2+20250218125101.663980-1-wangyuli@uniontech.com>
+References: <487CE8AA937621E2+20250218125101.663980-1-wangyuli@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250217063335.22257-4-xueshuai@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: N+zv///MAAEk47Uc2uTzhhAJloA+s98pwsasgf4yc//G96WycMqWVCyP
+	3NQVUQt7r1S5hXhrqMlTrH/EbbzEH3VEntBOWoEYfAaAfc5tamJExkdI0sdZn09+eecxi+B
+	CacLQBU+91dCMwrr5KUqSXsFoSoAKb7S7AIA3CeXR/e/Eas6onlA2r6s0k+y4ff0FJBjrSV
+	Qq+by8Ov1rXCohy618G5pU8i6WwPGUCKvR/dmuH0IJEYdldbAE12lmXeMb7SuLZDpBtdOWe
+	ylFGoK25oezRF33zHl/jlmTIbgha9GmtKtJ23CdQhRNuzgVUEanhBcq6QOKzAkv2/hLmMBL
+	GUx+nFTAE5GMbb+MGQF1NIMZaNVlT19Oc8yikOOEzRz7FPrfZssZRy3aLsK4Szho9IqMT45
+	mahIlpkg/nlJI1apZGKwfchipmgLWs6EvAVO1MyqqNBP8FoQ5I0ExwBcmAWYCGsCKO3jlq+
+	JI5lK/EVb2uhrQbYaFi6Q4e969wPAMmxeddY3+XkwBoEbU3HhHLkYZZ+OhlecJhaXEOU+Sv
+	5xKHd3va8fPHvpJ7ykc0NafCnDgJA4L0+09ENtMFRIbYOUT8ovAEHaX2i1NhrtmAFa8KjM1
+	U/RCu4iXK3sCFDrZPFvA6dxjzuGat0Yu59h4w/ntVLRMQ4SH8+6hVHaJjGZvqIQzW+sKpbz
+	KIP9IR+2fkydohuoyNUyOKctlSK7vQwDqtjPXMdKXdRBS75yze7QDK2wKdgS4fa/aybobym
+	eU/VoqPYgVWpRx+kvBMrAmP8q5m1xAWDToGRpmzzzQI3L4XVOTmocNn9WOS2YSiqdnmXBCr
+	AQoOPKGpP6HZEFBOA/V60BZ560AzzOh6ZoiwKbqulaGohT7lThz+LW3jttAB8obkM/Tw8jI
+	PPJL8fQX8J66tdCVTnNpq5LOw7/3WOX5YBKNIayW4keCT2BF4ed9PQA7+9z5rjXdzbPZJ9H
+	baTe8MU9+WvbbUS7bpUlkYiHDKhdmjz66du/bu1VIXtrfGW6j4A/hLAgWD4G0IwlTsUmsMe
+	9pIZu9ysUXBoQe7mVn6nbrFX1IQVuDVOuu/A1HYJ7f/U2YylHihfcMe5KzNkqoSAnvkTUUy
+	UBok1Xq4Gka
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+X-QQ-RECHKSPAM: 0
 
-On Mon, Feb 17, 2025 at 02:33:33PM +0800, Shuai Xue wrote:
+Declare which_prom() as static to suppress gcc compiler warning that
+'missing-prototypes'. This function is not intended to be called
+from other parts.
 
-> diff --git a/arch/x86/kernel/cpu/mce/severity.c b/arch/x86/kernel/cpu/mce/severity.c
-> index dac4d64dfb2a..14c2d71c3ce1 100644
-> --- a/arch/x86/kernel/cpu/mce/severity.c
-> +++ b/arch/x86/kernel/cpu/mce/severity.c
-> @@ -16,6 +16,7 @@
->  #include <asm/traps.h>
->  #include <asm/insn.h>
->  #include <asm/insn-eval.h>
-> +#include <linux/extable.h>
->  
->  #include "internal.h"
->  
-> @@ -285,7 +286,8 @@ static bool is_copy_from_user(struct pt_regs *regs)
->   */
->  static noinstr int error_context(struct mce *m, struct pt_regs *regs)
->  {
-> -	int fixup_type;
-> +	const struct exception_table_entry *e;
-> +	int fixup_type, imm;
->  	bool copy_user;
->  
->  	if ((m->cs & 3) == 3)
-> @@ -294,9 +296,14 @@ static noinstr int error_context(struct mce *m, struct pt_regs *regs)
->  	if (!mc_recoverable(m->mcgstatus))
->  		return IN_KERNEL;
->  
-> +	e = search_exception_tables(m->ip);
-> +	if (!e)
-> +		return IN_KERNEL;
+Fix follow error with gcc-14 when -Werror:
 
-You didn't actually build this, did you? Or did you ignore the extra
-noinstr warnings?
+arch/mips/dec/prom/init.c:45:13: error: no previous prototype for ‘which_prom’ [-Werror=missing-prototypes]
+   45 | void __init which_prom(s32 magic, s32 *prom_vec)
+      |             ^~~~~~~~~~
+cc1: all warnings being treated as errors
+make[6]: *** [scripts/Makefile.build:207: arch/mips/dec/prom/init.o] Error 1
+make[5]: *** [scripts/Makefile.build:465: arch/mips/dec/prom] Error 2
+make[5]: *** Waiting for unfinished jobs....
 
->  	/* Allow instrumentation around external facilities usage. */
->  	instrumentation_begin();
-> -	fixup_type = ex_get_fixup_type(m->ip);
-> +	fixup_type = FIELD_GET(EX_DATA_TYPE_MASK, e->data);
-> +	imm  = FIELD_GET(EX_DATA_IMM_MASK,  e->data);
->  	copy_user  = is_copy_from_user(regs);
->  	instrumentation_end();
->  
-> @@ -304,9 +311,13 @@ static noinstr int error_context(struct mce *m, struct pt_regs *regs)
->  	case EX_TYPE_UACCESS:
->  		if (!copy_user)
->  			return IN_KERNEL;
-> -		m->kflags |= MCE_IN_KERNEL_COPYIN;
-> -		fallthrough;
-> -
-> +		m->kflags |= MCE_IN_KERNEL_COPYIN | MCE_IN_KERNEL_RECOV;
-> +		return IN_KERNEL_RECOV;
-> +	case EX_TYPE_IMM_REG:
-> +		if (!copy_user || imm != -EFAULT)
-> +			return IN_KERNEL;
-> +		m->kflags |= MCE_IN_KERNEL_COPYIN | MCE_IN_KERNEL_RECOV;
-> +		return IN_KERNEL_RECOV;
-
-Maybe I'm justnot understanding things, but what's wrong with something
-like the below; why do we care about the ex-type if we know its a MOV
-reading from userspace?
-
-The less we muck about with the extable here, the better.
-
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
 ---
-diff --git a/arch/x86/kernel/cpu/mce/severity.c b/arch/x86/kernel/cpu/mce/severity.c
-index dac4d64dfb2a..cb021058165f 100644
---- a/arch/x86/kernel/cpu/mce/severity.c
-+++ b/arch/x86/kernel/cpu/mce/severity.c
-@@ -300,13 +300,12 @@ static noinstr int error_context(struct mce *m, struct pt_regs *regs)
- 	copy_user  = is_copy_from_user(regs);
- 	instrumentation_end();
- 
--	switch (fixup_type) {
--	case EX_TYPE_UACCESS:
--		if (!copy_user)
--			return IN_KERNEL;
--		m->kflags |= MCE_IN_KERNEL_COPYIN;
--		fallthrough;
-+	if (copy_user) {
-+		m->kflags |= MCE_IN_KERNEL_COPYIN | MCE_IN_KERNEL_COPYIN;
-+		return IN_KERNEL_RECOV
-+	}
- 
-+	switch (fixup_type) {
- 	case EX_TYPE_FAULT_MCE_SAFE:
- 	case EX_TYPE_DEFAULT_MCE_SAFE:
- 		m->kflags |= MCE_IN_KERNEL_RECOV;
+ arch/mips/dec/prom/init.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/mips/dec/prom/init.c b/arch/mips/dec/prom/init.c
+index cb12eb211a49..8d74d7d6c05b 100644
+--- a/arch/mips/dec/prom/init.c
++++ b/arch/mips/dec/prom/init.c
+@@ -42,7 +42,7 @@ int (*__pmax_close)(int);
+  * Detect which PROM the DECSTATION has, and set the callback vectors
+  * appropriately.
+  */
+-void __init which_prom(s32 magic, s32 *prom_vec)
++static void __init which_prom(s32 magic, s32 *prom_vec)
+ {
+ 	/*
+ 	 * No sign of the REX PROM's magic number means we assume a non-REX
+-- 
+2.47.2
+
 
