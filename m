@@ -1,163 +1,100 @@
-Return-Path: <linux-kernel+bounces-519408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E934AA39C80
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:50:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 13B98A39C7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:50:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D52D3A6B4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:50:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9EE93A68B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:50:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CC702638B4;
-	Tue, 18 Feb 2025 12:50:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3FA5263F55;
+	Tue, 18 Feb 2025 12:50:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LI1XOXi5"
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FIwko36p"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A70025C6F2
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 12:50:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE54263C89;
+	Tue, 18 Feb 2025 12:50:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739883012; cv=none; b=WZqd/mywZ9oH9QPYL2pkBCUZLGXSsqkuF0ntxFhi91cUqTnCemvZycQdgL1Uz6MkEnacv0NzylpGLTIwGOuPx8lz+TC/NgNY1spDBMi6CqYaXY9kb0xMiE8j9BPoswlvNM9Bqkb9jnMJsQxMd3DZS1t021lwnAqc9MHe46+C3jU=
+	t=1739883002; cv=none; b=KZWMCB98x5YgR6U6SOREqHdTmvYyP+cGvOr8Vxk7W+LWGffFKfhMxDy9fyxkYNKq7k45ZCJiuFkUE+hlhroCzUQgBsnU19iscCQJRD1f54qawvaqEe/+J4rzpD3rpwMc4oM/ZVN8jQuitFvn+NS1PwenMxqT1s/ofACEO+k36mA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739883012; c=relaxed/simple;
-	bh=DSSMR5/oEhrBBxMGuRsitGmxXCXATnKq0oSmeDXTbJE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U5G3Ee/6G2FmTd0sCyLDlijykuvotVWTusbSiYsrm9qRuRE424UXwIkiU/jFf0o5Dcrn6v650h5SJkAHd6C6qFOndArvY4oLqpFBc5fjfpX0afIA9U8woFa2xeir0bFtQNxgtLmOdw/O+A9y9dJfzwlBxPKG0wwjTvHmE3cE7t0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LI1XOXi5; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e5dd697475dso2163288276.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 04:50:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739883010; x=1740487810; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=QK+dyc1PR4OboE+3BwHPM5pfaMLTgXZ0OSHSzMoMBf4=;
-        b=LI1XOXi5tf3zljDF0S2W8d4a0gEosS7HarkrSAemlYCh41CU7SWjumrljK7DB+dNqG
-         ndkGY6MsMzto8nTXbqAtWtlJiIL2sIMhYjR/lJaZR18zJiJXRPGYi8k2byALdl0UGy3v
-         Gk3EKDm8mISHW8w2A1vjknH0yO+F77m612hUEjGLLp50UPKtJq+tAYggbTgPmreKc6qI
-         Cg04nUgYmvp/PwT7z3pOO1pv8bfSMdUg8YnYShMOvWpyDa+i2HvGe2Iavrx4SuBVWnfM
-         H11DFYBxZV037n98jzY3/imgPiGfLYBHoQ+kVhL8LFhe9FXKkiHSrIBhpV6ZV83WzBL8
-         iEBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739883010; x=1740487810;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QK+dyc1PR4OboE+3BwHPM5pfaMLTgXZ0OSHSzMoMBf4=;
-        b=J3CCqrMG6ylTc49i/v14qG19iBYapx9oj1zQpzO5uoG/71mUO4LWdzKwt9SO/6NHU6
-         QJB9SytbX7lNz6H5BnWrJx7wQqCfrycGRrjF9GuoBEbRRGPc/j+BWuFObVxCABeAxuUB
-         /N36L/XKUARTt26+9sfh+E94G7SHZULXjTqsXb3ev1G0OZ1A09CIL8txGi4+/QVw6vqa
-         RINAd6UR5eKbB0Sgd50i6EJN8sDVZRqvAv1bgyWawQkPkHlQ6irFRTfQ/b644xxIlL52
-         yKYW2LwoPbz0E+8FQq6MMFK+3Y8/grYefv6GZVOklxIPbAmi+v9U9jFzoqGu+AYTgiwf
-         bAOA==
-X-Forwarded-Encrypted: i=1; AJvYcCUUCS+HoEbR0sp/jAXzvC4s8jOLC2lw8ikz3pQ9+9FFwxUrTxaogBs6RwnfP1A10nA0LXF182VwIizr2+0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywd84JisNkzbWnEs/6vGVSj2IJXfv5l6ks7QvX74ZyVDFcGYdIG
-	vP/obzFx6ciz/X0KpoHD/2HkEwmfTF9T2gTSb/aVWfUXBARGskvzr1ARQ5Nz5IdEv967uUwS4mi
-	opGq8LlErB6+gr6BjGc2PJDYWb+rMR62etqMEVA==
-X-Gm-Gg: ASbGnctwxvwzm258MZcSOExl+aBl9SbXNdGg1IYu6yuT3sG4/B+pEbMFKLX0YQzg42P
-	pp1Be6pHObDYfQ5UJg6uoibPuPd1nIzx9CfuU0W60SxQrh5iomK18vc8EU8reoLuUATko3S2wsw
-	==
-X-Google-Smtp-Source: AGHT+IGH6vLk+U+IpOyIROSa4vJIPltJqku8QV1ftbJYlBuc7ZpPko6DcHgsxYIF2mNCIF53PQLSxJLqorXWqZRliXg=
-X-Received: by 2002:a05:6902:1086:b0:e5d:dcdb:18ed with SMTP id
- 3f1490d57ef6-e5ddcdb1badmr6882930276.32.1739883010026; Tue, 18 Feb 2025
- 04:50:10 -0800 (PST)
+	s=arc-20240116; t=1739883002; c=relaxed/simple;
+	bh=RPMvbmPyXBC6HshForiJ9DHWjlLIkfM/nS4w3wwPblI=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=Vf1YdVnIIWZXg2zJUmv95x8XqTG2t1a0SZFheDI0sx+niPSVHRNsF7PRO4RG7VyLHhKOHT1BT4BU5AgHw0lipnlTu4/VjOyCOzBsZSlb4gSEmImJlhIxOM8bzEWxT2jIs1mIkcWwMe0cQXUy8b12IAkHr/U6IrUHC6y/Wm3S+dk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FIwko36p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 033CBC4CEE8;
+	Tue, 18 Feb 2025 12:50:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739883002;
+	bh=RPMvbmPyXBC6HshForiJ9DHWjlLIkfM/nS4w3wwPblI=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=FIwko36poR7YOQo4z+MPtNpZ8jQp2ffjSBbzHoeNs+8pmLe5jpIIPKJ027VKLFxIh
+	 gYVTJFeZej9m7EQYsS2DXtIRDTwA7YD43d59HGGpwibaxI3quVoBZC5xSxGv5vi5id
+	 2I8gsiN684XoitcTnOksRQV3vVZ66eaJ18xiXvdq/fc3NhVFwldKUFzWhZPtmJTisd
+	 YhuaXYxUn3tPjihv1VDQT34WIiiUyaNN597EAdLBdmLY0NH4obCBvdAhZSxPTzwPBY
+	 Jc/BLwlIG3Tb9IPa8MnhyB0MxVo/HiMlIKH9hTW+BIA8F33MQCN44qH+98JoqW3p1e
+	 WScdbZpuy3h5g==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 710A3380AA7E;
+	Tue, 18 Feb 2025 12:50:33 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <4966939.GXAFRqVoOG@rjwysocki.net> <8497121.T7Z3S40VBb@rjwysocki.net>
-In-Reply-To: <8497121.T7Z3S40VBb@rjwysocki.net>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 18 Feb 2025 13:49:34 +0100
-X-Gm-Features: AWEUYZmNBflOPEaSpUMJ4BLjpv29L0jW7mM1vQW96k8wGYHbNA9-sC34ojg02fg
-Message-ID: <CAPDyKFpp1iuBXZB-T2=hhTND4Z63s7kJfaXWuiKTu1rrqMGc_Q@mail.gmail.com>
-Subject: Re: [PATCH v1 2/3] PM: runtime: Introduce pm_runtime_blocked()
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Alan Stern <stern@rowland.harvard.edu>, Bjorn Helgaas <helgaas@kernel.org>, 
-	Linux PCI <linux-pci@vger.kernel.org>, Johan Hovold <johan@kernel.org>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Jon Hunter <jonathanh@nvidia.com>, 
-	Linux ACPI <linux-acpi@vger.kernel.org>, 
-	Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next 0/3] net: phy: marvell-88q2xxx: cleanup
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173988303226.4073703.8557496610593822205.git-patchwork-notify@kernel.org>
+Date: Tue, 18 Feb 2025 12:50:32 +0000
+References: <20250214-marvell-88q2xxx-cleanup-v1-0-71d67c20f308@gmail.com>
+In-Reply-To: <20250214-marvell-88q2xxx-cleanup-v1-0-71d67c20f308@gmail.com>
+To: Dimitri Fedrau <dima.fedrau@gmail.com>
+Cc: andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ niklas.soderlund+renesas@ragnatech.se, gregor.herburger@ew.tq-group.com,
+ eichest@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 17 Feb 2025 at 21:20, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
->
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->
-> Introduce a new helper function called pm_runtime_blocked() for
-> checking the power.last_status value indicating whether or not the
-> enabling of runtime PM for the given device has been blocked (which
-> happens in the "prepare" phase of system-wide suspend if runtime
-> PM is disabled for the given device at that point and has never
-> been enabled so far).
->
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Hello:
 
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+This series was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-Kind regards
-Uffe
-
-
+On Fri, 14 Feb 2025 17:32:02 +0100 you wrote:
+> - align defines
+> - order includes alphabetically
+> - enable temperature sensor in mv88q2xxx_config_init
+> 
+> Signed-off-by: Dimitri Fedrau <dima.fedrau@gmail.com>
 > ---
->  drivers/base/power/runtime.c |   17 +++++++++++++++++
->  include/linux/pm_runtime.h   |    2 ++
->  2 files changed, 19 insertions(+)
->
-> --- a/drivers/base/power/runtime.c
-> +++ b/drivers/base/power/runtime.c
-> @@ -1555,6 +1555,23 @@
->  }
->  EXPORT_SYMBOL_GPL(pm_runtime_enable);
->
-> +bool pm_runtime_blocked(struct device *dev)
-> +{
-> +       bool ret;
-> +
-> +       /*
-> +        * dev->power.last_status is a bit field, so in case it is updated via
-> +        * RMW, read it under the spin lock.
-> +        */
-> +       spin_lock_irq(&dev->power.lock);
-> +
-> +       ret = dev->power.last_status == RPM_BLOCKED;
-> +
-> +       spin_unlock_irq(&dev->power.lock);
-> +
-> +       return ret;
-> +}
-> +
->  static void pm_runtime_disable_action(void *data)
->  {
->         pm_runtime_dont_use_autosuspend(data);
-> --- a/include/linux/pm_runtime.h
-> +++ b/include/linux/pm_runtime.h
-> @@ -81,6 +81,7 @@
->  extern void pm_runtime_unblock(struct device *dev);
->  extern void pm_runtime_enable(struct device *dev);
->  extern void __pm_runtime_disable(struct device *dev, bool regular);
-> +extern bool pm_runtime_blocked(struct device *dev);
->  extern void pm_runtime_allow(struct device *dev);
->  extern void pm_runtime_forbid(struct device *dev);
->  extern void pm_runtime_no_callbacks(struct device *dev);
-> @@ -277,6 +278,7 @@
->  static inline void pm_runtime_unblock(struct device *dev) {}
->  static inline void pm_runtime_enable(struct device *dev) {}
->  static inline void __pm_runtime_disable(struct device *dev, bool c) {}
-> +static inline bool pm_runtime_blocked(struct device *dev) { return true; }
->  static inline void pm_runtime_allow(struct device *dev) {}
->  static inline void pm_runtime_forbid(struct device *dev) {}
->
->
->
->
+> Dimitri Fedrau (3):
+>       net: phy: marvell-88q2xxx: align defines
+>       net: phy: marvell-88q2xxx: order includes alphabetically
+>       net: phy: marvell-88q2xxx: enable temperature sensor in mv88q2xxx_config_init
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next,1/3] net: phy: marvell-88q2xxx: align defines
+    https://git.kernel.org/netdev/net-next/c/8dcaed624f6a
+  - [net-next,2/3] net: phy: marvell-88q2xxx: order includes alphabetically
+    https://git.kernel.org/netdev/net-next/c/cbe0449e8f9f
+  - [net-next,3/3] net: phy: marvell-88q2xxx: enable temperature sensor in mv88q2xxx_config_init
+    https://git.kernel.org/netdev/net-next/c/6c806720bafe
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
