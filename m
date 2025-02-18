@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-520563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7C82A3AB92
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 23:22:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 230DEA3AB9C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 23:24:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B9FF165B24
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 22:22:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71FB23B2BED
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 22:23:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2C9A17A309;
-	Tue, 18 Feb 2025 22:22:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C6821DE2D4;
+	Tue, 18 Feb 2025 22:22:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FdckphZu"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jTfqF5F4"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7422A1ACEC7
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 22:22:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36C641DCB09
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 22:22:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739917351; cv=none; b=eUBUerNiY6fmZ0UhYWC68skgRDfGs/Jpr7X5nyqd4f5ZBlmAKCQaBBWnb7ZufdGfdFczylq0B4pUURJ+p53tdG7n1+gPDebm8LL7A/3exDQQF/a0r0LIq3RlwZaSdcfUo5uJ41IjzUYOk7S0ehlGP3lx0pYIiHQ1KnqCJVMbrXM=
+	t=1739917354; cv=none; b=pSOpGD+wuolxn4ANXkiYIel4vap0WUahPtNvYiuJdLEwAkV+Kt5bEGKX03muWNaPnS3MNGgX//6Hhd7BEsT0m0WSjibqT2goSsECU1XqLVAcLOA2MCEUn4SXF2T6NdOfz6xA8aUCrlRzhWIhDLm2NburZMzLq7cm6xvHsTnFP1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739917351; c=relaxed/simple;
-	bh=wz3yzYejx/8v4irersUarogzfJY+Deu6ePxVH2PlB2M=;
+	s=arc-20240116; t=1739917354; c=relaxed/simple;
+	bh=uf8vkAxRv8FmnfC2BO2dkQyzqST1cQSOXl1P4++13Xo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qrYqi/a8gWdAo87m64WCvO0d9h+Eytv/Xu3FAHySGhcRR3N55Mriwdz1zRir9+Z6Mpjv+mc2rONfxcQezF34BhcCQdFVzPaDP1aFl0agGWLCJZu36af6NB30M7eiyZU2LSUdT+Kia0c1OoeV7r6HTfM3u6wjU9tdtKdlcmVXjqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FdckphZu; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=uqfiMFzhhAy8uK4QYr7frSEEnCwLyzEbMFtBamVKSIffda1BqZJZw/9/lTvG+2CEsH1SZiWZeq3cjQd3Mh+HfBjdHu3gt+H2GsCAO1Sh8KVO4XSLqf2zee3P1TmAUD8s0sqgiMBDLjZOHzaVPTmnKcpmrBPDNTAmd548KGYBEN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jTfqF5F4; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739917347;
+	s=mimecast20190719; t=1739917352;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=PDNwQ6cJzqO/P0dW5wK2COewyumLqAUhMRnX8cwH+GU=;
-	b=FdckphZu5cvP7m15690Ax4lPU1jGN8Jcg/lkWE45u5SNEfkprfrBo7Nn4KBQrBqWviPFe3
-	FK5YyF9CIkKpT6fFuF4/7rYWFOQ+idBiZH+qBl9xzEsYL734TMmCPUBWrStpU3zyCZ1ENn
-	nblXWKSxuivv25So9zXx0XoG/0YLo20=
+	bh=Tc3MDK0ssjIqR64/Cyp3saXm6VeBQzlC8zqjX2lM+Zo=;
+	b=jTfqF5F4+EXHOr/rIAOjbhW04jBXd3XsJDaYy/4YtGva8XaAm3seXmTme1/1+X7MWag/uq
+	nmog8rtDkiNU7da1oudVfGhEETvgVWlNlhYVt3PLnmlyvtK1ck6QCvMkDsNaXMUB7MxSoy
+	Pzsqz/uWWxFgr9knwU4uia2NuOaEIOc=
 Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-665-cTjyOuWhM3StQl89hVlG0w-1; Tue,
- 18 Feb 2025 17:22:26 -0500
-X-MC-Unique: cTjyOuWhM3StQl89hVlG0w-1
-X-Mimecast-MFC-AGG-ID: cTjyOuWhM3StQl89hVlG0w_1739917345
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-679-yWn53nA9NteBtkAH18firQ-1; Tue,
+ 18 Feb 2025 17:22:28 -0500
+X-MC-Unique: yWn53nA9NteBtkAH18firQ-1
+X-Mimecast-MFC-AGG-ID: yWn53nA9NteBtkAH18firQ_1739917347
 Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F397B1800874;
-	Tue, 18 Feb 2025 22:22:24 +0000 (UTC)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B5CBD180036F;
+	Tue, 18 Feb 2025 22:22:27 +0000 (UTC)
 Received: from omen.home.shazbot.org (unknown [10.22.88.77])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 08A9830001A5;
-	Tue, 18 Feb 2025 22:22:22 +0000 (UTC)
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 440B4300019F;
+	Tue, 18 Feb 2025 22:22:25 +0000 (UTC)
 From: Alex Williamson <alex.williamson@redhat.com>
 To: alex.williamson@redhat.com
 Cc: kvm@vger.kernel.org,
@@ -64,9 +64,9 @@ Cc: kvm@vger.kernel.org,
 	mitchell.augustin@canonical.com,
 	clg@redhat.com,
 	jgg@nvidia.com
-Subject: [PATCH v2 2/6] vfio/type1: Convert all vaddr_get_pfns() callers to use vfio_batch
-Date: Tue, 18 Feb 2025 15:22:02 -0700
-Message-ID: <20250218222209.1382449-3-alex.williamson@redhat.com>
+Subject: [PATCH v2 3/6] vfio/type1: Use vfio_batch for vaddr_get_pfns()
+Date: Tue, 18 Feb 2025 15:22:03 -0700
+Message-ID: <20250218222209.1382449-4-alex.williamson@redhat.com>
 In-Reply-To: <20250218222209.1382449-1-alex.williamson@redhat.com>
 References: <20250218222209.1382449-1-alex.williamson@redhat.com>
 Precedence: bulk
@@ -78,82 +78,158 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-This is a step towards passing the structure to vaddr_get_pfns()
-directly in order to provide greater distinction between page backed
-pfns and pfnmaps.
+Passing the vfio_batch to vaddr_get_pfns() allows for greater
+distinction between page backed pfns and pfnmaps.  In the case of page
+backed pfns, vfio_batch.size is set to a positive value matching the
+number of pages filled in vfio_batch.pages.  For a pfnmap,
+vfio_batch.size remains zero as vfio_batch.pages are not used.  In both
+cases the return value continues to indicate the number of pfns and the
+provided pfn arg is set to the initial pfn value.
+
+This allows us to shortcut the pfnmap case, which is detected by the
+zero vfio_batch.size.  pfnmaps do not contribute to locked memory
+accounting, therefore we can update counters and continue directly,
+which also enables a future where vaddr_get_pfns() can return a value
+greater than one for consecutive pfnmaps.
+
+NB. Now that we're not guessing whether the initial pfn is page backed
+or pfnmap, we no longer need to special case the put_pfn() and batch
+size reset.  It's safe for vfio_batch_unpin() to handle this case.
 
 Reviewed-by: Peter Xu <peterx@redhat.com>
 Reviewed-by: "Mitchell Augustin" <mitchell.augustin@canonical.com>
 Tested-by: "Mitchell Augustin" <mitchell.augustin@canonical.com>
 Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
 ---
- drivers/vfio/vfio_iommu_type1.c | 21 +++++++++++++++++----
- 1 file changed, 17 insertions(+), 4 deletions(-)
+ drivers/vfio/vfio_iommu_type1.c | 63 ++++++++++++++++++---------------
+ 1 file changed, 35 insertions(+), 28 deletions(-)
 
 diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-index 119cf886d8c0..2e95f5f4d881 100644
+index 2e95f5f4d881..fafd8af125c7 100644
 --- a/drivers/vfio/vfio_iommu_type1.c
 +++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -471,12 +471,12 @@ static int put_pfn(unsigned long pfn, int prot)
+@@ -555,12 +555,16 @@ static int follow_fault_pfn(struct vm_area_struct *vma, struct mm_struct *mm,
  
- #define VFIO_BATCH_MAX_CAPACITY (PAGE_SIZE / sizeof(struct page *))
- 
--static void vfio_batch_init(struct vfio_batch *batch)
-+static void __vfio_batch_init(struct vfio_batch *batch, bool single)
+ /*
+  * Returns the positive number of pfns successfully obtained or a negative
+- * error code.
++ * error code.  The initial pfn is stored in the pfn arg.  For page-backed
++ * pfns, the provided batch is also updated to indicate the filled pages and
++ * initial offset.  For VM_PFNMAP pfns, only the returned number of pfns and
++ * returned initial pfn are provided; subsequent pfns are contiguous.
+  */
+ static int vaddr_get_pfns(struct mm_struct *mm, unsigned long vaddr,
+ 			  long npages, int prot, unsigned long *pfn,
+-			  struct page **pages)
++			  struct vfio_batch *batch)
  {
- 	batch->size = 0;
- 	batch->offset = 0;
- 
--	if (unlikely(disable_hugepages))
-+	if (single || unlikely(disable_hugepages))
- 		goto fallback;
- 
- 	batch->pages = (struct page **) __get_free_page(GFP_KERNEL);
-@@ -491,6 +491,16 @@ static void vfio_batch_init(struct vfio_batch *batch)
- 	batch->capacity = 1;
- }
- 
-+static void vfio_batch_init(struct vfio_batch *batch)
-+{
-+	__vfio_batch_init(batch, false);
-+}
-+
-+static void vfio_batch_init_single(struct vfio_batch *batch)
-+{
-+	__vfio_batch_init(batch, true);
-+}
-+
- static void vfio_batch_unpin(struct vfio_batch *batch, struct vfio_dma *dma)
- {
- 	while (batch->size) {
-@@ -730,7 +740,7 @@ static long vfio_unpin_pages_remote(struct vfio_dma *dma, dma_addr_t iova,
- static int vfio_pin_page_external(struct vfio_dma *dma, unsigned long vaddr,
- 				  unsigned long *pfn_base, bool do_accounting)
- {
--	struct page *pages[1];
-+	struct vfio_batch batch;
- 	struct mm_struct *mm;
++	long pin_pages = min_t(long, npages, batch->capacity);
+ 	struct vm_area_struct *vma;
+ 	unsigned int flags = 0;
  	int ret;
+@@ -569,10 +573,12 @@ static int vaddr_get_pfns(struct mm_struct *mm, unsigned long vaddr,
+ 		flags |= FOLL_WRITE;
  
-@@ -738,7 +748,9 @@ static int vfio_pin_page_external(struct vfio_dma *dma, unsigned long vaddr,
- 	if (!mmget_not_zero(mm))
- 		return -ENODEV;
+ 	mmap_read_lock(mm);
+-	ret = pin_user_pages_remote(mm, vaddr, npages, flags | FOLL_LONGTERM,
+-				    pages, NULL);
++	ret = pin_user_pages_remote(mm, vaddr, pin_pages, flags | FOLL_LONGTERM,
++				    batch->pages, NULL);
+ 	if (ret > 0) {
+-		*pfn = page_to_pfn(pages[0]);
++		*pfn = page_to_pfn(batch->pages[0]);
++		batch->size = ret;
++		batch->offset = 0;
+ 		goto done;
+ 	} else if (!ret) {
+ 		ret = -EFAULT;
+@@ -628,32 +634,42 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
+ 		*pfn_base = 0;
+ 	}
  
--	ret = vaddr_get_pfns(mm, vaddr, 1, dma->prot, pfn_base, pages);
-+	vfio_batch_init_single(&batch);
++	if (unlikely(disable_hugepages))
++		npage = 1;
 +
-+	ret = vaddr_get_pfns(mm, vaddr, 1, dma->prot, pfn_base, batch.pages);
- 	if (ret != 1)
- 		goto out;
+ 	while (npage) {
+ 		if (!batch->size) {
+ 			/* Empty batch, so refill it. */
+-			long req_pages = min_t(long, npage, batch->capacity);
+-
+-			ret = vaddr_get_pfns(mm, vaddr, req_pages, dma->prot,
+-					     &pfn, batch->pages);
++			ret = vaddr_get_pfns(mm, vaddr, npage, dma->prot,
++					     &pfn, batch);
+ 			if (ret < 0)
+ 				goto unpin_out;
  
-@@ -757,6 +769,7 @@ static int vfio_pin_page_external(struct vfio_dma *dma, unsigned long vaddr,
+-			batch->size = ret;
+-			batch->offset = 0;
+-
+ 			if (!*pfn_base) {
+ 				*pfn_base = pfn;
+ 				rsvd = is_invalid_reserved_pfn(*pfn_base);
+ 			}
++
++			/* Handle pfnmap */
++			if (!batch->size) {
++				if (pfn != *pfn_base + pinned || !rsvd)
++					goto out;
++
++				pinned += ret;
++				npage -= ret;
++				vaddr += (PAGE_SIZE * ret);
++				iova += (PAGE_SIZE * ret);
++				continue;
++			}
+ 		}
+ 
+ 		/*
+-		 * pfn is preset for the first iteration of this inner loop and
+-		 * updated at the end to handle a VM_PFNMAP pfn.  In that case,
+-		 * batch->pages isn't valid (there's no struct page), so allow
+-		 * batch->pages to be touched only when there's more than one
+-		 * pfn to check, which guarantees the pfns are from a
+-		 * !VM_PFNMAP vma.
++		 * pfn is preset for the first iteration of this inner loop
++		 * due to the fact that vaddr_get_pfns() needs to provide the
++		 * initial pfn for pfnmaps.  Therefore to reduce redundancy,
++		 * the next pfn is fetched at the end of the loop.
++		 * A PageReserved() page could still qualify as page backed
++		 * and rsvd here, and therefore continues to use the batch.
+ 		 */
+ 		while (true) {
+ 			if (pfn != *pfn_base + pinned ||
+@@ -688,21 +704,12 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
+ 
+ 			pfn = page_to_pfn(batch->pages[batch->offset]);
+ 		}
+-
+-		if (unlikely(disable_hugepages))
+-			break;
  	}
  
  out:
-+	vfio_batch_fini(&batch);
- 	mmput(mm);
- 	return ret;
- }
+ 	ret = vfio_lock_acct(dma, lock_acct, false);
+ 
+ unpin_out:
+-	if (batch->size == 1 && !batch->offset) {
+-		/* May be a VM_PFNMAP pfn, which the batch can't remember. */
+-		put_pfn(pfn, dma->prot);
+-		batch->size = 0;
+-	}
+-
+ 	if (ret < 0) {
+ 		if (pinned && !rsvd) {
+ 			for (pfn = *pfn_base ; pinned ; pfn++, pinned--)
+@@ -750,7 +757,7 @@ static int vfio_pin_page_external(struct vfio_dma *dma, unsigned long vaddr,
+ 
+ 	vfio_batch_init_single(&batch);
+ 
+-	ret = vaddr_get_pfns(mm, vaddr, 1, dma->prot, pfn_base, batch.pages);
++	ret = vaddr_get_pfns(mm, vaddr, 1, dma->prot, pfn_base, &batch);
+ 	if (ret != 1)
+ 		goto out;
+ 
 -- 
 2.48.1
 
