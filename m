@@ -1,90 +1,224 @@
-Return-Path: <linux-kernel+bounces-519628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDDB1A39FF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:33:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D09E5A39FDE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:32:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEFAC3B72C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:30:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 270761899351
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:30:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09E7626B0A6;
-	Tue, 18 Feb 2025 14:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lfSI+f1U"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA9026A1AB;
+	Tue, 18 Feb 2025 14:30:14 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6809F2698BC;
-	Tue, 18 Feb 2025 14:29:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FD7326A1A4;
+	Tue, 18 Feb 2025 14:30:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739888962; cv=none; b=dAS3buyc9/ckjAZSb+GbgPsekVl9xugafhMqb+zO2Umnmi2mY9IWsyiKwMISNP/E7/qEAkyhjdgCnhBZb95j6WEkqp0XIdV3h0erdfqX6OWSlhi31DhNKfMEIMfsLrKN4KKoFe6I0AM6b95Xu4ZdHHur9Torl/m5gTrlqQ0poAA=
+	t=1739889013; cv=none; b=M0MBRHuXa/iPpBN4/lm95M1O2asuS4Cv4+5k1nloCygF7PtN42QPCtjtVBfUns/bzsXPHirahgcfY+VtRkL5svCkIAUZtRi0My9CCv51ynaa6UMwHrY5buOnbtBD862qp1g3sdRQ5zvlaUDeHE6stZAN5s647sJ9YMXp28A1PsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739888962; c=relaxed/simple;
-	bh=PJhMxrQ6IRClgl4QOJlG0/le0GBoaW6SDI24GDJEeQ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=STKKehGSFHZiSFQ+5reBj472DolJ8Cfo86Q/9B4v9MkOl3fd5CbPpKukfSx57ediQE62HEHiodp3PxeO9r0fPwffpXArj9rgA6Dxy62lcD52v3tvu4cxhKwSr8GLnKRgDOf9Y2Imngx0mITy7GWYuU7IVPN5A4ALCoHfhkH8WkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lfSI+f1U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FC70C4CEE2;
-	Tue, 18 Feb 2025 14:29:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739888961;
-	bh=PJhMxrQ6IRClgl4QOJlG0/le0GBoaW6SDI24GDJEeQ4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=lfSI+f1Uuymjh2OzEk8sO4SxYPf/fXPTIPttvRo9COZs9ID/PlxjuejyrARgTLyy9
-	 4n/ByLBdcXtvExyif4Ps1NuohgE/fy0s9Nd9ewWmGgo0O3b+iKhNiZhqtx1wi6uPPj
-	 rzuouN4GZrOpf7icgcX3eqHYI62vhUmfBwtNd00WTP11JSyxq/0wHuaeosrW+skqJ+
-	 lxQTbjbMFiBtRed/SSNZFrz+qhc2ob25jvnJpIyraGDk1PiAZWT25cWOizBaQrfOoY
-	 X2aEAaUJkHuv6aAI9NJVTlWIftZB3U+CVWSetzm08Ou2o7as8VEWgZBLr6vGD4PW/y
-	 8e4RHg5hEQ4tw==
-Date: Tue, 18 Feb 2025 06:29:20 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
- <horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, David Ahern
- <dsahern@kernel.org>, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- Eric Dumazet <eric.dumazet@gmail.com>, kuniyu@amazon.co.jp,
- ushankar@purestorage.com, Kuniyuki Iwashima <kuniyu@amazon.com>
-Subject: Re: [PATCH net v4 2/2] arp: switch to dev_getbyhwaddr() in
- arp_req_set_public()
-Message-ID: <20250218062920.40aaaa6a@kernel.org>
-In-Reply-To: <20250218-debonair-smoky-sparrow-97e07f@leitao>
-References: <20250213-arm_fix_selftest-v4-0-26714529a6cf@debian.org>
-	<20250213-arm_fix_selftest-v4-2-26714529a6cf@debian.org>
-	<20250217163344.0b9c4a8f@kernel.org>
-	<20250218-debonair-smoky-sparrow-97e07f@leitao>
+	s=arc-20240116; t=1739889013; c=relaxed/simple;
+	bh=6oT5QNYRay3daY57dj/1aLFeR6e5vZ7XBdTvElEpiNM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UbxV2A93vY28JFbHsFaaKS7mfqV1L0/Cz5Af5MzrQRmrW7zU7dPNLP14zvIxFDGP2KevFoeKjFDPkQWg2i5iV4ShLxqLKJ3wJiGcHJTIv66yj64S/I2cfEKBU9SB8dKFDTtIwcExdAifHtkJe+d84OTXkp5NgGzfPHtw2XPFAZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4Yy24Z1tLQzpkCb;
+	Tue, 18 Feb 2025 22:30:38 +0800 (CST)
+Received: from kwepemg500010.china.huawei.com (unknown [7.202.181.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 911971401F1;
+	Tue, 18 Feb 2025 22:30:07 +0800 (CST)
+Received: from huawei.com (10.175.101.6) by kwepemg500010.china.huawei.com
+ (7.202.181.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 18 Feb
+ 2025 22:30:06 +0800
+From: Wang Zhaolong <wangzhaolong1@huawei.com>
+To: <sfrench@samba.org>, <tom@talpey.com>, <kuniyu@amazon.com>,
+	<ematsumiya@suse.de>
+CC: <linux-cifs@vger.kernel.org>, <samba-technical@lists.samba.org>,
+	<linux-kernel@vger.kernel.org>, <wangzhaolong1@huawei.com>,
+	<yi.zhang@huawei.com>
+Subject: [PATCH] smb: client: Fix netns refcount imbalance causing leaks and use-after-free
+Date: Tue, 18 Feb 2025 22:30:05 +0800
+Message-ID: <20250218143005.1318886-1-wangzhaolong1@huawei.com>
+X-Mailer: git-send-email 2.34.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemg500010.china.huawei.com (7.202.181.71)
 
-On Tue, 18 Feb 2025 01:36:30 -0800 Breno Leitao wrote:
-> On Mon, Feb 17, 2025 at 04:33:44PM -0800, Jakub Kicinski wrote:
-> > On Thu, 13 Feb 2025 04:42:38 -0800 Breno Leitao wrote:  
-> > > The arp_req_set_public() function is called with the rtnl lock held,
-> > > which provides enough synchronization protection. This makes the RCU
-> > > variant of dev_getbyhwaddr() unnecessary. Switch to using the simpler
-> > > dev_getbyhwaddr() function since we already have the required rtnl
-> > > locking.
-> > > 
-> > > This change helps maintain consistency in the networking code by using
-> > > the appropriate helper function for the existing locking context.  
-> > 
-> > I think you should make it clearer whether this fixes a splat with
-> > PROVE_RCU_LIST=y  
-> 
-> This one doesn't fix the splat in fact, since rtnl lock was held, and it
-> is moving from dev_getbyhwaddr_rcu() to dev_getbyhwaddr(), since rtnl
-> lock was held.
+Commit ef7134c7fc48 ("smb: client: Fix use-after-free of network
+namespace.") attempted to fix a netns use-after-free issue by manually
+adjusting reference counts via sk->sk_net_refcnt and sock_inuse_add().
 
-Are you sure? I don't see the RCU lock being taken on the path that
-ends up here. arp_ioctl() -> arp_req_set() -> arp_req_set_public()
+However, a later commit e9f2517a3e18 ("smb: client: fix TCP timers deadlock
+after rmmod") pointed out that the approach of manually setting
+sk->sk_net_refcnt in the first commit was technically incorrect, as
+sk->sk_net_refcnt should only be set for user sockets. It led to issues
+like TCP timers not being cleared properly on close. The second commit
+moved to a model of just holding an extra netns reference for
+server->ssocket using get_net(), and dropping it when the server is torn
+down.
+
+But there remain some gaps in the get_net()/put_net() balancing added by
+these commits. The incomplete reference handling in these fixes results
+in two issues:
+
+1. Netns refcount leaks[1]
+
+The problem process is as follows:
+
+```
+mount.cifs                        cifsd
+
+cifs_do_mount
+  cifs_mount
+    cifs_mount_get_session
+      cifs_get_tcp_session
+        get_net()  /* First get net. */
+        ip_connect
+          generic_ip_connect /* Try port 445 */
+            get_net()
+            ->connect() /* Failed */
+            put_net()
+          generic_ip_connect /* Try port 139 */
+            get_net() /* Missing matching put_net() for this get_net().*/
+      cifs_get_smb_ses
+        cifs_negotiate_protocol
+          smb2_negotiate
+            SMB2_negotiate
+              cifs_send_recv
+                wait_for_response
+                                 cifs_demultiplex_thread
+                                   cifs_read_from_socket
+                                     cifs_readv_from_socket
+                                       cifs_reconnect
+                                         cifs_abort_connection
+                                           sock_release();
+                                           server->ssocket = NULL;
+                                           /* Missing put_net() here. */
+                                           generic_ip_connect
+                                             get_net()
+                                             ->connect() /* Failed */
+                                             put_net()
+                                             sock_release();
+                                             server->ssocket = NULL;
+          free_rsp_buf
+    ...
+                                   clean_demultiplex_info
+                                     /* It's only called once here. */
+                                     put_net()
+```
+
+When cifs_reconnect() is triggered, the server->ssocket is released
+without a corresponding put_net() for the reference acquired in
+generic_ip_connect() before. it ends up calling generic_ip_connect()
+again to retry get_net(). After that, server->ssocket is set to NULL
+in the error path of generic_ip_connect(), and the net count cannot be
+released in the final clean_demultiplex_info() function.
+
+2. Potential use-after-free
+
+The current refcounting scheme can lead to a potential use-after-free issue
+in the following scenario:
+
+```
+ cifs_do_mount
+   cifs_mount
+     cifs_mount_get_session
+       cifs_get_tcp_session
+         get_net()  /* First get net */
+           ip_connect
+             generic_ip_connect
+               get_net()
+               bind_socket
+	         kernel_bind /* failed */
+               put_net()
+         /* after out_err_crypto_release label */
+         put_net()
+         /* after out_err label */
+         put_net()
+```
+
+In the exception handling process where binding the socket fails, the
+get_net() and put_net() calls are unbalanced, which may cause the
+server->net reference count to drop to zero and be prematurely released.
+
+To address both issues, this patch ties the netns reference counting to
+the server->ssocket and server lifecycles. The extra reference is now
+acquired when the server or socket is created, and released when the
+socket is destroyed or the server is torn down.
+
+[1]: https://bugzilla.kernel.org/show_bug.cgi?id=219792
+
+Fixes: ef7134c7fc48 ("smb: client: Fix use-after-free of network namespace.")
+Fixes: e9f2517a3e18 ("smb: client: fix TCP timers deadlock after rmmod")
+Signed-off-by: Wang Zhaolong <wangzhaolong1@huawei.com>
+---
+ fs/smb/client/connect.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/fs/smb/client/connect.c b/fs/smb/client/connect.c
+index f917de020dd5..0d454149f3b4 100644
+--- a/fs/smb/client/connect.c
++++ b/fs/smb/client/connect.c
+@@ -300,6 +300,7 @@ cifs_abort_connection(struct TCP_Server_Info *server)
+ 			 server->ssocket->flags);
+ 		sock_release(server->ssocket);
+ 		server->ssocket = NULL;
++		put_net(cifs_net_ns(server));
+ 	}
+ 	server->sequence_number = 0;
+ 	server->session_estab = false;
+@@ -3115,8 +3116,12 @@ generic_ip_connect(struct TCP_Server_Info *server)
+ 		/*
+ 		 * Grab netns reference for the socket.
+ 		 *
+-		 * It'll be released here, on error, or in clean_demultiplex_info() upon server
+-		 * teardown.
++		 * This reference will be released in several situations:
++		 * - In the failure path before the cifsd thread is started.
++		 * - In the all place where server->socket is released, it is
++		 *   also set to NULL.
++		 * - Ultimately in clean_demultiplex_info(), during the final
++		 *   teardown.
+ 		 */
+ 		get_net(net);
+ 
+@@ -3132,10 +3137,8 @@ generic_ip_connect(struct TCP_Server_Info *server)
+ 	}
+ 
+ 	rc = bind_socket(server);
+-	if (rc < 0) {
+-		put_net(cifs_net_ns(server));
++	if (rc < 0)
+ 		return rc;
+-	}
+ 
+ 	/*
+ 	 * Eventually check for other socket options to change from
+@@ -3181,9 +3184,6 @@ generic_ip_connect(struct TCP_Server_Info *server)
+ 	if (sport == htons(RFC1001_PORT))
+ 		rc = ip_rfc1001_connect(server);
+ 
+-	if (rc < 0)
+-		put_net(cifs_net_ns(server));
+-
+ 	return rc;
+ }
+ 
+-- 
+2.34.3
+
 
