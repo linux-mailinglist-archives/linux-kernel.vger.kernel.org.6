@@ -1,97 +1,87 @@
-Return-Path: <linux-kernel+bounces-519005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 295F6A39702
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:26:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69845A396FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:26:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FBAF1897977
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:25:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF1AA172D59
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:24:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1CFA232386;
-	Tue, 18 Feb 2025 09:23:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="oyu9hqIW"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF3E92309BD;
+	Tue, 18 Feb 2025 09:23:34 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B06622FF40;
-	Tue, 18 Feb 2025 09:23:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB2122C356
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 09:23:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739870620; cv=none; b=XToINF326iWNoSvwS6L4mp9FpZA2ObRT97ysSwVbkG0w2b73GvtgoWw9u1teL2nFMuCC4Hoy4V4SL+elSmvlB5GOPgjRtoevFNcOMED7DY2xmb8EPpCmt0z9Qn8MjN5GLQgpnGbBy/qDbztGSWF5LwpN+xnRLzkZ1fxLpSuWCZ4=
+	t=1739870614; cv=none; b=jt5+J0lhLU2YmILkyF1kcMfXc/RiWKkpiFTLv6sFhCizncSFaGic6offypdWGz3m/j3aos2Ht7Zs6gEmZfVWnvssY3BSSOKHM1eTxHDkROzs/1vAvYvRwkKrNTxciVP8/ibvUqoNhyrHG58Tja+SSOLXwmqGliBuyS1ifOpdBec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739870620; c=relaxed/simple;
-	bh=UX5PPI+ChEl3/dXxiilQBrO0SX7D3M0HfvISNEr9kMQ=;
-	h=From:To:Cc:Subject:MIME-Version:Content-Disposition:Content-Type:
-	 Message-Id:Date; b=Wq0foSizQ9t4Z2NPo4nXMlxSMO1Am80Wq7hrKRLsio0XWD3997OO0epbLosCoUn+32Ni9W2/TUXH7+PFGzMD3cvYejaEVMRNpai6YO8hJkTBsEIT5zmjD4E6ZmRSyuojzoF/kHGrZLZ2xBFz5B3aV0D7WIXcldaBH4kIVqFmnDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=oyu9hqIW; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Date:Sender:Message-Id:Content-Type:
-	Content-Transfer-Encoding:MIME-Version:Subject:Cc:To:From:Reply-To:Content-ID
-	:Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:
-	Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=GQMYg3y3odG51dQXDSWjPv/U6qwQ6HTUOxMrmwG2YjQ=; b=oyu9hqIWz9IMHn3HJeJT0q4Kv1
-	qIKBVutjUxgzxpE9yAVmM8yGlSb3Bk/Luh8O24lNlresxN+hsAHzMiXedWvG7XCKRS8kt7CAjgRxZ
-	LJdZUXf3t/b1zSD2XWKS1ktCdFO0KyZHYZ/Zob/RPGT3wlRQOquyCOqTbAo1V1f1mg/gMiMt7ZyhX
-	pprZH7EYHeCyEqoDAEmKTeHQWIME9VKXh8MP8x5419kWIatS/MwTB6mVW2L9OEugPh85N6fjHXTbg
-	KTWzZlAzqrdhRF5c4sr4ZziC/rwzVIpoAy012g3Pyyc3UKBYxMGWxtXQ7NqHofF7cMg2lZ/ASel63
-	TJnqYBLA==;
-Received: from e0022681537dd.dyn.armlinux.org.uk ([fd8f:7570:feb6:1:222:68ff:fe15:37dd]:55628 helo=rmk-PC.armlinux.org.uk)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	s=arc-20240116; t=1739870614; c=relaxed/simple;
+	bh=KPymWalzJF0940XaRvRQX+ZY9ifYmd3AMJoWGB24zsI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=QkHSSLafzrllb7O1X8r23qaZPV6q84HpQNLoyb4CHg3hpnMxeGgKfbccXMP61YXhcJCsXHR13CfWeYTyn7fjNIcl43m6VpLmRXk37sZQpH40NR1oAhJS1GCHTwqwoK88d65d+VixSZV3HQxb+WIS0+EYl83aGGnl25d67X3fSts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tkJp9-0000w2-0A; Tue, 18 Feb 2025 10:23:27 +0100
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
-	(envelope-from <rmk@armlinux.org.uk>)
-	id 1tkJpG-0001JE-0B;
-	Tue, 18 Feb 2025 09:23:34 +0000
-Received: from rmk by rmk-PC.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <rmk@rmk-PC.armlinux.org.uk>)
-	id 1tkJow-004Nfn-Cs; Tue, 18 Feb 2025 09:23:14 +0000
-From: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
-To: Jan Petrous <jan.petrous@oss.nxp.com>
-Cc: NXP S32 Linux Team <s32@nxp.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH] MAINTAINERS: fix DWMAC S32 entry
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tkJp8-001YuI-2P;
+	Tue, 18 Feb 2025 10:23:26 +0100
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tkJp8-0003Hv-28;
+	Tue, 18 Feb 2025 10:23:26 +0100
+Message-ID: <9e741688bb5d246ccba557ab22e0682029f32809.camel@pengutronix.de>
+Subject: Re: [PATCH 1/5] reset: imx8mp-audiomix: Add prefix for internal
+ macro
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Daniel Baluta <daniel.baluta@nxp.com>, shawnguo@kernel.org, 
+	mathieu.poirier@linaro.org
+Cc: s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, andersson@kernel.org, 
+	linux-remoteproc@vger.kernel.org, iuliana.prodan@nxp.com, 
+	laurentiu.mihalcea@nxp.com, shengjiu.wang@nxp.com, Frank.Li@nxp.com, 
+	krzk@kernel.org
+Date: Tue, 18 Feb 2025 10:23:26 +0100
+In-Reply-To: <20250218085712.66690-2-daniel.baluta@nxp.com>
+References: <20250218085712.66690-1-daniel.baluta@nxp.com>
+	 <20250218085712.66690-2-daniel.baluta@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset="utf-8"
-Message-Id: <E1tkJow-004Nfn-Cs@rmk-PC.armlinux.org.uk>
-Sender: Russell King <rmk@armlinux.org.uk>
-Date: Tue, 18 Feb 2025 09:23:14 +0000
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Using L: with more than a bare email address causes getmaintainer.pl
-to be unable to parse the entry. Fix this by doing as other entries
-that use this email address and convert it to an R: entry.
+On Di, 2025-02-18 at 10:57 +0200, Daniel Baluta wrote:
+> This adds IMX8MP_AUDIOMIX_ prefix to internal macros
+> in order to show that specific macros are related to
+> audiomix.
+>=20
+> Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
 
-Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index de81a3d68396..7da5d2df1b45 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2877,7 +2877,7 @@ F:	drivers/pinctrl/nxp/
- 
- ARM/NXP S32G/S32R DWMAC ETHERNET DRIVER
- M:	Jan Petrous <jan.petrous@oss.nxp.com>
--L:	NXP S32 Linux Team <s32@nxp.com>
-+R:	NXP S32 Linux Team <s32@nxp.com>
- S:	Maintained
- F:	Documentation/devicetree/bindings/net/nxp,s32-dwmac.yaml
- F:	drivers/net/ethernet/stmicro/stmmac/dwmac-s32.c
--- 
-2.30.2
-
+regards
+Philipp
 
