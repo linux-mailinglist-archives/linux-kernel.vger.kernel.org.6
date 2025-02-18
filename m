@@ -1,275 +1,168 @@
-Return-Path: <linux-kernel+bounces-518939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB1D2A39644
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:59:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B127AA3964A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:00:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69B4C188BB0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:59:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA7B018893C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:59:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B704F22FF2A;
-	Tue, 18 Feb 2025 08:58:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F1D92343AB;
+	Tue, 18 Feb 2025 08:58:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="kLRY2YE9"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2066.outbound.protection.outlook.com [40.107.21.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NgCyuku9"
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B17622F178;
-	Tue, 18 Feb 2025 08:58:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739869084; cv=fail; b=s5pwh4BBt6ySKJkAAyRQ94NntGoZc+iF7u9h57wYEEgJv/pL4DwKmIsfl8V0tIWK+KZnVY4o8Ue36NszpAYOj7hHXAvrxacrHsCJUARSAJ3G4qTtznFIWh/7Lh6Ucou+DpiHM73JuhtewXKBAwHEuELhsLRKyy159bfEmutYTxU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739869084; c=relaxed/simple;
-	bh=8OeJnZD9MlmZNozzt0JC622+TxcZxO6b/rtxuumSVX4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=gVktYq7GDT1AFn7edxVx1YT4kcwOEyRRMiW8xN5bdwXpbW1PpjIhjP/j0lz0SQVTrzivGucZuuXpfEvPwNdJh7YTMUZHNAWdH+c+ZqGDXlXqrPTEBkvg9Agch0gxY1R/NOjjZPlo0OmPOv+SF9SLRzSSOs+zU/3Z1RVR6JuT/HM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=kLRY2YE9; arc=fail smtp.client-ip=40.107.21.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VTJdc9xrkhzM/l5eoD5jgprZ6KlacdUHOB+IXhTM85Dx9LdLbnvha/xNbpY3BX7ltUgz+J8lwqyWBmkJGzyzEN0zJfvHrdkNx8Wd35SEM9V2jr/GNXM6DRg+jolO8Dd165+WP/0X2+fH6mzZRo/0kG5kXAIa0p7poxSOG8mhcnXb7FsbxhSX6WrAamIXNflly4yhcnSHQdPufHHHQR08W+IrunlXJNUVDT5DYcaVuSCQqyBzzeiDFBfICjQek7+L49SV1S+uMsb6sRSULLJzMH7mS5BpraRMdlTSGVMTg0wLfTEbuxkqgBZZyoQaIbfDpxTMpzYCu1wpqBiD8GHlIg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/DWA6l36mIRJ2hiBtuK8jXwsQP2icifS7X/uHU1E220=;
- b=v9xLzxllvG/FN74RKz5CGx5vfEH5OGfF/3hsm8uqgZ3C2rf/PtzBCniEzU2HNCzHWaav16sk1UpJWrOPe6FP58GbCpNsLR3QVKrUXgoi5qt9OAep/y+CQZsaTi3W0JOxhCzX/8Td1Q4uoDBRH+LrgAwY6p3g1+JVPvALdOrSp9D8rb12aGtH2URyhOt9NMVkqIV6hyYNelEziJd5HGd80oq4EgGRY5OtL9nOEgJVDzPNokxRMFOEg0wZ+5LfVagjUihZdbAFwcjbtZsmhIhMebp2r7joO659LwiAWTr+2+AFATr7x6NRjeJ+udGzAUrkmpwD5h5hSYvcHO/QF8BWmQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/DWA6l36mIRJ2hiBtuK8jXwsQP2icifS7X/uHU1E220=;
- b=kLRY2YE9FPYX+YbEapkdqOu4o3fMnT8nAC8GbolVk1nGdlpBv70ceYzBwFoyRz+Y6YyQgM7uTdAjZ0CfX0Nx2wB3Z58STckK9uKYBbSuMokz8cDkYBYgQpnQYHoijRWSbWksHtseiS7GG0u6YATaZZ183aQs6K01o2GzvSxKZvAmirod7BNhR6u0BvvPJarbNgmkIpzAxMoAiplTcpISJ7RM62aKd9kb2kghS5a/r3dnjDIVh5yyVnoqPSqSvTE7NNGJBtyaFhoLVPy3B2OGvhbJ4/rtc/VsQE1OUbE/ztS/vAzHaFpr+CYoVDhiT5RTH58GCcnqA1XsQLcucfFmFw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AS8PR04MB8247.eurprd04.prod.outlook.com (2603:10a6:20b:3f2::13)
- by AS5PR04MB10057.eurprd04.prod.outlook.com (2603:10a6:20b:67d::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.18; Tue, 18 Feb
- 2025 08:57:58 +0000
-Received: from AS8PR04MB8247.eurprd04.prod.outlook.com
- ([fe80::84f7:e2c3:ceed:c0a6]) by AS8PR04MB8247.eurprd04.prod.outlook.com
- ([fe80::84f7:e2c3:ceed:c0a6%5]) with mapi id 15.20.8445.017; Tue, 18 Feb 2025
- 08:57:58 +0000
-From: Daniel Baluta <daniel.baluta@nxp.com>
-To: p.zabel@pengutronix.de,
-	shawnguo@kernel.org,
-	mathieu.poirier@linaro.org
-Cc: s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	andersson@kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	iuliana.prodan@nxp.com,
-	laurentiu.mihalcea@nxp.com,
-	shengjiu.wang@nxp.com,
-	Frank.Li@nxp.com,
-	krzk@kernel.org,
-	Daniel Baluta <daniel.baluta@nxp.com>
-Subject: [PATCH 2/5] reset: imx8mp-audiomix: Prepare the code for more reset bits
-Date: Tue, 18 Feb 2025 10:57:09 +0200
-Message-Id: <20250218085712.66690-3-daniel.baluta@nxp.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250218085712.66690-1-daniel.baluta@nxp.com>
-References: <20250218085712.66690-1-daniel.baluta@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: VI1PR07CA0286.eurprd07.prod.outlook.com
- (2603:10a6:800:130::14) To AS8PR04MB8247.eurprd04.prod.outlook.com
- (2603:10a6:20b:3f2::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B02522FF55
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 08:58:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739869088; cv=none; b=GJrY95pP1FqbGCduzGFTA/SlHhGsIvUfghe6jRkF+N9V9LMDTNTS2IDqN8TV5k47hnYgiHE7nMWTJ2EerRe2IGQbnu74EZ/keDQt1He9E4AsVROEmHkYS0+59e19H4/ffep/s3+vGnUdplKjNJDFRU7549EVNednxgJjOAeKVYE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739869088; c=relaxed/simple;
+	bh=OyAnmBjaHUZcFsMsEw63Uv32r7ZHuHh2rGeXIQyNl/E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FKrVcq+qQLwfsDTHeGtZwgYdBmpkCDNAkvw0Y7IsmlhApHBBwf+fXmhwY0m5eo0xk1DdE9Exwohcj9N+EymMhJkl3v8pljC5RXshW8Idj1r0zRMIcEFpYt1ojuN0/DO9rsqzZiC7/x+Vydu1jXKaFU+NFs2StdHqr2p6RS0jcRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NgCyuku9; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e5dd164f03fso2161321276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 00:58:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739869085; x=1740473885; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0WiV88RuMX52VqCnbJqBbwtStRRNrClMaC5QzgRj89Y=;
+        b=NgCyuku9/qgheDn5M4AcDO0rpIQ7we6s2fI+hrP7/IVD1PY+t2eEFUlDgCbvGTAMzi
+         lTtn4doq9FOuq/DQaxHkmhTXBL7S4bpaQaggl/pZ2cliWqMD4SQSanwH+TB4znQsDL3g
+         3VQ+XW0K1n/TsA5iNsTuf8wdByIahjSgB4lYW1N7xAI1XUa0hBsoxL9ZC1sF72NGmKE3
+         1v9tcV1o1bHQr5FKz2ncx96EXW2MTHnmjralRbx6TBZ5aj+rRM3Os5dIaA6fdCY1oOhY
+         38MRGx8ZDfq6B5JjPuOUzQ38colL9+v0U5CnHYGeDNJx7xzcVI3xRkFyhFNxgBSFSZrK
+         CbJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739869085; x=1740473885;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0WiV88RuMX52VqCnbJqBbwtStRRNrClMaC5QzgRj89Y=;
+        b=WH/7GxVXSWIDwNjmim/YSQOvgap5v/tRsJeUKYqTf8Ky2INqXWeH09rMPicSpQcCHu
+         Jab6b3583BU535ptNr2cJXF8eMqx0i4XkGhCrgeqtFj2K8ocFRmt2vJtKHZk2CtO09fX
+         hNo1Y8znF7NzQ8RNcQyREw7omobKZNG7/YR9jDJw/lacchyj/WJ/Ged5W99FvG0p46Gn
+         eQtSqTFB38ZLfnpQ7OCp6FNbwd9BQBpAgjKdsnTuxCsWos8waCnC9TZDsfF4f40MLXmg
+         K3l+d2sLE/gHdAsNaUZVuibqwMfuQW0tx1Mb8PKjzYoHOBKOBPLToJ68NFT740e6mCrD
+         tLMg==
+X-Forwarded-Encrypted: i=1; AJvYcCWvBFY/a42LoAwHT9uVvo7M/4BlXY5ztOS4SJJJWTFmTqKJJ2bMa4oOwfTZBlSwUxq3U3Wt5Td8Jy9Iupw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2bL0jxfgcHDJwndeE+5rMGDnzqFjcKNT+Hh+cy51kljWsbLrq
+	96oIqzF+vTjfIh7u5vUI+fr+s0+O+1ckZe+7GK5nNOFQd5xqiQGADasFnT+c2oZs6bDCn6puC8a
+	xZafMsbixeL4BZpbxnIX0t88DIJwGjrx0E0VW
+X-Gm-Gg: ASbGncsMBBN8AVBJ+GVD/YLVwC20BziRpFLviwtnIi2LWSa/BlsiESpS9aisvKVJEa7
+	fcN8+LkmirnnKUuRYFJdYQjOQgE7Ec2f4Mop/1wsjFeOlv9ZGAylFJL066wf9Xn78otlxI8Z3sA
+	==
+X-Google-Smtp-Source: AGHT+IFDAv+Ww5Ff98rM498LWZrMYVGA7SxrEKpXl53VPNF2TtUIGFalfKMi0kzAC0F6424I9hSryLL8fES2qf4u6tI=
+X-Received: by 2002:a05:6902:102c:b0:e58:341d:50d6 with SMTP id
+ 3f1490d57ef6-e5dc91ed41fmr8784581276.35.1739869085379; Tue, 18 Feb 2025
+ 00:58:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8247:EE_|AS5PR04MB10057:EE_
-X-MS-Office365-Filtering-Correlation-Id: 172531a5-b78d-4954-d311-08dd4ffa5738
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|52116014|7416014|1800799024|10070799003;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Rf7eXR8suq3ZhMiw9aGQUPswAEHwjxdhsko+vjuNmROcLwSwNmm6mJq87vmJ?=
- =?us-ascii?Q?UQMf4ho6dYCmrviyBirs8qwY7KLdY7yp7r5KQFqaAIRk7dwMKwVP8AT7Xfvx?=
- =?us-ascii?Q?taJ+TFCjmtaJbJRiXIiTeLe7+SfHQxD0BmmMQLvunNCf35VD/raEzVvaLPi9?=
- =?us-ascii?Q?w/KIRLgaEewI+/41sSak/GdtY0lC/KZJvv0Eyg8hs72nxZmXXgLc8FJ3Z1Me?=
- =?us-ascii?Q?6+i1cftU8dcKsgqjbTKTzsulV4h/TtUq+y4QAzsqEQ3L1a7tS1dq+u6oDusF?=
- =?us-ascii?Q?35/XMX5xV/HWpWZPfpigem7U4bkT/+CP2IXnGFoyogKjPpYpzl7WheVnMqoX?=
- =?us-ascii?Q?bJy7KqgjqYZnqmUGMnFY2V9sFQNup0w75/Lonl3RuFNu1/6utPJmkzwUuRXh?=
- =?us-ascii?Q?RQ5aGNMmcmaZ3CDz3ohG00KGQcVoeu+SfgISlBW5E8L4D+dz0tSnBYmH1wWF?=
- =?us-ascii?Q?DkWegf5v8QiVaqmXESjKgUkkehwAMJao+3tiC7w09am0DXcEbhXsUfbaStXB?=
- =?us-ascii?Q?eI1rI+HBFsD22RML2TRuVIGlDn5uOvDLNj0KWUX1nr6spafvcUqyIxE9jQHF?=
- =?us-ascii?Q?uYbVgwhdgrE/th+SdbIAXDkqOIF9xHBHuza9YzBZuCza55JLF+1HOlkSMS0L?=
- =?us-ascii?Q?H23fomWE0Mf4bO/px8C/C8XHtC4yeNY4jPd0TLziySR1wF8t3/WfvZRjkclD?=
- =?us-ascii?Q?FLRm30OtEh8d1/udM++lMTZp7fqpwxhjPFoxy6HrOmTp079tk8nbHjpeUaw0?=
- =?us-ascii?Q?yeagEH9vlUb2BC2wMN8U99FlOYm37kz1fgMfmzkj8/+EPKSWR54MdQIkt2+p?=
- =?us-ascii?Q?dzdKHJwr2/x+Ndwl3kZVFogQOuxuKafW6I6Zv7H0izc3DtmtmbvP3S20KdnC?=
- =?us-ascii?Q?r/YkWzeH/J20DJAFR3OmqORm6LD4bgrByLp25MurbsqB205B8Tciawsnyb9M?=
- =?us-ascii?Q?Lf+m1EKz1kNkwxTYt8YURAa0KGdw0NRt+XxvH1y/znwO3bvhj18Q50lRIf06?=
- =?us-ascii?Q?LpHRXiLJ9vn7Vzl1kvLmShl++6Wjz9HoQiudu6am+sWZ06g2xoW4mTWEgPNM?=
- =?us-ascii?Q?ZA+vX6gGjewKivX/p9NC3njhpZU7yM0IJEse8nolfIHRz4lKJxR9OXLbM9i5?=
- =?us-ascii?Q?oX2KcR4cHSWtLdPLcI1z7AJ59kCN5IkokND+hs1WCiaW7i28LEyp3Zo/VW/r?=
- =?us-ascii?Q?IDyJjOoyJ9esNiWGpSNxyJ/EvB6JW+dkIRDlszdyWg8k3OhHy3lgUFGy+dWE?=
- =?us-ascii?Q?RBpXgVNo33M5WtgTCldJ6ibUc8W7h1VzvpGUMDIYD3YsXNubCFohVLPO7eSo?=
- =?us-ascii?Q?IYwlo2GUe6BuCy0O1NT3lNy6PeppiU20y3kqsqTsiZkrKSrTq0tYQQe8/4c5?=
- =?us-ascii?Q?wQop0KCLU1QpHL5oRROocDra0nRY?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8247.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(52116014)(7416014)(1800799024)(10070799003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?xcHulsNzpKn2TSIG+v2wyF8Gs4XsAHvDUpki96GDSxNouIFZ6KWyo5n/ye7q?=
- =?us-ascii?Q?RLn+RGujzwdy0U8deu5kBrRtJsXiRK4MHuJufFmSmu3Eg4pd+3pMBM0D9qhw?=
- =?us-ascii?Q?UlaTHQYxFXCAB30KBepYiVK1QB61+3zsyKWoRlpgH3Z40bCdP8AUkd0bg5MG?=
- =?us-ascii?Q?kcIQ7L8wR4MYEsV+FYEoAcKGp5y8X2J+DF0846kzmoCA0dENnagGDbkVlxWR?=
- =?us-ascii?Q?mS65tqdSKeeyigt9dqLzpGQm7nRMbD7/dA5qlqVFiORBtgJQ4k+WRuqQhkH0?=
- =?us-ascii?Q?ZuY+TqCmM8fpjiiHXC9f0bGU7h+k6QjmAxi3GCh8pWKObj0BZ+TxpvNO/RnQ?=
- =?us-ascii?Q?Mnua3AArDMDlngEZgz7EONv31FIziyBgX1TlU5XJAxOpFwIQoRyOYp02uSrv?=
- =?us-ascii?Q?9yycHbaMNIUlwFE3gaJFKPJL2UQVBfzj2tjhiULzkmYZXlurj6+y2ShMjkOr?=
- =?us-ascii?Q?dexgI1JZrf89fUr4pA2nEJEO71fnIauXOWdvjtceoDE5jyUWW/V51ZGcQjxv?=
- =?us-ascii?Q?FNcuuxwG9FDztt0TyWRUVhniTMvUGZHS/0owHJPVIRu4E4LUpaQVQZHZgtl1?=
- =?us-ascii?Q?kXzGB8otpq3Boo21qimXQOFr5FTREE0zVziC4QkiZNx27r+r3MmE1Ev1PxKK?=
- =?us-ascii?Q?EHdhsD717O6DGba19gcPiLbSyQGYQpnlewqO9kfgHprYLK7/GbNbQ9aiNhJU?=
- =?us-ascii?Q?LaTPvvuGeVUqbubLU+dDytpXR5KDorKUG+uESZVyKobOio80KgEXzmXIVgla?=
- =?us-ascii?Q?GHRbKL+2C/Pp0rZIBt7uCuRttoQqDRRclBeHG7njgwalyZiO044l/At/zzk7?=
- =?us-ascii?Q?u+u+VVfBKzxMhxtGpYTWgCoswaL2Ap15e/tOZJyEPo8aBShPl7bmZCiAcuXs?=
- =?us-ascii?Q?5XHoZioFjMVBXqzHT5NrYGWHTdp5vrJ+72XWWHKVU6N+BV/+A0copCjxVowQ?=
- =?us-ascii?Q?tIK1da9+O+r6PD+E/Hc/AkIdd90PGOFwLOBrAQqq8+004HHqrjCYGYbhIenW?=
- =?us-ascii?Q?fO1mulbwuMQ2cMXVe12+Y7O9eftgGpQDWCkOxLug6henLFOTXliQDKiLxSsh?=
- =?us-ascii?Q?5D6R+0iBlcug7BZJ31nBdpSf+hXmhyw1C1DbxwnHMW01AQd2C3/+Y99sxvMZ?=
- =?us-ascii?Q?SYpcYmDj6dYsxCjuf7UgjbGlFtc7ub44BH67zYCpEIubWik4wigCYdzRp10J?=
- =?us-ascii?Q?iw6P4vLjAnuWCr0dfEeXpJL+No1x/w4alFMaoUKXmmP4KbVvdRBZ2uw9Dvcf?=
- =?us-ascii?Q?xLhBR9VLikJkExRRA3mp2uIduM0foyALdujn0x6v5WnNI/rOpBb5Sy5XhpGC?=
- =?us-ascii?Q?e4JKhoZj6ufNNd2CNAQLZPgeMi1l6Hnhf6ip4IuyBEKYBA2x3JOCfWL6/S88?=
- =?us-ascii?Q?mgvPqSeX7ZhqQ23uvtOoysWQyqxbuWHcfxLKTHkxR5HRJRw7XCFM9pAph0XI?=
- =?us-ascii?Q?hl+4mhbZo8KFVi81mH3LpUXAVPrnqTxD8jGGbegty862Hoavs7Ty9iifM0UJ?=
- =?us-ascii?Q?PZ9ov8x5XQa5w0aO84j79vcUt3/uXCRKFncCJ0BZ8KdjPlAx70ANAqGsy33k?=
- =?us-ascii?Q?e03ARmjVJEn/8IG/TVNSxSKhfc9pFGHHpgKqKXsPrzoziRHYana8RFKLoAwl?=
- =?us-ascii?Q?3rlWtK/6bVFFzmWcqgWRVkHLUjSDc5vGtob6UAvJZdKZpSuB03O74L5boODR?=
- =?us-ascii?Q?KI5oOQ=3D=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 172531a5-b78d-4954-d311-08dd4ffa5738
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8247.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Feb 2025 08:57:58.2367
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: aAPi+pVrmgMicvTBl0tARl7XRNtItFyeUVoN4HFHq2vAnIC5rBpN7I0/ieyJDO59ze1cOlkqJGqLvNvVQbYRTg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS5PR04MB10057
+References: <20250214191615.v5.1.If6f14aa2512336173a53fc3552756cd8a332b0a3@changeid>
+ <2025021425-surgical-wackiness-0940@gregkh> <CADg1FFd3H0DLV-WX8jTB1VGyOZYEzchP99QvYxWmg1XCOo1ttg@mail.gmail.com>
+ <2025021717-prepay-sharpener-37fb@gregkh> <CADg1FFf7fONc+HJT8rq55rVFRnS_UxnEPnAGQ476WVe+208_pA@mail.gmail.com>
+ <2025021829-clamor-lavish-9126@gregkh>
+In-Reply-To: <2025021829-clamor-lavish-9126@gregkh>
+From: Hsin-chen Chuang <chharry@google.com>
+Date: Tue, 18 Feb 2025 16:57:38 +0800
+X-Gm-Features: AWEUYZm1tDse1ET3a-jgOK_9kE2iguqODg5oqAc57Y_gfIfAsF1oYPN_93ho47Y
+Message-ID: <CADg1FFd=PbnNSBWk4KGV85jvvRQBBGG4QD2VHM6ABY-mqC8+Lg@mail.gmail.com>
+Subject: Re: [PATCH v5] Bluetooth: Fix possible race with userspace of sysfs isoc_alt
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: linux-bluetooth@vger.kernel.org, luiz.dentz@gmail.com, 
+	chromeos-bluetooth-upstreaming@chromium.org, 
+	Hsin-chen Chuang <chharry@chromium.org>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Johan Hedberg <johan.hedberg@gmail.com>, Marcel Holtmann <marcel@holtmann.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Ying Hsu <yinghsu@chromium.org>, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Current code supports EARC PHY Software Reset and EARC 	Software
-Reset but it is not easily extensible to more reset bits.
+Hi Greg,
 
-So, refactor the code in order to easily allow more reset bits
-in the future.
+On Tue, Feb 18, 2025 at 4:23=E2=80=AFPM Greg KH <gregkh@linuxfoundation.org=
+> wrote:
+>
+> On Tue, Feb 18, 2025 at 12:24:07PM +0800, Hsin-chen Chuang wrote:
+> > Hi Greg,
+> >
+> > On Mon, Feb 17, 2025 at 4:53=E2=80=AFPM Greg KH <gregkh@linuxfoundation=
+.org> wrote:
+> > >
+> > > On Mon, Feb 17, 2025 at 04:44:35PM +0800, Hsin-chen Chuang wrote:
+> > > > On Fri, Feb 14, 2025 at 7:37=E2=80=AFPM Greg KH <gregkh@linuxfounda=
+tion.org> wrote:
+> > > > >
+> > > > > On Fri, Feb 14, 2025 at 07:16:17PM +0800, Hsin-chen Chuang wrote:
+> > > > > > From: Hsin-chen Chuang <chharry@chromium.org>
+> > > > > >
+> > > > > > Expose the isoc_alt attr with device group to avoid the racing.
+> > > > > >
+> > > > > > Now we create a dev node for btusb. The isoc_alt attr belongs t=
+o it and
+> > > > > > it also becomes the parent device of hci dev.
+> > > > > >
+> > > > > > Fixes: b16b327edb4d ("Bluetooth: btusb: add sysfs attribute to =
+control USB alt setting")
+> > > > >
+> > > > > Wait, step back, why is this commit needed if you can change the =
+alt
+> > > > > setting already today through usbfs/libusb without needing to mes=
+s with
+> > > > > the bluetooth stack at all?
+> > > >
+> > > > In short: We want to configure the alternate settings without
+> > > > detaching the btusb driver, while detaching seems necessary for
+> > > > libusb_set_interface_alt_setting to work (Please correct me if I'm
+> > > > wrong!)
+> > >
+> > > I think changing the alternate setting should work using usbfs as you
+> > > would send that command to the device, not the interface, so the driv=
+er
+> > > bound to the existing interface would not need to be removed.
+> >
+> > I thought USBDEVFS_SETINTERFACE was the right command to begin with,
+> > but it seems not working in this case.
+> > The command itself attempts to claim the interface, but the interface
+> > is already claimed by btusb so it failed with Device or resource busy
+> >
+> > drivers/usb/core/devio.c:
+> >   USBDEVFS_SETINTERFACE -> proc_setintf -> checkintf -> claimintf
+>
+> Ah, ok, thanks for checking.  So as you control this device, why not
+> just disconnect it, change the setting, and then reconnect it?
 
-Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
----
- drivers/reset/reset-imx8mp-audiomix.c | 53 ++++++++++++++++++++++-----
- 1 file changed, 43 insertions(+), 10 deletions(-)
+After dis/reconnecting, a Bluetooth chipset would lose all its state:
+Existing connections/scanners/advertisers are all dropped.
+This is as bad as (just an analogy) "Whenever you access a http web
+page, you need to bring your ethernet interface down and up, and after
+the page is downloaded, do that again".
 
-diff --git a/drivers/reset/reset-imx8mp-audiomix.c b/drivers/reset/reset-imx8mp-audiomix.c
-index 1fe21980a66c..6b1666c4e069 100644
---- a/drivers/reset/reset-imx8mp-audiomix.c
-+++ b/drivers/reset/reset-imx8mp-audiomix.c
-@@ -12,7 +12,30 @@
- #include <linux/reset-controller.h>
- 
- #define IMX8MP_AUDIOMIX_EARC_OFFSET		0x200
--#define IMX8MP_AUDIOMIX_EARC_RESET_MASK		0x3
-+#define IMX8MP_AUDIOMIX_EARC_RESET_MASK		0x1
-+#define IMX8MP_AUDIOMIX_EARC_PHY_RESET_MASK	0x2
-+
-+#define IMX8MP_AUDIOMIX_EARC		0
-+#define IMX8MP_AUDIOMIX_EARC_PHY	1
-+
-+#define IMX8MP_AUDIOMIX_RESET_NUM	2
-+
-+struct imx8mp_reset_map {
-+	unsigned int offset;
-+	unsigned int mask;
-+};
-+
-+static const struct imx8mp_reset_map reset_map[IMX8MP_AUDIOMIX_RESET_NUM] = {
-+	[IMX8MP_AUDIOMIX_EARC] = {
-+		.offset	= IMX8MP_AUDIOMIX_EARC_OFFSET,
-+		.mask	= IMX8MP_AUDIOMIX_EARC_RESET_MASK,
-+	},
-+	[IMX8MP_AUDIOMIX_EARC_PHY] = {
-+		.offset	= IMX8MP_AUDIOMIX_EARC_OFFSET,
-+		.mask	= IMX8MP_AUDIOMIX_EARC_PHY_RESET_MASK,
-+	},
-+
-+};
- 
- struct imx8mp_audiomix_reset {
- 	struct reset_controller_dev rcdev;
-@@ -30,13 +53,18 @@ static int imx8mp_audiomix_reset_assert(struct reset_controller_dev *rcdev,
- {
- 	struct imx8mp_audiomix_reset *priv = to_imx8mp_audiomix_reset(rcdev);
- 	void __iomem *reg_addr = priv->base;
--	unsigned int mask, reg;
-+	unsigned int mask, offset, reg;
- 	unsigned long flags;
- 
--	mask = BIT(id);
-+	if (id >=  IMX8MP_AUDIOMIX_RESET_NUM)
-+		return -EINVAL;
-+
-+	mask = reset_map[id].mask;
-+	offset = reset_map[id].offset;
-+
- 	spin_lock_irqsave(&priv->lock, flags);
--	reg = readl(reg_addr + IMX8MP_AUDIOMIX_EARC_OFFSET);
--	writel(reg & ~mask, reg_addr + IMX8MP_AUDIOMIX_EARC_OFFSET);
-+	reg = readl(reg_addr + offset);
-+	writel(reg & ~mask, reg_addr + offset);
- 	spin_unlock_irqrestore(&priv->lock, flags);
- 
- 	return 0;
-@@ -47,13 +75,18 @@ static int imx8mp_audiomix_reset_deassert(struct reset_controller_dev *rcdev,
- {
- 	struct imx8mp_audiomix_reset *priv = to_imx8mp_audiomix_reset(rcdev);
- 	void __iomem *reg_addr = priv->base;
--	unsigned int mask, reg;
-+	unsigned int mask, offset, reg;
- 	unsigned long flags;
- 
--	mask = BIT(id);
-+	if (id >=  IMX8MP_AUDIOMIX_RESET_NUM)
-+		return -EINVAL;
-+
-+	mask = reset_map[id].mask;
-+	offset = reset_map[id].offset;
-+
- 	spin_lock_irqsave(&priv->lock, flags);
--	reg = readl(reg_addr + IMX8MP_AUDIOMIX_EARC_OFFSET);
--	writel(reg | mask, reg_addr + IMX8MP_AUDIOMIX_EARC_OFFSET);
-+	reg = readl(reg_addr + offset);
-+	writel(reg | mask, reg_addr + offset);
- 	spin_unlock_irqrestore(&priv->lock, flags);
- 
- 	return 0;
-@@ -78,7 +111,7 @@ static int imx8mp_audiomix_reset_probe(struct auxiliary_device *adev,
- 	spin_lock_init(&priv->lock);
- 
- 	priv->rcdev.owner     = THIS_MODULE;
--	priv->rcdev.nr_resets = fls(IMX8MP_AUDIOMIX_EARC_RESET_MASK);
-+	priv->rcdev.nr_resets = IMX8MP_AUDIOMIX_RESET_NUM;
- 	priv->rcdev.ops       = &imx8mp_audiomix_reset_ops;
- 	priv->rcdev.of_node   = dev->parent->of_node;
- 	priv->rcdev.dev	      = dev;
--- 
-2.25.1
+>
+> Also, see my other review comment, how does BlueZ do this today?
 
+BlueZ handles that in their MGMT command, that is, through Control
+channel -> BlueZ kernel space code -> driver callbacks.
+Once a Bluetooth chipset is opened with the User channel, it can't be
+used with the Control channel simultaneously, and vice versa.
+
+--=20
+Best Regards,
+Hsin-chen
 
