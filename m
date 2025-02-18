@@ -1,1042 +1,268 @@
-Return-Path: <linux-kernel+bounces-519655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C661A3A03D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:44:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4ABFA3A05C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:48:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77E6B188D93D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:41:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3F9417B763
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:42:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B40C226B953;
-	Tue, 18 Feb 2025 14:40:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69F3326D5B9;
+	Tue, 18 Feb 2025 14:40:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ZrGaxfX3"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ly0gdxIP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E50626A1CC;
-	Tue, 18 Feb 2025 14:40:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CDB326B97A;
+	Tue, 18 Feb 2025 14:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739889605; cv=none; b=EluZwcmgdetJoU17sw68+vDGT7hzDWbRzi2GjxyWO5PDlX3ADyfoLYxObbapoqXNm8tgGFtjyq5mtQWthTEeSkQ1RJljWge3biCeRAZNiCkxwqYIzd4O6BFOU4uwAw9cBJqWx82/JKjicz4vDNlL5n3r6oYSTVI4iJDlJ42sXAc=
+	t=1739889610; cv=none; b=dcIUEzAAmvi5GoolcZo1ccqrQ0z/QOiKvnLeDgLOj0t22VeHqvpkIidsNfIs3YQdJhhrpgo6iulXq+ns6Hj8S1IaDZb1WDrALM3ieNpDGxLjov5t4U9AdlJc484mgf9lV2p7xFkP8mgroGVJ2mURuXcSVQJX6CdYhpUZweyE8IE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739889605; c=relaxed/simple;
-	bh=j833WT5C6q/asgIrwu5UTUWM4ccRO4oxQyp2YuStc8c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OKtdQoGj+CzVjjnmM7W60q0VSuQynVsKN3Xjl7HtDK1RKoI+Wkb93MeKeK9h9dTFHu0ssmiA31qNUfgBYK5AY+D72aRtS3acdRhqGsf4TJWSrjVA7QMeny7Bs51JJzc2t7ByV1DOiBiQozs6Y2C2HFwuCBF9uuSK99gDpfHhHCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ZrGaxfX3; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1739889600;
-	bh=j833WT5C6q/asgIrwu5UTUWM4ccRO4oxQyp2YuStc8c=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZrGaxfX3IU6xCrJFYUDSnaiVsczX4VWixX3UxCtvi5vhyMLhP9fbhYmq6XtKvwyao
-	 UXIQoSVHAxBT/mU8CLtULy6lWnHo2dN3ATZ+EDn8GaEVyy/8R7yC6Fvyq+cDUTQEWr
-	 v5KPdP8YDGP5Czy3scLRalf+v7dEZAjt7o8dhJ/4bMNTeG+NUrmQ9DYSckRn74csJc
-	 cJZGHBOc7dlThnKAXUScnnmPu2DWDLHhrVBahXEAcOyWakxoo4H/GXR3b9z1IqkqlG
-	 SI4+6DV2JN19dlDmkDpdHfTSDslWhvYUlcZ9x0W3+b5MeRijprFeojSSZLk6cYGXcH
-	 RA1meGzy0kmPQ==
-Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 658FD17E0CA0;
-	Tue, 18 Feb 2025 15:39:59 +0100 (CET)
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: neil.armstrong@linaro.org
-Cc: quic_jesszhan@quicinc.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	angelogioacchino.delregno@collabora.com,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel@collabora.com,
-	pablo.sun@mediatek.com,
-	christophe.jaillet@wanadoo.fr
-Subject: [PATCH v2 2/2] drm: panel: Add driver for Himax HX8279 and Startek KD070FHFID078
-Date: Tue, 18 Feb 2025 15:39:52 +0100
-Message-ID: <20250218143952.84261-3-angelogioacchino.delregno@collabora.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250218143952.84261-1-angelogioacchino.delregno@collabora.com>
-References: <20250218143952.84261-1-angelogioacchino.delregno@collabora.com>
+	s=arc-20240116; t=1739889610; c=relaxed/simple;
+	bh=vdD04g8DbxrW9E/m9FPFo+hn524y5DCK+6sqKYPsuXY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=j9aWMfDXhyC4sV6gzbL92IKQTnyk9wFtLbq+RblFtWLTSvw7Lbsnd2L0Ytn6quoPWJgKRfDfMMNGW60GCUB0Ucl5M9F1wRS+A2DXDpRR5mm4wjcdYWpZGfFB1YJ0AlcmBC3yYMX1SkQdvHxwjJYTSDW6rurLHknJ18V34/mreAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ly0gdxIP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0D05C4CEEB;
+	Tue, 18 Feb 2025 14:40:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739889610;
+	bh=vdD04g8DbxrW9E/m9FPFo+hn524y5DCK+6sqKYPsuXY=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=Ly0gdxIPP7Epro72hhc+sXNdh019Hy65n7BkHHtFHGrwfoi4oOnzCOZA3xb9Uy9EW
+	 CCLN4wSwMVz0LoSvfX1doEVQThYaq3qvUuTqMXjgddN8b/35so+Orku/wb9r/NkvMJ
+	 T9s9GaAMD9Uk62owD1obeNwiPDsxwWQfeF3lPzasJMmT4Pi9sLSW5uuL3zS249jR++
+	 eeTNalUbEfHeOHVBXoC8RbC5gu+lX9GXQkMRblgVm+VYGkC6Vu/qNnFSAYA/oL12bS
+	 /lMWDdv4KNzz26g0QxCeBeWs1Hf5jlyDZgPHq8rQ7DtqwiCYp1nGhRCoM2Zi+7qMsV
+	 3Ol0pONg9A06g==
+Message-ID: <8afc09d0728c4b71397d6b055dc86ab12310c297.camel@kernel.org>
+Subject: Re: [PATCH] nfsd: decrease cl_cb_inflight if fail to queue cb_work
+From: Jeff Layton <jlayton@kernel.org>
+To: Chuck Lever <chuck.lever@oracle.com>, Li Lingfeng
+ <lilingfeng3@huawei.com>, 	neilb@suse.de, okorniev@redhat.com,
+ Dai.Ngo@oracle.com, tom@talpey.com, 	linux-nfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: yukuai1@huaweicloud.com, houtao1@huawei.com, yi.zhang@huawei.com, 
+	yangerkun@huawei.com, lilingfeng@huaweicloud.com
+Date: Tue, 18 Feb 2025 09:40:07 -0500
+In-Reply-To: <9cea3133-d17c-48c5-8eb9-265fbfc5708b@oracle.com>
+References: <20250218135423.1487309-1-lilingfeng3@huawei.com>
+	 <0ae8a05272c2eb8a503102788341e1d9c49109dd.camel@kernel.org>
+	 <04ed0c70b85a1e8b66c25b9ad4d0aa4c2fb91198.camel@kernel.org>
+	 <9cea3133-d17c-48c5-8eb9-265fbfc5708b@oracle.com>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Add a driver for the Himax HX8279-D MIPI-DSI DriverIC with support
-for the Startek KX070FHFID078 7.0" 1200x1920 IPS panel, found on
-various MediaTek Genio Evaluation Kit boards.
+On Tue, 2025-02-18 at 09:31 -0500, Chuck Lever wrote:
+> On 2/18/25 9:29 AM, Jeff Layton wrote:
+> > On Tue, 2025-02-18 at 08:58 -0500, Jeff Layton wrote:
+> > > On Tue, 2025-02-18 at 21:54 +0800, Li Lingfeng wrote:
+> > > > In nfsd4_run_cb, cl_cb_inflight is increased before attempting to q=
+ueue
+> > > > cb_work to callback_wq. This count can be decreased in three situat=
+ions:
+> > > > 1) If queuing fails in nfsd4_run_cb, the count will be decremented
+> > > > accordingly.
+> > > > 2) After cb_work is running, the count is decreased in the exceptio=
+n
+> > > > branch of nfsd4_run_cb_work via nfsd41_destroy_cb.
+> > > > 3) The count is decreased in the release callback of rpc_task =E2=
+=80=94 either
+> > > > directly calling nfsd41_cb_inflight_end in nfsd4_cb_probe_release, =
+or
+> > > > calling nfsd41_destroy_cb in 	.
+> > > >=20
+> > > > However, in nfsd4_cb_release, if the current cb_work needs to resta=
+rt, the
+> > > > count will not be decreased, with the expectation that it will be r=
+educed
+> > > > once cb_work is running.
+> > > > If queuing fails here, then the count will leak, ultimately causing=
+ the
+> > > > nfsd service to be unable to exit as shown below:
+> > > > [root@nfs_test2 ~]# cat /proc/2271/stack
+> > > > [<0>] nfsd4_shutdown_callback+0x22b/0x290
+> > > > [<0>] __destroy_client+0x3cd/0x5c0
+> > > > [<0>] nfs4_state_destroy_net+0xd2/0x330
+> > > > [<0>] nfs4_state_shutdown_net+0x2ad/0x410
+> > > > [<0>] nfsd_shutdown_net+0xb7/0x250
+> > > > [<0>] nfsd_last_thread+0x15f/0x2a0
+> > > > [<0>] nfsd_svc+0x388/0x3f0
+> > > > [<0>] write_threads+0x17e/0x2b0
+> > > > [<0>] nfsctl_transaction_write+0x91/0xf0
+> > > > [<0>] vfs_write+0x1c4/0x750
+> > > > [<0>] ksys_write+0xcb/0x170
+> > > > [<0>] do_syscall_64+0x70/0x120
+> > > > [<0>] entry_SYSCALL_64_after_hwframe+0x78/0xe2
+> > > > [root@nfs_test2 ~]#
+> > > >=20
+> > > > Fix this by decreasing cl_cb_inflight if the restart fails.
+> > > >=20
+> > > > Fixes: cba5f62b1830 ("nfsd: fix callback restarts")
+> > > > Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
+> > > > ---
+> > > >  fs/nfsd/nfs4callback.c | 10 +++++++---
+> > > >  1 file changed, 7 insertions(+), 3 deletions(-)
+> > > >=20
+> > > > diff --git a/fs/nfsd/nfs4callback.c b/fs/nfsd/nfs4callback.c
+> > > > index 484077200c5d..8a7d24efdd08 100644
+> > > > --- a/fs/nfsd/nfs4callback.c
+> > > > +++ b/fs/nfsd/nfs4callback.c
+> > > > @@ -1459,12 +1459,16 @@ static void nfsd4_cb_done(struct rpc_task *=
+task, void *calldata)
+> > > >  static void nfsd4_cb_release(void *calldata)
+> > > >  {
+> > > >  	struct nfsd4_callback *cb =3D calldata;
+> > > > +	struct nfs4_client *clp =3D cb->cb_clp;
+> > > > +	int queued;
+> > > > =20
+> > > >  	trace_nfsd_cb_rpc_release(cb->cb_clp);
+> > > > =20
+> > > > -	if (cb->cb_need_restart)
+> > > > -		nfsd4_queue_cb(cb);
+> > > > -	else
+> > > > +	if (cb->cb_need_restart) {
+> > > > +		queued =3D nfsd4_queue_cb(cb);
+> > > > +		if (!queued)
+> > > > +			nfsd41_cb_inflight_end(clp);
+> > > > +	} else
+> > > >  		nfsd41_destroy_cb(cb);
+> > > > =20
+> > > >  }
+> > >=20
+> > > Good catch!
+> > >=20
+> > > Reviewed-by: Jeff Layton <jlayton@kernel.org>
+> > >=20
+> >=20
+> > Actually, I think this is not quite right. It's a bit more subtle than
+> > it first appears. The problem of course is that the callback workqueue
+> > jobs run in a different task than the RPC workqueue jobs, so they can
+> > race.
+> >=20
+> > cl_cb_inflight gets bumped when the callback is first queued, and only
+> > gets released in nfsd41_destroy_cb(). If it fails to be queued, it's
+> > because something else has queued the workqueue job in the meantime.
+> >=20
+> > There are two places that can occur: nfsd4_cb_release() and
+> > nfsd4_run_cb(). Since this is occurring in nfsd4_cb_release(), the only
+> > other option is that something raced in and queued it via
+> > nfsd4_run_cb().
+>=20
+> What would be the "something" that raced in?
+>=20
 
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- drivers/gpu/drm/panel/Kconfig              |  11 +
- drivers/gpu/drm/panel/Makefile             |   1 +
- drivers/gpu/drm/panel/panel-himax-hx8279.c | 905 +++++++++++++++++++++
- 3 files changed, 917 insertions(+)
- create mode 100644 drivers/gpu/drm/panel/panel-himax-hx8279.c
+I think we may be able to get there via multiple __break_lease() calls
+on the same layout or delegation. That could mean multiple calls to the
+->lm_break operation on the same object.
 
-diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
-index d7469c565d1d..678c8aabf311 100644
---- a/drivers/gpu/drm/panel/Kconfig
-+++ b/drivers/gpu/drm/panel/Kconfig
-@@ -154,6 +154,17 @@ config DRM_PANEL_LVDS
- 	  handling of power supplies or control signals. It implements automatic
- 	  backlight handling if the panel is attached to a backlight controller.
- 
-+config DRM_PANEL_HIMAX_HX8279
-+	tristate "Himax HX8279-based panels"
-+	depends on OF
-+	depends on DRM_MIPI_DSI
-+	depends on BACKLIGHT_CLASS_DEVICE
-+	help
-+	  Say Y if you want to enable support for panels based on the
-+	  Himax HX8279 controller, such as the Startek KD070FHFID078
-+	  7.0" 1200x1920 IPS LCD panel that uses a MIPI-DSI interface
-+	  and others.
-+
- config DRM_PANEL_HIMAX_HX83102
- 	tristate "Himax HX83102-based panels"
- 	depends on OF
-diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
-index 7dcf72646cac..d55698d7f287 100644
---- a/drivers/gpu/drm/panel/Makefile
-+++ b/drivers/gpu/drm/panel/Makefile
-@@ -16,6 +16,7 @@ obj-$(CONFIG_DRM_PANEL_EBBG_FT8719) += panel-ebbg-ft8719.o
- obj-$(CONFIG_DRM_PANEL_ELIDA_KD35T133) += panel-elida-kd35t133.o
- obj-$(CONFIG_DRM_PANEL_FEIXIN_K101_IM2BA02) += panel-feixin-k101-im2ba02.o
- obj-$(CONFIG_DRM_PANEL_FEIYANG_FY07024DI26A30D) += panel-feiyang-fy07024di26a30d.o
-+obj-$(CONFIG_DRM_PANEL_HIMAX_HX8279) += panel-himax-hx8279.o
- obj-$(CONFIG_DRM_PANEL_HIMAX_HX83102) += panel-himax-hx83102.o
- obj-$(CONFIG_DRM_PANEL_HIMAX_HX83112A) += panel-himax-hx83112a.o
- obj-$(CONFIG_DRM_PANEL_HIMAX_HX8394) += panel-himax-hx8394.o
-diff --git a/drivers/gpu/drm/panel/panel-himax-hx8279.c b/drivers/gpu/drm/panel/panel-himax-hx8279.c
-new file mode 100644
-index 000000000000..fda64230f6f2
---- /dev/null
-+++ b/drivers/gpu/drm/panel/panel-himax-hx8279.c
-@@ -0,0 +1,905 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Himax HX8279 DriverIC panels driver
-+ *
-+ * Copyright (c) 2025 Collabora Ltd.
-+ *                    AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-+ */
-+
-+#include <linux/bitfield.h>
-+#include <linux/delay.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_graph.h>
-+#include <linux/regulator/consumer.h>
-+
-+#include <drm/drm_connector.h>
-+#include <drm/drm_crtc.h>
-+#include <drm/drm_mipi_dsi.h>
-+#include <drm/drm_modes.h>
-+#include <drm/drm_panel.h>
-+
-+/* Page selection */
-+#define HX8279_REG_PAGE			0xb0
-+ #define HX8279_PAGE_SEL		GENMASK(3, 0)
-+
-+/* Page 0 - Driver/Module Configuration */
-+#define HX8279_P0_VGHS			0xbf
-+#define HX8279_P0_VGLS			0xc0
-+#define HX8279_P0_VGPHS			0xc2
-+#define HX8279_P0_VGNHS			0xc4
-+ #define HX8279_P0_VG_SEL		GENMASK(4, 0)
-+ #define HX8279_VGH_MIN_MV		8700
-+ #define HX8279_VGH_STEP_MV		300
-+ #define HX8279_VGL_MIN_MV		6700
-+ #define HX8279_VGL_STEP_MV		300
-+ #define HX8279_VGPNH_MIN_MV		4000
-+ #define HX8279_VGPNX_STEP_MV		50
-+ #define HX8279_VGH_VOLT_SEL(x)		((x - HX8279_VGH_MIN_MV) / HX8279_VGH_STEP_MV)
-+ #define HX8279_VGL_VOLT_SEL(x)		((x - HX8279_VGL_MIN_MV) / HX8279_VGL_STEP_MV)
-+ #define HX8279_VGPN_VOLT_SEL(x)	((x - HX8279_VGPNH_MIN_MV) / HX8279_VGPNX_STEP_MV)
-+
-+/* Page 1 - Gate driver On Array (GOA) Timing */
-+#define HX8279_P1_REG_GOA_L		0xc0
-+#define HX8279_P1_REG_GOUTL(x)		(HX8279_P1_REG_GOA_L + (x))
-+#define HX8279_P1_REG_GOA_R		0xd4
-+#define HX8279_P1_REG_GOUTR(x)		(HX8279_P1_REG_GOA_R + (x))
-+ #define HX8279_GOUT_STB		GENMASK(7, 6)
-+ #define HX8279_GOUT_SEL		GENMASK(5, 0)
-+
-+/* Page 3 - Gate driver On Array (GOA) Configuration */
-+#define HX8279_P3_REG_UNKNOWN_BA	0xba
-+#define HX8279_P3_REG_GOA_STVL		0xc8
-+ #define HX8279_P3_GOA_STV_LEAD		GENMASK(4, 0)
-+#define HX8279_P3_REG_GOA_CKVL		0xc9
-+ #define HX8279_P3_GOA_CKV_LEAD		GENMASK(4, 0)
-+#define HX8279_P3_REG_GOA_CKVD		0xca
-+ #define HX8279_P3_GOA_CKV_NONOVERLAP	BIT(7)
-+ #define HX8279_P3_GOA_CKV_RESERVED	BIT(6)
-+ #define HX8279_P3_GOA_CKV_DUMMY	GENMASK(5, 0)
-+#define HX8279_P3_REG_GOA_CLR1_W_ADJ	0xd2
-+#define HX8279_P3_REG_GOA_CLR234_W_ADJ	0xd3
-+#define HX8279_P3_REG_GOA_CLR1_CFG	0xd4
-+#define HX8279_P3_REG_GOA_CLR_CFG(x)	(HX8279_P3_REG_GOA_CLR1_CFG + x) /* CLR1..4 */
-+ #define HX8279_P3_GOA_CLR_CFG_POLARITY	BIT(7)
-+ #define HX8279_P3_GOA_CLR_CFG_STARTPOS	GENMASK(6, 0)
-+#define HX8279_P3_REG_UNKNOWN_E4	0xe4
-+#define HX8279_P3_REG_UNKNOWN_E5	0xe5
-+
-+/* Page 5 - MIPI */
-+#define HX8279_P5_REG_TIMING		0xb3
-+ #define HX8279_P5_TIMING_THS_SETTLE	GENMASK(7, 5)
-+ #define HX8279_P5_TIMING_LHS_SETTLE	BIT(4)
-+ #define HX8279_P5_TIMING_TLPX		GENMASK(3, 0)
-+#define HX8279_P5_REG_UNKNOWN_B8	0xb8
-+#define HX8279_P5_REG_UNKNOWN_BC	0xbc
-+#define HX8279_P5_REG_UNKNOWN_D6	0xd6
-+
-+/* Page 6 - Engineer */
-+#define HX8279_P6_REG_ENGINEER_PWD	0xb8
-+#define HX8279_P6_REG_INHOUSE_FUNC	0xc0
-+ #define HX8279_P6_ENG_UNLOCK_WORD	0xa5
-+#define HX8279_P6_REG_GAMMA_CHOPPER	0xbc
-+ #define HX8279_P6_GAMMA_POCGM_CTL	GENMASK(6, 4)
-+ #define HX8279_P6_GAMMA_POGCMD_CTL	GENMASK(2, 0)
-+#define HX8279_P6_REG_DLY_TIME_ADJ	0xd5
-+
-+struct hx8279 {
-+	struct drm_panel panel;
-+	struct mipi_dsi_device *dsi[2];
-+	struct regulator_bulk_data vregs[2];
-+	struct gpio_desc *enable_gpio;
-+	struct gpio_desc *reset_gpio;
-+	const struct hx8279_panel_desc *desc;
-+	u8 last_page;
-+	bool skip_voltage_config;
-+	bool skip_goa_timing;
-+	bool skip_goa_config;
-+	bool skip_mipi_timing;
-+	bool skip_gamma_config;
-+};
-+
-+struct hx8279_panel_mode {
-+	const struct drm_display_mode mode;
-+	int bpc;
-+	bool is_video_mode;
-+};
-+
-+struct hx8279_panel_desc {
-+	const char *model_name;
-+	const struct mipi_dsi_device_info dsi_info;
-+	const struct hx8279_panel_mode *mode_data;
-+	bool is_dual_dsi;
-+	u8 num_lanes;
-+	u8 num_modes;
-+
-+	/* Page 0 */
-+	unsigned int vgh_mv;
-+	unsigned int vgl_mv;
-+	unsigned int vgph_mv;
-+	unsigned int vgnh_mv;
-+
-+	/* Page 1 */
-+	u8 gout_l[20];
-+	u8 gout_r[20];
-+
-+	/* Page 3 */
-+	u8 goa_unk_ba;
-+	u8 goa_stv_lead_time_ck;
-+	u8 goa_ckv_lead_time_ck;
-+	u8 goa_ckv_dummy_vblank_num;
-+	bool goa_ckv_non_overlap_ctl;
-+	u8 goa_clr1_width_adj;
-+	u8 goa_clr234_width_adj;
-+	s8 goa_clr_polarity[4];
-+	int goa_clr_start_pos[4];
-+	u8 goa_unk_e4;
-+	u8 goa_unk_e5;
-+
-+	/* Page 5 */
-+	u8 bta_tlpx;
-+	bool lhs_settle_time_by_osc25;
-+	u8 ths_settle_time;
-+	u8 timing_unk_b8;
-+	u8 timing_unk_bc;
-+	u8 timing_unk_d6;
-+
-+	/* Page 6 */
-+	u8 gamma_ctl;
-+	u8 src_delay_time_adj_ck;
-+};
-+
-+static inline struct hx8279 *to_hx8279(struct drm_panel *panel)
-+{
-+	return container_of(panel, struct hx8279, panel);
-+}
-+
-+static int hx8279_set_page(struct hx8279 *hx,
-+			   struct mipi_dsi_multi_context *dsi_ctx, u8 page)
-+{
-+	const u8 cmd_set_page[] = { HX8279_REG_PAGE, page };
-+
-+	if (hx->last_page == page)
-+		return 0;
-+
-+	mipi_dsi_generic_write_multi(dsi_ctx, cmd_set_page, ARRAY_SIZE(cmd_set_page));
-+	if (!dsi_ctx->accum_err)
-+		hx->last_page = page;
-+	else
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+static int hx8279_set_module_config(struct hx8279 *hx,
-+				    struct mipi_dsi_multi_context *dsi_ctx)
-+{
-+	const struct hx8279_panel_desc *desc = hx->desc;
-+	u8 cmd_set_voltage[2];
-+	int ret;
-+
-+	if (hx->skip_voltage_config)
-+		return 0;
-+
-+	/* Page 0 - Driver/Module Configuration */
-+	ret = hx8279_set_page(hx, dsi_ctx, 0);
-+	if (ret)
-+		return ret;
-+
-+	if (desc->vgh_mv) {
-+		cmd_set_voltage[0] = HX8279_P0_VGHS;
-+		cmd_set_voltage[1] = HX8279_VGH_VOLT_SEL(desc->vgh_mv);
-+		mipi_dsi_generic_write_multi(dsi_ctx, cmd_set_voltage,
-+					     ARRAY_SIZE(cmd_set_voltage));
-+	}
-+
-+	if (desc->vgl_mv) {
-+		cmd_set_voltage[0] = HX8279_P0_VGLS;
-+		cmd_set_voltage[1] = HX8279_VGL_VOLT_SEL(desc->vgl_mv);
-+		mipi_dsi_generic_write_multi(dsi_ctx, cmd_set_voltage,
-+					     ARRAY_SIZE(cmd_set_voltage));
-+	}
-+
-+	if (desc->vgph_mv) {
-+		cmd_set_voltage[0] = HX8279_P0_VGPHS;
-+		cmd_set_voltage[1] = HX8279_VGPN_VOLT_SEL(desc->vgph_mv);
-+		mipi_dsi_generic_write_multi(dsi_ctx, cmd_set_voltage,
-+					     ARRAY_SIZE(cmd_set_voltage));
-+	}
-+
-+	if (desc->vgnh_mv) {
-+		cmd_set_voltage[0] = HX8279_P0_VGNHS;
-+		cmd_set_voltage[1] = HX8279_VGPN_VOLT_SEL(desc->vgnh_mv);
-+		mipi_dsi_generic_write_multi(dsi_ctx, cmd_set_voltage,
-+					     ARRAY_SIZE(cmd_set_voltage));
-+	}
-+
-+	return 0;
-+}
-+
-+static int hx8279_set_gout(struct hx8279 *hx,
-+			   struct mipi_dsi_multi_context *dsi_ctx)
-+{
-+	const struct hx8279_panel_desc *desc = hx->desc;
-+	u8 cmd_set_gout[2];
-+	int i, ret;
-+
-+	if (hx->skip_goa_timing)
-+		return 0;
-+
-+	ret = hx8279_set_page(hx, dsi_ctx, 1);
-+	if (ret)
-+		return ret;
-+
-+	for (i = 0; i < ARRAY_SIZE(desc->gout_l); i++) {
-+		cmd_set_gout[0] = HX8279_P1_REG_GOUTL(i);
-+		cmd_set_gout[1] = desc->gout_l[i];
-+		mipi_dsi_generic_write_multi(dsi_ctx, cmd_set_gout,
-+					     ARRAY_SIZE(cmd_set_gout));
-+	}
-+
-+	for (i = 0; i < ARRAY_SIZE(desc->gout_r); i++) {
-+		cmd_set_gout[0] = HX8279_P1_REG_GOUTR(i);
-+		cmd_set_gout[1] = desc->gout_r[i];
-+		mipi_dsi_generic_write_multi(dsi_ctx, cmd_set_gout,
-+					     ARRAY_SIZE(cmd_set_gout));
-+	}
-+
-+	return 0;
-+}
-+
-+static int hx8279_set_goa_cfg(struct hx8279 *hx,
-+			      struct mipi_dsi_multi_context *dsi_ctx)
-+{
-+	const struct hx8279_panel_desc *desc = hx->desc;
-+	u8 cmd_set_goa[2];
-+	int i, ret;
-+
-+	if (hx->skip_goa_config)
-+		return 0;
-+
-+	ret = hx8279_set_page(hx, dsi_ctx, 3);
-+	if (ret)
-+		return ret;
-+
-+	if (desc->goa_unk_ba)  {
-+		cmd_set_goa[0] = HX8279_P3_REG_UNKNOWN_BA;
-+		cmd_set_goa[1] = desc->goa_unk_ba;
-+		mipi_dsi_generic_write_multi(dsi_ctx, cmd_set_goa,
-+					     ARRAY_SIZE(cmd_set_goa));
-+	}
-+
-+	if (desc->goa_stv_lead_time_ck) {
-+		cmd_set_goa[0] = HX8279_P3_REG_GOA_STVL;
-+		cmd_set_goa[1] = FIELD_PREP(HX8279_P3_GOA_STV_LEAD,
-+					    desc->goa_stv_lead_time_ck);
-+		mipi_dsi_generic_write_multi(dsi_ctx, cmd_set_goa,
-+					     ARRAY_SIZE(cmd_set_goa));
-+	}
-+
-+	if (desc->goa_ckv_lead_time_ck) {
-+		cmd_set_goa[0] = HX8279_P3_REG_GOA_CKVL;
-+		cmd_set_goa[1] = FIELD_PREP(HX8279_P3_GOA_CKV_DUMMY,
-+					    desc->goa_ckv_lead_time_ck);
-+		mipi_dsi_generic_write_multi(dsi_ctx, cmd_set_goa,
-+					     ARRAY_SIZE(cmd_set_goa));
-+	}
-+
-+	if (desc->goa_ckv_dummy_vblank_num) {
-+		cmd_set_goa[0] = HX8279_P3_REG_GOA_CKVD;
-+		cmd_set_goa[1] = FIELD_PREP(HX8279_P3_GOA_CKV_LEAD,
-+					    desc->goa_ckv_dummy_vblank_num);
-+		cmd_set_goa[1] |= FIELD_PREP(HX8279_P3_GOA_CKV_NONOVERLAP,
-+					     desc->goa_ckv_non_overlap_ctl);
-+		/* RESERVED must be always set */
-+		cmd_set_goa[1] |= HX8279_P3_GOA_CKV_RESERVED;
-+		mipi_dsi_generic_write_multi(dsi_ctx, cmd_set_goa,
-+					     ARRAY_SIZE(cmd_set_goa));
-+	}
-+
-+	if (desc->goa_clr1_width_adj) {
-+		cmd_set_goa[0] = HX8279_P3_REG_GOA_CLR1_W_ADJ;
-+		cmd_set_goa[1] = desc->goa_clr1_width_adj;
-+		mipi_dsi_generic_write_multi(dsi_ctx, cmd_set_goa,
-+					     ARRAY_SIZE(cmd_set_goa));
-+	}
-+
-+	if (desc->goa_clr234_width_adj) {
-+		cmd_set_goa[0] = HX8279_P3_REG_GOA_CLR234_W_ADJ;
-+		cmd_set_goa[1] = desc->goa_clr234_width_adj;
-+		mipi_dsi_generic_write_multi(dsi_ctx, cmd_set_goa,
-+					     ARRAY_SIZE(cmd_set_goa));
-+	}
-+
-+	/* Polarity and Start Position arrays are of the same size */
-+	for (i = 0; i < ARRAY_SIZE(desc->goa_clr_polarity); i++) {
-+		if (desc->goa_clr_polarity[i] < 0 || desc->goa_clr_start_pos[i] < 0)
-+			continue;
-+
-+		cmd_set_goa[0] = HX8279_P3_REG_GOA_CLR_CFG(i);
-+		cmd_set_goa[1] = FIELD_PREP(HX8279_P3_GOA_CLR_CFG_STARTPOS,
-+					    desc->goa_clr_start_pos[i]);
-+		cmd_set_goa[1] |= FIELD_PREP(HX8279_P3_GOA_CLR_CFG_POLARITY,
-+					     desc->goa_clr_polarity[i]);
-+		mipi_dsi_generic_write_multi(dsi_ctx, cmd_set_goa,
-+					     ARRAY_SIZE(cmd_set_goa));
-+	}
-+
-+	if (desc->goa_unk_e4) {
-+		cmd_set_goa[0] = HX8279_P3_REG_UNKNOWN_E4;
-+		cmd_set_goa[1] = desc->goa_unk_e4;
-+		mipi_dsi_generic_write_multi(dsi_ctx, cmd_set_goa,
-+					     ARRAY_SIZE(cmd_set_goa));
-+	}
-+
-+	cmd_set_goa[0] = HX8279_P3_REG_UNKNOWN_E5;
-+	cmd_set_goa[1] = desc->goa_unk_e5;
-+	mipi_dsi_generic_write_multi(dsi_ctx, cmd_set_goa,
-+				     ARRAY_SIZE(cmd_set_goa));
-+
-+	return 0;
-+}
-+
-+static int hx8279_set_mipi_cfg(struct hx8279 *hx,
-+			       struct mipi_dsi_multi_context *dsi_ctx)
-+{
-+	const struct hx8279_panel_desc *desc = hx->desc;
-+	u8 cmd_set_mipi[2];
-+	int ret;
-+
-+	if (hx->skip_mipi_timing)
-+		return 0;
-+
-+	ret = hx8279_set_page(hx, dsi_ctx, 5);
-+	if (ret)
-+		return ret;
-+
-+	if (desc->bta_tlpx || desc->ths_settle_time || desc->lhs_settle_time_by_osc25) {
-+		cmd_set_mipi[0] = HX8279_P5_REG_TIMING;
-+		cmd_set_mipi[1] = FIELD_PREP(HX8279_P5_TIMING_TLPX, desc->bta_tlpx);
-+		cmd_set_mipi[1] |= FIELD_PREP(HX8279_P5_TIMING_THS_SETTLE,
-+					      desc->ths_settle_time);
-+		cmd_set_mipi[1] |= FIELD_PREP(HX8279_P5_TIMING_LHS_SETTLE,
-+					      desc->lhs_settle_time_by_osc25);
-+		mipi_dsi_generic_write_multi(dsi_ctx, cmd_set_mipi,
-+					     ARRAY_SIZE(cmd_set_mipi));
-+	}
-+
-+	if (desc->timing_unk_b8) {
-+		cmd_set_mipi[0] = HX8279_P5_REG_UNKNOWN_B8;
-+		cmd_set_mipi[1] = desc->timing_unk_b8;
-+		mipi_dsi_generic_write_multi(dsi_ctx, cmd_set_mipi,
-+					     ARRAY_SIZE(cmd_set_mipi));
-+	}
-+
-+	if (desc->timing_unk_bc) {
-+		cmd_set_mipi[0] = HX8279_P5_REG_UNKNOWN_BC;
-+		cmd_set_mipi[1] = desc->timing_unk_bc;
-+		mipi_dsi_generic_write_multi(dsi_ctx, cmd_set_mipi,
-+					     ARRAY_SIZE(cmd_set_mipi));
-+	}
-+
-+	if (desc->timing_unk_d6) {
-+		cmd_set_mipi[0] = HX8279_P5_REG_UNKNOWN_D6;
-+		cmd_set_mipi[1] = desc->timing_unk_d6;
-+		mipi_dsi_generic_write_multi(dsi_ctx, cmd_set_mipi,
-+					     ARRAY_SIZE(cmd_set_mipi));
-+	}
-+
-+	return 0;
-+}
-+
-+static int hx8279_set_adv_cfg(struct hx8279 *hx,
-+			      struct mipi_dsi_multi_context *dsi_ctx)
-+{
-+	const struct hx8279_panel_desc *desc = hx->desc;
-+	const u8 cmd_set_gamma[] = { HX8279_P6_REG_GAMMA_CHOPPER, desc->gamma_ctl };
-+	const u8 cmd_set_dly[] = { HX8279_P6_REG_DLY_TIME_ADJ, desc->src_delay_time_adj_ck };
-+	u8 cmd_set_eng[] = { HX8279_P6_REG_ENGINEER_PWD, HX8279_P6_ENG_UNLOCK_WORD };
-+	int ret;
-+
-+	if (!desc->gamma_ctl && !desc->src_delay_time_adj_ck)
-+		return 0;
-+
-+	ret = hx8279_set_page(hx, dsi_ctx, 6);
-+	if (ret)
-+		return ret;
-+
-+	/* Unlock ENG settings: write same word to both ENGINEER_PWD and INHOUSE_FUNC */
-+	mipi_dsi_generic_write_multi(dsi_ctx, cmd_set_eng, ARRAY_SIZE(cmd_set_eng));
-+
-+	cmd_set_eng[0] = HX8279_P6_REG_INHOUSE_FUNC;
-+	mipi_dsi_generic_write_multi(dsi_ctx, cmd_set_eng, ARRAY_SIZE(cmd_set_eng));
-+
-+	/* Set Gamma Chopper and Gamma buffer Chopper control */
-+	if (desc->gamma_ctl)
-+		mipi_dsi_generic_write_multi(dsi_ctx, cmd_set_gamma,
-+					     ARRAY_SIZE(cmd_set_gamma));
-+
-+	/* Set Source delay time adjustment (CKV falling to Source off) */
-+	if (desc->src_delay_time_adj_ck)
-+		mipi_dsi_generic_write_multi(dsi_ctx, cmd_set_dly,
-+					     ARRAY_SIZE(cmd_set_dly));
-+
-+	/* Lock ENG settings again */
-+	cmd_set_eng[0] = HX8279_P6_REG_ENGINEER_PWD;
-+	cmd_set_eng[1] = 0;
-+	mipi_dsi_generic_write_multi(dsi_ctx, cmd_set_eng, ARRAY_SIZE(cmd_set_eng));
-+
-+	cmd_set_eng[0] = HX8279_P6_REG_INHOUSE_FUNC;
-+	mipi_dsi_generic_write_multi(dsi_ctx, cmd_set_eng, ARRAY_SIZE(cmd_set_eng));
-+
-+	return 0;
-+}
-+
-+static int hx8279_on(struct hx8279 *hx)
-+{
-+	struct mipi_dsi_device *dsi = hx->dsi[0];
-+	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
-+	int ret;
-+
-+	/* Page 5 */
-+	ret = hx8279_set_mipi_cfg(hx, &dsi_ctx);
-+	if (ret)
-+		return ret;
-+
-+	/* Page 1 */
-+	ret = hx8279_set_gout(hx, &dsi_ctx);
-+	if (ret)
-+		return ret;
-+
-+	/* Page 3 */
-+	ret = hx8279_set_goa_cfg(hx, &dsi_ctx);
-+	if (ret)
-+		return ret;
-+
-+	/* Page 0 - Driver/Module Configuration */
-+	ret = hx8279_set_module_config(hx, &dsi_ctx);
-+	if (ret)
-+		return ret;
-+
-+	/* Page 6 */
-+	ret = hx8279_set_adv_cfg(hx, &dsi_ctx);
-+	if (ret)
-+		return ret;
-+
-+	if (dsi_ctx.accum_err)
-+		return dsi_ctx.accum_err;
-+
-+	return 0;
-+}
-+
-+static void hx8279_power_off(struct hx8279 *hx)
-+{
-+	gpiod_set_value_cansleep(hx->reset_gpio, 0);
-+	usleep_range(100, 500);
-+	gpiod_set_value_cansleep(hx->enable_gpio, 0);
-+	regulator_bulk_disable(ARRAY_SIZE(hx->vregs), hx->vregs);
-+}
-+
-+static int hx8279_disable(struct drm_panel *panel)
-+{
-+	struct hx8279 *hx = to_hx8279(panel);
-+	struct mipi_dsi_device *dsi = hx->dsi[0];
-+	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
-+
-+	mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
-+
-+	return 0;
-+}
-+
-+static int hx8279_enable(struct drm_panel *panel)
-+{
-+	struct hx8279 *hx = to_hx8279(panel);
-+	struct mipi_dsi_device *dsi = hx->dsi[0];
-+	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
-+
-+	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
-+
-+	return 0;
-+}
-+
-+static int hx8279_prepare(struct drm_panel *panel)
-+{
-+	struct hx8279 *hx = to_hx8279(panel);
-+	struct mipi_dsi_device *dsi = hx->dsi[0];
-+	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
-+	int ret;
-+
-+	ret = regulator_bulk_enable(ARRAY_SIZE(hx->vregs), hx->vregs);
-+	if (ret)
-+		return ret;
-+
-+	gpiod_set_value_cansleep(hx->enable_gpio, 1);
-+	usleep_range(5000, 6000);
-+	gpiod_set_value_cansleep(hx->reset_gpio, 1);
-+	usleep_range(6000, 7000);
-+
-+	ret = hx8279_on(hx);
-+	if (ret) {
-+		hx8279_power_off(hx);
-+		return ret;
-+	}
-+
-+	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
-+	mipi_dsi_msleep(&dsi_ctx, 130);
-+
-+	dsi->mode_flags |= MIPI_DSI_MODE_LPM;
-+	if (hx->dsi[1])
-+		hx->dsi[1]->mode_flags |= MIPI_DSI_MODE_LPM;
-+
-+	return 0;
-+}
-+
-+static int hx8279_unprepare(struct drm_panel *panel)
-+{
-+	struct hx8279 *hx = to_hx8279(panel);
-+	struct mipi_dsi_device *dsi = hx->dsi[0];
-+	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
-+
-+	dsi->mode_flags &= ~MIPI_DSI_MODE_LPM;
-+	if (hx->dsi[1])
-+		hx->dsi[1]->mode_flags &= ~MIPI_DSI_MODE_LPM;
-+
-+	mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
-+	mipi_dsi_msleep(&dsi_ctx, 130);
-+
-+	hx8279_power_off(hx);
-+	return 0;
-+}
-+
-+static int hx8279_get_modes(struct drm_panel *panel, struct drm_connector *connector)
-+{
-+	struct hx8279 *hx = to_hx8279(panel);
-+	int i;
-+
-+	for (i = 0; i < hx->desc->num_modes; i++) {
-+		struct drm_display_mode *mode;
-+
-+		mode = drm_mode_duplicate(connector->dev, &hx->desc->mode_data[i].mode);
-+		if (!mode)
-+			return -ENOMEM;
-+
-+		drm_mode_set_name(mode);
-+
-+		mode->type |= DRM_MODE_TYPE_DRIVER;
-+		if (hx->desc->num_modes == 1)
-+			mode->type |= DRM_MODE_TYPE_PREFERRED;
-+
-+		drm_mode_probed_add(connector, mode);
-+	}
-+
-+	connector->display_info.bpc = hx->desc->mode_data[0].bpc;
-+	connector->display_info.height_mm = hx->desc->mode_data[0].mode.height_mm;
-+	connector->display_info.width_mm = hx->desc->mode_data[0].mode.width_mm;
-+
-+	return hx->desc->num_modes;
-+}
-+
-+static const struct drm_panel_funcs hx8279_panel_funcs = {
-+	.disable = hx8279_disable,
-+	.unprepare = hx8279_unprepare,
-+	.prepare = hx8279_prepare,
-+	.enable = hx8279_enable,
-+	.get_modes = hx8279_get_modes,
-+};
-+
-+static int hx8279_init_vregs(struct hx8279 *hx, struct device *dev)
-+{
-+	int ret;
-+
-+	hx->vregs[0].supply = "vdd";
-+	hx->vregs[1].supply = "iovcc";
-+	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(hx->vregs),
-+				      hx->vregs);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = regulator_is_supported_voltage(hx->vregs[0].consumer,
-+					     3000000, 5000000);
-+	if (!ret)
-+		return -EINVAL;
-+
-+	ret = regulator_is_supported_voltage(hx->vregs[1].consumer,
-+					     1700000, 1900000);
-+	if (!ret)
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+static int hx8279_check_config(struct hx8279 *hx, struct device *dev)
-+{
-+	const struct hx8279_panel_desc *desc = hx->desc;
-+	int i, num_clr, num_zero;
-+
-+	/* Voltages config validation */
-+	if (!desc->vgh_mv && !desc->vgl_mv && !desc->vgph_mv && !desc->vgnh_mv)
-+		hx->skip_voltage_config = true;
-+	else if ((desc->vgh_mv && desc->vgh_mv < HX8279_VGH_MIN_MV) ||
-+		 (desc->vgl_mv && desc->vgl_mv < HX8279_VGL_MIN_MV) ||
-+		 (desc->vgph_mv && desc->vgph_mv < HX8279_VGPNH_MIN_MV) ||
-+		 (desc->vgnh_mv && desc->vgnh_mv < HX8279_VGPNH_MIN_MV))
-+			return -EINVAL;
-+
-+	/* GOA Timing validation */
-+	num_zero = 1;
-+	for (i = 0; i < ARRAY_SIZE(desc->gout_l); i++) {
-+		if (!desc->gout_l[i])
-+			num_zero++;
-+		else if (desc->gout_l[i] > (HX8279_GOUT_STB | HX8279_GOUT_SEL))
-+			return dev_err_probe(dev, -EINVAL,
-+					     "Invalid value found in gout_l[%d]\n", i);
-+	}
-+	if (num_zero >= ARRAY_SIZE(desc->gout_l))
-+		hx->skip_goa_timing = true;
-+
-+	if (!hx->skip_goa_timing) {
-+		num_zero = 1;
-+		for (i = 0; i < ARRAY_SIZE(desc->gout_r); i++) {
-+			if (!desc->gout_r[i])
-+				num_zero++;
-+			else if (desc->gout_r[i] > (HX8279_GOUT_STB | HX8279_GOUT_SEL))
-+				return dev_err_probe(dev, -EINVAL,
-+						     "Invalid value found in gout_r[%d]\n", i);
-+		}
-+		if (num_zero >= ARRAY_SIZE(desc->gout_r))
-+			hx->skip_goa_timing = true;
-+	}
-+
-+	/* GOA Configuration validation */
-+	if (!desc->goa_unk_ba && !desc->goa_stv_lead_time_ck &&
-+	    !desc->goa_ckv_lead_time_ck && !desc->goa_ckv_dummy_vblank_num &&
-+	    !desc->goa_clr1_width_adj && !desc->goa_clr234_width_adj &&
-+	    !desc->goa_unk_e4 && !desc->goa_unk_e5)
-+		hx->skip_goa_config = true;
-+
-+	if (!hx->skip_goa_config) {
-+		if ((desc->goa_stv_lead_time_ck > HX8279_P3_GOA_STV_LEAD) ||
-+		    (desc->goa_ckv_lead_time_ck > HX8279_P3_GOA_CKV_LEAD) ||
-+		    (desc->goa_ckv_dummy_vblank_num > HX8279_P3_GOA_CKV_DUMMY))
-+			return dev_err_probe(dev, -EINVAL,
-+					     "Invalid lead timings in GOA config\n");
-+		/*
-+		 * Don't perform zero check for polarity and start position, as
-+		 * both pol=0 and start=0 are valid configuration values.
-+		 */
-+		num_clr = 0;
-+		for (i = 0; i < ARRAY_SIZE(desc->goa_clr_start_pos); i++) {
-+			if (desc->goa_clr_start_pos[i] < 0)
-+				continue;
-+			else if (desc->goa_clr_start_pos[i] > HX8279_P3_GOA_CLR_CFG_STARTPOS)
-+				return dev_err_probe(dev, -EINVAL,
-+						     "Invalid start position for CLR%d\n", i + 1);
-+			else
-+				num_clr++;
-+		}
-+		if (!num_clr)
-+			return -EINVAL;
-+
-+		for (i = 0; i < ARRAY_SIZE(desc->goa_clr_polarity); i++) {
-+			if (num_clr < 0)
-+				return -EINVAL;
-+
-+			if (desc->goa_clr_polarity[i] < 0)
-+				continue;
-+			else if (desc->goa_clr_polarity[i] > 1)
-+				return dev_err_probe(dev, -EINVAL,
-+						     "Invalid polarity for CLR%d\n", i + 1);
-+			else
-+				num_clr--;
-+		}
-+	}
-+
-+	/* MIPI Configuration validation */
-+	if (!desc->bta_tlpx && !desc->lhs_settle_time_by_osc25 &&
-+	    !desc->ths_settle_time && !desc->timing_unk_b8 &&
-+	    !desc->timing_unk_bc && !desc->timing_unk_d6)
-+		hx->skip_mipi_timing = true;
-+
-+	/* Gamma Configuration validation */
-+	if (desc->gamma_ctl > (HX8279_P6_GAMMA_POCGM_CTL | HX8279_P6_GAMMA_POGCMD_CTL))
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+static int hx8279_probe(struct mipi_dsi_device *dsi)
-+{
-+	struct device *dev = &dsi->dev;
-+	struct hx8279 *hx;
-+	int i, num_dsis = 1, ret;
-+
-+	hx = devm_kzalloc(dev, sizeof(*hx), GFP_KERNEL);
-+	if (!hx)
-+		return -ENOMEM;
-+
-+	ret = hx8279_init_vregs(hx, dev);
-+	if (ret)
-+		return ret;
-+
-+	hx->desc = device_get_match_data(dev);
-+	if (!hx->desc)
-+		return -ENODEV;
-+
-+	/*
-+	 * In some DriverICs some or all fields may be OTP: perform a
-+	 * basic configuration check before writing to help avoiding
-+	 * irreparable mistakes.
-+	 *
-+	 * Please note that this is not perfect and will only check if
-+	 * the values may be plausible; values that are wrong for a
-+	 * specific display, but still plausible for DrIC config will
-+	 * be accepted.
-+	 */
-+	ret = hx8279_check_config(hx, dev);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Invalid DriverIC configuration\n");
-+
-+	/* The enable line may be always tied to VCCIO, so this is optional */
-+	hx->enable_gpio = devm_gpiod_get_optional(dev, "enable", GPIOD_ASIS);
-+	if (IS_ERR(hx->enable_gpio))
-+		return dev_err_probe(dev, PTR_ERR(hx->enable_gpio),
-+				     "Failed to get enable GPIO\n");
-+
-+	hx->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_ASIS);
-+	if (IS_ERR(hx->reset_gpio))
-+		return dev_err_probe(dev, PTR_ERR(hx->reset_gpio),
-+				     "Failed to get reset GPIO\n");
-+
-+	/* If the panel is connected on two DSIs then DSI0 left, DSI1 right */
-+	if (hx->desc->is_dual_dsi) {
-+		const struct mipi_dsi_device_info *info = &hx->desc->dsi_info;
-+		struct mipi_dsi_host *dsi_r_host;
-+		struct device_node *dsi_r;
-+
-+		dsi_r = of_graph_get_remote_node(dsi->dev.of_node, 1, -1);
-+		if (!dsi_r)
-+			return dev_err_probe(dev, -ENODEV, "Cannot get secondary DSI node.\n");
-+
-+		dsi_r_host = of_find_mipi_dsi_host_by_node(dsi_r);
-+		of_node_put(dsi_r);
-+		if (!dsi_r_host)
-+			return dev_err_probe(dev, -EPROBE_DEFER,
-+					     "Cannot get secondary DSI host\n");
-+
-+		hx->dsi[1] = devm_mipi_dsi_device_register_full(dev, dsi_r_host, info);
-+		if (IS_ERR(hx->dsi[1]))
-+			return dev_err_probe(dev, PTR_ERR(hx->dsi[1]),
-+					     "Cannot get secondary DSI node\n");
-+		num_dsis++;
-+		mipi_dsi_set_drvdata(hx->dsi[1], hx);
-+	}
-+
-+	hx->dsi[0] = dsi;
-+	mipi_dsi_set_drvdata(dsi, hx);
-+
-+	drm_panel_init(&hx->panel, dev, &hx8279_panel_funcs, DRM_MODE_CONNECTOR_DSI);
-+
-+	ret = drm_panel_of_backlight(&hx->panel);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Failed to get backlight\n");
-+
-+	drm_panel_add(&hx->panel);
-+
-+	for (i = 0; i < num_dsis; i++) {
-+		hx->dsi[i]->lanes = hx->desc->num_lanes;
-+		hx->dsi[i]->format = MIPI_DSI_FMT_RGB888;
-+
-+		hx->dsi[i]->mode_flags = MIPI_DSI_CLOCK_NON_CONTINUOUS |
-+					 MIPI_DSI_MODE_LPM;
-+
-+		if (hx->desc->mode_data[0].is_video_mode)
-+			hx->dsi[i]->mode_flags |= MIPI_DSI_MODE_VIDEO |
-+						  MIPI_DSI_MODE_VIDEO_SYNC_PULSE;
-+
-+		ret = devm_mipi_dsi_attach(dev, hx->dsi[i]);
-+		if (ret < 0)
-+			return dev_err_probe(dev, ret,
-+					     "Cannot attach to DSI%d host.\n", i);
-+	}
-+
-+	/* Make sure we start in a known state: panel off */
-+	gpiod_set_value_cansleep(hx->reset_gpio, 0);
-+	gpiod_set_value_cansleep(hx->enable_gpio, 0);
-+
-+	return 0;
-+}
-+
-+static void hx8279_remove(struct mipi_dsi_device *dsi)
-+{
-+	struct hx8279 *hx = mipi_dsi_get_drvdata(dsi);
-+
-+	drm_panel_remove(&hx->panel);
-+}
-+
-+static const struct hx8279_panel_mode startek_kd070fhfid078_modes[] = {
-+	{
-+		.mode = {
-+			.clock = 156458,
-+			.hdisplay = 1200,
-+			.hsync_start = 1200 + 50,
-+			.hsync_end = 1200 + 50 + 24,
-+			.htotal = 1200 + 50 + 24 + 66,
-+			.vdisplay = 1920,
-+			.vsync_start = 1920 + 14,
-+			.vsync_end = 1920 + 14 + 2,
-+			.vtotal = 1920 + 14 + 2 + 10,
-+			.width_mm = 95,
-+			.height_mm = 151,
-+			.type = DRM_MODE_TYPE_DRIVER
-+		},
-+		.bpc = 8,
-+		.is_video_mode = true,
-+	},
-+};
-+
-+static const struct hx8279_panel_desc startek_kd070fhfid078 = {
-+	.model_name = "Startek KD070FHFID078",
-+	.dsi_info = {
-+		.type = "KD070FHFID078",
-+		.channel = 0,
-+		.node = NULL,
-+	},
-+	.mode_data = startek_kd070fhfid078_modes,
-+	.num_modes = ARRAY_SIZE(startek_kd070fhfid078_modes),
-+	.num_lanes = 4,
-+
-+	/* Driver/Module Configuration: LC Matrix voltages */
-+	.vgh_mv = 18000,
-+	.vgl_mv = 12100,
-+	.vgph_mv = 5500,
-+	.vgnh_mv = 5500,
-+
-+	/* Gate driver On Array (GOA) Timing */
-+	.gout_l = { 0xd, 0xd, 0x6, 0x6, 0x8, 0x8, 0xa, 0xa, 0xc, 0xc,
-+		    0x0, 0x0, 0xe, 0xe, 0x1, 0x1, 0x4, 0x4, 0x0, 0x0 },
-+	.gout_r = { 0xd, 0xd, 0x5, 0x5, 0x7, 0x7, 0x9, 0x9, 0xb, 0xb,
-+		    0x0, 0x0, 0xe, 0xe, 0x1, 0x1, 0x3, 0x3, 0x0, 0x0 },
-+
-+	/* Gate driver On Array (GOA) Configuration */
-+	.goa_unk_ba = 0xf0,
-+	.goa_stv_lead_time_ck = 7,
-+	.goa_ckv_lead_time_ck = 3,
-+	.goa_ckv_dummy_vblank_num = 1,
-+	.goa_clr1_width_adj = 1,
-+	.goa_clr234_width_adj = 5,
-+	.goa_clr_polarity = { 0, 1, -1, -1 },
-+	.goa_clr_start_pos = { 5, 10, -1, -1 },
-+	.goa_unk_e4 = 0xc0,
-+	.goa_unk_e5 = 0x00,
-+
-+	/* MIPI Configuration */
-+	.bta_tlpx = 2,
-+	.lhs_settle_time_by_osc25 = true,
-+	.ths_settle_time = 2,
-+	.timing_unk_b8 = 0x7f,
-+	.timing_unk_bc = 0x20,
-+	.timing_unk_d6 = 0x7f,
-+
-+	/* ENG/Gamma Configuration */
-+	.gamma_ctl = FIELD_PREP_CONST(HX8279_P6_GAMMA_POCGM_CTL, 1) |
-+		     FIELD_PREP_CONST(HX8279_P6_GAMMA_POGCMD_CTL, 1),
-+	.src_delay_time_adj_ck = 72,
-+};
-+
-+static const struct of_device_id hx8279_of_match[] = {
-+	{ .compatible = "startek,kd070fhfid078", .data = &startek_kd070fhfid078 },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, hx8279_of_match);
-+
-+static struct mipi_dsi_driver hx8279_driver = {
-+	.probe = hx8279_probe,
-+	.remove = hx8279_remove,
-+	.driver = {
-+		.name = "panel-himax-hx8279",
-+		.of_match_table = hx8279_of_match,
-+	},
-+};
-+module_mipi_dsi_driver(hx8279_driver);
-+
-+MODULE_AUTHOR("AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>");
-+MODULE_DESCRIPTION("Himax HX8279 DriverIC panels driver");
-+MODULE_LICENSE("GPL");
--- 
-2.48.1
+>=20
+> > That will have incremented cl_cb_inflight() an extra
+> > time and so your patch will make sense for that.
+> >=20
+> > Unfortunately, the slot may leak in that case if nothing released it
+> > earlier. I think this probably needs to call nfsd41_destroy_cb() if the
+> > job can't be queued. That might, however, race with the callback
+> > workqueue job running.
+> >=20
+> > I think we might need to consider adding some sort of "this callback is
+> > running" atomic flag: do a test_and_set on the flag in nfsd4_run_cb()
+> > and only queue the workqueue job if that comes back false. Then, we can
+> > clear the bit in nfsd41_destroy_cb().
+> >=20
+> > That should ensure that you never fail to queue the workqueue job from
+> > nfsd4_cb_release().
+> >=20
+> > Thoughts?
+>=20
+>=20
 
+--=20
+Jeff Layton <jlayton@kernel.org>
 
