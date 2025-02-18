@@ -1,107 +1,98 @@
-Return-Path: <linux-kernel+bounces-519251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEF5DA399D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:01:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 816A4A399BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:58:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD1D31890CA4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:01:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40E53188BEBF
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:58:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D7F423AE7D;
-	Tue, 18 Feb 2025 11:00:46 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00B87239567;
+	Tue, 18 Feb 2025 10:58:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="xQY828Vy"
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0296223957E;
-	Tue, 18 Feb 2025 11:00:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49DB713D51E;
+	Tue, 18 Feb 2025 10:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739876446; cv=none; b=FCxUMvhqBpJMm0xHCiUiMnZ2K+pC+B0eNzZVpu0LybAIcA2My6FTZkGYZ12lVZokKd9Kj6c+t2HIePBk+86PlG1aAWb4vz3H+OAzSIyCJYoT8dHi4v095pKfcCwZssyuc7OcSWg9JRhvWB12mBVLN/N+0cS5JLOaGaGWNmsW6mM=
+	t=1739876322; cv=none; b=TmmeCTYNCGkUTAw6Pt0L9m4H8Dg9muIpjPmXofzNTQIXeV7ZBj1IaXp79P5OIZDhmEDwu1PlHlFvBYEElhXnFQYiZN1lqIXFsHZam1CjLr4+P23dVEhP+Dh4Wqcqn9fGJfBprcq7Tma1ukslIrPjUiBCOaPKrAqr3rsoVv36fAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739876446; c=relaxed/simple;
-	bh=AaXHOLfSiRko7E/buiBV0ldynweqc/O4MMXoh7oVF3U=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sAbcvnA6KphV9v+MmiDat6Anl4rRQTj3oW+yK6l+r+uTQYmo91OwWoiJ9iASs3PZDJGtSgoJHZ2AeXhMhqCwdjl52epQ40X1tLDWShOsRNaKqZtMztHXNYQy1yrd+3qVTHkaOz8Tj02fkbNSjvfuIkQMiAZvQUkB+/HdJVYH/7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4YxxNX65cRzMrcK;
-	Tue, 18 Feb 2025 18:59:08 +0800 (CST)
-Received: from dggemv711-chm.china.huawei.com (unknown [10.1.198.66])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6F7FB1A0188;
-	Tue, 18 Feb 2025 19:00:38 +0800 (CST)
-Received: from kwepemn100006.china.huawei.com (7.202.194.109) by
- dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 18 Feb 2025 19:00:38 +0800
-Received: from huawei.com (10.175.113.133) by kwepemn100006.china.huawei.com
- (7.202.194.109) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 18 Feb
- 2025 19:00:37 +0800
-From: Wang Hai <wanghai38@huawei.com>
-To: <edumazet@google.com>, <ncardwell@google.com>, <kuniyu@amazon.com>,
-	<davem@davemloft.net>, <dsahern@kernel.org>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <horms@kernel.org>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH net] tcp: Fix error ts_recent time during three-way handshake
-Date: Tue, 18 Feb 2025 18:58:24 +0800
-Message-ID: <20250218105824.34511-1-wanghai38@huawei.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1739876322; c=relaxed/simple;
+	bh=JrSYRQbRbJIRg2Bl8bm/Ov8CdgaQPul6Fqzh7AfEKfM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dqg2rhPG6nLZyWd0/hGT98rnRqcZ1Mi1/Lk9I7EZUGYLCjEqyn7O7Y4sHkII3YczoNzfSrHFa4GIb0d9BtB7EDwfg3DtFxmt0M73keOVFrC8JTgm4bMLVDSzwof89zDWcdz3Z8Bxm+JJ1WdAlQy/Cs8lYY+Fn9aQXgq+WudtIL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=xQY828Vy; arc=none smtp.client-ip=115.124.30.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1739876315; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+	bh=pmDZr8RzS+flLxV3A4zL7q/WNhMN3Hm30taNoOceehA=;
+	b=xQY828Vy2KA0XT7IRoMqtFkcZFpw0xeOtEqaV/lWlIznhV7MCUZpwHA8CNlIiynjXtr+fEXaWkoGxQ1qC0Vk5FJG0Rz2xhYzby6RXCpl93NTUrUN1QVahRPeD5qdDOuwfV66Zp14FctVBK+CkLQgLLN5uSCzjiXqd+Gcqy2CXbs=
+Received: from U-V2QX163P-2032.local(mailfrom:fengwei_yin@linux.alibaba.com fp:SMTPD_---0WPlh.8b_1739876313 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 18 Feb 2025 18:58:34 +0800
+Date: Tue, 18 Feb 2025 18:58:32 +0800
+From: YinFengwei <fengwei_yin@linux.alibaba.com>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: will@kernel.org, mark.rutland@arm.com, 
+	linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	jie.li.linux@linux.alibaba.com
+Subject: Re: [PATCH] perf/arm-cmn: don't claim resource during ioremap() for
+ CMN700 with ACPI
+Message-ID: <hfip42i45jkumuvgdthxm2bk6qylqyqh6erzaq43yiqygvn6uu@dcui675lwtkm>
+References: <20250218012111.30068-1-fengwei_yin@linux.alibaba.com_quarantine>
+ <d5040b5c-564d-4abf-be22-d2aa1183b633@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemn100006.china.huawei.com (7.202.194.109)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d5040b5c-564d-4abf-be22-d2aa1183b633@arm.com>
 
-If two ack packets from a connection enter tcp_check_req at the same time
-through different cpu, it may happen that req->ts_recent is updated with
-with a more recent time and the skb with an older time creates a new sock,
-which will cause the tcp_validate_incoming check to fail.
+On Tue, Feb 18, 2025 at 10:31:42AM +0800, Robin Murphy wrote:
+> On 2025-02-18 1:21 am, Yin Fengwei wrote:
+> > Currently, arm-cmn PMU driver assumes ACPI claim resource
+> > for CMN600 + ACPI. But with CMN700 + ACPI, the device probe
+> > failed because of resource claim failes when ioremap() is
+> > called:
+> > [   10.837300] arm-cmn ARMHC700:00: error -EBUSY: can't request region for resource [mem 0x40000000-0x4fffffff]
+> > [   10.847310] arm-cmn ARMHC700:00: probe with driver arm-cmn failed with error -16
+> > [   10.854726] arm-cmn ARMHC700:02: error -EBUSY: can't request region for resource [mem 0x40040000000-0x4004fffffff]
+> > [   10.865085] arm-cmn ARMHC700:02: probe with driver arm-cmn failed with error -16
+> > 
+> > Let CMN700 + ACPI do same as CMN600 + ACPI to allow CMN700
+> > work in ACPI env.
+> 
+> No, the CMN-600 routine is a special case for CMN-600 having two nested
+> memory resources of its own. CMN-700 and everything else only have one
+> memory resource, so that is not appropriate. What else is claiming the
+> region to cause a conflict?
+Sorry. Forgot the link for the new proposed fix:
+https://lore.kernel.org/all/Z7QYlUP6nfBNMXsv@U-V2QX163P-2032.local/
 
-cpu1                                cpu2
-tcp_check_req
-                                    tcp_check_req
-req->ts_recent = tmp_opt.rcv_tsval = t1
-                                    req->ts_recent = tmp_opt.rcv_tsval = t2
+My understanding is that there are two problems here:
+1. ACPI claim the memory range and that's why we see this -EBUSY error
+   with correct code path for CMN700 + ACPI table.
 
-newsk->ts_recent = req->ts_recent = t2 // t1 < t2
-tcp_child_process
-tcp_rcv_state_process
-tcp_validate_incoming
-tcp_paws_check
-if ((s32)(rx_opt->ts_recent - rx_opt->rcv_tsval) <= paws_win) // failed
+2. It's not correct to apply CMN600 probe method to CMN700 because
+   CMN600 has two nested memory resouces while CMN700 should only have
+   one memory resource. And you don't want to introduce trick to handle
+   incorect ACPI DSDT.
 
-In tcp_check_req, restore ts_recent to this skb's to fix this bug.
+Regards
+Yin, Fengwei
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Wang Hai <wanghai38@huawei.com>
----
- net/ipv4/tcp_minisocks.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/net/ipv4/tcp_minisocks.c b/net/ipv4/tcp_minisocks.c
-index b089b08e9617..0208455f9eb8 100644
---- a/net/ipv4/tcp_minisocks.c
-+++ b/net/ipv4/tcp_minisocks.c
-@@ -878,6 +878,10 @@ struct sock *tcp_check_req(struct sock *sk, struct sk_buff *skb,
- 	sock_rps_save_rxhash(child, skb);
- 	tcp_synack_rtt_meas(child, req);
- 	*req_stolen = !own_req;
-+	if (own_req && tcp_sk(child)->rx_opt.tstamp_ok &&
-+	    unlikely(tcp_sk(child)->rx_opt.ts_recent != tmp_opt.rcv_tsval))
-+		tcp_sk(child)->rx_opt.ts_recent = tmp_opt.rcv_tsval;
-+
- 	return inet_csk_complete_hashdance(sk, child, req, own_req);
- 
- listen_overflow:
--- 
-2.17.1
-
+> 
+> Thanks,
+> Robin.
 
