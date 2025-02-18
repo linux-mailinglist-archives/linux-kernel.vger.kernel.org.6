@@ -1,147 +1,133 @@
-Return-Path: <linux-kernel+bounces-520358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45C41A3A911
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 21:32:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8301A3A921
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 21:34:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A54B4178A53
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:30:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 613A9177216
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:31:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43C701E0E08;
-	Tue, 18 Feb 2025 20:25:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E33311EB1B9;
+	Tue, 18 Feb 2025 20:25:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="gHIkD4zo"
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KkdB3XAL"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE24A1D618A
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 20:25:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B38C01EB1B0;
+	Tue, 18 Feb 2025 20:25:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739910343; cv=none; b=H11keqs0C7AlbvbL7QblR79fYtUyXDDKZMg5tTAsVWYtTw7JP3YQOAwGVmBW4LSobuckD+eOMXHVGR5X/6KkmVYsT1UzXlXd4dJtFXNJ5rFU6TyhB5gQ9O3pbJ3yG+8EhUF4Ve6uvQrSGITxRaUuNay2eA2EI5H7zMxZCSd+QHY=
+	t=1739910359; cv=none; b=MryMI2cCahhQN57o6k7H7YH7YVpeCLs4A/kOzLwgeGP5sbj+gpr/6SaTMC5i9jrvJhtD1463AChBzi4rLTAIePh1/9lxzteMc06g5qmiWK0UHHbLTRm91PvocSF6o8M0M5hpZRcc/qoECDjd3XESkG7K0mual5GljWK6G+kjXv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739910343; c=relaxed/simple;
-	bh=cDkEeHC9gnLs+ohg4PIIyzg8RBeo4zppUQIu/rcKYug=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D+VqzWu55B6potAshnPSp+hIlQhZHTR2cSb1Ny/gwOOB76e8CMxa/GchhHjCDmvnwYAiLwosKhveKRkkQd0aj9Hnuw7n+eqCm1COOnROQ2hAPgP1KW0y3aRV0ipaOHMkIS42P9znVLgMGnusJbUWgxfL+3FF7DdIPLPHnZyq++M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=gHIkD4zo; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6e67bc04a3bso30604316d6.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 12:25:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1739910339; x=1740515139; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=22K3K8H/Z4VEtlmzFLZqURw4WdVHs3LP2poxDfotsZE=;
-        b=gHIkD4zoR5M7kIF6gESfGO6ZGntALAOdRrImpbY/3pCxKxl33jSyuKS3rIEYXbvkHg
-         PH2GkmoZbt6LPZO2zwiirLkna8cOA/Qk6l06Fo3fzq+htVrZX5Pp9RiL+0xrgD1Be2He
-         AEtrJ/eTsaTSYzttNoZAef+eavyKoWSbY5Xl2iEgIMR+wYdS+O3IGAHtUpf6Yqh6Lh1P
-         d+bbJfW3aqjY2j94gM9jW5XIBIFZkwwrRnRe09zZKbyTBZg9RYGYGxcO1ZHY0ZdBLEGp
-         AL3ozj6SAdDq4Z8Hzzts/CnsmcIw43p/GZewaWKA+sLHV5jMniP8JLuPJMTCWJRS9ntw
-         NUyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739910339; x=1740515139;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=22K3K8H/Z4VEtlmzFLZqURw4WdVHs3LP2poxDfotsZE=;
-        b=NK1H8OOYHgLLypDSpi9tjelk2dtEwh75rIZk6kiaJwFHWLoiYPgkpUdXcDtGgYvocI
-         EbmdrejTJjPglpUhCzzQMdlHaMqP0eC9mBIcPW5Kvv5NC+rtjfaXZ6JHxM/rjWzBatOl
-         qawgamQ2C0nK7JrzNFkQRSvTVMwEj5j9MqI3Iar62SWlR7jNswfkzZwjGbCGSEcQUYYz
-         vYLt61Bn/+yknnlKOMNTKocTgLgVrgcrDjos/4gauAIb0IYPhb3tRYiLf0aqNpFlMKr8
-         Z1d2wN3+R3sDi2cmYlYsRm6TBzkmQnUGIDsGHW/ZEF1MhCv8tv5AvehurGiM3kd5su+Y
-         GYGw==
-X-Forwarded-Encrypted: i=1; AJvYcCXGZgodj8Il6A+HNuIVOHTooui5FFG6sxamSoasCIMCxmRS0JffRwVedCIYulj9ECYurnnwXPMH3u7OC2Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6xphJhuEVVPfmyjHvQc61edZN92KFOhIykKTV5kKGSmfOv9hO
-	2VQEFPSZbIbFWrakDSs3XUdS5oRsYj9sI4++hcY/oOIxbIlYvRJ71XxZqnSuxhw=
-X-Gm-Gg: ASbGncsxFXVBY02I/obIkfDYLSMAlHrifn4FGT7NhEWOb5mFr/bQfYFvaj7lAo+jpsU
-	zwyD3+TTn/M3qPX6Zcesr3+hZ+DV6qT+NYNqTZu7YnUDACoZpn8Md5raAgl3n4j7aGSTRAkU/RH
-	z4MuRB0Qkq9g3/yi827Yx3iK7AA4RedBv29H9XvosOkU21OinG4UPOIy0iztwnQEZ9sbSx8v14a
-	USzUZzYMmctEo8/7A8jUdKPYZgXTpF4yJi873dIfwPnuQqu0baB77oIpacWZKT8Ov14TwMGEHwd
-	+aL4FG96Cp7lEqQ68/tJ+ZhOtWYZ4EsUvnGVjoQlaiV6cp+yLdxogYTPpZlGkNhH/HDp8D9zqQ=
-	=
-X-Google-Smtp-Source: AGHT+IEI19wWOEv8YZ18w+TjkiABH7btIaZS7NvAL6Op0w+BcszJCj70Cd8D/1/PYxxqGY2625dWkA==
-X-Received: by 2002:a05:6214:300e:b0:6e6:5bb2:c1a6 with SMTP id 6a1803df08f44-6e66cd064f7mr220329296d6.28.1739910339666;
-        Tue, 18 Feb 2025 12:25:39 -0800 (PST)
-Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c09a14d45dsm308921585a.10.2025.02.18.12.25.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 12:25:38 -0800 (PST)
-Date: Tue, 18 Feb 2025 15:25:37 -0500
-From: Gregory Price <gourry@gourry.net>
-To: David Hildenbrand <david@redhat.com>
-Cc: Yang Shi <shy828301@gmail.com>, lsf-pc@lists.linux-foundation.org,
-	linux-mm@kvack.org, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: CXL Boot to Bash - Section 3: Memory (block) Hotplug
-Message-ID: <Z7TswQbpPV590ADr@gourry-fedora-PF4VCD3F>
-References: <Z226PG9t-Ih7fJDL@gourry-fedora-PF4VCD3F>
- <Z7OWmDXEYhT0BB0X@gourry-fedora-PF4VCD3F>
- <CAHbLzkq6Me6nRaL6b09YxJ_nFkxb+n+M3-q_aJwOs2ZO4q8VCg@mail.gmail.com>
- <Z7TLwtQY3vGUw2bO@gourry-fedora-PF4VCD3F>
- <1b4c6442-a2b0-4290-8b89-c7b82a66d358@redhat.com>
+	s=arc-20240116; t=1739910359; c=relaxed/simple;
+	bh=9IUfkYYejgzYqaILdxndHszsbEAz7eKvYdVVZCcUKtk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=hYHfGY9Q1cSENWhYV+1MSynFG5yYGZIMJjGIiCF7mRf9H9RD2hGrcVFmyb0K9UkSu9eSCVJpWTU6h8A2WPRkvDG0zkt5jVKwv7WOZ6+UMjjg1upDFFvK9+D/E0+cDMddv4SEdMkBmBCgcKQ9fFU4KAAlrTQTA6ASymN82mutzfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KkdB3XAL; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51IIwLAc014993;
+	Tue, 18 Feb 2025 20:25:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	xbintQ10k3gaAfsoEtml4GPxRMtrtT4KCwA9NwsAfgw=; b=KkdB3XALGA7Fv65j
+	1YtvGRTvtISofMA88kCcatAXJ4lPS2qmR7MyYEd+oA1fJ4+7SReJNFSAMt9oJytj
+	aVCSXEWaG2LdV8QvcRpcKudpnbyEhvPEIzZwMXTmCBfQm/sAjhMbM2UA8BN2jU4a
+	hVk+baI35/OrogM7ftGk9mnrOA1y8KDB3jTXGKDtOx1xiKLJDi/GKN+XMRApMzXN
+	t+7oHkR969s1VTrWMdDwcA6bzlBoFn/Po68dzWzTJsZGJVm8qqm8JOY2h0RW25db
+	8kqDnqukvcJLnY6i0nZydSaoLavGhAf1NW3YQj9zDfRUwYrdv9q7XVprEDtA/L0L
+	/ePqQw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44vyy106nk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Feb 2025 20:25:40 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51IKPdfe002295
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Feb 2025 20:25:39 GMT
+Received: from [10.226.59.182] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 18 Feb
+ 2025 12:25:39 -0800
+Message-ID: <b3a8816c-3846-83ab-9750-fd12041d9495@quicinc.com>
+Date: Tue, 18 Feb 2025 13:25:38 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1b4c6442-a2b0-4290-8b89-c7b82a66d358@redhat.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH 3/4] kbuild: slim down package for building external
+ modules
+Content-Language: en-US
+To: Masahiro Yamada <masahiroy@kernel.org>, <linux-kbuild@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, Kees Cook <kees@kernel.org>,
+        Nathan
+ Chancellor <nathan@kernel.org>,
+        Nicolas Schier <nicolas@fjasle.eu>,
+        Ben
+ Hutchings <ben@decadent.org.uk>
+References: <20240727074526.1771247-1-masahiroy@kernel.org>
+ <20240727074526.1771247-4-masahiroy@kernel.org>
+From: Jeffrey Hugo <quic_jhugo@quicinc.com>
+In-Reply-To: <20240727074526.1771247-4-masahiroy@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 6K0e3kPgCKMQGaIOtOscn-GlU9SZ47QA
+X-Proofpoint-ORIG-GUID: 6K0e3kPgCKMQGaIOtOscn-GlU9SZ47QA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-18_09,2025-02-18_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ priorityscore=1501 lowpriorityscore=0 phishscore=0 clxscore=1011
+ suspectscore=0 spamscore=0 mlxlogscore=983 mlxscore=0 bulkscore=0
+ malwarescore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2502100000 definitions=main-2502180139
 
-On Tue, Feb 18, 2025 at 08:25:59PM +0100, David Hildenbrand wrote:
-> On 18.02.25 19:04, Gregory Price wrote:
+On 7/27/2024 1:42 AM, Masahiro Yamada wrote:
+> Exclude directories and files unnecessary for building external modules:
 > 
-> Hm?
-> 
-> If you enable memmap_on_memory, we will place the memmap on that carved-out
-> region, independent of ZONE_NORMAL/ZONE_MOVABLE etc. It's the "altmap".
->
-> Reason that we can place the memmap on a ZONE_MOVABLE is because, although
-> it is "unmovable", we told memory offlining code that it doesn't have to
-> care about offlining that memmap carveout, there is no migration to be done.
-> Just offline the block (memmap gets stale) and remove that block (memmap
-> gets removed).
-> 
-> If there is a reason where we carve out the memmap and *not* use it, that
-> case must be fixed.
-> 
+>   - include/config/  (except include/config/auto.conf)
+>   - scripts/atomic/
+>   - scripts/dtc/
+>   - scripts/kconfig/
+>   - scripts/mod/mk_elfconfig
+>   - scripts/package/
+>   - scripts/unifdef
+>   - .config
 
-Hm, I managed to trace down the wrong path on this particular code.
+Please revert this (the removal of .config).
 
-I will go back and redo my tests to sanity check, but here's what I
-would expect to see:
+I got some strange reports that our external module install broke, and 
+traced it to this change.  Our external module references the .config 
+because we have different logic for the build depending on if other, 
+related modules are present or not.
 
-1) if memmap_on_memory is off, and hotplug capacity (node1) is
-   zone_movable - then zone_normal (node0) should have N pages
-   accounted in nr_memmap_pages
+Also, it looks like this broke DKMS for some configurations, which not 
+only impacts DKMS itself [1] but also downstream projects [2].
 
-   1a) when dropping these memory blocks, I should see node0 memory
-       use drop by 4GB - since this is just GFP_KERNEL pages.
+While DKMS may be updated going forward to avoid this issue, there are 
+plenty of affected version out in the wild.
 
-2) if memmap_on_memory is on, and hotplug capacity (node1) is
-   zone_movable - then each memory block (256MB) should appear
-   as 252MB (-4MB of 64-byte page structs).  For 256GB (my system)
-   I should see a total of 252GB of onlined memory (-4GB of page struct)
+Also, I haven't surveyed every distro, but it looks like Ubuntu still 
+packages the .config with their headers in their upcoming "Plucky" 
+release based on 6.12.  I suspect they wouldn't do that if they didn't 
+feel it was needed/useful.
 
-   2a) when dropping these memory blocks, I should see node0 memory use
-       stay the same - since it was vmemmap usage.
+-Jeff
 
-I will double check that this isn't working as expected, and i'll double
-check for a build option as well.
-
-stupid question - it sorta seems like you'd want this as the default
-setting for driver-managed hotplug memory blocks, but I suppose for
-very small blocks there's problems (as described in the docs).
-
-:thinking: - is it silly to suggest maybe a per-driver memmap_on_memory
-setting rather than just a global setting?  For CXL capacity, this seems
-like a no-brainer since blocks can't be smaller than 256MB (per spec).
-
-~Gregory
+[1]: https://github.com/dell/dkms/issues/464
+[2]: https://github.com/linux-surface/linux-surface/issues/1654
 
