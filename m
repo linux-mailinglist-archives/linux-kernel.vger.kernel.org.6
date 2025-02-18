@@ -1,100 +1,245 @@
-Return-Path: <linux-kernel+bounces-519816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F2DFA3A232
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:10:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A0D9A3A25D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:16:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 963CD3A280C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:09:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFA14162381
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:14:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BAC916C850;
-	Tue, 18 Feb 2025 16:09:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23BDB26E65B;
+	Tue, 18 Feb 2025 16:14:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b="lb1FKjCI"
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JUzDrhRe"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3D2026E630
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 16:09:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF3E026E634;
+	Tue, 18 Feb 2025 16:14:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739894965; cv=none; b=SH8beTULeA2OvygFGwjIPV4Un1RVFOh5qLy80vRmIx9+yecSHemlY/bDR6F3nG615rbyUjGjnmKZn9rSqrI8Cc83uPiiWPV5YZjWjcxDmtGy3/d5HW0FEsdOLmMCgiZqbcnKyPL1Ws7bqGWsaE5eCZNhO67jEDtOPSkm4PlZs7g=
+	t=1739895247; cv=none; b=GRNHiO3EAmYvmwnqLq1qwba5X3ypPrQGmUfvkvPbpOv40m1bGvvX/8Aa+nan/HSUKMKPLDhfZpSsrNAA7n4IZgwCS3u6M5pMFmQltiIC1b2+4ErrSMGwdYI2CZD55SHuVORXEU06gXtb1O0WHsa8VtjhryxNxfnJ8fK3ycsuzIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739894965; c=relaxed/simple;
-	bh=AOhOsmxZezWbzjTsfDSX8kpBDPtwMyCO8DPaiR7znVw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZZUiFWFi67HL89EXJA2sHTcRocozhYPx//EV/7kLpiz1Y3ysHg9MgeMZMtO0taHQ1DMjMRtSF93+C4/vUr7tr/wTtkPFNPBMB1fuOSOmEmZG2hkRBnGanAIfN01iggVRgWmvkbaeUvVcj6CWjw/8DF5QNRXgiKwHyk1/vjQmNK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io; spf=pass smtp.mailfrom=rosenzweig.io; dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b=lb1FKjCI; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosenzweig.io
-Date: Tue, 18 Feb 2025 11:09:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosenzweig.io;
-	s=key1; t=1739894951;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iEztrQmMNZf8KxW9it4BP89Ve0C07hVeIKvyoxZfpJA=;
-	b=lb1FKjCI/WnYRemUD4eSVsAiqqKAwPZA+IuP1hhdgSp52sjlv2BMqOtqQ6OkTSYFTlGp2D
-	VSyjNnweZztIHyNNEDCbT04vjvqC2KTV0HL2y0ml6hgl6K22rQPOOCbxTdOSWVBUrS9Wb1
-	+eJuNV0+pB3SeoDtvAGXupFaZNIDISuwEFWJLdlqLWMCdGVB0d420Fyg9krTERTJYeT2OU
-	uvJKwMox1fq95/oUZTl84dtLigO0QyM1F99D6nEX/nF/tyo+dViHaYJSEpjY4BfIzbtAPf
-	SQJsUb8x+4BIkSft47WDuW3RkOeoV0AcvqACXtnvwujIi86DQcuu/BcY8oX0Bw==
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Alyssa Rosenzweig <alyssa@rosenzweig.io>
-To: Mark Brown <broonie@kernel.org>
-Cc: James Calligeros <jcalligeros99@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>,
-	Baojun Xu <baojun.xu@ti.com>, Dan Murphy <dmurphy@ti.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shi Fu <shifu0704@thundersoft.com>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Martin =?utf-8?Q?Povi=C5=A1er?= <povik+lin@cutebit.org>,
-	Hector Martin <marcan@marcan.st>, linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	asahi@lists.linux.dev, linux-hwmon@vger.kernel.org,
-	Neal Gompa <neal@gompa.dev>
-Subject: Re: [PATCH v2 13/29] ASoC: tas2770: Export 'die_temp' to sysfs
-Message-ID: <Z7Swn3nuGJfOO0Bc@blossom>
-References: <20250218-apple-codec-changes-v2-0-932760fd7e07@gmail.com>
- <20250218-apple-codec-changes-v2-13-932760fd7e07@gmail.com>
- <Z7Slq3BQY7S5REPy@finisterre.sirena.org.uk>
+	s=arc-20240116; t=1739895247; c=relaxed/simple;
+	bh=QERHkl/V9lV5UIXOlipCfHSfkDdvOfyeCTe7/qY/tEc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uF3kLBLzZgz6Ia8EJQmqB4QqLueKuEiFfwhdkgLmQHc6B6UgvAYL4NzD/VupauyG09LZ4xSOSJ0PebkEPzwbvrawMToVU673akPwXE/z3lkIPf5jfZ2KpaqQNlC+TUeanK0ACjKcQ1Y97Be1JzvoIbb7h2Ba8khr5W9E78bG4hE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JUzDrhRe; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2212a930001so60858475ad.0;
+        Tue, 18 Feb 2025 08:14:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739895245; x=1740500045; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RVj+BEh1+9LUAzm0IUaqd3Q04b9Nlt+xlsc1OoHZ4LQ=;
+        b=JUzDrhRe8pDy2ms9N/r+6Vu/OboR2VduV9rMN+ruwpX+GF2k4fbZCacEQpZ6SDPFYv
+         tbXDKiAg0VgDOM58EPFMF5YW27Jp7FoQys7xENwirTisO4ilpet80w0uA+fPb3jXlCQc
+         1sfjO3uGU97Xo3IzfJ4GBIuujbitQRZFCLo9mKM16ivqSeM8BqyuTaNj9S/FA15pxcla
+         pNWw4XH6ut5r9kofvMnOGEzq2KlWz9qWcsZob1w9Rxo4rC6vjMPId7861HviEvW2Bpi2
+         3rriF18mUhz+/p/erlOGXdDgGkAULQCTZItzXDsgLd7PvgCcT/7evt8qFnKb0T7ouUP+
+         APug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739895245; x=1740500045;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RVj+BEh1+9LUAzm0IUaqd3Q04b9Nlt+xlsc1OoHZ4LQ=;
+        b=kwK9EI7Qqh37RtpYgiF3iLox4i5llC+Tcq6m9NQJrIJ+G4sbc80LE+dcuAmFeKcfUl
+         GxMDDglMbq+z0ZAx0PJOy7HUSzxkEYy94CyTn/B+NasHB3BBIPIx149aeqUPdbm8OJU1
+         kNZSBGmLCfV+QD8rn2yNzk5uWY19HhBN85aN7wjS/nBxp62TB4wxuOkH0xxHwqXjDwqj
+         8DCTRvB/xGkvXGHco8aTMvLcp0qkaLTs3ttwYmdk1mlmD65O78e+eoIwpRsMReJYZB+n
+         +v6ewcpCAmG0AdKb0vD9hLvu/udSflEpNPhCzXKLRTzV8ZGxkzlv0sJ6ZF85hXZIVT5M
+         aX4A==
+X-Forwarded-Encrypted: i=1; AJvYcCV7mpONfrwm1mJEKgH6X2HATgt4i2soUNOjIRQ885jl+BbECbzzB7s9BP638tau10PfZDH8OzgYWxVl3ug=@vger.kernel.org, AJvYcCXaQP+EKaZKmtUBFRonaD3DNhhVvbDZ2UJuUu3IfJ7Za6GcACK63b075C0XPMfrS/Z103szHHXopFU4skTgJyq4Yw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZIuGgi/tgQn1O8ZCAIbxyz/Ypz6+djeiI5LnTtdqjQjfBb1mG
+	lKvIx0AMwb/RFqUYD3MJMjWSOYORlWsTCH+B/ADsWg3UcLsyOKwZ1CJgccET69s=
+X-Gm-Gg: ASbGncvrwmVPzfnjzOlCbW4v3quLii4dpgmJQrk9XxATc2Hj5RHsfFnhMsnsATN+ytx
+	fDXnN7QyQWmn1Z5rp2Hm1sCVtPMXDkMRnG3MaU42JwsF2zaA3iWqXC7ZXtO0muME5lh3U0pRxfj
+	QKWhB67onqg+cWMHvgqPVADW7ssZzn4UwB5aSl/yukxS8+VJpEvBVFVqv95QbUg4cFwLgSAsPTW
+	wE3dTs17xINkOG6ee9JgiJva7/722XuV8dY+Aa+lzd6otIA7PLQbLBKzYUHEIK6zJCcTVXyxAVO
+	dq/+l8+Vy9QmcSJX/4QgjeQ2H1Uot0gQszlIqw==
+X-Google-Smtp-Source: AGHT+IFL56XC6i8cvX7WNC3OfD2xcmGHIV7BQiHSo46T2lN7bkJSuuHQzbhNoorPwTW+txhSxOIvig==
+X-Received: by 2002:a17:903:2f8c:b0:21f:b483:2ad5 with SMTP id d9443c01a7336-22104038460mr211908965ad.20.1739895244758;
+        Tue, 18 Feb 2025 08:14:04 -0800 (PST)
+Received: from fedora.am.students.amrita.edu ([175.184.253.10])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d53490b6sm90934545ad.16.2025.02.18.08.14.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2025 08:14:04 -0800 (PST)
+From: Siddharth Menon <simeddon@gmail.com>
+To: devicetree@vger.kernel.org,
+	andersson@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: baolin.wang@linux.alibaba.com,
+	linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	BiscuitBobby <simeddon@gmail.com>
+Subject: [PATCH] dt-bindings: hwlock: Convert to dtschema
+Date: Tue, 18 Feb 2025 21:39:35 +0530
+Message-ID: <20250218161352.269237-1-simeddon@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z7Slq3BQY7S5REPy@finisterre.sirena.org.uk>
-X-Migadu-Flow: FLOW_OUT
 
-Le Tue, Feb 18, 2025 at 03:22:19PM +0000, Mark Brown a écrit :
-> On Tue, Feb 18, 2025 at 06:35:47PM +1000, James Calligeros wrote:
-> > From: Martin Povišer <povik+lin@cutebit.org>
-> > 
-> > Export a file for the readout of die temperature measurements.
-> > As per the datasheet, the temperature can be calculated by
-> > dividing the register value by 16 and then subtracting 93.
-> 
-> Please don't ignore review comments, people are generally making them
-> for a reason and are likely to have the same concerns if issues remain
-> unaddressed.  Having to repeat the same comments can get repetitive and
-> make people question the value of time spent reviewing.  If you disagree
-> with the review comments that's fine but you need to reply and discuss
-> your concerns so that the reviewer can understand your decisions.
+From: BiscuitBobby <simeddon@gmail.com>
 
-Which review comment...? The only thing I could find was about hwmon
-exporting, which James added a patch for in v2 ("ASoC: tas2770: expose
-die temp to hwmon"). Maybe I missed an email?
+Convert the generic hwspinlock bindings to DT schema.
+---
+ This is my first time converting bindings to dt schema, please let me
+ know if I have overlooked anything.
+ .../devicetree/bindings/hwlock/hwlock.txt     | 59 -----------------
+ .../devicetree/bindings/hwlock/hwlock.yaml    | 65 +++++++++++++++++++
+ 2 files changed, 65 insertions(+), 59 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/hwlock/hwlock.txt
+ create mode 100644 Documentation/devicetree/bindings/hwlock/hwlock.yaml
+
+diff --git a/Documentation/devicetree/bindings/hwlock/hwlock.txt b/Documentation/devicetree/bindings/hwlock/hwlock.txt
+deleted file mode 100644
+index 085d1f5c916a..000000000000
+--- a/Documentation/devicetree/bindings/hwlock/hwlock.txt
++++ /dev/null
+@@ -1,59 +0,0 @@
+-Generic hwlock bindings
+-=======================
+-
+-Generic bindings that are common to all the hwlock platform specific driver
+-implementations.
+-
+-Please also look through the individual platform specific hwlock binding
+-documentations for identifying any additional properties specific to that
+-platform.
+-
+-hwlock providers:
+-=================
+-
+-Required properties:
+-- #hwlock-cells:        Specifies the number of cells needed to represent a
+-                        specific lock.
+-
+-hwlock users:
+-=============
+-
+-Consumers that require specific hwlock(s) should specify them using the
+-property "hwlocks", and an optional "hwlock-names" property.
+-
+-Required properties:
+-- hwlocks:              List of phandle to a hwlock provider node and an
+-                        associated hwlock args specifier as indicated by
+-                        #hwlock-cells. The list can have just a single hwlock
+-                        or multiple hwlocks, with each hwlock represented by
+-                        a phandle and a corresponding args specifier.
+-
+-Optional properties:
+-- hwlock-names:         List of hwlock name strings defined in the same order
+-                        as the hwlocks, with one name per hwlock. Consumers can
+-                        use the hwlock-names to match and get a specific hwlock.
+-
+-
+-1. Example of a node using a single specific hwlock:
+-
+-The following example has a node requesting a hwlock in the bank defined by
+-the node hwlock1. hwlock1 is a hwlock provider with an argument specifier
+-of length 1.
+-
+-	node {
+-		...
+-		hwlocks = <&hwlock1 2>;
+-		...
+-	};
+-
+-2. Example of a node using multiple specific hwlocks:
+-
+-The following example has a node requesting two hwlocks, a hwlock within
+-the hwlock device node 'hwlock1' with #hwlock-cells value of 1, and another
+-hwlock within the hwlock device node 'hwlock2' with #hwlock-cells value of 2.
+-
+-	node {
+-		...
+-		hwlocks = <&hwlock1 2>, <&hwlock2 0 3>;
+-		...
+-	};
+diff --git a/Documentation/devicetree/bindings/hwlock/hwlock.yaml b/Documentation/devicetree/bindings/hwlock/hwlock.yaml
+new file mode 100644
+index 000000000000..2492fdad3c6e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/hwlock/hwlock.yaml
+@@ -0,0 +1,65 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/hwlock/hwlock.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Generic Hardware Lock (hwlock)
++
++description: |
++  Generic bindings that are common to all the hwlock platform specific driver
++  implementations.
++  Please also look through the individual platform specific hwlock binding
++  documentations for identifying any additional properties specific to that
++  platform.
++
++maintainers:
++  - Bjorn Andersson <andersson@kernel.org>
++  - Rob Herring <robh@kernel.org>
++  - Krzysztof Kozlowski <krzk+dt@kernel.org>
++  - Conor Dooley <conor+dt@kernel.org>
++
++properties:
++  $nodename:
++    pattern: "^hwlock(@.*)?"
++
++  "#hwlock-cells":
++    description: |
++      Specifies the number of cells needed to represent a specific lock.
++    minimum: 1
++
++  hwlocks:
++    description: |
++      List of phandle to a hwlock provider node and an associated hwlock args
++      specifier as indicated by #hwlock-cells. The list can have just a single
++      hwlock or multiple hwlocks, with each hwlock represented by a phandle and
++      a corresponding args specifier.
++
++  hwlock-names:
++    description: |
++      List of hwlock name strings defined in the same order as the hwlocks,
++      with one name per hwlock. Consumers can use the hwlock-names to match
++      and get a specific hwlock.
++
++patternProperties:
++  "^hwlock@[0-9a-f]+$":
++    type: object
++    description: Hardware lock provider node
++
++required:
++  - "#hwlock-cells"
++
++additionalProperties: true
++
++examples:
++  # Example 1: A node using a single specific hwlock
++  - |
++    node {
++      hwlocks = <&hwlock1 2>;
++    };
++
++  # Example 2: A node using multiple specific hwlocks
++  - |
++    node {
++      hwlocks = <&hwlock1 2>, <&hwlock2 0 3>;
++    };
+-- 
+2.48.1
+
 
