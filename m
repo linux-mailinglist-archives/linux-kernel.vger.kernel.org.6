@@ -1,133 +1,133 @@
-Return-Path: <linux-kernel+bounces-519798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6865EA3A213
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:05:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43C0DA3A231
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:10:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CF7E173E0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:04:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFD1C1884949
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:07:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 118B326E14D;
-	Tue, 18 Feb 2025 16:04:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F2F026E164;
+	Tue, 18 Feb 2025 16:07:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="U9YtFzZE"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Ul3mvmdN"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C6F123536B
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 16:03:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 369DB16C850;
+	Tue, 18 Feb 2025 16:07:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739894641; cv=none; b=JaBpDPfONhV31Oe/1wF2GYdilmjnW+8GncsR+BZsW7cEtLpWMEvLyKXasBUMzdcP+7H/ByGi2HFY+iYOLrcJm9hCbktbsNHiPjTaQDKgAiY4Ryt2to8asLqFA+8pyF96k4EXtDhVmlvRxkXh9S4km3SlT+ff5iplAOCFe8Umxxo=
+	t=1739894846; cv=none; b=F2aOTwITTrthQ2z7c6FhHdu6zTDT0Hr+bJdzuHeUpCnOdlT8n0EQKjuEzPoDea41s3tPKsVMHyNOwE2DKyg9vNN860PGHGH6BLMKQTlfkqPSVx5/jrhf67lx+ryUOjfQdvZZzgAkg2I3jTrocdwqDHwcAaeYRUEiHuhlD3/X5hw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739894641; c=relaxed/simple;
-	bh=q895/9qgMhtBqu0Uzl9tkRoBti/jVnEblaswsLouDTk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Gi0N7X9PwiDYW82HfbwHbA9DU5JHuthpEI9Ws2GwJMoWkZt5pweGKvTATtbysqGCVpfOMpQAsbZjohobUQujCPlSRO/t3+PXm6eOoZDIVOb4cEpwynXj1TWRghp3uAa8+P/Arcn/ex7DB/GNif8gedptfSpPh/AFz+TuZPbHtPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=U9YtFzZE; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-220d6c10a17so102605465ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 08:03:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739894639; x=1740499439; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bZDB6163brXmpWZDgT/6YzrIWqBj9L6ybAjsJnZ9ahg=;
-        b=U9YtFzZEuLU/jcqKKSgYYRSnELHPQ1kk+vkXgzXhTaMLdrxUn73VCuVKwYzi3F5GWe
-         jGuDLN98B4OFgddwplBYxJHAc8FY+cpsVIh9H43AdEjO1f5Fonjzp2WE2rlv2iGyI6yH
-         Buy5OzJTbMwkcjqtM0BEjzcPFxSfU0EOsZRjd5EG4IXpfiWbBPI3dCxNPWur8RAyIpBK
-         a166xLmFfzbf3CuZBWlr8Gwn2bXfOnR6quHgARi9b/6PeuCLjvN2TP9EL+nblRICypwZ
-         tQeLT6LgX8qpBsyNDqtuEpd0vUjzLpZr6HeWldgIYcq8nnZansrz5YQfuInn1KC8eO5I
-         48PA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739894639; x=1740499439;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bZDB6163brXmpWZDgT/6YzrIWqBj9L6ybAjsJnZ9ahg=;
-        b=Py/9fo7gcVEAAzQzFceVsCFb3fwpQc8sZnA8kZd9BHxoD5oJwmTNWFdis6pEYVZMm+
-         EF7eWQ9CfjOuVkA+OL34nCzPwePz74nWKLQGtFha4EfJoYx4LujBnFzAkv/19h7UElOM
-         MjA9I+SFQjtPrkjJzUCNK4fPs6r954LlYMVJ2mVI4q8l9OVcWnqRhmhxQ4aLL674fkVy
-         7PfCHxCp1mavn9CMuylEYwE1UvAIRSl+26DL2K80Vc3h4GiCMemfMNQMZRPp4eToTpAH
-         uc751lUZTytLiwdd16K2Q3aVGeh1GNrv7UgydWRt0VBWQuZrS5OqL4lwagRz0Dp9n1cp
-         QZCg==
-X-Forwarded-Encrypted: i=1; AJvYcCXIa6kr8X0mxlpz5rKPpevR4i0fdqxIYyWQm4Ek5FspzBFdcPoc41cCM+F49p3uFhR38nZamtMTRDy7/TY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKe3WELBDJvDMHDLE6lypsrdoF9Oh3Qn034TfA5qO2K4gCouNP
-	NN3NBzg919tA1mOIpNZtTdpRwS+//RUUFt2RW0WUXCn7MsEySmUCvKJbzxbTJZRLIrf66tFADIv
-	ZAg==
-X-Google-Smtp-Source: AGHT+IFNVuGgmnbQtTfdLkBHrvWh0s23OtsUX5+0HskCmpFlWqBybVXiHNX0UB/9IvEeeiAdLnbnMSNoI9o=
-X-Received: from pfan14.prod.google.com ([2002:aa7:8a4e:0:b0:730:7648:7a74])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:4e06:b0:732:706c:c4ff
- with SMTP id d2e1a72fcca58-7329cf56e98mr240940b3a.7.1739894639222; Tue, 18
- Feb 2025 08:03:59 -0800 (PST)
-Date: Tue, 18 Feb 2025 08:03:57 -0800
-In-Reply-To: <20250217085731.19733-1-yan.y.zhao@intel.com>
+	s=arc-20240116; t=1739894846; c=relaxed/simple;
+	bh=0K73ZkcdRvK5i5bBvBQT3dcTZxfeYnrTBCghlFqDUdc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h1dgu13KO6rviPAVxLLwxQB9qB9sDVAJ8uDvMRvfu6y/o0AvpcrfGl8VvOoR2IQmeGa9CZt3UF6/SprEC/l1KDoMEpOyympdbaGG9iNMk3xhSyK/S5Xfj+NjtXdch+g2AKgExVkz7oUdBeCeUl9wkTZEkZP05kZKIkzAoqAjfmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Ul3mvmdN; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1739894842;
+	bh=0K73ZkcdRvK5i5bBvBQT3dcTZxfeYnrTBCghlFqDUdc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Ul3mvmdNt3c5yp0JAGjna3WGQZXhVrj5Y0+b5XYRj4dSziyBL3CyuyVV5cXkoaTHo
+	 EGfH7cLak7T88MqCU7YJhe+GoNUl/D50CZ/8iWgPZmqPeZn2ChAn834w58E4QkEObc
+	 agx9FkxpCiNMMVWRDTum4SyNy9PNg2NV2+n7bZ/6zHP8U3OZ+dcjpN532mNeialcfv
+	 xhFa44LJ17VBNzWt+vt+Ej1BHwDfXeBB8Gb9+XcO0qlkz796T2INGPTaZxqFdxKiIN
+	 +3k1C7YuyXC/mTt0qBUkBK2qexUtu8qJVrz09XSrpWSffWv6OHENdqAETRX0WVnsYk
+	 ugUP9XeUHm5gw==
+Received: from trenzalore.hitronhub.home (unknown [23.233.251.139])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: detlev)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id BF89C17E1247;
+	Tue, 18 Feb 2025 17:07:19 +0100 (CET)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Chris Morgan <macromorgan@hotmail.com>,
+	Kever Yang <kever.yang@rock-chips.com>,
+	Dragan Simic <dsimic@manjaro.org>,
+	Tim Lunn <tim@feathertop.org>,
+	Michael Riesch <michael.riesch@wolfvision.net>,
+	FUKAUMI Naoki <naoki@radxa.com>,
+	Detlev Casanova <detlev.casanova@collabora.com>,
+	Alexey Charkov <alchark@gmail.com>,
+	Stephen Chen <stephen@radxa.com>,
+	Elon Zhang <zhangzj@rock-chips.com>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	kernel@collabora.com
+Subject: [PATCH v5 0/2] Add Radxa Rock 4D support
+Date: Tue, 18 Feb 2025 11:04:17 -0500
+Message-ID: <20250218160714.140709-1-detlev.casanova@collabora.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250217085535.19614-1-yan.y.zhao@intel.com> <20250217085731.19733-1-yan.y.zhao@intel.com>
-Message-ID: <Z7SvbSHe74HUXvz4@google.com>
-Subject: Re: [PATCH 2/2] KVM: x86/mmu: Bail out kvm_tdp_map_page() when VM dead
-From: Sean Christopherson <seanjc@google.com>
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: pbonzini@redhat.com, rick.p.edgecombe@intel.com, 
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon, Feb 17, 2025, Yan Zhao wrote:
-> Bail out of the loop in kvm_tdp_map_page() when a VM is dead. Otherwise,
-> kvm_tdp_map_page() may get stuck in the kernel loop when there's only one
-> vCPU in the VM (or if the other vCPUs are not executing ioctls), even if
-> fatal errors have occurred.
-> 
-> kvm_tdp_map_page() is called by the ioctl KVM_PRE_FAULT_MEMORY or the TDX
-> ioctl KVM_TDX_INIT_MEM_REGION. It loops in the kernel whenever RET_PF_RETRY
-> is returned. In the TDP MMU, kvm_tdp_mmu_map() always returns RET_PF_RETRY,
-> regardless of the specific error code from tdp_mmu_set_spte_atomic(),
-> tdp_mmu_link_sp(), or tdp_mmu_split_huge_page(). While this is acceptable
-> in general cases where the only possible error code from these functions is
-> -EBUSY, TDX introduces an additional error code, -EIO, due to SEAMCALL
-> errors.
-> 
-> Since this -EIO error is also a fatal error, check for VM dead in the
-> kvm_tdp_map_page() to avoid unnecessary retries until a signal is pending.
-> 
-> The error -EIO is uncommon and has not been observed in real workloads.
-> Currently, it is only hypothetically triggered by bypassing the real
-> SEAMCALL and faking an error in the SEAMCALL wrapper.
-> 
-> Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
-> ---
->  arch/x86/kvm/mmu/mmu.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> index 08ed5092c15a..3a8d735939b5 100644
-> --- a/arch/x86/kvm/mmu/mmu.c
-> +++ b/arch/x86/kvm/mmu/mmu.c
-> @@ -4700,6 +4700,10 @@ int kvm_tdp_map_page(struct kvm_vcpu *vcpu, gpa_t gpa, u64 error_code, u8 *level
->  	do {
->  		if (signal_pending(current))
->  			return -EINTR;
-> +
-> +		if (vcpu->kvm->vm_dead)
+Add the basic support for the board. (Not officially released yet)
+It is based on the Rockchip rk3576 SoC, so I haven't added the
+following devices yet:
+ - VOP/HDMI
+ - UFS
+as the support for those has not been merged yet, but are close to be
+and I already validated that they work.
+It will come with another patch set.
 
-This needs to be READ_ONCE().  Along those lines, I think I'd prefer
+The following devices are supported and working:
+ - UART
+ - SD Card
+ - Ethernet
+ - USB
+ - RTC
 
-		if (kvm_check_request(KVM_REQ_VM_DEAD, vcpu))
-			return -EIO;
+Changes since v4:
+ - Add the correct pinctrls when needed
+ - Move #clock- and #gpio- props to their corresponding props
+ - Add mmc0 alias
+ - Rename gpio to gpios
+ - Remove unnecessary blank lines
 
-or
+Changes since v3:
+ - Reorder nodes alphabetically
+ - Add missing cpu supply
 
-		if (kvm_check_request(KVM_REQ_VM_DEAD, vcpu)) 
-			return -EIO;
+Changes since v2:
+ - Move and rename snps,reset-* props to the PHY node
+ - Rename phy@1 to phy-ethernet@1
 
-so that if more terminal requests come long, we can bundle everything into a
-single check via a selective version of kvm_request_pending().
+Changes since v1:
+ - Add missing dt bindings
+ - Remove clock-frequency in rtc node
+ - Add line break in pmic pinctrls
+
+Detlev Casanova (1):
+  dt-bindings: arm: rockchip: Add Radxa ROCK 4D board
+
+Stephen Chen (1):
+  arm64: dts: rockchip: Add Radxa ROCK 4D device tree
+
+ .../devicetree/bindings/arm/rockchip.yaml     |   5 +
+ arch/arm64/boot/dts/rockchip/Makefile         |   1 +
+ .../boot/dts/rockchip/rk3576-rock-4d.dts      | 689 ++++++++++++++++++
+ 3 files changed, 695 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts
+
+-- 
+2.48.1
+
 
