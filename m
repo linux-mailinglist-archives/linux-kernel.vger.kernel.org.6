@@ -1,120 +1,127 @@
-Return-Path: <linux-kernel+bounces-520276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38811A3A7E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:43:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 324B8A3A7DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:42:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9BF83B1B7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:42:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C5CA1895326
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:43:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F5621E835C;
-	Tue, 18 Feb 2025 19:41:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NdboW2Tr"
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52F071E8335;
+	Tue, 18 Feb 2025 19:42:50 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E761EFFA7;
-	Tue, 18 Feb 2025 19:41:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED3FD1ACEDA
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 19:42:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739907709; cv=none; b=JogmrhAuCy6BqDcN8O9h0JihpU7DSbfbUnckXhUuhXyXyK5FlU+8mg1TTStxPU+PmJg/K5yIm48LfASsh+vWG+bHWWuecCLF9leVwhit0/pqMi2nVcAaptARok2Kf2q8tg/pluSnRLnTnl02Pi/Cu86mu6vdDME7lYJ0KYb/cB4=
+	t=1739907770; cv=none; b=TFBcNe9hDe/9+10iBCMkAfN7TXqhRL2K/QRQzSLCRxcz1Q08k2Vi6mYA+ZC/smX+b9I+ORkSAeVUiR8gXH3rdDgqcHRiq0DHOrIm0BPbP5MtSxqRR9utYZtrzRcedcnz47arxBVtTsyKWcy0ND8hPqcIw6hpZ2esfyh3sjW7vaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739907709; c=relaxed/simple;
-	bh=GMhY2X6oUkz9NAXj5l8fbYvKnOZ0XDHBM4sQNLT/xkY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kjcYaiYFQBzgP2ECxQczfsHEw1x/t622/Mcj167he7sEVzaUr/F+9W9+t1u5sociGD1oRAy0mmOOq5ix6CBCGtBaQEB7bkrPIY0XztJ4gD4/FHwPH4cKiWqncKW9M6c2943K047fBBANW53u8G4DT0ll+1+pmmGs1OkOahQqbg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NdboW2Tr; arc=none smtp.client-ip=209.85.217.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-4be76fecac5so399959137.1;
-        Tue, 18 Feb 2025 11:41:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739907707; x=1740512507; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vrSeJ2SSKPXe9psA+CXvKcG3ZPT5cBDgTCavvEP5NnQ=;
-        b=NdboW2TrSfk+y8e56gY/prSiFkE7XKykqtDm6K3c/xcf0EAJjF0aoMV9XKBfS0J5KR
-         Cl5/xhWPuf2LFxiNCdW6/CpDA+PQQmcWJ6vjeslu8GWyzUAjVMG5NvbUikNV/VNT6GBi
-         2NHyEyyTs17hxD/u07EYfoJ0sBpcD5xMpH2Mf8ukMRxbtsOD1dYevV2JY8Lq8/h4bxNT
-         QbVE1Y+LtxwnIc/sz+6fx0rWqC1WgHiEmRpdQp3CcN0SALPzeGfykDXLNc+Fc2GUl0uy
-         W88KXLO0kOJ5rkk+hU9YliLfBgp1k2zfIia16jdCyQUN5AEeBcbZbZlmyAmAGOK6PAyB
-         6/Hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739907707; x=1740512507;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vrSeJ2SSKPXe9psA+CXvKcG3ZPT5cBDgTCavvEP5NnQ=;
-        b=gZ9cLi+u31oIuiP+LvkvakdZyZxNNW0+wDhcDdzQ6KRQPOfuE78Q+wepi62aMumxsO
-         e2uE4cT3Lqz5ZiRcMltwQirMvZ5W6yjjcaFGE42NaUOlgDuIw0kD13NOPhU1rpgcsEY7
-         vphIoet7kO/hNH3icb0Q9m4xGHTaF3bEubdz40umsZtxv0S/+XfFj5xIS9Wk51LsouwC
-         mrLcCCN6RsWtSi+VpZD0r5WExu3q2I/CJRndTV/oChCyzXVPxYCmgrMp76y8VPM8KbFB
-         LBitecHFOrjICDWba/trwL8De/GEEqPeKPZ3agX7D4pHmiUsOKnbu1RBGfZek7J8+qMv
-         NDfw==
-X-Forwarded-Encrypted: i=1; AJvYcCXTjNF20Pp+tljTgnrXOgPqhkX08hZI7+4qD3YIKG9Ve6ZcHGdbp2QAlyT2nIXk594WORsDdlnUFziy/H4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwACT8Z3lzemqPXJ5xJJJ1JQFthY5cn0gL5efeBbOWrplyF8KxQ
-	s2SBrtzOrrOo5E7aY0kUU7akRgg/VfMzIk7LlXAGREITDyaOBYI2
-X-Gm-Gg: ASbGnctPQXVwGxcRKcNfpHGfImlyyuaY2RZIJXG2J6VB4vKes9sW5FWQNp7eMSXVT/g
-	IiUg6t85zyIMLYNV6R+Kf5UE2r2xPJXdNYDNNLXNBfVOBgxO8JOLW5WFWfJP4levsDOLICiR2Qf
-	I6ZoarniV089VXAX2ejBWmG24MVux9SHOpJZ+eW1Z/jBPX96+qX2P/QOCQwXlIifG5rq2Q/PNnD
-	WKvEMhXiEjcWC+mhn06qukcFcgxK148+R3OlbUjpJ9TK6HPhNjdJhMJ8yT5+s3Sfb5CVg1I7OVZ
-	VDmudMZjlWQASquHxN8zLms=
-X-Google-Smtp-Source: AGHT+IGJFLMla5373xo+8cLotDHzX6Nxqhx2kzLdmNkFtOjJ/5PGdFOMf1n3hDNQa+8VqFZP7cHPAg==
-X-Received: by 2002:a67:e70a:0:b0:4bb:d062:447 with SMTP id ada2fe7eead31-4bd3fc61509mr9227291137.5.1739907706734;
-        Tue, 18 Feb 2025 11:41:46 -0800 (PST)
-Received: from localhost.localdomain ([2800:bf0:82:3d2:9e61:1a62:1a8c:3e62])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4bc68dd766bsm2305214137.20.2025.02.18.11.41.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 11:41:45 -0800 (PST)
-From: Kurt Borja <kuurtb@gmail.com>
-To: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Hans de Goede <hdegoede@redhat.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Kurt Borja <kuurtb@gmail.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Jithu Joseph <jithu.joseph@intel.com>,
-	Ashok Raj <ashok.raj.linux@gmail.com>,
-	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH 4/4] platform/x86: intel: Use *-y instead of *-objs in Makefile
-Date: Tue, 18 Feb 2025 14:41:11 -0500
-Message-ID: <20250218194113.26589-5-kuurtb@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250218194113.26589-1-kuurtb@gmail.com>
-References: <20250218194113.26589-1-kuurtb@gmail.com>
+	s=arc-20240116; t=1739907770; c=relaxed/simple;
+	bh=NkgEzVvRxEnkVEBYlWY8u2rw7tSUs/oCRaRSaj/KFp0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ADj6le89oywFjWNXncWCi8Gu5uYi7QvtuG9mnAocayCefcwpQAFNJB7A4h6OwAu2jfGXDQizfKjglbxhUntbnp9DKr5wYMLsiAK8FxAoV44uO0koDOnhAp+Ys+QAr5qlKDfEVp+qMqquMl1kdhzw7Jw0/g5U2ymEihSFvB2hhEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 637C7C4CEE2;
+	Tue, 18 Feb 2025 19:42:44 +0000 (UTC)
+Date: Tue, 18 Feb 2025 19:42:42 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Tong Tiangen <tongtiangen@huawei.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Will Deacon <will@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	James Morse <james.morse@arm.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Alexander Potapenko <glider@google.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	kasan-dev@googlegroups.com, wangkefeng.wang@huawei.com,
+	Guohanjun <guohanjun@huawei.com>
+Subject: Re: [PATCH v13 4/5] arm64: support copy_mc_[user]_highpage()
+Message-ID: <Z7TisqB5qCIF5nYI@arm.com>
+References: <20241209024257.3618492-1-tongtiangen@huawei.com>
+ <20241209024257.3618492-5-tongtiangen@huawei.com>
+ <Z6zWSXzKctkpyH7-@arm.com>
+ <69955002-c3b1-459d-9b42-8d07475c3fd3@huawei.com>
+ <Z698SFVqHjpGeGC0@arm.com>
+ <e1d2affb-5c6b-00b5-8209-34bbca36f96b@huawei.com>
+ <Z7NN5Pa-c5PtIbcF@arm.com>
+ <3b181285-2ff3-b77a-867b-725f38ea86d3@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <3b181285-2ff3-b77a-867b-725f38ea86d3@huawei.com>
 
-The `objs` suffix is reserved for user-space tools. Use the `y` suffix
-instead, which is usually used for kernel drivers.
+On Tue, Feb 18, 2025 at 07:51:10PM +0800, Tong Tiangen wrote:
+> > > > > 在 2025/2/13 1:11, Catalin Marinas 写道:
+> > > > > > On Mon, Dec 09, 2024 at 10:42:56AM +0800, Tong Tiangen wrote:
+> > > > > > > Currently, many scenarios that can tolerate memory errors when copying page
+> > > > > > > have been supported in the kernel[1~5], all of which are implemented by
+> > > > > > > copy_mc_[user]_highpage(). arm64 should also support this mechanism.
+> > > > > > > 
+> > > > > > > Due to mte, arm64 needs to have its own copy_mc_[user]_highpage()
+> > > > > > > architecture implementation, macros __HAVE_ARCH_COPY_MC_HIGHPAGE and
+> > > > > > > __HAVE_ARCH_COPY_MC_USER_HIGHPAGE have been added to control it.
+> > > > > > > 
+> > > > > > > Add new helper copy_mc_page() which provide a page copy implementation with
+> > > > > > > hardware memory error safe. The code logic of copy_mc_page() is the same as
+> > > > > > > copy_page(), the main difference is that the ldp insn of copy_mc_page()
+> > > > > > > contains the fixup type EX_TYPE_KACCESS_ERR_ZERO_MEM_ERR, therefore, the
+> > > > > > > main logic is extracted to copy_page_template.S. In addition, the fixup of
+> > > > > > > MOPS insn is not considered at present.
+> > > > > > 
+> > > > > > Could we not add the exception table entry permanently but ignore the
+> > > > > > exception table entry if it's not on the do_sea() path? That would save
+> > > > > > some code duplication.
+[...]
+> So we need another way to distinguish the different processing of the
+> same exception type on SEA and non-SEA path.
 
-Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Kurt Borja <kuurtb@gmail.com>
----
- drivers/platform/x86/intel/ifs/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Distinguishing whether the fault is SEA or non-SEA is already done by
+the exception handling you are adding. What we don't have though is
+information about whether the caller invoked copy_highpage() or
+copy_mc_highpage(). That's where the code duplication comes in handy.
 
-diff --git a/drivers/platform/x86/intel/ifs/Makefile b/drivers/platform/x86/intel/ifs/Makefile
-index 30f035ef5581..c3e417bce9b6 100644
---- a/drivers/platform/x86/intel/ifs/Makefile
-+++ b/drivers/platform/x86/intel/ifs/Makefile
-@@ -1,3 +1,3 @@
- obj-$(CONFIG_INTEL_IFS)		+= intel_ifs.o
- 
--intel_ifs-objs			:= core.o load.o runtest.o sysfs.o
-+intel_ifs-y			:= core.o load.o runtest.o sysfs.o
+It's a shame we need to duplicate identical functions just to have
+different addresses to look up in the exception table. We are also short
+of caller saved registers to track this information (e.g. an extra
+argument to those functions that the exception handler interprets).
+
+I need to think a bit more, we could in theory get the arm64 memcpy_mc()
+to return an error code depending on what type of fault it got (e.g.
+-EHWPOISON for SEA, -EFAULT for non-SEA). copy_mc_highpage() would
+interpret this one and panic if -EFAULT. But we lose some fault details
+we normally get on a faulty access like some of the registers.
+
+Well, maybe the simples is still to keep the function duplication. I'll
+have another look at the series tomorrow.
+
 -- 
-2.48.1
-
+Catalin
 
