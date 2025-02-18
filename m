@@ -1,169 +1,140 @@
-Return-Path: <linux-kernel+bounces-519778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFDA9A3A1C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:53:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0808A3A1C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:53:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACB4B7A51B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:52:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83F681896A38
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:53:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6886F26E17A;
-	Tue, 18 Feb 2025 15:52:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D835126E168;
+	Tue, 18 Feb 2025 15:53:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K/Bfy9y9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HUBNhI2A"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6FFA26E14F;
-	Tue, 18 Feb 2025 15:52:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A362D26B2CA;
+	Tue, 18 Feb 2025 15:53:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739893976; cv=none; b=SW1s9H7QSY8DGLp8JWysCrTKLEFHC0M4sr/9Re63Xx9n7ry3uEv/7lfBcR2fu2dIKGxe2HmpdMAwAbA0KFn7OqkmLv1hzdQC9zGUGUR7Q8fLQZq+vs+RNJ1FZfBKQgLfET/egB759rebYco9hOh0YfP4xhYVRMImgTWvG/rn8hg=
+	t=1739894002; cv=none; b=hbNf3a4Wb/M/NjxmY5yfNqEFtnTR3KbUauaC5nwcT7FTcTUK1nAqkpk5m/IiKQCUYVqXfXSxxR/h74UkNT+IRNOeNPnD1DlUcFaHM8cD0DED0CVtI7BD6C/LpCwRsscjtk4l+zOHgF5Hzd9bEa3fFQaG3+LPvtW9uosgcxyFvLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739893976; c=relaxed/simple;
-	bh=Lfy3wqOCBbjxg5nNsnZbpi/kGngbJgptpe7heB+ZnUk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YnoN090mLzRwjnheAGrVyIoArtXT8pqG67WXDDmlkcZqsVHDiLutIJzUd5Ch7RfZd0pe/0t19R3FzIG3NKFJSOamCuZHY6zm5LaYxssfgdfyHAFbHeca71ebYWuHdmISWwmV+RrBi/DLPnVRqDqZ5qZd3jsNAYooSrU1YRQdSmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K/Bfy9y9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E116BC4CEE7;
-	Tue, 18 Feb 2025 15:52:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739893976;
-	bh=Lfy3wqOCBbjxg5nNsnZbpi/kGngbJgptpe7heB+ZnUk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=K/Bfy9y9GvvUCCcinsoy9LUwBfEUgAY7EsZTD9cvt7fqLwcGpXMHwq4sY1UkKTiHA
-	 IOt9JnV9XpERQg1rywCHuIE/vKBfkunfNpS2djpqLBoeaWRBh82U2QDKTxMXc5B3mW
-	 Q7oy9UqlgveAwOrkGE7vXiyle+mv0YX9s6/N09vGh7dV3Jl/AWWMHMqnJR/ahHeUYh
-	 9j65F3nRQ+eXHK0PEvPrVMs4kxW3alnNZmbi8qYdZ4e3nfzVCHwWX4+dvGPppnO1Pg
-	 MGHv+gjZMUjMjMXQHR+80vhf+4tJgvipE+ZYMIIwE5TWaglnES8eB/VpltrIsFNI+p
-	 NRSYrXILM7zqg==
-Date: Tue, 18 Feb 2025 16:52:53 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Doug Anderson <dianders@chromium.org>, 
-	Anusha Srivatsa <asrivats@redhat.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Joel Selvaraj <jo@jsfamily.in>, Ondrej Jirman <megi@xff.cz>, 
-	Javier Martinez Canillas <javierm@redhat.com>, Jianhua Lu <lujianhua000@gmail.com>, 
-	Robert Chiras <robert.chiras@nxp.com>, Artur Weber <aweber.kernel@gmail.com>, 
-	Jonathan Corbet <corbet@lwn.net>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, Tejas Vipin <tejasvipin76@gmail.com>
-Subject: Re: [PATCH 00/20] drm/panel: Move to using mipi_dsi_*_multi()
- variants when available
-Message-ID: <20250218-primitive-kickass-seagull-008bf2@houat>
-References: <20250213-mipi_cocci_multi-v1-0-67d94ff319cc@redhat.com>
- <CAD=FV=Vyx8vAeRohw3W11Tuv26_-zi-GV__G2cXFxF+e76MJkw@mail.gmail.com>
- <20250218-fabulous-agile-corgi-9a5ee0@houat>
- <ynmxaimdwkwfiryz5le5vpnfh5fzh5se4ebyqzkbnq355me76x@yxtyan3niivb>
+	s=arc-20240116; t=1739894002; c=relaxed/simple;
+	bh=lCnsm57wRkVUEr2EYPs5vpTf1bNso+B5yxBbk30D+pk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R7Ql1azARroCgQrtLV5HAjk8ZJSBfIeExrQWyVU13tMCuXkyqlDsBNYNxuyXf+sNEE1PTcKmFqNeEUdEiZao3X62ddQdtLaBiAwj19dSwMLJJ4uBv8CcWPBAVgT7hN4SAYw8Z9sj9Y0qiLJTF0KebyMlZZD3NY1Dwf/EjSSGLL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HUBNhI2A; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4394345e4d5so39418005e9.0;
+        Tue, 18 Feb 2025 07:53:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739893999; x=1740498799; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Gqq6g37S92FLqCn0P6nMDUdXCxzDP3LeI/hVC3lXB8c=;
+        b=HUBNhI2AYnjjwtquo61X4gw2bp04tv2qWyriaGka3YI6y42U4NVLpNm1WLYuI/40Gc
+         v/xstmOiZwWYvUdbwrACIwo2/hUaG22dIuB5HQh8cw4B45opimPWbS+t0Qk6PUEn47qS
+         f/tmoU+OyZHazuXeQ0OkeUwSdg1O3X4+1t3yVJ+f3xwLccmrhNoe44kXCFGTGR/LzXab
+         ABjNu5MSp2QOiAIyWINQWcoBK83rLgl+/Qyj73+d3A1rwQ+3AcLt4Q4kY2rhcxbjLthi
+         zh9sTmVS8XdbYn1oXYTkR1U9PCrbr+bgLYTkjnHbm7LsZ5GMrjpBhRL5fcqjG8O6rj7G
+         T6/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739893999; x=1740498799;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Gqq6g37S92FLqCn0P6nMDUdXCxzDP3LeI/hVC3lXB8c=;
+        b=FUIZjySM5dmywrRXSb4Gpf5CXYTCKq0iKau1Q6kYIyTF7urwWVtJ561I3M2DsMTdJE
+         5Rs2qpRCrd7A6ntCDnh/EczllZK42AJlUVS2DFDYodfVE9Il4wN0v91ki9ASGNEofSTO
+         uCU6wDCMXERS0JRni31aQosysKBayY3me3IPj2a3udUquInCqGw3mBwy4fmDuaUAOlNb
+         Ilbb1Ajp4YXD5z37MTifhZTS2tknJU5ObBrpq73AMeXRMu7sPMLkT78aJpocueVny017
+         81YXgXBjJ6v7HfbVlpl0XuSrfAU9T3WldBlfQo8lJnskRADW8Z3cMBrrI7zr0TIZExxw
+         kDFg==
+X-Forwarded-Encrypted: i=1; AJvYcCUJmQYKScCJnZjbf7VE/+Xglp5uywti2IZ098xR3xpW1PGS6s7TV0CiwxPu5uFHiUDemDV0dVs8bmrTrg==@vger.kernel.org, AJvYcCVArl9UPU3lNSeL9P3FJweUs3A1wrnOCmeUdig1Zt5akqaB+W/2cwbVDue3E72oIolzWs7d9lQT@vger.kernel.org, AJvYcCVPaNk/jGml3365bDFyyg/osn6zBjgt2yqpnwt4koWpNlINNDrDTcEKp27gfC12ydT9KSBZP6AgDp2G/OxniVE=@vger.kernel.org, AJvYcCWmGmiSvfBD9H6Zqel/BMbz05jiYwx1jDGivlnIJQfCZXwjY+E/QS63CRqG5CdRj9q+ilqAwiPo6WY0GeyD@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUtW/3mrlSWNv4mc+DPXCbcCGrqfvwTiZFwb+GJe5fEFeEJP0M
+	1ZJfyeWRkaOh/YD62TC6C+lIiA79mSQtR8x+92+wSZrtGKOYTNHw
+X-Gm-Gg: ASbGnct3G4v8hMwNCIQx3E8F2E8yWntl0NB+HdkFb9Y8NClcUaJ2CUm3QIsSS+fOq3M
+	zbLrZXpfekSedOUD3voHgEGVpUcucsNyP2nyCrCrrHVOWp0PxIJp4JMdGpVSoQfTjSwGUls7TFg
+	DRgGTCORNPcgUvAQsUr9Xkmsbyb0BIKrhosQ5Ad7ZxwJwhTfzHKAVsREA+wCsdRowHCt61M37j5
+	BRERLcFN8BFQ3fHrbKl1Q/IOztKOo0T+RxzviYWnFbVTGh+d90utWH3CMCdl4uMKoQqM2nUNgYt
+	mT6WikI6bzmzr1SKBKow+xaSoN+ePp6GnZMu
+X-Google-Smtp-Source: AGHT+IEGYm8rYjcBUuXhxOcUcfHVpS6MHONd1DTQowTqDCAeZYwIxDgYTNFQpOLKVNys1bEsUJCtOg==
+X-Received: by 2002:a5d:584e:0:b0:38d:cdac:fc02 with SMTP id ffacd0b85a97d-38f33f117bbmr8635842f8f.4.1739893998482;
+        Tue, 18 Feb 2025 07:53:18 -0800 (PST)
+Received: from [172.27.59.237] ([193.47.165.251])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4396b296afesm103260615e9.0.2025.02.18.07.53.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Feb 2025 07:53:18 -0800 (PST)
+Message-ID: <59b075bc-f6e6-42f0-bc01-c8921922299d@gmail.com>
+Date: Tue, 18 Feb 2025 17:53:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="fpteilqt6emhj7js"
-Content-Disposition: inline
-In-Reply-To: <ynmxaimdwkwfiryz5le5vpnfh5fzh5se4ebyqzkbnq355me76x@yxtyan3niivb>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] net/mlx5e: Avoid a hundred
+ -Wflex-array-member-not-at-end warnings
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+ Tariq Toukan <tariqt@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <Z6GCJY8G9EzASrwQ@kspp>
+ <4e556977-c7b9-4d37-b874-4f3d60d54429@embeddedor.com>
+ <8d06f07c-5bb4-473d-90af-5f57ce2b068f@gmail.com>
+ <7ce8d318-584f-42c2-b88a-2597acd67029@embeddedor.com>
+ <5f2ca37f-3f6d-44d2-9821-7d6b0655937d@gmail.com>
+ <36ab1f42-b492-497f-a1dc-34631f594da6@lunn.ch>
+Content-Language: en-US
+From: Tariq Toukan <ttoukan.linux@gmail.com>
+In-Reply-To: <36ab1f42-b492-497f-a1dc-34631f594da6@lunn.ch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
---fpteilqt6emhj7js
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 00/20] drm/panel: Move to using mipi_dsi_*_multi()
- variants when available
-MIME-Version: 1.0
 
-On Tue, Feb 18, 2025 at 02:14:43PM +0200, Dmitry Baryshkov wrote:
-> On Tue, Feb 18, 2025 at 10:55:49AM +0100, Maxime Ripard wrote:
-> > On Fri, Feb 14, 2025 at 08:26:02AM -0800, Doug Anderson wrote:
-> > > Hi,
-> > >=20
-> > > On Thu, Feb 13, 2025 at 12:44=E2=80=AFPM Anusha Srivatsa <asrivats@re=
-dhat.com> wrote:
-> > > >
-> > > > A lot of mipi API are deprecated and have a _multi() variant
-> > > > which is the preferred way forward. This covers  TODO in the
-> > > > gpu Documentation:[1]
-> > > >
-> > > > An incomplete effort was made in the previous version
-> > > > to address this[2]. It removed on the mipi_dsi_dcs_write_seq()
-> > > > and mipi_dsi_generic_write_seq_multi() with the respective
-> > > > replacemts and not the rest of the API.
-> > >=20
-> > > You didn't seem to take most of the suggestions I gave in response to
-> > > your v1 [3]. Specifically:
-> > >=20
-> > > a) I asked that you CC Tejas. I've added him again.
-> > >=20
-> > > b) I asked that you CC me on the whole patch series, which you didn't
-> > > do. I can find them, but I'd find it convenient in this case for them
-> > > to be in my Inbox.
-> > >=20
-> > > The first patch conflicts with what Tejas already landed in
-> > > drm-misc-next. See commit 8025f23728e9 ("drm/panel:
-> > > xinpeng-xpp055c272: transition to mipi_dsi wrapped functions"). The
-> > > second patch _also_ conflicts with what Tejas already landed. See
-> > > commit f4dd4cb79f9e ("drm/panel: visionox-r66451: transition to
-> > > mipi_dsi wrapped functions"). Later patches also also conflict. See
-> > > commit 0d6c9edf9e5b ("drm/panel: ebbg-ft8719: transition to mipi_dsi
-> > > wrapped functions"), commit ce8c69ec90ca ("drm/panel:
-> > > samsung-s6e88a0-ams452ef01: transition to mipi_dsi wrapped
-> > > functions"), and commit 7e3bf00047cd ("drm/panel: sharp-ls060t1sx01:
-> > > transition to mipi_dsi wrapped functions"). Maybe you should sync up
-> > > with drm-misc-next before submitting.
-> >=20
-> > Yes, you should definitely work from drm-misc-next there, and sync with
-> > Tejas.
-> >=20
-> > > I also questioned whether this really made sense to try to do with a
-> > > Coccinelle script and I still don't think so. It looks like Dmitry has
-> > > already reviewed the first few of your patches and has repeated my
-> > > advice. If you want to help with the effort of addressing this TODO
-> > > item then that's great, but I'll stop reviewing (and start silently
-> > > deleting) any future submissions of yours that say that they're done
-> > > entirely with a Coccinelle script unless you address this point and
-> > > convince me that your Coccinelle script is really smart enough to
-> > > handle all the corner cases. I'll also assert that you should review
-> > > Tejas's submissions to see how these conversions are expected to go.
-> >=20
-> > I couldn't find that in your first answer though. What corner cases do
-> > you have in mind, and why do you think coccinelle can't handle them?
->=20
-> As can be seen from the reviews:
->=20
-> - sleeps between DSI calls
-> - properly propagating the error at the end of the function
+On 18/02/2025 17:37, Andrew Lunn wrote:
+> On Tue, Feb 18, 2025 at 11:49:14AM +0200, Tariq Toukan wrote:
+>>
+>>
+>> On 18/02/2025 10:14, Gustavo A. R. Silva wrote:
+>>> Hi all,
+>>>
+>>> Friendly ping: who can take this, please?
+>>>
+>>> Thanks
+>>> -- 
+>>> Gustavo
+>>>
+>>
+>> net-next maintainers, please pick it.
+>> I provided the Reviewed-by tag.
+> 
+> The alternative patch was not formally submitted, it is just embedded
+> in the discussion. It needs posting as an actual patch for merging.
+> 
+>      Andrew
+> 
+> ---
+> pw-bot: cr
+> 
+> 
 
-These two are legitimate feedback, but I don't see how coccinelle cannot
-deal with them.
+Maybe it wasn't clear enough.
+We prefer the original patch, and provided the Reviewed-by tag for it.
 
-> - making decision whether to create the context at the caller or the
->   callee side. E.g. in patch 8 it is better to allocate context in
->   hx8394_enable() and pass it to .init_sequence() instead of keeping
->   some of error handling.
-
-Yeah, that one is definitely subjective, and is going to need manual
-review.
-
-Maxime
-
---fpteilqt6emhj7js
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ7Ss0QAKCRAnX84Zoj2+
-dukDAYDXcF39vpxiWmY6ypqgL/3oHzXWyDI/hPJjKLqlSm/RBJvFdXWqH7cTvsJF
-BGl9h0kBgJTBJ0vvu/UwpgZ/UyHD1S710s4lhY5YyyHuho6JwZzsb+tXPmRgz5E1
-/h560Q3h1w==
-=9vo/
------END PGP SIGNATURE-----
-
---fpteilqt6emhj7js--
+Thanks,
+Tariq
 
