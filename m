@@ -1,151 +1,392 @@
-Return-Path: <linux-kernel+bounces-519293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52CACA39B1F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:38:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74265A39B56
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:46:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C6521887F85
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:38:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 836B03B48AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:46:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35E6223DE85;
-	Tue, 18 Feb 2025 11:38:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I3j1GjpD"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15588233155
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 11:38:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C780A241103;
+	Tue, 18 Feb 2025 11:45:54 +0000 (UTC)
+Received: from harvie.cz (harvie.cz [77.87.242.242])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF4DA1ADFE3;
+	Tue, 18 Feb 2025 11:45:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.87.242.242
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739878689; cv=none; b=jPfQIU/Ohn7GZNaexDKkC1V71d07gytZar/Qz/o38SPBX7qjABeKQH9EmbkE9vqVZvWIurXZytYLSs4fn25Qbgej47sP05MF2q0K+XaJAkaIoSgACyhxZsT9KWfcohPAYh14Z61IQV9RqzIivBYo7eNmBoMkdpPeN/KCul1DLDI=
+	t=1739879154; cv=none; b=RZZGhwkt9JR3IOue2inBWOg7RtErNihsw6qo/4K4tNKErcPrKlyH7rutZZQVlSq89t/9YmJ0CNsuL/gJmJotlA3xKcc0JjPM89RbHB8fYyPaTDYgpYhEHfBQTxAjCIbecgasiwgwJi9Httqx+2HQ4g+ABzKmIPrOZ+ISGi03GeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739878689; c=relaxed/simple;
-	bh=6q1iXsSRhhA5iraUx9/TlIOcuAXc4FlVkywxBcBWo7A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ARc1h9uS9MbmoYCmMd04cpTL/xgtarv5+uJX+uczY34mkuicc/PfTW6aSCBXeaUwbP4hZBOLcCaAL7shZKAUp1RSkoFliOOV4/wdLVSwu0u1HB80Q4Bd2/Dgy0pqIyi4GQUVTHbnm6hznPpOhjVTYljBXePu7RSXVfedEVFwhEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I3j1GjpD; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739878688; x=1771414688;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=6q1iXsSRhhA5iraUx9/TlIOcuAXc4FlVkywxBcBWo7A=;
-  b=I3j1GjpDcD2CkCBASPmEwxxiROQds5ve0bd8/DuTEN8xEku1/VbHXgir
-   pkDeNlm2Lcn4WkGwvuH4Wf5mhH3UaICeK1FM2DZHP/85Vynt6/C17zKEg
-   0RlEnAo2NrGpVZm44ev5xGSazwNGBv1p8etI20kWXt6yWffRWJZUqjUbM
-   OAajp7wdqx0nkI9I8IMNSxayFWyhdJNNHk1nnoGRtnhi99VVTkA6C17A2
-   0ZvtSVG4pIcSJrHq5tTx7vB3fX2iAydkQ/IZr05H/57mvoU9WVhPhlzjp
-   FuLttcgk2qwvXHS0CIuvbe1fgmDCbBRRyJM6O2kWtbEWUFyv5iNBbB9MJ
-   Q==;
-X-CSE-ConnectionGUID: GQ4jMjCpQZqG4zFQwEp/GA==
-X-CSE-MsgGUID: mGlVdeZiRCGt1X5rm1X2Iw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="52000405"
-X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
-   d="scan'208";a="52000405"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 03:38:07 -0800
-X-CSE-ConnectionGUID: 1PPprSuYTq+skJ95hig4nQ==
-X-CSE-MsgGUID: oX3/9mneSNWk1zRt4ot+YQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="119298528"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 03:38:05 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tkLvO-0000000ChkY-3myE;
-	Tue, 18 Feb 2025 13:38:02 +0200
-Date: Tue, 18 Feb 2025 13:38:02 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH next 1/1] lib: Optimise hex_dump_to_buffer()
-Message-ID: <Z7RxGlCkQG9M4AeM@smile.fi.intel.com>
-References: <20250216201901.161781-1-david.laight.linux@gmail.com>
- <Z7JO9eutvu3KBEbc@smile.fi.intel.com>
- <20250216223715.734fedc8@pumpkin>
+	s=arc-20240116; t=1739879154; c=relaxed/simple;
+	bh=2Eauxf+JLpV+mLoqw6uc4VuzS2dTyT4yqfOm91N1Wt4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=qtcO2s+6LW8tJDurV/Cfd92e26RrR04LQcjkWrmZS6FWN1Ds2UHJCaCv4LBV2M9QdpaPCnGcpLip9RAVsqiJuMMzGIYHBjDGO+aifvnHRm8BsG+RTf9KbLucGksgcpNY7B/8anuRZU5zMnTo2MVP8SN1QoNcggh1QFQ2VSOs3Sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=77.87.242.242
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+Received: from anemophobia.amit.cz (unknown [31.30.84.130])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by harvie.cz (Postfix) with ESMTPSA id 21E1E1800FF;
+	Tue, 18 Feb 2025 12:39:20 +0100 (CET)
+From: Tomas Mudrunka <tomas.mudrunka@gmail.com>
+To: yukuai3@huawei.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-raid@vger.kernel.org,
+	mtkaczyk@kernel.org,
+	song@kernel.org,
+	tomas.mudrunka@gmail.com
+Subject: [PATCH v4] Export MDRAID bitmap on disk structure in UAPI header file
+Date: Tue, 18 Feb 2025 12:38:49 +0100
+Message-ID: <20250218113849.561007-1-tomas.mudrunka@gmail.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <bead708f-b901-18df-f461-c5324fbe2555@huawei.com>
+References: <bead708f-b901-18df-f461-c5324fbe2555@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250216223715.734fedc8@pumpkin>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Sun, Feb 16, 2025 at 10:37:15PM +0000, David Laight wrote:
-> On Sun, 16 Feb 2025 22:47:49 +0200
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> > On Sun, Feb 16, 2025 at 08:19:01PM +0000, David Laight wrote:
+When working on software that manages MD RAID disks from
+userspace. Currently provided headers only contain MD superblock.
+That is not enough to fully populate MD RAID metadata.
+Therefore this patch adds bitmap superblock as well.
 
-...
+Signed-off-by: Tomas Mudrunka <tomas.mudrunka@gmail.com>
+---
+V3 -> V4: Removed typedef
+V2 -> V3: Fixed checkpatch errors
+V1 -> V2: Also exported stuff needed by mdadm according to Mariusz Tkaczyk
 
-> > > +extern size_t hex_dump_to_buffer(const void *buf, size_t len, size_t rowsize,
-> > > +			      size_t groupsize, char *linebuf,
-> > > +			      size_t linebuflen, bool ascii);  
-> > 
-> > Looking at another thread where upper layer function wants to have unsigned
-> > long flags instead of bool ascii, I would also do the new API, that takes flags
-> > and leave the old one as a simple wrapper with all restrictions being applied.
-> 
-> I can't imagine any code relying on the rowsize being converted to 16.
-> And (elsewhere) I've definitely needed to do hexdumps with strange numbers
-> of bytes/line.
+ drivers/md/md-bitmap.c         | 45 +++++++++++---------------
+ drivers/md/md-bitmap.h         | 42 +-----------------------
+ include/uapi/linux/raid/md_p.h | 58 +++++++++++++++++++++++++++++++++-
+ 3 files changed, 76 insertions(+), 69 deletions(-)
 
-I didn't get how this is related to my comment.
-
-...
-
-> > > +			dst[0] = hex_asc_hi(ch);
-> > > +			dst[1] = hex_asc_lo(ch);  
-> > 
-> > We have hex_pack_byte() or so
-> 
-> At least some versions of gcc have generated better code if you don't
-> use *ptr++ but do the increment afterwards.
-> It is also what the old version used.
-
-Do we really care? What versions, btw, are you talk about?
-
-> Not to mention being another wrapper you need to look up to work out
-> what the code is doing.
-
-That's not an issue. We use a lot of wrappers in the Linux kernel.
-Without a skill to quickly find this information it would be very
-hard to develop the kernel code without reinventing a wheel.
-
-...
-
-> > > -		linebuf[lx++] = (isascii(ch) && isprint(ch)) ? ch : '.';
-> > > +		*dst++ = ch >= ' ' && ch < 0x7f ? ch : '.';  
-> > 
-> > Please also add a test case for this to make sure it has no changes.
-> 
-> Well isascii() usually checks for the 0x80 bit being clear and isprint()
-> rejects control characters and 'del' (0x7f).
-> I'm not sure what isascii() does for EBCDIC type charsets - but I don't
-> expect Linux runs on any of those so who cares.
-
-Still, it's good to have a test cases for this change.
-
-> Oh, and isprint() seems to be based on a memory lookup in an _ctype[] array.
-> Very 1970s.
-
-With enough CPU (data) caches it's quite effective.
-
+diff --git a/drivers/md/md-bitmap.c b/drivers/md/md-bitmap.c
+index ec4ecd96e..9f7252f08 100644
+--- a/drivers/md/md-bitmap.c
++++ b/drivers/md/md-bitmap.c
+@@ -32,15 +32,6 @@
+ #include "md.h"
+ #include "md-bitmap.h"
+ 
+-#define BITMAP_MAJOR_LO 3
+-/* version 4 insists the bitmap is in little-endian order
+- * with version 3, it is host-endian which is non-portable
+- * Version 5 is currently set only for clustered devices
+- */
+-#define BITMAP_MAJOR_HI 4
+-#define BITMAP_MAJOR_CLUSTERED 5
+-#define	BITMAP_MAJOR_HOSTENDIAN 3
+-
+ /*
+  * in-memory bitmap:
+  *
+@@ -673,7 +664,7 @@ static void md_bitmap_wait_writes(struct bitmap *bitmap)
+ /* update the event counter and sync the superblock to disk */
+ static void bitmap_update_sb(void *data)
+ {
+-	bitmap_super_t *sb;
++	struct bitmap_super *sb;
+ 	struct bitmap *bitmap = data;
+ 
+ 	if (!bitmap || !bitmap->mddev) /* no bitmap for this array */
+@@ -713,7 +704,7 @@ static void bitmap_update_sb(void *data)
+ 
+ static void bitmap_print_sb(struct bitmap *bitmap)
+ {
+-	bitmap_super_t *sb;
++	struct bitmap_super *sb;
+ 
+ 	if (!bitmap || !bitmap->storage.sb_page)
+ 		return;
+@@ -752,7 +743,7 @@ static void bitmap_print_sb(struct bitmap *bitmap)
+  */
+ static int md_bitmap_new_disk_sb(struct bitmap *bitmap)
+ {
+-	bitmap_super_t *sb;
++	struct bitmap_super *sb;
+ 	unsigned long chunksize, daemon_sleep, write_behind;
+ 
+ 	bitmap->storage.sb_page = alloc_page(GFP_KERNEL | __GFP_ZERO);
+@@ -812,7 +803,7 @@ static int md_bitmap_new_disk_sb(struct bitmap *bitmap)
+ static int md_bitmap_read_sb(struct bitmap *bitmap)
+ {
+ 	char *reason = NULL;
+-	bitmap_super_t *sb;
++	struct bitmap_super *sb;
+ 	unsigned long chunksize, daemon_sleep, write_behind;
+ 	unsigned long long events;
+ 	int nodes = 0;
+@@ -843,7 +834,7 @@ static int md_bitmap_read_sb(struct bitmap *bitmap)
+ 		bm_blocks = DIV_ROUND_UP_SECTOR_T(bm_blocks,
+ 			   (bitmap->mddev->bitmap_info.chunksize >> 9));
+ 		/* bits to bytes */
+-		bm_blocks = ((bm_blocks+7) >> 3) + sizeof(bitmap_super_t);
++		bm_blocks = ((bm_blocks+7) >> 3) + sizeof(struct bitmap_super);
+ 		/* to 4k blocks */
+ 		bm_blocks = DIV_ROUND_UP_SECTOR_T(bm_blocks, 4096);
+ 		offset = bitmap->cluster_slot * (bm_blocks << 3);
+@@ -859,7 +850,7 @@ static int md_bitmap_read_sb(struct bitmap *bitmap)
+ 				bitmap, bytes, sb_page);
+ 	} else {
+ 		err = read_sb_page(bitmap->mddev, offset, sb_page, 0,
+-				   sizeof(bitmap_super_t));
++				   sizeof(struct bitmap_super));
+ 	}
+ 	if (err)
+ 		return err;
+@@ -980,7 +971,7 @@ static inline unsigned long file_page_index(struct bitmap_storage *store,
+ 					    unsigned long chunk)
+ {
+ 	if (store->sb_page)
+-		chunk += sizeof(bitmap_super_t) << 3;
++		chunk += sizeof(struct bitmap_super) << 3;
+ 	return chunk >> PAGE_BIT_SHIFT;
+ }
+ 
+@@ -989,7 +980,7 @@ static inline unsigned long file_page_offset(struct bitmap_storage *store,
+ 					     unsigned long chunk)
+ {
+ 	if (store->sb_page)
+-		chunk += sizeof(bitmap_super_t) << 3;
++		chunk += sizeof(struct bitmap_super) << 3;
+ 	return chunk & (PAGE_BITS - 1);
+ }
+ 
+@@ -1015,7 +1006,7 @@ static int md_bitmap_storage_alloc(struct bitmap_storage *store,
+ 
+ 	bytes = DIV_ROUND_UP(chunks, 8);
+ 	if (with_super)
+-		bytes += sizeof(bitmap_super_t);
++		bytes += sizeof(struct bitmap_super);
+ 
+ 	num_pages = DIV_ROUND_UP(bytes, PAGE_SIZE);
+ 	offset = slot_number * num_pages;
+@@ -1382,7 +1373,7 @@ static int md_bitmap_init_from_disk(struct bitmap *bitmap, sector_t start)
+ 			void *paddr;
+ 
+ 			if (i == 0 && !mddev->bitmap_info.external)
+-				offset = sizeof(bitmap_super_t);
++				offset = sizeof(struct bitmap_super);
+ 
+ 			/*
+ 			 * If the bitmap is out of date, dirty the whole page
+@@ -1543,7 +1534,7 @@ static void bitmap_daemon_work(struct mddev *mddev)
+ 	    mddev->bitmap_info.external == 0) {
+ 		/* Arrange for superblock update as well as
+ 		 * other changes */
+-		bitmap_super_t *sb;
++		struct bitmap_super *sb;
+ 		bitmap->need_sync = 0;
+ 		if (bitmap->storage.filemap) {
+ 			sb = kmap_local_page(bitmap->storage.sb_page);
+@@ -2123,7 +2114,7 @@ static struct bitmap *__bitmap_create(struct mddev *mddev, int slot)
+ 	int err;
+ 	struct kernfs_node *bm = NULL;
+ 
+-	BUILD_BUG_ON(sizeof(bitmap_super_t) != 256);
++	BUILD_BUG_ON(sizeof(struct bitmap_super) != 256);
+ 
+ 	BUG_ON(file && mddev->bitmap_info.offset);
+ 
+@@ -2351,7 +2342,7 @@ static int bitmap_get_stats(void *data, struct md_bitmap_stats *stats)
+ 	struct bitmap_storage *storage;
+ 	struct bitmap_counts *counts;
+ 	struct bitmap *bitmap = data;
+-	bitmap_super_t *sb;
++	struct bitmap_super *sb;
+ 
+ 	if (!bitmap)
+ 		return -ENOENT;
+@@ -2415,7 +2406,7 @@ static int __bitmap_resize(struct bitmap *bitmap, sector_t blocks,
+ 			 */
+ 			bytes = DIV_ROUND_UP(bitmap->counts.chunks, 8);
+ 			if (!bitmap->mddev->bitmap_info.external)
+-				bytes += sizeof(bitmap_super_t);
++				bytes += sizeof(struct bitmap_super);
+ 			space = DIV_ROUND_UP(bytes, 512);
+ 			bitmap->mddev->bitmap_info.space = space;
+ 		}
+@@ -2427,9 +2418,9 @@ static int __bitmap_resize(struct bitmap *bitmap, sector_t blocks,
+ 			chunks = DIV_ROUND_UP_SECTOR_T(blocks, 1 << chunkshift);
+ 			bytes = DIV_ROUND_UP(chunks, 8);
+ 			if (!bitmap->mddev->bitmap_info.external)
+-				bytes += sizeof(bitmap_super_t);
++				bytes += sizeof(struct bitmap_super);
+ 		} while (bytes > (space << 9) && (chunkshift + BITMAP_BLOCK_SHIFT) <
+-			(BITS_PER_BYTE * sizeof(((bitmap_super_t *)0)->chunksize) - 1));
++			(BITS_PER_BYTE * sizeof(((struct bitmap_super *)0)->chunksize) - 1));
+ 	} else
+ 		chunkshift = ffz(~chunksize) - BITMAP_BLOCK_SHIFT;
+ 
+@@ -2463,7 +2454,7 @@ static int __bitmap_resize(struct bitmap *bitmap, sector_t blocks,
+ 	if (store.sb_page && bitmap->storage.sb_page)
+ 		memcpy(page_address(store.sb_page),
+ 		       page_address(bitmap->storage.sb_page),
+-		       sizeof(bitmap_super_t));
++		       sizeof(struct bitmap_super));
+ 	spin_lock_irq(&bitmap->counts.lock);
+ 	md_bitmap_file_unmap(&bitmap->storage);
+ 	bitmap->storage = store;
+@@ -2859,7 +2850,7 @@ chunksize_store(struct mddev *mddev, const char *buf, size_t len)
+ 	    !is_power_of_2(csize))
+ 		return -EINVAL;
+ 	if (BITS_PER_LONG > 32 && csize >= (1ULL << (BITS_PER_BYTE *
+-		sizeof(((bitmap_super_t *)0)->chunksize))))
++		sizeof(((struct bitmap_super *)0)->chunksize))))
+ 		return -EOVERFLOW;
+ 	mddev->bitmap_info.chunksize = csize;
+ 	return len;
+diff --git a/drivers/md/md-bitmap.h b/drivers/md/md-bitmap.h
+index 31c93019c..75bbe6b84 100644
+--- a/drivers/md/md-bitmap.h
++++ b/drivers/md/md-bitmap.h
+@@ -7,7 +7,7 @@
+ #ifndef BITMAP_H
+ #define BITMAP_H 1
+ 
+-#define BITMAP_MAGIC 0x6d746962
++#include <linux/raid/md_p.h>
+ 
+ typedef __u16 bitmap_counter_t;
+ #define COUNTER_BITS 16
+@@ -18,46 +18,6 @@ typedef __u16 bitmap_counter_t;
+ #define RESYNC_MASK ((bitmap_counter_t) (1 << (COUNTER_BITS - 2)))
+ #define COUNTER_MAX ((bitmap_counter_t) RESYNC_MASK - 1)
+ 
+-/* use these for bitmap->flags and bitmap->sb->state bit-fields */
+-enum bitmap_state {
+-	BITMAP_STALE	   = 1,  /* the bitmap file is out of date or had -EIO */
+-	BITMAP_WRITE_ERROR = 2, /* A write error has occurred */
+-	BITMAP_HOSTENDIAN  =15,
+-};
+-
+-/* the superblock at the front of the bitmap file -- little endian */
+-typedef struct bitmap_super_s {
+-	__le32 magic;        /*  0  BITMAP_MAGIC */
+-	__le32 version;      /*  4  the bitmap major for now, could change... */
+-	__u8  uuid[16];      /*  8  128 bit uuid - must match md device uuid */
+-	__le64 events;       /* 24  event counter for the bitmap (1)*/
+-	__le64 events_cleared;/*32  event counter when last bit cleared (2) */
+-	__le64 sync_size;    /* 40  the size of the md device's sync range(3) */
+-	__le32 state;        /* 48  bitmap state information */
+-	__le32 chunksize;    /* 52  the bitmap chunk size in bytes */
+-	__le32 daemon_sleep; /* 56  seconds between disk flushes */
+-	__le32 write_behind; /* 60  number of outstanding write-behind writes */
+-	__le32 sectors_reserved; /* 64 number of 512-byte sectors that are
+-				  * reserved for the bitmap. */
+-	__le32 nodes;        /* 68 the maximum number of nodes in cluster. */
+-	__u8 cluster_name[64]; /* 72 cluster name to which this md belongs */
+-	__u8  pad[256 - 136]; /* set to zero */
+-} bitmap_super_t;
+-
+-/* notes:
+- * (1) This event counter is updated before the eventcounter in the md superblock
+- *    When a bitmap is loaded, it is only accepted if this event counter is equal
+- *    to, or one greater than, the event counter in the superblock.
+- * (2) This event counter is updated when the other one is *if*and*only*if* the
+- *    array is not degraded.  As bits are not cleared when the array is degraded,
+- *    this represents the last time that any bits were cleared.
+- *    If a device is being added that has an event count with this value or
+- *    higher, it is accepted as conforming to the bitmap.
+- * (3)This is the number of sectors represented by the bitmap, and is the range that
+- *    resync happens across.  For raid1 and raid5/6 it is the size of individual
+- *    devices.  For raid10 it is the size of the array.
+- */
+-
+ struct md_bitmap_stats {
+ 	u64		events_cleared;
+ 	int		behind_writes;
+diff --git a/include/uapi/linux/raid/md_p.h b/include/uapi/linux/raid/md_p.h
+index ff47b6f0b..980a40376 100644
+--- a/include/uapi/linux/raid/md_p.h
++++ b/include/uapi/linux/raid/md_p.h
+@@ -1,7 +1,7 @@
+ /* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
+ /*
+    md_p.h : physical layout of Linux RAID devices
+-          Copyright (C) 1996-98 Ingo Molnar, Gadi Oxman
++	Copyright (C) 1996-98 Ingo Molnar, Gadi Oxman, Peter T. Breuer
+ 
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+@@ -15,6 +15,11 @@
+ #include <linux/types.h>
+ #include <asm/byteorder.h>
+ 
++/*
++ * Note: use of typedefs from this header file is deprecated,
++ * please refer directly to structs when writing new code.
++ */
++
+ /*
+  * RAID superblock.
+  *
+@@ -426,4 +431,55 @@ struct ppl_header {
+ 	struct ppl_header_entry entries[PPL_HDR_MAX_ENTRIES];
+ } __attribute__ ((__packed__));
+ 
++#define MD_BITMAP_SUBERBLOCK_EXPORTED 1	/* Notify that kernel provides it */
++#define BITMAP_MAGIC 0x6d746962		/* This is actually "bitm" in ASCII :-) */
++#define BITMAP_MAJOR_LO 3
++/* version 4 insists the bitmap is in little-endian order
++ * with version 3, it is host-endian which is non-portable
++ */
++#define BITMAP_MAJOR_HI 4
++#define BITMAP_MAJOR_CLUSTERED 5
++#define BITMAP_MAJOR_HOSTENDIAN 3
++
++/* use these for bitmap->flags and bitmap->sb->state bit-fields */
++enum bitmap_state {
++	BITMAP_STALE	   = 1,  /* the bitmap file is out of date or had -EIO */
++	BITMAP_WRITE_ERROR = 2, /* A write error has occurred */
++	BITMAP_HOSTENDIAN  = 15,
++};
++
++/* the superblock at the front of the bitmap file -- little endian */
++struct bitmap_super {
++	__le32 magic;        /*  0  BITMAP_MAGIC */
++	__le32 version;      /*  4  the bitmap major for now, could change... */
++	__u8  uuid[16];      /*  8  128 bit uuid - must match md device uuid */
++	__le64 events;       /* 24  event counter for the bitmap (1)*/
++	__le64 events_cleared;/*32  event counter when last bit cleared (2) */
++	__le64 sync_size;    /* 40  the size of the md device's sync range(3) */
++	__le32 state;        /* 48  bitmap state information */
++	__le32 chunksize;    /* 52  the bitmap chunk size in bytes */
++	__le32 daemon_sleep; /* 56  seconds between disk flushes */
++	__le32 write_behind; /* 60  number of outstanding write-behind writes */
++	__le32 sectors_reserved; /* 64 number of 512-byte sectors that are
++				  * reserved for the bitmap.
++				  */
++	__le32 nodes;        /* 68 the maximum number of nodes in cluster. */
++	__u8 cluster_name[64]; /* 72 cluster name to which this md belongs */
++	__u8  pad[256 - 136]; /* set to zero */
++} __attribute__ ((__packed__));
++
++/* notes:
++ * (1) This event counter is updated before the eventcounter in the md superblock
++ *    When a bitmap is loaded, it is only accepted if this event counter is equal
++ *    to, or one greater than, the event counter in the superblock.
++ * (2) This event counter is updated when the other one is *if*and*only*if* the
++ *    array is not degraded.  As bits are not cleared when the array is degraded,
++ *    this represents the last time that any bits were cleared.
++ *    If a device is being added that has an event count with this value or
++ *    higher, it is accepted as conforming to the bitmap.
++ * (3)This is the number of sectors represented by the bitmap, and is the range that
++ *    resync happens across.  For raid1 and raid5/6 it is the size of individual
++ *    devices.  For raid10 it is the size of the array.
++ */
++
+ #endif
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.48.1
 
 
