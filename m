@@ -1,247 +1,125 @@
-Return-Path: <linux-kernel+bounces-518594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 605F7A39168
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 04:43:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 595D5A3915D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 04:39:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A86AA7A076E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 03:42:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 423013AF78E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 03:38:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2A8E18A6DB;
-	Tue, 18 Feb 2025 03:42:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50691188580;
+	Tue, 18 Feb 2025 03:38:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=damenly.org header.i=@damenly.org header.b="XXclZVOs"
-Received: from mail-108-mta168.mxroute.com (mail-108-mta168.mxroute.com [136.175.108.168])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V3KyWvDU"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4963A175D47
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 03:42:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.175.108.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62CDA17C77;
+	Tue, 18 Feb 2025 03:38:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739850175; cv=none; b=qXKpEOoPRauWVpLmKABvl8TH8EwNUM88QhVF5x1sbbKfl+6Uk76BpocJdFTzL9TPh/v69bP0bUgrTp0PpUHMj7qy0n3Ryo5PmrKun6+KkBnmqbb33nYrR01rLAE1K0djPe9edAv3ZMX3K2Cfz6RIYImtFIkKF67b7Cs108FcuG0=
+	t=1739849937; cv=none; b=Gca4OaTKCX8dkedPf3g6vXpSeC5j20j3CpYhoixnnTW+3R2ny1zLkdV9SEUd9WViGK4AuDVUwoaUcFZBj61NtHuy766V52kII/cuXbw2MbK606Xrjx/KHJ0nI+cMZvXDhG0hrteeuJAvJhSWoio8c1Q8dpyEUsKD11hN6S3tP0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739850175; c=relaxed/simple;
-	bh=UMb4+aFxMbquMvlxFby4LyKkJKijizTX+6HIQOeItpA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=OvU/jQmcw7KGlXkEMBVT3DuRkoHIJxfszUREpDMB4zE5ACQWiBa6Fd3QAUVFVU7JoarVvwRxzKeGcFXxO4c+oKrv5Uqomww3iTdjHufaELAQ2E2l0uHw6klp2TDDh19dYeaByGe8nl/IBLUYpD0faGZujwHjKrSAFefHHUhsb4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=damenly.org; spf=pass smtp.mailfrom=damenly.org; dkim=pass (2048-bit key) header.d=damenly.org header.i=@damenly.org header.b=XXclZVOs; arc=none smtp.client-ip=136.175.108.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=damenly.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=damenly.org
-Received: from filter006.mxroute.com ([136.175.111.3] filter006.mxroute.com)
- (Authenticated sender: mN4UYu2MZsgR)
- by mail-108-mta168.mxroute.com (ZoneMTA) with ESMTPSA id 195172208bf000310e.006
- for <linux-kernel@vger.kernel.org>
- (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
- Tue, 18 Feb 2025 03:37:41 +0000
-X-Zone-Loop: 5d0c496bdc9addb4b166db6e8419fef6594e72f6a9bb
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=damenly.org
-	; s=x; h=Content-Type:MIME-Version:Message-ID:Date:References:In-Reply-To:
-	Subject:Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=pcNEJUXstr2iXp5Ip0XOYc8QKaMXHVJikJqjpPxPeRE=; b=XXclZVOsEaJcMtAo9/y2TSv4Tx
-	MAGeuF7tnvB02fEDerYmdt1MlhVNvla2LrVfrReaYwyA81FVaf/ZXDrF1DsrTdgpyjwb8FAKwY23u
-	NrWQOUFXVlP1BbMPrE4Vb6e9GrOY3Jbrg+uxxsgDyfOPmgmesA1myn8dqKGY6iaSwLm5mMOVFmZ3m
-	+kDWA6KEfnIL0fdbUtHECkaOIXrMhgOTS2N6BAPFyE6fsq0M/kM33abnEZ/xR8yIwKlDTqR8jnGLB
-	rNeL6tcg+w31o/AVDeF5DHrVk/Oeauq5C0btoMWESULByk2J++EX0Db/X4naF91KLcuNkstO54Vig
-	6h5UjtLQ==;
-From: Su Yue <l@damenly.org>
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: song@kernel.org,  yukuai3@huawei.com,  linux-raid@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  yi.zhang@huawei.com,  yangerkun@huawei.com
-Subject: Re: [PATCH md-6.15 7/7] md: switch md-cluster to use md_submodle_head
-In-Reply-To: <20250215092225.2427977-8-yukuai1@huaweicloud.com> (Yu Kuai's
-	message of "Sat, 15 Feb 2025 17:22:25 +0800")
-References: <20250215092225.2427977-1-yukuai1@huaweicloud.com>
-	<20250215092225.2427977-8-yukuai1@huaweicloud.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Tue, 18 Feb 2025 11:37:32 +0800
-Message-ID: <v7t76hz7.fsf@damenly.org>
+	s=arc-20240116; t=1739849937; c=relaxed/simple;
+	bh=ODxPYTsXExWrZFgcL3sfYH0HWgoLCM5DTy1lzZUJQik=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=JZZ559GTqKdiW5ket9/BMc/kBXnQf9WY8/9TiSMew+1vHrO/TG+fjpk7/WQp29jKrgb5URWStcrLnT8lVxV2kn7SezXRnyMe4Sc1t5Kph9mcaEqqtBhqKo1zFIkHBFCbfgx/EGOJ36mhHinRrYqvlfn7lQbeoem6DNCjs5YdtgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V3KyWvDU; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2fbf706c9cbso1222072a91.3;
+        Mon, 17 Feb 2025 19:38:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739849935; x=1740454735; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BpIhM0zsF5MRaXYqddzsaHiNvWZ/pZsLy5qS/qUhHO0=;
+        b=V3KyWvDUVJri+/NI2se17koolnHGmPl28jqGq2h6nM+t+sazPzHz0DOMGP4mXJhIkE
+         0Pb1O4KewYEn7epJfmGCVkdvSiTc5jgWJkKYQnSSfQT9cJO3edznkoL9glnGARWEHz26
+         yvBLUN/KHN6N5ufUJs53QNaHFZMQ4G2bBazdmJk56L4tEoKR9YvA4VJ+ymwD3EE0WF96
+         wfGEd0XmeP65BqwvLC2YhP9kzQApfxPynX13w63sC2cEG+0hjUisHo1UYOl3dt3tm9m0
+         IhyAEM+k8LlJogLO8yXPWDsPrY+xqijxPzWyqa4Ft4t73e4qreWpwDqqdbYlwdWG7F2z
+         4jgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739849935; x=1740454735;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BpIhM0zsF5MRaXYqddzsaHiNvWZ/pZsLy5qS/qUhHO0=;
+        b=tmI9F3DbEw7IIuvgmMSegmTXgNBd62LXmZyL3cobgDv36oOLB1qlJ4ZVmlQ/aifnJb
+         shOa8ghI5GNvEn9o3iEmBYhCvLaHRVXR8Zy0v00reAcTx30ZWofaID08x4VJ0VwOynW3
+         +X2I2CdfXxGipxFUzTCwNhjC5ZkUkWkkD8h2mCgHvOhe/XN4L4Ampw9NMVOm2LtdWVLs
+         qQf1xi91eDngYvqwZZFReDcGgO+BfFKwWr5AyWihx8UhYmCC8WcSxC6K7eTA6/ZFtx8u
+         KNh6vbWksa/NUq//76UesJQa4semXBNi/yxu/U+0KhjqW9KCCk1x+BQ3C2nW4AxjRslK
+         LXkw==
+X-Forwarded-Encrypted: i=1; AJvYcCUkU0011ivVynqMc0KRVsvjV5GfpY1G/jsGTDCEsWl5eEmHP/jOKdR2qXzS4+/0Eii4suGN5vB3vG0q7jEP@vger.kernel.org, AJvYcCWSBTWmDGRi06l2G90bjp2YwuhUadiksEu8fFYIVrFU7KTEFBJ+ArL5NSWkDjVQ07GtDL9KTlf+nM8w@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbmafqhsYaUUhNAv63BpWfpWBVPj+e9sKYvf9IrlmDv/ivuUAf
+	PDMRjQl4vHnirSPD89pgGuGEincUAaGlFHYSogH+oVtn1Ac9pHFG
+X-Gm-Gg: ASbGncsTlalzEufXuPBnsQj21oqy9gCHr2E22vMRJTKnqt+lSxE2UzSdC/K5qBQpzZH
+	TxEHW1InNHiPdrpaMAB+FwJtO+oOp5Syzywz6gLfKINpEHXlqBuSXJGLwp4tvEs/PfUpfZO1Ze3
+	IPkkFYM+6W3lzzYZT9VFlplxv9hLlfZzY3EXROdcisRADhn+I00m1sryf9iIUuvWh9RAnq7XbyY
+	fntFgjuh3VyAla1d7UFD+G/afG1TXteBTB3bM+pNN7SMvsXen8chPPtnzcrs02rWsI0MwTc5BY9
+	KKqu3d3PTjKWZV1iC35g
+X-Google-Smtp-Source: AGHT+IHp51ZpR11Xenf1xc5xrATpU2b9pYP8ziEHbXQ3EXKCqj44fPEbRUBGOVevxEXu+GXioUS4wg==
+X-Received: by 2002:a05:6a00:198c:b0:732:2923:b70e with SMTP id d2e1a72fcca58-73261446955mr7067310b3a.0.1739849935459;
+        Mon, 17 Feb 2025 19:38:55 -0800 (PST)
+Received: from rock-5b.. ([221.220.131.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73271b4a8b6sm3947699b3a.2.2025.02.17.19.38.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Feb 2025 19:38:54 -0800 (PST)
+From: Jianfeng Liu <liujianfeng1994@gmail.com>
+To: cristian.ciocaltea@collabora.com
+Cc: airlied@gmail.com,
+	andy.yan@rock-chips.com,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	heiko@sntech.de,
+	hjc@rock-chips.com,
+	kernel@collabora.com,
+	krzk+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	liujianfeng1994@gmail.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	robh@kernel.org,
+	simona@ffwll.ch,
+	tzimmermann@suse.de
+Subject: Re: [PATCH 3/4] arm64: dts: rockchip: Add HDMI1 PHY PLL clock source to VOP2 on RK3588
+Date: Tue, 18 Feb 2025 11:38:46 +0800
+Message-ID: <20250218033846.1251897-1-liujianfeng1994@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <1b3234ce-4526-4735-b9c0-c242e6cc3cf0@collabora.com>
+References: <1b3234ce-4526-4735-b9c0-c242e6cc3cf0@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed
-X-Authenticated-Id: l@damenly.org
+Content-Transfer-Encoding: 8bit
 
-On Sat 15 Feb 2025 at 17:22, Yu Kuai <yukuai1@huaweicloud.com> 
-wrote:
+Hi,
 
-> From: Yu Kuai <yukuai3@huawei.com>
->
-> To make code cleaner, and prepare to add kconfig for bitmap.
->
-> Also remove the unsed global variables pers_lock, md_cluster_ops 
-> and
-> md_cluster_mod, and exported symbols 
-> register_md_cluster_operations(),
-> unregister_md_cluster_operations() and md_cluster_ops.
->
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
->
-Reviewed-by: Su Yue <glass.su@suse.com>
+On Tue, 18 Feb 2025 01:33:34 +0200, Cristian Ciocaltea wrote:
+>@Jianfeng: Did you encounter any particular issue with the current approach?
 
-> ---
->  drivers/md/md-cluster.c | 14 ++++++++++----
->  drivers/md/md-cluster.h |  3 ---
->  drivers/md/md.c         | 41 
->  ++++++-----------------------------------
->  drivers/md/md.h         |  2 +-
->  4 files changed, 17 insertions(+), 43 deletions(-)
->
-> diff --git a/drivers/md/md-cluster.c b/drivers/md/md-cluster.c
-> index 6fd436a1d373..94221d964d4f 100644
-> --- a/drivers/md/md-cluster.c
-> +++ b/drivers/md/md-cluster.c
-> @@ -1612,7 +1612,14 @@ static int gather_bitmaps(struct md_rdev 
-> *rdev)
->  	return err;
->  }
->
-> -static const struct md_cluster_operations cluster_ops = {
-> +static struct md_cluster_operations cluster_ops = {
-> +	.head = {
-> +		.type	= MD_CLUSTER,
-> +		.id	= ID_CLUSTER,
-> +		.name	= "cluster",
-> +		.owner	= THIS_MODULE,
-> +	},
-> +
->  	.join   = join,
->  	.leave  = leave,
->  	.slot_number = slot_number,
-> @@ -1642,13 +1649,12 @@ static int __init cluster_init(void)
->  {
->  	pr_warn("md-cluster: support raid1 and raid10 (limited 
->  support)\n");
->  	pr_info("Registering Cluster MD functions\n");
-> -	register_md_cluster_operations(&cluster_ops, THIS_MODULE);
-> -	return 0;
-> +	return register_md_submodule(&cluster_ops.head);
->  }
->
->  static void cluster_exit(void)
->  {
-> -	unregister_md_cluster_operations();
-> +	unregister_md_submodule(&cluster_ops.head);
->  }
->
->  module_init(cluster_init);
-> diff --git a/drivers/md/md-cluster.h b/drivers/md/md-cluster.h
-> index 4e842af11fb4..8fb06d853173 100644
-> --- a/drivers/md/md-cluster.h
-> +++ b/drivers/md/md-cluster.h
-> @@ -37,9 +37,6 @@ struct md_cluster_operations {
->  	void (*update_size)(struct mddev *mddev, sector_t 
->  old_dev_sectors);
->  };
->
-> -extern int register_md_cluster_operations(const struct 
-> md_cluster_operations *ops,
-> -		struct module *module);
-> -extern int unregister_md_cluster_operations(void);
->  extern int md_setup_cluster(struct mddev *mddev, int nodes);
->  extern void md_cluster_stop(struct mddev *mddev);
->  extern void md_reload_sb(struct mddev *mddev, int raid_disk);
-> diff --git a/drivers/md/md.c b/drivers/md/md.c
-> index d94c9aa8c3aa..4d93cc1aaabc 100644
-> --- a/drivers/md/md.c
-> +++ b/drivers/md/md.c
-> @@ -81,13 +81,8 @@ static const char 
-> *action_name[NR_SYNC_ACTIONS] = {
->
->  static DEFINE_XARRAY(md_submodule);
->
-> -static DEFINE_SPINLOCK(pers_lock);
-> -
->  static const struct kobj_type md_ktype;
->
-> -static const struct md_cluster_operations *md_cluster_ops;
-> -static struct module *md_cluster_mod;
-> -
->  static DECLARE_WAIT_QUEUE_HEAD(resync_wait);
->  static struct workqueue_struct *md_wq;
->
-> @@ -7452,11 +7447,12 @@ static int update_raid_disks(struct 
-> mddev *mddev, int raid_disks)
->
->  static int get_cluster_ops(struct mddev *mddev)
->  {
-> -	spin_lock(&pers_lock);
-> -	mddev->cluster_ops = md_cluster_ops;
-> -	if (mddev->cluster_ops && !try_module_get(md_cluster_mod))
-> +	xa_lock(&md_submodule);
-> +	mddev->cluster_ops = xa_load(&md_submodule, ID_CLUSTER);
-> +	if (mddev->cluster_ops &&
-> +	    !try_module_get(mddev->cluster_ops->head.owner))
->  		mddev->cluster_ops = NULL;
-> -	spin_unlock(&pers_lock);
-> +	xa_unlock(&md_submodule);
->
->  	return mddev->cluster_ops == NULL ? -ENOENT : 0;
->  }
-> @@ -7467,7 +7463,7 @@ static void put_cluster_ops(struct mddev 
-> *mddev)
->  		return;
->
->  	mddev->cluster_ops->leave(mddev);
-> -	module_put(md_cluster_mod);
-> +	module_put(mddev->cluster_ops->head.owner);
->  	mddev->cluster_ops = NULL;
->  }
->
-> @@ -8559,31 +8555,6 @@ void unregister_md_submodule(struct 
-> md_submodule_head *msh)
->  }
->  EXPORT_SYMBOL_GPL(unregister_md_submodule);
->
-> -int register_md_cluster_operations(const struct 
-> md_cluster_operations *ops,
-> -				   struct module *module)
-> -{
-> -	int ret = 0;
-> -	spin_lock(&pers_lock);
-> -	if (md_cluster_ops != NULL)
-> -		ret = -EALREADY;
-> -	else {
-> -		md_cluster_ops = ops;
-> -		md_cluster_mod = module;
-> -	}
-> -	spin_unlock(&pers_lock);
-> -	return ret;
-> -}
-> -EXPORT_SYMBOL(register_md_cluster_operations);
-> -
-> -int unregister_md_cluster_operations(void)
-> -{
-> -	spin_lock(&pers_lock);
-> -	md_cluster_ops = NULL;
-> -	spin_unlock(&pers_lock);
-> -	return 0;
-> -}
-> -EXPORT_SYMBOL(unregister_md_cluster_operations);
-> -
->  int md_setup_cluster(struct mddev *mddev, int nodes)
->  {
->  	int ret = get_cluster_ops(mddev);
-> diff --git a/drivers/md/md.h b/drivers/md/md.h
-> index 873f33e2a1f6..dd6a28f5d8e6 100644
-> --- a/drivers/md/md.h
-> +++ b/drivers/md/md.h
-> @@ -603,7 +603,7 @@ struct mddev {
->  	mempool_t *serial_info_pool;
->  	void (*sync_super)(struct mddev *mddev, struct md_rdev *rdev);
->  	struct md_cluster_info		*cluster_info;
-> -	const struct md_cluster_operations *cluster_ops;
-> +	struct md_cluster_operations *cluster_ops;
->  	unsigned int			good_device_nr;	/* good device num 
->  within cluster raid */
->  	unsigned int			noio_flag; /* for memalloc scope API 
->  */
+This patch is adding a dependency of hdptxphy1 to vop for all rk3588
+boards, but not all rk3588 boards have dual hdmi, armsom sige7 is an
+example. At runtime I will get errors because there is no hdptxphy1
+enabled in devicetree:
+
+[    2.945675] rockchip-drm display-subsystem: [drm] *ERROR* failed to get pll_hdmiphy1
+
+Overwrting vop node at board level to remove the dependency of hdptxphy1
+can fix the issue.
+
+Best regards,
+Jianfeng
 
