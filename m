@@ -1,131 +1,100 @@
-Return-Path: <linux-kernel+bounces-519455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D53A3A39D1B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:14:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ECB7A39D03
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:10:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B84F3B9B19
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:08:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C1781898480
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:08:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2A00269B18;
-	Tue, 18 Feb 2025 13:06:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 647F1269CF9;
+	Tue, 18 Feb 2025 13:06:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Nb48jb86"
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RwJX5dZK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A662269B16
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 13:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F622690FE;
+	Tue, 18 Feb 2025 13:06:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739883973; cv=none; b=bRG2UNwyE2R5FtnhUaqShpdRuHjrOrMbgnqmgG6NbIOQrsebBxeLPSqm5H4v6E/7dL7H+iF9Wdh/kEkEQ2xBMy8zl+2gTV3Qhlcj/Fu6B0SHEeFnmVzpO0KXaT5CLBlPpFppemz2X/T0bBA946fn5HPlHchL2SB2QzzDo7HvTUE=
+	t=1739883993; cv=none; b=XNhAa0lvJ4lw32+YdJHowib88iapPt740FhfaP+ykWTAT+nzIyPbiX/WJ+43xYzLCJZY57WToYr0oqbwRKMMCNp0w87VvCV5bRQucZh0Lk2VWsapyUDvkIObkqciCxJ0W9dOP0hj6HQfDX/uohqcjN6Bht9TxJ8D8azza/WCrSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739883973; c=relaxed/simple;
-	bh=q+HbC06i8CG8XrIehHvRej0xtlb/tpGGxGM1a3va+bc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jCofK/b6yS6lTjQNgGnLmYStMeTH0AEHKHwc9k3WhWUsSR7TbwY5vN4QsXEabglYDbiZLFT1bXjhJFAgmopz+qaBehyvIRy9S7dzXy23Fy/zu+jkHMGTeAaQ+glKD+lMEvOZnbFPBKUPF+dHsWbZbP21d+epgsLWCOczGq38OwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=Nb48jb86; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7c08fc20194so452967785a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 05:06:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1739883970; x=1740488770; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7lyvU9JNedDqTCpzlpsd+T8LpPH2Gmgp9plDnXA9nVc=;
-        b=Nb48jb86Zct/iFx1IaXfgywRnbqk3cRMtfrwBp83H7pOy2pXBmEEVy4vYA1/+zabgl
-         rNEqOFZRbhSO0NSsvQru/7W4nQRjbdW6CREuAPymHiZK4aXqS1WlQSKAvns/21ZuYB5d
-         DzegpN72gBFQ7kDCMeKZ+S291Egiq5DQdE5thlQG6YhS16Z/KQiQILw0wuBjWRz1hxGc
-         3QpVEwHzzPmlxrDWGQljoeutxOf09xsk/axx//8MvsZS/xCzKOZZtc4DFvSa6ns1hs/c
-         FZPwZtCRHAArHHfZb/oHFCp1TSp1XuBd20RwUDc+6Gfbry1WsnN7JBBRLjFmSqDKJLDA
-         +BJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739883970; x=1740488770;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7lyvU9JNedDqTCpzlpsd+T8LpPH2Gmgp9plDnXA9nVc=;
-        b=VfYiXqQSFm3XQoSf1ncE9Z9o/TDCM+UoWCHW27pNTfT7PkUVkcyCO0q0zLjHxtZGQw
-         tLi65fLwlnvywmfUYPDaoEloT7dbexhDaU9YjektowfHTuWHyw9pnPnSVauqLioMCz1c
-         CXiB2Cqfj2msm8v3lOx/o+fhcu/B2/8Bldb+nmpMZkP57VDHQWJoILUpI1/bIleFSLZ0
-         G8NwKVwiWTypgjqDnl5hchp/gkk7r7l7zMOEmedQc/SmUpDDz40agaDc1xP0dy44lxAZ
-         TfaHVuolilTiiUR8BYaDb6mxAUNzoa3VxcPojJ43F/pApwmxOcBqHvQZ/zHOLFk90X7w
-         Qyng==
-X-Forwarded-Encrypted: i=1; AJvYcCXUkn0ugSLo5NAOFXPRwD0cehtZ5dBOhc6BYyQNqr1V8/8mjDtFql1IP9K5QPCEEwrxqAVQI3VAE3m1J84=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywk073U+znWewfRrKOfuK1U92MCTVeIlc0v9gJQCRNZKfJawums
-	pVmcl2Bpc9fYakuUk5sp74r6y4pUhmjYNr5nIbCzMKL7Lr8jhGB0sETPvEH0oD4=
-X-Gm-Gg: ASbGncth5tiTYnaSdr40z/z30RQUDpA4461nvDwHDjSGuWpTdsHGpNcaAJ4hdKsrmp0
-	HCwXj6S41jH/qnNtN3z7ceWw60+YHPqW9w36d9SbAFIN+Og/MVPIfqzFVOxx8lVPoQo/vQaN0gw
-	hKtyVG4H1btYMf8xzhbq/kLZ1HPXbcVNnTmc3z+lfOIcF9ExXOOPmf0DfCI0VLfJKU8sjB3Qd3t
-	3N5uPkwKfrH68d0rzHKvF2EKNsdJiVLiGKXcqwoxXiLjGWzcVRnuHQC67YG61hgc4ukZFex2eYF
-	hSSYSDliTLDJcNuUyMfhL1Ze20Qd4GYHplji/+FgrUtSLfUw24U07AeHD3E63FKl
-X-Google-Smtp-Source: AGHT+IE/gXCIwybwMK6bxAKgrlyI/gpY6nFvi94kQ78DP/ey/y9SZvjySbiVrf9fmXSNn/2xdNnHow==
-X-Received: by 2002:a05:620a:480b:b0:7c0:ab46:396c with SMTP id af79cd13be357-7c0ab463ca4mr528395185a.21.1739883970143;
-        Tue, 18 Feb 2025 05:06:10 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c09f33bc60sm235631685a.108.2025.02.18.05.06.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 05:06:09 -0800 (PST)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1tkNId-0000000HRM6-2S1o;
-	Tue, 18 Feb 2025 09:06:07 -0400
-Date: Tue, 18 Feb 2025 09:06:07 -0400
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Baolu Lu <baolu.lu@linux.intel.com>
-Cc: Nicolin Chen <nicolinc@nvidia.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Fenghua Yu <fenghua.yu@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>, Vinod Koul <vkoul@kernel.org>,
-	Zhangfei Gao <zhangfei.gao@linaro.org>,
-	Zhou Wang <wangzhou1@hisilicon.com>, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 11/12] iommufd: Remove unnecessary IOMMU_DEV_FEAT_IOPF
-Message-ID: <20250218130607.GG3696814@ziepe.ca>
-References: <20250214061104.1959525-1-baolu.lu@linux.intel.com>
- <20250214061104.1959525-12-baolu.lu@linux.intel.com>
- <Z67rghQyQrjb5sT1@Asurada-Nvidia>
- <4ee09fd2-92c6-4295-88ca-1cc061135417@linux.intel.com>
+	s=arc-20240116; t=1739883993; c=relaxed/simple;
+	bh=YodAmXd4oybScYWK8pNDUTkadK7M3omvdyYffhVFwN8=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=hGBt5onBTOyorI74VUuzH11Ocs+mm3lSIY03PRkQ77xI7sZCEbNmWWtxZGOQXqwbMYFzcLYCHLWeef3YEgbcooYgZjlFvSlwTFcuSx16M3w9PJeUwmYpiihzwU+PZpkf2/Mt52gmsag63Ngpop0D8bKCh+myrZ3SQ4s8SDGX+wQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RwJX5dZK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5259EC4CEE2;
+	Tue, 18 Feb 2025 13:06:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739883993;
+	bh=YodAmXd4oybScYWK8pNDUTkadK7M3omvdyYffhVFwN8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=RwJX5dZKGEAx2BCwkf+b+WqYyNQVu6NPYzFcunnG51iBEOEidGQjcnq1W+7r0bCQ7
+	 cCqNfV44z5Q0V1ixU4WZmL92185hc0KGmZl2uAqdCSOhVxPnEwtqEqAcQUkE9k4ZxV
+	 3oh6pYDgmYG4c5c9PL0V37a5xODUkx0f9gUnL6oP0hy6pW6ioV8G5oWnlyS9/Z/QFY
+	 jBnfXtRk0U08P+MKGd0lfafF8q9mcWxu2FlW8o+kbO3OLxJrbJJlNFj/ZE/j4pL71G
+	 PCHfiTNB1vPrb/fveOAplSQY4cqLER7QwqG5MXoxgOg257pO+xc4bYhScncbEVoRDa
+	 nmRBLsx1gZ0nw==
+Date: Tue, 18 Feb 2025 22:06:29 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>
+Subject: Re: [PATCH v3 1/2] mm/memblock: Add reserved memory release
+ function
+Message-Id: <20250218220629.6a352d70e0350b01e662d782@kernel.org>
+In-Reply-To: <Z7RwWyD67BxWPnK8@kernel.org>
+References: <173928521419.906035.17750338150436695675.stgit@devnote2>
+	<173928522350.906035.5626965043208329135.stgit@devnote2>
+	<Z7Q1xY3jhWjaSdeh@kernel.org>
+	<20250218174257.61018735a30268b5e21e50e3@kernel.org>
+	<Z7RXGX/TyAvETRgc@kernel.org>
+	<Z7RwWyD67BxWPnK8@kernel.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4ee09fd2-92c6-4295-88ca-1cc061135417@linux.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, Feb 15, 2025 at 02:32:32PM +0800, Baolu Lu wrote:
-> On 2/14/25 15:06, Nicolin Chen wrote:
-> > On Fri, Feb 14, 2025 at 02:11:03PM +0800, Lu Baolu wrote:
-> > > The iopf enablement has been moved to the iommu drivers. It is unnecessary
-> > > for iommufd to handle iopf enablement. Remove the iopf enablement logic to
-> > > avoid duplication.
+On Tue, 18 Feb 2025 13:34:51 +0200
+Mike Rapoport <rppt@kernel.org> wrote:
+
+> On Tue, Feb 18, 2025 at 11:47:11AM +0200, Mike Rapoport wrote:
+> > On Tue, Feb 18, 2025 at 05:42:57PM +0900, Masami Hiramatsu wrote:
+> > > Hi Mike,
 > > > 
-> > > Signed-off-by: Lu Baolu<baolu.lu@linux.intel.com>
-> > > ---
-> > >   drivers/iommu/iommufd/device.c          |   1 -
-> > >   drivers/iommu/iommufd/fault.c           | 111 ++++++------------------
-> > >   drivers/iommu/iommufd/iommufd_private.h |   3 -
-> > >   3 files changed, 28 insertions(+), 87 deletions(-)
-> > This is in conflict with my fault patches that Jason just took
-> > a couple days ago:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/jgg/iommufd.git/log/?
-> > h=for-next
+> > > 
+> > > Thanks! but I can not use free_reserved_area() here because it uses
+> > > virt_to_page(). Here we only know the physical address in the map.
+> > > I think we can use free_reserved_page() instead. Is that OK?
 > > 
-> > I think it needs a rebase, perhaps on the branch mentioned here:
-> > https://lore.kernel.org/linux-iommu/20250213150836.GC3754072@nvidia.com/
+> > For reserve_mem ranges virt_to_phys() will work, they are allocated from the
 > 
-> Yes, sure. I will rebase it in the next version to avoid the conflict.
+> I meant phys_to_virt() of course :)
 
-That's troublesome, I think just leave it so Joerg can pick it up. We
-can figure out what to do with the conflict later.
+Ah, I got it :). Let me update it.
 
-Jason
+Thanks!
+
+> 
+> > memory that is covered by the direct map.
+> 
+> -- 
+> Sincerely yours,
+> Mike.
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
