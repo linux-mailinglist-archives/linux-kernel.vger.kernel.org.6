@@ -1,128 +1,148 @@
-Return-Path: <linux-kernel+bounces-519610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 138FBA39EA3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:21:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C7C0A39EA2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:21:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0F17175022
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:21:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED4FD3A42CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:21:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA83426A0BC;
-	Tue, 18 Feb 2025 14:21:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DFED26A08C;
+	Tue, 18 Feb 2025 14:21:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b="cisU6zu+"
-Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Wt4oU0TS"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 104AD269D1B
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 14:21:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11CD3269D1C
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 14:21:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739888465; cv=none; b=aI1pGsGJBaSJy0MZXCN0QXvMmXdYQPZjpOM9uufMX2aCC+plokajhI4wT2BkhVa9OvZjw+ItDBLdLyaFC28W10JA8V+xu7iagFRqQRZzvDihf5YxZV6rYBqDYqHTkJJGTpnOq/YEvXyTb8IjJiiQbO6DENn9mp3o+c8UfbMB25Q=
+	t=1739888494; cv=none; b=oQbQIH9QzdoIVoyAyr1VP4ERGZYn6O6TH/ZdReDmJROyxpeV91IoLS+t+gwV6CK6UrkRgxKIwBJ000ZPK9rwgJkOb5k2yM/yjAAPCXrh3mObuUhEk16mggbdKoQzfrkYTM9k5C/DVBfjInz4DwVFAxPWYXfly26E+eXGIlsNiv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739888465; c=relaxed/simple;
-	bh=PHX9eFphN5fQHkjD5X6XVryLhS61bphBF0uF5eEXZso=;
+	s=arc-20240116; t=1739888494; c=relaxed/simple;
+	bh=33TMhdfwzRIeMgbcmfNy/XvfM4Ozc97THaJpS4//qnE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fdEWCHuup7TENrajywTfTbOndkm5YBRcfRByAO90um/kcQ+D8UU9gTlXRGAqbQQt3WgNFTboII3nrqfhwdKh8v8H7iCnQqRJ2x04h3M8FUEpbGdt2AgnpllFaysBKSBStLX5R46S/030jo8yEfMGmBZcRYHPSXvHp7VYyexbzAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b=cisU6zu+; arc=none smtp.client-ip=185.67.36.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout01.posteo.de (Postfix) with ESMTPS id 2CF83240027
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 15:20:55 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.net; s=2017;
-	t=1739888455; bh=PHX9eFphN5fQHkjD5X6XVryLhS61bphBF0uF5eEXZso=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:Content-Transfer-Encoding:From;
-	b=cisU6zu+rnd1s1mtjEPgIt4ueTODrMCnMd//MamgwGEsAFQcvJYUkbxc/Qk7JpAAA
-	 c8alNeb++xQetVw+zPRioHe2c0qaUQx74l1MwimQ+MYraUnmVM8judpuKvipXzxT4O
-	 C6feEc37oi7bUxqlKxQVU0/IErEmYM5LpNGjyvJwtPyxyZ6IgJf5+4xCAyTWptAbxM
-	 RiQW6RL22lmEJF6Yv3V/TXfnU+et4v0gSERvLD8BT3ioLHG3s0Ri/pDyMlq+bWYA/I
-	 rrSZM1PGhOk5N95K7d48+qBWFG8AiL6i0Yg+Y6dzRzwcfCouHMrjhZvdcLrJvEDHQc
-	 p/qR9q43etqBA==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4Yy1sK4BGLz9rxN;
-	Tue, 18 Feb 2025 15:20:53 +0100 (CET)
-Date: Tue, 18 Feb 2025 14:20:53 +0000
-From: =?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: openbmc@lists.ozlabs.org, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1 1/1] pinctrl: : Switch to use for_each_gpiochip_node()
- helper
-Message-ID: <Z7SXRZtrClEVBMDx@probook>
-References: <20250213193152.3120396-1-andriy.shevchenko@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gXMszT7py6pIuiRfJbXZO/HregHBKzVMGTY1jeU8n3zYod/kdjx7H0CRKP7pD8G+HvIfs8xM9FkheSrLVjb4bxg+KqGYymez7RZhdvk0R+U0WKLbUixQ5OxE9z7CwckIjWXVFcNea9tQMKKsRinskF8/lo/0Td7sR/d8+GC/Aak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Wt4oU0TS; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5dccaaca646so10040751a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 06:21:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739888491; x=1740493291; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=epp5Oj1kI3V0zqhBHGE/nEmzKDkVzIEDSBJvoi97Moc=;
+        b=Wt4oU0TSeHw/sNLLwxxqdsAPK0G/PW+799uk1s//YzBfZbx8D6ExFJulH2PHJDClVd
+         MZkEBolLuM7VGvxtnuS42XcLz8ZciqBJtHRfYcrlVjM5Rm3QBQ4L7/h2jgBYQ5AxDM5v
+         17Ut6u5N02gT6BTxYqOpSoV5OJg6iZTLRn1pGbPNgD2ADYIMVdsz5xjhc7OApyZkHS/4
+         7QRuojWNye63p2YzhHvor/opGvYeJOqxxcvQmQQNYfEyTJ9gWM/FUm/i5iNkg3J6mwCt
+         gdE51ZZlwvAoLfNwKV3RY0bxIxtsl29wT6y1iezeopl2PGrP5WN8X/v9LoiJAWsesCnh
+         vVWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739888491; x=1740493291;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=epp5Oj1kI3V0zqhBHGE/nEmzKDkVzIEDSBJvoi97Moc=;
+        b=TUKhy8lhMBltHufLL9t+GZbgFHjZTmSIicmeApG2KpMCDm99KpX/1t2hbmHWD2JYVZ
+         ibrrBBQlLwyGtGWy+MzTO+5hL9F0YZ+RrEI3EpO+MYEm6nTr+fRb/68r7bchvKejjt1u
+         1+vyd92DQRxBluVoWjWTmxYw4V9ayv4kI44UeqLtvFX3deC++I9zBaRgZi38S3FH107M
+         YOGZaTkSusmWUu4Qc8SdJAPLnlt5D5JXYDjet1JpAWrHk8WMG4KUuLRt83F6erIlacJG
+         b7zSi4n5eFXLlkp4bB/21Vjm0MfttNJEStroyIUkLdPg4KZ5wuAvNUNsms3O+iPVXMj+
+         Dn3A==
+X-Forwarded-Encrypted: i=1; AJvYcCVsMdJhCRHTyGJAHIuIMFCD/xQbaT33s09uxJtZ/5ngp3keWLwkSfQ85uFKi8l1hhRp57d1XxV/Fs9yL0g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjXoJDpZ9LgJh9niffg1obDS2ijLh8MJr6dAZ6FzB9jiDZ/HN0
+	iIdIRp3nKEGy9aE2oA5LaSeL9+NLuvaOPoy3xue+rK0NRXVG/n7VC5W10icVcTc=
+X-Gm-Gg: ASbGncsF4LxHSlDgeYJn91mZEK5VY3m35xaV758RWw1Bs/4RKAwWhDM4OxXTj9X2SbC
+	ESAxX6BL0mQ93KyRF6qI9hYr9qMheNNOfgKAcHu/OP1ksvPXL/CweFhb+cQy4jgJ8FOryZH2NO4
+	EveZElZZmhbACVYR/MMrClag7v+xjlJdWZ8wpv4SKJPTAapyn6cJZsw3Vy4NZtQXV3mJFsFTv61
+	4sjjhT9XR3jtbx0VjHmLyfafdJ7lgyijQjEw5wOCVQDlN/pZF3WoCNdOVhzCcIWbIlCp10HQ/ia
+	yPPZQkdf50vJRwLq18R/
+X-Google-Smtp-Source: AGHT+IGm8Y3zgYesHPFu1v5tsyTj/+j/bH9iWtpP4bLHsu1ODM2GS9NeO/WPPPsgDryp1DtOkgMs3Q==
+X-Received: by 2002:a05:6402:234a:b0:5de:a972:8c7 with SMTP id 4fb4d7f45d1cf-5e03722345amr12702547a12.5.1739888491339;
+        Tue, 18 Feb 2025 06:21:31 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-5dece1b5415sm8699308a12.4.2025.02.18.06.21.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2025 06:21:31 -0800 (PST)
+Date: Tue, 18 Feb 2025 17:21:27 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Philip Li <philip.li@intel.com>
+Cc: David Laight <david.laight.linux@gmail.com>,
+	Alexandre Ghiti <alex@ghiti.fr>, Christoph Hellwig <hch@lst.de>,
+	kernel test robot <lkp@intel.com>, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Carlos Maiolino <cem@kernel.org>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	linux-riscv@lists.infradead.org
+Subject: Re: fs/xfs/xfs_buf.c:1534 xfs_buf_submit_bio() warn: unsigned '_x'
+ is never less than zero.
+Message-ID: <78ff844a-0fb4-42f6-b54f-4d19e14cfd05@stanley.mountain>
+References: <202502171326.j4Xd3I0j-lkp@intel.com>
+ <20250217092445.GA29568@lst.de>
+ <a14347d2-6189-49bc-a1cc-e5959e76e6c2@ghiti.fr>
+ <20250217131203.2657cc4b@pumpkin>
+ <Z7PWuSA4jtZnxp5J@rli9-mobl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250213193152.3120396-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <Z7PWuSA4jtZnxp5J@rli9-mobl>
 
-On Thu, Feb 13, 2025 at 09:31:52PM +0200, Andy Shevchenko wrote:
-> Switch the code to use for_each_gpiochip_node() helper.
+On Tue, Feb 18, 2025 at 08:39:21AM +0800, Philip Li wrote:
+> + Dan
 > 
-> While at it, correct header inclusion as device property APIs
-> are provided in property.h.
+> Hi Dan,
 > 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
+> On Mon, Feb 17, 2025 at 01:12:03PM +0000, David Laight wrote:
+> > On Mon, 17 Feb 2025 13:06:49 +0100
+> > Alexandre Ghiti <alex@ghiti.fr> wrote:
+> > 
+> > > Hi Christoph,
+> > > 
+> > > On 17/02/2025 10:24, Christoph Hellwig wrote:
+> > > > On Mon, Feb 17, 2025 at 01:53:08PM +0800, kernel test robot wrote:  
+> > > >> New smatch warnings:
+> > > >> fs/xfs/xfs_buf.c:1534 xfs_buf_submit_bio() warn: unsigned '_x' is never less than zero.  
+> > > > Looks like this is an issue in the riscv virt_to_page implementation
+> > > > which also shows up in various other places.  Any chance this could get
+> > > > fixed in the riscv code?  
+> > > 
+> > > 
+> > > To me, the only test that could give rise to this warning is the last 
+> > > part of:
+> > > 
+> > > #define is_linear_mapping(x) \
+> > >  ††††††† ((x) >= PAGE_OFFSET && (!IS_ENABLED(CONFIG_64BIT) || (x) < 
+> > > PAGE_OFFSET + KERN_VIRT_SIZE))
+> > > 
+> > > But given that the config is a 32-bit config, it should not be evaluated 
+> > > at all.
+> > > 
+> > > Could that be a false-positive and then an issue in smatch?
+> > 
+> > Why is smatch even looking.
+> > The equivalent check in gcc has been moved to -W2 because of all false positives.
 
-Looks good, thanks!
+The Smatch check is a bit more sophisticated than the GCC check...
+I think if you removed the (!IS_ENABLED(CONFIG_64BIT) condition then
+Smatch wouldn't trigger a warning here.  How would I duplicate this
+warning?  The "ARCH=riscv make.cross" command does a 64bit build.
 
-Reviewed-by: J. Neusch√§fer <j.ne@posteo.net>
+Screw it, I can just silence this warning based on that it's a kernel
+build and the variable is called "_x".
 
->  drivers/pinctrl/nuvoton/pinctrl-wpcm450.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/nuvoton/pinctrl-wpcm450.c b/drivers/pinctrl/nuvoton/pinctrl-wpcm450.c
-> index cdad4ef11a2f..2f97accef837 100644
-> --- a/drivers/pinctrl/nuvoton/pinctrl-wpcm450.c
-> +++ b/drivers/pinctrl/nuvoton/pinctrl-wpcm450.c
-> @@ -10,7 +10,6 @@
->  //   block, shared between all GPIO banks
->  
->  #include <linux/device.h>
-> -#include <linux/fwnode.h>
->  #include <linux/gpio/driver.h>
->  #include <linux/interrupt.h>
->  #include <linux/irq.h>
-> @@ -18,6 +17,7 @@
->  #include <linux/module.h>
->  #include <linux/mod_devicetable.h>
->  #include <linux/platform_device.h>
-> +#include <linux/property.h>
->  #include <linux/regmap.h>
->  
->  #include <linux/pinctrl/pinconf.h>
-> @@ -1033,7 +1033,7 @@ static int wpcm450_gpio_register(struct platform_device *pdev,
->  		return dev_err_probe(dev, PTR_ERR(pctrl->gpio_base),
->  				     "Resource fail for GPIO controller\n");
->  
-> -	device_for_each_child_node(dev, child)  {
-> +	for_each_gpiochip_node(dev, child) {
->  		void __iomem *dat = NULL;
->  		void __iomem *set = NULL;
->  		void __iomem *dirout = NULL;
-> @@ -1044,9 +1044,6 @@ static int wpcm450_gpio_register(struct platform_device *pdev,
->  		u32 reg;
->  		int i;
->  
-> -		if (!fwnode_property_read_bool(child, "gpio-controller"))
-> -			continue;
-> -
->  		ret = fwnode_property_read_u32(child, "reg", &reg);
->  		if (ret < 0)
->  			return ret;
-> -- 
-> 2.45.1.3035.g276e886db78b
-> 
+regards,
+dan carpenter
+
 
