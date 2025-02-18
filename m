@@ -1,163 +1,244 @@
-Return-Path: <linux-kernel+bounces-518712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93B4DA393A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:05:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 954DFA393AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:06:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E44A7A390F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 07:04:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56BAB3B32CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 07:06:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A2091ACEB5;
-	Tue, 18 Feb 2025 07:05:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8369C1ACEB5;
+	Tue, 18 Feb 2025 07:06:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M217Hu5I"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="eePwfrfl"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1BA433E4
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 07:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE7033E4
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 07:06:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739862303; cv=none; b=sO0AjkEzs4sHgoKy7PecgWyWH05INjumDtzSxYwD5DZXR4yu8La/8+n6IBhVfg2rOxXgxM87HYHK8ZyyBpJP2C+eQQg9u+/HiWf3g3ZVdmKmZqcBfhPh0r2meWPEhz6GpBS3lh98rFcUEKVzXuvofDBb1ZaNXkwh1GUf/jKM/Ig=
+	t=1739862373; cv=none; b=uG1JkVUCiwXyujau3vRwN12FjRXFf20Rt3nGgQGdjIs+TQB8ko+WMW/JhVYQtLI5M0MXvlwXp0Rz/OnJ1+mGuauK33R184f00Ri0+DcjMKpD26X9SI4aCcYzLDYmaXgQLiICm1ZNGkjUAf6gjkr5CxXbAomtDJrtdDkP1hqM2wE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739862303; c=relaxed/simple;
-	bh=2rpxJgyouZ9eSsOh6PhY4BxbMZeNfYOzEbn3FxOFH84=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VxYU5lO2D4e70C3b4h3Mh77Y9FMlXOYXd7kOr95WgSAuQ6+SlGhSbdmCTOHqQ6dQD17RPSr2uC2miXy62piQtYV9p85AdXAlEH2kX/YXWYDVpNSDPKE12ilAC7cJC3lukCdzFlLOYOFSvcvK0B4hZqO6umP+nTRSPEpvh1FiDsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M217Hu5I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC870C4CEE2;
-	Tue, 18 Feb 2025 07:05:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739862303;
-	bh=2rpxJgyouZ9eSsOh6PhY4BxbMZeNfYOzEbn3FxOFH84=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M217Hu5IzvuOxg1Ua6VH8M7vwZVQXHjNW7QSBDQmC4XMHbjrIuYhFLCD/6UaO3Y2S
-	 eWzL3cfAEK6JH2iPpAIBpf3oT9Nm/RxuI2L6CgUXCgEA2EvaTCEcakB/RIOQnu+D8u
-	 YGt/IiDYm6jfKZYYD5bmuwdAaCcvJtIGJPDYicwDwyyQOfIR6t4iinlNVEasiAaUPc
-	 AiTFrZ2CfHq9z1VkuLp1AeR3F//lm5RXf1NNZeEcxrKRR3KM79Lzp2hSey3DbG59Uf
-	 FB7NXR6ToCRF3tUbtFNoGCjrmd2Zx19Sq5V8zaLqMAGfFxEVsZ1WabiBUNC8lpc8/7
-	 RpM0og+xth7MA==
-Date: Mon, 17 Feb 2025 23:05:01 -0800
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: "Kaplan, David" <David.Kaplan@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 20/35] x86/bugs: Define attack vectors
-Message-ID: <20250218070501.7mwcxqgsuxl3meef@jpoimboe>
-References: <20250108202515.385902-1-david.kaplan@amd.com>
- <20250108202515.385902-21-david.kaplan@amd.com>
- <20250211180752.pfsjvz62bztpnmoi@jpoimboe>
- <LV3PR12MB9265804700AB74A446F5220F94FC2@LV3PR12MB9265.namprd12.prod.outlook.com>
- <LV3PR12MB926524EFB64F6FB361046C5E94FB2@LV3PR12MB9265.namprd12.prod.outlook.com>
- <20250217201910.crsu7xucsa4dz3ub@jpoimboe>
- <LV3PR12MB9265249E8D0FD3920C42A1A994FB2@LV3PR12MB9265.namprd12.prod.outlook.com>
- <20250217233928.k3oem3bm7w63jzfr@jpoimboe>
- <LV3PR12MB9265041C9D8D4F3E5760F0B694FA2@LV3PR12MB9265.namprd12.prod.outlook.com>
+	s=arc-20240116; t=1739862373; c=relaxed/simple;
+	bh=OxOLf6nGovmG96Y/Nc9k1PszSMNWPW6wXkxHlnHygO8=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=UnmFck9cuvAqqDf/3hY7CQ+1qWTZ4AHiOBbNXtW4vHegHDTMSbzafzOY6aXoKR8nid0/a5GdA3JGw80H5l6h095hKOij+SZuHQMTCWPSZKrMDPZYypnzNL284jwLaoCZzq856CPPCn5yVw8Lf0iPQXOJA8qdG4guMN8AdeZvIlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=eePwfrfl; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1739862366;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Eyl6WgjL1XiGk5qWO8immzuKe7Gz2yvBndli/Sz5Ra0=;
+	b=eePwfrflks+k1sWQ9Br10G/dZioRG/ePOtfm+PclxERTgdiQdzvUwZKwwCFC+pD5s95h2K
+	2Jm/Szj8OYfQADNmhKehNbcsXfktHNIv5hRhRuGX37RxYJkSKAzQkmrZd3MD9hxG4qNjKB
+	vTv9jTagJvvUOgFCWrciO9vjDPBiO5E=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <LV3PR12MB9265041C9D8D4F3E5760F0B694FA2@LV3PR12MB9265.namprd12.prod.outlook.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
+Subject: Re: [PATCH V2] mm/hugetlb: wait for hugepage folios to be freed
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Muchun Song <muchun.song@linux.dev>
+In-Reply-To: <1739604026-2258-1-git-send-email-yangge1116@126.com>
+Date: Tue, 18 Feb 2025 15:05:29 +0800
+Cc: akpm@linux-foundation.org,
+ linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org,
+ 21cnbao@gmail.com,
+ david@redhat.com,
+ baolin.wang@linux.alibaba.com,
+ osalvador@suse.de,
+ liuzixing@hygon.cn
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <BEEBE7BB-E242-40F0-B752-E878865B56EB@linux.dev>
+References: <1739604026-2258-1-git-send-email-yangge1116@126.com>
+To: yangge1116@126.com
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Feb 18, 2025 at 02:24:01AM +0000, Kaplan, David wrote:
-> > > I do agree that they can be arch-generic (hence why I originally put
-> > > them in kernel/cpu.c) but I also don't know when (if ever) anyone from
-> > > other archs will want to pick them up.
-> >
-> > Well, for example, we already have the generic
-> > prctl(PR_SET_SPECULATION_CTRL) which is used by arm64.  If somebody boots
-> > with mitigate_user_user=off on arm64, they could reasonably expect those context
-> > switch mitigations to be disabled.
-> 
-> I'm not sure which this is an argument for actually :)
-> 
-> That is, I do agree that mitigate_user_user makes sense in an
-> arch-agnostic way and a user might expect context switch mitigations
-> disabled.  However this patch series doesn't implement these attack
-> vector controls for anything other than x86.  So I guess I'm not sure
-> if your argument is that because they aren't yet implemented for
-> arm64, then keeping them x86-specific is better...or if we should make
-> them generic to more easily support extension to other architectures.
 
-IMO, make them generic from the start, then there's less churn and it's
-easy to port the other arches.
 
-If we went with putting everything in "mitigations=", making them
-generic would be the obvious way to go anyway.
+> On Feb 15, 2025, at 15:20, yangge1116@126.com wrote:
+>=20
+> From: Ge Yang <yangge1116@126.com>
+>=20
+> Since the introduction of commit b65d4adbc0f0 ("mm: hugetlb: defer =
+freeing
+> of HugeTLB pages"), which supports deferring the freeing of HugeTLB =
+pages,
+> the allocation of contiguous memory through cma_alloc() may fail
+> probabilistically.
+>=20
+> In the CMA allocation process, if it is found that the CMA area is =
+occupied
+> by in-use hugepage folios, these in-use hugepage folios need to be =
+migrated
+> to another location. When there are no available hugepage folios in =
+the
+> free HugeTLB pool during the migration of in-use HugeTLB pages, new =
+folios
+> are allocated from the buddy system. A temporary state is set on the =
+newly
+> allocated folio. Upon completion of the hugepage folio migration, the
+> temporary state is transferred from the new folios to the old folios.
+> Normally, when the old folios with the temporary state are freed, it =
+is
+> directly released back to the buddy system. However, due to the =
+deferred
+> freeing of HugeTLB pages, the PageBuddy() check fails, ultimately =
+leading
+> to the failure of cma_alloc().
+>=20
+> Here is a simplified call trace illustrating the process:
+> cma_alloc()
+>    ->__alloc_contig_migrate_range() // Migrate in-use hugepage
+>        ->unmap_and_move_huge_page()
+>            ->folio_putback_hugetlb() // Free old folios
+>    ->test_pages_isolated()
+>        ->__test_page_isolated_in_pageblock()
+>             ->PageBuddy(page) // Check if the page is in buddy
+>=20
+> To resolve this issue, we have implemented a function named
+> wait_for_hugepage_folios_freed(). This function ensures that the =
+hugepage
+> folios are properly released back to the buddy system after their =
+migration
+> is completed. By invoking wait_for_hugepage_folios_freed() before =
+calling
+> PageBuddy(), we ensure that PageBuddy() will succeed.
+>=20
+> Fixes: b65d4adbc0f0 ("mm: hugetlb: defer freeing of HugeTLB pages")
 
-> > And then the mitigations= cmdline could simply be processed in order, without side
-> > effects, to give the user full flexibility.  To opt-in to specific vectors:
-> >
-> >   mitigations=off mitigations=user_kernel,host_guest
-> 
-> I don't like this idea as much as the next, because as noted above, I
-> think with most other command lines, a later version replaces an
-> earlier one, it doesn't append to it.
->
-> That is, something like "spectre_v2=retpoline spectre_v2=ibrs" ends up just meaning ibrs.
+The actual blamed commit should be the
 
-Yeah, that makes sense to me.
+commit c77c0a8ac4c52 ("mm/hugetlb: defer freeing of huge pages if in =
+non-task context")
 
-> > which is equivalent to:
-> >
-> >   mitigations=off,user_kernel,host_guest
-> >
-> > Or, if one prefers to opt-out:
-> >
-> >   mitigations=auto,no_user_user,no_guest_guest
-> >
-> > where the "auto" is optional for default configs.
-> 
-> This seems more appealing to me because I think it's clearer what 'on'
-> vs 'off' is.  It retains the more compact form of the command line
-> while also allowing for opt-in or opt-out style.  And if you specify
-> multiple "mitigations=" command lines, the new one replaces the old
-> one, like with most other options.
-> 
-> So I rather like this, and would be interested in what others think too.
+which is the first to introducing the delayed work to free the hugetlb =
+pages.
+It was removed by commit db71ef79b59bb2 and then was brought back by =
+commit
+b65d4adbc0f0 immediately.
 
-+1
+> Signed-off-by: Ge Yang <yangge1116@126.com>
+> ---
+>=20
+> V2:
+> - flush all folios at once suggested by David
+>=20
+> include/linux/hugetlb.h |  5 +++++
+> mm/hugetlb.c            |  8 ++++++++
+> mm/page_isolation.c     | 10 ++++++++++
+> 3 files changed, 23 insertions(+)
+>=20
+> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+> index 6c6546b..04708b0 100644
+> --- a/include/linux/hugetlb.h
+> +++ b/include/linux/hugetlb.h
+> @@ -697,6 +697,7 @@ bool hugetlb_bootmem_page_zones_valid(int nid, =
+struct huge_bootmem_page *m);
+>=20
+> int isolate_or_dissolve_huge_page(struct page *page, struct list_head =
+*list);
+> int replace_free_hugepage_folios(unsigned long start_pfn, unsigned =
+long end_pfn);
+> +void wait_for_hugepage_folios_freed(void);
+> struct folio *alloc_hugetlb_folio(struct vm_area_struct *vma,
+> 				unsigned long addr, bool =
+cow_from_owner);
+> struct folio *alloc_hugetlb_folio_nodemask(struct hstate *h, int =
+preferred_nid,
+> @@ -1092,6 +1093,10 @@ static inline int =
+replace_free_hugepage_folios(unsigned long start_pfn,
+> 	return 0;
+> }
+>=20
+> +static inline void wait_for_hugepage_folios_freed(void)
+> +{
+> +}
+> +
+> static inline struct folio *alloc_hugetlb_folio(struct vm_area_struct =
+*vma,
+>   			unsigned long addr,
+>   			bool cow_from_owner)
+> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> index 30bc34d..36dd3e4 100644
+> --- a/mm/hugetlb.c
+> +++ b/mm/hugetlb.c
+> @@ -2955,6 +2955,14 @@ int replace_free_hugepage_folios(unsigned long =
+start_pfn, unsigned long end_pfn)
+> return ret;
+> }
+>=20
+> +void wait_for_hugepage_folios_freed(void)
 
-> > The priority could be simplified:
-> >
-> >   1) individual mitigations (=auto means use system-wide default)
-> >
-> >   2) system-wide defaults (tweaked by mitigations=/mitigate_*=)
-> >
-> > So the system-wide defaults would be defined by mitigations=whatever, and those
-> > can be overriden by the individual mitigations.  That seems a lot more simple and
-> > logical.
-> >
-> > And since you're already introducing "=auto" for the individual mitigations, I think that
-> > would be easy enough to implement.
-> >
-> 
-> Yes it wouldn't be very hard, and it does make logical sense.  But I
-> think the big caveat is the change to the existing mitigations=off and
-> that it would no longer override individual mitigations.  Changing
-> that would seem to be a risk, and is that risk worth taking?
+We usually use the "hugetlb" term now instead of "huge_page" to =
+differentiate with THP.
+So I suggest naming it as wait_for_hugetlb_folios_freed().
 
-Honestly I don't see it as much of a risk.  AFAICT that behavior isn't
-documented anywhere.  I'd view it as more of an implementation detail.
+> +{
+> + 	struct hstate *h;
+> +
+> + 	for_each_hstate(h)
+> + 		flush_free_hpage_work(h);
 
-And we have to weigh that risk against better maintainability and ease
-of use going forward.  These bugs are going to continue to be found
-across all the major arches for a long time, let's get the interfaces
-right.
+Because all hstate use the shared work to defer the freeing of hugetlb =
+pages, we only
+need to flush once. Directly useing flush_work(&free_hpage_work) is =
+enough.
 
--- 
-Josh
+> +}
+> +
+> typedef enum {
+> 	/*
+> * For either 0/1: we checked the per-vma resv map, and one resv
+> diff --git a/mm/page_isolation.c b/mm/page_isolation.c
+> index 8ed53ee0..f56cf02 100644
+> --- a/mm/page_isolation.c
+> +++ b/mm/page_isolation.c
+> @@ -615,6 +615,16 @@ int test_pages_isolated(unsigned long start_pfn, =
+unsigned long end_pfn,
+> int ret;
+>=20
+> 	/*
+> +	 * Due to the deferred freeing of HugeTLB folios, the hugepage =
+folios may
+> +	 * not immediately release to the buddy system. This can cause =
+PageBuddy()
+> +	 * to fail in __test_page_isolated_in_pageblock(). To ensure =
+that the
+> +	 * hugepage folios are properly released back to the buddy =
+system, we
+
+hugetlb folios.
+
+Muchun,
+Thanks.
+
+> +	 * invoke the wait_for_hugepage_folios_freed() function to wait =
+for the
+> +	 * release to complete.
+> +	 */
+> + 	wait_for_hugepage_folios_freed();
+> +
+> + 	/*
+> 	 * Note: pageblock_nr_pages !=3D MAX_PAGE_ORDER. Then, chunks of =
+free
+> 	 * pages are not aligned to pageblock_nr_pages.
+> 	 * Then we just check migratetype first.
+> --=20
+> 2.7.4
+>=20
+
 
