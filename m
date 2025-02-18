@@ -1,117 +1,127 @@
-Return-Path: <linux-kernel+bounces-518571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3983EA390FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 03:54:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DD5DA39109
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 03:56:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 806E6172943
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 02:54:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F11101893213
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 02:55:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18E40155A25;
-	Tue, 18 Feb 2025 02:54:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 833011581E5;
+	Tue, 18 Feb 2025 02:55:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="NlAHMjao"
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="S9haAwkP"
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B51951581E5
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 02:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B6167E0E4
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 02:55:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739847256; cv=none; b=OACJLG0zgjUg2Yj0i3F9Hv9xyVMmYgzR6k8gbbAvhkEbPgn6VTFdspG69IV/VqKe0Jx8zL+wCk5ds7N3CTLDCqpOwFNRK0aBQ2VdzJt7A2lQOhoxYdqn6vd8cEbNFleqFOp0SFWXeedW7rRnDzdbPUFecP8c2pq23xYxpm2Z3Lw=
+	t=1739847336; cv=none; b=eTeuW50bLE7KKxEWuBX61mzgZhK24i8TH8BQZcub+CL+SyQmkL/6tzMBeLgoh5TbZbBlF/+pyhxuyuosGuZVMBgYz2N30PGtTzPTada+HNCzdVedRlOiiY21VQvLe8Es+NqwWHH3q99VJJQ0ztq/370ZmEWuk3M4KNJxJSYKgOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739847256; c=relaxed/simple;
-	bh=hggXA//dbpLfY4b0zVXCNzUbRF0IEh7fxc8rgRrjQr0=;
+	s=arc-20240116; t=1739847336; c=relaxed/simple;
+	bh=Uw/0M/9xl6kOjQzwFRhhjx7mHMsAQyKWjL/OtR1XgkY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jn4twxB1eorip5KXU3/Jk45jTaZ2nvV7GB9138s2XidLevLffSaZjUCIUL0PyhqzCP92JBbD8mvwCm3OmPxwyvTA+OYWieYU2DKU1grvuU9K/yYX+LXCZRaAJhuhDH/4P2Pe8US4k85lzH3RupAEwS95LxGdDrrtYVy3+j5ufQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=NlAHMjao; arc=none smtp.client-ip=209.85.217.49
+	 To:Cc:Content-Type; b=WN2bLEdjRddbJ7biWnILBMB5fJUMiao2zfpbaYu5X4vUHOvWDZjPaGqjRLcif00Jhoh5u+iK3fi5K0m226XO6NF5CNx9QxowlUyvV8ccltntvGakVdtmGofvpIiBsNaYw7CQAqLctYhseZvQyenT2keRurzZ06IRiTtHceTDu4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=S9haAwkP; arc=none smtp.client-ip=209.85.222.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-4ba00b6821aso1727367137.2
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 18:54:14 -0800 (PST)
+Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-86718c2c3b9so1379160241.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 18:55:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1739847253; x=1740452053; darn=vger.kernel.org;
+        d=broadcom.com; s=google; t=1739847334; x=1740452134; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=hggXA//dbpLfY4b0zVXCNzUbRF0IEh7fxc8rgRrjQr0=;
-        b=NlAHMjaoVNU//ouHMD/i3+ltz8TugmWt44W3kw2S1cBUMDwm74jKgy5V7k/YwJOpml
-         gyFOZtcbSS+c8YQKoyx/HFsa2ougeCHySCclrfOLajUUuCbKcLRRsgZiGe3QMhOsrhVw
-         a4bHThMQKGdsW8lnkMsH/tXf/YjGUePKGpsVI=
+        bh=1Ayxk8PDWuXfH6gz7m7DNx0NyBcv6xpknmuNfBWWNbY=;
+        b=S9haAwkPF11o+MkvxVGVCWTeQcvhRyKDfh3dXMmmicoR9Cwv6QO8i9g/ugnrSalF5h
+         SBnG3aMY/NMvBhhtA6RlQHZ4B7xJoLbmUJfBTIc1ld2ZvW1RoOPqX7m7Ij8EtZTgpnLN
+         EyEKqY8yirdxwF4pKUusbfbRwXBX51wmVbmaQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739847253; x=1740452053;
+        d=1e100.net; s=20230601; t=1739847334; x=1740452134;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=hggXA//dbpLfY4b0zVXCNzUbRF0IEh7fxc8rgRrjQr0=;
-        b=YEOXMSdCDdliBSI75H69vuTugxbOJPR7A3gZxRSo5gZ5eaz/STVqFgWzlswWWkEN5V
-         htXSPiMQ6oyvKSX0cmXUhMYVQeKXxVow9df4XYPvvzIShWMNiR+ZhOBvmt8lmWq+KG8b
-         Pyaa5yQ+mc5VP3u+OAjjyzmtd7nE6iIz1FRcbWFdMvSpvXsxp/68G0DUg+uhDOHC5BT+
-         7n55RXjlfI331PEiQ/aTgUeAa3VytmtkcNDQx5mkiTpXdED+oeODmEJoPeLTDdSqPwZe
-         7BkKJqjD0syhbRIxl5HTzalALkDF5ktQzZkToLejSf9sgzrWBQmchbsuZnG90c/sOGt/
-         FJDw==
-X-Forwarded-Encrypted: i=1; AJvYcCVQ/bYZtZgWqIj7HUx4jazHpyMgOwz4eBbajGURwjpgksw520aZt2XFaO1VPCXTrRb5gdxdlhbkYtwKb8k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEMs8762SywsovvRw+G9n5w2OXgkjBW1SrYl/g5gXLdyGhublD
-	dpzKSBGd7/LKr9FTyPXA67j7c6Kt5kL84jawFyIotSg7z7zN+2OZnV7S8bLAqkx+XtpB8JZBNpn
-	kT93LLmhFjC0sYv4mDe+lmlYn0aO02wCOPkJz
-X-Gm-Gg: ASbGncuN0IH9niaaD5HYoMZQ5i+q6FsIqOYMErYIz08B5sKshesvd4dWwlRcUDoWuwk
-	VjvvvzCdd4xhU929L1E9T5fpJcdBiCihirB9OVgfVbi+XT/Ml3MDVnWdVCGfOyzC58iSXz9rC6Q
+        bh=1Ayxk8PDWuXfH6gz7m7DNx0NyBcv6xpknmuNfBWWNbY=;
+        b=VqoSLjhOJyrLjSTmEJ5nBX7FeUG+nj4YYiGVlFvkzGPxx9tdK1QfX6Pnw/FO4xhWkp
+         NjdiT1PhvPEvdXHLAX/PmNPes4kEecAgkyAon8JmAzP/YtHsmm2LtxZ4F014rGrix7Gh
+         /FhJHDrWHnuFvd7xMqcw9d9ijvSNqYWI+rMFnK3ofAUjsT8/tAVQ6nF+iBMIV28A0og5
+         2JZBIuK1PIEy3Qvg6xS1CqNDBcI40xQ+rVL3+sKpn1zjgAewkB2A63JjzmElgC7DXzHL
+         l8BfGdreVGUVzYejW/0DizwFMZM7z7kh4S3ewrBDxsuZ1smv8fzEBcHzqxukV2Cd2GEj
+         g1XQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWA5IgPW4sYISW2upt6Fw+Jkk8UvM8R84Xl38u3hCFYdVMFwzG7hmf88xz1xxCPpn7UHBbf5YhmEr7faBM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YweW/n+Y/6ZumpY0DIemtietw8vOkfCDwOEuMD5DDpEwn+K4f6c
+	pvh+JawxcoN2y2gndC2xtL1pCgS66TB0mc98Rh+VEWEIlsH08rXh66nEuaA3X0BV1ZNWW+6q/w/
+	hk6+hZrAJYbHUKWx5g0vl9a8myCFxwAy9EQz1
+X-Gm-Gg: ASbGnculouUYPnbC4wXAq8GzrZ1VWyfXzNeBfhVo9OOQOhx6ZZUgNFQ+SBlQ0TOyjSK
+	l+sKAO20Pq3lcfp4Sxe0lSklzCaKz4HLsroZmylHyunEDhGILJrUbmz35ZwZrAYAHhYesHWw1Vw
 	==
-X-Google-Smtp-Source: AGHT+IG9SZUdqysoQhs9EbtkQn933N+Jljou7Uv2SWp4WKMWMSpWxLhiIYWyq05iRYzySsQ0IR1Xy/Kh6+Jn92rNfD4=
-X-Received: by 2002:a05:6102:4410:b0:4bb:dfd8:4177 with SMTP id
- ada2fe7eead31-4bd3fc6c4c9mr5637645137.7.1739847253571; Mon, 17 Feb 2025
- 18:54:13 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGpGG8tXtx0rVGHJZPy0YojNhFRAk4Bqh2lko7fcQlVMhgtPLObuwjP6KDVLiyzhiglcVQxN2ES+VazSjUoYKA=
+X-Received: by 2002:a05:6102:e11:b0:4bb:dfd8:4187 with SMTP id
+ ada2fe7eead31-4bd3fd92e1amr6286607137.13.1739847334110; Mon, 17 Feb 2025
+ 18:55:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250213180134.323929-1-tariqt@nvidia.com> <20250213180134.323929-2-tariqt@nvidia.com>
-In-Reply-To: <20250213180134.323929-2-tariqt@nvidia.com>
+References: <20250217-old_flags-v2-1-4cda3b43a35f@debian.org>
+In-Reply-To: <20250217-old_flags-v2-1-4cda3b43a35f@debian.org>
 From: Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>
-Date: Tue, 18 Feb 2025 08:24:01 +0530
-X-Gm-Features: AWEUYZkCl3MZ70-zouOti4G4AZeLKQHyJr2g3a9mCU2ZxpMjKS8qX9cgJclxrPI
-Message-ID: <CAH-L+nNJsjm9kADTX6YXkAUzsPeKJKJu47ndJ=qqtA5J6uA8_A@mail.gmail.com>
-Subject: Re: [PATCH net-next 01/10] devlink: Remove unused param of devlink_rate_nodes_check
-To: Tariq Toukan <tariqt@nvidia.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, Jiri Pirko <jiri@nvidia.com>, 
-	Cosmin Ratiu <cratiu@nvidia.com>, Carolina Jubran <cjubran@nvidia.com>, Gal Pressman <gal@nvidia.com>, 
-	Mark Bloch <mbloch@nvidia.com>, Donald Hunter <donald.hunter@gmail.com>, 
-	Jiri Pirko <jiri@resnulli.us>, Jonathan Corbet <corbet@lwn.net>, Saeed Mahameed <saeedm@nvidia.com>, 
-	Leon Romanovsky <leon@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-rdma@vger.kernel.org
+Date: Tue, 18 Feb 2025 08:25:22 +0530
+X-Gm-Features: AWEUYZkJAgMAX58qvZMqeG7z-FDL1XGb5IWneysgwSzSt2QIwV6Scz_UTiYe49M
+Message-ID: <CAH-L+nNXaM+P_1-HuE-w3XoCMraGA+4RhCm8L63LmHVmstXeCQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v2] net: Remove redundant variable declaration in __dev_change_flags()
+To: Breno Leitao <leitao@debian.org>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Nicolas Dichtel <nicolas.dichtel@6wind.com>, andrew@lunn.ch, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Mateusz Polchlopek <mateusz.polchlopek@intel.com>
 Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000881d47062e61c1ba"
+	boundary="00000000000054268f062e61c6e3"
 
---000000000000881d47062e61c1ba
+--00000000000054268f062e61c6e3
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 13, 2025 at 11:34=E2=80=AFPM Tariq Toukan <tariqt@nvidia.com> w=
-rote:
+On Mon, Feb 17, 2025 at 9:21=E2=80=AFPM Breno Leitao <leitao@debian.org> wr=
+ote:
 >
-> From: Cosmin Ratiu <cratiu@nvidia.com>
+> The old_flags variable is declared twice in __dev_change_flags(),
+> causing a shadow variable warning. This patch fixes the issue by
+> removing the redundant declaration, reusing the existing old_flags
+> variable instead.
 >
-> The 'mode' param is unused so remove it.
+>         net/core/dev.c:9225:16: warning: declaration shadows a local vari=
+able [-Wshadow]
+>         9225 |                 unsigned int old_flags =3D dev->flags;
+>         |                              ^
+>         net/core/dev.c:9185:15: note: previous declaration is here
+>         9185 |         unsigned int old_flags =3D dev->flags;
+>         |                      ^
+>         1 warning generated.
 >
-> Signed-off-by: Cosmin Ratiu <cratiu@nvidia.com>
-> Reviewed-by: Carolina Jubran <cjubran@nvidia.com>
-> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
+> Remove the redundant inner declaration and reuse the existing old_flags
+> variable since its value is not needed outside the if block, and it is
+> safe to reuse the variable. This eliminates the warning while
+> maintaining the same functionality.
+>
+> Signed-off-by: Breno Leitao <leitao@debian.org>
+> Reviewed-by: Mateusz Polchlopek <mateusz.polchlopek@intel.com>
 
 LGTM,
 Reviewed-by: Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
-
 
 --=20
 Regards,
 Kalesh AP
 
---000000000000881d47062e61c1ba
+--00000000000054268f062e61c6e3
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -183,14 +193,14 @@ a30CvRuhokNO6Jzh7ZFtjKVMzYas3oo6HXgA+slRszMu4pc+fRPO41FHjeDM76e6P5OnthhnD+NY
 x6xokUN65DN1bn2MkeNs0nQpizDqd0QxggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYD
 VQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25h
 bFNpZ24gMiBDQSAyMDIwAgw3wUUJsDUiPdpordMwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcN
-AQkEMSIEIA+CWct3EYyjIIQqYG3Q20uIlMQaRD45UcnA2c5vbQjOMBgGCSqGSIb3DQEJAzELBgkq
-hkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDIxODAyNTQxM1owaQYJKoZIhvcNAQkPMVwwWjAL
+AQkEMSIEIDIqgi5GM5Lky8YgEff+joOz+AQT6oU6QFKYZpkJSJCYMBgGCSqGSIb3DQEJAzELBgkq
+hkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDIxODAyNTUzNFowaQYJKoZIhvcNAQkPMVwwWjAL
 BglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG
-9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQBzlE2kWt3l
-DnMwB4b0YrCfZFTO4/QvoZmWI6dgl6eSOpWLsTv1WM6aqsnZoi6nKNuDdnZDT6eHLBiYxhHHldXX
-qde1OtokQquw+bfNhtw1kP+E8k4/qu1ZFPG60eRTkts3yivE/wqOzHZbgXLNFLa31mu7n3QCHl9r
-frA+6Jma7DiCEizCeEHEAQvEKfSXHYaZoBbNGqT+XimzU/iMcrq7zUUX5WzIsEpyR//O72lKrNHC
-JUNOl87lJRTVi0P5mJUTOaPMR2rBdTC2lGTHOeOkVVVFJY8k1nXEU4GSJDLkoJFTOEOXpZO8ZsM4
-JSlsOXNi+yZARAOC2hgMXYt478lU
---000000000000881d47062e61c1ba--
+9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQCGYniX0OeQ
+IC7l73mrtE243J+k4ZdwsDHUlqh/3eQRB6QpaCwPjo7mgupPYbbbXwDdwOUmW1rsAr56vdWMquXI
+CHpMwm2Gvi7PhotwQRxntWnCwFyzzIUEFG61wZMkwzgDp0mKd+7+FFl6d/qGRMXLfhZdk97geBeL
+voB02hq4Q1wWQxzzVWLNF4biEAk1Ve4rgwoVpgoOhYnaGIkLkN7marRcCK9Cqug+IdoKm5MFRVfK
+JITlnBoJySWkbXkoigQV3FBoz4Aq2UEpY3dDns5ckmGPYlhIff19+4iojgWrqkpTtOdc+uqQ2mOk
+4PP+KAx7xNiUu9UIa3hPnUTZeBty
+--00000000000054268f062e61c6e3--
 
