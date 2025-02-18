@@ -1,145 +1,122 @@
-Return-Path: <linux-kernel+bounces-519360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BED3A39C03
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:20:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4AADA39C0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:23:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9604162E73
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:18:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C9293B5D30
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:20:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A859324112E;
-	Tue, 18 Feb 2025 12:18:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 681AB2417FD;
+	Tue, 18 Feb 2025 12:20:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AcbIPFhq"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="k2o8+YsR"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD6C9653;
-	Tue, 18 Feb 2025 12:18:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739881121; cv=none; b=C0M8pajy3A6WJh2O71C6yQO9TQiytr1GxgnGSpMbyy4EYpUhgKZZ6pUpZeqbldiblB1bk2hMAvg00LZ203xJXqnTyUMyyOAcwS9kb7Oudp6U+zPaz6Le5B230PUvknQqNk8U5ZAWUdsVookutAuGpwZ0M32jIModYtlysi56ksI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739881121; c=relaxed/simple;
-	bh=UXMGXKFPk66kxCTjhHEVzYxn8lEWZHsKZJL5YAmtQuQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gPxINIsaw+vLU5FeqhmKvHUcLsZ4NYxZGU4d+B57ooZ+ktHd6wKIdobSVB+XLK26A0j9MOnvvKfbc5AG00gL0pfCwAJJc7LSUEx9QW5WfFkGtS6jydogShysNLyG4VfskELNlcLWy6Xm/8Iq7O/5ZQ+ttIUULVONVR6AHh7hjF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AcbIPFhq; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2fc8482c62dso392885a91.3;
-        Tue, 18 Feb 2025 04:18:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739881119; x=1740485919; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rcOf/+mAe7HjVKdjr7yO9VSKEbj6DVv1uV/KGTc/++g=;
-        b=AcbIPFhqVGnKwmd48hIlhXJZIifrNo4gqxOViIzUs9WZGuY5U2OHH4UcJ1j06sMmOC
-         cnFVADBG4fUQMQpIKIaXXP/Bnj7ezEkFTLt/VprUOLqLdqhAZKmPg3RIFVNQeEMpV8PD
-         HvrG4Hn7W+HZCD11Zfz2fAvzl1DjipC+TnYkswUFR6nV4KYGtuIiTfi0CKFdx27ktdZ5
-         MJFNzITiQLkJY4MBhg5I4/I+Co9/MNRda+Nc4cSGEb3gWLx/ayDYNrNkMH4QF++LozfA
-         PRUAqhD6EEnlg6X8Ysl5SMz1mSeAZvdJ2vgCnqC2Ana2s2WUuCDBNPAWo2EMGZdJshbH
-         1g3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739881119; x=1740485919;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rcOf/+mAe7HjVKdjr7yO9VSKEbj6DVv1uV/KGTc/++g=;
-        b=vnpegqC+J5y5ad/PNzu/7Ph+hser2Kz1Etvgzw+4zSk65CkBI9CZekjfo0F04Aszcp
-         XkFRcrnHmTbnd26D7MifNtpVvZtuVLn9LT2fZikKFm+GsJAP9l/cASET43AQQCGmBeVi
-         /b6XYfyQ3G2hSFqHCz2xnAVyE3rpIwp06ai69u0BzPtR+CU5XE6xbTp/gq3/PiY82F8P
-         49OOyY/SDEvY4GsT7A7UMvN3IWImOC9s+eJtk+mYqDlWnw/96m75bm94bp76eQT8TDou
-         ySh2A1430mj0W1kH1KhV6Yf81ehF21J+vTwaV8x0IxCTpHzBX7+Gecwpo9jI0ki79ywa
-         L4iA==
-X-Forwarded-Encrypted: i=1; AJvYcCV4f0/L8ZiCO9GaQsjZ87uZBqFFP1rM+tTL5F4DM5Q1FyJadMIXktewOMixpoCYGBfetNIjjUozBICA7gEN@vger.kernel.org, AJvYcCXcfzZapChY8XskY/UHrauEt5+2IjNyyGX4JUjmbFvNXx471WWHtjCX5ysXfl4uEI+CCDQlXOx1wsGm@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8nSsLkcmgNu8PKAOHUzJVq2lmvsV7yXOvRJDbrVjjtpTFcZyI
-	lGUV048a+QWTkQ1ziKjaAaItEpuyRVA9hZ2XhwhHeXwLc5GR6FOE
-X-Gm-Gg: ASbGncvbhFqAKMa3IWmYm8K4Ohj6pg+1txQurQF9oxzOAm8LTj+Fo2kD2jjibXxi9Au
-	UejdEKKgS6Ery40uDmm9cjFVV51xeCcoArfd1ffCPTRlEcmZflyxwq4+wA9Vd0dycxkdtGaL/yP
-	3j/Hugdtc9HFu+6bzjApszE7evLw0epooT5B5wwL7qH0C4Li1MK2TtgLreWR6+1B3d4IhJUIMAf
-	wUmMbRQpK+G12XnsC1vij+iHBtnUb9D1FdQ+suuVfnSs5dtygpfi+saa3DK1Ga1hwN3A512WF+D
-	YRw4CJdefINC2kwgh5MC
-X-Google-Smtp-Source: AGHT+IHPsPfeZPNuDFA8wzs+mlVOqsQ83YHZnd3qlJa4+vQqXKKzygw1wD0+aOsxjfqbOZCURGWEyg==
-X-Received: by 2002:a17:90b:2250:b0:2fc:1370:9c2f with SMTP id 98e67ed59e1d1-2fc4103cd0dmr8326098a91.4.1739881118858;
-        Tue, 18 Feb 2025 04:18:38 -0800 (PST)
-Received: from rock-5b.. ([221.220.131.19])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fc13ac19aesm9896535a91.17.2025.02.18.04.18.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 04:18:38 -0800 (PST)
-From: Jianfeng Liu <liujianfeng1994@gmail.com>
-To: heiko@sntech.de
-Cc: airlied@gmail.com,
-	andy.yan@rock-chips.com,
-	conor+dt@kernel.org,
-	cristian.ciocaltea@collabora.com,
-	devicetree@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	hjc@rock-chips.com,
-	kernel@collabora.com,
-	krzk+dt@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	liujianfeng1994@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	robh@kernel.org,
-	simona@ffwll.ch,
-	tzimmermann@suse.de
-Subject: Re: [PATCH 3/4] arm64: dts: rockchip: Add HDMI1 PHY PLL clock source to VOP2 on RK3588
-Date: Tue, 18 Feb 2025 20:17:46 +0800
-Message-ID: <20250218121749.1382322-1-liujianfeng1994@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <1919367.CQOukoFCf9@diego>
-References: <1919367.CQOukoFCf9@diego>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E18B10F4;
+	Tue, 18 Feb 2025 12:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739881228; cv=pass; b=sytStNd5nX1a5UNPT9M7otKh2FXv9tPDh9z2b3D2sbtHgkmx5jGr1jEoQMpgYWYSNsUWxzG9jzP3oUZ/Hvo/d8raqq/n0aIp2RrH8JAx/+vBFss34ujob3/kaVJ9E7kbI7PofqufS1+Nmsq89sy+agTVQtChkwV1uSyLVGEzA2A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739881228; c=relaxed/simple;
+	bh=7wG+k/J27UhE0wr9moyh2JThWcB7wEZyZUkzLHmMNAc=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=YMkl7amyO0D6fn+tBCiVuri41gt8OVjjzx6YYoC9rVpvLufnhrEOgdMCNrn66MoH0uEZkq/o/w0Ug5mCO/0t79RXTCwk2X2Z/sl91nVvSE+bQYaSdG2KTXQdSNnvbo+p6bRbz2EeH9whmKGonNYb5XceUPE1dWOYl6Nvgu5cTF0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=k2o8+YsR; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1739881194; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=oGjXYGqxVAaQvjPL6J0oChYi7O14uxalRxAVSbOKNImPXpApIvWUQq2ILUaSiOvArjnGS07kGjCHwaXHtyf8AgMZJbnnfi3E5GzyBrAD5+gMTYj7VMAROAfNihIfANS3uxSTAgXJBzoucH7P8Ch7QGjD1WpoQ/qZ9KDNNsxwOjY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1739881194; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=7wG+k/J27UhE0wr9moyh2JThWcB7wEZyZUkzLHmMNAc=; 
+	b=ZFW7JcyThRzv5FOvC4onq+bxF4M8EaRZk6aZD/JMEb9Tt6UiYac2mC1Xdj4MZBkwXlM3jR0JR4I9ktA4cI2umuSaK1K6HXbXtSZuhOST0ajwjoNQRtW9yvJW8S1z2mQ8XTB7s3LXv1VYLhvf6EcqZK5Ck/uifFl3I4m8dUh5NRs=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1739881194;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=7wG+k/J27UhE0wr9moyh2JThWcB7wEZyZUkzLHmMNAc=;
+	b=k2o8+YsRfBvh1gD5rj+DG2L7sdQoD7piyxZp0lABE4/bbdDs5gFtBKlLDVTVJz0T
+	JBbiJuECpD65vbol2UnZghnPNwCd5qFBq5HQn6f0d85ixjXuMY1APaC3pWEh/A0z37s
+	QkMwt+/1GnT6tHXOx7EycRrmU1saERxg/p5qo9Oc=
+Received: by mx.zohomail.com with SMTPS id 1739881191996449.9203601583672;
+	Tue, 18 Feb 2025 04:19:51 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.300.87.4.3\))
+Subject: Re: [PATCH v11 2/3] rust: add dma coherent allocator abstraction.
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <2b019479-2d32-433f-af78-c3378dee4e2b@gmail.com>
+Date: Tue, 18 Feb 2025 09:19:34 -0300
+Cc: Robin Murphy <robin.murphy@arm.com>,
+ rust-for-linux@vger.kernel.org,
+ dakr@kernel.org,
+ aliceryhl@google.com,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Trevor Gross <tmgross@umich.edu>,
+ Valentin Obst <kernel@valentinobst.de>,
+ open list <linux-kernel@vger.kernel.org>,
+ Christoph Hellwig <hch@lst.de>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ airlied@redhat.com,
+ "open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <E4FEFE5F-77C4-4ADB-AEFA-2580CA75BCFD@collabora.com>
+References: <20250123104333.1340512-1-abdiel.janulgue@gmail.com>
+ <20250123104333.1340512-3-abdiel.janulgue@gmail.com>
+ <633274AD-E55C-4A90-AB72-33D3E176176F@collabora.com>
+ <dd57c3ba-246e-414d-a9c1-eb2cff032d83@arm.com>
+ <2b019479-2d32-433f-af78-c3378dee4e2b@gmail.com>
+To: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+X-Mailer: Apple Mail (2.3826.300.87.4.3)
+X-ZohoMailClient: External
 
-Hi Heiko,
+Hi Abdiel,
 
-On Tue, 18 Feb 2025 11:00:57 +0100, Heiko Stübnerwrote:
->So I guess step1, check what error is actually returned.
+> On 18 Feb 2025, at 06:58, Abdiel Janulgue <abdiel.janulgue@gmail.com> =
+wrote:
+>=20
+> Hi Robin,
+>=20
+> On 17/02/2025 15:52, Robin Murphy wrote:
+>> FWIW we've been wanting to steer away from relying on the default =
+mask in new code, so it would be quite neat to actually enforce that =
+allocations fail if dma_coherent_mask hasn't been explicitly set =
+(assuming it's sufficiently cheap to keep a flag in the Device handle or =
+something like that - it's not the end of the world if it isn't =
+practical).
+>=20
+> I just had a quick look on how to possible approach this and indeed =
+would refactor the Device binding a bit. If it is okay with you this =
+could go in a follow-up patch? I was hoping to upstream the initial =
+support first - at least with the dma_set_mask/dma_set_coherent_mask put =
+in place already.
+>=20
+> Thanks!
+> /Abdiel
+>=20
 
-I have checked that the return value is -517:
+FYI: I don=E2=80=99t mind a follow-up patch.=20
 
-rockchip-drm display-subsystem: [drm] *ERROR* failed to get pll_hdmiphy1 with -517
-
->Step2 check if clk_get_optional need to be adapted or alternatively
->catch the error in the vop2 and set the clock to NULL ourself in that case.
-
-I tried the following patch to set the clock to NULL when clk_get_optional
-failed with value -517, and hdmi0 is working now. There are also some
-boards like rock 5 itx which only use hdmi1, I think we should also add
-this logic to vop2->pll_hdmiphy0.
-
-@@ -3733,6 +3751,15 @@ static int vop2_bind(struct device *dev, struct device *master, void *data)
- 		return PTR_ERR(vop2->pll_hdmiphy0);
- 	}
- 
-+	vop2->pll_hdmiphy1 = devm_clk_get_optional(vop2->dev, "pll_hdmiphy1");
-+	if (IS_ERR(vop2->pll_hdmiphy1)) {
-+		drm_err(vop2->drm, "failed to get pll_hdmiphy1 with %d\n", vop2->pll_hdmiphy1);
-+		if (vop2->pll_hdmiphy1 == -EPROBE_DEFER)
-+			vop2->pll_hdmiphy1 = NULL;
-+		else
-+			return PTR_ERR(vop2->pll_hdmiphy1);
-+	}
-+
- 	vop2->irq = platform_get_irq(pdev, 0);
- 	if (vop2->irq < 0) {
- 		drm_err(vop2->drm, "cannot find irq for vop2\n");
-
-Best regards,
-Jianfeng
+=E2=80=94 Daniel=
 
