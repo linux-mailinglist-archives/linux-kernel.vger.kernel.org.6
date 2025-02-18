@@ -1,138 +1,117 @@
-Return-Path: <linux-kernel+bounces-520222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12C33A3A730
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:17:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51C19A3A72F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:17:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86C70173843
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:14:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F8BC1895D6C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:14:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB9127290D;
-	Tue, 18 Feb 2025 19:11:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFCDF1E8341;
+	Tue, 18 Feb 2025 19:12:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HSGZJa4v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="apNO0xT7"
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1E05271265;
-	Tue, 18 Feb 2025 19:11:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4BFE1E51F8;
+	Tue, 18 Feb 2025 19:12:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739905879; cv=none; b=JWnuHVqEQ+JQpdgA6u67kvjqFlomSks09oJ+p8O1StDTj5aWh9izE+yXDdi5vlqTuvcqdVpmZJ+WXheMoEfeqw6tUV+JGgrY6/OocaplLb9ZEUW3laNfMWH3/eb96eZFk9DHngslHrBjKTejQA6/BoCQehkFVCXMcyf343d/2Bc=
+	t=1739905972; cv=none; b=i1nCF5DMW5aKhNtVfEv1aphdfIRdqNWbqu40IGNasMNJglGOv4BaqGUCBBe1qhJJr85OGi3FbCpGP5/iy1G5ZZrpiMyVKS8KFw6LFQA3BM1QLMw/5Wf25wtmI9+E2S8DtVP8SzEAUHatUOtnK2YeTUMkJhqqRa4UHAtatq46ykk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739905879; c=relaxed/simple;
-	bh=HAhbVYY0BFTrXeNHjiE12Hv0whhqsPdEA7Z/cepHjdI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BIP5Ighbnk/a8kPH5R59Cm7O2QgMkNW4/YcdFYphZRPTJtI5J0wbCYrnw9YBaK7mXadyqhGB6tba+2v6joaARa0Ual2Nlx65BejyZ7mFNmcZApraO2QwfoehlduNO3gsarUz/Xp0if5cjJZ7W7tAH5sljUeXGY234p4FCp9UcNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HSGZJa4v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C95CAC4CEE2;
-	Tue, 18 Feb 2025 19:11:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739905876;
-	bh=HAhbVYY0BFTrXeNHjiE12Hv0whhqsPdEA7Z/cepHjdI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HSGZJa4vmZo8KPPtt7ObQktcqNcxi/x/SlIp3NJC2JkgA2dKYg4o3yKvykS28TJ15
-	 CB4z3E2c616rmn1e+KNqe+srNCiDHJlxjOpCLD59DK0B1BnofPoT89A1AL8QXSPecU
-	 nnM295/8jhdbBvNPVxKg0Qmds9c+zHQLj+YV87ZPis3ChtApnLQPXkYsGrIYwHZ/Bq
-	 dbVdfzzbNY3eybrLBEtzEahE2nKu8mLg5fJASUXCMtHP1Rj7lCN/lFa4Qw6kHrEm/M
-	 JI4s31DmT5LIY4o0hLHat6Z+MAIuKIt5PIXnT+ZHnE+Je04QyTUeZSSuFu44k2jvwZ
-	 rAnFrsTwJVRbQ==
-Date: Tue, 18 Feb 2025 20:11:13 +0100
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Charlie Jenkins <charlie@rivosinc.com>,
-	Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Quentin Monnet <qmo@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
-	Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>, bpf <bpf@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	"linux-perf-use." <linux-perf-users@vger.kernel.org>,
-	Linux Power Management <linux-pm@vger.kernel.org>,
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
-	"open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/2] tools: Unify top-level quiet infrastructure
-Message-ID: <Z7TbUbs4nvuLF-rq@x1>
-References: <20250203-quiet_tools-v1-0-d25c8956e59a@rivosinc.com>
- <CAADnVQKTqRBQBA-yxB9EYPMgayP3rOE4iDhg+QD++2d=jxfY=Q@mail.gmail.com>
- <Z6JdwSsAk1xCiSrn@ghost>
- <Z6JksXDRh8OSAh-u@google.com>
- <CAADnVQKmKf6wY3dg+PfAxtrrFWGO7D-m83dEndjWksPfWDt5wQ@mail.gmail.com>
- <Z6Khl1rHIAb7wOXw@ghost>
- <CAEf4Bza5nKk6_fVY2vmJjZgPb40zB+R3REy8==ZLc98eg1iHTA@mail.gmail.com>
- <Z6pF5pkH_bqvDwMK@ghost>
- <CAEf4BzYqOtfOiYcHWRP44rwkrdzi3aMkjgD1-Td5DVAOLV=2kA@mail.gmail.com>
- <Z7TT7Jw5QDx2G81v@x1>
+	s=arc-20240116; t=1739905972; c=relaxed/simple;
+	bh=WoUKh5c/vDRm4FlNeCNrkzPuHxYE4Y4scX3UMvAd5O4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fioGpGPolYM914iknbFRtJ0u9gqlEC6SD3us8tx6TlqUat4gL0F90Jl2Ui6HB9GydmhxODILHEYPDFLSvwG8T+l0a7R1hin9pnunamFZrdQ9Nr2p+rDVwmsaSKVP0U211btmWssZKVO8iITXyOGl1iCXNbQ8GqHEv4CinIG7gPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=apNO0xT7; arc=none smtp.client-ip=209.85.167.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3f40ad1574fso512515b6e.0;
+        Tue, 18 Feb 2025 11:12:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739905970; x=1740510770; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=oF3IZ5dNlMyYD63Wzfa4O0wknfeiB+PfksPMCxVRCig=;
+        b=apNO0xT7oS8blITVvU5AA+T6WNsY+6TwmxVVmJRMLlKjITvOGyzXNV7ZnRjY12n/8b
+         sMJWFNdPaNXVlPzMZWB6U5F6Opyl+gZQHTxSTo/Fgrowe/jPQdueQ7NR1ifl1z9Zxzjk
+         hFCO8ojfy8FxDfiZWnE9IQoZeQ6d1YVf2Dls+BvEQLWtLrJ/QTxs/NZpG7TcT+/H90Qu
+         ZYKB92vz5Kbdwue+BNKAu5MSL8qEwx09PWD0vtsDFjWdA0XYRw9KEBnMTVZSYNQF4WVX
+         CnU1a+3ASEdd+J+GWhNrWVSEB2s8GZUXx0uwnBtvECB/caEGaKRxMnVP3WKF3TM0MnMw
+         WIGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739905970; x=1740510770;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oF3IZ5dNlMyYD63Wzfa4O0wknfeiB+PfksPMCxVRCig=;
+        b=kw47hKfXSdmyC37aW96kZ5iqrwRJkY8gBsp4+1MPc2H5ov6jKtx/zhmh4Iw91DCF9v
+         JJsID0Tl7uqW17LGwQxIKDYfWvjyJSSuSq/2G1MbQcvvAie+ik70PLDTscOAKl717oDH
+         fzujy0RAa68bU4Au3YfU6w6OLDMdiVY/UssXDKWaPK+xCbe5DXZpxD+z0yNCSyjCStWv
+         65CqgyZUN+1xnV+2h085IfFzQkfFnjBnD+/J2PaT5/5O63FPmZOQUH0UEQY9l3CDhfNY
+         qZFcT5W2ytGaurNVwCA+42UCfzBibjnVWz/ixnTL6h1OwJaVSYPJlASVAwACPATIheMw
+         s8yw==
+X-Forwarded-Encrypted: i=1; AJvYcCVTKu8iA+qY5X1X6M2J9L6SEwWwhC429l/9D0Y9NsszCEXu527ToCd6lr7RgxORdZTVIKOPMRVHPwF/vYM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiBwb81mg7OYyYtQR+77/HGgaABTeiS5pzXuMxM3w9QHoptY38
+	H/5JTOWrRWSCdvadf2SVVfMBlqOGufqcXU1Z98ioAn8NWxi/IHKw1ARmM9QwzSzLiVvpU2GDws6
+	Ob+60ohipHazBWnCFFrFNsK1RBk0=
+X-Gm-Gg: ASbGncsjiVtgW8YqwVTOyf5N3JSGDOT8wAPs1o7H3QD0kfz9VsSRz0yQ8Zu3WkE3tFS
+	aWFYWLntHcUoOsN37aUVl32zn4usUzfOH2ztjUdr3DWvI10uCFTCHvr3SPIJp+inGrHhWf6XYmM
+	G73ok/iI0BTNiKpA==
+X-Google-Smtp-Source: AGHT+IFb4knJMi3AOcDr6zaVeojXvLaFJxcBcDyvpUv4oVbjmkI7Mm6ZZOndeOhxjCi1+zyZXOxXG+rYjRuy9gA1yt0=
+X-Received: by 2002:a05:6808:181e:b0:3f3:d742:c2bd with SMTP id
+ 5614622812f47-3f40f1e5799mr776743b6e.13.1739905969652; Tue, 18 Feb 2025
+ 11:12:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z7TT7Jw5QDx2G81v@x1>
+References: <20250218165923.20740-1-suchitkarunakaran@gmail.com> <d194435e-88bf-49f6-bb6f-b52f77248965@kernel.org>
+In-Reply-To: <d194435e-88bf-49f6-bb6f-b52f77248965@kernel.org>
+From: Suchit K <suchitkarunakaran@gmail.com>
+Date: Wed, 19 Feb 2025 00:42:38 +0530
+X-Gm-Features: AWEUYZkoRmcxpgXd1SyCu20aEGPfydJydoqEvXvTkpjbLGDJXP09KIF_zfs0pMk
+Message-ID: <CAO9wTFhVx9nCPyMzHKCTnuBfrTmvA2QADg8La0z6KcYWpsxnEg@mail.gmail.com>
+Subject: Re: [PATCH REPOST] selftests: net: Fix minor typos in MPTCP and psock tests
+To: Matthieu Baerts <matttbe@kernel.org>
+Cc: netdev@vger.kernel.org, kuba@kernel.org, horms@kernel.org, 
+	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Feb 18, 2025 at 07:39:44PM +0100, Arnaldo Carvalho de Melo wrote:
-> On Mon, Feb 10, 2025 at 04:23:49PM -0800, Andrii Nakryiko wrote:
-> > On Mon, Feb 10, 2025 at 10:31 AM Charlie Jenkins <charlie@rivosinc.com> wrote:
-> > > On Wed, Feb 05, 2025 at 05:28:19PM -0800, Andrii Nakryiko wrote:
-> > > > On Tue, Feb 4, 2025 at 3:24 PM Charlie Jenkins <charlie@rivosinc.com> wrote:
-> > > > So, can you please check and fix?
+Thanks for the feedback!
 
-> > > I think I am misunderstanding what you are saying. The patch that we are
-> > > discussing on is the patch to fix this? You are showing the output from
-> > > the patch that is being fixed in this series.
-
-> > Ah, it's me getting confused. It was the earlier perf commit that
-> > broke all this, makes sense. I just double-checked with your patches
-> > applied locally. It indeed fixes the issue, LGTM.
-
-> > Acked-by: Andrii Nakryiko <andrii@kernel.org>
-
-> Thanks, b4 didn't pick this one, probably because you provided the Ack
-> for a previous version of this series, but the patch in it is the same
-> as in v2, so I'm keeping it, ok?
-
-> Also since you applied the patches and tested it, can I promote the tag
-> to Tested-by you?
-
-> Humm, there is a slight difference, checking that in the e-mails
-> thread...
-
-> +  quiet = quiet_
-> +  Q = @
-> 
-> The above doesn´t  have spaces surrounding the = sign, lemme see...
-
-Got it, the comment about consistency, etc.
-
-Can I use the Tested-by: for the v3 series?
-
-- Arnaldo
+On Wed, 19 Feb 2025 at 00:12, Matthieu Baerts <matttbe@kernel.org> wrote:
+>
+> Hi Suchit,
+>
+> On 18/02/2025 17:59, Suchit K wrote:
+> > From: Suchit <suchitkarunakaran@gmail.com>
+> >
+> > Fixes minor spelling errors:
+> > - `simult_flows.sh`: "al testcases" -> "all testcases"
+> > - `psock_tpacket.c`: "accross" -> "across"
+>
+> Thank you, the patch is no longer corrupted.
+>
+> Reviewed-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+>
+> This patch can be directly applied in net-next.
+>
+> Note: please next time don't repost your patches within one 24h period,
+> and use the [PATCH net-next] prefix, see:
+>
+>   https://docs.kernel.org/process/maintainer-netdev.html
+>
+> Cheers,
+> Matt
+> --
+> Sponsored by the NGI0 Core fund.
+>
 
