@@ -1,95 +1,112 @@
-Return-Path: <linux-kernel+bounces-520037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49729A3A502
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:12:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46923A3A503
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:12:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBD191890DE2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:12:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53B5D1890AC4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:12:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63CFA27128F;
-	Tue, 18 Feb 2025 18:11:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B10C2271277;
+	Tue, 18 Feb 2025 18:11:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="aEuCrB1f"
-Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OCUakSCA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DEB618CC15;
-	Tue, 18 Feb 2025 18:11:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A0AB18CC15;
+	Tue, 18 Feb 2025 18:11:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739902307; cv=none; b=g6R3k+tMlNXnG0a6NzzRSEJNDqSU0hIAy70GR8xrRd8nQePJyHlvZvf9b3/2p7XY1YfYYFV05MP56PNZ/Hzd+JdLX5v3IYxazOx1oqJIFtLltelItPoxppf7cjSdjmGrO0BSNZU4dwM+bZiQQPC/vKfav5kBDEQEQezaTlotKW0=
+	t=1739902315; cv=none; b=ZNC7f/TxhtcxKNh38YIUFqI7oxGUTy4YTCbQC6KMpL69m78efI8bWTRWdqknxiE00uyShV0lnBe6uq8ITZP3gBRbLYu2+KioyBFjuSggwVjKmY/7hWKmjOjrr1LCTYm7MeIh8KA1DjFwLibS4en63DiMd9BMg+jjRkBVxoIONzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739902307; c=relaxed/simple;
-	bh=RmK+sM1fIn4q659XBikH3ksVr9Po6MXHDQIlxxHTrRM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R/aLQQGc0foEMQjoHPMRELMQsHz/o9HaRvg5UWpNIU7LfwzQao13aUtSc2M1ZiTEpoDpIvJ+xjAv4EhbIX0ERozAqH90G4aPW070qRQnOEOXXOgJeeDO895oybklShN5i7YwOmUQg/AsWk0bxTApXzxGUWGoeihIalCCyRQOpoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=aEuCrB1f; arc=none smtp.client-ip=199.89.3.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 004.mia.mailroute.net (Postfix) with ESMTP id 4Yy6zh36n0zm0ytf;
-	Tue, 18 Feb 2025 18:11:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1739902302; x=1742494303; bh=D3fg9/FhRNXoopcFC00LwGSs
-	wRIqL9uglMvEe/X7NYI=; b=aEuCrB1fqMFywbjAFSjY3bzUo6y1gmcc77jH1vKN
-	45oDHbzOdJ1mLUqEzOkzDws2+Z1osAzX1FCAnqgFhTlVXyqfW3pt+L8+4/Dzwk7M
-	OsKMKCk0BFq/C2f1WaLoy4IJvx922+w2EKk79cF4OTzwqmZ4DI9dn0h3SoRLvpWg
-	ovVmQAMv9ny5DqeL61lUULY4E3tllIfUmonrOGS0ndQVMgO0O0CKwKRTCyHAwG1B
-	lHcHvSaKMKpeskyrF8Lx8uj3+R3SN/2/HPdYDgxsbm/Uo9Fk5zXlCtLEavSbG5ij
-	b8vemfg4Z824EizfjF418XElz9C2hqry7owwWjYRSPma5A==
-X-Virus-Scanned: by MailRoute
-Received: from 004.mia.mailroute.net ([127.0.0.1])
- by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id hzXxISCs6VtB; Tue, 18 Feb 2025 18:11:42 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4Yy6zX6kLyzm0ysh;
-	Tue, 18 Feb 2025 18:11:35 +0000 (UTC)
-Message-ID: <01bf49ea-8461-4961-bc9f-893ce59a3d2a@acm.org>
-Date: Tue, 18 Feb 2025 10:11:34 -0800
+	s=arc-20240116; t=1739902315; c=relaxed/simple;
+	bh=L6jtfNthTsF7txY6fasnR3MOiegSAMuJbAVTkGdQhZc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=myo4CjlWcjJktqBjO6UXu9dpj9MjF8w0ELxrnFwr+hzuOrdYMWqGmWpm5t+03acNhl6GU3NL0LTiSpXcTk1+ePD0NGxiDgLup9tQppwzpMQ4glMa3qudrUu8XbAp8Zw8mso9JsT6jIXXBBZpPJtExZ1TmfsR6390mHfvlArPobU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OCUakSCA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 866B9C4CEE4;
+	Tue, 18 Feb 2025 18:11:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739902314;
+	bh=L6jtfNthTsF7txY6fasnR3MOiegSAMuJbAVTkGdQhZc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=OCUakSCARiXqgyyR98tTnw+eQVZicfk5wR1CwOqW+mhd8ZwGmQf4N+w8cqxeiK0L0
+	 dFKEiL64XZSPBLYXaJXhFj1YrGT5P7njLITAAepf7lxT/PQKtyisMgpLwEzvgNpcGd
+	 a/LbC26HIg572QH/v4SDI3TgTXHT5bWLa6nI48Nj0BXaZyR3E7f/sEMNQjOuuEI+ZC
+	 h6ev6I3Hb0aEXTX4/JbbLyE8KSAw26g5Pz+Y+4IxU8Saq2Q6qByNueGLNSqyjSjk9T
+	 6sSYUePpgfHHC9c/2MX2NQAzyU4q1l9mzHro3F5PCwUkcLme+ecvMHF/wnJcYHeIto
+	 5qQ9wpr9kHQBA==
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5fa2685c5c0so2858648eaf.3;
+        Tue, 18 Feb 2025 10:11:54 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU+1WZaiq9klDQ1Ka+HsHZx7b2I1CUZIe2fUATtrKDezrNjyy81PTuN7CvGu+qITkB0MJ6H5MmwltBOE+ai@vger.kernel.org, AJvYcCWcSrmBNF3cpihQSCMxGKDZ9V+4vl3J76RWclbEY0XTLkB86w9GPXnFCJnAx8Llkuw/LxJ6D9joeXO2@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBxYNlyX1+4dfxfSQjwYJxuK6OkCwGX1cvJxHoV79fQXq2dpS1
+	kFf8JE2mV5ZIkHprO+UnJx8+0cus65ag4ug67Qgfi3ZxGh/Lo32hPGtQ1m8fpR7dnZCC/MyxjV5
+	0A+STjyLRsH5MQQS+FUuxWe9pHt8=
+X-Google-Smtp-Source: AGHT+IHra6W26CYn3h0Ps8XpOzMvEj6sdAECD9RxyFP9m9PND/S8EZ/XFVkJjJOUlcShUMiDIKUgEvdThbAw+HaSk1E=
+X-Received: by 2002:a05:6808:23d6:b0:3f4:9ae:cd60 with SMTP id
+ 5614622812f47-3f409aecf88mr2719780b6e.13.1739902313819; Tue, 18 Feb 2025
+ 10:11:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] scsi: hpsa: Remove deprecated and unnecessary
- strncpy()
-To: Thorsten Blum <thorsten.blum@linux.dev>,
- Don Brace <don.brace@microchip.com>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-hardening@vger.kernel.org, Kees Cook <kees@kernel.org>,
- David Laight <david.laight.linux@gmail.com>, storagedev@microchip.com,
- linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250214114302.86001-2-thorsten.blum@linux.dev>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20250214114302.86001-2-thorsten.blum@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250211104532.699124-1-thorsten.blum@linux.dev>
+In-Reply-To: <20250211104532.699124-1-thorsten.blum@linux.dev>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 18 Feb 2025 19:11:42 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0gW6E9hnhYbf+bG_8ERR3PqYQ8tMv_j+-MptZEv3awvnA@mail.gmail.com>
+X-Gm-Features: AWEUYZnoOEG4QxY-6lBGLYpiJHR8wKfKyOA45Iwy_8vxgFE5dL8J_AUKqq5dg0A
+Message-ID: <CAJZ5v0gW6E9hnhYbf+bG_8ERR3PqYQ8tMv_j+-MptZEv3awvnA@mail.gmail.com>
+Subject: Re: [RESEND PATCH] ACPI: video: Use str_yes_no() helper in acpi_video_bus_add()
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2/14/25 3:43 AM, Thorsten Blum wrote:
-> While replacing strncpy() with strscpy(), Bart Van Assche pointed out
-> that the code occurs inside sysfs write callbacks, which already uses
-> NUL-terminated strings. This allows the string to be passed directly to
-> sscanf() without requiring a temporary copy.
-> 
-> Remove the deprecated and unnecessary strncpy() and the corresponding
-> local variables, and pass the buffer buf directly to sscanf().
-> 
-> Replace sscanf() with kstrtoint() to silence checkpatch warnings.
+On Tue, Feb 11, 2025 at 11:45=E2=80=AFAM Thorsten Blum <thorsten.blum@linux=
+.dev> wrote:
+>
+> Remove hard-coded strings by using the str_yes_no() helper function.
+>
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> ---
+>  drivers/acpi/acpi_video.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
+> index a972831dbd66..efdadc74e3f4 100644
+> --- a/drivers/acpi/acpi_video.c
+> +++ b/drivers/acpi/acpi_video.c
+> @@ -27,6 +27,7 @@
+>  #include <linux/acpi.h>
+>  #include <acpi/video.h>
+>  #include <linux/uaccess.h>
+> +#include <linux/string_choices.h>
+>
+>  #define ACPI_VIDEO_BUS_NAME            "Video Bus"
+>  #define ACPI_VIDEO_DEVICE_NAME         "Video Device"
+> @@ -2039,9 +2040,9 @@ static int acpi_video_bus_add(struct acpi_device *d=
+evice)
+>
+>         pr_info("%s [%s] (multi-head: %s  rom: %s  post: %s)\n",
+>                ACPI_VIDEO_DEVICE_NAME, acpi_device_bid(device),
+> -              video->flags.multihead ? "yes" : "no",
+> -              video->flags.rom ? "yes" : "no",
+> -              video->flags.post ? "yes" : "no");
+> +              str_yes_no(video->flags.multihead),
+> +              str_yes_no(video->flags.rom),
+> +              str_yes_no(video->flags.post));
+>         mutex_lock(&video_list_lock);
+>         list_add_tail(&video->entry, &video_bus_head);
+>         mutex_unlock(&video_list_lock);
+> --
 
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+Applied with changelog edits as 6.15 material, thanks!
 
