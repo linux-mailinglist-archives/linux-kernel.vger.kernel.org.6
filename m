@@ -1,115 +1,88 @@
-Return-Path: <linux-kernel+bounces-518789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FBDFA3948F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:11:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C96EEA39492
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:11:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18B7D188976E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:11:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC920188A2B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:11:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A48A122AE73;
-	Tue, 18 Feb 2025 08:10:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00A6922AE6D;
+	Tue, 18 Feb 2025 08:11:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="lCxShyY2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FBPd4RUa";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BftFmJ+D"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09FD31DE4C2;
-	Tue, 18 Feb 2025 08:10:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6EE8228CA5
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 08:11:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739866253; cv=none; b=cKa4kwbNAM8T5FVWia1N7IV7gK6OvNQuLRZSTysvsoNC0PY61YlygexZ7EijndksNiZCKyvPmGjhGZCSUTQ/+nN56OuY8Ev41W0U2VTfGLWfwNYN8Vkbcq3cNzyoJ/Qk1o3D/caitXMVAaSq/tX4fBhzbIBQ1QS7qf7SO3BE+f0=
+	t=1739866274; cv=none; b=mnmlRSovPeCJN0H0Jb7I1imiZlFTJ/LMXFA84IK54jhtP4+wYiP1xbtDcEY317dThbcfXS3K6K0JzpMWunK8embUFar+IfRGcWl0Z3/szzhnojLYZXVjhHCMwuPxNuk9jwFGdX/KUWkmVmfh/T3SK96rX4qQX8o05WrdTHqsjIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739866253; c=relaxed/simple;
-	bh=Xn8Eug54BTNvbhwm4r4GgmUNpr3mOGqeFSI54sBSM1E=;
+	s=arc-20240116; t=1739866274; c=relaxed/simple;
+	bh=sMyD5WghmQkPvsBnt8DB05/niNVQXB+q56W3spPtS8U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bwFGq3mCV/4Fwtx0P0z/iDuyNYEEbbpeUQQIzuezRKFbgVOpyUv2iT+mFCjRgL6FSZQahh5EIAem2fepx+eOJCiBfOZ1Yr75k3aB+w05fVLTtT+dmv9SjPUuVlPERLnrwBmyFScIDcjRPOysbm2oJyosDoVwGaJj+/E8dQ/UnQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=lCxShyY2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DEF1C4CEE6;
-	Tue, 18 Feb 2025 08:10:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1739866252;
-	bh=Xn8Eug54BTNvbhwm4r4GgmUNpr3mOGqeFSI54sBSM1E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lCxShyY2pLEegHlZumDdUNGHJ53Wd9tracfk+YVj7jwbYw/+1YfexHq3y1Q+2oIZw
-	 gJkKy85+K/IWvWhud0dItMxD+nTJPqLMn84F73dMqfKCcZZ+OwNwRj0izL1CK7kFNA
-	 DfjdtE66b3QYtnmB8bdKQclSRD53/RNX9UeF8RWU=
-Date: Tue, 18 Feb 2025 09:10:49 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Patrice Chotard <patrice.chotard@foss.st.com>,
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/2] usb: core: Don't use %pK through printk
-Message-ID: <2025021822-plausible-poem-eb90@gregkh>
-References: <20250217-restricted-pointers-usb-v1-0-78da55158832@linutronix.de>
- <20250217-restricted-pointers-usb-v1-1-78da55158832@linutronix.de>
- <2025021733-strudel-curator-bfaf@gregkh>
- <20250217153444-4e1fd8ec-7f0e-4f40-8fc1-e323e4622284@linutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=d9KglXiXRCAm32ZQV6dO19rDSwzQiI5kA5VAFf8vtvj76D/dfLRB+76f3Z8MVh5eb5D0RRiof1aQxlK6k711vTudGowsM3q+gEhA55i+hkbk9OVNM7kFwGqOuQDnlla+5p673TAI00iJx2iZ1/ZoI3ZBWtRTuuFbKgkfGKw6ERQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FBPd4RUa; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BftFmJ+D; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 18 Feb 2025 09:11:09 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1739866271;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sMyD5WghmQkPvsBnt8DB05/niNVQXB+q56W3spPtS8U=;
+	b=FBPd4RUa4dPnYHRnJWsoa2szcs4AWOdIFdm7A3EDEDEhxql+Xguo1uhjhhXYKyHyPsWqRc
+	5AauyORi/ZPNt6MtV5ZXYcFanWNzFL5g1mZTWFK5iT49pdrYlwe1JeUK0cdsLu7w2UDop5
+	8Zsvj5tGxoxpAHhEWGxYQHSXMLcnMAfamWZH+VwKV+mptUpuK6ItYzPi9QLjUWI2dw8EF/
+	HcHOeN3eRn8JMFqiYwXgD2XV2juVpl0fryzPTt1J2plMYymsfyDp6IGTeOxGYX9kGbISz6
+	UZGMaLQuANy4Wlrbqezb4Ta6tXHE0z4m+7G+6AAbr7zucbuTGROEFwl4pLPeoQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1739866271;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sMyD5WghmQkPvsBnt8DB05/niNVQXB+q56W3spPtS8U=;
+	b=BftFmJ+DlYsBMqvagP//ConIXq0lavqv4rZXbYwqyHEgTxu27y8BDI56xFc9R44+FnMQgJ
+	w+kQzUuwTkQMhaDQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Waiman Long <longman@redhat.com>
+Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Alexander Potapenko <glider@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>, kasan-dev@googlegroups.com,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev, Nico Pache <npache@redhat.com>
+Subject: Re: [PATCH v4] kasan: Don't call find_vm_area() in a PREEMPT_RT
+ kernel
+Message-ID: <20250218081109.Hz-r4tkL@linutronix.de>
+References: <20250217204402.60533-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250217153444-4e1fd8ec-7f0e-4f40-8fc1-e323e4622284@linutronix.de>
+In-Reply-To: <20250217204402.60533-1-longman@redhat.com>
 
-On Mon, Feb 17, 2025 at 03:50:54PM +0100, Thomas Weiﬂschuh wrote:
-> On Mon, Feb 17, 2025 at 02:52:05PM +0100, Greg Kroah-Hartman wrote:
-> > On Mon, Feb 17, 2025 at 02:20:51PM +0100, Thomas Weiﬂschuh wrote:
-> > > Restricted pointers ("%pK") are not meant to be used through printk().
-> > > It can unintentionally expose security sensitive, raw pointer values.
-> > > 
-> > > Use regular pointer formatting instead.
-> > > 
-> > > Link: https://lore.kernel.org/lkml/20250113171731-dc10e3c1-da64-4af0-b767-7c7070468023@linutronix.de/
-> > > Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
-> > 
-> > So really this is just a revert of 2f964780c03b ("USB: core: replace %p
-> > with %pK"), right?
-> 
-> In this case, yes.
+On 2025-02-17 15:44:02 [-0500], Waiman Long wrote:
+> The following bug report was found when running a PREEMPT_RT debug kernel.
 
-Great!  Mark it as such then please :)
+Thank you.
 
-> > Why not express it that way, and explain _why_ it's somehow now ok to
-> > use %p when previously it wasn't?
-> 
-> The full background is in the email linked from the commit message.
+Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-That's not obvious at all when reviewing patches.  Please provide enough
-information in the text itself to understand what is going on.  We
-don't always have access to external links so we can't require them for
-context.
-
-> %p is more secure than %pK since
-> commit ad67b74d2469 ("printk: hash addresses printed with %p").
-> %pK was never intended to be used through printk() in the first place.
-
-Great, say that then please.
-
-> I'm doing the these changes for various subsystems using a common
-> commit message. The changes are not reverts for all of them and
-> digging out the specific history for each single line is a bunch
-> of extra work.
-
-Writing a good changelog is hard.  Trying to automate it like this is
-going to be harder.  Just take the time to either do a revert (and
-explain why), or do the change (and explain why).  Either way you have
-to explain it properly, no shortcuts there.
-
-> If you want more historical context, I'll resend the series, though.
-
-As you are reverting a commit that was stated to be "for security", yes,
-it better be redone, otherwise this is going to seem like a regression.
-
-thanks,
-
-greg k-h
+Sebastian
 
