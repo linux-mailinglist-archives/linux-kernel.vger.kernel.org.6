@@ -1,537 +1,80 @@
-Return-Path: <linux-kernel+bounces-519766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C460FA3A1A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:45:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77675A3A1A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:46:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 965713AACDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:44:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 452A93B1CA8
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:44:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ACE626B2B1;
-	Tue, 18 Feb 2025 15:44:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4417526E153;
+	Tue, 18 Feb 2025 15:44:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JVwiHBFh"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="nSmgq1Zp"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 486A9263F36
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 15:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45066263F36;
+	Tue, 18 Feb 2025 15:44:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739893479; cv=none; b=p+2FpDVEjd1PhpbO9qbhv5JZLKA0j953cmqjS16i+edHwNh+9KIzUOT0No/Z8LqIFEs0vwz7WWn1rQHsGjuoaYXUmJrx4ltvQ4w9a1NOQBMI9PVs0UiLb9708iSCb30DywiG4BazNoraP3gj+/kvK1EDMwauB/Di9KmeYhEG8TY=
+	t=1739893489; cv=none; b=D6pQKcCxQiU7LCTCLfrINBWxcjwdVumIunyUt7zukDP1Xj8Euo8xWpYYImjmtxhI1Bw+bjqJrAr5vMVpfMI1jw9eGYMeRv1AY74iXWoXgs2yWuP4gSoxxtkUxLvmRZyNEYdkHH6UDRmg5GEua24+WliM2f3pUUot2iWnGsfP2ck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739893479; c=relaxed/simple;
-	bh=hiqOyvIEADhwDnamhAD6b4fdHsnB2JQnJi9A7JWykdg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CMQkpWZmz1kvPG6jmu+emMubGQREK/9CBxlWRGeXbHGdiDSUvXhYz3/+6XOwsVFeiC/mYgrwv+9rvGquGNr3U3dlXhTBZWiMEhs5Sl3BUhjgwrl1dprtJ7Qzro/GsZVaXdOXJzcfcZM8tNr9Gh74so0XuQGWzYLI+5+uN+hmDCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JVwiHBFh; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739893476;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=WcUPNx2JQC70JR9g0edingK7bsjKh0hOq9aSnZC+a6M=;
-	b=JVwiHBFh3HyduAv6MecXJZjyLB1VSg1gVyGQvZpNfdR+TCIziQZrxc2GbkuR/firpfr6mk
-	X4Q9PeTGOhZ4y7yUU/L5N+99SyVeyLLFpI+OlPuP+iJN7mZubLbQ7+lX3ZazMdrzJuc3KQ
-	jkgsg3hr+dRgV8wvOGN3u0UZz7/AuYM=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-691-_3XGwvs_Pz23IccGaW2hZA-1; Tue, 18 Feb 2025 10:44:33 -0500
-X-MC-Unique: _3XGwvs_Pz23IccGaW2hZA-1
-X-Mimecast-MFC-AGG-ID: _3XGwvs_Pz23IccGaW2hZA_1739893473
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-38f37b4a72fso1710217f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 07:44:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739893473; x=1740498273;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=WcUPNx2JQC70JR9g0edingK7bsjKh0hOq9aSnZC+a6M=;
-        b=cLC1R1HnbnmkIecc3k//JYui2AT95njhoFpAQmfDirBOANe1QeUmIdt7Mr/CVJvhB8
-         7yMIW4SU6MppdwfD+1aG91tJ2F8CUN9FyrNc2uucZGQjT1eycj0eW2OtShMgIJjqAvdP
-         SYtUyvV2SpO0K1dlFtf4yoeBdUKEX6YAL1E9ZAdZV5ceFRoyZSf1lavdpXuLgrCmxk/c
-         irniOAvlRXuAmPw+TRsekbh8pRk4+6Qg8j5gg519AQDBdFunmhj66rAhb1sOfhH6xLCy
-         E5fgq9Kf66oneANEXZ1uVPQXOBUtU4RE8GjZUZ+NawJBq3/0iliUEZmXTQO/ujnhFJzl
-         iQ1w==
-X-Forwarded-Encrypted: i=1; AJvYcCXFuF8NclBL4KMc5sSge8Z7AdzKJqJCSt2eL8Jvt1xsKnbyNkzgOMRpA+/x8eGilIxXk2uT861sHsydCPI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMWjhaTy+ibao20P3OwPDTe6+Ju1jD8gUSby8DRj5PFJXx8GM/
-	uTpgYAbvNTFsAZQaAkqKv/qnBMJg2X8CefkDHqWd4ceT3LOzhnW01CSHZJ3x8Z3zr9oh3sZvnX8
-	FfGRJREqq7d32F25gTYkBdwAIXJlp0MmHK7ipen36PiYD+7sFqkmBs++NjEqNeA==
-X-Gm-Gg: ASbGncttvLr6iO20IJB61JYkv0Yt1KAD/dojOiSQArEfa0bBRzCnwPGTnJdr2eR3XjK
-	cYJpHkmFQxKlAvmc0bOrDAvAFlLnOkfZvM1HiVV2t3QNlzF2ArZDEu4gyiAAYUHscH1M2AEhukL
-	2PpashKFcXS8DdcgMyR3IminTGf6cfyr0RNDHaHCJ/Q7Z39rfvO0PgaQocus7Bf2Iap4+7iZiX4
-	PNCF12YSp6/Ol/5Hnp3AH7gSH/FKKYW1Aeg8z7ne/9Aq1DmVbtXRJJKBVFaI/M+G/xrs8XT5OiM
-	/ylWVYEsHtc4aUqeu77KjKrqXUSiQOYOiIPZXFLa5f//DxYfFBoMub7U2oNdFQIDZyshkVfuD86
-	gm59tVcIRE0NT/yMhBPKWve7ywDVRaX4P
-X-Received: by 2002:a05:6000:1f84:b0:38d:dc03:a3d6 with SMTP id ffacd0b85a97d-38f57bce501mr200205f8f.4.1739893472535;
-        Tue, 18 Feb 2025 07:44:32 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGaCfKmA14NfZC6X6I9NJIGyPqDFslk1wKOQE8jruH0uq2xV6T15XNvNwo+oWnoq8Dr3kHSIA==
-X-Received: by 2002:a05:6000:1f84:b0:38d:dc03:a3d6 with SMTP id ffacd0b85a97d-38f57bce501mr200164f8f.4.1739893471971;
-        Tue, 18 Feb 2025 07:44:31 -0800 (PST)
-Received: from ?IPV6:2003:cb:c70d:fb00:d3ed:5f44:1b2d:12af? (p200300cbc70dfb00d3ed5f441b2d12af.dip0.t-ipconnect.de. [2003:cb:c70d:fb00:d3ed:5f44:1b2d:12af])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4398a64febasm46852565e9.1.2025.02.18.07.44.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Feb 2025 07:44:31 -0800 (PST)
-Message-ID: <af3b230c-7aeb-44bf-8db3-3538dfb1b93c@redhat.com>
-Date: Tue, 18 Feb 2025 16:44:28 +0100
+	s=arc-20240116; t=1739893489; c=relaxed/simple;
+	bh=DA5ovtBGbrhX0W3s/JS3ztwML238rN8ZFkY+jw4W/+g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JD9rB7gY58v7krd/RdCgdyInNkgWLikLOml9Xy8VrOG3saSE1YAZv/2/A3MaAynPzO3FC8XHfyJyoejgh9N2SkQqX1sHW5LAA7eXqlZT8iwBJwfI8KOhmgX9pedEA1jFkOkcR2csSAIdXmVRx+pim5AhMg95TdM4N+Dri0+yM/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=nSmgq1Zp; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=0pQ5blC2+8DjxAh5O4SabJyjKzsTsXvGNXutRQEQZcw=; b=nSmgq1Zpt0SXPWsXRoB2EKcrv8
+	f+hoG0nbGcUzTnGs0OGrCucNiZts+RB1Tgs2vIEkOXAlqMMH2VwEZRzNBWsIWJLkOdW1Iv7Ib1V7z
+	Byty+ZJEazvoNsa0JrH+XVv9JmtBVG6ux5qlR8kFHi+TlAcet+OVrVhSLWN9n9yr0f0c=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tkPm3-00FL5R-Ur; Tue, 18 Feb 2025 16:44:39 +0100
+Date: Tue, 18 Feb 2025 16:44:39 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jijie Shao <shaojijie@huawei.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, andrew+netdev@lunn.ch, horms@kernel.org,
+	shenjian15@huawei.com, wangpeiyang1@huawei.com,
+	liuyonglong@huawei.com, chenhao418@huawei.com,
+	sudongming1@huawei.com, xujunsheng@huawei.com,
+	shiyongbang@huawei.com, libaihan@huawei.com,
+	jonathan.cameron@huawei.com, shameerali.kolothum.thodi@huawei.com,
+	salil.mehta@huawei.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 net-next 6/6] net: hibmcge: Add ioctl supported in
+ this module
+Message-ID: <d1286c95-95ab-4138-806f-a448dc2f0d78@lunn.ch>
+References: <20250218085829.3172126-1-shaojijie@huawei.com>
+ <20250218085829.3172126-7-shaojijie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 1/8] xarray: add xas_try_split() to split a multi-index
- entry.
-To: Zi Yan <ziy@nvidia.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
- "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Ryan Roberts <ryan.roberts@arm.com>, Hugh Dickins <hughd@google.com>,
- Yang Shi <yang@os.amperecomputing.com>, Miaohe Lin <linmiaohe@huawei.com>,
- Kefeng Wang <wangkefeng.wang@huawei.com>, Yu Zhao <yuzhao@google.com>,
- John Hubbard <jhubbard@nvidia.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250211155034.268962-1-ziy@nvidia.com>
- <20250211155034.268962-2-ziy@nvidia.com>
- <0bb75517-9418-4145-8aa8-b05373010711@redhat.com>
- <F5D2A2F4-34DC-4967-A149-A4D5578B5DB2@nvidia.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <F5D2A2F4-34DC-4967-A149-A4D5578B5DB2@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250218085829.3172126-7-shaojijie@huawei.com>
 
-On 17.02.25 23:05, Zi Yan wrote:
-> On 17 Feb 2025, at 16:44, David Hildenbrand wrote:
+On Tue, Feb 18, 2025 at 04:58:29PM +0800, Jijie Shao wrote:
+> This patch implements the .ndo_eth_ioctl() to
+> read and write the PHY register.
 > 
->> On 11.02.25 16:50, Zi Yan wrote:
->>> It is a preparation patch for non-uniform folio split, which always split
->>> a folio into half iteratively, and minimal xarray entry split.
->>>
->>> Currently, xas_split_alloc() and xas_split() always split all slots from a
->>> multi-index entry. They cost the same number of xa_node as the to-be-split
->>> slots. For example, to split an order-9 entry, which takes 2^(9-6)=8
->>> slots, assuming XA_CHUNK_SHIFT is 6 (!CONFIG_BASE_SMALL), 8 xa_node are
->>> needed. Instead xas_try_split() is intended to be used iteratively to split
->>> the order-9 entry into 2 order-8 entries, then split one order-8 entry,
->>> based on the given index, to 2 order-7 entries, ..., and split one order-1
->>> entry to 2 order-0 entries. When splitting the order-6 entry and a new
->>> xa_node is needed, xas_try_split() will try to allocate one if possible.
->>> As a result, xas_try_split() would only need one xa_node instead of 8.
->>>
->>> When a new xa_node is needed during the split, xas_try_split() can try to
->>> allocate one but no more. -ENOMEM will be return if a node cannot be
->>> allocated. -EINVAL will be return if a sibling node is split or
->>> cascade split happens, where two or more new nodes are needed, and these
->>> are not supported by xas_try_split().
->>>
->>> xas_split_alloc() and xas_split() split an order-9 to order-0:
->>>
->>>            ---------------------------------
->>>            |   |   |   |   |   |   |   |   |
->>>            | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
->>>            |   |   |   |   |   |   |   |   |
->>>            ---------------------------------
->>>              |   |                   |   |
->>>        -------   ---               ---   -------
->>>        |           |     ...       |           |
->>>        V           V               V           V
->>> ----------- -----------     ----------- -----------
->>> | xa_node | | xa_node | ... | xa_node | | xa_node |
->>> ----------- -----------     ----------- -----------
->>>
->>> xas_try_split() splits an order-9 to order-0:
->>>      ---------------------------------
->>>      |   |   |   |   |   |   |   |   |
->>>      | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
->>>      |   |   |   |   |   |   |   |   |
->>>      ---------------------------------
->>>        |
->>>        |
->>>        V
->>> -----------
->>> | xa_node |
->>> -----------
->>>
->>> Signed-off-by: Zi Yan <ziy@nvidia.com>
->>> ---
->>>    Documentation/core-api/xarray.rst |  14 ++-
->>>    include/linux/xarray.h            |   7 ++
->>>    lib/test_xarray.c                 |  47 +++++++++++
->>>    lib/xarray.c                      | 136 ++++++++++++++++++++++++++----
->>>    tools/testing/radix-tree/Makefile |   1 +
->>>    5 files changed, 188 insertions(+), 17 deletions(-)
->>>
->>> diff --git a/Documentation/core-api/xarray.rst b/Documentation/core-api/xarray.rst
->>> index f6a3eef4fe7f..c6c91cbd0c3c 100644
->>> --- a/Documentation/core-api/xarray.rst
->>> +++ b/Documentation/core-api/xarray.rst
->>> @@ -489,7 +489,19 @@ Storing ``NULL`` into any index of a multi-index entry will set the
->>>    entry at every index to ``NULL`` and dissolve the tie.  A multi-index
->>>    entry can be split into entries occupying smaller ranges by calling
->>>    xas_split_alloc() without the xa_lock held, followed by taking the lock
->>> -and calling xas_split().
->>> +and calling xas_split() or calling xas_try_split() with xa_lock. The
->>> +difference between xas_split_alloc()+xas_split() and xas_try_alloc() is
->>> +that xas_split_alloc() + xas_split() split the entry from the original
->>> +order to the new order in one shot uniformly, whereas xas_try_split()
->>> +iteratively splits the entry containing the index non-uniformly.
->>> +For example, to split an order-9 entry, which takes 2^(9-6)=8 slots,
->>> +assuming ``XA_CHUNK_SHIFT`` is 6, xas_split_alloc() + xas_split() need
->>> +8 xa_node. xas_try_split() splits the order-9 entry into
->>> +2 order-8 entries, then split one order-8 entry, based on the given index,
->>> +to 2 order-7 entries, ..., and split one order-1 entry to 2 order-0 entries.
->>> +When splitting the order-6 entry and a new xa_node is needed, xas_try_split()
->>> +will try to allocate one if possible. As a result, xas_try_split() would only
->>> +need 1 xa_node instead of 8.
->>>     Functions and structures
->>>    ========================
->>> diff --git a/include/linux/xarray.h b/include/linux/xarray.h
->>> index 0b618ec04115..9eb8c7425090 100644
->>> --- a/include/linux/xarray.h
->>> +++ b/include/linux/xarray.h
->>> @@ -1555,6 +1555,8 @@ int xa_get_order(struct xarray *, unsigned long index);
->>>    int xas_get_order(struct xa_state *xas);
->>>    void xas_split(struct xa_state *, void *entry, unsigned int order);
->>>    void xas_split_alloc(struct xa_state *, void *entry, unsigned int order, gfp_t);
->>> +void xas_try_split(struct xa_state *xas, void *entry, unsigned int order,
->>> +		gfp_t gfp);
->>>    #else
->>>    static inline int xa_get_order(struct xarray *xa, unsigned long index)
->>>    {
->>> @@ -1576,6 +1578,11 @@ static inline void xas_split_alloc(struct xa_state *xas, void *entry,
->>>    		unsigned int order, gfp_t gfp)
->>>    {
->>>    }
->>> +
->>> +static inline void xas_try_split(struct xa_state *xas, void *entry,
->>> +		unsigned int order, gfp_t gfp)
->>> +{
->>> +}
->>>    #endif
->>>     /**
->>> diff --git a/lib/test_xarray.c b/lib/test_xarray.c
->>> index 6932a26f4927..598ca38a2f5b 100644
->>> --- a/lib/test_xarray.c
->>> +++ b/lib/test_xarray.c
->>> @@ -1857,6 +1857,49 @@ static void check_split_1(struct xarray *xa, unsigned long index,
->>>    	xa_destroy(xa);
->>>    }
->>>   +static void check_split_2(struct xarray *xa, unsigned long index,
->>> +				unsigned int order, unsigned int new_order)
->>> +{
->>> +	XA_STATE_ORDER(xas, xa, index, new_order);
->>> +	unsigned int i, found;
->>> +	void *entry;
->>> +
->>> +	xa_store_order(xa, index, order, xa, GFP_KERNEL);
->>> +	xa_set_mark(xa, index, XA_MARK_1);
->>> +
->>> +	xas_lock(&xas);
->>> +	xas_try_halve(&xas, xa, order, GFP_KERNEL);
->>> +	if (((new_order / XA_CHUNK_SHIFT) < (order / XA_CHUNK_SHIFT)) &&
->>> +	    new_order < order - 1) {
->>> +		XA_BUG_ON(xa, !xas_error(&xas) || xas_error(&xas) != -EINVAL);
->>> +		xas_unlock(&xas);
->>> +		goto out;
->>> +	}
->>> +	for (i = 0; i < (1 << order); i += (1 << new_order))
->>> +		__xa_store(xa, index + i, xa_mk_index(index + i), 0);
->>> +	xas_unlock(&xas);
->>> +
->>> +	for (i = 0; i < (1 << order); i++) {
->>> +		unsigned int val = index + (i & ~((1 << new_order) - 1));
->>> +		XA_BUG_ON(xa, xa_load(xa, index + i) != xa_mk_index(val));
->>> +	}
->>> +
->>> +	xa_set_mark(xa, index, XA_MARK_0);
->>> +	XA_BUG_ON(xa, !xa_get_mark(xa, index, XA_MARK_0));
->>> +
->>> +	xas_set_order(&xas, index, 0);
->>> +	found = 0;
->>> +	rcu_read_lock();
->>> +	xas_for_each_marked(&xas, entry, ULONG_MAX, XA_MARK_1) {
->>> +		found++;
->>> +		XA_BUG_ON(xa, xa_is_internal(entry));
->>> +	}
->>> +	rcu_read_unlock();
->>> +	XA_BUG_ON(xa, found != 1 << (order - new_order));
->>> +out:
->>> +	xa_destroy(xa);
->>> +}
->>> +
->>>    static noinline void check_split(struct xarray *xa)
->>>    {
->>>    	unsigned int order, new_order;
->>> @@ -1868,6 +1911,10 @@ static noinline void check_split(struct xarray *xa)
->>>    			check_split_1(xa, 0, order, new_order);
->>>    			check_split_1(xa, 1UL << order, order, new_order);
->>>    			check_split_1(xa, 3UL << order, order, new_order);
->>> +
->>> +			check_split_2(xa, 0, order, new_order);
->>> +			check_split_2(xa, 1UL << order, order, new_order);
->>> +			check_split_2(xa, 3UL << order, order, new_order);
->>>    		}
->>>    	}
->>>    }
->>> diff --git a/lib/xarray.c b/lib/xarray.c
->>> index 116e9286c64e..c38beca77830 100644
->>> --- a/lib/xarray.c
->>> +++ b/lib/xarray.c
->>> @@ -1007,6 +1007,31 @@ static void node_set_marks(struct xa_node *node, unsigned int offset,
->>>    	}
->>>    }
->>>   +static struct xa_node *__xas_alloc_node_for_split(struct xa_state *xas,
->>> +		void *entry, gfp_t gfp)
->>> +{
->>> +	unsigned int i;
->>> +	void *sibling = NULL;
->>> +	struct xa_node *node;
->>> +	unsigned int mask = xas->xa_sibs;
->>> +
->>> +	node = kmem_cache_alloc_lru(radix_tree_node_cachep, xas->xa_lru, gfp);
->>> +	if (!node)
->>> +		return NULL;
->>> +	node->array = xas->xa;
->>> +	for (i = 0; i < XA_CHUNK_SIZE; i++) {
->>> +		if ((i & mask) == 0) {
->>> +			RCU_INIT_POINTER(node->slots[i], entry);
->>> +			sibling = xa_mk_sibling(i);
->>> +		} else {
->>> +			RCU_INIT_POINTER(node->slots[i], sibling);
->>> +		}
->>> +	}
->>> +	RCU_INIT_POINTER(node->parent, xas->xa_alloc);
->>> +
->>> +	return node;
->>> +}
->>> +
->>>    /**
->>>     * xas_split_alloc() - Allocate memory for splitting an entry.
->>>     * @xas: XArray operation state.
->>> @@ -1025,7 +1050,6 @@ void xas_split_alloc(struct xa_state *xas, void *entry, unsigned int order,
->>>    		gfp_t gfp)
->>>    {
->>>    	unsigned int sibs = (1 << (order % XA_CHUNK_SHIFT)) - 1;
->>> -	unsigned int mask = xas->xa_sibs;
->>>     	/* XXX: no support for splitting really large entries yet */
->>>    	if (WARN_ON(xas->xa_shift + 2 * XA_CHUNK_SHIFT <= order))
->>> @@ -1034,23 +1058,9 @@ void xas_split_alloc(struct xa_state *xas, void *entry, unsigned int order,
->>>    		return;
->>>     	do {
->>> -		unsigned int i;
->>> -		void *sibling = NULL;
->>> -		struct xa_node *node;
->>> -
->>> -		node = kmem_cache_alloc_lru(radix_tree_node_cachep, xas->xa_lru, gfp);
->>> +		struct xa_node *node = __xas_alloc_node_for_split(xas, entry, gfp);
->>>    		if (!node)
->>>    			goto nomem;
->>> -		node->array = xas->xa;
->>> -		for (i = 0; i < XA_CHUNK_SIZE; i++) {
->>> -			if ((i & mask) == 0) {
->>> -				RCU_INIT_POINTER(node->slots[i], entry);
->>> -				sibling = xa_mk_sibling(i);
->>> -			} else {
->>> -				RCU_INIT_POINTER(node->slots[i], sibling);
->>> -			}
->>> -		}
->>> -		RCU_INIT_POINTER(node->parent, xas->xa_alloc);
->>>    		xas->xa_alloc = node;
->>>    	} while (sibs-- > 0);
->>>   @@ -1122,6 +1132,100 @@ void xas_split(struct xa_state *xas, void *entry, unsigned int order)
->>>    	xas_update(xas, node);
->>>    }
->>>    EXPORT_SYMBOL_GPL(xas_split);
->>> +
->>> +/**
->>> + * xas_try_split() - Try to split a multi-index entry.
->>> + * @xas: XArray operation state.
->>> + * @entry: New entry to store in the array.
->>> + * @order: Current entry order.
->>> + * @gfp: Memory allocation flags.
->>> + *
->>> + * The size of the new entries is set in @xas.  The value in @entry is
->>> + * copied to all the replacement entries. If and only if one xa_node needs to
->>> + * be allocated, the function will use @gfp to get one. If more xa_node are
->>> + * needed, the function gives EINVAL error.
->>> + *
->>> + * Context: Any context.  The caller should hold the xa_lock.
->>> + */
->>> +void xas_try_split(struct xa_state *xas, void *entry, unsigned int order,
->>> +		gfp_t gfp)
->>> +{
->>> +	unsigned int sibs = (1 << (order % XA_CHUNK_SHIFT)) - 1;
->>> +	unsigned int offset, marks;
->>> +	struct xa_node *node;
->>> +	void *curr = xas_load(xas);
->>> +	int values = 0;
->>> +
->>> +	node = xas->xa_node;
->>> +	if (xas_top(node))
->>> +		return;
->>> +
->>> +	if (xas->xa->xa_flags & XA_FLAGS_ACCOUNT)
->>> +		gfp |= __GFP_ACCOUNT;
->>> +
->>> +	marks = node_get_marks(node, xas->xa_offset);
->>> +
->>> +	offset = xas->xa_offset + sibs;
->>> +	do {
->>> +		if (xas->xa_shift < node->shift) {
->>> +			struct xa_node *child = xas->xa_alloc;
->>> +			unsigned int expected_sibs =
->>> +				(1 << ((order - 1) % XA_CHUNK_SHIFT)) - 1;
->>> +
->>> +			/*
->>> +			 * No support for splitting sibling entries
->>> +			 * (horizontally) or cascade split (vertically), which
->>> +			 * requires two or more new xa_nodes.
->>> +			 * Since if one xa_node allocation fails,
->>> +			 * it is hard to free the prior allocations.
->>> +			 */
->>> +			if (sibs || xas->xa_sibs != expected_sibs) {
->>> +				xas_destroy(xas);
->>> +				xas_set_err(xas, -EINVAL);
->>> +				return;
->>> +			}
->>> +
->>> +			if (!child) {
->>> +				child = __xas_alloc_node_for_split(xas, entry,
->>> +						gfp);
->>> +				if (!child) {
->>> +					xas_destroy(xas);
->>> +					xas_set_err(xas, -ENOMEM);
->>> +					return;
->>> +				}
->>> +			}
->>
->> No expert on this, just wondering ...
->>
->> ... what is the effect if we halfway-through fail the split? Is it okay to leave that "partially split" thing in place? Can callers deal with that?
-> 
-> Good question.
-> 
+> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
 
-Let me rephrase: In __split_unmapped_folio(), we call xas_try_split(). 
-If that fails, we stop the split and effectively skip over the 
-__split_folio_to_order(). The folio remains unsplit (no order change: 
-old_order).
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-xas_try_split() was instructed to split from old_order -> split_order.
-
-xas_try_split() documents that: "The value in @entry is copied to all 
-the replacement entries.", meaning after the split, all entries will be 
-pointing at the folio.
-
-Now, can it happen that xas_try_split() would ever perform a partial 
-split in any way, when invoked from __split_unmapped_folio(), such that 
-we run into the do { } while(); loop and fail with -ENOMEM after already 
-having performed changes -- xas_update().
-
-Or is that simply impossible?
-
-Maybe it's just the do { } while(); loop in there that is confusing me. 
-(again, no expert)
-
-> xas_try_split() imposes what kind of split it does and is usually used to
-> split from order N to order N-1:
-
-You mean that old_order -> split_order will in the case of 
-__split_unmapped_folio() always be a difference of 1?
-
-> 
-> 1. when N is a multiplier of XA_CHUNK_SHIFT, a new xa_node is needed, so
-> either child (namely xas->xa_alloc) is not NULL, meaning someone called
-> xa_nomem() to allocate a xa_node before xas_try_split() or child is NULL
-> and an allocation is needed. If child is still NULL after the allocation,
-> meaning we are out of memory, no split is done;
-> 
-> 2. when N is not, no new xa_node is needed, xas_try_split() just rewrites
-> existing slot values to perform the split (the code after the hunk above).
-> No fail will happen. For this split, since no new xa_node is needed,
-> the caller is actually allowed to split from N to a value smaller than
-> N-1 as long as N-1 is >= (N - N % XA_CHUNK_SHIFT).
-> 
-> 
-> Various checks make sure xas_try_split() only sees the two above situation:
-> 
-> a. "xas->xa_shift < node->shift" means the split crosses XA_CHUNK_SHIFT,
-> at least 1 new xa_node is needed; the else branch only handles the case
-> 2 above;
-> 
-> b. for the then branch the "if (sibs || xas->xa_sibs != expected_sibs)"
-> check makes sure N is a multiplier of XA_CHUNK_SHIFT and the new order
-> has to be N-1. In "if (sibs || xas->xa_sibs != expected_sibs)",
-> "sibs != 0" means the from order N covers more than 1 slot, so more than 1
-> new xa_node is needed, "xas->xa_sibs != expected_sibs" makes sure
-> the new order is N-1 (you can see it from how expected_sibs is assigned).
-
-Thanks!
-
-> 
-> Let me know if you have any other question.
-
-Thanks for the details!
-
--- 
-Cheers,
-
-David / dhildenb
-
+    Andrew
 
