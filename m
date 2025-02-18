@@ -1,131 +1,150 @@
-Return-Path: <linux-kernel+bounces-518562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C566DA390E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 03:45:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67B04A390EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 03:47:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C3EC188EE69
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 02:45:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D3107A339C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 02:46:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A0D614B086;
-	Tue, 18 Feb 2025 02:45:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A24D1482E7;
+	Tue, 18 Feb 2025 02:46:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="hN3PtV6X"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="GEsVrqTB"
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 404F013AD26
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 02:45:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B29F145945
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 02:46:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739846702; cv=none; b=bFVs0nt9W0kKF4mZXZqbUPiJfm7nD90gWXrMExQqsZ8NGlLQKJGgrQR5O+q6xCflRP9/OCChMZm/fkN4wCZNLrjv38Wgo881Wfq5CW+9FJbjz0TPLq5YOzs3spbDITtQ5+TRzzNdBzuIHt2HkkSg+HpSnWA3fj31G55JfX/nwvU=
+	t=1739846817; cv=none; b=Z6R6qbl+z1WDbBcqja7tfPG1FTicp2r4JO3WKZmlSzmDU10CHXkfoaxdxg03PDmr5DuGlyVxzgLgmVlQ2mdVAK+5zleM5xIDLexq7pj+ieFkrDVe/2yF1JSGZJdYAMv9XnG2fXsEKqibI+ecQ9ib9nQuFFS8zOZN89QygdpTH2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739846702; c=relaxed/simple;
-	bh=Ym1JDMYuKzjV3+T6wzOukggNQMRUdIrIEe97T9H/oXE=;
+	s=arc-20240116; t=1739846817; c=relaxed/simple;
+	bh=zCp60ME3cYwLEI/cr5gg2Vo4OGDzXWLqhax5Hz1KBwE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=So+jzMxWvBnviZlGy1Pf9yvP3MxxNJTtNoP3Hs7EcAkldeTznmZEpedlmNu/iORWuUJAIR19RrGCxJO3xwF2DOusDXU7QCo+4nGJVp9QtGL1tyL6KJN3UdpEP7tMOcGmjep9JF2qI8liI8GHZ4DagRiYrzMtVf0u1u2OygsKd/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=hN3PtV6X; arc=none smtp.client-ip=209.85.214.174
+	 To:Cc:Content-Type; b=DS+zAXJMypXWuDwvqfQ67lJNe48muz218IUz6b9BDGMdbNmxOm59Kl9vNUCFCV+6yEkhDytAxnsxDt/9gsfZeEw6KiAnwrc42yQGXhHKKwoiBf3zfWjiGugDLGOQn/YknOeiiRmaCJCn+tFU9z+/LZBYTrTw93onwT0mYTMpoS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=GEsVrqTB; arc=none smtp.client-ip=209.85.221.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-220e6028214so81207455ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 18:45:00 -0800 (PST)
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-52098b01902so1858420e0c.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 18:46:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1739846700; x=1740451500; darn=vger.kernel.org;
+        d=broadcom.com; s=google; t=1739846814; x=1740451614; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=yLvnSIK09nWkECua8eCu00goZQFUlng1rcFuhm/cYJQ=;
-        b=hN3PtV6X2q8BTrO/gPWHDqMiQ3cjyLZ25wGeKTfo6/fCpoD/VlWXOBjYUV84PGqMxB
-         fX14FcI424NlDAn08DQYdEyyiHW7hmQSVmp3gXB73PSDFToDfcQw4xlhcWrysmF3fZUs
-         +2SZGqKXCD4oOSAppVQJSwntCCNbP1OCB+HWU=
+        bh=BDo4zHoJplsImJXR31WPuVBejEo50097LHOqGkKLS0o=;
+        b=GEsVrqTBDXwPIMrB8QULHUWv005A7lK0iTmWmiS+bC3GWhxK/yPmOqhIEucs3JLc02
+         T5quf/dXOEe/EbPEPzPMiiIm8tGyaPDJnGtrBsiUuwGxhp3BPpRp6rddUpYeuIEhU1+r
+         btlVhqNvqqBKBB6A2sAPCfn86vD0apuipSuCQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739846700; x=1740451500;
+        d=1e100.net; s=20230601; t=1739846814; x=1740451614;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=yLvnSIK09nWkECua8eCu00goZQFUlng1rcFuhm/cYJQ=;
-        b=sbJulr3lrpnJJHATIVYWTkRtg2g3z4AWFOA9jQXg1k4z6tPAzYPEzY8fWGlB4L307D
-         /edRfn5CiWLYWGWbyrgccn+Prf/6okVrs1Hi5fpN1DbxA+CIruieVVQExBSInLDuWwOx
-         OHKviPaToi/qiTl/t6ggAc3t1PQVYNq8rrZSDSNvpDLKudv5zzc27U+Gom36jxA3d0rE
-         SSDOcQlIWXh3Kgwx9g5QW965hWziIV1UF4gd9GvvdnFTKcMl8Fjlb2nmNJ49yele+Teq
-         n1HPuolzSjALZ361QOh1ybH1pZnYaqGxALlunDhc5V8nFklcyGmUdrr46uN+xLAt4Srt
-         pndQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV2NkTfNgzbS6VPp0LWYrM/mIbRfgsGodyLdZdtN08qWTLOW22BoJTrVMqrSC0WwGf/6peVp09FTBL4lms=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUkLnDHoPVs7gfheimXqQ6BsaFqIIMIxI5sZlibdbnjLenN8ci
-	avxr+7qCMX+Tm2nAT+8P6IQUwJP/BY4Alk00+YjVnIXvXQvwNFmWI3FCa1Eeu0I+UcQIPHEWsDl
-	d5NxTquilNZJPYbfoxUbjW0N0GCIb2c//Qvzj
-X-Gm-Gg: ASbGncsh5SK8kpCp/I/NYCbkPuneHLUmI4H6fvLb6TbgwIfvSkBMwrXT1A5EQ03yWaK
-	vZppeg1+LbLYQ0fyJQ/RxTIV5dBGCKPjliDOakD7849P5jLZ/FPY/hGODMIRfPIAt1RR1bBUE2A
+        bh=BDo4zHoJplsImJXR31WPuVBejEo50097LHOqGkKLS0o=;
+        b=tVby+4shUX8+FMlU91MW7VUq6bc7V1ELufj8lHdhPP53eukbqvPaCC9dUXZarvjkg+
+         +02VLa1J6PyFzP38KMguMKEE9bRj0tXLAIjmLd59zCRfjWsI8bYGH7SIFQJfzUsuDify
+         iF0nH0KVSnTTv2faeeCDrWoUY+fenGEIAtSgQ+KXJKxTyGIm7ctK0SWcTNPPaYVu8lLC
+         uRE4h6gJCV2+m+hh5m5qa6bf9Di5nmkNePy0LVngbP8my15qqgb+t3xlDM+7nfAoMirJ
+         B1DrqyavnhndfGIOvIPtLzPWADqf081vsJInLY7O0mZXJ6nosWPpxPCMRUuGX3Hytpe9
+         lDjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUQe0PK+/dXj0GZkowm99o9PUJq6NnRyJv8XhMD0OdIIMfaKq0WxYfAvP1VItz1VOsx+5+CZO9J5m3wITo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCW5u3S8PWX4hKMqxPXQ0KjWlElc/k0eaiXdxtG5i5qXBfq3th
+	RHzCzC62PMP5hLyd6sEQmKuKM07pq0fe2zaSxyoUSAbjfdIzIfMQgJFuostVP/4EDxXA8VHQpNf
+	3/MZxVntiAWxoDvvm4+ioR+06chBLWrBKQz6e
+X-Gm-Gg: ASbGncsmBm2cBZY0Uc81PrwlPOHAeWrlkVQjC2A/ADwMS3tYoeup0o6ulmLVwkUAGXB
+	b+fpb6wU69YwH+vyPznfzYs4vWkrfQkznQdr9jW5K22nZJ5J6MzC0rNWVx/kxBmHRYA1lC5CxMg
 	==
-X-Google-Smtp-Source: AGHT+IHsgCgSm6nNg/txskIzPw5zW0u+BpByI87vZVJqw2vjhWcaYVR+RDYdoxGsO9EBsPszjEqfbHys3Yw2z0rS43E=
-X-Received: by 2002:a05:6a21:6da7:b0:1ee:5d05:a18f with SMTP id
- adf61e73a8af0-1ee8cc25a7cmr22275576637.35.1739846700487; Mon, 17 Feb 2025
- 18:45:00 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IH1jXAzFNI3nw3rXWAYD7AhGbQylFbPlKcVG17ev5n7QVBk37l/bLM0XyAd5uZLy/cpARKIlpYUcXbEMYTg9SA=
+X-Received: by 2002:a05:6122:1184:b0:521:b3ee:4970 with SMTP id
+ 71dfb90a1353d-521b3ee4e69mr1480498e0c.2.1739846814634; Mon, 17 Feb 2025
+ 18:46:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250218011744.2397726-1-haoxiang_li2024@163.com>
-In-Reply-To: <20250218011744.2397726-1-haoxiang_li2024@163.com>
+References: <20250213035529.2402283-1-shaojijie@huawei.com>
+ <20250213035529.2402283-4-shaojijie@huawei.com> <20250217154028.GM1615191@kernel.org>
+ <14b562d6-7006-4fe0-be61-48fe1abebe49@huawei.com>
+In-Reply-To: <14b562d6-7006-4fe0-be61-48fe1abebe49@huawei.com>
 From: Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>
-Date: Tue, 18 Feb 2025 08:14:49 +0530
-X-Gm-Features: AWEUYZmy3Rk5IKS-p-8AmZQjs7wZFdI2edboezs4Z5so68a2cH5u9tcTn-tnvmc
-Message-ID: <CAH-L+nP5w7hRbONxPNG7NJtJzb-A0JOEMSq1hKNepM9GpFkt-g@mail.gmail.com>
-Subject: Re: [PATCH v2] nfp: bpf: Add check for nfp_app_ctrl_msg_alloc()
-To: Haoxiang Li <haoxiang_li2024@163.com>
-Cc: kuba@kernel.org, louis.peens@corigine.com, andrew+netdev@lunn.ch, 
-	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com, qmo@kernel.org, 
-	daniel@iogearbox.net, bpf@vger.kernel.org, oss-drivers@corigine.com, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Date: Tue, 18 Feb 2025 08:16:41 +0530
+X-Gm-Features: AWEUYZm3wbwgFu1jKUKQMq8gZdlJei2TqJLo6_vIYukmN4QyebSJKDR7mNPGIt8
+Message-ID: <CAH-L+nM0axD3QWXixe6p7U4dyVx=qn9zh5crOXLTxTH9Gpd9dQ@mail.gmail.com>
+Subject: Re: [PATCH net-next 3/7] net: hibmcge: Add rx checksum offload
+ supported in this module
+To: Jijie Shao <shaojijie@huawei.com>
+Cc: Simon Horman <horms@kernel.org>, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, andrew+netdev@lunn.ch, 
+	shenjian15@huawei.com, wangpeiyang1@huawei.com, liuyonglong@huawei.com, 
+	chenhao418@huawei.com, sudongming1@huawei.com, xujunsheng@huawei.com, 
+	shiyongbang@huawei.com, libaihan@huawei.com, jonathan.cameron@huawei.com, 
+	shameerali.kolothum.thodi@huawei.com, salil.mehta@huawei.com, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="00000000000090caa7062e61a0e1"
+	boundary="0000000000005d5764062e61a7ec"
 
---00000000000090caa7062e61a0e1
+--0000000000005d5764062e61a7ec
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 18, 2025 at 6:49=E2=80=AFAM Haoxiang Li <haoxiang_li2024@163.co=
-m> wrote:
+On Tue, Feb 18, 2025 at 7:47=E2=80=AFAM Jijie Shao <shaojijie@huawei.com> w=
+rote:
 >
-> Add check for the return value of nfp_app_ctrl_msg_alloc() in
-> nfp_bpf_cmsg_alloc() to prevent null pointer dereference.
 >
-> Fixes: ff3d43f7568c ("nfp: bpf: implement helpers for FW map ops")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
-> ---
-> Changes in v2:
-> - remove the bracket for one single-statement. Thanks, Guru!
-> ---
->  drivers/net/ethernet/netronome/nfp/bpf/cmsg.c | 2 ++
->  1 file changed, 2 insertions(+)
+> on 2025/2/17 23:40, Simon Horman wrote:
+> > On Thu, Feb 13, 2025 at 11:55:25AM +0800, Jijie Shao wrote:
+> >> This patch implements the rx checksum offload feature
+> >> including NETIF_F_IP_CSUM NETIF_F_IPV6_CSUM and NETIF_F_RXCSUM
+> >>
+> >> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
+> > ...
+> >
+> >> diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_txrx.c b/drive=
+rs/net/ethernet/hisilicon/hibmcge/hbg_txrx.c
+> >> index 8c631a9bcb6b..aa1d128a863b 100644
+> >> --- a/drivers/net/ethernet/hisilicon/hibmcge/hbg_txrx.c
+> >> +++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_txrx.c
+> >> @@ -202,8 +202,11 @@ static int hbg_napi_tx_recycle(struct napi_struct=
+ *napi, int budget)
+> >>   }
+> >>
+> >>   static bool hbg_rx_check_l3l4_error(struct hbg_priv *priv,
+> >> -                                struct hbg_rx_desc *desc)
+> >> +                                struct hbg_rx_desc *desc,
+> >> +                                struct sk_buff *skb)
+> >>   {
+> >> +    bool rx_checksum_offload =3D priv->netdev->features & NETIF_F_RXC=
+SUM;
+> > nit: I think this would be better expressed in a way that
+> >       rx_checksum_offload is assigned a boolean value (completely untes=
+ted).
+> >
+> >       bool rx_checksum_offload =3D !!(priv->netdev->features & NETIF_F_=
+RXCSUM);
 >
-> diff --git a/drivers/net/ethernet/netronome/nfp/bpf/cmsg.c b/drivers/net/=
-ethernet/netronome/nfp/bpf/cmsg.c
-> index 2ec62c8d86e1..b02d5fbb8c8c 100644
-> --- a/drivers/net/ethernet/netronome/nfp/bpf/cmsg.c
-> +++ b/drivers/net/ethernet/netronome/nfp/bpf/cmsg.c
-> @@ -20,6 +20,8 @@ nfp_bpf_cmsg_alloc(struct nfp_app_bpf *bpf, unsigned in=
-t size)
->         struct sk_buff *skb;
->
->         skb =3D nfp_app_ctrl_msg_alloc(bpf->app, size, GFP_KERNEL);
-> +       if (!skp)
-> +               return NULL;
-It looks like you did not compile this change.
+> Okay, I'll modify it in v2.
 
-Also, next time you push a new version, please modify the subject as:
-"[PATCH net v3] xxxx"
->         skb_put(skb, size);
+Maybe you can remove " in this module" from the patch title as it is
+implicit. This comment/suggestion applies to all patches in this
+series.
 >
->         return skb;
-> --
-> 2.25.1
+> Thanks
+> Jijie Shao
 >
+> >
+> >> +
+> >>      if (likely(!FIELD_GET(HBG_RX_DESC_W4_L3_ERR_CODE_M, desc->word4) =
+&&
+> >>                 !FIELD_GET(HBG_RX_DESC_W4_L4_ERR_CODE_M, desc->word4))=
+)
+> >>              return true;
 >
 
 
@@ -133,7 +152,7 @@ Also, next time you push a new version, please modify the subject as:
 Regards,
 Kalesh AP
 
---00000000000090caa7062e61a0e1
+--0000000000005d5764062e61a7ec
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -205,14 +224,14 @@ a30CvRuhokNO6Jzh7ZFtjKVMzYas3oo6HXgA+slRszMu4pc+fRPO41FHjeDM76e6P5OnthhnD+NY
 x6xokUN65DN1bn2MkeNs0nQpizDqd0QxggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYD
 VQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25h
 bFNpZ24gMiBDQSAyMDIwAgw3wUUJsDUiPdpordMwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcN
-AQkEMSIEIOJYaTfb/q6TQz9E0jZB6K1GoH+C3oW4TtVP2hbSJtLpMBgGCSqGSIb3DQEJAzELBgkq
-hkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDIxODAyNDUwMFowaQYJKoZIhvcNAQkPMVwwWjAL
+AQkEMSIEIH/8BG/tt2860JmLranvbkSP71lCPs3CvjtfYowfmnQaMBgGCSqGSIb3DQEJAzELBgkq
+hkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDIxODAyNDY1NFowaQYJKoZIhvcNAQkPMVwwWjAL
 BglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG
-9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQAl3iTWxMLr
-qU7RGfuZzuM/pGrUT5NZbyX83GtqUbLz6kOlyeYfa+i+vv3W6N+fRJUkFaotJ9Y/kxWrV6s/wt/f
-60YMPLEL+zDpDRsDSz+ORHhqHsLqHh9lMxgfUdOMVNP85MEtZPb4d+6HXA3XV21M/JH6vHYzylzx
-vzxKbmxuixHCsQo1pkRXrwyLhSImaLXVLnPTGKKRMfxBsfcv+bJJCWOu1Jg/yK/8Apu2B2zkLnVs
-BznEqB97n265GQvJZpC1jcu9TSHkTauv/Sz73j0l0ntdqf6wHhnTECBBHTMKH91j3UhNiogZ0HpJ
-EIVReC+14wZOzV/nIPl3MdjDccoz
---00000000000090caa7062e61a0e1--
+9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQC7b4oBuHwl
+HTd5np5B9Jq35i1TStnZqZRDLM8EkIQ/UBhy2spC96GxWkdImXI9uf79wBb9VvrEcwzFcAMoUJkS
+pI6VPY7pYvzv2AhdFkdxZS9penUnzxvYdDKcQXrfQ1n8AMeZkWmc9wZLJdPJPOtzNBT/41Blu473
+Z8OoAGWf7k7vDxRnyiTp6HRd4HsbBLUo+66WF9A6KbSbW0YDUMqLnwvYXm0M5nPAM33xjl0pxfKl
+2FIToPT3psUFxHlRKJE4ybI1sXfAaiuIL2MRJq3FX8E9qdBKaCFCqZxG9MHrED64IDOmyJTFdeDh
+tdkiAf0csQsvL9QwVxwkM9uD7TfT
+--0000000000005d5764062e61a7ec--
 
