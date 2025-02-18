@@ -1,238 +1,302 @@
-Return-Path: <linux-kernel+bounces-518979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2877A396A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:12:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E140A396AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:14:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E67A2188A3A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:12:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FF04188C168
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:14:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 577A422DFE5;
-	Tue, 18 Feb 2025 09:12:23 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136FD22E3EA;
+	Tue, 18 Feb 2025 09:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FV9jLOa+"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2B6622DF95
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 09:12:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43DC622AE42;
+	Tue, 18 Feb 2025 09:13:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739869942; cv=none; b=NMmssTC5/C8KzrywdiruZYAhRFFrx0rABR16HvT4FUsi5Jyypq+CiZESWmjvPtvORVogfOQ7LPLVAyjmlorkA0LO5QmxnXWCfyMxFTC5UTNNXZPteIaKDY+K4Ww8U/dCMb+5VMj5GADR1yj07p52vzR8j4tNoqGYcY9+2rlOjNw=
+	t=1739870042; cv=none; b=BAPMuhhFysZPcNSW/0pc5hQwsXhDFxdXU5twCqnsOpjS8b2rzF138PQuUVFgOqWECXWo7QexIJ3WKISQd8LJdbMIRci3lpu/FmhEWEZQUCujS+6pG0KafEF1RpmnRjtKktZubqGAvpxZSgK53dnQlZEXV2nEichDFlUKzC2HyUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739869942; c=relaxed/simple;
-	bh=fwhbAT7iF+x60zVHX7sN2CfDkZGQmzgkZDlm1Wo11is=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=OKR7+ngNxUeORUKRXFIwuVvfw6H037fMqf/Zn5z6GaoyGE1PeSR3B9LWPqhhB29R958Dy7DO5K+ka9tKCTw/PYT8CD8cdOZIfTBOCEjEKTONdM4c47EajlkbvK5T4FJU/ZFuI1UkOC7YIjnW0Gi4aW1fw1RLgaK8zMs7KJKhczQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3ce8dadfb67so38346795ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 01:12:20 -0800 (PST)
+	s=arc-20240116; t=1739870042; c=relaxed/simple;
+	bh=gWNVM12RivD5MRbtbQ5MAGzTtirxN9oxOsKoZrKbhCk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FzdZ8ZfMAaDSy7cmQFrkMHUZvmAxpv+ZeHUqcrmHiyGv7fsuddgNn4XVdNeATWg2JyaJjYVUDA9HUwpEYJSWaflqsl6XchSZHkrg+jZBNac57X6UKaUiiK9WDaZ0nn5CQvtr+4zrQzhgvYbMuj2y96syCa6RB6vREGow+Kd9g0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FV9jLOa+; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ab7483b9bf7so671039666b.3;
+        Tue, 18 Feb 2025 01:13:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739870038; x=1740474838; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JWEFbTINzWxsW/JqJ2SNOyfzIlQF1fNTD3RtsW2hBTc=;
+        b=FV9jLOa+HHNnhNNRhI8ut12KBQ9wXXhoTxp0WOEDOQ8XGWWb6QG+KTLoTKcdUXeMyO
+         88n5Oy9kCPcmVd3iISdMVcq+xUqsCptZxiRs/V/YjVeZlhupkFabB8O5BO2NM7a+deNS
+         mBUMwUXSuDC/NFv+glSU8e31woTv3FvTdtlLzu9xiwGJmO12eT0iXTZtmyQsuP0hPSah
+         x6qElP+neGqBkFzrYrIlZwMi6cTUzblWFKlMRHZhRfk9kyyUUYX7Lx0FI4MhNBOo+HBW
+         l+VgYUhAp5huYQXnrbxGO2sCClnygaeQKOpZvdGoQau3BcWBowBsXvY/zXXAAtWzRmFI
+         C+lg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739869940; x=1740474740;
-        h=content-transfer-encoding:to:from:subject:message-id:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wnJLTfmta2TNrlQgFdw3Kyt9opRqxR2syxoIevQZdl0=;
-        b=iDP4XcB0RAd7IaExvbZKGrzmMwl1J68OSpQhvhZWS2NmZwSx+xdZ3DqUA70GgJUVvi
-         Gh5tpc66ugtKJiocL7W1SnozUpxoAI2VAhzq2fXyAfuzRSgKVxy+qP6ES3xqOV8envsl
-         J/bM9bmK9JZN6Fy6tGon8Odb4Jq+1HWCoxi3tYsd8ElWJVEucEFZCsV6TT5P7zxdkvwT
-         WKJ23HD0m86zAQFj6YpOJBKar384QmQnTufW+BJm3iAwrT43eT6JsQD2lzFzKse7/ird
-         YMy06gxE+o6BEpmbC3+99DWbrBT5BK3JD6HoqJAAIOJ0teoXDS+vBA6ehxj6gp6OoKW3
-         374w==
-X-Forwarded-Encrypted: i=1; AJvYcCWAx0CxQFLhzLz2eAd01OX/pK/aKKFfaD2/ASItg1k8azZM9adfoCrfje1mNyuaYVuskeRAoWxa7zO/t7c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9xGxNdImMtejhFB4X2aINsHu7Q78k04xV9tdBHX+lGgz6rSlv
-	I+4WUCHRkpXtQmzDgHIi9namxP4kb7ZXHuTeUaCR1lT4dfK0NK2exhW9gnFTX1PbrtDDjseVxS3
-	5XTwf219qm+/1knwFwWv8DDkQTW55fiw6K5QVtQ6GkspgKNEBLi2+CHg=
-X-Google-Smtp-Source: AGHT+IHMQJtyQW2Hs1tj4XNcBPEZT7IoVYMmmXZ7FToeiO3rHt0VXbunvM35lmcuiOnIm1wYQ6woEK/1sQr7kl15q/UlgNtpGSqP
+        d=1e100.net; s=20230601; t=1739870038; x=1740474838;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JWEFbTINzWxsW/JqJ2SNOyfzIlQF1fNTD3RtsW2hBTc=;
+        b=NQkiZclvKf04cncHXI5x9TsqdGS1BFOCM4dSrWgHfoC/AwPQJ1FbetQIQyuzfrt6BE
+         V1OV1O1PNw2BeKjO3H6/9aEXLDDEnw6AKkF8Kw/Bo5259lcaMhEM615aewFuwG+mxBac
+         lp41l+KQFSBFtqIuDgcbvkEUwSZ0MbxYY9X4pvmB4KX+5kgmQtu+Hhl8MMicLo3BguPO
+         Fj2NXxrQ2sNgfnacmmFPBKxy50VHsIXwe10x4SZKBQvM4EEOz/vHlC1rmaigOh2s9/0i
+         JbB29M2A31/rGQVJ0f/EuQqgMZv8d1U2t75Mo3/NUkKn+Cn8O/ggTcdtp+M2pRx9DH3x
+         /ILQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUImb3vSLJL/yg0ue/rb46mnZD/EUCJTsJUOcWqo+IO8UHeyeTXIQoEVhA4F04ZsfocNc6upxEVl1Ck@vger.kernel.org, AJvYcCUMkGCCzGW1rJjUhl1uaeulbnO0q3pYA3N/IZItJb7RF0jVKcbylgZvPjtEfMJ+M9dPHtPTiiDFO6313Tv3qw==@vger.kernel.org, AJvYcCXgXWqgcnVtapdkPRdP8xq4r4VFrRR0FfBMlGkdcRkcrErTZevwpm8sneQKuMMjrefyBqG1ueHMqlITAVlV@vger.kernel.org
+X-Gm-Message-State: AOJu0YydcvATTB+xseuHNMaj9OlYQ2KAAe2dUF+XvcTTiR9RUtg/siJh
+	pFPIf9a6nNzGOiirIOLdNWgTsSYwGDT5y0oCcSuvm+gsT5sml1qOX54QYKRx+x53a0C3cmyCN2z
+	uxEGhcZxf5BoojUeJS9Fs6Xxz+9Q=
+X-Gm-Gg: ASbGncv8UuFOhOnDPnDv8RJBQe8TGmGDts4Eq6bN8FxeysldxeHUsFQi29uN4nkGX3W
+	pGaPOADZ3/rGvafMb0xhjZsFbgi/ttKOAriYeW0ETq7/yRZkx2h/zng0zWB8/qNDJt2CrrPx4
+X-Google-Smtp-Source: AGHT+IEB0b+dHr5UqG8M9ZVSRBF+tFuJVIUL+OTTFEJ9S68qBDv9eHEC4O94JlwUw1UT3y8fVIlx1AqV8ksDo8W53NE=
+X-Received: by 2002:a17:906:3ca9:b0:ab7:bac4:b321 with SMTP id
+ a640c23a62f3a-abb70be2be7mr1178156566b.29.1739870037904; Tue, 18 Feb 2025
+ 01:13:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c548:0:b0:3d0:4700:db0f with SMTP id
- e9e14a558f8ab-3d28090d830mr117361035ab.12.1739869939950; Tue, 18 Feb 2025
- 01:12:19 -0800 (PST)
-Date: Tue, 18 Feb 2025 01:12:19 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67b44ef3.050a0220.173698.004c.GAE@google.com>
-Subject: [syzbot] [bcachefs] WARNING: locking bug in simple_recursive_removal
-From: syzbot <syzbot+727c886b67040701c448@syzkaller.appspotmail.com>
-To: dakr@kernel.org, gregkh@linuxfoundation.org, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	rafael@kernel.org, syzkaller-bugs@googlegroups.com
+References: <20250216164029.20673-1-pali@kernel.org> <20250216164029.20673-2-pali@kernel.org>
+ <20250216183432.GA2404@sol.localdomain> <CAOQ4uxigYpzpttfaRc=xAxJc=f2bz89_eCideuftf3egTiE+3A@mail.gmail.com>
+ <20250216202441.d3re7lfky6bcozkv@pali> <CAOQ4uxj4urR70FmLB_4Qwbp1O5TwvHWSW6QPTCuq7uXp033B7Q@mail.gmail.com>
+ <Z7Pjb5tI6jJDlFZn@dread.disaster.area>
+In-Reply-To: <Z7Pjb5tI6jJDlFZn@dread.disaster.area>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 18 Feb 2025 10:13:46 +0100
+X-Gm-Features: AWEUYZnHvp-MpYsMxX-gG5kYL3y3kpV6TbAqFUCYIVrD73Pbml11umh0ZwxDxJs
+Message-ID: <CAOQ4uxh6aWO7Emygi=dXCE3auDcZZCmDP+jmjhgdffuz1Vx6uQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/4] fs: Add FS_XFLAG_COMPRESSED & FS_XFLAG_ENCRYPTED
+ for FS_IOC_FS[GS]ETXATTR API
+To: Dave Chinner <david@fromorbit.com>
+Cc: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
+	Eric Biggers <ebiggers@kernel.org>, "Darrick J. Wong" <djwong@kernel.org>, 
+	ronnie sahlberg <ronniesahlberg@gmail.com>, Chuck Lever <chuck.lever@oracle.com>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Steve French <sfrench@samba.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, 
+	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Tue, Feb 18, 2025 at 2:33=E2=80=AFAM Dave Chinner <david@fromorbit.com> =
+wrote:
+>
+> On Sun, Feb 16, 2025 at 09:43:02PM +0100, Amir Goldstein wrote:
+> > On Sun, Feb 16, 2025 at 9:24=E2=80=AFPM Pali Roh=C3=A1r <pali@kernel.or=
+g> wrote:
+> > >
+> > > On Sunday 16 February 2025 21:17:55 Amir Goldstein wrote:
+> > > > On Sun, Feb 16, 2025 at 7:34=E2=80=AFPM Eric Biggers <ebiggers@kern=
+el.org> wrote:
+> > > > >
+> > > > > On Sun, Feb 16, 2025 at 05:40:26PM +0100, Pali Roh=C3=A1r wrote:
+> > > > > > This allows to get or set FS_COMPR_FL and FS_ENCRYPT_FL bits vi=
+a FS_IOC_FSGETXATTR/FS_IOC_FSSETXATTR API.
+> > > > > >
+> > > > > > Signed-off-by: Pali Roh=C3=A1r <pali@kernel.org>
+> > > > >
+> > > > > Does this really allow setting FS_ENCRYPT_FL via FS_IOC_FSSETXATT=
+R, and how does
+> > > > > this interact with the existing fscrypt support in ext4, f2fs, ub=
+ifs, and ceph
+> > > > > which use that flag?
+> > > >
+> > > > As far as I can tell, after fileattr_fill_xflags() call in
+> > > > ioctl_fssetxattr(), the call
+> > > > to ext4_fileattr_set() should behave exactly the same if it came so=
+me
+> > > > FS_IOC_FSSETXATTR or from FS_IOC_SETFLAGS.
+> > > > IOW, EXT4_FL_USER_MODIFIABLE mask will still apply.
+> > > >
+> > > > However, unlike the legacy API, we now have an opportunity to deal =
+with
+> > > > EXT4_FL_USER_MODIFIABLE better than this:
+> > > >         /*
+> > > >          * chattr(1) grabs flags via GETFLAGS, modifies the result =
+and
+> > > >          * passes that to SETFLAGS. So we cannot easily make SETFLA=
+GS
+> > > >          * more restrictive than just silently masking off visible =
+but
+> > > >          * not settable flags as we always did.
+> > > >          */
+> > > >
+> > > > if we have the xflags_mask in the new API (not only the xflags) the=
+n
+> > > > chattr(1) can set EXT4_FL_USER_MODIFIABLE in xflags_mask
+> > > > ext4_fileattr_set() can verify that
+> > > > (xflags_mask & ~EXT4_FL_USER_MODIFIABLE =3D=3D 0).
+> > > >
+> > > > However, Pali, this is an important point that your RFC did not fol=
+low -
+> > > > AFAICT, the current kernel code of ext4_fileattr_set() and xfs_file=
+attr_set()
+> > > > (and other fs) does not return any error for unknown xflags, it jus=
+t
+> > > > ignores them.
+> > > >
+> > > > This is why a new ioctl pair FS_IOC_[GS]ETFSXATTR2 is needed IMO
+> > > > before adding support to ANY new xflags, whether they are mapped to
+> > > > existing flags like in this patch or are completely new xflags.
+> > > >
+> > > > Thanks,
+> > > > Amir.
+> > >
+> > > But xflags_mask is available in this new API. It is available if the
+> > > FS_XFLAG_HASEXTFIELDS flag is set. So I think that the ext4 improveme=
+nt
+> > > mentioned above can be included into this new API.
+> > >
+> > > Or I'm missing something?
+> >
+> > Yes, you are missing something very fundamental to backward compat API =
+-
+> > You cannot change the existing kernels.
+> >
+> > You should ask yourself one question:
+> > What happens if I execute the old ioctl FS_IOC_FSSETXATTR
+> > on an existing old kernel with the new extended flags?
+>
+> It should ignore all the things it does not know about.
+>
 
-syzbot found the following issue on:
+I don't know about "should" but it certainly does, that's why I was
+wondering if a new fresh ioctl was in order before extending to new flags.
 
-HEAD commit:    0ad2507d5d93 Linux 6.14-rc3
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=3D13efd7df980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3Db7bde34acd8f53b=
-1
-dashboard link: https://syzkaller.appspot.com/bug?extid=3D727c886b67040701c=
-448
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debia=
-n) 2.40
+> But the correct usage of FS_IOC_FSSETXATTR is to call
+> FS_IOC_FSGETXATTR to initialise the structure with all the current
+> inode state.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Yeh, this is how the API is being used by exiting xfs_io chattr.
+It does not mean that this is a good API.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7fe=
-b34a89c2a/non_bootable_disk-0ad2507d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/dfb4fc7c042e/vmlinux-=
-0ad2507d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/1682113b81f5/bzI=
-mage-0ad2507d.xz
+> In this situation, the fsx.fsx_xflags field needs to
+> return a flag that says "FS_XFLAGS_HAS_WIN_ATTRS" and now userspace
+> knows that it can set/clear the MS windows attr flags.  Hence if the
+> filesystem supports windows attributes, we can require them to
+> -support the entire set-.
+>
+> i.e. if an attempt to set a win attr that the filesystem cannot
+> implement (e.g. compression) then it returns an error (-EINVAL),
+> otherwise it will store the attr and perform whatever operation it
+> requires.
+>
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit=
-:
-Reported-by: syzbot+727c886b67040701c448@syzkaller.appspotmail.com
+I prefer not to limit the discussion to new "win" attributes,
+especially when discussing COMPR/ENCRYPT flags which are existing
+flags that are also part of the win attributes.
 
-loop0: detected capacity change from 0 to 32768
-bcachefs (loop0): starting version 1.7: mi_btree_bitmap opts=3Dmetadata_che=
-cksum=3Dnone,data_checksum=3Dnone,compression=3Dlz4,erasure_code,fsck,norec=
-overy,nojournal_transaction_names,reconstruct_alloc,nocow,no_data_io
-bcachefs (loop0): recovering from clean shutdown, journal seq 10
-bcachefs (loop0): Version upgrade required:
-Version upgrade from 0.24: unwritten_extents to 1.7: mi_btree_bitmap incomp=
-lete
-Doing incompatible version upgrade from 0.24: unwritten_extents to 1.20: di=
-rectory_size
-  running recovery passes: check_allocations,check_alloc_info,check_lrus,ch=
-eck_btree_backpointers,check_backpointers_to_extents,check_extents_to_backp=
-ointers,check_alloc_to_lru_refs,bucket_gens_init,check_snapshot_trees,check=
-_snapshots,check_subvols,check_subvol_children,delete_dead_snapshots,check_=
-inodes,check_extents,check_indirect_extents,check_dirents,check_xattrs,chec=
-k_root,check_unreachable_inodes,check_subvolume_structure,check_directory_s=
-tructure,check_nlinks,set_fs_needs_rebalance
-bcachefs (loop0): dropping and reconstructing all alloc info
-bcachefs (loop0): error validating btree node on loop0 at btree xattrs leve=
-l 0/0
-  u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq 2285c34bed0abe32 writ=
-ten 16 min_key POS_MIN durability: 1 ptr: 0:31:0 gen 0 =20
-  node offset 0/16 bset u64s 60928: bset past end of btree node (offset 0 l=
-en 960 but written 16), exiting
-bcachefs (loop0): Unable to continue, halting
-bcachefs (loop0): flagging btree xattrs lost data
-bcachefs (loop0): running explicit recovery pass check_topology (2), curren=
-tly at recovery_pass_empty (0)
-bcachefs (loop0): running explicit recovery pass scan_for_btree_nodes (1), =
-currently at recovery_pass_empty (0)
-error reading btree root btree=3Dxattrs level=3D0: btree_node_read_error, f=
-ixing
-invalid bkey in btree_node btree=3Dsubvolumes level=3D0: u64s 7 type subvol=
-ume 0:1:0 len 0 ver 0: root 4096 snapshot id 0
-  invalid snapshot: delete?, fixing
-bcachefs (loop0): scan_for_btree_nodes...
-bcachefs (loop0): btree node scan found 7 nodes after overwrites
- done
-bcachefs (loop0): check_topology...
-bcachefs (loop0): btree root xattrs unreadable, must recover from scan
-bcachefs (loop0): bch2_get_scanned_nodes(): recovery btree=3Dxattrs level=
-=3D0 POS_MIN - SPOS_MAX
-bcachefs (loop0): bch2_get_scanned_nodes(): recovering u64s 11 type btree_p=
-tr_v2 SPOS_MAX len 0 ver 0: seq 2285c34bed0abe32 written 960 min_key POS_MI=
-N durability: 1 ptr: 0:31:0 gen 0
-empty interior btree node at btree=3Dxattrs level=3D1
-u64s 5 type btree_ptr SPOS_MAX len 0 ver 0, fixing
-bcachefs (loop0): empty btree root xattrs
- done
-bcachefs (loop0): accounting_read... done
-bcachefs (loop0): alloc_read... done
-bcachefs (loop0): stripes_read... done
-bcachefs (loop0): snapshots_read... done
-bcachefs (loop0): done starting filesystem
-bcachefs (loop0): missing subvolume 1
-bcachefs (loop0): inconsistency detected - emergency read only at journal s=
-eq 10
-bcachefs (loop0): bch2_fs_get_tree(): error mounting: error getting root in=
-ode ENOENT_bkey_type_mismatch
-bcachefs (loop0): shutting down
-------------[ cut here ]------------
-DEBUG_LOCKS_WARN_ON(1)
-WARNING: CPU: 0 PID: 5320 at kernel/locking/lockdep.c:234 hlock_class kerne=
-l/locking/lockdep.c:234 [inline]
-WARNING: CPU: 0 PID: 5320 at kernel/locking/lockdep.c:234 check_wait_contex=
-t kernel/locking/lockdep.c:4852 [inline]
-WARNING: CPU: 0 PID: 5320 at kernel/locking/lockdep.c:234 __lock_acquire+0x=
-564/0x2100 kernel/locking/lockdep.c:5178
-Modules linked in:
-CPU: 0 UID: 0 PID: 5320 Comm: syz.0.0 Not tainted 6.14.0-rc3-syzkaller #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16=
-.3-2~bpo12+1 04/01/2014
-RIP: 0010:hlock_class kernel/locking/lockdep.c:234 [inline]
-RIP: 0010:check_wait_context kernel/locking/lockdep.c:4852 [inline]
-RIP: 0010:__lock_acquire+0x564/0x2100 kernel/locking/lockdep.c:5178
-Code: 00 00 83 3d 21 60 a0 0e 00 75 23 90 48 c7 c7 40 a2 2a 8c 48 c7 c6 40 =
-a5 2a 8c e8 97 c2 e4 ff 48 ba 00 00 00 00 00 fc ff df 90 <0f> 0b 90 90 90 3=
-1 db 48 81 c3 c4 00 00 00 48 89 d8 48 c1 e8 03 0f
-RSP: 0018:ffffc9000d4df530 EFLAGS: 00010046
-RAX: 95b5ba76c7869700 RBX: 0000000000000c41 RCX: 0000000000100000
-RDX: dffffc0000000000 RSI: 000000000005bf76 RDI: 000000000005bf77
-RBP: 0000000000040c41 R08: ffffffff81817e32 R09: 1ffff11003f8519a
-R10: dffffc0000000000 R11: ffffed1003f8519b R12: ffff8880009cd354
-R13: 0000000000000005 R14: 1ffff11000139a77 R15: ffff8880009cd3b8
-FS:  00007f48caa6a6c0(0000) GS:ffff88801fc00000(0000) knlGS:000000000000000=
-0
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000562b40d2b088 CR3: 00000000408fe000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5851
- down_write+0x99/0x220 kernel/locking/rwsem.c:1577
- inode_lock include/linux/fs.h:877 [inline]
- simple_recursive_removal+0x9a/0x8f0 fs/libfs.c:615
- debugfs_remove+0x49/0x70 fs/debugfs/inode.c:805
- __bch2_fs_stop+0x290/0x5c0 fs/bcachefs/super.c:643
- bch2_fs_get_tree+0xd3a/0x17a0 fs/bcachefs/fs.c:2303
- vfs_get_tree+0x90/0x2b0 fs/super.c:1814
- do_new_mount+0x2be/0xb40 fs/namespace.c:3560
- do_mount fs/namespace.c:3900 [inline]
- __do_sys_mount fs/namespace.c:4111 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4088
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f48c9b8e58a
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 =
-00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff f=
-f 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f48caa69e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007f48caa69ef0 RCX: 00007f48c9b8e58a
-RDX: 00004000000058c0 RSI: 0000400000005900 RDI: 00007f48caa69eb0
-RBP: 00004000000058c0 R08: 00007f48caa69ef0 R09: 0000000000010000
-R10: 0000000000010000 R11: 0000000000000246 R12: 0000400000005900
-R13: 00007f48caa69eb0 R14: 0000000000005912 R15: 00004000000001c0
- </TASK>
+To put it another way, suppose Pali did not come forward with a patch set
+to add win attribute control to smb, but to add ENCRYPT support to xfs.
+What would have been your prefered way to set the ENCRYPT flag in xfs?
+via FS_IOC_SETFLAGS or by extending FS_IOC_FSSETXATTR?
+and if the latter, then how would xfs_io chattr be expected to know if
+setting the ENCRYPT flag is supported or not?
 
+> IMO, the whole implementation in the patchset is wrong - there is no
+> need for a new xflags2 field,
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+xflags2 is needed to add more bits. I am not following.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> and there is no need for whacky field
+> masks or anything like that. All it needs is a single bit to
+> indicate if the windows attributes are supported, and they are all
+> implemented as normal FS_XFLAG fields in the fsx_xflags field.
+>
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Sorry, I did not understand your vision about the API.
+On the one hand, you are saying that there is no need for xflags2.
+On the other hand, that new flags should be treated differently than
+old flags (FS_XFLAGS_HAS_WIN_ATTRS).
+Either I did not understand what you mean or the documentation of
+what you are proposing sounds terribly confusing to me.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+> > The answer, to the best of my code emulation abilities is that
+> > old kernel will ignore the new xflags including FS_XFLAG_HASEXTFIELDS
+> > and this is suboptimal, because it would be better for the new chattr t=
+ool
+> > to get -EINVAL when trying to set new xflags and mask on an old kernel.
+>
+> What new chattr tool? I would expect that xfs_io -c "chattr ..."
+> will be extended to support all these new fields because that is the
+> historical tool we use for FS_IOC_FS{GS}ETXATTR regression test
+> support in fstests. I would also expect that the e2fsprogs chattr(1)
+> program to grow support for the new FS_XFLAGS bits as well...
+>
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+That's exactly what I meant by "new chattr tool".
+when user executes chattr +i or xfs_io -c "chattr +i"
+user does not care which ioctl is used and it is best if both
+utils will support the entire set of modern flags with the new ioctls
+so that eventually (after old fs are deprecated) the old ioctl may also
+be deprecated.
 
-If you want to undo deduplication, reply with:
-#syz undup
+> > It is true that the new chattr can call the old FS_IOC_FSGETXATTR
+> > ioctl and see that it has no FS_XFLAG_HASEXTFIELDS,
+> > so I agree that a new ioctl is not absolutely necessary,
+> > but I still believe that it is a better API design.
+>
+> This is how FS{GS}ETXATTR interface has always worked. You *must*
+> do a GET before a SET so that the fsx structure has been correctly
+> initialised so the SET operation makes only the exact change being
+> asked for.
+>
+> This makes the -API pair- backwards compatible by allowing struct
+> fsxattr feature bits to be reported in the GET operation. If the
+> feature bit is set, then those optional fields can be set. If the
+> feature bit is not set by the GET operation, then if you try to use
+> it on a SET operation you'll either get an error or it will be
+> silently ignored.
+>
+
+Yes, I know. I still think that this is a poor API design pattern.
+Imagine that people will be interested to include the fsxattr
+in rsync or such (it has been mentioned in the context of this effort)
+The current API is pretty useless for backup/restore and for
+copying supported attributes across filesystems.
+
+BTW, the internal ->fileattr_[gs]et() vfs API was created so that
+overlayfs could copy flags between filesystems on copy-up,
+but right now it only copies common flags.
+
+Adding a support mask to the API will allow smarter copy of
+supported attributes between filesystems that have a more
+specific common set of supported flags.
+
+> > Would love to hear what other fs developers prefer.
+>
+> Do not overcomplicate the problem. Use the interface as intended:
+> GET then SET, and GET returns feature bits in the xflags field to
+> indicate what is valid in the overall struct fsxattr. It's trivial
+> to probe for native fs support of windows attributes like this. It
+> also allows filesystems to be converted one at a time to support the
+> windows attributes (e.g. as they have on-disk format support for
+> them added). Applications like Samba can then switch behaviours
+> based on what they probe from the underlying filesystem...
+>
+
+OK, so we have two opinions.
+Debating at design time is much better than after API is released...
+
+I'd still like to hear from other stakeholders before we perpetuate
+the existing design pattern which requires apps to GET before SET
+and treat new (WIN) flags differently than old flags.
+
+Thanks,
+Amir.
 
