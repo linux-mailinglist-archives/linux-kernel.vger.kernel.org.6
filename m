@@ -1,169 +1,297 @@
-Return-Path: <linux-kernel+bounces-519666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9BBBA3A060
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:49:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47079A3A07F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:53:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34060188981F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:45:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27F763B03F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:46:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7D9526A0D2;
-	Tue, 18 Feb 2025 14:45:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7546826A1D1;
+	Tue, 18 Feb 2025 14:46:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="OvK8TTvn"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="gGfsCzPr"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 623E426AA8E
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 14:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7702269B09;
+	Tue, 18 Feb 2025 14:46:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739889909; cv=none; b=d9o1+pi1VbXAUOuWO836cNpBqSfV7SEIznXAbQqQA0XHO5WfH3m4AnYAXi95sbGnGfRxLgJ/QtmtsXu/3pzZBc6S5YaueAvsBbFs1uLorNktQlILIm6Da8r2eeLF0aoQ9eMn/B7VLbUxsYihAkrGvpS4t5F9mkJi17p6lwiMbiQ=
+	t=1739889967; cv=none; b=F4zdvJ677F4jtKiC6aNu6y1kJtTsJ/gpJDQcXIW2fOjiawxxYONZpqdq1j3LioIvErgAYuQsobfxsaDaYsRrGiY2PIwqd5DTjRSL9TIrXjRRlMAZ/V3z/UR+aKMhZ0QmU60R47LxcbxgsfA8Ieu6XINCDVSCXU6izIol/O7PPpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739889909; c=relaxed/simple;
-	bh=NbvVt7BZF1i5sDpL0YhX6xjDp5pujBMRRwFAm4iHKtQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u9BQSNY/BUFzN0WUCLC28NaJWyBAyNxGhOpqviwKE8V2GoxM6kjdOXKn1w7MnAeduAmluLAcK+9sCGMNNw/x2eEouZ5uVIu057vWxmte2cg6zoKa+8zypyZbvANUeCGh5K2Vv/HB1E7RFXOCqivZDiPyatL6roo4TMrI9PyAHgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=OvK8TTvn; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
+	s=arc-20240116; t=1739889967; c=relaxed/simple;
+	bh=L37JwsRhUvhyj8Iy1agx1x1+8qG2Qjpv6F1PihNs1dw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=VQRwSuZ/d3XvUhjc6pl4iSX71FFy3FCtgiuiH3WQ0709RQoefCLIZOpfHyAenVHSOPB1q40lCCayMr81phJvnxUkDAU+QDSl7q9wvrpFbvzpMbYOVUK+dYEoprcY9S8eVrQjo918kh2nc3ym3WHznsS0iDzLDXbdgYO1hWDxazM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=gGfsCzPr; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1739889963;
+	bh=L37JwsRhUvhyj8Iy1agx1x1+8qG2Qjpv6F1PihNs1dw=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=gGfsCzPrAZNoM9FAqQ2NNqibLLOcXtfJYQ4kDFc4lQDc3/n/zb1KyoHBSh952KTE0
+	 grIqMk7ZIoMpcC55mnzQ7sQJumYUkLFOPFKb551oXPiGuj66KriytXm1gPODpjB9qE
+	 uudCRvDxL9ps0+SLHGVWL53Zbc3w66KCdpRLOThF7Ym4d+ziPaxWEGnCZzZdRvR0Hj
+	 hy0+xQmgS7uKoyffrOjeBSBJQCI4djIdKJL+P5d5noBm3tJL2bP4AUrq0/88i3WLrP
+	 e6tS0faVQiFFR5/vrIaDZQvyvpzdr0wkA+bDyyMklexsLmf+gt9eUDievTckmlQsza
+	 uFKCIjIUcVChA==
+Received: from apertis-1.home (2a01cb088Cca73006086F5F072C6a07a.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:8cca:7300:6086:f5f0:72c6:a07a])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 398583F296
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 14:44:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1739889898;
-	bh=2wnnPPobX2+s1VhoPCe771be48GL2/WpZ73Ug6pSCno=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:In-Reply-To;
-	b=OvK8TTvnopKxfjLtGqL/qstq7ieSwR1kugcidusdbC1AUNn3deRkxdjD+Hwgvh3B4
-	 sRyGbcnEGHltrkskp8fdahPjs6ent7AmJ8twqjH8m/VbAKDll2Hegqbfj+6Sr+JZ9T
-	 6M34Ke/6Q2QqhLnts511gEVwsgIPZ+LxCdFJ5VZyV8wbt+P6AYVegu7Rs2DdmsSwJr
-	 FkkLHvKZSMgRHc4N4PnsnxJ6K4fgghVw6kUjWnAF4CQ/bAl0k2WvX3oMRtAi917Vuj
-	 WiUJZhbZfSaorvOAClv2OdfNfAH3/uZ9NJZlru9ABSG44eNiR2/tUxN4AB08gd3m8v
-	 OhzkGXRLRIhQQ==
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2f46b7851fcso17771209a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 06:44:58 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739889895; x=1740494695;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2wnnPPobX2+s1VhoPCe771be48GL2/WpZ73Ug6pSCno=;
-        b=lmhRAzyWDw0QCGtqZKZk2eWe8vVIQEr2B97UbKgJzz6mRNikc8zBGoOVGg5dhZauKy
-         2cdkK8zT6xpbha6Jh5oXqcp63efAY7cn8N3F981W6jGSU1lVfvkUIK2U/5H5fcBd5n5w
-         s+KFIwD/hpQAdg8sBYeG+9tGRytu2jZ43tqqqAKEkw2mp9bixctUMv3ClWqU8i4hG/2+
-         SIuTL0lRPHxeae6jKCfraXLG2AUvIgoEaY1gq7tdwMXqMnJgl7slRClAYW1nI7Jj4cHE
-         IawKVspnj1QbB9Y30Nq/kD5vsyld0jnclyyWcEsJpawZ/dKf5KJpyDUaFn2hli75kuBA
-         qZsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWuPPIrAKT+j+BfFOa5ZrUSeclnTpK5/zLZPhEg2xGBMjwCqEcaM4PRuo6tYi5bldiOtwmwykuk/434mlA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLG0NU3wnl1VP/hcO+2vvXT9YJ+9bHvLuWTLvFqvZwBtuSMzl/
-	mt4/6aCG8eYEe2SMyyIjJd2tj4/ypK+SOvaXX7TnsHtbh15knleHSFA84b5aPETRLrXXGB90n0J
-	+ryBXOo9nDvRLNyyBpaW508dwXuYQud5VLWf6ZWSu5n1ZwRh0IlVDGqF5BpiNhVDgMs0h/tJzyn
-	f+cw==
-X-Gm-Gg: ASbGnctHE0/64MxXvNlPUhb7rNvFUuXWz1gxaQaekTrXwVl4R7ahzL3H857yUYx3vFa
-	yrJYYHDPg80TiFXQdy0aVtcB3uCgNTJVB0v95dRxGzEoTTzIZet4wDXOuYWpb79rIm/D2a4C73U
-	Twk5IvhJI6/pXdD23pcVgIhTMCWkAzuNouiQTeI6A5ZTb8ZhKNtnK90JTwMKXCssqNByMVVerqS
-	EFkN6xrLWhtyRPox11nfWQQyKKbKRCQ99BUG8B5sQ6a8DR8qbzE1jvCTUVpW79ex6xAs2ntgmc9
-	GNABhBE=
-X-Received: by 2002:a17:90b:3c82:b0:2fa:13f7:960 with SMTP id 98e67ed59e1d1-2fc40f0e9dbmr22090218a91.13.1739889895160;
-        Tue, 18 Feb 2025 06:44:55 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IESbv8ZqGzwl13GA+Js7FWx5Lo/XTUtgadox++6SX63lhnE16lduw+yIem+lsV7vCbgIXUszw==
-X-Received: by 2002:a17:90b:3c82:b0:2fa:13f7:960 with SMTP id 98e67ed59e1d1-2fc40f0e9dbmr22090187a91.13.1739889894839;
-        Tue, 18 Feb 2025 06:44:54 -0800 (PST)
-Received: from localhost ([240f:74:7be:1:ad3a:e902:d78b:b8fa])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fbf999b5ddsm12120512a91.37.2025.02.18.06.44.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 06:44:54 -0800 (PST)
-Date: Tue, 18 Feb 2025 23:44:52 +0900
-From: Koichiro Den <koichiro.den@canonical.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-gpio@vger.kernel.org, brgl@bgdev.pl, linus.walleij@linaro.org, 
-	maciej.borzecki@canonical.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] gpio: pseudo: common helper functions for pseudo
- gpio devices
-Message-ID: <osk442flgow3px5jilhrn57xm2ha5wyrsnjae2mz4ht2dvgg2t@e7bzgjqawgik>
-References: <20250217142758.540601-1-koichiro.den@canonical.com>
- <20250217142758.540601-2-koichiro.den@canonical.com>
- <CAMuHMdWSBXHE9t2pMV+9iZRzrTUGVG+dnxxOMWbVF+HeCpt-xA@mail.gmail.com>
+	(Authenticated sender: jmassot)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9434917E0657;
+	Tue, 18 Feb 2025 15:46:03 +0100 (CET)
+Message-ID: <46ee390957d980189887badc1ca5e8ed437166d5.camel@collabora.com>
+Subject: Re: [PATCH 4/5] media/i2c: max96717: add FSYNC support
+From: Julien Massot <julien.massot@collabora.com>
+To: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>, Mauro Carvalho Chehab
+	 <mchehab@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+Date: Tue, 18 Feb 2025 15:46:02 +0100
+In-Reply-To: <20250207112958.2571600-5-laurentiu.palcu@oss.nxp.com>
+References: <20250207112958.2571600-1-laurentiu.palcu@oss.nxp.com>
+	 <20250207112958.2571600-5-laurentiu.palcu@oss.nxp.com>
+Organization: Collabora Ltd.
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdWSBXHE9t2pMV+9iZRzrTUGVG+dnxxOMWbVF+HeCpt-xA@mail.gmail.com>
 
-On Tue, Feb 18, 2025 at 02:24:32PM GMT, Geert Uytterhoeven wrote:
-> Hi Den-san,
-> 
-> On Mon, 17 Feb 2025 at 15:28, Koichiro Den <koichiro.den@canonical.com> wrote:
-> > Both gpio-sim and gpio-virtuser share a mechanism to instantiate a
-> > platform device and wait synchronously for probe completion.
-> > With gpio-aggregator adopting the same approach in a later commit for
-> > its configfs interface, it's time to factor out the common code.
-> >
-> > Add gpio-pseudo.[ch] to house helper functions used by all the pseudo
-> > GPIO device implementations.
-> >
-> > No functional change.
-> >
-> > Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
-> 
-> Thanks for your patch!
-> 
-> > --- /dev/null
-> > +++ b/drivers/gpio/gpio-pseudo.c
-> 
-> > +int pseudo_gpio_register(struct pseudo_gpio_common *common,
-> > +                        struct platform_device_info *pdevinfo)
-> > +{
-> > +       struct platform_device *pdev;
-> > +       char *name;
-> > +
-> > +       name = kasprintf(GFP_KERNEL, "%s.%u", pdevinfo->name, pdevinfo->id);
-> > +       if (!name)
-> > +               return -ENOMEM;
-> > +
-> > +       common->driver_bound = false;
-> > +       common->name = name;
-> > +       reinit_completion(&common->probe_completion);
-> > +       bus_register_notifier(&platform_bus_type, &common->bus_notifier);
-> > +
-> > +       pdev = platform_device_register_full(pdevinfo);
-> > +       if (IS_ERR(pdev)) {
-> > +               bus_unregister_notifier(&platform_bus_type, &common->bus_notifier);
-> > +               kfree(common->name);
-> 
-> On arm32:
-> error: implicit declaration of function ‘kfree’
-> 
-> Adding #include <linux/slab.h> fixes that.
-> Probably you want to include a few more, to avoid relying on
-> implicit includes.
+Hi Laurentiu,
 
-Thank you for pointing that out!
+Thanks for your patch
+On Fri, 2025-02-07 at 13:29 +0200, Laurentiu Palcu wrote:
+> According to specs:
+>=20
+> """
+> Frame synchronization (FSYNC) is used to align images sent from multiple
+> sources in surround-view applications and is required for concatenation.
+> In FSYNC mode, the GMSL2 CSI-2 quad deserializer sends a sync signal to
+> each serializer; the serializers then send the signal to the connected
+> sensor.
+> """
+>=20
+> Since max96717 can be used in multi-sensor setups, we need FSYNC
+> support. For that, I added a DT property("maxim,fsync-config") that will
+> be used to configure the frame sync output pin and the RX ID of the
+> GPIO as sent by the deserializer chip.
+>=20
+> Also, add the .request() callback for the gpiochip so that we can use
+> 'gpio-reserved-ranges' in DT to exclude the pins that are used for
+> FSYNC from being used as GPIOs.
+>=20
+>=20
+> I'm seeing different features in this patch:
+- Adding the request callback=20
+- Adding GPIO forwarding=20
+- Adding support to some pinctrl features such as pullup/pulldown
 
-Koichiro
 
-> 
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> -- 
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+
+>=20
+> Signed-off-by: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+> ---
+> =C2=A0drivers/media/i2c/max96717.c | 87 ++++++++++++++++++++++++++++++++-=
+---
+> =C2=A01 file changed, 79 insertions(+), 8 deletions(-)
+>=20
+> diff --git a/drivers/media/i2c/max96717.c b/drivers/media/i2c/max96717.c
+> index 6a668a004c717..47a3be195a971 100644
+> --- a/drivers/media/i2c/max96717.c
+> +++ b/drivers/media/i2c/max96717.c
+> @@ -70,13 +70,28 @@
+> =C2=A0#define MAX96717_VTX_CHKB_ALT=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 CCI_REG8(0x275)
+> =C2=A0
+> =C2=A0/* GPIO */
+> -#define MAX96717_NUM_GPIO=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 11
+> -#define MAX96717_GPIO_REG_A(gpio) CCI_REG8(0x2be + (gpio) * 3)
+> -#define MAX96717_GPIO_OUT=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 BIT(4)
+> -#define MAX96717_GPIO_IN=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 BIT(3)
+> -#define MAX96717_GPIO_RX_EN=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 BIT(2)
+> -#define MAX96717_GPIO_TX_EN=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 BIT(1)
+> -#define MAX96717_GPIO_OUT_DIS=C2=A0=C2=A0=C2=A0=C2=A0 BIT(0)
+> +#define MAX96717_NUM_GPIO		11
+> +#define MAX96717_GPIO_REG_A(gpio)	CCI_REG8(0x2be + (gpio) * 3)
+> +#define MAX96717_GPIO_OUT		BIT(4)
+> +#define MAX96717_GPIO_IN		BIT(3)
+> +#define MAX96717_GPIO_RX_EN		BIT(2)
+> +#define MAX96717_GPIO_TX_EN		BIT(1)
+> +#define MAX96717_GPIO_OUT_DIS		BIT(0)
+> +#define MAX96717_GPIO_REG_B(gpio)	CCI_REG8(0x2bf + (gpio) * 3)
+> +#define MAX96717_GPIO_TX_ID_MASK	GENMASK(4, 0)
+> +#define MAX96717_GPIO_TX_ID_SHIFT	0
+> +#define MAX96717_OUT_TYPE		BIT(5)
+> +#define MAX96717_OUT_TYPE_PUSH_PULL	BIT(5)
+> +#define MAX96717_OUT_TYPE_OPEN_DRAIN	0
+> +#define MAX96717_PULL_UPDN_SEL_MASK	GENMASK(7, 6)
+> +#define MAX96717_PULL_UPDN_SEL_SHIFT	6
+> +#define MAX96717_GPIO_NO_PULL		0
+> +#define MAX96717_GPIO_PULL_UP		1
+> +#define MAX96717_GPIO_PULL_DOWN		2
+> +#define MAX96717_GPIO_REG_C(gpio)	CCI_REG8(0x2c0 + (gpio) * 3)
+> +#define MAX96717_GPIO_RX_ID_MASK	GENMASK(4, 0)
+> +#define MAX96717_GPIO_RX_ID_SHIFT	0
+> +#define MAX96717_OVR_RES_CFG		BIT(7)
+> =C2=A0
+> =C2=A0/* CMU */
+> =C2=A0#define MAX96717_CMU_CMU2		CCI_REG8(0x0302)
+> @@ -125,6 +140,11 @@ enum max96717_vpg_mode {
+> =C2=A0	MAX96717_VPG_GRADIENT =3D 2,
+> =C2=A0};
+> =C2=A0
+> +struct max96717_fsync_desc {
+> +	int pin;
+> +	int rx_id;
+> +};
+> +
+> =C2=A0struct max96717_priv {
+> =C2=A0	struct i2c_client		=C2=A0 *client;
+> =C2=A0	struct regmap			=C2=A0 *regmap;
+> @@ -141,6 +161,7 @@ struct max96717_priv {
+> =C2=A0	struct clk_hw=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clk_h=
+w;
+> =C2=A0	struct gpio_chip=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 gpio_chip;
+> =C2=A0	enum max96717_vpg_mode=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 pattern;
+> +	struct max96717_fsync_desc	=C2=A0 fsync;
+Here we can have multiple GPIOs forwarded.
+
+> =C2=A0};
+> =C2=A0
+> =C2=A0static inline struct max96717_priv *sd_to_max96717(struct v4l2_subd=
+ev *sd)
+> @@ -364,6 +385,7 @@ static int max96717_gpiochip_probe(struct max96717_pr=
+iv *priv)
+> =C2=A0	gc->get_direction =3D max96717_gpio_get_direction;
+> =C2=A0	gc->direction_input =3D max96717_gpio_direction_in;
+> =C2=A0	gc->direction_output =3D max96717_gpio_direction_out;
+> +	gc->request =3D gpiochip_generic_request;
+> =C2=A0	gc->set =3D max96717_gpiochip_set;
+> =C2=A0	gc->get =3D max96717_gpiochip_get;
+> =C2=A0	gc->of_gpio_n_cells =3D 2;
+> @@ -386,6 +408,26 @@ static int max96717_gpiochip_probe(struct max96717_p=
+riv *priv)
+> =C2=A0	return 0;
+> =C2=A0}
+> =C2=A0
+> +static int max96717_fsync_setup(struct max96717_priv *priv)
+> +{
+> +	int ret =3D 0;
+> +
+> +	if (priv->fsync.pin =3D=3D -1)
+> +		return 0;
+> +
+> +	cci_update_bits(priv->regmap, MAX96717_GPIO_REG_C(priv->fsync.pin),
+> +			MAX96717_GPIO_RX_ID_MASK,
+> +			priv->fsync.rx_id << MAX96717_GPIO_RX_ID_SHIFT, &ret);
+                        FIELD_PREP(MAX96717_GPIO_RX_ID_MASK, priv->fsync.rx=
+_id), &ret);
+And you can get rid of the _SHIFT define.
+
+>=20
+> +
+> +	cci_update_bits(priv->regmap, MAX96717_GPIO_REG_B(priv->fsync.pin),
+> +			MAX96717_PULL_UPDN_SEL_MASK,
+> +			1 << MAX96717_PULL_UPDN_SEL_SHIFT, &ret);
+
+The serializer can't guess what kind of pin configuration is required for t=
+he design.
+This change deserves his own patch most likely implementing pinconf support=
+.
+
+> +
+> +	return cci_update_bits(priv->regmap, MAX96717_GPIO_REG_A(priv->fsync.pi=
+n),
+> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 MAX96717_GPIO_RX_EN | MAX96717_G=
+PIO_OUT_DIS,
+> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 MAX96717_GPIO_RX_EN, &ret);
+> +}
+
+
+> +
+> =C2=A0static int _max96717_set_routing(struct v4l2_subdev *sd,
+> =C2=A0				 struct v4l2_subdev_state *state,
+> =C2=A0				 struct v4l2_subdev_krouting *routing)
+> @@ -1037,7 +1079,8 @@ static int max96717_parse_dt(struct max96717_priv *=
+priv)
+> =C2=A0	struct v4l2_fwnode_endpoint vep =3D { .bus_type =3D V4L2_MBUS_CSI2=
+_DPHY };
+> =C2=A0	struct fwnode_handle *ep_fwnode;
+> =C2=A0	unsigned char num_data_lanes;
+> -	int ret;
+> +	int ret, count;
+> +	u32 dt_val[2];
+> =C2=A0
+> =C2=A0	ep_fwnode =3D fwnode_graph_get_endpoint_by_id(dev_fwnode(dev),
+> =C2=A0						=C2=A0=C2=A0=C2=A0 MAX96717_PAD_SINK, 0, 0);
+> @@ -1058,6 +1101,30 @@ static int max96717_parse_dt(struct max96717_priv =
+*priv)
+> =C2=A0
+> =C2=A0	priv->mipi_csi2 =3D vep.bus.mipi_csi2;
+> =C2=A0
+> +	priv->fsync.pin =3D -1;
+> +	count =3D fwnode_property_present(dev_fwnode(dev), "maxim,fsync-config"=
+);
+> +	if (count > 0) {
+> +		ret =3D fwnode_property_read_u32_array(dev_fwnode(dev), "maxim,fsync-c=
+onfig",
+> +						=C2=A0=C2=A0=C2=A0=C2=A0 dt_val, count);
+> +		if (ret) {
+> +			dev_err(dev, "Unable to read FSYNC config from DT.\n");
+> +			return ret;
+> +		}
+> +
+> +		priv->fsync.rx_id =3D dt_val[0];
+> +		if (priv->fsync.rx_id > 31) {
+> +			dev_err(dev, "Wrong GPIO RX ID. Allowed: 0 -> 31\n");
+> +			return -EINVAL;
+> +		}
+> +
+> +		priv->fsync.pin =3D dt_val[1];
+> +		if (priv->fsync.pin >=3D MAX96717_NUM_GPIO) {
+> +			dev_err(dev, "Wrong GPIO pin used for FSYNC. Allowed: 0 -> %d\n",
+> +				MAX96717_NUM_GPIO - 1);
+> +			return -EINVAL;
+> +		}
+> +	}
+>=20
+> +
+> =C2=A0	return 0;
+> =C2=A0}
+> =C2=A0
+> @@ -1092,6 +1159,10 @@ static int max96717_probe(struct i2c_client *clien=
+t)
+> =C2=A0		return dev_err_probe(&client->dev, ret,
+> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0 "Failed to init gpiochip\n");
+> =C2=A0
+> +	ret =3D max96717_fsync_setup(priv);
+> +	if (ret)
+> +		return dev_err_probe(&client->dev, ret, "Failed to setup FSYNC\n");
+> +
+Configuring GPIO forwarding can be done when calling GPIO chip probe.
+
+> =C2=A0	ret =3D max96717_register_clkout(priv);
+> =C2=A0	if (ret)
+> =C2=A0		return dev_err_probe(dev, ret, "Failed to register clkout\n");
+
+Best regards,
+--=20
+Julien
 
