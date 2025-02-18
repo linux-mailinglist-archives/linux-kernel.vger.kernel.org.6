@@ -1,188 +1,205 @@
-Return-Path: <linux-kernel+bounces-519014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84368A39713
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:28:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C198A39712
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:28:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3A331896F95
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:27:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 978541896A53
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:27:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 437B023315A;
-	Tue, 18 Feb 2025 09:27:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1446232368;
+	Tue, 18 Feb 2025 09:27:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jO5KWb97"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="qX5QQxHI"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E99723236C
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 09:27:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCF3423027C;
+	Tue, 18 Feb 2025 09:27:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739870827; cv=none; b=bIbzFDBKRt2jNJF/ELEO2VXNi5qOZiEPbnSH3frmA0XDVxE6Z7S7sG0gApuYI2pEUaP/YkaKSCvgamHRFSsiQf+clTIHsfcd4lVVl0peSAOQ/IQHbF4QNyQal8eIqmH3yRuz0dg/elptwJeXayb66Ubhntgrr9xW60eqKOppLTM=
+	t=1739870824; cv=none; b=XXzT60GfeXO7fI+qzw6gdKqqel1OCWfTDM5Zev/7LXlIl0mEN8KEKuufye/nmphxLSvtTL+PraCfJf5A1dl2unjOvnSX7nKpjsB+htt0i5FoC0JkgwGA8tMdUY4BDWaHMqmFKS7b70ItQ0Y1V9eIO6GiUt28LEvkGw0pt7HrT9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739870827; c=relaxed/simple;
-	bh=MriLzKzAAEIyF0n21wSKbavIuTWQW69OLGHxVTJ12Bw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GXlYUHjd69xGzzRQUntZ53+SCoL69upyGqc6gF4NP5+4fCH0r6BmwDiqTbEoXfofh6Hx2N+DmpakwJXoN4BFCIC+7GVI5DaoIYpiSv+GroJOolg7Ybk0GyPh7dz47M18SlU1LEyOhq08Zs3UKkVqCDUNbSAKL7D62qKf3s6iKN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jO5KWb97; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5dec817f453so8990289a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 01:27:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739870824; x=1740475624; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8BhUxzH6oEqhcLF8JGu78MOnEz5ur1uVJcS1EtL5slw=;
-        b=jO5KWb97uNFlKaKdO3gCGyzxwWn6d60ZrDDylBIGmg6zk4Raig/ZmiqmUTnsTmZ1Xb
-         z6jGxi8zvUmgmHTH0vTBjJVmgilWJV1eAAp3tHdipjXSiYdBHlZf6cBAkXgF2SZ+Ef36
-         3YRCKa/dDS1Ky0ScUTzRTIwZ9Wf8hk5mDEFOJWl5FUduf8xmLbCjqYOhZpkU7Scf3VOG
-         /u0xU70yLGkMEa3wUPv4FAUfgp0h2O1BhIcqk9k4C4FWXn0d6kB6Cu/ga6jHNGWGUqhS
-         /7Drs2TiuUiAERjaWFM32sd2Q49uIvqQnI+zwl1houZhNqJdEvTlU0UrGpcC9MQm8b+F
-         KGvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739870824; x=1740475624;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8BhUxzH6oEqhcLF8JGu78MOnEz5ur1uVJcS1EtL5slw=;
-        b=nGBDu8XdEMqxQ1gGLabQo53etKryY21EY0Q9O/4/wF6yhiuvc6fSrTzKySCCQ78/Iv
-         7Kf2EMi8wUPyFcl6zuftfxkMZ5DiiUa7P00XhNyDNc/KrX3sedO2hbabPekY0RQUQBWh
-         11lej0KlHN8aE2XSL1Lq/HF9IkyAYqvk1XvAWoRpruGUO1fdIolyq3r3nUB5TqF9R5gC
-         8/QnWIHuG7kXz27cyENDEVD44ae9BmtUI5n4Vwlelz04vjK4WfG9qrnWq6v0wF0VUvhi
-         TYFY7Ew77+xmVhlUqAfdb6cS9O6cSqczWLzXVTw/MgOg4Ic6t2mfPPK/vd5RcT5Un78+
-         +zNA==
-X-Forwarded-Encrypted: i=1; AJvYcCXfwK6OTzDAI3nVgQ8RXYmcc/+UcrATmn6E3hnoQ8/6IsguY+iNNl0n1PAAFRTXbeHNPhjYd0xQJ029Mco=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8AQSv/9KPAexfkO0qwDmBZpmLRpd8koWwaQPOfwyKXmM/wMnY
-	lpGliz+TGC5Z42XBIE81ma5357cMViiWybiv9oup2+03dr21qpyX3nFc6Ae81CU=
-X-Gm-Gg: ASbGnctHzixnfGtuQTvSED4TahQCDPW+iInUhf/9u24yi1UUMbFJx34mJqgUk9HcAZr
-	zl1o8uxHNDHXnnSPDBNoN6sBZSAMVwc7+rpwD11zEN8aZMbNPa9LQQsgjtczpWrwJ7AhQ81Ycsz
-	cWFz6CT8QF32qdoDc5EFHmce649cezvszF/8FjPrdWAX9il6Xy691ybXsUaMvLAR3eEX23zImHz
-	iI4+yubgVSdRCLWqAx6Pzseq8XQxbFQnSmWcoxBFRNbFFS18BdXZthFqiRCDib6Gj4zYeULEKS2
-	xF87O4A0k6h+/Gi5Zq6QzTwmKwM=
-X-Google-Smtp-Source: AGHT+IGjPWmulA6Wm4cfnS6vwEaBjcuzifQAXHXx0FB+cG+S71ZxSZy2T1iZVOVPgEyId5cZUv/+tw==
-X-Received: by 2002:a17:906:4794:b0:ab7:e8d6:3b12 with SMTP id a640c23a62f3a-abb70a958eamr1318865766b.1.1739870823557;
-        Tue, 18 Feb 2025 01:27:03 -0800 (PST)
-Received: from linaro.org ([2a02:2454:ff21:ef30:202d:2fec:52ff:5dac])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abbb0fb63ecsm151544466b.115.2025.02.18.01.27.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 01:27:03 -0800 (PST)
-Date: Tue, 18 Feb 2025 10:26:58 +0100
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-To: Johan Hovold <johan@kernel.org>
-Cc: Abel Vesa <abel.vesa@linaro.org>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Sibi Sankar <quic_sibis@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Trilok Soni <quic_tsoni@quicinc.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v6 2/2] usb: typec: Add support for Parade PS8830 Type-C
- Retimer
-Message-ID: <Z7RSYqQx72v-sPSt@linaro.org>
-References: <20250206-x1e80100-ps8830-v6-0-60b1e49cfa8d@linaro.org>
- <20250206-x1e80100-ps8830-v6-2-60b1e49cfa8d@linaro.org>
- <Z68EUTlHcm6TxjlY@hovoldconsulting.com>
- <Z7Q8xwcfeE3tcBLL@hovoldconsulting.com>
+	s=arc-20240116; t=1739870824; c=relaxed/simple;
+	bh=13RAFqO4JxKpY86E13TVG4O698Z/xjNecRvH9AgjNaY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MbXrZ9xNsAPqIhPLRGI0ZzKc+aMs4phoWjMPFU95O0oChKHAQ5+9fG/HB5N4D0EnKPZ1TO3Rql+eacRm29R62Z2V+qzFlpyZetpe4UxCLk0WkykHuYi8Qc21cmLzfGQo3vYEDjq9C2QeXz7ROIYyQX9qNsfM5PG9PvAL95GBYEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=qX5QQxHI; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1739870820;
+	bh=13RAFqO4JxKpY86E13TVG4O698Z/xjNecRvH9AgjNaY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qX5QQxHIowTOTnz9Li60/jzpzEyrmVKngsv1UdK5BflNfVIsKlkYXPG7WDiqBtW0N
+	 wrlwfNZICsMYgYLLCSDCZFgoggqWPGoNAzQNV12S1LSHlQdA7zF+X5A+PMDUAFnfN9
+	 UP6nY/ePSd7y/OWZAQHdvs3CvlriheHERJNRRwawHDev7Ij+DEltRFnDLwEC9HpdbS
+	 W7Gaa/kPKTVIoHDN79HMcjiz9A28S92w9F2kejmJVPjqsVVytQ9iMbpyPkPsR/XaXP
+	 melHDDbYycMbcLfXgf+kh+GIi4/QYUOWSq5WrWX/11u/L8rBITZ6U2NKD3pjt3xCHE
+	 QEyqpJK0Qc49A==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 34DE217E0391;
+	Tue, 18 Feb 2025 10:27:00 +0100 (CET)
+Message-ID: <a286cb5c-40f8-48ec-921d-bcf0b67728ed@collabora.com>
+Date: Tue, 18 Feb 2025 10:26:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z7Q8xwcfeE3tcBLL@hovoldconsulting.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/4] usb: mtu3: add support remote wakeup of mt8196
+To: =?UTF-8?B?Q2h1bmZlbmcgWXVuICjkupHmmKXls7Ap?= <Chunfeng.Yun@mediatek.com>,
+ "robh@kernel.org" <robh@kernel.org>,
+ "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+Cc: "linux-mediatek@lists.infradead.org"
+ <linux-mediatek@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "mathias.nyman@intel.com" <mathias.nyman@intel.com>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>
+References: <20250121145008.22936-1-chunfeng.yun@mediatek.com>
+ <20250121145008.22936-4-chunfeng.yun@mediatek.com>
+ <e63fdeba-04dd-4b88-a6d6-ca8a64e28e36@collabora.com>
+ <a689f7d25fb05ba83ac2de6ba879998fe2e21bcb.camel@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <a689f7d25fb05ba83ac2de6ba879998fe2e21bcb.camel@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 18, 2025 at 08:54:47AM +0100, Johan Hovold wrote:
-> On Fri, Feb 14, 2025 at 09:52:33AM +0100, Johan Hovold wrote:
-> > On Thu, Feb 06, 2025 at 11:28:28AM +0200, Abel Vesa wrote:
-> > > The Parade PS8830 is a USB4, DisplayPort and Thunderbolt 4 retimer,
-> > > controlled over I2C. It usually sits between a USB/DisplayPort PHY
-> > > and the Type-C connector, and provides orientation and altmode handling.
-> [...]
-> > > +	/* skip resetting if already configured */
-> > > +	if (regmap_test_bits(retimer->regmap, REG_USB_PORT_CONN_STATUS_0,
-> > > +			     CONN_STATUS_0_CONNECTION_PRESENT) == 1)
-> > > +		return gpiod_direction_output(retimer->reset_gpio, 0);
-> > 
-> > I'm still a little concerned about this. Won't you end up with i2c
-> > timeout errors in the logs if the device is held in reset before probe?
+Il 09/02/25 04:31, Chunfeng Yun (云春峰) ha scritto:
+> On Wed, 2025-01-22 at 10:30 +0100, AngeloGioacchino Del Regno wrote:
+>> External email : Please do not click links or open attachments until
+>> you have verified the sender or the content.
+>>
+>>
+>> Il 21/01/25 15:50, Chunfeng Yun ha scritto:
+>>> There are three USB controllers on mt8196, each controller's wakeup
+>>> control is different, add some specific versions for them.
+>>> Here add only for dual-role controllers.
+>>>
+>>> Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+>>
+>>   From the datasheets, I can read the following:
+>>
+>> IP0: host -> 0x1670_0000  device(mtu3) -> 0x1670_1000
+>> IP1: host -> 0x1671_0000  device(mtu3) -> 0x1671_1000
+>> IP2: host -> 0x1672_0000  device(mtu3) -> 0x1672_1000
+>>
+> I'll check it.
 > 
-> You should be able to use i2c_smbus_read_byte() to avoid logging errors
-> when the boot firmware has *not* enabled the device.
+>> ...this means that you're missing the IP2 here, which you did not
+>> miss in the
+>> commit adding the wakeup control in mtk-xhci instead.
+>>
+>> So, since I see that all of the USB IPs are behind MTU3, and that
+>> there is no
+>> USB IP that does *not* support gadget mode (so, there's no USB IP
+>> that does NOT
+>> support MTU3), you shall add all three here, and you shall drop the
+>> commit that
+>> adds the wakeup control in mtk-xhci entirely.
+> No, I'll still add them in mtk-xhci driver as before for the cases that
+> only use xhci only, no need use mtu3 driver.
+> 
+> As I said before, event the controller supports dual-role mode, which
+> don't mean that it can use this upstream mtu3 driver, some SoC have
+> limitation and can't support the dual-role mode switch used in upstream
+> driver. but all SoC can use upstream xhci-mtk driver. that why I add
+> some SoC's wakeup control in xhci-mtk, but not in mtu3 driver.
+> 
+>>
+>> This is because there will be no DT node declaring only XHCI.
+>>
+>> Since after the proposed change all controllers will be MTU3 -> XHCI,
+>> there's
+>> no need to add the same in the mtk-xhci driver.
+> I think it's better to leave the selection to the customer, for
+> example, on chromebook, we only use xhci driver and do not enable mtu3.
 > 
 
-FWIW, regmap_test_bits() doesn't seem to print any errors either, so I
-don't think switching to i2c_smbus_read_byte() is necessary.
+Chromebooks can use MTU3 and lock it in HOST mode only.
 
-Since I was curious, I tried booting the X1E80100 with
- 1. One PS8830 instance left as-is
- 2. One PS8830 instance changed to invalid I2C address
- 3. One PS8830 instance changed to have reset pin asserted via pinctrl
+The MTU3 hardware is there - don't hide it.
 
-There are no errors whatsoever, even for the one with invalid I2C
-address. In other words, the slightly more concerning part is that the
-driver doesn't check that any of the regmap reads/writes actually
-succeed.
+Regards,
+Angelo
 
-The diff I used for testing is below. (1) prints "skipping reset", (2)
-and (3) print "continuing reset".
+> Thanks
+> 
+>>
+>> Cheers,
+>> Angelo
+>>
+>>> ---
+>>> v2: add wakeup for dual-role controllers
+>>> ---
+>>>    drivers/usb/mtu3/mtu3_host.c | 17 +++++++++++++++++
+>>>    1 file changed, 17 insertions(+)
+>>>
+>>> diff --git a/drivers/usb/mtu3/mtu3_host.c
+>>> b/drivers/usb/mtu3/mtu3_host.c
+>>> index 7c657ea2dabd..d65b0f318436 100644
+>>> --- a/drivers/usb/mtu3/mtu3_host.c
+>>> +++ b/drivers/usb/mtu3/mtu3_host.c
+>>> @@ -46,6 +46,11 @@
+>>>    #define WC1_IS_P_95         BIT(12)
+>>>    #define WC1_IS_EN_P0_95             BIT(6)
+>>>
+>>> +/* mt8196 */
+>>> +#define PERI_WK_CTRL0_8196   0x08
+>>> +#define WC0_IS_EN_P0_96              BIT(0)
+>>> +#define WC0_IS_EN_P1_96              BIT(7)
+>>> +
+>>>    /* mt2712 etc */
+>>>    #define PERI_SSUSB_SPM_CTRL 0x0
+>>>    #define SSC_IP_SLEEP_EN     BIT(4)
+>>> @@ -59,6 +64,8 @@ enum ssusb_uwk_vers {
+>>>        SSUSB_UWK_V1_3,         /* mt8195 IP0 */
+>>>        SSUSB_UWK_V1_5 = 105,   /* mt8195 IP2 */
+>>>        SSUSB_UWK_V1_6,         /* mt8195 IP3 */
+>>> +     SSUSB_UWK_V1_7,         /* mt8196 IP0 */
+>>> +     SSUSB_UWK_V1_8,         /* mt8196 IP1 */
+>>>    };
+>>>
+>>>    /*
+>>> @@ -100,6 +107,16 @@ static void ssusb_wakeup_ip_sleep_set(struct
+>>> ssusb_mtk *ssusb, bool enable)
+>>>                msk = WC0_IS_EN_P3_95 | WC0_IS_C_95(0x7) |
+>>> WC0_IS_P_95;
+>>>                val = enable ? (WC0_IS_EN_P3_95 | WC0_IS_C_95(0x1)) :
+>>> 0;
+>>>                break;
+>>> +     case SSUSB_UWK_V1_7:
+>>> +             reg = ssusb->uwk_reg_base + PERI_WK_CTRL0_8196;
+>>> +             msk = WC0_IS_EN_P0_96;
+>>> +             val = enable ? msk : 0;
+>>> +             break;
+>>> +     case SSUSB_UWK_V1_8:
+>>> +             reg = ssusb->uwk_reg_base + PERI_WK_CTRL0_8196;
+>>> +             msk = WC0_IS_EN_P1_96;
+>>> +             val = enable ? msk : 0;
+>>> +             break;
+>>>        case SSUSB_UWK_V2:
+>>>                reg = ssusb->uwk_reg_base + PERI_SSUSB_SPM_CTRL;
+>>>                msk = SSC_IP_SLEEP_EN | SSC_SPM_INT_EN;
+>>
+>>
+>>
 
-Thanks,
-Stephan
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
-index fee694a364ea..1f8d61239723 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
-@@ -1010,9 +1010,9 @@ &i2c1 {
- 
- 	status = "okay";
- 
--	typec-mux@8 {
-+	typec-mux@42 {
- 		compatible = "parade,ps8830";
--		reg = <0x08>;
-+		reg = <0x42>;
- 
- 		clocks = <&rpmhcc RPMH_RF_CLK5>;
- 
-@@ -1673,6 +1673,7 @@ rtmr1_default: rtmr1-reset-n-active-state {
- 		function = "gpio";
- 		drive-strength = <2>;
- 		bias-disable;
-+		output-low;
- 	};
- 
- 	rtmr2_default: rtmr2-reset-n-active-state {
-diff --git a/drivers/usb/typec/mux/ps883x.c b/drivers/usb/typec/mux/ps883x.c
-index 10e407ab6b7f..04ed35d14fd6 100644
---- a/drivers/usb/typec/mux/ps883x.c
-+++ b/drivers/usb/typec/mux/ps883x.c
-@@ -370,8 +370,12 @@ static int ps883x_retimer_probe(struct i2c_client *client)
- 
- 	/* skip resetting if already configured */
- 	if (regmap_test_bits(retimer->regmap, REG_USB_PORT_CONN_STATUS_0,
--			     CONN_STATUS_0_CONNECTION_PRESENT) == 1)
-+			     CONN_STATUS_0_CONNECTION_PRESENT) == 1) {
-+		dev_info(dev, "skipping reset\n");
- 		return gpiod_direction_output(retimer->reset_gpio, 0);
-+	} else {
-+		dev_info(dev, "continuing reset\n");
-+	}
- 
- 	gpiod_direction_output(retimer->reset_gpio, 1);
- 
 
