@@ -1,137 +1,86 @@
-Return-Path: <linux-kernel+bounces-519361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E46CBA39C08
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:20:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12B31A39C0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:22:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB5DE162FF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:20:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C5987A3EA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:21:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B2C0241CA0;
-	Tue, 18 Feb 2025 12:20:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A336C2417FB;
+	Tue, 18 Feb 2025 12:21:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SR+loHcv"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 307BC10F4;
-	Tue, 18 Feb 2025 12:20:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="gSieVkef"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC73E22FF40;
+	Tue, 18 Feb 2025 12:21:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739881203; cv=none; b=n0CcKBEh6XB5wPEoWtFgAENDJwmOUemv3276nnlD1l42DC6ygoZF68la6N3tbcdskJH1XvphYkTVX8AnJqQpXpTQTOiGHQ+dZFtiZkG5VhUL3arfoBh+kxLg3HZI+OfBzNhcwhO/60ISKLKZahLLMGpKTfu1EkgMWfswvLpXgGA=
+	t=1739881315; cv=none; b=gXH1Oz81Jp5lNrtD/GB/tvwdjYV/ogU3FAowYOWayC2Ahf15uRRCgFKCCOQylTG1dMnKNpY6rtIJVCqtEiSGzdYhgxxpILfpAszwMMKCkDRX8LrYHo+H5wSaUeA7QeaiyvTqk5YaJIp8Fnk+y+qMljcPCrpNu+e0St4sl6LgBMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739881203; c=relaxed/simple;
-	bh=4tj/uKB2dgnjPTdijnM3vXriuzb+4MfuEX2Q/7/ORiI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=e/TWMeFaG7OHv/rTuwD3QArI7J2LJt+eo3GpX6SEa01zfFDxv6iyVgBNQjr479QKKgj4E5yF2pVP3VQpVEWkdt0LzR2hAJAvzwFPoizGhFZg1Q+7hKWOGejVE6e/nhUGTMU0JgorbXtqwbZ/I4yMyXRWsCetbBb2jGQJRrwiDUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SR+loHcv; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-38f3ee8a119so1311275f8f.0;
-        Tue, 18 Feb 2025 04:20:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739881200; x=1740486000; darn=vger.kernel.org;
-        h=content-disposition:mime-version:reply-to:message-id:subject:cc:to
-         :from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YI0Ifn7vvsd2ZeXns6IUX10UekanaA4DCvpGAYoOivQ=;
-        b=SR+loHcvlKFpnepbLbGmd2S9Vm9u00KFX0I7CJMT45tmiZ1YY5yGFJaxKbDN14xx4c
-         fQ4mTgGUQU4dKYxIkxryg1Z7c/BmaKz9rp5JQVe8GRiTUNrPkED76kHfWPSaZo3liV19
-         KsD86tBvBjFfyi3+64WY83rZoAGyFQZLPwC13qHGSw0LExUUH7Nd3LAqbOaOipRpBU1z
-         hWKT+D253xLaUGGhpHwysipkCRrHyY1KRpnnBP5PZvyu6i/ZC1gADAeOlI160hoJ8jQx
-         nG2pTnXDYbw6LsDXZt5AY5ut5SiZNnf8CM8o2g6qxOToPXfqnwe9Dt45RgNStMC7eI6F
-         lvPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739881200; x=1740486000;
-        h=content-disposition:mime-version:reply-to:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YI0Ifn7vvsd2ZeXns6IUX10UekanaA4DCvpGAYoOivQ=;
-        b=Mm48DdxXubhwvHMSz8Tw2zLT6GxCwBEnt19l3bW0fVESusoGXLWkEaGSA8AHgd2yE6
-         48V+bZ1iTa4ZXNc30+6AzvH21v0ZHQgCX7KuaEQZuqOKCSP6P9xi25USJW5knMrvFeCu
-         IjlxR6GcH/GldQtCRLtJLWuSxOJYmrndmhrHhNh8z74sIqNsH9KTEsP9SndYzcPHOd7x
-         it786cB6ICydtfRIe1yfITxMTe6MrYUkMgjv7YJsM46CQhzYAUzQ7bhsBnaRQzIJ1Mrn
-         6KzfHk3fDwd0XOwnmexfwyw6JWbzvL7QRw8bf0wAmJjiGz2F224k0+W9nxUJFg+hZ5xF
-         mouQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVhNQwPbe/pIx0SMbzGoqeQrD3dk35UDgihcyNpXMDRVzutViHOERvoCte4aZHkDiBqX7gr7A6j7OIo/MY=@vger.kernel.org, AJvYcCW3AX+AUmu4WHRITi9R16uYY6Gu3KyFfMPxMG86fXEVx4MOjkTfJcIawGbpB1Go+eMlxdROydbk@vger.kernel.org, AJvYcCWVpWaDK1GvOu925P7pppsAXBUqcaafgqWkuv97O3850tZSAhhuXUuzD+VXgiDWUkIHj27ASp2F@vger.kernel.org, AJvYcCX24h4qQvCg7W5nCueP3nwD93F6WURaTbOIupLc9vIOCONZc/+sMwdK8go5xMLU4i4sSVOPwbaYPVg5@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoKoD9A1oPdVOP4b5oLDKh4fuAkXA5u+kMLlQbmyFbqX4+shBY
-	4G9wUT8vUog5SegOmTQKAKiGViERb0H+C4SjjPKDs6DqOK73z0kB
-X-Gm-Gg: ASbGncs7Z38Ip8ZwIAxOPjSocOBuxYfEyd4oXEKpU9jNr8fnsO4IHnvquO30dLM1oZX
-	ZuCD550HIM3GltEEf20ITUiVJg+hKwP6xBBojI602qzN0GXWRleNo9/QQ/2HyhPGnm1ri3bZje6
-	cSMT0xDe2WbZFo96Q75vCy4T0xnCBbeDFWubSkmbq+aQx1zop+0TdTJchY7Legd2wb9bT3Qusqk
-	4IU+g9IUgWyijGukR2BNKap1JPCBeWT+i2FWCsG4X6+qaN4hNTADDneGYjNplcniZqsYFN/gKOq
-	uUNtU+AsZd+g9goSLy8=
-X-Google-Smtp-Source: AGHT+IHlT4BxvNGeiNIO+gy5eC2ESBpBIhLS2/P0chI7LitN4FV9GGXXLs586hiKwDjI9OiT413wcA==
-X-Received: by 2002:a5d:6c66:0:b0:38d:c2d7:b5a1 with SMTP id ffacd0b85a97d-38f33f28cb8mr11802160f8f.19.1739881200078;
-        Tue, 18 Feb 2025 04:20:00 -0800 (PST)
-Received: from qasdev.system ([2a02:c7c:6696:8300:5092:6ded:7935:11b8])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259d5ee2sm14652183f8f.80.2025.02.18.04.19.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 04:19:59 -0800 (PST)
-Date: Tue, 18 Feb 2025 12:19:57 +0000
-From: Qasim Ijaz <qasdev00@gmail.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] net: fix uninitialised access in mii_nway_restart()
-Message-ID: <Z7R6uet1dJ1UJsJ1@qasdev.system>
-Reply-To: cf0d2929-d854-48ce-97eb-69747f0833f2@lunn.ch
+	s=arc-20240116; t=1739881315; c=relaxed/simple;
+	bh=ptCScSd+4h1BoYlk7WM359v+rG83VRckDRqhzGXIR6I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CbUq3t5XPN5MYHjxOV43ocSuZjCdbfG7iOC1Jf3nAjdVPoGYrFGcMPFeDrT1Xp90OLUdCsDAv71uNL/m/e7cUE6tv6UawybGSFFdGT6AymUxLLq+G1IzZmD9uXqcnBL098UcBlI0vPNgRYZm/ELVhXFwuW1hooOPoY9rmYpnt7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=gSieVkef; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=Caj+i
+	S4MCMJNnw0cvQpDvzauLB52HqMQBpoATbVMicA=; b=gSieVkefNMIzjP+/ukSin
+	MyvhXXwrtxwlJGrO2CEVDRV9DFTQcbKdeoz+eQHS/3NQ/a0gtqMOoJkVmwk11R0E
+	ys9y3qVGfuYRUS6caxgWoXBthMOQP39Q/BMWecSLwdQK/l3v3Fnt0tuZt80+Jd/P
+	JVpcijI5xzwU4Wd5LZPGHg=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wD3b1JAe7Rn+27cMQ--.47696S2;
+	Tue, 18 Feb 2025 20:21:21 +0800 (CST)
+From: Haiyue Wang <haiyuewa@163.com>
+To: linux-trace-kernel@vger.kernel.org
+Cc: Haiyue Wang <haiyuewa@163.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-kernel@vger.kernel.org (open list:FUNCTION HOOKS (FTRACE))
+Subject: [PATCH v1] fgraph: Correct typo in ftrace_return_to_handler comment
+Date: Tue, 18 Feb 2025 20:20:34 +0800
+Message-ID: <20250218122052.58348-1-haiyuewa@163.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3b1JAe7Rn+27cMQ--.47696S2
+X-Coremail-Antispam: 1Uf129KBjvdXoW7Gr4DGr4UXr4xXF47Gr1rJFb_yoWxZwb_Xr
+	ZFyF18ua48CFn2vF1fAFZ7ZFyxtr1FgFW8uw47tFZxC3WUKF43J3Z8X3ZIqFWDZrs2grsa
+	9r15Wr1UGw13tjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xRtSdgJUUUUU==
+X-CM-SenderInfo: 5kdl53xhzdqiywtou0bp/1tbiYBj3a2e0BFtIBAABsl
 
-On Tue, Feb 18, 2025 at 02:10:08AM +0100, Andrew Lunn wrote:
-> On Tue, Feb 18, 2025 at 12:24:43AM +0000, Qasim Ijaz wrote:
-> > In mii_nway_restart() during the line:
-> > 
-> > 	bmcr = mii->mdio_read(mii->dev, mii->phy_id, MII_BMCR);
-> > 
-> > The code attempts to call mii->mdio_read which is ch9200_mdio_read().
-> > 
-> > ch9200_mdio_read() utilises a local buffer, which is initialised 
-> > with control_read():
-> > 
-> > 	unsigned char buff[2];
-> > 	
-> > However buff is conditionally initialised inside control_read():
-> > 
-> > 	if (err == size) {
-> > 		memcpy(data, buf, size);
-> > 	}
-> > 
-> > If the condition of "err == size" is not met, then buff remains 
-> > uninitialised. Once this happens the uninitialised buff is accessed 
-> > and returned during ch9200_mdio_read():
-> > 
-> > 	return (buff[0] | buff[1] << 8);
-> > 	
-> > The problem stems from the fact that ch9200_mdio_read() ignores the
-> > return value of control_read(), leading to uinit-access of buff.
-> > 
-> > To fix this we should check the return value of control_read()
-> > and return early on error.
-> 
-> What about get_mac_address()?
-> 
-> If you find a bug, it is a good idea to look around and see if there
-> are any more instances of the same bug. I could be wrong, but it seems
-> like get_mac_address() suffers from the same problem?
+Signed-off-by: Haiyue Wang <haiyuewa@163.com>
+---
+ kernel/trace/fgraph.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thank you for the feedback Andrew. I checked get_mac_address() before
-sending this patch and to me it looks like it does check the return value of
-control_read(). It accumulates the return value of each control_read() call into 
-rd_mac_len and then checks if it not equal to what is expected (ETH_ALEN which is 6),
-I believe each call should return 2.
+diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
+index 5dddfc2149f6..8d925cbdce3a 100644
+--- a/kernel/trace/fgraph.c
++++ b/kernel/trace/fgraph.c
+@@ -865,7 +865,7 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
+ }
+ 
+ /*
+- * After all architecures have selected HAVE_FUNCTION_GRAPH_FREGS, we can
++ * After all architectures have selected HAVE_FUNCTION_GRAPH_FREGS, we can
+  * leave only ftrace_return_to_handler(fregs).
+  */
+ #ifdef CONFIG_HAVE_FUNCTION_GRAPH_FREGS
+-- 
+2.48.1
 
-> 
-> 	Andrew
 
