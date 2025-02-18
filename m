@@ -1,118 +1,81 @@
-Return-Path: <linux-kernel+bounces-519855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02612A3A2D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:29:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D801A3A2D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:29:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6892C1615D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:29:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1AD53A2829
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:29:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A78126E622;
-	Tue, 18 Feb 2025 16:28:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="GhmZXsNZ"
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85CE026E15A;
+	Tue, 18 Feb 2025 16:29:45 +0000 (UTC)
+Received: from exchange.fintech.ru (exchange.fintech.ru [195.54.195.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0FB2269AFF
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 16:28:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FD051C3054
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 16:29:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.54.195.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739896138; cv=none; b=clJ2YlQKOZH6EfzRkZdlRQTp6Em1TdDPnZddMoK8AzlxNLo4xuG6Pp0h2lVCv8EF16Ly3kcYmZQGEBDpIeW8bF/nQRDjBcKMgZwT4V/RDOPTECt5ZfEGwrOFh4NZlak7tHzh2QrXsDB+eff7qdwN3isyBch2ZQkiyZWOH9MSqdo=
+	t=1739896185; cv=none; b=XuL+K7Hcah0DPTmts6XMhm6k810HV5oiJmuax1Si+RmS9DOHRzVdKov4wmFl24SVPMsqOYcEUhVUbR4lJ/Pdmb3GfWTx026lIfqH1U5h+W0lzTgfYfc47lerdiFD1CvwFrXa7G1Ugea35kjhLJO4M7WcoWtwR4AfrISFAT/ydxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739896138; c=relaxed/simple;
-	bh=ZLqIegwy/9OPkRJFz9LymatoR8kXczOAXBYPAKt34o4=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Z/f+PF9Wd69xC8TKyu0LwbUfDWr7mXE0mCQIq2HtVVkyYaJMT/Yx2vZWKKTpPyBTEQReVG1O6lzA7ML3YQKjqi4sTyOUztkiq5nGvJFtFsrJryBN2/obktN3smZoRjXK1P27MsyXr+9rcXqHEuXdHORlz1ZuBPrCi2s/68wXlRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=GhmZXsNZ; arc=none smtp.client-ip=209.85.166.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3cf8e017abcso17301955ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 08:28:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1739896135; x=1740500935; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zZSFheZSQhhD9BZXFMBQVD0TW1CBXyU0mBPRkFUDMV8=;
-        b=GhmZXsNZb/zuvVBqj8z3udk6yxnzpr0z51JAWAZWUgah1OMpyMuUp5O+cxnLPj0IUA
-         1VY0h2t5q6mu3xM31cdhRr8Uul54gKUgiFm+M92aDgdYV36r6b98mh1OEUO8Mi2YJWBh
-         K3MdLPG25wwwH8eAkvGDycb6USnzwrV8FxCJaLyi8xMCmdkcOSDXArfPq3+UxBDhiOOu
-         Embpmu57d49VSBj5dfnBzFhCGPEy+VhKNcRsLeiZ/WSyIxzMwA9U+OsINBhVjI+erUbj
-         jwVkBFLdEtvi+q583DR+pl1wgO7X1cyJ68qQsX/q/zbl7Gr0RcrhO6Z2IcIvl71xHqxc
-         /zXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739896135; x=1740500935;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zZSFheZSQhhD9BZXFMBQVD0TW1CBXyU0mBPRkFUDMV8=;
-        b=A8x22DFwtIq64nAXWiT7IvyLTNCkgFV1PwfwIV/DrpgZW/ZuqHpER5b8vR0Lvy4CLi
-         VbXOmaC6Z/DyZdb16/VfBTm6a2vjaTSj9yR4o02H55SvgDzGXo6FCur7NRZDMnyDMjSs
-         z9dPjfyR6OuSXv2hv+vqzx9iSLWhaV252aAffwxN+i3tO7komK8k6aztVMdUyTmICf1C
-         x44BYJeAV5qZhkId1GkW0O2elwk4rR67yJFN7pENTJUyxLoE/ufmQzmMjbcMMbvCQbx+
-         O6e1zY9SKNykxi47Bfxh1RHhSF4UZTpEs5F8HEnFbJORV4PPOpMS/cVSvgZOC5BjO/8o
-         pDVA==
-X-Forwarded-Encrypted: i=1; AJvYcCX06m9Ov0O2CdTZdmA+nlt7sE67dZJKvNy0gtGPbUw2fsSj+OAHXq1eXffDpoET8n3D7EKlAn4f0jUvIqM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygbfsEwK1KfXPB2aFBOJNJ0ui6nqFu1xOvynrW4LTYsEie3Qc7
-	uuil5k6WiJialQO7N6wZkHYbu3CyrEAn1Avs9oEslglHVFjW38Xskk+8ZlxSUmv9zdW+rm6UXjU
-	n
-X-Gm-Gg: ASbGncu9NJfjJkx4N5FQXD5K414m1/zGhaXR1nhQpQBqBVrEW29T87ZLh/C47R8k1/j
-	y3DxJINOaqz7J6VezpufwH57Mo3SCpODIxTz5PLxGmVm7NFzecM8G/QDq4UHMURzruhIhNXH80+
-	OMOjFTG9vW3D8okDKZ+imRyERkW+zH0fm6f6+QQNX+Q5mlBDuM1xyHFaElFuIfZVFv4c3R8eK/w
-	XjBsJmE+r33GjJGw/rUSzlg4pCGhmlEBE+Q2AalobQrV562Aevk5tDPhYfXzmB6RrTolMb885h8
-	t7k7lSk=
-X-Google-Smtp-Source: AGHT+IFxS7BlF0CZIeMaviLLRr7C3mH9hEBNvjEDhDAhT5him999heZnOoe+++OGaPF1UldwWm0gGA==
-X-Received: by 2002:a05:6e02:3103:b0:3d0:443d:a5ad with SMTP id e9e14a558f8ab-3d280771825mr144713065ab.2.1739896135029;
-        Tue, 18 Feb 2025 08:28:55 -0800 (PST)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4eea175b566sm827823173.137.2025.02.18.08.28.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 08:28:54 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: Dan Schatzberg <schatzberg.dan@gmail.com>, 
- Ming Lei <ming.lei@redhat.com>, linux-block@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Zhaoyang Huang <huangzhaoyang@gmail.com>, 
- steve.kang@unisoc.com, "zhaoyang.huang" <zhaoyang.huang@unisoc.com>
-In-Reply-To: <20250218065835.19503-1-zhaoyang.huang@unisoc.com>
-References: <20250218065835.19503-1-zhaoyang.huang@unisoc.com>
-Subject: Re: [PATCH] Revert "driver: block: release the lo_work_lock before
- queue_work"
-Message-Id: <173989613412.1451056.13330550436881172975.b4-ty@kernel.dk>
-Date: Tue, 18 Feb 2025 09:28:54 -0700
+	s=arc-20240116; t=1739896185; c=relaxed/simple;
+	bh=gCXNynCSULMV7N/Nw/nTy3wXntG/bQKHaxFV9fBm1rU=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lNqgDNbbghL7pn+GqZjTPjsNXSFmArE5RP7bWyjDYrWl4NxJcBJOnj2NuSOwjBriQzXCWL0g0dzPw4qzlvFLQjujYIeLtnfl+BLVl/QsM/ADKxWg/xAkDGGvUASaoRk6nLDOghYrisjKiCUJxk25SY31izuNBJsa33fuWCa+CUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru; spf=pass smtp.mailfrom=fintech.ru; arc=none smtp.client-ip=195.54.195.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintech.ru
+Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
+ (195.54.195.169) with Microsoft SMTP Server (TLS) id 14.3.498.0; Tue, 18 Feb
+ 2025 19:29:31 +0300
+Received: from localhost (10.0.253.138) by Ex16-01.fintech.ru (10.0.10.18)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Tue, 18 Feb
+ 2025 19:29:31 +0300
+From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+To: <syzbot+d693c07c6f647e0388d3@syzkaller.appspotmail.com>
+CC: Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
+	<syzkaller-bugs@googlegroups.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [syzbot] [usb?] WARNING in usbnet_start_xmit/usb_submit_urb (2)
+Date: Tue, 18 Feb 2025 19:29:29 +0300
+Message-ID: <20250218162931.958387-1-n.zhandarovich@fintech.ru>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <000000000000346bbd0613dc4396@google.com>
+References:
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-14bd6
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
+ (10.0.10.18)
 
+Do basic endpoint verification via usbnet utilities in gl620a driver.
 
-On Tue, 18 Feb 2025 14:58:35 +0800, zhaoyang.huang wrote:
-> This reverts commit ad934fc1784802fd1408224474b25ee5289fadfc.
-> 
-> loop_queue_work should be strictly serialized to loop_process_work since
-> the lo_worker could be freed without noticing new work has been queued
-> again.
-> 
-> 
-> [...]
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+---
+ drivers/net/usb/gl620a.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Applied, thanks!
-
-[1/1] Revert "driver: block: release the lo_work_lock before queue_work"
-      commit: 02b3c61aab443d8c1cc7d7eb0ae0a8d86b547224
-
-Best regards,
--- 
-Jens Axboe
-
-
-
+diff --git a/drivers/net/usb/gl620a.c b/drivers/net/usb/gl620a.c
+index 46af78caf457..0bfa37c14059 100644
+--- a/drivers/net/usb/gl620a.c
++++ b/drivers/net/usb/gl620a.c
+@@ -179,9 +179,7 @@ static int genelink_bind(struct usbnet *dev, struct usb_interface *intf)
+ {
+ 	dev->hard_mtu = GL_RCV_BUF_SIZE;
+ 	dev->net->hard_header_len += 4;
+-	dev->in = usb_rcvbulkpipe(dev->udev, dev->driver_info->in);
+-	dev->out = usb_sndbulkpipe(dev->udev, dev->driver_info->out);
+-	return 0;
++	return usbnet_get_endpoints(dev, intf);
+ }
+ 
+ static const struct driver_info	genelink_info = {
 
