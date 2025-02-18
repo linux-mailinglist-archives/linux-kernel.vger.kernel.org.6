@@ -1,431 +1,216 @@
-Return-Path: <linux-kernel+bounces-520246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48B2AA3A76A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:30:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 632D0A3A770
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:30:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DAA0B7A4112
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:29:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D3A11890083
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:30:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58C271E832C;
-	Tue, 18 Feb 2025 19:29:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1466F1E8331;
+	Tue, 18 Feb 2025 19:30:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K8OLu0ml"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="iPi9xbFX"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EBA31B6CE8
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 19:29:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 907F821B9F0
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 19:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739906988; cv=none; b=QnByIAoD781s0vpAPshegCf65XCK+KxegWZA6PvJrMnz0lt8XeZ3tPAHuXF0qg5NfoWz+0Bvih9dlpd+3HFlBPmHc1OxGPghw9UiFVlw7/V8NP5n9svQ2lz/2njwCGWCNXLBcq9/OcqyuJJnjy402psq/7gqsKnsLBAI71TvCAc=
+	t=1739907038; cv=none; b=G1HOol/fFu+u1vY1LsDAOWEaD6dZWyjc5Evz7FKwiXWPUfhjQjtPRts787ETVVASxi0CAtcu98z9xOkSzRbQ1PsSjeJ8F8CSmD/RmrNPUybeHBu8XEuYaPk0Mi/eq4TC8pzGx1POux9JnldlAarIr1ZiBvRyx5iKqSJf8QYYvNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739906988; c=relaxed/simple;
-	bh=Iyi0mkkbj829sYGj2VaDB/ZDTf8v5Q+yc6BRlMTdJbo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ten3GVJ12/KKwDbrTxGE+zY9utfVSWlWJVMAgZThuP3u8NdhIQ3FCjJP9egTqYDLa9P0rEmntbBbASx1RfT3RFkr5pojazs2Skz0uBbXigj7MKQBmyF5VkmMO0ufwxCo+QtQjotMjvwhhQDU0XKTB4x6MYR4TEVFfRL73WjVguA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K8OLu0ml; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739906985;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2XqglfLfBNjZUvkW/Dyb4ZzrcV/Lr4EbGt5iKUqOYU8=;
-	b=K8OLu0mlO9xmjxE501ro2EVA8ysjQv5CeZZHApdy6XR6fUNdSNFjNey8cufHjTEB24yGO2
-	7GSjevOEWHfZbqEXOx9N5YlafO+XYbUEzpoaPRhIWr4ZVMCBt86/RF6RtwKJ0vQWA9X2wo
-	YL7lKFRQ/5tmlFHj6+lxHwoLKVkFTgs=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-632-2-7YQxnJOZWOsf8-tb6x5g-1; Tue, 18 Feb 2025 14:29:43 -0500
-X-MC-Unique: 2-7YQxnJOZWOsf8-tb6x5g-1
-X-Mimecast-MFC-AGG-ID: 2-7YQxnJOZWOsf8-tb6x5g_1739906983
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c0ab4035a1so231157285a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 11:29:43 -0800 (PST)
+	s=arc-20240116; t=1739907038; c=relaxed/simple;
+	bh=5jr0njrsEqh+gx0/hryuSdGRgOG6j3FS8QheXHGTwG0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=EZx9ArcdSWjeKqbTwNRtA1YbgWvtDPfy+pQHdJkX21ILHAvmmiBaZ81KqAK2yIWTdyJ4fFVwtvR7NPaWrGbPK3mR/aziydPgHrMqWqfPbOmE1aJ0fX7zO++QEjdbqV+dUVDTcLZsUtQw7syk1/pMxohVevp1UZEnqyJo70JiYZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=iPi9xbFX; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5dca468c5e4so10886169a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 11:30:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1739907033; x=1740511833; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mIW3Tj0XdfJSfKxjiYcsy2cS5srx8ZXffTdS0QjWZns=;
+        b=iPi9xbFXoFkuOB38lOMznWFcQ1MAMFKqht6vye+n3Kr7WYFLum3f5AyOCyMLjolYZb
+         Fpp85jTyXW1YczDxyrarLt+y1OTok1umGN6VdANm+G3B152uaDNvbSVo0psYdpfzZgqZ
+         U1V+bhTqhffnsmDklmKh6bWKjBLirzdisLJL8LDYUp6IWExy+G1YvNyRBQSqKxf/04+0
+         FlBh2y6DPVxJDi8NuFN04mH4NjuWF4S8vxwGvwdzy3xSoCDXmrVNRADn6q8lfoK2pXYX
+         MXzR4tnEn1nyGHXtaBSgZhzv6i5fO0wD13ecDvXJkqIHTPSRAX/mlUObCmJK6gvN203H
+         WW8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739906983; x=1740511783;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2XqglfLfBNjZUvkW/Dyb4ZzrcV/Lr4EbGt5iKUqOYU8=;
-        b=hqyd0zUq/owROirRhekWTJiJVXnsBXGWDIQh/0kLuJA7Y1xc+zfqrG+hngqm3hibPK
-         orlYK0buBlvxhBqriEibASbqY1Iwe51oLSawL4P0eUStc3ZBpoi8bxMtb3DCYRyiLjym
-         WkvfgX5JbwMQ1SdvOJ27Ty2m4gjzuIrorYoIyqxioTN90/RiKkrBoa/sjfLD9czSV06B
-         1WsAdFM4gO8ao+dXZHXOGr4G1/yIuPGD5bYjbkvTgoNcAzuAj/kjI8UO506suhT/W5Pv
-         E5JgnsUiwSi6hSiuLUchU2d9BMP3W/rawnFgwNrlIbW27gtJe+97OqfFPYS7NTwJo0cA
-         x9Dw==
-X-Forwarded-Encrypted: i=1; AJvYcCXfnZuiZVnw3juX5j2mBVwFjXLTbv3WLW4/smEL02FkiSFT+be1UK21361kWT7T2Yj7SXQah+LqqhLIyTk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLUXZdTmws5HLQWIix0ETCsCPElirkCLXIiZJWkObuemSIPznZ
-	crwfMnGWMvJownX6wDHTyIgB+xLLuXHL5+1zCN8AFWYBYyggi+jY+tdm88JD3P3Bx4a71yOa3n8
-	1e5P8hcFj4uPZol1E+PnbL8v9Sn0lHGp2uvphqVAbFbXBxGSEGaNuQIdKl0ScYg==
-X-Gm-Gg: ASbGnct8nV1uupDK8kjYWct8XB/j8V1Hw3ym7fNO0W4h1DbjLAKILjOV32MxywkiWxx
-	CMXbm+i9gXshRUf89jBzRRh5k5+hv9qjehEGKlVIWWCJHJcD4WnSK6mMC5iqIBvjTxH4GdqCgDm
-	N4uv1kczTPOj+hGOPsbA2uBmeOGOkeGHcLh2iaWTQXtxxr3+iloN0CO4EJriyWtjtcR1IL9c2Mp
-	x+UTV8IE+8BaDDWEkqIx20w1rUXauM5GksAgrHSKCLFXmviTBEYKuStZneWR2nqbxMQjS5z5jOB
-	og3i
-X-Received: by 2002:a05:620a:4146:b0:7c0:5e82:8228 with SMTP id af79cd13be357-7c08a9a6346mr1971368385a.21.1739906983319;
-        Tue, 18 Feb 2025 11:29:43 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGl+8v+Xj43jpMThJb5/HqXF7xZfzQHa0JE30wSeMgrl6wT/+uCV8Ncoyw1h1dz70J5H9xDvw==
-X-Received: by 2002:a05:620a:4146:b0:7c0:5e82:8228 with SMTP id af79cd13be357-7c08a9a6346mr1971363385a.21.1739906982811;
-        Tue, 18 Feb 2025 11:29:42 -0800 (PST)
-Received: from starship ([2607:fea8:fc01:8d8d:6adb:55ff:feaa:b156])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c095bffcc6sm329046985a.3.2025.02.18.11.29.41
+        d=1e100.net; s=20230601; t=1739907033; x=1740511833;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mIW3Tj0XdfJSfKxjiYcsy2cS5srx8ZXffTdS0QjWZns=;
+        b=iyugJ5mGTRB/GqxJfEoehvRiL+IAPpieqf+G2K9IlTUJ7CxCmCuFLEW52ThQ/Lzs2o
+         lGyxo3hCMt4vvZZd4BqNWZWGSW0l/LPNY9Y0vspootwf3OV11gkMf8+BmOXpKwvG0ouR
+         DRjrw14Lifhxfocb5F93H0PViMcFPCv0xL0QqfEdxDZZh8/TEUX7Wkr3xCBKaWrxkA85
+         2V7P/y+Q2yRRL/PXCj/tAmxBfJ6VW19R+oQWkgrTwjp5fXHK9EPaeg4qpyIclGyPbTnt
+         n1YpK7Us/RZNSyETOdF5dVF523CJpgVhNxK5rNejMiv80OcwrdxZYImSSoISZa8xs0Rc
+         PGmQ==
+X-Gm-Message-State: AOJu0YxGLCrc0/KHPBTPkgqjQu+XqrEanpl6BXWGYeQQz+yNschnIkAU
+	v/IYSnvSVbE5y1VaFMRW+WfSODfZj39Azs/WriuM/x8r2W4cFyAh0ZDpf5BTLko=
+X-Gm-Gg: ASbGncs2Ye04qXErpAfIqWgUOe82iRoJbr7xAJ+kQrHZLvSgR2fy7L9yn1FEjuLDq8H
+	IjI5rTSguMKQzphkAqZ4dJk/ZfV9YWPVUjusPM/ncuGtxo7a/EKfMtUwZZKrSb5BTFgD32YWIEv
+	/2e3tT4hoe55uyBdN8j3SP0bH+aSRR2kHT4PRf3TEvyUbbbK61+gCngFh6sMYCmH1QZ78xpkNj/
+	AO4ctOkZndgBfKqx5bMF57GmtqHTpOzPlURYn8H9Hvo9eft702n6IJrdOrrSmd5SOohoO+FK9QO
+	wKyji5l9EFDETu9kJkryQC/PUp+F
+X-Google-Smtp-Source: AGHT+IEsUkQkmLnMxncHVAOTmPsKmvVPSTaQR78ji9vJrVN7d833EMl3VWJfxC45bU7tBdks7OZrJg==
+X-Received: by 2002:a05:6402:51d4:b0:5e0:51a9:d410 with SMTP id 4fb4d7f45d1cf-5e051a9d59cmr11065896a12.25.1739907032830;
+        Tue, 18 Feb 2025 11:30:32 -0800 (PST)
+Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:cbaf:af0:839d:fb4a])
+        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-5dece1c3ce5sm9338985a12.17.2025.02.18.11.30.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 11:29:42 -0800 (PST)
-Message-ID: <025b409c5ca44055a5f90d2c67e76af86617e222.camel@redhat.com>
-Subject: Re: [PATCH v9 00/11] KVM: x86/mmu: Age sptes locklessly
-From: Maxim Levitsky <mlevitsk@redhat.com>
-To: James Houghton <jthoughton@google.com>, Sean Christopherson
-	 <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: David Matlack <dmatlack@google.com>, David Rientjes
- <rientjes@google.com>,  Marc Zyngier <maz@kernel.org>, Oliver Upton
- <oliver.upton@linux.dev>, Wei Xu <weixugc@google.com>, Yu Zhao
- <yuzhao@google.com>, Axel Rasmussen <axelrasmussen@google.com>, 
- kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Tue, 18 Feb 2025 14:29:41 -0500
-In-Reply-To: <20250204004038.1680123-1-jthoughton@google.com>
-References: <20250204004038.1680123-1-jthoughton@google.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
+        Tue, 18 Feb 2025 11:30:32 -0800 (PST)
+From: Jerome Brunet <jbrunet@baylibre.com>
+Subject: [PATCH v4 0/8] driver core: auxiliary bus: add device creation
+ helper
+Date: Tue, 18 Feb 2025 20:29:45 +0100
+Message-Id: <20250218-aux-device-create-helper-v4-0-c3d7dfdea2e6@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAKnftGcC/42NQQ6CMBBFr0Jm7RimLbG48h6GRSmDNEEgUyQQw
+ t2tnMDl+/n//R0iS+AI92wH4SXEMA4JzCUD37nhxRiaxKByZUhRju6zYpOKntELu5mx435iwVK
+ ToUIZLpSGNJ+E27Ce6meVuAtxHmU7nxb6pX9IF0LCwtpbaxpb6tw+arf1oRa++vEN1XEcXzgI+
+ /LDAAAA
+X-Change-ID: 20241210-aux-device-create-helper-93141524e523
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+ Arnd Bergmann <arnd@arndb.de>, Danilo Krummrich <dakr@kernel.org>, 
+ Conor Dooley <conor.dooley@microchip.com>, 
+ Daire McNamara <daire.mcnamara@microchip.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Douglas Anderson <dianders@chromium.org>, 
+ Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Hans de Goede <hdegoede@redhat.com>, 
+ =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+ Gregory CLEMENT <gregory.clement@bootlin.com>, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ dri-devel@lists.freedesktop.org, platform-driver-x86@vger.kernel.org, 
+ linux-mips@vger.kernel.org, linux-clk@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+ Jerome Brunet <jbrunet@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3639; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=5jr0njrsEqh+gx0/hryuSdGRgOG6j3FS8QheXHGTwG0=;
+ b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBntN/OWNreQDN/vUjV7hrjtf9acN+LfunziKrQQ
+ 0+55m0edLGJAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCZ7TfzgAKCRDm/A8cN/La
+ hRMsD/9ziamapLyta7b2bnUpuc3WwKbKpFZ9GL/J7nw2y3cw/h5jQBYbDSF9JrRSKgzBbfv6Sey
+ QRNn8YHjpUuiMQoo8wdF8JQAlfzz2s0Us6Or+rdpDD/QESOXyHDqj4MUG6FTXYd6FP3XToJ42vi
+ o298p/RQJt7nZk755yQCNu+oz2gqK2ZaQnsfxtwRPjODRR7EFCDtt6GzOIQ6gMys62o6Mk/PRs+
+ l1rKan/fK30ltLDStso25MaxLWBWV+npLFI35BMTlhMEwG+JTun3VMmjlWz9kiBjMqGBx2qiste
+ CCASomjcV/H2nDkNLAKwD/UefscVOHz9VIb3RNV4bBZIaCNqPYvjtZw8poWesaxupOoNpkApV1I
+ iuOjXT0pkOdE3AtkaBQ/6cVd15in+oW9zqTzplE86661VuagqxrOQ+l8pbmbmk0R89TtIXS6KLO
+ hLZG6xJCG94i6UMTAU0hCmZlQU/CW22okUfGUHjgTYK6ptzPX+PDffsa4fBWg7IHfxtdZ2bKtln
+ RgJlvATKPKlyz7ds7JlS5NJM9MAPT8rPBlDL08q9TxYGO1jW1mxv3I14XfLQ7XXv+yTGVoSNwA0
+ XUgHQc8fDO8z2hMMyQDJqxbCfvG5BaZ42qT2FGwEEHgMmmQe7i0RN0x7Le1Ppt/hMQ35Cpsysif
+ vfaUCrYJTwsPKFQ==
+X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
+ fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-On Tue, 2025-02-04 at 00:40 +0000, James Houghton wrote:
-> By aging sptes locklessly with the TDP MMU and the shadow MMU, neither
-> vCPUs nor reclaim (mmu_notifier_invalidate_range*) will get stuck
-> waiting for aging. This contention reduction improves guest performance
-> and saves a significant amount of Google Cloud's CPU usage, and it has
-> valuable improvements for ChromeOS, as Yu has mentioned previously[1].
-> 
-> Please see v8[8] for some performance results using
-> access_tracking_perf_test patched to use MGLRU.
-> 
-> Neither access_tracking_perf_test nor mmu_stress_test trigger any
-> splats (with CONFIG_LOCKDEP=y) with the TDP MMU and with the shadow MMU.
+The suggestion for this change was initially discussed here: [1]
 
+This patchset adds and use a helper to create a simple auxiliary device.
+The goal is to remove boilerplate code that tends to get repeated for
+simple cases.
 
-Hi, I have a question about this patch series and about the access_tracking_perf_test:
+Only the last change was tested on actual HW. The other usage of the helper
+have only been compile tested with x64_64 allmodconfig. There are many other
+simple cases of auxiliary device creation but those tend to use the
+'container_of' trick to allocate the auxiliary device. It is possible to
+convert these drivers to use the provided helper but the conversion is
+slightly more complex.
 
-Some time ago, I investigated a failure in access_tracking_perf_test which shows up in our CI.
+NOTE: This series is based on -rc1. Only the first change is meant to
+applied. The reset will likely wait for the helper to land in mainline.
+Rebase on the corresponding subsystem will be done when/if necessary.
 
-The root cause was that 'folio_clear_idle' doesn't clear the idle bit when MGLRU is enabled,
-and overall I got the impression that MGLRU is not compatible with idle page tracking.
+[1]: https://lore.kernel.org/linux-clk/df0a53ee859e450d84e81547099f5f36.sboyd@kernel.org
 
+Changes in v4:
+- Added eyeq reset patch from Theo (Thanks)
+- Changed returned value to 'valid or NULL'. Consumers should return
+  -ENODEV if translation to int is necessary.
+- Export the non-managed function helpers
+- Default id to 0 for the simpler devm_auxiliary_device_create() as
+  suggested by Conor
+- Fix clk-imx8mp-audiomix config problem reported by Ira
+- Rebased on drm-next for ti-sn65dsi86
+- Link to v3: https://lore.kernel.org/r/20250211-aux-device-create-helper-v3-0-7edb50524909@baylibre.com
 
-I thought that this patch series and the 'mm: multi-gen LRU: Have secondary MMUs participate in MM_WALK' 
-patch series could address this but the test still fails.
+Changes in v3:
+- Implement Ira's suggestion to use KBUILD_MODNAME by default, same as
+  auxiliary_driver_register()
+- Link to v2: https://lore.kernel.org/r/20250206-aux-device-create-helper-v2-0-fa6a0f326527@baylibre.com
 
+Changes in v2:
+- Add usage examples, as requested.
+- Add 'id' as function parameter:  Adding the example usage showed that
+  handling IDA allocation was not appropriate and making the usage more
+  complex for simple use case.
+- Also add 'modname' as parameter: Most driver have been using
+  KBUILD_MODNAME and this actually rarely align with the driver name.
+- Link to v1: https://lore.kernel.org/r/20241210-aux-device-create-helper-v1-1-5887f4d89308@baylibre.com
 
-For the reference the exact problem is:
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+Jerome Brunet (7):
+      driver core: auxiliary bus: add device creation helpers
+      reset: mpfs: use the auxiliary device creation
+      drm/bridge: ti-sn65dsi86: use the auxiliary device
+      platform: arm64: lenovo-yoga-c630: use the auxiliary device creation helper
+      clk: eyeq: use the auxiliary device creation helper
+      clk: clk-imx8mp-audiomix: use the auxiliary device creation helper
+      clk: amlogic: axg-audio: use the auxiliary reset driver - take 2
 
-1. Idle bits for guest memory under test are set via /sys/kernel/mm/page_idle/bitmap
+Théo Lebrun (1):
+      reset: eyeq: drop device_set_of_node_from_dev() done by parent
 
-2. Guest dirties memory, which leads to A/D bits being set in the secondary mappings.
-
-3. A NUMA autobalance code write protects the guest memory. KVM in response evicts the SPTE mappings with A/D bit set,
-   and while doing so tells mm that pages were accessed using 'folio_mark_accessed' (via kvm_set_page_accessed (*) )
-   but due to MLGRU the call doesn't clear the idle bit and thus all the traces of the guest access disappear
-   and the kernel thinks that the page is still idle.
-
-I can say that the root cause of this is that folio_mark_accessed doesn't do what it supposed to do.
-
-Calling 'folio_clear_idle(folio);' in MLGRU case in folio_mark_accessed() 
-will probably fix this but I don't have enough confidence
-to say if this is all that is needed to fix this. 
-If this is the case I can send a patch.
-
-
-This patch makes the test pass (but only on 6.12 kernel and below, see below):
-
-diff --git a/mm/swap.c b/mm/swap.c
-index 59f30a981c6f..2013e1f4d572 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -460,7 +460,7 @@ void folio_mark_accessed(struct folio *folio)
- {
-        if (lru_gen_enabled()) {
-                folio_inc_refs(folio);
--               return;
-+               goto clear_idle_bit;
-        }
- 
-        if (!folio_test_referenced(folio)) {
-@@ -485,6 +485,7 @@ void folio_mark_accessed(struct folio *folio)
-                folio_clear_referenced(folio);
-                workingset_activation(folio);
-        }
-+clear_idle_bit:
-        if (folio_test_idle(folio))
-                folio_clear_idle(folio);
- }
-
-
-To always reproduce this, it is best to use a patch to make the test run in a loop, 
-like below (although the test fails without this as well).
-
-
-diff --git a/tools/testing/selftests/kvm/access_tracking_perf_test.c b/tools/testing/selftests/kvm/access_tracking_perf_test.c
-index 3c7defd34f56..829774e325fa 100644
---- a/tools/testing/selftests/kvm/access_tracking_perf_test.c
-+++ b/tools/testing/selftests/kvm/access_tracking_perf_test.c
-@@ -131,6 +131,7 @@ static void mark_vcpu_memory_idle(struct kvm_vm *vm,
-        uint64_t pages = vcpu_args->pages;
-        uint64_t page;
-        uint64_t still_idle = 0;
-+       uint64_t failed_to_mark_idle = 0;
-        uint64_t no_pfn = 0;
-        int page_idle_fd;
-        int pagemap_fd;
-@@ -160,6 +161,14 @@ static void mark_vcpu_memory_idle(struct kvm_vm *vm,
-                }
- 
-                mark_page_idle(page_idle_fd, pfn);
-+
-+
-+                if (!is_page_idle(page_idle_fd, pfn)) {
-+                        failed_to_mark_idle++;
-+                        continue;
-+                }
-+
-+
-        }
- 
-        /*
-@@ -183,16 +192,15 @@ static void mark_vcpu_memory_idle(struct kvm_vm *vm,
-         * explicitly flush the TLB when aging SPTEs.  As a result, more pages
-         * are cached and the guest won't see the "idle" bit cleared.
-         */
--       if (still_idle >= pages / 10) {
-+       //if (still_idle >= pages / 10) {
- #ifdef __x86_64__
--               TEST_ASSERT(this_cpu_has(X86_FEATURE_HYPERVISOR),
--                           "vCPU%d: Too many pages still idle (%lu out of %lu)",
--                           vcpu_idx, still_idle, pages);
-+       //      TEST_ASSERT(this_cpu_has(X86_FEATURE_HYPERVISOR),
-+       //                  "vCPU%d: Too many pages still idle (%lu out of %lu)",
-+       //                  vcpu_idx, still_idle, pages);
- #endif
--               printf("WARNING: vCPU%d: Too many pages still idle (%lu out of %lu), "
--                      "this will affect performance results.\n",
--                      vcpu_idx, still_idle, pages);
--       }
-+               printf("vCPU%d: idle pages: %lu out of %lu, failed to mark idle: %lu no pfn: %lu\n",
-+                      vcpu_idx, still_idle, pages, failed_to_mark_idle, no_pfn);
-+       //}
- 
-        close(page_idle_fd);
-        close(pagemap_fd);
-@@ -315,14 +323,16 @@ static void run_test(enum vm_guest_mode mode, void *arg)
-        access_memory(vm, nr_vcpus, ACCESS_WRITE, "Populating memory");
- 
-        /* As a control, read and write to the populated memory first. */
--       access_memory(vm, nr_vcpus, ACCESS_WRITE, "Writing to populated memory");
--       access_memory(vm, nr_vcpus, ACCESS_READ, "Reading from populated memory");
-+       //access_memory(vm, nr_vcpus, ACCESS_WRITE, "Writing to populated memory");
-+       //access_memory(vm, nr_vcpus, ACCESS_READ, "Reading from populated memory");
- 
-        /* Repeat on memory that has been marked as idle. */
-+again:
-        mark_memory_idle(vm, nr_vcpus);
-        access_memory(vm, nr_vcpus, ACCESS_WRITE, "Writing to idle memory");
--       mark_memory_idle(vm, nr_vcpus);
--       access_memory(vm, nr_vcpus, ACCESS_READ, "Reading from idle memory");
-+       //mark_memory_idle(vm, nr_vcpus);
-+       //access_memory(vm, nr_vcpus, ACCESS_READ, "Reading from idle memory");
-+       goto again;
- 
-        memstress_join_vcpu_threads(nr_vcpus);
-        memstress_destroy_vm(vm);
-
-
-With the above patch applied, you will notice after 4-6 iterations that the number of still idle
-pages soars:
-
-Populating memory             : 0.798882357s
-vCPU0: idle pages: 0 out of 262144, failed to mark idle: 0 no pfn: 0
-Mark memory idle              : 3.003939277s
-Writing to idle memory        : 0.503653562s
-vCPU0: idle pages: 0 out of 262144, failed to mark idle: 0 no pfn: 0
-Mark memory idle              : 3.060128175s
-Writing to idle memory        : 0.502705587s
-vCPU0: idle pages: 2048 out of 262144, failed to mark idle: 0 no pfn: 0
-Mark memory idle              : 3.039294079s
-Writing to idle memory        : 0.092227612s
-vCPU0: idle pages: 0 out of 262144, failed to mark idle: 0 no pfn: 0
-Mark memory idle              : 3.046216234s
-Writing to idle memory        : 0.295077724s
-vCPU0: idle pages: 132558 out of 262144, failed to mark idle: 0 no pfn: 0
-Mark memory idle              : 2.711946690s
-Writing to idle memory        : 0.302882502s
-
-...
-
-
-
-(*) Turns out that since kernel 6.13, this code that sets accessed bit in the primary paging
-structure, when the secondary was zapped was *removed*. I bisected this to commit:
-
-66bc627e7fee KVM: x86/mmu: Don't mark "struct page" accessed when zapping SPTEs
-
-So now the access_tracking_test is broken regardless of MGLRU.
-
-Any ideas on how to fix all this mess?
-
+ drivers/base/auxiliary.c                  | 108 ++++++++++++++++++++++++++++
+ drivers/clk/clk-eyeq.c                    |  57 ++++-----------
+ drivers/clk/imx/clk-imx8mp-audiomix.c     |  49 +++----------
+ drivers/clk/meson/Kconfig                 |   2 +-
+ drivers/clk/meson/axg-audio.c             | 114 ++++--------------------------
+ drivers/gpu/drm/bridge/ti-sn65dsi86.c     |  49 ++-----------
+ drivers/platform/arm64/lenovo-yoga-c630.c |  40 +----------
+ drivers/reset/reset-eyeq.c                |  13 +---
+ drivers/reset/reset-mpfs.c                |  56 ++-------------
+ include/linux/auxiliary_bus.h             |  17 +++++
+ 10 files changed, 176 insertions(+), 329 deletions(-)
+---
+base-commit: 0ed1356af8f629ae807963b7db4e501e3b580bc2
+change-id: 20241210-aux-device-create-helper-93141524e523
 
 Best regards,
-	Maxim Levitsky
-
-
-> 
-> === Previous Versions ===
-> 
-> Since v8[8]:
->  - Re-added the kvm_handle_hva_range helpers and applied Sean's
->    kvm_{handle -> age}_hva_range rename.
->  - Renamed spte_has_volatile_bits() to spte_needs_atomic_write() and
->    removed its Accessed bit check. Undid change to
->    tdp_mmu_spte_need_atomic_write().
->  - Renamed KVM_MMU_NOTIFIER_{YOUNG -> AGING}_LOCKLESS.
->  - cpu_relax(), lockdep, preempt_disable(), and locking fixups for
->    per-rmap lock (thanks Lai and Sean).
->  - Renamed kvm_{has -> may_have}_shadow_mmu_sptes().
->  - Rebased onto latest kvm/next, including changing
->    for_each_tdp_mmu_root_rcu to use `types`.
->  - Dropped MGLRU changes from access_tracking_perf_test.
->  - Picked up Acked-bys from Yu. (thank you!)
-> 
-> Since v7[7]:
->  - Dropped MGLRU changes.
->  - Dropped DAMON cleanup.
->  - Dropped MMU notifier changes completely.
->  - Made shadow MMU aging *always* lockless, not just lockless when the
->    now-removed "fast_only" clear notifier was used.
->  - Given that the MGLRU changes no longer introduce a new MGLRU
->    capability, drop the new capability check from the selftest.
->  - Rebased on top of latest kvm-x86/next, including the x86 mmu changes
->    for marking pages as dirty.
-> 
-> Since v6[6]:
->  - Rebased on top of kvm-x86/next and Sean's lockless rmap walking
->    changes.
->  - Removed HAVE_KVM_MMU_NOTIFIER_YOUNG_FAST_ONLY (thanks DavidM).
->  - Split up kvm_age_gfn() / kvm_test_age_gfn() optimizations (thanks
->    DavidM and Sean).
->  - Improved new MMU notifier documentation (thanks DavidH).
->  - Dropped arm64 locking change.
->  - No longer retry for CAS failure in TDP MMU non-A/D case (thanks
->    Sean).
->  - Added some R-bys and A-bys.
-> 
-> Since v5[5]:
->  - Reworked test_clear_young_fast_only() into a new parameter for the
->    existing notifiers (thanks Sean).
->  - Added mmu_notifier.has_fast_aging to tell mm if calling fast-only
->    notifiers should be done.
->  - Added mm_has_fast_young_notifiers() to inform users if calling
->    fast-only notifier helpers is worthwhile (for look-around to use).
->  - Changed MGLRU to invoke a single notifier instead of two when
->    aging and doing look-around (thanks Yu).
->  - For KVM/x86, check indirect_shadow_pages > 0 instead of
->    kvm_memslots_have_rmaps() when collecting age information
->    (thanks Sean).
->  - For KVM/arm, some fixes from Oliver.
->  - Small fixes to access_tracking_perf_test.
->  - Added missing !MMU_NOTIFIER version of mmu_notifier_clear_young().
-> 
-> Since v4[4]:
->  - Removed Kconfig that controlled when aging was enabled. Aging will
->    be done whenever the architecture supports it (thanks Yu).
->  - Added a new MMU notifier, test_clear_young_fast_only(), specifically
->    for MGLRU to use.
->  - Add kvm_fast_{test_,}age_gfn, implemented by x86.
->  - Fix locking for clear_flush_young().
->  - Added KVM_MMU_NOTIFIER_YOUNG_LOCKLESS to clean up locking changes
->    (thanks Sean).
->  - Fix WARN_ON and other cleanup for the arm64 locking changes
->    (thanks Oliver).
-> 
-> Since v3[3]:
->  - Vastly simplified the series (thanks David). Removed mmu notifier
->    batching logic entirely.
->  - Cleaned up how locking is done for mmu_notifier_test/clear_young
->    (thanks David).
->  - Look-around is now only done when there are no secondary MMUs
->    subscribed to MMU notifiers.
->  - CONFIG_LRU_GEN_WALKS_SECONDARY_MMU has been added.
->  - Fixed the lockless implementation of kvm_{test,}age_gfn for x86
->    (thanks David).
->  - Added MGLRU functional and performance tests to
->    access_tracking_perf_test (thanks Axel).
->  - In v3, an mm would be completely ignored (for aging) if there was a
->    secondary MMU but support for secondary MMU walking was missing. Now,
->    missing secondary MMU walking support simply skips the notifier
->    calls (except for eviction).
->  - Added a sanity check for that range->lockless and range->on_lock are
->    never both provided for the memslot walk.
-> 
-> For the changes since v2[2], see v3.
-> 
-> Based on latest kvm/next.
-> 
-> [1]: https://lore.kernel.org/kvm/CAOUHufYS0XyLEf_V+q5SCW54Zy2aW5nL8CnSWreM8d1rX5NKYg@mail.gmail.com/
-> [2]: https://lore.kernel.org/kvmarm/20230526234435.662652-1-yuzhao@google.com/
-> [3]: https://lore.kernel.org/linux-mm/20240401232946.1837665-1-jthoughton@google.com/
-> [4]: https://lore.kernel.org/linux-mm/20240529180510.2295118-1-jthoughton@google.com/
-> [5]: https://lore.kernel.org/linux-mm/20240611002145.2078921-1-jthoughton@google.com/
-> [6]: https://lore.kernel.org/linux-mm/20240724011037.3671523-1-jthoughton@google.com/
-> [7]: https://lore.kernel.org/kvm/20240926013506.860253-1-jthoughton@google.com/
-> [8]: https://lore.kernel.org/kvm/20241105184333.2305744-1-jthoughton@google.com/
-> 
-> James Houghton (7):
->   KVM: Rename kvm_handle_hva_range()
->   KVM: Add lockless memslot walk to KVM
->   KVM: x86/mmu: Factor out spte atomic bit clearing routine
->   KVM: x86/mmu: Relax locking for kvm_test_age_gfn() and kvm_age_gfn()
->   KVM: x86/mmu: Rename spte_has_volatile_bits() to
->     spte_needs_atomic_write()
->   KVM: x86/mmu: Skip shadow MMU test_young if TDP MMU reports page as
->     young
->   KVM: x86/mmu: Only check gfn age in shadow MMU if
->     indirect_shadow_pages > 0
-> 
-> Sean Christopherson (4):
->   KVM: x86/mmu: Refactor low level rmap helpers to prep for walking w/o
->     mmu_lock
->   KVM: x86/mmu: Add infrastructure to allow walking rmaps outside of
->     mmu_lock
->   KVM: x86/mmu: Add support for lockless walks of rmap SPTEs
->   KVM: x86/mmu: Support rmap walks without holding mmu_lock when aging
->     gfns
-> 
->  Documentation/virt/kvm/locking.rst |   4 +-
->  arch/x86/include/asm/kvm_host.h    |   4 +-
->  arch/x86/kvm/Kconfig               |   1 +
->  arch/x86/kvm/mmu/mmu.c             | 364 +++++++++++++++++++++--------
->  arch/x86/kvm/mmu/spte.c            |  19 +-
->  arch/x86/kvm/mmu/spte.h            |   2 +-
->  arch/x86/kvm/mmu/tdp_iter.h        |  26 ++-
->  arch/x86/kvm/mmu/tdp_mmu.c         |  36 ++-
->  include/linux/kvm_host.h           |   1 +
->  virt/kvm/Kconfig                   |   2 +
->  virt/kvm/kvm_main.c                |  56 +++--
->  11 files changed, 364 insertions(+), 151 deletions(-)
-> 
-> 
-> base-commit: f7bafceba76e9ab475b413578c1757ee18c3e44b
-
-
-
+-- 
+Jerome
 
 
