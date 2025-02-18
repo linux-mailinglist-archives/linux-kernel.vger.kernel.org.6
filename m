@@ -1,227 +1,401 @@
-Return-Path: <linux-kernel+bounces-519878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 131E8A3A311
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:42:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55AD9A3A313
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:43:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BBAD3ACF92
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:42:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D97E188C153
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:43:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4083524336D;
-	Tue, 18 Feb 2025 16:42:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kbNB6uye"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F1526E14E;
+	Tue, 18 Feb 2025 16:43:05 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71869269B18;
-	Tue, 18 Feb 2025 16:42:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB2224113C
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 16:43:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739896943; cv=none; b=kxWneBzOBqQFh2jHgOg+IuFfJATzAnAOCXsfqvXMASH8fRI3QjpslOvSZGlsiEDXFxqmh7qXoZ0JzRA8cKJUwc/OfI9d1MxdwRSk+Y5t+lNyM4G8QVFe91fwByyfjUmWYdIEHhf+xcziiu1RGVxL6XlV43lSflYnpbxvnrChqFM=
+	t=1739896984; cv=none; b=CQY0RJ3of50SiJVLxL7RY4DUiSggITep4a37dTsf+rwco9iLdebH8MLjNn20UfdYEPN9I0W+ySqk8353lNYwuO09Gpn65WL0DWi2fTKqfrTjjyUTHG5qavNc9SRZcdZvm/1O6HTvutixXzLFBYY83s1nOLGcdK769oomxgvlByw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739896943; c=relaxed/simple;
-	bh=+yjjfKvfn9QbCvp5Fpi7pa975A/fsHsfBIVJXJFNYko=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XRdJzmcue6pvJ13M9hoCbLNNbl0HTDFUTcuXMOd7QoCTGYUr6oP1oEapksqNoWf6l/3I639fa8UeQ3k2YasmKYAZ4dAHLhDvozF7jG6OwfJokEHrhnHLyu/NbyV+v4s+4gr9jdjeTbmgu9t3AeFMoIhSD1eBY4X2Mcohdzc/Mo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kbNB6uye; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86AACC4CEE2;
-	Tue, 18 Feb 2025 16:42:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739896943;
-	bh=+yjjfKvfn9QbCvp5Fpi7pa975A/fsHsfBIVJXJFNYko=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kbNB6uyeNkBBV5TSJmZBmy///gLnnTX5ngHF41PYtZcQayWbx953IDAoCV2SxpSq0
-	 1iT/h2bBGC6IKjBeqWDz3inuiPVEliNYWiE70BMyWhjIFVyNBPZs/QRuXfHlIr+t4U
-	 6+YDbF2WV23OnZMVeXy1JO3mQ/+FnYmKKtscH1Qt9c8LPNMGVBKu1iT6pCCJe1CqWY
-	 HocUUwpIJ6pC9XXBLesdTON0wcTYMLnbvIfzp1Qrlw0ALcjT3rQy2vBO85sJ6E78nx
-	 ious/8IS2eWQ71L6mtuqQ5sQlE7+3mNbe8zhoFxq4NWUtUdGtDqHFOiT9lW0kCg2bv
-	 znC56Et632ybA==
-Message-ID: <8ab81ec1-4e94-4d0c-b961-a1f8b89cd834@kernel.org>
-Date: Tue, 18 Feb 2025 17:42:17 +0100
+	s=arc-20240116; t=1739896984; c=relaxed/simple;
+	bh=HaJ8ECQLllyu3DHtXp8YQXCvWJr8Qr0K9njivXqPOWI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=P8GyHM3JB8I3gSElheGHk5fIG0Vn+I3J3j/xUWjR5ipW2cOqnTtDdlnuF5NE1afMYogJqHVESfCzRR5qqLxfwBmcSnMl+5LE+cvpedZ5w5vJu5HR//f4VUSQb2FYh+Q9+8LJ9psHUSTeWS1xd7g1ChcrpbBRE6HsZzNIxXxXHoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3d18fbafa4dso34873525ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 08:43:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739896982; x=1740501782;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xvoZP9Ew3j0xNkhRmwHcC+W0OQle1YYhza32F6A4EYE=;
+        b=uxxp7n6bBMpesi+GLCKO3cCK+pKmXqoo85ycbRhg3d5xQX+DyKb1lNLgGtxqmwwE7/
+         X//RI24SPJeKnQelB2figK676zyhghdUUimXlzDVDihrNcI4sFB8zYqNtn0siJ8N/0k5
+         3jGB1LnnC0+rXkxds0j/YCWDZrWVLT36voJxbSbvhiX5xrfwt45IqUwteBfuQz1M8wsR
+         h+m5bVs2uWX9IA2inQ8S+2Nk10oJl07wqH0PKQDJDAOfBmniH0RUFreFsu81oFhGs3o1
+         g1nWRIqjIv4NvtXmuR3eHzdtqT6ke1BIog5axgOzUehavV8LnbjDJAK3UgbSL6rwopm2
+         ITrA==
+X-Gm-Message-State: AOJu0YzScgzxvDiboxd4fIpGpLX/tI796HKEFPNZI5aqWCR/hL6FOgC0
+	khw5smG1rt+9bALVDwTEmHH6gmuGevrv3ESJIv677igGEUvUao64hVb7fOatGJrTBXy1Xmi8nYz
+	jsuHsvIy1BEilMoDURNAQlea+q8SrmaFXlvkLEPnMq5/KUfpND/dKbVM=
+X-Google-Smtp-Source: AGHT+IEedm73BDXylXme+oRdKpuSLgKeUhzR8AZXfQgBWEuC2X/olrwtIRAcJaYyfF+pjeQDy7k77gsREBDBlYUssc0i7+X5+OrY
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: hwlock: Convert to dtschema
-To: Siddharth Menon <simeddon@gmail.com>, devicetree@vger.kernel.org,
- andersson@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org
-Cc: baolin.wang@linux.alibaba.com, linux-remoteproc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250218161352.269237-1-simeddon@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250218161352.269237-1-simeddon@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:20cf:b0:3d0:4700:db18 with SMTP id
+ e9e14a558f8ab-3d28091909fmr139438285ab.20.1739896981901; Tue, 18 Feb 2025
+ 08:43:01 -0800 (PST)
+Date: Tue, 18 Feb 2025 08:43:01 -0800
+In-Reply-To: <20250218162931.958387-1-n.zhandarovich@fintech.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67b4b895.050a0220.6ca4a.0001.GAE@google.com>
+Subject: Re: [syzbot] [usb?] WARNING in usbnet_start_xmit/usb_submit_urb (2)
+From: syzbot <syzbot+d693c07c6f647e0388d3@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, n.zhandarovich@fintech.ru, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 18/02/2025 17:09, Siddharth Menon wrote:
-> From: BiscuitBobby <simeddon@gmail.com>
-> 
-> Convert the generic hwspinlock bindings to DT schema.
+Hello,
 
-Thank you for your patch. There is something to discuss/improve.
+syzbot tried to test the proposed patch but the build/boot failed:
 
-Please run scripts/checkpatch.pl and fix reported warnings. After that,
-run also `scripts/checkpatch.pl --strict` and (probably) fix more
-warnings. Some warnings can be ignored, especially from --strict run,
-but the code here looks like it needs a fix. Feel free to get in touch
-if the warning is not clear.
+ 0000000000000000
+ZMM26=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM27=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM28=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM29=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM30=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM31=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+info registers vcpu 2
 
-Also you must use your full name, not nicknames.
+CPU#2
+RAX=3D000000000003b7ed RBX=3D0000000000000002 RCX=3Dffffffff8b4e4469 RDX=3D=
+0000000000000000
+RSI=3Dffffffff8b6ceca0 RDI=3Dffffffff8bd26900 RBP=3Dffffed1003a5f000 RSP=3D=
+ffffc90000197e08
+R8 =3D0000000000000001 R9 =3Dffffed100d506f85 R10=3Dffff88806a837c2b R11=3D=
+0000000000000000
+R12=3D0000000000000002 R13=3Dffff88801d2f8000 R14=3Dffffffff90614b10 R15=3D=
+0000000000000000
+RIP=3Dffffffff8b4e584f RFL=3D00000206 [-----P-] CPL=3D0 II=3D0 A20=3D1 SMM=
+=3D0 HLT=3D1
+ES =3D0000 0000000000000000 ffffffff 00c00000
+CS =3D0010 0000000000000000 ffffffff 00a09b00 DPL=3D0 CS64 [-RA]
+SS =3D0018 0000000000000000 ffffffff 00c09300 DPL=3D0 DS   [-WA]
+DS =3D0000 0000000000000000 ffffffff 00c00000
+FS =3D0000 0000000000000000 ffffffff 00c00000
+GS =3D0000 ffff88806a800000 ffffffff 00c00000
+LDT=3D0000 0000000000000000 ffffffff 00c00000
+TR =3D0040 fffffe0000091000 00004087 00008b00 DPL=3D0 TSS64-busy
+GDT=3D     fffffe000008f000 0000007f
+IDT=3D     fffffe0000000000 00000fff
+CR0=3D80050033 CR2=3D000000c001ff3000 CR3=3D0000000028542000 CR4=3D00352ef0
+DR0=3D0000000000000000 DR1=3D0000000000000000 DR2=3D0000000000000000 DR3=3D=
+0000000000000000=20
+DR6=3D00000000fffe0ff0 DR7=3D0000000000000400
+EFER=3D0000000000000d01
+FCW=3D037f FSW=3D0000 [ST=3D0] FTW=3D00 MXCSR=3D00001f80
+FPR0=3D0000000000000000 0000 FPR1=3D0000000000000000 0000
+FPR2=3D0000000000000000 0000 FPR3=3D0000000000000000 0000
+FPR4=3D0000000000000000 0000 FPR5=3D0000000000000000 0000
+FPR6=3D0000000000000000 0000 FPR7=3D0000000000000000 0000
+Opmask00=3D00000000feffffd0 Opmask01=3D0000000000000000 Opmask02=3D00000000=
+ffbfef77 Opmask03=3D0000000000000000
+Opmask04=3D00000000ffffffff Opmask05=3D00000000004007ff Opmask06=3D00000000=
+07ffe7ff Opmask07=3D0000000000000000
+ZMM00=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM01=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 00007ffcc54fe900 0000003000000010
+ZMM02=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 2f2f2f2f2f2f2f2f 2f2f2f2f2f2f2f2f
+ZMM03=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 ff00000000000000 0000000000000000
+ZMM04=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 ffff000000000000 0000000000000000
+ZMM05=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 ffff000000000000 ffff000000000000
+ZMM06=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 ffff000000000000 0000000000000000
+ZMM07=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM08=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM09=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM10=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM11=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM12=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM13=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM14=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM15=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM16=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM17=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 656e696c5f706c63 73002a5d392d305b 79747400786d7470 0079747400646461
+ZMM18=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 54003d534b4e494c 564544003d4d4554 535953425553003d 4854415056454400
+ZMM19=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 540018534b4e494c 56454400184d4554 5359534255530018 4854415056454400
+ZMM20=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 00000000000002b1 0000000000306963 682f68746f6f7465 756c622f6c617574
+ZMM21=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 00005612a682e3d0 00005612a6800860 0000000000000031 0000000000007374
+ZMM22=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 382433273f397b27 697a787c69303b7e 69305f474f5b647c 6930382433273f39
+ZMM23=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM24=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 383a3a263d383a3a 263c383a3a263f38 3a3a263e383a3a26 39383a3a2638383a
+ZMM25=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 373031383d4d0031 3d4553003053303d 4c494b4145005f4b 00383432383d4855
+ZMM26=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 302c302c30300030 2c303000302c3030 2c302c303000302c 00302c3000313200
+ZMM27=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 282b2e2fdf37342d 280bbfbf23243324 26312033fc040f18 1317140d080b0412
+ZMM28=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 343133bffc121104 1214041204110814 100411bffc040f18 1317140d080b0412
+ZMM29=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 4141414141414141 4141414141414141 4141414141414141 4141414141414141
+ZMM30=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 1a1a1a1a1a1a1a1a 1a1a1a1a1a1a1a1a 1a1a1a1a1a1a1a1a 1a1a1a1a1a1a1a1a
+ZMM31=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 2020202020202020 2020202020202020 2020202020202020 2020202020202020
+info registers vcpu 3
+
+CPU#3
+RAX=3D00000000000354f1 RBX=3D0000000000000003 RCX=3Dffffffff8b4e4469 RDX=3D=
+0000000000000000
+RSI=3Dffffffff8b6ceca0 RDI=3Dffffffff8bd26900 RBP=3Dffffed1003a5f488 RSP=3D=
+ffffc900001a7e08
+R8 =3D0000000000000001 R9 =3Dffffed100d526f85 R10=3Dffff88806a937c2b R11=3D=
+0000000000000000
+R12=3D0000000000000003 R13=3Dffff88801d2fa440 R14=3Dffffffff90614b10 R15=3D=
+0000000000000000
+RIP=3Dffffffff8b4e584f RFL=3D00000202 [-------] CPL=3D0 II=3D0 A20=3D1 SMM=
+=3D0 HLT=3D1
+ES =3D0000 0000000000000000 ffffffff 00c00000
+CS =3D0010 0000000000000000 ffffffff 00a09b00 DPL=3D0 CS64 [-RA]
+SS =3D0018 0000000000000000 ffffffff 00c09300 DPL=3D0 DS   [-WA]
+DS =3D0000 0000000000000000 ffffffff 00c00000
+FS =3D0000 0000000000000000 ffffffff 00c00000
+GS =3D0000 ffff88806a900000 ffffffff 00c00000
+LDT=3D0000 0000000000000000 ffffffff 00c00000
+TR =3D0040 fffffe00000d8000 00004087 00008b00 DPL=3D0 TSS64-busy
+GDT=3D     fffffe00000d6000 0000007f
+IDT=3D     fffffe0000000000 00000fff
+CR0=3D80050033 CR2=3D00007ffcc54fcc38 CR3=3D0000000031e64000 CR4=3D00352ef0
+DR0=3D0000000000000000 DR1=3D0000000000000000 DR2=3D0000000000000000 DR3=3D=
+0000000000000000=20
+DR6=3D00000000fffe0ff0 DR7=3D0000000000000400
+EFER=3D0000000000000d01
+FCW=3D037f FSW=3D0000 [ST=3D0] FTW=3D00 MXCSR=3D00001f80
+FPR0=3D0000000000000000 0000 FPR1=3D0000000000000000 0000
+FPR2=3D0000000000000000 0000 FPR3=3D0000000000000000 0000
+FPR4=3D0000000000000000 0000 FPR5=3D0000000000000000 0000
+FPR6=3D0000000000000000 0000 FPR7=3D0000000000000000 0000
+Opmask00=3D0000000000004080 Opmask01=3D0000000000000000 Opmask02=3D00000000=
+ffbfef77 Opmask03=3D0000000000000000
+Opmask04=3D00000000ffffffff Opmask05=3D00000000004007ff Opmask06=3D00000000=
+07ffe7ff Opmask07=3D0000000000000000
+ZMM00=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 e84fcfa9c78ccedc f9358e8b8d1e6507
+ZMM01=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 61fe0d8ee1aa91c6 0a53a729ace036b9
+ZMM02=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 1c4fc8d55995bb04 a4ae025458899da4
+ZMM03=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 f6ca87b37ba1d987 c0ea7406efc60b73
+ZMM04=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000001940
+ZMM05=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000040
+ZMM06=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 000000000000001f 0000000000000000
+ZMM07=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 8ed23ca400000000 000000000000001f
+ZMM08=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 000000008f569510 0000001f00000000
+ZMM09=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 8fb4a5e600000000 0000000000000000
+ZMM10=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 d84c7dc136d97cbf 004b5ba7b9882b91
+ZMM11=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 716f48661497e322 0996f7d142db9648
+ZMM12=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM13=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM14=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 a54ff53a3c6ef372 bb67ae856a09e667
+ZMM15=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 5be0cd191f83d9ab 9b05688c510e527f
+ZMM16=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM17=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 656e696c5f706c63 73002a5d392d305b 79747400786d7470 0079747400646461
+ZMM18=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 54003d534b4e494c 564544003d4d4554 535953425553003d 4854415056454400
+ZMM19=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 540018534b4e494c 56454400184d4554 5359534255530018 4854415056454400
+ZMM20=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000356c6c 696b66722f306963 682f68746f6f7465 756c622f6c617574
+ZMM21=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 00005612a682e3d0 00005612a6800860 0000000000000031 0000000000007374
+ZMM22=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 382433273f397b27 697a787c69303b7e 69305f474f5b647c 6930382433273f39
+ZMM23=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM24=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 383a3a263d383a3a 263c383a3a263f38 3a3a263e383a3a26 39383a3a2638383a
+ZMM25=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 373031383d4d0031 3d4553003053303d 4c494b4145005f4b 00383432383d4855
+ZMM26=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 302c302c30300030 2c303000302c3030 2c302c303000302c 00302c3000313200
+ZMM27=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 282b2e2fdf37342d 280bbfbf23243324 26312033fc040f18 1317140d080b0412
+ZMM28=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 343133bffc121104 1214041204110814 100411bffc040f18 1317140d080b0412
+ZMM29=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 4141414141414141 4141414141414141 4141414141414141 4141414141414141
+ZMM30=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 1a1a1a1a1a1a1a1a 1a1a1a1a1a1a1a1a 1a1a1a1a1a1a1a1a 1a1a1a1a1a1a1a1a
+ZMM31=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 2020202020202020 2020202020202020 2020202020202020 2020202020202020
 
 
-> ---
->  This is my first time converting bindings to dt schema, please let me
->  know if I have overlooked anything.
->  .../devicetree/bindings/hwlock/hwlock.txt     | 59 -----------------
->  .../devicetree/bindings/hwlock/hwlock.yaml    | 65 +++++++++++++++++++
->  2 files changed, 65 insertions(+), 59 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/hwlock/hwlock.txt
->  create mode 100644 Documentation/devicetree/bindings/hwlock/hwlock.yaml
-> 
+syzkaller build log:
+go env (err=3D<nil>)
+GO111MODULE=3D'auto'
+GOARCH=3D'amd64'
+GOBIN=3D''
+GOCACHE=3D'/syzkaller/.cache/go-build'
+GOENV=3D'/syzkaller/.config/go/env'
+GOEXE=3D''
+GOEXPERIMENT=3D''
+GOFLAGS=3D''
+GOHOSTARCH=3D'amd64'
+GOHOSTOS=3D'linux'
+GOINSECURE=3D''
+GOMODCACHE=3D'/syzkaller/jobs/linux/gopath/pkg/mod'
+GONOPROXY=3D''
+GONOSUMDB=3D''
+GOOS=3D'linux'
+GOPATH=3D'/syzkaller/jobs/linux/gopath'
+GOPRIVATE=3D''
+GOPROXY=3D'https://proxy.golang.org,direct'
+GOROOT=3D'/usr/local/go'
+GOSUMDB=3D'sum.golang.org'
+GOTMPDIR=3D''
+GOTOOLCHAIN=3D'auto'
+GOTOOLDIR=3D'/usr/local/go/pkg/tool/linux_amd64'
+GOVCS=3D''
+GOVERSION=3D'go1.22.7'
+GCCGO=3D'gccgo'
+GOAMD64=3D'v1'
+AR=3D'ar'
+CC=3D'gcc'
+CXX=3D'g++'
+CGO_ENABLED=3D'1'
+GOMOD=3D'/syzkaller/jobs/linux/gopath/src/github.com/google/syzkaller/go.mo=
+d'
+GOWORK=3D''
+CGO_CFLAGS=3D'-O2 -g'
+CGO_CPPFLAGS=3D''
+CGO_CXXFLAGS=3D'-O2 -g'
+CGO_FFLAGS=3D'-O2 -g'
+CGO_LDFLAGS=3D'-O2 -g'
+PKG_CONFIG=3D'pkg-config'
+GOGCCFLAGS=3D'-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=3D0=
+ -ffile-prefix-map=3D/tmp/go-build823339970=3D/tmp/go-build -gno-record-gcc=
+-switches'
 
-You leave now incorrect paths in the kernel.
-
-If you decide to convert the generic subsystem binding, you must take
-extra care and change/fix/update/improve all bindings using it.
-
-
-> diff --git a/Documentation/devicetree/bindings/hwlock/hwlock.yaml b/Documentation/devicetree/bindings/hwlock/hwlock.yaml
-> new file mode 100644
-> index 000000000000..2492fdad3c6e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/hwlock/hwlock.yaml
-> @@ -0,0 +1,65 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/hwlock/hwlock.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Generic Hardware Lock (hwlock)
-> +
-> +description: |
-> +  Generic bindings that are common to all the hwlock platform specific driver
-> +  implementations.
-> +  Please also look through the individual platform specific hwlock binding
-> +  documentations for identifying any additional properties specific to that
-> +  platform.
-> +
-> +maintainers:
-> +  - Bjorn Andersson <andersson@kernel.org>
-> +  - Rob Herring <robh@kernel.org>
-> +  - Krzysztof Kozlowski <krzk+dt@kernel.org>
-> +  - Conor Dooley <conor+dt@kernel.org>
-
-Subsystem maintainer only.
-
-> +
-> +properties:
-> +  $nodename:
-> +    pattern: "^hwlock(@.*)?"
-
-Why .* in the pattern if you do not anchor it with $?
-
-> +
-> +  "#hwlock-cells":
-> +    description: |
-> +      Specifies the number of cells needed to represent a specific lock.
-> +    minimum: 1
-> +
-> +  hwlocks:
-> +    description: |
-
-Do not need '|' unless you need to preserve formatting.
-
-> +      List of phandle to a hwlock provider node and an associated hwlock args
-> +      specifier as indicated by #hwlock-cells. The list can have just a single
-> +      hwlock or multiple hwlocks, with each hwlock represented by a phandle and
-> +      a corresponding args specifier.
-
-Missing type, here and  other places, unless this is already covered by
-dtschema? But then why this binding is needed?
-
-> +
-> +  hwlock-names:
-> +    description: |
-> +      List of hwlock name strings defined in the same order as the hwlocks,
-> +      with one name per hwlock. Consumers can use the hwlock-names to match
-> +      and get a specific hwlock.
-
-Hm? I don't think you understood the binding. The provider does not have
-consumer properties. Read again original binding.
-
-> +
-> +patternProperties:
-> +  "^hwlock@[0-9a-f]+$":
-> +    type: object
-> +    description: Hardware lock provider node
-
-This makes no sense. hwlock within hwlock?
-
-> +
-> +required:
-> +  - "#hwlock-cells"
-> +
-> +additionalProperties: true
-> +
-> +examples:
-> +  # Example 1: A node using a single specific hwlock
+git status (err=3D<nil>)
+HEAD detached at 68da6d951a
+nothing to commit, working tree clean
 
 
-Drop all examples, not really useful.
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:31: run command via tools/syz-env for best compatibility, see:
+Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+go list -f '{{.Stale}}' ./sys/syz-sysgen | grep -q false || go install ./sy=
+s/syz-sysgen
+make .descriptions
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:31: run command via tools/syz-env for best compatibility, see:
+Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+bin/syz-sysgen
+go fmt ./sys/... >/dev/null
+touch .descriptions
+GOOS=3Dlinux GOARCH=3Damd64 go build "-ldflags=3D-s -w -X github.com/google=
+/syzkaller/prog.GitRevision=3D68da6d951a345757b69b764ceb8dda1e9d65b038 -X '=
+github.com/google/syzkaller/prog.gitRevisionDate=3D20241122-101921'" "-tags=
+=3Dsyz_target syz_os_linux syz_arch_amd64 " -o ./bin/linux_amd64/syz-execpr=
+og github.com/google/syzkaller/tools/syz-execprog
+mkdir -p ./bin/linux_amd64
+g++ -o ./bin/linux_amd64/syz-executor executor/executor.cc \
+	-m64 -O2 -pthread -Wall -Werror -Wparentheses -Wunused-const-variable -Wfr=
+ame-larger-than=3D16384 -Wno-stringop-overflow -Wno-array-bounds -Wno-forma=
+t-overflow -Wno-unused-but-set-variable -Wno-unused-command-line-argument -=
+static-pie -std=3Dc++17 -I. -Iexecutor/_include -fpermissive -w -DGOOS_linu=
+x=3D1 -DGOARCH_amd64=3D1 \
+	-DHOSTGOOS_linux=3D1 -DGIT_REVISION=3D\"68da6d951a345757b69b764ceb8dda1e9d=
+65b038\"
+/usr/bin/ld: /tmp/ccwqmbyQ.o: in function `test_cover_filter()':
+executor.cc:(.text+0x142db): warning: the use of `tempnam' is dangerous, be=
+tter use `mkstemp'
+/usr/bin/ld: /tmp/ccwqmbyQ.o: in function `Connection::Connect(char const*,=
+ char const*)':
+executor.cc:(.text._ZN10Connection7ConnectEPKcS1_[_ZN10Connection7ConnectEP=
+KcS1_]+0x104): warning: Using 'gethostbyname' in statically linked applicat=
+ions requires at runtime the shared libraries from the glibc version used f=
+or linking
 
-Best regards,
-Krzysztof
+
+Error text is too large and was truncated, full error text is at:
+https://syzkaller.appspot.com/x/error.txt?x=3D112877df980000
+
+
+Tested on:
+
+commit:         2408a807 Merge tag 'vfs-6.14-rc4.fixes' of git://git.k..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/li=
+nux.git master
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3D702f2e48d262560=
+e
+dashboard link: https://syzkaller.appspot.com/bug?extid=3Dd693c07c6f647e038=
+8d3
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Deb=
+ian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=3D168a03a45800=
+00
+
 
