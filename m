@@ -1,178 +1,180 @@
-Return-Path: <linux-kernel+bounces-518705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74F10A3938F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 07:45:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E333A39398
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 07:57:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1266E3ABCF5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 06:45:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56CD01890656
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 06:57:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D15CE1B85D1;
-	Tue, 18 Feb 2025 06:45:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F04B1B6CE8;
+	Tue, 18 Feb 2025 06:57:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Djvu0DZw"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nHuA3w+b"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 631981E522;
-	Tue, 18 Feb 2025 06:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C6D21465A1
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 06:57:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739861128; cv=none; b=OH6xF3nynBFnboMVRI6t2UIgRLhAH+Dn0Qq6i+iWQa33XIahwOiG4UqgT7Ax32O6u+baSvI8nuYoFG4HLzyhRtdMKNXmkS4KP8Vmdg1I+xHbNXkFxkQt5HVRa0i5VqqQj56GYm8eVDeKXnYEaAMY8/zhcTjzc2dpZOqdAwuLqCU=
+	t=1739861862; cv=none; b=nqXLrKmWkslDZQg/g3NxUhztcvWQylySDer91jpx/3h4YKdf5/jTw8UmvO9GRCQ1Uggl0QEPmm6k1yuSWonUeSyPMYXLlId58PXyXETp2Q5h5j5Wk/lOZVZVAuqxgNyVRjCGzOTG2/EltaA+vWXIRRCg9cfF3Y6Hh9EjZRrP2cY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739861128; c=relaxed/simple;
-	bh=JeV9NGTiS5LreF1qALXiBXoNIsC31R6+99vMmtp8aGA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ctcoQrRl1Z9JB1xuAhCy8Nxa6g9eFogbQbd0KbL8FMVIs+1f+pkkXU8vlGIvllGQLcuyn5kzXtOBKjJVJ2Y3igVqA6OnOQ/JPdyyVHZn8Hsd2bkVsttS0a1+Ka+fFSLVEve0Ogz6il9GTfKjCBhE0ldQo146qr8pQvHEb31ppa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Djvu0DZw; arc=none smtp.client-ip=209.85.167.44
+	s=arc-20240116; t=1739861862; c=relaxed/simple;
+	bh=XQ/NVnfVE7NNvDTmpfLLDpqgGlSMILACTRheTT216ng=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Nq7WFUAI8qpJMycvpSg9nYb3bWEQwl+8hvKlA496XWIlxc1JnLBskYNNhIUxNw3inFaq0B2s6RUKOwPUilqg9fd9CeAY4ZzEYc3tb3nliFViP48yzFI0kvqWgiU493nQAZoyfAF8nbksqkHHK2hIzcKiKMSUrVLP7PGm6T2+OHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nHuA3w+b; arc=none smtp.client-ip=209.85.208.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-543e4bbcd86so5108828e87.1;
-        Mon, 17 Feb 2025 22:45:26 -0800 (PST)
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-30613802a04so53937361fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 22:57:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739861124; x=1740465924; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SqQUy+TmHlIe2lGS+cxMn2E4zLJa5hzyQ87XCzDVJCw=;
-        b=Djvu0DZw2SVxetINmRH7ELr7tv9S30C6IGu62NM7opgmOq2FyM48HYqqRTIQbRXY3+
-         GNHlZd738gs+cfjBxX9z3An1ldynlbvs0amfI7YHQeuXl6n+u1hfPUO9h7Wj7OWUrClV
-         YkD4EiV/Uk/HQjsf/DJMhcz6LEcVHvaA9qZk2QE3ioDFlYIX1hmhhaOqwkFFXkuv/tMi
-         bui4DHm/j35fAt4T2a5DZs1hmGv9EGgSwYrrFVkErK3zaSsW+qElkatZeeJZwDgxkoVx
-         nId2zlM1g9nJvB6oLjyhbWtRG4N59gulkhkOpUFA5B/lIEGyy6ptD/r92foeGAVcLAPn
-         NinA==
+        d=gmail.com; s=20230601; t=1739861858; x=1740466658; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=iRBSYqRtQX5z3bqMamdRSkx7Zu9m86472PmcDCtWIMo=;
+        b=nHuA3w+bWD4Zhj5/+Vb6V6f3mX05RPbcoEiPe2gn/Ntt5ldbUicwEZNBVCq3jjl2CD
+         LR2WpTtLFi47/ggs5ICsiszMl6VU1zMDMUi7Rp26Hf1lxuCJ0PKhSdLgmjxvCPGaK3yl
+         09rC5KlWO7+6QKdNFNU5UEwhVgYTHQk0keTCd14SbM4rRcPuXxmf4ackvYdZDcRojCoT
+         7jiji9bg/CkDqvmpQjSqHPVtbrQY7FDpHBdcIxxryxLaTsIWqx6yMylkVZh0DZcT7TGT
+         oVQiLuQflp9P+Tif80xJ0V5i7ibrOOw7QClRZzSaefIrY1QOp5GH+idK6fwRRvLcJzAx
+         mYzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739861124; x=1740465924;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SqQUy+TmHlIe2lGS+cxMn2E4zLJa5hzyQ87XCzDVJCw=;
-        b=qfBEZj9GaGI8cjOLaoRFjrtz8zIi/bwSD+KLiCxb23PFOx2IH1Rf+OHMl5+F5j5Ux7
-         6nU8dqungxL+OosDwyJvFcbmRXWtL6Q38zO05LkYDmLyR+CrxGr+93jL4g43UMcCmfny
-         LGyCUuYp3XbGWrdsjQL51VQ+AUyzOD+O0SQvcMORjM8KlBr4EGPnV0jTwgbuvyPYMRA5
-         Ha3KgG2bcqgw17oq4G+R8TuIHvEA2F0KML0jbnPYur+Ni8M5Ov3SAcukyOSVJpr0rbiH
-         0yQob5HgZTHNId3LgSf2fcWCY58jgbGoqOAuvclZsUnlL2ACA5qtbnFNW3n80jSgY6xb
-         jqEg==
-X-Forwarded-Encrypted: i=1; AJvYcCU+QXV4m3ez3dUoC2SeWHCLpxcqJpBwaqV8Tfg2eHopBN4RyL20gkmBUr1ZgxiJjL0p3wkKTlt6c/cTX0fxP8w1q+6xDxHR@vger.kernel.org, AJvYcCUbQMLzklNnds7JFWssCGswGuvXTDtRQ3yDYLph+YzwxEypExpMW77uacXVAK+iKwPjOagHAGNLbFos@vger.kernel.org, AJvYcCVA0GnmYKuZ3nq3KN3YcXUCE1X1hLGpOmSLN+PNGppk9jLUSZAYzMjC+MySSKVxwNoOw0TRiixslHoK@vger.kernel.org, AJvYcCXECuciXsZQMl7zJOm0J41J/OLjlGTuAK7kzwlYuwaQMbx6GzwuDjlQyPpyh1xeecSS8p3xPMSbhGA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+h2tFO7JdJSd7S6nYkzzX5c8stuVlE2x00//uTzczlX1jvsew
-	Z9IKZ2DiIchZmLUNM3g548wVf7g0hUYitTgSBAMcuEeTjN8YhLwiObP/jA==
-X-Gm-Gg: ASbGncsBJJzN0zzlLXRZdVgUWqorCS8ChPMiDToPon23MUug1jTklblhtf7GlgMvheQ
-	SvYn/OYJrP86BaLpo+yN/5367lXsQPrqzYREbhSGyqRI+gVxXy7qvJ7MV5zqY/xf5IIqywulpZa
-	ObO9mFsyyE+fMNW+kv7cfKBUrUyM0+LQBhP/M/J1wTI4PMp2JUBJ9c2AGD2BOO6KEwV5JM0odMn
-	JlEjMrHV4UuWBD+L6rGDGAaTkjde6VFyeDwB528fpA4UWuigJPa4UA4EiQbNbk4/Hiwu9+PTy99
-	FHBqEv3AOtu1CeQQtfz2qMHkAYS4chFtCCH6NVqI7RZds+55gTdHD21K1N2l4Y/mHGV55Dxb
-X-Google-Smtp-Source: AGHT+IEj3If62LMKd4zu2mxufSyaNBZmRoYKgPnZLeAis7jJXTrJ3g3nqNEZsiWpXSyAKIM7D7Y5BQ==
-X-Received: by 2002:a05:6512:3ba9:b0:545:2cf5:dc6c with SMTP id 2adb3069b0e04-5452fe8ff00mr3726297e87.51.1739861124087;
-        Mon, 17 Feb 2025 22:45:24 -0800 (PST)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5452de0b2f7sm1330302e87.97.2025.02.17.22.45.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Feb 2025 22:45:23 -0800 (PST)
-Message-ID: <48b3e732-b60d-411c-a519-5e89f87eea7d@gmail.com>
-Date: Tue, 18 Feb 2025 08:45:22 +0200
+        d=1e100.net; s=20230601; t=1739861858; x=1740466658;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iRBSYqRtQX5z3bqMamdRSkx7Zu9m86472PmcDCtWIMo=;
+        b=srD2L715vQlfIZLzwgQRU7EuN60JWZjsz5Zjh7Y49IgKW/opNBxtPDFGl5rHdqoy4O
+         9ortLGGCiOULJIClxf7QvS6+kt/L11FyYcoFR/BhIIF5RiqwSvYsztGioeuWoU1th8PQ
+         KbyFhI+p54LJe3yOjWWHqt/4gkGDtMRSOUEsdqS5h5DtGMkLNhU63IJ4OdLT931jLyOU
+         h7InWDNjy3ffDQwkw8mTs15DLLVdf/d87uiCfpmoAL7eLrZhg3P97dufRmwz+I5CeAJp
+         mKu9KG9u1t2KizarC4iEKBQHYho8wn+jhFkmSTYCv/SD2Dytc1An9+y9036YLqC5hoeb
+         ikHA==
+X-Forwarded-Encrypted: i=1; AJvYcCUBEJdMNBIFK/YWyReyQFJCdKoyFNQ+r29pk/MI4N/TiTB6DqOTG8E9TXzS2deJOhuOCOUWdGPr/3tRxLM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwakBtWqEHSSAcQxzHIbtiHkDbyhG8qGz+Is/DU6vh0yksQta22
+	vcczFIzokKuOAKhJhpy5lUvhT87KhgY1H6H7VjOAKKOfXeM1vvccpiMpbbHgY7CBc0+cLCYS3Iy
+	6E/zRHnJy0cDltKol9Y8sKzb8sqQ=
+X-Gm-Gg: ASbGncvjr8coMW8OGwAhDvQw7mP6SK0oLCB+31uFHnx5905jBbhwldioP6KEshqzKOV
+	3P4G4o0ACUZzuOhz/nPysG8w5es5vMv2U+8+A4WZ/LpwyEqDb11LkOy/+GmUyRaJQrRN95QJg
+X-Google-Smtp-Source: AGHT+IER7wjl6f9njeMck7m0ivCclnh4kfcs7yKY0+I1guG8f5sYgtFMtdPO/1a8VTFbDz5EyQv2cPIiaAaMAZBQ268=
+X-Received: by 2002:a05:6512:a8f:b0:545:576:cbca with SMTP id
+ 2adb3069b0e04-5452fe2ef99mr3503855e87.8.1739861858234; Mon, 17 Feb 2025
+ 22:57:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 02/12] reboot: reboot, not shutdown, on
- hw_protection_reboot timeout
-To: Ahmad Fatoum <a.fatoum@pengutronix.de>,
- Andrew Morton <akpm@linux-foundation.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Fabio Estevam
- <festevam@denx.de>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
- Jonathan Corbet <corbet@lwn.net>, Serge Hallyn <serge@hallyn.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>,
- Guenter Roeck <groeck@chromium.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-security-module@vger.kernel.org,
- chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
- kernel@pengutronix.de
-References: <20250113-hw_protection-reboot-v2-0-161d3fc734f0@pengutronix.de>
- <20250113-hw_protection-reboot-v2-2-161d3fc734f0@pengutronix.de>
- <7b6d3226-4422-415a-9146-16c421463ac5@gmail.com>
- <de781a07-d209-4bbe-8945-efcb4490f604@pengutronix.de>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <de781a07-d209-4bbe-8945-efcb4490f604@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250217040928.34561-1-chunjie.zhu@cloud.com>
+In-Reply-To: <20250217040928.34561-1-chunjie.zhu@cloud.com>
+From: =?UTF-8?Q?Andreas_Gr=C3=BCnbacher?= <andreas.gruenbacher@gmail.com>
+Date: Tue, 18 Feb 2025 07:57:25 +0100
+X-Gm-Features: AWEUYZnV-Lx0KP6OYcQcbVwoe36BP9Dfghup5ZWfXQ0Y3N-qXvk2GRJ-CxLSgXM
+Message-ID: <CAHpGcMK0vez+c0NT-U40=JYy+_X-rtfR50KEZXiFXuA6E-tUmQ@mail.gmail.com>
+Subject: Re: [PATCH] fix gfs2 umount timeout bug
+To: Chunjie Zhu <chunjie.zhu@cloud.com>
+Cc: Andreas Gruenbacher <agruenba@redhat.com>, gfs2@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 17/02/2025 22:22, Ahmad Fatoum wrote:
-> Hello Matti,
-> 
-> On 22.01.25 12:28, Matti Vaittinen wrote:
->> On 13/01/2025 18:25, Ahmad Fatoum wrote:
->>> hw_protection_shutdown() will kick off an orderly shutdown and if that
->>> takes longer than a configurable amount of time, an emergency shutdown
->>> will occur.
->>>
->>> Recently, hw_protection_reboot() was added for those systems that don't
->>> implement a proper shutdown and are better served by rebooting and
->>> having the boot firmware worry about doing something about the critical
->>> condition.
->>>
->>> On timeout of the orderly reboot of hw_protection_reboot(), the system
->>> would go into shutdown, instead of reboot. This is not a good idea, as
->>> going into shutdown was explicitly not asked for.
->>>
->>> Fix this by always doing an emergency reboot if hw_protection_reboot()
->>> is called and the orderly reboot takes too long.
->>>
->>> Fixes: 79fa723ba84c ("reboot: Introduce thermal_zone_device_critical_reboot()")
->>> Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
->>> ---
->>>    kernel/reboot.c | 70 ++++++++++++++++++++++++++++++++++++++++-----------------
->>>    1 file changed, 49 insertions(+), 21 deletions(-)
->>>
->>> diff --git a/kernel/reboot.c b/kernel/reboot.c
->>> index 847ac5d17a659981c6765699eac323f5e87f48c1..222b63dfd31020d0e2bc1b1402dbfa82adc71990 100644
->>> --- a/kernel/reboot.c
->>> +++ b/kernel/reboot.c
->>> @@ -932,48 +932,76 @@ void orderly_reboot(void)
->>>    }
->>>    EXPORT_SYMBOL_GPL(orderly_reboot);
->>>    +static const char *hw_protection_action_str(enum hw_protection_action action)
->>> +{
->>> +    switch (action) {
->>> +    case HWPROT_ACT_SHUTDOWN:
->>> +        return "shutdown";
->>> +    case HWPROT_ACT_REBOOT:
->>> +        return "reboot";
->>> +    default:
->>> +        return "undefined";
->>> +    }
->>> +}
->>> +
->>> +static enum hw_protection_action hw_failure_emergency_action;
->>
->> nit: Do we have a (theoretical) possibility that two emergency restarts get scheduled with different actions? Should the action be allocated (maybe not) for each caller, or should there be a check if an operation with conflicting action is already scheduled?
->>
->> If this was already considered and thought it is not an issue:
->>
->> Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
-> 
-> __hw_protection_trigger (née __hw_protection_shutdown) has this at its start:
-> 
->   static atomic_t allow_proceed = ATOMIC_INIT(1);
-> 
->   /* Shutdown should be initiated only once. */
->   if (!atomic_dec_and_test(&allow_proceed))
->           return;
-> 
-> It's thus not possible to have a later emergency restart race against the first.
-> 
+Hello,
 
-Ah, indeed. I missed this. Thanks for the clarification! :)
+Am Mo., 17. Feb. 2025 um 05:10 Uhr schrieb Chunjie Zhu <chunjie.zhu@cloud.com>:
+>   If there are heavy lock contenions between nodes in a cluster, at
+>   fs umount time,
+>
+>           node 1                           node 2
+>             |                                |
+>             |                                |
+>      iopen glock lock    -->       iopen glock go_callback
+>             |                                |
+>             |                                |
+>          EAGAIN                       try evict failure
+>             |                                |
+>             |                                |
+>        DLM_ECANCEL                           |
+>             |                                |
+>             |                                |
+>       glock complete                         |
+>             |                                |
+>             |                                |
+>     umount(clear_glock)                      |
+>             |                                |
+>             |                                |
+>  cannot free iopen glock                     |
+>             |                                |
+>             |                                |
+>     umount timeout (*)                       |
+>             |                                |
+>             |                                |
+>       umount complete                        |
+>                                              |
+>                                              |
+>                                        umount succeed
 
-Yours,
-	-- Matti
+Thank you for your bug report. I'm having a hard time following what
+you are trying to say, and the patch itself doesn't look right to me.
+If there was a reference counting problem like the patch suggests, we
+would probably see regular left-over glocks at unmount time, but I'm
+not aware of any such problems. So you ld you please explain in a bit
+more detail what you think the problem is? Do you get any messages in
+the syslog? The file checksum in the patch refers to commit
+bb25b97562e5 ("gfs2: remove dead code in add_to_queue") from 2023.
+What exact kernel version are you running?
+
+Thanks,
+Andreas
+
+> Signed-off-by: Chunjie Zhu <chunjie.zhu@cloud.com>
+> ---
+>  fs/gfs2/glock.c | 20 +++++++++++++++++++-
+>  1 file changed, 19 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/gfs2/glock.c b/fs/gfs2/glock.c
+> index 4a280be229a6..bf2445f0afa9 100644
+> --- a/fs/gfs2/glock.c
+> +++ b/fs/gfs2/glock.c
+> @@ -2120,6 +2120,23 @@ static void thaw_glock(struct gfs2_glock *gl)
+>         gfs2_glock_queue_work(gl, 0);
+>  }
+>
+> +/**
+> + * IOPEN glock might be a zombie glock instance due to lock contention
+> + * between nodes in the cluster during fs umount, then it causes umount
+> + * timeout
+> + */
+> +
+> +static int is_zombie_glock(struct gfs2_glock *gl)
+> +{
+> +       if (test_bit(GLF_LOCK, &gl->gl_flags) &&
+> +               test_bit(GLF_DEMOTE, &gl->gl_flags) &&
+> +               test_bit(GLF_BLOCKING, &gl->gl_flags) &&
+> +               (gl->gl_name.ln_type == LM_TYPE_IOPEN) &&
+> +               list_empty(&gl->gl_holders))
+> +               return 1;
+> +       return 0;
+> +}
+> +
+>  /**
+>   * clear_glock - look at a glock and see if we can free it from glock cache
+>   * @gl: the glock to look at
+> @@ -2132,7 +2149,8 @@ static void clear_glock(struct gfs2_glock *gl)
+>
+>         spin_lock(&gl->gl_lockref.lock);
+>         if (!__lockref_is_dead(&gl->gl_lockref)) {
+> -               gl->gl_lockref.count++;
+> +               if (!is_zombie_glock(gl))
+> +                       gl->gl_lockref.count++;
+>                 if (gl->gl_state != LM_ST_UNLOCKED)
+>                         handle_callback(gl, LM_ST_UNLOCKED, 0, false);
+>                 __gfs2_glock_queue_work(gl, 0);
+> --
+> 2.34.1
+>
+>
 
