@@ -1,134 +1,145 @@
-Return-Path: <linux-kernel+bounces-519040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32E9EA3975A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:45:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0B15A3977D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:51:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46AAD17086A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:45:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92A5717549F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:49:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C743D22CBD0;
-	Tue, 18 Feb 2025 09:45:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD2E224112A;
+	Tue, 18 Feb 2025 09:46:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vBXM/rx6"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=benjamin.gaignard@collabora.com header.b="g1utORNB"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ABE418E743
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 09:45:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739871914; cv=none; b=AXUl7PoxFgmpWagfbuTbUqIb8Mf7sr/79jyUAg3NuMhYNRDKA94duX67aybgIimFodAFiv6xh/967GQfXCedXmwiajBIjNnO92ixVa/Q00pyZPcDuwFJzMfYbBUJC9RDoF+T0fhJgMGj4Ft635jG6wZElqS1Z0rhUOZTLmW3YtE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739871914; c=relaxed/simple;
-	bh=7fXt6T5kmLlXgE+CzxBthLo33V/bf++Dbg39Nps04Mk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mSRucB8Z3NiHcqEvAYFLhtIqwSdFLswmY3Sr2g9PUPjIQ8iyE78oWcTwBmenojC/YgB7njI0L4Q8P4Y3pn9dxgKsyv5dUOuVTAPRtymt6O2gr4bOpID/l/3f7EQgw7+RCKXaEU8tDUgcsL4GVycAlsxOWHJxTlA+4O4gfve0rgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vBXM/rx6; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-30a2594435dso21112671fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 01:45:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739871910; x=1740476710; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BN2VhcauqG9RbV8MqCf3noWGKfT4ixMjIIxfEPq00RA=;
-        b=vBXM/rx6yUBhusU238+qeS5vNPlYLG6dDHdZA07UwZlwJtotWgoPo/hUB3gAM48rb6
-         R2mwZkFc60NU+v3Bo1IdyWKnfEwhj72+SlfkOXjDI96OG386U80q1WERDMAmfLJ1HX9u
-         S+dAuH7GewfXCgLO6R07U1fUKTSBI2f7nuAGMUYVhLEF42SBoL0uNVC2hPu/rPhFUPIv
-         hk7Dbl9rByCwrk723bHAVG884FggE2CYoVJiJCsCQ+Q7XiXKo6sYIM8JQt8RTqoU/jei
-         naBM/en6wzAsNb7ddmTfeCzD0LsSJ5BBgFIZzRGup5gvpUFxc/slyl/cnvxxaRTi5LBv
-         EFJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739871910; x=1740476710;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BN2VhcauqG9RbV8MqCf3noWGKfT4ixMjIIxfEPq00RA=;
-        b=mQpTBNtCeRWPgG0y5Qtn2Ioy3ufMbW1bOEOGNgvsRwdkNN3YrY9MbiOYI+kRlM3MAj
-         DlE4sA9Ip4n8QlO3WRbrJKdl3mYsQFJGd0tcR1oCNyVT6ac4+HyoiZbD5MNlIsO7sWG/
-         cdvX9FumfHe/G/GmDAZ5WFudHgnoplmtx4P1QUzXuk2VPm9FqkHrvXmf8tHvymr6g2f+
-         iIXQWx/CnojksEMrZQpJZEMoB9JEwXaMc/sdE8FGNhF8dy2l6fiz/NJkssaSQqMv8eIC
-         i0jcmjOw6jtlhd6uLM8kjR3TmykSGqIOFYKDMMhTFOokjpPoYx9GJ7nCWPVsxvlQrTUY
-         EhfA==
-X-Forwarded-Encrypted: i=1; AJvYcCWnTyOxGhDiBu747FrvSiLz6mo2s/tKxozYs955ORPXCrADkFkCcc1lmWcX+Q55hCzAnHLYG+JIBIDt/lo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtjuZ67NAcRYIxqfsU6yMG7LD0wWrsLTVTv91jVhIKtWXcZ4sD
-	VtYnZPWOw0bWiwv+S+90h6L5ASQeCLkV4XD5TCVThmuG0XRGxCEJ33rHf0Zy2jjC59GiqZOqD0Q
-	/ZqoE9+n+s+Ni/m9ZJzBWqDp1vWHos1paWdImvA==
-X-Gm-Gg: ASbGncsoh8XsJT4JMQX9zZZs1ARfDiQ7u2Okei/de748IDtVhq/cW9F9chdW7vsbX//
-	CWtGUlUxh9USRoe7O49wkALyYgGZE1UEMUXlzFbu8CgPJVhE2/I6grFqxdIKxOTz4ICaEsg88
-X-Google-Smtp-Source: AGHT+IGxEO+DF5kRzIjq3qFDfgxYzzAxwLSdI984z84zV2jQrwPlYtypYU1pgjXiiaRe+HuUJiU9UcU2s7gThRggfQU=
-X-Received: by 2002:a2e:8457:0:b0:309:31bf:ec17 with SMTP id
- 38308e7fff4ca-30931bfef5fmr28690911fa.15.1739871910394; Tue, 18 Feb 2025
- 01:45:10 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C862723ED66;
+	Tue, 18 Feb 2025 09:46:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739872000; cv=pass; b=Nn1Hf/ASDBMCSZRr/97VYw1zcqeFvSQkLs3RKLJ0rTpak0HaJFRig+EdOvZSUcwFVPjocAaSvRPHZaJ+tJwlFOBvO5tm216B4ypTPxUZ26an1L0uxk0NzTXfAhSdmLuDbRch5wAWBFoLr1eVbt7Djf9tEU0pT1GW8NASf4f4F60=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739872000; c=relaxed/simple;
+	bh=oluM229+QkjMcH16tdElVipTqwxo4aGfq7njvhdh9y0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DoGaBmJTAb0P/pQ7RSQSz17dFerW92q5OGPPkDzuwtUW5EHpetPtmM0wb3d3pPdJ5Hd8k3diF+zryYDmQ5sY9/FDv0f1gAZGizGOl/iz87fX9DR3dqjEz/7LFjBIoh2yrzHusSBGSDxKQ1Er2geCInrJICvlkpgCp66GiaVcoaA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=benjamin.gaignard@collabora.com header.b=g1utORNB; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1739871969; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=kEMoEGYx4odDVnsn3kMR/Xa8T58NL5/WmIxhiC1QmDbOw2kMQt/nIPfyAIekGWktvDCzSQAYuYhc5Abj436AfzGo5ngAIi5OCQ1jE670om64Fg/MjBH3P0wn0nzYUt5/m5cRmfADwsUCvAChuIJ8LczNcfwphDaeU3ImME8VvG8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1739871969; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Q1RdT5eL57c25wsLGjqwv0tswd3r+m/iGHKhWU5vNkU=; 
+	b=hLzq0fvMYDz4a5xxxexNYBS03rTRyJMvfImGjFHcBZXArSaI4gII1ayNbBOTGf9CaecoStJL/xfhCv2E69KTZGQtfvXuzjrABQJ5DT0E0ywS30UNAKqgSC9priy2c0ORkMYZGg0hpVISv8ZnwJ8TMHDFGsYFWAKuCRsFR/cih4o=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=benjamin.gaignard@collabora.com;
+	dmarc=pass header.from=<benjamin.gaignard@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1739871969;
+	s=zohomail; d=collabora.com; i=benjamin.gaignard@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=Q1RdT5eL57c25wsLGjqwv0tswd3r+m/iGHKhWU5vNkU=;
+	b=g1utORNBtkSzGH4AGRNSLNihyapmNrQnpoMzHP+cBeRE9eEU2ZqtKp7oQcMfGo+Z
+	TrnTvx/ncakBtybvu8lPzOEs+C+Shxev/I0KWei9noHHV1ypPzapSK4ZLfPqC4uFpGI
+	+MAtfsBQlcrdwxeylDkOd7Jtj9TnrOERFBINv/+E=
+Received: by mx.zohomail.com with SMTPS id 1739871967704282.7054777678519;
+	Tue, 18 Feb 2025 01:46:07 -0800 (PST)
+Message-ID: <4a04b12c-8765-47bb-af61-c6b47133f2af@collabora.com>
+Date: Tue, 18 Feb 2025 10:46:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250121-03-k1-gpio-v4-1-4641c95c0194@gentoo.org>
- <Z5FPJLzAEVXGWJnE@chonkvm.lixom.net> <20250123113042-GYA38135@gentoo>
- <Z5LOdh-4UxRtteOy@chonkvm.lixom.net> <20250127181726.GA538260-robh@kernel.org>
- <20250128031712-GYB47737@gentoo> <CACRpkdYbSOHD9UH5=+qjztxS3Cq_rxaoOT9tFtD8ZWm9zQGnPw@mail.gmail.com>
- <CACRpkdZa887vx4Lmxk1U_8w5n7AxMnyzGexeYzhsxNGT-DTYcQ@mail.gmail.com>
- <20250206133156-GYA5687@gentoo> <CACRpkdZYYZ5tUR4gJXuCrix0k56rPPB2TUGP3KpwqMgjs_Vd5w@mail.gmail.com>
- <20250214115410-GYA21743@gentoo>
-In-Reply-To: <20250214115410-GYA21743@gentoo>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 18 Feb 2025 10:44:59 +0100
-X-Gm-Features: AWEUYZnVti-LvZHDXYhaweA_xJfXLbPMVGPKFtEd0c95Dmo8gtzeCdJx9Be6kOY
-Message-ID: <CACRpkdaQZ5wJ0S=FfTzBkZOfCE7zvTPQ-wn53rHcZztbHLC8xQ@mail.gmail.com>
-Subject: Re: [PATCH v4 1/4] dt-bindings: gpio: spacemit: add support for K1 SoC
-To: Yixun Lan <dlan@gentoo.org>
-Cc: Rob Herring <robh@kernel.org>, Olof Johansson <olof@lixom.net>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Conor Dooley <conor@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Yangyu Chen <cyy@cyyself.name>, 
-	Jisheng Zhang <jszhang@kernel.org>, Jesse Taube <mr.bossman075@gmail.com>, 
-	Inochi Amaoto <inochiama@outlook.com>, Icenowy Zheng <uwu@icenowy.me>, 
-	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] media: verisilicon: Fix AV1 decoder clock frequency
+To: Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Heiko Stuebner
+ <heiko@sntech.de>, Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ kernel@collabora.com, stable@vger.kernel.org
+References: <20250217-b4-hantro-av1-clock-rate-v2-1-e179fad52641@collabora.com>
+Content-Language: en-US
+From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+In-Reply-To: <20250217-b4-hantro-av1-clock-rate-v2-1-e179fad52641@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Feb 14, 2025 at 12:54=E2=80=AFPM Yixun Lan <dlan@gentoo.org> wrote:
 
-> thanks for this very detail prototype! it works mostly, with one problem:
+Le 17/02/2025 à 22:46, Nicolas Dufresne a écrit :
+> The desired clock frequency was correctly set to 400MHz in the device tree
+> but was lowered by the driver to 300MHz breaking 4K 60Hz content playback.
+> Fix the issue by removing the driver call to clk_set_rate(), which reduce
+> the amount of board specific code.
 >
-> how to map gpio correctly to the pin from pinctrl subsystem?
+> Fixes: 003afda97c65 ("media: verisilicon: Enable AV1 decoder on rk3588")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+
+Reviewed-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+
+> ---
+> This patch fixes user report of AV1 4K60 decoder not being fast enough
+> on RK3588 based SoC. This is a break from Hantro original authors
+> habbit of coding the frequencies in the driver instead of specifying this
+> frequency in the device tree. The other calls to clk_set_rate() are left
+> since this would require modifying many dtsi files, which would then be
+> unsuitable for backport.
+> ---
+> Changes in v2:
+> - Completely remove the unused init function, the driver is null-safe
+> - Link to v1: https://lore.kernel.org/r/20250217-b4-hantro-av1-clock-rate-v1-1-65b91132c551@collabora.com
+> ---
+>   drivers/media/platform/verisilicon/rockchip_vpu_hw.c | 9 ---------
+>   1 file changed, 9 deletions(-)
 >
-> for example, I specify gpio-ranges in dts, then
->                 gpio0: gpio@d4019000 {
->                         compatible =3D "spacemit,k1-gpio";
->                         reg =3D <0x0 0xd4019000 0x0 0x100>;
->                         ...
->                         gpio-ranges =3D <&pinctrl 0 0 96>;
->                 };
+> diff --git a/drivers/media/platform/verisilicon/rockchip_vpu_hw.c b/drivers/media/platform/verisilicon/rockchip_vpu_hw.c
+> index 964122e7c355934cd80eb442219f6ba51bba8b71..842040f713c15e6ff295771bc9fa5a7b66e584b2 100644
+> --- a/drivers/media/platform/verisilicon/rockchip_vpu_hw.c
+> +++ b/drivers/media/platform/verisilicon/rockchip_vpu_hw.c
+> @@ -17,7 +17,6 @@
+>   
+>   #define RK3066_ACLK_MAX_FREQ (300 * 1000 * 1000)
+>   #define RK3288_ACLK_MAX_FREQ (400 * 1000 * 1000)
+> -#define RK3588_ACLK_MAX_FREQ (300 * 1000 * 1000)
+>   
+>   #define ROCKCHIP_VPU981_MIN_SIZE 64
+>   
+> @@ -440,13 +439,6 @@ static int rk3066_vpu_hw_init(struct hantro_dev *vpu)
+>   	return 0;
+>   }
+>   
+> -static int rk3588_vpu981_hw_init(struct hantro_dev *vpu)
+> -{
+> -	/* Bump ACLKs to max. possible freq. to improve performance. */
+> -	clk_set_rate(vpu->clocks[0].clk, RK3588_ACLK_MAX_FREQ);
+> -	return 0;
+> -}
+> -
+>   static int rockchip_vpu_hw_init(struct hantro_dev *vpu)
+>   {
+>   	/* Bump ACLK to max. possible freq. to improve performance. */
+> @@ -807,7 +799,6 @@ const struct hantro_variant rk3588_vpu981_variant = {
+>   	.codec_ops = rk3588_vpu981_codec_ops,
+>   	.irqs = rk3588_vpu981_irqs,
+>   	.num_irqs = ARRAY_SIZE(rk3588_vpu981_irqs),
+> -	.init = rk3588_vpu981_hw_init,
+>   	.clk_names = rk3588_vpu981_vpu_clk_names,
+>   	.num_clocks = ARRAY_SIZE(rk3588_vpu981_vpu_clk_names)
+>   };
 >
->                 foo-gpios =3D <&gpio0 2 28 GPIO_ACTIVE_LOW>;
+> ---
+> base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+> change-id: 20250217-b4-hantro-av1-clock-rate-e5497f1499df
 >
-> It should get GPIO_92 ( 92 =3D 2 * 32 + 28), but turns out GPIO_28
->
-> Probably there is something I missed...
-
-No it's just me missing the complexity!
-
-> to make the gpio part work, we need additional custom gpio-ranges parser,
-> which should similar to of_gpiochip_add_pin_range() in gpiolib-of.c
-> (at least gpio core need to adjust to call custom this function)
-
-Let me send a patch set to bring threecell into the core instead,
-and see if it works for you!
-
-I will post it real soon.
-
-Yours,
-Linus Walleij
+> Best regards,
 
