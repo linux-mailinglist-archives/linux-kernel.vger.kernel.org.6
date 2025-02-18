@@ -1,139 +1,111 @@
-Return-Path: <linux-kernel+bounces-519749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 731BEA3A162
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:36:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D406A3A165
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:36:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84C093A65A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:34:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6958B3AD8F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:35:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80CBA26D5A5;
-	Tue, 18 Feb 2025 15:34:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C5A26D5A5;
+	Tue, 18 Feb 2025 15:35:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b="tDb+G7QI";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TSMrSP2f"
-Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h3ni8SRf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8DA9262811;
-	Tue, 18 Feb 2025 15:34:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0AC01990C7;
+	Tue, 18 Feb 2025 15:35:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739892883; cv=none; b=RbvB2758BmGJM6AQ1TTZUlMKVYoC0a+pi5dmuI5/IVTMWtM/IXH7R1Ym9jSzw4o83S4cs3S5VWiw3KmHx8ASmwUcOQRs7t86e1zNjnLgQE+YALCxr3y1vw9JPHgcVQYoGZY8/YT3ngLDGi3Nis3VFoRTXtG97xElTRmgN2WP7V8=
+	t=1739892907; cv=none; b=u6ZGeh9IUrIIBMnFg2FVhlv5E1nzrL9iHQGT3kp4e9J+5BSCDS/z7GBzidAr2tQJLKMdgOBaBKaIrByBumQ8456+nuLqQKe1PLbQ8SkHfdrUV4fi6cjq9oRGc2dDZad8kfTACbWjOaMEkq+VMEzw3tRYVE/RdDSuVa3hGkSb600=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739892883; c=relaxed/simple;
-	bh=GXMTpvkPCJ7m5KbW5KvE3Nphli4h5mo+kNooPAwQgpU=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=n2PpJkq6PHDmQMePKOiPg8AxfMcMgD0xKIz/TjpE/9SgpttjRQvtRG5Fz7VlsCBD4R7u/o4ExZeLidObhkGC/y4iZUJyb1kZqnO1hvZUV73EMm9K7K/NjIIhckiPDMBZW7G7mytbuHtEoG2AFOtuH0hJK1HkvauceRqKFGEcgV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev; spf=pass smtp.mailfrom=svenpeter.dev; dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b=tDb+G7QI; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TSMrSP2f; arc=none smtp.client-ip=202.12.124.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svenpeter.dev
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 7A88825401E6;
-	Tue, 18 Feb 2025 10:34:40 -0500 (EST)
-Received: from phl-imap-07 ([10.202.2.97])
-  by phl-compute-10.internal (MEProxy); Tue, 18 Feb 2025 10:34:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svenpeter.dev;
-	 h=cc:cc:content-transfer-encoding:content-type:content-type
-	:date:date:from:from:in-reply-to:in-reply-to:message-id
-	:mime-version:references:reply-to:subject:subject:to:to; s=fm1;
-	 t=1739892880; x=1739979280; bh=vNqt5U9GOUsRRqGjKu27jmxa6soUqk9Y
-	UPA7tKq4cmQ=; b=tDb+G7QIGPYi+Fs+28MJiKIZFjovpT+nbWDuHk9SCVY7vG8B
-	FDE+Oj3ct6izKaBhS8TTZrdJJF2zcGypfbY7eMaR5EUknH27Q4+oIJltEVQNI1LG
-	zdoAcncw3B16d7+EK9rmqfxp1E09wLJrxiANy9g8ck6YCzzpJvg9O57HZlGPkvCE
-	BxPLSYql2SuHy41fvIv8dbvYHX73gMAKTn9MPvqoT7031TVIewipcPZFI17XdFwJ
-	Tm3UX86otR7V1GjxL6faowXM+ABjsGAN6iNvJFg+PHW0+2FvnQauPunSYsSJhvKy
-	X2Ivblu9sHz2k2oNJTEJF142RIe+7pQ7wP8bqg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1739892880; x=
-	1739979280; bh=vNqt5U9GOUsRRqGjKu27jmxa6soUqk9YUPA7tKq4cmQ=; b=T
-	SMrSP2fsBeXreOuMb300Z2us+GwogmneAy6jSBBlMkE2DpFiIeNShZCJixCWBmsj
-	N9N2ek/z+T99ppO8D+MBSelQu46TrnLyf4VmyGQl1uhKkbYK/NN6BhWHL9UA4r/i
-	AFcFsb+7/TYPv9RFDaYLhQ3W9ocB4iwq/G9rDJ/f7CddKDZyYHKPkJbbWxUhqTwk
-	p7FtlSBmWbLwzyLmf1hSmAr+mcoQq2Tli+Jfq3rcvr6PqHtvex5NxnfB+6dGzozw
-	+MEQT8PcmbHYZSZu+x17VnLVXmJIrRus7vNZ1S8NJIcFpPfkoPczFLs6yELzlREq
-	78IhWrDxwBcvnHMzmIlvQ==
-X-ME-Sender: <xms:jqi0Z4nMHOJMaKq8uG_NlDxLPaw4n-vggnNKA9xjP5O_bl8OWzpscQ>
-    <xme:jqi0Z31ISMrHY9hMU5YrjERGwn_v5tQSLO3CnnPAkOab1N-ZgOpyuE8JzHg6qzc__
-    7Cc6WtJf4x-TMsTdP8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeiudeikecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdfuvhgvnhcurfgvthgvrhdfuceoshhvvghnsehsvhgvnhhpvghtvg
-    hrrdguvghvqeenucggtffrrghtthgvrhhnpeeutedtleeiuefgjedvgfejvefftdekleei
-    gefgfffhheehkeetleehgfetgedtvdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgne
-    cuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepshhvvghn
-    sehsvhgvnhhpvghtvghrrdguvghvpdhnsggprhgtphhtthhopeduuddpmhhouggvpehsmh
-    htphhouhhtpdhrtghpthhtoheplhhinhgrsegrshgrhhhilhhinhgrrdhnvghtpdhrtghp
-    thhtohepvghrrhhorhdvjeesghhmrghilhdrtghomhdprhgtphhtthhopehjsehjrghnnh
-    gruhdrnhgvthdprhgtphhtthhopegrgigsohgvsehkvghrnhgvlhdrughkpdhrtghpthht
-    ohepuggrnhdrtggrrhhpvghnthgvrheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplh
-    hinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhg
-    pdhrtghpthhtoheprghsrghhiheslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtth
-    hopehhrghrshhhihhtrdhmrdhmohhgrghlrghprghllhhisehorhgrtghlvgdrtghomhdp
-    rhgtphhtthhopegrlhihshhsrgesrhhoshgvnhiifigvihhgrdhioh
-X-ME-Proxy: <xmx:jqi0Z2qDg0I7zAF77FbLuIaV1_8_wROYP2UYLMvCln1_tUcZQgGytg>
-    <xmx:jqi0Z0mcq9CMwg__3FKOFptFKMlafcmGjCb3mchG7931NM9T4rmRNg>
-    <xmx:jqi0Z23lCqX-FAKEjK0lSMxxuJj8DFyJMGJDDOCStSLrbnSsfBnskQ>
-    <xmx:jqi0Z7s5JpdjaV9TyuvDZ5uPko3ClOed0aWVbeyL6WyXaX2WzH-Cng>
-    <xmx:kKi0Z_usWWPE6CYtwzc8mZU67wVkMuPUMnI7L_RTvOCU9obF1tlfrnA_>
-Feedback-ID: i51094778:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 6AEEDBA0072; Tue, 18 Feb 2025 10:34:38 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1739892907; c=relaxed/simple;
+	bh=xG4cICiE98lRJZYn34MUYDdZqiy1OLzJL6O9uz4mrTw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ANEWdmWm48Plci5hnGar5e5XoKl3W8ngzkvTXRi1FdmGbUrqV7xhEpXXpmdO8NQYhP2pVvPF4iG7mnYGpC+ScB4g7vCCTztIbXI9r/ydPCqVBhhiEKSpSF2n/0ak4s+KXRj8F/lBDLHbacWS6SRSikVnxTF4tf09Yfidp+cy5gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h3ni8SRf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98F7EC4CEE2;
+	Tue, 18 Feb 2025 15:35:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739892906;
+	bh=xG4cICiE98lRJZYn34MUYDdZqiy1OLzJL6O9uz4mrTw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=h3ni8SRfCZanQq2OCYohP6jeCZGqeIzhPlJFYOoVYhxLfdxRgRORFwtqoCQlV7ziG
+	 wBDLimSOMcn0tPIjxg/Jd3/1aQvo3OPI6VNOuaGxSL9Vr10TTiHeultntgnZwFTa4z
+	 i4R7b1kOqK0YOpc6RCxeVaven2reJEUnFieS9M0gy0FaZGJ/YSY5RXwhUoc35WXWxm
+	 uavLpeJkNMLuFS1II3s/L4pXLeE2g7NRFoWam90Xt8o7r94Uo3lOBWF8DmQwwAwiSt
+	 qwq2tuMTKOmmmGzl66FgDHlPb/4Ui1DdQoF/5oxemLD//V/PliD6AzEQ9Ymfn7YHt/
+	 QJiW7fA7vHN7A==
+Date: Tue, 18 Feb 2025 15:35:02 +0000
+From: Mark Brown <broonie@kernel.org>
+To: James Calligeros <jcalligeros99@gmail.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>, Shenghao Ding <shenghao-ding@ti.com>,
+	Kevin Lu <kevin-lu@ti.com>, Baojun Xu <baojun.xu@ti.com>,
+	Dan Murphy <dmurphy@ti.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shi Fu <shifu0704@thundersoft.com>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Martin =?utf-8?Q?Povi=C5=A1er?= <povik+lin@cutebit.org>,
+	Hector Martin <marcan@marcan.st>, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	asahi@lists.linux.dev, linux-hwmon@vger.kernel.org,
+	Neal Gompa <neal@gompa.dev>
+Subject: Re: [PATCH v2 21/29] ASoC: tas2764: Add reg defaults for
+ TAS2764_INT_CLK_CFG
+Message-ID: <Z7Sopr2V6CzL9eVi@finisterre.sirena.org.uk>
+References: <20250218-apple-codec-changes-v2-0-932760fd7e07@gmail.com>
+ <20250218-apple-codec-changes-v2-21-932760fd7e07@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 18 Feb 2025 16:34:17 +0100
-From: "Sven Peter" <sven@svenpeter.dev>
-To: "Harshit Mogalapalli" <harshit.m.mogalapalli@oracle.com>,
- "Alyssa Rosenzweig" <alyssa@rosenzweig.io>, "Janne Grunau" <j@jannau.net>,
- "Asahi Lina" <lina@asahilina.net>, "Jens Axboe" <axboe@kernel.dk>,
- asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
- "Dan Carpenter" <error27@gmail.com>
-Message-Id: <0e609fea-48b0-4b39-aae4-90395a782ed8@app.fastmail.com>
-In-Reply-To: <20250212085853.1357906-1-harshit.m.mogalapalli@oracle.com>
-References: <20250212085853.1357906-1-harshit.m.mogalapalli@oracle.com>
-Subject: Re: [PATCH] soc: apple: rtkit: Fix use-after-free in apple_rtkit_crashlog_rx()
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
-
-Hi,
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="V9/MPtnfPTWJuqHi"
+Content-Disposition: inline
+In-Reply-To: <20250218-apple-codec-changes-v2-21-932760fd7e07@gmail.com>
+X-Cookie: Editing is a rewording activity.
 
 
-On Wed, Feb 12, 2025, at 09:58, Harshit Mogalapalli wrote:
-> This code calls kfree(bfr); and then passes "bfr" to rtk->ops->crashed()
-> which is a use after free.  The ->crashed function pointer is implemented
-> by apple_nvme_rtkit_crashed() and it doesn't use the "bfr" pointer so
-> this doesn't cause a problem.  But it still looks sketchy as can be.
->
-> Fix this by moving kfree() after the last usage of bfr.
->
-> Fixes: c559645f343a ("soc: apple: rtkit: Pass the crashlog to the 
-> crashed() callback")
+--V9/MPtnfPTWJuqHi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This commit isn't upstream yet afaict, did you mean to post a review comment
-to [1] instead?
+On Tue, Feb 18, 2025 at 06:35:55PM +1000, James Calligeros wrote:
+> From: Hector Martin <marcan@marcan.st>
+>=20
+> Reviewed-by: Neal Gompa <neal@gompa.dev>
+> Signed-off-by: Hector Martin <marcan@marcan.st>
+> Signed-off-by: James Calligeros <jcalligeros99@gmail.com>
 
+This is now upstream already, as are another couple of these patches.
+If nothing else please base your submissions on current code to avoid
+spurious conflicts.
 
-[1] https://lore.kernel.org/asahi/20250202-rtkit-crashdump-v1-1-9d38615b4e12@asahilina.net/
+--V9/MPtnfPTWJuqHi
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
-Best,
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAme0qKYACgkQJNaLcl1U
+h9A9iQf/WzzFguT3AEkECdXsmlm1cLHB1ASjmxzy7a7RyqWGQCjkplsneb0L+NKj
+/rP9bendh+6EzPmADrBRzB7OjzUaOa+cpBXQX9pEqZg3p2sRC+WCKy1rtH5pf7R0
+3yRL7h3P+dGaPf8R08SQ32iG8IT2d+M+ly7S5sAegrRf4VOubywTTXWRAYuETEQ+
+YMMEEAhmaleOaAmtJQVAfRBvd0/xj1qr6e+j4sslu83kmFdpycfb8bIe80Zr0WJ5
+ky2oNf32te0ps+Tc8Zf3Ya3gu+Ny4LF+cglv5FBUwEnNOR2vtFPjCF+f2IsOd9IO
+u7SfIAQgTal6r5LdVylz6825na8LUQ==
+=ma9b
+-----END PGP SIGNATURE-----
 
-
-Sven
+--V9/MPtnfPTWJuqHi--
 
