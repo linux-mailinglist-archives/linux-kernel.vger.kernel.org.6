@@ -1,98 +1,72 @@
-Return-Path: <linux-kernel+bounces-518770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECFA9A3942D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:54:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F7A0A39434
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:55:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 738DA7A133B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 07:53:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 479EA3B55A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 07:54:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E0B61FF1AA;
-	Tue, 18 Feb 2025 07:54:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB2C51FF7D1;
+	Tue, 18 Feb 2025 07:54:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="PPsDCYXe";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="5g5XYrVZ";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="PPsDCYXe";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="5g5XYrVZ"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LToRPUYw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66FA91DBB37
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 07:54:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EECC71FF60C;
+	Tue, 18 Feb 2025 07:54:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739865248; cv=none; b=LkCGxOdBn9ZARpkUm7onU0qDUGb//bjY/uTDcyzR2wDqxebeGHGlls2Wt746d7GiiHrea9tzs4zgZm+1OIyZkoehYru707TqEGZgETRvRc/d4rgK1VzOICK5miTBzjGrG1oAbU6RGv0FKYXD5nOZzUo6rJg+9tPvAP+L37knVLQ=
+	t=1739865283; cv=none; b=kU51zFg8mbd5rd0DVQqpAJoKUubISGQ4HBQCVIbAZp8RhulMYnA14DEjGeMKdYqGc0wtUMoR5EXu9KkiVhbz4KZNtR+CAFn1x3b92JB1uVlblQ/WcobzjtjMTCY2T2jciDv/qFui9EH8Q4DVHB306+67xT54hdRdZ0SQoKcYwRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739865248; c=relaxed/simple;
-	bh=Vkk6AGzyABeTN27FoNfk4tOS0rUlOcfUXzCFf34W0Cs=;
+	s=arc-20240116; t=1739865283; c=relaxed/simple;
+	bh=v6rks38UjHbSedKTqBUrl+hkA672IhEJ7GpUXquArPA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KUDA87XIwNWuq28sYtpi2SJBqYLoMSjMInuptQ3HaOpvt28YcH5A1CtRgqNl0dc91GaODWoM9jU7OTUIsn3g/+YGFtjF6vt18aoVq9Wv9YJfL5uR2I3siMqk02JdvmQIYk7WKwbuZSRa6KJyC+jomxTd+iKvGlVSRVrCLjX+Cgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=PPsDCYXe; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=5g5XYrVZ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=PPsDCYXe; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=5g5XYrVZ; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from kitsune.suse.cz (unknown [10.100.12.127])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 5E54F21160;
-	Tue, 18 Feb 2025 07:54:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739865244; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=d7bHl0ooLxFSzjEUZAaPsWHsj5Dt6Ubf1dAYLGBp6pQ=;
-	b=PPsDCYXeUSsNDKWv4y90uj2vZdDSQrsaIyIPThIXp1rg3V4Exd1i7qTev+o9zh2uDCSJ66
-	OelCcm5ItOHQqW1IapYXvbtpfA46V0ZDoTMSnoGLrSrJZfR8SaMoUG/ibs7IQnZ6CybUWk
-	+5YCI3Ma2ojogyPhh6CWq/tnJhIbmlQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739865244;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=d7bHl0ooLxFSzjEUZAaPsWHsj5Dt6Ubf1dAYLGBp6pQ=;
-	b=5g5XYrVZagb7mg9gJiByPE5IU70wlyqEirYOjDaQqamW7rkm5QbeURmiHU+wfAG3eXecAJ
-	CjcMdlC6zmGgL4BQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739865244; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=d7bHl0ooLxFSzjEUZAaPsWHsj5Dt6Ubf1dAYLGBp6pQ=;
-	b=PPsDCYXeUSsNDKWv4y90uj2vZdDSQrsaIyIPThIXp1rg3V4Exd1i7qTev+o9zh2uDCSJ66
-	OelCcm5ItOHQqW1IapYXvbtpfA46V0ZDoTMSnoGLrSrJZfR8SaMoUG/ibs7IQnZ6CybUWk
-	+5YCI3Ma2ojogyPhh6CWq/tnJhIbmlQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739865244;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=d7bHl0ooLxFSzjEUZAaPsWHsj5Dt6Ubf1dAYLGBp6pQ=;
-	b=5g5XYrVZagb7mg9gJiByPE5IU70wlyqEirYOjDaQqamW7rkm5QbeURmiHU+wfAG3eXecAJ
-	CjcMdlC6zmGgL4BQ==
-Date: Tue, 18 Feb 2025 08:54:03 +0100
-From: Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
-To: Shung-Hsi Yu <shung-hsi.yu@suse.com>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Segher Boessenkool <segher@kernel.crashing.org>,
-	Vitaly Chikunov <vt@altlinux.org>,
-	Abhishek Dubey <dubeyabhishek777@gmail.com>,
-	Yonghong Song <yonghong.song@linux.dev>
-Subject: Re: [PATCH 1/1] powerpc: use __clang__ instead of CONFIG_CC_IS_CLANG
-Message-ID: <Z7Q8m4131_7K44qn@kitsune.suse.cz>
-References: <20250218044802.17302-1-shung-hsi.yu@suse.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=STVCcmVxwx535hyinrk2FR7/wehjD9vBlSu7VnHT8vHcFNJe3cIS0lKQ75A82B2sK+AWcxB3WdQL60bII89gwhF3n8Pjzjh5/SuUisa3i7XMswxTpkKizA+xVVAIH0S6Umur+bqV5po8bPqCho14jxzxLqsrPyaU5GfIYxsq37o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LToRPUYw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DB2BC4CEE2;
+	Tue, 18 Feb 2025 07:54:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739865281;
+	bh=v6rks38UjHbSedKTqBUrl+hkA672IhEJ7GpUXquArPA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LToRPUYwFDatGYuVMfS6Qzc6jsJu1/cSBZ7FSMONQ53i2pQPdbiDKih0rw5E4zUSs
+	 sSF3gc6UqJrgZ+STAZyVezsYZOboCIbB73cLQJuM3/ckaXE5ht3BPqSMX/GvKmJ8dQ
+	 NGd2d7bNhUpHwq9tY6nwWZ2KyIHHD+a6bWWuckGxwFh+J0c/iKIDhE2sUHDj3tTUqa
+	 F2vXRdWDyfV8PldwsIf6oVMefRyoLfd8ZfdiVNCclJxYKp+4vQJWforvhGlQtpRGOW
+	 YEieCXceTZ1uUNqCPiwM2Gro9JSfiRwF59m45R4vSJgmIphJlq6vI1rB/BkDojZhjt
+	 H08LdkorabBJQ==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1tkIRL-000000000R5-3DtY;
+	Tue, 18 Feb 2025 08:54:48 +0100
+Date: Tue, 18 Feb 2025 08:54:47 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rajendra Nayak <quic_rjendra@quicinc.com>,
+	Sibi Sankar <quic_sibis@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Trilok Soni <quic_tsoni@quicinc.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v6 2/2] usb: typec: Add support for Parade PS8830 Type-C
+ Retimer
+Message-ID: <Z7Q8xwcfeE3tcBLL@hovoldconsulting.com>
+References: <20250206-x1e80100-ps8830-v6-0-60b1e49cfa8d@linaro.org>
+ <20250206-x1e80100-ps8830-v6-2-60b1e49cfa8d@linaro.org>
+ <Z68EUTlHcm6TxjlY@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -101,80 +75,152 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250218044802.17302-1-shung-hsi.yu@suse.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-8.30 / 50.00];
-	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	RCVD_COUNT_ZERO(0.00)[0];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[lists.ozlabs.org,vger.kernel.org,ellerman.id.au,linux.ibm.com,gmail.com,csgroup.eu,kernel.org,google.com,kernel.crashing.org,altlinux.org,linux.dev];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,kitsune.suse.cz:helo,kitsune.suse.cz:mid]
-X-Spam-Score: -8.30
-X-Spam-Flag: NO
+In-Reply-To: <Z68EUTlHcm6TxjlY@hovoldconsulting.com>
 
-Hello,
+On Fri, Feb 14, 2025 at 09:52:33AM +0100, Johan Hovold wrote:
+> On Thu, Feb 06, 2025 at 11:28:28AM +0200, Abel Vesa wrote:
+> > The Parade PS8830 is a USB4, DisplayPort and Thunderbolt 4 retimer,
+> > controlled over I2C. It usually sits between a USB/DisplayPort PHY
+> > and the Type-C connector, and provides orientation and altmode handling.
 
-how does this happen?
+Turns out Greg had picked this one up 20 minutes before I sent my
+comments. I did see Heikki's ack the day before and realised time was
+short but was not able to drop everything and review the last revision
+due to meetings that afternoon.
 
-On Tue, Feb 18, 2025 at 12:48:01PM +0800, Shung-Hsi Yu wrote:
-> Due to include chain (below), powerpc's asm-compat.h is part of UAPI,
-> thus it should use the __clang__ macro to directly detect whether Clang
-> is used rather then relying on the kernel config setting. The later is
-> unreliable because the userspace tools that uses UAPI may be compile
-> with a different compiler than the one used for the kernel, leading to
-> incorrect constrain selection (see link for an example of such).
+Well, well, I guess you can say I only have myself to blame for not
+reviewing within a week of the last revision being posted.
+
+> > +static int ps883x_retimer_probe(struct i2c_client *client)
+> > +{
+> > +	struct device *dev = &client->dev;
+> > +	struct typec_switch_desc sw_desc = { };
+> > +	struct typec_retimer_desc rtmr_desc = { };
+> > +	struct ps883x_retimer *retimer;
+> > +	int ret;
+> > +
+> > +	retimer = devm_kzalloc(dev, sizeof(*retimer), GFP_KERNEL);
+> > +	if (!retimer)
+> > +		return -ENOMEM;
+> > +
+> > +	retimer->client = client;
+> > +
+> > +	mutex_init(&retimer->lock);
+> > +
+> > +	retimer->regmap = devm_regmap_init_i2c(client, &ps883x_retimer_regmap);
+> > +	if (IS_ERR(retimer->regmap))
+> > +		return dev_err_probe(dev, PTR_ERR(retimer->regmap),
+> > +				     "failed to allocate register map\n");
+> > +
+> > +	ret = ps883x_get_vregs(retimer);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	retimer->xo_clk = devm_clk_get(dev, NULL);
+> > +	if (IS_ERR(retimer->xo_clk))
+> > +		return dev_err_probe(dev, PTR_ERR(retimer->xo_clk),
+> > +				     "failed to get xo clock\n");
+> > +
+> > +	retimer->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_ASIS);
 > 
->   include/uapi/linux/ptrace.h
->   arch/powerpc/include/asm/ptrace.h
-
-There is arch/powerpc/include/uapi/asm/ptrace.h
-
-and if the installed header is used this is what should be included.
-
-That does no include other asm headers.
-
-Thanks
-
-Michal
-
->   arch/powerpc/include/asm/paca.h
->   arch/powerpc/include/asm/atomic.h
->   arch/powerpc/include/asm/asm-compat.h
+> What if the reset pin has not been configured by the boot firmware? Then
+> this input the to device will be floating when you power it on,
+> something which you'd typically try to avoid by asserting reset before
+> enabling power.
 > 
-> Link: https://github.com/iovisor/bcc/issues/5172
-> Signed-off-by: Shung-Hsi Yu <shung-hsi.yu@suse.com>
-> ---
->  arch/powerpc/include/asm/asm-compat.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> > +	if (IS_ERR(retimer->reset_gpio))
+> > +		return dev_err_probe(dev, PTR_ERR(retimer->reset_gpio),
+> > +				     "failed to get reset gpio\n");
+> > +
+> > +	retimer->typec_switch = typec_switch_get(dev);
+> > +	if (IS_ERR(retimer->typec_switch))
+> > +		return dev_err_probe(dev, PTR_ERR(retimer->typec_switch),
+> > +				     "failed to acquire orientation-switch\n");
+> > +
+> > +	retimer->typec_mux = typec_mux_get(dev);
+> > +	if (IS_ERR(retimer->typec_mux)) {
+> > +		ret = dev_err_probe(dev, PTR_ERR(retimer->typec_mux),
+> > +				    "failed to acquire mode-mux\n");
+> > +		goto err_switch_put;
+> > +	}
+> > +
+> > +	ret = drm_aux_bridge_register(dev);
+> > +	if (ret)
+> > +		goto err_mux_put;
+> > +
+> > +	ret = ps883x_enable_vregs(retimer);
+> > +	if (ret)
+> > +		goto err_mux_put;
+> > +
+> > +	ret = clk_prepare_enable(retimer->xo_clk);
+> > +	if (ret) {
+> > +		dev_err(dev, "failed to enable XO: %d\n", ret);
+> > +		goto err_vregs_disable;
+> > +	}
+> > +
+> > +	sw_desc.drvdata = retimer;
+> > +	sw_desc.fwnode = dev_fwnode(dev);
+> > +	sw_desc.set = ps883x_sw_set;
+> > +
+> > +	retimer->sw = typec_switch_register(dev, &sw_desc);
+> > +	if (IS_ERR(retimer->sw)) {
+> > +		ret = PTR_ERR(retimer->sw);
+> > +		dev_err(dev, "failed to register typec switch: %d\n", ret);
+> > +		goto err_clk_disable;
+> > +	}
+> > +
+> > +	rtmr_desc.drvdata = retimer;
+> > +	rtmr_desc.fwnode = dev_fwnode(dev);
+> > +	rtmr_desc.set = ps883x_retimer_set;
+> > +
+> > +	retimer->retimer = typec_retimer_register(dev, &rtmr_desc);
+> > +	if (IS_ERR(retimer->retimer)) {
+> > +		ret = PTR_ERR(retimer->retimer);
+> > +		dev_err(dev, "failed to register typec retimer: %d\n", ret);
+> > +		goto err_switch_unregister;
+> > +	}
+> > +
+> > +	/* skip resetting if already configured */
+> > +	if (regmap_test_bits(retimer->regmap, REG_USB_PORT_CONN_STATUS_0,
+> > +			     CONN_STATUS_0_CONNECTION_PRESENT) == 1)
+> > +		return gpiod_direction_output(retimer->reset_gpio, 0);
 > 
-> diff --git a/arch/powerpc/include/asm/asm-compat.h b/arch/powerpc/include/asm/asm-compat.h
-> index f48e644900a2..34f8740909a9 100644
-> --- a/arch/powerpc/include/asm/asm-compat.h
-> +++ b/arch/powerpc/include/asm/asm-compat.h
-> @@ -37,7 +37,7 @@
->  #define STDX_BE	stringify_in_c(stdbrx)
->  #endif
->  
-> -#ifdef CONFIG_CC_IS_CLANG
-> +#ifdef __clang__
->  #define DS_FORM_CONSTRAINT "Z<>"
->  #else
->  #define DS_FORM_CONSTRAINT "YZ<>"
-> -- 
-> 2.48.1
+> I'm still a little concerned about this. Won't you end up with i2c
+> timeout errors in the logs if the device is held in reset before probe?
+
+You should be able to use i2c_smbus_read_byte() to avoid logging errors
+when the boot firmware has *not* enabled the device.
+
+My worry is that this perfectly valid case has not even been tested,
+and worst case you may need a device-tree property to fully determine
+whether the device has been initialised by the boot firmware or not (cf.
+'regulator-boot-on').
+
+And if we need binding changes those need to be there from the start.
+
+I guess we have a few weeks to work this out, and if needed we can
+always disable the driver temporarily.
+
+> Have you tried unbinding the device and rebinding to test this?
 > 
+> And what about the CONN_STATUS_0_CONNECTION_PRESENT bit; it sounds like
+> it just reflects the connected status. Are you sure it will not be set
+> for a device that has not yet been configured?
+
+> > +err_switch_unregister:
+> > +	typec_switch_unregister(retimer->sw);
+> > +err_vregs_disable:
+> > +	ps883x_disable_vregs(retimer);
+> > +err_clk_disable:
+> > +	clk_disable_unprepare(retimer->xo_clk);
+> 
+> This one should go above err_vregs_disable or can end up with an
+> unbalanced clock disable or regulators left on after probe failure.
+> 
+> And you should assert reset before disabling clocks as well to avoid
+> driving the pin after disabling power.
+
+I'll send an incremental fix for this.
+
+Johan
 
