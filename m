@@ -1,99 +1,120 @@
-Return-Path: <linux-kernel+bounces-518850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C66F3A39537
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:25:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DB51A3955D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:29:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9643D7A140C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:24:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31608177AD1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:25:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53A9C22AE7F;
-	Tue, 18 Feb 2025 08:23:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CE3E22B8D9;
+	Tue, 18 Feb 2025 08:23:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ue2WDAeQ"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="N2rjtMJY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB7CE1FF1B4;
-	Tue, 18 Feb 2025 08:23:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DF8E22B8AC;
+	Tue, 18 Feb 2025 08:23:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739866993; cv=none; b=rdfRZe3LsqXms83M8iRTs8rlNlQ9ShPz2AVz0rVTklx24oJGGn3nQNXr6yL+54A9ln0LegJFEBWOGMWqhZ86QvEnQtRyETz+0tLOi/63EutvtrK1EMRK7fp/g9BEXEeLFgWgAo5RhZVMLEYmNIBCN5uYX4QzOHxtCDOD2OB+M5M=
+	t=1739866995; cv=none; b=KUuHq0bIloPbNUKMphOAxvpPw8Klz/VdVG6Kq8stBfsBo7g014nZAsXDg9oBuBty9XmViGQdu6Qia9/Pd827x4pB9Eo+U9g6Ut0EywZz3oZki+3TtznrbInWYVdTiSbbhrbf+aV2k0flGViosp+7aU9QI3cooSvf3jY5yS4lkCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739866993; c=relaxed/simple;
-	bh=p6YzcyfZTI2awbpmNRLFZOrM9ZUlgJUmwUZ83JNsVM4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PYE4WeO4cmHzyUJL/T/v6uOKn9EYo0Oj7gb2tAQ8RwQPfbuAgk4bjlzLwYdwj7LoazIPCzIMhTGshWkFbOuf6WU/5acNCQjgqm3ngME7IZD0E/t9M7SfRZPY/pOrbLV+uTp5P7L2yxIMHx911Cl7qBvafgC7Mn5hU3jq95s7BnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ue2WDAeQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13D9DC4CEE2;
-	Tue, 18 Feb 2025 08:23:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739866993;
-	bh=p6YzcyfZTI2awbpmNRLFZOrM9ZUlgJUmwUZ83JNsVM4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ue2WDAeQ9ahdmETC2736iv7XZV4xUcU2vmA9SJsbv39kC/+uSJrTx9Jv3hkehZknO
-	 Pjj4Z9zGrtxM1sLiqEZTjWKNa0qf2yJo4RKHoxGaR4RQVyw9BcAuaD24E//cf0etiz
-	 rFxRDEPFm4+/F7XesRiczpjJAlq/dVpvbjqniySiPbZ4tLtPoFVtfDvvwBo50HUlQK
-	 T02yJykk9jK8yLxs8TehvZi+3C3TnyMSc9M44vLEBSwNoty7pBdqNAUdGEW+wzZSr6
-	 D0QVuyNWesS+vh+gfHpb2AHUHINS+9ZoSufjO5t4SpuPjwAQ3x5BnOgpUzPZYCB+Uu
-	 WpAB6w7EzgftA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan+linaro@kernel.org>)
-	id 1tkIsx-000000002R5-2j2W;
-	Tue, 18 Feb 2025 09:23:20 +0100
-From: Johan Hovold <johan+linaro@kernel.org>
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Abel Vesa <abel.vesa@linaro.org>
-Subject: [PATCH] usb: typec: ps883x: fix probe error handling
-Date: Tue, 18 Feb 2025 09:22:43 +0100
-Message-ID: <20250218082243.9318-1-johan+linaro@kernel.org>
-X-Mailer: git-send-email 2.45.3
+	s=arc-20240116; t=1739866995; c=relaxed/simple;
+	bh=neeFVALKbKwQUPHxKrTHs/kVl2XxJWwQWOBdLZElY94=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y0dxAA4/f8T+FxyXeTum+U+VRDI4Ftd+BQffKeRivUpWQrP3UDjJkX3bZFzcqqgenDNTTJKGK1i3pk4kMCBaEQKBPD2a7B58qr4FkRnPOxInHalh6tB1RZlbm9Ad4NuHX55F/6joLJ8CN8jEOaViTN3lVezrbD+PVGgPwK65Fy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=N2rjtMJY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 176AFC4CEE2;
+	Tue, 18 Feb 2025 08:23:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1739866994;
+	bh=neeFVALKbKwQUPHxKrTHs/kVl2XxJWwQWOBdLZElY94=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=N2rjtMJYFrD16J2ut1MoO/nzfvlY4PeHMMF470CaK971/Tp4bYfsa1ItIz39BTEaL
+	 MSN5czFgQaYui30dNETEwZjLLYUuJNE9NOTYB2WPsw0rkMuI3r+NXvh3k1mJyVIc2E
+	 nRWiyvMpLa3tZGZjIW6J6hi9WgDmHzbPTVVlluzE=
+Date: Tue, 18 Feb 2025 09:23:11 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Hsin-chen Chuang <chharry@google.com>
+Cc: linux-bluetooth@vger.kernel.org, luiz.dentz@gmail.com,
+	chromeos-bluetooth-upstreaming@chromium.org,
+	Hsin-chen Chuang <chharry@chromium.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Johan Hedberg <johan.hedberg@gmail.com>,
+	Marcel Holtmann <marcel@holtmann.org>,
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+	Ying Hsu <yinghsu@chromium.org>, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v5] Bluetooth: Fix possible race with userspace of sysfs
+ isoc_alt
+Message-ID: <2025021829-clamor-lavish-9126@gregkh>
+References: <20250214191615.v5.1.If6f14aa2512336173a53fc3552756cd8a332b0a3@changeid>
+ <2025021425-surgical-wackiness-0940@gregkh>
+ <CADg1FFd3H0DLV-WX8jTB1VGyOZYEzchP99QvYxWmg1XCOo1ttg@mail.gmail.com>
+ <2025021717-prepay-sharpener-37fb@gregkh>
+ <CADg1FFf7fONc+HJT8rq55rVFRnS_UxnEPnAGQ476WVe+208_pA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CADg1FFf7fONc+HJT8rq55rVFRnS_UxnEPnAGQ476WVe+208_pA@mail.gmail.com>
 
-Fix the probe error handling to avoid unbalanced clock disable or
-leaving regulators on after probe failure.
+On Tue, Feb 18, 2025 at 12:24:07PM +0800, Hsin-chen Chuang wrote:
+> Hi Greg,
+> 
+> On Mon, Feb 17, 2025 at 4:53 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Mon, Feb 17, 2025 at 04:44:35PM +0800, Hsin-chen Chuang wrote:
+> > > On Fri, Feb 14, 2025 at 7:37 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> > > >
+> > > > On Fri, Feb 14, 2025 at 07:16:17PM +0800, Hsin-chen Chuang wrote:
+> > > > > From: Hsin-chen Chuang <chharry@chromium.org>
+> > > > >
+> > > > > Expose the isoc_alt attr with device group to avoid the racing.
+> > > > >
+> > > > > Now we create a dev node for btusb. The isoc_alt attr belongs to it and
+> > > > > it also becomes the parent device of hci dev.
+> > > > >
+> > > > > Fixes: b16b327edb4d ("Bluetooth: btusb: add sysfs attribute to control USB alt setting")
+> > > >
+> > > > Wait, step back, why is this commit needed if you can change the alt
+> > > > setting already today through usbfs/libusb without needing to mess with
+> > > > the bluetooth stack at all?
+> > >
+> > > In short: We want to configure the alternate settings without
+> > > detaching the btusb driver, while detaching seems necessary for
+> > > libusb_set_interface_alt_setting to work (Please correct me if I'm
+> > > wrong!)
+> >
+> > I think changing the alternate setting should work using usbfs as you
+> > would send that command to the device, not the interface, so the driver
+> > bound to the existing interface would not need to be removed.
+> 
+> I thought USBDEVFS_SETINTERFACE was the right command to begin with,
+> but it seems not working in this case.
+> The command itself attempts to claim the interface, but the interface
+> is already claimed by btusb so it failed with Device or resource busy
+> 
+> drivers/usb/core/devio.c:
+>   USBDEVFS_SETINTERFACE -> proc_setintf -> checkintf -> claimintf
 
-Note that the active-low reset pin should also be asserted to avoid
-leaking current after disabling the regulators.
+Ah, ok, thanks for checking.  So as you control this device, why not
+just disconnect it, change the setting, and then reconnect it?
 
-Fixes: 257a087c8b52 ("usb: typec: Add support for Parade PS8830 Type-C Retimer")
-Cc: Abel Vesa <abel.vesa@linaro.org>
-Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
----
- drivers/usb/typec/mux/ps883x.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Also, see my other review comment, how does BlueZ do this today?
 
-diff --git a/drivers/usb/typec/mux/ps883x.c b/drivers/usb/typec/mux/ps883x.c
-index 10e407ab6b7f..ef086989231f 100644
---- a/drivers/usb/typec/mux/ps883x.c
-+++ b/drivers/usb/typec/mux/ps883x.c
-@@ -387,10 +387,11 @@ static int ps883x_retimer_probe(struct i2c_client *client)
- 
- err_switch_unregister:
- 	typec_switch_unregister(retimer->sw);
--err_vregs_disable:
--	ps883x_disable_vregs(retimer);
- err_clk_disable:
- 	clk_disable_unprepare(retimer->xo_clk);
-+err_vregs_disable:
-+	gpiod_set_value(retimer->reset_gpio, 1);
-+	ps883x_disable_vregs(retimer);
- err_mux_put:
- 	typec_mux_put(retimer->typec_mux);
- err_switch_put:
--- 
-2.45.3
+thanks,
 
+greg k-h
 
