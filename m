@@ -1,240 +1,203 @@
-Return-Path: <linux-kernel+bounces-519806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A3B7A3A22B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:09:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 685A0A3A22A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:09:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 329831898C43
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:06:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9C811770CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:06:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75E0B26F47E;
-	Tue, 18 Feb 2025 16:05:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 913F526E166;
+	Tue, 18 Feb 2025 16:06:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0i7Kor5K"
-Received: from mail-lf1-f74.google.com (mail-lf1-f74.google.com [209.85.167.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="FgA4+xS4"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B3526F447
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 16:05:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.74
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739894707; cv=none; b=PiPbHXa1W3xJMNSySSEr+pZu71k7gsSIp6AHSqv3GWh7vnbDXxzPOfTnP0kxjTlYdMyQ/mCDFSbURbAUGJ2mzq+oTCKKJW2BjmXJ6S/YPIniuUdK70nVT8fcOYiI+lQEuJn3+xGvJYQVjx/SiQogJJDnrV5zTbyWzcpqeJxvhJM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739894707; c=relaxed/simple;
-	bh=+86Ks27emKBEUdAR/yquXOZ5pX01/bsLm7oyTQMlGko=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=qdFN3NxEd+53KRWx1da2XLovNjJcIkzZWaPoD2KHmrEIrahDXMwChyainN0J/BHkh4obeLp/frmCuWPIgCAE8RH3aqlXh2apLfA5HcMNuaG1uqk/QX3HxyeSszl9LfwVc4a+ZCibeADRGf0EQ7tQjzD2+rCi6YyiixyqadNntZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dvyukov.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0i7Kor5K; arc=none smtp.client-ip=209.85.167.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--dvyukov.bounces.google.com
-Received: by mail-lf1-f74.google.com with SMTP id 2adb3069b0e04-545314fc413so1820329e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 08:05:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739894704; x=1740499504; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=g1PhhXFGFFLjKCOlfG2U0IWT7jUTa2le5EkO7OmJarM=;
-        b=0i7Kor5K1IXp7NSUtc0DLvxiSs5NLBZZ4tWHD/7KzUqWmQaq5zT4q2RVM/tYyXBopr
-         OpEYSOQiV4Iw8e3VJ2MskqYQuncnjDdHSMKFprNTPM+n0ypUH+ao0QMgwTSPlsm55RYm
-         +uv88zG4k4cMvowcjfqNVthS8tTKUMvZ0AK/l5xg7zb8zMAQYA7NHC++OzIPST+UPsX7
-         9CaN14VK/3Dg3Ls1G2MxB15dw/HQ8dwR/3FYtZJARvIvCahSP03Rl1+LlIR8j5MdGmmm
-         FpDMZ+YKUy/0tpiujsj0irlxia50BOtpdq+budDKFbM68eSy3BG+Njvlbpl5QX+2kvTY
-         JC9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739894704; x=1740499504;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=g1PhhXFGFFLjKCOlfG2U0IWT7jUTa2le5EkO7OmJarM=;
-        b=aNxU14sdkxnTS9pUGuBZtkKSrImceB9u3XtWqNYHEoAjb2kEv/zjXOBN0ou0zLGLCq
-         I53B1R4+83mksGid7C/eZRDab3Rokf6tWZpKuxrCTrkFJIpyZbnM0DKZOGpR1K4fNvPR
-         58geYedRW5vShY54lW+SMQPVkwnyyHhS8MRO6ElUNONtB9LxE77xSRle9+TbG5g6xOMP
-         fplho4JMbmBIMuHyuG2r8Q8E0ieof9OCpnws42EeZekGq2nRdX6tf0FaxdT3U+6t43XD
-         pOTGjbDc7qBq59MSBr/QiTYkSSORC+e3nk0YWJICcLB4D6uKe6BUPqLQqFAOkYdN+CG3
-         b6ag==
-X-Forwarded-Encrypted: i=1; AJvYcCVNy8ANURmUcj28PDdi1YVHQC7NfCDUCQ13SWxGEytqEXoh21c1i5HTcfQjEqA8g+H86im7Jmyi8/GY6zM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8ZVLuFXxXPi2byZFp/jUNrOrzBynH4iqt3ZyhlalUbs5e3bR5
-	JYsYns/Zs2EwsDyMbCjq79U1R8ToZn2CDr87UnPX5/1Nq0ozHDq/7ngjBYrno1pOedfdIJW52ji
-	Bl/6/SA==
-X-Google-Smtp-Source: AGHT+IFQ5r0iX9btAy5iAzFYlowkpYrALsekY1SW7hZ60mqrsvMAnxluXmZE8RUjYs8fdVUXLOQUP62cXnRH
-X-Received: from ejchw12.prod.google.com ([2002:a17:907:a0cc:b0:abb:a168:b6d9])
- (user=dvyukov job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6512:238a:b0:545:4d1:64c0
- with SMTP id 2adb3069b0e04-5452fe63376mr5840413e87.27.1739894703816; Tue, 18
- Feb 2025 08:05:03 -0800 (PST)
-Date: Tue, 18 Feb 2025 17:04:36 +0100
-In-Reply-To: <cover.1739894594.git.dvyukov@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1226226B2D3;
+	Tue, 18 Feb 2025 16:06:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739894796; cv=pass; b=n8VTye2f+gbouixJMdlLeHOD9W3eovpZ2VfNjpziuxc0wKrxx592EIGgwfSTkPm3CsbZ5lntWqloH5Koxn7Au3tnYrW7FVTvv4TqIIQXVxaW5eLWzHIJnoC3i2DMZ5q0nGeqmwsOL7SAsLub2ZxBiHVpMdLioOOnA0A0gDDyaKI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739894796; c=relaxed/simple;
+	bh=DDzbET4fd19jTqe0Q5idiTqv1d97ze68l/zrB2P5rqM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gwYsIMHeCW5Vk9yTnPFRHayNf8baliThhFAsMheP4JWj+T9ZJAEy6SVlxCob9L7b+183BjBZH37QqnM8z4NQn2UYWHiLs11zZV+IOn6CqZ89JtG/1rrcxviopQm7WQoJ0ho4B9A799WN3nusVy7Atn1WYjGS59PQU6B+JJgcVQI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=FgA4+xS4; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1739894756; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=QeE1UnGpkKUhFcjiTUMcgglbMPdzh955L6Mi2jIgD9tKNIPn26QzzWlV7f2y01eoxZSYkPLCGhcOpaKPojXRbtmGgdqIgS1zfN36bpC/hRjB+jcE9koavgWBAfY/sonHzKAQRSXZxLIXWMgspqrApuhGdX1IRJXN1+GCHmGNFq4=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1739894756; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=G046fTzq88sck8KR6YfGTXkooubDb0hnHxEcuTcuA5k=; 
+	b=M7LcLdJQJVTN3G8u1bPUrNdYseFDG0lZMGBgvh9/yidSYURnFwX6TSOKl42NFCJ8wNXPsXNX82FsLDrvkAPh8tdcU7amdyHvWpLtHPOnfEcI13WO9WZC43QpsVSSfANAl3+jyjn0ShAo4rke8ei77214gfqIW2G+3wiiPX72fDs=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1739894756;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=G046fTzq88sck8KR6YfGTXkooubDb0hnHxEcuTcuA5k=;
+	b=FgA4+xS4u3LMbTIIyv5qrJ6nnZmCprKCSG6FW+rUMiJXrIv136LF1qPiqpNhHi7N
+	gQTLKgLNW6DXedADhp8GDjgB+ZMLON6NZRfxYc3YNyshrOByqG5h6AGKiLfXPNbAJmR
+	Ftn4+eWXOqdOxSn99vfv2v0JP8kGRp5qh40qA+Cs=
+Received: by mx.zohomail.com with SMTPS id 1739894753650443.23063731499315;
+	Tue, 18 Feb 2025 08:05:53 -0800 (PST)
+Received: by venus (Postfix, from userid 1000)
+	id 4B7381807FB; Tue, 18 Feb 2025 17:05:48 +0100 (CET)
+Date: Tue, 18 Feb 2025 17:05:48 +0100
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>
+Cc: Jianfeng Liu <liujianfeng1994@gmail.com>, airlied@gmail.com, 
+	andy.yan@rock-chips.com, conor+dt@kernel.org, cristian.ciocaltea@collabora.com, 
+	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, hjc@rock-chips.com, 
+	kernel@collabora.com, krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, robh@kernel.org, simona@ffwll.ch, 
+	tzimmermann@suse.de
+Subject: Re: [PATCH 3/4] arm64: dts: rockchip: Add HDMI1 PHY PLL clock source
+ to VOP2 on RK3588
+Message-ID: <ldgdrytto5y2xf3ois23j4ymtajtwmqlxjr2zyqhwbbxcx6f6y@gzb37fntx2x6>
+References: <1919367.CQOukoFCf9@diego>
+ <20250218121749.1382322-1-liujianfeng1994@gmail.com>
+ <lnuceofdwm6lgibworaghcujp6rrncvn4e2xc2vzltimjw3rqu@jur7x5cxt5ue>
+ <2425191.NG923GbCHz@diego>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1739894594.git.dvyukov@google.com>
-X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
-Message-ID: <5e105b1382cd43d05f1d3a80958e4f50f32144c8.1739894594.git.dvyukov@google.com>
-Subject: [PATCH 3/3] selftests: Extend syscall_user_dispatch test to check
- allowed range
-From: Dmitry Vyukov <dvyukov@google.com>
-To: krisman@collabora.com, tglx@linutronix.de, luto@kernel.org, 
-	peterz@infradead.org, keescook@chromium.org, gregory.price@memverge.com
-Cc: Dmitry Vyukov <dvyukov@google.com>, Marco Elver <elver@google.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="o5rdl6ozldbywqxd"
+Content-Disposition: inline
+In-Reply-To: <2425191.NG923GbCHz@diego>
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.4.2/239.824.9
+X-ZohoMailClient: External
 
-Add a test that ensures that PR_SET_SYSCALL_USER_DISPATCH respects
-the specified allowed PC range. The test includes both a continuous
-range and a wrap-around range.
 
-Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
-Cc: Gabriel Krisman Bertazi <krisman@collabora.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Gregory Price <gregory.price@memverge.com>
-Cc: Marco Elver <elver@google.com>
-Cc: linux-kernel@vger.kernel.org
----
- .../syscall_user_dispatch/sud_test.c          | 79 +++++++++++--------
- 1 file changed, 48 insertions(+), 31 deletions(-)
+--o5rdl6ozldbywqxd
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 3/4] arm64: dts: rockchip: Add HDMI1 PHY PLL clock source
+ to VOP2 on RK3588
+MIME-Version: 1.0
 
-diff --git a/tools/testing/selftests/syscall_user_dispatch/sud_test.c b/tools/testing/selftests/syscall_user_dispatch/sud_test.c
-index b0969925ec64c..fa40e46e6d3e9 100644
---- a/tools/testing/selftests/syscall_user_dispatch/sud_test.c
-+++ b/tools/testing/selftests/syscall_user_dispatch/sud_test.c
-@@ -10,6 +10,7 @@
- #include <sys/sysinfo.h>
- #include <sys/syscall.h>
- #include <signal.h>
-+#include <stdbool.h>
- 
- #include <asm/unistd.h>
- #include "../kselftest_harness.h"
-@@ -110,31 +111,15 @@ TEST(bad_prctl_param)
- 	/* PR_SYS_DISPATCH_ON */
- 	op = PR_SYS_DISPATCH_ON;
- 
--	/* Dispatcher region is bad (offset > 0 && len == 0) */
--	EXPECT_EQ(-1, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x1, 0x0, &sel));
--	EXPECT_EQ(EINVAL, errno);
--	EXPECT_EQ(-1, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, -1L, 0x0, &sel));
--	EXPECT_EQ(EINVAL, errno);
-+	/* All ranges are allowed */
-+	EXPECT_EQ(0, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x1, 0x0, &sel));
-+	EXPECT_EQ(0, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, -1L, 0x0, &sel));
-+	EXPECT_EQ(0, prctl(PR_SET_SYSCALL_USER_DISPATCH, PR_SYS_DISPATCH_ON, 1, -1L, &sel));
-+	EXPECT_EQ(0, prctl(PR_SET_SYSCALL_USER_DISPATCH, PR_SYS_DISPATCH_ON, -1L, 0x1, &sel));
- 
- 	/* Invalid selector */
- 	EXPECT_EQ(-1, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x0, 0x1, (void *) -1));
- 	EXPECT_EQ(EFAULT, errno);
--
--	/*
--	 * Dispatcher range overflows unsigned long
--	 */
--	EXPECT_EQ(-1, prctl(PR_SET_SYSCALL_USER_DISPATCH, PR_SYS_DISPATCH_ON, 1, -1L, &sel));
--	EXPECT_EQ(EINVAL, errno) {
--		TH_LOG("Should reject bad syscall range");
--	}
--
--	/*
--	 * Allowed range overflows usigned long
--	 */
--	EXPECT_EQ(-1, prctl(PR_SET_SYSCALL_USER_DISPATCH, PR_SYS_DISPATCH_ON, -1L, 0x1, &sel));
--	EXPECT_EQ(EINVAL, errno) {
--		TH_LOG("Should reject bad syscall range");
--	}
- }
- 
- /*
-@@ -145,11 +130,13 @@ char glob_sel;
- int nr_syscalls_emulated;
- int si_code;
- int si_errno;
-+unsigned long syscall_addr;
- 
- static void handle_sigsys(int sig, siginfo_t *info, void *ucontext)
- {
- 	si_code = info->si_code;
- 	si_errno = info->si_errno;
-+	syscall_addr = (unsigned long)info->si_call_addr;
- 
- 	if (info->si_syscall == MAGIC_SYSCALL_1)
- 		nr_syscalls_emulated++;
-@@ -172,26 +159,29 @@ static void handle_sigsys(int sig, siginfo_t *info, void *ucontext)
- #endif
- }
- 
--TEST(dispatch_and_return)
-+int setup_sigsys_handler(void)
- {
--	long ret;
- 	struct sigaction act;
- 	sigset_t mask;
- 
--	glob_sel = 0;
--	nr_syscalls_emulated = 0;
--	si_code = 0;
--	si_errno = 0;
--
- 	memset(&act, 0, sizeof(act));
- 	sigemptyset(&mask);
--
- 	act.sa_sigaction = handle_sigsys;
- 	act.sa_flags = SA_SIGINFO;
- 	act.sa_mask = mask;
-+	return sigaction(SIGSYS, &act, NULL);
-+}
- 
--	ret = sigaction(SIGSYS, &act, NULL);
--	ASSERT_EQ(0, ret);
-+TEST(dispatch_and_return)
-+{
-+	long ret;
-+
-+	glob_sel = 0;
-+	nr_syscalls_emulated = 0;
-+	si_code = 0;
-+	si_errno = 0;
-+
-+	ASSERT_EQ(0, setup_sigsys_handler());
- 
- 	/* Make sure selector is good prior to prctl. */
- 	SYSCALL_DISPATCH_OFF(glob_sel);
-@@ -321,4 +311,31 @@ TEST(direct_dispatch_range)
- 	}
- }
- 
-+bool test_range(unsigned long offset, unsigned long length)
-+{
-+	nr_syscalls_emulated = 0;
-+	if (prctl(PR_SET_SYSCALL_USER_DISPATCH, PR_SYS_DISPATCH_ON, offset, length, &glob_sel))
-+		return false;
-+	SYSCALL_DISPATCH_ON(glob_sel);
-+	return syscall(MAGIC_SYSCALL_1) == MAGIC_SYSCALL_1 && nr_syscalls_emulated == 1;
-+}
-+
-+TEST(dispatch_range)
-+{
-+	ASSERT_EQ(0, setup_sigsys_handler());
-+	ASSERT_EQ(0, prctl(PR_SET_SYSCALL_USER_DISPATCH, PR_SYS_DISPATCH_ON, 0, 0, &glob_sel));
-+	SYSCALL_DISPATCH_ON(glob_sel);
-+	ASSERT_EQ(MAGIC_SYSCALL_1, syscall(MAGIC_SYSCALL_1));
-+	TH_LOG("syscall_addr=0x%lx", syscall_addr);
-+	EXPECT_FALSE(test_range(syscall_addr, 1));
-+	EXPECT_FALSE(test_range(syscall_addr-100, 200));
-+	EXPECT_TRUE(test_range(syscall_addr+1, 100));
-+	EXPECT_TRUE(test_range(syscall_addr-100, 100));
-+	/* Wrap-around tests for everything except for a single PC. */
-+	EXPECT_TRUE(test_range(syscall_addr+1, -1));
-+	EXPECT_FALSE(test_range(syscall_addr, -1));
-+	EXPECT_FALSE(test_range(syscall_addr+2, -1));
-+	SYSCALL_DISPATCH_OFF(glob_sel);
-+}
-+
- TEST_HARNESS_MAIN
--- 
-2.48.1.601.g30ceb7b040-goog
+Hi,
 
+On Tue, Feb 18, 2025 at 03:53:06PM +0100, Heiko St=FCbner wrote:
+> Am Dienstag, 18. Februar 2025, 15:13:07 MEZ schrieb Sebastian Reichel:
+> > On Tue, Feb 18, 2025 at 08:17:46PM +0800, Jianfeng Liu wrote:
+> > > On Tue, 18 Feb 2025 11:00:57 +0100, Heiko St=FCbnerwrote:
+> > > >So I guess step1, check what error is actually returned.
+> > >=20
+> > > I have checked that the return value is -517:
+> > >=20
+> > > rockchip-drm display-subsystem: [drm] *ERROR* failed to get pll_hdmip=
+hy1 with -517
+> > >=20
+> > > >Step2 check if clk_get_optional need to be adapted or alternatively
+> > > >catch the error in the vop2 and set the clock to NULL ourself in tha=
+t case.
+> > >=20
+> > > I tried the following patch to set the clock to NULL when clk_get_opt=
+ional
+> > > failed with value -517, and hdmi0 is working now. There are also some
+> > > boards like rock 5 itx which only use hdmi1, I think we should also a=
+dd
+> > > this logic to vop2->pll_hdmiphy0.
+> > >=20
+> > > @@ -3733,6 +3751,15 @@ static int vop2_bind(struct device *dev, struc=
+t device *master, void *data)
+> > >  		return PTR_ERR(vop2->pll_hdmiphy0);
+> > >  	}
+> > > =20
+> > > +	vop2->pll_hdmiphy1 =3D devm_clk_get_optional(vop2->dev, "pll_hdmiph=
+y1");
+> > > +	if (IS_ERR(vop2->pll_hdmiphy1)) {
+> > > +		drm_err(vop2->drm, "failed to get pll_hdmiphy1 with %d\n", vop2->p=
+ll_hdmiphy1);
+> > > +		if (vop2->pll_hdmiphy1 =3D=3D -EPROBE_DEFER)
+> > > +			vop2->pll_hdmiphy1 =3D NULL;
+> > > +		else
+> > > +			return PTR_ERR(vop2->pll_hdmiphy1);
+> > > +	}
+> > > +
+> >=20
+> > This first of all shows, that we should replace drm_err in this
+> > place with dev_err_probe(), which hides -EPROBE_DEFER errors by
+> > default and instead captures the reason for /sys/kernel/debug/devices_d=
+eferred.
+> >=20
+> > Second what you are doing in the above suggestion will break kernel
+> > configurations where VOP is built-in and the HDMI PHY is build as a
+> > module.
+> >=20
+> > But I also think it would be better to have the clocks defined in the
+> > SoC level DT. I suppose that means vop2_bind would have to check if
+> > the HDMI controller <ID> is enabled and only requests pll_hdmiphy<ID>
+> > based on that. Considering there is the OF graph pointing from VOP
+> > to the enabled HDMI controllers, it should be able to do that.
+>=20
+>=20
+> I was more thinking about fixing the correct thing, with something like:
+>=20
+> ----------- 8< ----------
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index cf7720b9172f..50faafbf5dda 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -5258,6 +5258,10 @@ of_clk_get_hw_from_clkspec(struct of_phandle_args =
+*clkspec)
+>         if (!clkspec)
+>                 return ERR_PTR(-EINVAL);
+>=20
+> +       /* Check if node in clkspec is in disabled/fail state */
+> +       if (!of_device_is_available(clkspec->np))
+> +               return ERR_PTR(-ENOENT);
+> +
+>         mutex_lock(&of_clk_mutex);
+>         list_for_each_entry(provider, &of_clk_providers, link) {
+>                 if (provider->node =3D=3D clkspec->np) {
+> ----------- 8< ----------
+>=20
+> Because right now the clk framework does not handle nodes in
+> failed/disabled state and would defer indefinitly.
+
+Also LGTM.
+
+Greetings,
+
+-- Sebastian
+
+--o5rdl6ozldbywqxd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAme0r9AACgkQ2O7X88g7
++prEJw//b+Nw+9Nf9WpI627qaO/nkDdYe5KdSqZ5AJLbh3YYVOCDhT/NZaj0hLmr
+vhxexWcqOxpnDMvC2+85z8Zvlkh5/4WVYfOb1e2ffacSFKlA63hKr6/icLbn/ID4
+MMtySrVG96k07/4Z33vjoLj8Hp/CHb/g8R0H3Kkre7CMBF8QLCbQFyMV9EwuCMQN
+V2uLFkhfuK1iuAQtoIkTeI5ayDNYEcA+iOyTNdcNenKL1iAuFqpBDZpsvWQArMm6
+W4mGQos4IbyoQs2eaT/+oj1BYpbCAmjAoD4lpWyhj/UzNgDnX35Q49cRrJk3zAfS
+dLl5gy1zWl1H/L0zCYEAw6ug+3ZtFRHAlGiHDJytGTIQHNBD5oYXabVqKaJtdZU3
+iqfqEA7DmJHQ0wUE1yn/Z96bkJ/caCrKwzVMCNmJnFh4FMm6Mn4C38rZBbPp5qov
+HmZiCDyegmHk91Le38hY1aa+Hme0YIkAm2pHUAzuvbNXShnydKIETQh/K+kv1XEb
+0Ox82DOWJnavmrRxBv/O8RfsMJG7PArEOekq/bHVRl0Z4e0fpOkRKC3bF1M0VaGj
+2djV6h+zLemt/Oy1RtzVot7yL5nI5EwIAzpZgzF5HZikFWLsoy3EjNLKXnLRwwTA
+le9kWno3wn2Ycy6E+wfMLIi3nULqcz1pXJqlxg3cTh2ZLqiugLs=
+=91vC
+-----END PGP SIGNATURE-----
+
+--o5rdl6ozldbywqxd--
 
