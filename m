@@ -1,156 +1,333 @@
-Return-Path: <linux-kernel+bounces-519403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDD7AA39C72
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:49:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B7EDA39C7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:50:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CD3116F95B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:49:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79644171ECC
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:49:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D48125A643;
-	Tue, 18 Feb 2025 12:49:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18F1C2594B9;
+	Tue, 18 Feb 2025 12:49:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LufKjvml"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wLUpja4b"
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 529C818E743;
-	Tue, 18 Feb 2025 12:49:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76AA425A35C
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 12:49:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739882944; cv=none; b=np68FjvYkO/74mlloOEUug1SY4waSj93XGWoNKKCObJuBBM+kdF8DFyBTOe/LiGvy1bYj/ZWbgiy40i2Rhd1H+6i2Q96jBKeXdsN2ODNSzwZ9KLzhXmTPPwMHjUIqSG+jTjT32IzsnjxNtjYBSKzY5cNvkh617zS5H3mbtQnYvM=
+	t=1739882975; cv=none; b=VUynIZ9Xv97J8vsEtGnQwzpuBgNe75nPrPtkIU/h7aT0kRtF0HrgU9yla0O/axb1VNn5OILZkwsqDLqyVOuQvMocl6L/smPq9Vqf45G5Mn7VFwMMHhLQ+NPNvQr+v1B6pySGoM+1lp7AtC4RMvPp5Z8iIT45yR8S2Zp1j8Gv2Bk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739882944; c=relaxed/simple;
-	bh=3MTAPX7BbYroUzgDrT3TI2XCGXe5QTbsIEpvN1L+HL0=;
+	s=arc-20240116; t=1739882975; c=relaxed/simple;
+	bh=4c34Pl9V9oAv5pnu9ClgVRb05vmvT9zIOa3MRXeK69s=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZKPfHpTYxdMDxQRRzQh9kSakib4mzqmE/2lfCIuePwL+XK9yeWSWOo88CWLLL+g2h7Vyueu9MeNAhIMMGr3UdAYuyi1gLn39eOCHe+wDrfyxxXPgZ2ikWD3DpjQtbfMpW+85ptfvY1bqh7y65u90s+300WPG8UicdjW2Ts43t4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LufKjvml; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4396424d173so54426125e9.0;
-        Tue, 18 Feb 2025 04:49:02 -0800 (PST)
+	 To:Cc:Content-Type; b=cUB0r39HwKQ7MB+HIZro3if7mEzcsQkxGcL0PbNJbZ4WZ5tKwMbLdMyF+/SUPxHxNBDc5ujmkrP5p/uVN23YSu2fxzdJhk5u8gVjBfJSBjDjYmFY6zHRFuRZP6K0oQhzHMYnbHwxYwn9ISppNaVMkM+BjzqRdMWrgneF28D2/Fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wLUpja4b; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e5dd164f03fso2345375276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 04:49:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739882941; x=1740487741; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xHMEUUgzJ5Lepuax0T+IdRjsT3yoJrxVgzW4e4ftDcQ=;
-        b=LufKjvmlDUVmfLvbIZx+lAUYODeSytD9mQKXxcFDFP8oUuf8jmD/5ssOoiAqKBnaEt
-         /cAO1rIP/2294mF9rCyKQGFxl4AXl9HhSE61aQhEjMWFJT7SPN0HqU6G/j2TG9t6Wrak
-         kO19wGRrtOUnHzDyU646zQWWqVAFbJqUrP+f5lyzp2nTJ+VJfjC4kwS7mK+nuisJzdFG
-         C1HJQdwodtBerH8yNhsKldgmnk8lmtpJD0W+uSKhzi/zIqt1aFbdRb9dhyfuapBnvbaR
-         oFxHanqQmiTln0ra3zqqlUg/MzganTwGG2lM183KhlaOl2d9bNtTdKhA/Ixgio71Sev2
-         UA6w==
+        d=linaro.org; s=google; t=1739882971; x=1740487771; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=KFFzr8bI2A+xFNJr0YO4ppktmUAC80FDXNawfppZ3YM=;
+        b=wLUpja4bT030NAOBXzMAAFIZ4dcIHYZK8x35N8/bxQSyJI+c69nL6SKzOCY0P5AtO7
+         phUbIj42ZdZQbDcm6kvU1gk3Vqygbnpwby4DwpplXbI1XkLKWPiOYzLhJtNsedYuOxcF
+         TOOl1DiXR/kgL2zAHK23TR4jaFpiSLKj1zpxQDIlEhPHNyPxXdJFZXuzVGlt5iZAas48
+         YqRQhyBI/cjF4Fi8uZoB8zKNgjcdohM/pyE/HmGZPqjYivmHZzhIZ/z8FkQJ1XDoquRT
+         hjvYwo2k7r+AcMyKdw8q2ZPGEK7vGZ8JaPLcknzqxzsFVmZ1la3iGtSS68vGFJAKc5oh
+         Dayg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739882941; x=1740487741;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xHMEUUgzJ5Lepuax0T+IdRjsT3yoJrxVgzW4e4ftDcQ=;
-        b=A9GxgLKrKrfjwVh3WEMwxAeWDah+G26/diR1kdhkX4IhhcznFJHwF6cAQiTKotRu+a
-         iMFjfKg3BJzPdpG/PXc4SuB5OjfB/Y/OzjtBuCsE42BuOzUN1wDgxEf4FT8Gbs5OptAU
-         w3a0F5t9E5IC6ZH7jm0sKZ9kEAgQJ5OKBZ1/FeQnZnLbb620mRjjraAVxkHCzRw/GZnP
-         oJ/ChhqrjMk3QlAUpFWrchEMuofhiORwIKjqFmDDVgd3xS93Pg/pM4xa5DgsDjWVlbaC
-         7Sx0t2rnCg52saR6bj3hWw18pM3qlBGJ7PtH7F4+9qHCn8PtnyFGkLW+xWqpPtgkKTlu
-         TvIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWI1V/gr800+022JwuP8Zqd4fqHMpQ7+qxCBrISFTGWkU5rJfY0dLUXjD44foV+yw4muKGlofDr6YsQ@vger.kernel.org, AJvYcCWxiDG9Q2Kdrqw9k4FC/koHCJ8qyktO13pFfLNGiFGaoMDHqCVEAhSllZwLKJ44+9usstdi2jNOb6sH6HG+@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcQGsh56iGvzsomZYNseSDOmtDW4SpP2DUotAlMF25sBspLpIg
-	+i32ATtNM2J+5yQxZ4KL+eMPcAtngYz59+0NG7xITnTmYWBM0kXcZGfX+KkBl6QtLZBfNnJug6a
-	BdDp0b608RTHrXI2QAVe38+tQMvY=
-X-Gm-Gg: ASbGnctNFJOwl2yHoKR6u/aOtcd9kA1jzpBfzv4sJwDSjN3ntburJGNu5792bTq4E3m
-	hs/L0r9J/wLwx6EI8s2i/48vEwtkMZEWoHWkJc7MsE0gEvLKMevr90M3AiczKSEZpFl0BC2FZgw
+        d=1e100.net; s=20230601; t=1739882971; x=1740487771;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KFFzr8bI2A+xFNJr0YO4ppktmUAC80FDXNawfppZ3YM=;
+        b=B/TGjDhTvJjWyxxy4WN8dSOxHrE4ZAaWwkqswf17UmVooI96tLZpGNRJI/lhqT9O98
+         4gRrXuI65wFOY2TJ3xp74AvGz9xTcml4zBjvl3GS9VXeTzwmQ4kSCng4wQr6NlPnRLhD
+         SjIKd7Qf/TxLu6BinbIEcMmRS43LaZ+bdJH1LCiWyTL5/irVc/tRBHsFtZinJo8+M094
+         cJYIwqdqlTyhvJN7KiDCpx9uLMN3dbnPx62O4rKSTAhs9uYvA8JEan0wxfUj9DuC/6Ek
+         TREposB2pylDKcJdoOTfbCpqJv+7keCU7yHGKI9lfVKGOLzan29N/8oA8w2UC4Jfi+27
+         9TmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXiq3P9Xd8omg6nfyM7E5fJ0Kr3WecFfN0E80VJuu2nf/V9b4N+dhABgQFGICA+mfalJRllq+z0C1bPXqI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6M+jDCXnFcMJxN48lvK4TL6TS/pE8XNCFu6BcjBECGawCKvxX
+	Cf+oWjrH0yIdwpI6CQ7hGNtkGhF+XoDURvAGLfBpKX1RN1JHnOhssGzFr/cOQv8jLUaJ5QzcE0K
+	z2J0uLx9HlfUMBUR7ybMwHn6gcNC55kTBJIB0Jg==
+X-Gm-Gg: ASbGncvgdmSaSe3mrjg72KAWgkcpP/tEwU0GIAIkBtZ7gU4JPfiXeNqgVyanqOJksOF
+	545toObMmvLNxS7JI1h686jAm4XMnbsp1BvrLlkLmRxoUCZoPV9EccOHjqDm4eBZ1KEYS4fDgKw
 	==
-X-Google-Smtp-Source: AGHT+IG+4guV9zL2bAZNHMObNNITOjYzmm8gBHf04+Fx5knp80glZYkRGDTbsirq+bKDuplePjSR8kzavUyBoBLNCGo=
-X-Received: by 2002:adf:fa08:0:b0:38f:2a99:b377 with SMTP id
- ffacd0b85a97d-38f33f57459mr12091977f8f.53.1739882940549; Tue, 18 Feb 2025
- 04:49:00 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGsgdIc+lrg0uaYthxDbjuu2RqLkOGypGT4hi5o7axf12/WwRJRBOA2dkTImuNSHrVtpIgEHz+zzrRbpfPSKhw=
+X-Received: by 2002:a05:6902:1086:b0:e5d:dcdb:18ed with SMTP id
+ 3f1490d57ef6-e5ddcdb1badmr6881189276.32.1739882971297; Tue, 18 Feb 2025
+ 04:49:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250217140910.108175-1-clamor95@gmail.com> <c19bd9b3-86c4-4f1a-beb9-b6aed32b3ef5@suse.de>
-In-Reply-To: <c19bd9b3-86c4-4f1a-beb9-b6aed32b3ef5@suse.de>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Tue, 18 Feb 2025 14:48:48 +0200
-X-Gm-Features: AWEUYZknhrRerz9466maOIJ-JIcnOjmCvbeJ_Q4ULJO_5cv5VSDkdN2CrbigW9c
-Message-ID: <CAPVz0n0WG1Q51SONb4fmkzi4q7Q0sZ_aKSLrLnGboNNya6nO+Q@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] drm: bridge: add ssd2825 RGB/DSI bridge support
-To: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Javier Martinez Canillas <javierm@redhat.com>, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <4966939.GXAFRqVoOG@rjwysocki.net> <2000822.PYKUYFuaPT@rjwysocki.net>
+In-Reply-To: <2000822.PYKUYFuaPT@rjwysocki.net>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 18 Feb 2025 13:48:54 +0100
+X-Gm-Features: AWEUYZl2e3wuU09rOhy0fKyxgy2Cy7-O9CxX1TT4Fs9bV1RChSBGopUjoJ_6AZU
+Message-ID: <CAPDyKFoB0fQCabahYpx=A_Ns7vJgWYdK=rxuHk+XHVv35cFvWQ@mail.gmail.com>
+Subject: Re: [PATCH v1 3/3] PM: sleep: Use DPM_FLAG_SMART_SUSPEND conditionally
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Alan Stern <stern@rowland.harvard.edu>, Bjorn Helgaas <helgaas@kernel.org>, 
+	Linux PCI <linux-pci@vger.kernel.org>, Johan Hovold <johan@kernel.org>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Jon Hunter <jonathanh@nvidia.com>, 
+	Linux ACPI <linux-acpi@vger.kernel.org>, 
+	Mika Westerberg <mika.westerberg@linux.intel.com>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Saravana Kannan <saravanak@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-=D0=B2=D1=82, 18 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 14:36 Thom=
-as Zimmermann <tzimmermann@suse.de> =D0=BF=D0=B8=D1=88=D0=B5:
++ Saravana
+
+On Mon, 17 Feb 2025 at 21:19, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
 >
-> (cc'ing Javier)
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 >
-> Hi
+> A recent discussion has revealed that using DPM_FLAG_SMART_SUSPEND
+> unconditionally is generally problematic because it may lead to
+> situations in which the device's runtime PM information is internally
+> inconsistent or does not reflect its real state [1].
 >
-> Am 17.02.25 um 15:09 schrieb Svyatoslav Ryhel:
-> > Solomon SSD2825 is a RGB to MIPI DSI bridge used in LG Optimus 4D P880
-> > and LG Optimus Vu P895
+> For this reason, change the handling of DPM_FLAG_SMART_SUSPEND so that
+> it is only taken into account if it is consistently set by the drivers
+> of all devices having any PM callbacks throughout dependency graphs in
+> accordance with the following rules:
 >
-> There's a driver for Solomon 13xx displays in drm/solomon. Did you check
-> that this new driver isn't just an extension of the existing code?
+>  - The "smart suspend" feature is only enabled for devices whose drivers
+>    ask for it (that is, set DPM_FLAG_SMART_SUSPEND) and for devices
+>    without PM callbacks unless they have never had runtime PM enabled.
+>
+>  - The "smart suspend" feature is not enabled for a device if it has not
+>    been enabled for the device's parent unless the parent does not take
+>    children into account or it has never had runtime PM enabled.
+>
+>  - The "smart suspend" feature is not enabled for a device if it has not
+>    been enabled for one of the device's suppliers taking runtime PM into
+>    account unless that supplier has never had runtime PM enabled.
+>
+> Namely, introduce a new device PM flag called smart_suspend that is only
+> set if the above conditions are met and update all DPM_FLAG_SMART_SUSPEND
+> users to check power.smart_suspend instead of directly checking the
+> latter.
+>
+> At the same time, drop the power.set_active flage introduced recently
+> in commit 3775fc538f53 ("PM: sleep: core: Synchronize runtime PM status
+> of parents and children") because it is now sufficient to check
+> power.smart_suspend along with the dev_pm_skip_resume() return value
+> to decide whether or not pm_runtime_set_active() needs to be called
+> for the device.
+>
+> Link: https://lore.kernel.org/linux-pm/CAPDyKFroyU3YDSfw_Y6k3giVfajg3NQGwNWeteJWqpW29BojhQ@mail.gmail.com/  [1]
+> Fixes: 7585946243d6 ("PM: sleep: core: Restrict power.set_active propagation")
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+>  drivers/acpi/device_pm.c  |    6 +---
+>  drivers/base/power/main.c |   63 +++++++++++++++++++++++++++++++++++-----------
+>  drivers/mfd/intel-lpss.c  |    2 -
+>  drivers/pci/pci-driver.c  |    6 +---
+>  include/linux/pm.h        |    2 -
+>  5 files changed, 55 insertions(+), 24 deletions(-)
+>
+> --- a/drivers/acpi/device_pm.c
+> +++ b/drivers/acpi/device_pm.c
+> @@ -1161,8 +1161,7 @@
+>   */
+>  int acpi_subsys_suspend(struct device *dev)
+>  {
+> -       if (!dev_pm_test_driver_flags(dev, DPM_FLAG_SMART_SUSPEND) ||
+> -           acpi_dev_needs_resume(dev, ACPI_COMPANION(dev)))
+> +       if (!dev->power.smart_suspend || acpi_dev_needs_resume(dev, ACPI_COMPANION(dev)))
+
+Nitpick: Rather than checking the dev->power.smart_suspend flag
+directly here, perhaps we should provide a helper function that
+returns true when dev->power.smart_suspend is set? In this way, it's
+the PM core soley that operates on the flag.
+
+>                 pm_runtime_resume(dev);
+>
+>         return pm_generic_suspend(dev);
+> @@ -1320,8 +1319,7 @@
+>   */
+>  int acpi_subsys_poweroff(struct device *dev)
+>  {
+> -       if (!dev_pm_test_driver_flags(dev, DPM_FLAG_SMART_SUSPEND) ||
+> -           acpi_dev_needs_resume(dev, ACPI_COMPANION(dev)))
+> +       if (!dev->power.smart_suspend || acpi_dev_needs_resume(dev, ACPI_COMPANION(dev)))
+>                 pm_runtime_resume(dev);
+>
+>         return pm_generic_poweroff(dev);
+> --- a/drivers/base/power/main.c
+> +++ b/drivers/base/power/main.c
+> @@ -656,15 +656,13 @@
+>          * so change its status accordingly.
+>          *
+>          * Otherwise, the device is going to be resumed, so set its PM-runtime
+> -        * status to "active" unless its power.set_active flag is clear, in
+> +        * status to "active" unless its power.smart_suspend flag is clear, in
+>          * which case it is not necessary to update its PM-runtime status.
+>          */
+> -       if (skip_resume) {
+> +       if (skip_resume)
+>                 pm_runtime_set_suspended(dev);
+> -       } else if (dev->power.set_active) {
+> +       else if (dev->power.smart_suspend)
+>                 pm_runtime_set_active(dev);
+> -               dev->power.set_active = false;
+> -       }
+>
+>         if (dev->pm_domain) {
+>                 info = "noirq power domain ";
+> @@ -1282,14 +1280,8 @@
+>               dev->power.may_skip_resume))
+>                 dev->power.must_resume = true;
+>
+> -       if (dev->power.must_resume) {
+> -               if (dev_pm_test_driver_flags(dev, DPM_FLAG_SMART_SUSPEND)) {
+> -                       dev->power.set_active = true;
+> -                       if (dev->parent && !dev->parent->power.ignore_children)
+> -                               dev->parent->power.set_active = true;
+> -               }
+> +       if (dev->power.must_resume)
+>                 dpm_superior_set_must_resume(dev);
+> -       }
+>
+>  Complete:
+>         complete_all(&dev->power.completion);
+> @@ -1797,6 +1789,49 @@
+>         return error;
+>  }
+>
+> +static void device_prepare_smart_suspend(struct device *dev)
+> +{
+> +       struct device_link *link;
+> +       int idx;
+> +
+> +       /*
+> +        * The "smart suspend" feature is enabled for devices whose drivers ask
+> +        * for it and for devices without PM callbacks unless runtime PM is
+> +        * disabled and enabling it is blocked for them.
+> +        *
+> +        * However, if "smart suspend" is not enabled for the device's parent
+> +        * or any of its suppliers that take runtime PM into account, it cannot
+> +        * be enabled for the device either.
+> +        */
+> +       dev->power.smart_suspend = (dev->power.no_pm_callbacks ||
+> +               dev_pm_test_driver_flags(dev, DPM_FLAG_SMART_SUSPEND)) &&
+> +               !pm_runtime_blocked(dev);
+> +
+> +       if (!dev->power.smart_suspend)
+> +               return;
+> +
+> +       if (dev->parent && !pm_runtime_blocked(dev->parent) &&
+> +           !dev->parent->power.ignore_children && !dev->parent->power.smart_suspend) {
+> +               dev->power.smart_suspend = false;
+> +               return;
+> +       }
+> +
+> +       idx = device_links_read_lock();
+> +
+> +       list_for_each_entry_rcu_locked(link, &dev->links.suppliers, c_node) {
+> +               if (!(link->flags | DL_FLAG_PM_RUNTIME))
+> +                       continue;
+> +
+> +               if (!pm_runtime_blocked(link->supplier) &&
+> +                   !link->supplier->power.smart_suspend) {
+
+This requires device_prepare() for all suppliers to be run before its
+consumer. Is that always the case?
+
+> +                       dev->power.smart_suspend = false;
+> +                       break;
+> +               }
+> +       }
+> +
+> +       device_links_read_unlock(idx);
+
+From an execution overhead point of view, did you check if the above
+code had some measurable impact on the latency for dpm_prepare()?
+
+> +}
+> +
+>  /**
+>   * device_prepare - Prepare a device for system power transition.
+>   * @dev: Device to handle.
+> @@ -1858,6 +1893,7 @@
+>                 pm_runtime_put(dev);
+>                 return ret;
+>         }
+> +       device_prepare_smart_suspend(dev);
+>         /*
+>          * A positive return value from ->prepare() means "this device appears
+>          * to be runtime-suspended and its state is fine, so if it really is
+> @@ -2033,6 +2069,5 @@
+>
+>  bool dev_pm_skip_suspend(struct device *dev)
+>  {
+> -       return dev_pm_test_driver_flags(dev, DPM_FLAG_SMART_SUSPEND) &&
+> -               pm_runtime_status_suspended(dev);
+> +       return dev->power.smart_suspend && pm_runtime_status_suspended(dev);
+>  }
+> --- a/drivers/mfd/intel-lpss.c
+> +++ b/drivers/mfd/intel-lpss.c
+> @@ -480,7 +480,7 @@
+>
+>  static int resume_lpss_device(struct device *dev, void *data)
+>  {
+> -       if (!dev_pm_test_driver_flags(dev, DPM_FLAG_SMART_SUSPEND))
+> +       if (!dev->power.smart_suspend)
+>                 pm_runtime_resume(dev);
+>
+>         return 0;
+> --- a/drivers/pci/pci-driver.c
+> +++ b/drivers/pci/pci-driver.c
+> @@ -812,8 +812,7 @@
+>          * suspend callbacks can cope with runtime-suspended devices, it is
+>          * better to resume the device from runtime suspend here.
+>          */
+> -       if (!dev_pm_test_driver_flags(dev, DPM_FLAG_SMART_SUSPEND) ||
+> -           pci_dev_need_resume(pci_dev)) {
+> +       if (!dev->power.smart_suspend || pci_dev_need_resume(pci_dev)) {
+>                 pm_runtime_resume(dev);
+>                 pci_dev->state_saved = false;
+>         } else {
+> @@ -1151,8 +1150,7 @@
+>         }
+>
+>         /* The reason to do that is the same as in pci_pm_suspend(). */
+> -       if (!dev_pm_test_driver_flags(dev, DPM_FLAG_SMART_SUSPEND) ||
+> -           pci_dev_need_resume(pci_dev)) {
+> +       if (!dev->power.smart_suspend || pci_dev_need_resume(pci_dev)) {
+>                 pm_runtime_resume(dev);
+>                 pci_dev->state_saved = false;
+>         } else {
+> --- a/include/linux/pm.h
+> +++ b/include/linux/pm.h
+> @@ -680,8 +680,8 @@
+>         bool                    syscore:1;
+>         bool                    no_pm_callbacks:1;      /* Owned by the PM core */
+>         bool                    async_in_progress:1;    /* Owned by the PM core */
+> +       bool                    smart_suspend:1;        /* Owned by the PM core */
+>         bool                    must_resume:1;          /* Owned by the PM core */
+> -       bool                    set_active:1;           /* Owned by the PM core */
+>         bool                    may_skip_resume:1;      /* Set by subsystems */
+>  #else
+>         bool                    should_wakeup:1;
+>
+>
 >
 
-Definitely no, ssd2825 is a RGB to DSI bridge in a pure form. While
-13xx as you have said are display controllers family.
-
-> Best regards
-> Thomas
->
-> >
-> > ---
-> > Changes on switching from v1 to v2:
-> > - added description for clock
-> > - removed clock-names
-> > - added boundries for hs-zero-delay-ns and hs-prep-delay-ns
-> > - added mutex lock for host transfers
-> > - converted to atomic ops
-> > - get drm_display_mode mode with atomic helpers
-> > - parameterized INTERFACE_CTRL_REG_6 configuration
-> > - added video mode validation and fixup
-> > - removed clock name
-> > - switched to devm_regulator_bulk_get_const
-> > - added default timings
-> > ---
-> >
-> > Svyatoslav Ryhel (2):
-> >    dt-bindings: display: bridge: Document Solomon SSD2825
-> >    drm: bridge: Add support for Solomon SSD2825 RGB/DSI bridge
-> >
-> >   .../display/bridge/solomon,ssd2825.yaml       | 141 +++
-> >   drivers/gpu/drm/bridge/Kconfig                |  14 +
-> >   drivers/gpu/drm/bridge/Makefile               |   1 +
-> >   drivers/gpu/drm/bridge/ssd2825.c              | 824 +++++++++++++++++=
-+
-> >   4 files changed, 980 insertions(+)
-> >   create mode 100644 Documentation/devicetree/bindings/display/bridge/s=
-olomon,ssd2825.yaml
-> >   create mode 100644 drivers/gpu/drm/bridge/ssd2825.c
-> >
->
-> --
-> --
-> Thomas Zimmermann
-> Graphics Driver Developer
-> SUSE Software Solutions Germany GmbH
-> Frankenstrasse 146, 90461 Nuernberg, Germany
-> GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-> HRB 36809 (AG Nuernberg)
->
+Kind regards
+Uffe
 
