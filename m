@@ -1,116 +1,101 @@
-Return-Path: <linux-kernel+bounces-518512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BF43A39034
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 02:13:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 01D88A3903B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 02:19:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C0113AEB5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 01:13:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00F8B3B0E85
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 01:19:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 984263A1BA;
-	Tue, 18 Feb 2025 01:13:07 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 788CD182BD;
-	Tue, 18 Feb 2025 01:13:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB8561FF2;
+	Tue, 18 Feb 2025 01:19:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="n55o8bmk"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2723C749A;
+	Tue, 18 Feb 2025 01:19:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739841187; cv=none; b=f219k0/k+5q07+JjTX9j7EqAY9MOKxo3KHKtBzXQXlj4l7IX6DZzhFU8KDARfTIq0qfj7xmGIgUs1xCi26qTpTLyC+0DAusGn8QsiG49Vsf18RzOQzrsy2yt4X8X3J/+knhis7s30sZ+6gvkRVRsNDQaZ7tS0OLJvLjaNsyW4AQ=
+	t=1739841583; cv=none; b=slYd2+e5rzr9k3CYtxRsy2jf69zSWjPhyYKftOZJ13AfCkz8r/VoMMdKixM0JzLNxg3wB3EfomAjd4o0Ub8VTshcguRFI5sMsJRqp1fmga54ILt3s5fn9Xir/tGY5FiJBRgpiPGIDHGEXfxZIipS2n4jSF98UDfyOsQ4U2mUFhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739841187; c=relaxed/simple;
-	bh=xKSunbQDy+ZdHopNpEGMjfWuv5Bb9bZaGtaJDqZHGus=;
-	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=eerUO/MkJHnAo50DLfDasxw8zYmTIGKSbbVRW5Pxccbvsf6FvCa257y5l2YkX+qUJH1S4o38BzI+5ys3MqmvlSBxSuScAfhgAevpetWDjHWKWyTz2i57nuMmkelrQ8JxDUPjGTHAeij9mxl8vNUpf+rC1Jty+1CasFjYQQYqd58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4YxhGy6nSPzgcB2;
-	Tue, 18 Feb 2025 09:08:26 +0800 (CST)
-Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 764FA1403A2;
-	Tue, 18 Feb 2025 09:13:01 +0800 (CST)
-Received: from [10.67.120.192] (10.67.120.192) by
- kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 18 Feb 2025 09:12:59 +0800
-Message-ID: <3c0861b7-c999-4202-b5c9-12ca714107f6@huawei.com>
-Date: Tue, 18 Feb 2025 09:12:58 +0800
+	s=arc-20240116; t=1739841583; c=relaxed/simple;
+	bh=c/ZQGdXIfgHE4q3zLhqGd2gcz/q/MQny26xl8zQZnXo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jtNYIKNCvukBHixBnnXIwd+ATa9tTK7Y6QR+kZvLmGEwf51JXetAUqlVeYgkHzybCyyUR6aO5gsrVr3nhOrCTSq0bPMRZcbh3jr9CNq9MFv3RY/3t0yf7s/vdjaQAvIcTZgDqGxhQs7PiIHiFsRnC/fPUTVuua6esRN86bnR1wM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=n55o8bmk; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=1A4W/
+	wxVhLOVPo5bfmTxi6BeWglYj96/K2R6TB6QL08=; b=n55o8bmkxkVxXAJXBBpp4
+	UW8Q3PeaNmDgJfA8+UawiKpvwV3W1YV9ABXK8x9Q5vX+5hlYu/7moQle1egFrd03
+	smAVTHfwAW+z6Mtn3GLFfkVqGZF38gJ+OtoGxt+WCJy6XfP++YPwdiuLoCnmpIvr
+	jA7e7M0LSp5hwz/A8rcS9w=
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [])
+	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wDHb+m637NnPp9RNA--.63284S4;
+	Tue, 18 Feb 2025 09:17:48 +0800 (CST)
+From: Haoxiang Li <haoxiang_li2024@163.com>
+To: kuba@kernel.org,
+	louis.peens@corigine.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	haoxiang_li2024@163.com,
+	qmo@kernel.org,
+	daniel@iogearbox.net
+Cc: bpf@vger.kernel.org,
+	oss-drivers@corigine.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH v2] nfp: bpf: Add check for nfp_app_ctrl_msg_alloc()
+Date: Tue, 18 Feb 2025 09:17:44 +0800
+Message-Id: <20250218011744.2397726-1-haoxiang_li2024@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-CC: <shaojijie@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <andrew+netdev@lunn.ch>,
-	<horms@kernel.org>, <shenjian15@huawei.com>, <wangpeiyang1@huawei.com>,
-	<liuyonglong@huawei.com>, <chenhao418@huawei.com>, <sudongming1@huawei.com>,
-	<xujunsheng@huawei.com>, <shiyongbang@huawei.com>, <libaihan@huawei.com>,
-	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
-	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next 2/7] net: hibmcge: Add self test supported in
- this module
-To: Andrew Lunn <andrew@lunn.ch>
-References: <20250213035529.2402283-1-shaojijie@huawei.com>
- <20250213035529.2402283-3-shaojijie@huawei.com>
- <6501012c-fecf-42b3-a70a-2c8a968b6fbd@lunn.ch>
- <842c3542-95a6-4112-9c50-70226b0caadc@huawei.com>
- <9bc6a8b9-2d78-4aef-801d-21425426d3a1@lunn.ch>
-From: Jijie Shao <shaojijie@huawei.com>
-In-Reply-To: <9bc6a8b9-2d78-4aef-801d-21425426d3a1@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemk100013.china.huawei.com (7.202.194.61)
+X-CM-TRANSID:_____wDHb+m637NnPp9RNA--.63284S4
+X-Coremail-Antispam: 1Uf129KBjvdXoW7XFy3tr48Zw43Gry7Zr1xAFb_yoWDXrcEkF
+	129Fnak3yFkr1Ykr4jgw4avr9Fywn0qryruFZxKrZavry7Ar48XrykurZ5AF9rWF4xAFZr
+	X3s7JrWUAa42qjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRNvtCUUUUUU==
+X-CM-SenderInfo: xkdr5xpdqjszblsqjki6rwjhhfrp/1tbiqQD3bmez3bE5egAAsL
 
+Add check for the return value of nfp_app_ctrl_msg_alloc() in
+nfp_bpf_cmsg_alloc() to prevent null pointer dereference.
 
-on 2025/2/14 21:53, Andrew Lunn wrote:
-> On Fri, Feb 14, 2025 at 10:46:31AM +0800, Jijie Shao wrote:
->> on 2025/2/14 3:59, Andrew Lunn wrote:
->>> On Thu, Feb 13, 2025 at 11:55:24AM +0800, Jijie Shao wrote:
->>>> This patch supports many self test: Mac, SerDes and Phy.
->>>>
->>>> To implement self test, this patch implements a simple packet sending and
->>>> receiving function in the driver. By sending a packet in a specific format,
->>>> driver considers that the test is successful if the packet is received.
->>>> Otherwise, the test fails.
->>>>
->>>> The SerDes hardware is on the BMC side, Therefore, when the SerDes loopback
->>>> need enabled, driver notifies the BMC through an event message.
->>>>
->>>> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
->>> Please take a look at the work Gerhard Engleder is doing, and try not
->>> to reinvent net/core/selftest.c
->>>
->>>       Andrew
->> I actually knew about this, but after browsing the source code, I gave up using it.
->>
->> I have an additional requirement: serdes loopback and mac loopback.
->> However, they are not supported in net/core/selftest.c.
-> Which is why i pointed you toward Gerhard. He found similar
-> limitations in the code, wanting to add in extra tests, same as you.
-> Two developers wanting to do that same things, suggests the core
-> should be extended to support that, not two different copies hidden
-> away in drivers.
->
-> Maybe my initial advice about not exporting the helpers was bad? I
-> don't know. Please chat with Gerhard and come up with a design that
-> makes the core usable for both your uses cases, and anybody else
-> wanting to embed similar self tests in their driver.
->
-> 	Andrew
+Fixes: ff3d43f7568c ("nfp: bpf: implement helpers for FW map ops")
+Cc: stable@vger.kernel.org
+Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
+---
+Changes in v2:
+- remove the bracket for one single-statement. Thanks, Guru!
+---
+ drivers/net/ethernet/netronome/nfp/bpf/cmsg.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-OK, this patch will be removed from this patchset in v2.
-I will re-send it as RFC to discuss it.
-
-Thanks，
-Jijie Shao
+diff --git a/drivers/net/ethernet/netronome/nfp/bpf/cmsg.c b/drivers/net/ethernet/netronome/nfp/bpf/cmsg.c
+index 2ec62c8d86e1..b02d5fbb8c8c 100644
+--- a/drivers/net/ethernet/netronome/nfp/bpf/cmsg.c
++++ b/drivers/net/ethernet/netronome/nfp/bpf/cmsg.c
+@@ -20,6 +20,8 @@ nfp_bpf_cmsg_alloc(struct nfp_app_bpf *bpf, unsigned int size)
+ 	struct sk_buff *skb;
+ 
+ 	skb = nfp_app_ctrl_msg_alloc(bpf->app, size, GFP_KERNEL);
++	if (!skp)
++		return NULL;
+ 	skb_put(skb, size);
+ 
+ 	return skb;
+-- 
+2.25.1
 
 
