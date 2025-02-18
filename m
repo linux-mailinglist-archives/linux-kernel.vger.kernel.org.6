@@ -1,123 +1,161 @@
-Return-Path: <linux-kernel+bounces-519410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09F3DA39C8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:52:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 697D9A39C8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:52:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED3E13A6366
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:52:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8359D3A5065
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:52:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7904D26138A;
-	Tue, 18 Feb 2025 12:52:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08F76260A4E;
+	Tue, 18 Feb 2025 12:52:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="Z+608SsJ"
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SR3OERlx"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 811E51ABEA5;
-	Tue, 18 Feb 2025 12:52:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C712A25A35C;
+	Tue, 18 Feb 2025 12:52:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739883152; cv=none; b=qLanCO4FczstK7QIKN/efRJ5HDY0yvjoiom49xk98G7iwwl++J9lQVl/gyy2YFb35cr8qCHJ65Lvnu4skXbx7IQBg+FWMDlXujPa81VpjUHOgPnYN7q4HdO019gNx4GWKb3k64HDOPAkmrpqmojtz7mnvo/++l2/rna9hqBc28g=
+	t=1739883129; cv=none; b=j+zjbhiwFpLEL0OBGC7XS9BAkjYffzR16+/vpngPEiPynx0jdOzEpy+mM8Ir5B0Q4kXGK1nYC+LqedPBlIbajJqF652d1mz502CUGGcV7gJQU2ZaGbWPykTLPALve9aVLq/oUxS9mx3r5rka4o+GyQuMni0/8oQXpFKJlg4Xxdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739883152; c=relaxed/simple;
-	bh=ozqzKBaZp7THjUy8Frl0csVo51t11dKyaoRQzyPOS+0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=F35BHyn/X6wKrpf6cTTrZAwYO3ZEaauBwhBriLtQmUY/B4BUe7q8DQGiVa5I1ykITqsm5R/mccaQ7GBv7XLKE8rn8BhYGNR6kjmZCBN4ul+GxyJVToIGYrOodZHQ9MADdM4ok5f8ufoRC1kWjE0T4vsV7BlYqT7CyMJ1H9c1Twk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=Z+608SsJ; arc=none smtp.client-ip=54.243.244.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1739883125;
-	bh=ikvmjdBqBWtzjLpRsgXdFU5i2uUbwM5rbB8j6aNXBLY=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=Z+608SsJvCBmfvsozJzFyPA2pxCSO47DNZwOLz4/9Iq1c3FS8j4DQGSAeMx/Qq7ez
-	 FmxyIE3ESVwGupJCkVbYO/UgzBocfgq6+aAdmih5jm2TR6HL8jNSMsnDsmMWs71ED0
-	 tQ1FlN/l62eLz6D/LFHkR8LogkIw0KB3iK0WkPlY=
-X-QQ-mid: bizesmtpip3t1739883073tocqmdk
-X-QQ-Originating-IP: C6fzMKU50jlhRjqH9yg7T1ID+cGXKwH0cAaoJw7bVqo=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 18 Feb 2025 20:51:12 +0800 (CST)
-X-QQ-SSF: 0002000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 6899335646084924292
-From: WangYuli <wangyuli@uniontech.com>
-To: tsbogend@alpha.franken.de,
-	macro@orcam.me.uk
-Cc: linux-mips@vger.kernel.org,
+	s=arc-20240116; t=1739883129; c=relaxed/simple;
+	bh=WZCqNOQCx6zO8+iDsOvyi+ZcmH4P3OrAmCncVdzCDts=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dKI21xqnS3V9pJeOX7V5Cxxq0af7u1Dj3/B5fgDaKjNaeYNxB2ypWhbdKQKPYbO+FiUncFnyiUxMWHCCgomSm51KfifF4f18kxqN6VS8a23O6LvNFhvUBFId7d+Oxg4TRCe5A1SlvmmkDlmBA5IK5AMULKkHS0R2lJbPJYAdipw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SR3OERlx; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43971025798so17473555e9.1;
+        Tue, 18 Feb 2025 04:52:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739883126; x=1740487926; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=T00F6m62eOnON9Sf4S3pOg2h4Ua/j/4d10PkPsHZ+/k=;
+        b=SR3OERlxei12QHBRk0Gp/BfB3jUHP4GWZGSQeYNue+qYIp1bG8wXWz/VcaA5lZDdyv
+         jyVY6+hEaOpfJMtriOe7KR4H1sL2EBNLcxfZ/fMka0TxBjputn4R0vE+Cs6GEV7uOSll
+         WVi16OVu+98j/NZZXtQCxJDgWrfhJ+xHMcz3fXVik2km30AiooP11YOc+LWqTvln4V/5
+         ehbjcvGHaCs/R2/Cgu/OL7pv/rYbAEhGhCvSY03GrkrnM5u+46c7JX6qYzWSGxZA+mjG
+         K4ARSJTRCxXbfnBUGK1GuXVC6EcPOrmXQselOkmLX8jFSie8OJUK+nOr0etOIqRh7G/x
+         SYDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739883126; x=1740487926;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=T00F6m62eOnON9Sf4S3pOg2h4Ua/j/4d10PkPsHZ+/k=;
+        b=S3gpGMgyOL28TV3F96VntR2HTs6SJE/QKK/SITpxlQhvTROd6twuEhoG5FgE0gGjwS
+         94VEvo4nND65vo5wJn0j2vmEDI3yareYbpOW9X7SFZcQF/XLE9bnOXvXoxCTQtyKlVzF
+         AMRwk6gCcVDvXxN8fJFH/TtfGavlVXnuNfxsy+cPiAuZs4QWIWe4cVM/hKhCOzblvoFR
+         ttDRTqB39Qtpgc5TNB3fkfFTm7aSS9NSv7CM2yakBBJ2OxKF7zFrBP3o8i9+k8X6GVUu
+         f0aWQ+VyaH5H5vubXUMivKSlL760eKjsGCi+RSLZc1gc5l2FTHj1kC28Q78IGbF79HoZ
+         7rWw==
+X-Forwarded-Encrypted: i=1; AJvYcCVGOFDnYKVOZhxxfqy1QRV876jUDZIjjOT62JWQ8B1LgwwSTvwTLbdtKNWPUt729vTvOnpy/oFInflR@vger.kernel.org, AJvYcCX+ADsUJeEydefzIpuqtRT2m7gY7jjvYXgX3EgJeAGhKUm5geBNtmWSvk3+ANcKCyp8jVvmAN1Mjm0csiqB@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYyynHnkH0syuaR+B8kmx9rA7LrPty8sxzB2SCC1Yg8lMacI0R
+	hbdy2Ex53GT9CrmpQWGVH8bg4B1BPPSdVh/OJePA/65BozZA6Gs6
+X-Gm-Gg: ASbGncv19Nn0GKRH0RDDCMEHBmSGgZ/CnhOv4vTiZclcIZ1FwBrFWvzzsoBK7syodXB
+	YBv5TZkof2FjQqPlFVHbp0baAvNfnl1jmQBBeHV+LweYCpxaaZhTulrFarw10Wg/83YkXZQhJmY
+	svULJlDbPz0s9HsB+9mysC2pMlHKU/KymE1uakq4/v/hgrbHaS1ZXSNFSer988zU42gu7yvi1tt
+	cuqhZYDO30mz99A7vXETktThjgzAMHxCyWxvYBrXYcVcjvZDPB91b2X8NlrTbH5BIvGXbk6V2Dg
+	HEmHhXSpCUdICuwZvUs4rn0MRA8=
+X-Google-Smtp-Source: AGHT+IEmUMaihQHu0knpO02wdP9d0VNbrRbAmiSUjS7OIoELcuwHR+y40zRhkum98y6zzAK+5vJKnQ==
+X-Received: by 2002:a05:6000:402a:b0:38d:e48b:1766 with SMTP id ffacd0b85a97d-38f33f118c8mr11517057f8f.6.1739883124714;
+        Tue, 18 Feb 2025 04:52:04 -0800 (PST)
+Received: from prasmi.Home ([2a06:5906:61b:2d00:6940:cc67:5b00:b151])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f25a0fa2dsm14747720f8f.101.2025.02.18.04.52.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2025 04:52:04 -0800 (PST)
+From: Lad Prabhakar <prabhakar.csengg@gmail.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	zhanjun@uniontech.com,
-	niecheng1@uniontech.com,
-	guanwentao@uniontech.com,
-	chenlinxuan@uniontech.com,
-	WangYuli <wangyuli@uniontech.com>
-Subject: [PATCH 0/7] MIPS: decstation_64_defconfig: Compile the kernel with warnings as errors
-Date: Tue, 18 Feb 2025 20:51:01 +0800
-Message-ID: <487CE8AA937621E2+20250218125101.663980-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.47.2
+	Lad Prabhakar <prabhakar.csengg@gmail.com>
+Subject: [PATCH] arm64: dts: qcom: Drop `tx-sched-sp` property
+Date: Tue, 18 Feb 2025 12:51:57 +0000
+Message-ID: <20250218125157.412701-1-prabhakar.csengg@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: MavvAJs3NvAhUfmTVx8SHfqqW2NMg4JA6H1tn+T/BpmMPfMLwWiamBmt
-	9yMBpcQdaEdtZF3QVyMPudHu0+kb4f6UM/cm30egBPez3wneKDWWdN7ehBjDiE2QuGlvC1L
-	7RTQ4Enu1AntIbodEMCPbTrVf6s5BBYc/Bjq9GNBACBeyQQuzRMcoANgFVgtml0cfiJDmQg
-	5DgC39z4Ts41N5hSOvuWmDSlTjA03SyTfoKHA3AnQEv3rWpUgiPeW9jHyWqLNJDPCoVZkaD
-	vb1f2hEo339uL1vpatE5SBjuT6nPHUSQYttV7ZY0yTNRvSBIW9LaYushtzHXgAFSmfb21ML
-	kDLNKbW28rTNWJ5iQah2Zo26hEQoR1Eli3f92dsbdA/jlqQ+ht9coY8id1q3h/xyMdhN69I
-	h4VYwSk0EXRi4fWz3MAOb/Wkbf4zMJ8XoEienOjSnqjkWNTA0egbCwugtsk8PM+aFVI3bZK
-	9F6xS4gK0FTX0QpohVT49B2kBMnrNhDYiEcvloe3CN1lit2P0tDveRVIBlb5pMg75/ysTHd
-	0itBTQNyCLdyWVSH1KHO5WV+jU9Dpaft3mEAqDAtN05JG1La04MjB+qP/RQ82BGAyquRXL9
-	pB4DxNV916KRU0jC0w8EmZKARqn4VUj4LCTzVEYk6zfqVTfvwl6LkbNK6JwQQf0yodooh5I
-	89cbWp5oa2qELG02kphm0m9oQq7Yr0ybgIMnnA/v0jDkGaliUNiMFfS3w0MhlamOwSy1n77
-	vK5a16HMCycLewydR8CIjwiLO88sKgnLhwuuCnyxGgsi3uue83knGpiSYYdtLoYUMY+PB59
-	dgoz+MmMbs3HuGXVgs0OCTAy4eDbz5A35xb22X0n1RAzcbrOiUOSPI55YiAPlox60Aj0fQm
-	V5652KtqzG4sS9Ix7Lmbhz3mfulWcO0h0NbTdBnpPZXiHeb6HRj+bgynvrSEL9Q26UjpI69
-	DubBxT4ZpqR4thrEPwLLwNpNeI1P/8wRgkuIZrX2i/XEKefpCe1MyGlKVTApphrN2phMzI/
-	kcGtS5pHUD0s8xQj9HNrDNB2iSvwh/tqGePJOWFA==
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-X-QQ-RECHKSPAM: 0
 
-Patchset ("MIPS: dec: Only check -msym32 when need compiler") from list [1]
-allows us to compile kernel image packages with decstation_64_defconfig.
+The `tx-sched-sp` property was removed in commit aed6864035b1 ("net:
+stmmac: platform: Delete a redundant condition branch").
 
-However, compilation warnings remain during the build.
+Therefore, it can be safely removed from the device tree.
 
-Address these warnings and enable CONFIG_WERROR for decstation_64_defconfig.
+Signed-off-by: Lad Prabhakar <prabhakar.csengg@gmail.com>
+---
+ arch/arm64/boot/dts/qcom/qcs8300-ride.dts  | 1 -
+ arch/arm64/boot/dts/qcom/sa8540p-ride.dts  | 2 --
+ arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi | 2 --
+ 3 files changed, 5 deletions(-)
 
-[1]. https://lore.kernel.org/all/8ABBF323414AEF93+20250217142541.48149-1-wangyuli@uniontech.com/
-
-WangYuli (7):
-  MIPS: dec: Declare which_prom() as static
-  MIPS: dec: Create reset.h
-  MIPS: cevt-ds1287: Add missing ds1287.h include
-  MIPS: ds1287: Match ds1287_set_base_clock() function types
-  MIPS: dec: Remove dec_irq_dispatch()
-  MIPS: decstation_64_defconfig: Update configs dependencies
-  MIPS: decstation_64_defconfig: Compile the kernel with warnings as
-    errors
-
- arch/mips/configs/decstation_64_defconfig | 45 +++++++++--------------
- arch/mips/dec/int-handler.S               |  2 +-
- arch/mips/dec/prom/init.c                 |  5 +--
- arch/mips/dec/reset.c                     |  2 +
- arch/mips/dec/setup.c                     | 15 +-------
- arch/mips/include/asm/dec/reset.h         | 17 +++++++++
- arch/mips/include/asm/ds1287.h            |  2 +-
- arch/mips/kernel/cevt-ds1287.c            |  1 +
- 8 files changed, 44 insertions(+), 45 deletions(-)
- create mode 100644 arch/mips/include/asm/dec/reset.h
-
+diff --git a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
+index b5c9f89b3435..af75350f59b8 100644
+--- a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
++++ b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
+@@ -257,7 +257,6 @@ queue3 {
+ 
+ 	mtl_tx_setup: tx-queues-config {
+ 		snps,tx-queues-to-use = <4>;
+-		snps,tx-sched-sp;
+ 
+ 		queue0 {
+ 			snps,dcb-algorithm;
+diff --git a/arch/arm64/boot/dts/qcom/sa8540p-ride.dts b/arch/arm64/boot/dts/qcom/sa8540p-ride.dts
+index 177b9dad6ff7..11663cf81e45 100644
+--- a/arch/arm64/boot/dts/qcom/sa8540p-ride.dts
++++ b/arch/arm64/boot/dts/qcom/sa8540p-ride.dts
+@@ -225,7 +225,6 @@ queue3 {
+ 
+ 	ethernet0_mtl_tx_setup: tx-queues-config {
+ 		snps,tx-queues-to-use = <1>;
+-		snps,tx-sched-sp;
+ 
+ 		queue0 {
+ 			snps,dcb-algorithm;
+@@ -302,7 +301,6 @@ queue3 {
+ 
+ 	ethernet1_mtl_tx_setup: tx-queues-config {
+ 		snps,tx-queues-to-use = <1>;
+-		snps,tx-sched-sp;
+ 
+ 		queue0 {
+ 			snps,dcb-algorithm;
+diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+index 175f8b1e3b2d..eeae4f071274 100644
+--- a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
++++ b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+@@ -411,7 +411,6 @@ queue3 {
+ 
+ 	mtl_tx_setup: tx-queues-config {
+ 		snps,tx-queues-to-use = <4>;
+-		snps,tx-sched-sp;
+ 
+ 		queue0 {
+ 			snps,dcb-algorithm;
+@@ -480,7 +479,6 @@ queue3 {
+ 
+ 	mtl_tx_setup1: tx-queues-config {
+ 		snps,tx-queues-to-use = <4>;
+-		snps,tx-sched-sp;
+ 
+ 		queue0 {
+ 			snps,dcb-algorithm;
 -- 
-2.47.2
+2.43.0
 
 
