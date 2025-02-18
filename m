@@ -1,95 +1,129 @@
-Return-Path: <linux-kernel+bounces-518736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1283A393E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:42:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DAFCCA3940A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:46:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B493188D222
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 07:42:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B8DE188E41D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 07:45:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4533A1BD9C6;
-	Tue, 18 Feb 2025 07:42:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBD501C6FEE;
+	Tue, 18 Feb 2025 07:43:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gthhYI9H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bhYJN+Iu"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 966EA1B87CF;
-	Tue, 18 Feb 2025 07:42:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A34AA1BC07B;
+	Tue, 18 Feb 2025 07:43:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739864531; cv=none; b=qZsF9SM1iF1KhGpMUwoyGJE36H8TuX2CHfACmbWes3A26km18+6ufUNHMTIHpeykpLfz1aP1QVlpSYWYMBCYb/WGkB9VXwYKtYP0/mj7x5BiodQvf3VvjWj/IVXbGGmdJS3dmtZgEiBrdW1MZ6yu7N75asCVDBx0KGvmALVa7bU=
+	t=1739864593; cv=none; b=dsLcSC/SiJUUAFvjrHiiFuNjrdK7qkfGzvBsessmcsnbXZfRzcTkCvyWXuPG/wMPrEAB6CKFYzyjPjYaouy8VGIwCdHwrZtbo7FXIgSg3sVBBu8rtK9ViBprNM5vj8+LeWm10KXP4l3esXxx87d0mhqXaXRLZUkZfLWPGdrW1mE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739864531; c=relaxed/simple;
-	bh=IvK/YZdxhIzz+WQDui+6ei6dQMpDPKxU2syoofLtyUI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g4XjQcqEsj84+HAhD96xp+8ONUgGBf2TD+cGM8o56Z4aT8nGJgAvQPJmXFsPKUtOnPRl17ja1pr0s/R52FJvMhzbaCe798q1YH90GM5Sjr7pn28Dpd9zZ6WJFtxYFlL7jajybP//yK+lFIVkh5SeL8LXuRydWKOcJYGduvFBltc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gthhYI9H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18009C4CEE6;
-	Tue, 18 Feb 2025 07:42:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739864531;
-	bh=IvK/YZdxhIzz+WQDui+6ei6dQMpDPKxU2syoofLtyUI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=gthhYI9H3TZNlItYwrKDSFuBdEkiKZrIrU49lRCIALScYrla7kqdufoYgJbGesW/s
-	 ZfqxxSTLbGj+8Qi02jw6wsu7IjVEgz+bO00kvW3TUsL0f4tzjbMOd/9uV2HfiIurGn
-	 9m47eoooc9igVM7Kr/FL6sr3en6A29okd0rLtNhhTWvF/CB0QtRNolG7vflfcsD6xz
-	 5Y/qo9rK8O3PiqfxmhGwBv3+ZcwBzQrmF1rOAzJKp2/QmhVDrqXUJv1jdVM5dlk+on
-	 Cu6aRVRbEFTEck7PdHrsS7uMdIMjjN8PGkfUTeir2LhQ/k8qQ00Esd9LqRLeaDttod
-	 NGahJwRUtODMg==
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5452c29bacfso4304621e87.3;
-        Mon, 17 Feb 2025 23:42:11 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVX9TsriKvcfn4hVZI1VloDV3FC7mHZvLakwigpi2n9w8OI1BlQGRCm6AMI+1847VlTSt9vqsIK@vger.kernel.org, AJvYcCVnJrG/D+MDFf7oVd0UMa4I7q2uY6egkVmfQaqxd71rCKtgPlZg2dNkjaLwVGw5Z3X8T87keoNqaNuEx5M=@vger.kernel.org, AJvYcCWn5LnzDlCdlTcw3lAXzq272gO0eYkBBBCkEC9O7UbXd0mqsdM3IjACABcZM/k4jBWeAzrUdHcE4Y/6rsIG@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywb+U4C5xFyWpzIl6PFTcTIefpXtdAitYUf47102VwcCu1dPQ8L
-	WW0ATvXusUuzshplXhiRosMB94kuI5Q5fXkFiutw3kN8jZvZBAcYDpwCC3kxpTTH+bC7ds+alQ5
-	tcWTzZSXSnGVLzmara5lmTrjuCyE=
-X-Google-Smtp-Source: AGHT+IHcwsPEwQwvSNlp7+txo1ExLwL6bb64NekXlJS4T9EnBQWu9yYoLt2pG9NrnPvUbCr2H8go8Lh60C6VvcSVOhE=
-X-Received: by 2002:a05:6512:2342:b0:545:60b:f394 with SMTP id
- 2adb3069b0e04-5452fe27255mr4337762e87.4.1739864529480; Mon, 17 Feb 2025
- 23:42:09 -0800 (PST)
+	s=arc-20240116; t=1739864593; c=relaxed/simple;
+	bh=IGnYlnCmTaS8mNd7QTNJRpIo2yNqswDiNM1aivm3f+M=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Rn2XEbrtxhkFWkwHKvEr77GqcguI0zXWAkJr0XDrH5vcWIofKHHUKkbob7IQRQQBeu2dGPh38DS/SaKvFxLIboqg61CSq0Ocfef2v94qaPJwi53lWFSPZHiWAWg625By/JhbXL3hS/9ceif1CaV5cH49YHY19FE/TJBQ3ISVuMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bhYJN+Iu; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51HMpjW7028586;
+	Tue, 18 Feb 2025 07:43:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=lWXe/D40KTJXrGXuoNXt5j
+	DuAYNmR+E6160oFRqEgjc=; b=bhYJN+IuSvxuZmAsK96a353rXQRJAXiolW4Bqh
+	gv8zy5QBlAWgpfHmYl7CO+3qLdLDwwCgAadsp1xo1uoDWQ7o/nM6AAI8RYszp8Rx
+	g6WomQxTW5eZqnJ7lJtyvUR7pArdIs3T/x18Mheu8SoNSORSNZVzrASCIPORqAu4
+	3Hs/W+W2luc5dST0vmCVoF5ENOdsMI6gOCie1T62dkgs1T6Y2RHUINaDeEIp1OHE
+	BlreKRFq0KKdwtlcvDmEhDyPdqPf/4Ziwi/iE71c7SJMC4q/KOal125VlPn8TKUD
+	6aDxOXW3fJi9QcQ+ShDDULmmHdb/BEDruPmIDbuMvLabHhWA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44v3mg2hh2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Feb 2025 07:43:07 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51I7h6Sx004447
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Feb 2025 07:43:06 GMT
+Received: from hu-jiaymao-sha.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 17 Feb 2025 23:43:04 -0800
+From: Jiayang Mao <quic_jiaymao@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_bt@quicinc.com>
+Subject: [PATCH v1] linux-qcom-base-6.6: Add firmware-name in BT node for qcs615-ride
+Date: Tue, 18 Feb 2025 13:12:55 +0530
+Message-ID: <20250218074255.4152013-1-quic_jiaymao@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250212154718.44255-1-ebiggers@kernel.org> <Z61yZjslWKmDGE_t@gondor.apana.org.au>
- <20250213063304.GA11664@sol.localdomain> <20250215090412.46937c11@kernel.org>
- <Z7FM9rhEA7n476EJ@gondor.apana.org.au> <20250217094032.3cbe64c7@kernel.org> <Z7QBuIvr4Asiezgc@gondor.apana.org.au>
-In-Reply-To: <Z7QBuIvr4Asiezgc@gondor.apana.org.au>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Tue, 18 Feb 2025 08:41:57 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXFe2f0cCYznorrO-wJyh-qxJP5z-HdR9rbQiuMKC5u6qw@mail.gmail.com>
-X-Gm-Features: AWEUYZnpo_Rxk-ow416mB2XJK3Qj-eZIWTL3GmEexif4qB9L-kVkI7AOouI7sOg
-Message-ID: <CAMj1kXFe2f0cCYznorrO-wJyh-qxJP5z-HdR9rbQiuMKC5u6qw@mail.gmail.com>
-Subject: Re: [PATCH v8 0/7] Optimize dm-verity and fsverity using multibuffer hashing
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Jakub Kicinski <kuba@kernel.org>, Eric Biggers <ebiggers@kernel.org>, fsverity@lists.linux.dev, 
-	linux-crypto@vger.kernel.org, dm-devel@lists.linux.dev, x86@kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Sami Tolvanen <samitolvanen@google.com>, Alasdair Kergon <agk@redhat.com>, 
-	Mike Snitzer <snitzer@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Mikulas Patocka <mpatocka@redhat.com>, David Howells <dhowells@redhat.com>, netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: xWs3BmFX7Zn9W9ye_9_8sJICxnii4gkb
+X-Proofpoint-ORIG-GUID: xWs3BmFX7Zn9W9ye_9_8sJICxnii4gkb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-18_02,2025-02-18_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ bulkscore=0 clxscore=1011 adultscore=0 priorityscore=1501 mlxscore=0
+ phishscore=0 spamscore=0 mlxlogscore=999 impostorscore=0 malwarescore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502180058
 
-On Tue, 18 Feb 2025 at 04:43, Herbert Xu <herbert@gondor.apana.org.au> wrote:
->
-> On Mon, Feb 17, 2025 at 09:40:32AM -0800, Jakub Kicinski wrote:
-> >
-> > Yes, that's true for tunnels and for IPsec.
-> > TLS does crypto in sendmsg/recvmsg, process context.
->
-> OK that's good to know.  So whether SIMD is always allowed or
-> not won't impact TLS at least.
->
+The qcs615-ride platform uses the QCA6698 Bluetooth chip. While the
+QCA6698 shares the same IP core as the WCN6855, it has different RF
+components and RAM sizes, requiring new firmware files. Use the
+firmware-name property to specify the nvm and rampatch firmware to load.
 
-And for IPsec, I'd assume that the cryptd fallback is only needed when
-TX and RX are competing for the same CPU.
+This patch depends on below patch:
+- WiFi/BT DTS
+https://lore.kernel.org/all/20241203060318.1750927-1-quic_yuzha@quicinc.com/
 
-So for modern systems, I don't think the SIMD helper does anything
-useful, and we should just remove it, especially if we can relax the
-softirq/preemption rules for kernel SIMD on x86 like I did for arm64.
+Signed-off-by: Jiayang Mao <quic_jiaymao@quicinc.com>
+---
+ arch/arm64/boot/dts/qcom/qcs615-ride.dts | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+index 5ba9dd5eec6c..03547fbd33bc 100644
+--- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
++++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: BSD-3-Clause
+ /*
+- * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
++ * Copyright (c) 2024-2025, Qualcomm Innovation Center, Inc. All rights reserved.
+  */
+ /dts-v1/;
+ 
+@@ -611,6 +611,7 @@ &uart7 {
+ 
+ 	bluetooth {
+ 		compatible = "qcom,wcn6855-bt";
++		firmware-name = "QCA6698/hpnv21", "QCA6698/hpbtfw21.tlv";
+ 
+ 		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
+ 		vddaon-supply = <&vreg_pmu_aon_0p59>;
+-- 
+2.25.1
+
 
