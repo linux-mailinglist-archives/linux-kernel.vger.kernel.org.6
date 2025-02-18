@@ -1,122 +1,146 @@
-Return-Path: <linux-kernel+bounces-520218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93107A3A71C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:13:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B2ACA3A725
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:14:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29E777A15FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:12:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 000353AE6AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:13:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B977B21B9F7;
-	Tue, 18 Feb 2025 19:09:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FF87267384;
+	Tue, 18 Feb 2025 19:10:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MfnhWYds"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LD2OLZnt"
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF62121B9F3;
-	Tue, 18 Feb 2025 19:09:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 215A11EB5C0;
+	Tue, 18 Feb 2025 19:09:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739905786; cv=none; b=XinPlZbcAGsCAqx8JjEWXxuyYhry1j7b4CWuiKGvMkH5Hi/Yz+9tx+GhpWOJB68W9WFuta2hqbMl1CsCuOOcEZDpFcKYNMxfr9TTFGRA9wnP5EPBweDcYe0Cd/BNyicYt2mtbabgsavqdaO4hwkI36XRzchpJ3nlWUdm2S7MjLY=
+	t=1739905801; cv=none; b=jIX4uYWCoburYNVPfySJy+h5coVWOp2QPZn1kDLTcv1vsmLFils3MHk/SKF4jRq2AqwXv/biymgYBC2PvGjEnxWB2+2PNfFoACiS6KNEJKZEELM+GHKC2vbuZP0QR/ee88Oe3vh8C4WfVscMCHrBblRAW/z2Uh6HiIavTzmsZCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739905786; c=relaxed/simple;
-	bh=MKRpg20GW51A8TO6MgkFLj5LD4O/ElF77sV3bubJAfM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X4XWPaHH7wIgx5Q9z7ZgQGrVMKOt3AEWSrQwiEegHVJROrV8oN4hGwdWisqMButTXkUjAjG2KocxcgYjEmLdnEDlxLa6EeFjcEU+AIsT+NHSeOwCSxTPHMY8Qt7WbdQ9KhyYcphrDB61UjzcQFAjUWe12UEaw90O7r7Hjq8FNOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MfnhWYds; arc=none smtp.client-ip=209.85.214.171
+	s=arc-20240116; t=1739905801; c=relaxed/simple;
+	bh=lXn4v5JsnT7T3CKTx48NSASkpRG4iPPRkLsp9BEySfY=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=jo58S78Q9ICTSCvAxqn3htqJDidnEJnd5IoG1o6ltkWobYbEQMuvYM6WaH2EypPTRXvoHeuwfygVzkw+TEZj6R+2lf0i4qqvAWkwtVbMyBnkQ6woiQuaj4maYsq6LeZZazLwoD6Y9xDscPah6zNiq25Ah5s2f+A0UqVB9NPYYpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LD2OLZnt; arc=none smtp.client-ip=209.85.221.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-220c2a87378so83445725ad.1;
-        Tue, 18 Feb 2025 11:09:44 -0800 (PST)
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-520a473d2adso1890211e0c.2;
+        Tue, 18 Feb 2025 11:09:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739905784; x=1740510584; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BB41eKE33tD6ZlxR2QuIN+D2oIaS7wnfJEtztipPSK4=;
-        b=MfnhWYds0qNI3aJNRXeZ9bhssOY4/b3On/bQMysu1CXRCrvsEW6o5Km4LbS8TpLq/a
-         q4tN+LPJ8vczM9eliRwYUxuwhK5YdkzUbRetOw9L3DwLbToL1UeUVfgSBbaD1u+exVwp
-         bYifpI6hxazA+AmcPOlPg1+WMA5b3M0XOq95l9fh/aBLizTQPyVhOpjz9sDWwiP7BinB
-         7H7WO4YiYS7UejpSKGkIZInHdVqbbwY1L7WKp1TZKzkMJrdN4F+ZSkfMPR4/C3FaOec6
-         oK2mmsvZxyPjs2JpzvV64UZZhUTb5jfmEXUkUW/G75mpJhvUV+SOckciEn5BChMbCRQX
-         46DQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739905784; x=1740510584;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1739905799; x=1740510599; darn=vger.kernel.org;
+        h=in-reply-to:references:cc:to:from:subject:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BB41eKE33tD6ZlxR2QuIN+D2oIaS7wnfJEtztipPSK4=;
-        b=ZQzMLXJgjuKf+Czfr/0JSzDmvxEw2+SfPEATQdMz4DMybLonL32TtgUw4bbWyBKafY
-         p1b4MozA2NwkDzeGUXl0hcTkfyoqq0BNo6dn52y8OOPwRDE4ClYywttJ7SZd1frxplfV
-         5O7SIxI7kiaa49+3vakUkqCVn7zC1GiGtM7HH83lwCowdr1CkZUS0IPyK891IGgFpxeT
-         DnMfBtUTbcfZZ0AN2GaH1bZGvMxsfztmbHcjwMP7hus+dlk6GD+qyfd/TwIGy/nurbwV
-         i3A4/Ej/JEvzDIzZ1M3tR0SEdVrQpSbQ6D5T2gxGXZ4pp0lcNRXXfq8m83mVnGxeCua7
-         XmgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW4jtwSFx9f9/j7SYypGKF0F0FuheR0hmrsXGzPd+D//Js9ODZ3gs6ePrc0wKhHUPKSaMw=@vger.kernel.org, AJvYcCXekByQCgsmpyY7Kyy9BHOu3KYmK5oWdUNuVfAXyzGehVp4gxaDtE4BIoOyWJHsV0I63eAvBIQ3jqxp58Jn@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3DprxyNXBWOvQH/6tTaMOWZTaanriOlT1JaHQzH1aYQTp5DaP
-	/GWNZhfSk+MkCT/e+QcZUzaB9orfVsdVMy18pOTRngFmhrC+YlPt
-X-Gm-Gg: ASbGncsd/j3UDIHUOg2k1TZ+mjYk+vaO1w+eHJE0EytS3xGqHZ6zF4YBbsbC0g0gVvm
-	JA3oOtsB41m8+Z/8VO4Ev9wNmWdjslWHUJcdj1BSJFBRSwsfEIk6Y/T66CY9vNNsCyJgyxx8jjZ
-	+Te5l+7vHrl123Ne8mYVVMfWFSNHe8vu4/auUCl+5pc99uqvoP06RmzLVpJWRzbzc4z0+Sv4dk2
-	FCZm05ZQ5Hx4sMIHX5QGDlXiXhMy2N5XwA92ckV6GZgqRVHttJkQ9t0aKdYmOFioqVvcMgMQrZh
-	DLHxjqTp8R7Uwc4=
-X-Google-Smtp-Source: AGHT+IHewgZoDXqzwkD/Pf9RNFhJxKN2ex1Jk+M6rDTJ0peO0LGgdlAqipzv9O4selP+o5eu5Tnlug==
-X-Received: by 2002:a05:6a20:12c3:b0:1ee:8296:b078 with SMTP id adf61e73a8af0-1ee8cb40d00mr23483247637.25.1739905783780;
-        Tue, 18 Feb 2025 11:09:43 -0800 (PST)
-Received: from localhost ([216.228.125.131])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ae07fec1f8esm3414096a12.28.2025.02.18.11.09.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 11:09:43 -0800 (PST)
-Date: Tue, 18 Feb 2025 14:09:41 -0500
-From: Yury Norov <yury.norov@gmail.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: Andrea Righi <arighi@nvidia.com>, David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>, Ian May <ianm@nvidia.com>,
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH sched_ext/for-6.15] sched_ext: idle: Introduce node-aware
- idle cpu kfunc helpers
-Message-ID: <Z7Ta9ULl141jcjFF@thinkpad>
-References: <20250218180441.63349-1-arighi@nvidia.com>
- <Z7TZIvaxzEDD2u9A@slm.duckdns.org>
+        bh=lXn4v5JsnT7T3CKTx48NSASkpRG4iPPRkLsp9BEySfY=;
+        b=LD2OLZnt/9BjEvICMYbhZjAQxIPIDRiGXhsod2Wo+HmtMEpe+hbTqcP8S4IuBEog7K
+         rNoTc/RY29mKiuNVOhlLP2Om8v/jH1bzvitL0Rrvo3XUPHVjkgcN70QHIczeGLwBcMyn
+         ++gTmWuCBKLZh/OFxwcnD9bp8TtFRH8Job/f/Vbd7YRJql+/FJ6yM/6A20tskoyd42+J
+         aiXKvhnPkIfIWT3hf5N3g2cpY3ul5emMXyzmkLZT9GLL0QWWog3yH8KCc51lJm/gZGve
+         ST9mnT+p9Oq70TcqMfQSXI2O5mOwkd2qEHWuMhTN4kOoiZ6EWwkk13egUFI8VxYJ+iY0
+         0Reg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739905799; x=1740510599;
+        h=in-reply-to:references:cc:to:from:subject:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=lXn4v5JsnT7T3CKTx48NSASkpRG4iPPRkLsp9BEySfY=;
+        b=c8ArEaCbGe8OooVp3kI2ziZx6H1MZsThzycO81PM2DJy+YeKWRoOJlr8tpJXjih4Bd
+         mMNqbcO0BMvctVBz1slv8RWLTzS3yiUqZ0hRqWuTz9L2X9ECTCgBfMbP+L/xBEvRGdzY
+         y7mw4nkssWXOLTFluXH5aaVHKVPdwSBQKb9WBNMOnUQsw2JxD21PmRnvKpSzEg48F/Wj
+         atWtP/vPs1XZbexsH1nX92+NMGutRfQeG0v8O6HLMqiFjerhbMVzSThKNn1M9F3S4R6A
+         ncAYuq5r2/5fpiYYUhkTULXqpOFFNmK32YUqLvgUgZbSytEg02qGjUPEP2lEX47/rF3B
+         jrrA==
+X-Forwarded-Encrypted: i=1; AJvYcCUy02gdyeafV+PkZotitgMz+nKuUJlUn8Jld7pcYZCPxaH/N6T0JuOJu782kSEdg6VNhPhOkLBVYsNtK7Y=@vger.kernel.org, AJvYcCXHfSIwCJpRGqEnUOblkG1crYt/lGQQyFbHqwir7I9m1PRfOnZ95Hgs0c3qLxMz6LWVTHk8uE9q1OMVTE4H4xhDmpvwbA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxDiKSpt+gjjoQvMIbjJcctStc6kWLFjmi7Mt+WiHq5/u9iw+p
+	DW77OcfrahHh01SDO2aW3dE8EBPAmrBRffHEHCC8JGOCL4Ua6Z2K
+X-Gm-Gg: ASbGncvCVl00BmZatOCthyLg5JKic6tOUwZxk5NPaAYUEG9YPSxFXBfKhUJUVW4B5J4
+	zcBmi6GG21AMltoEjhFQQiZN1zSXeg7K4w2G9vVCH0l4cj+S9qv4uO1cpLXNbcSESx+/Zhvrnrb
+	n3uY+x4ktE04DOliauu3V2Qs4xsDasBfZPfvUg8o5gDV9hraGaQJIJdcYDeX1v++4mCbRXF83/D
+	n9BU6MPTZ9Siz4AjXZVXxNp57EmLmwvQ6Vl4n+XzPE9atZMRn/uGbe0a7Js5GZYXuXIKK9XHa5o
+	RRZjmCU=
+X-Google-Smtp-Source: AGHT+IGhGHn1OSq1/KyiMdFiNJ/FWPMnxHif0EI/0h3HHaJEpRGDOTCue5uNkfKSt2He6QDmbLceGQ==
+X-Received: by 2002:a05:6122:1686:b0:520:60c2:3f3 with SMTP id 71dfb90a1353d-521c441d9e3mr497554e0c.4.1739905798992;
+        Tue, 18 Feb 2025 11:09:58 -0800 (PST)
+Received: from localhost ([2800:bf0:82:3d2:9e61:1a62:1a8c:3e62])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-520a3430c00sm1810703e0c.0.2025.02.18.11.09.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Feb 2025 11:09:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z7TZIvaxzEDD2u9A@slm.duckdns.org>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 18 Feb 2025 14:09:56 -0500
+Message-Id: <D7VT4O9N3KD3.3DK9CY1TODOMR@gmail.com>
+Subject: Re: [PATCH] platform/x86: dell: Use *-y instead of *-objs in
+ Makefile
+From: "Kurt Borja" <kuurtb@gmail.com>
+To: =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: "Hans de Goede" <hdegoede@redhat.com>,
+ <platform-driver-x86@vger.kernel.org>, "LKML"
+ <linux-kernel@vger.kernel.org>, =?utf-8?q?Pali_Roh=C3=A1r?=
+ <pali@kernel.org>, <Dell.Client.Kernel@dell.com>, "Matthew Garrett"
+ <mjg59@srcf.ucam.org>, "Andy Shevchenko"
+ <andriy.shevchenko@linux.intel.com>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20250214214535.4947-1-kuurtb@gmail.com>
+ <cc0f1964-ae37-4cfb-b5d2-da2e2a97e522@linux.intel.com>
+In-Reply-To: <cc0f1964-ae37-4cfb-b5d2-da2e2a97e522@linux.intel.com>
 
-On Tue, Feb 18, 2025 at 09:01:54AM -1000, Tejun Heo wrote:
-> On Tue, Feb 18, 2025 at 07:04:41PM +0100, Andrea Righi wrote:
-> > Introduce a new kfunc to retrieve the node associated to a CPU:
-> > 
-> >  int scx_bpf_cpu_node(s32 cpu)
-> > 
-> > Add the following kfuncs to provide BPF schedulers direct access to
-> > per-node idle cpumasks information:
-> > 
-> >  const struct cpumask *scx_bpf_get_idle_cpumask_node(int node)
-> >  const struct cpumask *scx_bpf_get_idle_smtmask_node(int node)
-> >  s32 scx_bpf_pick_idle_cpu_node(const cpumask_t *cpus_allowed,
-> >  				int node, u64 flags)
-> >  s32 scx_bpf_pick_any_cpu_node(const cpumask_t *cpus_allowed,
-> >  			       int node, u64 flags)
-> > 
-> > Moreover, trigger an scx error when any of the non-node aware idle CPU
-> > kfuncs are used when SCX_OPS_BUILTIN_IDLE_PER_NODE is enabled.
-> > 
-> > Cc: Yury Norov [NVIDIA] <yury.norov@gmail.com>
-> > Signed-off-by: Andrea Righi <arighi@nvidia.com>
-> 
-> Applied to sched_ext/for-6.15.
+On Mon Feb 17, 2025 at 3:58 AM -05, Ilpo J=C3=A4rvinen wrote:
+> On Fri, 14 Feb 2025, Kurt Borja wrote:
+>
+>> The `objs` suffix is reserved for user-space tools. Use the `y` suffix
+>> instead, which is usually used for kernel drivers.
+>>=20
+>> Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>> Signed-off-by: Kurt Borja <kuurtb@gmail.com>
+>> ---
+>> Hi all,
+>>=20
+>> I based this patch on top of the for-next branch.
+>>=20
+>> Ilpo, if you prefer this patch to be based on top of the fixes branch,
+>> let me know. I'd submit two separate patches, one for alienware-wmi, on
+>> top of the for-next branch and one for the other drivers, on top of
+>> fixes.
+>
+> Thanks for the fix.
+>
+> I took this through for-next branch to not make our lives unnecessarily=
+=20
+> complicated. If there would be only handful of -objs, I might have decide=
+=20
+> otherwise but this (wrong) pattern is really widespread so removing a few=
+=20
+> drops from the ocean is not going to sound us the finish line fanfare. Bu=
+t=20
+> it's still an important step towards the right direction, regardless.
+>
+> TBH, I didn't know the distinction either until Andy explained it (and=20
+> like you, would have just copied the pattern if one was readily=20
+> available). But I've never really deep dived into the kernel's build=20
+> system anyway.
 
-I added my review-by in v12. Can you please add it here?
+I will finish the job for this subsystem, so no one copies this pattern
+again :p
 
-Reviewed-by: Yury Norov [NVIDIA] <yury.norov@gmail.com>
+>
+> I wonder why checkpatch doesn't catch it, or does it? At least there are=
+=20
+> no "objs" strings in its source.
+
+It doesn't actually. Not even with --strict.
+
+--=20
+ ~ Kurt
 
