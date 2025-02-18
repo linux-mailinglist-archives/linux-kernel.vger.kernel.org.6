@@ -1,239 +1,213 @@
-Return-Path: <linux-kernel+bounces-518559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED9A2A390DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 03:33:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3F4DA390E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 03:39:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9902188D107
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 02:33:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B131D3B07E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 02:39:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D15314831E;
-	Tue, 18 Feb 2025 02:33:07 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F07A1527B1;
+	Tue, 18 Feb 2025 02:39:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a/fETK+h"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F32054C9F;
-	Tue, 18 Feb 2025 02:33:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDA41146A72
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 02:39:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739845987; cv=none; b=hu8dibaPXq/DTg1oD4qCcPqZ5NiXZsdQBBT5RmSc5V0x8wkUazgL+hpi5T9pPPsDO+beKkfl4E5pD0hP4n2POicwWNvArlzT9MpCcrWceX3t5ZwpwMp+7hLoD98ws9lsEPio7TXroJ6XJ2WvjT2TewYc8u+r5vT9fvxvixf9jC0=
+	t=1739846366; cv=none; b=OvfETO2Mu/5XxpqcbKeiszIvZi3E01zDkGKxQJXxabiZOac3VuXImQaob4P1pXKdsC0g+2kigJTiVynBeHxIGdn8xSC2U6xAIjjyPVcYhskReAsb2DFlahMCsVvfw96UVuBoYcMT5ZXsLAOB4QyBshAzqLtNB0PW7BDxEIBBXss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739845987; c=relaxed/simple;
-	bh=kVFDQLrwBz6/w4jbcFWfuXnpbej/CPofQc4TeZhDOF4=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=m9DmB/oKuSOVJHjCOEJ2wq96+Kj5TYcMRFgotYYMzzoEqSr3gIHB2mVYRnSw0MH0uDjRu/6Zd1enxhPAwX7mtKYP0NB+QiRCU4Atp68nvkZ8t2IcApEBYKgIDfsc421Vqmi+2PGVtwmDtJuu7hYr40TsVlrjGu2wAtV66ibTpq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Yxk550fyjz22vtY;
-	Tue, 18 Feb 2025 10:30:01 +0800 (CST)
-Received: from kwepemk500007.china.huawei.com (unknown [7.202.194.92])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0752B1400DD;
-	Tue, 18 Feb 2025 10:33:00 +0800 (CST)
-Received: from [10.174.179.143] (10.174.179.143) by
- kwepemk500007.china.huawei.com (7.202.194.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 18 Feb 2025 10:32:59 +0800
-Subject: Re: [PATCH v3] Export MDRAID bitmap on disk structure in UAPI header
- file
-To: Tomas Mudrunka <tomas.mudrunka@gmail.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-raid@vger.kernel.org>,
-	<song@kernel.org>, Mariusz Tkaczyk <mtkaczyk@kernel.org>
-References: <20241231030929.246059-1-tomas.mudrunka@gmail.com>
- <20250206223005.1759192-1-tomas.mudrunka@gmail.com>
-From: Yu Kuai <yukuai3@huawei.com>
-Message-ID: <bead708f-b901-18df-f461-c5324fbe2555@huawei.com>
-Date: Tue, 18 Feb 2025 10:32:58 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1739846366; c=relaxed/simple;
+	bh=XYKTxWIY8WkAi6EQk9rM5/LYwSGuFSyR39aS7SeeGxA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YKcYwNRBBZo7hkV0LR89pgXMBOsFC1gnOJAEKgTqZQRi8rdRS1a5Q8rNvpEG+gIGgBO7XgTNpzErk3+plJY3D0aOQhTiCybf1nPpB+EAc3YRT0Lx4K3EzT183JLQ4Ge02svJg7mh4aesKJ9vTF6O32NpOE7o04JgMQGFD83OJPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a/fETK+h; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739846363;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=BSJXCcaXZJnQ9dzb7rdYVPIMXJ/QVoaHaudkSEF5u+A=;
+	b=a/fETK+h95f0SxhwXXxX6FqT+GbBMbqAXd3VbinslfU+EQMtFf6SmNUjW2wRPm7nlUBUQG
+	84cyD4pM+nyGLWGHkf6XjhNFsrZYDDLCHOE0vIs0Lnww3i3j6bE9xzF/gllTcV7DnctFei
+	F+aCUZ2smX8Mp6vgn54Omair3RowN2c=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-400-vBSwEWu6OOyeqHoKwRWg1w-1; Mon,
+ 17 Feb 2025 21:39:20 -0500
+X-MC-Unique: vBSwEWu6OOyeqHoKwRWg1w-1
+X-Mimecast-MFC-AGG-ID: vBSwEWu6OOyeqHoKwRWg1w_1739846359
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6DBB91800373;
+	Tue, 18 Feb 2025 02:39:18 +0000 (UTC)
+Received: from localhost.localdomain (unknown [10.72.112.151])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3A35A19560AB;
+	Tue, 18 Feb 2025 02:39:11 +0000 (UTC)
+From: Jason Wang <jasowang@redhat.com>
+To: mst@redhat.com,
+	jasowang@redhat.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	pabeni@redhat.com
+Cc: xuanzhuo@linux.alibaba.com,
+	eperezma@redhat.com,
+	virtualization@lists.linux.dev,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] virtio-net: tweak for better TX performance in NAPI mode
+Date: Tue, 18 Feb 2025 10:39:08 +0800
+Message-ID: <20250218023908.1755-1-jasowang@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250206223005.1759192-1-tomas.mudrunka@gmail.com>
-Content-Type: text/plain; charset="gbk"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemk500007.china.huawei.com (7.202.194.92)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-Hi, Tomas
+There are several issues existed in start_xmit():
 
-ÔÚ 2025/02/07 6:30, Tomas Mudrunka Ð´µÀ:
-> When working on software that manages MD RAID disks from
-> userspace. Currently provided headers only contain MD superblock.
-> That is not enough to fully populate MD RAID metadata.
-> Therefore this patch adds bitmap superblock as well.
-> 
-> Signed-off-by: Tomas Mudrunka <tomas.mudrunka@gmail.com>
-> ---
+- Transmitted packets need to be freed before sending a packet, this
+  introduces delay and increases the average packets transmit
+  time. This also increase the time that spent in holding the TX lock.
+- Notification is enabled after free_old_xmit_skbs() which will
+  introduce unnecessary interrupts if TX notification happens on the
+  same CPU that is doing the transmission now (actually, virtio-net
+  driver are optimized for this case).
 
-Can you fix the checkpatch warning and send a new version?
+So this patch tries to avoid those issues by not cleaning transmitted
+packets in start_xmit() when TX NAPI is enabled and disable
+notifications even more aggressively. Notification will be since the
+beginning of the start_xmit(). But we can't enable delayed
+notification after TX is stopped as we will lose the
+notifications. Instead, the delayed notification needs is enabled
+after the virtqueue is kicked for best performance.
 
-Thanks,
-Kuai
+Performance numbers:
 
-> V1 -> V2: Also exported stuff needed by mdadm according to Mariusz Tkaczyk
-> V2 -> V3: Fixed checkpatch errors
-> 
->   drivers/md/md-bitmap.c         |  9 ------
->   drivers/md/md-bitmap.h         | 42 +--------------------------
->   include/uapi/linux/raid/md_p.h | 53 +++++++++++++++++++++++++++++++++-
->   3 files changed, 53 insertions(+), 51 deletions(-)
-> 
-> diff --git a/drivers/md/md-bitmap.c b/drivers/md/md-bitmap.c
-> index ec4ecd96e..247610f9a 100644
-> --- a/drivers/md/md-bitmap.c
-> +++ b/drivers/md/md-bitmap.c
-> @@ -32,15 +32,6 @@
->   #include "md.h"
->   #include "md-bitmap.h"
->   
-> -#define BITMAP_MAJOR_LO 3
-> -/* version 4 insists the bitmap is in little-endian order
-> - * with version 3, it is host-endian which is non-portable
-> - * Version 5 is currently set only for clustered devices
-> - */
-> -#define BITMAP_MAJOR_HI 4
-> -#define BITMAP_MAJOR_CLUSTERED 5
-> -#define	BITMAP_MAJOR_HOSTENDIAN 3
-> -
->   /*
->    * in-memory bitmap:
->    *
-> diff --git a/drivers/md/md-bitmap.h b/drivers/md/md-bitmap.h
-> index 31c93019c..75bbe6b84 100644
-> --- a/drivers/md/md-bitmap.h
-> +++ b/drivers/md/md-bitmap.h
-> @@ -7,7 +7,7 @@
->   #ifndef BITMAP_H
->   #define BITMAP_H 1
->   
-> -#define BITMAP_MAGIC 0x6d746962
-> +#include <linux/raid/md_p.h>
->   
->   typedef __u16 bitmap_counter_t;
->   #define COUNTER_BITS 16
-> @@ -18,46 +18,6 @@ typedef __u16 bitmap_counter_t;
->   #define RESYNC_MASK ((bitmap_counter_t) (1 << (COUNTER_BITS - 2)))
->   #define COUNTER_MAX ((bitmap_counter_t) RESYNC_MASK - 1)
->   
-> -/* use these for bitmap->flags and bitmap->sb->state bit-fields */
-> -enum bitmap_state {
-> -	BITMAP_STALE	   = 1,  /* the bitmap file is out of date or had -EIO */
-> -	BITMAP_WRITE_ERROR = 2, /* A write error has occurred */
-> -	BITMAP_HOSTENDIAN  =15,
-> -};
-> -
-> -/* the superblock at the front of the bitmap file -- little endian */
-> -typedef struct bitmap_super_s {
-> -	__le32 magic;        /*  0  BITMAP_MAGIC */
-> -	__le32 version;      /*  4  the bitmap major for now, could change... */
-> -	__u8  uuid[16];      /*  8  128 bit uuid - must match md device uuid */
-> -	__le64 events;       /* 24  event counter for the bitmap (1)*/
-> -	__le64 events_cleared;/*32  event counter when last bit cleared (2) */
-> -	__le64 sync_size;    /* 40  the size of the md device's sync range(3) */
-> -	__le32 state;        /* 48  bitmap state information */
-> -	__le32 chunksize;    /* 52  the bitmap chunk size in bytes */
-> -	__le32 daemon_sleep; /* 56  seconds between disk flushes */
-> -	__le32 write_behind; /* 60  number of outstanding write-behind writes */
-> -	__le32 sectors_reserved; /* 64 number of 512-byte sectors that are
-> -				  * reserved for the bitmap. */
-> -	__le32 nodes;        /* 68 the maximum number of nodes in cluster. */
-> -	__u8 cluster_name[64]; /* 72 cluster name to which this md belongs */
-> -	__u8  pad[256 - 136]; /* set to zero */
-> -} bitmap_super_t;
-> -
-> -/* notes:
-> - * (1) This event counter is updated before the eventcounter in the md superblock
-> - *    When a bitmap is loaded, it is only accepted if this event counter is equal
-> - *    to, or one greater than, the event counter in the superblock.
-> - * (2) This event counter is updated when the other one is *if*and*only*if* the
-> - *    array is not degraded.  As bits are not cleared when the array is degraded,
-> - *    this represents the last time that any bits were cleared.
-> - *    If a device is being added that has an event count with this value or
-> - *    higher, it is accepted as conforming to the bitmap.
-> - * (3)This is the number of sectors represented by the bitmap, and is the range that
-> - *    resync happens across.  For raid1 and raid5/6 it is the size of individual
-> - *    devices.  For raid10 it is the size of the array.
-> - */
-> -
->   struct md_bitmap_stats {
->   	u64		events_cleared;
->   	int		behind_writes;
-> diff --git a/include/uapi/linux/raid/md_p.h b/include/uapi/linux/raid/md_p.h
-> index ff47b6f0b..2995528f9 100644
-> --- a/include/uapi/linux/raid/md_p.h
-> +++ b/include/uapi/linux/raid/md_p.h
-> @@ -1,7 +1,7 @@
->   /* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
->   /*
->      md_p.h : physical layout of Linux RAID devices
-> -          Copyright (C) 1996-98 Ingo Molnar, Gadi Oxman
-> +	Copyright (C) 1996-98 Ingo Molnar, Gadi Oxman, Peter T. Breuer
->   
->      This program is free software; you can redistribute it and/or modify
->      it under the terms of the GNU General Public License as published by
-> @@ -426,4 +426,55 @@ struct ppl_header {
->   	struct ppl_header_entry entries[PPL_HDR_MAX_ENTRIES];
->   } __attribute__ ((__packed__));
->   
-> +#define MD_BITMAP_SUBERBLOCK_EXPORTED 1	/* Notify that kernel provides it */
-> +#define BITMAP_MAGIC 0x6d746962		/* This is actually "bitm" in ASCII :-) */
-> +#define BITMAP_MAJOR_LO 3
-> +/* version 4 insists the bitmap is in little-endian order
-> + * with version 3, it is host-endian which is non-portable
-> + */
-> +#define BITMAP_MAJOR_HI 4
-> +#define BITMAP_MAJOR_CLUSTERED 5
-> +#define BITMAP_MAJOR_HOSTENDIAN 3
-> +
-> +/* use these for bitmap->flags and bitmap->sb->state bit-fields */
-> +enum bitmap_state {
-> +	BITMAP_STALE	   = 1,  /* the bitmap file is out of date or had -EIO */
-> +	BITMAP_WRITE_ERROR = 2, /* A write error has occurred */
-> +	BITMAP_HOSTENDIAN  = 15,
-> +};
-> +
-> +/* the superblock at the front of the bitmap file -- little endian */
-> +typedef struct bitmap_super_s {
-> +	__le32 magic;        /*  0  BITMAP_MAGIC */
-> +	__le32 version;      /*  4  the bitmap major for now, could change... */
-> +	__u8  uuid[16];      /*  8  128 bit uuid - must match md device uuid */
-> +	__le64 events;       /* 24  event counter for the bitmap (1)*/
-> +	__le64 events_cleared;/*32  event counter when last bit cleared (2) */
-> +	__le64 sync_size;    /* 40  the size of the md device's sync range(3) */
-> +	__le32 state;        /* 48  bitmap state information */
-> +	__le32 chunksize;    /* 52  the bitmap chunk size in bytes */
-> +	__le32 daemon_sleep; /* 56  seconds between disk flushes */
-> +	__le32 write_behind; /* 60  number of outstanding write-behind writes */
-> +	__le32 sectors_reserved; /* 64 number of 512-byte sectors that are
-> +				  * reserved for the bitmap.
-> +				  */
-> +	__le32 nodes;        /* 68 the maximum number of nodes in cluster. */
-> +	__u8 cluster_name[64]; /* 72 cluster name to which this md belongs */
-> +	__u8  pad[256 - 136]; /* set to zero */
-> +} bitmap_super_t;
-> +
-> +/* notes:
-> + * (1) This event counter is updated before the eventcounter in the md superblock
-> + *    When a bitmap is loaded, it is only accepted if this event counter is equal
-> + *    to, or one greater than, the event counter in the superblock.
-> + * (2) This event counter is updated when the other one is *if*and*only*if* the
-> + *    array is not degraded.  As bits are not cleared when the array is degraded,
-> + *    this represents the last time that any bits were cleared.
-> + *    If a device is being added that has an event count with this value or
-> + *    higher, it is accepted as conforming to the bitmap.
-> + * (3)This is the number of sectors represented by the bitmap, and is the range that
-> + *    resync happens across.  For raid1 and raid5/6 it is the size of individual
-> + *    devices.  For raid10 it is the size of the array.
-> + */
-> +
->   #endif
-> 
+1) single queue 2 vcpus guest with pktgen_sample03_burst_single_flow.sh
+   (burst 256) + testpmd (rxonly) on the host:
+
+- When pinning TX IRQ to pktgen VCPU: split virtqueue PPS were
+  increased 55% from 6.89 Mpps to 10.7 Mpps and 32% TX interrupts were
+  eliminated. Packed virtqueue PPS were increased 50% from 7.09 Mpps to
+  10.7 Mpps, 99% TX interrupts were eliminated.
+
+- When pinning TX IRQ to VCPU other than pktgen: split virtqueue PPS
+  were increased 96% from 5.29 Mpps to 10.4 Mpps and 45% TX interrupts
+  were eliminated; Packed virtqueue PPS were increased 78% from 6.12
+  Mpps to 10.9 Mpps and 99% TX interrupts were eliminated.
+
+2) single queue 1 vcpu guest + vhost-net/TAP on the host: single
+   session netperf from guest to host shows 82% improvement from
+   31Gb/s to 58Gb/s, %stddev were reduced from 34.5% to 1.9% and 88%
+   of TX interrupts were eliminated.
+
+Signed-off-by: Jason Wang <jasowang@redhat.com>
+---
+ drivers/net/virtio_net.c | 45 ++++++++++++++++++++++++++++------------
+ 1 file changed, 32 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+index 7646ddd9bef7..ac26a6201c44 100644
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -1088,11 +1088,10 @@ static bool is_xdp_raw_buffer_queue(struct virtnet_info *vi, int q)
+ 		return false;
+ }
+ 
+-static void check_sq_full_and_disable(struct virtnet_info *vi,
+-				      struct net_device *dev,
+-				      struct send_queue *sq)
++static bool tx_may_stop(struct virtnet_info *vi,
++			struct net_device *dev,
++			struct send_queue *sq)
+ {
+-	bool use_napi = sq->napi.weight;
+ 	int qnum;
+ 
+ 	qnum = sq - vi->sq;
+@@ -1114,6 +1113,25 @@ static void check_sq_full_and_disable(struct virtnet_info *vi,
+ 		u64_stats_update_begin(&sq->stats.syncp);
+ 		u64_stats_inc(&sq->stats.stop);
+ 		u64_stats_update_end(&sq->stats.syncp);
++
++		return true;
++	}
++
++	return false;
++}
++
++static void check_sq_full_and_disable(struct virtnet_info *vi,
++				      struct net_device *dev,
++				      struct send_queue *sq)
++{
++	bool use_napi = sq->napi.weight;
++	int qnum;
++
++	qnum = sq - vi->sq;
++
++	if (tx_may_stop(vi, dev, sq)) {
++		struct netdev_queue *txq = netdev_get_tx_queue(dev, qnum);
++
+ 		if (use_napi) {
+ 			if (unlikely(!virtqueue_enable_cb_delayed(sq->vq)))
+ 				virtqueue_napi_schedule(&sq->napi, sq->vq);
+@@ -3253,15 +3271,10 @@ static netdev_tx_t start_xmit(struct sk_buff *skb, struct net_device *dev)
+ 	bool use_napi = sq->napi.weight;
+ 	bool kick;
+ 
+-	/* Free up any pending old buffers before queueing new ones. */
+-	do {
+-		if (use_napi)
+-			virtqueue_disable_cb(sq->vq);
+-
++	if (!use_napi)
+ 		free_old_xmit(sq, txq, false);
+-
+-	} while (use_napi && !xmit_more &&
+-	       unlikely(!virtqueue_enable_cb_delayed(sq->vq)));
++	else
++		virtqueue_disable_cb(sq->vq);
+ 
+ 	/* timestamp packet in software */
+ 	skb_tx_timestamp(skb);
+@@ -3287,7 +3300,10 @@ static netdev_tx_t start_xmit(struct sk_buff *skb, struct net_device *dev)
+ 		nf_reset_ct(skb);
+ 	}
+ 
+-	check_sq_full_and_disable(vi, dev, sq);
++	if (use_napi)
++		tx_may_stop(vi, dev, sq);
++	else
++		check_sq_full_and_disable(vi, dev,sq);
+ 
+ 	kick = use_napi ? __netdev_tx_sent_queue(txq, skb->len, xmit_more) :
+ 			  !xmit_more || netif_xmit_stopped(txq);
+@@ -3299,6 +3315,9 @@ static netdev_tx_t start_xmit(struct sk_buff *skb, struct net_device *dev)
+ 		}
+ 	}
+ 
++	if (use_napi && kick && unlikely(!virtqueue_enable_cb_delayed(sq->vq)))
++		virtqueue_napi_schedule(&sq->napi, sq->vq);
++
+ 	return NETDEV_TX_OK;
+ }
+ 
+-- 
+2.34.1
+
 
