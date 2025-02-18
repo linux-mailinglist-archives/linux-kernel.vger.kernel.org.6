@@ -1,469 +1,220 @@
-Return-Path: <linux-kernel+bounces-519692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F09AAA3A0BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:04:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A779A39E2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:02:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5DC4188B3E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:03:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A571B1694E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:01:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33DB626A1D6;
-	Tue, 18 Feb 2025 15:02:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F5142673BA;
+	Tue, 18 Feb 2025 14:01:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qCc+Uo4U"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="YASki/u4"
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013059.outbound.protection.outlook.com [40.107.159.59])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE0B22AE4E
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 15:02:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739890969; cv=none; b=UDOu8rUhrS/+OWSIKt16I31uN3DVk26Dpu38yaQP54Gt0X+s7aHf9BspDbKzHdTDdkSPMb0vhWGbq8+oX4Z9vhejId/7OMtO3G8z4ZGC/QP2lgLrwI/rW2zMB7eBwzKtH79kMF3jQoTleA0f6+CLtivpNPXzkBUygutxtvQdWzs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739890969; c=relaxed/simple;
-	bh=IJqDsCY7HJfENXpaqjfftAGCHoVZB5afzR2gtzOaUlU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r91CF1FdhetKuxQz9pz6wVW7opxHqyxS5350ZpOCZ8YtJ1Xfa8H5jSNSX1wUe0g+cuRrCr4jN7rJa8JLu8CwjwP+lYmyzaiHdaDarMjJPzbN5MvLTEkRUpXslnaajnZfKsUUID9vQZfjQ54hlSJTJysEL08XUamwQs+pZpNpu5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qCc+Uo4U; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2210d92292eso81227155ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 07:02:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739890966; x=1740495766; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=jWcJBMztVJPnjv77fK+NPeNY4keL9ty0/4Tf67Wb3BE=;
-        b=qCc+Uo4UPB3hH9e0vQOIFG2HLivcdFqhqd3u+lKL1gjgR0Z4EL7Cvp7NmNk24T7F3i
-         It0k+x5FLwgxg91NAnRzWbq/s0aXdhX6iAwNrfJIajZNz1Ly5kN922OBEUnyzDKsqca7
-         w0e69UYPYFPx6qdpAc7oqMZtX0fXzm1eQohaDB2WYY2eDeO9aS3DCOzMSDTxEbH00QyF
-         2h8PMqCxF1g9QzRaTUL7JsOlSKTc3w6sfMSRuZFcN4WVKkJw8YkFU5xl+fnUrPK7OyQn
-         7RhUEP7ux64wopV9bRy+nI8pPIBIFQX27bx7qaZn2QNbNK7/H4xQ9/s5aeUtJ5A5AxdQ
-         QiNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739890966; x=1740495766;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jWcJBMztVJPnjv77fK+NPeNY4keL9ty0/4Tf67Wb3BE=;
-        b=HRJCTHmU82xmZ05CGsNwZUt8orGHxrKgf0cqgMiqAXMtDr0BqFFyMLOvRhoxFwR8sQ
-         F0uagSBBMkJ2C2J2JbR6ZG5DsZolWc9i7+zaURCLsUGbeoBzHIiGfeaty1MKLzl3D2gM
-         GVS91LQu857nJZ8SkbZwbOXORZ8EjCfBeNoxr8SmdvbAb5UTnpqTlKX4KFrTmSV0AtyK
-         p0a/fwh0JoGBCPM8W3H6c/bVBofmKXQJByMoFtS7pkhd4PEdkRFbVf3VMN6Ac+ww7IS5
-         T5wUmCK7Oq8A6RuMGfagQuKp613Sma7Rq/dHlbXKNCdjaUzdtorZPWVf5PlhP3KYbNXT
-         Or2w==
-X-Gm-Message-State: AOJu0Yw4OkNu/y8e7APVksLbfgz0wHg9YWqW3rx4t8n9WMbfKvqIarYX
-	zQ9ZwVvSIDQRM06Y069w2/L1ijQK7axQ6P6UiU6R/h7424CbjhCShsBpdRNzoA==
-X-Gm-Gg: ASbGncudCURj7auX7nYSXWgN45slYo1JB5W7EYXioNLn9XHC5td0Gz9Dwn9j4o463Nx
-	9Forgi0rOGk2wkwaKWCGxinf/D9d9iZmveJrpkB3ssEIlZusrs1cMZ4LG6l9RzdS8nOCZv8ngTN
-	ABotHzeTyhMY0GNhuNftC08XwbgTirmpDqoJfYDq5n/MZc3jHwQQ8mhPporafAgFFXHXrYIAEo2
-	4lVTjGO/YnI6LS6hn08vEonr24fU4bwhoTtnWcaTqaqcV4i7CbiXxoX0tEGaUrisWbJAR6+0/5F
-	6N0l71p5KXPsSZShvhZDek4vcRk=
-X-Google-Smtp-Source: AGHT+IF+vWFeQAwC0HTJEP2zVCzr9RvYcRojW9qsaHZE9h4rXSus+Sx1wVii57C3PhSK5l9G3L3+IA==
-X-Received: by 2002:a05:6a21:9999:b0:1ee:66f6:87e6 with SMTP id adf61e73a8af0-1ee8cbbba1amr25798990637.31.1739890966357;
-        Tue, 18 Feb 2025 07:02:46 -0800 (PST)
-Received: from thinkpad ([120.56.197.245])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7324273e318sm10548970b3a.96.2025.02.18.07.02.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 07:02:45 -0800 (PST)
-Date: Tue, 18 Feb 2025 20:32:39 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Shradha Todi <shradha.t@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-	bhelgaas@google.com, jingoohan1@gmail.com,
-	Jonathan.Cameron@Huawei.com, fan.ni@samsung.com,
-	nifan.cxl@gmail.com, a.manzanares@samsung.com,
-	pankaj.dubey@samsung.com, cassel@kernel.org, 18255117159@163.com,
-	quic_nitegupt@quicinc.com, quic_krichai@quicinc.com,
-	gost.dev@samsung.com
-Subject: Re: [PATCH v6 2/4] Add debugfs based silicon debug support in DWC
-Message-ID: <20250218150239.mnylvhyfnw6dtzag@thinkpad>
-References: <20250214105007.97582-1-shradha.t@samsung.com>
- <CGME20250214105341epcas5p11ea07dba0a55700bc098077eb53e79b8@epcas5p1.samsung.com>
- <20250214105007.97582-3-shradha.t@samsung.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 645B212CD96;
+	Tue, 18 Feb 2025 14:01:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739887306; cv=fail; b=nXDtg7qj3PjIs+9u7RaFe37/qlJsKaJ9dZXgE5Ou4YO0iJ51xGI6tIMKUIYBEuQiDStpR5NQp0D82K9UYeuvNU9CwhIWZIshLEI3jdPMLnVtEFpPpvzAJyzIDaEQDNbrvxVN0TEM4ol7P6jgNSWfHu5pI8OKtDwEkcwDMfFM6tw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739887306; c=relaxed/simple;
+	bh=1ExSnw4JyijQD2ymaKCwQ4YSULUXiU7Tn2BPgFnDOJs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=BysMQPTqch5smzpCK0hPMfi0FmdvYALqdUSdXe462gXl0MkXHO/eUHBK7J4UneqkqCvK8FZxSexPbnANxkyXzahNzn7GouiHoefU5uHRDjcu+h4pjy2+QiVnIkeEnzFxIJ5RmaO+GMEQKYtUUjj4xof20bqULrjyAcuZC/tnWG0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=YASki/u4; arc=fail smtp.client-ip=40.107.159.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QJmXbLb97Ul8fis8rQiXvU+P4Vsv294YQ2dg/KrBdieOVGJW6PQUvL4idiJk96u5neismMopbm/mdxR8ynlE6KqhnsTxVRC8wSjr1pVhPBSfbDX+vthQ1eA/CfKzs5e8RVkQI+bHfOHiwnqbKMeHeURG29DIuganAKQD03jHlhVZIyQAVEQSGZtt0Hjyzo97XYk7jrYVEYst448HMZSUkHjq5QudBxP7SoTwjctnVdt+/aDuPxRDKD2eyc3X+gLXZZ70rTPHHRA1CwMn8gcYKXNL8dA9v8bmnt9oUGGb5UhANyiWnv0INl8qOW2IMn7cl39eRCJVKRXWEvtKqg/spA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OQXrCGgIax72fV7iP2OBRMDakN1CxP0zpi3RKjbn7Bc=;
+ b=HcgT/QBTI4gT9jW3Lk07C6u3x1fJypDfDCusdMw6C5AjFQn7f2MSLWxhnXu+daAZjQi5XSdcV7+u3d2i1bk/YRnVVN3xJ/8l5sX0DDbIcBVpYs+A2hJPUuG3AHa3JNt+JQ4AwEhpgjdqekQB/0+m/dxUohsmgistNX/XtTv6oWThOelFvt4AIeW+iI1WGI5qkRpXatVRG3+nWtIQ1yiqxX/NFD+aeenOjz9MmKcvNdh8HxsAEqlpwdNBJSY76zFzqX3Wrta7+S1xQasL9cDdXl/CZkuDX9PmhgV17F5ejAVuzFooH7u+DkYKGSwIga4Z2gYpLe0RmCF2Ki3tv0aLiA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OQXrCGgIax72fV7iP2OBRMDakN1CxP0zpi3RKjbn7Bc=;
+ b=YASki/u4emeX6QN5hLTX6IxJIR0CzxbyzmobYomypWrp7lgG0KG2hPBTB61dbXBruHMJqBIXfN2AgZRU8E7xCqgZNDdEJMd5hNgcqNqikrF9iMXUq+CXRN2rAa1VrdsiaHE4YSyaLggnqA3vbyhA7BrdX84cukoXeLAawMrUCiCNC1A9y6dAHz61h282fO0T1cIhkyjtJCpDN1lw92qMQ+XmAIGAqCWf7Xl+OrGs12hKGcpRr5XdUtlGvy8Y3gjnWD6W803sUyM/pgRp1z2JEt7A3z58+rtPlEq+WY2k1kGAMenrtF4iEBw+UVj/xTjn+pJ43pCGyGZdEW7t8koFIQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DB9PR04MB8461.eurprd04.prod.outlook.com (2603:10a6:10:2cf::20)
+ by PAXPR04MB8078.eurprd04.prod.outlook.com (2603:10a6:102:1c1::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Tue, 18 Feb
+ 2025 14:01:39 +0000
+Received: from DB9PR04MB8461.eurprd04.prod.outlook.com
+ ([fe80::b1b9:faa9:901b:c197]) by DB9PR04MB8461.eurprd04.prod.outlook.com
+ ([fe80::b1b9:faa9:901b:c197%4]) with mapi id 15.20.8445.017; Tue, 18 Feb 2025
+ 14:01:39 +0000
+Date: Tue, 18 Feb 2025 23:08:38 +0800
+From: Peng Fan <peng.fan@oss.nxp.com>
+To: Daniel Baluta <daniel.baluta@nxp.com>
+Cc: p.zabel@pengutronix.de, shawnguo@kernel.org, mathieu.poirier@linaro.org,
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, andersson@kernel.org,
+	linux-remoteproc@vger.kernel.org, iuliana.prodan@nxp.com,
+	laurentiu.mihalcea@nxp.com, shengjiu.wang@nxp.com, Frank.Li@nxp.com,
+	krzk@kernel.org
+Subject: Re: [PATCH 2/5] reset: imx8mp-audiomix: Prepare the code for more
+ reset bits
+Message-ID: <20250218150838.GA6537@nxa18884-linux>
+References: <20250218085712.66690-1-daniel.baluta@nxp.com>
+ <20250218085712.66690-3-daniel.baluta@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250218085712.66690-3-daniel.baluta@nxp.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-ClientProxiedBy: SI1PR02CA0006.apcprd02.prod.outlook.com
+ (2603:1096:4:1f7::11) To DB9PR04MB8461.eurprd04.prod.outlook.com
+ (2603:10a6:10:2cf::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250214105007.97582-3-shradha.t@samsung.com>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB9PR04MB8461:EE_|PAXPR04MB8078:EE_
+X-MS-Office365-Filtering-Correlation-Id: 959e6554-1d56-456e-f5dd-08dd5024c3e6
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|52116014|376014|7416014|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Oa1xVDzFRyUkKxdxltD/vTrCJsCxuN6ku/gxAYffjPMKWTLl5o6AzSJbYgdh?=
+ =?us-ascii?Q?o3DxSjH3dbPHKDWElVGAhXEG0uyemkZTvMRDieuI1EMjhKcRW5JlWJQGjQq7?=
+ =?us-ascii?Q?qo+qn+fGX5qjmO8O06nuqLlL8waCn08F1mnL3VTk0Nm1MtG7b/VnWuIj+Vnl?=
+ =?us-ascii?Q?D3yDRjI6PMuIfkPcvln/G8UghLu/Br10/mln2F2aKWEVshlkSe7BS2evG5dO?=
+ =?us-ascii?Q?Nv1AzFDKT82B8dIMEIXfansbKkBNXyZoqePKBGOWy3KiDdR4B9jAnK/M4evp?=
+ =?us-ascii?Q?NYBSU8/5MUTtvpUoKxCIXr2/V7JS8dWnPwUMI1wo09sg+4FsvtntXiPsewOt?=
+ =?us-ascii?Q?BT4a7TSQkmVZ6Ncg8q/gjiMGX3XVa+ek4TiD2qT7VsKO/fWpHGLFhWNQm8Ad?=
+ =?us-ascii?Q?nQ8HCS0CTDFOJDh3WAxG1a3I/tOZxbXsfAVEKe0jzWcnu77RmtL+oUc/8vG8?=
+ =?us-ascii?Q?igJ/iYCTqUGzKO1JhKph1KYQF6rfU30cChopZVi+GCV5kih+t/ZDH2FUw8vX?=
+ =?us-ascii?Q?zmcnX3WBVSLMoJ0D4e2O+yHXa4CahmjIGKrXhFW0pUE8iM7FpNVmM7cYV9hF?=
+ =?us-ascii?Q?phq0uZZ0UP9wVCtDcP/Qw0ximDFKjbX62Wmut4XyBNBqc0gk2cCXmH0Ak4mA?=
+ =?us-ascii?Q?hqrEzXdOc/f+Cjotv1HvZtwIlN+JFmkhokw/rUltdEPqdTwAwkYFWt+JzU1U?=
+ =?us-ascii?Q?WLf/Zi2unm2RzkrarCdUsB8SC6nC6M0wOIwxL/OhoJpsEo0XVHShTF3nnBUA?=
+ =?us-ascii?Q?zQYC+I0mdW2T1g+J1ruMeZuNwgK2p224w45VNHQ4EL3AlCXtJZKYwQoWxzZC?=
+ =?us-ascii?Q?D0NTyVwb9JW1b7Y0YAtvZBt97JIG3Tei1weX0oSBkhz9IO0tRuSROBq50q2C?=
+ =?us-ascii?Q?uHlqu4rn2uASktmhH5F0xYpE19G+G86mQqkqbMMbazI951R3t472ZDB0RePR?=
+ =?us-ascii?Q?4NkyGFPVwe+/ZgiExxoDmOTObadMIZSJ+ZTyYbEmi3CWr3PwIM/VbEFoF/Bp?=
+ =?us-ascii?Q?w8J3NOz04MsIKP9of8tqzTodSXyuu2qZ8Li5yoPGQ5ZmissvgMxWxwiVkC2A?=
+ =?us-ascii?Q?K1CX97AXXULZv4hpPxFVajZBtJ/RfGn48eIkiSzj3QaoAu7xu1FwAAWDEVaR?=
+ =?us-ascii?Q?3kDxS/yD1kcTUop2o1hYM3D5L7Pyh1e1LjL2t5nmGg+7WDQYwAqqqjakTZb9?=
+ =?us-ascii?Q?AvApb9MPFr4qM6qXnb3Vi9fBPHZNyAHE6Agp6TiA5++I1yejap/pRFQm7puj?=
+ =?us-ascii?Q?Vr+i4s6sQb+ZCcCzIIcGIUsebaPHW5DtV49j4Pq8OXmqRuyV/G03ltO/WcLO?=
+ =?us-ascii?Q?qdSkhmSFfb9AbRp6bqp8Hg1/fdb6EHLdvzU7nDu6Y0vu/iJxSERfkFjF0oX3?=
+ =?us-ascii?Q?QIt6dHYw9n8Fy9YlTTNiASOzFuDlkT67Is0rV4m3hJLOJkwX5hhurCdPtCd9?=
+ =?us-ascii?Q?f+8UGMaMd6AZ0uJxM5mG8nGk01+X7/8D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB8461.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(376014)(7416014)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Kt0uqph98a4/iexGcIoimN64lSzja4mkN3NvL35+EzjM+xSEe/Zvt/BJd8QM?=
+ =?us-ascii?Q?xmGNa5xiAqTeVSyKUCSJyBUX5romjNgE2DY7F57bESbFR1pAgL8lw8uxE9He?=
+ =?us-ascii?Q?WrsFSSmtvy3ASM8+t9bZqjaeMBis4MFU2Jwe4uzJMWgX795uqkdl9SvZNejp?=
+ =?us-ascii?Q?zjKpGOvUjH/65RMS+Qtg2FHNumEBxndBzj1GIpZo3KF+t3aR1TTd0gAValmE?=
+ =?us-ascii?Q?WnXVIR2Ez7F+cAgAAsgxztz0HG0ijJqy/BpFRdK6lLp5D4mnFuXDTYj4w+CR?=
+ =?us-ascii?Q?InAf9UAZLyeVjzlaOERTMsPI62BsD3jKJljxovh01EG4yFZw0PjuBEYY29I9?=
+ =?us-ascii?Q?qV6NB+OflnqzJhZl1NlE+TM928+3o6+60M5+le2qx5Sed1IVb/kG1rep8tc0?=
+ =?us-ascii?Q?roZz+X7i5GrTED6yNxNRvygkIpvyqpKihW4WWfQMLc6/Nmloj4ax/EwXT8ei?=
+ =?us-ascii?Q?Dn+Yvpch3HMtkGOyc7yfsZOfs78GcolVcMrh7cJWfo5/sx1TC7eHapy9nEZ1?=
+ =?us-ascii?Q?oDFRKCY7FCZL6LlqY8mKdlBZI72VReH+9JynVqyCErDDSDLYz9tkPf1l1dBa?=
+ =?us-ascii?Q?uDu+w9rm+ioELyeDOzOmRlhb4v3y3tMOE2nPr06NpAdCmkMvFLWMY36FRytX?=
+ =?us-ascii?Q?hOF61SA0yb/yKrMbUcmOAq7XdQioDfG66CaJHMmXiET1uB2HzwlAuByIu5ya?=
+ =?us-ascii?Q?+p6Ggl0vZpYRQtp8LfzQgewTwGku33mn/6HGsVyyqnQh4kdiipEtCTf96+xb?=
+ =?us-ascii?Q?/FWQfee6aAgH5QNVeQ8brpfUMrI79PgbAKD6yCEkGFERMeV2z0+63MG3FTRP?=
+ =?us-ascii?Q?QTRAAM+JEybg+aBSQl3TbdgJbtBXn9gWYDgL2hXmtA5cJWMlwwBOvNPiVYiL?=
+ =?us-ascii?Q?fgOppfkRd/dPkkoM/TVYEOYaTxZqD5R4Hosc5eMjHTojrCqc0kz91jc7gGyt?=
+ =?us-ascii?Q?bEZZ7W2YwodVnW6FBL3p3nXPwbc2wpdDMUSaPxb0EtNlZvnKkNnLVxvm9Fqn?=
+ =?us-ascii?Q?Xxg+9so/D7/ZXZ9LQDnxbrblAwcWw2qvkiykeyf+sPm5ZFUD1n09y3MsLyZm?=
+ =?us-ascii?Q?t+Iwsi7Cvzx17NmMiznEp30FZlSsv/0pW/YQGPKCzaXA6j0ktk49cpivMr8y?=
+ =?us-ascii?Q?8GSytZqfrflNtHm1dSYioigfA/r3va/6x99FMZaHMDOOsLc32cA9hZBmEA7g?=
+ =?us-ascii?Q?lYJlfbVroU2EdJXLp2HA+F0/6ErKihJPLVwk6Xv/wN7HuOF4DuqqA0Wptdcc?=
+ =?us-ascii?Q?U7JFHna5LrBHpSfNApNTnNSaWCifULz0T0/W4E8DrW1+r7eNBB4OpsVm/plb?=
+ =?us-ascii?Q?pLMdfL2wmlbjttFXMF4wWxoZ6rKvw3XNDiv9rp0fN6+un1R9bKYm31xgd+pw?=
+ =?us-ascii?Q?xmPO//3wTBFeCthTGrKUv7RJKgCWolz8XjRfKlEEAsfpq3Cf+oGZrcp1VkW7?=
+ =?us-ascii?Q?ZNx7c67D888DM0vdA9J8a5FDPIKyYwGap79ZlBHF3JlsG8I0dvGqdqV7rIi5?=
+ =?us-ascii?Q?DWANNaKLd1ZuomQDgXZhynqFAlSnmLIX7oBibVKMfLXHKd0iboypI5WuNCMx?=
+ =?us-ascii?Q?5fzjlwpid7P2BDCTsvJNG056KFjuDFyz0CjFZRSc?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 959e6554-1d56-456e-f5dd-08dd5024c3e6
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB8461.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Feb 2025 14:01:39.5274
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: bxXjSELM9le5KwwRDB7847Gqe8VazwVZbTKOc9qk7NjMot+G3xjGgnP8D+RKq1RQ7oEReDcGSLVRgNWz4yNHpQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8078
 
-On Fri, Feb 14, 2025 at 04:20:05PM +0530, Shradha Todi wrote:
-> Add support to provide silicon debug interface to userspace. This set
-> of debug registers are part of the RASDES feature present in DesignWare
-> PCIe controllers.
+On Tue, Feb 18, 2025 at 10:57:09AM +0200, Daniel Baluta wrote:
+>Current code supports EARC PHY Software Reset and EARC 	Software
+>Reset but it is not easily extensible to more reset bits.
+>
+>So, refactor the code in order to easily allow more reset bits
+>in the future.
+>
+>Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+>---
+> drivers/reset/reset-imx8mp-audiomix.c | 53 ++++++++++++++++++++++-----
+> 1 file changed, 43 insertions(+), 10 deletions(-)
+>
+>diff --git a/drivers/reset/reset-imx8mp-audiomix.c b/drivers/reset/reset-imx8mp-audiomix.c
+>index 1fe21980a66c..6b1666c4e069 100644
+>--- a/drivers/reset/reset-imx8mp-audiomix.c
+>+++ b/drivers/reset/reset-imx8mp-audiomix.c
+>@@ -12,7 +12,30 @@
+> #include <linux/reset-controller.h>
 > 
-> Signed-off-by: Shradha Todi <shradha.t@samsung.com>
-> ---
->  Documentation/ABI/testing/debugfs-dwc-pcie    |  13 ++
->  drivers/pci/controller/dwc/Kconfig            |  10 +
->  drivers/pci/controller/dwc/Makefile           |   1 +
->  .../controller/dwc/pcie-designware-debugfs.c  | 207 ++++++++++++++++++
->  .../pci/controller/dwc/pcie-designware-ep.c   |   5 +
->  .../pci/controller/dwc/pcie-designware-host.c |   6 +
->  drivers/pci/controller/dwc/pcie-designware.h  |  20 ++
->  7 files changed, 262 insertions(+)
->  create mode 100644 Documentation/ABI/testing/debugfs-dwc-pcie
->  create mode 100644 drivers/pci/controller/dwc/pcie-designware-debugfs.c
+> #define IMX8MP_AUDIOMIX_EARC_OFFSET		0x200
+>-#define IMX8MP_AUDIOMIX_EARC_RESET_MASK		0x3
+>+#define IMX8MP_AUDIOMIX_EARC_RESET_MASK		0x1
+>+#define IMX8MP_AUDIOMIX_EARC_PHY_RESET_MASK	0x2
+>+
+>+#define IMX8MP_AUDIOMIX_EARC		0
+>+#define IMX8MP_AUDIOMIX_EARC_PHY	1
+
+Should this two lines be put in dt-bindings?
+
+>+
+>+#define IMX8MP_AUDIOMIX_RESET_NUM	2
+>+
+>+struct imx8mp_reset_map {
+>+	unsigned int offset;
+>+	unsigned int mask;
+>+};
+>+
+>+static const struct imx8mp_reset_map reset_map[IMX8MP_AUDIOMIX_RESET_NUM] = {
+>+	[IMX8MP_AUDIOMIX_EARC] = {
+>+		.offset	= IMX8MP_AUDIOMIX_EARC_OFFSET,
+>+		.mask	= IMX8MP_AUDIOMIX_EARC_RESET_MASK,
+>+	},
+>+	[IMX8MP_AUDIOMIX_EARC_PHY] = {
+>+		.offset	= IMX8MP_AUDIOMIX_EARC_OFFSET,
+>+		.mask	= IMX8MP_AUDIOMIX_EARC_PHY_RESET_MASK,
+>+	},
+>+
+
+blank line
+
+>+};
 > 
-> diff --git a/Documentation/ABI/testing/debugfs-dwc-pcie b/Documentation/ABI/testing/debugfs-dwc-pcie
-> new file mode 100644
-> index 000000000000..e8ed34e988ef
-> --- /dev/null
-> +++ b/Documentation/ABI/testing/debugfs-dwc-pcie
-> @@ -0,0 +1,13 @@
-> +What:		/sys/kernel/debug/dwc_pcie_<dev>/rasdes_debug/lane_detect
-> +Date:		Feburary 2025
 
-Please align these fields
-
-> +Contact:	Shradha Todi <shradha.t@samsung.com>
-> +Description:	(RW) Write the lane number to be checked for detection.	Read
-> +		will return whether PHY indicates receiver detection on the
-> +		selected lane. The default selected lane is Lane0.
-> +
-> +What:		/sys/kernel/debug/dwc_pcie_<dev>/rasdes_debug/rx_valid
-> +Date:		Feburary 2025
-> +Contact:	Shradha Todi <shradha.t@samsung.com>
-> +Description:	(RW) Write the lane number to be checked as valid or invalid. Read
-> +		will return the status of PIPE RXVALID signal of the selected lane.
-> +		The default selected lane is Lane0.
-> diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
-> index b6d6778b0698..48a10428a492 100644
-> --- a/drivers/pci/controller/dwc/Kconfig
-> +++ b/drivers/pci/controller/dwc/Kconfig
-> @@ -6,6 +6,16 @@ menu "DesignWare-based PCIe controllers"
->  config PCIE_DW
->  	bool
->  
-> +config PCIE_DW_DEBUGFS
-> +	default y
-> +	depends on DEBUG_FS
-> +	depends on PCIE_DW_HOST || PCIE_DW_EP
-> +	bool "DWC PCIe debugfs entries"
-> +	help
-> +	  Enables debugfs entries for the DW PCIe Controller. These entries
-> +	  provide all debug features related to DW controller including the RAS
-> +	  DES features to help in debug, error injection and statistical counters.
-> +
->  config PCIE_DW_HOST
->  	bool
->  	select PCIE_DW
-> diff --git a/drivers/pci/controller/dwc/Makefile b/drivers/pci/controller/dwc/Makefile
-> index a8308d9ea986..54565eedc52c 100644
-> --- a/drivers/pci/controller/dwc/Makefile
-> +++ b/drivers/pci/controller/dwc/Makefile
-> @@ -1,5 +1,6 @@
->  # SPDX-License-Identifier: GPL-2.0
->  obj-$(CONFIG_PCIE_DW) += pcie-designware.o
-> +obj-$(CONFIG_PCIE_DW_DEBUGFS) += pcie-designware-debugfs.o
->  obj-$(CONFIG_PCIE_DW_HOST) += pcie-designware-host.o
->  obj-$(CONFIG_PCIE_DW_EP) += pcie-designware-ep.o
->  obj-$(CONFIG_PCIE_DW_PLAT) += pcie-designware-plat.o
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-debugfs.c b/drivers/pci/controller/dwc/pcie-designware-debugfs.c
-> new file mode 100644
-> index 000000000000..fe799d36fa7f
-> --- /dev/null
-> +++ b/drivers/pci/controller/dwc/pcie-designware-debugfs.c
-> @@ -0,0 +1,207 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Synopsys DesignWare PCIe controller debugfs driver
-> + *
-> + * Copyright (C) 2025 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com
-> + *
-> + * Author: Shradha Todi <shradha.t@samsung.com>
-> + */
-> +
-> +#include <linux/debugfs.h>
-> +
-> +#include "pcie-designware.h"
-> +
-> +#define SD_STATUS_L1LANE_REG		0xb0
-> +#define PIPE_RXVALID			BIT(18)
-> +#define PIPE_DETECT_LANE		BIT(17)
-> +#define LANE_SELECT			GENMASK(3, 0)
-> +
-> +#define DWC_DEBUGFS_BUF_MAX		128
-> +
-> +struct dwc_pcie_vsec_id {
-> +	u16 vendor_id;
-> +	u16 vsec_id;
-> +	u8 vsec_rev;
-> +};
-> +
-> +/*
-> + * VSEC IDs are allocated by the vendor, so a given ID may mean different
-> + * things to different vendors. See PCIe r6.0, sec 7.9.5.2.
-> + */
-> +static const struct dwc_pcie_vsec_id dwc_pcie_vsec_ids[] = {
-> +	{ .vendor_id = PCI_VENDOR_ID_ALIBABA,
-> +		.vsec_id = 0x02, .vsec_rev = 0x4 },
-> +	{ .vendor_id = PCI_VENDOR_ID_AMPERE,
-> +		.vsec_id = 0x02, .vsec_rev = 0x4 },
-> +	{ .vendor_id = PCI_VENDOR_ID_QCOM,
-> +		.vsec_id = 0x02, .vsec_rev = 0x4 },
-> +	{ .vendor_id = PCI_VENDOR_ID_SAMSUNG,
-> +		.vsec_id = 0x02, .vsec_rev = 0x4 },
-> +	{} /* terminator */
-
-This should go into the common include file as I proposed in my series:
-https://lore.kernel.org/linux-pci/20250218-pcie-qcom-ptm-v1-1-16d7e480d73e@linaro.org/
-
-> +};
-> +
-> +/**
-> + * struct dwc_pcie_rasdes_info - Stores controller common information
-> + * @ras_cap_offset: RAS DES vendor specific extended capability offset
-> + * @reg_lock: Mutex used for RASDES shadow event registers
-
-If this is not used by all register accesses, please rename it as such. Like,
-reg_event_lock.
-
-> + *
-> + * Any parameter constant to all files of the debugfs hierarchy for a single controller
-> + * will be stored in this struct. It is allocated and assigned to controller specific
-> + * struct dw_pcie during initialization.
-> + */
-> +struct dwc_pcie_rasdes_info {
-> +	u32 ras_cap_offset;
-> +	struct mutex reg_lock;
-> +};
-> +
-> +static ssize_t lane_detect_read(struct file *file, char __user *buf, size_t count, loff_t *ppos)
-> +{
-> +	struct dw_pcie *pci = file->private_data;
-> +	struct dwc_pcie_rasdes_info *rinfo = pci->debugfs->rasdes_info;
-> +	char debugfs_buf[DWC_DEBUGFS_BUF_MAX];
-> +	ssize_t off = 0;
-
-Not required. See below.
-
-> +	u32 val;
-> +
-> +	val = dw_pcie_readl_dbi(pci, rinfo->ras_cap_offset + SD_STATUS_L1LANE_REG);
-> +	val = FIELD_GET(PIPE_DETECT_LANE, val);
-> +	if (val)
-> +		off += scnprintf(debugfs_buf, DWC_DEBUGFS_BUF_MAX - off, "Lane Detected\n");
-
-I don't understand why you want to add 'off' which was initialized to 0. Also
-this just prints single string.
-
-> +	else
-> +		off += scnprintf(debugfs_buf, DWC_DEBUGFS_BUF_MAX - off, "Lane Undetected\n");
-> +
-> +	return simple_read_from_buffer(buf, count, ppos, debugfs_buf, off);
-> +}
-> +
-> +static ssize_t lane_detect_write(struct file *file, const char __user *buf,
-> +				 size_t count, loff_t *ppos)
-> +{
-> +	struct dw_pcie *pci = file->private_data;
-> +	struct dwc_pcie_rasdes_info *rinfo = pci->debugfs->rasdes_info;
-> +	u32 lane, val;
-> +
-> +	val = kstrtou32_from_user(buf, count, 0, &lane);
-> +	if (val)
-> +		return val;
-> +
-> +	val = dw_pcie_readl_dbi(pci, rinfo->ras_cap_offset + SD_STATUS_L1LANE_REG);
-> +	val &= ~(LANE_SELECT);
-> +	val |= FIELD_PREP(LANE_SELECT, lane);
-> +	dw_pcie_writel_dbi(pci, rinfo->ras_cap_offset + SD_STATUS_L1LANE_REG, val);
-> +
-> +	return count;
-> +}
-> +
-> +static ssize_t rx_valid_read(struct file *file, char __user *buf, size_t count, loff_t *ppos)
-> +{
-> +	struct dw_pcie *pci = file->private_data;
-> +	struct dwc_pcie_rasdes_info *rinfo = pci->debugfs->rasdes_info;
-> +	char debugfs_buf[DWC_DEBUGFS_BUF_MAX];
-> +	ssize_t off = 0;
-> +	u32 val;
-> +
-> +	val = dw_pcie_readl_dbi(pci, rinfo->ras_cap_offset + SD_STATUS_L1LANE_REG);
-> +	val = FIELD_GET(PIPE_RXVALID, val);
-> +	if (val)
-> +		off += scnprintf(debugfs_buf, DWC_DEBUGFS_BUF_MAX - off, "RX Valid\n");
-
-Same here.
-
-> +	else
-> +		off += scnprintf(debugfs_buf, DWC_DEBUGFS_BUF_MAX - off, "RX Invalid\n");
-> +
-> +	return simple_read_from_buffer(buf, count, ppos, debugfs_buf, off);
-> +}
-> +
-> +static ssize_t rx_valid_write(struct file *file, const char __user *buf, size_t count, loff_t *ppos)
-> +{
-> +	return lane_detect_write(file, buf, count, ppos);
-> +}
-> +
-> +#define dwc_debugfs_create(name)			\
-> +debugfs_create_file(#name, 0644, rasdes_debug, pci,	\
-> +			&dbg_ ## name ## _fops)
-> +
-> +#define DWC_DEBUGFS_FOPS(name)					\
-> +static const struct file_operations dbg_ ## name ## _fops = {	\
-> +	.open = simple_open,				\
-> +	.read = name ## _read,				\
-> +	.write = name ## _write				\
-> +}
-> +
-> +DWC_DEBUGFS_FOPS(lane_detect);
-> +DWC_DEBUGFS_FOPS(rx_valid);
-> +
-> +static void dwc_pcie_rasdes_debugfs_deinit(struct dw_pcie *pci)
-> +{
-> +	struct dwc_pcie_rasdes_info *rinfo = pci->debugfs->rasdes_info;
-> +
-> +	mutex_destroy(&rinfo->reg_lock);
-> +}
-> +
-> +static int dwc_pcie_rasdes_debugfs_init(struct dw_pcie *pci, struct dentry *dir)
-> +{
-> +	struct dentry *rasdes_debug;
-> +	struct dwc_pcie_rasdes_info *rasdes_info;
-> +	const struct dwc_pcie_vsec_id *vid;
-> +	struct device *dev = pci->dev;
-> +	int ras_cap;
-> +
-> +	for (vid = dwc_pcie_vsec_ids; vid->vendor_id; vid++) {
-> +		ras_cap = dw_pcie_find_vsec_capability(pci, vid->vendor_id,
-> +							vid->vsec_id);
-> +		if (ras_cap)
-> +			break;
-> +	}
-> +	if (!ras_cap) {
-> +		dev_dbg(dev, "no rasdes capability available\n");
-> +		return -ENODEV;
-> +	}
-
-This will also go inside a new API, dw_pcie_find_rasdes_capability(pci).
-
-> +
-> +	rasdes_info = devm_kzalloc(dev, sizeof(*rasdes_info), GFP_KERNEL);
-> +	if (!rasdes_info)
-> +		return -ENOMEM;
-> +
-> +	/* Create subdirectories for Debug, Error injection, Statistics */
-> +	rasdes_debug = debugfs_create_dir("rasdes_debug", dir);
-
-_debug prefix is not needed since the directory itself belongs to debugfs.
-
-> +
-> +	mutex_init(&rasdes_info->reg_lock);
-> +	rasdes_info->ras_cap_offset = ras_cap;
-> +	pci->debugfs->rasdes_info = rasdes_info;
-> +
-> +	/* Create debugfs files for Debug subdirectory */
-> +	dwc_debugfs_create(lane_detect);
-> +	dwc_debugfs_create(rx_valid);
-> +
-> +	return 0;
-> +}
-> +
-> +void dwc_pcie_debugfs_deinit(struct dw_pcie *pci)
-> +{
-> +	dwc_pcie_rasdes_debugfs_deinit(pci);
-> +	debugfs_remove_recursive(pci->debugfs->debug_dir);
-> +}
-> +
-> +int dwc_pcie_debugfs_init(struct dw_pcie *pci)
-> +{
-> +	char dirname[DWC_DEBUGFS_BUF_MAX];
-> +	struct device *dev = pci->dev;
-> +	struct debugfs_info *debugfs;
-> +	struct dentry *dir;
-> +	int ret;
-> +
-> +	/* Create main directory for each platform driver */
-> +	snprintf(dirname, DWC_DEBUGFS_BUF_MAX, "dwc_pcie_%s", dev_name(dev));
-> +	dir = debugfs_create_dir(dirname, NULL);
-> +	if (IS_ERR(dir))
-> +		return PTR_ERR(dir);
-
-debugfs creation is not supposed to fail. So you should remove the error check.
-
-> +
-> +	debugfs = devm_kzalloc(dev, sizeof(*debugfs), GFP_KERNEL);
-> +	if (!debugfs)
-> +		return -ENOMEM;
-> +
-> +	debugfs->debug_dir = dir;
-> +	pci->debugfs = debugfs;
-> +	ret = dwc_pcie_rasdes_debugfs_init(pci, dir);
-> +	if (ret)
-> +		dev_dbg(dev, "rasdes debugfs init failed\n");
-
-RASDES
-
-> +
-> +	return 0;
-> +}
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
-> index f3ac7d46a855..a87a714bb472 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
-> @@ -642,6 +642,7 @@ void dw_pcie_ep_cleanup(struct dw_pcie_ep *ep)
->  {
->  	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
->  
-> +	dwc_pcie_debugfs_deinit(pci);
->  	dw_pcie_edma_remove(pci);
->  }
->  EXPORT_SYMBOL_GPL(dw_pcie_ep_cleanup);
-> @@ -813,6 +814,10 @@ int dw_pcie_ep_init_registers(struct dw_pcie_ep *ep)
->  
->  	dw_pcie_ep_init_non_sticky_registers(pci);
->  
-> +	ret = dwc_pcie_debugfs_init(pci);
-> +	if (ret)
-> +		goto err_remove_edma;
-> +
->  	return 0;
->  
->  err_remove_edma:
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-> index d2291c3ceb8b..6b03ef7fd014 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-> @@ -524,6 +524,10 @@ int dw_pcie_host_init(struct dw_pcie_rp *pp)
->  	if (ret)
->  		goto err_remove_edma;
->  
-> +	ret = dwc_pcie_debugfs_init(pci);
-> +	if (ret)
-> +		goto err_remove_edma;
-> +
-
-Why can't you move it to the end of the function?
-
->  	if (!dw_pcie_link_up(pci)) {
->  		ret = dw_pcie_start_link(pci);
->  		if (ret)
-> @@ -571,6 +575,8 @@ void dw_pcie_host_deinit(struct dw_pcie_rp *pp)
->  
->  	dw_pcie_stop_link(pci);
->  
-> +	dwc_pcie_debugfs_deinit(pci);
-> +
-
-This should be moved to the start of the function.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+Regards,
+Peng
 
