@@ -1,103 +1,139 @@
-Return-Path: <linux-kernel+bounces-519748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 411B4A3A15F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:35:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 731BEA3A162
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:36:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8657B3AC855
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:34:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84C093A65A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:34:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F09226BDBA;
-	Tue, 18 Feb 2025 15:34:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80CBA26D5A5;
+	Tue, 18 Feb 2025 15:34:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="kWqh2nJh"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b="tDb+G7QI";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TSMrSP2f"
+Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E2CF13AD26;
-	Tue, 18 Feb 2025 15:34:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8DA9262811;
+	Tue, 18 Feb 2025 15:34:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739892875; cv=none; b=uSEoZjY16vGV6WQ08JoYEdKITfy5GWjJcf4mffy3otgujqTIKtSMH0AAUpJNSLPF2r+fQdXrrkEuqMhwwD7hG7HFUg/a8A+ygEC+/Pfq58IJmyp76WphjHy21C9ySdaEn6k96CdM6/a1phVRxcRKX9cn6zr+CbgrP8YO56qT8Os=
+	t=1739892883; cv=none; b=RbvB2758BmGJM6AQ1TTZUlMKVYoC0a+pi5dmuI5/IVTMWtM/IXH7R1Ym9jSzw4o83S4cs3S5VWiw3KmHx8ASmwUcOQRs7t86e1zNjnLgQE+YALCxr3y1vw9JPHgcVQYoGZY8/YT3ngLDGi3Nis3VFoRTXtG97xElTRmgN2WP7V8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739892875; c=relaxed/simple;
-	bh=xP0O74aAz3/thkqgp4kW0eukkcQDwPA45eEmjLaSsH8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DVlJrQCqPaGStDRpKX4Ggh+2xROBPhjgiDh4xZJiCnAWj8XMCJpuulnzwxTsb3pdzY7rN46mjnZSwuDLIwVSAucL1WEH/N4UNtpHHhyF1mLjcWv/WH1gslWDEZE+cGZPReurYhTxAxVLxDw+ZVHaY7czUlMziyBcktjqAwrxocc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=kWqh2nJh; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A684340E0220;
-	Tue, 18 Feb 2025 15:34:31 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id zXILX5Pa0jDr; Tue, 18 Feb 2025 15:34:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1739892868; bh=k5EEcJ+X4BamW818gv6v3mk4r1C4gWG5Gcc90naHqaI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kWqh2nJhYN4pVYrpF88LC423UTe1w79Ajm+8tpwkWpV2vfcP9fmIdNsYcx2qDawbS
-	 SSIGbzBkN6zXGZtOTQvdkG1h4GNxcVlDeFQipDjFH7f0UuolPoVgIozRVX6Joxb+/s
-	 Ij/Vn52NPnsBERVw/wpA7RQwymTmPTDJfffu7I+V7fnAVhyMG1RQ3I0JyELzt3UFRs
-	 1cSv7LlWuQRl6457JolsgMcE8Oxb0ZOPPGdtW9fUZq0PUhmN0A8VsdxKIigZfNkMHr
-	 1em4x/gGvQLLV/X1SsuukeqA5lfXrnzZknxKAf899UU/zcgrZw/CzQpMmZtnbG7yOL
-	 y+tvN+spNIrCf0DoaCIkQ5tBaAEAAKhBv2bHeRD9OOvvPzQkk/Vv9ALiaWnCfbKxEq
-	 EQOvVR8xcqZIcP66VjOd0m0HJYchef6KbkzRwRHSb954YHPdzAdU79BzBFb1cxOpVZ
-	 ylWpWr60+wEKYOsA4wISP6ooeoySOpKMRIPX3rSdJZGBwsd9UgEKRYF7RYESj0Uox4
-	 54wxqqyII74tedNDVSYZw9wgFsDSGPpWOlDBNsLQFa/Inqcxw4SNTSem96Y3S3Z3vS
-	 TvKEhE5E0mZXW2Fc2yJwvxugS+r3YNLwKfzZA47Axy8t6IA7zi4oM1gxBpgCxirIdg
-	 tiUluNOWs2+2PjvvI42r/rEo=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B72FC40E0212;
-	Tue, 18 Feb 2025 15:34:15 +0000 (UTC)
-Date: Tue, 18 Feb 2025 16:34:14 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Patrick Bellasi <derkling@google.com>
-Cc: Sean Christopherson <seanjc@google.com>,
-	Yosry Ahmed <yosry.ahmed@linux.dev>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, x86@kernel.org,
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Patrick Bellasi <derkling@matbug.net>,
-	Brendan Jackman <jackmanb@google.com>,
-	David Kaplan <David.Kaplan@amd.com>
-Subject: Re: [PATCH final?] x86/bugs: KVM: Add support for SRSO_MSR_FIX
-Message-ID: <20250218153414.GMZ7Sodh_eQXqTNE2x@fat_crate.local>
-References: <20250218111306.GFZ7RrQh3RD4JKj1lu@fat_crate.local>
- <20250218144257.1033452-1-derkling@google.com>
+	s=arc-20240116; t=1739892883; c=relaxed/simple;
+	bh=GXMTpvkPCJ7m5KbW5KvE3Nphli4h5mo+kNooPAwQgpU=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=n2PpJkq6PHDmQMePKOiPg8AxfMcMgD0xKIz/TjpE/9SgpttjRQvtRG5Fz7VlsCBD4R7u/o4ExZeLidObhkGC/y4iZUJyb1kZqnO1hvZUV73EMm9K7K/NjIIhckiPDMBZW7G7mytbuHtEoG2AFOtuH0hJK1HkvauceRqKFGEcgV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev; spf=pass smtp.mailfrom=svenpeter.dev; dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b=tDb+G7QI; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TSMrSP2f; arc=none smtp.client-ip=202.12.124.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svenpeter.dev
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 7A88825401E6;
+	Tue, 18 Feb 2025 10:34:40 -0500 (EST)
+Received: from phl-imap-07 ([10.202.2.97])
+  by phl-compute-10.internal (MEProxy); Tue, 18 Feb 2025 10:34:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svenpeter.dev;
+	 h=cc:cc:content-transfer-encoding:content-type:content-type
+	:date:date:from:from:in-reply-to:in-reply-to:message-id
+	:mime-version:references:reply-to:subject:subject:to:to; s=fm1;
+	 t=1739892880; x=1739979280; bh=vNqt5U9GOUsRRqGjKu27jmxa6soUqk9Y
+	UPA7tKq4cmQ=; b=tDb+G7QIGPYi+Fs+28MJiKIZFjovpT+nbWDuHk9SCVY7vG8B
+	FDE+Oj3ct6izKaBhS8TTZrdJJF2zcGypfbY7eMaR5EUknH27Q4+oIJltEVQNI1LG
+	zdoAcncw3B16d7+EK9rmqfxp1E09wLJrxiANy9g8ck6YCzzpJvg9O57HZlGPkvCE
+	BxPLSYql2SuHy41fvIv8dbvYHX73gMAKTn9MPvqoT7031TVIewipcPZFI17XdFwJ
+	Tm3UX86otR7V1GjxL6faowXM+ABjsGAN6iNvJFg+PHW0+2FvnQauPunSYsSJhvKy
+	X2Ivblu9sHz2k2oNJTEJF142RIe+7pQ7wP8bqg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1739892880; x=
+	1739979280; bh=vNqt5U9GOUsRRqGjKu27jmxa6soUqk9YUPA7tKq4cmQ=; b=T
+	SMrSP2fsBeXreOuMb300Z2us+GwogmneAy6jSBBlMkE2DpFiIeNShZCJixCWBmsj
+	N9N2ek/z+T99ppO8D+MBSelQu46TrnLyf4VmyGQl1uhKkbYK/NN6BhWHL9UA4r/i
+	AFcFsb+7/TYPv9RFDaYLhQ3W9ocB4iwq/G9rDJ/f7CddKDZyYHKPkJbbWxUhqTwk
+	p7FtlSBmWbLwzyLmf1hSmAr+mcoQq2Tli+Jfq3rcvr6PqHtvex5NxnfB+6dGzozw
+	+MEQT8PcmbHYZSZu+x17VnLVXmJIrRus7vNZ1S8NJIcFpPfkoPczFLs6yELzlREq
+	78IhWrDxwBcvnHMzmIlvQ==
+X-ME-Sender: <xms:jqi0Z4nMHOJMaKq8uG_NlDxLPaw4n-vggnNKA9xjP5O_bl8OWzpscQ>
+    <xme:jqi0Z31ISMrHY9hMU5YrjERGwn_v5tQSLO3CnnPAkOab1N-ZgOpyuE8JzHg6qzc__
+    7Cc6WtJf4x-TMsTdP8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeiudeikecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdfuvhgvnhcurfgvthgvrhdfuceoshhvvghnsehsvhgvnhhpvghtvg
+    hrrdguvghvqeenucggtffrrghtthgvrhhnpeeutedtleeiuefgjedvgfejvefftdekleei
+    gefgfffhheehkeetleehgfetgedtvdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgne
+    cuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepshhvvghn
+    sehsvhgvnhhpvghtvghrrdguvghvpdhnsggprhgtphhtthhopeduuddpmhhouggvpehsmh
+    htphhouhhtpdhrtghpthhtoheplhhinhgrsegrshgrhhhilhhinhgrrdhnvghtpdhrtghp
+    thhtohepvghrrhhorhdvjeesghhmrghilhdrtghomhdprhgtphhtthhopehjsehjrghnnh
+    gruhdrnhgvthdprhgtphhtthhopegrgigsohgvsehkvghrnhgvlhdrughkpdhrtghpthht
+    ohepuggrnhdrtggrrhhpvghnthgvrheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplh
+    hinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhg
+    pdhrtghpthhtoheprghsrghhiheslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtth
+    hopehhrghrshhhihhtrdhmrdhmohhgrghlrghprghllhhisehorhgrtghlvgdrtghomhdp
+    rhgtphhtthhopegrlhihshhsrgesrhhoshgvnhiifigvihhgrdhioh
+X-ME-Proxy: <xmx:jqi0Z2qDg0I7zAF77FbLuIaV1_8_wROYP2UYLMvCln1_tUcZQgGytg>
+    <xmx:jqi0Z0mcq9CMwg__3FKOFptFKMlafcmGjCb3mchG7931NM9T4rmRNg>
+    <xmx:jqi0Z23lCqX-FAKEjK0lSMxxuJj8DFyJMGJDDOCStSLrbnSsfBnskQ>
+    <xmx:jqi0Z7s5JpdjaV9TyuvDZ5uPko3ClOed0aWVbeyL6WyXaX2WzH-Cng>
+    <xmx:kKi0Z_usWWPE6CYtwzc8mZU67wVkMuPUMnI7L_RTvOCU9obF1tlfrnA_>
+Feedback-ID: i51094778:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 6AEEDBA0072; Tue, 18 Feb 2025 10:34:38 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250218144257.1033452-1-derkling@google.com>
+Date: Tue, 18 Feb 2025 16:34:17 +0100
+From: "Sven Peter" <sven@svenpeter.dev>
+To: "Harshit Mogalapalli" <harshit.m.mogalapalli@oracle.com>,
+ "Alyssa Rosenzweig" <alyssa@rosenzweig.io>, "Janne Grunau" <j@jannau.net>,
+ "Asahi Lina" <lina@asahilina.net>, "Jens Axboe" <axboe@kernel.dk>,
+ asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
+ "Dan Carpenter" <error27@gmail.com>
+Message-Id: <0e609fea-48b0-4b39-aae4-90395a782ed8@app.fastmail.com>
+In-Reply-To: <20250212085853.1357906-1-harshit.m.mogalapalli@oracle.com>
+References: <20250212085853.1357906-1-harshit.m.mogalapalli@oracle.com>
+Subject: Re: [PATCH] soc: apple: rtkit: Fix use-after-free in apple_rtkit_crashlog_rx()
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Tue, Feb 18, 2025 at 02:42:57PM +0000, Patrick Bellasi wrote:
-> Maybe a small improvement we could add on top is to have a separate and
-> dedicated cmdline option?
-> 
-> Indeed, with `X86_FEATURE_SRSO_USER_KERNEL_NO` we are not effectively using an
-> IBPB on VM-Exit anymore. Something like the diff down below?
+Hi,
 
-Except that I don't see the point of this yet one more cmdline option. Our
-mitigations options space is a nightmare. Why do we want to add another one?
 
--- 
-Regards/Gruss,
-    Boris.
+On Wed, Feb 12, 2025, at 09:58, Harshit Mogalapalli wrote:
+> This code calls kfree(bfr); and then passes "bfr" to rtk->ops->crashed()
+> which is a use after free.  The ->crashed function pointer is implemented
+> by apple_nvme_rtkit_crashed() and it doesn't use the "bfr" pointer so
+> this doesn't cause a problem.  But it still looks sketchy as can be.
+>
+> Fix this by moving kfree() after the last usage of bfr.
+>
+> Fixes: c559645f343a ("soc: apple: rtkit: Pass the crashlog to the 
+> crashed() callback")
 
-https://people.kernel.org/tglx/notes-about-netiquette
+This commit isn't upstream yet afaict, did you mean to post a review comment
+to [1] instead?
+
+
+[1] https://lore.kernel.org/asahi/20250202-rtkit-crashdump-v1-1-9d38615b4e12@asahilina.net/
+
+
+Best,
+
+
+Sven
 
