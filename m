@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-520181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09A49A3A6B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:03:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 824C3A3A6AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:03:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B92A3B80EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:00:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B168176687
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:00:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB39B1E5209;
-	Tue, 18 Feb 2025 18:59:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2FB41EB5C2;
+	Tue, 18 Feb 2025 18:59:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TjX01HdD"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kHNLrt9Z"
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 231351EB5C1
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 18:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1588B1E521E
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 18:59:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739905195; cv=none; b=L/LkgPNw63vdwAmbzzpq5baEx+sAPgMm5IkHoA8rcdfy2vwOf0vMC0yquD3Dbr+ppl67aHk6R4DOZcaJlgtC6OOtHVD1byAxUpNguJL0G2ZhDaBM8ayKiNUrTJZexN3dFxHq+9eKxcz6567AmNYQX3H9hv4cq1g9erEPxB2iwSE=
+	t=1739905196; cv=none; b=O+CPUg/RE9cKOb65yx5T/FpSXZa+xSCCKYbL61lx77Ee81cdnK4JjnPReKjJfuvhVatnKQzD2FZrCmJvysNdVDK1B0o8o5HJm7OZoeHySXLYmjC0R3zHUnsmg7OyYNFGB6/9lrCKE2/hzzT/erAHbuGvyNzPlPLK0fJHAEOrz3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739905195; c=relaxed/simple;
-	bh=NFINkBrN2m68Dtkx3Nfr3I9LAK5YDzkBgvburJpx9/0=;
+	s=arc-20240116; t=1739905196; c=relaxed/simple;
+	bh=MUX8NCacaOOOA4OaGPglasYy9E+dcC18HNOKsMX/PsY=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=BVzpfxDTwev9iOMufuLi709aVC1I5IXPZbe07EK0VJZ9KQT/WAXP8Wzrwsib9FvnDtc0SdQyFEkgSWIRedBSi3DkYZ3ASbZk0OfR+1q35nAGjTXW9qL7XWN5rMj4Yr5UHtNouu/cS8LtRfTWZZ5mFBEoVT9GNi+mPpXsJ7b458I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TjX01HdD; arc=none smtp.client-ip=209.85.128.73
+	 To:Cc:Content-Type; b=H3S+XVwGVMHK+7P8aVGQWlf+hWVlTpCfdXg1UD13YfuyNtAr5HOebLic3goZgRUc3XaS7V4idPWJssxkwIRoPRox2mRLr3PhMlnmEdPxcvd88Xxl/DaM0vPYKkqqFd/iyHd3cWn/Zu8ImqLhohS2e8EYiuVu6mliXfArYSJ2CEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kHNLrt9Z; arc=none smtp.client-ip=209.85.221.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-439868806bbso297355e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 10:59:52 -0800 (PST)
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-38f37b4a72fso35857f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 10:59:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739905191; x=1740509991; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1739905193; x=1740509993; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qkbFzOJ58R3pRGkmrijokUluuUu8ft2s70MHpEt0/Gw=;
-        b=TjX01HdD3DsToVuHJDa4WLAhY73RMYo7V8aQgK1lq7ZHIp8JxjsRT7ElA4b+kkLCzI
-         SRQ4+eEmjY1lHFOCswCRBWpUOo1FcT6VDLNmAd6nPAnwKR09wQNMwkutzJp52iEoKRDH
-         MBVlrBgk6psOF9Omecb+xcvEfPerzXsV/BIpHQMwOFoGU4DznZxtaffuDTDpgJetR2X3
-         VI0em5hq/JMl7MjUYQk1FKqSo/nqmfUreDgYYPEvgqxUOrto7Ww1OjgUQbwY0BBffPn1
-         OCXtx0VVNUnY9M3TYrGflNERTK8rgN80Qu+DMwsFoUUbvlkg/CinKi3CaYYkOlD4HJOd
-         Ul5A==
+        bh=r0kpBhbfXxtZzDMHLag5RRsggHKY1KhBdZYwLBVe1gQ=;
+        b=kHNLrt9ZK1f+vfEYV+m5R9qiMOXid3Bi9yQ0CtJkkaK8aWkFIzS9+JAfRYbXvhM1aO
+         Yr8t1eyB8ZAGiNYWM5lKiiOd7E2mTXmzCxzzSLpqf6TiMvLpaIFskPldj2S77VL1BYpD
+         UehPfgHBRrLKdNW2dBqXtqeNiQk+L5dYx1tj6Usc4ddQjRMkev6/bCBdEPzx2Se/57G7
+         yFI5akvoWxcvwqqZDFV1+TM5zscF0ewBLMP0DwpIxOFf847mepATJbniaKOD0rj9SCgx
+         humFX9cqoLWbmdTUR1nr9n+gnY8sJm2N/vab08q2of8mQMt63HHO4+m9ivNuKr94WzdV
+         T8Hw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739905191; x=1740509991;
+        d=1e100.net; s=20230601; t=1739905193; x=1740509993;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qkbFzOJ58R3pRGkmrijokUluuUu8ft2s70MHpEt0/Gw=;
-        b=bjsITUe387lvAs5rYEVOhFG8Qxq+n4jye4Trz6GNTL0y9Yo66YyZmXVYbqDEXTFsJ2
-         LTW9pX/VPxdZxy0rNlspAolVhwE/STW1C2sFbVVGmqbmIWcPBwt1Zt0/lkK8rM8xKh6p
-         76QtJ0xGrfllh8Ulxz/OonkL726N6ero/ZFOZCq6o1pSRfjapwmc2d1aYKeJkUd1Mu+Y
-         JrPltg7HKHf9G7wbGdxTMQ6xAEfPf0evwAOLTHzcSbhbDhR042QIMzQlZLNaL2rJb0G1
-         BvC8FLA7LeJbV6SbixOmmy77VPj45cNPXgYDJT+0UQ+D2jvrTY9sDlNM3WnS5XlR5ND+
-         QbZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX8+HGXX0n+HedtltMkemkPQkQavq9cs5GYEVrDkeI1nPS9wfmCGybHvIt/ACQD6e8hjBOBK0yFgZ3+hBM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw86OpQlR6HYxMXjHC2Qtmd+Ar9lDDbhOTL4uvTFK2mnyda95+s
-	wDS1ppQ0xCiHOrvA6iWqrZR7vGvFAviy4NWfS57L0zPKncDPPzVTYX5GZjb8I+uoSVOtaLwHjQt
-	qte+rO067lA==
-X-Google-Smtp-Source: AGHT+IFf4tjcTsmeHv6vxo8C5qfpFSz+rGcmnB97J0xvK8kvFs8Ha8/XW4av6zciXZGnqt+HKgZKQBfIVctZ/g==
-X-Received: from wmbg23.prod.google.com ([2002:a05:600c:a417:b0:439:95b9:9200])
+        bh=r0kpBhbfXxtZzDMHLag5RRsggHKY1KhBdZYwLBVe1gQ=;
+        b=SgnG9JYLxyw9QZP87ILecKgEvKKKKGfANfC2V6n7mi4flRNCRsXPzOevJtZMkp8VcH
+         LU42DSd/0YsOfJxiWUIsg6veNwm7kXbw5F21bbKLOvW84IvMgUrCP3xS7w55DaymtxfQ
+         59n1RHMJnBOjqTVhSXyuxClgYP9ROoOE/dYKVLG/tK619jbhcaVlV/bDACzRDXkYWOG7
+         CWYKwcRmirOSQH0ms01BllHciMms3IeByWH4edry3Oo5eAg/Wvp0WqM35GAjB7r9R0aH
+         C3CYQwvGzld9tSx940K82OowfaOSEYo6Sr7ENiAH4SUeMAxw4UTXav3CLy8plLz0kiD/
+         cjJg==
+X-Forwarded-Encrypted: i=1; AJvYcCUC9DyTHYEewv3Hwgw9ZF5LDSFmc3Abp4zn+dTavHFqpsEIlxD9H5OqKYKS0fI0QpIGT0e3ycNwhKhMOKQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8L/Uf7nfYFVAUizufW8bL/M1JOtdr3mBIkn/cqjPySSGpHqxj
+	KHyw8hHMzUYitNAWXd2aDxBSdsqx9ZM9R81Prwerr7eRshSQisLyn0uWxiVyBmhgjH2mCOXaGFm
+	mPX5Wt7W6EQ==
+X-Google-Smtp-Source: AGHT+IH8NmujlT/kHbLcbrDIh4TdqTEkbJHgI3ziVHNlXWsjC5xp2dgiGsl9Qlu/Bsx5dLWERlz6Up6uxakhtg==
+X-Received: from wmbfp16.prod.google.com ([2002:a05:600c:6990:b0:439:8ee3:e17b])
  (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:4449:b0:439:873a:1114 with SMTP id 5b1f17b1804b1-43999ae18f9mr8268715e9.6.1739905191596;
- Tue, 18 Feb 2025 10:59:51 -0800 (PST)
-Date: Tue, 18 Feb 2025 18:59:40 +0000
+ 2002:a5d:47a1:0:b0:38d:d274:4537 with SMTP id ffacd0b85a97d-38f57bf8a25mr729075f8f.7.1739905193562;
+ Tue, 18 Feb 2025 10:59:53 -0800 (PST)
+Date: Tue, 18 Feb 2025 18:59:41 +0000
 In-Reply-To: <20250218-force-cpu-bug-v3-0-da3df43d1936@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250218-force-cpu-bug-v3-0-da3df43d1936@google.com>
 X-Mailer: b4 0.15-dev-42535
-Message-ID: <20250218-force-cpu-bug-v3-2-da3df43d1936@google.com>
-Subject: [PATCH v3 2/4] x86/cpu: Create helper to parse clearcpuid param
+Message-ID: <20250218-force-cpu-bug-v3-3-da3df43d1936@google.com>
+Subject: [PATCH v3 3/4] x86/cpu: Add setcpuid cmdline param
 From: Brendan Jackman <jackmanb@google.com>
 To: Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
 	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
@@ -83,144 +83,112 @@ Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Brendan Jackman <jackmanb@google.com>
 Content-Type: text/plain; charset="utf-8"
 
-This is in preparation for a later commit that will reuse this code, to
-make review convenient.
+In preparation for adding support to fake out CPU bugs, add a general
+facility to force-enable CPU flags.
 
-Factor out a helper function which does the full handling for this arg
-including printing info to the console.
+The flag taints the kernel and the documentation attempts to be clear
+that this is highly unsuitable for uses outside of kernel development
+and platform experimentation.
 
-No functional change intended.
+The new arg is parsed just like clearcpuid, but instead of leading to
+setup_clear_cpu_cap() it leads to setup_force_cpu_cap().
 
 Signed-off-by: Brendan Jackman <jackmanb@google.com>
 ---
- arch/x86/kernel/cpu/common.c | 97 ++++++++++++++++++++++++--------------------
- 1 file changed, 53 insertions(+), 44 deletions(-)
+
+Notes:
+    I've tested this by booting a nested QEMU
+    guest on an Intel host, which with setcpuid=svm
+    will claim that it supports AMD virtualization.
+
+ arch/x86/kernel/cpu/common.c | 34 +++++++++++++++++++++++++---------
+ 1 file changed, 25 insertions(+), 9 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index f96a3a4829bd..1241c205b9d0 100644
+index 1241c205b9d0..245807f9351d 100644
 --- a/arch/x86/kernel/cpu/common.c
 +++ b/arch/x86/kernel/cpu/common.c
-@@ -1479,56 +1479,18 @@ static void detect_nopl(void)
+@@ -1479,12 +1479,12 @@ static void detect_nopl(void)
  #endif
  }
  
--/*
-- * We parse cpu parameters early because fpu__init_system() is executed
-- * before parse_early_param().
-- */
--static void __init cpu_parse_early_param(void)
-+static inline void parse_clearcpuid(char *arg)
+-static inline void parse_clearcpuid(char *arg)
++static inline void parse_set_clear_cpuid(char *arg, bool set)
  {
--	char arg[128];
--	char *argptr = arg, *opt;
--	int arglen, taint = 0;
--
--#ifdef CONFIG_X86_32
--	if (cmdline_find_option_bool(boot_command_line, "no387"))
--#ifdef CONFIG_MATH_EMULATION
--		setup_clear_cpu_cap(X86_FEATURE_FPU);
--#else
--		pr_err("Option 'no387' required CONFIG_MATH_EMULATION enabled.\n");
--#endif
--
--	if (cmdline_find_option_bool(boot_command_line, "nofxsr"))
--		setup_clear_cpu_cap(X86_FEATURE_FXSR);
--#endif
--
--	if (cmdline_find_option_bool(boot_command_line, "noxsave"))
--		setup_clear_cpu_cap(X86_FEATURE_XSAVE);
--
--	if (cmdline_find_option_bool(boot_command_line, "noxsaveopt"))
--		setup_clear_cpu_cap(X86_FEATURE_XSAVEOPT);
--
--	if (cmdline_find_option_bool(boot_command_line, "noxsaves"))
--		setup_clear_cpu_cap(X86_FEATURE_XSAVES);
--
--	if (cmdline_find_option_bool(boot_command_line, "nousershstk"))
--		setup_clear_cpu_cap(X86_FEATURE_USER_SHSTK);
--
--	/* Minimize the gap between FRED is available and available but disabled. */
--	arglen = cmdline_find_option(boot_command_line, "fred", arg, sizeof(arg));
--	if (arglen != 2 || strncmp(arg, "on", 2))
--		setup_clear_cpu_cap(X86_FEATURE_FRED);
--
--	arglen = cmdline_find_option(boot_command_line, "clearcpuid", arg, sizeof(arg));
+ 	char *opt;
+ 	int taint = 0;
+ 
+-	pr_info("Clearing CPUID bits:");
++	pr_info("%s CPUID bits:", set ? "Force-enabling" : "Clearing");
+ 
+ 	while (arg) {
+ 		bool found __maybe_unused = false;
+@@ -1505,7 +1505,10 @@ static inline void parse_clearcpuid(char *arg)
+ 				else
+ 					pr_cont(" %s", x86_cap_flags[bit]);
+ 
+-				setup_clear_cpu_cap(bit);
++				if (set)
++					setup_force_cpu_cap(bit);
++				else
++					setup_clear_cpu_cap(bit);
+ 				taint++;
+ 			}
+ 			/*
+@@ -1523,7 +1526,10 @@ static inline void parse_clearcpuid(char *arg)
+ 				continue;
+ 
+ 			pr_cont(" %s", opt);
+-			setup_clear_cpu_cap(bit);
++			if (set)
++				setup_force_cpu_cap(bit);
++			else
++				setup_clear_cpu_cap(bit);
+ 			taint++;
+ 			found = true;
+ 			break;
+@@ -1579,10 +1585,12 @@ static void __init cpu_parse_early_param(void)
+ 		setup_clear_cpu_cap(X86_FEATURE_FRED);
+ 
+ 	arglen = cmdline_find_option(boot_command_line, "clearcpuid", arg, sizeof(arg));
 -	if (arglen <= 0)
 -		return;
-+	char *opt;
-+	int taint = 0;
++	if (arglen > 0)
++		parse_set_clear_cpuid(arg, false);
  
- 	pr_info("Clearing CPUID bits:");
- 
--	while (argptr) {
-+	while (arg) {
- 		bool found __maybe_unused = false;
- 		unsigned int bit;
- 
--		opt = strsep(&argptr, ",");
-+		opt = strsep(&arg, ",");
- 
- 		/*
- 		 * Handle naked numbers first for feature flags which don't
-@@ -1570,10 +1532,57 @@ static void __init cpu_parse_early_param(void)
- 		if (!found)
- 			pr_cont(" (unknown: %s)", opt);
- 	}
--	pr_cont("\n");
- 
- 	if (taint)
- 		add_taint(TAINT_CPU_OUT_OF_SPEC, LOCKDEP_STILL_OK);
-+
-+	pr_cont("\n");
-+}
-+
-+
-+/*
-+ * Parse cpu parameters early because fpu__init_system() is executed
-+ * before parse_early_param().
-+ */
-+static void __init cpu_parse_early_param(void)
-+{
-+	char arg[128];
-+	int arglen;
-+
-+#ifdef CONFIG_X86_32
-+	if (cmdline_find_option_bool(boot_command_line, "no387"))
-+#ifdef CONFIG_MATH_EMULATION
-+		setup_clear_cpu_cap(X86_FEATURE_FPU);
-+#else
-+		pr_err("Option 'no387' required CONFIG_MATH_EMULATION enabled.\n");
-+#endif
-+
-+	if (cmdline_find_option_bool(boot_command_line, "nofxsr"))
-+		setup_clear_cpu_cap(X86_FEATURE_FXSR);
-+#endif
-+
-+	if (cmdline_find_option_bool(boot_command_line, "noxsave"))
-+		setup_clear_cpu_cap(X86_FEATURE_XSAVE);
-+
-+	if (cmdline_find_option_bool(boot_command_line, "noxsaveopt"))
-+		setup_clear_cpu_cap(X86_FEATURE_XSAVEOPT);
-+
-+	if (cmdline_find_option_bool(boot_command_line, "noxsaves"))
-+		setup_clear_cpu_cap(X86_FEATURE_XSAVES);
-+
-+	if (cmdline_find_option_bool(boot_command_line, "nousershstk"))
-+		setup_clear_cpu_cap(X86_FEATURE_USER_SHSTK);
-+
-+	/* Minimize the gap between FRED is available and available but disabled. */
-+	arglen = cmdline_find_option(boot_command_line, "fred", arg, sizeof(arg));
-+	if (arglen != 2 || strncmp(arg, "on", 2))
-+		setup_clear_cpu_cap(X86_FEATURE_FRED);
-+
-+	arglen = cmdline_find_option(boot_command_line, "clearcpuid", arg, sizeof(arg));
-+	if (arglen <= 0)
-+		return;
-+
-+	parse_clearcpuid(arg);
+-	parse_clearcpuid(arg);
++	arglen = cmdline_find_option(boot_command_line, "setcpuid", arg, sizeof(arg));
++	if (arglen > 0)
++		parse_set_clear_cpuid(arg, true);
  }
  
  /*
+@@ -2014,15 +2022,23 @@ void print_cpu_info(struct cpuinfo_x86 *c)
+ }
+ 
+ /*
+- * clearcpuid= was already parsed in cpu_parse_early_param().  This dummy
+- * function prevents it from becoming an environment variable for init.
++ * clearcpuid= and setcpuid= were already parsed in cpu_parse_early_param().
++ * These dummy functions prevent them from becoming an environment variable for
++ * init.
+  */
++
+ static __init int setup_clearcpuid(char *arg)
+ {
+ 	return 1;
+ }
+ __setup("clearcpuid=", setup_clearcpuid);
+ 
++static __init int setup_setcpuid(char *arg)
++{
++	return 1;
++}
++__setup("setcpuid=", setup_setcpuid);
++
+ DEFINE_PER_CPU_ALIGNED(struct pcpu_hot, pcpu_hot) = {
+ 	.current_task	= &init_task,
+ 	.preempt_count	= INIT_PREEMPT_COUNT,
 
 -- 
 2.48.1.601.g30ceb7b040-goog
