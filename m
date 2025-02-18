@@ -1,209 +1,167 @@
-Return-Path: <linux-kernel+bounces-519566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 651E0A39E18
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:58:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AA5CA39E32
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:03:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E206188AC7D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:58:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91C703AA3CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:59:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6A5B269AFF;
-	Tue, 18 Feb 2025 13:58:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C528D171A7;
+	Tue, 18 Feb 2025 13:59:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PPfEaT4Z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kLicXgCJ"
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFFA7263F36;
-	Tue, 18 Feb 2025 13:58:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A427269AE6
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 13:59:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739887089; cv=none; b=SE4d/A5j8/2IKzOIp84I/pAdaZSzv8EliFhL+2NzZjFmdQpt+/r61UzgY9FEHYW73fXfHm6/RR3tm9K5Puk0puEuj91KKMD17Q2MsL4RD97mfmjjqKp/dXyMjRwZSgX/YI02628UPJ+MzCqoVA2k3gr506K+w8OFxbV+v9gWBFM=
+	t=1739887174; cv=none; b=FtLhDHNoHm5aGD6eMufrknKppsxpcpKYEb7OQwMrpvP/vR88S9GsS3nBKc4R5b3seCcTx/BrnyRBaFsuRRF5ZKYPWkOdmI4RmBwwZ7fipUmVUo71L/MMpXqfFA6Y8UY5vGrLkFPF5Jl4bk+iSwA1n4li0kPqTl5KWdpdz560ey4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739887089; c=relaxed/simple;
-	bh=05ioUIZ9eW4C3n+2uobzEo+SsGZXGW2MZGvEd6nxZZE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=qgbrVpxsPd/hNWAA7RIsSLYimhVpxETXw8+UqZR01BWdmP0Sq6Wt/eRJgeo+4pTeCGp6JXyaC+0Gg+j/npId9o+SStF5pOtdnh9e+k9AvT82H5c5gXBSAGy+zmvELA4a5ujIR3b0zkrcC9oj/hTOtuYiKO987G9m7CK6iezWMMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PPfEaT4Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B06E1C4CEE2;
-	Tue, 18 Feb 2025 13:58:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739887088;
-	bh=05ioUIZ9eW4C3n+2uobzEo+SsGZXGW2MZGvEd6nxZZE=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=PPfEaT4Zu7LUI4aSqwJM23lA41HB6nMLrsFKV2spFq6OFRTH1vLAQppi2Byzh6agj
-	 xk/vQEhDUHGCVuj4BUG90L+aKlKyYmL2VAMGRmYT4pH8I99wTFscXus7ZW7HovX48m
-	 JDwA/ikKLM6QCpI3oDmgF47XBFX0kQRPw2+Zfnjc0LJZcw7VdzN1grP3m6ZzfAq1bg
-	 k5ODh1IcwUQ2QHSaqRYMfEQpchZIHsY1EIFhJHS1RzGy8JYx/iA0/KQ74HU8TBhnJk
-	 kfb5FcIBrsbiJayBZqklxc+rui8EQyNo4Z2imXghw2AXEY2m/FevjbR+S/5KmiMP1r
-	 IzbKT9tK9Khig==
-Message-ID: <0ae8a05272c2eb8a503102788341e1d9c49109dd.camel@kernel.org>
-Subject: Re: [PATCH] nfsd: decrease cl_cb_inflight if fail to queue cb_work
-From: Jeff Layton <jlayton@kernel.org>
-To: Li Lingfeng <lilingfeng3@huawei.com>, chuck.lever@oracle.com,
- neilb@suse.de, 	okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com,
- linux-nfs@vger.kernel.org, 	linux-kernel@vger.kernel.org
-Cc: yukuai1@huaweicloud.com, houtao1@huawei.com, yi.zhang@huawei.com, 
-	yangerkun@huawei.com, lilingfeng@huaweicloud.com
-Date: Tue, 18 Feb 2025 08:58:06 -0500
-In-Reply-To: <20250218135423.1487309-1-lilingfeng3@huawei.com>
-References: <20250218135423.1487309-1-lilingfeng3@huawei.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1739887174; c=relaxed/simple;
+	bh=8FbOJ0YuzWNREmtL/U0Q5q34IXWjIrhlLf+96xzPrx4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type; b=toKvVzPNooaFfI0ZhsAcdgqZjy96vemfQl+yYE2/NkqyKuYGJPVw/BV4vV4lezq1WtYLJSCmxS2CzHnxdKqQqAVP5YuWgPHiXIz1H3F1UdxypggcSO3J9yO9O/GmdhvIiPdIsbF9759rznTGgcbYYGalNendxLspxtA8E8RDcWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kLicXgCJ; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e5ad75ca787so4561664276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 05:59:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739887171; x=1740491971; darn=vger.kernel.org;
+        h=content-transfer-encoding:from:to:content-language:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mBTitMHW10mShDDuvyybiVh0MUPGAff1nlPO1Ig+Pnc=;
+        b=kLicXgCJV8NiTMGPe9pxIuZSsNBlSNZjati/XDLJa5OEP0aEmCwa/kk+Sb7Nbu0aFI
+         nKkUXSkf6XnyVgADffuRPsVCo6Ca5IuOhkZNmL+6GvzWffMBVN5JoVNwvEXMaM7m+zXa
+         PXxDEZ0+LvsiNRuFxjP61KCrr8VlHotmsQXUEMBPaEyurcvzC7hDq31xxeq/LHGsRBRm
+         Jj15jXv/EqpkyQL/Za01fwLHdPS9/0Dk5o7pK+c4QUyveFul//4u4YGMcB8gfaDohYxm
+         km+2VCSOJPodUXfGLLXBXn+BcUIXrO6h6rHSAJLwe4Qm8SG4mpIbNDh+WYknQGCYtTFm
+         FDeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739887171; x=1740491971;
+        h=content-transfer-encoding:from:to:content-language:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=mBTitMHW10mShDDuvyybiVh0MUPGAff1nlPO1Ig+Pnc=;
+        b=Bpv+e/PxAidxOxLz5gAPKhfeO0lLyt/VGjVCLHd72WVRiCTIRyZIr29RpC3D1GvgrP
+         oyLS/V1qrGNILrClIIOZC8HEnxV3JLDlriYe9Cy2PdhxzeF+zaK2VuxGDp+sg3bsBwgW
+         3h8xfU6QzbZbUQgyVp5LLCx0FH6RrxGs12bOrzn3F4pbcLnbbHiFEMuvCqV8i0rvCAQ2
+         1/z4+wUoY7QNq5zrF87r6m0MPPQfSlUoLztVyfWjBis/FecgmrSCbWPUJrgRzHvO7cDi
+         K8MnNdS17wkQgRTSCGE58mbdvwL4vCFrxikpj7cU5PNLpL13kxJaC5FhiH0gLdka5vuA
+         K+gA==
+X-Forwarded-Encrypted: i=1; AJvYcCWALdCmz8vLMLg++i5eqjefrhE5dRG3jTd5vurWLZ2fO+w2uZljs0ZDCV0ucvBiW10VD8W0iEb3NaF14B8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1JccTvXVvNLpeQo55Bn/epbs6l8iXQfvNXpY5essUTx3R2k6b
+	luQIaJT7f/p4kwk+K00UQP9EqW7x2hkJK9UInB0sPLpQNbLTuA5d
+X-Gm-Gg: ASbGncvMnL6sihMR9ze4Z5dGqZMlp/FuH91/iChjYrbAXoRYgROjG8hUZb5UdOtqF6x
+	j0zqqT6G+U63Rwo0kNS8wVAoywBFRqMHA6WpA5xPJpVRbcby1GD0n4lbR5/rFrY0k/ojvtvIxh8
+	1KKexAyZ+BpJl2p3BLccalbVJWjjjPYY0DGvetzraElyYkefAy/qdqzfTBRZbU1meGz1Dw8TL62
+	Q+RI3aMrTpz40yonFCesgRMh7CHTMQL/XgQyOBUNx6y/fChj+fOz0tpwZjyJ58Dh3Ie5pbuFvcG
+	F9RGxjj85siCL3zx6UVIMmFFOEx+HCvFK2BWHGK+0Q==
+X-Google-Smtp-Source: AGHT+IGr/7yCTqFWAoZsEW/RB9JqyxCCCoN2i9ai0N6qMixFJeolznestAOTxgZkSj8FZSpKdp3qAg==
+X-Received: by 2002:a05:6902:f84:b0:e5d:cbad:c961 with SMTP id 3f1490d57ef6-e5dcbadcc01mr7758222276.22.1739887171310;
+        Tue, 18 Feb 2025 05:59:31 -0800 (PST)
+Received: from ?IPV6:2600:1702:2480:14d0::48? ([2600:1702:2480:14d0::48])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e5dae0d9aadsm3067538276.35.2025.02.18.05.59.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Feb 2025 05:59:30 -0800 (PST)
+Message-ID: <381a838c-bb8a-8e95-c35a-343601cbe8e3@gmail.com>
+Date: Tue, 18 Feb 2025 08:59:29 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.0
+Subject: [PATCH] nvme-pci: quirk Acer FA100 for non-uniqueue identifiers
+Content-Language: en-US
+To: "christopherericlentocha@gmail.com" <christopherericlentocha@gmail.com>,
+ kbusch@kernel.org, axboe@kernel.dk, hch@lst.de, sagi@grimberg.me,
+ linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Christopher Lentocha <christopherericlentocha@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 2025-02-18 at 21:54 +0800, Li Lingfeng wrote:
-> In nfsd4_run_cb, cl_cb_inflight is increased before attempting to queue
-> cb_work to callback_wq. This count can be decreased in three situations:
-> 1) If queuing fails in nfsd4_run_cb, the count will be decremented
-> accordingly.
-> 2) After cb_work is running, the count is decreased in the exception
-> branch of nfsd4_run_cb_work via nfsd41_destroy_cb.
-> 3) The count is decreased in the release callback of rpc_task =E2=80=94 e=
-ither
-> directly calling nfsd41_cb_inflight_end in nfsd4_cb_probe_release, or
-> calling nfsd41_destroy_cb in nfsd4_cb_release.
->=20
-> However, in nfsd4_cb_release, if the current cb_work needs to restart, th=
-e
-> count will not be decreased, with the expectation that it will be reduced
-> once cb_work is running.
-> If queuing fails here, then the count will leak, ultimately causing the
-> nfsd service to be unable to exit as shown below:
-> [root@nfs_test2 ~]# cat /proc/2271/stack
-> [<0>] nfsd4_shutdown_callback+0x22b/0x290
-> [<0>] __destroy_client+0x3cd/0x5c0
-> [<0>] nfs4_state_destroy_net+0xd2/0x330
-> [<0>] nfs4_state_shutdown_net+0x2ad/0x410
-> [<0>] nfsd_shutdown_net+0xb7/0x250
-> [<0>] nfsd_last_thread+0x15f/0x2a0
-> [<0>] nfsd_svc+0x388/0x3f0
-> [<0>] write_threads+0x17e/0x2b0
-> [<0>] nfsctl_transaction_write+0x91/0xf0
-> [<0>] vfs_write+0x1c4/0x750
-> [<0>] ksys_write+0xcb/0x170
-> [<0>] do_syscall_64+0x70/0x120
-> [<0>] entry_SYSCALL_64_after_hwframe+0x78/0xe2
-> [root@nfs_test2 ~]#
->=20
-> Fix this by decreasing cl_cb_inflight if the restart fails.
->=20
-> Fixes: cba5f62b1830 ("nfsd: fix callback restarts")
-> Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
-> ---
->  fs/nfsd/nfs4callback.c | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
->=20
-> diff --git a/fs/nfsd/nfs4callback.c b/fs/nfsd/nfs4callback.c
-> index 484077200c5d..8a7d24efdd08 100644
-> --- a/fs/nfsd/nfs4callback.c
-> +++ b/fs/nfsd/nfs4callback.c
-> @@ -1459,12 +1459,16 @@ static void nfsd4_cb_done(struct rpc_task *task, =
-void *calldata)
->  static void nfsd4_cb_release(void *calldata)
->  {
->  	struct nfsd4_callback *cb =3D calldata;
-> +	struct nfs4_client *clp =3D cb->cb_clp;
-> +	int queued;
-> =20
->  	trace_nfsd_cb_rpc_release(cb->cb_clp);
-> =20
-> -	if (cb->cb_need_restart)
-> -		nfsd4_queue_cb(cb);
-> -	else
-> +	if (cb->cb_need_restart) {
-> +		queued =3D nfsd4_queue_cb(cb);
-> +		if (!queued)
-> +			nfsd41_cb_inflight_end(clp);
-> +	} else
->  		nfsd41_destroy_cb(cb);
-> =20
->  }
 
-Good catch!
+In order for two Acer FA100 SSDs to work in one PC (in the case of
+myself, a Lenovo Legion T5 28IMB05), and not show one drive and not
+the other, and sometimes mix up what drive shows up (randomly), these
+two lines of code need to be added, and then both of the SSDs will
+show up and not conflict when booting off of one of them. If you boot
+up your computer with both SSDs installed without this patch, you may
+also randomly get into a kernel panic (if the initrd is not set up) or
+stuck in the initrd "/init" process, it is set up, however, if you do
+apply this patch, there should not be problems with booting or seeing
+both contents of the drive. Tested with the btrfs filesystem with a
+RAID configuration of having the root drive '/' combined to make two
+256GB Acer FA100 SSDs become 512GB in total storage.
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Kernel Logs with patch applied (`dmesg -t | grep -i nvm`):
+
+```
+...
+nvme 0000:04:00.0: platform quirk: setting simple suspend
+nvme nvme0: pci function 0000:04:00.0
+nvme 0000:05:00.0: platform quirk: setting simple suspend
+nvme nvme1: pci function 0000:05:00.0
+nvme nvme1: missing or invalid SUBNQN field.
+nvme nvme1: allocated 64 MiB host memory buffer.
+nvme nvme0: missing or invalid SUBNQN field.
+nvme nvme0: allocated 64 MiB host memory buffer.
+nvme nvme1: 8/0/0 default/read/poll queues
+nvme nvme1: Ignoring bogus Namespace Identifiers
+nvme nvme0: 8/0/0 default/read/poll queues
+nvme nvme0: Ignoring bogus Namespace Identifiers
+nvme0n1: p1 p2
+...
+```
+
+Kernel Logs with patch not applied (`dmesg -t | grep -i nvm`):
+
+```
+...
+nvme 0000:04:00.0: platform quirk: setting simple suspend
+nvme nvme0: pci function 0000:04:00.0
+nvme 0000:05:00.0: platform quirk: setting simple suspend
+nvme nvme1: pci function 0000:05:00.0
+nvme nvme0: missing or invalid SUBNQN field.
+nvme nvme1: missing or invalid SUBNQN field.
+nvme nvme0: allocated 64 MiB host memory buffer.
+nvme nvme1: allocated 64 MiB host memory buffer.
+nvme nvme0: 8/0/0 default/read/poll queues
+nvme nvme1: 8/0/0 default/read/poll queues
+nvme nvme1: globally duplicate IDs for nsid 1
+nvme nvme1: VID:DID 1dbe:5216 model:Acer SSD FA100 256GB firmware:1.Z.J.2X
+nvme0n1: p1 p2
+...
+```
+
+Signed-off-by: Christopher Lentocha <christopherericlentocha@gmail.com>
+---
+  drivers/nvme/host/pci.c | 2 ++
+  1 file changed, 2 insertions(+)
+
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 9197a5b17..950289405 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -3706,6 +3706,8 @@ static const struct pci_device_id nvme_id_table[] = {
+  		.driver_data = NVME_QUIRK_BOGUS_NID, },
+  	{ PCI_DEVICE(0x1cc1, 0x5350),   /* ADATA XPG GAMMIX S50 */
+  		.driver_data = NVME_QUIRK_BOGUS_NID, },
++	{ PCI_DEVICE(0x1dbe, 0x5216),   /* Acer/INNOGRIT FA100/5216 NVMe SSD */
++		.driver_data = NVME_QUIRK_BOGUS_NID, },
+  	{ PCI_DEVICE(0x1dbe, 0x5236),   /* ADATA XPG GAMMIX S70 */
+  		.driver_data = NVME_QUIRK_BOGUS_NID, },
+  	{ PCI_DEVICE(0x1e49, 0x0021),   /* ZHITAI TiPro5000 NVMe SSD */
+-- 
+2.38.1
+
 
