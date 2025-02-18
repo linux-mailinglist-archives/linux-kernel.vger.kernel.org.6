@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-518843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EE7CA39551
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:28:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08E84A39552
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:28:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75CB616622E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:24:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69B9A176BB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:24:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1A7222D4E9;
-	Tue, 18 Feb 2025 08:19:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF9A31D90DB;
+	Tue, 18 Feb 2025 08:19:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D+6NaU6P"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XFgD8noi"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73A5A22CBF7;
-	Tue, 18 Feb 2025 08:19:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1932206F15;
+	Tue, 18 Feb 2025 08:19:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739866770; cv=none; b=rB38FQ84qwmM7oaipMWjf4/Btoly0sAWdj5oarQ76te4qqGCT3xRnXXInhntF/m+E0RupEXAns0iWyhbHYk9cIOYgJHdO10CWVb+0Lj95Qcnnd6OkVQ7VdbW4YXU8/jWE/1WL6IQo/mFAIOJaVK1zCXsvI+Ccv3gA0+Q/Okr0Bw=
+	t=1739866790; cv=none; b=NpW9HIAob9WfRt7V8K1v3+ZnAEdbZXIOA/gJgdmSPa5oOWF/WSNY0gaELP5VnKmhQ56q+nOHoWNh53/FxfYPwIBa/boQAhwjRha05X63HOXSDHoW2cl6H36Y0R9pDav6wjtrpeUMnsJObmeVeEKq+Gj3vZAeA/XTGZczxLFtpUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739866770; c=relaxed/simple;
-	bh=8ws+/8lspNy+rR5tjQn0/4EjYnvKhOpPRaAw0LffmfQ=;
+	s=arc-20240116; t=1739866790; c=relaxed/simple;
+	bh=kRU3BBM+6pq6tmllpt/bIuIdjTWZr2MiffpU/uDWsS0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MYJv3UW15+s+zf/d5NA/iy7OX6azTc47F95uswHj+ynfujlhGUlfx3Z3kD0YgvYvW3jY9if2L+NBvLnUeRznRVsh1T8S+RX9YSzjWT7onhTW0y+vbm3ZSTiivqoqWV5olrwiEgbh5kS866Kiju4B+9vYt/3WI6bs/3TDoey7eIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D+6NaU6P; arc=none smtp.client-ip=192.198.163.16
+	 MIME-Version; b=BVCL7iXXVwjlXu3xlwxCRDjnwfDKuKbbtHtNpNClONi49mNysEOZSxVKep5riC/CwCpwcCr/tYkLty5mcgK0zwfuoVnqeVhKZCe+el7NmGCwPucqhxN4RbS0UfuHjvyYC/obeuDA9dXZz7w7fZ/5kXqnOC9qLRlC33Q8gc/LNM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XFgD8noi; arc=none smtp.client-ip=192.198.163.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739866769; x=1771402769;
+  t=1739866789; x=1771402789;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=8ws+/8lspNy+rR5tjQn0/4EjYnvKhOpPRaAw0LffmfQ=;
-  b=D+6NaU6PkN5axv6chDOXlZJWghFBDFnZUWH6HKSfzPEpnQnzBje5uJJF
-   w/SDvhm8wM7KkGXGrFmp1xDYWAtYja7dW5UKbxoXhttYZUAOqny3F/SZ3
-   GMDF0LCuOiHxWMJAh42RDEAzmXgTQ5swLC9i71PU7qwscBpbcO0efK0e8
-   ELT/Bg2K3iHvOTI3XiHFJQCQYLBezBfbvTtN/7XWbO3C1f02D/dMpGj7e
-   cskJmUcul/XkBKV5lGqsii9iCVosijAMs0NiN+eDFE6xVkDo2+dLzUcrQ
-   gc4sXN6bNVHy6YiddHTvoL2/VLybpcVuljvTqSk7KWSbfuEh2pw60R2j+
-   w==;
-X-CSE-ConnectionGUID: IU48MjcSRqeNuqs3BipIJQ==
-X-CSE-MsgGUID: 4+1LASDnRQ6ld3DJoLqbFw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="28150413"
+  bh=kRU3BBM+6pq6tmllpt/bIuIdjTWZr2MiffpU/uDWsS0=;
+  b=XFgD8noigUFOIB7P8T4GHHx/Phu72E9ibuSadxyS9yktJ1gD8bDmmaDU
+   OR/6Z2F0f8yNJB/G7aA4duIACj3IfFW91oX+qFUslazbtWv9Iqok2exbi
+   ZyzgkSXqISxsNJPIwgP5RAgowBOO5l+Hm+fFidj8EDqNcjy240TF6Rxhz
+   m2nRLm+30yBZA9bK7LQBzIt6i3b3zbS+olQj0eKKm9pNwT1O2z7BRxx7N
+   A8gJUnzfN/jHcjLYT23Tyff0n/hRgG0qwNUJosKM4Fc70lyh0OAR8EoQ+
+   wXsT3RieviYa+p+ZzWOlzO9mGRv4PAFfB7ajIH/jMv7G9H6O/NRVJ/FbW
+   Q==;
+X-CSE-ConnectionGUID: 14949JObTp+ibAPOc90VnA==
+X-CSE-MsgGUID: s2bneEUCQFyomUbZAkVFiw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="28150455"
 X-IronPort-AV: E=Sophos;i="6.13,295,1732608000"; 
-   d="scan'208";a="28150413"
+   d="scan'208";a="28150455"
 Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 00:19:27 -0800
-X-CSE-ConnectionGUID: 46KsSX6nShmB+6L3gB4eDg==
-X-CSE-MsgGUID: zDFh8fMPSzOB5kwIyeazag==
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 00:19:48 -0800
+X-CSE-ConnectionGUID: IYj6E66YQH63xLaNCe56vw==
+X-CSE-MsgGUID: fqGS+T4jSJq734ReKLPe/A==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="119247888"
+   d="scan'208";a="119247941"
 Received: from ijarvine-mobl1.ger.corp.intel.com (HELO wieczorr-mobl1.intel.com) ([10.245.245.49])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 00:19:09 -0800
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 00:19:28 -0800
 From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
 To: kees@kernel.org,
 	julian.stecklina@cyberus-technology.de,
@@ -130,9 +130,9 @@ Cc: linux-doc@vger.kernel.org,
 	linux-mm@kvack.org,
 	linux-arm-kernel@lists.infradead.org,
 	x86@kernel.org
-Subject: [PATCH v2 10/14] x86: KASAN raw shadow memory PTE init
-Date: Tue, 18 Feb 2025 09:15:26 +0100
-Message-ID: <738373d32089fbf84a8c5d6f32ade1bf28d14020.1739866028.git.maciej.wieczor-retman@intel.com>
+Subject: [PATCH v2 11/14] x86: LAM initialization
+Date: Tue, 18 Feb 2025 09:15:27 +0100
+Message-ID: <e1a92159d657d1f389a8ee799a33ee2173098bb6.1739866028.git.maciej.wieczor-retman@intel.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <cover.1739866028.git.maciej.wieczor-retman@intel.com>
 References: <cover.1739866028.git.maciej.wieczor-retman@intel.com>
@@ -144,73 +144,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In KASAN's generic mode the default value in shadow memory is zero.
-During initialization of shadow memory pages they are allocated and
-zeroed.
+To make use of KASAN's tag based mode on x86 Linear Address Masking
+(LAM) needs to be enabled. To do that the 28th bit in CR4 needs to be
+set.
 
-In KASAN's tag-based mode the default tag for the arm64 architecture is
-0xFE which corresponds to any memory that should not be accessed. On x86
-(where tags are 4-bit wide instead of 8-bit wide) that tag is 0xE so
-during the initializations all the bytes in shadow memory pages should
-be filled with 0xE or 0xEE if two tags should be packed in one shadow
-byte.
+Set the bit in early memory initialization.
 
-Use memblock_alloc_try_nid_raw() instead of memblock_alloc_try_nid() to
-avoid zeroing out the memory so it can be set with the KASAN invalid
-tag.
+When launching secondary CPUs the LAM bit gets lost. To avoid this it
+needs to get added in a mask in head_64.S. The bit mask permits some
+bits of CR4 to pass from the primary CPU to the secondary CPUs without
+being cleared.
 
 Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
 ---
-Changelog v2:
-- Remove dense mode references, use memset() instead of kasan_poison().
+ arch/x86/kernel/head_64.S | 3 +++
+ arch/x86/mm/init.c        | 3 +++
+ 2 files changed, 6 insertions(+)
 
- arch/x86/mm/kasan_init_64.c | 19 ++++++++++++++++---
- 1 file changed, 16 insertions(+), 3 deletions(-)
-
-diff --git a/arch/x86/mm/kasan_init_64.c b/arch/x86/mm/kasan_init_64.c
-index 9dddf19a5571..299a2144dac4 100644
---- a/arch/x86/mm/kasan_init_64.c
-+++ b/arch/x86/mm/kasan_init_64.c
-@@ -35,6 +35,18 @@ static __init void *early_alloc(size_t size, int nid, bool should_panic)
- 	return ptr;
- }
- 
-+static __init void *early_raw_alloc(size_t size, int nid, bool should_panic)
-+{
-+	void *ptr = memblock_alloc_try_nid_raw(size, size,
-+			__pa(MAX_DMA_ADDRESS), MEMBLOCK_ALLOC_ACCESSIBLE, nid);
-+
-+	if (!ptr && should_panic)
-+		panic("%pS: Failed to allocate page, nid=%d from=%lx\n",
-+		      (void *)_RET_IP_, nid, __pa(MAX_DMA_ADDRESS));
-+
-+	return ptr;
-+}
-+
- static void __init kasan_populate_pmd(pmd_t *pmd, unsigned long addr,
- 				      unsigned long end, int nid)
- {
-@@ -64,8 +76,9 @@ static void __init kasan_populate_pmd(pmd_t *pmd, unsigned long addr,
- 		if (!pte_none(*pte))
- 			continue;
- 
--		p = early_alloc(PAGE_SIZE, nid, true);
--		entry = pfn_pte(PFN_DOWN(__pa(p)), PAGE_KERNEL);
-+		p = early_raw_alloc(PAGE_SIZE, nid, true);
-+		memset(p, PAGE_SIZE, KASAN_SHADOW_INIT);
-+		entry = pfn_pte(PFN_DOWN(__pa_nodebug(p)), PAGE_KERNEL);
- 		set_pte_at(&init_mm, addr, pte, entry);
- 	} while (pte++, addr += PAGE_SIZE, addr != end);
- }
-@@ -437,7 +450,7 @@ void __init kasan_init(void)
- 	 * it may contain some garbage. Now we can clear and write protect it,
- 	 * since after the TLB flush no one should write to it.
+diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
+index 31345e0ba006..87158729f138 100644
+--- a/arch/x86/kernel/head_64.S
++++ b/arch/x86/kernel/head_64.S
+@@ -206,6 +206,9 @@ SYM_INNER_LABEL(common_startup_64, SYM_L_LOCAL)
+ 	 *  there will be no global TLB entries after the execution."
  	 */
--	memset(kasan_early_shadow_page, 0, PAGE_SIZE);
-+	memset(kasan_early_shadow_page, KASAN_SHADOW_INIT, PAGE_SIZE);
- 	for (i = 0; i < PTRS_PER_PTE; i++) {
- 		pte_t pte;
- 		pgprot_t prot;
+ 	movl	$(X86_CR4_PAE | X86_CR4_LA57), %edx
++#ifdef CONFIG_ADDRESS_MASKING
++	orl	$X86_CR4_LAM_SUP, %edx
++#endif
+ #ifdef CONFIG_X86_MCE
+ 	/*
+ 	 * Preserve CR4.MCE if the kernel will enable #MC support.
+diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
+index 62aa4d66a032..5499ba683b53 100644
+--- a/arch/x86/mm/init.c
++++ b/arch/x86/mm/init.c
+@@ -761,6 +761,9 @@ void __init init_mem_mapping(void)
+ 	probe_page_size_mask();
+ 	setup_pcid();
+ 
++	if (boot_cpu_has(X86_FEATURE_LAM) && IS_ENABLED(CONFIG_KASAN_SW_TAGS))
++		cr4_set_bits_and_update_boot(X86_CR4_LAM_SUP);
++
+ #ifdef CONFIG_X86_64
+ 	end = max_pfn << PAGE_SHIFT;
+ #else
 -- 
 2.47.1
 
