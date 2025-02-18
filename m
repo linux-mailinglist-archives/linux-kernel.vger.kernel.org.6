@@ -1,123 +1,200 @@
-Return-Path: <linux-kernel+bounces-518782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28E6BA3947E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:07:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EFF8A3947F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:07:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C558216A6E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:07:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60DA3188E0F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:07:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEBE922ACF3;
-	Tue, 18 Feb 2025 08:07:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D7C22ACF7;
+	Tue, 18 Feb 2025 08:07:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="JYtwZ3rw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Jf1SZCwg";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="O/5UskKI";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Jf1SZCwg";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="O/5UskKI"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E5031DF73C;
-	Tue, 18 Feb 2025 08:07:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6034922ACCE
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 08:07:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739866040; cv=none; b=FTVJmazPx1sHe+uEGlqm5ZPX9NPP5ytPjKKNTQ/4R/ChBqT/ev43t9oYug2/Hgoy9naIy6Dsvom7sACA3/rPuGbJCwIKJQ7uF85qmrzQAmtQ43kAFN3rYc98SjHUEaghgGWE+qSXfnO7OgXCgg2CAliPYbSuDclMT349lHkOQjc=
+	t=1739866057; cv=none; b=R3zOf+Y2u1A7fJC8v20j/zGsy4AHHNAp0Agjh4Mok+2SzQF7uhuR0c/NwMzGLLEd3pbqi7TPYDSPZ/NZtSwsCBzkg2C4mqXC5A+eOS52QCNfBQG1vtjuevTfNcxhklYrq9hlwiaJW+prZIuyvg/vEjJfbmhHEEK4m5J5dfj3/gY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739866040; c=relaxed/simple;
-	bh=0nJNYoHEPY55ekPjs2MDTQbDYT48weyBXJTKQum9lYM=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HdxV0dDZkC2IqubZZRGwjiiFhyMKu4Mc0n2Oe3fvu3xUthGF6g7jFsneiGAF0Xujtc7hwym7QP1NZya1bymDki7+XWKT1qyhVuRicMnG+UF8/VCJoaY6syKi5/vSFyikdwZ7Zp4GPn0st5WTMa6A8cEcn90l3gm6h4RHsZV7oUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=JYtwZ3rw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02E3AC4CEE6;
-	Tue, 18 Feb 2025 08:07:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1739866038;
-	bh=0nJNYoHEPY55ekPjs2MDTQbDYT48weyBXJTKQum9lYM=;
-	h=Date:From:To:Subject:References:In-Reply-To:From;
-	b=JYtwZ3rwsLQu4WBaDduY/mEVvInOMPJ16YmXZDER0bYrEWJ7sdc7ZYLPmZh3GGD9r
-	 ESqOX2EZjua0kKcrx9D+Lgm3sRAiIBYUth0/RuncbJL/eXmaEYJ+CB9msS8pozxVDE
-	 1J+N56X+jVbr+Qg7Di4W4B8vCuSz8MTDnZTlbyp4=
-Date: Tue, 18 Feb 2025 09:07:15 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Alexandre Courbot <acourbot@nvidia.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	David Airlie <airlied@gmail.com>,
-	John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Subject: Re: [RFC PATCH 0/3] gpu: nova-core: add basic timer subdevice
- implementation
-Message-ID: <2025021830-segment-boil-5ff7@gregkh>
-References: <20250217-nova_timer-v1-0-78c5ace2d987@nvidia.com>
- <Z7NaPYvuRF11uxnM@phenom.ffwll.local>
+	s=arc-20240116; t=1739866057; c=relaxed/simple;
+	bh=n8hdxqea0Cii7OvjC4177i8E3IGatQMn5FrjuusoBws=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UjzUHefnk+LAjsyxC3uxF26bpTTitgfiruxfSymCi0zOwgnkNeJ1NF8DWQ6c4jRGnntt0KAs4kkoPtKn03EfaPuH6EJyNhaEqMkAFRMZtgHgs2FaYkqZEKSEPdx6jtXJzY9e+yMGpFOuLUKtyQ546/YKXZcafmsmPytU5/pvAhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Jf1SZCwg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=O/5UskKI; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Jf1SZCwg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=O/5UskKI; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 5E6F91F396;
+	Tue, 18 Feb 2025 08:07:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1739866048; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s8rH66VwakmIVEj/znEtIpDflz8sHWMRIsQr8wdgyxk=;
+	b=Jf1SZCwgLmk8GfWDRpkOrvOl/QIM3TVKeZvbvnJhYnkyGtlZWs+Jn59GVY2JQr7HbM3K9P
+	Wpp59uJaBLcAxYM0EI1UFLQ2uRP3L24IUcAhrD4Cu5u/DfNlk4+CUIoCpY8EMA730s77iJ
+	TffB2+Qn2rRyDkrJVIAGhRwC+SED0iA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1739866048;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s8rH66VwakmIVEj/znEtIpDflz8sHWMRIsQr8wdgyxk=;
+	b=O/5UskKIHAr2Oq0o9YYLVhqkxf51VbheQrA5g/PJWQ62DQJ2HUhaxBbQBSQJARfk6kdC+v
+	ha8ttrSvmfVeSlAg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1739866048; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s8rH66VwakmIVEj/znEtIpDflz8sHWMRIsQr8wdgyxk=;
+	b=Jf1SZCwgLmk8GfWDRpkOrvOl/QIM3TVKeZvbvnJhYnkyGtlZWs+Jn59GVY2JQr7HbM3K9P
+	Wpp59uJaBLcAxYM0EI1UFLQ2uRP3L24IUcAhrD4Cu5u/DfNlk4+CUIoCpY8EMA730s77iJ
+	TffB2+Qn2rRyDkrJVIAGhRwC+SED0iA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1739866048;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s8rH66VwakmIVEj/znEtIpDflz8sHWMRIsQr8wdgyxk=;
+	b=O/5UskKIHAr2Oq0o9YYLVhqkxf51VbheQrA5g/PJWQ62DQJ2HUhaxBbQBSQJARfk6kdC+v
+	ha8ttrSvmfVeSlAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D648E132C7;
+	Tue, 18 Feb 2025 08:07:27 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id A8v0ML8/tGc4VQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Tue, 18 Feb 2025 08:07:27 +0000
+Date: Tue, 18 Feb 2025 09:07:26 +0100
+Message-ID: <87zfij65hd.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: John Keeping <jkeeping@inmusicbrands.com>
+Cc: Takashi Iwai <tiwai@suse.de>,
+	Takashi Iwai <tiwai@suse.com>,
+	Clemens Ladisch <clemens@ladisch.de>,
+	Jaroslav Kysela <perex@perex.cz>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [BUG] ALSA: usb-audio: drain may fail with multi-port close race
+In-Reply-To: <Z7OCJ2DikMvhAxVf-jkeeping@inmusicbrands.com>
+References: <20250217111647.3368132-1-jkeeping@inmusicbrands.com>
+	<8734gc8prr.wl-tiwai@suse.de>
+	<Z7OCJ2DikMvhAxVf-jkeeping@inmusicbrands.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z7NaPYvuRF11uxnM@phenom.ffwll.local>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -3.30
+X-Spam-Flag: NO
 
-On Mon, Feb 17, 2025 at 04:48:13PM +0100, Simona Vetter wrote:
-> On Mon, Feb 17, 2025 at 11:04:45PM +0900, Alexandre Courbot wrote:
-> > Hi everyone,
-> > 
-> > This short RFC is based on top of Danilo's initial driver stub series
-> > [1] and has for goal to initiate discussions and hopefully some design
-> > decisions using the simplest subdevice of the GPU (the timer) as an
-> > example, before implementing more devices allowing the GPU
-> > initialization sequence to progress (Falcon being the logical next step
-> > so we can get the GSP rolling).
-> > 
-> > It is kept simple and short for that purpose, and to avoid bumping into
-> > a wall with much more device code because my assumptions were incorrect.
-> > 
-> > This is my first time trying to write Rust kernel code, and some of my
-> > questions below are probably due to me not understanding yet how to use
-> > the core kernel interfaces. So before going further I thought it would
-> > make sense to raise the most obvious questions that came to my mind
-> > while writing this draft:
-> > 
-> > - Where and how to store subdevices. The timer device is currently a
-> >   direct member of the GPU structure. It might work for GSP devices
-> >   which are IIUC supposed to have at least a few fixed devices required
-> >   to bring the GSP up ; but as a general rule this probably won't scale
-> >   as not all subdevices are present on all GPU variants, or in the same
-> >   numbers. So we will probably need to find an equivalent to the
-> >   `subdev` linked list in Nouveau.
-> > 
-> > - BAR sharing between subdevices. Right now each subdevice gets access
-> >   to the full BAR range. I am wondering whether we could not split it
-> >   into the relevant slices for each-subdevice, and transfer ownership of
-> >   each slice to the device that is supposed to use it. That way each
-> >   register would have a single owner, which is arguably safer - but
-> >   maybe not as flexible as we will need down the road?
-> > 
-> > - On a related note, since the BAR is behind a Devres its availability
-> >   must first be secured before any hardware access using try_access().
-> >   Doing this on a per-register or per-operation basis looks overkill, so
-> >   all methods that access the BAR take a reference to it, allowing to
-> >   call try_access() from the highest-level caller and thus reducing the
-> >   number of times this needs to be performed. Doing so comes at the cost
-> >   of an extra argument to most subdevice methods ; but also with the
-> >   benefit that we don't need to put the BAR behind another Arc and share
-> >   it across all subdevices. I don't know which design is better here,
-> >   and input would be very welcome.
-> > 
-> > - We will probably need sometime like a `Subdevice` trait or something
-> >   down the road, but I'll wait until we have more than one subdevice to
-> >   think about it.
+On Mon, 17 Feb 2025 19:38:31 +0100,
+John Keeping wrote:
 > 
-> It might make sense to go with a full-blown aux bus. Gives you a lot of
-> structures and answers to these questions, but also might be way too much.
+> On Mon, Feb 17, 2025 at 06:06:16PM +0100, Takashi Iwai wrote:
+> > On Mon, 17 Feb 2025 12:16:46 +0100,
+> > John Keeping wrote:
+> > > 
+> > > I'm seeing a bug where data sometimes fails to send on USB MIDI devices
+> > > with multiple ports which seems to be a result of a race around closing
+> > > ports introduced by commit 0125de38122f0 ("ALSA: usb-audio: Cancel
+> > > pending work at closing a MIDI substream").
+> > > 
+> > > The scenario is essentially this program:
+> > > 
+> > > 	snd_rawmidi_t *port0, *port1;
+> > > 	snd_rawmidi_open(NULL, &port0, "hw:0,0,0", 0);
+> > > 	snd_rawmidi_open(NULL, &port1, "hw:0,0,1", 0);
+> > > 
+> > > 	snd_rawmidi_write(port0, data, len);
+> > > 
+> > > 	snd_rawmidi_close(port1);
+> > > 	snd_rawmidi_close(port0);
+> > > 
+> > > What happens seems to be the following:
+> > > 
+> > > 	write(port0)
+> > > 	`- snd_usbmidi_output_trigger
+> > > 	   `- queue_work()
+> > >         close(port1)
+> > > 	`- snd_usbmidi_output_close
+> > > 	   `- cancel_work_sync()	# Work has not yet started here
+> > > 	close(port0)
+> > > 	`- snd_rawmidi_drain_output
+> > > 	   # Times out because nothing is processing outbound data!
+> > > 
+> > > The two ports interact like this because they are on the same endpoint,
+> > > so should the work only be cancelled when the last endpoint is closed?
+> > 
+> > How about the following patch work?
+> > It's a band-aid, but should suffice.  The callback is already
+> > protected with rawmidi open_mutex.
+> 
+> Yes, this patch fixes it and is
+> 
+> Tested-by: John Keeping <jkeeping@inmusicbrands.com>
 
-No, it's not too much, that's exactly what the auxbus code is for
-(splitting a real device into child ones where they all share the same
-physical resources.)  So good suggestion.
+Thank you for quick testing!
 
-thanks,
+Looking at the code again, I think the suggested fix isn't right.
+It still allows some pending work accessing the freed object.
 
-greg k-h
+Could you test the following one-liner instead?
+
+
+Takashi
+
+-- 8< --
+--- a/sound/usb/midi.c
++++ b/sound/usb/midi.c
+@@ -1145,7 +1145,7 @@ static int snd_usbmidi_output_close(struct snd_rawmidi_substream *substream)
+ {
+ 	struct usbmidi_out_port *port = substream->runtime->private_data;
+ 
+-	cancel_work_sync(&port->ep->work);
++	flush_work(&port->ep->work);
+ 	return substream_open(substream, 0, 0);
+ }
+ 
 
