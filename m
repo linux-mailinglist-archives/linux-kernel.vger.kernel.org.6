@@ -1,131 +1,99 @@
-Return-Path: <linux-kernel+bounces-519670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2967CA3A076
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:52:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9779FA3A082
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:53:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C4AD18853F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:49:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 458EB16782E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:49:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B156826A0FE;
-	Tue, 18 Feb 2025 14:49:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F2426A0D2;
+	Tue, 18 Feb 2025 14:49:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h0iZJQxN"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ghV3OEoC";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MmFO/Pi6"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD3D262D1C
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 14:49:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEBAE269AF9
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 14:49:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739890172; cv=none; b=OcrtMPJAWlRSWOIze6xAcKJmNjrLwcMVTgY1899TOzGBMEU6lGew+F4IwSxRg9BVUhY6jkSNhRbNlyafEfDrdAdcCYeGBald1GkpBckmzOVbRj/uozmHu4Bk71a7ZiYabhGetPHFgFSAW+g1HztHlFZubsc72qVs6c3YtnyKlOM=
+	t=1739890163; cv=none; b=BJeXaxzyzPhMC6Y8NW9fQ67d9GEV0pSMXgTVb3jXUmZrnfimK9H+gBjxa0zHTTK9QloeH0wNT1HdCayuBbXA7pTh57Wtw9kF+S7pW+QIqwBclqsCjAHU8WxZS1h0ZtwG6JGpi078xtl8lHlEW9Kyzje+c84fumXWbib3wAKiEU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739890172; c=relaxed/simple;
-	bh=UVGVBuu6e33jMGeyfiLTBPJGjbrgPrDhUZRv5B1e3oo=;
+	s=arc-20240116; t=1739890163; c=relaxed/simple;
+	bh=EoFCNMATQP3Q9pMrw/bMv7YovslbUB9wfmbqPQ09s10=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ce0SrjR9NfQ4O3Fy3eLfOPMCph3cgeWW29VTFoIZxS/OE3XHgSddbLM5rhusolz2o/cepQ+jD/N6FwyiumO77DG0jQYVLvEPLuwZNiTrHDreFAv1qZCuDr54sQOHaQoWSN6su30gaJwdZ4mzG5liHykwXuR5nI0O3AwOLCBphgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h0iZJQxN; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739890171; x=1771426171;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=UVGVBuu6e33jMGeyfiLTBPJGjbrgPrDhUZRv5B1e3oo=;
-  b=h0iZJQxNgGPKd5HI5Xk2dV5Iq7r+4/cHAoiiGOtsieH7mAujNU3gsJmO
-   qYDL9alRBh2RdLsMPtjqQl62RE/1ZAz0y0AMZE2plQ1vfi3j3v/HxRoZb
-   6Xb90ZdC44Ks78IJWCdahKyitp/AqT1h5oBWKlsAlVXPOnZUkVLDHHmew
-   GbaPPvSyYQcexUL5mm9UNx/UTUZOOpYqQljc18R+04OXt5OlFXCW05odw
-   LIHgTpKend+wL/TEPc4yyrjrCIsaXoYH/CJeEsPe1B4S0ti4hnpA8zBVE
-   j1O5clviPqLiKLMM4plVxA8ow7YLsqbi+MayiihzneR/XKZOGlXS9973m
-   A==;
-X-CSE-ConnectionGUID: dS0zmsI/QuWBjbD14zmPoQ==
-X-CSE-MsgGUID: B5tGiOz5T9WbHwI7SchCAw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="51227841"
-X-IronPort-AV: E=Sophos;i="6.13,296,1732608000"; 
-   d="scan'208";a="51227841"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 06:49:30 -0800
-X-CSE-ConnectionGUID: IzJFd+DHSfumLx2XFcJAZg==
-X-CSE-MsgGUID: MS49BogmTkSPwqIUagHD6w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="114884797"
-Received: from sosterlu-desk.ger.corp.intel.com (HELO himmelriiki) ([10.245.245.44])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 06:49:23 -0800
-Date: Tue, 18 Feb 2025 16:49:12 +0200
-From: Mikko Ylinen <mikko.ylinen@linux.intel.com>
-To: "Xing, Cedric" <cedric.xing@intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=LBofn+8SLO7CZzom4pJ3P3payyad51TF6SE/w1e3kDKF5ngFhnbiuER0D5lYRIpHlgFicvoQShGBHB7C5+93+w9iPJwNz47JGdQoL2J7cZ3nZ+XRw7B+dLqCYA/nxQoayLI73faHGMepvwCBHMRgP91K3OUlSNDP49hLdpwXOz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ghV3OEoC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MmFO/Pi6; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 18 Feb 2025 15:49:18 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1739890159;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BfQaGrORdum9vGG5fQzt3Nbocsm7WjhndHQi5585VyI=;
+	b=ghV3OEoCYxMjCHDtgSFEhjxZv1ibhMuYkRHOxDJq2VplgZAtywfWj8WmCnSa3yDGpB0T0g
+	VNhhNu9b3kg7vuio7krvuQc+f7QR/MMXKHFkc4m8tnD/z9n7XPl+ZRr/lP460r1tXT08D9
+	GdiIYiZ+qr4pSkvQgefhQt0cCJVdEXROSICZP7Q0/RyF8+dqLg5erIxVZ5Zu1Zm2N65k+C
+	HTEjGpnI6eOLIbbzpbk3VHHFuOSoLcg8RCg/ayhui5AGJMSZobtQKI0YRa2MjV7XlXVS6V
+	b38yrd7jl00YfpljHwFtjvTvDqf0IF8YUKBkO5DtvBfcRKxU4LC62oWWN40hfw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1739890159;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BfQaGrORdum9vGG5fQzt3Nbocsm7WjhndHQi5585VyI=;
+	b=MmFO/Pi6ESc16H/nlsONL22mJ4HvnJjwo72oTws3KYtfdvo8NHcHtxfXYo6KD0aSzGCCXB
+	r5iogN97eZXPWFBg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: kernel test robot <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, Petr Pavlu <petr.pavlu@suse.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>,
 	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-	linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev,
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-Subject: Re: [PATCH 0/4] tsm: Unified Measurement Register ABI for TVMs
-Message-ID: <Z7Sd6FuDDMgExEna@himmelriiki>
-References: <20250212-tdx-rtmr-v1-0-9795dc49e132@intel.com>
- <15c69d57-4ffb-4ea1-8cbc-0ba6d3d7b14f@intel.com>
- <be7e3c9d-208a-4bda-b8cf-9119f3e0c4ce@intel.com>
- <015cdddb-7f74-4205-af8a-b15cad7ddc22@intel.com>
- <d8f3eb33-d902-4391-adc7-005e4895b471@intel.com>
+	Ingo Molnar <mingo@redhat.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+Subject: Re: [linux-next:master] [x86]  66fbf67705:
+ kernel-selftests.kvm.hardware_disable_test.fail
+Message-ID: <20250218144918.Rl33HhXh@linutronix.de>
+References: <202502140800.ebac2328-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <d8f3eb33-d902-4391-adc7-005e4895b471@intel.com>
+In-Reply-To: <202502140800.ebac2328-lkp@intel.com>
 
-On Thu, Feb 13, 2025 at 03:50:19PM -0600, Xing, Cedric wrote:
-> On 2/13/2025 10:58 AM, Dave Hansen wrote:
-> > On 2/13/25 08:21, Xing, Cedric wrote:
-> > > On 2/12/2025 10:50 PM, Dave Hansen wrote:
-> > > > On 2/12/25 18:23, Cedric Xing wrote:
-> > > > > NOTE: This patch series introduces the Measurement Register (MR) ABI,
-> > > > > and
-> > > > > is a continuation of the RFC series on the same topic [1].
-> > > > 
-> > > > Could you please explain how the benefits of this series are helpful to
-> > > > end users?
-> > > 
-> > > This series exposes MRs as sysfs attributes, allowing end users to
-> > > access them effortlessly without needing to write any code. This
-> > > simplifies the process of debugging and diagnosing measurement-related
-> > > issues. Additionally, it makes the CC architecture more intuitive for
-> > > newcomers.
-> > 
-> > Wait a sec, so there's already ABI for manipulating these? This just
-> > adds a parallel sysfs interface to the existing ABI?
-> > 
-> No, this is new. There's no existing ABI for accessing measurement registers
-> from within a TVM (TEE VM). Currently, on TDX for example, reading TDX
-> measurement registers (MRs) must be done by getting a TD quote. And there's
-> no way to extend any RTMRs. Therefore, it would be much easier end users to
+On 2025-02-14 10:03:18 [+0800], kernel test robot wrote:
+> kernel test robot noticed "kernel-selftests.kvm.hardware_disable_test.fail" on:
+> 
+> commit: 66fbf677051818b9b5339fa8bfeac1b2e288efa5 ("x86: Use RCU in all users of __module_address().")
+> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
+> 
+> [test failed on linux-next/master df5d6180169ae06a2eac57e33b077ad6f6252440]
+> 
+> # timeout set to 120
+> # selftests: kvm: hardware_disable_test
+> # Random seed: 0x6b8b4567
+> #
+> not ok 73 selftests: kvm: hardware_disable_test # TIMEOUT 120 seconds
 
-TD reports *are* available through the tdx_guest ioctl so there's overlap
-with the suggested reportdata/report0 entries at least. Since configfs-tsm
-provides the generic transport for TVM reports, the best option to make report0
-available is through configfs-tsm reports.
+I've been playing with that. It completed after ~45secs. The linked
+dmesg had also mmu_stress_test timed out but it completed here, too.
+I had a timeout in access_tracking_perf_test and memslot_perf_test.
 
-The use case on MRCONFIGID mentioned later in this thread does not depend
-on this series. It's easy for the user-space to interprete the full report
-to find MRCONFIGID or any other register value (the same is true for HOSTDATA
-on SNP).
+The box is very sluggish. LOCKDEP, KASAN and maybe UBSAN cause that. I
+would say the commit in question is innocent.
 
-The question here is whether there's any real benefit for the kernel to
-expose the provider specific report details through sysfs or could we focus on
-the RTMR extend capability only.
-
--- 
-Regards, Mikko
+Sebastian
 
