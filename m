@@ -1,340 +1,110 @@
-Return-Path: <linux-kernel+bounces-520255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43764A3A799
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:32:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C3E5A3A79E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:32:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F9783B07C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:32:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E46A1890760
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:32:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5021F1E8359;
-	Tue, 18 Feb 2025 19:31:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="x66dltxJ"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA9527128E;
+	Tue, 18 Feb 2025 19:31:04 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCE6F26AA9E
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 19:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45E0726FA5D;
+	Tue, 18 Feb 2025 19:31:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739907060; cv=none; b=hU2w1kN7Y/4981pMJ4gz321jYbRuF9RH8vFX9YuRXW5bUpmLIy3kRp2Pkc0bQD9efh/1QvfxH+BSgPWuGg9S1gaf/ncsFlF6yRQQEblvT0Homo2vco0Ye9pTdq5KsSZRix+u4XH+l9mQWh5pPOTLmdLAwmH/c0NdixTcF8EbLVI=
+	t=1739907064; cv=none; b=qZflc1OdTq1LS6hJYIrDA1CfYyA8zru2NFgWVOl2O/dTKjbV7IiWHakUdWBcGewazVfktkt160ApFNB9KoPlznlFsQurvNn0PK1kx/auy13J/eraTDSgeGxqkXC5TgQaqTIomhxj29i2WaozMWrkjM+P3OSxGln4QZZhBFhqv+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739907060; c=relaxed/simple;
-	bh=QQ/ztLzccoD2euaC9XiJx7WBiQoWT8xupZIvkEt0604=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=smm7uBPLomvKK2CxwlhWLuBhVVWhMqrGk/MJ131SJgbI0hDLr9K/z1oYuJNI+KPAy4DfEFS/vSRdwHtkQ2AccLs+/2BDN5VsdMgIF3sgPwigL9PRNo/eVP59375faZqcVl5i3Uzpi1I6hwm5cECl9OH4nMioRMy3e1AnUjaxSvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=x66dltxJ; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e0373c7f55so6257427a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 11:30:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1739907056; x=1740511856; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=E174y95QWB8sLP4kKdqQSVofl2EIrt9GShIhCjB+Tv8=;
-        b=x66dltxJ2imkOsOyvb+S38tfRpiPaYohRf8fURu/0BOGy/wft679UJGRx21KU+sRpn
-         woTViUMDAxeblIqMbSYTL3qniw6et3JR5JlymWFXcCHCST30UDmzRLM39k5IYKKmtMzk
-         5DPG7sLZmJ9O1j8riZAx3vlDW/LlN7zuMOB4U6PjNsVdMZsWh/HdYw/67ioolSzB7Ma4
-         EYUTuFQ0u7sFJZuKDUqZ8bwa95Hy2fiBnaplBo4kDkzQOoJ6oRrXx8nI0ozhkFZj/9o/
-         Xl2A0w/mYEQ1E4uWSnAcnd2FchP5FEeFE1bfYOZnrKfY7JG8OkphiZh6YfY9IRwpNonG
-         3zBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739907056; x=1740511856;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=E174y95QWB8sLP4kKdqQSVofl2EIrt9GShIhCjB+Tv8=;
-        b=xAQ37tJk/NDA6dlDERTUOKM/X2vr8rxmPfXjsHAzhPVCsdzHKsPkHqLw9L+CLws7hI
-         aREGlmnNcfkIMnpsHDBLJF0kmUHgxp9b6JL4k2uiDP7UTEkniRWbVBGn6XwWS5DA3S/+
-         QCbhdKm6Wg4majeIsF45k97BLFI4nxsJ5GCWoXIyUXxePo76groUDKmAj+ywYKWjBez4
-         idfAkcBwTb3TCLVdUWY/2b9/isetRsFGE6CQQpx6lUpviMeJI9v++IU3VMtjIp/CT9LL
-         yuOGIrcdt1pbhrNENVa9/H+QR4YWvmwRbT0yAqjxz/vzFekpOXrnHyXjzZ6k8WTysc1f
-         qg3w==
-X-Gm-Message-State: AOJu0YxvcASuNUeuevJUqBzmypmVsTmUBkqoK5ewVwxtD4zETy6FPZxA
-	EdUNOwQnMs6vV/7IWNh18gP75QB089M/yjoj5OZcLczLhtNtiVoM/lgI3v3rqW8=
-X-Gm-Gg: ASbGnctz6qkillRMaAsO34nm8TTvMcHnpMrj+WbSMS9Y/XvjJ4XWhpjoEQm3HMLyJJm
-	WORA6kHHoqjfK+U4mwt5b6hMgrLYIlr4bWS2pG01cVXOip4At07PsBiL3MxTEUh300HIFNtsTq4
-	UO+ZpnupfDxaHPpegypWN+0rmznJ30JOSQnMsxYrR24zEQT7S5sRH8bENZTLn9bArHG2JtqDSg2
-	SNQU22RyUzoOEI2zZjkhU5sd10kV+jIMMVa4uo4psw3fh78+hRjuVTeEHunR9IWWwZQPvCdThjq
-	DpYVNyEIztGn9WVtozgwHNaHEABQ
-X-Google-Smtp-Source: AGHT+IH6dYXNSP6vLBRqe/ecMthhMu5dDSxKiguicPwszoCj13HXx3I+/2icxv2B1ExrsNYAjEdIdw==
-X-Received: by 2002:a05:6402:2354:b0:5e0:4c04:4186 with SMTP id 4fb4d7f45d1cf-5e089d2fb1dmr614186a12.24.1739907056050;
-        Tue, 18 Feb 2025 11:30:56 -0800 (PST)
-Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:cbaf:af0:839d:fb4a])
-        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-5dece1c3ce5sm9338985a12.17.2025.02.18.11.30.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 11:30:54 -0800 (PST)
-From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Tue, 18 Feb 2025 20:29:53 +0100
-Subject: [PATCH v4 8/8] clk: amlogic: axg-audio: use the auxiliary reset
- driver - take 2
+	s=arc-20240116; t=1739907064; c=relaxed/simple;
+	bh=M1jr8I1XtRu/vwFBpS9PinZubsUd8YkNyv8q5TbJtHc=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=GRMA7n0DVK5JX4Q8auWdrG0lgaCgbKvuG+QCNZoJqaE99LH3zsIjr1ew/BI8+lYj6K1g4b8/pRYPQ8gTDLx62rjW+2hZI/mnT5NFrUfTQlTKZrSqciv+lIPfVIZKl4+9w6YjLeHwV6uZQMJvoRU27BxubMQ5xjNNYMIIhyp4rDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEA9CC4CEE2;
+	Tue, 18 Feb 2025 19:31:03 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1tkTJW-000000049yr-14ax;
+	Tue, 18 Feb 2025 14:31:26 -0500
+Message-ID: <20250218193033.338823920@goodmis.org>
+User-Agent: quilt/0.68
+Date: Tue, 18 Feb 2025 14:30:33 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Heiko Carstens <hca@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>,
+ Vasily Gorbik <gor@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>
+Subject: [PATCH 0/5] ftrace: Fix fprobe with function graph accounting
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250218-aux-device-create-helper-v4-8-c3d7dfdea2e6@baylibre.com>
-References: <20250218-aux-device-create-helper-v4-0-c3d7dfdea2e6@baylibre.com>
-In-Reply-To: <20250218-aux-device-create-helper-v4-0-c3d7dfdea2e6@baylibre.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
- Arnd Bergmann <arnd@arndb.de>, Danilo Krummrich <dakr@kernel.org>, 
- Conor Dooley <conor.dooley@microchip.com>, 
- Daire McNamara <daire.mcnamara@microchip.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Douglas Anderson <dianders@chromium.org>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Hans de Goede <hdegoede@redhat.com>, 
- =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
- Gregory CLEMENT <gregory.clement@bootlin.com>, 
- =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Kevin Hilman <khilman@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
- dri-devel@lists.freedesktop.org, platform-driver-x86@vger.kernel.org, 
- linux-mips@vger.kernel.org, linux-clk@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
- Jerome Brunet <jbrunet@baylibre.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5906; i=jbrunet@baylibre.com;
- h=from:subject:message-id; bh=QQ/ztLzccoD2euaC9XiJx7WBiQoWT8xupZIvkEt0604=;
- b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBntN/VtNnyVBp1TZn2uakB3wDmrM70EYdAQGZ+h
- wV2jlYYVniJAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCZ7Tf1QAKCRDm/A8cN/La
- hQBjD/0RTaMxkXwenpFzTWRtbkfYP170epu7rqTng51UkW5dx0c746c0Qrzw65ygwvKsO9bol97
- b/pX1khkHz4ELctHC0/gUmfugRQcCjQABsrNxkCDZbVBWRI7TKwaVoFcjcogbLRmvhkjiXSfa1S
- 76FtH1DuaN7gQrQdnBBv1x7FKtahKBLyNkCamDmUN9/H+D4B5VUNpcymmgVRLIBszSinmGqPTL3
- MFDp0iDIpcxyoimExExtn7UXtiiqjTpiVC3WAuZQXY27zbMEjJJxtF7SWARmqxnkHPm4H6w4tje
- yctm1scmNxdLcnIBZBttjcu1TSntqESMEE4DFI03peNUvXuIL/XIFKO9EyRcTaq7T5JooFZ+uYF
- LjdTh5p1c+BdBEMRNBzCgChSerJ/F58X3dhAkb7BXDZfPr8Y2bCPMd1mwrJAwZRHh5EgJA5zdFo
- rSJu5S0ppYvzv4qYrPuiIwYXLpBN9djNeVshuwVJwGsoAJqs06vCyDgSjU/Wht/lVTA6m64V/xZ
- oA6dK3fHpBl5KIXSw65n854LYYRdWFln2yKyuGoYuso0i2Ib91Z91bnr/bzsBtM6h7s6w+3u2D3
- qcBQmOQ4aRSkyjclGXHc52MWgItdbJJ6s4Skitguub8FI3JxLo5cemUnME0vG2oMshqf0hDvQex
- S37+rb/FVdA14/A==
-X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
- fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-Remove the implementation of the reset driver in axg audio
-clock driver and migrate to the one provided by reset framework
-on the auxiliary bus.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/meson/Kconfig     |   2 +-
- drivers/clk/meson/axg-audio.c | 114 +++++-------------------------------------
- 2 files changed, 14 insertions(+), 102 deletions(-)
+Heiko Carstens reported[1] a bug when running the ftrace selftests.
+After running them, he noticed that the enabled_functions file had
+all functions enabled in it. That means something was registered to
+ftrace that shouldn't be.
 
-diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-index be2e3a5f83363b07cdcec2601acf15780ff24892..7cb21fc223b063cb93812643f02f192343981ed8 100644
---- a/drivers/clk/meson/Kconfig
-+++ b/drivers/clk/meson/Kconfig
-@@ -106,7 +106,7 @@ config COMMON_CLK_AXG_AUDIO
- 	select COMMON_CLK_MESON_SCLK_DIV
- 	select COMMON_CLK_MESON_CLKC_UTILS
- 	select REGMAP_MMIO
--	select RESET_CONTROLLER
-+	imply RESET_MESON_AUX
- 	help
- 	  Support for the audio clock controller on AmLogic A113D devices,
- 	  aka axg, Say Y if you want audio subsystem to work.
-diff --git a/drivers/clk/meson/axg-audio.c b/drivers/clk/meson/axg-audio.c
-index 9df627b142f89788966ede0262aaaf39e13f0b49..3948f5d0faca372dd5cc4ed6dc95f9c89fe5bae8 100644
---- a/drivers/clk/meson/axg-audio.c
-+++ b/drivers/clk/meson/axg-audio.c
-@@ -4,6 +4,7 @@
-  * Author: Jerome Brunet <jbrunet@baylibre.com>
-  */
- 
-+#include <linux/auxiliary_bus.h>
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/init.h>
-@@ -12,7 +13,6 @@
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
- #include <linux/reset.h>
--#include <linux/reset-controller.h>
- #include <linux/slab.h>
- 
- #include "meson-clkc-utils.h"
-@@ -1678,84 +1678,6 @@ static struct clk_regmap *const sm1_clk_regmaps[] = {
- 	&sm1_earcrx_dmac_clk,
- };
- 
--struct axg_audio_reset_data {
--	struct reset_controller_dev rstc;
--	struct regmap *map;
--	unsigned int offset;
--};
--
--static void axg_audio_reset_reg_and_bit(struct axg_audio_reset_data *rst,
--					unsigned long id,
--					unsigned int *reg,
--					unsigned int *bit)
--{
--	unsigned int stride = regmap_get_reg_stride(rst->map);
--
--	*reg = (id / (stride * BITS_PER_BYTE)) * stride;
--	*reg += rst->offset;
--	*bit = id % (stride * BITS_PER_BYTE);
--}
--
--static int axg_audio_reset_update(struct reset_controller_dev *rcdev,
--				unsigned long id, bool assert)
--{
--	struct axg_audio_reset_data *rst =
--		container_of(rcdev, struct axg_audio_reset_data, rstc);
--	unsigned int offset, bit;
--
--	axg_audio_reset_reg_and_bit(rst, id, &offset, &bit);
--
--	regmap_update_bits(rst->map, offset, BIT(bit),
--			assert ? BIT(bit) : 0);
--
--	return 0;
--}
--
--static int axg_audio_reset_status(struct reset_controller_dev *rcdev,
--				unsigned long id)
--{
--	struct axg_audio_reset_data *rst =
--		container_of(rcdev, struct axg_audio_reset_data, rstc);
--	unsigned int val, offset, bit;
--
--	axg_audio_reset_reg_and_bit(rst, id, &offset, &bit);
--
--	regmap_read(rst->map, offset, &val);
--
--	return !!(val & BIT(bit));
--}
--
--static int axg_audio_reset_assert(struct reset_controller_dev *rcdev,
--				unsigned long id)
--{
--	return axg_audio_reset_update(rcdev, id, true);
--}
--
--static int axg_audio_reset_deassert(struct reset_controller_dev *rcdev,
--				unsigned long id)
--{
--	return axg_audio_reset_update(rcdev, id, false);
--}
--
--static int axg_audio_reset_toggle(struct reset_controller_dev *rcdev,
--				unsigned long id)
--{
--	int ret;
--
--	ret = axg_audio_reset_assert(rcdev, id);
--	if (ret)
--		return ret;
--
--	return axg_audio_reset_deassert(rcdev, id);
--}
--
--static const struct reset_control_ops axg_audio_rstc_ops = {
--	.assert = axg_audio_reset_assert,
--	.deassert = axg_audio_reset_deassert,
--	.reset = axg_audio_reset_toggle,
--	.status = axg_audio_reset_status,
--};
--
- static struct regmap_config axg_audio_regmap_cfg = {
- 	.reg_bits	= 32,
- 	.val_bits	= 32,
-@@ -1766,8 +1688,7 @@ struct audioclk_data {
- 	struct clk_regmap *const *regmap_clks;
- 	unsigned int regmap_clk_num;
- 	struct meson_clk_hw_data hw_clks;
--	unsigned int reset_offset;
--	unsigned int reset_num;
-+	const char *rst_drvname;
- 	unsigned int max_register;
- };
- 
-@@ -1775,7 +1696,7 @@ static int axg_audio_clkc_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	const struct audioclk_data *data;
--	struct axg_audio_reset_data *rst;
-+	struct auxiliary_device *auxdev;
- 	struct regmap *map;
- 	void __iomem *regs;
- 	struct clk_hw *hw;
-@@ -1834,22 +1755,15 @@ static int axg_audio_clkc_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	/* Stop here if there is no reset */
--	if (!data->reset_num)
--		return 0;
--
--	rst = devm_kzalloc(dev, sizeof(*rst), GFP_KERNEL);
--	if (!rst)
--		return -ENOMEM;
--
--	rst->map = map;
--	rst->offset = data->reset_offset;
--	rst->rstc.nr_resets = data->reset_num;
--	rst->rstc.ops = &axg_audio_rstc_ops;
--	rst->rstc.of_node = dev->of_node;
--	rst->rstc.owner = THIS_MODULE;
-+	/* Register auxiliary reset driver when applicable */
-+	if (data->rst_drvname) {
-+		auxdev = __devm_auxiliary_device_create(dev, dev->driver->name,
-+							data->rst_drvname, NULL, 0);
-+		if (!auxdev)
-+			return -ENODEV;
-+	}
- 
--	return devm_reset_controller_register(dev, &rst->rstc);
-+	return 0;
- }
- 
- static const struct audioclk_data axg_audioclk_data = {
-@@ -1869,8 +1783,7 @@ static const struct audioclk_data g12a_audioclk_data = {
- 		.hws = g12a_audio_hw_clks,
- 		.num = ARRAY_SIZE(g12a_audio_hw_clks),
- 	},
--	.reset_offset = AUDIO_SW_RESET,
--	.reset_num = 26,
-+	.rst_drvname = "rst-g12a",
- 	.max_register = AUDIO_CLK_SPDIFOUT_B_CTRL,
- };
- 
-@@ -1881,8 +1794,7 @@ static const struct audioclk_data sm1_audioclk_data = {
- 		.hws = sm1_audio_hw_clks,
- 		.num = ARRAY_SIZE(sm1_audio_hw_clks),
- 	},
--	.reset_offset = AUDIO_SM1_SW_RESET0,
--	.reset_num = 39,
-+	.rst_drvname = "rst-sm1",
- 	.max_register = AUDIO_EARCRX_DMAC_CLK_CTRL,
- };
- 
+The issue was with the accounting of the new fprobe logic which was
+built on top of the function graph infrastructure. Patch 3 of this
+series is the fix for that bug, but while debugging that, 3 other
+accounting bugs were discovered.
 
--- 
-2.47.2
+The bug fix for the reported bug was that fprobes would update its counter
+every time a new fprobe was added, even if a new fprobe was attached to a
+function that was already attached to another fprobe. But when removing the
+fprobe, it would not decrement the counter of an fprobe with a duplicate.
+This left the fprobe ops attached to function graph and when it removed the
+last probe from the hash, it would create an empty filter hash which would
+tell function graph that it wanted to trace all functions. The solution was
+to always decrement the counter when a fprobe was removed.
 
+The first of the other bugs was that when enabling a second subops to the
+function graph infrastructure, it would add all functions to be called back
+and not just the functions for the two subops for tracing. This was due to
+the creation of the filter hash for the manager ops that controls the
+subops. The first iteration where the manage ops hash was NULL was mistaken
+as an "empty hash" which means to trace all functions.
+
+The second bug was when adding a function to the hash where the hash already
+had that function, it would allocate and create a new entry for it.  This
+leaves duplicates and causes unnecessary overhead and memory wastage.
+
+The third bug was when the last fprobe was removed, it would just unregister
+from function graph but it did not remove the function from its own ops
+hash. When adding a new fprobe, it would not only enable the function for
+that new fprobe, but it would also enable the function of the last fprobe
+that was removed.
+
+Finally, a test was added to check and fail if any of the bugs were
+introduced, with the exception of the duplicate hash entries, as that
+was more of a memory waste and not something visible by user space.
+
+[1] https://lore.kernel.org/all/20250217114918.10397-A-hca@linux.ibm.com/
+
+Steven Rostedt (5):
+      ftrace: Fix accounting of adding subops to a manager ops
+      ftrace: Do not add duplicate entries in subops manager ops
+      fprobe: Fix accounting of when to unregister from function graph
+      fprobe: Always unregister fgraph function from ops
+      selftests/ftrace: Update fprobe test to check enabled_functions file
+
+----
+ kernel/trace/fprobe.c                              |  8 ++--
+ kernel/trace/ftrace.c                              | 33 +++++++++----
+ .../ftrace/test.d/dynevent/add_remove_fprobe.tc    | 54 ++++++++++++++++++++++
+ 3 files changed, 81 insertions(+), 14 deletions(-)
 
