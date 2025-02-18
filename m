@@ -1,123 +1,180 @@
-Return-Path: <linux-kernel+bounces-519582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2732A39E47
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:08:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88E1EA39E4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:09:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B1BE188B390
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:08:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C8F03A23CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:09:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0CE5269B02;
-	Tue, 18 Feb 2025 14:07:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46E25269B17;
+	Tue, 18 Feb 2025 14:09:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JM2U3cOP"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="CV+RovXp"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0D31207644;
-	Tue, 18 Feb 2025 14:07:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18F77243361;
+	Tue, 18 Feb 2025 14:09:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739887677; cv=none; b=SwAFoKNpR51bxDFE+pZ8uG5nHnRV1jfm+aMjkzEQkusmHNB9QMvoE0kYiby+1OQuSpSFNxh5T9b8W+YHnN+Si6612LkQmDtA0agWNNlMoODOKizXKqm5APECr75cArPTur3JnIgScHWhAx5N5UQJOiWY4ZLs9TC5yDwzgdJhYUg=
+	t=1739887767; cv=none; b=N9PhUqFWlHLSHhN3lXiRWvLs/CSB01jMLCuqaCoS3X4qivcb0J+9G+nBeVOTtMXUUwZSs808WN0x+L5IwXojCZMlAh51lhdQbB+A2SjHw2fENuY3s3kqBE6h/XdxE2wzXi9teIUKaceYcUMMTCo2uTAtEFqkhIe1bO9fvVjoUOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739887677; c=relaxed/simple;
-	bh=FNvj8sCueTrxfOtK1bE8HaMBcrhFqMBwyCdDzbGaNRU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Oj9Xb9tlt4eL1+Mg7Dd4Fr9gpufktvyHy5ZF0LPaUDN9FzzQNK5jU0Z5op1qR+Mz7sUuhytPSTq21x2BEBbK52imztd6uoCddQwjH6euri6MFwKMSBMBKI+jFEwuIg1XzIt4OIs3qm143dk2dXRguLRPhVyhSgsRjrjGrPI8kyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JM2U3cOP; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2fc042c9290so8344716a91.0;
-        Tue, 18 Feb 2025 06:07:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739887675; x=1740492475; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AAc3ks8m7sc7B4PDBh8P097QzbrGCXimimGuS9OzNkc=;
-        b=JM2U3cOPf6P9xAbUfKtqKmTi6F/djpLJVnmBJdLHlHe8OsVzjdOhmei56T2J3WGVIC
-         e4W9B5BR9UvkoNNa7jt5pZzPumgN8b66TEmaoxHz6GSoDWpezwtqhZBLPTaGy4d6uUox
-         K3Z039E81LMc7P/Hx57xxR7yb44Dmz/Q6bNBzxOvBFgzk24xLhhtqxwdiUd9FrIhQYpD
-         VjFaUQbCcZ8DWE6lKayn0TXgur4TIWA4caKSaqSPi+WDe5KiRKQrroOoNoz0SQLtbzrr
-         dO6xCsTE2h+Z1KwzJ0sI8SlncettZOs7BMGNtO0NcOtULAoIwiz9WJYgRlTmQmEgnrQ2
-         eXaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739887675; x=1740492475;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AAc3ks8m7sc7B4PDBh8P097QzbrGCXimimGuS9OzNkc=;
-        b=OnQJJ69lsSWc0edHTOjGbQalPeBy/senyD5RnpM1kY022wbIGHVOMuFqB63XBNLLp9
-         DAxL+xF6inz7fXJ+EQLdKho5u3YPTRSuzxM10fpcU4S2z/DlFzSfrZhkiC7aBH57yHjW
-         pd0YAjFO+pn9HCjOfhMsoVa9doUdFKl5RYmLhs1lQSZyc2I0Vj676orQnuXtLcpqrMsx
-         4GFJdbb8jCbJWO7EC7r/TZL6kBnblPLd7cOhNp3jhhiH/s4KnX5r3jN1Gni49W8ilaFQ
-         s/52ZS6DsmzTV4Pbj9TW65vamtVmXRD5Pt95OpV+oTkYC252eCH0/1Mqn+CO6//pp3TK
-         ZJLg==
-X-Forwarded-Encrypted: i=1; AJvYcCVQzUeMSPI+eEAkPrbXwhh/m1uoY9pnj9EdHq8/c20vRP5rnAJFrKkeqlNLQlLFIZmOalUVyDQnQiXpqgE=@vger.kernel.org, AJvYcCVsq36IosWHcUTxANsvz63aQbZl0PEE41QFv1KIlt4TSQH7U1ykaRTzoFiF5SrshxqDgBwxi5kmIeKD@vger.kernel.org
-X-Gm-Message-State: AOJu0YwakItEx3OgQDjuDpnsxbPhntgLpdEnI0LarBtl+VLbkgrI0meT
-	Gm/Uwe4GuoqEGWbe47HHWTMlvr2BtnwXsqtGg+pqjELbmN2bJkqN
-X-Gm-Gg: ASbGncv+UGb6UWVKm8Hpve69NErwEwODufLKLEBnZ1hc3b3eMd+y2h3HR/LC/I9ExTW
-	nKHmTXKKOwJz8IX0TAV/DtvDMxW2jAwz1QqrBacJI+jAA9u1+G8blxRfBEfgQE6PJKsitdZvruE
-	L5sy4OvsV8QUP8GEa9dDgqqbl4QyJI0lcL+ouI7teHW0lxvpQIBscErEilKvJzaXe+WR/JUqJYU
-	ftHx4rfWlSwxPe3EH8V84pyGLrDzCjfONhy4igdrkRIsyhb/2wvF+NZ4frAPoJdaHO+/rY1Fapb
-	FE/4RGDWcgVm9JiI8g9hPiuhRnGbTSA7LyDOQxWVqIHqKn5wiRFLOgYh2Snugnyv97LPG64lZ/a
-	HkCPnbQTahdbI
-X-Google-Smtp-Source: AGHT+IFPN68wS30Nt8EqquCKHrPPdtzyNgfnZN8Uy0UGUn+srQLGItB26KLP3BnWcgivH+bNyazbLQ==
-X-Received: by 2002:a17:90b:35c9:b0:2ee:ee5e:42fb with SMTP id 98e67ed59e1d1-2fc40f1076emr22333960a91.13.1739887674823;
-        Tue, 18 Feb 2025 06:07:54 -0800 (PST)
-Received: from DESKTOP-NBGHJ1C.flets-east.jp (p12284229-ipxg45101marunouchi.tokyo.ocn.ne.jp. [60.39.60.229])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fc13bbeec8sm10037888a91.49.2025.02.18.06.07.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 06:07:54 -0800 (PST)
-From: Ryo Takakura <ryotkkr98@gmail.com>
-To: bigeasy@linutronix.de,
-	lgoncalv@redhat.com
-Cc: bhelgaas@google.com,
-	jonathan.derrick@linux.dev,
-	kbusch@kernel.org,
-	kw@linux.com,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev,
-	lpieralisi@kernel.org,
-	manivannan.sadhasivam@linaro.org,
-	nirmal.patel@linux.intel.com,
-	robh@kernel.org,
-	rostedt@goodmis.org
-Subject: Re: [PATCH v3] PCI: vmd: Fix spinlock usage on config access for RT kernel
-Date: Tue, 18 Feb 2025 23:07:45 +0900
-Message-Id: <20250218140745.16065-1-ryotkkr98@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250218080934.IRRZ6B6h@linutronix.de>
-References: <20250218080934.IRRZ6B6h@linutronix.de>
+	s=arc-20240116; t=1739887767; c=relaxed/simple;
+	bh=I/RdCQPPn1wHaFmlp+tuRpK9XsLvtlVCcv5TFMGTqPg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pkDgHp/UYeGz4Ia1oAtvIswY4OqAgB3kfJaChDrYcL6rN6NIF2WnvsbXoSJp9vbNhPBrcIgH+tZx67uMvP9Duny4bH4Z4AflQhsbk9BY1aVyJj+bXzzVE8mOWRj4m3qzsRZX8oXqa50IUp3l6F6bO4sHKB2GPO0r5qXvodmCu1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=CV+RovXp; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51IBML7J020389;
+	Tue, 18 Feb 2025 14:08:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=9AF1om8Lrm/xLDRHOLxFEifeKpnaLe
+	RhNPZT9gDLIQ0=; b=CV+RovXpmtr1HdW8oXhrmXR+yctXcF/BZ/igc+sObd4LmN
+	Q+YeZ1Zlb43eyfvWfHnVonpvcozFlMyS7RwWrXmeeapi/bJc0Xqnd/qGeGwkkqYx
+	zL1E7BNIE+kIXvk8qpAT60eq6qShVzwSUL2vNi2m4D6+XHL77xqXT+KRDpqxKNEw
+	VFv8m1cHcw3z3cUALoCO9xSlCFCDjwS7GjlwK3XN5pEwSMMC+4YXKqAp4mzE8/XH
+	/9saCZ8rgKGhg0d+fjm594PCQaoMsYHZqawndMZp+Wt2fIn9VzEBYa6q9a5OfePO
+	UhtAvSK5l82To9C9ygf3TkZ3thakqLmrVwcHailg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44vg99u7j6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Feb 2025 14:08:28 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51IE7Lf0016617;
+	Tue, 18 Feb 2025 14:08:28 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44vg99u7j0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Feb 2025 14:08:27 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51IBaUc3013259;
+	Tue, 18 Feb 2025 14:08:26 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 44u7fkk9wb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Feb 2025 14:08:26 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51IE8NZ59306562
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 18 Feb 2025 14:08:23 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 430722004E;
+	Tue, 18 Feb 2025 14:08:23 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id AAD4620043;
+	Tue, 18 Feb 2025 14:08:22 +0000 (GMT)
+Received: from osiris (unknown [9.152.212.60])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 18 Feb 2025 14:08:22 +0000 (GMT)
+Date: Tue, 18 Feb 2025 15:08:21 +0100
+From: Heiko Carstens <hca@linux.ibm.com>
+To: joel granados <joel.granados@kernel.org>
+Cc: Kees Cook <kees@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        "Liang, Kan" <kan.liang@linux.intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andreas Larsson <andreas@gaisler.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-acpi@vger.kernel.org
+Subject: Re: [PATCH 7/8] s390: mv s390 sysctls into their own file under
+ arch/s390 dir
+Message-ID: <20250218140821.7740Ab5-hca@linux.ibm.com>
+References: <20250218-jag-mv_ctltables-v1-0-cd3698ab8d29@kernel.org>
+ <20250218-jag-mv_ctltables-v1-7-cd3698ab8d29@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250218-jag-mv_ctltables-v1-7-cd3698ab8d29@kernel.org>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: C1vwg1h0Wd1-AF41KNeLrehTep7PLEGd
+X-Proofpoint-ORIG-GUID: 6Qf1aZgnvDRrtDnExFplYp_kZP8KujkA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-18_06,2025-02-18_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ adultscore=0 mlxscore=0 suspectscore=0 clxscore=1011 mlxlogscore=780
+ priorityscore=1501 bulkscore=0 malwarescore=0 phishscore=0 spamscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502180106
 
-Hi Luis and Sebastian,
+On Tue, Feb 18, 2025 at 10:56:23AM +0100, joel granados wrote:
+> Move s390 sysctls (spin_retry and userprocess_debug) into their own
+> files under arch/s390. We create two new sysctl tables
+> (2390_{fault,spin}_sysctl_table) which will be initialized with
+> arch_initcall placing them after their original place in proc_root_init.
+> 
+> This is part of a greater effort to move ctl tables into their
+> respective subsystems which will reduce the merge conflicts in
+> kerenel/sysctl.c.
+  ^^^^^^^
+typo
 
-Thanks for checking in.
+> diff --git a/arch/s390/lib/spinlock.c b/arch/s390/lib/spinlock.c
+> index a81a01c44927..4483fdc9d472 100644
+> --- a/arch/s390/lib/spinlock.c
+> +++ b/arch/s390/lib/spinlock.c
+> @@ -17,6 +17,10 @@
+>  #include <asm/alternative.h>
+>  #include <asm/asm.h>
+>  
+> +#if defined(CONFIG_SMP)
+> +#include <linux/sysctl.h>
+> +#endif
+> +
+...
+> +#if defined(CONFIG_SMP)
+> +static const struct ctl_table s390_spin_sysctl_table[] = {
+> +	{
+> +		.procname	= "spin_retry",
+> +		.data		= &spin_retry,
+> +		.maxlen		= sizeof(int),
+> +		.mode		= 0644,
+> +		.proc_handler	= proc_dointvec,
+> +	},
+> +};
+> +
+> +static int __init init_s390_spin_sysctls(void)
+> +{
+> +	register_sysctl_init("kernel", s390_spin_sysctl_table);
+> +	return 0;
+> +}
+> +arch_initcall(init_s390_spin_sysctls);
+> +#endif
 
-On Tue, 18 Feb 2025 09:09:34 +0100, Sebastian Andrzej Siewior wrote:
->On 2025-02-17 13:50:37 [-0300], Luis Claudio R. Goncalves wrote:
->> On Thu, Dec 19, 2024 at 10:45:49AM +0900, Ryo Takakura wrote:
->> > PCI config access is locked with pci_lock which is raw_spinlock.
->> > Convert cfg_lock to raw_spinlock so that the lock usage is consistent
->> > for RT kernel.
->> 
->> Any movement here?
->
->Reposted as https://lore.kernel.org/all/20250218080830.ufw3IgyX@linutronix.de
-
-Thanks for the update!
-
-Sincerely,
-Ryo Takakura
+I see that you want to keep the existing CONFIG_SMP behaviour, but since a
+long time s390 enforces CONFIG_SMP=y (this was obviously never reflected in
+kernel/sysctl.c).
+Therefore the above ifdefs should be removed, and in addition the include
+statement should be added to the other linux includes at the top of the file.
 
