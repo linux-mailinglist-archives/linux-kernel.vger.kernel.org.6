@@ -1,384 +1,105 @@
-Return-Path: <linux-kernel+bounces-519245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 062BBA399C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:59:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62D59A399CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:01:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AB23188CD05
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:59:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC970172208
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:59:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEE52239579;
-	Tue, 18 Feb 2025 10:58:51 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6E4D23957E;
+	Tue, 18 Feb 2025 10:59:26 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EDCD13D51E;
-	Tue, 18 Feb 2025 10:58:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AF8D23536B;
+	Tue, 18 Feb 2025 10:59:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739876331; cv=none; b=DCYYC2nrQRP9yuUgnvG1fpRu7uSJvCOiNu+U1Y1yjb6beVZS4mPUrpjJPIKNJwcsAWpwmxB3ydjTvOFQou3errL9ZyJk5RfEYRWDTxoTtZUemkrpseF8ZeWJQe+YYSWmJDkj7gJxc0g0/NTIQOpS7CpkKO/btKks0tUZUmXIQCo=
+	t=1739876366; cv=none; b=DzjtTIgAqFjG5Juf9Iew85fvSnWLIQEbcp0T2Qgf9cvZTlIeKt/afk6NiRQadVaJOqrOwa17hnmjghkAlgqYxkt7un8uHp9XzTUYaf5y7NuR2pXQayrpFLzgS0MLFgi8NKOOgJ4yOSNMa4yzcdVKHZVRaLGfkWTBhZTMailb0qA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739876331; c=relaxed/simple;
-	bh=iKnuvPAFyjaJZ2Hb2hiO75EaMpLf7xoMbImYdpyFDEE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=osGBK/QfDTuxYQml4ZCn0D9sBrniOpF3EX3TDquH+hMl3JZrdXPxPhGhkJB141bhr5us65RgX9Kt8nKGfjpQOPWB+A4cX0gSe/rRVn5cEYvA9QbXr0VPkCNvvjFyHaLjydBN3v+MhrSEaqN0doFUGJTmorugiXK/dJDhzvpXe7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4YxxLJ5lPjz6GD8S;
-	Tue, 18 Feb 2025 18:57:12 +0800 (CST)
-Received: from frapeml100008.china.huawei.com (unknown [7.182.85.131])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4860E140B33;
-	Tue, 18 Feb 2025 18:58:45 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (7.182.85.71) by
- frapeml100008.china.huawei.com (7.182.85.131) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 18 Feb 2025 11:58:45 +0100
-Received: from frapeml500008.china.huawei.com ([7.182.85.71]) by
- frapeml500008.china.huawei.com ([7.182.85.71]) with mapi id 15.01.2507.039;
- Tue, 18 Feb 2025 11:58:45 +0100
-From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-To: liulongfang <liulongfang@huawei.com>, "alex.williamson@redhat.com"
-	<alex.williamson@redhat.com>, "jgg@nvidia.com" <jgg@nvidia.com>, "Jonathan
- Cameron" <jonathan.cameron@huawei.com>
-CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linuxarm@openeuler.org" <linuxarm@openeuler.org>
-Subject: RE: [PATCH 3/3] migration: adapt to new migration configuration
-Thread-Topic: [PATCH 3/3] migration: adapt to new migration configuration
-Thread-Index: AQHbgasfpWViJMA7d0C64ALSy1cFErNM47rQ
-Date: Tue, 18 Feb 2025 10:58:44 +0000
-Message-ID: <23e896a0788f4fc59b25b58be059a0f8@huawei.com>
-References: <20250218021507.40740-1-liulongfang@huawei.com>
- <20250218021507.40740-4-liulongfang@huawei.com>
-In-Reply-To: <20250218021507.40740-4-liulongfang@huawei.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1739876366; c=relaxed/simple;
+	bh=n1iqObZEzA0rDmHtOHu37IVyO1+M8xcx8X5qmxcmFTI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rCicmvdyfEelVGjSVA9nFhYA8DS3B3qk4CnzwLGP74uYEZwuH3Pi/kqsbs2AGX7MKkrfm73MAyn0VqV9oo1PYlGUMS6hrLwxOnVA0xsGwoIqPXIeHkIMH3GTLXL+XtPfPWPZyFpUrIhdzzhq/9nWmdjQ2MjkdPyWVUG6qCWnE5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [180.172.76.141])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id C9223342FA4;
+	Tue, 18 Feb 2025 10:59:23 +0000 (UTC)
+Date: Tue, 18 Feb 2025 10:59:19 +0000
+From: Yixun Lan <dlan@gentoo.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, Olof Johansson <olof@lixom.net>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>, Yangyu Chen <cyy@cyyself.name>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Jesse Taube <mr.bossman075@gmail.com>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Icenowy Zheng <uwu@icenowy.me>,
+	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v4 1/4] dt-bindings: gpio: spacemit: add support for K1
+ SoC
+Message-ID: <20250218105919-GYB29065@gentoo>
+References: <20250127181726.GA538260-robh@kernel.org>
+ <20250128031712-GYB47737@gentoo>
+ <CACRpkdYbSOHD9UH5=+qjztxS3Cq_rxaoOT9tFtD8ZWm9zQGnPw@mail.gmail.com>
+ <CACRpkdZa887vx4Lmxk1U_8w5n7AxMnyzGexeYzhsxNGT-DTYcQ@mail.gmail.com>
+ <20250206133156-GYA5687@gentoo>
+ <CACRpkdZYYZ5tUR4gJXuCrix0k56rPPB2TUGP3KpwqMgjs_Vd5w@mail.gmail.com>
+ <20250214115410-GYA21743@gentoo>
+ <CACRpkdaQZ5wJ0S=FfTzBkZOfCE7zvTPQ-wn53rHcZztbHLC8xQ@mail.gmail.com>
+ <20250218095540-GYA29065@gentoo>
+ <CACRpkdZiD7LRAk3hhvWdnf9DCuQCWGLoE1xd_z9ddRKZP=uvLw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACRpkdZiD7LRAk3hhvWdnf9DCuQCWGLoE1xd_z9ddRKZP=uvLw@mail.gmail.com>
 
+Hi Linus:
 
+On 11:17 Tue 18 Feb     , Linus Walleij wrote:
+> On Tue, Feb 18, 2025 at 10:55 AM Yixun Lan <dlan@gentoo.org> wrote:
+> 
+> > > I will post it real soon.
+> > >
+> > can you check the v5 of the patch here [1]? which I just sent out yesterday
+> > it does 1) implement xlate() 2) instroduce custom add_pin_page()
+> > the gpio part works as I tested, the gpio irq probably need more testing
+> 
+> Ah nice! I have the same idea, but I just bring all the stuff you
+> need to reimplement in your driver into the core instead.
+> 
+> Your driver and bindings will look the same, you will just do
+> not need to reimplement the translation functions (if my code
+> works as I intended...)
+> 
+great! I will test and let you know if it works, many thanks..
 
-> -----Original Message-----
-> From: liulongfang <liulongfang@huawei.com>
-> Sent: Tuesday, February 18, 2025 2:15 AM
-> To: alex.williamson@redhat.com; jgg@nvidia.com; Shameerali Kolothum
-> Thodi <shameerali.kolothum.thodi@huawei.com>; Jonathan Cameron
-> <jonathan.cameron@huawei.com>
-> Cc: kvm@vger.kernel.org; linux-kernel@vger.kernel.org;
-> linuxarm@openeuler.org; liulongfang <liulongfang@huawei.com>
-> Subject: [PATCH 3/3] migration: adapt to new migration configuration
->=20
-> On the new hardware platform, the migration region is moved from
-> VF to PF. the driver also needs to be modified accordingly to adapt
-> to the new hardware device.
->=20
-> Use PF's io base directly on the new hardware platform. and no mmap
-> operation is required.
-> If it is on an old platform, the driver needs to be compatible with
-> the old solution.
+> Yours,
+> Linus Walleij
 
-
-I see that you have used "new hardware platform" everywhere and I think
-it is better we make it more specific, like QM_HW_V4?
-
-Also it is not clear to me, what happens if you try migration between
-QM_HW_V3 <--> QM_HW_V4? Is that going to be success or we are
-failing it somewhere? I see only the dev_id check in vf_qm_check_match().
-
-Thanks,
-Shameer
-
-> Signed-off-by: Longfang Liu <liulongfang@huawei.com>
-> ---
->  .../vfio/pci/hisilicon/hisi_acc_vfio_pci.c    | 165 ++++++++++++------
->  .../vfio/pci/hisilicon/hisi_acc_vfio_pci.h    |   7 +
->  2 files changed, 119 insertions(+), 53 deletions(-)
->=20
-> diff --git a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-> b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-> index 599905dbb707..cf5a807c2199 100644
-> --- a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-> +++ b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-> @@ -125,6 +125,72 @@ static int qm_get_cqc(struct hisi_qm *qm, u64
-> *addr)
->  	return 0;
->  }
->=20
-> +static int qm_get_xqc_regs(struct hisi_acc_vf_core_device *hisi_acc_vdev=
-,
-> +			   struct acc_vf_data *vf_data)
-> +{
-> +	struct hisi_qm *qm =3D &hisi_acc_vdev->vf_qm;
-> +	struct device *dev =3D &qm->pdev->dev;
-> +	u32 eqc_addr, aeqc_addr;
-> +	int ret;
-> +
-> +	if (qm->ver =3D=3D QM_HW_V3) {
-> +		eqc_addr =3D QM_EQC_DW0;
-> +		aeqc_addr =3D QM_AEQC_DW0;
-> +	} else {
-> +		eqc_addr =3D QM_EQC_PF_DW0;
-> +		aeqc_addr =3D QM_AEQC_PF_DW0;
-> +	}
-> +
-> +	/* QM_EQC_DW has 7 regs */
-> +	ret =3D qm_read_regs(qm, eqc_addr, vf_data->qm_eqc_dw, 7);
-> +	if (ret) {
-> +		dev_err(dev, "failed to read QM_EQC_DW\n");
-> +		return ret;
-> +	}
-> +
-> +	/* QM_AEQC_DW has 7 regs */
-> +	ret =3D qm_read_regs(qm, aeqc_addr, vf_data->qm_aeqc_dw, 7);
-> +	if (ret) {
-> +		dev_err(dev, "failed to read QM_AEQC_DW\n");
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int qm_set_xqc_regs(struct hisi_acc_vf_core_device *hisi_acc_vdev=
-,
-> +			   struct acc_vf_data *vf_data)
-> +{
-> +	struct hisi_qm *qm =3D &hisi_acc_vdev->vf_qm;
-> +	struct device *dev =3D &qm->pdev->dev;
-> +	u32 eqc_addr, aeqc_addr;
-> +	int ret;
-> +
-> +	if (qm->ver =3D=3D QM_HW_V3) {
-> +		eqc_addr =3D QM_EQC_DW0;
-> +		aeqc_addr =3D QM_AEQC_DW0;
-> +	} else {
-> +		eqc_addr =3D QM_EQC_PF_DW0;
-> +		aeqc_addr =3D QM_AEQC_PF_DW0;
-> +	}
-> +
-> +	/* QM_EQC_DW has 7 regs */
-> +	ret =3D qm_write_regs(qm, eqc_addr, vf_data->qm_eqc_dw, 7);
-> +	if (ret) {
-> +		dev_err(dev, "failed to write QM_EQC_DW\n");
-> +		return ret;
-> +	}
-> +
-> +	/* QM_AEQC_DW has 7 regs */
-> +	ret =3D qm_write_regs(qm, aeqc_addr, vf_data->qm_aeqc_dw, 7);
-> +	if (ret) {
-> +		dev_err(dev, "failed to write QM_AEQC_DW\n");
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static int qm_get_regs(struct hisi_qm *qm, struct acc_vf_data *vf_data)
->  {
->  	struct device *dev =3D &qm->pdev->dev;
-> @@ -167,20 +233,6 @@ static int qm_get_regs(struct hisi_qm *qm, struct
-> acc_vf_data *vf_data)
->  		return ret;
->  	}
->=20
-> -	/* QM_EQC_DW has 7 regs */
-> -	ret =3D qm_read_regs(qm, QM_EQC_DW0, vf_data->qm_eqc_dw, 7);
-> -	if (ret) {
-> -		dev_err(dev, "failed to read QM_EQC_DW\n");
-> -		return ret;
-> -	}
-> -
-> -	/* QM_AEQC_DW has 7 regs */
-> -	ret =3D qm_read_regs(qm, QM_AEQC_DW0, vf_data->qm_aeqc_dw,
-> 7);
-> -	if (ret) {
-> -		dev_err(dev, "failed to read QM_AEQC_DW\n");
-> -		return ret;
-> -	}
-> -
->  	return 0;
->  }
->=20
-> @@ -238,20 +290,6 @@ static int qm_set_regs(struct hisi_qm *qm, struct
-> acc_vf_data *vf_data)
->  		return ret;
->  	}
->=20
-> -	/* QM_EQC_DW has 7 regs */
-> -	ret =3D qm_write_regs(qm, QM_EQC_DW0, vf_data->qm_eqc_dw, 7);
-> -	if (ret) {
-> -		dev_err(dev, "failed to write QM_EQC_DW\n");
-> -		return ret;
-> -	}
-> -
-> -	/* QM_AEQC_DW has 7 regs */
-> -	ret =3D qm_write_regs(qm, QM_AEQC_DW0, vf_data->qm_aeqc_dw,
-> 7);
-> -	if (ret) {
-> -		dev_err(dev, "failed to write QM_AEQC_DW\n");
-> -		return ret;
-> -	}
-> -
->  	return 0;
->  }
->=20
-> @@ -470,6 +508,10 @@ static int vf_qm_load_data(struct
-> hisi_acc_vf_core_device *hisi_acc_vdev,
->  		return ret;
->  	}
->=20
-> +	ret =3D qm_set_xqc_regs(hisi_acc_vdev, vf_data);
-> +	if (ret)
-> +		return ret;
-> +
->  	ret =3D hisi_qm_mb(qm, QM_MB_CMD_SQC_BT, qm->sqc_dma, 0, 0);
->  	if (ret) {
->  		dev_err(dev, "set sqc failed\n");
-> @@ -544,6 +586,10 @@ static int vf_qm_state_save(struct
-> hisi_acc_vf_core_device *hisi_acc_vdev,
->  		return ret;
->  	}
->=20
-> +	ret =3D qm_get_xqc_regs(hisi_acc_vdev, vf_data);
-> +	if (ret)
-> +		return -EINVAL;
-> +
->  	ret =3D vf_qm_read_data(vf_qm, vf_data);
->  	if (ret)
->  		return -EINVAL;
-> @@ -1131,34 +1177,46 @@ static int hisi_acc_vf_qm_init(struct
-> hisi_acc_vf_core_device *hisi_acc_vdev)
->  {
->  	struct vfio_pci_core_device *vdev =3D &hisi_acc_vdev->core_device;
->  	struct hisi_qm *vf_qm =3D &hisi_acc_vdev->vf_qm;
-> +	struct hisi_qm *pf_qm =3D hisi_acc_vdev->pf_qm;
->  	struct pci_dev *vf_dev =3D vdev->pdev;
->=20
-> -	/*
-> -	 * ACC VF dev BAR2 region consists of both functional register space
-> -	 * and migration control register space. For migration to work, we
-> -	 * need access to both. Hence, we map the entire BAR2 region here.
-> -	 * But unnecessarily exposing the migration BAR region to the Guest
-> -	 * has the potential to prevent/corrupt the Guest migration. Hence,
-> -	 * we restrict access to the migration control space from
-> -	 * Guest(Please see mmap/ioctl/read/write override functions).
-> -	 *
-> -	 * Please note that it is OK to expose the entire VF BAR if migration
-> -	 * is not supported or required as this cannot affect the ACC PF
-> -	 * configurations.
-> -	 *
-> -	 * Also the HiSilicon ACC VF devices supported by this driver on
-> -	 * HiSilicon hardware platforms are integrated end point devices
-> -	 * and the platform lacks the capability to perform any PCIe P2P
-> -	 * between these devices.
-> -	 */
-> +	if (pf_qm->ver =3D=3D QM_HW_V3) {
-> +		/*
-> +		 * ACC VF dev BAR2 region consists of both functional
-> register space
-> +		 * and migration control register space. For migration to
-> work, we
-> +		 * need access to both. Hence, we map the entire BAR2
-> region here.
-> +		 * But unnecessarily exposing the migration BAR region to
-> the Guest
-> +		 * has the potential to prevent/corrupt the Guest migration.
-> Hence,
-> +		 * we restrict access to the migration control space from
-> +		 * Guest(Please see mmap/ioctl/read/write override
-> functions).
-> +		 *
-> +		 * Please note that it is OK to expose the entire VF BAR if
-> migration
-> +		 * is not supported or required as this cannot affect the ACC
-> PF
-> +		 * configurations.
-> +		 *
-> +		 * Also the HiSilicon ACC VF devices supported by this driver
-> on
-> +		 * HiSilicon hardware platforms are integrated end point
-> devices
-> +		 * and the platform lacks the capability to perform any PCIe
-> P2P
-> +		 * between these devices.
-> +		 */
->=20
-> -	vf_qm->io_base =3D
-> -		ioremap(pci_resource_start(vf_dev,
-> VFIO_PCI_BAR2_REGION_INDEX),
-> -			pci_resource_len(vf_dev,
-> VFIO_PCI_BAR2_REGION_INDEX));
-> -	if (!vf_qm->io_base)
-> -		return -EIO;
-> +		vf_qm->io_base =3D
-> +			ioremap(pci_resource_start(vf_dev,
-> VFIO_PCI_BAR2_REGION_INDEX),
-> +				pci_resource_len(vf_dev,
-> VFIO_PCI_BAR2_REGION_INDEX));
-> +		if (!vf_qm->io_base)
-> +			return -EIO;
->=20
-> -	vf_qm->fun_type =3D QM_HW_VF;
-> +		vf_qm->fun_type =3D QM_HW_VF;
-> +		vf_qm->ver =3D pf_qm->ver;
-> +	} else {
-> +		/*
-> +		 * In the new HW platform, the migration function register
-> space is in BAR2 of PF,
-> +		 * and each VF occupies 8KB address space.
-> +		 */
-> +		vf_qm->io_base =3D pf_qm->io_base +
-> QM_MIG_REGION_OFFSET +
-> +				hisi_acc_vdev->vf_id *
-> QM_MIG_REGION_SIZE;
-> +		vf_qm->fun_type =3D QM_HW_PF;
-> +	}
->  	vf_qm->pdev =3D vf_dev;
->  	mutex_init(&vf_qm->mailbox_lock);
->=20
-> @@ -1488,7 +1546,8 @@ static void hisi_acc_vfio_pci_close_device(struct
-> vfio_device *core_vdev)
->=20
->  	mutex_lock(&hisi_acc_vdev->open_mutex);
->  	hisi_acc_vdev->dev_opened =3D false;
-> -	iounmap(vf_qm->io_base);
-> +	if (vf_qm->ver =3D=3D QM_HW_V3)
-> +		iounmap(vf_qm->io_base);
->  	mutex_unlock(&hisi_acc_vdev->open_mutex);
->  	vfio_pci_core_close_device(core_vdev);
->  }
-> diff --git a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.h
-> b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.h
-> index 245d7537b2bc..b01eb54525d3 100644
-> --- a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.h
-> +++ b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.h
-> @@ -50,6 +50,13 @@
->  #define QM_EQC_DW0		0X8000
->  #define QM_AEQC_DW0		0X8020
->=20
-> +#define QM_MIG_REGION_OFFSET	0x180000
-> +#define QM_MIG_REGION_SIZE	0x2000
-> +
-> +#define QM_SUB_VERSION_ID		0x100210
-> +#define QM_EQC_PF_DW0		0x1c00
-> +#define QM_AEQC_PF_DW0		0x1c20
-> +
->  struct acc_vf_data {
->  #define QM_MATCH_SIZE offsetofend(struct acc_vf_data, qm_rsv_state)
->  	/* QM match information */
-> --
-> 2.24.0
-
+-- 
+Yixun Lan (dlan)
+Gentoo Linux Developer
+GPG Key ID AABEFD55
 
