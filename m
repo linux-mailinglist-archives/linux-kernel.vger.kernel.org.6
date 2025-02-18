@@ -1,227 +1,469 @@
-Return-Path: <linux-kernel+bounces-519691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91460A3A0BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:03:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F09AAA3A0BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:04:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4F741898CB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:01:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5DC4188B3E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:03:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 445E926B0BB;
-	Tue, 18 Feb 2025 15:01:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33DB626A1D6;
+	Tue, 18 Feb 2025 15:02:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EVhkyPbO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qCc+Uo4U"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2FEA26B09F
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 15:01:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE0B22AE4E
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 15:02:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739890872; cv=none; b=Oy9l88CNRiiRe+9XQXjact41nzTQTpQj2KdXXbcCrSHqfsAcL/8IH+V40XsBbGxYsvNtZ0nXyYydn12oOT4vFd7jTSMmMLMDEqlNSdi+EMGm21ysAOHDwFzkjv646d+OXNQIrFgUq935bHVK5JisGNESCYTuDgJ+DT4sBNU8ElI=
+	t=1739890969; cv=none; b=UDOu8rUhrS/+OWSIKt16I31uN3DVk26Dpu38yaQP54Gt0X+s7aHf9BspDbKzHdTDdkSPMb0vhWGbq8+oX4Z9vhejId/7OMtO3G8z4ZGC/QP2lgLrwI/rW2zMB7eBwzKtH79kMF3jQoTleA0f6+CLtivpNPXzkBUygutxtvQdWzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739890872; c=relaxed/simple;
-	bh=4hBYE6B01UeRjqlshmIvDdGDVPSx2AoZpCUG3pM445Y=;
+	s=arc-20240116; t=1739890969; c=relaxed/simple;
+	bh=IJqDsCY7HJfENXpaqjfftAGCHoVZB5afzR2gtzOaUlU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SgkEeZjesZ91jsZUpGmFX0c7NTjP65meVYzOIt8XXI2yBr8UV2y1Lb1SBeEdAi0RlW4vjriZgl3EI2F+Ovl6ZBJuVkV/Enwua3EuVNJ11r5Yr35iWO7NHsb/ZElAldPGQ/WUIW+Pk0s5rfzeACzSY2Um11ngb2zyhNkSc6vZCZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EVhkyPbO; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739890869;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JX1r2mAn5Gc8hPXlwtBNG+ZhPCbtcKvIrqVwrTSJiTw=;
-	b=EVhkyPbOXbiHFeZjXEppzRx7NJWaR+5owuLm9OSXmcrKLS7UE80jhtd1CAhfIZwTes6gTy
-	g6me/QI3ka5zqsSMGWBdJeTbhdauYHCLZTU2cRbPzN9XiQo2pEbpTZ3v/ysgIGx7RCsbwU
-	JHlHrObdsUpdDkRQE1qVuO0mfkMwE6s=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-675-EaGfRCPCNKupytQfDL50NQ-1; Tue,
- 18 Feb 2025 10:01:05 -0500
-X-MC-Unique: EaGfRCPCNKupytQfDL50NQ-1
-X-Mimecast-MFC-AGG-ID: EaGfRCPCNKupytQfDL50NQ_1739890864
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2DA7118009AE;
-	Tue, 18 Feb 2025 15:01:04 +0000 (UTC)
-Received: from pauld.westford.csb (unknown [10.22.89.54])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DA55B180035F;
-	Tue, 18 Feb 2025 15:01:01 +0000 (UTC)
-Date: Tue, 18 Feb 2025 10:00:59 -0500
-From: Phil Auld <pauld@redhat.com>
-To: Vishal Chourasia <vishalc@linux.ibm.com>
-Cc: Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Waiman Long <longman@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [CHANGE 1/2] sched/isolation: Make use of more than one
- housekeeping cpu
-Message-ID: <20250218150059.GC547103@pauld.westford.csb>
-References: <20250211140104.420739-1-pauld@redhat.com>
- <4a8d54e7-fa29-4ce4-9023-3cdffa0807e6@linux.ibm.com>
- <20250213142653.GA472203@pauld.westford.csb>
- <Z67Wy9Jjn0BZa01A@linux.ibm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=r91CF1FdhetKuxQz9pz6wVW7opxHqyxS5350ZpOCZ8YtJ1Xfa8H5jSNSX1wUe0g+cuRrCr4jN7rJa8JLu8CwjwP+lYmyzaiHdaDarMjJPzbN5MvLTEkRUpXslnaajnZfKsUUID9vQZfjQ54hlSJTJysEL08XUamwQs+pZpNpu5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qCc+Uo4U; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2210d92292eso81227155ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 07:02:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739890966; x=1740495766; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=jWcJBMztVJPnjv77fK+NPeNY4keL9ty0/4Tf67Wb3BE=;
+        b=qCc+Uo4UPB3hH9e0vQOIFG2HLivcdFqhqd3u+lKL1gjgR0Z4EL7Cvp7NmNk24T7F3i
+         It0k+x5FLwgxg91NAnRzWbq/s0aXdhX6iAwNrfJIajZNz1Ly5kN922OBEUnyzDKsqca7
+         w0e69UYPYFPx6qdpAc7oqMZtX0fXzm1eQohaDB2WYY2eDeO9aS3DCOzMSDTxEbH00QyF
+         2h8PMqCxF1g9QzRaTUL7JsOlSKTc3w6sfMSRuZFcN4WVKkJw8YkFU5xl+fnUrPK7OyQn
+         7RhUEP7ux64wopV9bRy+nI8pPIBIFQX27bx7qaZn2QNbNK7/H4xQ9/s5aeUtJ5A5AxdQ
+         QiNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739890966; x=1740495766;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jWcJBMztVJPnjv77fK+NPeNY4keL9ty0/4Tf67Wb3BE=;
+        b=HRJCTHmU82xmZ05CGsNwZUt8orGHxrKgf0cqgMiqAXMtDr0BqFFyMLOvRhoxFwR8sQ
+         F0uagSBBMkJ2C2J2JbR6ZG5DsZolWc9i7+zaURCLsUGbeoBzHIiGfeaty1MKLzl3D2gM
+         GVS91LQu857nJZ8SkbZwbOXORZ8EjCfBeNoxr8SmdvbAb5UTnpqTlKX4KFrTmSV0AtyK
+         p0a/fwh0JoGBCPM8W3H6c/bVBofmKXQJByMoFtS7pkhd4PEdkRFbVf3VMN6Ac+ww7IS5
+         T5wUmCK7Oq8A6RuMGfagQuKp613Sma7Rq/dHlbXKNCdjaUzdtorZPWVf5PlhP3KYbNXT
+         Or2w==
+X-Gm-Message-State: AOJu0Yw4OkNu/y8e7APVksLbfgz0wHg9YWqW3rx4t8n9WMbfKvqIarYX
+	zQ9ZwVvSIDQRM06Y069w2/L1ijQK7axQ6P6UiU6R/h7424CbjhCShsBpdRNzoA==
+X-Gm-Gg: ASbGncudCURj7auX7nYSXWgN45slYo1JB5W7EYXioNLn9XHC5td0Gz9Dwn9j4o463Nx
+	9Forgi0rOGk2wkwaKWCGxinf/D9d9iZmveJrpkB3ssEIlZusrs1cMZ4LG6l9RzdS8nOCZv8ngTN
+	ABotHzeTyhMY0GNhuNftC08XwbgTirmpDqoJfYDq5n/MZc3jHwQQ8mhPporafAgFFXHXrYIAEo2
+	4lVTjGO/YnI6LS6hn08vEonr24fU4bwhoTtnWcaTqaqcV4i7CbiXxoX0tEGaUrisWbJAR6+0/5F
+	6N0l71p5KXPsSZShvhZDek4vcRk=
+X-Google-Smtp-Source: AGHT+IF+vWFeQAwC0HTJEP2zVCzr9RvYcRojW9qsaHZE9h4rXSus+Sx1wVii57C3PhSK5l9G3L3+IA==
+X-Received: by 2002:a05:6a21:9999:b0:1ee:66f6:87e6 with SMTP id adf61e73a8af0-1ee8cbbba1amr25798990637.31.1739890966357;
+        Tue, 18 Feb 2025 07:02:46 -0800 (PST)
+Received: from thinkpad ([120.56.197.245])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7324273e318sm10548970b3a.96.2025.02.18.07.02.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2025 07:02:45 -0800 (PST)
+Date: Tue, 18 Feb 2025 20:32:39 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Shradha Todi <shradha.t@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+	bhelgaas@google.com, jingoohan1@gmail.com,
+	Jonathan.Cameron@Huawei.com, fan.ni@samsung.com,
+	nifan.cxl@gmail.com, a.manzanares@samsung.com,
+	pankaj.dubey@samsung.com, cassel@kernel.org, 18255117159@163.com,
+	quic_nitegupt@quicinc.com, quic_krichai@quicinc.com,
+	gost.dev@samsung.com
+Subject: Re: [PATCH v6 2/4] Add debugfs based silicon debug support in DWC
+Message-ID: <20250218150239.mnylvhyfnw6dtzag@thinkpad>
+References: <20250214105007.97582-1-shradha.t@samsung.com>
+ <CGME20250214105341epcas5p11ea07dba0a55700bc098077eb53e79b8@epcas5p1.samsung.com>
+ <20250214105007.97582-3-shradha.t@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Z67Wy9Jjn0BZa01A@linux.ibm.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250214105007.97582-3-shradha.t@samsung.com>
 
-Hi Vishal.
-
-On Fri, Feb 14, 2025 at 11:08:19AM +0530 Vishal Chourasia wrote:
-> Hi Phil, Vineeth
+On Fri, Feb 14, 2025 at 04:20:05PM +0530, Shradha Todi wrote:
+> Add support to provide silicon debug interface to userspace. This set
+> of debug registers are part of the RASDES feature present in DesignWare
+> PCIe controllers.
 > 
-> On Thu, Feb 13, 2025 at 09:26:53AM -0500, Phil Auld wrote:
-> > On Thu, Feb 13, 2025 at 10:14:04AM +0530 Madadi Vineeth Reddy wrote:
-> > > Hi Phil Auld,
-> > > 
-> > > On 11/02/25 19:31, Phil Auld wrote:
-> > > > The exising code uses housekeeping_any_cpu() to select a cpu for
-> > > > a given housekeeping task. However, this often ends up calling
-> > > > cpumask_any_and() which is defined as cpumask_first_and() which has
-> > > > the effect of alyways using the first cpu among those available.
-> > > > 
-> > > > The same applies when multiple NUMA nodes are involved. In that
-> > > > case the first cpu in the local node is chosen which does provide
-> > > > a bit of spreading but with multiple HK cpus per node the same
-> > > > issues arise.
-> > > > 
-> > > > Spread the HK work out by having housekeeping_any_cpu() and
-> > > > sched_numa_find_closest() use cpumask_any_and_distribute()
-> > > > instead of cpumask_any_and().
-> > > > 
-> > > 
-> > > Got the overall intent of the patch for better load distribution on
-> > > housekeeping tasks. However, one potential drawback could be that by
-> > > spreading HK work across multiple CPUs might reduce the time that
-> > > some cores can spend in deeper idle states which can be beneficial for
-> > > power-sensitive systems.
-> > > 
-> > > Thoughts?
-> > 
-> > NOHZ_full setups are not generally used in power sensitive systems I think.
-> > They aren't in our use cases at least. 
-> > 
-> > In cases with many cpus a single housekeeping cpu can not keep up. Having
-> > other HK cpus in deep idle states while the one in use is overloaded is
-> > not a win. 
+> Signed-off-by: Shradha Todi <shradha.t@samsung.com>
+> ---
+>  Documentation/ABI/testing/debugfs-dwc-pcie    |  13 ++
+>  drivers/pci/controller/dwc/Kconfig            |  10 +
+>  drivers/pci/controller/dwc/Makefile           |   1 +
+>  .../controller/dwc/pcie-designware-debugfs.c  | 207 ++++++++++++++++++
+>  .../pci/controller/dwc/pcie-designware-ep.c   |   5 +
+>  .../pci/controller/dwc/pcie-designware-host.c |   6 +
+>  drivers/pci/controller/dwc/pcie-designware.h  |  20 ++
+>  7 files changed, 262 insertions(+)
+>  create mode 100644 Documentation/ABI/testing/debugfs-dwc-pcie
+>  create mode 100644 drivers/pci/controller/dwc/pcie-designware-debugfs.c
 > 
-> To me, an overloaded CPU sounds like where more than one tasks are ready
-> to run, and a HK CPU is one receiving periodic scheduling clock
-> ticks, so HP CPU is bound to comes out of any power-saving state it is in.
+> diff --git a/Documentation/ABI/testing/debugfs-dwc-pcie b/Documentation/ABI/testing/debugfs-dwc-pcie
+> new file mode 100644
+> index 000000000000..e8ed34e988ef
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/debugfs-dwc-pcie
+> @@ -0,0 +1,13 @@
+> +What:		/sys/kernel/debug/dwc_pcie_<dev>/rasdes_debug/lane_detect
+> +Date:		Feburary 2025
 
-If the overload is caused by HK and interrupts there is nothing in the
-system to help. Tasks, sure, can get load balanced.
+Please align these fields
 
-And as you say, the HK cpus will have generally ticks happening anyway.
+> +Contact:	Shradha Todi <shradha.t@samsung.com>
+> +Description:	(RW) Write the lane number to be checked for detection.	Read
+> +		will return whether PHY indicates receiver detection on the
+> +		selected lane. The default selected lane is Lane0.
+> +
+> +What:		/sys/kernel/debug/dwc_pcie_<dev>/rasdes_debug/rx_valid
+> +Date:		Feburary 2025
+> +Contact:	Shradha Todi <shradha.t@samsung.com>
+> +Description:	(RW) Write the lane number to be checked as valid or invalid. Read
+> +		will return the status of PIPE RXVALID signal of the selected lane.
+> +		The default selected lane is Lane0.
+> diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
+> index b6d6778b0698..48a10428a492 100644
+> --- a/drivers/pci/controller/dwc/Kconfig
+> +++ b/drivers/pci/controller/dwc/Kconfig
+> @@ -6,6 +6,16 @@ menu "DesignWare-based PCIe controllers"
+>  config PCIE_DW
+>  	bool
+>  
+> +config PCIE_DW_DEBUGFS
+> +	default y
+> +	depends on DEBUG_FS
+> +	depends on PCIE_DW_HOST || PCIE_DW_EP
+> +	bool "DWC PCIe debugfs entries"
+> +	help
+> +	  Enables debugfs entries for the DW PCIe Controller. These entries
+> +	  provide all debug features related to DW controller including the RAS
+> +	  DES features to help in debug, error injection and statistical counters.
+> +
+>  config PCIE_DW_HOST
+>  	bool
+>  	select PCIE_DW
+> diff --git a/drivers/pci/controller/dwc/Makefile b/drivers/pci/controller/dwc/Makefile
+> index a8308d9ea986..54565eedc52c 100644
+> --- a/drivers/pci/controller/dwc/Makefile
+> +++ b/drivers/pci/controller/dwc/Makefile
+> @@ -1,5 +1,6 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  obj-$(CONFIG_PCIE_DW) += pcie-designware.o
+> +obj-$(CONFIG_PCIE_DW_DEBUGFS) += pcie-designware-debugfs.o
+>  obj-$(CONFIG_PCIE_DW_HOST) += pcie-designware-host.o
+>  obj-$(CONFIG_PCIE_DW_EP) += pcie-designware-ep.o
+>  obj-$(CONFIG_PCIE_DW_PLAT) += pcie-designware-plat.o
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-debugfs.c b/drivers/pci/controller/dwc/pcie-designware-debugfs.c
+> new file mode 100644
+> index 000000000000..fe799d36fa7f
+> --- /dev/null
+> +++ b/drivers/pci/controller/dwc/pcie-designware-debugfs.c
+> @@ -0,0 +1,207 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Synopsys DesignWare PCIe controller debugfs driver
+> + *
+> + * Copyright (C) 2025 Samsung Electronics Co., Ltd.
+> + *		http://www.samsung.com
+> + *
+> + * Author: Shradha Todi <shradha.t@samsung.com>
+> + */
+> +
+> +#include <linux/debugfs.h>
+> +
+> +#include "pcie-designware.h"
+> +
+> +#define SD_STATUS_L1LANE_REG		0xb0
+> +#define PIPE_RXVALID			BIT(18)
+> +#define PIPE_DETECT_LANE		BIT(17)
+> +#define LANE_SELECT			GENMASK(3, 0)
+> +
+> +#define DWC_DEBUGFS_BUF_MAX		128
+> +
+> +struct dwc_pcie_vsec_id {
+> +	u16 vendor_id;
+> +	u16 vsec_id;
+> +	u8 vsec_rev;
+> +};
+> +
+> +/*
+> + * VSEC IDs are allocated by the vendor, so a given ID may mean different
+> + * things to different vendors. See PCIe r6.0, sec 7.9.5.2.
+> + */
+> +static const struct dwc_pcie_vsec_id dwc_pcie_vsec_ids[] = {
+> +	{ .vendor_id = PCI_VENDOR_ID_ALIBABA,
+> +		.vsec_id = 0x02, .vsec_rev = 0x4 },
+> +	{ .vendor_id = PCI_VENDOR_ID_AMPERE,
+> +		.vsec_id = 0x02, .vsec_rev = 0x4 },
+> +	{ .vendor_id = PCI_VENDOR_ID_QCOM,
+> +		.vsec_id = 0x02, .vsec_rev = 0x4 },
+> +	{ .vendor_id = PCI_VENDOR_ID_SAMSUNG,
+> +		.vsec_id = 0x02, .vsec_rev = 0x4 },
+> +	{} /* terminator */
 
-> > 
-> > If your single HK cpu can keep up then only configure that one HK cpu.
-> > The others will go idle and stay there.  And since they are nohz_full
-> > might get to stay idle even longer.
-> While it is good to distribute the load across each HK CPU in the HK 
-> cpumask (queuing jobs on different CPUs each time), this can cause
-> jitter in virtualized environments. Unnecessaryily evicting other
-> tenants, when it's better to overload a VP than to wake up other VPs of a
-> tenant.
-> 
+This should go into the common include file as I proposed in my series:
+https://lore.kernel.org/linux-pci/20250218-pcie-qcom-ptm-v1-1-16d7e480d73e@linaro.org/
 
-Sorry I'm not sure I understand your setup. Are your running virtual
-tenants on the HK cpus?  nohz_full in the guests? Maybe you only need
-on HK then it won't matter.
+> +};
+> +
+> +/**
+> + * struct dwc_pcie_rasdes_info - Stores controller common information
+> + * @ras_cap_offset: RAS DES vendor specific extended capability offset
+> + * @reg_lock: Mutex used for RASDES shadow event registers
 
-My concern is that currently there is no point in having more than
-one HK cpu (per node in a NUMA case). The code as currently implemented
-is just not doing what it needs to.
+If this is not used by all register accesses, please rename it as such. Like,
+reg_event_lock.
 
-We have numerous cases where a single HK cpu just cannot keep up and
-the remote_tick warning fires. It also can lead to the other things
-(orchastration sw, HA keepalives etc) on the HK cpus getting starved
-which leads to other issues.  In these cases we recommend increasing
-the number of HK cpus.  But... that only helps the userspace tasks
-somewhat. It does not help the actual housekeeping part.
+> + *
+> + * Any parameter constant to all files of the debugfs hierarchy for a single controller
+> + * will be stored in this struct. It is allocated and assigned to controller specific
+> + * struct dw_pcie during initialization.
+> + */
+> +struct dwc_pcie_rasdes_info {
+> +	u32 ras_cap_offset;
+> +	struct mutex reg_lock;
+> +};
+> +
+> +static ssize_t lane_detect_read(struct file *file, char __user *buf, size_t count, loff_t *ppos)
+> +{
+> +	struct dw_pcie *pci = file->private_data;
+> +	struct dwc_pcie_rasdes_info *rinfo = pci->debugfs->rasdes_info;
+> +	char debugfs_buf[DWC_DEBUGFS_BUF_MAX];
+> +	ssize_t off = 0;
 
-It seems clear to me that the intent of the cpumask_any_and() calls
-is to pick _any_ cpu in the hk mask. Not just the first, otherwise
-it would just use cpumask_first_and().
+Not required. See below.
 
-I'm open to alternate suggestions of how to fix this.
+> +	u32 val;
+> +
+> +	val = dw_pcie_readl_dbi(pci, rinfo->ras_cap_offset + SD_STATUS_L1LANE_REG);
+> +	val = FIELD_GET(PIPE_DETECT_LANE, val);
+> +	if (val)
+> +		off += scnprintf(debugfs_buf, DWC_DEBUGFS_BUF_MAX - off, "Lane Detected\n");
 
+I don't understand why you want to add 'off' which was initialized to 0. Also
+this just prints single string.
 
-Cheers,
-Phil
+> +	else
+> +		off += scnprintf(debugfs_buf, DWC_DEBUGFS_BUF_MAX - off, "Lane Undetected\n");
+> +
+> +	return simple_read_from_buffer(buf, count, ppos, debugfs_buf, off);
+> +}
+> +
+> +static ssize_t lane_detect_write(struct file *file, const char __user *buf,
+> +				 size_t count, loff_t *ppos)
+> +{
+> +	struct dw_pcie *pci = file->private_data;
+> +	struct dwc_pcie_rasdes_info *rinfo = pci->debugfs->rasdes_info;
+> +	u32 lane, val;
+> +
+> +	val = kstrtou32_from_user(buf, count, 0, &lane);
+> +	if (val)
+> +		return val;
+> +
+> +	val = dw_pcie_readl_dbi(pci, rinfo->ras_cap_offset + SD_STATUS_L1LANE_REG);
+> +	val &= ~(LANE_SELECT);
+> +	val |= FIELD_PREP(LANE_SELECT, lane);
+> +	dw_pcie_writel_dbi(pci, rinfo->ras_cap_offset + SD_STATUS_L1LANE_REG, val);
+> +
+> +	return count;
+> +}
+> +
+> +static ssize_t rx_valid_read(struct file *file, char __user *buf, size_t count, loff_t *ppos)
+> +{
+> +	struct dw_pcie *pci = file->private_data;
+> +	struct dwc_pcie_rasdes_info *rinfo = pci->debugfs->rasdes_info;
+> +	char debugfs_buf[DWC_DEBUGFS_BUF_MAX];
+> +	ssize_t off = 0;
+> +	u32 val;
+> +
+> +	val = dw_pcie_readl_dbi(pci, rinfo->ras_cap_offset + SD_STATUS_L1LANE_REG);
+> +	val = FIELD_GET(PIPE_RXVALID, val);
+> +	if (val)
+> +		off += scnprintf(debugfs_buf, DWC_DEBUGFS_BUF_MAX - off, "RX Valid\n");
 
-> > 
-> > I do have a patch that has this controlled by a sched feature if that
-> > is of interest. Then it could be disabled if you don't want it.
-> 
-> Vishal
-> > 
-> > Cheers,
-> > Phil
-> > 
-> > > 
-> > > Thanks,
-> > > Madadi Vineeth Reddy
-> > > 
-> > > > Signed-off-by: Phil Auld <pauld@redhat.com>
-> > > > Cc: Peter Zijlstra <peterz@infradead.org>
-> > > > Cc: Juri Lelli <juri.lelli@redhat.com>
-> > > > Cc: Frederic Weisbecker <frederic@kernel.org>
-> > > > Cc: Waiman Long <longman@redhat.com>
-> > > > Cc: linux-kernel@vger.kernel.org
-> > > > ---
-> > > >  kernel/sched/isolation.c | 2 +-
-> > > >  kernel/sched/topology.c  | 2 +-
-> > > >  2 files changed, 2 insertions(+), 2 deletions(-)
-> > > > 
-> > > > diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
-> > > > index 81bc8b329ef1..93b038d48900 100644
-> > > > --- a/kernel/sched/isolation.c
-> > > > +++ b/kernel/sched/isolation.c
-> > > > @@ -40,7 +40,7 @@ int housekeeping_any_cpu(enum hk_type type)
-> > > >  			if (cpu < nr_cpu_ids)
-> > > >  				return cpu;
-> > > >  
-> > > > -			cpu = cpumask_any_and(housekeeping.cpumasks[type], cpu_online_mask);
-> > > > +			cpu = cpumask_any_and_distribute(housekeeping.cpumasks[type], cpu_online_mask);
-> > > >  			if (likely(cpu < nr_cpu_ids))
-> > > >  				return cpu;
-> > > >  			/*
-> > > > diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-> > > > index c49aea8c1025..94133f843485 100644
-> > > > --- a/kernel/sched/topology.c
-> > > > +++ b/kernel/sched/topology.c
-> > > > @@ -2101,7 +2101,7 @@ int sched_numa_find_closest(const struct cpumask *cpus, int cpu)
-> > > >  	for (i = 0; i < sched_domains_numa_levels; i++) {
-> > > >  		if (!masks[i][j])
-> > > >  			break;
-> > > > -		cpu = cpumask_any_and(cpus, masks[i][j]);
-> > > > +		cpu = cpumask_any_and_distribute(cpus, masks[i][j]);
-> > > >  		if (cpu < nr_cpu_ids) {
-> > > >  			found = cpu;
-> > > >  			break;
-> > > 
-> > 
-> > -- 
-> > 
-> 
+Same here.
+
+> +	else
+> +		off += scnprintf(debugfs_buf, DWC_DEBUGFS_BUF_MAX - off, "RX Invalid\n");
+> +
+> +	return simple_read_from_buffer(buf, count, ppos, debugfs_buf, off);
+> +}
+> +
+> +static ssize_t rx_valid_write(struct file *file, const char __user *buf, size_t count, loff_t *ppos)
+> +{
+> +	return lane_detect_write(file, buf, count, ppos);
+> +}
+> +
+> +#define dwc_debugfs_create(name)			\
+> +debugfs_create_file(#name, 0644, rasdes_debug, pci,	\
+> +			&dbg_ ## name ## _fops)
+> +
+> +#define DWC_DEBUGFS_FOPS(name)					\
+> +static const struct file_operations dbg_ ## name ## _fops = {	\
+> +	.open = simple_open,				\
+> +	.read = name ## _read,				\
+> +	.write = name ## _write				\
+> +}
+> +
+> +DWC_DEBUGFS_FOPS(lane_detect);
+> +DWC_DEBUGFS_FOPS(rx_valid);
+> +
+> +static void dwc_pcie_rasdes_debugfs_deinit(struct dw_pcie *pci)
+> +{
+> +	struct dwc_pcie_rasdes_info *rinfo = pci->debugfs->rasdes_info;
+> +
+> +	mutex_destroy(&rinfo->reg_lock);
+> +}
+> +
+> +static int dwc_pcie_rasdes_debugfs_init(struct dw_pcie *pci, struct dentry *dir)
+> +{
+> +	struct dentry *rasdes_debug;
+> +	struct dwc_pcie_rasdes_info *rasdes_info;
+> +	const struct dwc_pcie_vsec_id *vid;
+> +	struct device *dev = pci->dev;
+> +	int ras_cap;
+> +
+> +	for (vid = dwc_pcie_vsec_ids; vid->vendor_id; vid++) {
+> +		ras_cap = dw_pcie_find_vsec_capability(pci, vid->vendor_id,
+> +							vid->vsec_id);
+> +		if (ras_cap)
+> +			break;
+> +	}
+> +	if (!ras_cap) {
+> +		dev_dbg(dev, "no rasdes capability available\n");
+> +		return -ENODEV;
+> +	}
+
+This will also go inside a new API, dw_pcie_find_rasdes_capability(pci).
+
+> +
+> +	rasdes_info = devm_kzalloc(dev, sizeof(*rasdes_info), GFP_KERNEL);
+> +	if (!rasdes_info)
+> +		return -ENOMEM;
+> +
+> +	/* Create subdirectories for Debug, Error injection, Statistics */
+> +	rasdes_debug = debugfs_create_dir("rasdes_debug", dir);
+
+_debug prefix is not needed since the directory itself belongs to debugfs.
+
+> +
+> +	mutex_init(&rasdes_info->reg_lock);
+> +	rasdes_info->ras_cap_offset = ras_cap;
+> +	pci->debugfs->rasdes_info = rasdes_info;
+> +
+> +	/* Create debugfs files for Debug subdirectory */
+> +	dwc_debugfs_create(lane_detect);
+> +	dwc_debugfs_create(rx_valid);
+> +
+> +	return 0;
+> +}
+> +
+> +void dwc_pcie_debugfs_deinit(struct dw_pcie *pci)
+> +{
+> +	dwc_pcie_rasdes_debugfs_deinit(pci);
+> +	debugfs_remove_recursive(pci->debugfs->debug_dir);
+> +}
+> +
+> +int dwc_pcie_debugfs_init(struct dw_pcie *pci)
+> +{
+> +	char dirname[DWC_DEBUGFS_BUF_MAX];
+> +	struct device *dev = pci->dev;
+> +	struct debugfs_info *debugfs;
+> +	struct dentry *dir;
+> +	int ret;
+> +
+> +	/* Create main directory for each platform driver */
+> +	snprintf(dirname, DWC_DEBUGFS_BUF_MAX, "dwc_pcie_%s", dev_name(dev));
+> +	dir = debugfs_create_dir(dirname, NULL);
+> +	if (IS_ERR(dir))
+> +		return PTR_ERR(dir);
+
+debugfs creation is not supposed to fail. So you should remove the error check.
+
+> +
+> +	debugfs = devm_kzalloc(dev, sizeof(*debugfs), GFP_KERNEL);
+> +	if (!debugfs)
+> +		return -ENOMEM;
+> +
+> +	debugfs->debug_dir = dir;
+> +	pci->debugfs = debugfs;
+> +	ret = dwc_pcie_rasdes_debugfs_init(pci, dir);
+> +	if (ret)
+> +		dev_dbg(dev, "rasdes debugfs init failed\n");
+
+RASDES
+
+> +
+> +	return 0;
+> +}
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> index f3ac7d46a855..a87a714bb472 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> @@ -642,6 +642,7 @@ void dw_pcie_ep_cleanup(struct dw_pcie_ep *ep)
+>  {
+>  	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+>  
+> +	dwc_pcie_debugfs_deinit(pci);
+>  	dw_pcie_edma_remove(pci);
+>  }
+>  EXPORT_SYMBOL_GPL(dw_pcie_ep_cleanup);
+> @@ -813,6 +814,10 @@ int dw_pcie_ep_init_registers(struct dw_pcie_ep *ep)
+>  
+>  	dw_pcie_ep_init_non_sticky_registers(pci);
+>  
+> +	ret = dwc_pcie_debugfs_init(pci);
+> +	if (ret)
+> +		goto err_remove_edma;
+> +
+>  	return 0;
+>  
+>  err_remove_edma:
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+> index d2291c3ceb8b..6b03ef7fd014 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> @@ -524,6 +524,10 @@ int dw_pcie_host_init(struct dw_pcie_rp *pp)
+>  	if (ret)
+>  		goto err_remove_edma;
+>  
+> +	ret = dwc_pcie_debugfs_init(pci);
+> +	if (ret)
+> +		goto err_remove_edma;
+> +
+
+Why can't you move it to the end of the function?
+
+>  	if (!dw_pcie_link_up(pci)) {
+>  		ret = dw_pcie_start_link(pci);
+>  		if (ret)
+> @@ -571,6 +575,8 @@ void dw_pcie_host_deinit(struct dw_pcie_rp *pp)
+>  
+>  	dw_pcie_stop_link(pci);
+>  
+> +	dwc_pcie_debugfs_deinit(pci);
+> +
+
+This should be moved to the start of the function.
+
+- Mani
 
 -- 
-
+மணிவண்ணன் சதாசிவம்
 
