@@ -1,238 +1,218 @@
-Return-Path: <linux-kernel+bounces-518732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 497F1A393DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:37:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 94326A393DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:37:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B228170F8E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 07:37:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1347D16DD2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 07:37:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 686F61B87F2;
-	Tue, 18 Feb 2025 07:37:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Nbp56iCp"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 239451B87E2;
+	Tue, 18 Feb 2025 07:37:44 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6271B1B85DF;
-	Tue, 18 Feb 2025 07:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739864245; cv=fail; b=aW4LSlj+p675A5qU3KwJkYSYc8usxCGAQHcu8Qs05mH72VCcIi1PXgPaYlxnW2rEPOkhZKe/5c0N7ozaxfi5R7VClPJoufY18f7Od3z6ebHgXmY1G13Qq5PW4IOUevBNfyZpQb7iZpQXdLNksCabDKWNOmL3j0BdAfcMH4z3WPA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739864245; c=relaxed/simple;
-	bh=tokc9IecguZrbJFCVuEn5GJfhPyABGq2i29udusFTZc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=OXkFpb4YqPZwuA4fphrpKb9Eq3wvoTbLSzMv0U6JkoTa6CYA5bxKyK4R2316vdJ4XjvwPP5/7HyAx90YuXTocc06S20kkXY3Io13xFtx1uQVt8s/63joa4ivhqL3x8cMqTxkSc4byuF9AQ/9o9uCZ8UVuL/u8QC3x6H48aI12eI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Nbp56iCp; arc=fail smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739864243; x=1771400243;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=tokc9IecguZrbJFCVuEn5GJfhPyABGq2i29udusFTZc=;
-  b=Nbp56iCp3S7YrtMFzRwQkifnvzzXH4XS/yz7o/CtMZHT0jANrAu93o7f
-   6oinMwushXpU6f/2bfuTCthGrN2kWntD+3UFlzhJ/Cyq+VGwalplXb2ze
-   FQWlywsIYgIPaNAzVCpVt5OnBtcBX2eF4GIHbDe/MUgJ3sH8x0tuZh26x
-   hACvVAiOFoYMNoJEC3gy97bg7HgiOxkv7JLceB5lv8gnjuB2rZJ48zmOA
-   e/7imKtTm34qNDfSwnhKVpw7P/y6s1IDDc7CM9uEnSKMqhWaDR2dP2+IN
-   ReZWb981tYDOyfdqVVWdvNXBiQylTwZ15kTdKqUqGaHhUevx5YtIoMLU4
-   A==;
-X-CSE-ConnectionGUID: o0LlmmMfT7O6MLLAVD9F1w==
-X-CSE-MsgGUID: OODlPqrTQQKlmOpBGKfJRQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="57952747"
-X-IronPort-AV: E=Sophos;i="6.13,295,1732608000"; 
-   d="scan'208";a="57952747"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 23:37:22 -0800
-X-CSE-ConnectionGUID: xs63l5fsSOiBIKoTDkWa8w==
-X-CSE-MsgGUID: 9bS2skXhSuqFKI93+kRx5g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="118446395"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 23:37:22 -0800
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Mon, 17 Feb 2025 23:37:21 -0800
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Mon, 17 Feb 2025 23:37:21 -0800
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.171)
- by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Mon, 17 Feb 2025 23:37:21 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jpSx5McXx1FLmaFCWbMWw8HOycN6BxNW6oG3DO9rcL0QhoM3f3y/OT71TJAtTGUdNxjNV7pOvwPOG2wcLzlBtC4bA0hRj5MVG9BiBAP/SlHiN6ZIfxOghNibB35YRszEGwxbRxR+7A6J99ti8nPXdpyw1SmWUK7uFffYDArFszBoG1SOqvk7IxEzKTk4f3Ruz33fiKe+WUQPJbHBIMcGW6soXI6NUYKYrLO3FEr1nMx8yPieZ396a+VVYEIzAg0Yv6p8GcYP+JFByRjuyKimnhR3gy264n9MIKRCNo8SRwjQhoHiTMZpq7wIucE4iVJNAZjtxgz67aXnXem4vz1Sfw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tokc9IecguZrbJFCVuEn5GJfhPyABGq2i29udusFTZc=;
- b=jYe1ngFhawN2Cz7RLcyDz89RFCkITPRW0sKTEtCfrcK0gwWzjCtA1gIbF986xqpdR3zYD1tzlLYqD27jKvKjHgU17TsjZJpU64j2HDMbGQbTx1cv/49TSmBXpZBZ9U2x/wgJ2aY+ldzEAVAar/jJwLmBqHJ2Kjr5UsUxMVihpBS6Ecmgu3jA99yM5/D/d0KtfJ1GtFi4B83gsJtqPLdTrdlv3ALR+eWiWLKsRPN2jjryaDmslt0budPD2SiHzhMwfxdrsdYN/ZPUN29fBpVpcdwO7nLRKfDAPX+AF0+y+0FolNMU88k67nLCxQSjDz14EZQUzsWR48UT9t1NQL/L4w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from CY8PR11MB7134.namprd11.prod.outlook.com (2603:10b6:930:62::17)
- by IA1PR11MB8174.namprd11.prod.outlook.com (2603:10b6:208:450::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Tue, 18 Feb
- 2025 07:37:19 +0000
-Received: from CY8PR11MB7134.namprd11.prod.outlook.com
- ([fe80::cd87:9086:122c:be3d]) by CY8PR11MB7134.namprd11.prod.outlook.com
- ([fe80::cd87:9086:122c:be3d%4]) with mapi id 15.20.8422.012; Tue, 18 Feb 2025
- 07:37:18 +0000
-From: "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>
-To: Yazen Ghannam <yazen.ghannam@amd.com>, "x86@kernel.org" <x86@kernel.org>,
-	"Luck, Tony" <tony.luck@intel.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-	"Smita.KoralahalliChannabasappa@amd.com"
-	<Smita.KoralahalliChannabasappa@amd.com>
-Subject: RE: [PATCH v2 13/16] x86/mce: Unify AMD DFR handler with MCA Polling
-Thread-Topic: [PATCH v2 13/16] x86/mce: Unify AMD DFR handler with MCA Polling
-Thread-Index: AQHbfjgoQWs/bRLHLkmM5J8oXwf5nbNMsZTQ
-Date: Tue, 18 Feb 2025 07:37:18 +0000
-Message-ID: <CY8PR11MB7134EE8E03532382B8FC23F389FA2@CY8PR11MB7134.namprd11.prod.outlook.com>
-References: <20250213-wip-mca-updates-v2-0-3636547fe05f@amd.com>
- <20250213-wip-mca-updates-v2-13-3636547fe05f@amd.com>
-In-Reply-To: <20250213-wip-mca-updates-v2-13-3636547fe05f@amd.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CY8PR11MB7134:EE_|IA1PR11MB8174:EE_
-x-ms-office365-filtering-correlation-id: 0575f510-2395-402e-54c4-08dd4fef12c7
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?QWcydHBETGpqTHFaQ1pwellTTEVhSTNVZWc5OWVUc1pBMWV5dk13M0NZdm52?=
- =?utf-8?B?YVBvY3JtNUg1czZBdHpBZjhvbkhIdVNsaXNtTDVZcHRGeDBabFJneDV4WVda?=
- =?utf-8?B?QXRwUU5FU0NldzZiOENEWkZYWklyRFFTSnNuOTlpOXpmWVVaOGhOdVNFbkRU?=
- =?utf-8?B?R1J5aEN1cW5OanNUaHU5Si83MzZ5ZWsydCsvSldCQWFhd3BPc245eENKNkdw?=
- =?utf-8?B?WHdieUl4OUJueVcvdzc3WlBycllVT2R3Y0NMRkdKVmhPVk1NRGlPV0RpTUw5?=
- =?utf-8?B?SWFCYWI1amFDcUJHYVp5RUY2U2pSTW8yUEVMaHFJWXJJRUN0SnhCNlQrdE1l?=
- =?utf-8?B?RWtuUGNTZzhRU2JHTTVTeXBhQmR5ZXZabm5ROUdybEk1WUtYS3ZWTGlFYzgr?=
- =?utf-8?B?VjYzK2g5NTVWdXFrb3ZPSytsVTZ0ZjZmN2t2M1h0REI4cmMvVktYREVrTEZC?=
- =?utf-8?B?MlZ3S0lWbnFQeGlmbG1IZ2VGNERqbGFDbHpuZmNSV3lDL0xZd25BZURrS01E?=
- =?utf-8?B?YjA3bVlkaE5jazBSaGQ0Z0dCc3YxNzFBK2xqZi9vVmNEMys5MG1MRXZvRUJl?=
- =?utf-8?B?a1dnV3dZQTRpUDdSNzRTKytoak8wU0tlcmVDVkN3cGdMWEtZb3dzMlR4Vjdm?=
- =?utf-8?B?Yk8rcHhSZ0hON3ZxWVJxNjVUbUVyL3JyRUpvd2dvOVExQ21KWkMxQlJjSU9R?=
- =?utf-8?B?dzdneURCYXhBSEdDT0JPeHlyWWRzQjlZWllZQjZ1MEZIL0I3b3QyYXpUaW52?=
- =?utf-8?B?b1MrTU1MYUJGSzNHSzhpSWRFWlJqWVhldjZKeEVTU3UzREc1ZHRIbUZwV05j?=
- =?utf-8?B?TjFKbUJsUWYwenF6TW5SNTJrOW5iMHVTelViRkVzNnJRZmgyWmxmZUE2ZGF1?=
- =?utf-8?B?SmkwV2VVUE8zaWdjQmtpWkR4K1JVOTVpL05tU09GbmxNN2ZSeEMrUnptUXRr?=
- =?utf-8?B?TXpzQ0M2VTRNOEpsZXROZXRxNU02dXEzRHo4RE5pd3JGeHRQSnZiM0xuVWNv?=
- =?utf-8?B?M0dTYkpzY3pBSkVPZzBZZlZBYkFaT05WNThmZ1lheTBGWHhFVmFZUFBTaXoz?=
- =?utf-8?B?REp2ZlY2WkludUx4WHU4c0R6OW9paVhMU0lqZUdjMkRUUEZnVkx5dnBBRURa?=
- =?utf-8?B?MEhhbW9XUWxObXRpMFZFLzIwZk0wRHFFUFpYTnZad3BwdFFiekVtYVgrWW9r?=
- =?utf-8?B?WCttaDJxZWR4UUVsdUNlTVNWS1VEWVB5MWEvTXQ0SGR4WHNhUFo4aTAvZnZL?=
- =?utf-8?B?cGc3Z2cvZnJxVVNLSFpGNVliY2RTaFdWampMMGVnMmlpT2VaN255ZGwrcVZ1?=
- =?utf-8?B?Y1FoSlZ6N2dzSEkyT2pQWk82cWM3SithVzdpb1U1eStiZy9IQmQ4NUE4WDdC?=
- =?utf-8?B?OHp4VkNqZjl2MlJYaFFhbkhEQi9yVmJpbUlIcFFDWWllRmhkMHp6SWM3U2lD?=
- =?utf-8?B?eUxjR0ZyMEtTc0hxU3dkakhkZU90YlFvbnlrR0Fwd0IyTnY0dUlFVlFORnZ4?=
- =?utf-8?B?aUR2cHl2N0lmM1VNb1ZvMSs1NUVKc0ttTWg5L1dVMGZpbWNucFFtL2VxSndF?=
- =?utf-8?B?SGFOQkxQbXJFMEZuMUNBcSs2dmZkUmxubVJQckVwdDlRWkxpdUs4SzdZTXVK?=
- =?utf-8?B?czIrZ08wV0IrekZ5a29QMXFWTjRzcUg4K1M5YkNjd2o4TUsrRjNNbktvWm9G?=
- =?utf-8?B?RXoyWlBweTdzazgvYm5kVXZOckova3FyT2lLYU5KT3gyaWREbXpjdEQ2bEZN?=
- =?utf-8?B?dHRxMGxMNGhnODZMZHRod09KeTVSb0d3eVlGU0x3cVFOZ25kK3M5MHJmeHFk?=
- =?utf-8?B?TGoxL1J2OHBaczgrbEMyRlA5Q3BFWklqT1pzYjJEMkh4bWFzM21ZemE1MEVU?=
- =?utf-8?B?enhDRGR6S0lSOWk0cXRYM3haTlNoaTUvWE9zT2tIald6TTBGOTNjV09WQm9k?=
- =?utf-8?Q?RGRL3V816nFXA0i5uRAtklqeIbU+5Z6S?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR11MB7134.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?S05hZXFXT2lwL0xLRURlbkpXVWVoWmJhcXlwNTI3RExjZFdGMytmWkJUZ3k1?=
- =?utf-8?B?UGszWGJHRmpIZlo1dkdMa0Jva0hoWHRUQlZCYmNZRTJoZHZhbmZvNk1TWjUy?=
- =?utf-8?B?TFFGeVRGUFhwbGVuSjFXTUtlODZMdyswWTc0TC9qUTlFeDM1aHdtOE9mYUNJ?=
- =?utf-8?B?RkdzdnFSei9rQWpObVZxOXRlK3BjZmRkaE1GdUFFY3FDbXV1RTdhcmE1ckd0?=
- =?utf-8?B?RktPWFpvV3pSZTh4aXVyeVE3NVd0ZkhqMjdwYndoM2RLR3BRbUFNVGNuZWtH?=
- =?utf-8?B?cWNGanlaNmRTZExYVVg0Q2FqWEtDQnJhT3BTTkRXZ0xMR3Q4RGNWWXlKUkRl?=
- =?utf-8?B?Z0twcXI2SDRkN3l6Tks2UWRhOW4zbk5OVWFjN0xNVE91dXVCQzQ4NzhvVTAz?=
- =?utf-8?B?Y0dVcGxuTzVWdG1vQ09zTEFnYk8xZklaN2FTVFdsUUdEVXZNSzh4Q0lXL3B5?=
- =?utf-8?B?R2lGTkdYZ0NLUEFrSHdDTmFwcFY3WUYxOThZS3lGYkpYd2RaTnNFRUY2ZTdp?=
- =?utf-8?B?NVBWRm9SMitsUldnTGUyOHVZejNxY2N2NHF3YTJnRDgrKzRWaTI4UVBMeklm?=
- =?utf-8?B?aWRNVThLZW9NTUtpSEdEOVBIZnA4TGFaOEtYSkVUOXNUSWFLOFJpYVZWdHdq?=
- =?utf-8?B?bDdxcEdIcCt1WnhPUzNtRUdyc3pFNUk1M1hUS3RycUxlZDFadi90d0RmNFBv?=
- =?utf-8?B?elpDSnNJNkE0VExLcUhNdEwyZklqdFRFQ0FsVmswZ0t0MUk4N2dlTWNKMzNF?=
- =?utf-8?B?b1JEYnZHZk5CbmVTRUF3UWZEVlVDT0FEU3ZGR3lneVNkQlBRSUZnZEx5Y2Zz?=
- =?utf-8?B?cVNxRGhDYWZsdUFWVURlRkJGbG1VeGdRNXdSRndKQnQxSnlMS0pCTzRTcmVF?=
- =?utf-8?B?ZU9XeW1kOGJwMzlyaCthMVNlZDB3cUpPOGJBSkE1cnZGT2hITzJNM0JhcmEw?=
- =?utf-8?B?TTh0VGxPRjFReGV6SjgzcVlSQzVaQTdqV0c1NENSOXhKbUNEUVJIVjJBUWtL?=
- =?utf-8?B?MDIyNXN6dXNJb2JJaWQ2bURRNFJ6UWI3WXJUSjhMOGxIRTVTYXUrT1RKMDMx?=
- =?utf-8?B?Z1pFNmo2OHl0Mi85ZyszclUyY09JN0lRSzRVWjFvNmN6OVVvTnU4T2xGTjUv?=
- =?utf-8?B?aEhQMVl3N3FFSFQwR3EwY2t4UVJMd2pyQ0w1NnhUOFIrMWZ5RmRGVjJlYTNk?=
- =?utf-8?B?WHBwMWJKemZOeHdyanJ1WHMvU1pENjlXNE5yZVM0clBQRFRyS2g2aGdVejdC?=
- =?utf-8?B?ZFB3R3RkRDBSUW5rakdTZlU0cFhRRGVIblVXNFk3NS8wY1RJbWJsWEgrZGE5?=
- =?utf-8?B?TDI5WjRGeTN5WE4zL1o1TGZXMG9mNXhEdmFiV0lsSllYRmtMZ3hWOENzVzQz?=
- =?utf-8?B?ZzJ6Y3RTZ2VWZmdxQmtOOUF4U2RKdE0vc2M0Tkkvcy9oeERTT2FWdzg4UVFQ?=
- =?utf-8?B?T0FmTUdUZW14UDdLUi84KzJsSENFOE5IanpUbFZoZXdYWHhudVJUdXJZMGFx?=
- =?utf-8?B?ZDBzVUVPN0xySGRFUS9OeXNjY29Ya1ErNnkwY1lsV1AvcW5wVWUrRGlVMzVN?=
- =?utf-8?B?RGlzQnJnUWd0Q2pXSVBjZ2VTd082c1IyQlYvTy9pR2cyRVdsaGNVUDFLNkNX?=
- =?utf-8?B?c2NWMmR1L3BFcVBzSno3Umx2U1c0aHZIaWRlQzRGVEREeVRYQkIwWGNlQVlj?=
- =?utf-8?B?SmNaQ1lGblNTR3VDTnpzY0ptVHVJdjZzTlgrbWtYdWNXUGd1ZG8yQ29MVGJG?=
- =?utf-8?B?YjBRbkxtcWJVcmttVUVPcE9SSk1RN0I0WFJsNWNpSGFSaWsxQ1Ywcm5kYVor?=
- =?utf-8?B?R2E4Q0htSi9yOVVTOTlWbVRzNlJKQjRzMjErbVovL08rVkRndDFEaVJpT0xt?=
- =?utf-8?B?K01CVjhxNG9GSy9zK2Zjc0UwcUMxL1dORUpNb0t1TVg0SGpEWnZuMHR5dTNM?=
- =?utf-8?B?d09qY3oydkh5Q1dTMU9sZEZzR3lsOEVoQ2o5RExaWFZ3akg5MDBXc0IzbW4r?=
- =?utf-8?B?TWVrK0JHNk4vd25YYktsR2o1RUFqSEZ4WGVDdFVsYW50cXNRRG1LYUVpb0U2?=
- =?utf-8?B?Q2t0ZG1BSFlnSnEzZHRDWHpDYkNtOEo0STJnd05IQ2xON2RGay8xTVNoTDBa?=
- =?utf-8?Q?q4f38eM6T19o4w49oJO8XxdoC?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E28021B85E4
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 07:37:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739864263; cv=none; b=kDFSZ7z1JI20i17Fw8x1TDFpHSXQ0jcx9KrWeKNDdEYSUpqbfQuyeqr7zJiGk/G9FrVkA4l5m6+y3YXUcce1fiYK/wH9oJArpRRGcY0kPoJZo5q8UycW+aNLElPj2/8VMoexaRCUEIsGaIsr24DdphoKdkzXeYWkc6suPAOSftc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739864263; c=relaxed/simple;
+	bh=DUoJQlVlnERLhUSNoTxyxiAkOJwMamJa+WF47ELS5bE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N6Q+UUJBdtL4LXc6bx95E6++W/RskKA5wd6RddQot9vT2+g1o/vhIzEcugO1nLDgS0m8lpLe8Ym3xBiN3q7+YIxZJ6icFqRzM0W633qOpa5HzGJAoTN09O7FAENntYdDh3TP1ByI78FlBsytkfBh/0wfhHMT+QX/aQKMpraoqWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tkIAe-0006zz-Cf; Tue, 18 Feb 2025 08:37:32 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tkIAd-001Y2U-2P;
+	Tue, 18 Feb 2025 08:37:31 +0100
+Received: from pengutronix.de (p5b164285.dip0.t-ipconnect.de [91.22.66.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 5FA283C56E7;
+	Tue, 18 Feb 2025 07:37:31 +0000 (UTC)
+Date: Tue, 18 Feb 2025 08:37:30 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Cc: Matt Jan <zoo868e@gmail.com>, 
+	syzbot+d7d8c418e8317899e88c@syzkaller.appspotmail.com, linux-kernel@vger.kernel.org, linux-can@vger.kernel.org
+Subject: Re: [PATCH] can: ucan: Correct the size parameter
+Message-ID: <20250218-accurate-viridian-manatee-6f2878-mkl@pengutronix.de>
+References: <67b323a4.050a0220.173698.002b.GAE@google.com>
+ <20250217190404.354574-1-zoo868e@gmail.com>
+ <2f33170a-f7bb-47dd-8cb7-15c055dabc83@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CY8PR11MB7134.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0575f510-2395-402e-54c4-08dd4fef12c7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Feb 2025 07:37:18.6725
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: xC+3puIHttsDfngaQJK03H9dQ0/b5gWMeaHNn53A2JO4tHUTcQTvdO0o6rA8v9A2M+8p3HY8jsw57x9JW2risw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB8174
-X-OriginatorOrg: intel.com
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="h4vmx37zg34x3jwu"
+Content-Disposition: inline
+In-Reply-To: <2f33170a-f7bb-47dd-8cb7-15c055dabc83@wanadoo.fr>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-PiBGcm9tOiBZYXplbiBHaGFubmFtIDx5YXplbi5naGFubmFtQGFtZC5jb20+DQo+IFsuLi5dDQo+
-ICtzdGF0aWMgYm9vbCBzbWNhX3Nob3VsZF9sb2dfcG9sbF9lcnJvcihlbnVtIG1jcF9mbGFncyBm
-bGFncywgc3RydWN0DQo+ICttY2VfaHdfZXJyICplcnIpIHsNCj4gKwlzdHJ1Y3QgbWNlICptID0g
-JmVyci0+bTsNCj4gKw0KPiArCS8qDQo+ICsJICogSWYgdGhpcyBpcyBhIGRlZmVycmVkIGVycm9y
-IGZvdW5kIGluIE1DQV9TVEFUVVMsIHRoZW4gY2xlYXINCj4gKwkgKiB0aGUgcmVkdW5kYW50IGRh
-dGEgZnJvbSB0aGUgTUNBX0RFU1RBVCByZWdpc3Rlci4NCj4gKwkgKi8NCj4gKwlpZiAobS0+c3Rh
-dHVzICYgTUNJX1NUQVRVU19WQUwpIHsNCj4gKwkJaWYgKG0tPnN0YXR1cyAmIE1DSV9TVEFUVVNf
-REVGRVJSRUQpDQo+ICsJCQltY2Vfd3Jtc3JsKE1TUl9BTUQ2NF9TTUNBX01DeF9ERVNUQVQobS0N
-Cj4gPmJhbmspLCAwKTsNCj4gKw0KPiArCQlyZXR1cm4gdHJ1ZTsNCj4gKwl9DQo+ICsNCj4gKwkv
-Kg0KPiArCSAqIElmIHRoZSBNQ0FfREVTVEFUIHJlZ2lzdGVyIGhhcyB2YWxpZCBkYXRhLCB0aGVu
-IHVzZQ0KPiArCSAqIGl0IGFzIHRoZSBzdGF0dXMgcmVnaXN0ZXIuDQo+ICsJICovDQo+ICsJbS0+
-c3RhdHVzID0gbWNlX3JkbXNybChNU1JfQU1ENjRfU01DQV9NQ3hfREVTVEFUKG0tDQo+ID5iYW5r
-KSk7DQo+ICsNCj4gKwlpZiAoIShtLT5zdGF0dXMgJiBNQ0lfU1RBVFVTX1ZBTCkpDQo+ICsJCXJl
-dHVybiBmYWxzZTsNCj4gKw0KPiArCS8qDQo+ICsJICogR2F0aGVyIGFsbCByZWxldmFudCBkYXRh
-IG5vdyBhbmQgbG9nIHRoZSByZWNvcmQgYmVmb3JlIGNsZWFyaW5nDQo+ICsJICogdGhlIGRlZmVy
-cmVkIHN0YXR1cyByZWdpc3Rlci4gVGhpcyBhdm9pZHMgbmVlZGluZyB0byBnbyBiYWNrIHRvDQo+
-ICsJICogdGhlIHBvbGxpbmcgZnVuY3Rpb24gZm9yIHRoZXNlIGFjdGlvbnMuDQo+ICsJICovDQo+
-ICsJbWNlX3JlYWRfYXV4KGVyciwgbS0+YmFuayk7DQo+ICsNCj4gKwlpZiAobS0+c3RhdHVzICYg
-TUNJX1NUQVRVU19BRERSVikNCj4gKwkJbS0+YWRkciA9DQo+IG1jZV9yZG1zcmwoTVNSX0FNRDY0
-X1NNQ0FfTUN4X0RFQUREUihtLT5iYW5rKSk7DQo+ICsNCj4gKwlzbWNhX2V4dHJhY3RfZXJyX2Fk
-ZHIobSk7DQo+ICsJbS0+c2V2ZXJpdHkgPSBtY2Vfc2V2ZXJpdHkobSwgTlVMTCwgTlVMTCwgZmFs
-c2UpOw0KPiArDQoNCklzIHRoZSBmb2xsb3dpbmcgY2hlY2sgaW4gbWFjaGluZV9jaGVja19wb2xs
-KCkgbmVlZGVkIGJlZm9yZSANCnF1ZXVpbmcvbG9nZ2luZyBBTUQncyBkZWZlcnJlZCBlcnJvcj8N
-Cg0KICAgICAgIGlmIChtY2FfY2ZnLmRvbnRfbG9nX2NlICYmICFtY2VfdXNhYmxlX2FkZHJlc3Mo
-bSkpDQogICAgICAgICAgICAgLy9KdXN0IGNsZWFyIE1DQV9TVEFUVVMsIGJ1dCBub3QgcXVldWUv
-bG9nIGVycm9ycy4NCg0KPiArCWlmIChmbGFncyAmIE1DUF9RVUVVRV9MT0cpDQo+ICsJCW1jZV9n
-ZW5fcG9vbF9hZGQoZXJyKTsNCj4gKwllbHNlDQo+ICsJCW1jZV9sb2coZXJyKTsNCj4gKw0KPiAr
-CW1jZV93cm1zcmwoTVNSX0FNRDY0X1NNQ0FfTUN4X0RFU1RBVChtLT5iYW5rKSwgMCk7DQo+ICsJ
-cmV0dXJuIGZhbHNlOw0KPiArfQ0KWy4uLl0NCg==
+
+--h4vmx37zg34x3jwu
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] can: ucan: Correct the size parameter
+MIME-Version: 1.0
+
+On 18.02.2025 11:22:11, Vincent Mailhol wrote:
+> On 18/02/2025 at 04:04, Matt Jan wrote:
+> > According to the comment, the size parameter is only required when
+> > @dst is not an array, or when the copy needs to be smaller than
+> > sizeof(@dst). Since the source is a `union ucan_ctl_payload`, the
+> > correct size should be sizeof(union ucan_ctl_payload).
+>=20
+> While this fix is correct, I think that the root cause is that
+> up->ctl_msg_buffer->raw is not NUL terminated.
+>=20
+> Because of that, a local copy was added, just to reintroduce the NUL
+> terminating byte.
+>=20
+> I think it is better to just directly terminate up->ctl_msg_buffer->raw
+> and get rid of the firmware_str local variable and the string copy.
+>=20
+> So, what about this:
+>=20
+> diff --git a/drivers/net/can/usb/ucan.c b/drivers/net/can/usb/ucan.c
+> index 39a63b7313a4..268085453d24 100644
+> --- a/drivers/net/can/usb/ucan.c
+> +++ b/drivers/net/can/usb/ucan.c
+> @@ -186,7 +186,7 @@ union ucan_ctl_payload {
+>          */
+>         struct ucan_ctl_cmd_get_protocol_version cmd_get_protocol_version;
+>=20
+> -       u8 raw[128];
+> +       char fw_info[128];
+>  } __packed;
+>=20
+>  enum {
+> @@ -424,18 +424,19 @@ static int ucan_ctrl_command_out(struct ucan_priv *=
+up,
+>                                UCAN_USB_CTL_PIPE_TIMEOUT);
+>  }
+>=20
+> -static int ucan_device_request_in(struct ucan_priv *up,
+> -                                 u8 cmd, u16 subcmd, u16 datalen)
+> +static void ucan_get_fw_info(struct ucan_priv *up, char *fw_info,
+> size_t size)
+>  {
+> -       return usb_control_msg(up->udev,
+> -                              usb_rcvctrlpipe(up->udev, 0),
+> -                              cmd,
+> -                              USB_DIR_IN | USB_TYPE_VENDOR |
+> USB_RECIP_DEVICE,
+> -                              subcmd,
+> -                              0,
+> -                              up->ctl_msg_buffer,
+> -                              datalen,
+> -                              UCAN_USB_CTL_PIPE_TIMEOUT);
+> +       int ret;
+> +
+> +       ret =3D usb_control_msg(up->udev, usb_rcvctrlpipe(up->udev, 0),
+> +                             UCAN_DEVICE_GET_FW_STRING,
+> +                             USB_DIR_IN | USB_TYPE_VENDOR |
+> USB_RECIP_DEVICE,
+> +                             0, 0, fw_info, size - 1,
+> +                             UCAN_USB_CTL_PIPE_TIMEOUT);
+> +       if (ret > 0)
+> +               fw_info[ret] =3D '\0';
+> +       else
+> +               strcpy(fw_info, "unknown");
+>  }
+>=20
+>  /* Parse the device information structure reported by the device and
+> @@ -1314,7 +1315,6 @@ static int ucan_probe(struct usb_interface *intf,
+>         u8 in_ep_addr;
+>         u8 out_ep_addr;
+>         union ucan_ctl_payload *ctl_msg_buffer;
+> -       char firmware_str[sizeof(union ucan_ctl_payload) + 1];
+>=20
+>         udev =3D interface_to_usbdev(intf);
+>=20
+> @@ -1527,17 +1527,6 @@ static int ucan_probe(struct usb_interface *intf,
+>          */
+>         ucan_parse_device_info(up, &ctl_msg_buffer->cmd_get_device_info);
+>=20
+> -       /* just print some device information - if available */
+> -       ret =3D ucan_device_request_in(up, UCAN_DEVICE_GET_FW_STRING, 0,
+> -                                    sizeof(union ucan_ctl_payload));
+> -       if (ret > 0) {
+> -               /* copy string while ensuring zero termination */
+> -               strscpy(firmware_str, up->ctl_msg_buffer->raw,
+> -                       sizeof(union ucan_ctl_payload) + 1);
+> -       } else {
+> -               strcpy(firmware_str, "unknown");
+> -       }
+> -
+>         /* device is compatible, reset it */
+>         ret =3D ucan_ctrl_command_out(up, UCAN_COMMAND_RESET, 0, 0);
+>         if (ret < 0)
+> @@ -1555,7 +1544,10 @@ static int ucan_probe(struct usb_interface *intf,
+>=20
+>         /* initialisation complete, log device info */
+>         netdev_info(up->netdev, "registered device\n");
+> -       netdev_info(up->netdev, "firmware string: %s\n", firmware_str);
+> +       ucan_get_fw_info(up, up->ctl_msg_buffer->fw_info,
+> +                        sizeof(up->ctl_msg_buffer->fw_info));
+> +       netdev_info(up->netdev, "firmware string: %s\n",
+> +                   up->ctl_msg_buffer->fw_info);
+
+We could also use the:
+
+    printf("%.*s", sizeof(up->ctl_msg_buffer->fw_info), up->ctl_msg_buffer-=
+>fw_info);
+
+format string trick to only print a limited number of chars of the given
+string. But I'm also fine with your solution. Either way, please send a
+proper patch :)
+
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--h4vmx37zg34x3jwu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAme0OLUACgkQDHRl3/mQ
+kZw9uwgAmpOyOf1wkR0AGLIlgvqr34+Zhb618ewFvznR16Bn0/6VoNBDGUlQFzYA
+0oS7rdFuA+Zv8DdfWg98kUyNiZ9E+2cIkqTioUAqzZVHgeFeD8aZrwxJa13tYkoi
+0xHizIC58c5u6jdOcBvNagyt73qX0wYtEiUhEcGJiRl8BP2mApjv69rmdHkE76pA
+hvld1rwWUYI1MB2nip8YRxYhpt4YCQfIX9VDcmIX6W76JJJGN2efLwoCGChmMyXA
+Vac3DjnvluwxFcLP1JlbdlYUusrqRwK8ruzKHP2gpkqDCdL278RBV2+Mq9TXgGWH
+SW+l/BA8hcxXzRJAUeDrYAzBa/+73Q==
+=01QG
+-----END PGP SIGNATURE-----
+
+--h4vmx37zg34x3jwu--
 
