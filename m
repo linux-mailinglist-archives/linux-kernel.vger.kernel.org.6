@@ -1,125 +1,140 @@
-Return-Path: <linux-kernel+bounces-519072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5136A397AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:54:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56FBCA3979C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:53:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9E8F7A1CA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:51:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85614162344
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:52:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C33C248175;
-	Tue, 18 Feb 2025 09:46:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA5B653;
+	Tue, 18 Feb 2025 09:47:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UL2mXM8l";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BOHBFqT2"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WxYr3p8+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB0D7246335;
-	Tue, 18 Feb 2025 09:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FB3022CBD0;
+	Tue, 18 Feb 2025 09:47:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739872009; cv=none; b=leepAO8l5aqhUcZdMz6FUQFRE+Ua/P7nKoqsOadicDiYxQVSCXk1Xob2Oxp8KvnxQhtqe+fACP2/fZppd89/CIWThdZIPZvHn1MUINrWlst310wic4vP0Z3BbAl2DTqyVZQA4J96FT6N+UuyRbqR6SMqht7Ce7b1BDBkKZxFs04=
+	t=1739872032; cv=none; b=e2Mb7L/QmEcKkmmeo/7BPg27rNje2nC51l9KAXW0DKhr2WdTPhHVBWALxxJ2nx/wd6LSIbUUmldj2ydVRaQCKq69v0otRNomhX/9Oe2RPAFTMBoyjoxd0sLA/kMkNPpaZMerABnmpqX1FqhcBDEyIBbkdxVb/7aH0NwggZ0SGNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739872009; c=relaxed/simple;
-	bh=5J1JCnlrPEyC3wKj5hlfaP8vPKgl5X42BUKi5TPNLdw=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=M2X6P4ftq6uVixJPxj+sT3p3VlaA4dx3c+/y0auT01Evffs5GxNL8qpHt/3eppnKG2uguFchjEIA6zuPjNgAP6ylQpQHt1dXAxOh5n039EQFZE58dhDl3t+b0oWvqg6HuCTwCPEr6hFLZsUQ+SZA91nTSuEp0pkhYp22sd4Kv7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UL2mXM8l; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BOHBFqT2; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 18 Feb 2025 09:46:45 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1739872005;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0el+vZOLLGmlZA+e1CSulntccrWgwxv9M5Q6sS5J0uw=;
-	b=UL2mXM8lC1NkC/P5SZn46TpcoIlX5ezk4o1ppt1ZhksS9v6dK1hNCpB1enE74cYB6aS4gk
-	UlRwLKjgEe1O+8d5DblIPRleg9+nziOaTB0dfj0va8tV3BrTYE+nkcU4PG7rB8MnfKf8Mf
-	zNvsf4USXEes2KR7pQbkxz53zFBE+Jv6BK5Uyj5p/9GpleJIzZ4xw7s9mT0cRDvrZNUd67
-	l8l5lf1j/mwZtA6FKcgXKnL8RZLH90n2Ez4F6qrniA0oxnhk60av3oFK/laySqWlM47g1l
-	liWMtJn9fLaLerwuQ/SlocFmdtDr8wmyLK14zNumPnE8xZm97xzejlqmzKw7lA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1739872005;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0el+vZOLLGmlZA+e1CSulntccrWgwxv9M5Q6sS5J0uw=;
-	b=BOHBFqT2WGpY3yJM6PKsXCUsDCEp2yA9RhwrKUCcIHMk8xA/e00G5LY5NCq2IO7hBanmHn
-	s/jSDKz1Rqf/usCQ==
-From: "tip-bot2 for Nam Cao" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/cleanups] KVM: PPC: Switch to use hrtimer_setup()
-Cc: Nam Cao <namcao@linutronix.de>, Thomas Gleixner <tglx@linutronix.de>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: =?utf-8?q?=3Ca58c4f16b1cfba13f96201fda355553850a97562=2E17387?=
- =?utf-8?q?46821=2Egit=2Enamcao=40linutronix=2Ede=3E?=
-References: =?utf-8?q?=3Ca58c4f16b1cfba13f96201fda355553850a97562=2E173874?=
- =?utf-8?q?6821=2Egit=2Enamcao=40linutronix=2Ede=3E?=
+	s=arc-20240116; t=1739872032; c=relaxed/simple;
+	bh=RewN5nlvJM/iiydEKFf80mM01NzWJ5mNu9D7+12YtFY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MkyUF6HnIOpBNYrYl8p4tabTZwjTfF9B9b6fvO2Fd46vHkGmJIs4qPeyfLWM5AjHTUOqIOpf5i1BbfaP0DW2oq81Uedq5iag20NfBnxSg403odC1Tq67fwlsV+r0N6UxlE9lQe/IbdJd6Y1XIfIYtqssALDeVZw/y6GlkhsNhG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WxYr3p8+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09C41C4CEE2;
+	Tue, 18 Feb 2025 09:47:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739872031;
+	bh=RewN5nlvJM/iiydEKFf80mM01NzWJ5mNu9D7+12YtFY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WxYr3p8+ONFGwBoe1iFxQlwIolL1Cznbq8f6dhKX94nIMMeQSNMLuJ4TNF4oqUsDg
+	 di2QHX3OtREUPToYGwHEvIPPF/psJiHmlT3rKLI0NHX1ZUmJ6m2tbyN1bWv2rIrxcf
+	 7mFDdcFWUQaCtf6tLCHuPWdpg+2TzUz0U8s9BGZ0FtLtb73kSwApNfMoN2r3wifvzC
+	 KM3iXPsoh/LeRxt7ksvSTpiWTdyoPtWr1IFjeLhin+RLl9zT3etYaoijloF4PJhaQJ
+	 5lGSC9GRKfalcPp7pRzRF9BzF0IZ5meUM6mrcKz68sY7tOQ42muFf1IBeKDS2QmDTN
+	 ZeDmaT0MZD6KQ==
+Date: Tue, 18 Feb 2025 11:47:05 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v3 1/2] mm/memblock: Add reserved memory release function
+Message-ID: <Z7RXGX/TyAvETRgc@kernel.org>
+References: <173928521419.906035.17750338150436695675.stgit@devnote2>
+ <173928522350.906035.5626965043208329135.stgit@devnote2>
+ <Z7Q1xY3jhWjaSdeh@kernel.org>
+ <20250218174257.61018735a30268b5e21e50e3@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173987200535.10177.7528400490473745436.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250218174257.61018735a30268b5e21e50e3@kernel.org>
 
-The following commit has been merged into the timers/cleanups branch of tip:
+On Tue, Feb 18, 2025 at 05:42:57PM +0900, Masami Hiramatsu wrote:
+> Hi Mike,
+> 
+> On Tue, 18 Feb 2025 09:24:53 +0200
+> Mike Rapoport <rppt@kernel.org> wrote:
+> 
+> > Hi Masami,
+> > 
+> > On Tue, Feb 11, 2025 at 11:47:03PM +0900, Masami Hiramatsu (Google) wrote:
+> > > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > > 
+> > > Add reserve_mem_release_by_name() to release a reserved memory region
+> > > with a given name. This allows us to release reserved memory which is
+> > > defined by kernel cmdline, after boot.
+> > > 
+> > > Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > > Cc: Mike Rapoport <rppt@kernel.org>
+> > > Cc: linux-mm@kvack.org
+> > 
+> > ...
+> > 
+> > > +/**
+> > > + * reserve_mem_release_by_name - Release reserved memory region with a given name
+> > > + * @name: The name that is attatched to a reserved memory region
+> > > + *
+> > > + * Forcibly release the pages in the reserved memory region so that those memory
+> > > + * can be used as free memory. After released the reserved region size becomes 0.
+> > > + *
+> > > + * Returns: 1 if released or 0 if not found.
+> > > + */
+> > > +int reserve_mem_release_by_name(const char *name)
+> > > +{
+> > > +	struct reserve_mem_table *map;
+> > > +	unsigned int page_count;
+> > > +	phys_addr_t start;
+> > > +
+> > > +	guard(mutex)(&reserve_mem_lock);
+> > > +	map = reserve_mem_find_by_name_nolock(name);
+> > > +	if (!map)
+> > > +		return 0;
+> > > +
+> > > +	start = map->start;
+> > > +	page_count = DIV_ROUND_UP(map->size, PAGE_SIZE);
+> > > +
+> > > +	for (int i = 0; i < page_count; i++) {
+> > > +		phys_addr_t addr = start + i * PAGE_SIZE;
+> > > +		struct page *page = pfn_to_page(addr >> PAGE_SHIFT);
+> > > +
+> > > +		page->flags &= ~BIT(PG_reserved);
+> > > +		__free_page(page);
+> > > +	}
+> > 
+> > We have free_reserved_area(), please use it here.
+> > Otherwise
+> > 
+> > Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> 
+> Thanks! but I can not use free_reserved_area() here because it uses
+> virt_to_page(). Here we only know the physical address in the map.
+> I think we can use free_reserved_page() instead. Is that OK?
 
-Commit-ID:     a0241210a3f3950bf4a28b5077108c8a126d47ec
-Gitweb:        https://git.kernel.org/tip/a0241210a3f3950bf4a28b5077108c8a126d47ec
-Author:        Nam Cao <namcao@linutronix.de>
-AuthorDate:    Wed, 05 Feb 2025 11:38:46 +01:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Tue, 18 Feb 2025 10:32:30 +01:00
-
-KVM: PPC: Switch to use hrtimer_setup()
-
-hrtimer_setup() takes the callback function pointer as argument and
-initializes the timer completely.
-
-Replace hrtimer_init() and the open coded initialization of
-hrtimer::function with the new setup mechanism.
-
-Patch was created by using Coccinelle.
-
-Signed-off-by: Nam Cao <namcao@linutronix.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/a58c4f16b1cfba13f96201fda355553850a97562.1738746821.git.namcao@linutronix.de
-
----
- arch/powerpc/kvm/powerpc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/powerpc/kvm/powerpc.c b/arch/powerpc/kvm/powerpc.c
-index ce1d91e..61f2b7e 100644
---- a/arch/powerpc/kvm/powerpc.c
-+++ b/arch/powerpc/kvm/powerpc.c
-@@ -766,8 +766,8 @@ int kvm_arch_vcpu_create(struct kvm_vcpu *vcpu)
- {
- 	int err;
+For reserve_mem ranges virt_to_phys() will work, they are allocated from the
+memory that is covered by the direct map.
  
--	hrtimer_init(&vcpu->arch.dec_timer, CLOCK_REALTIME, HRTIMER_MODE_ABS);
--	vcpu->arch.dec_timer.function = kvmppc_decrementer_wakeup;
-+	hrtimer_setup(&vcpu->arch.dec_timer, kvmppc_decrementer_wakeup, CLOCK_REALTIME,
-+		      HRTIMER_MODE_ABS);
- 
- #ifdef CONFIG_KVM_EXIT_TIMING
- 	mutex_init(&vcpu->arch.exit_timing_lock);
+> Thank you,
+> 
+> -- 
+> Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+-- 
+Sincerely yours,
+Mike.
 
