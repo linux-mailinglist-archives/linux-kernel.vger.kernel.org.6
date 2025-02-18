@@ -1,63 +1,65 @@
-Return-Path: <linux-kernel+bounces-520501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BA5EA3AABC
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 22:21:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30427A3AAC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 22:21:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C9403AC7D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 21:21:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73A7F188B8C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 21:21:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C3281C7001;
-	Tue, 18 Feb 2025 21:21:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5A871C84DA;
+	Tue, 18 Feb 2025 21:21:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ESL3MmvY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rRRl3Oft"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94E2E286294;
-	Tue, 18 Feb 2025 21:21:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F21DA1BEF78;
+	Tue, 18 Feb 2025 21:21:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739913682; cv=none; b=R6BZgjnpGer/ILjTEc52srkdGo58lbosjeAVO4C4AAW8tZlkqVa/qb6MZdNUbE/NAX0eDHPmhNFdEGZph2pqYuY4p0Ou1iJPl8m3LFz3M292QK9Y7Fr10ijZzbPYgO+Pj8UAzW0x5+bWqLaXwig9LTsr5h6du2qGUmtHCSkeDJI=
+	t=1739913700; cv=none; b=l39U38WOcO0oMDwQd7bNJiJyQNL35F89zG94IzV/QGXb05rj7Aj0SAbXR3L+eS7EBpPsupr1X/630U804go03Vc3/9Mwb/NyJoNFCqT5pnKdghT+ib7IQUuqrKbCR0YvigD7OgmwbXHNy9e3gzcyWskjwCYYvSvsdenbIxnc2Lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739913682; c=relaxed/simple;
-	bh=H97NOaITxO0txt0Xyc0RqlV6PqN91lQG7cGzJqI9UGs=;
+	s=arc-20240116; t=1739913700; c=relaxed/simple;
+	bh=B9lSIUKtKaBWlF14BOO6dZrB7G6K1Zk063vl/H8dksY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XkMQ+HVw9NWeB12xDYKiG5rSmXCv5w2kzXWz7kCoHMIdpXl/Fu0TGGYkUSdV/GLCaLiCaTe4dbi+simf/w9eH6u7U7xghrt9An9RuUbWnjXSitCH97cG59rS5aAuqbONntFh0FB3EJVR37z2dipx+s6eQI5KIMJKhYJFOEYRQYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ESL3MmvY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9F8DC4CEE2;
-	Tue, 18 Feb 2025 21:21:21 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=pgwkSLI5UjhF13xNdq2IENMFpZ9CFemuPPugX6kDEidnchz3tHTxUlf6ulEBOPvUupBIx/6pX4EZ9wfIBcwoVprYFMpYAmrP16NU3nYP25YVzCse1vLw8xpICKQiqXPIM4zVyi9MQNTdyy6ECqQoXg9upSyC1ogdvcR9vweNAxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rRRl3Oft; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E6D0C4CEE2;
+	Tue, 18 Feb 2025 21:21:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739913682;
-	bh=H97NOaITxO0txt0Xyc0RqlV6PqN91lQG7cGzJqI9UGs=;
+	s=k20201202; t=1739913699;
+	bh=B9lSIUKtKaBWlF14BOO6dZrB7G6K1Zk063vl/H8dksY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ESL3MmvYejhFG0p7DiQf5UDyM672YT6+AaKwUOc+zTdVNMVU1CIdvn69zl2+T7Vl8
-	 M7TUZmEhAWevPIe+IU+ARpqRHN4rc/39+TR87K2/w+kz2jm46QshdYdnqDokdauKAH
-	 GFpTPNNvqqFsYdOcAT/47w9PlautlNrYhjKVwuBrXIBVhTAKzOD3puR1XdjtO+/Jma
-	 CXyoIghl7CKnRQ+Sm0OTJpvhTAbFG7aow33ZZMty6Pa5x4RBpyDDNii+/Om+Bq8xlm
-	 s2g55SdwjFfFqVmiFTi/EiJB+Kn6Nc6m2xTvby1+Vmk2jvCsoD2qlrMiWnGpubjaAd
-	 8NhB07wQ+JsMg==
-Date: Tue, 18 Feb 2025 13:21:20 -0800
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>, linux-modules@vger.kernel.org
-Subject: Re: [PATCH 5/8] module: Add module_for_each_mod() function
-Message-ID: <Z7T50DxEL7NYkr8H@bombadil.infradead.org>
-References: <20250205225031.799739376@goodmis.org>
- <20250205225103.760856859@goodmis.org>
- <20250206142817.91853f475c681bc2ef7ca962@kernel.org>
- <20250206102720.0fd57129@gandalf.local.home>
- <20250214173017.07b0b250@gandalf.local.home>
+	b=rRRl3Oft5D1yNq8A/9GdXQlhT4a0/layZcEr6m168EFyUt483vukkReL1VrsLfdVW
+	 zOO6npRBlyNM4X9gkvxRqfp6wI453gdsRZlmJofmiL8zFsCY0YRhJuey7zQfw9fWFU
+	 xogFI9TFgXaaOcQZYVUhiS3aMAEuqHwyWwWSH0Dzt2B5hsdZV/dN0urTVADAhSk6G0
+	 V9Ut2rkKOCfMDY7wY1cEm2cEiHavDVfRO2cvjELFHVIb0Z+e80RwGR/n6Z2ptYlHVt
+	 r5EzUyJauBdauhOBLVtjpVAvKiMVdxIfXO/TXeUhmiYpot8O+xydOproUw8+D0zbPb
+	 GGcv6XBWrNaOQ==
+Date: Tue, 18 Feb 2025 15:21:38 -0600
+From: Rob Herring <robh@kernel.org>
+To: patrice.chotard@foss.st.com
+Cc: Mark Brown <broonie@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	christophe.kerello@foss.st.com
+Subject: Re: [PATCH v4 0/8] Add STM32MP25 SPI NOR support
+Message-ID: <20250218212138.GA1092771-robh@kernel.org>
+References: <20250218130000.87889-1-patrice.chotard@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,60 +68,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250214173017.07b0b250@gandalf.local.home>
+In-Reply-To: <20250218130000.87889-1-patrice.chotard@foss.st.com>
 
-On Fri, Feb 14, 2025 at 05:30:17PM -0500, Steven Rostedt wrote:
-> On Thu, 6 Feb 2025 10:27:20 -0500
-> Steven Rostedt <rostedt@goodmis.org> wrote:
+On Tue, Feb 18, 2025 at 01:59:52PM +0100, patrice.chotard@foss.st.com wrote:
+> From: Patrice Chotard <patrice.chotard@foss.st.com>
 > 
-> > > BTW, do we really need to disable preempt or is it enough to call
-> > > rcu_read_lock()?  
-> > 
-> > Bah, as I expected this function to be changed, I didn't spend too much
-> > time on looking at its implementation. I just cut and pasted how the other
-> > loops worked. But yes, it should not be disabling preemption. In fact, I
-> > think the module code itself should not be disabling preemption!
-> > 
-> > I'll have to go and look into that.
+> This series adds SPI NOR support for STM32MP25 SoCs from STMicroelectronics.
 > 
-> It really looks like it requires preempt_disable(), as the code in
-> kernel/module/main.c has in several places:
+> On STM32MP25 SoCs family, an Octo Memory Manager block manages the muxing,
+> the memory area split, the chip select override and the time constraint 
+> between its 2 Octo SPI children.
 > 
-> 	preempt_disable();
+> Due to these depedencies, this series adds support for: 
+>   - Octo Memory Manager driver.
+>   - Octo SPI driver.
+>   - yaml schema for Octo Memory Manager and Octo SPI drivers.
 > 
-> 	list_for_each_entry_rcu(mod, &modules, list) {
-> 		[..]
-> 	}
+> The device tree files adds Octo Memory Manager and its 2 associated Octo 
+> SPI chidren in stm32mp251.dtsi and adds SPI NOR support in stm32mp257f-ev1
+> board.
 > 
-> 	preempt_enable();
+> Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
 > 
-> Or
-> 
-> 	module_assert_mutex_or_preempt();
-> 
-> 	[..]
-> 
-> 	list_for_each_entry_rcu(mod, &modules, list,
-> 				lockdep_is_held(&module_mutex)) {
-> 
-> 
-> So it looks like it either requires preempt_disable or holding the
-> module_mutex.
-> 
-> As I need to call this with trace_types_lock held, and there's a place
-> where trace_types_lock is within a module callback, I don't think it's safe
-> to take that lock in that loop, otherwise we have the ABBA deadlock.
-> 
-> Luis,
-> 
-> Is this patch OK, and also is there any plan to move the module code to
-> using just rcu_read_lock instead of preempt_disable?
+> Changes in v4:
+>   - Add default value requested by Krzysztof for st,omm-req2ack-ns, 
+>     st,omm-cssel-ovr and st,omm-mux properties in st,stm32mp25-omm.yaml
+>   - Remove constraint in free form test for st,omm-mux property.
+>   - Fix drivers/memory/Kconfig by replacing TEST_COMPILE_ by COMPILE_TEST.
+>   - Fix SPDX-License-Identifier for stm32-omm.c.
+>   - Fix Kernel test robot by fixing dev_err() format in stm32-omm.c.
+>   - Add missing pm_runtime_disable() in the error handling path in
+>     stm32-omm.c.
+>   - Replace an int by an unsigned int in stm32-omm.c
+>   - Remove uneeded "," after terminator in stm32-omm.c.
+>   - Update cover letter description to explain dependecies between 
+>     Octo Memory Manager and its 2 Octo SPI children.
+>   - Add Reviewed-by Krzysztof Kozlowski for patch 1 and 3.
 
-The patch is not OK, you're looking at old code, look at
-modules-next and as Petr suggested look at Sebastian's recently
-merged work.
-
-git remote add korg-modules git://git.kernel.org/pub/scm/linux/kernel/git/modules/linux.git
-
-  Luis
+No, you didn't.
 
