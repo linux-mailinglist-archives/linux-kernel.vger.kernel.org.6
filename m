@@ -1,100 +1,121 @@
-Return-Path: <linux-kernel+bounces-520094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD41EA3A5A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:31:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0C9DA3A5B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:34:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCE95166806
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:31:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69FCA16902D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:33:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D7F72356C2;
-	Tue, 18 Feb 2025 18:31:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45B4717A313;
+	Tue, 18 Feb 2025 18:33:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="swHEmBmk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FOJP5LaK"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 732B217A2E2;
-	Tue, 18 Feb 2025 18:31:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 264252356D6;
+	Tue, 18 Feb 2025 18:33:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739903501; cv=none; b=sxx3okSptPOFozE9YTJ76LIwdUPjQYzDpZVhvHMvM8n3HvepBOoJb/A+81TsLo/0jD3xuK1az3ssx7QWgPpPzCpPegJsmCLG7xIpeu5OwkI3ArfGl3HCh+JTNdMhTtlQNYiN+2I+B+yY7iBfoxuAQayP2QyHRU0w0p6rlMVRvCU=
+	t=1739903608; cv=none; b=XgawM8rRgjoR+UP9AyNrSTYjTFtuzUe8yK0p6FGqcHcoSmFaZNEdHttYMEAnc8cQuw3g7loYiy8O17BLhn7Nb/a04NNAJILDuF4YupPRKgtN+DJ9WWdDROiMQr+s/IyuyM5BTZumxf4uHUMAkGDvnGN6pGULt+M8PEx4SnhqOgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739903501; c=relaxed/simple;
-	bh=D8dZnOXFuROlbQzwYeFLYukaJG+WvfuqVEkJvIIiXE0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=g8gyLBFOhqbTRul6NlneAIt/MNCdwxH18cJmjX5OyjLtQPt+73My+1Dj37oheTGfx+EYTIh2x8QDcxHt2zFrhQFvcNHPw38UZQYdFVal6yFJp31Y77rUHKdjpkSwq2sSH3HbYSodn5Q4HKkVQ9AqIBCv1R0AUHSTp0nQgs9oDNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=swHEmBmk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C7B9C4CEE2;
-	Tue, 18 Feb 2025 18:31:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739903499;
-	bh=D8dZnOXFuROlbQzwYeFLYukaJG+WvfuqVEkJvIIiXE0=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=swHEmBmkLDhgWpG8J9xtDug53hxv+cLGvgql5mbqbjMVdYxL171ydBGjcHgZg65vM
-	 ScgU9qsNX0x+EH2MSPTX73WbmI6idcP7/P7chUgXDWCLAg0YbKxKWnPntjyKBRPyPk
-	 a6TpVHWHzOhQO7MYM09GjiVGKOawqRxUYdakYLn/3Mdm4Ly42swWKkVykmjkT4gyIL
-	 vnagzYQqFhuIBfWC55sOE9lrHil0TuiDAFnMt6d8UgV60AhBIA4fzahNln95FYrbCF
-	 1ctSu0Eqq4myDYkci5fgeva8+JE2piB8g/tAw3ecjJeIZMDnuAyVjsPiWzguYuSb+7
-	 cABMuN8Q3Vv+A==
-Message-ID: <eaa0d608fb78d06caca26edc9a830cf1a02f9fb8.camel@kernel.org>
-Subject: Re: [PATCH v12 00/19] x86: Trenchboot secure dynamic launch Linux
- kernel support
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: ross.philipson@oracle.com, linux-kernel@vger.kernel.org, x86@kernel.org,
- 	linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, kexec@lists.infradead.org, 
-	linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org
-Cc: dpsmith@apertussolutions.com, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com, ardb@kernel.org, 
-	mjg59@srcf.ucam.org, James.Bottomley@hansenpartnership.com,
- peterhuewe@gmx.de, 	jgg@ziepe.ca, luto@amacapital.net,
- nivedita@alum.mit.edu, 	herbert@gondor.apana.org.au, davem@davemloft.net,
- corbet@lwn.net, 	ebiederm@xmission.com, dwmw2@infradead.org,
- baolu.lu@linux.intel.com, 	kanth.ghatraju@oracle.com,
- andrew.cooper3@citrix.com, 	trenchboot-devel@googlegroups.com
-Date: Tue, 18 Feb 2025 20:31:35 +0200
-In-Reply-To: <060ffc99-59e8-4b71-9e7d-daeb807332c3@oracle.com>
-References: <20241219194216.152839-1-ross.philipson@oracle.com>
-	 <060ffc99-59e8-4b71-9e7d-daeb807332c3@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1739903608; c=relaxed/simple;
+	bh=CLX+RDq2VWcGf6HMksoo+sold6zfnddBA8DO/uK8jSg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=E/hAjR/SAnplaQjCdDy2m7bTdHfWsez+Q2ffEZmaDKMS7LHy9hBxsLncFEMioA/Dt7KjUYcZWGagjQrC66jmw+RR6BPpfHGsNqgYw73Wy4FeE0E6AodqKhbuyj/X9FzHf3XmjdOnZSxQCvKUMf9S0/9OaOw5Y2cX+cR70WOtv4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FOJP5LaK; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-aaee2c5ee6eso890221866b.1;
+        Tue, 18 Feb 2025 10:33:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739903605; x=1740508405; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QiWaYyIQgq/zvsUV9YAcDJlEM1SSFLHFaWet2X/6k/M=;
+        b=FOJP5LaK4dGQwghoi/FgrvTzG1nEpHcdJaj2WFF8bK0wQABQS2UolGhwg5T0QWsa27
+         6MkdyuDEst6N8b7JiFGNjL9pArlOgMQN3juQ4PClgtTNrSnY76E5qjzXaYjIlU5iRKGl
+         SPyLuIm3tGn9TNkbXhub8nNEj/3pVU/VR9+H1tKn9Nkr0LUgbUmjoThYfoAQKgy+EIWp
+         AhWFwK7oMnBjpeIH4BzMQ6e18RfVXSG2S9aEGA+9dUF4OMhhweDJ9rfOTDb4ylzdE899
+         Xl9aGESNw1nLNs2ZIHrn0zXvuVaQ7bY9U4O40gyLpHavaa0ELKhDLW9LGaW9R5THV5nK
+         5+Sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739903605; x=1740508405;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QiWaYyIQgq/zvsUV9YAcDJlEM1SSFLHFaWet2X/6k/M=;
+        b=Fn6fVc8AbiGaqQivLPWzT7tVOXrUUhtQ1iY/uIR8+nfC/wrN2x4f6MVX0U7Z9hTB2L
+         fqx6/N/p0yP/TFGiHACnJ3gKT02/2Msc+dd1XjLJ2w0zA1h0AgrxbSYKB6jufB/MITUa
+         7cCntbt6mbL1iXXZy7JuGXsVX41ZhkCiXh85pnZ3+NMlp2qcO9WdvXIXAn7eyzRVHr3t
+         sqIF6FQ2FL5eunUkfopjsipHdWrpqA40wLKu/koLGO8iARNrbHTf8c8m7VPGpWGXth2v
+         9ugQXE+XSgH4OCcYA92AQaDZ7/fnrgGdJQxZwrB2CfnuICF6mjNR5aQFUnbL2CClRwm2
+         Kqbg==
+X-Forwarded-Encrypted: i=1; AJvYcCU80+5OR+ltxhnumKG7fQSgPCr7+Kq2AXndoZMfbkG+Jfcld/fpkV2M9Aur/Edj2UpBCTV9MljMdt49914=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyH5cgs/oYcQoyE2XRn3PZJ48cnG469utWsg987rF+goj1f81q2
+	udXaiOQPetCJppYQAYYi/u5Rm+Lx1UXbMhRnZK6DCbkuxE8XRA37XOovkw==
+X-Gm-Gg: ASbGncsjD2CFKaw3HiOUWtFRnU1ZCCzeHyByIKr7QyGLPwfNF4beCMIbhmU38Qc9N2I
+	cg+WmjVKw1ULXE+wTzk+hcODuZ+EbTbMZJkADAv10IH3gGjvNRu0yiwD75M0rK3m2vtkfMhL20c
+	uHbebUiwhGQSZ1BioTmJu4gSwCwqsgYN2oiI+JCbv5EM/KjedM0pan3PdQ682/6kTgY/gWefJp4
+	CitSLRaUeuu3xl2kyysQxCG8+JfIEfbbFxogIE2QeNN2tXo5YCiSRFCsGikmu1K/KC/+/w1kV6X
+	f3xrVE4f5qz/pttEPeg=
+X-Google-Smtp-Source: AGHT+IHilc1/LeFkTHY2RAJaXraZFQ2RzkRGy8HMc2JHm31GKT3plqARIwcVuuhbYOL1sMbOUgtxbw==
+X-Received: by 2002:a17:907:7743:b0:ab7:ee47:993f with SMTP id a640c23a62f3a-abbcd0a6399mr69832066b.47.1739903605019;
+        Tue, 18 Feb 2025 10:33:25 -0800 (PST)
+Received: from [127.0.1.1] ([2a00:79c0:625:3600:3000:d590:6fca:357f])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba53232039sm1106649266b.9.2025.02.18.10.33.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2025 10:33:24 -0800 (PST)
+From: Dimitri Fedrau <dima.fedrau@gmail.com>
+Subject: [PATCH 0/2] net: phy: marvell-88q2xxx: Enable temperature
+ measurement in probe again
+Date: Tue, 18 Feb 2025 19:33:08 +0100
+Message-Id: <20250218-marvell-88q2xxx-hwmon-enable-at-probe-v1-0-999a304c8a11@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGTStGcC/x3NwQrCMAyA4VcZORvYIq3VVxEPmUYX6NqZyiyMv
+ bvF43f5/w2KmEqBS7eByapFc2oYDh3cJ04vQX00A/XkehpOOLOtEiOG8KZaK07fOSeUxGMU5A8
+ ulkdBYvLeH8mdg4PWWkyeWv+f623ff++7x7J3AAAA
+X-Change-ID: 20250217-marvell-88q2xxx-hwmon-enable-at-probe-2a2666325985
+To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>, 
+ Gregor Herburger <gregor.herburger@ew.tq-group.com>, 
+ Stefan Eichenberger <eichest@gmail.com>, 
+ Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Dimitri Fedrau <dima.fedrau@gmail.com>
+X-Mailer: b4 0.14.2
 
-On Tue, 2025-02-18 at 10:21 -0800, ross.philipson@oracle.com wrote:=20
-> Hello folks,
->=20
-> We posted the v12 version of our patch set in December of 2024 and we
-> have not heard anything on it from the community. We believe we have=20
-> reasonably addressed the issues as has been discussed on list. I
-> realize=20
-> there has been a lot going on with releases etc but I just wanted to=20
-> send a bump that these patches are out there if anyone has time.
+Patchset fixes these:
+- Enable temperature measurement in probe again
+- Prevent reading temperature with asserted reset
 
-I don't know what happened but to be totally honest with you I missed
-that version. Maybe it was holiday rush but yeah still I did not skip
-it for that reason per se, just that it could very well explain the
-silence (people tend to fast-forward more at the time, and then
-mistakes easily happen).
+Signed-off-by: Dimitri Fedrau <dima.fedrau@gmail.com>
+---
+Dimitri Fedrau (2):
+      net: phy: marvell-88q2xxx: Enable temperature measurement in probe again
+      net: phy: marvell-88q2xxx: Prevent reading temperature with asserted reset
 
-I'm right now on holiday up until end of this month, and this will
-require enough time that I unfortunately have to postpone the review
-up until the first full week of the next Month, in order to do this
-properly.
+ drivers/net/phy/marvell-88q2xxx.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+---
+base-commit: 071ed42cff4fcdd89025d966d48eabef59913bf2
+change-id: 20250217-marvell-88q2xxx-hwmon-enable-at-probe-2a2666325985
 
-Still, apologies for ignoring this!
+Best regards,
+-- 
+Dimitri Fedrau <dima.fedrau@gmail.com>
 
-> Thank you,
-> Ross Philipson
-
-BR, Jarkko
 
