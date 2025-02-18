@@ -1,140 +1,151 @@
-Return-Path: <linux-kernel+bounces-519584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E319A39E50
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:10:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80DFCA39E53
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:11:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48B11188C8A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:09:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CE2516992D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:10:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EBDD269B05;
-	Tue, 18 Feb 2025 14:09:40 +0000 (UTC)
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 781C0269B1F;
+	Tue, 18 Feb 2025 14:10:15 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72842269822;
-	Tue, 18 Feb 2025 14:09:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21062243361
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 14:10:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739887780; cv=none; b=btELK6kRXBT08u50N8Zb4NGIBpCd+QLpmYWM6IDmaAyncCrEdXy1nh2L6t9AXm8s423wrBhhaf59j9vXKubAEEnuj+WYKAZYNY4eOQHIzVPBWgASoKOx8h0RHbHgm6vRPX9tKqOZRjf1BTAvfH7y2Alj5FpJNwbfxZT2pk1plbE=
+	t=1739887815; cv=none; b=G0gVvT7wzbIxEa6nd7e8wQKjIznLc5RJ1tmxcCxMFQJClrb/jSGgGOJ0ZtzjiSGAJJEzfruvhD6H0h02dPDvf9cz8wjn1qD3FpzuRIwLFp8arAyzoFyY0FREttc6LDtb22IN3br20E9GGY5hFnYgZqLr8+nkXcEGq4Z75mrSLKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739887780; c=relaxed/simple;
-	bh=LDe4YY/D/KG814sUzaFt57nrvQqaY4+cHfBTOTZhp4M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CCK5CbnYyzXpPSE/lREwqwFvqMdpd7SaruZYQrI02LNEJTohZxIEwkqgnjH2LI+PGczaQwkRZIfprY8aZTdaKUgB9i5YXldBdfJW9el8e8ufP1g8waPrkmjEyNHH+a7tCwGFb3DG/wNhVpRMnf0xli5ynx/pT0iW95tP4eQ+rJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-abb8045c3f3so355634266b.2;
-        Tue, 18 Feb 2025 06:09:38 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739887777; x=1740492577;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MOqpNPfprzC/VuOUsgbWKiDS4uVsWF0Gzq7YLXne2M0=;
-        b=VDIH9ZSbm2c+20VAqaGeXZItmHBPdLypTZQQvvz1B52IwAi+/BbHTjmcmUuwec4KOm
-         GnOr47vW+jFnAGiFDHmJlwrJCxgSDZ3GWC1RYRXB+4mGJcGpOheGFYuH/IDi6zyZfw3b
-         XwW6I8RSneh8fH93nbys07fE5ntUuH6Wv6ngOeLiW38PhP8rPhuCvWxiJlsEGZnM0j+1
-         sRpuSuM4pUv9tPmQ4moyTw5FEtGODDAtk1aO0SvHFKrBl5IQ+CSMR8NcbOMmo8Vxfoxf
-         d33Ri2LsdDtipYZewwUTPyZK1gHdnd/PZjjOgHb8c3D0r0xdwHVXVR1y+rNaEApIQMYX
-         0njA==
-X-Forwarded-Encrypted: i=1; AJvYcCUkPWp3IgTa7adRPqHV1DYhnVyDqaGggXCy1dpPjVJaCRKrNpWdjHGf93tdeR6bKj45WoQBxtqw@vger.kernel.org, AJvYcCWcLOfOwqyjJTuaE/ohYvcAgD//BCR9nTlnzc1Egf6xQdR6KXzuQDLAuPh9ZNltsHy/zz1p3X61b5CwByY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy47dufIgoNkXJgyTKaqqHuH5w0uy/rGO0puPUz3WoVwP4AWs6M
-	kNmgoa+bw9TtVT/ObS+E832sTRW/9j4YQEJ19PwalywvW/IZFQL8
-X-Gm-Gg: ASbGncuSmq8+wjLXbcwNsFAG5gkSEQ0CzTYhqBlSpIWXW072GEG6yGNhOc48Ww8I8HS
-	yRFHTLeznGIqgdT2GZAUyRnohFgupdzLWwkQqh4eJwR7ZjcOUehz8EFMdutPfg8F1fSRRdyuxHQ
-	uC3VzQMvFG8HdodJql51PMhKmK9DkGwcjA+oNu5MJNNoF+lchV5vClhjyJf7IprfHYJWwdnkmcY
-	sg1ns5YqBeA7/cM9bHNJaaBKyWJllqKAVUaAzzgPajGSFQaLVFjeqA3ofaO4sJvDbIt5fABnLxd
-	I3EhVu4=
-X-Google-Smtp-Source: AGHT+IF5nwrMpEy7s0eR61eGJJWsqTPMythWKfZZ2UKJQmRW6VNlsUYbb7Fb2C34VdjEApYgHubpIQ==
-X-Received: by 2002:a17:907:70d:b0:aba:5e4b:b0b6 with SMTP id a640c23a62f3a-abb70e53b7dmr1229698566b.54.1739887776310;
-        Tue, 18 Feb 2025 06:09:36 -0800 (PST)
-Received: from gmail.com ([2a03:2880:30ff:71::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abba4fc0c29sm295532566b.157.2025.02.18.06.09.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 06:09:35 -0800 (PST)
-Date: Tue, 18 Feb 2025 06:09:33 -0800
-From: Breno Leitao <leitao@debian.org>
-To: Ido Schimmel <idosch@idosch.org>
-Cc: Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Kevin Tian <kevin.tian@intel.com>, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 1/1] iommu/vt-d: Fix suspicious RCU usage
-Message-ID: <20250218-meaty-clever-buffalo-9ba688@leitao>
-References: <20250218022422.2315082-1-baolu.lu@linux.intel.com>
- <Z7RdnR2onJ2AZIJl@shredder>
+	s=arc-20240116; t=1739887815; c=relaxed/simple;
+	bh=gO4it8ayrvM9ybkMDTfVzsL+Da8DTjcC6TCiQ21ZDFU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=onjz8KT8dy1a+ZEcQBUjI+JWcFBSiJKk9ZeJQ7yn3ElcfuGw1ovm9gk1Yb8fqdPILgFOkBJG3JXph84GQkFMCijZfX5bYroZCfLCmiNeMqtl3VL4xXg2uNTpwqmB3FHPhxMWVa9qGAKCgA5ceTLTmDar8iIieCYRK7bFhq8rrfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Yy1Xh1lwYzkXNS;
+	Tue, 18 Feb 2025 22:06:28 +0800 (CST)
+Received: from kwepemd200014.china.huawei.com (unknown [7.221.188.8])
+	by mail.maildlp.com (Postfix) with ESMTPS id 70BA314035E;
+	Tue, 18 Feb 2025 22:10:07 +0800 (CST)
+Received: from localhost.localdomain (10.50.165.33) by
+ kwepemd200014.china.huawei.com (7.221.188.8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Tue, 18 Feb 2025 22:10:06 +0800
+From: Yicong Yang <yangyicong@huawei.com>
+To: <catalin.marinas@arm.com>, <will@kernel.org>, <sudeep.holla@arm.com>,
+	<tglx@linutronix.de>, <peterz@infradead.org>, <mpe@ellerman.id.au>,
+	<linux-arm-kernel@lists.infradead.org>, <mingo@redhat.com>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>, <pierre.gondois@arm.com>,
+	<dietmar.eggemann@arm.com>
+CC: <linuxppc-dev@lists.ozlabs.org>, <x86@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <morten.rasmussen@arm.com>,
+	<msuchanek@suse.de>, <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
+	<jonathan.cameron@huawei.com>, <prime.zeng@hisilicon.com>,
+	<linuxarm@huawei.com>, <yangyicong@hisilicon.com>, <xuwei5@huawei.com>,
+	<guohanjun@huawei.com>, <sshegde@linux.ibm.com>
+Subject: [PATCH v11 0/4] Support SMT control on arm64
+Date: Tue, 18 Feb 2025 22:10:14 +0800
+Message-ID: <20250218141018.18082-1-yangyicong@huawei.com>
+X-Mailer: git-send-email 2.31.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z7RdnR2onJ2AZIJl@shredder>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemd200014.china.huawei.com (7.221.188.8)
 
-On Tue, Feb 18, 2025 at 12:14:53PM +0200, Ido Schimmel wrote:
-> + Breno who also encountered this issue
+From: Yicong Yang <yangyicong@hisilicon.com>
 
-Thanks. Please add the following if you feel appropriate.
+The core CPU control framework supports runtime SMT control which
+is not yet supported on arm64. Besides the general vulnerabilities
+concerns we want this runtime control on our arm64 server for:
 
-Reported-by: Breno Leitao <leitao@debian.org>
+- better single CPU performance in some cases
+- saving overall power consumption
 
-> On Tue, Feb 18, 2025 at 10:24:21AM +0800, Lu Baolu wrote:
-> > Commit <d74169ceb0d2> ("iommu/vt-d: Allocate DMAR fault interrupts
-> > locally") moved the call to enable_drhd_fault_handling() to a code
-> > path that does not hold any lock while traversing the drhd list. Fix
-> > it by ensuring the dmar_global_lock lock is held when traversing the
-> > drhd list.
-> > 
-> > Without this fix, the following warning is triggered:
-> >  =============================
-> >  WARNING: suspicious RCU usage
-> >  6.14.0-rc3 #55 Not tainted
-> >  -----------------------------
-> >  drivers/iommu/intel/dmar.c:2046 RCU-list traversed in non-reader section!!
-> >                other info that might help us debug this:
-> >                rcu_scheduler_active = 1, debug_locks = 1
-> >  2 locks held by cpuhp/1/23:
-> >  #0: ffffffff84a67c50 (cpu_hotplug_lock){++++}-{0:0}, at: cpuhp_thread_fun+0x87/0x2c0
-> >  #1: ffffffff84a6a380 (cpuhp_state-up){+.+.}-{0:0}, at: cpuhp_thread_fun+0x87/0x2c0
-> >  stack backtrace:
-> >  CPU: 1 UID: 0 PID: 23 Comm: cpuhp/1 Not tainted 6.14.0-rc3 #55
-> >  Call Trace:
-> >   <TASK>
-> >   dump_stack_lvl+0xb7/0xd0
-> >   lockdep_rcu_suspicious+0x159/0x1f0
-> >   ? __pfx_enable_drhd_fault_handling+0x10/0x10
-> >   enable_drhd_fault_handling+0x151/0x180
-> >   cpuhp_invoke_callback+0x1df/0x990
-> >   cpuhp_thread_fun+0x1ea/0x2c0
-> >   smpboot_thread_fn+0x1f5/0x2e0
-> >   ? __pfx_smpboot_thread_fn+0x10/0x10
-> >   kthread+0x12a/0x2d0
-> >   ? __pfx_kthread+0x10/0x10
-> >   ret_from_fork+0x4a/0x60
-> >   ? __pfx_kthread+0x10/0x10
-> >   ret_from_fork_asm+0x1a/0x30
-> >   </TASK>
-> > 
-> > Simply holding the lock in enable_drhd_fault_handling() will trigger a
-> > lock order splat. Avoid holding the dmar_global_lock when calling
-> > iommu_device_register(), which starts the device probe process.
-> > 
-> > Fixes: d74169ceb0d2 ("iommu/vt-d: Allocate DMAR fault interrupts locally")
-> > Reported-by: Ido Schimmel <idosch@idosch.org>
-> > Closes: https://lore.kernel.org/linux-iommu/Zx9OwdLIc_VoQ0-a@shredder.mtl.com/
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-> 
-> Thanks for the fix. I tested it and the warning is gone.
-> 
-> Tested-by: Ido Schimmel <idosch@nvidia.com>
+This patchset implements it in the following aspects:
 
-Tested-by: Breno Leitao <leitao@debian.org>
+- Provides a default topology_is_primary_thread()
+- support retrieve SMT thread number on OF based system
+- support retrieve SMT thread number on ACPI based system
+- select HOTPLUG_SMT for arm64
+
+Tests has been done on our ACPI based arm64 server and on ACPI/OF
+based QEMU VMs.
+
+Change since v10:
+- handle topology parsing failure case on DT based system
+- address some style comments per Jonathan and add tags, Thanks
+Link: https://lore.kernel.org/linux-arm-kernel/20241220075313.51502-1-yangyicong@huawei.com/
+
+Change since v9:
+- Refine the comment of topology_is_primary_thread(). Tested with LoongArch
+  to prove it also works on architecture's not using CONFIG_GENERIC_ARCH_TOPOLOGY
+- always call cpu_smt_set_num_threads() to make the smt/control shows correct
+  status on non-SMT system
+Link: https://lore.kernel.org/linux-arm-kernel/20241114141127.23232-1-yangyicong@huawei.com/
+
+Change since v8:
+- Fix WARN on ACPI based non-SMT platform noticed in v7, per Pierre.
+Link: https://lore.kernel.org/all/20241105093237.63565-1-yangyicong@huawei.com/
+
+Change since v7:
+Address the comments from Thomas:
+- Add a newline between the glue define and function of topology_is_primary_thread
+- Explicitly mention the sibling mask won't be empty in the comment
+Link: https://lore.kernel.org/lkml/20241030125415.18994-1-yangyicong@huawei.com/
+
+Change since v6:
+- Fix unused variable if !CONFIG_ARM64 || !CONFIG_RISV found by lkp-test
+- Fix max_smt_thread_num updating in OF path pointed by Pierre
+- Drop unused variable and refine the comments/commit per Pierre
+Link: https://lore.kernel.org/linux-arm-kernel/20241015021841.35713-1-yangyicong@huawei.com/
+
+Change since v5:
+- Drop the dependency on CONFIG_SMP since it's always on on arm64, per Pierre
+- Avoid potential multiple calls of cpu_smt_set_num_threads() on asymmetric system, per Dietmar
+- Detect heterogenous SMT topology and issue a warning for partly support, per Pierre
+- Thanks Dietmar for testing, didn't pickup the tag due to code changes. Thanks testing by Pierre
+Link: https://lore.kernel.org/linux-arm-kernel/20240806085320.63514-1-yangyicong@huawei.com/
+
+Change since v4:
+- Provide a default topology_is_primary_thread() in the framework, Per Will
+Link: https://lore.kernel.org/linux-arm-kernel/20231121092602.47792-1-yangyicong@huawei.com/
+
+Change since v3:
+- Fix some build and kconfig error reported by kernel test robot <lkp@intel.com>
+Link: https://lore.kernel.org/linux-arm-kernel/20231114040110.54590-1-yangyicong@huawei.com/
+
+Change since v2:
+- Detect SMT thread number at topology build from ACPI/DT, avoid looping CPUs
+- Split patches into ACPI/OF/arch_topology path and enable the kconfig for arm64
+Link: https://lore.kernel.org/linux-arm-kernel/20231010115335.13862-1-yangyicong@huawei.com/
+
+Yicong Yang (4):
+  cpu/SMT: Provide a default topology_is_primary_thread()
+  arch_topology: Support SMT control for OF based system
+  arm64: topology: Support SMT control on ACPI based system
+  arm64: Kconfig: Enable HOTPLUG_SMT
+
+ arch/arm64/Kconfig                  |  1 +
+ arch/arm64/kernel/topology.c        | 66 +++++++++++++++++++++++++++++
+ arch/powerpc/include/asm/topology.h |  1 +
+ arch/x86/include/asm/topology.h     |  2 +-
+ drivers/base/arch_topology.c        | 27 ++++++++++++
+ include/linux/topology.h            | 22 ++++++++++
+ 6 files changed, 118 insertions(+), 1 deletion(-)
+
+-- 
+2.24.0
+
 
