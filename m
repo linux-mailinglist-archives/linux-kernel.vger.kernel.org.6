@@ -1,161 +1,119 @@
-Return-Path: <linux-kernel+bounces-520836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9458AA3AFEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 04:08:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CAB7A3AFF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 04:12:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E2D53ADD9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 03:08:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09C427A1D94
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 03:11:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23EA019D072;
-	Wed, 19 Feb 2025 03:08:43 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16DAE1119A;
-	Wed, 19 Feb 2025 03:08:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52A9019D8A9;
+	Wed, 19 Feb 2025 03:12:06 +0000 (UTC)
+Received: from sgoci-sdnproxy-4.icoremail.net (sgoci-sdnproxy-4.icoremail.net [129.150.39.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 723301925BF;
+	Wed, 19 Feb 2025 03:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.150.39.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739934522; cv=none; b=ip7iF/YtZNP5ROI7yFeWKRoiB3jVrqb1jYW6Mu75Ay18kFeuhIxp4mfO1XR8k/OJPmUmThflM9Fq0gKwLU954xDM2wT+AYhXu4j1DQAy+SqxFI+NusAgXAAy7Pe2yrOsj3WMmU4cnnn7gmrmKQJ41kA0CMHT+R09SfnQIdpDYS8=
+	t=1739934726; cv=none; b=Or77qqu+XlHuKfm1sbINMgovVNmSfA+FutVPPP1Eo81sBFbJ8NbkTcUUMSlI5L0ycPse/l3cG72CuAGch4VrSD8QEdc1ztefP2rpNhk0Fg112knApiEkon0wf76z7YZTi4bV2UHccmeeM1+YClZnDdKGt0PRNg4TpdecOz4Dn8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739934522; c=relaxed/simple;
-	bh=F/b7KSb/46Hhx7CHmSwzSQ8LRO+xjTjA4Gt7OJu6PLs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=DDOlqmcWa1GK33vcVEz4X57ZZDgGWyyP1pq8caKb1H7bB24LmxYKKk/MTiHT0dyGHJkQmFTcYQe1OBULKCEej8fJNZb70VonZOGJK6E3hGLn5B3ZCmQMc0E0+ANtzktH1NghxVKzgJqDLihsJB5QFBu16DGYLdS4avSeCNU9i9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4YyLsK5pbVzMrgD;
-	Wed, 19 Feb 2025 11:07:01 +0800 (CST)
-Received: from dggemv711-chm.china.huawei.com (unknown [10.1.198.66])
-	by mail.maildlp.com (Postfix) with ESMTPS id 22AFF1A0188;
-	Wed, 19 Feb 2025 11:08:32 +0800 (CST)
-Received: from kwepemn100006.china.huawei.com (7.202.194.109) by
- dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 19 Feb 2025 11:08:31 +0800
-Received: from [10.174.176.245] (10.174.176.245) by
- kwepemn100006.china.huawei.com (7.202.194.109) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 19 Feb 2025 11:08:30 +0800
-Message-ID: <4dff834e-f652-447c-a1f0-bfd851449f70@huawei.com>
-Date: Wed, 19 Feb 2025 11:08:30 +0800
+	s=arc-20240116; t=1739934726; c=relaxed/simple;
+	bh=Y4x9AJ4sFAsA6vxBXOn1lrmRO3mYJXJAUoR0KvIWu1M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DtXTwZ2XPiVA81IHou+AyG7vMLxJDFIQfKj5FWqgAuzWkS4/3IWYMbT9ZOSy0Cu+1X9I2l79NVTmxyDM/z0HlJ9yML/XpMBKOKNKO3RGGB6GIY8oRI5VPt9nQcWcHEsIqPOmIFyYEh6Sf572pBpCoG4XuGCwWbhE9W7V39iuysA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytium.com.cn; spf=pass smtp.mailfrom=phytium.com.cn; arc=none smtp.client-ip=129.150.39.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytium.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytium.com.cn
+Received: from prodtpl.icoremail.net (unknown [10.12.1.20])
+	by hzbj-icmmx-6 (Coremail) with SMTP id AQAAfwCXnQ31S7Vnnt+tAw--.15444S2;
+	Wed, 19 Feb 2025 11:11:49 +0800 (CST)
+Received: from phytium.com.cn (unknown [123.150.8.50])
+	by mail (Coremail) with SMTP id AQAAfwBnaobyS7VnB7QrAA--.6774S3;
+	Wed, 19 Feb 2025 11:11:48 +0800 (CST)
+From: Yuquan Wang <wangyuquan1236@phytium.com.cn>
+To: dave@stgolabs.net,
+	jonathan.cameron@huawei.com,
+	dave.jiang@intel.com,
+	alison.schofield@intel.com,
+	vishal.l.verma@intel.com,
+	ira.weiny@intel.com,
+	dan.j.williams@intel.com
+Cc: linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	chenbaozi@phytium.com.cn,
+	Yuquan Wang <wangyuquan1236@phytium.com.cn>
+Subject: [PATCH v4 0/1] cxl/pmem: debug invalid serial number data
+Date: Wed, 19 Feb 2025 11:11:12 +0800
+Message-Id: <20250219031113.407526-1-wangyuquan1236@phytium.com.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] tcp: Fix error ts_recent time during three-way
- handshake
-To: Eric Dumazet <edumazet@google.com>
-CC: <ncardwell@google.com>, <kuniyu@amazon.com>, <davem@davemloft.net>,
-	<dsahern@kernel.org>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<horms@kernel.org>, <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	Jason Xing <kerneljasonxing@gmail.com>
-References: <20250218105824.34511-1-wanghai38@huawei.com>
- <CANn89iKF+LC_isruAAd+nyxgytr4LPeFTe9=ey0j=Xy5URMvkg@mail.gmail.com>
-Content-Language: en-US
-From: Wang Hai <wanghai38@huawei.com>
-In-Reply-To: <CANn89iKF+LC_isruAAd+nyxgytr4LPeFTe9=ey0j=Xy5URMvkg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemn100006.china.huawei.com (7.202.194.109)
+X-CM-TRANSID:AQAAfwBnaobyS7VnB7QrAA--.6774S3
+X-CM-SenderInfo: 5zdqw5pxtxt0arstlqxsk13x1xpou0fpof0/1tbiAQAGAWe0524A4QADs+
+Authentication-Results: hzbj-icmmx-6; spf=neutral smtp.mail=wangyuquan
+	1236@phytium.com.cn;
+X-Coremail-Antispam: 1Uk129KBjvJXoW7CF17tw1xWryUCr4fAry7ZFb_yoW8XFW5pF
+	Z3KFWfCF98GrW7Zw4xZr1rWF1YqF48Cr4UGryrtw18Gr4kJr10vrWSya9Fya47GrWvvF4Y
+	gryjvFsxuFy7u3DanT9S1TB71UUUUUJqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
+	DUYxn0WfASr-VFAU7a7-sFnT9fnUUIcSsGvfJ3UbIYCTnIWIevJa73UjIFyTuYvj4RJUUU
+	UUUUU
+
+v3 -> v4:
+- Pull the info[i] assignment and check code up
+
+v2 -> v3:
+- Add an inline comment
+- Debug serial number before its assignment
+
+v1 -> v2:
+- Change 'dev_dbg' to 'dev_err'
 
 
+Background
+==========
+A device with missing or invalid serial number is not compliant with the
+spec. But we could still use it to create a nvdimm pmem region and set a
+non-zero cookie of nd_interleave_set, for example:
+  1. create a cxl pmem region interleaved with 2 devices (one with
+     serial number 0 and the other with serial number 1), and the cookie
+     would be non-zero/valid.
+  2. create the second cxl pmem region by 1 device with no serial number
+     and this region would have a non-zero cookie because the offset of
+     dpa is non-zero.
 
-On 2025/2/18 21:35, Eric Dumazet wrote:
-> On Tue, Feb 18, 2025 at 12:00 PM Wang Hai <wanghai38@huawei.com> wrote:
->>
->> If two ack packets from a connection enter tcp_check_req at the same time
->> through different cpu, it may happen that req->ts_recent is updated with
->> with a more recent time and the skb with an older time creates a new sock,
->> which will cause the tcp_validate_incoming check to fail.
->>
->> cpu1                                cpu2
->> tcp_check_req
->>                                      tcp_check_req
->> req->ts_recent = tmp_opt.rcv_tsval = t1
->>                                      req->ts_recent = tmp_opt.rcv_tsval = t2
->>
->> newsk->ts_recent = req->ts_recent = t2 // t1 < t2
->> tcp_child_process
->> tcp_rcv_state_process
->> tcp_validate_incoming
->> tcp_paws_check
->> if ((s32)(rx_opt->ts_recent - rx_opt->rcv_tsval) <= paws_win) // failed
->>
->> In tcp_check_req, restore ts_recent to this skb's to fix this bug.
->>
->> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
->> Signed-off-by: Wang Hai <wanghai38@huawei.com>
->> ---
->>   net/ipv4/tcp_minisocks.c | 4 ++++
->>   1 file changed, 4 insertions(+)
->>
->> diff --git a/net/ipv4/tcp_minisocks.c b/net/ipv4/tcp_minisocks.c
->> index b089b08e9617..0208455f9eb8 100644
->> --- a/net/ipv4/tcp_minisocks.c
->> +++ b/net/ipv4/tcp_minisocks.c
->> @@ -878,6 +878,10 @@ struct sock *tcp_check_req(struct sock *sk, struct sk_buff *skb,
->>          sock_rps_save_rxhash(child, skb);
->>          tcp_synack_rtt_meas(child, req);
->>          *req_stolen = !own_req;
->> +       if (own_req && tcp_sk(child)->rx_opt.tstamp_ok &&
->> +           unlikely(tcp_sk(child)->rx_opt.ts_recent != tmp_opt.rcv_tsval))
->> +               tcp_sk(child)->rx_opt.ts_recent = tmp_opt.rcv_tsval;
->> +
->>          return inet_csk_complete_hashdance(sk, child, req, own_req);
-> 
-> Have you seen the comment at line 818 ?
-> 
-> /* TODO: We probably should defer ts_recent change once
->   * we take ownership of @req.
->   */
-> 
-> Plan was clear and explained. Why implement something else (and buggy) ?
-Hi Eric,
+Problem
+=======
+In a nvdimm interleave-set each device with an invalid or zero
+serial number may cause pmem region initialization to fail, but in
+cxl case such device could still set cookies of nd_interleave_set
+and create a nvdimm pmem region.
 
-According to the plan, can we fix it like this?
+CXL Pmem Validation
+===================
+This patch adds the validation of serial number in cxl pmem region creation.
+The event of no serial number would cause to fail to set the cookie
+and pmem region.
 
-diff --git a/net/ipv4/tcp_minisocks.c b/net/ipv4/tcp_minisocks.c
-index b089b08e9617..1210d4967b94 100644
---- a/net/ipv4/tcp_minisocks.c
-+++ b/net/ipv4/tcp_minisocks.c
-@@ -814,13 +814,6 @@ struct sock *tcp_check_req(struct sock *sk, struct 
-sk_buff *skb,
-         }
+cxl-test
+========
+A mock serial number is set from the platform device id and 0 is a valid
+platform device id. For cxl-test to work properly, always +1 on mock
+device's serial number.
 
-         /* In sequence, PAWS is OK. */
--
--       /* TODO: We probably should defer ts_recent change once
--        * we take ownership of @req.
--        */
--       if (tmp_opt.saw_tstamp && !after(TCP_SKB_CB(skb)->seq, 
-tcp_rsk(req)->rcv_nxt))
--               WRITE_ONCE(req->ts_recent, tmp_opt.rcv_tsval);
--
-         if (TCP_SKB_CB(skb)->seq == tcp_rsk(req)->rcv_isn) {
-                 /* Truncate SYN, it is out of window starting
-                    at tcp_rsk(req)->rcv_isn + 1. */
-@@ -878,6 +871,9 @@ struct sock *tcp_check_req(struct sock *sk, struct 
-sk_buff *skb,
-         sock_rps_save_rxhash(child, skb);
-         tcp_synack_rtt_meas(child, req);
-         *req_stolen = !own_req;
-+       if (own_req && tmp_opt.saw_tstamp && !after(TCP_SKB_CB(skb)- 
-seq, tcp_rsk(req)->rcv_nxt))
-+               tcp_sk(child)->rx_opt.ts_recent = tmp_opt.rcv_tsval;
-+
-         return inet_csk_complete_hashdance(sk, child, req, own_req);
+Yuquan Wang (1):
+  cxl/pmem: debug invalid serial number data
 
-  listen_overflow:
-> 
+ drivers/cxl/pmem.c           | 12 ++++++++++--
+ tools/testing/cxl/test/mem.c |  2 +-
+ 2 files changed, 11 insertions(+), 3 deletions(-)
+
+-- 
+2.34.1
 
 
