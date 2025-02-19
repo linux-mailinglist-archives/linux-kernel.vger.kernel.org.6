@@ -1,108 +1,103 @@
-Return-Path: <linux-kernel+bounces-521290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE809A3BB2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:07:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61563A3BB1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:05:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1437B1693EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:05:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65B94188EF64
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:05:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C00B1DE2C2;
-	Wed, 19 Feb 2025 10:05:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E90F11D6DAD;
+	Wed, 19 Feb 2025 10:05:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="TClOvpmz"
-Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qgtNZMkb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 448081C5D4B;
-	Wed, 19 Feb 2025 10:05:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5000C1CCB40;
+	Wed, 19 Feb 2025 10:05:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739959506; cv=none; b=kM3Puwlf2SJns01Ir945M/ITscoM8t7QZZtlk5RhdvUH6vGpqlgSzLjPuZw+MNqwdLu/be/5Z7vxCBk696dIkqaAsLp5AfdWHayaDtuxgObwU0Wl74aJExUvoobQEKPqwkBZFTS1NTEVZqkxWNtFbVf7RBGQ2RprzaQaNEXj8QM=
+	t=1739959503; cv=none; b=dbKBrw7OnWnbMt0mHKoW9N21meY/YOe+rKghK8AABSZA1xr0PKq109Xjotin+R2+j2BSPaLda79Yzj+0q63qGUKJ2GwxRNquo1mSLBdgHJu2qad2Vu4dbVZui9jrWgxafG3kEDq0Hbq5P2YZ/yyuopEK47kCQ4fI6Bf6cSKp71g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739959506; c=relaxed/simple;
-	bh=YzuIjqnMTrFlB4hvEKVFysqiE8b1+xS0KXoi/G2/UUQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KjLxnqa3biUdrHpixaFe+qY10BS+sRtYL9fQdpY4Ly4WJw8snFVjMSxqmAXMSwaJqpFaSuVodBD6b48IqeYhSjfDT6SkdDXYdl8PbfVEVi6aoxkhQcVL3Mje6RWv9lZqcFek+0x/5TYzJcy9hTayCnhe8OAoetZo5Pzi0dkCQUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=TClOvpmz; arc=none smtp.client-ip=115.124.30.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1739959499; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=WGGGatMc3XTlrHZosb11mRPJJMxCkTLAw1+W24e+j8M=;
-	b=TClOvpmzbeU863V50FX13OBOPPwL0dStIJziPpazookxmeYKrElHNbcOT+dJryElZcwPiDGH4WDAjo6EDiipZ8OY79HWqrx+x1YCsRx1wt6se8fwPm6KJle5QtEMwHgxYYwfcG6jY0iPP2Au1oEN0/XNlaGNIFmf4jehLa2Xick=
-Received: from 30.74.144.134(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WPp2srF_1739959498 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 19 Feb 2025 18:04:58 +0800
-Message-ID: <f899d6b3-e607-480b-9acc-d64dfbc755b5@linux.alibaba.com>
-Date: Wed, 19 Feb 2025 18:04:57 +0800
+	s=arc-20240116; t=1739959503; c=relaxed/simple;
+	bh=q3sSmMA+TzF2loONrEp0YWdCAMJpcHANiEkcbVEA7YA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JCwkhh4a1XxJBk8UGFQMahTsJWsAfzjZSM+pmiq6INMA49ABGm53kx4Jb59SRjlWC6t367RCKBmUrRI9FSPDz/apoD9JtGC0d9qGk6Qkmi+l89lPNQlWFvnNzdzQy45q8zYJSrfKMs5lh/Aqcze7LvuCKDogU3Xm3SM/8uDXLTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qgtNZMkb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F61FC4CED1;
+	Wed, 19 Feb 2025 10:05:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739959502;
+	bh=q3sSmMA+TzF2loONrEp0YWdCAMJpcHANiEkcbVEA7YA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qgtNZMkb+04rvKGz6+bmbeeDb1CVPjDEUJPCJEyDXrm1RVe1utdqGOjIE7OLYwwwZ
+	 9SKdVFGiB48B2lU/NTUyoxSg0EGeHiTriJR50e82wQB8W4RyYkeM1TFOGPt5AqyB8E
+	 3Ec/is8Qykc5zer3EtIMjYjg8zMDw3bLsywVwxTKauTOVqkQsOFlXfvjRdJPjDJePJ
+	 7J80/S6wCCxHCnEl+vy1xbJE4kT49mnj9r8lQKrAi0ibU6luaBElHIKFw55VmIG0W5
+	 MNExlH1Eozwfdr41KKLWUG0WVCJHLsTZFZRNJeelSzvapXnp+ThE8BpFUK61in+l+b
+	 4kUHWwxRYycrQ==
+Date: Wed, 19 Feb 2025 11:04:58 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Bagas Sanjaya <bagasdotme@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, NeilBrown <neilb@suse.de>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of the vfs-brauner tree
+Message-ID: <20250219-frappierend-rannten-2ae9c14117ea@brauner>
+References: <20250219153444.0046e433@canb.auug.org.au>
+ <Z7WaNWHRkqt2rFGA@archie.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] mm/shmem: use xas_try_split() in
- shmem_split_large_entry()
-To: Zi Yan <ziy@nvidia.com>, Matthew Wilcox <willy@infradead.org>,
- linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Cc: Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins
- <hughd@google.com>, Kairui Song <kasong@tencent.com>,
- Miaohe Lin <linmiaohe@huawei.com>, linux-kernel@vger.kernel.org
-References: <20250218235444.1543173-1-ziy@nvidia.com>
- <20250218235444.1543173-3-ziy@nvidia.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <20250218235444.1543173-3-ziy@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Z7WaNWHRkqt2rFGA@archie.me>
 
-Hi Zi,
-
-Sorry for the late reply due to being busy with other things:)
-
-On 2025/2/19 07:54, Zi Yan wrote:
-> During shmem_split_large_entry(), large swap entries are covering n slots
-> and an order-0 folio needs to be inserted.
+On Wed, Feb 19, 2025 at 03:45:41PM +0700, Bagas Sanjaya wrote:
+> On Wed, Feb 19, 2025 at 03:34:44PM +1100, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > After merging the vfs-brauner tree, today's linux-next build (htmldocs)
+> > produced this warning:
+> > 
+> > Documentation/filesystems/porting.rst:1173: ERROR: Unexpected indentation. [docutils]
+> > 
+> > Introduced by commit
+> > 
+> >   20c2c1baa9ab ("VFS: add common error checks to lookup_one_qstr_excl()")
+> > 
 > 
-> Instead of splitting all n slots, only the 1 slot covered by the folio
-> need to be split and the remaining n-1 shadow entries can be retained with
-> orders ranging from 0 to n-1.  This method only requires
-> (n/XA_CHUNK_SHIFT) new xa_nodes instead of (n % XA_CHUNK_SHIFT) *
-> (n/XA_CHUNK_SHIFT) new xa_nodes, compared to the original
-> xas_split_alloc() + xas_split() one.
+> Separating the bullet list should suffice (plus s/recommend/recommended/
+> for consistency with the rest of docs):
 > 
-> For example, to split an order-9 large swap entry (assuming XA_CHUNK_SHIFT
-> is 6), 1 xa_node is needed instead of 8.
+> ---- >8 ----
+> diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesystems/porting.rst
+> index 3b6622fbd66be9..cfac50a7258db6 100644
+> --- a/Documentation/filesystems/porting.rst
+> +++ b/Documentation/filesystems/porting.rst
+> @@ -1166,10 +1166,11 @@ kern_path_locked() and user_path_locked() no longer return a negative
+>  dentry so this doesn't need to be checked.  If the name cannot be found,
+>  ERR_PTR(-ENOENT) is returned.
+>  
+> -** recommend**
+> +** recommended**
+>  
+>  lookup_one_qstr_excl() is changed to return errors in more cases, so
+> -these conditions don't require explicit checks.
+> +these conditions don't require explicit checks:
+> +
+>   - if LOOKUP_CREATE is NOT given, then the dentry won't be negative,
+>     ERR_PTR(-ENOENT) is returned instead
+>   - if LOOKUP_EXCL IS given, then the dentry won't be positive,
 > 
-> xas_try_split_min_order() is used to reduce the number of calls to
-> xas_try_split() during split.
+> Let me know if I should send the formal patch.
 
-For shmem swapin, if we cannot swap in the whole large folio by skipping 
-the swap cache, we will split the large swap entry stored in the shmem 
-mapping into order-0 swap entries, rather than splitting it into other 
-orders of swap entries. This is because the next time we swap in a shmem 
-folio through shmem_swapin_cluster(), it will still be an order 0 folio.
-
-Moreover I did a quick test with swapping in order 6 shmem folios, 
-however, my test hung, and the console was continuously filled with the 
-following information. It seems there are some issues with shmem swapin 
-handling. Anyway, I need more time to debug and test.
-
-[ 1037.364644] Huh VM_FAULT_OOM leaked out to the #PF handler. Retrying PF
-[ 1037.364650] Huh VM_FAULT_OOM leaked out to the #PF handler. Retrying PF
-[ 1037.364652] Huh VM_FAULT_OOM leaked out to the #PF handler. Retrying PF
-[ 1037.364654] Huh VM_FAULT_OOM leaked out to the #PF handler. Retrying PF
-[ 1037.364656] Huh VM_FAULT_OOM leaked out to the #PF handler. Retrying PF
-[ 1037.364658] Huh VM_FAULT_OOM leaked out to the #PF handler. Retrying PF
-[ 1037.364659] Huh VM_FAULT_OOM leaked out to the #PF handler. Retrying PF
-[ 1037.364661] Huh VM_FAULT_OOM leaked out to the #PF handler. Retrying PF
-[ 1037.364663] Huh VM_FAULT_OOM leaked out to the #PF handler. Retrying PF
-[ 1037.364665] Huh VM_FAULT_OOM leaked out to the #PF handler. Retrying PF
-[ 1042.368539] pagefault_out_of_memory: 9268696 callbacks suppressed
-.......
+No, I'll fix it in-tree and fold it.
+Thanks.
 
