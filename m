@@ -1,236 +1,329 @@
-Return-Path: <linux-kernel+bounces-521912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D2FAA3C3C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:38:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF8BCA3C3D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:41:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A935717672E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:37:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78C171882F8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:38:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDB011F8F09;
-	Wed, 19 Feb 2025 15:37:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 087E41F9F7C;
+	Wed, 19 Feb 2025 15:38:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="fgSfp0ld"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="ucYY8yUa"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50E671F37BA;
-	Wed, 19 Feb 2025 15:37:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F0151DC184
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 15:38:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739979475; cv=none; b=dbipLp9uucQ3aF6mlksy0J942JOETTDJGSikJVQLB8tkaJHF1t8tkWvztE3bZ+fqlpEMa1Wum8wD3HMo6/lVh9aecuCHYWZIhfc4mD057bNp9gIChrELG7pvpG/3p5vAH0p7bm6R7hPUPfKLhHefUgJmrl0e1R+Ag59G8yH92hQ=
+	t=1739979518; cv=none; b=ZfN9SjVOVTTK648AvtKDGJI+DMPKUtxKWRRMjgmQzIbgKGD2N8pqUvIEXaSQJYm3PCzaZHdu4x7PjzAbr7li7j+STBdispxv1VJdYZtYo9rQLhgmEHNP41HIHODymbxyZsjxhz2uy/vbgewXa62dvJBNdP3XX5SE01nA2HvoZBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739979475; c=relaxed/simple;
-	bh=axCNMnpKAhLuowO4WagW+r0b9RbhHX8hO31iLpIavNk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QZLBuocoMVxeGqkMrjLHCe6UAjj6qN/3JoXWoFVKSMLIPoYiz7Jceacr/LgE4zM8KsoklHhWnfOp8uWxsRd/LDlMyShlBo6vxVSM3DheZZA1jjdSml+SB0aA+GbChQpkWXYEWTOQDA++cLJvBBB3cXKQgn0vL6hN+KHXfhHzeSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=fgSfp0ld; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51JFbA2D011660;
-	Wed, 19 Feb 2025 15:37:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=GutrDS
-	yCSH/AB96WUJAY2Xow2tXi6nzxIQdwxOo5sWo=; b=fgSfp0ldBCTrxRSd+1r43A
-	oC+6tvhhoqMgzNUaL++C9/fvailI0YIt/IGxi6zNIX5FL1dg5eSH3AHLog2oUmYU
-	SD0RQLjLr3vZraDHyYcAApytTd9OB1WwS+T+kVT6s8yQEXW/sPOtajNTWqyfyRvo
-	0/PhMggfDO3pfyovjwiPipR9fjp920p+aWvDDHE2oXYVQ6SNjZc52oxERrBcqIU1
-	HCGH3JdHtG6NFaKwBVh565ksw7/Wgla1oaWzENaSShMe5gEC/zeo+81MHX8VEb8r
-	YelHwIgleSF/haIJ0WyJTCD6rnSjQgoChPA+Lbd0akiqQVkYJuvF86+A+PWjJ9oA
-	==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44w5c9bpwj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Feb 2025 15:37:15 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51JE289l009646;
-	Wed, 19 Feb 2025 15:37:13 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 44w03y4sg2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Feb 2025 15:37:13 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51JFbCpg29950608
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 19 Feb 2025 15:37:13 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BAEB058059;
-	Wed, 19 Feb 2025 15:37:12 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D913B58043;
-	Wed, 19 Feb 2025 15:37:11 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 19 Feb 2025 15:37:11 +0000 (GMT)
-Message-ID: <f102607b-963a-40c6-a14f-0803f8b059cc@linux.ibm.com>
-Date: Wed, 19 Feb 2025 10:37:11 -0500
+	s=arc-20240116; t=1739979518; c=relaxed/simple;
+	bh=r0nl07WQCvR1t6EeSBi89DS4RroDeQNnskMk86HzuPg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=K8h21C79QtunkdKyJSsRXfgxmryjlJ2yQoerKsllqQrnXX2Saqn7d/g8i6jpeHd5oNw7RDDQjVK37kVi4kCsdf/pMtCyI1U0rUBbDp0ue2FTjJX+BFxa4LRoM4YHx7HC/mB4xS+RELCZfJYAIfqp0+SFJxInKmwZr5EtrEfcSJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca; spf=none smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=ucYY8yUa; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ndufresne.ca
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-472087177a5so14421031cf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 07:38:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1739979514; x=1740584314; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=r0nl07WQCvR1t6EeSBi89DS4RroDeQNnskMk86HzuPg=;
+        b=ucYY8yUaTpl7uAACoTYQgGc2mhUaBAtW9FOh6QqvjlU72+JsqoPrKXLx4SPSCuMYZV
+         OEMuBekvTn42xGHkdGx0KlHYmkhN/C8l5mIyHxOekOh51FhFgAZrA8Kq0jPyQkt8FHS3
+         xXRUFyuSPI46QngdXcb7h47A6pbgfD0qRQDGSbULmaYwPuE6S5ULQZH28O9+GdCYyIMb
+         StBRBM5q6d+fpPC67Zz6TFFuY+b0vImyNRTloF08XlN0Nr7+WJ8ce9Iy6P+O69bEF+L8
+         yZSiHBAiWX+QbNq4akuZOB+nv9/CmBgeSRusEhzt4ANbzf21y8iz8by9MMw6RqGmWVnL
+         7USQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739979514; x=1740584314;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=r0nl07WQCvR1t6EeSBi89DS4RroDeQNnskMk86HzuPg=;
+        b=ls9REPi/BinbEG7gxnK7T+T0OOo0eGX/iurGqlul1atpNYG2WMZ/NbrlQXeoOMNp7a
+         LLD+H7YVbmpGMw9+CElQ6EH/jtpsWFJLNpMQc0JDIVX4KCvn68Ofxk/dx27aAw6SAiXa
+         2ei8R4sVzP/VD4PnmZAubYUFLuTRkH1+qZmwzKxtbWUvnxMPciCs5aJk7x6klrNaekfH
+         b4QWJYpAeqFgB7+kMu4Vl4zQziiVyvVQgKqir5oSaKJsRD999g1FT3N+BgNoVytFSIvl
+         mghsX6J0BhJOYUq1H8qb2RDGxURaCObobA+bUAD+NSYp7kly/75jEmO4I0nBlm8+8+Mc
+         q6HA==
+X-Forwarded-Encrypted: i=1; AJvYcCXJ1m7O99mlQmf8fnOL7xi3xhO2QFVPCAiiijNxd2Oig+JaYcSennLjEn+LDLdWVGlbBBragxa7L34uY1s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyj5orJ9P3GV95zj15dfvpYsuK3ZWYzXStqpTjo6sZBVtKFrOFJ
+	mjegGBQ7wpXnS9F7fJrYnh9rD4xyfj4bHfJ4+FONa+l9kh7wnaGmBmk7k8TCWFY=
+X-Gm-Gg: ASbGncvCW051mghJDr/zsi6lUdzHQXNaWEtm3chptCa65thtAgbJEjwqLc1gbex0EWh
+	wLJitck+fQWCcljV9KI4mxBPHtNBpYAbQW/XW3eJJpbxj76OYoacS1h5xIibmzhiAPkJbuUjTSS
+	b7VqOIEjTGkRuXrCupqb7biE4l1t+asUk/TRV3PsvXXxN4RHGRvQL347SNXS5q85eCy/y7+ECRz
+	eYZk6fj/+GcnTlqkZ3zQbX9LDU5oXerFzHkuGP3yv+NpWdQvrWvYRlBJnTnK262H0k4vFsAe6n5
+	XVUjX4q3zqDARWxThFdh
+X-Google-Smtp-Source: AGHT+IFIKw2WXgBDSoS/lPjW2Im//1d5EyJCDntNvrkKNeDNCF68gDnZkdGkn7ryG/DhIkBrPFCuzA==
+X-Received: by 2002:a05:622a:1311:b0:472:11ff:65fa with SMTP id d75a77b69052e-47211ff6a11mr16508631cf.50.1739979514079;
+        Wed, 19 Feb 2025 07:38:34 -0800 (PST)
+Received: from ?IPv6:2606:6d00:11:e976::5ac? ([2606:6d00:11:e976::5ac])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-471fdca4cefsm24350581cf.45.2025.02.19.07.38.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2025 07:38:32 -0800 (PST)
+Message-ID: <5682afd1785f37d9a995bee1643174b669c48535.camel@ndufresne.ca>
+Subject: Re: [PATCH v1 2/3] dt-bindings: media: mediatek: mdp3: Add
+ compatibles for MT8188 MDP3
+From: Nicolas Dufresne <nicolas@ndufresne.ca>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	chunkuang.hu@kernel.org, Yunfei Dong <yunfei.dong@mediatek.com>, Jason-JH
+ Lin	 <jason-jh.lin@mediatek.com>
+Cc: p.zabel@pengutronix.de, airlied@gmail.com, simona@ffwll.ch, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ 	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ mchehab@kernel.org, 	matthias.bgg@gmail.com, moudy.ho@mediatek.com,
+ dri-devel@lists.freedesktop.org, 	linux-mediatek@lists.infradead.org,
+ devicetree@vger.kernel.org, 	linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, 	linux-arm-kernel@lists.infradead.org,
+ kernel@collabora.com, 	sebastian.fricke@collabora.com,
+ macpaul.lin@mediatek.com
+Date: Wed, 19 Feb 2025 10:38:31 -0500
+In-Reply-To: <20241218105320.38980-3-angelogioacchino.delregno@collabora.com>
+References: <20241218105320.38980-1-angelogioacchino.delregno@collabora.com>
+	 <20241218105320.38980-3-angelogioacchino.delregno@collabora.com>
+Autocrypt: addr=nicolas@ndufresne.ca; prefer-encrypt=mutual;
+ keydata=mQGiBEUQN0MRBACQYceNSezSdMjx7sx6gwKkMghrrODgl3B0eXBTgNp6c431IfOOEsdvk
+ oOh1kwoYcQgbg4MXw6beOltysX4e8fFWsiRkc2nvvRW9ir9kHDm49MkBLqaDjTqOkYKNMiurFW+go
+ zpr/lUW15QqT6v68RYe0zRdtwGZqeLzX2LVuukGwCg4AISzswrrYHNV7vQLcbaUhPgIl0D+gILYT9
+ TJgAEK4YHW+bFRcY+cgUFoLQqQayECMlctKoLOE69nIYOc/hDr9uih1wxrQ/yL0NJvQCohSPyoyLF
+ 9b2EuIGhQVp05XP7FzlTxhYvGO/DtO08ec85+bTfVBMV6eeY4MS3ZU+1z7ObD7Pf29YjyTehN2Dan
+ 6w1g2rBk5MoA/9nDocSlk4pbFpsYSFmVHsDiAOFje3+iY4ftVDKunKYWMhwRVBjAREOByBagmRau0
+ cLEcElpf4hX5f978GoxSGIsiKoDAlXX+ICDOWC1/EXhEEmBR1gL0QJgiVviNyLfGJlZWnPjw6xhhm
+ tHYWTDxBOP5peztyc2PqeKsLsLWzAr7QnTmljb2xhcyBEdWZyZXNuZSA8bmljb2xhc0BuZHVmcmVz
+ bmUuY2E+iGIEExECACIFAlXA3CACGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFTAi2sB
+ qgcJngAnRDBTr8bhzuH0KQwFP1nEYtfgpKdAKCrQ/sJfuG/8zsd7J8wVl7y3e8ARbRDTmljb2xhcy
+ BEdWZyZXNuZSAoQi4gU2MuIEluZm9ybWF0aXF1ZSkgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29
+ tPohgBBMRAgAgBQJFlCyOAhsDBgsJCAcDAgQVAggDBBYCAwECHgECF4AACgkQcVMCLawGqBwhLQCg
+ zYlrLBj6KIAZ4gmsfjXD6ZtddT8AoIeGDicVq5WvMHNWign6ApQcZUihtElOaWNvbGFzIER1ZnJlc
+ 25lIChCLiBTYy4gSW5mb3JtYXRpcXVlKSA8bmljb2xhcy5kdWZyZXNuZUBjb2xsYWJvcmEuY28udW
+ s+iGIEExECACIFAkuzca8CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFTAi2sBqgcQX8
+ An2By6LDEeMxi4B9hUbpvRnzaaeNqAJ9Rox8rfqHZnSErw9bCHiBwvwJZ77QxTmljb2xhcyBEdWZy
+ ZXNuZSA8bmljb2xhcy5kdWZyZXNuZUBjb2xsYWJvcmEuY29tPohiBBMRAgAiBQJNzZzPAhsDBgsJC
+ AcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRBxUwItrAaoHLlxAKCYAGf4JL7DYDLs/188CPMGuwLypw
+ CfWKc9DorA9f5pyYlD5pQo6SgSoiC0R05pY29sYXMgRHVmcmVzbmUgKEIgU2MuIEluZm9ybWF0aXF
+ 1ZSkgPG5pY29sYXMuZHVmcmVzbmVAdXNoZXJicm9va2UuY2E+iGAEExECACAFAkUQN0MCGwMGCwkI
+ BwMCBBUCCAMEFgIDAQIeAQIXgAAKCRBxUwItrAaoHPTnAJ0WGgJJVspoctAvEcI00mtp5WAFGgCgr
+ +E7ItOqZEHAs+xabBgknYZIFPU=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 4/7] ima: kexec: define functions to copy IMA log at
- soft boot
-To: steven chen <chenste@linux.microsoft.com>, zohar@linux.ibm.com,
-        roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
-        eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
-        code@tyhicks.com, bauermann@kolabnow.com,
-        linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
-        James.Bottomley@HansenPartnership.com, bhe@redhat.com,
-        vgoyal@redhat.com, dyoung@redhat.com
-References: <20250218225502.747963-1-chenste@linux.microsoft.com>
- <20250218225502.747963-5-chenste@linux.microsoft.com>
-Content-Language: en-US
-From: Stefan Berger <stefanb@linux.ibm.com>
-In-Reply-To: <20250218225502.747963-5-chenste@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: _2h1PqhZlz4EX5Bg4hbV1qibYy_kiHN-
-X-Proofpoint-GUID: _2h1PqhZlz4EX5Bg4hbV1qibYy_kiHN-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-19_06,2025-02-19_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- spamscore=0 lowpriorityscore=0 suspectscore=0 clxscore=1011 bulkscore=0
- malwarescore=0 phishscore=0 mlxlogscore=999 adultscore=0 impostorscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502190122
 
+Hi Angelo,
 
+Le mercredi 18 d=C3=A9cembre 2024 =C3=A0 11:53 +0100, AngeloGioacchino Del =
+Regno
+a =C3=A9crit=C2=A0:
+> Add compatible strings for the FG, HDR, RSZ, STITCH, TCC, TDSHP
+> and WROT hardware components found in MediaTek's MT8188 SoC.
 
-On 2/18/25 5:54 PM, steven chen wrote:
-> IMA log is copied to the new Kernel during kexec 'load' using
+The firmware for this is missing in linux-firmware. I will not ack or
+pickMTK-VCODEC/MDP3 patches until this issue has been resolved.
 
-The IMA log is currently copied to the new kernel ...
+regards,
+Nicolas
 
-
-> ima_dump_measurement_list().  The log copy at kexec 'load' may result in
-> loss of IMA measurements during kexec soft reboot.  It needs to be copied
-
-However, the log copied at kexec 'load' may result in loss of IMA 
-measurements due to missed measurements that only occurred after kexec 
-'load'. Therefore, the log needs to be copied during kexec 'execute'. 
-Setup the ...
-
-> over during kexec 'execute'.  Setup the needed infrastructure to move the
-> IMA log copy from kexec 'load' to 'execute'.
-> 
-> Define a new IMA hook ima_update_kexec_buffer() as a stub function.
-> It will be used to call ima_dump_measurement_list() during kexec
-> 'execute'.
-> 
-> Implement ima_kexec_post_load() function to be invoked after the new
-> Kernel image has been loaded for kexec. ima_kexec_post_load() maps the
-> IMA buffer to a segment in the newly loaded Kernel.  It also registers
-> the reboot notifier_block to trigger ima_update_kexec_buffer() at
-> exec 'execute'.
-
-kexec 'execute'
-
-> 
-> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-> Signed-off-by: steven chen <chenste@linux.microsoft.com>
-
-With the above changes:
-
-Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-
+>=20
+> This hardware is compatible with MT8195.
+>=20
+> Signed-off-by: AngeloGioacchino Del Regno
+> <angelogioacchino.delregno@collabora.com>
 > ---
->   include/linux/ima.h                |  3 ++
->   security/integrity/ima/ima_kexec.c | 46 ++++++++++++++++++++++++++++++
->   2 files changed, 49 insertions(+)
-> 
-> diff --git a/include/linux/ima.h b/include/linux/ima.h
-> index 0bae61a15b60..8e29cb4e6a01 100644
-> --- a/include/linux/ima.h
-> +++ b/include/linux/ima.h
-> @@ -32,6 +32,9 @@ static inline void ima_appraise_parse_cmdline(void) {}
->   
->   #ifdef CONFIG_IMA_KEXEC
->   extern void ima_add_kexec_buffer(struct kimage *image);
-> +extern void ima_kexec_post_load(struct kimage *image);
-> +#else
-> +static inline void ima_kexec_post_load(struct kimage *image) {}
->   #endif
->   
->   #else
-> diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
-> index 704676fa6615..0fa65f91414b 100644
-> --- a/security/integrity/ima/ima_kexec.c
-> +++ b/security/integrity/ima/ima_kexec.c
-> @@ -12,10 +12,14 @@
->   #include <linux/kexec.h>
->   #include <linux/of.h>
->   #include <linux/ima.h>
-> +#include <linux/reboot.h>
-> +#include <asm/page.h>
->   #include "ima.h"
->   
->   #ifdef CONFIG_IMA_KEXEC
->   static struct seq_file ima_kexec_file;
-> +static void *ima_kexec_buffer;
-> +static bool ima_kexec_update_registered;
->   
->   static void ima_reset_kexec_file(struct seq_file *sf)
->   {
-> @@ -183,6 +187,48 @@ void ima_add_kexec_buffer(struct kimage *image)
->   	kexec_dprintk("kexec measurement buffer for the loaded kernel at 0x%lx.\n",
->   		      kbuf.mem);
->   }
-> +
-> +/*
-> + * Called during kexec execute so that IMA can update the measurement list.
-> + */
-> +static int ima_update_kexec_buffer(struct notifier_block *self,
-> +				   unsigned long action, void *data)
-> +{
-> +	return NOTIFY_OK;
-> +}
-> +
-> +struct notifier_block update_buffer_nb = {
-> +	.notifier_call = ima_update_kexec_buffer,
-> +};
-> +
-> +/*
-> + * Create a mapping for the source pages that contain the IMA buffer
-> + * so we can update it later.
-> + */
-> +void ima_kexec_post_load(struct kimage *image)
-> +{
-> +	if (ima_kexec_buffer) {
-> +		kimage_unmap_segment(ima_kexec_buffer);
-> +		ima_kexec_buffer = NULL;
-> +	}
-> +
-> +	if (!image->ima_buffer_addr)
-> +		return;
-> +
-> +	ima_kexec_buffer = kimage_map_segment(image,
-> +					      image->ima_buffer_addr,
-> +					      image->ima_buffer_size);
-> +	if (!ima_kexec_buffer) {
-> +		pr_err("Could not map measurements buffer.\n");
-> +		return;
-> +	}
-> +
-> +	if (!ima_kexec_update_registered) {
-> +		register_reboot_notifier(&update_buffer_nb);
-> +		ima_kexec_update_registered = true;
-> +	}
-> +}
-> +
->   #endif /* IMA_KEXEC */
->   
->   /*
+> =C2=A0.../devicetree/bindings/media/mediatek,mdp3-fg.yaml=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 | 8
+> ++++++--
+> =C2=A0.../devicetree/bindings/media/mediatek,mdp3-hdr.yaml=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 | 8
+> ++++++--
+> =C2=A0.../devicetree/bindings/media/mediatek,mdp3-rsz.yaml=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 | 1 +
+> =C2=A0.../devicetree/bindings/media/mediatek,mdp3-stitch.yaml=C2=A0=C2=A0=
+ | 8
+> ++++++--
+> =C2=A0.../devicetree/bindings/media/mediatek,mdp3-tcc.yaml=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 | 8
+> ++++++--
+> =C2=A0.../devicetree/bindings/media/mediatek,mdp3-tdshp.yaml=C2=A0=C2=A0=
+=C2=A0 | 8
+> ++++++--
+> =C2=A0.../devicetree/bindings/media/mediatek,mdp3-wrot.yaml=C2=A0=C2=A0=
+=C2=A0=C2=A0 | 1 +
+> =C2=A07 files changed, 32 insertions(+), 10 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/media/mediatek,mdp3-
+> fg.yaml b/Documentation/devicetree/bindings/media/mediatek,mdp3-
+> fg.yaml
+> index 03f31b009085..40fda59fa8a8 100644
+> --- a/Documentation/devicetree/bindings/media/mediatek,mdp3-fg.yaml
+> +++ b/Documentation/devicetree/bindings/media/mediatek,mdp3-fg.yaml
+> @@ -16,8 +16,12 @@ description:
+> =C2=A0
+> =C2=A0properties:
+> =C2=A0=C2=A0 compatible:
+> -=C2=A0=C2=A0=C2=A0 enum:
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - mediatek,mt8195-mdp3-fg
+> +=C2=A0=C2=A0=C2=A0 oneOf:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - enum:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - mediatek,mt8195=
+-mdp3-fg
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - items:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: mediatek=
+,mt8188-mdp3-fg
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: mediatek=
+,mt8195-mdp3-fg
+> =C2=A0
+> =C2=A0=C2=A0 reg:
+> =C2=A0=C2=A0=C2=A0=C2=A0 maxItems: 1
+> diff --git a/Documentation/devicetree/bindings/media/mediatek,mdp3-
+> hdr.yaml b/Documentation/devicetree/bindings/media/mediatek,mdp3-
+> hdr.yaml
+> index d4609bba6578..d9f926c20220 100644
+> --- a/Documentation/devicetree/bindings/media/mediatek,mdp3-hdr.yaml
+> +++ b/Documentation/devicetree/bindings/media/mediatek,mdp3-hdr.yaml
+> @@ -16,8 +16,12 @@ description:
+> =C2=A0
+> =C2=A0properties:
+> =C2=A0=C2=A0 compatible:
+> -=C2=A0=C2=A0=C2=A0 enum:
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - mediatek,mt8195-mdp3-hdr
+> +=C2=A0=C2=A0=C2=A0 oneOf:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - enum:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - mediatek,mt8195=
+-mdp3-hdr
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - items:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: mediatek=
+,mt8188-mdp3-hdr
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: mediatek=
+,mt8195-mdp3-hdr
+> =C2=A0
+> =C2=A0=C2=A0 reg:
+> =C2=A0=C2=A0=C2=A0=C2=A0 maxItems: 1
+> diff --git a/Documentation/devicetree/bindings/media/mediatek,mdp3-
+> rsz.yaml b/Documentation/devicetree/bindings/media/mediatek,mdp3-
+> rsz.yaml
+> index f5676bec4326..8124c39d73e9 100644
+> --- a/Documentation/devicetree/bindings/media/mediatek,mdp3-rsz.yaml
+> +++ b/Documentation/devicetree/bindings/media/mediatek,mdp3-rsz.yaml
+> @@ -20,6 +20,7 @@ properties:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - mediatek,m=
+t8183-mdp3-rsz
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - items:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - enum:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 - mediatek,mt8188-mdp3-rsz
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 - mediatek,mt8195-mdp3-rsz
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: med=
+iatek,mt8183-mdp3-rsz
+> =C2=A0
+> diff --git a/Documentation/devicetree/bindings/media/mediatek,mdp3-
+> stitch.yaml b/Documentation/devicetree/bindings/media/mediatek,mdp3-
+> stitch.yaml
+> index d815bea29154..1d8e7e202c42 100644
+> --- a/Documentation/devicetree/bindings/media/mediatek,mdp3-
+> stitch.yaml
+> +++ b/Documentation/devicetree/bindings/media/mediatek,mdp3-
+> stitch.yaml
+> @@ -16,8 +16,12 @@ description:
+> =C2=A0
+> =C2=A0properties:
+> =C2=A0=C2=A0 compatible:
+> -=C2=A0=C2=A0=C2=A0 enum:
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - mediatek,mt8195-mdp3-stitch
+> +=C2=A0=C2=A0=C2=A0 oneOf:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - enum:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - mediatek,mt8195=
+-mdp3-stitch
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - items:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: mediatek=
+,mt8188-mdp3-stitch
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: mediatek=
+,mt8195-mdp3-stitch
+> =C2=A0
+> =C2=A0=C2=A0 reg:
+> =C2=A0=C2=A0=C2=A0=C2=A0 maxItems: 1
+> diff --git a/Documentation/devicetree/bindings/media/mediatek,mdp3-
+> tcc.yaml b/Documentation/devicetree/bindings/media/mediatek,mdp3-
+> tcc.yaml
+> index 14ea556d4f82..6cff7c073ce4 100644
+> --- a/Documentation/devicetree/bindings/media/mediatek,mdp3-tcc.yaml
+> +++ b/Documentation/devicetree/bindings/media/mediatek,mdp3-tcc.yaml
+> @@ -17,8 +17,12 @@ description:
+> =C2=A0
+> =C2=A0properties:
+> =C2=A0=C2=A0 compatible:
+> -=C2=A0=C2=A0=C2=A0 enum:
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - mediatek,mt8195-mdp3-tcc
+> +=C2=A0=C2=A0=C2=A0 oneOf:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - enum:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - mediatek,mt8195=
+-mdp3-tcc
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - items:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: mediatek=
+,mt8188-mdp3-tcc
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: mediatek=
+,mt8195-mdp3-tcc
+> =C2=A0
+> =C2=A0=C2=A0 reg:
+> =C2=A0=C2=A0=C2=A0=C2=A0 maxItems: 1
+> diff --git a/Documentation/devicetree/bindings/media/mediatek,mdp3-
+> tdshp.yaml b/Documentation/devicetree/bindings/media/mediatek,mdp3-
+> tdshp.yaml
+> index 8ab7f2d8e148..cdfa27324738 100644
+> --- a/Documentation/devicetree/bindings/media/mediatek,mdp3-
+> tdshp.yaml
+> +++ b/Documentation/devicetree/bindings/media/mediatek,mdp3-
+> tdshp.yaml
+> @@ -16,8 +16,12 @@ description:
+> =C2=A0
+> =C2=A0properties:
+> =C2=A0=C2=A0 compatible:
+> -=C2=A0=C2=A0=C2=A0 enum:
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - mediatek,mt8195-mdp3-tdshp
+> +=C2=A0=C2=A0=C2=A0 oneOf:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - enum:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - mediatek,mt8195=
+-mdp3-tdshp
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - items:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: mediatek=
+,mt8188-mdp3-tdshp
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: mediatek=
+,mt8195-mdp3-tdshp
+> =C2=A0
+> =C2=A0=C2=A0 reg:
+> =C2=A0=C2=A0=C2=A0=C2=A0 maxItems: 1
+> diff --git a/Documentation/devicetree/bindings/media/mediatek,mdp3-
+> wrot.yaml b/Documentation/devicetree/bindings/media/mediatek,mdp3-
+> wrot.yaml
+> index 53a679338402..b6269f4f9fd6 100644
+> --- a/Documentation/devicetree/bindings/media/mediatek,mdp3-wrot.yaml
+> +++ b/Documentation/devicetree/bindings/media/mediatek,mdp3-wrot.yaml
+> @@ -20,6 +20,7 @@ properties:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - mediatek,m=
+t8183-mdp3-wrot
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - items:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - enum:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 - mediatek,mt8188-mdp3-wrot
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 - mediatek,mt8195-mdp3-wrot
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: med=
+iatek,mt8183-mdp3-wrot
+> =C2=A0
 
 
