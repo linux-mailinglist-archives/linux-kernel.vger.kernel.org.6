@@ -1,88 +1,143 @@
-Return-Path: <linux-kernel+bounces-520946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55272A3B191
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:24:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C14A4A3B192
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:25:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CE9F3AFD5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 06:23:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 380947A61B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 06:24:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1EBC1B87F8;
-	Wed, 19 Feb 2025 06:23:54 +0000 (UTC)
-Received: from mta22.hihonor.com (mta22.hihonor.com [81.70.192.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA1AE1BC099;
+	Wed, 19 Feb 2025 06:24:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jkSNw4m4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FE6D16D9AF
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 06:23:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.192.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49EEC17BB21;
+	Wed, 19 Feb 2025 06:24:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739946234; cv=none; b=b+Z8uARcGEMBqBrEJ7Ox4Jy4JsYu9wk3m4hh6F0HMw1uU/3/spVK45kyK3heqPwFNlTMNQPhS9zHUNdrHbbZL4mrLoJOsSNHyUiodddKS0Qque6lwo9f5Z9k8Kvi8Jw4HNl6RCbKe1q/r71kdRbGQED1GQNbZ9sa5LHTSRlaE1I=
+	t=1739946296; cv=none; b=lvA0AeoiO1f3pNat41xsC1KqM2E+zzSM9XRYYkFNw5Vgx09+ociz4M+m8sPkff2tgDAvAkz8F8AsSdysgKM6D/E+UkU7QSZedJahak3AW2A0b+P/NtD0po4BsCE1agEbu54iPfqAFbdKbsfCk2q7mEak2dKIi0roWh9tpy7XYkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739946234; c=relaxed/simple;
-	bh=1hIJCWwGC953Ijo4lalx+UZSk476OHtXAIu9d88Nxy0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=bwsthJlLc1fwZ/JnzfUTEo/lVC3tVf+bwkUSH4+6k1M4Hd5AmiWNTut+LUTC+OjjTuKIC6qdX+XuDOE517yUifOKVVv+Ez0IE3pIoN3IbiFuQnH0cXy2z9aXE3vCVK6IzyTCXeUbWtWS96fJIBuv8AcHzHfiL2rT9b03vmR6yhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.192.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-Received: from w001.hihonor.com (unknown [10.68.25.235])
-	by mta22.hihonor.com (SkyGuard) with ESMTPS id 4YyRCx3dqnzYlZ3B;
-	Wed, 19 Feb 2025 14:23:25 +0800 (CST)
-Received: from a008.hihonor.com (10.68.30.56) by w001.hihonor.com
- (10.68.25.235) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 19 Feb
- 2025 14:23:43 +0800
-Received: from a007.hihonor.com (10.68.22.31) by a008.hihonor.com
- (10.68.30.56) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 19 Feb
- 2025 14:23:43 +0800
-Received: from a007.hihonor.com ([fe80::e866:83ac:f23b:c25c]) by
- a007.hihonor.com ([fe80::e866:83ac:f23b:c25c%10]) with mapi id
- 15.02.1544.011; Wed, 19 Feb 2025 14:23:42 +0800
-From: gaoxu <gaoxu2@honor.com>
-To: Andrew Morton <akpm@linux-foundation.org>, Barry Song <21cnbao@gmail.com>
-CC: "linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Suren Baghdasaryan <surenb@google.com>, Yosry
- Ahmed <yosry.ahmed@linux.dev>
-Subject: =?utf-8?B?5Zue5aSNOiBbUEFUQ0ggdjRdIG1tOiBGaXggcG9zc2libGUgTlVMTCBwb2lu?=
- =?utf-8?B?dGVyIGRlcmVmZXJlbmNlIGluIF9fc3dhcF9kdXBsaWNhdGU=?=
-Thread-Topic: [PATCH v4] mm: Fix possible NULL pointer dereference in
- __swap_duplicate
-Thread-Index: AduCcQRTKSEr86o5RfKgi/48SSQ2J///g8MAgAAaroD//1MYUA==
-Date: Wed, 19 Feb 2025 06:23:42 +0000
-Message-ID: <d9676b1355e84820aeeda18a1c77297a@honor.com>
-References: <e223b0e6ba2f4924984b1917cc717bd5@honor.com>
-	<CAGsJ_4y9eoHRSUSzs96UWUVygEDcoTQqFM1uyEtr_VHcmAmVDw@mail.gmail.com>
- <20250218200355.959a79bf9b6253772a95e782@linux-foundation.org>
-In-Reply-To: <20250218200355.959a79bf9b6253772a95e782@linux-foundation.org>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1739946296; c=relaxed/simple;
+	bh=/WPyWqy6uz1A6d3DyTISknBJVadCdZToLl9t/SRP2Q8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=go/IRKnjCZhtfmItPopHA/DSoGDd6sQAEoa6J0U0hSv2KFUxxQEqeX3JDNRBhwSSA95kukSohWBVFx/LlRdRN5c2NEN24jMIcieIjz4jXgOVMjyWHyq1i6aSbBI59G88ve7DQ+ovUsX9knIS07AlMcxZkGIYsF0NzrHE4RSk7/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jkSNw4m4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2D32C4CED1;
+	Wed, 19 Feb 2025 06:24:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739946295;
+	bh=/WPyWqy6uz1A6d3DyTISknBJVadCdZToLl9t/SRP2Q8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jkSNw4m4M9cgbdFImN1aPwiLVHWUXmCxwA2sJKFr4PSMlFUkgmTsXMEOfy3P55d+S
+	 QatrkkZ6Omik/jXbZx+RC7MMtQd33e6HEwT6Khh8aJqxEFfc1lVaWl8N7AJx25ucJQ
+	 UbUwYZlq5yUFZUdWARz6zQ8ApLc/S7lp7o5foCucLXX6RwzMv787+bFuj/3I/OTQ30
+	 AmTNov4MB5BEV0Vxnh7uJ+DQdarRllJkNfyl6RPPSsh3A6WEJqCTYA+eBo634NDQs6
+	 9tbRUm0iMwz1TmLaTYNp3hiTxpswfX+jmXc6/ykJ+gi3pFX6d2cSQYf9LVppVsQtB3
+	 LBARGiYo8oYbA==
+Message-ID: <3d96896d-5bb7-4ae5-a6c9-b586337eaa3f@kernel.org>
+Date: Wed, 19 Feb 2025 07:24:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/2] tty/vt: Use KVAL instead of use bit operation
+To: Alexey Gladkov <legion@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-serial@vger.kernel.org
+References: <cover.1739881707.git.legion@kernel.org>
+ <01ee8849ef8dc49c93a77bc4961ad56b9d435b8a.1739881707.git.legion@kernel.org>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <01ee8849ef8dc49c93a77bc4961ad56b9d435b8a.1739881707.git.legion@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-PiANCj4gT24gV2VkLCAxOSBGZWIgMjAyNSAxNToyODoyNiArMTMwMCBCYXJyeSBTb25nIDwyMWNu
-YmFvQGdtYWlsLmNvbT4NCj4gd3JvdGU6DQo+IA0KPiA+ID4gVGhlIHBhdGNoIHNlZW1zIHRvIG9u
-bHkgcHJvdmlkZSBhIHdvcmthcm91bmQsIGJ1dCB0aGVyZSBhcmUgbm8gbW9yZQ0KPiA+ID4gZWZm
-ZWN0aXZlIHNvZnR3YXJlIHNvbHV0aW9ucyB0byBoYW5kbGUgdGhlIGJpdCBmbGlwcyBwcm9ibGVt
-LiBUaGlzDQo+ID4gPiBwYXRoIHdpbGwgY2hhbmdlIHRoZSBpc3N1ZSBmcm9tIGEgc3lzdGVtIGNy
-YXNoIHRvIGEgcHJvY2Vzcw0KPiA+ID4gZXhjZXB0aW9uLCB0aGVyZWJ5IHJlZHVjaW5nIHRoZSBp
-bXBhY3Qgb24gdGhlIGVudGlyZSBtYWNoaW5lLg0KPiA+ID4NCj4gPiA+IFNpZ25lZC1vZmYtYnk6
-IGdhbyB4dSA8Z2FveHUyQGhvbm9yLmNvbT4NCj4gPg0KPiA+IFJlZ2FyZGxlc3Mgb2Ygd2hldGhl
-ciB0aGUgYWJvdmUgc3RhdGVtZW50IGlzIDEwMCUgYWNjdXJhdGUgb3Igd2hldGhlcg0KPiA+IGEg
-Yml0LWZsaXAgYWN0dWFsbHkgZXhpc3RzLCBwcm92aWRpbmcgdGhpcyBjaGVjayBzdGlsbCBzZWVt
-cyB1c2VmdWwsDQo+ID4gYXQgbGVhc3QgZm9yIGRlZmVuc2l2ZSBwcm9ncmFtbWluZy4NCj4gDQo+
-IEknbSBkb3VidGZ1bCBhcyB3ZWxsLg0KPiANCj4gSG93IG9mdGVuIGhhcyB0aGlzIGNyYXNoIGJl
-ZW4gb2JzZXJ2ZWQ/DQpUaGUgcHJvYmFiaWxpdHkgb2YgdGhpcyBpc3N1ZSBvY2N1cnJpbmcgaXMg
-YXBwcm94aW1hdGVseSAxIGluIDUwMCwwMDAgcGVyIHdlZWsuDQo=
+On 18. 02. 25, 13:29, Alexey Gladkov wrote:
+> The K_HANDLERS always gets KVAL as an argument. It is better to use the
+> KVAL macro itself instead of bit operation.
+> 
+> Signed-off-by: Alexey Gladkov <legion@kernel.org>
+> ---
+>   drivers/tty/vt/keyboard.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/tty/vt/keyboard.c b/drivers/tty/vt/keyboard.c
+> index 804355da46f5..7df041ac4d5c 100644
+> --- a/drivers/tty/vt/keyboard.c
+> +++ b/drivers/tty/vt/keyboard.c
+> @@ -885,7 +885,7 @@ static void k_shift(struct vc_data *vc, unsigned char value, char up_flag)
+>   		if (kbd->kbdmode == VC_UNICODE)
+>   			to_utf8(vc, npadch_value);
+>   		else
+> -			put_queue(vc, npadch_value & 0xff);
+> +			put_queue(vc, KVAL(npadch_value));
+
+While the mask is the same, this is not a kval, right?
+
+>   		npadch_active = false;
+>   	}
+>   }
+> @@ -1519,7 +1519,7 @@ static void kbd_keycode(unsigned int keycode, int down, bool hw_raw)
+>   	if ((raw_mode || kbd->kbdmode == VC_OFF) && type != KT_SPEC && type != KT_SHIFT)
+>   		return;
+>   
+> -	(*k_handler[type])(vc, keysym & 0xff, !down);
+> +	(*k_handler[type])(vc, KVAL(keysym), !down);
+
+This makes sense.
+
+-- 
+js
+suse labs
 
