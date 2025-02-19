@@ -1,115 +1,103 @@
-Return-Path: <linux-kernel+bounces-521782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C979EA3C234
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:33:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9AC2A3C23E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:35:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 254B47A69DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:32:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA490188853B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:35:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CC371EFFB0;
-	Wed, 19 Feb 2025 14:33:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CBFE1EFFBD;
+	Wed, 19 Feb 2025 14:35:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nhrax0jh"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cPNM5W0l"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C84E1EA7C0;
-	Wed, 19 Feb 2025 14:33:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05CD71D5CFA;
+	Wed, 19 Feb 2025 14:35:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739975596; cv=none; b=ecrINkh3XcrQahm0CH8/7cPWovYFyDjenPrUyB+rZEbuvGL0HqtG1+UqMC0CFFbMKx/ks38SRC+p7/tkf7IbIzYczwxSLNBSSX+fFB7uFLyHtYtK8A/tSqq5/T+aVLh7950VOFLV54npNfUEAueu1ozdzLsNFJJeNSA9xeufUnY=
+	t=1739975724; cv=none; b=PFwGMKNY3Ob5VMF5Iy5Udvjpp2cfeorPo3JMZovlcVvCBU/tz2wzGsIFDEjlVs/hOcc1UpthTB3X4PlQnDBUkZQ5WWV6kJTu85IYodBojcyenoeUUMQPTOm3QPZPPALTE8dW19iv8wQjJQC90/ly5dYrW2JQklMFi4e2x9ulc1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739975596; c=relaxed/simple;
-	bh=EwqKQLBrqZdGo2nOl3OWJ2M3vIrSDqkQtxNLnilyFV0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AR9Ow0dfSxHE9uRiSn0AjvWVXCQ3qKPgGPg45c+zOvgZI0S0eIIxQrth3aZxmGHDjdlgUwd4E9oswlFILe4sTrwN92TYM3t4iq/gFlsnXTaXwWaK0HcQLoFQaXessgjh80Zq+uSCgg+vNK+7foF22QHMlsG9+YB3EA1XOx/QKmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nhrax0jh; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5462ea9691cso1243182e87.2;
-        Wed, 19 Feb 2025 06:33:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739975592; x=1740580392; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EwqKQLBrqZdGo2nOl3OWJ2M3vIrSDqkQtxNLnilyFV0=;
-        b=nhrax0jhn7NHbb73+s71rZR/PZOHa+pguOxeqe322pHUvebQ6vHWgXQjGX0mBGrFUP
-         I73joAaB/sjvoyrhCZe2DFAAr8bm5P9+ikuzlqo6R3+ZMwQZ7q3L2l/eznSrCAW0mnUV
-         uysgxNvB6Un0fbGJ9zLUgxfjh8PcwQ77rnaSLRN8r/54Ia2hjm1Vf4PFgqqmSVuILWko
-         getq2wPZVG7KWCjIH4aSHMBf0fCX5BClTLWomVV/XdII1Enk0iRfnF1EskX/VIgmEFo9
-         QbXlTuocUNgSBlDhoRAv2aBntjs9RBom6gC2fI6zy3a0F2s+KfJmW5A4QUAV9ZkfJ7ag
-         l3pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739975592; x=1740580392;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EwqKQLBrqZdGo2nOl3OWJ2M3vIrSDqkQtxNLnilyFV0=;
-        b=dXKXatGkQhQawR9fhR6njvrLMqxs/eHmrk89+b3WgV/8KQ3kIPiL89Jvho10xAVDh/
-         Wy1VJFwjCKAyyjAaJC3ejyjuQFuCj4aUis+8tr2Uyg0EBKADZynRyBX1tPV/YdQkUQbY
-         yUsIG2OOJFbG4IRg0hFPHfTFweGfc0Oa0hlmxQHYXoE7RSh6J6UrF+ymcFYfEffUH45z
-         QcQmJCjvRP7ekiqWLzXBR3GA8GkZ9FtxRgvGO/pm4KnQgWaYVyy1rGV37kYDa0cvXrbL
-         RFsGOpaRGu7iJYizYODHqOHMsn6AjBBzxx30mh34WiEZ6DrmgbkQ15yg3OZ0E10HnqZX
-         fPfw==
-X-Forwarded-Encrypted: i=1; AJvYcCVoMxQVahBebDhzAe7+NC/3Dp/1Nkj8skgeywbwkWpZuiR25QVFICVoxSjF199RmdRCu+N70QtjRwKC7V8=@vger.kernel.org, AJvYcCX4cRhPveWG1Y5rC17WwKcyyOy253PibVilO5HOeko/YAYXxgzTkXXCt0tWXLG7DFJMKKDPiwnq44k/tQZaLoU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/qISCnL4mPoePrI0OAYdWDKByGGpqKBSztLyUJMgE4CsWfYLv
-	6M8A03mI5QETbYY+BjWpB8HoWi3ifFdFSdHwy+keHBDKD+O4cLr4zCNxVPPBEy0ArBeLwjf2J0O
-	/Im/gWae1xJOntvzceYqfa3GYQdE=
-X-Gm-Gg: ASbGnct12l1vcBaYSq6vX8gcDEIO8kd9gfUglxdJeAF+9G8VmTwkNvMRykL+zuH2BG4
-	Sv+cdcXXzlGspGHQUasi7f6lwsLQv6HNE5sEhZa13+aSgGHyLUBEFyHXKmOwkgAo8AeX/M6y41p
-	Sebz58AOYB6lPc
-X-Google-Smtp-Source: AGHT+IF0trpyo9U23QoXVVbC+J/EGS/xPFcNcqE7i/8gGVx+T8ftlX4poX8leCUCuwOEpI1Xbdak24UljYuRb7k0RBQ=
-X-Received: by 2002:a05:6512:ba6:b0:546:2ea9:6666 with SMTP id
- 2adb3069b0e04-5462ef17af9mr1858980e87.34.1739975591559; Wed, 19 Feb 2025
- 06:33:11 -0800 (PST)
+	s=arc-20240116; t=1739975724; c=relaxed/simple;
+	bh=GyuvvvFLxtnOcvSEUGEfHzjE6V8NMOmriruOGMT11eI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=trr3TFD7CUcyTPSNKuB+dPSkA69VK3v1/lMzx1na4yuxTHILyUYXYPGbE+frDcgSsQ1FWH1xKHZhMrXEN1seoBQKtOKvvuvi+sQk1dswaT86Ygo683AskyuenuXKZyy0BQ5XxeSfWES18+tbuNi2exKJffYfAxvZu/iK2XRMuTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cPNM5W0l; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739975723; x=1771511723;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=GyuvvvFLxtnOcvSEUGEfHzjE6V8NMOmriruOGMT11eI=;
+  b=cPNM5W0lS0Jen/i5eySxOnEkEUmJzGBlVYgVAzsHOmneVt6EWgABXips
+   BXrafCRsyVkJM3JR+MmuDAHjbzWYYDgfWh5jRL7t5jB5EgkhrQZRsL4bJ
+   Ly39a5iPbJaAkmZHeeM5vCFI8Xe9hcVO2vCm3ZutWVpbjokMgjkxg6+u3
+   5fX8dzMpxSflZzSrHo8EdazdHn1WE8cElt6jvuqH4fIk9g8eeCBqXlXVI
+   B0BM2DW9is8kBcSpNHZVEGcxZWU6v8xopu4LbKjqmAzwSRgpP3LIgCNKj
+   yWvcDw4J45uZUErxwdheAJckizeTGix2k2kDZyv0NAZWXD0uvzsb2upl0
+   w==;
+X-CSE-ConnectionGUID: d/Cr62llS5aG0UEgnvEtPg==
+X-CSE-MsgGUID: C1J6V2/UTFSRfKYRXdtrxA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11350"; a="39900488"
+X-IronPort-AV: E=Sophos;i="6.13,299,1732608000"; 
+   d="scan'208";a="39900488"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 06:35:22 -0800
+X-CSE-ConnectionGUID: fmFzTx/vQCefXey2Fcv+Dg==
+X-CSE-MsgGUID: Pmgxd7ivQsmeps7a3kBPug==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="115638986"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 06:35:20 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tklAT-0000000D34y-02Pv;
+	Wed, 19 Feb 2025 16:35:17 +0200
+Date: Wed, 19 Feb 2025 16:35:16 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Kurt Borja <kuurtb@gmail.com>
+Cc: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Hans de Goede <hdegoede@redhat.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Prasanth Ksr <prasanth.ksr@dell.com>, Dell.Client.Kernel@dell.com
+Subject: Re: [PATCH 1/4] platform/x86: dell: dell-wmi-sysman: Use *-y instead
+ of *-objs in Makefile
+Message-ID: <Z7XsJMwFhZLk-0S4@smile.fi.intel.com>
+References: <20250218194113.26589-1-kuurtb@gmail.com>
+ <20250218194113.26589-2-kuurtb@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250203-cstr-core-v8-0-cb3f26e78686@gmail.com>
- <CAJ-ks9kyozt45VeXG7GBTN-ejy_HGMOekFYFMmzS8AbEusZMWQ@mail.gmail.com> <CAH5fLgjUuCo5Ayx4WCfnrVAC1prvUbY-pvZdinkAb+KcSOWvpA@mail.gmail.com>
-In-Reply-To: <CAH5fLgjUuCo5Ayx4WCfnrVAC1prvUbY-pvZdinkAb+KcSOWvpA@mail.gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Wed, 19 Feb 2025 09:32:35 -0500
-X-Gm-Features: AWEUYZkukcYdvGsaT4hNVUarHCSF0QpSSReovbKfJ45ER4Jk9CEfW_I7LMDQNV0
-Message-ID: <CAJ-ks9=JMWQMTdJSkdVGJus1mcRQWZ-34B_s4Ti7ab5NAdA6pg@mail.gmail.com>
-Subject: Re: [PATCH v8 0/4] rust: replace kernel::str::CStr w/ core::ffi::CStr
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Michal Rostecki <vadorovsky@protonmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250218194113.26589-2-kuurtb@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, Feb 19, 2025 at 9:21=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> w=
-rote:
->
-> On Tue, Feb 18, 2025 at 5:05=E2=80=AFPM Tamir Duberstein <tamird@gmail.co=
-m> wrote:
-> >
-> > Gentle ping. Trevor, Alice, Benno: you all participated in the last
-> > round of review - I'd appreciate it if you could take a look at this
-> > series.
->
-> The primary thing that comes to mind looking at this is that losing
-> the Display impl is pretty sad. Having to jump through hoops every
-> time you want to print a string isn't great :(
+On Tue, Feb 18, 2025 at 02:41:08PM -0500, Kurt Borja wrote:
+> The `objs` suffix is reserved for user-space tools. Use the `y` suffix
+> instead, which is usually used for kernel drivers.
 
-There's the practical answer and the philosophical one. The former is
-that core::ffi::CStr doesn't impl Display. The latter is that Display
-implementations aren't meant to be lossy, and we shouldn't make it
-ergonomic to do things that might surprise the user.
+I haven't received a cover letter. Please, make sure when you send a version of
+the few patches under the same thread you add a cover letter. You may consider
+using my "smart" (not really) script [1] to send patch series to LKML.
 
-We could add our own UnicodeCStr which could impl Display and be
-AsRef<CStr>. Do you think that should gate this work?
+[1]: https://github.com/andy-shev/home-bin-tools/blob/master/ge2maintainer.sh
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
