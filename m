@@ -1,133 +1,231 @@
-Return-Path: <linux-kernel+bounces-520663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53788A3ACEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 00:58:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FDFFA3ACED
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 01:01:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5933D188C7C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 23:58:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D63B67A5A28
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 00:00:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05CA71DE2CD;
-	Tue, 18 Feb 2025 23:58:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C175D1D555;
+	Wed, 19 Feb 2025 00:01:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NBNUVquV"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M8RXxFHG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F2081A8F6D
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 23:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E22D92862A7;
+	Wed, 19 Feb 2025 00:01:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739923085; cv=none; b=jM4oR85lKmcaxfEoYGbfTR9CF0JXK5GsXtJks6ihV1yXZMM8Gw8SANWGiG9fXT5Sg8q956AdiGw0sO0ZfhG0Y++MN4pRmfhxIYfbgSNJEjjQaoJBIilUOZnPrl/5nl7yCznfnfBr0HzDukC6H/U06CSXuXHVFzeXICOkkc9GAu4=
+	t=1739923273; cv=none; b=rHCiFgb1gm0k/hBgpNw5kgvUktDxyfsW8nAkgriRhz9tCgs+Z1DuX6Sfeah1jNWRwWNsk9yWA0ZJbh9ETLgseT17m3uv4X9s7XlHeCCDwThXRpnNdFlLVbgxh7tKJrL5ue69ilBcr4npMsdkXk4OEi80Urs5niAFh5+mniDvpdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739923085; c=relaxed/simple;
-	bh=fC1P3XC32NnXo00sjdLw5qb9N9oKkD+Omqv1rR0S5FE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GRpcu0aJkg9QtSCZL4UG0MRziSv7pNC5wZMw8ZkmT9oq7gW+BY5fVq66xGRF1EL56vm8UyOX0KdOuBs/vl3uCbSBY98Z5QHvgdc+tMr/MHifukpeW6DLj5L4y8u000rkeDe0peJQVeyRp0Qhqv+s8CC/zrngCXzNiDnealp/2iY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NBNUVquV; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-abb81285d33so641525266b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 15:58:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739923082; x=1740527882; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fC1P3XC32NnXo00sjdLw5qb9N9oKkD+Omqv1rR0S5FE=;
-        b=NBNUVquVCURmYfIOhIQBZb66QqzkBuPwjWuQlrKQj76FoFf4nD4fbz7YH+b54DgHmI
-         9gzffI4yEv8u5+JD3GU2tPMxBQfzP4rSCXbSdc58LL1VYYOMbU3gjRQu4/Q0Vi7ojVVF
-         mQXO8EEgmjppjMeXbIb0lSRNqK4aY1wDall22o9tMtof2ctiGSusLEcNFyaXeuzCD3g2
-         vzkBgC2zVfrDJJX51ULE6cRUHsBl2B+fIGaiV6HFq9P1mD+5/B1tmsZU6mSVyMGDb8LA
-         Amcu4r71c7MThFTUTbhhly0Dma3Zbkdhe5eySr9y8LFYtJzdkSOPF2eq4k9/0MtPtY7r
-         XNaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739923082; x=1740527882;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fC1P3XC32NnXo00sjdLw5qb9N9oKkD+Omqv1rR0S5FE=;
-        b=pP7NqZI5b7/pnl5tUrmrDxTQ4nvAbugMImxc6gkl23zcwglK3gjsE1VJbx5nxZwQa0
-         riBB3MSDbKImZzQwxirKYRNp0SUA7ZE1kD5YyNR0DJodXlKjVqp4UDjNmWrf/knZo6gz
-         PFrZANWStDTEhTf9b9q9GY9yRbDoOvLeZlx5xJUF7oprePAactr43cRqqW0glhbba/79
-         pZw+x2QyqAZsQ5madc9zSY4UjuzlQynvWQBTLnFe4HnPqG0uqo702G6uG4EY//6fzpTL
-         Co4IHQ2dkCai3FaVJSVGfVfATlf0iTHiDOzklhfXPV8YkHrf4EDl/lmZF4fctvIh7p60
-         bz+A==
-X-Forwarded-Encrypted: i=1; AJvYcCU067+/LLK90XkkBe4wRK3hFw7AoZItSrM0raUwRnFFpm3QYX+87YkfnhpueSteosb5KnoIChEDklJ7qbk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTc1ByeTCn6tj0Np1aohLZhDnrpsw4YPHI/Dh0/0wkq7xSnOp8
-	8mc77DvdPLRAZDiLonshvSUD2qfei2yvmmlr9WTiIG3/y87XPKhLbaQ5NKmirL71fdj1QJIqsh+
-	fB/yEk0aLOY0V4ZjtpggtSMpoHsBqKfOuVxfQ
-X-Gm-Gg: ASbGncsbL07eI9RX58MOwG4J0WbjmylMQWrXSkGpC2Kk05py1M9C7R9t6gBkBP36Utn
-	yBJi3saTLmBaMOqk7SzIFXEvb39+jPiiVCXR81jRtOmvcK3vvneVzTt+sde+9+GcKyPJtwRb/
-X-Google-Smtp-Source: AGHT+IFrQ15TJ33fdYF/oTMtbCii+ZRQfmSIkaWviOKdP/iHummReS5upGdEbovHEhto8hKzDWcCHzZn9/UWQZ+2rDM=
-X-Received: by 2002:a17:907:60c9:b0:ab7:d361:11b4 with SMTP id
- a640c23a62f3a-abb70a7c9c4mr1630995466b.7.1739923081760; Tue, 18 Feb 2025
- 15:58:01 -0800 (PST)
+	s=arc-20240116; t=1739923273; c=relaxed/simple;
+	bh=cm8OO5bcKvs73+STsmNSGmtXnECBJJLX0XFp5QmxPRI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=stNDB5761cmdR53gwYdQ2bSmqHUfz+t/4F0TcH1Aw658YDt4Y942rIwRif9zT20J1zNsxphcAP2dGyts/bI68vjem13LY0jYVnpyLejozABur+PAn0MVuzT9+cXBEdM9dYhg8cFvRTl6c1sUJHc/buPLGDklG3S9urvCmcq253w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M8RXxFHG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 961C5C4CEE2;
+	Wed, 19 Feb 2025 00:01:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739923272;
+	bh=cm8OO5bcKvs73+STsmNSGmtXnECBJJLX0XFp5QmxPRI=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=M8RXxFHGtPFOm1ombji2LUR6ZhsHFLW2bpvoeQ8YQWOlQq3eRTMwGEstbQDt9ZSOz
+	 /3qXV/ZvqMMvFxKKRrA3axKAAN6qTLOCjrClIl7HJZUBs2Pl49uE3BHsalNwegTxoA
+	 3fqBy3nmANttIvt+UT/IrnYiMMZ70d+qaU/TaXWaMJ0A1mpKxli1PLTJ8krJd1BoxE
+	 ilAdFSdhIqFlH8xkDemq2vliUMSPLOVSQMMZT6eVfsy0U2PqVKmexnXPww87+bJ2oT
+	 v5kBWmWuLB0bSVQ3dlOKssHNBmxNxH+nfS34aroenUJf03Ta43pVSRXXRfPUdQ/KiF
+	 OJ1WsqHllwH3A==
+Message-ID: <dac077f01aab5afe283b3b683176013605e2fe8f.camel@kernel.org>
+Subject: Re: [PATCH 0/3] nfsd: don't allow concurrent queueing of workqueue
+ jobs
+From: Jeff Layton <jlayton@kernel.org>
+To: NeilBrown <neilb@suse.de>
+Cc: Chuck Lever <chuck.lever@oracle.com>, Olga Kornievskaia	
+ <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey
+ <tom@talpey.com>,  Li Lingfeng <lilingfeng3@huawei.com>,
+ linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 18 Feb 2025 19:01:10 -0500
+In-Reply-To: <173991761979.3118120.3421996111713215488@noble.neil.brown.name>
+References: <20250218-nfsd-callback-v1-0-14f966967dd8@kernel.org>
+	 <173991761979.3118120.3421996111713215488@noble.neil.brown.name>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250212-tdx-rtmr-v1-0-9795dc49e132@intel.com>
- <15c69d57-4ffb-4ea1-8cbc-0ba6d3d7b14f@intel.com> <be7e3c9d-208a-4bda-b8cf-9119f3e0c4ce@intel.com>
- <015cdddb-7f74-4205-af8a-b15cad7ddc22@intel.com> <d8f3eb33-d902-4391-adc7-005e4895b471@intel.com>
- <c7894df2-2b27-4f67-b428-3eca312503f9@intel.com> <c2cf2184-7753-454e-ac99-8c4f3c9c3d16@intel.com>
- <01fc0997-a0e7-4086-b0aa-67b4a51b328a@intel.com> <12ed2ab1-e97d-4a20-8370-8c60cabffc77@intel.com>
- <ab2036d5-5b6f-4fa9-995a-fba63c0a5209@linux.intel.com> <f4d344de-70c2-4fd4-bb18-2912cf0f3f98@intel.com>
-In-Reply-To: <f4d344de-70c2-4fd4-bb18-2912cf0f3f98@intel.com>
-From: Dionna Amalie Glaze <dionnaglaze@google.com>
-Date: Tue, 18 Feb 2025 15:57:49 -0800
-X-Gm-Features: AWEUYZlz10uZ3RgXyh6tsNf75k8mF_KZ5dIIh28yA3hngdsabEPbjxarUn5eOH0
-Message-ID: <CAAH4kHYq7_3vLXQaCA7iKF+mC5Pg0cn-1FsB-iCbN7Jim9a-OQ@mail.gmail.com>
-Subject: Re: [PATCH 0/4] tsm: Unified Measurement Register ABI for TVMs
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Dan Middleton <dan.middleton@linux.intel.com>, "Xing, Cedric" <cedric.xing@intel.com>, 
-	Dan Williams <dan.j.williams@intel.com>, 
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev, 
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 18, 2025 at 8:57=E2=80=AFAM Dave Hansen <dave.hansen@intel.com>=
- wrote:
->
-> On 2/18/25 08:25, Dan Middleton wrote:
-> > One common reason is to _identify the workload_ running in the VM.
-> > Typically a VM attestation tells you that you booted to a clean state.
-> > It is much more valuable to a Relying Party to know that they are
-> > interacting
-> > with a trusted application / workload.
-> > Projects like CNCF Confidential Containers [1] and Attested Containers
-> > [2] would like to do this.
->
-> That's a _bit_ of a different story than the series author mentioned here=
-:
->
->
-> https://lore.kernel.org/all/be7e3c9d-208a-4bda-b8cf-9119f3e0c4ce@intel.co=
-m/
->
-> It would be great to see a solid, consistent story about what the
-> purpose of this series is when v2 is posted. As always, it would be even
-> better if it was obvious that this is not tied to one vendor or one
-> architecture.
->
-> If there are actual end users who care about this, it would be great to
-> see their acks on it as well.
->
+On Wed, 2025-02-19 at 09:26 +1100, NeilBrown wrote:
+> On Wed, 19 Feb 2025, Jeff Layton wrote:
+> > While looking at the problem that Li Lingfeng reported [1] around
+> > callback queueing failures, I noticed that there were potential
+> > scenarios where the callback workqueue jobs could run concurrently with
+> > an rpc_task. Since they touch some of the same fields, this is incorrec=
+t
+> > at best and potentially dangerous.
+>=20
+> If the problem is that workqueue jobs might run concurrently with
+> rpc_tasks and that we don't want that, could we simply run all the cb
+> tasks as "sync" rpc tasks in the workqueue??
+>=20
+> i.e. change rpc_call_async() in nfsd4_run_cb_work() to rpc_call_sync ...
+> and fix any breakage because I doubt it is really as simple as that.
+>=20
+> This would fully serialise all the callbacks.  Is that what to goal is
+> here, or is the goal more subtle?
+>=20
 
-We would like to have this for Google Confidential Space and Kubernetes Eng=
-ine.
+I think we need to serialize callbacks that use the same struct
+nfsd4_callback. Today we can end up with the same callback running
+concurrently with some of them:
 
-Acked-by: Dionna Glaze <dionnaglaze@google.com>
+The callback workqueue jobs only run until the rpc_task has been
+submitted. After that point the workqueue job can run again and submit
+a second rpc_task. That can end up with multiple RPCs racing to set and
+fetch the cb_status, cb_slot, etc. in the nfsd4_callback.
 
+Note that a few of the callbacks have their own mechanism for
+serialization (CB_RECALL_ANY, CB_GETATTR, and the callback channel
+probes), but the others don't.
+
+Making all of the RPCs synchronous would mean that all callbacks to the
+client would be serialized, which would be overkill. We'd be going back
+to a single-slot callback channel.
+
+I think serializing on the nfsd4_callback is right. The part I'm not
+yet certain about is whether to just ignore attempts to queue up the
+callback while one is running, or if we need to ensure that it runs
+again after the current callback has finished if that happens.
+
+The latter seems more correct, but I can't quite come up with a
+situation where it matters. Maybe a multiple CB_LAYOUTRECALL callback
+attempts can race with a layout stateid morphing?
+
+
+>=20
+>=20
+> >=20
+> > This patchset adds a new mechanism for ensuring that the same
+> > nfsd4_callback can't run concurrently with itself, regardless of where
+> > it is in its execution. This also gives us a more sure mechanism for
+> > handling the places where we need to take and hold a reference on an
+> > object while the callback is running.
+> >=20
+> > This should also fix the problem that Li Lingfeng reported, since
+> > queueing the work from nfsd4_cb_release() should never fail. Note that
+> > the patch they sent earlier (fdf5c9413ea) should be dropped from
+> > nfsd-testing before this will apply cleanly.
+> >=20
+> > [1]: https://lore.kernel.org/linux-nfs/20250218135423.1487309-1-lilingf=
+eng3@huawei.com/
+> >=20
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+> > Jeff Layton (3):
+> >       nfsd: prevent callback tasks running concurrently
+> >       nfsd: eliminate cl_ra_cblist and NFSD4_CLIENT_CB_RECALL_ANY
+> >       nfsd: move cb_need_restart flag into cb_flags
+> >=20
+> >  fs/nfsd/nfs4callback.c | 12 ++++++------
+> >  fs/nfsd/nfs4layouts.c  |  7 ++++---
+> >  fs/nfsd/nfs4proc.c     |  2 +-
+> >  fs/nfsd/nfs4state.c    | 26 +++++++++++---------------
+> >  fs/nfsd/state.h        | 13 ++++++++++---
+> >  fs/nfsd/trace.h        |  2 +-
+> >  6 files changed, 33 insertions(+), 29 deletions(-)
+> > ---
+> > base-commit: 4a52e5e49d1b50fcb584e434cced6d0547ddea42
+> > change-id: 20250218-nfsd-callback-f723b8498c78
+> >=20
+> > Best regards,
+> > --=20
+> > Jeff Layton <jlayton@kernel.org>
+> >=20
+> >=20
+>=20
 
 --=20
--Dionna Glaze, PhD, CISSP, CCSP (she/her)
+Jeff Layton <jlayton@kernel.org>
 
