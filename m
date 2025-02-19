@@ -1,86 +1,86 @@
-Return-Path: <linux-kernel+bounces-521088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 627A8A3B3E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:31:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09917A3B3F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:32:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D24307A5925
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:30:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 137581674A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:32:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B961C3BF1;
-	Wed, 19 Feb 2025 08:31:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2F81C68A6;
+	Wed, 19 Feb 2025 08:31:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NChX05j4"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GdVJB5Un"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82D1C1C5F0C
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 08:31:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C0A1C5F2F
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 08:31:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739953891; cv=none; b=LF9T07eCPtreLeosnvSXtbXv1ftYvOg3W3wxbAjJTH6w48mVJJp1geUAZ7KdjwLloSaPM/+H8mcFG4ovrAVEkI2yp3Tij6zPdyzZt7TfZnreO9CZeZLpSIhe8EMVGFy9kKqjnUQjBQ/tCbW/ufeBpa2rznEkuPPpKsi1fkEeba8=
+	t=1739953918; cv=none; b=h6cbNe/042B5NkFyilNLULKxRofiq+kYyZpdYCPuBVU4+n/moRpModsgjvp8MMDjDls7bovvg7I+hppNmR6pMeir3d2IV17Ii7zbofMucHdUlQjw7F14rvuMBVnehXoxx+ctTSpWny1TsmjrypWhLX3lQLJDolbqA//LyeY57lY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739953891; c=relaxed/simple;
-	bh=p3tn8ZFvwYniuzNcC0kQzM+giQ6RuUeu8skJy3DQIc4=;
+	s=arc-20240116; t=1739953918; c=relaxed/simple;
+	bh=UhnxOOWMxBvGlatftTNDMWcxd2JI+FJKndrlJr1K0X8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FGNXdEID8akNG2jq6L0wFf7DbJ5nHZyZV8ZiF9nKBhfyUiAnZFXjuvWvPVjHJwVvDaezv1BAHNN2usu96lSeGYmNw6O0rkm7cMXf57E6z5IUAaFqEK0RwZHinjt1CsWm8l0MLjnc6I/8Bnzba2m/G5spvmDhLBtDch7INtJzhpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NChX05j4; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=LBpwbM7g6NZDrI1sZm+rFl2WvuyKIPsX5HZ8e6MGjNdgeFmETaqZd3R5/qQg73cfB33BOYElvKcZ8p5agbZIQgSNe5MUd+uEVeTyeenCc0WjfTCvMf+Ga0tCLNL8GDzPygGeKqSOdcPB+EsPAJUcR52GyTuya73aUPgjvgX6Hzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GdVJB5Un; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739953888;
+	s=mimecast20190719; t=1739953915;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=xoSWF7ivtka5y/2Lzuv5kTt8fFZFrxCYIT9YBSjbXpw=;
-	b=NChX05j4IsOTX1LkjZjo7G6DBFEy8UAsRNMFfmXmWHlddPni+HqSmb4jtMPSXJSERgAn/U
-	GplwY0PP8irYjIVumkzB8asOdIN+kymDSplbOpJpkMHvW0qeJbzg2A33n6iMGjSTZC3vjO
-	5jYzQiz2VlxwlMk6DMWjMxGCiUXdOsI=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=4JbRdqdYJQdJMppsYc3IVc1lHy5Cz2pY+l6GdpwErAU=;
+	b=GdVJB5UnwpertiSqmtRWwTKnGy1AOEqkx2PmiwvuasDWQpLQq/MLpr7ulegQBNjwDvvqHL
+	10Smxi6M4mxiTrlepoX0tPPAXcAiAfKzPk+BphTGpCA4JWp7zKviTTE3rH5YES20danuR1
+	rJDHlAnecNd8bbtkY7k6Wl98tZTU39U=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-671-gkR4-h5FMZG4cficP9_YrQ-1; Wed, 19 Feb 2025 03:31:26 -0500
-X-MC-Unique: gkR4-h5FMZG4cficP9_YrQ-1
-X-Mimecast-MFC-AGG-ID: gkR4-h5FMZG4cficP9_YrQ_1739953885
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-38f4cce15c8so1380468f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 00:31:26 -0800 (PST)
+ us-mta-101-MrrjtE4qOy6dRvCBE_Kdiw-1; Wed, 19 Feb 2025 03:31:52 -0500
+X-MC-Unique: MrrjtE4qOy6dRvCBE_Kdiw-1
+X-Mimecast-MFC-AGG-ID: MrrjtE4qOy6dRvCBE_Kdiw_1739953911
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-38f443b4949so1481878f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 00:31:52 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739953885; x=1740558685;
+        d=1e100.net; s=20230601; t=1739953911; x=1740558711;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=xoSWF7ivtka5y/2Lzuv5kTt8fFZFrxCYIT9YBSjbXpw=;
-        b=UsyooieRaUQt1UBCETEazWnNxhjkimJVTVn7QfeBo0UAWoncUSiYk2MNo5PBaRepgA
-         QiQIRpm8hx1EhTXCl0fnFa+dx+JlEnILQqQD37bbgjnhZrYtqwG4JOsN8DtPZvjc0fxF
-         NSjdUWiH4zmicjHggSc+7pbynxBKjDcRTEN8NqLWE+C0Hq4KhZKu/6WHTONtd2lYuas7
-         NgupqOnSbi3RlRANEBd2fOn9P8f8v50pcF5SQhRqRsmil3Ux52TQaNMVBLp0kbRdHPja
-         LjGCbEJsIIfYkOOBIooezp+kNLKuNEN0YNmjm3nY0h52pLyGZXEwUA8z/O3f088F3usy
-         Y+dg==
-X-Forwarded-Encrypted: i=1; AJvYcCXZ95Vb7wvGChXpMJdUD7YNnCrX5nOVynQu6z7g+PMRaFznhwS3PgRtgnvFAZOImCyACu76r7LmU6J+whs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzok6gbd9sURRHleV4ff8Kz8POCM5+vMno55C2ZPZcJDLvG5Tg7
-	qLxGbssCidQs3U2I7O7U+IqEAFo2FXemGTb7JTfv6t6aajYYfRTj6QU8yemy5KRpV7ICHGhaASB
-	ghn4iKHFKUULO9MMbtIuSWUL5/XZCFsRDs9VrP6sMtRKu+AsFsdU1SmU5ouw9slbRG9ssXw6d
-X-Gm-Gg: ASbGncvCPoT0xpFk5j4bU+6inUaxOUEtLQP+9N1dobX4eH1eNjCzit4YuEX+u6/bgbx
-	+mn9II5mzoDaDcDBvCj+KwDNzH+mGDsieeyetNwLWLnKJ7kaHBKia6ZACTc8bkzoCox0wvKgAP5
-	AIC5tRHCWd+PZfAuyx77dEsvHUMEfDTQK9QXng4BtDQxmlYDai18WZYXV3O1EK1uxmlDMsysEF6
-	w89233trXi5HgjJpNjmQ8zVdrepiF7qOVd369ZraR8dqlx7ySwIXF5orrGD6obiVckBW2cyiQ0c
-	k12HKvOw3V+JfnxmhXb/1DaAqtfZ6MSiaek=
-X-Received: by 2002:a5d:64ac:0:b0:38f:48ee:ddb1 with SMTP id ffacd0b85a97d-38f48eedf3fmr8557557f8f.18.1739953885404;
-        Wed, 19 Feb 2025 00:31:25 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEmsKGZq+Fp0+1s4eiZUBJ9pyIlcY4KLYJbrhzT3N8ksvnD77OiS9Ha0P/hFRqGHnQx0Q1d7w==
-X-Received: by 2002:a5d:64ac:0:b0:38f:48ee:ddb1 with SMTP id ffacd0b85a97d-38f48eedf3fmr8557526f8f.18.1739953884984;
-        Wed, 19 Feb 2025 00:31:24 -0800 (PST)
+        bh=4JbRdqdYJQdJMppsYc3IVc1lHy5Cz2pY+l6GdpwErAU=;
+        b=XVaKwSLW8u/2UNS2uyB8eFb7V4YBgdGEpxkTYn7AYWoPQ3vEDnK9MPjflpoKWMNu17
+         GCtQEzd3QbDmSpgs6zvKWyvEFA1IoyXhpIF9iBClmdXm8tBpRwFQVBKXgTUvKqDhd3yW
+         8Ms7n3SR6lfCtEVDl9lbU0mEKQEu59c4FMeGBH3bc6t7rRCIZhkkQ4LIaJV0F8ySvmi1
+         vD1MiFb2PfCkFDrsJJ5qRT8TElWMgD2B4Pgi8Y1ZvPlPqlfbKXIQ6QF9yDvnZy4n8COa
+         daBwyu9YS1nLcd72vwDfd7z5DGaADkfBnDZk40xc/nDn9Ijm4rtCjGLWwHCb8rtlsI11
+         t+MQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWWU5IP1FHNStGjoAVahTrVO7+c7hL5MqfEszLZIPTt7Mng7fKNwPJEu2P2E8ghMR2TfjyCADvyVPzef2k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZTO15cBxAa87RzFzWNwAt+Hnlk1318ucuWZFMDAqTG3/8zJyQ
+	GEyTthzpQt5fHPC+grHeP6MgIhNR4fBx8jNg++9WJL/h4AA1hh3N3zjHYP/gr+aryGJ//aS2XIX
+	Jt4QZ1wQYArixKrnOny1l/WlE/YvuAvB4ctOSbyu+QVjAtoiWej8I6HlGWbLpDg==
+X-Gm-Gg: ASbGncuBxoMTQChQWf54KUrPDq5nOjAPGDCfBQST1oT7bTDiJ09u3N851jV05RLz3BG
+	2lA7Un3CN5Mv89Pd8RI7u91cmMgM1HXiQNUj4jFn/zKTlfOLYYKF8yBfcGO6STvjGe71rRipy4Q
+	jQ8SeOvQ3k4tkeFiQ7gBLsASmh9meRwahN31hzsQ+IkRFgTlllliPAvcwy9infsCyfuIriKdJ04
+	b7P+Se8l3/wBNPYU8T3/2D5cjQLH74iLf+EjONUC402Wy5H1oPUbgTVvOWOD4kq/tcAKg2v9hAf
+	Z7BAh5/+FWJzNK1fQro2HP4dIGTle0v2SyU=
+X-Received: by 2002:adf:ee92:0:b0:387:8752:5691 with SMTP id ffacd0b85a97d-38f34171107mr11521948f8f.47.1739953911493;
+        Wed, 19 Feb 2025 00:31:51 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFK2yPpWvl6gawDQ+6Z/O1hl+oXMmm08C5dns5ahFLa2iCT5uUa7byqQ4lD2sIg9VRBudkicA==
+X-Received: by 2002:adf:ee92:0:b0:387:8752:5691 with SMTP id ffacd0b85a97d-38f34171107mr11521934f8f.47.1739953911145;
+        Wed, 19 Feb 2025 00:31:51 -0800 (PST)
 Received: from [192.168.3.141] (p5b0c68c8.dip0.t-ipconnect.de. [91.12.104.200])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a04f208sm204390315e9.6.2025.02.19.00.31.22
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258dcf08sm17434852f8f.36.2025.02.19.00.31.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Feb 2025 00:31:23 -0800 (PST)
-Message-ID: <04f2a081-b267-42de-881f-14cb16ab0e3c@redhat.com>
-Date: Wed, 19 Feb 2025 09:31:22 +0100
+        Wed, 19 Feb 2025 00:31:50 -0800 (PST)
+Message-ID: <3d1315ab-ba94-46c2-8dbf-ef26454f7007@redhat.com>
+Date: Wed, 19 Feb 2025 09:31:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,12 +88,14 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V4] mm/hugetlb: wait for hugetlb folios to be freed
-To: yangge1116@126.com, akpm@linux-foundation.org
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org,
- 21cnbao@gmail.com, baolin.wang@linux.alibaba.com, muchun.song@linux.dev,
- osalvador@suse.de, liuzixing@hygon.cn
-References: <1739936804-18199-1-git-send-email-yangge1116@126.com>
+Subject: Re: [PATCH v2 5/6] mm: Provide address mask in struct
+ follow_pfnmap_args
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, peterx@redhat.com,
+ mitchell.augustin@canonical.com, clg@redhat.com, jgg@nvidia.com,
+ akpm@linux-foundation.org, linux-mm@kvack.org
+References: <20250218222209.1382449-1-alex.williamson@redhat.com>
+ <20250218222209.1382449-6-alex.williamson@redhat.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -141,128 +143,35 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <1739936804-18199-1-git-send-email-yangge1116@126.com>
+In-Reply-To: <20250218222209.1382449-6-alex.williamson@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 19.02.25 04:46, yangge1116@126.com wrote:
-> From: Ge Yang <yangge1116@126.com>
+On 18.02.25 23:22, Alex Williamson wrote:
+> follow_pfnmap_start() walks the page table for a given address and
+> fills out the struct follow_pfnmap_args in pfnmap_args_setup().
+> The address mask of the page table level is already provided to this
+> latter function for calculating the pfn.  This address mask can also
+> be useful for the caller to determine the extent of the contiguous
+> mapping.
 > 
-> Since the introduction of commit c77c0a8ac4c52 ("mm/hugetlb: defer freeing
-> of huge pages if in non-task context"), which supports deferring the
-> freeing of hugetlb pages, the allocation of contiguous memory through
-> cma_alloc() may fail probabilistically.
+> For example, vfio-pci now supports huge_fault for pfnmaps and is able
+> to insert pud and pmd mappings.  When we DMA map these pfnmaps, ex.
+> PCI MMIO BARs, we iterate follow_pfnmap_start() to get each pfn to test
+> for a contiguous pfn range.  Providing the mapping address mask allows
+> us to skip the extent of the mapping level.  Assuming a 1GB pud level
+> and 4KB page size, iterations are reduced by a factor of 256K.  In wall
+> clock time, mapping a 32GB PCI BAR is reduced from ~1s to <1ms.
 > 
-> In the CMA allocation process, if it is found that the CMA area is occupied
-> by in-use hugetlb folios, these in-use hugetlb folios need to be migrated
-> to another location. When there are no available hugetlb folios in the
-> free hugetlb pool during the migration of in-use hugetlb folios, new folios
-> are allocated from the buddy system. A temporary state is set on the newly
-> allocated folio. Upon completion of the hugetlb folio migration, the
-> temporary state is transferred from the new folios to the old folios.
-> Normally, when the old folios with the temporary state are freed, it is
-> directly released back to the buddy system. However, due to the deferred
-> freeing of hugetlb pages, the PageBuddy() check fails, ultimately leading
-> to the failure of cma_alloc().
-> 
-> Here is a simplified call trace illustrating the process:
-> cma_alloc()
->      ->__alloc_contig_migrate_range() // Migrate in-use hugetlb folios
->          ->unmap_and_move_huge_page()
->              ->folio_putback_hugetlb() // Free old folios
->      ->test_pages_isolated()
->          ->__test_page_isolated_in_pageblock()
->               ->PageBuddy(page) // Check if the page is in buddy
-> 
-> To resolve this issue, we have implemented a function named
-> wait_for_freed_hugetlb_folios(). This function ensures that the hugetlb
-> folios are properly released back to the buddy system after their migration
-> is completed. By invoking wait_for_freed_hugetlb_folios() before calling
-> PageBuddy(), we ensure that PageBuddy() will succeed.
-> 
-> Fixes: c77c0a8ac4c52 ("mm/hugetlb: defer freeing of huge pages if in non-task context")
-> Signed-off-by: Ge Yang <yangge1116@126.com>
-> Cc: <stable@vger.kernel.org>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: linux-mm@kvack.org
+> Reviewed-by: Peter Xu <peterx@redhat.com>
+> Reviewed-by: "Mitchell Augustin" <mitchell.augustin@canonical.com>
+> Tested-by: "Mitchell Augustin" <mitchell.augustin@canonical.com>
+> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
 > ---
-> 
-> V4:
-> - add a check to determine if hpage_freelist is empty suggested by David
-> 
-> V3:
-> - adjust code and message suggested by Muchun and David
-> 
-> V2:
-> - flush all folios at once suggested by David
-> 
->   include/linux/hugetlb.h |  5 +++++
->   mm/hugetlb.c            |  8 ++++++++
->   mm/page_isolation.c     | 10 ++++++++++
->   3 files changed, 23 insertions(+)
-> 
-> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-> index 6c6546b..0c54b3a 100644
-> --- a/include/linux/hugetlb.h
-> +++ b/include/linux/hugetlb.h
-> @@ -697,6 +697,7 @@ bool hugetlb_bootmem_page_zones_valid(int nid, struct huge_bootmem_page *m);
->   
->   int isolate_or_dissolve_huge_page(struct page *page, struct list_head *list);
->   int replace_free_hugepage_folios(unsigned long start_pfn, unsigned long end_pfn);
-> +void wait_for_freed_hugetlb_folios(void);
->   struct folio *alloc_hugetlb_folio(struct vm_area_struct *vma,
->   				unsigned long addr, bool cow_from_owner);
->   struct folio *alloc_hugetlb_folio_nodemask(struct hstate *h, int preferred_nid,
-> @@ -1092,6 +1093,10 @@ static inline int replace_free_hugepage_folios(unsigned long start_pfn,
->   	return 0;
->   }
->   
-> +static inline void wait_for_freed_hugetlb_folios(void)
-> +{
-> +}
-> +
->   static inline struct folio *alloc_hugetlb_folio(struct vm_area_struct *vma,
->   					   unsigned long addr,
->   					   bool cow_from_owner)
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index 30bc34d..8801dbc 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -2955,6 +2955,14 @@ int replace_free_hugepage_folios(unsigned long start_pfn, unsigned long end_pfn)
->   	return ret;
->   }
->   
-> +void wait_for_freed_hugetlb_folios(void)
-> +{
-> +	if (llist_empty(&hpage_freelist))
-> +		return;
-> +
-> +	flush_work(&free_hpage_work);
-> +}
-> +
->   typedef enum {
->   	/*
->   	 * For either 0/1: we checked the per-vma resv map, and one resv
-> diff --git a/mm/page_isolation.c b/mm/page_isolation.c
-> index 8ed53ee0..b2fc526 100644
-> --- a/mm/page_isolation.c
-> +++ b/mm/page_isolation.c
-> @@ -615,6 +615,16 @@ int test_pages_isolated(unsigned long start_pfn, unsigned long end_pfn,
->   	int ret;
->   
->   	/*
-> +	 * Due to the deferred freeing of hugetlb folios, the hugepage folios may
-> +	 * not immediately release to the buddy system. This can cause PageBuddy()
-> +	 * to fail in __test_page_isolated_in_pageblock(). To ensure that the
-> +	 * hugetlb folios are properly released back to the buddy system, we
-> +	 * invoke the wait_for_freed_hugetlb_folios() function to wait for the
-> +	 * release to complete.
-> +	 */
-> +	wait_for_freed_hugetlb_folios();
-> +
-> +	/*
->   	 * Note: pageblock_nr_pages != MAX_PAGE_ORDER. Then, chunks of free
->   	 * pages are not aligned to pageblock_nr_pages.
->   	 * Then we just check migratetype first.
-
 
 Acked-by: David Hildenbrand <david@redhat.com>
 
