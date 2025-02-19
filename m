@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-522145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95601A3C6A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:49:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64022A3C6B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:51:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC0E33B8A97
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:49:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A9C81884FBB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:50:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BCD81BCA19;
-	Wed, 19 Feb 2025 17:48:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DBF01BCA19;
+	Wed, 19 Feb 2025 17:49:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LjDNY0TI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="qxjpHJ4t"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B83519CC33;
-	Wed, 19 Feb 2025 17:48:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9613192580
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 17:49:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739987336; cv=none; b=lvHHI0GhkURBEPt0ftqRGJZMercS+28pDsJk9r+zjwim+W5IahSz7K+Ev652dbmk8TwiHO66FpIK+KuLcSo2k3bzwjrnmpQ8ggk+vOdoGzlMaCS8zNJt0+fOut6fG96P3PKLJB6/EuzPUYAhaf9ZFyiCLBmxsWahCQsC8Q1tbb8=
+	t=1739987394; cv=none; b=E3QlEMoX2hz7m609DaT825mmhEQt9gvhEx3leQoI1mB3WPk2rtYKmxj6qrjBRJ5lFruZ+nRY+vFLnUGqfRnuTD0G5SqUv0dfVAtXUl47YgCxXGA4W4hVxD0GYENorkfWHJ/S8AAynFlAWhL/E1jFkWRkSsdBCMyF7560BwP53Fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739987336; c=relaxed/simple;
-	bh=eABSkrzx4Qs0AYJ01eC/IAUU8ScLgyuVvlLJERhWrVY=;
+	s=arc-20240116; t=1739987394; c=relaxed/simple;
+	bh=ehH8TK1UXsd8MxE8OrYZ4KkZHnWrbgI+iBbISw88D7k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I80z9ka2gvs7bzZcwIPs1hGioSZ8JSC4/D+RjxGf0cDL6U1V8EbAKFY0hRLD/iY98OZ+YI4XZDWrlIFBP2edMZY0oSZw2wwUmKdHDCFp7aeDH6x9RySoRge0YdOdnT76eoj+/CL4AtYMEYNtCmIok67aEXpcrunTJUPprunIcm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LjDNY0TI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A3AFC4CED1;
-	Wed, 19 Feb 2025 17:48:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739987336;
-	bh=eABSkrzx4Qs0AYJ01eC/IAUU8ScLgyuVvlLJERhWrVY=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hmiehvr/OEVHewl1PnrpKx24hdZSQtxgAoubwDFiBWZuW/mZBhDdaY6A/BHko1cjIpIhJmRC0gepyBrouZLNCVw7vn65THGxOz8hEMkBN4yS9aU9QvsQoTFrJ461yBetyfymVe6VcuI3pfUwcQeZc/07cscCgBH2yuwGZHtgXkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=qxjpHJ4t; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2F8503E;
+	Wed, 19 Feb 2025 18:48:27 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1739987307;
+	bh=ehH8TK1UXsd8MxE8OrYZ4KkZHnWrbgI+iBbISw88D7k=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LjDNY0TIYWHEiZIkbTaVwR2M8ShomTU1tjkcIn1hYaGEdtYRTpRKDxMomni2QWkzz
-	 8OJwJRAYCzeo4UUM36sn0sl+IGWojCEgpML9/1/HB2MmUGYkq/EbtgL97U+zKbb1Aa
-	 4wIsa4JPKOIXIvstsKJlL4pjNqL72XWB21dK834dnXOnJ6FVyvPr6EPmXf7Eh5U2v5
-	 hDIFHeAh25GRX2nUIf3N2u1SDBqoAwHd9oGYxOXp0B7o0O0KFt1cjRn1E8QIFE35Cq
-	 tvPIc7f0PFXIJ2P2iglN25iBxn7l/KdgaY+qT+rAnKbocfeghW5pgJiHoCFqGByO98
-	 YpySU+UUiqgYQ==
-Date: Wed, 19 Feb 2025 23:18:46 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Fedor Pchelkin <pchelkin@ispras.ru>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Vitalii Mordan <mordan@ispras.ru>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
-	Jeff Johnson <quic_jjohnson@quicinc.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Amit Singh Tomar <amittomer25@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	b=qxjpHJ4twUM+bakLBtJEWS9NKWqtOJRbDhVokKIkLnCc+djLVtTuNKfeFHfek2QIY
+	 +FbpMh91pxfr91KoQ+pWSRfxuMnwoxq6n30drFS6mJOI4Fz5AnJ3pjn5DUyYIELb3E
+	 7rPsubtTQg07KBH46csT7LagRALlwuBWko7UlXPQ=
+Date: Wed, 19 Feb 2025 19:49:34 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Vishal Sagar <vishal.sagar@amd.com>,
+	Anatoliy Klymenko <anatoliy.klymenko@amd.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Michal Simek <michal.simek@amd.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-actions@lists.infradead.org,
-	Alexey Khoroshilov <khoroshilov@ispras.ru>,
-	Vadim Mutilin <mutilin@ispras.ru>, lvc-project@linuxtesting.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] tty: owl-uart: fix call balance of owl_port->clk
- handling routines
-Message-ID: <20250219174846.t4eso3o2aug6rb47@thinkpad>
-References: <20250213112416.1610678-1-mordan@ispras.ru>
- <20250214171405.kvyyespxtfqxhapc@thinkpad>
- <ci23nalbgrgi5o7zbze4adc54mupn6nymu25konthvtbhyjb7u@z4bteiubsiy6>
+	Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v3 06/11] drm/fourcc: Add DRM_FORMAT_XVUY2101010
+Message-ID: <20250219174934.GA22240@pendragon.ideasonboard.com>
+References: <20250212-xilinx-formats-v3-0-90d0fe106995@ideasonboard.com>
+ <20250212-xilinx-formats-v3-6-90d0fe106995@ideasonboard.com>
+ <bdpw2g65uor77tijlhpabodog7haqvdcemnr3wzqkooerzuib5@hfdn5zsrbkgg>
+ <7674314f-d95a-433a-81d2-ca78bc199359@ideasonboard.com>
+ <naw67daoyb2lfmq4jovlwanz5niaolptwnug3c3kkrtlfoh6dd@trkctqyzvtb5>
+ <23e71045-1ae2-4e02-9780-aa11a338d481@ideasonboard.com>
+ <20250219150840.GA31825@pendragon.ideasonboard.com>
+ <gkqq3c6pew5etfmjqqzgxtddlu7h3tbscrijkbymls524vfrrz@uy7qysfecrjk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,35 +72,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ci23nalbgrgi5o7zbze4adc54mupn6nymu25konthvtbhyjb7u@z4bteiubsiy6>
+In-Reply-To: <gkqq3c6pew5etfmjqqzgxtddlu7h3tbscrijkbymls524vfrrz@uy7qysfecrjk>
 
-On Fri, Feb 14, 2025 at 09:39:09PM +0300, Fedor Pchelkin wrote:
-> On Fri, 14. Feb 22:44, Manivannan Sadhasivam wrote:
-> > On Thu, Feb 13, 2025 at 02:24:16PM +0300, Vitalii Mordan wrote:
-> > > If owl_port->clk was enabled in owl_uart_probe(), it must be disabled in
-> > > all error paths to ensure proper cleanup. However, if uart_add_one_port()
-> > > returns an error in owl_uart_probe(), the owl_port->clk clock will not be
-> > > disabled.
+On Wed, Feb 19, 2025 at 07:28:44PM +0200, Dmitry Baryshkov wrote:
+> On Wed, Feb 19, 2025 at 05:08:40PM +0200, Laurent Pinchart wrote:
+> > On Wed, Feb 19, 2025 at 04:47:26PM +0200, Tomi Valkeinen wrote:
+> > > Hi,
 > > > 
-> > > Use the devm_clk_get_enabled() helper function to ensure proper call
-> > > balance for owl_port->clk.
+> > > On 18/02/2025 05:26, Dmitry Baryshkov wrote:
+> > > > On Mon, Feb 17, 2025 at 10:27:56PM +0200, Tomi Valkeinen wrote:
+> > > >> Hi,
+> > > >>
+> > > >> On 17/02/2025 22:15, Dmitry Baryshkov wrote:
+> > > >>> On Wed, Feb 12, 2025 at 04:56:10PM +0200, Tomi Valkeinen wrote:
+> > > >>>> Add XVUY2101010, a 10 bits per component YCbCr format in a 32 bit
+> > > >>>> container.
+> > > >>>
+> > > >>> Is there a more common name for this format? Otherwise googling for it
+> > > >>> reveals only your series.
+> > > >>
+> > > >> In the cover letter I mention the gstreamer names where available (this
+> > > >> particular format is not in gstreamer). AMD has these in their zynqmp
+> > > >> documentation (https://docs.amd.com/r/en-US/ug1085-zynq-ultrascale-trm/Video-Packer-Format).
+> > > >>
+> > > >> XVUY2101010 is YUV444_10BPC in AMD docs.
+> > > >>
+> > > >> X403 is Y444_10LE32 in gstreamer, and YV24_10BPC in AMD docs.
+> > > >>
+> > > >> I'm not sure you'll have much more luck googling with those names, though
+> > > >> =).
+> > > > 
+> > > > I'm asking, because include/uapi/drm/drm_fourcc.h has a pretty explicit
+> > > > waiver: GL, Vulkan or other open standards. Otherwise normal
+> > > > requirements apply and it's required to have an open-source usespace
+> > > > implementation, etc.
 > > > 
+> > > I can drop DRM_FORMAT_XVUY2101010 until we get it to gstreamer. I just 
+> > > had it ready, so I thought it's better to include it than leave out.
+> > > 
+> > > Is the current gstreamer support enough for the other formats to fulfill 
+> > > the userspace requirement?
 > > 
-> > Do not use newly introduced APIs to fix old bugs. The bug should be fixed
-> > separately to allow backporting and the conversion should be done on top.
+> > We've received a green light in the past to add formats to drm_fourcc.h
+> > that would be used by cameras only. There's no open formal standard there, but
+> > we have libcamera as a de-facto standard. I would assume GStreamer to be
+> > enough for a scanout format.
 > 
-> These relatively new helpers are already available in all currently
-> supported stable kernels including 5.4.y.
-> 
-> Commit 7ef9651e9792 ("clk: Provide new devm_clk helpers for prepared and
-> enabled clocks") was conveniently backported there as a dependency for
-> the similar bug fixes.
+> Thanks for the clarification!
 
-Ah, then fine with me.
-
-- Mani
+To make it extra clear, this format is not currently (as in the mainline
+kernel, with Tomi's work) used for cameras, but only for display
+scanout. My comment related to cameras was meant to indicate I expect
+drm_fourcc.h to not strictly require all formats to match open formal
+standards.
 
 -- 
-மணிவண்ணன் சதாசிவம்
+Regards,
+
+Laurent Pinchart
 
