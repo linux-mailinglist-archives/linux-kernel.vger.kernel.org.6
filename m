@@ -1,124 +1,107 @@
-Return-Path: <linux-kernel+bounces-521169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8423A3B60F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:04:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74783A3B5E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:03:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14BB2162768
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:56:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C8033BA047
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:56:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AB8E1DE2BE;
-	Wed, 19 Feb 2025 08:47:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29F891F8BC6;
+	Wed, 19 Feb 2025 08:47:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pGpH9mTb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FrYyeie8"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E04461F3BB6;
-	Wed, 19 Feb 2025 08:46:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 835A81F78E0;
+	Wed, 19 Feb 2025 08:47:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739954820; cv=none; b=nIcKfiayTjaqL+j4vRr3zqjjYQRXPzKQH34m/mIFXM/p4vJ8rZtKTvlrqumEQimG52HEm820hcNgs+6RZKHmZ0D1hS0+7DduXjo3JDB52a6e6czsl9jYqBOhxy+w+PGq4MxfrHh6PwgnkykLHywQ5fKoQg9y2e7GIRixE7GtksY=
+	t=1739954833; cv=none; b=uVyQwqlngjxFp8yIp6WmSyzRvbya839rhaR8MwydWqRlj4HfO25YFuvFRsmuveDZRzbNTZKLUiDSBbFwyWWxCYoW54Ngg3IhmauFNiLfqQrr/wcPqVgiCmfR1ZgGuAvj7BVr/5nOh0ATaCKyWL0S4x+hCs7GSOE8xXaZz9097PY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739954820; c=relaxed/simple;
-	bh=/m2FmsbmklUHkDMFAYB5nNLniP8aogv96FU1XtosaoY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=rthxJmemKI3jT/Bnjb+9rsap3k5/zm3/UjqI/sydYO/IGawXTqqqhngWv7ATCzUIumBIUC/AAnI05EauYCHeKmeJy9lBsSUXVqD9m3oPGbzXbdFBI0aPDQ1Cd+5z+JxvxvmfY48C5MAFcrneZQWFNeND9ojj0qkjKYLHUFWzlbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pGpH9mTb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8B27C4CED1;
-	Wed, 19 Feb 2025 08:46:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739954819;
-	bh=/m2FmsbmklUHkDMFAYB5nNLniP8aogv96FU1XtosaoY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=pGpH9mTbVX6yzKBAb2dDLu93MENVlPzYABTAkvNa9uIIMk7Z96wUtZhWHVUiSAA+p
-	 A2lNQWSOIY3pBZJpMZR++14HdwIlAhn2MIuKbUaoFYpvPfm3msEIPXj7FVK7gtHsRe
-	 ruhURUC1P05+9YlbKJf0CP4XfVx6wOn29qQcqxCXtJq4ywmg2hcxbNdC2Rm6QsrI2Q
-	 6mOUAuMTVzI64JjfnzNTWI0veUhHMPOpfZSW5SjbWKyuG5XooySMxLZurFXMvcx2ty
-	 CQWEjRIXutcYN+lqlN6aYGRc+ZFOM95/sfjolTrS98C+NfRaTY6fHLc4uX3BUQ0ARe
-	 zTlfruthpWphA==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Asahi Lina" <lina@asahilina.net>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
- <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
- <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Benno
- Lossin" <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,
-  "Trevor Gross" <tmgross@umich.edu>,  "Jann Horn" <jannh@google.com>,
-  "Matthew Wilcox" <willy@infradead.org>,  "Paolo Bonzini"
- <pbonzini@redhat.com>,  "Danilo Krummrich" <dakr@kernel.org>,  "Wedson
- Almeida Filho" <wedsonaf@gmail.com>,  "Valentin Obst"
- <kernel@valentinobst.de>,  "Andrew Morton" <akpm@linux-foundation.org>,
-  <linux-mm@kvack.org>,  <airlied@redhat.com>,  "Abdiel Janulgue"
- <abdiel.janulgue@gmail.com>,  <rust-for-linux@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>,  <asahi@lists.linux.dev>
-Subject: Re: [PATCH 2/6] rust: page: Convert to Ownable
-In-Reply-To: <20250202-rust-page-v1-2-e3170d7fe55e@asahilina.net> (Asahi
-	Lina's message of "Sun, 02 Feb 2025 22:05:44 +0900")
-References: <20250202-rust-page-v1-0-e3170d7fe55e@asahilina.net>
-	<MbcmURUJ_wZdg4knkI3W95ZyOnefwXlfV2hkOjh8CS8MeRBBMtRzqO_ghFNp8nnMD4DrIw1sxWBVH5Pkqkr08Q==@protonmail.internalid>
-	<20250202-rust-page-v1-2-e3170d7fe55e@asahilina.net>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Wed, 19 Feb 2025 09:46:45 +0100
-Message-ID: <87bjuye2yy.fsf@kernel.org>
+	s=arc-20240116; t=1739954833; c=relaxed/simple;
+	bh=AgIkmTOMFIiQ/yYf+qwHjFoT+UCJ7JkbheTv56rMQVo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bLOezr2MYSdlnmEVKyjVK2wCwk6pfIsxprBoen5AgIpHdWc9YckJj8/EClW97sUJwzVXk4D9xDrNt3ve7laeTEaoTU5/9oqY1mEtOBI+KX7x8hFaoS6N9iiUn/kvu3Ni4Tvpom7lZUlr9m+rXwDYU5vq7RXmEik/esgLSo5WbNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FrYyeie8; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2fa48404207so12906349a91.1;
+        Wed, 19 Feb 2025 00:47:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739954828; x=1740559628; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Lm6ot2bmZKY4yplCPn3FScSqX5mEiwAZVgVtm575nD8=;
+        b=FrYyeie8IriuF3s5RaNI58kcDur8t9JVC2mxtKJ9f+WtIprbYOENpzeVKRiT/hNZvQ
+         p0qf2sVBGUCyQceY+Z7IRxxz4rpuuegeT2rjtlRPV/ni07lPmmu7qKpUOKPm5MWJp812
+         zceL9/qWB3oFRw1xMGLppnYAyC8ZHtJRmaRPTQ5yS7OsNdKUYyEE91jo3rxkGc8bd0a8
+         GGkkxvZmrkGFMbGYXZp4laJPzP5M944XISIkmtkDFwQFa5/gYHePWw/2WKhB8BNzT2qV
+         KLK87lug2YOyz5P+yMfv+Fi9uCasrFhQ1oXsdsRRlwPYQyQwezo4v6Y9EwsT7+JTwNLX
+         tF2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739954828; x=1740559628;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Lm6ot2bmZKY4yplCPn3FScSqX5mEiwAZVgVtm575nD8=;
+        b=IeBsSW291hWHMTPDCG5Yo4P8DLiv/6dBRJl1b4yLpcPwJbd0JiHI1QgEuwODdVcDs/
+         gxpZSQF8VVbt2W/RutzUx8sNRbePoEnl0HVBYj4NG8g7sCT0IndinIEzO/BWbY0LTpdb
+         wl5/UfPJlAPa9/fJf484tis7LThz7eAgEdASiLycBj8Ez+/IahuM/HKuvf24VYI2vJ9c
+         IMKiNAb9euQuD0tjS8kTrmQsSNLseBlM061U85MgWvCL//49o3zN6LhMGKUUlGRagOHu
+         kbY/21qUyheH5dhMc7l+otY9eQYjIwZnyiSencZ/rY2sOXnmnB27B2cjLnc4ew8e1KYO
+         maug==
+X-Forwarded-Encrypted: i=1; AJvYcCVDbvlTmn1PjJya2jQC3ZMJ8rc2ayW0xWeWzeegm359fo/lY0KEA3ptdFy/DSquv7GarjxVQP4LvHq24ec=@vger.kernel.org, AJvYcCWfapfIEA4vB4hfsD5GfFdwEqARrXp3Z3ZIgjzxKMB8cGUHs7i0pfYDDoO2bBjxL+l9dvKHwx6n0kJj3JxX2daHIQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzvFsWgHCUuMuchEhsM0m4hGiVzboJdh9q9zzblmGGFTVTecCE
+	Mm3bpfP66EKHTUImWMYFORserdtlr+w29nAPSde/cT3Vfq+WbBj6LjD99rQkDT0urAu/GLk/BDM
+	Zb5mziwzMVAf6x7X63rwNwbs1aw0=
+X-Gm-Gg: ASbGnct5rWy5fyjCbgf8a87/bxfvNhDUAvuBo20BhzgKaG0R0rzI4HE3ZJ4uo7gSYDB
+	djfq7/ggw3LQnIvq3UGAfg42/Hj/0IJFG+siUw8GUgUENxx1j9Iun044e6EoyaD5EixAMGOEvpM
+	IytshmlCMc30HtDCVBFZKZkl1YcYH9EII=
+X-Google-Smtp-Source: AGHT+IG+metsRNLMCZZs47flBptl1mN2HTXJMmlH3rhFkejJqD6kI7GKh4odcp79LiYNjAbxr0qV1WFbSYqoQepjiGU=
+X-Received: by 2002:a17:90a:ea17:b0:2fa:d95:4501 with SMTP id
+ 98e67ed59e1d1-2fc40f21c67mr30436208a91.18.1739954827668; Wed, 19 Feb 2025
+ 00:47:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <20250218085712.66690-1-daniel.baluta@nxp.com> <20250218085712.66690-6-daniel.baluta@nxp.com>
+ <50c7055a676fb7f1bf27cb33a914df641c56dd15.camel@pengutronix.de>
+In-Reply-To: <50c7055a676fb7f1bf27cb33a914df641c56dd15.camel@pengutronix.de>
+From: Daniel Baluta <daniel.baluta@gmail.com>
+Date: Wed, 19 Feb 2025 10:46:55 +0200
+X-Gm-Features: AWEUYZlhtQ6N4279fN6OqZAxKAvbZZ0SsWRbMIXuyMNnTZ9yjwFgBR8L58MeFwg
+Message-ID: <CAEnQRZCSL2ieQQFoHHpRwR5XfErZCm8nDMpr6rBVBWXiFKbm1A@mail.gmail.com>
+Subject: Re: [PATCH 5/5] imx_dsp_rproc: Use reset controller API to control
+ the DSP
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Daniel Baluta <daniel.baluta@nxp.com>, shawnguo@kernel.org, mathieu.poirier@linaro.org, 
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, andersson@kernel.org, 
+	linux-remoteproc@vger.kernel.org, iuliana.prodan@nxp.com, 
+	laurentiu.mihalcea@nxp.com, shengjiu.wang@nxp.com, Frank.Li@nxp.com, 
+	krzk@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-"Asahi Lina" <lina@asahilina.net> writes:
-
-> This allows Page references to be returned as borrowed references,
-> without necessarily owning the struct page.
+> > +     case IMX_RPROC_RESET_CONTROLLER:
+> > +             priv->reset = devm_reset_control_get_optional_exclusive(dev, NULL);
 >
-> Signed-off-by: Asahi Lina <lina@asahilina.net>
-> ---
->  rust/kernel/page.rs | 30 ++++++++++++++++--------------
->  1 file changed, 16 insertions(+), 14 deletions(-)
->
-> diff --git a/rust/kernel/page.rs b/rust/kernel/page.rs
-> index fdac6c375fe46e1ba589f1640afeae3e001e39ae..0b6cbe02522ab6e6e1810288a=
-d23af4e4aa587d8 100644
-> --- a/rust/kernel/page.rs
-> +++ b/rust/kernel/page.rs
-> @@ -7,6 +7,7 @@
->      bindings,
->      error::code::*,
->      error::Result,
-> +    types::{Opaque, Ownable, Owned},
->      uaccess::UserSliceReader,
->  };
->  use core::ptr::{self, NonNull};
-> @@ -30,13 +31,10 @@ pub const fn page_align(addr: usize) -> usize {
->      (addr + (PAGE_SIZE - 1)) & PAGE_MASK
->  }
->
-> -/// A pointer to a page that owns the page allocation.
-> -///
-> -/// # Invariants
-> -///
-> -/// The pointer is valid, and has ownership over the page.
-> +/// An object representing a memory page in the kernel (`struct page`).
+> Is this optional on purpose? There is no mention of it in the commit
+> message. Where is this resets property documented in the dt-bindings?
 
-Can you  link to the header file containing `struct page`?
+For this particular case on imx8mp the reset control shouldn't be optional
+because the DSP won't really start without it.
 
-.. memory page in the kernel ([`struct page`]).
+I was thinking for future boards that might have a reset but which is
+is not mandatory.
 
-[`struct page`]: srctree/include/linux/mm_types.h
-
-Otherwise looks good =F0=9F=91=8D
-
-
-Best regards,
-Andreas Hindborg
-
-
-
+Will document the resets in v2.
 
