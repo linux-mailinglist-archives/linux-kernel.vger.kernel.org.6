@@ -1,204 +1,165 @@
-Return-Path: <linux-kernel+bounces-521193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1E13A3B704
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:11:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 198D7A3B77F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:15:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC56B7A5FCC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:09:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 994107A7B2D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:12:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56E3A1DF72C;
-	Wed, 19 Feb 2025 09:06:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAEAD1E51ED;
+	Wed, 19 Feb 2025 09:08:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Or4nQuM7"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cn/5O4Py"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A8091DF27F
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 09:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 110681DE2C5;
+	Wed, 19 Feb 2025 09:08:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739955968; cv=none; b=bfa0QU9DCUO7R6EF3fOD7eT7hXFFjUdlxzNr11RhV1eYvuf4TQVQ+PJ4TWorRiIYxnXQViHpsLWX9TNnZAxP2F++GPIi/5OKv+zh7gd9WtnyrqeyEqsRSJolJP1pnM6/uUwDH/86fwHqrCw5jinGf97LyQ7Y67vQ3p2W3rTygC4=
+	t=1739956135; cv=none; b=GQAGX0FWbG4lUykjjW11rPQydppRNLRzeam+BC4BtG/KF8pcv+6KVCELFn3I5lIhXuKQbBruKlVImWWRBTqHJTnJNtD07tQIBomVpYHvK5iyobIyDbmiN+HzdgvJHlY2GnhC+WRXBhmUhiLKqHjFZa/uLVz2mogZ8nGxcvF/gaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739955968; c=relaxed/simple;
-	bh=Ll4Hm33BOP6BRDteNaeEkalteukRrEcf/dQJ2Kgc9eE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ddymI6+HXWG/KtlQYj1wvkX4T7Ah66XZ7074KrB3bljAOB1LYL4YuyPf12epxLNFNwUMkaPiZJi1NSgYyF0fJ5JsAwe4ilPetIKOF2Q6NdPnT34arHPQDzzzTTdsWACg4m2vMsGb+AGmc4FFmxn/1qCHRcCPXfqny9ytlkImb3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Or4nQuM7; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-54626a71b40so2374754e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 01:06:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739955964; x=1740560764; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JParjzdc5yBYoG0m5UmXTy5mjDiWwZLgHUFOravZSiI=;
-        b=Or4nQuM7nTSyBqwDP5wJ/fwD8lL2sW7zUCjTGIDt5vK5uZQXQAsTbeDKtNdtRRIu3M
-         cGu5aeWkF4o/oouZ7hZHhBgpVdIkp7bhZC2HHJDNlybdeFhGVtZWfjhcKpvoM1JuMtVL
-         V3aaqxI0TGOZl8C5hPFh/PwbLTJNpgfmQY/hKHQknZIXREBN5Dpu1P72SoR5zj2Lf3tt
-         KMPTdpWaYhYiROMN3CREXh/jpTthjnAnDxBS8rAFwUjA5NS9d9W2+KMLKG8EEGi4CYfn
-         IYK7uFcZZaLr2uTNRyFx79y4VCPTsRSYu+pqk+8F07R/mLroAxNCLySC5x10SH7Edm23
-         GqGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739955964; x=1740560764;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JParjzdc5yBYoG0m5UmXTy5mjDiWwZLgHUFOravZSiI=;
-        b=q9hnL2tUVF2k545EUuzYyRwcIqOycdhGXmO7he0MqtbAWLK9jxwqeAlGwMcJ02+wfh
-         zDwszuPo7pt9rOxujOJdXPNgs3zgcGMalEv3YKdSWGIy5BqKTOF/4pY2IVlEByNCVjMb
-         m1lS3P3yvqqN0DZt8vBHTUxA36l8Eygfc/o8ozuKpUzNisg5IkviXFFSw+muQ9iXS0zR
-         SfU/I58/xa4r6wpPOgU4NJV+L4/9u8cBDzaNv8LEQTeXXIrouuQ5QHkSPQzs+Q16yG5D
-         NziB/nVPbAU94Mem4yhlGcYSSgBjN2HZWCB7EAQ5ebA4eUYMmLRyZOMx7KALTCayOczs
-         U+/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXGoTwtJulrhYysyphVDpUVI9FytRTgwRIAx71UKj5wcnmncKWMWl+8kXDwVIj1Wxb+fsQU6wF+0niGGQc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAvgaeoAJ+GvU0KvBfGaIaTa70fS5uXw36EAhD7sreDf+Qy2FB
-	9BKVlQCNR1Vy+dZgtkYTu9ApUpAQw7Hpgp9NotRGSZrH5B5gviN1u8miPQoNM/o=
-X-Gm-Gg: ASbGncsnm5EtbUeHCv8GrEnojZVBtjzhyNLgYKf2CVGKGwmAoI6QSCT8RHbfQTOVlb1
-	rtXKHgpUU2bh/IRd/FH6eW/AW0kiAd5m5eYoQbPVPnEXdjy6YWwiTz+tGviBPGfE5FCmMFKEIwK
-	KdQbE9jrsGkrd7VC4C3xHY8CXdrf2nH/XCbLxxVkofdnT4joXV5i2HzhFT5agWaA+L02IjaXzwx
-	FVE1QoMp0D7gebm0GQIjE3dLQUxw9cfBz5paFXEe/lrOKmsC5d2E33h+H5/c7SAyS1Sveup5kxr
-	AbR39yUu6aW7yRW7HpY0XyAUo7Q8rQ9xfBhCJ3ZIHhICi7xkkFaLWGBm3KZYjyBRfq1GWLw=
-X-Google-Smtp-Source: AGHT+IHm7rrZGF7gWE8rLuZPX4nvDlV3DcFc5Uk1QwC4R6ncjGo7U2SoOER3uymDvhu6BZaa/4okgQ==
-X-Received: by 2002:a05:6512:3a94:b0:545:10bc:20ca with SMTP id 2adb3069b0e04-5452fe583c4mr6368433e87.24.1739955964491;
-        Wed, 19 Feb 2025 01:06:04 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54530df9016sm1454714e87.36.2025.02.19.01.06.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2025 01:06:04 -0800 (PST)
-Date: Wed, 19 Feb 2025 11:06:02 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Danilo Krummrich <dakr@kernel.org>, Conor Dooley <conor.dooley@microchip.com>, 
-	Daire McNamara <daire.mcnamara@microchip.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Douglas Anderson <dianders@chromium.org>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Hans de Goede <hdegoede@redhat.com>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
-	Gregory CLEMENT <gregory.clement@bootlin.com>, =?utf-8?B?VGjDqW8=?= Lebrun <theo.lebrun@bootlin.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Kevin Hilman <khilman@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, dri-devel@lists.freedesktop.org, 
-	platform-driver-x86@vger.kernel.org, linux-mips@vger.kernel.org, linux-clk@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-amlogic@lists.infradead.org
-Subject: Re: [PATCH v4 1/8] driver core: auxiliary bus: add device creation
- helpers
-Message-ID: <crtrciitrlqkxh5mxvnbdjy6zoxny5onse7xgbw7biozg6myux@grp3ketgl2uh>
-References: <20250218-aux-device-create-helper-v4-0-c3d7dfdea2e6@baylibre.com>
- <20250218-aux-device-create-helper-v4-1-c3d7dfdea2e6@baylibre.com>
+	s=arc-20240116; t=1739956135; c=relaxed/simple;
+	bh=H5NMFS2Fh2rZLI4Ybr4KO56eNYRwtHNXpI5Gr51mPrQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=cWxAV7469fgOxtdkANuswcKZ492Gf6C72/T2H/2XhffB+ggzMFa3oC10oXadJlQxQdRQRFH1m+vc6i4OnB4SBq3PldI1tL96STAUQ3Vz7WFWDVzvND5DRBvIkoT3gQPaBZBaSHf5L7GmhnWpl0GaBGcTOLU053xdzVyqNLoVs6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cn/5O4Py; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9377C4CEE8;
+	Wed, 19 Feb 2025 09:08:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739956134;
+	bh=H5NMFS2Fh2rZLI4Ybr4KO56eNYRwtHNXpI5Gr51mPrQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=Cn/5O4Py8nkJkGYAn5w3MmHBEFOVt01d1Ny7OCDGR4665c6UZeu0jZ9ne3VtKtaOv
+	 w2r5joyy7DyVMQdQFVH9lEY/eCybUgOSoRqfCxj82PKRz4jEavtz/jmo3Hotoa8PKb
+	 IhhRW4Ycm/W5ydcV2au/2as69WSk2Jr1kx1kmXR2AOW2Wt0IBpSru0ljk8Jxz2/BEu
+	 HK6D1Td7xjZxJhs7ksKtLLNPK6IHeoI/BDI/JqI/4gForwP2DiuhlywDW1nfY1Hr4l
+	 7x8swvlgZJ+kkLMygbcGUBawIJ9Z8632m/iszzWSPIP6/6BwwZIX61EhVA49HVcrjU
+	 lUJ6xc8RoxusA==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Asahi Lina" <lina@asahilina.net>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
+ <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
+ <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Benno
+ Lossin" <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,
+  "Trevor Gross" <tmgross@umich.edu>,  "Jann Horn" <jannh@google.com>,
+  "Matthew Wilcox" <willy@infradead.org>,  "Paolo Bonzini"
+ <pbonzini@redhat.com>,  "Danilo Krummrich" <dakr@kernel.org>,  "Wedson
+ Almeida Filho" <wedsonaf@gmail.com>,  "Valentin Obst"
+ <kernel@valentinobst.de>,  "Andrew Morton" <akpm@linux-foundation.org>,
+  <linux-mm@kvack.org>,  <airlied@redhat.com>,  "Abdiel Janulgue"
+ <abdiel.janulgue@gmail.com>,  <rust-for-linux@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>,  <asahi@lists.linux.dev>
+Subject: Re: [PATCH 5/6] rust: page: Add physical address conversion functions
+In-Reply-To: <20250202-rust-page-v1-5-e3170d7fe55e@asahilina.net> (Asahi
+	Lina's message of "Sun, 02 Feb 2025 22:05:47 +0900")
+References: <20250202-rust-page-v1-0-e3170d7fe55e@asahilina.net>
+	<VV8JXgQx5DhojJFUVdTJ-K7EH0VWJ4_JVIMqPi_SQJPDuak8dJOVOhWSIpndjMtwJUTDwDSt4T8jFtkiUmpQOQ==@protonmail.internalid>
+	<20250202-rust-page-v1-5-e3170d7fe55e@asahilina.net>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Wed, 19 Feb 2025 10:06:48 +0100
+Message-ID: <87r03ucnh3.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250218-aux-device-create-helper-v4-1-c3d7dfdea2e6@baylibre.com>
+Content-Type: text/plain
 
-On Tue, Feb 18, 2025 at 08:29:46PM +0100, Jerome Brunet wrote:
-> Add helper functions to create a device on the auxiliary bus.
-> 
-> This is meant for fairly simple usage of the auxiliary bus, to avoid having
-> the same code repeated in the different drivers.
-> 
-> Suggested-by: Stephen Boyd <sboyd@kernel.org>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->  drivers/base/auxiliary.c      | 108 ++++++++++++++++++++++++++++++++++++++++++
->  include/linux/auxiliary_bus.h |  17 +++++++
->  2 files changed, 125 insertions(+)
-> 
-> diff --git a/drivers/base/auxiliary.c b/drivers/base/auxiliary.c
-> index afa4df4c5a3f371b91d8dd8c4325495d32ad1291..a6d46c2759be81a0739f07528d5959c2a76eb8a8 100644
-> --- a/drivers/base/auxiliary.c
-> +++ b/drivers/base/auxiliary.c
-> @@ -385,6 +385,114 @@ void auxiliary_driver_unregister(struct auxiliary_driver *auxdrv)
->  }
->  EXPORT_SYMBOL_GPL(auxiliary_driver_unregister);
->  
-> +static void auxiliary_device_release(struct device *dev)
-> +{
-> +	struct auxiliary_device *auxdev = to_auxiliary_dev(dev);
-> +
-> +	kfree(auxdev);
-> +}
-> +
-> +/**
-> + * auxiliary_device_create - create a device on the auxiliary bus
-> + * @dev: parent device
-> + * @modname: module name used to create the auxiliary driver name.
-> + * @devname: auxiliary bus device name
-> + * @platform_data: auxiliary bus device platform data
-> + * @id: auxiliary bus device id
-> + *
-> + * Helper to create an auxiliary bus device.
-> + * The device created matches driver 'modname.devname' on the auxiliary bus.
-> + */
-> +struct auxiliary_device *auxiliary_device_create(struct device *dev,
-> +						 const char *modname,
-> +						 const char *devname,
-> +						 void *platform_data,
-> +						 int id)
-> +{
-> +	struct auxiliary_device *auxdev;
-> +	int ret;
-> +
-> +	auxdev = kzalloc(sizeof(*auxdev), GFP_KERNEL);
-> +	if (!auxdev)
-> +		return NULL;
-> +
-> +	auxdev->id = id;
-> +	auxdev->name = devname;
-> +	auxdev->dev.parent = dev;
-> +	auxdev->dev.platform_data = platform_data;
-> +	auxdev->dev.release = auxiliary_device_release;
-> +	device_set_of_node_from_dev(&auxdev->dev, dev);
-> +
-> +	ret = auxiliary_device_init(auxdev);
-> +	if (ret) {
-> +		kfree(auxdev);
-> +		return NULL;
-> +	}
-> +
-> +	ret = __auxiliary_device_add(auxdev, modname);
-> +	if (ret) {
+"Asahi Lina" <lina@asahilina.net> writes:
 
-This loses possible error return values from __auxiliary_device_add().
-I'd suggest to return ERR_PTR(ret) here and in the
-auxiliary_device_init() chunks and ERR_PTR(-ENOMEM) in case of kzalloc()
-failure.
+[...]
 
-> +		/*
-> +		 * It may look odd but auxdev should not be freed here.
-> +		 * auxiliary_device_uninit() calls device_put() which call
-> +		 * the device release function, freeing auxdev.
-> +		 */
-> +		auxiliary_device_uninit(auxdev);
-> +		return NULL;
-> +	}
+>  /// A bitwise shift for the page size.
+> @@ -249,6 +251,69 @@ pub unsafe fn copy_from_user_slice_raw(
+>              reader.read_raw(unsafe { core::slice::from_raw_parts_mut(dst.cast(), len) })
+>          })
+>      }
 > +
-> +	return auxdev;
-> +}
-> +EXPORT_SYMBOL_GPL(auxiliary_device_create);
+> +    /// Returns the physical address of this page.
+> +    pub fn phys(&self) -> PhysicalAddr {
+> +        // SAFETY: `page` is valid due to the type invariants on `Page`.
+> +        unsafe { bindings::page_to_phys(self.as_ptr()) }
+> +    }
 > +
+> +    /// Converts a Rust-owned Page into its physical address.
+> +    ///
+> +    /// The caller is responsible for calling [`Page::from_phys()`] to avoid leaking memory.
+> +    pub fn into_phys(this: Owned<Self>) -> PhysicalAddr {
+> +        ManuallyDrop::new(this).phys()
+> +    }
+> +
+> +    /// Converts a physical address to a Rust-owned Page.
+> +    ///
+> +    /// # Safety
+> +    /// The caller must ensure that the physical address was previously returned by a call to
+> +    /// [`Page::into_phys()`], and that the physical address is no longer used after this call,
+> +    /// nor is [`Page::from_phys()`] called again on it.
 
--- 
-With best wishes
-Dmitry
+Do we really need the `PhysicalAddr` to come from a call to
+`Page::into_phys`? Could we relax this and say that we don't care how
+you came about the `PhysicalAddr` as long as you can guarantee that
+ownership is correct? That would make interop with C easer in some cases.
+
+> +    pub unsafe fn from_phys(phys: PhysicalAddr) -> Owned<Self> {
+> +        // SAFETY: By the safety requirements, the physical address must be valid and
+> +        // have come from `into_phys()`, so phys_to_page() cannot fail and
+> +        // must return the original struct page pointer.
+> +        unsafe { Owned::from_raw(NonNull::new_unchecked(bindings::phys_to_page(phys)).cast()) }
+> +    }
+> +
+> +    /// Borrows a Page from a physical address, without taking over ownership.
+> +    ///
+> +    /// If the physical address does not have a `struct page` entry or is not
+> +    /// part of a System RAM region, returns None.
+> +    ///
+> +    /// # Safety
+> +    /// The caller must ensure that the physical address, if it is backed by a `struct page`,
+> +    /// remains available for the duration of the borrowed lifetime.
+> +    pub unsafe fn borrow_phys(phys: &PhysicalAddr) -> Option<&Self> {
+> +        // SAFETY: This is always safe, as it is just arithmetic
+> +        let pfn = unsafe { bindings::phys_to_pfn(*phys) };
+> +        // SAFETY: This function is safe to call with any pfn
+> +        if !unsafe { bindings::pfn_valid(pfn) && bindings::page_is_ram(pfn) != 0 } {
+> +            None
+> +        } else {
+> +            // SAFETY: We have just checked that the pfn is valid above, so it must
+> +            // have a corresponding struct page. By the safety requirements, we can
+> +            // return a borrowed reference to it.
+> +            Some(unsafe { &*(bindings::pfn_to_page(pfn) as *mut Self as *const Self) })
+
+I think you can maybe go
+`bindings::pfn_to_page(pfn).cast::<Self>().cast_const()` here.
+
+> +        }
+> +    }
+> +
+> +    /// Borrows a Page from a physical address, without taking over ownership
+> +    /// nor checking for validity.
+> +    ///
+> +    /// # Safety
+> +    /// The caller must ensure that the physical address is backed by a `struct page` and
+> +    /// corresponds to System RAM. This is true when the address was returned by
+> +    /// [`Page::into_phys()`].
+> +    pub unsafe fn borrow_phys_unchecked(phys: &PhysicalAddr) -> &Self {
+> +        // SAFETY: This is always safe, as it is just arithmetic
+> +        let pfn = unsafe { bindings::phys_to_pfn(*phys) };
+> +        // SAFETY: The caller guarantees that the pfn is valid. By the safety
+> +        // requirements, we can return a borrowed reference to it.
+> +        unsafe { &*(bindings::pfn_to_page(pfn) as *mut Self as *const Self) }
+
+Same applies here.
+
+
+Best regards,
+Andreas Hindborg
+
+
+
 
