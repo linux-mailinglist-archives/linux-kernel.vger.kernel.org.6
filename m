@@ -1,108 +1,123 @@
-Return-Path: <linux-kernel+bounces-521324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 744C3A3BB9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:25:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB295A3BB9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:26:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5743D3B1A0D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:25:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BC96188CF57
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:26:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20CC71BD014;
-	Wed, 19 Feb 2025 10:25:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 503F81D6DA3;
+	Wed, 19 Feb 2025 10:25:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="OEfeN0fw"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SMJDMuef"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836A32F41;
-	Wed, 19 Feb 2025 10:25:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C93C2862A1;
+	Wed, 19 Feb 2025 10:25:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739960707; cv=none; b=taQJx1GiE89cwO/pQNx1A+2czmn9n7tDopS5QWXH/IWjjtABYWtyZOJPtK6i/fZEovTQUcWfBrZ9hez5mgiu5BAx+DDDUQ2Xapu5O6iqTXJlLUHLU3+84fbB5nHXcbWYh7nAKSYtWh4tMhvhOWLgWWdInYPG4RHKPhegAHaHU2g=
+	t=1739960749; cv=none; b=FrRQJ9GkAs1AEOdRQIj13UThG1WM+S90au//oxEU/bWVqwv4Nu0yCF20bo4grcufMV9VHupLq0JoK3Zc/cuFk04NqGotO8SNa+fA201Muw/wTNV3mZOsytp0zdCSpRXS7CkPivQ0Hy/GjCsPdvozCJTuM1nyiPRjXy1JUnwfcr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739960707; c=relaxed/simple;
-	bh=70xw9/zk6se8hKbZVVs7psYYypJwFKVOXlbDMO4NNLI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rviles0F+2jQh1anljcr7X27kw2wnY+yvm4icm73oVtu2tL1bkhNHlJ3YIswTnmllKfquZKB51n0kKTZkTMNeT+I9+11C43y1VOgP4hQ7Mx3nYTMF2IkRoVgGFMgw56Wf3pw6LqrENdVsaNycGSTPZAcjqxZj/bX8XmO+CUlxuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=OEfeN0fw; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3905D10382D3C;
-	Wed, 19 Feb 2025 11:24:50 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1739960696;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=R+P3f4KN/Jh3rG/rD8+HRKO0VqzZWriCsR2W/RI9aUE=;
-	b=OEfeN0fwBN6LCHPHGEXv00yMdeHpV7M0J7V73vfQiPWg3+ExFnjZ49jJ97m3AVByjqrOeP
-	/RShWpr3bh44xiN/rKm9K/M3/VjJStvsf4SJZcl1u6eS8kN5gaUB5nT1zuBcj+CAM+9NL5
-	10ECkJH1pJ9I65ztLtFb+Niw/O1UGNOm43KQIUwe6Vmjmc8zxcNLDLLjN0hyszejk1Iynr
-	H7uAKcV8R5kse0tu/BhVyf1tiOpHpyLzwOg2vmtLMQ7MmuWTreOU25mCw2RBzg9gbJq/Kz
-	ZWNKeCyG+L5CtokpKh2ng+8fb7uyiCwbjgczInBVD4Jpn01is9Akqlf6HdHmVA==
-Date: Wed, 19 Feb 2025 11:24:48 +0100
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-Subject: Re: [PATCH 6.1 000/578] 6.1.129-rc1 review
-Message-ID: <Z7WxcPi+JKuyJsds@duo.ucw.cz>
-References: <20250219082652.891560343@linuxfoundation.org>
+	s=arc-20240116; t=1739960749; c=relaxed/simple;
+	bh=8uSV57w6guRspjPcI3Ph7+Z4m0bpeZZl2dptfc9qUu0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ZxH1/F7xmD9tERJm7E1aXYOc1dZ89u9NtW3UJZSzXccVoFrl2ygxexru9mpN6Egqd49LSczeNtkMQGY4fVeTIiL30aHrw1V+TS1EG5VWVVfySMCxFGL92FEc69tASihUrPT8PDwcU+ClwNErBZAi3/iITHHZeIVTlwKG8U82bng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SMJDMuef; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-abb90f68f8cso633392866b.3;
+        Wed, 19 Feb 2025 02:25:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739960746; x=1740565546; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=8uSV57w6guRspjPcI3Ph7+Z4m0bpeZZl2dptfc9qUu0=;
+        b=SMJDMuefHnoSMZWI6AoWkWOpwnFvGGx0EkflpSg6vympw+k22q+YvOrB/x1wtxG5JF
+         naa/2V5HOsqzEVyV8geI2GI+/Vmo08HWk18KixZDladUYhVfJCsyHPDH95dmHcvQaxsO
+         22P7QToZyma2I9dtppWLiJPyl9NQi/qbJSsnsz+QWjWeJoudCyd+BbMoY6a/iVOHaEBv
+         iIwiXRcWOY0oTisTgwSHqRjn/IuBQNH5AgTQE9sk/3wFSy9YgZ67gElZqeegufJwTeFe
+         rL0/Jt+ivcNUv426w23dAozQe7/M7JQ4jfpioOKkbJk9QbzHOAaiLeY5lelFD10n3Kb/
+         9/EQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739960746; x=1740565546;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8uSV57w6guRspjPcI3Ph7+Z4m0bpeZZl2dptfc9qUu0=;
+        b=lRDXg1l+PYCSlO/EdFzUNDUQkLHt3zjvLWeoXn5r+vZ7sysCAbrl8ugCLJpJxNA9mG
+         /M1ZuuLGxWu/hKs8lI3sLtrmlSBEXfpJ18neOSGLqt0lo1iIN9YMr+I6Q31btSOhU78A
+         5Hnath0Bi820LICyi3F2CZMm6qOaGUSWiux3LZ+qdTm+zItX3+x1HHMQdWUHF2na37vw
+         QRk0VFTogVZNMl1yBnfuI1+zB/31PMUbm7KaFQmq1ZC4eH+MHg9ZQKQpHDRsxNwHzHg/
+         OCl9S0oQc/nxJUYVHd89LxfKRjPIp8uVbJAJWMrVyx6wPkDAop838KrsRgt6KCYxU0td
+         MKLg==
+X-Forwarded-Encrypted: i=1; AJvYcCWLmSf1j8alLm2yLtV5wqmh/9PqynC4ZfQT1I7Qn58jcpQAhryoifF7OF5N2UGS0o5OthflSjr+bDa7yk71@vger.kernel.org, AJvYcCX855xGeaw2R0f1e1TvVHUhw+ujkyIauOYkS9sglJSjTh0D+nG4xZ2Zs/MFtFyuXKcvwK4Ey3/ipik=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTxa5b2ENjDZxRCMfJR3RBufHTXLAcnnhtmqFhJHFrWuWulOyp
+	n/GdX1uSi9m26Axuj6+tJ7s8hODir/YOe6CB/tFpAisGoEiU+yqC
+X-Gm-Gg: ASbGncvkPg0LLJY/1t1jFlEAJAuagSw3c3hOUXTXdDyaLMdYC0QobzJB/rplqwOPktf
+	3akOyKXNW0tuxxbZ4zDbaxplPEyH1zI/c/zMlzTalC1KOf2A9JHBHJIOCJyni7wXQiaFvdSmYRU
+	UdBPzHEt+a8aIttOfALCr49YSe91yM5IdWq1HhTo9RYFI3wbRgx3PhrTsrAN0VHyhz78b9+xI6S
+	bNOHSo1FJRP0EKbt8Grzz2fZ9QpFUl38/b6r09W5j2i4aZ313kpYL85dRouU+7IXZniskKXDBkB
+	7Y49METaq590R45NXchlSFkS0gLA7+fZ3u8dqzzEBUpaf92rLFclEijiHSCnH5o=
+X-Google-Smtp-Source: AGHT+IFMGXP2CXvj2q6FX1Qnoy46K40AnJgjimp1pXLWx7bAkbQDY9uMJg9gte8M1MxsR7Rx+8eQTQ==
+X-Received: by 2002:a17:906:c154:b0:ab7:fc9a:28e2 with SMTP id a640c23a62f3a-abb70df002amr1908313166b.47.1739960746021;
+        Wed, 19 Feb 2025 02:25:46 -0800 (PST)
+Received: from ?IPv6:2001:818:ea8e:7f00:2575:914:eedd:620e? ([2001:818:ea8e:7f00:2575:914:eedd:620e])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb4d3ef3c0sm893376266b.41.2025.02.19.02.25.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2025 02:25:44 -0800 (PST)
+Message-ID: <908388ae994bd39b1e8f444adabc214c91433590.camel@gmail.com>
+Subject: Re: [PATCH 0/2] iio: adc: ad4695: fix out of bounds array access
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: David Lechner <dlechner@baylibre.com>, Michael Hennerich	
+ <michael.hennerich@analog.com>, Nuno =?ISO-8859-1?Q?S=E1?=
+ <nuno.sa@analog.com>,  Lars-Peter Clausen	 <lars@metafoo.de>, Jonathan
+ Cameron <jic23@kernel.org>, Trevor Gamblin	 <tgamblin@baylibre.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ linux-iio@vger.kernel.org, 	linux-kernel@vger.kernel.org
+Date: Wed, 19 Feb 2025 10:25:48 +0000
+In-Reply-To: <20250218-iio-adc-ad4695-fix-out-of-bounds-array-access-v1-0-57fef8c7a3fd@baylibre.com>
+References: 
+	<20250218-iio-adc-ad4695-fix-out-of-bounds-array-access-v1-0-57fef8c7a3fd@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="JcUuyTE4Uj/fkr9+"
-Content-Disposition: inline
-In-Reply-To: <20250219082652.891560343@linuxfoundation.org>
-X-Last-TLS-Session-Version: TLSv1.3
 
+On Tue, 2025-02-18 at 17:17 -0600, David Lechner wrote:
+> I was doing some more testing and found a bug with the
+> in_temp_sampling_frequency attribute being corrupted. This is a patch
+> to fix that, plus a bonus patch that cleans up some related code (it
+> wasn't strictly part of the fix, hence the separate patch).
+>=20
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> ---
 
---JcUuyTE4Uj/fkr9+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
 
-Hi!
+> David Lechner (2):
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: adc: ad4695: fix out of bounds array =
+access
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: adc: ad4695: simplify getting oversam=
+pling_ratio
+>=20
+> =C2=A0drivers/iio/adc/ad4695.c | 26 ++++++++++++++++++++------
+> =C2=A01 file changed, 20 insertions(+), 6 deletions(-)
+> ---
+> base-commit: ac856912f210bcff6a1cf8cf9cb2f6a1dfe85798
+> change-id: 20250218-iio-adc-ad4695-fix-out-of-bounds-array-access-7f16ebc=
+3be14
+>=20
+> Best regards,
 
-> This is the start of the stable review cycle for the 6.1.129 release.
-> There are 578 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-
-CIP testing did not find any problems here:
-
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.1.y
-
-Tested-by: Pavel Machek (CIP) <pavel@denx.de>
-
-Best regards,
-                                                                Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---JcUuyTE4Uj/fkr9+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ7WxcAAKCRAw5/Bqldv6
-8u5oAJ49aUqdpfP5A+PgynAWh+GzrsTC8gCghu41czmzQTiBd4R1gGZxUW/LtQY=
-=upo+
------END PGP SIGNATURE-----
-
---JcUuyTE4Uj/fkr9+--
 
