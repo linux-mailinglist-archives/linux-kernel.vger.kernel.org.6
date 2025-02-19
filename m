@@ -1,137 +1,109 @@
-Return-Path: <linux-kernel+bounces-521505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E18BA3BE35
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:35:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B42FBA3BE39
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:35:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA545174B0C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:33:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4264918915FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:35:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D91C41DE8BC;
-	Wed, 19 Feb 2025 12:32:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RoGlhI8t"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CCBC1E2312;
+	Wed, 19 Feb 2025 12:35:24 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD39E1E0080;
-	Wed, 19 Feb 2025 12:32:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A11D21DEFE1
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 12:35:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739968377; cv=none; b=SAF1jAA+sJTY2IVcQ7cCgbc6Jr2N1BCwnb4/AtUcDfCQ9RAwk19GT81n80l1yjKEqxqcfRSIClKOraXquF1BgycITCfSuhA6H4jeRflb7foEJ6URz8HtyP5KfQXvJSpX1TZisiRSi7g8pHG0stMFCDgSTfO3x45mSxdsnJn19Mo=
+	t=1739968524; cv=none; b=R+z5y0127wOOLa3EuN/BqahWHXUy7x+zCRpoJZmiYisBuDuy1uf2CDEfCMJaTxFOK3lXHvaph/WR/dgQ1kpwlLsBPc71SQLejWm/8zqyXpw6pcITSj7cMzy9SHkfp1u5hWd/GqYDYJNIKDncA2B0TKQZ7yf5M/C2YZQ/pgbKUrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739968377; c=relaxed/simple;
-	bh=yDIUhMyqlYHrRY20nMSXqUJxRAG2s+oBiIMHyGosyBg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oJop2aDB33R6oa0or0Z2HlQGMMvs0/A1vQ6rjYUJFrzFT6rNqGiXAR2i2OryTUdXbV/UglKQcdxs8Y0HlHQ/xmGhQbfZWiGp1RLPHTd3Oyn50svG8nXrbIU+OexjaWXqg6WiT9/3qjq2A17ly/5BMAw+//GDQiF7zf0QN63yeWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RoGlhI8t; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739968374; x=1771504374;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=yDIUhMyqlYHrRY20nMSXqUJxRAG2s+oBiIMHyGosyBg=;
-  b=RoGlhI8taAGKT6PI9qqJtbIT0Tmj9MmI7smPws2BxN9gAKJVG7YVSgHC
-   w+8PiVqXMfCbumv4+oowLm+sAf3L6ggdKETj42gzk80uzEcuS7fviaEom
-   L5jXHdfqGFjxBV5xZMuhg/VH0MBV0aqKNLgnOmd1eFPeOrRpcGiguieZs
-   QKiLswICX5kXviKVMyYADHzVhDaMKB+iCYMBndx/8BjKxGQLwP5xQZd6w
-   fCZUAYwSqDTHimd7VkQMc2YXkurG25KkRYFVAZtQ+fIdR4+sAz2vBCM8j
-   aJSXm3dlkWmStEMZIoprFHR64TrUGUXCbzXwm9tVydcQZ60SIxrcKwNQo
-   A==;
-X-CSE-ConnectionGUID: INzGqisJTJa9JyRLp60uDA==
-X-CSE-MsgGUID: Q3yLY/8oQgiZTx4+0BbUQQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11350"; a="44618012"
-X-IronPort-AV: E=Sophos;i="6.13,298,1732608000"; 
-   d="scan'208";a="44618012"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 04:32:54 -0800
-X-CSE-ConnectionGUID: P6SoXoDrS4CFvqkEzYPl/Q==
-X-CSE-MsgGUID: ubcoNE6GTcOEyO+gJYZUDQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,298,1732608000"; 
-   d="scan'208";a="114622799"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 04:32:51 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1tkjFx-0000000D1RH-1Vab;
-	Wed, 19 Feb 2025 14:32:49 +0200
-Date: Wed, 19 Feb 2025 14:32:49 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Dipen Patel <dipenp@nvidia.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	timestamp@lists.linux.dev,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v4 1/2] gpiolib: move all includes to the top of
- gpio/consumer.h
-Message-ID: <Z7XPcYtaA4COHDYj@smile.fi.intel.com>
-References: <20250217103922.151047-1-brgl@bgdev.pl>
+	s=arc-20240116; t=1739968524; c=relaxed/simple;
+	bh=uNBj/ImDnKTGA+wH35E3FFPPbuFi6CN+GuHENEoMLAs=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=nKSI8R8I+EYNRyfMyw5wyhai3ORASpD6N6W/YAjWwpM4BURXXGc4FSZ5lJaNK/Y65VGUHvV2Cnrk+vyF3OPRFct8/uI4CHI9eiT8uSZzRi+aE8yGfGUxV4cieyHo56map4XQPIUmVOD5gyO4LTLwYyzVxvm4mHfNf0fOIc+yHwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3d2b6d933a5so5496305ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 04:35:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739968522; x=1740573322;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vA7AEMtbZSMQceuCW4kpr3lEV6x/Aal06ousZtj0ONE=;
+        b=VAlcgpx1Vc5tcNNeAyp5ILhfNCATrGHwmgdKz0wGQKqku06PyBjUEjd9oPFJN12Vr4
+         xfDzAXakTKhutee6G0fpfuYgmvAm0XIool8SacI4fXqj9t0wkjqexkVnne0EWsbI6im8
+         J5HBYE3K/MTVpTPFc5iwQG+7bGv/0Tm6GA12MA9QUchwMmLpRzRoagXZkoj0JEW1Awlw
+         5rUTzhsss4W3qtyN7saLx9e6cDRHqhTR3iU+hlFqNyzRXWLtSDejnmCdn+Vi+vnsBdV+
+         TVzaGbNieoEC0u7lWgwGcCA8/ZlPm+RMRhUsah/KQIhZaWrTJmNhUIzfpaObKoq+p7i+
+         hrew==
+X-Gm-Message-State: AOJu0Yy8/EdJ9+Fi5qPLXleLbXe6iITpwZOzd8mfGjPIcQqVS0YXZiSt
+	L6KMY+9i4FT0Ec22IZOo5tu9Ewfb5Heh/7MNNyZ7uJPiKHz4H1W2et26qAChsKUG1fgxYjF6Qkv
+	d6MghmBVCemejsPFLRo+KXz3X0aer/mtzgDirBcS5CVMUZ57mJtOwsLI=
+X-Google-Smtp-Source: AGHT+IFRw8HELeRQsGdtJWhrL/jACe5r45N5MLtwpFk+FM2CQp5miKbmS+CJbnprHkpkj7RGeEMq3RFIdD/yigbXG6uxM+lFpy3Q
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250217103922.151047-1-brgl@bgdev.pl>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+X-Received: by 2002:a05:6e02:1aaf:b0:3d2:a5a0:8afa with SMTP id
+ e9e14a558f8ab-3d2b5296431mr33082065ab.6.1739968521806; Wed, 19 Feb 2025
+ 04:35:21 -0800 (PST)
+Date: Wed, 19 Feb 2025 04:35:21 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67b5d009.050a0220.14d86d.00e4.GAE@google.com>
+Subject: [syzbot] Monthly media report (Feb 2025)
+From: syzbot <syzbot+listc61c465ecde303186fd7@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Feb 17, 2025 at 11:39:21AM +0100, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> We have several conditional includes depending on !CONFIG_GPIOLIB. This
-> is supposed to reduce compilation time with CONFIG_GPIOLIB=y but in
-> practice there's no difference on modern machines.
+Hello media maintainers/developers,
 
-It's not about modern machines. If every maintainer will think this way,
-we end up in the complete and utter dead end with the headers.
+This is a 31-day syzbot report for the media subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/media
 
-I believe you at least had read the cover letter for the infamous Ingo's series
-about headers and how it speeds up the build (in some cases up to 70% on as you
-said "modern machines").
+During the period, 0 new issues were detected and 0 were fixed.
+In total, 21 issues are still open and 91 have already been fixed.
 
-> It makes adding new stubs that depend on more than just GPIOLIB harder so
-> move them all to the top, unduplicate them and replace asm/ with preferred
-> linux/ alternatives.
+Some of the still happening issues:
 
-NAK.
+Ref Crashes Repro Title
+<1> 544     Yes   WARNING in usb_free_urb
+                  https://syzkaller.appspot.com/bug?extid=b466336413a1fba398a5
+<2> 209     No    KASAN: slab-use-after-free Read in em28xx_release_resources
+                  https://syzkaller.appspot.com/bug?extid=16062f26c6480975e5ed
+<3> 193     Yes   WARNING in smsusb_init_device/usb_submit_urb
+                  https://syzkaller.appspot.com/bug?extid=85e3ddbf0ddbfbc85f1e
+<4> 126     Yes   WARNING in smsusb_start_streaming/usb_submit_urb
+                  https://syzkaller.appspot.com/bug?extid=12002a39b8c60510f8fb
+<5> 77      Yes   WARNING in call_s_stream
+                  https://syzkaller.appspot.com/bug?extid=5bcd7c809d365e14c4df
+<6> 62      Yes   KASAN: vmalloc-out-of-bounds Write in tpg_fill_plane_buffer (3)
+                  https://syzkaller.appspot.com/bug?extid=365005005522b70a36f2
+<7> 17      Yes   KASAN: slab-use-after-free Read in dvb_device_open
+                  https://syzkaller.appspot.com/bug?extid=1eb177ecc3943b883f0a
+<8> 4       Yes   KASAN: use-after-free Read in em28xx_close_extension (2)
+                  https://syzkaller.appspot.com/bug?extid=a11c46f37ee083a73deb
+<9> 3       No    general protection fault in dvb_usbv2_generic_write
+                  https://syzkaller.appspot.com/bug?extid=f9f5333782a854509322
 
-This makes dependency hell things much worse and this is a step back on the
-untangling the current situation along with the slowing down the speed of the
-build. Please. consider to revert or discard this patch.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-...
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
->  #include <linux/bits.h>
-> +#include <linux/bug.h>
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
 
-Okay to replace, but not okay to move.
-
->  #include <linux/err.h>
-> +#include <linux/errno.h>
-
-Please, double check that it uses error codes from it, otherwise err.h includes
-asm/errno.h with basic codes already.
-
-> +#include <linux/kernel.h>
-
-This is definitely no. Please, read what's written in the top of that file and
-here is just a proxy for should come in the future a kind of might_sleep.h.
-Do not move this one at all, please.
-
->  #include <linux/types.h>
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+You may send multiple commands in a single email message.
 
