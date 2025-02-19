@@ -1,93 +1,118 @@
-Return-Path: <linux-kernel+bounces-521456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAF38A3BD91
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:58:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87337A3BD90
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:58:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E74316ABCD
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:58:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EE2B1896498
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:58:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FF1D1DFE25;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 053751DFE23;
 	Wed, 19 Feb 2025 11:57:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gtzgLa0N"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="ZnGEtjMO";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IzobVLZJ"
+Received: from flow-a5-smtp.messagingengine.com (flow-a5-smtp.messagingengine.com [103.168.172.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 840EA1DF25D
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 11:57:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 483F21DE4F1;
+	Wed, 19 Feb 2025 11:57:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739966263; cv=none; b=m8qVQLNMVTLMBS4DUYX7SJY2BbcKmnM8kDwb2riB9Mel+7LTpgDNFTB5+J9YZa1dDtUjBUD5FAKYN6QjPbWDBeK/MrNnubSoaC44/BcknBMK6aOgtnrCtCZyrSb9crmBz4LAQ5WqUoXOmv8hmLdhiL1E1DNA3+sv6uoheBqzsus=
+	t=1739966263; cv=none; b=hpRtMW5zGEV0FGPrPzLhbBydj6eTE+9bQBUHewNnTrmZc8PtWL2AhaHX2Hmsw8Nt/KSOOHWjUiQ1J6i63TMEd+yCQpDFxVjC1xCKw2FoxWvIG/xHVGBILPpeyO+GqjeH9LxgaI2TIpYDknxcE6M7Gj8l3iPlhIMCHeQgF19Bp9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1739966263; c=relaxed/simple;
-	bh=kRms6J0w0K8ZO7wZUeNbLbD3dLIuggXRMxSjihVx9a0=;
+	bh=4k1po3JFC/xg27AWImd+emnF0oRfoeOXjB0dtgrtVAU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mjo0cg7pi5tbwrOUMImXCDjVYjumr2zbjlV8UPCm42GuYEY2jgzHJ+h6htuk2J0p5I+wqFL/y0lVuVrgOOVy/1pamLv9jmcxoHpXnGbZsMhrBFTrSsAo8S6aFUUrOBMHnrcHJVa6AaJwqkPVrQEU14dy42KeK4r96qdgFTx5meY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gtzgLa0N; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-543cc81ddebso6887283e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 03:57:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739966260; x=1740571060; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=yl/X30LKsnqNL0hLrSqKOQZayaA3Z0KhIiM4VXXv7pg=;
-        b=gtzgLa0NkSvgZDwcbm10idn6affYlZGVbxr4QEdcoqfWDS+oO3g2ND4wLVFs1LSy9l
-         BL9WdWEyMHrOJ82VxM7nwegCWmZbz6LPoiAirytW1OlbBBpKnpQXSsF+Cy8apfqBZzOT
-         kFwWsv+ihNA9wMC32qFHqbMeIie5iMRhW1FULpVmRRFutMwhPHUB8taKDg76RMTDwd29
-         kb87rjQWsytbbPtVRId8O3Rt7flv1q+AKwyFXhN8iC4eZaud186PZuLG7fKyKDF5fQQ9
-         VY+lh30lv/jswHNND1zCIWoG+0AlLOXWoeYkoi6vFXTnqfBqeQiZaj91b/BWDklKOsRr
-         RCAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739966260; x=1740571060;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yl/X30LKsnqNL0hLrSqKOQZayaA3Z0KhIiM4VXXv7pg=;
-        b=iSw+k+xZcqsGtwpQ8U5wM8rRkz0RkVeQjGwvXzFVcIncnj9mKSlncfAmkzai2Hxb6g
-         neEEJiHoxaD5xSVqNtZ9ZXNpOSzw4RAMZfiXxmnJXjuSv1NL/jn2R/Y3Z1F6bdVgxSL0
-         JtHCqPX6ZUe713Pl2ig3Gf39uKbTKC907/1QsPtrEQmwcPrTn/XvZkSAJCEtU6Ojc9zU
-         6OK7iIK4cycyNgPGvlEu+KmLX9L0tKs6ezxRuC2wr6k225T51497DZKy0bCkWx/7Lkh8
-         pwbcGmK3xA6gSwZY09ca6JBQChEHNBgQdS1Nb5+VWylp3JrEpg2ZqBIdfXb8Q3a6EVaf
-         9WsA==
-X-Forwarded-Encrypted: i=1; AJvYcCVjqgb6NnRSucKWOqjG544aLqvLWn6hLy5zDeDapxP9vIM7Pk4uQYx6//CAzqRCXocgkD0FCbQ+mLFb03M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxfj6bCBVAdn8pq2oypAd2vVCaG4UozdcZUIxaUzkLifNKhO1A6
-	0WCnxGky7Xf43WGyPGhzPd1HblzFdZ9HxWciMhzFvWPtZlnHAo4APJoqLicvEXE=
-X-Gm-Gg: ASbGncstoirqf2tuYfjR6u1LuhtSryVohr8bgnSvG3Fuedqe4nyT5skwdlA59QdL6Bh
-	UefDKxxlGaNj4iLipG05iXdZ14ETjadpqdzLlRzNTvLd4Qg8iLYBPRVCccafqA1j3S7mxRr+3ko
-	gUowhZ/2YfIfpZINR4RTN/Jt6cw7CEcQe8t6JCHG9fuSENXVS1UMI2oOsD3okZx4w9zv32I7Ch0
-	o7YKSUMwGSBGnU0zf4INNTubePo7r4xG1TGViYuO64hGrJ3i5LON4ReACT+W8GX7+apyA7ffDNo
-	/1bLOAuyVpAOeWCbDX3xC8CxefWtVLVfQ53QBIoFhUkknPhcsuYr/Mhg2N6bsT8EbxSjEck=
-X-Google-Smtp-Source: AGHT+IHcT3I49ZcCntfNXaucNk5PZW4mqa0Uohu3g3DGhO2yRKmX5U82+iGSJxkgL6G1fVz2UZDmwg==
-X-Received: by 2002:a05:6512:4025:b0:545:2f09:a3f6 with SMTP id 2adb3069b0e04-5452fe2e1b1mr5021313e87.1.1739966259567;
-        Wed, 19 Feb 2025 03:57:39 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54527244fd7sm1859640e87.12.2025.02.19.03.57.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2025 03:57:39 -0800 (PST)
-Date: Wed, 19 Feb 2025 13:57:37 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jagadeesh Kona <quic_jkona@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>, 
-	Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
-	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5] clk: qcom: common: Attach clock power domains
- conditionally
-Message-ID: <fvcmc3ibqcwzokvqomntxn2vkgduvbdsx3gd5vkctzwrik7bis@iyjrejmqkpfp>
-References: <20250218-videocc-pll-multi-pd-voting-v1-0-cfe6289ea29b@quicinc.com>
- <20250218-videocc-pll-multi-pd-voting-v1-3-cfe6289ea29b@quicinc.com>
- <2c5rbbpe5muw53oemyq6vhsmhzpzcpn7on4ujl5v7i7s3fdlob@eh37gy5dpfnp>
- <bb4cd14e-a9ea-4c13-9774-cca169dcb8d1@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lW89LfIfM36R9D+7GM046jQDQqNkhsebXYOKrwozMAVYrSIUupybZzzFF+U93vXFxTIxTiaSfYtWs5SQT965fhpjqbyhnXVTRfcTv3J+9jGAZQtBvIfDwWOmOg/M5bYvjXoDxsqAFXhZIF4QuwAi/gxmqrUA5Qx7G38qWt0Z/YM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=ZnGEtjMO; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=IzobVLZJ; arc=none smtp.client-ip=103.168.172.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
+Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
+	by mailflow.phl.internal (Postfix) with ESMTP id 16F85201789;
+	Wed, 19 Feb 2025 06:57:40 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-02.internal (MEProxy); Wed, 19 Feb 2025 06:57:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1739966260; x=1739973460; bh=I0Vr7zjYe+
+	LzROidf2KdAM0FeJYDrHAhTGLGwi7YtgU=; b=ZnGEtjMO7AINmHlgXsViick38g
+	sED8BBGIc4vzI41aYcZkvTv7tMmAl2CYypqi/XpBgIOnw4FeODoyNg6k/Nwozko6
+	FG1C9nOXlX0m7D/o+o+W5E7qYe8GZUiThYWscNV56K5BEsjhrgg4vLd1bafjQacS
+	HyFLGOCBOnCPUVRs/3YHXR1CmSfZCNHiSswIzMN+kl9ksfrq6QVL3nRi5UUztm4N
+	vf4nTRNkGlb4c46UEZShn+nUkeTKRR1ZL3bagN91houWTDWm6pF5AVBvqYV2BvYA
+	EH+B2ru4qHb9l1SjjB8fPHes6nJdDEp5P6v/uLHQdQKMiCshRC6JA4MIR2NA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1739966260; x=1739973460; bh=I0Vr7zjYe+LzROidf2KdAM0FeJYDrHAhTGL
+	Gwi7YtgU=; b=IzobVLZJfukFykt4i6eVYyGagYUSdLzrJ+kKgK1Myd6dRmFXfUE
+	YA+IeAxWbmpKjDFOihiqLar4F+Be478YgB9W8Wn9sGt3nSNpuQXAiDk35OuntrbP
+	WJqmHKBbx2YNN96srbSNwih0n02nvIs8oho4ZOOFwfh5/ot4ZVEc6BPygetHlkfV
+	5UaKeDhUeaSkXBKcs2mpXUynscIBmhwnCmXy6LlECjHYN9qoPd+VzeQTRy1FG4JO
+	0jSeggenWwrBLkldkYL5Hg+9Gu31FG4kMOAFrMhw/d3y+x36QV+2UO6ckEGf4PmW
+	N8m1RdbNcjl95Tp0/FTxBXNQemWNZYwMYGA==
+X-ME-Sender: <xms:M8e1Zxc4nEkIU6aRDFmOLJEnMwle1yw3vBQokwHqBww3xJX-FLtoiQ>
+    <xme:M8e1Z_OnEqGXRTGc7gJV2j_IKi5pFbtScK2_pHqmtWbprCq_rz9LYJndYi1PWTQPl
+    sMlBM-8LXj90ANfRqc>
+X-ME-Received: <xmr:M8e1Z6gsOt17SienMM3DX3KO-YnyORDYQlR6NaUsKnVEWjNAKA6aAjvroxOA-vLR6Bap90M129j1yS7EvkdVM61jb56rNs71--0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeigedujecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttdej
+    necuhfhrohhmpeflrghnnhgvucfirhhunhgruhcuoehjsehjrghnnhgruhdrnhgvtheqne
+    cuggftrfgrthhtvghrnhepgfdvffevleegudejfeefheehkeehleehfefgjefffeetudeg
+    tefhuedufeehfeetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilh
+    hfrhhomhepjhesjhgrnhhnrghurdhnvghtpdhnsggprhgtphhtthhopedvvddpmhhouggv
+    pehsmhhtphhouhhtpdhrtghpthhtoheplhgruhhrvghnthdrphhinhgthhgrrhhtsehiug
+    gvrghsohhnsghorghrugdrtghomhdprhgtphhtthhopehfnhhklhdrkhgvrhhnvghlsehg
+    mhgrihhlrdgtohhmpdhrtghpthhtohepkhhriihksehkvghrnhgvlhdrohhrghdprhgtph
+    htthhopehsvhgvnhesshhvvghnphgvthgvrhdruggvvhdprhgtphhtthhopegrlhihshhs
+    rgesrhhoshgvnhiifigvihhgrdhiohdprhgtphhtthhopehrohgshheskhgvrhhnvghlrd
+    horhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthht
+    oheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmrghrtggrnh
+    esmhgrrhgtrghnrdhsth
+X-ME-Proxy: <xmx:M8e1Z69fp5UtCDSgtdHbRJOaO6ofWHA2pUkPtu7-mXVd_uPZq9m01g>
+    <xmx:M8e1Z9u70kv0LcFER15ThwwD-6Leqc-OUjgUeztpCvcFeRjPRXN89A>
+    <xmx:M8e1Z5FaSzYMQq6TOOLDR414dl66AOYDTbo4t-79vgvVpzp10ilNBw>
+    <xmx:M8e1Z0NnvX9Z8_L15P1RSf9-_AVkLw7jf1ETZNCsoqK7vgkwZhbNvw>
+    <xmx:NMe1ZxSGnD2ua2i_owXFtXWucBE25DO8kebyhgs0H0RDLv74zlzz5HC2>
+Feedback-ID: i47b949f6:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 19 Feb 2025 06:57:38 -0500 (EST)
+Date: Wed, 19 Feb 2025 12:57:37 +0100
+From: Janne Grunau <j@jannau.net>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Sasha Finkelstein <fnkl.kernel@gmail.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Sven Peter <sven@svenpeter.dev>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Hector Martin <marcan@marcan.st>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-media@vger.kernel.org, imx@lists.linux.dev
+Subject: Re: [PATCH 3/5] media: dt-bindings: Add Apple ISP
+Message-ID: <20250219115737.GB26386@robin.jannau.net>
+References: <20250219-isp-v1-0-6d3e89b67c31@gmail.com>
+ <20250219-isp-v1-3-6d3e89b67c31@gmail.com>
+ <16f6d4a2-2102-48b9-a0ae-b8c6595975b8@kernel.org>
+ <CAMT+MTR7dhtt3SOMg0K3UakJQftqnc2S-rV41HdHtA+o9aSPug@mail.gmail.com>
+ <20250219105326.GA31383@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,67 +121,116 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <bb4cd14e-a9ea-4c13-9774-cca169dcb8d1@quicinc.com>
+In-Reply-To: <20250219105326.GA31383@pendragon.ideasonboard.com>
 
-On Wed, Feb 19, 2025 at 05:06:11PM +0530, Jagadeesh Kona wrote:
-> 
-> 
-> On 2/18/2025 10:48 PM, Dmitry Baryshkov wrote:
-> > On Tue, Feb 18, 2025 at 07:56:48PM +0530, Jagadeesh Kona wrote:
-> >> Attach clock power domains in qcom_cc_really_probe() only
-> >> if the clock controller has not already attached to them.
+On Wed, Feb 19, 2025 at 12:53:26PM +0200, Laurent Pinchart wrote:
+> On Wed, Feb 19, 2025 at 10:54:31AM +0100, Sasha Finkelstein wrote:
+> > On Wed, 19 Feb 2025 at 10:37, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> > > > +
+> > > > +  apple,platform-id:
+> > > > +    description: Platform id for firmware
+> > > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > >
+> > >
+> > > No, use firmware-name.
 > > 
-> > Squash this to the previous patch and call the new function. No need to
-> > duplicate the code.
+> > Not sure how is firmware-name an appropriate field, fw-name is a string
+> > that references a firmware file, while this field is an id that is sent to the
+> > coprocessor firmware in order to identify the platform.
 > > 
-> 
-> I tried calling the new function here instead of duplicating code, but that
-> is leading to below warning since the desc passed to qcom_cc_really_probe()
-> has a const qualifier and hence we cannot update desc->pd_list inside
-> qcom_cc_really_probe().
-> 
-> drivers/clk/qcom/common.c:305:33:   WARNING : passing argument 2 of ‘qcom_cc_attach_pds’ discards ‘const’ qualifier from pointer target type [-Wdiscarded-qualifiers]
-
-It sounds like this can be fixed with a one-line patch.
-
-> 
-> Thanks,
-> Jagadeesh
-> 
-> >>
-> >> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
-> >> ---
-> >>  drivers/clk/qcom/common.c | 9 ++++++---
-> >>  1 file changed, 6 insertions(+), 3 deletions(-)
-> >>
-> >> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
-> >> index ec27f70b24bdec24edd2f6b3df0d766fc1cdcbf0..eb7e2a56d1d135f839fd9bd470ba6231ce775a8c 100644
-> >> --- a/drivers/clk/qcom/common.c
-> >> +++ b/drivers/clk/qcom/common.c
-> >> @@ -300,9 +300,12 @@ int qcom_cc_really_probe(struct device *dev,
-> >>  	if (!cc)
-> >>  		return -ENOMEM;
-> >>  
-> >> -	ret = devm_pm_domain_attach_list(dev, NULL, &cc->pd_list);
-> >> -	if (ret < 0 && ret != -EEXIST)
-> >> -		return ret;
-> >> +	cc->pd_list = desc->pd_list;
-> >> +	if (!cc->pd_list) {
-> >> +		ret = devm_pm_domain_attach_list(dev, NULL, &cc->pd_list);
-> >> +		if (ret < 0 && ret != -EEXIST)
-> >> +			return ret;
-> >> +	}
-> >>  
-> >>  	reset = &cc->reset;
-> >>  	reset->rcdev.of_node = dev->of_node;
-> >>
-> >> -- 
-> >> 2.34.1
-> >>
+> > > > +  apple,temporal-filter:
+> > > > +    description: Whether temporal filter should be enabled in firmware
+> > > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > >
+> > > And why is this not enabled always? Why this is board specific?
 > > 
+> > Not every board has support for this feature.
+> > 
+> > > You miss here ports or port. ISP usually gets signal from some camera or
+> > > other block.
+> > 
+> > For complex cameras - yes, but this is closer to a UVC camera connected
+> > via a bespoke protocol. We do not need to deal with the sensor access,
+> > all of it is managed by the coprocessor firmware.
+> > 
+> > > > +        properties:
+> > > > +          apple,config-index:
+> > > > +            description: Firmware config index
+> > > > +            $ref: /schemas/types.yaml#/definitions/uint32
+> > >
+> > >
+> > > No duplicated indices. You have reg for this, assuming this is index.
+> > 
+> > There are duplicated indices, see isp-imx248.dtsi in patch 5 for an example.
+> > 
+> > > All these do not look like hardware properties but rather configuration
+> > > of sensor which should be done runtime by OS, not by DT.
+> > 
+> > Those are board-specific and not discoverable via the ISP protocol.
+> 
+> But they are settable through the ISP protocol, aren't they ? For
+> instance, looking at isp-imx248.dtsi, the first four entries are
+> 
+> 	/* 1280x720 */
+> 	preset0 {
+> 		apple,config-index = <0>;
+> 		apple,input-size = <1296 736>;
+> 		apple,output-size = <1280 720>;
+> 		apple,crop = <8 8 1280 720>;
+> 	};
+> 
+> 	/* 960x720 (4:3) */
+> 	preset1 {
+> 		apple,config-index = <0>;
+> 		apple,input-size = <1296 736>;
+> 		apple,output-size = <960 720>;
+> 		apple,crop = <168 8 960 720>;
+> 	};
+> 
+> 	/* 960x540 (16:9) */
+> 	preset2 {
+> 		apple,config-index = <0>;
+> 		apple,input-size = <1296 736>;
+> 		apple,output-size = <960 540>;
+> 		apple,crop = <8 8 1280 720>;
+> 	};
+> 
+> 	/* 640x480 (4:3) */
+> 	preset3 {
+> 		apple,config-index = <0>;
+> 		apple,input-size = <1296 736>;
+> 		apple,output-size = <640 480>;
+> 		apple,crop = <168 8 960 720>;
+> 	};
+> 
+> But I may be interested in capturing a 640x480 frame with cropping only
+> and without scaling, with
+> 
+> input-size = 1296x736
+> output-size = 640x480
+> crop = (328,128)/640x480
+> 
+> Or I may want my cropped frame to be located in the upper-left corner:
+> 
+> input-size = 1296x736
+> output-size = 640x480
+> crop = (8,8)/640x480
+> 
+> If I set those parameters through the ISP protocol, won't it work ?
 
--- 
-With best wishes
-Dmitry
+If my memory serves me right the presets wre added as workaround for
+userspace not handling V4L2_FRMSIZE_TYPE_STEPWISE well (or at all) and
+the added complexity of handling the qadratic sensor with partially
+occluded or outside of the usable lens diameter corners.
+
+It is a simplified description of the hardware to make it useable for
+most software which is expected simple uvc cameras.
+
+There are still two common issues in user space software related to this
+driver:
+- software expects width == linesize
+- resolution selection is based frame height, i.e. it prefers 1080x1920
+  over 1920x1080 on devices with quadratic sensor.
+
+ciao Janne
 
