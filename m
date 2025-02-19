@@ -1,330 +1,222 @@
-Return-Path: <linux-kernel+bounces-521552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BE20A3BF18
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:58:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4F18A3BED0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:54:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B36B27A3622
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:57:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5913A3B0B0D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:52:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CE7B1EDA15;
-	Wed, 19 Feb 2025 12:52:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3534E1EE7BE;
+	Wed, 19 Feb 2025 12:51:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U4Zhxt4w"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="F2lb0MP6"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2045.outbound.protection.outlook.com [40.107.93.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 094891EDA1A;
-	Wed, 19 Feb 2025 12:52:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739969573; cv=none; b=YHyqw72w0KYiMqtLgsyQTF/pGimH+gRIDU9G2bLkHKSyaH+87z8A4ak6/l1q3OoxR2PXY4Era4JpT9SMxuKQl7r8oJZgSYqrgFq4ohkAjWPEgVrd+76Vjw9OoZURiGl3+HBMnaxkBHzwkgIUD4x5rJECs9SC+Q3DErTqrRF9XJE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739969573; c=relaxed/simple;
-	bh=jqz5blGUX5UncrsSac4ngco/AKqB1xIOiCjAuaEMTY0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IC9p6rrHOZP6U5EEm4Fdyom3DVFOBn3JndV+xApaj6ET9nH5ZLd6cvJkeFpsVMd08Ml0Ow9bATiDjL9pyr7U9rdRmvAAiw/UlS7XvGFF/knv+fWRJ0MENgSnOoBi/mmCJ+wOSC75WlDqigGwOdLHj3AxA6KrmyvOUOKi0UhZ7Zk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U4Zhxt4w; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-220c8cf98bbso135197225ad.1;
-        Wed, 19 Feb 2025 04:52:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739969571; x=1740574371; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Qx8bg1rA+gp6wNTCNpkIOzYNrMU90JwyPLUIFRVvz8E=;
-        b=U4Zhxt4wkWLZNEUdriEmY4nt1U6QODPGEGdOWFd9SYyAS/nxTfidywYkZ6ubu3DG4+
-         fxsNNL7dD2aK0EjlUsX6L/LFXNxuKAyahEASlZEzbscVVUnGXU97Q9nx7SM1CKXVxNuh
-         qp0NFRZkXNgB9eNYubxXcpSK2IDla9H/bho2M81Dt7r5QM4IQ16sAf6HirYG5hFzQUxg
-         3XgiCArjTeOFhXS1Kr0mgA6tmHGEt1t5GxQZxs4UN4sgHSfdUupBMD5X0n38rrds/TBy
-         TVgXloxArrLyXw85Xlwqe8nEIPrwYnNAUmLKQ/0lg6wYNwMYwsUpzGYqmQLaLRbkhKP5
-         xjjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739969571; x=1740574371;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Qx8bg1rA+gp6wNTCNpkIOzYNrMU90JwyPLUIFRVvz8E=;
-        b=do/S6iYXwKn/lAiCEW9jhLeSnJ41LGKqFLz3uhNfP5h+lMx/lwJfhGrzWXzIo3Bgf+
-         3Sc1o+r5vCAaXuAR8HDSFjuGhhk7Uwtk5t1dnyBCxBmQ9T3SjL/4aPjX8Y1pit2xpPpZ
-         bZtJVpAcoyw0PCcU68AD4CFzku5gIOK43upSsMUElNv40SDl1LetcvtE35J24w6aJHOp
-         uYsDl2tg3njcVZHHzBokMOT4l3CocGIwSUA4OY2hp43WlwD749NqMk8htsubbT9WuUqW
-         A7xiRJdZx/Ks+wPkBUcG0pgxgKHCSoes9PjOWnaRtwUmqLV7HDdBVnrBQKaTkg1rYaO6
-         Emqg==
-X-Forwarded-Encrypted: i=1; AJvYcCUl4CSDdABPIYAP/mZBXAIZ9S+Ne6VZ7cwEuTJ7Xoc4Vj3WE0XRfCn7kbcdCOiFCGZLYJBjxSdCxBRv@vger.kernel.org, AJvYcCVg5ssw7cA5Y4/fYPCcT8jMvfAFCF+ne7zoeGrfjVj3Cc0oK9Zp9lks2k/0ErnL1trt3Puo/YkTROQFithgHExD@vger.kernel.org, AJvYcCVmCJ+TJCazkHIR1TNMvpRAPpkrTa1vcDeQ9PAiylf7sjLpt3POkfiCQie6XyaXo3D69oP6YhUSE4QSfA==@vger.kernel.org, AJvYcCVtaMhJlRGuZe1nY3lj3zQkxKBJq8sUfYnW1X64jFCSOeA+r3rf+7zWm5iop/ApBVZChPB4c/uV6bOmqw==@vger.kernel.org, AJvYcCWMQwUAelExnT2fjXH8vas4yuuZNjqqOfDMpZkWyXWoaJ3OOPsEHPeyuUGeORbMQCcqNXU=@vger.kernel.org, AJvYcCWYEuWdKNnLEq2CBvXkykJNu/TV48GCIjJpOM6gXPEFN6UDbCZfeiwLIz+xlbElz/YJWpX4CYHPZei3@vger.kernel.org, AJvYcCX9j6ndoyepFmcT2VLbLz5XlyXvLr5M493MNsT2Izm/1vZk27b1uwQXLiMiOFgWBSfKUHnWM1xAnvZxtC7T6W8=@vger.kernel.org, AJvYcCXQiX6EVq0pYLKEuooztkPIWwMinVspuRBY+VPA+ZCDUxP6ACMbmWuHK8X/XKGYqaKzxUEOTMolfV+4ZJId@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5R2C2JSYpTGvH3Oul56YBFuDCxBOHR5UpEqp5w1qZFUf30C7y
-	Vwn26gm1J73ltiWcIAdr01qIqxsnku/+p5onmTUjJ7UM8xj2EsF8alW6YioT
-X-Gm-Gg: ASbGnctoOTWBVPFFZYGKrvxQiBahIVCfLhX9XTZrpTR0l7CTKJPbHaeBhjRSBMGoZEt
-	3cr0GvLuaWxYIXDGjF+fZbig9jG7/ewCUPc2XAfv0BeYkDFhW4khmnCWrWGR6l/IaVysUzrx0wm
-	A74UWwrkicZkVCgxwmRck6MSsy/wLHAydNncAvyJe0VXvi6cyoXH8UKKF/kHWQygkklemlSNH2u
-	hqb0NZ89HHFKKY3dtwUgx/l3o7g767tjmoEHtSvpNR6Cjub1JYJ79kptNT4Q9yzmw+T0PNbhwIU
-	Yejx4g==
-X-Google-Smtp-Source: AGHT+IFzy5Z/oqAXsIcnrbdGOPINebfA49h4xYVAFBGwVs0inyqERb0A/6qA2oCD1QD2DsUmBu7oEA==
-X-Received: by 2002:a17:902:f706:b0:21f:35fd:1b57 with SMTP id d9443c01a7336-221040be680mr277312185ad.43.1739969570774;
-        Wed, 19 Feb 2025 04:52:50 -0800 (PST)
-Received: from ws.. ([103.167.140.11])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d536436fsm103427175ad.64.2025.02.19.04.52.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2025 04:52:50 -0800 (PST)
-From: Xiao Liang <shaw.leon@gmail.com>
-To: netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Kuniyuki Iwashima <kuniyu@amazon.com>,
-	Jakub Kicinski <kuba@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Simon Horman <horms@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Alexander Aring <alex.aring@gmail.com>,
-	Stefan Schmidt <stefan@datenfreihafen.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Steffen Klassert <steffen.klassert@secunet.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	linux-rdma@vger.kernel.org,
-	linux-can@vger.kernel.org,
-	osmocom-net-gprs@lists.osmocom.org,
-	bpf@vger.kernel.org,
-	linux-ppp@vger.kernel.org,
-	wireguard@lists.zx2c4.com,
-	linux-wireless@vger.kernel.org,
-	b.a.t.m.a.n@lists.open-mesh.org,
-	bridge@lists.linux.dev,
-	linux-wpan@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v10 13/13] selftests: net: Add test cases for link and peer netns
-Date: Wed, 19 Feb 2025 20:50:39 +0800
-Message-ID: <20250219125039.18024-14-shaw.leon@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250219125039.18024-1-shaw.leon@gmail.com>
-References: <20250219125039.18024-1-shaw.leon@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78CE11EB18E;
+	Wed, 19 Feb 2025 12:51:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739969485; cv=fail; b=g5nZdVBU1w+DG53acKmOQaAxqaLVs6VMErdCVOYy0ZvkqYgFxkENnZ3QQRL2940Tvmrt3vryn0MVa54Us086bsA5BrdN0dC5VIbbufnmEwogoL6OJAjjhBI3eUCZ0dOfdcWg7KiwiSjCj0CTN1VEt745dfYJRkbGC0QPGTy/Yb4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739969485; c=relaxed/simple;
+	bh=t4ttGmqqNBRgDrHwWvjXVW3gUJg1Ojyrn+Ayx5q9gUY=;
+	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
+	 In-Reply-To:MIME-Version; b=Xpm5aYbsDmr4FRs9LpUtTjB1quPmKcwDpcPdC7+qHR8u5/PO7YqRZSdcWFCj/5zaORA+VufyK6NZGZCUwCLRoFqElE6rIDuJO46cT6At5H+TR/xk6I/8CRl+KD0f0Xu1g5K4NNt7A8XNp+WEjRTV58T+SRWdB8Fs4ma0ozPm7uk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=F2lb0MP6; arc=fail smtp.client-ip=40.107.93.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yDteiHrKwsKOaJbLZE2QbDeq1vuBuUdGGG8xgC1g/b6BUJUye7S/AHRUZFLuHPZeL+GPxV/5yfq3tc4EZHCnhlWIpjdhBXiz1DI6de2N1prtJrgymI+UqVAvFe40s7eCkNojzTItMvxe5/xt7z14fT2bTPFqpvm15n7clKPTlArzBZw6OvwsM1K+XcrK8pUKhEvg7nmp2dZ/ClEVsQG8idsXqw6b5SCiuhZO+G6pTJcJ7uW+jN5TzwPSblpVuvLlZZFP5B3lTsnLTdlHHC//7vYXVm098IwCDCeOoOLYOjvAiVHkR/A05pjAi8IV+7i4yL4SW35GzyBtkpuRW8Z0Zw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=s8OBz/iLdUHGdthP55cr+5/jjP8rCRyZi9cKfINwcE0=;
+ b=j0fr6XUttqxb8WilO0BWssl15kmX36qC2lJiy9tSbvKp4M+AvoPnOC8Cw9xKeFnJ22KmQStfTOy87zWj1kYxrHXWMpqlmKukEwNffmy/h3Oo0r3VDvzfmKU1TN9QtPM46NKrHYyvm1DPvVTZTDGfACqawCEoOlPiCYTmz4rQIMl/qBC61H4EzNhezGh5Dgs8E4Af8vwydvXg4CIkWhSoSdNhHd9Fzb563Fsf4HKpeHlH6+HWcWmgeTqxTRcx5LjCGLB+AvluNCOKcVQaZ1RBvAPArAwBIyosld+z33mZZzId/JJc6//uc7aTC147Ko6/ClBh3jKj4vpRMi2zhCwNOw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=s8OBz/iLdUHGdthP55cr+5/jjP8rCRyZi9cKfINwcE0=;
+ b=F2lb0MP6YEGfH9RvPXSMAtCzEzIRZaD/j736vbmQxgltRRBT8vWmkKPuTUhSIrvDygslVY1Vpr2i+iKbWMt+VoZrz6biyhn+Fy1lvh1Z9QkqrM24DtdZesUU8f8d9Y2sIJ2STEymgEbx+0BNVGYnjVjRH2uHNHESGK0OgDjohJT0p8SU7pf+aAHMEIgsmERAB/0FdxrObow29HYLpzuJu9ObOv1DIYslK9o+GRWisoU1l/BpgFKRz7c3XFkhp9Fy5eN9PioNZgeZehSV/F91Uaihf5Mqrs6sd14HiJIaK/xGWPVsgAUj+c+pvPJqfbuBueqCD4FKGk1fl1apj5e85w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from MN2PR12MB3997.namprd12.prod.outlook.com (2603:10b6:208:161::11)
+ by BL3PR12MB6523.namprd12.prod.outlook.com (2603:10b6:208:3bf::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Wed, 19 Feb
+ 2025 12:51:17 +0000
+Received: from MN2PR12MB3997.namprd12.prod.outlook.com
+ ([fe80::d161:329:fdd3:e316]) by MN2PR12MB3997.namprd12.prod.outlook.com
+ ([fe80::d161:329:fdd3:e316%6]) with mapi id 15.20.8466.013; Wed, 19 Feb 2025
+ 12:51:16 +0000
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 19 Feb 2025 21:51:13 +0900
+Message-Id: <D7WFP99SMV3H.26AJWK17S0UPX@nvidia.com>
+Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
+ "dakr@kernel.org" <dakr@kernel.org>, "airlied@gmail.com"
+ <airlied@gmail.com>, "Ben Skeggs" <bskeggs@nvidia.com>
+Subject: Re: [PATCH RFC 1/3] rust: add useful ops for u64
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "John Hubbard" <jhubbard@nvidia.com>, "Alexandre Courbot"
+ <acourbot@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
+ "daniel.almeida@collabora.com" <daniel.almeida@collabora.com>
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20250217-nova_timer-v1-0-78c5ace2d987@nvidia.com>
+ <20250217-nova_timer-v1-1-78c5ace2d987@nvidia.com>
+ <C1FF4314-C013-4AE1-A94E-444AFACDB4AC@collabora.com>
+ <D7VLMD31YB0V.OKHDSVUPAZTE@nvidia.com>
+ <1b8921d46f7d70c7467ea0940d60220f05cccc5d.camel@nvidia.com>
+ <D7W119MHCCWH.IS600FTIOV8O@nvidia.com>
+ <e6322f90-08bd-4e86-8dad-2ddbd7e5cece@nvidia.com>
+In-Reply-To: <e6322f90-08bd-4e86-8dad-2ddbd7e5cece@nvidia.com>
+X-ClientProxiedBy: TYCP286CA0121.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:2b6::14) To MN2PR12MB3997.namprd12.prod.outlook.com
+ (2603:10b6:208:161::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR12MB3997:EE_|BL3PR12MB6523:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7910438c-7ec5-4698-cce1-08dd50e41987
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|10070799003;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?QjdOR2t6RXR1b1NhODdXWXdQYmRMYkFRUzFpYTBKWkNEL3M0TldvZjNpaHBF?=
+ =?utf-8?B?ZDUxT1p0NjA1M0sxSnE2UlduT2sxQ1B4aEljQlhxRzk2Q1FWUGljdW1BMGc3?=
+ =?utf-8?B?MFM0cjY0YWovNWpVSmRERDIydkhFeDgrWnRxVGZOTi9wWkdGOGdXbEQ3OWJM?=
+ =?utf-8?B?NzE4YlZUMXJFTCtRaTdlZDF5QU5pTXpaUWxUU1VSdGhzZkJpRmNhcTFXV1JZ?=
+ =?utf-8?B?TXBVc2JXcVlKWktPaEVlS3F6cENtdFUzU0xwTGt1TlhDalNIbWdTK0RJRHdO?=
+ =?utf-8?B?ZzZaUXhPVnliZ0ZpYUZiQmpHM1krZXlENGFLV3FNNUc2V3RRT09QRGpLUjdk?=
+ =?utf-8?B?dk13TGJqMFRhbVY4NWp1Nys4VDJ5Z1UwMVFmQTVYVTh3YzI4Ly8rUVlWNXdS?=
+ =?utf-8?B?ZGx1SHd2T2pITWJHWi9tRTk4VFg2bXRUYlY4enZ0Y2lXQlFUVU4rZ0ViaWFV?=
+ =?utf-8?B?ejBJTUlDRGhMdU0zcFZMSncxRGoya0Faa1pCUkg5aGtjZklBakszVTRYWVRr?=
+ =?utf-8?B?Y3B5czVKY01YWVltdUZRMHEwQmNZdUQ0bGpZQk5nLzJaTTIvWWNOekJWL2RD?=
+ =?utf-8?B?SCt4SkU5VWVpV1NYUW8wamJ4d0syYjlHdlJGUzFvQnZybk93RGs2UnlSbUwy?=
+ =?utf-8?B?TGNGZTNvVGZhTkdmZmw4MnN1TXJZNlY0R1JXZXVwaW1hWG94MmxOQUdSKzB4?=
+ =?utf-8?B?b2gyTlJuTGNVS01JU3VpNEVRWUZLZUlDcHRSK3ZaRGJiNjRuSlFiOTB3ckp4?=
+ =?utf-8?B?Z29YZjMzSWRrSFMzakJHYnQvUm9Dd0c1R3diQ3pjUHBLWXQ3dDZHNWpzSTJO?=
+ =?utf-8?B?cXNuNTFUaVFwREZjQW1ORzJoclpjOTZIdUtlVXlVc0crZ0JJeU5QUmFuMGpO?=
+ =?utf-8?B?QUVlVlBDTTg0T3QzLy9zc0oyZlJYRFhIYnpRcG5VdGZQcEdMZjFpWTdRQkJ3?=
+ =?utf-8?B?RkJOQXB2VzVmNjJWT1N6VFAyMXI3eUI3cW5KeWcvUXNDNU9MR0x2bGR0cmlE?=
+ =?utf-8?B?c0s1R1NIMUxFNzNKblg1aXdRaVp1ZFVMSWVoQVZmbmdXMktSMTBaNGlNYTdG?=
+ =?utf-8?B?RGxwei9GWjBTbzVyWlBIMlVOdWhOSDNpbnM5TkxoZTBHeUI2OTY3YU9vOU9Y?=
+ =?utf-8?B?dmNXSlRFZmRuMWthc1dMY0pBVFJoajhhLzNMZDBHa0wyUFliVGJXT2dCT1FL?=
+ =?utf-8?B?WGw0dzhPYjRvbGVFRW9kb2hhNGFzVFVSZngrUlBEUTB3NGpnK1pQUGhwc0VJ?=
+ =?utf-8?B?ampNNVhYWklEWnBNQVBJeVk2UXZZdGdGRU9nREthNFIwZXdNK1hFa1B4YStG?=
+ =?utf-8?B?eUhkemZ1V25Sd1hUUmFoT1FtQkJ0U1puNUVLd0lVTmtwT3daQzU0V3BPdDZy?=
+ =?utf-8?B?K0RyRWkyVEhwN2ZGRklHdlpmQzRSTmFlMHpaL1Jwa1V5K0IycFcvOGZKSTBr?=
+ =?utf-8?B?RkhZQ2lPUGFNNzIrTE1tdmQzUEUwd08reThROVlxS0ZnVTlRUlF2WmZGNXdT?=
+ =?utf-8?B?SkJTZUliK1pGNTRsQWxpQlUvQ1NsVUdxbi9SYUQyVERoNTJtdFhHZFpQajgv?=
+ =?utf-8?B?bVJHY0VzUm5RbllBZzVRak5aRWtKSGNkSUNuUFo5eHRYQkdqYlpDZk0veG1S?=
+ =?utf-8?B?d2pkcVEvVFFKMVRBN1h1ZXhNVTZoRGIyV3MwbXNYS2JGWmc3UzM0UWVRZ0tJ?=
+ =?utf-8?B?QStreVhueE51b1J6R2ZMTjgxaVVJSEpQRENMdXlqd1hvZ0VjK3B5TCtSYSsx?=
+ =?utf-8?B?NDQ1VWVPRm9DblpCNHdWbHltdkwwV1FHNzlpektpcXZhT3pSRzk1dzdNN1pn?=
+ =?utf-8?B?UzFrNEgxQ2g2dDAwVmRiWDVJRThPWm82MlE2bksxdmVaS0dRcEpDUnlLNWVC?=
+ =?utf-8?Q?MgKMMF14p63Ra?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3997.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(10070799003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Z0dQWUl5alpyZm4xVjVXcllVVDlzVkU1WE5iOEVXWEZKTllGQUozSTJ4K2RP?=
+ =?utf-8?B?ZW5jaXdZUFh4TFdJWHgyemc1NXovdDVZVkdxQktPZUgxRm5PRkRYWGs5KzZE?=
+ =?utf-8?B?MFgwN0FWTVNoRFFDODl4VitHYThoZ2YrT3JqNGFUWmFuV0didUM1WFR4K1hx?=
+ =?utf-8?B?ZjR1RUFVR3FYdDE3dmdDQ2xKWllwUXVpVGMvSlpGcXFBZnZieHd5eGVhVUJP?=
+ =?utf-8?B?WTJMMS90ZGlYRE1ZK05ncjFMU0xNSTFLTDlhVnowQUkzajZKQzJBcDI4cm1w?=
+ =?utf-8?B?am5YWCtnYWcrajc0YU5lWW5YNjNWZmZPdkxmOUxET1pTWWwzL3pHdUlTbFpy?=
+ =?utf-8?B?UlFZM1RXWmZOZVpoUTZsYWIwdXJ6Y1F6TXNucFJrVnZRR3FrcXNJeFJxdTFC?=
+ =?utf-8?B?R3ZOcGdWRGM3TzU0VkcydllrRTEzQi92Tm5qZmJML2t0UVZhUXk4dmt2ZCsv?=
+ =?utf-8?B?ajZ2aENibTNDcldFamVSbERuZXZES3RpQlRFNGorNzFHdHpuYTNKWnZwS2tO?=
+ =?utf-8?B?TTM0aEo3RzR5S1FrdVVOeHVzNUg3czFYVnhrYU5UVlVhN3NCVG8xc0hPamlD?=
+ =?utf-8?B?OHFGSVNPTkdOUXJzMFZQRWs3RCtZU1hIQ3ZSRWpaZGZQWFlaV3hWbE1UV0g1?=
+ =?utf-8?B?L3hsSXkxUG9NKzQ4cE5Hb2wzcy9IbmhaQTRNYlVEY3FTTVpUTXU0cmV2cXpu?=
+ =?utf-8?B?akgzTE43NnQ2cWFHZGFTangwTWFMbzdINWQ1alQyMGFsSzJWTHdoaUF2WGd1?=
+ =?utf-8?B?R2haVnkrajlJNHpGK2Y4UGJycXlGSXdabG11QnYwMVNpMHo2TzB3NEhMaEtP?=
+ =?utf-8?B?SHdLTDFwNTlCM2wrWEtQZ0JaN0VaUXA2d0FhSEZ1NFVHYUdVNndBTExmcUEv?=
+ =?utf-8?B?bzloNW5hVWwyMlVQcitadEMwVG1xRU92WE1lRW9LNi9CWjNoZXlOWDFtLzBr?=
+ =?utf-8?B?RHhvNUx0ZWd4aXI0dmZyVFIzRzM5WkFLcXZDR0RjNlY2d0YvOU5kQ0hsSVBw?=
+ =?utf-8?B?YkRVZmx4bWZIRVVKd0VqUWlZWU9GblNTVGtHbk52bGlmZmhwdkJTSks2V3VJ?=
+ =?utf-8?B?QVNhUTZUa2RQbmk5eDBnT0ZpR3U1ZEFlczVWWk5kUGNVelBoNC9RVncvM0k1?=
+ =?utf-8?B?bnlZOHlwQlh1Yyt3ZWN6K1c1SWdSL2JwamRHckJNR3Zsb0tDQU5nM0NPbThN?=
+ =?utf-8?B?MzByU3YxYzBMN2RDTGRXbnZzbGQzZzE4akRhSWx3WFcwTVNHWEhXTlgyOVZx?=
+ =?utf-8?B?QkxtWnFLdEZLNzhWTEU0eFRDNTd1Vm9rSmdrUGYwUWZONXNKZ05lenBNbmEr?=
+ =?utf-8?B?cEtMenpSdFRCVVNyeWFJai9OVDlncmlMR3k4VTlZc0NrczhNc3p3eGp0VjBi?=
+ =?utf-8?B?d0Q5SGdXWWF4L2lFcUJDSzY4dFB2alBBb3oyTmk0TG1nc0lVS0FTR1FQQmFy?=
+ =?utf-8?B?TUFFZmNnSGNwTVRIcEFnZ0p1OTF0eHF2K2VpSUQ0ZDhrSSs0TWQzOWxvU1Fk?=
+ =?utf-8?B?ajZZdDlwcEFCWWZpYzVqOFpib1E3ckhCUG80RFVzYWc2bjZoVTBrVVd6MDFR?=
+ =?utf-8?B?QjZyRUl3NndVUWk1YURObStjb1YvbU1ZeDM0YnVQRGxoZkIwVVZodUEzeHJM?=
+ =?utf-8?B?a1ZoZlQrM2hYTEFKUnNWQjBqb29NRGRiamZFZTBtUVRJZmFYek9MWHc4K3NJ?=
+ =?utf-8?B?OHdraWlBTUFVbVIxOHdZWFErRHVDVzJVU3NTaGdZaE9vWUFzbjhPRzcyVGtT?=
+ =?utf-8?B?bk9TUmZscDNLL1JWNllIT1hzdDRxd1REYlBocVc3NjBpZTYwY2JpUDM4akpU?=
+ =?utf-8?B?K2JHQkFsNUw0dndWQTRIR0x2citiMWEyS2dhcUYrU0lDcXU3djBnaEtMV0NZ?=
+ =?utf-8?B?ZWRTZ21sWERzVFkwbVhzeXIvOHhod0ozaEdCTWtkZnNtMEtURmVRVUFoRWhl?=
+ =?utf-8?B?bXhpcjRFaGI0bktDY1RhQnJiYk0wbmNKd25YdDE1UWlUbWpZcUE1eitkc3hq?=
+ =?utf-8?B?d1hITFBmSmNXQVV0V2dQZG5LNTZ5S3V5M3NwOGozcklyczNSUW5QQnNvYXRG?=
+ =?utf-8?B?MzlkblVRZStWc0ZCeDRzczNXTUVDSnBxaklXK2dheFNZLytpaFJ6RXJqaDFv?=
+ =?utf-8?B?OGpmVWJyT2ZiVHVLdFR5RTJTWWVMaklsZmVqQ28vNTcrazdnUlhNZkQ2eFFm?=
+ =?utf-8?Q?P6v2jYI8esGW6VxZQsSOf98iIxN+PA8otDK9z0S4/ZqX?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7910438c-7ec5-4698-cce1-08dd50e41987
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3997.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2025 12:51:16.8741
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: oT8db7xeOGvuRtSqH/MFbRsqAex7OmXZQnf0XcwybSzjLyYdg5QeKWAMhtkJqh4Zx4Ms0CqjSxNhRulmXL0XtA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6523
 
- - Add test for creating link in another netns when a link of the same
-   name and ifindex exists in current netns.
- - Add test to verify that link is created in target netns directly -
-   no link new/del events should be generated in link netns or current
-   netns.
- - Add test cases to verify that link-netns is set as expected for
-   various drivers and combination of namespace-related parameters.
+On Wed Feb 19, 2025 at 12:24 PM JST, John Hubbard wrote:
+> On 2/18/25 5:21 PM, Alexandre Courbot wrote:
+>> On Wed Feb 19, 2025 at 5:51 AM JST, Timur Tabi wrote:
+>>> On Tue, 2025-02-18 at 22:16 +0900, Alexandre Courbot wrote:
+> ...
+>> More likely this would be something like:
+>>=20
+>>    let SplitU64 { high: some_u32, .. } =3D some_u64;
+>>=20
+>> Which is still a bit verbose, but a single-liner.
+>>=20
+>> Actually. How about adding methods to this trait that return either
+>> component?
+>>=20
+>>    let some_u32 =3D some_u64.high_half();
+>>    let another_u32 =3D some_u64.low_half();
+>>=20
+>> These should be used most of the times, and using destructuring/tuple
+>> would only be useful for a few select cases.
+>
+> I think I like this approach best so far, because that is actually how
+> drivers tend to use these values: one or the other 32 bits at a time.
+> Registers are often grouped into 32-bit named registers, and driver code
+> wants to refer to them one at a time (before breaking some of them down
+> into smaller named fields)>
+>
+> The .high_half() and .low_half() approach matches that very closely.
+> And it's simpler to read than the SplitU64 API, without losing anything
+> we need, right?
 
-Signed-off-by: Xiao Liang <shaw.leon@gmail.com>
----
- tools/testing/selftests/net/Makefile      |   1 +
- tools/testing/selftests/net/config        |   5 +
- tools/testing/selftests/net/link_netns.py | 141 ++++++++++++++++++++++
- tools/testing/selftests/net/netns-name.sh |  10 ++
- 4 files changed, 157 insertions(+)
- create mode 100755 tools/testing/selftests/net/link_netns.py
+Yes, that looks like the optimal way to do this actually. It also
+doesn't introduce any overhead as the destructuring was doing both
+high_half() and low_half() in sequence, so in some cases it might
+even be more efficient.
 
-diff --git a/tools/testing/selftests/net/Makefile b/tools/testing/selftests/net/Makefile
-index 8d6116b80cf1..aeb96c085614 100644
---- a/tools/testing/selftests/net/Makefile
-+++ b/tools/testing/selftests/net/Makefile
-@@ -36,6 +36,7 @@ TEST_PROGS += cmsg_so_priority.sh
- TEST_PROGS += test_so_rcv.sh
- TEST_PROGS += cmsg_time.sh cmsg_ipv6.sh
- TEST_PROGS += netns-name.sh
-+TEST_PROGS += link_netns.py
- TEST_PROGS += nl_netdev.py
- TEST_PROGS += rtnetlink.py
- TEST_PROGS += srv6_end_dt46_l3vpn_test.sh
-diff --git a/tools/testing/selftests/net/config b/tools/testing/selftests/net/config
-index 5b9baf708950..ab55270669ec 100644
---- a/tools/testing/selftests/net/config
-+++ b/tools/testing/selftests/net/config
-@@ -107,3 +107,8 @@ CONFIG_XFRM_INTERFACE=m
- CONFIG_XFRM_USER=m
- CONFIG_IP_NF_MATCH_RPFILTER=m
- CONFIG_IP6_NF_MATCH_RPFILTER=m
-+CONFIG_IPVLAN=m
-+CONFIG_CAN=m
-+CONFIG_CAN_DEV=m
-+CONFIG_CAN_VXCAN=m
-+CONFIG_NETKIT=y
-diff --git a/tools/testing/selftests/net/link_netns.py b/tools/testing/selftests/net/link_netns.py
-new file mode 100755
-index 000000000000..aab043c59d69
---- /dev/null
-+++ b/tools/testing/selftests/net/link_netns.py
-@@ -0,0 +1,141 @@
-+#!/usr/bin/env python3
-+# SPDX-License-Identifier: GPL-2.0
-+
-+import time
-+
-+from lib.py import ksft_run, ksft_exit, ksft_true
-+from lib.py import ip
-+from lib.py import NetNS, NetNSEnter
-+from lib.py import RtnlFamily
-+
-+
-+LINK_NETNSID = 100
-+
-+
-+def test_event() -> None:
-+    with NetNS() as ns1, NetNS() as ns2:
-+        with NetNSEnter(str(ns2)):
-+            rtnl = RtnlFamily()
-+
-+        rtnl.ntf_subscribe("rtnlgrp-link")
-+
-+        ip(f"netns set {ns2} {LINK_NETNSID}", ns=str(ns1))
-+        ip(f"link add netns {ns1} link-netnsid {LINK_NETNSID} dummy1 type dummy")
-+        ip(f"link add netns {ns1} dummy2 type dummy", ns=str(ns2))
-+
-+        ip("link del dummy1", ns=str(ns1))
-+        ip("link del dummy2", ns=str(ns1))
-+
-+        time.sleep(1)
-+        rtnl.check_ntf()
-+        ksft_true(rtnl.async_msg_queue.empty(),
-+                  "Received unexpected link notification")
-+
-+
-+def validate_link_netns(netns, ifname, link_netnsid) -> bool:
-+    link_info = ip(f"-d link show dev {ifname}", ns=netns, json=True)
-+    if not link_info:
-+        return False
-+    return link_info[0].get("link_netnsid") == link_netnsid
-+
-+
-+def test_link_net() -> None:
-+    configs = [
-+        # type, common args, type args, fallback to dev_net
-+        ("ipvlan", "link dummy1", "", False),
-+        ("macsec", "link dummy1", "", False),
-+        ("macvlan", "link dummy1", "", False),
-+        ("macvtap", "link dummy1", "", False),
-+        ("vlan", "link dummy1", "id 100", False),
-+        ("gre", "", "local 192.0.2.1", True),
-+        ("vti", "", "local 192.0.2.1", True),
-+        ("ipip", "", "local 192.0.2.1", True),
-+        ("ip6gre", "", "local 2001:db8::1", True),
-+        ("ip6tnl", "", "local 2001:db8::1", True),
-+        ("vti6", "", "local 2001:db8::1", True),
-+        ("sit", "", "local 192.0.2.1", True),
-+        ("xfrm", "", "if_id 1", True),
-+    ]
-+
-+    with NetNS() as ns1, NetNS() as ns2, NetNS() as ns3:
-+        net1, net2, net3 = str(ns1), str(ns2), str(ns3)
-+
-+        # prepare link netnsid  and a dummy link needed by certain drivers
-+        ip(f"netns set {net3} {LINK_NETNSID}", ns=str(net2))
-+        ip("link add dummy1 type dummy", ns=net3)
-+
-+        cases = [
-+            # source, "netns", "link-netns", expected link-netns
-+            (net3, None, None, None, None),
-+            (net3, net2, None, None, LINK_NETNSID),
-+            (net2, None, net3, LINK_NETNSID, LINK_NETNSID),
-+            (net1, net2, net3, LINK_NETNSID, LINK_NETNSID),
-+        ]
-+
-+        for src_net, netns, link_netns, exp1, exp2 in cases:
-+            tgt_net = netns or src_net
-+            for typ, cargs, targs, fb_dev_net in configs:
-+                cmd = "link add"
-+                if netns:
-+                    cmd += f" netns {netns}"
-+                if link_netns:
-+                    cmd += f" link-netns {link_netns}"
-+                cmd += f" {cargs} foo type {typ} {targs}"
-+                ip(cmd, ns=src_net)
-+                if fb_dev_net:
-+                    ksft_true(validate_link_netns(tgt_net, "foo", exp1),
-+                              f"{typ} link_netns validation failed")
-+                else:
-+                    ksft_true(validate_link_netns(tgt_net, "foo", exp2),
-+                              f"{typ} link_netns validation failed")
-+                ip(f"link del foo", ns=tgt_net)
-+
-+
-+def test_peer_net() -> None:
-+    types = [
-+        "vxcan",
-+        "netkit",
-+        "veth",
-+    ]
-+
-+    with NetNS() as ns1, NetNS() as ns2, NetNS() as ns3, NetNS() as ns4:
-+        net1, net2, net3, net4 = str(ns1), str(ns2), str(ns3), str(ns4)
-+
-+        ip(f"netns set {net3} {LINK_NETNSID}", ns=str(net2))
-+
-+        cases = [
-+            # source, "netns", "link-netns", "peer netns", expected
-+            (net1, None, None, None, None),
-+            (net1, net2, None, None, None),
-+            (net2, None, net3, None, LINK_NETNSID),
-+            (net1, net2, net3, None, None),
-+            (net2, None, None, net3, LINK_NETNSID),
-+            (net1, net2, None, net3, LINK_NETNSID),
-+            (net2, None, net2, net3, LINK_NETNSID),
-+            (net1, net2, net4, net3, LINK_NETNSID),
-+        ]
-+
-+        for src_net, netns, link_netns, peer_netns, exp in cases:
-+            tgt_net = netns or src_net
-+            for typ in types:
-+                cmd = "link add"
-+                if netns:
-+                    cmd += f" netns {netns}"
-+                if link_netns:
-+                    cmd += f" link-netns {link_netns}"
-+                cmd += f" foo type {typ}"
-+                if peer_netns:
-+                    cmd += f" peer netns {peer_netns}"
-+                ip(cmd, ns=src_net)
-+                ksft_true(validate_link_netns(tgt_net, "foo", exp),
-+                          f"{typ} peer_netns validation failed")
-+                ip(f"link del foo", ns=tgt_net)
-+
-+
-+def main() -> None:
-+    ksft_run([test_event, test_link_net, test_peer_net])
-+    ksft_exit()
-+
-+
-+if __name__ == "__main__":
-+    main()
-diff --git a/tools/testing/selftests/net/netns-name.sh b/tools/testing/selftests/net/netns-name.sh
-index 6974474c26f3..0be1905d1f2f 100755
---- a/tools/testing/selftests/net/netns-name.sh
-+++ b/tools/testing/selftests/net/netns-name.sh
-@@ -78,6 +78,16 @@ ip -netns $NS link show dev $ALT_NAME 2> /dev/null &&
-     fail "Can still find alt-name after move"
- ip -netns $test_ns link del $DEV || fail
- 
-+#
-+# Test no conflict of the same name/ifindex in different netns
-+#
-+ip -netns $NS link add name $DEV index 100 type dummy || fail
-+ip -netns $NS link add netns $test_ns name $DEV index 100 type dummy ||
-+    fail "Can create in netns without moving"
-+ip -netns $test_ns link show dev $DEV >> /dev/null || fail "Device not found"
-+ip -netns $NS link del $DEV || fail
-+ip -netns $test_ns link del $DEV || fail
-+
- echo -ne "$(basename $0) \t\t\t\t"
- if [ $RET_CODE -eq 0 ]; then
-     echo "[  OK  ]"
--- 
-2.48.1
+I'd just like to find a better naming. high() and low() might be enough?
+Or are there other suggestions?
 
 
