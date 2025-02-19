@@ -1,549 +1,230 @@
-Return-Path: <linux-kernel+bounces-522520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FA04A3CB5E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:26:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66AA1A3CB60
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:27:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 813FB189BB08
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:27:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36CED3A9884
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:27:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E1A257433;
-	Wed, 19 Feb 2025 21:26:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFC3B257431;
+	Wed, 19 Feb 2025 21:27:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="duFtBYLN"
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="SFYT4QZg"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011004.outbound.protection.outlook.com [52.101.70.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F921B87EF
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 21:26:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740000412; cv=none; b=PEtFpAiplVB4g+GKcxlNLAK3g099CMkhwitmkXtAw0qJq75eF7z5wzmVC5tLdCumv/EN1OcF7cy9iiLC03poB2x70L+s0N9J4liZpHU7ugWXgRgYdnO/NfEyqib8OcUVJEyHXInVJrqKKlOXmKUT/5yYFmFMQtrgubHljQjdcmw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740000412; c=relaxed/simple;
-	bh=gPsf0PiWERkYfgq8nP/WmCGmcxtUTZTmwL6NnDzt/to=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HaRNKLb9rywz8WTsEjgDJjoLTncm/3twhVa7Ep27Vq6Zzb2m142/RrPJ7gqGJtYIGCd5V+VnexBpnCAJVe2exxZ3v7xHayD9lRv922aOBMWs4mJHb2fh0CE4MXyCkt0wseB+mRuFMK6UG4ELJXc3ZqrnMSKiaXtwf0iJjR2csms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=duFtBYLN; arc=none smtp.client-ip=209.85.217.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-4be66ac7685so97138137.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 13:26:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740000408; x=1740605208; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PJOQ6lceG9Ck3uIraRnLbRatOw1m52Vf/oVnWKVAOlk=;
-        b=duFtBYLN/R0qvt/VDNrlcw5N+0tGafuLES0LFBZi8tdo3KwF0gbMe4KQuZy5pZFYFB
-         yuN6OISEtidIR7qq52mom0PwmfU+pE2WmaDcMPezGQs9GBWsGey8ZgRo7Q81G/eDUGys
-         uGWg+awG1d+1aG3aRXrl+x95N0tq4tN+jtM5u1RnwiizfLrPtoTnDKGCd4h6Z+OX3X4L
-         scN+RTRmfFCgXJU052xajeuZem/O0OSO+zIqu6aW2C+GvlRKOmqSmmJbqjFnAhHGoOKd
-         0YLektoDDk9keblRl4AN01i88iT5w2LxBG4CcCw4PsZnw7d8Wdb1zkDCol/5A3njtPDS
-         IlZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740000408; x=1740605208;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PJOQ6lceG9Ck3uIraRnLbRatOw1m52Vf/oVnWKVAOlk=;
-        b=csdfuqWJfkr80WwsicbgIP16MfRJqOGS4ZpWc+sVfp5m6GCzX/FYxMDEBlA+Qy20i+
-         F15GZeM8p23Ixb4b1+0RjEevgjyxVEpihtlKiC0P/u6yBCYP8xdJP3hsedFN1tCOr4dL
-         SFq7pqd1YBrK2456qweVNwo1s14iADy30ZSu0aMVEaQo70ltf38yvPHx0DOrBPE9Kefo
-         EbSOHSH8Lo5bCbFPEO/csei3TOeggxOzzQgkBItvheyrhwFghTppZugPuigw8GRFhLh2
-         g4OqB4fN6Rl5Y65zkiLwiF3NlufCQzBZOzyn50/bB7w8T4s01u8PccUOhhn9Wqp57BfO
-         QLrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVSjQk5unJChBywBSublm5YnGxit0L4yX9nYZ3GNT7zZZhbA3mN9qWZAUcnH9IZPPzRQgcfmdN9lDvYJdM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiYoN/yGvhHqx1T29r73PJSNR3YeT7BHsWJh6VRVF5gHnX53dm
-	TlWdJ1dI6zufvbpkDdXvvjd0n5kQpu7643hqklFisZr3Uxeww9jUfi0FIG439d+FGF+lxepdmz/
-	HCxOJaA6X+rGBPreAfON3NCMs27I=
-X-Gm-Gg: ASbGnctCLw1GKbCKsrngF2hwYc/bQu9nhEEGU901npvan2QfIoRs/5C7kSoAf+9pNSC
-	5987d6d2/jYFnFEO2ijvAwrttx7QtWLmseq79QteSfrQiihxnN6C4bRANosTX3HvW9dAu6l6R
-X-Google-Smtp-Source: AGHT+IEZIcVsMAGJSqghR6Ngu88YOIUbUgsvmqiWCNTGHhBLkotmzTl5o8Rcf0DhpME0+fJ1I6P/QXM7UNpTR7WtzOs=
-X-Received: by 2002:a67:e7c3:0:b0:4bd:3c41:7f6c with SMTP id
- ada2fe7eead31-4bd3fcd1db0mr12642728137.10.1740000408512; Wed, 19 Feb 2025
- 13:26:48 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF54F25742B;
+	Wed, 19 Feb 2025 21:27:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.4
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740000431; cv=fail; b=cjUgd9oHm3D47tfjZsvgSwOLF44Fy1OHyrjH+mF2E0V8qWyxTsQN/RcaX9RDJpldBz9QBE998ic1m/mn/LJaY2xQM/yaD8RyCaJbEFvPKdMAwI2XyHII+LBL+cy1Av9k3RInebazJFv+IBPt53/6e+lvrkeAgB8fyqgrUGkNIoQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740000431; c=relaxed/simple;
+	bh=Uai6BlCZZisjTMORyM279ijKY9QAlq/Fvm6HGBjOzZ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=iK3n+qTzIx/v2eh4DsFQD0aQm7NfodS7TZu9O/WHaDKvZSQHtqrlv3ubBym5aIzJH/7iXnJ18xZeNvP31rV+K5tvxqaXQhfCdvoQpkMo66eVrJJ8QGQx/tPFqUj/r3qzmNVbDoeVap3nIZxXJ+Fzg1wCjqXYDW+zrElxk7tkPlc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=SFYT4QZg; arc=fail smtp.client-ip=52.101.70.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NYwYeWJ7a7Pur642QggzywBQ3rrmIsd1R02LEQxRAg9cPoOh9YorGc07Ydg5u5i7Aqq8j6sBX9s1Q/43lNF5xDSc030MMS69HUjUCivs/509x+Qy5sPKE8cjZl5CRbbPzAQrKW73NivhAG27vdmU/QhAOghy5a3Zo2ENcce6+qryL59Xsya06OIS8sgti0DscHOXDuzru+7qyGU1b9giR3Bi1vI3tvhIadCK1eeZgbwmlT9Z34Tzocv6YSwJzVc1UyOhIkOpI+cOsMNPmiRBh4n1tXnT5f15x/e2Lg996NJq8+7+TP6oMB0oe9uzsCbV0zmgzBqUk3I0lyGGnRPPvA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QLi2pkRJeHrMVChvA9ZCQ4miozJNOxM8/zxUrhjkLA4=;
+ b=JSwUYJ6jE8R0CdWy/rJ22/lRTUHHbOg3EbMx/8LFflS/7yAYV+fH1KX3km6nkLagD3khJJXDc9QDfBFGZLCwxz4p200fuMx/TdBRrTFqZaUYnyC8/9lO5KAi3z/5DVb8vjVsOzi225F80gQghmtt1LBjS8C4J739/T7arAU0DEMHdncoNktMo1cN3MBZWDP7IJAyIYFbqJr/m58Mv0ga4rq7nJ12mS7KgRtq31OiUANCtFKXoKTrUHT00b/4V7n5YTTI/vXtrP0iMyrEoagRy0HtSHbICk85uT0laA0PzpAHp0g7B8YFkOBAZ1Mo9dcmmEyok0nOXbnHR2rubF0g8A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QLi2pkRJeHrMVChvA9ZCQ4miozJNOxM8/zxUrhjkLA4=;
+ b=SFYT4QZgXCQpyMs8dU5o1dnP8cgvoWgjB45KGSZFkIhx+tA2RacPSWG8Yy81kB7cN0/XkJhmcwOE+9H1tYlWnQMZRJCeRCAdd4e7DoP8/gLd/rkXvyzxMWwN7c0xEB915YvksS8V0xb9o9291TIC9/Yth1lrmayiplUI+uC9kce62VHBz9BH0xRn5+qfB0PKntV/hHALDgat6T7K+49/ya5+L7aFamorqg43kmHJmlgXqVzpkkuhvfOx4+69uxBiMfs/vfzq55XVIsakKVuzRdjt4G6Z4tuP2eQXkccTtW1yHPc3hnuEuoWWzdUKS+B7WE8Di7agUhceL1pYL/jKjg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by DBBPR04MB8026.eurprd04.prod.outlook.com (2603:10a6:10:1ed::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.15; Wed, 19 Feb
+ 2025 21:27:06 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8445.017; Wed, 19 Feb 2025
+ 21:27:06 +0000
+Date: Wed, 19 Feb 2025 16:26:57 -0500
+From: Frank Li <Frank.li@nxp.com>
+To: Daniel Baluta <daniel.baluta@nxp.com>
+Cc: p.zabel@pengutronix.de, robh@kernel.org, shawnguo@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, s.hauer@pengutronix.de,
+	kernel@pengutronix.de, festevam@gmail.com,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	mathieu.poirier@linaro.org, shengjiu.wang@nxp.com, peng.fan@nxp.com,
+	laurentiu.mihalcea@nxp.com, iuliana.prodan@nxp.com
+Subject: Re: [PATCH v2 2/8] dt-bindings: dsp: fsl,dsp: Add resets property
+Message-ID: <Z7ZMoReqEGcSManv@lizhi-Precision-Tower-5810>
+References: <20250219192102.423850-1-daniel.baluta@nxp.com>
+ <20250219192102.423850-3-daniel.baluta@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250219192102.423850-3-daniel.baluta@nxp.com>
+X-ClientProxiedBy: SJ0PR05CA0004.namprd05.prod.outlook.com
+ (2603:10b6:a03:33b::9) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250219112519.92853-1-21cnbao@gmail.com> <CAJuCfpEWFz14R1vD4Rezy98WBk25HWWX+6DsGBekeYMugKTsfQ@mail.gmail.com>
- <CAGsJ_4yx1=jaQmDG_9rMqHFFkoXqMJw941eYvtby28OqDq+S7g@mail.gmail.com> <CA+EESO651xc=jR7DyX9XhEtyxFe_Cys8XwT8WDr4phC97ssW-w@mail.gmail.com>
-In-Reply-To: <CA+EESO651xc=jR7DyX9XhEtyxFe_Cys8XwT8WDr4phC97ssW-w@mail.gmail.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Thu, 20 Feb 2025 10:26:36 +1300
-X-Gm-Features: AWEUYZk4zFdI6kWz6qPPz0pkPQXtDjpS4BYItskL3T285fQe3jrRm2cSy5r55Uw
-Message-ID: <CAGsJ_4xzaTYcJuP+a=NqPX6-75YcSsdvTr_uxxYzpe0QwP08xg@mail.gmail.com>
-Subject: Re: [PATCH RFC] mm: Fix kernel BUG when userfaultfd_move encounters swapcache
-To: Lokesh Gidra <lokeshgidra@google.com>
-Cc: Suren Baghdasaryan <surenb@google.com>, linux-mm@kvack.org, akpm@linux-foundation.org, 
-	linux-kernel@vger.kernel.org, zhengtangquan@oppo.com, 
-	Barry Song <v-songbaohua@oppo.com>, Andrea Arcangeli <aarcange@redhat.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Axel Rasmussen <axelrasmussen@google.com>, 
-	Brian Geffon <bgeffon@google.com>, Christian Brauner <brauner@kernel.org>, 
-	David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>, Jann Horn <jannh@google.com>, 
-	Kalesh Singh <kaleshsingh@google.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
-	Matthew Wilcox <willy@infradead.org>, Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>, 
-	Nicolas Geoffray <ngeoffray@google.com>, Peter Xu <peterx@redhat.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Shuah Khan <shuah@kernel.org>, 
-	ZhangPeng <zhangpeng362@huawei.com>, Yu Zhao <yuzhao@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DBBPR04MB8026:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4eca4ca8-c58e-4cd7-771d-08dd512c28c6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|7416014|376014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ykHMPXWIvdSHDNgOtt1Onktl2N4YBrPDDWYErkWmYegfIOoVgTBHAKQvNkMc?=
+ =?us-ascii?Q?aiFsergmZjAsYBCq7zYvZf6zz9Y5x63XPz1K004FeBNSorx0dRT5uXKAK5pW?=
+ =?us-ascii?Q?4oSva5LCiaxc5XwCgBveMa/jpYWG9ms/1mpcx4j3qOu7mEWbBDgC9sE5RMIe?=
+ =?us-ascii?Q?kxIDzW9qkiHd94ImrCjmkmOInQjxRaP52M8KIr8yWOXD4TKfjy3e375yGWce?=
+ =?us-ascii?Q?oWlHaHLY1gug9JLwd19H7+1wCe7RNIjgU2UnadjSVQMK8fhtACMqj5cJ7ol8?=
+ =?us-ascii?Q?Cwy2Rg2UXwLjMWD5aefb4srdpuTHA825dE6J6B937ElC9gojIjbrgZOVJ3NK?=
+ =?us-ascii?Q?ld823L7hw9UdqmHVCdUCkX5BHqBUxlUiZvH8SRIjx3lfUaCUNHx0z8hiVK9f?=
+ =?us-ascii?Q?WT4NFld3ARtIILHu4ymGOIaTf7gzlN8StA6rDISGGj6S4Ma5iNPB6ONcgYg5?=
+ =?us-ascii?Q?QsoXJQErYvilUUqX2l9SE/TXKs4I/dnWHOYNYS+/5BhwLRF05JEIAAWABWYB?=
+ =?us-ascii?Q?hJHCn+sgM+0QOaz7sqsBuFQ4QMZnL7Zu56bpulHb82hf/Fk7DU7C1MCIoyeJ?=
+ =?us-ascii?Q?I86YN5SWfE2Icg7EeDvBEXjkgmb2Zm2nXg48qxBTmZ8COZIFO3z9Th/Z/mfc?=
+ =?us-ascii?Q?Htow+Ae9LOWn/nUjkYJB0l8la4dj4im5wIsn5T2IfNH9kgyUY2pp+Af+07gx?=
+ =?us-ascii?Q?nUMMHl7wAcrFKAXexGCshRmNGqkd/gCqrqxP727QROBa8z6KAU5tWKbidpYP?=
+ =?us-ascii?Q?x7yM+x6ophnM8GcUnjQE5JrbbEH/wpk0Do5vt9s23mbkEqwmO5ByVz+7gQOS?=
+ =?us-ascii?Q?/T2Hr4JPJDxnXQOaiaHVp4NNlcbxIzkyFHhARCvRPKCwQJmWtS+Z4LC6qflX?=
+ =?us-ascii?Q?tNOAaZB1fpeyn76ZEtXyE14jXkEMt21k6YA0gjNRGhMDTUkylHiuTtlVHorH?=
+ =?us-ascii?Q?WoF+yMHnALFrNHr8461whAs8zK1OaYcyPn3sdo2MvxHlm8AZSwK9cZxINVyo?=
+ =?us-ascii?Q?Xizjq6S0i9gyxLKknhKxUtRxbZHBnp/mDxJb+dqoigaNzds2GxoZ6XXaqmUY?=
+ =?us-ascii?Q?9vEK5qZB8jiPKaPmJfBhvAwuCwgqaTv0vZLOBqQu/c7XAK08Ml61AFYSVJnH?=
+ =?us-ascii?Q?5yIx24qaijj65XjHGlKfOI0zHLbdqpn1Xfxwm1ynkzo75iHkIQ+3NAZgGZZC?=
+ =?us-ascii?Q?B7Csk3VKMVriQB5ZpQZRtGZO7R/d7cqPuU1N0wHgLRJDaeEf8X3gU8Y3PDNs?=
+ =?us-ascii?Q?+O2FaaEugmmq9SsQyBXdFZM4YWtIhjB4DlwV3CCBiBCCSx7MNFPCNVeV0sR3?=
+ =?us-ascii?Q?10uvDko7bWvNcLpwYEZKiwt2CicggQkSLxutERy0coTX1TCT0illJy6RyHNd?=
+ =?us-ascii?Q?uBDfHcbntrWyeUnj6sjusNW2znu3tG1kvp4nNTxO0ufGGGoF4FAwlBPLBLku?=
+ =?us-ascii?Q?wdTjOuTWHxo8GGMnEzMfDNexeMCH6NC6?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?xR/an9ECzA7h0o4q3syltBpj6/gqR/cww7Ofl32kKJLZViGcQjcqlbpIqQiR?=
+ =?us-ascii?Q?9GLFvgBgEPo1SJDF04Wd+t1+/XcQVOVQtjx6JO0KA35uuTJ4h9G/BhYb/cs6?=
+ =?us-ascii?Q?uL9XfOKl6lYI4DkOs9YyrCej/alMr7RYCV/nBtQBrlQ0rbm8TERWOmQyVn/s?=
+ =?us-ascii?Q?boKzDANNFzsCz3JB1yG/KaiCfQg1coxSbS/SEL4zO8O3S3qkbHdkLYI+v480?=
+ =?us-ascii?Q?Jtrd1SMGCDDwp32KB5qRVflwJYmziioaF+UFhrdXncD3JgFAGzg2ceJW7YSQ?=
+ =?us-ascii?Q?E0nuek1EbM6dwTetN12nYuiOpRzq3NXB/kCo/ojPiU+j4y/O50yjhjpdm0LV?=
+ =?us-ascii?Q?81tTI1vO1+7gaPaDX0TBhmes9Pxp2PcH1lg6jZ8xVWmjO6zb/jCCOiLf1xtU?=
+ =?us-ascii?Q?J42BmFLqEId1puAHZPbFRGvA9kbD35HlkUnu8wCuvoRSuoK4Dcu1d+fXHvwX?=
+ =?us-ascii?Q?LZt8+cKMebska9lTBSaSJ1RB98YnqoSH8aNj98BEN/MGEPcPw5yxJE5RfIrD?=
+ =?us-ascii?Q?hkSUsTA9hEkVL07R1Qt39I1agNnPkiTwrHM2rHhoNiGvy7pbU85prDNzUifA?=
+ =?us-ascii?Q?FrNj6kdmz5Xlba2UbIZ1p+IvRAXvbP1g6UGS7We+/rdqxTFTC94idzseI/2v?=
+ =?us-ascii?Q?aptn402Tp8yx5ju5LaZOEZ7G1eiTdMUWZvAmNlGiS+2skCV2xBwd6ot0eqyl?=
+ =?us-ascii?Q?RZpsbi8bWUt2EniUSF/jwT2rPHVjuh4+FqRsnbvkW9g+mWsDz7oO0ce3tBtK?=
+ =?us-ascii?Q?fp/74PLqzyfQXNSRoXJDRbi4U8RJKnimZ26HxtZsqQD3WP7EaYVJrhIE5kvc?=
+ =?us-ascii?Q?EJ44x68Q5ohnSglk2/YHAGdSAY+lLWYJJAFrhL3rwVM//X3VcetUk3iLlg4s?=
+ =?us-ascii?Q?qQfIdP5mDcRGOcjXRhRtSZVATvmVhOvmtxozsJ7VgL/ev1/kEcmHuaxH1dqM?=
+ =?us-ascii?Q?yqcT0/0a9KIL3QXsEQdwZdMRigC57iKOoKOVOzchhqqa8CdLwFrdwZtwYw5o?=
+ =?us-ascii?Q?zUFFNy5yYIhLeBgyTpk3mCmRWBOOpagG0cMgz+t4YeksCdkkT7t+5F7B63Cf?=
+ =?us-ascii?Q?zaK38eqj2tsvmU/FBFkFhw9l8aV8U5sKSwDww8qs8tbXOrGU08jKWRl8QvzD?=
+ =?us-ascii?Q?xgBSsUcpB0kz1yIrvHFWRpFR1Bu02biZ4ZAOzdlOwNvhZ4ml0VOejNGcYzcw?=
+ =?us-ascii?Q?69xQf//AQYelIAynsgyN5e22xfcioV3kOYttQKuPZsrWtIS4kG8vkvLaU+Eb?=
+ =?us-ascii?Q?kGdYJTIKmDV/lBXOCW2i65zlMq/S6HvrTEZPTsFrNsIR5g+Ie88zuBEMmtgh?=
+ =?us-ascii?Q?jc+afshfkz5AlHi98xq7f/zczoGwGAjEylwRDWkocSfz3NKaCnUySlZJsgEz?=
+ =?us-ascii?Q?O9aYxRGfPX3u01tvBN1K6LNb8dITnLOND4fO+L9kNtCxOuC0lqejNPOv2AB4?=
+ =?us-ascii?Q?j5WMCPhZvIuczypHxrOKnCvOqWxFZveSv12eZ/46V92+/xr1CdsvKJx2YXsD?=
+ =?us-ascii?Q?fZMVkNbcyxiq4+940l8l8aRhzc5FoT1Elp2v/IXIWhH3QIElqtYnlMqABaX7?=
+ =?us-ascii?Q?dtpiPVGT6auQH66oRZneKntxd8icYimoYQTksEMy?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4eca4ca8-c58e-4cd7-771d-08dd512c28c6
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2025 21:27:06.1978
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: AM0UW4NMwrfvmvjFiFauDWv62tJauhdT+Z0B5orMiruCEvN4jC+9gAcUmzpLqPe7imQ3PjxpxoYRiuhZp0WcJw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB8026
 
-On Thu, Feb 20, 2025 at 10:03=E2=80=AFAM Lokesh Gidra <lokeshgidra@google.c=
-om> wrote:
+On Wed, Feb 19, 2025 at 09:20:56PM +0200, Daniel Baluta wrote:
+> On i.MX8MP we introduced support for using a reset controller
+> to control DSP operation.
 >
-> On Wed, Feb 19, 2025 at 12:38=E2=80=AFPM Barry Song <21cnbao@gmail.com> w=
-rote:
-> >
-> > On Thu, Feb 20, 2025 at 7:27=E2=80=AFAM Suren Baghdasaryan <surenb@goog=
-le.com> wrote:
-> > >
-> > > On Wed, Feb 19, 2025 at 3:25=E2=80=AFAM Barry Song <21cnbao@gmail.com=
-> wrote:
-> > > >
-> > > > From: Barry Song <v-songbaohua@oppo.com>
-> > > >
-> > > > userfaultfd_move() checks whether the PTE entry is present or a
-> > > > swap entry.
-> > > >
-> > > > - If the PTE entry is present, move_present_pte() handles folio
-> > > >   migration by setting:
-> > > >
-> > > >   src_folio->index =3D linear_page_index(dst_vma, dst_addr);
-> > > >
-> > > > - If the PTE entry is a swap entry, move_swap_pte() simply copies
-> > > >   the PTE to the new dst_addr.
-> > > >
-> > > > This approach is incorrect because even if the PTE is a swap
-> > > > entry, it can still reference a folio that remains in the swap
-> > > > cache.
-> > > >
-> > > > If do_swap_page() is triggered, it may locate the folio in the
-> > > > swap cache. However, during add_rmap operations, a kernel panic
-> > > > can occur due to:
-> > > >  page_pgoff(folio, page) !=3D linear_page_index(vma, address)
-> > >
-> > > Thanks for the report and reproducer!
-> > >
-> > > >
-> > > > $./a.out > /dev/null
-> > > > [   13.336953] page: refcount:6 mapcount:1 mapping:00000000f43db19c=
- index:0xffffaf150 pfn:0x4667c
-> > > > [   13.337520] head: order:2 mapcount:1 entire_mapcount:0 nr_pages_=
-mapped:1 pincount:0
-> > > > [   13.337716] memcg:ffff00000405f000
-> > > > [   13.337849] anon flags: 0x3fffc0000020459(locked|uptodate|dirty|=
-owner_priv_1|head|swapbacked|node=3D0|zone=3D0|lastcpupid=3D0xffff)
-> > > > [   13.338630] raw: 03fffc0000020459 ffff80008507b538 ffff80008507b=
-538 ffff000006260361
-> > > > [   13.338831] raw: 0000000ffffaf150 0000000000004000 0000000600000=
-000 ffff00000405f000
-> > > > [   13.339031] head: 03fffc0000020459 ffff80008507b538 ffff80008507=
-b538 ffff000006260361
-> > > > [   13.339204] head: 0000000ffffaf150 0000000000004000 000000060000=
-0000 ffff00000405f000
-> > > > [   13.339375] head: 03fffc0000000202 fffffdffc0199f01 ffffffff0000=
-0000 0000000000000001
-> > > > [   13.339546] head: 0000000000000004 0000000000000000 00000000ffff=
-ffff 0000000000000000
-> > > > [   13.339736] page dumped because: VM_BUG_ON_PAGE(page_pgoff(folio=
-, page) !=3D linear_page_index(vma, address))
-> > > > [   13.340190] ------------[ cut here ]------------
-> > > > [   13.340316] kernel BUG at mm/rmap.c:1380!
-> > > > [   13.340683] Internal error: Oops - BUG: 00000000f2000800 [#1] PR=
-EEMPT SMP
-> > > > [   13.340969] Modules linked in:
-> > > > [   13.341257] CPU: 1 UID: 0 PID: 107 Comm: a.out Not tainted 6.14.=
-0-rc3-gcf42737e247a-dirty #299
-> > > > [   13.341470] Hardware name: linux,dummy-virt (DT)
-> > > > [   13.341671] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSB=
-S BTYPE=3D--)
-> > > > [   13.341815] pc : __page_check_anon_rmap+0xa0/0xb0
-> > > > [   13.341920] lr : __page_check_anon_rmap+0xa0/0xb0
-> > > > [   13.342018] sp : ffff80008752bb20
-> > > > [   13.342093] x29: ffff80008752bb20 x28: fffffdffc0199f00 x27: 000=
-0000000000001
-> > > > [   13.342404] x26: 0000000000000000 x25: 0000000000000001 x24: 000=
-0000000000001
-> > > > [   13.342575] x23: 0000ffffaf0d0000 x22: 0000ffffaf0d0000 x21: fff=
-ffdffc0199f00
-> > > > [   13.342731] x20: fffffdffc0199f00 x19: ffff000006210700 x18: 000=
-00000ffffffff
-> > > > [   13.342881] x17: 6c203d2120296567 x16: 6170202c6f696c6f x15: 662=
-866666f67705f
-> > > > [   13.343033] x14: 6567617028454741 x13: 2929737365726464 x12: fff=
-f800083728ab0
-> > > > [   13.343183] x11: ffff800082996bf8 x10: 0000000000000fd7 x9 : fff=
-f80008011bc40
-> > > > [   13.343351] x8 : 0000000000017fe8 x7 : 00000000fffff000 x6 : fff=
-f8000829eebf8
-> > > > [   13.343498] x5 : c0000000fffff000 x4 : 0000000000000000 x3 : 000=
-0000000000000
-> > > > [   13.343645] x2 : 0000000000000000 x1 : ffff0000062db980 x0 : 000=
-000000000005f
-> > > > [   13.343876] Call trace:
-> > > > [   13.344045]  __page_check_anon_rmap+0xa0/0xb0 (P)
-> > > > [   13.344234]  folio_add_anon_rmap_ptes+0x22c/0x320
-> > > > [   13.344333]  do_swap_page+0x1060/0x1400
-> > > > [   13.344417]  __handle_mm_fault+0x61c/0xbc8
-> > > > [   13.344504]  handle_mm_fault+0xd8/0x2e8
-> > > > [   13.344586]  do_page_fault+0x20c/0x770
-> > > > [   13.344673]  do_translation_fault+0xb4/0xf0
-> > > > [   13.344759]  do_mem_abort+0x48/0xa0
-> > > > [   13.344842]  el0_da+0x58/0x130
-> > > > [   13.344914]  el0t_64_sync_handler+0xc4/0x138
-> > > > [   13.345002]  el0t_64_sync+0x1ac/0x1b0
-> > > > [   13.345208] Code: aa1503e0 f000f801 910f6021 97ff5779 (d4210000)
-> > > > [   13.345504] ---[ end trace 0000000000000000 ]---
-> > > > [   13.345715] note: a.out[107] exited with irqs disabled
-> > > > [   13.345954] note: a.out[107] exited with preempt_count 2
-> > > >
-> > > > Fully fixing it would be quite complex, requiring similar handling
-> > > > of folios as done in move_present_pte.
-> > >
-> > > How complex would that be? Is it a matter of adding
-> > > folio_maybe_dma_pinned() checks, doing folio_move_anon_rmap() and
-> > > folio->index =3D linear_page_index like in move_present_pte() or
-> > > something more?
-> >
-> > My main concern is still with large folios that require a split_folio()
-> > during move_pages(), as the entire folio shares the same index and
-> > anon_vma. However, userfaultfd_move() moves pages individually,
-> > making a split necessary.
-> >
-> > However, in split_huge_page_to_list_to_order(), there is a:
-> >
-> >         if (folio_test_writeback(folio))
-> >                 return -EBUSY;
-> >
-> > This is likely true for swapcache, right? However, even for move_presen=
-t_pte(),
-> > it simply returns -EBUSY:
-> >
-> > move_pages_pte()
-> > {
-> >                 /* at this point we have src_folio locked */
-> >                 if (folio_test_large(src_folio)) {
-> >                         /* split_folio() can block */
-> >                         pte_unmap(&orig_src_pte);
-> >                         pte_unmap(&orig_dst_pte);
-> >                         src_pte =3D dst_pte =3D NULL;
-> >                         err =3D split_folio(src_folio);
-> >                         if (err)
-> >                                 goto out;
-> >
-> >                         /* have to reacquire the folio after it got spl=
-it */
-> >                         folio_unlock(src_folio);
-> >                         folio_put(src_folio);
-> >                         src_folio =3D NULL;
-> >                         goto retry;
-> >                 }
-> > }
-> >
-> > Do we need a folio_wait_writeback() before calling split_folio()?
-> >
-> > By the way, I have also reported that userfaultfd_move() has a fundamen=
-tal
-> > conflict with TAO (Cc'ed Yu Zhao), which has been part of the Android c=
-ommon
-> > kernel. In this scenario, folios in the virtual zone won=E2=80=99t be s=
-plit in
-> > split_folio(). Instead, the large folio migrates into nr_pages small fo=
-lios.
-> >
-> > Thus, the best-case scenario would be:
-> >
-> > mTHP -> migrate to small folios in split_folio() -> move small folios t=
-o
-> > dst_addr
-> >
-> > While this works, it negates the performance benefits of
-> > userfaultfd_move(), as it introduces two PTE operations (migration in
-> > split_folio() and move in userfaultfd_move() while retry), nr_pages mem=
-ory
-> > allocations, and still requires one memcpy(). This could end up
-> > performing even worse than userfaultfd_copy(), I guess.
-> >
-> > The worst-case scenario would be failing to allocate small folios in
-> > split_folio(), then userfaultfd_move() might return -ENOMEM?
-> >
-> > Given these issues, I strongly recommend that ART hold off on upgrading
-> > to userfaultfd_move() until these problems are fully understood and
-> > resolved. Otherwise, we=E2=80=99re in for a rough ride!
->
-> At the moment, ART GC doesn't work taking mTHP into consideration. We
-> don't try to be careful in userspace to be large-page aligned or
-> anything. Also, the MOVE ioctl implementation works either on
-> huge-pages or on normal pages. IIUC, it can't handle mTHP large pages
-> as a whole. But that's true for other userfaultfd ioctls as well. If
-> we were to continue using COPY, it's not that it's in any way more
-> friendly to mTHP than MOVE. In fact, that's one of the reasons I'm
-> considering making the ART heap NO_HUGEPAGE to avoid the need for
-> folio-split entirely.
+> This patch adds reset property which is required for i.MX8MP.
 
-Disabling mTHP is one way to avoid potential bugs. However, as long as
-UFFDIO_MOVE is available, we can=E2=80=99t prevent others, aside from ART G=
-C,
-from using it, right? So, we still need to address these issues with mTHP.
+Avoid words "this patch" according to kernel submit patch document.
 
-If a trend-following Android app discovers the UFFDIO_MOVE API, it might
-use it, and it may not necessarily know to disable hugepages. Doesn=E2=80=
-=99t that
-pose a risk?
+Just said:  Add reset property ...
 
 >
-> Furthermore, there are few cases in which COPY ioctl's overhead just
-> doesn't make sense for ART GC. So starting to use MOVE ioctl is the
-> right thing to do.
+> Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+> ---
+>  .../devicetree/bindings/dsp/fsl,dsp.yaml      | 19 ++++++++++++++++++-
+>  1 file changed, 18 insertions(+), 1 deletion(-)
 >
-> What we need eventually to gain mTHP benefits is both MOVE ioctl to
-> support large-page migration as well as GC code in userspace to work
-> with mTHP in mind.
-> >
-> > >
-> > > > For now, a quick solution
-> > > > is to return -EBUSY.
-> > > > I'd like to see others' opinions on whether a full fix is worth
-> > > > pursuing.
-> > > >
-> > > > For anyone interested in reproducing it, the a.out test program is
-> > > > as below,
-> > > >
-> > > >  #define _GNU_SOURCE
-> > > >  #include <stdio.h>
-> > > >  #include <stdlib.h>
-> > > >  #include <string.h>
-> > > >  #include <sys/mman.h>
-> > > >  #include <sys/ioctl.h>
-> > > >  #include <sys/syscall.h>
-> > > >  #include <linux/userfaultfd.h>
-> > > >  #include <fcntl.h>
-> > > >  #include <pthread.h>
-> > > >  #include <unistd.h>
-> > > >  #include <poll.h>
-> > > >  #include <errno.h>
-> > > >
-> > > >  #define PAGE_SIZE 4096
-> > > >  #define REGION_SIZE (512 * 1024)
-> > > >
-> > > >  #ifndef UFFDIO_MOVE
-> > > >  struct uffdio_move {
-> > > >      __u64 dst;
-> > > >      __u64 src;
-> > > >      __u64 len;
-> > > >      #define UFFDIO_MOVE_MODE_DONTWAKE        ((__u64)1<<0)
-> > > >      #define UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES ((__u64)1<<1)
-> > > >      __u64 mode;
-> > > >      __s64 move;
-> > > >  };
-> > > >  #define _UFFDIO_MOVE  (0x05)
-> > > >  #define UFFDIO_MOVE   _IOWR(UFFDIO, _UFFDIO_MOVE, struct uffdio_mo=
-ve)
-> > > >  #endif
-> > > >
-> > > >  void *src, *dst;
-> > > >  int uffd;
-> > > >
-> > > >  void *madvise_thread(void *arg) {
-> > > >      if (madvise(src, REGION_SIZE, MADV_PAGEOUT) =3D=3D -1) {
-> > > >          perror("madvise MADV_PAGEOUT");
-> > > >      }
-> > > >      return NULL;
-> > > >  }
-> > > >
-> > > >  void *fault_handler_thread(void *arg) {
-> > > >      struct uffd_msg msg;
-> > > >      struct uffdio_move move;
-> > > >      struct pollfd pollfd =3D { .fd =3D uffd, .events =3D POLLIN };
-> > > >
-> > > >      pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
-> > > >      pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, NULL);
-> > > >
-> > > >      while (1) {
-> > > >          if (poll(&pollfd, 1, -1) =3D=3D -1) {
-> > > >              perror("poll");
-> > > >              exit(EXIT_FAILURE);
-> > > >          }
-> > > >
-> > > >          if (read(uffd, &msg, sizeof(msg)) <=3D 0) {
-> > > >              perror("read");
-> > > >              exit(EXIT_FAILURE);
-> > > >          }
-> > > >
-> > > >          if (msg.event !=3D UFFD_EVENT_PAGEFAULT) {
-> > > >              fprintf(stderr, "Unexpected event\n");
-> > > >              exit(EXIT_FAILURE);
-> > > >          }
-> > > >
-> > > >          move.src =3D (unsigned long)src + (msg.arg.pagefault.addre=
-ss - (unsigned long)dst);
-> > > >          move.dst =3D msg.arg.pagefault.address & ~(PAGE_SIZE - 1);
-> > > >          move.len =3D PAGE_SIZE;
-> > > >          move.mode =3D 0;
-> > > >
-> > > >          if (ioctl(uffd, UFFDIO_MOVE, &move) =3D=3D -1) {
-> > > >              perror("UFFDIO_MOVE");
-> > > >              exit(EXIT_FAILURE);
-> > > >          }
-> > > >      }
-> > > >      return NULL;
-> > > >  }
-> > > >
-> > > >  int main() {
-> > > >  again:
-> > > >      pthread_t thr, madv_thr;
-> > > >      struct uffdio_api uffdio_api =3D { .api =3D UFFD_API, .feature=
-s =3D 0 };
-> > > >      struct uffdio_register uffdio_register;
-> > > >
-> > > >      src =3D mmap(NULL, REGION_SIZE, PROT_READ | PROT_WRITE, MAP_PR=
-IVATE | MAP_ANONYMOUS, -1, 0);
-> > > >      if (src =3D=3D MAP_FAILED) {
-> > > >          perror("mmap src");
-> > > >          exit(EXIT_FAILURE);
-> > > >      }
-> > > >      memset(src, 1, REGION_SIZE);
-> > > >
-> > > >      dst =3D mmap(NULL, REGION_SIZE, PROT_READ | PROT_WRITE, MAP_PR=
-IVATE | MAP_ANONYMOUS, -1, 0);
-> > > >      if (dst =3D=3D MAP_FAILED) {
-> > > >          perror("mmap dst");
-> > > >          exit(EXIT_FAILURE);
-> > > >      }
-> > > >
-> > > >      uffd =3D syscall(SYS_userfaultfd, O_CLOEXEC | O_NONBLOCK);
-> > > >      if (uffd =3D=3D -1) {
-> > > >          perror("userfaultfd");
-> > > >          exit(EXIT_FAILURE);
-> > > >      }
-> > > >
-> > > >      if (ioctl(uffd, UFFDIO_API, &uffdio_api) =3D=3D -1) {
-> > > >          perror("UFFDIO_API");
-> > > >          exit(EXIT_FAILURE);
-> > > >      }
-> > > >
-> > > >      uffdio_register.range.start =3D (unsigned long)dst;
-> > > >      uffdio_register.range.len =3D REGION_SIZE;
-> > > >      uffdio_register.mode =3D UFFDIO_REGISTER_MODE_MISSING;
-> > > >
-> > > >      if (ioctl(uffd, UFFDIO_REGISTER, &uffdio_register) =3D=3D -1) =
-{
-> > > >          perror("UFFDIO_REGISTER");
-> > > >          exit(EXIT_FAILURE);
-> > > >      }
-> > > >
-> > > >      if (pthread_create(&madv_thr, NULL, madvise_thread, NULL) !=3D=
- 0) {
-> > > >          perror("pthread_create madvise_thread");
-> > > >          exit(EXIT_FAILURE);
-> > > >      }
-> > > >
-> > > >      if (pthread_create(&thr, NULL, fault_handler_thread, NULL) !=
-=3D 0) {
-> > > >          perror("pthread_create fault_handler_thread");
-> > > >          exit(EXIT_FAILURE);
-> > > >      }
-> > > >
-> > > >      for (size_t i =3D 0; i < REGION_SIZE; i +=3D PAGE_SIZE) {
-> > > >          char val =3D ((char *)dst)[i];
-> > > >          printf("Accessing dst at offset %zu, value: %d\n", i, val)=
-;
-> > > >      }
-> > > >
-> > > >      pthread_join(madv_thr, NULL);
-> > > >      pthread_cancel(thr);
-> > > >      pthread_join(thr, NULL);
-> > > >
-> > > >      munmap(src, REGION_SIZE);
-> > > >      munmap(dst, REGION_SIZE);
-> > > >      close(uffd);
-> > > >      goto again;
-> > > >      return 0;
-> > > >  }
-> > > >
-> > > > As long as you enable mTHP (which likely increases the residency
-> > > > time of swapcache), you can reproduce the issue within a few
-> > > > seconds. But I guess the same race condition also exists with
-> > > > small folios.
-> > > >
-> > > > Fixes: adef440691bab ("userfaultfd: UFFDIO_MOVE uABI")
-> > > > Cc: Andrea Arcangeli <aarcange@redhat.com>
-> > > > Cc: Suren Baghdasaryan <surenb@google.com>
-> > > > Cc: Al Viro <viro@zeniv.linux.org.uk>
-> > > > Cc: Axel Rasmussen <axelrasmussen@google.com>
-> > > > Cc: Brian Geffon <bgeffon@google.com>
-> > > > Cc: Christian Brauner <brauner@kernel.org>
-> > > > Cc: David Hildenbrand <david@redhat.com>
-> > > > Cc: Hugh Dickins <hughd@google.com>
-> > > > Cc: Jann Horn <jannh@google.com>
-> > > > Cc: Kalesh Singh <kaleshsingh@google.com>
-> > > > Cc: Liam R. Howlett <Liam.Howlett@oracle.com>
-> > > > Cc: Lokesh Gidra <lokeshgidra@google.com>
-> > > > Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
-> > > > Cc: Michal Hocko <mhocko@suse.com>
-> > > > Cc: Mike Rapoport (IBM) <rppt@kernel.org>
-> > > > Cc: Nicolas Geoffray <ngeoffray@google.com>
-> > > > Cc: Peter Xu <peterx@redhat.com>
-> > > > Cc: Ryan Roberts <ryan.roberts@arm.com>
-> > > > Cc: Shuah Khan <shuah@kernel.org>
-> > > > Cc: ZhangPeng <zhangpeng362@huawei.com>
-> > > > Signed-off-by: Barry Song <v-songbaohua@oppo.com>
-> > > > ---
-> > > >  mm/userfaultfd.c | 11 +++++++++++
-> > > >  1 file changed, 11 insertions(+)
-> > > >
-> > > > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-> > > > index 867898c4e30b..34cf1c8c725d 100644
-> > > > --- a/mm/userfaultfd.c
-> > > > +++ b/mm/userfaultfd.c
-> > > > @@ -18,6 +18,7 @@
-> > > >  #include <asm/tlbflush.h>
-> > > >  #include <asm/tlb.h>
-> > > >  #include "internal.h"
-> > > > +#include "swap.h"
-> > > >
-> > > >  static __always_inline
-> > > >  bool validate_dst_vma(struct vm_area_struct *dst_vma, unsigned lon=
-g dst_end)
-> > > > @@ -1079,9 +1080,19 @@ static int move_swap_pte(struct mm_struct *m=
-m,
-> > > >                          pmd_t *dst_pmd, pmd_t dst_pmdval,
-> > > >                          spinlock_t *dst_ptl, spinlock_t *src_ptl)
-> > > >  {
-> > > > +       struct folio *folio;
-> > > > +       swp_entry_t entry;
-> > > > +
-> > > >         if (!pte_swp_exclusive(orig_src_pte))
-> > > >                 return -EBUSY;
-> > > >
-> > >
-> > > Would be helpful to add a comment explaining that this is the case
-> > > when the folio is in the swap cache.
-> > >
-> > > > +       entry =3D pte_to_swp_entry(orig_src_pte);
-> > > > +       folio =3D filemap_get_folio(swap_address_space(entry), swap=
-_cache_index(entry));
-> > > > +       if (!IS_ERR(folio)) {
-> > > > +               folio_put(folio);
-> > > > +               return -EBUSY;
-> > > > +       }
-> > > > +
-> > > >         double_pt_lock(dst_ptl, src_ptl);
-> > > >
-> > > >         if (!is_pte_pages_stable(dst_pte, src_pte, orig_dst_pte, or=
-ig_src_pte,
-> > > > --
-> > > > 2.39.3 (Apple Git-146)
-> > > >
-> >
+> diff --git a/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml b/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
+> index ab93ffd3d2e5..923e7f079f1b 100644
+> --- a/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
+> +++ b/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
+> @@ -82,6 +82,13 @@ properties:
+>      description:
+>        Phandle to syscon block which provide access for processor enablement
+>
+> +  resets:
+> +    description:
+> +      A pair consisting of phandle to audio-blk-control and an index referencing
+> +      the DSP Run/Stall bit in audiomix registers.
+> +      See include/dt-bindings/reset/imx8mp-reset-audiomix.h for each index meaning.
 
-Thanks
-Barry
+Generally, needn't description for such common property. Or just said
+for example, i.MX8MP, ... , because it may change to difference reset
+providor in future.
+
+Anyway, I think it is fine leave here.
+
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
+
+> +    maxItems: 1
+> +
+>  required:
+>    - compatible
+>    - reg
+> @@ -164,6 +171,16 @@ allOf:
+>              - const: txdb1
+>              - const: rxdb0
+>              - const: rxdb1
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - fsl,imx8mp-dsp
+> +              - fsl,imx8mp-hifi4
+> +    then:
+> +      required:
+> +        - "resets"
+>
+>  additionalProperties: false
+>
+> @@ -220,5 +237,5 @@ examples:
+>                 <&mu2 3 0>;
+>        memory-region = <&dsp_vdev0buffer>, <&dsp_vdev0vring0>,
+>                        <&dsp_vdev0vring1>, <&dsp_reserved>;
+> -      fsl,dsp-ctrl = <&audio_blk_ctrl>;
+> +      resets = <&audio_blk_ctrl IMX8MP_AUDIOMIX_DSP>;
+>      };
+> --
+> 2.25.1
+>
 
