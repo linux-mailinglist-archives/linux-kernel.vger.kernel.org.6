@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-521121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0854EA3B455
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:41:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 491E0A3B47C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:43:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CFE3163A9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:38:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17F24176096
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:40:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF1971EB1BE;
-	Wed, 19 Feb 2025 08:33:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 181111DE899;
+	Wed, 19 Feb 2025 08:34:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jrbFtN9j"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XhMSdjMe"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B891E1EA7ED;
-	Wed, 19 Feb 2025 08:33:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D6A21DE88A;
+	Wed, 19 Feb 2025 08:34:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739953983; cv=none; b=dX3o0OBbkL5yVvnylgmQIGv7hfY11rVa8pMRvHHPlBhrMDhslC+SxGx6RyCxDdZKYAg215RZIWyl9EfXfuOEGsKF1R5bCDhub6jig7JgrZir/sg+57VX/e98X+MHwAmRxZ6E8DG9VWKOnJqQdFswzut48i73bIcYIRm7punE5k4=
+	t=1739954062; cv=none; b=SpflCvu+ZkPNYozF2bQ3i9gMzBl3Koal3jIud67Qeaw2ZiiUy47pOWHHv4T0y80a7U3RkzpvnNyx9lAc0h24IhTF9xkFeov6kaEvTa5I0Fvm/E+sQYCtdy+dtkGgPDELWdpix8/NW9nrg2KLsO71zSXitJB6q5MY80SV3gMZLqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739953983; c=relaxed/simple;
-	bh=492UxWHba5+PdraY25snSVuyYciW7Iz27+/Vla1ltTo=;
+	s=arc-20240116; t=1739954062; c=relaxed/simple;
+	bh=KsqfkOhM0rRWlu+dSeh9xNNmtl2vUUrFOcsGhvODUT0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Kjt6DKJShy+M2OOlCRJuwtAI/xBl3nIDFywsLTBM8IRK+KyucZDufhJb0Bbt8zV+O+HnZ0Ge+686pT9veDPK/VqB4I8z8p+B2Nh7/7kEKvt/ttP6nB+sh3jJ18TEdYR3TyWg1k+dT+bab1u9lNEDPcEc1YlnZaPph5Fb5rPWE+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jrbFtN9j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD416C4CEE9;
-	Wed, 19 Feb 2025 08:32:59 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=mWcSSHdrWGGUQvA6tEqhFgv7dNQQJMUP02CyTrevi6wQOt9aw9XeTcaAjcLp8pW2DYHlP0cGJWV1fnA/B2ThZ7chQ9ioMmNhM8k9kc+Lp7bjYXERumkD1vNqE+DrqhR/eiRdcxEJHdwdsqPLPUMlcXmb3mn37dBoCeYRThMjEBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XhMSdjMe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11124C4CEE6;
+	Wed, 19 Feb 2025 08:34:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739953983;
-	bh=492UxWHba5+PdraY25snSVuyYciW7Iz27+/Vla1ltTo=;
+	s=k20201202; t=1739954061;
+	bh=KsqfkOhM0rRWlu+dSeh9xNNmtl2vUUrFOcsGhvODUT0=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jrbFtN9jcjqpz1JAips0rZy8nLJ1Mw3cqwhGfn3uyojPxfdYxfEL9B8T60DLf7Bga
-	 aXMq286XivXZbnyzXjB7J9xEeB3P04uz9R0CaOeEeo249Y0lPvnOXeePGzrOAWx2XT
-	 28/3b8Y9MccgDjMTg8seRDOA6gRc5o1wnwfawVzkRig7JHQDmeYzGqsoIPPwt4rNdr
-	 rcCxl5KSdP1Th3pmoKdubWX34ckFJdnUSAscjdEm6dUvFfOctgKeOokXnBgdMH00Cp
-	 3br0tS5hZvL6AI2fRCRnXT9OmYY5gM/gayqdKzoho4pEu4pfGBRMrn831U9WOZkSKV
-	 ulCpe8k7IOSQQ==
-Message-ID: <0dd1d68a-37e5-4c90-ad2a-74805d94296f@kernel.org>
-Date: Wed, 19 Feb 2025 09:32:57 +0100
+	b=XhMSdjMeQtfVJM5MUeQa/y4IqfGPNHVetQPZ0H+KpXlbLfoAJ3z3u7O88mQFjTqYW
+	 MoJetJnccwCMVcPrrt+8n4f7QR5T2+qYGYl3B0PGcRk++Dh+CpYTe+InggFz4XMATQ
+	 AapNWevrsKdtAuPSh1L9Hui4/aA0K58Q9w+qF3t69pr3lBT4f1Q2LbIldquiMB1rYB
+	 DjIEFSJ/v7eFd95pOsiK9YWFrc0epl5u9KWKBq9F+HDHTLR52VZTCmxaOJGrASt7qM
+	 Aw+29E7ILx7WyEiB2eslKwc9aBUP8AGt7YzysW1jsfl69zB5jNXZVGc8i7mpso4//X
+	 fBGY0n9CieDeg==
+Message-ID: <03ec9bef-715a-462b-b58b-03255cd80225@kernel.org>
+Date: Wed, 19 Feb 2025 09:34:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,18 +49,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] usb: dwc3: exynos: add support for Exynos2200
- variant
+Subject: Re: [PATCH v1] dt-bindings: timer: exynos4210-mct: add
+ samsung,exynos2200-mct-peris compatible
 To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Cc: linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250215123453.163434-1-ivo.ivanov.ivanov1@gmail.com>
- <20250215123453.163434-3-ivo.ivanov.ivanov1@gmail.com>
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250215123922.163630-1-ivo.ivanov.ivanov1@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -106,21 +104,24 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250215123453.163434-3-ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <20250215123922.163630-1-ivo.ivanov.ivanov1@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 15/02/2025 13:34, Ivaylo Ivanov wrote:
-> Add Exynos2200 compatible string and associated driver data. This SoC
-> requires a Link interface AXI clock.
+On 15/02/2025 13:39, Ivaylo Ivanov wrote:
+> Whilst having a new multicore timer that differs from the old designs in
+> functionality and registers (marked as MCTv2 in vendor kernels),
+> Exynos2200 also keeps an additional multicore timer connected over PERIS
+> that reuses the same design as older exynos socs.
+> 
+> Add a compatible for the legacy multicore timer of Exynos2200. Rather
+> than differentiating it based on the block version, mark it as the
+> one connected over PERIS.
 > 
 > Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-> ---
->  drivers/usb/dwc3/dwc3-exynos.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
 
 Best regards,
 Krzysztof
