@@ -1,148 +1,168 @@
-Return-Path: <linux-kernel+bounces-521564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD191A3BF5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:04:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A463A3BF64
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:06:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC73A189A798
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:00:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2778167D12
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:01:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E10081E1C1F;
-	Wed, 19 Feb 2025 12:58:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 477E81E1A18;
+	Wed, 19 Feb 2025 13:00:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="PUcv/jhy"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pKkFCea4"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F4A2198E81
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 12:58:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A821E1E0DCD
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 13:00:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739969924; cv=none; b=FUsfA2Ag+taXH5fZuxtHyJsrD5uZnuE54DlcNtgnNDW5vv98RreSHn59lcvhZeEHKx5ULgmuXpJc1Cq/IoC/8NClq5ltdlTeJRe+MVCDKeDkYBPocg9ySc9F+C9QWRRmzfnvbGemND3fVZEh6z/djbHRBL+6xB4Irw+OT6VwCXg=
+	t=1739970039; cv=none; b=HrZGmMlDywXZgBE/Bie+b3onWhlJ5UeDI9EgBRqAfS4CrosBmERPeZbgKI8SZ9kC7sMwLPsHVSpNBYE2eTHTxAK894Ta0uW37iOHxae6LRjtbKLVrTHWiibCmnQl03TdRi7nkJc/ciOrU33iZRMLDii2pdxzFqGfd2f7rJx0//c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739969924; c=relaxed/simple;
-	bh=mFyDWsE7J9ZW8FmEHWh+K0Jf/vn8Ov7C5joVUJWT04s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HUKAQinUMtuM9XGy6mFSL1aLBA1OwQQ5DusHaQ+PziTMoTwQ0nPyM/hc9GxBNo6arlLJhlDt65GRpI6awWSTD+ifb1dlLHxajrj4qrTEWuWogIqN4C4n7hgJnW0Jm4QRHiU26Y0aemf33NUat5y9amTEyjIYEyfty5D1BWeumpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=PUcv/jhy; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43996e95114so11919095e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 04:58:42 -0800 (PST)
+	s=arc-20240116; t=1739970039; c=relaxed/simple;
+	bh=xLBEqgHgGc6f4GhWFZTZYL2fXQhQWUDFIGyzofB5XTk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HgX/XELh/1fIVNG2LVeQRvvJXmKEDj3t3fCHz+5JcgbLteFKR0NP5JMKUNfJiDNR4lSbqEAHAfKDo7URneyWFE9w+FTDP7bfiQ6c8uQkYYcCsxfjDUq7qtFNotvhoHpxEom/M8lSvwlUaTkegKnWQYzBkQPnYast2JvbDzTicSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pKkFCea4; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-30a36eecb9dso31034571fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 05:00:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1739969921; x=1740574721; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=34sVOinnrdUpopDeZt0X3vBKN/d5vCnq4SYbVGcMLpU=;
-        b=PUcv/jhyl3Oz6a/O1c1xGJ+/KgQnUmo4aS5WPqLdqL2WlkrIn/d+/EVQlccO5XTQob
-         cHeZrc52ut8+SfxHGobx+afvEacmOi9L8BbMJ8Lldcco3Grs7QKdI45xyLC/G29NYckN
-         lvbZ+nJ8J9VPLZZyXCqQfOk6S7fXWlQyUDtiQ=
+        d=linaro.org; s=google; t=1739970035; x=1740574835; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=j9nu9CEuORGkEvM5vI9UglG07cy4F38vVcl8XiBSAjU=;
+        b=pKkFCea4/IIrp8b/LYgwymV8YICs5PDFK43yQsB7Njy/lVc8obarlEvUY5H5bBBse2
+         XWoHzixNLq9AS50wruEkPY3F9eh94Hi6d4ZmuwgaC/RBdk840WhoEPdiPHIqFMR6oiwi
+         K8Gzi0el2tdFcJE8/PnCgJ5WyZ9ISg09VZEZh75jQK8ePN1rhy32WgYFkPlGYccX3nLi
+         ldRTxr4c8l8QJOGbJWSzrOxoL/zW17l6blFOpsWVVx6DauBzTlFkNC+imyEUDsOMmLqp
+         DRNnrhhN+wE3gFrUW+UBoBqLjBvmNX/+q7T+66C4ErPfmZq8F0QKM0fq7zvt5EJcU/k/
+         msVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739969921; x=1740574721;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=34sVOinnrdUpopDeZt0X3vBKN/d5vCnq4SYbVGcMLpU=;
-        b=IYMTlrtDELG4udJ8RiEIQuzh1rqnCg9tWjy++s3LIoGXSua9dFvMs+WlUsGmepBGSJ
-         xTA+5BbTHJAOOotdDOH4zwdwIrtALhBzRqCoZL6uzqUKYRITU4iUKgntasRNr4aH9pIf
-         XbPkPfbrrThB6WLQMB0/PBQuTOI/cVmaq/ZOt3bULpOsTTjknjFM/K0XaERvurnB+Jr2
-         20JRJ1WvxIHHW7p7iH7zbVI7S1/vMFO4LqepQgc4T6/pu8BMkZll7zrQrLVpqg2XCcZF
-         ZvVqjqIJ/SCZdQbkchMZi2We3McWOXTDwA3pn+02hZnsAk6HcYpoL6Ojr7jXdMxUH3Pu
-         zi0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVref51OuSx59brCNVpXDgh9d34raeCrB5mSTHkb56GK9Se4AnG0mZ3h3+8VRZcZMLmtSMFBVJAqEOYRxw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnBXJtZernRUHGW0wa2wY+3oQqk9Aj9mc734jYrn+A9dUdne24
-	DyNQ1Hdtb+QY2mWng6j+Lm/HOtSgrtD8YFcgijDs0Q58+WCdmM4VJOf8fJpqPLk=
-X-Gm-Gg: ASbGncsvqDv3sqHP6pKFM3aTwxnL70w8XzIGOa0bt5b/S1EPKKKwHf+2oZMYBH356/N
-	9/94XAvUgt8FQoshQ6RyAa/1+4llMcICrBxEyeowmdnle5ZZHdwwxHEMEPv1EcVTOlCTDCiuxht
-	9YRrB8wKH0SHsOnGYqEIDhbCE7vkpGseUpIhr3Pf5NjNWG2QmsjhrSG0qKDwVpjcQXZFUJyyFb4
-	feQTtlO5K5mKAJlngsz0nIzFDaZGqod4n7l2bLKb/Bfsb/ViVterPWS7yvLTWX0P8zfcQToDvWj
-	rSSHMccoRH43/l86rNcZ8d4HT0M=
-X-Google-Smtp-Source: AGHT+IGzbUBUg/56lBAekqPCOphT5RTECYUG5Q84fY/+IOL0ZwxmdTe8Ny3WUiTLHfIX8hhDw7t+4Q==
-X-Received: by 2002:a05:600c:1c98:b0:439:88bb:d026 with SMTP id 5b1f17b1804b1-43988bbd48cmr104447115e9.5.1739969920700;
-        Wed, 19 Feb 2025 04:58:40 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:5485:d4b2:c087:b497])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a1aa7c7sm214383535e9.27.2025.02.19.04.58.39
+        d=1e100.net; s=20230601; t=1739970035; x=1740574835;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=j9nu9CEuORGkEvM5vI9UglG07cy4F38vVcl8XiBSAjU=;
+        b=gjnc1ANoZXJsIEeJy7dLyXKegj1/VWJHYpJWbkgJckj7E0pDJOgoB+wescDSFGBbyE
+         6I+cl3duIOtWeuKUblKDxiCdzNwe0Xpmke78oBXJD8w+16ibGcouxHj3fQC+reChslKI
+         awaAEsChmr0Wor513SojNdgsSSlwERP4hWKj/SninpyD6kJkdVQ3eV9m3OQT20w87dJw
+         mQ+USNgWz6DOYsqZopEGBja0EXmDXZSidgDEgVlnAZSea4M+dfBRKpaNYRcZscSXoGCU
+         nHgkSO12pmT0M7c+f/kdFVZb4Z5f46Tptzoq2qcI88m8Ee1qPytz8sAckJEyJwQiROFC
+         OrjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUQglXZ6UE5ra3eUtnXQ3cmVb8wOToXSKfse6KRCAM936VIpQR/yMF6b915yYL51zJsUM9hX+CbV0de/80=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyigc2PzpfuglxsXaW+T0JQ5HeaaKcrRIDzyaDXAeYR5EAD0HWi
+	PfgyMEhrTmJo08C5ctmfJsZybGWlln5Z7YCgSulAQvxLG2eNddrtTCcX0HkkGks=
+X-Gm-Gg: ASbGnctJJaZxNeg09fyyRkirkn1vmPqxkgLcsKlWEdKR4BeWvD9H2bvrXY1XCA62e7J
+	wwZEbNTj81dffRFB4gkBt73HHG7OXNJOyLgyK4QuqBoe2Rbe9d2lPQdxxixR/nurLv501DDsBi8
+	5rLhabllbXW1YSqBLu4IqIP/p0V/gdwMw9GztmdkHMltF/hwSWhGBcm+T/hPmKEiDSnCzSWwo+t
+	DcTrU/qcm0wKYgyklKU8xZr209J0HW/cfIYf35s+8Hyh9iGU/NZmSYlh9J1WyWYuWTnSnDrjaJT
+	2tF4t9Ygkc3MGo2ZVlDOCSs=
+X-Google-Smtp-Source: AGHT+IF6YzLxPjQygzIyCyDmuGvnG2Nvx8WRct2Dh5q/Fm/R1qDKwRlM49lHsASYxtLspq93RsPzSw==
+X-Received: by 2002:a05:6512:36d0:b0:545:3037:a704 with SMTP id 2adb3069b0e04-5453037a70amr4902370e87.17.1739970035480;
+        Wed, 19 Feb 2025 05:00:35 -0800 (PST)
+Received: from umbar.lan ([192.130.178.90])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5451f105a3dsm2179515e87.144.2025.02.19.05.00.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2025 04:58:40 -0800 (PST)
-Date: Wed, 19 Feb 2025 13:58:38 +0100
-From: Simona Vetter <simona.vetter@ffwll.ch>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Dave Airlie <airlied@gmail.com>,
-	Alexandre Courbot <acourbot@nvidia.com>,
-	John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Subject: Re: [RFC PATCH 0/3] gpu: nova-core: add basic timer subdevice
- implementation
-Message-ID: <Z7XVfnnrRKrtQbB6@phenom.ffwll.local>
-Mail-Followup-To: Danilo Krummrich <dakr@kernel.org>,
-	Dave Airlie <airlied@gmail.com>,
-	Alexandre Courbot <acourbot@nvidia.com>,
-	John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-References: <20250217-nova_timer-v1-0-78c5ace2d987@nvidia.com>
- <Z7OrKX3zzjrzZdyz@pollux>
- <CAPM=9tyu84z4Xk5X0fykO3Dazby2UqRgwtN4woNKe4Z2yMyDZg@mail.gmail.com>
- <Z7RgOd_57wcSUyB0@pollux>
+        Wed, 19 Feb 2025 05:00:34 -0800 (PST)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH v3 0/2] drm/bridge: reuse DRM HDMI Audio helpers for
+ DisplayPort bridges
+Date: Wed, 19 Feb 2025 15:00:29 +0200
+Message-Id: <20250219-dp-hdmi-audio-v3-0-42900f034b40@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z7RgOd_57wcSUyB0@pollux>
-X-Operating-System: Linux phenom 6.12.11-amd64 
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAO3VtWcC/3XMQQ6CMBCF4auQrq1pRyDgynsYFy0zhUmUklYbD
+ eHuFlZq4vK95PtnESkwRXEsZhEocWQ/5nHYFaIbzNiTZMxbgIJKgaolTnLAG0vzQPZSV9g6tGR
+ t60Q2UyDHz613vuQ9cLz78NrySa/vv1LSUsnGGF2aplNY4unKowl+70Mv1lSCT97+cshc12hrs
+ g7AuS++LMsb2LJyleoAAAA=
+X-Change-ID: 20250206-dp-hdmi-audio-15d9fdbebb9f
+To: Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+ Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+ Hermes Wu <Hermes.wu@ite.com.tw>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2231;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=xLBEqgHgGc6f4GhWFZTZYL2fXQhQWUDFIGyzofB5XTk=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBntdXxTPSIb3Dq/+5KCR2epY51xmqraveZyobcV
+ 3GTWgbS4XmJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ7XV8QAKCRCLPIo+Aiko
+ 1fjiCACucytRzp+kgNNU42Wz6rz4JB5m835hRXFZRFNkxVQL4iN1K4NUjk1970tPgxM0ejsc+EJ
+ MWfeH7BZ9kEaJzjH23bIgxBNS955/l6oVPvuQeSHQcNoAyUXhLpeadElzKSiH2IhUu/SxWhGXRg
+ CwMB/Qu99lbFD70FLE2h7FTEOrKs8/JczxvrZ7xAf2CPqC4bS3ZA3/laUBUBEWWc+6p+DzLwkpT
+ +bYDXQK9Z0DMjYbRobucVtIO6DT68dCgfISRT/bJyqeE3+XDQNgsoAxsUzZzvFtulxc+xCTJQVx
+ UX7dBMhG6rvm4CrvBgu8RTYyzk7ugOjkZSp444w1RGcl6nVd
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-On Tue, Feb 18, 2025 at 11:26:01AM +0100, Danilo Krummrich wrote:
-> On Tue, Feb 18, 2025 at 11:46:26AM +1000, Dave Airlie wrote:
-> > > 1. How to avoid unnecessary calls to try_access().
-> > >
-> > > This is why I made Boot0.read() take a &RevocableGuard<'_, Bar0> as argument. I
-> > > think we can just call try_access() once and then propage the guard through the
-> > > callchain, where necessary.
-> > 
-> > Nope, you can't do that, RevocableGuard holds a lock and things
-> > explode badly in lockdep if you do.
-> 
-> Yes, try_access() marks the begin of an RCU read side critical section. Hence,
-> sections holding the guard should be kept as short as possible.
-> 
-> What I meant is that for a series of I/O operations we can still pass the guard
-> to subsequent functions doing the actual I/O ops.
-> 
-> More generally, I also thought about whether we should also provide an SRCU
-> variant of Revocable and hence Devres. Maybe we even want to replace it with
-> SRCU entirely to ensure that drivers can't stall the RCU grace period for too
-> long by accident.
+A lot of DisplayPort bridges use HDMI Codec in order to provide audio
+support. Present DRM HDMI Audio support has been written with the HDMI
+and in particular DRM HDMI Connector framework support, however those
+audio helpers can be easily reused for DisplayPort drivers too.
 
-The issue with srcu is that the revocation on driver unload or hotunplug
-becomes unbound. Which is very, very uncool, and the fundamental issue
-that also drm_dev_enter/exit() struggles with. So unless the kernel has a
-concept of "bound-time mutex only, but not unbounded sleeps of any sort" I
-think we should try really, really hard to introduce srcu revocables on
-the rust side. And at least for mmio I don't think any driver needs more
-than maybe some retry loops while holding a spinlock, which is fine under
-standard rcu. It does mean that drivers need to have fairly fine-grained
-fallible paths for dealing with revocable resources, but I think that's
-also a good thing - mmio to an unplugged device times out and is really
-slow, so doing too many of those isn't a great idea either.
+Patches by Hermes Wu that targeted implementing HDMI Audio support in
+the iTE IT6506 driver pointed out the necessity of allowing one to use
+generic audio helpers for DisplayPort drivers, as otherwise each driver
+has to manually (and correctly) implement the get_eld() and plugged_cb
+support.
 
-Ofc on the C side of things the balance shits a lot, and we just want to
-at least make "no uaf on driver hotunplug" something achievable and hence
-are much more ok with the risk that it's just stuck forever or driver
-calls take an undue amount of time until they've finished timing out
-everything.
+Implement necessary integration in drm_bridge_connector and provide an
+example implementation in the msm/dp driver.
 
-Cheers, Sima
+The plan is to land core parts via the drm-misc-next tree and msm patch
+via the msm-next tree.
+
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+Changes in v3:
+- Dropped DRM_BRIDGE_OP_DisplayPort, added DRM_BRIDGE_OP_HDMI_AUDIO
+  (Laurent, Maxime)
+- Dropped the subconnector patch (again)
+- Link to v2: https://lore.kernel.org/r/20250209-dp-hdmi-audio-v2-0-16db6ebf22ff@linaro.org
+
+Changes in v2:
+- Added drm_connector_attach_dp_subconnector_property() patches
+- Link to v1: https://lore.kernel.org/r/20250206-dp-hdmi-audio-v1-0-8aa14a8c0d4d@linaro.org
+
+---
+Dmitry Baryshkov (2):
+      drm/bridge: split HDMI Audio from DRM_BRIDGE_OP_HDMI
+      drm/msm/dp: reuse generic HDMI codec implementation
+
+ drivers/gpu/drm/bridge/lontium-lt9611.c        |   2 +-
+ drivers/gpu/drm/display/drm_bridge_connector.c |  59 +++++++----
+ drivers/gpu/drm/msm/Kconfig                    |   1 +
+ drivers/gpu/drm/msm/dp/dp_audio.c              | 131 +++----------------------
+ drivers/gpu/drm/msm/dp/dp_audio.h              |  27 ++---
+ drivers/gpu/drm/msm/dp/dp_display.c            |  28 +-----
+ drivers/gpu/drm/msm/dp/dp_display.h            |   6 --
+ drivers/gpu/drm/msm/dp/dp_drm.c                |   8 ++
+ include/drm/drm_bridge.h                       |  23 ++++-
+ 9 files changed, 90 insertions(+), 195 deletions(-)
+---
+base-commit: 0e9eb9d5dfffee443c2765f86625b3a6d2659e95
+change-id: 20250206-dp-hdmi-audio-15d9fdbebb9f
+
+Best regards,
 -- 
-Simona Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
 
