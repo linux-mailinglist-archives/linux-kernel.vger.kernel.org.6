@@ -1,332 +1,318 @@
-Return-Path: <linux-kernel+bounces-521175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E894CA3B658
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:06:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5857CA3B6D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:10:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E57417AB2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:00:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 865F33BC1E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:00:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DB8B1E0B86;
-	Wed, 19 Feb 2025 08:52:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C10A71E0E14;
+	Wed, 19 Feb 2025 08:53:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k/JMEo72"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SG5DHqfs"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4410F1CB518;
-	Wed, 19 Feb 2025 08:52:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 291D51E0DCC
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 08:53:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739955177; cv=none; b=Fjg0M6YXs45R1TKckkq7RX163pH9gHHECZexpiyBM04WFTeUubxHpQOWUoG3RMbUTkDNZxMLVN6OUGkIjd3sEYw7WdcS+vgbXDqyzX42WVqzZc5Rxgkdkk0xA9hjvMw//8soLDpT2QdLShUyV/HEKvn3lygXgC3SYhXG7m/5F2c=
+	t=1739955199; cv=none; b=SnTinr6DpouPUt1+ZumJQuRmN4Waae4odmrfOTmGBNTHxBXH7+QRYxHA/BFHeZbEp4v+iIMhtOUgEFF19LWUjeoo+yMd2/NvShV9A1UHdxQ/5g5BScQanljUiRsYvNO5+AJFT4AjW7iwWTsIcBFLgyaYSdCSgjAwqVUErjy20fc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739955177; c=relaxed/simple;
-	bh=jci8wU+mUppwHF3MfleP7kdhnU5A1Un1W0SKGtlKO6Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L5mPFnX1eGaufRM0t9Wl28zQLltMly5hGQLQpXbGrk5M8xqIdQRWzOOyiLG2aNGVVtqUWwanYk4/6joooJewbW4D9nmrkcic4mR+lPcX1ru9bXrKU2aw0Zwf07qKe/Bai2DIrLPjDTFXehZmgMGQ4h4+zbjdGDSlBsbuivslfFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k/JMEo72; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2fcb6c42c47so1021730a91.1;
-        Wed, 19 Feb 2025 00:52:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739955171; x=1740559971; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NG1o86OYTiLAxzL3Ree3H8BihYn463hfbH7TMewO7RI=;
-        b=k/JMEo721U3hzRpg0tzQNwd8CM8Jm58GKl4sGmCqMKQrpxlezJ6NEpRzC8drnoghfR
-         g6V2O6/5D0vxBTAIKxAjKNbVIZ/24+I9Irug2WSYiTkRdfdoKAVUnnDQ3n018nZ9MBAB
-         W0qOQt9ejRl6hKYkXIq6h5/WjqsZWh1m20X7cWmeQUNG0WAKndFu0jVM64pAy0Tu67wI
-         W29lSB1L2Wzc9YoL8xGLObupof6JCZnuyI7/zWrCTNJCcIFB6mIof0hyXnkZ1MtfBokt
-         yQa8Dt5kdAuvhxJJTbIJoPIJX1cRkRCv21ucIdq3vrHUOvIRkiaHDutGo4cHdXcbnZJB
-         w+hQ==
+	s=arc-20240116; t=1739955199; c=relaxed/simple;
+	bh=mxWh7ll8uxiPpIsYTT3ZtmhEUvYjQT1y5Uf0VRC+VX8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AnxyQ99ywmV7B51AKdx5TA+3eUM2MLZhoOw4ESeyqPOddCF1+RIWPUbKlVwPXejvd+MaAAE5/hZe0pdwnMsKeqPDzx8dcnyCv03hbREvf0yW/YDjKXDaV+THEZwIo45JqR+a/+bFoKopTkCOeHyWN94MMZ9aebp+ef/gOMZ8QGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SG5DHqfs; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739955193;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Y3RTKbzPGzhYU0bOzSORSMZdnlNJ+TKlrPge/3JxlnU=;
+	b=SG5DHqfsMbSnaW4z4du5598r4Q8fWhzQuvUBGjtpld46rbg88TRyFL0hwvwcj+u5VktWhY
+	eWk4Z/v+8otwyq6VOMQvvDJvrbMF7zZsnVO4c1Ausho8PHbFOhMQR+HNJdg6QrTjTvUD5Z
+	OT8YEcG6sdf0iJ9WOgsjR7P3++ZiEcg=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-557-yt4jtyCqMbSavDdgRpEhaQ-1; Wed, 19 Feb 2025 03:53:11 -0500
+X-MC-Unique: yt4jtyCqMbSavDdgRpEhaQ-1
+X-Mimecast-MFC-AGG-ID: yt4jtyCqMbSavDdgRpEhaQ_1739955190
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4394c747c72so32912275e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 00:53:11 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739955171; x=1740559971;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NG1o86OYTiLAxzL3Ree3H8BihYn463hfbH7TMewO7RI=;
-        b=fHpOmc2Cd1j79VUF8GIuVX2KXlv9AKhtKyqrO3/j/O3AYoon63TcO00u7zsWpjOdMf
-         OoTjlOobwtWheibkrOUhN9WYJ99xmYkWtLiHn3uzO5YlWvIhPYXF+TWmf3DQSpso4g0c
-         97H/KWQO9yQzXxdKdkSm9K1/VIEWVWXCN513DV6oj3HnmnwmR/4Ib3gz3mDOmC/AMetO
-         HclC5DU6ANG1Et99yxD4XHLfJmZD+OchAG1GnxliBgd/h0cbbJaM267ZnnuD/RnEzU6n
-         //Iu8O5xDIpfHrc0SaZubZuOwhqAaCsYPFyXyoX5zTgjOj2endxi37LAnf+Mk/JNT7Nm
-         zEWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWY66zNKhCAaS/hjJa9IzcglfXPTbNbOVSDcGDbbGuial/O4hxepQlx/S20JV1m0KKcfD0GpnpUerz3mflR@vger.kernel.org, AJvYcCXYwgEoQ9Bw0vmwtozEDS1Hfhbf8v9wHHj8HjOQU5O97p09mYytEDHQHLNcw3ZNrwRNiraii4BAd+H2HA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+UEEGec8uLM6OfcvfTfXnFjf+JU4Nqzgu4ckOUUnAf6B7eRGT
-	Dzd3ZcMKQbsCjFUdRsn+Cly3lWVSTToKAF1PykbJDljZkfT5lV7DOtmxDNi1Ki1IGmQ27Zvgs46
-	aatsNtzG5t+Af7Wyz+TMoSmWJEZQ=
-X-Gm-Gg: ASbGncsdULuPizM5T10LfkUBjSBpDKojlsA9iN3h2ciUtGqv7qZ2KU8uH/bHIEyaqXj
-	BRnw53Yy/Oo4bPmfHA1/q71LuFASW6VAZqrJNLoel36rYr0U0FS0DzbohTEMJqJbuZFID7wcLUw
-	==
-X-Google-Smtp-Source: AGHT+IFlt/omkNd9yvjQ73i9iaP39l+q+ypgb3SsHdAC/r/nv82+7zRg5B57SfeafGSmOVpFNOG1UumfxX2ZcPCwwRE=
-X-Received: by 2002:a17:90b:2252:b0:2ee:c9b6:c26a with SMTP id
- 98e67ed59e1d1-2fc40f1086amr26350955a91.11.1739955171341; Wed, 19 Feb 2025
- 00:52:51 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739955190; x=1740559990;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Y3RTKbzPGzhYU0bOzSORSMZdnlNJ+TKlrPge/3JxlnU=;
+        b=EY26aYvb4PcB1PDCj9jXnmDw9YPfJof+ZgZsczRysIuSSwkllvmVGY8JtcRkANayka
+         xEoXtxysgz0F44uFBos4Uo6zXM//PS2vGMLn5j4T3DRpcIiWja5geurEYSi6uUCXjvAn
+         aWc6NgGKnl8dZiMGvnV4eM6PvnQnHtOAz3Gihdps1soxYNyInDDYjJddYGr5htycECh1
+         PAtTNj8Nu3GIGaZ1trCPm+Xi7SRAyLf2s4ZTV2q/Y3kIY4orrYny0Mln0W7L2NxtdaA8
+         dcx5xVaV15x+tUgZWxqpE6diZCcPUay6EAGh8pDhCn3HGxFHttQESPxjp53g58hOwI7c
+         0hbA==
+X-Forwarded-Encrypted: i=1; AJvYcCX8vO1Kl5/kenlp2g/uC82XGPKN8Nohg97FuqGfvnbZol0Nc9sD8grj+kOHYMDsZ13idZzhrjdN1U6MTS4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAeaj39IMt2U39unt6T59ASKGa8V1R9iiqBfWLKyEExxeZ/Bgp
+	sxzwQcCG80oL0VHonFRu6xp6rlQELRZ4Y8qK/OUBAKSgnGpvWwcqqlwuRqajoa8EPXqVfdzs2mN
+	d7gjCwYeNYKMWmuMt5vPSvClSnetjTrq06TcYwJax5YQZKSqq/pu+YtDOKdU7hQ==
+X-Gm-Gg: ASbGncvBFn8T/m/gI9X7jkxJCqMG8NheLz6ALvicIoHkWGivuXAsYKgcyfSBSeIV9sl
+	58vBZMsPucA4RbCvgICTonyKx7N3vyj5vdtg6YefGlpzMB9wMiBped/AdoVqgfiH7HKx7NATslB
+	aQlByQMgMgtZKKG/W1ayrv8zXX3HVLHn7dQ8vSdr8yJ1GPJJ7mJhEjxIan3l29ioFKQ7/+AfStF
+	/xXveO7M5vzGoYI61tZ7gOfREeKR5McO1rw0ZiV7n30nQ2ZVV5FrWaD9MAeZcWTo6BrP/b59A/3
+	n45CJ7VYS1XUTE3CP534Lw8oWzFZYDErMmY=
+X-Received: by 2002:a05:600c:468d:b0:439:91dd:cfa3 with SMTP id 5b1f17b1804b1-43991ddd1f7mr71014695e9.29.1739955190483;
+        Wed, 19 Feb 2025 00:53:10 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHx30RG+4JLoDz7Ka+fSqZ4eEfXF8qqBuHgGrd9WrXzZoAldBNNjBxMEAYKQO9+ocdK769P4w==
+X-Received: by 2002:a05:600c:468d:b0:439:91dd:cfa3 with SMTP id 5b1f17b1804b1-43991ddd1f7mr71014465e9.29.1739955190069;
+        Wed, 19 Feb 2025 00:53:10 -0800 (PST)
+Received: from [192.168.3.141] (p5b0c68c8.dip0.t-ipconnect.de. [91.12.104.200])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4399c5f901bsm5799465e9.3.2025.02.19.00.53.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Feb 2025 00:53:08 -0800 (PST)
+Message-ID: <e332391c-30fb-49c3-9c05-574b0c486a81@redhat.com>
+Date: Wed, 19 Feb 2025 09:53:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250208073829.1176287-1-zhenghaoran154@gmail.com>
- <CAL3q7H5JgQkFavwrjOsvxDt9mMjVUK_nPOha-WYU-muLW=Orug@mail.gmail.com>
- <CAPjX3FeaL2+oRz81OEkLKjWwr1XuOOa3t-kgCrc51we-C-GVng@mail.gmail.com>
- <CAL3q7H7iFQ0pS+TB8NNj5CDA=c1cmurSiGsuXDn61O6A5=mBSQ@mail.gmail.com>
- <CAPjX3Feo9=hkptSxOMREKVckbvhfbmjHAWYBL2sBryDcVzp0NA@mail.gmail.com> <CAL3q7H7eSw0gg=JQwiEe9_pSEqcxugpgOWJDdv45UHrZbsFhzw@mail.gmail.com>
-In-Reply-To: <CAL3q7H7eSw0gg=JQwiEe9_pSEqcxugpgOWJDdv45UHrZbsFhzw@mail.gmail.com>
-From: haoran zheng <zhenghaoran154@gmail.com>
-Date: Wed, 19 Feb 2025 16:52:40 +0800
-X-Gm-Features: AWEUYZl0AqWU4PSGnrD1gRPn8X09Y09pv6l1WfgF5DpjbcufmseVqHpio1YeBqM
-Message-ID: <CAKa5YKjymZzRWy6WhVhu+mMzENunsM6URBL3o-_yy1wPGhdV-A@mail.gmail.com>
-Subject: Re: [PATCH] btrfs: fix data race when accessing the block_group's
- used field
-To: Filipe Manana <fdmanana@kernel.org>
-Cc: Daniel Vacek <neelx@suse.com>, clm@fb.com, josef@toxicpanda.com, dsterba@suse.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	baijiaju1990@gmail.com, 21371365@buaa.edu.cn
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: CXL Boot to Bash - Section 3: Memory (block) Hotplug
+To: Gregory Price <gourry@gourry.net>
+Cc: Yang Shi <shy828301@gmail.com>, lsf-pc@lists.linux-foundation.org,
+ linux-mm@kvack.org, linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <Z226PG9t-Ih7fJDL@gourry-fedora-PF4VCD3F>
+ <Z7OWmDXEYhT0BB0X@gourry-fedora-PF4VCD3F>
+ <CAHbLzkq6Me6nRaL6b09YxJ_nFkxb+n+M3-q_aJwOs2ZO4q8VCg@mail.gmail.com>
+ <Z7TLwtQY3vGUw2bO@gourry-fedora-PF4VCD3F>
+ <1b4c6442-a2b0-4290-8b89-c7b82a66d358@redhat.com>
+ <Z7TswQbpPV590ADr@gourry-fedora-PF4VCD3F>
+ <bda4cf52-d81a-4935-b45a-09e9439e33b6@redhat.com>
+ <Z7UvchoiRUg_cnhh@gourry-fedora-PF4VCD3F>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <Z7UvchoiRUg_cnhh@gourry-fedora-PF4VCD3F>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 19, 2025 at 12:29=E2=80=AFAM Filipe Manana <fdmanana@kernel.org=
-> wrote:
->
-> On Tue, Feb 18, 2025 at 4:14=E2=80=AFPM Daniel Vacek <neelx@suse.com> wro=
-te:
-> >
-> > On Tue, 18 Feb 2025 at 11:19, Filipe Manana <fdmanana@kernel.org> wrote=
-:
-> > >
-> > > On Tue, Feb 18, 2025 at 8:08=E2=80=AFAM Daniel Vacek <neelx@suse.com>=
- wrote:
-> > > >
-> > > > On Mon, 10 Feb 2025 at 12:11, Filipe Manana <fdmanana@kernel.org> w=
-rote:
-> > > > >
-> > > > > On Sat, Feb 8, 2025 at 7:38=E2=80=AFAM Hao-ran Zheng <zhenghaoran=
-154@gmail.com> wrote:
-> > > > > >
-> > > > > > A data race may occur when the function `btrfs_discard_queue_wo=
-rk()`
-> > > > > > and the function `btrfs_update_block_group()` is executed concu=
-rrently.
-> > > > > > Specifically, when the `btrfs_update_block_group()` function is=
- executed
-> > > > > > to lines `cache->used =3D old_val;`, and `btrfs_discard_queue_w=
-ork()`
-> > > > > > is accessing `if(block_group->used =3D=3D 0)` will appear with =
-data race,
-> > > > > > which may cause block_group to be placed unexpectedly in discar=
-d_list or
-> > > > > > discard_unused_list. The specific function call stack is as fol=
-lows:
-> > > > > >
-> > > > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3DDATA_RACE=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
-> > > > > >  btrfs_discard_queue_work+0x245/0x500 [btrfs]
-> > > > > >  __btrfs_add_free_space+0x3066/0x32f0 [btrfs]
-> > > > > >  btrfs_add_free_space+0x19a/0x200 [btrfs]
-> > > > > >  unpin_extent_range+0x847/0x2120 [btrfs]
-> > > > > >  btrfs_finish_extent_commit+0x9a3/0x1840 [btrfs]
-> > > > > >  btrfs_commit_transaction+0x5f65/0xc0f0 [btrfs]
-> > > > > >  transaction_kthread+0x764/0xc20 [btrfs]
-> > > > > >  kthread+0x292/0x330
-> > > > > >  ret_from_fork+0x4d/0x80
-> > > > > >  ret_from_fork_asm+0x1a/0x30
-> > > > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3DOTHER_INFO=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D
-> > > > > >  btrfs_update_block_group+0xa9d/0x2430 [btrfs]
-> > > > > >  __btrfs_free_extent+0x4f69/0x9920 [btrfs]
-> > > > > >  __btrfs_run_delayed_refs+0x290e/0xd7d0 [btrfs]
-> > > > > >  btrfs_run_delayed_refs+0x317/0x770 [btrfs]
-> > > > > >  flush_space+0x388/0x1440 [btrfs]
-> > > > > >  btrfs_preempt_reclaim_metadata_space+0xd65/0x14c0 [btrfs]
-> > > > > >  process_scheduled_works+0x716/0xf10
-> > > > > >  worker_thread+0xb6a/0x1190
-> > > > > >  kthread+0x292/0x330
-> > > > > >  ret_from_fork+0x4d/0x80
-> > > > > >  ret_from_fork_asm+0x1a/0x30
-> > > > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > > >
-> > > > > > Although the `block_group->used` was checked again in the use o=
-f the
-> > > > > > `peek_discard_list` function, considering that `block_group->us=
-ed` is
-> > > > > > a 64-bit variable, we still think that the data race here is an
-> > > > > > unexpected behavior. It is recommended to add `READ_ONCE` and
-> > > > > > `WRITE_ONCE` to read and write.
-> > > > > >
-> > > > > > Signed-off-by: Hao-ran Zheng <zhenghaoran154@gmail.com>
-> > > > > > ---
-> > > > > >  fs/btrfs/block-group.c | 4 ++--
-> > > > > >  fs/btrfs/discard.c     | 2 +-
-> > > > > >  2 files changed, 3 insertions(+), 3 deletions(-)
-> > > > > >
-> > > > > > diff --git a/fs/btrfs/block-group.c b/fs/btrfs/block-group.c
-> > > > > > index c0a8f7d92acc..c681b97f6835 100644
-> > > > > > --- a/fs/btrfs/block-group.c
-> > > > > > +++ b/fs/btrfs/block-group.c
-> > > > > > @@ -3678,7 +3678,7 @@ int btrfs_update_block_group(struct btrfs=
-_trans_handle *trans,
-> > > > > >         old_val =3D cache->used;
-> > > > > >         if (alloc) {
-> > > > > >                 old_val +=3D num_bytes;
-> > > > > > -               cache->used =3D old_val;
-> > > > > > +               WRITE_ONCE(cache->used, old_val);
-> > > > > >                 cache->reserved -=3D num_bytes;
-> > > > > >                 cache->reclaim_mark =3D 0;
-> > > > > >                 space_info->bytes_reserved -=3D num_bytes;
-> > > > > > @@ -3690,7 +3690,7 @@ int btrfs_update_block_group(struct btrfs=
-_trans_handle *trans,
-> > > > > >                 spin_unlock(&space_info->lock);
-> > > > > >         } else {
-> > > > > >                 old_val -=3D num_bytes;
-> > > > > > -               cache->used =3D old_val;
-> > > > > > +               WRITE_ONCE(cache->used, old_val);
-> > > > > >                 cache->pinned +=3D num_bytes;
-> > > > > >                 btrfs_space_info_update_bytes_pinned(space_info=
-, num_bytes);
-> > > > > >                 space_info->bytes_used -=3D num_bytes;
-> > > > > > diff --git a/fs/btrfs/discard.c b/fs/btrfs/discard.c
-> > > > > > index e815d165cccc..71c57b571d50 100644
-> > > > > > --- a/fs/btrfs/discard.c
-> > > > > > +++ b/fs/btrfs/discard.c
-> > > > > > @@ -363,7 +363,7 @@ void btrfs_discard_queue_work(struct btrfs_=
-discard_ctl *discard_ctl,
-> > > > > >         if (!block_group || !btrfs_test_opt(block_group->fs_inf=
-o, DISCARD_ASYNC))
-> > > > > >                 return;
-> > > > > >
-> > > > > > -       if (block_group->used =3D=3D 0)
-> > > > > > +       if (READ_ONCE(block_group->used) =3D=3D 0)
-> > > > >
-> > > > > There are at least 3 more places in discard.c where we access ->u=
-sed
-> > > > > without being under the protection of the block group's spinlock.
-> > > > > So let's fix this for all places and not just a single one...
-> > > > >
-> > > > > Also, this is quite ugly to spread READ_ONCE/WRITE_ONCE all over =
-the place.
-> > > > > What we typically do in btrfs is to add helpers that hide them, s=
-ee
-> > > > > block-rsv.h for example.
-> > > > >
-> > > > > Also, I don't think we need READ_ONCE/WRITE_ONCE.
-> > > > > We could use data_race(), though I think that could be subject to
-> > > > > load/store tearing, or just take the lock.
-> > > > > So adding a helper like this to block-group.h:
-> > > > >
-> > > > > static inline u64 btrfs_block_group_used(struct btrfs_block_group=
- *bg)
-> > > > > {
-> > > > >    u64 ret;
-> > > > >
-> > > > >    spin_lock(&bg->lock);
-> > > > >    ret =3D bg->used;
-> > > > >    spin_unlock(&bg->lock);
-> > > > >
-> > > > >     return ret;
-> > > > > }
+> What's mildly confusing is for pages used for altmap to be accounted for
+> as if it's an allocation in vmstat - but for that capacity to be chopped
+> out of the memory-block (it "makes sense" it's just subtly misleading).
 
-I understand that using lock to protect block_group->used
-in discard.c file is feasible. In addition, I looked at the code
-of block-group.c and found that locks have been added in
-some places where block_group->used are used. , it
-seems that it is not appropriate to call
-btrfs_block_group_used again to obtain (because it will
-cause deadlock). I would like to ask other similar places
-where block_group->used needs to call
-btrfs_block_group_used function in addition to the four
-places in discard.c?
+Would the following make it better or worse?
 
-> > > >
-> > > > Would memory barriers be sufficient here? Taking a lock just for
-> > > > reading one member seems excessive...
+diff --git a/drivers/base/memory.c b/drivers/base/memory.c
+index 4765f2928725c..17a4432427051 100644
+--- a/drivers/base/memory.c
++++ b/drivers/base/memory.c
+@@ -237,9 +237,12 @@ static int memory_block_online(struct memory_block *mem)
+          * Account once onlining succeeded. If the zone was unpopulated, it is
+          * now already properly populated.
+          */
+-       if (nr_vmemmap_pages)
++       if (nr_vmemmap_pages) {
+                 adjust_present_page_count(pfn_to_page(start_pfn), mem->group,
+                                           nr_vmemmap_pages);
++               adjust_managed_page_count(pfn_to_page(start_pfn),
++                                         nr_vmemmap_pages);
++       }
+  
+         mem->zone = zone;
+         mem_hotplug_done();
+@@ -273,17 +276,23 @@ static int memory_block_offline(struct memory_block *mem)
+                 nr_vmemmap_pages = mem->altmap->free;
+  
+         mem_hotplug_begin();
+-       if (nr_vmemmap_pages)
++       if (nr_vmemmap_pages) {
+                 adjust_present_page_count(pfn_to_page(start_pfn), mem->group,
+                                           -nr_vmemmap_pages);
++               adjust_managed_page_count(pfn_to_page(start_pfn),
++                                         -nr_vmemmap_pages);
++       }
+  
+         ret = offline_pages(start_pfn + nr_vmemmap_pages,
+                             nr_pages - nr_vmemmap_pages, mem->zone, mem->group);
+         if (ret) {
+                 /* offline_pages() failed. Account back. */
+-               if (nr_vmemmap_pages)
++               if (nr_vmemmap_pages) {
+                         adjust_present_page_count(pfn_to_page(start_pfn),
+                                                   mem->group, nr_vmemmap_pages);
++                       adjust_managed_page_count(pfn_to_page(start_pfn),
++                                                 nr_vmemmap_pages);
++               }
+                 goto out;
+         }
+  
+Then, it would look "just like allocated memory" from that node/zone.
 
-Do I need to perform performance testing to ensure the impact if I lock it?
+As if, the memmap was allocated immediately when we onlined the memory
+(see below).
 
-> > >
-> > > Do you think there's heavy contention on this lock?
-> >
-> > This is not about contention. Spin lock should just never be used this
-> > way. Or any lock actually. The critical section only contains a single
-> > fetch operation which does not justify using a lock.
-> > Hence the only guarantee such lock usage provides are the implicit
-> > memory barriers (from which maybe only one of them is really needed
-> > depending on the context where this helper is going to be used).
-> >
-> > Simply put, the lock is degraded into a memory barrier this way. So
-> > why not just use the barriers in the first place if only ordering
-> > guarantees are required? It only makes sense.
->
-> As said earlier, it's a lot easier to reason about lock() and unlock()
-> calls rather than spreading memory barriers in the write and read
-> sides.
-> Historically he had several mistakes with barriers, they're simply not
-> as straightforward to reason as locks.
->
-> Plus spreading the barriers in the read and write sides makes the code
-> not so easy to read, not to mention in case of any new sites updating
-> the member, we'll have to not forget adding a barrier.
->
-> It's just easier to reason and maintain.
->
->
-> >
-> > > Usually I prefer to go the simplest way, and using locks is a lot mor=
-e
-> > > straightforward and easier to understand than memory barriers.
-> >
-> > How so? Locks provide the same memory barriers implicitly.
->
-> I'm not saying they don't.
-> I'm talking about easier code to read and maintain.
->
-> >
-> > > Unless it's clear there's an observable performance penalty, keeping
-> > > it simple is better.
-> >
-> > Exactly. Here is where our opinions differ. For me 'simple' means
-> > without useless locking.
-> > I mean especially with locks they should only be used when absolutely
-> > necessary. In a sense of 'use the right tool for the job'. There are
-> > more lightweight tools possible in this context. Locks provide
-> > additional guarantees which are not needed here.
-> >
-> > On the other hand I understand that using a lock is a 'better safe
-> > than sorry' approach which should also work. Just keep in mind that
-> > spinlock may sleep on RT.
->
-> It's not about a better safe than sorry, but easier to read, reason
-> and maintain.
->
-> >
-> > > data_race() may be ok here, at least for one of the unprotected
-> > > accesses it's fine, but would have to analyse the other 3 cases.
-> >
-> > That's exactly my thoughts. Maybe not even the barriers are needed
-> > after all. This needs to be checked on a per-case basis.
-> >
-> > > >
-> > > > > And then use btrfs_bock_group_used() everywhere in discard.c wher=
-e we
-> > > > > aren't holding a block group's lock.
-> > > > >
-> > > > > Thanks.
-> > > > >
-> > > > >
-> > > > > >                 add_to_discard_unused_list(discard_ctl, block_g=
-roup);
-> > > > > >         else
-> > > > > >                 add_to_discard_list(discard_ctl, block_group);
-> > > > > > --
-> > > > > > 2.34.1
-> > > > > >
-> > > > > >
-> > > > >
+> 
+> I thought the system was saying i'd allocated memory (from the 'free'
+> capacity) instead of just reducing capacity.
+
+The question is whether you want that memory to be hidden from MemTotal
+(carveout?) or treated just like allocated memory (allocation?).
+
+If you treat the memmap as "just a memory allocation after early boot"
+and "memap_on_memory" telling you to allocate that memory from the
+hotplugged memory instead of the buddy, then "carveout"
+might be more of an internal implementation detail to achieve that memory
+allocation.
+
+
+>>> stupid question - it sorta seems like you'd want this as the default
+>>> setting for driver-managed hotplug memory blocks, but I suppose for
+>>> very small blocks there's problems (as described in the docs).
+>>
+>> The issue is that it is per-memblock. So you'll never have 1 GiB ranges
+>> of consecutive usable memory (e.g., 1 GiB hugetlb page).
+>>
+> 
+> That makes sense, i had not considered this.  Although it only applies
+> for small blocks - which is basically an indictment of this suggestion:
+> 
+> https://lore.kernel.org/linux-mm/20250127153405.3379117-1-gourry@gourry.net/
+> 
+> So I'll have to consider this and whether this should be a default.
+> It's probably this is enough to nak this entirely.
+> 
+> 
+> ... that said ....
+> 
+> Interestingly, when I tried allocating 1GiB hugetlb pages on a dax device
+> in ZONE_MOVABLE (without memmap_on_memory) - the allocation fails silently
+> regardless of block size (tried both 2GB and 256MB).  I can't find a reason
+> why this would be the case in the existing documentation.
+
+Right, it only currently works with ZONE_NORMAL, because 1 GiB pages are
+considered unmovable in practice (try reliably finding a 1 GiB area to
+migrate the memory to during memory unplug ... when these hugetlb things are
+unswappable etc.).
+
+I documented it under https://www.kernel.org/doc/html/latest/admin-guide/mm/memory-hotplug.html
+
+"Gigantic pages are unmovable, resulting in user space consuming a lot of unmovable memory."
+
+If we ever support THP in that size range, we might consider them movable
+because we can just split/swapout them when allcoating a migration target
+fails.
+
+> 
+> (note: hugepage migration is enabled in build config, so it's not that)
+> 
+> If I enable one block (256MB) into ZONE_NORMAL, and the remainder in
+> movable (with memmap_on_memory=n) the allocation still fails, and:
+> 
+>     nr_slab_unreclaimable 43
+> 
+> in node1/vmstat - where previously there was nothing.
+> 
+> Onlining the dax devices into ZONE_NORMAL successfully allowed 1GiB huge
+> pages to allocate.
+> > This used the /sys/bus/node/devices/node1/hugepages/* interfaces to test
+> 
+> Using the /sys/kernel/mm/hugepages/hugepages-1048576kB/nr_hugepages with
+> interleave mempolicy - all hugepages end up on ZONE_NORMAL.
+> 
+> (v6.13 base kernel)
+> 
+> This behavior is *curious* to say the least.  Not sure if bug, or some
+> nuance missing from the documentation - but certainly glad I caught it.
+
+See above :)
+
+> 
+> 
+>> I thought we had that? See MHP_MEMMAP_ON_MEMORY set by dax/kmem.
+>>
+>> IIRC, the global toggle must be enabled for the driver option to be considered.
+> 
+> Oh, well, that's an extra layer I missed.  So there's:
+> 
+> build:
+>    CONFIG_MHP_MEMMAP_ON_MEMORY=y
+>    CONFIG_ARCH_MHP_MEMMAP_ON_MEMORY_ENABLE=y
+> global:
+>    /sys/module/memory_hotplug/parameters/memmap_on_memory
+> device:
+>    /sys/bus/dax/devices/dax0.0/memmap_on_memory
+> 
+> And looking at it - this does seem to be the default for dax.
+> 
+> So I can drop the existing `nuance movable/memmap` section and just
+> replace it with the hugetlb subtleties x_x.
+> 
+> I appreciate the clarifications here, sorry for the incorrect info and
+> the increasing confusing.
+
+
+No worries. If you have ideas on what to improve in the memory hotplug
+docs, please let me know!
+
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
