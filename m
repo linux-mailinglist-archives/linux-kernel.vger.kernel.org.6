@@ -1,160 +1,134 @@
-Return-Path: <linux-kernel+bounces-521675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49537A3C0BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:57:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5065A3C075
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:49:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4662E3ABFF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:52:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A5F07A359A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:48:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B1421F754E;
-	Wed, 19 Feb 2025 13:50:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 851241C4A16;
+	Wed, 19 Feb 2025 13:49:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="e/MgA4NT"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="nEzbjkMW"
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F26301F5837;
-	Wed, 19 Feb 2025 13:50:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6A5C1E0B61
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 13:49:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739973003; cv=none; b=JCtS6caZQqd04PUWLAX3ZEik4hfKcrzG2Ei0LaMBgR6P5WyXrXUM1w0RRho9KEF5aGNiBmmxcQMGK+srPGnNsm4BRIpvBZSnXZUlOWeu91A73l6nO4tW2Rmzw5vx+TdDoyWXgkU6MAosm7k0J3i36M5PfEUGDzDO8e1RhJXdLlY=
+	t=1739972949; cv=none; b=W4NUvueoH0u9BzC32FmZDUEYskOSoFR9aZUgL8yxsvIoeW17dz6KrIS4HecfJ/W4UqbpyUUEfU3fwOU1+jl3PPayNiOrP6/3DEiKcF2vmuHXmeW0KNq8pshddHALF+vCjSxFW2Gk64oNSprpFF2hc3XeXfkRF0XtbIPcOwtJ0Tk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739973003; c=relaxed/simple;
-	bh=viJXLf5qesszZisZjfDfCS6B8SB7JofUtDlzQmb2wWg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=e03MEB0MMkU/RVq5VBF7g5lXRzSSq5uOlfbWSG8wUg9UIK9f8yyZwVxLuB4kFgUALeahxJ74MJq9Smjt0Q9qbt6r1/H5g7sDR0ANvYSW/8vQPyTrLfngoDevVGU7HODQ1sRww8z+Y/IKS9/7LiO67WkyzOTEMehZo3egE9bIu4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=e/MgA4NT; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [127.0.1.1] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A974D6B5;
-	Wed, 19 Feb 2025 14:48:27 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1739972908;
-	bh=viJXLf5qesszZisZjfDfCS6B8SB7JofUtDlzQmb2wWg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=e/MgA4NTIEOgo09qQ8yH57zv9tZ5cJZhfOVl+oMYrNxJxtmW8jXlUK/6MMQetbsmM
-	 yyu7dHeDCOUs4peydKnuqkHQHtdgFQyLA4aTk3idkgBt43y6iBa0XWor8H7pWKwMxA
-	 7ZK9+0agggx3dK/NBp9Na/VmkfZp/3V+0xmTr47o=
-From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Date: Wed, 19 Feb 2025 15:49:04 +0200
-Subject: [PATCH 10/18] media: rcar-csi2: Optimize rcsi2_calc_mbps()
+	s=arc-20240116; t=1739972949; c=relaxed/simple;
+	bh=BUI9OqmTcDikEdPpFqYBtUMWk3tIemL4LfC4CrBlhCs=;
+	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GKH0T3p/XNLodXL/1z/5cqJ8+rb+vhvhf1KNQaLLKIGWhkaQFi26YRwft99h9LxRXlJ1qW3//e42Hfe38emVQDTs9Ia3JW97Cbyax8MDHZ7e/TkMvSQITnFZ2TJfITp/TlQJg0+lUPN46TQn2WKyPhjOqBrb4v2gBmTD94cxq0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=nEzbjkMW; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-oi1-f198.google.com (mail-oi1-f198.google.com [209.85.167.198])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 30C9B403E4
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 13:49:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1739972946;
+	bh=vZ2L/MpVD9pi+KEJm9yQ5LlxRKJxVGZ45ty3yuLt/90=;
+	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=nEzbjkMWCJnyEWQBKILuTnDW97lTVU/aBTXW2aqzx3rC5S734Yb6BkrGSCEQuuZ+X
+	 zcvHcndsb92buXpnQB7mKmbKhO7MMKe4YKoj6vSpuDuVCenqqJjW5/Hszp0KpG3My6
+	 yG0encPaaPDwQXpT4rtKh2/pvuV3+KyWhjSoULAkdXr3FdEoPIzZchwmPz7GfcJBvD
+	 YUMf27tiqfqpYwvL5j+e8Vb14ZwoUst7apMN01wa4vgW3HnIrhUHK1g5iMOtQoTq3v
+	 2iCjpoTSHi0ATFRyvLkpEJJoTBH1DsDUUhioxb6dfbRfpLvJtKVQgGPXYDfaT0FjqF
+	 UbylJ7ch0ayQw==
+Received: by mail-oi1-f198.google.com with SMTP id 5614622812f47-3f402d2e007so2393666b6e.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 05:49:06 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739972945; x=1740577745;
+        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vZ2L/MpVD9pi+KEJm9yQ5LlxRKJxVGZ45ty3yuLt/90=;
+        b=PODuwzuK4+8sK7Djv4OM7ii+PrbeNsr3M2fGcPYxrUKa9qiVpa9shXyOEDQak1mMPe
+         ovHUBUPYlyHvCXo0SpMZJXzcuM7vnSAysIArKqyxj+6j1ISPtiVvgiKgrZT/TiPMyaSm
+         nzJZ9rg693G+vxEeqrZPnbXciyvny/Ab1eJOUu9k8gMfqUTVUsW5Zlbs6UQCgFRA9gbT
+         6txLSOPqhWoGZcl7h2gwohvClurAaZDWoW37K4ZZAm3brc8FjpVZFE9c4YU0Pqhzvw/Y
+         scHGMXVtDpq6vRAsBXFt/KEu1C0ngxFQmI2RMSoy+ub7EtjUpwOtZnnoHpSdAmt09PTB
+         xRFA==
+X-Forwarded-Encrypted: i=1; AJvYcCV0KCtOzd+zdBEKoReFXux7a7z9E9gV/lqCGD3V7pj0ZvIqIpgrPfTQsJhHYvjD4qfyIDWl7T3mlPn8yoM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxE1H71dZAMhPEQDYcBKtiknGJBlxy9jlRTBi4MHPLcDxDkrhwT
+	9lmCDXj9UEos1fAkwT9qwN09Q080nMBXQi2lwntqiogVsdL4RjaXJ65kS2ejnViGyLsAdg4WwuF
+	RFW5bk/cNz95M3kWEti0IeCdcm9yV3dFvRIywAiUoyhwRoeW6Vgtv/J9emBw0UUs62Ugptl7QxT
+	dk4mrFsuWhVPxIYZp17S9Gc5lH33WpCeBmBQ2KNEmUQTD8fMvUWy6p
+X-Gm-Gg: ASbGncvnoj+vuuvjOdXw+nCSLWtyksEriWYoqL8+xHV1OhYJANPJH09EcR1SrqVX1k6
+	QpM7Wclyxd3/IsWzf8Kd8oyMLhMa6VTjzHhJ7y00kld3+LUrC544BM/quAUVUjKzL2lqpyFJVqc
+	S953lvMtSXSedJVWM=
+X-Received: by 2002:a54:470b:0:b0:3f3:fd67:2608 with SMTP id 5614622812f47-3f3fd672befmr5957015b6e.29.1739972945145;
+        Wed, 19 Feb 2025 05:49:05 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGemB5vEg69QJBbksFxTXFeiKLyjYXC6wA0L7MlZFlY9odqxeB6ktR9vGlUGBZLGLU/XQ5O+HGNQ5YSDDhmNxY=
+X-Received: by 2002:a54:470b:0:b0:3f3:fd67:2608 with SMTP id
+ 5614622812f47-3f3fd672befmr5956995b6e.29.1739972944890; Wed, 19 Feb 2025
+ 05:49:04 -0800 (PST)
+Received: from 348282803490 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 19 Feb 2025 05:49:04 -0800
+Received: from 348282803490 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 19 Feb 2025 05:49:04 -0800
+From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+In-Reply-To: <20250102183746.411526-2-e@freeshell.de>
+References: <20250102183746.411526-1-e@freeshell.de> <20250102183746.411526-2-e@freeshell.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250219-rcar-streams-v1-10-f1b93e370aab@ideasonboard.com>
-References: <20250219-rcar-streams-v1-0-f1b93e370aab@ideasonboard.com>
-In-Reply-To: <20250219-rcar-streams-v1-0-f1b93e370aab@ideasonboard.com>
-To: =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>, 
- Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-X-Mailer: b4 0.15-dev-42535
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2170;
- i=tomi.valkeinen+renesas@ideasonboard.com; h=from:subject:message-id;
- bh=viJXLf5qesszZisZjfDfCS6B8SB7JofUtDlzQmb2wWg=;
- b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBnteFz2itzgqVD1jVMjzPHBPjeEYU16vWCtR4qw
- aWzFEueyayJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCZ7XhcwAKCRD6PaqMvJYe
- 9WANEACEZxzbcWF6noX7DGwaYrMe6e6FGGGy1afvEikmWWbRG/I9bT+ynbOVAAncwAIDL5IBE0f
- S5TYBRDiiqLjOk3OMTWRbFYAj6DWwtw7foGHnvcSeRkch861GmcxsVCdmjamVOosUR1Tc1KWpcH
- aeLpU1Cyi2g8HjmrlWkZ5AxUaCv8S0eM4idTi+l1TsMYlw6Z017coSrTzEfJkz3rKH7CkRWHKnp
- T+vrSuil1zzwAf0rANUU7GH8lR2Ehaw+tacZOabNNgPi3vxl0z8dQO7O9ZKzcwqU9rtRdUgzHq1
- y5Lm5NcMZdtD+ghhwdc3JXA5UThPTLA/GKvrf0mPSF0+6DDFsVHNc+W3Lr14B71uqAmfa72FHQW
- cPGJ6XWCKzAGvXUnLWNPSDzW7rTQ6iJg7fpL6JahTNQ3+YDGHPdIfaMHdOyd6APpSjh9mdW3Erk
- dH/Wq1BdtZgy3mQpj6ACNvuIGbBaGJlR4D+odX+qlA4P2UG7hMlICEJwuY2bGy+vu3r5B/7FxHi
- w8/ScEmz6ymppDbltp4agzS4TuD83g5HsxESLeJqFsLQHJEvq5T5EeGCvE8ZLU6xdnGGmjGl2O/
- meNGxFfz+ePXhPhc7mOjMvq28pZlzP9HsJcYHQZ7V5ZhOItsDjQGqk2YV/+nmv3/7ZQMCzTFumP
- i8G+bB1SbHkewqw==
-X-Developer-Key: i=tomi.valkeinen+renesas@ideasonboard.com; a=openpgp;
- fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
+Mime-Version: 1.0
+Date: Wed, 19 Feb 2025 05:49:04 -0800
+X-Gm-Features: AWEUYZkTX4lQFT8guSxek473k_5pfX61Dv6EsoPJnhEMc3gblikrRm7DyM9abC4
+Message-ID: <CAJM55Z-g4nQXcHe94KUj78W5N1PfSbRo03uPs31_8gH41z4aww@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] riscv: dts: starfive: jh7110: pciephy0 USB 3.0
+ configuration registers
+To: E Shattow <e@freeshell.de>, Conor Dooley <conor@kernel.org>, 
+	Emil Renner Berthing <kernel@esmil.dk>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
+Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-With modern drivers supporting V4L2_CID_LINK_FREQ, we don't need to do
-any calculations based on the bpp and number of lanes when figuring out
-the link frequency. However, the code currently always runs code to get
-the bpp and number of lanes.
+E Shattow wrote:
+> StarFive JH7110 contains a Cadence USB2.0+USB3.0 controller IP block that
+> may exclusively use pciephy0 for USB3.0 connectivity. Add the register
+> offsets for the driver to enable/disable USB3.0 on pciephy0.
+>
+> Signed-off-by: E Shattow <e@freeshell.de>
 
-Optimize the rcsi2_calc_mbps() so that we only do that when needed, i.e.
-when V4L2_CID_LINK_FREQ is not supported by the upstream subdevice.
+Reviewed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
 
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
----
- drivers/media/platform/renesas/rcar-csi2.c | 32 ++++++++++++++++++------------
- 1 file changed, 19 insertions(+), 13 deletions(-)
+Thanks!
 
-diff --git a/drivers/media/platform/renesas/rcar-csi2.c b/drivers/media/platform/renesas/rcar-csi2.c
-index f8b581e10886..d6d5c18b0b4c 100644
---- a/drivers/media/platform/renesas/rcar-csi2.c
-+++ b/drivers/media/platform/renesas/rcar-csi2.c
-@@ -1001,33 +1001,39 @@ static int rcsi2_get_active_lanes(struct rcar_csi2 *priv,
- static int rcsi2_calc_mbps(struct rcar_csi2 *priv,
- 			   struct v4l2_subdev_state *state)
- {
--	const struct rcar_csi2_format *format;
--	struct v4l2_mbus_framefmt *fmt;
- 	struct v4l2_subdev *source;
- 	unsigned int lanes;
- 	unsigned int bpp;
- 	s64 freq;
- 	u64 mbps;
--	int ret;
- 
- 	if (!priv->remote)
- 		return -ENODEV;
- 
- 	source = priv->remote;
- 
--	ret = rcsi2_get_active_lanes(priv, &lanes);
--	if (ret)
--		return ret;
-+	if (v4l2_ctrl_find(source->ctrl_handler, V4L2_CID_LINK_FREQ)) {
-+		bpp = 0;
-+		lanes = 0;
-+	} else {
-+		const struct rcar_csi2_format *format;
-+		struct v4l2_mbus_framefmt *fmt;
-+		int ret;
- 
--	fmt = v4l2_subdev_state_get_format(state, RCAR_CSI2_SINK);
--	if (!fmt)
--		return -EINVAL;
-+		ret = rcsi2_get_active_lanes(priv, &lanes);
-+		if (ret)
-+			return ret;
- 
--	format = rcsi2_code_to_fmt(fmt->code);
--	if (!format)
--		return -EINVAL;
-+		fmt = v4l2_subdev_state_get_format(state, RCAR_CSI2_SINK);
-+		if (!fmt)
-+			return -EINVAL;
-+
-+		format = rcsi2_code_to_fmt(fmt->code);
-+		if (!format)
-+			return -EINVAL;
- 
--	bpp = format->bpp;
-+		bpp = format->bpp;
-+	}
- 
- 	freq = v4l2_get_link_freq(source->ctrl_handler, bpp, 2 * lanes);
- 	if (freq < 0) {
-
--- 
-2.43.0
-
+> ---
+>  arch/riscv/boot/dts/starfive/jh7110.dtsi | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110.dtsi b/arch/riscv/boot/dts/starfive/jh7110.dtsi
+> index 0d8339357bad..75ff07303e8b 100644
+> --- a/arch/riscv/boot/dts/starfive/jh7110.dtsi
+> +++ b/arch/riscv/boot/dts/starfive/jh7110.dtsi
+> @@ -611,6 +611,8 @@ usbphy0: phy@10200000 {
+>  		pciephy0: phy@10210000 {
+>  			compatible = "starfive,jh7110-pcie-phy";
+>  			reg = <0x0 0x10210000 0x0 0x10000>;
+> +			starfive,sys-syscon = <&sys_syscon 0x18>;
+> +			starfive,stg-syscon = <&stg_syscon 0x148 0x1f4>;
+>  			#phy-cells = <0>;
+>  		};
+>
+> --
+> 2.45.2
+>
 
