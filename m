@@ -1,169 +1,151 @@
-Return-Path: <linux-kernel+bounces-521629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DDF7A3C010
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:36:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEE84A3C02A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:41:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C24CF188BB92
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:36:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72DC53A79FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:36:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 357DF1E32D3;
-	Wed, 19 Feb 2025 13:36:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FFAB1E51EE;
+	Wed, 19 Feb 2025 13:36:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EHph9ofT"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="I4znsC4k"
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BACB01E5718;
-	Wed, 19 Feb 2025 13:36:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E13381DDA36
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 13:36:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739972183; cv=none; b=VJwwMY6iJrOKP99qj6QqthQbtI7AGHyGpU834S8dNgyHYa4/hqm43eEEEuSMfZ+3uEXE5AfgzPtYRpI0lLhGh0ca0gVNV0uMzvYfDDJmYr7fpn1kLsQNPBrujoz6v/5bsS6fTAmR1jK9orvV60X+NIDP/HMwACHNaEhIJBWbMik=
+	t=1739972216; cv=none; b=gH6zybpiGPZTGJmkVJP6Yi7qL2ATMNID3+kafEPmdBqgi2ZkcK8u8+aaf4DBVQmTB5XS84qPslBEIv7t+xYELzHYW2bFMsqAVj9S89ouw2AGyXc1ojjK/xSCY9RTi1wDBFUo/wtIWjejfHiSJ2Z0+GovM9V2FrJh0l9xetzAw74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739972183; c=relaxed/simple;
-	bh=7ihWjXMDbjH1f4hkfj9yu5zjMSN4SJcUGVD62F9f64Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F6P3613P6eq+5a2tpssHQKIS3befUcA6LUF1rQIAphQ4IHBWYaRs3vU7bYArqsti07r5Y/mAP8Yvx2eZh2q0TcA434/Gu85+BHAz7179Orq6R9Z6KU5EZOucccKVheyd8S5LNRbkzVtro9vwB4bnKPEEZa2aS54N+HJTvXT4pcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EHph9ofT; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-30737db1aa9so63425071fa.1;
-        Wed, 19 Feb 2025 05:36:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739972179; x=1740576979; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HSsnV19R3euCe7A+mmLLwP9bRWysONanwRs/f83625E=;
-        b=EHph9ofTvDHNDUiWoC5q9QoZazOKIE+mXp9G1Q9LoaK7hTUOsGe1QfgVmaB6QaQ156
-         ZccPgs6KyZBUT1o59d0GhKl7DgNP/4YlkN/FnhSe8eAq01AWKyP/rHsSNTmazugBg0K7
-         PBRJfTN/vvaISoQeKAuH7pXHMc3KwH1+rc111zvK4ftR+FhGR5DSGlO7l8JTvwgU/xKC
-         5EJFxhxzvXVp7MkQLmOvbRrdaXaboGsYfP7/Itbtc5gLFRn5xTCY/O8ZAvdXmm1QtIap
-         W6wO/7JcHTvRKu9rDQMkrvxlB4R2dhgCifcMTkonhn4kHw+c94PWLCEX5IGpSsR2jBc/
-         FJLQ==
+	s=arc-20240116; t=1739972216; c=relaxed/simple;
+	bh=a5amTpCIxi1oHRkT9I7QqR+ljS6+mKJGpRiYNSmKfLo=;
+	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f8sPhq6rYPYgfSDQ9yafefenp8UiM5xrkjCm6eHfUPipGrpk48DnoqNl7WQ83bp4Ymcqf3vCV+TnUpdxRaVEGxevHIlNHmu+jrf6wYBdQzh9I71jX6jknt+k/hjTeIxJPwbH0KT0DyXGfzM7LdbwvEK2KdZfiEsdBV6CruTGquI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=I4znsC4k; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com [209.85.167.200])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id B027F3F2F0
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 13:36:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1739972210;
+	bh=oxEPsf6BXD6TadgvNAnbgKVAmCgtOTjj+4mMTP9U1dQ=;
+	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=I4znsC4k9jemo5zvo5E8Xgu9kjstO3YqvdC9bXhboLtiubU1tC+th/bncec2Onqg+
+	 Bxht7qbFe0F32lSl3/TwLNcVOuloIyvfhpInZFusfJpHkr/SsxL2ACng+4hBnMCMGb
+	 r+jQDi+F1K02rBdKK0nWCVRryj0Nwj2PyRDRhP4FJfZHJIaPDxM+AUGC3Z1BUyKe6a
+	 eRk6TVNiGbiC3oQ5kCfmR74P1WI5QzoTENbrEQr6zDd+cjthpewySyMCiL/zCRPC1b
+	 APKEJgRxRhxamNM505JCnTSyXmRZ4znqXe7c8cZ8qQ+UbQ5tw1G9gp02EUQVUguGhP
+	 KbFSZ9NitsC7w==
+Received: by mail-oi1-f200.google.com with SMTP id 5614622812f47-3f40c241372so525841b6e.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 05:36:50 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739972179; x=1740576979;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HSsnV19R3euCe7A+mmLLwP9bRWysONanwRs/f83625E=;
-        b=RflRrUdlzLEAYFjHlbQHGnVdSE79TAPWd4CUhuUCivBPVkNwtBnamio48f0UG4h9Na
-         WkGRbFjQuG3czAItUlgpLHCpJ+8FWe4N1WMrYGSrDYjSMP5obmyiz78nBW3l5oH+zp8B
-         cA7bojwC5YiysS46aaOnELX1tsWZV9ozzeFEPQzs1499Ndg8wujoWJ4ZQIkHZ4ADVEZ8
-         D+NERPB9/MLcF/lGsQoJf2QJbflQ1FMpj6fgmxg4V3GwkP5nQ6Ti7qT7wl3B0zwuM+uD
-         GznHG4fA5kBeaD9NUGehhOJKAYTHO4IOz/IgEmRyUAXjdL1hYE+qjy270jITIq9zsNmQ
-         h86g==
-X-Forwarded-Encrypted: i=1; AJvYcCVlAafVaG1XGUPmAWa6lJ3ra7QzrZF2OhXG0F+GAxMEZwcHmadcKY3GEbTh9ZTtLGZHpCNqKDG6Cx96@vger.kernel.org, AJvYcCX1gtrW92ZbAYc5xAOA9FG0Fj+TCoa9D91VdsKk0Tow036k0HEzWKVJlQ2Oiv7KUjTk0HF/O7NkozRj6APy@vger.kernel.org, AJvYcCX6AR8svjcZ73abSVUYw/2fs+9Y2EpfGIA0AIBmFaxw0pv04L+5Ifb2D+2fgM9NI6E58ehKted8QPoi@vger.kernel.org, AJvYcCXnBJrzY47FM7s6JYFUyqDenI8UGvf3udMzLOUiu9dKX4vcGyxLISy97iFjj2badw1J2llMdvy61qToygH2MiH+jA0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztFpwL6O4+LO3DopVY7a0X3YusvLDS923Jxs6SwGGwrAznEbw+
-	x8WOlSDzdyHl6hrAMfOhpERB44e514dpagreT3i2hLUvglClSlH8MlEzhg==
-X-Gm-Gg: ASbGncvI10lddu6egYTdZJBK7aideVykkyh1U5YIEAeJpIWUfx84LRzl7NjeEPX+e5M
-	TxCdkH+ILU5N1whDfCZVmWf8+ehEORSAD++AmMCglemYT0wJeU+RhqWg6A78DjWtql3uPDfreEv
-	uFIIpOPJ9ZlMPYruum4ThRMgrk4IQwBV55qWpbmZu1UBO4fZ1Vkw8AsV0b0e6TSERsG7gYSiTo/
-	oZ3Pyh/j/lHaoCLv2AvU4wD18NZ9GX20+0ZbwhJgWlOpm7OGqls6Nw2NC21tNqYJZtkLzuyi6Md
-	V48qT4cqVP8NxA0PCviZPb5lDnJnUULyCqVEAiLIG+AyMeCun1bTKPLvtp1xmNY20vqZpIKT
-X-Google-Smtp-Source: AGHT+IECONOuwKIydK//bT3AGqnTWMmCdF2rv/KJJHD8I1175BIY8l67zp+r+qNFr42gMLhOkEmBmA==
-X-Received: by 2002:a05:651c:2222:b0:308:f4cc:951b with SMTP id 38308e7fff4ca-30a45035a2fmr14037951fa.23.1739972178597;
-        Wed, 19 Feb 2025 05:36:18 -0800 (PST)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30a258703c9sm13795701fa.7.2025.02.19.05.36.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Feb 2025 05:36:16 -0800 (PST)
-Message-ID: <f1c6078e-39bf-499f-b7ab-17526b3e60a9@gmail.com>
-Date: Wed, 19 Feb 2025 15:36:14 +0200
+        d=1e100.net; s=20230601; t=1739972209; x=1740577009;
+        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oxEPsf6BXD6TadgvNAnbgKVAmCgtOTjj+4mMTP9U1dQ=;
+        b=tpGTANgHOSRUCVw++wrV5MmXT89dPkQgoeqd2LN99G0sEMuLa5gykMipGYsxHE3NNl
+         1SkM5ThcJ+OQ81pc3WtGXPiV2Q8Y2xjQwo+W9ke3hbZr101WQhKYF8rHByWdr5RAKifb
+         UJP58+AhBjTPux882Kync8E2CkvbhrdKC073XbvfKw/bokf66aMw0bU7J3yFYwis58MZ
+         gtIbnJnhCFxbVK/WS5Y20jJRZ9uaXtWpMq7OXP/id/dQygQDEMb9r13aV7DzGVlz+3UD
+         IQNyH82/usH3en2TpsX35Aub+P6o0aE7at2WeSZ+u1BdG5EBSiRTPMSeatwHMKXZIXAw
+         FERQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWRsFOAuwbD4HpyQTrNhSUAPuMHJmVzwHHn/5hNbZoa968zeFcLRcz5yVw2BmOGsjagjYdII9sYsxopizs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIoajQUf3lfMmsHQbupdSRZwHTVk52Ae7G3NUxEaaR/47riURe
+	uo8YtsObg9SUsaTJDHdMcGmeq0d3n848Ci6LMpyQKT8j1rP+96dUL+lI6nCYK7oGHUF/aaT5FGB
+	68O2r3z+qK5HTvNffE0cTyziX8sABTsJtP6h3R/iE6f7Dz1WxgE8pfgIlbypbvpkS+DurLIiS2+
+	UO7UPyEeALFzzD01/ukdgQnCNZV5P1ldANLBA52Omcw2sXUFHkD5Zp
+X-Gm-Gg: ASbGnctvW8ZPzhFKy3nLVXv/+ahTjtS8x+epIBH8b84RuhkhOHfvJmqrbOH7TtZgJUQ
+	cv8Ife6HRPNjUEzRqMpW8GnKFwqgSmq8L8W83Ay7st2d5H1UZxTtq/UkCHnC2oG3+KsRSx+A1TE
+	JhvrEN5ihusZkAHPA=
+X-Received: by 2002:a05:6808:13d3:b0:3f4:b14:8d8e with SMTP id 5614622812f47-3f40b148f5emr4687278b6e.39.1739972209583;
+        Wed, 19 Feb 2025 05:36:49 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IG9hEEslwxSC5v+wHCnRCJJyBAh2kUK73RjgIFEWwcww6qhYK/ZqyM+mXPwcQZQKmE7ZuGDceV0yV4YigAzOhA=
+X-Received: by 2002:a05:6808:13d3:b0:3f4:b14:8d8e with SMTP id
+ 5614622812f47-3f40b148f5emr4687243b6e.39.1739972209253; Wed, 19 Feb 2025
+ 05:36:49 -0800 (PST)
+Received: from 348282803490 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 19 Feb 2025 05:36:47 -0800
+Received: from 348282803490 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 19 Feb 2025 05:36:47 -0800
+From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+In-Reply-To: <20250213-tidy-dollop-cbfc8fc7dc91@spud>
+References: <20250213-tidy-dollop-cbfc8fc7dc91@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 6/9] iio: adc: rzg2l_adc: Use adc-helpers
-To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
- <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>,
- Hugo Villeneuve <hvilleneuve@dimonoff.com>, Nuno Sa <nuno.sa@analog.com>,
- David Lechner <dlechner@baylibre.com>,
- Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
-References: <cover.1739967040.git.mazziesaccount@gmail.com>
- <25c5d22f6f0cbd1355eee2e9d9103c3ee71cebdc.1739967040.git.mazziesaccount@gmail.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <25c5d22f6f0cbd1355eee2e9d9103c3ee71cebdc.1739967040.git.mazziesaccount@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Date: Wed, 19 Feb 2025 05:36:47 -0800
+X-Gm-Features: AWEUYZnRpiBceaWxcRC-Lan6TxlbntvEwYvjC2A02PkLG-UmOt5pf0O2VECu_Eg
+Message-ID: <CAJM55Z9VDCymHezg8WGuJUnySzNFKBJO8g5ARJegb2zAmxeuOA@mail.gmail.com>
+Subject: Re: [PATCH v1] riscv: dts: starfive: remove non-existent dac from jh7110
+To: Conor Dooley <conor@kernel.org>, linux-riscv@lists.infradead.org
+Cc: Conor Dooley <conor.dooley@microchip.com>, Emil Renner Berthing <kernel@esmil.dk>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 19/02/2025 14:31, Matti Vaittinen wrote:
-> The new devm_iio_adc_device_alloc_chaninfo() -helper is intended to help
-> drivers avoid open-coding the for_each_node -loop for getting the
-> channel IDs. The helper provides standard way to detect the ADC channel
-> nodes (by the node name), and a standard way to convert the "reg",
-> "diff-channels", "single-channel" and the "common-mode-channel" to
-> channel identification numbers used in the struct iio_chan_spec.
-> Furthermore, the helper checks the ID is in range of 0 ... num-channels.
-> 
-> The original driver treated all found child nodes as channel nodes. The
-> new helper requires channel nodes to be named channel[@N]. This should
-> help avoid problems with devices which may contain also other but ADC
-> child nodes. Quick grep from arch/* with the rzg2l_adc's compatible
-> string didn't reveal any in-tree .dts with channel nodes named
-> othervice. Also, same grep shows all the .dts seem to have channel IDs
-> between 0..num of channels.
-> 
-> Use the new helper.
-> 
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-> 
+Conor Dooley wrote:
+> From: Conor Dooley <conor.dooley@microchip.com>
+>
+> The jh7110 boards do not have a Rohm DAC on them as far as I
+> can tell, and they certainly do not have a dh2228fv, as this device does
+> not actually exist! Remove the dac nodes from the devicetrees as it is
+> not acceptable to pretend to have a device on a board in order to bind
+> the spidev driver in Linux.
+>
+> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+
+Hmm.. I thought we already did this, but it must have been another board.
+In any case
+
+Reviewed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+
+Thanks!
+/Emil
+
 > ---
-> Revision history:
-> v2 => v3:
->   - New patch
-> 
-> I picked the rzg2l_adc in this series because it has a straightforward
-> approach for populating the struct iio_chan_spec. Only other member
-> in the stuct besides the .channel, which can't use a 'template' -data,
-> is the .datasheet_name. This makes the rzg2l_adc well suited for example
-> user of this new helper. I hope this patch helps to evaluate whether these
-> helpers are worth the hassle.
-> 
-> The change is compile tested only!! Testing before applying is highly
-> appreciated (as always!).
+> CC: Emil Renner Berthing <kernel@esmil.dk>
+> CC: Conor Dooley <conor@kernel.org>
+> CC: Rob Herring <robh@kernel.org>
+> CC: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> CC: linux-riscv@lists.infradead.org
+> CC: devicetree@vger.kernel.org
+> CC: linux-kernel@vger.kernel.org
 > ---
->   drivers/iio/adc/rzg2l_adc.c | 41 ++++++++++++++++++-------------------
->   1 file changed, 20 insertions(+), 21 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
-> index cd3a7e46ea53..3e1c74019785 100644
-> --- a/drivers/iio/adc/rzg2l_adc.c
-> +++ b/drivers/iio/adc/rzg2l_adc.c
-> @@ -11,6 +11,7 @@
-
-...
-
->   
-> +static const struct iio_chan_spec rzg2l_adc_chan_template = {
-> +	.type = IIO_VOLTAGE,
-
-I just rebased this to v6.14-rc3 and noticed the channel type can no 
-longer come from the template. There are also some other minor changes. 
-I'll fix this in v4 if this same approach is kept.
-
-> +	.indexed = 1,
-> +	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
-> +};
-> +
-
-Yours,
-	-- Matti
+>  arch/riscv/boot/dts/starfive/jh7110-common.dtsi | 6 ------
+>  1 file changed, 6 deletions(-)
+>
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi b/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
+> index dd2eefc295e5..c2f70f5e2918 100644
+> --- a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
+> +++ b/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
+> @@ -350,12 +350,6 @@ &pwm {
+>  &spi0 {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&spi0_pins>;
+> -
+> -	spi_dev0: spi@0 {
+> -		compatible = "rohm,dh2228fv";
+> -		reg = <0>;
+> -		spi-max-frequency = <10000000>;
+> -	};
+>  };
+>
+>  &syscrg {
+> --
+> 2.45.2
+>
 
