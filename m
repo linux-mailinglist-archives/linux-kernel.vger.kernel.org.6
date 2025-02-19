@@ -1,305 +1,129 @@
-Return-Path: <linux-kernel+bounces-521479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 420BBA3BDEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:22:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 397EDA3BDF5
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:25:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28E04188D68B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:22:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 363093B72B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:23:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2BEE1E0E08;
-	Wed, 19 Feb 2025 12:22:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE17B1DFE25;
+	Wed, 19 Feb 2025 12:23:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Yk2wDoVx"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R3WqKKWJ"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5089F1DE8BE;
-	Wed, 19 Feb 2025 12:22:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76B551DF24B;
+	Wed, 19 Feb 2025 12:23:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739967735; cv=none; b=JtTiTvgAItUyOzrCzZ9XMV2AsnIJMqSnt88G9mhcV20t4pKE7ee2SWLYllCyTq6xiiwLoKh/SJhnVb0ZRaRal7ZO5yFYCjsx/+pv55O/1v5kAtXapxcVhEf0fWp6pkXODtQgstp+GKSgvt8HRSLYGcaFUeqnBeMVn0r00lFfnYk=
+	t=1739967784; cv=none; b=V6X8mUGiinEmAGKoi4+OorL3hFHZnwIdqWqvQFoMN0rwI5nnl3BAVVEvUrHfIxHa4IawlZUReU5sY2cKusWh8hidJ5H/hMcSP/WrIqKdAuCtcTFh+ifH+XUMfrAjScVjrgKfhYZaH7OCyFWpNoQpyOTYP2UP7nMYjdcTVIBQ00c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739967735; c=relaxed/simple;
-	bh=B7yMogAYJNxLn7fYb3PggxlyL8doB57WH2k5L7pR6qY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=otBzyEwP4B2o1/5+ojQkVnNaHgrvkthYgITxszODk88vSUo72NOWwO8IEHhQMzPoyYzBnMExkI4zQTSvN29xoYrD82UHeb62J/tHMmqMJ8w+uJkuJuv1HiQJ6+y/IzcjPtrhSKVUlneFoGFcU0FcGSPapJ/9QbMC5ZzQEYLXwEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Yk2wDoVx; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1739967731;
-	bh=B7yMogAYJNxLn7fYb3PggxlyL8doB57WH2k5L7pR6qY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Yk2wDoVxGDit/enUVx/kChc6yIHjf3EnUhy5QU1OJUi5u0cUkmQBcvOt+QTpkYs+h
-	 6XIj0BVMuC85EuWa/MZfNUAkjqn5DjNHEC/a87M+fFHu8Si6Tag0v4lma7dqwp7bEa
-	 VGYQRieRGq1JeFtxZygjDqViwbv2Dt53lOO1nBOX5LnwEH4HhogqtT3SwBd6F2h866
-	 OY2iqamC+sfOiqKpkZ7IIudZV2uE9q2oS8D3KQg2GfVe2wqVS0LlkR52/P/OA0X5PC
-	 Y6OY1Pv3pvZVFOR9BHNhWZXO/omNAqm+Bq7G1mMzGWgynzebJ/7sRvt+nEd5GQXx9j
-	 ZKvv3gm1W/H8w==
-Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0574717E1566;
-	Wed, 19 Feb 2025 13:22:10 +0100 (CET)
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: heikki.krogerus@linux.intel.com
-Cc: gregkh@linuxfoundation.org,
-	andre.draszik@linaro.org,
-	angelogioacchino.delregno@collabora.com,
-	linux@roeck-us.net,
-	shufan_lee@richtek.com,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel@collabora.com,
-	pablo.sun@mediatek.com
-Subject: [PATCH v2 2/2] arm64: dts: mediatek: mt8390-genio: Add USB, TypeC Controller, MUX
-Date: Wed, 19 Feb 2025 13:22:06 +0100
-Message-ID: <20250219122206.46695-3-angelogioacchino.delregno@collabora.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250219122206.46695-1-angelogioacchino.delregno@collabora.com>
-References: <20250219122206.46695-1-angelogioacchino.delregno@collabora.com>
+	s=arc-20240116; t=1739967784; c=relaxed/simple;
+	bh=wcPgPvt7xFuou44taFEPq4RZvM4AiyrEyzV2wScCqBE=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=XVAOtTqSYpMuCId2KLdZw/5y1zTaQ+y1eDWEkvS4ACxPmtjoPsbU6jsxtAgBI7Ii9g4Dr2lMMLJBGBfpSvkphcRe4VUjD+RJU9F+lJQP0Q/gWxskHszyUzLVnM7YhFlx0Ehy1ZfJDAVEJMtglCKwNtMofWhHs4Ibjkg3hmdt3Sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R3WqKKWJ; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-30613802a04so70378611fa.2;
+        Wed, 19 Feb 2025 04:23:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739967780; x=1740572580; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=obLMw1YZNp4QVfdT8ixQobBxsvfZhlM96MKwlYaSHKo=;
+        b=R3WqKKWJeoctFSUDse82CvF1qAS37S95aUUMKq054bdFfnMFOBL2sV36lIeI1VpKdB
+         dPi2Y65m79rle/3C/v1Gxx0t2X83OnxegbVcN78UIra/KwJLyib5WasdJSzQMR4TrKsf
+         HD4rgCWLG6uq260+GwpLFz/Me5UQzMexszzc2SlKXmJ0be5dpaKklumgY3aDNrA4i/kn
+         wIH40FJSZKYZifxpU7wzo/UOk8erFu5Svn+PPg49hVE/24iSGfRoaS5YcQQOEK3c3Y5O
+         DVzgtnHd00Ao8cY97D+3K6iejykR+q9q1V7RRYHZZ+ysool/oOeeHdIsoZtfmlCBRc7O
+         lPFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739967780; x=1740572580;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=obLMw1YZNp4QVfdT8ixQobBxsvfZhlM96MKwlYaSHKo=;
+        b=Pyix+s8te+7ZqbvGHl6Ejj721q7UAdiLKhL4b+SNOH4DdIcaNpP2+zGG3UVfOukyd7
+         2WaPd5ikYnkGeklI7R7ATPmjtdna6X9CBmd75st90BAw5tCTH1k0VAa6sGnQg7EchW7q
+         L8x4rnqD6OUB9gsADg8/5nuJrmS0QVZBnR/+WfsSv/K7cqCkjr4iDF/vAUxVurd/b6cN
+         sqc0FNmKJxtfTQJ/V4IMB1jidW0an2qrRqFc1PIu7COUNPEEK9SlUBSxVdfUro+fKsB7
+         iHifr8/C2hPljAc87QvbnuJSkV2TXDrCaoieJZc6zRyys6gSrGMEZIzYMU663eXU+LnL
+         KoAA==
+X-Gm-Message-State: AOJu0Yy8cz1CNweRU8yIYnXrW/w7QZnKDAWNS4jtJR8sP5zZ7gJPCkKf
+	nuvnZhFYKfs1556nqVGjvrKX9oaSuAvUjr7Va9BLXD4i8MsAegpX+qhaIPTwdXm80NJ4X0Uiblq
+	kFeMnLCU8fTDjHfxXmD1PtYZv6oUWcBM=
+X-Gm-Gg: ASbGncsW1KXsFhvp1R4t/AYNBlEIbsh5fKsHS+RDqllS4H9hfAre0qiad1ba7lDV2iK
+	AzmzNOMgE4RZw1PrjC9QuHOEOoQ1/pThrxTtm0qd1pdf73ZYyI4zIMQoLzzR6K7IveykIaPRS
+X-Google-Smtp-Source: AGHT+IEbloDRf96LKl3Shyqgq2lYsmT2UDmjR+IfoRJZKQQMG4b3p2NeKyCpXjPzTYxNTzZdI2bk97P5PjxERg/gE9E=
+X-Received: by 2002:a05:6512:3e23:b0:546:3136:f03d with SMTP id
+ 2adb3069b0e04-5463136f074mr878474e87.35.1739967779329; Wed, 19 Feb 2025
+ 04:22:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: Naveen Kumar P <naveenkumar.parna@gmail.com>
+Date: Wed, 19 Feb 2025 17:52:47 +0530
+X-Gm-Features: AWEUYZkFcgq0ZIxP1LRBGTMevJO9cYiAMOwpXrpvdc1uwSNH49ITMWw-snaxU-Q
+Message-ID: <CAMciSVU4vv7=WjVUhuP3PJHdpnYqrgMPCmz-HnijEbhyxk54eQ@mail.gmail.com>
+Subject: PCI: hotplug_event: PCIe PLDA Device BAR Reset
+To: linux-pci@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Bjorn Helgaas <helgaas@kernel.org>, 
+	kernelnewbies <kernelnewbies@kernelnewbies.org>, 
+	Naveen Kumar P <naveenkumar.parna@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-This board features multiple USB connectors:
- * One Type-C connector with Power Delivery and Alt. Modes;
- * One MicroUSB connector, also used for bootloader SW download;
- * One USB through the RaspberryPi-compatible pins header.
+Hi all,
 
-Add configuration for the MTU3 controllers providing OTG support
-with role switching both on the MicroUSB port, RPi pins header,
-and the Type-C port found on this board.
+I am writing to seek assistance with an issue we are experiencing with
+a PCIe device (PLDA Device 5555) connected through PCI Express Root
+Port 1 to the host bridge.
 
-Moreover, add the Richtek RT1715 Type-C Power Delivery Controller
-which manages current source/sink, linked to the iTE IT5205 Type-C
-Alternate Mode Passive Mux, handling both mode switching between
-USB (up to 3.1 Gen2 10Gbps) and DisplayPort (four lanes, DP1.4,
-op to 8.1Gbps) and plug orientation switching.
+We have observed that after booting the system, the Base Address
+Register (BAR0) memory of this device gets reset to 0x0 after
+approximately one hour or more (the timing is inconsistent). This was
+verified using the lspci output and the setpci -s 01:00.0
+BASE_ADDRESS_0 command.
 
-All USB ports reside on different controller instances, and all of
-them support host or gadget and can be configured as desired at
-runtime.
+To diagnose the issue, we checked the dmesg log, but it did not
+provide any relevant information. I then enabled dynamic debugging for
+the PCI subsystem (drivers/pci/*) and noticed the following messages
+related ACPI hotplug in the dmesg log:
 
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- .../dts/mediatek/mt8390-genio-common.dtsi     | 141 +++++++++++++++++-
- 1 file changed, 133 insertions(+), 8 deletions(-)
+[    0.465144] pci 0000:01:00.0: reg 0x10: [mem 0xb0400000-0xb07fffff]
+...
+[ 6710.000355] ACPI: \_SB_.PCI0.RP01: acpiphp_glue: Bus check in hotplug_event()
+[ 7916.250868] perf: interrupt took too long (4072 > 3601), lowering
+kernel.perf_event_max_sample_rate to 49000
+[ 7984.719647] perf: interrupt took too long (5378 > 5090), lowering
+kernel.perf_event_max_sample_rate to 37000
+[11051.409115] ACPI: \_SB_.PCI0.RP01: acpiphp_glue: Bus check in hotplug_event()
+[11755.388727] ACPI: \_SB_.PCI0.RP01: acpiphp_glue: Bus check in hotplug_event()
+[12223.885715] ACPI: \_SB_.PCI0.RP01: acpiphp_glue: Bus check in hotplug_event()
+[14303.465636] ACPI: \_SB_.PCI0.RP01: acpiphp_glue: Bus check in hotplug_event()
+After these messages appear, reading the device BAR memory results in
+0x0 instead of the expected value.
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi b/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi
-index fd977daa4185..a6c8abf371aa 100644
---- a/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi
-@@ -260,6 +260,22 @@ &i2c1 {
- 	pinctrl-0 = <&i2c1_pins>;
- 	clock-frequency = <400000>;
- 	status = "okay";
-+
-+	typec-mux@48 {
-+		compatible = "ite,it5205";
-+		reg = <0x48>;
-+
-+		mode-switch;
-+		orientation-switch;
-+
-+		vcc-supply = <&mt6359_vcn33_1_bt_ldo_reg>;
-+
-+		port {
-+			it5205_sbu_mux: endpoint {
-+				remote-endpoint = <&typec_sbu_out>;
-+			};
-+		};
-+	};
- };
- 
- &i2c2 {
-@@ -281,6 +297,66 @@ &i2c4 {
- 	pinctrl-0 = <&i2c4_pins>;
- 	clock-frequency = <1000000>;
- 	status = "okay";
-+
-+	rt1715@4e {
-+		compatible = "richtek,rt1715";
-+		reg = <0x4e>;
-+		interrupts-extended = <&pio 12 IRQ_TYPE_LEVEL_LOW>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&tcpci_int_pins>;
-+		vbus-supply = <&usb_p1_vbus>;
-+
-+		connector {
-+			compatible = "usb-c-connector";
-+			label = "USB-C";
-+			data-role = "dual";
-+			op-sink-microwatt = <10000000>;
-+			power-role = "dual";
-+			try-power-role  = "sink";
-+			pd-revision = /bits/ 8 <0x03 0x00 0x01 0x08>;
-+
-+			sink-pdos = <PDO_FIXED(5000, 2000,
-+					       PDO_FIXED_DUAL_ROLE |
-+					       PDO_FIXED_DATA_SWAP)>;
-+			source-pdos = <PDO_FIXED(5000, 2000,
-+						 PDO_FIXED_DUAL_ROLE |
-+						 PDO_FIXED_DATA_SWAP)>;
-+
-+			altmodes {
-+				displayport {
-+					svid = /bits/ 16 <0xff01>;
-+					vdo = <0x001c1c47>;
-+				};
-+			};
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					typec_con_hs: endpoint {
-+						remote-endpoint = <&mtu3_hs1_role_sw>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					typec_con_ss: endpoint {
-+						remote-endpoint = <&xhci_ss_ep>;
-+					};
-+				};
-+
-+				port@2 {
-+					reg = <2>;
-+					typec_sbu_out: endpoint {
-+						remote-endpoint = <&it5205_sbu_mux>;
-+					};
-+
-+				};
-+			};
-+		};
-+	};
- };
- 
- &i2c5 {
-@@ -849,6 +925,14 @@ pins-reset {
- 		};
- 	};
- 
-+	tcpci_int_pins: tcpci-int-pins {
-+		pins-int-n {
-+			pinmux = <PINMUX_GPIO12__FUNC_B_GPIO12>;
-+			bias-pull-up;
-+			input-enable;
-+		};
-+	};
-+
- 	uart0_pins: uart0-pins {
- 		pins {
- 			pinmux = <PINMUX_GPIO31__FUNC_O_UTXD0>,
-@@ -904,6 +988,14 @@ pins-usb-hub-3v3-en {
- 		};
- 	};
- 
-+	usb2_default_pins: usb2-default-pins {
-+		pins-iddig {
-+			pinmux = <PINMUX_GPIO89__FUNC_B_GPIO89>;
-+			input-enable;
-+			bias-pull-up;
-+		};
-+	};
-+
- 	wifi_pwrseq_pins: wifi-pwrseq-pins {
- 		pins-wifi-enable {
- 			pinmux = <PINMUX_GPIO127__FUNC_B_GPIO127>;
-@@ -1012,9 +1104,21 @@ &u3phy2 {
- };
- 
- &ssusb0 {
--	dr_mode = "host";
-+	dr_mode = "otg";
-+	maximum-speed = "high-speed";
-+	usb-role-switch;
-+	wakeup-source;
- 	vusb33-supply = <&mt6359_vusb_ldo_reg>;
-+	pinctrl-0 = <&usb_default_pins>;
-+	pinctrl-names = "default";
- 	status = "okay";
-+
-+	connector {
-+		compatible = "gpio-usb-b-connector", "usb-b-connector";
-+		type = "micro";
-+		id-gpios = <&pio 83 GPIO_ACTIVE_HIGH>;
-+		vbus-supply = <&usb_p0_vbus>;
-+	};
- };
- 
- &xhci0 {
-@@ -1022,9 +1126,19 @@ &xhci0 {
- };
- 
- &ssusb1 {
--	dr_mode = "host";
-+	dr_mode = "otg";
-+	usb-role-switch;
-+	wakeup-source;
- 	vusb33-supply = <&mt6359_vusb_ldo_reg>;
-+	pinctrl-0 = <&usb1_default_pins>;
-+	pinctrl-names = "default";
- 	status = "okay";
-+
-+	port {
-+		mtu3_hs1_role_sw: endpoint {
-+			remote-endpoint = <&typec_con_hs>;
-+		};
-+	};
- };
- 
- &xhci1 {
-@@ -1058,17 +1172,28 @@ xhci_ss_ep: endpoint {
- };
- 
- &ssusb2 {
--	interrupts-extended = <&gic GIC_SPI 536 IRQ_TYPE_LEVEL_HIGH 0>,
--			      <&pio 220 IRQ_TYPE_LEVEL_HIGH>;
--	interrupt-names = "host", "wakeup";
--
--	dr_mode = "host";
-+	dr_mode = "otg";
-+	maximum-speed = "high-speed";
-+	usb-role-switch;
- 	vusb33-supply = <&mt6359_vusb_ldo_reg>;
-+	wakeup-source;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&usb2_default_pins>;
- 	status = "okay";
-+
-+	connector {
-+		compatible = "gpio-usb-b-connector", "usb-b-connector";
-+		type = "micro";
-+		id-gpios = <&pio 89 GPIO_ACTIVE_HIGH>;
-+		vbus-supply = <&usb_p2_vbus>;
-+	};
- };
- 
- &xhci2 {
--	status = "okay";
-+	interrupts-extended = <&gic GIC_SPI 536 IRQ_TYPE_LEVEL_HIGH 0>,
-+			      <&pio 220 IRQ_TYPE_LEVEL_HIGH>;
-+	interrupt-names = "host", "wakeup";
- 	vusb33-supply = <&mt6359_vusb_ldo_reg>;
- 	vbus-supply = <&sdio_fixed_3v3>; /* wifi_3v3 */
-+	status = "okay";
- };
--- 
-2.48.1
+I would like to understand the following:
 
+1. What could be causing these hotplug_event debug messages?
+2. Why does this result in the BAR memory being reset?
+3. How can we resolve this issue?
+
+I have verified that the issue occurs even without loading the driver
+for the PLDA Device 5555, so it does not appear to be related to the
+device driver.
+
+Any help or guidance on debugging this issue would be greatly appreciated.
+
+Thank you for your assistance.
+
+Best regards,
+Naveen
 
