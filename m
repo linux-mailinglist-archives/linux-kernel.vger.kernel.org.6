@@ -1,102 +1,192 @@
-Return-Path: <linux-kernel+bounces-520908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72899A3B0EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 06:27:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D93D6A3B0CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 06:12:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63C4A1890CF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 05:27:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0262418981AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 05:11:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B60621B4F21;
-	Wed, 19 Feb 2025 05:27:09 +0000 (UTC)
-Received: from neil.brown.name (neil.brown.name [103.29.64.221])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B58EA1AF0D3;
+	Wed, 19 Feb 2025 05:10:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="JHJ2dQhg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEA0F1B424F;
-	Wed, 19 Feb 2025 05:27:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0464419DF99;
+	Wed, 19 Feb 2025 05:10:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739942829; cv=none; b=XOs+JODTA49KI3kKbLsI3wbaxv8CFtHPhsZ5HoFbHAhZyjuIZy1LrdWxMKetGPyJ9Nfkcie4sb5B9KAJ5hjb2yKGagToWFlBK3K0EVZKQglbOHBIxuNhiB89ICzWLMQHJUGHGGExIx3cf7jSpw3GzA+vVarl6vNRLohlFmUGQio=
+	t=1739941846; cv=none; b=hxgHLRHUkUuF4COwewVI6wQP11y/IxL5ouZ2iQgUYHUz0XECO+wFf2oA4ZirKbDPkLuoY60AUCALWDsD60e46lwhEwyrPgGXPbbUhMDlBF1m/a5nDKCdBgMkSUKDbUQD5pfwxnCaPVJ/aRkN0eoCbCjey5FezICEHxp0CVCGE9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739942829; c=relaxed/simple;
-	bh=zOtklbXj1MZ6z0i6CsShg2jHvMNpAoDXL2gvDpNBTl4=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=NeT8wRskj9oAolgB0tc+S5wpw9eYGTpTYLCSoQf9MHHENUbg4eQZd6QCyT5DlqQhzRmaFO2UIA3pAlg/G2bxOIHUx4z0worHle8XXy/E8g76nbxefG1JcmKUfmTxrZ0aiMI+GB7vKBVh1cy+fbzGY8bu6sjsshTPOItXRzgDvSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
-Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
-	by neil.brown.name with esmtp (Exim 4.95)
-	(envelope-from <mr@neil.brown.name>)
-	id 1tkcJL-00630d-UN;
-	Wed, 19 Feb 2025 05:07:51 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1739941846; c=relaxed/simple;
+	bh=qxphvqi7G/P4h2lBp66CeMOj+EvTR2VDJKFiAP9MOjg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yy3OUpvqWqJOWC1FOilz/HHpweoPY/LQXE+vXRJcU6f1gRvWfdq1dLHWt3nXGwrO/cXBOHGucfcCIpOYpGNl8NdP/3Ey3/jNZFczewK/JwLZV9j8LL8I0kqET5YJTP6utRz2HWTJKAvVQSd/q5osCgjIU24E1ojcNx6Q5oVo5WE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=JHJ2dQhg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA51DC4CED1;
+	Wed, 19 Feb 2025 05:10:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1739941845;
+	bh=qxphvqi7G/P4h2lBp66CeMOj+EvTR2VDJKFiAP9MOjg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JHJ2dQhgEGEU9XHZRYdpJh9ouXvg+EK03p6FxYi4Es8RtII/fARmJDvW9r2lADXlv
+	 NWlLS5XQ6rq+k84lrtV9ZhIJY+F374YFqdrJtySwbkszTomR7ofaRQQBBHPwLixvHu
+	 Kx/Rrqr77KRT51765LSBPmomgVc4/L7w68rP5w0Y=
+Date: Wed, 19 Feb 2025 06:10:42 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: 2025021350-geometry-appear-9d84@gregkh.smtp.subspace.kernel.org
+Cc: shaggy@kernel.org, zhaomengmeng@kylinos.cn, llfamsec@gmail.com,
+	ancowi69@gmail.com, jfs-discussion@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	syzbot+4e6e7e4279d046613bc5@syzkaller.appspotmail.com,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] jfs: fix slab-out-of-bounds read in ea_get()
+Message-ID: <2025021902-overspend-buckwheat-e5c3@gregkh>
+References: <Z7UoUyuHzGWwvBOK@qasdev.system>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neil@brown.name>
-To: "Boqun Feng" <boqun.feng@gmail.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>,
- "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>,
- "Christoph Hellwig" <hch@infradead.org>,
- "rust-for-linux" <rust-for-linux@vger.kernel.org>,
- "Linus Torvalds" <torvalds@linux-foundation.org>,
- "Greg KH" <gregkh@linuxfoundation.org>, "David Airlie" <airlied@gmail.com>,
- linux-kernel@vger.kernel.org, ksummit@lists.linux.dev
-Subject: Re: Rust kernel policy
-In-reply-to: <Z7VKW3eul-kGaIT2@Mac.home>
-References: <>, <Z7VKW3eul-kGaIT2@Mac.home>
-Date: Wed, 19 Feb 2025 16:07:51 +1100
-Message-id: <173994167131.3118120.16887445524155129088@noble.neil.brown.name>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z7UoUyuHzGWwvBOK@qasdev.system>
 
-On Wed, 19 Feb 2025, Boqun Feng wrote:
-> On Tue, Feb 18, 2025 at 04:58:27PM -0800, H. Peter Anvin wrote:
-> [...]
-> > > > David Howells did a patch set in 2018 (I believe) to clean up the C c=
-ode in the kernel so it could be compiled with either C or C++; the patchset =
-wasn't particularly big and mostly mechanical in nature, something that would=
- be impossible with Rust. Even without moving away from the common subset of =
-C and C++ we would immediately gain things like type safe linkage.
-> > >=20
-> > > That is great, but that does not give you memory safety and everyone
-> > > would still need to learn C++.
-> >=20
-> > The point is that C++ is a superset of C, and we would use a subset of C++
-> > that is more "C+"-style. That is, most changes would occur in header file=
-s,
-> > especially early on. Since the kernel uses a *lot* of inlines and macros,
-> > the improvements would still affect most of the *existing* kernel code,
-> > something you simply can't do with Rust.
-> >=20
->=20
-> I don't think that's the point of introducing a new language, the
-> problem we are trying to resolve is when writing a driver or some kernel
-> component, due to the complexity, memory safety issues (and other
-> issues) are likely to happen. So using a language providing type safety
-> can help that. Replacing inlines and macros with neat template tricks is
-> not the point, at least from what I can tell, inlines and macros are not
-> the main source of bugs (or are they any source of bugs in production?).
-> Maybe you have an example?
+On Wed, Feb 19, 2025 at 12:39:47AM +0000, Qasim Ijaz wrote:
+> On Thu, Feb 13, 2025 at 11:07:07AM +0100, Greg KH wrote:
+> > On Thu, Feb 13, 2025 at 12:20:25AM +0000, Qasim Ijaz wrote:
+> > > During the "size_check" label in ea_get(), the code checks if the extended 
+> > > attribute list (xattr) size matches ea_size. If not, it logs 
+> > > "ea_get: invalid extended attribute" and calls print_hex_dump().
+> > > 
+> > > Here, EALIST_SIZE(ea_buf->xattr) returns 4110417968, which exceeds 
+> > > INT_MAX (2,147,483,647). Then ea_size is clamped:
+> > > 
+> > > 	int size = clamp_t(int, ea_size, 0, EALIST_SIZE(ea_buf->xattr));
+> > > 
+> > > Although clamp_t aims to bound ea_size between 0 and 4110417968, the upper 
+> > > limit is treated as an int, causing an overflow above 2^31 - 1. This leads 
+> > > "size" to wrap around and become negative (-184549328).
+> > > 
+> > > The "size" is then passed to print_hex_dump() (called "len" in 
+> > > print_hex_dump()), it is passed as type size_t (an unsigned 
+> > > type), this is then stored inside a variable called 
+> > > "int remaining", which is then assigned to "int linelen" which 
+> > > is then passed to hex_dump_to_buffer(). In print_hex_dump() 
+> > > the for loop, iterates through 0 to len-1, where len is 
+> > > 18446744073525002176, calling hex_dump_to_buffer() 
+> > > on each iteration:
+> > > 
+> > > 	for (i = 0; i < len; i += rowsize) {
+> > > 		linelen = min(remaining, rowsize);
+> > > 		remaining -= rowsize;
+> > > 
+> > > 		hex_dump_to_buffer(ptr + i, linelen, rowsize, groupsize,
+> > > 				   linebuf, sizeof(linebuf), ascii);
+> > > 	
+> > > 		...
+> > > 	}
+> > > 	
+> > > The expected stopping condition (i < len) is effectively broken 
+> > > since len is corrupted and very large. This eventually leads to 
+> > > the "ptr+i" being passed to hex_dump_to_buffer() to get closer 
+> > > to the end of the actual bounds of "ptr", eventually an out of 
+> > > bounds access is done in hex_dump_to_buffer() in the following 
+> > > for loop:
+> > > 
+> > > 	for (j = 0; j < len; j++) {
+> > > 			if (linebuflen < lx + 2)
+> > > 				goto overflow2;
+> > > 			ch = ptr[j];
+> > > 		...
+> > > 	}
+> > > 
+> > > To fix this we should validate "EALIST_SIZE(ea_buf->xattr)" 
+> > > before it is utilised.
+> > > 
+> > > Reported-by: syzbot <syzbot+4e6e7e4279d046613bc5@syzkaller.appspotmail.com>
+> > > Tested-by: syzbot <syzbot+4e6e7e4279d046613bc5@syzkaller.appspotmail.com>
+> > > Closes: https://syzkaller.appspot.com/bug?extid=4e6e7e4279d046613bc5
+> > > Fixes: d9f9d96136cb ("jfs: xattr: check invalid xattr size more strictly")
+> > > Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
+> > > ---
+> > >  fs/jfs/xattr.c | 15 ++++++++++-----
+> > >  1 file changed, 10 insertions(+), 5 deletions(-)
+> > > 
+> > > diff --git a/fs/jfs/xattr.c b/fs/jfs/xattr.c
+> > > index 24afbae87225..7575c51cce9b 100644
+> > > --- a/fs/jfs/xattr.c
+> > > +++ b/fs/jfs/xattr.c
+> > > @@ -559,11 +555,16 @@ static int ea_get(struct inode *inode, struct ea_buffer *ea_buf, int min_size)
+> > >  
+> > >        size_check:
+> > >  	if (EALIST_SIZE(ea_buf->xattr) != ea_size) {
+> > > -		int size = clamp_t(int, ea_size, 0, EALIST_SIZE(ea_buf->xattr));
+> > > -
+> > > -		printk(KERN_ERR "ea_get: invalid extended attribute\n");
+> > > -		print_hex_dump(KERN_ERR, "", DUMP_PREFIX_ADDRESS, 16, 1,
+> > > -				     ea_buf->xattr, size, 1);
+> > > +		if (unlikely(EALIST_SIZE(ea_buf->xattr) > INT_MAX)) {
+> > > +			printk(KERN_ERR "ea_get: extended attribute size too large: %u > INT_MAX\n",
+> > > +			       EALIST_SIZE(ea_buf->xattr));
+> > > +		} else {
+> > > +			int size = clamp_t(int, ea_size, 0, EALIST_SIZE(ea_buf->xattr));
+> > > +
+> > > +			printk(KERN_ERR "ea_get: invalid extended attribute\n");
+> > > +			print_hex_dump(KERN_ERR, "", DUMP_PREFIX_ADDRESS, 16, 1,
+> > > +				       ea_buf->xattr, size, 1);
+> > > +		}
+> > >  		ea_release(inode, ea_buf);
+> > >  		rc = -EIO;
+> > >  		goto clean_up;
+> > > -- 
+> > > 2.39.5
+> > > 
+> > 
+> > Hi,
+> > 
+> > This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+> > a patch that has triggered this response.  He used to manually respond
+> > to these common problems, but in order to save his sanity (he kept
+> > writing the same thing over and over, yet to different people), I was
+> > created.  Hopefully you will not take offence and will fix the problem
+> > in your patch and resubmit it so that it can be accepted into the Linux
+> > kernel tree.
+> > 
+> > You are receiving this message because of the following common error(s)
+> > as indicated below:
+> > 
+> > - You have marked a patch with a "Fixes:" tag for a commit that is in an
+> >   older released kernel, yet you do not have a cc: stable line in the
+> >   signed-off-by area at all, which means that the patch will not be
+> >   applied to any older kernel releases.  To properly fix this, please
+> >   follow the documented rules in the
+> >   Documentation/process/stable-kernel-rules.rst file for how to resolve
+> >   this.
+> > 
+> > If you wish to discuss this problem further, or you have questions about
+> > how to resolve this issue, please feel free to respond to this email and
+> > Greg will reply once he has dug out from the pending patches received
+> > from other developers.
+> >
+> Hi Greg,
+> 
+> Just following up on this patch. I’ve sent v2 with the added CC stable tag. Here’s the link:
+> https://lore.kernel.org/all/20250213210553.28613-1-qasdev00@gmail.com/
+> 
+> Let me know if any further changes are needed.
 
-Examples would be great, wouldn't they?
-Certainly we introduce lots of bugs into the kernel, and then we fix a
-few of them.  Would it be useful to describe these bugs from the
-perspective of the type system with an assessment of how an improved
-type system - such a rust provides - could have prevented that bug.
+It's been less than one week, for a filesystem that is not actively
+maintained and no one should be using anymore, so please be patient.
 
-Anyone who fixes a bug is here-by encouraged to include a paragraph in
-the commit message for the fix which describes how a stronger type
-system would have caught it earlier.  We can then automatically harvest
-them and perform some analysis.  Include the phrase "type system" in
-your commit message to allow it to be found easily.
+thanks,
 
-Thanks,
-NeilBrown
+greg k-h
 
