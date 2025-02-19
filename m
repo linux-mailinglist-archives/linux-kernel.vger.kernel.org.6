@@ -1,101 +1,155 @@
-Return-Path: <linux-kernel+bounces-522205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0F47A3C752
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:24:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B80AA3C768
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:26:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78AC2188DA7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:24:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC85517B67D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:24:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C7A3214A6E;
-	Wed, 19 Feb 2025 18:23:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AC1821516A;
+	Wed, 19 Feb 2025 18:24:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="FSh8FygM"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CSu2xVkc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADBC11FCFD2
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 18:23:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2958214A6F;
+	Wed, 19 Feb 2025 18:24:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739989427; cv=none; b=DYhQ0DyxG4GFJ+WUirlnyHEeSJ2hoFNmgCbMaKTv7yzc1zzF32+3/ANbEaGWuqdfxyu45/ckyx9P6MlorxiW5rUvjwGC5kaFMI9QQKjkCW78winKnJgVjvaR8+pjsonhl1hzm6salKpSRwjH1dU24dh8DN3d27A1uaSjp90bzso=
+	t=1739989467; cv=none; b=kJiDbDRBLZj7ZtLrqtcyrtl2B/FXbmlva/StF1xHFBpkm3cEUbPN4se4f3kfbvjnsyEFcSC+jpbmNKzGfl3yPNT+vX3OoILr7InADlq1ZJPtWWpDrjgNN8HBQUBn8lIaymSaXSRx4I5jD74g5GzMUB4Vis99wcowjQXdhoLn1yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739989427; c=relaxed/simple;
-	bh=F3QQLn5iHEqa61zNY6HqpiLPzAagm6AWvPWfS3ckb3U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MvnLUkO7iosLCTcv003bTUNC9rSMBTjsM8Q9HfT8vdyQerXzwaayZYqykiElaEi05ZoTIR+TpdBppWl7nOcoEEaYD1PAY4oCPdH3pEoYsOeWXwOx+0SALjjg179YuxdncZ64HbT6iG+18jsLZ5cnCjYKT9mIxNedL0wCi9RiHCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=FSh8FygM; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D8C8540E015F;
-	Wed, 19 Feb 2025 18:23:42 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id M-9yfGl9isMo; Wed, 19 Feb 2025 18:23:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1739989419; bh=v0HTPPPJwvOYn4e7z6j0xoj8hH1coAAx24Lf63l4oeE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FSh8FygMwhSOUfjaGnlTdRKcC6BR/AiyuJB2sUSS5Jf51d7CxQT/TJ+EgfzIQJmVa
-	 UeqGLDJ2Ktx3AHls5U/2lHSRB6Z57WgoGMCGJJTfmEIupnOTqZQmrI4TUfM5HjQFEO
-	 /ILWWahkfZXx19PADct2AiG0bxIOOdlO180Fz6wPp+MqFtlZ9l92jw75PAErXTTYkR
-	 SfxKJw0J0k7fB3jX2yGdzbFLHvmsG4r7pznYn9pxh6qUbPBT23JNjmD0+eRUFefb0e
-	 oeb+o/wWTwRBJZpvNOhze42XXWbBGR3dVnPi0OleQy91t+8q5ha94NuG9BodzukeTs
-	 Xlsnc1eDMTDTiirky4Dal1Z+phevYuBYpW+StIBrELOAfwzAAyFfWkgH/4o1tO23Ud
-	 hlBEXRng82XhOiOI5OI1qxqQzCLuh+FZX0NmLWeiehkujuMPjjGu5hgffG5uwjB4u9
-	 YkhLT9CNipXxBNtc73HsHB7W95UfMWdnPiQ5XEgsBqVnZi3ycfYIFeUAu3UAdYJXqm
-	 rRm1ioN1PMXTZKi1UGKeXVvLovyNVS1ENkV2X+y+AUgT+qv05CFl/b4c6dsqN2ERX7
-	 T4dchjZVbMwaPaxBRxA1D0eSkw3mC3ZOVr9o9nLE2NhbXUCqppt6SkoYAu2qycFvHj
-	 odJ/x9ySPL6jopfW4PJ7GHUA=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1AC5840E0176;
-	Wed, 19 Feb 2025 18:23:23 +0000 (UTC)
-Date: Wed, 19 Feb 2025 19:23:22 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Rik van Riel <riel@surriel.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org,
-	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
-	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
-	linux-mm@kvack.org, akpm@linux-foundation.org, jackmanb@google.com,
-	jannh@google.com, mhklinux@outlook.com, andrew.cooper3@citrix.com,
-	Manali Shukla <Manali.Shukla@amd.com>
-Subject: Re: [PATCH v11 04/12] x86/mm: get INVLPGB count max from CPUID
-Message-ID: <20250219182322.GBZ7YhmoQw13Welm_d@fat_crate.local>
-References: <20250213161423.449435-1-riel@surriel.com>
- <20250213161423.449435-5-riel@surriel.com>
- <20250219115626.GMZ7XG6s-5ftg1XLoZ@fat_crate.local>
- <b749384b7dea020880057359d06d4e9172c7aaec.camel@surriel.com>
+	s=arc-20240116; t=1739989467; c=relaxed/simple;
+	bh=HO2nS9e5yumnBiRIcG2Rxrl7IXs3SEM+FOvSNOffi1o=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=NGiJF/LJr8fp7Ct+OBE5+S74BhM8iFnxET72YmCIhqMGA7LLB6Kd3Qt8mAmEFScrmimFyVZ5nC6xzC8Xpu19pT/TRpWppGJPJc/Oexp4OaFjwredJEWX1DLwBTusY6bI8lhcWG+9ipMmllmwp7mVAoVB+ETBEgURmEkBz94Zqyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CSu2xVkc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 410C9C4CEE0;
+	Wed, 19 Feb 2025 18:24:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739989467;
+	bh=HO2nS9e5yumnBiRIcG2Rxrl7IXs3SEM+FOvSNOffi1o=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=CSu2xVkcybgK7UX+OY08miKmSSTEajE0z2mWORv/90c59mgDQVOvN8fnWIpDRvgLV
+	 Nl0AjxuPq68dKK2DNjb1GHiDL7ujKsZ7E+d5qxqnZhn+R5ar6woyj1I5zPtlf/+S0w
+	 9AlSS3mlVUZ0MzfAl/JyJvX9PAarjtPmI6k68m7RMR97gCQHHgyqKg5XpVeM7IqU63
+	 j4d7fSR59bc5i5aDZSEslV4DHXuFpkw9KVm7mDwLNOGAR4BYfjOkPFLti6WTj3mDPi
+	 WtZ17QKfSupObXw1Jm1dJZIOlBydGSexOKoCckmRmjHrJTOEIC2HLUUUfRWULmnKw6
+	 /OFpGnWnAwuRg==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH v3 01/19] crypto: scatterwalk - move to next sg entry just in time
+Date: Wed, 19 Feb 2025 10:23:23 -0800
+Message-ID: <20250219182341.43961-2-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250219182341.43961-1-ebiggers@kernel.org>
+References: <20250219182341.43961-1-ebiggers@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <b749384b7dea020880057359d06d4e9172c7aaec.camel@surriel.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Feb 19, 2025 at 12:52:56PM -0500, Rik van Riel wrote:
-> Should I modify get_cpu_cap() to store
-> c->x86_capabilities[CPUID_8000_0008_EDX] ?
-> 
-> Currently only the EBX data is stored there,
-> while invlpgb_count_max comes from EDX.
+From: Eric Biggers <ebiggers@google.com>
 
-No, you should simply assign invlpgb_count_max there.
+The scatterwalk_* functions are designed to advance to the next sg entry
+only when there is more data from the request to process.  Compared to
+the alternative of advancing after each step if !sg_is_last(sg), this
+has the advantage that it doesn't cause problems if users accidentally
+don't terminate their scatterlist with the end marker (which is an easy
+mistake to make, and there are examples of this).
 
+Currently, the advance to the next sg entry happens in
+scatterwalk_done(), which is called after each "step" of the walk.  It
+requires the caller to pass in a boolean 'more' that indicates whether
+there is more data.  This works when the caller immediately knows
+whether there is more data, though it adds some complexity.  However in
+the case of scatterwalk_copychunks() it's not immediately known whether
+there is more data, so the call to scatterwalk_done() has to happen
+higher up the stack.  This is error-prone, and indeed the needed call to
+scatterwalk_done() is not always made, e.g. scatterwalk_copychunks() is
+sometimes called multiple times in a row.  This causes a zero-length
+step to get added in some cases, which is unexpected and seems to work
+only by accident.
+
+This patch begins the switch to a less error-prone approach where the
+advance to the next sg entry happens just in time instead.  For now,
+that means just doing the advance in scatterwalk_clamp() if it's needed
+there.  Initially this is redundant, but it's needed to keep the tree in
+a working state as later patches change things to the final state.
+
+Later patches will similarly move the dcache flushing logic out of
+scatterwalk_done() and then remove scatterwalk_done() entirely.
+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ include/crypto/scatterwalk.h | 19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
+
+diff --git a/include/crypto/scatterwalk.h b/include/crypto/scatterwalk.h
+index 32fc4473175b1..924efbaefe67a 100644
+--- a/include/crypto/scatterwalk.h
++++ b/include/crypto/scatterwalk.h
+@@ -24,22 +24,30 @@ static inline void scatterwalk_crypto_chain(struct scatterlist *head,
+ 		sg_chain(head, num, sg);
+ 	else
+ 		sg_mark_end(head);
+ }
+ 
++static inline void scatterwalk_start(struct scatter_walk *walk,
++				     struct scatterlist *sg)
++{
++	walk->sg = sg;
++	walk->offset = sg->offset;
++}
++
+ static inline unsigned int scatterwalk_pagelen(struct scatter_walk *walk)
+ {
+ 	unsigned int len = walk->sg->offset + walk->sg->length - walk->offset;
+ 	unsigned int len_this_page = offset_in_page(~walk->offset) + 1;
+ 	return len_this_page > len ? len : len_this_page;
+ }
+ 
+ static inline unsigned int scatterwalk_clamp(struct scatter_walk *walk,
+ 					     unsigned int nbytes)
+ {
+-	unsigned int len_this_page = scatterwalk_pagelen(walk);
+-	return nbytes > len_this_page ? len_this_page : nbytes;
++	if (walk->offset >= walk->sg->offset + walk->sg->length)
++		scatterwalk_start(walk, sg_next(walk->sg));
++	return min(nbytes, scatterwalk_pagelen(walk));
+ }
+ 
+ static inline void scatterwalk_advance(struct scatter_walk *walk,
+ 				       unsigned int nbytes)
+ {
+@@ -54,17 +62,10 @@ static inline struct page *scatterwalk_page(struct scatter_walk *walk)
+ static inline void scatterwalk_unmap(void *vaddr)
+ {
+ 	kunmap_local(vaddr);
+ }
+ 
+-static inline void scatterwalk_start(struct scatter_walk *walk,
+-				     struct scatterlist *sg)
+-{
+-	walk->sg = sg;
+-	walk->offset = sg->offset;
+-}
+-
+ static inline void *scatterwalk_map(struct scatter_walk *walk)
+ {
+ 	return kmap_local_page(scatterwalk_page(walk)) +
+ 	       offset_in_page(walk->offset);
+ }
 -- 
-Regards/Gruss,
-    Boris.
+2.48.1
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
