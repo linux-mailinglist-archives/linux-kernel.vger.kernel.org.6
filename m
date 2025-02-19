@@ -1,260 +1,158 @@
-Return-Path: <linux-kernel+bounces-522100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9804EA3C5EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:18:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2947EA3C5F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:19:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9075E1886FF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:18:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E6491884FBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:18:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C77420E6F9;
-	Wed, 19 Feb 2025 17:17:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xbFfkkIH"
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BB4D2144A9;
+	Wed, 19 Feb 2025 17:18:33 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B688F58
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 17:17:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBA35286284;
+	Wed, 19 Feb 2025 17:18:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739985476; cv=none; b=HtidLVhw0aXKix/IYiUWVgBSoQr3RC69PG6BL7eVq8R5YckHPs4PLFL6uGJlJHByzOzBA7wk807ZVVekAp+VFNWA5+3UDFXUjXccgppE7VgDheC0l1OA0IXzNCqgYgHd8KYyxXYtMiKlb2KTTYU6prHIi9FQELsAzvsb7MgD44U=
+	t=1739985513; cv=none; b=n+vkqaGfi+s1rq88fESmo37QCQiO2obys74PNfd6qG7hgC3wMFYvASLfbRSPds2nrx7yh0qFEPOT85+MUH9oQarSHuX69TRxIWJZt8xtPygwKOzndFlELK+04QOKuyCyLPl1wsv40QkCdbJZC5dpdbYinqH3sGozocI1/1dpSLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739985476; c=relaxed/simple;
-	bh=OVEokc++S9KH6ryzdoMossQu0Y+z5+h9xa01Nfet8/g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CYM9xOUribA2AlWTbSwBkYiMiAE4lzajY/52apCx5kGopb00zCGGkYtdEaCnL2Wf2XgudnFxk2KxCNCAu9xzquqXRWnKamf74ksp6Qf/6WqAcrrIvRKqFqtmNH35D8jzYFCE9mV+abSprI40FuMPEbh+FDMMZAr3rtKl4T9qu5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xbFfkkIH; arc=none smtp.client-ip=209.85.210.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-7272f1de42fso1557556a34.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 09:17:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739985474; x=1740590274; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OVEokc++S9KH6ryzdoMossQu0Y+z5+h9xa01Nfet8/g=;
-        b=xbFfkkIH/bW1agzpu/VTz5cIVzF1fboMal96aSps5UaGXgRX3/vUdljfQN0+y9+eqP
-         MSrL4JllOwi5G02dJAGpLf4/Pmd9sfKtDFeKeG+xoV9w1zbe3Y5lmBbPqSOSQtq+58Ch
-         RJMcVVZOC8Sm+PI1oEIQqGObq2Rj8Tb9aCsGw4h52W453Ok4l0DwpTGUmEihT3e6vOFQ
-         DUeEiMdP8S1xGa1drjQ8cL+LmG81UML5hjma2diieAI694q6UaLaed006JaxtyxubOUB
-         YyFmZfI8e4dNlBFKo4ENFed7qdafue9UhprVtQSPEh8zgX3UmTA8kSoTwUAcxRnt5UNe
-         6YIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739985474; x=1740590274;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OVEokc++S9KH6ryzdoMossQu0Y+z5+h9xa01Nfet8/g=;
-        b=K7AXItOrl6CSCHFqxBTofWVgNbmZytWqP7Yoax006lluAjvsDYiUq9BqIw/LF8oPaw
-         ToCJuHE36cLLBEYOaHfC2lJlUS5hPm8TY5/5ZvRYRpACvjAi+usJM0yjqa7Wwk9ThW4T
-         mR8LKX4HpW4DN896x0Y0anlbXe/UI+zkl//xv+P2BTQQNrhGzykobdox7iOnPXsna7la
-         ocaObTF0EWfgVR97MZ+qX4zTfqKkotNEjok9HJ+FfYZacGIUxffyVf+ovLR36iiXtOL2
-         u295fyEoMwjDzuAwaH+hXF6CHI35bSC4Icu74kOGrvrBOmxUBiNuf4XvBz9H9y6KncMI
-         N+pA==
-X-Forwarded-Encrypted: i=1; AJvYcCVhzzb2Tbl+2ZpA3Ksji3FyApOjEVqplzG29RFdGuDEc+X2FdIZAldHnxOlWYnAwtdzpz+t2onI7CavWZ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqriwNweIzlfcjl0HpZXxViDm9nXmTBzxkb40rTqGp/KXBvku3
-	hNdjlcVKKrRjdVhbDpfrCPRC3LChpElkrAGHXU0mEYo52tfMLnZ8Ix6ppJ0Tq+u2DnBrrxHjjbA
-	KPtj9tcl/MsuEVHmIwxEb2zxXNfF+rL2JlOAt
-X-Gm-Gg: ASbGnctOWZ7wOJm2ztPFBWX5fXmFf+BnfRhl0q5s/3wQqYA/SBmEUlYkpgWVF+Jb5SE
-	1RlziDUqfsM+kJWK7crFo3q+eSmJqD9Sxvl9ZVAyISwcVNtix0bNW8FLnk2CeMvIdXYR/1g==
-X-Google-Smtp-Source: AGHT+IFtTKY1jDjL5dUAYxyA8Qit+rF+HdRs0rA/paAkjRr1rXODcHay0xhy+IxufTt79brO1JJ/4wMTQIJGiFmJfCk=
-X-Received: by 2002:a05:6830:388f:b0:727:1041:4202 with SMTP id
- 46e09a7af769-7273779be8emr4220238a34.21.1739985473786; Wed, 19 Feb 2025
- 09:17:53 -0800 (PST)
+	s=arc-20240116; t=1739985513; c=relaxed/simple;
+	bh=Axex9ugl2cp1Mnn+czrujd78B3to4P86gl7uF640N9c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lAfpFm2X5BhcubaymMPd4bacljPfkuFkNW9L5v5L0iovcYYVgXjoUdRnKghTXg2SHcJVrULcEV1JJeeF/pqhin8+Xz08yvOhFsekrvf/dY5rY/sf/xyk6hWkcjx+COwU544KopoWgnwwEMkIAe72DuGeGt/unPlOQsiOhtFHD7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 358C4C4CEE0;
+	Wed, 19 Feb 2025 17:18:27 +0000 (UTC)
+Date: Wed, 19 Feb 2025 17:18:24 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Herbert Xu <herbert@gondor.apana.org.au>, willy@infradead.org,
+	Pankaj Raghav <p.raghav@samsung.com>,
+	Yang Shi <yang@os.amperecomputing.com>,
+	David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH 6.6 000/389] 6.6.76-rc2 review
+Message-ID: <Z7YSYArXkRFEy6FO@arm.com>
+References: <20250206155234.095034647@linuxfoundation.org>
+ <CA+G9fYvKzV=jo9AmKH2tJeLr0W8xyjxuVO-P+ZEBdou6C=mKUw@mail.gmail.com>
+ <CA+G9fYtqBxt+JwSLCcVBchh94GVRhbo9rTP26ceJ=sf4MDo61Q@mail.gmail.com>
+ <Z7Xj-zIe-Sa1syG7@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250212032155.1276806-1-jeffxu@google.com> <b114f48a-a485-4ebd-9278-6c62a1f33d9c@lucifer.local>
- <CAKbZUD0TAX8F9kDCEEvGSbcegDD4GLyra3ewtxncBbs45WJZ3g@mail.gmail.com>
- <7545d5eb-a16e-4cc8-a9e3-5431be01aade@lucifer.local> <CAKbZUD3kaYEqQFU1TWfJWvtV02ESaMb0_ygadGgeAKo-b+GRcA@mail.gmail.com>
- <202502131240.A57C749@keescook> <CAKbZUD16kfO2OBxY2fMbnmnEinTeKbPpTOLVC=Pc+FbWN_kjcQ@mail.gmail.com>
-In-Reply-To: <CAKbZUD16kfO2OBxY2fMbnmnEinTeKbPpTOLVC=Pc+FbWN_kjcQ@mail.gmail.com>
-From: enh <enh@google.com>
-Date: Wed, 19 Feb 2025 12:17:42 -0500
-X-Gm-Features: AWEUYZkrJhHGOE4gkmIH4jm_-jQkhQ0BXH4tsu9GjGg65iZ6RBKYUV0BMKZMxwM
-Message-ID: <CAJgzZopodgaJqUmu_DPjUM6GnL5ZOrjn219wsHNv0Em+iyAgvQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v5 0/7] mseal system mappings
-To: Pedro Falcato <pedro.falcato@gmail.com>
-Cc: Kees Cook <kees@kernel.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, jeffxu@chromium.org, 
-	akpm@linux-foundation.org, jannh@google.com, torvalds@linux-foundation.org, 
-	vbabka@suse.cz, Liam.Howlett@oracle.com, adhemerval.zanella@linaro.org, 
-	oleg@redhat.com, avagin@gmail.com, benjamin@sipsolutions.net, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	linux-mm@kvack.org, jorgelo@chromium.org, sroettger@google.com, hch@lst.de, 
-	ojeda@kernel.org, thomas.weissschuh@linutronix.de, adobriyan@gmail.com, 
-	johannes@sipsolutions.net, hca@linux.ibm.com, willy@infradead.org, 
-	anna-maria@linutronix.de, mark.rutland@arm.com, linus.walleij@linaro.org, 
-	Jason@zx2c4.com, deller@gmx.de, rdunlap@infradead.org, davem@davemloft.net, 
-	peterx@redhat.com, f.fainelli@gmail.com, gerg@kernel.org, 
-	dave.hansen@linux.intel.com, mingo@kernel.org, ardb@kernel.org, 
-	mhocko@suse.com, 42.hyeyoo@gmail.com, peterz@infradead.org, ardb@google.com, 
-	rientjes@google.com, groeck@chromium.org, mpe@ellerman.id.au, 
-	aleksandr.mikhalitsyn@canonical.com, mike.rapoport@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z7Xj-zIe-Sa1syG7@arm.com>
 
-On Tue, Feb 18, 2025 at 6:18=E2=80=AFPM Pedro Falcato <pedro.falcato@gmail.=
-com> wrote:
->
-> On Thu, Feb 13, 2025 at 8:47=E2=80=AFPM Kees Cook <kees@kernel.org> wrote=
-:
-> >
-> > On Thu, Feb 13, 2025 at 07:59:48PM +0000, Pedro Falcato wrote:
-> > > On Wed, Feb 12, 2025 at 2:02=E2=80=AFPM Lorenzo Stoakes
-> > > <lorenzo.stoakes@oracle.com> wrote:
-> > > >
-> > > > (sorry I really am struggling to reply to mail as lore still seems =
-to be
-> > > > broken).
-> > > >
-> > > > On Wed, Feb 12, 2025 at 12:37:50PM +0000, Pedro Falcato wrote:
-> > > > > On Wed, Feb 12, 2025 at 11:25=E2=80=AFAM Lorenzo Stoakes
-> > > > > <lorenzo.stoakes@oracle.com> wrote:
-> > > > > >
-> > > > > > On Wed, Feb 12, 2025 at 03:21:48AM +0000, jeffxu@chromium.org w=
-rote:
-> > > > > > > From: Jeff Xu <jeffxu@chromium.org>
-> > > > > > >
-> > > > > > > The commit message in the first patch contains the full descr=
-iption of
-> > > > > > > this series.
-> > > > > >
-> > > > [...]
-> > > > >
-> > > > > FWIW, although it would (at the moment) be hard to pull off in th=
-e
-> > > > > libc, I still much prefer it to playing these weird games with CO=
-NFIG
-> > > > > options and kernel command line options and prctl and personality=
- and
-> > > > > whatnot. It seems to me like we're trying to stick policy where i=
-t
-> > > > > doesn't belong.
-> > > >
-> > > > The problem is, as a security feature, you don't want to make it tr=
-ivially
-> > > > easy to disable.
-> > > >
-> > > > I mean we _need_ a config option to be able to strictly enforce onl=
-y making
-> > > > the feature enable-able on architectures and configuration option
-> > > > combinations that work.
-> > > >
-> > > > But if there is userspace that will be broken, we really have to ha=
-ve some
-> > > > way of avoiding the disconnect between somebody making policy decis=
-ion at
-> > > > the kernel level and somebody trying to run something.
-> > > >
-> > > > Because I can easily envision somebody enabling this as a 'good sec=
-urity
-> > > > feature' for a distro release or such, only for somebody else to la=
-ter try
-> > > > rr, CRIU, or whatever else and for it to just not work or fail subt=
-ly and
-> > > > to have no idea why.
+On Wed, Feb 19, 2025 at 02:00:27PM +0000, Catalin Marinas wrote:
+> > On Sat, 8 Feb 2025 at 16:54, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+> > > Regression on qemu-arm64 and FVP noticed this kernel warning running
+> > > selftests: arm64: check_hugetlb_options test case on 6.6.76-rc1 and
+> > > 6.6.76-rc2.
 > > >
-> > > Ok so I went looking around for the glibc patchset. It seems they're
-> > > moving away from tunables and there was a nice
-> > > GNU_PROPERTY_MEMORY_SEAL added to binutils.
-> > > So my proposal is to parse this property on the binfmt_elf.c side, an=
-d
-> > > mm would use this to know if we should seal these mappings. This seem=
-s
-> > > to tackle compatibility problems,
-> > > and glibc isn't sealing programs without this program header anyway. =
-Thoughts?
-> >
-> > It seems to me that doing this ties it to the binary, rather than
-> > execution context, which may want to seal/not-seal, etc. I have a sense
-> > that it's be better as a secure bit, or prctl, or something like that. =
-The
-> > properties seem to be better suited for "this binary _can_ do a thing"
-> > or "this binary _requires_ a thing", like the GNU_STACK bits, etc. But
-> > maybe there's more to this I'm not considering?
->
-> Doesn't this exactly kind of Just Work though? "This binary can
-> do/tolerate sealing". I would blindly guess that we don't have very
-> opinionated shared libraries that do this kind of shenanigans
-> unilaterally, so that's probably not something we really need to worry
-> about (though I admittedly need to read through the glibc patchset,
-> and nail down what they're thinking about doing with linking
-> mseal-ready and mseal-non-ready ELF execs/shared objects together).
-> The problem with something like prctl is that we either indirectly
-> provide some kind of limited form of munseal, or we require some sort
-> of handover (like personality(2) + execve(2)), which both sound like a
-> huge PITA and still don't solve any of our backwards compat issues...
-> all binaries would need to be patched with this
-> prctl/personality()/whatever call, and old ones wouldn't work.
->
-> The semantics behind GNU_PROPERTY_MEMORY_SEAL are unclear to me (maybe
-> the toolchain folks could shed some light?), but it sounds like it'd
-> fit perfectly.
-> I suspect we probably want to parse this on the kernel's side anyway
-> (to seal the main program/interp's segments)[1], then extending them
-> to the kernel system mappings should be somewhat trivial...
-> I don't think we'll ever get a program that can't cope with sealing
-> the system mappings but can cope with sealing itself (and if we do, we
-> just won't seal the entire thing and that's _okay_).
->
-> Deploying mseal-ready programs could then be done in a phased way by
-> distros. e.g chromeOS and android could simply enable the
-> corresponding linker option in LDFLAGS and let it rip. Other more
-> mainstream distros could obviously take a little longer or test/deploy
-> this on all programs not named gVisor and/or after CRIU is okay with
-> all of this. We then might not need a user-configurable CONFIG_ (only
-> an arch HAS_SYSTEM_MAPPINGS_MSEAL or whatever), nor a sysctl, and
-> everyone is happy.
->
-> I glanced through libc-alpha again and it seems like the glibc folks
-> also seem to have reached the same idea, but I'd love to hear from
-> Adhemerval.
->
-> Am I missing anything?
+> > > Test regression: WARNING-arch-arm64-mm-copypage-copy_highpage
+> > >
+> > > ------------[ cut here ]------------
+> > > [   96.920028] WARNING: CPU: 1 PID: 3611 at
+> > > arch/arm64/mm/copypage.c:29 copy_highpage
+> > > (arch/arm64/include/asm/mte.h:87)
+> > > [   96.922100] Modules linked in: crct10dif_ce sm3_ce sm3 sha3_ce
+> > > sha512_ce sha512_arm64 fuse drm backlight ip_tables x_tables
+> > > [   96.925603] CPU: 1 PID: 3611 Comm: check_hugetlb_o Not tainted 6.6.76-rc2 #1
+> > > [   96.926956] Hardware name: linux,dummy-virt (DT)
+> > > [   96.927695] pstate: 43402009 (nZcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+> > > [   96.928687] pc : copy_highpage (arch/arm64/include/asm/mte.h:87)
+> > > [   96.929037] lr : copy_highpage
+> > > (arch/arm64/include/asm/alternative-macros.h:232
+> > > arch/arm64/include/asm/cpufeature.h:443
+> > > arch/arm64/include/asm/cpufeature.h:504
+> > > arch/arm64/include/asm/cpufeature.h:814 arch/arm64/mm/copypage.c:27)
+> > > [   96.929399] sp : ffff800088aa3ab0
+> > > [   96.930232] x29: ffff800088aa3ab0 x28: 00000000000001ff x27: 0000000000000000
+> > > [   96.930784] x26: 0000000000000000 x25: 0000ffff9b800000 x24: 0000ffff9b9ff000
+> > > [   96.931402] x23: fffffc0003257fc0 x22: ffff0000c95ff000 x21: ffff0000c93ff000
+> > > [   96.932054] x20: fffffc0003257fc0 x19: fffffc000324ffc0 x18: 0000ffff9b800000
+> > > [   96.933357] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
+> > > [   96.934091] x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
+> > > [   96.935095] x11: 0000000000000000 x10: 0000000000000000 x9 : 0000000000000000
+> > > [   96.935982] x8 : 0bfffc0001800000 x7 : 0000000000000000 x6 : 0000000000000000
+> > > [   96.936536] x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
+> > > [   96.937089] x2 : 0000000000000000 x1 : ffff0000c9600000 x0 : ffff0000c9400080
+> > > [   96.939431] Call trace:
+> > > [   96.939920] copy_highpage (arch/arm64/include/asm/mte.h:87)
+> > > [   96.940443] copy_user_highpage (arch/arm64/mm/copypage.c:40)
+> > > [   96.940963] copy_user_large_folio (mm/memory.c:5977 mm/memory.c:6109)
+> > > [   96.941535] hugetlb_wp (mm/hugetlb.c:5701)
+> > > [   96.941948] hugetlb_fault (mm/hugetlb.c:6237)
+> > > [   96.942344] handle_mm_fault (mm/memory.c:5330)
+> > > [   96.942794] do_page_fault (arch/arm64/mm/fault.c:513
+> > > arch/arm64/mm/fault.c:626)
+> > > [   96.943341] do_mem_abort (arch/arm64/mm/fault.c:846)
+> > > [   96.943797] el0_da (arch/arm64/kernel/entry-common.c:133
+> > > arch/arm64/kernel/entry-common.c:144
+> > > arch/arm64/kernel/entry-common.c:547)
+> > > [   96.944229] el0t_64_sync_handler (arch/arm64/kernel/entry-common.c:0)
+> > > [   96.944765] el0t_64_sync (arch/arm64/kernel/entry.S:599)
+> > > [   96.945383] ---[ end trace 0000000000000000 ]---
+> 
+> Prior to commit 25c17c4b55de ("hugetlb: arm64: add mte support"), there
+> was no hugetlb support with MTE, so the above code path should not
+> happen - it seems to get a PROT_MTE hugetlb page which should have been
+> prevented by arch_validate_flags(). Or something else corrupts the page
+> flags and we end up with some random PG_mte_tagged set.
 
-Android's a bit interesting because there isn't really a "binary" in
-the usual sense. an Android app is basically a shared library of JNI
-code dlopen()ed into a clone() of an already-initialized Java runtime
-(the "zygote").
+The problem is in the arm64 arch_calc_vm_flag_bits() as it returns
+VM_MTE_ALLOWED for any MAP_ANONYMOUS ignoring MAP_HUGETLB (it's been
+doing this since day 1 of MTE). The implementation does handle the
+hugetlb file mmap() correctly but not the MAP_ANONYMOUS case.
 
-that said, i'm not expecting sealing the vdso to be problematic (even
-if i'm not sure how useful it is to do so, being unaware of any
-exploit that's ever used this?).
+The fix would be something like below:
 
-for me the tricky part is when it's used for regular user shared
-libraries which seems the most convincing use case to me, albeit
-mainly for app compat reasons ["stopping apps from poking at
-implementation details they shouldn't, which later causes breakage if
-the implementation detail changes"]. the irony being that it'll
-_cause_ app compat problems by breaking all such things all at once.
-so that'll be "fun" for someone to try to roll out!
+-----------------8<--------------------------
+diff --git a/arch/arm64/include/asm/mman.h b/arch/arm64/include/asm/mman.h
+index 5966ee4a6154..8ff5d88c9f12 100644
+--- a/arch/arm64/include/asm/mman.h
++++ b/arch/arm64/include/asm/mman.h
+@@ -28,7 +28,8 @@ static inline unsigned long arch_calc_vm_flag_bits(unsigned long flags)
+ 	 * backed by tags-capable memory. The vm_flags may be overridden by a
+ 	 * filesystem supporting MTE (RAM-based).
+ 	 */
+-	if (system_supports_mte() && (flags & MAP_ANONYMOUS))
++	if (system_supports_mte() &&
++	    ((flags & MAP_ANONYMOUS) && !(flags & MAP_HUGETLB)))
+ 		return VM_MTE_ALLOWED;
 
-it also breaks dlclose() (unless your dlopen() was with RTLD_NODELETE,
-which is not the default on Android either). that's fine for OS
-libraries that have already been loaded by the zygote, but hard to
-make a default. that said, i do expect games and banking apps to be
-interested to try this when they hear about it.
+ 	return 0;
+-------------------8<-----------------------
 
-anyway, in general i think an ELF property per-library sounds
-reasonable, matching what we have for arm64 BTI. i have no strong
-opinion on the system mappings and what if anything executables should
-do, for the reasons given above, but the elf property sounds
-reasonable.
+This fix won't make sense for mainline since it supports MAP_HUGETLB
+already.
 
-> [1] we should probably nail this responsibility handover down before
-> glibc msealing (or bionic) makes it to a release. It'd probably be a
-> little nicer if we could mseal these segments from the kernel instead
-> of forcing the libc to take care of this, now that we have this
-> property.
->
-> --
-> Pedro
+Greg, are you ok with a stable-only fix as above or you'd rather see the
+full 25c17c4b55de ("hugetlb: arm64: add mte support") backported?
+
+Thanks.
+
+-- 
+Catalin
 
