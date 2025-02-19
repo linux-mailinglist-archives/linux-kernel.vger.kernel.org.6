@@ -1,155 +1,118 @@
-Return-Path: <linux-kernel+bounces-521867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF63FA3C35F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:17:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3337AA3C34D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:15:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC9003A9352
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:15:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFBC57A586F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:14:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE7B71F4183;
-	Wed, 19 Feb 2025 15:15:36 +0000 (UTC)
-Received: from dediextern.your-server.de (dediextern.your-server.de [85.10.215.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4197198E8C;
+	Wed, 19 Feb 2025 15:15:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pJ8qWtGj"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA2915CD52;
-	Wed, 19 Feb 2025 15:15:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.10.215.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64B1815CD52
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 15:15:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739978136; cv=none; b=SmI3ipIM+QzfrBtAYAKTm9PO8vqP9HF+rYLOTQU3PkR7qj+1iIAGamYG9F7cHvMBNPNXpGV9A3x/TPJhDZpj4keFaUS+4OUniNp8TRzi89x0IA8jCzpbRxwhKNc9Um9IL4M0uS4IKCyYUpeQtXpac7XQD383foeHMyD2MHoaeGY=
+	t=1739978129; cv=none; b=svEngsFwUUAGgDs8Y/5xkAGRvYYCWA89e0xuWeudU0SFK9Qvc61v9cKTekV4wyO1I+OgWjfIpA9DYrGLOjY758LqL3KMlWsWR/xuXayzQi7gi3RyDhBOBZaUcFdQrgzZfPl9l4nPpbnN43mzNetdqh6VKOIb15dyuX7bBOXhN44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739978136; c=relaxed/simple;
-	bh=y9WgzGffg+Am1VM1kKEZ+wLyOI55SBmza0HtJx0xEaQ=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:From:Subject:
-	 In-Reply-To:Content-Type; b=WRft6mv9h6XVO1BXNZKUPEG778i8vQdYFwl6pjByQ/OhAoKSKHRYDG1WJ3ghfdNsxD/FwnPIOrZCejv6DKWNjpB2pLL4wrBbbPiXYdFWcDniwN+d4/muXBrVCZSrlO6kp6X4fmbsXb3101wV4b4+sRMGAQfRCC0IozivVHxDd9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hetzner-cloud.de; spf=pass smtp.mailfrom=hetzner-cloud.de; arc=none smtp.client-ip=85.10.215.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hetzner-cloud.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hetzner-cloud.de
-Received: from sslproxy04.your-server.de ([78.46.152.42])
-	by dediextern.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <marcus.wichelmann@hetzner-cloud.de>)
-	id 1tklnE-000C1J-Hk; Wed, 19 Feb 2025 16:15:20 +0100
-Received: from [2a0d:3344:1523:1f10:f118:b2d4:edbb:54af]
-	by sslproxy04.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <marcus.wichelmann@hetzner-cloud.de>)
-	id 1tklnE-000GLI-1m;
-	Wed, 19 Feb 2025 16:15:20 +0100
-Message-ID: <fea35f08-3f29-4f7e-8be5-c77d4cee8be1@hetzner-cloud.de>
-Date: Wed, 19 Feb 2025 16:15:17 +0100
+	s=arc-20240116; t=1739978129; c=relaxed/simple;
+	bh=lmp+K833cpavV06YZOLU0YZf3FFGqq9FdQl2u7K8H64=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g+YzZja/tOY2Y+b66nELVgAxyV0BvcuGkvuRtGjx46XOtWrXAWbTZryk36yuRIcZ24DolCDHclKGUJGa3yplwOoaGTdyDymvofjXmphg7KaiSgXH4Aqwe8Rs6proaMdVgP4blDeyl51dYH27OFCNVJhSI1pKcLHDpc1JQ+zh4Us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pJ8qWtGj; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=175cKEWRmZAKRUF4IVht6MRwBpaF+VjbFIkwKtXrOb0=; b=pJ8qWtGjs36Asigj/eIF2fjmtL
+	Z6l3Lf5VzhHydPYTDx/1zuid39HUcGewgWCpg580nLX1vBtiTi3HXFQwL5O2ypisxHoyg5tzZWJBI
+	9kEsQN/LTiR20mhHz9Gs8rbRCMmFKl47y9sjdYbSQGKGa9lFr0LfQ49zB4AwP1ssLrqg9MM6geQB3
+	fT+shlpgru8N2F8+VhvLJ0TEG6O857I62vrQua6pizq0hqHVc5g7YJxHPuNRE5P7aHsQW/w1Q6lSn
+	ius3VHQP341mFQiUa7Ai7X50KCG5xSRE6hsm+UKjU9BOw7dV4C39oJ1Cq9+FWNMyvjRBnsveufnL1
+	hSSaOb+g==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tklnE-00000006K7E-43yU;
+	Wed, 19 Feb 2025 15:15:20 +0000
+Date: Wed, 19 Feb 2025 15:15:20 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Jeongjun Park <aha310510@gmail.com>
+Cc: akpm@linux-foundation.org, brauner@kernel.org,
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+	segoon@openwall.com, linux-kernel@vger.kernel.org,
+	syzbot+a2b84e569d06ca3a949c@syzkaller.appspotmail.com
+Subject: Re: [PATCH] ipc: fix to protect IPCS lookups using RCU
+Message-ID: <Z7X1iLYDHWFuvqAK@casper.infradead.org>
+References: <20250219132905.8214-1-aha310510@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-Cc: jasowang@redhat.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, ast@kernel.org,
- daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev,
- eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev,
- john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
- haoluo@google.com, jolsa@kernel.org, mykolal@fb.com, shuah@kernel.org,
- hawk@kernel.org
-References: <20250217172308.3291739-1-marcus.wichelmann@hetzner-cloud.de>
- <20250217172308.3291739-3-marcus.wichelmann@hetzner-cloud.de>
- <67b3e6b6b9dc6_c0e2529482@willemb.c.googlers.com.notmuch>
- <dee9bc39-e666-4d97-8a42-240ffb458bcc@hetzner-cloud.de>
- <67b5f392408d7_1b78d8294e7@willemb.c.googlers.com.notmuch>
-Content-Language: en-US
-From: Marcus Wichelmann <marcus.wichelmann@hetzner-cloud.de>
-Autocrypt: addr=marcus.wichelmann@hetzner-cloud.de; keydata=
- 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
- wySmewx3h/yfMh0aFxHhvLPxrO2IEQ==
-Subject: Re: [PATCH bpf-next v2 2/6] net: tun: enable transfer of XDP metadata
- to skb
-In-Reply-To: <67b5f392408d7_1b78d8294e7@willemb.c.googlers.com.notmuch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: marcus.wichelmann@hetzner-cloud.de
-X-Virus-Scanned: Clear (ClamAV 1.0.7/27554/Wed Feb 19 10:50:24 2025)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250219132905.8214-1-aha310510@gmail.com>
 
-Am 19.02.25 um 16:06 schrieb Willem de Bruijn:
-> Marcus Wichelmann wrote:
->> Am 18.02.25 um 02:47 schrieb Willem de Bruijn:
->>> [...]
->>> This is pointer comparison, which is tricky wrt type. It likely is
->>> ptrdiff_t and thus signed. But may want to use max_t(long int, ..) to
->>> make this explicit.
->>
->> Ah, I see, good point.
->>
->> So like that?
->>
->> 	metasize = max_t(long int, xdp->data - xdp->data_meta, 0);
->> 	if (metasize)
->> 		skb_metadata_set(skb, metasize);
-> 
-> Or just this? Also ensures the test uses signed int.
-> 
->      int metasize;
-> 
->      ...
-> 
-> 
->      metasize = xdp->data - xdp->data_meta;
->      if (metasize > 0)
->              skb_metadata_set(skb, metasize);
-> 
+On Wed, Feb 19, 2025 at 10:29:05PM +0900, Jeongjun Park wrote:
+> In shm_destroy_orphaned(), we are not performing updates to the IPCS and are
+> only calling idr_for_each(), which can be protected by the RCU read-critical
+> section.
 
-Well, yeah, just keep it simple I guess. ;) Will do that.
+Well, no, that's not true.  The IPCS is updated by the callback passed
+to idr_for_each().
 
-I'll send a V3 patch series with the change.
+> And if idr_for_each() is not protected by the RCU read-critical section,
+> then when radix_tree_node_free() is called to free the struct radix_tree_node
+> through call_rcu(), the node will be freed immediately, and when reading the
+> next node in radix_tree_for_each_slot(), the memory that has already been
+> freed may be read.
+> 
+> Therefore, when calling idr_for_each() in shm_destroy_orphaned(), it should
+> be modify to protect it within the RCU read critical section.
 
-Thanks!
+This is a very complicated way of not describing what the problem is.
+How about:
 
-Marcus
+Holding the rwsem is insufficient to protect the IDR from concurrent
+modification.  That allows radix tree nodes to be freed while we are
+iterating the IDR.  We can prevent this by holding the RCU read lock
+in addition to the rwsem.
+
+(a really good commit message would explain why holding the rwsem is
+insufficient, but the way ipc uses the IDR and RCU is very complicated,
+and I don't remember)
+
+> Reported-by: syzbot+a2b84e569d06ca3a949c@syzkaller.appspotmail.com
+> Fixes: b34a6b1da371 ("ipc: introduce shm_rmid_forced sysctl")
+> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+> ---
+>  ipc/shm.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/ipc/shm.c b/ipc/shm.c
+> index 99564c870084..baef5afadfb9 100644
+> --- a/ipc/shm.c
+> +++ b/ipc/shm.c
+> @@ -431,8 +431,10 @@ static int shm_try_destroy_orphaned(int id, void *p, void *data)
+>  void shm_destroy_orphaned(struct ipc_namespace *ns)
+>  {
+>  	down_write(&shm_ids(ns).rwsem);
+> +	rcu_read_lock();
+>  	if (shm_ids(ns).in_use)
+>  		idr_for_each(&shm_ids(ns).ipcs_idr, &shm_try_destroy_orphaned, ns);
+> +	rcu_read_unlock();
+>  	up_write(&shm_ids(ns).rwsem);
+>  }
+>  
+> --
 
