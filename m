@@ -1,87 +1,98 @@
-Return-Path: <linux-kernel+bounces-522737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65223A3CDFA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 00:58:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id ABF5CA3CDF9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 00:57:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77B0D189A025
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 23:58:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE6491898046
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 23:57:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9811264608;
-	Wed, 19 Feb 2025 23:58:04 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6C4925EFB5;
+	Wed, 19 Feb 2025 23:57:48 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0493261366
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 23:58:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E9D81D63E6
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 23:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740009484; cv=none; b=kR1gQmeUOqN6fc+vFvtgurC2m+izVv2GIdWhDOmXhAeTvExTDkQ5/sY5tyv0ivqxtjwrxJ7tLfWxCXJYoeo+AtEPYRAm/1TqoL0suafKK+H0xkXLU4TfZ/pD9DJ0ETOvdAurShhY5NfF3QWTst5aN0q5ecMJ2WYhX1HxVBk5Gs4=
+	t=1740009468; cv=none; b=tjtU8oBES48N9zLhlW9Y3/Is7s35XELroCKuJbE3PV63TdxENOZPSg1qzGoR2rAQ0IM9y/VqRd3zGzc4+Yp4iPD8Gy1mr0Zqp7k6shraCwi/yX5aqkBHATbyMm7U+976bMxold119DpGZnqoYFy8YTMjdhd0LNzMOLFe7cZR+AQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740009484; c=relaxed/simple;
-	bh=VpxJ709Ll1ZV9KuqFVvujLMvKLXdc2GpDcoVirmZh1I=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=RRaiON9KGvhUIXxW+232iIP5ImaOB3GlKX8d/qX0PebD/CMKajGF+6FnJkasQhu2TX8cQ+Qq57ebDm6LJHHOGUCWWJJeWnOQkzKL1ARyigZxXBkWXal9nY+GRcT7LAA1Q8dLTWsbkMgpCQv/gCXkSSsOFJX9e5jCzL/4HvIFoEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3ce843b51c3so8636995ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 15:58:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740009482; x=1740614282;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kPFt5Mz4ybfRPNq71ksWFUJThgKeei9LolPAm05pXAU=;
-        b=sTvgG5xF2mCf504AxeprXw4O7PkkSOJXqh6f/R20i0orn6SvyEsFcMRibTlL6n+osX
-         OvYYLxj9Ktl4tJMecKfhr4lLLEoMX72eNea+m09JzCIwfhzK2lHrEHdsBheS4EpFJnN1
-         KeIV2UY6B10zVivuWaCwirHxLBpjeLDhgWBt+37c5pcMsFX9TQ+Kl0D7kHrEyRYVNH9m
-         KiXN7hyTspqgyqqLPh5i5i96ZU4vTagnMSl6JrKaj4ncbVlrtjZxrAt4U6nUom1BoyxV
-         qB+0J/XLN5jPOz4XrWabgOWT9V9DR7s/mgF4090fDhXC3nfcWIMWmWwYN7jNZ98yKjse
-         zAKw==
-X-Forwarded-Encrypted: i=1; AJvYcCURcPw8qzhmqCio+XHV12CPpWSZ9TsA7arLJLroi0YF2hk9+9pFDJHUNdUYUOAkx9pDVQfl/GXEni1CaX0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhYHmnXab49dgEzj4yimxameUimAYwgYqCSSRHK4kM4m5S4Yv6
-	eoq/in2m8XtXRiqTyk8UEolfze+DKUvQTEyQAg736f/DszfQWLcXAd+pBom5hM2Vyp8XZET+Muh
-	doAiHNQ5TKMlPcpEQDsAu2PRDmcyCp9zLAtusPA7qvVsYw9CdC+bqfec=
-X-Google-Smtp-Source: AGHT+IGUFHkp/DNPLl0d92qmqWsmWuZ6eCRJRZCW06SgHOh4RyYkxlH2wY72Cp39/eMghkStc9jmsHx9Bto5Z53YbFzZyeb4V0an
+	s=arc-20240116; t=1740009468; c=relaxed/simple;
+	bh=/GRWYC90xwLM6F52KAnvtSN66kvgTdhs/W50basMdU0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PR4ee4FZNqP9AIRd5TdCf6tGE9O+fSxn/wCkQG2tM4gAaqQezqIX4CaXXea4Yffq8w5VBBg3EJj0oT6VDC76CFP60/Q3GRW1QuFbQhWIG36oV/VCDnInj5RmCxpquZ9mzpuJxS2K6M8/Z5xhdINuNS3XD29ke81uECUV5NDnBck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FB9AC4CED1;
+	Wed, 19 Feb 2025 23:57:46 +0000 (UTC)
+Date: Wed, 19 Feb 2025 18:58:10 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Waiman Long <llong@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Andrew
+ Morton <akpm@linux-foundation.org>, Boqun Feng <boqun.feng@gmail.com>, Joel
+ Granados <joel.granados@kernel.org>, Anna Schumaker
+ <anna.schumaker@oracle.com>, Lance Yang <ioworker0@gmail.com>, Kent
+ Overstreet <kent.overstreet@linux.dev>, Yongliang Gao
+ <leonylgao@tencent.com>, Tomasz Figa <tfiga@chromium.org>, Sergey
+ Senozhatsky <senozhatsky@chromium.org>, linux-kernel@vger.kernel.org, Linux
+ Memory Management List <linux-mm@kvack.org>
+Subject: Re: [PATCH 1/2] hung_task: Show the blocker task if the task is
+ hung on mutex
+Message-ID: <20250219185810.57561c69@gandalf.local.home>
+In-Reply-To: <20250220080908.fc1494f0f7c611b48fbe0f8b@kernel.org>
+References: <173997003868.2137198.9462617208992136056.stgit@mhiramat.tok.corp.google.com>
+	<173997004932.2137198.7959507113210521328.stgit@mhiramat.tok.corp.google.com>
+	<20250219112308.5d905680@gandalf.local.home>
+	<0fa9dd8e-2d83-487e-bfb1-1f5d20cd9fe6@redhat.com>
+	<20250219152435.35077ac3@gandalf.local.home>
+	<20250220080908.fc1494f0f7c611b48fbe0f8b@kernel.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1446:b0:3d1:9cee:3d2f with SMTP id
- e9e14a558f8ab-3d28098a133mr217124485ab.18.1740009482124; Wed, 19 Feb 2025
- 15:58:02 -0800 (PST)
-Date: Wed, 19 Feb 2025 15:58:02 -0800
-In-Reply-To: <tencent_14375A4BEC7483764966023C0136D4968209@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67b6700a.050a0220.14d86d.0153.GAE@google.com>
-Subject: Re: [syzbot] [jfs?] KMSAN: uninit-value in diFree
-From: syzbot <syzbot+df6cdcb35904203d2b6d@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Thu, 20 Feb 2025 08:09:08 +0900
+Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+> So something like this?
+> 
+> unsigned int	block_flags;
+> union {
+> 	struct mutex	*mutex;
+> 	struct rwsem	+rwsem;
+> 	struct rtmutex	*rtmutex;
+> } blocked_on;
+> 
+> enum {
+> 	BLOCKED_ON_MUTEX;
+> 	BLOCKED_ON_RWSEM;
+> 	BLOCKED_ON_RTMUTEX;
+> 	BLOCKED_ON_IO;
+> } block_reason;
+> 
+> For the safety, we may anyway lock the task anyway, but that is the
+> same as stacktrace.
 
-Reported-by: syzbot+df6cdcb35904203d2b6d@syzkaller.appspotmail.com
-Tested-by: syzbot+df6cdcb35904203d2b6d@syzkaller.appspotmail.com
+Why not make it into a single entity?
 
-Tested on:
+struct blocked_on {
+	unsigned int	flags;
+	union {
+		struct mutex	*mutex;
+		struct rwsem	*rwsem;
+		struct rtmutex	*rtmutex;
+	} blocked_on;
+};
 
-commit:         6537cfb3 Merge tag 'sound-6.14-rc4' of git://git.kerne..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17ddb5b0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8cf1217edc1cc7da
-dashboard link: https://syzkaller.appspot.com/bug?extid=df6cdcb35904203d2b6d
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=169b27f8580000
+-- Steve
 
-Note: testing is done by a robot and is best-effort only.
 
