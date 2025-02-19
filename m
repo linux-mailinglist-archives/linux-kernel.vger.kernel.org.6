@@ -1,266 +1,135 @@
-Return-Path: <linux-kernel+bounces-521636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26A50A3C024
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:39:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 790C7A3C04A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:44:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA63C188D16E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:39:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 086281701B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:39:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E80271E5B67;
-	Wed, 19 Feb 2025 13:38:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63F9D1EA7FC;
+	Wed, 19 Feb 2025 13:38:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jyzTA/hk"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="YRdx01fP"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB45A19CD01;
-	Wed, 19 Feb 2025 13:38:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33AB81E8339
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 13:38:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739972326; cv=none; b=ax0qWpQJtIMAvBfWTVpv0/GZZVbZsRVuU19HDHNsx7vUNwG+mX2nX0xhvAAuXdp7/Fgz5GuBss1gLsshoO2hj5WsRn0H0ItHZf6XzZGW6g0rvO3Q3MaCC6wcfc64cXewIi9JrmA7zxyqV/qt9aseIILH8RtysvFV2mtgJ8N+AdU=
+	t=1739972330; cv=none; b=kagiuJ2M2EDSi5IueSPZVma/LafoR3QA9PtNReCPtCWpjhgR+QZf9ZFQK20EXWmcVbHYqIDQdGUr9BucMglKljfnw+FciZsY+bjwktGQVAd8O6E/J9DVvrrRSNbWKJIK4qaAOVDRuotRlU7+xAbpUyO2RMh1TLmPkFZS0hmTqZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739972326; c=relaxed/simple;
-	bh=ss+b8WFJ460bWqkMhzwN0V/1Oxr3SxGisl0KFPLpS6I=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=p6cEV740g/TYG5qyXwfCyU4TGY905tMtYE3bEcda2Artra65hc/qpkMdne4WO3QgTNEET5ttIoqhquH/TAP8x+YSbbN7wbtgdP0kgCh9oVFNt94XPNt9dynDPpvQfzg7q/6WR/jmeReesxUtrkl+Pe8bXs78eFqT/ERkZyONZB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jyzTA/hk; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 8413A442F7;
-	Wed, 19 Feb 2025 13:38:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1739972322;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=40VQPDLl9432aUrN3sAc+VkJbcJXajTxhY3GmtVBO3o=;
-	b=jyzTA/hk2CspLLq+x9cJh7syK0+LIGn6EqqtqPFmwKa33Yy6M2hIK8NI0QM+3FKswz6lnL
-	HUn9JiMz3g0KpuYt2WUwT44yZrdJjnYVPM42NNqIIRARogu8Anb/leIeYVgAPxcAtu46eV
-	A5nXsUoVeSBoGUsSwlwtmhbZxZjDpNp7SxzGFAe/l2aC0W9U4Atz8OBIQvC77JksfpGP/O
-	frxXq6v9F+uP2pL9D+dIX8jPDaONdpqti6Z+Z0nBpVkgt2RNCSTZ+Wzeq6IHa9pZiGmpuH
-	rSif1XCrS+/T7NaBy+KxjsP5yMPOH4tnq2b9FvphL690g2mwt8Fttl3vqK9cdA==
-Date: Wed, 19 Feb 2025 14:38:40 +0100
-From: Herve Codina <herve.codina@bootlin.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>
-Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [RFC PATCH 0/3] i2c: Introduce i2c bus extensions
-Message-ID: <20250219143840.2730cddf@bootlin.com>
-In-Reply-To: <20250205173918.600037-1-herve.codina@bootlin.com>
-References: <20250205173918.600037-1-herve.codina@bootlin.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1739972330; c=relaxed/simple;
+	bh=ww8qhd750yM/3V9soiIqSvERrd7hLK08TNlxdBwyh1c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rHknAydr6TxQQwqN52PEZg4zczeFp+WApWWneEu1C5v/5Paf/exIAL1a1NX89pc+TcwidMMHpNIEP3FH7KFT7Lu/3AbZQC97erEXOxRal5dEFfGoPO9cC0DRBfvVkVOHhTafw0PT7KNvFLqTFvTo0zDNK81d5OWIOpjRnSB8vd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=YRdx01fP; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-46fa764aac2so54676311cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 05:38:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1739972328; x=1740577128; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qmFgtXmk2eQOZz5aocdhBV3sp36pVIgMFye7f82uT/E=;
+        b=YRdx01fPrA06dLWOByy7Iyj7An5yKwm7iwNjpeVM7bZeTfa4Jr7/VUFhtjC9MIRqCF
+         2cEgMJUXWS8rkV+BdbWbYAU/VL4emmD7fRETcfWZJZ4QArKr2nh8E76sibrU+2e9Xlwi
+         r9554nfnAuK/+S9pkapCJ8829hl+sGES+LfD1o9Vuklh24SgrUXEiN8n6ziP5URnsWKn
+         WY85RMZyJkDEQC0yrYdRIesDmI9cbHL5zJW/NVZ/H3KIlev1h9l7LIlN3PjHrLCltVjK
+         nPnfLM1tPif/dHOn3sFD+ymWR7GyPJ26oeOzFovAs1/oyVNuYtPWUJJX6trSPaxxXVNQ
+         8bBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739972328; x=1740577128;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qmFgtXmk2eQOZz5aocdhBV3sp36pVIgMFye7f82uT/E=;
+        b=saCTEVrZk9w9mKEf8ot21S7x5EksVk3vPEj2Yf69vgBPmxs9hmkf9CxjIquKsr0/As
+         38vLsmbBvPOOVfse7F0dxRTQ/NmQIYL/69Etx2PqwbC/lavEapduCkhxklIuepz0AswZ
+         2xWARuneas1yqz47uAKE5h7SEOPSWOF/z7FhppR6CYUvSnvf6xL3MbotiL+sHFWforRa
+         NUriRI57dICIbvMBIGNbxSsrdOaaMQYSivP6TQAqmPox2l7U3PjwxSdFFt5kSL/74f/P
+         iPXyKdOAqmOlYh+wJVxE6XXSMwE9bjwnsi+wFFjjvPSXRVlnMzcJ1SLiCSKaJGFithIR
+         Xerw==
+X-Forwarded-Encrypted: i=1; AJvYcCUHBeWn0Fi2VAm4RfQHU0Fn2IEVELKEzlkValckpmpVXbkooGHXGp2AgRl5Axro14zfFZqHby42zKbUilE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSbVXu1Th6xEVOtXxHOvTcsiL9FcvEmeZRTpssjn4TAN4n6dJj
+	oQ0hvDJEeOCc94g6Q5lESyzmBsJ1MWKe5u+VcHFknouEV9s40YPHkVDCSlVnO8Y=
+X-Gm-Gg: ASbGncusDpdyRAieuGXDkv/k7HhApnLf3bEObwYV9VQkYNJVDuZXWi8dn9hG0F2P2eK
+	ZHKQ8hRJj23l7o3LNmDgF9NdX6/OYV0Y9BCMrvGi14ngtpT3Q0TXsUn/sbenIki1VWuW/ujV2Th
+	Xk0N7kxOAjXpGK3N9SgstdkNu3kqOSfANiOTaF7g/VP8YC4h9Coe18nopwcWRHvikcRk69+/xcD
+	lzMzDSPgoe+KrpKNrA85uRWV8WJPdmhzU6aizeTJv07JTv7RlNGR1+8tA3I18g8V4eie2OsBH+O
+	VorUvHhR+Y9F9uBgNw7qwrdUCafhEnZMrhX0fVv7DcPdN8RknURMZHKWWJ9Ikgal
+X-Google-Smtp-Source: AGHT+IGe+fO3k/hUtSTw1kQddphoKox1ngHNckiz5XU+GRYnYWcN3popRgflLMJK4dFjjHqz9YutFA==
+X-Received: by 2002:a05:622a:148d:b0:471:9721:7482 with SMTP id d75a77b69052e-471dbd5616bmr269631021cf.27.1739972328059;
+        Wed, 19 Feb 2025 05:38:48 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-471fdf8ac21sm22421101cf.19.2025.02.19.05.38.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2025 05:38:47 -0800 (PST)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1tkkHn-0000000067m-05Qh;
+	Wed, 19 Feb 2025 09:38:47 -0400
+Date: Wed, 19 Feb 2025 09:38:47 -0400
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: "Daisuke Matsuda (Fujitsu)" <matsuda-daisuke@fujitsu.com>
+Cc: "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+	"leon@kernel.org" <leon@kernel.org>,
+	"zyjzyj2000@gmail.com" <zyjzyj2000@gmail.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"rpearsonhpe@gmail.com" <rpearsonhpe@gmail.com>,
+	"Zhijian Li (Fujitsu)" <lizhijian@fujitsu.com>,
+	Joe Klein <joe.klein812@gmail.com>
+Subject: Re: [PATCH for-next v9 0/5] On-Demand Paging on SoftRoCE
+Message-ID: <20250219133847.GM3696814@ziepe.ca>
+References: <20241220100936.2193541-1-matsuda-daisuke@fujitsu.com>
+ <CAHjRaAeXCC+AAV+Ne0cJMpZJYxbD8ox28kp966wkdVJLJdSC_g@mail.gmail.com>
+ <OS3PR01MB98654FDD5E833D1C409B9C2CE5022@OS3PR01MB9865.jpnprd01.prod.outlook.com>
+ <OS3PR01MB9865F967A8BE67AE332FC926E5032@OS3PR01MB9865.jpnprd01.prod.outlook.com>
+ <20250103150546.GD26854@ziepe.ca>
+ <CAHjRaAfuTDGP9TKqBWVDE32t0JzE3jpL8WPBpO_iMhrgMS6MFQ@mail.gmail.com>
+ <CAHjRaAd+x1DapbWu0eMXdFuVru5Jw8jzTHyXo2-+RSZYUK9vgg@mail.gmail.com>
+ <20250113201611.GI26854@ziepe.ca>
+ <OS3PR01MB98659E07C0DAA1838FFBC70DE5E92@OS3PR01MB9865.jpnprd01.prod.outlook.com>
+ <OS3PR01MB98651D06FEFF22AD1CFBABF8E5C52@OS3PR01MB9865.jpnprd01.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeigeefkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthekredtredtjeenucfhrhhomhepjfgvrhhvvgcuvehoughinhgruceohhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeejueeggeehiedtvefhjedtveeugeehtdekteffkeeggeefkefhlefhfeetiedvheenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdhlphgtrdgvvhgvnhhtshdpghhithhhuhgsrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeelpdhrtghpthhtohepfihsrgdorhgvnhgvshgrshesshgrnhhgqdgvnhhgihhnvggvrhhinhhgrdgtohhmpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlr
- dhorhhgpdhrtghpthhtoheplhhinhhugidqihdvtgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopeguvghvihgtvghtrhgvvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhm
-X-GND-Sasl: herve.codina@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <OS3PR01MB98651D06FEFF22AD1CFBABF8E5C52@OS3PR01MB9865.jpnprd01.prod.outlook.com>
 
-Hi Wolfram,
+On Wed, Feb 19, 2025 at 10:48:25AM +0000, Daisuke Matsuda (Fujitsu) wrote:
+> On Thu, Jan 30, 2025 7:52 PM Daisuke Matsuda (Fujitsu):
+> > On Tue, Jan 14, 2025 5:16 AM Jason Gunthorpe:
+> > > On Mon, Jan 13, 2025 at 02:15:27PM +0100, Joe Klein wrote:
+> > >
+> > > > > > > Possibly, there was a regression in libibverbs between v39.0-1 and v50.0-2build2.
+> > > > > > > We need to take a closer look to resolve the malfunction of rxe on Ubuntu 24.04.
+> > > > > >
+> > > > > > That's distressing.
+> > 
+> > I am going to start bisecting the root cause to fix it.
+> > It may take a while, so please stay patient.
+> 
+> On Ubuntu 22.04.5, both v50.0 branch and master branch pass the pyverbs testcases,
+> so it is not a regression of libibverbs. However, on Ubuntu 24.04.1, the test causes
+> segmentation fault with both branches. The issue looks specific to Ubuntu 24.04.
+> 
+> Could it be possible the update of python version leads to the
+> failure? 
 
-In order for me to move forward on this new feature sending a patch for the
-binding or reworking my proposal can you provide feedback on the topic and
-the current implementation available in this RFC.
+Or a cython update? It certainly could..
 
-Best regards,
-Hervé
+So maybe there is nothing to worry about kernel side if the test case
+passes on older OS userspace
 
-On Wed,  5 Feb 2025 18:39:13 +0100
-Herve Codina <herve.codina@bootlin.com> wrote:
-
-> The big picture behind this RFC series is to support a Linux device
-> with a connector to physically add and remove an add-on to/from the
-> main device to augment its features at runtime, adding devices on
-> non-discoverable busses, using device tree overlays.
-> 
-> The related big picture has been already presented in
->   - the 'Add support for GE SUNH hot-pluggable connector' series [0]
->   - the 'Runtime hotplug on non-discoverable busses with device tree
->     overlays' talk at Linux Plumbers Conference 2024 [1].
-> 
-> This series focuses on the i2c related part.
-> 
-> An i2c bus is wired to the connector and allows an add-on board to
-> connect additional i2c devices to this bus.
-> 
-> When device tree nodes are added, the I2C core tries to probe client
-> devices based on the classic DT structure:
-> 
->   i2c@abcd0000 {
->       some-client@42 { compatible = "xyz,blah"; ... };
->   };
-> 
-> However for hotplug connectors described via device tree overlays [0]
-> there is additional level of indirection, which is needed to decouple
-> the overlay and the base tree:
-> 
->   --- base device tree ---
-> 
->   i2c1: i2c@abcd0000 {
->       compatible = "xyz,i2c-ctrl";
->       i2c-bus-extension@0 {
->           i2c-bus = <&i2c_ctrl>;
->       };
->       ...
->   };
-> 
->   i2c5: i2c@cafe0000 {
->       compatible = "xyz,i2c-ctrl";
->       i2c-bus-extension@0 {
->           i2c-bus = <&i2c-sensors>;
->       };
->       ...
->   };
-> 
->   connector {
->       i2c_ctrl: i2c-ctrl {
->           i2c-parent = <&i2c1>;
->           #address-cells = <1>;
->           #size-cells = <0>;
->       };
-> 
->       i2c-sensors {
->           i2c-parent = <&i2c5>;
->           #address-cells = <1>;
->           #size-cells = <0>;
->       };
->   };
-> 
->   --- device tree overlay ---
-> 
->   ...
->   // This node will overlay on the i2c-ctrl node of the base tree
->   i2c-ctrl {
->       eeprom@50 { compatible = "atmel,24c64"; ... };
->   };
->   ...
-> 
->   --- resulting device tree ---
-> 
->   i2c1: i2c@abcd0000 {
->       compatible = "xyz,i2c-ctrl";
->       i2c-bus-extension@0 {
->           i2c-bus = <&i2c_ctrl>;
->       };
->       ...
->   };
-> 
->   i2c5: i2c@cafe0000 {
->       compatible = "xyz,i2c-ctrl";
->       i2c-bus-extension@0 {
->           i2c-bus = <&i2c-sensors>;
->       };
->       ...
->   };
-> 
->   connector {
->       i2c-ctrl {
->           i2c-parent = <&i2c1>;
->           #address-cells = <1>;
->           #size-cells = <0>;
-> 
->           eeprom@50 { compatible = "atmel,24c64"; ... };
->       };
-> 
->       i2c-sensors {
->           i2c-parent = <&i2c5>;
->           #address-cells = <1>;
->           #size-cells = <0>;
->       };
->   };
-> 
-> Here i2c-ctrl (same goes for i2c-sensors) represent the part of I2C bus
-> that is on the hot-pluggable add-on. On hot-plugging it will physically
-> connect to the I2C adapter on the base board. Let's call the 'i2c-ctrl'
-> node an "extension node".
-> 
-> In order to decouple the overlay from the base tree, the I2C adapter
-> (i2c@abcd0000) and the extension node (i2c-ctrl) are separate nodes.
-> Rightfully, only the former will probe into an I2C adapter, and it will
-> do that perhaps during boot, long before overlay insertion or after the
-> overlay has been inserted for instance if the I2C adapter is remove and
-> re-probed for whatever reason after the overlay insertion.
-> 
-> The extension node won't probe into an I2C adapter or any other device
-> or bus, so its subnodes ('eeprom@50') won't be interpreted as I2C
-> clients by current I2C core code.
-> 
-> The extension node is linked to the adapter node in two ways. The first
-> one with the i2c-bus-extension adapter sub-node and the second one with
-> the i2c-parent property in the extension node itself.
-> 
-> The purpose of those two links is to handle device probing in several
-> cases.
-> 
-> - First case: Adapter already probed when add-on devices are added
-> 
-> When devices are added by the overlay, an OF change notification is
-> triggered so that busses can support those new devices.
-> 
-> Going from a newly added device node, the i2c-parent property allows to
-> find the corresponding I2C adapter and register the new I2C client with
-> this adapter.
-> 
-> The patch 1 in this series proposes modification to handle this case
-> and, by the nature of the modification, all cases where a phandle refers
-> an extension node instead of the adapter node itself.
-> 
-> - Second case: Add-on devices already present in device-tree when
->   adapter is probed
-> 
-> In this case, everything is already described in the device-tree and
-> then the adapter is probed.
-> 
-> OF change notifications don't play a role in this case either because
-> they were never triggered (the overlay was applied by the bootloader)
-> or they were triggered before the adapter is probed and so were
-> missed/ignored.
-> 
-> The adapter probe process registers device already described at the
-> adapter node level (current code) and, thanks to i2c-bus-extension
-> adapter sub-node and its i2c-bus property, it can also follow the
-> extension and registers devices described in those extension nodes.
-> 
-> The patch 2 and 3 in this series proposes modifications to handle this
-> case.
-> 
-> I know device-tree bindings for i2c-bus-extension and i2c-parent are not
-> yet provided in this RFC series.
-> 
-> I would like to discuss the proposal before going further and write
-> those needed bindinds (i2c-bus-extension needs to be added in
-> i2c-controller.yaml available in dt-schema repository [2]).
-> 
-> Best regards,
-> Hervé Codina
-> 
-> [0] https://lore.kernel.org/all/20240917-hotplug-drm-bridge-v4-0-bc4dfee61be6@bootlin.com/
-> [1] https://lpc.events/event/18/contributions/1696/
-> [2] https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/i2c/i2c-controller.yaml
-> 
-> Herve Codina (3):
->   i2c: core: Follow i2c-parent when retrieving an adapter from node
->   i2c: i2c-core-of: Move children registration in a dedicated function
->   i2c: i2c-core-of: Handle i2c bus extensions
-> 
->  drivers/i2c/i2c-core-base.c | 43 ++++++++++++++++++++++++++++-
->  drivers/i2c/i2c-core-of.c   | 54 +++++++++++++++++++++++++++++--------
->  2 files changed, 85 insertions(+), 12 deletions(-)
-> 
+Jason
 
