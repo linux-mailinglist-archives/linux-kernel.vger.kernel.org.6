@@ -1,115 +1,118 @@
-Return-Path: <linux-kernel+bounces-521445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E81FA3BD6D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:50:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37270A3BD71
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:51:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF3C81662F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:50:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92D4F1891C4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:51:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02DF71DB546;
-	Wed, 19 Feb 2025 11:50:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06FE91DED43;
+	Wed, 19 Feb 2025 11:51:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="fzeE/D70"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="JVtfwhf7"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 997A4286291;
-	Wed, 19 Feb 2025 11:50:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D5D01C700F;
+	Wed, 19 Feb 2025 11:51:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739965804; cv=none; b=F1owMONCx64+ugY/nI1H14kkgrdBJEG5V9alQe6jIXBrSkPiYdWKI3CoBcGmJ7G8oNhPJLFzJ7xt2L+HrUIeP7kNQwV6QPhEHUNRjEMguybm5ERZ9s4VZYxS5i7BwjdE8rYmomK7p7lC9Lqd3jlpY4VSFjGpIDKF+EO5YpvgpHs=
+	t=1739965886; cv=none; b=IhvRfHPIhcAXqx6gYGfugnef/GocqRZU/moeXLQzNQvuxef1clLT20tHJqlDsuZaRgOhZIzHld9DsYBCXUzsiTXTuRg+I/2U6wAA2YuuG7H3Sd9VGMvQWIHMAirmWIKDjsVVitXFAFVpFaRBy9jfeHRfZ/0WgJBT8s4pSRYdwIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739965804; c=relaxed/simple;
-	bh=zjCya3UkJ9nS19n6CQZQ4XIk6JtOv4d5YcFjY5uiVJk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qJ3vVIM4Is2fnFAJzTc8Zq0Y3OXq/Gd/X9EzseA9proO0QFJAVMGR5Wy/Qj2PLeQm4nPCtBwY6Re1BN4/cN/mQJ5gq/MRJmNQDvaftqFi2ZD83fXJ+kFlCHC0DEPEgBsSn3HEOzJ74JxT1f7mewxnqBJ7qJK7cX0dDB3f9s3md8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=fzeE/D70; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 62E6F10382F0F;
-	Wed, 19 Feb 2025 12:49:56 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1739965798;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=DmE/AqNS2uy0QlORQ3XZZ++nuTd4ykAVXTbN7NVTIZw=;
-	b=fzeE/D709YCLzOyof5x37NCe3HjjsvRoAPnhyqoAq6puzHn6jaKnAI/7HCLN2Adv+KWYIb
-	qhykKL6tAFpc1IMieFJdTjtC0JW2IilHAuMXh9xLswuoiy6upsgIEKi//pwtr4LiM+jPdH
-	iPjOuUmvVCIspveJlusVDxzmPRpz6Pqp0MltAil+j8Xfsp2kcNHa/cgIocHKK0Geo8lZoq
-	o77vXhzqOARwQ4cLIKUiKOyPMJYYdF9C0i9At/CpKxwUj83S+gjiOORwvdSN1v8d9lv57b
-	axXiLkxQ20q0vu5pV/MFlZw61ns9tLefp/zAqzuxxm6M69h6hd0/GpmcJnZmPA==
-From: Lukasz Majewski <lukma@denx.de>
-To: Abel Vesa <abelvesa@kernel.org>,
-	Peng Fan <peng.fan@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-clk@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Lukasz Majewski <lukma@denx.de>
-Subject: [PATCH] arm: clk: Add ETH switch clock description for vf610 SoC
-Date: Wed, 19 Feb 2025 12:49:36 +0100
-Message-Id: <20250219114936.3546530-1-lukma@denx.de>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1739965886; c=relaxed/simple;
+	bh=IDthTVL2Wrce+0if7DYoKTu3tMYLsxDFclMAU0Fkw0Y=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=H+QLZVkzpd/3wJzxismmYoKG8aUrkawixPnh9wO0KcE8OUyE3FyjRwDdJEk2LW/pTc3prSP6DFWhb4QJ5lAKklCG5nZM8P6aPznkUvFn7sVk8QKtthzbRnX2UgqzpaU+yT/DaxHEWi9isuLI9MEeBgJRowisenb67oBUYUOYPDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=JVtfwhf7; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1739965835; x=1740570635; i=markus.elfring@web.de;
+	bh=NvehylpXKAE4GsvHzvdLLIOowgvyYMRU7kGv4X4UngY=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=JVtfwhf7WFgQLaTkRfW+vr+Dp1wv+41F9lKvulOLukBQgpVvjU5rEHywyPZekY5t
+	 Yv9l01MUfOpf8C7AjgzoFWERlB+i9BCSphMtCTHxMi9sjT0ssqcHtuWrrwPJ7zePg
+	 kieLsPOjrbI/Iqm1XcNCs3wZITk+gCZqJELZfbVj8cFgOsEz9/EdMHNbYLhSY0Kcw
+	 lJHTZKphj/EVyuwDftqcIFp3TRrUUvL46i4wNnNYtBFQNRCfzMfGkhpd6FlmKNT/l
+	 q2yDBbKIWhXEFYk8StPvJ/kGB3m/bspxT8PRj/AJ8y27UojLRg4QOwkv8upEc3WSX
+	 Zsj5uF5plzUrN9n0oQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.10]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MWQyl-1traNc1Mbr-00U394; Wed, 19
+ Feb 2025 12:50:35 +0100
+Message-ID: <899a68e1-913f-497b-a8ac-12af94e776b2@web.de>
+Date: Wed, 19 Feb 2025 12:50:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla Thunderbird
+To: Kohei Enju <enjuk@amazon.com>, netdev@vger.kernel.org
+Cc: Kohei Enju <kohei.enju@gmail.com>, LKML <linux-kernel@vger.kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>,
+ David Rientjes <rientjes@google.com>, "David S . Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Gilad Naaman <gnaaman@drivenets.com>, Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+ Jakub Kicinski <kuba@kernel.org>, Joel Granados <joel.granados@kernel.org>,
+ Joonsoo Kim <iamjoonsoo.kim@lge.com>, Kuniyuki Iwashima <kuniyu@amazon.com>,
+ Li Zetao <lizetao1@huawei.com>, Paolo Abeni <pabeni@redhat.com>,
+ Pekka Enberg <penberg@kernel.org>, Roman Gushchin
+ <roman.gushchin@linux.dev>, Simon Horman <horms@kernel.org>,
+ Vlastimil Babka <vbabka@suse.cz>
+References: <20250219102227.72488-1-enjuk@amazon.com>
+Subject: Re: [PATCH net-next v2] neighbour: Replace kvzalloc() with kzalloc()
+ when GFP_ATOMIC is specified
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250219102227.72488-1-enjuk@amazon.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:6pYanJvVoy3kjf8nHZT5X5BQBTg2kZHu7XAP+a/tNgMwt6VV1lD
+ 4PkDbOMbQcuSxm9hcK4YHklHWqG9LNerp8R7CosuCXsnF3SFJTMHFhS9Za8Royu82/Z3rud
+ x42rQ4Y62z8S4bRfciuTmuFNZ65FLipTPQYX0tyMqUizR6zScpBzt63z4fUxMVJ3UaEBBIw
+ CKOzEeKTXFAGrcmMDtg1g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Imyo5+kblPA=;IZtplPX/5S2Xl83MO5rkyCWJv1b
+ vRCSupZHsFVntUGeJia5oTYYNPv/LYDS7lYcEB7rnNFN29hNVEB+jNNEIRQ/Cgscq1GCqJOC9
+ 9KPVl7LHCub/qfAQG1bzZP5iLrOmRzXErGcH/73Lt7H1/ZQW2cK1b7spq6VWojrh/Xvz8KgXs
+ UCMyE4JDae/nPJpoc/4TRb4MXBTySH53oJ1MixVqX+6p7NEpokRHEpIqssdLNCbJDTT2XE23H
+ sDFIVjXIY2Oya306/4JFhN53LnTwhCGnXSyvVbJs52ns+R3nTAFLbGuJJW37yJY7NugTAfT4+
+ +W12omY88KwAJGq3T9KEtlseumhkJwVCPvSjKt6f/b1LUFiplTrXEpY8Da48LdXhswKFYyUjd
+ zt0Gg4aHJ1jeFqsoxLEwI5tD2uNK0Ir+OIU4M7L8GvHnGWZCcp82+FjP/ttZ2PYJS3HxdSsgZ
+ 4W81gsHJlFWj2vKseeXNEY4Sas4aPZoDVrp2cfget5uk1cjW+wAf6Th81JWyVDHQQCKuQa/at
+ 5vsCbRYFw2rkGjd7ZuvE3IEc3/k11WCTEOkrfy+GGftDyoMIbVDdtB1v5mrrgILFIlK5FUlVe
+ frV+cff8aNZBnJs20CbRG+qtfFw65ODgJz6HT4Xd/KeaeJvlQp9yUnzHxa/r6GtRHIMvYzD9t
+ nYbqbnD8SYHYjwZNNGi8PqyqOynl6x/LEpG5mqW5u1RVOS65qCUXH/fGaCvt4OQVXf4PF3AW/
+ IHv92lP0Ix/iWoQoG459iniYWvZ7cxu7AKj8JdAccRNHiXg0CSoOsYxcJQN5RD3zRrZQnN7Mb
+ KQb0OWnIc1ihPNs9lyrjm5DShGrouvZKP3cD2JHd1I89ozo9+AmvOd/XCaS7jagf0XHumZ5EZ
+ lsgbn4ReougJCUrAkT846TBODkCFfjaqEnyX7johm0aBsNTmfdCCcr3966aethhzllp/wRxVi
+ axdQhtAxBJOCsZyOwVmxGKioHoLGjbElbKKWVfjZVNAAvcoGfdiluctvp5mioS/O7b5SN2ptA
+ OcDJTiasP2fpuZBaAiSYGRHHvvxwfS9TAIgcyMi/LkwnwX3aujiu02AFtyGdwKBQebpJEkast
+ g2SGJ8FHjquoR6Kx1a8Ldpy7msvcfwi/DEBtAlSChCfGtFvycJgqcbKXUfhW79XU47pcSH/Tj
+ DOfrAent/Pom7jjmDC9dvHIVGX8ib4CA9RI37VLMobwzf7vCaI+054c416XH3UvqBkqbKUi1H
+ WzmJW75yKJA/jxPdSi9MhjVvJST7I4sMgubSSgByR1rQBe3W0yq90sy78hxF+yTrgzlh589pP
+ ddLo1AsNHNGCmCSGybWcd1hecGwszYcNPYL9Q9ih8ldsipxHODhcJ+Na3yDwEr8VKFCHFyIZu
+ 6anil/ps9Tl2OARMp061qAiSIULmstvQUozQgiSXB1PQlO+65gHqWOa3fHDAkurEcEfp/jfzk
+ 3wQ5cVh3a54gTfI3YwExFPgQL1HI=
 
-The NXP's vf610 soc is equipped with L2 switch IP block from More
-Than IP (MTIP) vendor.
+=E2=80=A6
+> This patch replaces =E2=80=A6
 
-It requires special clock (VF610_CLK_ESW) to be operational.
+  Thus replace?
 
-Signed-off-by: Lukasz Majewski <lukma@denx.de>
----
- drivers/clk/imx/clk-vf610.c             | 1 +
- include/dt-bindings/clock/vf610-clock.h | 3 ++-
- 2 files changed, 3 insertions(+), 1 deletion(-)
+See also:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.14-rc3#n94
 
-diff --git a/drivers/clk/imx/clk-vf610.c b/drivers/clk/imx/clk-vf610.c
-index 9e11f1c7c397..405bf48a1d28 100644
---- a/drivers/clk/imx/clk-vf610.c
-+++ b/drivers/clk/imx/clk-vf610.c
-@@ -309,6 +309,7 @@ static void __init vf610_clocks_init(struct device_node *ccm_node)
- 	clk[VF610_CLK_ENET_TS] = imx_clk_gate("enet_ts", "enet_ts_sel", CCM_CSCDR1, 23);
- 	clk[VF610_CLK_ENET0] = imx_clk_gate2("enet0", "ipg_bus", CCM_CCGR9, CCM_CCGRx_CGn(0));
- 	clk[VF610_CLK_ENET1] = imx_clk_gate2("enet1", "ipg_bus", CCM_CCGR9, CCM_CCGRx_CGn(1));
-+	clk[VF610_CLK_ESW] = imx_clk_gate2("esw", "ipg_bus", CCM_CCGR10, CCM_CCGRx_CGn(8));
- 
- 	clk[VF610_CLK_PIT] = imx_clk_gate2("pit", "ipg_bus", CCM_CCGR1, CCM_CCGRx_CGn(7));
- 
-diff --git a/include/dt-bindings/clock/vf610-clock.h b/include/dt-bindings/clock/vf610-clock.h
-index 373644e46747..95446f1bee16 100644
---- a/include/dt-bindings/clock/vf610-clock.h
-+++ b/include/dt-bindings/clock/vf610-clock.h
-@@ -197,6 +197,7 @@
- #define VF610_CLK_TCON1			188
- #define VF610_CLK_CAAM			189
- #define VF610_CLK_CRC			190
--#define VF610_CLK_END			191
-+#define VF610_CLK_ESW			191
-+#define VF610_CLK_END			192
- 
- #endif /* __DT_BINDINGS_CLOCK_VF610_H */
--- 
-2.40.1
-
+Regards,
+Markus
 
