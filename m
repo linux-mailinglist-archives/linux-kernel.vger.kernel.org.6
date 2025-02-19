@@ -1,283 +1,315 @@
-Return-Path: <linux-kernel+bounces-521410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63D3EA3BCD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:30:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA554A3BC7C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:14:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EB3A18994DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:30:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 604AC3AE826
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:12:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F304C1DF756;
-	Wed, 19 Feb 2025 11:29:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA7E61DEFE7;
+	Wed, 19 Feb 2025 11:12:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b="anZAHNUL";
-	dkim=pass (1024-bit key) header.d=IMGTecCRM.onmicrosoft.com header.i=@IMGTecCRM.onmicrosoft.com header.b="N2E/AwTF"
-Received: from mx08-00376f01.pphosted.com (mx08-00376f01.pphosted.com [91.207.212.86])
+	dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b="XJs1fd/u"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11012003.outbound.protection.outlook.com [52.101.66.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E40311DF75C
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 11:29:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=91.207.212.86
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D410B1DE89A;
+	Wed, 19 Feb 2025 11:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.3
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739964592; cv=fail; b=TYV4zpjNLZGhlZBUkZHEJkKZMv9buZbVbiGF4xMlNiS5AU6G4d6H2s5IrH0Rz4r/wt+EhvT+2We2hVYBuZRaMgmLFDsWjUsHhW12l454/OHSLu88k12Yg2Le3i0ibrnMYkegk7I8jb09896Y5coTrG8Qe8NynznBxZimzUF5wk4=
+	t=1739963551; cv=fail; b=tQmmSjD2N/E5ggM1jjtqs7VkdMAYvbT+ReZt5a9uTjgMgwMvBnjRrAgxzrtVDtznTCV4M4AQQaijwHmguNZQnIpUbrQhXaIpqCj10g0q/8ctA859Rr9urGph5KhdUOIXhUYz7Ve3q81r0b6y2V7VGzv/+dLAgbQsC246Dd9taK0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739964592; c=relaxed/simple;
-	bh=+c1ZdsvhiQXdU9FyS3kkdVueFFpkDu7Lbgs7PBc0944=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=lKL5ylK2T1JLR6wTkCu5mEY6BIVPZsyXDfKv90hH2aDMqHNWIROwboA5nFR3OchALEPk6KUO5zLQmOFAozxy5UwZHMjXG+eZ0DR1RJ8WW4iuzergI87Vhkr9q30x/SvhkcZ3NfDZr7DNuAMzfJnJU0uiX8OGnZUrq6jkezSUkac=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com; spf=pass smtp.mailfrom=imgtec.com; dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b=anZAHNUL; dkim=pass (1024-bit key) header.d=IMGTecCRM.onmicrosoft.com header.i=@IMGTecCRM.onmicrosoft.com header.b=N2E/AwTF; arc=fail smtp.client-ip=91.207.212.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=imgtec.com
-Received: from pps.filterd (m0168888.ppops.net [127.0.0.1])
-	by mx08-00376f01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51JAnNEv000301;
-	Wed, 19 Feb 2025 11:12:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=imgtec.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=dk201812; bh=ixVwsR4uv5NdL/BBp9gDuN+2/
-	Jf6oyNV6Sm6VzNW1zI=; b=anZAHNUL8ZcPDqV+LSRbd3TFowfWVpk44ty9jMHUM
-	C6o/N7TPjGY94ytSF7b5ZPl0hf8rH/OB2ncirVmNR2Tn/hu3cBUI05py1UlJUqeu
-	YDWPpz2JXvjAXU6ym8orjnJyy8ueanXFvayS3LeUexix0yKjjjX+jgAP7kJ1zWmI
-	Co1mGHFU/cdoFFrh9Z/B7CKNtaTwbmDN/Rj6P11APeWPya9ao+5l/LBKoXjEzIZA
-	EvuCmPFY+EScDj9AkpHWij19WVMX2PpNJGHPBdguW6sQBvlsfhfITr1pnuXDIglo
-	Z89AF0w3K4+P7Nlcd0CKM74CJaOve6l1Tgv5qBxkULo3Q==
-Received: from lo2p265cu024.outbound.protection.outlook.com (mail-uksouthazlp17011031.outbound.protection.outlook.com [40.93.67.31])
-	by mx08-00376f01.pphosted.com (PPS) with ESMTPS id 44w4c9rah4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Feb 2025 11:12:21 +0000 (GMT)
+	s=arc-20240116; t=1739963551; c=relaxed/simple;
+	bh=pn6dKZ1wgHzKhaP072B9x1q9E35wom4OHYK9/tx05hI=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=TMhhM0jqvUtPecvjFe2aRs6GvDuZYCW4ghwIFYjA4xO4Xgv8T6/wJi91YyZfWp+pMCV9DNpN0O7ie0yP+qZrrpE+WScveP3eEwmgtsId0fma3krjHifmHP7OJhW2RAjF3aOd13gtZ6yQIBRskYFmsi4soarEZ7imjiIVU+4DF5s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de; spf=pass smtp.mailfrom=cherry.de; dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b=XJs1fd/u; arc=fail smtp.client-ip=52.101.66.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cherry.de
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wL83/wHakx1eRMEwIR3sQTziUt5QzwGRaBywNKGynDqdUkUsHB3hmd14BCZuZ34zVndZfe5XzU1ziqpZFiqCq+j4i2NFIwe+jqCvZ2eNcIRFt5mIyHJlb6VVxi2JREuwkn/c2jwtv7DUXM22w3jkp+00kglwAfSQyvbWfZVqegw1oNpVQKikEZo9/LeuCaTfbWjHd2+8/4ATziKYsyNpREtNF/SXwBqxIhr5QEBa7EczpwLkINzOmOikol+/9P1UPi7++vu7cC/nuNGTqzuh+xjevbbMGxZ9RSBT0+y0lb6ePo8Vj8cOtC251itSi3v/BdlU6JmUHWCTuBtIGWPqRQ==
+ b=rdCHI8qbUDLIETmtsbc3acraexgrZznUhufN4zab89vq9i7VicoJwyaiELRNv4VlLk/NMsyaKpBghoMFT2UmF9Iy0vxDSSznIZ7Qh/LUBgMxemY6nCEkgtV9Kg4FT8oH058Lk0tLzdm3FtIl+7vp9VzewzlrgqGdM6ogLxiIlr/pVk5i3A97aFHhbij/ma0lIbCk4Y/xewBQkDzFrPo4WcbiDn5Z6iNr4BlzYBSRyY+1M3Op880n/aFT0DiuZJherYPFdc1kTfAwssHL34gEZpWflKd4Sowl1Mt1StLLQSbooH8x+nAo2RY+BBjID6OQcuxDa1BA/OukwugmpVPbyw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ixVwsR4uv5NdL/BBp9gDuN+2/Jf6oyNV6Sm6VzNW1zI=;
- b=kXCG6vjPi4FU8N5BRU3EzTLXdO1aUJNl9mqPCIkDDRwB2xXzBTXD14oSoavOeFL2l+gQ0v+y4RKNIx83/8Atl9Szn8kpc9T7pK3gevpAuYkMcfz69lIg3OctHtpEaX/ynZ1BqPq2x6jGHXHthTtYBlhZ9N+BkfXYtOIiL5NQF4G5nQcHPHQLAHP6A/+/wsrT5s1OqyKO4qESuc1AmH9BxGt7ijyLAP7rMTHpeICdi4WxkFYgQ6KrQPNOyGe7Sg8c4ye8q0ufnJkJJVr97r6mfrsC8I2bhQnaIEYE1COcmM3wEwFeXcWP+YHh2JeD6DiTd8qoaEU/x4Rp6ZPruaTLMQ==
+ bh=1L9E/7RvbrV4ahhQwBNI7f7Ey1tvgqcvFMXpYuxXGQw=;
+ b=C4gqlRd5AZKfzRZ/TdIqH9dRZUMrADqldyMy00xzeaPPKEFjo+Teadiwa8VrCYW0ZGnQmKWkbz0gUouY9tI+Bc3FyqcrGeQXs+x+38Xgs9jQrD67gbSB9KPFTAQJya95cX9WxEcy4kCeCGM0RSQl4BOVQ9TT7KaBV66GBYCyxHxphd4/cwJIVgT+RKEY2uO6Avlum4eAis2Eg/xWmfcPKiEYeJZuY8bWf3IBOOyFTmTW5+Q5YCeinaI5RenBgk15uTe55WDsEabYmnp7ldc7VHfGM/sIzSzcBAxNXZwG8LuO8OYL3WkfxeReUJ2ijCPUNqm3+6hQoNKLSzXU6EgS5A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=imgtec.com; dmarc=pass action=none header.from=imgtec.com;
- dkim=pass header.d=imgtec.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=IMGTecCRM.onmicrosoft.com; s=selector2-IMGTecCRM-onmicrosoft-com;
+ smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
+ dkim=pass header.d=cherry.de; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ixVwsR4uv5NdL/BBp9gDuN+2/Jf6oyNV6Sm6VzNW1zI=;
- b=N2E/AwTFU2XCfCYigndn4aZlU2i35kzpr0jKtdWaTREvxyisZmre447tOSnH7WqQaUIL0k14voVUhc0zt5jxUxxl7zTPMcmscTgxidTR+BVunaRUgk288rFCw7tCZkfOZ7LE7RLdUfbQwvbEv9eP6h8PeQoMqG3Cjc6JMMrQxqY=
-Received: from CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:e7::8) by
- LO4P265MB6635.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:2f6::13) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8445.19; Wed, 19 Feb 2025 11:12:19 +0000
-Received: from CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM
- ([fe80::8e9d:6b2f:9881:1e15]) by CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM
- ([fe80::8e9d:6b2f:9881:1e15%7]) with mapi id 15.20.8466.013; Wed, 19 Feb 2025
- 11:12:19 +0000
-From: Matt Coster <Matt.Coster@imgtec.com>
-To: Masahiro Yamada <masahiroy@kernel.org>
-CC: Frank Binns <Frank.Binns@imgtec.com>, David Airlie <airlied@gmail.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard
-	<mripard@kernel.org>, Simona Vetter <simona@ffwll.ch>,
-        Thomas Zimmermann
-	<tzimmermann@suse.de>,
-        "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] drm/imagination: remove unnecessary header include path
-Thread-Topic: [PATCH] drm/imagination: remove unnecessary header include path
-Thread-Index: AQHbe6XqBmDfaU+Kdk6mPq/BnbQ1W7NOhvuA
-Date: Wed, 19 Feb 2025 11:12:19 +0000
-Message-ID: <ba1cf682-87f0-4a95-a829-08764dad7c68@imgtec.com>
-References: <20250210102352.1517115-1-masahiroy@kernel.org>
-In-Reply-To: <20250210102352.1517115-1-masahiroy@kernel.org>
-Accept-Language: en-GB, en-US
+ bh=1L9E/7RvbrV4ahhQwBNI7f7Ey1tvgqcvFMXpYuxXGQw=;
+ b=XJs1fd/uKeumQ/I1J4FufMOjJv5UPT8jaif4V6JmfAdQHN7byAtw2oLJg9R3aDQLUJxxrlRAXZO0MaEVl3ybV99SbhRomJK175sSmQhBfrZthto+gErD2bXS1kp/nmfjdqXQEMD/CLd2wYtHZ+Vwlemu7hqAwlfI1n7gLSzV758=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=cherry.de;
+Received: from AS8PR04MB8897.eurprd04.prod.outlook.com (2603:10a6:20b:42c::20)
+ by DBBPR04MB7530.eurprd04.prod.outlook.com (2603:10a6:10:1f5::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.14; Wed, 19 Feb
+ 2025 11:12:25 +0000
+Received: from AS8PR04MB8897.eurprd04.prod.outlook.com
+ ([fe80::35f6:bc7d:633:369a]) by AS8PR04MB8897.eurprd04.prod.outlook.com
+ ([fe80::35f6:bc7d:633:369a%6]) with mapi id 15.20.8445.016; Wed, 19 Feb 2025
+ 11:12:25 +0000
+Message-ID: <24e8abf9-0bb9-4cbd-857b-0842fc914486@cherry.de>
+Date: Wed, 19 Feb 2025 12:12:24 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/2] hwmon: (amc6821) Add PWM polarity configuration
+ with OF
+To: Francesco Dolcini <francesco@dolcini.it>
+Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Farouk Bouabid
+ <farouk.bouabid@cherry.de>, Francesco Dolcini
+ <francesco.dolcini@toradex.com>, linux-hwmon@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250218165633.106867-1-francesco@dolcini.it>
+ <20250218165633.106867-3-francesco@dolcini.it>
+ <eb5c844a-e726-44c0-a0c1-7796d1a28ec3@cherry.de>
+ <20250219103307.GA22470@francesco-nb>
 Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CWXP265MB3397:EE_|LO4P265MB6635:EE_
-x-ms-office365-filtering-correlation-id: 427cd9e0-80ca-4582-f13a-08dd50d646a8
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|366016|1800799024|4053099003|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?Zm12aDNlekVaL1VVaWNHNjBNS3lLbzBmd1ZHdXRxL2xlNHdwM0ZZeVQ0TU1s?=
- =?utf-8?B?bEU5UGpPR0VISmdnRjZvRTl0dTdvQ2c4NUNOWTRsejh0VjN6VTcxVHBBbmZu?=
- =?utf-8?B?Y29zK2JMYVI4OXhacGlBSlk3dHYrMWlydmsrOGdBeFVXN0RnQ3l1QVZqeTY0?=
- =?utf-8?B?cDh3aGVKek9mb0ZlSExpUEozWkM2aFFvcEVPdWphaUhoQ01QQjA2THRpUmxw?=
- =?utf-8?B?eVZUdTVneUU3cFZjTm96TnVnUHJUK01NREoxTmY3NmxPYzBSOE41UFNVVWxu?=
- =?utf-8?B?Y0FrMy81aW1POTluL1ljMTJwSkRHU0piSTN1cFRTcEg3SHRvMUk0Z1BNWmF0?=
- =?utf-8?B?WEJDQW52V1VCRWpGanV5dW02MXlJeEZDa0xXS2VJSFkxeDAvY3NiT0xDS1pB?=
- =?utf-8?B?bTQ2U0pQamtzL2p0Z0swbWpCU2dXempyTjNNVW5hZGR1bmo2czNMbWUzaTIr?=
- =?utf-8?B?OVd2SSs2enJLTVlSRHpJc2ZXSm1RV3B5SHlZL2VpeHdhUG9GR0VWcEkrQTlo?=
- =?utf-8?B?ZGhVUjdUV010ekgrWXZoSWM2ckUrTVNrTzd0M0RJY3Zsc3ovdm9wNnNPTmR6?=
- =?utf-8?B?OGlHRjJyRU9DSGxaWGdqeEh2a1hyRGU1RVVGY2QzcytjZmZlcDk5S3Vvcngw?=
- =?utf-8?B?bHhPc040TWl0U3JacXpSUnJTU2xrSjM5VXNFY2g4RlNwNzN4dk10ak9EYmF6?=
- =?utf-8?B?OHVQNHhONDF2aGx1TnVERGxVTDcxRTZPVlE5MDBjODRWWkhxTzk4S0hETEYz?=
- =?utf-8?B?Q0UvM3o2bFVHcXpvS0gyZ2JDcStad0lqMzhZVGVMMjNWNkszdm02OEN3RGJP?=
- =?utf-8?B?NC9uenNZQ0EyUm0rU0VZeStWYXplbjZjVTFvQUhoMXJUUG0rUXdQZHBQUkUv?=
- =?utf-8?B?Qm1lM01tNUNHbXJsNmUyTlBwQ04wbVlsVmVNRkV4clpuakpWRjZXRThCU1dZ?=
- =?utf-8?B?a2w5WlF4dytWdUd0blBSRzc4TWx5R2M5MVZHUjNiQTJQTFo4YXNyQUZ0eEZ4?=
- =?utf-8?B?QTRnQXNlWEd6cDIxdjdwQ3NnTmxrdm96bE4wR3ExQzUvNWlJclRMaFgyaitO?=
- =?utf-8?B?WENVUlhmamtsVDZleFJQZDkwWFhrQ1F6WEgxeXdBU1kzQnhkRXY1RzJFbkRH?=
- =?utf-8?B?TWNhR3g5WXZ6WEpzeVR5YzluYkhZKzhLSm1YVkV3VUdYaVdXKzJGcGpWb2tj?=
- =?utf-8?B?elUzZjhpYUhQS1kvZmpXV3B0T3BYMnJZRWptbFBqSzJTbWJuQXBINUNaMGhK?=
- =?utf-8?B?dU5uOXZyUjd1VmJyQjRvYjZrSnRuVlM5c3RJTHFDM25pREdWcjliU3BJNTA5?=
- =?utf-8?B?d0lqb0k4MTlIM2VKMFlKK05lbVZMR0pZTXIzWkNXVDNRVHNqKzdCMDIzMWs3?=
- =?utf-8?B?RWFEN0lkbUdCUFFGL1A1cU1zckExd3lIYjhWR3pTT2kxaXhEanU5dTR0QUFL?=
- =?utf-8?B?ektUSDI5WXF1NExxUGFRTEtDWTRoeUFMZ2lIeTN0QzN1bUhLUVQ5Y3YrTjRp?=
- =?utf-8?B?eHl0TGNHaU0rMDdXMEp2V1RhMFdyZ3Z0Q1pGWTczdVJQN05wcytkWnl0cjlF?=
- =?utf-8?B?M1BlczN1NlpiYmxrQmErNkM0TU5TZy9WdWl2TnRyd0s0Mkszbk5tNFlnL0lP?=
- =?utf-8?B?Vm81ZWxXb1NjQmJ0WVRuamk2WStuWm5oSUVIdlN5SnplWDJRblp0NmQvSTNy?=
- =?utf-8?B?eUQvdjhOTGUyMGgyNTdzYjVtREx5Um9RbXM2aVF1OWl4UmNydXpmQXNyY0hH?=
- =?utf-8?B?N1lTdHNMcGVkczZnYXVKQ3JzQStxOE5HN1dYenBMK1ZuRUFLaTNXRlFqeDVo?=
- =?utf-8?B?eVN2WmppZ2xKT3hVMmd1NzhlWmN5MnhtNUVKbGsxblk1eVh3OVhheUhGdXg5?=
- =?utf-8?B?NU5GcWYwR3pEQkJlRGY0em42NWl0VitXNlJIangxOEJ2ME03dUx4RlI3RFVT?=
- =?utf-8?Q?1NbdETc6dqM8/KZI//0d7ZrL5zfOqqwU?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(4053099003)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?MlFIblE0ZWduWVhjNXZJbWdsSlN6Rkg1aC9vd0J0c1o1MXlDLzVKL3ZpRUR3?=
- =?utf-8?B?MWZVcXpCeDFwR1ZvUTNqblVwcEZkQ1NIT255cHdPbWlVelg5R25jT1VZMG14?=
- =?utf-8?B?WjlNRTNFVkpUaWZLbFNRcFZPMUxiZEpDSnN4V2tqVURkY09STGpOaXZpdDY3?=
- =?utf-8?B?WkRIaGZxbkhwdE8vZUJiTWEzQUNCZ29HSldBQlhidHZiSyswS1l4dm9DZDRm?=
- =?utf-8?B?Ukk5WklISlRWL1pDSDEyTWdaRWJGSjk2cVpHajJkOUVDc0pvSkVocythUjJF?=
- =?utf-8?B?QXlYNmZSRk9pOVFWbHpjT2s5bDhHMSt2NXR1cVc4aVpBTUpROFBYeWZGdzR3?=
- =?utf-8?B?a21odWFsR1VxY2pxSi9LdHQvVCtiZ0IyMGRIeVFjUkZLT3d6MFA0SHhvVm0r?=
- =?utf-8?B?M0pYRVBFdnZobnRpek5kUnpYd2xzWnFkbjFXVGxYVC9ZZGpBdzBPS0ljSkxl?=
- =?utf-8?B?V0E0RjI0RVJkTkZyUWVVTkE1a1JYcTNaS2Nkc2V2SHdnalp3UVhuSmpRV2cz?=
- =?utf-8?B?ZVhabmwrNEhDMWxZalVGd0tTYWpSam13WWxWV2tuSC9zcG1iZ0kweXZYTFRF?=
- =?utf-8?B?a1JrTE5CdVlGbkc0MlhPMS8yZHYrdjNJSWFFanhxWVlNUXNwdi8wZDlBblZz?=
- =?utf-8?B?WFZNWUd5Yks1VFFWUUVOeXI1SGlCQTNtR1hZME5UY25WVHB3VDY3VWZlVmxE?=
- =?utf-8?B?OG5ybkN3d0JLTStaT2l6NWNLdXNjeXJMVUhpYmVpcVZweG05TlNROEkwT1o0?=
- =?utf-8?B?ek80WGt3aUF2MlZoWmhZMm9pcVQxSDZXWWtKN1RCaWd6ZTdxTmdQMG9UUUJn?=
- =?utf-8?B?emQ0ZGNJRERUenN1V2tFaW9zQmJHMi9IK0hzTW1oUThJdCtjYXkxS0Z1N2NE?=
- =?utf-8?B?dEJoRlNka0FneHJ1WGtiUFRSdDdMQUdac0lnYnlIeVpmZDRxVEVxbjN0OTlW?=
- =?utf-8?B?Z1BYdjMwOHRVSjhtSTVGeVd6YW9zNXMrSXBWY1g0UlltU2M1dFNpeEEyR011?=
- =?utf-8?B?d2hRd3lxYkVrWS9Nc0tOY0FPRHZsa2hNelFIOERpWXI5VjJaQ0FtelhSWHFi?=
- =?utf-8?B?dzJTU2pTL1ZIN0pJczJZa0dDN01JSWRmU2lxMW5uWkxRRnpabXkwOWpaUTVt?=
- =?utf-8?B?MWtGeUZiUjFnbzJ0a0g2Vnd3c29XRUhHUGFOK1hubTFzZEtmOVhsRUJwNkRZ?=
- =?utf-8?B?ZEdUWHdtYTlnVmVUblZhMExrV1lUVkQwVlhRQ1dQdWJYaE1DdlNCVEJUY3RB?=
- =?utf-8?B?ZThUL2FlU21vY1dwZU43alhXSWViYVhiWnp4RUZ5a1lMWlBsUkRlNitIaGY3?=
- =?utf-8?B?WklTWDdlZ3FrMmJ2bkZRN0p1TEg1NHVaRjBGYTcyVWwwMEVRTUJFelY1cWdj?=
- =?utf-8?B?VmtBVHcwQ0tiMzlRZW8ybWJvbGQ1RXpranBLZnRZVVNPQmFNcVY3UFRMaGVF?=
- =?utf-8?B?LzNSTzNON1lSK05ucC9GeEZaM3BKS1VWSTN6NEw0SWtMNjZ5VFRuQmFJMzBr?=
- =?utf-8?B?WWU1dnljQXpacnNidzEvaEZmemw5T25kVm5XaGxhSFI4OTBKYVBVQ0NFa2JJ?=
- =?utf-8?B?eEdidlc0MmRJWkQ1Zm90L0I0OUtTSDAxY05zTUEvUjExbCt3RUU2TW9ieGxn?=
- =?utf-8?B?WFpGeVdqNW9YZmhPWlh1dmF2YWUrdnlrSUNNcmZYNjBHZC9HcVVRTnJLZFZG?=
- =?utf-8?B?NlVqN1hxVjU5Nm11TkJCZ2ZWNHNWVkcvM1VpNGo2UHFxLzlFM0p2OHVOZXpw?=
- =?utf-8?B?TmExWEJoOWtEbXV1RlRFMURKUDd5ZTRaT1p4SFNTeVVPTnVLSnlhaE1xUklE?=
- =?utf-8?B?bUdkNE9uYjdLZG4wZTQ4VlpIUDBKM3FwdjIwRWRqY1pxVlhGcndPZWhnc0hI?=
- =?utf-8?B?TGQ3NEthOHJNWk9MTExRbTdLY09hOU1YbGVCNW1pT2ZpSk84Y1dDU0JhSlBz?=
- =?utf-8?B?K1ladXp2OExlRzRxSm9wV1ZqbElJQUlGcUE5RkNkeEcremIvY3JvSmlDYnBt?=
- =?utf-8?B?V3JyenRTQTloYXpwY1FTQ3F3a2lWQis5UW15WlNVRFFyaFNaNFpFbFBIeGhi?=
- =?utf-8?B?OE5sNkkxSllUMmZTNFhqcnA2eWZpSjNjbFZQWTc0K3poNU1Ka3dkTGNMZ2N2?=
- =?utf-8?B?N1IzR0pId09RUHRCbzhYSFoxS3EzUWhXWTN0THdPTUh3Y3VTVzJrYzlLanUz?=
- =?utf-8?B?QlE9PQ==?=
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature";
-	boundary="------------bl34Z8oAgU3Z4N79HjP2ktAv"
+From: Quentin Schulz <quentin.schulz@cherry.de>
+In-Reply-To: <20250219103307.GA22470@francesco-nb>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR4P281CA0112.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:bb::11) To AS8PR04MB8897.eurprd04.prod.outlook.com
+ (2603:10a6:20b:42c::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: imgtec.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR04MB8897:EE_|DBBPR04MB7530:EE_
+X-MS-Office365-Filtering-Correlation-Id: 55f626bb-f935-4c1d-91c2-08dd50d64a02
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TVJPQ3VZWHowc3h4NzhjM1VYd0NLWFh3MmhVV2lBU1kwS0pUVFFNZWs2ci9E?=
+ =?utf-8?B?aGhDN1luWHZQUUVXa1JUaFpVYmpWUDJNRDJMUUg2VWZ4aHNqd2ZGbk1zeUZp?=
+ =?utf-8?B?TFNieWt2SnB4RURZWUVRb2NBUHhSUy9TcFdLNGZoVWhacEFxUUt3ZGc0MkZp?=
+ =?utf-8?B?d0llQXhjSTBMdFZBb1VTSWJyd0FZdEg0aDI4anV5Wkl4OHNBZjJmMmRIUElQ?=
+ =?utf-8?B?ZWVUR0NhNitQcDVteks4YTl2cldlWE9wditTd1MxZW5UNXVHL3k5bG1haHZI?=
+ =?utf-8?B?U3VyV0phL0pqUjNOWU9ad2hUWHRnc1NwcDIzM29mUVRsdGpPVWVQdnVGOGo4?=
+ =?utf-8?B?b1B1MGVNa2pSK3Y4Y3llbWRQK1Y3MFRvTXFDSFoybkxya0VUUHE4ZnpQTWtG?=
+ =?utf-8?B?ZlgyRGFxb2NEVzd6VW9BNCtWZWM0OWxNSVJ6SWRGUUhlY2FzSHd3QkNjY2lJ?=
+ =?utf-8?B?QWt0ZUFkTGF1SkJNVWJlbzEyYkpXeG5nb2lnWExSYTVQbVI1UVdOK0UvTVNB?=
+ =?utf-8?B?T0s2dlA1ZDFtZitGVTZaNlRRNkJSUUF0cTZIby9BTjB6bW94Y0lIQVNhMGtt?=
+ =?utf-8?B?TnpNNzJrZGxFSWkxR1JZMm01VmovYnZ1WGRyYklYSE9VK1hXd0FNcWVYaW5P?=
+ =?utf-8?B?WGEzVkxFZEtzT3FQZUhkZnJZRGlxMzZxQW1jUys2UFdYNHJ2V0paTXdDNTJx?=
+ =?utf-8?B?RkFoT1c1bXFCRzl5QkJkWkVoUVM4emxPT1F5UzlISXZkRHh2OWVyd3hkZ25l?=
+ =?utf-8?B?VWtDdW1HbDZ6NSt1ME9mb0tmb3ZnU09EeHE2NXEyeWxFM2F3MmNjMmw3Nk1M?=
+ =?utf-8?B?UzdBdnV6aTM4UUdndDVYN1FJOXhqYjhuZ2xXdXkyVVRENWR5NmdJVFkxMk84?=
+ =?utf-8?B?TittZFhSeW5VOWlVMzFEa3hJaHdwM1hvWFlaS3lHSitMMkJKalE5bzFTeGZD?=
+ =?utf-8?B?QXZzK29hdjAyRGd3OXRJbTJpM2wvYTlsQWlOcmgwMXE3T0doL0RwbFpBeXhv?=
+ =?utf-8?B?RjNrcUdLYnFzNUpjeXR5dG5vbDFmK01HaVZhUy9uUmNTNTNIakZPSnByamlx?=
+ =?utf-8?B?a3Y4R1JQUWo2YmM4ei94dzRSSGlhRGZRUU1KVUFXdUFXWjNrRlRQeDMwczBm?=
+ =?utf-8?B?MDRuMDVZbzVHc1o0RElEdG84YUFIK3Uvaklsd2wzYUs4OCtLTGlZTFlWcE8r?=
+ =?utf-8?B?NEJDNG8xVGFKRCtQR1dLbTZMNmU4U09BMGl4cXd5eWdySHJPTWpqanhwRXFj?=
+ =?utf-8?B?Wmx0dmN4djlNa2JuQzRucS9NUVlhcDZxRDNmR3FEczY0MDlkblJkdSswRzVM?=
+ =?utf-8?B?QnJZN013THRjb3FlbnAxOU5lUGxOOUlId3ZwOHQrVldQbkFleWNWdkZMc21z?=
+ =?utf-8?B?U21mUGJCVlRsWUN4RldVbE9MS01JdWt2R0d4WWVtSmk5T2Q1VnhhU053UDN4?=
+ =?utf-8?B?Y0FtTCtyNXVpci9YNHZtRUVPTVM4UEhtWDRqTE94amh2UVJCZjZybFlqZm9k?=
+ =?utf-8?B?V0x1VjhMK08zNWJQTG1XazRlWWFOcGlJZ2duY0xuWFVQaU0yRENJbW0xb0lZ?=
+ =?utf-8?B?cFYxRktVTnJodEtCd1ludkM0MHlPeDNvVGU0SkYyUGU4eW1PYXdocGVhTitl?=
+ =?utf-8?B?SFpqL3NiMzQzSVRobCt3ODJoUUxWSmg2ZzNsWFE2alBqbWFKUU9sUG9ONmxJ?=
+ =?utf-8?B?YTk4OTBaa012YmFVL01qRVNveGNBcFFnWlA5VXZhYTdBUldKM08wSm5OS29n?=
+ =?utf-8?B?azRHMkFEeEYzNHptMlJ5YTA2MGwwT0I0OU41SkhnRWZmNWxwVnd5QmR1Ty9Q?=
+ =?utf-8?B?cXhySUZrUWpYN1BZbEVDL09VT1NNaFY1UXRhdVNlYnhpOGdxeGM3VTk0eXMv?=
+ =?utf-8?Q?9aZ1k35MzAmH2?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8897.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?c1kwSW5heWNaNVp5am5JUEhBaG1EeUQxKy9wQjA3cUd5Yk42UmRrRTRLWXRs?=
+ =?utf-8?B?Njdka3NUek9lMmE5WkpmajJXMFlwWmtaM3BUM3hMQXdWTlRBeitLWEloeUlC?=
+ =?utf-8?B?MGNBWElDTEgyV0p3c0g0dWd1NnhhVG1KTFI2Q1MrVE9QNFZ2MjU5N2c4WjQ2?=
+ =?utf-8?B?YndBczg5U3o4Y1VLWUlySWZ4cm1HY3JHRC91bi9IcHJseXAvQ2I3VHJtV056?=
+ =?utf-8?B?OWtTMVZvY3duUlZ0ODRVb3UydXh1MEhpcmdtV0ZiM0xpNlhoZW0xNmZPaVBB?=
+ =?utf-8?B?L0xLNTlHQ3FnMENKVDRRY1phdjc4d3ozZ3JuLzhKZ3Z4UnFDSklxdTRBcC8z?=
+ =?utf-8?B?aW8wN1BmM3NqUm1nY0I4M2lkQ3kzbFdQQ3RvQU93dDJEbU9HS09jS0JFYjJC?=
+ =?utf-8?B?Z1R4Vzh0OVpTakVOejdVMUk3THZXTTU5UmJLWmJUdldQWis4dnpOZHUyNzhk?=
+ =?utf-8?B?b1hMVkhrM1RtMUhObndtR0tXSW4yVlN1b3REZWRyTkV5ZlhoYlJjdEFsVVFV?=
+ =?utf-8?B?UUMwRWtaQmNub3V4QXBwZjlhL3NDWUwySWhaNXJWbHhxY2JrZzk5YzRsYjhl?=
+ =?utf-8?B?c1Y1cHVIYXRNLzU5bEV0WklVanA2MTk1V0REbUJBZXlvUFl4dVdMZ3BSMEVl?=
+ =?utf-8?B?TzJkNmNKaXp5Qm9qbmxjRHpqL0dYS1RBaXNrQmxJOVBSRzhwV1owNDdLMjFW?=
+ =?utf-8?B?d3BFOEJJMHZIei9jT0MrWmUyeGVTcE9yaUEwRDZ4VFNncEpWcGVWQktRSzY3?=
+ =?utf-8?B?ZHNWYjgzVWlhV3U4UVlYSitIaHU5ekJ0QVMycEtKK1NDdFRNOVIyM2RjYUhO?=
+ =?utf-8?B?OXpPTTlLc2E1L3pkZkpUUWpvR1VZZGY4U0dZcGxIVlBEUFhoZEVkKzZSRDRT?=
+ =?utf-8?B?ckM2cmkvM0N0VVQ3SkdXVjg5cTQwaEpESjYzRnFpVXJnOEJXTHkzSjZrcUtC?=
+ =?utf-8?B?dGtoNHljMU05dHlMVnNQRUVnTjBNbmJMWDdPd0N2eVlqYjd4VVhHRlFYdXc1?=
+ =?utf-8?B?MU9lUWtEMGdWTDRMTFJEL1p3QVFkRENCb1gwYVNQTm52V0g0QWxHbUxmL2dn?=
+ =?utf-8?B?WTM0RXZZcVpwTVEwZ1NBNEloS0doOURHdUt1VjJ1aFBIT0dQZzBWY0tlbDZU?=
+ =?utf-8?B?QkxGc0hhVGhqQUwvU0RoK1ptSWU0WUJ2WVpXNkxzRXdDS3pRaEtJemROZTVs?=
+ =?utf-8?B?MmhTWHV5NlJ1OFlKdVRacWhQM0NLL3J2dlNJL3pXWTF2eVNuWExRTVNGdkVD?=
+ =?utf-8?B?MkkwQW5LVXJCVFI4UkphVjluc00vS0ZGTUswanRTRHpUZWNkSnE5QndzME13?=
+ =?utf-8?B?Rjg1M2tmd001MGtON25jN0F5bkMxYTNPMVcxQlM5OUo1YnRSNlRTbkVmeVR6?=
+ =?utf-8?B?VnZRSUlDa1ladkx2YVZuNmJXYkRwQkNwY0JmdlpGRldXNHQrTnhRYVEvdnVo?=
+ =?utf-8?B?UUxZekVYNUZ1U3pCNzM0WjZkK000cWtzZ3B3TU1MVFdrMllKUTlaYkFvTGR2?=
+ =?utf-8?B?QUtLeUpPbmNBZEhyQnJrb3V2RFNXN010V20yVWRubit1dFNEbFg5TVluWFMw?=
+ =?utf-8?B?K0IrWXJNK0VsTGkwdDI3azBvOXNqcEdia0YrOGlISHp1ekMxRExOOE5rUFl4?=
+ =?utf-8?B?enFzeHEzckszU3M4NjZzOXMrODd3MDNNdXVlMXhjeFB4bXF6RDRoRnFESE5Y?=
+ =?utf-8?B?cHlzZWtFMndxOVZSSm1ZSWN5Vmw5UjAzSThXb3ZjSGNFRU1lY05hNTQ5dmdQ?=
+ =?utf-8?B?MlBnWEpROTlMbzlzVnFCcTIxVlhaNHNScUZXMG5YdnNVNGpkaWNwT2UySzlZ?=
+ =?utf-8?B?bzBrVTFFNFFURTRUME45MlNrYVVIUURMRWJHMU9OUmppd0tDTjJPeXdiOElZ?=
+ =?utf-8?B?Zzh5ajRpdW5UZjN1L1k3RTNQU1g1ZGRuRDNkZ1VvMGZFNUdMYzdvSS93WWNX?=
+ =?utf-8?B?TFlQVDJ2SzlxV0V5VjdKdzFRVVA3MzFLT0p3YjNENXdyaFRpNU5WTlArS0pZ?=
+ =?utf-8?B?R2hZek1pYUlnclE3eEVQdmhuWWdvZnBmK2JtUHhmWEJOTG8vRHlqVWJUc3Ns?=
+ =?utf-8?B?RCtCbEdyVnR2QU5ZbzJONGJVdTROZGs4c3g0SWhTTkN6dDlaS3VyVi93L09k?=
+ =?utf-8?B?Y0dDa1pHbnlCamFEajVMemFZNWVqR2tmZmNacWUwcTZxWWRIbTJ3SUVnN1Bk?=
+ =?utf-8?B?S0E9PQ==?=
+X-OriginatorOrg: cherry.de
+X-MS-Exchange-CrossTenant-Network-Message-Id: 55f626bb-f935-4c1d-91c2-08dd50d64a02
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8897.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 427cd9e0-80ca-4582-f13a-08dd50d646a8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Feb 2025 11:12:19.5112
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2025 11:12:25.3161
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0d5fd8bb-e8c2-4e0a-8dd5-2c264f7140fe
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: JVvOFsUPCqLj6Mp9pI7BMDeQ5ZtkwUUascdd3+cgxmjJAGfXrJzKwHQQGzZ0WWqE0R6wLrOZgbcCvpXrBA9BUQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO4P265MB6635
-X-Proofpoint-GUID: Jhq_Axu_N4qRJt7HVDQWDc3VjO3LaCdE
-X-Proofpoint-ORIG-GUID: Jhq_Axu_N4qRJt7HVDQWDc3VjO3LaCdE
-X-Authority-Analysis: v=2.4 cv=U59oDfru c=1 sm=1 tr=0 ts=67b5bc96 cx=c_pps a=8AFXndYnQsE2+LUeOUhaNQ==:117 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=T2h4t0Lz3GQA:10 a=WnR_qW7rlZcA:10 a=NgoYpvdbvlAA:10
- a=VwQbUJbxAAAA:8 a=r_1tXGB3AAAA:8 a=I8P48JU3W84_1xkU_o4A:9 a=QEXdDO2ut3YA:10 a=8MhQR4WxyVGciBG807IA:9 a=FfaGCDsud1wA:10 a=t8nPyN_e6usw4ciXM-Pk:22
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qq37oR3s8xvrarkSHDdZ4tZtLxwiY5XfmeXgkY6Oc3e2ISuT463NOeBdZUiyxfeNhd+PIr0iqoqpTYO86qqIiBkF3gkYkmkWWVDd2eFNX+Y=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7530
 
---------------bl34Z8oAgU3Z4N79HjP2ktAv
-Content-Type: multipart/mixed; boundary="------------mIC7kVkEj0sLOLoDT51bWhTC";
- protected-headers="v1"
-From: Matt Coster <matt.coster@imgtec.com>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Frank Binns <frank.binns@imgtec.com>, David Airlie <airlied@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Simona Vetter <simona@ffwll.ch>,
- Thomas Zimmermann <tzimmermann@suse.de>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-Message-ID: <ba1cf682-87f0-4a95-a829-08764dad7c68@imgtec.com>
-Subject: Re: [PATCH] drm/imagination: remove unnecessary header include path
-References: <20250210102352.1517115-1-masahiroy@kernel.org>
-In-Reply-To: <20250210102352.1517115-1-masahiroy@kernel.org>
+Hi Francesco,
 
---------------mIC7kVkEj0sLOLoDT51bWhTC
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+On 2/19/25 11:33 AM, Francesco Dolcini wrote:
+> Hello Quentin,
+> 
+> On Wed, Feb 19, 2025 at 11:08:43AM +0100, Quentin Schulz wrote:
+>> On 2/18/25 5:56 PM, Francesco Dolcini wrote:
+>>> From: Francesco Dolcini <francesco.dolcini@toradex.com>
+>>>
+>>> Add support to configure the PWM-Out pin polarity based on a device
+>>> tree property.
+>>>
+>>> Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+>>> ---
+>>>    drivers/hwmon/amc6821.c | 7 +++++--
+>>>    1 file changed, 5 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/hwmon/amc6821.c b/drivers/hwmon/amc6821.c
+>>> index 1e3c6acd8974..1ea2d97eebca 100644
+>>> --- a/drivers/hwmon/amc6821.c
+>>> +++ b/drivers/hwmon/amc6821.c
+>>> @@ -845,7 +845,7 @@ static int amc6821_detect(struct i2c_client *client, struct i2c_board_info *info
+>>>    	return 0;
+>>>    }
+>>> -static int amc6821_init_client(struct amc6821_data *data)
+>>> +static int amc6821_init_client(struct i2c_client *client, struct amc6821_data *data)
+>>>    {
+>>>    	struct regmap *regmap = data->regmap;
+>>>    	int err;
+>>> @@ -864,6 +864,9 @@ static int amc6821_init_client(struct amc6821_data *data)
+>>>    		if (err)
+>>>    			return err;
+>>> +		if (of_property_read_bool(client->dev.of_node, "ti,pwm-inverted"))
+>>
+>> I know that the AMC6821 is doing a lot of smart things, but this really
+>> tickled me. PWM controllers actually do support that already via
+>> PWM_POLARITY_INVERTED flag for example. See
+>> Documentation/devicetree/bindings/hwmon/adt7475.yaml which seems to be
+>> another HWMON driver which acts as a PWM controller. I'm not sure this is
+>> relevant, applicable or desired but I wanted to highlight this.
+> 
+>  From the DT binding point of view, it seems to implement the same I am
+> proposing here with adi,pwm-active-state property.
+> 
 
-On 10/02/2025 10:23, Masahiro Yamada wrote:
-> drivers/gpu/drm/imagination/ includes local headers with the double-quo=
-te
-> form (#include "...").
->=20
-> Hence, the header search path addition is unneeded.
->=20
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+Ah! It seems like I read only the part that agreed with the idea I had 
+in mind :)
 
-Hi Masahiro,
+> Do you have anything more specific in mind?
+> 
 
-Thanks for this, it's:
+Yes, #pwm-cells just below in the binding. You can then see that the 
+third cell in a PWM specifier is for the polarity. If I didn't misread 
+once more, I believe that what's in adi,pwm-active-state is ignored 
+based on the content of the PWM flags in a PWM cell specifier, c.f. 
+adt7475_set_pwm_polarity followed by adt7475_fan_pwm_config in 
+adt7475_probe. I would have assumed that having the polarity inverted in 
+adi,pwm-active-state would mean that the meaning of the flag in the PWM 
+cell specifier would be inverted as well, meaning 0 -> inverted, 
+PWM_POLARITY_INVERTED -> doubly inverted so "normal" polarity.
 
-Reviewed-by: Matt Coster <matt.coster@imgtec.com>
+adt7475_fan_pwm_config was added a few years after adt7475_set_pwm_polarity.
 
-If no one has any objections, I'll take this by the drm tree later
-today.
+>>
+>>> +			pwminv = 1;
+>>> +
+>>
+>> This is silently overriding the module parameter.
+>>
+>> I don't think this is a good idea, at the very least not silently.
+> 
+> I was thinking at the same, and in the end I do have proposed this
+> solution in any case.
+> 
+> Let's look at the 2 use cases in which the DT property and the module
+> parameter are different.
+> 
+> ## 1
+> 
+> module parameter pwminv=0
+> ti,pwm-inverted DT property present
+> 
+> => we enable the PWM inversion
+> 
+> I think this is fair, if someone has a DT based system we need to assume
+> that the DT is correct. This is a HW configuration, not a module
+> parameter.
+> 
+> ## 2
+> 
+> module parameter pwminv=1
+> ti,pwm-inverted DT property absent
+> 
+> => we enable the PWM inversion
+> 
+> In this case the module parameter is overriding the DT. It means that
+> someone explicitly set pwminv=1 module parameter. I think is fair to
+> fulfill the module parameter request in this case, overriding the DT
+> 
+
+Why are we not assuming the DT is correct here as well? I don't like 
+that the behavior is different depending on the presence of the DT 
+property. Its absence should carry as much weight as its presence. If 
+you don't want that to be the case, we can always have another property like
+
+ti,pwm-polarity = <0>; /* normal polarity */
+
+or
+
+ti,pwm-polarity = <PWM_POLARITY_INVERTED>;
+
+and then the absence of the DT property is a "weak" normal polarity for 
+which we shouldn't print the error message if it differs from the module 
+param. But honestly, I don't think the DT people will be happy with that 
+suggestion :)
+
+>> I would suggest to add some logic in the probe function to set this value
+>> and check its consistency.
+> 
+> With that said I can implement something around the lines you proposed,
+> if you still think is worth doing it. I would personally just keep the
+> priority on the module parameter over the DT and add an info print on what
+> is actually configured by the driver (not checking if they are
+> different).
+> 	
+
+Module params over DT is fine with me, I just want consistency here, so 
+if it's always the case, fine :)
+
+Not really sure we need a dev_info, that's pretty verbose. I liked 
+dev_err for when both settings differ.
 
 Cheers,
-Matt
-
-> ---
->=20
->  drivers/gpu/drm/imagination/Makefile | 2 --
->  1 file changed, 2 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/imagination/Makefile b/drivers/gpu/drm/ima=
-gination/Makefile
-> index 9bc6a3884c22..3d9d4d40fb80 100644
-> --- a/drivers/gpu/drm/imagination/Makefile
-> +++ b/drivers/gpu/drm/imagination/Makefile
-> @@ -1,8 +1,6 @@
->  # SPDX-License-Identifier: GPL-2.0-only OR MIT
->  # Copyright (c) 2023 Imagination Technologies Ltd.
-> =20
-> -subdir-ccflags-y :=3D -I$(src)
-> -
->  powervr-y :=3D \
->  	pvr_ccb.o \
->  	pvr_cccb.o \
-
---=20
-Matt Coster
-E: matt.coster@imgtec.com
-
---------------mIC7kVkEj0sLOLoDT51bWhTC--
-
---------------bl34Z8oAgU3Z4N79HjP2ktAv
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wnsEABYIACMWIQS4qDmoJvwmKhjY+nN5vBnz2d5qsAUCZ7W8kwUDAAAAAAAKCRB5vBnz2d5qsN8c
-AP90tjsQfp8XN7v25wI67LNaUsDqL4T1I5ih1jcNdViJxwD/R0H4Im73j556+Pyr2U48wLAkNnbH
-xnApqjEy38IO8wI=
-=iaUW
------END PGP SIGNATURE-----
-
---------------bl34Z8oAgU3Z4N79HjP2ktAv--
+Quentin
 
