@@ -1,83 +1,88 @@
-Return-Path: <linux-kernel+bounces-521229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56C49A3B9AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:35:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE5A2A3B942
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:31:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 366413BF4E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:25:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 778A917BC97
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:26:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6DAC188CCA;
-	Wed, 19 Feb 2025 09:22:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1380F1DE3AE;
+	Wed, 19 Feb 2025 09:22:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="CAxjgUaK"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="qdcGHmef"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 886EE1B4F0C
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 09:22:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4ADB1C5D69
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 09:22:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739956937; cv=none; b=nIaspipMQRYjjZOd6Nki8AeIuRC6LJ39iOIZ+7OsqHozl7WmqQAmObGsmXN0L4EoVoc7LhUPwP6fNf4I9wGtCPe3rRJhKIBhDJKeDkQay2qx76/qtZnVyJ04tT03TQpnN9+k2DD+nrtxRsDWpHY19avGQNZsFOfE+haK22b4BkM=
+	t=1739956954; cv=none; b=SAr7ol1cAAPbIM7A/NU3VDsfwDYqAFP7e5HQd7FgtTmKOXq/iSXZYVfrDehT/QEP+yWVf3ky8t3A9WtTkuJe7yoDdkGsqYdYXitcb+SVEDy2rtxxKYzneqbv6d2aJHSR2M/DFkZo+hf52vZHUtN16LjZjjD93Ta6NzNRTdmzzwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739956937; c=relaxed/simple;
-	bh=btOjj/fS6M7wJvEylFDR42rA/D1lmC5FHZJt6IgOwJc=;
+	s=arc-20240116; t=1739956954; c=relaxed/simple;
+	bh=Emq0s37HWVf+yMAcB00SXuh2VSIdv4rvq6v00xkLO3s=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XOYNKO27Si2WHFjRNRvoTwWTmiDh08o/1xaw5db39qW7Sbx+PScAPe0uaIn1sepbKFil0t9xpy5E4rLuvX276I1d/qfhXjvs6YkRcyyUw5Bt7sTLwqeyW892WdlLpRg67k96X394xfPpK7gtAzjGgMD9n2R31XMVVKTTq3Nhdtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=CAxjgUaK; arc=none smtp.client-ip=209.85.214.181
+	 MIME-Version:Content-Type; b=a/W6DBUq4l19uqe36nuTuIm9YzRWYa2mUMiExlMQOHuOkvM9t+EGAoACnrtw+rIpWydkuRYKx1bIhZUbn5PZByjmYPH2kG8v5hgOoq82pk1Phkk7xtiUeQGZdzpPjyfeUxiwZ8oiZoyfYmUpeuMKS6bNrBnGs+J9q9BzT+ZdbwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=qdcGHmef; arc=none smtp.client-ip=209.85.214.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-21c2f1b610dso164341785ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 01:22:15 -0800 (PST)
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-220bff984a0so116191965ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 01:22:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=citrix.com; s=google; t=1739956934; x=1740561734; darn=vger.kernel.org;
+        d=citrix.com; s=google; t=1739956951; x=1740561751; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7ZJg6bVS4EQSvqcvYB18UYZOZ9WdLOPfmEHjgud3AfI=;
-        b=CAxjgUaKlQLM0A/P/iynAqDqxtg+mESZwD9QutVmb2Se4iYVnLavbYVm4Si0r0gYuJ
-         rLiGQ7WcigU8L36hoZ8RZtjuoVCpD2zdIeSp4S+Ky/bMxGxb6uXUWtCio2GGVEz7dTJ5
-         57QrNYaLqBS8tumzTXG0IF1RG7eU7Bl0VXQj0=
+        bh=zjpV/rOsBTZhvMzmuINLNFZE/6rbEow5DAVU2rYU1PQ=;
+        b=qdcGHmefAT+xBHykoCBohWDqLuGjyyk4gBR2fizHuEb3pIKIZEhVoD1ACMHbtbEbZ7
+         a1ZdP2SSuu5Q0k8ugHRKDNhZ9p32HVG8hMuLDx/eNQTnkXXK1AjxDvJ70uFgo2LlZ29f
+         vgikYZ5iiyl9tcBOQaWXX31305V3D7xoWWspw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739956934; x=1740561734;
+        d=1e100.net; s=20230601; t=1739956951; x=1740561751;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7ZJg6bVS4EQSvqcvYB18UYZOZ9WdLOPfmEHjgud3AfI=;
-        b=OO1+H5YKZkknalIcINJCuAB5iJGEjJ9T5UQjko4aIoku+5xsMfU4TmokEeclZMrkxf
-         ABYE1RCtV4DoCOTcK4a68hXNA+Cv3Y4Eqfko0SKm1rEQ/NEMp3IIEB4g6853uzV9amON
-         iMJTm/z93VEdEJNGnn45Ixa9G16sXesoy5d/QAkWLL5wWlM3EQiyIJBjSXCmm8seWN1e
-         Zem/aZTNvTzDQu8wuvtztt7ALy4wiqe2TMkyyGbPsx/5Sscdjnwzl4oiW7Clf579Xj9b
-         uyCTfJ7SdeJWX5E74qd4ahDnN2OByP8V6XDfqQT9ytOLlr7EyB7aagicVu3iVV3pBiiP
-         fZKw==
-X-Gm-Message-State: AOJu0YyH0OkAHKE0zz67AzZUuN1Zo0eX579JBAR7ILIHQH22mj3evmko
-	TprDznDPi9DYpdF+geL41j0pZe1VnbQ/HU7iOB/jXvG0sFFK/ueS00VRHLFzncDmT+gImy3qnrn
-	t
-X-Gm-Gg: ASbGncs1w8VrqBjmaGW9Pb+LckB+2bt/mg5n13OJa0nlMfSG3L8/N1zxzfFEJHYzjQs
-	afNjRmNXq5PulLgAAKjZC3ay+HCyR3PgZvF2Hf1JX7xizc2p78wSrJDv1jE8IqBLBRY+4vLOXvY
-	JfginpxpJWa9oKnfgzqXeDwyUst/6m/G71No2HIFsr8ebccGA2/TeHdnFpSBqThAL8YMMQlCtGY
-	yXiMcJKbDtnp6QZirPvjwoPx15AAvl6vfdKmgaNEGi6BXMJ8taVa//bRKP7FGceTQ/YI+WiKFZE
-	Iq81viBZNmtq34PynMRq
-X-Google-Smtp-Source: AGHT+IH2CJE5OkGckIlv4JN5MuajJLAOUuGuc18ZFqOtmBHZImObUq5mVTJXCcZHX2k+NCDuJBVy7A==
-X-Received: by 2002:a17:903:41c8:b0:215:853d:38 with SMTP id d9443c01a7336-2210405d2ffmr289308605ad.25.1739956934306;
-        Wed, 19 Feb 2025 01:22:14 -0800 (PST)
+        bh=zjpV/rOsBTZhvMzmuINLNFZE/6rbEow5DAVU2rYU1PQ=;
+        b=Dcn/qlc3RyCBc8Jkyxs35tXCjkyhP6dLosGewdoIDLHHZphRobKRKfgjUHvR/IKOQC
+         ffez3B9DPOidtTsHA0P+STLoTBmfzYP4Qm+80zES4XPuoUbN4WIuDup6/EpR47QOtaTV
+         AwfspnSkKe1zydyUikeu8XMUEDupx9RGGEOBD0a8RpjWx8ZjSQnEk3Fc8jNDpduP3iA2
+         6rgHxv1luokWHuAEofVQeFVgeJZzY8k/Mt2JpK4Rhx137nTjqLoGc2nDxBkBMzccaNI0
+         GmNmHMa1+3PH2bzx/082HIH9vEwm/vKr3vRULhdNLNsc9DE5uP+wLHkPKsgMuE9n4Plr
+         rYRg==
+X-Gm-Message-State: AOJu0YzasrMxvbrWzmsAWV/PQV1cZIJlQhMJg3AjQByhTiyl8tDERIRp
+	TOG7dp7x/+XUOvdDeHtZBeE2sWuiCZtpCoHkw7ZRZPc9xp69kirPhSTJSTeWLFmn4K6OutMKba5
+	+
+X-Gm-Gg: ASbGncvIUL2tqocwHba8MXLxCY0oLrOp//h6HoZn1mti/jOrQPN2g0JLJ4Em/qFo2sX
+	cd9olUMfXO4i7E9Arnx74sW0XU39eqNkNlA/UXXVbmyD3nqKgXiDfeoWNmd5JLkXL7WW3mzlM+M
+	+GsodnogNjBraJip0mFvbMGP+gcEIW8Q62pbfLFV6+6G0bqdS6D4ipz1w50ITl8fRBqlkWBWVi5
+	BW2LDa8HE1wdl5yKd8tlTJADCMk2PNLk4SuO9l9JMLR8zg8PpdZTNokly0ID0Ju5xW0AX2zhE4i
+	MYcUHAvQRM0hAxOGGPWg
+X-Google-Smtp-Source: AGHT+IEJm44nEb0TxcOjkAjrcsD0xsD/CPlwgrhHME8dtzpc5/4Onda8YE7jAeRTGmWr+ZG5phmDmw==
+X-Received: by 2002:a17:902:ce87:b0:21f:85ee:f2df with SMTP id d9443c01a7336-22103f16b56mr276089045ad.15.1739956950796;
+        Wed, 19 Feb 2025 01:22:30 -0800 (PST)
 Received: from localhost ([84.78.159.3])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d5348e68sm101300795ad.28.2025.02.19.01.22.12
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d545d621sm100543165ad.136.2025.02.19.01.22.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2025 01:22:13 -0800 (PST)
+        Wed, 19 Feb 2025 01:22:30 -0800 (PST)
 From: Roger Pau Monne <roger.pau@citrix.com>
 To: linux-kernel@vger.kernel.org,
-	xen-devel@lists.xenproject.org
+	xen-devel@lists.xenproject.org,
+	linux-pci@vger.kernel.org
 Cc: Roger Pau Monne <roger.pau@citrix.com>,
-	Juergen Gross <jgross@suse.com>,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>
-Subject: [PATCH v3 1/3] xen/pci: Do not register devices with segments >= 0x10000
-Date: Wed, 19 Feb 2025 10:20:55 +0100
-Message-ID: <20250219092059.90850-2-roger.pau@citrix.com>
+	Nirmal Patel <nirmal.patel@linux.intel.com>,
+	Jonathan Derrick <jonathan.derrick@linux.dev>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH v3 2/3] PCI: vmd: Disable MSI remapping bypass under Xen
+Date: Wed, 19 Feb 2025 10:20:56 +0100
+Message-ID: <20250219092059.90850-3-roger.pau@citrix.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20250219092059.90850-1-roger.pau@citrix.com>
 References: <20250219092059.90850-1-roger.pau@citrix.com>
@@ -90,94 +95,73 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The current hypercall interface for doing PCI device operations always uses
-a segment field that has a 16 bit width.  However on Linux there are buses
-like VMD that hook up devices into the PCI hierarchy at segment >= 0x10000,
-after the maximum possible segment enumerated in ACPI.
+MSI remapping bypass (directly configuring MSI entries for devices on the
+VMD bus) won't work under Xen, as Xen is not aware of devices in such bus,
+and hence cannot configure the entries using the pIRQ interface in the PV
+case, and in the PVH case traps won't be setup for MSI entries for such
+devices.
 
-Attempting to register or manage those devices with Xen would result in
-errors at best, or overlaps with existing devices living on the truncated
-equivalent segment values.  Note also that the VMD segment numbers are
-arbitrarily assigned by the OS, and hence there would need to be some
-negotiation between Xen and the OS to agree on how to enumerate VMD
-segments and devices behind them.
+Until Xen is aware of devices in the VMD bus prevent the
+VMD_FEAT_CAN_BYPASS_MSI_REMAP capability from being used when running as
+any kind of Xen guest.
 
-Skip notifying Xen about those devices.  Given how VMD bridges can
-multiplex interrupts on behalf of devices behind them there's no need for
-Xen to be aware of such devices for them to be usable by Linux.
+The MSI remapping bypass is an optional feature of VMD bridges, and hence
+when running under Xen it will be masked and devices will be forced to
+redirect its interrupts from the VMD bridge.  That mode of operation must
+always be supported by VMD bridges and works when Xen is not aware of
+devices behind the VMD bridge.
 
 Signed-off-by: Roger Pau Monné <roger.pau@citrix.com>
-Acked-by: Juergen Gross <jgross@suse.com>
 ---
 Changes since v2:
- - Capitalize subject.
- - Add extra comments to note thet 16bit segments value hypercall interface
-   limitation.
+ - Adjust patch subject.
+ - Adjust code comment.
 
 Changes since v1:
- - Adjust commit message width to 75 columns.
- - Expand commit message.
+ - Add xen header.
+ - Expand comment.
 ---
- drivers/xen/pci.c | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+ drivers/pci/controller/vmd.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/drivers/xen/pci.c b/drivers/xen/pci.c
-index 416f231809cb..bfe07adb3e3a 100644
---- a/drivers/xen/pci.c
-+++ b/drivers/xen/pci.c
-@@ -43,6 +43,18 @@ static int xen_add_device(struct device *dev)
- 		pci_mcfg_reserved = true;
- 	}
- #endif
+diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
+index 9d9596947350..e619accca49d 100644
+--- a/drivers/pci/controller/vmd.c
++++ b/drivers/pci/controller/vmd.c
+@@ -17,6 +17,8 @@
+ #include <linux/rculist.h>
+ #include <linux/rcupdate.h>
+ 
++#include <xen/xen.h>
 +
-+	if (pci_domain_nr(pci_dev->bus) >> 16) {
+ #include <asm/irqdomain.h>
+ 
+ #define VMD_CFGBAR	0
+@@ -970,6 +972,24 @@ static int vmd_probe(struct pci_dev *dev, const struct pci_device_id *id)
+ 	struct vmd_dev *vmd;
+ 	int err;
+ 
++	if (xen_domain()) {
 +		/*
-+		 * The hypercall interface is limited to 16bit PCI segment
-+		 * values, do not attempt to register devices with Xen in
-+		 * segments greater or equal than 0x10000.
++		 * Xen doesn't have knowledge about devices in the VMD bus
++		 * because the config space of devices behind the VMD bridge is
++		 * not known to Xen, and hence Xen cannot discover or configure
++		 * them in any way.
++		 *
++		 * Bypass of MSI remapping won't work in that case as direct
++		 * write by Linux to the MSI entries won't result in functional
++		 * interrupts, as Xen is the entity that manages the host
++		 * interrupt controller and must configure interrupts.  However
++		 * multiplexing of interrupts by the VMD bridge will work under
++		 * Xen, so force the usage of that mode which must always be
++		 * supported by VMD bridges.
 +		 */
-+		dev_info(dev,
-+			 "not registering with Xen: invalid PCI segment\n");
-+		return 0;
++		features &= ~VMD_FEAT_CAN_BYPASS_MSI_REMAP;
 +	}
 +
- 	if (pci_seg_supported) {
- 		DEFINE_RAW_FLEX(struct physdev_pci_device_add, add, optarr, 1);
+ 	if (resource_size(&dev->resource[VMD_CFGBAR]) < (1 << 20))
+ 		return -ENOMEM;
  
-@@ -149,6 +161,16 @@ static int xen_remove_device(struct device *dev)
- 	int r;
- 	struct pci_dev *pci_dev = to_pci_dev(dev);
- 
-+	if (pci_domain_nr(pci_dev->bus) >> 16) {
-+		/*
-+		 * The hypercall interface is limited to 16bit PCI segment
-+		 * values.
-+		 */
-+		dev_info(dev,
-+			 "not unregistering with Xen: invalid PCI segment\n");
-+		return 0;
-+	}
-+
- 	if (pci_seg_supported) {
- 		struct physdev_pci_device device = {
- 			.seg = pci_domain_nr(pci_dev->bus),
-@@ -182,6 +204,16 @@ int xen_reset_device(const struct pci_dev *dev)
- 		.flags = PCI_DEVICE_RESET_FLR,
- 	};
- 
-+	if (pci_domain_nr(dev->bus) >> 16) {
-+		/*
-+		 * The hypercall interface is limited to 16bit PCI segment
-+		 * values.
-+		 */
-+		dev_info(&dev->dev,
-+			 "unable to notify Xen of device reset: invalid PCI segment\n");
-+		return 0;
-+	}
-+
- 	return HYPERVISOR_physdev_op(PHYSDEVOP_pci_device_reset, &device);
- }
- EXPORT_SYMBOL_GPL(xen_reset_device);
 -- 
 2.46.0
 
