@@ -1,206 +1,323 @@
-Return-Path: <linux-kernel+bounces-522591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDAB5A3CC1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 23:12:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2512BA3CC1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 23:13:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42BAE7A7C76
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:11:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83F563B4B45
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:12:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67AD6255E46;
-	Wed, 19 Feb 2025 22:11:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B0E23C393;
+	Wed, 19 Feb 2025 22:12:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Nv/4T04U"
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="id8XpDkI"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D1071B4F21
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 22:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 594CD235341;
+	Wed, 19 Feb 2025 22:12:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740003118; cv=none; b=fVZFJ4A9rB1+N+YO8QxtSbFENAWiPQZ+2/KLsfOzFwGucquXzUQnzUpY3w2uzJRN8sc7f47MHcsmNzMowORgoFQH2ttSpll9kMmUikFUW4nyKAVvxhzEvAoVnGdHLJTGst6OXZAG071ugkLm2jyimEQs1exOYm1B/0gXaNfGnlo=
+	t=1740003171; cv=none; b=J3G1YgeRZ0fdD6EiObwTsyQL4Te0DDsuKbrl8AoO/hn5Q6hYwbj9gRaGd7uedqpjXrVUXud1izcOSvWUVCZxLjInNI6V/IsR18J/q3DKEcdfFmt5a06Qm+c+IrAczkUc34uGRtbJ0apiHPi2rEhw4jK22wl136kgQjjgs9sr7Vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740003118; c=relaxed/simple;
-	bh=ZSV2XFFcj0GPI8zUDnU8tdH44VjKfteko0rzddXUI0g=;
+	s=arc-20240116; t=1740003171; c=relaxed/simple;
+	bh=c+A+Sen05MwdGsybGVz4QGuNyPIh4f7uHp4qCz0u/OI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C9tLdw8Ue0t8IKf9faQ7NDkmM1+qdrsVFBHPdqqecfLyqVE4vApj5AVUaDJ3GzDYefJ0FBgB2cRA2u7Q9MSivu2cYanSwjlDtsN4sqmLLcuVBVYyKGIIaC3oKgkAjKdu/2WlxD/+d19+GV+1MlJ34ntFv3TTVFV2UTJCVylv/wA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Nv/4T04U; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3d18c325ee4so19475ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 14:11:56 -0800 (PST)
+	 To:Cc:Content-Type; b=AooZ6OJT1TEYfTm599BcUovhaBb328gDiJmwUF4QIqYjIrF6wJXmnAMbCr3UyMIDFyPu1qOGiUPxvlE2tr6h6hdkRmCf5Y/prFt3IK4/zccUR9yWv66pweSX/0h8g5fB1vekQ+5knL550uBF/Y1tX2vvd/4gaufwHYiMsrDyD2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=id8XpDkI; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-30737db1aa9so2313561fa.1;
+        Wed, 19 Feb 2025 14:12:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740003116; x=1740607916; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1740003167; x=1740607967; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=C6ArLCB4R8roBsda9VKkvi/MZSJCY2OE3VLm6uu/stU=;
-        b=Nv/4T04UZLA6R3cezr+UfAK/yqfNNb9qzjnv33RH3cGuPvkwBeVLCUGuKI1GN4t0Cu
-         kN4f3VenvuWmCxyAcTa9nRUVHXC4ZkSvUU2frJZqUbVF+lUbGnkP1bTgLbYrnW8hfAqi
-         oMBcATpFjam5Ah216oitlR9/HqNMg+TB7EbrbIVbRtjEi38uJyW9FoZYRitgf/2b++hD
-         +GVL8J4/388A4BjNIRDtDvP2UrmiKrVnQx4K8WujwvQEmQv3pPh68URjVf8ULTdvgYP7
-         thIx/PqL/YSCDShv5iiWErI1FItFpKLGFzxzOENXCNisTb3OY56t0Y06ENTlvhqt7EZi
-         Iecw==
+        bh=GIKBRHMcOqSVIdfOy3zE27b+P7n2oksvV9ggqE8kB6o=;
+        b=id8XpDkIb98QpVoF8FF9N/Jwvhgku4TMHSNH8bxuJAX9PjeQSnZpRuU4MURHGcZyFU
+         LvLylgC+Bw9gk+xDgsdMj1t3RWKf2Eg9XChSBe3nUtYuFLl/8Esl0Lp1iS7b9AAGkPjT
+         g25lqq8fdTUj3j4eByS3mUrgir3jDYaA2ZlKbYF1mg+6d6UZgap7FlNXlPV9YCs6qUOA
+         k6WmSRK2GGePI3b52RArFfKEaLh7PNo9y5ILwiLTUgbMxyKXxCUnq2hzx7b8HZnNseK8
+         AOdvO5p8HFMW9+jF5ZSSv1PbFw4axXZEsYW47Q6pEbX/lDPD8YsUfllt9rAG2sVx9X42
+         A/vQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740003116; x=1740607916;
+        d=1e100.net; s=20230601; t=1740003167; x=1740607967;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=C6ArLCB4R8roBsda9VKkvi/MZSJCY2OE3VLm6uu/stU=;
-        b=JXiYlXnyUboPGyqOzk+sJThLbHJBups6N1gR/YDAK4eUMkxklDXgm5q5a/gBbGw+Lx
-         HdYWaNVubphkUiU/umBNjre5XQkf0HqwWM0cWEqVYPlus6Ge2fb6ccYcbH4pYzvyrTRl
-         sRoj4lXo6YNUDXVT4s1yixDcFvEd/ZdxYt5p3ot2+VAEBXJZelfI3V6W0vv7Ios4mhW5
-         TWbnzhjpwF6bML/I1IECc9169hG/lek4Lr8W707RCU2Xm+fVuEhqIfK9YMwNB5H3EBDf
-         aNLnVc6d2SdBZvC+uq926HOlKbmG2P7zqHqA7blSIKI/t3K3uYfOhYIkez+FUfN9GP+7
-         6okA==
-X-Forwarded-Encrypted: i=1; AJvYcCXN3xte9O6Cy3Nz0vGYKfrLtVhu0wV2DljBS1S8pJP9JKd7iEbOZEqkzKQjjvYSqt1zkHDm9xxZ1INWKso=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRAk6Yt8THdOZfs0sDGSM1oXFx8V7ngOtA4BLCK9Sbyqbj/7pK
-	VQ9lh7klQi/B0hFD8jpW9J98QIQP5jjFbopaCHGfY11/hQyNQ9qcSFZCumxS+zHRdeceCimEcBY
-	mdX707SNg/2n1VlEnFJzNGZPNHHj7ZHEpp4XG
-X-Gm-Gg: ASbGncuSeIt6e339ibW2N71xYTLyyRto5NksG+5/AAl5LSq538wq1M9FxDB8NFVT6Cn
-	pUTSCS3RcpYY4tVz0YGyq6h7lYscMDP1SnzcyVOnLWpbQvtGaDfZiAEaeMXw0r53Yh3Bu4B91R6
-	ClSd0A11/w+LmxDJNOK6NFjGFSFQ==
-X-Google-Smtp-Source: AGHT+IGhcAVq+WRuRQVnOuGGJtUQeqPrN7aOEOZtJgaXAh4ql05WNUT5TuGe/Y3K+XW3iNQqSaY3slehVT3VVATri5c=
-X-Received: by 2002:a05:6e02:1564:b0:3a7:e3b3:2e3 with SMTP id
- e9e14a558f8ab-3d2c24e2cabmr249395ab.17.1740003115887; Wed, 19 Feb 2025
- 14:11:55 -0800 (PST)
+        bh=GIKBRHMcOqSVIdfOy3zE27b+P7n2oksvV9ggqE8kB6o=;
+        b=XPnLg0e0YwsZ5W6WRuJg6fW0lMiU1Zv85kSVGgfA/ShcxFCZ8taKeHExu1/gmQbsFM
+         iYgvRH0m551JqrmerFY8Q1RuSRk0FEySbw3WmCVUBEftzHCTpFFRMHcyGaK58Lt75Bh0
+         mP6RPvo3P5oCbHijQmhBOw3euYiZad6GNG2kX+sdDeW+yzufI6TEVM1cuobHJ8xlIx4j
+         tVYAKSEbdi7AXb+iMSQVN0pDP8nir3XekZPmB3QEnFFAsg7aQU8rz3aid+dJ/HWU8c18
+         y6+TIwA9tdaS4hwGmWMd9fKlOO0KCPMCbHfePI00LsAgn9RIUbyLtMP3w7vdCca06MN6
+         JYkA==
+X-Forwarded-Encrypted: i=1; AJvYcCUYxivMFANo6dsWhRAO4E1+ftucdbwGap1/sHkJduoZMvTRTk0mDEzJyqi1hGf2IbdtBXODQHXfGJEyuwnSf5w=@vger.kernel.org, AJvYcCUrnPqLNzjrlyKctfvhO2gFRb4n6YsGg91JHHk82PUZkVIM2He2Wd6IF4romsHVceLhxn2/82/varAR278=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHy6OFZBxrUVStxSYtqJL1ir5bT/uDIHF8SQ+Fi1BGuUPBhuzE
+	WG+N8jXfuYyQBKCDG0HHvVFHmFPW0oUnGs00JuAdi0rAk4A/pp03TiuX33B2la+xt1biNa+qdYJ
+	cMTITgRNktbsIezbllfpBPvOUmGo=
+X-Gm-Gg: ASbGnctp8xiTFOxqZAiERDytP0KK1BezlUtByMX8DISQ9WVfQhLZR+nflJYOcFlprFt
+	/SaxgKntdKBQs81MvxoJt65+d5zSM6wz/0TbKnU0BbD2PaLIQKgJfw2M7G7I0DnX/JAHD4Lujd/
+	DBymJB2j0A5gVR
+X-Google-Smtp-Source: AGHT+IFLtX4yHsGsyOxSX8mpmfua0lhLcXVTvj9TgzcK4Mwq4JrkWyjZY+f79AqO9yva/1AiwVvZITBPILjdAWn6Ow8=
+X-Received: by 2002:a2e:7206:0:b0:302:1cdd:73c6 with SMTP id
+ 38308e7fff4ca-30a44ed34d4mr17786141fa.20.1740003166972; Wed, 19 Feb 2025
+ 14:12:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250109175401.161340-1-irogers@google.com> <CAP-5=fWghT8+pBFVxn9JDbqHU9NPy9mgyT8Ee=pTdkCKxRoJgA@mail.gmail.com>
- <CAP-5=fWZAk7XqtL+=CanefkuFxhDsJ22+-uHkrxXi4g8123oew@mail.gmail.com> <Z7ZD5phOOCbKggrn@google.com>
-In-Reply-To: <Z7ZD5phOOCbKggrn@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 19 Feb 2025 14:11:43 -0800
-X-Gm-Features: AWEUYZk6j6515T41cTNxcsJrjdJ1p2AxDpZySNgLbQrIYaG_Rg_DMAueizS4zec
-Message-ID: <CAP-5=fXeZM7iWNQq0ar1HmAwWrH4HAHqD3F=ueB=jaw-2UMn_w@mail.gmail.com>
-Subject: Re: [PATCH v1] perf parse-events: Tidy name token matching
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Andi Kleen <ak@linux.intel.com>, Dominique Martinet <asmadeus@codewreck.org>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250219201602.1898383-1-gary@garyguo.net> <20250219201602.1898383-3-gary@garyguo.net>
+In-Reply-To: <20250219201602.1898383-3-gary@garyguo.net>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Wed, 19 Feb 2025 17:12:10 -0500
+X-Gm-Features: AWEUYZmSeTADXrQZ9OhxAAoSUHqGwJ2KjAsCNPF-N3zoInkW0QEck3vsA1-kWvw
+Message-ID: <CAJ-ks9npk8oSFHZHdViR1XhF+A8e2L+P0wCgmjE7mzAxS9WK1g@mail.gmail.com>
+Subject: Re: [PATCH v3 2/4] rust: convert `Arc` to use `Refcount`
+To: Gary Guo <gary@garyguo.net>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Wedson Almeida Filho <walmeida@microsoft.com>, 
+	Alex Mantel <alexmantel93@mailbox.org>, Will Deacon <will@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Mark Rutland <mark.rutland@arm.com>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 19, 2025 at 12:49=E2=80=AFPM Namhyung Kim <namhyung@kernel.org>=
- wrote:
+On Wed, Feb 19, 2025 at 3:17=E2=80=AFPM Gary Guo <gary@garyguo.net> wrote:
 >
-> Hi Ian,
+> With `Refcount` type created, `Arc` can use `Refcount` instead of
+> calling into FFI directly.
 >
-> On Wed, Feb 19, 2025 at 11:02:40AM -0800, Ian Rogers wrote:
-> > On Mon, Feb 10, 2025 at 11:23=E2=80=AFAM Ian Rogers <irogers@google.com=
-> wrote:
-> > >
-> > > On Thu, Jan 9, 2025 at 9:54=E2=80=AFAM Ian Rogers <irogers@google.com=
-> wrote:
-> > > >
-> > > > Prior to commit 70c90e4a6b2f ("perf parse-events: Avoid scanning PM=
-Us
-> > > > before parsing") names (generally event names) excluded hyphen (min=
-us)
-> > > > symbols as the formation of legacy names with hyphens was handled i=
-n
-> > > > the yacc code. That commit allowed hyphens supposedly making
-> > > > name_minus unnecessary. However, changing name_minus to name has
-> > > > issues in the term config tokens as then name ends up having priori=
-ty
-> > > > over numbers and name allows matching numbers since commit
-> > > > 5ceb57990bf4 ("perf parse: Allow tracepoint names to start with dig=
-its
-> > > > "). It is also permissable for a name to match with a colon (':') i=
-n
-> > > > it when its in a config term list. To address this rename name_minu=
-s
-> > > > to term_name, make the pattern match name's except for the colon, a=
-dd
-> > > > number matching into the config term region with a higher priority
-> > > > than name matching. This addresses an inconsistency and allows grea=
-ter
-> > > > matching for names inside of term lists, for example, they may star=
-t
-> > > > with a number.
-> > > >
-> > > > Rename name_tag to quoted_name and update comments and helper
-> > > > functions to avoid str detecting quoted strings which was already d=
-one
-> > > > by the lexer.
-> > > >
-> > > > Signed-off-by: Ian Rogers <irogers@google.com>
-> > >
-> > > Ping. This patch addresses name parsing inconsistencies, in particula=
-r
-> > > events may start with a number without a PMU, but not with. It also
-> > > aims to give better names to patterns than name_minus and name_tag
-> > > (with term_name and quoted_name respectively) that have drifted from
-> > > their original meaning and become to me less than intention revealing=
-.
-> >
-> > Ping.
+> Signed-off-by: Gary Guo <gary@garyguo.net>
+> ---
+>  rust/kernel/sync/arc.rs | 65 +++++++++++++++++------------------------
+>  1 file changed, 26 insertions(+), 39 deletions(-)
 >
-> Sorry for the delay.  Can you please give an example for better
-> understanding if there's a change in the behavior?
+> diff --git a/rust/kernel/sync/arc.rs b/rust/kernel/sync/arc.rs
+> index 3cefda7a4372..1f5fbc6b3742 100644
+> --- a/rust/kernel/sync/arc.rs
+> +++ b/rust/kernel/sync/arc.rs
+> @@ -8,7 +8,7 @@
+>  //! threads.
+>  //!
+>  //! It is different from the standard library's [`Arc`] in a few ways:
+> -//! 1. It is backed by the kernel's `refcount_t` type.
+> +//! 1. It is backed by the kernel's [`Refcount`] type.
+>  //! 2. It does not support weak references, which allows it to be half t=
+he size.
+>  //! 3. It saturates the reference count instead of aborting when it goes=
+ over a threshold.
+>  //! 4. It does not provide a `get_mut` method, so the ref counted object=
+ is pinned.
+> @@ -18,10 +18,10 @@
+>
+>  use crate::{
+>      alloc::{AllocError, Flags, KBox},
+> -    bindings,
+>      init::{self, InPlaceInit, Init, PinInit},
+> +    sync::Refcount,
+>      try_init,
+> -    types::{ForeignOwnable, Opaque},
+> +    types::ForeignOwnable,
+>  };
+>  use core::{
+>      alloc::Layout,
+> @@ -143,7 +143,7 @@ pub struct Arc<T: ?Sized> {
+>  #[pin_data]
+>  #[repr(C)]
+>  struct ArcInner<T: ?Sized> {
+> -    refcount: Opaque<bindings::refcount_t>,
+> +    refcount: Refcount,
+>      data: T,
+>  }
+>
+> @@ -155,7 +155,7 @@ impl<T: ?Sized> ArcInner<T> {
+>      /// `ptr` must have been returned by a previous call to [`Arc::into_=
+raw`], and the `Arc` must
+>      /// not yet have been destroyed.
+>      unsafe fn container_of(ptr: *const T) -> NonNull<ArcInner<T>> {
+> -        let refcount_layout =3D Layout::new::<bindings::refcount_t>();
+> +        let refcount_layout =3D Layout::new::<Refcount>();
+>          // SAFETY: The caller guarantees that the pointer is valid.
+>          let val_layout =3D Layout::for_value(unsafe { &*ptr });
+>          // SAFETY: We're computing the layout of a real struct that exis=
+ted when compiling this
+> @@ -207,8 +207,7 @@ impl<T> Arc<T> {
+>      pub fn new(contents: T, flags: Flags) -> Result<Self, AllocError> {
+>          // INVARIANT: The refcount is initialised to a non-zero value.
+>          let value =3D ArcInner {
+> -            // SAFETY: There are no safety requirements for this FFI cal=
+l.
+> -            refcount: Opaque::new(unsafe { bindings::REFCOUNT_INIT(1) })=
+,
+> +            refcount: Refcount::new(1),
+>              data: contents,
+>          };
+>
+> @@ -290,7 +289,7 @@ pub fn ptr_eq(this: &Self, other: &Self) -> bool {
+>      /// use kernel::sync::{Arc, UniqueArc};
+>      ///
+>      /// let arc =3D Arc::new(42, GFP_KERNEL)?;
+> -    /// let unique_arc =3D arc.into_unique_or_drop();
+> +    /// let unique_arc =3D Arc::into_unique_or_drop(arc);
+>      ///
+>      /// // The above conversion should succeed since refcount of `arc` i=
+s 1.
+>      /// assert!(unique_arc.is_some());
+> @@ -306,35 +305,30 @@ pub fn ptr_eq(this: &Self, other: &Self) -> bool {
+>      /// let arc =3D Arc::new(42, GFP_KERNEL)?;
+>      /// let another =3D arc.clone();
+>      ///
+> -    /// let unique_arc =3D arc.into_unique_or_drop();
+> +    /// let unique_arc =3D Arc::into_unique_or_drop(arc);
+>      ///
+>      /// // The above conversion should fail since refcount of `arc` is >=
+1.
+>      /// assert!(unique_arc.is_none());
+>      ///
+>      /// # Ok::<(), Error>(())
+>      /// ```
+> -    pub fn into_unique_or_drop(self) -> Option<Pin<UniqueArc<T>>> {
+> +    pub fn into_unique_or_drop(this: Self) -> Option<Pin<UniqueArc<T>>> =
+{
 
-The example in:
-https://lore.kernel.org/r/20240510-perf_digit-v4-3-db1553f3233b@codewreck.o=
-rg
-is `perf trace -e '9p:*'` which allows the number to start a
-tracepoint name, but what is true for tracepoint names is also true
-for event names. I lack the tracepoint but the patch here is making
-that work if the event/tracepoint is specified with a PMU, so:
+Why did this signature need to change?
 
-Before the input is just seen as broken:
-```
-$ perf stat -e 'tracepoint/9p:9p/' true
-event syntax error: 'tracepoint/9p:9p/'
-                               \___ Unrecognized input
-Run 'perf list' for a list of valid events
+>          // We will manually manage the refcount in this method, so we di=
+sable the destructor.
+> -        let me =3D ManuallyDrop::new(self);
+> +        let this =3D ManuallyDrop::new(this);
+>          // SAFETY: We own a refcount, so the pointer is still valid.
+> -        let refcount =3D unsafe { me.ptr.as_ref() }.refcount.get();
+> +        let refcount =3D unsafe { &this.ptr.as_ref().refcount };
+>
+>          // If the refcount reaches a non-zero value, then we have destro=
+yed this `Arc` and will
+>          // return without further touching the `Arc`. If the refcount re=
+aches zero, then there are
+>          // no other arcs, and we can create a `UniqueArc`.
+> -        //
+> -        // SAFETY: We own a refcount, so the pointer is not dangling.
+> -        let is_zero =3D unsafe { bindings::refcount_dec_and_test(refcoun=
+t) };
+> -        if is_zero {
+> -            // SAFETY: We have exclusive access to the arc, so we can pe=
+rform unsynchronized
+> -            // accesses to the refcount.
+> -            unsafe { core::ptr::write(refcount, bindings::REFCOUNT_INIT(=
+1)) };
+> +        if refcount.dec_and_test() {
+> +            refcount.set(1);
 
-Usage: perf stat [<options>] [<command>]
+We could retain the unsynchronized operation here by taking a mutable
+reference above and writing through it. Right? Could we remove `set`
+from the abstraction in the previous patch?
 
-   -e, --event <event>   event selector. use 'perf list' to list
-available events
-```
+>
+> -            // INVARIANT: We own the only refcount to this arc, so we ma=
+y create a `UniqueArc`. We
+> -            // must pin the `UniqueArc` because the values was previousl=
+y in an `Arc`, and they pin
+> -            // their values.
+> +            // INVARIANT: If the refcount failed to decrement because it=
+ is 1, then we have the
+> +            // exclusive ownership, so we may create a `UniqueArc`. We m=
+ust pin the `UniqueArc`
+> +            // because the values was previously in an `Arc`, and they p=
+in their values.
 
-After the input fails because the event wasn't found:
-```
-$ perf stat -e 'tracepoint/9p:9p/' true
-event syntax error: 'tracepoint/9p:9p/'
-                    \___ Bad event or PMU
+Pre-existing typo you're taking ownership of: "the values" should be
+"the value". But why touch this comment at all?
 
-Unable to find PMU or event on a PMU of 'tracepoint'
+>              Some(Pin::from(UniqueArc {
+> -                inner: ManuallyDrop::into_inner(me),
+> +                inner: ManuallyDrop::into_inner(this),
+>              }))
+>          } else {
+>              None
+> @@ -396,14 +390,10 @@ fn as_ref(&self) -> &T {
+>
+>  impl<T: ?Sized> Clone for Arc<T> {
+>      fn clone(&self) -> Self {
+> -        // SAFETY: By the type invariant, there is necessarily a referen=
+ce to the object, so it is
+> -        // safe to dereference it.
+> -        let refcount =3D unsafe { self.ptr.as_ref() }.refcount.get();
+> -
+> -        // INVARIANT: C `refcount_inc` saturates the refcount, so it can=
+not overflow to zero.
+> +        // INVARIANT: `Refcount` saturates the refcount, so it cannot ov=
+erflow to zero.
+>          // SAFETY: By the type invariant, there is necessarily a referen=
+ce to the object, so it is
+>          // safe to increment the refcount.
+> -        unsafe { bindings::refcount_inc(refcount) };
+> +        unsafe { self.ptr.as_ref().refcount.inc() };
+>
+>          // SAFETY: We just incremented the refcount. This increment is n=
+ow owned by the new `Arc`.
+>          unsafe { Self::from_inner(self.ptr) }
+> @@ -412,16 +402,14 @@ fn clone(&self) -> Self {
+>
+>  impl<T: ?Sized> Drop for Arc<T> {
+>      fn drop(&mut self) {
+> -        // SAFETY: By the type invariant, there is necessarily a referen=
+ce to the object. We cannot
+> -        // touch `refcount` after it's decremented to a non-zero value b=
+ecause another thread/CPU
+> -        // may concurrently decrement it to zero and free it. It is ok t=
+o have a raw pointer to
+> -        // freed/invalid memory as long as it is never dereferenced.
+> -        let refcount =3D unsafe { self.ptr.as_ref() }.refcount.get();
+> -
+>          // INVARIANT: If the refcount reaches zero, there are no other i=
+nstances of `Arc`, and
+>          // this instance is being dropped, so the broken invariant is no=
+t observable.
+> -        // SAFETY: Also by the type invariant, we are allowed to decreme=
+nt the refcount.
+> -        let is_zero =3D unsafe { bindings::refcount_dec_and_test(refcoun=
+t) };
+> +        // SAFETY: By the type invariant, there is necessarily a referen=
+ce to the object.
+> +        // NOTE: we cannot touch `refcount` after it's decremented to a =
+non-zero value because
+> +        // another thread/CPU may concurrently decrement it to zero and =
+free it. However it is okay
+> +        // to have a transient reference to decrement the refcount, see
+> +        // https://github.com/rust-lang/rust/issues/55005.
+> +        let is_zero =3D unsafe { self.ptr.as_ref().refcount.dec_and_test=
+() };
 
-event syntax error: 'tracepoint/9p:9p/'
-                               \___ unknown term '9p:9p' for pmu 'tracepoin=
-t'
+How come this careful handling is not required in into_unique_or_drop?
+At least, the SAFETY comment there is much more mundane.
 
-valid terms: config,config1,config2,config3,name,period,percore,metric-id
-
-event syntax error: 'tracepoint/9p:9p/'
-                               \___ unknown term '9p:9p' for pmu 'tracepoin=
-t'
-
-valid terms: config,config1,config2,config3,name,period,percore,metric-id
-Run 'perf list' for a list of valid events
-
-Usage: perf stat [<options>] [<command>]
-
-   -e, --event <event>   event selector. use 'perf list' to list
-available events
-```
-
-But the patch is just about making the name term more consistent and
-cleaner, the weirdness above wasn't its main point, I want the code to
-be easy to read and understand.
-
-Thanks,
-Ian
+>          if is_zero {
+>              // The count reached zero, we must free the memory.
+>              //
+> @@ -673,8 +661,7 @@ pub fn new_uninit(flags: Flags) -> Result<UniqueArc<M=
+aybeUninit<T>>, AllocError>
+>          // INVARIANT: The refcount is initialised to a non-zero value.
+>          let inner =3D KBox::try_init::<AllocError>(
+>              try_init!(ArcInner {
+> -                // SAFETY: There are no safety requirements for this FFI=
+ call.
+> -                refcount: Opaque::new(unsafe { bindings::REFCOUNT_INIT(1=
+) }),
+> +                refcount: Refcount::new(1),
+>                  data <- init::uninit::<T, AllocError>(),
+>              }? AllocError),
+>              flags,
+> --
+> 2.47.2
+>
 
