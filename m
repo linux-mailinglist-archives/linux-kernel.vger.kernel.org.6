@@ -1,161 +1,243 @@
-Return-Path: <linux-kernel+bounces-521501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6D6CA3BE30
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:33:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E7FEA3BE3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:36:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB0FB178162
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:32:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBCE83AF11F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:32:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61C6D1E3DE5;
-	Wed, 19 Feb 2025 12:31:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B06A11E0DB5;
+	Wed, 19 Feb 2025 12:32:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TAxq0RK2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="carIGxqz"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2A21E260D;
-	Wed, 19 Feb 2025 12:31:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2724C1E5B71;
+	Wed, 19 Feb 2025 12:31:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739968313; cv=none; b=APeufjMJ2o4ShaJNPS1hf7L/FsBVjmLGDlEUdqdyq35+pbZ1mzmN3vGRRrWal29XI+rwuAxxbcJn6UkdNz8+429QOmQHFhn9FDlE0h7GWVr/OO6c17upwV778HpkDRYMyhb+H9Yivl1sJLOBJk6YHGa43Q08sVFdevzQCBiLSDQ=
+	t=1739968321; cv=none; b=pvIoAj16eDDBxO7Cq7KVuLd32hk727QxON9SvNwbHR94apARVFk3r83dudAE94UYQ1po6orBYywcwr3je2bUgMz7WACiZPBDKATTQK8br76OUFNE0xJi/CbDnXhEDe4gRVtaJTeVYqsOR4Z/0adY061pCNQIGwuShNCR3m9ZU+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739968313; c=relaxed/simple;
-	bh=C3QFJuaEE2hRUH66y5x74xuq/js7HFqLVBpJ3Yuv+AM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hEwivAdo5v9VMX6TFDdujm5+8W5BpjVKo+x5bwa8+O+2wrJjS2uBqariQKPUOJCpAUc8L5SNq4AIjURacyfB2q/+zi2jQvaCBw0mo0Q5KfsMLQzIjtSV/4bAK4T5l/grVXVLo/jp+4pi8Q9ZNUl/ATHUr03C3GNM1pG7ObHF1kU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TAxq0RK2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15256C4CED1;
-	Wed, 19 Feb 2025 12:31:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739968313;
-	bh=C3QFJuaEE2hRUH66y5x74xuq/js7HFqLVBpJ3Yuv+AM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TAxq0RK2jZDaums+xv+RO2vBZXLiuCzI1AUc+ZfgP9qAbJmtsS9hTMSWcDmGjCybx
-	 nqfWa02t7lFqhI8dfSpjDbQjJI/FRUzOrEyLiXDNwj5kB2DPu3do7keQY341n5f23W
-	 HCX34JdPe6BcO6cvpy5q9R+lChRLzvshtcRs3G5wFrN7qJztekF8fdbFTycgkp5gjU
-	 CLbnb9eKKRAELpUiaydGYCzT6REVkuD8AJqnqHVuakZFXVmS+aHJGbwzxSyQcoZH1K
-	 VQxxi+lo1MUcAc2WBVDKeTbnxOuf2a1NcDUZOybddTA9+/LucFgZXxr8vx5w54MiyU
-	 KZnflGtQBbypw==
-Message-ID: <ec58d467-baa3-4630-bfb0-f09d366a9be9@kernel.org>
-Date: Wed, 19 Feb 2025 13:31:48 +0100
+	s=arc-20240116; t=1739968321; c=relaxed/simple;
+	bh=U0JRwfZpNRp+812FgOW9ZHl/nMZWKI1NbdstILYPpaY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QoWnd7Nw2gDskOKLxHnZcHUuL+4fna8UYNM4iOBiiqGgJZMKzztDA7ibDB/qt+yZ9u1FDsJOVxImQLSKUOxBC4+aN0bSXKpqAnplpBEK1UHIAJ6crBvAdz8CmaQ154sCxgjQDFOECAvipaqZQzcH/XEW+NaidYF7QbSBtDqqARg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=carIGxqz; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5461b5281bcso3422299e87.3;
+        Wed, 19 Feb 2025 04:31:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739968317; x=1740573117; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=K/8lsdpKrVRGvDk8bdsIYhaiCtFIej4Yk5OWrIJakDc=;
+        b=carIGxqzkRkRgey0H0ILDYuhc/AsFMSBHEJ+nwaKN9kGg8imcDRk16skeysNqFUTNd
+         ObskyAo22W/XKs0vZtDR50tcFwZsa8WfGkETMk+eRJvHhqqEzUo2g+vIasCv0ic9fdf/
+         u0BmtoE05G/42htdRf6ZbPNSFk5VkEDFEd1ixvvOVR+duSznx1DRBfRAU83jlOVBMBmH
+         B+k6b/KN7Mi1Z2ivK37NZazh/7gxIBcNWVawQ5C03fpuz39PeSLCIqpxB4drR4HMzgf0
+         JYGYA1iqiuqs764kqVFcdYEORn9Gt6xJFjZw0ujkAWSd2gfV/MxUh8U+3EcN8kq5h3bB
+         Ot2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739968317; x=1740573117;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K/8lsdpKrVRGvDk8bdsIYhaiCtFIej4Yk5OWrIJakDc=;
+        b=RQ1/bPoU04Y5jtBFQzmwGoTWdhAsShUjoVgqeL3xLfecCT90CnrQuenAi77aMQHuCi
+         bmYO6gBV4v2TIMXaumlwBUCmGf7WrwdECsUJ53XS8vx8furg8PxwdUuW7MVP2I9ipBjt
+         A8bAFJB6da/DgfC/XIW7WOnjmKv0/Hc6xy4xLxnMcSH4DUoTvQSisNCrHxqF9rk5vZP7
+         L5uFvgzKhYCfouMWiEM3NkkMfvAEzDwmbljIuyADrW6+QfDzCeShmVKqKlVFSOMHzYLq
+         UR33g60K88njomT7KxNgVfPzY9eC2YC473EptpN6mCm9a41Xf7/OAtr/bTSSmcziRB7i
+         z9jA==
+X-Forwarded-Encrypted: i=1; AJvYcCUO+5FjQd4PnVWcnnHAxse24tkII8ZrmYc0iYAQJF3MVP5VLrenKaF8of896AcgidH+IF+nKfGzi86x@vger.kernel.org, AJvYcCWveyMinYaT+h5i9VzgDUAN2nnIcXV6rO/VV/AHlAfHhglsm+7IxImFTwIN/sU1y44VRujptKBqVprdFlhLlqPv8Ik=@vger.kernel.org, AJvYcCX2TOX5+pw3Q+KHc7KK4Iubm7Ei2gkROePHpZp5poAtYJNN/cxxJG4a4JmtMXWSWKrmYsjIZK7vCauL1pNW@vger.kernel.org, AJvYcCXVaftHwN5bJ123qIad45YWSOHw+PbLC3gZGDZmKEw80bmJ8cqu8HqXb9dhLcin/dlFyQ7D2/RjZc+/@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9Po1IUze8MVDN1imFT4dTNddUcaCwnWW1HU3jUQ9Say152xNL
+	VREckkBMAjw8946/eNVb356sv6YLqxbT8Lrj1rE3MWEq9arCMemZ
+X-Gm-Gg: ASbGnct9fWLpnw9np+ARnbbPyEr+zp9Y7AQvvODgZ5HW9jURNmSuzI+7ww8cKkl47wI
+	sHiax1v4k/dyfczqhZROys9VkCVlaqt3qkSIjEqQE1wsazPZk27HokCGwLloMJl6f8n0c7h0kYk
+	IvxaPfVrnsxyM3+1H4qbjw++rGa6b2F+3s5QnEcRCcFDchBx0IF5QV4RVZsbGXmtB3cfrxEOnTK
+	m208SNsSxBoGoYcZ1+y0loAFVcZlxHXdPx/8PSUG3SjpKjg0e1xwQd/vt4xmrJeFRYATQTzsdml
+	Q38I5d7SGPIvxL8d3poSkQ==
+X-Google-Smtp-Source: AGHT+IHxBzOtMjJ6R20Hyns4SI3S/h1XqzVvWjCS9fdPX3gfnk60+xs7fGA4Wr7UNOkuWHPHq9EJQw==
+X-Received: by 2002:a05:6512:1286:b0:545:2950:5360 with SMTP id 2adb3069b0e04-5452fe570a5mr6750403e87.22.1739968316988;
+        Wed, 19 Feb 2025 04:31:56 -0800 (PST)
+Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5461db6474bsm1137730e87.58.2025.02.19.04.31.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2025 04:31:56 -0800 (PST)
+Date: Wed, 19 Feb 2025 14:31:51 +0200
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+	Nuno Sa <nuno.sa@analog.com>, David Lechner <dlechner@baylibre.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
+Subject: [PATCH v3 7/9] iio: adc: sun20i-gpadc: Use adc-helpers
+Message-ID: <21b9af362b64a1d9c2a13cc46242dd6955996c46.1739967040.git.mazziesaccount@gmail.com>
+References: <cover.1739967040.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/8] dt-bindings: media: nxp: Add Wave6 video codec device
-To: Nas Chung <nas.chung@chipsnmedia.com>
-Cc: "mchehab@kernel.org" <mchehab@kernel.org>,
- "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>,
- "sebastian.fricke@collabora.com" <sebastian.fricke@collabora.com>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-imx@nxp.com" <linux-imx@nxp.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "jackson.lee" <jackson.lee@chipsnmedia.com>,
- "lafley.kim" <lafley.kim@chipsnmedia.com>
-References: <20250210090725.4580-1-nas.chung@chipsnmedia.com>
- <20250210090725.4580-4-nas.chung@chipsnmedia.com>
- <cb7937f5-2045-4903-825c-71ed70097efb@kernel.org>
- <SL2P216MB12460EDF6265459D11E2A5A9FBFF2@SL2P216MB1246.KORP216.PROD.OUTLOOK.COM>
- <20250213-imaginary-shrimp-of-merriment-6ccb6f@krzk-bin>
- <SE1P216MB1242EBEEAA36BE73AD466FB6FBFA2@SE1P216MB1242.KORP216.PROD.OUTLOOK.COM>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <SE1P216MB1242EBEEAA36BE73AD466FB6FBFA2@SE1P216MB1242.KORP216.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="s1x8TMYhsB4jne8Z"
+Content-Disposition: inline
+In-Reply-To: <cover.1739967040.git.mazziesaccount@gmail.com>
 
-On 18/02/2025 10:21, Nas Chung wrote:
-> For example:
-> vpu: video-codec@4c480000 {
->         compatible = "nxp,imx95-vpu";
->         reg = <0x0 0x4c480000 0x0 0x50000>;
-> 	ranges = <0x0 0x0 0x4c480000 0x50000>;
-> 
->         vpuctrl: vpu-ctrl@40000 {
->           compatible = "nxp,imx95-vpu-ctrl";
-> 	  reg = <0x40000 0x10000>;
->         };
-> 
->         vpucore0: vpu-core@00000 {
->           compatible = "nxp,imx95-vpu-core";
->           reg = <0x00000 0x10000>;
->         };
-> 
->         vpucore1: vpu-core@10000 {
->           compatible = "nxp,imx95-vpu-core";
->           reg = <0x10000 0x10000>;
->         };
-> 
->         vpucore2: vpu-core@20000 {
->           compatible = "nxp,imx95-vpu-core";
->           reg = <0x20000 0x10000>;
->         };
-> 
->         vpucore3: vpu-core@30000 {
->           compatible = "nxp,imx95-vpu-core";
 
-Why do you need compatible here? Could it be anything else?
+--s1x8TMYhsB4jne8Z
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->           reg = <0x30000 0x10000>;
+The new devm_iio_adc_device_alloc_chaninfo() -helper is intended to help
+drivers avoid open-coding the for_each_node -loop for getting the
+channel IDs. The helper provides standard way to detect the ADC channel
+nodes (by the node name), and a standard way to convert the "reg",
+"diff-channels", "single-channel" and the "common-mode-channel" to
+channel identification numbers used in the struct iio_chan_spec.
+Furthermore, the helper checks the ID is in range of 0 ... num-channels.
 
-Where is the rest of resources? You created children only for one
-resource - address space?
+The original driver treated all found child nodes as channel nodes. The
+new helper requires channel nodes to be named channel[@N]. This should
+help avoid problems with devices which may contain also other but ADC
+child nodes. Quick grep from arch/* with the sun20i-gpadc's compatible
+string didn't reveal any in-tree .dts with channel nodes named
+othervice. Also, same grep shows all the in-tree .dts seem to have
+channel IDs between 0..num of channels.
 
-Best regards,
-Krzysztof
+Use the new helper.
+
+Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+
+---
+Revision history:
+v2 =3D> v3:
+ - New patch
+
+I picked the sun20i-gpadc in this series because it has a straightforward
+approach for populating the struct iio_chan_spec. Everything else except
+the .channel can use 'template'-data.
+
+This makes the sun20i-gpadc well suited to be an example user of this new
+helper. I hope this patch helps to evaluate whether these helpers are worth
+the hassle.
+
+The change is compile tested only!! Testing before applying is highly
+appreciated (as always!). Also, even though I tried to audit the dts
+files for the reg-properties in the channel nodes, use of references
+didn't make it easy. I can't guarantee I didn't miss anything.
+---
+ drivers/iio/adc/sun20i-gpadc-iio.c | 42 ++++++++++++++----------------
+ 1 file changed, 19 insertions(+), 23 deletions(-)
+
+diff --git a/drivers/iio/adc/sun20i-gpadc-iio.c b/drivers/iio/adc/sun20i-gp=
+adc-iio.c
+index 136b8d9c294f..36d48d95f029 100644
+--- a/drivers/iio/adc/sun20i-gpadc-iio.c
++++ b/drivers/iio/adc/sun20i-gpadc-iio.c
+@@ -15,6 +15,7 @@
+ #include <linux/property.h>
+ #include <linux/reset.h>
+=20
++#include <linux/iio/adc-helpers.h>
+ #include <linux/iio/iio.h>
+=20
+ #define SUN20I_GPADC_DRIVER_NAME	"sun20i-gpadc"
+@@ -149,37 +150,32 @@ static void sun20i_gpadc_reset_assert(void *data)
+ 	reset_control_assert(rst);
+ }
+=20
++static const struct iio_chan_spec sun20i_gpadc_chan_template =3D {
++	.type =3D IIO_VOLTAGE,
++	.indexed =3D 1,
++	.info_mask_separate =3D BIT(IIO_CHAN_INFO_RAW),
++	.info_mask_shared_by_type =3D BIT(IIO_CHAN_INFO_SCALE),
++};
++
++static const struct iio_adc_props sun20i_gpadc_chan_props =3D {
++	.required =3D IIO_ADC_CHAN_PROP_TYPE_REG,
++};
++
+ static int sun20i_gpadc_alloc_channels(struct iio_dev *indio_dev,
+ 				       struct device *dev)
+ {
+-	unsigned int channel;
+-	int num_channels, i, ret;
++	int num_channels;
+ 	struct iio_chan_spec *channels;
+=20
+-	num_channels =3D device_get_child_node_count(dev);
++	num_channels =3D devm_iio_adc_device_alloc_chaninfo(dev,
++					&sun20i_gpadc_chan_template, &channels,
++					&sun20i_gpadc_chan_props);
++	if (num_channels < 0)
++		return num_channels;
++
+ 	if (num_channels =3D=3D 0)
+ 		return dev_err_probe(dev, -ENODEV, "no channel children\n");
+=20
+-	channels =3D devm_kcalloc(dev, num_channels, sizeof(*channels),
+-				GFP_KERNEL);
+-	if (!channels)
+-		return -ENOMEM;
+-
+-	i =3D 0;
+-	device_for_each_child_node_scoped(dev, node) {
+-		ret =3D fwnode_property_read_u32(node, "reg", &channel);
+-		if (ret)
+-			return dev_err_probe(dev, ret, "invalid channel number\n");
+-
+-		channels[i].type =3D IIO_VOLTAGE;
+-		channels[i].indexed =3D 1;
+-		channels[i].channel =3D channel;
+-		channels[i].info_mask_separate =3D BIT(IIO_CHAN_INFO_RAW);
+-		channels[i].info_mask_shared_by_type =3D BIT(IIO_CHAN_INFO_SCALE);
+-
+-		i++;
+-	}
+-
+ 	indio_dev->channels =3D channels;
+ 	indio_dev->num_channels =3D num_channels;
+=20
+--=20
+2.48.1
+
+
+--s1x8TMYhsB4jne8Z
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAme1zzcACgkQeFA3/03a
+ocVCEQf/apaKkLHlAvNzeV+JKHo6yZDGv6rn7zx2MXDtaPiound3ykKHcgPY498P
+38ikuU9ndRbuvC8VnJgdM3Zl1/A2LwH4Oucpkf8YfLiOg0lhowQdvdENcvbDGGX2
+55HgTmhlDc/ZalxeQw+BskM+IMTdXdc038K9MiwtpghKgqRCpSc42+qlLlf+PKOV
+OmHPs56Ieg7eljc1b/BtnXQLsoEIV9c4G4TmD0RZ2HweNAcoIKgJDGgfj9HsISUf
+0A0Py6UOsR5makm7tLhBfAzDd+qhixmrtt2tZZYSIF7h9mnMd7S4+CtJMWdAj4fG
+PQSvCuR17XsboEperUGS7DRuGu4tuA==
+=t+wj
+-----END PGP SIGNATURE-----
+
+--s1x8TMYhsB4jne8Z--
 
