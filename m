@@ -1,509 +1,246 @@
-Return-Path: <linux-kernel+bounces-522717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 459E6A3CDBC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 00:43:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E67DBA3CDB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 00:39:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14DE0175CB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 23:43:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADE4E3AA3D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 23:39:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E7DC25E464;
-	Wed, 19 Feb 2025 23:43:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6540D25EF86;
+	Wed, 19 Feb 2025 23:39:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ziglang.org header.i=@ziglang.org header.b="DWWLbQtP"
-Received: from mail.ziglang.org (mail.ziglang.org [108.61.23.47])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GwYdsVjo"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5DBD13DBB1;
-	Wed, 19 Feb 2025 23:43:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=108.61.23.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740008612; cv=none; b=BkdJVaxGfqfxfj0xqcdjJZDLqlJ50iWgIZ4cAaxs2/hEu1Du6zjeEIJj7vjOg8t8FDTQvw6q1FbpbM5K/CaOa6a4QsZUfcjCHVm/GXUliFx2fCmZUMqHS2e9i1DG1Sx9x63UQGI4rS0HHkEgZHZPP2vVYO0/sqEB8f94bCWgF+I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740008612; c=relaxed/simple;
-	bh=d1tbpeoy8+Gm6Hz6x4yI39deQEWqQLj4fDXrtRO6fn4=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=CfmJl3zAKgulxv/Hi9z5Ug6U6K7jP5avWap8Kc8JtI79FpcavUshe/Gi9QODSOYUPFzOUrQUcBZvobnyF3XjYfvRG2BpHMVKTx6u0vnOLGUL8nTHt8zM/BHqJnjKMtQDMBmGv+XQapwYzXIyrjS65DYh7w/uVLQhkki7a1PAxl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ziglang.org; spf=pass smtp.mailfrom=ziglang.org; dkim=pass (1024-bit key) header.d=ziglang.org header.i=@ziglang.org header.b=DWWLbQtP; arc=none smtp.client-ip=108.61.23.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ziglang.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziglang.org
-Message-ID: <7ee53910-0be5-4e8f-9816-de92973eb35d@ziglang.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ziglang.org; s=mail;
-	t=1740008287; bh=d1tbpeoy8+Gm6Hz6x4yI39deQEWqQLj4fDXrtRO6fn4=;
-	h=Date:To:From:Subject;
-	b=DWWLbQtPFB4R8Q43zOJnIGdosIw0wyJkBUfu26UrU+V8/2kysAGj36J3LOIJmw/7c
-	 bYpl8Iksx6jDbR4BVUeCTGaeaUU0yGFT1lqKaj+k4fz0UPCqv0lo+2GO7N2PYAtQ1m
-	 PuAl2wps9X1Ko2yDvzcjFDcyCT12q2quJghz8SBQ=
-Date: Wed, 19 Feb 2025 15:37:58 -0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16EFB25D539
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 23:39:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740008361; cv=fail; b=TDCgCGbkMNKYgYgIazTDu5/6YyNoKhUIxPj6Zwaj+5pif7CvbyzldLdNIFpke73uy4qBfFqWyw/UNd9WZfpHVVRp1RCh4CaKTBnstx8id0nOjeJgkuEgMitRvkuu2hlrTpdewPvHCVQ977xF/hBYUMQSF1rrSpZKrZ4VHxvDik0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740008361; c=relaxed/simple;
+	bh=yHUR959Davigjdd2/Obnj+KREphKI8f+mb0rcyon1Aw=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=bxgZvJsyaAK/i+6Me/Ud4bcYQuMiIDyb/oP9tjT0w19VIncliF0iiKUtgBlB/wafVPFQU4ahD2ZR2ekPmxHJJk19Y9eYnUcne+3+ruA+J/hQsN5488sggFZT8Rc0+cS01KhbxFC3tqFPXvqKTPdLmbu+RyyaP5P1R/nWezVtZDI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GwYdsVjo; arc=fail smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740008360; x=1771544360;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=yHUR959Davigjdd2/Obnj+KREphKI8f+mb0rcyon1Aw=;
+  b=GwYdsVjolmxIbVweFHKkIjdOB7PRdB4h6utqT613pn1xBvqmIUiT96Ze
+   QUMa8RtZyvHLhdsj1OD28xkXUrZPMt3dzJYJjSGY0Krk1amVM+Wf/Fc0U
+   fJPJJCsG8vlcvr3JUXPQp8CmZo1wzCSWH8eWwcny0DJnxBiOiUe3NPbOp
+   gWIYT86BNyxhrjkWHyQG9mn1nNd+udKGMte0Q5FN7SnCRNz5e6L7TrpUL
+   xYOIkIBN5W8gpXAWHoSFlFWVlyAM0HWsO0ZlZsQhmubouM9h4XflydDiS
+   s+Dk8izUYNu8jcIVBOnHGKdLq7PpmkBw06uSsuF2u6oJ1k7GGLrR8SBLs
+   A==;
+X-CSE-ConnectionGUID: zzT0i7yJT+mZsIgKr4w7QA==
+X-CSE-MsgGUID: kbfnTz1dTdaUel7VIHQkTw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11350"; a="43599205"
+X-IronPort-AV: E=Sophos;i="6.13,300,1732608000"; 
+   d="scan'208";a="43599205"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 15:39:19 -0800
+X-CSE-ConnectionGUID: FogFiSVuRF6El7YYoiKsCg==
+X-CSE-MsgGUID: 42PVBWWJT3mSR0VJKl1gXQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="115345418"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 15:39:19 -0800
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Wed, 19 Feb 2025 15:39:18 -0800
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Wed, 19 Feb 2025 15:39:18 -0800
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.47) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Wed, 19 Feb 2025 15:39:17 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=j7psuspMT+cdH3P/l1tKGXATDUwTpwaK21ZLQrZianpW8BRaSNSGRwz8+0Vg7+IDPXt2FGNxAZuAqBwWkr0P1u5fchtacRqUEZGdcGeUu3ZyldCduAa5FRXYkoMrwjm0oPmaWWThnFBFUJ66XjSRBILU8Vg8oB2v9XUS/NudOXtlIt+bk1OmkhdsL1dCYb5Ao3s5TDl287fQfGX4dRnOOwWprNA/ld4k3tK2Dx3+Sdcv2IGiFJ//55f/TdeoUwt0BtF5RCxHORVRtK+aRsvP+QYxpYTo40dC9iXnVFkhgYXNj3Laf9isOvOlbfP8UxK5VID/a+VBubfZ3ymHzfN+Wg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=R2UoLt381tIZNdqHPrbGbrijPAJyNo1MZsW8nsVBwr4=;
+ b=vSw3DMj5UFVMSbfBYHOcsaqoJitIDxaf3OB6hPvwW9pMR+hnsry3XY/Ag+15yu+RW4I7wjMn8HEE9ntgqpCSk8hwXVLOIM1LVN0n8AAsrA8mcMAi6bVNMjdhSzevdU5GrqHOpUNxVNva8AstnrV3wSGemYBVmi5To48BDavb6Ld1t/PRwnKTFHgmD84EpEn2cO0CTLnPZe3EYHPBr6shZao164xFcgU2mpjQ89jsHuewPKofpwPXwiw2KSa76x+hpCSnnorva6y3S0/zqQz5tz2XQWmY+FGvYb6M8v+apOFo+AV0kUsBakqBgQDOa/hszCHc6psjk0YEUqkLgyd86A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by DM4PR11MB7350.namprd11.prod.outlook.com (2603:10b6:8:105::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.14; Wed, 19 Feb
+ 2025 23:38:47 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%4]) with mapi id 15.20.8466.013; Wed, 19 Feb 2025
+ 23:38:47 +0000
+Message-ID: <d5e4eefb-d2c0-48f6-891b-ffd5200fc9d6@intel.com>
+Date: Wed, 19 Feb 2025 15:38:44 -0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 15/42] x86/resctrl: Move monitor exit work to a resctrl
+ exit call
+To: James Morse <james.morse@arm.com>, <x86@kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>, H Peter Anvin <hpa@zytor.com>, Babu Moger
+	<Babu.Moger@amd.com>, <shameerali.kolothum.thodi@huawei.com>, "D Scott
+ Phillips OS" <scott@os.amperecomputing.com>, <carl@os.amperecomputing.com>,
+	<lcherian@marvell.com>, <bobo.shaobowang@huawei.com>,
+	<tan.shaopeng@fujitsu.com>, <baolin.wang@linux.alibaba.com>, Jamie Iles
+	<quic_jiles@quicinc.com>, Xin Hao <xhao@linux.alibaba.com>,
+	<peternewman@google.com>, <dfustini@baylibre.com>, <amitsinght@marvell.com>,
+	David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
+	"Dave Martin" <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>, Shanker
+ Donthineni <sdonthineni@nvidia.com>, Shaopeng Tan
+	<tan.shaopeng@jp.fujitsu.com>, "Tony Luck" <tony.luck@intel.com>
+References: <20250207181823.6378-1-james.morse@arm.com>
+ <20250207181823.6378-16-james.morse@arm.com>
+From: Reinette Chatre <reinette.chatre@intel.com>
+Content-Language: en-US
+In-Reply-To: <20250207181823.6378-16-james.morse@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4PR03CA0341.namprd03.prod.outlook.com
+ (2603:10b6:303:dc::16) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Language: en-US
-To: Miri Korenblit <miriam.rachel.korenblit@intel.com>,
- Kalle Valo <kvalo@kernel.org>, Johannes Berg <johannes.berg@intel.com>,
- Kees Cook <kees@kernel.org>, Emmanuel Grumbach
- <emmanuel.grumbach@intel.com>, Breno Leitao <leitao@debian.org>,
- Yedidya Benshimol <yedidya.ben.shimol@intel.com>,
- linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-From: Andrew Kelley <andrew@ziglang.org>
-Subject: bug report: iwlwifi crash on ROG STRIX X670E-E GAMING WIFI
-Autocrypt: addr=andrew@ziglang.org; keydata=
- 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
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|DM4PR11MB7350:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2dffab95-13b0-4540-c118-08dd513e8e07
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016|7053199007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?b3N5ZzN1NURHMTdnYUdWbHRQN2ljVkJDQ2kzY1VZaFVYVFF3THNLVG13ZzRq?=
+ =?utf-8?B?a1A4Z1hmdFl1WmMwQUtiVWFabWI4RGUyOWlPRGVJZWtBb1FiWnFYSXRDZlgz?=
+ =?utf-8?B?TUozRkJvc3cxWVltYTBYK3dwMk9NbURtVHFoYkRWMjBLM1paRlhYOHl6cmFt?=
+ =?utf-8?B?ZmgxdWpyWjZNYXpKdHZmWXVhZzBlTmFEZ3pNcDk2bTNUaXE5TlJ0MUNvZHRO?=
+ =?utf-8?B?TzFQRTdRNjlaenVsakc0QmQzeXI0R0J5MVpDWTdidEtqbEhoR1VxcUYvaDBv?=
+ =?utf-8?B?TlcwYWtOYnE1dG5NOSthYVJpZEppait3REVScXpqNWxqQm1GQXdlNUl5cml6?=
+ =?utf-8?B?Nmo2cW4xYnZkNjVWN1RZKzFZUktpMEM3OXpWVHp0d2lyZHNwNlU2a1hXdWE3?=
+ =?utf-8?B?R2N0cDdFaGFGbElyeXp6MHFwdGh1aEZQR3hTc002VlF1OHQ0dGVTLzFEUVNt?=
+ =?utf-8?B?MDhLRlJCZmlYcWgvYlRDcThTTjVLSWRIemVqWTFHOHlLOFJsSWtvSlo1SHJE?=
+ =?utf-8?B?blU2S1VoWDJpVi9uMDhHYThwTEhINk95cFBnNjRMb2dMMG1ETkdSenZ0aEM0?=
+ =?utf-8?B?Ry9zZkR6Uzc4YStJRjRId3lwTXdEMUlqemlsVjg5UmdDdkppNi9kOWhFM05s?=
+ =?utf-8?B?L3Vpc1M5NVZiU0xReWV0cm14MzdxT3piajQxckk3V2x1ZmU0ekVnNjBaYUhm?=
+ =?utf-8?B?Qk9SOWNHQUtyQzhoczRrRTg1Um5aeVhENEFyaVF3WnNWZVJqSjR4ZDBHRzNq?=
+ =?utf-8?B?N2RudU1vSGh5cmFCTXBoT2syVytvY2NCZ0Y3QkNXNUE5aWFVUDNrenlXbCtF?=
+ =?utf-8?B?VlFpS3hwRXlDd0gzRTdVS290OUZud1pBZWFPT2YwbWJTbWR2OWc2MFltcG9T?=
+ =?utf-8?B?SFFnUlBMSEY1d2VGN3dJY1IvaGpNb1A5YmhIc0xla3ZaZldBYzBsQnFpL1Vj?=
+ =?utf-8?B?OFcvdzFBbWJNNjZRSW42aXFYb2QxUDkzM3ZmVUZhN09HZEp2NHozRmRVNzJs?=
+ =?utf-8?B?aUZxMFhUVUhVMzNFMmJnTGlhRXJWbXlsNTlKWEpzdi8zd1Y4bTNZMjhmNHRN?=
+ =?utf-8?B?aGpkYVZyL3k2NHM2U2w4RngxS3lhSUxneUNDU2N2ZmxIR0pUZ05PbVN4SXRJ?=
+ =?utf-8?B?N2VndndkemRhSzVidDdDOVVCVTdsRFJKeThZa2JNZ1NEeEllWCtBRkpnN24w?=
+ =?utf-8?B?T2poYU54RmttelB5QVIzakduQzNXNmp4enRkeWtHaS93NWhNRTNtM04xaWUz?=
+ =?utf-8?B?bmFJSVE2VzJjWmpEdVdXM0J0R0F6dTRLSmJrclJ0V1JnT053bDRaK1JoQjRk?=
+ =?utf-8?B?Z2V3ZXBlaDBqSU95WldWNFo4TURxS3hURXFTajhwYUZVbXczVXIvc2pTT24z?=
+ =?utf-8?B?THlFNU1YUVNtTDJWTm5lcUE1Y0theThLN2RqOGlLdEtISDArUmltMTl3dnBB?=
+ =?utf-8?B?NGQ0bDFucW9xa0szNjcyVWMyL2VKdjN6S0xuYWJlWTZJTGpvNFJ0THNCRFRL?=
+ =?utf-8?B?eUYwU2FFNjlqTGs0NGJFbjlsS2xXRXM2M1ovUWhieXRnUzBBVXoyc1R6YlBm?=
+ =?utf-8?B?SnFaeTNGZ1RDMEtienRyRmRHd1JCL09qMTZydnJsRnhpeHRYS3g4UmxWQ2Z5?=
+ =?utf-8?B?K3l5MnNnc05McHFEOHdGMU5ZNXVselhXQldhZzVRM2JMMm1zbnN0MXhFdExO?=
+ =?utf-8?B?RURzM254OVYzT0lvTjR1MVowYWhyRU91UjRsdkQzY2xBYnk2aVhnelJ3Y2lP?=
+ =?utf-8?B?N3VUSkt0bTRUUjNjQk83cGRTWVNSckxNQ0tTUEd2TEhXdUphQU5tTUIvNmdN?=
+ =?utf-8?B?VXV4dVR2eHc0VE5xQU5GUzk5LzcxaEYwVHhGT2hTcW14NVB6YWhJRXV3ZXdR?=
+ =?utf-8?Q?L84qCldTxlCAy?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?di9QYms4UHdzaUNRaWhIV2oxUTJMT2ppei8rQ1A4NVd2UGRCNFB3MjEzNDMv?=
+ =?utf-8?B?RDBWQ25ibEVQM3owNTlkTWRHRHlzaThTbjZveDZMQ0hxNW03ZGxLWUphaXRl?=
+ =?utf-8?B?SGdaL0s5dzJTR2llalJGZDZHYnE5MW5naGRIUHhiR2tBSHJOMFB2eTZuYkxq?=
+ =?utf-8?B?RXp1blpNS2FBanlWMGxkZzROQ2pSTzNRckxUUjJvU1pRUHowRjJTN3hBN2s4?=
+ =?utf-8?B?OXVOUXlpZ3I3QS8zSElaNXdhQ3M2dmJ4cmsvWWR5TVVxc0tPVWlBVmkzdUNX?=
+ =?utf-8?B?U2ZjTVRpUldFd1E2QWU5aXF0TmZsb0VCeTB5YTl1ZmZKNFpmV2VIRk9uaUhS?=
+ =?utf-8?B?cE5xNmNoVi9rckVPbjU3eXFUcWRjUktsSXBudHB4SHNZZUk2YlFERFczOG10?=
+ =?utf-8?B?aG9Zb2JqdzFKclJ3S2FKUHZxanF5Nm1aVTQvYU9lSm94N1hGRmhZQ0tuTWpj?=
+ =?utf-8?B?VU1UVjQwTkJ6TnBIQzlWcjl3K1lQQkJxR2xNc1lqMVc0ejZWVDFvYzVTenN1?=
+ =?utf-8?B?dE9QY0RFUEhXNk9SSEdTeTFxNVM2ckVnS2tEaDk5bU5EUjcvMzh5VXlXT2Vp?=
+ =?utf-8?B?VkZ0V0d5V1VvaFprSzEvQkdRTFY0L21lZzlFVENzTFBCbFM5eDI1ZEdvZzNW?=
+ =?utf-8?B?ZHc0SkE4ZENXdGdNaWtVZzI1ZkE5YXc0MCtjRkoyTTNTVFMxNHNyT1daSER2?=
+ =?utf-8?B?ODFDSnNTa1BqSlVabkk4QVN5a1ppU09GWGptOFdxamJqSmpnc1VQeEFvbHpR?=
+ =?utf-8?B?STNBT2V5YTZSMDZ1UzJ5dldaR1BhY2EraDE4bVV0T3dlZkdqUWM5Zy9yZjl1?=
+ =?utf-8?B?L0pJYytSMDUvbTBibFpDSFNCSDc4Z3NJVk5BVGovTDFHK1dHVXFGZFNGWWlW?=
+ =?utf-8?B?V0RNNURrNExDNkdJQjJ4RnhVWTE0bUtXMi8va1plR3FTS1d0d2thZkJiaHdB?=
+ =?utf-8?B?VFZRUEJqUkFxS2ZPMFAwcy91U2NpUGNETm56dStjVEtGUndnK2ZUR0doVCtp?=
+ =?utf-8?B?NXhrbEcwdi9lT2l3TnVXWDU4b2xLTzV6SXdheCs5aHZxd081RzRSNGV2dTVN?=
+ =?utf-8?B?S21EUFNOcTFWbU8zVE54Mi85MXcwbzNxK3l2dGo2RzdCTURyU0tvWDIyT2RD?=
+ =?utf-8?B?ZndpRkNBTy9SR3ZqK3hpcFpNNUtUaUFqMFVSbGZHSjJsRFhKYmZUR0RqUm1r?=
+ =?utf-8?B?TS9tZEpRYXlEQUlqTVY3WFYxNTB2c0tERTAwdnBid1RLRW5oajg3dEgvclJD?=
+ =?utf-8?B?aVpUeG1HcXYxUHZEQWcwdlhpS1F6aWQ3S2JickMzTjBKRVowc1Nia05Ra0hE?=
+ =?utf-8?B?RDUxRG01eU92WFVvc0lKeitvODdpN1g2OVYxa0hqZ0huK2NnVUdoaVl5Lys4?=
+ =?utf-8?B?cXZXSHFDVFJQSDRqN0NYekpvT2ptOG82MXFDMWFtM29lL25QazNsMTlZellu?=
+ =?utf-8?B?UzhQaXJPUGhBbzh2UEMyNnRxODJZek42VGhFSGJtZEQydzVnRGFYRFZsSHpY?=
+ =?utf-8?B?Qkk4S013Nnp5b080cjhoRWlWU0RsdGxIY2lpcmR5U0R1a1FQaDBYSkNiMlpU?=
+ =?utf-8?B?WVNqOXhzTU9WV00zMWNVSW90MUhPOWwrUWFzNGdwTGRybjN3eEdvWnFjSm5v?=
+ =?utf-8?B?STlLa1ZmSmRoSmwzekFmT1ExTFpCUFFITTR2dmJvVTdSSWV6Q3VyaW53VXcy?=
+ =?utf-8?B?R09wdWtxZGFHaC9uU2V5V1JhRUtoZmhmZ3QxVC9JMWZKUUNFMVN5VHU2WmNX?=
+ =?utf-8?B?OEl6UDIzamtBV0hLR3ZBMUNIbXNhL0NDZUJ6akExaHRFeVBXdjlKbk5UUlBZ?=
+ =?utf-8?B?MGk2ZnhuSUNkWTJkM3RNYXUwN1FTbDFFcjA1a1c1VURnVlRhaWYyTXhsSlpB?=
+ =?utf-8?B?TG83M3hUeHNyc25LNDlpZ1UvU1R1QktGOFRBenRpakdmMFp6Vlk2KzNONnV3?=
+ =?utf-8?B?VFZLb2l3TU1TQmxIYUtFbEhZMm9xbUtFdG1QZ00rQWZBUlFyRytLYVJLc05I?=
+ =?utf-8?B?ZDJrODh2Z1pnR2o0Q0ZudGNCbzc0YXlyK2tuNEhNWWZMVHhiK2cxUjFJdFJ2?=
+ =?utf-8?B?bHYwNy94c1JUVU85dUdrUzZEejZtNWxmTEhjbExRbEcvb2NaUm53dUhERVhs?=
+ =?utf-8?B?Qys2aTNBN0ZTdmFIQy91dlQ0bmJycHVvQVl6WXRpNTIzdVFOdjJYK0tKT3Zl?=
+ =?utf-8?B?TGc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2dffab95-13b0-4540-c118-08dd513e8e07
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2025 23:38:47.0310
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: YPKZ0R6AE8VvbW75rnsewIH+/4bQ6kU80Mk1bLYMz73pqUvQbkVZGF0RCaskeHCPc75ScnDJEWwXqr2RNeV+5Tft44d74nsf/ZQwz8TaSwQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB7350
+X-OriginatorOrg: intel.com
 
-I've observed this bug on the following Linux versions:
+Hi James,
 
-linux-6.10.7
-linux-6.11.2
-linux-6.12.3
-linux-6.13
-linux-6.13.2
+On 2/7/25 10:17 AM, James Morse wrote:
+> rdt_put_mon_l3_config() is called via the architecture's
+> resctrl_arch_exit() call, and appears to free the rmid_ptrs[]
+> and closid_num_dirty_rmid[] arrays. In reality this code is marked
+> __exit, and is removed by the linker as resctrl can't be built
+> as a module.
+> 
+> To separate the filesystem and architecture parts of resctrl,
+> this free()ing work needs to be triggered by the filesystem,
+> as these structures belong to the filesystem code.
+> 
+> Rename rdt_put_mon_l3_config() resctrl_mon_resource_exit()
+> and call it from resctrl_exit(). The kfree() is currently
+> dependent on r->mon_capable.
+> 
+> Signed-off-by: James Morse <james.morse@arm.com>
+> Tested-by: Carl Worth <carl@os.amperecomputing.com> # arm64
+> Tested-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
+> Reviewed-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
+> Reviewed-by: Tony Luck <tony.luck@intel.com>
+> ---
 
-I don't have reliable steps to reproduce unfortunately, but I can tell 
-you that it happens about every 1-2 days.
+Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
 
-When it happens the system becomes unusable, some CPUs seem locked in a 
-busywait in the kernel, and depending on CPU roulette, I have to hold 
-the power button down for 10 seconds in order to reboot.
-
-dmesg output follows:
-
-[454898.246627] iwlwifi 0000:0b:00.0: Error sending 
-SYSTEM_STATISTICS_CMD: time out after 2000ms.
-[454898.246634] iwlwifi 0000:0b:00.0: Current CMD queue read_ptr 40081 
-write_ptr 40082
-[454902.599603] iwlwifi 0000:0b:00.0: Queue 3 is stuck 22051 22277
-[454919.254583] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-[454919.254589] rcu:    18-....: (97 ticks this GP) 
-idle=a71c/1/0x4000000000000000 softirq=3597262/3597262 fqs=4759
-[454919.254593] rcu:    (detected by 14, t=21002 jiffies, g=44790117, 
-q=28374 ncpus=32)
-[454919.254596] Sending NMI from CPU 14 to CPUs 18:
-[454919.427060] NMI backtrace for cpu 18
-[454919.427063] CPU: 18 UID: 0 PID: 1487 Comm: NetworkManager Not 
-tainted 6.13.2 #1-NixOS
-[454919.427066] Hardware name: ASUS System Product Name/ROG STRIX 
-X670E-E GAMING WIFI, BIOS 1905 02/05/2024
-[454919.427067] RIP: 0010:iwl_trans_pcie_read32+0x14/0x20 [iwlwifi]
-[454919.427082] Code: e9 5c 6f a9 c8 90 90 90 90 90 90 90 90 90 90 90 90 
-90 90 90 90 90 66 0f 1f 00 0f 1f 44 00 00 89 f6 48 03 b7 f8 1b 00 00 8b 
-06 <31> f6 31 ff e9 2e 6f a9 c8 0f 1f 00 90 90 90 90 90 90 90 90 90 90
-[454919.427083] RSP: 0018:ffffa941c2f9b410 EFLAGS: 00000286
-[454919.427085] RAX: 00000000ffffffff RBX: ffff894e1f604028 RCX: 
-0000000000000000
-[454919.427086] RDX: 0000000000000000 RSI: ffffa941c1f5c024 RDI: 
-ffff894e1f604028
-[454919.427087] RBP: 0000000000000011 R08: 0000000000003a98 R09: 
-0000000000000000
-[454919.427087] R10: 0000000000000000 R11: 0000000000000000 R12: 
-0000000000000024
-[454919.427088] R13: 0000000000000024 R14: ffff894e1f604028 R15: 
-0000000000003a98
-[454919.427089] FS:  00007f1fc24a8500(0000) GS:ffff895d1e100000(0000) 
-knlGS:0000000000000000
-[454919.427090] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[454919.427090] CR2: 00001c2c021f2000 CR3: 000000010ca94000 CR4: 
-0000000000f50ef0
-[454919.427091] PKRU: 55555554
-[454919.427092] Call Trace:
-[454919.427094]  <NMI>
-[454919.427097]  ? nmi_cpu_backtrace+0x9f/0x120
-[454919.427101]  ? nmi_cpu_backtrace_handler+0x11/0x20
-[454919.427103]  ? nmi_handle+0x5e/0x160
-[454919.427106]  ? default_do_nmi+0x43/0x100
-[454919.427109]  ? exc_nmi+0x138/0x1d0
-[454919.427110]  ? end_repeat_nmi+0xf/0x53
-[454919.427115]  ? iwl_trans_pcie_read32+0x14/0x20 [iwlwifi]
-[454919.427122]  ? iwl_trans_pcie_read32+0x14/0x20 [iwlwifi]
-[454919.427129]  ? iwl_trans_pcie_read32+0x14/0x20 [iwlwifi]
-[454919.427135]  </NMI>
-[454919.427136]  <TASK>
-[454919.427136]  iwl_read32+0x18/0x80 [iwlwifi]
-[454919.427143]  iwl_poll_bit+0x42/0x90 [iwlwifi]
-[454919.427150]  __iwl_trans_pcie_grab_nic_access+0xcb/0x170 [iwlwifi]
-[454919.427158]  iwl_trans_pcie_grab_nic_access+0x1a/0x40 [iwlwifi]
-[454919.427165]  iwl_force_nmi+0xa3/0xc0 [iwlwifi]
-[454919.427172]  iwl_trans_sync_nmi_with_addr+0xf9/0x130 [iwlwifi]
-[454919.427178]  ? srso_alias_return_thunk+0x5/0xfbef5
-[454919.427181]  iwl_trans_pcie_send_hcmd+0x429/0x470 [iwlwifi]
-[454919.427188]  ? __pfx_autoremove_wake_function+0x10/0x10
-[454919.427191]  iwl_trans_send_cmd+0x57/0x100 [iwlwifi]
-[454919.427200]  iwl_mvm_request_system_statistics+0xcd/0x1c0 [iwlmvm]
-[454919.427212]  iwl_mvm_request_statistics+0x9c/0x250 [iwlmvm]
-[454919.427221]  iwl_mvm_mac_sta_statistics+0x19d/0x3d0 [iwlmvm]
-[454919.427228]  sta_set_sinfo+0xde/0xc60 [mac80211]
-[454919.427250]  ieee80211_dump_station+0x47/0x70 [mac80211]
-[454919.427270]  nl80211_dump_station+0x13f/0x2a0 [cfg80211]
-[454919.427295]  genl_dumpit+0x36/0x90
-[454919.427299]  netlink_dump+0x138/0x370
-[454919.427304]  __netlink_dump_start+0x1e7/0x2b0
-[454919.427307]  genl_family_rcv_msg_dumpit+0x9c/0x110
-[454919.427309]  ? srso_alias_return_thunk+0x5/0xfbef5
-[454919.427310]  ? free_unref_page+0x4d8/0x5d0
-[454919.427313]  ? __pfx_genl_start+0x10/0x10
-[454919.427314]  ? __pfx_genl_dumpit+0x10/0x10
-[454919.427315]  ? __pfx_genl_done+0x10/0x10
-[454919.427316]  genl_rcv_msg+0x146/0x2d0
-[454919.427318]  ? __pfx_nl80211_dump_station+0x10/0x10 [cfg80211]
-[454919.427333]  ? __pfx_genl_rcv_msg+0x10/0x10
-[454919.427334]  netlink_rcv_skb+0x58/0x110
-[454919.427337]  genl_rcv+0x28/0x40
-[454919.427339]  netlink_unicast+0x1a3/0x290
-[454919.427340]  netlink_sendmsg+0x222/0x4b0
-[454919.427342]  ____sys_sendmsg+0x3ab/0x3e0
-[454919.427345]  ? copy_msghdr_from_user+0x7d/0xc0
-[454919.427348]  ___sys_sendmsg+0x9a/0xf0
-[454919.427352]  __sys_sendmsg+0x87/0xf0
-[454919.427355]  do_syscall_64+0xb7/0x210
-[454919.427357]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[454919.427360] RIP: 0033:0x7f1fc3519d6d
-[454919.427379] Code: 28 89 54 24 1c 48 89 74 24 10 89 7c 24 08 e8 0a 9e 
-f7 ff 8b 54 24 1c 48 8b 74 24 10 41 89 c0 8b 7c 24 08 b8 2e 00 00 00 0f 
-05 <48> 3d 00 f0 ff ff 77 53 44 89 c7 48 89 44 24 08 e8 5e 9e f7 ff 48
-[454919.427380] RSP: 002b:00007ffdc96ed020 EFLAGS: 00000246 ORIG_RAX: 
-000000000000002e
-[454919.427381] RAX: ffffffffffffffda RBX: 000000003d644d20 RCX: 
-00007f1fc3519d6d
-[454919.427382] RDX: 0000000000000000 RSI: 00007ffdc96ed070 RDI: 
-000000000000000a
-[454919.427382] RBP: 00007ffdc96ed070 R08: 0000000000000000 R09: 
-0000000000000000
-[454919.427383] R10: 0000000000000000 R11: 0000000000000246 R12: 
-000000003d65e890
-[454919.427383] R13: 000000003d64f4f0 R14: 00007ffdc96ed380 R15: 
-000000003d62fea0
-[454919.427386]  </TASK>
-[454921.031584] iwlwifi 0000:0b:00.0: Queue 2 is stuck 528 530
-[454924.490417] watchdog: BUG: soft lockup - CPU#1 stuck for 22s! 
-[swapper/1:0]
-[454924.490419] Modules linked in: btusb xpad ff_memless uinput ccm qrtr 
-rfcomm snd_seq_dummy snd_hrtimer snd_seq af_packet cmac algif_hash 
-algif_skcipher af_alg bnep nls_iso8859_1 nls_cp437 vfat fat amdgpu 
-iwlmvm mac80211 libarc4 iwlwifi btrtl btintel amdxcp drm_exec btbcm 
-gpu_sched btmtk drm_buddy drm_ttm_helper cfg80211 bluetooth ttm 
-drm_suballoc_helper drm_display_helper asus_nb_wmi eeepc_wmi asus_wmi 
-platform_profile battery cec i8042 i2c_algo_bit sparse_keymap 
-snd_hda_codec_hdmi edac_mce_amd edac_core snd_hda_intel uvcvideo amd_atl 
-snd_usb_audio intel_rapl_msr snd_intel_dspcfg snd_intel_sdw_acpi 
-intel_rapl_common videobuf2_vmalloc crct10dif_pclmul spd5118 
-crc32_pclmul snd_hda_codec uvc polyval_clmulni videobuf2_memops 
-polyval_generic snd_usbmidi_lib videobuf2_v4l2 ghash_clmulni_intel 
-sp5100_tco snd_ump snd_hda_core sha512_ssse3 videobuf2_common watchdog 
-snd_rawmidi sha256_ssse3 videodev sha1_ssse3 snd_hwdep snd_seq_device 
-sd_mod aesni_intel snd_pcm gf128mul i2c_piix4 crypto_simd cryptd 
-snd_timer mc rapl uas igc
-[454924.490460]  k10temp i2c_smbus wmi_bmof sch_fq_codel video ptp 
-mousedev onboard_usb_dev snd rfkill pps_core wacom input_leds soundcore 
-joydev evdev led_class mac_hid atkbd wmi libps2 backlight serio 
-vivaldi_fmap tpm_crb tiny_power_button tpm_tis gpio_amdpt tpm_tis_core 
-gpio_generic button loop tun tap macvlan bridge stp llc kvm_amd ccp kvm 
-fuse efi_pstore configfs nfnetlink efivarfs tpm libaescfb ecdh_generic 
-ecc rng_core dmi_sysfs ip_tables autofs4 ext4 crc32c_generic crc16 
-mbcache jbd2 hid_generic usbhid hid usb_storage ahci libahci xhci_pci 
-libata nvme xhci_hcd scsi_mod nvme_core crc32c_intel scsi_common 
-nvme_auth rtc_cmos dm_mod dax [last unloaded: btusb]
-[454924.490493] CPU: 1 UID: 0 PID: 0 Comm: swapper/1 Not tainted 6.13.2 
-#1-NixOS
-[454924.490495] Hardware name: ASUS System Product Name/ROG STRIX 
-X670E-E GAMING WIFI, BIOS 1905 02/05/2024
-[454924.490495] RIP: 0010:native_queued_spin_lock_slowpath+0x79/0x2c0
-[454924.490500] Code: 0f ba 2b 08 0f 92 c2 8b 03 0f b6 d2 c1 e2 08 30 e4 
-09 d0 3d ff 00 00 00 77 64 85 c0 74 10 0f b6 03 84 c0 74 09 f3 90 0f b6 
-03 <84> c0 75 f7 b8 01 00 00 00 66 89 03 5b 5d 41 5c 41 5d 31 c0 31 d2
-[454924.490501] RSP: 0018:ffffa941c02f4e18 EFLAGS: 00000202
-[454924.490502] RAX: 0000000000000001 RBX: ffff894e1f605c94 RCX: 
-0000000000000000
-[454924.490503] RDX: 0000000000000000 RSI: 0000000000000001 RDI: 
-ffff894e1f605c94
-[454924.490503] RBP: 0000000000d05c04 R08: 0000000000000000 R09: 
-0000000000000000
-[454924.490504] R10: 0000000000000000 R11: 0000000000000000 R12: 
-ffffffffc1266020
-[454924.490505] R13: ffffffffc1266020 R14: ffff894e1f605c94 R15: 
-ffff894e7b279d30
-[454924.490505] FS:  0000000000000000(0000) GS:ffff895d1d880000(0000) 
-knlGS:0000000000000000
-[454924.490506] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[454924.490507] CR2: 00001c2c20a58000 CR3: 000000080ac22000 CR4: 
-0000000000f50ef0
-[454924.490508] PKRU: 55555554
-[454924.490508] Call Trace:
-[454924.490509]  <IRQ>
-[454924.490510]  ? watchdog_timer_fn+0x235/0x2b0
-[454924.490513]  ? __pfx_watchdog_timer_fn+0x10/0x10
-[454924.490515]  ? __hrtimer_run_queues+0x10f/0x2b0
-[454924.490518]  ? hrtimer_interrupt+0xff/0x260
-[454924.490520]  ? __sysvec_apic_timer_interrupt+0x52/0x120
-[454924.490523]  ? sysvec_apic_timer_interrupt+0x39/0x80
-[454924.490525]  ? asm_sysvec_apic_timer_interrupt+0x1a/0x20
-[454924.490528]  ? __pfx_iwl_txq_stuck_timer+0x10/0x10 [iwlwifi]
-[454924.490538]  ? __pfx_iwl_txq_stuck_timer+0x10/0x10 [iwlwifi]
-[454924.490546]  ? native_queued_spin_lock_slowpath+0x79/0x2c0
-[454924.490548]  ? __pfx_iwl_txq_stuck_timer+0x10/0x10 [iwlwifi]
-[454924.490554]  ? __pfx_iwl_txq_stuck_timer+0x10/0x10 [iwlwifi]
-[454924.490561]  _raw_spin_lock+0x3f/0x60
-[454924.490562]  __iwl_trans_pcie_grab_nic_access+0x3d/0x170 [iwlwifi]
-[454924.490570]  ? __pfx_iwl_txq_stuck_timer+0x10/0x10 [iwlwifi]
-[454924.490578]  ? __pfx_iwl_txq_stuck_timer+0x10/0x10 [iwlwifi]
-[454924.490588]  iwl_trans_pcie_grab_nic_access+0x1a/0x40 [iwlwifi]
-[454924.490598]  iwl_force_nmi+0xa3/0xc0 [iwlwifi]
-[454924.490608]  call_timer_fn+0x27/0x130
-[454924.490611]  __run_timer_base.part.0+0x20c/0x290
-[454924.490615]  run_timer_softirq+0x73/0xc0
-[454924.490617]  handle_softirqs+0xe1/0x2f0
-[454924.490620]  __irq_exit_rcu+0xd6/0x100
-[454924.490621]  sysvec_apic_timer_interrupt+0x73/0x80
-[454924.490623]  </IRQ>
-[454924.490624]  <TASK>
-[454924.490624]  asm_sysvec_apic_timer_interrupt+0x1a/0x20
-[454924.490626] RIP: 0010:cpuidle_enter_state+0xcd/0x440
-[454924.490627] Code: b9 72 3e ff e8 14 ed ff ff 8b 53 04 49 89 c5 0f 1f 
-44 00 00 31 ff e8 02 ed 3c ff 45 84 ff 0f 85 4e 02 00 00 fb 0f 1f 44 00 
-00 <45> 85 f6 0f 88 90 01 00 00 49 63 d6 48 8d 04 52 48 8d 04 82 49 8d
-[454924.490628] RSP: 0018:ffffa941c01c7e90 EFLAGS: 00000246
-[454924.490629] RAX: 0000000000000000 RBX: ffff894e010ce400 RCX: 
-0000000000000000
-[454924.490630] RDX: 0000000000000001 RSI: 0000000000000000 RDI: 
-0000000000000000
-[454924.490630] RBP: 0000000000000002 R08: 0000000000000000 R09: 
-0000000000000000
-[454924.490631] R10: 0000000000000000 R11: 0000000000000000 R12: 
-ffffffff8add1560
-[454924.490631] R13: 00019dbb43db41cc R14: 0000000000000002 R15: 
-0000000000000000
-[454924.490635]  cpuidle_enter+0x2d/0x50
-[454924.490638]  do_idle+0x1b1/0x210
-[454924.490641]  cpu_startup_entry+0x29/0x30
-[454924.490643]  start_secondary+0x11e/0x140
-[454924.490644]  common_startup_64+0x13e/0x141
-[454924.490648]  </TASK>
-[454932.295575] rcu: INFO: rcu_preempt detected expedited stalls on 
-CPUs/tasks: { 1-.... 18-.... } 21253 jiffies s: 31717 root: 0x3/.
-[454932.295584] rcu: blocking rcu_node structures (internal RCU debug): 
-l=1:0-15:0x2/. l=1:16-31:0x4/.
-[454932.295588] Sending NMI from CPU 22 to CPUs 1:
-[454932.295592] NMI backtrace for cpu 1
-[454932.295595] CPU: 1 UID: 0 PID: 0 Comm: swapper/1 Tainted: G 
-    L     6.13.2 #1-NixOS
-[454932.295597] Tainted: [L]=SOFTLOCKUP
-[454932.295597] Hardware name: ASUS System Product Name/ROG STRIX 
-X670E-E GAMING WIFI, BIOS 1905 02/05/2024
-[454932.295598] RIP: 0010:native_queued_spin_lock_slowpath+0x79/0x2c0
-[454932.295603] Code: 0f ba 2b 08 0f 92 c2 8b 03 0f b6 d2 c1 e2 08 30 e4 
-09 d0 3d ff 00 00 00 77 64 85 c0 74 10 0f b6 03 84 c0 74 09 f3 90 0f b6 
-03 <84> c0 75 f7 b8 01 00 00 00 66 89 03 5b 5d 41 5c 41 5d 31 c0 31 d2
-[454932.295604] RSP: 0018:ffffa941c02f4e18 EFLAGS: 00000202
-[454932.295606] RAX: 0000000000000001 RBX: ffff894e1f605c94 RCX: 
-0000000000000000
-[454932.295607] RDX: 0000000000000000 RSI: 0000000000000001 RDI: 
-ffff894e1f605c94
-[454932.295607] RBP: 0000000000d05c04 R08: 0000000000000000 R09: 
-0000000000000000
-[454932.295608] R10: 0000000000000000 R11: 0000000000000000 R12: 
-ffffffffc1266020
-[454932.295609] R13: ffffffffc1266020 R14: ffff894e1f605c94 R15: 
-ffff894e7b279d30
-[454932.295609] FS:  0000000000000000(0000) GS:ffff895d1d880000(0000) 
-knlGS:0000000000000000
-[454932.295610] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[454932.295611] CR2: 00001c2c20a58000 CR3: 000000080ac22000 CR4: 
-0000000000f50ef0
-[454932.295612] PKRU: 55555554
-[454932.295612] Call Trace:
-[454932.295614]  <NMI>
-[454932.295617]  ? nmi_cpu_backtrace+0x9f/0x120
-[454932.295620]  ? nmi_cpu_backtrace_handler+0x11/0x20
-[454932.295623]  ? nmi_handle+0x5e/0x160
-[454932.295625]  ? default_do_nmi+0x43/0x100
-[454932.295627]  ? exc_nmi+0x138/0x1d0
-[454932.295629]  ? end_repeat_nmi+0xf/0x53
-[454932.295634]  ? __pfx_iwl_txq_stuck_timer+0x10/0x10 [iwlwifi]
-[454932.295643]  ? __pfx_iwl_txq_stuck_timer+0x10/0x10 [iwlwifi]
-[454932.295651]  ? native_queued_spin_lock_slowpath+0x79/0x2c0
-[454932.295653]  ? native_queued_spin_lock_slowpath+0x79/0x2c0
-[454932.295654]  ? native_queued_spin_lock_slowpath+0x79/0x2c0
-[454932.295655]  </NMI>
-[454932.295656]  <IRQ>
-[454932.295656]  ? __pfx_iwl_txq_stuck_timer+0x10/0x10 [iwlwifi]
-[454932.295663]  ? __pfx_iwl_txq_stuck_timer+0x10/0x10 [iwlwifi]
-[454932.295669]  _raw_spin_lock+0x3f/0x60
-[454932.295670]  __iwl_trans_pcie_grab_nic_access+0x3d/0x170 [iwlwifi]
-[454932.295678]  ? __pfx_iwl_txq_stuck_timer+0x10/0x10 [iwlwifi]
-[454932.295685]  ? __pfx_iwl_txq_stuck_timer+0x10/0x10 [iwlwifi]
-[454932.295691]  iwl_trans_pcie_grab_nic_access+0x1a/0x40 [iwlwifi]
-[454932.295698]  iwl_force_nmi+0xa3/0xc0 [iwlwifi]
-[454932.295705]  call_timer_fn+0x27/0x130
-[454932.295708]  __run_timer_base.part.0+0x20c/0x290
-[454932.295711]  run_timer_softirq+0x73/0xc0
-[454932.295713]  handle_softirqs+0xe1/0x2f0
-[454932.295716]  __irq_exit_rcu+0xd6/0x100
-[454932.295717]  sysvec_apic_timer_interrupt+0x73/0x80
-[454932.295720]  </IRQ>
-[454932.295720]  <TASK>
-[454932.295721]  asm_sysvec_apic_timer_interrupt+0x1a/0x20
-[454932.295722] RIP: 0010:cpuidle_enter_state+0xcd/0x440
-[454932.295724] Code: b9 72 3e ff e8 14 ed ff ff 8b 53 04 49 89 c5 0f 1f 
-44 00 00 31 ff e8 02 ed 3c ff 45 84 ff 0f 85 4e 02 00 00 fb 0f 1f 44 00 
-00 <45> 85 f6 0f 88 90 01 00 00 49 63 d6 48 8d 04 52 48 8d 04 82 49 8d
-[454932.295725] RSP: 0018:ffffa941c01c7e90 EFLAGS: 00000246
-[454932.295726] RAX: 0000000000000000 RBX: ffff894e010ce400 RCX: 
-0000000000000000
-[454932.295726] RDX: 0000000000000001 RSI: 0000000000000000 RDI: 
-0000000000000000
-[454932.295727] RBP: 0000000000000002 R08: 0000000000000000 R09: 
-0000000000000000
-[454932.295727] R10: 0000000000000000 R11: 0000000000000000 R12: 
-ffffffff8add1560
-[454932.295728] R13: 00019dbb43db41cc R14: 0000000000000002 R15: 
-0000000000000000
-[454932.295731]  cpuidle_enter+0x2d/0x50
-[454932.295735]  do_idle+0x1b1/0x210
-[454932.295737]  cpu_startup_entry+0x29/0x30
-[454932.295739]  start_secondary+0x11e/0x140
-[454932.295741]  common_startup_64+0x13e/0x141
-[454932.295745]  </TASK>
-[454932.296590] Sending NMI from CPU 22 to CPUs 18:
-[454932.444521] NMI backtrace for cpu 18
-[454932.444523] CPU: 18 UID: 0 PID: 1487 Comm: NetworkManager Tainted: G 
-             L     6.13.2 #1-NixOS
-[454932.444525] Tainted: [L]=SOFTLOCKUP
-[454932.444526] Hardware name: ASUS System Product Name/ROG STRIX 
-X670E-E GAMING WIFI, BIOS 1905 02/05/2024
-[454932.444526] RIP: 0010:iwl_trans_pcie_read32+0x14/0x20 [iwlwifi]
-[454932.444541] Code: e9 5c 6f a9 c8 90 90 90 90 90 90 90 90 90 90 90 90 
-90 90 90 90 90 66 0f 1f 00 0f 1f 44 00 00 89 f6 48 03 b7 f8 1b 00 00 8b 
-06 <31> f6 31 ff e9 2e 6f a9 c8 0f 1f 00 90 90 90 90 90 90 90 90 90 90
-[454932.444542] RSP: 0018:ffffa941c2f9b410 EFLAGS: 00000286
-[454932.444544] RAX: 00000000ffffffff RBX: ffff894e1f604028 RCX: 
-0000000000000000
-[454932.444545] RDX: 0000000000000000 RSI: ffffa941c1f5c024 RDI: 
-ffff894e1f604028
-[454932.444545] RBP: 0000000000000011 R08: 0000000000003a98 R09: 
-0000000000000000
-[454932.444546] R10: 0000000000000000 R11: 0000000000000000 R12: 
-0000000000000024
-[454932.444547] R13: 0000000000000024 R14: ffff894e1f604028 R15: 
-0000000000003a98
-[454932.444548] FS:  00007f1fc24a8500(0000) GS:ffff895d1e100000(0000) 
-knlGS:0000000000000000
-[454932.444549] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[454932.444550] CR2: 00001c2c021f2000 CR3: 000000010ca94000 CR4: 
-0000000000f50ef0
-[454932.444551] PKRU: 55555554
-[454932.444551] Call Trace:
-[454932.444553]  <NMI>
-[454932.444554]  ? nmi_cpu_backtrace+0x9f/0x120
-[454932.444557]  ? nmi_cpu_backtrace_handler+0x11/0x20
-[454932.444559]  ? nmi_handle+0x5e/0x160
-[454932.444562]  ? default_do_nmi+0x43/0x100
-[454932.444564]  ? exc_nmi+0x138/0x1d0
-[454932.444566]  ? end_repeat_nmi+0xf/0x53
-[454932.444570]  ? iwl_trans_pcie_read32+0x14/0x20 [iwlwifi]
-[454932.444582]  ? iwl_trans_pcie_read32+0x14/0x20 [iwlwifi]
-[454932.444593]  ? iwl_trans_pcie_read32+0x14/0x20 [iwlwifi]
-[454932.444600]  </NMI>
-[454932.444600]  <TASK>
-[454932.444601]  iwl_read32+0x18/0x80 [iwlwifi]
-[454932.444608]  iwl_poll_bit+0x42/0x90 [iwlwifi]
-[454932.444615]  __iwl_trans_pcie_grab_nic_access+0xcb/0x170 [iwlwifi]
-[454932.444623]  iwl_trans_pcie_grab_nic_access+0x1a/0x40 [iwlwifi]
-[454932.444629]  iwl_force_nmi+0xa3/0xc0 [iwlwifi]
-[454932.444636]  iwl_trans_sync_nmi_with_addr+0xf9/0x130 [iwlwifi]
-[454932.444643]  ? srso_alias_return_thunk+0x5/0xfbef5
-[454932.444645]  iwl_trans_pcie_send_hcmd+0x429/0x470 [iwlwifi]
-[454932.444653]  ? __pfx_autoremove_wake_function+0x10/0x10
-[454932.444656]  iwl_trans_send_cmd+0x57/0x100 [iwlwifi]
-[454932.444664]  iwl_mvm_request_system_statistics+0xcd/0x1c0 [iwlmvm]
-[454932.444676]  iwl_mvm_request_statistics+0x9c/0x250 [iwlmvm]
-[454932.444684]  iwl_mvm_mac_sta_statistics+0x19d/0x3d0 [iwlmvm]
-[454932.444692]  sta_set_sinfo+0xde/0xc60 [mac80211]
-[454932.444714]  ieee80211_dump_station+0x47/0x70 [mac80211]
-[454932.444734]  nl80211_dump_station+0x13f/0x2a0 [cfg80211]
-[454932.444759]  genl_dumpit+0x36/0x90
-[454932.444762]  netlink_dump+0x138/0x370
-[454932.444766]  __netlink_dump_start+0x1e7/0x2b0
-[454932.444770]  genl_family_rcv_msg_dumpit+0x9c/0x110
-[454932.444771]  ? srso_alias_return_thunk+0x5/0xfbef5
-[454932.444772]  ? free_unref_page+0x4d8/0x5d0
-[454932.444775]  ? __pfx_genl_start+0x10/0x10
-[454932.444776]  ? __pfx_genl_dumpit+0x10/0x10
-[454932.444777]  ? __pfx_genl_done+0x10/0x10
-[454932.444778]  genl_rcv_msg+0x146/0x2d0
-[454932.444780]  ? __pfx_nl80211_dump_station+0x10/0x10 [cfg80211]
-[454932.444795]  ? __pfx_genl_rcv_msg+0x10/0x10
-[454932.444796]  netlink_rcv_skb+0x58/0x110
-[454932.444799]  genl_rcv+0x28/0x40
-[454932.444800]  netlink_unicast+0x1a3/0x290
-[454932.444802]  netlink_sendmsg+0x222/0x4b0
-[454932.444804]  ____sys_sendmsg+0x3ab/0x3e0
-[454932.444807]  ? copy_msghdr_from_user+0x7d/0xc0
-[454932.444809]  ___sys_sendmsg+0x9a/0xf0
-[454932.444814]  __sys_sendmsg+0x87/0xf0
-[454932.444817]  do_syscall_64+0xb7/0x210
-[454932.444819]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[454932.444821] RIP: 0033:0x7f1fc3519d6d
-[454932.444839] Code: 28 89 54 24 1c 48 89 74 24 10 89 7c 24 08 e8 0a 9e 
-f7 ff 8b 54 24 1c 48 8b 74 24 10 41 89 c0 8b 7c 24 08 b8 2e 00 00 00 0f 
-05 <48> 3d 00 f0 ff ff 77 53 44 89 c7 48 89 44 24 08 e8 5e 9e f7 ff 48
-[454932.444839] RSP: 002b:00007ffdc96ed020 EFLAGS: 00000246 ORIG_RAX: 
-000000000000002e
-[454932.444841] RAX: ffffffffffffffda RBX: 000000003d644d20 RCX: 
-00007f1fc3519d6d
-[454932.444841] RDX: 0000000000000000 RSI: 00007ffdc96ed070 RDI: 
-000000000000000a
-[454932.444842] RBP: 00007ffdc96ed070 R08: 0000000000000000 R09: 
-0000000000000000
-[454932.444843] R10: 0000000000000000 R11: 0000000000000246 R12: 
-000000003d65e890
-[454932.444843] R13: 000000003d64f4f0 R14: 00007ffdc96ed380 R15: 
-000000003d62fea0
-[454932.444846]  </TASK>
+Reinette
 
 
