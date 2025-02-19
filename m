@@ -1,120 +1,125 @@
-Return-Path: <linux-kernel+bounces-520670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5515A3AD05
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 01:20:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7C2EA3AD08
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 01:24:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D65D218925C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 00:20:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0644173C55
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 00:24:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA299F9D9;
-	Wed, 19 Feb 2025 00:19:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codeweavers.com header.i=@codeweavers.com header.b="qUy9oCrl"
-Received: from mail.codeweavers.com (mail.codeweavers.com [4.36.192.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D7712B73;
+	Wed, 19 Feb 2025 00:24:26 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94C58BA45
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 00:19:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=4.36.192.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 706E3BA45;
+	Wed, 19 Feb 2025 00:24:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739924395; cv=none; b=WIQsvBtSSdx8JGjS5tVW8Mp8XSXBfS5t3/0y2bZvkxyAk66GHNLDgMRoHOaYKKC6H6x2FMQ2JHp2QRzAPkOZHXSM5OuWCOBDgf5qIsJhvR+n9EQldtzSGued8/pfwUi6DI138gR7qlJUPcbqnUlg+GRQlIapLOXQ0gdqyQwAKMo=
+	t=1739924666; cv=none; b=dtybvVTZL52BsCVaYfN2g5KYXZDr331FTw6Drz5UFkA6/qNDqy+KNTwPHMqxtu+YQPcGgongS7mVehVlvqhBvXcdvptrIQE08wl4L1bVhFDRXQPdDR2oKadetjeFUoZM4rcCC/giM2Vpib9ugHNsumtzP9CzEwq+hNGMnZO4AY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739924395; c=relaxed/simple;
-	bh=eNGkxnFs7IfHoyUxhahkA5IGad+mw8JRk9WKmUZKn7Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ez6j+zJoxbiXNmnLELh5sINrVBg/YanQ+9bynt+W6hACFEduMvAtcsAsqrQ477DZH18c1s1lseXFhRHQl99EW6/iYuV/0tkY5NWZPjacOVaVZ12chG4SQvrUwVHzDGhOT8FeFnFtceaA2c7KKngGx1MJJXGkPxS/+dYYDiYXBvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeweavers.com; spf=pass smtp.mailfrom=codeweavers.com; dkim=pass (2048-bit key) header.d=codeweavers.com header.i=@codeweavers.com header.b=qUy9oCrl; arc=none smtp.client-ip=4.36.192.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeweavers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeweavers.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=codeweavers.com; s=s1; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
-	Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=J0FrlYHmGxujW2VQqJf7eNzJk4nHZqKuUCvraxZGc7I=; b=qUy9oCrlmcXh1Th/DBT9nehFu8
-	xA4YY2hhi1NoyawdZYCNgyvSfNv75EI1Hy66mQH8/JN4I0tU+H7wFjEQGbaz+dxBV9+ZsOeTFfl9r
-	ePzMnGvcZJp54k1vm6seXG//qZUMc8TOghzKZtaFFAWo/RCKcFpYy0liRp5DNxrSVuDVEqJjpHjRK
-	ljKsKB2n/fs7/UxZPuD+zJQ0CjLTHl7Y9ZGi5a6EiQEwQsqzgqxCXccpjqwtptNSla5tdf2QHBB1r
-	k1wmVC0cDhh9GY6K3muQMJeXgGXPjaU4VxCORiEuQP4k2Y4DcwA7Igz3dKXwfeWOTFI0ZuOXlQmka
-	DGdmWCzQ==;
-Received: from cw137ip160.mn.codeweavers.com ([10.69.137.160] helo=camazotz.mn.codeweavers.com)
-	by mail.codeweavers.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <zfigura@codeweavers.com>)
-	id 1tkXod-00Alyi-2B;
-	Tue, 18 Feb 2025 18:19:51 -0600
-From: Elizabeth Figura <zfigura@codeweavers.com>
-To: Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org,
-	wine-devel@winehq.org,
-	Elizabeth Figura <zfigura@codeweavers.com>,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH] ntsync: Check wait count based on byte size.
-Date: Tue, 18 Feb 2025 18:19:20 -0600
-Message-ID: <20250219001920.210847-1-zfigura@codeweavers.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1739924666; c=relaxed/simple;
+	bh=v+G6XQjKH8mwQQ9LTsWzSc9ufj1uf31ots88a2yaIdU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RngZzjcAH0Kre/oWyFqAyjPvCTBrFOpqDJxN4rIPAmoVuu7rsMrCo4lLj8Es2pHb6Elb1tmy0ULsQQqwQ4ienvpjjPwNUOENpXpaXRPx8OhssQRSAkkS7jI8I9HFxSYnL9pk3p73lP80yKuraXE4Paed6zGET2s/U/EVCm420gI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D314C4CEE2;
+	Wed, 19 Feb 2025 00:24:24 +0000 (UTC)
+Date: Tue, 18 Feb 2025 19:24:46 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Mark
+ Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Petr Pavlu <petr.pavlu@suse.com>, Sami
+ Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>,
+ linux-modules@vger.kernel.org, Sebastian Andrzej Siewior
+ <bigeasy@linutronix.de>
+Subject: Re: [PATCH 5/8] module: Add module_for_each_mod() function
+Message-ID: <20250218192446.1269e461@gandalf.local.home>
+In-Reply-To: <Z7T50DxEL7NYkr8H@bombadil.infradead.org>
+References: <20250205225031.799739376@goodmis.org>
+	<20250205225103.760856859@goodmis.org>
+	<20250206142817.91853f475c681bc2ef7ca962@kernel.org>
+	<20250206102720.0fd57129@gandalf.local.home>
+	<20250214173017.07b0b250@gandalf.local.home>
+	<Z7T50DxEL7NYkr8H@bombadil.infradead.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-GCC versions below 13 incorrectly detect the copy size as being static and too
-small to fit in the "fds" array. Work around this by explicitly calculating the
-size and returning EINVAL based on that, instead of based on the object count.
+On Tue, 18 Feb 2025 13:21:20 -0800
+Luis Chamberlain <mcgrof@kernel.org> wrote:
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202502072019.LYoCR9bF-lkp@intel.com/
-Suggested-by: Arnd Bergmann <arnd@arndb.de>
+> The patch is not OK, you're looking at old code, look at
+> modules-next and as Petr suggested look at Sebastian's recently
+> merged work.
+> 
+> git remote add korg-modules git://git.kernel.org/pub/scm/linux/kernel/git/modules/linux.git
 
---
+Would this be OK?
 
-Suggested-by as per Arnd's request, but the only thing I changed was preserving
-array_size() [as noted by Geert in the linked thread]. I tested and found no
-regressions.
+I have this on v6.14-rc3, and it doesn't cause any conflicts when I merge
+it with modules-next, and it builds fine.
 
----
- drivers/misc/ntsync.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+-- Steve
 
-diff --git a/drivers/misc/ntsync.c b/drivers/misc/ntsync.c
-index 586b86243e1d..24cb2f71186a 100644
---- a/drivers/misc/ntsync.c
-+++ b/drivers/misc/ntsync.c
-@@ -873,6 +873,7 @@ static int setup_wait(struct ntsync_device *dev,
+diff --git a/include/linux/module.h b/include/linux/module.h
+index 30e5b19bafa9..9a71dd2cb11f 100644
+--- a/include/linux/module.h
++++ b/include/linux/module.h
+@@ -782,6 +782,8 @@ static inline void *module_writable_address(struct module *mod, void *loc)
+ 	return __module_writable_address(mod, loc);
+ }
+ 
++void module_for_each_mod(int(*func)(struct module *mod, void *data), void *data);
++
+ #else /* !CONFIG_MODULES... */
+ 
+ static inline struct module *__module_address(unsigned long addr)
+@@ -894,6 +896,10 @@ static inline void *module_writable_address(struct module *mod, void *loc)
  {
- 	int fds[NTSYNC_MAX_WAIT_COUNT + 1];
- 	const __u32 count = args->count;
-+	size_t size = array_size(count, sizeof(fds[0]));
- 	struct ntsync_q *q;
- 	__u32 total_count;
- 	__u32 i, j;
-@@ -880,15 +881,14 @@ static int setup_wait(struct ntsync_device *dev,
- 	if (args->pad || (args->flags & ~NTSYNC_WAIT_REALTIME))
- 		return -EINVAL;
+ 	return loc;
+ }
++
++static inline void module_for_each_mod(int(*func)(struct module *mod, void *data), void *data)
++{
++}
+ #endif /* CONFIG_MODULES */
  
--	if (args->count > NTSYNC_MAX_WAIT_COUNT)
-+	if (size >= sizeof(fds))
- 		return -EINVAL;
+ #ifdef CONFIG_SYSFS
+diff --git a/kernel/module/main.c b/kernel/module/main.c
+index 1fb9ad289a6f..1bd4e3b7098a 100644
+--- a/kernel/module/main.c
++++ b/kernel/module/main.c
+@@ -3809,6 +3809,19 @@ bool is_module_text_address(unsigned long addr)
+ 	return ret;
+ }
  
- 	total_count = count;
- 	if (args->alert)
- 		total_count++;
- 
--	if (copy_from_user(fds, u64_to_user_ptr(args->objs),
--			   array_size(count, sizeof(*fds))))
-+	if (copy_from_user(fds, u64_to_user_ptr(args->objs), size))
- 		return -EFAULT;
- 	if (args->alert)
- 		fds[count] = args->alert;
--- 
-2.47.2
-
++void module_for_each_mod(int(*func)(struct module *mod, void *data), void *data)
++{
++	struct module *mod;
++
++	guard(rcu)();
++	list_for_each_entry_rcu(mod, &modules, list) {
++		if (mod->state == MODULE_STATE_UNFORMED)
++			continue;
++		if (func(mod, data))
++			break;
++	}
++}
++
+ /**
+  * __module_text_address() - get the module whose code contains an address.
+  * @addr: the address.
 
