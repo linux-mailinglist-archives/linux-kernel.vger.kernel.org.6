@@ -1,221 +1,285 @@
-Return-Path: <linux-kernel+bounces-521896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 728A3A3C394
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:26:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AD19A3C397
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:26:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 160367A8487
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:24:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81153189A9F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:26:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 300431F4620;
-	Wed, 19 Feb 2025 15:25:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE22B1F461F;
+	Wed, 19 Feb 2025 15:26:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fR1pSFvp"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="2UmZFbhv"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2056.outbound.protection.outlook.com [40.107.244.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 744F01F4180
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 15:25:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739978746; cv=none; b=bW3k4r0Qh5w9/Lb23PSFKfK/FMVF4iBaGG3phFV8s9IgMkp4Zs5x3e49cHSESfflf+e15J35vo0GxsjZ68yLVcsFPc10c0W+1w588yKWRSJO+7V9IA7Q5cjjeZpLl6+8CN2X7Vj4Sc4IMw/6iJJrHMJq7W+8wIftAguQOoa8SQA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739978746; c=relaxed/simple;
-	bh=XRVPAVWN0HDcStW6xUkCUHkrgRmZ4Z0xi6MQYld+xpk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AsloXN5z0bCxleNMq9+4/oQlINoX7LVwpwRxxpT1XtbWnsOGAjPtSWuI/eDnbKhxtQBuzI4A9AU0r6b1jUv9nbVcp5wZiwNr2nQ1afbQOS7p+R9KmCcQiRZHDtvCWY1wzaeB1ggsa8+Qlif27RkCSZGl5L34W2bsIIROJxT5FcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fR1pSFvp; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4398e839cd4so6285335e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 07:25:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739978742; x=1740583542; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2TVboDbTS95QyZTgZm/sSOHGaAKi+IOHygPp3tuwMR8=;
-        b=fR1pSFvpgqGfnKsXQsi7CVR4DTQP1ZDJe1w9ZEk4zUZueoO+Um9kn1MvSGd/jER3qx
-         P8b6VzhTRMxG/b2F9Ge67LmK/4IiyLryRkeOCdBV+j1G/zOdE72JK+P9PNC2fWUU2k4h
-         NyQJ8L0smDADjxmTkUlR6m+fLUcbRxs3Ffi9u+57D2d8pfDiT47SfGxgwtW4KkljqyAF
-         /gA1AjVreVYyfcm0qEnlPHgRMw6pDNGd9caPzrHynKMdn5Hmm9nm3WWErXXXGwStqDy5
-         sG1RMWyTy4ZquSi1ej6REwkg05nBkXJ3Q46jehGfFH+eQyWZDp5w79DSvCfG1SP4ghuL
-         secw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739978742; x=1740583542;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2TVboDbTS95QyZTgZm/sSOHGaAKi+IOHygPp3tuwMR8=;
-        b=LxzHdVM5/M3YEIVEiJuRA/dtFqAU/uo17M+XBFoUY5HAG+Suc5dAcWQrbRIX0Lg0vO
-         GS/BvmSVVKXvREb4nBgRsdA5kE3effa4udsfoObUIpTiVobFBs6aK42UqurbdQ7yyq3J
-         pnLJs1Th+jX5aX7SqfGRR1yzo41OhimGgOdyAUf55Q1XDyWwy6mBEGjSHyHZHuhLNMVb
-         u1gduK2nzIJNF+a+npcxCtePWUizkB2YYu8fxynOBy9SVA2ZHpxbfCQ2k/sgQBeHyZdS
-         CM12RhzInmaxN82cCBhGnIZCxeIOxkX0+7PU+duBgvySDD13qs5iehgmWZKYkY2Ekz+3
-         a/7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVR6Xsc29RKjQytdd3thoGxmn2IzKi4Gq9wvBYGKdi4fKpBU7o1WwnuOJip5UNYd3WjXVw7cJ9Zhykn/gM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvSeGQGEQ8L3K3wFDh1d/qYZbozhgvjOPWAqCn99NwiB+bQf+d
-	8Pyn69aS0V7nz+fmzp2SSdRmlhNpEzwaNqLKIBKXT4MRhVlzsPsqi1/lVeuQ0Zc=
-X-Gm-Gg: ASbGncu7mO6BSREvSw+XdzKvroMSX7tFy/RZisnDt5BQtABfoHoHtdsPYp8UaURE0lV
-	gABJTECKXbx4IHN12pRkx5dBLYZhngmroXkphyeHXISmQUUPUcmcbGfFrb/aVTTr8kPI1n+lNvV
-	IrOZE/ijn96azTbjQZipMreuw1J40w12RoiWYX03nbzHm+d92C0NVoCXxmJEIy+lThhgs49abmV
-	rDGLiw5SBhwkhrCZ9CLzTx+sro8iNQMt6Ma7VE0REpRPPZgO9GCCkSeoHHo1BsiKQYP2IdcTEpl
-	PPn0h+gMUx9HYftEm/iGTAZakw==
-X-Google-Smtp-Source: AGHT+IHUdFK1lvkIKfQXed2a/KYhYlsDONXCYFg5p0+CqyAxqO1bS9PwbNrEGNiXbD3YDFKA1AvLhw==
-X-Received: by 2002:a5d:5f49:0:b0:38f:2b52:f059 with SMTP id ffacd0b85a97d-38f57d95940mr3673454f8f.27.1739978741585;
-        Wed, 19 Feb 2025 07:25:41 -0800 (PST)
-Received: from [192.168.68.163] ([145.224.90.202])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258ccd51sm18138198f8f.29.2025.02.19.07.25.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Feb 2025 07:25:41 -0800 (PST)
-Message-ID: <2834c9d7-f401-4b29-8f92-22193eb9ce31@linaro.org>
-Date: Wed, 19 Feb 2025 15:25:39 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58DB81E885;
+	Wed, 19 Feb 2025 15:26:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739978769; cv=fail; b=X73uK01A6VMQOxWCv9HB3UZ7NRMhm8cKcHkcagq25PHLgMTNeDJk/Cm9RpFeyyfYUsZPzim+sR7Hd7TIkh7nEO3L0gkTnyGaOl7yrQaCdVd3glGe15af4rF8z9TjmxUZshuKf4Qi9wo/fmnDYl39+3LUOwF31Zxbo0kg7P8GmMU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739978769; c=relaxed/simple;
+	bh=VsRN+WCYdRx3JSFKg20CVnSKzEceso6YyF2WVJ/Ak10=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=MQ9brojbvOS8M41hFAj6and6IdIRQE2ZQmUqF0wdeHG+mBRlHblXbZ4riqjO8+Qwfzl+n4mwFBkLtvWvzLtgdcUfij+kjUbK8+aDv61LcfUjcSk9g56PlyNkFlgrbzZxTv0HR9kyxQx4ghwOcCSUUMCtX3WMt7JCCNEvhSiUcU8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=2UmZFbhv; arc=fail smtp.client-ip=40.107.244.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=b0ufXBU6H7AFxDoRac8UjY09nTYRNqXOpsdeQWO0Kco+MIydAKyBx0+08JIhhoLdfPRU1jLQGS/44DYoMHhfLS1zZFHgcxWXH7E0t6cNivAcKBZeXaht4sOh1MCWWMMn6bwBqBNwwnngB40spiDeAgKEhmz4+i5NhVdEI8NFAyt0rwqJdMsyP6sTOOBdhFZ5vvXw17LZ8Zb6MtCPBLUkKOgsBVmRcbj0n6Dre0SKfGqnB59qYKeWYsLH9aBVcZOAWl0AKdZH+qjC58zbe63Q6PvtSV+iyHvMzcg5GIk8uss7f/MdBjVpy7gLogdRmcEtJkiXPciMEjMHUOzdZ8cFDw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MRIQBEaVLEF431nq4fyGm3rrcj2s3qdaoEK6N5RUWJo=;
+ b=mnKplg7fw0TSDzllvzeVxA8B7CZfF7mSR/99YeAO81OYihQFYgVTllSeItwqxaCd3Z4HLtWeb1IZh4Z4M7hqKieBXDcCJka6RzPwqovFEHIfadGbPEhAXsA9j7emuQWGI1N/SOYd82NFM44QhSbktvg7+smO+19d7o7CZwXgX2cXWBR/6NY0Yn7rGEGl8RsqsI+yPx9TbyHtMkKnoYMUxwNz9Gw1TqwWz6ludjllPaX7qDecq9tcgXVr6f1xzLEke+4TerZvSgHnl2pHkA/GjWq7dTP7yS8Pcg+4AthJXTqH9qq54GegoC1goNjIxRmZskdkdNPoRvw1Z85R2XEb2w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MRIQBEaVLEF431nq4fyGm3rrcj2s3qdaoEK6N5RUWJo=;
+ b=2UmZFbhvTlgne13HTz4Vm9Yy+bdaoIg2vuPtqK56d8YHrxmHpJo+xO28B+MI3vSG6AYlOBTOtW9KkRSxtHc6CvAA44QfLPTgDLSADjHUMORTEVemCNH3rfFyccIwvVqHfn8gxOc9cPCIA7Mm+/F7Gp7oLmBINuCCs58j3EgxDz0=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS7PR12MB8252.namprd12.prod.outlook.com (2603:10b6:8:ee::7) by
+ DS0PR12MB8041.namprd12.prod.outlook.com (2603:10b6:8:147::18) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8445.19; Wed, 19 Feb 2025 15:26:06 +0000
+Received: from DS7PR12MB8252.namprd12.prod.outlook.com
+ ([fe80::2d0c:4206:cb3c:96b7]) by DS7PR12MB8252.namprd12.prod.outlook.com
+ ([fe80::2d0c:4206:cb3c:96b7%3]) with mapi id 15.20.8445.017; Wed, 19 Feb 2025
+ 15:26:06 +0000
+Date: Wed, 19 Feb 2025 20:55:57 +0530
+From: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
+To: Mario Limonciello <superm1@kernel.org>
+Cc: Perry Yuan <perry.yuan@amd.com>,
+	Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>,
+	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>,
+	"open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>,
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: Re: [PATCH v3 17/18] cpufreq/amd-pstate: Rework CPPC enabling
+Message-ID: <Z7X4BfEAbRwCg2Dg@BLRRASHENOY1.amd.com>
+References: <20250217220707.1468365-1-superm1@kernel.org>
+ <20250217220707.1468365-18-superm1@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250217220707.1468365-18-superm1@kernel.org>
+X-ClientProxiedBy: PN3PR01CA0059.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:99::13) To DS7PR12MB8252.namprd12.prod.outlook.com
+ (2603:10b6:8:ee::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] perf vendor events arm64: Add A720/A520
- events/metrics
-To: Ian Rogers <irogers@google.com>, Namhyung Kim <namhyung@kernel.org>
-Cc: Yangyu Chen <cyy@cyyself.name>, linux-perf-users@vger.kernel.org,
- John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
- Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Liang Kan <kan.liang@linux.intel.com>,
- Yoshihiro Furudera <fj5100bi@fujitsu.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <tencent_5360DA048EE5B8CF3104213F8D037C698208@qq.com>
- <Z66YjGvjD_yzEHUg@google.com>
- <tencent_45B4E91CA370C563D6420A1A25F992056D09@qq.com>
- <1b8b234f-6435-45cf-83e7-8e86c84f075f@linaro.org>
- <CAP-5=fVAhLLH-a0_wLo8dPoMLOb6rOJiTgGh-OFZJJoaLFE-8Q@mail.gmail.com>
- <fe46069e-c52e-45ee-b4b3-8b929fb83b31@linaro.org>
- <Z7UHieRRnvRb5_oU@google.com>
- <CAP-5=fWXmNoFLyWv+vo7hhLSqTDy7hf+-huKRD9OUWnO-GESRw@mail.gmail.com>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <CAP-5=fWXmNoFLyWv+vo7hhLSqTDy7hf+-huKRD9OUWnO-GESRw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB8252:EE_|DS0PR12MB8041:EE_
+X-MS-Office365-Filtering-Correlation-Id: b4905b0d-592a-48c0-221a-08dd50f9ba29
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?s6AIN4/lHhtxUXBCTND22Fht3bUD1dDIVUXryrZa3hFQjUnH0OuEnbKtT5/p?=
+ =?us-ascii?Q?oXNRQkL97plae9qDNu24CJZ3vk9XT/lBbbh1lGybVjrfWNqBC1/90+zL5Zn7?=
+ =?us-ascii?Q?UYKKa0dHMBPpeMvAwPBUmNk+sMQyLe9lYzA1G1MPixIlAqU9SRMn4jo641vh?=
+ =?us-ascii?Q?QLi4U+MYrGIJVOC6ym6MSnX3NtMZ+cNCjBWJ7ORx4GoG7I2+mKjLFjxvuRob?=
+ =?us-ascii?Q?J1YH2dnlpypdM23CR2iwBxuWfuNuGazFGMcZV92uqRi0iauMMwdXWFuJkulL?=
+ =?us-ascii?Q?4nz0HYKkaDRylb9cos2ySPj7/rCc3TvqrSuOnVdTuLvpPczQfPpeQt4LewrP?=
+ =?us-ascii?Q?p+hdX4yp3TlpZheM4c5SvvSnOtClIZaZcW9ARDFxhN4SW6xqKMD2lirRfrJn?=
+ =?us-ascii?Q?PFxhAPwEchNr6II28+8gVXi+tmFqnvkRv0G/cdZl8Sw2b5Ff2qerwBKn04V0?=
+ =?us-ascii?Q?AW9BDJr92+SEUmY3g/4bcjdzrGbN481esiQolhCIXMh5oaeP93gGDUnj+PJe?=
+ =?us-ascii?Q?Id4MB2+hiTaRS6o7TS3Z4D9GSGvxfjusdiMjXt8+hYEGe7PXU0jfqztuJMKs?=
+ =?us-ascii?Q?6i+VYMhFrkVgKSqvEzJ3Dq5SlSVQZf2ir2eY7tyBBAb4zH0hx5BMJE9GgQIJ?=
+ =?us-ascii?Q?4XLfA7rg+bd/lktPnkmykOKkxTRzdtIwbtxM7P0U7d9Ul0/jRk7zpp3nO5/c?=
+ =?us-ascii?Q?4Mgh8V+KHXpOny3GEcAo4hdursx2d4EANN/xwz0hA6lRi+7VnsIv9TBMmJ9H?=
+ =?us-ascii?Q?ELW/w1J8NaPD10UhJDEToAP2QVEQ8rGB6x4h0LCG7HrNVdLlSkIbq/umhVms?=
+ =?us-ascii?Q?ASuRGQmz+Ul3f3sQUAP0RD6rtrzUwUQTWaKeIjleYuy9JajPb7qPDPEg+lGP?=
+ =?us-ascii?Q?BVsUvfXE1c4xyN+9tAyMhr8SXaXxO3cKfy6rq7D+KFF9N6HzAVY1Hm0rePyi?=
+ =?us-ascii?Q?2Pgz/W3omfPk5vJL78OLJ0nKye++Ft83qbFQ/kS0LKW18k8GQTrNqyZ+hrJr?=
+ =?us-ascii?Q?ljjCMN6b+buU+3g2y16fGs9E1+PrOduL4ljfPoXqpN11BqYpHXc33hRgW8LR?=
+ =?us-ascii?Q?+sNjc/Nzuf09RJqxhitoRrCX6yKFiQrNwR3+gy2dUlO501jRPubSdV8LJcjS?=
+ =?us-ascii?Q?aRfx08HmvvK46kQi5qJLkDYI5eKOm3T/uMn1e6xA9zAizwV/k36xr3rzUIrk?=
+ =?us-ascii?Q?J0oLPqd2l0mo0s6gLp46Mw1YsbF2/scS9lgSksD5SXlGm6tDR7hs2QkzTG6O?=
+ =?us-ascii?Q?llftEkZ9zLXl8uYELn/FHOkKr73tXIOjQ2KeeU84QGonCpaa4ABDIlnyNwFY?=
+ =?us-ascii?Q?S0qJPwzST4bBsfjWrFd4aeV5sfUx0D8bQAfohxpjkV2p18/EpevPEG/yQzZA?=
+ =?us-ascii?Q?rugCCfZQ9uO+Z1mjk+t7KR6ZvGwj?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB8252.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?yFHmJNJ+T/lMhp7283vXX9EaEj9xofTrezZvsTJjQie9LKcrQPtLhGG3Y7o7?=
+ =?us-ascii?Q?RjIPxHL2cmvynwupKptwY+2zV+/Fat6NDaleVrUKDoVApnchsfaHsMh9NP14?=
+ =?us-ascii?Q?aj8fsjC0PvGltbJa9yDKboMP5ZER+LttV435NRiyd9eKZepqzPkl9s3jfKfl?=
+ =?us-ascii?Q?n09n/8FhUu9J7PrKuYRCDiSR2OmpCCodg/YwzfOItJZ1csg4Ib3zRHEHC75I?=
+ =?us-ascii?Q?zLJJt9rJ/tu/1ZG8WfMo8EZz3fakGH6uVZuXtiKVLnrEKPLUY6dueXe60C6h?=
+ =?us-ascii?Q?12TYgwumwS20wuSaetKtSdKBrnYyTAbF7hR4Jiw5GIC9WFrwv+nch+KRAs8p?=
+ =?us-ascii?Q?RjuM7xnzlNahSsvmiUdfp2yy/D7zR3tFx5gDnx59qHg1zvL57V7BhgAEVFXx?=
+ =?us-ascii?Q?1ytgKOdRdfyx7+lVj0QQ+To6M/OIKt8juJcbdGqT2f4Vu4U+ufpkg4oPdAqN?=
+ =?us-ascii?Q?yccBqguZxkU16Wzt/+B3eHxml/HtHOIpE8I9R452cbEgvvTg3eV3sUTprfI5?=
+ =?us-ascii?Q?kzALlZmCrvq0YQvrclyHESakNxqL6ETrshoYWPVI9FVB07xP+sesfWRSr4fS?=
+ =?us-ascii?Q?SgCAK4gYK/9vzJLCpLtZ0avJ68RYAfKRhPsACyGCW2o0XMU+XDR63AZmjTFx?=
+ =?us-ascii?Q?AUdLNyM2/vADyRPQ0U8s2pYmzhO4UwvEb93oV+Z+H6fYm4cpzPIuU2ElhOEH?=
+ =?us-ascii?Q?AwE48izQqiRMk+BNDmcnH3yCRhQ4LSMUMaSAVWIfi1NFfWlnjiXcbq9fo8CP?=
+ =?us-ascii?Q?fNgRv3USBHiZ72QtS2tPyz09bLARjXlSA+IEeZcNdNTXhCwCqSCWMi23yWy7?=
+ =?us-ascii?Q?gpLt8L/pXQDL/XatJ9N7iC4i3ccaCUcaFwujC1q5pgK7zws4zrSxxjww2bxW?=
+ =?us-ascii?Q?3ptrY0C7+Oa9jhTaWz/s64g+cdhWSeKp091gvLyYkIPrnvcqpRT0gppiWDMk?=
+ =?us-ascii?Q?w5JR6c00PCVGyCYsCBgFOc4J5plA0ba8B7rTPh8Xp6h2zbuSCXH1tihOdOU3?=
+ =?us-ascii?Q?LZVqrslHhELj6Q74XmQleK9bPOVzZ+M26D/uV+xzU52BZqVqMtZHIzEgK4ge?=
+ =?us-ascii?Q?DmYQhY8v/J0cXAdK2T2euBuXoemleSqKZrxXSJnAx9FpEyF7ZWAQqyvnY32g?=
+ =?us-ascii?Q?VGrhlcKeWgXEz30ACpxfi/GmYzqMsT2mMiihrgbB3Qf3C6LFwoeaC99dq/UI?=
+ =?us-ascii?Q?paz78/K4ohYPBx7yJXMp4U+berBcR9tsauwZWW8oq7N4/bZt0XovyxkuAotg?=
+ =?us-ascii?Q?DMnq/ju+N7DQJ07yHF13zkKrCu1RDdweTvMhSO2GN5jcbrS2gv0Bu7riWHry?=
+ =?us-ascii?Q?bFXMQjT69j0vTTWJmtOZNL/TL5DP66u5Uwt+E/c6UHP0wD36KFb+x2ioWw+J?=
+ =?us-ascii?Q?XyvUM8c2hKuvMy3XagFoqJ0ppLPDyaKXxrvFBXalFrLnEHjJleRua8TM7d3Y?=
+ =?us-ascii?Q?JvG7DRq2JYeCB3w9r5BNUtyv1/tWeTfrtI/ZZ6+3m+oHql8QzT0PwDSOS3vu?=
+ =?us-ascii?Q?CszoUSIHx42fT0Gw6CaUL2j91UARiNCDOgKFOb3x/aDQMVD0EqbDJbjLA7+m?=
+ =?us-ascii?Q?Kyx66+5eGPV8T/w2k6ZRe+FkGWDeCaY0gkxclJgY?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b4905b0d-592a-48c0-221a-08dd50f9ba29
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB8252.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2025 15:26:05.9318
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +XlGorz+3CNmEtuNEX1yt6UR6p7jjdfbrvRhS1jQJEkbVvQo0Egslu33+pj0C26Z7qz9lUoAmksIlRJUZ3GsrA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8041
 
-
-
-On 18/02/2025 10:33 pm, Ian Rogers wrote:
-> On Tue, Feb 18, 2025 at 2:19 PM Namhyung Kim <namhyung@kernel.org> wrote:
->>
->> On Tue, Feb 18, 2025 at 09:30:23AM +0000, James Clark wrote:
->>>
->>>
->>> On 18/02/2025 12:41 am, Ian Rogers wrote:
->>>> On Fri, Feb 14, 2025 at 2:02 AM James Clark <james.clark@linaro.org> wrote:
->>>>>
->>>>>
->>>>>
->>>>> On 14/02/2025 5:49 am, Yangyu Chen wrote:
->>>>>>
->>>>>>
->>>>>>> On 14 Feb 2025, at 09:12, Namhyung Kim <namhyung@kernel.org> wrote:
->>>>>>>
->>>>>>> Hello,
->>>>>>>
->>>>>>> On Thu, Feb 13, 2025 at 11:11:01PM +0800, Yangyu Chen wrote:
->>>>>>>> This patchset adds the perf JSON files for the Cortex-A720 and Cortex-A520
->>>>>>>> processors. Some events have been tested on Raxda Orion 6 with Cix P1 SoC
->>>>>>>> (8xA720 + 4xA520) running mainline Kernel with ACPI mode.
->>>>>>>
->>>>>>> I'm curious how the name of PMUs look like.  It is cortex_a720 (or a520)?
->>>>>>
->>>>>> The name of PMUs comes from Arm's documentation. I have included these
->>>>>> links in each patch.
->>>>>>
->>>>>>> I remember there's a logic to check the length of hex digits at the end.
->>>>>>>
->>>>>>
->>>>>> Could you provide more details about this?
->>>>>>
->>>>>>> Ian, are you ok with this?
->>>>>>>
->>>>>
->>>>> I think they wouldn't be merged because they're core PMUs, so should be
->>>>> fine? Even though they would otherwise be merged because they're more
->>>>> than 3 hex digits.
->>>>
->>>> Do we know the PMU names? If they are cortex_a520 and cortex_a720 then
->>>
->>> It will be "armv9_cortex_a720" from this line:
->>>
->>>    PMUV3_INIT_SIMPLE(armv9_cortex_a720)
->>
->> I see, thanks!
->>
->>>
->>>> this comment at least reads a little stale:
->>>> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/pmus.c?h=perf-tools-next#n76
->>>> ```
->>>> /*
->>>> * There is a '_{num}' suffix. For decimal suffixes any length
->>>> * will do, for hexadecimal ensure more than 2 hex digits so
->>>> * that S390's cpum_cf PMU doesn't match.
->>>> */
->>>> ```
->>>> James is right that core PMUs aren't put on the same list as uncore/other PMUs.
->>
->> Ok, then I guess we're good.
+On Mon, Feb 17, 2025 at 04:07:06PM -0600, Mario Limonciello wrote:
+> From: Mario Limonciello <mario.limonciello@amd.com>
 > 
-> I think you may be able to do things that look odd, like today the
-> "i915" PMU can be called just "i", I think the a520/a720 naming will
-> allow "armv9_cortex/cycles/" as an event name, then open it on two
-> PMUs if they are present. 
-
-I assumed that was the intended behavior. It seems fairly useful to be 
-able to open on ones with common prefixes.
-
-> We may only show one PMU in perf list as
-> that code I think assumes they're the same PMU as they only differ by
-> suffix:
-> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/pmus.c?h=perf-tools-next#n384
-
-Yeah that is the case. I didn't realise it when looking at the previous 
-fixes to keep the suffixes in perf stat output.
-
-> I can imagine aggregation possibly being broken, but I think that
-> works off the number of PMUs not the names of the PMUs, so it should
-> be okay. Probably the only thing broken that matter is perf list when
-> you have a BIG.little system with a520 and a720, this may be broken
-> with say a a53 and a72 today as both of those suffix lengths are >2,
-> but maybe they use the "armv8._pmuv3_0", "armv8._pmuv3_1", etc. naming
-> convention. I suspect the >2 here:
-
-Also the case for a53 and a72 right now. Even "perf list --unit 
-armv8_cortex_a57" doesn't work because we deduplicate before filtering. 
-Adding -v fixes it though because that disables deduplication. Perhaps 
-we can change it to disable it with the --unit argument?
-
-> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/pmus.c?h=perf-tools-next#n80
-> would still work and be correct if it were >4. If that changes then
-> this will also need to change:
-> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/Documentation/ABI/testing/sysfs-bus-event_source-devices?h=perf-tools-next#n12
-
-That could be an easy fix. If >4 is enough to still get rid of all the 
-uncore duplicates I can make the change?
-
+> The CPPC enable register is configured as "write once".  That is
+> any future writes don't actually do anything.
 > 
-> Thanks,
-> Ian
+> Because of this, all the cleanup paths that currently exist for
+> CPPC disable are non-effective.
 > 
->>
->> Thanks,
->> Namhyung
->>
+> Rework CPPC enable to only enable after all the CAP registers have
+> been read to avoid enabling CPPC on CPUs with invalid _CPC or
+> unpopulated MSRs.
+> 
+> As the register is write once, remove all cleanup paths as well.
+> 
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+> v3:
+>  * Fixup for suspend/resume issue
+> ---
+[..snip..]
 
+>  
+> -static int shmem_cppc_enable(bool enable)
+> +static int shmem_cppc_enable(struct cpufreq_policy *policy)
+>  {
+> -	int cpu, ret = 0;
+> +	struct amd_cpudata *cpudata = policy->driver_data;
+>  	struct cppc_perf_ctrls perf_ctrls;
+> +	int ret;
+>  
+> -	if (enable == cppc_enabled)
+> -		return 0;
+> +	ret = cppc_set_enable(cpudata->cpu, 1);
+> +	if (ret)
+> +		return ret;
+>  
+> -	for_each_present_cpu(cpu) {
+> -		ret = cppc_set_enable(cpu, enable);
+> +	/* Enable autonomous mode for EPP */
+> +	if (cppc_state == AMD_PSTATE_ACTIVE) {
+> +		/* Set desired perf as zero to allow EPP firmware control */
+> +		perf_ctrls.desired_perf = 0;
+> +		ret = cppc_set_perf(cpudata->cpu, &perf_ctrls);
+>  		if (ret)
+>  			return ret;
+
+We don't need the if condition here. There is nothing following this
+inside the if block and the function return "ret" soon after coming
+out of this if block.
+
+
+> -
+> -		/* Enable autonomous mode for EPP */
+> -		if (cppc_state == AMD_PSTATE_ACTIVE) {
+> -			/* Set desired perf as zero to allow EPP firmware control */
+> -			perf_ctrls.desired_perf = 0;
+> -			ret = cppc_set_perf(cpu, &perf_ctrls);
+> -			if (ret)
+> -				return ret;
+> -		}
+>  	}
+>  
+> -	cppc_enabled = enable;
+>  	return ret;
+>  }
+>  
+>  DEFINE_STATIC_CALL(amd_pstate_cppc_enable, msr_cppc_enable);
+>  
+> -static inline int amd_pstate_cppc_enable(bool enable)
+[..snip..]
+
+>  
+> -static int amd_pstate_epp_reenable(struct cpufreq_policy *policy)
+> +static int amd_pstate_epp_cpu_online(struct cpufreq_policy *policy)
+>  {
+>  	struct amd_cpudata *cpudata = policy->driver_data;
+>  	union perf_cached perf = READ_ONCE(cpudata->perf);
+>  	int ret;
+>  
+> -	ret = amd_pstate_cppc_enable(true);
+> -	if (ret)
+> -		pr_err("failed to enable amd pstate during resume, return %d\n", ret);
+> -
+> -
+> -	return amd_pstate_epp_update_limit(policy);
+> -}
+> +	pr_debug("AMD CPU Core %d going online\n", cpudata->cpu);
+>  
+> -static int amd_pstate_epp_cpu_online(struct cpufreq_policy *policy)
+> -{
+> -	struct amd_cpudata *cpudata = policy->driver_data;
+> -	int ret;
+> +	ret = amd_pstate_cppc_enable(policy);
+> +	if (ret)
+> +		return ret;
+>  
+> -	pr_debug("AMD CPU Core %d going online\n", cpudata->cpu);
+>  
+> -	ret = amd_pstate_epp_reenable(policy);
+> +	ret = amd_pstate_update_perf(policy, 0, 0, perf.highest_perf, cpudata->epp_cached, false);
+
+Previously, when a CPU came online, the callpath would be
+amd_pstate_epp_cpu_online(policy)
+--> amd_pstate_epp_reenable(policy)
+     --> amd_pstate_epp_update_limit(policy)
+          --> amd_pstate_epp_update_limit(policy)
+
+which reevaluates the min_perf_limit and max_perf_limit based on
+policy->min and policy->max and then calls
+
+      amd_pstate_update_perf(policy, min_limit_perf, 0, max_limit_perf, epp, false)
+
+With this patch, we call
+
+      amd_pstate_update_perf(policy, 0, 0, perf.highest_perf, cpudata->epp_cached, false);
+
+which would set CPPC.min_perf to 0.
+
+I guess this should be ok since cpufreq_online() would eventually call
+amd_pstate_verify() and amd_pstate_epp_set_policy() which should
+re-initialize the the min_limit_perf and max_limit_perf. Though I
+haven't verified if the behaviour changes with this patch when the CPU
+is offlined and brought back online.
+
+Rest of the patch looks good to me.
+
+-- 
+Thanks and Regards
+gautham.
 
