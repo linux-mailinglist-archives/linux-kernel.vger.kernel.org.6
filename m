@@ -1,100 +1,151 @@
-Return-Path: <linux-kernel+bounces-521341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41E7EA3BBD2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:45:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 220ADA3BBDB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:47:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9BB27A5AE0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:44:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD1333B0C0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:46:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13E841DE4CA;
-	Wed, 19 Feb 2025 10:45:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FD4C1DE2B5;
+	Wed, 19 Feb 2025 10:46:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="h0LKRF3P"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gahZUNlF"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE261D5CEA
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 10:45:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D10B195FE8;
+	Wed, 19 Feb 2025 10:46:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739961903; cv=none; b=ucvaKkGQ9p18XBvs1+3zldz7Dpdg5gnLhtSIkDpvh/BxsZTCuEPZGG8yd2kBwgVzXfYbmvq/1xyksAjbZTDf5Rva/0Nl4i4m8lNz6WMlbxEhNmlGZhLBc56uJBqPN1o8RctCzJv4vAescgo7HdaC64QRBBK0QFuzk/qG5EpmkUY=
+	t=1739962015; cv=none; b=U9SMMzhyjDvGJ2mEPhAZ6tsDR6hse0Opo1uhE2z3T+Gz1FWtbAr5xgb66q+V7p+/XGpr93nCzbPYy0G2vWunwpc2DeJH5IELafqrhajrqcxpUPrnNeHUvB0bc63RPDrLCKjdU/y1N2mzkBBwG1cvLVky8fhdxckPGr1A0hXeDlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739961903; c=relaxed/simple;
-	bh=yOasvxAPT+33s1e8WIhGVLyj9p6z+7KuZNdkuNuKPQI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=o8WAsk+NGeZr9Jjirmi7B8f6jWQPn+DYWgcg/gWynsqm2ftBnJhgypBCYu6WOKubK3rFFytqq4EO0BHfLRcjU5NdXJGMr5ADgAtwZ9BDzWQSvltlQI2eVDrp+jZOomqreDGPA4YsaQIXPR2XUxLO3QVQBk07b8v4Cu6Nnz/RGrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=h0LKRF3P; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1739961889;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=+lLHrG6tRNaGKq8TsOg3rt8iC7m9nw0vu2rC3UkGSno=;
-	b=h0LKRF3PkNW/x1UQSwcIU5DKC/9ASBUFtlWxCxJOgjyBSlmqTvp11D2GtOZ9H8gmwWHzxA
-	c0mXEM1Mz3szoFFvq1tbZggD/wHHScVhTgxCninZYq8aYJv6UVDJJ/jHbPt6AczdLPsV4U
-	oncHpCYcxO5acySrn09ZHTwgwWjusDE=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Dinh Nguyen <dinguyen@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-clk@vger.kernel.org,
+	s=arc-20240116; t=1739962015; c=relaxed/simple;
+	bh=31ENOo68558J8kka2dIh2wZxxlZYzqoWhM6K0uGoJbc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fJmSkybnQuJXrqqET7DvKiEQASUI5I4iIHXG/xBovzYTNAeDh7h7fR5+CYAGRmp7TQr/pfeHCGUloDF5jqzVRRgQi9eDHCIOaQMPsIQe/2nGS8Scyrz4koDXWF2o25SAO/0uzGajrAKL8ovmPhK6ZSZj8bsd4EVyWZxZz9RLw0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gahZUNlF; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5e04064af07so7548828a12.0;
+        Wed, 19 Feb 2025 02:46:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739962012; x=1740566812; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=eAkVyyk317tc30zj9Sr7h1NT9KbCBzbLvARlSySyLSQ=;
+        b=gahZUNlFNv3/uzBPuJDqawqY1LvGA8bg4dqq9LODeNKuS88HOJHWjUJcQmGipB9BHV
+         uKWX3dwy8dwp49o121/SJrtWEvoiRJ7CKBfMMH3SzeC5IFDcXfSUOgQbiWh7splCfjBs
+         bj0tKAwkl5YSvEogdlewVNTtmgoWRmqd2jwZOTYJ6OfEwsFDQflVtA3uu5CoNzlZPa9K
+         HjLBkMo6KSqic4uyEWV22EE2O5exD6hlmdUFZj79XQOl26vTxxcXQ8SElhRpOP9ectkA
+         ZQZSsQfIyQ0FHDQVZGPGyqvi/MYyIFaoA4wiqKDfSF7s61OKq+JYHoLZ6b/0HTp1oFzY
+         ATGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739962012; x=1740566812;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eAkVyyk317tc30zj9Sr7h1NT9KbCBzbLvARlSySyLSQ=;
+        b=LUDIYUD7+B+gpvZUpG0zy5xMxYXakt1M6zXJCs4L/yll/F9bm7jZXg+ReNIJxacjE0
+         MuUBPHRx3qBNVxayogb+yM33hWUBJE/bSSNOBdVHrV/TePVTjn0If57P18rfeAuHMcQU
+         E0VzNBix4CS0ax/icNMWqX8u4CmGsfFYDIlylMJ0/MlQlJMce8rzVttWnvAW1S6UOlYZ
+         8aHmaDwlFJ5zssr5hx17la+PAFzH/HvwNOP5CupMo9TSwacKgYWdLTZZYwdpFKzy4Zhs
+         I/eQkqpyXFM9cRpzxe8dyALDQPwaCAYfTKhcKkyXJZ4KiYWzBXGb8orNcrX4SO392mT1
+         u8kQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVe2nzdRAQsfpCUrsWN9E1oszI5W4M2eF/+dCtXvm9HsNwuijxi9/9WYamiSda06Lx7S/h/vCIX@vger.kernel.org, AJvYcCX7XiJhqP3u674SCecLzlUqVp4rSTRa2ISp75mRwAmfXWLfMnjJrcmZf14kaCBFu1Hge+kw3kpjhrpqdx4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyFAl/bQ8Vd490YuwI923JQMFATQyID064rI5DVCFbDAgXnT8g
+	jyVEwD4TjVUlFvqKrmlKuBkq8uxD8u/BIc3wZlvmsPDBh9HidF5Oaergqw==
+X-Gm-Gg: ASbGncv5qrgaAJpfxU3BFZ+xWms0eV5R2yhwa+DXFafNdS6jAgR3RyO22Db6wqcLO87
+	9bxaF+q91OMx0QniyAF6AHVW5RFM6QQrpYAxGzv6+1Wocfe6yRRleI/P/gsZszkJV9v279g1tMo
+	rZHuGQ4AAS3jAhmCWHowetYr+WTeLAlOyjgQVaEaqZId4i02CEWqDsNED8b3X44T87B+b+0o6hu
+	Lw/ieyq5JFR5F/X1KaUSKEUsVt64+vpZJHBPQz7X6A7dNeneqbHTd2pUPhLZo6hbzZDQV9RxQPP
+	IgNdYpmQtlHD
+X-Google-Smtp-Source: AGHT+IEk6j9RjgMgxPzqQgj2U0wvTr1YPwgyRsxzroqQYOzDLgg2d2MU6KU9FGvblfBJOjSEIhCBog==
+X-Received: by 2002:a05:6402:5246:b0:5de:39fd:b2ff with SMTP id 4fb4d7f45d1cf-5e035f49943mr19003699a12.0.1739962012125;
+        Wed, 19 Feb 2025 02:46:52 -0800 (PST)
+Received: from debian ([2a00:79c0:646:8200:45fb:7d1a:5e4d:9727])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dece2709a9sm10169900a12.53.2025.02.19.02.46.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2025 02:46:50 -0800 (PST)
+Date: Wed, 19 Feb 2025 11:46:47 +0100
+From: Dimitri Fedrau <dima.fedrau@gmail.com>
+To: Stefan Eichenberger <eichest@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
+	Gregor Herburger <gregor.herburger@ew.tq-group.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>, netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH] clk: socfpga: stratix10: Optimize local variables
-Date: Wed, 19 Feb 2025 11:44:35 +0100
-Message-ID: <20250219104435.1525-2-thorsten.blum@linux.dev>
+Subject: Re: [PATCH 1/2] net: phy: marvell-88q2xxx: Enable temperature
+ measurement in probe again
+Message-ID: <20250219104647.GC3888@debian>
+References: <20250218-marvell-88q2xxx-hwmon-enable-at-probe-v1-0-999a304c8a11@gmail.com>
+ <20250218-marvell-88q2xxx-hwmon-enable-at-probe-v1-1-999a304c8a11@gmail.com>
+ <Z7V3Wsex1G7-zEYc@eichest-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z7V3Wsex1G7-zEYc@eichest-laptop>
 
-Since readl() returns a u32, the local variable reg can also have the
-data type u32. Furthermore, mdiv and refdiv are derived from reg and can
-also be a u32.
+Hi Stefan,
 
-Since do_div() casts the divisor to u32 anyway, changing the data type
-of refdiv to u32 removes the following Coccinelle/coccicheck warning
-reported by do_div.cocci:
+thanks for reviewing.
 
-  WARNING: do_div() does a 64-by-32 division, please consider using div64_ul instead
+Am Wed, Feb 19, 2025 at 07:16:58AM +0100 schrieb Stefan Eichenberger:
+> Hi Dimitri,
+> 
+> On Tue, Feb 18, 2025 at 07:33:09PM +0100, Dimitri Fedrau wrote:
+> > Enabling of the temperature sensor was moved from mv88q2xxx_hwmon_probe to
+> > mv88q222x_config_init with the consequence that the sensor is only
+> > usable when the PHY is configured. Enable the sensor in
+> > mv88q2xxx_hwmon_probe as well to fix this.
+> > 
+> > Fixes: a197004cf3c2 ("net: phy: marvell-88q2xxx: Fix temperature measurement with reset-gpios")
+> > Signed-off-by: Dimitri Fedrau <dima.fedrau@gmail.com>
+> > ---
+> >  drivers/net/phy/marvell-88q2xxx.c | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> > 
+> > diff --git a/drivers/net/phy/marvell-88q2xxx.c b/drivers/net/phy/marvell-88q2xxx.c
+> > index a3996471a1c9a5d4060d5d19ce44aa70e902a83f..30d71bfc365597d77c34c48f05390db9d63c4af4 100644
+> > --- a/drivers/net/phy/marvell-88q2xxx.c
+> > +++ b/drivers/net/phy/marvell-88q2xxx.c
+> > @@ -718,6 +718,13 @@ static int mv88q2xxx_hwmon_probe(struct phy_device *phydev)
+> >  	struct device *dev = &phydev->mdio.dev;
+> >  	struct device *hwmon;
+> >  	char *hwmon_name;
+> > +	int ret;
+> > +
+> > +	/* Enable temperature sense */
+> > +	ret = phy_modify_mmd(phydev, MDIO_MMD_PCS, MDIO_MMD_PCS_MV_TEMP_SENSOR2,
+> > +			     MDIO_MMD_PCS_MV_TEMP_SENSOR2_DIS_MASK, 0);
+> > +	if (ret < 0)
+> > +		return ret;
+> >  
+> >  	priv->enable_temp = true;
+> >  	hwmon_name = devm_hwmon_sanitize_name(dev, dev_name(dev));
+> 
+> Is it necessary to have it enabled in probe and in config? Is that
+> because of the soft reset? Can it happen that the phy is reset but
+> config is not called, then we would end up in the same situation right?
+>
+Even if the phy is not configured yet, it is probed and the PHYs hard reset
+is deasserted, so I can read the temperature. I think the situation you
+mean is when the PHY is brought up and down again. In this case the hard
+reset of the PHY is asserted and I can't read the temperature. That's
+the second patch of the series that fixes this issue.
 
-Compile-tested only.
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- drivers/clk/socfpga/clk-pll-s10.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/socfpga/clk-pll-s10.c b/drivers/clk/socfpga/clk-pll-s10.c
-index 1d82737befd3..a88c212bda12 100644
---- a/drivers/clk/socfpga/clk-pll-s10.c
-+++ b/drivers/clk/socfpga/clk-pll-s10.c
-@@ -83,9 +83,9 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hwclk,
- 					 unsigned long parent_rate)
- {
- 	struct socfpga_pll *socfpgaclk = to_socfpga_clk(hwclk);
--	unsigned long mdiv;
--	unsigned long refdiv;
--	unsigned long reg;
-+	u32 mdiv;
-+	u32 refdiv;
-+	u32 reg;
- 	unsigned long long vco_freq;
- 
- 	/* read VCO1 reg for numerator and denominator */
--- 
-2.48.1
-
+Best regards,
+Dimitri
 
