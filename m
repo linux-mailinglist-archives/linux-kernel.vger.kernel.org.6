@@ -1,121 +1,114 @@
-Return-Path: <linux-kernel+bounces-521908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB084A3C3BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:36:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C15FA3C3C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:37:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 450F217648A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:36:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E27B18918B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:37:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F4851F91C7;
-	Wed, 19 Feb 2025 15:36:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S6OSmOqv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4BAA1FCCFD;
+	Wed, 19 Feb 2025 15:36:52 +0000 (UTC)
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F14201DE8BE;
-	Wed, 19 Feb 2025 15:36:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA48C1FC10F;
+	Wed, 19 Feb 2025 15:36:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739979396; cv=none; b=X8lAqFiB9/fYYr/CCk9im5lq3XX73+HKyKYqn66ghMFPAuefPQMsRlivTKDvw3h42YDIaoTSdCH36ykMwXVBNS/2HvOzMkDIplJXOss6qBIwfyRIDdP2VT4+zDk6Rj4jCe0m6LoTJgIgmrM9k/gN9ozbg6o43BzlFXUrM6mPXYI=
+	t=1739979412; cv=none; b=WxyZx6wq64gvXrKAMk6dt364MAQrcI50Nb6l608g8cEQkh4UoOBKcH/wK8f/pttG6vooD9VwaCWwkvyTkntQOK489absAPRAmCpFc8pUZAoI5+JWbLwl9zNkC9PrsRMu8/HTrJhzPQiWWn5sO2B+VE/qs844JlGAw9KUDTuK0sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739979396; c=relaxed/simple;
-	bh=a3GoHWAtbGEX5SYxHIAKqAqipfDcxdOpT8UtE5+wBX4=;
+	s=arc-20240116; t=1739979412; c=relaxed/simple;
+	bh=Ujy0BIPtNrfND0xHnHIFj/TLD1JGmnJppohKxkoYFzM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=strVpxjpvdwfiYIvjjlD+X8rSmE6g+Zhk6heBdCRHB0YhlOxYZoYPGKWsvCX8gWrnVz5xzjcsvVTlfdglT0wgR2McRthWooj7PKvh/pmLrRbZ8Haqh8GR6auP0WtDIovjQFMGx7tt7wcLOjTSt6ohL7g8gPO4bQbqSyFBOUF77E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S6OSmOqv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6725FC4CED1;
-	Wed, 19 Feb 2025 15:36:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739979395;
-	bh=a3GoHWAtbGEX5SYxHIAKqAqipfDcxdOpT8UtE5+wBX4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=S6OSmOqvmKP3TboFyrwmpiegR2HtvWZGRS7d7jlMNPqXqXpwjFTFPi69O64bRQqYj
-	 3GQWH5zdJusYM5PEz5SuPTF5evUA7UZufw3EO4janDzg2fKTJ7vWyi8B6dWJG1+kSC
-	 +RydITHFHvkQcQ3I98uQcHeY6ZkhWFQSDSnaNIrU9Bq+QZtI5iw5bXPY2QTwma++a9
-	 0MHb6EZkmknga/aHnHYx506KNrdNzF5xcGvG0qwqDSbTL1PF1XbnQe4aBig9S/sK+r
-	 a/+jbDzeQOHG94QmZKn7Z+YPpMsM9+4qX90HQygA6xQnersG3Sgx9BPWgnoHN0qtgu
-	 BFi9lM1T1QjkQ==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1tkm7x-000000003PB-0mbg;
-	Wed, 19 Feb 2025 16:36:45 +0100
-Date: Wed, 19 Feb 2025 16:36:45 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Akhil P Oommen <quic_akhilpo@quicinc.com>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH 2/4] arm64: dts: qcom: x1e80100: Apply consistent
- critical thermal shutdown
-Message-ID: <Z7X6jZev8fpoq0Ih@hovoldconsulting.com>
-References: <20250219-x1e80100-thermal-fixes-v1-0-d110e44ac3f9@linaro.org>
- <20250219-x1e80100-thermal-fixes-v1-2-d110e44ac3f9@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FKCklLVr9A5aC9VtAYQWzZ9PMG7h8gUzjyvAXbzDirOkgCjzQEhyKHwNPgW8w5Vnbe1habLHHBrsFUL2DK7k6jmZCAoJwlxadj07I9AwqVKK/7lEaVl4JG46ye4evYf5MzHo5erAFYZwCYacO81zqGnbEqgablSC6D1DmOnP7Bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5ded368fcd9so9311231a12.1;
+        Wed, 19 Feb 2025 07:36:50 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739979409; x=1740584209;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6llFm8J1sbZ3d26kndvqAhLtdSFqZOZdKTBTtPApNdc=;
+        b=qPxgHraFt0b4N7GCkuHKC6Yowk0aYek5kgKCEgxAkImzbvET1zia80THI0rocTqdCL
+         kk0aY0It6kNiLlhSg8TJy+PxDo6Bnaxvh9aCGkOEHiPlZYf4KThi8bgPyJpZHbgyB5cQ
+         7Vw0mdfM2kKlqyjowxlTJgSj6e3JIWyMyum5Uv3hc0jAFioWeZtrXJIVpi19JiEj39jG
+         MmcSWL3iavOU9+8GAAYwqaTgM7XLWItBQ7doJDNRpnMFvmY10dntZwXuJnYoOAZ19TXS
+         97+ZRXHI9tUT8IH2yUNYG1OXPPQyXEpap+M9unDIa93j80pEU5bFKvYEsi1JMG+OB9Yx
+         F+sQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVWgipPcmCwCxkETfDtt7XenCmWq/wJBP59TCpB81EyD8jpzEcIqSmz4Bu3zOOj/UrU3XgLg7Uv@vger.kernel.org, AJvYcCVYqdhV+Q3GJNGFRTigm4aRPFkl6PWE/UmziwQaywDK8vgxH4I61hQroX4eDtB6EawgVX6ksCT+op65huw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynUHHQ3DkB30OFdB2Coul9eBzEyhNkzKuiW9/Fx79xnJPKwtaE
+	y+xveQai5EbDIFBlE8BU3INej6aYdPgOGwtQLJKX0foXwGd3X5mb
+X-Gm-Gg: ASbGncscIDURcbVbrFSTaxHi8Y9OwOyaEqHqHWWeeag55WBjo77taUgRgNHuP3QN37N
+	NrnQZsWYl6qs/c6zOllWPCteX/uiTXXwJEai8R5ngwLqbdIxfyl8aKV5r2uJFpSyBaowfzKgWiD
+	0shWNJhX7V205oRJDz8Ao5pNyX8hbiFa0SPOanPokyEaSTtuQOFqw2t5ZdD5xW9SyF70mEfZ6Pp
+	NeFtOA6UzIliA3KluZw/AxS+RZ55yvPE77her946y4VH5JvTGjgJhzpEp0kT3x6ArSu+JK6DJxT
+	+uY=
+X-Google-Smtp-Source: AGHT+IHLbbKT+NeJwzgMUAtja4qR1bPzV8ZDiBggz1Xb8UKenPMjRNiG3pGusZx60PHjyIhUvsHq+g==
+X-Received: by 2002:a17:906:314a:b0:ab7:ec8b:c642 with SMTP id a640c23a62f3a-abbccccb77amr355748566b.5.1739979408746;
+        Wed, 19 Feb 2025 07:36:48 -0800 (PST)
+Received: from gmail.com ([2a03:2880:30ff::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abba4542e7fsm532798866b.139.2025.02.19.07.36.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2025 07:36:48 -0800 (PST)
+Date: Wed, 19 Feb 2025 07:36:45 -0800
+From: Breno Leitao <leitao@debian.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	David Wei <dw@davidwei.uk>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, paulmck@kernel.org,
+	kernel-team@meta.com
+Subject: Re: [PATCH net-next v2] netdevsim: call napi_schedule from a timer
+ context
+Message-ID: <20250219-astonishing-nimble-wolverine-1300f0@leitao>
+References: <20250217-netdevsim-v2-1-fc7fe177b98f@debian.org>
+ <20250217115031.25abfaf4@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250219-x1e80100-thermal-fixes-v1-2-d110e44ac3f9@linaro.org>
+In-Reply-To: <20250217115031.25abfaf4@kernel.org>
 
-On Wed, Feb 19, 2025 at 12:36:19PM +0100, Stephan Gerhold wrote:
-> The firmware configures the TSENS controller with a maximum temperature of
-> 120°C. When reaching that temperature, the hardware automatically triggers
-> a reset of the entire platform. Some of the thermal zones in x1e80100.dtsi
-> use a critical trip point of 125°C. It's impossible to reach those.
+Hello Jakub,
+
+On Mon, Feb 17, 2025 at 11:50:31AM -0800, Jakub Kicinski wrote:
+> On Mon, 17 Feb 2025 09:35:29 -0800 Breno Leitao wrote:
+> > The netdevsim driver was experiencing NOHZ tick-stop errors during packet
+> > transmission due to pending softirq work when calling napi_schedule().
+> > This issue was observed when running the netconsole selftest, which
+> > triggered the following error message:
+> > 
+> >   NOHZ tick-stop error: local softirq work is pending, handler #08!!!
+> > 
+> > To fix this issue, introduce a timer that schedules napi_schedule()
+> > from a timer context instead of calling it directly from the TX path.
+> > 
+> > Create an hrtimer for each queue and kick it from the TX path,
+> > which then schedules napi_schedule() from the timer context.
 > 
-> It's preferable to shut down the system cleanly before reaching the
-> hardware trip point. Make the critical temperature trip points consistent
-> by setting all of them to 115°C and apply a consistent hysteresis.
-> The ACPI tables also specify 115°C as critical shutdown temperature.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 4e915987ff5b ("arm64: dts: qcom: x1e80100: Enable tsens and thermal zone nodes")
-> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+> This crashes in the nl_netdev test.
 
-> @@ -8483,7 +8483,7 @@ trip-point1 {
->  				};
->  
->  				cpu-critical {
-> -					temperature = <110000>;
-> +					temperature = <115000>;
+Yea, a nasty crash. Looking at the crash, it seems to be  disabling the
+timer before initializing it, and timer->base was not properly
+assigned/set.
 
-Have you asked the authors where this lower limit came from (or
-determined it was just copy pasta some other way)?
+> I think you should move the hrtimer init to nsim_queue_alloc()
+> and removal to nsim_queue_free()
 
->  					hysteresis = <1000>;
->  					type = "critical";
->  				};
+That seems to make nl_netdev happier. Let me do more tests, and then ask
+NIPA do finish the work.
 
-> @@ -8737,7 +8737,7 @@ trip-point0 {
->  				};
->  
->  				video-critical {
-> -					temperature = <125000>;
-> +					temperature = <115000>;
->  					hysteresis = <1000>;
->  					type = "critical";
->  				};
-
-Ok, make sense to backport the first patch as well then.
-
-Looks good to me:
-
-Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
+Thanks!
 
