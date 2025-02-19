@@ -1,145 +1,117 @@
-Return-Path: <linux-kernel+bounces-521610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53996A3BFF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:31:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE47FA3BFE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:28:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43E41166DB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:28:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06CAD1885A43
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:28:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 776E11E520E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 378D61E3DE4;
 	Wed, 19 Feb 2025 13:28:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="o/u2j1HJ"
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34D461DEFE1;
-	Wed, 19 Feb 2025 13:28:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42A701CAA95;
+	Wed, 19 Feb 2025 13:28:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739971706; cv=none; b=tT4FL4gZc96dUBrUz+XXmFFfZzlqw0st6dS3DWZ3R+DPGDrWaWmMEDd3qam4Olia4I83l1w27Lmw9iyPkKwa3VsAimMcZ1PPkcoUnzE2Swy8razqcggh7K/swKyED9U0l55NSprXBkELqEbDRPAhiOp+7yrABGINcRBP0X2zkFs=
+	t=1739971706; cv=none; b=ixjwraejhmcI7OZGIbxS+rQn7c3+76xPqHN25NOaUFAxsS2pHdSjzYLgLI/HBS4IGZq6BKQ0oL6u7WJljmZIcqO8WT2Ijl+eiv1gUihJQvZgk0laXPys9uJR2Aq+imtgLu+MmN0oskL8IntwYJnBfJlMzh/f+rZqC/fw8QsAR5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1739971706; c=relaxed/simple;
-	bh=1e016EqTQZdP7kuufHE6tQ1LhaOiDE00JtzdrCEtDOk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PKDK3yXJAq+DtBLkyhrIbgDre+3eOa8ipGUXmwTA4I3aXjG/YOLXK9t50p5l1riwSyl7pD0dP5E14Edv8rHfPhZ+tNdTidS8f1NPycoNePAmxcFAAawWGK+UzXulHXIqRAbuULE4TcCngO1LeUJ44XGEdS1ti76vMfi9IHR44kQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=o/u2j1HJ; arc=none smtp.client-ip=115.124.30.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1739971698; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=PZFTmiWgIWK8Z5wC1s1Fh0TDUD2HKL3tvr0e+ik4nUg=;
-	b=o/u2j1HJC0q6BFcG3NTEFjNfFPaMINeKkR4hgRRBR5U41LGoQeR8ac7n4yzKv/9EReNfKJ9azQeT6ZZoupxCyEXHaPtw9a6tpb76lFfmCMMu0/fjKrH9fz1dOeE5iYAJh19L0FOeCBqHpLctL/SCMmPMhJvrsA6ldCS8lOgf+fc=
-Received: from 30.246.161.128(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WPpRZwU_1739971697 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 19 Feb 2025 21:28:18 +0800
-Message-ID: <5dfdb75c-e532-4a5e-8098-7650c6494d78@linux.alibaba.com>
-Date: Wed, 19 Feb 2025 21:28:16 +0800
+	bh=lMdWoFAhhwD7FG5rhhx9X3bRO5vHcx7dvb5tK7w1qI0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZWgWosSj9Ye14mhFKG608pcC+t8ntw0ZbHvdvrFenHBUHweMQCwZtYrdmy4AIX9aP4pmEVgG9DSiy/glhHPP48XG7oV7yPjZesTSzFFW5jxMDDglE6NgLuGxm73AronI1futcQ5xhDByaWcWXsIFabCsJcnb+KwQdYR5ckIB+rY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D88541682;
+	Wed, 19 Feb 2025 05:28:42 -0800 (PST)
+Received: from e133380.arm.com (e133380.arm.com [10.1.197.43])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7DBDD3F59E;
+	Wed, 19 Feb 2025 05:28:20 -0800 (PST)
+Date: Wed, 19 Feb 2025 13:28:18 +0000
+From: Dave Martin <Dave.Martin@arm.com>
+To: Babu Moger <babu.moger@amd.com>
+Cc: corbet@lwn.net, reinette.chatre@intel.com, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	tony.luck@intel.com, peternewman@google.com, fenghua.yu@intel.com,
+	x86@kernel.org, hpa@zytor.com, paulmck@kernel.org,
+	akpm@linux-foundation.org, thuth@redhat.com, rostedt@goodmis.org,
+	xiongwei.song@windriver.com, pawan.kumar.gupta@linux.intel.com,
+	daniel.sneddon@linux.intel.com, jpoimboe@kernel.org,
+	perry.yuan@amd.com, sandipan.das@amd.com, kai.huang@intel.com,
+	xiaoyao.li@intel.com, seanjc@google.com, xin3.li@intel.com,
+	andrew.cooper3@citrix.com, ebiggers@google.com,
+	mario.limonciello@amd.com, james.morse@arm.com,
+	tan.shaopeng@fujitsu.com, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, maciej.wieczor-retman@intel.com,
+	eranian@google.com
+Subject: Re: [PATCH v11 01/23] x86/resctrl: Add __init attribute to functions
+ called from resctrl_late_init()
+Message-ID: <Z7Xccob9B2IMiAXy@e133380.arm.com>
+References: <cover.1737577229.git.babu.moger@amd.com>
+ <e946a96a5d161f7b32e84c23c1a0024a31db2898.1737577229.git.babu.moger@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 7/7] dmaengine: idxd: Refactor remove call with
- idxd_cleanup() helper
-To: Fenghua Yu <fenghuay@nvidia.com>, vinicius.gomes@intel.com,
- dave.jiang@intel.com, vkoul@kernel.org
-Cc: nikhil.rao@intel.com, dmaengine@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250215054431.55747-1-xueshuai@linux.alibaba.com>
- <20250215054431.55747-8-xueshuai@linux.alibaba.com>
- <4b5b45b3-76a1-4850-aeba-ff4d6777e97c@nvidia.com>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <4b5b45b3-76a1-4850-aeba-ff4d6777e97c@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e946a96a5d161f7b32e84c23c1a0024a31db2898.1737577229.git.babu.moger@amd.com>
 
+Hi,
 
-
-在 2025/2/19 05:01, Fenghua Yu 写道:
-> Hi, Shuai,
+On Wed, Jan 22, 2025 at 02:20:09PM -0600, Babu Moger wrote:
+> resctrl_late_init() has the __init attribute, but some of the functions
+> called from it do not have the __init attribute.
 > 
-> On 2/14/25 21:44, Shuai Xue wrote:
->> The idxd_cleanup() helper clean up perfmon, interrupts, internals and so
-> 
-> s/clean/cleans/
-> 
-> 
->> on. Refactor remove call with idxd_cleanup() helper to avoid code
-> s/idxd_cleanup()/the idxd_cleanup()/
->> duplication. Note, this also fixes the missing put_device() for idxd
->> groups, enginces and wqs.
->>
->> Fixes: bfe1d56091c1 ("dmaengine: idxd: Init and probe for Intel data accelerators")
->> Suggested-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
->> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
->> ---
->>   drivers/dma/idxd/init.c | 13 ++-----------
->>   1 file changed, 2 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
->> index f40f1c44a302..0fbfbe024c29 100644
->> --- a/drivers/dma/idxd/init.c
->> +++ b/drivers/dma/idxd/init.c
->> @@ -1282,20 +1282,11 @@ static void idxd_remove(struct pci_dev *pdev)
->>       get_device(idxd_confdev(idxd));
-> get_device() is called here.
->>       device_unregister(idxd_confdev(idxd));
->>       idxd_shutdown(pdev);
->> -    if (device_pasid_enabled(idxd))
->> -        idxd_disable_system_pasid(idxd);
->>       idxd_device_remove_debugfs(idxd);
->> -
->> -    irq_entry = idxd_get_ie(idxd, 0);
->> -    free_irq(irq_entry->vector, irq_entry);
->> -    pci_free_irq_vectors(pdev);
->> +    idxd_cleanup(idxd);
->>       pci_iounmap(pdev, idxd->reg_base);
->> -    if (device_user_pasid_enabled(idxd))
->> -        idxd_disable_sva(pdev);
->> -    pci_disable_device(pdev);
->> -    destroy_workqueue(idxd->wq);
->> -    perfmon_pmu_remove(idxd);
->>       idxd_free(idxd);
-> 
-> put_device() is called inside idxd_free(). Seems not easy to read code to match the pair.
+> Add the __init attribute to all the functions in the call sequences to
+> maintain consistency throughout.
 
-IMHO, idxd_free() is paired with idxd_alloc() which grap a reference count by
-device_initialize(). So, we should match that right pair.
+(BTW, did you just find these cases by inspection, or were you getting
+build warnings?
 
-> * When ->release() is called for the idxd->conf_dev, it frees all the memory related
-> * to the idxd context.
+Even with CONFIG_DEBUG_SECTION_MISMATCH=y, I struggle to get build
+warnings about section mismatches on inlined functions.  Even building
+with -fno-inline doesn't flag them all up (though I don't think this
+suppresses all inlining).
 
-I did not figure out why you explictly grab reference count of
-idxd_confdev(idxd).
+If you have a way of tracking these cases down automatically, I'd be
+interested to know so that I can apply it elsewhere.)
 
-idxd_unregister_devices() is paired with idxd_register_devices(), it only
-decrease reference through wqs, engines, and groups. So a refcnt of
-idxd->conf_dev is still hold by idxd_alloc().
+Cheers
+---Dave
 
-Please correct me, if I missed anything.
 
 > 
-> Plus idxd_free() is called only in non FLR case.
-> 
-> Maybe it's better to change this code to:
-> 
-> 1. call put_device() outside idxd_free() so that it's easy to match the get_device() and put_deivce in the same level of function.
+> Fixes: 6a445edce657 ("x86/intel_rdt/cqm: Add RDT monitoring initialization")
+> Fixes: def10853930a ("x86/intel_rdt: Add two new resources for L2 Code and Data Prioritization (CDP)")
+> Fixes: bd334c86b5d7 ("x86/resctrl: Add __init attribute to rdt_get_mon_l3_config()")
+> Suggested-by: Reinette Chatre <reinette.chatre@intel.com>
+> Signed-off-by: Babu Moger <babu.moger@amd.com>
+> ---
 
-See my comments above.
-> 
-> 2. idxd_free() called here is OK because this is not in FLR handler. But only call it in non FLR path in idxd_pci_probe_alloc()
-> 
+[...]
 
-Exactly, so, shoud I add a protection in idxd_free() in a fact that non FLR case will not call it.
+> diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
+> index 3d1735ed8d1f..f0a331287979 100644
+> --- a/arch/x86/kernel/cpu/resctrl/core.c
+> +++ b/arch/x86/kernel/cpu/resctrl/core.c
+> @@ -145,7 +145,7 @@ u32 resctrl_arch_system_num_rmid_idx(void)
+>   * is always 20 on hsw server parts. The minimum cache bitmask length
+>   * allowed for HSW server is always 2 bits. Hardcode all of them.
+>   */
+> -static inline void cache_alloc_hsw_probe(void)
+> +static inline __init void cache_alloc_hsw_probe(void)
+>  {
+>  	struct rdt_hw_resource *hw_res = &rdt_resources_all[RDT_RESOURCE_L3];
+>  	struct rdt_resource *r  = &hw_res->r_resctrl;
+> @@ -277,7 +277,7 @@ static __init bool __rdt_get_mem_config_amd(struct rdt_resource *r)
 
-Thanks.
-Shuai
+[...]
 
