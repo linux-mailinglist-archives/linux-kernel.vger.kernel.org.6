@@ -1,93 +1,83 @@
-Return-Path: <linux-kernel+bounces-520984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DF88A3B23E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:23:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC4EBA3B24B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:26:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 187D716ADC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:23:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D70251897408
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:25:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37FF81C1AB6;
-	Wed, 19 Feb 2025 07:23:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A514E1C1F05;
+	Wed, 19 Feb 2025 07:24:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sWh3K25m"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FtKBbQaY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9BB41BBBDC
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 07:23:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0579C1BBBC6;
+	Wed, 19 Feb 2025 07:24:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739949824; cv=none; b=TybELMb0mFDixJTE7RMaH4xdZHDg26vl/3fBXghv3Mbn5Hlyvr76fYAQIGdBV/w3beiXNNLvkv3RvAnMd6afplUopXoUsaxb8eZmwbkLzPG0lUmc92KlBNFziCYmnzF92ozsRqHnzRUmOMxB/U6YOkf0q2bkKwSho2zhrLOR11E=
+	t=1739949895; cv=none; b=IY20pb/nVNCAIyFVWgLOJhyjfr9eLoytOCa/yxuxY8tJRTMW2mOQUj+g788ACR8HXEbjGjnP6Fo7QQrAwyVp7w75nbuFKMho6nm38EOwvINLm7hn+4MK2vmVQ/iYL8U2w/eC8CvZz3lCVZ4FsD3GAKryeKbHjBrg12fub34wHbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739949824; c=relaxed/simple;
-	bh=3kLZsDMev250iMmOeYc57o6jrc1EykFIZENk0ndPuYU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=ZSDohpOMRTec2JSgsQ2TNmIHcuRNQbcFgU0Dtp7D5ZVuLEYyMXGoCwFVr34yOK3d9zFrFTxzNVBklCC0nv6rhVuPfhXOgGjUqLqK++WLFz/Rfy0HgYjHi8s60claWpqv9Ce9BeMSxcRh4j2wlOUVWyGyCecl0vV4CH6Wu3Ev0+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sWh3K25m; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-abbac134a19so371176366b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 23:23:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739949820; x=1740554620; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MrkL1EzynOEYQjnCeAURIHzh4kwI++Df9MFvfdWTjOg=;
-        b=sWh3K25mnKh9gMRLCLTcHskOivAUBekArGJKNO/qBodUigrTCmk8ZQySoqS22z3QPn
-         3UQXvQxOfwmG1TkzdUH0JShB9Y1qeV9aWrxL4VfQL/7yHiP3oTTH66smfMVFPTdPg09W
-         J262+EPSj/Miosa1gO1H2h58ywUHtQMIR+5TXCIK6QRx0vmC7bV+AJYO8774A9c9Sq5C
-         0hY3v5rBmXgu8v/t2QFLu4ZNhLAuGlN9E1cAHKfnunD/4xd5T0eXDOQqdMdZSfU61boZ
-         AKQ6q5rnDKjog+a/WcnQeFcOPnos+Tnzf92M7CT2fTOzk19fQCL+ilcVrZGOZrI3fwRX
-         D73g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739949820; x=1740554620;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MrkL1EzynOEYQjnCeAURIHzh4kwI++Df9MFvfdWTjOg=;
-        b=TBagw4chUbF46Q8pJPQy0SfDRqFhPobhzgI4G/Ifa4x7UusHzIMqhSWeTdDNr9fcid
-         4+3iQK3xLQdjdJ54NiNmgcZmbYRhwprse02UmLkh9XD4oYHwTjpBZ8llTAJkLsYtYoTT
-         UQG4m93UQngkyeFt1UQga1crhEDDHUMy4f579f3w7MZApsBkVKtDAP8Ha6TTAB+lgucf
-         oMzcV3wGejjbVlwtmoCm2XXc74UtOfv+UCYd68hWFuEeaOvpe3c74L0pmCf9RzdKMxPa
-         EJMifQ3wsljVq5BAHkxJttbMsOWHk5TbhdbtYSKfAP/knVvARpi27tctgkn+99Zjc8Cd
-         L52w==
-X-Forwarded-Encrypted: i=1; AJvYcCWusUmFhno0jP+g7y8dAJxuDywmZmY282AZhul8ymCq6COvzqCWAqi+/xgctN6iQiZOE2GTQwlIviUEN4g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySKgZPc3ot34TkRSAlUrsVsv2MvDKN6zn4cAguZ+zgme/IziLS
-	9Pq5EKWGyMBJQpPo1+oN41L3VLRyGAtOpRiPyo2w9DKmWZuxNVzdjYDKukZ9XSM=
-X-Gm-Gg: ASbGncu03NN7yYhyd0leNf+wfHOKmLZ1CPFO9Is/mDUmLPtE23969GvndPf0YPfAFnl
-	8Xmui6tm0YuFpjgJERlBVmDwU34TJ6GOpAnOJpelKQH0pGtbTcc3yxVt9Z8e4awFTTTTW32lYx5
-	ryMr4x6g7s/h8sKVoT1aBt7EBdsMqyvK7r+tKiwLiQG43NQS9PPwv+K/efYOoO+irEUifBXvMhx
-	sNZNEa7f9eHD0fXCip+VNlgVFPLf6H0WMMEVVi1XUiIjrhiipKiNb9ZjynvlBSiAVnrslfWzKWp
-	HN7jhST1B9kBnhgsLHCG
-X-Google-Smtp-Source: AGHT+IHZWXCuEpvT3xvdDN/MFE3D6j40MB5FYWQcEZO+pokW/icP1OWkegX28oeygqnpWf0djqcvPg==
-X-Received: by 2002:a17:907:3e82:b0:abb:db78:a25c with SMTP id a640c23a62f3a-abbdb78ac9amr70624766b.46.1739949820011;
-        Tue, 18 Feb 2025 23:23:40 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-abb837378e7sm729086166b.52.2025.02.18.23.23.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 23:23:39 -0800 (PST)
-Date: Wed, 19 Feb 2025 10:23:36 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Mark Tseng <chun-jen.tseng@mediatek.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Project_Global_Chrome_Upstream_Group@mediatek.com,
-	chun-jen.tseng@mediatek.com
-Subject: Re: [PATCH v3 1/3] cpufreq: mediatek: using global lock avoid race
- condition
-Message-ID: <23e24631-aee4-43cc-8f85-29ec58241c03@stanley.mountain>
+	s=arc-20240116; t=1739949895; c=relaxed/simple;
+	bh=SRqj9MZLCV8OPtw+RLc/L0/R3k9RqsqUSw55QX9OOlE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YtPfqFmnY540fizjQvdMLKzY79uMEwbWgyoG8nP+AUei+W+bc5edInd9RytkY6rzc1GKTBjx3X7VwX16g1q+TBSyli2yvA9ZX/jamMqH5+LqF7X8A8FGtlAq+4eb1nXbxChMd7OQf6e21q/X50HcHruXH4B/XLp5p5MnoGtejwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FtKBbQaY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1235C4CED1;
+	Wed, 19 Feb 2025 07:24:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739949894;
+	bh=SRqj9MZLCV8OPtw+RLc/L0/R3k9RqsqUSw55QX9OOlE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FtKBbQaYTslR+0p7SefBILIuS73xk2HkHE9X1wi3f1RYXdzexSpsyIrHcPKNtZYjL
+	 BvKiLvIz6tiQbKcH9IhyUrzpRPaTkQMGYuEz3o1+LwRY6+cXJ2ZdV6QYVU7JbUtlYQ
+	 05YBQSpFJ0o9+4PFttNGG2I4B8gyRtwm24/vnas8DwL/rcu9i5Hz/rxhmWxht1y1Dw
+	 wkLpe3ZZgtmacfwPN46ynU8iy+ypPSs9dwF5Tdr7KWenmjNUChafxZkv2PmgFVMNfi
+	 6mdnd8DQM0qYd4dN8GiXu45YvQUX49U1bZ45kTkOBpF0wvbKLl80gJxVUX5K2raMUR
+	 MM9jdOERGv5AQ==
+Date: Wed, 19 Feb 2025 09:24:31 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Wei Yang <richard.weiyang@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Alexander Graf <graf@amazon.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Anthony Yznaga <anthony.yznaga@oracle.com>,
+	Arnd Bergmann <arnd@arndb.de>, Ashish Kalra <ashish.kalra@amd.com>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Ingo Molnar <mingo@redhat.com>, James Gowans <jgowans@amazon.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Pratyush Yadav <ptyadav@amazon.de>,
+	Rob Herring <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Usama Arif <usama.arif@bytedance.com>,
+	Will Deacon <will@kernel.org>, devicetree@vger.kernel.org,
+	kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
+Subject: Re: [PATCH v4 02/14] memblock: add MEMBLOCK_RSRV_KERN flag
+Message-ID: <Z7WHL_Xqgoln9oLg@kernel.org>
+References: <20250206132754.2596694-1-rppt@kernel.org>
+ <20250206132754.2596694-3-rppt@kernel.org>
+ <20250218155004.n53fcuj2lrl5rxll@master>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,90 +86,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250214074353.1169864-2-chun-jen.tseng@mediatek.com>
+In-Reply-To: <20250218155004.n53fcuj2lrl5rxll@master>
 
-Hi Mark,
+Hi,
 
-kernel test robot noticed the following build warnings:
+On Tue, Feb 18, 2025 at 03:50:04PM +0000, Wei Yang wrote:
+> On Thu, Feb 06, 2025 at 03:27:42PM +0200, Mike Rapoport wrote:
+> >From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+> >
+> >to denote areas that were reserved for kernel use either directly with
+> >memblock_reserve_kern() or via memblock allocations.
+> >
+> >Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> >---
+> > include/linux/memblock.h | 16 +++++++++++++++-
+> > mm/memblock.c            | 32 ++++++++++++++++++++++++--------
+> > 2 files changed, 39 insertions(+), 9 deletions(-)
+> >
+> >diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+> >index e79eb6ac516f..65e274550f5d 100644
+> >--- a/include/linux/memblock.h
+> >+++ b/include/linux/memblock.h
+> >@@ -50,6 +50,7 @@ enum memblock_flags {
+> > 	MEMBLOCK_NOMAP		= 0x4,	/* don't add to kernel direct mapping */
+> > 	MEMBLOCK_DRIVER_MANAGED = 0x8,	/* always detected via a driver */
+> > 	MEMBLOCK_RSRV_NOINIT	= 0x10,	/* don't initialize struct pages */
+> >+	MEMBLOCK_RSRV_KERN	= 0x20,	/* memory reserved for kernel use */
+> 
+> Above memblock_flags, there are comments on explaining those flags.
+> 
+> Seems we miss it for MEMBLOCK_RSRV_KERN.
 
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Right, thanks!
+ 
+> > 
+> > #ifdef CONFIG_HAVE_MEMBLOCK_PHYS_MAP
+> >@@ -1459,14 +1460,14 @@ phys_addr_t __init memblock_alloc_range_nid(phys_addr_t size,
+> > again:
+> > 	found = memblock_find_in_range_node(size, align, start, end, nid,
+> > 					    flags);
+> >-	if (found && !memblock_reserve(found, size))
+> >+	if (found && !__memblock_reserve(found, size, nid, MEMBLOCK_RSRV_KERN))
+> 
+> Maybe we could use memblock_reserve_kern() directly. If my understanding is
+> correct, the reserved region's nid is not used.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Mark-Tseng/cpufreq-mediatek-using-global-lock-avoid-race-condition/20250214-154521
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
-patch link:    https://lore.kernel.org/r/20250214074353.1169864-2-chun-jen.tseng%40mediatek.com
-patch subject: [PATCH v3 1/3] cpufreq: mediatek: using global lock avoid race condition
-config: sparc-randconfig-r071-20250218 (https://download.01.org/0day-ci/archive/20250219/202502190807.fz6fs2jz-lkp@intel.com/config)
-compiler: sparc64-linux-gcc (GCC) 14.2.0
+We use nid of reserved regions in reserve_bootmem_region() (commit
+61167ad5fecd ("mm: pass nid to reserve_bootmem_region()")) but KHO needs to
+know the distribution of reserved memory among the nodes before
+memmap_init_reserved_pages().
+ 
+> BTW, one question here. How we handle concurrent memblock allocation? If two
+> threads find the same available range and do the reservation, it seems to be a
+> problem to me. Or I missed something?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202502190807.fz6fs2jz-lkp@intel.com/
-
-smatch warnings:
-drivers/cpufreq/mediatek-cpufreq.c:367 mtk_cpufreq_opp_notifier() warn: inconsistent returns 'global &mtk_policy_lock'.
-
-vim +367 drivers/cpufreq/mediatek-cpufreq.c
-
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  317  static int mtk_cpufreq_opp_notifier(struct notifier_block *nb,
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  318  				    unsigned long event, void *data)
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  319  {
-5f81d7eeae239d drivers/cpufreq/mediatek-cpufreq.c Mark Tseng    2025-02-14  320  	struct dev_pm_opp *opp;
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  321  	struct dev_pm_opp *new_opp;
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  322  	struct mtk_cpu_dvfs_info *info;
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  323  	unsigned long freq, volt;
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  324  	struct cpufreq_policy *policy;
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  325  	int ret = 0;
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  326  
-5f81d7eeae239d drivers/cpufreq/mediatek-cpufreq.c Mark Tseng    2025-02-14  327  	mutex_lock(&mtk_policy_lock);
-5f81d7eeae239d drivers/cpufreq/mediatek-cpufreq.c Mark Tseng    2025-02-14  328  	opp = data;
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  329  	info = container_of(nb, struct mtk_cpu_dvfs_info, opp_nb);
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  330  
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  331  	if (event == OPP_EVENT_ADJUST_VOLTAGE) {
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  332  		freq = dev_pm_opp_get_freq(opp);
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  333  
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  334  		if (info->current_freq == freq) {
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  335  			volt = dev_pm_opp_get_voltage(opp);
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  336  			ret = mtk_cpufreq_set_voltage(info, volt);
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  337  			if (ret)
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  338  				dev_err(info->cpu_dev,
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  339  					"failed to scale voltage: %d\n", ret);
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  340  		}
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  341  	} else if (event == OPP_EVENT_DISABLE) {
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  342  		freq = dev_pm_opp_get_freq(opp);
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  343  
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  344  		/* case of current opp item is disabled */
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  345  		if (info->current_freq == freq) {
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  346  			freq = 1;
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  347  			new_opp = dev_pm_opp_find_freq_ceil(info->cpu_dev,
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  348  							    &freq);
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  349  			if (IS_ERR(new_opp)) {
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  350  				dev_err(info->cpu_dev,
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  351  					"all opp items are disabled\n");
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  352  				ret = PTR_ERR(new_opp);
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  353  				return notifier_from_errno(ret);
-
-mutex_unlock(&mtk_policy_lock) before returning.
-
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  354  			}
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  355  
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  356  			dev_pm_opp_put(new_opp);
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  357  			policy = cpufreq_cpu_get(info->opp_cpu);
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  358  			if (policy) {
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  359  				cpufreq_driver_target(policy, freq / 1000,
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  360  						      CPUFREQ_RELATION_L);
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  361  				cpufreq_cpu_put(policy);
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  362  			}
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  363  		}
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  364  	}
-5f81d7eeae239d drivers/cpufreq/mediatek-cpufreq.c Mark Tseng    2025-02-14  365  	mutex_unlock(&mtk_policy_lock);
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  366  
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05 @367  	return notifier_from_errno(ret);
-c210063b40acab drivers/cpufreq/mediatek-cpufreq.c Rex-BC Chen   2022-05-05  368  }
+memblock allocations end before smp_init(), there is no possible concurrency.
+ 
+> -- 
+> Wei Yang
+> Help you, Help me
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+Sincerely yours,
+Mike.
 
