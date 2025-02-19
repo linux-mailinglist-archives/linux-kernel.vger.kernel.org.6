@@ -1,87 +1,85 @@
-Return-Path: <linux-kernel+bounces-522721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 113E1A3CDC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 00:47:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18B2EA3CDE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 00:52:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03B811890A43
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 23:47:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5C5E18937CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 23:52:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 674CC25E479;
-	Wed, 19 Feb 2025 23:47:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A0F2262D0E;
+	Wed, 19 Feb 2025 23:52:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3Uh5xP2O"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nrO2KsAB"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 519E91C1F13
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 23:47:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D14E25EF87;
+	Wed, 19 Feb 2025 23:52:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740008862; cv=none; b=EswSpVZcsp1YaiTeBCMcxt1BkLrtBdgJ12jwWNjikbwSaMsiJp4woOKt16Kk+m+i6ekTlM4cyVmjfUjZB6Pf+GgT25Xspn0kwO9VI1SeU4e7thMNbgxgx8CYXrJSZ71hGtKdGIUtS9sVzZQEiEfeTBNj6R821n9kNI8gk/kG+1M=
+	t=1740009131; cv=none; b=qv5hTdWTUXqu1FR5QJiAi3eTUpV9VH7S2fpRrU0te5rjMuJ8osf1wpqmjQqgKiIjijWd7Inz+eujVJRLuHlMvSxoSXuODWNhaOY0SHeTyf3enTNz1n6JQjlsfzMwqEkLFhu5SD8VvvuSM/foJCGCi0EWBMiN1KYSng7VxsBVK/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740008862; c=relaxed/simple;
-	bh=UwUuwdukqezMT4zNFsZB2G1bJ/KiWJbSnKOhjVLNBmA=;
+	s=arc-20240116; t=1740009131; c=relaxed/simple;
+	bh=fC6muqlChDrljBG2bGaCmMbBFb3Lrun3fzk8vu7AYLA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eLKmat4fM1GnRq5tL8tmvtzeM6iFVoCTzIt/Q1gH8xFvX+Zz9jns7kSaVDky41OpXs78BelScu40QnFBmw75VK60+fma92FCOq/Eo7zFfEx2Uj1EHzMi5eU9+x18An+i1wC2FslhavKW2Z5Xh9orTZ9X5awfN/hwJUkDMUltdC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3Uh5xP2O; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-22117c396baso37855ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 15:47:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740008860; x=1740613660; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7EDgb9ixmcxW5HDhsD7poMpSDgYXVSUp8X6oXzf45dg=;
-        b=3Uh5xP2OXM2kvwkDLr4Wq4JT+d3yAaz0Z9KwPBYizh+NFwyWcA2RfPPC1Zju4+KKtx
-         CXCiQZSU9uhkf1ZG4KO4NiQlg6U8n/3EGYcpD0pUFI2V5vYjWEgwK9RYaGKfvd0iJ7JW
-         H71r7lmdI9GodL4ehceXVxlSHGuPxExL7MTL1XPN506nG1OO7W2ivC8eobTSHj2cYEwy
-         ylyBW/nvNONOuiI4FfWUWSzABAzeBpdN/s96fRnsdaLVfLwY1Bpbep6vCmKaaMBxRVZh
-         TJAlxdm2iyuDhLaAx4VLlwN/2qQY99Fb8Mf6scmCRsW8qBXyVQap6imhaIVCEFc0R+B3
-         BqHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740008860; x=1740613660;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7EDgb9ixmcxW5HDhsD7poMpSDgYXVSUp8X6oXzf45dg=;
-        b=Alw6OX9DR1b/6mpFgmN14YtZMAUFe2QLvXsULpWB45yzPNp/gFw0vDIHGYswCoCD6O
-         SGNCGXh0iMyB9x9JVMWgctOQWjT6B2QZ9ZKusxuePi+R+kuU/tUpGmCdc6cxEi/riO7t
-         1kcQnjDpHNxgoZfoAAGNYItAq9m+C8FH6xtOTbFHBagJNm8nYVvmUANIl/bQcNp3TTes
-         FlNX3RUzL375+9GVWNGdVUpFr1fpmFk26kBk6jVrCniQj9DZRc3sMJ65/jKrpj81PbLP
-         dawSjN6pUUEbBc+b3pxP+D4iY7oVj6/j1N7Ma1BkrQiaclimwlRk4d/BJibALw4ebJfe
-         Ah/w==
-X-Forwarded-Encrypted: i=1; AJvYcCWEf7OvLM455D/wBpX9KAuNcxB1q1QWb2acHZVkGWPjaUbsDEU3BIFwcJFSVCBN3rcgch7v4SZ6obdsDbo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAQIpwrUbYnCx7PwYnKrkRDU2xy7zpcGveyfaMVxHMVIm7o/Xb
-	qewp/ownVX5wQ5zl4L/6KdhrOv2IeDplGwjAndNv25bX83KXGX0A7yk42RrGBg==
-X-Gm-Gg: ASbGnctqxoSI4yq+mp8CqaCJRRS4lhxhPf4XWJVaOI0IZVw9wr2OBJCLNY+rBX2621c
-	LJtOcSLyCtaaAKS9s+Ee3oNKXtVczSRsnPdyr9ouZZWpQZrZ1a0ERdflVDBrKkXr0VtnpMo6v/D
-	eusMdMqEMamFgZv2ZsWLU6+HgDfwjVqeRJP6vr8I4Kfz2jAc4TTZeYYmv+qeBRCDGVmK2le0cQI
-	tASTUW3Jt4bXrJlzdtFD0+g4++F+WqPAenKSbf3smjo5VS2jG9ac6zV46ZYLsn5ocdzdUWqkAaj
-	TXMajHyQ5Awz4z7AzQCCBK9bLEPrWZDzFX0SJLUi9HjHQqLURfnnIIJA2Ik=
-X-Google-Smtp-Source: AGHT+IG0hr/jG6j1sf+wqHDPRpxr2FFnc0Et7UEElKQxjMSSSyeVPZKlgXTKJB1uWFrEjnPtBHR0Yg==
-X-Received: by 2002:a17:902:d48e:b0:215:79b5:aa7e with SMTP id d9443c01a7336-2218ff9e8a0mr489615ad.13.1740008859704;
-        Wed, 19 Feb 2025 15:47:39 -0800 (PST)
-Received: from google.com (190.40.105.34.bc.googleusercontent.com. [34.105.40.190])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2217eb0e503sm12269545ad.62.2025.02.19.15.47.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2025 15:47:38 -0800 (PST)
-Date: Wed, 19 Feb 2025 23:47:34 +0000
-From: Sami Tolvanen <samitolvanen@google.com>
-To: Mikulas Patocka <mpatocka@redhat.com>
-Cc: Eric Biggers <ebiggers@kernel.org>,
-	Akilesh Kailash <akailash@google.com>, kernel-team@android.com,
-	Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
-	Milan Broz <gmazyland@gmail.com>, dm-devel@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] dm-verity: do forward error correction on metadata
- I/O errors
-Message-ID: <20250219234734.GA758416@google.com>
-References: <920de20f-1d11-e6f6-e7ae-a774f5c210f0@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YWdjfnRQlM1A6asntg2Eq1jq5LDnNVmsvC8h+Jmgm7VBim7/OhB3r7OV9ERtAmePnHUxCgaGfC+hMsASRQABvTk/nkNxepY9xP6ZdgaWmsEfUf8un5g51OQnaJf9c8y9fXmd03nsLYu04Cxx8Tlc6JFAL4jkqWVYJavatpqxOdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nrO2KsAB; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740009129; x=1771545129;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=fC6muqlChDrljBG2bGaCmMbBFb3Lrun3fzk8vu7AYLA=;
+  b=nrO2KsAB8MhUlqZMSNHsxPoG+tMkFCfdRdqSPyXo/BmlOXFHutA1QjhM
+   75yc6ZOykBcHhq5QfqQ1ib/8hhAKSPdBDAP8TS4c/grAJJqFOSvB/jq+8
+   18/nHEOrNf7wEDY34hrH6sUouaGshXtj9WPJY4jTaJ2bONX6tmfl1TO2I
+   rwooDDHZswIr1jjaaeo8Zm30jvNgvdwhAYzdybJxqXmTfZMjRwoUAS0Fv
+   /RTvl+db7/s5Yj937VFS2yFJjs4mkfUbWR3sNfIswA39kVT40YwdYgU6E
+   uWtdQC1X1GoppuBfZhEF4xVAcZfFmapjbOH4PGB0ZP7sqT+8s/UzFL2nE
+   w==;
+X-CSE-ConnectionGUID: y9safsIiRJCd87WfDDymbg==
+X-CSE-MsgGUID: qJ5AF7wuQ0mqU0ue1Sv2ZQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11350"; a="44688520"
+X-IronPort-AV: E=Sophos;i="6.13,300,1732608000"; 
+   d="scan'208";a="44688520"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 15:52:08 -0800
+X-CSE-ConnectionGUID: ooLzz0LaSPGEFPY9ENumrA==
+X-CSE-MsgGUID: NYD5DsV1TIOSvYVpYayIhg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,300,1732608000"; 
+   d="scan'208";a="115065139"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa008.fm.intel.com with ESMTP; 19 Feb 2025 15:52:04 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tktrF-0003d5-26;
+	Wed, 19 Feb 2025 23:52:01 +0000
+Date: Thu, 20 Feb 2025 07:51:05 +0800
+From: kernel test robot <lkp@intel.com>
+To: Svyatoslav Ryhel <clamor95@gmail.com>, Lee Jones <lee@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Pavel Machek <pavel@ucw.cz>,
+	Daniel Thompson <danielt@kernel.org>,
+	Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org, linux-leds@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] mfd: lm3533: convert to use OF
+Message-ID: <202502200718.H8t6Uv7b-lkp@intel.com>
+References: <20250218132702.114669-3-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,81 +88,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <920de20f-1d11-e6f6-e7ae-a774f5c210f0@redhat.com>
+In-Reply-To: <20250218132702.114669-3-clamor95@gmail.com>
 
-On Mon, Feb 17, 2025 at 10:36:02PM +0100, Mikulas Patocka wrote:
-> dm-verity: do forward error correction on metadata I/O errors
-> 
-> Do forward error correction if metadata I/O fails.
-> 
-> Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-> 
-> ---
->  drivers/md/dm-verity-target.c |   25 +++++++++++++++++++++----
->  1 file changed, 21 insertions(+), 4 deletions(-)
-> 
-> Index: linux-2.6/drivers/md/dm-verity-target.c
-> ===================================================================
-> --- linux-2.6.orig/drivers/md/dm-verity-target.c	2025-02-10 16:24:56.000000000 +0100
-> +++ linux-2.6/drivers/md/dm-verity-target.c	2025-02-17 16:47:37.000000000 +0100
-> @@ -311,7 +311,7 @@ static int verity_verify_level(struct dm
->  
->  	if (static_branch_unlikely(&use_bh_wq_enabled) && io->in_bh) {
->  		data = dm_bufio_get(v->bufio, hash_block, &buf);
-> -		if (data == NULL) {
-> +		if (IS_ERR_OR_NULL(data)) {
+Hi Svyatoslav,
 
-Thanks for adding the check, makes this easier to follow.
+kernel test robot noticed the following build errors:
 
->  			/*
->  			 * In tasklet and the hash was not in the bufio cache.
->  			 * Return early and resume execution from a work-queue
-> @@ -324,8 +324,24 @@ static int verity_verify_level(struct dm
->  						&buf, bio->bi_ioprio);
->  	}
->  
-> -	if (IS_ERR(data))
-> -		return PTR_ERR(data);
-> +	if (IS_ERR(data)) {
-> +		if (skip_unverified)
-> +			return 1;
-> +		r = PTR_ERR(data);
-> +		data = dm_bufio_new(v->bufio, hash_block, &buf);
-> +		if (IS_ERR(data))
-> +			return r;
-> +		if (verity_fec_decode(v, io, DM_VERITY_BLOCK_TYPE_METADATA,
-> +				      hash_block, data) == 0) {
-> +			aux = dm_bufio_get_aux_data(buf);
-> +			aux->hash_verified = 1;
-> +			goto release_ok;
-> +		} else {
-> +			dm_bufio_release(buf);
-> +			dm_bufio_forget(v->bufio, hash_block);
-> +			return r;
-> +		}
-> +	}
->  
->  	aux = dm_bufio_get_aux_data(buf);
->  
-> @@ -366,6 +382,7 @@ static int verity_verify_level(struct dm
->  		}
->  	}
->  
-> +release_ok:
->  	data += offset;
->  	memcpy(want_digest, data, v->digest_size);
->  	r = 0;
-> @@ -1761,7 +1778,7 @@ static struct target_type verity_target
->  	.name		= "verity",
->  /* Note: the LSMs depend on the singleton and immutable features */
->  	.features	= DM_TARGET_SINGLETON | DM_TARGET_IMMUTABLE,
-> -	.version	= {1, 10, 0},
-> +	.version	= {1, 11, 0},
->  	.module		= THIS_MODULE,
->  	.ctr		= verity_ctr,
->  	.dtr		= verity_dtr,
+[auto build test ERROR on lee-mfd/for-mfd-next]
+[also build test ERROR on lee-leds/for-leds-next robh/for-next linus/master v6.14-rc3 next-20250219]
+[cannot apply to lee-mfd/for-mfd-fixes]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Reviewed-by: Sami Tolvanen <samitolvanen@google.com>
+url:    https://github.com/intel-lab-lkp/linux/commits/Svyatoslav-Ryhel/dt-bindings-mfd-Document-TI-LM3533-MFD/20250218-212857
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git for-mfd-next
+patch link:    https://lore.kernel.org/r/20250218132702.114669-3-clamor95%40gmail.com
+patch subject: [PATCH v2 2/2] mfd: lm3533: convert to use OF
+config: arm-randconfig-002-20250219 (https://download.01.org/0day-ci/archive/20250220/202502200718.H8t6Uv7b-lkp@intel.com/config)
+compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250220/202502200718.H8t6Uv7b-lkp@intel.com/reproduce)
 
-Sami
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502200718.H8t6Uv7b-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/video/backlight/lm3533_bl.c:417:25: error: use of undeclared identifier 'lm3533_match_table'; did you mean 'lm3533_bl_match_table'?
+     417 | MODULE_DEVICE_TABLE(of, lm3533_match_table);
+         |                         ^~~~~~~~~~~~~~~~~~
+         |                         lm3533_bl_match_table
+   include/linux/module.h:250:15: note: expanded from macro 'MODULE_DEVICE_TABLE'
+     250 | extern typeof(name) __mod_device_table__##type##__##name                \
+         |               ^
+   drivers/video/backlight/lm3533_bl.c:413:34: note: 'lm3533_bl_match_table' declared here
+     413 | static const struct of_device_id lm3533_bl_match_table[] = {
+         |                                  ^
+   1 error generated.
+
+
+vim +417 drivers/video/backlight/lm3533_bl.c
+
+   412	
+   413	static const struct of_device_id lm3533_bl_match_table[] = {
+   414		{ .compatible = "ti,lm3533-backlight" },
+   415		{ },
+   416	};
+ > 417	MODULE_DEVICE_TABLE(of, lm3533_match_table);
+   418	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
