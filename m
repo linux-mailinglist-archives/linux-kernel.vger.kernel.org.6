@@ -1,132 +1,106 @@
-Return-Path: <linux-kernel+bounces-520806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC6F6A3AF6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 03:19:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E767A3AF86
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 03:22:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B78D83B2603
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:19:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 113FE18996F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:20:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA52213D891;
-	Wed, 19 Feb 2025 02:18:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47164160783;
+	Wed, 19 Feb 2025 02:19:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TkmQiIq8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ubN6Iskt"
+Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8CA2192580
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 02:18:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 249CF35953;
+	Wed, 19 Feb 2025 02:19:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739931509; cv=none; b=U0yuZotZW7bo+HTxnzR0gOzToQeLRC4snZoPwtTcJ0Jlrox6IOYd1futjwFgcWxwOxJPqhH5eN3VQI9c9jDvUrGt0nNx59XShvE/t8CqEnVjxVOezUx5HKqFBF0/fQnQPlYCh46HD2XeyKcWpKZdPnPQ7gz/Z72sLpLhWDENyIU=
+	t=1739931597; cv=none; b=dAv62xyBan0Xtq0X4dpFSYOTSGj8Z2P2e64N7QncGY2za/F+eudfFqviJeCMd5GsEKEf8wGGi0l8qpIieysx6VGU5GOCsU2em+wIFBnfv9mT0h9Fw3HNJvCZa6IN+elakufL3f+zbav0kx7D/q85D3DJDa1ShMdkPiEh9F/Ko3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739931509; c=relaxed/simple;
-	bh=7970QM1xZmqq/TgEZxRgA2G329dagmUAvSBDdehiCKg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZIOzp8/08j/grPFYw43XpRCRyfGAAcUhd94H8W4JEfBEULHxWRdfUuyVi3x3YNRkhEUwHDsydO+KvR7fgfdb91f4bSovOo9u21EzSUo5cPKQjX4lwbdLa9ucb13Ks7KW9L29vIZS/d8r0hFO2ZKaYNgqI2JhrZc5/CNE2DITjiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TkmQiIq8; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739931506;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=v8m9/U7uQSSFPcBA25A4fBqyiaCO54n8VIlpbaNJ5EU=;
-	b=TkmQiIq8dvhrjJ7Uy+wOzn0vbDG2zHIb51mz14aF3FEk6T6gIeRY3fnMeNYhBywLLb26ts
-	HH7fn1mp2BAz8rAuS2lx1uoYeJzzRQNDqXsmAXu1LtAoXmmNjVTg5iudB0PBhdD+KCIseU
-	hITS/D6rjb+y6r8jLcx+AvzE7/psx/o=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-338-rLhuEFm1MNKyofazmyW6_g-1; Tue,
- 18 Feb 2025 21:18:23 -0500
-X-MC-Unique: rLhuEFm1MNKyofazmyW6_g-1
-X-Mimecast-MFC-AGG-ID: rLhuEFm1MNKyofazmyW6_g_1739931502
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4186619373DC;
-	Wed, 19 Feb 2025 02:18:22 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.22.65.50])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 44EAA1956094;
-	Wed, 19 Feb 2025 02:18:20 +0000 (UTC)
-From: Luiz Capitulino <luizcap@redhat.com>
-To: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	david@redhat.com,
-	yuzhao@google.com,
-	pasha.tatashin@soleen.com
-Cc: akpm@linux-foundation.org,
-	hannes@cmpxchg.org,
-	muchun.song@linux.dev,
-	luizcap@redhat.com
-Subject: [PATCH 4/4] mm: page_ext: make page_ext_next() private to page_ext
-Date: Tue, 18 Feb 2025 21:17:50 -0500
-Message-ID: <5794ff5b322febd376728c8e22c802c15827dcc8.1739931468.git.luizcap@redhat.com>
-In-Reply-To: <cover.1739931468.git.luizcap@redhat.com>
-References: <cover.1739931468.git.luizcap@redhat.com>
+	s=arc-20240116; t=1739931597; c=relaxed/simple;
+	bh=XCO7aG0qdH8I+G0ipRw03stO6RiIv2I3oVc7k1eZLdk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YoJg+UkgTJ1j7ieOXulevVlNSEEzrEjs5+G2oputMo2DRccMlLXNV+iNZ2B4O0Lvbbw0FrCrsNn3MHWXzcL/f5QQAm29//jLf0nuMLpYRiBtQ+3qmFCgrFE1sQUqX+SVBWMMQCtBiAzOyycUGry6vTdvFxgWWEbE+znxujkwPfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ubN6Iskt; arc=none smtp.client-ip=115.124.30.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1739931590; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+	bh=kNmeRWaY/Gzx67QUsazLWRkGga4wXBt2+ae+XANxPFs=;
+	b=ubN6IsktplmGv6rxvIF4EBaNeE10OWih16NkuhfArgiudBVGAXZF5weDmizf3shEdkE97nXjCktP7TtG8iobDaA98M10iuCn6SM3o0iPprd1CoxLi8SyqbJ4FzoYFOEJ0X0oJG/njjUtV692kdWwh2ujc0Ingy3DyidVNkOVC3o=
+Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0WPnQaEn_1739931588 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 19 Feb 2025 10:19:49 +0800
+Date: Wed, 19 Feb 2025 10:19:48 +0800
+From: Feng Tang <feng.tang@linux.alibaba.com>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+	Guanghui Feng <guanghuifeng@linux.alibaba.com>,
+	Liguang Zhang <zhangliguang@linux.alibaba.com>,
+	Lukas Wunner <lukas@wunner.de>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH v2 1/2] PCI/portdrv: Add necessary wait for disabling
+ hotplug events
+Message-ID: <Z7U_xNsQ04_tcTgB@U-2FWC9VHC-2323.local>
+References: <20250218034859.40397-1-feng.tang@linux.alibaba.com>
+ <a7ebd733-3fdd-4163-8fd4-9f70ee40c6be@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+In-Reply-To: <a7ebd733-3fdd-4163-8fd4-9f70ee40c6be@web.de>
 
-Previous commits removed page_ext_next() use from page_ext clients. Make
-it private.
+Hi Markus,
 
-Fixes: cf54f310d0d3 ("mm/hugetlb: use __GFP_COMP for gigantic folios")
-Signed-off-by: Luiz Capitulino <luizcap@redhat.com>
----
- include/linux/page_ext.h | 7 -------
- mm/page_ext.c            | 7 +++++++
- 2 files changed, 7 insertions(+), 7 deletions(-)
+On Tue, Feb 18, 2025 at 10:00:33AM +0100, Markus Elfring wrote:
+> > There was problem reported by firmware developers that they received
+> > 2 pcie link control commands in very short intervals on an ARM server,
+> > which doesn't comply with pcie spec, and broke their state machine and
+> > work flow. According to PCIe 6.1 spec, section 6.7.3.2, software needs
+> 
+> Would you like to use key words in consistent ways also in such a change description?
 
-diff --git a/include/linux/page_ext.h b/include/linux/page_ext.h
-index a99da12e59fa7..3a4f0f825aa59 100644
---- a/include/linux/page_ext.h
-+++ b/include/linux/page_ext.h
-@@ -101,13 +101,6 @@ static inline void *page_ext_data(struct page_ext *page_ext,
- 	return (void *)(page_ext) + ops->offset;
- }
- 
--static inline struct page_ext *page_ext_next(struct page_ext *curr)
--{
--	void *next = curr;
--	next += page_ext_size;
--	return next;
--}
--
- struct page_ext_iter {
- 	unsigned long pfn;
- 	unsigned long index;
-diff --git a/mm/page_ext.c b/mm/page_ext.c
-index 508deb04d5ead..f9e515d353005 100644
---- a/mm/page_ext.c
-+++ b/mm/page_ext.c
-@@ -567,6 +567,13 @@ struct page_ext *page_ext_iter_begin(struct page_ext_iter *iter, struct page *pa
- 	return iter->page_ext;
- }
- 
-+static struct page_ext *page_ext_next(struct page_ext *curr)
-+{
-+	void *next = curr;
-+	next += page_ext_size;
-+	return next;
-+}
-+
- /**
-  * page_ext_iter_next() - Get next page extension
-  * @iter: page extension iterator.
--- 
-2.48.1
+Will do. thanks
 
+> 
+> > to wait at least 1 second for the command-complete event, before
+> > resending the cmd or …
+> 
+>                 command?
+
+Yes.
+
+> …
+> > ---
+> > Changlog:
+> >
+> >   since v1:
+> …
+> 
+> Are cover letters generally desirable for patch series?
+
+The 2 patches solve different issue, and not logically relevant. But
+I'll try in next version.
+
+Thanks,
+Feng
+
+> Regards,
+> Markus
 
