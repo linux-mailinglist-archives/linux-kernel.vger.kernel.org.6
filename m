@@ -1,91 +1,125 @@
-Return-Path: <linux-kernel+bounces-522150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1E37A3C6B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:51:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D2FCFA3C6B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:51:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3330E179CB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:51:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1132179B90
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:51:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63FA22139C4;
-	Wed, 19 Feb 2025 17:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CF772144D3;
+	Wed, 19 Feb 2025 17:51:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a3hIgDLX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hMViZhKJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5BB0192580
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 17:50:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5DA71AF0D3;
+	Wed, 19 Feb 2025 17:51:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739987457; cv=none; b=YN/tIcRAfABxTnq5DIMcOw8oYX0zhjI1jlhU0IM/tDM13by/6PjCZklKWf3vYinyMfioUXKMz5AE3h7c77IVnJ2y/wn3ZSImWplFAC7YGLo99NmS9MpJsGPDiWyK7RA5lZ+FRoxMJdw/IyLpAlkqCsjkNIQusPopXFSj7PAPB8o=
+	t=1739987491; cv=none; b=qM7DWFLxo807/mf1u4txrQn/QPcjsodS9MZqWHtPLBMLQT6vS3Gw2iTPQv22NbSm54j05joqfiXqkKF438l/w2dTWTzLUHGqCAorGJL4nVl4P7cVusXoNZ8eZ40A2j/p+PH5ojAyLRZc4awmN5hG+y3gDI7NZMSm0OuYpLi/UC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739987457; c=relaxed/simple;
-	bh=LhceaD7KQjDq9ozhSrykMWNVsJdLZt+E4/+9DnJdKZA=;
+	s=arc-20240116; t=1739987491; c=relaxed/simple;
+	bh=H5/3Y209ghOxqgg6POxPe1hvZOewNiPPmcfKtVsdFGk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Eqpfu7FURdb1XaIhlrWVGqA8qI86XeKuiHuI/7bjci2I2rZKb7pn2Ti1o9ZDrZLnOUvod42pYhTUdLj7GS+rDm/RYCbeBnjehM7A6kwbpFzfA51RpFW8leRcq0oAkWrJ9YBk0xqsDyR001Q4ZLz5NxJJMpz84UoxaYO1IPgAlfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a3hIgDLX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B070C4CED1;
-	Wed, 19 Feb 2025 17:50:57 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=I6wJVnLdPHo+oFHLUR2U+Bbd/qxGl14+u4U8mabUE+J2y1zB5qX5j1KG0KY/dTf7MqMTKD3xZnog8QNbmvrlZ+Pjp7CQVWtBm0qQUgvXC6i6BnjaOItbR1cRLLMs7utE8ghhZ66eo1jtGndUk7FpCwxf1bzq7co1pEDW97rE94o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hMViZhKJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89815C4CED1;
+	Wed, 19 Feb 2025 17:51:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739987457;
-	bh=LhceaD7KQjDq9ozhSrykMWNVsJdLZt+E4/+9DnJdKZA=;
+	s=k20201202; t=1739987491;
+	bh=H5/3Y209ghOxqgg6POxPe1hvZOewNiPPmcfKtVsdFGk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=a3hIgDLXwBAhiRa4a+796H9gVMoarq98RfZEycMYyG0tnx5LSS1BxTZelGOFtOKiy
-	 P+IISpufYzUOXIqkkZ26a691nr3dMFWhHWeBUHyV7HnvvyWg65ibbwCAma9VZiMi7+
-	 8X9qBvQyLABki8H3YWSZvbGd76BL4gt3fMqOMgoxJ6oFMOvrRuM+YkuhU+YBi2RbVI
-	 LJ+ROJDwfXaUDvPCXAHvKkeMKD/GU+K9MhVI1S5rHQoaQLnemr07NKJshswzUEs9s4
-	 ZpKW4aUqRFN/24IP87O2DWOV7OWUitojVkpYkPkIurcP8/rXP+/yT7sQ4GRUYO1nAN
-	 k3NQVoaZ6x24A==
-Date: Wed, 19 Feb 2025 09:50:54 -0800
-From: Kees Cook <kees@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, alyssa.milburn@intel.com,
-	scott.d.constable@intel.com, joao@overdrivepizza.com,
-	andrew.cooper3@citrix.com, jpoimboe@kernel.org,
-	jose.marchesi@oracle.com, hjl.tools@gmail.com,
-	ndesaulniers@google.com, samitolvanen@google.com, nathan@kernel.org,
-	ojeda@kernel.org, alexei.starovoitov@gmail.com, mhiramat@kernel.org,
-	jmill@asu.edu
-Subject: Re: [PATCH v3 01/10] x86/cfi: Add warn option
-Message-ID: <202502190941.CA60135@keescook>
-References: <20250219162107.880673196@infradead.org>
- <20250219163514.364049576@infradead.org>
+	b=hMViZhKJG+IIBBzxumfv7bsA8LcTpXBCk66MtLx4tF4HdLTSzyaF4S3os6qkx+MSI
+	 aMcFB660Ro18FmMNHC0WdCMZSGkozVlHwCYhYIwYBr03Aews/K1jrDujiwiecIq2lJ
+	 3xO2CaeMG31qkI74EKXctu9YjtjHEYxCgDm4dIJS/avqWtrB9OJuwtO3LozGC+X0LT
+	 hQK2iPK9RjJCQrTX4UANqdK381MeXWCX9ro8Ct0RJi7VwQLtuC+iy7t53ZELsxMeVK
+	 FPioMQ2OzJ8T3ECCctvVHa6R693Pbwl0M5bFDupJz2Q7cc0MhQpUxb+GZX/EgxDJHj
+	 tdsDREETlNePw==
+Date: Wed, 19 Feb 2025 23:21:19 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Brian Norris <briannorris@chromium.org>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Tsai Sung-Fu <danielsftsai@google.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andrew Chant <achant@google.com>, Sajid Dalvi <sdalvi@google.com>,
+	Marc Zyngier <maz@kernel.org>
+Subject: Re: [PATCH] PCI: dwc: Separate MSI out to different controller
+Message-ID: <20250219175119.vjfdgvltutpzyyp5@thinkpad>
+References: <20250115083215.2781310-1-danielsftsai@google.com>
+ <20250127100740.fqvg2bflu4fpqbr5@thinkpad>
+ <CAK7fddC6eivmD0-CbK5bbwCUGUKv2m9a75=iL3db=CRZy+A5sg@mail.gmail.com>
+ <20250211075654.zxjownqe5guwzdlf@thinkpad>
+ <CAK7fddDkQX1aj5ZyTjh1_Pk+XME3AY=m5ouEFRgmLuJjBJytbA@mail.gmail.com>
+ <20250214071552.l4fufap6q5latcit@thinkpad>
+ <Z6-fjJv3LXTir1Yj@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250219163514.364049576@infradead.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z6-fjJv3LXTir1Yj@google.com>
 
-On Wed, Feb 19, 2025 at 05:21:08PM +0100, Peter Zijlstra wrote:
-> Rebuilding with CFI_PERMISSIVE toggled is such a pain, esp. since
-> clang is so slow.
+On Fri, Feb 14, 2025 at 11:54:52AM -0800, Brian Norris wrote:
+> On Fri, Feb 14, 2025 at 12:45:52PM +0530, Manivannan Sadhasivam wrote:
+> > On Tue, Feb 11, 2025 at 04:23:53PM +0800, Tsai Sung-Fu wrote:
+> > > >Because you cannot set affinity for chained MSIs as these MSIs are muxed to
+> > > >another parent interrupt. Since the IRQ affinity is all about changing which CPU
+> > > >gets the IRQ, affinity setting is only possible for the MSI parent.
+> > > 
+> > > So if we can find the MSI parent by making use of chained
+> > > relationships (32 MSI vectors muxed to 1 parent),
+> > > is it possible that we can add that implementation back ?
+> > > We have another patch that would like to add the
+> > > dw_pci_msi_set_affinity feature.
+> > > Would it be a possible try from your perspective ?
+> > > 
+> > 
+> > This question was brought up plenty of times and the concern from the irqchip
+> > maintainer Marc was that if you change the affinity of the parent when the child
+> > MSI affinity changes, it tends to break the userspace ABI of the parent.
+> > 
+> > See below links:
+> > 
+> > https://lore.kernel.org/all/87mtg0i8m8.wl-maz@kernel.org/
+> > https://lore.kernel.org/all/874k0bf7f7.wl-maz@kernel.org/
+> 
+> It's hard to meaningfully talk about a patch that hasn't been posted
+> yet, but the implementation we have at least attempts to make *some*
+> kind of resolution to those ABI questions. For one, it rejects affinity
+> changes that are incompatible (by some definition) with affinities
+> requested by other virqs shared on the same parent line. It also updates
+> their effective affinities upon changes.
+> 
+> Those replies seem to over-focus on dynamic, user-space initiated
+> changes too. But how about for "managed-affinity" interrupts? Those are
+> requested by drivers internally to the kernel (a la
+> pci_alloc_irq_vectors_affinity()), and can't be changed by user space
+> afterward. It seems like there'd be room for supporting that, provided
+> we don't allow conflicting/non-overlapping configurations.
+> 
+> I do see that Marc sketched out a complex sysfs/hierarchy API in some of
+> his replies. I'm not sure that would provide too much value to the
+> managed-affinity cases we're interested in, but I get the appeal for
+> user-managed affinity.
+> 
 
-This seems too complex; report_cfi_failure() already has the fail/warn
-logic test. I would have expected cfi_warn to take CONFIG_CFI_PERMISSIVE
-as a default instead, like:
+Whatever your proposal is, please get it reviewed by Marc.
 
-+bool cfi_warn __ro_after_init = IS_ENABLED(CONFIG_CFI_PERMISSIVE);
-
-and then just replace report_cfi_failure()'s check of
-CONFIG_CFI_PERMISSIVE with cfi_warn:
-
--        if (IS_ENABLED(CONFIG_CFI_PERMISSIVE)) {
-+        if (cfi_warn) {
-
--Kees
-
-(I do worry about data-only attacks going after page tables and flipping
-pages to r/w and changing cfi_warn to 1, but that's probably on the same
-order of difficulty as targeting the cfi handler function itself. Hmpf.)
+- Mani
 
 -- 
-Kees Cook
+மணிவண்ணன் சதாசிவம்
 
