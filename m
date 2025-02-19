@@ -1,140 +1,415 @@
-Return-Path: <linux-kernel+bounces-521806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07E0CA3C279
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:48:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 783C2A3C288
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:50:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15C9E1761D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:47:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF8593BA3CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:48:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C3AB1F3B83;
-	Wed, 19 Feb 2025 14:47:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F1A31F4197;
+	Wed, 19 Feb 2025 14:47:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IEwKX5Xk"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YV/XmDuA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A4543595B;
-	Wed, 19 Feb 2025 14:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377391EA7DA;
+	Wed, 19 Feb 2025 14:47:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739976464; cv=none; b=HXpkEZQHd0qChTn80Ni31BEY+oB61X05CJq7uqpZirn0OA8ZPZalW2Js3VV2wvjaXFdc0rdeewZZ7NJqv3a7s9l8SoxEgMga4bBCHv2RzmvyJ4usGcLi/DqHJlBxNZYUtPB+DPi9k0nD6Hqt5cLVvQSE8jGBIWowmJsj27pwHp0=
+	t=1739976468; cv=none; b=K9fz/ugrxw74rpzrvV8d5h3Al/hsExALLCWmXZIUuVf6mU2kMA+DkwT40Kep1U02g7hvsyJ45Hmlb42CKFYasL0SkNT/6Nd0VsCTMxt7X5b2wrGMChQm3UiUtttMZk6dYMRxKZ3YX3doM7R/uEGcGlJadyyqhTl8kB26pxM6zR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739976464; c=relaxed/simple;
-	bh=PWf83lHH1CbX7g4OE56Q3tOSzAlGY69s8uTYqC4rU/w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DjQazhMmrZiassMRlw0R5wZ9c8zkLitJ9H7euBizIPf2FD/O69VQgCo5L5GN0XKPatlHnfE3+QoOuKrS+D0HzsiwG6fl25AKCLpo+ORPh71k3XpVeLTnP6zTiTN+MGxsWCMqhL8Z5ZkBeVQYTZCd6fFGSu08n0ZRqre2nWNAmuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IEwKX5Xk; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2fc0bd358ccso13665118a91.2;
-        Wed, 19 Feb 2025 06:47:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739976461; x=1740581261; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=x5dsTYe1UcGt3x043SagaFh0jmczJ8yiUGL829wJKMw=;
-        b=IEwKX5XkeyPY87Cv8L+kv0M+MOCAtkxKznNLZEYFKQP2RjWSUQvdvDJKbm9J59m5ZP
-         FfsswcgiYCIkmmUIlQXEnPi+UjdmthgsqBh8auNtUpXZk4zkSpfupGHlOzTodjnH6OZ3
-         sMeaLIWP96KG6CdugB7qcTq5+eB4u7AwgcwSl2z9CKrzrof4ObMpnWQPhG46K7/lRZ2E
-         MzGF7tnADOz9c6gCVkx6ucll392eAOf5vpmhqcaL6mRKGLW21JuJAVq/eHQGTbJALTYW
-         mG0PXoyNvCrT3FKdnKBaWElsnLnDFET/0EHk+aQ+VZz5KUnHDrLJ7oXRzM7JWyA68PHK
-         ewvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739976461; x=1740581261;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=x5dsTYe1UcGt3x043SagaFh0jmczJ8yiUGL829wJKMw=;
-        b=OSHOz/RF7DssACIYqYskNAkImN2+zQ7dGxH7ZGaEPNKh5hfFECBFwFnlT9hBldMv2M
-         GXKJw/lO3HvqP6AiMayg929lZUaPpx983ORwsgDyY40yQOEod54BuJINWvALQ3BeHVtt
-         yRYeaPWUAq3+9gnvwMZdzmUsd5Nyido3rNqDUSduk8PGt7fnX7Irf/QZ1Q1ZGtcNuVDO
-         04wEbjSTJw5V3XA8AcI3Is9tc157q/HHkN+qv/mLg4W2cUp8KU9IS/NzDY3DeHbEG7k6
-         t6uGAo8Vz66zL+9/RQa8jUGRhbt+/85oE6eGMRjiiiz7aBG9oTc0LqHY2V2QR22w+ezS
-         ES6w==
-X-Forwarded-Encrypted: i=1; AJvYcCU3kbfx21qDYkFuqmRd8IxgQyR7NGYETfjeID074nnH2dRyj2gmoWPVW0H7Q5oQVYGbQj1NChmRlJvNKx8=@vger.kernel.org, AJvYcCU4qDAKu9ROdPAVkBs1ybq/k4eyZo+bZ3H0AnREpe2L4j+6loqzatkxZIr6L1pSwb2qLwtrbUVo@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9ALDd/qQL6cacWYnOVjB0s8/hEj2A4g+fEC3p/nmZ6FmnUxCE
-	4ZleeP8hZ+w9okyjU4J+IxNLYp7J0ZwPHGUisQlmLMquc/W41ERc+vXoQixhmuTOwiID6tJOoxn
-	RG91iP9fvOn2L3zEg8dRyaJDjDB40g0ZSnUs=
-X-Gm-Gg: ASbGncu8vzjeh/Y0Lu83HNvvqZdpxYsWXrk9niKBde/TRfC0LtYeRxBAyHcZgy6O1Be
-	gxpVu44QOEAO7dzEu9gQRIiJYem/kpK00RbfGMFY8BDm3q2JPcMYbuezAzqZpSMo44INGPmEavK
-	8=
-X-Google-Smtp-Source: AGHT+IGTm0/gDlwx71/Xw2OaMGDWR52C7tQCBQxrWVSO50CktdLR2VUPQbyX5z4L6RKXGSIhm5JkjyP9Mkosm9D0Eks=
-X-Received: by 2002:a17:90b:2241:b0:2ea:83a0:47a5 with SMTP id
- 98e67ed59e1d1-2fc40d124c7mr28768178a91.4.1739976461283; Wed, 19 Feb 2025
- 06:47:41 -0800 (PST)
+	s=arc-20240116; t=1739976468; c=relaxed/simple;
+	bh=joEOF2wWeEjzxDI0b9i6oilQjPKxJJsBuH2yBbEaBmU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kiFdrJBsNu3OdYSpCR0z3c8XQbxnAH/HuzdilPIBkTcG8NTC42T3QeSQ59PSOq5h/9AYE72RH9HpXpeOayMOPvK/jMFLHXF+EzkXHKmH4fk4WLd0EUgVKEOUMp7LUQkW0CoySC3TrisvzHE6T7jpVysovo0PtVYBVJMIPzOzoIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YV/XmDuA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 524F2C4CED6;
+	Wed, 19 Feb 2025 14:47:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739976467;
+	bh=joEOF2wWeEjzxDI0b9i6oilQjPKxJJsBuH2yBbEaBmU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YV/XmDuApIdajTtGPDwg71AdOqq6SYLVSrycHfjLEfDLPkVwfJsWlzRVqfys9Wqx6
+	 RAUvKr6yEoRbM1A3Rwu47dhex7qDytvQA+682S/z5ByHjL1zZNgOd79E9XwsxwB4Wk
+	 egge43Mf0mREf5IilHAaefLWwXWnmYeSLzwD3zGcK8yTinoaPU/MJrHN0ZJyHhkwZp
+	 6fTzT1UxoI5RDtT1ZA/DQ47f3KyDKQ/2V9qCYBtYGUytFiv5iYbmOWdIdyBENb6UJp
+	 OyrYxHIIJ0s0w453QItd/A3Oa0WPnx1+wKU+F9TKxcrKAhe+Z82j291FQMdRw9UgOb
+	 uI9Is/GCvPSKA==
+Date: Wed, 19 Feb 2025 15:47:44 +0100
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Stephane Eranian <eranian@google.com>
+Subject: Re: [PATCH] perf report: Add 'tgid' sort key
+Message-ID: <Z7XvEFEZtCRZKG7Y@x1>
+References: <20250206000137.2026034-1-namhyung@kernel.org>
+ <Z60NFEAf2C8cL8Xh@x1>
+ <Z60Ndm8VVI4Ao31U@x1>
+ <CAP-5=fXw09MM5XyozJMM3FjMANJei1aNVmBghSEQFiCKAtJmXw@mail.gmail.com>
+ <CAP-5=fUqcykMdApHVweETg9bp2EVPJhJOj_PR8cByOOA6OyQGw@mail.gmail.com>
+ <Z6_CL0RpUUvw0lR7@x1>
+ <Z7TvZGjVix2asYWI@x1>
+ <Z7T1LVSLo8EEMmkM@x1>
+ <Z7UDlZKnqXRqNqQa@google.com>
+ <Z7XsltyqUWrdKma0@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250116160314.23873-1-aha310510@gmail.com> <20250117102920.GI6206@kernel.org>
-In-Reply-To: <20250117102920.GI6206@kernel.org>
-From: Jeongjun Park <aha310510@gmail.com>
-Date: Wed, 19 Feb 2025 23:47:34 +0900
-X-Gm-Features: AWEUYZnAUIyaru8MWqDKgk3-dUJ-t4E7Nz19GBkUaFwkxF4Klji97LxCaNQiA3k
-Message-ID: <CAO9qdTEmgdN2CyAJGyeSXMKbM1uZDRwZ-6vGu_ft4uHsNjgCqg@mail.gmail.com>
-Subject: Re: [PATCH net-next] net: sxgbe: change conditional statement from if
- to switch
-To: Simon Horman <horms@kernel.org>
-Cc: bh74.an@samsung.com, andrew+netdev@lunn.ch, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	richardcochran@gmail.com, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z7XsltyqUWrdKma0@x1>
 
-Simon Horman <horms@kernel.org> wrote:
->
-> On Fri, Jan 17, 2025 at 01:03:14AM +0900, Jeongjun Park wrote:
-> > Change the if conditional statement in sxgbe_rx_ctxt_wbstatus() to a switch
-> > conditional statement to improve readability, and also add processing for
-> > cases where all conditions are not satisfied.
-> >
-> > Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-> > ---
-> >  .../net/ethernet/samsung/sxgbe/sxgbe_desc.c   | 43 +++++++++++++------
-> >  1 file changed, 30 insertions(+), 13 deletions(-)
-> >
-> > diff --git a/drivers/net/ethernet/samsung/sxgbe/sxgbe_desc.c b/drivers/net/ethernet/samsung/sxgbe/sxgbe_desc.c
-> > index b33ebf2dca47..5e69ab8a4b90 100644
-> > --- a/drivers/net/ethernet/samsung/sxgbe/sxgbe_desc.c
-> > +++ b/drivers/net/ethernet/samsung/sxgbe/sxgbe_desc.c
-> > @@ -421,31 +421,48 @@ static void sxgbe_rx_ctxt_wbstatus(struct sxgbe_rx_ctxt_desc *p,
->
-> ...
->
-> > +     default:
-> > +             pr_err("Invalid PTP Message type\n");
-> > +             break;
-> > +     }
-> >  }
->
-> Hi Jeongjun,
->
-> I was wondering if it would be best if the error message above should be
-> rate limited, or perhaps the callback enhanced to return an error in such
-> cases. But that depends on where sxgbe_rx_ctxt_wbstatus is called.
-> And I'm unable to find where the it called.
->
-> I see that sxgbe_rx_ctxt_wbstatus is registered as a get_rx_ctxt_tstamp_status
-> callback. But is the get_rx_ctxt_tstamp_status callback called anywhere?
+On Wed, Feb 19, 2025 at 03:37:10PM +0100, Arnaldo Carvalho de Melo wrote:
+> On Tue, Feb 18, 2025 at 02:03:01PM -0800, Namhyung Kim wrote:
+> > On Tue, Feb 18, 2025 at 10:01:33PM +0100, Arnaldo Carvalho de Melo wrote:
+> > > On Tue, Feb 18, 2025 at 09:36:52PM +0100, Arnaldo Carvalho de Melo wrote:
+> > > > So the call to maps_fixup_end() will set maps->end_broken to false,
+> > > > since it fixed up the map ends, etc, but then we insert more maps with
+> > > > broken ends:
+> > >  
+> > > > #6  0x0000000000633d52 in check_invariants (maps=0xf967c0) at util/maps.c:95
+> > > > 95						assert(map__end(prev) <= map__end(map));
+> > > > (gdb) p prev->dso->name
+> > > > $1 = 0xfc47ab "bpf_trampoline_6442522522"
+> > > 
+> > > So the above map is created overlapping a previously existing map:
+> > > 
+> > > root@number:~# perf probe -l
+> > >   probe_perf:maps_fixup_end (on maps__fixup_end:1@util/maps.c in /home/acme/bin/perf with maps)
+> > >   probe_perf:maps_insert (on maps__insert:1@util/maps.c in /home/acme/bin/perf with maps name start end)
+> > > root@number:~# 
+> > > 
+> > > root@number:~# perf trace --lib -e probe_perf:maps* perf record sleep
+> > > <SNIP>
+> > >    319.791 perf/1732173 probe_perf:maps_insert((634e5e) maps=0x2d9715d0 name="bpf_prog_6deef7357e7b4530_sd_fw_egress" start=0xffffffffc0160788 end=0xffffffffc01607c8)
+> > >    319.810 perf/1732173 probe_perf:maps_insert((634e5e) maps=0x2d9715d0 name="bpf_prog_6deef7357e7b4530_sd_fw_ingress" start=0xffffffffc01647b8 end=0xffffffffc01647f8)
+> > >    319.822 perf/1732173 probe_perf:maps_insert((634e5e) maps=0x2d9715d0 name="bpf_prog_6deef7357e7b4530_sd_fw_egress" start=0xffffffffc016482c end=0xffffffffc016486c)
+> > >    319.834 perf/1732173 probe_perf:maps_insert((634e5e) maps=0x2d9715d0 name="bpf_prog_6deef7357e7b4530_sd_fw_ingress" start=0xffffffffc01648ac end=0xffffffffc01648ec)
+> > >    319.845 perf/1732173 probe_perf:maps_insert((634e5e) maps=0x2d9715d0 name="bpf_prog_be31ae23198a0378_sd_devices" start=0xffffffffc0186388 end=0xffffffffc01864b2)
+> > >    319.857 perf/1732173 probe_perf:maps_insert((634e5e) maps=0x2d9715d0 name="bpf_trampoline_6442522522" start=0xffffffffc0147640 end=0xffffffffc0148640)
+> > > [ perf record: Captured and wrote 0.035 MB perf.data (7 samples) ]
+> > > perf: util/maps.c:95: check_invariants: Assertion `map__end(prev) <= map__end(map)' failed.
+> > > root@number:~# 
+> > > 
+> > > So a PERF_RECORD_KSYMBOL processing will add a map for
+> > > "bpf_trampoline_6442522522" that has its start after before the
+> > > "bpf_prog_40ddf486530245f5_sd_devices" start, ok, but ends after
+> > > "bpf_prog_40ddf486530245f5_sd_devices", overlapping it.
+> > > 
+> > > machine__process_ksymbol_register() does:
+> > > 
+> > > 713			map__set_start(map, event->ksymbol.addr);
+> > > 714			map__set_end(map, map__start(map) + event->ksymbol.len);
+> > > 715			err = maps__insert(machine__kernel_maps(machine), map);
+> > > 
+> > > And:
+> > > 
+> > > (gdb) p /x event->ksymbol.addr
+> > > $2 = 0xffffffffc0147a2c
+> > > (gdb) p event->ksymbol.len
+> > > $3 = 306
+> > 
+> > Hmm.. so I think the situation is like below.
+> > 
+> >                    (bpf_trampoline_6442522522)
+> >             +---------------------------------------+   
+> > 	    |                                       |
+> > 	    |       +------------------------+      |
+> > 	    |       | (bpf_prog_40ddf486...) | <----+----  adding this
+> > 	    |       |                        |      |
+> > 	    |       |                        |      |
+> > 	    |   c0147a2c                            |
+> > 	    |                                       |
+> >         c0147640                                 c0148640
+> > 
+> > And it failed to add bpf_prog_40ddf486... in check_invariants() because
+> > the end address is smaller than the previous map.
+> 
+> No, it didn't fail to add, it managed to do it which left the kernel
+> maps in a broken state, with overlappings while it had a cleared
+> ends_broken, then, later, when the checks_invariant is finally called at
+> perf record exit time:
 
-Hello. Sorry for the late reply.
+Nope, __maps__insert() should notice that the ends are broken and set
+it:
 
-I still don't know exactly where sxgbe_rx_ctxt_wbstatus() is called. What I
-do know is that I can't find a function that calls this function within the
-Linux kernel. When I wrote this patch, I thought it would be good to refactor
-this function, so I wrote the patch, but I didn't know exactly where
-this function
-was being used. I think it might be a function called from an external
-kernel driver
-written by Samsung itself.
+        if (nr_maps == 1) {
+                /* If there's just 1 entry then maps are sorted. */
+                maps__set_maps_by_address_sorted(maps, true);
+                maps__set_maps_by_name_sorted(maps, maps_by_name != NULL);
+        } else {
+                /* Sorted if maps were already sorted and this map starts after the last one. */
+                maps__set_maps_by_address_sorted(maps,
+                        maps__maps_by_address_sorted(maps) &&
+                        map__end(maps_by_address[nr_maps - 2]) <= map__start(new));
+                maps__set_maps_by_name_sorted(maps, false);
+        }
+        if (map__end(new) < map__start(new))
+                RC_CHK_ACCESS(maps)->ends_broken = true;
 
-Regards,
 
-Jeongjun Park
+humm, RC_CHK_ACCESS(maps)->ends_broken should be set for the case we
+have and I think it isn't being... Then the bpf trampoline map that is
+the last entry to be added is before the last entry and thus
+maps_by_address_sorted is set to false, ends_broken continues false and
+at the end maps_by_address_sorted is set to true and the last
+check_invariants triggerrs the asserts...
+ 
+> > > > > #4  0x00007ffff6e3681e in __assert_fail_base (fmt=0x7ffff6fc3bb8 "%s%s%s:%u: %s%sAssertion `%s' failed.\n%n", assertion=assertion@entry=0x7bef08 "map__end(prev) <= map__end(map)",
+> > > > >     file=file@entry=0x7bedf8 "util/maps.c", line=line@entry=95, function=function@entry=0x7bf1c0 <__PRETTY_FUNCTION__.6> "check_invariants") at assert.c:96
+> > > > > #5  0x00007ffff6e47047 in __assert_fail (assertion=0x7bef08 "map__end(prev) <= map__end(map)", file=0x7bedf8 "util/maps.c", line=95,
+> > > > >     function=0x7bf1c0 <__PRETTY_FUNCTION__.6> "check_invariants") at assert.c:105
+> > > > > #6  0x00000000006347a1 in check_invariants (maps=0xf987e0) at util/maps.c:95
+> > > > > #7  0x0000000000635ae2 in maps__remove (maps=0xf987e0, map=0xf98a80) at util/maps.c:538
+> > > > > #8  0x000000000062afd2 in machine__destroy_kernel_maps (machine=0xf98178) at util/machine.c:1176
+> > > > > #9  0x000000000062b32b in machines__destroy_kernel_maps (machines=0xf98178) at util/machine.c:1238
+> > > > > #10 0x00000000006388af in perf_session__destroy_kernel_maps (session=0xf97f60) at util/session.c:105
+> > > > > #11 0x0000000000638df0 in perf_session__delete (session=0xf97f60) at util/session.c:248
+> > > > > #12 0x0000000000431f18 in __cmd_record (rec=0xecace0 <record>, argc=4, argv=0x7fffffffde60) at builtin-record.c:2888
+> 
+> is when we detect the problem, but I see what you mean, I'm trying to
+> figure out why this isn't caught here:
+> 
+> machine__process_ksymbol_register() ->
+> 	int maps__insert(struct maps *maps, struct map *map)
+> 	{       
+> 		int ret;
+> 
+> 		down_write(maps__lock(maps));
+> 		ret = __maps__insert(maps, map);
+> 		check_invariants(maps);
+> 		up_write(maps__lock(maps));
+> 		return ret;
+> 	}
+> 
+> Some more tracing:
+> 
+> root@number:~# perf probe -d probe_perf:* ; perf probe -qx ~/bin/perf check_invariants maps 'maps->maps_by_address_sorted' ; perf probe -qx ~/bin/perf maps__insert maps 'map->dso->name:string' 'map->start' 'map->end' ; perf probe -qx ~/bin/perf maps__fixup_end maps ; perf probe -l
+> Removed event: probe_perf:check_invariants
+> Removed event: probe_perf:maps_fixup_end
+> Removed event: probe_perf:maps_insert
+>   probe_perf:check_invariants (on check_invariants:1@util/maps.c in /home/acme/bin/perf with maps maps_by_address_sorted)
+>   probe_perf:maps_fixup_end (on maps__fixup_end:1@util/maps.c in /home/acme/bin/perf with maps)
+>   probe_perf:maps_insert (on maps__insert:1@util/maps.c in /home/acme/bin/perf with maps name start end)
+> root@number:~#
+> 
+> And then:
+> 
+> root@number:~# perf trace --lib -e probe_perf:maps_*,probe_perf:check_invariants/max-stack=32/ perf record sleep
+> <SNIP>
+>    316.283 perf/1882053 probe_perf:maps_insert((634e64) maps=0x342785d0 name="bpf_prog_6deef7357e7b4530_sd_fw_ingress" start=0xffffffffc01648ac end=0xffffffffc01648ec)
+>    316.284 perf/1882053 probe_perf:check_invariants((633b0f) maps=0x342785d0 maps_by_address_sorted=0x0)
+>                                        check_invariants (/home/acme/bin/perf)
+>                                        maps__insert (/home/acme/bin/perf)
+>                                        machine__process_ksymbol_register (/home/acme/bin/perf)
+>                                        machine__process_ksymbol (/home/acme/bin/perf)
+>                                        perf_event__process_ksymbol (/home/acme/bin/perf)
+>                                        machines__deliver_event (/home/acme/bin/perf)
+>                                        perf_session__deliver_event (/home/acme/bin/perf)
+>                                        perf_session__process_event (/home/acme/bin/perf)
+>                                        process_simple (/home/acme/bin/perf)
+>                                        reader__read_event (/home/acme/bin/perf)
+>                                        reader__process_events (/home/acme/bin/perf)
+>                                        __perf_session__process_events (/home/acme/bin/perf)
+>                                        perf_session__process_events (/home/acme/bin/perf)
+>                                        process_buildids (/home/acme/bin/perf)
+>                                        record__finish_output (/home/acme/bin/perf)
+>                                        __cmd_record (/home/acme/bin/perf)
+>                                        cmd_record (/home/acme/bin/perf)
+>                                        run_builtin (/home/acme/bin/perf)
+>                                        handle_internal_command (/home/acme/bin/perf)
+>                                        run_argv (/home/acme/bin/perf)
+>                                        main (/home/acme/bin/perf)
+>                                        __libc_start_call_main (/usr/lib64/libc.so.6)
+>                                        __libc_start_main@@GLIBC_2.34 (/usr/lib64/libc.so.6)
+>                                        _start (/home/acme/bin/perf)
+>    316.296 perf/1882053 probe_perf:maps_insert((634e64) maps=0x342785d0 name="bpf_prog_be31ae23198a0378_sd_devices" start=0xffffffffc0186388 end=0xffffffffc01864b2)
+>    316.298 perf/1882053 probe_perf:check_invariants((633b0f) maps=0x342785d0 maps_by_address_sorted=0x0)
+>                                        check_invariants (/home/acme/bin/perf)
+>                                        maps__insert (/home/acme/bin/perf)
+>                                        machine__process_ksymbol_register (/home/acme/bin/perf)
+>                                        machine__process_ksymbol (/home/acme/bin/perf)
+>                                        perf_event__process_ksymbol (/home/acme/bin/perf)
+>                                        machines__deliver_event (/home/acme/bin/perf)
+>                                        perf_session__deliver_event (/home/acme/bin/perf)
+>                                        perf_session__process_event (/home/acme/bin/perf)
+>                                        process_simple (/home/acme/bin/perf)
+>                                        reader__read_event (/home/acme/bin/perf)
+>                                        reader__process_events (/home/acme/bin/perf)
+>                                        __perf_session__process_events (/home/acme/bin/perf)
+>                                        perf_session__process_events (/home/acme/bin/perf)
+>                                        process_buildids (/home/acme/bin/perf)
+>                                        record__finish_output (/home/acme/bin/perf)
+>                                        __cmd_record (/home/acme/bin/perf)
+>                                        cmd_record (/home/acme/bin/perf)
+>                                        run_builtin (/home/acme/bin/perf)
+>                                        handle_internal_command (/home/acme/bin/perf)
+>                                        run_argv (/home/acme/bin/perf)
+>                                        main (/home/acme/bin/perf)
+>                                        __libc_start_call_main (/usr/lib64/libc.so.6)
+>                                        __libc_start_main@@GLIBC_2.34 (/usr/lib64/libc.so.6)
+>                                        _start (/home/acme/bin/perf)
+>    316.310 perf/1882053 probe_perf:maps_insert((634e64) maps=0x342785d0 name="bpf_trampoline_6442522522" start=0xffffffffc0147640 end=0xffffffffc0148640)
+>    316.311 perf/1882053 probe_perf:check_invariants((633b0f) maps=0x342785d0 maps_by_address_sorted=0x0)
+>                                        check_invariants (/home/acme/bin/perf)
+>                                        maps__insert (/home/acme/bin/perf)
+>                                        machine__process_ksymbol_register (/home/acme/bin/perf)
+>                                        machine__process_ksymbol (/home/acme/bin/perf)
+>                                        perf_event__process_ksymbol (/home/acme/bin/perf)
+>                                        machines__deliver_event (/home/acme/bin/perf)
+>                                        perf_session__deliver_event (/home/acme/bin/perf)
+>                                        perf_session__process_event (/home/acme/bin/perf)
+>                                        process_simple (/home/acme/bin/perf)
+>                                        reader__read_event (/home/acme/bin/perf)
+>                                        reader__process_events (/home/acme/bin/perf)
+>                                        __perf_session__process_events (/home/acme/bin/perf)
+>                                        perf_session__process_events (/home/acme/bin/perf)
+>                                        process_buildids (/home/acme/bin/perf)
+>                                        record__finish_output (/home/acme/bin/perf)
+>                                        __cmd_record (/home/acme/bin/perf)
+>                                        cmd_record (/home/acme/bin/perf)
+>                                        run_builtin (/home/acme/bin/perf)
+>                                        handle_internal_command (/home/acme/bin/perf)
+>                                        run_argv (/home/acme/bin/perf)
+>                                        main (/home/acme/bin/perf)
+>                                        __libc_start_call_main (/usr/lib64/libc.so.6)
+>                                        __libc_start_main@@GLIBC_2.34 (/usr/lib64/libc.so.6)
+>                                        _start (/home/acme/bin/perf)
+>    316.369 perf/1882053 probe_perf:check_invariants((633b0f) maps=0x342a6950 maps_by_address_sorted=0x1)
+>                                        check_invariants (/home/acme/bin/perf)
+>                                        __maps__insert_sorted (/home/acme/bin/perf)
+>                                        __maps__fixup_overlap_and_insert (/home/acme/bin/perf)
+>                                        maps__fixup_overlap_and_insert (/home/acme/bin/perf)
+>                                        thread__insert_map (/home/acme/bin/perf)
+>                                        machine__process_mmap2_event (/home/acme/bin/perf)
+>                                        perf_event__process_mmap2 (/home/acme/bin/perf)
+>                                        build_id__process_mmap2 (/home/acme/bin/perf)
+>                                        machines__deliver_event (/home/acme/bin/perf)
+>                                        perf_session__deliver_event (/home/acme/bin/perf)
+>                                        ordered_events__deliver_event (/home/acme/bin/perf)
+>                                        do_flush (/home/acme/bin/perf)
+>                                        __ordered_events__flush (/home/acme/bin/perf)
+>                                        ordered_events__flush (/home/acme/bin/perf)
+>                                        __perf_session__process_events (/home/acme/bin/perf)
+>                                        perf_session__process_events (/home/acme/bin/perf)
+>                                        process_buildids (/home/acme/bin/perf)
+>                                        record__finish_output (/home/acme/bin/perf)
+>                                        __cmd_record (/home/acme/bin/perf)
+>                                        cmd_record (/home/acme/bin/perf)
+>                                        run_builtin (/home/acme/bin/perf)
+>                                        handle_internal_command (/home/acme/bin/perf)
+>                                        run_argv (/home/acme/bin/perf)
+>                                        main (/home/acme/bin/perf)
+>                                        __libc_start_call_main (/usr/lib64/libc.so.6)
+>                                        __libc_start_main@@GLIBC_2.34 (/usr/lib64/libc.so.6)
+>                                        _start (/home/acme/bin/perf)
+> <SNIP>
+> [ perf record: Captured and wrote 0.035 MB perf.data (7 samples) ]
+>   1195.433 perf/1882053 probe_perf:check_invariants((633b0f) maps=0x342785d0 maps_by_address_sorted=0x1)
+>                                        check_invariants (/home/acme/bin/perf)
+>                                        maps__remove (/home/acme/bin/perf)
+>                                        machine__destroy_kernel_maps (/home/acme/bin/perfperf: util/maps.c:95: check_invariants: Assertion `map__end(prev) <= map__end(map)' failed.
+> )
+>                                        machines__destroy_kernel_maps (/home/acme/bin/perf)
+>                                        perf_session__destroy_kernel_maps (/home/acme/bin/perf)
+>                                        perf_session__delete (/home/acme/bin/perf)
+>                                        __cmd_record (/home/acme/bin/perf)
+>                                        cmd_record (/home/acme/bin/perf)
+>                                        run_builtin (/home/acme/bin/perf)
+>                                        handle_internal_command (/home/acme/bin/perf)
+>                                        run_argv (/home/acme/bin/perf)
+>                                        main (/home/acme/bin/perf)
+>                                        __libc_start_call_main (/usr/lib64/libc.so.6)
+>                                        __libc_start_main@@GLIBC_2.34 (/usr/lib64/libc.so.6)
+>                                        _start (/home/acme/bin/perf)
+> root@number:~#
+> 
+> check_invariants() doesn't check the ends because the
+> maps_byh_address_sorted is not set, I'll soon disappear into a call, but
+> the above should help as a checkpoint, I'll be back.
+> 
+> - Arnaldo
+> 
+>  
+> > > Thread 1 "perf" hit Breakpoint 1, machine__process_ksymbol_register (machine=0xf96158, event=0x7ffff7fb9aa0, sample=0x7fffffffa860) at util/machine.c:688
+> > > 688	{
+> > > (gdb) bt
+> > > #0  machine__process_ksymbol_register (machine=0xf96158, event=0x7ffff7fb9aa0, sample=0x7fffffffa860) at util/machine.c:688
+> > > #1  0x00000000006294ca in machine__process_ksymbol (machine=0xf96158, event=0x7ffff7fb9aa0, sample=0x7fffffffa860) at util/machine.c:779
+> > > #2  0x00000000005ce2fd in perf_event__process_ksymbol (tool=0xec8ce0 <record>, event=0x7ffff7fb9aa0, sample=0x7fffffffa860, machine=0xf96158) at util/event.c:296
+> > > #3  0x000000000063b6e4 in machines__deliver_event (machines=0xf96158, evlist=0xf521f0, event=0x7ffff7fb9aa0, sample=0x7fffffffa860, tool=0xec8ce0 <record>, file_offset=31392, 
+> > >     file_path=0xf96850 "perf.data") at util/session.c:1334
+> > > #4  0x000000000063b8c9 in perf_session__deliver_event (session=0xf95f40, event=0x7ffff7fb9aa0, tool=0xec8ce0 <record>, file_offset=31392, file_path=0xf96850 "perf.data")
+> > >     at util/session.c:1367
+> > > #5  0x000000000063c6bd in perf_session__process_event (session=0xf95f40, event=0x7ffff7fb9aa0, file_offset=31392, file_path=0xf96850 "perf.data") at util/session.c:1626
+> > > #6  0x000000000063de3d in process_simple (session=0xf95f40, event=0x7ffff7fb9aa0, file_offset=31392, file_path=0xf96850 "perf.data") at util/session.c:2203
+> > > #7  0x000000000063daf4 in reader__read_event (rd=0x7fffffffafa0, session=0xf95f40, prog=0x7fffffffaf70) at util/session.c:2132
+> > > #8  0x000000000063dcee in reader__process_events (rd=0x7fffffffafa0, session=0xf95f40, prog=0x7fffffffaf70) at util/session.c:2181
+> > > #9  0x000000000063df8b in __perf_session__process_events (session=0xf95f40) at util/session.c:2226
+> > > #10 0x000000000063e988 in perf_session__process_events (session=0xf95f40) at util/session.c:2390
+> > > #11 0x000000000042d98b in process_buildids (rec=0xec8ce0 <record>) at builtin-record.c:1475
+> > > #12 0x000000000042e963 in record__finish_output (rec=0xec8ce0 <record>) at builtin-record.c:1798
+> > > #13 0x0000000000431c46 in __cmd_record (rec=0xec8ce0 <record>, argc=2, argv=0x7fffffffde80) at builtin-record.c:2841
+> > > #14 0x000000000043513f in cmd_record (argc=2, argv=0x7fffffffde80) at builtin-record.c:4260
+> > > #15 0x00000000004bcf65 in run_builtin (p=0xecbd60 <commands+288>, argc=3, argv=0x7fffffffde80) at perf.c:351
+> > > #16 0x00000000004bd20c in handle_internal_command (argc=3, argv=0x7fffffffde80) at perf.c:404
+> > > #17 0x00000000004bd365 in run_argv (argcp=0x7fffffffdc6c, argv=0x7fffffffdc60) at perf.c:448
+> > > #18 0x00000000004bd6ae in main (argc=3, argv=0x7fffffffde80) at perf.c:556
+> > > (gdb)
+> > 
+> > > So, this one liner "refixes" the "modules" ends when processing the
+> > > records to find the build ids, unsure if it is the best solution tho:
+> 
+> > I think it "fixes" the problem by not clearing maps->ends_broken during
+> > the sample processing.  So check_invariants() will not check the end
+> > addresses of overlapping bpf_trampoline and bpf_prog.
+> 
+> You mean my one-liner?
+> 
+> I meant "refixes" as in maps__fixup_end() will fixup the overlapping of
+> the bpf_trampoline and bpf_prog and will re-clear maps->ends_broken
+> (needlessly, it was already cleared by the first call to
+> maps__fixup_end() after loading modules, at the start of the session).
+> 
+> Then check_invariants() _will_, check again, because maps->ends_broken
+> is cleared (was cleared twice even), the end addresses and there will
+> not be any overlapping, no?
+> 
+> - Arnaldo
+>  
+> > I'm curious how other commands (like perf report) are affected.  I think
+> > the original concern was the output of `perf buildid-list -m`.
+> > 
+> > Thanks,
+> > Namhyung
+> > 
+> > > 
+> > > diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+> > > index 5db1aedf48df92d2..5c4603d08ab5f2cb 100644
+> > > --- a/tools/perf/builtin-record.c
+> > > +++ b/tools/perf/builtin-record.c
+> > > @@ -1797,6 +1797,8 @@ record__finish_output(struct record *rec)
+> > >  	if (!rec->no_buildid) {
+> > >  		process_buildids(rec);
+> > >  
+> > > +		maps__fixup_end(machine__kernel_maps(&rec->session->machines.host));
+> > > +
+> > >  		if (rec->buildid_all)
+> > >  			perf_session__dsos_hit_all(rec->session);
+> > >  	}
+> > > 
+> > > 
 
