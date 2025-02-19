@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-521801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 682AEA3C270
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:46:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 576CEA3C271
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:47:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B4681889F48
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:46:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA7CA7A6986
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:45:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F37E18A959;
-	Wed, 19 Feb 2025 14:46:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86641F3BB2;
+	Wed, 19 Feb 2025 14:46:25 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AED2F1E0B62
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 14:46:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D356B1F3BAE
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 14:46:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739976382; cv=none; b=oP8Eu5gCbIPaoTBv9+L35hD9mNFJvspKdB3Q0CzjCxfRDIQ+QWaYlM/honSPO9ogM5soMuYs/v5NZhLxEQGVjl9mVmWPTz/nHc1Glk9WHIX6pTqw1V6rptErW1xc/SQTufXh/A6qtduTBfJD1CAYGkeWD4CSGGqbqtf6TEYZQ7Q=
+	t=1739976385; cv=none; b=iSt3P8BCxPFRIST1Db0mPy9mkGhsHHcjHZTqpItt69dGTz5s7F2lAHRM15qwbuk6vlObXmCcngZzptt5CReFkheFd4fCVGL+1f6YMbrSxPqUyc84a9faiXyE/ryZUFfJ2jfcP1r6PY8Ne4EXuAsk1WN0U3l7sfx9QTwzxbGuJC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739976382; c=relaxed/simple;
-	bh=Na8CwMKfZHUBjRSTymCHd4NTW74NZ0Z9OFJIxFyScTw=;
+	s=arc-20240116; t=1739976385; c=relaxed/simple;
+	bh=00S8SzVTUIlPAEjvwTNT51wKehEtr9/Cue1IlllhnSg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dGs7jYSPEmssSKyW9z4enYq9X6VVMeEQu/bzpfhp02GWBmr4cjLAoHfT2zPcV/df/HCmkkjsxiRm+GHz48CAYmqnTE0plhNpN7pqpyLYyRDozz5OfFYjQKdFqwOJBYUIoQeb0G8xl9Nt+GHvHVqB4nKn1sfRKw0823We0FuCkEc=
+	 MIME-Version:Content-Type; b=uoTI8SvWZN2d7e4QrIf5uyhqRpqFXatzKLVHA+3s1xRlWeWfWG7ZlibWoudUhEhPOycqB3hZRW9lRXP6CTJOaaOJXeAwIdL7I3JytPidifDZKVT4z96ELo5q66nS8vq+teYztMqMzYkSFLXWSu703V5Blhwy0yvZgcrpZ5lLumI=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 68B071688;
-	Wed, 19 Feb 2025 06:46:38 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9499C202C;
+	Wed, 19 Feb 2025 06:46:41 -0800 (PST)
 Received: from mazurka.cambridge.arm.com (mazurka.cambridge.arm.com [10.2.80.18])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B64FD3F59E;
-	Wed, 19 Feb 2025 06:46:16 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 40E293F59E;
+	Wed, 19 Feb 2025 06:46:20 -0800 (PST)
 From: =?UTF-8?q?Miko=C5=82aj=20Lenczewski?= <miko.lenczewski@arm.com>
 To: ryan.roberts@arm.com,
 	yang@os.amperecomputing.com,
@@ -54,9 +54,9 @@ To: ryan.roberts@arm.com,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
 Cc: =?UTF-8?q?Miko=C5=82aj=20Lenczewski?= <miko.lenczewski@arm.com>
-Subject: [PATCH v1 2/3] arm64/mm: Delay tlbi in contpte_convert() under BBML2
-Date: Wed, 19 Feb 2025 14:38:39 +0000
-Message-ID: <20250219143837.44277-6-miko.lenczewski@arm.com>
+Subject: [PATCH v1 3/3] arm64/mm: Elide tlbi in contpte_convert() under BBML2
+Date: Wed, 19 Feb 2025 14:38:40 +0000
+Message-ID: <20250219143837.44277-7-miko.lenczewski@arm.com>
 X-Mailer: git-send-email 2.45.3
 In-Reply-To: <20250219143837.44277-3-miko.lenczewski@arm.com>
 References: <20250219143837.44277-3-miko.lenczewski@arm.com>
@@ -69,45 +69,27 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-When converting a region via contpte_convert() to use mTHP, we have two
-different goals. We have to mark each entry as contiguous, and we would
-like to smear the dirty and young (access) bits across all entries in
-the contiguous block. Currently, we do this by first accumulating the
-dirty and young bits in the block, using an atomic
-__ptep_get_and_clear() and the relevant pte_{dirty,young}() calls,
-performing a tlbi, and finally smearing the correct bits across the
-block using __set_ptes().
-
-This approach works fine for BBM level 0, but with support for BBM level
-2 we are allowed to reorder the tlbi to after setting the pagetable
-entries. This reordering means that other threads will not see an
-invalid pagetable entry, instead operating on stale data, until we have
-performed our smearing and issued the invalidation. Avoiding this
-invalid entry reduces faults in other threads, and thus improves
-performance marginally (more so when there are more threads).
+If we support bbml2 without conflict aborts, we can avoid the final
+flush and have hardware manage the tlb entries for us. Avoiding flushes
+is a win.
 
 Signed-off-by: Mikołaj Lenczewski <miko.lenczewski@arm.com>
 Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
 ---
- arch/arm64/mm/contpte.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ arch/arm64/mm/contpte.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
 diff --git a/arch/arm64/mm/contpte.c b/arch/arm64/mm/contpte.c
-index 55107d27d3f8..e26e8f8cfb9b 100644
+index e26e8f8cfb9b..26a86248f897 100644
 --- a/arch/arm64/mm/contpte.c
 +++ b/arch/arm64/mm/contpte.c
-@@ -68,9 +68,13 @@ static void contpte_convert(struct mm_struct *mm, unsigned long addr,
- 			pte = pte_mkyoung(pte);
- 	}
- 
--	__flush_tlb_range(&vma, start_addr, addr, PAGE_SIZE, true, 3);
-+	if (!system_supports_bbml2_noconflict())
-+		__flush_tlb_range(&vma, start_addr, addr, PAGE_SIZE, true, 3);
+@@ -72,9 +72,6 @@ static void contpte_convert(struct mm_struct *mm, unsigned long addr,
+ 		__flush_tlb_range(&vma, start_addr, addr, PAGE_SIZE, true, 3);
  
  	__set_ptes(mm, start_addr, start_ptep, pte, CONT_PTES);
-+
-+	if (system_supports_bbml2_noconflict())
-+		__flush_tlb_range(&vma, start_addr, addr, PAGE_SIZE, true, 3);
+-
+-	if (system_supports_bbml2_noconflict())
+-		__flush_tlb_range(&vma, start_addr, addr, PAGE_SIZE, true, 3);
  }
  
  void __contpte_try_fold(struct mm_struct *mm, unsigned long addr,
