@@ -1,218 +1,143 @@
-Return-Path: <linux-kernel+bounces-521492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BA0CA3BE09
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:30:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8A52A3BE0D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:31:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 779D07A5B6C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:29:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E989D1891153
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:30:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 295BD1C701A;
-	Wed, 19 Feb 2025 12:30:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 987521E0DD0;
+	Wed, 19 Feb 2025 12:30:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C2MTT+q9"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DsR6S0xH"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EDE51DDA3B;
-	Wed, 19 Feb 2025 12:30:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E961DF755;
+	Wed, 19 Feb 2025 12:30:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739968203; cv=none; b=tqETQ9qTklnLeOnVJG31fK0LsQH/SwM/dV10EJi8vbjK30rXKelOusQUzNP58ed/AdZ0C09KYk067d6KwXIqdScHGrN+02TsM9CBWY7Bewz+uZISFDzaHJB9UnddFZ2NmDUjJGwfYpsxbOVy3mFQLCfw5ldARzUQWJAUybvmXFc=
+	t=1739968241; cv=none; b=Q3nnQSOaWAjkAPSqxptJ0PoJ3FplnqD3jqlJLtCV4163bmrSnHrgUctsI56uciucWhTPL42w/X+eIyx/4w7eq39JIWtxIq49WAKuFGWMiCU04Qnd+QLQPQy2pIAFryaf2T7ycq4peULFCV7RhYcErGiI8gMlN/Cwp9csfr9iBgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739968203; c=relaxed/simple;
-	bh=SlKuG0AdBwn/S5pE8rkdaa+Z4RfGUwCknA7f5LLdKiI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=NxxCPf+M/+FjBrbN8ceuABiU9JCXsQeoAI230yjc6iBTKCnKTznhoNc4Nt3azKeLBVCrONmihOLolBTiExy+VcpezFnlzrHkg4m8r+B5BzOo9NJaHtrPbDIaV4d6d7Fy+CIPn1iEgkw3Z64xQuKvcoJyjNn2e5CgoXnZWdp8jqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C2MTT+q9; arc=none smtp.client-ip=209.85.208.175
+	s=arc-20240116; t=1739968241; c=relaxed/simple;
+	bh=ztDgWvwz+CZSZ7CQPPdu/7HdN7wQIMweiboHpzxoiWg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=pYKdcsEON/poA/odFq6vyXaWwXpnBkmpFOCy8EWR6+/fy4+wZOfvDMPldZ85EciofMQee0gUIEJNkqlhIKe4pEHAlo9V7ZvcuDrzEw5dvbkzVnOWYO+eCd8aNGU6l2dKBdSrenwzCEgSdWeF4xXtjvfVp9FQa9cFSIiz5oIYav8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DsR6S0xH; arc=none smtp.client-ip=209.85.214.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-30737db1aa9so62782881fa.1;
-        Wed, 19 Feb 2025 04:30:01 -0800 (PST)
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-219f8263ae0so122286035ad.0;
+        Wed, 19 Feb 2025 04:30:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739968199; x=1740572999; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+24dvPWABcFd9MeuF3ZS2A94KuzubvQXMwsC3UbrqGc=;
-        b=C2MTT+q90QiIPNteIYC5JHSmFGLICmiuotjQUYATnTbhyFIx4faaau8K+yog+ot4O8
-         MPgzThoz/Zd9J26CdQEgdH+1WZqBZNAeL+VZR73+4BRzSPIpCc1t2G7FK8nuXtsSRa8z
-         Lg/b3yzQwxWOQhLwesC/XovGvQwGaOhZ/3i8sUb21KCYvWnNBZkdUEemlZTw+U7UOzJH
-         XVSNXCRgVe4PIOa6JYUMqkNwQGzR10wwT2dejt4NbV64S6SrWxYQNoDn3BaIqelY4iUT
-         4cv9/j0EaSPbyOJyqkF1lv4ttnGsg/GNe0ZzThlUh4h6yw8MUTGhyXM1VdGJHVTAv3wP
-         XYOw==
+        d=gmail.com; s=20230601; t=1739968239; x=1740573039; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jYxtuN+FHDHDJ1UtgUUZtfJNaXcnoTaEgSZ1XZNBNzw=;
+        b=DsR6S0xHbZWBjb8wktPU8nH7WqaUXZ19KrTg7W4CRcg4RboFTvCS5c06gZCAbFuXMm
+         YcX2A7xLCFR5Wp3jtYT11jNHC27AsYTwUEJhTBdydOD+CZfsMh4OBy55uqwAhd1vH7Kl
+         TOZOxntNg6tjtFG5OjkGiwLKgvECLF+qmy6inZXHFu8NZacYLhHUjzM2Ki/Zht/389Us
+         b1T+yCaEiFJ5wS3WMPlTHQvKKaXD+OOuwUskuoEPSqUeqcmgq5TlCAdUudaYavLD8QH3
+         h2KJzi8lbJ3xzARdn6ESykTN3Lhvbd4y2ARZYOD933+0cg51C0BEOQ/oaI1nTRhEQSMn
+         8sVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739968199; x=1740572999;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+24dvPWABcFd9MeuF3ZS2A94KuzubvQXMwsC3UbrqGc=;
-        b=T4tEiIjxrv6E2KbnM8asLWLy3Vw0SAUG0hIV0BuwevscgJoqthv4sXNfTM2RJylnQw
-         jqwE6H6vaIsS3lo7FtjWjyTSSS+6fZQSFOCNq2QYeBazvH7HorEh9nO7kSgmE1kBSBbC
-         OBJwUSCK3NyxMNJk8QJymkQBNhOwMu3TkmDc/EB0+KcScymC5WoZBBVFyKxzJwI7jveL
-         Z0ZOUa+9AcZKmqbZ2apP1oE7OU+jUJ4K6Z2psGn/NAwrfR2BMa7IvIgsfPFkVZwOqr0y
-         j/nnWXoD0LOmJ1eobnghaVa811N5QmBYuNgFV+vJwV9j1D4MU66rxCEu8kiBr5Zi+WHS
-         +gmw==
-X-Forwarded-Encrypted: i=1; AJvYcCU2zbcxIg3uKulKlCX5w2fAfZLSS9yWGf09AXxapcofwypWqlD1unFqRslBeMNr5EJah/4rZ5SoSRBfwvlY@vger.kernel.org, AJvYcCU9Wimoiok+CcpqWcC4jOOw5JkqnCHKM6sBz0HcHhUM8I+MrajFTH4Z2MWwfbmrKTUAb8aqHiHUwXbR@vger.kernel.org, AJvYcCW42NdxEle7rixBe1LLibE8yd0e6YJlGsh66VGXVKO8T82suOiwMKW3LKB1KyPs+OACvIBtU7XgiS4VmTRGcqC8ALU=@vger.kernel.org, AJvYcCWCS9//0CoDsFAh5uKFqiUjlg0uM42D0uhObXZBZmL3voH2aDW10VLHoJKxkNJcrUd2tjHfcviYPQLg@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1jjmH5Fxz0cA0Ro1hRkUxhRlz/8hXNfCiKIkgQlQlpYXqVAYp
-	n68uTFs/dA+9BVcNxBAXn2QqlCyBZQXSSmQY5ziOdnjzHioiumyT8DvQDA==
-X-Gm-Gg: ASbGncsIHyDkDz5WODuRnuPlbPhs5T+YYvAF1f7sFKUuQCUVcGgveLF8yInv8x9RVjv
-	JderfyZyGMTic2/kBP+Z50exySL0T6Fu4Qw8/WIUbSKF9QgV48v2qG6AgS4Tbfya9WlHZT030y+
-	wK5dgHKxffZ3Q9BMX1HH5OL71WMRoD6VIZM00/pqiLxQP6zgg6PasPth41TlevxtvNPdd8GOrb2
-	Tcyi9ZXJRU1Z8skRgT4Khd52Yh6fGUPzPgVnUMOyJM/KE0yawuEsWn9Y3fucR9uRK5sBTey4oor
-	sVro2jqEfPe4PXcbI73qoQ==
-X-Google-Smtp-Source: AGHT+IFQyrXqy5NpHLF7+Lu4p1h9WASYPxxPIwKuoow2XXCkQtMPyIwZy0Fsi378ablFiyznjOaaqg==
-X-Received: by 2002:a2e:95ca:0:b0:308:da52:5672 with SMTP id 38308e7fff4ca-30a44dbb8eamr9477541fa.6.1739968199067;
-        Wed, 19 Feb 2025 04:29:59 -0800 (PST)
-Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3091029b75esm22556451fa.103.2025.02.19.04.29.56
+        d=1e100.net; s=20230601; t=1739968239; x=1740573039;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jYxtuN+FHDHDJ1UtgUUZtfJNaXcnoTaEgSZ1XZNBNzw=;
+        b=u50EU4mCOQlue4eGCTR/wcaEwOkqWTpDU/Tr1M33hbia6qVdwtQbgRVst0EkOoGRQv
+         CAjJpwvGCc9+Gl+zU6gk4TNXrYgJdv/4md084PKMrLOvvi0jwUoA5FcaaEoAPETLvMqw
+         sF9dz+CPx9O1JwK8kJDYCurQ86miYawxm9ctfXPouMiwRpNB2ggze8gZFohmctfZdf1O
+         HCfUkFj5X9wLhtt2/mpVIp/+Vq/juLs46xK1y8sHWpU8I4psfD358NbLAYu+TJeTwaje
+         4Uz/8p5WXiU9V46EdxAHq80ndDU3hNt2sJsWRI220tOTLIuKSf5crOpxoZS2R1/K2yM3
+         5CUw==
+X-Forwarded-Encrypted: i=1; AJvYcCW1pFT2oMB0OzhGXn9RqBS9Rz3E6/s+etext39Tq6f8M+NuSBlSn8EjO5JkCzmVbbFayPrUJAwU@vger.kernel.org, AJvYcCWVVrIcVeg72VsqI5llBggeON9hzsFCT7JH6FGWdtQEJ9qcwXZ8yrGadJ7kt0vIlCmWx7Kbl3BjrbjFog==@vger.kernel.org, AJvYcCXPvyI/cPVtAwpjIdxfbCv550uxyyZwUfuES4NrIRLZZTAjoOcMfrBpp0VN5aJ2mAI7JZvhtqqcXDxy827A@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3v/2dP+3makg8Rb1LwUbwcLmnmVcacAXHUbqrQea1Cz8oG4SF
+	friO1iHSuWQ3KfddQ6cS0oQhWOJjh5SwgjmZV8xqTpeM2N4sOTPs
+X-Gm-Gg: ASbGnctPRP4QJhNt3flrJwXu6HuSYfL9FnNEfpB8fV8TL6lkvkI12LlB2IvQxVbdMZm
+	1wTio2ULRUngBPeoMth8itRmnYh5URkBxkhS3cnLrAzrSnRwCVsnOZDmw2+Ttcz0QU1hl7iE4S1
+	pjYrTGE/a8g8CBwBusjCQkeLqMYGsqdNOsYw3rWa9Kqn9EtoLQwkavWUyc6r905qA0abas3sJB7
+	M8oG7RmScRA5xocOrt27GDyTr+QBxCkosCIKSAr5IyU//wlD3+Ei5UQbrtEqVCPF4USVKn9pCxd
+	WQkempKZQqaZ8XopMrk=
+X-Google-Smtp-Source: AGHT+IFHs043Az3sOgkW8oNKMParbw6enY+JvxfeqIdEzf8wa0Ef/I2EUsS+62XtazqXNwwof3B8Rw==
+X-Received: by 2002:a05:6a00:180f:b0:730:98ac:ad79 with SMTP id d2e1a72fcca58-732617d97b8mr27800074b3a.12.1739968238240;
+        Wed, 19 Feb 2025 04:30:38 -0800 (PST)
+Received: from ubuntuxuelab.. ([58.246.183.50])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7327e17440esm5575536b3a.76.2025.02.19.04.30.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2025 04:29:56 -0800 (PST)
-Date: Wed, 19 Feb 2025 14:29:45 +0200
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
-	Nuno Sa <nuno.sa@analog.com>, David Lechner <dlechner@baylibre.com>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v3 0/9] Support ROHM BD79124 ADC
-Message-ID: <cover.1739967040.git.mazziesaccount@gmail.com>
+        Wed, 19 Feb 2025 04:30:37 -0800 (PST)
+From: Haoyu Li <lihaoyu499@gmail.com>
+To: danielt@kernel.org
+Cc: chenyuan0y@gmail.com,
+	deller@gmx.de,
+	dri-devel@lists.freedesktop.org,
+	jani.nikula@linux.intel.com,
+	jingoohan1@gmail.com,
+	lee@kernel.org,
+	lihaoyu499@gmail.com,
+	linux-fbdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	robh@kernel.org,
+	stable@vger.kernel.org,
+	zichenxie0106@gmail.com
+Subject: [PATCH] drivers: video: backlight: Fix NULL Pointer Dereference in backlight_device_register()
+Date: Wed, 19 Feb 2025 20:29:50 +0800
+Message-Id: <20250219122950.7416-1-lihaoyu499@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <Z65fFRKgqk-33HXI@aspen.lan>
+References: <Z65fFRKgqk-33HXI@aspen.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="VPbxCdjMCaKD7rlG"
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
+As per Jani and Daniel's feedback, I have updated the patch so that
+the `wled->name` null check now occurs in the `wled_configure`
+function, right after the `devm_kasprintf` callsite. This should
+resolve the issue.
+The updated patch is as follows:
 
---VPbxCdjMCaKD7rlG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In the function "wled_probe", the "wled->name" is dynamically allocated
+(wled_probe -> wled_configure -> devm_kasprintf), and it is possible
+for it to be NULL.
 
-Support ROHM BD79124 ADC.
+To avoid dereferencing a NULL pointer (wled_probe ->
+devm_backlight_device_register -> backlight_device_register),
+we add a null-check after the allocation rather than in
+backlight_device_register.
 
-This series adds also couple of helper functions for parsing the channel
-information from the device tree. There has been some discussion about
-how useful these are, and whether they should support also differential
-and single ended channel configurations. This version adds support for
-those - with the cost of added complexity and somewhat harder to use
-API. I've babbled more about that in the patch 2/9. (And, I actually
-wonder if I should've returned this to RFC?)
-
-The last couple of patches are examples of drivers which could utilize
-these added helpers:
- - 6/9 converts rzg2l_adc to use helpers
- - 7/9 converts sun20i-gpadc to use helpers
- - 9/9 makes the ti-ads7924 to respect the channel specification give in
-   the device-tree using these helpers.
-
-patch 8/9 is small simplification for the ti-ads7924, and it can be
-taken independently from the rest of the series.
-
-NOTE: Patches 6...9 are untested as I lack of relevant HW. They have
-been compile tested only.
-
-The ROHM BD79124 ADC itself is quite usual stuff. 12-bit, 8-channel ADC
-with threshold monitoring.
-
-Except that:
- - each ADC input pin can be configured as a general purpose output.
- - manually starting an ADC conversion and reading the result would
-   require the I2C _master_ to do clock stretching(!) for the duration
-   of the conversion... Let's just say this is not well supported.
- - IC supports 'autonomous measurement mode' and storing latest results
-   to the result registers. This mode is used by the driver due to the
-   "peculiar" I2C when doing manual reads.
-
-Furthermore, the ADC uses this continuous autonomous measuring,
-and the IC keeps producing new 'out of window' IRQs if measurements are
-out of window - the driver disables the event for 1 seconds when sending
-it to user. This prevents generating storm of events
-
-Revision history:
-v2 =3D> v3:
- - Restrict BD79124 channel numbers as suggested by Conor and add
-   Conor's Reviewed-by tag.
- - Support differential and single-ended inputs
- - Convert couple of existing drivers to use the added ADC helpers
- - Minor fixes based on reviews
-Link to v2:
-https://lore.kernel.org/all/cover.1738761899.git.mazziesaccount@gmail.com/
-
-RFC v1 =3D> v2:
- - Drop MFD and pinmux.
- - Automatically re-enable events after 1 second.
- - Export fwnode parsing helpers for finding the ADC channels.
-
+Fixes: f86b77583d88 ("backlight: pm8941: Convert to using %pOFn instead of device_node.name")
+Signed-off-by: Haoyu Li <lihaoyu499@gmail.com>
+Cc: stable@vger.kernel.org
 ---
+ drivers/video/backlight/qcom-wled.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Matti Vaittinen (9):
-  dt-bindings: ROHM BD79124 ADC/GPO
-  iio: adc: add helpers for parsing ADC nodes
-  iio: adc: Support ROHM BD79124 ADC
-  MAINTAINERS: Add IIO ADC helpers
-  MAINTAINERS: Add ROHM BD79124 ADC/GPO
-  iio: adc: rzg2l_adc: Use adc-helpers
-  iio: adc: sun20i-gpadc: Use adc-helpers
-  iio: adc: ti-ads7924 Drop unnecessary function parameters
-  iio: adc: ti-ads7924: Respect device tree config
+diff --git a/drivers/video/backlight/qcom-wled.c b/drivers/video/backlight/qcom-wled.c
+index 9afe701b2a1b..3dacfef821ca 100644
+--- a/drivers/video/backlight/qcom-wled.c
++++ b/drivers/video/backlight/qcom-wled.c
+@@ -1409,6 +1409,11 @@ static int wled_configure(struct wled *wled)
+ 	if (rc)
+ 		wled->name = devm_kasprintf(dev, GFP_KERNEL, "%pOFn", dev->of_node);
+ 
++	if (!wled->name) {
++		dev_err(wled->dev, "Fail to initialize wled name\n");
++		return -EINVAL;
++	}
++
+ 	switch (wled->version) {
+ 	case 3:
+ 		u32_opts = wled3_opts;
+-- 
+2.34.1
 
- .../bindings/iio/adc/rohm,bd79124.yaml        |  114 ++
- MAINTAINERS                                   |   12 +
- drivers/iio/adc/Kconfig                       |   15 +
- drivers/iio/adc/Makefile                      |    2 +
- drivers/iio/adc/industrialio-adc.c            |  304 +++++
- drivers/iio/adc/rohm-bd79124.c                | 1162 +++++++++++++++++
- drivers/iio/adc/rzg2l_adc.c                   |   41 +-
- drivers/iio/adc/sun20i-gpadc-iio.c            |   42 +-
- drivers/iio/adc/ti-ads7924.c                  |   85 +-
- include/linux/iio/adc-helpers.h               |   56 +
- 10 files changed, 1742 insertions(+), 91 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/iio/adc/rohm,bd79124.=
-yaml
- create mode 100644 drivers/iio/adc/industrialio-adc.c
- create mode 100644 drivers/iio/adc/rohm-bd79124.c
- create mode 100644 include/linux/iio/adc-helpers.h
-
-
-base-commit: 5bc55a333a2f7316b58edc7573e8e893f7acb532
---=20
-2.48.1
-
-
---VPbxCdjMCaKD7rlG
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAme1zrIACgkQeFA3/03a
-ocUsDQf+MzovJEb2dg7/IVoqkcsWktNipBVWqti1q0SzAim/n4IZOlirx8H9AIrL
-fJ2XTMTWXnBwILjIocXuJFYRVnOqvycj24bKxfPxDFf1+FUdmi5fH7DfpLkhdYCS
-2eODnHijf63nwjWWd5b/IlljdDtaD5G3B60dNiZ7lFqGsS1gC/qlSCJhU9L2N4UE
-o6+uv9mTZMDGIS50sFRwLHPQmLTCeERT2BISZEvUx2tja3oRyUcn6mDj78qeiTFy
-5GNg5n2ReMybSVjkK07jlToFJtVy1A+WRU+3BVURyB0vfoaOywcPwj2px8GqUF2Q
-nheY0QtC2h8bZvny4IEeWB6TcsLDuw==
-=T+fL
------END PGP SIGNATURE-----
-
---VPbxCdjMCaKD7rlG--
 
