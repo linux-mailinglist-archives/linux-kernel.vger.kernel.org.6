@@ -1,146 +1,154 @@
-Return-Path: <linux-kernel+bounces-520730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AE89A3AE57
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:03:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5747AA3AE62
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:03:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6765B1886330
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 01:01:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2B94189A0A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 01:01:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E9121BBBEA;
-	Wed, 19 Feb 2025 00:57:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C8749625;
+	Wed, 19 Feb 2025 00:58:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kMJg/nWV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LXLcW8DP"
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB4BA33991;
-	Wed, 19 Feb 2025 00:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00E683F9D5;
+	Wed, 19 Feb 2025 00:58:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739926640; cv=none; b=UZ+c98x2ogwhjKvL8W1HeBmxCziwVm2K6kl4Yt+ElkpUlg+pj+4TmIZV9FhSL0Z8Ag3klUlmS4Ys+hGemhGE7t8+7IW2ATlLP59QdpndnLOnj8Y7Y+nN9+rKp6HsZJMLTkZBe79VPW3EOBQayfplsaNoQpcJRIeeehOcNPRyYxk=
+	t=1739926734; cv=none; b=I6hV7WSJYR1rIczR+QrTgyZrc6Oqv1vPpHNCUWDad/3I5a2AFHbblf6vnYUD9w48u/X/Pdl6ZVr84kStZ8rsce29F+h4qOjgAyVDgdGsEKl91SqWCwIKYlOAhnM4iabhXv6mRaUDgu4LfQrFXQxGuArjnp+mCer5ue+3KhOq81Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739926640; c=relaxed/simple;
-	bh=O476KadsknrNOtGe0FYpBki4MawyLZYBAEC/CL/ml6s=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=QiMv+NKZAEHvhtrAJNMVKrWlRzhwL9yOgq4e9JmM6CDNNyUuZp761cdsPgeBqbPlvuyaiFnM7FGH5SocvMNJoEFnijSFl3RAtVfh05V7ge2P8mnlQ9Dc0yHk62tIFi/F8AA6C2VpT/lMpE2lRmbP0TW265hyfIW1oOBoL8pwjow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kMJg/nWV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A100C4CEE2;
-	Wed, 19 Feb 2025 00:57:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739926640;
-	bh=O476KadsknrNOtGe0FYpBki4MawyLZYBAEC/CL/ml6s=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=kMJg/nWVU8MRPLWQYfQIUgjymhjVfibF7HurwZJG07cOBW5Vc4WYiP3zkDjYujn8d
-	 vnWkS8QEg/C1K9j7UBpn46fGW9LHIAvbtpLMzyFD7N6z9BcDQMQvL67fhNNiOl0zX8
-	 4VVUxk95RDViI9a+cxl6w/f3PkW42LX0Go8X9M4V6TIqnkrjzUC2IKUTQOX6fdqc3U
-	 FUVBx2Qkfu2R0deh/+xmWKlnQMlarX5xqWotNW370glSXoNmTDwVxXpHwj4lefSVHz
-	 /bGzkxdO/isTaI0znfnJoStb+UZjzsJAy5pdmoxaGH35tXpGswouhncNopexLBt2Dj
-	 JDE9RwCcLMB7g==
-Date: Wed, 19 Feb 2025 09:57:15 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
- Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>, Heiko Carstens <hca@linux.ibm.com>, Sven
- Schnelle <svens@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>, stable@vger.kernel.org
-Subject: Re: [PATCH 4/5] fprobe: Always unregister fgraph function from ops
-Message-Id: <20250219095715.26c7b7811b05d3952c7bfa56@kernel.org>
-In-Reply-To: <20250218193126.785837383@goodmis.org>
-References: <20250218193033.338823920@goodmis.org>
-	<20250218193126.785837383@goodmis.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1739926734; c=relaxed/simple;
+	bh=jmhrcWKkHilvljIZMViZu2rF01jndp2vBAJzdVRoh1E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P/iggX5yX70oxSlHciC/H+FCX5oP5B5YiyJ78LCAPxwtIcSkkxqSqP3Hxs26sLpgMkp5uDC0HsUFJaE+YhBBGmJq9bexvsmOgFTo7pNUvEZzDwp5D8EjXPX/JErXC8Su7Fq7OgdIPfe9BOp/giuR8XQry73TblcT6QvWfx/ADhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LXLcW8DP; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6f6715734d9so54154457b3.3;
+        Tue, 18 Feb 2025 16:58:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739926732; x=1740531532; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3bJA8YmCnEAodhQF45ajT3K8Tf2jxKNSg9AlHiUTHU4=;
+        b=LXLcW8DP2P45u+EwbcVN9t0ANH9FVEVfSGmKOLEHTvclUDNPYliciwo3GH/bAPqJZ2
+         nYw7AFJsAWw8w0CWTXgWKJa0gZDcFKV+2tUiQ6g7TP51JB4dle+2RKXZD4ZlbH6NRRNN
+         5/u2pi9VQtONqVEZDEz1nBNHYx4LA1YKFpKdfiEtNVPJGVE0EnZwVITpm0nNwCr4M0w7
+         W8Rrq8WnIZoplkV3qS3fv4KGyXB0m41m/IzbH6xl2Hqx9aJjD2cKcG30ML+C72BpXLfM
+         avDKyyUX5fAvlBKLgDDKBMEsENZMGVtFRvGeFguq3hZoNlPZyWXoyc8NfxaBsdfiheWo
+         L+DA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739926732; x=1740531532;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3bJA8YmCnEAodhQF45ajT3K8Tf2jxKNSg9AlHiUTHU4=;
+        b=h42afGEBTPVsngSljcUqkWKVQiivkMFidugCPFRJ5kDkJqJbw9LpgZsUyDZHfD05f/
+         4bw4esrjUD+n2g+B1z+G6hG4Hjwk8/n587xS1K297pyxHZ1WOPvYc9adybb7/N0rDI2l
+         BjZZOERMtIIMx0ECWyZ+Cgc1DdW6zNWrhTGW1GuIm8NYaTX0hwbYmINdEN2xHxnT+5SI
+         0z2mVoVq5mNX8dJK2FAWU+umCGzLxZtaOQrdneIqm8dwG+JVu8OmPDxdjhyvX1absunw
+         VnS8LR7x7hI+/EhKzehLTh6oc7MX2MzRu2dYtjLecIrYWdsWt4JYbh5BmG/IRn0IIc1u
+         RWWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVh0eYu0zHKfOfcf0O8H4TDO6qj3GqJa2FIoZkflPi63lKdCVtVDqPo60lE387Vayq2oaUDe3FRW9TtPXg=@vger.kernel.org, AJvYcCXKGEh7kzwaKYcaA3/FNWuOfHTVmCawTJI3MaqX3CVjKMHn6DL5FyYuGjuQNdzpj7+vWCkqqb+Cl5MY6z7+L9B8nQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIL/gMm6zAHgrgNcq6NLGdAFn7xxs+gheD4PGenvuHprP9qtwL
+	FYb1C9M6Be9fjDjj8XUNTQVJYHmfsuMqrHNHbHf1CltBY8lPy+aG+U33kR2lqD6jJvH2GJT1BMp
+	soSjv7U6kXG4Zr+o47AsidcmotwDP71vxlTY=
+X-Gm-Gg: ASbGncv44xS7e6U5tRgaZuEdQN5jRBbG8aBAzDz17D5uLJY2q8qC9BSTbtOaXDYVZno
+	H2tr1znOCZh0ZQ9ipjmMgPHcwQNIIqy6O3FvH6p/gCPEJCKy94QAwWNh5Hv87rqnQt9ndmGc=
+X-Google-Smtp-Source: AGHT+IEeP/YT/u4I+5++spTx5STaz32WAdkPHQ0r6pEpxbcpGKMYWXOONHY3D8IgkB4l/Re67bza7kdwVs/5ZbJ1/AI=
+X-Received: by 2002:a05:690c:9314:b0:6fb:5f8f:1d13 with SMTP id
+ 00721157ae682-6fb5f8f2431mr85409727b3.8.1739926731672; Tue, 18 Feb 2025
+ 16:58:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <20250213230009.1450907-1-howardchu95@gmail.com>
+ <20250213230009.1450907-11-howardchu95@gmail.com> <CAH0uvohY6fBaJvMZNi-fcHEW1Dw7Zp5Q_+ZxNgcaaFary-3sWw@mail.gmail.com>
+ <CAP-5=fXae_851WezB5rNkv6cp2DfAWobJ-cbehKy3eiFe8F9Ow@mail.gmail.com>
+In-Reply-To: <CAP-5=fXae_851WezB5rNkv6cp2DfAWobJ-cbehKy3eiFe8F9Ow@mail.gmail.com>
+From: Howard Chu <howardchu95@gmail.com>
+Date: Tue, 18 Feb 2025 16:58:40 -0800
+X-Gm-Features: AWEUYZk51OITA1PnUtwP2-sCogR1IFXU3FVw0TaqLn9NcCVaKH6bgdGxvZlLvPI
+Message-ID: <CAH0uvoh7dcMN7BjzHspEdd3+HgQza1wgNxctGvxFKmOjVCrh7g@mail.gmail.com>
+Subject: Re: [PATCH v15 10/10] perf test: Add direct off-cpu test
+To: Ian Rogers <irogers@google.com>
+Cc: acme@kernel.org, namhyung@kernel.org, jolsa@kernel.org, 
+	adrian.hunter@intel.com, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, 
+	James Clark <james.clark@linaro.org>, Kan Liang <kan.liang@linux.intel.com>, 
+	Mark Rutland <mark.rutland@arm.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Arnaldo Carvalho de Melo <acme@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 18 Feb 2025 14:30:37 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
+Hello Ian,
 
-> From: Steven Rostedt <rostedt@goodmis.org>
-> 
-> When the last fprobe is removed, it calls unregister_ftrace_graph() to
-> remove the graph_ops from function graph. The issue is when it does so, it
-> calls return before removing the function from its graph ops via
-> ftrace_set_filter_ips(). This leaves the last function lingering in the
-> fprobe's fgraph ops and if a probe is added it also enables that last
-> function (even though the callback will just drop it, it does add unneeded
-> overhead to make that call).
-> 
->   # echo "f:myevent1 kernel_clone" >> /sys/kernel/tracing/dynamic_events
->   # cat /sys/kernel/tracing/enabled_functions
-> kernel_clone (1)           	tramp: 0xffffffffc02f3000 (ftrace_graph_func+0x0/0x60) ->ftrace_graph_func+0x0/0x60
-> 
->   # echo "f:myevent2 schedule_timeout" >> /sys/kernel/tracing/dynamic_events
->   # cat /sys/kernel/tracing/enabled_functions
-> kernel_clone (1)           	tramp: 0xffffffffc02f3000 (ftrace_graph_func+0x0/0x60) ->ftrace_graph_func+0x0/0x60
-> schedule_timeout (1)           	tramp: 0xffffffffc02f3000 (ftrace_graph_func+0x0/0x60) ->ftrace_graph_func+0x0/0x60
-> 
->   # > /sys/kernel/tracing/dynamic_events
->   # cat /sys/kernel/tracing/enabled_functions
-> 
->   # echo "f:myevent3 kmem_cache_free" >> /sys/kernel/tracing/dynamic_events
->   # cat /sys/kernel/tracing/enabled_functions
-> kmem_cache_free (1)           	tramp: 0xffffffffc0219000 (ftrace_graph_func+0x0/0x60) ->ftrace_graph_func+0x0/0x60
-> schedule_timeout (1)           	tramp: 0xffffffffc0219000 (ftrace_graph_func+0x0/0x60) ->ftrace_graph_func+0x0/0x60
-> 
-> The above enabled a fprobe on kernel_clone, and then on schedule_timeout.
-> The content of the enabled_functions shows the functions that have a
-> callback attached to them. The fprobe attached to those functions
-> properly. Then the fprobes were cleared, and enabled_functions was empty
-> after that. But after adding a fprobe on kmem_cache_free, the
-> enabled_functions shows that the schedule_timeout was attached again. This
-> is because it was still left in the fprobe ops that is used to tell
-> function graph what functions it wants callbacks from.
-> 
+Thanks for testing this patch :).
 
-Good catch! I forgot to remove the filter in this case.
-Is there anyway to be sure the filter is empty or clear it if
-fprobe_graph_active == 0?
+On Tue, Feb 18, 2025 at 11:32=E2=80=AFAM Ian Rogers <irogers@google.com> wr=
+ote:
+>
+> On Thu, Feb 13, 2025 at 3:04=E2=80=AFPM Howard Chu <howardchu95@gmail.com=
+> wrote:
+> >
+> > Hello,
+> >
+> > On Thu, Feb 13, 2025 at 3:00=E2=80=AFPM Howard Chu <howardchu95@gmail.c=
+om> wrote:
+> > >
+> > > Why is there a --off-cpu-thresh 2000?
+> > >
+> > > We collect an off-cpu period __ONLY ONCE__, either in direct sample f=
+orm,
+> > > or in accumulated form (in BPF stack trace map).
+> > >
+> > > If I don't add --off-cpu-thresh 2000, the sample in the original test
+> > > goes into the ring buffer instead of the BPF stack trace map.
+> > >
+> > > Additionally, when using -e dummy, the ring buffer is not open, causi=
+ng
+> > > us to lose a sample.
+> >
+> > Just noticed that this commit message is wrong, should be:
+> > """
+> > Add tests for direct off-cpu samples and --off-cpu-thresh option.
+> > """
+>
+> Tested-by: Ian Rogers <irogers@google.com>
+> ```
+> 121: perf record offcpu profiling tests                              : Ok
+> ```
+> I'd be tempted to keep the comments about why 2000 next to the actual
+> code rather than in the commit message. In the code the value is 12000
+> and not 2000 though?
 
-Thank you,
+I actually deleted the --off-cpu-thresh 2000. It was intended to fix
+Namhyung's original test because I forgot to enable the off-cpu event.
+Now that recording the off-cpu time of a task is fixed, that
+workaround is no longer necessary. The --off-cpu-thresh 12000 option
+is used to force sleep 1 to produce an at-the-end sample, as only
+tasks that have been off the CPU for more than 1.2 seconds can emit
+direct samples, and since this is recording an off-cpu period below
+the threshold, I think it makes sense to put it here in
+test_offcpu_below_thresh(). That being said, if you=E2=80=99d like me to ad=
+d a
+comment or two, I=E2=80=99d be glad to do so.
 
-> Cc: stable@vger.kernel.org
-> Fixes: 4346ba1604093 ("fprobe: Rewrite fprobe on function-graph tracer")
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> ---
->  kernel/trace/fprobe.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/kernel/trace/fprobe.c b/kernel/trace/fprobe.c
-> index 90241091ca61..886090845b1a 100644
-> --- a/kernel/trace/fprobe.c
-> +++ b/kernel/trace/fprobe.c
-> @@ -403,11 +403,9 @@ static void fprobe_graph_remove_ips(unsigned long *addrs, int num)
->  	lockdep_assert_held(&fprobe_mutex);
->  
->  	fprobe_graph_active--;
-> -	if (!fprobe_graph_active) {
-> -		/* Q: should we unregister it ? */
-> +	/* Q: should we unregister it ? */
-> +	if (!fprobe_graph_active)
->  		unregister_ftrace_graph(&fprobe_graph_ops);
-> -		return;
-> -	}
->  
->  	ftrace_set_filter_ips(&fprobe_graph_ops.ops, addrs, num, 1, 0);
->  }
-> -- 
-> 2.47.2
-> 
-> 
+Thanks,
+Howard
 
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+>
+> Thanks,
+> Ian
 
