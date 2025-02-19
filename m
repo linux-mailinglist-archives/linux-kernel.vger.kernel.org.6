@@ -1,88 +1,60 @@
-Return-Path: <linux-kernel+bounces-522423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A66A6A3CA3F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:42:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00DFFA3CA47
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:44:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B82CD18898FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 20:42:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DCEE3A5A5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 20:42:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56A2323F295;
-	Wed, 19 Feb 2025 20:42:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 958A02405E4;
+	Wed, 19 Feb 2025 20:42:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="f3Vs6FZ2"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="r1dP4bEL"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6C711F8BA5
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 20:42:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62FC721516A;
+	Wed, 19 Feb 2025 20:42:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739997727; cv=none; b=BThgc46+mElVi4dVD3/vfhwgDv3LGkVCZ0qrzzaTK6W7sc3XQRoJA8qB444PFun6zIOITeHTbLCUg37na9ZY6RlPOY2XXLkHKNr8cDfje600qE/7I6hUHPU2Lx/OD6Yjhi+jECji4d+cQCrnHmtcVv5/2zySP9SViEDvzLgK55o=
+	t=1739997757; cv=none; b=NMCLAMIVfqahzK4CYVCVb2US3CC5ry/TrD15V3ahf5z9nDzw72bdFloHAl5WzyL6W91SPu66xJESgNMQLCNZgMK2N+uVY91sKeCOPepjUoZwILkCinErwt0BFKMj+lQmVgjMTPT1rk+lIg9jMkxNo26zYk6oOuYWqaak7ipEi5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739997727; c=relaxed/simple;
-	bh=oGFH9gjtels+xMBADqC9C7inQemNOF9SL3MjxANpjE0=;
+	s=arc-20240116; t=1739997757; c=relaxed/simple;
+	bh=rIHiiJyUz1iYyZLTnyvClQJ1jWf6pFqwKsA46EDaHa0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l1V8BKDDYjvvmRspGdb32kHBtgEjQGKRZvnvyBnPtUmGDnltXDbuYmxruUEz00oiFvxIvYx2Fyd+8CA686RH8AuYOxuEFTwmC0GorS5nY6XeG1Yi9U5EBskUdoVgl01XHtIyNEPYv6GtnS15c/5GLpiggYM0pe1/T5QYukUhguU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=f3Vs6FZ2; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5461a485aa2so231023e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 12:42:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739997724; x=1740602524; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oWfn2QE048JAogGjdO/HN/1zhXyyFXLbFj0VStJXPXI=;
-        b=f3Vs6FZ2vzfyF2Z/DD550YgLJ0lt4e8cPYloO33PkLD8ZDwwin4ytiWUexmHNbeudl
-         KMspWXpAsEsDOfwnkBFKjqsPMhrkNS7IiimgeR8BU6LCQXjXdgA9JTBOOnGmIwNWLD2t
-         DUKT/GG84e/5Qgmsa4wK+XRqoJNREezaide4XVR1FKxbABJxu+8lUGxhSh5w5+24diRe
-         +zHAlAE/FzRwakTZaGm4Dk4hzIz49zpFmADwSCY6Fd1hHCGv77NLrzCLyjOJmhrWYgZa
-         cmHNk+tRdEGlykqTjAxm5TaAFI/yS8LfpHTyLhghi8iBWgXFKnwNex9Ary3Gb7hNZgE2
-         kjgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739997724; x=1740602524;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oWfn2QE048JAogGjdO/HN/1zhXyyFXLbFj0VStJXPXI=;
-        b=ZzNGV969EAJHBYHHVVziWZGFWMJhAgnHUnbvyi0M6bHGr+TnPZRBMY4Gjh7XbfwYzn
-         gU+Ric4u1A8KV05yM6/BpWZJH6KLH1KWe12UFQ0Y+ZKASVg7GWH9zqJt3tH0iCYekGXX
-         NPeYUCtVazO81Ce9z5d4t1Ti2R42tHNRNjkRjzT8KYqtV1WAhco79VXUPJJ+svlFGEGy
-         sWc0iWGffUq/S3gmEHmpIRnapniWIr6N5VbNN/GXNmWBNmNxL6jSWLNWjAFtpZmKE4JD
-         X4trNNcCGa8eZQW/DQJagX0nGftYxPYx4wT3Yrv7d1zXeFJpgl3/U0+JqjEkQV3qbM1i
-         vHNw==
-X-Forwarded-Encrypted: i=1; AJvYcCV1RRJeH3Mu3Cj9J/CFPeCKg3Jnrn2pQ/tA+VkRCHvSw1NcbisWZuKnJsdJ7PppsjAItw3NBXbhEx835cA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmXb2VQB9dQzgkdGwm5LSgOXtkZLGLD56gEzOPfdjjRmG01g17
-	aGwBOmuDYWFzlav0T5OGm+0bcoBr4Y5lGrNlxbOdPAHqNKUAuhotKYgDJ9ukuZI=
-X-Gm-Gg: ASbGnctdpL7VWkV/zbTMhBRhxAgz/aLzQUOOCFVaNXlx7GLei7BdJSkgNBVaLiJdjgm
-	KG1yfcoFeTkk1ZcJUzqWZylRQx/A9IzuqOFA3m9SInZdyNcO7DHcmH7oEYjexLJM4u6VeyzZLwQ
-	1VVkexYTHw36BPG7+bBxAy5NW0iHnqY0lJBissjOdjoDTwd/pFmdA6uKevoRvfbYTn4IKXihQsB
-	2iBxO6Vx54DefpXEtleuMlQir3q7wL46EVliRBo2ZgrYGi4kr4r7CXcX906CqvBomcDv35wl62V
-	Dx8zMSh1ABU5aH8kpyNsEZoSMGOy6FuQdffJubYeDQaPNHfIjJ86brtWmhWypPjoS0Jp6Xs=
-X-Google-Smtp-Source: AGHT+IGXMalRxphojh9Kz/mE/PFLZuuLeouSpCzsm5nqbBL2KU5Od7qqkelGjB8u41IdiGOmFC8W3A==
-X-Received: by 2002:a05:6512:e94:b0:545:d54:2ec6 with SMTP id 2adb3069b0e04-5462eedb519mr1875009e87.2.1739997723749;
-        Wed, 19 Feb 2025 12:42:03 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5452871ead0sm1907991e87.193.2025.02.19.12.42.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2025 12:42:02 -0800 (PST)
-Date: Wed, 19 Feb 2025 22:41:59 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jessica Zhang <quic_jesszhan@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 5/5] drm/msm/dpu: rate limit snapshot capture for mmu
- faults
-Message-ID: <h5i5wegkurgmujrkx35qpyjmkbjv3z4re53dx5i4ly4ghzpek6@hgsdbmfmgxe3>
-References: <20250219-abhinavk-smmu-fault-handler-v3-0-aa3f0bf4434a@quicinc.com>
- <20250219-abhinavk-smmu-fault-handler-v3-5-aa3f0bf4434a@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VSQveJ7w76WqOB4EKVU/XoAb8eBwmvY6qdeIfAtKm9Tw+TdAV2F90RfritT+qu8gDqRW2xdEND+yDfOxFoNnFCz1fqkG/7ct8p7aKCy9qX9P0q6v8dTk73hvP0RYjcAm2zInXB8bdgp7bGSJg+/7OQsz0LQljIXyd4DVDTs04Jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=r1dP4bEL; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=8ftta+Mc6Pupl8QpbRC1xuQpxe/1w+NCOFRaih1qjFU=; b=r1dP4bELxRpeutIC2q7wzdmcoz
+	WuiY3I2nM7HWAI1GGTjw4MIZpF/EzadWSU6ejzGohQrmJ6HKQk7V5+AoZGcZf4BtulwWGWoMo4Vwy
+	7WKSayVvn5cMmWqYQtCCThBl7p/q4/3Ygr2Gi4ft1zk+sdXz22vLAAjRs8X22IYm6wjo=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tkqti-00Fk50-3i; Wed, 19 Feb 2025 21:42:22 +0100
+Date: Wed, 19 Feb 2025 21:42:22 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Wei Fang <wei.fang@nxp.com>
+Cc: claudiu.manoil@nxp.com, vladimir.oltean@nxp.com, xiaoning.wang@nxp.com,
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, ioana.ciornei@nxp.com,
+	yangbo.lu@nxp.com, michal.swiatkowski@linux.intel.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, stable@vger.kernel.org
+Subject: Re: [PATCH v2 net 8/9] net: enetc: correct the EMDIO base offset for
+ ENETC v4
+Message-ID: <abe49f9e-a1c4-424a-a96f-0793c0fab57f@lunn.ch>
+References: <20250219054247.733243-1-wei.fang@nxp.com>
+ <20250219054247.733243-9-wei.fang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,37 +63,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250219-abhinavk-smmu-fault-handler-v3-5-aa3f0bf4434a@quicinc.com>
+In-Reply-To: <20250219054247.733243-9-wei.fang@nxp.com>
 
-On Wed, Feb 19, 2025 at 11:49:21AM -0800, Jessica Zhang wrote:
-> From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> 
-> There is no recovery mechanism in place yet to recover from mmu
-> faults for DPU. We can only prevent the faults by making sure there
-> is no misconfiguration.
-> 
-> Rate-limit the snapshot capture for mmu faults to once per
-> msm_atomic_commit_tail() as that should be sufficient to capture
-> the snapshot for debugging otherwise there will be a lot of DPU
-> snapshots getting captured for the same fault which is redundant
-> and also might affect capturing even one snapshot accurately.
-> 
-> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
-> ---
-> Changes in v3:
-> - Clear fault_snapshot_capture before calling prepare_commit() (Dmitry)
-> - Make fault_snapshot_capture an atomic variable (Dmitry, Abhinav)
-> ---
->  drivers/gpu/drm/msm/msm_atomic.c | 2 ++
->  drivers/gpu/drm/msm/msm_kms.c    | 5 ++++-
->  drivers/gpu/drm/msm/msm_kms.h    | 3 +++
->  3 files changed, 9 insertions(+), 1 deletion(-)
-> 
+On Wed, Feb 19, 2025 at 01:42:46PM +0800, Wei Fang wrote:
+> In addition to centrally managing external PHYs through EMIDO device,
+> each ENETC has a set of EMDIO registers to access and manage its own
+> external PHY. When adding i.MX95 ENETC support, the EMDIO base offset
+> was forgot to be updated, which will result in ENETC being unable to
+> manage its external PHY through its own EMDIO registers.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+So this never worked?
 
--- 
-With best wishes
-Dmitry
+If it never worked, does it actually bother anybody?
+
+Stable rules say:
+
+  It must either fix a real bug that bothers people or just add a device ID.
+
+	Andrew
 
