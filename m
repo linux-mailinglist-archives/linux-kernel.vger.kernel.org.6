@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-522383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1909A3C974
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:17:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77197A3C975
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:17:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9195B1889D32
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 20:17:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22B0C170D72
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 20:17:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E40B22E3F7;
-	Wed, 19 Feb 2025 20:17:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC90122F38C;
+	Wed, 19 Feb 2025 20:17:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="o1AmmdRX"
+	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="mwWpr+Hb"
 Received: from CWXP265CU009.outbound.protection.outlook.com (mail-ukwestazon11021086.outbound.protection.outlook.com [52.101.100.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8ABCEEAA;
-	Wed, 19 Feb 2025 20:17:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E547922CBF6;
+	Wed, 19 Feb 2025 20:17:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.100.86
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739996245; cv=fail; b=LkuQC8Qf4+4cAGHpOJ0jMol6SEYZjt9uhzM7mNeIgycPQOttBdr2YfUX5zgX7OeWdjAeOceR3+8YkO4UdiCkEYYR9JLjw9sCmk5vR16PYQPpXOpyOeI+VTvpKija//AhOlKKot5o5dOP+GoIeOVl0DKTgHA9M0Wh+HZ/bv8+fxQ=
+	t=1739996247; cv=fail; b=khPJZ7p6TQS/FDy4Iz75MN/OUL6gQ73NadP4J6NwQES19dUIRgvwXBshrtOD5fTKm4wAtLa7WchnlTAq9+sNbVr6RJ8fZccC1ScJ2ezFnO2+w/kqNB+c31IV+50ArQKaOOsc1p3fR0StksXd7NdryiC+6IhMzPXyKk7flhfjHJs=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739996245; c=relaxed/simple;
-	bh=57F9H9cid+f5sk6Rg2VbDCegnoZihq519rd5WFtGZmc=;
+	s=arc-20240116; t=1739996247; c=relaxed/simple;
+	bh=Gkt+zhrxSn1MrnFhafCdvbyG7Nc7xrbQEupBogtPHQk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=jLb+gE0MH3jRA7eKJa+UZ2qdP7rEeZGlIcjpmjVyUkz1/oZ8szqR6y+3CeiZ55GCZ2gmkoqraMcBJADFXUSXhUU2dOfs2nL0fpMLV5L0o969U9SRmN7493uTOF0DStqg/w8MF33Iz9HvGYr520eyPNRHu31BAA5MFArq57cWeE4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=o1AmmdRX; arc=fail smtp.client-ip=52.101.100.86
+	 Content-Type:MIME-Version; b=lHp109vpmS5V0gyalS0UEJFJHC52/YPjDqlcvTeg28iq4H7ekVc2gwj20aofaQRtx5oqY75ohex0kgR5Jrybs3BBl8oRqZ4lW2JjD21NnXoUuQAhDOU5tTas69G65Uqo+gO9Gn3Cyw/9jUttQ+lZF7YvtMNqZ3y09s9eODdfzhI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=mwWpr+Hb; arc=fail smtp.client-ip=52.101.100.86
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=USrSsyKzfxTx7NhefI6C5RvnFvMXeoqKAa1YfAMcH5wHha6hw0guYIHSx/RPCx+KKxxjbzdm+5cowpb6614Fymn9rhuy8txjX4f3fmUCR39YZVrKpWrDZ5tVm+05aTQn+RyoLEpsdc6WHLM1d5lnHjpwZjGfEItphXVEL4h3cd4fxOCy4g0I7QkPjEJu0a5RW5z6raIR24E157uXn0anzaoKsvU/7R403O+410k9gFgDoIXo7ppCQs3URFEnbY79BfptbNNHZksgeNKJqLYC+vF2i9wH2R/4t/IYsTJt56r1z1nE2Arn0DSFlCqfLiMtE4O1xAtTdJURwfPrNBPFCQ==
+ b=MMc61Ke759zKXeNdio8HgfaGUVlUPb521nG/4sGB+ZtuLyYJleeRkviSpRI+gOoMoABWlx7pglmlbJcBWNUYrm9GJCxWjiruqUZ1n9jb/gwJSjt4YkS5eAPT8rk+psC9Uu6wWGIPGvUrAc7bW0+gCNQ1v2aBM/um/gWJGitT7ZY4vABU5F+C+7kZl05i+adQ1ZGIbCNhZ3PAqN3j3UvVsVkmmmOv4Of7KhI3Cmj+h+I8UC/Q9/oBXOOuIVOQpMzJ4hcMOujxeOZeSSBmlujWnckJGSo7xBBAnTilWlIHqXWsZrHOGmxPqhWMNdb1+rBu5PJBSJ5EAaxhHGCQmA+azw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=s3OjeCQFUqK0mZLsIu5Vd0ymD0QGE5uSzh4XqZ3vans=;
- b=BOSL2B7IgVDGN0ONxtkZZrZ4uqZV3EAyDOCaaa4/cPw+7ACQtWnVfp5kUwn5y2gwLzixqAWoVehyZo1KEoV9qa83eS2aaw7pUQQ0EAu4MBVTFeX62yejT6DDbGxHIm5S30sJfYzRxLNrtwNkdD3l5PYqFjI/yIxr67pm/ktNMosbgB7G4b0/ifK44YdPGcfUG4BkHzZCXUukQRhD3APij4ZLH02fBPp6s263UeTgi+/BRfRePcjbtBzsTLbIugL/cCIDtGPXZzx/EFTJlzkFVwblA7UHLob5KaC1QlBVwOBiH6vdlSkQii1O1TLIuYFKEfcX8dBWBsIbEsrJ5uWPWg==
+ bh=U6VS7cv9WJnfApSfCAp4D9lnXs5HUDSUGvFwEufAego=;
+ b=Nv4Ax3obQO5D5Pby9y04KtBUt9A1jkrw3pKpEXHQJ1qjf4a9Sm3NIt4pbl9zhuM8o9Immas4/R5UQnJ/kXRwp/F0zIuf4C7XM20OM4B+Xb6BkvK0xc/1lwLgk8gj3o0TRmr/kco/sxF2PBc5f4YUkL6o2CaDs72STb3WL4gK8nGuFGv0KmqUzQA4h1GyNwW0LbnYNQcbh4HdqmIIUOSAYcztBC5b+ojlcG7J+i2DvwMl+IopQXZB4ycNdKjm5cR2C7jykZ4vXlKHHQiVbk6xXh6gDhkiIwVO1PaDa/Gkn6A2+fbm3UFOobjtfGu1U7xw/p6awHCi37+dcHeCDK2iFw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
  dkim=pass header.d=garyguo.net; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=s3OjeCQFUqK0mZLsIu5Vd0ymD0QGE5uSzh4XqZ3vans=;
- b=o1AmmdRXaANjDzfTD0bVZMLTRy9OWyg3j+P9zHsIjr/VK2s8LwA1fJYSYn0v7qZ8H6xq0j47HXA5LrC/1PSLZX37kdhTWURAQySiZ7J/yXd4ASg4nOCzA+9YtNtXwKq3xFj0H1o33ZSRt8bJ01Ktnz9Qsd5KimI7gif/2KfLoEc=
+ bh=U6VS7cv9WJnfApSfCAp4D9lnXs5HUDSUGvFwEufAego=;
+ b=mwWpr+HbagGoEESVIRkLNUh2keWdexCBJIUGyc1WAHYV7gKRbhsvK6FTSHhb7LdZ7oyUfROggSCM/tsRhPpgwkTCOQOki/Za7GfwFVPYJr2gsRBfbrnV9TCikdOvAqPGK5NRqpxWnfn/BKJIMuZ0rzImuR4HKKhdVkqFIpZwrng=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=garyguo.net;
 Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:253::10)
  by LO2P265MB2783.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:13d::5) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.15; Wed, 19 Feb
- 2025 20:17:21 +0000
+ 2025 20:17:24 +0000
 Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
  ([fe80::1818:a2bf:38a7:a1e7]) by LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
  ([fe80::1818:a2bf:38a7:a1e7%4]) with mapi id 15.20.8466.015; Wed, 19 Feb 2025
- 20:17:21 +0000
+ 20:17:24 +0000
 From: Gary Guo <gary@garyguo.net>
 To: Miguel Ojeda <ojeda@kernel.org>,
 	Alex Gaynor <alex.gaynor@gmail.com>,
@@ -67,17 +67,17 @@ To: Miguel Ojeda <ojeda@kernel.org>,
 	Alice Ryhl <aliceryhl@google.com>,
 	Trevor Gross <tmgross@umich.edu>,
 	Danilo Krummrich <dakr@kernel.org>,
-	Will Deacon <will@kernel.org>,
+	Tamir Duberstein <tamird@gmail.com>,
+	Wedson Almeida Filho <walmeida@microsoft.com>,
+	Alex Mantel <alexmantel93@mailbox.org>
+Cc: Will Deacon <will@kernel.org>,
 	Peter Zijlstra <peterz@infradead.org>,
 	Mark Rutland <mark.rutland@arm.com>,
-	Tamir Duberstein <tamird@gmail.com>,
-	Lyude Paul <lyude@redhat.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>
-Cc: rust-for-linux@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/4] rust: implement `kernel::sync::Refcount`
-Date: Wed, 19 Feb 2025 20:15:30 +0000
-Message-ID: <20250219201602.1898383-2-gary@garyguo.net>
+Subject: [PATCH v3 2/4] rust: convert `Arc` to use `Refcount`
+Date: Wed, 19 Feb 2025 20:15:31 +0000
+Message-ID: <20250219201602.1898383-3-gary@garyguo.net>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250219201602.1898383-1-gary@garyguo.net>
 References: <20250219201602.1898383-1-gary@garyguo.net>
@@ -94,233 +94,248 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: LO2P265MB5183:EE_|LO2P265MB2783:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4b6dbc8a-1ffc-4e40-a4dc-08dd51226a79
+X-MS-Office365-Filtering-Correlation-Id: 6464ea83-0c2b-404e-3e0f-08dd51226c1a
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|10070799003|921020;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?YXIwrfe8+8uPJuxYApnZfWia5UUKyErKRtkWW6zpW3/Brlu/JXVohYBaEa/A?=
- =?us-ascii?Q?MCjY3pIhh9+NcV8Ac+c+vdh0RgnQVuWamrR0LQoWjg7M9E+TRJKNXFYV1C2F?=
- =?us-ascii?Q?tNtgEhsKSBN4eVSEiWtNQL5c3vTJgo/35+Pw7ZEbrt6XxGKHQCLzcjwftIBk?=
- =?us-ascii?Q?4xJq+ppXNTK2loThj210P7tWv2Mlv0gOobGKGQMuJeYWWfxQ5hqEjY51CJC5?=
- =?us-ascii?Q?gARHSWxXN5Z3RI3WnOq8nWA1E6mYQkbtgeTJPv4cDvUKmOQQ61CQMds3dPlq?=
- =?us-ascii?Q?m+So+lOHDplr61NdA3SZVgKzRxtOlvvO1yAqyWGu9y75+CsMqXSQSMHkjetW?=
- =?us-ascii?Q?isbe4oc2Hgsn300LsEVI/aAFl9te4z9HUcfHheNShGAf9qYxAP4T8ncisE9S?=
- =?us-ascii?Q?F5VP7/WMPdfOkJz/OmSSgMQgj9MAakwAXRrrT+2RqooGDbm+uXFyyMV9mSWi?=
- =?us-ascii?Q?nZ5JXSc2nYD10Wtck7L4E99dSJxyYaJVipEzWt6WhsmD/LYE7Sp0DKxM7U7a?=
- =?us-ascii?Q?TfsoCBMqzspASXrDOWdbSRXZ5z2/f2g/sh0XAvOKYev1CQue7C6cvBJrl2gY?=
- =?us-ascii?Q?IO4dh5cmZpL82wpTsTqranbjfxqorOPZ7HgF+yq4reiJgbioy6kZDQX8c0tc?=
- =?us-ascii?Q?H/eSTPwcLMWH0+NEI/onxbupoQmSijflfGHk/P1iWbFfF+r1437N4cFsgG9f?=
- =?us-ascii?Q?c6pCiN3kmq0H+brvMtKHKRlf1z3YLx/lkX+6tLIz7koRBfq2/rgg9vwlSIhU?=
- =?us-ascii?Q?XMvY8b8Vdxp7h3nEgHlAH45+Sy3lHQMEalNycmuLKtzO6PklEAHIqv4YTJyY?=
- =?us-ascii?Q?5aFf4+KUq6boUYbcx5eSIsLwEHoUOzMTLkIZZapC2W5NkRK6Eu+7xsmq2sFm?=
- =?us-ascii?Q?eStEkeSXS/S8G+ZdxNuvP+GvRAdUjIlsIQbIBayCFYA8pDvWW3ZYQgZmDo+v?=
- =?us-ascii?Q?6ry/hzKHvvoE25LdKyToSyY+StVSmf0dtBGzg4EvntNWyJURKZU5ofq6JAJS?=
- =?us-ascii?Q?BVRXGOUTLPpvgqf6+bfakhqt8IZfgFixQjn2BhomRzsNECnEDo+vRSUy9mEn?=
- =?us-ascii?Q?10UBWPqwh9astW/9TalhylhjBztlIFAMx0h6bgPtgLVBvqLSz5Qu3tryJzw2?=
- =?us-ascii?Q?5qA/nHrWsVl4fp0zgk8+vnurdI5DvDU34Jd/e6vKcOZI7lKP4/osPGIfLDGC?=
- =?us-ascii?Q?k09HJXYDBgdhiM7iRWXDReTGaIntkYuo8gHYgiLZBuJUMtaGbrCWXGX9n+u1?=
- =?us-ascii?Q?hP0Jn92sV8pQLBuEoFEottBbu2gpWJp3gdIZrJr2cX5IsVVUxDShwibOyIJe?=
- =?us-ascii?Q?WzFZLdiwKbEHrkDeZMPCjMpwfR+jZ5UvEw3aszRRcMKAY4+vnW+OAXfrSRaA?=
- =?us-ascii?Q?6OiGv6Qryew6JmTThS1WlhMCPT40CgysFnMxp8utwK+huEGdQTb3QSBxqCXP?=
- =?us-ascii?Q?uce238cHjQc=3D?=
+	=?us-ascii?Q?7OxVu5bfg0vbm3Hs3ROgTkbyHkIAQzQraxIMKAnhG0OYpxBd5Il8rBE5kw1D?=
+ =?us-ascii?Q?2xps4vThfKLCcRG4KxXHaePNGgLprwAc3XxF7NMDlrhTsaB3lvJVOFrAxz/0?=
+ =?us-ascii?Q?2MSVveqXa4ywNC2NZOKDWuq15EAEQ3xyV2V0dnE/LLDzJRRxUpqwQmkFmh9S?=
+ =?us-ascii?Q?owZUAwbVZh07eZe4jTb8rJuLdSr2JHC+ozJ712P9UFTjbiGnN9/fgovxniy/?=
+ =?us-ascii?Q?a6F+HoaZZTFLdJv4rHer6r5pfPwnACUjA1cMIrY6XXUTsQxMaudfLhxijKyM?=
+ =?us-ascii?Q?Q5GZUWltHDwPma0RkZHMnT0Z2wm/Uk2cFgszXwVYPyxyot2H8FLE5WDb+D/H?=
+ =?us-ascii?Q?1e5UugqhOMIeVkfTanbMLuZxkbpoRyQjsv8pOTjpGT0cXSmAyr0ROq2wFDyz?=
+ =?us-ascii?Q?bV7x0UdqLLbH9+27ymyi+Df961xuuMMUBKlZI8/SseA+02eEArRbx7Ep4voH?=
+ =?us-ascii?Q?Hv6RMlTiCweHy6wlE+RWCAAUNqldimv0JBeaISZujBUm/vfz9NOseq8w5pOH?=
+ =?us-ascii?Q?I5u6RyWgEWApPh+jtv4eUSQpYnBkpr2rkzGDODSk569GZlSWboZ3fjaWCq4J?=
+ =?us-ascii?Q?Anbx007RmQQCuGorovVF37TwClEzd78Q1qUuniVdUOeENz2BLiqTVAvV5sgk?=
+ =?us-ascii?Q?5nQ4TcAJ5O6gja/VfrrIQq2QAgTWj2absXtDsfYObIdUfxoaHea0fO7sbQnY?=
+ =?us-ascii?Q?R7yASj9ZshFX37cElFDuJkkYK3+u9V7N/xhI8VNxFyjaMWy/ts8D/dS1fIsG?=
+ =?us-ascii?Q?miDRSYnyyBwiR9lZwQZyZIH4ogiYDaaQLyJONnR2NCCJPMqrm6bindcuujTo?=
+ =?us-ascii?Q?XGxe/CctB2HjepSP2gN5sa1WurdIAtnQJi2uHGnEV6O8BpnKmCLR9RdyIShk?=
+ =?us-ascii?Q?Qc4d9aMGSKzAmIuZpv9fP2PQ1y0UdKBfhT9pHppHLOPlRc2INWXFaf5fEURx?=
+ =?us-ascii?Q?6lojyW8FV+B7VKTkMIkg0CNpEZcFQVbklxiP/AXJ/jeFpQiw7w0ZgWTtecp1?=
+ =?us-ascii?Q?IuINLerCWOV3J5rA3S07ojHJ7OFrWdzEcGRwg4z+YWICQXdk72QfjAr5Cuou?=
+ =?us-ascii?Q?VVpALzoMhPsBgvUlY952/GAeEdib68yYDCgAKvJM+NxvWpIQpKkeEUAXJwG5?=
+ =?us-ascii?Q?RlzAcX64GIE2WBiKMK1VSw7N/PdMa0FQh2FdTkEeQ1SxDZDW187b2KJdkmUz?=
+ =?us-ascii?Q?15zb5e4TPrQmBlhZ1keJAHB674BN8kIhK+vKYNoahOKTum/e8Qi7P82ZPXsw?=
+ =?us-ascii?Q?kq1lmTEY9DDuaSMbI73gqLJZ6MX1geKvT7unWQko8V+cGrToOy5bIDCyiZTD?=
+ =?us-ascii?Q?tYwkl1N5ouF28J1gTcpV/OH/zwnqw9vXM2n0278P11aYP6OiLIadsbmNcb4+?=
+ =?us-ascii?Q?Y4I9fuOTKtMoskFxb+eDS9Bz18fVJ9wqCAwAfzUeTJBhF31xPq358Mye9eCt?=
+ =?us-ascii?Q?4NOz6F5qTW8=3D?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(10070799003)(921020);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?6ArW5mWQ9cZ593UF5PR5J9Ilsho0qL+WCT7ohLartUrxzvTVHsbd66A+om9a?=
- =?us-ascii?Q?7X9LqMdejPkjMglTv5GCYVv9iUkTpPLCN8fb7p9/jTSnugJ5IC2oSt0qBQW3?=
- =?us-ascii?Q?ofpqbh/BrBkdtNuPNZFcDlI2WvAS21HaRrPwZGXZivKuuTPtrB/b03Z5CWR9?=
- =?us-ascii?Q?MBnoFL7H4ESVO0b5XqXuOtV8e/iWUBqV25D21i7oCEbyj/RaiTJF1ofN/gOk?=
- =?us-ascii?Q?LAg0PX5LXaJKCQIu+O9jsM47tGC++pIS95r9ZEVUb/IOLE77znwX3Ue9g1kQ?=
- =?us-ascii?Q?YIOoQ6sE79mdAr2lHRnLvWkVg1lILi+yyLcz5ZydLAKBRRZNRsxP2fBp3Li8?=
- =?us-ascii?Q?khleAMa5hnXgHncXoAGwxwAb2EPsb9YyFMfBhE5fD8V7YvdKgKTXvKk2Rp2l?=
- =?us-ascii?Q?Ttjt6opfVblfaRWmELa3Tqxfhv+V6wO9rXXfJdBjyO5/jo6LAXYFK8Q8N+Ey?=
- =?us-ascii?Q?CVMZk5O8c5Sl8pxEGe+XJJERP69npU7oNimsykAze00CSzR7xxoSW0IGVNAo?=
- =?us-ascii?Q?0CHGHRYo/VYbiuC3L4aXiOCaGpa2EjbOAWrc0pGh8tvPrEmTIXSTMwUH9SPa?=
- =?us-ascii?Q?DNrDMSQBeihOoINYbniCIsbeAi+Xp326YgsELif/nRGrus4M3MJv7/b7M5Eh?=
- =?us-ascii?Q?G46+6x4OIRSNtw+XzY3YFUkFd6FrwzRzJiUlCdZTzHjNolNFJS62k8YylanG?=
- =?us-ascii?Q?ss2AODFxrP41sHirlwewkkB1atdI1TNrGp9pA7tTtN9znPaWu6uV2WS42Rjz?=
- =?us-ascii?Q?atqZaS9yK8rJOPuhInrWHfpvAPQ98wqILvL4BnJZt2t7Yxk+BMZuBnNi3uel?=
- =?us-ascii?Q?Zd2Zj+GWqSkeqT2ZhfQxzKSg28mPPuICDUS+wrb50IEEbP94mE/tYayn5ySy?=
- =?us-ascii?Q?JeNDBjWk/11s3xI10mnMBpg8EqlaENJUcpCwy9BxJMpZkuuR/nVzvaqWJ/tS?=
- =?us-ascii?Q?XrLQOeSDWasbuBWyPEwJ7z6gc7yeTbNZiwBi50dmcPieaBRkBp4A8GjYWrUx?=
- =?us-ascii?Q?OtpOglqtB5dd3RDmICiL7FiRuPI3mSdq5SsAO9fms/HL8G1+ULmg6YDpyFn1?=
- =?us-ascii?Q?Th5W4MP69iAEA1mx+IoBvl7iw5h7q9x6x50huyn5yr/Q7l+WBhFQu5W/+2rq?=
- =?us-ascii?Q?bbyluPFQHaJI5yE+OEbRU5xbOleTFpcAlyivI4xqOWPl3PDgMi+alENORB5w?=
- =?us-ascii?Q?6+ofdvyGpLVaMdTyiHP8oUFYdXPyT0ppjbKhLrWL5Ah293t5GLk70uEOO9uA?=
- =?us-ascii?Q?ztLi954oogGZXaUC02xAM5z0/UAshTXf6mRTTRF417KzbSAXMDYu/x5Z1mCE?=
- =?us-ascii?Q?m0JTnY9BfLcrOHQjbWfVEJDhkXtQswukRJ7xK4su+CUPhXy1MyQgYd3bdun4?=
- =?us-ascii?Q?37qXxpPVF8VP3+TT1DlreC0Y5uUG+VcfJByPdGkcYKGWi0Y0TP2a78/z9pcC?=
- =?us-ascii?Q?NQ/wcZZPQosm3L4WDUu8pmjQPgVyIV+ns3QyVDDIv+Ix3UOWYRSFVcIe0QLH?=
- =?us-ascii?Q?ue/vDes2T0ceoluNPJx8MAc6NK6xTTwRLBS4Pq7queTTJOJIyOluqz16o/Oo?=
- =?us-ascii?Q?3mVpa5UXsr6aOWqh2pDAj9dZF/LKPuyTXdOwxeGfOe02EzQ1FtELXY9NQ0NK?=
- =?us-ascii?Q?uA=3D=3D?=
+	=?us-ascii?Q?sMjQARC4izXPxoAm/NFo00qr3XQFYd9cBoJ1tOSvTm7AYJXQ/MNc2clDmEUW?=
+ =?us-ascii?Q?GZh0e/cfbbYRAreATiZdvN1DyQKwFUW5skXOcI8XpKxGrhO/r0OzCj0ZAuvb?=
+ =?us-ascii?Q?BpXQHAp7h2fdZpRoGhP6P1lSzIR76Sxduri1uFSsCosbO4Q0VO7fUfjvkzjQ?=
+ =?us-ascii?Q?XGW/pYyjzpVR3bf2zUtlQ0aYg5j5c17dxZlqtrU+3FpxNVF8KwGzzpLBVafj?=
+ =?us-ascii?Q?U6asXxpYe1065ls/D+ky2cnYPsQ4Pe4Lsio+FfhYHhLk2ddUQdtplHNJz4O3?=
+ =?us-ascii?Q?n1zxiG90vOxyD6ml3mdBU1JO3Kojui2sEBY+9qeAMHd/NEwBEZQjJUbnSNz9?=
+ =?us-ascii?Q?DeHvjcRCdiKg91d2eUzfpWTOro9biEKcUypCQwPhcF4pelwQGRFZ82fWnLnS?=
+ =?us-ascii?Q?f5ssseIwmt1K/ijcbNTwmCpo/8u68p9QCTm6RL3asfyoAiPckTs3GOxtjj8u?=
+ =?us-ascii?Q?i36m7+T9s01BFdb7qOZP+oAA4Fe70/fP6hSZh92RTUDcpdz952TrFW0TSNER?=
+ =?us-ascii?Q?fqSo0ha0nc2dL0/CLEyFZyrqwcniuEIHoOjEdCxtoRT78mqM+63dO17l+vmO?=
+ =?us-ascii?Q?airID0m7clEQ3ILzr7j8i0DzisthOz3eNvViIn2BZzWVUgDiOEfIzcRxorjw?=
+ =?us-ascii?Q?pprjBEp1sTRDA91kx4aKOS4/G1MupCEYzEDqi+jpElW6fXr+9SajGZ8UL9MJ?=
+ =?us-ascii?Q?VPphCd/O1CuRDsV3SDL390Lck3pwFWwYRCgIgfjtgJYV8nsz5zuOBk1EXS8R?=
+ =?us-ascii?Q?fTqAbyY3TmbjkcCrF5Sp+LmB8yN31HM3ammHjxbEtkoBHeIvt7dQgKb2XDL3?=
+ =?us-ascii?Q?B9WFrKqtlVT+Q3dZrRBMhd2Atvo4SQVZ46hzR3oLXTqZ77+fhkaa4OLXnCyg?=
+ =?us-ascii?Q?TeoCqZ8eLvSRM8/KnsuMtA2SLtRWavAN6dp5yHFA7VHCETJfC6tbZeIRqZkR?=
+ =?us-ascii?Q?JHmeqIxWRy+Toq2i2s8GtxrGTksXj+1gnc+kyq+Ftb5PxHAxB0fD/yvkKMG8?=
+ =?us-ascii?Q?u+oM4yfPbRyghq1HMBIkWjtkzGBCrh9iiAzFguJQEPUE8VikssdwQ/bWxchQ?=
+ =?us-ascii?Q?AKnQ9iyD5MJWU8jMjhkaK9bLKKNkeuOsAg/gq0xJzE8yVD6m1D3bWlQ2SVc7?=
+ =?us-ascii?Q?wmKznWzANpdwha5gk5sYxSl+5bpKoKXjd9qVe7sexnGVgCWzjoZerk0PC/IL?=
+ =?us-ascii?Q?JSsFROmCYYS+dKaCu6Aui7BAHoqhEZMnf8SlPIlBz6ju605Bs669lEyZnsup?=
+ =?us-ascii?Q?J+crpmHziO8Xox4NLMAySPzdvhM27WhfF3060DtPglMK9EHnLq/DlmgMR2fo?=
+ =?us-ascii?Q?7RYtmgLT0QNOQToBXITHyglnfUvIQSfK+Hj/SIk15qXiLUc/kR7bnNcTZZrs?=
+ =?us-ascii?Q?/G1/j0C7JufzWFiBT76YRtBCxzCC4GdqIxQ8r4Y9fTvUIO4UfvvkBW7jX8fY?=
+ =?us-ascii?Q?YWKLe+kGn82tfRpF1TVcguKjBx4lAGsbEKzikganqh2mEoOZ0DXHDje28RzZ?=
+ =?us-ascii?Q?PTZDa7n7VEJO3HcRcOGFB4uXA2Uz5do1RF2ied3GMUjzE3BEHUG2+ZDM2YCl?=
+ =?us-ascii?Q?NGOmtFqnyGcA2TbQ1rEzNPsKi3P6ZbXCwAyU+sJbnTmFe2JTCPJtaLZbXPey?=
+ =?us-ascii?Q?GQ=3D=3D?=
 X-OriginatorOrg: garyguo.net
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4b6dbc8a-1ffc-4e40-a4dc-08dd51226a79
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6464ea83-0c2b-404e-3e0f-08dd51226c1a
 X-MS-Exchange-CrossTenant-AuthSource: LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2025 20:17:21.4889
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2025 20:17:24.1932
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2mKtE/UBi5KfAAdPIcpGL9qkatayuDTi1V2IkCimH4CGEMNUEJkFuLh3VSCx20lYENdZJeY+WmXHjAOff92Jpg==
+X-MS-Exchange-CrossTenant-UserPrincipalName: tpmJycV16M4iskmogcwpRQivTO1/s4wMRNjIi40QTjtjQxifWc2VjwFv03rgCqBcqaXrkqIr+WHwqfpPj8wS/w==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO2P265MB2783
 
-This is a wrapping layer of `include/linux/refcount.h`. Currently the
-kernel refcount has already been used in `Arc`, however it calls into
-FFI directly.
+With `Refcount` type created, `Arc` can use `Refcount` instead of
+calling into FFI directly.
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
 Signed-off-by: Gary Guo <gary@garyguo.net>
 ---
- rust/helpers/refcount.c      | 10 +++++
- rust/kernel/sync.rs          |  2 +
- rust/kernel/sync/refcount.rs | 86 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 98 insertions(+)
- create mode 100644 rust/kernel/sync/refcount.rs
+ rust/kernel/sync/arc.rs | 65 +++++++++++++++++------------------------
+ 1 file changed, 26 insertions(+), 39 deletions(-)
 
-diff --git a/rust/helpers/refcount.c b/rust/helpers/refcount.c
-index d6adbd2e45a1..d175898ad7b8 100644
---- a/rust/helpers/refcount.c
-+++ b/rust/helpers/refcount.c
-@@ -7,11 +7,21 @@ refcount_t rust_helper_REFCOUNT_INIT(int n)
- 	return (refcount_t)REFCOUNT_INIT(n);
+diff --git a/rust/kernel/sync/arc.rs b/rust/kernel/sync/arc.rs
+index 3cefda7a4372..1f5fbc6b3742 100644
+--- a/rust/kernel/sync/arc.rs
++++ b/rust/kernel/sync/arc.rs
+@@ -8,7 +8,7 @@
+ //! threads.
+ //!
+ //! It is different from the standard library's [`Arc`] in a few ways:
+-//! 1. It is backed by the kernel's `refcount_t` type.
++//! 1. It is backed by the kernel's [`Refcount`] type.
+ //! 2. It does not support weak references, which allows it to be half the size.
+ //! 3. It saturates the reference count instead of aborting when it goes over a threshold.
+ //! 4. It does not provide a `get_mut` method, so the ref counted object is pinned.
+@@ -18,10 +18,10 @@
+ 
+ use crate::{
+     alloc::{AllocError, Flags, KBox},
+-    bindings,
+     init::{self, InPlaceInit, Init, PinInit},
++    sync::Refcount,
+     try_init,
+-    types::{ForeignOwnable, Opaque},
++    types::ForeignOwnable,
+ };
+ use core::{
+     alloc::Layout,
+@@ -143,7 +143,7 @@ pub struct Arc<T: ?Sized> {
+ #[pin_data]
+ #[repr(C)]
+ struct ArcInner<T: ?Sized> {
+-    refcount: Opaque<bindings::refcount_t>,
++    refcount: Refcount,
+     data: T,
  }
  
-+void rust_helper_refcount_set(refcount_t *r, int n)
-+{
-+	refcount_set(r, n);
-+}
-+
- void rust_helper_refcount_inc(refcount_t *r)
- {
- 	refcount_inc(r);
- }
+@@ -155,7 +155,7 @@ impl<T: ?Sized> ArcInner<T> {
+     /// `ptr` must have been returned by a previous call to [`Arc::into_raw`], and the `Arc` must
+     /// not yet have been destroyed.
+     unsafe fn container_of(ptr: *const T) -> NonNull<ArcInner<T>> {
+-        let refcount_layout = Layout::new::<bindings::refcount_t>();
++        let refcount_layout = Layout::new::<Refcount>();
+         // SAFETY: The caller guarantees that the pointer is valid.
+         let val_layout = Layout::for_value(unsafe { &*ptr });
+         // SAFETY: We're computing the layout of a real struct that existed when compiling this
+@@ -207,8 +207,7 @@ impl<T> Arc<T> {
+     pub fn new(contents: T, flags: Flags) -> Result<Self, AllocError> {
+         // INVARIANT: The refcount is initialised to a non-zero value.
+         let value = ArcInner {
+-            // SAFETY: There are no safety requirements for this FFI call.
+-            refcount: Opaque::new(unsafe { bindings::REFCOUNT_INIT(1) }),
++            refcount: Refcount::new(1),
+             data: contents,
+         };
  
-+void rust_helper_refcount_dec(refcount_t *r)
-+{
-+	refcount_dec(r);
-+}
-+
- bool rust_helper_refcount_dec_and_test(refcount_t *r)
- {
- 	return refcount_dec_and_test(r);
-diff --git a/rust/kernel/sync.rs b/rust/kernel/sync.rs
-index 3498fb344dc9..b196cd0b358e 100644
---- a/rust/kernel/sync.rs
-+++ b/rust/kernel/sync.rs
-@@ -13,6 +13,7 @@
- mod locked_by;
- pub mod poll;
- pub mod rcu;
-+mod refcount;
+@@ -290,7 +289,7 @@ pub fn ptr_eq(this: &Self, other: &Self) -> bool {
+     /// use kernel::sync::{Arc, UniqueArc};
+     ///
+     /// let arc = Arc::new(42, GFP_KERNEL)?;
+-    /// let unique_arc = arc.into_unique_or_drop();
++    /// let unique_arc = Arc::into_unique_or_drop(arc);
+     ///
+     /// // The above conversion should succeed since refcount of `arc` is 1.
+     /// assert!(unique_arc.is_some());
+@@ -306,35 +305,30 @@ pub fn ptr_eq(this: &Self, other: &Self) -> bool {
+     /// let arc = Arc::new(42, GFP_KERNEL)?;
+     /// let another = arc.clone();
+     ///
+-    /// let unique_arc = arc.into_unique_or_drop();
++    /// let unique_arc = Arc::into_unique_or_drop(arc);
+     ///
+     /// // The above conversion should fail since refcount of `arc` is >1.
+     /// assert!(unique_arc.is_none());
+     ///
+     /// # Ok::<(), Error>(())
+     /// ```
+-    pub fn into_unique_or_drop(self) -> Option<Pin<UniqueArc<T>>> {
++    pub fn into_unique_or_drop(this: Self) -> Option<Pin<UniqueArc<T>>> {
+         // We will manually manage the refcount in this method, so we disable the destructor.
+-        let me = ManuallyDrop::new(self);
++        let this = ManuallyDrop::new(this);
+         // SAFETY: We own a refcount, so the pointer is still valid.
+-        let refcount = unsafe { me.ptr.as_ref() }.refcount.get();
++        let refcount = unsafe { &this.ptr.as_ref().refcount };
  
- pub use arc::{Arc, ArcBorrow, UniqueArc};
- pub use condvar::{new_condvar, CondVar, CondVarTimeoutResult};
-@@ -20,6 +21,7 @@
- pub use lock::mutex::{new_mutex, Mutex, MutexGuard};
- pub use lock::spinlock::{new_spinlock, SpinLock, SpinLockGuard};
- pub use locked_by::LockedBy;
-+pub use refcount::Refcount;
+         // If the refcount reaches a non-zero value, then we have destroyed this `Arc` and will
+         // return without further touching the `Arc`. If the refcount reaches zero, then there are
+         // no other arcs, and we can create a `UniqueArc`.
+-        //
+-        // SAFETY: We own a refcount, so the pointer is not dangling.
+-        let is_zero = unsafe { bindings::refcount_dec_and_test(refcount) };
+-        if is_zero {
+-            // SAFETY: We have exclusive access to the arc, so we can perform unsynchronized
+-            // accesses to the refcount.
+-            unsafe { core::ptr::write(refcount, bindings::REFCOUNT_INIT(1)) };
++        if refcount.dec_and_test() {
++            refcount.set(1);
  
- /// Represents a lockdep class. It's a wrapper around C's `lock_class_key`.
- #[repr(transparent)]
-diff --git a/rust/kernel/sync/refcount.rs b/rust/kernel/sync/refcount.rs
-new file mode 100644
-index 000000000000..a6a683f5d7b8
---- /dev/null
-+++ b/rust/kernel/sync/refcount.rs
-@@ -0,0 +1,86 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+//! Atomic reference counting.
-+//!
-+//! C header: [`include/linux/refcount.h`](srctree/include/linux/refcount.h)
-+
-+use crate::types::Opaque;
-+
-+/// Atomic reference counter.
-+///
-+/// This type is conceptually an atomic integer, but provides saturation semantics compared to
-+/// normal atomic integers. Values in the negative range when viewed as a signed integer are
-+/// saturation (bad) values. For details about the saturation semantics, please refer to top of
-+/// [`include/linux/refcount.h`](srctree/include/refcount.h).
-+///
-+/// Wraps the kernel's C `refcount_t`.
-+#[repr(transparent)]
-+pub struct Refcount(Opaque<bindings::refcount_t>);
-+
-+impl Refcount {
-+    /// Construct a new [`Refcount`] from an initial value.
-+    #[inline]
-+    pub fn new(value: i32) -> Self {
-+        // SAFETY: There are no safety requirements for this FFI call.
-+        Self(Opaque::new(unsafe { bindings::REFCOUNT_INIT(value) }))
-+    }
-+
-+    #[inline]
-+    fn as_ptr(&self) -> *mut bindings::refcount_t {
-+        self.0.get()
-+    }
-+
-+    /// Set a refcount's value.
-+    #[inline]
-+    pub fn set(&self, value: i32) {
-+        // SAFETY: `self.as_ptr()` is valid.
-+        unsafe { bindings::refcount_set(self.as_ptr(), value) }
-+    }
-+
-+    /// Increment a refcount.
-+    ///
-+    /// It will saturate if overflows and `WARN`. It will also `WARN` if the refcount is 0, as this
-+    /// represents a possible use-after-free condition.
-+    ///
-+    /// Provides no memory ordering, it is assumed that caller already has a reference on the
-+    /// object.
-+    #[inline]
-+    pub fn inc(&self) {
-+        // SAFETY: self is valid.
-+        unsafe { bindings::refcount_inc(self.as_ptr()) }
-+    }
-+
-+    /// Decrement a refcount.
-+    ///
-+    /// It will `WARN` on underflow and fail to decrement when saturated.
-+    ///
-+    /// Provides release memory ordering, such that prior loads and stores are done
-+    /// before.
-+    #[inline]
-+    pub fn dec(&self) {
-+        // SAFETY: `self.as_ptr()` is valid.
-+        unsafe { bindings::refcount_dec(self.as_ptr()) }
-+    }
-+
-+    /// Decrement a refcount and test if it is 0.
-+    ///
-+    /// It will `WARN` on underflow and fail to decrement when saturated.
-+    ///
-+    /// Provides release memory ordering, such that prior loads and stores are done
-+    /// before, and provides an acquire ordering on success such that memory deallocation
-+    /// must come after.
-+    ///
-+    /// Returns true if the resulting refcount is 0, false otherwise.
-+    #[inline]
-+    #[must_use = "use `dec` instead you do not need to test if it is 0"]
-+    pub fn dec_and_test(&self) -> bool {
-+        // SAFETY: `self.as_ptr()` is valid.
-+        unsafe { bindings::refcount_dec_and_test(self.as_ptr()) }
-+    }
-+}
-+
-+// SAFETY: `refcount_t` is thread-safe.
-+unsafe impl Send for Refcount {}
-+
-+// SAFETY: `refcount_t` is thread-safe.
-+unsafe impl Sync for Refcount {}
+-            // INVARIANT: We own the only refcount to this arc, so we may create a `UniqueArc`. We
+-            // must pin the `UniqueArc` because the values was previously in an `Arc`, and they pin
+-            // their values.
++            // INVARIANT: If the refcount failed to decrement because it is 1, then we have the
++            // exclusive ownership, so we may create a `UniqueArc`. We must pin the `UniqueArc`
++            // because the values was previously in an `Arc`, and they pin their values.
+             Some(Pin::from(UniqueArc {
+-                inner: ManuallyDrop::into_inner(me),
++                inner: ManuallyDrop::into_inner(this),
+             }))
+         } else {
+             None
+@@ -396,14 +390,10 @@ fn as_ref(&self) -> &T {
+ 
+ impl<T: ?Sized> Clone for Arc<T> {
+     fn clone(&self) -> Self {
+-        // SAFETY: By the type invariant, there is necessarily a reference to the object, so it is
+-        // safe to dereference it.
+-        let refcount = unsafe { self.ptr.as_ref() }.refcount.get();
+-
+-        // INVARIANT: C `refcount_inc` saturates the refcount, so it cannot overflow to zero.
++        // INVARIANT: `Refcount` saturates the refcount, so it cannot overflow to zero.
+         // SAFETY: By the type invariant, there is necessarily a reference to the object, so it is
+         // safe to increment the refcount.
+-        unsafe { bindings::refcount_inc(refcount) };
++        unsafe { self.ptr.as_ref().refcount.inc() };
+ 
+         // SAFETY: We just incremented the refcount. This increment is now owned by the new `Arc`.
+         unsafe { Self::from_inner(self.ptr) }
+@@ -412,16 +402,14 @@ fn clone(&self) -> Self {
+ 
+ impl<T: ?Sized> Drop for Arc<T> {
+     fn drop(&mut self) {
+-        // SAFETY: By the type invariant, there is necessarily a reference to the object. We cannot
+-        // touch `refcount` after it's decremented to a non-zero value because another thread/CPU
+-        // may concurrently decrement it to zero and free it. It is ok to have a raw pointer to
+-        // freed/invalid memory as long as it is never dereferenced.
+-        let refcount = unsafe { self.ptr.as_ref() }.refcount.get();
+-
+         // INVARIANT: If the refcount reaches zero, there are no other instances of `Arc`, and
+         // this instance is being dropped, so the broken invariant is not observable.
+-        // SAFETY: Also by the type invariant, we are allowed to decrement the refcount.
+-        let is_zero = unsafe { bindings::refcount_dec_and_test(refcount) };
++        // SAFETY: By the type invariant, there is necessarily a reference to the object.
++        // NOTE: we cannot touch `refcount` after it's decremented to a non-zero value because
++        // another thread/CPU may concurrently decrement it to zero and free it. However it is okay
++        // to have a transient reference to decrement the refcount, see
++        // https://github.com/rust-lang/rust/issues/55005.
++        let is_zero = unsafe { self.ptr.as_ref().refcount.dec_and_test() };
+         if is_zero {
+             // The count reached zero, we must free the memory.
+             //
+@@ -673,8 +661,7 @@ pub fn new_uninit(flags: Flags) -> Result<UniqueArc<MaybeUninit<T>>, AllocError>
+         // INVARIANT: The refcount is initialised to a non-zero value.
+         let inner = KBox::try_init::<AllocError>(
+             try_init!(ArcInner {
+-                // SAFETY: There are no safety requirements for this FFI call.
+-                refcount: Opaque::new(unsafe { bindings::REFCOUNT_INIT(1) }),
++                refcount: Refcount::new(1),
+                 data <- init::uninit::<T, AllocError>(),
+             }? AllocError),
+             flags,
 -- 
 2.47.2
 
