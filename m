@@ -1,125 +1,122 @@
-Return-Path: <linux-kernel+bounces-522340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08B16A3C8DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 20:35:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D802A3C8D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 20:34:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21FE8179E5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:33:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52ACE189D963
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:33:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4DEB22B59A;
-	Wed, 19 Feb 2025 19:33:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 257E822AE7B;
+	Wed, 19 Feb 2025 19:33:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kcpvs2EK"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="shZgsFPJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5AAB214A82;
-	Wed, 19 Feb 2025 19:33:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81D341B0F33;
+	Wed, 19 Feb 2025 19:33:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739993616; cv=none; b=dI1/qSc8MuBdzhLJWQPYcgM3WKVSsK0AtgeQNTz+n4BGfmN2h12i4Z7fzm0U2F51JSp0eO8TaEJVQwyiZmhSxnPkI6+uYriCsL8Wc7Mwg4E1eJvBf+WQ5X3Wv8f1BkDrfdJ0/ZFfBKdVaDXQVV5AWjwxZg6q+Wo6AQCg680Td4s=
+	t=1739993596; cv=none; b=W07hPGzbNwf+v8IXbOKN2+clvcOu8UoN+N6k17Ms1gMS80H8XAE/6HelgpY2e/BKqfZc+2e54SrsIt5heokAL9bpUKNToivstdW9zlALToWHwQrN2xBIU3c9FBVSCHGyawT/Vi1g8CBNDaT6x3Zo2y5mw+c45tdKKFayUvGFuho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739993616; c=relaxed/simple;
-	bh=GeZf4kDWRw/Af0VAE8UW473eCeB6nzQJVVunELl0mnY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Ik4vhi6KxJLcon8gGz30w0f11nPdEp7d692/jSJlj0fmHn5avlMzj0b6kxBngrnj2yhKeDVB71s+lHj61hb5StC2tNPN4wx/r//Tv+rnVN7pySc1MIpUZuzwFkBrJqQKHnv1OjX3ZMtNwWvYcd6hPirj0sNiUOqOfrJn9DvpgTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kcpvs2EK; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2fcb6c42c47so267538a91.1;
-        Wed, 19 Feb 2025 11:33:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739993614; x=1740598414; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PSTRBDyjlCXG1A80Pr2C6LuOvywBhiJXPi7qtOpll3M=;
-        b=kcpvs2EKNbI8ywPvCR2SjznLFmZ6VFb77f25krON2uVoqzN6dhJugNKQnpMIqCkwCG
-         R1KE1tctuctH8//feipV3nTtgUwWmqQQbFLRUUiDHmqU/Sc9B5mKXwBzdClnrTx5GPq1
-         D7y5Bme1fbsbb4jZcfl3m7cqq3jZlRjIhCQREBA6qsWAMEgHSB0Atnb80hAHXwRrgs4K
-         nfYrlPS9srOEyeEliNqeVy+u2dqs0DVty0+vN0T8Joq6hOEv1CH4yjf/h95lL21IHgoQ
-         S5bipDXIyg9QcjT+cm0dVyWOZZYOib4dglydVB7IHMUXkVHqxkUldV4tek/kdI7PA0hp
-         yIRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739993614; x=1740598414;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PSTRBDyjlCXG1A80Pr2C6LuOvywBhiJXPi7qtOpll3M=;
-        b=Nwds90aLkf83qN4LBUY+wW4j09YIwFrXCpD3AO3nPik7RHuVDJ8yLCX27AHhZ344I5
-         oIo4xpLam/mM7kLgAst3KzEXS/X3/HvlVCmEHAcVF34MiVxDXQlo2aocYsYygJcPDk/l
-         tHjMfGuRXp7fm6pCxe5L59/foH1M1FthHztdixjbGrWPrZ6dCb+7lHk6DofrekoJOfnL
-         d7S9XynDGNqoDmOAESF6eVrpqBwoYj8b4cDfiswwhBNAUlrv3rn5acbOUDPCRlvqcAno
-         qTb/BiuqxLnXMe23bmrZFtTNJOjMru2YZTqewcLmvHd4Z3UiPGKxe1bIN72SEwgTfsxp
-         gfEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVv+oj2CENSKD2vrhOqus9J/xsiWu2HWL36QlDnsVhfO+fDMvfav8F+rM9PJmHtxxsRPvYh5mAHT0SUy+TL@vger.kernel.org, AJvYcCWC69MEc7cRhiMEcIsykaXTVKvCZUUXg2M3jgDb6yyRRPlduf2amWOimglg6C6HjkYLPglWHDR94OPFu5Ws@vger.kernel.org, AJvYcCWFM3cdvgVLYi4Gcwajjb4o/LaSP3WelmdQ1GJTfwAoE39aydVuk3/44drfez2gzs7MsuenqmHeWY8YPqpvX+Lo@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywckl6Ez4rQjjt+nZ5XwJA+LACXLh/jfoCcQ6TMHg1tXYElJVuU
-	/YcRTU652GXRE42m66+WlHo533eyxvW9X1blDAfHPVDAVyUxOuFF
-X-Gm-Gg: ASbGncsvzitX8qhyIzDwzxdppPmvaTJssaLg6LYuWhwPaek8JbDkPbLbKa2Oh712/zn
-	DuNfNnMx2eoeSgA476vxIweO616V5yKMCdJmiDqXlTh+0DVkh/LmYVS1VQHz3yC6anf50C8td1x
-	xdL5+PYqJYpAa7JdkmDvFaaJDqN7ISviD3V+aU9WoSf0dHma3zH3f2r+VL/vrHzLeiskfQ563I7
-	Pj/vf7jZPhcW//PFe2RhB67UpJ5RTEbuMLZYHg/lYetk0GeuDENKgdwsc4DjqO106vERnOvTG93
-	z0nrLiqsH6TsD8c/8n6Sy+QJY+mcFs4/M5huvthOkHaYlVWDEa47qQ+T0OjlYb4IjBJgeGp1yg=
-	=
-X-Google-Smtp-Source: AGHT+IHTgtVoWn3jrKGALRPQNFfpnDcaIG9q9d3lBREc3fWPQIxYttYGlnxyXuJE2rxhVOnFy1zxbA==
-X-Received: by 2002:a17:90b:2887:b0:2fa:1a23:c01d with SMTP id 98e67ed59e1d1-2fc40f26600mr26453316a91.21.1739993613788;
-        Wed, 19 Feb 2025 11:33:33 -0800 (PST)
-Received: from node0.suho-242436.threadtune-pg0.utah.cloudlab.us ([128.110.217.182])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fbf98b3305sm14193282a91.6.2025.02.19.11.33.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2025 11:33:33 -0800 (PST)
-From: Sumya Hoque <sumyahoque2012@gmail.com>
-To: skhan@linuxfoundation.org
-Cc: Sumya Hoque <sumyahoque2012@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	shuah@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	kees@kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org
-Subject: [PATCH v2] selftests:sysctl:Fix minor typos in sysctl test
-Date: Wed, 19 Feb 2025 19:33:01 +0000
-Message-Id: <20250219193301.46563-1-sumyahoque2012@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <202502190912.CA03B56796@keescook>
-References: <202502190912.CA03B56796@keescook>
+	s=arc-20240116; t=1739993596; c=relaxed/simple;
+	bh=B/tsrWMqdKAycCUkzWrulcuHm4sff0bSqRXkpZ6/uOE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MTyDHi2xWdpqgVVCSs89IfeWsoX7JfPE0QkZRshGenptFpHVzk0M2Hxu0w9n32dfOA/sJELtVpQz3qlZYPId56bFU2O+FhnrMbYwgVMtD2ES2+rFFYcbiyGjA0za2JIUrlAL40XcaDHHQyFS/RRZs4sx0iiJ/Y5FzZ44boMOcF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=shZgsFPJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7079C4CED1;
+	Wed, 19 Feb 2025 19:33:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739993595;
+	bh=B/tsrWMqdKAycCUkzWrulcuHm4sff0bSqRXkpZ6/uOE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=shZgsFPJzX/Rmq7lXoap6nhFc2etFR6yVN3weXpAhdPHANrwtY05A6znl4crRQdtW
+	 dJ4yGoG4bawGoi3oy90HWvHUc3GjIZc2IfYzQ6RWpcF1cD/MidmIXwwwqbjJq8O4U2
+	 dYmpCeAJ4kwAuQs4ojP8UipQryqEXadW8sOgDyW8hFIzyl0xuvm0OCmV5gOc1Y4QKy
+	 bn/r+uwV487M9RnOZjHkBt4GVpPAuODQu19gXQyIYyqPwetjHueWhgsJ1mXl975edD
+	 ZN/nD4KCnGNLes7ct5aybqPKnVbjf23kBqP+Q/vcnQA3k5rNCANPEuUEbhfRPoBee9
+	 pvE0uwXxGb4tg==
+Date: Wed, 19 Feb 2025 11:33:12 -0800
+From: Kees Cook <kees@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] yama: don't abuse rcu_read_lock/get_task_struct in
+ yama_task_prctl()
+Message-ID: <202502191125.1A6F07E@keescook>
+References: <20250219161417.GA20851@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250219161417.GA20851@redhat.com>
 
+On Wed, Feb 19, 2025 at 05:14:17PM +0100, Oleg Nesterov wrote:
+> current->group_leader is stable, no need to take rcu_read_lock() and do
+> get/put_task_struct().
 
-Signed-off-by: Sumya Hoque <sumyahoque2012@gmail.com>
----
- tools/testing/selftests/sysctl/sysctl.sh | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Can you explain why this is true? In trying to figure this out again,
+it seems that the only way current->group_leader can vanish is if
+the entire process vanishes (fork or thread exec), in which case the
+"current" in this prctl can't be happening; this appears to be locked
+behind tsk->sighand->siglock ?
 
-diff --git a/tools/testing/selftests/sysctl/sysctl.sh b/tools/testing/selftests/sysctl/sysctl.sh
-index 84472b436c07..323468653327 100755
---- a/tools/testing/selftests/sysctl/sysctl.sh
-+++ b/tools/testing/selftests/sysctl/sysctl.sh
-@@ -891,11 +891,11 @@ usage()
- 	echo "    -l      List all test ID list"
- 	echo " -h|--help  Help"
- 	echo
--	echo "If an error every occurs execution will immediately terminate."
-+	echo "If an error ever occurs execution will immediately terminate."
- 	echo "If you are adding a new test try using -w <test-ID> first to"
- 	echo "make sure the test passes a series of tests."
- 	echo
--	echo Example uses:
-+	echo Example usage:
- 	echo
- 	echo "$TEST_NAME.sh            -- executes all tests"
- 	echo "$TEST_NAME.sh -t 0002    -- Executes test ID 0002 number of times is recomended"
+-Kees
+
+> 
+> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+> ---
+>  security/yama/yama_lsm.c | 9 ++-------
+>  1 file changed, 2 insertions(+), 7 deletions(-)
+> 
+> diff --git a/security/yama/yama_lsm.c b/security/yama/yama_lsm.c
+> index 1971710620c1..3d064dd4e03f 100644
+> --- a/security/yama/yama_lsm.c
+> +++ b/security/yama/yama_lsm.c
+> @@ -222,7 +222,7 @@ static int yama_task_prctl(int option, unsigned long arg2, unsigned long arg3,
+>  			   unsigned long arg4, unsigned long arg5)
+>  {
+>  	int rc = -ENOSYS;
+> -	struct task_struct *myself = current;
+> +	struct task_struct *myself;
+>  
+>  	switch (option) {
+>  	case PR_SET_PTRACER:
+> @@ -232,11 +232,7 @@ static int yama_task_prctl(int option, unsigned long arg2, unsigned long arg3,
+>  		 * leader checking is handled later when walking the ancestry
+>  		 * at the time of PTRACE_ATTACH check.
+>  		 */
+> -		rcu_read_lock();
+> -		if (!thread_group_leader(myself))
+> -			myself = rcu_dereference(myself->group_leader);
+> -		get_task_struct(myself);
+> -		rcu_read_unlock();
+> +		myself = current->group_leader;
+>  
+>  		if (arg2 == 0) {
+>  			yama_ptracer_del(NULL, myself);
+> @@ -255,7 +251,6 @@ static int yama_task_prctl(int option, unsigned long arg2, unsigned long arg3,
+>  			}
+>  		}
+>  
+> -		put_task_struct(myself);
+>  		break;
+>  	}
+>  
+> -- 
+> 2.25.1.362.g51ebf55
+> 
+> 
+
 -- 
-2.34.1
-
+Kees Cook
 
