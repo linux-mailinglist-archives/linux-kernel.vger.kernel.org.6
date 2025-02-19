@@ -1,120 +1,259 @@
-Return-Path: <linux-kernel+bounces-522562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 334CDA3CBD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:52:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 26A3BA3CBD9
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:54:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AE3F189C57F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:52:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD6F818942A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:54:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF8662580E2;
-	Wed, 19 Feb 2025 21:52:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCD7E23ED5A;
+	Wed, 19 Feb 2025 21:54:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="UiyrZ8jd"
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wPiPoa7p"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E711823DEB6
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 21:52:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C07723DEB6
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 21:54:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740001964; cv=none; b=W+0Yrz/1CDwTaaNPTwT6v2VALA+5KQtnVDVQnDCbGHbJVUKJiej1XZBB/xZMfAgaElREAqg7SHtI35eMPnZDWaJyJb7Jdin3zdMqOBdFRtLiATV0NJmrBaFsD2dhhHSA+eOVSUNG4GFk1be8aHzC8ISTgzrB8PSNnzsWx1pS8E4=
+	t=1740002045; cv=none; b=rj/27pAUA0Huimv+mpAAg1EnMuxCeNu4+cHdbv6l2Q6nE9752jJmf2UT227G9mQ2ImlNvlqiVazGS0blkC+tyFT8Zy64cBE8wlMBm3gOqDhrMozKRbEuaawEbiobQGkGy2YLYqKl89iESkUDz0/bTl7LVJ5iOjq+O52n19efJhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740001964; c=relaxed/simple;
-	bh=fh9ZVJ2I9C5CQ5kpkV5A2PRiDffiKTGkZaaK1WWz7/s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GjmHL7FffP0swtOvcWthkjtqzzTAzxdJmRldaI0IB03VLPM0T2LhWUUFWUKiFHIRlltDQjtekFgKaxDgU58b+5WHZSEOGfDU0I7b3B89di5qkBD1qubkTFdneRQWTkYMJcbLcaaTzSO1hX/lbQ7cwG0bAG5hIQWDFvtV6Q+58XQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=UiyrZ8jd; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3d04932a36cso2453795ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 13:52:41 -0800 (PST)
+	s=arc-20240116; t=1740002045; c=relaxed/simple;
+	bh=f2Evl1/Y2JRZTJBM8MgwzdslOMp6PcDTZCILmIIZjgI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TomddjW2q7+N08WpTFyhYP0WnjaftrfeMTxacUO31oOCCbJ+Gcv6hpN5lGTyCltRtnxfxgkJauuWrWDLveYAdVpG20jhsAAsPif/azUY868spktH2vAPi24SyBaeGkGq4HHsZDHiDMqVaX5OktnicdtHplFwU9Z3HlKnIqEAZCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wPiPoa7p; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5e033c2f106so287576a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 13:54:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1740001961; x=1740606761; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8fcihMsF5MEa3PMJJpw5KAMRg9ye+pHOyIpzaUV9zkY=;
-        b=UiyrZ8jdTZX4V0zETE+4MLrb3JPUoj1xRrhke3vBGNGDzU3CMizWcw8kaVn3S4g31x
-         hGIqk0em7smlwds/n0DQ2OCCB6ouYV+57jFJDYiFz+dWR/eLPbUwnXhYkeKjXZkM3KCA
-         viK1Cy102SBVLexYhwPeCBJwls9VNgWtupRiMMJH5LMrjHR9pmdGO9Ei7Lg0x5vzPCWO
-         VXuZy/HVPHhb9+1unqRnCxhnQzJHa0EY85OXrTvMCRrEVC5de2wXl8cyzyq0oNTnOuni
-         Y7P6tDETyiX+WDSotuOl4BmAdt5Fc7Gicn4RXG88i6tGmEbNgfVSabcGYXbrHSaXqNJD
-         urvQ==
+        d=google.com; s=20230601; t=1740002041; x=1740606841; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hly2+E/pWLYHFHzBEhpYiIK1H+/yy5Tlka93bMM+wKs=;
+        b=wPiPoa7pP09xjsSP70pkj/bvYFKd8x4lNN0emVrSQKf2EdGmTdHIwxYbfq/D5U/v7v
+         HNweq3GlDYEk4vlyOlA4AA3oA2ER6qqWPtPaq7KIrkmGz3S31FPtfYRFqXse1fmpDih+
+         js2cqwMLiire1+Wic3M1WykeFStfatbO17Fl6mYzgD5QjB5SIEwVKPIWt+Se/LmY246M
+         KvsxSviAtIozPXJu6NLqQ3eKjsuGjr4FcnEPNnHxDFrvgbdisJ5Us6VuZK8mqdEjtQqf
+         DDjgBwEAa1aNRhC6xfCj9QR9YWfoCEpi6xtk45cHLQjk+OlINjGznmuvSZCEeRB6Kk4w
+         REVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740001961; x=1740606761;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8fcihMsF5MEa3PMJJpw5KAMRg9ye+pHOyIpzaUV9zkY=;
-        b=VZrmJ9RF1gyrCYQg/Nv9wZ+zoJtQhLN0i3+QozdWPSQEyt7em7Vm5qudUAYHQiib/2
-         9AaCdrCrGA60/acT4RRo05qiMXGf9QP6gBRF6G+ifrwuiNPSCOTgzkWESgjFdmQtH0hr
-         I09eSKi5+xCRcN71DZyRzgRRqJgeA8l2eqdWUYCmj0PAjLYUWcVKXFZP7ZY+/8rKWhaf
-         0s+kMmRxN8wPdp4CCg+lRR6tJ7rENsKDq4ecKeJC6/kJxZFBVBmNiis246xyIwABU4pD
-         39AbQyNxGJvd53MUm9C2Op6rOWnH60jgYYYLq/J4xxGqc15Uz1cJg/Vx0JgAwbCiSUMq
-         fKVg==
-X-Forwarded-Encrypted: i=1; AJvYcCUSgvg9fE6BT/ghH72gkUbZxLYE9XhC12Lq/1GUElN1Jj8Az76XWwWmZCaZum7vqDonmzJz70NxL271mPU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyL2sFk5RWBme0TdlceTBynXvyB7QH4bcyK18M0NTosiI66pS84
-	5PwwNN2Oe3hsygrBY1G/qUbGmreoxNBcytBAYn77vEWl99kuzNJ9D/TlwEXae1c=
-X-Gm-Gg: ASbGncvE51YTOSZj75kEfDR1izQCX6MOEdJ3XZhrRhSLlP1F9t3imNzXdMuz8h7Tm7p
-	GOn/NsPxud6nNHCPywZaeFsBtujY8vXLBZmYcs7UUREHRAO+4/ZXbX0IhQ9Jlumr6pfyYmOJari
-	CVWjYC2w7D6pTS16Gy0omgOIgUtqM4wD8bCPawJZ1XRCtqLrMo/Hemj9/YwiGWvO78/3gE9apM6
-	1bvxnfj1MU26tXTaEFMT09RfCQ279mNm0GedF/0eiNgZUcXOLZunFAin5KB9O8htDwQAWxvXqXJ
-	aErD/fl0EtQ=
-X-Google-Smtp-Source: AGHT+IFLt3AeBJ7f+PdPJ1liHm+gk3zN+nhOjD4Dv+4rd5YKqbbfrdRTWVg6WMFJdTceMOCut+5tDA==
-X-Received: by 2002:a05:6e02:1a4d:b0:3d0:164e:958 with SMTP id e9e14a558f8ab-3d2808feacemr188569535ab.17.1740001960871;
-        Wed, 19 Feb 2025 13:52:40 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ee7d9653aesm2608219173.16.2025.02.19.13.52.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Feb 2025 13:52:40 -0800 (PST)
-Message-ID: <9bf2510f-9a04-4199-b626-a27c4e4425a2@kernel.dk>
-Date: Wed, 19 Feb 2025 14:52:39 -0700
+        d=1e100.net; s=20230601; t=1740002041; x=1740606841;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hly2+E/pWLYHFHzBEhpYiIK1H+/yy5Tlka93bMM+wKs=;
+        b=jZPYwqrTn6ZqBXZ9zvewSF0zXxtKy/jVp2vnP2qDv+CztzGAhH1sYzkhBEUbD10Isu
+         Li5G36ap2qBmsOHsKWPcp2uudKdJSOwHzcOk91ilHHkpf3/opTfmg6NW/9CmmDZtfI3g
+         5NOFDeiJobGP2wVH4GCHQ1Zx5ieTp2CRlqDdANbtmZ96Orhs1HhyRiYQdxzxa4nS7Qxm
+         c692Fmjzp40Z4DNnNBtiifNNGlt06NgOt1/6KUaAmhOS+aX4QnthqmHb5s7inHCNXW/Z
+         qvxl6vGfcROFnW5GhswXqZroduoIhzQpzpCVXdcr/XvRBWEEplErXRDzuxeHopdFOkUP
+         C45w==
+X-Forwarded-Encrypted: i=1; AJvYcCXwEnaD8GtztdNXnzx3Q1rHw3wL7ptK2y3g7zwXiHrRriry6Ga+/x05gBXTxKlaAIOAFJ0NmOBq0DFb/Oc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7viZgU8Jvt4fXvfB92Xlmy6idCSUryijcTzXbaXbaCG5NqQi7
+	NeUGiwJJFtyhioWMHctQpFhUIIcHHLE05fmaXC0aftYRQaWysUoYf/5GIuVQIOVDj8Lc6eFNLXG
+	LSCTpOtWweCOj81dxgu9QIvQJ0h9Eu37Q6Uh4
+X-Gm-Gg: ASbGncsOK4qWHuXlwfU6FMfnuBOtbbyIXKsLO/is4oW4JyNC88U5XW7D3yKsXTkPCz2
+	QPsGg+xCPc/aiDtbHrWsfInZbliQ2/eRSGf2Cxyn9ONrodzLKRFzKzrvSkyJgmDCIBZ6XP1YC
+X-Google-Smtp-Source: AGHT+IE8hY7HZbQxDsGR2DbY0WjBS8/vjMy9cpF4Uk6YeOTrso2rzJyYUK3piSrXg5oFlVO1VY67vEoPtoW7JVgAxy4=
+X-Received: by 2002:a05:6402:35cb:b0:5dc:caab:9447 with SMTP id
+ 4fb4d7f45d1cf-5e036063e6amr49959261a12.18.1740002041121; Wed, 19 Feb 2025
+ 13:54:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: Fixes tag needs some work in the block tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Pavel Begunkov <asml.silence@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20250220085120.149904bb@canb.auug.org.au>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20250220085120.149904bb@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241118193024.2695876-1-jperaza@google.com> <2024111818-molecule-pedicure-db1b@gregkh>
+In-Reply-To: <2024111818-molecule-pedicure-db1b@gregkh>
+From: Joshua Peraza <jperaza@google.com>
+Date: Wed, 19 Feb 2025 13:53:48 -0800
+X-Gm-Features: AWEUYZkO-tcQ2iOyT9akmDadkWwc5wTxIV3gUrRKPZqCyQfwcTlPQkMZ347whJ8
+Message-ID: <CAFRSFxLF-i9Yvcf653-5gThV6PS_USqM3C5C8AaWrXuFaj8EZg@mail.gmail.com>
+Subject: Re: [v8 PATCH 0/2] PCI/ACPI: Support Microsoft's "DmaProperty"
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: baolu.lu@linux.intel.com, bhelgaas@google.com, dtor@google.com, 
+	dwmw2@infradead.org, helgaas@kernel.org, iommu@lists.linux-foundation.org, 
+	jean-philippe@linaro.org, joro@8bytes.org, jsbarnes@google.com, 
+	lenb@kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, mika.westerberg@linux.intel.com, oohall@gmail.com, 
+	pavel@denx.de, rafael.j.wysocki@intel.com, rafael@kernel.org, 
+	rajatja@google.com, rajatxjain@gmail.com, will@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2/19/25 2:51 PM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> In commit
-> 
->   f6977b06c598 ("io_uring/zcrx: fix leaks on failed registration")
-> 
-> Fixes tag
-> 
->   Fixes: 9fd13751abf5f ("io_uring/zcrx: grab a net device")
-> 
-> has these problem(s):
-> 
->   - Target SHA1 does not exist
-> 
-> Maybe you meant
-> 
-> Fixes: 035af94b39fd ("io_uring/zcrx: grab a net device")
+On Mon, Nov 18, 2024 at 11:43=E2=80=AFAM Greg KH <gregkh@linuxfoundation.or=
+g> wrote:
+>
+> On Mon, Nov 18, 2024 at 07:30:22PM +0000, Joshua Peraza wrote:
+> > This patchset rebases two previously posted patches supporting
+> > recognition of Microsoft's DmaProperty.
+> >
+> > v8: Joshua renames untrusted_dma to requires_dma_protection and updates
+> > some comments, reducing use of the word "trust" to refer to PCI devices
+> > and matching the word choice in Microsoft's documentation.
+>
+> So this is the "clarity"?  I'm not sold, sorry.  Again, did you look at
+> the previous discussions we had about this name?  We don't have to use
+> Microsoft's term here as it is used differently by Linux today, right?
+> If you really want to support the DmaProperty, why not just support that
+> with a new bit as that's something different here, right?
+>
+> Again, look at what this is supposed to be conveying.  They ability to
+> DMA to anywhere isn't really the root issue here, or is it?  What is the
+> threat model you are trying to mitigate?
+>
+> > v7: Rajat updates a comment with Robin's suggestion. Joshua re-sends an=
+d
+> > Greg requests clarity and documentation on why untrusted_dma is the
+> > right name.
+> >
+> > v6: Rajat renames pci_dev_has_dma_property and links to Microsoft's
+> > documentation in the commit message. Robin suggests clarifying a
+> > comment.
+> >
+> > v5: Rajat changes the name to untrusted_dma. Bjorn suggesting changing
+> > another function's name pci_acpi_check_for_dma_protection to
+> > pci_dev_has_dma_property and seeks clarified documentation.
+> >
+> > v4: Rajat changes the name to poses_dma_risk. Christoph suggests this
+> > name doesn't capture the intent as well as untrusted_dma and Rafael
+> > agrees.
+> >
+> > v1,v2,v3: Greg suggests that (un)trusted is the wrong word for referrin=
+g
+> > to PCI devices, recommending a name something like "platform wants to
+> > protect dma access for this device."
+>
+> Or is it?  I said this when?  Just how old is this patch series?
+>
+> confused,
+>
+> greg k-h
 
-Oops, I'll fix it up.
+(sorry if you're getting this again; re-sending as plain text)
 
+Sorry for the confusion! What do you think about the following for a
+new cover letter?
 
--- 
-Jens Axboe
+Threat model: An overview of the security implications of strict vs
+non-strict IOMMU is presented at [1]. This change is motivated by
+=E2=80=9CCase 1=E2=80=9D where a DMA-capable device is processing untrusted=
+ inputs,
+e.g. network devices.
 
+This patchset proposes using =E2=80=9CDMA protection=E2=80=9D to mitigate t=
+his risk.
+This has the following effects, currently controlled by the
+=E2=80=9Cpci_dev::untrusted=E2=80=9D flag.
+
+- Separate IOMMU DMA domains
+- Use of SWIOTLB if CONFIG_SWIOTLB
+- Disables =E2=80=9Cquirks=E2=80=9D in intel IOMMU
+- Disables Address Translation Services
+
+The =E2=80=9Cuntrusted=E2=80=9D flag was introduced in 2018 in [2]. The mot=
+ivation for
+that change was to enable using IOMMU to protect against DMA attacks
+from externally facing devices such as thunderbolt ports. The patchset
+introduces the =E2=80=9Cuntrusted=E2=80=9D flag which =E2=80=9Cis supposed =
+to cover various
+PCIe devices that may be used to conduct DMA attacks.=E2=80=9D The patchset
+originally proposes naming the flag =E2=80=9Cis_external=E2=80=9D but is re=
+named to
+=E2=80=9Cis_untrusted=E2=80=9D and then =E2=80=9Cuntrusted=E2=80=9D supposi=
+ng that it could apply to
+more than just externally facing thunderbolt devices. The fact that
+=E2=80=9CExternalFacingPort=E2=80=9D is not part of any standard is called =
+out during
+review but also that Windows expecting firmware to identify external
+facing ports makes it =E2=80=9Cas good as a formal standard in the Windows
+world.=E2=80=9D
+
+This current patch series was first proposed in January 2022 [3]. It
+originally proposed a new property =E2=80=9CUntrustedDevice=E2=80=9D which =
+would cause
+the untrusted flag to be set. In V1 Greg questions whether the new
+property is part of the ACPI standard, asks who is making this policy
+decision, and states =E2=80=9CThis notion of =E2=80=98trust=E2=80=99 for PC=
+I devices is
+crazy=E2=80=A6.=E2=80=9D Mika links to Microsoft's documentation of =E2=80=
+=9CDmaProperty=E2=80=9D and
+suggests that property is adopted instead. Greg objects that Linux
+does not have =E2=80=9Cdma protection=E2=80=9D but Mika says that this is t=
+he IOMMU.
+The term =E2=80=9CDMA protection=E2=80=9D is also used in thunderbolt drive=
+r code for
+the same purpose and in an Intel white paper [4] describing the
+technique. Mika also observes that Linux has recognized several
+properties documented by Microsoft but not part of the ACPI standard.
+There is discussion between Mika, Rafael, and Rajat about seeking to
+align with Microsoft on the semantics of =E2=80=9CDmaProperty=E2=80=9D for
+compatibility with firmware produced for Windows.
+
+V2 of this patch series [5] again proposed an =E2=80=9CUntrustedDevice=E2=
+=80=9D
+property which Greg objects to because it is not sufficiently
+descriptive, not sufficiently documented, and policies about trust
+don=E2=80=99t belong in the kernel. Rajat describes the =E2=80=9Cuntrusted=
+=E2=80=9D flag=E2=80=99s
+current use, controlling IOMMU and Greg suggests naming the flag
+=E2=80=9Cuse_iommu=E2=80=9D or =E2=80=9Cable to do DMA=E2=80=9D
+
+V3 of this patch series [6] proposes recognizing =E2=80=9CDmaProperty=E2=80=
+=9D with
+slightly altered semantics from Microsoft=E2=80=99s documentation. Greg
+suggests adhering to Microsoft=E2=80=99s semantics for =E2=80=9CDmaProperty=
+=E2=80=9D and to
+introduce a new property with new semantics instead. Greg again states
+that the flag being named =E2=80=9Cuntrusted=E2=80=9D (not changed in this =
+patch) is
+confusing.
+
+V4 renames =E2=80=9Cuntrusted=E2=80=9D to =E2=80=9Cposes_dma_risk=E2=80=9D.=
+ Christoph suggests
+=E2=80=9Cuntrusted_dma=E2=80=9D and Rafael agrees.
+
+V5 renames the flag to =E2=80=9Cuntrusted_dma=E2=80=9D. Bjorn asks for clar=
+ification
+about whether the semantics of this flag will match Microsoft=E2=80=99s
+documentation. Rajat responds that Microsoft has agreed to update
+their documentation to have aligned semantics, in particular =E2=80=9Cthe
+property is not restricted to identify =E2=80=98internal PCIe hierarchies=
+=E2=80=99
+(starting at root port), but to "any PCI device". As of today,
+Microsoft=E2=80=99s documentation does not appear to have been updated.
+
+In V6 Rajat updates a link to Microsoft=E2=80=99s documentation, renames a
+function to pci_dev_has_dma_property() and uses
+acpi_dev_get_property() to read =E2=80=9CDmaProperty=E2=80=9D.
+
+In V7-V8 Joshua re-sends and Greg requests a summary of the history of
+debate about the name for the =E2=80=9Cuntrusted=E2=80=9D flag as well as w=
+hat is the
+threat model, what does this property convey, and why we should use
+Microsoft=E2=80=99s DmaProperty and its semantics instead of inventing
+something new.
+
+Links:
+[1] https://lore.kernel.org/linux-arm-msm/20210624101557.v2.3.Icde6be7601a5=
+939960caf802056c88cd5132eb4e@changeid/
+[2] https://lore.kernel.org/lkml/20181129155153.35840-1-mika.westerberg@lin=
+ux.intel.com/
+[3] https://lore.kernel.org/all/20220120000409.2706549-1-rajatja@google.com=
+/
+[4] https://www.intel.com/content/dam/develop/external/us/en/documents/inte=
+l-whitepaper-using-iommu-for-dma-protection-in-uefi-820238.pdf
+[5] https://lore.kernel.org/all/20220202020103.2149130-1-rajatja@google.com=
+/
+[6] https://lore.kernel.org/all/20220216220541.1635665-1-rajatja@google.com=
+/
 
