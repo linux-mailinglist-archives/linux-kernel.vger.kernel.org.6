@@ -1,144 +1,159 @@
-Return-Path: <linux-kernel+bounces-521930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 401AEA3C408
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:47:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D851A3C40D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:47:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 342997A948D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:42:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA9777A961B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:42:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E13D212FB8;
-	Wed, 19 Feb 2025 15:40:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FEAF1FC104;
+	Wed, 19 Feb 2025 15:40:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="HhPCt1z9"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VFqEizxP"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F97C212D68
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 15:40:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A9CA1E885
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 15:40:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739979608; cv=none; b=aUGEthI5RF/t6/l8QZN4kooTjLPJOd6VY+WyHQOZeJRIQ+zWhZfmlRZHR+aI3AMX9lu3wFCfb0CW7vzawNcsYqSM+cRy8kxASHa2zAPiu/jJlxqf84EuOo1QnM4kh2fqPRVGgywcisW67B2n05JJcyTF3s0ZDHfuJz8bqmunQFQ=
+	t=1739979634; cv=none; b=JIW7+O2Qz31wxwzPik5N3JDF+dLXpN7m5QjnUYpoqblKN9+oDTB0xUL4EawIKXfjjToU1XTOGANMouJYHK8h+NNH3r87Z+qyFA9pQJLnZu6sKHPFrQA8vppNFyy6Cvjp988onBtvilWQDmKH0gmgCI+LG69tQUNVfkUpFQ4TNXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739979608; c=relaxed/simple;
-	bh=buTHsj2oaFq5Wqga1EBuGagDv+saNvOZR/UVtfuyT4c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KetDOefBJ9jP0Ci/PUDvGpNXZ1+jgVEV3fN29+VVo5ZgJSeoHcMNrzg2gDuPi4cBaqvgZRFPN1v7AnlQkT+9X+hz/5NXCjvaOci/LlqcH56HHBqBbeozyLYbd+Z/G96KYb7g3XbQxHxokG1iMEL3ToobOVOeNzeVqM6KHO6pXa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=HhPCt1z9; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-472003f8c47so8875801cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 07:40:04 -0800 (PST)
+	s=arc-20240116; t=1739979634; c=relaxed/simple;
+	bh=lhw9iIqeY0rMUOFrAAe70oZmuW9594NHsdSt36EJT3k=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=iobQQwKKCFZ0XLlTValMdlKj4prQz9asav4tbhkoRNCxeFmHpmOGLPMmS67CLkXgDCRFWsOIngRKwxxLpO7sbQSrKvHnZqYVi9DTInINeYNCL7cjyQFMEta05ot+k+CT2FCTwlhEryNVgzOyERCFy5wruwuqJt0HIAZzCYnw4jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VFqEizxP; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-4399a5afc72so5494435e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 07:40:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1739979604; x=1740584404; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=92iIBWqK77Z7RcDzOrfe8c0bA9AELD7+jjJwAT/7JP0=;
-        b=HhPCt1z96x0HkTwLe/IKTSeyx0/SOX03j11AitZXAifIeLfRbKtaTUf4FVqm0A9QW4
-         aahVvQ2Wgrqs7Fga8Vic/BcH7HZ1nbhh1y4e/yKNBPmz7GkvT54cAyU+n5Tead6a7Coa
-         vfI831sXwnkxlpZDxsDC2wtHQjHp2Up3fyxfw=
+        d=google.com; s=20230601; t=1739979630; x=1740584430; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=dsoyyheG5eYnfYlWZPRHrjZCkRWZfS8w+U1gKGkozWU=;
+        b=VFqEizxPbaRIXJg5utS1tF276kmFCrx4zYU6WW8Pt/PHyAHsbnFqTM8CH5sV0KjYbN
+         L8fX8ms9j0KQBfWUXZMvsGi0NpWkxA2uaBQM7DonFxfzJVukoI0UdjrHWs7cEoqEAqI/
+         QjRwXG+oZR2WDZGWxT7uLg1NMDaOeLlt8gHWJLJXO9FGbWZWCgkCBnD0PJRXnj2OQo7Y
+         FMKPgCSWAEovBMzsN5q968NiBnl/1MwV4GPQIHJvd7unulOFmEYEQ2X/miEE8buP/f2z
+         mFd27JKnXEVNsGtHdO0k2lB6NdK5u097+5Li4Xr51yFNO6WfrUNLVdaWnDyy8DOSWRfo
+         f9PQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739979604; x=1740584404;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=92iIBWqK77Z7RcDzOrfe8c0bA9AELD7+jjJwAT/7JP0=;
-        b=DrMyOrT32nCvi6sCvlPhE7mbPBwCcOOl3iIRHsnJNbPNSue/fnKdqP8JZnTm0kbfvm
-         eZAXV8mSEIHmx5Q0Vgl/M2WLc4BBcTfMGfGYCrKOpB34wSGkEQLVi72lGfSo9XwdnRQY
-         RrT92ZQCPMiQNNRdkv6pONsAJb1F8vts6//Ty/pD0r8ZXlKcepPt4Z9OqP1n8Uv8mgjN
-         qBw04ZWkTHVgino69GzosCzWENW69SWkOAbxfRBGcJY/j/q9H/hf1Gbej2noWp1HkJuU
-         ZMW1e8Q2QeFQOGJUB9D3H0iLl3TW9AHBrnjKH5iuPyndPoRlL4/eJaiH9/CFSiVray9n
-         2DKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVHzvbP2ovXiMJhT53kOSzMrd+vLgTn5+0kyIG9BEu1E74zZD5Atr5ZP+4WfbfY4W+MhUidOuqQ+knaJGY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSWiRU4ZlzSrHMP1tnFR+Inqm2ugiSNL2UmD632C+K7AfCYc2I
-	RoNi7SndldQSbdoIRoj7GSRMxbJIBkY74Eu+AfadoMbPtFDTk55SnxgiZjzQt3purhgIu+q7PBv
-	6I/wN2pk/SLAaF5miZXjc2+EyuawVqketZUxpCQ==
-X-Gm-Gg: ASbGncvLdocKOB9O+U0gP2DRa3APOcbKDc8PU0+xPgXlETSeOO15bgGfZjJFMgj0Ou9
-	oTQUcfC3zHuSWOHmO/ImZ18Oen2pNWCN2URa+noeQZw8P7TxYlAYybi62lnxEPaYokzXM6SY=
-X-Google-Smtp-Source: AGHT+IFAeU/+H+SJFluznNcKJQGWZ0dI8+j7igAo72ORVv+picT+17KaUR1+ksOwgZMe+UPUb+KJUxbhqcefENa7mOM=
-X-Received: by 2002:a05:622a:250e:b0:472:2bc:8763 with SMTP id
- d75a77b69052e-472081120acmr72334071cf.17.1739979604016; Wed, 19 Feb 2025
- 07:40:04 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739979630; x=1740584430;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dsoyyheG5eYnfYlWZPRHrjZCkRWZfS8w+U1gKGkozWU=;
+        b=m98du0/r/LP49c/FtIXIiO8C/A8DVTk0hBv2MsOkquzqpqgIpI/iRuJwvOt/x8sacr
+         Ap96UV3LEVtjlgJmnXv3IlGlgwDqk/O+PFhTeVhoKhQOq1Mj1ViaCFWvr2cVRNeYFkll
+         uhjQ6HebNCcvVk+A1TCDsvg7f1CsLb67eGGBhFBIzGW4E9VoMzKY377ax1ZO8eTcJb0C
+         9+OTF6RPWtiqXcWEIWG3CWX+8stAhrXgZJVjWhH7aRfocf/mNMYNUOsrucu2rFnvPSUc
+         P6VYJhVxu6s7aHY/9EXNprNWtJU/APxeMz/A7UVkP3UuXIJMbepFe0Xvi+DCK175gWou
+         GVaw==
+X-Forwarded-Encrypted: i=1; AJvYcCUvs/Eq5EyURtBOS+ExlaxYbOwAZmgnSW+9jAhmo9UujBUoGhaeKwVkEUdmwVb5pFheJrKwuhtNCoZkAG0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxggKZEDubNsBCH30wlD3ucNYz/b+cIqLiccFF2TnfBKGKPdeJa
+	++O0QQvSl5HoHUtYT6Flgi3yfA/5iYTqwk+Cmp0WOEwKdbBXyxjxXBW+Lp7NAiNNTu0vvI6C7Lo
+	ctpQd0SGarw==
+X-Google-Smtp-Source: AGHT+IF2Ji0kRCZEUvwuqRlmx5jaUs3gvVr5uXlpZ7FXngrGZjd8PDbLbHNXrHxLgegwCyHsoGRFDC8zswzKcg==
+X-Received: from wmbes14.prod.google.com ([2002:a05:600c:810e:b0:439:8cc3:4f3b])
+ (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:401f:b0:38f:4531:3989 with SMTP id ffacd0b85a97d-38f45313c69mr12438222f8f.51.1739979630529;
+ Wed, 19 Feb 2025 07:40:30 -0800 (PST)
+Date: Wed, 19 Feb 2025 15:40:25 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250217133228.24405-1-luis@igalia.com> <20250217133228.24405-3-luis@igalia.com>
- <Z7PaimnCjbGMi6EQ@dread.disaster.area> <CAJfpegszFjRFnnPbetBJrHiW_yCO1mFOpuzp30CCZUnDZWQxqg@mail.gmail.com>
- <87r03v8t72.fsf@igalia.com> <CAJfpegu51xNUKURj5rKSM5-SYZ6pn-+ZCH0d-g6PZ8vBQYsUSQ@mail.gmail.com>
- <87frkb8o94.fsf@igalia.com> <CAJfpegsThcFwhKb9XA3WWBXY_m=_0pRF+FZF+vxAxe3RbZ_c3A@mail.gmail.com>
- <87tt8r6s3e.fsf@igalia.com> <Z7UED8Gh7Uo-Yj6K@dread.disaster.area> <87eczu41r9.fsf@igalia.com>
-In-Reply-To: <87eczu41r9.fsf@igalia.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 19 Feb 2025 16:39:53 +0100
-X-Gm-Features: AWEUYZnsd8RmZK6RM-APkCg4E8uZetY9FeJcgcAmTH8on7mvgs9rhtwhdwChAuM
-Message-ID: <CAJfpegs-_sFPnMBwEa-2OSiaNriH6ZvEnM73vNZBiwzrSWFraw@mail.gmail.com>
-Subject: Re: [PATCH v6 2/2] fuse: add new function to invalidate cache for all inodes
-To: Luis Henriques <luis@igalia.com>
-Cc: Dave Chinner <david@fromorbit.com>, Bernd Schubert <bschubert@ddn.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Matt Harvey <mharvey@jumptrading.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Valentin Volkl <valentin.volkl@cern.ch>, 
-	Laura Promberger <laura.promberger@cern.ch>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAGj7tWcC/x2MQQqAIBAAvyJ7bkE3ouwr0SF0q4Uo0Yog/HvSa
+ ZjDzAuJo3CCXr0Q+ZYkx17EVArcOu0Lo/jiQJoaTcbi9mDgiC5cGM5C62dfa9u1ZKBEIfIszz8 cxpw/XIL6VGAAAAA=
+X-Change-Id: 20250219-lx-per-cpu-ptr-c9dfd3098721
+X-Mailer: b4 0.15-dev
+Message-ID: <20250219-lx-per-cpu-ptr-v1-1-b4492fc471e7@google.com>
+Subject: [PATCH] scripts/gdb: Add $lx_per_cpu_ptr()
+From: Brendan Jackman <jackmanb@google.com>
+To: Jan Kiszka <jan.kiszka@siemens.com>, Kieran Bingham <kbingham@kernel.org>
+Cc: Florian Rommel <mail@florommel.de>, linux-kernel@vger.kernel.org, 
+	Brendan Jackman <jackmanb@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-On Wed, 19 Feb 2025 at 12:23, Luis Henriques <luis@igalia.com> wrote:
+We currently have $lx_per_cpu() which works fine for stuff that kernel
+code would access via per_cpu(). But this doesn't work for stuff that
+kernel code accesses via per_cpu_ptr():
 
-> +static int fuse_notify_update_epoch(struct fuse_conn *fc)
-> +{
-> +       struct fuse_mount *fm;
-> +       struct inode *inode;
-> +
-> +       inode = fuse_ilookup(fc, FUSE_ROOT_ID, &fm);
-> +       if (!inode) || !fm)
-> +               return -ENOENT;
-> +
-> +       iput(inode);
-> +       atomic_inc(&fc->epoch);
-> +       shrink_dcache_sb(fm->sb);
+(gdb) p $lx_per_cpu(node_data[1].node_zones[2]->per_cpu_pageset)
+Cannot access memory at address 0xffff11105fbd6c28
 
-This is just an optimization and could be racy, kicking out valid
-cache (harmlessly of course).  I'd leave it out of the first version.
+This is because we take the address of the pointer and use that as the
+offset, instead of using the stored value.
 
-There could be more than one fuse_mount instance.  Wondering if epoch
-should be per-fm not per-fc...
+Add a GDB version that mirrors the kernel API, which uses the pointer
+value.
 
-> @@ -204,6 +204,12 @@ static int fuse_dentry_revalidate(struct inode *dir, const struct qstr *name,
->         int ret;
->
->         inode = d_inode_rcu(entry);
-> +       if (inode) {
-> +               fm = get_fuse_mount(inode);
-> +               if (entry->d_time < atomic_read(&fm->fc->epoch))
-> +                       goto invalid;
-> +       }
+To be consistent with per_cpu_ptr(), we need to return the pointer value
+instead of dereferencing it for the user. Therefore, move the existing
+dereference out of the per_cpu() Python helper and do that only in the
+$lx_per_cpu() implementation.
 
-Negative dentries need to be invalidated too.
+Signed-off-by: Brendan Jackman <jackmanb@google.com>
+---
+ scripts/gdb/linux/cpus.py | 21 +++++++++++++++++++--
+ 1 file changed, 19 insertions(+), 2 deletions(-)
 
-> @@ -446,6 +452,12 @@ static struct dentry *fuse_lookup(struct inode *dir, struct dentry *entry,
->                 goto out_err;
->
->         entry = newent ? newent : entry;
-> +       if (inode) {
-> +               struct fuse_mount *fm = get_fuse_mount(inode);
-> +               entry->d_time = atomic_read(&fm->fc->epoch);
-> +       } else {
-> +               entry->d_time = 0;
-> +       }
+diff --git a/scripts/gdb/linux/cpus.py b/scripts/gdb/linux/cpus.py
+index 13eb8b3901b8fc5e2500138c7d204ac5f7c9858c..1f7e62efb38bf4ddee0058fea8634fd377317669 100644
+--- a/scripts/gdb/linux/cpus.py
++++ b/scripts/gdb/linux/cpus.py
+@@ -46,7 +46,7 @@ def per_cpu(var_ptr, cpu):
+             # !CONFIG_SMP case
+             offset = 0
+     pointer = var_ptr.cast(utils.get_long_type()) + offset
+-    return pointer.cast(var_ptr.type).dereference()
++    return pointer.cast(var_ptr.type)
+ 
+ 
+ cpu_mask = {}
+@@ -149,11 +149,28 @@ Note that VAR has to be quoted as string."""
+         super(PerCpu, self).__init__("lx_per_cpu")
+ 
+     def invoke(self, var, cpu=-1):
+-        return per_cpu(var.address, cpu)
++        return per_cpu(var.address, cpu).dereference()
+ 
+ 
+ PerCpu()
+ 
++class PerCpuPtr(gdb.Function):
++    """Return per-cpu pointer.
++
++$lx_per_cpu_ptr("VAR"[, CPU]): Return the per-cpu pointer called VAR for the
++given CPU number. If CPU is omitted, the CPU of the current context is used.
++Note that VAR has to be quoted as string."""
++
++    def __init__(self):
++        super(PerCpuPtr, self).__init__("lx_per_cpu_ptr")
++
++    def invoke(self, var, cpu=-1):
++        return per_cpu(var, cpu)
++
++
++PerCpuPtr()
++
++
+ def get_current_task(cpu):
+     task_ptr_type = task_type.get_type().pointer()
+ 
 
-Again, should do the same for positive and negative dentries.
+---
+base-commit: f527c5c2abb60ddfd6b929d479b985071500419d
+change-id: 20250219-lx-per-cpu-ptr-c9dfd3098721
 
-Need to read out fc->epoch before sending the request to the server,
-otherwise might get a stale dentry with an updated epoch.
+Best regards,
+-- 
+Brendan Jackman <jackmanb@google.com>
 
-This also needs to be done in fuse_create_open(), create_new_entry()
-and fuse_direntplus_link().
-
-Thanks,
-Miklos
 
