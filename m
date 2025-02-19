@@ -1,136 +1,221 @@
-Return-Path: <linux-kernel+bounces-521773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86C22A3C220
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:28:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90A86A3C226
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:29:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C66443A4A16
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:27:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C26E03A8C04
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:27:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74CED1E5203;
-	Wed, 19 Feb 2025 14:27:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EE691EF0A5;
+	Wed, 19 Feb 2025 14:27:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="G5lt7oPQ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="AfOejkfP"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB93E1EB5FD
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 14:27:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F33251EDA36;
+	Wed, 19 Feb 2025 14:27:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739975229; cv=none; b=ojz6622sKvR9ADr4OGVkka+2JmjD3mMp4ziWEYftdqMYAOnOYUNRe4RraxXTKnkJYXqkpU0cICAarYyK/7y1oWF1xfq+CACvxsyJzGBGSEMuLcx3XbT4LwtkM8lAqNBYyr0STn3WOjQgnhgTUdDW2gDV82rHYQ4HBc1gywd4+Dg=
+	t=1739975239; cv=none; b=pHQ9GNi2391n4f05627QzlwM5uTVcRamDEom4S9f3D97ge0TZi8Cln54BwXs+0zbkFi/beCBEHcUUhLzetWrQSn0zB9OYIbMOmTc/1Q6SOpgFycwmrxFDT65ho3DPFYhSqudJqPHBtpVEyaUdZNDpp95bS8w+8eqzqbtLhXJT3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739975229; c=relaxed/simple;
-	bh=72EuZvMdd07piylkq+qnrWqr5/zLRwB/17q1RfYIf8E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LPXcgDjqjrisE1ujw2nTgHkooutYH2/a6vDSC+QGWuP+MBVfA79SDStLgTVupWAstMpCdp3ES5PDZ3wKEq+ySbAN6DiZiRemSjp5sncQ+dPyhCjMTOBwsaszatvaqF+vZIkhJySuS3v8i0fdv8N1yaVmsSEaKyD3wN+H2d2flaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=G5lt7oPQ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739975226;
+	s=arc-20240116; t=1739975239; c=relaxed/simple;
+	bh=0pFWGoZn4Prj7Yo7wgKAH1aCq2wU+y2KNw3p/vWZ0jk=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=eQbRDT5Ko6E+PXB9OinTXiifcvEtD3lYwIZVAyYlLvn7iBiP80N22gb57D7KC2ULGMI1zLPu3qjVRmExGYobYXzM+MhK+b67jaCTh/yJgSB+pzthS9Nd8yT4fTtdrX34lrssX/MLfYdJk7ZQx6iEGynVegknbsoLww8FIPzt4cM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=AfOejkfP; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 3ED624429B;
+	Wed, 19 Feb 2025 14:27:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1739975233;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=l5kXQZ+eC5UGlAspGME2/vd0jXGJDk+3LXqrC+fAcrU=;
-	b=G5lt7oPQLEwrBT1RraIlS2mrWIvSwNnn3DcW2ccF8I5Kbz3LlaAM5FUBGJamu0uHwxJ6gr
-	EsR3LGSUvknRbf2dBL8UjSVbARiWtveM3J2/9sJOfoHC668wdyAWMlg3gQXlGtatCN6sRG
-	117Jv6IJkAeDpI8eM7eTJOCSn6gSab4=
-Received: from mail-ot1-f70.google.com (mail-ot1-f70.google.com
- [209.85.210.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-244-3zt8R62FOVmrQMf_Vj5zEA-1; Wed, 19 Feb 2025 09:27:05 -0500
-X-MC-Unique: 3zt8R62FOVmrQMf_Vj5zEA-1
-X-Mimecast-MFC-AGG-ID: 3zt8R62FOVmrQMf_Vj5zEA_1739975225
-Received: by mail-ot1-f70.google.com with SMTP id 46e09a7af769-7272acb753bso2542506a34.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 06:27:05 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739975225; x=1740580025;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=l5kXQZ+eC5UGlAspGME2/vd0jXGJDk+3LXqrC+fAcrU=;
-        b=k6+Wt2tcgZ6x1RhbPjOlGatvAUweNUmUqNiU4L5heg7K/s6Z7f/ajN2BbeLv/7QIyx
-         4A86g+NwETmpDFi3QPtYm0d5KdN9gYh/rH1Ff2PSzjh63AjbavcmwECMfIVBnJmcpM6m
-         f2T+6cbae4zHavaap0c89SfM2yb9iqXYU4MPdgUGvqmv/gXcbupxnN2SFzmrubuuhbWP
-         nRF8JDfhIMKAq+RDXw01JTWTMN0fzqYPI3ZdTBMZn0Xr1Vme8OBfLES3y83HfuefcP7H
-         hZIybdxMcMXQfYvpyYNhmAFeFhfll9IDwmsjDs1NQn7UySXj2NRLY/2W+IXvBM7SHMzn
-         dhiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXLn9GtN67SGsaHQasLy9Kd92Df42PHBUoK6T9l/yy58nGc0zik+dNyT2GOHeSfx9jnFTqSOb2w9Z4/9mQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdyFmA0yfW+lLJC2mBm4iqcxskeCFthm7Q+/WwAbIS6DhCLqDo
-	f9FkAuih4lp0vtK3u6KYCxFVF+oIGno3s2z0ZOI8Yyg259A+A/cV3CJOIMPFsgPJAi7lost3xy4
-	T085dwT05zW5O69ZmKoTSn9giZD90F2ARd/awdaqQ8SFg68jaMdw/6oGEv/IgJQ==
-X-Gm-Gg: ASbGncvn1+KJtJ1iG7ql2wDCov59PmuhFw6+FgAFWBObAgu6W66OC4odzHWmZYfIpFF
-	x918FJ0T/K8uL8c7RyMjHN7b2BBgJhR31jcDWpZ4bvb4ZMAqsk20Exy5v/pJxbZz6+1rabH4wSc
-	B9QwvB9JX4mO++KJYXoa4x2rim28nuHXUgIldWETHo0G9Mw+3R7xg9s2GuZ5fbpIgTNVeTo7OYd
-	qLtJeYtjH+NysPJYoXBLDNpCaEk/qfSczLDfrmiWPguPd+T8WecsVJs6Hk=
-X-Received: by 2002:a05:6830:3881:b0:727:2f9d:284c with SMTP id 46e09a7af769-7272f9d28e1mr6334026a34.10.1739975224833;
-        Wed, 19 Feb 2025 06:27:04 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHe2Jy1S/ef+XCanbcwoVdwjMu3KsSLGol5t9LBgIHWTVgTQUJ5yIjtd/FzoCMUVyUc7zq5gg==
-X-Received: by 2002:a05:6830:3881:b0:727:2f9d:284c with SMTP id 46e09a7af769-7272f9d28e1mr6334003a34.10.1739975224544;
-        Wed, 19 Feb 2025 06:27:04 -0800 (PST)
-Received: from x1.local ([2604:7a40:2041:2b00::1000])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-72726ce6bf3sm1768025a34.68.2025.02.19.06.27.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2025 06:27:03 -0800 (PST)
-Date: Wed, 19 Feb 2025 09:26:53 -0500
-From: Peter Xu <peterx@redhat.com>
-To: Rafael Aquini <aquini@redhat.com>
-Cc: linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>,
-	Shuah Khan <shuah@kernel.org>
-Subject: Re: [PATCH] selftests/mm: run_vmtests.sh: fix half_ufd_size_MB
- calculation
-Message-ID: <Z7XqLQmmkDjWNM_5@x1.local>
-References: <20250218192251.53243-1-aquini@redhat.com>
+	bh=EkMPD/etQhH7KFsqRASd4glbb25QFa2tlMnA5cz7dtI=;
+	b=AfOejkfPWIIkVVS8W7N/WjFh11EKqwCpwvfUvhcCF55VbZgZ+7dyzRVerahYA/U5QKvNfs
+	14b6ciDDvT7hBKzP3DiDkgFYkYytOirMWDUkTGuq+DbMLhUY3MRZHPoP3bJA1XNSKD1wjW
+	8t8dSAltbX1VBysPio9J42dgWNJuSh6bn7Ps7Yyx7asiipVUQt2goxVnpcf1Cdp4L378N3
+	xhxHuXcUx9G6CXd8eiplIkEuQWPr840iwyVF6m4MZPa7E4XaetWFV535aJ9gTLca+/EtiA
+	vBvfP3BS8R+ApQ0LHDv799HcSP6zWqhBEKTNqLobfSTtmzE2LwgFbCuvDyeXeA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250218192251.53243-1-aquini@redhat.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 19 Feb 2025 15:27:11 +0100
+Message-Id: <D7WHQQM7K8NI.3JS09W4941HY1@bootlin.com>
+Cc: "Miquel Raynal" <miquel.raynal@bootlin.com>, "Romain Gantois"
+ <romain.gantois@bootlin.com>, "Magnus Damm" <magnus.damm@gmail.com>, "Rob
+ Herring" <robh+dt@kernel.org>, "Krzysztof Kozlowski"
+ <krzysztof.kozlowski+dt@linaro.org>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, "Herve Codina" <herve.codina@bootlin.com>,
+ "Milan Stevanovic" <milan.stevanovic@se.com>, "Jimmy Lalande"
+ <jimmy.lalande@se.com>, "Pascal Eberhard" <pascal.eberhard@se.com>,
+ <linux-renesas-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "Gareth Williams"
+ <gareth.williams.jx@renesas.com>, "Wolfram Sang"
+ <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH v2 2/2] ARM: dts: r9a06g032: add r9a06g032-rzn1d400-eb
+ board device-tree
+From: "Thomas Bonnefille" <thomas.bonnefille@bootlin.com>
+To: "Geert Uytterhoeven" <geert@linux-m68k.org>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20230209133507.150571-1-clement.leger@bootlin.com>
+ <20230209133507.150571-3-clement.leger@bootlin.com>
+ <CAMuHMdWUorkDYXZvsd-9rjwEkeJYC_FMfexZHaGYHDry=9Yjdg@mail.gmail.com>
+ <20230215092933.2f71ece0@fixe.home> <20230215115441.361aed53@fixe.home>
+ <CAMuHMdVhGFyrWx6oD-K9WhZRtYT_xJ_kWRA+vhdvB_JubFk8YA@mail.gmail.com>
+ <CAMuHMdX4nMA6HSu=UkNEWJWKK432VB5YVQCWn_rDZ6mNSv+41g@mail.gmail.com>
+ <87mshsvqjk.fsf@bootlin.com> <D7S772FNL7ZM.JNEXBJY6PJ44@bootlin.com>
+ <CAMuHMdVAJRhSLYbt27P-AzwHc89+MYKi-3KmkhT=hhXq27UFbQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdVAJRhSLYbt27P-AzwHc89+MYKi-3KmkhT=hhXq27UFbQ@mail.gmail.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeigeegkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepggfgtgffkfevuffhvffofhgjsehtqhertdertdejnecuhfhrohhmpedfvfhhohhmrghsuceuohhnnhgvfhhilhhlvgdfuceothhhohhmrghsrdgsohhnnhgvfhhilhhlvgessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepffekjeefheeuhfehtdeulefhieekteejuddvuddvuefgkeeiheffjeethedtieffnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepthhhohhmrghsrdgsohhnnhgvfhhilhhlvgessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudeipdhrtghpthhtohepghgvvghrtheslhhinhhugidqmheikehkrdhorhhgpdhrtghpthhtohepmhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomhdprhgtphhtthhopehrohhmrghinhdrghgrnhhtohhishessghoohhtlhhinhdrtghomhdprhgtphhtthhopehmrghgnhhushdruggrmhhmsehgm
+ hgrihhlrdgtohhmpdhrtghpthhtoheprhhosghhodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriiihshiithhofhdrkhhoiihlohifshhkihdoughtsehlihhnrghrohdrohhrghdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhopehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomh
+X-GND-Sasl: thomas.bonnefille@bootlin.com
 
-On Tue, Feb 18, 2025 at 02:22:51PM -0500, Rafael Aquini wrote:
-> From: Rafael Aquini <raquini@redhat.com>
-> 
-> We noticed that uffd-stress test was always failing to run when invoked
-> for the hugetlb profiles on x86_64 systems with a processor count of 64
-> or bigger:
->   ...
->   # ------------------------------------
->   # running ./uffd-stress hugetlb 128 32
->   # ------------------------------------
->   # ERROR: invalid MiB (errno=9, @uffd-stress.c:459)
->   ...
->   # [FAIL]
->   not ok 3 uffd-stress hugetlb 128 32 # exit=1
->   ...
-> 
-> The problem boils down to how run_vmtests.sh (mis)calculates the size
-> of the region it feeds to uffd-stress. The latter expects to see an
-> amount of MiB while the former is just giving out the number of free
-> hugepages halved down. This measurement discrepancy ends up violating
-> uffd-stress' assertion on number of hugetlb pages allocated per CPU,
-> causing it to bail out with the error above.
-> 
-> This commit fixes that issue by adjusting run_vmtests.sh's half_ufd_size_MB
-> calculation so it properly renders the region size in MiB, as expected,
-> while maintaining all of its original constraints in place.
-> 
-> Fixes: 2e47a445d7b3 ("selftests/mm: run_vmtests.sh: fix hugetlb mem size calculation")
-> Signed-off-by: Rafael Aquini <raquini@redhat.com>
+Hello Geert,
 
-Oops.. thanks!
+> On Fri, 14 Feb 2025 at 14:20, Thomas Bonnefille
+> <thomas.bonnefille@bootlin.com> wrote:
+>> >> On Wed, Feb 15, 2023 at 12:31=E2=80=AFPM Geert Uytterhoeven
+>> >> <geert@linux-m68k.org> wrote:
+>> >>> On Wed, Feb 15, 2023 at 11:52 AM Cl=C3=A9ment L=C3=A9ger
+>> >>> <clement.leger@bootlin.com> wrote:
+>> >>> > Le Wed, 15 Feb 2023 09:29:33 +0100,
+>> >>> > Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com> a =C3=A9crit :
+>> >>> > > Le Tue, 14 Feb 2023 17:25:14 +0100,
+>> >>> > > Geert Uytterhoeven <geert@linux-m68k.org> a =C3=A9crit :
+>> >>> > > > On Thu, Feb 9, 2023 at 2:32 PM Cl=C3=A9ment L=C3=A9ger <clemen=
+t.leger@bootlin.com> wrote:
+>> >>> > > > > The EB board (Expansion board) supports both RZ/N1D and RZ-N=
+1S. Since this
+>> >>> > > > > configuration targets only the RZ/N1D, it is named r9a06g032=
+-rzn1d400-eb.
+>> >>> > > > > It adds support for the 2 additional switch ports (port C an=
+d D) that are
+>> >>> > > > > available on that board.
+>> >>> > > > >
+>> >>> > > > > Signed-off-by: Cl=C3=A9ment L=C3=A9ger <clement.leger@bootli=
+n.com>
+>> >>> > > >
+>> >>> > > > Thanks for your patch!
+>> >>> > > >
+>> >>> > > > > --- /dev/null
+>> >>> > > > > +++ b/arch/arm/boot/dts/r9a06g032-rzn1d400-eb.dts
+>> >>>
+>> >>> > > > > +       pinctrl-0 =3D <&pins_eth1>, <&pins_eth2>, <&pins_eth=
+3>, <&pins_eth4>,
+>> >>> > > > > +                   <&pins_mdio1>;
+>> >>> > > > > +
+>> >>> > > > > +       mdio {
+>> >>> > > > > +               /* CN15 and CN16 switches must be configured=
+ in MDIO2 mode */
+>> >>> > > > > +               switch0phy1: ethernet-phy@1 {
+>> >>> > > > > +                       reg =3D <1>;
+>> >>> > > > > +                       marvell,reg-init =3D <3 16 0 0x1010>=
+;
+>> >>> > > >
+>> >>> > > > marvell,reg-init is not documented in any DT bindings document=
+?
+>> >>> > >
+>> >>> > > Indeed, this is not somethiong that should be made available her=
+e. It's
+>> >>> > > only inverting the LED polarity but supported by some internal p=
+atch.
+>> >>> > > I'll remove that.
+>> >>>
+>> >>> > I actually was confused by a property I added in another device-tr=
+ee but
+>> >>> > marvell,reg-init exists, is handled by the marvell phy driver and =
+used
+>> >>> > in a few device-trees. Strangely, it is not documented anywhere. S=
+o I
+>> >>> > can either remove that (and the LED won't work properly) or let it=
+ live
+>> >>> > depending on what you prefer.
+>> >>>
+>> >>> In that case, please keep it.
+>> >>> But the property really should be documented, one day...
+>>
+>> As Cl=C3=A9ment mentioned, this property is used to set up the LEDs for
+>> Marvell PHY. However, Marvell's PHYs have no dedicated bindings; only
+>> their associated switches do. PHY's usually don't have their own yaml,
+>> so there is no easy place where to add this property. We could however
+>> describe them in the numerous switch bindings that embed a Marvell PHY,
+>> which are: Qualcomm ETHQOS, Cadence MACB/GEM, Gianfar, Freescale FEC,
+>> Renesas switches and of course Marvell switches.
+>>
+>> I already thought of doing it in the binding of the renesas switch, like
+>> this :
+>>
+>> Documentation/devicetree/bindings/net/dsa/renesas,rzn1-a5psw.yaml:
+>> ```
+>>
+>> \[...\]
+>>
+>> mdio:
+>> $ref: /schemas/net/mdio.yaml#
+>> patternProperties:
+>> '@\[0-9a-f\]+$':
+>> properties:
+>> marvel,reg-init:
+>> - description: Lorem Ipsum
+>>
+>> unevaluatedProperties: false
+>>
+>> \[...\]
+>>
+>> ```
+>> but it would document it only for this particular switch.
+>> It is also possible to do it in the main mdio.yaml on the model of this:
+>> https://elixir.bootlin.com/linux/v6.13.1/source/Documentation/devicetree=
+/bindings/spi/spi-peripheral-props.yaml#L121
+>>
+>> What's your opinion on this ?
+>
+> Oh, so this is a similar issue as the one preventing us from converting
+> the Micrel PHY bindings to dt-schema[1]?
+>
+> You could still document it in a text binding file:
+> Documentation/devicetree/bindings/net/marvell,phy.txt
+> That cannot be used for validation, but at least people can find the
+> property using git grep...
+>
 
-Reviewed-by: Peter Xu <peterx@redhat.com>
+Ack, I'll do that.
 
--- 
-Peter Xu
+However, after the third version this series will no longer be related
+to the marvell,reg-init property. Therefore, I might document it in a
+different series.
 
+>> Moreover, everywhere this property is used in the kernel, it is to set
+>> up the LEDs. Nowadays, the Marvell PHY driver should be able to handle
+>> LEDs without this property. Therefore, this property should be
+>> deprecated in this case.
+>
+> So the LED works now on this board without the property?
+> Then the property can be dropped?
+
+Yes it does, I "just" have to add an LED as a child node of the phy in
+the device-tree.
+I'll send a third version using this mechanism soon.
+However, I will not be able to test it on the real evaluation board but
+on a proprietary board using the same SoC and PHY. It should not cause
+any problem as I will reproduce exactly what the marvell,reg-init
+property was doing.
+
+Regards,
+Thomas
 
