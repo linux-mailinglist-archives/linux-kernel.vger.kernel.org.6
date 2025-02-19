@@ -1,117 +1,181 @@
-Return-Path: <linux-kernel+bounces-522347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D36F2A3C8EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 20:37:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E49A0A3C8F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 20:39:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30783189AAF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:35:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1435A3B214D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:36:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 178C022B8A2;
-	Wed, 19 Feb 2025 19:35:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C225822B8A4;
+	Wed, 19 Feb 2025 19:36:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IJQiBSs/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BVC9iWak"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B54184F;
-	Wed, 19 Feb 2025 19:35:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF89B1FECAE;
+	Wed, 19 Feb 2025 19:36:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739993711; cv=none; b=n99jTwULFDD0W/Eio7b81c65ANhydJMIsACb/BeN3MyIwar+/MhYiTpogSHbYqPrcCwvGSrjRUBl+uogvdZx8oIgZ4r2iOKQq+Ts/CJcvNY/ingLIUj7/DOLiDPo3qgr8iwSLTasE2MmCSivDSPYJT7AeRl+WFzqCLAZq8CaWko=
+	t=1739993790; cv=none; b=js2r78i+d62NBNC1+pYvEPI146m6+B/IyotjWEBWesRqoZz3EwKDOImUynPB/QY9zPtM2Uj5rfjU3QCTDdAz+7pxNi8WSQkuXES0fhgZ6NjAJUx+BFJmMla3CgUsHQwD+TbyhlcswQLkIqwz6L6A8IG8fJEZIanUUUYtMrFxwls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739993711; c=relaxed/simple;
-	bh=Fn3wSAWM9ieh5UpaveCtIUFgMyNxAkN0r0CDO0Ag7jA=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cW2fA5SCZclYM4C0S5BpHhSI4AEJP1Qjzd95qXee5jL7z1RmIil5U3B5JWi8XPmkUoFyPRclK04B0dQcwXnfl0yRIr1ToEqkrx2jJuVEb4jDVggI1h/VgV7JbnDbPdK9EurHmsZjf1zuG4uYc5IYEJpeMPibofCLbgKBVYWDuUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IJQiBSs/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD18AC4CED1;
-	Wed, 19 Feb 2025 19:35:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739993710;
-	bh=Fn3wSAWM9ieh5UpaveCtIUFgMyNxAkN0r0CDO0Ag7jA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=IJQiBSs/OxkI/b/fg3rkPfPtMCLTTVv1+aG2xhowPUN9D3oLnDGftbbGSRQhDcK7u
-	 ZcLPs7QbUi6hex3dZHv8ZcTTuYKe43MQKKJEJWI6m0L3rWuOoNs19gDePjWsUlv9IK
-	 4K1LrljQSvq2sWmYBMnJi78pR2ljKq5KuEn276r+zUpVGwHckYGN+eBBfGWyyxB9WW
-	 dy+lPHI0chP9BpNAf8WDxzQvRHBCHdsmYSjLZRRUniZ73Y0JyFgip+ImP0B+4vsZdi
-	 uQnRrAP+xenUMjLuMYizDAacCwiWVMd2z3BWAyMj2XCfTToNKZ76q1Jhu5+GoFRkh/
-	 c0S8kF2n00l1Q==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tkpqe-005wOm-Se;
-	Wed, 19 Feb 2025 19:35:08 +0000
-Date: Wed, 19 Feb 2025 19:35:08 +0000
-Message-ID: <86zfihramr.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Oliver Upton <oliver.upton@linux.dev>
-Cc: kvmarm@lists.linux.dev,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Mingwei Zhang <mizhang@google.com>,
-	Colton Lewis <coltonlewis@google.com>,
-	Raghavendra Rao Ananta <rananta@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Janne Grunau <j@jannau.net>
-Subject: Re: [PATCH v2 07/14] KVM: arm64: Use a cpucap to determine if system supports FEAT_PMUv3
-In-Reply-To: <Z7YvkHpm3w__HnkO@linux.dev>
-References: <20250203183111.191519-1-oliver.upton@linux.dev>
-	<20250203183111.191519-8-oliver.upton@linux.dev>
-	<864j0psuas.wl-maz@kernel.org>
-	<Z7YvkHpm3w__HnkO@linux.dev>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1739993790; c=relaxed/simple;
+	bh=YUZVKPNnWqfMc6DHELioLciuEgVLDK11YWAFpFQIrpU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=oY0NKppHyuOx2SAc6XYX5VDlUt13HSshk26Wjkth6D8MrZuT8NVwF5hygiBm8m88Zh6M8QC347ZG6dYeq8dQ8ZbXELbg7HxGF/TAKS3W/xDJZWkjjrAmGMbBTCMcMh7DMkmbviGzYx0B2zTvj4a15YMfGVnl01l/tJaqE4fIw+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=BVC9iWak; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51JJa5pU2063500
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 19 Feb 2025 13:36:05 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1739993765;
+	bh=8EvVce+jqD12k32qwF7nR1NxOePu4ZKlcn0n3l2IJUI=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=BVC9iWakCbU6AvMW2RylcRWtY2vSIlU6vNlIuUCnK4Ng+AAdwW87md1tFYmgpYkk/
+	 Pb5Nyoyd8ZQnvICjNZ6BHJdopuWS48+T21BvEh/rHfrkOHc0xHsy4Y9dxmXeGXFSkz
+	 rBsTTX0wCN+Adn9YZBnt/0voh4n+z6FkXUzC4qmg=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51JJa5me014675
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 19 Feb 2025 13:36:05 -0600
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 19
+ Feb 2025 13:36:04 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 19 Feb 2025 13:36:04 -0600
+Received: from [10.249.135.49] ([10.249.135.49])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51JJZxUp074733;
+	Wed, 19 Feb 2025 13:36:00 -0600
+Message-ID: <b399c73b-359a-4dde-acc3-0bf4aea900e9@ti.com>
+Date: Thu, 20 Feb 2025 01:05:58 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: oliver.upton@linux.dev, kvmarm@lists.linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, mizhang@google.com, coltonlewis@google.com, rananta@google.com, catalin.marinas@arm.com, will@kernel.org, mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, j@jannau.net
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/2] irqchip: ti-tsir: Add support for Timesync
+ Interrupt Router
+To: Thomas Gleixner <tglx@linutronix.de>, Jason Reeder <jreeder@ti.com>,
+        <vigneshr@ti.com>, <nm@ti.com>, Paolo Abeni <pabeni@redhat.com>,
+        "Jakub
+ Kicinski" <kuba@kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S.
+ Miller" <davem@davemloft.net>,
+        Andrew Lunn <andrew+netdev@lunn.ch>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <srk@ti.com>,
+        <s-vadapalli@ti.com>, <danishanwar@ti.com>, <m-malladi@ti.com>,
+        "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>
+References: <20250205160119.136639-1-c-vankar@ti.com>
+ <20250205160119.136639-2-c-vankar@ti.com> <87lduin4o5.ffs@tglx>
+ <09880b14-cef1-44cd-9fa4-8840fb673c0a@ti.com> <87cyfplg8s.ffs@tglx>
+ <dda464e2-d442-4e20-bc6d-cea854c5f17f@ti.com> <87jz9tjwjk.ffs@tglx>
+ <4238ddcc-d6ab-41a3-8725-b948f013a5b9@ti.com> <87ikp8jph9.ffs@tglx>
+Content-Language: en-US
+From: "Vankar, Chintan" <c-vankar@ti.com>
+In-Reply-To: <87ikp8jph9.ffs@tglx>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Wed, 19 Feb 2025 19:22:56 +0000,
-Oliver Upton <oliver.upton@linux.dev> wrote:
+Hello Thomas/Greg,
+
+On 2/18/2025 1:47 AM, Thomas Gleixner wrote:
+> Chintan!
 > 
-> On Wed, Feb 19, 2025 at 05:44:59PM +0000, Marc Zyngier wrote:
-> > > +static bool has_pmuv3(const struct arm64_cpu_capabilities *entry, int scope)
-> > > +{
-> > > +	u64 dfr0 = read_sanitised_ftr_reg(SYS_ID_AA64DFR0_EL1);
-> > > +	unsigned int pmuver;
-> > > +
-> > > +	pmuver = cpuid_feature_extract_unsigned_field(dfr0,
-> > > +						      ID_AA64DFR0_EL1_PMUVer_SHIFT);
-> > > +	if (pmuver == ID_AA64DFR0_EL1_PMUVer_IMP_DEF)
-> > > +		return false;
-> > > +
-> > > +	return pmuver >= ID_AA64DFR0_EL1_PMUVer_IMP;
-> > 
-> > Given that PMUVer is a signed field, how about using
-> > cpuid_feature_extract_signed_field() and do a signed comparison instead?
+> On Sat, Feb 15 2025 at 17:19, Chintan Vankar wrote:
+>> On 14/02/25 04:13, Thomas Gleixner wrote:
+>>> Two questions:
+>>>
+>>>    1) For the case where no interrupt is involved, how is the routing
+>>>       configured?
+>>>
+>>>    2) For the case where it routes an input line to an interupt, then how
+>>>       is this interrupt going to be handled by this interrupt domain which
+>>>       is not connected to anything and implements an empty disfunctional
+>>>       interrupt chip?
+>>>
+>>
+>> For both the cases above the job of Timesync INTR is to map the output
+>> register with the corresponding input.
+>>
+>> As described in section 11.3.2.1 in the TRM at:
+>> https://www.ti.com/lit/ug/spruiu1d/spruiu1d.pdf,
+>> the job of the Timesync INTR is to provide a configuration of the
+>> "output registers which controls the selection". Hence we just have to
+>> provide configuration APIs in the Timesync INTR which programs output
+>> registers of the Timesync INTR. About the handling of the interrupts,
+>> the device which receives an interrupt needs to handle the interrupt.
+>>
+>> Could you please explain why we consider these two cases to be
+>> different?
 > 
-> I'm happy to include a comment, but the PMUVer field is not signed. Any value
-> other than 0xF is meant to be treated as an unsigned quantity.
+> They are different as
 > 
-> DDI047L.a D24.1.3.2 is where this is coming from.
+>    #1 Routes the signal from one IP block to another IP block
+> 
+>       So there is no notion of an actual interrupt, but still you use the
+>       interrupt domain mechanism, which requires to allocate a Linux
+>       interrupt number just to configure that router.
+> 
+>       What's the purpose of this interrupt number and the allocated
+>       resources behind it?
+> 
+>    #2 Routes the signal from an IP block to an actual interrupt "input"
+> 
+>       Again, this requires to allocate a Linux interrupt number which is
+>       disfunctional as it is not connected in the interrupt domain
+>       hierarchy and just provides an interrupt chip with a name and no
+>       actual functionality behind it.
+> 
+>       So the resulting real interrupt needs yet another interrupt number
+>       which then maps to something which actually can handle interrupts.
+> 
+> So in some aspect they are not that different because both have nothing
+> to do with the actual concept of interrupt management in the Linux
+> kernel.
+> 
+>  From the kernel's interrupt handling POV this is a completely
+> transparent piece of hardware, which is not associated to any interrupt
+> handling mechanism. Just because the manual mentions INTR in the name of
+> the IP block does not make it part of the actual kernel interrupt
+> handling.
+> 
+> I have no idea into which subsystem such a SoC configuration belongs to,
+> but Greg might have an idea.
+> 
 
-Duh, you're of course correct. Ignore me.
+Thanks for the reviewing the patch. Since you suggest to implement it
+with a different subsystem, I want your and Greg's suggestion for that.
 
-	M.
+As we discussed and also from the documentation, Timesync INTR should be
+configured by programming it's output registers to control the selection
+corresponding to the input. Mux-controller subsystem also works on the
+similar kind of principle, to program the output by selectively choosing
+from multiple input sources, I am trying to relate Timesync INTR with
+that subsystem.
 
--- 
-Without deviation from the norm, progress is not possible.
+Could you please suggest if the implementation can be achieved using the
+mux-subsystem ?
+
+
+Regards,
+Chintan.
+
+> Thanks,
+> 
+>          tglx
 
