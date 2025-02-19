@@ -1,133 +1,130 @@
-Return-Path: <linux-kernel+bounces-522315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AD49A3C88B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 20:25:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 650ADA3C839
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 20:05:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93165189BACA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:25:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EAC31896420
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:05:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FAF122ACDF;
-	Wed, 19 Feb 2025 19:25:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A37214A98;
+	Wed, 19 Feb 2025 19:05:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fleSNih+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JJtXkNMk"
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D993B22A819;
-	Wed, 19 Feb 2025 19:25:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CBDC1BC099;
+	Wed, 19 Feb 2025 19:05:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739993104; cv=none; b=bDSPtcUQu/nAUr4G872VUg/XqNzch4KtVKj4vssYDNmIG6kQdTfMW+Unhf8CUg+J2aEvn7iET8z+CZehj9M/itvTjDqifkKNFO/RDI5bjG/phJ4z4f18kDLvzevf9kZXF4LBJ1SBsvHgJJyRGyuktBT6LG0MK/Q9+IhuSRb3hYs=
+	t=1739991921; cv=none; b=bjuTOdIpkWyS0ixsAKRHcIbqqS9uGrxZznQ+IydkLf5r7r6p2ClnX+F573yz4yVtF+EDHbB6YJX5Yh0jb++gTSH47qzoRYqp6c7qtSxwWZmeBGUT9WJ0KPrZ6N/SW8P5RpIZZe/qqiE/IsECTjUqO84O9qF2bEtwLtPayeBOMmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739993104; c=relaxed/simple;
-	bh=4xkjxsKSnDG+ejxVEfbphpK/6goWvTkMshFWpmtRGeA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=OfxV3MGUefmwRufsQEZU8DXGkOgqLkfscYZ06Sj20xvBz+Wlvhid6LzqRlQKPSkag2YO5gO++aMrYwJcImWKkeoqUhGUjge/trUeBNUe08jxO3368A0TIPGZMI2FcKMIOMcHgm4aKdWi9h15S+l7MQfVBvseW/klxkHj9+KCQ/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fleSNih+; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739993103; x=1771529103;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=4xkjxsKSnDG+ejxVEfbphpK/6goWvTkMshFWpmtRGeA=;
-  b=fleSNih+rQIRNQmvCjmSFGbM3RUb+ZuTYk7Z3y1gI/CKRE3aez8XRrvX
-   Mm0dP7Gnj/dZeinbYIQ/S/+HR/vYZw07QB62uN8NFZlSW2fwCV5hRFOUI
-   9K8+s1URn2NDC5a4ZDazdVLwSi0BOG84kQ8yOnW13+LN0Dtw+cE/3g3cI
-   PVj2xOkpsHOhhJHLANJa7aB5srIR2ZNc7cR1qMNsem5YpnVNYvmHnyR6X
-   ACvKglWqNvxXQVxOhlcMUb/74tpWpBUFCoRsiQBpnD3FtpE1OvoxoKekv
-   hydZF+QIVt0XU52p6ywxG5oKzDMcbLnPRfThlJEstCcNbioaKwGWdIpZI
-   Q==;
-X-CSE-ConnectionGUID: aOdavW0RRAaww0BU75viLg==
-X-CSE-MsgGUID: /HsYx9OCQIOXk9dZHmUClg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11350"; a="40604683"
-X-IronPort-AV: E=Sophos;i="6.13,299,1732608000"; 
-   d="scan'208";a="40604683"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 11:25:00 -0800
-X-CSE-ConnectionGUID: sT6FCgk1RDag9ulyZnQRTg==
-X-CSE-MsgGUID: v13zxD0XTXmGo28FPVA9pw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,299,1732608000"; 
-   d="scan'208";a="114791542"
-Received: from dprybysh-mobl.ger.corp.intel.com (HELO localhost) ([10.245.246.160])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 10:55:18 -0800
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Jim Qu <Jim.Qu@amd.com>, Lukas Wunner <lukas@wunner.de>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David
- Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Takashi Iwai
- <tiwai@suse.de>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Su Hui
- <suhui@nfschina.com>
-Subject: Re: [PATCH] vgaswitcheroo: Fix error checking in
- vga_switcheroo_register_audio_client()
-In-Reply-To: <f608a3b5-320a-4194-bd03-cf08be04c317@stanley.mountain>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <ae24cd32-1e78-4656-b983-051ed22d86b9@stanley.mountain>
- <87zfiim09n.fsf@intel.com>
- <f608a3b5-320a-4194-bd03-cf08be04c317@stanley.mountain>
-Date: Wed, 19 Feb 2025 20:54:41 +0200
-Message-ID: <87r03tn4su.fsf@intel.com>
+	s=arc-20240116; t=1739991921; c=relaxed/simple;
+	bh=ztyb2fXwunLfalIiPtae00a+lEGWhwQCiGz2vFyFqN8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=a3fS9QW9BkjY5iGGNxohAqjQressCIE3O3o4AwRpYdhHJ2TofrjqGkHeMEgqg7tBA6s62WHlG9I3hvXGE8PvAx4IJRrDeXFUG8BSTX3eqtaQAkdvNugR7QQCJxRA5Zsy4wyLA0CPhSm7RiwQVy9T8tqZdBkya/Y1B5EHApmKLHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JJtXkNMk; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6e679353108so134036d6.3;
+        Wed, 19 Feb 2025 11:05:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739991918; x=1740596718; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VRvAkhsGhUk7jbKy01PWTBy1d/q6DACp1Xpa84XmA00=;
+        b=JJtXkNMkBDN/h/POjp9ZHGAbMmYdMVPM7w0/hdnUwudvyJSdbbY59BZHTZn0lIqoy3
+         paVuVciiddqyJ0gkNipwDmRTn0nu4/SZIK8aPvjCP3r24ZSdN27Pp5HvXOEDH/PE3OnO
+         KboPL70GVijzxg/eni6rqqqUFimq2G7HswcNUYdid7Y5DedzJvbC1ey7SLich6xU1zl7
+         7iVfUL3pBxgAqIiXyMe1RqbKuIesEe6t1KfkPmu6Lc9Ozyc8uv/ezk7l+jaUWteVT4gX
+         1fwZfjc+6sv2HpGwGgpPisIYfSKAYnVfIJS+cxiAKZhvQ5MR+vSNn5rEGe8hl52KRJSA
+         hdcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739991918; x=1740596718;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VRvAkhsGhUk7jbKy01PWTBy1d/q6DACp1Xpa84XmA00=;
+        b=w9AmaPDhvPuKOjXH1ZNCvajwu6Yb7CAkDVN4AkZA2E9Kad7gvXAxvdm52lXpOtH3+2
+         qYeCHc9zixss7FGq8y+OtqTNMUaRT4Je8t/uji11LjNRA+hmjLV4OgkIgdtOFsjF0mfy
+         fQwoK2cY4BEdi78kA2DGQrA7O7G7I4F92UBinXCQogB/91j4G/PBY9+Fepy8UFA8q6fz
+         RC0rTso0aNqDmKkR9GqT+y/QKA893ngLhQ9XlXny0L+MedEcWOSjvKlG6oHnLhkyzL2S
+         /bxZRbM4jdpoEfGbGVrI0jjhFgs2qfn/FG4X0frGDYggBfIqbiXC0gok72jl9Z0Ubvwt
+         VrZA==
+X-Forwarded-Encrypted: i=1; AJvYcCVsBjkj3dcfuC6XkN+K9VeRF6KWV4eAVtmEjPGynj4sFOxzMgqRDgL1T0g36/oVEHSs5UKG5pQgrbgWJYk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDYnjzCU7pRI9eUVxjsHhnw0iT+xr8/YfA+pIHWSO1C3UHYauU
+	QFrUGuhMMEWEzkKGrvUOZ7cP2obRlJs1YIo+ZRR3w83YCxPiMoZ0
+X-Gm-Gg: ASbGncv3DUs/pyk/e8GDKjc7cNTo2dtn3hNMU2Aog7DrBmvtCK2ilMI+T4c/Z5DxbML
+	Pc2sJ+vXLh7RSp2uBzaYj4UnmFZ68N91x8RqKwmT8RfHonleyfSkLvVh/cg6cwfVdZOUoDiNqbe
+	rfRBcnZKmzZCqOkEKPQH5mqKbf2dwpDLqxU+KYKDqhYwR1EYqMQQK7amV17DXvYIcRBe008Eu9b
+	N8b5UApkHwlZGHkN0RP/mP1uTUuRa3J7x060UI7UZYp4hNIDmz8htdlThc6DUDtKarfHOwDKXYY
+	rCV/ICoAV5M/TdOIdWStC4gPS6ozWCI0SuxYoeqrg51dPSXeR8pmJkC90g==
+X-Google-Smtp-Source: AGHT+IEa9ajlxAKKQ3yxN4CheGZKtbgkFRUTKEWsGrjHM8+63DelUHJd83Is34UDkvnXGPEET4SGpA==
+X-Received: by 2002:a05:6214:19e8:b0:6e6:5d69:ec2f with SMTP id 6a1803df08f44-6e66ce2c080mr95717886d6.8.1739991917967;
+        Wed, 19 Feb 2025 11:05:17 -0800 (PST)
+Received: from matt-Z87X-UD4H.mynetworksettings.com ([2600:1002:a012:8f2c:7dfa:4120:7aa2:1242])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e676c70fd6sm45178086d6.85.2025.02.19.11.05.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2025 11:05:17 -0800 (PST)
+From: Matthew Majewski <mattwmajewski@gmail.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Uwe Kleine-Konig <u.kleine-koenig@baylibre.com>,
+	Shuah Khan <skhan@linuxfoundation.org>
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Matthew Majewski <mattwmajewski@gmail.com>
+Subject: [PATCH] media: vim2m: print device name after registering device
+Date: Wed, 19 Feb 2025 14:05:01 -0500
+Message-Id: <20250219190501.295976-1-mattwmajewski@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Wed, 19 Feb 2025, Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> On Wed, Feb 19, 2025 at 05:17:56PM +0200, Jani Nikula wrote:
->> On Wed, 19 Feb 2025, Dan Carpenter <dan.carpenter@linaro.org> wrote:
->> > The "id" variable is an enum and in this context it's treated as an
->> > unsigned int so the error handling can never trigger.
->> 
->> When would that be true with GCC?
->
-> The C standard give compilers a lot of flexibility with regards to enums.
+Move the v4l2_info() call displaying the video device name after the
+device is actually registered.
 
-This I did know.
+This fixes a bug where the driver was always displaying "/dev/video0"
+since it was reading from the vfd before it was registered.
 
-> But in terms of GCC/Clang then enums default to unsigned int, if you
-> declare one as negative then they become signed int.  If they don't fit
-> in int, then they become u64 etc.
+Signed-off-by: Matthew Majewski <mattwmajewski@gmail.com>
+---
+ drivers/media/test-drivers/vim2m.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-But somehow I'd failed to appreciate GCC/Clang actually do use unsigned
-and signed on a case by case basis. I thought they defaulted to signed
-int. TIL.
-
-And I still consider myself a rather experienced C coder. There must be
-something wrong with either C or me. Or possibly both.
-
-
-Thanks,
-Jani.
-
->
-> enum u32_values {
-> 	zero,
-> };
->
-> enum s32_values {
-> 	minus_one = -1,
-> 	zero,
-> };
->
-> enum u64_values {
-> 	big = 0xfffffffffUL;
-> };
->
-> regards,
-> dan carpenter
->
-
+diff --git a/drivers/media/test-drivers/vim2m.c b/drivers/media/test-drivers/vim2m.c
+index 6c24dcf27eb0..0fe97e208c02 100644
+--- a/drivers/media/test-drivers/vim2m.c
++++ b/drivers/media/test-drivers/vim2m.c
+@@ -1314,9 +1314,6 @@ static int vim2m_probe(struct platform_device *pdev)
+ 	vfd->v4l2_dev = &dev->v4l2_dev;
+ 
+ 	video_set_drvdata(vfd, dev);
+-	v4l2_info(&dev->v4l2_dev,
+-		  "Device registered as /dev/video%d\n", vfd->num);
+-
+ 	platform_set_drvdata(pdev, dev);
+ 
+ 	dev->m2m_dev = v4l2_m2m_init(&m2m_ops);
+@@ -1343,6 +1340,9 @@ static int vim2m_probe(struct platform_device *pdev)
+ 		goto error_m2m;
+ 	}
+ 
++	v4l2_info(&dev->v4l2_dev,
++		  "Device registered as /dev/video%d\n", vfd->num);
++
+ #ifdef CONFIG_MEDIA_CONTROLLER
+ 	ret = v4l2_m2m_register_media_controller(dev->m2m_dev, vfd,
+ 						 MEDIA_ENT_F_PROC_VIDEO_SCALER);
 -- 
-Jani Nikula, Intel
+2.25.1
+
 
