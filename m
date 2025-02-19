@@ -1,257 +1,175 @@
-Return-Path: <linux-kernel+bounces-522105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4493A3C611
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:23:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BB72AA3C59D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:05:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74722178533
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:22:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CFB11768B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:04:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB37921423C;
-	Wed, 19 Feb 2025 17:22:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 983DF214225;
+	Wed, 19 Feb 2025 17:04:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HBvLWFrF"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qqf0gLgC"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F574286284;
-	Wed, 19 Feb 2025 17:22:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CF421E8326
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 17:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739985772; cv=none; b=TUSRuLr7ufO/RnNxGmyKtZypFeK14ZQZGE8MhMl98RtGZid3FXUVSZD4Cme0wMjc6lwe8yHQDyxwNg1l955hRYI4074mxfSmCzjMFRjEn5fOnXtByzcfQubt73r2ZtzGqMJB5J/eHiOTTapAPQQyh3ZIR4tM3S6zRxp/XdTmolY=
+	t=1739984655; cv=none; b=Nvw3BKZEUSbxPwST9bpyo/lpYpvPlHT6G78LJ52cB25g1NdfvOn+GqhyAyxCe5M8IWXuQbA0M6LqNvlIUAOcgFBKY4DG210rOLi8fA2MyEDF5UNVdtlRnQSnTE8ev1114s1leYuyaC5RWlwH1tfzLdyeuO8G8w1dqbudANJCkuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739985772; c=relaxed/simple;
-	bh=akhUxN+QxLEckZcxCpguN5EnjkBnD9oRnQSuFZ8ZKSM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=F7zw4CUA8UKCmC1wNffn32d2UGag0zozPNsGKjlMP92/rYD9LdkAidIYakRi2J/CYj8gsGOu0ivmcTT/UQCqPCnc17Ua8PvCghBXT8dAiTlUmRHZUFQpXDT4cYw+A9XB/O+P2E9K5rO2P/amQbOdEftUo+BSEu+V+kAtKkcvrwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HBvLWFrF; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739985770; x=1771521770;
-  h=message-id:subject:from:reply-to:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=akhUxN+QxLEckZcxCpguN5EnjkBnD9oRnQSuFZ8ZKSM=;
-  b=HBvLWFrF0q9k7azTn2vzgHb/ko0I60FZl4WJnzike7VS3GTPGNe3LuQR
-   mQC2DPzDPq32o4wgR0FeNedIREmPwEFt2XeWnH7zl1+wtiD0+YFz7EbPg
-   nQi7ajk2tfMoElHjxSgTPvXE4mIzWXneBfNJWtVYjZRWLy3lNcycrXA2m
-   iJXaThod454xChkpg9vFzHqNLi0xDjNh6jjfQT5MybczjznZ+vYYwR5/O
-   2G+VOox7mKXO3o5UnuWxhmmTCYrR7ttr7eGKTRmeK70u/ZP/6tjW9IXJH
-   4fipLDcRzaXVbU4ZT3Nx/PQa1B+i7yTkdBHICWt/p0emr6dHtHqjF9Ji6
-   g==;
-X-CSE-ConnectionGUID: eZsX1oNiReC5n5o0rxp7wA==
-X-CSE-MsgGUID: Bror4W8QRCKD68IFQj6HzQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11350"; a="51354824"
-X-IronPort-AV: E=Sophos;i="6.13,299,1732608000"; 
-   d="scan'208";a="51354824"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 09:22:49 -0800
-X-CSE-ConnectionGUID: BRlidm1zTwmv/BO/vvlzuA==
-X-CSE-MsgGUID: PHqqdaA9SB2DY4ysxBUtAg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,299,1732608000"; 
-   d="scan'208";a="115432705"
-Received: from iherna2-mobl4.amr.corp.intel.com ([10.125.110.29])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 09:01:22 -0800
-Message-ID: <4cf99d5f9b63aec22c24c445dea9a80d71f5f024.camel@linux.intel.com>
-Subject: Re: [PATCH net-next v7 3/7] arch: x86: add IPC mailbox accessor
- function and add SoC register access
-From: "David E. Box" <david.e.box@linux.intel.com>
-Reply-To: david.e.box@linux.intel.com
-To: Dave Hansen <dave.hansen@intel.com>, Choong Yong Liang
- <yong.liang.choong@linux.intel.com>, Simon Horman <horms@kernel.org>, Jose
- Abreu <joabreu@synopsys.com>, Jose Abreu <Jose.Abreu@synopsys.com>, Thomas
- Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav
- Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, "H .
- Peter Anvin" <hpa@zytor.com>, Rajneesh Bhardwaj
- <irenic.rajneesh@gmail.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S
- . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Maxime
- Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
- <alexandre.torgue@foss.st.com>, Jiawen Wu <jiawenwu@trustnetic.com>,
- Mengyuan Lou <mengyuanlou@net-swift.com>, Heiner Kallweit
- <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, Hans de Goede
- <hdegoede@redhat.com>, Ilpo =?ISO-8859-1?Q?J=E4rvinen?=
- <ilpo.jarvinen@linux.intel.com>, Richard Cochran
- <richardcochran@gmail.com>, Serge Semin <fancer.lancer@gmail.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
- platform-driver-x86@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org
-Date: Wed, 19 Feb 2025 09:01:20 -0800
-In-Reply-To: <063bd012-d377-4d3d-9dcc-57e360d8f462@intel.com>
-References: <20250206131859.2960543-1-yong.liang.choong@linux.intel.com>
-	 <20250206131859.2960543-4-yong.liang.choong@linux.intel.com>
-	 <063bd012-d377-4d3d-9dcc-57e360d8f462@intel.com>
-Organization: David E. Box
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1739984655; c=relaxed/simple;
+	bh=ZSlCHoccH1fd2TiMJkNz1beL9R2IY6D8yT+/UdOdbKY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BMMAY2sivFIZEXXnNoPJtpCiWsvKWxHM05S2xNKCDa8jJBhh0Zgml2AczJ+jDbsKWmPQ32IecyR4HZu03cSyjBddFAEokjeK0JkLUJKPq5ntV5mZsFLEW87VK4c46UYyCj/k1z76szQhZRA25TjvkAlgsY+W+odJufqWDy19/Ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qqf0gLgC; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ab7c4350826so591966b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 09:04:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739984652; x=1740589452; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=nS+re8IZzfg78cocQERJ5nCGG/g/BmDYdKGFLYilFLk=;
+        b=qqf0gLgCFha3f3ExQ7ULIY/83BgVgOqu6dB36siK9OEZUhwB0NdOaEqhuPoHrH3UtV
+         tj1Xav3TedRp9IlU0x9JADufvV3buKBVkWMVmvesuig4DOSrtXu90iJlgMvymyrGnNP0
+         WC+CESLVhcz7BI9Bzt4UwG6s5iQaS04OuNL1VwcBMnYimIzgIT8SKJAwLuIXAVTGmfb7
+         bISofjboxsjegqzTjUAAZiMFLv6wKWTAG85Uca2esEsewNoTLQM93005R+6DOVMooIGG
+         LogMuYWn9tUk4h6j6AyelaEU2y0+lfQ2Pxc+VqC/+0LeJu+0Plwt5j1/H92PcqEyJZsH
+         SMyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739984652; x=1740589452;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nS+re8IZzfg78cocQERJ5nCGG/g/BmDYdKGFLYilFLk=;
+        b=VfBLMSvF2WWyHcMW7WHfdKFu4M1xgLzyQKnm27yquMUAiSbK+3A/TvqMWmFl0gNApe
+         EYfU46S/dzGRYoG1uB48pcFvkB9WL9n/OiRsx9DJMIpQ+cN3v83DPZqIHprKFnMuv7K2
+         M1FdgfpVH0TRByhx9aVoNugaWmf/kPX9XxsILLGba/IiHntIWeZS7siXySpdOttpzBLk
+         cC1WF674mamEZ6/u+atIhH5bCqjXqVm39BtFYwvS52Kfk7eGsuuUxvIxgQ8wEfyDOVcA
+         88wcL7OQnY+ypPDobOWwwhj/HrlQ5uhNGM1yRlUIOP1i2mW+t1jJgbGoaAF9sKwLfmqj
+         wzsg==
+X-Forwarded-Encrypted: i=1; AJvYcCXt6fJzGEKcADTj7xncDiBDpgYI3OxhwO+rg4Bj+q617Zen/MkO9SHvi1DxtiIhGp6HnVqSU5YqD6+diN8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzV1lJSIFUZF8Z08qyZ81P7RzkVwG6MtyQLJBuacAfYvxKyHyFV
+	FvNKEk8yC0QuLXy8YLFBo5VhXXPpSa7bploteJPydd7cL0+0HVLdg7v6Zj5VTek=
+X-Gm-Gg: ASbGncu4syb+SkoBm+3LtXR7TRa41t3vS6//U8w8ybCi6fvbiXQERJ5RjZxQuT3t3YB
+	+L8zCdqRuepWJ8do2NxD+ybxZwwCBMtHLatrSioQfErf/+jtBl2rvFKrdyhAAR6ww1XFObUvcD6
+	Yah7UC13f0WTvwyCOHffTiEvjzWfA6mGMBcREhmm/8Mzmu1xmUQqAo97DMpGzC65PAcq9WmxEsA
+	yjjgcURPywiU2uR+ssAxfF1Zm20Hhb+iBiPlV6KpzYxkqVkfm+qbMIw2Fpyp73MVw2OkwsOfyu7
+	UZjjTC+RlrQgns407uoMiMI3bZZUTfIplgY=
+X-Google-Smtp-Source: AGHT+IHSBmAP86VSnxXjkgY3cMH8/9ybX2ae7f5N9URrzW7hspPUH+L+dLL7ObVqx/KKAuYObmZ2zg==
+X-Received: by 2002:a17:907:7248:b0:ab6:6176:9dff with SMTP id a640c23a62f3a-abb7053d8e7mr780406166b.0.1739984652450;
+        Wed, 19 Feb 2025 09:04:12 -0800 (PST)
+Received: from [192.168.1.20] ([178.197.206.225])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba5323202dsm1299545566b.6.2025.02.19.09.04.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Feb 2025 09:04:11 -0800 (PST)
+Message-ID: <4b2426d2-a7bb-4c19-9ebe-77f6a90caf5e@linaro.org>
+Date: Wed, 19 Feb 2025 18:04:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 15/16] drm/msm/dpu: Implement new v12.0 DPU differences
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar
+ <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Krishna Manikandan <quic_mkrishn@quicinc.com>,
+ Jonathan Marek <jonathan@marek.ca>, Kuogee Hsieh <quic_khsieh@quicinc.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, linux-arm-msm@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Srini Kandagatla <srinivas.kandagatla@linaro.org>
+References: <20250217-b4-sm8750-display-v2-0-d201dcdda6a4@linaro.org>
+ <20250217-b4-sm8750-display-v2-15-d201dcdda6a4@linaro.org>
+ <qlotuliwnm5spneolztca7avmh2a46pz2xqlxzqbw5kwa53m6q@oyhnzz7fhay3>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <qlotuliwnm5spneolztca7avmh2a46pz2xqlxzqbw5kwa53m6q@oyhnzz7fhay3>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, 2025-02-06 at 08:46 -0800, Dave Hansen wrote:
-> On 2/6/25 05:18, Choong Yong Liang wrote:
-> >=20
-> > - Exports intel_pmc_ipc() for host access to the PMC IPC mailbox
-> > - Add support to use IPC command allows host to access SoC registers=
-=20
-> > through PMC firmware that are otherwise inaccessible to the host due
-> > to security policies.
-> I'm not quite parsing that second bullet as a complete sentence.
->=20
-> But that sounds scary! Why is the fact that they are "otherwise
-> inaccessible" relevant here?
+On 17/02/2025 20:18, Dmitry Baryshkov wrote:
+> On Mon, Feb 17, 2025 at 05:41:36PM +0100, Krzysztof Kozlowski wrote:
+>> Implement new features and differences coming in v12.0 of DPU present on
+>> Qualcomm SM8750 SoC:
+>> 1. 10-bit color alpha.
+>> 2. New CTL_PIPE_ACTIVE and CTL_LAYER_ACTIVE registers for pipes and
+>>    layer mixers.
+>> 2. Several differences in LM registers (also changed offsets) for LM
+>>    crossbar hardware changes.
+> 
+> I'd really prefer for this patch to be split into a logical chunks
+> rather than "everything for 12.x"
+everything 12.x is still logical chunk. I can split more, but without
+guidance what is here logical chunk, will be tricky.
 
-The PMC IPC mailbox is a host interface to the PMC. Its purpose is to allow=
- the
-host to access certain areas of the PMC that are restricted from direct MMI=
-O
-access due to security policies. Other parts of the PMC are accessible via =
-MMIO
-(most of what the intel_pmc_core driver touches with is MMIO), so I think t=
-he
-original statement was trying to explain why the mailbox is needed instead =
-of
-MMIO in this case. However, I agree that the mention of security policies i=
-s not
-relevant to the change itself.
+For example 10-bit color alpha looks like separate feature. But
+remaining PIPE/LAYER active - not sure.
 
-> ...
-> > diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> > index 87198d957e2f..631c1f10776c 100644
-> > --- a/arch/x86/Kconfig
-> > +++ b/arch/x86/Kconfig
-> > @@ -688,6 +688,15 @@ config X86_AMD_PLATFORM_DEVICE
-> > =C2=A0	=C2=A0 I2C and UART depend on COMMON_CLK to set clock. GPIO driv=
-er is
-> > =C2=A0	=C2=A0 implemented under PINCTRL subsystem.
-> > =C2=A0
-> > +config INTEL_PMC_IPC
-> > +	tristate "Intel Core SoC Power Management Controller IPC mailbox"
-> > +	depends on ACPI
-> > +	help
-> > +	=C2=A0 This option enables sideband register access support for Intel
-> > SoC
-> > +	=C2=A0 power management controller IPC mailbox.
-> > +
-> > +	=C2=A0 If you don't require the option or are in doubt, say N.
->=20
-> Could we perhaps beef this up a bit to help users figure out if they
-> want to turn this on? Really the only word in the entire help text
-> that's useful is "Intel".
->=20
-> I'm not even sure we *want* to expose this to users. Can we just leave
-> it as:
->=20
-> 	config INTEL_PMC_IPC
-> 		def_tristate n
-> 		depends on ACPI
->=20
-> so that it only gets enabled by the "select" in the other patches?
+I can split them but I would not call such split necessarily logical.
 
-I agree with this change Choong. This can be selected by the driver that's =
-using
-it. There's no need to expose it to users.
-
->=20
-> > + * Authors: Choong Yong Liang <yong.liang.choong@linux.intel.com>
-> > + *=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 David E. Box =
-<david.e.box@linux.intel.com>
->=20
-> I'd probably just leave the authors bit out. It might have been useful
-> in the 90's, but that's what git is for today.
->=20
-> > +	obj =3D buffer.pointer;
-> > +	/* Check if the number of elements in package is 5 */
-> > +	if (obj && obj->type =3D=3D ACPI_TYPE_PACKAGE && obj->package.count =
-=3D=3D
-> > 5) {
-> > +		const union acpi_object *objs =3D obj->package.elements;
-> > +
->=20
-> The comment there is just not super useful. It might be useful to say
-> *why* the number of elements needs to be 5.
->=20
-> > +EXPORT_SYMBOL(intel_pmc_ipc);
-> > +
-> > +MODULE_LICENSE("GPL");
-> > +MODULE_DESCRIPTION("Intel PMC IPC Mailbox accessor");
->=20
-> Honestly, is this even worth being a module? How much code are we
-> talking about here?
-
-Yeah, this doesn't need to be a module either.
-
-David
-
->=20
-> > diff --git a/include/linux/platform_data/x86/intel_pmc_ipc.h
-> > b/include/linux/platform_data/x86/intel_pmc_ipc.h
-> > new file mode 100644
-> > index 000000000000..d47b89f873fc
-> > --- /dev/null
-> > +++ b/include/linux/platform_data/x86/intel_pmc_ipc.h
-> > @@ -0,0 +1,34 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +/*
-> > + * Intel Core SoC Power Management Controller Header File
-> > + *
-> > + * Copyright (c) 2023, Intel Corporation.
-> > + * All Rights Reserved.
-> ...
->=20
-> This copyright is a _bit_ funky. It's worth at least saying in the cover
-> letter that this patch has been sitting untouched for over a year, thus
-> the old copyright.
->=20
-> Or, if you've done actual work with it, I'd assume the copyright needs
-> to get updated.
->=20
-> > +struct pmc_ipc_cmd {
-> > +	u32 cmd;
-> > +	u32 sub_cmd;
-> > +	u32 size;
-> > +	u32 wbuf[4];
-> > +};
-> > +
-> > +/**
-> > + * intel_pmc_ipc() - PMC IPC Mailbox accessor
-> > + * @ipc_cmd:=C2=A0 struct pmc_ipc_cmd prepared with input to send
->=20
-> You probably don't need to restate the literal type of ipc_cmd.
->=20
-> > + * @rbuf:=C2=A0=C2=A0=C2=A0=C2=A0 Allocated u32[4] array for returned =
-IPC data
->=20
-> The "Allocated" thing here threw me a bit. Does this mean it *must* be
-> "allocated" as in it comes from kmalloc()? Or can it be on the stack? Or
-> part of a static variable?
->=20
-> > + * Return: 0 on success. Non-zero on mailbox error
-> > + */
-> > +int intel_pmc_ipc(struct pmc_ipc_cmd *ipc_cmd, u32 *rbuf);
->=20
-> Also, if it can *only* be u32[4], then the best way to declare it is:
->=20
-> struct pmc_ipc_rbuf {
-> 	u32 buf[4];
-> };
->=20
-> and:
->=20
-> int intel_pmc_ipc(struct pmc_ipc_cmd *ipc_cmd,
-> 		=C2=A0 struct pmc_ipc_rbuf rbuf *rbuf);
->=20
-> Then you don't need a comment saying that it must be a u32[4]. It's
-> implied in the structure.
-
+Best regards,
+Krzysztof
 
