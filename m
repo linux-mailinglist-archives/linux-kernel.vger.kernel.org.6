@@ -1,236 +1,106 @@
-Return-Path: <linux-kernel+bounces-521455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87337A3BD90
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:58:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28CD1A3BD93
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:58:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EE2B1896498
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:58:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78AB316E1C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:58:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 053751DFE23;
-	Wed, 19 Feb 2025 11:57:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09DBE1DF754;
+	Wed, 19 Feb 2025 11:58:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="ZnGEtjMO";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IzobVLZJ"
-Received: from flow-a5-smtp.messagingengine.com (flow-a5-smtp.messagingengine.com [103.168.172.140])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="POu1JT8g"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 483F21DE4F1;
-	Wed, 19 Feb 2025 11:57:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EC8F1DE4F1;
+	Wed, 19 Feb 2025 11:58:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739966263; cv=none; b=hpRtMW5zGEV0FGPrPzLhbBydj6eTE+9bQBUHewNnTrmZc8PtWL2AhaHX2Hmsw8Nt/KSOOHWjUiQ1J6i63TMEd+yCQpDFxVjC1xCKw2FoxWvIG/xHVGBILPpeyO+GqjeH9LxgaI2TIpYDknxcE6M7Gj8l3iPlhIMCHeQgF19Bp9w=
+	t=1739966290; cv=none; b=otgaLKXnJ13HyS/5VkUg0jVhQRWbEB33kX2n5JR7ePxFC7yEJSrj2FvrersFtQIUv+0aelHWlQKV6oFhumdLtTJx10c6HIjzzjrn/3jLiXxdvZ6pRGHUIXB1QXMzsIELK3bWM0nb5+gEVemzximxAuun6EsE/PtNOi7O0G5nLMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739966263; c=relaxed/simple;
-	bh=4k1po3JFC/xg27AWImd+emnF0oRfoeOXjB0dtgrtVAU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lW89LfIfM36R9D+7GM046jQDQqNkhsebXYOKrwozMAVYrSIUupybZzzFF+U93vXFxTIxTiaSfYtWs5SQT965fhpjqbyhnXVTRfcTv3J+9jGAZQtBvIfDwWOmOg/M5bYvjXoDxsqAFXhZIF4QuwAi/gxmqrUA5Qx7G38qWt0Z/YM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=ZnGEtjMO; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=IzobVLZJ; arc=none smtp.client-ip=103.168.172.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
-	by mailflow.phl.internal (Postfix) with ESMTP id 16F85201789;
-	Wed, 19 Feb 2025 06:57:40 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-02.internal (MEProxy); Wed, 19 Feb 2025 06:57:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1739966260; x=1739973460; bh=I0Vr7zjYe+
-	LzROidf2KdAM0FeJYDrHAhTGLGwi7YtgU=; b=ZnGEtjMO7AINmHlgXsViick38g
-	sED8BBGIc4vzI41aYcZkvTv7tMmAl2CYypqi/XpBgIOnw4FeODoyNg6k/Nwozko6
-	FG1C9nOXlX0m7D/o+o+W5E7qYe8GZUiThYWscNV56K5BEsjhrgg4vLd1bafjQacS
-	HyFLGOCBOnCPUVRs/3YHXR1CmSfZCNHiSswIzMN+kl9ksfrq6QVL3nRi5UUztm4N
-	vf4nTRNkGlb4c46UEZShn+nUkeTKRR1ZL3bagN91houWTDWm6pF5AVBvqYV2BvYA
-	EH+B2ru4qHb9l1SjjB8fPHes6nJdDEp5P6v/uLHQdQKMiCshRC6JA4MIR2NA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1739966260; x=1739973460; bh=I0Vr7zjYe+LzROidf2KdAM0FeJYDrHAhTGL
-	Gwi7YtgU=; b=IzobVLZJfukFykt4i6eVYyGagYUSdLzrJ+kKgK1Myd6dRmFXfUE
-	YA+IeAxWbmpKjDFOihiqLar4F+Be478YgB9W8Wn9sGt3nSNpuQXAiDk35OuntrbP
-	WJqmHKBbx2YNN96srbSNwih0n02nvIs8oho4ZOOFwfh5/ot4ZVEc6BPygetHlkfV
-	5UaKeDhUeaSkXBKcs2mpXUynscIBmhwnCmXy6LlECjHYN9qoPd+VzeQTRy1FG4JO
-	0jSeggenWwrBLkldkYL5Hg+9Gu31FG4kMOAFrMhw/d3y+x36QV+2UO6ckEGf4PmW
-	N8m1RdbNcjl95Tp0/FTxBXNQemWNZYwMYGA==
-X-ME-Sender: <xms:M8e1Zxc4nEkIU6aRDFmOLJEnMwle1yw3vBQokwHqBww3xJX-FLtoiQ>
-    <xme:M8e1Z_OnEqGXRTGc7gJV2j_IKi5pFbtScK2_pHqmtWbprCq_rz9LYJndYi1PWTQPl
-    sMlBM-8LXj90ANfRqc>
-X-ME-Received: <xmr:M8e1Z6gsOt17SienMM3DX3KO-YnyORDYQlR6NaUsKnVEWjNAKA6aAjvroxOA-vLR6Bap90M129j1yS7EvkdVM61jb56rNs71--0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeigedujecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttdej
-    necuhfhrohhmpeflrghnnhgvucfirhhunhgruhcuoehjsehjrghnnhgruhdrnhgvtheqne
-    cuggftrfgrthhtvghrnhepgfdvffevleegudejfeefheehkeehleehfefgjefffeetudeg
-    tefhuedufeehfeetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilh
-    hfrhhomhepjhesjhgrnhhnrghurdhnvghtpdhnsggprhgtphhtthhopedvvddpmhhouggv
-    pehsmhhtphhouhhtpdhrtghpthhtoheplhgruhhrvghnthdrphhinhgthhgrrhhtsehiug
-    gvrghsohhnsghorghrugdrtghomhdprhgtphhtthhopehfnhhklhdrkhgvrhhnvghlsehg
-    mhgrihhlrdgtohhmpdhrtghpthhtohepkhhriihksehkvghrnhgvlhdrohhrghdprhgtph
-    htthhopehsvhgvnhesshhvvghnphgvthgvrhdruggvvhdprhgtphhtthhopegrlhihshhs
-    rgesrhhoshgvnhiifigvihhgrdhiohdprhgtphhtthhopehrohgshheskhgvrhhnvghlrd
-    horhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthht
-    oheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmrghrtggrnh
-    esmhgrrhgtrghnrdhsth
-X-ME-Proxy: <xmx:M8e1Z69fp5UtCDSgtdHbRJOaO6ofWHA2pUkPtu7-mXVd_uPZq9m01g>
-    <xmx:M8e1Z9u70kv0LcFER15ThwwD-6Leqc-OUjgUeztpCvcFeRjPRXN89A>
-    <xmx:M8e1Z5FaSzYMQq6TOOLDR414dl66AOYDTbo4t-79vgvVpzp10ilNBw>
-    <xmx:M8e1Z0NnvX9Z8_L15P1RSf9-_AVkLw7jf1ETZNCsoqK7vgkwZhbNvw>
-    <xmx:NMe1ZxSGnD2ua2i_owXFtXWucBE25DO8kebyhgs0H0RDLv74zlzz5HC2>
-Feedback-ID: i47b949f6:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 19 Feb 2025 06:57:38 -0500 (EST)
-Date: Wed, 19 Feb 2025 12:57:37 +0100
-From: Janne Grunau <j@jannau.net>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Sasha Finkelstein <fnkl.kernel@gmail.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Sven Peter <sven@svenpeter.dev>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Hector Martin <marcan@marcan.st>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-media@vger.kernel.org, imx@lists.linux.dev
-Subject: Re: [PATCH 3/5] media: dt-bindings: Add Apple ISP
-Message-ID: <20250219115737.GB26386@robin.jannau.net>
-References: <20250219-isp-v1-0-6d3e89b67c31@gmail.com>
- <20250219-isp-v1-3-6d3e89b67c31@gmail.com>
- <16f6d4a2-2102-48b9-a0ae-b8c6595975b8@kernel.org>
- <CAMT+MTR7dhtt3SOMg0K3UakJQftqnc2S-rV41HdHtA+o9aSPug@mail.gmail.com>
- <20250219105326.GA31383@pendragon.ideasonboard.com>
+	s=arc-20240116; t=1739966290; c=relaxed/simple;
+	bh=yfucNtav9zosEn23eavh+hcBR39Pgv6g7EaIOb9LX+w=;
+	h=From:To:Cc:Subject:MIME-Version:Content-Disposition:Content-Type:
+	 Message-Id:Date; b=pNB9KTp5ULPG+RE8nvrZdL0Vni52IyDk4en4vfErNbAT5XwOUCXlxY2je2rVZDZSHMp+KT3+YdIJM3WDqdfP7QfpPM4gp+MMItqZ0d5H45oeNgN0d6N7HskiyBjJhmteWi7S+TWWDdoTipeqG/QVIxvq9VW4c7xM3YwVK8ppq6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=POu1JT8g; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Date:Sender:Message-Id:Content-Type:
+	Content-Transfer-Encoding:MIME-Version:Subject:Cc:To:From:Reply-To:Content-ID
+	:Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:
+	Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=kpNp8MjIizYb7OH3AFJBJFxIeGnBoky4xSMY7bm6YaM=; b=POu1JT8gRqxYf6k2RglvMqqRcU
+	5E3AVChz13gXtmPBOcmfbqXveOI4iTx00Si/PAUESwrE837IShuGE9f8lYTcv5dSbogmxMCf3V2yz
+	33dAvKrQWiPtrDnLzLa8bQaRNHGiIcZheGBd9f1J0wb1WsKM5rrVZVOdWb9zJmVzsVpJUqzbTpE2x
+	6yxTjUA+Hc3UTz8JS7rRgs0HfyyPojCAMlT/1oNWJ99oHUgkDYrPshaRFOYoAMph0fS1WIrHIKM9E
+	FlJNQTl+TgZymAu1jFkAF+YgDjn+j7OJpDBeo7O9f5NZhz1T5SGDQ7M4XqT/aQ6ZM7IAur+UYQ9M9
+	EI7TY5+A==;
+Received: from e0022681537dd.dyn.armlinux.org.uk ([fd8f:7570:feb6:1:222:68ff:fe15:37dd]:32898 helo=rmk-PC.armlinux.org.uk)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <rmk@armlinux.org.uk>)
+	id 1tkiiH-0005b1-2e;
+	Wed, 19 Feb 2025 11:58:01 +0000
+Received: from rmk by rmk-PC.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <rmk@rmk-PC.armlinux.org.uk>)
+	id 1tkihy-004TEP-0O; Wed, 19 Feb 2025 11:57:42 +0000
+From: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	"Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	NXP S32 Linux Team <s32@nxp.com>,
+	Paolo Abeni <pabeni@redhat.com>
+Subject: [PATCH net] MAINTAINERS: fix dwmac-s32 entry
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250219105326.GA31383@pendragon.ideasonboard.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Message-Id: <E1tkihy-004TEP-0O@rmk-PC.armlinux.org.uk>
+Sender: Russell King <rmk@armlinux.org.uk>
+Date: Wed, 19 Feb 2025 11:57:42 +0000
 
-On Wed, Feb 19, 2025 at 12:53:26PM +0200, Laurent Pinchart wrote:
-> On Wed, Feb 19, 2025 at 10:54:31AM +0100, Sasha Finkelstein wrote:
-> > On Wed, 19 Feb 2025 at 10:37, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > > > +
-> > > > +  apple,platform-id:
-> > > > +    description: Platform id for firmware
-> > > > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > >
-> > >
-> > > No, use firmware-name.
-> > 
-> > Not sure how is firmware-name an appropriate field, fw-name is a string
-> > that references a firmware file, while this field is an id that is sent to the
-> > coprocessor firmware in order to identify the platform.
-> > 
-> > > > +  apple,temporal-filter:
-> > > > +    description: Whether temporal filter should be enabled in firmware
-> > > > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > >
-> > > And why is this not enabled always? Why this is board specific?
-> > 
-> > Not every board has support for this feature.
-> > 
-> > > You miss here ports or port. ISP usually gets signal from some camera or
-> > > other block.
-> > 
-> > For complex cameras - yes, but this is closer to a UVC camera connected
-> > via a bespoke protocol. We do not need to deal with the sensor access,
-> > all of it is managed by the coprocessor firmware.
-> > 
-> > > > +        properties:
-> > > > +          apple,config-index:
-> > > > +            description: Firmware config index
-> > > > +            $ref: /schemas/types.yaml#/definitions/uint32
-> > >
-> > >
-> > > No duplicated indices. You have reg for this, assuming this is index.
-> > 
-> > There are duplicated indices, see isp-imx248.dtsi in patch 5 for an example.
-> > 
-> > > All these do not look like hardware properties but rather configuration
-> > > of sensor which should be done runtime by OS, not by DT.
-> > 
-> > Those are board-specific and not discoverable via the ISP protocol.
-> 
-> But they are settable through the ISP protocol, aren't they ? For
-> instance, looking at isp-imx248.dtsi, the first four entries are
-> 
-> 	/* 1280x720 */
-> 	preset0 {
-> 		apple,config-index = <0>;
-> 		apple,input-size = <1296 736>;
-> 		apple,output-size = <1280 720>;
-> 		apple,crop = <8 8 1280 720>;
-> 	};
-> 
-> 	/* 960x720 (4:3) */
-> 	preset1 {
-> 		apple,config-index = <0>;
-> 		apple,input-size = <1296 736>;
-> 		apple,output-size = <960 720>;
-> 		apple,crop = <168 8 960 720>;
-> 	};
-> 
-> 	/* 960x540 (16:9) */
-> 	preset2 {
-> 		apple,config-index = <0>;
-> 		apple,input-size = <1296 736>;
-> 		apple,output-size = <960 540>;
-> 		apple,crop = <8 8 1280 720>;
-> 	};
-> 
-> 	/* 640x480 (4:3) */
-> 	preset3 {
-> 		apple,config-index = <0>;
-> 		apple,input-size = <1296 736>;
-> 		apple,output-size = <640 480>;
-> 		apple,crop = <168 8 960 720>;
-> 	};
-> 
-> But I may be interested in capturing a 640x480 frame with cropping only
-> and without scaling, with
-> 
-> input-size = 1296x736
-> output-size = 640x480
-> crop = (328,128)/640x480
-> 
-> Or I may want my cropped frame to be located in the upper-left corner:
-> 
-> input-size = 1296x736
-> output-size = 640x480
-> crop = (8,8)/640x480
-> 
-> If I set those parameters through the ISP protocol, won't it work ?
+Using L: with more than a bare email address causes getmaintainer.pl
+to be unable to parse the entry. Fix this by doing as other entries
+that use this email address and convert it to an R: entry.
 
-If my memory serves me right the presets wre added as workaround for
-userspace not handling V4L2_FRMSIZE_TYPE_STEPWISE well (or at all) and
-the added complexity of handling the qadratic sensor with partially
-occluded or outside of the usable lens diameter corners.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Fixes: 6bc6234cbd5e ("MAINTAINERS: Add Jan Petrous as the NXP S32G/R DWMAC driver maintainer")
+Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-It is a simplified description of the hardware to make it useable for
-most software which is expected simple uvc cameras.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 0bfcbe6a74ea..4795b6209711 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2877,7 +2877,7 @@ F:	drivers/pinctrl/nxp/
+ 
+ ARM/NXP S32G/S32R DWMAC ETHERNET DRIVER
+ M:	Jan Petrous <jan.petrous@oss.nxp.com>
+-L:	NXP S32 Linux Team <s32@nxp.com>
++R:	NXP S32 Linux Team <s32@nxp.com>
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/net/nxp,s32-dwmac.yaml
+ F:	drivers/net/ethernet/stmicro/stmmac/dwmac-s32.c
+-- 
+2.30.2
 
-There are still two common issues in user space software related to this
-driver:
-- software expects width == linesize
-- resolution selection is based frame height, i.e. it prefers 1080x1920
-  over 1920x1080 on devices with quadratic sensor.
-
-ciao Janne
 
