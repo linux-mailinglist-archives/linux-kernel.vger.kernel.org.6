@@ -1,122 +1,250 @@
-Return-Path: <linux-kernel+bounces-521389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14E21A3BC93
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:18:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 31C9CA3BC9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:20:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2EDA16D2F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:18:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F42371703B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:20:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2BE71DF251;
-	Wed, 19 Feb 2025 11:18:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="JHIKDTi8"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03FF81DF251;
+	Wed, 19 Feb 2025 11:20:18 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A71BD1C54A5;
-	Wed, 19 Feb 2025 11:18:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E76931A2C29;
+	Wed, 19 Feb 2025 11:20:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739963910; cv=none; b=MLXhWrC1dgPlz1Jde+Ussnl2EQWUTwwz2xBbUrOImx7qqlo+FQoVpFCNWAwothsv6gIF6g4s+AUZLn6tZtH3cSHokuzvmicWZiWPBPjIjtLRwuL70HdMD5EO1GCWU4i6MOCdAl+yg46eHJoxcHQlCputAlARdrOqmQ+AJrK5tfI=
+	t=1739964017; cv=none; b=SjRp+tjus/YljY2w3us9Z+beFFPokMLgjLJHXAJla2T/6Hszcmw7oTIOQM1KAkIoZ5ZR5C2ZvyrC5PdSR/VzBiIwarhA+5T/zSwlsaJY8iR6S94pErd0mvLYpwQWTSE3ukyefAiWN3H1+ZN06+ZmdZIvh29BPviJgaOdglWP1rk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739963910; c=relaxed/simple;
-	bh=40mCJlvF8cko1+OgcezwWGuKpQJ0u8WrathRhG8tZPg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WApSEx1rPyj34izQUr5DXT9CasjGvs0Oj9t1YZCDQDFBG3dWppys7WrYOWLV/ry0puUwDbXJMq9ihgnJJCKB2Ke/OSe9pJBOIiN11ERBoZ/yxrFR4vpXME4gvKoGwDFr0BQ0ZZXM5AQmq6Zx9nyzfEXMm1yGNEqR6t2YwTReef0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=JHIKDTi8; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-38f325ddbc2so3391381f8f.1;
-        Wed, 19 Feb 2025 03:18:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1739963907; x=1740568707; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7nAXyqLiQShxXdHExWOGFHNht5Zg/ZSArUtFxZtpy/s=;
-        b=JHIKDTi8NSwT1M1VZ65GdCS5w7XSXPFyxzV+7PPmNScwcxy7FI3GgTh43+S3WwSOaK
-         5thI3LBc7SrSViIsHFbBjXkH6WMNiL2pkJNCELtYd5HNK37UJxgFcJbPPI4vb/XsX6d3
-         SW7lihlR3UPta8B87YITEQC2vvTEE9kkHWCKS7pN7hf8Vf3CCnKIPU5FwfVetzaxC0Tg
-         7lE975ztprfse5A2/N0FqK9eqGbpjqcyZrAiwauew6mhtJcEpt/rWkr4KFJERJTgZumR
-         +7mXR0QyI3QLnrl/Ns4gM5lszc7WabxTvuaMUJ9AScQ0+l0Mxerlo2UowkOp+slGOByi
-         rFwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739963907; x=1740568707;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7nAXyqLiQShxXdHExWOGFHNht5Zg/ZSArUtFxZtpy/s=;
-        b=up60SwH+5cCvgLFuebwNgwJ6hvDntmfCEr1FfZNGqsa5WWkUqDYU+nwiKqvpfIEkJl
-         nSSAIpg32WbXtwSmtX/zdjrl8HAVtKsXzkttdVq4ztuY1VMHpHIoLHkoKFRrFMtzPOo1
-         EFtZGvLu/BS6LsM2q193NWJgl1kWUSLkvhETgMHAcXvfb6MM30dMtWIE7OVJQVms/Wda
-         dfVy40idChMXhOvzTArZ0IAZKMDL29g5zy9xaIfWfTDJnV7iN6Y97NE/yTXqnpnNTwe1
-         v6G6GkP73ja9KFD4ASFl4jhlHlrwK2moGRW//jilR6iDiYzGiwpaa8yb5jyNL5FbS1/L
-         +K/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUvdY1DDf6Gw8KPMzi7dR6sjuEbMwxIQnQjILXbSyRdwXtTW/drxSuMozo2N8xrdylGMwF86LiTWe3rvCM=@vger.kernel.org, AJvYcCVjTgTKa3vIm+3IdF6Oh1AMUMk11AQGcbskaBjnOgKJ4dzPOmJXu/zeaerF5aUL8/PITgBPod17@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxl2QD1F7o90YdGiQAi5xfm1/OyB94GfA/LhSUX0BLOIkBrDwgo
-	jcW5oOFdVkFFZfLkwSCzj7V+Bdz91JnAn3hnHnaenxcE7DeSD7I=
-X-Gm-Gg: ASbGncviSmp4BsAsryTfAvCst+BAoFHanaZ3aiEDJqxWFw+Fi6W7+VAih6p50uTHGsp
-	ssYGj/G6FtqRySzrAlrOpyzyAJIZVgf3boZ3r9wleAtXlXWl9WIwx2VlIxtx+gBoUgF7gzeFxnH
-	JLPMgh4NwVMeQmRdBE+jQT+2EvKsqIU8HgHHyinY1U12uZXmLoovwRHCofX7t16wbmqBBfVlqKi
-	qT+ZQeU9s7HKu8X7UJ+gHF0wzsyBsoCphEdIRgbB7v8px/jWJfVVra5VMJ2Rd2Zn8NWTRlMuKi8
-	1UTIT2njRq1GpyrgmHMVaC3k1DnYbYSZl0FKUdcRnen3N79+vdBsdREr3w1nKu8V8pr9
-X-Google-Smtp-Source: AGHT+IHqSbU/mySv08zQ+ZnfmJkUguL9G8ebWxSbh5QnTnV41gOwaEKyh41mQEtSGCtKswwMTupuug==
-X-Received: by 2002:a5d:6c66:0:b0:388:c61d:43e0 with SMTP id ffacd0b85a97d-38f34167d68mr19545175f8f.48.1739963906782;
-        Wed, 19 Feb 2025 03:18:26 -0800 (PST)
-Received: from [192.168.1.3] (p5b2b4e7c.dip0.t-ipconnect.de. [91.43.78.124])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258b434fsm17819691f8f.16.2025.02.19.03.18.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Feb 2025 03:18:26 -0800 (PST)
-Message-ID: <7a077c71-e325-41d6-8cf4-d3fa8827e51b@googlemail.com>
-Date: Wed, 19 Feb 2025 12:18:25 +0100
+	s=arc-20240116; t=1739964017; c=relaxed/simple;
+	bh=21iMGn5nmMgxSUhNifIphPXQHgu7d4Uv/JM64va/VIs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=h03P3jDI85tkEjeyDEeMH4ti1+gir/Xp45EUV1LFayAIk9vwxTpwfr/R8XAoxPzElLjImwvq/rKY7XELruu3NQ3aLkKSp7KPCylqVntHjkOHggbRRRv1XSq1KefjWntls3WZj4V6c5TpAOYDca7GPTwnGk9jmmz4WzQRnanU31Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4YyYpr37n2z22kst;
+	Wed, 19 Feb 2025 19:20:36 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9333E140360;
+	Wed, 19 Feb 2025 19:20:05 +0800 (CST)
+Received: from [10.67.120.129] (10.67.120.129) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 19 Feb 2025 19:20:05 +0800
+Message-ID: <c9950a79-7bcb-41c2-a59e-af315dc6d7ff@huawei.com>
+Date: Wed, 19 Feb 2025 19:20:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.1 000/578] 6.1.129-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20250219082652.891560343@linuxfoundation.org>
-Content-Language: de-DE
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20250219082652.891560343@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC] mm: alloc_pages_bulk: remove assumption of populating only
+ NULL elements
+To: Dave Chinner <david@fromorbit.com>
+CC: Yishai Hadas <yishaih@nvidia.com>, Jason Gunthorpe <jgg@ziepe.ca>, Shameer
+ Kolothum <shameerali.kolothum.thodi@huawei.com>, Kevin Tian
+	<kevin.tian@intel.com>, Alex Williamson <alex.williamson@redhat.com>, Chris
+ Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba
+	<dsterba@suse.com>, Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
+	Yue Hu <zbestahu@gmail.com>, Jeffle Xu <jefflexu@linux.alibaba.com>, Sandeep
+ Dhavale <dhavale@google.com>, Carlos Maiolino <cem@kernel.org>, "Darrick J.
+ Wong" <djwong@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Jesper
+ Dangaard Brouer <hawk@kernel.org>, Ilias Apalodimas
+	<ilias.apalodimas@linaro.org>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Trond Myklebust
+	<trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, Chuck Lever
+	<chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, Neil Brown
+	<neilb@suse.de>, Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo
+	<Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, Luiz Capitulino
+	<luizcap@redhat.com>, Mel Gorman <mgorman@techsingularity.net>,
+	<kvm@vger.kernel.org>, <virtualization@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <linux-btrfs@vger.kernel.org>,
+	<linux-erofs@lists.ozlabs.org>, <linux-xfs@vger.kernel.org>,
+	<linux-mm@kvack.org>, <netdev@vger.kernel.org>, <linux-nfs@vger.kernel.org>
+References: <20250217123127.3674033-1-linyunsheng@huawei.com>
+ <Z7Oqy2j4xew7FW9Z@dread.disaster.area>
+ <cf270a65-c9fa-453a-b7a0-01708063f73e@huawei.com>
+ <Z7T4NZAn4wD_DLTl@dread.disaster.area>
+Content-Language: en-US
+From: Yunsheng Lin <linyunsheng@huawei.com>
+In-Reply-To: <Z7T4NZAn4wD_DLTl@dread.disaster.area>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-Am 19.02.2025 um 09:20 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.1.129 release.
-> There are 578 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 2025/2/19 5:14, Dave Chinner wrote:
+> On Tue, Feb 18, 2025 at 05:21:27PM +0800, Yunsheng Lin wrote:
+>> On 2025/2/18 5:31, Dave Chinner wrote:
+>>
+>> ...
+>>
+>>> .....
+>>>
+>>>> diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
+>>>> index 15bb790359f8..9e1ce0ab9c35 100644
+>>>> --- a/fs/xfs/xfs_buf.c
+>>>> +++ b/fs/xfs/xfs_buf.c
+>>>> @@ -377,16 +377,17 @@ xfs_buf_alloc_pages(
+>>>>  	 * least one extra page.
+>>>>  	 */
+>>>>  	for (;;) {
+>>>> -		long	last = filled;
+>>>> +		long	alloc;
+>>>>  
+>>>> -		filled = alloc_pages_bulk(gfp_mask, bp->b_page_count,
+>>>> -					  bp->b_pages);
+>>>> +		alloc = alloc_pages_bulk(gfp_mask, bp->b_page_count - refill,
+>>>> +					 bp->b_pages + refill);
+>>>> +		refill += alloc;
+>>>>  		if (filled == bp->b_page_count) {
+>>>>  			XFS_STATS_INC(bp->b_mount, xb_page_found);
+>>>>  			break;
+>>>>  		}
+>>>>  
+>>>> -		if (filled != last)
+>>>> +		if (alloc)
+>>>>  			continue;
+>>>
+>>> You didn't even compile this code - refill is not defined
+>>> anywhere.
+>>>
+>>> Even if it did complile, you clearly didn't test it. The logic is
+>>> broken (what updates filled?) and will result in the first
+>>> allocation attempt succeeding and then falling into an endless retry
+>>> loop.
+>>
+>> Ah, the 'refill' is a typo, it should be 'filled' instead of 'refill'.
+>> The below should fix the compile error:
+>> --- a/fs/xfs/xfs_buf.c
+>> +++ b/fs/xfs/xfs_buf.c
+>> @@ -379,9 +379,9 @@ xfs_buf_alloc_pages(
+>>         for (;;) {
+>>                 long    alloc;
+>>
+>> -               alloc = alloc_pages_bulk(gfp_mask, bp->b_page_count - refill,
+>> -                                        bp->b_pages + refill);
+>> -               refill += alloc;
+>> +               alloc = alloc_pages_bulk(gfp_mask, bp->b_page_count - filled,
+>> +                                        bp->b_pages + filled);
+>> +               filled += alloc;
+>>                 if (filled == bp->b_page_count) {
+>>                         XFS_STATS_INC(bp->b_mount, xb_page_found);
+>>                         break;
+>>
+>>>
+>>> i.e. you stepped on the API landmine of your own creation where
+>>> it is impossible to tell the difference between alloc_pages_bulk()
+>>> returning "memory allocation failed, you need to retry" and
+>>> it returning "array is full, nothing more to allocate". Both these
+>>> cases now return 0.
+>>
+>> As my understanding, alloc_pages_bulk() will not be called when
+>> "array is full" as the above 'filled == bp->b_page_count' checking
+>> has ensured that if the array is not passed in with holes in the
+>> middle for xfs.
+> 
+> You miss the point entirely. Previously, alloc_pages_bulk() would
+> return a value that would tell us the array is full, even if we
+> call it with a full array to begin with.
+> 
+> Now it fails to tell us that the array is full, and we have to track
+> that precisely ourselves - it is impossible to tell the difference
+> between "array is full" and "allocation failed". Not being able to
+> determine from the allocation return value whether the array is
+> ready for use or whether another go-around to fill it is needed is a
+> very poor API choice, regardless of anything else.
+> 
+> You've already demonstrated this: tracking array usage in every
+> caller is error-prone and much harder to get right than just having
+> alloc_pages_bulk() do everything for us.
 
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
-oddities or regressions found.
+While I am agreed that it might be hard to track array usage in every
+caller to see if removing assumption of populating only NULL elements
+cause problem for them, I still think the page bulk alloc API before
+this patch have some space for improvement from performance and
+easy-to-use perspective as the most existing calllers of page bulk
+alloc API are trying to bulk allocate the page for the whole array
+sequentially.
 
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+> 
+>>> The existing code returns nr_populated in both cases, so it doesn't
+>>> matter why alloc_pages_bulk() returns with nr_populated != full, it
+>>> is very clear that we still need to allocate more memory to fill it.
+>>
+>> I am not sure if the array will be passed in with holes in the
+>> middle for the xfs fs as mentioned above, if not, it seems to be
+>> a typical use case like the one in mempolicy.c as below:
+>>
+>> https://elixir.bootlin.com/linux/v6.14-rc1/source/mm/mempolicy.c#L2525
+> 
+> That's not "typical" usage. That is implementing "try alloc" fast
+> path that avoids memory reclaim with a slow path fallback to fill
+> the rest of the array when the fast path fails.
+> 
+> No other users of alloc_pages_bulk() is trying to do this.
 
+What I meant by "typical" usage is the 'page_array + nr_allocated'
+trick that avoids the NULL checking when page bulk allocation API
+is used in mm/mempolicy.c, most of existing callers for page bulk
+allocation in other places seems likely to be changed to do the
+similar trick as this patch does.
 
-Beste Grüße,
-Peter Schneider
+> 
+> Indeed, it looks somewhat pointless to do this here (i.e. premature
+> optimisation!), because the only caller of
+> alloc_pages_bulk_mempolicy_noprof() has it's own fallback slowpath
+> for when alloc_pages_bulk() can't fill the entire request.
+> 
+>>> IOWs, you just demonstrated why the existing API is more desirable
+>>> than a highly constrained, slightly faster API that requires callers
+>>> to get every detail right. i.e. it's hard to get it wrong with the
+>>> existing API, yet it's so easy to make mistakes with the proposed
+>>> API that the patch proposing the change has serious bugs in it.
+>>
+>> IMHO, if the API is about refilling pages for the only NULL elements,
+>> it seems better to add a API like refill_pages_bulk() for that, as
+>> the current API seems to be prone to error of not initializing the
+>> array to zero before calling alloc_pages_bulk().
+> 
+> How is requiring a well defined initial state for API parameters
+> "error prone"?  What code is failing to do the well known, defined
+> initialisation before calling alloc_pages_bulk()?
+> 
+> Allowing uninitialised structures in an API (i.e. unknown initial
+> conditions) means we cannot make assumptions about the structure
+> contents within the API implementation.  We cannot assume that all
+> variables are zero on the first use, nor can we assume that anything
+> that is zero has a valid state.
 
--- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
+It seems the above is the main differenece we see from the API perspective,
+as I see the array as output parameter and you seems to treat the array as
+both input and output parameter?
 
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
+The kmem_cache_alloc_bulk() API related API seems to treat the array as
+output parameter too as this patch does, the difference from this patch
+is that if there is no enough memory, it will free the allocated memory
+and return 0 to the caller while this patch returns already allocated
+memory to its caller even when there is no enough memory.
+
+> 
+> Again, this is poor API design - structures passed to interfaces
+> -should- have a well defined initial state, either set by a *_init()
+> function or by defining the initial state to be all zeros (i.e. via
+> memset, kzalloc, etc).
+> 
+> Performance and speed is not an excuse for writing fragile, easy to
+> break code and APIs.
+> 
+> -Dave.
 
