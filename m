@@ -1,143 +1,97 @@
-Return-Path: <linux-kernel+bounces-522544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DF81A3CB9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:38:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD088A3CBA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:40:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8E1B189A6C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:38:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35A973B1EE4
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:40:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22DC72586F1;
-	Wed, 19 Feb 2025 21:37:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2E892580E2;
+	Wed, 19 Feb 2025 21:40:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=ijzerbout.nl header.i=@ijzerbout.nl header.b="aJHNcKdd"
-Received: from bout3.ijzerbout.nl (bout3.ijzerbout.nl [136.144.140.114])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD91B23536C;
-	Wed, 19 Feb 2025 21:37:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.144.140.114
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="tQgXeAfh"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1976F1C5F35;
+	Wed, 19 Feb 2025 21:39:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740001045; cv=none; b=jjyK0JYClHoEAU6o72G6D+qesE3IFwfIJx3gJRw7E8D0/VrMzab9R1R0vXx+C2g2lcz/PHIqXG9319YqQOoEXV5vnJNbSybXLxKRiyCg/pEN2u/iESVC7XxSNPYcar0nj6nkr6ecduiF3hZ7dTeFOu48MHU5yjMOqUo6Zphn68E=
+	t=1740001203; cv=none; b=ed+Koxpx4oadr6HZiV/b/0zRyLClOqAdZENJzc6CFe3RQ0Csu0fd++U8vjRO+UreMFIKHTeo9962j++ggLW/NwyvPtibT6N/q1GDKIJdDtnnhPlCU2D5nUJHJmjPpEEihjI7GazjsKpsV/4pb6s3rkpqSQQQTr2Ee6xZBCPcdXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740001045; c=relaxed/simple;
-	bh=O6zQw43LAnWXOb2LcFvXhT5c9S8XjaexMimq/8E+fNA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=icSyqtppsHnZ7HId8NODjOV24ZsIB/w4aUlKI7aMXS7pK1uyRdyt5PtmSXKQCLYLuVidDW2TkOgczhqLPWDSe3Kc4EKkK7aQNL2x0hAwpJNRAmVzgilRg6vi6j3+py9Qbm9cwMyDbAr2udm6zO1nxup7KSiqi7Ialr56Fgv3xGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ijzerbout.nl; spf=pass smtp.mailfrom=ijzerbout.nl; dkim=pass (4096-bit key) header.d=ijzerbout.nl header.i=@ijzerbout.nl header.b=aJHNcKdd; arc=none smtp.client-ip=136.144.140.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ijzerbout.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ijzerbout.nl
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ijzerbout.nl; s=key;
-	t=1740001032; bh=O6zQw43LAnWXOb2LcFvXhT5c9S8XjaexMimq/8E+fNA=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=aJHNcKdd5m9Dac2h4LNAim6W8Hbgi8hGpOM2oSuk/9cL+cIA6aVZocLxesHdXN/jy
-	 wPLcui6hDdwCc82LrLLtL7BlKQ/bM6mduv6fuh88nq9u0K03MqfJZeD+zfS40Hm0No
-	 oA27b0Tpio/DF5EYVUiizXD0GhSzbASAlyFRlp+x+3dNv7DJg1MfzFHQ4BBKOYke18
-	 Ah8HgPKHBCE0d8l2+b23h1JdDcCZKfIs/FPF+kifz8whQKgZO6KVGZSuM8CuqC0eaG
-	 Q4ATkGyls80xHUpYuNg9jTikfRPWrqw0fCPtGO6i9GfslVL6gma8j3lpV+U1hJ1/jd
-	 VHMPpjNVsqscrW0+n6+qmG4Cy6MC9LwHcTJTwdoRMshSjaPrdIQrpuhNt6luGuv0vF
-	 W822OP4j2ObWGZCYOH2FmhK4nSRcVAOLqJy5bKgXJ9QM9jADglgRVyQAHu3/8C2+ox
-	 nxOoyeLNWjAlkESs7tjRHtTA+5x0krjRZM7tgucYDZEEc21GCUzppxwHPDYy2HX1bP
-	 EgKOwQCWOh7QAcfvYsQZbXxTU+e7TFjHXRIZqbvuGJn3b2REFftA0PpJoYwcQRn++L
-	 TM/M4V1seQaa/ZiaRwRDaPIEwYHzfcYZ4o+0VrquwEUALMZupX0AHvHMIV7VHL+cCo
-	 Ejwv2bKCpAu0riLlnMKOLvqk=
-Received: from [IPV6:2a10:3781:99:1:1ac0:4dff:fea7:ec3a] (racer.ijzerbout.nl [IPv6:2a10:3781:99:1:1ac0:4dff:fea7:ec3a])
-	by bout3.ijzerbout.nl (Postfix) with ESMTPSA id 554D01601C1;
-	Wed, 19 Feb 2025 22:36:58 +0100 (CET)
-Message-ID: <4cf65af4-4b86-47b2-bfd0-3dd5a15c91ff@ijzerbout.nl>
-Date: Wed, 19 Feb 2025 22:36:55 +0100
+	s=arc-20240116; t=1740001203; c=relaxed/simple;
+	bh=D5yQRlgjz8pIf0S3EvuJaVVxsdibweNfwCw0CARbfq0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=judr84lYDmpS48eb4Jv3nvz3fzxkZ91qY1mCI2wLRf/3U2K6uu0mtJWQMXqtf/pyQp87nXfhReR+1yiQug7o7xbP7OWS8jD3iHk36KCM5HITd1eHfVD2dksUIVSMGg21bVqrj25OVbHEuJ7n5E4z5vV6wyub9lyCqLCYZIjaK3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=tQgXeAfh; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1740001194;
+	bh=cIogJHhgqGA5f5yLXpjO29DTGRFoxWFnIadtsybhlqQ=;
+	h=Date:From:To:Cc:Subject:From;
+	b=tQgXeAfhhUkXRbZ/gaw9IWQKawVcPwHCiM6M0zlb9kuMGYtsInxP6W3gXDl8eaCno
+	 k/ZnqbcPadEsHSwowZOHLR2vii2EpckOd6GB3oQwobcrpVLPb1i8FPI3H8R5jUueyx
+	 ME3BjCFN4m6yZHQNV2sOiEiJ0TMu83qeoWx9FeinbB0zz9NdYVVYiRclHTEOqeL6mo
+	 9iOq/7LjKUgxzTNCB6sRuTGAqo0jD6DNemb36Km0qhgGTCjmzBt0/SFjIfDxDo/NLs
+	 /wnuGaomqpHNxOkEmLQh1oqn5bmy2Uk3bphQekWJc46jhaEnr0doXhL7+niFeTEQD1
+	 ZNZpBHYySBRRw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4YyqYQ4CQGz4x2c;
+	Thu, 20 Feb 2025 08:39:54 +1100 (AEDT)
+Date: Thu, 20 Feb 2025 08:39:53 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Anna Schumaker <anna@kernel.org>, Trond Myklebust <trondmy@gmail.com>,
+ NFS Mailing List <linux-nfs@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patches in the nfs-anna tree
+Message-ID: <20250220083953.12e3ad01@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [net-next PATCH v6 3/6] octeontx2-pf: AF_XDP zero copy receive
- support
-To: Suman Ghosh <sumang@marvell.com>, horms@kernel.org, sgoutham@marvell.com,
- gakula@marvell.com, sbhatta@marvell.com, hkelam@marvell.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- lcherian@marvell.com, jerinj@marvell.com, john.fastabend@gmail.com,
- bbhushan2@marvell.com, hawk@kernel.org, andrew+netdev@lunn.ch,
- ast@kernel.org, daniel@iogearbox.net, bpf@vger.kernel.org,
- larysa.zaremba@intel.com
-References: <20250213053141.2833254-1-sumang@marvell.com>
- <20250213053141.2833254-4-sumang@marvell.com>
-Content-Language: en-US
-From: Kees Bakker <kees@ijzerbout.nl>
-In-Reply-To: <20250213053141.2833254-4-sumang@marvell.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/V=bh8+aeNG+zXVz8hrEld.k";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Op 13-02-2025 om 06:31 schreef Suman Ghosh:
-> This patch adds support to AF_XDP zero copy for CN10K.
-> This patch specifically adds receive side support. In this approach once
-> a xdp program with zero copy support on a specific rx queue is enabled,
-> then that receive quse is disabled/detached from the existing kernel
-> queue and re-assigned to the umem memory.
->
-> Signed-off-by: Suman Ghosh <sumang@marvell.com>
-> ---
->   .../ethernet/marvell/octeontx2/nic/Makefile   |   2 +-
->   .../ethernet/marvell/octeontx2/nic/cn10k.c    |   7 +-
->   .../marvell/octeontx2/nic/otx2_common.c       | 114 ++++++++---
->   .../marvell/octeontx2/nic/otx2_common.h       |   6 +-
->   .../ethernet/marvell/octeontx2/nic/otx2_pf.c  |  25 ++-
->   .../marvell/octeontx2/nic/otx2_txrx.c         |  73 +++++--
->   .../marvell/octeontx2/nic/otx2_txrx.h         |   6 +
->   .../ethernet/marvell/octeontx2/nic/otx2_vf.c  |  12 +-
->   .../ethernet/marvell/octeontx2/nic/otx2_xsk.c | 182 ++++++++++++++++++
->   .../ethernet/marvell/octeontx2/nic/otx2_xsk.h |  21 ++
->   .../ethernet/marvell/octeontx2/nic/qos_sq.c   |   2 +-
->   11 files changed, 389 insertions(+), 61 deletions(-)
->   create mode 100644 drivers/net/ethernet/marvell/octeontx2/nic/otx2_xsk.c
->   create mode 100644 drivers/net/ethernet/marvell/octeontx2/nic/otx2_xsk.h
->
->
-> [...]
-> diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_xsk.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_xsk.c
-> new file mode 100644
-> index 000000000000..894c1e0aea6f
-> --- /dev/null
-> +++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_xsk.c
->
-> [...]
-> +static void otx2_clean_up_rq(struct otx2_nic *pfvf, int qidx)
-> +{
-> +	struct otx2_qset *qset = &pfvf->qset;
-> +	struct otx2_cq_queue *cq;
-> +	struct otx2_pool *pool;
-> +	u64 iova;
-> +
-> +	/* If the DOWN flag is set SQs are already freed */
-> +	if (pfvf->flags & OTX2_FLAG_INTF_DOWN)
-> +		return;
-> +
-> +	cq = &qset->cq[qidx];
-> +	if (cq)
-> +		otx2_cleanup_rx_cqes(pfvf, cq, qidx);
-The if check makes no sense, cq is always != NULL
-> +
-> [...]
-> +int otx2_xsk_wakeup(struct net_device *dev, u32 queue_id, u32 flags)
-> +{
-> +	struct otx2_nic *pf = netdev_priv(dev);
-> +	struct otx2_cq_poll *cq_poll = NULL;
-> +	struct otx2_qset *qset = &pf->qset;
-> +
-> +	if (pf->flags & OTX2_FLAG_INTF_DOWN)
-> +		return -ENETDOWN;
-> +
-> +	if (queue_id >= pf->hw.rx_queues)
-> +		return -EINVAL;
-> +
-> +	cq_poll = &qset->napi[queue_id];
-> +	if (!cq_poll)
-> +		return -EINVAL;
-cq_poll can never be NULL.
-> [...]
->
+--Sig_/V=bh8+aeNG+zXVz8hrEld.k
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi all,
+
+There are 2923 patches duplicated from Linus Torvalds' tree in the
+nfs-anna tree.  It is unusable in this state, so I will drop it today
+unless it is updated very soon.  It looks like an attempted rebase onto
+v6.14-rc2 went badly wrong :-(
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/V=bh8+aeNG+zXVz8hrEld.k
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAme2T6kACgkQAVBC80lX
+0Gzd4ggAjS2kcHFzQFQGuKtc4LdcsIgxBhNYrkzfhCM2MW12uu7HKH6rKZTT5A2w
+YyiUNBRagVBh4Ao3OMuKGlQrYZVK9vHDvib0TUxmI53Lva2c+pqIF40+8hn0kNHf
+fnICQsF+rGkjh0g3Yru6Z0LBE8lLOI1eMvIGtyzKUHopwzO1KRnigxHHTU6nRZn7
+FhmEQUn2o4dW01SciUnxCYQvECrnZeCkgZvKiEC4khTBYB887UA0ZKQA9nFQK5hS
+26CS65iMOYFBhl27LHni90RMn/sI7qUe3Of5QDKJQ1MEs0Bv+BlIV5KH8hpfivid
+NbfJKz2PRfwl3pEn8qKYOfpExANp5A==
+=AZTQ
+-----END PGP SIGNATURE-----
+
+--Sig_/V=bh8+aeNG+zXVz8hrEld.k--
 
