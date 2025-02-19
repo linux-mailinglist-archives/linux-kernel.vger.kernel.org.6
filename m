@@ -1,55 +1,86 @@
-Return-Path: <linux-kernel+bounces-521339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD10FA3BBCE
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:43:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E08AA3BBCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:43:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8D88189A091
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:43:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E05023B3B26
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:42:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46FE1DE4CA;
-	Wed, 19 Feb 2025 10:43:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CEE91DE4C5;
+	Wed, 19 Feb 2025 10:42:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lHxv1rQW"
-Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ak8rxXY3"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30CB01DE3D6
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 10:43:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F7681D6DD8;
+	Wed, 19 Feb 2025 10:42:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739961789; cv=none; b=Z78lNEXWUQffJRZ6FRNQ4Xe+BrQk9pBSY9LvAIr43X4f192qrakCv8mFj5sHPtFmCDzZ4Q938cQv3xwinhaamvYcQd0EozM1u89u4Eae/lQB1yLuqNSyj7c5wOmCQxwyzFqm4jW21KyjIICgqjhcwBhQhjBS5wf5/b3kCI4N7s8=
+	t=1739961775; cv=none; b=d+9VjtE/I+oAygUJZEKSgNZ50/vAzRgokRfAkxSBcRc4PBZ48pwQ4afoEsdvmiuhcn1AXwxbjNRQxLcarYjuBxqjEoX/uthfUkP8RTBHjKvb/TwbtxlCZ8b22HeG2r3NKU7i6q24qZP5mL6SLAfollrYVM/fccZN2qyHDmW+Xfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739961789; c=relaxed/simple;
-	bh=vwR3Dde9N6LUvIAX31OqMPbVsGjC70xuGq4f8HLd26E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dMFdejgMCV5qJjiS/w7Dotx34lVbZtiY+rPotRc/zUmSYUSYGF3xRkg3KAF6tRq5Zy5MGngoq0hp+Ue1rxdMI+gH+Ikqn59DyczLQKIls4hpyM2Y16+DWAfd/0inlOCjeQjGcVp3jY8ZwtSOKIo4B66mJ4+l8r+O+lJNvFej8eM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lHxv1rQW; arc=none smtp.client-ip=95.215.58.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1739961775;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=QxvIf0tFqiiS1NmW0FA0jKf0OtND4XikKa8Y58GH4EI=;
-	b=lHxv1rQWpHbfW+N4AgLzhTYe7M4eaBT/+pjHprX0XgHRRUsZ7S+IT67OMUEBe7GF8VMRBD
-	gr+tBV6qRPNqbo2BHMZ+8zoHd2MBumYf/gEJymM47CuyhPor8G5UDbE7howjn142pX1Hxq
-	kRzdJ15csJDpFR7Y6rW7ANTfhZIrfKs=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Dinh Nguyen <dinguyen@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH] clk: socfpga: clk-pll: Optimize local variables
-Date: Wed, 19 Feb 2025 11:42:25 +0100
-Message-ID: <20250219104224.1265-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1739961775; c=relaxed/simple;
+	bh=p+hPLk0JhmrKHlRpP43gqWn7owWRPdmZ77cBOwe7hoA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MIqiidztizsJNlvMC0TgBbKGKyvODboUdmdaWUZtihbjvagzp5ylqsJ6RTuvvbCYakfs0vQUUc4xShTcVZQp6HwlvG+KCBSvWFX9kLmJIICuUPxpJx61fJmPbLsjl5U3q+cShdPTk62OugtzTMw5mGp54CuBaq56f1CXX5z4Mzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ak8rxXY3; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-220f048c038so85685085ad.2;
+        Wed, 19 Feb 2025 02:42:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739961774; x=1740566574; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2XnFU8EaOdq62LfxTov6x5Z3I/byCdSxv47oBiUyW3I=;
+        b=Ak8rxXY31b7Xa1+Pb8KuTDMy/3RIUCLCqlw2fnSAuiUJ4HiAjNUdQYFOdqrRKqk41E
+         CUrF7aad6zvVcWQTeO+RbkbpbDYwkFQfWnTHQ7Lz7zow1AsQ3kgkO29g6n6YnIi+yEwG
+         Iwx/cCS3SV8L8dPaGIqQotwxPrf9AunLRqLqmKk9T4qf0lAwphCxG7NakFryfUkUuFM5
+         hE1FANgXCpUERQLfppArx9pqU44Do6eHwxS+S6OZTYiuQxov3oFadQdeUCQs1y1e3oge
+         IlTwMfLixVWYWOesFY++CmDOXo0Gvco2wAE2qmkFkx+dK//+kSHcRJMKBE61K2H0ww2u
+         9LIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739961774; x=1740566574;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2XnFU8EaOdq62LfxTov6x5Z3I/byCdSxv47oBiUyW3I=;
+        b=Sygf1SuB0ULtEJBD4OA1poH9RCwXTqYkFD+EkeRYLqFxAWLAk2mXCZlmE9zDgAsqpu
+         8VrP4XsbXVjXeW6PCOJqY0j26EO1tUOYTmDuCVjJsChgbRzPhfGwrpA5+TuuhL8WChzI
+         nmH82+Rj49qQXYaKPsAMcuHXCVgvxWKETV72z5bQQJYaWI33ek7qomPGA/Pvfue0Ny6H
+         3BxvO7dqU4kH6O3WEfr/7j7BgtHOuu8MVSeIh0ldx5+lPwQL/FxPN6CWBFnoAGK4ww8t
+         +ajXBZ5ZhI9bnfkgj7UhhwC+qpgFrBWDXfzjed3jc8aVhyRRoglNtvUHJ++pIjFwIYlB
+         aNxA==
+X-Forwarded-Encrypted: i=1; AJvYcCUPqAHngZNG+8IVONpx5j2LOxQMkRs2/62tsS4xgrrbBPi9D8RALb1t/qkqVzBgXx/kp15wNAIjs8546VI=@vger.kernel.org, AJvYcCX0E1bwlRFIpfclqCIR4TadArPOoNT1t3TVTNZnwOwlTq7Fn0EmF+w84rYT10LUvQpncoa4Z0c7r5pyLHx56aixjrb9@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTO2rkH+AEE9p5Z4Ko27LRVmlzGl9vkiDQ7hfASms0wgqbY0CO
+	TzmzgF26AfL0gfUdL4eP4i28v07qvgbCaxvW8XybSxPouOwzvvV5
+X-Gm-Gg: ASbGncu6sFqh3kRULXqk+hwL42bAgx7jUZLRb/rSYBX5V6dp/Senuex1KlaFjvd8TdV
+	sGcaepHqROi2FoRyxhsDvWXdiSyFtlQYE24FwoQjES9iXSKBg/16ck1clVMNyhspE2qKjdW06pf
+	DCoIUlMlSH+SkuPbKN7iKP3FcYt5RGqaX4skmAuZlZmDYxTpTX94Hu7DZecIRDv5e54cCw91PbJ
+	SguAxisaLSYldpVdFZbvd22VW6rUyo6DWtyNmAUNJK+gt4kNm80jz00MINJK92fR50jduyTyQ8v
+	OIlkqBZgy23P04wh1HNJx8KjDrznlXzJyLoeI9sN8q227r/fS6YZ7wmBCotlbh3t4hKUBOc=
+X-Google-Smtp-Source: AGHT+IHjTS8X+w1k6uNV84RSXxe6rvfUywxmTyv8ppnFYs6uUU4/dVHdurSXskkGx1KBDXq6C2bJyw==
+X-Received: by 2002:a05:6300:640d:b0:1ee:b033:6dde with SMTP id adf61e73a8af0-1eeb03372d7mr14817906637.3.1739961773660;
+        Wed, 19 Feb 2025 02:42:53 -0800 (PST)
+Received: from AHUANG12-3ZHH9X.lenovo.com (1-175-143-196.dynamic-ip.hinet.net. [1.175.143.196])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-add3f326b31sm8246832a12.64.2025.02.19.02.42.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2025 02:42:53 -0800 (PST)
+From: Adrian Huang <adrianhuang0701@gmail.com>
+X-Google-Original-From: Adrian Huang <ahuang12@lenovo.com>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	Adrian Huang <ahuang12@lenovo.com>
+Subject: [PATCH 1/1] tracing: Fix memory leak when reading set_event file
+Date: Wed, 19 Feb 2025 18:42:30 +0800
+Message-Id: <20250219104230.12000-1-ahuang12@lenovo.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,43 +88,63 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-Since readl() returns a u32, the local variables reg and bypass can also
-have the data type u32. Furthermore, divf and divq are derived from reg
-and can also be a u32.
+From: Adrian Huang <ahuang12@lenovo.com>
 
-Since do_div() casts the divisor to u32 anyway, changing the data type
-of divq to u32 removes the following Coccinelle/coccicheck warning
-reported by do_div.cocci:
+kmemleak reports the following memory leak after reading set_event file:
 
-  WARNING: do_div() does a 64-by-32 division, please consider using div64_ul instead
+  # cat /sys/kernel/tracing/set_event
 
-Compile-tested only.
+  # cat /sys/kernel/debug/kmemleak
+  unreferenced object 0xff110001234449e0 (size 16):
+  comm "cat", pid 13645, jiffies 4294981880
+  hex dump (first 16 bytes):
+    01 00 00 00 00 00 00 00 a8 71 e7 84 ff ff ff ff  .........q......
+  backtrace (crc c43abbc):
+    __kmalloc_cache_noprof+0x3ca/0x4b0
+    s_start+0x72/0x2d0
+    seq_read_iter+0x265/0x1080
+    seq_read+0x2c9/0x420
+    vfs_read+0x166/0xc30
+    ksys_read+0xf4/0x1d0
+    do_syscall_64+0x79/0x150
+    entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+The issue can be reproduced regardless of whether set_event is empty or
+not. Here is an example about the valid content of set_event.
+
+  # cat /sys/kernel/tracing/set_event
+  sched:sched_process_fork
+  sched:sched_switch
+  sched:sched_wakeup
+  *:*:mod:trace_events_sample
+
+The root cause is that s_next() returns NULL when nothing is found.
+This results in s_stop() attempting to free a NULL pointer because its
+parameter p is NULL.
+
+Fix the issue by freeing the memory appropriately when s_next() fails
+to find anything.
+
+Fixes: b355247df104 ("tracing: Cache ":mod:" events for modules not loaded yet")
+Signed-off-by: Adrian Huang <ahuang12@lenovo.com>
 ---
- drivers/clk/socfpga/clk-pll.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/trace/trace_events.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/socfpga/clk-pll.c b/drivers/clk/socfpga/clk-pll.c
-index 9dcc1b2d2cc0..03a96139a576 100644
---- a/drivers/clk/socfpga/clk-pll.c
-+++ b/drivers/clk/socfpga/clk-pll.c
-@@ -39,9 +39,9 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hwclk,
- 					 unsigned long parent_rate)
- {
- 	struct socfpga_pll *socfpgaclk = to_socfpga_clk(hwclk);
--	unsigned long divf, divq, reg;
-+	u32 divf, divq, reg;
- 	unsigned long long vco_freq;
--	unsigned long bypass;
-+	u32 bypass;
+diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
+index 4cb275316e51..c76353ad0a4e 100644
+--- a/kernel/trace/trace_events.c
++++ b/kernel/trace/trace_events.c
+@@ -1591,6 +1591,7 @@ s_next(struct seq_file *m, void *v, loff_t *pos)
+ 		return iter;
+ #endif
  
- 	reg = readl(socfpgaclk->hw.reg);
- 	bypass = readl(clk_mgr_base_addr + CLKMGR_BYPASS);
++	kfree(iter);
+ 	return NULL;
+ }
+ 
 -- 
-2.48.1
+2.34.1
 
 
