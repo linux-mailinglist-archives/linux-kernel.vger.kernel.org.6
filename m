@@ -1,239 +1,306 @@
-Return-Path: <linux-kernel+bounces-521519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84531A3BE64
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:45:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 711CAA3BE66
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:45:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 692961895E81
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:45:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2862A169183
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:45:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13FAB1E0DCD;
-	Wed, 19 Feb 2025 12:45:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2881E0489;
+	Wed, 19 Feb 2025 12:45:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="dWM/VX4j"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xS318kzU"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D6681DFD9D
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 12:45:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1A9D1E130F
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 12:45:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739969115; cv=none; b=idCOFuk8iNA0AEs84cH5X87/rXV3vHu1fwzFSKUyMUBGM7LyuZEqPbiUXDQF6duMcyNukSrbo/KX5FgPYIzPcL4zQAF1fdB9z4UzkODne9dfZOGYhN2s7JNp7xKHY0P4RHwhIILJ+PYgIt84At2ADrSF5s8gtKP0hoAczPsgEVg=
+	t=1739969120; cv=none; b=K9iIIfvKPrNmgEFeByWKlW60PIuVXYndwZ/46ovjvBzaJJq58ls/R4eRiJfT57stk/GnPodgA+IITpHfACbAzzzBHvjBsL/l/FFNv4kUirOoC6wNsFvryGlAfHtMnHxeVNcyuISqK1rkykHyH2R4lxcsbalmujabkllPuGp7Ayg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739969115; c=relaxed/simple;
-	bh=P+gV28lKZRdfBrqRS0IUOyxV12AN6CkJXtnoB0Q4LhU=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=b1uAfoTZ3zn+docgNlzWVdSUvlcvnlaNjwMHMpaOSWwmqjSz44t7bgJ6rUdWRJLYq45S6cOw+742Bg3rkAeV+Xa6KpV06/lrkOOodK+qcClz30ThqO+B9luswIpCrnZp5OzNgzuWofzOS00Db1CaGdjeU7ni/JXLcnUPGwKvChk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=dWM/VX4j; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-abbd96bef64so97031066b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 04:45:11 -0800 (PST)
+	s=arc-20240116; t=1739969120; c=relaxed/simple;
+	bh=SujlMEtjiB9fAqCOvbOIsge9JLMj6Dhcb2IJVMdalNI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XfxHPQoMY2WyoOo6q4NrY/mpnWlVtRzoWyQ7MEvvTvPyEjSHvLIU0NuEN2k0pnMa0YP5AnhUDtwFODUYLMRYdfcZ09FJc58YNapYQHFkCTJme3NTUX4uN9cikKk5NFV0X1d0SRK1ZLLuSnST1t+x5dkFpt5pTYSZ5HieqmKUQUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xS318kzU; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-30762598511so64171381fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 04:45:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1739969110; x=1740573910; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=8aWk9ACxeOktVt7eviYGo7lrFquCo7Eax3iBYmtuH50=;
-        b=dWM/VX4jF8QeQNKpWe2OLTFW8wbKTbTTiIMq1bsxMfuTG2YipiwIiZUaQ6GxkdVdZ2
-         l8UdB1AuEhi5QNzq9ILiAp/HYh98lZCyPCiLlPAJZO6NI3k4YV5G9YAgUamcJZ7nxbw1
-         qOCCHwIFrZkqF9FH/T2SX/EVAvHc8zuyIQBnNrqkSs2CtT4z43xntwrWw/gJA6w91DgR
-         gZ8LnN1d7K4THpjnYEpXDq8YdK4emLB3jEjw3/7nlQK1HQwuQeRSTNgrONi4zHtg9brU
-         I1kZNvW7LQafC94NMLgj61QeMiZzw/hqD3DGCsMlLnUfPCFz7l+mxh1iH7JJ513C4dMs
-         qq3A==
+        d=linaro.org; s=google; t=1739969116; x=1740573916; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z217kFaLT0sl618WVzPwLldmHYW2Ds2srfCVEmUlDAg=;
+        b=xS318kzURw1O2p4gzPafkFq8Dx/JQUGc2SCq8SGCPFTTzXKbYs5qk1hmqqd76DAhs9
+         KrA5odUw5PkCkf+6tMcNkijbTehHk8yv6U7ePlfDiCZj99h2ZOxvYnERwREnAqKNsk6C
+         A0zM+c3Ix9eW5B8NJrwgi8vKMla4D4cmTtMh1A8gr0yU9Ha1fp0gyWN7Ml90upVslZtF
+         TdagaxSvhvIJlP1z+j/CdWqQmyGqeQLPHTFp88ZttyZxdvL/P2RpV3HU1uo4gqqd7EX0
+         TYgHsceEJHtJApfkYor5P/ICcHZ27d3jIF10y50V01Muqg2Y0j9QnButLnoGCfXuiI9b
+         jiVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739969110; x=1740573910;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8aWk9ACxeOktVt7eviYGo7lrFquCo7Eax3iBYmtuH50=;
-        b=GAj4MiGcDVcSfeiDrydErPI8RSN8gN6i/Bbpd50wwKgMvr6B9xkIB3y/4KZlkAwBE0
-         obapo+eyyKeHwswU+Tvv5ZzQnGphkQ2bdWOAr5DmSiZPwrP3kdWq7f0r4iSiK8Xm6UAM
-         sXNOpPw0O5LuAEGbCoZY/Gr58wkDMFwq4VUS0Po77Kdaub09OoQmMxQ61Gf6GzfbCkAd
-         I1NWXLCH0Sshb9M3P/SYCRBfzJ+YCGRwRKkkRfotatNGCBLJ/kjL8D4KKZbFvzLlSO3H
-         0eUMf4JTC+b6F6+6lcCuJhvU28fBVbwWCCyKwpZzwc/SBgC8QD0rCs6DcqhrRDGC2zxr
-         bhLA==
-X-Forwarded-Encrypted: i=1; AJvYcCUDxrUQNgCKZdYaLrrZNyYPA44RF+F+rjh5nVYTQJ2XhsyuDEVomNuP8tGwA4qx3FBDDfS0OUxnjCFBF6M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfKYwCgQDUx+i5pkQAkaT22vHK2T5r6X/kyMaf6geOrhZTcSZ2
-	wWZbvoXaawT9Xf7QS+piNrD5NmtIMoXRQK8i1Y8bVJH9jCF+YPtshzq0PWmueXpq/NC3EJ5nZq/
-	9
-X-Gm-Gg: ASbGncuiajApvXevK7lZWMGSvJwtFqvNwtnIByFBBF9GKF9cnBxG4VmdwZTUhkYuzVn
-	3PInV63GvM8ckTU37lzT+USMqE2umvkYF0e1rcBM4p6hCRV1W1CMfwn0pAoJhHZ2qEs7p/CypT2
-	WxYM4NbTQWf0LNll5WvWEINqbOmZAPkAQrXiS1LQqrYen1DLXP2tayxXGtkJKCCfm6ESFPYAlVF
-	DYOpHI6ieFkVj8TYAgmJs9bvPiEaZrN9IZfHyVwadVD3syVsZN7vPZke8kodq7I4mM4l46omIGM
-	xrr0PQQgpxb2ihsadGtH0xY=
-X-Google-Smtp-Source: AGHT+IFYOVix0/dEDuKvIlQRX7Je/rbWqPWV9hEJk5Bq1TOCsIV+uU9vL3eEn13Z0cJvKpMHBrX2xQ==
-X-Received: by 2002:a17:907:72cf:b0:aa6:96ad:f903 with SMTP id a640c23a62f3a-abb70db0230mr1396162866b.31.1739969109935;
-        Wed, 19 Feb 2025 04:45:09 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.25])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb836ee14dsm771388866b.47.2025.02.19.04.45.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Feb 2025 04:45:09 -0800 (PST)
-Message-ID: <8d83ea72-bb81-4c63-bf69-28cf5848ae20@tuxon.dev>
-Date: Wed, 19 Feb 2025 14:45:07 +0200
+        d=1e100.net; s=20230601; t=1739969116; x=1740573916;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Z217kFaLT0sl618WVzPwLldmHYW2Ds2srfCVEmUlDAg=;
+        b=s1DMKqImaCriNxM39yEyORDm2SNpI9oHIWUTZcibcF0k4VSiJqWelsVeWYrte+GlqX
+         sx9+EJZezyDf+ydpMn+jUgsLUEcNz8gcKPhuIx3JAmF1RQy9g0bHKLmww99boa7kbCH6
+         WvzrI6uD6JpUMoOw4SwRB+kyjMgQIDygbHb6YPXQ3NHUo2v/6TuwBXggqqLZP84oOPSi
+         DrC/6gV4PWEQ7Q9HsfjiptAvdgNW3zYYfr0BNKwNuH0s1t9OYeXq6cFYNI6BMC//OIQl
+         GbdqzYcEfxbh8VqW/vv6s+gcWvbAi9Lj2cilBR13TDDL/bPjaJ1lMFmIAfAXO0UCQPc/
+         JjHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVJu+VwZ0suofCppv6O0rubx0dI4L618A79UUHsFTXpQb0Oajud66eidc6RGu0mGdNtBowAF6OyzwL2ndk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxptJWLkddZ4BN0w7n6P6S6A0nY4qUeFcIACx//WjCDiddI5ohM
+	jm+isVeyhl37t0EGDYGXGEExSYLOUmiml+YxYMfWgK4iW5rc8c7MzoDnDQAbDPw=
+X-Gm-Gg: ASbGncsaNw/VmJOMGrUp9zWYPdLw8rhdpRcQT/BXzJXSEZZe3EZQPQ/bPiFBlglnFWL
+	9ABRBF4lYdrMohmj6xWTHzNpNADLd7azXmCVjP119hQkWiTZTZ4BgqRbAd5/LdL2aa73ukBWdIv
+	Odmw9ww7WLNH1WLl1ZwtqMZoINv8TyMcuEJAI4sfFek37vmavnd8ha6Sf7oe6ZeX1HcPMoTfsH1
+	u4Vr1tXkuCyYv7WC5qEGRBMkbImHbmpjqypVvpKk7DPiFrU1eMW/0R8p64OdrEBeJyAFS4PqhIa
+	dNkkmhCv1da+khWG1LjoaOwRkxGHlrjH4WSYUXGabmsJrBrLbrnoTX7f9VLiTq5zBQudiTY=
+X-Google-Smtp-Source: AGHT+IESOn67cir2vYMtY8x3Vv1zDfzqjjVGfcBVqbC1O5W1dGf9M/iO0Mu0IV2x6MnhWhIgNvOc3w==
+X-Received: by 2002:a05:6512:280b:b0:545:9e4:ca91 with SMTP id 2adb3069b0e04-5452fe6af9emr5782243e87.39.1739969115934;
+        Wed, 19 Feb 2025 04:45:15 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54531b8ac1dsm1426567e87.75.2025.02.19.04.45.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2025 04:45:15 -0800 (PST)
+Date: Wed, 19 Feb 2025 14:45:12 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Yongbang Shi <shiyongbang@huawei.com>
+Cc: xinliang.liu@linaro.org, tiantao6@hisilicon.com, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, 
+	daniel@ffwll.ch, kong.kongxinwei@hisilicon.com, liangjian010@huawei.com, 
+	chenjianmin@huawei.com, lidongming5@huawei.com, libaihan@huawei.com, 
+	shenjian15@huawei.com, shaojijie@huawei.com, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 drm-dp 2/7] drm/hisilicon/hibmc: Add dp serdes cfg in
+ dp process
+Message-ID: <4tt5hs7fztjwoa3nf2f4yvdyaj3izvmqsi6kdh3rsldarn5wj6@qczfv6uzfxbw>
+References: <20250210144959.100551-1-shiyongbang@huawei.com>
+ <20250210144959.100551-3-shiyongbang@huawei.com>
+ <cqlf4jj5mtxig4pw7nn5wi34miisuh7veuv5i4lz2wrxafbdb7@h7glfdpl6tyf>
+ <110f8ad3-341c-457d-883e-d417a6a7f9dc@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] driver core: platform: Use devres group to free driver
- probe resources
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-To: Jonathan Cameron <jic23@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: rafael@kernel.org, dakr@kernel.org, ulf.hansson@linaro.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <20250215130849.227812-1-claudiu.beznea.uj@bp.renesas.com>
- <2025021539-untrained-prompter-a48f@gregkh>
- <4bf01946-90e3-4169-91fa-10d9f90310e9@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <4bf01946-90e3-4169-91fa-10d9f90310e9@tuxon.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <110f8ad3-341c-457d-883e-d417a6a7f9dc@huawei.com>
 
-Hi, Daniel, Jonathan,
+On Wed, Feb 19, 2025 at 03:39:10PM +0800, Yongbang Shi wrote:
+> > On Mon, Feb 10, 2025 at 10:49:54PM +0800, Yongbang Shi wrote:
+> > > From: Baihan Li <libaihan@huawei.com>
+> > > 
+> > > Add dp serdes cfg in link training process, and related adapting
+> > > and modificating. We change some init values about training,
+> > Imperative language, please. Use 'change', not 'we change'.
+> > 
+> > > because we want completely to negotiation process, so we start with
+> > > the maximum rate and the electrical characteristic level is 0.
+> > > 
+> > > Signed-off-by: Baihan Li <libaihan@huawei.com>
+> > > Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
+> > > ---
+> > > ChangeLog:
+> > > v1 -> v2:
+> > >    - splittting the patch and add more detailed the changes in the commit message, suggested by Dmitry Baryshkov.
+> > > ---
+> > >   .../gpu/drm/hisilicon/hibmc/dp/dp_config.h    |  1 +
+> > >   drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c    |  6 +++-
+> > >   drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c  | 33 ++++++++++++++++---
+> > >   drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h   |  1 +
+> > >   .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c   |  8 ++---
+> > >   5 files changed, 38 insertions(+), 11 deletions(-)
+> > > 
+> > > diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_config.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_config.h
+> > > index 74dd9956144e..c5feef8dc27d 100644
+> > > --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_config.h
+> > > +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_config.h
+> > > @@ -15,5 +15,6 @@
+> > >   #define HIBMC_DP_CLK_EN			0x7
+> > >   #define HIBMC_DP_SYNC_EN_MASK		0x3
+> > >   #define HIBMC_DP_LINK_RATE_CAL		27
+> > > +#define HIBMC_DP_SYNC_DELAY(lanes)	((lanes) == 0x2 ? 86 : 46)
+> > >   #endif
+> > > diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
+> > > index 39fd3687efca..ee1ff205ff56 100644
+> > > --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
+> > > +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
+> > > @@ -3,6 +3,7 @@
+> > >   #include <linux/io.h>
+> > >   #include <linux/delay.h>
+> > > +#include <drm/drm_managed.h>
+> > >   #include "dp_config.h"
+> > >   #include "dp_comm.h"
+> > >   #include "dp_reg.h"
+> > > @@ -73,6 +74,9 @@ static void hibmc_dp_set_sst(struct hibmc_dp_dev *dp, struct drm_display_mode *m
+> > >   				 HIBMC_DP_CFG_STREAM_HTOTAL_SIZE, htotal_size);
+> > >   	hibmc_dp_reg_write_field(dp, HIBMC_DP_VIDEO_HORIZONTAL_SIZE,
+> > >   				 HIBMC_DP_CFG_STREAM_HBLANK_SIZE, hblank_size);
+> > > +	hibmc_dp_reg_write_field(dp, HIBMC_DP_VIDEO_PACKET,
+> > > +				 HIBMC_DP_CFG_STREAM_SYNC_CALIBRATION,
+> > > +				 HIBMC_DP_SYNC_DELAY(dp->link.cap.lanes));
+> > >   }
+> > >   static void hibmc_dp_link_cfg(struct hibmc_dp_dev *dp, struct drm_display_mode *mode)
+> > > @@ -170,7 +174,7 @@ int hibmc_dp_hw_init(struct hibmc_dp *dp)
+> > >   		return -EAGAIN;
+> > >   	dp_dev->link.cap.lanes = 0x2;
+> > > -	dp_dev->link.cap.link_rate = DP_LINK_BW_2_7;
+> > > +	dp_dev->link.cap.link_rate = DP_LINK_BW_8_1;
+> > >   	/* hdcp data */
+> > >   	writel(HIBMC_DP_HDCP, dp_dev->base + HIBMC_DP_HDCP_CFG);
+> > > diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c
+> > > index f6355c16cc0a..43a4b656493f 100644
+> > > --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c
+> > > +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c
+> > > @@ -6,6 +6,7 @@
+> > >   #include <drm/drm_print.h>
+> > >   #include "dp_comm.h"
+> > >   #include "dp_reg.h"
+> > > +#include "dp_serdes.h"
+> > >   #define HIBMC_EQ_MAX_RETRY 5
+> > > @@ -108,7 +109,11 @@ static int hibmc_dp_link_training_cr_pre(struct hibmc_dp_dev *dp)
+> > >   		return ret;
+> > >   	for (i = 0; i < dp->link.cap.lanes; i++)
+> > > -		train_set[i] = DP_TRAIN_VOLTAGE_SWING_LEVEL_2;
+> > > +		train_set[i] = DP_TRAIN_VOLTAGE_SWING_LEVEL_0;
+> > > +
+> > > +	ret = hibmc_dp_serdes_set_tx_cfg(dp, dp->link.train_set);
+> > > +	if (ret)
+> > > +		return ret;
+> > >   	ret = drm_dp_dpcd_write(&dp->aux, DP_TRAINING_LANE0_SET, train_set, dp->link.cap.lanes);
+> > >   	if (ret != dp->link.cap.lanes) {
+> > > @@ -137,21 +142,28 @@ static bool hibmc_dp_link_get_adjust_train(struct hibmc_dp_dev *dp,
+> > >   	return false;
+> > >   }
+> > > -static inline int hibmc_dp_link_reduce_rate(struct hibmc_dp_dev *dp)
+> > > +static int hibmc_dp_link_reduce_rate(struct hibmc_dp_dev *dp)
+> > >   {
+> > > +	u8 rate = 0;
+> > > +
+> > >   	switch (dp->link.cap.link_rate) {
+> > >   	case DP_LINK_BW_2_7:
+> > >   		dp->link.cap.link_rate = DP_LINK_BW_1_62;
+> > > -		return 0;
+> > > +		rate = DP_SERDES_BW_1_62;
+> > > +		break;
+> > >   	case DP_LINK_BW_5_4:
+> > >   		dp->link.cap.link_rate = DP_LINK_BW_2_7;
+> > > -		return 0;
+> > > +		rate = DP_SERDES_BW_2_7;
+> > > +		break;
+> > >   	case DP_LINK_BW_8_1:
+> > >   		dp->link.cap.link_rate = DP_LINK_BW_5_4;
+> > > -		return 0;
+> > > +		rate = DP_SERDES_BW_5_4;
+> > > +		break;
+> > >   	default:
+> > >   		return -EINVAL;
+> > >   	}
+> > > +
+> > > +	return hibmc_dp_serdes_rate_switch(rate, dp);
+> > This looks like:
+> > 
+> > if (dp->link.cap.link_rate == DP_LINK_BW_1_62)
+> >      return -EINVAL;
+> > 
+> > dp->link.cap.link_rate++;
+> > return hibmc_dp_serdes_rate_switch(rate, dp);
+> 
+> We need map DP_LINK_BW_2_7 to DP_SERDES_BW's value firstly, which is for our SERDES' register cfg.
+> This value is not like 0x6, 0xa, etc.
 
-On 15.02.2025 15:51, Claudiu Beznea wrote:
-> Hi, Greg,
-> 
-> On 15.02.2025 15:25, Greg KH wrote:
->> On Sat, Feb 15, 2025 at 03:08:49PM +0200, Claudiu wrote:
->>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>
->>> On the Renesas RZ/G3S (and other Renesas SoCs, e.g., RZ/G2{L, LC, UL}),
->>> clocks are managed through PM domains. These PM domains, registered on
->>> behalf of the clock controller driver, are configured with
->>> GENPD_FLAG_PM_CLK. In most of the Renesas drivers used by RZ SoCs, the
->>> clocks are enabled/disabled using runtime PM APIs. The power domains may
->>> also have power_on/power_off support implemented. After the device PM
->>> domain is powered off any CPU accesses to these domains leads to system
->>> aborts.
->>>
->>> During probe, devices are attached to the PM domain controlling their
->>> clocks and power. Similarly, during removal, devices are detached from the
->>> PM domain.
->>>
->>> The detachment call stack is as follows:
->>>
->>> device_driver_detach() ->
->>>   device_release_driver_internal() ->
->>>     __device_release_driver() ->
->>>       device_remove() ->
->>>         platform_remove() ->
->>> 	  dev_pm_domain_detach()
->>>
->>> During driver unbind, after the device is detached from its PM domain,
->>> the device_unbind_cleanup() function is called, which subsequently invokes
->>> devres_release_all(). This function handles devres resource cleanup.
->>>
->>> If runtime PM is enabled in driver probe via devm_pm_runtime_enable(), the
->>> cleanup process triggers the action or reset function for disabling runtime
->>> PM. This function is pm_runtime_disable_action(), which leads to the
->>> following call stack of interest when called:
->>>
->>> pm_runtime_disable_action() ->
->>>   pm_runtime_dont_use_autosuspend() ->
->>>     __pm_runtime_use_autosuspend() ->
->>>       update_autosuspend() ->
->>>         rpm_idle()
->>>
->>> The rpm_idle() function attempts to resume the device at runtime. However,
->>> at the point it is called, the device is no longer part of a PM domain
->>> (which manages clocks and power states). If the driver implements its own
->>> runtime PM APIs for specific functionalities - such as the rzg2l_adc
->>> driver - while also relying on the power domain subsystem for power
->>> management, rpm_idle() will invoke the driver's runtime PM API. However,
->>> since the device is no longer part of a PM domain at this point, the PM
->>> domain's runtime PM APIs will not be called. This leads to system aborts on
->>> Renesas SoCs.
->>>
->>> Another identified case is when a subsystem performs various cleanups
->>> using device_unbind_cleanup(), calling driver-specific APIs in the process.
->>> A known example is the thermal subsystem, which may call driver-specific
->>> APIs to disable the thermal device. The relevant call stack in this case
->>> is:
->>>
->>> device_driver_detach() ->
->>>   device_release_driver_internal() ->
->>>     device_unbind_cleanup() ->
->>>       devres_release_all() ->
->>>         devm_thermal_of_zone_release() ->
->>> 	  thermal_zone_device_disable() ->
->>> 	    thermal_zone_device_set_mode() ->
->>> 	      struct thermal_zone_device_ops::change_mode()
->>>
->>> At the moment the driver-specific change_mode() API is called, the device
->>> is no longer part of its PM domain. Accessing its registers without proper
->>> power management leads to system aborts.
->>>
->>> Open a devres group before calling the driver probe, and close it
->>> immediately after the driver remove function is called and before
->>> dev_pm_domain_detach(). This ensures that driver-specific devm actions or
->>> reset functions are executed immediately after the driver remove function
->>> completes. Additionally, it prevents driver-specific runtime PM APIs from
->>> being called when the device is no longer part of its power domain.
->>>
->>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>> ---
->>>
->>> Hi,
->>>
->>> Although Ulf gave its green light for the approaches on both IIO [1],
->>> [2] and thermal subsystems [3], Jonathan considered unacceptable the
->>> approaches in [1], [2] as he considered it may lead to dificult to
->>> maintain code and code opened to subtle bugs (due to the potential of
->>> mixing devres and non-devres calls). He pointed out a similar approach
->>> that was done for the I2C bus [4], [5].
->>>
->>> As the discussions in [1], [2] stopped w/o a clear conclusion, this
->>> patch tries to revive it by proposing a similar approach that was done
->>> for the I2C bus.
->>>
->>> Please let me know you input.
->>
->> I'm with Jonathan here, the devres stuff is getting crazy here and you
->> have drivers mixing them and side affects happening and lots of
->> confusion.  Your change here is only going to make it even more
->> confusing, and shouldn't actually solve it for other busses (i.e. what
->> about iio devices NOT on the platform bus?)
-> 
-> You're right, other busses will still have this problem.
-> 
->>
->> Why can't your individual driver handle this instead?
-> 
-> Initially I tried it at the driver level by using non-devres PM runtime
-> enable API but wasn't considered OK by all parties.
-> 
-> I haven't thought about having devres_open_group()/devres_close_group() in
-> the driver itself but it should work.
-
-Are you OK with having the devres_open_group()/devres_close_group() in the
-currently known affected drivers (drivers/iio/adc/rzg2l_adc.c and the
-proposed drivers/thermal/renesas/rzg3s_thermal.c [1]) ?
-
-Thank you,
-Claudiu
-
-[1]
-https://lore.kernel.org/all/20250103163805.1775705-5-claudiu.beznea.uj@bp.renesas.com
+Ack
 
 > 
-> Thank you,
-> Claudiu
 > 
->>
->> thanks,
->>
->> greg k-h
-> 
+> > >   }
+> > >   static inline int hibmc_dp_link_reduce_lane(struct hibmc_dp_dev *dp)
+> > > @@ -159,6 +171,7 @@ static inline int hibmc_dp_link_reduce_lane(struct hibmc_dp_dev *dp)
+> > >   	switch (dp->link.cap.lanes) {
+> > >   	case 0x2:
+> > >   		dp->link.cap.lanes--;
+> > > +		drm_warn(dp->dev, "dp link training reduce to 1 lane\n");
+> > drm_dbg
+> > 
+> > >   		break;
+> > >   	case 0x1:
+> > >   		drm_err(dp->dev, "dp link training reduce lane failed, already reach minimum\n");
+> > > @@ -206,6 +219,11 @@ static int hibmc_dp_link_training_cr(struct hibmc_dp_dev *dp)
+> > >   		}
+> > >   		level_changed = hibmc_dp_link_get_adjust_train(dp, lane_status);
+> > > +
+> > > +		ret = hibmc_dp_serdes_set_tx_cfg(dp, dp->link.train_set);
+> > > +		if (ret)
+> > > +			return ret;
+> > > +
+> > >   		ret = drm_dp_dpcd_write(&dp->aux, DP_TRAINING_LANE0_SET, dp->link.train_set,
+> > >   					dp->link.cap.lanes);
+> > >   		if (ret != dp->link.cap.lanes) {
+> > > @@ -255,6 +273,11 @@ static int hibmc_dp_link_training_channel_eq(struct hibmc_dp_dev *dp)
+> > >   		}
+> > >   		hibmc_dp_link_get_adjust_train(dp, lane_status);
+> > > +
+> > > +		ret = hibmc_dp_serdes_set_tx_cfg(dp, dp->link.train_set);
+> > > +		if (ret)
+> > > +			return ret;
+> > > +
+> > >   		ret = drm_dp_dpcd_write(&dp->aux, DP_TRAINING_LANE0_SET,
+> > >   					dp->link.train_set, dp->link.cap.lanes);
+> > >   		if (ret != dp->link.cap.lanes) {
+> > > diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
+> > > index 4a515c726d52..f2fa9807d8ab 100644
+> > > --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
+> > > +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
+> > > @@ -72,5 +72,6 @@
+> > >   #define HIBMC_DP_CFG_STREAM_TU_SYMBOL_FRAC_SIZE	GENMASK(9, 6)
+> > >   #define HIBMC_DP_CFG_STREAM_HTOTAL_SIZE		GENMASK(31, 16)
+> > >   #define HIBMC_DP_CFG_STREAM_HBLANK_SIZE		GENMASK(15, 0)
+> > > +#define HIBMC_DP_CFG_STREAM_SYNC_CALIBRATION	GENMASK(31, 20)
+> > Please consider restructuring the header so that it becomes more
+> > obvious, which register are these masks for.
+> > 
+> > >   #endif
+> > > diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+> > > index e6de6d5edf6b..bade693d9730 100644
+> > > --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+> > > +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+> > > @@ -28,9 +28,7 @@
+> > >   #include "hibmc_drm_drv.h"
+> > >   #include "hibmc_drm_regs.h"
+> > > -#define HIBMC_DP_HOST_SERDES_CTRL		0x1f001c
+> > > -#define HIBMC_DP_HOST_SERDES_CTRL_VAL		0x8a00
+> > > -#define HIBMC_DP_HOST_SERDES_CTRL_MASK		0x7ffff
+> > > +#define HIBMC_DP_HOST_SERDES_CTRL	0x1f001c
+> > Unnecessary whitespace change.
+> > 
+> > Why HIBMC_DP_HOST_SERDES_CTRL is not in the dp_reg.h?
+> > 
+> > >   DEFINE_DRM_GEM_FOPS(hibmc_fops);
+> > > @@ -122,8 +120,8 @@ static int hibmc_kms_init(struct hibmc_drm_private *priv)
+> > >   	}
+> > >   	/* if DP existed, init DP */
+> > > -	if ((readl(priv->mmio + HIBMC_DP_HOST_SERDES_CTRL) &
+> > > -	     HIBMC_DP_HOST_SERDES_CTRL_MASK) == HIBMC_DP_HOST_SERDES_CTRL_VAL) {
+> > > +	ret = readl(priv->mmio + HIBMC_DP_HOST_SERDES_CTRL);
+> > > +	if (ret) {
+> > >   		ret = hibmc_dp_init(priv);
+> > >   		if (ret)
+> > >   			drm_err(dev, "failed to init dp: %d\n", ret);
+> > > -- 
+> > > 2.33.0
+> > > 
 
+-- 
+With best wishes
+Dmitry
 
