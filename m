@@ -1,210 +1,106 @@
-Return-Path: <linux-kernel+bounces-521642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54214A3C049
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:44:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07D56A3C054
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:45:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8D913BA3FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:41:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A0F917829A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:41:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD551EB5CF;
-	Wed, 19 Feb 2025 13:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="vBdg6rzO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE50B1EB1B8;
-	Wed, 19 Feb 2025 13:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 353C81E9B0B;
+	Wed, 19 Feb 2025 13:41:14 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5718A45C14;
+	Wed, 19 Feb 2025 13:41:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739972462; cv=none; b=qXckfNpR5z8p9ICuy0ofI8Pyfd6r2rZlDge/C51ZUGkiFVBlxWYdGJtU7/kNHKA+BVJDnuuyGInkALeK24BdOSuQNgF5cZSDyXXsVaCWcettKoWuw3BZxTmYUXMtg5bZeMtExCje/mwrox0AkzYkLH7vCrxeciQArHREcLjc0Og=
+	t=1739972473; cv=none; b=PMnU75GFHLwE0m6UBiSqjECu2+HmSEGGh7hx+2bNrBQJ18Q3+5aGC+GrYsnRd8XmCsg1TYT1/8P4WxlFXr9HlvJVavE4jQ8489QV2dghjDoNb7si8ZpArpQ1D5uqVtOkpWZEolHQJWVKk6bMgyFnx8XKiddFN+2e9Y4GRn+lOQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739972462; c=relaxed/simple;
-	bh=Agd8dAvug++fNqH4Fy/1e7D6Lgjyatp74gkEX5NdNps=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FaCjCvchDsmfjTHtEH2oxJnST1OCXYbDMgL20+fIIMo4SU5nGPwYDJZqtoKaa3pdSmybEynmE6RSW2SPQPafmJeI6wyJAopdNeliZOan9+blYdM1xbymzo2UWIzZFgl8r1Syxwb1UwIPn6lfGlPu3bNzYlgnCiRpAK2IMe1HJlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=vBdg6rzO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5617C4CEE7;
-	Wed, 19 Feb 2025 13:41:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1739972461;
-	bh=Agd8dAvug++fNqH4Fy/1e7D6Lgjyatp74gkEX5NdNps=;
-	h=From:To:Cc:Subject:Date:From;
-	b=vBdg6rzOtRgIpF2ExgrdPZyFzcjdO/yMw8De+F+0Uu93VrR/30dOZetNZjReJaEbp
-	 BSfQfRYf2AxPzk8a70HfoB8C53PB6gPbTPAKv0HerNwi/+C2yFs32ASVXQel/GWbul
-	 L4EnK2IGxTdFiL0Nn8DV+hkYtGlLpduOZLipucck=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable <stable@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	linux-perf-users@vger.kernel.org
-Subject: [PATCH] perf: fix up some comments and code to properly use the event_source bus
-Date: Wed, 19 Feb 2025 14:40:56 +0100
-Message-ID: <2025021955-implant-excavator-179d@gregkh>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1739972473; c=relaxed/simple;
+	bh=z3oU/+k+ZI8AERKJpGKypXZmHNAT00Wj8hIykkcfdNs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FP4FdtqGgOZNziWhbXdkXvf3XL6+ZwUtPZgDJUeDLN52hMG3KFk2apnfn9vxyiAj/J4xio1Z8cTvIN2JuYmKPX5BFiA5zSnDYAarXh87APrVkNAS9sMlQUWTxYWnIjIvvuPbQ5D+pbZPtZNojNqi4ex5+sF5uooYAliR8YoVmC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 056F61682;
+	Wed, 19 Feb 2025 05:41:30 -0800 (PST)
+Received: from e133380.arm.com (e133380.arm.com [10.1.197.43])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8C9773F59E;
+	Wed, 19 Feb 2025 05:41:07 -0800 (PST)
+Date: Wed, 19 Feb 2025 13:41:05 +0000
+From: Dave Martin <Dave.Martin@arm.com>
+To: Babu Moger <babu.moger@amd.com>
+Cc: corbet@lwn.net, reinette.chatre@intel.com, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	tony.luck@intel.com, peternewman@google.com, fenghua.yu@intel.com,
+	x86@kernel.org, hpa@zytor.com, paulmck@kernel.org,
+	akpm@linux-foundation.org, thuth@redhat.com, rostedt@goodmis.org,
+	xiongwei.song@windriver.com, pawan.kumar.gupta@linux.intel.com,
+	daniel.sneddon@linux.intel.com, jpoimboe@kernel.org,
+	perry.yuan@amd.com, sandipan.das@amd.com, kai.huang@intel.com,
+	xiaoyao.li@intel.com, seanjc@google.com, xin3.li@intel.com,
+	andrew.cooper3@citrix.com, ebiggers@google.com,
+	mario.limonciello@amd.com, james.morse@arm.com,
+	tan.shaopeng@fujitsu.com, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, maciej.wieczor-retman@intel.com,
+	eranian@google.com
+Subject: Re: [PATCH v11 17/23] x86/resctrl: Auto assign/unassign counters
+ when mbm_cntr_assign is enabled
+Message-ID: <Z7XfcV05ZZkHm6bc@e133380.arm.com>
+References: <cover.1737577229.git.babu.moger@amd.com>
+ <2119b76ef8be21b1d8b2deedfab23e8e33ba724c.1737577229.git.babu.moger@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Lines: 140
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5486; i=gregkh@linuxfoundation.org; h=from:subject:message-id; bh=Agd8dAvug++fNqH4Fy/1e7D6Lgjyatp74gkEX5NdNps=; b=owGbwMvMwCRo6H6F97bub03G02pJDOlb76ebbU9UnT+X4ZnUhoWH5R9O2PNTc3Pzo9v8O7ksO Hd33e2f2hHLwiDIxCArpsjyZRvP0f0VhxS9DG1Pw8xhZQIZwsDFKQAT6VrLsKD/3/tZr2bObREz Z1p6LnD1HuYCcz+G+XG2l1qW8QgKzCvoLeD43XleQlgkFQA=
-X-Developer-Key: i=gregkh@linuxfoundation.org; a=openpgp; fpr=F4B60CC5BF78C2214A313DCB3147D40DDB2DFB29
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2119b76ef8be21b1d8b2deedfab23e8e33ba724c.1737577229.git.babu.moger@amd.com>
 
-In sysfs, the perf events are all located in
-/sys/bus/event_source/devices/ but some places ended up hard-coding the
-location to be at the root of /sys/devices/ which could be very risky as
-you do not exactly know what type of device you are accessing in sysfs
-at that location.
+Hi,
 
-So fix this all up by properly pointing everything at the bus device
-list instead of the root of the sysfs devices/ tree.
+On Wed, Jan 22, 2025 at 02:20:25PM -0600, Babu Moger wrote:
+> Assign/unassign counters on resctrl group creation/deletion. Two counters
+> are required per group, one for MBM total event and one for MBM local
+> event.
+> 
+> There are a limited number of counters available for assignment. If these
+> counters are exhausted, the kernel will display the error message: "Out of
+> MBM assignable counters". However, it is not necessary to fail the
+> creation of a group due to assignment failures. Users have the flexibility
+> to modify the assignments at a later time.
 
-Cc: stable <stable@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Ian Rogers <irogers@google.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: "Liang, Kan" <kan.liang@linux.intel.com>
-Cc: linux-perf-users@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- tools/perf/Documentation/intel-hybrid.txt | 12 ++++++------
- tools/perf/Documentation/perf-list.txt    |  2 +-
- tools/perf/arch/x86/util/iostat.c         |  2 +-
- tools/perf/builtin-stat.c                 |  2 +-
- tools/perf/util/mem-events.c              |  2 +-
- tools/perf/util/pmu.c                     |  4 ++--
- 6 files changed, 12 insertions(+), 12 deletions(-)
+If we are doing this, should turning mbm_cntr_assign mode on also
+trigger auto-assingment for all extant monitoring groups?
 
-diff --git a/tools/perf/Documentation/intel-hybrid.txt b/tools/perf/Documentation/intel-hybrid.txt
-index e7a776ad25d7..0379903673a4 100644
---- a/tools/perf/Documentation/intel-hybrid.txt
-+++ b/tools/perf/Documentation/intel-hybrid.txt
-@@ -8,15 +8,15 @@ Part of events are available on core cpu, part of events are available
- on atom cpu and even part of events are available on both.
- 
- Kernel exports two new cpu pmus via sysfs:
--/sys/devices/cpu_core
--/sys/devices/cpu_atom
-+/sys/bus/event_source/devices/cpu_core
-+/sys/bus/event_source/devices/cpu_atom
- 
- The 'cpus' files are created under the directories. For example,
- 
--cat /sys/devices/cpu_core/cpus
-+cat /sys/bus/event_source/devices/cpu_core/cpus
- 0-15
- 
--cat /sys/devices/cpu_atom/cpus
-+cat /sys/bus/event_source/devices/cpu_atom/cpus
- 16-23
- 
- It indicates cpu0-cpu15 are core cpus and cpu16-cpu23 are atom cpus.
-@@ -60,8 +60,8 @@ can't carry pmu information. So now this type is extended to be PMU aware
- type. The PMU type ID is stored at attr.config[63:32].
- 
- PMU type ID is retrieved from sysfs.
--/sys/devices/cpu_atom/type
--/sys/devices/cpu_core/type
-+/sys/bus/event_source/devices/cpu_atom/type
-+/sys/bus/event_source/devices/cpu_core/type
- 
- The new attr.config layout for PERF_TYPE_HARDWARE:
- 
-diff --git a/tools/perf/Documentation/perf-list.txt b/tools/perf/Documentation/perf-list.txt
-index d0c65fad419a..c3ffd93f94d7 100644
---- a/tools/perf/Documentation/perf-list.txt
-+++ b/tools/perf/Documentation/perf-list.txt
-@@ -188,7 +188,7 @@ in the CPU vendor specific documentation.
- 
- The available PMUs and their raw parameters can be listed with
- 
--  ls /sys/devices/*/format
-+  ls /sys/bus/event_source/devices/*/format
- 
- For example the raw event "LSD.UOPS" core pmu event above could
- be specified as
-diff --git a/tools/perf/arch/x86/util/iostat.c b/tools/perf/arch/x86/util/iostat.c
-index 00f645a0c18a..7442a2cd87ed 100644
---- a/tools/perf/arch/x86/util/iostat.c
-+++ b/tools/perf/arch/x86/util/iostat.c
-@@ -32,7 +32,7 @@
- #define MAX_PATH 1024
- #endif
- 
--#define UNCORE_IIO_PMU_PATH	"devices/uncore_iio_%d"
-+#define UNCORE_IIO_PMU_PATH	"bus/event_source/devices/uncore_iio_%d"
- #define SYSFS_UNCORE_PMU_PATH	"%s/"UNCORE_IIO_PMU_PATH
- #define PLATFORM_MAPPING_PATH	UNCORE_IIO_PMU_PATH"/die%d"
- 
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index 77e327d4a9a7..68ea7589c143 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -97,7 +97,7 @@
- #include <internal/threadmap.h>
- 
- #define DEFAULT_SEPARATOR	" "
--#define FREEZE_ON_SMI_PATH	"devices/cpu/freeze_on_smi"
-+#define FREEZE_ON_SMI_PATH	"bus/event_source/devices/cpu/freeze_on_smi"
- 
- static void print_counters(struct timespec *ts, int argc, const char **argv);
- 
-diff --git a/tools/perf/util/mem-events.c b/tools/perf/util/mem-events.c
-index 3692e988c86e..0277d3e1505c 100644
---- a/tools/perf/util/mem-events.c
-+++ b/tools/perf/util/mem-events.c
-@@ -189,7 +189,7 @@ static bool perf_pmu__mem_events_supported(const char *mnt, struct perf_pmu *pmu
- 	if (!e->event_name)
- 		return true;
- 
--	scnprintf(path, PATH_MAX, "%s/devices/%s/events/%s", mnt, pmu->name, e->event_name);
-+	scnprintf(path, PATH_MAX, "%s/bus/event_source/devices/%s/events/%s", mnt, pmu->name, e->event_name);
- 
- 	return !stat(path, &st);
- }
-diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-index 6206c8fe2bf9..a8193ac8f2e7 100644
---- a/tools/perf/util/pmu.c
-+++ b/tools/perf/util/pmu.c
-@@ -36,12 +36,12 @@
- #define UNIT_MAX_LEN	31 /* max length for event unit name */
- 
- enum event_source {
--	/* An event loaded from /sys/devices/<pmu>/events. */
-+	/* An event loaded from /sys/bus/event_source/devices/<pmu>/events. */
- 	EVENT_SRC_SYSFS,
- 	/* An event loaded from a CPUID matched json file. */
- 	EVENT_SRC_CPU_JSON,
- 	/*
--	 * An event loaded from a /sys/devices/<pmu>/identifier matched json
-+	 * An event loaded from a /sys/bus/event_source/devices/<pmu>/identifier matched json
- 	 * file.
- 	 */
- 	EVENT_SRC_SYS_JSON,
--- 
-2.48.1
+Either way though, this auto-assignment feels like a potential nuisance
+for userspace.
 
+If the userspace use-case requires too many monitoring groups for the
+available counters, then the kernel will auto-assign counters to a
+random subset of groups which may or may not be the ones that userspace
+wanted to monitor; then userspace must manually look for the assigned
+counters and unassign some of them before they can be assigned where
+userspace actually wanted them.
+
+This is not impossible for userspace to cope with, but it feels
+awkward.
+
+Is there a way to inhibit auto-assignment?
+
+Or could automatic assignments be considered somehow "weak", so that
+new explicit assignments can steal automatically assigned counters
+without the need to unassign them explicitly?
+
+[...]
+
+Cheers
+---Dave
 
