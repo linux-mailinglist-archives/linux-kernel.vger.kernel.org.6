@@ -1,272 +1,241 @@
-Return-Path: <linux-kernel+bounces-522529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D30F3A3CB82
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:33:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 64EA8A3CB95
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:36:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E29293A8F2D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:33:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43D463B4960
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:36:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D67332580CC;
-	Wed, 19 Feb 2025 21:33:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6AEA2586D3;
+	Wed, 19 Feb 2025 21:36:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="lD1imvK0"
-Received: from AS8PR03CU001.outbound.protection.outlook.com (mail-westeuropeazon11012013.outbound.protection.outlook.com [52.101.71.13])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="I0rwc7Ox"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE9452147E4;
-	Wed, 19 Feb 2025 21:33:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.71.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740000795; cv=fail; b=n75MeVehnHeGhaCk3E/XM7viMQt/eyZtIk7/bvPSJ46tgwjtYw9deL++kZv1ucMOyngqdbH5vBe/l1sopxYzWv2vPCbDOHabhbHG8AUE3OBcE/td2uFFwk3qkVCSWsGIWrqbq7AO3KPY4Rnnm12780bnGon+hZsEnMZKXJGqLWY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740000795; c=relaxed/simple;
-	bh=V0RrQvQS59nGzQkJfZOlOX/tf+9TzVo7yWQ3X9XC9nI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=p//iWk8aIniOKP0nKw9dS8gWscIvLXpBnqxz7UV44MWyk8rxABzWftzQOFmeZ6Q/PX3Kx/faFubOOuYovH07rFHHPHQcyiU77q8AmXys1a6KUC3J0y7OQDxVOMiCdcvfogJ9RPCzTHzyFigjHSbZBOcSrHA2lKg7Yjfqrvy/ZgA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=lD1imvK0; arc=fail smtp.client-ip=52.101.71.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DqAO59vthm2xf4pjGT5tXVm1wNQCEl/9/EhzNM2Lhu6Xm5p7/shfQFcCq2Q+YI85U3ilDeDg7ceY22sIj6pgBPVHDOmd/P6ykXYyX/QesB5e1KlH58rDvTIvjDgGBUUQaQx9xycXvztTz0NJxr19t61/t0W62qnNlNcMB06eyvRtibfcibPo+xbw2rl873UpsDfH/Esf44Ket0WuMcnxnQ5IAGqWFpzMfNABw4qJY1H6mIRuodmPHlMpT237NNWmNl2+SSPKIPYqkxt+ww66DI+JIGMpoeDyRdn9txQOJ5euEzaC+REQZtsnfe6YPXcnC1eIuCW8ZSfkjawLWfYY5g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SFuaSnrc68rqu34kpKA6/Z0ITdEvHIFEpnGvEbxv4fY=;
- b=D4EKLXbfg0+r8AFa/U2Hkv0n/Ws2ztdC6yAzxXituXcb5U9jCiOtPZ31Byl1pxp9cQrThoQ8ThdjXjDC0pfPE4lYsFcORioF2Fu0ONZ40p4uXqGXTq36CEboc/wCxFCoJWDlHqSOgVmnACzJPSi5yJQ2GtXUOzdrLKYcgf/dL8gy0081wrnItO6rrGFKXs5mrA9L6E1KqvaEMgwXtRnaFYk10em+nTLC9hWFh8Hpcsk4iO+TjU0+EcDg55pH5L4Hk61Mbrw3hWiVgEAGs+JknOfseFq3+ujRfeVHmctqVhMxKLPtTz60Dm3RyvDPxAI4h9uJh34b3gryrySjU7N5QQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SFuaSnrc68rqu34kpKA6/Z0ITdEvHIFEpnGvEbxv4fY=;
- b=lD1imvK01jGDYvnwBjMQRameaymp3Nqpm5tuFICiaXFPQ50EvwJhktKpeiW2h7MileQ2eb7KXGSu0xjs3ynIlP+fnVBSgrL4GM8TWsFfO4zWH1jJgMUacupuChG+vJZq2yQFdLvrFklAyN3Vlj6k6syKoLVy1BN3xDiZA5fIv1LJw+6DF9E5moHjF3e4rIA7Zy1GIkgUvWuFE9v1u5a8e3bACkqT9LDLpU5Q5115QWB+0+KocFJeXmmgrDj0Ygr53avihaUARNCRav5YfgH0RGfbSGOZkYiqPXcdBOMvZLhaJGLDsGfkfuu4qKTq2q1Mxwo5reCK74yBx+NjygNcOA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by AS5PR04MB10058.eurprd04.prod.outlook.com (2603:10a6:20b:683::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.15; Wed, 19 Feb
- 2025 21:33:10 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8445.017; Wed, 19 Feb 2025
- 21:33:10 +0000
-Date: Wed, 19 Feb 2025 16:33:04 -0500
-From: Frank Li <Frank.li@nxp.com>
-To: Daniel Baluta <daniel.baluta@nxp.com>
-Cc: p.zabel@pengutronix.de, robh@kernel.org, shawnguo@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, s.hauer@pengutronix.de,
-	kernel@pengutronix.de, festevam@gmail.com,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	mathieu.poirier@linaro.org, shengjiu.wang@nxp.com, peng.fan@nxp.com,
-	laurentiu.mihalcea@nxp.com, iuliana.prodan@nxp.com
-Subject: Re: [PATCH v2 8/8] imx_dsp_rproc: Use reset controller API to
- control the DSP
-Message-ID: <Z7ZOEDV3GnO7mAwx@lizhi-Precision-Tower-5810>
-References: <20250219192102.423850-1-daniel.baluta@nxp.com>
- <20250219192102.423850-9-daniel.baluta@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250219192102.423850-9-daniel.baluta@nxp.com>
-X-ClientProxiedBy: SA1P222CA0022.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:806:22c::19) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F07072580DD
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 21:36:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740000965; cv=none; b=rVLWQXB+G5b5k409ilUmeDQhdQDhzEMvjFsMTkWomc/hRyTjwTEnP4f3Ndq1N+ixZ2Z16g9O1TUM71ga86IpkkVeO1vXeFL6eycBuN9nx6DUY73ZmMdUqOYv/bubkhee+HxEDNeAj93SYuY2YaixqcZ6C51RPdOCq4Fcl8Rrzi8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740000965; c=relaxed/simple;
+	bh=NwdYX80AoZVeXVazJE3UJmo3FYdczQC745wtVt8RgYM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Tphgskc2W6yfCAWxp8eE2Eb9U5ZEqYrCuGrzj2RYo8r9vnEf6IAD7gX55aslTRncV/HDiETvuPJji3+2r3WZhGcVQa+4ZstvhG+WjU1OA//ya9Aj8DZ+Ese+Kis3IpM1SRb4jW3GMKP0IaNh03oWNAZ7Ov01VUfYhcfI0T+rsc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=I0rwc7Ox; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1740000960;
+	bh=NwdYX80AoZVeXVazJE3UJmo3FYdczQC745wtVt8RgYM=;
+	h=From:Subject:Date:To:Cc:From;
+	b=I0rwc7OxZO/A8+eM2K9ehjgODO4sXhrHw8dr4Lay6/FCtNjpWn/ZcMbqBavBCLbsE
+	 ZlLY9ZfiPQVJzpnfwGRc6zG2HThzo+X69tYn51AR+rrh8ozHoKic/9lJC+vejVX5wb
+	 w7fA8CI8F08P2wxeBvUxT4rqwK3N+UB+NV9iGNqc=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Subject: [PATCH 0/6] sysfs: finalize the constification of 'struct
+ bin_attribute'
+Date: Wed, 19 Feb 2025 22:34:49 +0100
+Message-Id: <20250219-sysfs-const-bin_attr-final-v1-0-02828d86af3c@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AS5PR04MB10058:EE_
-X-MS-Office365-Filtering-Correlation-Id: 64d847d2-8e68-4ed5-2b55-08dd512d01a7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|52116014|7416014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?3nXg0WX+3kTBjYurkMiYXuL1z/t90qSunGg64CUl7RufJ2lrWmVsnXiDpYkz?=
- =?us-ascii?Q?09u8khe8coI/FqfPvT9PU2ZE4qorLDk2+FhgfrHWj1DeNzy02Ca6Y+JZSQmJ?=
- =?us-ascii?Q?cXkrXC6bGx13t/B89IgBZA/SFRNpqBhnl+SKT5xmL+/R0eOoNlnnGRfqhawq?=
- =?us-ascii?Q?Gk089WLQfuVLyVpSE2x4B5yiy6+vT83ab6LrGKsAGQC8/6fh8certnb48u5L?=
- =?us-ascii?Q?QzOgYNnmB3rboTYUsf/Vf26PcrBN7+ttybGFWxla1BWV1034tK2G/ohgRnMC?=
- =?us-ascii?Q?rnfXAA9IMW5eWSSIKev4gp1sOmwcJCAWP71s0XcwyhoWIJOyUj0ASj90uo9M?=
- =?us-ascii?Q?ArTfN4K4BKlwg+0hPnyqSTBJXm32BeiyAPLrxoABe+2E6yzzQUe30zL1HbI8?=
- =?us-ascii?Q?WTj2VRqxLnR4k2c1YNE2MFY9nWvtMTW5cgKv+EgARqh2YqXsCm7vUeXAy+QP?=
- =?us-ascii?Q?nWXkOYXr92pwd4Rrd9hH3WiWTidBZFpJ7khHhoHKQh6liiCBgRVMC4vYQqX1?=
- =?us-ascii?Q?Tr6H/QkH2J5jNoY88lK/3vC1sWP/6tYgvj9sqdALdAqV6irtOdSA2R5CFrWa?=
- =?us-ascii?Q?TrfY0G4Z+YmBC45ilhBrLuHflbhl0dpoojYdjgogjXL3jKm98Bn9zVtT3qrR?=
- =?us-ascii?Q?ID64VeK0lvA7HpxI6psgcdRFZVxgmBddaCwWj+ZfgaYJyiDQyqHffEzW9hPE?=
- =?us-ascii?Q?xcWnRsMZPY5/F9qXJBDAaWvGKjbR5EgAK85kTnoZpL0aoLsh4nBOAPupizE+?=
- =?us-ascii?Q?9FvUJ0oQ8w+BnWtzTYU40aN0jwb8tR7GjuUC4eAVJiu5dCdjrMlC+875UFxO?=
- =?us-ascii?Q?mkAJME8JV+TH1vJ49aMSpTB0XgysaYrqfLjugRI2m6Qq7qNgTLBCjqgVcOM6?=
- =?us-ascii?Q?azP0SE9i6h9IISPnbDmvGqky4Xuv8gJ3GOuOWmAwqCa5C+7gl/lBeIbZIgxZ?=
- =?us-ascii?Q?1ZP8LoT4iIgotz4WUxoaX7ZxPV0nsk44WLrzqwjk09Ex2LvvveXyKjqanVYN?=
- =?us-ascii?Q?iE8JspLkQ54mVXT8AUReZAcDrrYF76KAA7GiDbI06xdBPtBz+NeipKqc3756?=
- =?us-ascii?Q?Ut11v/gzulIWTVoyaF2QEqFcBG3EBZb0irhxy7I94xVEC/wvsY9+W3d32pMq?=
- =?us-ascii?Q?hYAYMxVODlXMlnWX3ZdDJA7k6lY2OUpgVdOWjP0hcPRE+mSDvvkxkB8sWvBc?=
- =?us-ascii?Q?XPtZM8uNL0WJo0hjtdIHd1YAL6tefXO8IOJ0YOavId1KaEhckQgGY/U0tjT2?=
- =?us-ascii?Q?BQWFYoWUFgHHeIb07Az/YMFCI6SSPq+E130JC04miIv9gXiy1XdN75pe31O7?=
- =?us-ascii?Q?CYofUq70O6zdqQkdcDQNGVTPjBWvIMHF/nV5DAuQVYOL2EV1G9N2o3z9+Z4w?=
- =?us-ascii?Q?ObmIMpmQvSWBS2K8R6GJGXZscGNqEpfJ4IzTnCgy4EL85i8FDIDjgHnclrDW?=
- =?us-ascii?Q?pq4w9SRSZcWfpNdKvwwIATNjoH+t6xNo?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(7416014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?2aXyXDhGqmQ2xn9NZhRGyPU5MV0z0qjwFvYiRDW8ZLXVzNJz0zb+7E4FiSXJ?=
- =?us-ascii?Q?UNzSqGGI+xYh5v6TFVLcCeenQhULrm+eJWx1UOx2Sk+nqDvlL0Ad/nbnff4V?=
- =?us-ascii?Q?O9CyFb7V6KRCscA0PtAJEmwNftpyamLTlaR2aITt41eoW2Bt5lbjeb59047p?=
- =?us-ascii?Q?iCJMxFf5Xcigai7UKkgaU3DaFady/uqaWmLi5QAASczpWARK5MUN1aNpz+bA?=
- =?us-ascii?Q?DeGntoXs/DQbTb4aFCXVkUtrRi/pvV5duX5WGf6SPGqWOeB7lSeamvZTtr9U?=
- =?us-ascii?Q?6wBnbfOgGbPFPEPGQophGwkRTqXRm7vEuQAMuSJM/D7FwzdGx9gmYSv+vFRk?=
- =?us-ascii?Q?bpJkOKWDVPdKBcgjyCx3hPdvMI7PsVEP136k0fPL0tjMQcq4jw0gBOoO5VIH?=
- =?us-ascii?Q?YAssil6XOS6kOslnZpeNxxn+DiSXPwGdRZNp+YHzpHh/0ANPsrB6YYlsdnEK?=
- =?us-ascii?Q?H1inrw2FZQ5UvKBoqOixabuumgMfo9pZZ3+E548iXulxuH8fB/pJpokzVL9z?=
- =?us-ascii?Q?WC0Kv0p5/YYzpS+QALs/9nqBCrKgNCvHprtJ7LyZFo6MEnhIcsTcQ9RYTfYY?=
- =?us-ascii?Q?H0f2R1Dp8CXf36ABDX2NEQPh8iF8J+KkSKvIw1zeTSM6kOBSb1spG4wxRuai?=
- =?us-ascii?Q?ycdNUf59S96s+BWKO9OYQLqHiMbrLNslGcQzQBbhKp8AYwVoVtFpF+7g+8nu?=
- =?us-ascii?Q?ReT2YFnxRC1aJ15+eTO1I3U7XPscdg5ueyHq+MGUMT+zhBwQTCqSnPjZrJNg?=
- =?us-ascii?Q?G5N+2GhEl0XSbhpSi5tHDmKMyZSbH2F8rZMjRsMerdlj9E8bkUfhAtiWainE?=
- =?us-ascii?Q?Bf4UH0Q/qv4tTeo1ISxMo3yLACBqjUgO7NIMWQyULsbPfmA/W8AuOby3I10f?=
- =?us-ascii?Q?Zk+ybzt80TOb+wOAPsiqaTviGW4uxqjU5RFr+Ey+m6PjpkttEjP8RIEDnsBv?=
- =?us-ascii?Q?YLP+jFBt2xl+ZptVyd1fWWWUxR0CNqyx9OO5kq7E9WPGSNc8py/64P7/Xk4R?=
- =?us-ascii?Q?ce+suPyk2SHcVT+ac543dcwZ7mZjEV7HKv0R6n+iEFDt534tajMsZgaTymJy?=
- =?us-ascii?Q?PcBEfm0faEtbdL7RaYbd/RS0ahAmqiWzYRlBOM6WrKDA5VFWAABk0ejZB0iE?=
- =?us-ascii?Q?wD4PEP3k8vkLSFrWmDVrFig/a+/2c7zG1Ym2OeScWmr2f3SbVTDHRH4r/nfz?=
- =?us-ascii?Q?P+nNQbmlfcD9O5PCl5Eh6+OxaPKB4wCWIwrapVp2JeJHMIeZjbmBN+17skuY?=
- =?us-ascii?Q?mpYQF9iN5wkCPDAwWp/LeyxDrinVGriML+TQVMDidm1fgj6WHxmLxAyv7SK9?=
- =?us-ascii?Q?Lywc5P7ViGL6Gp+kDzKxnLxlvJWRqawKwsVKingeBUga+YK0YBtv+kLko+iG?=
- =?us-ascii?Q?n5CTjGlTb9trZfkgm++nJtVO2kJSHYZ2ulBrCLhdVcJHptBMVcnkMuuq+E+r?=
- =?us-ascii?Q?x4Y+XhzlbKSmQzey5FL964Ydt9QZG2SPeUf07Qi9evmzlixjLbRhVBI2Cjbu?=
- =?us-ascii?Q?/Jssihf3Mu1Slx5QarmKtN+9PZNtGIoB3s7IoVD+T11UsgAwXIXP3oUpqJ9s?=
- =?us-ascii?Q?7NJoWL+Te38Ljf0LABPAZFOJ8heD8uwa2AdR0KtZ?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 64d847d2-8e68-4ed5-2b55-08dd512d01a7
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2025 21:33:10.1714
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: aTFiMEW3nGMjWTxAQTXAfyvow3pVC4kU0frUcJuaNo9+/vTORi5dT+flh0iXaiGxjcuu8D9I0RjYjjQ6rl7Svg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS5PR04MB10058
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAHlOtmcC/x3MUQqDMAwA0KtIvg20ZTLdVYZI16YaGHE0RRTx7
+ pZ9vp93glJmUng1J2TaWHmVCts2EBYvMyHHanDGdcbZJ+qhSTGsogU/LJMvJWNi8V+MAz2iCan
+ 3NkINfpkS7//8PV7XDR+Bcv1sAAAA
+X-Change-ID: 20250217-sysfs-const-bin_attr-final-d9e4d0cf8a1d
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1740000960; l=10357;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=NwdYX80AoZVeXVazJE3UJmo3FYdczQC745wtVt8RgYM=;
+ b=rSZvM5P0jctPdSfRG6AD0XXuCnHbFqe+V1pK62DZ8JiCsQj3k4+uZ5n+qDz88INevjihWZT/e
+ cKMhqu0V71nBanjEDVm+L4LgQcLXaXmw12sMshI+TWZ76RimRimZNYR
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-On Wed, Feb 19, 2025 at 09:21:02PM +0200, Daniel Baluta wrote:
-> Use the reset controller API to control the DSP on i.MX8MP. This way
-> we can have a better control of the resources and avoid using a syscon
-> to access the audiomix bits.
->
-> Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
-> Reviewed-by: Peng Fan <peng.fan@nxp.com>
+All users have been migrated to the new const types.
+Change the types of the normal fields, switch all users over and then
+get rid of the transition machinery.
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
+This depends on the following patches which are not mainline yet:
 
-> ---
->  drivers/remoteproc/imx_dsp_rproc.c | 25 +++++++++++++++++--------
->  drivers/remoteproc/imx_rproc.h     |  2 ++
->  2 files changed, 19 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
-> index ea5024919c2f..631563e4f86d 100644
-> --- a/drivers/remoteproc/imx_dsp_rproc.c
-> +++ b/drivers/remoteproc/imx_dsp_rproc.c
-> @@ -19,6 +19,7 @@
->  #include <linux/pm_runtime.h>
->  #include <linux/regmap.h>
->  #include <linux/remoteproc.h>
-> +#include <linux/reset.h>
->  #include <linux/slab.h>
->
->  #include "imx_rproc.h"
-> @@ -111,6 +112,7 @@ enum imx_dsp_rp_mbox_messages {
->   */
->  struct imx_dsp_rproc {
->  	struct regmap				*regmap;
-> +	struct reset_control			*reset;
->  	struct rproc				*rproc;
->  	const struct imx_dsp_rproc_dcfg		*dsp_dcfg;
->  	struct clk_bulk_data			clks[DSP_RPROC_CLK_MAX];
-> @@ -192,9 +194,7 @@ static int imx8mp_dsp_reset(struct imx_dsp_rproc *priv)
->  	/* Keep reset asserted for 10 cycles */
->  	usleep_range(1, 2);
->
-> -	regmap_update_bits(priv->regmap, IMX8M_AudioDSP_REG2,
-> -			   IMX8M_AudioDSP_REG2_RUNSTALL,
-> -			   IMX8M_AudioDSP_REG2_RUNSTALL);
-> +	reset_control_assert(priv->reset);
->
->  	/* Take the DSP out of reset and keep stalled for FW loading */
->  	pwrctl = readl(dap + IMX8M_DAP_PWRCTL);
-> @@ -231,13 +231,9 @@ static int imx8ulp_dsp_reset(struct imx_dsp_rproc *priv)
->
->  /* Specific configuration for i.MX8MP */
->  static const struct imx_rproc_dcfg dsp_rproc_cfg_imx8mp = {
-> -	.src_reg	= IMX8M_AudioDSP_REG2,
-> -	.src_mask	= IMX8M_AudioDSP_REG2_RUNSTALL,
-> -	.src_start	= 0,
-> -	.src_stop	= IMX8M_AudioDSP_REG2_RUNSTALL,
->  	.att		= imx_dsp_rproc_att_imx8mp,
->  	.att_size	= ARRAY_SIZE(imx_dsp_rproc_att_imx8mp),
-> -	.method		= IMX_RPROC_MMIO,
-> +	.method		= IMX_RPROC_RESET_CONTROLLER,
->  };
->
->  static const struct imx_dsp_rproc_dcfg imx_dsp_rproc_cfg_imx8mp = {
-> @@ -329,6 +325,9 @@ static int imx_dsp_rproc_start(struct rproc *rproc)
->  					  true,
->  					  rproc->bootaddr);
->  		break;
-> +	case IMX_RPROC_RESET_CONTROLLER:
-> +		ret = reset_control_deassert(priv->reset);
-> +		break;
->  	default:
->  		return -EOPNOTSUPP;
->  	}
-> @@ -369,6 +368,9 @@ static int imx_dsp_rproc_stop(struct rproc *rproc)
->  					  false,
->  					  rproc->bootaddr);
->  		break;
-> +	case IMX_RPROC_RESET_CONTROLLER:
-> +		ret = reset_control_assert(priv->reset);
-> +		break;
->  	default:
->  		return -EOPNOTSUPP;
->  	}
-> @@ -995,6 +997,13 @@ static int imx_dsp_rproc_detect_mode(struct imx_dsp_rproc *priv)
->
->  		priv->regmap = regmap;
->  		break;
-> +	case IMX_RPROC_RESET_CONTROLLER:
-> +		priv->reset = devm_reset_control_get_exclusive(dev, NULL);
-> +		if (IS_ERR(priv->reset)) {
-> +			dev_err(dev, "Failed to get DSP reset control\n");
-> +			return PTR_ERR(priv->reset);
-> +		}
-> +		break;
->  	default:
->  		ret = -EOPNOTSUPP;
->  		break;
-> diff --git a/drivers/remoteproc/imx_rproc.h b/drivers/remoteproc/imx_rproc.h
-> index 17a7d051c531..cfd38d37e146 100644
-> --- a/drivers/remoteproc/imx_rproc.h
-> +++ b/drivers/remoteproc/imx_rproc.h
-> @@ -24,6 +24,8 @@ enum imx_rproc_method {
->  	IMX_RPROC_SMC,
->  	/* Through System Control Unit API */
->  	IMX_RPROC_SCU_API,
-> +	/* Through Reset Controller API */
-> +	IMX_RPROC_RESET_CONTROLLER,
->  };
->
->  /* dcfg flags */
-> --
-> 2.25.1
->
+https://lore.kernel.org/r/20250114-sysfs-const-bin_attr-cxl-v1-1-5afa23fe2a52@weissschuh.net
+https://lore.kernel.org/r/20250125-sysfs-const-bin_attr-dmi-v2-0-ece1895936f4@weissschuh.net
+https://lore.kernel.org/r/20241216-sysfs-const-bin_attr-drm-v1-0-210f2b36b9bf@weissschuh.net
+https://lore.kernel.org/r/20241215-sysfs-const-bin_attr-fsi-v1-1-b717f76a0146@weissschuh.net
+https://lore.kernel.org/r/20241216-sysfs-const-bin_attr-habanalabs-v1-1-b35463197efb@weissschuh.net
+https://lore.kernel.org/r/20241222-sysfs-const-bin_attr-input-v1-1-1229dbe5ae71@weissschuh.net
+https://lore.kernel.org/r/20241215-sysfs-const-bin_attr-mokvar-v1-1-d5a3d1fff8d1@weissschuh.net
+https://lore.kernel.org/r/20241215-sysfs-const-bin_attr-pcmcia-v1-1-ebb82e47d834@weissschuh.net
+https://lore.kernel.org/r/20241216-sysfs-const-bin_attr-powerpc-v1-0-bbed8906f476@weissschuh.net
+https://lore.kernel.org/r/20250114-sysfs-const-bin_attr-qemu_fw_cfg-v1-1-76f525a3ee72@weissschuh.net
+https://lore.kernel.org/r/20241216-sysfs-const-bin_attr-rapidio-v1-1-0f47f4719683@weissschuh.net
+https://lore.kernel.org/r/20241122-sysfs-const-bin_attr-rci2-v1-1-3db1ec9aa203@weissschuh.net
+
+The treewide changes have been done with sed/grep.
+This series and prerequisites have passed 0day on top of
+2408a807bfc3 ("Merge tag 'vfs-6.14-rc4.fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs").
+
+I'm only sending this to the sysfs maintainers. The treewide changes are
+purely mechanical.
+
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+Thomas Weißschuh (6):
+      sysfs: constify bin_attribute argument of bin_attribute::read/write()
+      sysfs: constify attribute_group::bin_attrs
+      sysfs: treewide: switch back to bin_attribute::read()/write()
+      sysfs: treewide: switch back to attribute_group::bin_attrs
+      sysfs: remove bin_attribute::read_new/write_new()
+      sysfs: remove attribute_group::bin_attrs_new
+
+ arch/powerpc/kernel/secvar-sysfs.c                 |  2 +-
+ arch/powerpc/perf/hv-24x7.c                        |  2 +-
+ arch/powerpc/platforms/powernv/opal-core.c         |  4 +--
+ arch/powerpc/platforms/powernv/opal-dump.c         |  2 +-
+ arch/powerpc/platforms/powernv/opal-elog.c         |  2 +-
+ arch/powerpc/platforms/powernv/opal-flash.c        |  2 +-
+ arch/powerpc/platforms/powernv/opal-msglog.c       |  2 +-
+ arch/powerpc/platforms/powernv/opal.c              |  2 +-
+ arch/powerpc/platforms/powernv/ultravisor.c        |  2 +-
+ arch/s390/kernel/cpacf.c                           |  2 +-
+ arch/s390/kernel/ipl.c                             | 18 +++++------
+ arch/s390/pci/pci_sysfs.c                          |  2 +-
+ arch/x86/kernel/ksysfs.c                           |  8 ++---
+ drivers/accel/habanalabs/common/sysfs.c            |  4 +--
+ drivers/acpi/bgrt.c                                |  2 +-
+ drivers/acpi/sysfs.c                               |  4 +--
+ drivers/base/devcoredump.c                         |  2 +-
+ drivers/base/firmware_loader/sysfs.c               |  6 ++--
+ drivers/base/node.c                                |  2 +-
+ drivers/base/topology.c                            |  2 +-
+ drivers/cxl/port.c                                 |  2 +-
+ drivers/firmware/efi/mokvar-table.c                |  2 +-
+ drivers/firmware/google/cbmem.c                    |  2 +-
+ drivers/firmware/google/gsmi.c                     |  2 +-
+ drivers/firmware/google/memconsole.c               |  2 +-
+ drivers/firmware/google/vpd.c                      |  4 +--
+ drivers/firmware/qemu_fw_cfg.c                     |  2 +-
+ drivers/fsi/fsi-core.c                             |  4 +--
+ drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c            |  6 ++--
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c            |  2 +-
+ .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_hdcp.c |  4 +--
+ drivers/gpu/drm/drm_sysfs.c                        |  4 +--
+ drivers/gpu/drm/i915/i915_gpu_error.c              |  4 +--
+ drivers/gpu/drm/i915/i915_sysfs.c                  |  8 ++---
+ drivers/gpu/drm/lima/lima_drv.c                    |  4 +--
+ drivers/hid/hid-core.c                             |  2 +-
+ drivers/hid/hid-roccat-arvo.c                      |  2 +-
+ drivers/hid/hid-roccat-common.h                    |  8 ++---
+ drivers/hid/hid-roccat-isku.c                      | 10 +++---
+ drivers/hid/hid-roccat-kone.c                      |  6 ++--
+ drivers/hid/hid-roccat-koneplus.c                  | 14 ++++-----
+ drivers/hid/hid-roccat-konepure.c                  |  2 +-
+ drivers/hid/hid-roccat-kovaplus.c                  | 12 ++++----
+ drivers/hid/hid-roccat-lua.c                       |  4 +--
+ drivers/hid/hid-roccat-pyra.c                      | 14 ++++-----
+ drivers/hid/hid-roccat-ryos.c                      |  2 +-
+ drivers/hid/hid-roccat-savu.c                      |  2 +-
+ drivers/i2c/i2c-slave-eeprom.c                     |  4 +--
+ drivers/iio/imu/bno055/bno055.c                    |  2 +-
+ drivers/infiniband/hw/hfi1/sysfs.c                 |  2 +-
+ drivers/infiniband/hw/qib/qib_sysfs.c              |  2 +-
+ drivers/input/touchscreen/goodix_berlin_core.c     |  2 +-
+ drivers/leds/led-class.c                           |  2 +-
+ drivers/media/pci/solo6x10/solo6x10-core.c         |  2 +-
+ drivers/misc/c2port/core.c                         |  2 +-
+ drivers/misc/cxl/sysfs.c                           |  4 +--
+ drivers/misc/ds1682.c                              |  4 +--
+ drivers/misc/eeprom/max6875.c                      |  2 +-
+ drivers/misc/ocxl/sysfs.c                          |  2 +-
+ drivers/misc/pch_phub.c                            |  4 +--
+ drivers/misc/sram.c                                |  4 +--
+ drivers/mtd/spi-nor/sysfs.c                        |  2 +-
+ .../net/ethernet/qlogic/netxen/netxen_nic_main.c   | 10 +++---
+ drivers/net/ethernet/qlogic/qlcnic/qlcnic_sysfs.c  | 34 ++++++++++----------
+ drivers/net/phy/spi_ks8995.c                       |  4 +--
+ drivers/net/wireless/ti/wlcore/sysfs.c             |  2 +-
+ drivers/nvmem/core.c                               | 14 ++++-----
+ drivers/of/kobj.c                                  |  2 +-
+ drivers/pci/hotplug/acpiphp_ibm.c                  |  2 +-
+ drivers/pci/p2pdma.c                               |  2 +-
+ drivers/pci/pci-sysfs.c                            | 12 ++++----
+ drivers/pci/vpd.c                                  |  2 +-
+ drivers/pcmcia/cistpl.c                            |  4 +--
+ drivers/platform/chrome/cros_ec_vbc.c              |  2 +-
+ drivers/platform/mellanox/mlxbf-bootctl.c          |  2 +-
+ drivers/platform/x86/amd/hsmp/acpi.c               |  4 +--
+ drivers/platform/x86/amd/hsmp/plat.c               |  4 +--
+ drivers/platform/x86/dell/dcdbas.c                 |  2 +-
+ drivers/platform/x86/dell/dell_rbu.c               |  2 +-
+ drivers/platform/x86/intel/pmt/class.c             |  2 +-
+ drivers/platform/x86/intel/sdsi.c                  |  2 +-
+ drivers/platform/x86/wmi-bmof.c                    |  2 +-
+ drivers/power/supply/ds2760_battery.c              |  2 +-
+ drivers/power/supply/ds2780_battery.c              | 10 +++---
+ drivers/power/supply/ds2781_battery.c              | 10 +++---
+ drivers/power/supply/olpc_battery.c                |  4 +--
+ drivers/ptp/ptp_ocp.c                              |  2 +-
+ drivers/rapidio/rio-sysfs.c                        |  6 ++--
+ drivers/s390/char/sclp_config.c                    |  2 +-
+ drivers/s390/char/sclp_sd.c                        |  2 +-
+ drivers/s390/cio/chp.c                             |  2 +-
+ drivers/s390/crypto/pkey_sysfs.c                   |  8 ++---
+ drivers/scsi/3w-sas.c                              |  4 +--
+ drivers/scsi/arcmsr/arcmsr_attr.c                  |  6 ++--
+ drivers/scsi/esas2r/esas2r_main.c                  |  6 ++--
+ drivers/scsi/ibmvscsi/ibmvfc.c                     |  2 +-
+ drivers/scsi/ipr.c                                 | 10 +++---
+ drivers/scsi/lpfc/lpfc_attr.c                      |  8 ++---
+ drivers/scsi/qedf/qedf_attr.c                      |  4 +--
+ drivers/scsi/qla2xxx/qla_attr.c                    | 28 ++++++++---------
+ drivers/scsi/qla4xxx/ql4_attr.c                    |  4 +--
+ drivers/scsi/scsi_sysfs.c                          |  6 ++--
+ drivers/usb/core/sysfs.c                           |  2 +-
+ drivers/usb/usbip/vudc_sysfs.c                     |  2 +-
+ drivers/video/fbdev/aty/radeon_base.c              |  4 +--
+ drivers/video/fbdev/udlfb.c                        |  4 +--
+ drivers/w1/slaves/w1_ds2406.c                      |  4 +--
+ drivers/w1/slaves/w1_ds2408.c                      |  2 +-
+ drivers/w1/slaves/w1_ds2413.c                      |  2 +-
+ drivers/w1/slaves/w1_ds2430.c                      |  2 +-
+ drivers/w1/slaves/w1_ds2431.c                      |  2 +-
+ drivers/w1/slaves/w1_ds2433.c                      | 12 ++++----
+ drivers/w1/slaves/w1_ds2438.c                      |  2 +-
+ drivers/w1/slaves/w1_ds2780.c                      |  2 +-
+ drivers/w1/slaves/w1_ds2781.c                      |  2 +-
+ drivers/w1/slaves/w1_ds2805.c                      |  4 +--
+ drivers/w1/slaves/w1_ds28e04.c                     |  2 +-
+ drivers/w1/w1.c                                    |  2 +-
+ drivers/zorro/zorro-sysfs.c                        |  4 +--
+ fs/sysfs/file.c                                    | 22 +++----------
+ fs/sysfs/group.c                                   |  6 ++--
+ include/linux/sysfs.h                              | 36 ++++------------------
+ kernel/bpf/btf.c                                   |  2 +-
+ kernel/bpf/sysfs_btf.c                             |  2 +-
+ kernel/module/sysfs.c                              | 14 ++++-----
+ mm/page_idle.c                                     |  2 +-
+ net/bridge/br_sysfs_br.c                           |  2 +-
+ 127 files changed, 291 insertions(+), 327 deletions(-)
+---
+base-commit: 16fbcf2511cee77492408f12b31eb8557c24bee8
+change-id: 20250217-sysfs-const-bin_attr-final-d9e4d0cf8a1d
+
+Best regards,
+-- 
+Thomas Weißschuh <linux@weissschuh.net>
+
 
