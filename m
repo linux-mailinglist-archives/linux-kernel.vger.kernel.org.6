@@ -1,160 +1,168 @@
-Return-Path: <linux-kernel+bounces-522011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60FA9A3C4E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:24:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD65AA3C4EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:26:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 310613AA831
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:22:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9758A168EA5
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:23:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 191A21FDE10;
-	Wed, 19 Feb 2025 16:22:47 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 770541FE44A;
+	Wed, 19 Feb 2025 16:23:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Vke7Uwod"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B28FA1F4620
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 16:22:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6F011FDA9D
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 16:23:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739982166; cv=none; b=vFMNcX8GdgKXEKV9O8oqrGl5dn9XpEspOaG7GG5gycrBZhHK/ciyfenF5bvgnRRUzc7/tiXG3509X3i/iCDFxLjtbXS9637U6c8xgEV2ZUjfwdrJfk6CvocPuCs0ku5sTEnpT0Kkq4TTOSq0vd7qh60JY5OgscoiBRBpF8u04DA=
+	t=1739982225; cv=none; b=ZXsToeAVFEej+jfP+wNCDyFyrhXA0rzpOVpQiYMbOdUW/I1OUF4mXoBJZmZIMUCohbLcdnABhiRKxXEJnk6Td72gQaLMooif7eU9uqtAQMe89N1sxWkn7QG4WHFwiAQ3aqcyuZjF5xPEE7s8vlPM2ADOK3Z79wwm0MgF047bk1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739982166; c=relaxed/simple;
-	bh=PSh/3fF365VRVdIYlepfiPt+5JXUEbpp9W7V2QjmLWk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nn+bo05hI32qiQgMTK04pK74PYaFHkl9i4gFMffytTyRkzvJRDGmoAGdFzZnhjnSOrvgZwdli7B0GuFfSLAnwmskmQvamnWdj44h/h8S0SXkTFVU+XBUjG12UXe9jqhUoZZX1oJbUxdknsWiAMY3xZ5//ZKxNR/uUKwu26RmlmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB84AC4CED1;
-	Wed, 19 Feb 2025 16:22:44 +0000 (UTC)
-Date: Wed, 19 Feb 2025 11:23:08 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
- Boqun Feng <boqun.feng@gmail.com>, Waiman Long <longman@redhat.com>, Joel
- Granados <joel.granados@kernel.org>, Anna Schumaker
- <anna.schumaker@oracle.com>, Lance Yang <ioworker0@gmail.com>, Kent
- Overstreet <kent.overstreet@linux.dev>, Yongliang Gao
- <leonylgao@tencent.com>, Tomasz Figa <tfiga@chromium.org>, Sergey
- Senozhatsky <senozhatsky@chromium.org>, linux-kernel@vger.kernel.org, Linux
- Memory Management List <linux-mm@kvack.org>, Lance Yang
- <ioworker0@gmail.com>
-Subject: Re: [PATCH 1/2] hung_task: Show the blocker task if the task is
- hung on mutex
-Message-ID: <20250219112308.5d905680@gandalf.local.home>
-In-Reply-To: <173997004932.2137198.7959507113210521328.stgit@mhiramat.tok.corp.google.com>
-References: <173997003868.2137198.9462617208992136056.stgit@mhiramat.tok.corp.google.com>
-	<173997004932.2137198.7959507113210521328.stgit@mhiramat.tok.corp.google.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1739982225; c=relaxed/simple;
+	bh=tZwVmZGIy/eSt0F/uS5uvIVQSBhlXJtKuOQbLfRhrCg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=eICV9UQj2a6JYbNnHWAlSHGQLmv6bm2CskNIP5nScBfod6cwZiDMGxl4TJyCH9J14pw2NljTkMkvnp2IApGIzaT0rDLi7ZO+ezinWUx6EnkNsNrnL5TbUoV6ImiWk9diZaYI4aVuQeZVVil7SumBGElLTp7yZhmxBZJV3C2pHaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Vke7Uwod; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-38f29a2c6a2so661979f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 08:23:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739982222; x=1740587022; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=h/JVUNmYdeWSnzu6tb+ukMUUG1W+l3NrvPTKiVQ7u4Y=;
+        b=Vke7Uwod9f7K4ip6hKiQccBOYt0NbTcfWchbUqvinJJwaibX9kpRwsTNN5DhgSY3l8
+         BBNUKwDzDihtRSJ4Og1RA6UU3Va+gwkQ4vgREButi11pEYSaV20EeK5uwejPogyf2S4L
+         A43b9bZ9xn6v7OFWuQnTL5MdO7WRN8M2zVc7PcWTgBqZYjVpjccolj96HjEhGVvE5SUN
+         jiQDAU/30fXar/GOF4BJfkh3r2Cbaf/X18ffQpn0PYlqt5kCY3oBKkyV9Zm34+i1A6ke
+         Jlz42DWPDlATsJtV/EIOGBfOGEGYdRsGcLr6tftr2ai2uU3+RugOyS23SUmYyfoAgeSD
+         fiZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739982222; x=1740587022;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=h/JVUNmYdeWSnzu6tb+ukMUUG1W+l3NrvPTKiVQ7u4Y=;
+        b=g8doGW7LPVfldhpybkJMFbeIg0X2oVXGebSEBC3q8CJSmJiNkzBWDN8+4/nGWbfDH1
+         lNpSM3o3Y6YnNfcy3wYMlGcuWU7etTmM1sDV5JpZGb8LLbP1TroX7mC8l/3KqXshILbg
+         vYlibt+zjJR4beixWNGhCWfAK+rimxLCYFBdCJbkW5cbBvqXsD44EWaSBaGGsRgYSaQ3
+         8ri2vZFcAQ4Bk2iA52YyE51siMlSHhgOztIgV3/XzmC50ShVVvuI7AcRtvbNBMLtlnnc
+         YNXwfO9pZx6Y5cuTeNP/e/xNY4tXM9itIH53LzJ7cAUo1uxjnK95egB/ELoz1Z4UheB7
+         524A==
+X-Forwarded-Encrypted: i=1; AJvYcCXONL7fDHl6ng/2+1rYBqOuEDQvE7Id2cQ1BQBCeaYVAKUdz4rAdyrKwfO3bNQigHnmLthBiBVuuJ6U1mY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvoakPJhQkgoyS2/Cf3wj69zzGZ3tNf1Ia9Aml3xdGJy6XzmG/
+	zpzQXd7LI0FXcMII6BDGG1VTJT85SZILJJcTtFS5Qre0Vw+WtpRoGxyR76LIia2mNwjO/04Rs/N
+	uc3E=
+X-Gm-Gg: ASbGncucE9BDzBCjEJCdBLif8VDxC/UPmSoQY2QQ/Up+YBOSFVQX6WVnOR2cIQuWT+r
+	WqNrvwVtNW7GFaol2fP+VEhL3NyfcPoSExZX5XNRhMzwp9yXoZtRBWb0WDtcC3fSqBmB8crXzxo
+	oiGnV3RR2+PPlD/KZnZfUflc0UpLCU8b1VKJdJE/EC3JCQtdr4h31AQ71nFG977+13FEW3u56hX
+	VANBv2CalFyFcopofqi0U/Om2hMoDjg56ye7JowP5qxVDT4S6d37dDOICNk/bg4WjZkQJ16fP6g
+	9RXq0FgbxbyomH3IBn/uOvHhlz36RfE=
+X-Google-Smtp-Source: AGHT+IGBdM3lo0D85OcGM+X/7yDsIYEa3ff6Dvt0fm3r6ukYvpu2eEqg39AxdYMVjgmIP9+/XM39uw==
+X-Received: by 2002:a05:6000:210a:b0:38c:5d0b:71ca with SMTP id ffacd0b85a97d-38f33e87b96mr6342208f8f.0.1739982222200;
+        Wed, 19 Feb 2025 08:23:42 -0800 (PST)
+Received: from [127.0.1.1] ([178.197.206.225])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f25a0fe5esm18442417f8f.99.2025.02.19.08.23.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2025 08:23:41 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v5 0/2] drm/msm/dsi/phy: Improvements around concurrent
+ PHY_CMN_CLK_CFG[01]
+Date: Wed, 19 Feb 2025 17:23:31 +0100
+Message-Id: <20250219-drm-msm-phy-pll-cfg-reg-v5-0-d28973fa513a@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIMFtmcC/4XNy2rDMBCF4VcJWneKZmT5klXeo2RhWSNb4BtSM
+ THG7145m6YE0+V/YL7ZROTgOYrrZROBFx/9NKbQHxfRdPXYMnibWpAkLVEh2DDAEAeYuxXmvof
+ GtRC4hYK1cbquK+tyka7nwM4/nvLXPXXn4/cU1uejBY/1f3NBkKBMVbFjQ1zaW+/HOkyfU2jFg
+ S70C5FU5xAlqMzJoMobbYneIPUCYXYOqQTJKlOm1LIgat6g7BUqzqEsQShzIy1ap5H/QPu+/wC
+ XLcutmgEAAA==
+X-Change-ID: 20250131-drm-msm-phy-pll-cfg-reg-7e5bf5aa9df6
+To: Rob Clark <robdclark@gmail.com>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Jonathan Marek <jonathan@marek.ca>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Rob Clark <robdclark@chromium.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1781;
+ i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
+ bh=tZwVmZGIy/eSt0F/uS5uvIVQSBhlXJtKuOQbLfRhrCg=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBntgWG39erfPCkDuCBdlsjBei3XeCpr5sf5QY1l
+ egU/afYzjaJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZ7YFhgAKCRDBN2bmhouD
+ 1zQOD/0c+MQ1gae4xMmQAO8dgpOXfEBJ6P5vw2BXNnqg8SilK01Oks0ZGEoEacDx49ZndSz3WA4
+ Sv2hqvKyFS3oF2gQ5Nar78q/04ZvrWxRW9Jde/J6ivRid+0TwEODwpA6JqyHoDhHYMDU5Hm2C+j
+ cdC/GKKl/1oYT++nmzvSU+3d+RtuSleDwzjNmBL8G2fMDH17tU6KwKuWBK4+e6I99qPAPexWGzq
+ qmcaIqXGsoU76ltjMb4W0QBVKdproY0F99tH9O+DW/g5wS5SGPrkTKCnHxTje3aLAF0FoDhFI/M
+ yKWZbwklNlSbuiRHWddbyoy2JEywnLkeKSlQLk52VB2JJMMWYdrO4uMUqW5ThmF6LuMnv2m2ZiO
+ 3nBybqToaOZ1Tsb5AezUdTsj7IKrM0Se19X71latB2eVGK7KOejtRWmK9GDIp11jPq9KrvnWuoK
+ IZ/bUDh2KlgHkUm3JOhMCwkv0e2u22epW0r++EKWSIqIkqUx477N0qXZX+iSP/v6qrZjpxkDDV3
+ 5BH4kEzJRtGNCEoJsztwmwJYf8+wBsL+nnLazTWjVlVHPI68H3Lr7+Ud4A9CvXEQQFr7UIyd+sU
+ 4oTPnHpykDkR0YEIkj/BKKW8QSqy00tv2yUMH3mno2Lx1ZSx7vYv1J7Dt0/Dxan0ObifeqColxR
+ vZQ8uPeFGafll1w==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
+ fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-On Wed, 19 Feb 2025 22:00:49 +0900
-"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+Changes in v5:
+- Drop applied patches 1-3
+- Split part touching pll_7nm_register() from last (#4) patch to new patch
+   - Thus: new patch #1 in new numbering.
+- Link to v4: https://lore.kernel.org/r/20250217-drm-msm-phy-pll-cfg-reg-v4-0-106b0d1df51e@linaro.org
 
-> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> 
-> The "hung_task" shows a long-time uninterruptible slept task, but most
-> often, it's blocked on a mutex acquired by another task. Without
-> dumping such a task, investigating the root cause of the hung task
-> problem is very difficult.
-> 
-> Fortunately CONFIG_DEBUG_MUTEXES=y allows us to identify the mutex
-> blocking the task. And the mutex has "owner" information, which can
-> be used to find the owner task and dump it with hung tasks.
-> 
-> With this change, the hung task shows blocker task's info like below;
-> 
+Changes in v4:
+- Add tags
+- Patch #4: Add mising bitfield.h include
+- One more FIELD_GET and DSI_7nm_PHY_CMN_CLK_CFG1_DSICLK_SEL (Dmitry)
+- Link to v3: https://lore.kernel.org/r/20250214-drm-msm-phy-pll-cfg-reg-v3-0-0943b850722c@linaro.org
 
-We've hit bugs like this in the field a few times, and it was very
-difficult to debug. Something like this would have made our lives much
-easier!
+Changes in v3:
+- Define bitfields in patches 1-3, so move there parts from patch #4
+- Use FIELD_GET
+- Keep separate cached->bit_clk_div and pix_clk_div
+- I think this implements entire feedback from Dmitry
+- Link to v2: https://lore.kernel.org/r/20250203-drm-msm-phy-pll-cfg-reg-v2-0-862b136c5d22@linaro.org
 
-> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> ---
->  kernel/hung_task.c           |   38 ++++++++++++++++++++++++++++++++++++++
->  kernel/locking/mutex-debug.c |    1 +
->  kernel/locking/mutex.c       |    9 +++++++++
->  kernel/locking/mutex.h       |    6 ++++++
->  4 files changed, 54 insertions(+)
-> 
-> diff --git a/kernel/hung_task.c b/kernel/hung_task.c
-> index 04efa7a6e69b..d1ce69504090 100644
-> --- a/kernel/hung_task.c
-> +++ b/kernel/hung_task.c
-> @@ -25,6 +25,8 @@
->  
->  #include <trace/events/sched.h>
->  
-> +#include "locking/mutex.h"
-> +
->  /*
->   * The number of tasks checked:
->   */
-> @@ -93,6 +95,41 @@ static struct notifier_block panic_block = {
->  	.notifier_call = hung_task_panic,
->  };
->  
-> +
-> +#ifdef CONFIG_DEBUG_MUTEXES
-> +static void debug_show_blocker(struct task_struct *task)
-> +{
-> +	struct task_struct *g, *t;
-> +	unsigned long owner;
-> +	struct mutex *lock;
-> +
-> +	if (!task->blocked_on)
-> +		return;
-> +
-> +	lock = task->blocked_on->mutex;
+Changes in v2:
+- Add Fixes tag
+- New patch #4
+- Link to v1: https://lore.kernel.org/r/20250131-drm-msm-phy-pll-cfg-reg-v1-0-3b99efeb2e8d@linaro.org
 
-This is a catch 22. To look at the task's blocked_on, we need the
-lock->wait_lock held, otherwise this could be an issue. But to get that
-lock, we need to look at the task's blocked_on field! As this can race.
+Calling these improvements, not fixes, because I don't think we ever hit
+actual concurrency issue.  Although if we ever hit it, it would be very
+tricky to debug and find the cause.
 
-Another thing is that the waiter is on the task's stack. Perhaps we need to
-move this into sched/core.c and be able to lock the task's rq. Because even
-something like:
+Best regards,
+Krzysztof
 
-	waiter = READ_ONCE(task->blocked_on);
+---
+Krzysztof Kozlowski (2):
+      drm/msm/dsi/phy: Use dsi_pll_cmn_clk_cfg1_update() when registering PLL
+      drm/msm/dsi/phy: Define PHY_CMN_CLK_CFG[01] bitfields and simplify saving
 
-May be garbage if the task were to suddenly wake up and run.
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c             | 18 +++++++++---------
+ drivers/gpu/drm/msm/registers/display/dsi_phy_7nm.xml |  1 +
+ 2 files changed, 10 insertions(+), 9 deletions(-)
+---
+base-commit: 15ad9d0efd6a8b1db4c098ac0a5e66b736ca774a
+change-id: 20250131-drm-msm-phy-pll-cfg-reg-7e5bf5aa9df6
 
-Now if we were able to lock the task's rq, which would prevent it from
-being woken up, then the blocked_on field would not be at risk of being
-corrupted.
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
--- Steve
-
-
-> +	if (unlikely(!lock)) {
-> +		pr_err("INFO: task %s:%d is blocked on a mutex, but the mutex is not found.\n",
-> +			task->comm, task->pid);
-> +		return;
-> +	}
-> +	owner = debug_mutex_get_owner(lock);
-> +	if (likely(owner)) {
-> +		/* Ensure the owner information is correct. */
-> +		for_each_process_thread(g, t)
-> +			if ((unsigned long)t == owner) {
-> +				pr_err("INFO: task %s:%d is blocked on a mutex owned by task %s:%d.\n",
-> +					task->comm, task->pid, t->comm, t->pid);
-> +				sched_show_task(t);
-> +				return;
-> +			}
-> +	}
-> +	pr_err("INFO: task %s:%d is blocked on a mutex, but the owner is not found.\n",
-> +		task->comm, task->pid);
-> +}
-> +#else
-> +#define debug_show_blocker(t)	do {} while (0)
-> +#endif
 
