@@ -1,108 +1,73 @@
-Return-Path: <linux-kernel+bounces-522325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45286A3C8AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 20:30:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C861CA3C937
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 20:56:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C15D47A75C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:29:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5D23178322
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:56:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D6FA22B8C1;
-	Wed, 19 Feb 2025 19:29:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB58922CBEA;
+	Wed, 19 Feb 2025 19:55:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="3GspiWLe";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZuBiIz42";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="3GspiWLe";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZuBiIz42"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RCd8yD67"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADA3922B5B6
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 19:29:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6828E214A93;
+	Wed, 19 Feb 2025 19:55:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739993367; cv=none; b=FRfWFCyBOxS+rcPFEpLoRYNDr3SRMjKhlw5Ylry33hBn8gGHbUxg1TUitgMtROrdYeGPWLLW1r4KtEFWzSuXDtZsQKbHug8Ss1yog9He4dULpeHyzPFR6xneEcqky8h1KyqTq96Qx1mUov/ES9nVj9xfyI4okQNK88qG5EN97vc=
+	t=1739994958; cv=none; b=JnfT4uyn0KZYxIbXyW1W9VZKsg785BqnVnmJK8dKHUAaaFZpcnlmkQ6Le1qWoUdxGQFkZy0S2H3cmlpNwnV3/CSKasAxN/WmNlxeaTpYEcW7bFIqgn9galSqC4CZJSiw5vC5DYhDV89++rP1dL0v7q4SPF7rqskPDAZNLPAMcMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739993367; c=relaxed/simple;
-	bh=H8HDfsjRdTLeCiSUsEFAPOM3zMyyboUITTD5Uaa1PnM=;
+	s=arc-20240116; t=1739994958; c=relaxed/simple;
+	bh=XYRLO9Nx/3iNwg2W/mBPrYLGRCXl0xLmYjE0QIkqthc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YAuU57sOOjS/G9Qh6gem1d37FO9DMDnFhkZ962g4HCz2e5BQm8rClfsAOeNSJ3T+dwQo9wr7vd6uQhUvbtDvv8+6uupVtneBberSr+2mbmjxV6C/mIQa4OBpxMOhZvsyN8w/6TWya3JgULsk0gyr2C+CXFBzl76SGEfCMsu7VBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=3GspiWLe; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZuBiIz42; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=3GspiWLe; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZuBiIz42; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 88B3321137;
-	Wed, 19 Feb 2025 19:29:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1739993363;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qp0pqMz6ueZ4JV1vYoPSBbdk2P2+tc6COjGX7xSlRyo=;
-	b=3GspiWLejZnLRU/qUjBgS8UWAiklAxXJh3HigNe/51wkTDXjM+Wc7tPxgQK7LGpnx5IT2y
-	RTJx836O3VPeBGUQavL+nBdf7FYEIWhMLpewUkEr+u4vn70SLUMcRq6wtzXI5X1cGsQyOd
-	quPUI/iTSwcK/XX4IFILV8t/4vNBXOo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1739993363;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qp0pqMz6ueZ4JV1vYoPSBbdk2P2+tc6COjGX7xSlRyo=;
-	b=ZuBiIz42+gr7xVhLV03J2V2Zxwhn2uaWYQtxLh/0XrmXf2Yyp6/XuwXbEHK2qzLWab9T15
-	+OImyck7B7cFx4DA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=3GspiWLe;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=ZuBiIz42
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1739993363;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qp0pqMz6ueZ4JV1vYoPSBbdk2P2+tc6COjGX7xSlRyo=;
-	b=3GspiWLejZnLRU/qUjBgS8UWAiklAxXJh3HigNe/51wkTDXjM+Wc7tPxgQK7LGpnx5IT2y
-	RTJx836O3VPeBGUQavL+nBdf7FYEIWhMLpewUkEr+u4vn70SLUMcRq6wtzXI5X1cGsQyOd
-	quPUI/iTSwcK/XX4IFILV8t/4vNBXOo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1739993363;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qp0pqMz6ueZ4JV1vYoPSBbdk2P2+tc6COjGX7xSlRyo=;
-	b=ZuBiIz42+gr7xVhLV03J2V2Zxwhn2uaWYQtxLh/0XrmXf2Yyp6/XuwXbEHK2qzLWab9T15
-	+OImyck7B7cFx4DA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 48B9513715;
-	Wed, 19 Feb 2025 19:29:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id kPwSERMxtmcrAgAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Wed, 19 Feb 2025 19:29:23 +0000
-Date: Wed, 19 Feb 2025 20:29:21 +0100
-From: David Sterba <dsterba@suse.cz>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-	Jeff Layton <jlayton@kernel.org>, Jeremy Kerr <jk@ozlabs.org>,
-	Joel Stanley <joel@jms.id.au>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Nick Terrell <terrelln@fb.com>, Vineet Gupta <vgupta@kernel.org>
-Subject: Re: linux-next: trees being removed (zstd tree)
-Message-ID: <20250219192921.GF5777@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <20250212095632.6bdd50d7@canb.auug.org.au>
- <20250216224200.50b9dd6a@canb.auug.org.au>
+	 Content-Type:Content-Disposition:In-Reply-To; b=smWgvJehiPj17z5I+jRQ/JhpDikZ2HqZg0VE8J61OP1lTxU3bqJlm3EBr5oW1VeFGl1A/u0Fm9M//x1rWMVWvb6iham7cSB8u5dXwf4M7vkTLrbkc/09Hhq81guEw51rMPzRXz2JOwIfJCz/CDMHvNcgl7YVd/Va7x25o91MQCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RCd8yD67; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739994956; x=1771530956;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=XYRLO9Nx/3iNwg2W/mBPrYLGRCXl0xLmYjE0QIkqthc=;
+  b=RCd8yD67Gq6zSEi3hck4SFOKTU8KA3+/qpPpPI4jJKjJ4xZo+VFZjde8
+   +6n679hxRpbzRr7/kYE9cxNJh53dgKQMnD4LZi72YlAj/TOrU6KYkqQar
+   x/wYQffo7kzRbZqBxGuvd5ESXjwu4FvyXAXQQA/4BHGh+BonLLH6aKIdl
+   M69ooZYQGvswd71V0qjI/4jyx98BOFO85vExrpBfWMX2UkJzaVBjeRV6a
+   /zQpD1+dgSREF11+cSXLyRULJ+1/1J/b4gW52XSXHbU2+ZKPtF5b2ve6u
+   +SCY5XEnEvS9idQPiKbn6KH8ScOIvKdISr3uydPDosQswHSr1OBsYnygN
+   A==;
+X-CSE-ConnectionGUID: TFuIKCP/R/q7+XbCNGoHzw==
+X-CSE-MsgGUID: ZHZUKLy8RNSZbm47H0C07A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11350"; a="40617957"
+X-IronPort-AV: E=Sophos;i="6.13,299,1732608000"; 
+   d="scan'208";a="40617957"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 11:55:56 -0800
+X-CSE-ConnectionGUID: r8AT+bCDRyq5CN6xisywsg==
+X-CSE-MsgGUID: 31hUtXCeR8a7kxAUgFFs2g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="152026501"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2.lan) ([10.125.110.15])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 11:29:43 -0800
+Date: Wed, 19 Feb 2025 11:29:31 -0800
+From: Alison Schofield <alison.schofield@intel.com>
+To: Yuquan Wang <wangyuquan1236@phytium.com.cn>
+Cc: dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com,
+	vishal.l.verma@intel.com, ira.weiny@intel.com,
+	dan.j.williams@intel.com, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org, chenbaozi@phytium.com.cn
+Subject: Re: [PATCH v5 1/1] cxl/pmem: debug invalid serial number data
+Message-ID: <Z7YxG6o4b5CVNErZ@aschofie-mobl2.lan>
+References: <20250219040029.515451-1-wangyuquan1236@phytium.com.cn>
+ <20250219040029.515451-2-wangyuquan1236@phytium.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -111,88 +76,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250216224200.50b9dd6a@canb.auug.org.au>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Rspamd-Queue-Id: 88B3321137
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.21 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:replyto,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.21
-X-Spam-Flag: NO
+In-Reply-To: <20250219040029.515451-2-wangyuquan1236@phytium.com.cn>
 
-On Sun, Feb 16, 2025 at 10:42:00PM +1100, Stephen Rothwell wrote:
-> Hi all,
+On Wed, Feb 19, 2025 at 12:00:29PM +0800, Yuquan Wang wrote:
+> In a nvdimm interleave-set each device with an invalid or zero
+> serial number may cause pmem region initialization to fail, but in
+> cxl case such device could still set cookies of nd_interleave_set
+> and create a nvdimm pmem region.
 > 
-> On Wed, 12 Feb 2025 09:56:32 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > Tree			Last commit date
-> >   URL
-> >   comits (if any)
-> > ----			----------------
-> > file-locks		2023-09-01 08:09:48 -0700
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git#locks-next
-> > fsi			2023-12-14 19:44:11 +1030
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/joel/fsi.git#next
-> >   ec084e4ec314 ("fsi: sbefifo: Bump up user write cmd length")
-> >   f7236a0c919e ("fsi: sbefifo: Handle pending write command")
-> >   c5eeb63edac9 ("fsi: Fix panic on scom file read")
-> > gpio			2023-09-10 16:28:41 -0700
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
-> > header_cleanup		2024-01-15 15:52:12 -0500
-> >   git://evilpiepirate.org/bcachefs.git#header_cleanup
-> > kspp-gustavo		2024-01-21 14:11:32 -0800
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git#for-next/kspp
-> > tsm			2023-10-19 18:12:00 -0700
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/djbw/linux#tsm-next
-> > zstd			2023-11-20 14:49:34 -0800
-> >   https://github.com/terrelln/linux.git#zstd-next
-> >   98988fc8e9ed ("zstd: import upstream v1.5.5")
-> >   40eb0e915deb ("zstd: Backport Huffman speed improvement from upstream")
-> >   3f832dfb8a8e ("zstd: fix g_debuglevel export warning")
-> > zstd-fixes		2023-11-14 17:12:52 -0800
-> >   https://github.com/terrelln/linux.git#zstd-linus
+> This adds the validation of serial number in cxl pmem region creation.
+> The event of no serial number would cause to fail to set the cookie
+> and pmem region.
 > 
-> All the above trees have been removed.  Give me a yell if you want one
-> back.
+> For cxl-test to work properly, always +1 on mock device's serial
+> number.
+> 
+> Signed-off-by: Yuquan Wang <wangyuquan1236@phytium.com.cn>
 
-That's unfortunate that ZSTD is out of linux-next. We have several
-in-kernel users of ZSTD so we need to keep up with its upstream. In the
-past the ZSTD syncs were already in big steps, like from 1.4.10 to
-1.5.0. Now we don't even have the 1.5.5 updated merged for like 1.5 year
-(since 6.6 times).
+Re-applying my tag-
 
-There are scripts to prepare the update for kernel, it's quite easy to
-get it for linux.git testing. There still needs to be a review because
-it's userspace code but it should not be that hard.
+Reviewed-by: Alison Schofield <alison.schofield@intel.com>
 
-Unless Nick wants to continue maintaining it, I am reluctantly
-volunteering with hopes that somebody will join and take over it
-eventually.
+snip
+> 
 
