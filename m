@@ -1,151 +1,130 @@
-Return-Path: <linux-kernel+bounces-521202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07393A3B7DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:19:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5490A3B826
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:22:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96B8D18860C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:13:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4555617F708
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:14:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC60C1DE8B9;
-	Wed, 19 Feb 2025 09:09:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 425941DF27E;
+	Wed, 19 Feb 2025 09:11:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="cRtniLhk"
-Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EtMb9zkJ"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9EFD1DE88A;
-	Wed, 19 Feb 2025 09:09:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF431C760D;
+	Wed, 19 Feb 2025 09:10:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739956156; cv=none; b=FSa+HWpQU6NmXIcjQbP/HD+V5bWXkiqL5+dJgO5ERPQwijLZAdUXaRQsVeO92RxHsbdLxVqmLrAbKXjzpUSuVPJbyd5Ge9C4AYaXuVnkdQSLnAygKZzI86XugASI03IbOVHaaokJwbqND07kNxuqAPDv+SBrX5iCd3A6DSt1g3U=
+	t=1739956259; cv=none; b=MPlufsI565sL5TFhjUA9PePb2CWum1+UxqCiOk+NQP9VzOx5GIkWbGMVQSiK/dK7V5N6+7ZSgnaT0Yxr4o1q3iAu3d0nJS5dVCA0ee7pRQ4cMpZ4LJk5uBa1GPKNbE86isYqKN6wrG6n6Sku8whk19Gld+4Qnz7Nv0VMlf6k0Pk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739956156; c=relaxed/simple;
-	bh=9vk7x8p7OZ+QywMaVdmYFW4mZywPyCxbk61u3m25ECI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gRl/xvgEJ2ZW8tXLrCsPnLxy9veoEGI/1R/MynifA8wC3VP8ODZx57ZVlkmivlbc0SIEqUzWHSO3qH17WcOyuFpeTZUUEN95ApBiLOmTo1BoGu/NcVCgQbRq9Cvo+hmsfixPYuLKQWl4IsJpodyjWEhaoIkWhTl7P5hOGUcUQpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=cRtniLhk; arc=none smtp.client-ip=115.124.30.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1739956143; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=ftZU+5bMAOO43RWbn35YZbsoovI4IiODb5WpQejCd88=;
-	b=cRtniLhkv3wjY2JOwtfP02DcJvl+1vJFgEDet0Wh1fCOq0GJZP1FgNuczHLGUF54NNRJ9x9oHzRjr7sP4By5oVuY6fqbKEV1vs4g3KiYe951kQ04Vj8bATqR2M1ufAFjuQScbpfB+kmSELcXiVBmKOryMjkSMI4hTrUlV7ga0lo=
-Received: from 30.246.161.128(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WPonrx6_1739956141 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 19 Feb 2025 17:09:02 +0800
-Message-ID: <eb44baac-f212-4b25-bbbf-6f0c498f2c5c@linux.alibaba.com>
-Date: Wed, 19 Feb 2025 17:08:54 +0800
+	s=arc-20240116; t=1739956259; c=relaxed/simple;
+	bh=Mfnk4+yY355XVH6CmnFX3sLcgDhvDA98IzA+BQ+5SJo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dP1YXES3c1WoRkim9sbh+Qn/qqFAT34lemXRkP9x0dbaRsp4S4iqqrMf/rzyQeT2BlZ4Y6AM7jRjaivk67BObOHeKOA7DryedpfQ7tU4kOsrBa3yDL14iD29xrVIsn73Q0giAw0GyCCR/nX0YxXItAYZ1t+sHXtHPxbdQSrUZDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=EtMb9zkJ; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51J9AlWm235735
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Wed, 19 Feb 2025 03:10:47 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1739956247;
+	bh=gJPqdtzI9Py6Q4HPT5VLP7yvXmMDLZ9+w6vjEknP6v0=;
+	h=From:To:CC:Subject:Date;
+	b=EtMb9zkJi/DvzW2PVwpaX81NKX6xOP0cD7ypus8eyNjqp1uzGGTSd8TDOEika37Bo
+	 uYlxVObAZ8iY5IGy0QsfHPabPXrXTJZxZjoIDQl+w1pmi7ZcYxiGrP/EjFb16KNKW6
+	 H+FVL0e/KLGXDb1lcUsyOy9CaMvJIfxcjF5QRXwA=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51J9AlHo079355;
+	Wed, 19 Feb 2025 03:10:47 -0600
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 19
+ Feb 2025 03:10:47 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 19 Feb 2025 03:10:47 -0600
+Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.227.151])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51J9AhoH053377;
+	Wed, 19 Feb 2025 03:10:43 -0600
+From: Beleswar Padhi <b-padhi@ti.com>
+To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
+CC: <afd@ti.com>, <hnagalla@ti.com>, <u-kumar1@ti.com>, <jm@ti.com>,
+        <jan.kiszka@siemens.com>, <christophe.jaillet@wanadoo.fr>,
+        <jkangas@redhat.com>, <eballetbo@redhat.com>, <b-padhi@ti.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH 0/2] Refactor Data Structures for TI K3 R5 remoteproc
+Date: Wed, 19 Feb 2025 14:40:40 +0530
+Message-ID: <20250219091042.263819-1-b-padhi@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/7] dmaengine: idxd: fix memory leak in error handling
- path of idxd_setup_wqs
-To: Fenghua Yu <fenghuay@nvidia.com>, vinicius.gomes@intel.com,
- dave.jiang@intel.com, vkoul@kernel.org
-Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250215054431.55747-1-xueshuai@linux.alibaba.com>
- <20250215054431.55747-2-xueshuai@linux.alibaba.com>
- <f44a4303-d106-408c-ba59-911fe7b9a290@nvidia.com>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <f44a4303-d106-408c-ba59-911fe7b9a290@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
+This series aligns the K3 R5 remoteproc's data structures with that of M4 and
+DSP data structures, so that common functionalities between R5, DSP, M4 can be
+refactored out later[0]. Thanks to Andrew for suggesting this idea[1], however I
+have tweaked the implementation a bit, reasoning in Appendix.
 
+Testing Done:
+1. Tested boot of R5F remoteprocs in MCU and MAIN voltage domain in both
+IPC-Only mode and Kernel remoteproc mode in all K3 J7* devices.
+2. Tested IPC in Lockstep, Split and Single-CPU Mode configuration (wherever
+applicable) of R5F remoteprocs in all K3 J7* devices.
+3. Tested shutdown and power-up of R5F remoteprocs from Linux userspace in
+Lockstep, Split and Single-CPU Mode configuration. (with additional patches for
+graceful shutdown)
+4. Verified no errors in device removal path by executing
+`modprobe -r ti_k3_r5_remoteproc`
+5. Tested that each patch in this series generates no new warnings/errors.
 
-在 2025/2/19 00:32, Fenghua Yu 写道:
-> Hi, Shuai,
-> 
-> On 2/14/25 21:44, Shuai Xue wrote:
->> Memory allocated for wqs is not freed if an error occurs during
->> idxd_setup_wqs(). To fix it, free the allocated memory in the reverse
->> order of allocation before exiting the function in case of an error.
->>
->> Fixes: a8563a33a5e2 ("dmanegine: idxd: reformat opcap output to match bitmap_parse() input")
->> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
->> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
->> ---
->>   drivers/dma/idxd/init.c | 20 +++++++++++++++++---
->>   1 file changed, 17 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
->> index b946f78f85e1..b85736fd25bd 100644
->> --- a/drivers/dma/idxd/init.c
->> +++ b/drivers/dma/idxd/init.c
->> @@ -169,8 +169,8 @@ static int idxd_setup_wqs(struct idxd_device *idxd)
->>       idxd->wq_enable_map = bitmap_zalloc_node(idxd->max_wqs, GFP_KERNEL, dev_to_node(dev));
->>       if (!idxd->wq_enable_map) {
->> -        kfree(idxd->wqs);
->> -        return -ENOMEM;
->> +        rc = -ENOMEM;
->> +        goto err_bitmap;
->>       }
->>       for (i = 0; i < idxd->max_wqs; i++) {
->> @@ -191,6 +191,7 @@ static int idxd_setup_wqs(struct idxd_device *idxd)
->>           rc = dev_set_name(conf_dev, "wq%d.%d", idxd->id, wq->id);
->>           if (rc < 0) {
->>               put_device(conf_dev);
->> +            kfree(wq);
->>               goto err;
->>           }
->> @@ -204,6 +205,7 @@ static int idxd_setup_wqs(struct idxd_device *idxd)
->>           wq->wqcfg = kzalloc_node(idxd->wqcfg_size, GFP_KERNEL, dev_to_node(dev));
->>           if (!wq->wqcfg) {
->>               put_device(conf_dev);
->> +            kfree(wq);
->>               rc = -ENOMEM;
->>               goto err;
->>           }
->> @@ -211,7 +213,9 @@ static int idxd_setup_wqs(struct idxd_device *idxd)
->>           if (idxd->hw.wq_cap.op_config) {
->>               wq->opcap_bmap = bitmap_zalloc(IDXD_MAX_OPCAP_BITS, GFP_KERNEL);
->>               if (!wq->opcap_bmap) {
->> +                kfree(wq->wqcfg);
->>                   put_device(conf_dev);
->> +                kfree(wq);
->>                   rc = -ENOMEM;
->>                   goto err;
->>               }
->> @@ -225,11 +229,21 @@ static int idxd_setup_wqs(struct idxd_device *idxd)
->>       return 0;
->>    err:
->> -    while (--i >= 0) {
->> +    while (i-- > 0) {
-> 
-> Why changed to "i-- > 0" here? Before coming to here, the mem areas allocated for wqs[i] are freed already and there is not need to free them again here, right? 
+Note:
+Could not test the Single-core mode configuration for R5F cluster, as J7*
+devices do not have them.
 
-Yes.
+[0]: https://lore.kernel.org/all/20250103101231.1508151-1-b-padhi@ti.com
+[1]: https://lore.kernel.org/all/da80e039-bcea-41a3-83ec-e10ffb4b0c46@ti.com
 
-> And if i>1, mem areas for wqs[0] won't be freed and will leak, right?
+Thanks,
+Beleswar
 
-No, the two ways of writing are equivalent.
+Appendix:
+Tried with both approaches suggested in [1]:
+a. Two pointers for cores: With this approach, had to write lot of extra code in
+error paths, which could be done easier with a loop. Sample code snippet: 
+https://gist.github.com/3V3RYONE/8ee52c38a2411a0a5d31217781f1dc56
 
-#include <stdio.h>
+b. Array of two pointers: Got better with looping around cores, but still had to
+check for out of bound edge cases etc, Plus had to loop at all error paths,
+lengthier code.
 
-int main()
-{
-     int i = 1;
-     while (i-- > 0)
-         printf("freeing i %d\n", i);
+c. Current Implementation: So, if we are already looping, why not use a list
+instead of array, and let the list_* helpers take care of traversal etc. With
+this, I had to do the least changes, plus we need not merge the two structs now,
+thanks to void pointers. I think this was the thought when we first wrote the
+driver (using list instead of arrays). Let me know if there is any drawbacks.
 
-     return 0;
-}
+Beleswar Padhi (2):
+  remoteproc: k3-r5: Re-order internal memory initialization function
+  remoteproc: k3-r5: Refactor Data Structures to Align with DSP and M4
 
-// console output
-// freeing i 0
+ drivers/remoteproc/ti_k3_r5_remoteproc.c | 510 ++++++++++++-----------
+ 1 file changed, 262 insertions(+), 248 deletions(-)
 
-I will drop this line to avoid confusion.
-
-Thanks.
-Shuai
+-- 
+2.34.1
 
 
