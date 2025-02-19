@@ -1,104 +1,94 @@
-Return-Path: <linux-kernel+bounces-522650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5423A3CCDF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 00:00:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79000A3CCE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 00:00:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 167A93AA6EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:59:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 866E57A759F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:59:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 247FA25C6F8;
-	Wed, 19 Feb 2025 22:59:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BC5613FD86;
+	Wed, 19 Feb 2025 23:00:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ueb9zaXD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZtFBri/4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 784A824F5A0;
-	Wed, 19 Feb 2025 22:59:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C79F925A334;
+	Wed, 19 Feb 2025 23:00:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740005998; cv=none; b=tbJcnKKqdU0+DdY3xhKbHOHm/03mu3So8VCILS4/Isa4VnCo3I2V5ByAmwgnNyd2nlXTA4y5uUs12JmnqjHa95VUbru3dzuh9pUF8663PL4uyE3lwbGkAYoqkch5BYsc06O1QmVFQjyBkuG87GOUaF1UXtxOBvuUOzGo9Ntq5MY=
+	t=1740006006; cv=none; b=n143+QAHwLFYvJTZie9EEV+pKqW8i/0LOl6SHMwKQDOo0EJHNMUXG3Num0Ku47fcED9rym2c25NbzBlN9vcbYzFmKXOUQtsN8Hnd62qEJDu8FVc95UEXehYZzglfm6axtPFK4tvqIJP7uffPJNGY19RnKLwhslrx8knp9XlYBqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740005998; c=relaxed/simple;
-	bh=GAeIj8FmQR0knadcmGgigmXGl4izDzATSQxm6mP/rGw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c+JBeVkO2f3wT3jwZRivCq1cEJmXnrtmP2Rdt3tl18gSQ1mSughBhksF1N0yflKNZ5UAyk2CyIdsBut/QZNV+XWi58QafetLlb9ryZVlhgqYuWOzSsvXSfzBnBqhzf7Z6bzAMwH7gNEuNCVUGd1W0W9xGTt5Fdjud+VCmdymTck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ueb9zaXD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF696C4CED1;
-	Wed, 19 Feb 2025 22:59:57 +0000 (UTC)
+	s=arc-20240116; t=1740006006; c=relaxed/simple;
+	bh=ycjVKUq0Z/JzO3KFCBtaeWyRj0ZFaYt/UYqgHgQIqQo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=IiyQeVpQfmAz4nCkMLnRqibH9TqsjDDP0pop/UScrCtR1iWNKrB1D+yDcuTu2X8J/l23pWWSPh70SxI/HGtgjZFqaXNHpt3DtpBh89JU0S5lSUyZyWkrFs9PCzjIzKPIquMKOBAt2KnBbrqrdXk6XrMS20qOZT+7G0QyX+8G0QM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZtFBri/4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 236C6C4CED1;
+	Wed, 19 Feb 2025 23:00:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740005997;
-	bh=GAeIj8FmQR0knadcmGgigmXGl4izDzATSQxm6mP/rGw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ueb9zaXDZ361ZoSo0F5ov30MAW/Gn3Qi85zXJUHST/CtziaiTrmS2WRscB7H/dTpv
-	 zN7OuwNn4UhOf824Ob3fWzYzGLbUwtaX53JOOROaj3q7mcQoSUQklfyApzM0WM+UaV
-	 QQlQXX7qlRC/EGBugvPt8AE2iFOp7lXv8yjrIC7Cq4GLwwxtdm1S4aB6R8m6Tv+LkL
-	 PE9h81sZ5pCZfixa5Qpz296zbBiXUAaltYLRr0J5q6k+QV6YioeqZVkzYZYVEc5RIu
-	 xm1uV1mt+2Z9Ih9k7d7zqQ9r+oDozYtz1ipfiF5Ubqs278IQpAICflrNM1j60EQj/p
-	 2HZcdpEbjq9OQ==
-Date: Wed, 19 Feb 2025 16:59:56 -0600
-From: Rob Herring <robh@kernel.org>
-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Cc: Ryan.Wanner@microchip.com, krzk+dt@kernel.org, conor+dt@kernel.org,
-	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-	vkoul@kernel.org, wim@linux-watchdog.org, linux@roeck-us.net,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
-	linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH 2/8] dt-bindings: watchdog: sama5d4-wdt: Add sama7d65-wdt
-Message-ID: <20250219225956.GA3127467-robh@kernel.org>
-References: <cover.1739555984.git.Ryan.Wanner@microchip.com>
- <3c55e634f2993ac5a49e1b8bfceb2333e175d376.1739555984.git.Ryan.Wanner@microchip.com>
- <a1ebb518-ff69-4dff-a8b4-7c3b716450a5@tuxon.dev>
+	s=k20201202; t=1740006006;
+	bh=ycjVKUq0Z/JzO3KFCBtaeWyRj0ZFaYt/UYqgHgQIqQo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=ZtFBri/4A0glWn5U+INtzQH/E0QqdqJyOB50h3NrGzv9vuluIEFYbA31+fxDoXBnO
+	 +0PlwNTe+iYXaY7Yao6IQIMNYU3vICTYT8ZX9XRoVAODhOAq0M+QJHd30YnhAoW6kE
+	 moUOEoVqihsND3H6jZ5uJun4tWudm75pXQ5Qd1WXFY5npLl810ovG9YSFXNUVyPszD
+	 nzQwx2w/eBI/pZwTeGQtVRdIx+i0cgezapTEnJuowfgE62gAuISqZCJegTakhpeLCb
+	 3oHdyjZat6m6UYxzVp33DJesmf7Pv3gmXB8//98EpdSAJacjqhfnc5b5sGxQ6Xi+Jn
+	 kLbJhUmHiKfPg==
+Date: Wed, 19 Feb 2025 17:00:04 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] PCI: shpchp: Debug & logging cleanup
+Message-ID: <20250219230004.GA248230@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <a1ebb518-ff69-4dff-a8b4-7c3b716450a5@tuxon.dev>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250218224602.GA198344@bhelgaas>
 
-On Tue, Feb 18, 2025 at 10:42:36AM +0200, Claudiu Beznea wrote:
-> 
-> 
-> On 14.02.2025 20:08, Ryan.Wanner@microchip.com wrote:
-> > From: Ryan Wanner <Ryan.Wanner@microchip.com>
+On Tue, Feb 18, 2025 at 04:46:02PM -0600, Bjorn Helgaas wrote:
+> On Mon, Feb 17, 2025 at 11:55:48AM +0200, Ilpo Järvinen wrote:
+> > Hi all,
 > > 
-> > Add microchip,sama7d65-wdt compatible string to the dt-binding documentation.
+> > This series cleans up debug/logging in shpchp driver.
 > > 
-> > Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
-> > ---
-> >  .../devicetree/bindings/watchdog/atmel,sama5d4-wdt.yaml        | 3 +++
-> >  1 file changed, 3 insertions(+)
+> > The series is an update for the only remaining patch in the pci_printk()
+> > removal series. To avoid breaking build, pci_printk() itself will only
+> > be removed in the next kernel release because both AER and shpchp used
+> > it and are in different topic branches.
 > > 
-> > diff --git a/Documentation/devicetree/bindings/watchdog/atmel,sama5d4-wdt.yaml b/Documentation/devicetree/bindings/watchdog/atmel,sama5d4-wdt.yaml
-> > index cdf87db361837..e9c026194d403 100644
-> > --- a/Documentation/devicetree/bindings/watchdog/atmel,sama5d4-wdt.yaml
-> > +++ b/Documentation/devicetree/bindings/watchdog/atmel,sama5d4-wdt.yaml
-> > @@ -23,6 +23,9 @@ properties:
-> >            - const: microchip,sam9x7-wdt
-> >            - const: microchip,sam9x60-wdt
-> >
+> > v2:
+> > - Split removal of logging wrappers and module parameter removal to
+> >   own patches
+> > - Explain how dynamic debugging can be enabled
+> > 
+> > Ilpo Järvinen (2):
+> >   PCI: shpchp: Remove unused logging wrappers
+> >   PCI: shpchp: Remove "shpchp_debug" module parameter
+> > 
+> >  drivers/pci/hotplug/shpchp.h      | 18 +-----------------
+> >  drivers/pci/hotplug/shpchp_core.c |  3 ---
+> >  2 files changed, 1 insertion(+), 20 deletions(-)
 > 
-> You could have keep this new line after the items section that you've added.
-> 
-> > +      - items:
-> > +          - const: microchip,sama7d65-wdt
-> > +          - const: microchip,sama7g5-wdt
-> 
-> here.
+> Applied to pci/hotplug for v6.15, thanks, Ilpo!
 
-Please do.
+And I added the previous patches:
 
-> 
-> >    reg:
-> >      maxItems: 1
-> >  
-> 
+  7d5f1e615e69 ("PCI: shpchp: Remove logging from module init/exit functions")
+  499982200892 ("PCI: shpchp: Change dbg() -> ctrl_dbg()")
+
+that you mentioned that I forgot to include here, which should fix the
+build failure.
 
