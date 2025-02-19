@@ -1,91 +1,159 @@
-Return-Path: <linux-kernel+bounces-521746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05853A3C1D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:19:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C0B7A3C1DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:20:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6150B3BDFF2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:12:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00B533A886B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:12:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D35BC1FBEB4;
-	Wed, 19 Feb 2025 14:09:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 819B51FDE12;
+	Wed, 19 Feb 2025 14:09:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TccyuFSR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SSsjidcM"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F6841EB18E;
-	Wed, 19 Feb 2025 14:09:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3011D1F30A9;
+	Wed, 19 Feb 2025 14:09:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739974184; cv=none; b=g7eZHIslFkG1Nq5+ofJE/b+fe1JydejrA2ejORo5sRfwchjwxti4wsc/6slvDRcr2fivijklTZ6XOJgHdEi9vVbsygxUlk0rmNJu7pot25I3U78cYCOJ2tDFXDkiSMOVrCDuGOU8RT7CqLxjP459HRxf5hOlRQxHTWmK83Q2mAU=
+	t=1739974197; cv=none; b=l005Ln3ybregdTmUpAf1tidEfpJCYDFKp19oEWfhQvwNN1RXH+hjG4Obn/yY50bFvL29IFh/F5KD03t9FA6aSq2TNXecnwkz31WigGgTchVB2mE8kyl9JQYgPyI/p3L7vvFR57SADmDlY1JfGd8ueavWpC4SMKpOnj+5hUKR8Fc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739974184; c=relaxed/simple;
-	bh=JWgcAq5A9ztdHbWMUTio29UETb/IscdfA8OBtkFemUU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WvdAphAXxrk1I/biowJsz8a4SKGerFOPObNBgKiru749C00SOIurpHhLBa9DzBUi3xfDuZ05yCH/oD54zzLJtQAm1B8FsnK/QxsNl4i6KPLoZSB7rhsBbI0VD9nAzbQfIRXU4G21ztnmvz8tpUZZ+HOOxNp0LcjvRqb4oTf7G9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TccyuFSR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65FDAC4CED1;
-	Wed, 19 Feb 2025 14:09:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739974183;
-	bh=JWgcAq5A9ztdHbWMUTio29UETb/IscdfA8OBtkFemUU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TccyuFSRpBorHgFXQPF4jywQnxaSyjRv5kG0R1jqKWyU4qXc+AvWbZPQalZw47dNY
-	 OIyGPzJhUXQrWy8URny+Ye7RihHebYiW0UsSKZCOe7SzmxKwsroHZhPWIgJqrwm7tO
-	 w+f5r48Z4U/KBR7wKl5OsddGrT5Jiq7+apwAz3kkyOmUIjMPqxgUO9gVgi5hSyGJL4
-	 /qs8Li8q3E432iMYZ4dvsHbL0Ymu6nVunLHBPYdZ1xsmtD3cdsjIwiRuvUhOPm1in5
-	 He6Un2pb1KKcEuJxV9heTakSXyRZMo1BzaRq7puhdlvspqo+DvYQj80PmMMkrCByJx
-	 EVxkVZcTdkhog==
-Date: Wed, 19 Feb 2025 08:09:42 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Atish Patra <atishp@rivosinc.com>
-Cc: Will Deacon <will@kernel.org>, Conor Dooley <conor@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>, Ian Rogers <irogers@google.com>,
-	linux-kernel@vger.kernel.org,
-	Arnaldo Carvalho de Melo <acme@kernel.org>, kvm@vger.kernel.org,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Anup Patel <anup@brainfault.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Conor Dooley <conor+dt@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-	Atish Patra <atishp@atishpatra.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-riscv@lists.infradead.org,
-	Peter Zijlstra <peterz@infradead.org>,
-	Namhyung Kim <namhyung@kernel.org>, devicetree@vger.kernel.org,
-	kvm-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	linux-perf-users@vger.kernel.org,
-	Adrian Hunter <adrian.hunter@intel.com>, weilin.wang@intel.com
-Subject: Re: [PATCH v4 07/21] dt-bindings: riscv: add Smcntrpmf ISA extension
- description
-Message-ID: <173997417868.2413662.12513351374335592804.robh@kernel.org>
-References: <20250205-counter_delegation-v4-0-835cfa88e3b1@rivosinc.com>
- <20250205-counter_delegation-v4-7-835cfa88e3b1@rivosinc.com>
+	s=arc-20240116; t=1739974197; c=relaxed/simple;
+	bh=FmNh8i/+NBQdKhSxJQWTczf6sC4JYYzdaKEbQ/SujWk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=J5DIQ4NHpsu83y1FyujdNu7GNWMBJ5zI1Wf3gz2BZS0CMkNQqlSrU9j5QSpiSBTA/DUFTb/qBHvk9ym2ERYJKiDpWSn74zUy6zEiYKO9CJUlBSM8TGDqVxjkgN5FhnH9pDbkXW79DYtbOWffFbIGtokOnw9EJskbU2SxN12jojE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SSsjidcM; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739974196; x=1771510196;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=FmNh8i/+NBQdKhSxJQWTczf6sC4JYYzdaKEbQ/SujWk=;
+  b=SSsjidcMyZQcdGiy48krTE/TXJSb9Xt+ZrL248UBopobKcjA7bO5CFC/
+   vWgTUYYxFO90jDB10vzRZ9mg26KBWSYSiBy6+LoRNIYaPDk33JYOMzPq1
+   Tw4kqzEB99ChQzMBwr5RfJNdYQElrzMQRFMvuB9EyrPDw1AH3dga2Qr1/
+   H3tBTw14qImCEYsD7ZtwFA87FoGKwZ0sD7ZuIOo+V7HY+HcRq52ZE9fw/
+   uiw/Y3H+PweDyqA2KxQ5h14QUnnwvFr6/PF+yGCHoIUo8RYMZGXxyZoRR
+   IHaMraVHth2ag38kJkRk8WHCbsMZ3HTqf2rIJG0TYlyH9PAmBts9baxzW
+   g==;
+X-CSE-ConnectionGUID: kXmosbpmS+uWfQaqo/6oWQ==
+X-CSE-MsgGUID: zOmLAjNnQDWlgVy+XJD1mQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11350"; a="51351222"
+X-IronPort-AV: E=Sophos;i="6.13,299,1732608000"; 
+   d="scan'208";a="51351222"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 06:09:55 -0800
+X-CSE-ConnectionGUID: FHBLuRzJSRSY2NCfTF611Q==
+X-CSE-MsgGUID: Y9EvvsvVS0O0u6GzPtvajg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="118860004"
+Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
+  by fmviesa003.fm.intel.com with ESMTP; 19 Feb 2025 06:09:55 -0800
+From: kan.liang@linux.intel.com
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	linux-kernel@vger.kernel.org
+Cc: ak@linux.intel.com,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Amiri Khalil <amiri.khalil@intel.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] perf/x86/intel: Fix event constraints for LNC
+Date: Wed, 19 Feb 2025 06:10:05 -0800
+Message-Id: <20250219141005.2446823-1-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.38.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250205-counter_delegation-v4-7-835cfa88e3b1@rivosinc.com>
+Content-Transfer-Encoding: 8bit
 
+From: Kan Liang <kan.liang@linux.intel.com>
 
-On Wed, 05 Feb 2025 23:23:12 -0800, Atish Patra wrote:
-> Add the description for Smcntrpmf ISA extension
-> 
-> Signed-off-by: Atish Patra <atishp@rivosinc.com>
-> ---
->  Documentation/devicetree/bindings/riscv/extensions.yaml | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
+According to the latest event list, update the event constraint tables
+for Lion Cove core.
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+The general rule (the event codes < 0x90 are restricted to counters
+0-3.) has been removed. There is no restriction for most of the
+performance monitoring events.
+
+Fixes: a932aa0e868f ("perf/x86: Add Lunar Lake and Arrow Lake support")
+Reported-by: Amiri Khalil <amiri.khalil@intel.com>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Cc: stable@vger.kernel.org
+---
+ arch/x86/events/intel/core.c | 20 +++++++-------------
+ arch/x86/events/intel/ds.c   |  2 +-
+ 2 files changed, 8 insertions(+), 14 deletions(-)
+
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index da70526194b0..051a5bea0568 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -397,34 +397,28 @@ static struct event_constraint intel_lnc_event_constraints[] = {
+ 	METRIC_EVENT_CONSTRAINT(INTEL_TD_METRIC_FETCH_LAT, 6),
+ 	METRIC_EVENT_CONSTRAINT(INTEL_TD_METRIC_MEM_BOUND, 7),
+ 
++	INTEL_EVENT_CONSTRAINT(0x20, 0xf),
++
++	INTEL_UEVENT_CONSTRAINT(0x012a, 0xf),
++	INTEL_UEVENT_CONSTRAINT(0x012b, 0xf),
+ 	INTEL_UEVENT_CONSTRAINT(0x0148, 0x4),
+ 	INTEL_UEVENT_CONSTRAINT(0x0175, 0x4),
+ 
+ 	INTEL_EVENT_CONSTRAINT(0x2e, 0x3ff),
+ 	INTEL_EVENT_CONSTRAINT(0x3c, 0x3ff),
+-	/*
+-	 * Generally event codes < 0x90 are restricted to counters 0-3.
+-	 * The 0x2E and 0x3C are exception, which has no restriction.
+-	 */
+-	INTEL_EVENT_CONSTRAINT_RANGE(0x01, 0x8f, 0xf),
+ 
+-	INTEL_UEVENT_CONSTRAINT(0x01a3, 0xf),
+-	INTEL_UEVENT_CONSTRAINT(0x02a3, 0xf),
+ 	INTEL_UEVENT_CONSTRAINT(0x08a3, 0x4),
+ 	INTEL_UEVENT_CONSTRAINT(0x0ca3, 0x4),
+ 	INTEL_UEVENT_CONSTRAINT(0x04a4, 0x1),
+ 	INTEL_UEVENT_CONSTRAINT(0x08a4, 0x1),
+ 	INTEL_UEVENT_CONSTRAINT(0x10a4, 0x1),
+ 	INTEL_UEVENT_CONSTRAINT(0x01b1, 0x8),
++	INTEL_UEVENT_CONSTRAINT(0x01cd, 0x3fc),
+ 	INTEL_UEVENT_CONSTRAINT(0x02cd, 0x3),
+-	INTEL_EVENT_CONSTRAINT(0xce, 0x1),
+ 
+ 	INTEL_EVENT_CONSTRAINT_RANGE(0xd0, 0xdf, 0xf),
+-	/*
+-	 * Generally event codes >= 0x90 are likely to have no restrictions.
+-	 * The exception are defined as above.
+-	 */
+-	INTEL_EVENT_CONSTRAINT_RANGE(0x90, 0xfe, 0x3ff),
++
++	INTEL_UEVENT_CONSTRAINT(0x00e0, 0xf),
+ 
+ 	EVENT_CONSTRAINT_END
+ };
+diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
+index df9499d6e4dc..a04618c47f05 100644
+--- a/arch/x86/events/intel/ds.c
++++ b/arch/x86/events/intel/ds.c
+@@ -1199,7 +1199,7 @@ struct event_constraint intel_lnc_pebs_event_constraints[] = {
+ 	INTEL_FLAGS_UEVENT_CONSTRAINT(0x100, 0x100000000ULL),	/* INST_RETIRED.PREC_DIST */
+ 	INTEL_FLAGS_UEVENT_CONSTRAINT(0x0400, 0x800000000ULL),
+ 
+-	INTEL_HYBRID_LDLAT_CONSTRAINT(0x1cd, 0x3ff),
++	INTEL_HYBRID_LDLAT_CONSTRAINT(0x1cd, 0x3fc),
+ 	INTEL_HYBRID_STLAT_CONSTRAINT(0x2cd, 0x3),
+ 	INTEL_FLAGS_UEVENT_CONSTRAINT_DATALA_LD(0x11d0, 0xf),	/* MEM_INST_RETIRED.STLB_MISS_LOADS */
+ 	INTEL_FLAGS_UEVENT_CONSTRAINT_DATALA_ST(0x12d0, 0xf),	/* MEM_INST_RETIRED.STLB_MISS_STORES */
+-- 
+2.38.1
 
 
