@@ -1,198 +1,183 @@
-Return-Path: <linux-kernel+bounces-521916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C4F1A3C3E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:42:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE7A4A3C3CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:40:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21B827A93A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:38:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5795C1666D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:40:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 176201FC7EE;
-	Wed, 19 Feb 2025 15:39:37 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAD811FAC31
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 15:39:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58AAC1FAC31;
+	Wed, 19 Feb 2025 15:39:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NFBW21lC"
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 134FB198E81;
+	Wed, 19 Feb 2025 15:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739979576; cv=none; b=jhpyej3t3cipjJKMhGJt+yZqOeYYcWizzYAAIwE+T8IF+QLGmWdoIYiQ/mq0MBfUAFZwUkTVLD8KzZoCxA3X+wunUW6TD753IdJbjgSFpLbSuTURtbai9ep0B+1pFVpzOlCWOJsYugcpLzPDpu38zR0q00uE83BSX3i8XJtFS1g=
+	t=1739979585; cv=none; b=RaoXrvGo8hq23G9pmfOCCRx+12bSOnS+NauV6JtWXhgj7hW0g6ATFGx8mqazAJx57GEd3Z4dTMn3heLPxjNrLZky0nXYsarPXF+jJSfiTWJqQY9v6MZqXBXZAcOfJ2qMWjQde4pY+Y9O+rz3pCaHfGpNq2xuUz8CKc1Yl05b2C0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739979576; c=relaxed/simple;
-	bh=Ry3S/1dW+hdKw55rvixvVMLC17KAs6jZsDOAF2LH1ho=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=umY5Y6h2vR7Jh9fOMRMMmV41pVJ9d4r/3glQXT8E4aJsdlC+iWIpf19xkkmQDkX7Wj5ywWw/GzSLy+aBfTyXO2U/7StBwkAdEnUcP/BnYTHHKuu+K+b5XL1idQ3GFFsyvoRJS2R+s4AOH+Qw0o1/gMb5zdAeK7UDi2i4vEV6tSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5A1011688;
-	Wed, 19 Feb 2025 07:39:52 -0800 (PST)
-Received: from [10.57.35.204] (unknown [10.57.35.204])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 71DC73F792;
-	Wed, 19 Feb 2025 07:39:28 -0800 (PST)
-Message-ID: <a6846db8-9efa-46f8-9939-7727c83d1601@arm.com>
-Date: Wed, 19 Feb 2025 15:39:25 +0000
+	s=arc-20240116; t=1739979585; c=relaxed/simple;
+	bh=gOBJQr57HVai1YFd7Xm+S8zGKknWTzs5SQGe41z1lOY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VqfIpUMXa4+QIq7MEvKOo7DR9miJP1vQRiEN6zL4VttT8yIXxMxUpRijkryU6uf7zVRCKBu5bzvwXMI+2Gc4RfVqoANNcS7PIQdQXQCfG2pWgcJhWle+ivTk0JBr+2U1t6xKzFIhS8E/A7A/xjSThZJUl/NCV/Ydvl4aASNS8pA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NFBW21lC; arc=none smtp.client-ip=209.85.222.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7c0a1677aebso278760885a.0;
+        Wed, 19 Feb 2025 07:39:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739979583; x=1740584383; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:feedback-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=QOPQIn1fX7GxNW/Oq7e50z1baZmFRs2en+1MYVm0Jko=;
+        b=NFBW21lCXm9CbR81Gum2qoGNYd+hry0EojUdsQC84hMSbg3aqFocCRMFmXMVMvojjf
+         CIqzpm10T9o5l5JmlZ1pTwrLu4PLZ9Tr99jYDaYZ72mcxnG6ZIAWqKgzeirB65cuc6Qn
+         K8stk3ES9XZpQLcjpaMDfNPPjobYOCqeO90CJg6/hRmKQ3JZI2vDe1qElNJUYlxyuQNx
+         ZbW2OS6+WdCtAfWwdh34Kt35ktI3NX9GcbNccAXkcGlm35Z95O4nvzox4mFC2p39VcYP
+         B6MoVmjVLyRdTUXQko642USlixBFiDlh5SHVF7ISMHpeqXH4tPNW4g1mjSompz2wtydy
+         vt/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739979583; x=1740584383;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:feedback-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QOPQIn1fX7GxNW/Oq7e50z1baZmFRs2en+1MYVm0Jko=;
+        b=anczp1E7AsvlKm6q89V3Ae1i+t5bbZFF3q9Gbb4kmhYn79SQsR8Obf7s1OXj4KnPOt
+         xfEdIh0vn5bquOikzmF/a+A2k4CYZVkzmwo6YQ8QxVm3VeJcWiUhBRUNAHvctiqsCOpA
+         7crRX1onDMBfEAn6lLaG+lcCRq7uNWk1uH2sIDzHZyAyppsV9NRq3O6/PBkTADfuqArb
+         ja4aMlCvR9MncoFME96HVr1H+11fWYshfTMO4+MuLbFJFSo/R2WEPya+L56wjieDp8Hg
+         ofQdIbtWxlFU0q1X/wHfGanSsGpjOh+nhG7nDW3drx1M4hllzkyHAiuTJVjYbHR+GskO
+         o+HQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU7+ttoQK/z/cMODARS5rp2eQQj2tWemrxkb5DeDn6zgEj2drwkwkC1Kt0diUbc1VAZXmRhpy2e/9AHA+vjp4ywKRFW@vger.kernel.org, AJvYcCUe1GF1r8+g8H9GBctpycToFM8c2Asj4VMTfccPZxM6R1Qzu2yPZGTYBABmEkYvQoD5vgARdBNN/sQ=@vger.kernel.org, AJvYcCXGekreKnEgwPLPQSlNvv1sSYOjEkxNp9jW4hI94Ee8Osbh8ZfasEnbHomNRdO6Me9QFb39oHXvPvIuVe14xmub@vger.kernel.org, AJvYcCXo5+4x3Ln/T2ufPUxxH4OGNVfFtimKGNYzlHEN9BnbJAJrDQ/WnY4J5ykF8A5N+a7hZEPpB1qyr9poyRde@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVXBD8pjYrMxRCbuKlrDudewy368WRpVy9cxQLKuRtavwXX8a/
+	I8CXwEfLTD/lExlXHBikSvHRJP9n7Vu8YH6Q9hsfk+k8B/uofA0g
+X-Gm-Gg: ASbGncuForHTIK7Qb6H6NrJ3wx2MA39lBd+cLJIu49IHjYBOrtryjZZDkF0wdMlp54d
+	tH8OXRFl8uE3XeQNgplhbcssoxsL6lo2Ml6MBkSo6KemXP1O4J4k/7WLEUJEWYeyjHTnnrkoYqx
+	xN5GGtlC9DmXoiKw3C/habEnjY+wko0/U3IvlVhXe74+nq+HD+/y+jqS/YEISAfUWBj2m1VJGFB
+	dad1ZI9piruWoOKTqAczTdh+eAzvxTh0iq7pfIW+2WN1ENN0fdNJ+b9cv5/mc/bQ7iycJ34bF8u
+	DzP8IhNT1fmvihq/zyaM/W2kx9lfqMPyO3h09FPyRbmo4VuNVWMGrup19t0mFMJY7VuZLPEPoFa
+	qPEOCFg==
+X-Google-Smtp-Source: AGHT+IFzvAL5bAZmO7McixMnJtBdygccmJwnnXWUeAxB4tYPWT6bakDwtgNas5txE5kws5pwrRm0PA==
+X-Received: by 2002:a05:620a:6007:b0:7c0:ba6b:b6d2 with SMTP id af79cd13be357-7c0ba6bba2bmr259913385a.38.1739979582828;
+        Wed, 19 Feb 2025 07:39:42 -0800 (PST)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c0abde9fa0sm233481185a.105.2025.02.19.07.39.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2025 07:39:42 -0800 (PST)
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 8EBEE1200043;
+	Wed, 19 Feb 2025 10:39:41 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-09.internal (MEProxy); Wed, 19 Feb 2025 10:39:41 -0500
+X-ME-Sender: <xms:Pfu1Z_9mOZVtSQlDGI4OZflKd6QOxIceB0nV4d3dPgJC1rRDWcntHA>
+    <xme:Pfu1Z7sQBHkepvrr9SmSFjU-d7AT21r2etUgfqWGZriP5Ny5vY5Y9HpfeMqTahVLg
+    g8d-x6z7KTYddspng>
+X-ME-Received: <xmr:Pfu1Z9B5h7vUujka9GGhE8Bf3WhGUVXJHeSmDGfHYCX9kIfllo-G8Lz-NA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeigeeigecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffoggfgsedtkeertdertddtnecu
+    hfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtg
+    homheqnecuggftrfgrthhtvghrnhepgeegueekgefhvedukedtveejhefhkeffveeufedu
+    iedvleetledtkeehjefgieevnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlh
+    hushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhm
+    vghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekhe
+    ehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghm
+    vgdpnhgspghrtghpthhtohepvdekpdhmohguvgepshhmthhpohhuthdprhgtphhtthhope
+    hrtghusehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghorhgsvghtsehl
+    fihnrdhnvghtpdhrtghpthhtoheprhhoshhtvgguthesghhoohgumhhishdrohhrghdprh
+    gtphhtthhopehmhhhirhgrmhgrtheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgr
+    thhhihgvuhdruggvshhnohihvghrshesvghffhhitghiohhsrdgtohhmpdhrtghpthhtoh
+    epphgruhhlmhgtkheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepfhhrvgguvghrihgt
+    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopehnvggvrhgrjhdruhhprgguhhihrgihse
+    hkvghrnhgvlhdrohhrghdprhgtphhtthhopehjohgvlhesjhhovghlfhgvrhhnrghnuggv
+    shdrohhrgh
+X-ME-Proxy: <xmx:Pfu1Z7cpw4Bu6SWvRSIB59oWNQCspdHG_i7TfaqabHWq4vhlHNiCFw>
+    <xmx:Pfu1Z0Pxio3WCXYf3Sx3PV2KmeQ62kelDYSrFEf-aJ-Oky1Iw3LJgA>
+    <xmx:Pfu1Z9mHlR3mAQmc8Qt6Ec9foVre3KXoKz2PNpHUNqJgjHVbWLPGrw>
+    <xmx:Pfu1Z-teYc2WLpoA8InXfuhgV3ST4LZv-sgibucN97rb1-0gZOev2w>
+    <xmx:Pfu1Z-tYEUEP1VinV0deYw632B4GKoB0EmNNXPDTxMk1Cnru0V03hWcL>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 19 Feb 2025 10:39:40 -0500 (EST)
+From: Boqun Feng <boqun.feng@gmail.com>
+To: rcu@vger.kernel.org
+Cc: Jonathan Corbet <corbet@lwn.net>,	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,	Boqun Feng <boqun.feng@gmail.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,	Davidlohr Bueso <dave@stgolabs.net>,
+	Shuah Khan <shuah@kernel.org>,	Andrew Morton <akpm@linux-foundation.org>,
+	Thomas Huth <thuth@redhat.com>,	"Borislav Petkov (AMD)" <bp@alien8.de>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,	Yury Norov <yury.norov@gmail.com>,
+	Valentin Schneider <vschneid@redhat.com>,	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,	linux-trace-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH rcu 00/11] RCU torture changes for v6.15
+Date: Wed, 19 Feb 2025 07:39:27 -0800
+Message-Id: <20250219153938.24966-1-boqun.feng@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/3] arm64: Add BBM Level 2 cpu feature
-To: =?UTF-8?Q?Miko=C5=82aj_Lenczewski?= <miko.lenczewski@arm.com>,
- ryan.roberts@arm.com, yang@os.amperecomputing.com, catalin.marinas@arm.com,
- will@kernel.org, joey.gouly@arm.com, broonie@kernel.org,
- mark.rutland@arm.com, james.morse@arm.com, yangyicong@hisilicon.com,
- anshuman.khandual@arm.com, maz@kernel.org, liaochang1@huawei.com,
- akpm@linux-foundation.org, david@redhat.com, baohua@kernel.org,
- ioworker0@gmail.com, oliver.upton@linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250219143837.44277-3-miko.lenczewski@arm.com>
- <20250219143837.44277-5-miko.lenczewski@arm.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20250219143837.44277-5-miko.lenczewski@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Hi Miko,
+Hi,
 
-On 2025-02-19 2:38 pm, Mikołaj Lenczewski wrote:
-> The Break-Before-Make cpu feature supports multiple levels (levels 0-2),
-> and this commit adds a dedicated BBML2 cpufeature to test against
-> support for.
-> 
-> This is a system feature as we might have a big.LITTLE architecture
-> where some cores support BBML2 and some don't, but we want all cores to
-> be available and BBM to default to level 0 (as opposed to having cores
-> without BBML2 not coming online).
-> 
-> To support BBML2 in as wide a range of contexts as we can, we want not
-> only the architectural guarantees that BBML2 makes, but additionally
-> want BBML2 to not create TLB conflict aborts. Not causing aborts avoids
-> us having to prove that no recursive faults can be induced in any path
-> that uses BBML2, allowing its use for arbitrary kernel mappings.
-> Support detection of such CPUs.
+Please find the upcoming changes in rcutorture for v6.15. The
+changes can also be found at:
 
-If this may be used for splitting/compacting userspace mappings, then 
-similarly to 6e192214c6c8 ("iommu/arm-smmu-v3: Document SVA interaction 
-with new pagetable features"), strictly we'll also want a check in 
-arm_smmu_sva_supported() to make sure that the SMMU is OK with BBML2 
-behaviour too, and disallow SVA if not. Note that the corresponding 
-SMMUv3.2-BBML2 feature is already strict about TLB conflict aborts, so 
-is comparatively nice and straightforward.
+	git://git.kernel.org/pub/scm/linux/kernel/git/rcu/linux.git torture.2025.02.05a
 
-Thanks,
-Robin.
+Regards,
+Boqun
 
-> Signed-off-by: Mikołaj Lenczewski <miko.lenczewski@arm.com>
-> ---
->   arch/arm64/Kconfig                  |  9 ++++++++
->   arch/arm64/include/asm/cpufeature.h |  5 +++++
->   arch/arm64/kernel/cpufeature.c      | 32 +++++++++++++++++++++++++++++
->   arch/arm64/tools/cpucaps            |  1 +
->   4 files changed, 47 insertions(+)
-> 
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index 940343beb3d4..84be2c5976f0 100644
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -2057,6 +2057,15 @@ config ARM64_TLB_RANGE
->   	  The feature introduces new assembly instructions, and they were
->   	  support when binutils >= 2.30.
->   
-> +config ARM64_ENABLE_BBML2
-> +	bool "Enable support for Break-Before-Make Level 2 detection and usage"
-> +	default y
-> +	help
-> +	  FEAT_BBM provides detection of support levels for break-before-make
-> +	  sequences. If BBM level 2 is supported, some TLB maintenance requirements
-> +	  can be relaxed to improve performance. Selecting N causes the kernel to
-> +	  fallback to BBM level 0 behaviour even if the system supports BBM level 2.
-> +
->   endmenu # "ARMv8.4 architectural features"
->   
->   menu "ARMv8.5 architectural features"
-> diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
-> index e0e4478f5fb5..2da872035f2e 100644
-> --- a/arch/arm64/include/asm/cpufeature.h
-> +++ b/arch/arm64/include/asm/cpufeature.h
-> @@ -866,6 +866,11 @@ static __always_inline bool system_supports_mpam_hcr(void)
->   	return alternative_has_cap_unlikely(ARM64_MPAM_HCR);
->   }
->   
-> +static inline bool system_supports_bbml2_noconflict(void)
-> +{
-> +	return alternative_has_cap_unlikely(ARM64_HAS_BBML2_NOCONFLICT);
-> +}
-> +
->   int do_emulate_mrs(struct pt_regs *regs, u32 sys_reg, u32 rt);
->   bool try_emulate_mrs(struct pt_regs *regs, u32 isn);
->   
-> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-> index d561cf3b8ac7..8c337bd95ef7 100644
-> --- a/arch/arm64/kernel/cpufeature.c
-> +++ b/arch/arm64/kernel/cpufeature.c
-> @@ -2176,6 +2176,31 @@ static bool hvhe_possible(const struct arm64_cpu_capabilities *entry,
->   	return arm64_test_sw_feature_override(ARM64_SW_FEATURE_OVERRIDE_HVHE);
->   }
->   
-> +static bool has_bbml2_noconflict(const struct arm64_cpu_capabilities *entry,
-> +				 int scope)
-> +{
-> +	if (!IS_ENABLED(CONFIG_ARM64_ENABLE_BBML2))
-> +		return false;
-> +
-> +	/* We want to allow usage of bbml2 in as wide a range of kernel contexts
-> +	 * as possible. This list is therefore an allow-list of known-good
-> +	 * implementations that both support bbml2 and additionally, fulfil the
-> +	 * extra constraint of never generating TLB conflict aborts when using
-> +	 * the relaxed bbml2 semantics (such aborts make use of bbml2 in certain
-> +	 * kernel contexts difficult to prove safe against recursive aborts).
-> +	 */
-> +	static const struct midr_range supports_bbml2_without_abort_list[] = {
-> +		MIDR_REV_RANGE(MIDR_CORTEX_X4, 0, 3, 0xf),
-> +		MIDR_REV_RANGE(MIDR_NEOVERSE_V3, 0, 2, 0xf),
-> +		{}
-> +	};
-> +
-> +	if (!is_midr_in_range_list(read_cpuid_id(), supports_bbml2_without_abort_list))
-> +		return false;
-> +
-> +	return true;
-> +}
-> +
->   #ifdef CONFIG_ARM64_PAN
->   static void cpu_enable_pan(const struct arm64_cpu_capabilities *__unused)
->   {
-> @@ -2926,6 +2951,13 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
->   		.matches = has_cpuid_feature,
->   		ARM64_CPUID_FIELDS(ID_AA64MMFR2_EL1, EVT, IMP)
->   	},
-> +	{
-> +		.desc = "BBM Level 2 without conflict abort",
-> +		.capability = ARM64_HAS_BBML2_NOCONFLICT,
-> +		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
-> +		.matches = has_bbml2_noconflict,
-> +		ARM64_CPUID_FIELDS(ID_AA64MMFR2_EL1, BBM, 2)
-> +	},
->   	{
->   		.desc = "52-bit Virtual Addressing for KVM (LPA2)",
->   		.capability = ARM64_HAS_LPA2,
-> diff --git a/arch/arm64/tools/cpucaps b/arch/arm64/tools/cpucaps
-> index 1e65f2fb45bd..8d67bb4448c5 100644
-> --- a/arch/arm64/tools/cpucaps
-> +++ b/arch/arm64/tools/cpucaps
-> @@ -26,6 +26,7 @@ HAS_ECV
->   HAS_ECV_CNTPOFF
->   HAS_EPAN
->   HAS_EVT
-> +HAS_BBML2_NOCONFLICT
->   HAS_FPMR
->   HAS_FGT
->   HAS_FPSIMD
+Paul E. McKenney (11):
+  torture: Add get_torture_init_jiffies() for test-start time
+  rcutorture: Add a test_boost_holdoff module parameter
+  rcutorture: Include grace-period sequence numbers in
+    failure/close-call
+  rcutorture: Expand failure/close-call grace-period output
+  rcu: Trace expedited grace-period numbers in hexadecimal
+  rcutorture: Add ftrace-compatible timestamp to GP# failure/close-call
+    output
+  rcutorture: Make cur_ops->format_gp_seqs take buffer length
+  rcutorture: Move RCU_TORTURE_TEST_{CHK_RDR_STATE,LOG_CPU} to bool
+  rcutorture: Complain when invalid SRCU reader_flavor is specified
+  srcu: Add FORCE_NEED_SRCU_NMI_SAFE Kconfig for testing
+  torture: Make SRCU lockdep testing use srcu_read_lock_nmisafe()
+
+ .../admin-guide/kernel-parameters.txt         |  5 ++
+ include/linux/torture.h                       |  1 +
+ include/trace/events/rcu.h                    |  2 +-
+ kernel/rcu/Kconfig                            | 11 ++++
+ kernel/rcu/Kconfig.debug                      | 18 ++++-
+ kernel/rcu/rcu.h                              |  2 +
+ kernel/rcu/rcutorture.c                       | 65 +++++++++++++++++--
+ kernel/rcu/tiny.c                             | 14 ++++
+ kernel/rcu/tree.c                             | 20 ++++++
+ kernel/torture.c                              | 12 ++++
+ .../selftests/rcutorture/bin/srcu_lockdep.sh  |  2 +-
+ 11 files changed, 144 insertions(+), 8 deletions(-)
+
+-- 
+2.39.5 (Apple Git-154)
 
 
