@@ -1,308 +1,447 @@
-Return-Path: <linux-kernel+bounces-521217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FCDBA3B8FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:29:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE3A1A3B95F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:32:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56A723B6904
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:21:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD7E117D54C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:23:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5B9F1DE4C5;
-	Wed, 19 Feb 2025 09:18:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 436621DF25E;
+	Wed, 19 Feb 2025 09:20:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="RvmU39g6";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="CuWQD6gW"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="um+CXceo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D74E21B4F0C;
-	Wed, 19 Feb 2025 09:18:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739956689; cv=fail; b=Jgei6s/HqVeHuILZdek6pDIeRswo7BhFuYT96UyzmHtE8zH+5AY+3MdCzhFrJHaPNQV/JJPj/IigSBhXAb5kwrrFXLq84rDYeN9PBJ17hY0Jl2oCPjV2GP68ifoCkDemxYCx1Zzrmnd+VXuilKx0GozqRpag85S4jllallmSSiI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739956689; c=relaxed/simple;
-	bh=eH0LmM8R0NLrb/dKm4SzbTzfhkdBgM/XNteLMIyeMhg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=TVNLixIk5J4GXxR5ujNnDajqE11SpvK2elHjwOpAEWklf9D+EGEp9vT31++vrOoDLmD5J39ZP+bME4CTxARltAf509JMnpF0+Ajv1J1AIvWkTzmdaabrnVT9GkkbikxT7ahsCnX2EyzZn860sOKVao/6IfhP4iDi2C/vLpPV0ls=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=RvmU39g6; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=CuWQD6gW; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51J1v1ol019291;
-	Wed, 19 Feb 2025 09:17:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=eH0LmM8R0NLrb/dKm4SzbTzfhkdBgM/XNteLMIyeMhg=; b=
-	RvmU39g6dLn6KLs/sdClTFWfFu0n9RuvytQQsJKd6XxKABNc+QEuyWyo11PS/FIA
-	KFRkek/a5jFzEnnzvrpHsbO90zP8FIox3uOMsw8NuR4U14W2NFV0sKVD3Ag/CCGs
-	VzgF97AY7UWnN+hOQaXaOErKd2gCS09fnTUffJhj7UDvRFw3NyXZmF08mIcaEX0W
-	uH7v7YpvVD+YUj/fa314vHxr659iGOopYmhUrzABA13Nzh3IOHI2qURznVWCd+X8
-	izAtZPk/mv+Qi1kSRu7wobMDk1iqrZeT1Kba0Yzb1TYJKLpGg/6H/NN9JOZMZp1k
-	RX5TzTOE0RPo5aEIkmKeVQ==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 44w00ms6n9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 19 Feb 2025 09:17:50 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 51J7kqjV025217;
-	Wed, 19 Feb 2025 09:17:49 GMT
-Received: from nam02-dm3-obe.outbound.protection.outlook.com (mail-dm3nam02lp2046.outbound.protection.outlook.com [104.47.56.46])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 44w08w7rh7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 19 Feb 2025 09:17:49 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=S8mMKucLLO7AKeqdLeRpDyQ6f4Ovytu+7A/GqssYG0uw/Z87Qkvw0PxDTyCxp6ZXlgLk1guap2X9u1s/yE5NNthwr7iwaREs3jha+W84C2jlybijW6ofU24KDO8O1drs6kEXBgNV+Ma2Z6uDMCfN9wPf/nZBJ/yNXUnkOvgm1UaPrIUXS46bnqdBA+7ZLDp3KdSZfOiVaEpDIPJp4/LDw8nGn2A0+yTSN1w0WWLpUty61Bmr0dSL8eu+PRntlbIMVo5J+bX2dFrA6KdnvYq+Ky6b6mh6Y1TwIkVDMmRIdbD/0WdHcHJksrzf68YoBJQWqhclx1gFYLxcrEkfNAH8vw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=eH0LmM8R0NLrb/dKm4SzbTzfhkdBgM/XNteLMIyeMhg=;
- b=Chz6vyWP7u5BnR64Os/BCarxWA1xQRLEmkcGvL2m1Hx0fKjYG8uhbAStI0EtNQq30DPob1mJrgXdVS7jCqvffUj9eOKVk+tqjD/gWqWG4Nqu9FJd58bLKLbqC4KnDTolXjxD8t8NCqVDxuNQlb0dM4ZLz8sLUOLkQO+YL0dB28iIdhYM3FFmtRYP/fxKnSwUaP0mycIJrGWE2q0RrnLUWj7uVDSyekemEv6hGZrAlEf5N9N6JXscUhNeokQF6vpogEb18HhQWBMvR2kzpfCLBPlQ595/mHf6xKMxHHvaG8w8mgAbJnD6gsZ+lI1b5+g8EsKEANFI4CA4XNQ4Tv2nNA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eH0LmM8R0NLrb/dKm4SzbTzfhkdBgM/XNteLMIyeMhg=;
- b=CuWQD6gWB1/RHsTQpHy106bjrxIEoUFMaQwhDWTZtsgiAXfLalhRXgl7dlytZZX43eg8AIzyGyY5hF+rnAASsm69BWsraKBbw0maoUfQg6iik44MtD11YEhPY43UbPqmSC3Mbog1LNe8/+rPow4fuzdDmXrjV/Tmsvt/orvWCIA=
-Received: from BYAPR10MB3366.namprd10.prod.outlook.com (2603:10b6:a03:14f::25)
- by MN6PR10MB8000.namprd10.prod.outlook.com (2603:10b6:208:4f5::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Wed, 19 Feb
- 2025 09:17:46 +0000
-Received: from BYAPR10MB3366.namprd10.prod.outlook.com
- ([fe80::baf2:dff1:d471:1c9]) by BYAPR10MB3366.namprd10.prod.outlook.com
- ([fe80::baf2:dff1:d471:1c9%5]) with mapi id 15.20.8445.017; Wed, 19 Feb 2025
- 09:17:46 +0000
-Date: Wed, 19 Feb 2025 09:17:43 +0000
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Kalesh Singh <kaleshsingh@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>,
-        "Paul E . McKenney" <paulmck@kernel.org>, Jann Horn <jannh@google.com>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
-        linux-api@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>,
-        Juan Yescas <jyescas@google.com>
-Subject: Re: [PATCH 0/4] mm: permit guard regions for file-backed/shmem
- mappings
-Message-ID: <a2e12142-3eb2-48c9-b0d9-35a86cb56eec@lucifer.local>
-References: <cover.1739469950.git.lorenzo.stoakes@oracle.com>
- <CAC_TJveMB1_iAUt81D5-+z8gArbVcbfDM=djCZG_bRVaCEMRmg@mail.gmail.com>
- <45297010-a0a4-4a42-84e8-6f4764eab3b3@lucifer.local>
- <41af4ffb-0383-4d00-9639-0bf16e1f5f37@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <41af4ffb-0383-4d00-9639-0bf16e1f5f37@redhat.com>
-X-ClientProxiedBy: LNXP265CA0043.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:5c::31) To BYAPR10MB3366.namprd10.prod.outlook.com
- (2603:10b6:a03:14f::25)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D43A17A2FE
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 09:20:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739956800; cv=none; b=DUWfKHhfk9KBiiJmfJIcaVIqBY9oaSBz9T5lGtyhvxMfffw8tkdeIwbI+5aOov81KABA8BFdI8TPZALJtC4Jh7K9R0GSz1e1pWh7f2t8boPGfLRTp4k6aGKqp+UAB/eE2XjLsKS7U+J2VTFYUL2VcfWcSULRMvklmydwNABr+5s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739956800; c=relaxed/simple;
+	bh=GgomySZeWLFxNbBGw621PvZP7aIPFglKh/2yCe/9CRw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N+PfjZKWXoVFsrstR3m8UUyy+xSyPp2vLZvWCtMZcgMrDQG7Jgmyz0T1k6JEOsfzFbZ4z2fgNlLVwyULVNvZQVySAtwVGWAbs1bNWsNXLBTSJyPppt57DmXQn/6frYCqvdeRbkYAikC9/c9W0CJHoiCMm2l2OfoAg8ZxUD4wInY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=um+CXceo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9234AC4CED1;
+	Wed, 19 Feb 2025 09:19:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739956799;
+	bh=GgomySZeWLFxNbBGw621PvZP7aIPFglKh/2yCe/9CRw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=um+CXceoAosY+iDzoAcLX/Gvv/rQUVTxGW/D/FIllUW1/Xtt/ZcLq3JjP/7iBMa6V
+	 sn4fuIndsB7k0OrGZcr7TFYHJ/fQy2HJL4nmOiXcQmx5dsGVJ/xTrchO6c37rirl2D
+	 FpY24faKQspkY7slXbWMMzU9ymOv3hw8ttfZ96UfDGi6ykw7u1Z71D2kVxzmYpoAMA
+	 c4ByAoK602ltzfCP3C6oPrAK+cRR1RvPZKAfLpViVBEKUA6eaIfXh+aa0cJ/K6V6R6
+	 jEMjwsA06ggIId/GdPUcdgyNsbaCmlYJzgFhjlGkVp8R40iL9qJbWU8KfsgjvmFGnO
+	 KdWRqEzlyDGwQ==
+Date: Wed, 19 Feb 2025 10:19:57 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	=?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 02/10] drm/display: add CEC helpers code
+Message-ID: <20250219-fascinating-quizzical-herring-fe7d9c@houat>
+References: <20250126-drm-hdmi-connector-cec-v3-0-5b5b2d4956da@linaro.org>
+ <20250126-drm-hdmi-connector-cec-v3-2-5b5b2d4956da@linaro.org>
+ <ylahtg54vvrpg5rzp3z5oyi37mtblj3hn4pzwylcimfakrzy3m@idqczwb3hvxl>
+ <lme4jqksg7djyrxwpo3x363vlsyhld22co3tfsthniistnrm5h@kbygscfa7afr>
+ <20250205-smoky-fearless-hornet-cbf422@houat>
+ <j2ej27mzia326q6fjqk2c3xui6dhbx2chswjjmgaoxgiajstl2@dcmgdtkzbjht>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BYAPR10MB3366:EE_|MN6PR10MB8000:EE_
-X-MS-Office365-Filtering-Correlation-Id: 559686b9-c82d-4a18-cb9d-08dd50c645c1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MGtCYUFHWEZNTkRobXFzYzlLbzlHQ2xDK0tPY3Y4ejJkcXd2NXlaWGlvRUVK?=
- =?utf-8?B?QUE2dlg4VTgwVkthSHdPcVZhTTgrVitTajc3TCtWZWYxdStKMzIrV3I5d3dE?=
- =?utf-8?B?eWJFTTduS1ErVXkzZ3JJYWVZTXFCK05MOXBIL2w5cjBJei9XRXpvWHgyem1N?=
- =?utf-8?B?VTVNbmVCY0todkRUYXJ0RHJjV0hYc0VRRHZTQnFQRjZiZXpob242ZkdwMDcy?=
- =?utf-8?B?R0x2Slh3OUV6Vks1bVgzSnl5TzM3TGRmZU02UXpOWFA5UW1wMEVXVzdPQzJW?=
- =?utf-8?B?cFJ6YnJycEN5TlIvRDM1Q3FuMWtmWmNSWVVZajRoNVJwL0NDZVMyV1JVSnc1?=
- =?utf-8?B?djg5N2RRVjhvMjdMcHJ2YUozRHNVeWE5aTJBMURoOUI4TzBoT1ovRlV3RU5T?=
- =?utf-8?B?YkxUQ3BlUVNvNmlLVmcwbzA1TzZWOFZNbUtQbWRQS09VUzR2Sy9wU1J0cTlY?=
- =?utf-8?B?ajNKUGNWY0JBL3ZrU29tcEtwZHJZajEvUzgxbVpDU0xjTHkwNTFIZ2ozdUZT?=
- =?utf-8?B?RWhWVVpONDJFcGRwWEUvZ1dhY3RlR1dSVFVPNGZoZ2NMdTZDekVBUFdyZ0l5?=
- =?utf-8?B?MStjeWhTdUlONnh1OEp6Y293cExCemc2OXFMdU5BazRaWnVIN1lINTlkNER4?=
- =?utf-8?B?TU1LNkdZSkRTWThaeXQrdklYOVNOaGg0dDRvbFNWNWNxMkFnWDhGbzVNMS9K?=
- =?utf-8?B?a1YvNGVLdkl4OUpsSUwyMllDNkorcHJxcEZ4R3YrdFRmNFdrZUpEcnlqcXV3?=
- =?utf-8?B?RzhVeXczRkhZRk1WY3JGSDdRS3RVMVI5TzB4VUZYWXpWd3NEVVdhY2ZjRngw?=
- =?utf-8?B?TjVrUEJxRWxwL0xvcHM0TjBTQVVjZW5lR1h3elpBUkY0d2I0a1M2aGVSV2JV?=
- =?utf-8?B?WFNvTzFWQzVyNkpyOXp5MlY4V3ZzMG9KdG5SL0NKcVJhZ3RyL2xxdE5VZE9R?=
- =?utf-8?B?aUlZSnl0RlFiV2xOUWxUSEc1N1pxZUcydVdUckZrdTkvaEYrRXVNUzhLRFd0?=
- =?utf-8?B?TGZva3RGUHNKY3pNNHZmSzBpa0liVmtGa1dVZ2tZQ3A3eU4yYzVFL29xRGZa?=
- =?utf-8?B?ZzZXaWtrbXIxbzdENDVRTnNpN2pEY3hUZlhJY0EyaHZaTDI3VENRbEhaMnRu?=
- =?utf-8?B?azI3clRXVlVPNTNzMjNZaEFFcHllVFRwV2dWZUdqMXhTL1Yya09ldE9jZVp6?=
- =?utf-8?B?cUZPU0twRU51TStpNEUvZVM2QTBNdU5qTkt3TTduNVU2M0hicUY0UGJIMHhh?=
- =?utf-8?B?MDhWVG1ybEM5S1lyN2JpbFFJVk5UYkRnaVNpaDl2OWpxOFJoem4yRXBZT1A1?=
- =?utf-8?B?SXhvKzBUREJubnhNbTl2bjFiNzRqRnZJbDlvR09zR2hCUWF0QTdEYUZlSFlt?=
- =?utf-8?B?T1lUZVhjZ20vZkgycG5UWmVkQzFwNHF5dmRSZkNWMDAvWWwrVkFOcnA4OGZz?=
- =?utf-8?B?dUx0N1RkL3hYTStiSzBCcDdxaUZrcEt1c1Z0WVllQzlmYTU4QVE0VVluU1R3?=
- =?utf-8?B?V1VCOUlkdUZlRGsrOWJEYUNLRVdrTStMZDlUZWpmNUM1WjZneWdWUjd2VVZ4?=
- =?utf-8?B?RUt6eDJoV2ZYUFpRc1JoNXREUFQwNFJTNEsyUFR1dFY5R3RtMTZ0VGN4T2E0?=
- =?utf-8?B?OE5vSVF3MDltODVPeUhVSFNyeXMwQmQrT1ZEejhKZ1d5ZDhNQTZkUUFNbFJR?=
- =?utf-8?B?Vnh3bFU4dG1rN2haVzNibmFQRDJMUGt6R0Q1bFRXVFZqUUdWV1JKZ1RKYUxX?=
- =?utf-8?B?djc1MjNFM1RBMGtrYmVHWWxoQkt1VTZsMEx3TWp6MnkvOTZGMFFTOEhwb2pC?=
- =?utf-8?B?RExnMzZsRGNPUzMzTTFiMExJeHh4ZUFQVXBPaUpicHdPRXFKOTNhcFVvQjhh?=
- =?utf-8?Q?GDEfFlCRBw55L?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR10MB3366.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aFNmZVdVaUMrUnRWVlA1bXRrRm9CMXNHRlNUblZCZkxmMHBSSFNhdnp3UGZj?=
- =?utf-8?B?R28yNzJwOUExT1phS0twVnI4NGVoZ3pMc2hhKzFJdmNXcFlqVnBSVnZNaklk?=
- =?utf-8?B?WTN0QWZIZE1uMjZEWHViRk5DY0l5VzlhVXRIZEJaK1VqcTU3aXJPTXFYdkZV?=
- =?utf-8?B?ZFVxc2VrRnVucUhIRFJkRjNKRHBhLy9Pb1oyckRWMU1KcWxHUXlpVzJob1I4?=
- =?utf-8?B?Q1lzVk14WmJncndUQ3ViNzB4K3ZkY1VXTkUrQnhkWGhkbEFZLzd6K2dUSkZP?=
- =?utf-8?B?bFVlejcrd2R0NkJGVTZjMSs0U0UvN2FXampKMU15ZEVRODQ3YWRVNUhob1Nh?=
- =?utf-8?B?Ukcycmp0N1ByY2FBRFZNY1puSElPVEc0VS9UYXJ1UGZDSFN1SnNsRlhwMFp6?=
- =?utf-8?B?M3QrNWxJc052aUpyVnN0bnc0RWNMd054c29LRjc2eTU3ZitQSW5MeWh1cEJl?=
- =?utf-8?B?cmFNcytKN3dsRkZ3OTJsZ0g3S2FnSGhxZERkZEZObVFkL3BxUXplRUFSWVZ3?=
- =?utf-8?B?eXAwTE16bURWSkprQnA2TGxzQkNQRkFkN2F6cURTOURaa21zV0RzRGtqdGxS?=
- =?utf-8?B?VEFScHllVnVCZXlBYnkycEJqS003ME9RV0FnNktTVjNJSFF0NlNZZS9xb3VC?=
- =?utf-8?B?elRJYkZSUlNISWZzcTBzbGZSZ0MweHNhdWZ1cGczbkZnZ1BMRi9tNXJ3dkNC?=
- =?utf-8?B?RjkvTUFKWW5oNjJwamFmdVlMMHd5aEpuZm5rS0phSjRDMjNrVXA5UnRXelFn?=
- =?utf-8?B?YnVibDRLWXRYQlM1cEwxaGJUaFdBNFdFSFpQMXhOVzZDOHpmYVI0YkVPTlZL?=
- =?utf-8?B?WExKU3QyMzE5L1ZYMFc3YXFleC9HWHAwek8vMno2dGNPcHc3SlZOejU3QktE?=
- =?utf-8?B?bGhyWGY1eGZ3Vkt6MVhSWEtwbDdiQW1UREI0cVpWRmJZOWgxemd3UFFrYzhh?=
- =?utf-8?B?VkpoekVKUFE2OEltS3o2MUJSRnVuNG9mZjIwUEdzRmVvZUk2d0NPRXhxZThG?=
- =?utf-8?B?QUNvb1hjN2tPaWlJVzdVZG5pTUNGTE93eWRYanRzaGpjU0xEblRQdjQzOEJz?=
- =?utf-8?B?ZFBBQmZZYU9QRDhzTzNuSHIydlZFSEZYRk52L1hpdUhQcXZFczBkVVVlanpv?=
- =?utf-8?B?MEhseDJvSkJRd2crS2VsbEF6dTI2T1A4UGdweW8rUWJXcnR0NW40aE1qT2pW?=
- =?utf-8?B?Wi9MVkRCRVZWOEpYeWh0T3pGNVNtVWhPS0lGSklwZFVmT1NUb0gxTU53T2lZ?=
- =?utf-8?B?dWNKNnJLWEVOcDJJeFJxWUlpVmdPR3l3bG5OcTAvTVlRTHdSRTJsMkFSemNT?=
- =?utf-8?B?SUZJdHdLYU1RT3dUdWE4TG1ZQ1dwMmNiTW15a1RoQkNMUWRMcHhIODNJZkxu?=
- =?utf-8?B?aGREbEVhTGh2VmNaaG5Ya21CRUNkTzNCZnFUajNDRnkvR0dvaVJ6Zk1IYTZm?=
- =?utf-8?B?MGRSeVNYN2lENXR4WWZORzlPajIySitTbTJvYVB6enlIYTlkSXdUbDh5WUxq?=
- =?utf-8?B?dzM1QWUvK2ZjSnJCWlZnYzg0dk11RVJ4WmZnNXo4V1JkUm5jdmFJbE40RlpL?=
- =?utf-8?B?LzVheTFjQnAyemJzTmhaSUNrTW01enNPUmMyNkdqU3VJZzJUQnB0Z3JPNmxX?=
- =?utf-8?B?MkpqZ3ErVGVqeWc1dE1vMFhNUG1DSEhmakxlZWtxQzRqTE14TVJMU3pvZFVZ?=
- =?utf-8?B?WlJkWWdtUFN0a0l3SE9qWFBoTUdXdVJjZ1VxY3VnbHNaY2NjajlheVFsb1hW?=
- =?utf-8?B?WERmZm9yUE1sNXBTNC9IeldET0tFeFJzRFAwNFpJMTZXMHJCVng1N2NCVHBB?=
- =?utf-8?B?L1NnWS9FbFVTYVl1RVphUDBGTnAzTGxxK3JxWXlqdkFpaW5UL1Y1NVZUamJC?=
- =?utf-8?B?MFNpcWxTbkRsUzRKbXBsREM2anJ5U3hZYStsZWNVMThOQ0tzWmlwRmhoZ3c1?=
- =?utf-8?B?MzlXNlIrSFAyWG95Y1NYa05OS2Y3QlBvRmFFMmowL09pV09WVEdLU1VpVlpq?=
- =?utf-8?B?d2RxZXpPZEo4Zk5FeUxUa2JMbTlvTzJSWUpSZlN2bnZGRHRJVWROYnIyYnhF?=
- =?utf-8?B?bUZGZnlHRk54ZEgrd3ZBb0JyaXo2OEMrUDUzQUtqUmJFelUzY1pRdWVKeCtH?=
- =?utf-8?B?UUdjV1JjaVVRczBoQzFVZnE0OGhiZGljZExEWVd6QnhyaXk4U2pxVGE5VDRk?=
- =?utf-8?B?Y3c9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	Edn6UbirIuIxP/mDzxmycDKaAL7Vcm6uka4avZBwZljt4z4eFEGPCvhX2SMm0PeQhnCV3Hj3UvWCzoTD1e1plluDXwSovNdrnZO8ktSPzabvzeBOPlFFSXsO7lQpJJ/a4RvRrigkI6qVHWCzAbLR9SO3ukTnLc0ao440cfnkfx8vRiJNJ7iFt4aDS8g16/EiCebo75jzi828zmaRKr5XzvyyvJWBPydcPmehRdhOEGDwe6x/Yp15BF3Ek5QV3WW/AvGE9OmW8dTV8gaoaShsFi1ZCbI7HDVl4BrKgms2BQNgbqMZAMI76zpV5Sl2WKIOvjIzedlW78MBJoGZQ+w0kahKXoEVi03f3xmnxAHCZ9BTh/3boeSDe6/HAXiWt8nqy/1hEhW2r9MwrfsYNuOZuEUZf5ndQHB2C77Q10/UaSw3nrSIWiQAmW6VzjjC80mYJGu5Xr4AgQjoZSSUIKsvNAseAEJtARCKpoxhhYn/j2qBWtUfGkiidzJWIwPaKD7kZqLuiimETg5W/SzZg5Rv6O3gSQ/oN7L2/vFx9cKkqkFF5be4Gsrb4K7KKbjcEUhatM7XEGXsLF1yr/1b6wqO/IwkMltIn1deU2Cxc+uW97I=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 559686b9-c82d-4a18-cb9d-08dd50c645c1
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR10MB3366.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2025 09:17:46.1661
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /5XoVbU7ISRsl/NzmzWBd+fOs1ajbusXG8FWxpExWeRIwZVR+xI6vntJZU5oVcAbOFLL1ER+XqLSllPX+QfpwOhGN+4NXLg2fvuqZ8wLTqk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR10MB8000
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-19_04,2025-02-18_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 adultscore=0 bulkscore=0
- mlxscore=0 spamscore=0 mlxlogscore=999 phishscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502100000
- definitions=main-2502190073
-X-Proofpoint-ORIG-GUID: 7NA4n9kehChZHDL-BVcqgngFALeieI8m
-X-Proofpoint-GUID: 7NA4n9kehChZHDL-BVcqgngFALeieI8m
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="yw42zjrvnoz67ryw"
+Content-Disposition: inline
+In-Reply-To: <j2ej27mzia326q6fjqk2c3xui6dhbx2chswjjmgaoxgiajstl2@dcmgdtkzbjht>
 
-On Wed, Feb 19, 2025 at 10:15:47AM +0100, David Hildenbrand wrote:
-> On 19.02.25 10:03, Lorenzo Stoakes wrote:
-> > On Wed, Feb 19, 2025 at 12:25:51AM -0800, Kalesh Singh wrote:
-> > > On Thu, Feb 13, 2025 at 10:18 AM Lorenzo Stoakes
-> > > <lorenzo.stoakes@oracle.com> wrote:
-> > > >
-> > > > The guard regions feature was initially implemented to support anonymous
-> > > > mappings only, excluding shmem.
-> > > >
-> > > > This was done such as to introduce the feature carefully and incrementally
-> > > > and to be conservative when considering the various caveats and corner
-> > > > cases that are applicable to file-backed mappings but not to anonymous
-> > > > ones.
-> > > >
-> > > > Now this feature has landed in 6.13, it is time to revisit this and to
-> > > > extend this functionality to file-backed and shmem mappings.
-> > > >
-> > > > In order to make this maximally useful, and since one may map file-backed
-> > > > mappings read-only (for instance ELF images), we also remove the
-> > > > restriction on read-only mappings and permit the establishment of guard
-> > > > regions in any non-hugetlb, non-mlock()'d mapping.
-> > >
-> > > Hi Lorenzo,
-> > >
-> > > Thank you for your work on this.
-> >
-> > You're welcome.
-> >
-> > >
-> > > Have we thought about how guard regions are represented in /proc/*/[s]maps?
-> >
-> > This is off-topic here but... Yes, extensively. No they do not appear
-> > there.
-> >
-> > I thought you had attended LPC and my talk where I mentioned this
-> > purposefully as a drawback?
-> >
-> > I went out of my way to advertise this limitation at the LPC talk, in the
-> > original series, etc. so it's a little disappointing that this is being
-> > brought up so late, but nobody else has raised objections to this issue so
-> > I think in general it's not a limitation that matters in practice.
-> >
-> > >
-> > > In the field, I've found that many applications read the ranges from
-> > > /proc/self/[s]maps to determine what they can access (usually related
-> > > to obfuscation techniques). If they don't know of the guard regions it
-> > > would cause them to crash; I think that we'll need similar entries to
-> > > PROT_NONE (---p) for these, and generally to maintain consistency
-> > > between the behavior and what is being said from /proc/*/[s]maps.
-> >
-> > No, we cannot have these, sorry.
-> >
-> > Firstly /proc/$pid/[s]maps describes VMAs. The entire purpose of this
-> > feature is to avoid having to accumulate VMAs for regions which are not
-> > intended to be accessible.
-> >
-> > Secondly, there is no practical means for this to be accomplished in
-> > /proc/$pid/maps in _any_ way - as no metadata relating to a VMA indicates
-> > they have guard regions.
-> >
-> > This is intentional, because setting such metadata is simply not practical
-> > - why? Because when you try to split the VMA, how do you know which bit
-> > gets the metadata and which doesn't? You can't without _reading page
-> > tables_.
-> >
-> > /proc/$pid/smaps _does_ read page tables, but we can't start pretending
-> > VMAs exist when they don't, this would be completely inaccurate, would
-> > break assumptions for things like mremap (which require a single VMA) and
-> > would be unworkable.
-> >
-> > The best that _could_ be achieved is to have a marker in /proc/$pid/smaps
-> > saying 'hey this region has guard regions somewhere'.
->
-> And then simply expose it in /proc/$pid/pagemap, which is a better interface
-> for this pte-level information inside of VMAs. We should still have a spare
-> bit for that purpose in the pagemap entries.
 
-Ah yeah thanks David forgot about that!
+--yw42zjrvnoz67ryw
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 02/10] drm/display: add CEC helpers code
+MIME-Version: 1.0
 
-This is also a possibility if that'd solve your problems Kalesh?
+On Wed, Feb 05, 2025 at 05:01:09PM +0200, Dmitry Baryshkov wrote:
+> On Wed, Feb 05, 2025 at 03:27:05PM +0100, Maxime Ripard wrote:
+> > On Tue, Jan 28, 2025 at 02:17:19PM +0200, Dmitry Baryshkov wrote:
+> > > On Tue, Jan 28, 2025 at 11:36:06AM +0100, Maxime Ripard wrote:
+> > > > On Sun, Jan 26, 2025 at 03:29:07PM +0200, Dmitry Baryshkov wrote:
+> > > > > Add generic CEC helpers to be used by HDMI drivers. Both notifier=
+ and
+> > > > > and adapter are supported for registration. Once registered, the =
+driver
+> > > > > can call common set of functions to update physical address, to
+> > > > > invalidate it or to unregister CEC data.
+> > > > >=20
+> > > > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > > > ---
+> > > > >  drivers/gpu/drm/display/Kconfig               |   5 +
+> > > > >  drivers/gpu/drm/display/Makefile              |   2 +
+> > > > >  drivers/gpu/drm/display/drm_hdmi_cec_helper.c | 209 ++++++++++++=
+++++++++++++++
+> > > > >  include/drm/display/drm_hdmi_cec_helper.h     |  61 ++++++++
+> > > > >  4 files changed, 277 insertions(+)
+> > > > >=20
+> > > > > diff --git a/drivers/gpu/drm/display/Kconfig b/drivers/gpu/drm/di=
+splay/Kconfig
+> > > > > index 8d22b7627d41f7bc015decf24ae02a05bc00f055..49da9b768acf3e5f8=
+4f2cefae4bb042cfd57a50c 100644
+> > > > > --- a/drivers/gpu/drm/display/Kconfig
+> > > > > +++ b/drivers/gpu/drm/display/Kconfig
+> > > > > @@ -82,6 +82,11 @@ config DRM_DISPLAY_HDMI_AUDIO_HELPER
+> > > > >  	  DRM display helpers for HDMI Audio functionality (generic HDM=
+I Codec
+> > > > >  	  implementation).
+> > > > > =20
+> > > > > +config DRM_DISPLAY_HDMI_CEC_HELPER
+> > > > > +	bool
+> > > > > +	help
+> > > > > +	  DRM display helpers for HDMI CEC implementation.
+> > > > > +
+> > > > >  config DRM_DISPLAY_HDMI_HELPER
+> > > > >  	bool
+> > > > >  	help
+> > > > > diff --git a/drivers/gpu/drm/display/Makefile b/drivers/gpu/drm/d=
+isplay/Makefile
+> > > > > index b17879b957d5401721396e247fa346387cf6c48a..2cd078e2b81c1a9e6=
+b336c4187b444bcb8a50e51 100644
+> > > > > --- a/drivers/gpu/drm/display/Makefile
+> > > > > +++ b/drivers/gpu/drm/display/Makefile
+> > > > > @@ -16,6 +16,8 @@ drm_display_helper-$(CONFIG_DRM_DISPLAY_DSC_HEL=
+PER) +=3D \
+> > > > >  drm_display_helper-$(CONFIG_DRM_DISPLAY_HDCP_HELPER) +=3D drm_hd=
+cp_helper.o
+> > > > >  drm_display_helper-$(CONFIG_DRM_DISPLAY_HDMI_AUDIO_HELPER) +=3D \
+> > > > >  	drm_hdmi_audio_helper.o
+> > > > > +drm_display_helper-$(CONFIG_DRM_DISPLAY_HDMI_CEC_HELPER) +=3D \
+> > > > > +	drm_hdmi_cec_helper.o
+> > > > >  drm_display_helper-$(CONFIG_DRM_DISPLAY_HDMI_HELPER) +=3D \
+> > > > >  	drm_hdmi_helper.o \
+> > > > >  	drm_scdc_helper.o
+> > > > > diff --git a/drivers/gpu/drm/display/drm_hdmi_cec_helper.c b/driv=
+ers/gpu/drm/display/drm_hdmi_cec_helper.c
+> > > > > new file mode 100644
+> > > > > index 0000000000000000000000000000000000000000..a6ed5f0fc3835b013=
+a83308f5285ea0819c5702c
+> > > > > --- /dev/null
+> > > > > +++ b/drivers/gpu/drm/display/drm_hdmi_cec_helper.c
+> > > > > @@ -0,0 +1,209 @@
+> > > > > +// SPDX-License-Identifier: MIT
+> > > > > +/*
+> > > > > + * Copyright (c) 2024 Linaro Ltd
+> > > > > + */
+> > > > > +
+> > > > > +#include <drm/drm_bridge.h>
+> > > > > +#include <drm/drm_connector.h>
+> > > > > +#include <drm/display/drm_hdmi_cec_helper.h>
+> > > > > +
+> > > > > +#include <linux/mutex.h>
+> > > > > +
+> > > > > +#include <media/cec.h>
+> > > > > +#include <media/cec-notifier.h>
+> > > > > +
+> > > > > +void drm_connector_hdmi_cec_unregister(struct drm_connector *con=
+nector)
+> > > > > +{
+> > > > > +	cec_unregister_adapter(connector->cec.adapter);
+> > > > > +	connector->cec.adapter =3D NULL;
+> > > > > +
+> > > > > +	cec_notifier_conn_unregister(connector->cec.notifier);
+> > > > > +	connector->cec.notifier =3D NULL;
+> > > > > +
+> > > > > +	connector->cec.funcs =3D NULL;
+> > > > > +}
+> > > > > +EXPORT_SYMBOL(drm_connector_hdmi_cec_unregister);
+> > > > > +
+> > > > > +static const struct drm_connector_cec_funcs drm_connector_hdmi_c=
+ec_funcs =3D {
+> > > > > +	.unregister =3D drm_connector_hdmi_cec_unregister,
+> > > > > +};
+> > > > > +
+> > > > > +int drm_connector_hdmi_cec_notifier_register(struct drm_connecto=
+r *connector,
+> > > > > +					     const char *port_name,
+> > > > > +					     struct device *dev)
+> > > > > +{
+> > > > > +	struct cec_connector_info conn_info;
+> > > > > +	struct cec_notifier *notifier;
+> > > > > +	int ret;
+> > > > > +
+> > > > > +	mutex_lock(&connector->cec.mutex);
+> > > > > +
+> > > > > +	if (connector->cec.funcs) {
+> > > > > +		ret =3D -EBUSY;
+> > > > > +		goto err_unlock;
+> > > > > +	}
+> > > > > +
+> > > > > +	cec_fill_conn_info_from_drm(&conn_info, connector);
+> > > > > +
+> > > > > +	notifier =3D cec_notifier_conn_register(dev, port_name, &conn_i=
+nfo);
+> > > > > +	if (!notifier) {
+> > > > > +		ret =3D -ENOMEM;
+> > > > > +		goto err_unlock;
+> > > > > +	}
+> > > > > +
+> > > > > +	connector->cec.notifier =3D notifier;
+> > > > > +	connector->cec.funcs =3D &drm_connector_hdmi_cec_funcs;
+> > > > > +
+> > > > > +	mutex_unlock(&connector->cec.mutex);
+> > > > > +
+> > > > > +	return 0;
+> > > > > +
+> > > > > +err_unlock:
+> > > > > +	mutex_unlock(&connector->cec.mutex);
+> > > > > +
+> > > > > +	return ret;
+> > > > > +}
+> > > > > +EXPORT_SYMBOL(drm_connector_hdmi_cec_notifier_register);
+> > > > > +
+> > > > > +#define to_hdmi_cec_adapter_ops(ops) \
+> > > > > +	container_of(ops, struct drm_connector_hdmi_cec_adapter_ops, ba=
+se)
+> > > > > +
+> > > > > +static int drm_connector_hdmi_cec_adap_enable(struct cec_adapter=
+ *adap, bool enable)
+> > > > > +{
+> > > > > +	struct drm_connector *connector =3D cec_get_drvdata(adap);
+> > > > > +	struct drm_connector_hdmi_cec_adapter_ops *ops =3D
+> > > > > +		to_hdmi_cec_adapter_ops(connector->cec.funcs);
+> > > > > +
+> > > > > +	return ops->enable(connector, enable);
+> > > > > +}
+> > > > > +
+> > > > > +static int drm_connector_hdmi_cec_adap_log_addr(struct cec_adapt=
+er *adap, u8 logical_addr)
+> > > > > +{
+> > > > > +	struct drm_connector *connector =3D cec_get_drvdata(adap);
+> > > > > +	struct drm_connector_hdmi_cec_adapter_ops *ops =3D
+> > > > > +		to_hdmi_cec_adapter_ops(connector->cec.funcs);
+> > > > > +
+> > > > > +	return ops->log_addr(connector, logical_addr);
+> > > > > +}
+> > > > > +
+> > > > > +static int drm_connector_hdmi_cec_adap_transmit(struct cec_adapt=
+er *adap, u8 attempts,
+> > > > > +						u32 signal_free_time, struct cec_msg *msg)
+> > > > > +{
+> > > > > +	struct drm_connector *connector =3D cec_get_drvdata(adap);
+> > > > > +	struct drm_connector_hdmi_cec_adapter_ops *ops =3D
+> > > > > +		to_hdmi_cec_adapter_ops(connector->cec.funcs);
+> > > > > +
+> > > > > +	return ops->transmit(connector, attempts, signal_free_time, msg=
+);
+> > > > > +}
+> > > > > +
+> > > > > +static const struct cec_adap_ops drm_connector_hdmi_cec_adap_ops=
+ =3D {
+> > > > > +	.adap_enable =3D drm_connector_hdmi_cec_adap_enable,
+> > > > > +	.adap_log_addr =3D drm_connector_hdmi_cec_adap_log_addr,
+> > > > > +	.adap_transmit =3D drm_connector_hdmi_cec_adap_transmit,
+> > > > > +};
+> > > > > +
+> > > > > +int drm_connector_hdmi_cec_register(struct drm_connector *connec=
+tor,
+> > > > > +				    const struct drm_connector_hdmi_cec_adapter_ops *ops,
+> > > > > +				    const char *name,
+> > > > > +				    u8 available_las,
+> > > > > +				    struct device *dev)
+> > > > > +{
+> > > > > +	struct cec_connector_info conn_info;
+> > > > > +	struct cec_adapter *cec_adap;
+> > > > > +	int ret;
+> > > > > +
+> > > > > +	if (!ops->base.unregister ||
+> > > > > +	    !ops->init || !ops->enable || !ops->log_addr || !ops->trans=
+mit)
+> > > > > +		return -EINVAL;
+> > > > > +
+> > > > > +	mutex_lock(&connector->cec.mutex);
+> > > > > +
+> > > > > +	if (connector->cec.funcs) {
+> > > > > +		ret =3D -EBUSY;
+> > > > > +		goto err_unlock;
+> > > > > +	}
+> > > > > +
+> > > > > +	cec_adap =3D cec_allocate_adapter(&drm_connector_hdmi_cec_adap_=
+ops, connector, name,
+> > > > > +					CEC_CAP_DEFAULTS | CEC_CAP_CONNECTOR_INFO,
+> > > > > +					available_las ? : CEC_MAX_LOG_ADDRS);
+> > > > > +	ret =3D PTR_ERR_OR_ZERO(cec_adap);
+> > > > > +	if (ret < 0)
+> > > > > +		goto err_unlock;
+> > > > > +
+> > > > > +	cec_fill_conn_info_from_drm(&conn_info, connector);
+> > > > > +	cec_s_conn_info(cec_adap, &conn_info);
+> > > > > +
+> > > > > +	connector->cec.adapter =3D cec_adap;
+> > > > > +	connector->cec.funcs =3D &ops->base;
+> > > > > +
+> > > > > +	ret =3D ops->init(connector);
+> > > > > +	if (ret < 0)
+> > > > > +		goto err_delete_adapter;
+> > > > > +
+> > > > > +	ret =3D cec_register_adapter(cec_adap, dev);
+> > > > > +	if (ret < 0)
+> > > > > +		goto err_delete_adapter;
+> > > > > +
+> > > > > +	mutex_unlock(&connector->cec.mutex);
+> > > > > +
+> > > > > +	return 0;
+> > > > > +
+> > > > > +err_delete_adapter:
+> > > > > +	cec_delete_adapter(cec_adap);
+> > > > > +
+> > > > > +	connector->cec.adapter =3D NULL;
+> > > > > +
+> > > > > +err_unlock:
+> > > > > +	mutex_unlock(&connector->cec.mutex);
+> > > > > +
+> > > > > +	return ret;
+> > > > > +}
+> > > > > +EXPORT_SYMBOL(drm_connector_hdmi_cec_register);
+> > > > > +
+> > > > > +void drm_connector_hdmi_cec_received_msg(struct drm_connector *c=
+onnector,
+> > > > > +					 struct cec_msg *msg)
+> > > > > +{
+> > > > > +	cec_received_msg(connector->cec.adapter, msg);
+> > > > > +}
+> > > > > +EXPORT_SYMBOL(drm_connector_hdmi_cec_received_msg);
+> > > > > +
+> > > > > +void drm_connector_hdmi_cec_transmit_attempt_done(struct drm_con=
+nector *connector,
+> > > > > +						  u8 status)
+> > > > > +{
+> > > > > +	cec_transmit_attempt_done(connector->cec.adapter, status);
+> > > > > +}
+> > > > > +EXPORT_SYMBOL(drm_connector_hdmi_cec_transmit_attempt_done);
+> > > > > +
+> > > > > +void drm_connector_hdmi_cec_transmit_done(struct drm_connector *=
+connector,
+> > > > > +					  u8 status,
+> > > > > +					  u8 arb_lost_cnt, u8 nack_cnt,
+> > > > > +					  u8 low_drive_cnt, u8 error_cnt)
+> > > > > +{
+> > > > > +	cec_transmit_done(connector->cec.adapter, status,
+> > > > > +			  arb_lost_cnt, nack_cnt, low_drive_cnt, error_cnt);
+> > > > > +}
+> > > > > +EXPORT_SYMBOL(drm_connector_hdmi_cec_transmit_done);
+> > > > > +
+> > > > > +void drm_connector_hdmi_cec_phys_addr_invalidate(struct drm_conn=
+ector *connector)
+> > > > > +{
+> > > > > +	mutex_lock(&connector->cec.mutex);
+> > > > > +
+> > > > > +	cec_phys_addr_invalidate(connector->cec.adapter);
+> > > > > +	cec_notifier_phys_addr_invalidate(connector->cec.notifier);
+> > > > > +
+> > > > > +	mutex_unlock(&connector->cec.mutex);
+> > > > > +}
+> > > > > +EXPORT_SYMBOL(drm_connector_hdmi_cec_phys_addr_invalidate);
+> > > > > +
+> > > > > +void drm_connector_hdmi_cec_phys_addr_set(struct drm_connector *=
+connector)
+> > > > > +{
+> > > > > +	mutex_lock(&connector->cec.mutex);
+> > > > > +
+> > > > > +	cec_s_phys_addr(connector->cec.adapter,
+> > > > > +			connector->display_info.source_physical_address, false);
+> > > > > +	cec_notifier_set_phys_addr(connector->cec.notifier,
+> > > > > +				   connector->display_info.source_physical_address);
+> > > > > +
+> > > > > +	mutex_unlock(&connector->cec.mutex);
+> > > > > +}
+> > > > > +EXPORT_SYMBOL(drm_connector_hdmi_cec_phys_addr_set);
+> > > > > diff --git a/include/drm/display/drm_hdmi_cec_helper.h b/include/=
+drm/display/drm_hdmi_cec_helper.h
+> > > > > new file mode 100644
+> > > > > index 0000000000000000000000000000000000000000..cd6274e4ee9b3e41a=
+2d85289c4a420b854340e19
+> > > > > --- /dev/null
+> > > > > +++ b/include/drm/display/drm_hdmi_cec_helper.h
+> > > > > @@ -0,0 +1,61 @@
+> > > > > +/* SPDX-License-Identifier: MIT */
+> > > > > +
+> > > > > +#ifndef DRM_DISPLAY_HDMI_CEC_HELPER
+> > > > > +#define DRM_DISPLAY_HDMI_CEC_HELPER
+> > > > > +
+> > > > > +#include <drm/drm_connector.h>
+> > > > > +
+> > > > > +#include <linux/types.h>
+> > > > > +
+> > > > > +struct drm_connector;
+> > > > > +
+> > > > > +struct cec_msg;
+> > > > > +struct device;
+> > > > > +
+> > > > > +struct drm_connector_hdmi_cec_adapter_ops {
+> > > > > +	struct drm_connector_cec_funcs base;
+> > > > > +
+> > > > > +	int (*init)(struct drm_connector *connector);
+> > > > > +	void (*uninit)(struct drm_connector *connector);
+> > > > > +
+> > > > > +	int (*enable)(struct drm_connector *connector, bool enable);
+> > > > > +	int (*log_addr)(struct drm_connector *connector, u8 logical_add=
+r);
+> > > > > +	int (*transmit)(struct drm_connector *connector, u8 attempts,
+> > > > > +			u32 signal_free_time, struct cec_msg *msg);
+> > > > > +};
+> > > >=20
+> > > > Why can't we merge drm_connector_cec_funcs and
+> > > > drm_connector_cec_adapter_ops? They look equivalent to me?
+> > >=20
+> > > Well, not exactly. The funcs is a generic interface. Notifiers do not
+> > > need the adapter_ops. And cec_pin (sun4i) would also require a differ=
+ent
+> > > set of callbacks. Thus I decided that it's easier to subclass funcs
+> > > instead of adding all possible callbacks there.
+> >=20
+> > There's two things here: cec_pin and cec_adapter are equivalent. They
+> > provide the same feature, but one relies on an hardware controller, the
+> > other bitbangs a GPIO. They are also mutually exclusive.
+> >=20
+> > So I'd very much expect a different set of hooks there.
+>=20
+> That's the point. Normal CEC adapters would need to implement these
+> callbacks. CEC pin adapter will have a different set of callbacks.
+> Notifiers do not need any extra callbacks at all.
 
-This bit will be fought over haha
+Sure, and that's true for most of the KMS entities we support. What I
+don't get is why that dual layer func structure is needed in the first
+place. We have no other entity that works that way, and we typically
+solve this using a helper.
 
->
-> --
-> Cheers,
->
-> David / dhildenb
->
+Maxime
+
+--yw42zjrvnoz67ryw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ7WiPAAKCRAnX84Zoj2+
+dqRlAYDKyvbMvNU7FFsZ28yYD7pORcOa4Z4LiLUoDzS12cyiRyh7hu3RlFc1hl33
+VriqP2QBgJzviPfdCfXFCThN9ctad0eX+ROGSvdzssikdExQvXTokH62FgJYcbJK
+OL9THcPlDw==
+=tGFg
+-----END PGP SIGNATURE-----
+
+--yw42zjrvnoz67ryw--
 
