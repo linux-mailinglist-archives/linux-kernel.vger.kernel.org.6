@@ -1,188 +1,98 @@
-Return-Path: <linux-kernel+bounces-522137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1543A3C677
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:45:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8D40A3C679
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:46:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4309E171F88
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:45:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8755C179BFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:46:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 316502144A7;
-	Wed, 19 Feb 2025 17:45:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 053251B2190;
+	Wed, 19 Feb 2025 17:45:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GzI76u01"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OBJq3tT+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FA462144CF;
-	Wed, 19 Feb 2025 17:45:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 603021F61C;
+	Wed, 19 Feb 2025 17:45:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739987102; cv=none; b=iqozSCvvvFwMGMPp5DEShpKKQflaaFBivgP4/olEHCAsLR5EJn6gL7NrqAdaZAYJgiyMio/RAlXPTMwLzZWPfQcQiVvxjV3YYI4RlFShZQqLlF0724VeMt/BZcF0HWutMw9vaxY3sNze+jgrbU31erfKJGG19HD+oEUP6trBLJ4=
+	t=1739987156; cv=none; b=j5RhzpE/kT5W4Zu9JnnACkDZ11VA6IrV16gZp68ouWaUMZoNYLwW3TNkOel2JLyvlpVPGWLev7Y5tfPS+ykEP5uqk4a+yfbYQ7w3OGCFBAp/AeFkY2KnLwCndkGAxl6WF8ev1Bu3FjTdBqwEbikKuxpFxrOjE3KAnjlXb3pnN94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739987102; c=relaxed/simple;
-	bh=9DDQSRBXojYKs3E7l0ZcCaT7BmSFwinEFa+8YID+AY0=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pBcE4vYr1FhYv4N5Ph71acGfG0+9eilxiHnMeWn5ti+B8RKbxW0cR6bUYoL8pUp9DxuLoBpVAgi81ymSau6VMvl9U2cVb5fNvL4OiGxUZM2uHITr43WcVgz9eL7Bp5iocP3zRqnGMD34wMr61YsvdleSxu3/43YGDL/Yt+LdbBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GzI76u01; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E56B1C4CED1;
-	Wed, 19 Feb 2025 17:45:01 +0000 (UTC)
+	s=arc-20240116; t=1739987156; c=relaxed/simple;
+	bh=OoQAimFA7R4sw2wy3Xb8P7B/ZeQ9EXQikBds9cRlDpo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NRsymumqnoWSpeEpyI0Nrp1KSLbrX1FpFFXnt8/ddoZNg1Z20lKZBl2sBUM1c3BsZS1a7SdZBC3zjOmUGPI9r066lbf3aknYjfg6M7werCBh18FW2nrIkwxeDY/suzEgYCWUhk9SB1buq0fbTCRR3idSQFy2iiOss+XNLHcvnD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OBJq3tT+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 526B9C4CED1;
+	Wed, 19 Feb 2025 17:45:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739987102;
-	bh=9DDQSRBXojYKs3E7l0ZcCaT7BmSFwinEFa+8YID+AY0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=GzI76u01W+GuItG8twFKvac3xBV8lqEt2O70ZlQ9ECAM7mn4PvY6B6m3dFVNeoSJF
-	 bAZxgh30RdMRUzQZLDVLSZOCrIsIbWzdIvS33u09PTY07HDgLbMXmj9W6psLwIPzV0
-	 RRdB7by9dMs04GOCMFsJFA3aNWTLPeTIY3MtUfRUk7iI1rZlLhg6o8YHzQk6Y1myQG
-	 +vh8xwegNiTBcoB2O13Kb55jz5H6cBYN5tTbvKe6Xv5pKDYLJPngZcOJg79IpF7r1H
-	 9Fe0p6n8xuhg2RWvpbnx4SRy/p+ijK15Cn73A1hkbadJEXNaZqwemj4H/B/dHrvYY/
-	 i6Rd5VZq9xLKg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tko83-005ud8-MR;
-	Wed, 19 Feb 2025 17:44:59 +0000
-Date: Wed, 19 Feb 2025 17:44:59 +0000
-Message-ID: <864j0psuas.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Oliver Upton <oliver.upton@linux.dev>
-Cc: kvmarm@lists.linux.dev,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Mingwei Zhang <mizhang@google.com>,
-	Colton Lewis <coltonlewis@google.com>,
-	Raghavendra Rao Ananta <rananta@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Janne Grunau <j@jannau.net>
-Subject: Re: [PATCH v2 07/14] KVM: arm64: Use a cpucap to determine if system supports FEAT_PMUv3
-In-Reply-To: <20250203183111.191519-8-oliver.upton@linux.dev>
-References: <20250203183111.191519-1-oliver.upton@linux.dev>
-	<20250203183111.191519-8-oliver.upton@linux.dev>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1739987155;
+	bh=OoQAimFA7R4sw2wy3Xb8P7B/ZeQ9EXQikBds9cRlDpo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OBJq3tT+ep9ojdjKhW+ra0Tar8VThKkamqTYbtZCPdKcCfuEv4uYczXgI9EHPzSO0
+	 e6oyAnWt0v5yQNAlz/UlVQBq8aIxV+5pFRl6+tEIjCnYbgYTXrK8phe78HT1mpsZ3Q
+	 zLZMG7uIFGiu0LMqwsHZWTLC7RbLmgHBEDmNqFgtVRhzyHWxXmUKIvx/WAptmcOXjD
+	 oaYyTJie7hH8HhsKgUe/GE5d0G4wdcWKqcsmJP9qEoT7jy9LxO9qNmHyrrmRlmr7vO
+	 QMAme0n/gEqKxXOaqpMT+Zo56gLEgURrUQiGuCYSmIFiApf5J4aeOzfPzwBsa3I1p6
+	 rxqFJg5MxS03Q==
+Date: Wed, 19 Feb 2025 18:45:49 +0100
+From: Niklas Cassel <cassel@kernel.org>
+To: Shradha Todi <shradha.t@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	manivannan.sadhasivam@linaro.org, lpieralisi@kernel.org,
+	kw@linux.com, robh@kernel.org, bhelgaas@google.com,
+	jingoohan1@gmail.com, Jonathan.Cameron@huawei.com,
+	fan.ni@samsung.com, nifan.cxl@gmail.com, a.manzanares@samsung.com,
+	pankaj.dubey@samsung.com, 18255117159@163.com,
+	quic_nitegupt@quicinc.com, quic_krichai@quicinc.com,
+	gost.dev@samsung.com
+Subject: Re: [PATCH v6 0/4] Add support for debugfs based RAS DES feature in
+ PCIe DW
+Message-ID: <Z7YYzdN-MboQKIt-@ryzen>
+References: <CGME20250214105330epcas5p13b0d5bef72b012d71e850c9454015880@epcas5p1.samsung.com>
+ <20250214105007.97582-1-shradha.t@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: oliver.upton@linux.dev, kvmarm@lists.linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, mizhang@google.com, coltonlewis@google.com, rananta@google.com, catalin.marinas@arm.com, will@kernel.org, mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, j@jannau.net
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250214105007.97582-1-shradha.t@samsung.com>
 
-On Mon, 03 Feb 2025 18:31:04 +0000,
-Oliver Upton <oliver.upton@linux.dev> wrote:
+On Fri, Feb 14, 2025 at 04:20:03PM +0530, Shradha Todi wrote:
+> DesignWare controller provides a vendor specific extended capability
+> called RASDES as an IP feature. This extended capability  provides
+> hardware information like:
+>  - Debug registers to know the state of the link or controller. 
+>  - Error injection mechanisms to inject various PCIe errors including
+>    sequence number, CRC
+>  - Statistical counters to know how many times a particular event
+>    occurred
 > 
-> KVM is about to learn some new tricks to virtualize PMUv3 on IMPDEF
-> hardware. As part of that, we now need to differentiate host support
-> from guest support for PMUv3.
+> However, in Linux we do not have any generic or custom support to be
+> able to use this feature in an efficient manner. This is the reason we
+> are proposing this framework. Debug and bring up time of high-speed IPs
+> are highly dependent on costlier hardware analyzers and this solution
+> will in some ways help to reduce the HW analyzer usage.
 > 
-> Add a cpucap to determine if an architectural PMUv3 is present to guard
-> host usage of PMUv3 controls.
+> The debugfs entries can be used to get information about underlying
+> hardware and can be shared with user space. Separate debugfs entries has
+> been created to cater to all the DES hooks provided by the controller.
+> The debugfs entries interacts with the RASDES registers in the required
+> sequence and provides the meaningful data to the user. This eases the
+> effort to understand and use the register information for debugging.
 > 
-> Tested-by: Janne Grunau <j@jannau.net>
-> Signed-off-by: Oliver Upton <oliver.upton@linux.dev>
-> ---
->  arch/arm64/include/asm/cpufeature.h     |  5 +++++
->  arch/arm64/kernel/cpufeature.c          | 19 +++++++++++++++++++
->  arch/arm64/kvm/hyp/include/hyp/switch.h |  4 ++--
->  arch/arm64/kvm/pmu.c                    | 10 +++++-----
->  arch/arm64/tools/cpucaps                |  1 +
->  include/kvm/arm_pmu.h                   |  2 +-
->  6 files changed, 33 insertions(+), 8 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
-> index e0e4478f5fb5..0eff048848b8 100644
-> --- a/arch/arm64/include/asm/cpufeature.h
-> +++ b/arch/arm64/include/asm/cpufeature.h
-> @@ -866,6 +866,11 @@ static __always_inline bool system_supports_mpam_hcr(void)
->  	return alternative_has_cap_unlikely(ARM64_MPAM_HCR);
->  }
->  
-> +static inline bool system_supports_pmuv3(void)
-> +{
-> +	return cpus_have_final_cap(ARM64_HAS_PMUV3);
-> +}
-> +
->  int do_emulate_mrs(struct pt_regs *regs, u32 sys_reg, u32 rt);
->  bool try_emulate_mrs(struct pt_regs *regs, u32 isn);
->  
-> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-> index 4eb7c6698ae4..6886d2875fac 100644
-> --- a/arch/arm64/kernel/cpufeature.c
-> +++ b/arch/arm64/kernel/cpufeature.c
-> @@ -1898,6 +1898,19 @@ static bool has_lpa2(const struct arm64_cpu_capabilities *entry, int scope)
->  }
->  #endif
->  
-> +static bool has_pmuv3(const struct arm64_cpu_capabilities *entry, int scope)
-> +{
-> +	u64 dfr0 = read_sanitised_ftr_reg(SYS_ID_AA64DFR0_EL1);
-> +	unsigned int pmuver;
-> +
-> +	pmuver = cpuid_feature_extract_unsigned_field(dfr0,
-> +						      ID_AA64DFR0_EL1_PMUVer_SHIFT);
-> +	if (pmuver == ID_AA64DFR0_EL1_PMUVer_IMP_DEF)
-> +		return false;
-> +
-> +	return pmuver >= ID_AA64DFR0_EL1_PMUVer_IMP;
+> This series creates a generic debugfs framework for DesignWare PCIe
+> controllers where other debug features apart from RASDES can also be
+> added as and when required.
 
-Given that PMUVer is a signed field, how about using
-cpuid_feature_extract_signed_field() and do a signed comparison instead?
-
-> +}
-> +
->  #ifdef CONFIG_UNMAP_KERNEL_AT_EL0
->  #define KPTI_NG_TEMP_VA		(-(1UL << PMD_SHIFT))
->  
-> @@ -2999,6 +3012,12 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
->  		ARM64_CPUID_FIELDS(ID_AA64PFR1_EL1, GCS, IMP)
->  	},
->  #endif
-> +	{
-> +		.desc = "PMUv3",
-> +		.capability = ARM64_HAS_PMUV3,
-> +		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
-> +		.matches = has_pmuv3,
-> +	},
-
-This cap is probed unconditionally (without any configuration
-dependency)...
-
->  	{},
->  };
->  
-> diff --git a/arch/arm64/kvm/hyp/include/hyp/switch.h b/arch/arm64/kvm/hyp/include/hyp/switch.h
-> index f838a45665f2..0edc7882bedb 100644
-> --- a/arch/arm64/kvm/hyp/include/hyp/switch.h
-> +++ b/arch/arm64/kvm/hyp/include/hyp/switch.h
-> @@ -244,7 +244,7 @@ static inline void __activate_traps_common(struct kvm_vcpu *vcpu)
->  	 * counter, which could make a PMXEVCNTR_EL0 access UNDEF at
->  	 * EL1 instead of being trapped to EL2.
->  	 */
-> -	if (kvm_arm_support_pmu_v3()) {
-> +	if (system_supports_pmuv3()) {
-
-... but kvm_arm_support_pmu_v3() is conditional on
-CONFIG_HW_PERF_EVENTS.  Doesn't this create some sort of new code path
-that we didn't expect?
-
-Thanks,
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+FWIW, for the series:
+Tested-by: Niklas Cassel <cassel@kernel.org>
 
