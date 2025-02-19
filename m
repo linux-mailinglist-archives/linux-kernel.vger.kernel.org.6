@@ -1,200 +1,211 @@
-Return-Path: <linux-kernel+bounces-521246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBBCCA3B9F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:38:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DC8AA3BA10
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:39:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99C891889460
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:32:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADC103BB0FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:31:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E57E1EFFB2;
-	Wed, 19 Feb 2025 09:27:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D031EFF8F;
+	Wed, 19 Feb 2025 09:27:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E+uRmM/J"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S6fp/oif"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF111EFFA9
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 09:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2393B1DED66
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 09:27:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739957240; cv=none; b=Uq2RfHc+pelD/IWqt/kLuhS1ypuggVUfL4ipdbP5/cTbb8AsUe5kZlJ9Izk0VlvlcBJVWcJmloYLjRNeJQJuksnHPEP/pcIWNyc9KMLjFY4i6PxEUvvtl6yZgU9+QsIVbtoEWK/IsVApLthVtyLUKJH7c6QSR4xPbpz3TtzxCMU=
+	t=1739957233; cv=none; b=rt71rEBdGunZAr5PIypnrnVyrvpjRGCO/kcQAODeaSUQys1xZHH+SIYhODbZfDrc8Sp/NAjiFSDEWXv6LXRA5zy+Y393zzZZXlZPlSkfbHUfEJ/L5OGYK/Xne62TRipU/spJ70q0ZLhZwplLFk01i1CHKkN8gw7RZ9YOjIPVGQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739957240; c=relaxed/simple;
-	bh=unRu9IGp7efgsLQGK8Mix56R+2C/bXzqMtDWxufLqQ8=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=FaQeS4Hm3TSK7NVTDa3LjwPwJIDwkKvBIfMN89UHj1Gfri69v3ZvhvfGPKWDCPpTb9NM27UPxfhSLEiCO/EcZ34q+CuxEo76cC2WviKuQhfG9Gnd2ohsrp76qsOkumXRCXe9+4bNvgVWX5sD1MHvVxZgok9/vUCe+RX3eICX1Q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E+uRmM/J; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739957239; x=1771493239;
-  h=date:from:to:cc:subject:message-id;
-  bh=unRu9IGp7efgsLQGK8Mix56R+2C/bXzqMtDWxufLqQ8=;
-  b=E+uRmM/JzA4ltZrnNVKN6302Cy9d1Dl5yhfzHYMe0B5qBsLTGs/d/roa
-   d55Doi7VaCTmMp2YgBg4mPNpEAqdA168iV7NxaFSwCWKsih9yTB4mdPnD
-   HolWuRTlaDGh207rocTAQjqt/DiEaIwytRiNu1SlAtGlZORzqY8Q6FtvP
-   BGaLaXFM5f5ZLV4X7yMiD92SMCN3EcVfT2uahxR8HVqeAlWdGHyCvXZoY
-   vwtLMJZEYg5HEuVX2G4Le9GPEnyxF4eWZK5Xr4hNcTHkrTzJj8E8CNddF
-   ZGb2siTJeCauOKWrmBpw51pLLvrZm0Sock6JPsd2nGnMw/QsbYks9F/7B
-   g==;
-X-CSE-ConnectionGUID: 6DbgM/9yTHqZOc75qaiEjQ==
-X-CSE-MsgGUID: PkB1L1R9T32H9YlHlLhehQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="28282980"
-X-IronPort-AV: E=Sophos;i="6.13,298,1732608000"; 
-   d="scan'208";a="28282980"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 01:27:18 -0800
-X-CSE-ConnectionGUID: pdYUgk9RQU6aqNNWVJy9Zg==
-X-CSE-MsgGUID: mcP9QRKlQ6W+c8JqesPIvg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,298,1732608000"; 
-   d="scan'208";a="115317341"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa009.fm.intel.com with ESMTP; 19 Feb 2025 01:27:17 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tkgMM-0002O5-2S;
-	Wed, 19 Feb 2025 09:27:14 +0000
-Date: Wed, 19 Feb 2025 17:26:23 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:irq/drivers] BUILD SUCCESS
- 46b9ba2ac09003d0a09f2f730b64cae03af29041
-Message-ID: <202502191717.HPk5CPk5-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1739957233; c=relaxed/simple;
+	bh=ibGK0B/VwiFEaUagDEK/6uOENi08zoPdM0mnICCGBKA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cAQCkEs/UTJMHE/KmUOqe/Fi9VueeKRIiBpPjFhpWl9jKHPRKJmY6Fi9jq1aWru3BQ/zr5RS7mYSmhI0Vs+SXCLKAj2DgByEpxkHsl9lr0rKsZkbVWrfHtgmWXBx3+S6jtZR92Q1uvi7UngJ7pdnx+Dcnrqu+NolTJnnxmhsKho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S6fp/oif; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739957229;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ndnLFTfO36QdDrY2GKsCimhP7BsNniHfdFDqWlGMKsI=;
+	b=S6fp/oifiHTYZHerrFb8Eh1MLUc7b4M/N/9BiXFgXlrWFQNFkIm6s0y19Ct8wCZPW6g0rD
+	ONfUGDjY3OShMzbI8ICp3PwdL4CNi0B9VV1f+OwP8Qo/FAcJxEGYjs5wYVlDPn3PZtKHFX
+	pKOYb1wuBDldDdgMJRQGK4ouaS/R9Is=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-590-E15bHH2QOPWMUuQ8IXuv7g-1; Wed,
+ 19 Feb 2025 04:27:04 -0500
+X-MC-Unique: E15bHH2QOPWMUuQ8IXuv7g-1
+X-Mimecast-MFC-AGG-ID: E15bHH2QOPWMUuQ8IXuv7g_1739957222
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1A5D0180087F;
+	Wed, 19 Feb 2025 09:27:02 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.127])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 606751800940;
+	Wed, 19 Feb 2025 09:26:59 +0000 (UTC)
+Date: Wed, 19 Feb 2025 17:26:55 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Kairui Song <ryncsn@gmail.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+	Chris Li <chrisl@kernel.org>, Barry Song <v-songbaohua@oppo.com>,
+	Hugh Dickins <hughd@google.com>,
+	Yosry Ahmed <yosryahmed@google.com>,
+	"Huang, Ying" <ying.huang@linux.alibaba.com>,
+	Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>,
+	Kalesh Singh <kaleshsingh@google.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/7] mm, swap: use percpu cluster as allocation fast path
+Message-ID: <Z7Wj3/YjcF5xzbHm@MiWiFi-R3L-srv>
+References: <20250214175709.76029-1-ryncsn@gmail.com>
+ <20250214175709.76029-6-ryncsn@gmail.com>
+ <Z7WOCvQq3xi9wxnt@MiWiFi-R3L-srv>
+ <CAMgjq7C0Yg164SHJcP6wDC0od-xRuBMxLsJJwB0oWavpgsr8tg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMgjq7C0Yg164SHJcP6wDC0od-xRuBMxLsJJwB0oWavpgsr8tg@mail.gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/drivers
-branch HEAD: 46b9ba2ac09003d0a09f2f730b64cae03af29041  irqchip/riscv-imsic: Special handling for non-atomic device MSI update
+On 02/19/25 at 04:34pm, Kairui Song wrote:
+> On Wed, Feb 19, 2025 at 3:54 PM Baoquan He <bhe@redhat.com> wrote:
+> 
+> Hi Baoquan,
+> 
+> Thanks for the review!
+> 
+> >
+> > On 02/15/25 at 01:57am, Kairui Song wrote:
+> > > From: Kairui Song <kasong@tencent.com>
+> > >
+> > > Current allocation workflow first traverses the plist with a global lock
+> > > held, after choosing a device, it uses the percpu cluster on that swap
+> > > device. This commit moves the percpu cluster variable out of being tied
+> > > to individual swap devices, making it a global percpu variable, and will
+> > > be used directly for allocation as a fast path.
+> > >
+> > > The global percpu cluster variable will never point to a HDD device, and
+> > > allocation on HDD devices is still globally serialized.
+> > >
+> > > This improves the allocator performance and prepares for removal of the
+> > > slot cache in later commits. There shouldn't be much observable behavior
+> > > change, except one thing: this changes how swap device allocation
+> > > rotation works.
+> > >
+> > > Currently, each allocation will rotate the plist, and because of the
+> > > existence of slot cache (64 entries), swap devices of the same priority
+> > > are rotated for every 64 entries consumed. And, high order allocations
+> > > are different, they will bypass the slot cache, and so swap device is
+> > > rotated for every 16K, 32K, or up to 2M allocation.
+> > >
+> > > The rotation rule was never clearly defined or documented, it was changed
+> > > several times without mentioning too.
+> > >
+> > > After this commit, once slot cache is gone in later commits, swap device
+> > > rotation will happen for every consumed cluster. Ideally non-HDD devices
+> > > will be rotated if 2M space has been consumed for each order, this seems
+> >
+> > This breaks the rule where the high priority swap device is always taken
+> > to allocate as long as there's free space in the device. After this patch,
+> > it will try the percpu cluster firstly which is lower priority even though
+> > the higher priority device has free space. However, this only happens when
+> > the higher priority device is exhausted, not a generic case. If this is
+> > expected, it may need be mentioned in log or doc somewhere at least.
+> 
+> Hmm, actually this rule was already broken if you are very strict
+> about it. The current percpu slot cache does a pre-allocation, so the
+> high priority device will be removed from the plist while some CPU's
+> slot cache holding usable entries.
 
-elapsed time: 1438m
+Ah, right, I didn't think about this point.
 
-configs tested: 108
-configs skipped: 2
+> 
+> If the high priority device is exhausted, some CPU's percpu cluster
+> will point to a low priority device indeed, and keep using it until
+> the percpu cluster is drained. I think this should be
+> OK. The high priority device is already full, so the amount of
+> swapouts falls back to low priority device is only a performance
+> issue, I think it's a tiny change for a rare case.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Agree, thanks for explanation.
 
-tested configs:
-alpha                             allnoconfig    gcc-14.2.0
-alpha                            allyesconfig    gcc-14.2.0
-arc                              allmodconfig    gcc-13.2.0
-arc                               allnoconfig    gcc-13.2.0
-arc                              allyesconfig    gcc-13.2.0
-arc                   randconfig-001-20250218    gcc-13.2.0
-arc                   randconfig-002-20250218    gcc-13.2.0
-arm                              allmodconfig    gcc-14.2.0
-arm                               allnoconfig    clang-17
-arm                              allyesconfig    gcc-14.2.0
-arm                   randconfig-001-20250218    gcc-14.2.0
-arm                   randconfig-002-20250218    gcc-14.2.0
-arm                   randconfig-003-20250218    gcc-14.2.0
-arm                   randconfig-004-20250218    clang-21
-arm64                            allmodconfig    clang-18
-arm64                             allnoconfig    gcc-14.2.0
-arm64                 randconfig-001-20250218    clang-21
-arm64                 randconfig-002-20250218    clang-21
-arm64                 randconfig-003-20250218    gcc-14.2.0
-arm64                 randconfig-004-20250218    clang-16
-csky                              allnoconfig    gcc-14.2.0
-csky                  randconfig-001-20250218    gcc-14.2.0
-csky                  randconfig-002-20250218    gcc-14.2.0
-hexagon                          allmodconfig    clang-21
-hexagon                           allnoconfig    clang-21
-hexagon                          allyesconfig    clang-18
-hexagon               randconfig-001-20250218    clang-17
-hexagon               randconfig-002-20250218    clang-21
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20250218    gcc-12
-i386        buildonly-randconfig-002-20250218    gcc-12
-i386        buildonly-randconfig-003-20250218    gcc-12
-i386        buildonly-randconfig-004-20250218    clang-19
-i386        buildonly-randconfig-005-20250218    clang-19
-i386        buildonly-randconfig-006-20250218    gcc-12
-i386                                defconfig    clang-19
-loongarch                        allmodconfig    gcc-14.2.0
-loongarch                         allnoconfig    gcc-14.2.0
-loongarch             randconfig-001-20250218    gcc-14.2.0
-loongarch             randconfig-002-20250218    gcc-14.2.0
-m68k                             allmodconfig    gcc-14.2.0
-m68k                              allnoconfig    gcc-14.2.0
-m68k                             allyesconfig    gcc-14.2.0
-microblaze                       allmodconfig    gcc-14.2.0
-microblaze                        allnoconfig    gcc-14.2.0
-microblaze                       allyesconfig    gcc-14.2.0
-mips                              allnoconfig    gcc-14.2.0
-nios2                             allnoconfig    gcc-14.2.0
-nios2                 randconfig-001-20250218    gcc-14.2.0
-nios2                 randconfig-002-20250218    gcc-14.2.0
-openrisc                          allnoconfig    gcc-14.2.0
-openrisc                         allyesconfig    gcc-14.2.0
-openrisc                            defconfig    gcc-14.2.0
-parisc                           allmodconfig    gcc-14.2.0
-parisc                            allnoconfig    gcc-14.2.0
-parisc                           allyesconfig    gcc-14.2.0
-parisc                              defconfig    gcc-14.2.0
-parisc                randconfig-001-20250218    gcc-14.2.0
-parisc                randconfig-002-20250218    gcc-14.2.0
-powerpc                          allmodconfig    gcc-14.2.0
-powerpc                           allnoconfig    gcc-14.2.0
-powerpc                          allyesconfig    clang-16
-powerpc               randconfig-001-20250218    gcc-14.2.0
-powerpc               randconfig-002-20250218    gcc-14.2.0
-powerpc               randconfig-003-20250218    clang-21
-powerpc64             randconfig-001-20250218    gcc-14.2.0
-powerpc64             randconfig-002-20250218    clang-16
-powerpc64             randconfig-003-20250218    clang-18
-riscv                            allmodconfig    clang-21
-riscv                             allnoconfig    gcc-14.2.0
-riscv                            allyesconfig    clang-21
-riscv                 randconfig-001-20250218    gcc-14.2.0
-riscv                 randconfig-002-20250218    clang-21
-s390                             allmodconfig    clang-19
-s390                              allnoconfig    clang-21
-s390                             allyesconfig    gcc-14.2.0
-s390                  randconfig-001-20250218    clang-21
-s390                  randconfig-002-20250218    clang-15
-sh                               allmodconfig    gcc-14.2.0
-sh                                allnoconfig    gcc-14.2.0
-sh                               allyesconfig    gcc-14.2.0
-sh                    randconfig-001-20250218    gcc-14.2.0
-sh                    randconfig-002-20250218    gcc-14.2.0
-sparc                            allmodconfig    gcc-14.2.0
-sparc                             allnoconfig    gcc-14.2.0
-sparc                 randconfig-001-20250218    gcc-14.2.0
-sparc                 randconfig-002-20250218    gcc-14.2.0
-sparc64               randconfig-001-20250218    gcc-14.2.0
-sparc64               randconfig-002-20250218    gcc-14.2.0
-um                               allmodconfig    clang-21
-um                                allnoconfig    clang-18
-um                               allyesconfig    gcc-12
-um                    randconfig-001-20250218    clang-21
-um                    randconfig-002-20250218    gcc-11
-x86_64                            allnoconfig    clang-19
-x86_64                           allyesconfig    clang-19
-x86_64      buildonly-randconfig-001-20250218    clang-19
-x86_64      buildonly-randconfig-002-20250218    gcc-12
-x86_64      buildonly-randconfig-003-20250218    clang-19
-x86_64      buildonly-randconfig-004-20250218    gcc-12
-x86_64      buildonly-randconfig-005-20250218    clang-19
-x86_64      buildonly-randconfig-006-20250218    clang-19
-x86_64                              defconfig    gcc-11
-xtensa                            allnoconfig    gcc-14.2.0
-xtensa                randconfig-001-20250218    gcc-14.2.0
-xtensa                randconfig-002-20250218    gcc-14.2.0
+> 
+> >
+> > > reasonable. HDD devices is rotated for every allocation regardless of the
+> > > allocation order, which should be OK and trivial.
+> > >
+> > > Signed-off-by: Kairui Song <kasong@tencent.com>
+> > > ---
+> > >  include/linux/swap.h |  11 ++--
+> > >  mm/swapfile.c        | 120 +++++++++++++++++++++++++++----------------
+> > >  2 files changed, 79 insertions(+), 52 deletions(-)
+> > ......
+> > > diff --git a/mm/swapfile.c b/mm/swapfile.c
+> > > index ae3bd0a862fc..791cd7ed5bdf 100644
+> > > --- a/mm/swapfile.c
+> > > +++ b/mm/swapfile.c
+> > > @@ -116,6 +116,18 @@ static atomic_t proc_poll_event = ATOMIC_INIT(0);
+> > >
+> > ......snip....
+> > >  int get_swap_pages(int n_goal, swp_entry_t swp_entries[], int entry_order)
+> > >  {
+> > >       int order = swap_entry_order(entry_order);
+> > > @@ -1211,19 +1251,28 @@ int get_swap_pages(int n_goal, swp_entry_t swp_entries[], int entry_order)
+> > >       int n_ret = 0;
+> > >       int node;
+> > >
+> > > +     /* Fast path using percpu cluster */
+> > > +     local_lock(&percpu_swap_cluster.lock);
+> > > +     n_ret = swap_alloc_fast(swp_entries,
+> > > +                             SWAP_HAS_CACHE,
+> > > +                             order, n_goal);
+> > > +     if (n_ret == n_goal)
+> > > +             goto out;
+> > > +
+> > > +     n_goal = min_t(int, n_goal - n_ret, SWAP_BATCH);
+> >
+> > Here, the behaviour is changed too. In old allocation, partial
+> > allocation will jump out to return. In this patch, you try the percpu
+> > cluster firstly, then call scan_swap_map_slots() to try best and will
+> > jump out even though partial allocation succeed. But the allocation from
+> > scan_swap_map_slots() could happen on different si device, this looks
+> > bizarre. Do you think we need reconsider the design?
+> 
+> Right, that's a behavior change, but only temporarily affects slot cache.
+> get_swap_pages will only be called with size > 1 when order == 0, and
+> only by slot cache. (Large order allocation always use size == 1,
+> other users only uses order == 0 && size == 1). So I didn't' notice
+> it, as this series is removing slot cache.
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Right, I am reviewing patch 6, noticed this is temporary.
+
+> 
+> The partial side effect would be "returned slots will be from
+> different devices" and "slot_cache may get drained faster as
+> get_swap_pages may return less slots when percpu cluster is drained".
+> Might be a performance issue but seems slight and trivial, slot cache
+> can still work. And the next commit will just remove the slot cache,
+> and the problem will be gone. I think I can add a comment about it
+> here?
+
+Sounds good. Adding comment can avoid other people being confused when
+checking patch 5. Thanks.
+
 
