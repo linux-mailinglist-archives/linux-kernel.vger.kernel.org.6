@@ -1,155 +1,137 @@
-Return-Path: <linux-kernel+bounces-522350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6D23A3C8F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 20:38:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6522AA3C901
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 20:42:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B3587A81D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:37:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5444C188E636
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:42:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28DAD21B19E;
-	Wed, 19 Feb 2025 19:38:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B669322B5A4;
+	Wed, 19 Feb 2025 19:42:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lh55lzyr"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Rw88Z40g"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4527184F
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 19:38:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3434E1B0F33;
+	Wed, 19 Feb 2025 19:42:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739993917; cv=none; b=QRshIrVfW/sx1ZKYlhi7zmhNqklMwSy3KIJsCtvlBjYu8k8ZUmd7IqdW75LzxZK4VgwhVnZgIyEIqTQBRVpNU0HOpE18/Casuy9+uRGQDeMJJ55MrOjkMhxwCLXKgQj3YFDGsAicej2goh+DYi6zV1IQV2ntjn8y+/eKezWA+xE=
+	t=1739994133; cv=none; b=TnAVxSkposQyXfnNXF5zKEnoSwRH8ZKIaQK7kWweCBEXO+eO1rCL70rQ4tPej0g2ilo+hxnctliZiYaGreW5d2sHRatDsPGJQ5CWKwGmtcRNHi6F/jieMhleaZaY1NO2Qs31w2yIR/iglBMHd2v1xmGDMrcBu7oBSu4ON3AmF1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739993917; c=relaxed/simple;
-	bh=sFzz87xmpa4DBWmRLEaYsXO+yEKSQPufKsStfayypuU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ULPog5kABBS+SG0qdIu0jyQRoe9F6//HEEJribaWrZk9pM2Q+XwN8Geiuwz77FwZ3z98fLwtSDV2DYci5XEtucEgmaxhlAXH6qgcz67w7k7KPScShpU5ChbsCxovGcwfaMPaKKMurCtuYVPsvwAL2zk2GgS6ptrGjSnwJO7xJoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lh55lzyr; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4399ca9d338so697685e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 11:38:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739993914; x=1740598714; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JfZKZmH5FYTebhsLF0b17MePHU4Jur+WAQAG/XZ3ZWY=;
-        b=lh55lzyrQJLtCiHXxW1XYzVZT6YAdAAzRcwmS4AjuSWtEupC+y2s4a4NojPCqwzcSi
-         xCzLDfB/MJnxvmecWHD7gZ8rL1wak1m3a6cQPebUT7AFNf8H68gclGmwqLTgSYyo4p3E
-         ozDSawdEdpUnjK6upYVimrBXKQcujENiKunL82aTEStaFJyqa9WekSf575MST2pnYy1i
-         HmjTGqbtkjd3l1oeb48dIOyn/IsZW9pnhDxZD35lFS82bk3DTUoNAD3YCbonNo9HNdSX
-         iwH6/iMAY1qaUgZqlT67k7iF/VWWvfg9Wdy8pt+GKBkhI9+aotU1F4tQQFnacSLshEO9
-         s4Cw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739993914; x=1740598714;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JfZKZmH5FYTebhsLF0b17MePHU4Jur+WAQAG/XZ3ZWY=;
-        b=bQgVer0m64fkH5v9EP47xplhbc/WIWdMYtuS41qaiEaEU/ijBWUAxl5VD2VdKlM/c+
-         getnheDegH7dxSSRhZ+NAYvnXNy93CbnAClQnh61h/CxoqDmmxi36PfdLj+ZXjdeejmq
-         sES3tzGm2L/h8XJzuwqdWBi/VZoTOA1XK/cxzCztQ5z+fvgKqwTf944iJhNhkjvnugiL
-         2+LJH1ywy1So/8IL+5UXQfxW8a1Fx65Y5tmqY0jK+g9Bstb0OxXJtl6a0JkkhjGxGQw6
-         4LM1bgNR6mbikUSW15iwebNK55w4f6LhF5brhEKpwhJimRAedtlcVs6QbAJ4MO5hHMlV
-         IYaw==
-X-Forwarded-Encrypted: i=1; AJvYcCV2hEgq2K2nAnceVC6lZBDPfTTmtu3rzG9zvOCetcO4GeJgN7NvOi1SY8/NcF778Zi1e+hNgS6zZKyuJ84=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8mWcRiki0ORPWTSxxg91I0fybFUUpSB+t/QUZErS0Q2zCAF6k
-	jRXcSBK5goUUEhn1B3KoQJuQ2b7dUNXnupUJ6A2m01d8cypGbeFP
-X-Gm-Gg: ASbGncsZEmTdh9UQRAYjWqWYm1DWenDna410vxQP5hR6gKIhifH1dB/E+bXktyB96J0
-	Ci6W8XIkZOYXju6d2Sp+hwd42xkGoC+rPg0kcyTPSWWv9elMpy+DGykFI2+sFxK4rb0b0hUZZyR
-	M5h0YklRlSFbn/YDRprETJMdO9OVgJ2fr6bZpYz4D+SDgq15hA4JhWFpnQdTiKRvaCb9PSRb4TO
-	Xn4lTXIda05Ml9rhw24roGhIIwf63dvApoJon4KZeseoxkLv0lsl+EKbN8EoVB6L5XTereL3BND
-	iSp5pXzPFTOgUs+mFQfkj6e6Lfjaa8NOeQ51n/MBGdd1dbRJHSgDcQ==
-X-Google-Smtp-Source: AGHT+IGQ/AW4cri/ewPhu7V0AiejxybGKG+K4nwQWsbfvSJgMa2uzX3mMG75uQXSaEjRg1/F71XNlw==
-X-Received: by 2002:a05:600c:19cc:b0:439:9a28:9e8d with SMTP id 5b1f17b1804b1-4399a28a067mr46334905e9.12.1739993914036;
-        Wed, 19 Feb 2025 11:38:34 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259f8273sm18242939f8f.89.2025.02.19.11.38.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2025 11:38:33 -0800 (PST)
-Date: Wed, 19 Feb 2025 19:38:32 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Eric Dumazet <edumazet@google.com>
-Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker
- <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel
- <linux-kernel@vger.kernel.org>, Benjamin Segall <bsegall@google.com>, Eric
- Dumazet <eric.dumazet@gmail.com>
-Subject: Re: [PATCH V2 4/4] posix-timers: Use RCU in posix_timer_add()
-Message-ID: <20250219193832.6c3fa40f@pumpkin>
-In-Reply-To: <20250219125522.2535263-5-edumazet@google.com>
-References: <20250219125522.2535263-1-edumazet@google.com>
-	<20250219125522.2535263-5-edumazet@google.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1739994133; c=relaxed/simple;
+	bh=jpDV+E4FWsQEf6WnMfXYCuqqpKYDdvTvL7ljXSS8Tos=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ZNQkvMbap0XW602u7Zfg1UheAhdaGozDOkzGyIQLlaA6J1G3jTpxhpV0mN3jvgaOc+EUibF2Gt7RAvw4VeImrj4KyZHakT9TVU3x2sqbQMytNxz/H8sI9GllAlJiMpGxLTJByFoAR2aLV72ZDZ7KXHUh7TEgTVPjKGnoNi3S3zA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Rw88Z40g; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 4E166442D1;
+	Wed, 19 Feb 2025 19:42:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1739994122;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Qu8bmC+bJMdyIbAzv6s6vSAzbmr6QSn1AGgHeToUVqk=;
+	b=Rw88Z40gvyY5CqmwimK116YrV7tj5ntXdd7LTq0BemhllU/nDMfdQlbs4Ta2Ula/8NzVie
+	ee07DdK4bNv3mdAxvsPzOYfMcp7RnOQU+D7mjOq7ga9ZtG+GLAIEVjOI6piQ+P+UQ7Zsc1
+	/9mTBcXJLYbPLY/JFlGJPg2Y+pkEtNzWpmPziHXVGuyXRcOz+jf7/+j2v79j4XKnUh3NjE
+	mC5RjZ8QfshPUC2qHzsHgsQwZyWNbb8E+6Fdv4+xobZCi+RIDiOg45iWgDMx+lz/oSzope
+	XMW7+OEojQjfUaXPL0OZ0C1J/Ld0okk7zInXhCVhRdaKJqSvZIPv6BjKVtg97g==
+From: =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
+Date: Wed, 19 Feb 2025 20:41:39 +0100
+Subject: [PATCH] selftests/bpf: DENYLIST.aarch64: enable kprobe_multi tests
+ for ARM64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250219-enable_kprobe_multi_tests-v1-1-faeec99240c8@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAPIztmcC/x3MQQqDMBBG4avIrBvQhJTWq0gJmvxtBzVKJpaCe
+ HeDy2/x3k6CxBBqq50Sfiy8xILmVpH/9vEDxaGYdK1trZunQuyHCW5c0zLAzduU2WVIFuUfwRp
+ j7rA+UOnXhDf/r3f3Oo4TDjmk/WsAAAA=
+X-Change-ID: 20250219-enable_kprobe_multi_tests-c8d53336e5cd
+To: Alexei Starovoitov <ast@kernel.org>, 
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, 
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, 
+ Bastien Curutchet <bastien.curutchet@bootlin.com>, ebpf@linuxfoundation.org, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, bpf@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
+X-Mailer: b4 0.14.2
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeihedufecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephfffufggtgfgkffvvefosehtkeertdertdejnecuhfhrohhmpeetlhgvgihishcunfhothhhohhrroculdgvuefrhfcuhfhouhhnuggrthhiohhnmdcuoegrlhgvgihishdrlhhothhhohhrvgessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepjefghfeiudduffetfeehueduffdtteeigeehvdeludetueffvedvfedttdekieevnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepvdgrtddvmeekgedvkeemfhelgegtmegvtddtmeemfhekheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemkeegvdekmehfleegtgemvgdttdemmehfkeehpdhhvghloheplgduledvrdduieekrddurdduleejngdpmhgrihhlfhhrohhmpegrlhgvgihishdrlhhothhhohhrvgessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvddvpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohephihonhhghhhonhhgrdhsohhngheslhhinhhugidruggvvhdprhgtphhtthhop
+ ehshhhurghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsughfsehfohhmihgthhgvvhdrmhgvpdhrtghpthhtohepvggsphhfsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheprghstheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghnughrihhisehkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhesihhoghgvrghrsghogidrnhgvth
+X-GND-Sasl: alexis.lothore@bootlin.com
 
-On Wed, 19 Feb 2025 12:55:22 +0000
-Eric Dumazet <edumazet@google.com> wrote:
+The kprobe_multi feature was disabled on ARM64 due to the lack of fprobe
+support.
 
-> If many posix timers are hashed in posix_timers_hashtable,
-> hash_lock can be held for long durations.
-> 
-> This can be really bad in some cases as Thomas
-> explained in https://lore.kernel.org/all/87ednpyyeo.ffs@tglx/
-> 
-> We can perform all searches under RCU, then acquire
-> the lock only when there is a good chance to need it,
-> and after cpu caches were populated.
-> 
-> Also add a cond_resched() in the possible long loop.
+The fprobe rewrite on function_graph has been recently merged and thus
+brought support for fprobes on arm64.  This then enables kprobe_multi
+support on arm64, and so the corresponding tests can now be run on this
+architecture.
 
-Since this code fragment has a 'free choice' of the timer id, why not
-select an empty table slot and then pick a value that maps to it?
+Remove the tests depending on kprobe_multi from DENYLIST.aarch64 to
+allow those to run in CI. CONFIG_FPROBE is already correctly set in
+tools/testing/selftests/bpf/config
 
-You can run a free-list through the empty table slots so the allocate
-is (almost always) fixed cost and trivial.
-The only complexity arises when the table is full and needs to be
-reallocated twice as large.
+Signed-off-by: Alexis Lothoré (eBPF Foundation) <alexis.lothore@bootlin.com>
+---
+The tests being enabled with this series have been run locally in an
+ARM64 qemu environment, and in Github CI.
 
-The high bits of the 'id' can be incremented every time the id is allocated
-so stale ids can be detected (until a quite large number of allocate/free).
+I only did some testing to ensure that the tests depending on kprobe_multi
+now run correctly on arm64, it is fair to stress that all the hard
+work has actually been done by M. Hiramatsu ([0])
 
-	David
+[0] https://lore.kernel.org/bpf/173518987627.391279.3307342580035322889.stgit@devnote2/
+---
+ tools/testing/selftests/bpf/DENYLIST.aarch64 | 9 ---------
+ 1 file changed, 9 deletions(-)
 
-> 
-> Signed-off-by: Eric Dumazet <edumazet@google.com>
-> ---
->  kernel/time/posix-timers.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
-> index ed27c7eab456..bd73bc4707c1 100644
-> --- a/kernel/time/posix-timers.c
-> +++ b/kernel/time/posix-timers.c
-> @@ -125,7 +125,19 @@ static int posix_timer_add(struct k_itimer *timer)
->  
->  		head = &posix_timers_hashtable[hash(sig, id)];
->  
-> +		rcu_read_lock();
-> +		if (posix_timers_find(head, sig, id)) {
-> +			rcu_read_unlock();
-> +			cond_resched();
-> +			continue;
-> +		}
-> +		rcu_read_unlock();
->  		spin_lock(&hash_lock);
-> +		/*
-> +		 * We must perform the lookup under hash_lock protection
-> +		 * because another thread could have used the same id.
-> +		 * This is very unlikely, but possible.
-> +		 */
->  		if (!posix_timers_find(head, sig, id)) {
->  			timer->it_id = (timer_t)id;
->  			timer->it_signal = (struct signal_struct *)((unsigned long)sig | 1UL);
+diff --git a/tools/testing/selftests/bpf/DENYLIST.aarch64 b/tools/testing/selftests/bpf/DENYLIST.aarch64
+index 901349da680fa67896d279d184db78e964d9ae27..6d8feda27ce9de07d77d6e384666082923e3dc76 100644
+--- a/tools/testing/selftests/bpf/DENYLIST.aarch64
++++ b/tools/testing/selftests/bpf/DENYLIST.aarch64
+@@ -1,12 +1,3 @@
+-bpf_cookie/multi_kprobe_attach_api               # kprobe_multi_link_api_subtest:FAIL:fentry_raw_skel_load unexpected error: -3
+-bpf_cookie/multi_kprobe_link_api                 # kprobe_multi_link_api_subtest:FAIL:fentry_raw_skel_load unexpected error: -3
+-kprobe_multi_bench_attach                        # needs CONFIG_FPROBE
+-kprobe_multi_test                                # needs CONFIG_FPROBE
+-module_attach                                    # prog 'kprobe_multi': failed to auto-attach: -95
+ fentry_test/fentry_many_args                     # fentry_many_args:FAIL:fentry_many_args_attach unexpected error: -524
+ fexit_test/fexit_many_args                       # fexit_many_args:FAIL:fexit_many_args_attach unexpected error: -524
+ tracing_struct/struct_many_args                  # struct_many_args:FAIL:tracing_struct_many_args__attach unexpected error: -524
+-fill_link_info/kprobe_multi_link_info            # bpf_program__attach_kprobe_multi_opts unexpected error: -95
+-fill_link_info/kretprobe_multi_link_info         # bpf_program__attach_kprobe_multi_opts unexpected error: -95
+-fill_link_info/kprobe_multi_invalid_ubuff        # bpf_program__attach_kprobe_multi_opts unexpected error: -95
+-missed/kprobe_recursion                          # missed_kprobe_recursion__attach unexpected error: -95 (errno 95)
+
+---
+base-commit: d3417ac824b98e8773bc04b93e09c4b93c2c6cad
+change-id: 20250219-enable_kprobe_multi_tests-c8d53336e5cd
+
+Best regards,
+-- 
+Alexis Lothoré, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
