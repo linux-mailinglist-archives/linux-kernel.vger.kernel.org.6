@@ -1,284 +1,213 @@
-Return-Path: <linux-kernel+bounces-521835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17997A3C2EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:02:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CE91A3C2F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:02:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B260C1670BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:02:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45D791891805
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:02:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA69A1F3BB5;
-	Wed, 19 Feb 2025 15:02:33 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B388E1F3BB5;
+	Wed, 19 Feb 2025 15:02:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YiWDqtCH"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E10D1E8335
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 15:02:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BDE31E8335
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 15:02:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739977353; cv=none; b=Uh9F8DTzWNH+RnY5VWGk7TBEAeLlEXGK45ubC8n4AYJFVpx3T8iwcImirDRqriGCQ68wC0QsGB8DqmwTx8On6gQwgkaf20Kuc+FU4H24p/wOc7FiGvCVROdVpXd+tv4Kw30K/ldxsxieQhEzPgT7qTBjgleRYyxnD3JH6KxVuc4=
+	t=1739977364; cv=none; b=EUbdxlIMiYQxREwJOOkwu/Ca0AiN+SzuIksJhmfwPuEjyLnb5pLXHRZXQLS3xNoAzEPR34oRX6LI+kHkDNNSnC3UrmyL473r2sJDcfEJGAVnVA4ncFW16Me6SvIkPBUj6mL0caYrNDFmgaqWlAihnz3BdSPzOiXDRjNPqlueUQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739977353; c=relaxed/simple;
-	bh=RUNbt4yGPSt7OH59avth3IQQbP99cZS7WYjTwXjBDTw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=j0fLmIShPC2t9uiXqHc3ecZiUoFidfLVD/iDLcCsMhURejBDOUEUO8EW4hI9a7pAWz3m50NeiZZa3RxmKf9D3J+TRE3Otv8AaPjUEqMQqlgMV1z16GooVZ+p1gZWowlstVZlddq5oqdRrnH+9zcgdlutm7TBeMGHNlYVrRC0PAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tkla9-0004IU-Do; Wed, 19 Feb 2025 16:01:49 +0100
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tkla6-001mdz-12;
-	Wed, 19 Feb 2025 16:01:46 +0100
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tkla6-0009xm-0e;
-	Wed, 19 Feb 2025 16:01:46 +0100
-Message-ID: <ef2026c28b9e6d59a98f6f33eb14f3b762454423.camel@pengutronix.de>
-Subject: Re: [PATCH v5 12/21] reset: thead: Add TH1520 reset controller
- driver
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Michal Wilczynski <m.wilczynski@samsung.com>, mturquette@baylibre.com, 
- sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-  drew@pdp7.com, guoren@kernel.org, wefu@redhat.com,
- jassisinghbrar@gmail.com,  paul.walmsley@sifive.com, palmer@dabbelt.com,
- aou@eecs.berkeley.edu,  frank.binns@imgtec.com, matt.coster@imgtec.com, 
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
-  airlied@gmail.com, simona@ffwll.ch, ulf.hansson@linaro.org,
- jszhang@kernel.org,  m.szyprowski@samsung.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org
-Date: Wed, 19 Feb 2025 16:01:46 +0100
-In-Reply-To: <20250219140239.1378758-13-m.wilczynski@samsung.com>
-References: <20250219140239.1378758-1-m.wilczynski@samsung.com>
-	 <CGME20250219140305eucas1p26317b54727c68cf069458d270e06d962@eucas1p2.samsung.com>
-	 <20250219140239.1378758-13-m.wilczynski@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1739977364; c=relaxed/simple;
+	bh=RCSNSrVTe/dIu2bGRH3kYV2UOZDaKXu3GBeWw3Uyyz4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qL9SWQALAujtjNDz4lsCsO1GXfnfNamT7a63YLKilpqtM8KpmR59Dl/r7Csu5uPA0HU2O5nPLCdLax3MbaNqQ4alRe9Z/4zewgJwNbk67wMf5AD4MN3zdb7VPAZkfSe4AC9zYXIz+YZqpmit6Qp3+CdvD6PeQhFQcUUKM9KP0Us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YiWDqtCH; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5ded368fcd9so9245057a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 07:02:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739977360; x=1740582160; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mZHxmk9Ox5llPkI9w3/SQ5aztAbCrTpqRs4EJf1BNlA=;
+        b=YiWDqtCHfIyEX5aWrUlCkIixCx4eONZ+HslRwbrKeICmWVxA/M8ONQCi1UwvXeJeJB
+         QV2b4dpNM3bEAgFE4YVUgzlpxmmozXjGiWZ3YpwUlwVTd7Al6lnYLb+VQ2LlvBwLZmre
+         onf5N+TI42UPCbcxCENuYUNbIO0PAkbpQBh8Xcn+J3OToVApdSvi8Da5SjvYjNHxfy9x
+         0ZkzIEL0V6pan5D2gw6eyI+ffp8pAJjgymdcDRfkfEC9r61rUUcdJEiEwVF/9b+MtPiX
+         88PhgJlwCm7IPgSI6bT1xjA8gZWFNsQZHXhkJM0mk3i7L5i4SaSwMJo/P12sIaMHnuU3
+         6g4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739977360; x=1740582160;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mZHxmk9Ox5llPkI9w3/SQ5aztAbCrTpqRs4EJf1BNlA=;
+        b=FyAfUwT+XoxpXELbIOGJtgVsqAHIsJ5ImtYgVuxVl6UxFIThjDXe58RRdhnq4PjogT
+         mLRXqC/OaInz2kM0BMObuVKUCWGLH5u73NPS8V+NM7hwABSsgVIo3EbSCKp91zfBI1iq
+         20OPWpMDe3PmTI3PHfFPaU9h74iK89ZRWnbeuccM4Ceo1qOHu9uipy/vqfjsBxdZ6+yZ
+         7tJIAGMpZLf63J0QVArI5eUa2ONrXF7BkhfIK/oR7hu/GshjEinjvtO/CvBCYiNAvgZI
+         GlOJ/32atpd+RYO8W8FoHn0kPMOpIwFGsDu3XSFCX4ZPLaV1h/AhOpEKYTecbXDcVWON
+         pArg==
+X-Forwarded-Encrypted: i=1; AJvYcCWJOnYday2nP0DawYix6sXMNuxsO7ss7WVkLgfELXibMM62/PCOadvYa33OKwer+YmRBzuh24xI/WglgcA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuVGgwH72HNFis16hdcWgVX1DAh0fJMP2ZBkDjIPkQcwKEWDPy
+	luWB21shKfjjleyNhV1IHqfyF9nx+bgOb19UE0qilAZHedmIGHR0WTZ33VsFD3GZtjE2aXjCGcP
+	SwNHvu+U6EOZ1pNgveYHZuYCqbrs=
+X-Gm-Gg: ASbGnctLw7D1tHSdoMxKAj6XPmArdlRai0NWq4W5JwYYNqOgUuWX5KMpkUpuE4C2tUc
+	QhDQ6zPtDpWCJsBHnWKRDz//9y2XQeFMDadiIk5l+PMiUaHeOdaTmZlvSD/LLr3F5NVi895zD
+X-Google-Smtp-Source: AGHT+IHq4IO2JlnOqG7659shJfdrV3OkM/TNkV5y/AM1wIU+x9ko/zSrRY+nfZq394aLcLTbFpCDw4LEKK3G94anSiI=
+X-Received: by 2002:a05:6402:26cd:b0:5e0:6770:2b6a with SMTP id
+ 4fb4d7f45d1cf-5e089d316demr3345670a12.23.1739977358654; Wed, 19 Feb 2025
+ 07:02:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <173997003868.2137198.9462617208992136056.stgit@mhiramat.tok.corp.google.com>
+ <CAK1f24knkxX34hNLRjT20mjyyOwasmXgXJBbTDX=7WYwiw9S1g@mail.gmail.com>
+In-Reply-To: <CAK1f24knkxX34hNLRjT20mjyyOwasmXgXJBbTDX=7WYwiw9S1g@mail.gmail.com>
+From: Lance Yang <ioworker0@gmail.com>
+Date: Wed, 19 Feb 2025 23:02:01 +0800
+X-Gm-Features: AWEUYZkdZAHl4TKYpUipGVKNVSOrlB6SVRk-Qdb4IJkgGdtuOP47nBGCQssv9Xw
+Message-ID: <CAK1f24m-Ci3BvgfVYGW2tFSUEkPwiO9=0M_w4kpOt1qViiDXdg@mail.gmail.com>
+Subject: Re: [PATCH 0/2] hung_task: Dump the blocking task stacktrace
+To: mhiramat@kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Will Deacon <will@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, Waiman Long <longman@redhat.com>, 
+	Joel Granados <joel.granados@kernel.org>, Anna Schumaker <anna.schumaker@oracle.com>, 
+	Kent Overstreet <kent.overstreet@linux.dev>, Yongliang Gao <leonylgao@tencent.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Tomasz Figa <tfiga@chromium.org>, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>, linux-kernel@vger.kernel.org, 
+	Linux Memory Management List <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mi, 2025-02-19 at 15:02 +0100, Michal Wilczynski wrote:
-> Add reset controller driver for the T-HEAD TH1520 SoC that manages
-> hardware reset lines for various subsystems. The driver currently
-> implements support for GPU reset control, with infrastructure in place
-> to extend support for NPU and Watchdog Timer resets in future updates.
->=20
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-> ---
->  MAINTAINERS                  |   1 +
->  drivers/reset/Kconfig        |  10 +++
->  drivers/reset/Makefile       |   1 +
->  drivers/reset/reset-th1520.c | 141 +++++++++++++++++++++++++++++++++++
->  4 files changed, 153 insertions(+)
->  create mode 100644 drivers/reset/reset-th1520.c
->=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 819686e98214..e4a0a83b4c11 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -20425,6 +20425,7 @@ F:	drivers/mailbox/mailbox-th1520.c
->  F:	drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c
->  F:	drivers/pinctrl/pinctrl-th1520.c
->  F:	drivers/pmdomain/thead/
-> +F:	drivers/reset/reset-th1520.c
->  F:	include/dt-bindings/clock/thead,th1520-clk-ap.h
->  F:	include/dt-bindings/power/thead,th1520-power.h
->  F:	include/dt-bindings/reset/thead,th1520-reset.h
-> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-> index 5b3abb6db248..fa0943c3d1de 100644
-> --- a/drivers/reset/Kconfig
-> +++ b/drivers/reset/Kconfig
-> @@ -272,6 +272,16 @@ config RESET_SUNXI
->  	help
->  	  This enables the reset driver for Allwinner SoCs.
-> =20
-> +config RESET_TH1520
-> +	tristate "T-HEAD 1520 reset controller"
-> +	depends on ARCH_THEAD || COMPILE_TEST
-> +	select REGMAP_MMIO
-> +	help
-> +	  This driver provides support for the T-HEAD TH1520 SoC reset controll=
-er,
-> +	  which manages hardware reset lines for SoC components such as the GPU=
-.
-> +	  Enable this option if you need to control hardware resets on TH1520-b=
-ased
-> +	  systems.
-> +
->  config RESET_TI_SCI
->  	tristate "TI System Control Interface (TI-SCI) reset driver"
->  	depends on TI_SCI_PROTOCOL || (COMPILE_TEST && TI_SCI_PROTOCOL=3Dn)
-> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-> index 677c4d1e2632..d6c2774407ae 100644
-> --- a/drivers/reset/Makefile
-> +++ b/drivers/reset/Makefile
-> @@ -35,6 +35,7 @@ obj-$(CONFIG_RESET_SIMPLE) +=3D reset-simple.o
->  obj-$(CONFIG_RESET_SOCFPGA) +=3D reset-socfpga.o
->  obj-$(CONFIG_RESET_SUNPLUS) +=3D reset-sunplus.o
->  obj-$(CONFIG_RESET_SUNXI) +=3D reset-sunxi.o
-> +obj-$(CONFIG_RESET_TH1520) +=3D reset-th1520.o
->  obj-$(CONFIG_RESET_TI_SCI) +=3D reset-ti-sci.o
->  obj-$(CONFIG_RESET_TI_SYSCON) +=3D reset-ti-syscon.o
->  obj-$(CONFIG_RESET_TI_TPS380X) +=3D reset-tps380x.o
-> diff --git a/drivers/reset/reset-th1520.c b/drivers/reset/reset-th1520.c
-> new file mode 100644
-> index 000000000000..d6816c86ba95
-> --- /dev/null
-> +++ b/drivers/reset/reset-th1520.c
-> @@ -0,0 +1,141 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2024 Samsung Electronics Co., Ltd.
-> + * Author: Michal Wilczynski <m.wilczynski@samsung.com>
-> + */
-> +
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/reset-controller.h>
-> +#include <linux/regmap.h>
-> +
-> +#include <dt-bindings/reset/thead,th1520-reset.h>
-> +
-> + /* register offset in VOSYS_REGMAP */
-> +#define TH1520_GPU_RST_CFG		0x0
-> +#define TH1520_GPU_RST_CFG_MASK		GENMASK(1, 0)
-> +
-> +/* register values */
-> +#define TH1520_GPU_SW_GPU_RST		BIT(0)
-> +#define TH1520_GPU_SW_CLKGEN_RST	BIT(1)
-> +
-> +struct th1520_reset_priv {
-> +	struct reset_controller_dev rcdev;
-> +	struct regmap *map;
-> +};
-> +
-> +struct th1520_reset_map {
-> +	u32 bit;
-> +	u32 reg;
-> +};
-> +
-> +static const struct th1520_reset_map th1520_resets[] =3D {
-> +	[TH1520_RESET_ID_GPU] =3D {
-> +		.bit =3D TH1520_GPU_SW_GPU_RST,
-> +		.reg =3D TH1520_GPU_RST_CFG,
-> +	},
-> +	[TH1520_RESET_ID_GPU_CLKGEN] =3D {
-> +		.bit =3D TH1520_GPU_SW_CLKGEN_RST,
-> +		.reg =3D TH1520_GPU_RST_CFG,
-> +	}
+On Wed, Feb 19, 2025 at 9:33=E2=80=AFPM Lance Yang <ioworker0@gmail.com> wr=
+ote:
+>
+> CC linux-mm
+>
+> On Wed, Feb 19, 2025 at 9:00=E2=80=AFPM Masami Hiramatsu (Google)
+> <mhiramat@kernel.org> wrote:
+> >
+> > Hi,
+> >
+> > The hung_task detector is very useful for detecting the lockup.
+> > However, since it only dumps the blocked (uninterruptible sleep)
+> > processes, it is not enough to identify the root cause of that
+> > lockup.
+> >
+> > For example, if a process holds a mutex and sleep an event in
+> > interruptible state long time, the other processes will wait on
+> > the mutex in uninterruptible state. In this case, the waiter
+> > processes are dumped, but the blocker process is not shown
+> > because it is sleep in interruptible state.
 
-I expect the NPU and WDT resets will be added to this list later?
+Cool! I just ran into something similar today, but with rwsem. In that
+case, the blocked process was locked up, and we could not identify
+the root cause either ;(
 
-> +};
-> +
-> +static inline struct th1520_reset_priv *
-> +to_th1520_reset(struct reset_controller_dev *rcdev)
-> +{
-> +	return container_of(rcdev, struct th1520_reset_priv, rcdev);
-> +}
-> +
-> +static int th1520_reset_assert(struct reset_controller_dev *rcdev,
-> +			       unsigned long id)
-> +{
-> +	struct th1520_reset_priv *priv =3D to_th1520_reset(rcdev);
-> +	const struct th1520_reset_map *reset;
-> +
-> +	if (id >=3D ARRAY_SIZE(th1520_resets))
-> +		return -EINVAL;
+Thanks,
+Lance
 
-This check is not necessary. The core will have checked this in
-of_reset_simple_xlate() before returning the reset control.
-
-> +
-> +	reset =3D &th1520_resets[id];
-> +
-> +	return regmap_update_bits(priv->map, reset->reg, reset->bit, 0);
-> +}
-> +
-> +static int th1520_reset_deassert(struct reset_controller_dev *rcdev,
-> +				 unsigned long id)
-> +{
-> +	struct th1520_reset_priv *priv =3D to_th1520_reset(rcdev);
-> +	const struct th1520_reset_map *reset;
-> +
-> +	if (id >=3D ARRAY_SIZE(th1520_resets))
-> +		return -EINVAL;
-
-This check is not necessary.
-
-> +
-> +	reset =3D &th1520_resets[id];
-> +
-> +	return regmap_update_bits(priv->map, reset->reg, reset->bit,
-> +				  reset->bit);
-> +}
-> +
-> +static const struct reset_control_ops th1520_reset_ops =3D {
-> +	.assert	=3D th1520_reset_assert,
-> +	.deassert =3D th1520_reset_deassert,
-> +};
-> +
-> +static const struct regmap_config th1520_reset_regmap_config =3D {
-> +	.reg_bits =3D 32,
-> +	.val_bits =3D 32,
-> +	.reg_stride =3D 4,
-> +	.fast_io =3D true,
-> +};
-> +
-> +static int th1520_reset_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev =3D &pdev->dev;
-> +	struct th1520_reset_priv *priv;
-> +	void __iomem *base;
-> +	int ret;
-> +
-> +	priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	base =3D devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(base))
-> +		return PTR_ERR(base);
-> +
-> +	priv->map =3D devm_regmap_init_mmio(dev, base,
-> +					  &th1520_reset_regmap_config);
-> +	if (IS_ERR(priv->map))
-> +		return PTR_ERR(priv->map);
-> +
-> +	/* Initialize GPU resets to asserted state */
-> +	ret =3D regmap_update_bits(priv->map, TH1520_GPU_RST_CFG,
-> +				 TH1520_GPU_RST_CFG_MASK, 0);
-> +	if (ret)
-> +		return ret;
-> +
-> +	priv->rcdev.owner =3D THIS_MODULE;
-> +	priv->rcdev.nr_resets =3D 2;
-
-Better use ARRAY_SIZE(th1520_resets) here, this will simplify adding
-further resets in the future. With that,
-
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-
-regards
-Philipp
+> >
+> > This adds a feature to dump the blocker task which holds a mutex
+> > when detecting a hung task. e.g.
+> >
+> >  INFO: task cat:113 blocked for more than 122 seconds.
+> >        Not tainted 6.14.0-rc3-00002-g6afe972e1b9b #152
+> >  "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this messa=
+ge.
+> >  task:cat             state:D stack:13432 pid:113   tgid:113   ppid:103=
+    task_flags:0x400100 flags:0x00000002
+> >  Call Trace:
+> >   <TASK>
+> >   __schedule+0x731/0x960
+> >   ? schedule_preempt_disabled+0x54/0xa0
+> >   schedule+0xb7/0x140
+> >   ? __mutex_lock+0x51d/0xa50
+> >   ? __mutex_lock+0x51d/0xa50
+> >   schedule_preempt_disabled+0x54/0xa0
+> >   __mutex_lock+0x51d/0xa50
+> >   ? current_time+0x3a/0x120
+> >   read_dummy+0x23/0x70
+> >   full_proxy_read+0x6a/0xc0
+> >   vfs_read+0xc2/0x340
+> >   ? __pfx_direct_file_splice_eof+0x10/0x10
+> >   ? do_sendfile+0x1bd/0x2e0
+> >   ksys_read+0x76/0xe0
+> >   do_syscall_64+0xe3/0x1c0
+> >   ? exc_page_fault+0xa9/0x1d0
+> >   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> >  RIP: 0033:0x4840cd
+> >  RSP: 002b:00007ffe632b76c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+> >  RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000004840cd
+> >  RDX: 0000000000001000 RSI: 00007ffe632b7710 RDI: 0000000000000003
+> >  RBP: 00007ffe632b7710 R08: 0000000000000000 R09: 0000000000000000
+> >  R10: 0000000001000000 R11: 0000000000000246 R12: 0000000000001000
+> >  R13: 000000003a8b63a0 R14: 0000000000000001 R15: ffffffffffffffff
+> >   </TASK>
+> >  INFO: task cat:113 is blocked on a mutex owned by task cat:112.
+> >  task:cat             state:S stack:13432 pid:112   tgid:112   ppid:103=
+    task_flags:0x400100 flags:0x00000002
+> >  Call Trace:
+> >   <TASK>
+> >   __schedule+0x731/0x960
+> >   ? schedule_timeout+0xa8/0x120
+> >   schedule+0xb7/0x140
+> >   schedule_timeout+0xa8/0x120
+> >   ? __pfx_process_timeout+0x10/0x10
+> >   msleep_interruptible+0x3e/0x60
+> >   read_dummy+0x2d/0x70
+> >   full_proxy_read+0x6a/0xc0
+> >   vfs_read+0xc2/0x340
+> >   ? __pfx_direct_file_splice_eof+0x10/0x10
+> >   ? do_sendfile+0x1bd/0x2e0
+> >   ksys_read+0x76/0xe0
+> >   do_syscall_64+0xe3/0x1c0
+> >   ? exc_page_fault+0xa9/0x1d0
+> >   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> >  RIP: 0033:0x4840cd
+> >  RSP: 002b:00007ffd69513748 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+> >  RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000004840cd
+> >  RDX: 0000000000001000 RSI: 00007ffd69513790 RDI: 0000000000000003
+> >  RBP: 00007ffd69513790 R08: 0000000000000000 R09: 0000000000000000
+> >  R10: 0000000001000000 R11: 0000000000000246 R12: 0000000000001000
+> >  R13: 0000000029d8d3a0 R14: 0000000000000001 R15: ffffffffffffffff
+> >   </TASK>
+> >
+> > Thank you,
+> >
+> > ---
+> >
+> > Masami Hiramatsu (Google) (2):
+> >       hung_task: Show the blocker task if the task is hung on mutex
+> >       samples: Add hung_task detector mutex blocking sample
+> >
+> >
+> >  kernel/hung_task.c                  |   38 ++++++++++++++++++++
+> >  kernel/locking/mutex-debug.c        |    1 +
+> >  kernel/locking/mutex.c              |    9 +++++
+> >  kernel/locking/mutex.h              |    6 +++
+> >  samples/Kconfig                     |    9 +++++
+> >  samples/Makefile                    |    1 +
+> >  samples/hung_task/Makefile          |    2 +
+> >  samples/hung_task/hung_task_mutex.c |   66 +++++++++++++++++++++++++++=
+++++++++
+> >  8 files changed, 132 insertions(+)
+> >  create mode 100644 samples/hung_task/Makefile
+> >  create mode 100644 samples/hung_task/hung_task_mutex.c
+> >
+> > --
+> > Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
