@@ -1,156 +1,380 @@
-Return-Path: <linux-kernel+bounces-522468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9057EA3CABE
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:03:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F08B8A3CAA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:00:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB0CA174DAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:03:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DF653B42A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 20:57:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 296DC253F26;
-	Wed, 19 Feb 2025 21:03:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 720652505AD;
+	Wed, 19 Feb 2025 20:56:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="tfMjQR1m"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cS8/Y9/j"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D014184F;
-	Wed, 19 Feb 2025 21:03:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E1724F5B5
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 20:56:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739998995; cv=none; b=q5tqmZ/uWZyhe151DbMlr26Pyo3WDCLnYIW1nn4H0K4hGjlfhvfD2sgKejWr/sFS4xVuN2oraDBUNOzuoIj0hkep09dtsZ2kiXDRUtd1Y6fflQhWCTvaADCh3XxNK5CM8gDYYaW01Fh/1phaX3xgSTHPrAmtZtanZmQ0g3JsNi8=
+	t=1739998605; cv=none; b=dquu5NqaO+mMMsODtsFNmTMsiLwBoP703g3Xvb9gBMaAaC/i8Rhi9sVNRkEGzreIius7kr65qCY7VhLuPuqsCsUTUTMw2gGQqooIluYcnEenu2qQfZ/umw2tJLlbBaLHErIaEG8KCd86olrsXnOU0xeO9nK0NMlxydx0dibE7iE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739998995; c=relaxed/simple;
-	bh=bVh/9Xy+fVVQmLK0Abao4KGCAGEU47AesaNFcotfLBU=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=LU4FdGkZgUa0ZpAJm/Z3oysifeizrzyGQhKK9btjDI/VPjW/EOyF1oClbk9o1NGS94m99TTNeiryXDL1e7J33P+bsRJU0W497T0qV7y31XPHIKHSzwZ39U3f1z4P7+yglUVx20bBiwbLYlLxWYZ3EHOptkQXWxVObLabE0WgcHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=tfMjQR1m; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1739998981; x=1740603781; i=markus.elfring@web.de;
-	bh=2SWP69i4G2CzvUOmUdUSobPigRxGcLa8t5Qfp8lqpJQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=tfMjQR1mabCmPcG7yobPSy3kOc2Oo18cmCVLFHMEcp4BAqoUoPe7tQJGtn6a7YBC
-	 BQ1rrXjZRFHsnUPgK0IOP6Acem806DUT5qzMdpb+En5M+nbrwZaxE0WOk8YixXICg
-	 RkaFdh0NTf7XbbDbcrMqjdfrmRVuuU4cIYEmlTWnuf8e1L2gT+JkgSB5aKr3bHJqm
-	 1EFYtJnKR9vOTWcw4WPfMGzCM071HRdnrT8h3/r2aRii91jv5TAmT0fiEHqDuRuhB
-	 kmCuj6gxj0l2wrx+IlD9bL3E53XPVxMfjFr+rBogSQ7vvocN1wOQuFQ++RgeQ7who
-	 1mh9zgfiXqXD/H8PFA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.70.10]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MQPZj-1tyHH13N0D-00XOQW; Wed, 19
- Feb 2025 21:56:34 +0100
-Message-ID: <9e46e0f9-ef0d-406f-9fa9-9c4464a8db88@web.de>
-Date: Wed, 19 Feb 2025 21:56:31 +0100
+	s=arc-20240116; t=1739998605; c=relaxed/simple;
+	bh=QnG8SEamObBuiIMCf7KmVArDMeAn6Gi4mO2vSDLCQt0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ON0fL1IedPGTXN1H1/pmADMjkfmBKrTXgMvr59T3DI0JkOCSAeot8crabQGQJQwvBc7hDnXpiBNa/TtYartuyR/zfeUy3eZBxyRLBf7CysD1+q1wd3l6IjDLg1ZeWgWXYkHtCMwYHDyzqjm+t8JJapIziHW9oat/k0JGnfmDslA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cS8/Y9/j; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2212222d4cdso37435ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 12:56:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739998603; x=1740603403; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QnG8SEamObBuiIMCf7KmVArDMeAn6Gi4mO2vSDLCQt0=;
+        b=cS8/Y9/jpsiQgjkKSWR42u3QNW7sYnizn7Po5GKizgz7m0HLt7VY+eWgZc3TuqEs5D
+         ItczCY7D37cqQIXgJsYQueINM6rac772LDHofk29ZJMCx4QwxkB+LuSktZTX8MaDL7xn
+         0HLJUionlg4jDtbD2vRq6w+RkFozB0JNjRauB2p6BiAgadA9JPuie+V55GiWkce/CCYr
+         DYj6DVMDn5mOK7L+xvnahXUSyGPNu2bW37SkTnoBgrfwnVY4ZOOrov7080oTDjEQkEev
+         P5kFqcxxyRnVhFigRnh+vRYpc/wYGbnSQZFw7Krf6S7cse1wXKDM6dh6ADkJOnriRFyE
+         6CJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739998603; x=1740603403;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QnG8SEamObBuiIMCf7KmVArDMeAn6Gi4mO2vSDLCQt0=;
+        b=VT2nScXdHbjd5g9R86vxzCRV22Ikd1v3FMZ703BusWV7/ZMw2mWleEqzZUTGgLnYQ5
+         C9DftfzEqIv0fKBoTSi+qWktSUR0UJTX0ohgnczdjPFXE+UGEVudh4A1wLZL6SyW9tlT
+         PMJH5q5X954D+bSFigFb4pJwDlMolNW+MCby4zJwpofuJ/hS75pBmJO5Z1pd17aINUVQ
+         rUr/xADbLZUvQLzsYNMnQ5XkUU8K2IcZ+KlKDOfi5JZyNtQX172zz38j7aiTYAUnUX8p
+         ObyWVX4LHYV69gtYyTT+IDQoMmC7a3RDiEQePJ6/5ieiNpRF5OCf1xR6WLaBRVp/mGny
+         eAEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWDgzEUWryGgNj+IDuYz9d9Bjf92kjE3MYKrw4jsmHDgX3IHcvyOyl5JgaeHd5lYV5wJG6cRLv2NySmcOk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7yfpQW23+ovowy02mc/HEGoHJ36ezEOUWZe4GRGF7dpMG1l4z
+	RYP2DWdhhZ53Rm/Yyj+50bDvePreeNKE3L34X3JwlM97lBgjGJ347wAA1j1TYX2cWKJeFJRGs1i
+	4TM81B7+Erez032ZB9U5yM0An6R/O/c0kejWo
+X-Gm-Gg: ASbGncsy2CoWoxcM+8U7vt6NtMKT5YYFox1AczQLiMFXNQSYqCfSYOKrMtWnzDSJgG4
+	bDN1SEYzzhCwfgDyyoGQnGWow5rUHW1rkUHXb8TwLSXr7ys51z+iA7xwZj/zHoaCvLTDvTnBOpO
+	KHrYrNl9mPo/mBpgRNRcot9QZj0ZA=
+X-Google-Smtp-Source: AGHT+IFe/qAXXHMG11QgG9tLNjslwzcmEjlHXjncZ98KGM4VEwqJXA9x482HDiIZJNWdb53GcTKtRVIS9ahIvNUCJ8c=
+X-Received: by 2002:a17:902:f68c:b0:216:7aaa:4c5f with SMTP id
+ d9443c01a7336-2218e0f2c10mr437695ad.3.1739998602713; Wed, 19 Feb 2025
+ 12:56:42 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Dingxian Wen <shawn.wen@rock-chips.com>,
- Dmitry Osipenko <dmitry.osipenko@collabora.com>,
- Shreeya Patel <shreeya.patel@collabora.com>, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org,
- Conor Dooley <conor+dt@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>,
- =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- Jose Abreu <Jose.Abreu@synopsys.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Nelson Costa <Nelson.Costa@synopsys.com>,
- Nicolas Dufresne <nicolas.dufresne@collabora.com>,
- Rob Herring <robh@kernel.org>,
- Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel@collabora.com,
- Tim Surber <me@timsurber.de>
-References: <20250218184439.28648-5-dmitry.osipenko@collabora.com>
-Subject: Re: [PATCH v7 4/6] media: platform: synopsys: Add support for HDMI
- input driver
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250218184439.28648-5-dmitry.osipenko@collabora.com>
-Content-Type: text/plain; charset=UTF-8
+References: <cover.1739469950.git.lorenzo.stoakes@oracle.com>
+ <CAC_TJveMB1_iAUt81D5-+z8gArbVcbfDM=djCZG_bRVaCEMRmg@mail.gmail.com>
+ <45297010-a0a4-4a42-84e8-6f4764eab3b3@lucifer.local> <41af4ffb-0383-4d00-9639-0bf16e1f5f37@redhat.com>
+ <a2e12142-3eb2-48c9-b0d9-35a86cb56eec@lucifer.local> <CAC_TJvf6fOACObzR0ANFFrD+ecrP8MbXEZ_ZdzRu0Lg4RunS9g@mail.gmail.com>
+ <e07dfd31-197c-49d0-92bd-12aad02daa7e@lucifer.local>
+In-Reply-To: <e07dfd31-197c-49d0-92bd-12aad02daa7e@lucifer.local>
+From: Kalesh Singh <kaleshsingh@google.com>
+Date: Wed, 19 Feb 2025 12:56:31 -0800
+X-Gm-Features: AWEUYZkrEux9sPcJzlJVUSGba3dMcQMqfgKzAP1pAI9URr8_0NHa8B2vfhArMAE
+Message-ID: <CAC_TJvfBvZZc=xyB0jez2VCDit-rettfQf7H4xhQbN7bYxKw-A@mail.gmail.com>
+Subject: Re: [PATCH 0/4] mm: permit guard regions for file-backed/shmem mappings
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: David Hildenbrand <david@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Suren Baghdasaryan <surenb@google.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>, 
+	"Paul E . McKenney" <paulmck@kernel.org>, Jann Horn <jannh@google.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Shuah Khan <shuah@kernel.org>, 
+	linux-kselftest@vger.kernel.org, linux-api@vger.kernel.org, 
+	John Hubbard <jhubbard@nvidia.com>, Juan Yescas <jyescas@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:g/nteeapHpXeO3nP8XGK/NTsQoE4a7rQd00/eKhfZJqD3E4me6k
- mPBfaWWvqneRcRbYIXoVsvgfDFiwgmcn2+SwUKiismKfCo0nx3rdQhZBy4mLTqfXiQ+eYAr
- crbVywIUycNHedSQV7D5KlQ5pZaP5YEjKbWr4MixaWf0KeSynMRIIrtuR+28WZrPHQqNJtt
- zqqN1ASlctW5KqJINvu4A==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:F6O9QjTt1G8=;HpKS35OzFbD2n7qX+2zD6g8CqrC
- WJq6SvPVn2nfLtSdsFHcqLn6PhsEEPHbiDYi5+hiEv330H5MWR8uzDy8ynohUQ1NO87pH+TbN
- 3Z7rmW5bOWVMVgAYMbM624vf9R2DSrLHEcUD0lCBQXV60pcUZYnOhDRloORXyzNJ/NHWwS7GR
- 42GyPmGZEvu3UDnBKLG8EfXzNjV+C/A9THZFxchZVcNdMXWP9hrk9eSCWMRow3wHxlRAD0PBv
- yZQbkhqabUSuTD04SIjrNgRQ+qaCf7G3j+TUrELBlZULaXJPmwKinYL0DbOXJzw/HtV7d6tWW
- ysxdZB2ndqOVlErXale3IcVCSDZKfbkzCnRh9m1TcQoSRVesIVBRRUvTuOw90ILWQ7/yBaWQP
- dnGxcgsuujpWCLg295YbrKdxqhpx/9yDMTZ25igOTLNQn8YkEqFMYbeW7eth93G3qSSZDPSto
- h9qjwqQ6gmnY2swDVZpm1EkufLMhOfJNfY8dDyUumvq3QMnAxJlA3sZlIbEo1TeVKzLmhIKq6
- Qft//XcK4v9YoXUERycZsjlFGeUnQY199Yj29FBZwNrEzIZKg/q0Zzk9jr8Wo2WfGnT5z641i
- La1hJAE56bUXpkCJ4waMFC7dZVUg9s6u4gR3q7/L85hi0n+yxuAvUhPEMj2w7YViK3USI3W7p
- DGk7SVBQj0fPchGDiwD7KVkWkHa5BQuhWRrr9vSwg6s05UQLHLup1CalK1qtQg8s7wuo0gl7c
- xusuqZgsz3m+mAUcloC1gPtzJZNzIwefvVh3+g0YOeUpkJuQU7xYTKZP6nN2RCrmed4WHsCmt
- MgDeSCWhgok1hC1JTw9H3+Ak0y2+yQiXvgOoGd40as86rAz/NFMxf0+sDaEQmxmkiXOuX6Xmd
- wbAcVplFRj0GXutlKxZ/+pBN5Y8a1GeyzAphxCtbfwSBILW/pLhTp7rNQTb09ivct0rXc8wXl
- w6raEcMLutMy4dKg2V7F9YZeXQgXNn88pTbLm+/IizroWw4RXpF0gJgArAu7Up65PjJVO815/
- HhhmiXpVRFTax9lXiYunirS3t2Ac37LsZlL3726VGZogrNJoNg6wnpdvzcUuNz4tP5pFf7UNx
- GVDrgCw3s0Wbp4oFTtSKpAIuIw0C8xUFXq33VllH7apXxi2jKSZiQI14KkNZYXo7rpb1evfXO
- 6f84DHHtaDtOT3qDh5yxAb+W4S3FLSL04hGwHpXSIuU9Z+AGWJOCx7pXnqGqUgnCA1I1h2ufj
- NgwkMoT4WiiTdYK5hnI2MrCwUgiWQBL/Kpbu3IR+vIPmJhD+lhHoxnCk6dJ4F7qblvKi+yoHo
- PPpVQjb3RuOeMzP4BpiNv2G0S6VL3+nIkBF7d/3Sy0IkTH5Ev8q0FxOTAJ0veFW4thvq8g2ey
- BOdjPsmLsQQG4ZoQFUDdCVLjwFq7An9VLwbajUg9J+X/nxCY5wEpYmB1AioYX09/BCczVNZxr
- NnGfOlw==
 
-=E2=80=A6
-> +++ b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
-> @@ -0,0 +1,2718 @@
-=E2=80=A6
-> +static u32 hdmirx_readl(struct snps_hdmirx_dev *hdmirx_dev, int reg)
-> +{
-> +	u32 val;
-> +
-> +	guard(spinlock_irqsave)(&hdmirx_dev->rst_lock);
-> +
-> +	val =3D readl(hdmirx_dev->regs + reg);
-> +
-> +	return val;
-> +}
+On Wed, Feb 19, 2025 at 11:20=E2=80=AFAM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> On Wed, Feb 19, 2025 at 10:52:04AM -0800, Kalesh Singh wrote:
+> > On Wed, Feb 19, 2025 at 1:17=E2=80=AFAM Lorenzo Stoakes
+> > <lorenzo.stoakes@oracle.com> wrote:
+> > >
+> > > On Wed, Feb 19, 2025 at 10:15:47AM +0100, David Hildenbrand wrote:
+> > > > On 19.02.25 10:03, Lorenzo Stoakes wrote:
+> > > > > On Wed, Feb 19, 2025 at 12:25:51AM -0800, Kalesh Singh wrote:
+> > > > > > On Thu, Feb 13, 2025 at 10:18=E2=80=AFAM Lorenzo Stoakes
+> > > > > > <lorenzo.stoakes@oracle.com> wrote:
+> > > > > > >
+> > > > > > > The guard regions feature was initially implemented to suppor=
+t anonymous
+> > > > > > > mappings only, excluding shmem.
+> > > > > > >
+> > > > > > > This was done such as to introduce the feature carefully and =
+incrementally
+> > > > > > > and to be conservative when considering the various caveats a=
+nd corner
+> > > > > > > cases that are applicable to file-backed mappings but not to =
+anonymous
+> > > > > > > ones.
+> > > > > > >
+> > > > > > > Now this feature has landed in 6.13, it is time to revisit th=
+is and to
+> > > > > > > extend this functionality to file-backed and shmem mappings.
+> > > > > > >
+> > > > > > > In order to make this maximally useful, and since one may map=
+ file-backed
+> > > > > > > mappings read-only (for instance ELF images), we also remove =
+the
+> > > > > > > restriction on read-only mappings and permit the establishmen=
+t of guard
+> > > > > > > regions in any non-hugetlb, non-mlock()'d mapping.
+> > > > > >
+> > > > > > Hi Lorenzo,
+> > > > > >
+> > > > > > Thank you for your work on this.
+> > > > >
+> > > > > You're welcome.
+> > > > >
+> > > > > >
+> > > > > > Have we thought about how guard regions are represented in /pro=
+c/*/[s]maps?
+> > > > >
+> > > > > This is off-topic here but... Yes, extensively. No they do not ap=
+pear
+> > > > > there.
+> > > > >
+> > > > > I thought you had attended LPC and my talk where I mentioned this
+> > > > > purposefully as a drawback?
+> > > > >
+> > > > > I went out of my way to advertise this limitation at the LPC talk=
+, in the
+> > > > > original series, etc. so it's a little disappointing that this is=
+ being
+> > > > > brought up so late, but nobody else has raised objections to this=
+ issue so
+> > > > > I think in general it's not a limitation that matters in practice=
+.
+> > > > >
+> >
+> > Sorry for raising this now, yes at the time I believe we discussed
+> > reducing the vma slab memory usage for the PROT_NONE mappings. I
+> > didn't imagine that apps could have dependencies on the mapped ELF
+> > ranges in /proc/self/[s]maps until recent breakages from a similar
+> > feature. Android itself doesn't depend on this but what I've seen is
+> > banking apps and apps that have obfuscation to prevent reverse
+> > engineering (the particulars of such obfuscation are a black box).
+>
+> Ack ok fair enough, sorry, but obviously you can understand it's
+> frustrating when I went to great lengths to advertise this not only at th=
+e
+> talk but in the original series.
+>
+> Really important to have these discussions early. Not that really we can =
+do
+> much about this, as inherently this feature cannot give you what you need=
+.
+>
+> Is it _only_ banking apps that do this? And do they exclusively read
+> /proc/$pid/maps? I mean there's nothing we can do about that, sorry.
 
-May such a function implementation be simplified?
+Not only banking apps but that's a common category.
 
-{
-	guard(spinlock_irqsave)(&hdmirx_dev->rst_lock);
-	return readl(hdmirx_dev->regs + reg);
-}
+> If that's immutable, then unless you do your own very, very, very slow cu=
+stom
+> android maps implementation (that will absolutely break the /proc/$pid/ma=
+ps
+> scalability efforts atm) this is just a no-go.
+>
+
+Yeah unfortunately that's immutable as app versions are mostly
+independent from the OS version.
+
+We do have something that handles this by encoding the guard regions
+in the vm_flags, but as you can imagine it's not generic enough for
+upstream.
+
+> >
+> > > > > >
+> > > > > > In the field, I've found that many applications read the ranges=
+ from
+> > > > > > /proc/self/[s]maps to determine what they can access (usually r=
+elated
+> > > > > > to obfuscation techniques). If they don't know of the guard reg=
+ions it
+> > > > > > would cause them to crash; I think that we'll need similar entr=
+ies to
+> > > > > > PROT_NONE (---p) for these, and generally to maintain consisten=
+cy
+> > > > > > between the behavior and what is being said from /proc/*/[s]map=
+s.
+> > > > >
+> > > > > No, we cannot have these, sorry.
+> > > > >
+> > > > > Firstly /proc/$pid/[s]maps describes VMAs. The entire purpose of =
+this
+> > > > > feature is to avoid having to accumulate VMAs for regions which a=
+re not
+> > > > > intended to be accessible.
+> > > > >
+> > > > > Secondly, there is no practical means for this to be accomplished=
+ in
+> > > > > /proc/$pid/maps in _any_ way - as no metadata relating to a VMA i=
+ndicates
+> > > > > they have guard regions.
+> > > > >
+> > > > > This is intentional, because setting such metadata is simply not =
+practical
+> > > > > - why? Because when you try to split the VMA, how do you know whi=
+ch bit
+> > > > > gets the metadata and which doesn't? You can't without _reading p=
+age
+> > > > > tables_.
+> >
+> > Yeah the splitting becomes complicated with any vm flags for this...
+> > meaning any attempt to expose this in /proc/*/maps have to
+> > unconditionally walk the page tables :(
+>
+> It's not really complicated, it's _impossible_ unless you made literally
+> all VMA code walk page tables for every single operation. Which we are
+> emphatically not going to do :)
+>
+> And no, /proc/$pid/maps is _never_ going to walk page tables. For obvious
+> performance reasons.
+>
+> >
+> > > > >
+> > > > > /proc/$pid/smaps _does_ read page tables, but we can't start pret=
+ending
+> > > > > VMAs exist when they don't, this would be completely inaccurate, =
+would
+> > > > > break assumptions for things like mremap (which require a single =
+VMA) and
+> > > > > would be unworkable.
+> > > > >
+> > > > > The best that _could_ be achieved is to have a marker in /proc/$p=
+id/smaps
+> > > > > saying 'hey this region has guard regions somewhere'.
+> > > >
+> > > > And then simply expose it in /proc/$pid/pagemap, which is a better =
+interface
+> > > > for this pte-level information inside of VMAs. We should still have=
+ a spare
+> > > > bit for that purpose in the pagemap entries.
+> > >
+> > > Ah yeah thanks David forgot about that!
+> > >
+> > > This is also a possibility if that'd solve your problems Kalesh?
+> >
+> > I'm not sure what is the correct interface to advertise these. Maybe
+> > smaps as you suggested since we already walk the page tables there?
+> > and pagemap bit for the exact pages as well? It won't solve this
+> > particular issue, as 1000s of in field apps do look at this through
+> > /proc/*/maps. But maybe we have to live with that...
+>
+> I mean why are we even considering this if you can't change this anywhere=
+?
+> Confused by that.
+>
+> I'm afraid upstream can't radically change interfaces to suit this
+> scenario.
+>
+> We also can't change smaps in the way you want, it _has_ to still give
+> output per VMA information.
+
+Sorry I wasn't suggesting to change the entries in smaps, rather
+agreeing to your marker suggestion. Maybe a set of ranges for each
+smaps entry that has guards? It doesn't solve the use case, but does
+make these regions visible to userspace.
+
+>
+> The proposed change that would be there would be a flag or something
+> indicating that the VMA has guard regions _SOMEWHERE_ in it.
+>
+> Since this doesn't solve your problem, adds complexity, and nobody else
+> seems to need it, I would suggest this is not worthwhile and I'd rather n=
+ot
+> do this.
+>
+> Therefore for your needs there are literally only two choices here:
+>
+> 1. Add a bit to /proc/$pid/pagemap OR
+> 2. a new interface.
+>
+> I am not in favour of a new interface here, if we can just extend pagemap=
+.
+>
+> What you'd have to do is:
+>
+> 1. Find virtual ranges via /proc/$pid/maps
+> 2. iterate through /proc/$pid/pagemaps to retrieve state for all ranges.
+>
+
+Could we also consider an smaps field like:
+
+VmGuards: [AAA, BBB), [CCC, DDD), ...
+
+or something of that sort?
 
 
-=E2=80=A6
-> +static int hdmirx_get_detected_timings(struct snps_hdmirx_dev *hdmirx_d=
-ev,
-> +				       struct v4l2_dv_timings *timings)
-> +{
-=E2=80=A6
-> +	mutex_lock(&hdmirx_dev->work_lock);
-> +retry:
-> +	memset(timings, 0, sizeof(struct v4l2_dv_timings));
-=E2=80=A6
-> +	mutex_unlock(&hdmirx_dev->work_lock);
-> +
-> +	return ret;
-> +}
-=E2=80=A6
+> Since anything that would retrieve guard region state would need to walk
+> page tables, any approach would be slow and I don't think this would be a=
+ny
+> less slow than any other interface.
+>
+> This way you'd be able to find all guard regions all the time.
+>
+> This is just the trade-off for this feature unfortunately - its whole
+> design ethos is to allow modification of -faulting- behaviour without
+> having to modify -VMA- behaviour.
+>
+> But if it's banking apps whose code you can't control (surprised you don'=
+t
+> lock down these interfaces), I mean is this even useful to you?
+>
+> If your requirement is 'you have to change /proc/$pid/maps to show guard
+> regions' I mean the answer is that we can't.
+>
+> >
+> > We can argue that such apps are broken since they may trip on the
+> > SIGBUS off the end of the file -- usually this isn't the case for the
+> > ELF segment mappings.
+>
+> Or tearing of the maps interface, or things getting unmapped or or
+> or... It's really not a sane thing to do.
+>
+> >
+> > This is still useful for other cases, I just wanted to get some ideas
+> > if this can be extended to further use cases.
+>
+> Well I'm glad that you guys find it useful for _something_ ;)
+>
+> Again this wasn't written only for you (it is broadly a good feature for
+> upstream), but I did have your use case in mind, so I'm a little
+> disappointed that it doesn't help, as I like to solve problems.
+>
+> But I'm glad it solves at least some for you...
 
-Would you become interested to apply a statement like =E2=80=9Cguard(mutex=
-)(&hdmirx_dev->work_lock);=E2=80=9D?
-https://elixir.bootlin.com/linux/v6.14-rc3/source/include/linux/mutex.h#L2=
-01
+I recall Liam had a proposal to store the guard ranges in the maple tree?
 
-Regards,
-Markus
+I wonder if that can be used in combination with this approach to have
+a better representation of this?
+
+>
+> >
+> > Thanks,
+> > Kalesh
+> >
+> >
+> > >
+> > > This bit will be fought over haha
+> > >
+> > > >
+> > > > --
+> > > > Cheers,
+> > > >
+> > > > David / dhildenb
+> > > >
 
