@@ -1,82 +1,93 @@
-Return-Path: <linux-kernel+bounces-522653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FEB6A3CCE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 00:00:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59D64A3CCEC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 00:01:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 032BA7A753D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:59:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E802E17BE47
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 23:00:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A830625D539;
-	Wed, 19 Feb 2025 23:00:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19EF925E45D;
+	Wed, 19 Feb 2025 23:00:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="raIXypYF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gT+ft3iL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 083002417C3;
-	Wed, 19 Feb 2025 23:00:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76C8E25D555;
+	Wed, 19 Feb 2025 23:00:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740006019; cv=none; b=RQIW/aYQisFnUd2epBqkuzMHlpJQFYU9w6i33dfI9fctOKzNSNEVq0JS/CPdjkN+7q+r7kwd/gdXw3Qeokz9Jj1ST0T1MT4VH81tI/sz4sWfNYKG4+Hpxxkl/10WKha03myXyqSZCxWUcQLKvqN91cSEuUGnWM+6YptBII9molQ=
+	t=1740006001; cv=none; b=uKoopbG6EKJMMcyCLhzEwMFnsqjDtZ53Um/5zuZh+KLtHBvq+/Dh1AuL4TajzD1RUw8KNHkzBGaJP24pmqHMDBMT92JUNntKDnd9WzGEMIBheEjmAXN5yz4X19zBuzyL6twSfSLUhVFIpzf4sB7Lcet2jj91LjN8SqltOMB6k8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740006019; c=relaxed/simple;
-	bh=Fm7ii2ab9wmKHnkgzHIKXYVrWpsA7NKpu2v+Av3Ghh8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L8Us4RsomsfITU9PDdEg90J130XF70bEBKzecjvLoIR0wVC9k+qx0WNm/Cx7XKSpogyxqlBHZ8lgy6XMhev+oKh1+geWsCpUB2oyD/ssEeBwpHa6ag/kVN8n43lZyruRHnrzcBsuMbK44i6ED+p9owdj563L8MfL7BlsF0K03q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=raIXypYF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5ABB7C4CED1;
-	Wed, 19 Feb 2025 23:00:18 +0000 (UTC)
+	s=arc-20240116; t=1740006001; c=relaxed/simple;
+	bh=Avixi87/yUvx+vB5Nk9euMakPds3svx9rpHC3tSzvek=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=KRi/1SUrgJx6vVoj4KWXeOI2zmTGcAiy7kBMxH85hsndLZaxJUO6LoNJgFrsQ6T4PrLW2F1F1uS4dPZ0NIxRJZ1GXLjzjPtLjAF5G5Hw3KK1HpqLLpYC3G3golqcZM2pG4Dxseza6Ynx58Lpty50KcS8eHUpsIGF5aAMYtdzRWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gT+ft3iL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8380C4CEE0;
+	Wed, 19 Feb 2025 23:00:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740006018;
-	bh=Fm7ii2ab9wmKHnkgzHIKXYVrWpsA7NKpu2v+Av3Ghh8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=raIXypYFZI9kHKms0Iy1gpDJxZja85zUcLtt4/iedzY/wXqt55qFnkcZmjEPkB5ga
-	 NLtetxbVC3/TrBR7e5Qdb0CcXCInXG66fQXmjn6ZRsXqPymT+3JSVfMMontJeM7MYS
-	 EgvhE4CRss9oUxw9ev9t97jwvi2vLDDdlYkH/oWegidHL2NDChAydDpWN+R2regoBJ
-	 kIPy1h4Q97GI30/COJxkdvh6zfefBIp359ZWAwlR4kneu1pSLr873FkzAdZ80vCcU0
-	 6R9f1S/BeLtbMCZTmc/G74oQPy+s8AgpuTlWA1o8uW3ggF7VEdzzFdFdInEAqPUnmu
-	 aNV+hrhphurHw==
-Date: Wed, 19 Feb 2025 17:00:17 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Ryan.Wanner@microchip.com
-Cc: linux-kernel@vger.kernel.org, linux@roeck-us.net,
-	wim@linux-watchdog.org, claudiu.beznea@tuxon.dev, vkoul@kernel.org,
-	conor+dt@kernel.org, devicetree@vger.kernel.org,
-	dmaengine@vger.kernel.org, nicolas.ferre@microchip.com,
-	linux-watchdog@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, alexandre.belloni@bootlin.com,
-	krzk+dt@kernel.org
-Subject: Re: [PATCH 3/8] dt-bindings: dma: atmel: add microchip,sama7d65-dma
-Message-ID: <174000601710.3128913.15621337092238580817.robh@kernel.org>
-References: <cover.1739555984.git.Ryan.Wanner@microchip.com>
- <8b69f0c6d8955790edcdbe5d1e205b43dedb99ff.1739555984.git.Ryan.Wanner@microchip.com>
+	s=k20201202; t=1740006000;
+	bh=Avixi87/yUvx+vB5Nk9euMakPds3svx9rpHC3tSzvek=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=gT+ft3iLRCKHnOxgb4+TqS+HaBofMO943Lft75JgqO9u1+LUmOBgsPeA/8qWOmGWR
+	 g9G4tdUefzFzoaVDRk99mgJYGtl2DqskhhHaeHLV9F1nbhtUOv/Xvr+JB0bBbG59Ji
+	 2HsKEroDQJPMb+lTVFtt4IcgkS9k8vP1XLjkoxIOuJJR2715GigH1ILMMkUAry8cG9
+	 gWC7Lod3Uev5pOVvzsz70Qyx9YqKeKrC4UhauNBpEXlGxMMLlEHIcC3dz/7K0iS0ja
+	 6MEWQr380RJT0cKyqr6n6L5u42n5Mxocnqc78YrZU84AatZKDhI50K9buRQ18lo7xn
+	 mzvK9YKuuXk2w==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE374380AAEC;
+	Wed, 19 Feb 2025 23:00:32 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8b69f0c6d8955790edcdbe5d1e205b43dedb99ff.1739555984.git.Ryan.Wanner@microchip.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH bpf-next v2] libbpf: Wrap libbpf API direct err with
+ libbpf_err
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174000603155.775571.10326164542234873495.git-patchwork-notify@kernel.org>
+Date: Wed, 19 Feb 2025 23:00:31 +0000
+References: <20250219153711.29651-1-chen.dylane@linux.dev>
+In-Reply-To: <20250219153711.29651-1-chen.dylane@linux.dev>
+To: Tao Chen <chen.dylane@linux.dev>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ eddyz87@gmail.com, haoluo@google.com, jolsa@kernel.org, qmo@kernel.org,
+ bpf@vger.kernel.org, linux-kernel@vger.kernel.org, chen.dylane@gmail.com
 
+Hello:
 
-On Fri, 14 Feb 2025 11:08:16 -0700, Ryan.Wanner@microchip.com wrote:
-> From: Ryan Wanner <Ryan.Wanner@microchip.com>
-> 
-> Add microchip,sama7d65-dma compatible string to DT bindings
-> documentation.
-> 
-> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
-> ---
->  Documentation/devicetree/bindings/dma/atmel,sama5d4-dma.yaml | 3 +++
->  1 file changed, 3 insertions(+)
-> 
+This patch was applied to bpf/bpf-next.git (master)
+by Andrii Nakryiko <andrii@kernel.org>:
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+On Wed, 19 Feb 2025 23:37:11 +0800 you wrote:
+> From: Tao Chen <chen.dylane@gmail.com>
+> 
+> Just wrap the direct err with libbpf_err, keep consistency
+> with other APIs.
+> 
+> Acked-by: Eduard Zingerman <eddyz87@gmail.com>
+> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+> 
+> [...]
+
+Here is the summary with links:
+  - [bpf-next,v2] libbpf: Wrap libbpf API direct err with libbpf_err
+    https://git.kernel.org/bpf/bpf-next/c/e8af068239ca
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
