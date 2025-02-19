@@ -1,311 +1,145 @@
-Return-Path: <linux-kernel+bounces-521232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6991A3B97E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:33:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0763AA3B96D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:32:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE4723BAD5E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:26:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D90CE3BC3A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:26:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FF251D5175;
-	Wed, 19 Feb 2025 09:22:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E717C1C6FE7;
+	Wed, 19 Feb 2025 09:22:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="MCZl3tqE"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="kRv3J7cR"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB21F1C831A
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 09:22:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 934021C548C
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 09:22:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739956966; cv=none; b=rfCoaNd7eXxrzfBJkd0QZLIE9mVQTqG7bh4ZkY0LqSmvE/XRrvYF+3xt29xU5lDtPDdBeD9j8BhB0ZSoSTEn9mD9RmLjpzTJuGYIYi8w0w81m3KmKF8S/PIgobQlICUO2nmdX4rU3CbgnsyASL+9070t1Ejw9ESbEXhlNCxgI3U=
+	t=1739956960; cv=none; b=hWt25RpAlu1ZTCJf7au52Uh6mMdPd8KUoalacYIZE/dwhOyZXVmee2Ia/Ugbq1AwUQSBTLNx0rHDCdMVQ0wPCCu3Qr/CwGgM1yU3UIvM7XwXUUOmJkXqgwQDV9pSzNC//xvBnDJ1yzbIaa9l+WX4SBWThTqUiRxXilXGtzJqGcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739956966; c=relaxed/simple;
-	bh=CBhtCWjbsQ04UiOa3AFjnffqRHthDOcfY1FMq+mMzQE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=J3VDzbYgrh+FbZgSCydVA8CFxR9Hb6PH9wt1wAIMEv1wixjTs3sXCX3bogXbeJPAp5qDJN2xu6wl8VTIlXdQPdz+3JjDESY2DhEnNaz9m4kplK5tfOZUSGaLP/Gw3hRlxYD7EYCKSB1/v7MltI7rpdWnvlbLS1LrrGsaMVchqO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=MCZl3tqE; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-21f61b01630so10371125ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 01:22:44 -0800 (PST)
+	s=arc-20240116; t=1739956960; c=relaxed/simple;
+	bh=882+GeLvhOhZ90ZJo71O/xXswVk12JFwrOg2gd0h8EE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KfcE4qsx5c0CLViyTscC8AQUIGfzud6F7s6We6ZmoxKsWAH7lZuM1vy31tYJh/OkSHA9NuqpC+2CgwdNnuXfVepeyzx/+vBUypBErZnN8F7hHLBQSXWstnduTEf0ppr4fwi0+09XnjWGhnXwWm3VC8Fcv/EjdaOpvT/+golC/ZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=kRv3J7cR; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-30a3092a9ebso34576791fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 01:22:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=citrix.com; s=google; t=1739956964; x=1740561764; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1739956957; x=1740561757; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YnGtO5JguyJMDAVVd/amsK5Mk4hYl7NsHvQivQkdUR8=;
-        b=MCZl3tqEJL5izV+q90DQoQ05feKL4TyefSpnFGDkamOqnRC/3GbIZHkLer+QWAR03n
-         MH1X5KqtFOOyZgOBmellPkYtdq+rXDQOgfs6flsYJdGfArMpXtkxT3gj+xBzrD1YoGow
-         2EsTNjWNRIeMGp+yeXRi80rsZ61bWpy7fdgm0=
+        bh=882+GeLvhOhZ90ZJo71O/xXswVk12JFwrOg2gd0h8EE=;
+        b=kRv3J7cRUMV91yt5eJpe7WOu3+oEwlSoFvmbu9xD0Mb30r6YevqlS+xz0SXVAck0Jf
+         Mi5A5axfVZOo32XvdnGb/eg3arg5B65+uOLPq1JDQIFl9FrxLBtYvP8KJ4ghU8rfNzOC
+         bMcj5w4TAsFNZEiBv+EqyeC6JBGsCbag+Yq7QJIf6gXnL/EMzb4Ul8O2ZUSnwUN88MUq
+         3KlHRklNGXAwkUdSGnp77jWqqxCAzqGWjOG8BjIndmSIkOxdkr25tMfIB/aQKeA03w2/
+         n7xh5ddUNtsr/XZeS+Owfax+/faO3Q+A0HgZhUnvoiCO3bS0QErx+DXzliVGiD1vrDxd
+         3lDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739956964; x=1740561764;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1739956957; x=1740561757;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=YnGtO5JguyJMDAVVd/amsK5Mk4hYl7NsHvQivQkdUR8=;
-        b=vJO9/vu1h69v9cCrk90ycxzgaaM1HgaBBVncDr8p9br3rYK1cQQHlyXTcf8aK6IJaw
-         P/vZUXVj93cHd3pmtRuWIFEefPkY/yG6NSr7P9Px+GxWFKTaL+ErwU2VCkJVtAG+K78O
-         0U2utvR3SHN9f9LKzvMNg8ypnFpiLFkF78wcA2WXQ/g7npBooSPrq9b/0Gufs/Elhggo
-         53VXXnq/6gSFp/jd9b+O1sIxuBgXp9XSZIOEDJd5hAkYYlH5sJEJ70fZFMHjzOxVE/GB
-         avflKJ1V2qpL5Q/FkEhUUhH6F7rmDmKWlPGNPcVYp112ltOGbhcWWmYNa6a61dNAiopO
-         Yc/A==
-X-Gm-Message-State: AOJu0YxWdF1ViCfTN+L1SxWWTHFckNTYOhKvS52/Xu6nLb5N4Cs1OE9u
-	d2ZOtR1UTSUNUTnBlzRC67kaIKWKkKxbk/N9j1okgJMWFXGoamdAU+8cPwWxdI6Tv2AEwLI5019
-	L
-X-Gm-Gg: ASbGncu192Sp5GHxaW/zPkrM5iMdZu9T2BK21nhTIwvSQWHdU48y3J8bFEWEiHC9VCV
-	VxVjBBr/oZRzXyidl8N8ClrjP3OLmDD/9BO2EofTf7XqrAn7AWKgRimTq7d4njmhO5wR6sTh2yN
-	UW7x2rrJZJlzcfJ0eUGoJsHahVTtbue5jUxFk9XAMoJF41LJFDOtYBDm+MGa+7qQpnplTljzzYG
-	tuHP/0RWFEhXtriKJMtvtjBQsK6hFkE+4PRneGRyGCieGLAguhKCcrnGPS6B5+SpWvOihEkS9dJ
-	/z/RnAfEQHkfGE7aUVns
-X-Google-Smtp-Source: AGHT+IEyC15TnZIAvUKjVtLm/x4/Lo6Nn8PENAHDVB3FMrtCAy7HQuzopUgCjPn21zM5n19hoHeGqw==
-X-Received: by 2002:a05:6a00:9297:b0:727:39a4:30cc with SMTP id d2e1a72fcca58-7329cd75fe4mr5153986b3a.1.1739956963747;
-        Wed, 19 Feb 2025 01:22:43 -0800 (PST)
-Received: from localhost ([84.78.159.3])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7325b1afd0esm9030926b3a.137.2025.02.19.01.22.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2025 01:22:43 -0800 (PST)
-From: Roger Pau Monne <roger.pau@citrix.com>
-To: linux-kernel@vger.kernel.org,
-	xen-devel@lists.xenproject.org,
-	linux-pci@vger.kernel.org
-Cc: Roger Pau Monne <roger.pau@citrix.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Juergen Gross <jgross@suse.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH v3 3/3] PCI/MSI: Convert pci_msi_ignore_mask to per MSI domain flag
-Date: Wed, 19 Feb 2025 10:20:57 +0100
-Message-ID: <20250219092059.90850-4-roger.pau@citrix.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20250219092059.90850-1-roger.pau@citrix.com>
-References: <20250219092059.90850-1-roger.pau@citrix.com>
+        bh=882+GeLvhOhZ90ZJo71O/xXswVk12JFwrOg2gd0h8EE=;
+        b=h4QDoR/0MILcAUJBJhW4Ueidj1ifY2tLqs2Bsyb4dyjJDbkvHJr2HFRKgAJdVgozD1
+         eupO210yvx6Czy4MWy03Tk55FbM0E4hPDgY08hhGW4RFGaUiM/9CjA94jtFu98gcUugu
+         Cd6D0E6FcRYvf9AmF8wvYY8L1DsrZDcY/Im8x71WGMvF8wHx+Es+IRrRSQWGk97sl3LP
+         HPDEuytcG2bhwX45sQTd6MCC6u+c6OMeuNY2j9lHQeZaZzMG8a3hHlIjAyNmM+upEEOp
+         WH21vF0DgFTMcdiN4O4tQOFlYXROAdeEGowBzpaY4xbpMqeH4l3h6pWYWiU3J1ogboal
+         oZUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVgMJcK6a8n5yxytPjeOzlG66n0QB7ubaSMs3XWNaoNonHwNSlsBwW+RQu56hMdrai/fKnC8OUo6c6xFWk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUoaHfcWzPzUEIDBUMPyvJVr5vkZFY6HeSeMCe2FU74WXyjUrF
+	1z2Maq6qxAjqxktPrN5SSzumM6SN4rRd5bIqR3l+9KuDo9OB3KLVqw9FrHTARngBZJCU1ns42rc
+	HhtMmR9vHwUiPnAhjmR68gGzbUFxBBfoVqza8Wg==
+X-Gm-Gg: ASbGncuhrYj+0qBg+er4B5HypqfMBBJl7cLYWSvVQX4n4ItEUDhm7lPVaQxJAPhXs+M
+	AwBsYyMHIjhsvFU44FepFs8I7Z7K9iTzxWTSO24dtFcaP0+85xA8gWXlpifr170PEZ57agApZ0G
+	pEEHSswv7rFNchhOGT6hj5RZUABjI=
+X-Google-Smtp-Source: AGHT+IFdq3DsLsQ07SUQyFjnXJ/TBOJSzpWcwna2L3NBWTn+vHCfPc0MhMyzYqgbujIH1hiHEH5Zd5fdTZyJSgFlEkc=
+X-Received: by 2002:a05:651c:a:b0:2ff:8e69:77d7 with SMTP id
+ 38308e7fff4ca-30927a64cacmr48765581fa.20.1739956956700; Wed, 19 Feb 2025
+ 01:22:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250210-gpio-sanitize-retvals-v1-0-12ea88506cb2@linaro.org>
+ <CGME20250219083836eucas1p1b7ecc6e5fdc34d66ef7565bfcf399254@eucas1p1.samsung.com>
+ <20250210-gpio-sanitize-retvals-v1-1-12ea88506cb2@linaro.org>
+ <dfe03f88-407e-4ef1-ad30-42db53bbd4e4@samsung.com> <CAMRc=MduJK0_gat2aVQbR9udYNj9oDcoN=me0wa4K6L8dX_52Q@mail.gmail.com>
+ <7c045d13-146f-448c-ad73-60069059b242@samsung.com>
+In-Reply-To: <7c045d13-146f-448c-ad73-60069059b242@samsung.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 19 Feb 2025 10:22:25 +0100
+X-Gm-Features: AWEUYZm6Gj5cFgQ87Mb8LjORD5nmtpBio1fdKEzvV2SnbMSrnrl4QoWzxX_bD5k
+Message-ID: <CAMRc=Me2vsqtsZwuy1d9h6hA4+XVVGCeh8Nd77-Pq1QCMniUfQ@mail.gmail.com>
+Subject: Re: [PATCH 1/8] gpiolib: check the return value of gpio_chip::get_direction()
+To: Marek Szyprowski <m.szyprowski@samsung.com>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Setting pci_msi_ignore_mask inhibits the toggling of the mask bit for both
-MSI and MSI-X entries globally, regardless of the IRQ chip they are using.
-Only Xen sets the pci_msi_ignore_mask when routing physical interrupts over
-event channels, to prevent PCI code from attempting to toggle the maskbit,
-as it's Xen that controls the bit.
+On Wed, Feb 19, 2025 at 10:14=E2=80=AFAM Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+>
+> On 19.02.2025 09:50, Bartosz Golaszewski wrote:
+> > On Wed, Feb 19, 2025 at 9:38=E2=80=AFAM Marek Szyprowski
+> > <m.szyprowski@samsung.com> wrote:
+> >> On 10.02.2025 11:51, Bartosz Golaszewski wrote:
+> >>> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >>>
+> >>> As per the API contract - gpio_chip::get_direction() may fail and ret=
+urn
+> >>> a negative error number. However, we treat it as if it always returne=
+d 0
+> >>> or 1. Check the return value of the callback and propagate the error
+> >>> number up the stack.
+> >>>
+> >> This change breaks bcm2835 pincontrol/gpio driver (and probably others=
+)
+> >> in next-20250218. The problem is that some gpio lines are initially
+> >> configured as alternate function (i.e. uart) and .get_direction return=
+s
+> >> -EINVAL for them, what in turn causes the whole gpio chip fail to
+> >> register. Here is the log with WARN_ON() added to line
+> >> drivers/pinctrl/bcm/pinctrl-bcm2835.c:350 from Raspberry Pi 4B:
+> >>
+> >> Any suggestions how to fix this issue? Should we add
+> >> GPIO_LINE_DIRECTION_UNKNOWN?
+> >>
+> > That would be quite an intrusive change and not something for the
+> > middle of the release cycle. I think we need to revert to the previous
+> > behavior for this particular use-case: check ret for EINVAL and assume
+> > it means input as it's the "safe" setting. Now the question is - can
+> > this only happen during the chip registration or should we filter out
+> > EINVAL at each gpiod_get_direction() call?
+>
+> IMHO it will be enough to use that workaround only in the
+> gpiochip_add_data_with_key() function. The other functions modified by
+> the $subject patch are strictly related to input or output gpio mode of
+> operation, so having the line set to proper input/output state seems to
+> be justified.
+>
 
-However, the pci_msi_ignore_mask being global will affect devices that use
-MSI interrupts but are not routing those interrupts over event channels
-(not using the Xen pIRQ chip).  One example is devices behind a VMD PCI
-bridge.  In that scenario the VMD bridge configures MSI(-X) using the
-normal IRQ chip (the pIRQ one in the Xen case), and devices behind the
-bridge configure the MSI entries using indexes into the VMD bridge MSI
-table.  The VMD bridge then demultiplexes such interrupts and delivers to
-the destination device(s).  Having pci_msi_ignore_mask set in that scenario
-prevents (un)masking of MSI entries for devices behind the VMD bridge.
+Cc'ing Florian
 
-Move the signaling of no entry masking into the MSI domain flags, as that
-allows setting it on a per-domain basis.  Set it for the Xen MSI domain
-that uses the pIRQ chip, while leaving it unset for the rest of the
-cases.
+After a quick glance at existing get_direction() callbacks, it seems
+this is the only driver that does it. I'm wondering if it wouldn't
+make sense to change the driver behavior instead and make it assume
+input for unknown functions.
 
-Remove pci_msi_ignore_mask at once, since it was only used by Xen code, and
-with Xen dropping usage the variable is unneeded.
-
-This fixes using devices behind a VMD bridge on Xen PV hardware domains.
-
-Albeit Devices behind a VMD bridge are not known to Xen, that doesn't mean
-Linux cannot use them.  By inhibiting the usage of
-VMD_FEAT_CAN_BYPASS_MSI_REMAP and the removal of the pci_msi_ignore_mask
-bodge devices behind a VMD bridge do work fine when use from a Linux Xen
-hardware domain.  That's the whole point of the series.
-
-Signed-off-by: Roger Pau Monné <roger.pau@citrix.com>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Juergen Gross <jgross@suse.com>
----
-Changes since v2:
- - Fix subject line.
-
-Changes since v1:
- - Fix build.
- - Expand commit message.
----
- arch/x86/pci/xen.c    |  8 ++------
- drivers/pci/msi/msi.c | 37 +++++++++++++++++++++----------------
- include/linux/msi.h   |  3 ++-
- kernel/irq/msi.c      |  2 +-
- 4 files changed, 26 insertions(+), 24 deletions(-)
-
-diff --git a/arch/x86/pci/xen.c b/arch/x86/pci/xen.c
-index 0f2fe524f60d..b8755cde2419 100644
---- a/arch/x86/pci/xen.c
-+++ b/arch/x86/pci/xen.c
-@@ -436,7 +436,8 @@ static struct msi_domain_ops xen_pci_msi_domain_ops = {
- };
- 
- static struct msi_domain_info xen_pci_msi_domain_info = {
--	.flags			= MSI_FLAG_PCI_MSIX | MSI_FLAG_FREE_MSI_DESCS | MSI_FLAG_DEV_SYSFS,
-+	.flags			= MSI_FLAG_PCI_MSIX | MSI_FLAG_FREE_MSI_DESCS |
-+				  MSI_FLAG_DEV_SYSFS | MSI_FLAG_NO_MASK,
- 	.ops			= &xen_pci_msi_domain_ops,
- };
- 
-@@ -484,11 +485,6 @@ static __init void xen_setup_pci_msi(void)
- 	 * in allocating the native domain and never use it.
- 	 */
- 	x86_init.irqs.create_pci_msi_domain = xen_create_pci_msi_domain;
--	/*
--	 * With XEN PIRQ/Eventchannels in use PCI/MSI[-X] masking is solely
--	 * controlled by the hypervisor.
--	 */
--	pci_msi_ignore_mask = 1;
- }
- 
- #else /* CONFIG_PCI_MSI */
-diff --git a/drivers/pci/msi/msi.c b/drivers/pci/msi/msi.c
-index 2f647cac4cae..4c8c2b57b5f6 100644
---- a/drivers/pci/msi/msi.c
-+++ b/drivers/pci/msi/msi.c
-@@ -10,12 +10,12 @@
- #include <linux/err.h>
- #include <linux/export.h>
- #include <linux/irq.h>
-+#include <linux/irqdomain.h>
- 
- #include "../pci.h"
- #include "msi.h"
- 
- int pci_msi_enable = 1;
--int pci_msi_ignore_mask;
- 
- /**
-  * pci_msi_supported - check whether MSI may be enabled on a device
-@@ -285,6 +285,8 @@ static void pci_msi_set_enable(struct pci_dev *dev, int enable)
- static int msi_setup_msi_desc(struct pci_dev *dev, int nvec,
- 			      struct irq_affinity_desc *masks)
- {
-+	const struct irq_domain *d = dev_get_msi_domain(&dev->dev);
-+	const struct msi_domain_info *info = d->host_data;
- 	struct msi_desc desc;
- 	u16 control;
- 
-@@ -295,8 +297,7 @@ static int msi_setup_msi_desc(struct pci_dev *dev, int nvec,
- 	/* Lies, damned lies, and MSIs */
- 	if (dev->dev_flags & PCI_DEV_FLAGS_HAS_MSI_MASKING)
- 		control |= PCI_MSI_FLAGS_MASKBIT;
--	/* Respect XEN's mask disabling */
--	if (pci_msi_ignore_mask)
-+	if (info->flags & MSI_FLAG_NO_MASK)
- 		control &= ~PCI_MSI_FLAGS_MASKBIT;
- 
- 	desc.nvec_used			= nvec;
-@@ -604,12 +605,15 @@ static void __iomem *msix_map_region(struct pci_dev *dev,
-  */
- void msix_prepare_msi_desc(struct pci_dev *dev, struct msi_desc *desc)
- {
-+	const struct irq_domain *d = dev_get_msi_domain(&dev->dev);
-+	const struct msi_domain_info *info = d->host_data;
-+
- 	desc->nvec_used				= 1;
- 	desc->pci.msi_attrib.is_msix		= 1;
- 	desc->pci.msi_attrib.is_64		= 1;
- 	desc->pci.msi_attrib.default_irq	= dev->irq;
- 	desc->pci.mask_base			= dev->msix_base;
--	desc->pci.msi_attrib.can_mask		= !pci_msi_ignore_mask &&
-+	desc->pci.msi_attrib.can_mask		= !(info->flags & MSI_FLAG_NO_MASK) &&
- 						  !desc->pci.msi_attrib.is_virtual;
- 
- 	if (desc->pci.msi_attrib.can_mask) {
-@@ -659,9 +663,6 @@ static void msix_mask_all(void __iomem *base, int tsize)
- 	u32 ctrl = PCI_MSIX_ENTRY_CTRL_MASKBIT;
- 	int i;
- 
--	if (pci_msi_ignore_mask)
--		return;
--
- 	for (i = 0; i < tsize; i++, base += PCI_MSIX_ENTRY_SIZE)
- 		writel(ctrl, base + PCI_MSIX_ENTRY_VECTOR_CTRL);
- }
-@@ -714,6 +715,8 @@ static int msix_setup_interrupts(struct pci_dev *dev, struct msix_entry *entries
- static int msix_capability_init(struct pci_dev *dev, struct msix_entry *entries,
- 				int nvec, struct irq_affinity *affd)
- {
-+	const struct irq_domain *d = dev_get_msi_domain(&dev->dev);
-+	const struct msi_domain_info *info = d->host_data;
- 	int ret, tsize;
- 	u16 control;
- 
-@@ -744,15 +747,17 @@ static int msix_capability_init(struct pci_dev *dev, struct msix_entry *entries,
- 	/* Disable INTX */
- 	pci_intx_for_msi(dev, 0);
- 
--	/*
--	 * Ensure that all table entries are masked to prevent
--	 * stale entries from firing in a crash kernel.
--	 *
--	 * Done late to deal with a broken Marvell NVME device
--	 * which takes the MSI-X mask bits into account even
--	 * when MSI-X is disabled, which prevents MSI delivery.
--	 */
--	msix_mask_all(dev->msix_base, tsize);
-+	if (!(info->flags & MSI_FLAG_NO_MASK)) {
-+		/*
-+		 * Ensure that all table entries are masked to prevent
-+		 * stale entries from firing in a crash kernel.
-+		 *
-+		 * Done late to deal with a broken Marvell NVME device
-+		 * which takes the MSI-X mask bits into account even
-+		 * when MSI-X is disabled, which prevents MSI delivery.
-+		 */
-+		msix_mask_all(dev->msix_base, tsize);
-+	}
- 	pci_msix_clear_and_set_ctrl(dev, PCI_MSIX_FLAGS_MASKALL, 0);
- 
- 	pcibios_free_irq(dev);
-diff --git a/include/linux/msi.h b/include/linux/msi.h
-index b10093c4d00e..59a421fc42bf 100644
---- a/include/linux/msi.h
-+++ b/include/linux/msi.h
-@@ -73,7 +73,6 @@ struct msi_msg {
- 	};
- };
- 
--extern int pci_msi_ignore_mask;
- /* Helper functions */
- struct msi_desc;
- struct pci_dev;
-@@ -556,6 +555,8 @@ enum {
- 	MSI_FLAG_PCI_MSIX_ALLOC_DYN	= (1 << 20),
- 	/* PCI MSIs cannot be steered separately to CPU cores */
- 	MSI_FLAG_NO_AFFINITY		= (1 << 21),
-+	/* Inhibit usage of entry masking */
-+	MSI_FLAG_NO_MASK		= (1 << 22),
- };
- 
- /**
-diff --git a/kernel/irq/msi.c b/kernel/irq/msi.c
-index 396a067a8a56..7682c36cbccc 100644
---- a/kernel/irq/msi.c
-+++ b/kernel/irq/msi.c
-@@ -1143,7 +1143,7 @@ static bool msi_check_reservation_mode(struct irq_domain *domain,
- 	if (!(info->flags & MSI_FLAG_MUST_REACTIVATE))
- 		return false;
- 
--	if (IS_ENABLED(CONFIG_PCI_MSI) && pci_msi_ignore_mask)
-+	if (info->flags & MSI_FLAG_NO_MASK)
- 		return false;
- 
- 	/*
--- 
-2.46.0
-
+Bart
 
