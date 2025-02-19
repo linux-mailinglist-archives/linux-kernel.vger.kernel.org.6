@@ -1,175 +1,145 @@
-Return-Path: <linux-kernel+bounces-521977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1C03A3C483
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:10:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AFC2A3C485
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:10:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 660E43B8E22
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:07:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C55F3BB10A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:08:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C5E11FE46C;
-	Wed, 19 Feb 2025 16:07:43 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A35D21FDE03;
-	Wed, 19 Feb 2025 16:07:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 802711FDE01;
+	Wed, 19 Feb 2025 16:08:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="LqSHTHpe"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6ABB1FDA85
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 16:07:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739981262; cv=none; b=FsE18DwfeFVBQSA3ke+/NWZg8D8DktoRXp/LdSYL/Z7seDya8qHzj7X21XtEU1fqqcUz3Y4JMJogr/mb+UhK9iZgo9X0ClI7PnHsaPCskqooejY2AKDvdvxbvvs5WLdN5kVcjUHHfZ8rzocYqYbf/72razpJq7ZHetZ6R4GCsVY=
+	t=1739981281; cv=none; b=aguXThFXwVsb2nF+7bBfLwS8gPveMDpmW4ihEYlx85zZi/OHvt7iVUlqUVlqeAkySg3avkFWiI1wJX2TJjosm63KXZinULGzmUHjCV2T/UmHMpYkFNKzRnf43wbN47XQoxxtigM51vsLXOzRxfjysahEHQsQ8ujOadXyIACbrzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739981262; c=relaxed/simple;
-	bh=g0PBpbCAAAIxLvLEUXjbW119WGVJf9Rzrw66OtCteLY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sZ7RIEtO2lvYD9UnJf2g7OW+sB6owYH5IoaE6/rwIl/iLuMol5zCO0rgkK7ezqV7m8nniFMUrrtMdYQRwEUsWvX9E1VM0LxSuMeLWoubN0iSdXiVYcj5EtlfMG8uWrcjaxXSNgnXdX4XqFKlrQ7bx9tooz0KjOdbQewW9J60z00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 39FCD1682;
-	Wed, 19 Feb 2025 08:07:58 -0800 (PST)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.43])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 202723F6A8;
-	Wed, 19 Feb 2025 08:07:35 -0800 (PST)
-Date: Wed, 19 Feb 2025 16:07:32 +0000
-From: Dave Martin <Dave.Martin@arm.com>
-To: Babu Moger <babu.moger@amd.com>
-Cc: corbet@lwn.net, reinette.chatre@intel.com, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	tony.luck@intel.com, peternewman@google.com, fenghua.yu@intel.com,
-	x86@kernel.org, hpa@zytor.com, paulmck@kernel.org,
-	akpm@linux-foundation.org, thuth@redhat.com, rostedt@goodmis.org,
-	xiongwei.song@windriver.com, pawan.kumar.gupta@linux.intel.com,
-	daniel.sneddon@linux.intel.com, jpoimboe@kernel.org,
-	perry.yuan@amd.com, sandipan.das@amd.com, kai.huang@intel.com,
-	xiaoyao.li@intel.com, seanjc@google.com, xin3.li@intel.com,
-	andrew.cooper3@citrix.com, ebiggers@google.com,
-	mario.limonciello@amd.com, james.morse@arm.com,
-	tan.shaopeng@fujitsu.com, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, maciej.wieczor-retman@intel.com,
-	eranian@google.com
-Subject: Re: [PATCH v11 23/23] x86/resctrl: Introduce interface to modify
- assignment states of the groups
-Message-ID: <Z7YBxNIWb7dqOnfi@e133380.arm.com>
-References: <cover.1737577229.git.babu.moger@amd.com>
- <fe1c0c4cebd353ccb3e588d7ea2fe9ef3dff0ef2.1737577229.git.babu.moger@amd.com>
+	s=arc-20240116; t=1739981281; c=relaxed/simple;
+	bh=kudtpuxsWTIFCFoKJSMw9KCgS0xd5Fcnm1gsja5/LfA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lU0CrASHo+8hyj19sX6qI9y2rh9gCbZacDi35W3hmSby0y6tYGtbVNysvlIgQ/3OOcIac68TXJnXXeHHooLdGYBrVrxWFI0BF4a/FqWnHziF9ZdbS+9CGbe6t/QncZ2UNpVbC7PNGPAinqVV2NFQJ7KIBwq8k6Vv7VVSeECl0/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=LqSHTHpe; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ab7430e27b2so1173994266b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 08:07:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1739981278; x=1740586078; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DwMMGNmWOuotqPv4IxkXyX8g8+4F3yGXxMrg8cS3U8o=;
+        b=LqSHTHpeck28688smqBzzVnK+ow4sAKr/DVBi/7QsTH9K/Ha5EC3/cYKEpp1jIHm30
+         4ABE7l/DQBRPzmkgXFMfcERNrPfR/VDV28UCxKo1jOeO81IJBU3fQt0Id+VaMIt/RPBC
+         iO/7vMQ+i1tXcWjmEVMYC1UwnQtkHhohHA2/VllDtGihY80f9rCCmyrvNH1ldk0OdKGi
+         YAroX78iM4F97B//OxL9ZYjnDpMvHKmnlogxFbcxl3j+vgxDHAuKM7/9yLbT6vPD2Xnj
+         m2ksoUlxdVhg/+21VklB+6H3bX+dsxJ13Q0t69Q5gzYSNZrtFD58iBJTToZX/DGkSwTF
+         gW8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739981278; x=1740586078;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DwMMGNmWOuotqPv4IxkXyX8g8+4F3yGXxMrg8cS3U8o=;
+        b=gkifRtGFqaSsaqWG0CT6cTkWyu3gjaRAFFeDkwYu9wlS5NxsTuLZW5ru8B/V08fFO4
+         cdD3EVf7q8XQ4jvMDfZsVmcnjzabS8gZj6Q79RORE7F1VUMbZD/U4LBJvmcJdHS16q2K
+         kELcUTcfelf4Q/qW3NwxLutfIHJ50gXTerNGZIShx0P+M4y8zINrd0Z3hbWxcx9ykpYB
+         JWi55ZswDx3PRvD57cA8VOpZbBy5Vyu3N9QBUY8x35JUR26vj5bCW+YlMar8S2OhBFdO
+         tN/KSLBCQMDk76BLcecNOyuc1D3+riltlu8yLavXt2B7NXvbmthQBOmIfaGWtPWjN/7K
+         sI4A==
+X-Forwarded-Encrypted: i=1; AJvYcCXp8fNKPi1B5B89VUBcNIku/7LKJ/2BhalfZS0doSX3mw6cmy8XyEDvqs8QClkfFrTihcNiyFa7IcFIdJc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUPujrJx1mxiSJfPeLqqegRkFclUcziGXHISD7tDWGWRJ08GnL
+	EKNIZ/3YZxlsQHxQVytcMnGtGhIF/q4VbHdhqbaI/KfqC84S3VFotktplNbCMbE=
+X-Gm-Gg: ASbGncsetUfKyt0bTHq5uZBuvWjlN6rw5QTdFwrbAUCCOcvfAUGOMIwAY2jxcbmICWW
+	EKru+rlRSKUgdOUMIaTMZWTJjpmpBxKOrV+RHrXGaFBVjyoZA7nWg6rnyosdFpveXbOc4iuCRuu
+	r+knZ3RiyvM4tSAMXLKC7L+Kn8UwMVzos0Ig5tE2xBsQ4Z7u6Z9dHAHrWMtqPBGn5JRQby8nc5r
+	kCcWr6egYvYyAMunM6HPjHN5ZQuSSGAablvAuIPFiRCgsrSo65ZmuQwywcDz4/gtzDDJqIkW57n
+	IvWQQZio2/SFc9DlpJ2QkKhID/8j6gL2vr0J+LbzKzsK
+X-Google-Smtp-Source: AGHT+IFb8j7IIkxOR/n0tzGJ+yjodWKnwFUug+Qx75yEhRVyIDQOoSAzY1twMqg5YS3jbZDvVYlQxw==
+X-Received: by 2002:a17:906:9d2:b0:ab7:5fcd:d4e4 with SMTP id a640c23a62f3a-abb70d6b001mr1606723766b.41.1739981278058;
+        Wed, 19 Feb 2025 08:07:58 -0800 (PST)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.25])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abbc0d0b882sm327791066b.109.2025.02.19.08.07.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2025 08:07:57 -0800 (PST)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: yoshihiro.shimoda.uh@renesas.com,
+	vkoul@kernel.org,
+	kishon@kernel.org,
+	horms+renesas@verge.net.au,
+	fabrizio.castro@bp.renesas.com,
+	robh@kernel.org
+Cc: claudiu.beznea@tuxon.dev,
+	linux-renesas-soc@vger.kernel.org,
+	linux-phy@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH RFT 0/5] phy: renesas: rcar-gen3-usb2: Fixes for Renesas RZ/G3S
+Date: Wed, 19 Feb 2025 18:07:43 +0200
+Message-ID: <20250219160749.1750797-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <fe1c0c4cebd353ccb3e588d7ea2fe9ef3dff0ef2.1737577229.git.babu.moger@amd.com>
+
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
 Hi,
 
-On Wed, Jan 22, 2025 at 02:20:31PM -0600, Babu Moger wrote:
-> When mbm_cntr_assign mode is enabled, users can designate which of the MBM
-> events in the CTRL_MON or MON groups should have counters assigned.
-> 
-> Provide an interface for assigning MBM events by writing to the file:
-> /sys/fs/resctrl/info/L3_MON/mbm_assign_control. Using this interface,
-> events can be assigned or unassigned as needed.
-> 
-> Format is similar to the list format with addition of opcode for the
-> assignment operation.
->  "<CTRL_MON group>/<MON group>/<domain_id><opcode><flags>"
+Series add fixes for the Renesas USB2 PHY driver identified while
+working on the Renesas RZ/G3S USB support. These changes are
+needed for the upcomming RZ/G3S USB support (especially for the
+power management support).
 
-[...]
+Series (with [1] on top) was tested on Renesas RZ/G3S with consecutive
+unbind/bind and data transfer tests before/after the unbind/bind.
 
-> diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-> index 6e29827239e0..299839bcf23f 100644
-> --- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-> +++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-> @@ -1050,6 +1050,244 @@ static int resctrl_mbm_assign_control_show(struct kernfs_open_file *of,
+The unbind/bind was also tested on the devices with the following
+device trees but w/o checking the data transfer (as I only had
+remote access w/o USB devices connected):
+- r8a7742-iwg21d-q7.dts
+- r8a7743-iwg20d-q7.dts
+- r8a7744-iwg20d-q7.dts
+- r8a7745-iwg22d-sodimm.dts
+- r8a77470-iwg23s-sbc.dts
+- r8a774a1-hihope-rzg2m-ex.dts
+- r8a774b1-hihope-rzg2n-ex.dts
+- r8a774e1-hihope-rzg2h-ex.dts
+- r9a07g043u11-smarc.dts
+- r9a07g044c2-smarc.dts
+- r9a07g044l2-smarc.dts
+- r9a07g054l2-smarc.dts
+- r9a07g043f01-smarc.dts
 
-[...]
+Please give it a try also on your devices with [1] on top as well.
 
-> +static ssize_t resctrl_mbm_assign_control_write(struct kernfs_open_file *of,
-> +						char *buf, size_t nbytes, loff_t off)
-> +{
-> +	struct rdt_resource *r = of->kn->parent->priv;
-> +	char *token, *cmon_grp, *mon_grp;
-> +	enum rdt_group_type rtype;
-> +	int ret;
-> +
-> +	/* Valid input requires a trailing newline */
-> +	if (nbytes == 0 || buf[nbytes - 1] != '\n')
-> +		return -EINVAL;
-> +
-> +	buf[nbytes - 1] = '\0';
-> +
-> +	cpus_read_lock();
-> +	mutex_lock(&rdtgroup_mutex);
-> +
-> +	rdt_last_cmd_clear();
-> +
-> +	if (!resctrl_arch_mbm_cntr_assign_enabled(r)) {
-> +		rdt_last_cmd_puts("mbm_cntr_assign mode is not enabled\n");
-> +		mutex_unlock(&rdtgroup_mutex);
-> +		cpus_read_unlock();
-> +		return -EINVAL;
-> +	}
-> +
-> +	while ((token = strsep(&buf, "\n")) != NULL) {
-> +		/*
-> +		 * The write command follows the following format:
-> +		 * “<CTRL_MON group>/<MON group>/<domain_id><opcode><flags>”
-> +		 * Extract the CTRL_MON group.
-> +		 */
-> +		cmon_grp = strsep(&token, "/");
-> +
+Thank you,
+Claudiu Beznea
 
-As when reading this file, I think that the data can grow larger than a
-page and get split into multiple write() calls.
+Claudiu Beznea (5):
+  phy: renesas: rcar-gen3-usb2: Fix role detection on unbind/bind
+  phy: renesas: rcar-gen3-usb2: Move IRQ request in probe
+  phy: renesas: rcar-gen3-usb2: Lock around hardware registers and
+    driver data
+  phy: renesas: rcar-gen3-usb2: Assert PLL reset on PHY power off
+  phy: renesas: rcar-gen3-usb2: Set timing registers only once
 
-I don't currently think the file needs to be redesigned, but there are
-some concerns about how userspace will work with it that need to be
-sorted out.
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c | 134 +++++++++++++----------
+ 1 file changed, 74 insertions(+), 60 deletions(-)
 
-Every monitoring group can contribute a line to this file:
+-- 
+2.43.0
 
-	CTRL_GROUP / MON_GROUP / DOMAIN = [t][l] [ ; DOMAIN = [t][l] ]* LF
-
-so, 2 * (NAME_MAX + 1) + NUM_DOMAINS * 5 - 1 + 1
-
-NAME_MAX on Linux is 255, so with, say, up to 16 domains, that's about
-600 bytes per monitoring group in the worst case.
-
-We don't need to have many control and monitoring groups for this to
-grow potentially over 4K.
-
-
-We could simply place a limit on how much userspace is allowed to write
-to this file in one go, although this restriction feels difficult for
-userspace to follow -- but maybe this is workable in the short term, on
-current systems (?)
-
-Otherwise, since we expect this interface to be written using scripting
-languages, I think we need to be prepared to accept fully-buffered
-I/O.  That means that the data may be cut at random places, not
-necessarily at newlines.  (For smaller files such as schemata this is
-not such an issue, since the whole file is likely to be small enough to
-fit into the default stdio buffers -- this is how sysfs gets away with
-it IIUC.)
-
-For fully-buffered I/O, we may have to cache an incomplete line in
-between write() calls.  If there is a dangling incomplete line when the
-file is closed then it is hard to tell userspace, because people often
-don't bother to check the return value of close(), fclose() etc.
-However, since it's an ABI violation for userspace to end this file
-with a partial line, I think it's sufficient to report that via
-last_cmd_status.  (Making close() return -EIO still seems a good idea
-though, just in case userspace is listening.)
-
-I hacked up something a bit like this so that schemata could be written
-interactively from the shell, so I can try to port that onto this series
-as an illustration, if it helps.
-
-Cheers
----Dave
 
