@@ -1,125 +1,160 @@
-Return-Path: <linux-kernel+bounces-522014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 130FAA3C4E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:24:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60FA9A3C4E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:24:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B263189D64F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:23:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 310613AA831
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:22:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFA3E1FE443;
-	Wed, 19 Feb 2025 16:23:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="jDTON8jY"
-Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 191A21FDE10;
+	Wed, 19 Feb 2025 16:22:47 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0F31F4620
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 16:23:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B28FA1F4620
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 16:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739982187; cv=none; b=JTftgyhqEOC+PB34Oq5xNJzqbdwYaAUvisudj2NCDnm03Zkg1nOfJaTfPVWiloOGGOLMPYe02WiGx7A60T7jh0IOpBf4zeP2Lyj8cg75PdpFhGacu9/7IT7H3V91xNHoG54/cncPRpMKAntT7pR5Wj19Iq4YjwQaQVm96WIgA/E=
+	t=1739982166; cv=none; b=vFMNcX8GdgKXEKV9O8oqrGl5dn9XpEspOaG7GG5gycrBZhHK/ciyfenF5bvgnRRUzc7/tiXG3509X3i/iCDFxLjtbXS9637U6c8xgEV2ZUjfwdrJfk6CvocPuCs0ku5sTEnpT0Kkq4TTOSq0vd7qh60JY5OgscoiBRBpF8u04DA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739982187; c=relaxed/simple;
-	bh=NvID/kMg36Diao3OFuD2pJOuu3vylpBwx2YN0l8Evok=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GuUCLPayT4B0dFvKDHVlicLLnDdl3oE5WanCOAagm1S/zfFFVnE0eOxD/j/heT963hJwdVlJ31pFkfq0G13qS9cMFJvaKCmFiLvNuzQ78UGaQUzh7rpt7sSNR4ACvoM69Vip/oZ8yFisxG2GpXJRKF8gX4WI8FyO96eWE6MjUnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=jDTON8jY; arc=none smtp.client-ip=209.85.166.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-8559020a76aso91690639f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 08:23:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1739982183; x=1740586983; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=67TYMpkqxY5mExKnmZVTE77hxJr9qVBfzvrOMIP8NRY=;
-        b=jDTON8jYgvmi1TsE5gCn12hB9s6ARl3WruyKmqI7gUlgX7GEVlGvbWZ0Gj2g6vji9w
-         1x5zJnaWxxXiTaToNxoN97dFSXKQLDc3gLeqKUnW851aanfswQntEKsygwEVN7+it5An
-         9zUbQfOR8spWXmgH0aIgQLU0xoFg47XqEDUauquqr1+dWgoygqnVy3BoZykcjEW4KllX
-         Rc1DbRtWWPZmcs2mHb+Sx4FQw7kX7f0hwRhdLIL0gHgvk6vnHZPo7k0+uUBY+8WTc9KN
-         GEMGi5zagKFa3479AFmda+tMeZQQulU2F8jMiXyXZhV0krSJq4BI0o/9VDpSxYDWzc1x
-         U9Gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739982183; x=1740586983;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=67TYMpkqxY5mExKnmZVTE77hxJr9qVBfzvrOMIP8NRY=;
-        b=ac0LaBkuQM5eiyVnMhZAm6Z5SJrhcmSUf07ZSqyRnDF8o5jFxD2MSwSt1rnJSvC1JN
-         D7Rdqo+ZdNI3eJkCUfr3lJtDzvudzJPV7vkxtlN538cxf+KM4TRgqjjmd8iVjGu8ebNP
-         Ju9EKKNMmLun6qCUHRWxMV7w9fy61RykaoiYDDHxTNHeTNBL1y5ht+FwK9JqgDu9p5tg
-         hBK9iqcxHictZemCuJxw3MiRBzZYnh4HIJvCWS8kJa57SVaZDiKkXetycSe0Va3ij2fG
-         2ZCRbINlq/DlwcLUIn4rkDP61NdMcQrBF5PEoCdBCyfg5MHRgIi5BWNRQ0VS9vVSUIEN
-         usrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWq/UK+RFak46RDsiInFZEIW6uQ4yYWLGijJetXsoyLejlsfLB1cVzPbnchbBxgRK6TY23RSbHCAOQOK98=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyswKYZqYmVfW5OT2Z7HekgwkXpCMTNKvzTR8VGvnN0RLWc9J33
-	eAJfTBkvKRNepZ/gid8y3zAihpyN0qYumytAeYFe1r/3Lc+e2srClDUfxC272V0=
-X-Gm-Gg: ASbGncuioDE4Od68h8nHFgIcr+cALkK9n4SryRLcNfhN4y8bJuWs1l7rLCGsqxXAcsa
-	NZmyb2laMHpWlcRcLV8wOF43cfXF61Ce4j0Fl5WWFX6hjiaO4OYLsVlo5qqWqHcSkUBrnl/5sTr
-	JIaLbshBwuIOzNv7H1xS7XyHYo9rN1G6EA3yOBwYtRMcggbk+S95mlqxW3v2tJU5UxRgq3f9u0G
-	s20eKgYSl8ktLNDQVkUQszl8D5pB7yAsxstvsYPLBgXItOXzdFJRPYZV5+HDuzOwLlPt7UzLRSm
-	+93zAVGoIGI=
-X-Google-Smtp-Source: AGHT+IGsP9WAlYtkUYVoWjhz3+vnzS72BFbKRaFhdh7G4oojUtLjlV/F9FheozGc1GxCuDhK7ilFlw==
-X-Received: by 2002:a05:6e02:1d85:b0:3d1:a75e:65dd with SMTP id e9e14a558f8ab-3d2807905e3mr162742745ab.10.1739982183443;
-        Wed, 19 Feb 2025 08:23:03 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ee8809c5d1sm2144921173.38.2025.02.19.08.23.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Feb 2025 08:23:02 -0800 (PST)
-Message-ID: <65e5ddcd-642b-4671-b814-d4a66b2039d3@kernel.dk>
-Date: Wed, 19 Feb 2025 09:23:01 -0700
+	s=arc-20240116; t=1739982166; c=relaxed/simple;
+	bh=PSh/3fF365VRVdIYlepfiPt+5JXUEbpp9W7V2QjmLWk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nn+bo05hI32qiQgMTK04pK74PYaFHkl9i4gFMffytTyRkzvJRDGmoAGdFzZnhjnSOrvgZwdli7B0GuFfSLAnwmskmQvamnWdj44h/h8S0SXkTFVU+XBUjG12UXe9jqhUoZZX1oJbUxdknsWiAMY3xZ5//ZKxNR/uUKwu26RmlmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB84AC4CED1;
+	Wed, 19 Feb 2025 16:22:44 +0000 (UTC)
+Date: Wed, 19 Feb 2025 11:23:08 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
+ Boqun Feng <boqun.feng@gmail.com>, Waiman Long <longman@redhat.com>, Joel
+ Granados <joel.granados@kernel.org>, Anna Schumaker
+ <anna.schumaker@oracle.com>, Lance Yang <ioworker0@gmail.com>, Kent
+ Overstreet <kent.overstreet@linux.dev>, Yongliang Gao
+ <leonylgao@tencent.com>, Tomasz Figa <tfiga@chromium.org>, Sergey
+ Senozhatsky <senozhatsky@chromium.org>, linux-kernel@vger.kernel.org, Linux
+ Memory Management List <linux-mm@kvack.org>, Lance Yang
+ <ioworker0@gmail.com>
+Subject: Re: [PATCH 1/2] hung_task: Show the blocker task if the task is
+ hung on mutex
+Message-ID: <20250219112308.5d905680@gandalf.local.home>
+In-Reply-To: <173997004932.2137198.7959507113210521328.stgit@mhiramat.tok.corp.google.com>
+References: <173997003868.2137198.9462617208992136056.stgit@mhiramat.tok.corp.google.com>
+	<173997004932.2137198.7959507113210521328.stgit@mhiramat.tok.corp.google.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] mm/truncate: don't skip dirty page in
- folio_unmap_invalidate()
-To: Jingbo Xu <jefflexu@linux.alibaba.com>,
- "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, brauner@kernel.org,
- linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk
-References: <20250218120209.88093-1-jefflexu@linux.alibaba.com>
- <20250218120209.88093-3-jefflexu@linux.alibaba.com>
- <cedbmhuivcr2imkzuqebrrihdkfsmgqmplqqn7s2fusk3v4ezq@7jbz26dds76d>
- <b2248d8c-1f80-4806-80fb-cbc40ad713e6@linux.alibaba.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <b2248d8c-1f80-4806-80fb-cbc40ad713e6@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 2/18/25 6:23 PM, Jingbo Xu wrote:
-> 
-> 
-> On 2/18/25 8:32 PM, Kirill A. Shutemov wrote:
->> On Tue, Feb 18, 2025 at 08:02:09PM +0800, Jingbo Xu wrote:
->>> ... otherwise this is a behavior change for the previous callers of
->>> invalidate_complete_folio2(), e.g. the page invalidation routine.
->>
->> Hm. Shouldn't the check be moved to caller of the helper in mm/filemap.c?
->>
->> Otherwise we would drop pages without writing them back. And lose user's
->> data.
->>
-> 
-> IMHO this check is not needed as the following folio_launder() called
-> inside folio_unmap_invalidate() will write back the dirty page.
-> 
-> Hi Jens,
-> 
-> What do you think about it?
+On Wed, 19 Feb 2025 22:00:49 +0900
+"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
 
-Yep agree on that.
+> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> 
+> The "hung_task" shows a long-time uninterruptible slept task, but most
+> often, it's blocked on a mutex acquired by another task. Without
+> dumping such a task, investigating the root cause of the hung task
+> problem is very difficult.
+> 
+> Fortunately CONFIG_DEBUG_MUTEXES=y allows us to identify the mutex
+> blocking the task. And the mutex has "owner" information, which can
+> be used to find the owner task and dump it with hung tasks.
+> 
+> With this change, the hung task shows blocker task's info like below;
+> 
 
--- 
-Jens Axboe
+We've hit bugs like this in the field a few times, and it was very
+difficult to debug. Something like this would have made our lives much
+easier!
 
+> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> ---
+>  kernel/hung_task.c           |   38 ++++++++++++++++++++++++++++++++++++++
+>  kernel/locking/mutex-debug.c |    1 +
+>  kernel/locking/mutex.c       |    9 +++++++++
+>  kernel/locking/mutex.h       |    6 ++++++
+>  4 files changed, 54 insertions(+)
+> 
+> diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+> index 04efa7a6e69b..d1ce69504090 100644
+> --- a/kernel/hung_task.c
+> +++ b/kernel/hung_task.c
+> @@ -25,6 +25,8 @@
+>  
+>  #include <trace/events/sched.h>
+>  
+> +#include "locking/mutex.h"
+> +
+>  /*
+>   * The number of tasks checked:
+>   */
+> @@ -93,6 +95,41 @@ static struct notifier_block panic_block = {
+>  	.notifier_call = hung_task_panic,
+>  };
+>  
+> +
+> +#ifdef CONFIG_DEBUG_MUTEXES
+> +static void debug_show_blocker(struct task_struct *task)
+> +{
+> +	struct task_struct *g, *t;
+> +	unsigned long owner;
+> +	struct mutex *lock;
+> +
+> +	if (!task->blocked_on)
+> +		return;
+> +
+> +	lock = task->blocked_on->mutex;
+
+This is a catch 22. To look at the task's blocked_on, we need the
+lock->wait_lock held, otherwise this could be an issue. But to get that
+lock, we need to look at the task's blocked_on field! As this can race.
+
+Another thing is that the waiter is on the task's stack. Perhaps we need to
+move this into sched/core.c and be able to lock the task's rq. Because even
+something like:
+
+	waiter = READ_ONCE(task->blocked_on);
+
+May be garbage if the task were to suddenly wake up and run.
+
+Now if we were able to lock the task's rq, which would prevent it from
+being woken up, then the blocked_on field would not be at risk of being
+corrupted.
+
+-- Steve
+
+
+> +	if (unlikely(!lock)) {
+> +		pr_err("INFO: task %s:%d is blocked on a mutex, but the mutex is not found.\n",
+> +			task->comm, task->pid);
+> +		return;
+> +	}
+> +	owner = debug_mutex_get_owner(lock);
+> +	if (likely(owner)) {
+> +		/* Ensure the owner information is correct. */
+> +		for_each_process_thread(g, t)
+> +			if ((unsigned long)t == owner) {
+> +				pr_err("INFO: task %s:%d is blocked on a mutex owned by task %s:%d.\n",
+> +					task->comm, task->pid, t->comm, t->pid);
+> +				sched_show_task(t);
+> +				return;
+> +			}
+> +	}
+> +	pr_err("INFO: task %s:%d is blocked on a mutex, but the owner is not found.\n",
+> +		task->comm, task->pid);
+> +}
+> +#else
+> +#define debug_show_blocker(t)	do {} while (0)
+> +#endif
 
