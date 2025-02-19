@@ -1,256 +1,147 @@
-Return-Path: <linux-kernel+bounces-522624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24328A3CC93
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 23:43:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B5AF7A3CC95
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 23:43:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15071170050
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:43:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A3EE170FF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:43:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F01CE25A348;
-	Wed, 19 Feb 2025 22:43:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB9F425B669;
+	Wed, 19 Feb 2025 22:43:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mMqv0luy"
-Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PKdANEYz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 909D421B9C5
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 22:43:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0547625A34B;
+	Wed, 19 Feb 2025 22:43:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740005004; cv=none; b=IieRsoya2FBZqB8UNROSeuXiQJuW7zHxDnO56QE8ggqu65ZAlOD9NbW+kMS6ukipt7MqnW/DiJmrtt7DblTkz2KaMTcSpNnjAqZXIV7Tjn7XQI0H03+vSQTADqjaPdZgg8nvvjlLZsoh5ADhHpFzmuv+nxk06DR1PZ/9AtxSnow=
+	t=1740005005; cv=none; b=c1qEuVuDmsxLlTp7urVmQoTmrNykL71dGtod9vMTFNQqgY8Cd8dbIxngMM2rsrjRRtKuOMZyQ8RT7LxDJxWrPOo+RLZGRPaQAnJTqglo9fnJqu27ka+4BSyTgpZNC9ky+kE0sChAiumps7aaU+L83zRsRucblRk6potm+MwxWZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740005004; c=relaxed/simple;
-	bh=h2NRHjDecopR8l5RP8zzvh9LJ1iSzbV/geHRFqci76I=;
+	s=arc-20240116; t=1740005005; c=relaxed/simple;
+	bh=oB01MPEv8LjdiYQ+OxWvCnlcAnbSN33JSl8xlJVCC9k=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QtmR6mpmk10ctONTh2aLCxvfOi+7+vUXwqlAqjXqqHPgM8cenEVKb8DHNTnHEn7iRQBa4NADiZUZBwJYlwxGe0GvdW0s2HZeRQOcDOvvp+3bKVsCecQuHhxiLFTRKnx+ikcYCUdT+5MdOnW7Pf/TrOFGDMKDjRqr7mrfMbsV2+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mMqv0luy; arc=none smtp.client-ip=209.85.166.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3d19702f977so24355ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 14:43:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740005001; x=1740609801; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0Y/dovmWdG7T+i+r2MZlIGAZJzk/xUKUEy1yv6P218A=;
-        b=mMqv0luy66O8ENb8LNhwhXuum3LvjFy5ryhIpXUTzfyBXlblf79DI0drVNLJmCttZu
-         ZPAxDBEJ5OGOJUmirrC+gc+iYJ/w/6vgbcULK9Y8/oWDJl8osiJ7dopAq6KF1GILAG3f
-         v4fqhdUIAkVQ1yunvXMpJoDqAxdkUJSeZaw3GoHZWqbca/CM6jtsQ8NEyz/WYn95NR8m
-         7LYd44yRU3bgVT5rnjfq4a5BKSq5axEguTUFpicDS8U8rVU8aPkF30O+yInJ4YmgL0ik
-         saqmGWQ03fVpsbD1DbIzSKb2EM6VoZDOeeo3dQrWnW9F3tu58o6F6Zjkf+Vi9UZ0gLIV
-         UtRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740005001; x=1740609801;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0Y/dovmWdG7T+i+r2MZlIGAZJzk/xUKUEy1yv6P218A=;
-        b=ATEPdb2BOyLzy4GSG2hFtV2L16w0BiMBgHyLAdevsOqRN+mcff59hj47KOQipLtZ26
-         0fM0ieIDr3m2pRzAaz6ZWdBc4N2WAMl2jrkRoA7S+KYwvkbMvrBkl7VRcaXDB6VF4crh
-         22ueE8q62JYoPkKeBExRPwbkOiUm2pahqsIVzDvThxmj4QvVB8k1K13GaSfH88Ax2CVr
-         W4n/PML/l2K29hS3SHoI3wg9iH51GNeQsy+1fyWEDpswrTF1Xo5hMnUTewKt9UgHI5bS
-         iHKM+dqUIXIiHRuCToSrBIsEYDb6Bn7LvMfKwIctRGjUVOQXmpwnkbgRYSLdrXYhliSo
-         +p2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU3Tyzq7v2+fsHoWF/aviv7c3iascXiNdC4L2/H1e/dH621KCjjWd3XUkna1iAOVa4Y0CGmwXjz0IvHpkQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyueNMeihR5aK3QD1FJQZ1D3TGrYuS2zZKX+rckJdaY5yuXGDdK
-	5y70ZF9WzixBTyO4xtnm5UMCqrr13O9A96luITMbliIEWQKUPX8RxXw7q7aC+1quGGTM9w8yCVR
-	6CXL9LMaZJKyub0Ppm7GfcVAUb1Holba+ktiL
-X-Gm-Gg: ASbGncvEv3R0Z/RMSA+phpo72ZFn+VZTRF997wbOUMBqG9NE/dKfr4exk3e65/z0ezR
-	PTbbCW2dMWReWkQ6liJT36NtxIoZ77f2diBBXgm6nimphA0WKzNOFebObAOsgUhlF2mGwDrMzuW
-	LXIuhfjuBpxL7UJdgFNP2DJ7Zcxg==
-X-Google-Smtp-Source: AGHT+IFC0YKr6ge+vQ0BA0jbZopO8H5aIWcwki6w0/svHfg5XzmpQ8wqSVmBQuHa6Wl6ARptthNty7N4A/x29IJdE8Y=
-X-Received: by 2002:a05:6e02:1b05:b0:3d0:bd4:e46e with SMTP id
- e9e14a558f8ab-3d2c0b75924mr1079235ab.22.1740005001493; Wed, 19 Feb 2025
- 14:43:21 -0800 (PST)
+	 To:Cc:Content-Type; b=FjSiucQh0cQnEMGWgz53Xog6O4+zKikwgjfFOgMQT/SzVYuuElMZvwBPJFER5u+UxfnJq669CGnn4DfVe3bfcI0lZ/rUv49YCf16ymHjIeaTKAJsv2lylHfWZzTzWHiSGoLPGlVF9tvBTp++KUqBYpHHMk5xQgyHT9WRjmk+c68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PKdANEYz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64B31C4CED1;
+	Wed, 19 Feb 2025 22:43:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740005004;
+	bh=oB01MPEv8LjdiYQ+OxWvCnlcAnbSN33JSl8xlJVCC9k=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=PKdANEYzNjjbIr38NUk7z5p+Z9F+jXUNOmA/lCJpQk0PIvqLqO1KpO0bseNfZeNob
+	 rLtJk3fBlNATiACZPTodvbpgflqT7l3UK4V7RSUPAq2k7JSBXpDoUiU8OcNRQBWAup
+	 97RceaLpTYnX79uBjTd2v9iXYkUuKF/fOxMSmENUd9V0KSXP3vCnuXbx5c6y8PCbxe
+	 HrXq0fUDtdNUmRi/saRgQ6+7SHEZK8KUz08YiBb4ITIw/iejPUG24gETgwfO0QILbq
+	 rww1v9l2Y4wNnor4HcMEcCjb67uxHLwqtXO6Jmr3eFMSO9Dv7k7ATme476m1vIgAD8
+	 z6O9Lj1jIyaFw==
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5e04cb346eeso404257a12.2;
+        Wed, 19 Feb 2025 14:43:24 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUw8wsyr+kDIoHS+Obdy+m4O2nN6FDJ66Qg8cZiAON6AHjvqJgsKwIaAboO9a4hePksKco4SUZ2sO1XYg==@vger.kernel.org, AJvYcCVXxz3TEa/wqCl+wEs0/pdc4qyetF0jwseKV2fNY7eGU6w9BPAs/iH2ZNUuOWqxC6NRXlcRVUhTnEPK@vger.kernel.org, AJvYcCWCcBAqe5QyKa48/9qla0OoOe4lD+4eqN40lAXj5YXh0daERut4eBuK8zExTzbV9F3QIBOfdLlGXCMrjDY/@vger.kernel.org, AJvYcCWI4QYUha0s4Zd6OzgWG3anWgb8mtaLAet9uA45yZrWVzFJFiRMGNkmNGY0xFygWY09pyyHlbDhutUx@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOkO83LYDOULBM875nE8gp7gFTKehyu1/PxpaOhHd0gynxoWn1
+	fc8fm0jdQeAxM5ym5Y/PUhZ+OSB0OO1Cy/yr/+sXO2omfak3wN8N7Cb/IwP2uNqBZmoKsrrmup2
+	1Iir2XqW1/J9JD119EeGDdT/g3A==
+X-Google-Smtp-Source: AGHT+IFKS59MJjzGgNFJyErjdo066Kf2RALm9L7HJRWP4YBWsnRrUMaiDEu5+latsq8sxVCx8lc/g5fr4x7Fq4A6sTU=
+X-Received: by 2002:a05:6402:381b:b0:5e0:8920:c4c5 with SMTP id
+ 4fb4d7f45d1cf-5e0a4afb1ddmr203602a12.11.1740005002935; Wed, 19 Feb 2025
+ 14:43:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250109175401.161340-1-irogers@google.com> <CAP-5=fWghT8+pBFVxn9JDbqHU9NPy9mgyT8Ee=pTdkCKxRoJgA@mail.gmail.com>
- <CAP-5=fWZAk7XqtL+=CanefkuFxhDsJ22+-uHkrxXi4g8123oew@mail.gmail.com>
- <Z7ZD5phOOCbKggrn@google.com> <CAP-5=fXeZM7iWNQq0ar1HmAwWrH4HAHqD3F=ueB=jaw-2UMn_w@mail.gmail.com>
- <Z7Za30xyVUQWI1tV@google.com>
-In-Reply-To: <Z7Za30xyVUQWI1tV@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 19 Feb 2025 14:43:10 -0800
-X-Gm-Features: AWEUYZkoW8uinawVDJYMzpveA0ZEuCIE2CtPCeO_4HSgxaqFzd9JHRM-ml0me0g
-Message-ID: <CAP-5=fW=_4j43-mY3B02BavaOdTA469kUjEZaahTUA5S7Ma4sQ@mail.gmail.com>
-Subject: Re: [PATCH v1] perf parse-events: Tidy name token matching
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Andi Kleen <ak@linux.intel.com>, Dominique Martinet <asmadeus@codewreck.org>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1739486121.git.robin.murphy@arm.com> <c2f0ae276fd5a18e1653bae8bb0c51670e35b283.1739486121.git.robin.murphy@arm.com>
+In-Reply-To: <c2f0ae276fd5a18e1653bae8bb0c51670e35b283.1739486121.git.robin.murphy@arm.com>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 19 Feb 2025 16:43:10 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+RA3ojYgqkELOrCd68JHRGPsuObzbRi3RA6eV7NYh0Cw@mail.gmail.com>
+X-Gm-Features: AWEUYZnOMA-FyQa1U3tn01tUjPcRrp-PbPJQL6m4k_dHn-Ztt3nE99iHpRmo__k
+Message-ID: <CAL_Jsq+RA3ojYgqkELOrCd68JHRGPsuObzbRi3RA6eV7NYh0Cw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] iommu: Get DT/ACPI parsing into the proper probe path
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo <guohanjun@huawei.com>, 
+	Sudeep Holla <sudeep.holla@arm.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Russell King <linux@armlinux.org.uk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Stuart Yoder <stuyoder@gmail.com>, 
+	Laurentiu Tudor <laurentiu.tudor@nxp.com>, Nipun Gupta <nipun.gupta@amd.com>, 
+	Nikhil Agarwal <nikhil.agarwal@amd.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-acpi@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	iommu@lists.linux.dev, devicetree@vger.kernel.org, linux-pci@vger.kernel.org, 
+	Charan Teja Kalla <quic_charante@quicinc.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 19, 2025 at 2:27=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
-wrote:
+On Thu, Feb 13, 2025 at 5:49=E2=80=AFPM Robin Murphy <robin.murphy@arm.com>=
+ wrote:
 >
-> On Wed, Feb 19, 2025 at 02:11:43PM -0800, Ian Rogers wrote:
-> > On Wed, Feb 19, 2025 at 12:49=E2=80=AFPM Namhyung Kim <namhyung@kernel.=
-org> wrote:
-> > >
-> > > Hi Ian,
-> > >
-> > > On Wed, Feb 19, 2025 at 11:02:40AM -0800, Ian Rogers wrote:
-> > > > On Mon, Feb 10, 2025 at 11:23=E2=80=AFAM Ian Rogers <irogers@google=
-.com> wrote:
-> > > > >
-> > > > > On Thu, Jan 9, 2025 at 9:54=E2=80=AFAM Ian Rogers <irogers@google=
-.com> wrote:
-> > > > > >
-> > > > > > Prior to commit 70c90e4a6b2f ("perf parse-events: Avoid scannin=
-g PMUs
-> > > > > > before parsing") names (generally event names) excluded hyphen =
-(minus)
-> > > > > > symbols as the formation of legacy names with hyphens was handl=
-ed in
-> > > > > > the yacc code. That commit allowed hyphens supposedly making
-> > > > > > name_minus unnecessary. However, changing name_minus to name ha=
-s
-> > > > > > issues in the term config tokens as then name ends up having pr=
-iority
-> > > > > > over numbers and name allows matching numbers since commit
-> > > > > > 5ceb57990bf4 ("perf parse: Allow tracepoint names to start with=
- digits
-> > > > > > "). It is also permissable for a name to match with a colon (':=
-') in
-> > > > > > it when its in a config term list. To address this rename name_=
-minus
-> > > > > > to term_name, make the pattern match name's except for the colo=
-n, add
-> > > > > > number matching into the config term region with a higher prior=
-ity
-> > > > > > than name matching. This addresses an inconsistency and allows =
-greater
-> > > > > > matching for names inside of term lists, for example, they may =
-start
-> > > > > > with a number.
-> > > > > >
-> > > > > > Rename name_tag to quoted_name and update comments and helper
-> > > > > > functions to avoid str detecting quoted strings which was alrea=
-dy done
-> > > > > > by the lexer.
-> > > > > >
-> > > > > > Signed-off-by: Ian Rogers <irogers@google.com>
-> > > > >
-> > > > > Ping. This patch addresses name parsing inconsistencies, in parti=
-cular
-> > > > > events may start with a number without a PMU, but not with. It al=
-so
-> > > > > aims to give better names to patterns than name_minus and name_ta=
-g
-> > > > > (with term_name and quoted_name respectively) that have drifted f=
-rom
-> > > > > their original meaning and become to me less than intention revea=
-ling.
-> > > >
-> > > > Ping.
-> > >
-> > > Sorry for the delay.  Can you please give an example for better
-> > > understanding if there's a change in the behavior?
-> >
-> > The example in:
-> > https://lore.kernel.org/r/20240510-perf_digit-v4-3-db1553f3233b@codewre=
-ck.org
-> > is `perf trace -e '9p:*'` which allows the number to start a
-> > tracepoint name, but what is true for tracepoint names is also true
-> > for event names. I lack the tracepoint but the patch here is making
-> > that work if the event/tracepoint is specified with a PMU, so:
-> >
-> > Before the input is just seen as broken:
-> > ```
-> > $ perf stat -e 'tracepoint/9p:9p/' true
-> > event syntax error: 'tracepoint/9p:9p/'
-> >                                \___ Unrecognized input
-> > Run 'perf list' for a list of valid events
-> >
-> > Usage: perf stat [<options>] [<command>]
-> >
-> >    -e, --event <event>   event selector. use 'perf list' to list
-> > available events
-> > ```
-> >
-> > After the input fails because the event wasn't found:
-> > ```
-> > $ perf stat -e 'tracepoint/9p:9p/' true
-> > event syntax error: 'tracepoint/9p:9p/'
-> >                     \___ Bad event or PMU
-> >
-> > Unable to find PMU or event on a PMU of 'tracepoint'
-> >
-> > event syntax error: 'tracepoint/9p:9p/'
-> >                                \___ unknown term '9p:9p' for pmu 'trace=
-point'
-> >
-> > valid terms: config,config1,config2,config3,name,period,percore,metric-=
-id
-> >
-> > event syntax error: 'tracepoint/9p:9p/'
-> >                                \___ unknown term '9p:9p' for pmu 'trace=
-point'
-> >
-> > valid terms: config,config1,config2,config3,name,period,percore,metric-=
-id
-> > Run 'perf list' for a list of valid events
-> >
-> > Usage: perf stat [<options>] [<command>]
-> >
-> >    -e, --event <event>   event selector. use 'perf list' to list
-> > available events
-> > ```
-> >
-> > But the patch is just about making the name term more consistent and
-> > cleaner, the weirdness above wasn't its main point, I want the code to
-> > be easy to read and understand.
+> In hindsight, there were some crucial subtleties overlooked when moving
+> {of,acpi}_dma_configure() to driver probe time to allow waiting for
+> IOMMU drivers with -EPROBE_DEFER, and these have become an
+> ever-increasing source of problems. The IOMMU API has some fundamental
+> assumptions that iommu_probe_device() is called for every device added
+> to the system, in the order in which they are added. Calling it in a
+> random order or not at all dependent on driver binding leads to
+> malformed groups, a potential lack of isolation for devices with no
+> driver, and all manner of unexpected concurrency and race conditions.
+> We've attempted to mitigate the latter with point-fix bodges like
+> iommu_probe_device_lock, but it's a losing battle and the time has come
+> to bite the bullet and address the true source of the problem instead.
 >
-> Ok, so I guess there's no behavior change from the users perspective in
-> this patchset.  Do you plan to add support for the tracepoint name in
-> the config term (like tracepoint/9p:9p/) later?
+> The crux of the matter is that the firmware parsing actually serves two
+> distinct purposes; one is identifying the IOMMU instance associated with
+> a device so we can check its availability, the second is actually
+> telling that instance about the relevant firmware-provided data for the
+> device. However the latter also depends on the former, and at the time
+> there was no good place to defer and retry that separately from the
+> availability check we also wanted for client driver probe.
+>
+> Nowadays, though, we have a proper notion of multiple IOMMU instances in
+> the core API itself, and each one gets a chance to probe its own devices
+> upon registration, so we can finally make that work as intended for
+> DT/IORT/VIOT platforms too. All we need is for iommu_probe_device() to
+> be able to run the iommu_fwspec machinery currently buried deep in the
+> wrong end of {of,acpi}_dma_configure(). Luckily it turns out to be
+> surprisingly straightforward to bootstrap this transformation by pretty
+> much just calling the same path twice. At client driver probe time,
+> dev->driver is obviously set; conversely at device_add(), or a
+> subsequent bus_iommu_probe(), any device waiting for an IOMMU really
+> should *not* have a driver already, so we can use that as a condition to
+> disambiguate the two cases, and avoid recursing back into the IOMMU core
+> at the wrong times.
+>
+> Obviously this isn't the nicest thing, but for now it gives us a
+> functional baseline to then unpick the layers in between without many
+> more awkward cross-subsystem patches. There are some minor side-effects
+> like dma_range_map potentially being created earlier, and some debug
+> prints being repeated, but these aren't significantly detrimental. Let's
+> make things work first, then deal with making them nice.
+>
+> With the basic flow finally in the right order again, the next step is
+> probably turning the bus->dma_configure paths inside-out, since all we
+> really need from bus code is its notion of which device and input ID(s)
+> to parse the common firmware properties with...
+>
+> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+> ---
+>  drivers/acpi/arm64/dma.c        |  5 ++++
+>  drivers/acpi/scan.c             | 10 +++-----
+>  drivers/amba/bus.c              |  2 +-
+>  drivers/base/platform.c         |  2 +-
+>  drivers/bus/fsl-mc/fsl-mc-bus.c |  2 +-
+>  drivers/cdx/cdx.c               |  2 +-
+>  drivers/iommu/iommu.c           | 43 ++++++++++++++++++++++++---------
+>  drivers/iommu/of_iommu.c        | 10 +++++++-
+>  drivers/of/device.c             |  7 +++++-
 
-I think we treat tracepoints much as we do regular PMU perf events
-except in the encoding of the config. There is also a sysfs PMU:
-```
-$ ls -al /sys/bus/event_source/devices/tracepoint
-/
-total 0
-drwxr-xr-x  3 root root    0 Feb 19 14:35 .
-drwxr-xr-x 78 root root    0 Feb 19 08:13 ..
--rw-r--r--  1 root root 4096 Feb 19 14:34 perf_event_mux_interval_ms
-drwxr-xr-x  2 root root    0 Feb 19 08:13 power
-lrwxrwxrwx  1 root root    0 Feb 19 08:13 subsystem -> ../../bus/event_sour=
-ce
--r--r--r--  1 root root 4096 Feb 19 10:53 type
--rw-r--r--  1 root root 4096 Feb 19 08:13 uevent
-```
-with the type reflecting the perf_event_attr type (3 aka
-PERF_TYPE_TRACEPOINT). So I think much like with the hwmon_pmu.c it
-makes sense to have a tracepoint_pmu.c and move logic like
-parse-events add_tracepoint in there:
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
-ee/tools/perf/util/parse-events.c?h=3Dperf-tools-next#n523
-in that case tracepoint/9p:9p/ would be a valid tracepoint event name.
-For now this code is cleaning up that if you had a 9p on say the cpu
-PMU, 9p would wildcard match with it but cpu/9p/ would be a parse
-error - as the event name currently doesn't allow a number to start it
-when it is part of the term list, what this patch fixes as part of
-tidying up the code.
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
-Thanks,
-Ian
-
->
-> Thanks,
-> Namhyung
->
+>  drivers/pci/pci-driver.c        |  2 +-
+>  10 files changed, 60 insertions(+), 25 deletions(-)
 
