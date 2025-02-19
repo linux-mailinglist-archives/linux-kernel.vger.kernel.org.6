@@ -1,165 +1,316 @@
-Return-Path: <linux-kernel+bounces-522387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78A37A3C97C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:19:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4FA8A3CA91
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:58:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51C287A775A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 20:17:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 076EA3BB792
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 20:56:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AAF0EEAA;
-	Wed, 19 Feb 2025 20:18:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A07E24F5BB;
+	Wed, 19 Feb 2025 20:54:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HFa6tZkX"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l4Nr+edr"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF95A21B9D1
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 20:18:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739996305; cv=none; b=gwfNaV8cJtKL37lkaQ0uv5Cpm1FO6Zu2866nNOo38M7Z8ymUhTSmOrJpKABeFgSdcsBuyXUCmMkGvAJSnhHjtV2QVCv1sTX5L4IwlB7Emb5DtS5yUYSDaTWRtM/naHYreCg7gh8iNbhqNK/YBFBXC95x8LrFmIgKL+AaRhVe2/8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739996305; c=relaxed/simple;
-	bh=htF0r6kx/S7tQY8cEb6K/3jw6UP23ugfC+8gBe9WF8o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hMpaqqE9z1mBBsT+3PkyIBWpKtO+saofUTuXJRMOqW7GRHBcprt3cJTRasDbOV4iS8JPNKvH1es2YVR0RhdW4UxALbx8oiWiaKWPGSP84DOOqvHoOLXsHSUcx9AvHCRj8UGHZVPKYSItpGnAwGOyGJ5C3LfW+PlM9pHcTStOIjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HFa6tZkX; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739996302;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cly/NXz6wazzzBHR6ULlMjYuQlQdlZukgLVDG9F7dVo=;
-	b=HFa6tZkXCdxQj7j7HRAfdfA/w1hKBim8MCtJ2Zjo0J3Y1JinNqMeDPYKM2W2W8mMObNk80
-	fZ5bnU55d+QzQdfv/jo2axOT/q9oF10kMuvQDbKH/ypfQUPYPSjCf6CSespSrBwrW9UsGE
-	Eef16V2TE8kEPSz9OfDHpQZ/ROkRab0=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-146-WhEuTI77PvWpZ_bkU6GrGg-1; Wed,
- 19 Feb 2025 15:18:16 -0500
-X-MC-Unique: WhEuTI77PvWpZ_bkU6GrGg-1
-X-Mimecast-MFC-AGG-ID: WhEuTI77PvWpZ_bkU6GrGg_1739996295
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EC8CA19783B7;
-	Wed, 19 Feb 2025 20:18:14 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.33.102])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 134401800359;
-	Wed, 19 Feb 2025 20:18:11 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed, 19 Feb 2025 21:17:46 +0100 (CET)
-Date: Wed, 19 Feb 2025 21:17:42 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Kees Cook <kees@kernel.org>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] yama: don't abuse rcu_read_lock/get_task_struct in
- yama_task_prctl()
-Message-ID: <20250219201742.GD5948@redhat.com>
-References: <20250219161417.GA20851@redhat.com>
- <202502191125.1A6F07E@keescook>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A37A24E4B4;
+	Wed, 19 Feb 2025 20:54:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.8
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739998484; cv=fail; b=DHFzb5jQNhQ8zpZ4VRAO58EIsFrZGwC5dSIazsQSGm0/l6IvMBtTI5Z5vGfZpDQDmeP8LqIWn5pVhCMqPFmAksmZxC6boxF/p9rEDGzWwQe6T7stwbPt6jZtD55MzBpk/MVFJm8yyBgR/kY79LgSbRheQBgYSaxwR/QvhR/1nJM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739998484; c=relaxed/simple;
+	bh=xqdd3x1xJhOnUodftc8hB6QvW9IaP5VqP7FcCmR6g50=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=YC53QPfaG73z/lweusnlDga5RujBGN4WydR5HhcSIEaT9xbkJfRk/yW0uQt5Uucm5QjV7YEmvIwHNgmi6zgsIso4wo992+LXZpd79u4kxzmv8P44Fm+Fj+Wz4WhFYa95i6hqqG64Jd1RyJBMKbsbrEd+G3zMvX7AvKrrzSlHasU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l4Nr+edr; arc=fail smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739998481; x=1771534481;
+  h=date:from:to:cc:subject:message-id:references:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=xqdd3x1xJhOnUodftc8hB6QvW9IaP5VqP7FcCmR6g50=;
+  b=l4Nr+edrhJFIi/yG1+mHdOJWykmPVNi0rmSXAPnTJKxYTBzN7ZsU5FYG
+   i/JzLIbLXcBl+rL3QXGGaUWecB0cthgIkN8BgXI4zJIAjO6k6TvtWr9OQ
+   bJnbn4H24W+E3+DVCNGYORxlP2eQsRihKhjN3Ngnq8tUtgKvn2vm2gRkR
+   WGc8NJdp9Fzbb2ZtkVLKMTOQ4V/VXbkCTZiiEZx3pFY5+2C6BVFTD06JA
+   KLtrdnxuBRpbQx15B+nVzszpZ/fq0GIFkbTEnfzI4t/R7gBubpAkc6eFo
+   IGarrtEyuvg/0J9wN6raGexFAvqhHE+4Nhw5cGsSqLNIgIVtS6qd+iLFJ
+   g==;
+X-CSE-ConnectionGUID: SfLLjgFgRlWByqmyJHGgmg==
+X-CSE-MsgGUID: vPGLTcPZTlySKScP+xrfJg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11350"; a="58299356"
+X-IronPort-AV: E=Sophos;i="6.13,299,1732608000"; 
+   d="scan'208";a="58299356"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 12:54:40 -0800
+X-CSE-ConnectionGUID: HY+06/bzSRqtFzrjG5oKXQ==
+X-CSE-MsgGUID: ZYOajQ1oRB6ajcYr3Vp48Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,299,1732608000"; 
+   d="scan'208";a="114572648"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by orviesa009.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 19 Feb 2025 12:18:19 -0800
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Wed, 19 Feb 2025 12:17:59 -0800
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Wed, 19 Feb 2025 12:17:59 -0800
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.173)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Wed, 19 Feb 2025 12:17:58 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EEH2pbMCWvKAJz9CapGzdP9rWfp6vQmE19J3qZ1TJKCOtz9lGlLOYYXhSDXsltz1R+KRqW5EcHQCDmh+NRBj9s9wS07f6ekekIa80qPZOdkwNq7fTCOYMljdNlclRM7RMfFAM7r102KSgRCd8oYrPUfT75d4dAG/3zWwMmHeLbpVpPKUNrHArElFSN+SFhlAOa1SLW7m+4W1A+txfDeRNec27QNP49+WI02VzyIIT7LOlh6z4WG+1s25x2EQjnSOnsveSbHIeapCmIVqdyTGl7BkIOZteTTm2YjHkin4J1k1/3vD8u2yQ8732bx2MZxnpBNwAxkxNgNnJBbGEcHAwg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=28PcdZHOyhHkQcfruJOTzHmEyytBQBvyA+829bYi0GQ=;
+ b=XCZYPQf7fEvYCnXm9UUp3JJerl2TfVKQgvzxeA7yCrFYfLWkIoHkMafNl8rrF+y6W4nkY+J+tNBZgJ3TlowiOdqSjtm3PWv+qp5z2N8kjv9l1i9lLFcCG0WxK1MU6M2/770ux4j+dvJ4mnIWDcPYnJKR5N2qek6X6pR179AxswHiPUcOnvNB1zW1/r0SmW6o/jb5e+MgrpVtHXA9giBlYV0HPqBXlxVJfhKoAYoJqvYPvv8I0pcq1aFjN9Pxcs2ePm1WcYJzymF82GIm37oAFZZ0eigGQzCMxorSycoandp19JeRn8bGRgZ7On+Nf+00RCwiuuFfQuRm4DvyOS3Mig==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CY5PR11MB6139.namprd11.prod.outlook.com (2603:10b6:930:29::17)
+ by MW3PR11MB4667.namprd11.prod.outlook.com (2603:10b6:303:53::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.14; Wed, 19 Feb
+ 2025 20:17:54 +0000
+Received: from CY5PR11MB6139.namprd11.prod.outlook.com
+ ([fe80::7141:316f:77a0:9c44]) by CY5PR11MB6139.namprd11.prod.outlook.com
+ ([fe80::7141:316f:77a0:9c44%3]) with mapi id 15.20.8466.013; Wed, 19 Feb 2025
+ 20:17:54 +0000
+Date: Wed, 19 Feb 2025 14:17:48 -0600
+From: Lucas De Marchi <lucas.demarchi@intel.com>
+To: Luis Chamberlain <mcgrof@kernel.org>
+CC: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Daniel Gomez
+	<da.gomez@samsung.com>, Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen
+	<samitolvanen@google.com>, Alexei Starovoitov <ast@kernel.org>, "Daniel
+ Borkmann" <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+	"Martin KaFai Lau" <martin.lau@linux.dev>, Eduard Zingerman
+	<eddyz87@gmail.com>, "Song Liu" <song@kernel.org>, Yonghong Song
+	<yonghong.song@linux.dev>, "John Fastabend" <john.fastabend@gmail.com>, KP
+ Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo
+	<haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, Nathan Chancellor
+	<nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, Bill
+ Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+	<linux-modules@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, bpf
+	<bpf@vger.kernel.org>, clang-built-linux <llvm@lists.linux.dev>, iovisor-dev
+	<iovisor-dev@lists.iovisor.org>, <gost.dev@samsung.com>
+Subject: Re: [PATCH 2/2] moderr: add module error injection tool
+Message-ID: <qnfhjhyqlagmrmk3dwfb2ay37ihi6dlkzs67bzxpu7izz6wqc5@aiohaxlgzx5r>
+References: <CGME20250122131159eucas1p17693e311a9b7674288eb3c34014b6f2c@eucas1p1.samsung.com>
+ <20250122-modules-error-injection-v1-0-910590a04fd5@samsung.com>
+ <20250122-modules-error-injection-v1-2-910590a04fd5@samsung.com>
+ <CAADnVQJ8tYSx-ujszq54m2XyecoJUgQZ6HQheTrohhfQS6Y9sQ@mail.gmail.com>
+ <Z5lEoUxV4fBzKf4i@bombadil.infradead.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z5lEoUxV4fBzKf4i@bombadil.infradead.org>
+X-ClientProxiedBy: MW4P221CA0021.NAMP221.PROD.OUTLOOK.COM
+ (2603:10b6:303:8b::26) To CY5PR11MB6139.namprd11.prod.outlook.com
+ (2603:10b6:930:29::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202502191125.1A6F07E@keescook>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY5PR11MB6139:EE_|MW3PR11MB4667:EE_
+X-MS-Office365-Filtering-Correlation-Id: ae0156fc-374f-4caa-8ae5-08dd51227daf
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7416014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?ZjFKb0hLamdHRzdNcEVVK01ocytVcHJDclgxK3RFWFdlQXZjcjZwRXBYY3BV?=
+ =?utf-8?B?cXY3dktjZjF4ZG9KbkVkbGJ2MURrU05tUGRpQmpsQ3BVYU5XcFhXem1GZW9q?=
+ =?utf-8?B?TU1xUndBblFrVFhxakNJc2I0Z2QwcHQ2TnVXZVBNZ25nNEtaTnhOY09KQWlr?=
+ =?utf-8?B?cElpS1cvdTIxNDNhL2FFMzdsTlZpclJmdnl1Y1RkZXptdzdPOXZzZXdia1V6?=
+ =?utf-8?B?RFlLeDNkbHNWa0RGb2gySzVQS3BJWUFicW1pblF0Z21PTkU2dEFXeExnMXZx?=
+ =?utf-8?B?KzRmKzExNVNaUE8yc3hwRzhSS0trTEs4cWpzTUdoeUVxbEhSWVJVZVBZakl0?=
+ =?utf-8?B?NjNQQ25xdEFDSnVBdERIRVlzUkp4NFV3N1pPMG1wemtvU0pqTkFmQklQRDQy?=
+ =?utf-8?B?M21pVjkzVmNWK1VDKzB6Mm9ic010MW05UjR0aU1pRFdkYUtmTGh6MDQrUG1m?=
+ =?utf-8?B?ZER2TmE5T1Zmb1FSQU4yMTRNYWdxZlVOOUluMEhmS1BQUytYS1ovM1NpQTRT?=
+ =?utf-8?B?YjNuVWJQM0JwdC9UU2hKcEdBYmRQZE44b2d6ai95bjhQcldXNFBlcm9IbGlr?=
+ =?utf-8?B?VTFFRE4zQ3pjVENrVVdnUngxQnloZXlXSTllZ05QbHVmcFJMMXdraVhxMzlF?=
+ =?utf-8?B?OXVRVmJlUEJQblQwSlhQZVhvWUpocTBzSzNpNXc2WWZCRFMrcmw0M2J3K1Vk?=
+ =?utf-8?B?WW5YaFJsNDQvM1BvQjhpR25tZlVOd1RYK0dsZTFTUHRDa3dtdkRQYm9nbEpT?=
+ =?utf-8?B?ODc4dnFqalZBTWE4Sk8xQ3VjRFIySGxLU2NybHkzVmdUdWVrUVUwbnMrS1BB?=
+ =?utf-8?B?R3EwM2ZYVDQ0ZVFBUHdkRmJVa0JHS0F4SWYrTnN3bGl6Y0hDaW92a29CNG0v?=
+ =?utf-8?B?d2VPcG5TNllPVE9aVHpqWHBFbjkxNmMxZFVOL2JoNTJpQkhrOEw0YWtlQndr?=
+ =?utf-8?B?cVBKS1BpT2lXSmRtWGRIa3Y2eE50NGlsQ0cvbkxYSDZUNjFmaHBYd3Z4M0dD?=
+ =?utf-8?B?Vkh1ZVNhSjk2V3FZOHJaci95SlhGVTV0UG9ZOGo3NXVzWnJNaFMzT1hKRVFT?=
+ =?utf-8?B?T0pLRWo2ZEFrc29vZnh6ZzlRdG9YNW4wWXV2RkluL3FIQmw3dUtRQkkybUt2?=
+ =?utf-8?B?SG1yWFYwUkR6SnRqREtCbUpsY29OZituMVV1U0lpZkhrSUQvWC9RRUs5bkxz?=
+ =?utf-8?B?T3JmU25MV1E2dTZOMHFSTWw0WEhKSVpKZVllQlNuUVpXM0pPNWo0dFZKRnJC?=
+ =?utf-8?B?N2ZCUWlqTHM5ckN6S05VRnpMbDNoYk9EYW5CRUZtS1NDVk9iMC9hUEZRK1RY?=
+ =?utf-8?B?dFIrVjNFQ3VjdUhXMnRkbFB0ZWZJNFF2YkdaTjJZMjA2TmRPNzBVZkhVUnd1?=
+ =?utf-8?B?VC9FRHNOTHd6WTJ6YjBURndlK1k4aEdCNjA1NnZnU2tYMm9TME41QnNRaFI4?=
+ =?utf-8?B?VmpjQ3N3ZnNDRk1ibEpEYVFMSFRjc1lFWEhmSllYT0ppUXRoUGtxSFdFZTMx?=
+ =?utf-8?B?YjUzUGhOOU41dnA2Zzl4Y2RsVmZsTDBoaUJvQlZWRjJwWjI3TWNUV0d3ZjR0?=
+ =?utf-8?B?ZzhGaWpzam5vSVNRZnF4QmNaRG9JRVNxeGpDTG1ueWN3Sm1uNFNUeENpSzg0?=
+ =?utf-8?B?bGVGYStrOUNNSnhUQnI2QkRTZ0Q0czFSQW10L1NKZTBMOTBSM0V5UmU3S2Zp?=
+ =?utf-8?B?dFQ3d1pqRVduTDFLTCt2QXRwUVJCdmNDNk5ITHJZeTQ4VmVTdkl0Z21iVG9W?=
+ =?utf-8?B?b0RqcTZVOEtNdEk4Zi9vYzZ3Rk9mUGlYeDZ0bVVHMG0rUndEMFZTckpKaVBP?=
+ =?utf-8?B?MndLUWt1ZU0vc2dEZ2h2Zz09?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR11MB6139.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?eGVESlVXcnB5UG9nbEx2Vm1HajBMM1dCeURsYS9vY0xnRzVzS2JMWEZpS2xI?=
+ =?utf-8?B?eitDV1lDM2JFNThoSncvS2FLVmtJeUZBWnVjOU9qL3p4cWpiVVBNa2xzUFRw?=
+ =?utf-8?B?QTNkbyt3ZEt4NmJQOVd6UmI2VFRsYlRiaGVLeXFDeWZKc21mRytROTRWcWtC?=
+ =?utf-8?B?WmM1aEl4VExWTHhJRklOemNHWFQ1RXk0RlZRWnAxdWdNa2l2NDk5WCtMaVhX?=
+ =?utf-8?B?QU1XWmxYWHpJVkVxaW5jUjhjYTF3MTZ1WlVhUWw5ZjFuaWhDQlM0TStBc1ZQ?=
+ =?utf-8?B?UDRYMDF6b3VTWlhMMWpPZ01nMVRnUWhLN2NCQVlrVzZ1QWtUaVdjMGhKSmx4?=
+ =?utf-8?B?TVdSWWFyN3JidFpVRkxsYytQejdOK2UyZ3FwWG5RMVEvcXRKZGQ0SHdvcmYw?=
+ =?utf-8?B?V1B0OHRRZHlwMG5LRVJFeEllWExRekpzckpMMkJUYUhUVGhNQnRHN2dEMzBY?=
+ =?utf-8?B?OFVRSVYzVncwMU5PWFQ1NE8vNmJSNDIwNFRuT0w2NUpVY29yWks3RStQaHRa?=
+ =?utf-8?B?REV1cDVpcU0zOGhDVnFreFU0TWtxekdtaU5DcGlQaFQ1SkJIQWpDRXFIWmlS?=
+ =?utf-8?B?MnpXN1Z6czRxb3RJZjBVeXYyQ3NzcFhjeVBlVXk1NUNHNC9wMnBaSUE2a2hz?=
+ =?utf-8?B?b0VoQS91dy9ZM3c2NGt5SnVQTnhmd2V1M25GdEJXbWt2T2hZUldoQ2JkZ3JS?=
+ =?utf-8?B?NHlBZU1hRnU5OUtGS3FnRUFvc3Z0UG9IREtvYldvN2dOdUdJUkdZYkNkZVlX?=
+ =?utf-8?B?c25QOGN4LysrbEVERUdrWHZUK2Myak9xQ1RGTDV3eVR5UzhhZ1RtQ29ham1D?=
+ =?utf-8?B?VW9HTTY1NmFNazlCNlowcjlodythV2pwY3hCaFZ0V3NrNFdDQlAyNXA3Z0xY?=
+ =?utf-8?B?Z2YwTEI0b09GMDJYZkN4RUpVVm1HemxycWNMVmtUQXZqZDkyR3V2dG0xLzdV?=
+ =?utf-8?B?MjhsZHRJZCtZbXE2c3h2ZzR1WHJIVG1QVStvQzZ3OXNDSHpsYWwyUlJVVWhU?=
+ =?utf-8?B?ZEdHT3dUUkJYSlFjRVVQa2xUQW42dVVMTlcrQmtWa0YvSjAzb0MwNGpQWEQz?=
+ =?utf-8?B?ZTlBYWFGV2FQRHJTZUh2VCtiSlFIM1pEd3JQd1JTNDA1bCt4aWdNU21TczJy?=
+ =?utf-8?B?TXFQd1FKc3dDdS9CVHZDL0tMQnlXdTJuK0tDMzBFRTJHT2t3Zm5qaUUxT3dC?=
+ =?utf-8?B?YW83OEw4Uy9BT0VWeVhwc1FDbSt1VGNhNjc3dHljWUZUZ0RkRVIzUmUyWWxv?=
+ =?utf-8?B?a1hMcGQvQTFjTXlMa2dvSnhMSzZPeVNzWWZKNjBWQ1h4dnBScXhyT2FSbERa?=
+ =?utf-8?B?YWtqL0p4RzZ0aTFCcDc0aGxYRnhMU2ErNWZ2bHY1cUNkSzlJR201TlZNWU9q?=
+ =?utf-8?B?MHh6d0k5aVNBOEExL3VJT0NlUjcwdklSVTF4dmtXYjQyNkcrWHJOVXBENTAv?=
+ =?utf-8?B?a1VscW1SOXRTaVRhRHErWDhEVXdsdXh0MDIyUGllSDZpS2RpQ3RTT05HdG9P?=
+ =?utf-8?B?Vzd2bjlXNi9WSzZxTE0vNHFYTStKZ2Z6a2loNWFDaGNZenBxY1A4VFVsYkw4?=
+ =?utf-8?B?R2lRNDdNakw3SEZhKzR6Y3hrWk4rRVUrV1JUMmkzYkx2NHZVOTFaRGcycWRD?=
+ =?utf-8?B?eklNaHBJWnBEaW9iSWVILy9ydTVTQVRZL2VWMzVta3c2OGJwNnpRbncrMFFT?=
+ =?utf-8?B?dlpFWGZMV3d0KzZDcU91aytrbVpEY1dmaTZWOTBJTnNockwwMkRzV0NlRGpV?=
+ =?utf-8?B?TUhtQlhodFJDbmZITWh2Zkh0VEh5dFE0QytPWXBTbVQ1S0VFZXFYcjFaYVFL?=
+ =?utf-8?B?Ym8xSnB0RmRUdjBMSnB0YkUra3BNNE8vVnJZY3pITkpSZGUwUXBQMDVha1h0?=
+ =?utf-8?B?WTk4SzBMS0U4Ky94V0w3T0M0eHJFZVc3cGdPenQvZmxFQWVZdzRWVnRQT3NJ?=
+ =?utf-8?B?d2hPM2NEdVY5WVJ3NDBDRUtPdERmU1k1VjBOR3pPYm83dzFJZ2VLRVk2aVo3?=
+ =?utf-8?B?ZW1OZk5xcndpM3VlamVRTzFVdXRWdHZobklMT0t1QktBcVdQOTZySCt3NUYy?=
+ =?utf-8?B?TXk2TFdHenI4WTdVWU9EVitWR2NWdzNaYnF5U2ZFYkhqbnJxTzQ4OVVWSGtz?=
+ =?utf-8?B?TmtLcnEwZlZiUldPWkYyKys3MVppY2o5ZWFsWFl4Q2c4bml6OFJWZkdJME00?=
+ =?utf-8?B?T2c9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: ae0156fc-374f-4caa-8ae5-08dd51227daf
+X-MS-Exchange-CrossTenant-AuthSource: CY5PR11MB6139.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2025 20:17:54.0153
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: mF9JQUvDDaSZF9ln87mheWGmrxUoJBi/e72HG7MHi/VIFTVAvoQwo975H6ak5+UOqKQTWHfQAWwKj0kZbhr1l2AmQJNoVO+uLLxsURdwX4Q=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR11MB4667
+X-OriginatorOrg: intel.com
 
-On 02/19, Kees Cook wrote:
+On Tue, Jan 28, 2025 at 12:57:05PM -0800, Luis Chamberlain wrote:
+>On Wed, Jan 22, 2025 at 09:02:19AM -0800, Alexei Starovoitov wrote:
+>> On Wed, Jan 22, 2025 at 5:12 AM Daniel Gomez <da.gomez@samsung.com> wrote:
+>> >
+>> > Add support for a module error injection tool. The tool
+>> > can inject errors in the annotated module kernel functions
+>> > such as complete_formation(), do_init_module() and
+>> > module_enable_rodata_after_init(). Module name and module function are
+>> > required parameters to have control over the error injection.
+>> >
+>> > Example: Inject error -22 to module_enable_rodata_ro_after_init for
+>> > brd module:
+>> >
+>> > sudo moderr --modname=brd --modfunc=module_enable_rodata_ro_after_init \
+>> > --error=-22 --trace
+>> > Monitoring module error injection... Hit Ctrl-C to end.
+>> > MODULE     ERROR FUNCTION
+>> > brd        -22   module_enable_rodata_after_init()
+>> >
+>> > Kernel messages:
+>> > [   89.463690] brd: module loaded
+>> > [   89.463855] brd: module_enable_rodata_ro_after_init() returned -22,
+>> > ro_after_init data might still be writable
+>> >
+>> > Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
+>> > ---
+>> >  tools/bpf/Makefile            |  13 ++-
+>> >  tools/bpf/moderr/.gitignore   |   2 +
+>> >  tools/bpf/moderr/Makefile     |  95 +++++++++++++++++
+>> >  tools/bpf/moderr/moderr.bpf.c | 127 +++++++++++++++++++++++
+>> >  tools/bpf/moderr/moderr.c     | 236 ++++++++++++++++++++++++++++++++++++++++++
+>> >  tools/bpf/moderr/moderr.h     |  40 +++++++
+>> >  6 files changed, 510 insertions(+), 3 deletions(-)
+>>
+>> The tool looks useful, but we don't add tools to the kernel repo.
+>> It has to stay out of tree.
 >
-> On Wed, Feb 19, 2025 at 05:14:17PM +0100, Oleg Nesterov wrote:
-> > current->group_leader is stable, no need to take rcu_read_lock() and do
-> > get/put_task_struct().
+>For selftests we do add random tools.
 >
-> Can you explain why this is true? In trying to figure this out again,
-> it seems that the only way current->group_leader can vanish is if
-> the entire process vanishes (fork or thread exec), in which case the
-> "current" in this prctl can't be happening; this appears to be locked
-> behind tsk->sighand->siglock ?
+>> The value of error injection is not clear to me.
+>
+>It is of great value, since it deals with corner cases which are
+>otherwise hard to reproduce in places which a real error can be
+>catostrophic.
+>
+>> Other places in the kernel use it to test paths in the kernel
+>> that are difficult to do otherwise.
+>
+>Right.
+>
+>> These 3 functions don't seem to be in this category.
+>
+>That's the key here we should focus on. The problem is when a maintainer
+>*does* agree that adding an error injection entry is useful for testing,
+>and we have a developer willing to do the work to help test / validate
+>it. In this case, this error case is rare but we do want to strive to
+>test this as we ramp up and extend our modules selftests.
+>
+>Then there is the aspect of how to mitigate how instrusive code changes
+>to allow error injection are. In 2021 we evaluated the prospect of error
+>injection in-kernel long ago for other areas like the block layer for
+>add_disk() failures [0] but the minimal interface to enable this from
+>userspace with debugfs was considered just too intrusive.
+>
+>This effort tried to evaluate what this could look like with eBPF to
+>mitigate the required in-kernel code, and I believe the light weight
+>nature of it by just requiring a sprinkle with ALLOW_ERROR_INJECTION()
+>suffices to my taste.
+>
+>So, perhaps the tools aspect can just go in:
+>
+>tools/testing/selftests/module/
 
-Well, almost, but this has nothing to do with tsk->sighand->siglock...
+but why would it be module-specific? Based on its current implementation
+and discussion about inject.py it seems to be generic enough to be
+useful to test any function annotated with ALLOW_ERROR_INJECTION().
 
-task->group_leader can only be changed by thread exec, when a non leader
-thread does exec, see de_thread(). But de_thread() can't succeed and change
-->group_leader until all other threads exit, see the "Kill all other threads
-in the thread group" code in de_thread(). The "current" task can't exit, so
-current->group_leader is stable.
+As xe driver maintainer, it may be interesting to use such a tool:
 
-Note also that we already have a lot of current->group_leader users which
-don't use rcu/get_task_struct.
+	$ git grep ALLOW_ERROR_INJECT -- drivers/gpu/drm/xe | wc -l  
+	23
 
-That said, we have a lot of buggy users of tsk->group_leader when
-same_thread_group(tsk, current) != true ;) For example, sys_prlimit64().
-And note that rcu_read_lock/get_task_struct can't help in this case.
-I am going to send some fixes.
+How does this approach compare to writing the function name on debugfs
+(the current approach in xe's testsuite)?
 
-Oleg.
+	fail_function @ https://docs.kernel.org/fault-injection/fault-injection.html#fault-injection-capabilities-infrastructure
+	https://gitlab.freedesktop.org/drm/igt-gpu-tools/-/blob/master/tests/intel/xe_fault_injection.c?ref_type=heads#L108
 
-> 
-> -Kees
-> 
-> > 
-> > Signed-off-by: Oleg Nesterov <oleg@redhat.com>
-> > ---
-> >  security/yama/yama_lsm.c | 9 ++-------
-> >  1 file changed, 2 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/security/yama/yama_lsm.c b/security/yama/yama_lsm.c
-> > index 1971710620c1..3d064dd4e03f 100644
-> > --- a/security/yama/yama_lsm.c
-> > +++ b/security/yama/yama_lsm.c
-> > @@ -222,7 +222,7 @@ static int yama_task_prctl(int option, unsigned long arg2, unsigned long arg3,
-> >  			   unsigned long arg4, unsigned long arg5)
-> >  {
-> >  	int rc = -ENOSYS;
-> > -	struct task_struct *myself = current;
-> > +	struct task_struct *myself;
-> >  
-> >  	switch (option) {
-> >  	case PR_SET_PTRACER:
-> > @@ -232,11 +232,7 @@ static int yama_task_prctl(int option, unsigned long arg2, unsigned long arg3,
-> >  		 * leader checking is handled later when walking the ancestry
-> >  		 * at the time of PTRACE_ATTACH check.
-> >  		 */
-> > -		rcu_read_lock();
-> > -		if (!thread_group_leader(myself))
-> > -			myself = rcu_dereference(myself->group_leader);
-> > -		get_task_struct(myself);
-> > -		rcu_read_unlock();
-> > +		myself = current->group_leader;
-> >  
-> >  		if (arg2 == 0) {
-> >  			yama_ptracer_del(NULL, myself);
-> > @@ -255,7 +251,6 @@ static int yama_task_prctl(int option, unsigned long arg2, unsigned long arg3,
-> >  			}
-> >  		}
-> >  
-> > -		put_task_struct(myself);
-> >  		break;
-> >  	}
-> >  
-> > -- 
-> > 2.25.1.362.g51ebf55
-> > 
-> > 
-> 
-> -- 
-> Kees Cook
-> 
+If you decide to have the tool to live somewhere else, then kmod repo
+could be a candidate. Although I think having it in kernel tree is
+simpler maintenance-wise.
 
+Lucas De Marchi
+
+>
+>[0] https://www.spinics.net/lists/linux-block/msg68159.html
+>
+>  Luis
 
