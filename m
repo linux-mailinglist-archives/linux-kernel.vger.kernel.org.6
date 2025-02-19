@@ -1,336 +1,291 @@
-Return-Path: <linux-kernel+bounces-521845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B342AA3C30A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:06:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7555BA3C328
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:09:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3299B1891086
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:06:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F56C3AA03B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:06:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 498911F4196;
-	Wed, 19 Feb 2025 15:05:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 121AF1F4160;
+	Wed, 19 Feb 2025 15:06:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Fj9DPHjt"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2066.outbound.protection.outlook.com [40.107.102.66])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="HNz74Uzy"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA9E1F3BBB;
-	Wed, 19 Feb 2025 15:05:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739977556; cv=fail; b=LNICMc0RfHU0nRH9Wpdeypy8HGJXcFSurx16IcviInI1ASxtnb2rJTEVSEEZ3MbNheSjksF3ddYag/JUP8IkELc50t4kr8Am89Z3M6UAyWrhl+3ckKUW024mYfSLH4fUyT6PiVQcKFu/HEYFVKrp5oXsZ5BO9x+wT51dRZRQTDA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739977556; c=relaxed/simple;
-	bh=6tV2Fnr8hRB5oyPLcltcpH6wnEo7heKapHqoi3wauFM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=OPwa08XkWFmbKY776i20XvEpNy1bVbtNTurfHKnyrnb5+Lna/Ov3HtgDDEhdUgVgd5xAJNtdHWU5RtQtL5dK7o0d4OILnFukunXwtu4MJLZxt6hmHFHW4/iWyjGF2lbzcy0rCivPvbkF0awjKW5RHjnUxpjcJg2dJUO9Cjciq2M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Fj9DPHjt; arc=fail smtp.client-ip=40.107.102.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cKAsFn867LSBUrRDJRgLFFcPuio7g1kVjax6/5B3BxnD0mNuzin6h5zIkyj+1kkBfP20/PYEZl78XAAuVXtV/8JhTTv8Ye2FTDBOcX1At7bF/CKblzCwCvqUdClYox/JR/+k9mfHJTS9zIwl5GGUkPkRIfW8dQODkLBuMPM2JL/BkhGOcyy5ZWRkr2+bH2sAKpYZi2qXMLICJhcYOFmtzJQ6JrPLhB8kXWtWoJViYO/+2fm1xH9xaSt37BuzaPrOXw+6uDkpQmTeaRhbjSW+Xr7KiVGPhF4a9NkeMh79IS4/u8HisN5cyzQFHYZUHvaAKmBPHw+Sm8NL7oglePKu8g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=A1iOID2bcXBamzPTPoVujjbZLDwoclMiI2auzlDjDSo=;
- b=I85RKatiZQHPpuolBakFVS11n8M3WGNuWjC+VksaKcPWHqrkYJM8oeL4MqgHhIyrYgvTmAjGfFcV8lSgBNvC70BFUwH5lD///njvN8vD4fqauGvGJl2zSNQH++yWxug118rdBLMHz2v0DbKyvPqu574bdY6d4oA4TfsAR6bCWfWL+QXrccxYu/1PSDASPA8Zj/lC19a7vTnImjdxHU5WmmjtwWSIEzrOuKzrDYS7Dz79SaIJ7joZBJI0XNc+5/6FzY63RRzsWPLNGWSiEkKaQxK6ohMTm3oRjCw+zqJ5wNct5jWFZMWP1tS1YxkHFNpsfU8P3A+QoRBpPx03gvbUDw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=A1iOID2bcXBamzPTPoVujjbZLDwoclMiI2auzlDjDSo=;
- b=Fj9DPHjtaPs3OTzO7PDyEwIr0fW8Gz9vCl1el9BDTe4MuD2iQ/7s2ibQICNGHSs09onYv1adA2uEnZ9LwXDupyWfUm7FAqLlZ8L/DVr8nBNyrzfX/9apfbw3PBgxKhAIvecBFLDQc4o4vm0dr9nDpgVpjSlaPZUw2OvPjFwvzlP6F6DD6No/P64jZTWnYkvNCoGWGwHvPDIdn13+8OFpb9WfS+ZfxneL+1k8L9L+S/5yGitdkFCRhfxa/7kfhRcUZ+ZYBFK6rOvOxI8u+N7KtMVNe9Ym20kF9X5iC2DlKWQsFNZljEd+vHtQR0P9Bj0IhMVbZQeCOJjgTRDx7hvzIg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
- by IA1PR12MB9029.namprd12.prod.outlook.com (2603:10b6:208:3f0::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Wed, 19 Feb
- 2025 15:05:50 +0000
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91%5]) with mapi id 15.20.8445.017; Wed, 19 Feb 2025
- 15:05:50 +0000
-Date: Wed, 19 Feb 2025 10:05:47 -0500
-From: Joel Fernandes <joelagnelf@nvidia.com>
-To: Valentin Schneider <vschneid@redhat.com>
-Cc: Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org,
-	x86@kernel.org, virtualization@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev,
-	linux-riscv@lists.infradead.org, linux-perf-users@vger.kernel.org,
-	xen-devel@lists.xenproject.org, kvm@vger.kernel.org,
-	linux-arch@vger.kernel.org, rcu@vger.kernel.org,
-	linux-hardening@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, bpf@vger.kernel.org,
-	bcm-kernel-feedback-list@broadcom.com,
-	Juergen Gross <jgross@suse.com>,
-	Ajay Kaher <ajay.kaher@broadcom.com>,
-	Alexey Makhalov <alexey.amakhalov@broadcom.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Jason Baron <jbaron@akamai.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Clark Williams <williams@redhat.com>,
-	Yair Podemsky <ypodemsk@redhat.com>,
-	Tomas Glozar <tglozar@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Kees Cook <kees@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36E311F417E;
+	Wed, 19 Feb 2025 15:06:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739977573; cv=none; b=os0D4qxaw6yquRWigf0yVlB88rBbul86/YWa8Jv7aXD2VY1LuQqgB6t0bLtvEyigNjjTHmLUXHexF2zZEnlPfIwDu49sMk+Qymp/HYIog+RC1ocXqLlWHbadGUG6JymuqUzSBrfmWUTyQT/4ke6upl1y5P9yMcTGBOqYAVM+sjs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739977573; c=relaxed/simple;
+	bh=tIxf2kJ2DG7gfisurkYdaFjSbgVpZ/DLEHxNk3gVMlk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hHzeVB1spOltKHA+tN/CB71XLKIFfMIyEWkUzeQ6YvHFM4XenfDMg1vqyXpbbICD9DriLwi5fjfovbNV1rWEl88/+s8W+FcW+ws8elEFsa6gxxfUrC/SzCpby3U/V7lkcQ9OJn3KgH5sKyEHxkAvt9nkirkppnbHwBOoP2Qdgdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=HNz74Uzy; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9AF8F169;
+	Wed, 19 Feb 2025 16:04:46 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1739977486;
+	bh=tIxf2kJ2DG7gfisurkYdaFjSbgVpZ/DLEHxNk3gVMlk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HNz74Uzy/VJyMGqyVU0Nk9FpWHneFQB0fd33CfjnvFpWXk6UMP05dAQ0PPD3Y0QP3
+	 LR34ZO1NHrtSN2T4a0o86H5/2nI1sPbz3PujXu7KOLX0iVQ6xOhboVYMVumxhWMkjb
+	 pX+Ts5a9M24ej97lpllzij/9/OjfuKU95ZqBRkOg=
+Date: Wed, 19 Feb 2025 17:05:53 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>, "H. Peter Anvin" <hpa@zytor.com>,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
 	Christoph Hellwig <hch@infradead.org>,
-	Shuah Khan <shuah@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
-	"Mike Rapoport (Microsoft)" <rppt@kernel.org>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Rong Xu <xur@google.com>,
-	Nicolas Saenz Julienne <nsaenzju@redhat.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Yosry Ahmed <yosryahmed@google.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	Jinghao Jia <jinghao7@illinois.edu>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Tiezhu Yang <yangtiezhu@loongson.cn>
-Subject: Re: [PATCH v4 29/30] x86/mm, mm/vmalloc: Defer
- flush_tlb_kernel_range() targeting NOHZ_FULL CPUs
-Message-ID: <20250219145302.GA480110@joelnvbox>
-References: <20250114175143.81438-1-vschneid@redhat.com>
- <20250114175143.81438-30-vschneid@redhat.com>
- <CAG48ez1Mh+DOy0ysOo7Qioxh1W7xWQyK9CLGNU9TGOsLXbg=gQ@mail.gmail.com>
- <xhsmh34hhh37q.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <CAG48ez3H8OVP1GxBLdmFgusvT1gQhwu2SiXbgi8T9uuCYVK52w@mail.gmail.com>
- <xhsmhzfjpfkky.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <xhsmhzfjpfkky.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
-X-ClientProxiedBy: MN2PR18CA0005.namprd18.prod.outlook.com
- (2603:10b6:208:23c::10) To SN7PR12MB8059.namprd12.prod.outlook.com
- (2603:10b6:806:32b::7)
+	rust-for-linux <rust-for-linux@vger.kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	David Airlie <airlied@gmail.com>, linux-kernel@vger.kernel.org,
+	ksummit@lists.linux.dev
+Subject: Re: Rust kernel policy
+Message-ID: <20250219150553.GD15114@pendragon.ideasonboard.com>
+References: <CANiq72m-R0tOakf=j7BZ78jDHdy=9-fvZbAT8j91Je2Bxy0sFg@mail.gmail.com>
+ <Z7SwcnUzjZYfuJ4-@infradead.org>
+ <CANiq72myjaA3Yyw_yyJ+uvUrZQcSLY_jNp65iKH8Y5xGY5tXPQ@mail.gmail.com>
+ <326CC09B-8565-4443-ACC5-045092260677@zytor.com>
+ <CANiq72m+r1BZVdVHn2k8XeU37ZeY6VT2S9KswMuFA=ZO3e4uvQ@mail.gmail.com>
+ <a7c5973a-497c-4f31-a7be-b3123bddb6dd@zytor.com>
+ <Z7VKW3eul-kGaIT2@Mac.home>
+ <2025021954-flaccid-pucker-f7d9@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|IA1PR12MB9029:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5c25bda2-da56-4557-f687-08dd50f6e56c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|7416014|376014|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NkhIL1FkR2JpVzRHUFVNR1R2VzhJRGMwTW1xdlRCU0JVMk4rZ091MnNnQjZ4?=
- =?utf-8?B?NXdkclVldTdJY1NjTnBjYUNDOG1MUjF3em8vR0lOcFJsWTFGL0xhS1BqbDVY?=
- =?utf-8?B?S0xTdERaaFFGekFheFN5YjRrU2Z5ZURTSXBmRXcyK0tpTUxvaTBDNmk1Sjh1?=
- =?utf-8?B?WjdIalJ1cURXYlBwMzM2V2k4SG5JRG9uT0M4bjdBMlJna0J3S2JCWVFmYW9V?=
- =?utf-8?B?V1Joa1JHUEJ0eFJvdjRJenlPbVRDNFRDajF4SFMxRWNOVEljeFA1RVgvVHpR?=
- =?utf-8?B?K0xFMVExdHZXKzk3bFFBTkk1OVo2TzRQUm42S3BiU3ZJK0pBNDRaRlEzbVBm?=
- =?utf-8?B?Z3B3NmtTbk5LaHpkMDNuRnMxRjIzRFl6OFVkT1lsSG1aQnRVcHJUVWdXSXlU?=
- =?utf-8?B?TDFmZTczTmlVTndTQ2I5WnhMdklDbU5FcFZscmNVMXhqcUUvcU5RRm9ENmxL?=
- =?utf-8?B?ck0zeHZLcUIyMERLUFNaQWd4UTVmWHorc3FzNFl3dGl1ZjEwWjRBclozcGlB?=
- =?utf-8?B?NDVtTTcxeGhWUDNtTnZrTE5JVjJpSXpxVko2c2IwcVR1eUV3MG1zb3Byb3hV?=
- =?utf-8?B?Ynk3a3gzZWcwS2oyVitMVWdRVS8xMU1mcUtkUlVTbXk2QktyVm9GV01DU0VS?=
- =?utf-8?B?K1MyUkhHR0FQaE5sV1RsUEhkeEpISnJ1T0xGRndxc3dkaTZDZFZRWGZkNmdO?=
- =?utf-8?B?NXNxenNjLy9YdjJTa05ITThxVkdReGUrdHhOdkZOTjZLWXJHNmE2Z3N1VXJ1?=
- =?utf-8?B?bmhUUGpzR3dsaVB3a3NQMWp6MCtnTFdjM3c0OUN3ZllHekpFMkl6RHh6STE4?=
- =?utf-8?B?ZjdOTGE0Mjk1RHdHLzNZM245VDlScFd4WkZKYW5VQ2x3dlg5WGNwNTExTDd3?=
- =?utf-8?B?ZUU0VmlZYXo5dUNOMjMzUDlRR25EbVEyMnhJQlhLR201emphN0hab0xGSStN?=
- =?utf-8?B?ZHEwOVVzQVB1UjQwTTE3QkRqUDg4RU9LOEgwZkZ0VUR2LzRMNHB6anhDNldB?=
- =?utf-8?B?QTFkWUVudFhHcE9lZlFGS0JXdHZnUGtuNC8rRHFkSExJdHpXbzZIMUNxcDVq?=
- =?utf-8?B?ZGl3bVh0cDVKRzl0QnZyZENZM2xuNmJxSVFXT0lDdzRScW8vWjlEblp3RERI?=
- =?utf-8?B?ZU9hZ0EwZDFlNFk5K0xvalVQMFo3OWtGcmNyVG04dFE2MEltbU5qNUtsMDBy?=
- =?utf-8?B?OTY2NUZKWkFxZXBvT3YxTWw3a2o2R3ExL2l3VFlYZjdHT1BQeThJdElicHcx?=
- =?utf-8?B?dlphMDNCVGtnQ1FKbjFkRHJEdFlEQWtQV2lzbVZMbVpGWmsyaDVzVlVteVYv?=
- =?utf-8?B?RnhXc3JQdjc5MWJGWDlUSzRMQXcyYklEQnh2YkxkNGtVVFdhTnkzVU44OGNk?=
- =?utf-8?B?dXMvNHZBdjI5bFBjb1RYemJCMmFvT1NrWFl3YThnU2VwZG10TFM1ZFdTZ0lj?=
- =?utf-8?B?VXlLK1dNUXh4YzE1TTZnbi9jQ1JxUEhHbzViblBtblJxRWpHcEMyMzNacmFl?=
- =?utf-8?B?TmVOdVlpMlpjbndPY0hqNkJaV20xaU9wazRqM21hZWlUUXM0TE9XU2twQm4v?=
- =?utf-8?B?aWFzWnhkZS9ITTNETkVtQUQ3ZlJFdm43RU9OYlRGaTJJTWorVHZTR3Q0YUlK?=
- =?utf-8?B?dUlyOVFyN2ZOSTZKeHdWUnUyU2w3alI0ZkdKdTJkcG5FTjJpTkJwVTlVWE1L?=
- =?utf-8?B?VDlyTU5JSXdIZFJDa1JMWTYvRkFGZkUwb1ZXQWs2bkRTaWpScVB6RjltdnFD?=
- =?utf-8?B?TDJBMktqM2tnRjRJekxNL2FIUW5SUDVEZkQvQ29qSnR3amppbzNZVG9FanFi?=
- =?utf-8?B?OEI5Z24rSTN1dll0ZTJZWFc4Wk03eUd4by9KR2VEci9Nci9NRWdzTk1xZmpW?=
- =?utf-8?Q?DKrgDoGj60ipC?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dG5QQjRJRTdQMXJBS3BQOUNjU21LdWw5SzdyRFlQakRERlFib3JuclBOOERN?=
- =?utf-8?B?UWc3U0VTUFlLVVFGMFFGUEpyWWlRZTlUc0xieDAwbHYrblkvTys1dnVCZ0l1?=
- =?utf-8?B?Y1pnWUI3Q0pSY1ZaL1htNThQekg2UCtTMEhTZ0MvWjliYlRtVXVPejRybnd3?=
- =?utf-8?B?Q1RRdi9aV0ZxVjMwdUdVWEZ1ajFYak9ZdFlINU12WDFqN043SXhtSFFnVVpo?=
- =?utf-8?B?NWNXeXJwSWd4RkxsYlUxa3FtSVNZRkpjT0RjMmlyck9QVDI2ZnZaQ2hoMHEz?=
- =?utf-8?B?OUVQNVBsTnk3VjFoUVp2bmszNjRSTWVxdVIxdlZNbE5QL1U3S09PaU5BaDRE?=
- =?utf-8?B?RERBTjNJS25INVFYSGRhVzYvUHRBMlVVRHgwRU85QitiUjI0cTJ0RzN3eU9s?=
- =?utf-8?B?Q2FkTDY1ZEtzRHIxRk9Bd2R1SUJzaW1uek10Tm1BcXlyamFYVW4zV05WMnVw?=
- =?utf-8?B?YzZtTThnelZDTmwxSGgwOWt3dy8zcVl3NEhTQi9iV1NpK1hUdndObEsrT0lq?=
- =?utf-8?B?Y0VjNXBuYU5tRU5LRnBhRkpVV25EQzlBL0FxdU5MeHVPRndQa05ZaUliTmN4?=
- =?utf-8?B?QVkwdGswQkxZb0lxUHV5RGwxdXNUNTlGNjcyRTdER0x1TEN2TXF0aGNPTWJ6?=
- =?utf-8?B?aWUzTjFjWGNBMEszeUVLQmdhZ3FVdm85amgxSGloZWVZRDd1WFZwNXhKMTdt?=
- =?utf-8?B?SEp0S0wvcS9kb2cvdWVnKzVyUjk3N1dIaWUycVZjWU84Q3E0S00zYUZxWkNZ?=
- =?utf-8?B?VC84UGlEdE1qTTZMQnUzWlJzbE5KTjlLL3cwWi8zUFAvNWFzb09HWjR0Yzln?=
- =?utf-8?B?ZXM1Q2RwUmhmR2puUHpuTWI1WUV4NFh0VG1VSTBYZUg0ckcxeGljZll6d2tQ?=
- =?utf-8?B?c0lEUkZRSFpSdWg3WEJZbm9XQndiZ0hIallnODFjVGxnQ3RHTTN5WGFmdmxX?=
- =?utf-8?B?M1JhL28vV3NBYmk0TmhjMkZZQklYRW4vWWd4aC9YaktXUWxUQW83ME9MRkxn?=
- =?utf-8?B?dDZ5a1JIVmUrOWZRNmd2VnFHY1h4KzRKKyszcmh3MElmbHpTYlpzQmZmZlRr?=
- =?utf-8?B?QUgrS0NMN1Z6Q2RDV3NRWUwwWnQ0elZMQlVBWSt2VDE4RHBSM293TmtEdlNQ?=
- =?utf-8?B?MVFnZldMVWJTMTNLY3FBZWRvM0NnQ3phSzlWM3U4dVlKZkNlU1o2Z0Fnc0JO?=
- =?utf-8?B?ZjR3T3VNZ2ZTNHJUUkVaamNnRHhvU3VyRVM2ZitrRlIxV1hIbEpBUFptRUtU?=
- =?utf-8?B?OWF5R0tPUEdZRWFuWGtOUEVmSUpUclVSV3lVMXpVdlpHVWhSeGdxRkd1RFMx?=
- =?utf-8?B?VUgzUVZ5d3gwQlhPK2FTZmU5SUVCSi9EMXNkZGNaditxRzc0SER2SkEwRDEw?=
- =?utf-8?B?RDVhWHlJUEtaNmp1eHlUVVNSZWllTmh5TGJYcm8wNU5ua3kya1dTL2V2Q3Nj?=
- =?utf-8?B?YnorRUw5UmM4K3MrbEVJRTdhZGFoNkdtVmRwRlpDUmxrYnNTSVlXbStuOGVZ?=
- =?utf-8?B?c0luRGpqYXdDRHozcW5wYlI0bkNYUXhUZnJrR0NHMzFWY3hjM3FidEtYQUJQ?=
- =?utf-8?B?Ri9GV3pMQ3RsVUVZSmF4SGhGOHExMjY0ajRyaGs2MTBkQ0h0Nzc3QlNlVVhw?=
- =?utf-8?B?UmdoYkd0U0RwNVBWeHZ3S3VaeWUwNDZxSkhmcUI4U2RDdVVGZHlKcXU0VGRy?=
- =?utf-8?B?QzhlcVlCclJZU3RmU0lMV04wOVhUWVhvMDZtYXE5TGdoRUJlV245dERQNnFQ?=
- =?utf-8?B?OE1XUk1CaWRhNHhzSllPNkxBRytSTE9hcmNCeXVTSGhvQjRhenJ2OGdFMU9C?=
- =?utf-8?B?KytoQlpNUkg4RnhHZm4zOXh6MWNtTWw0T1ZlMUdFdnEwVXZ5WGtkUDFRS3pH?=
- =?utf-8?B?clM4Z1hweG5lSGdhTnlhUUlzZEQzWWEvejlvOTliS0xtR2ppK3p6QWZsTE1O?=
- =?utf-8?B?MFBCVEExTWRhbXRPNWFmM3JaazcxSFVSODFIc2N4Znl0UVZEbGkwQXBhdnZ3?=
- =?utf-8?B?Zk9RMU8wdTZrbSsvOTlvajc0VmpTOGxwb1U3NzBTczV0QjlpYU1ia0hoaHNU?=
- =?utf-8?B?QWJYT1M0MjZrMUpNYjFRR0ZBMWthYlhmcUNES1lwdEUvZkZSUUpjMjJhUUxC?=
- =?utf-8?Q?f37H3uFx36Kce1SweEEnpii7O?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5c25bda2-da56-4557-f687-08dd50f6e56c
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2025 15:05:49.9907
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vENyi1BqIDH2Vmt4z2lQDPuELFOWe5ymrHLk0eJ/9UyBz/j89j0TliQZuvZyk7Hk6bMN/M4gsP9X/jwzE3I/VQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB9029
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2025021954-flaccid-pucker-f7d9@gregkh>
 
-On Fri, Jan 17, 2025 at 05:53:33PM +0100, Valentin Schneider wrote:
-> On 17/01/25 16:52, Jann Horn wrote:
-> > On Fri, Jan 17, 2025 at 4:25 PM Valentin Schneider <vschneid@redhat.com> wrote:
-> >> On 14/01/25 19:16, Jann Horn wrote:
-> >> > On Tue, Jan 14, 2025 at 6:51 PM Valentin Schneider <vschneid@redhat.com> wrote:
-> >> >> vunmap()'s issued from housekeeping CPUs are a relatively common source of
-> >> >> interference for isolated NOHZ_FULL CPUs, as they are hit by the
-> >> >> flush_tlb_kernel_range() IPIs.
-> >> >>
-> >> >> Given that CPUs executing in userspace do not access data in the vmalloc
-> >> >> range, these IPIs could be deferred until their next kernel entry.
-> >> >>
-> >> >> Deferral vs early entry danger zone
-> >> >> ===================================
-> >> >>
-> >> >> This requires a guarantee that nothing in the vmalloc range can be vunmap'd
-> >> >> and then accessed in early entry code.
-> >> >
-> >> > In other words, it needs a guarantee that no vmalloc allocations that
-> >> > have been created in the vmalloc region while the CPU was idle can
-> >> > then be accessed during early entry, right?
-> >>
-> >> I'm not sure if that would be a problem (not an mm expert, please do
-> >> correct me) - looking at vmap_pages_range(), flush_cache_vmap() isn't
-> >> deferred anyway.
-> >
-> > flush_cache_vmap() is about stuff like flushing data caches on
-> > architectures with virtually indexed caches; that doesn't do TLB
-> > maintenance. When you look for its definition on x86 or arm64, you'll
-> > see that they use the generic implementation which is simply an empty
-> > inline function.
-> >
-> >> So after vmapping something, I wouldn't expect isolated CPUs to have
-> >> invalid TLB entries for the newly vmapped page.
-> >>
-> >> However, upon vunmap'ing something, the TLB flush is deferred, and thus
-> >> stale TLB entries can and will remain on isolated CPUs, up until they
-> >> execute the deferred flush themselves (IOW for the entire duration of the
-> >> "danger zone").
-> >>
-> >> Does that make sense?
-> >
-> > The design idea wrt TLB flushes in the vmap code is that you don't do
-> > TLB flushes when you unmap stuff or when you map stuff, because doing
-> > TLB flushes across the entire system on every vmap/vunmap would be a
-> > bit costly; instead you just do batched TLB flushes in between, in
-> > __purge_vmap_area_lazy().
-> >
-> > In other words, the basic idea is that you can keep calling vmap() and
-> > vunmap() a bunch of times without ever doing TLB flushes until you run
-> > out of virtual memory in the vmap region; then you do one big TLB
-> > flush, and afterwards you can reuse the free virtual address space for
-> > new allocations again.
-> >
-> > So if you "defer" that batched TLB flush for CPUs that are not
-> > currently running in the kernel, I think the consequence is that those
-> > CPUs may end up with incoherent TLB state after a reallocation of the
-> > virtual address space.
-> >
+On Wed, Feb 19, 2025 at 06:39:10AM +0100, Greg KH wrote:
+> On Tue, Feb 18, 2025 at 07:04:59PM -0800, Boqun Feng wrote:
+> > On Tue, Feb 18, 2025 at 04:58:27PM -0800, H. Peter Anvin wrote:
+> > [...]
+> > > > > David Howells did a patch set in 2018 (I believe) to clean up
+> > > > > the C code in the kernel so it could be compiled with either C
+> > > > > or C++; the patchset wasn't particularly big and mostly
+> > > > > mechanical in nature, something that would be impossible with
+> > > > > Rust. Even without moving away from the common subset of C and
+> > > > > C++ we would immediately gain things like type safe linkage.
+> > > > 
+> > > > That is great, but that does not give you memory safety and everyone
+> > > > would still need to learn C++.
+> > > 
+> > > The point is that C++ is a superset of C, and we would use a subset of C++
+> > > that is more "C+"-style. That is, most changes would occur in header files,
+> > > especially early on. Since the kernel uses a *lot* of inlines and macros,
+> > > the improvements would still affect most of the *existing* kernel code,
+> > > something you simply can't do with Rust.
+> > > 
+> > 
+> > I don't think that's the point of introducing a new language, the
+> > problem we are trying to resolve is when writing a driver or some kernel
+> > component, due to the complexity, memory safety issues (and other
+> > issues) are likely to happen. So using a language providing type safety
+> > can help that. Replacing inlines and macros with neat template tricks is
+> > not the point, at least from what I can tell, inlines and macros are not
+> > the main source of bugs (or are they any source of bugs in production?).
+> > Maybe you have an example?
 > 
-> Ah, gotcha, thank you for laying this out! In which case yes, any vmalloc
-> that occurred while an isolated CPU was NOHZ-FULL can be an issue if said
-> CPU accesses it during early entry;
+> As someone who has seen almost EVERY kernel bugfix and security issue
+> for the past 15+ years (well hopefully all of them end up in the stable
+> trees, we do miss some at times when maintainers/developers forget to
+> mark them as bugfixes), and who sees EVERY kernel CVE issued, I think I
+> can speak on this topic.
+> 
+> The majority of bugs (quantity, not quality/severity) we have are due to
+> the stupid little corner cases in C that are totally gone in Rust.
+> Things like simple overwrites of memory (not that rust can catch all of
+> these by far), error path cleanups, forgetting to check error values,
+> and use-after-free mistakes.  That's why I'm wanting to see Rust get
+> into the kernel, these types of issues just go away, allowing developers
+> and maintainers more time to focus on the REAL bugs that happen (i.e.
+> logic issues, race conditions, etc.)
+> 
+> I'm all for moving our C codebase toward making these types of problems
+> impossible to hit, the work that Kees and Gustavo and others are doing
+> here is wonderful and totally needed, we have 30 million lines of C code
+> that isn't going anywhere any year soon.  That's a worthy effort and is
+> not going to stop and should not stop no matter what.
 
-So the issue is:
+I'd say it should accelerate. Ironically, I think it's also affected by
+the same maintainer burn out issue that is hindering adoption of rust.
+When time is limited, short term urgencies are very often prioritized
+over long term improvements.
 
-CPU1: unmappes vmalloc page X which was previously mapped to physical page
-P1.
+As a maintainer of some code in the kernel, I sometimes find it very
+hard to strike the right balance of yak shaving. Some of it is needed
+given the large scale of the project and the contributors/maintainers
+ratio, but tolerance to yak shaving isn't high. It varies drastically
+depending on the contributors (both individuals and companies), and I've
+recently felt in my small area of the kernel that some very large
+companies fare significantly worse than smaller ones.
 
-CPU2: does a whole bunch of vmalloc and vfree eventually crossing some lazy
-threshold and sending out IPIs. It then goes ahead and does an allocation
-that maps the same virtual page X to physical page P2.
+(More on this below)
 
-CPU3 is isolated and executes some early entry code before receving said IPIs
-which are supposedly deferred by Valentin's patches.
+> But for new code / drivers, writing them in rust where these types of
+> bugs just can't happen (or happen much much less) is a win for all of
+> us, why wouldn't we do this?  C++ isn't going to give us any of that any
+> decade soon, and the C++ language committee issues seem to be pointing
+> out that everyone better be abandoning that language as soon as possible
+> if they wish to have any codebase that can be maintained for any length
+> of time.
+> 
+> Rust also gives us the ability to define our in-kernel apis in ways that
+> make them almost impossible to get wrong when using them.  We have way
+> too many difficult/tricky apis that require way too much maintainer
+> review just to "ensure that you got this right" that is a combination of
+> both how our apis have evolved over the years (how many different ways
+> can you use a 'struct cdev' in a safe way?) and how C doesn't allow us
+> to express apis in a way that makes them easier/safer to use.  Forcing
+> us maintainers of these apis to rethink them is a GOOD thing, as it is
+> causing us to clean them up for EVERYONE, C users included already,
+> making Linux better overall.
+> 
+> And yes, the Rust bindings look like magic to me in places, someone with
+> very little Rust experience, but I'm willing to learn and work with the
+> developers who have stepped up to help out here.  To not want to learn
+> and change based on new evidence (see my point about reading every
+> kernel bug we have.)
+> 
+> Rust isn't a "silver bullet" that will solve all of our problems, but it
+> sure will help in a huge number of places, so for new stuff going
+> forward, why wouldn't we want that?
+> 
+> Linux is a tool that everyone else uses to solve their problems, and
+> here we have developers that are saying "hey, our problem is that we
+> want to write code for our hardware that just can't have all of these
+> types of bugs automatically".
+> 
+> Why would we ignore that?
+> 
+> Yes, I understand our overworked maintainer problem (being one of these
+> people myself), but here we have people actually doing the work!
 
-It does not receive the IPI becuase it is deferred, thus access by early
-entry code to page X on this CPU results in a UAF access to P1.
+This got me thinking, this time with thoughts that are taking shape.
+Let's see if they make sense for anyone else.
 
-Is that the issue?
+First, a summary of where we stand, in the particular area I'd like to
+discuss. Hopefully the next paragraph won't be controversial (but who
+knows, I may have an unclear or biased view).
 
-thanks,
+Maintainability, and maintainer burn out, are high in the lirst of the
+many arguments I've heard against rust in the kernel. Nobody really
+disputes the fact that we have a shortage of maintainers compared to the
+amount of contributions we receive. I have seen this argument being
+flipped by many proponents of rust in the kernel: with rust making some
+classes of bugs disappear, maintainers will have more time to focus on
+other issue (as written above by Greg himself). Everybody seems to agree
+that there will be an increased workload for maintainers in a transition
+period as they would need to learn a new language, but that increased
+workload would not be too significant as maintainers would be assisted
+by rust developers who will create (and to some extent maintain) rust
+bindings to kernel APIs. The promise of greener pastures is that
+everybody will be better off once the transition is over, including
+maintainers.
 
- - Joel
+In my experience, chasing bugs is neither the hardest nor the most
+mental energy consuming part of the technical maintenance [*]. What I
+find difficult is designing strong and stable foundations (either in
+individual drivers, or in subsystems as a whole) to build a maintainable
+code base on top. What I find even more horrendous is fixing all the
+mistakes we've made in this regard. As Greg also mentioned above, many
+of our in-kernel APIs were designed at a time when we didn't know better
+(remember device handling before the rewrite of the device/driver model
+? I was fortunately too inexperienced back then to understand how
+horrible things were, which allowed me to escape PTSD), and the amount
+of constraints that the C language allows compilers to enforce at
+compile time is very limited. I believe the former is a worse problem
+than the latter at this time: for lots of the in-kernel APIs,
+compile-time constraints enforcement to prevent misuse doesn't matter,
+because those APIs don't provide *any* way to be used safely. Looking at
+the two subsystems I know the best, V4L2 and DRM, handling the life time
+of objects safely in drivers isn't just hard, it's often plain
+impossible. I'd be surprised if I happened to have picked as my two
+main subsystems the only ones that suffer from this, so I expect this
+kind of issue to be quite widespread.
 
+History is history, I'm not blaming anyone here. There are mistakes we
+just wouldn't repeat the same way today. We have over the years tried to
+improve in-kernel APIs to fix this kind of issues. It's been painful
+work, which sometimes introduced more (or just different) problems than
+it fixed, again because we didn't know better (devm_kzalloc is *still*
+very wrong in the majority of cases). One of the promises of rust for
+the kernel is that it will help in this very precise area, thanks to its
+stronger philosophy of focussing efforts on interface design. As Greg
+mentioned above, it will also lead to improvements for the C users of
+the APIs. As part of their work on creating those rust bindings, rust
+for Linux developers and maintainers improving the situation for
+everybody. This is great. On paper.
+
+In reality, in order to provide API that are possible to use correctly,
+we have many areas deep in kernel code that will require a complete
+redesign (similar in effort to the introduction of the device model),
+affecting all the drivers using them. I understand that the development
+of rust bindings has already helped improving some in-kernel C APIs, but
+I have only seen such improvements of a relatively small scale compared
+to what would be needed to fix life time management of objects in V4L2.
+I would be very surprised if I was working in the only area in the
+kernel that is considered broken beyond repair by many people related to
+life time management, so I think this kind of maintainer nightmare is
+not an isolated case.
+
+The theory is that rust bindings would come with C API improvements and
+fixes. However, when I expressed the fact that rust bindings for V4L2
+would first require a complete rewrite of object life time management in
+the subsystem, I was told this was way too much yak shaving. As a
+maintainer facing the horrendous prospect of fixing this one day, I just
+can't agree to rust bindings being built on top of such a bad
+foundation, as it would very significantly increase the amount of work
+needed to fix the problem.
+
+If we want real maintainer buy-in for rust in the kernel, I believe this
+is the kind of problem space we should start looking into. Helping
+maintainers solve these issues will help decreasing their work load and
+stress level significantly in the long term, regardless of other
+benefits rust as a language may provide. I believe that cooperation
+between the C and rust camps on such issues would really improve mutual
+understanding, and ultimately create a lot of trust that seems to be
+missing. If someone were to be interested in rust bindings for V4L2 and
+willing to put significant time and effort in fixing the underlying
+issue, I would be very happy to welcome them, and willing to learn
+enough rust to review the rust API.
+
+
+[*] I'm leaving out here community building, which is the other
+important part of a maintainer's work, and also requires lots of
+efforts. How rust could help or hinder this is interesting but out of my
+scope right now. If you feel inclined to share your thoughts on this
+mine field, please do so in a reply to this e-mail separate from
+feedback on the technical subject to avoid mixing topics.
+
+> Yes, mixed language codebases are rough, and hard to maintain, but we
+> are kernel developers dammit, we've been maintaining and strengthening
+> Linux for longer than anyone ever thought was going to be possible.
+> We've turned our development model into a well-oiled engineering marvel
+> creating something that no one else has ever been able to accomplish.
+> Adding another language really shouldn't be a problem, we've handled
+> much worse things in the past and we shouldn't give up now on wanting to
+> ensure that our project succeeds for the next 20+ years.  We've got to
+> keep pushing forward when confronted with new good ideas, and embrace
+> the people offering to join us in actually doing the work to help make
+> sure that we all succeed together.
+
+-- 
+Regards,
+
+Laurent Pinchart
 
