@@ -1,209 +1,134 @@
-Return-Path: <linux-kernel+bounces-520848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18703A3B00C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 04:34:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26E42A3B00E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 04:35:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0075B3A5DF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 03:34:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6E887A5CA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 03:34:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BF9019D8A9;
-	Wed, 19 Feb 2025 03:34:21 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94BD81A317F;
+	Wed, 19 Feb 2025 03:34:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="RLn71sKu"
+Received: from mail-pl1-f226.google.com (mail-pl1-f226.google.com [209.85.214.226])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67DA8136A
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 03:34:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A20A136A
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 03:34:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739936060; cv=none; b=caY+vq49p6UtNBMaDTcLuwBU37SW/sEgPd5GjP8hCpMK8vYP0cXzSs4CdRBw8OJI6U0QoVhnlELYQWhBTgVl6Qvfo7Zsp1NvAGghcACuewO6kfGGRh9l5EVYixQ6Tg/VOoyPnTVMXDiZmfkO7dwTNAoBH1Y96gMddeK0LH1oQOg=
+	t=1739936094; cv=none; b=MFIKYUFanQIgDNuFzQT4ZiFZwo3kV8qqvk19qodTVrmfyiHINi0ayjjetzCPvgb1Sxz/6k4u+h+rq2KbdvmW9ipLqtqrt4UNn9r7Be2qPK+tcfD/eNqvmhacthArbebe6Vj6o3cC2riyMfPXhbKl9P/DyoGauja421f20AXgoFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739936060; c=relaxed/simple;
-	bh=aXUT4dlyb+UYLtC39KF3C9ZrU2dc3dLEl1h6DlfA5kQ=;
-	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ctBW5ttIEDIEb56YohgoceiqhkjUgMEqKJ39uVH7Cm/9yCizc34IEuEv+i5UL9HWXbZ4e1/oSsKV0qxklRzRX0HROwL09b7XjCTh8x3iX8LV1/s8mtdto9uJLASXno5d6lkSnQcZP68syfh1egPg8uUaAJC8V1HFuR86Y4JyKfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4YyMPF6FRSz22wRQ;
-	Wed, 19 Feb 2025 11:31:13 +0800 (CST)
-Received: from kwepemg100017.china.huawei.com (unknown [7.202.181.58])
-	by mail.maildlp.com (Postfix) with ESMTPS id E5827140120;
-	Wed, 19 Feb 2025 11:34:13 +0800 (CST)
-Received: from [10.174.178.114] (10.174.178.114) by
- kwepemg100017.china.huawei.com (7.202.181.58) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 19 Feb 2025 11:34:13 +0800
-Message-ID: <783bfb90-c298-410c-893c-d497a1a2727f@huawei.com>
-Date: Wed, 19 Feb 2025 11:34:12 +0800
+	s=arc-20240116; t=1739936094; c=relaxed/simple;
+	bh=nps8bhqqW9C31UMiIA1K5irHfRijgaCUHJE1SPI3/+c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RuXlyDXxCDipbfjsStJo/43pXEbayyxHViO9T1EK10GsOhpdh3VrU//S0P8i3u4rFHbji2OZtKErozHznNV9//+vr+LNWWm+rHThafXtt8S0hVPs8+5GdXzIFoV+p4wlJoUg+BNwnHzkaBVQiq1EkAkjfZwQPm8LTQVvS+EfNww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=RLn71sKu; arc=none smtp.client-ip=209.85.214.226
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pl1-f226.google.com with SMTP id d9443c01a7336-2217875d103so78585ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 19:34:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1739936090; x=1740540890; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oWmLSi2mB7M9yGiVBZcQbkxr3CzoST/Pj74hRTCGb30=;
+        b=RLn71sKu3iTdBbM0nEP92OSgoR2tQ7Fa1alGlaAB9sS3Mw+agmv39e8w6mLL3HTvxP
+         EojBv5C2t6yTofKhXJZipxiCmOqo1CYaPIdm8vw2WaZzYzIUjTfjbz71o4EpjM1cgFKy
+         rdMoJktL5qWvDrnY25tUCKDQXweGjvPgGLFa96Z1rqw6pkBQjQ8J4TEYHdB+ylKu03Wh
+         reNEEDyACUNgOaOYEcjr1NKMMIe9xy/n1gyEalj/pxCDVinge/y3M/4NlqFhCQvcQxAS
+         jlwCbSZRhFXZtaWt7fuczXtOAYyV81z+SsoLe0rZgbfe/hBmFvfdvUdq7W+dgM1tuRnT
+         sYaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739936090; x=1740540890;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oWmLSi2mB7M9yGiVBZcQbkxr3CzoST/Pj74hRTCGb30=;
+        b=A3qOxEHoLFtcsTWWFe8EOR7UaWczawRyb1L5xCvZikQv0X8jA6765QKe1O+mVTqlhs
+         6OGKMiJXC3mzH6Rr8mmDK7AVdZaUGNnz1fsPrrISUCvBl68OXnsVXZqkX9WJRdpBnGD9
+         txW5KTEcQBdx5yRAw0ou4GY79TdNp81wF/a+e70HPeylaIikFxEHlmVP506sFg6RE1jP
+         STZSpwS+bST9Y5yOO66lGhE5zaLWAu7I+ml6WJ1TTJ5S9kAqfLcmGMGZOZsPoMew2A6r
+         fBS+I1Shp2l+k0ReUNGphovg7i/SL6u2yXhMgf3tlXWtGcOSxkGjFD91zz5HOdGYLB4P
+         O+xA==
+X-Forwarded-Encrypted: i=1; AJvYcCUNpagXe+w+MD9xgCeagACUh5rXFRBBoKXrs/hzRhvZV8qZPF/WDBtKYwQ99e6xln/OMoeXDocAH5+vs1g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTV6SBQdcg0P4Kx2sxpS5xVpu7aXuMoyv13a8FVBsF2N5fIphE
+	IYMSNdiIc6vVYbKybxv5kTcu8Xr9ptQ+vu13FFjUjtfw/nfWa+99Wp/wrQePenacY9yXPhCxcv8
+	2+9mH5a9LIn9Wraqzgvgsf6f6/W0sIiBAwaKsIWe2OAk7587R
+X-Gm-Gg: ASbGnctleTJIQ80fMUgLpGSE3YNx1oc2IV/k3/oiTmozWX+xTQOp9aS5Gjkp5SFbDBx
+	EUAVJyxspwHsJ2IFel8WQcL5h6GgEvj8bbR4kWSmRBu7U1/BwD9ahwr88QZ9DDo8czLgYgBoyxp
+	t5Kj4+2jxcSt3o/05Dh3u9b3GMkRyAGGh2rP1s1jE7RUmcpTueZ4umAsSEp+F28IjCBNt54W1As
+	lR0+zk22EEvGnnCLUmmf9vIDBpxRRaahn7fuCaPTCFz+4TNwgHIV1D0RaHhqddaCpSCLzfmwIHE
+	ZNbbYawvXjROKyaUXvCxp5c=
+X-Google-Smtp-Source: AGHT+IGSnWI6/oo0pSCxMy/XF1XplpCCogXqJteEhB5BWQPqOLmP54GMkGp0qkgHp8tJhMhpxzRxr1dnG5jd
+X-Received: by 2002:a05:6a21:6da6:b0:1ee:d621:3c3f with SMTP id adf61e73a8af0-1eed6213ceamr1083705637.0.1739936090265;
+        Tue, 18 Feb 2025 19:34:50 -0800 (PST)
+Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
+        by smtp-relay.gmail.com with ESMTPS id d2e1a72fcca58-7325b336950sm708046b3a.7.2025.02.18.19.34.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2025 19:34:50 -0800 (PST)
+X-Relaying-Domain: purestorage.com
+Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id A6765340643;
+	Tue, 18 Feb 2025 20:34:49 -0700 (MST)
+Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
+	id 9FD0EE410B7; Tue, 18 Feb 2025 20:34:49 -0700 (MST)
+From: Caleb Sander Mateos <csander@purestorage.com>
+To: Jens Axboe <axboe@kernel.dk>,
+	Pavel Begunkov <asml.silence@gmail.com>
+Cc: Caleb Sander Mateos <csander@purestorage.com>,
+	io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] io_uring/rsrc: remove unused constants
+Date: Tue, 18 Feb 2025 20:34:43 -0700
+Message-ID: <20250219033444.2020136-1-csander@purestorage.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-CC: <mawupeng1@huawei.com>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <akpm@linux-foundation.org>,
-	<david@redhat.com>, <osalvador@suse.de>, <nao.horiguchi@gmail.com>,
-	<mhocko@suse.com>
-Subject: Re: [PATCH v3 1/3] mm: memory-failure: update ttu flag inside
- unmap_poisoned_folio
-To: <linmiaohe@huawei.com>
-References: <20250217014329.3610326-1-mawupeng1@huawei.com>
- <20250217014329.3610326-2-mawupeng1@huawei.com>
- <55e4ad74-752b-65c6-5ceb-b3a7fd7959a1@huawei.com>
-From: mawupeng <mawupeng1@huawei.com>
-In-Reply-To: <55e4ad74-752b-65c6-5ceb-b3a7fd7959a1@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemg100017.china.huawei.com (7.202.181.58)
+Content-Transfer-Encoding: 8bit
 
+IO_NODE_ALLOC_CACHE_MAX has been unused since commit fbbb8e991d86
+("io_uring/rsrc: get rid of io_rsrc_node allocation cache") removed the
+rsrc_node_cache.
 
+IO_RSRC_TAG_TABLE_SHIFT and IO_RSRC_TAG_TABLE_MASK have been unused
+since commit 7029acd8a950 ("io_uring/rsrc: get rid of per-ring
+io_rsrc_node list") removed the separate tag table for registered nodes.
 
-On 2025/2/19 10:50, Miaohe Lin wrote:
-> On 2025/2/17 9:43, Wupeng Ma wrote:
->> From: Ma Wupeng <mawupeng1@huawei.com>
->>
->> Commit 6da6b1d4a7df ("mm/hwpoison: convert TTU_IGNORE_HWPOISON to
->> TTU_HWPOISON") introduce TTU_HWPOISON to replace TTU_IGNORE_HWPOISON
->> in order to stop send SIGBUS signal when accessing an error page after
->> a memory error on a clean folio. However during page migration, anon
->> folio must be set with TTU_HWPOISON during unmap_*(). For pagecache
->> we need some policy just like the one in hwpoison_user_mappings to
->> set this flag. So move this policy from hwpoison_user_mappings to
->> unmap_poisoned_folio to handle this warning properly.
->>
->> Warning will be produced during unamp poison folio with the following log:
->>
->>   ------------[ cut here ]------------
->>   WARNING: CPU: 1 PID: 365 at mm/rmap.c:1847 try_to_unmap_one+0x8fc/0xd3c
->>   Modules linked in:
->>   CPU: 1 UID: 0 PID: 365 Comm: bash Tainted: G        W          6.13.0-rc1-00018-gacdb4bbda7ab #42
->>   Tainted: [W]=WARN
->>   Hardware name: QEMU QEMU Virtual Machine, BIOS 0.0.0 02/06/2015
->>   pstate: 20400005 (nzCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
->>   pc : try_to_unmap_one+0x8fc/0xd3c
->>   lr : try_to_unmap_one+0x3dc/0xd3c
->>   Call trace:
->>    try_to_unmap_one+0x8fc/0xd3c (P)
->>    try_to_unmap_one+0x3dc/0xd3c (L)
->>    rmap_walk_anon+0xdc/0x1f8
->>    rmap_walk+0x3c/0x58
->>    try_to_unmap+0x88/0x90
->>    unmap_poisoned_folio+0x30/0xa8
->>    do_migrate_range+0x4a0/0x568
->>    offline_pages+0x5a4/0x670
->>    memory_block_action+0x17c/0x374
->>    memory_subsys_offline+0x3c/0x78
->>    device_offline+0xa4/0xd0
->>    state_store+0x8c/0xf0
->>    dev_attr_store+0x18/0x2c
->>    sysfs_kf_write+0x44/0x54
->>    kernfs_fop_write_iter+0x118/0x1a8
->>    vfs_write+0x3a8/0x4bc
->>    ksys_write+0x6c/0xf8
->>    __arm64_sys_write+0x1c/0x28
->>    invoke_syscall+0x44/0x100
->>    el0_svc_common.constprop.0+0x40/0xe0
->>    do_el0_svc+0x1c/0x28
->>    el0_svc+0x30/0xd0
->>    el0t_64_sync_handler+0xc8/0xcc
->>    el0t_64_sync+0x198/0x19c
->>   ---[ end trace 0000000000000000 ]---
->>
->> Fixes: 6da6b1d4a7df ("mm/hwpoison: convert TTU_IGNORE_HWPOISON to TTU_HWPOISON")
->> Suggested-by: David Hildenbrand <david@redhat.com>
->> Signed-off-by: Ma Wupeng <mawupeng1@huawei.com>
->> Acked-by: David Hildenbrand <david@redhat.com>
-> 
-> Thanks. LGTM. One nit below.
-> 
-> Acked-by: Miaohe Lin <linmiaohe@huawei.com>
-> 
->> ---
->>  mm/internal.h       |  5 ++--
->>  mm/memory-failure.c | 61 +++++++++++++++++++++++----------------------
->>  mm/memory_hotplug.c |  3 ++-
->>  3 files changed, 36 insertions(+), 33 deletions(-)
->>
->> diff --git a/mm/internal.h b/mm/internal.h
->> index 9826f7dce607..c9186ca8d7c2 100644
->> --- a/mm/internal.h
->> +++ b/mm/internal.h
->> @@ -1102,7 +1102,7 @@ static inline int find_next_best_node(int node, nodemask_t *used_node_mask)
->>   * mm/memory-failure.c
->>   */
->>  #ifdef CONFIG_MEMORY_FAILURE
->> -void unmap_poisoned_folio(struct folio *folio, enum ttu_flags ttu);
->> +int unmap_poisoned_folio(struct folio *folio, unsigned long pfn, bool must_kill);
->>  void shake_folio(struct folio *folio);
->>  extern int hwpoison_filter(struct page *p);
->>  
->> @@ -1125,8 +1125,9 @@ unsigned long page_mapped_in_vma(const struct page *page,
->>  		struct vm_area_struct *vma);
->>  
->>  #else
->> -static inline void unmap_poisoned_folio(struct folio *folio, enum ttu_flags ttu)
->> +static inline int unmap_poisoned_folio(struct folio *folio, unsigned long pfn, bool must_kill)
->>  {
->> +	return -EBUSY;
->>  }
->>  #endif
->>  
->> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
->> index a7b8ccd29b6f..b5212b6e330a 100644
->> --- a/mm/memory-failure.c
->> +++ b/mm/memory-failure.c
->> @@ -1556,8 +1556,34 @@ static int get_hwpoison_page(struct page *p, unsigned long flags)
->>  	return ret;
->>  }
->>  
->> -void unmap_poisoned_folio(struct folio *folio, enum ttu_flags ttu)
->> +int unmap_poisoned_folio(struct folio *folio, unsigned long pfn, bool must_kill)
->>  {
->> +	enum ttu_flags ttu = TTU_IGNORE_MLOCK | TTU_SYNC | TTU_HWPOISON;
->> +	struct address_space *mapping;
->> +
->> +	if (folio_test_swapcache(folio)) {
->> +		pr_err("%#lx: keeping poisoned page in swap cache\n", pfn);
->> +		ttu &= ~TTU_HWPOISON;
->> +	}
->> +
->> +	/*
->> +	 * Propagate the dirty bit from PTEs to struct page first, because we
->> +	 * need this to decide if we should kill or just drop the page.
->> +	 * XXX: the dirty test could be racy: set_page_dirty() may not always
->> +	 * be called inside page lock (it's recommended but not enforced).
->> +	 */
->> +	mapping = folio_mapping(folio);
->> +	if (!must_kill && !folio_test_dirty(folio) && mapping &&
->> +	    mapping_can_writeback(mapping)) {
->> +		if (folio_mkclean(folio)) {
->> +			folio_set_dirty(folio);
->> +		} else {
->> +			ttu &= ~TTU_HWPOISON;
->> +			pr_info("%#lx: corrupted page was clean: dropped without side effects\n",
->> +				pfn);
->> +		}
->> +	}
->> +
->>  	if (folio_test_hugetlb(folio) && !folio_test_anon(folio)) {
->>  		struct address_space *mapping;
-> 
-> This mapping can be removed as we have already defined one above. But this is trivial.
+Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+---
+ io_uring/rsrc.h | 6 ------
+ 1 file changed, 6 deletions(-)
 
-Thanks.
-
-I will resend this patch with the duplicate defination removed.
-
-> 
-> Thanks.
-> .
+diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
+index a6d883c62b22..0297daf02ac7 100644
+--- a/io_uring/rsrc.h
++++ b/io_uring/rsrc.h
+@@ -2,16 +2,10 @@
+ #ifndef IOU_RSRC_H
+ #define IOU_RSRC_H
+ 
+ #include <linux/lockdep.h>
+ 
+-#define IO_NODE_ALLOC_CACHE_MAX 32
+-
+-#define IO_RSRC_TAG_TABLE_SHIFT	(PAGE_SHIFT - 3)
+-#define IO_RSRC_TAG_TABLE_MAX	(1U << IO_RSRC_TAG_TABLE_SHIFT)
+-#define IO_RSRC_TAG_TABLE_MASK	(IO_RSRC_TAG_TABLE_MAX - 1)
+-
+ enum {
+ 	IORING_RSRC_FILE		= 0,
+ 	IORING_RSRC_BUFFER		= 1,
+ };
+ 
+-- 
+2.45.2
 
 
