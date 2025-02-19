@@ -1,190 +1,156 @@
-Return-Path: <linux-kernel+bounces-521465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA982A3BDB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:02:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4660CA3BDBB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:05:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B15143A33CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:02:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17EF916D2D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:05:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C23051DED57;
-	Wed, 19 Feb 2025 12:02:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D188D1DED57;
+	Wed, 19 Feb 2025 12:05:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Sipm70qQ"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="KIvsZxZP"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 456241DED4C
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 12:02:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B60A1CF5E2
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 12:05:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739966553; cv=none; b=ijmWxx6GsDYSqrrQPqkc13Ob4D5llbRyCjntTi5/1gEl6EXZcwhjittraO9wr2CpllEuF6AhnFhFwGqbubdNe/gRSBUTXYSgCpk6+/f9uHbAPNApdOsN98a0bwroEqTzyOu13OzG2SNerd7UQbEy5wZSgFM6oF3u3qQ7SdeLNIY=
+	t=1739966709; cv=none; b=jLLqHnZy/rQN7Z4BscJVYzSxn4hKSkXY33r4e46ixrK9xQmGnK3DMMLzgxgY8SZ9QpIjTJRwxrO32at4Wtgzcn2QNlwZ6B9ybRxg5/L1Cj1lGNEf07dv1oQWag333THt3GbowErT2PqyFtywGBoE5EzgaiOah5lcvQW7TjEHV+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739966553; c=relaxed/simple;
-	bh=qNatnVCTXCSUtPNdRQ6TNSVEZF7p6W8BZcQY4/i8Pf8=;
+	s=arc-20240116; t=1739966709; c=relaxed/simple;
+	bh=5s/ZgHzBUDq1mtrGfLxwMGn2ZXY2/6NZLF5GPClAWxk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t35+p3vQ6J+w3bXLMt4TJ3o7Ecs+dS2pOEnBTQiqZEpawN3uA+XDPvEqpK0OW4BiNRceaitRrZLwPyIRJDPmKWB7C08nRZi2wWCDEb9QMcd1AOVUuYdzOyqw23gOHLzRtF7ssXauHNHWIL1OYCnoUrTJ31PVBx26sb10i6ot4Hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Sipm70qQ; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-545284eac3bso5691833e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 04:02:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739966549; x=1740571349; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=c8xTKanYx+xoZdJey1C0S3ieRvxQW3SxZZcXt2SXB8c=;
-        b=Sipm70qQoOL+kvqiXzPEUzpLyytRtOrhsuUb2wZqNuNmJZ4VUpOP9jXIgjaQA8LnGJ
-         NaIHjbURJlLBHTM/SIbYDrYYPEVHMZCfXMK3v+RJQOGKpbTcj1caNAryoK+eLqcFEaQR
-         WBU7ZEk6hMYkEK4OXYrJshLtEzVTqirmQ8FD3NfqMlFWdCkKDLtm3sXldsKJeLb859Tz
-         /qN87dr7X/9mUBhq90mMEautcGqF05sPJV+BbE/SoW3574rufD/FCBkPIEpnwZKaq/x0
-         u5A9Kt15JEA/LUBtGzwwykxeATS8PTesdsFgV+Wm7XWhOlWN2oIo8NfF7jD1k1cs6Rqe
-         vp0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739966549; x=1740571349;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=c8xTKanYx+xoZdJey1C0S3ieRvxQW3SxZZcXt2SXB8c=;
-        b=LESeOrobmGvJiK7P8z5F/Cb3b2nHmqdjq5tOOeqmocZu09RTiSM8M7Y9Gt3JjDlRf6
-         HePKUyYPRyplfZpvgOdUE8fYBnBr8OJpOvKDpVUSGE4MXzKa0G5qH1z6YNHNfEz+pMko
-         +Z6ECEpuMnbY72lWJwxDiii25UVdxpqB+4eWzoORhzcTsTebH0lLPoS7ST1s06UKTzsr
-         iqoL9xo3+N2CM0/HAGuDQytrVBAzGB3pHq2MDb+Wq4S9zyCWI4LcUB9Ai791hwDuJCEQ
-         DVF92vlshvSeqhtgP03zQGX4J7zaCB0CLRR5KTHGYIaTy3mo3J5g+KRTMGUka4AyZbLJ
-         A4MQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVfLJaIWST/OzA+B6mguJDc7RvXXJjbzvqb8GZp7SzDDA1QqxtfPpsv3JyQT5Mz6ni9BXzl+HgKRb95qDI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyh8OYxObxgoK81Ns59il1Tpd0mA3HSKRQQrDoCpQg1UhM1aEbQ
-	UlXDsZ4u70z1VTT0MiZILmthCs05bg44orOXIrTmvKgRpZ06lUEK/Otnb2qUmAo=
-X-Gm-Gg: ASbGnct4uZ2tf6yWZLzr9Dh+P8uOvcQZeUjjkM4HaS6mIt/L8HPe6V88Ipr2QGdpJ48
-	xmN/uKJbAXjeoaW1r7vPJbtXzLoEwHRdGf2zkiklvMAstVsA82pNRSGI44StXJy/JSpraA2PLEz
-	Iml0N359IYKxIUUnSRQz02G3+h4ZdsrZvP6RwefmoG5BY7V1N6iTQ9BGIWhwkYt/kq9iDa+Wdr1
-	s35sZfHV4krK8SK7YmkHb1LZyiVhevJpCXiM1dChmwJuVUspVxcwxd6OY9Om0liurs3/0k52sbM
-	FtH37eDwqMfykzfiH38bsFbFRiW6WAIpnIQ3D9In7WAcZ6ADMOUUN6w/U8r+CuBIconTXD4=
-X-Google-Smtp-Source: AGHT+IHbk50hGd8GUQwEPPbTJfbgC5WxbsoyaAfYiOyZ8/SynsFsCjbirUJgyZXCdoDx0F42tjrihA==
-X-Received: by 2002:a05:6512:281b:b0:545:1d96:d6f7 with SMTP id 2adb3069b0e04-5462ef197d6mr1485538e87.32.1739966549327;
-        Wed, 19 Feb 2025 04:02:29 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5456468c28csm1382050e87.122.2025.02.19.04.02.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2025 04:02:28 -0800 (PST)
-Date: Wed, 19 Feb 2025 14:02:26 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jagadeesh Kona <quic_jkona@quicinc.com>
-Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>, 
-	Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
-	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/5] clk: qcom: videocc: Add support to attach multiple
- power domains
-Message-ID: <v744bey7hvqkhzx4f6tb7sqds4yh5ggpv2ftuhbjbose3wossd@hjf6sqaitjfx>
-References: <20250218-videocc-pll-multi-pd-voting-v1-0-cfe6289ea29b@quicinc.com>
- <20250218-videocc-pll-multi-pd-voting-v1-4-cfe6289ea29b@quicinc.com>
- <eec2869a-fa8f-4aaf-9fc5-e7a8baf0f864@linaro.org>
- <huluiiaqmunvmffoqadrhssd3kl2toutqtcw7rzamv3sqdglsf@7lz66x4sj3gv>
- <a8350d0f-2a63-46de-86f3-c156809cca0e@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=oVQyBtTJv6doc2sdTrX2+eEbd3iUKsrEEplNZXqKThgDuBAW7XsLilBLCzrAR+xf0+wnyhilfxX+cgWLRvVYAEyaqslku6IJf0C4WBeZkjS4PvEnpnK0rPa1Dg5jChWJwwjGdC0QctTF9v9sdpRbFrj4ssaV7sLJlBWj8IsYaC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=KIvsZxZP; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 819F340E0221;
+	Wed, 19 Feb 2025 12:05:03 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id Bh14lVrcUpQq; Wed, 19 Feb 2025 12:04:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1739966698; bh=IlEwYGsWU+HgFJw77Yn9NIdwvzcfp45kelarRrAI4mE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KIvsZxZPY0a6o6WJhwtxdezGe4Uiy20yMdMpxP6FYqbu44KgSczMiKnruyzFqfnyA
+	 l7dan9nOmgIU7dhqKXLfNQRfNyHAticSbZ3LBesmKQBj4v9HQ19rVBwyutUI0663Qr
+	 SYiPeamIYDYzGNdtHN7bp1lOLERAcOljOW7nGDP/o/s2PwSLmC4OvL81bqfzNO5362
+	 r7c+MKBNtvO10r5kEyRu7CXChvkgDOuUhtPaDHAa3LI/tks/kV6rOfOHsEezgT15Gc
+	 mDUDiBV/EeOBXFufVwa7rcMb5C8VtQezwTNSz/Efl/9cs+IBBj8f2451mhGhVPJ4cU
+	 KATPfUuMjtxwgKkFIdoMqhOK229JrYQvfFm43ihq+X8bmmJZD61mN0gtdjRwcrrfk8
+	 4oXK8tn6sH1oM443FikbakoCj0Q42dQyHgg4bSd7dKwOyJHhJAirlSwBb2bcbPjdUW
+	 UQVmf2BIDcxwH82Y0uDhAImbgCuvtL4CNHg4YIRshYmqgrITZpQF8RwPqcOgEQhX6h
+	 bwsQ0+L2Jz2/syfPQ9eKKqmWjs/nsW0MRFLrWssUWCN3O3hWwTpJnnNa0etsURyM0k
+	 5g6XcQjATVT/CV8dbHEpdBZFe+SH4jAp6+ttVs1SmekDC3LaWLRAdkH2anBJgPu9W/
+	 o0Mweqmc3Hwp/wyn4a3rzpBk=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2FC2240E0220;
+	Wed, 19 Feb 2025 12:04:42 +0000 (UTC)
+Date: Wed, 19 Feb 2025 13:04:41 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Rik van Riel <riel@surriel.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org,
+	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
+	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
+	linux-mm@kvack.org, akpm@linux-foundation.org, jackmanb@google.com,
+	jannh@google.com, mhklinux@outlook.com, andrew.cooper3@citrix.com,
+	Manali Shukla <Manali.Shukla@amd.com>
+Subject: Re: [PATCH v11 05/12] x86/mm: add INVLPGB support code
+Message-ID: <20250219120441.GNZ7XI2aWWUmXh2H2m@fat_crate.local>
+References: <20250213161423.449435-1-riel@surriel.com>
+ <20250213161423.449435-6-riel@surriel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <a8350d0f-2a63-46de-86f3-c156809cca0e@quicinc.com>
+In-Reply-To: <20250213161423.449435-6-riel@surriel.com>
 
-On Wed, Feb 19, 2025 at 05:08:52PM +0530, Jagadeesh Kona wrote:
+On Thu, Feb 13, 2025 at 11:13:56AM -0500, Rik van Riel wrote:
+> Add invlpgb.h with the helper functions and definitions needed to use
+> broadcast TLB invalidation on AMD EPYC 3 and newer CPUs.
 > 
+> Signed-off-by: Rik van Riel <riel@surriel.com>
+> Tested-by: Manali Shukla <Manali.Shukla@amd.com>
+> Tested-by: Brendan Jackman <jackmanb@google.com>
+> Tested-by: Michael Kelley <mhklinux@outlook.com>
+> ---
+>  arch/x86/include/asm/disabled-features.h |   8 +-
+>  arch/x86/include/asm/invlpgb.h           | 101 +++++++++++++++++++++++
+>  arch/x86/include/asm/tlbflush.h          |   1 +
+>  3 files changed, 109 insertions(+), 1 deletion(-)
+>  create mode 100644 arch/x86/include/asm/invlpgb.h
 > 
-> On 2/18/2025 10:49 PM, Dmitry Baryshkov wrote:
-> > On Tue, Feb 18, 2025 at 03:46:15PM +0000, Bryan O'Donoghue wrote:
-> >> On 18/02/2025 14:26, Jagadeesh Kona wrote:
-> >>> During boot-up, the PLL configuration might be missed even after
-> >>> calling pll_configure() from the clock controller probe. This can
-> >>> happen because the PLL is connected to one or more rails that are
-> >>> turned off, and the current clock controller code cannot enable
-> >>> multiple rails during probe. Consequently, the PLL may be activated
-> >>> with suboptimal settings, causing functional issues.
-> >>>
-> >>> To properly configure the video PLLs in the probe on SM8450, SM8475,
-> >>> SM8550, and SM8650 platforms, the MXC rail must be ON along with MMCX.
-> >>> Therefore, add support to attach multiple power domains to videocc on
-> >>> these platforms.
-> >>>
-> >>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
-> >>> ---
-> >>>   drivers/clk/qcom/videocc-sm8450.c | 4 ++++
-> >>>   drivers/clk/qcom/videocc-sm8550.c | 4 ++++
-> >>>   2 files changed, 8 insertions(+)
-> >>>
-> >>> diff --git a/drivers/clk/qcom/videocc-sm8450.c b/drivers/clk/qcom/videocc-sm8450.c
-> >>> index f26c7eccb62e7eb8dbd022e2f01fa496eb570b3f..b50a14547336580de88a741f1d33b126e9daa848 100644
-> >>> --- a/drivers/clk/qcom/videocc-sm8450.c
-> >>> +++ b/drivers/clk/qcom/videocc-sm8450.c
-> >>> @@ -437,6 +437,10 @@ static int video_cc_sm8450_probe(struct platform_device *pdev)
-> >>>   	struct regmap *regmap;
-> >>>   	int ret;
-> >>> +	ret = qcom_cc_attach_pds(&pdev->dev, &video_cc_sm8450_desc);
-> >>> +	if (ret)
-> >>> +		return ret;
-> >>> +
-> >>>   	ret = devm_pm_runtime_enable(&pdev->dev);
-> >>>   	if (ret)
-> >>>   		return ret;
-> >>> diff --git a/drivers/clk/qcom/videocc-sm8550.c b/drivers/clk/qcom/videocc-sm8550.c
-> >>> index 7c25a50cfa970dff55d701cb24bc3aa5924ca12d..d4b223d1392f0721afd1b582ed35d5061294079e 100644
-> >>> --- a/drivers/clk/qcom/videocc-sm8550.c
-> >>> +++ b/drivers/clk/qcom/videocc-sm8550.c
-> >>> @@ -542,6 +542,10 @@ static int video_cc_sm8550_probe(struct platform_device *pdev)
-> >>>   	int ret;
-> >>>   	u32 sleep_clk_offset = 0x8140;
-> >>> +	ret = qcom_cc_attach_pds(&pdev->dev, &video_cc_sm8550_desc);
-> >>> +	if (ret)
-> >>> +		return ret;
-> >>> +
-> >>>   	ret = devm_pm_runtime_enable(&pdev->dev);
-> >>>   	if (ret)
-> >>>   		return ret;
-> >>>
-> >>
-> >> What's the difference between doing the attach here or doing it in
-> >> really_probe() ?
-> > 
-> > I'd second this. If the domains are to be attached before calling any
-> > other functions, move the call to the qcom_cc_map(), so that all drivers
-> > get all domains attached before configuring PLLs instead of manually
-> > calling the function.
-> > 
-> 
-> I earlier tried moving the attach PDs call to qcom_cc_map(), but I faced the below issues
-> 1. desc passed to qcom_cc_map() has const qualifier, so updating desc->pd_list
->    inside qcom_cc_map() is leading to a warning.
+> diff --git a/arch/x86/include/asm/disabled-features.h b/arch/x86/include/asm/disabled-features.h
+> index c492bdc97b05..625a89259968 100644
+> --- a/arch/x86/include/asm/disabled-features.h
+> +++ b/arch/x86/include/asm/disabled-features.h
+> @@ -129,6 +129,12 @@
+>  #define DISABLE_SEV_SNP		(1 << (X86_FEATURE_SEV_SNP & 31))
+>  #endif
+>  
+> +#ifdef CONFIG_X86_BROADCAST_TLB_FLUSH
+> +#define DISABLE_INVLPGB		0
+> +#else
+> +#define DISABLE_INVLPGB		(1 << (X86_FEATURE_INVLPGB & 31))
+> +#endif
+> +
 
-And? Can you fix the warning?
+What does that bring you really in savings?
 
-> 2. If we attach the PDs after calling get_sync() on device, I observed
->    that PDS are not getting enabled during probe. Currently qcom_cc_map()
->    is called after get_sync() is already called on device.
+>  /*
+>   * Make sure to add features to the correct mask
+>   */
+> @@ -146,7 +152,7 @@
+>  #define DISABLED_MASK11	(DISABLE_RETPOLINE|DISABLE_RETHUNK|DISABLE_UNRET| \
+>  			 DISABLE_CALL_DEPTH_TRACKING|DISABLE_USER_SHSTK)
+>  #define DISABLED_MASK12	(DISABLE_FRED|DISABLE_LAM)
+> -#define DISABLED_MASK13	0
+> +#define DISABLED_MASK13	(DISABLE_INVLPGB)
+>  #define DISABLED_MASK14	0
+>  #define DISABLED_MASK15	0
+>  #define DISABLED_MASK16	(DISABLE_PKU|DISABLE_OSPKE|DISABLE_LA57|DISABLE_UMIP| \
+> diff --git a/arch/x86/include/asm/invlpgb.h b/arch/x86/include/asm/invlpgb.h
+> new file mode 100644
+> index 000000000000..a1d5dedd5217
+> --- /dev/null
+> +++ b/arch/x86/include/asm/invlpgb.h
 
-Move PM handling into qcom_cc_map(). Then together with the Bryan's
-proposal most of the probe() functions can just call qcom_cc_probe()
+I remember asking you to add all that gunk to arch/x86/include/asm/tlb.h.
+Please do so.
 
-> 
-> Probably, we can add a new function qcom_cc_attach_pds_map() where we can
-> attach PDs and call qcom_cc_map() inside it. We can then invoke this new
-> function at the start of probe before get_sync(). I will post this change
-> in next version if this aligns with your thoughts.
-> 
-> Thanks,
-> Jagadeesh
+> +#define INVLPGB_VA			BIT(0)
+> +#define INVLPGB_PCID			BIT(1)
+> +#define INVLPGB_ASID			BIT(2)
+> +#define INVLPGB_INCLUDE_GLOBAL		BIT(3)
+> +#define INVLPGB_FINAL_ONLY		BIT(4)
+> +#define INVLPGB_INCLUDE_NESTED		BIT(5)
+> +
+> +/* Flush all mappings for a given pcid and addr, not including globals. */
+> +static inline void invlpgb_flush_user(unsigned long pcid,
+> +				      unsigned long addr)
+
+Please drop this unused function.
 
 -- 
-With best wishes
-Dmitry
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
