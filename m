@@ -1,132 +1,118 @@
-Return-Path: <linux-kernel+bounces-522276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C278CA3C831
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 20:03:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10FD3A3C833
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 20:03:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0D8C1888272
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:03:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2BC616CDB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:03:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A05011B87CC;
-	Wed, 19 Feb 2025 19:02:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GuSu2DcH"
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 276A92144A9;
+	Wed, 19 Feb 2025 19:03:51 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A6691B6D17
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 19:02:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC72419D882;
+	Wed, 19 Feb 2025 19:03:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739991776; cv=none; b=CDiCVCReBpfXx7o4XIuS1z5mPMsqZo9CDKyDtxaXj1fco7OSx9hSWzaIVyh+GCASr0t8BXVKR9sVGFCzIYFXsibJ0i7KvlNMS6gKAUD9lZ87ocNts+/vPGkpoXq4m5nm8tiRAG0IllqhsJPlxvE4Ztk3L1lHx0WN43ciA8wYSV0=
+	t=1739991830; cv=none; b=U5QJkCWvhGfgMfKuJGI8ATBrzwDO59BciBdVtfkk5gcetfSjop5Iqxtz9k+z4NF0dZ8WaxF2pOCX+692J1bdGySQiqgKh6O0eqE3BJqKYQA8NYq5DY5nMoCzOIecXcGLLE9qe7oB1u6z/6GFLOOGrM2lt0LmoCZc9ihgv4+plNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739991776; c=relaxed/simple;
-	bh=xqCqR/hufhb5P8/CLi7BzLgbexyw/GGhmOMSc6YxdVA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=NHrZdJusmsL0UmYNQHCaMxYfaM+aluGXOd4o1xxmZUDpvuFd/pRGGQFIAWd4I9fRS1eGtveByiLRlH6vnuKE9nMwTzCf48CgPlqzEOg77G+GbSrOyklrktgwUwlUPf82vsfKBqbIFBsY1HmsboJiFAmkzFzYnpkoCdxuV8JWBp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GuSu2DcH; arc=none smtp.client-ip=209.85.166.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3d1925db9e7so14255ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 11:02:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739991773; x=1740596573; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xqCqR/hufhb5P8/CLi7BzLgbexyw/GGhmOMSc6YxdVA=;
-        b=GuSu2DcHnkPqOPuI51GdTuhRJWIOuRFR8z7JBtf+mrOCFAOKH+uurXURgXHI3tXEdo
-         Rqu443aZNwn5GUz4h6jzokPcuBY5OFh3sjbpQCRLp97X2COi+q4I6F6eFd5DvFIJ0cnf
-         GaEnZ8mbcEAgaPt7LvTzBfFHcb8t/tfNVe7dMOMswp/0gNtTN5O0XMX6QYAB4uSEuwRx
-         FS1s1CppzNEOmsepLs3726/CPLAJgHukkuS/HkzZvrEApKRN2PAZtq1MhnhooI6D7Ehb
-         nBmNP83ArDm2HxlR8HxaNlyp4QerB4N7a094IqBzap7wixOTkpf9e0FdSjPFAyGTRS94
-         JKhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739991773; x=1740596573;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xqCqR/hufhb5P8/CLi7BzLgbexyw/GGhmOMSc6YxdVA=;
-        b=hLuYL9R4HL6PClqwJw2V4mg4x0hp1OJJr7i6LZYKbY2hSWZ4xqw02m7FpE4FEdM3ko
-         /TxaFyhY885ME57DfEXkIZkCvIXtOjsU7imyFuGX05tX6Mis6Q43Z/to8Yh6B6OFqJ7A
-         mXi5W79QlnTRd2wgV/vObdClAiGTnQGHx/WOFNlt2pmUArgh6APJyRTKkR2fZI+w+ooa
-         /tAj0Ui/g1HaUb2goPnoGyGHyM6FC07nXFpY+DCyAq+7bS0K1CT69zW1CyhTmpAhci2G
-         HIq/I5zmB0FJ8jj8KQ+PfWlWnBHX3Dl0L36lu0AIq3mVY3iEIpm0h8Ah2RmjLrMDFtYp
-         0raw==
-X-Forwarded-Encrypted: i=1; AJvYcCVm2/0mzLOqOjEE2cf8INDv7nB17KP+Ch4+0+WDg16KHat6Y+NR2mW4vKUuGaSeZuJhHuSAC9ExRb8laJM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yze9s+iM8dMrCS/2vc/DG+cpYjRpRO60NN4rnaIGXAoDsGCo+8+
-	SdVSvXpEYJaOeAaEDasB/VljG4rdZYsLxTbRgISSh20hNwTxsGv0z6+YhQoyP2UQ1eW1WuZ2alC
-	kd0u2q5p8KGWdEZCq/kV3zox143FL2rc+1Rgj
-X-Gm-Gg: ASbGncs2+2pDEzqYNJ6j7E2AiPSieADmwjiSR5C084DbBeb0CqtS3207LP1PtOQKGaO
-	7sTAUyDwZ8vtguFfsWYzb9F2+Ajx4to9BqxVVAK33EoC1VxHlQ4pcWhlCM4QDW+LY5/aWRBecDt
-	PEVSU+AGTu7rtaCr3/rnCiD7Bxbw==
-X-Google-Smtp-Source: AGHT+IFTTa9BmF/cvrRnLMexuFSYqNhnGoLFlnoL7/Nc/YaDz0GVAvlFhZqtew98n6t59Vt1hUPih85IrbvbGbZZDxs=
-X-Received: by 2002:a92:c56e:0:b0:3cf:fbc9:5c10 with SMTP id
- e9e14a558f8ab-3d2c0b75e6fmr148655ab.26.1739991773534; Wed, 19 Feb 2025
- 11:02:53 -0800 (PST)
+	s=arc-20240116; t=1739991830; c=relaxed/simple;
+	bh=hV9RkYt4igjtnbWj+6XyMa9R2wiMLiWet1Pt7YOzH00=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GR0FWV8NA1krmnLkI44n0yjdacyu+GV2KkfbBe6UUjWXr6HRfUX4mhTJ4ACPgxNL/7tXg9S7MjYTB6Vs4d75wwLwcmGUpeerpc+c8knjSQ4yrZapL1NyA+ayNVpfc+rlgF+sbg9Q2AG15H0vGMZSis/ieasg0o8+RDPcouJ6Vqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13436C4CED1;
+	Wed, 19 Feb 2025 19:03:43 +0000 (UTC)
+Date: Wed, 19 Feb 2025 19:03:41 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Will Deacon <will@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Arnd Bergmann <arnd@arndb.de>, Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	David Hildenbrand <david@redhat.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Dev Jain <dev.jain@arm.com>, Kevin Brodsky <kevin.brodsky@arm.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] arm64: hugetlb: Fix huge_ptep_get_and_clear() for
+ non-present ptes
+Message-ID: <Z7YrDQry8zo2jS53@arm.com>
+References: <20250217140419.1702389-1-ryan.roberts@arm.com>
+ <20250217140419.1702389-3-ryan.roberts@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250109175401.161340-1-irogers@google.com> <CAP-5=fWghT8+pBFVxn9JDbqHU9NPy9mgyT8Ee=pTdkCKxRoJgA@mail.gmail.com>
-In-Reply-To: <CAP-5=fWghT8+pBFVxn9JDbqHU9NPy9mgyT8Ee=pTdkCKxRoJgA@mail.gmail.com>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 19 Feb 2025 11:02:40 -0800
-X-Gm-Features: AWEUYZkGjeOagc7NGuKyV-tf79xYdyrj45f5ezlrCbEQXR619UXdXuxCSPih_AY
-Message-ID: <CAP-5=fWZAk7XqtL+=CanefkuFxhDsJ22+-uHkrxXi4g8123oew@mail.gmail.com>
-Subject: Re: [PATCH v1] perf parse-events: Tidy name token matching
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, Andi Kleen <ak@linux.intel.com>, 
-	Dominique Martinet <asmadeus@codewreck.org>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250217140419.1702389-3-ryan.roberts@arm.com>
 
-On Mon, Feb 10, 2025 at 11:23=E2=80=AFAM Ian Rogers <irogers@google.com> wr=
-ote:
->
-> On Thu, Jan 9, 2025 at 9:54=E2=80=AFAM Ian Rogers <irogers@google.com> wr=
-ote:
-> >
-> > Prior to commit 70c90e4a6b2f ("perf parse-events: Avoid scanning PMUs
-> > before parsing") names (generally event names) excluded hyphen (minus)
-> > symbols as the formation of legacy names with hyphens was handled in
-> > the yacc code. That commit allowed hyphens supposedly making
-> > name_minus unnecessary. However, changing name_minus to name has
-> > issues in the term config tokens as then name ends up having priority
-> > over numbers and name allows matching numbers since commit
-> > 5ceb57990bf4 ("perf parse: Allow tracepoint names to start with digits
-> > "). It is also permissable for a name to match with a colon (':') in
-> > it when its in a config term list. To address this rename name_minus
-> > to term_name, make the pattern match name's except for the colon, add
-> > number matching into the config term region with a higher priority
-> > than name matching. This addresses an inconsistency and allows greater
-> > matching for names inside of term lists, for example, they may start
-> > with a number.
-> >
-> > Rename name_tag to quoted_name and update comments and helper
-> > functions to avoid str detecting quoted strings which was already done
-> > by the lexer.
-> >
-> > Signed-off-by: Ian Rogers <irogers@google.com>
->
-> Ping. This patch addresses name parsing inconsistencies, in particular
-> events may start with a number without a PMU, but not with. It also
-> aims to give better names to patterns than name_minus and name_tag
-> (with term_name and quoted_name respectively) that have drifted from
-> their original meaning and become to me less than intention revealing.
+On Mon, Feb 17, 2025 at 02:04:15PM +0000, Ryan Roberts wrote:
+> diff --git a/arch/arm64/mm/hugetlbpage.c b/arch/arm64/mm/hugetlbpage.c
+> index 06db4649af91..614b2feddba2 100644
+> --- a/arch/arm64/mm/hugetlbpage.c
+> +++ b/arch/arm64/mm/hugetlbpage.c
+> @@ -163,24 +163,23 @@ static pte_t get_clear_contig(struct mm_struct *mm,
+>  			     unsigned long pgsize,
+>  			     unsigned long ncontig)
+>  {
+> -	pte_t orig_pte = __ptep_get(ptep);
+> -	unsigned long i;
+> -
+> -	for (i = 0; i < ncontig; i++, addr += pgsize, ptep++) {
+> -		pte_t pte = __ptep_get_and_clear(mm, addr, ptep);
+> -
+> -		/*
+> -		 * If HW_AFDBM is enabled, then the HW could turn on
+> -		 * the dirty or accessed bit for any page in the set,
+> -		 * so check them all.
+> -		 */
+> -		if (pte_dirty(pte))
+> -			orig_pte = pte_mkdirty(orig_pte);
+> -
+> -		if (pte_young(pte))
+> -			orig_pte = pte_mkyoung(orig_pte);
+> +	pte_t pte, tmp_pte;
+> +	bool present;
+> +
+> +	pte = __ptep_get_and_clear(mm, addr, ptep);
+> +	present = pte_present(pte);
+> +	while (--ncontig) {
 
-Ping.
+A 'for' loop may be more consistent with the rest of the file but I
+really don't mind the 'while' loop.
 
-Thanks,
-Ian
+Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
 
