@@ -1,46 +1,74 @@
-Return-Path: <linux-kernel+bounces-521807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7A9CA3C285
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:50:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D30E6A3C286
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:50:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1FD33B4BF4
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:47:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BF843BA328
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:48:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C0261F3BA6;
-	Wed, 19 Feb 2025 14:47:45 +0000 (UTC)
-Received: from dediextern.your-server.de (dediextern.your-server.de [85.10.215.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4CAC1F419B;
+	Wed, 19 Feb 2025 14:47:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="CyR4X7pU"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFEF928628E;
-	Wed, 19 Feb 2025 14:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.10.215.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8BA18A959
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 14:47:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739976464; cv=none; b=Bis4ajilexR0VPzPhl+2YxXti7SiGpRdovsvvyxqSowrTL+rDfSHtaIVtoewsb3gkG56ng5KZby8lKcHGMv0P/vaHmjPqJvUZMkyom4AHzbAvJW38OiBIndWDCSORlVZ4jzq643gCO03F4RbyNlWh7EMBzC/HtYgjAVxIbIZfvk=
+	t=1739976469; cv=none; b=P3ci2f6N2RfkVqvbFnz750ObPoTXxLQDwXhxL9zip4pPOF69mFrHnLv1eMKcEQuCspg8Ftvex6p0L44uV2nLr5OMqjix7ckR0NsabRGXwC49up/V6xUZNnGc76BrCZy70fLbwDcz++K0KIknns084NadYKFQRcGZGSiObyRQxP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739976464; c=relaxed/simple;
-	bh=bVhdQ6db7vpeRW96FXxkda9FROiCv9l+LI7ZCrTmn6U=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:From:Subject:
-	 In-Reply-To:Content-Type; b=iSHtV5agESVmDmnDyeK4D68gKU22WGZR/iSl3mHaB171hh6lg3HAjJBI9CGD+c4z981yJUpHXboN/mJ26Kx+8ZgVPQxIcXMagKnUE7O70+I/HpaZtAn2N7f58ZJjLk4pcCAQG5ja0qUc59+JMaVnCzBWn0xU5yJFWPgyMx9C9M8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hetzner-cloud.de; spf=pass smtp.mailfrom=hetzner-cloud.de; arc=none smtp.client-ip=85.10.215.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hetzner-cloud.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hetzner-cloud.de
-Received: from sslproxy05.your-server.de ([78.46.172.2])
-	by dediextern.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <marcus.wichelmann@hetzner-cloud.de>)
-	id 1tklLz-000ADq-88; Wed, 19 Feb 2025 15:47:11 +0100
-Received: from [2a0d:3344:1523:1f10:f118:b2d4:edbb:54af]
-	by sslproxy05.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <marcus.wichelmann@hetzner-cloud.de>)
-	id 1tklLy-0008aU-39;
-	Wed, 19 Feb 2025 15:47:11 +0100
-Message-ID: <dee9bc39-e666-4d97-8a42-240ffb458bcc@hetzner-cloud.de>
-Date: Wed, 19 Feb 2025 15:47:09 +0100
+	s=arc-20240116; t=1739976469; c=relaxed/simple;
+	bh=VWAB+5wF246B3sL2qm5eHiqciG27jLu7YB36Xc4E6Ts=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IqI8pWcmrEyz5tiwbFiMmnNrBvIEHfVoIKAJyN0HYOoz5ZwTXAjvMTsR/9rCSGLwG5zrXBxz2RaUhc/MDa902S4F37bgtHoa0at3z/nJyLrJBajj8jm/6pW//KF1J9Q/pa4kBvcoCCxjLnUPnQHJF5Hod+lPAxqT4+2E1sdh0wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=CyR4X7pU; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51J75NsE012080;
+	Wed, 19 Feb 2025 14:47:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=allqKi
+	ueGaAXBRJ4vpQBjpSHtbMt9C7zoJnCo9rTS9k=; b=CyR4X7pU+uzDN3Lbv5WQ33
+	uIB3iPWTGHPtXsA0t+TY7MsQyE9LoGNsv4pEKLZAX1QzumQFoXAJK1h+GFH02gs1
+	qv3Qq42BrnmjbCfnTRIo2cxBquIdZl056XQrYQ33U92prBjGNUyNB8twxk5/64oe
+	xg17R8HKz18n4+VUZQoI5Fn3tJ9tkz0f0kAfZweYCGii+nIuvxOJOLs/AmhoRh1f
+	3We7yHC5q0+YW5STlQu7+a1nlSmL+nASqOGFStCPSheLfovMcsYPQPVSdqzjSlcS
+	rm1/vS5Q9nFvrDhW9AA24fhIXpbKBdu3IELqPyNMsb5CVz4JItaUsJBOJE9sKIfg
+	==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44w5c9bee9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Feb 2025 14:47:31 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51JDqXdf029296;
+	Wed, 19 Feb 2025 14:47:30 GMT
+Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44w024cjj7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Feb 2025 14:47:30 +0000
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
+	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51JElUPE20251320
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 19 Feb 2025 14:47:30 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5855C5804E;
+	Wed, 19 Feb 2025 14:47:30 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0C57958054;
+	Wed, 19 Feb 2025 14:47:27 +0000 (GMT)
+Received: from [9.61.184.147] (unknown [9.61.184.147])
+	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 19 Feb 2025 14:47:26 +0000 (GMT)
+Message-ID: <2ff87386-c6db-4f2e-be91-213504d99a78@linux.ibm.com>
+Date: Wed, 19 Feb 2025 20:17:25 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,128 +76,91 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-Cc: jasowang@redhat.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, ast@kernel.org,
- daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev,
- eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev,
- john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
- haoluo@google.com, jolsa@kernel.org, mykolal@fb.com, shuah@kernel.org,
- hawk@kernel.org
-References: <20250217172308.3291739-1-marcus.wichelmann@hetzner-cloud.de>
- <20250217172308.3291739-3-marcus.wichelmann@hetzner-cloud.de>
- <67b3e6b6b9dc6_c0e2529482@willemb.c.googlers.com.notmuch>
+Subject: Re: [PATCH] nvme: remove multipath module parameter
+To: Keith Busch <kbusch@kernel.org>, John Meneghini <jmeneghi@redhat.com>
+Cc: hch@lst.de, sagi@grimberg.me, bmarzins@redhat.com,
+        Bryan Gurney <bgurney@redhat.com>, linux-nvme@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Marco Patalano <mpatalan@redhat.com>,
+        axboe@kernel.dk
+References: <20250204211158.43126-1-bgurney@redhat.com>
+ <7c588344-f019-4939-8a93-0a450481d4bc@redhat.com>
+ <Z7Sh-3yHbXVmRbNL@kbusch-mbp>
+ <8a1730a1-1faf-4722-99e1-c3a85257b6f4@redhat.com>
+ <Z7TARX-tFY3mnuU7@kbusch-mbp>
 Content-Language: en-US
-From: Marcus Wichelmann <marcus.wichelmann@hetzner-cloud.de>
-Autocrypt: addr=marcus.wichelmann@hetzner-cloud.de; keydata=
- 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
- wySmewx3h/yfMh0aFxHhvLPxrO2IEQ==
-Subject: Re: [PATCH bpf-next v2 2/6] net: tun: enable transfer of XDP metadata
- to skb
-In-Reply-To: <67b3e6b6b9dc6_c0e2529482@willemb.c.googlers.com.notmuch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Nilay Shroff <nilay@linux.ibm.com>
+In-Reply-To: <Z7TARX-tFY3mnuU7@kbusch-mbp>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: marcus.wichelmann@hetzner-cloud.de
-X-Virus-Scanned: Clear (ClamAV 1.0.7/27554/Wed Feb 19 10:50:24 2025)
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 5sDdhRf2rzB5W1cUsG7tc1BiCsSpIlov
+X-Proofpoint-GUID: 5sDdhRf2rzB5W1cUsG7tc1BiCsSpIlov
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-19_06,2025-02-19_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ spamscore=0 lowpriorityscore=0 suspectscore=0 clxscore=1011 bulkscore=0
+ malwarescore=0 phishscore=0 mlxlogscore=999 adultscore=0 impostorscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502190115
 
-Am 18.02.25 um 02:47 schrieb Willem de Bruijn:
-> Marcus Wichelmann wrote:
->> [...]
->> +	metasize = max(xdp->data - xdp->data_meta, 0);
+
+
+On 2/18/25 10:45 PM, Keith Busch wrote:
+> On Tue, Feb 18, 2025 at 11:31:58AM -0500, John Meneghini wrote:
+>> On 2/18/25 10:06 AM, Keith Busch wrote:
+>>> On Thu, Feb 13, 2025 at 03:37:28PM -0500, John Meneghini wrote:
+>>>> Keith, Christoph and Sagi,
+>>>>
+>>>> This patch has been fully tested and analyzed by Red Hat's QA group and no
+>>>> unexpected side effects or regressions have been found. Both NVMe/FC and NVMe/TCP
+>>>> have been tested. Our QE engineer has asked me to report this upstream.
+>>>
+>>> What's the harm in leaving the parameter? *I* use it so I can test both
+>>> ways without needing to compile multiple kernels.
+>>
+>> LOL.  We've been talking about this since 2017. The goal has always been to remove support for DMMP with NVMe.
 > 
-> Can xdp->data_meta ever be greater than xdp->data?
+> I understand that disabling nvme native mp it is required for device
+> mapper, and I get you want to prevent the possibility of anyone using
+> dm-mp with nvme, but that isn't the only user that wants to see all
+> namespace paths.
+>  
+Agreed! I do have nvme multi-controller disks and I toggle multipath module parameter to
+test it both ways. One with each individual path to a shared namespace and another with 
+a single head node path and then let IO policy determine which path to choose for sending
+IO to disk. 
+In fact, we have few nvme blktests which only runs if device is configured with single path
+and so testing it on multi-controller nvme disk would require us to turn off multipath module
+parameter. In that way this parameter is very handy. My typical way of 
+toggling this parameter is:
+1. disable multipath
+# rmmod nvme
+# rmmod nvme_core
+# modprobe nvme_core multipath=0
+# modprobe nvme
 
-When an xdp_buff has no metadata support, then this is marked by setting
-xdp->data_meta to xdp->data + 1. See xdp_prepare_buff or
-xdp_set_data_meta_invalid.
+Now I could run all nvme blktests which require us disable multipath.
 
-In the case of tun_xdp_one, the xdp_buff is externally created by another
-driver and passed to the tun driver using sendmsg and TUN_MSG_PTR. For
-now, the vhost_net driver is the only driver doing that, and
-xdp->data_meta is set to xdp->data there, marking support for metadata.
+2. enable multipath:
+# rmmod nvme
+# rmmmod nvme_core
+# modprobe nvme_core multipath=1
+# modprobe nvme
 
-So knowing that vhost_net is currently the only driver passing xdp_buffs
-to tun_sendmsg, the check is not strictly necessary. But other drivers
-may use this API as well in the future. That's why I'd like to not make
-the assumption that other drivers always create the xdp_buffs with
-metadata support, when they pass them to tun_sendmsg.
+Now if we get away with multipath parameter then it means we have to re-compile kernel
+disabling CONFIG_NVME_MULTIPATH option and that's something we may want to avoid, 
+if possible.
 
-Or am I just to careful about this? What do you think?
+Having said that I'm not against this patch however we certainly have users who would 
+be using multipath parameter and taking away this parameter may break those user 
+application. So I'm wondering why is it not possible for RedHat to let their customer
+know the fact that starting with RHEL-10, we don't support DMMP for NVMe device even
+though the multipath module parameter is present?
 
-> This is pointer comparison, which is tricky wrt type. It likely is
-> ptrdiff_t and thus signed. But may want to use max_t(long int, ..) to
-> make this explicit.
+Thanks,
+--Nilay
 
-Ah, I see, good point.
 
-So like that?
 
-	metasize = max_t(long int, xdp->data - xdp->data_meta, 0);
-	if (metasize)
-		skb_metadata_set(skb, metasize);
-
-Alternatively, there is also xdp_data_meta_unsupported(xdp_buff) which
-could be used to make this check very explicit, but I don't see it being
-used in network drivers elsewhere. Not sure why.
-
->> +	if (metasize)
->> +		skb_metadata_set(skb, metasize);
->> +
-> 
-> Not strictly needed. As skb_metadata_clear is just
-> skb_metadata_set(skb, 0). But also not wrong, so fine to keep.
-
-Oh, haven't seen that.
-I'm following a common pattern here that I've seen in many other network
-drivers (grep for "skb_metadata_set"):
-
-	unsigned int metasize = xdp->data - xdp->data_meta;
-	[...]
-	if (metasize)
-		skb_metadata_set(skb, metasize);
-
-Marcus
 
