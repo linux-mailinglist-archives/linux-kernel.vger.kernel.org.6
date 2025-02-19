@@ -1,114 +1,166 @@
-Return-Path: <linux-kernel+bounces-522197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EC27A3C749
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:21:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0F07A3C7C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:39:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 247297A7678
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:20:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FE033B3270
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:35:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEBA3215052;
-	Wed, 19 Feb 2025 18:21:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E55D1FCFD2;
+	Wed, 19 Feb 2025 18:35:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="BwE8op6y"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gA4vvv6n"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A537214A91
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 18:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF50B286284
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 18:35:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739989267; cv=none; b=RTZGAjfyOQOPtB738YSnKJbSo+4pE7LVKoyrMwm8nPPeIbxWV6HD7rPwP03o+Las5UDiTQAYio1XjbkMUI/Yiocw+LV2y/vTH5lUUh03SnezP/0V16Oi9MZ/b+HwYhTvfTU8Ep7oUYnD89jU2c38sv0Fm1E/6+qvQUzfWu/8OUM=
+	t=1739990137; cv=none; b=TVZYyoSPxCmrQ+qOF6vYc7cRgHzoR/86M3bHJZncVWl/BwQkfFkv62sODEcQtNnP9J0GV6yRjqKhGteQNfZiydjqTdBfB0dgS+vINLi8iH7ZxDb4HL7adiVYsz4QlrLT3c/RXLHgz/hcJLw1WBNP4KyQcvFI55QUrRChnROkWK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739989267; c=relaxed/simple;
-	bh=8CgxNFyMM7zmFDu9EisOs7jtPU4pHFGMxPxBbuPvqOA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UOTklPlRcY7QUGgkkGxxu4iiFJB9KTVApQf3W1ldKgon8TnzTsttAG4KMUp49Tzi3+XbrYSvc2nQXAQQOu2UuA5Pz4A9IWyOpoK03idtc1ntZBOvnKhpqIhJICIIuj9tOBY2p333PTkNnqwksoLGF15xBxdpJ+ki1WfQFymduDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=BwE8op6y; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id AE63340E015F;
-	Wed, 19 Feb 2025 18:21:01 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id zmtvIYp5kkgb; Wed, 19 Feb 2025 18:20:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1739989257; bh=ATO75li95qD/O2WQMMZ9TytqExWfoWWTxFG2Bb0yENQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BwE8op6ynPbNPhzPkCqY9XBmtMaxuvE7/JuEnaPopXjClTXqGVxKinHkv/KlUcBr9
-	 c0bZ9mnvzHcLE8Hs6NTuhX8t8QQKTBbcKsCM6v1gtLNj+Pd3hBDc83MFo2YfFqqWhU
-	 he/5GEa3bL3ou04JQX4mAEPQXPd4SPdjUPjI+eTCivizg0YgQ1lrDi+iNR2p29Y1dz
-	 urUjNRjvxtuXGJgVC6JtIONyN1U1oO6fgQusxDWzJjUxY0WSQXehQ+RWkhTEgGdARS
-	 jtksNZICB9Wy/omBI/GICo4APOeZcW+oFf68MwTbi/rAqLAyu2LN82TWE9BZONGc0Y
-	 hL1N4RyvvGKpmidXrv8qATHM7jI0pBjjqi99Vr7J3IU+2eSH5hq9Vakv+ydFIAcgZB
-	 psNaENzHh93XyDA5ya2lIjKKQeexCSMoNnedTQoFXKC1boZcoefL8/CNTP0J8TziT0
-	 owPGdRLuXXsXjB0JIyKEUfHXUR42wLobWNKBrErVzajsyM+BeIod5Na2ypFSuAQ3qB
-	 mSI3WRdgKjM+xym1KgXiXU4v59wflB/JMJYfajtaXDQutIUb9UPzR6g8O9EOTGvap5
-	 Z9RnlJoSAMBkgKsZ2Qezsg8CbJ/IC6TDxyklNYfPfhKN+qg4Po04OQGyPSZVC8YN1m
-	 2ApBS8iVNR7a81GWPmmlMQg8=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A52A040E0176;
-	Wed, 19 Feb 2025 18:20:47 +0000 (UTC)
-Date: Wed, 19 Feb 2025 19:20:41 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: "Kaplan, David" <David.Kaplan@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 06/35] x86/bugs: Restructure mmio mitigation
-Message-ID: <20250219182041.GOZ7Yg-VlXLdgX7-3Z@fat_crate.local>
-References: <20250108202515.385902-1-david.kaplan@amd.com>
- <20250108202515.385902-7-david.kaplan@amd.com>
- <20250210232951.x4mbmpjy57jpunb5@jpoimboe>
- <LV3PR12MB926503692B759DF39113626294FD2@LV3PR12MB9265.namprd12.prod.outlook.com>
- <20250211231839.bmcgj4vnvjyba74d@jpoimboe>
- <LV3PR12MB9265E88D27667AE6BAD9F7F394FC2@LV3PR12MB9265.namprd12.prod.outlook.com>
- <20250212231646.gyf4zbqlq7f6kqqf@jpoimboe>
+	s=arc-20240116; t=1739990137; c=relaxed/simple;
+	bh=7prenXagOrLaHxQTYkCyFErnEhCLzGfw+nnqrOCEqVw=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=hCR3N1JL374hABwxZ07cJvIen+As78AlkNUrMT7TGXJfjYhpydcne5j2/6wLy8wnykDvzOocLUxhrK3gjS7iktknnLJJmqhMWnA8NAHamUxmwjXpalpdmiU5CfD15irvv45R0VhiU28CDSQQH34FZ/rgSHKSO4d9Di/9MtTTvU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gA4vvv6n; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739990136; x=1771526136;
+  h=date:from:to:cc:subject:message-id;
+  bh=7prenXagOrLaHxQTYkCyFErnEhCLzGfw+nnqrOCEqVw=;
+  b=gA4vvv6n9v8bYPm7GYuuDsZlxzU+/xHdE/qZENWhTI5uSkhxF4yqERpB
+   5tI2surBD5EMkeieI+HcMLazem5H1AGnd1Rrv16BQZXOdsl4f9TdOXqxT
+   I3BNYewecfY0o/z9XIYIFCDP1rD/uGHbUqPmUzWULYqUYXHGKKx52fJkD
+   JzHFT1jmnbjoXAlp/dgbn0PAO/UEbbggkABAY5U77JHvO1O3SoD+UIUqk
+   30gJqBXiA0qflzzKuHNtBct1LTT4/Wg5EJ3gsWLYlZXOrZySHOjbynYFP
+   4TGKOFoQgT1mZIqkdK4Yjk6WgG98zp8NP7ztlnhEe0Waf+JS87dZ7LnpR
+   A==;
+X-CSE-ConnectionGUID: 0kY5DbfqRKKk+h1LPJdo6A==
+X-CSE-MsgGUID: J26VEjIqT1WOs/R0ljYX4w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11350"; a="63220148"
+X-IronPort-AV: E=Sophos;i="6.13,299,1732608000"; 
+   d="scan'208";a="63220148"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 10:35:35 -0800
+X-CSE-ConnectionGUID: i4DlK0O/TGmV5zLYsy+N7Q==
+X-CSE-MsgGUID: CpwIsLGNSbisaZzPxyHgnw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,299,1732608000"; 
+   d="scan'208";a="115326225"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa010.fm.intel.com with ESMTP; 19 Feb 2025 10:21:17 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tkoh7-0003In-2H;
+	Wed, 19 Feb 2025 18:21:13 +0000
+Date: Thu, 20 Feb 2025 02:20:43 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/misc] BUILD SUCCESS
+ c893ee3f95f16fcb98da934d61483d0b7d8ed568
+Message-ID: <202502200233.FaoTxUh8-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250212231646.gyf4zbqlq7f6kqqf@jpoimboe>
 
-On Wed, Feb 12, 2025 at 03:16:46PM -0800, Josh Poimboeuf wrote:
-> static bool __init verw_mitigation_enabled(void)
-> {
-> 	return mds_mitigation != MDS_MITIGATION_OFF ||
-> 		(taa_mitigation != TAA_MITIGATION_OFF && taa_vulnerable()) ||
-> 		(mmio_mitigation != MMIO_MITIGATION_OFF && mmio_needs_verw());
-> 		(rfds_mitigation != RFDS_MITIGATION_OFF && !rfds_needs_ucode());
-> }
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/misc
+branch HEAD: c893ee3f95f16fcb98da934d61483d0b7d8ed568  x86/amd_node: Add a smn_read_register() helper
 
-Instead of turning it into a head-scratching madness, it might be a lot easier
-if all the places which enable VERW mitigation, would do
+elapsed time: 1454m
 
-	verw_mitigation_enabled = true;
+configs tested: 74
+configs skipped: 1
 
-and then the code can simply check that static var...
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
--- 
-Regards/Gruss,
-    Boris.
+tested configs:
+alpha                           allyesconfig    gcc-14.2.0
+arc                             allmodconfig    gcc-13.2.0
+arc                             allyesconfig    gcc-13.2.0
+arc                  randconfig-001-20250219    gcc-13.2.0
+arc                  randconfig-002-20250219    gcc-13.2.0
+arm                             allmodconfig    gcc-14.2.0
+arm                             allyesconfig    gcc-14.2.0
+arm                  randconfig-001-20250219    gcc-14.2.0
+arm                  randconfig-002-20250219    clang-17
+arm                  randconfig-003-20250219    clang-15
+arm                  randconfig-004-20250219    gcc-14.2.0
+arm64                           allmodconfig    clang-18
+arm64                randconfig-001-20250219    clang-21
+arm64                randconfig-002-20250219    gcc-14.2.0
+arm64                randconfig-003-20250219    gcc-14.2.0
+arm64                randconfig-004-20250219    gcc-14.2.0
+csky                 randconfig-001-20250219    gcc-14.2.0
+csky                 randconfig-002-20250219    gcc-14.2.0
+hexagon                         allmodconfig    clang-21
+hexagon                         allyesconfig    clang-18
+hexagon              randconfig-001-20250219    clang-14
+hexagon              randconfig-002-20250219    clang-21
+i386                            allmodconfig    gcc-12
+i386                             allnoconfig    gcc-12
+i386                            allyesconfig    gcc-12
+i386       buildonly-randconfig-001-20250219    clang-19
+i386       buildonly-randconfig-002-20250219    clang-19
+i386       buildonly-randconfig-003-20250219    gcc-12
+i386       buildonly-randconfig-004-20250219    clang-19
+i386       buildonly-randconfig-005-20250219    clang-19
+i386       buildonly-randconfig-006-20250219    gcc-12
+i386                               defconfig    clang-19
+loongarch            randconfig-001-20250219    gcc-14.2.0
+loongarch            randconfig-002-20250219    gcc-14.2.0
+nios2                randconfig-001-20250219    gcc-14.2.0
+nios2                randconfig-002-20250219    gcc-14.2.0
+parisc               randconfig-001-20250219    gcc-14.2.0
+parisc               randconfig-002-20250219    gcc-14.2.0
+powerpc              randconfig-001-20250219    clang-15
+powerpc              randconfig-002-20250219    clang-17
+powerpc              randconfig-003-20250219    gcc-14.2.0
+powerpc64            randconfig-001-20250219    gcc-14.2.0
+powerpc64            randconfig-002-20250219    gcc-14.2.0
+powerpc64            randconfig-003-20250219    gcc-14.2.0
+riscv                randconfig-001-20250219    clang-21
+riscv                randconfig-002-20250219    gcc-14.2.0
+s390                            allmodconfig    clang-19
+s390                            allyesconfig    gcc-14.2.0
+s390                 randconfig-001-20250219    clang-18
+s390                 randconfig-002-20250219    clang-21
+sh                              allmodconfig    gcc-14.2.0
+sh                              allyesconfig    gcc-14.2.0
+sh                   randconfig-001-20250219    gcc-14.2.0
+sh                   randconfig-002-20250219    gcc-14.2.0
+sparc                           allmodconfig    gcc-14.2.0
+sparc                randconfig-001-20250219    gcc-14.2.0
+sparc                randconfig-002-20250219    gcc-14.2.0
+sparc64              randconfig-001-20250219    gcc-14.2.0
+sparc64              randconfig-002-20250219    gcc-14.2.0
+um                              allmodconfig    clang-21
+um                              allyesconfig    gcc-12
+um                   randconfig-001-20250219    clang-21
+um                   randconfig-002-20250219    clang-21
+x86_64                           allnoconfig    clang-19
+x86_64                          allyesconfig    clang-19
+x86_64     buildonly-randconfig-001-20250219    gcc-12
+x86_64     buildonly-randconfig-002-20250219    clang-19
+x86_64     buildonly-randconfig-003-20250219    gcc-12
+x86_64     buildonly-randconfig-004-20250219    clang-19
+x86_64     buildonly-randconfig-005-20250219    gcc-12
+x86_64     buildonly-randconfig-006-20250219    clang-19
+x86_64                             defconfig    gcc-11
+xtensa               randconfig-001-20250219    gcc-14.2.0
+xtensa               randconfig-002-20250219    gcc-14.2.0
 
-https://people.kernel.org/tglx/notes-about-netiquette
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
