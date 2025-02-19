@@ -1,149 +1,198 @@
-Return-Path: <linux-kernel+bounces-522006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C18CA3C4D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:22:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EA8FA3C4D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:22:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FB4D189BCEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:20:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5616D3B44DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:20:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88E1D1FECAC;
-	Wed, 19 Feb 2025 16:20:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FC231FF5EC;
+	Wed, 19 Feb 2025 16:20:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="U5jUlKZE"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bvwGXcjG";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WfVoEapw";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bvwGXcjG";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WfVoEapw"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 420CE1DFE22;
-	Wed, 19 Feb 2025 16:20:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D8891FE47C
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 16:20:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739982022; cv=none; b=Hd9XrOdKXpbUi6WuNLSkKO8zLIJEeaG4Dm8yP6EsRGFc1j8L4r7+GYIB7WpBfIGlBJP1GPe5lt8+5qDE+oxHDhGRzpd/WmZBfRN2YVyCoFWFDHmMqjDzlTPsqpBMXYN1iaygq2ipWTYcjAposoJu1dHx/Jy8ZZYSp8E7Li5j67M=
+	t=1739982024; cv=none; b=j6ho7Yyd0kOpBOkcip4nFrbLYpvaM7s/t99MH5ENu85ZJwE1zXQiXqjycMR/gP8GOc7gqG0+5UbZ9EimpWC+ZN5Fm0yvwCfGhoGbgXBIsT/cp3GbPYbJLpnNkUxoSUeSfC20/DWnfhz9vPWHOItD5COxk5jR4vEpP75Kn+xat9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739982022; c=relaxed/simple;
-	bh=+0LOcYm6fSsPFqHx1s95FCUsSr75f1CKB2mKlq8PkVk=;
+	s=arc-20240116; t=1739982024; c=relaxed/simple;
+	bh=oWE/B+cS5Sj7ipZO4LJ/VQju3qnVg9yBsznUUUgdgN0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tgkmeSM+F4I9IT3puZHGe0fl9GKNAyPCH4iZa1LYXn9KLeBAkIQJdGInIdXwym35h+PyrACbjqKYMAKy8xhEPyYHd0DxxMCkyJof+F23Dey+jD/X1alLRmKJ1nBFCdNzadNvSJNTJ40fapSyoxS0o3KLuCXF9n8WxdpPYXLCad0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=U5jUlKZE; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb (31-10-206-125.static.upc.ch [31.10.206.125])
-	by mail11.truemail.it (Postfix) with ESMTPA id ECFF01F996;
-	Wed, 19 Feb 2025 17:20:17 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1739982018;
-	bh=+RCWGqzFDgmd2FwOpznRu+lUDieVK6vkZsF0gYl+7kY=; h=From:To:Subject;
-	b=U5jUlKZEBU7blMI+/7EODl7BL/0W3hM9eLGgtBaXrBQYbC6w12J7Q7zUvu7ajqkt9
-	 HqIwFuQKIZ2Tabn3Za/mrbxoalkPEUHm71qXkPKEI518LSAMg1b0GzufY8wQ6XClSE
-	 wqwDSh7F/fCsxqdjcl/yAKb4ZCx/9km77jr7mhkY4W4RK87eo5JmzWVAC15K+3zM3/
-	 Ip2ltv0eaBs/go/TlcXwREYuar0FjSxb8aom9Ok0oudmANqUeaxYGmHtimRfuZ0y7P
-	 N/PGNZdAqeCunavB/qAckqTQP4YYl6MSvTqzMwcG6nyrWqgTO6NEAMRp+kWJq+RNbt
-	 rzUdwbqbQmGIg==
-Date: Wed, 19 Feb 2025 17:20:16 +0100
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Quentin Schulz <quentin.schulz@cherry.de>
-Cc: Francesco Dolcini <francesco@dolcini.it>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Farouk Bouabid <farouk.bouabid@cherry.de>,
-	Francesco Dolcini <francesco.dolcini@toradex.com>,
-	linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/2] hwmon: (amc6821) Add PWM polarity configuration
- with OF
-Message-ID: <20250219162016.GC22470@francesco-nb>
-References: <20250218165633.106867-1-francesco@dolcini.it>
- <20250218165633.106867-3-francesco@dolcini.it>
- <eb5c844a-e726-44c0-a0c1-7796d1a28ec3@cherry.de>
- <20250219103307.GA22470@francesco-nb>
- <24e8abf9-0bb9-4cbd-857b-0842fc914486@cherry.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ugQ9ChreA/vMqhmyIM7lnXXrCtaj2Fo+sfSuoeF7uVuSbI0dgraKMfm5Pyq5aEdU+SSVRpvVrdXGM8oW37geGpFIxMqMS/1P+VXmlnpN7mb5p7l3k5qtOdUOX5R8YXSfxLByhxBGu7r+Zzy77bLBHyMtFtU6QjE8X/rvMOeKFLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bvwGXcjG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=WfVoEapw; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bvwGXcjG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=WfVoEapw; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 665EB211B3;
+	Wed, 19 Feb 2025 16:20:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1739982021; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=P6V+BUY/JEvJ94fWLWOg0Xs7qQ+LQG+BjLQoaO/Fp5k=;
+	b=bvwGXcjG14SPhpCsD0rBKONmr0b0jzzxODLq1NRDgyb4eBH5/kVaYWu8AQBkFn2AgbhQko
+	prCq+iYhlDcOlwuGPBnojDVGsh2h3MIkjh3q0iloPbeWsO2VTDP009XJFfkkjkjV1iX0P6
+	nq2UN9RCKur1NjqjAkKNeetebFA5cRo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1739982021;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=P6V+BUY/JEvJ94fWLWOg0Xs7qQ+LQG+BjLQoaO/Fp5k=;
+	b=WfVoEapwxOvLlq96tBnm0CHJU/7usq7IAU7z2TjYxEJ6vsgYYOrvPowHQIqf7QNFCnbF6A
+	QVtfh6q/L5J25BAw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1739982021; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=P6V+BUY/JEvJ94fWLWOg0Xs7qQ+LQG+BjLQoaO/Fp5k=;
+	b=bvwGXcjG14SPhpCsD0rBKONmr0b0jzzxODLq1NRDgyb4eBH5/kVaYWu8AQBkFn2AgbhQko
+	prCq+iYhlDcOlwuGPBnojDVGsh2h3MIkjh3q0iloPbeWsO2VTDP009XJFfkkjkjV1iX0P6
+	nq2UN9RCKur1NjqjAkKNeetebFA5cRo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1739982021;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=P6V+BUY/JEvJ94fWLWOg0Xs7qQ+LQG+BjLQoaO/Fp5k=;
+	b=WfVoEapwxOvLlq96tBnm0CHJU/7usq7IAU7z2TjYxEJ6vsgYYOrvPowHQIqf7QNFCnbF6A
+	QVtfh6q/L5J25BAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 58048137DB;
+	Wed, 19 Feb 2025 16:20:21 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id nkkmFcUEtmecRQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 19 Feb 2025 16:20:21 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 0AE27A08A7; Wed, 19 Feb 2025 17:20:17 +0100 (CET)
+Date: Wed, 19 Feb 2025 17:20:17 +0100
+From: Jan Kara <jack@suse.cz>
+To: Brian Mak <makb@juniper.net>
+Cc: Michael Stapelberg <michael@stapelberg.ch>, 
+	Christian Brauner <brauner@kernel.org>, "Eric W. Biederman" <ebiederm@xmission.com>, 
+	Jan Kara <jack@suse.cz>, Kees Cook <kees@kernel.org>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, Oleg Nesterov <oleg@redhat.com>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH v3] binfmt_elf: Dump smaller VMAs first in ELF cores
+Message-ID: <a3owf3zywbnntq4h4eytraeb6x7f77lpajszzmsy5d7zumg3tk@utzxmomx6iri>
+References: <036CD6AE-C560-4FC7-9B02-ADD08E380DC9@juniper.net>
+ <20250218085407.61126-1-michael@stapelberg.de>
+ <39FC2866-DFF3-43C9-9D40-E8FF30A218BD@juniper.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <24e8abf9-0bb9-4cbd-857b-0842fc914486@cherry.de>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <39FC2866-DFF3-43C9-9D40-E8FF30A218BD@juniper.net>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	REDIRECTOR_URL(0.00)[urldefense.com];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Spam-Score: -3.80
+X-Spam-Flag: NO
 
-Hi Quentin,
-
-On Wed, Feb 19, 2025 at 12:12:24PM +0100, Quentin Schulz wrote:
-> On 2/19/25 11:33 AM, Francesco Dolcini wrote:
-> > On Wed, Feb 19, 2025 at 11:08:43AM +0100, Quentin Schulz wrote:
-> > > On 2/18/25 5:56 PM, Francesco Dolcini wrote:
-> > > > From: Francesco Dolcini <francesco.dolcini@toradex.com>
-> > > > 
-> > > > Add support to configure the PWM-Out pin polarity based on a device
-> > > > tree property.
-> > > > 
-> > > > Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-> > > > ---
-> > > >    drivers/hwmon/amc6821.c | 7 +++++--
-> > > >    1 file changed, 5 insertions(+), 2 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/hwmon/amc6821.c b/drivers/hwmon/amc6821.c
-> > > > index 1e3c6acd8974..1ea2d97eebca 100644
-> > > > --- a/drivers/hwmon/amc6821.c
-> > > > +++ b/drivers/hwmon/amc6821.c
-> > > > @@ -845,7 +845,7 @@ static int amc6821_detect(struct i2c_client *client, struct i2c_board_info *info
-> > > >    	return 0;
-> > > >    }
-> > > > -static int amc6821_init_client(struct amc6821_data *data)
-> > > > +static int amc6821_init_client(struct i2c_client *client, struct amc6821_data *data)
-> > > >    {
-> > > >    	struct regmap *regmap = data->regmap;
-> > > >    	int err;
-> > > > @@ -864,6 +864,9 @@ static int amc6821_init_client(struct amc6821_data *data)
-> > > >    		if (err)
-> > > >    			return err;
-> > > > +		if (of_property_read_bool(client->dev.of_node, "ti,pwm-inverted"))
-> > > 
-> > > I know that the AMC6821 is doing a lot of smart things, but this really
-> > > tickled me. PWM controllers actually do support that already via
-> > > PWM_POLARITY_INVERTED flag for example. See
-> > > Documentation/devicetree/bindings/hwmon/adt7475.yaml which seems to be
-> > > another HWMON driver which acts as a PWM controller. I'm not sure this is
-> > > relevant, applicable or desired but I wanted to highlight this.
+On Tue 18-02-25 19:53:51, Brian Mak wrote:
+> On Feb 18, 2025, at 12:54 AM, Michael Stapelberg <michael@stapelberg.ch> wrote:
+> 
+> > I think in your testing, you probably did not try the eu-stack tool
+> > from the elfutils package, because I think I found a bug:
+> 
+> Hi Michael,
+> 
+> Thanks for the report. I can confirm that this issue does seem to be
+> from this commit. I tested it with Juniper's Linux kernel with and
+> without the changes.
+> 
+> You're correct that the original testing done did not include the
+> eu-stack tool.
+> 
+> > Current elfutils cannot symbolize core dumps created by Linux 6.12+.
+> > I noticed this because systemd-coredump(8) uses elfutils, and when
+> > a program crashed on my machine, syslog did not show function names.
 > > 
-> >  From the DT binding point of view, it seems to implement the same I am
-> > proposing here with adi,pwm-active-state property.
+> > I reported this issue with elfutils at:
+> > https://urldefense.com/v3/__https://sourceware.org/bugzilla/show_bug.cgi?id=32713__;!!NEt6yMaO-gk!DbttKuHxkBdrV4Cj9axM3ED6mlBHXeQGY3NVzvfDlthl-K39e9QIrZcwT8iCXLRu0OivWRGgficcD-aCuus$
+> > …but figured it would be good to give a heads-up here, too.
 > > 
+> > Is this breakage sufficient reason to revert the commit?
+> > Or are we saying userspace just needs to be updated to cope?
 > 
-> Ah! It seems like I read only the part that agreed with the idea I had in
-> mind :)
+> The way I see it is that, as long as we're in compliance with the
+> applicable ELF specifications, then the issue lies with userspace apps
+> to ensure that they are not making additional erroneous assumptions.
 > 
-> > Do you have anything more specific in mind?
-> > 
+> However, Eric mentioned a while ago in v1 of this patch that he believes
+> that the ELF specification requires program headers be written in memory
+> order. Digging through the ELF specifications, I found that any loadable
+> segment entries in the program header table must be sorted on the
+> virtual address of the first byte of which the segment resides in
+> memory.
 > 
-> Yes, #pwm-cells just below in the binding. You can then see that the third
-> cell in a PWM specifier is for the polarity. If I didn't misread once more,
-> I believe that what's in adi,pwm-active-state is ignored based on the
-> content of the PWM flags in a PWM cell specifier, c.f.
-> adt7475_set_pwm_polarity followed by adt7475_fan_pwm_config in
-> adt7475_probe. I would have assumed that having the polarity inverted in
-> adi,pwm-active-state would mean that the meaning of the flag in the PWM cell
-> specifier would be inverted as well, meaning 0 -> inverted,
-> PWM_POLARITY_INVERTED -> doubly inverted so "normal" polarity.
+> This indicates that we have deviated from the ELF specification with
+> this commit. One thing we can do to remedy this is to have program
+> headers sorted according to the specification, but then continue dumping
+> in VMA size ordering. This would make the dumping logic significantly
+> more complex though.
 > 
-> adt7475_fan_pwm_config was added a few years after adt7475_set_pwm_polarity.
+> Seeing how most popular userspace apps, with the exception of eu-stack,
+> seem to work, we could also just leave it, and tell userspace apps to
+> fix it on their end.
 
-I think this is out of scope for this patch. The amc6821 can control the
-fan PWM stand-alone, this change has nothing to do with the generic pwm
-framework, this is required to have the PWM out pin correctly driven by
-the fan controller chip.
+Well, it does not seem eu-stack is that unpopular and we really try hard to
+avoid user visible regressions. So I think we should revert the change. Also
+the fact that the patch breaks ELF spec is an indication there may be other
+tools that would get confused by this and another reason for a revert...
 
-> Module params over DT is fine with me, I just want consistency here, so if
-> it's always the case, fine :)
-
-Ok, I'll implement it this way.
-
-Francesco
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
