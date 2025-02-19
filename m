@@ -1,208 +1,223 @@
-Return-Path: <linux-kernel+bounces-520678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77541A3AD2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 01:40:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 20ABCA3AD2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 01:40:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF8707A56DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 00:39:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C52B7A5740
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 00:39:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31F7A224D6;
-	Wed, 19 Feb 2025 00:39:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFA5F18E1A;
+	Wed, 19 Feb 2025 00:40:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KuzF1ekW"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lt9RzjAp"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C8F2286297;
-	Wed, 19 Feb 2025 00:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EDCB35280;
+	Wed, 19 Feb 2025 00:40:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739925580; cv=none; b=fFobMYinqLaEArLXSUOIchY+1sl5rku3VERvpoUGkjH6WJYH4iC1H9P+zkSyIz7Bas8FT7JNbBxiqUcGU0CEkigeQ1CqoyCm6KdADqogOYhlX8LNoLlMEpNOMa6UEBusk+8h0b0qOjQEPKCxvPbUM11kCza3vR0z07VNZpH4z8c=
+	t=1739925604; cv=none; b=k2KKkHnUGTmLeoSc2LMzduD7lCYx7LRThKgR8UJ6BvxmdQUKk1KUOI8vfFkMACmdv5tJj+wz1hlbU+B0vIqfsUhy0Nm7U5r5qnapX9QunWQT5VJ5SWtAS82UyynZOfTElSP4heb+aF4dnUn0dtvn7PBxq4w+QCrsW/wwXRNZ/Wc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739925580; c=relaxed/simple;
-	bh=ny12EX+o4qM029fH3mY2iSlT+ERh8W7+sa79jE2Anl4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r0rfUu/1SCFlphcSx93lNQtKwCH+oP8f/MZhP0lts8OySYVP2gWaP2p7J0td0/cIX1z4MiCJiOkyK9wYa9tu8IgzsD0/1mk8MoyF/i1HCcHMxzU5rc/XZ6gNA5eXFlelSG8UWO255nesRBTeOh5NH9Hl7fWjvCMmq/2OyKdhD9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KuzF1ekW; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739925579; x=1771461579;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=ny12EX+o4qM029fH3mY2iSlT+ERh8W7+sa79jE2Anl4=;
-  b=KuzF1ekWnUktjghpmEJw4PpkydsUrhA/ZgnXNbmTWZrTImhT6anDojTI
-   y0kFKQ55KGW2Jz79imC4v6PrOxrPFtEM2DcRJxFAYaP53cFcsrQA8zfy1
-   fsQZzZIlcK1ei3aFQay/hrCtGdQwX/EU1rq00mBOie8Oj5GbvEjsmow2B
-   BkjQZ2htEh2WC2UBVzUSNI8EoHnX0/2Q7VG2tSIFjgrolEf7k3cI/2hz7
-   G+X7QOM/Z0+nmtTwyEmH1ykLhmDn2JZeyp6aYbVJvMiIYoSQ/ZJ/RYJMX
-   kz5SzXYGTip2bD8xy+ekl7HUVSacEz9R06hVGWyJNiN81LxZmYg4UCV0n
-   Q==;
-X-CSE-ConnectionGUID: vWbTiqaAQ5OyySeKYpSjyQ==
-X-CSE-MsgGUID: amn+OfK3SfuUmmXPAPn+Ug==
-X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="50859735"
-X-IronPort-AV: E=Sophos;i="6.13,296,1732608000"; 
-   d="scan'208";a="50859735"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 16:39:37 -0800
-X-CSE-ConnectionGUID: StxpGDHDSbyAh5uQiajbzA==
-X-CSE-MsgGUID: FiydVNMLQ+SQcbnjn4HSPg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="145453200"
-Received: from mgoodin-mobl2.amr.corp.intel.com (HELO [10.125.109.220]) ([10.125.109.220])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 16:39:30 -0800
-Message-ID: <d0450bc8-6585-49ca-9cad-49e65934bd5c@intel.com>
-Date: Tue, 18 Feb 2025 16:39:34 -0800
+	s=arc-20240116; t=1739925604; c=relaxed/simple;
+	bh=V579PLhg5kd9B6AIRrCrl53a5ccGV5L8cH2lf2PBTEs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=tk6zP4kXx+KcXphqEpuauKZZmJQgjZAZlXGvLXeIPR1Fl7BWS3roKLFdE5U4o8DGrSB6yQC3dffAAdrhAF4FEoD8g06anrYL/OVtFUaQFF/COmcYCpASEhBC4rHxckOrh6CZH42lGRYLB3tHjrDEucQlF282XvJhFF2SZ+zogLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lt9RzjAp; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-38f325dd90eso2600718f8f.3;
+        Tue, 18 Feb 2025 16:40:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739925600; x=1740530400; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-disposition:mime-version:reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4JHOHl2LXDy5H0c0r+6Un847IQsdcEJr0cAAnvM10wM=;
+        b=lt9RzjApPbwUdd1fi4S8Jp7Zv0pBzHh9s4gmR1YmXE/9Cw3eELNu3KeihM5rxdMeiW
+         mPHJo0v+5gK7I7FFKcL9KKfLWFFDzo0q5dvlvXeTTmHz5pc4Nf88Q5YkVVaOwTsbFFH/
+         7fWvHkUVQvKUwaQZrofMzcI9/AVKMntZ9zSuwEXl1ys7NQY3CR4wSRIHUFfUKNK+HshG
+         B96zAVo0eMlOVG3d1t4ouv1zQMWRu6sWnzFYlMSRoW92byas1YLhRWM3qcZeJC8CDQnK
+         7mbNy+pgO54F6G5g0VBmC8J8OIjr2JJnQvHYPl0P40ZKx9mBMS4v2r88jIWH33AMGUfq
+         yG/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739925600; x=1740530400;
+        h=content-transfer-encoding:content-disposition:mime-version:reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4JHOHl2LXDy5H0c0r+6Un847IQsdcEJr0cAAnvM10wM=;
+        b=DWhxmbiZLPTBwAHXyJQthp9zbCq81oQSN5TaX9UTtn4SaoHuBfRcH8XumlfK23TxpI
+         2Cehj7VS2nI8+CBdm5/Ec9CGwrKN4QiUIqZyAtszjxbQJ2lIX0zFy/gmTvPNNWM3rrPi
+         nKeQLNA957dRwHBne0uWON+jd0EQlWMZkwZi+uD5oKIZshvsSpWbHWi3LQVOVaQzT97y
+         rrQeJ2kV5yQjR9Tke/9pQbBlSzTUWcGei2vZzJYHcz/Q5EtUcX1cRz2IRgKZR4f48Uzk
+         1r6oAYD+1fFYMfY8g4cEnIwANjFJxBYC4RYnGYGJb5wps5kl8DmO1T1Z3OnM+9AYRL5T
+         OVFw==
+X-Forwarded-Encrypted: i=1; AJvYcCWrRSRpPew3x8qwPeO162VQTUK0SC2UP0Dsjg7Kkfbc/cgLY4GZvqoApYWDgQN2VKwwvUZNW+vH@vger.kernel.org, AJvYcCWsXMont4hSKnQ/DXNE6fGT1hvLgsr1/h4IGbwP38ca90Xrc+heKMXTQH3xAFSX79YwUFKs1cpO7M/LZ/I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6em0xvNTbb7Xy83oVa2ErKXFnTkRLwSU1PeX8e1rqL8+o6Kkq
+	qYbN2mEea5VQnJh5+0loAWxs3eMyRQYoM0+g5kbuYEb9OsmAZAwe
+X-Gm-Gg: ASbGncvMUp3L+olaAazS1E/66r9RaK4ir/N6bCToPKAppDim5a4qcdWkNrX+FLr0osI
+	7oL7S87FHgsBldyTGF9EDXLlBn9YFWu/n4GTDnEpuaafNCI/VSZizVsoEkENukt6q6jjgNHki+F
+	sPev5+6rMNE25RQQuhWIdontxcO8Iy5ImVF6KE7httnJnJCLZPEPheSxrHNHDn4vtpTPvp2NHfV
+	8/ezH+RCAPJ3k6UbXsLub8z8UTB57H5N2FoQXnt7B7susQ53FK32gcjWbwENbppiDKGrT6vv2AJ
+	Lh3HuyBk6ePs79bgvXM=
+X-Google-Smtp-Source: AGHT+IH3+KUECayclfSqQFaRWxuKG5B08STeM0zSF0183amtqyEvTCXByOdJbxpa7ysaG2Ke1EpuiQ==
+X-Received: by 2002:a5d:518b:0:b0:38f:2f88:b034 with SMTP id ffacd0b85a97d-38f33f4e284mr11303156f8f.42.1739925600068;
+        Tue, 18 Feb 2025 16:40:00 -0800 (PST)
+Received: from qasdev.system ([2a02:c7c:6696:8300:9fde:9e4f:b0fd:6a37])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258b434fsm16570328f8f.16.2025.02.18.16.39.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2025 16:39:58 -0800 (PST)
+Date: Wed, 19 Feb 2025 00:39:47 +0000
+From: Qasim Ijaz <qasdev00@gmail.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: shaggy@kernel.org, zhaomengmeng@kylinos.cn, llfamsec@gmail.com,
+	gregkh@linuxfoundation.org, ancowi69@gmail.com,
+	jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+	syzbot+4e6e7e4279d046613bc5@syzkaller.appspotmail.com,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] jfs: fix slab-out-of-bounds read in ea_get()
+Message-ID: <Z7UoUyuHzGWwvBOK@qasdev.system>
+Reply-To: 2025021350-geometry-appear-9d84@gregkh.smtp.subspace.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 29/30] x86/mm, mm/vmalloc: Defer
- flush_tlb_kernel_range() targeting NOHZ_FULL CPUs
-To: Valentin Schneider <vschneid@redhat.com>, Jann Horn <jannh@google.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
- virtualization@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- loongarch@lists.linux.dev, linux-riscv@lists.infradead.org,
- linux-perf-users@vger.kernel.org, xen-devel@lists.xenproject.org,
- kvm@vger.kernel.org, linux-arch@vger.kernel.org, rcu@vger.kernel.org,
- linux-hardening@vger.kernel.org, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org, bpf@vger.kernel.org,
- bcm-kernel-feedback-list@broadcom.com, Juergen Gross <jgross@suse.com>,
- Ajay Kaher <ajay.kaher@broadcom.com>,
- Alexey Makhalov <alexey.amakhalov@broadcom.com>,
- Russell King <linux@armlinux.org.uk>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>,
- Josh Poimboeuf <jpoimboe@kernel.org>,
- Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
- Sean Christopherson <seanjc@google.com>, Paolo Bonzini
- <pbonzini@redhat.com>, Andy Lutomirski <luto@kernel.org>,
- Arnd Bergmann <arnd@arndb.de>, Frederic Weisbecker <frederic@kernel.org>,
- "Paul E. McKenney" <paulmck@kernel.org>, Jason Baron <jbaron@akamai.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ard Biesheuvel <ardb@kernel.org>,
- Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
- Joel Fernandes <joel@joelfernandes.org>,
- Josh Triplett <josh@joshtriplett.org>, Boqun Feng <boqun.feng@gmail.com>,
- Uladzislau Rezki <urezki@gmail.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
- Juri Lelli <juri.lelli@redhat.com>, Clark Williams <williams@redhat.com>,
- Yair Podemsky <ypodemsk@redhat.com>, Tomas Glozar <tglozar@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall
- <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
- Kees Cook <kees@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
- Christoph Hellwig <hch@infradead.org>, Shuah Khan <shuah@kernel.org>,
- Sami Tolvanen <samitolvanen@google.com>, Miguel Ojeda <ojeda@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- "Mike Rapoport (Microsoft)" <rppt@kernel.org>,
- Samuel Holland <samuel.holland@sifive.com>, Rong Xu <xur@google.com>,
- Nicolas Saenz Julienne <nsaenzju@redhat.com>,
- Geert Uytterhoeven <geert@linux-m68k.org>,
- Yosry Ahmed <yosryahmed@google.com>,
- "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
- Jinghao Jia <jinghao7@illinois.edu>, Luis Chamberlain <mcgrof@kernel.org>,
- Randy Dunlap <rdunlap@infradead.org>, Tiezhu Yang <yangtiezhu@loongson.cn>
-References: <20250114175143.81438-1-vschneid@redhat.com>
- <20250114175143.81438-30-vschneid@redhat.com>
- <CAG48ez1Mh+DOy0ysOo7Qioxh1W7xWQyK9CLGNU9TGOsLXbg=gQ@mail.gmail.com>
- <xhsmh34hhh37q.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <CAG48ez3H8OVP1GxBLdmFgusvT1gQhwu2SiXbgi8T9uuCYVK52w@mail.gmail.com>
- <xhsmh5xlhk5p2.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <CAG48ez1EAATYcX520Nnw=P8XtUDSr5pe+qGH1YVNk3xN2LE05g@mail.gmail.com>
- <xhsmh34gkk3ls.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <352317e3-c7dc-43b4-b4cb-9644489318d0@intel.com>
- <xhsmhjz9mj2qo.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <xhsmhjz9mj2qo.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-On 2/18/25 14:40, Valentin Schneider wrote:
->> In practice, it's mostly limited like that.
->>
->> Architecturally, there are no promises from the CPU. It is within its
->> rights to cache anything from the page tables at any time. If it's in
->> the CR3 tree, it's fair game.
->>
-> So what if the VMEMMAP range *isn't* in the CR3 tree when a CPU is
-> executing in userspace?
+On Thu, Feb 13, 2025 at 11:07:07AM +0100, Greg KH wrote:
+> On Thu, Feb 13, 2025 at 12:20:25AM +0000, Qasim Ijaz wrote:
+> > During the "size_check" label in ea_get(), the code checks if the extended 
+> > attribute list (xattr) size matches ea_size. If not, it logs 
+> > "ea_get: invalid extended attribute" and calls print_hex_dump().
+> > 
+> > Here, EALIST_SIZE(ea_buf->xattr) returns 4110417968, which exceeds 
+> > INT_MAX (2,147,483,647). Then ea_size is clamped:
+> > 
+> > 	int size = clamp_t(int, ea_size, 0, EALIST_SIZE(ea_buf->xattr));
+> > 
+> > Although clamp_t aims to bound ea_size between 0 and 4110417968, the upper 
+> > limit is treated as an int, causing an overflow above 2^31 - 1. This leads 
+> > "size" to wrap around and become negative (-184549328).
+> > 
+> > The "size" is then passed to print_hex_dump() (called "len" in 
+> > print_hex_dump()), it is passed as type size_t (an unsigned 
+> > type), this is then stored inside a variable called 
+> > "int remaining", which is then assigned to "int linelen" which 
+> > is then passed to hex_dump_to_buffer(). In print_hex_dump() 
+> > the for loop, iterates through 0 to len-1, where len is 
+> > 18446744073525002176, calling hex_dump_to_buffer() 
+> > on each iteration:
+> > 
+> > 	for (i = 0; i < len; i += rowsize) {
+> > 		linelen = min(remaining, rowsize);
+> > 		remaining -= rowsize;
+> > 
+> > 		hex_dump_to_buffer(ptr + i, linelen, rowsize, groupsize,
+> > 				   linebuf, sizeof(linebuf), ascii);
+> > 	
+> > 		...
+> > 	}
+> > 	
+> > The expected stopping condition (i < len) is effectively broken 
+> > since len is corrupted and very large. This eventually leads to 
+> > the "ptr+i" being passed to hex_dump_to_buffer() to get closer 
+> > to the end of the actual bounds of "ptr", eventually an out of 
+> > bounds access is done in hex_dump_to_buffer() in the following 
+> > for loop:
+> > 
+> > 	for (j = 0; j < len; j++) {
+> > 			if (linebuflen < lx + 2)
+> > 				goto overflow2;
+> > 			ch = ptr[j];
+> > 		...
+> > 	}
+> > 
+> > To fix this we should validate "EALIST_SIZE(ea_buf->xattr)" 
+> > before it is utilised.
+> > 
+> > Reported-by: syzbot <syzbot+4e6e7e4279d046613bc5@syzkaller.appspotmail.com>
+> > Tested-by: syzbot <syzbot+4e6e7e4279d046613bc5@syzkaller.appspotmail.com>
+> > Closes: https://syzkaller.appspot.com/bug?extid=4e6e7e4279d046613bc5
+> > Fixes: d9f9d96136cb ("jfs: xattr: check invalid xattr size more strictly")
+> > Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
+> > ---
+> >  fs/jfs/xattr.c | 15 ++++++++++-----
+> >  1 file changed, 10 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/fs/jfs/xattr.c b/fs/jfs/xattr.c
+> > index 24afbae87225..7575c51cce9b 100644
+> > --- a/fs/jfs/xattr.c
+> > +++ b/fs/jfs/xattr.c
+> > @@ -559,11 +555,16 @@ static int ea_get(struct inode *inode, struct ea_buffer *ea_buf, int min_size)
+> >  
+> >        size_check:
+> >  	if (EALIST_SIZE(ea_buf->xattr) != ea_size) {
+> > -		int size = clamp_t(int, ea_size, 0, EALIST_SIZE(ea_buf->xattr));
+> > -
+> > -		printk(KERN_ERR "ea_get: invalid extended attribute\n");
+> > -		print_hex_dump(KERN_ERR, "", DUMP_PREFIX_ADDRESS, 16, 1,
+> > -				     ea_buf->xattr, size, 1);
+> > +		if (unlikely(EALIST_SIZE(ea_buf->xattr) > INT_MAX)) {
+> > +			printk(KERN_ERR "ea_get: extended attribute size too large: %u > INT_MAX\n",
+> > +			       EALIST_SIZE(ea_buf->xattr));
+> > +		} else {
+> > +			int size = clamp_t(int, ea_size, 0, EALIST_SIZE(ea_buf->xattr));
+> > +
+> > +			printk(KERN_ERR "ea_get: invalid extended attribute\n");
+> > +			print_hex_dump(KERN_ERR, "", DUMP_PREFIX_ADDRESS, 16, 1,
+> > +				       ea_buf->xattr, size, 1);
+> > +		}
+> >  		ea_release(inode, ea_buf);
+> >  		rc = -EIO;
+> >  		goto clean_up;
+> > -- 
+> > 2.39.5
+> > 
 > 
-> AIUI that's the case with kPTI - the remaining kernel pages should mostly
-> be .entry.text and cpu_entry_area, at least for x86.
+> Hi,
+> 
+> This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+> a patch that has triggered this response.  He used to manually respond
+> to these common problems, but in order to save his sanity (he kept
+> writing the same thing over and over, yet to different people), I was
+> created.  Hopefully you will not take offence and will fix the problem
+> in your patch and resubmit it so that it can be accepted into the Linux
+> kernel tree.
+> 
+> You are receiving this message because of the following common error(s)
+> as indicated below:
+> 
+> - You have marked a patch with a "Fixes:" tag for a commit that is in an
+>   older released kernel, yet you do not have a cc: stable line in the
+>   signed-off-by area at all, which means that the patch will not be
+>   applied to any older kernel releases.  To properly fix this, please
+>   follow the documented rules in the
+>   Documentation/process/stable-kernel-rules.rst file for how to resolve
+>   this.
+> 
+> If you wish to discuss this problem further, or you have questions about
+> how to resolve this issue, please feel free to respond to this email and
+> Greg will reply once he has dug out from the pending patches received
+> from other developers.
+>
+Hi Greg,
 
-Having part of VMEMMAP not in the CR3 tree should be harmless while
-running userspace. VMEMMAP is a purely software structure; the hardware
-doesn't do implicit supervisor accesses to it. It's also not needed in
-super early entry.
+Just following up on this patch. I’ve sent v2 with the added CC stable tag. Here’s the link:
+https://lore.kernel.org/all/20250213210553.28613-1-qasdev00@gmail.com/
 
-Maybe I missed part of the discussion though. Is VMEMMAP your only
-concern? I would have guessed that the more generic vmalloc()
-functionality would be harder to pin down.
+Let me know if any further changes are needed.
+
+Thanks,
+Qasim
+> thanks,
+> 
+> greg k-h's patch email bot
 
