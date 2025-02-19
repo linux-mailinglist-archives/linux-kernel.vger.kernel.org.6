@@ -1,136 +1,130 @@
-Return-Path: <linux-kernel+bounces-521233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71034A3B9D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:36:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8798A3B988
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:33:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38E4C17EEBB
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:27:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85CE83BFD55
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:27:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DC1C1DF737;
-	Wed, 19 Feb 2025 09:23:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D1C41DF98E;
+	Wed, 19 Feb 2025 09:23:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f27tE3nY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fAcSnX3E"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BEC31B85EC;
-	Wed, 19 Feb 2025 09:23:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4116158862;
+	Wed, 19 Feb 2025 09:23:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739956997; cv=none; b=V9fYF9Dm9XCS3CH54m0XTzN8pStu+VAoBfVEMKZb5Y+dhoIVKCYe4e3DC7nRBlK0thpTzQ60d1ALDn1Rm4R6cxLWUdhRXb2ubL2pj1XixRWkKef8Aun8yuqEpsgcnsL9gZUKwuNs18OabosWi1BL3HE1tkzvGC5UxulS901Bz6o=
+	t=1739957006; cv=none; b=IjigKyNLEUXeYy7ikoJo25WivnN9J2tVEKPugT/Jm/0BvjYYU/A6ElfpGW3GX9/DQ9OxKD1BBUS5oSdA0c0CAbTelAraKnRqG9PJAr4yXL4FKWRCYlVq0PHzhx0HSZFZ1B5w2hpTyaG+zQKXAwAeQlnrW8oOjin4UV12NMAP78o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739956997; c=relaxed/simple;
-	bh=edDYdJ1koOY5vO64/PjG+7myObUD05yXqicg12hNyTA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CiS0ABXmVvDHzz3WSigKwe6tmI8SE2tAvSmNr6VaDsMNn8DLAuTMpwi9pSeUauCPGInkCgiBaAZskBj1FvxhoWRMNygnhhC6RfJj71V/DNt470q/4vwzlj7/4baOeSJA/S+Pso7RtCClNOl+qgaBlVfNgk7pJXxv6hFYE5XGHos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f27tE3nY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0C53C4CED1;
-	Wed, 19 Feb 2025 09:23:15 +0000 (UTC)
+	s=arc-20240116; t=1739957006; c=relaxed/simple;
+	bh=YhYVhJFyUQYcroil7prEDBRqCCm4sFrb0M3BiFATJmQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TQUp1ogJIgq3JNsH423rekXydSBNDhYeJuEuVVCyOshOGnMgH6XbmYGRHxJMbdSBlSDuxk3j6ELtb7CHi37X5LAG6uCg2o48lGcAViixRJgETevvhP1OvwQ71IqTdgJ03x68xlkt2XiO1rFe9x1C9l64Sy4mC2tewpI8AnLWwqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fAcSnX3E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BB66C4CEE7;
+	Wed, 19 Feb 2025 09:23:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739956996;
-	bh=edDYdJ1koOY5vO64/PjG+7myObUD05yXqicg12hNyTA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=f27tE3nYzA0v/r8V4+mbWwUAUaUd+unL7IsUt089+1o9U8gVeGVx1XjYgsAxx9UQy
-	 CarEWcnY+QDulSLTY9yxPUlOp+neTD4m1zuwQsfAfjY8iQ2yHGo2N9AyRnkC9Tsr8s
-	 vA76eQXCcMbFdBk0TDh/nyj5AU4j9eCajorEXiMdUlcQrVOrZgAr2brr49iOjSYgNu
-	 5CAzgneHUbJ2Ft2LhV3n/lXAu1wBkMBZKSZmaK6Zf29xqZMmsQLxw0Xb3N7rpHv1eH
-	 hr72zqmqoBYcmUJc7MxUmBNpIzsaT2b6bZK6ZanQnitwtaB4ICruHY9RvYtxOdfEOk
-	 FyEGtQRZci8cg==
-Date: Wed, 19 Feb 2025 10:23:12 +0100
-From: Alexey Gladkov <legion@kernel.org>
-To: Jiri Slaby <jirislaby@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	LKML <linux-kernel@vger.kernel.org>, linux-serial@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] tty/vt: Use KVAL instead of use bit operation
-Message-ID: <Z7WjABCTLE4CisKY@example.org>
-References: <cover.1739881707.git.legion@kernel.org>
- <01ee8849ef8dc49c93a77bc4961ad56b9d435b8a.1739881707.git.legion@kernel.org>
- <3d96896d-5bb7-4ae5-a6c9-b586337eaa3f@kernel.org>
+	s=k20201202; t=1739957006;
+	bh=YhYVhJFyUQYcroil7prEDBRqCCm4sFrb0M3BiFATJmQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=fAcSnX3EF5Q+IrlrEyrnqGo2Un8ajJzh6xKpblEgnfstRR4eRks2hb9DnEQ+muGxO
+	 Ag1hM80kkg44gIMSZAfmM8BvdQReN2ciCsUEXWF7EMAYw64JB2ooQ3UD27sYwZ1ZEy
+	 CpW24qZagRG6+Zno8B0KryXnXCHgFfKRPLjH+dw7xX4FJhG0tDnY6XE4QxPz9OCImm
+	 ICMOY21O0jh/1JBjo6brcbRuUmA0Wv4EpdEYLQNU2PWSftE/I3fSYKxVR3QkJUnqkf
+	 aVfyFMpjYEZLChLQxXyHfrDV+PdDX7tXK6ECJ3hpIbTUnGnaT80M0czDb4l0pCL/T+
+	 H3uI8VAzuZarQ==
+Message-ID: <23f1971f-117a-4515-a7e8-116f03abccc7@kernel.org>
+Date: Wed, 19 Feb 2025 10:23:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3d96896d-5bb7-4ae5-a6c9-b586337eaa3f@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/7] dt-bindings: display: mediatek: ccorr: Add support
+ for MT8196
+To: Jay Liu <jay.liu@mediatek.com>, Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Yongqiang Niu <yongqiang.niu@mediatek.com>, CK Hu <ck.hu@mediatek.com>,
+ Hsin-Yi Wang <hsinyi@chromium.org>
+Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ Project_Global_Chrome_Upstream_Group@mediatek.com
+References: <20250219092040.11227-1-jay.liu@mediatek.com>
+ <20250219092040.11227-5-jay.liu@mediatek.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250219092040.11227-5-jay.liu@mediatek.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 19, 2025 at 07:24:52AM +0100, Jiri Slaby wrote:
-> On 18. 02. 25, 13:29, Alexey Gladkov wrote:
-> > The K_HANDLERS always gets KVAL as an argument. It is better to use the
-> > KVAL macro itself instead of bit operation.
-> > 
-> > Signed-off-by: Alexey Gladkov <legion@kernel.org>
-> > ---
-> >   drivers/tty/vt/keyboard.c | 4 ++--
-> >   1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/tty/vt/keyboard.c b/drivers/tty/vt/keyboard.c
-> > index 804355da46f5..7df041ac4d5c 100644
-> > --- a/drivers/tty/vt/keyboard.c
-> > +++ b/drivers/tty/vt/keyboard.c
-> > @@ -885,7 +885,7 @@ static void k_shift(struct vc_data *vc, unsigned char value, char up_flag)
-> >   		if (kbd->kbdmode == VC_UNICODE)
-> >   			to_utf8(vc, npadch_value);
-> >   		else
-> > -			put_queue(vc, npadch_value & 0xff);
-> > +			put_queue(vc, KVAL(npadch_value));
-> 
-> While the mask is the same, this is not a kval, right?
+On 19/02/2025 10:20, Jay Liu wrote:
+> Add a compatible string for MediaTek MT8196 SoC
 
-I'm pretty sure it's KVAL, but to be honest I don't understand why it is
-not done for to_utf8() as well. All values passed to to_utf8() must be
-kval.
+You do not add compatible for soc but its component. But even if this
+was correct commit msg, you still repeat what is in the diff. Say
+something useful, is it compatible with 8195 maybe? Or with something else?
 
-We call to_utf8() in k_unicode, fn_enter (through k_spec), handle_diacr
-(through k_deadunicode or k_unicode). All K_HANDLERS take KVAL as value.
 
-If I understand this code correctly, it is more correct to write it like
-this:
-
---- a/drivers/tty/vt/keyboard.c
-+++ b/drivers/tty/vt/keyboard.c
-@@ -882,10 +882,11 @@ static void k_shift(struct vc_data *vc, unsigned char value, char up_flag)
-
-        /* kludge */
-        if (up_flag && shift_state != old_state && npadch_active) {
-+               u32 kval = KVAL(npadch_value);
-                if (kbd->kbdmode == VC_UNICODE)
--                       to_utf8(vc, npadch_value);
-+                       to_utf8(vc, kval);
-                else
--                       put_queue(vc, npadch_value & 0xff);
-+                       put_queue(vc, kval);
-                npadch_active = false;
-        }
- }
-
-But I may be wrong because the code about npadch_value is very old and I
-may be missing something.
-
-> >   		npadch_active = false;
-> >   	}
-> >   }
-> > @@ -1519,7 +1519,7 @@ static void kbd_keycode(unsigned int keycode, int down, bool hw_raw)
-> >   	if ((raw_mode || kbd->kbdmode == VC_OFF) && type != KT_SPEC && type != KT_SHIFT)
-> >   		return;
-> >   
-> > -	(*k_handler[type])(vc, keysym & 0xff, !down);
-> > +	(*k_handler[type])(vc, KVAL(keysym), !down);
-> 
-> This makes sense.
-> 
-> -- 
-> js
-> suse labs
-> 
-
--- 
-Rgrds, legion
-
+Best regards,
+Krzysztof
 
