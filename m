@@ -1,132 +1,261 @@
-Return-Path: <linux-kernel+bounces-521785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD923A3C24B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:37:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A860A3C251
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:38:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5014B162DCD
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:36:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C27963ABF26
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:36:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 415501F2B87;
-	Wed, 19 Feb 2025 14:36:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 662591F2BA7;
+	Wed, 19 Feb 2025 14:36:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="un/2wA9v"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WO/R78U9"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 046521EFFA7;
-	Wed, 19 Feb 2025 14:36:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F36FC1EEA5A;
+	Wed, 19 Feb 2025 14:36:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739975794; cv=none; b=tLxSCZVeBnBwbSwQI3OrlOaFyWeAQOWLjNz0bKe8K/Z1iDzpc2JKGPbTFWwGhNS3T2IZT6k/7M0wZtmmLG2FTXw/OSiJgWoYZxG1OIbwRA0lBrkZ1yFI2TQrtL0ccXHq0N0gyFwb36hiauMIJAUelIryEQUS1LlBOliIB1EBfk0=
+	t=1739975813; cv=none; b=NP85ohBv8gSq1v+iS4OG/gd9TYIFXzyGKvRKzMAapkAvb/Xsx81ywiCWMY3y8OQHo6aXs6+ItFs06FWVI2AFG8yGVOZArP9m5aLgL59o4LNF4iOBO71AYS/dHSBa81xekXfQ0AzTHnOXfLt4KYzwv5nsCbJLjJSmYfho70NCrZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739975794; c=relaxed/simple;
-	bh=S1wEomMubQ8Qzsz3uiF2/eE26D5d+ws1NBpGm2b8xUQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=riR14rAU6LOLER4V4tntr16Bji40/kV9GFnAlI8WtBu2rC84PcGzldfzkA/F0vMCo3nG3d22wLaIDiLOYhpKwUX6zO65PFoedTzuLwYLuL7xoh2Wvblfj3GCz0+wPwSRguQL8SdRSEt4Lj4P4CjKnyGGWNWF//uLsuanlOZxm5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=un/2wA9v; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 093FA514;
-	Wed, 19 Feb 2025 15:35:06 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1739975707;
-	bh=S1wEomMubQ8Qzsz3uiF2/eE26D5d+ws1NBpGm2b8xUQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=un/2wA9v80jUXrd1C9rzwYK5oYYbd0CGkrKc9oqPlDHWc52ac6vTqjVweEJIyu4+d
-	 J/V/H6RYNVckCh2Jfny6zzLAxnB5A/DGdRA3ZFR/4XLehopYp7AIs9RBozBf3WB2mN
-	 n7x0Vz4sPolQqWxmOzWmw5cizKM+wUzE3fnh2hpA=
-Message-ID: <458fd743-e6d6-475d-9da8-121c7d1a6bb4@ideasonboard.com>
-Date: Wed, 19 Feb 2025 16:36:27 +0200
+	s=arc-20240116; t=1739975813; c=relaxed/simple;
+	bh=owahyn3Hxz73SFk6tozaZ6nyv4UuwSojGk+W3MEIRvY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aimwyx8gRVvkh0nHzUvBOxpmrZFLm3Mr6C2yP2YGL9gdjtnqGo9McTiZaaLALlS1D8vYFKY22Ht94O4c0ZPJWu43jhWdMc7WY3JEDerpG51dCB9IFB6iOpKOHzPm0xK0ML7RpODs6U3wr88/1rNaXTQf62X+TGrH/RXNfxUFnyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WO/R78U9; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4397e5d5d99so22929055e9.1;
+        Wed, 19 Feb 2025 06:36:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739975810; x=1740580610; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+QTXbtvB5WqPCPZqBXLo7Idaw2Yrfijp1ad/HqmeWbs=;
+        b=WO/R78U951O1KgrQtrQh++lM12lBYvwAUCYywMN5tikvEuivqaNeoXpQVXkMpAb3OR
+         FXz9o4//7TfPp7Gx3oTPBBb+irGgesbKKuGaqVK+o5V0aK8LEPci6yyeBdmYr8Gt8u1q
+         s4fuhokQibHdEibRI2wiW4xUvVSdixFDJltpo2j0ZEKuEzU7HbSw/b3laJN0UufDlPR5
+         BEUs9nZLAPDAxIUQxjHE+VY695oPq0GW/LPXhIVvsqApBy0c7rom0nTjsIYs2Sfubpm7
+         AJ7+CrpSMyO0bzGqF6X44UwO7C9XINp8oO60j0qbEy73lQmqHBroAusQxjiKkcpWqPSV
+         pPMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739975810; x=1740580610;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+QTXbtvB5WqPCPZqBXLo7Idaw2Yrfijp1ad/HqmeWbs=;
+        b=fAouuuf3SxbnAAwRbWVmk65KVQDG5ysyroMjRFyVixXcERYTokGz/SNUmdlJcHFgRO
+         Gspt9MONQF0Tam5/Lzh0XsT3YC0A5NC7OqDI2eQ9y4FkEGnd+MVJvOQ5HUjeBMg/0bQ6
+         XSKXtr3uupF68f+u9vPrtQ6Mzz6QvBu0sMxhy/3Nzx1rMCu9YXwIVdJ3NtHt7SYVHW7V
+         5KMRAJ7AUCRYX2AsgrH0iJyn5Rf5Pf9rZ/2WP1ef//XkJpPrnwaUk74dlb33uXfxZzgc
+         qNSdjkE9r4bXiNHqBjy2MlotbD25ib7pFmTbxo6uXhe/TEnLU5AxZ3d1p9Y4JT6NjcwE
+         D3ow==
+X-Forwarded-Encrypted: i=1; AJvYcCVARYvpvQvo6py/jHd72X5GSFIYk+CYhrafGB+tXowY+O47LenhvFYFXj7MYeukMh4DCvUytfR4x3qB@vger.kernel.org, AJvYcCVEy2AUgYCZlFIWxBzoXOTG3JlqU3ECmNT2ydwawraTPb1U8soGcWmZZBbSqvCvGj0YKwLoPqSBa1sBVskN@vger.kernel.org, AJvYcCWASgCq+KHPZWRaM+c7P7RPl6jcbGaGcXGwg97WtAswjOxIpEeHGeN4txG6SDNMgBfs1L2Xdfh1ZWh5AOA=@vger.kernel.org, AJvYcCWwDPAlfp+aJgiLwhtnCqsHehiVX/hi0PUMKOZpACNrKZaoUuKrhyq9GKO1DaFG18iubx+ULGTV0pgl@vger.kernel.org, AJvYcCXKejCskenoU3zmGZH/gddnicTUfEL4+wR5HAmfMvgAYr/NQF8puQWxv/b7llmfHXPWG+pvKeuj+24aag==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDT/yxoJ+VXBSydqzgIPVllhDGcFY0huiXh8dB0z4keh3IA8M8
+	BjmV8P5R+6OFMk7JEOfyuZW0FZ20lFS7kw7UZ0+bF5dkaCTnwqpiBb5IfVxp7PF/nhd63cwVse6
+	uaQrYH55u1MGDRa2IwUyV/YoRMuU=
+X-Gm-Gg: ASbGncuAolZIVCy6cXP8TkKveIuSkAuYx+DovQ9ehjcuoIZcL70cRJYXmskjTtz1ZXs
+	rM+Ya8Gyifi7cpc9q1Jupan0+Ruk55JDPUP2JC581RZrSTPcZY0Oj3E95MUhyqd7I811Ch0kY3g
+	==
+X-Google-Smtp-Source: AGHT+IGuUdWXrb/mtz3pDeb/kKeAwZ1uQIcWAmTUWKnQyPJtlEcB5Mz3/TO0x0WLmRb/T6h6Ir38NTvppeBJI0eHa/0=
+X-Received: by 2002:a05:600c:4750:b0:439:9828:c425 with SMTP id
+ 5b1f17b1804b1-4399828c633mr54172835e9.7.1739975809915; Wed, 19 Feb 2025
+ 06:36:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/18] media: rcar-csi2: Fix typo
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
- Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-References: <20250219-rcar-streams-v1-0-f1b93e370aab@ideasonboard.com>
- <20250219-rcar-streams-v1-7-f1b93e370aab@ideasonboard.com>
- <20250219142459.GB512344@ragnatech.se>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-In-Reply-To: <20250219142459.GB512344@ragnatech.se>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250218132702.114669-1-clamor95@gmail.com> <20250218132702.114669-3-clamor95@gmail.com>
+ <Z7XqKcOUt5niXzpv@smile.fi.intel.com>
+In-Reply-To: <Z7XqKcOUt5niXzpv@smile.fi.intel.com>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Wed, 19 Feb 2025 16:36:38 +0200
+X-Gm-Features: AWEUYZnnp1prjZiOv4DEGghz-JiQuuNsDsxtsmrRfSqxZJkzyQuhOgT8aOgjbHE
+Message-ID: <CAPVz0n1_WQyOHhtEVAh53uhEUhZvqqZSEJh6XALtSrVfkMSLYw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] mfd: lm3533: convert to use OF
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Pavel Machek <pavel@ucw.cz>, 
+	Daniel Thompson <danielt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-iio@vger.kernel.org, linux-leds@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+=D1=81=D1=80, 19 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 16:27 Andy=
+ Shevchenko
+<andriy.shevchenko@linux.intel.com> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On Tue, Feb 18, 2025 at 03:27:00PM +0200, Svyatoslav Ryhel wrote:
+> > Remove platform data and fully relay on OF and device tree
+> > parsing and binding devices.
+>
+> Thanks for following the advice, but the problem with this change as it d=
+oes
+> too much at once. It should be split to a few simpler ones.
+> On top of that, this removes MFD participation from the driver but leaves=
+ it
+> under MFD realm. Moreover, looking briefly at the code it looks like it o=
+pen
+> codes the parts of MFD. The latter needs a very goo justification which c=
+ommit
+> message is missing.
+>
 
-On 19/02/2025 16:24, Niklas Söderlund wrote:
-> Hi Tomi,
-> 
-> On 2025-02-19 15:49:01 +0200, Tomi Valkeinen wrote:
->> Fix typo with variable name 'msps'.
-> 
-> FWIW, this is not a typo, C-PHY uses symbols per seconds, not bits per
-> second.
+Splitting this into a set of commits would be nearly impossible,
+original driver does not relay on OF, it relays on platform data.
+Ripping out platform data will leave behind a broken useless driver.
+So it has to be done simultaneously.
 
-Hmm, but the code calls rcsi2_calc_mbps() and uses the returned value as 
-msps. How can that be right, if it's symbols?
+MFD part is removed since MFD cells binding is unconditional, while
+the device supports any amount of children grater then one. For
+example, my  device uses only backlight at bank A, while all other
+subdevices are not present and used. This patch switches to dynamic
+bind of children.
 
-  Tomi
+> ...
+>
+> > +static const struct of_device_id lm3533_als_match_table[] =3D {
+> > +     { .compatible =3D "ti,lm3533-als" },
+> > +     { },
+>
+> No comma for the terminator entry. I think I already pointed that out ear=
+lier.
+>
+> > +};
+>
+> ...
+>
+> > +     device_property_read_string(&pdev->dev, "linux,default-trigger",
+> > +                                 &led->cdev.default_trigger);
+>
+> One prerequisite patch you probably want is an introduction of
+>
+>         struct device *dev =3D &pdev->dev;
+>
+> in the respective ->probe() implementations. This, in particular, makes t=
+he
+> above lines shorter and fit one line.
+>
 
->>
->> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
->> ---
->>   drivers/media/platform/renesas/rcar-csi2.c | 10 +++++-----
->>   1 file changed, 5 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/media/platform/renesas/rcar-csi2.c b/drivers/media/platform/renesas/rcar-csi2.c
->> index 845fb3e155f1..92697ea3df01 100644
->> --- a/drivers/media/platform/renesas/rcar-csi2.c
->> +++ b/drivers/media/platform/renesas/rcar-csi2.c
->> @@ -1301,7 +1301,7 @@ static int rcsi2_start_receiver_v4h(struct rcar_csi2 *priv,
->>   	const struct rcar_csi2_format *format;
->>   	const struct v4l2_mbus_framefmt *fmt;
->>   	unsigned int lanes;
->> -	int msps;
->> +	int mbps;
->>   	int ret;
->>   
->>   	/* Use the format on the sink pad to compute the receiver config. */
->> @@ -1314,9 +1314,9 @@ static int rcsi2_start_receiver_v4h(struct rcar_csi2 *priv,
->>   	if (ret)
->>   		return ret;
->>   
->> -	msps = rcsi2_calc_mbps(priv, format->bpp, lanes);
->> -	if (msps < 0)
->> -		return msps;
->> +	mbps = rcsi2_calc_mbps(priv, format->bpp, lanes);
->> +	if (mbps < 0)
->> +		return mbps;
->>   
->>   	/* Reset LINK and PHY*/
->>   	rcsi2_write(priv, V4H_CSI2_RESETN_REG, 0);
->> @@ -1352,7 +1352,7 @@ static int rcsi2_start_receiver_v4h(struct rcar_csi2 *priv,
->>   	rcsi2_write16(priv, V4H_PPI_RW_COMMON_CFG_REG, 0x0003);
->>   
->>   	/* C-PHY settings */
->> -	ret = rcsi2_c_phy_setting_v4h(priv, msps);
->> +	ret = rcsi2_c_phy_setting_v4h(priv, mbps);
->>   	if (ret)
->>   		return ret;
->>   
->>
->> -- 
->> 2.43.0
->>
-> 
+This is not a scope of this patchset. Original driver uses &pdev->dev
 
+> ...
+>
+> > +static const struct of_device_id lm3533_led_match_table[] =3D {
+> > +     { .compatible =3D "ti,lm3533-leds" },
+> > +     { },
+>
+> As per above.
+>
+> > +};
+>
+> ...
+>
+> > +             if (!strcmp(comatible, "ti,lm3533-als"))
+> > +                     lm3533->have_als =3D 1;
+>
+> If you end up having this, it's not the best what we can do. OF ID tables=
+ have
+> a driver_data field exactly for the cases like this.
+>
+
+This is required by core driver to handle some attributes and is here
+solely not to touch those in this patch.
+
+> ...
+>
+> > +             if (!strcmp(comatible, "ti,lm3533-backlight"))
+> > +                     lm3533->have_backlights =3D 1;
+>
+> Ditto.
+>
+> ...
+>
+> > +             if (!strcmp(comatible, "ti,lm3533-leds"))
+> > +                     lm3533->have_leds =3D 1;
+>
+> Ditto.
+>
+> ...
+>
+> > +             ret =3D lm3533_update(bl->lm3533, LM3533_REG_CTRLBANK_AB_=
+BCONF,
+> > +                                 1 << (2 * id + 1), 1 << (2 * id + 1))=
+;
+>
+> BIT() and better to use a temporary variable for this calculation.
+>
+> > +             if (ret)
+> > +                     return ret;
+>
+> ...
+>
+> > +             ret =3D lm3533_update(bl->lm3533, LM3533_REG_OUTPUT_CONF1=
+,
+> > +                                 id | id << 1, BIT(0) | BIT(1));
+>
+>                 mask =3D GENMASK();
+>                 ..., id ? mask : 0, mask);
+>
+> > +             if (ret)
+> > +                     return ret;
+> > +     }
+>
+> ...
+>
+> > +     bd =3D devm_backlight_device_register(&pdev->dev, pdev->name, pde=
+v->dev.parent,
+> > +                                         bl, &lm3533_bl_ops, &props);
+>
+>
+> With the advice from above:
+>
+>         bd =3D devm_backlight_device_register(dev, pdev->name, dev->paren=
+t, bl, &lm3533_bl_ops,
+>                                             &props);
+>
+>
+> >       if (IS_ERR(bd)) {
+> >               dev_err(&pdev->dev, "failed to register backlight device\=
+n");
+> >               return PTR_ERR(bd);
+>
+> Consider another prerequisite patch (which should come before the firstly
+> proposed one):
+>
+>         struct device *dev =3D &pdev->dev; // yes, this can go in this ch=
+ange
+>         ...
+>
+>         if (IS_ERR(bd))
+>                 return dev_err_probe(dev, PTR_ERR(bd), "failed to registe=
+r backlight device\n");
+>
+> ...
+>
+> > +static const struct of_device_id lm3533_bl_match_table[] =3D {
+> > +     { .compatible =3D "ti,lm3533-backlight" },
+> > +     { },
+>
+> As per above.
+>
+> > +};
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
 
