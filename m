@@ -1,210 +1,304 @@
-Return-Path: <linux-kernel+bounces-520780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D76B9A3AF25
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:54:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DCB9DA3AF27
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:54:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A880E3AE0E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 01:54:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2FC73ADF56
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 01:54:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F2DF13D891;
-	Wed, 19 Feb 2025 01:54:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BCD814B08C;
+	Wed, 19 Feb 2025 01:54:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="QBi0e+XW";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="vIgWHYVn"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RCkKPdSx"
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A690233E1;
-	Wed, 19 Feb 2025 01:54:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739930062; cv=fail; b=SxAo8rILmLTfEf00kb/4yCvKUY0T1V5y2r+C1hPeEirMSPOe0kClTVEeRPPGMc+Zu1t36NNNOUM/zywxvIhY8z9Zia0PsPUJduI05KcDh9WUEVDwRhzeecBGJgdix1VGuZx7srOKIrzoRS2sxj40LorryEUeccFbK57vtdfIhTE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739930062; c=relaxed/simple;
-	bh=p6N3IRdKDVsvbJy/JZ1cHGVpGwO6DsJ5M+BU+WmUQhQ=;
-	h=To:Cc:Subject:From:In-Reply-To:Message-ID:References:Date:
-	 Content-Type:MIME-Version; b=E06ljlXUcp/iwHMQQCy5OYo1XZssvr7vY85M98OJD+F7G9AG4LdLD/qnVDbwD2uEmk+0Bm7aW8UDSUxOUt03TwWd0s3GmpzXE8TwY8cbaVhAqD7b4lX8DUi6RrunJIU5KDklVj0G7k7OU5Tqtu4+cqT8h5UWnFjEXhMOYqtOEmY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=QBi0e+XW; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=vIgWHYVn; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51IMg7vF007173;
-	Wed, 19 Feb 2025 01:53:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2023-11-20; bh=6tKuXyJC6XPnNG/YM6
-	1JSqCj2xG6FM/qPjhe8h5vcJ8=; b=QBi0e+XWKJv5zSxr/ItB8sJHVy2YVbrfvc
-	/O3A/phklek9aW4C8uUw/eAA9p5VP7S6zG2HLgnPaYMqrP6tRCyLx6LQmI7R5VfD
-	6/sxersSeoi6KZaGSpiXvDcLRPGE1SguHews0qfg2Bp8V3IclEBy5MFezxTT7S56
-	GdZAs0p18KUNPHkVOgBe0ua0T7bZPmQazcLCQN+oK3zljTJ0adbdr4l7XVV5GPPq
-	9gDhN0tZzK5/d/5mT0By/PkHNS9k3KHsthy1Gtl+DPO/DYmRWU6150jXqd7hUsS8
-	KLItfSwCrn/ouSD7rTIQ+enDeAR3rcZPAA0b5DZfIIlGESfF6sMQ==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 44w00n0m3w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 19 Feb 2025 01:53:53 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 51INMU4O025214;
-	Wed, 19 Feb 2025 01:53:52 GMT
-Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2170.outbound.protection.outlook.com [104.47.56.170])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 44w08vuw83-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 19 Feb 2025 01:53:52 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jm3aQowN2Q6iOmbiQUx/zCRwOM9zTNSIX8IkxJ/z2HOOdSmeiXk3PUoFo8+0KwDWS/jpumv0u116lfDgceTeViB9y+s7DZFZ5aABXXACbqOI+DWSsZ5HOAMi1HNjJhgmbXIJlhplutLKOKd67LitM9fvQD1xwsCPbNKf1dNs1ySqeJ70/e2Q2B8ggViz0bYU6La2zK0QzOz2K/sWaCmb4XFK884S7ieKkgGZ1CzdOsnPP0/oX2Wpk7CqgHhMC/pAld9m80SRK2w4Ec7hkLqLNREGhNsuvTXLBA11EpNVsD6100FP1opKozB5t+M8iah+KkBWAri5H+8JON8bWYcU3g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6tKuXyJC6XPnNG/YM61JSqCj2xG6FM/qPjhe8h5vcJ8=;
- b=FSngUt4Co9+Kd6cf5xYjas4VXvcOMgj4IPklGNsAFBwBkpVXEBL5Ce69FZN/UZp3UFOH3FDuYP4M6UDJV0fpt00tD99X1Jx2QlbUjaA3xMQOC7Yc1FvDCcRrYkO0NQTOuMejsTK4ei6kZ3+lrqgHsE7oLLWe/JUVBv63UeZV6ZS42i+IioWs1mFa8DwHOkToNVUUS/0T4LRSobDVETptRo1GoRcPQpH/4PEeiQXXxwzMZQo4NQJbZtfLflzcvqJvzfylNGBRaCfta0fSyAGyrkkva6GYjMFon9YReo81FRETxxC2WnzecF6/5g7WEGioo2WVl02n4fHlcJWDfh1QZA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DBDE7081D
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 01:54:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739930079; cv=none; b=e1+mu82eXj3cqDUUJWyjhHqvwej2Jy/YZSfyJuQzzW9rBSDQ7En/EjRxO609klwgef9RebuOwcq+mTwuMGCB6AEv9/0EizQltwduRWoQ/2Qo9AjpxV9nF4BfivEnvQH+zF26fTGYUlQ65zP2WeSRPAKiOZ6+KA+XMQvcVi1pAn8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739930079; c=relaxed/simple;
+	bh=c8GDYqlbgIMRWWO2sf77W+DHpA5uVuBQxbt73RzgXOI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dbkqSbALzjFCzppWcNBzw4ng33tpKqjwU2UJGo2FARGhF95c7e2DLS+yZ2PoNOS3xiJ/NG4iXQ/NBMGDDR+ZY+U0JSi+44jUTu0jBEM8MGFH/Yvc43BQlJkXcZNeJS6rQX5vrtHlYdPiA7xihGMPdsR/l70mptwzavQIVy72n0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RCkKPdSx; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e5df8468d6eso1876807276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 17:54:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6tKuXyJC6XPnNG/YM61JSqCj2xG6FM/qPjhe8h5vcJ8=;
- b=vIgWHYVnDxPyUXo3evoK+TtvHXZ7u+sKaiTmEDW3/0Zp0V0z7/DXjzBMHvUjYTtHTOXFnbcYDtnNGND18TToIAa8EdndX+2in7pdnRTLlWbFnoUabEv+aD7YuqYXHIA7N21MlVTppSaKMF0Sx8u3keI12hemXCIMZCDiMzq6q2s=
-Received: from CH0PR10MB5338.namprd10.prod.outlook.com (2603:10b6:610:cb::8)
- by SN4PR10MB5541.namprd10.prod.outlook.com (2603:10b6:806:20e::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Wed, 19 Feb
- 2025 01:53:44 +0000
-Received: from CH0PR10MB5338.namprd10.prod.outlook.com
- ([fe80::5cca:2bcc:cedb:d9bf]) by CH0PR10MB5338.namprd10.prod.outlook.com
- ([fe80::5cca:2bcc:cedb:d9bf%4]) with mapi id 15.20.8445.017; Wed, 19 Feb 2025
- 01:53:44 +0000
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Don Brace <don.brace@microchip.com>,
-        "James E.J. Bottomley"
- <James.Bottomley@HansenPartnership.com>,
-        "Martin K. Petersen"
- <martin.petersen@oracle.com>,
-        linux-hardening@vger.kernel.org, Kees Cook
- <kees@kernel.org>,
-        David Laight <david.laight.linux@gmail.com>,
-        Bart Van
- Assche <bvanassche@acm.org>, storagedev@microchip.com,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] scsi: hpsa: Remove deprecated and unnecessary strncpy()
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-In-Reply-To: <20250214114302.86001-2-thorsten.blum@linux.dev> (Thorsten Blum's
-	message of "Fri, 14 Feb 2025 12:43:02 +0100")
-Organization: Oracle Corporation
-Message-ID: <yq1a5aiog3o.fsf@ca-mkp.ca.oracle.com>
-References: <20250214114302.86001-2-thorsten.blum@linux.dev>
-Date: Tue, 18 Feb 2025 20:53:41 -0500
-Content-Type: text/plain
-X-ClientProxiedBy: BYAPR07CA0101.namprd07.prod.outlook.com
- (2603:10b6:a03:12b::42) To CH0PR10MB5338.namprd10.prod.outlook.com
- (2603:10b6:610:cb::8)
+        d=google.com; s=20230601; t=1739930076; x=1740534876; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=P7evDSaXnUit0j7oV94MbFS+YZGrtfrFgOO3rHeTxyk=;
+        b=RCkKPdSxERhDZOR5t8KVf0n4RJNNocbQlooR0ze1QAocUW2Kaz/A7v3Kw6vcFLbMBU
+         YcrVnSYZCvlDa6S0SVDLqNoRgAVTU1Adx6MBcoND9aM/qQ+18D7S4rRJ9CGK0vD/Q259
+         LU4ZMsCzTmmwRMgc76N08uR7Tu0jhnoA9p5Eh2fWVk76hIqiGUCR+71KktS3I+c5FzcP
+         q/q7M4BTVJD6iW3h42P5usNV3K8768froN5c8fVT+85QvYcHD7bJHgHi5lU5SGaGjCyh
+         96YVN03R0JwjK/kEJykKZu20Tok2dF2Q0e4u4LVfY9E8UudF5f8BpC13FwglBtAwZnyE
+         Entw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739930076; x=1740534876;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=P7evDSaXnUit0j7oV94MbFS+YZGrtfrFgOO3rHeTxyk=;
+        b=skILKksflr6PnhQf1LJOY/cd2MkKRFfLyzcHHA8RlkgQtrd+1NTV9+mhXv9gr73wJR
+         4VIi8mxloMThpDkj/494B52p9pLeKPtuRe7TjHnjhTUf1SdaoTwIj7jUkizaztSwTB5G
+         NsrkM17CaAnnuKpUzCL2tUtvpyKC5qmjImM1Y1S7YGDwgygOUVI2jXA0Z8UU7lswb+z0
+         KMJUV7WTVrRoKn18qXAKZen4Kccxyr5cbQ3r/R7zrnhXKjKAdEjrCmyt4dSq9daV/s4I
+         sDyH8FxyPJqzFEeB7PdIxF2s/MtH4BRizRGi21gGa9Zgh2cdlok/cZHxoP9oE3e2CVUF
+         ibJA==
+X-Forwarded-Encrypted: i=1; AJvYcCXtAMBzo3FYDzIf3mrl5Cm2t6R50lQYvcKV9TIhWaqYt8EYZ7roZIRBP5Ea7uA5gIok4OHmfa4KImDzuHs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWN8Gmxg5OBdJZB15JCYRL34/9nBLq/hOP+KLppXluIBC8MYvI
+	ve8yEGv3fjiYnZZq8iIaoqW2Li7z/yNoyAedhhxiCJCWgeTL7CLSklSgBlR1EsMtkxgGouwuBdC
+	5OoSCxO6yo+hapqYyX/sGqCM/JYnvBh0p6mWb
+X-Gm-Gg: ASbGncsIjXuPAesLH0zzd24ICEzHNuMu0DVrLw285lqnGFjM7ccCO83pMUvRgtajoRq
+	jpZiqC+iMLVPtdYjwmq6+CvUVD0fALWG/r5veNlXEdMIPNsXIzBpcL3w5/MO8IuMiRBAh8h80D6
+	cB1EhHzWxaiSoh9VuWD3FKjOdX
+X-Google-Smtp-Source: AGHT+IF/kLMYr7be5Y33dHtm4KpedctJM1JrBgkcfSrp8OXbr50OnQgeO4FKsxUlWgnsWYDAUVcmqvHvUuuyhZCxqOg=
+X-Received: by 2002:a05:6902:1b12:b0:e5b:21e4:d891 with SMTP id
+ 3f1490d57ef6-e5e0a0de7c5mr1595011276.29.1739930076241; Tue, 18 Feb 2025
+ 17:54:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH0PR10MB5338:EE_|SN4PR10MB5541:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6c1fd15c-717c-4d06-12a3-08dd50883df5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?V5LIVpxAOGdbk4PQtl292OBg+4v0E7E8Vi/TYwBtJa1rvbbDlFfSkav8xGGE?=
- =?us-ascii?Q?BJEfMg6Z0UGnpytp/ceDJxN47fxfCJvb7EfR8WmY/gdc5il1s0jXmDcMrqnk?=
- =?us-ascii?Q?tAwF/VOrD6SL6v5jEqy/QDi7nijk3KtVZp+7cqQX/nBlfTiDRoMyRmMh0eOY?=
- =?us-ascii?Q?AeUPCfW7PUvmBe/MwUH9/T1yMVMt0OKqpSMx+mc2dp+CTBTVkIbxRu1fFgHz?=
- =?us-ascii?Q?iHpbcwMgJRzK0bm2VNXS2lhAKijShOIcKWegZNVmaTLxZ0X4VhbSKTGjEBwE?=
- =?us-ascii?Q?eU98N0DkZJaCqnx9yybyta+TtVrfDXVt8kgq6Iux8Fh6tQHQWjkHwE+i0lGk?=
- =?us-ascii?Q?GB24g7cdSDlHIAZw27V1aELH20XXDzeqGXTo/C5NpIge7P+Jq5bLY8EfmMxE?=
- =?us-ascii?Q?gCNtWWxWUJGCWC1ZW8ayhtXM6XVCh4VqF8By0IQ84aUTvydaKCpHRU+xhKlV?=
- =?us-ascii?Q?2WL+yQHmQSswnB84sOibY/Qx/p5SCuNj111UM5Q22EvTFjZT88PEB34uWiRp?=
- =?us-ascii?Q?S7+pORFvceq75Tre1f68nD8IdqNKVxB5JeuYi7g+kjMpgh7oKONyJrznkZYP?=
- =?us-ascii?Q?JfD7ZgyW9TS1P0q45NcLuNCj9Vgv7DVUlme0K6RbZKM+h9BR5/2Gaync9yw+?=
- =?us-ascii?Q?VT/poY6FcY36PuO43BtrVy2nfjjYq/+VjtnBrJvuahJ/GCtSVOeyNBanSMQZ?=
- =?us-ascii?Q?I1fWYgaygqEQjs2JqlIGlY5Lfhg+l/aoM8zxBmPfl0dF+4dPuBwYdbdvwaVf?=
- =?us-ascii?Q?vfHJtt8iAW9urhBI4riWVz8iusEwT1wuw18E3lwkWL4RN8gpT1ycZcvEhdZa?=
- =?us-ascii?Q?GBQefktyxMUamOSAdy/2OxGC+CW5I50L9YBQoISVR8HXP6Rxw8l/n69zbvOV?=
- =?us-ascii?Q?ooCvHOr8tSOLUQgY7iLDXePdGDVqInq6S5jWuepjXYK+6+zn8PUWJwdUPzkG?=
- =?us-ascii?Q?xNkQjOg5DKHUtxp70pa7VrVBbgMnat7EwPS6xKkrakn0OYq0eBixkpO0Zs7N?=
- =?us-ascii?Q?fXvaLBXp6IV1VMdXv5z6uiWQpgHuxgEUA1yvaYoQFDY+OHZZ1GUi6Nm7yilV?=
- =?us-ascii?Q?QMWxxfcoNTETxNkgubR+1IsVbAJ21GG2BnkaFS/TDN+Eu/eCe3VfgRIyzX+H?=
- =?us-ascii?Q?Io9h2g0A2Ec9k4LxTSh6p6lY5WprgDGT3NCrRo+dtitXJncHy8Q2LUnS1Bzq?=
- =?us-ascii?Q?UzWB+29sgjl/12FF+ywpW/8apmihgf3OHUyZnl/35RqOkp5c8JMC4kRiLJzB?=
- =?us-ascii?Q?0kJoTUuFwniuDJfkIjROHhkP3/zxjHpmjX36CViBnwO8ARd1VfpEhU11Sz2y?=
- =?us-ascii?Q?BwqYlTKvYQo7Xt97EQ1uNXg/K1tv9BX6SiN02zCrSNy8bHS6jBD9KyG0anFQ?=
- =?us-ascii?Q?uKkiashBvYU3mBP9qtxbhQUH7Z6E?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR10MB5338.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?nflV82bTJSDXv3mHcA6o8l+EzhkGlYGhbXtVPpphNLuEXxpm3ZMV59/PyIf5?=
- =?us-ascii?Q?PhmMRYkhZseIndnvAx2UXT9m6322qHCicyK6r6Nej5OJZCzPY/skkxfIgpep?=
- =?us-ascii?Q?GjrI9DW+1r00Syl0g2QZUBgihrMfIT+ibAPUuuj7fZTthTPC7mdWJ8Cdy72X?=
- =?us-ascii?Q?/u+eigkqI9EKEkTiDC7XI10nl2ZJYXyRbmBD8iMBGky2OB6B5/AWjAyCdmdz?=
- =?us-ascii?Q?r5pBUG3d9j97fCQ9SSyzSexMI7YTGMmn5POY8gs7AZz/6UkHR8Rbg5FR2w2o?=
- =?us-ascii?Q?CRtLSjeR/ErYTTsg0ydbnO2K2N2qpYtNADGjc18PtUbga/Qtzh60UBkZZ9Ye?=
- =?us-ascii?Q?WcF1viIc1gjGJvd7QScLAjfSZ+RjmlPHg7+GBNFFpmvZwZMuyeqUxtR+UQIu?=
- =?us-ascii?Q?5l2z344upzSzJ3E7BzTphOgzrFvM5oH8j3u47P0q++U1OFLP/+yJG2DyiPpl?=
- =?us-ascii?Q?R4E5geIj54gpJr8eEvkHZFbWgGbjZoo0z3lh/t7prFaAW3g3SqWHRWJHgZlm?=
- =?us-ascii?Q?Y+SXx2FJgqZmsZFaSuYKs5kqO8c3CP2h51iPCrso3neQVVWjZXl9TiIsRcsG?=
- =?us-ascii?Q?j+oAO2eGustrUaslIQZWd7/0RmKrfjVjiVKaK+TxJLqSuEWv4ySQYrMOWuK7?=
- =?us-ascii?Q?PlDxTiuQWD0tvxQiDasSnufu4MemKeJaE7t8xjQolyG/wmPv0U8Fa45Vvs73?=
- =?us-ascii?Q?q+kuYO8Tk35ZqX59ON8M0TqAmvoANxafa20k/aywR4dbmIkPO1xcis7uKX5Z?=
- =?us-ascii?Q?J3xiUJlouvNKpd+glikv/qDAsp2bbcp4Q1msU8i/z6dbgtmEZC2Qp5Z4qLE7?=
- =?us-ascii?Q?Pfp8sxwfz9jGosrEiSOuFczhlRa/o5RfiKAMqbehdez4JWEOua7fcP9S3ATo?=
- =?us-ascii?Q?kWfQUF06rVbe3gLaddydxQY3wqzSmztXFCsFHHxji6wQIOzw1IDrH/xTeDan?=
- =?us-ascii?Q?qoJYj4Y/TLl2Q6t5zObhSSmj5F1rCxXX8XwzCzPdrbZRMb29Tta7U7/1Fozk?=
- =?us-ascii?Q?ZJ50lUlhcW5qR5XwEb11mz8rrLlvDOOoU89zikvfW6YR10D0D1qly3aIm1m5?=
- =?us-ascii?Q?rF+ezv8di4qLZSVDiwY0VSj/zd0BOa5lj7yNYAIIDzf8wR1CZnr0qTJgh+wg?=
- =?us-ascii?Q?H8QcH/GGj64H0Zf/Uq4ygcRsWuLVS9z290eU4aj8ZnZ2jGn3O2GUy/hmxP5c?=
- =?us-ascii?Q?Zg79RlfdV13s1kvkUGrFOyRkFnrYo6ZTmzyxx64cSXCeExVvh3dToJkiTU5m?=
- =?us-ascii?Q?ZXNVNzPCrTWiwLmouNcBM8so44qU3RtCVfSNij9X++LTjHReMaDvBcbnoH9+?=
- =?us-ascii?Q?k5DpPQJRvXbL7tQmhMH7uHwxe5CD6FmfhALA7qUy1mqG3NaJajTqFncS0aJe?=
- =?us-ascii?Q?1kvh1N+uH2vG1YPRJsgPm1gvUhe1McrFgRdcB9jGzKZXZJIp22WLV6Us6tjW?=
- =?us-ascii?Q?m0VJuZxC+qgs6JHoidPCF6TFMt6tQG3FRfGvSclbfaapTKyCkhfAoalhmLQe?=
- =?us-ascii?Q?+QtKW3jAgV3nix6MQ9iRnkMovgdEGUkUP3vp7qKqrOazCEVIf4dOxb8Gu0WI?=
- =?us-ascii?Q?BSG+NQTWknW5Q2oMezitn4zD1imXsDYCcqRlawJ0asfN2OnUnvowsItFPRSV?=
- =?us-ascii?Q?dw=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	vRHTxj0vprL84tEsG792jWB5WWOFoRD30bh9z6fTPdX0guw2qXT866d9VuJ5ob2KtmGjK1PG8vMHgcNbZI9J8YYwUp9xBFeUSYvFXE5cPl50jKl73bzskBQ3aN4w1KjIxkyo9VmOIpzQ4Eck66Vo94vyvN6i0+SGt/T3iWlufGF7FnVklK6IeA821W254GYmB50Zk42Yt748sN0oEtCS77WnnqlxLShIxGeWIoNBcO2CsLxsNOCZKu9VSxaUdgDilQv307ZanivTD9sMwOgrK58JgnYGfWNzaMHpny+85W5MBvS0vkx6P04Dlku6CtaM5bewFvHXrmQtHYud1YFSS2xfApILaAHVNdSJX98xy6OGDO7lKZ1HkuwprGZHv60mcJcFtSVXgwmE2au7xFexFc3O+NIBXE2988lltCwf3EXasoyCDA6BPnlWE5bXvwmaXcE4aLs81dK7jym5tRVZtYA4UoYmtnMGXRPdrZBO9ZgeiTEU4qWmK785smv4MsrQcp3jF62epsSGFNgBSl3C0nZDoRuH8YpAf8S4p87wWZgcXd1quhvUtFrZDF2mYey1xYDnXNju11vpbaiwJfVsaPtGOIpc6gBUTEchHQLaoG0=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6c1fd15c-717c-4d06-12a3-08dd50883df5
-X-MS-Exchange-CrossTenant-AuthSource: CH0PR10MB5338.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2025 01:53:44.2845
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: nW1I7VLrAutIQjOnggUxK3H+l4C9pAKjR4drlAhLHhbppzOzIQWSsoTjU/Fo9PC+hMTvjG5kW0aag4ty26Ie/FpMZQ45VX13tC2nMQIwqA4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR10MB5541
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-19_01,2025-02-18_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 adultscore=0 bulkscore=0
- mlxscore=0 spamscore=0 mlxlogscore=898 phishscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502100000
- definitions=main-2502190013
-X-Proofpoint-ORIG-GUID: LuopwFNTHbNNHxzyw74DMk5TMzglGXnz
-X-Proofpoint-GUID: LuopwFNTHbNNHxzyw74DMk5TMzglGXnz
+References: <20250214191615.v5.1.If6f14aa2512336173a53fc3552756cd8a332b0a3@changeid>
+ <2025021425-surgical-wackiness-0940@gregkh> <CADg1FFd3H0DLV-WX8jTB1VGyOZYEzchP99QvYxWmg1XCOo1ttg@mail.gmail.com>
+ <2025021717-prepay-sharpener-37fb@gregkh> <CADg1FFf7fONc+HJT8rq55rVFRnS_UxnEPnAGQ476WVe+208_pA@mail.gmail.com>
+ <2025021829-clamor-lavish-9126@gregkh> <CADg1FFd=PbnNSBWk4KGV85jvvRQBBGG4QD2VHM6ABY-mqC8+Lg@mail.gmail.com>
+ <2025021807-ultimate-ascent-f5e0@gregkh> <CADg1FFdLA8LCafbQA=x5onSj6FKS=0ihpYPpSjQmDpGG2iOb5A@mail.gmail.com>
+ <2025021812-expedited-fanning-d5d0@gregkh> <CADg1FFdXNEDN7hXX2bw91YKbJzpk4ZiLP+ut9QBRkuK=vDmDJw@mail.gmail.com>
+In-Reply-To: <CADg1FFdXNEDN7hXX2bw91YKbJzpk4ZiLP+ut9QBRkuK=vDmDJw@mail.gmail.com>
+From: Hsin-chen Chuang <chharry@google.com>
+Date: Wed, 19 Feb 2025 09:54:09 +0800
+X-Gm-Features: AWEUYZmNb725GSfA6SGcNuEFOzHPTodWRw4o1ZG5KtE-iCNlbAS_tFXNkGdpOes
+Message-ID: <CADg1FFcQzRbVhx+hcWpjzkTCzbE2wY+KLMYz0O-NUUOfv=XyDg@mail.gmail.com>
+Subject: Re: [PATCH v5] Bluetooth: Fix possible race with userspace of sysfs isoc_alt
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: linux-bluetooth@vger.kernel.org, luiz.dentz@gmail.com, 
+	chromeos-bluetooth-upstreaming@chromium.org, 
+	Hsin-chen Chuang <chharry@chromium.org>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Johan Hedberg <johan.hedberg@gmail.com>, Marcel Holtmann <marcel@holtmann.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Ying Hsu <yinghsu@chromium.org>, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Greg,
 
-Thorsten,
+On Tue, Feb 18, 2025 at 8:24=E2=80=AFPM Hsin-chen Chuang <chharry@google.co=
+m> wrote:
+>
+> Hi Greg,
+>
+> On Tue, Feb 18, 2025 at 6:56=E2=80=AFPM Greg KH <gregkh@linuxfoundation.o=
+rg> wrote:
+> >
+> > On Tue, Feb 18, 2025 at 06:01:42PM +0800, Hsin-chen Chuang wrote:
+> > > Hi Greg,
+> > >
+> > > On Tue, Feb 18, 2025 at 5:21=E2=80=AFPM Greg KH <gregkh@linuxfoundati=
+on.org> wrote:
+> > > >
+> > > > On Tue, Feb 18, 2025 at 04:57:38PM +0800, Hsin-chen Chuang wrote:
+> > > > > Hi Greg,
+> > > > >
+> > > > > On Tue, Feb 18, 2025 at 4:23=E2=80=AFPM Greg KH <gregkh@linuxfoun=
+dation.org> wrote:
+> > > > > >
+> > > > > > On Tue, Feb 18, 2025 at 12:24:07PM +0800, Hsin-chen Chuang wrot=
+e:
+> > > > > > > Hi Greg,
+> > > > > > >
+> > > > > > > On Mon, Feb 17, 2025 at 4:53=E2=80=AFPM Greg KH <gregkh@linux=
+foundation.org> wrote:
+> > > > > > > >
+> > > > > > > > On Mon, Feb 17, 2025 at 04:44:35PM +0800, Hsin-chen Chuang =
+wrote:
+> > > > > > > > > On Fri, Feb 14, 2025 at 7:37=E2=80=AFPM Greg KH <gregkh@l=
+inuxfoundation.org> wrote:
+> > > > > > > > > >
+> > > > > > > > > > On Fri, Feb 14, 2025 at 07:16:17PM +0800, Hsin-chen Chu=
+ang wrote:
+> > > > > > > > > > > From: Hsin-chen Chuang <chharry@chromium.org>
+> > > > > > > > > > >
+> > > > > > > > > > > Expose the isoc_alt attr with device group to avoid t=
+he racing.
+> > > > > > > > > > >
+> > > > > > > > > > > Now we create a dev node for btusb. The isoc_alt attr=
+ belongs to it and
+> > > > > > > > > > > it also becomes the parent device of hci dev.
+> > > > > > > > > > >
+> > > > > > > > > > > Fixes: b16b327edb4d ("Bluetooth: btusb: add sysfs att=
+ribute to control USB alt setting")
+> > > > > > > > > >
+> > > > > > > > > > Wait, step back, why is this commit needed if you can c=
+hange the alt
+> > > > > > > > > > setting already today through usbfs/libusb without need=
+ing to mess with
+> > > > > > > > > > the bluetooth stack at all?
+> > > > > > > > >
+> > > > > > > > > In short: We want to configure the alternate settings wit=
+hout
+> > > > > > > > > detaching the btusb driver, while detaching seems necessa=
+ry for
+> > > > > > > > > libusb_set_interface_alt_setting to work (Please correct =
+me if I'm
+> > > > > > > > > wrong!)
+> > > > > > > >
+> > > > > > > > I think changing the alternate setting should work using us=
+bfs as you
+> > > > > > > > would send that command to the device, not the interface, s=
+o the driver
+> > > > > > > > bound to the existing interface would not need to be remove=
+d.
+> > > > > > >
+> > > > > > > I thought USBDEVFS_SETINTERFACE was the right command to begi=
+n with,
+> > > > > > > but it seems not working in this case.
+> > > > > > > The command itself attempts to claim the interface, but the i=
+nterface
+> > > > > > > is already claimed by btusb so it failed with Device or resou=
+rce busy
+> > > > > > >
+> > > > > > > drivers/usb/core/devio.c:
+> > > > > > >   USBDEVFS_SETINTERFACE -> proc_setintf -> checkintf -> claim=
+intf
+> > > > > >
+> > > > > > Ah, ok, thanks for checking.  So as you control this device, wh=
+y not
+> > > > > > just disconnect it, change the setting, and then reconnect it?
+> > > > >
+> > > > > After dis/reconnecting, a Bluetooth chipset would lose all its st=
+ate:
+> > > > > Existing connections/scanners/advertisers are all dropped.
+> > > >
+> > > > If you are changing the alternate USB configuration, all state shou=
+ld be
+> > > > dropped, right?  If not, huh how does the device know to keep that
+> > > > state?
+> > >
+> > > No, the Bluetooth chip doesn't drop any info when the alt is changed.
+> > > It only affects the data transfer bandwidth on that interface.
+> > >
+> > > >
+> > > > > This is as bad as (just an analogy) "Whenever you access a http w=
+eb
+> > > > > page, you need to bring your ethernet interface down and up, and =
+after
+> > > > > the page is downloaded, do that again".
+> > > >
+> > > > Your ethernet interface does not contain state like this, we handle
+> > > > chainging IP addresses and devices all the time, so perhaps wrong
+> > > > analogy :)
+> > > >
+> > > > > > Also, see my other review comment, how does BlueZ do this today=
+?
+> > > > >
+> > > > > BlueZ handles that in their MGMT command, that is, through Contro=
+l
+> > > > > channel -> BlueZ kernel space code -> driver callbacks.
+> > > > > Once a Bluetooth chipset is opened with the User channel, it can'=
+t be
+> > > > > used with the Control channel simultaneously, and vice versa.
+> > > >
+> > > > So why not use that same control channel in your code?  Why are you
+> > >
+> > > Because we're using the User channel, and they can't be used at the s=
+ame time.
+> >
+> > This doesn't make sense.  Either BlueZ has this same problem, or it
+> > doesn't.  As you say it does not, then again, why can't you use the
+> > exact same user/kernel api to achieve this?
+> >
+> > The user/kernel api is "fixed" right now, if you wish to replace the
+> > userspace side of the BlueZ code with your own, then you should/must us=
+e
+> > that same user/kernel api.  Don't go adding duplicate interfaces please=
+.
+>
+> I would say the kernel provides 2 sets of the API, Control and User,
+> and now the User channel is missing something.
+> I think it makes sense to add support for it.
+>
+> >
+> > > > reinventing a new control channel for something that is obviously t=
+here
+> > > > already?
+> > >
+> > > Not quite the same as "reinventing". The Control channel command does
+> > > much more than just setting the alt; It just doesn't work with the
+> > > User channel.
+> > >
+> > > >
+> > > > So in short, what's preventing you from using the same exact driver
+> > > > callbacks, OR the same exact kernel api.  Surely you all are not
+> > >
+> > > The answer is the same as the above. This feature is missing in the
+> > > User channel, and I'm completing it with this patch.
+> >
+> > Again, that seems to be your userspace's issue, not the kernel's.  Just
+> > use the same api that bluez uses here.
+> >
+> > > > replacing all of the in-kernel BlueZ code with an external kernel d=
+river
+> > > > just for this, right?  If so, that's not ok at all.
+> > >
+> > > Sorry I don't quite get it. What do you mean by the external kernel d=
+river?
+> >
+> > You said you are not using the bluez kernel code, right?  So you must
+> > have some kernel code to implement this instead for the same
+> > functionality.  Otherwise you are using the bluez kernel api here.
+>
+> No, we don't have kernel code for Bluetooth. We have everything in user s=
+pace.
+>
+> >
+> > Again, just use the same api please, don't go adding new one-off apis
+> > through sysfs for this when it is not needed.
+> >
+> > I'll also step back further and say, why not use bluez?  What is so
+> > wrong with that that you all need a totally different bluetooth stack?
+> > Why not just fix the bluez code for anything that is currently missing
+> > or lacking there that required you to write a new one.
+>
+> I think the main purpose is moving the stack to the user space.
+> When the user hits a Bluetooth issue, it's much easier to reset the stack=
+.
+> Also, a simple Bluetooth bug just won't crash your kernel and we could
+> even crash MORE to detect an incorrect chipset behavior earlier.
+> Of course BlueZ has its own advantages, but it's just all trade-offs.
+>
+> >
+> > And yes, I know the inclination of Android to constantly rewrite the
+> > bluetooth stack, it's on the what, third or fourth iteration already?
+> > What's to guarantee that this really will be the last one?  :)
+>
+> That's incorrect. Android is still using and maintaining the same
+> stack since it left BlueZ.
+>
+> --
+> Best Regards,
+> Hsin-chen
 
-> While replacing strncpy() with strscpy(), Bart Van Assche pointed out
-> that the code occurs inside sysfs write callbacks, which already uses
-> NUL-terminated strings. This allows the string to be passed directly to
-> sscanf() without requiring a temporary copy.
+I'm moving forward and sending out v6 for review as there's no more
+comment related to the struct device usage.
+We could continue the discussion on v6, thanks.
 
-Applied to 6.15/scsi-staging, thanks!
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+--=20
+Best Regards,
+Hsin-chen
 
