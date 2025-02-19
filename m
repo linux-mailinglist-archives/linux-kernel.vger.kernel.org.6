@@ -1,143 +1,145 @@
-Return-Path: <linux-kernel+bounces-520818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 954A5A3AF9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 03:32:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 55317A3AF9B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 03:31:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6225716D6DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:32:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F63316D74F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:31:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70DB513D62B;
-	Wed, 19 Feb 2025 02:32:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cloud.com header.i=@cloud.com header.b="W382tvEb"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54E3F3F9C5
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 02:32:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42C7013CFB6;
+	Wed, 19 Feb 2025 02:31:23 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 684478BE8
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 02:31:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739932321; cv=none; b=CjwGDwbYsnLAWoSoYH/eK5eisDjCORbWwQk0Yx7mCPgZf1nvkRIvpUgDwSzNvcRgw6tWPyOdhwkKaC1dSHv0L0WDYJN7ohbghXCzgwHF8Fd+8Na/742LjJxmS63QcizB743yuzs9uX7zxhz9bCpXjIqKPWzOzLax/xC4gAccbh0=
+	t=1739932282; cv=none; b=aiXZkxRfw7+Gd3uFd+NEWuplGTUUQe9auULK/iYSxIS5wrjf9cuEE7VknJ64SMk+GDLUjbUg9TLXf+mDP2T75bNGH7NIJ4/XAFEn/ssMDn8psgQZJNyitnVxCGEdiw/MxhWKFsIXIVUwfR36nl5sKwIqw5dav3j8aGpbuVXHVH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739932321; c=relaxed/simple;
-	bh=vtNCEh2s4yfr7oWGmkL/KiyGBmJ7liD0fOsxJY8sIXM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WMk/sQ++P/qUJ3fR6CtUHV8ze78aneGDB2PgDSkvAIw7G4X2xZqUDGkfbF7L8sX619ZLzxpqmifXM5Kl5xMcAlYgoFh6ojgTOojnLY4StKvGKiWz646oqsid3hyeHkzbPukKRPDoqbLg/VlheDGlKv041K+FdE9bJaT8ymgieVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloud.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=cloud.com header.i=@cloud.com header.b=W382tvEb; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-220bff984a0so111190505ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 18:32:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloud.com; s=cloud; t=1739932319; x=1740537119; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UMbzBLa4cAlmfPQi7VUGkd1l2tBGQkhyu/SotgYTeck=;
-        b=W382tvEbRN+kFgLq8NPF97Q9wZH/DhbJm6C81BMEkhGAf67QgwiPM7dk3fUA2nz/Cr
-         XxK/meMY2QZGWZqK1XCIRZ0tr3DAivOS23sLowD0gcjvFUvMEykkOPnxELgFIt+91Xki
-         7zCujvnRI4EqGptR1FRM+svioz/lMmPxS78gc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739932319; x=1740537119;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UMbzBLa4cAlmfPQi7VUGkd1l2tBGQkhyu/SotgYTeck=;
-        b=hDcA57aQr4KSGWDE42kw9pJR1VxRmCfeeePwFoj8XaT+kE1vt8tHWKSn3SmngIs37c
-         B3nn1BapLdvq4spwm+UD5FOcPo1dtgq9MYkBuzn0KBIpYtmd2njpNTMltDynoKSC6L6C
-         fahwnok3nidzrdq02lxZmITuUHsQoTfH/Gv4gRgz+1gpiOvIpqRI79Fw58m91NOYczOH
-         hvDk5fhWRKpUpK8/w+qKY0kE/tBawE8OefNu9XUYxutX6o0tufzYwrrF7aGRAJdn9vAQ
-         pzsQvKNm+8otpKXFjfW1kLUwwd6cPk4ASwfnxnCLZp2QVFoVTrBt3eG1mu2Ou2RvgkJQ
-         y46Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWeL9xtUHp+jpll0PxWa7tdlNBkpV2gG3Yf6fRj7cskshwQrK7DC/t6WFcPLgKrtylzqmXg3YyjQDRZ12c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvgQtEnKHO7Z3glGfNvG288tR8VxVfNUso/tm0BUULp6JWJhje
-	ZO+s+bgMkMCGJgEJhJmG1jE8lldLXsblH/Tr8yFizboCmulgINSbe95l1wz+Rg+85D/2R+i9CBE
-	W
-X-Gm-Gg: ASbGncvcfndQRkSEBiG3BSgmogYEkxbvh/0IfT5VeY4wCu7z/yNG16HzWAgpRtNLQ0Q
-	sEZEE/G1JqPtYURZVFu8K04MKc99G4MdOjm6guAW6gsN5OhBPkNVYWFChfrjM+iPSSwi5bRpBe/
-	wlPYua7qo2qygymPWOV/dxnjd19Ji6ore25znF55CYquiHxfun44Q+onVC0HHXkRJ2Z21oVpLYQ
-	0LCt607YLy65O34aZ9o8pI4KJWNwujD10x9Aa7tFHv0horUtGdAxxPoQNVnLW02LISeFHwbKQJz
-	zAcK9ZmTwP54aIFuKffbVyU7fjUh0ZhQxr2hyQ==
-X-Google-Smtp-Source: AGHT+IHW+XXFajOXMQh82qC+hUX4SWHOEwAm/IPVuoAhxDKSgoy8z/LA4zU9drz2cmOSG/TO1iilkA==
-X-Received: by 2002:a05:6a21:688:b0:1ee:d8c8:4b8d with SMTP id adf61e73a8af0-1eed8c84dd2mr944002637.7.1739932319592;
-        Tue, 18 Feb 2025 18:31:59 -0800 (PST)
-Received: from localhost.localdomain ([154.91.3.20])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73242546158sm11248290b3a.16.2025.02.18.18.31.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 18:31:59 -0800 (PST)
-From: Chunjie Zhu <chunjie.zhu@cloud.com>
-To: Bob Peterson <rpeterso@redhat.com>,
-	Andreas Gruenbacher <agruenba@redhat.com>
-Cc: Chunjie Zhu <chunjie.zhu@cloud.com>,
-	gfs2@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [v2] fix "NULL pointer dereference in gfs2_recover_func"
-Date: Wed, 19 Feb 2025 02:30:44 +0000
-Message-Id: <20250219023045.45240-1-chunjie.zhu@cloud.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250218093003.41966-1-chunjie.zhu@cloud.com>
-References: <20250218093003.41966-1-chunjie.zhu@cloud.com>
+	s=arc-20240116; t=1739932282; c=relaxed/simple;
+	bh=zBlFKCrlAVKkTJc8p/ji3Fppl8tdV5cX53mvBAU5t5k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U1ALkB6ndLHsXOvYnQiEB1FHQDVAML7J1Ar0MDd6ACEqYfCr8lP/OELWuv79vJfc4D7wAaHcjfCSV6u/NnLKsClKINwGs2i6zGBwkzWriPwunIUMD0i/C6m4Efm4x93IY8F2YW3Iqy/qnbNWIML4aVLzle9vAOfriFbqnohb60g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 08A07152B;
+	Tue, 18 Feb 2025 18:31:38 -0800 (PST)
+Received: from [10.162.16.56] (a077893.blr.arm.com [10.162.16.56])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E8D2D3F6A8;
+	Tue, 18 Feb 2025 18:31:17 -0800 (PST)
+Message-ID: <3fe309d8-7775-4533-b08b-51ce1a3f362c@arm.com>
+Date: Wed, 19 Feb 2025 08:01:15 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2] arm64/hugetlb: Consistently use pud_sect_supported()
+To: Ryan Roberts <ryan.roberts@arm.com>, linux-arm-kernel@lists.infradead.org
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ linux-kernel@vger.kernel.org
+References: <20250218113639.475947-1-anshuman.khandual@arm.com>
+ <0ad8b31e-f1f1-426d-89e8-a21cf72814d1@arm.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <0ad8b31e-f1f1-426d-89e8-a21cf72814d1@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-before checking WITHDRAW flag, we have to check inode pointer
 
-v2:
-  fix gfs2_sbd NULL pointer deference
 
-Signed-off-by: Chunjie Zhu <chunjie.zhu@cloud.com>
----
- fs/gfs2/recovery.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+On 2/18/25 19:31, Ryan Roberts wrote:
+> On 18/02/2025 11:36, Anshuman Khandual wrote:
+>> Let's be consistent in using pud_sect_supported() for PUD_SIZE sized pages.
+>> Hence change hugetlb_mask_last_page() and arch_make_huge_pte() as required.
+>>
+>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>> Cc: Will Deacon <will@kernel.org>
+>> Cc: linux-arm-kernel@lists.infradead.org
+>> Cc: linux-kernel@vger.kernel.org
+>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+>> ---
+>> This patch applies on v6.14-rc3
+>>
+>> Changes in V2:
+>>
+>> - Added an warning when PUD_SIZE is requested but not supported per Ryan
+>>
+>> Changes in V1:
+>>
+>> https://lore.kernel.org/all/20250217065414.49489-1-anshuman.khandual@arm.com/
+>>
+>>  arch/arm64/mm/hugetlbpage.c | 9 +++++++--
+>>  1 file changed, 7 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/arch/arm64/mm/hugetlbpage.c b/arch/arm64/mm/hugetlbpage.c
+>> index 98a2a0e64e25..1d89599a20d7 100644
+>> --- a/arch/arm64/mm/hugetlbpage.c
+>> +++ b/arch/arm64/mm/hugetlbpage.c
+>> @@ -342,7 +342,9 @@ unsigned long hugetlb_mask_last_page(struct hstate *h)
+>>  	switch (hp_size) {
+>>  #ifndef __PAGETABLE_PMD_FOLDED
+>>  	case PUD_SIZE:
+>> -		return PGDIR_SIZE - PUD_SIZE;
+>> +		if (pud_sect_supported())
+>> +			return PGDIR_SIZE - PUD_SIZE;
+>> +		break;
+>>  #endif
+>>  	case CONT_PMD_SIZE:
+>>  		return PUD_SIZE - CONT_PMD_SIZE;
+>> @@ -364,7 +366,10 @@ pte_t arch_make_huge_pte(pte_t entry, unsigned int shift, vm_flags_t flags)
+>>  	switch (pagesize) {
+>>  #ifndef __PAGETABLE_PMD_FOLDED
+>>  	case PUD_SIZE:
+>> -		entry = pud_pte(pud_mkhuge(pte_pud(entry)));
+>> +		if (pud_sect_supported())
+>> +			entry = pud_pte(pud_mkhuge(pte_pud(entry)));
+>> +		else
+>> +			pr_warn("%s: pud huge page not supported\n", __func__);
+>>  		break;
+>>  #endif
+>>  	case CONT_PMD_SIZE:
+> 
+> Personally, I think something like this is cleaner than having 2 warnings:
+> 
+> pte_t arch_make_huge_pte(pte_t entry, unsigned int shift, vm_flags_t flags)
+> {
+> 	size_t pagesize = 1UL << shift;
+> 
+> 	switch (pagesize) {
+> #ifndef __PAGETABLE_PMD_FOLDED
+> 	case PUD_SIZE:
+> 		if (pud_sect_supported())
+> 			return pud_pte(pud_mkhuge(pte_pud(entry)));
+> 		break;
+> #endif
+> 	case CONT_PMD_SIZE:
+> 		return pmd_pte(pmd_mkhuge(pmd_mkcont(pte_pmd(entry))));
+> 	case PMD_SIZE:
+> 		return pmd_pte(pmd_mkhuge(pte_pmd(entry)));
+> 	case CONT_PTE_SIZE:
+> 		return pte_mkcont(entry);
 
-diff --git a/fs/gfs2/recovery.c b/fs/gfs2/recovery.c
-index 44806513fc06..8434dd385ac5 100644
---- a/fs/gfs2/recovery.c
-+++ b/fs/gfs2/recovery.c
-@@ -400,7 +400,7 @@ static void recover_local_statfs(struct gfs2_jdesc *jd,
- 
- void gfs2_recover_func(struct work_struct *work)
- {
--	struct gfs2_jdesc *jd = NULL;
-+	struct gfs2_jdesc *jd = container_of(work, struct gfs2_jdesc, jd_work);
- 	struct gfs2_inode *ip = NULL;
- 	struct gfs2_sbd *sdp = NULL;
- 	struct gfs2_log_header_host head;
-@@ -411,16 +411,20 @@ void gfs2_recover_func(struct work_struct *work)
- 	int error = 0;
- 	int jlocked = 0;
- 
--	if (gfs2_withdrawn(sdp)) {
--		fs_err(sdp, "jid=%u: Recovery not attempted due to withdraw.\n",
--		       jd->jd_jid);
-+	if (unlikely(!jd->jd_inode)) {
-+		fs_err(sdp, "jid=%u: Looks like withdraw is ongoing, skip recovery.\n",
-+			   jd->jd_jid);
- 		goto fail;
- 	}
- 
--	jd = container_of(work, struct gfs2_jdesc, jd_work);
- 	ip = GFS2_I(jd->jd_inode);
- 	sdp = GFS2_SB(jd->jd_inode);
- 
-+	if (gfs2_withdrawn(sdp)) {
-+		fs_err(sdp, "jid=%u: Recovery not attempted due to withdraw.\n",
-+		       jd->jd_jid);
-+		goto fail;
-+	}
- 	t_start = ktime_get();
- 	if (sdp->sd_args.ar_spectator)
- 		goto fail;
--- 
-2.34.1
+A "default" entry is needed here for the switch statement above. But that
+could be just a simple break statement.
 
+> 	}
+> 
+> 	pr_warn("%s: unrecognized huge page size 0x%lx\n",
+> 		__func__, pagesize);
+
+
+> 	return entry;
+> }
+
+Initially thought about that, but wondered if "unsupported" should be called
+out as "unrecognized" instead. But that's a trivial detail. So I will do the
+changes as suggested.
 
