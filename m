@@ -1,141 +1,214 @@
-Return-Path: <linux-kernel+bounces-521573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BE3FA3BF6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:07:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2C8FA3BF70
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:07:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A63B43B97E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:02:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54C3817AA5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:02:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A7801F180F;
-	Wed, 19 Feb 2025 13:01:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MkrTiSE8"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCA561EB1BC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CC0A1EFFA7;
 	Wed, 19 Feb 2025 13:01:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lCcnFldD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C25F1EA7EA
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 13:01:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739970065; cv=none; b=ArHMovMynEXnGg2co5oAc3r8ZPNuZjHjltrFuLiGT9jAy72Zw/uW+OFY+tZFtDkDw1F1Ookck/rOy0YzkOK949PbhkmsoISKUSbfl+3kuFyzZLwZOtu2NH9gaBDA14cwMuuWLpTldVIBeJfVUTUGs0mdLvHTXS1RksDI2O09c2g=
+	t=1739970062; cv=none; b=qtmus0bcU67KqRd8wJHbTBqhq9SnYGTOc7rQ533X35ujz94pSue42D5RwnzFki38tfI8Wa/cZLLsJWSvamWZy0/dycznZ0lC6PFTRYMPbVBOVybqS4pLAscEOIybU2NMkEwb5NJz4+AZoPYFV0NNSJ6u7Xe/cuUtxYhPt8rv3gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739970065; c=relaxed/simple;
-	bh=pGOE535JPESVOkJalcuOjvOQHEl00UMEuL4t4kpsmTE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EUkqjkNgPOLW6GinOOuEes0MMObiSdTYMdVfAmHekoc9AhX6Jqh5M/5NSr9JKmpujluYmSihQVGn0BPt3t8LssUADJDdCzB5IjoUGENtqo2hocPAGU4L2Me0me87HGX1B/w2hkBhDxLZ0uwEkR+0zz6fjzhFw37gf1jKYJvhVAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MkrTiSE8; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-38f378498b0so3407237f8f.0;
-        Wed, 19 Feb 2025 05:01:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739970062; x=1740574862; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=P3HpZLd+aYslb+R149ASLHhysO3/cTsAOVwWXC8DuTI=;
-        b=MkrTiSE8WInnBb+yAPTwVV8m+kYfEAFocbGGKt5s8P1DNjMDRQJoCUWwJvo9RnBU5c
-         bxSKfWMB5jODShGWVUMYIzpJwraU9g14lXOo9w+HCoiPcFe9IQrGxQTF6AwCavqLjTqB
-         ZoeOCqgZK/VA5GRSSWsNRyN5Oh6riLVqhnoHp5PXaXnzlH3qHRRZF4vPLVP3Fj5NClIx
-         REY4a1N1K2kzIb+DfMgIdMz0UL/61PJmvtTJ385kyf7BQAHIfEfbNQ0gCDarRMpFenGF
-         sWs4qH5JjrimDwP5AOSHpZLsdxH6HfcESZMEkrBRHotnH3xQR3F5t2Mz4LxPjGlLHYwM
-         bVGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739970062; x=1740574862;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=P3HpZLd+aYslb+R149ASLHhysO3/cTsAOVwWXC8DuTI=;
-        b=vK2/MXKmORyHH/bTJ1pUglYnIuLdLmPzkVvSh1c4hUVL2OPyTMsAFSpeuLlhY7lbkt
-         wXx/XMMo3PBa2dpDoKQ/kl0X7VBq+KUZbw446iSxLPLNhIrd4krlD/5UyBhKVO/2NB1J
-         IkHOi+lOO3ubtysKxN6it1wA0Z970cKzXuXhiJB2U0eS4/rosslQn0MonGv0n3hgbzGc
-         L1guig46nFCYPmozbVHCFdE/JBzwnOJhFXtCzGDtjI9eYqT8/JOl9VNiqJ9wwxLaWEJc
-         fVkXGnFHo7IOZDH3tc4q6cRGutcxv3JimkKPdFM64+8h1be3JCfXeGqa78oM9YRMIzaH
-         4HAA==
-X-Forwarded-Encrypted: i=1; AJvYcCUbriJ4mS39TJJGMrk7IvRY6yma1nmZYNmAIpJ3WdzEVKLfkCV/a9PoWOnwZju70aCTkWvBeKQrs7mvLg==@vger.kernel.org, AJvYcCUpJn5dwXaBEmPV58WMQNxSm2zLC0gBpnYlgxrzA19vb92/DTr3DeADFNATAr7D9vd5abSiQa0D@vger.kernel.org, AJvYcCWPSNxbHy7bx8gqUdf38kApQIh+oQyeU+LXfi99V8ODX3HYFDx6yCOsQi7oQOAgnDtNG2MPtIfL8SMS+3c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHBB6WPrhua1Wpxb2Cf7eJM9ivQcFZHVSlHQYR1vNx50uvD8Wb
-	dYB3pQ3NzEi/xKEuWDKP3yryhT9t63E4bQuDtqg77yDOC1A2hct1
-X-Gm-Gg: ASbGncvsyDdT8kr4aokZg881hE0yG+ywqzgZpd2Ogcrmdtc0AsGEFRDhqzcWnl8r68a
-	PaK4oENRWnJ8xzAKpSYI3F5D+60HzNAu4I/VFEpItYqEeUbA/il4reptLsyKVxCc+tmXIN0twAx
-	k9sTZ9A01s3GfhvT8LrRxWklU7RV4Unrop1XlLINlCS/GZfsowSSEdLGflGnTv3jl5K5POvUXFW
-	qpF0cJ52FbDSy7qPcdk46JSvz5ksa5wt8IYNQTI2gdbwTbIhlik3J1gFvG9Q6GbBWOqc1u7HYfM
-	AKNSpyxVjOdzIEU59P4yAVMDv+tQ4XUjFUDy
-X-Google-Smtp-Source: AGHT+IHxeWotohuf1kI7KK6w/ViTEakVBNdMfZ3xL3gBkPm8R3XNTmC3J7Prc/MrPjdWbeL1SbeFLg==
-X-Received: by 2002:adf:e989:0:b0:38f:30a3:51fe with SMTP id ffacd0b85a97d-38f587ca4ebmr2482955f8f.42.1739970061532;
-        Wed, 19 Feb 2025 05:01:01 -0800 (PST)
-Received: from [172.27.59.237] ([193.47.165.251])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258f8c4bsm17825416f8f.46.2025.02.19.05.00.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Feb 2025 05:01:01 -0800 (PST)
-Message-ID: <8369b884-71c9-495a-8a1f-ab8ca4ee5f59@gmail.com>
-Date: Wed, 19 Feb 2025 15:00:57 +0200
+	s=arc-20240116; t=1739970062; c=relaxed/simple;
+	bh=yRt/VaZXQuh0DYvzuCq9THX6LnIgF5KQbpuqcMQ4SZs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fsQ6t/14XaEROZT++0mpUTkpLtAUsNpPz8JuSPR9AKBDU6y2a43ry8150Xlvu1kSg/v+bZcERsNUIG/kdntV2TINPl0tTLqtVtXQ2s8Wq4T6JTKP31laMFWR+H79fVz/FMPycohDBL7j/SekWD0+yzSqn+L1J7QNrIbZCMI9cfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lCcnFldD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D690CC4CED1;
+	Wed, 19 Feb 2025 13:00:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739970061;
+	bh=yRt/VaZXQuh0DYvzuCq9THX6LnIgF5KQbpuqcMQ4SZs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=lCcnFldD0m+q/ylAlrkWh8wDO68zQUs+Fhb+80rATiw1vEBeLLczY8edQtLr6IImG
+	 3BbLY0OILVuMSdiVFvaCkfG2IW/YwW2X2/iLIQl7Eff8xpp6PEODAgnvaeFPQIoo+e
+	 jNzEUCsNInV4iAX3kznlG26MnJ6DwpVRWH9LlqfNRXMLDJnsE7B+8LdZkC+MkpJZna
+	 KVRNSBPjgMPUij2X33DD4DdOuqDYRc++Gkzvc3ZmWLQc5bMdXHhHkN4iU/r0lzOT07
+	 PyU/m/hL+YmuAOWIc8bS58GlQQ7MPTl1x9lNgkQA6pKJedBDf7d8hc88Gz7kqBDv7J
+	 bKUS9OnwgPNWQ==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+	Waiman Long <longman@redhat.com>,
+	Joel Granados <joel.granados@kernel.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Anna Schumaker <anna.schumaker@oracle.com>,
+	Lance Yang <ioworker0@gmail.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Yongliang Gao <leonylgao@tencent.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Tomasz Figa <tfiga@chromium.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] samples: Add hung_task detector mutex blocking sample
+Date: Wed, 19 Feb 2025 22:00:58 +0900
+Message-ID:  <173997005819.2137198.2020111976324308587.stgit@mhiramat.tok.corp.google.com>
+X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
+In-Reply-To:  <173997003868.2137198.9462617208992136056.stgit@mhiramat.tok.corp.google.com>
+References:  <173997003868.2137198.9462617208992136056.stgit@mhiramat.tok.corp.google.com>
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 4/4] net/mlx5: Add sensor name to temperature
- event message
-To: Jakub Kicinski <kuba@kernel.org>, Tariq Toukan <tariqt@nvidia.com>
-Cc: Simon Horman <horms@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, Shahar Shitrit <shshitrit@nvidia.com>,
- Gal Pressman <gal@nvidia.com>, Saeed Mahameed <saeedm@nvidia.com>,
- Leon Romanovsky <leon@kernel.org>, netdev@vger.kernel.org,
- linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
- Carolina Jubran <cjubran@nvidia.com>
-References: <20250213094641.226501-1-tariqt@nvidia.com>
- <20250213094641.226501-5-tariqt@nvidia.com>
- <20250215192935.GU1615191@kernel.org> <20250217162719.1e20afac@kernel.org>
-Content-Language: en-US
-From: Tariq Toukan <ttoukan.linux@gmail.com>
-In-Reply-To: <20250217162719.1e20afac@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
+Add a hung_task detector mutex blocking test sample code.
 
-On 18/02/2025 2:27, Jakub Kicinski wrote:
-> On Sat, 15 Feb 2025 19:29:35 +0000 Simon Horman wrote:
->>> +	for_each_set_bit(i, bit_set_ptr, num_bits) {
->>> +		const char *sensor_name = hwmon_get_sensor_name(hwmon, i + bit_set_offset);
->>> +
->>> +		mlx5_core_warn(dev, "Sensor name[%d]: %s\n", i + bit_set_offset, sensor_name);
->>> +	}
->>> +}
->>
->> nit:
->>
->> If you have to respin for some other reason, please consider limiting lines
->> to 80 columns wide or less here and elsewhere in this patch where it
->> doesn't reduce readability (subjective I know).
-> 
-> +1, please try to catch such situations going forward
-> 
+This module will create a dummy file on the debugfs. That file will
+cause the read process to sleep for enough long time (256 seconds)
+while holding a mutex. As a result, the second process will wait on
+the mutex for a prolonged duration and be detected by the hung_task
+detector.
 
-Hi Jakub,
+Usage is;
 
-This was not missed.
-This is not a new thing...
-We've been enforcing a max line length of 100 chars in mlx5 driver for 
-the past few years.
-I don't have the full image now, but I'm convinced that this dates back 
-to an agreement between the mlx5 and netdev maintainers at that time.
+ > cd /sys/kernel/debug/hung_task
+ > cat mutex & cat mutex
 
-80 chars could be too restrictive, especially with today's large 
-monitors, while 100-chars is still highly readable.
-This is subjective of course...
+and wait for hung_task message.
 
-If you don't have a strong preference, we'll keep the current 100 chars 
-limit. Otherwise, just let me know and we'll start enforcing the 
-80-chars limit for future patches.
+Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+---
+ samples/Kconfig                     |    9 +++++
+ samples/Makefile                    |    1 +
+ samples/hung_task/Makefile          |    2 +
+ samples/hung_task/hung_task_mutex.c |   66 +++++++++++++++++++++++++++++++++++
+ 4 files changed, 78 insertions(+)
+ create mode 100644 samples/hung_task/Makefile
+ create mode 100644 samples/hung_task/hung_task_mutex.c
 
-Regards,
-Tariq
+diff --git a/samples/Kconfig b/samples/Kconfig
+index 820e00b2ed68..09011be2391a 100644
+--- a/samples/Kconfig
++++ b/samples/Kconfig
+@@ -300,6 +300,15 @@ config SAMPLE_CHECK_EXEC
+ 	  demonstrate how they should be used with execveat(2) +
+ 	  AT_EXECVE_CHECK.
+ 
++config SAMPLE_HUNG_TASK
++	tristate "Hung task detector test code"
++	depends on DETECT_HUNG_TASK && DEBUG_FS
++	help
++	  Build a module which provide a simple debugfs file. If user reads
++	  the file, it will sleep long time (256 seconds) with holding a
++	  mutex. Thus if there are 2 or more processes read this file, it
++	  will be detected by the hung_task watchdog.
++
+ source "samples/rust/Kconfig"
+ 
+ source "samples/damon/Kconfig"
+diff --git a/samples/Makefile b/samples/Makefile
+index f24cd0d72dd0..bf6e6fca5410 100644
+--- a/samples/Makefile
++++ b/samples/Makefile
+@@ -42,3 +42,4 @@ obj-$(CONFIG_SAMPLE_FPROBE)		+= fprobe/
+ obj-$(CONFIG_SAMPLES_RUST)		+= rust/
+ obj-$(CONFIG_SAMPLE_DAMON_WSSE)		+= damon/
+ obj-$(CONFIG_SAMPLE_DAMON_PRCL)		+= damon/
++obj-$(CONFIG_SAMPLE_HUNG_TASK)		+= hung_task/
+diff --git a/samples/hung_task/Makefile b/samples/hung_task/Makefile
+new file mode 100644
+index 000000000000..fe9dde799880
+--- /dev/null
++++ b/samples/hung_task/Makefile
+@@ -0,0 +1,2 @@
++# SPDX-License-Identifier: GPL-2.0-only
++obj-$(CONFIG_SAMPLE_HUNG_TASK) += hung_task_mutex.o
+\ No newline at end of file
+diff --git a/samples/hung_task/hung_task_mutex.c b/samples/hung_task/hung_task_mutex.c
+new file mode 100644
+index 000000000000..7a29f2246d22
+--- /dev/null
++++ b/samples/hung_task/hung_task_mutex.c
+@@ -0,0 +1,66 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * hung_task_mutex.c - Sample code which causes hung task by mutex
++ *
++ * Usage: load this module and read `<debugfs>/hung_task/mutex`
++ *        by 2 or more processes.
++ *
++ * This is for testing kernel hung_task error message.
++ * Note that this will make your system freeze and maybe
++ * cause panic. So do not use this except for the test.
++ */
++
++#include <linux/debugfs.h>
++#include <linux/delay.h>
++#include <linux/fs.h>
++#include <linux/module.h>
++#include <linux/mutex.h>
++
++#define HUNG_TASK_DIR   "hung_task"
++#define HUNG_TASK_FILE  "mutex"
++#define SLEEP_SECOND 256
++
++static const char dummy_string[] = "This is a dummy string.";
++static DEFINE_MUTEX(dummy_mutex);
++struct dentry *hung_task_dir;
++
++static ssize_t read_dummy(struct file *file, char __user *user_buf,
++			  size_t count, loff_t *ppos)
++{
++	/* If the second task waits on the lock, it is uninterruptible sleep. */
++	guard(mutex)(&dummy_mutex);
++
++	/* When the first task sleep here, it is interruptible. */
++	msleep_interruptible(SLEEP_SECOND * 1000);
++
++	return simple_read_from_buffer(user_buf, count, ppos,
++				dummy_string, sizeof(dummy_string));
++}
++
++static const struct file_operations hung_task_fops = {
++	.read = read_dummy,
++};
++
++static int __init hung_task_sample_init(void)
++{
++	hung_task_dir = debugfs_create_dir(HUNG_TASK_DIR, NULL);
++	if (IS_ERR(hung_task_dir))
++		return PTR_ERR(hung_task_dir);
++
++	debugfs_create_file(HUNG_TASK_FILE, 0400, hung_task_dir,
++			    NULL, &hung_task_fops);
++
++	return 0;
++}
++
++static void __exit hung_task_sample_exit(void)
++{
++	debugfs_remove_recursive(hung_task_dir);
++}
++
++module_init(hung_task_sample_init);
++module_exit(hung_task_sample_exit);
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Masami Hiramatsu");
++MODULE_DESCRIPTION("Simple sleep under mutex file for testing hung task");
+
 
