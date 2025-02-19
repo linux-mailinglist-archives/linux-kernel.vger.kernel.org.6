@@ -1,259 +1,187 @@
-Return-Path: <linux-kernel+bounces-521337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D55C6A3BBCA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:41:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6471CA3BC50
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:02:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B27EA3B011F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:41:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49C1B1886A97
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:02:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B5FF1DE3D6;
-	Wed, 19 Feb 2025 10:41:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D5131D90DD;
+	Wed, 19 Feb 2025 11:01:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZZJ2z1F6"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="BtWahkjv";
+	dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b="kKNjoD2y"
+Received: from e3i103.smtp2go.com (e3i103.smtp2go.com [158.120.84.103])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D734A1ACED2;
-	Wed, 19 Feb 2025 10:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B1D11BD9DB
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 11:01:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=158.120.84.103
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739961665; cv=none; b=eftCG/mJMaVZwH+0VbKp4womcMTg3+sQOhiibS7EdSyfJ5Bf/d/uoCbRBCt8syZmcdEQm13lFiA8zwJE5yhtRloAjfc8jgd59a/fckWwYQztvyBfdykIN807u9Q7sCjjlJ6wTg5wdJHnesXE6+OIWkLf64zM2d/djdYMp1UvP1g=
+	t=1739962914; cv=none; b=N3CW1/KDKukpuubpYbejkgqQeWeyiKEsBlNXgt7tABCzwaxvwh+txTKGMp/UR42fFHe+Mt5oPHCUwDyrXoZqwxarUzQxwawiPxiztcR0lpVLb52WOuFQrXBGslquy4Vx/TTj/GDNgIn0+zSytIHGXUHdWp6ZOUgChTSQTTEmnSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739961665; c=relaxed/simple;
-	bh=1ZifGDt6ZsCQyZDMlCaNaOvYPhCX16g7i+WBuMry1HM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P4teib9Y7jG91hF5T5pGdevT+Ef2U/OubM5/uvnISRZNhr8tanezHRGShVg9lafaeu5yUVfeV3TZjUoqiWFVkVBqPsvvDHM6yfAwEtG1T0VhgtRGzlTx0yBz/ia5vdiWC7ceCEqqiScGQAaV8Orb1Ss9cAvnhi2ivjRQpiF3lHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZZJ2z1F6; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=3G6kUYCeF3vQA0srZDA8CCP/Hwqz0yhm4jKVJ6oazFg=; b=ZZJ2z1F676sZRKBnsd2zd+5eNa
-	W7JGCVMwwTsxjM8oX9qzYCwG02vZ70AgwhgZtTFjVKjO2XvAaXBZHMToy7XFCMVlJIwdnLdxAnQ/z
-	55qm8Cd41GYNVm3OzFFPz9itzjIUgvZSjYEzXWld5ZDxMmojS9uTLyQdjT0qMC5TBEidMTVn2+7dd
-	5JhhufeQdigioyM77qdRhzoLJMGDLkDHT53t1Wnl86mpJItw9yW53Dp471njAcr3Y6OaF6cWbpc1o
-	syQdV6vWDR7HvAIfBJVeg4TkthkHP6S2rqM8EmGmTrIcAJGzXts4W548AYOTAL0bgTWn+rxYaRg2U
-	1IfeEkpw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tkhVO-00000005kiw-2Fle;
-	Wed, 19 Feb 2025 10:40:38 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 8EC60300783; Wed, 19 Feb 2025 11:40:37 +0100 (CET)
-Date: Wed, 19 Feb 2025 11:40:37 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Shuai Xue <xueshuai@linux.alibaba.com>, tony.luck@intel.com,
-	nao.horiguchi@gmail.com, tglx@linutronix.de, mingo@redhat.com,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	linmiaohe@huawei.com, akpm@linux-foundation.org,
-	jpoimboe@kernel.org, linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	baolin.wang@linux.alibaba.com, tianruidong@linux.alibaba.com
-Subject: Re: [PATCH v2 3/5] x86/mce: add EX_TYPE_EFAULT_REG as in-kernel
- recovery context to fix copy-from-user operations regression
-Message-ID: <20250219104037.GG40464@noisy.programming.kicks-ass.net>
-References: <20250217063335.22257-1-xueshuai@linux.alibaba.com>
- <20250217063335.22257-4-xueshuai@linux.alibaba.com>
- <20250218125408.GD40464@noisy.programming.kicks-ass.net>
- <1ff716d3-eb3d-477e-ae30-1abe97eee01b@linux.alibaba.com>
- <20250218141535.GC34567@noisy.programming.kicks-ass.net>
- <20250218164800.GNZ7S5wL1A4dTaySOP@fat_crate.local>
+	s=arc-20240116; t=1739962914; c=relaxed/simple;
+	bh=KVCozw5OuqMr/WczaaczI9sNw6U6VyepsSXMw6cdk+0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZwqXXkb3HHkUIRgC5GoCPhAtNKJiLGqhNa7C9NszUJ6U3ZtMKLhO19/dyw0/0UfN9S7sqkB/1/iAS5cT7Zx0gVMGWebqK+Vv6LHcpjFRj2/dsaAwZZOZYQssLWS8zZ36321AXMBgTSl7OaqghQCbZiEFQavXQx9dbMrREJbSBW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt; spf=pass smtp.mailfrom=em510616.triplefau.lt; dkim=pass (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=BtWahkjv; dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b=kKNjoD2y; arc=none smtp.client-ip=158.120.84.103
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em510616.triplefau.lt
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=smtpservice.net;
+ i=@smtpservice.net; q=dns/txt; s=a1-4; t=1739962001; h=feedback-id :
+ x-smtpcorp-track : date : message-id : to : subject : from : reply-to
+ : sender : list-unsubscribe : list-unsubscribe-post;
+ bh=+8j7cPu5o3satpWXmx3WXP8Hl7/oNZHXIrtA6XxAmFU=;
+ b=BtWahkjvK9E2lWv4tmIwxFtD/IrUN+Qhopr/8KJbxHNZdp4irU9FFt71LiglJeW+G2dUK
+ ktGGv3xIrLym5dAY3VJ7uY3EBh17GpOM/XUU5unVmtczaQnM6dS5ftIDwqCIGRbUMhfwZ1k
+ A6XNvfCLPMXwRrNBFCMAer+aRrhqMTFfUU9VAqBYtI2GrVWVbfrF08J9g3kfPXbKUe+77oZ
+ tTVna52Z36hBaQcrsINe/1Lzb6SIKOFFc53rFnPIlK8Z1xw5TOO3emQPbV36LMQg12GEceD
+ iNCj7M5B+pZn+o7xzS/UV4dFp2c4TBxrIJrDOIDGeKD4K9OPTciRpDe70Aig==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=triplefau.lt;
+ i=@triplefau.lt; q=dns/txt; s=s510616; t=1739962001; h=from : subject
+ : to : message-id : date;
+ bh=+8j7cPu5o3satpWXmx3WXP8Hl7/oNZHXIrtA6XxAmFU=;
+ b=kKNjoD2yyfd/pC/oTvSeVWVtno2h7ea/GCAcXMS+ZxLEDvjjLhDjIZ9qGOV4C6+q1wxfZ
+ +VT/bjUkFIRdPkkKaJDQH1+8UDIla7/iNBq3tRjRqLgTGxEYCRQk8TDkp272b1CCHvvX60k
+ wE2Sq6NJAowhiBCMY6B/2OoDVYWvgn6JUKljFnPaUddM1jd+UUNZeb2ZMWK2Sc5NtOFBvSz
+ 9Uv6wy6nyN5PQbUwG/dn66kc1bNJT3E0hKhzwHoBm6lQ6w+0YuFAkYkTHbK6tKiOgRV1ECF
+ KqLUfgjDQMST9jTgBt7P9xVxTPhWVKnArovO/hjef1mXEEKK3ToW6UUFWQWw==
+Received: from [10.12.239.196] (helo=localhost)
+	by smtpcorp.com with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.97.1-S2G)
+	(envelope-from <repk@triplefau.lt>)
+	id 1tkhb5-AIkwcC8t737-KJeX;
+	Wed, 19 Feb 2025 10:46:31 +0000
+From: Remi Pommarel <repk@triplefau.lt>
+To: linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+	Remi Pommarel <repk@triplefau.lt>
+Subject: [PATCH] leds: Fix LED_OFF brightness race
+Date: Wed, 19 Feb 2025 11:41:36 +0100
+Message-Id: <26a2690e77671cfe687c5614613fbb6f079f7365.1739959820.git.repk@triplefau.lt>
+X-Mailer: git-send-email 2.40.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250218164800.GNZ7S5wL1A4dTaySOP@fat_crate.local>
+Content-Transfer-Encoding: 8bit
+X-Report-Abuse: Please forward a copy of this message, including all headers, to <abuse-report@smtp2go.com>
+Feedback-ID: 510616m:510616apGKSTK:510616sYieL8a4ZV
+X-smtpcorp-track: -T8PF3lcNFij.M73-XIf0KzC2.UKiciwXCj8k
 
-On Tue, Feb 18, 2025 at 05:48:00PM +0100, Borislav Petkov wrote:
-> On Tue, Feb 18, 2025 at 03:15:35PM +0100, Peter Zijlstra wrote:
-> > diff --git a/arch/x86/kernel/cpu/mce/severity.c b/arch/x86/kernel/cpu/mce/severity.c
-> > index dac4d64dfb2a..cfdae25eacd7 100644
-> > --- a/arch/x86/kernel/cpu/mce/severity.c
-> > +++ b/arch/x86/kernel/cpu/mce/severity.c
-> > @@ -301,18 +301,19 @@ static noinstr int error_context(struct mce *m, struct pt_regs *regs)
-> >  	instrumentation_end();
-> >  
-> >  	switch (fixup_type) {
-> > -	case EX_TYPE_UACCESS:
-> > -		if (!copy_user)
-> > -			return IN_KERNEL;
-> > -		m->kflags |= MCE_IN_KERNEL_COPYIN;
-> > -		fallthrough;
-> > -
-> >  	case EX_TYPE_FAULT_MCE_SAFE:
-> >  	case EX_TYPE_DEFAULT_MCE_SAFE:
-> >  		m->kflags |= MCE_IN_KERNEL_RECOV;
-> >  		return IN_KERNEL_RECOV;
-> >  
-> >  	default:
-> > +		if (copy_user) {
-> 
-> As said on chat, if we can make is_copy_from_user() *always* correctly detect
-> user access, then sure but I'm afraid EX_TYPE_UACCESS being generated at the
-> handful places where we do user memory access is there for a reason as it
-> makes it pretty explicit.
+While commit fa15d8c69238 ("leds: Fix set_brightness_delayed() race")
+successfully forces led_set_brightness() to be called with LED_OFF at
+least once when switching from blinking to LED on state so that
+hw-blinking can be disabled, another race remains. Indeed in
+led_set_brightness(LED_OFF) followed by led_set_brightness(any)
+scenario the following CPU scheduling can happen:
 
-Thing is, we have copy routines that do not know if its user or not.
-is_copy_from_user() must be reliable.
+    CPU0                                     CPU1
+    ----                                     ----
+ set_brightness_delayed() {
+   test_and_clear_bit(BRIGHTNESS_OFF)
+                                         led_set_brightness(LED_OFF) {
+                                           set_bit(BRIGHTNESS_OFF)
+					   queue_work()
+                                         }
+                                         led_set_brightness(any) {
+                                           set_bit(BRIGHTNESS)
+					   queue_work() //already queued
+                                         }
+   test_and_clear_bit(BRIGHTNESS)
+     /* LED set with brightness any */
+ }
 
-Anyway, if you all really want to go all funny, try the below.
+ /* From previous CPU1 queue_work() */
+ set_brightness_delayed() {
+   test_and_clear_bit(BRIGHTNESS_OFF)
+     /* LED turned off */
+   test_and_clear_bit(BRIGHTNESS)
+     /* Clear from previous run, LED remains off */
 
-Someone has to go and stick some EX_FLAG_USER on things, but I just
-really don't believe that's doing to be useful. Because while you're
-doing that, you should also audit if is_copy_from_user() will catch it
-and if it does, you don't need the tag.
+In that case the led_set_brightness(LED_OFF)/led_set_brightness(any)
+sequence will be effectively executed in reverse order and LED will
+remain off.
 
-See how much tags you end up with..
+With the introduction of commit 32360bf6a5d4 ("leds: Introduce ordered
+workqueue for LEDs events instead of system_wq") the race is easier to
+trigger as sysfs brightness configuration does not wait for
+set_brightness_delayed() work to finish (flush_work() removal).
 
+Use delayed_set_value to optionnally re-configure brightness after a
+LED_OFF. That way a LED state could be configured more that once but
+final state will always be as expected.
 
+Fixes: fa15d8c69238 ("leds: Fix set_brightness_delayed() race")
+Signed-off-by: Remi Pommarel <repk@triplefau.lt>
 ---
-diff --git a/arch/x86/include/asm/extable_fixup_types.h b/arch/x86/include/asm/extable_fixup_types.h
-index 906b0d5541e8..1d6c6ff51d28 100644
---- a/arch/x86/include/asm/extable_fixup_types.h
-+++ b/arch/x86/include/asm/extable_fixup_types.h
-@@ -31,6 +31,9 @@
- #define EX_FLAG_CLEAR_DX		EX_DATA_FLAG(2)
- #define EX_FLAG_CLEAR_AX_DX		EX_DATA_FLAG(3)
- 
-+#define EX_FLAG_USER			EX_DATA_FLAG(4)
-+#define EX_FLAG_MCE			EX_DATA_FLAG(8)
-+
- /* types */
- #define	EX_TYPE_NONE			 0
- #define	EX_TYPE_DEFAULT			 1
-@@ -46,8 +49,6 @@
- #define	EX_TYPE_RDMSR_SAFE		11 /* reg := -EIO */
- #define	EX_TYPE_WRMSR_IN_MCE		12
- #define	EX_TYPE_RDMSR_IN_MCE		13
--#define	EX_TYPE_DEFAULT_MCE_SAFE	14
--#define	EX_TYPE_FAULT_MCE_SAFE		15
- 
- #define	EX_TYPE_POP_REG			16 /* sp += sizeof(long) */
- #define EX_TYPE_POP_ZERO		(EX_TYPE_POP_REG | EX_DATA_IMM(0))
-diff --git a/arch/x86/kernel/cpu/mce/severity.c b/arch/x86/kernel/cpu/mce/severity.c
-index dac4d64dfb2a..86a32fa020d2 100644
---- a/arch/x86/kernel/cpu/mce/severity.c
-+++ b/arch/x86/kernel/cpu/mce/severity.c
-@@ -300,21 +300,20 @@ static noinstr int error_context(struct mce *m, struct pt_regs *regs)
- 	copy_user  = is_copy_from_user(regs);
- 	instrumentation_end();
- 
--	switch (fixup_type) {
--	case EX_TYPE_UACCESS:
--		if (!copy_user)
--			return IN_KERNEL;
--		m->kflags |= MCE_IN_KERNEL_COPYIN;
--		fallthrough;
--
--	case EX_TYPE_FAULT_MCE_SAFE:
--	case EX_TYPE_DEFAULT_MCE_SAFE:
-+	if (fixup_type == EX_TYPE_NONE)
-+		return IN_KERNEL;
-+
-+	if (fixup_type & EX_FLAG_MCE) {
- 		m->kflags |= MCE_IN_KERNEL_RECOV;
- 		return IN_KERNEL_RECOV;
+While the race does seem to be very thin, it is very easy to trigger it
+on my setup with the following command:
+
+ $ echo "pattern" > /sys/class/leds/<device>/trigger
+ $ echo "3 200 40 200 3 200 3 200" > /sys/class/leds/<device>/pattern
+ $ sleep 1
+ $ echo 0 > /sys/class/leds/<device>/brightness
+ $ echo 30 > /sys/class/leds/<device>/brightness
+
+The issue happens 8 out of 10 times, not sure why this is the case,
+maybe two consecutive set_bit() on one CPU are likely to appear as
+one just after a previous test_and_clear_bit() on another due to
+the full memory barrier implied by this atomic operation ?
+
+ drivers/leds/led-core.c | 20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
+index f6c46d2e5276..528f53bf13a9 100644
+--- a/drivers/leds/led-core.c
++++ b/drivers/leds/led-core.c
+@@ -159,8 +159,19 @@ static void set_brightness_delayed(struct work_struct *ws)
+ 	 * before this work item runs once. To make sure this works properly
+ 	 * handle LED_SET_BRIGHTNESS_OFF first.
+ 	 */
+-	if (test_and_clear_bit(LED_SET_BRIGHTNESS_OFF, &led_cdev->work_flags))
++	if (test_and_clear_bit(LED_SET_BRIGHTNESS_OFF, &led_cdev->work_flags)) {
+ 		set_brightness_delayed_set_brightness(led_cdev, LED_OFF);
++		/*
++		 * The consecutives led_set_brightness(LED_OFF),
++		 * led_set_brightness(LED_FULL) could have been executed out of
++		 * order (LED_FULL first), if the work_flags has been set
++		 * between LED_SET_BRIGHTNESS_OFF and LED_SET_BRIGHTNESS of this
++		 * work. To avoid ending with the LED turned off, turn the LED
++		 * on again.
++		 */
++		if (led_cdev->delayed_set_value != LED_OFF)
++			set_bit(LED_SET_BRIGHTNESS, &led_cdev->work_flags);
 +	}
  
--	default:
--		return IN_KERNEL;
-+	if ((fixup_type & EX_FLAG_USER) || copy_user) {
-+		m->kflags |= MCE_IN_KERNEL_COPYIN | MCE_IN_KERNEL_RECOV;
-+		return IN_KERNEL_RECOV;
- 	}
+ 	if (test_and_clear_bit(LED_SET_BRIGHTNESS, &led_cdev->work_flags))
+ 		set_brightness_delayed_set_brightness(led_cdev, led_cdev->delayed_set_value);
+@@ -331,10 +342,11 @@ void led_set_brightness_nopm(struct led_classdev *led_cdev, unsigned int value)
+ 	 * change is done immediately afterwards (before the work runs),
+ 	 * it uses a separate work_flag.
+ 	 */
+-	if (value) {
+-		led_cdev->delayed_set_value = value;
++	led_cdev->delayed_set_value = value;
 +
-+	return IN_KERNEL;
- }
- 
- /* See AMD PPR(s) section Machine Check Error Handling. */
-diff --git a/arch/x86/kernel/fpu/legacy.h b/arch/x86/kernel/fpu/legacy.h
-index 098f367bb8a7..3f6036840d65 100644
---- a/arch/x86/kernel/fpu/legacy.h
-+++ b/arch/x86/kernel/fpu/legacy.h
-@@ -24,7 +24,7 @@ static inline void ldmxcsr(u32 mxcsr)
- 	asm volatile(ASM_STAC "\n"					\
- 		     "1: " #insn "\n"					\
- 		     "2: " ASM_CLAC "\n"				\
--		     _ASM_EXTABLE_TYPE(1b, 2b, EX_TYPE_FAULT_MCE_SAFE)	\
-+		     _ASM_EXTABLE_TYPE(1b, 2b, EX_TYPE_FAULT | EX_FLAG_MCE)	\
- 		     : [err] "=a" (err), output				\
- 		     : "0"(0), input);					\
- 	err;								\
-diff --git a/arch/x86/kernel/fpu/xstate.h b/arch/x86/kernel/fpu/xstate.h
-index aa16f1a1bbcf..eef534091105 100644
---- a/arch/x86/kernel/fpu/xstate.h
-+++ b/arch/x86/kernel/fpu/xstate.h
-@@ -115,7 +115,7 @@ static inline int update_pkru_in_sigframe(struct xregs_state __user *buf, u64 ma
- 	asm volatile("1:" op "\n\t"					\
- 		     "xor %[err], %[err]\n"				\
- 		     "2:\n\t"						\
--		     _ASM_EXTABLE_TYPE(1b, 2b, EX_TYPE_FAULT_MCE_SAFE)	\
-+		     _ASM_EXTABLE_TYPE(1b, 2b, EX_TYPE_FAULT | EX_FLAG_MCE)	\
- 		     : [err] "=a" (err)					\
- 		     : "D" (st), "m" (*st), "a" (lmask), "d" (hmask)	\
- 		     : "memory")
-diff --git a/arch/x86/lib/copy_mc_64.S b/arch/x86/lib/copy_mc_64.S
-index c859a8a09860..7977689ad46e 100644
---- a/arch/x86/lib/copy_mc_64.S
-+++ b/arch/x86/lib/copy_mc_64.S
-@@ -103,9 +103,9 @@ SYM_FUNC_START(copy_mc_fragile)
- 	movl	%ecx, %edx
- 	jmp copy_mc_fragile_handle_tail
- 
--	_ASM_EXTABLE_TYPE(.L_read_leading_bytes, .E_leading_bytes, EX_TYPE_DEFAULT_MCE_SAFE)
--	_ASM_EXTABLE_TYPE(.L_read_words, .E_read_words, EX_TYPE_DEFAULT_MCE_SAFE)
--	_ASM_EXTABLE_TYPE(.L_read_trailing_bytes, .E_trailing_bytes, EX_TYPE_DEFAULT_MCE_SAFE)
-+	_ASM_EXTABLE_TYPE(.L_read_leading_bytes, .E_leading_bytes, EX_TYPE_DEFAULT | EX_FLAG_MCE)
-+	_ASM_EXTABLE_TYPE(.L_read_words, .E_read_words, EX_TYPE_DEFAULT | EX_FLAG_MCE)
-+	_ASM_EXTABLE_TYPE(.L_read_trailing_bytes, .E_trailing_bytes, EX_TYPE_DEFAULT | EX_FLAG_MCE)
- 	_ASM_EXTABLE(.L_write_leading_bytes, .E_leading_bytes)
- 	_ASM_EXTABLE(.L_write_words, .E_write_words)
- 	_ASM_EXTABLE(.L_write_trailing_bytes, .E_trailing_bytes)
-@@ -143,7 +143,7 @@ SYM_FUNC_START(copy_mc_enhanced_fast_string)
- 	movq %rcx, %rax
- 	RET
- 
--	_ASM_EXTABLE_TYPE(.L_copy, .E_copy, EX_TYPE_DEFAULT_MCE_SAFE)
-+	_ASM_EXTABLE_TYPE(.L_copy, .E_copy, EX_TYPE_DEFAULT | EX_FLAG_MCE)
- 
- SYM_FUNC_END(copy_mc_enhanced_fast_string)
- #endif /* !CONFIG_UML */
-diff --git a/arch/x86/mm/extable.c b/arch/x86/mm/extable.c
-index 51986e8a9d35..7358bf10baba 100644
---- a/arch/x86/mm/extable.c
-+++ b/arch/x86/mm/extable.c
-@@ -293,8 +293,10 @@ static bool ex_handler_eretu(const struct exception_table_entry *fixup,
- int ex_get_fixup_type(unsigned long ip)
- {
- 	const struct exception_table_entry *e = search_exception_tables(ip);
-+	if (!e)
-+		return EX_TYPE_NONE;
- 
--	return e ? FIELD_GET(EX_DATA_TYPE_MASK, e->data) : EX_TYPE_NONE;
-+	return FIELD_GET(EX_DATA_TYPE_MASK, e->data) | (e->data & (EX_FLAG_USER | EX_FLAG_MCE));
- }
- 
- int fixup_exception(struct pt_regs *regs, int trapnr, unsigned long error_code,
-@@ -327,10 +329,8 @@ int fixup_exception(struct pt_regs *regs, int trapnr, unsigned long error_code,
- 
- 	switch (type) {
- 	case EX_TYPE_DEFAULT:
--	case EX_TYPE_DEFAULT_MCE_SAFE:
- 		return ex_handler_default(e, regs);
- 	case EX_TYPE_FAULT:
--	case EX_TYPE_FAULT_MCE_SAFE:
- 		return ex_handler_fault(e, regs, trapnr);
- 	case EX_TYPE_UACCESS:
- 		return ex_handler_uaccess(e, regs, trapnr, fault_addr);
++	if (value)
+ 		set_bit(LED_SET_BRIGHTNESS, &led_cdev->work_flags);
+-	} else {
++	else {
+ 		clear_bit(LED_SET_BRIGHTNESS, &led_cdev->work_flags);
+ 		clear_bit(LED_SET_BLINK, &led_cdev->work_flags);
+ 		set_bit(LED_SET_BRIGHTNESS_OFF, &led_cdev->work_flags);
+-- 
+2.40.0
+
 
