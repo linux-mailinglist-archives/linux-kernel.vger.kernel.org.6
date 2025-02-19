@@ -1,63 +1,63 @@
-Return-Path: <linux-kernel+bounces-521755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 939E5A3C1EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:22:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD5F1A3C1CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:18:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25C1B16D713
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:19:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19F2D188959D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:14:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5120D1EDA3B;
-	Wed, 19 Feb 2025 14:19:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F31411EB9E5;
+	Wed, 19 Feb 2025 14:14:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Iy8gBjDX"
-Received: from smtp.smtpout.orange.fr (smtp-80.smtpout.orange.fr [80.12.242.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="V/O4Svi+"
+Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02651D5CFA;
-	Wed, 19 Feb 2025 14:19:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F364A1E00BF;
+	Wed, 19 Feb 2025 14:14:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739974760; cv=none; b=tAVXt5fyaYLFS4GjB5j9xwSxXsjznbpbX3uDLLGjxiv1WIoxHdMykptdLmz70gjxLr+oNU/kw5TiwvVQkmyASx0JIz9SkF0rh3LULIQmKL9PCjp3y0SlSUUXZW1MYTynRTUPBJcAZ/q+3wR5qjaHxcLrdUHBZy0PRk7jEddb04Q=
+	t=1739974461; cv=none; b=U0qCk5rdEoazlqCbcsqLELFfR84E5ztnuz01Hg8O8prmkzDH/p/fd8yhtKdcko/MivvtrAU73w7czltwchJfx6T8SXY50tRN7JF9Q/6DExVHOk/7e4uGmjY8Bowq9Q2vA+FhKqgMI2Wk8mZmb8Jvg/EnsJ7tXTwbX+psjTkj5GU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739974760; c=relaxed/simple;
-	bh=xhOka5HrB/5l9DnPGh8I/d8vI/RjpFfgtquNt4qx9kk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GtbUXK1airPflb+BCP3ODWwLgbWTnnq4UqdJ9r1/BuR0s0kihMlBPrkfk0erGOdDKydnuxpZ2dUXUv5tACsS4Ie9mzRrvEG8U88rpB6eymZ5lAjGrHZanCgpDkyxFsyFYY0UnsDv9fadDwvWE/5lY4PgnhUu6DVr5pS2kADfiv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Iy8gBjDX; arc=none smtp.client-ip=80.12.242.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id kkmNtlwWuP1lPkkmQtAPTZ; Wed, 19 Feb 2025 15:10:27 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1739974227;
-	bh=/3VqG2Ixu4D/b/fBjdxtIHmnWs32ARGjXTBEBsZkq2k=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=Iy8gBjDXBxphsv6TAVjALjMVIWnok0wI4Cn6sv230TK+vh1OEefemFDGWNn93Q3dW
-	 mi6c47I+n2eTCn+vM0WVmX0SRdFkR1mbig/p1d4gFvyZ0+l6M0fJHGwlCqE5ZmgKJ6
-	 05lb5Beqs9gRPb9WW8e0Q6+v2f3v2XktqjQQH3DIFLLb5K5CMBpRsil+Aupeg2hsuH
-	 +9wnWbiqgkK3yf0SoktRsrp8WYCnzZZuwaztUh8kmED9XgKDcMCyCr1ozmRj0kUH8l
-	 tZpjHPXWUuFZxo/yydJ/XvXeiwDRCgNaIztMvQcAMWPgu8k4fMGEMS/Bc9fHFYoDGt
-	 eeEiSBiqY2xBg==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 19 Feb 2025 15:10:27 +0100
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-btrfs@vger.kernel.org
-Subject: [PATCH] btrfs: zoned: Remove some code duplication
-Date: Wed, 19 Feb 2025 15:10:21 +0100
-Message-ID: <74072f83285f96aba98add7d24c9f944d22a721b.1739974151.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1739974461; c=relaxed/simple;
+	bh=nmJ4ZvLLFI6LL0PkBqcWvO+4q3PB/WXRBiH66z1+dQg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=E2nYGVV5ctrb0leNUBd1hB/Mtn31a3MDcrHhMOYO8XJX3KgTDWtEg9V49bV2yJkMr0uFK7OOfoSJ++9iZN1DtwlJBmQhWHPAWBUaJE2KSaBvMVdtq9uxuN1k6ZK0VFljQwSuLZ1plPNnozVWFOWQ5u23yOiTOdaKXIWWWseonFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=V/O4Svi+; arc=none smtp.client-ip=198.37.111.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1739974458;
+	bh=nmJ4ZvLLFI6LL0PkBqcWvO+4q3PB/WXRBiH66z1+dQg=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=V/O4Svi+fwpZCG27kiFpvgSBNGfGszwoxKf4G6rH6eDYFeADAhn+CV/wAwOgcdCE1
+	 XHOVF5zUzW+U4+m3d9vPvOhYZYrF6fDWKhjjitsEta8j+srvVZhS5r28Mnn8b7CFcY
+	 p0asKWDa4KoAqEVAH7oVVvou54QriyK62nSYvYao=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::db7])
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 461A31C2556;
+	Wed, 19 Feb 2025 09:14:18 -0500 (EST)
+Message-ID: <2bcf7cb500403cb26ad04934e664f34b0beafd18.camel@HansenPartnership.com>
+Subject: Re: Rust kernel policy
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>, Christoph Hellwig
+	 <hch@infradead.org>
+Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, rust-for-linux
+ <rust-for-linux@vger.kernel.org>, Linus Torvalds
+ <torvalds@linux-foundation.org>,  Greg KH <gregkh@linuxfoundation.org>,
+ David Airlie <airlied@gmail.com>,  linux-kernel@vger.kernel.org,
+ ksummit@lists.linux.dev
+Date: Wed, 19 Feb 2025 09:14:17 -0500
+In-Reply-To: <b7a3958e-7a0a-482e-823a-9d6efcb4b577@stanley.mountain>
+References: 
+	<CANiq72m-R0tOakf=j7BZ78jDHdy=9-fvZbAT8j91Je2Bxy0sFg@mail.gmail.com>
+	 <Z7SwcnUzjZYfuJ4-@infradead.org>
+	 <b7a3958e-7a0a-482e-823a-9d6efcb4b577@stanley.mountain>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,37 +66,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This code snippet is written twice in row, so remove one of them.
+On Wed, 2025-02-19 at 11:05 +0300, Dan Carpenter wrote:
+> On Tue, Feb 18, 2025 at 08:08:18AM -0800, Christoph Hellwig wrote:
+> > But that also shows how core maintainers are put off by trivial
+> > things like checking for integer overflows or compiler enforced
+> > synchronization (as in the clang thread sanitizer).
+> > How are we're going to bridge the gap between a part of the kernel
+> > that is not even accepting relatively easy rules for improving
+> > safety vs another one that enforces even strong rules.
+> 
+> Yeah.  It's an ironic thing...
+> 
+>         unsigned long total = nr * size;
+> 
+>         if (nr > ULONG_MAX / size)
+>                 return -EINVAL;
+> 
+> In an ideal world, people who write code like that should receive a
+> permanent ban from promoting Rust.
 
-This was apparently added by accident in commit efe28fcf2e47 ("btrfs:
-handle unexpected parent block offset in btrfs_alloc_tree_block()")
+I look at most of the bugfixes flowing through subsystems I watch and a
+lot of them are in error legs.  Usually around kfree cockups (either
+forgetting or freeing to early).  Could we possibly fix a lot of this
+by adopting the _cleanup_ annotations[1]?  I've been working in systemd
+code recently and they seem to make great use of this for error leg
+simplification.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- fs/btrfs/zoned.c | 9 ---------
- 1 file changed, 9 deletions(-)
+Regards,
 
-diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
-index b5b9d16664a8..6c4534316aad 100644
---- a/fs/btrfs/zoned.c
-+++ b/fs/btrfs/zoned.c
-@@ -1663,15 +1663,6 @@ int btrfs_load_block_group_zone_info(struct btrfs_block_group *cache, bool new)
- 	}
- 
- out:
--	/* Reject non SINGLE data profiles without RST */
--	if ((map->type & BTRFS_BLOCK_GROUP_DATA) &&
--	    (map->type & BTRFS_BLOCK_GROUP_PROFILE_MASK) &&
--	    !fs_info->stripe_root) {
--		btrfs_err(fs_info, "zoned: data %s needs raid-stripe-tree",
--			  btrfs_bg_type_to_raid_name(map->type));
--		return -EINVAL;
--	}
--
- 	/* Reject non SINGLE data profiles without RST. */
- 	if ((map->type & BTRFS_BLOCK_GROUP_DATA) &&
- 	    (map->type & BTRFS_BLOCK_GROUP_PROFILE_MASK) &&
--- 
-2.48.1
+James
 
+[1] https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.html#index-cleanup-variable-attribute
+https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.html#index-cleanup-variable-attribute
 
