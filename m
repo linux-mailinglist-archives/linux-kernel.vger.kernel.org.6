@@ -1,199 +1,152 @@
-Return-Path: <linux-kernel+bounces-521974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D23EA3C480
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:09:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 046C5A3C47C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:09:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 269C83B5FB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:07:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAB9016E229
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:08:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F8FA1FDE24;
-	Wed, 19 Feb 2025 16:07:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C9D21FE471;
+	Wed, 19 Feb 2025 16:07:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b="jvoY4w7y"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2072.outbound.protection.outlook.com [40.107.20.72])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="lEB9CPIw"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FE231FDE09
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 16:07:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.72
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739981230; cv=fail; b=FukBn1wuIRM0h3aKVlzNefqIZqnWFonMC+rtV2TaepXMEcQg2bWhqFR6/y4LyxjjH4sI/GmN9DydzeBoi14yimKTXX0DrHqPbLMfWegj8jYete5qLEF977/tf8nHNFSbRUTiq/27uzu9b8NhzVfssPqmKItTJ3x+9W2VgkiWBCc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739981230; c=relaxed/simple;
-	bh=lLDSw7GN29H9tn6AwHwQ4+muqUAtOLcgTtXi6yKan5w=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Zsy13wqmaLejtQ2fbSZtxvtRD1U+WuWdXrESdRmrfEZZyfdWnyZajH6kz9+m+aHbxcq3t7OwQwwUi5Zr1/QxYscBsdBfReZ2FRBFJ7RwNEz8Nt6TFi7mBPmlexJepjNWAiWA/4hEpMVlP8IcDUj3OBe/b5dCwbPpKjtffRi+TWo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de; spf=pass smtp.mailfrom=cherry.de; dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b=jvoY4w7y; arc=fail smtp.client-ip=40.107.20.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cherry.de
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xqt3bXF3+yKemOWVtUeQzudYi0eKBgGi/xI8NBQTPHZfcxbAVcQFiSo0J31VUjmkgAu2XpSNUoqfcSKy4v14x5Nmnb16W2NA1pUrPb0N8YfXoz3wndAQtvcONnfZAXfY88/E4puSY7rU/l4b0nqjhB7jnGrkBV1TOTBT8jsPPMYPgQprvWFS2CjI5fMlkvB+J786lECkxXT97UB7wqFXJQAZrmEPt/OrOYEAicO3Huv5755syM97pWLS8wU1ifRNykkXnO9rRwvnDJ6lA8IEV54DoGi00XkhLBl4B6BKZlytteSNEXSVyLs0bPX5thMg/ARdsICQvynAsVRGWk/WJA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OGI4FT1K/Zrdr3UeF4yAGP3ydqXH95UEPl4FfyiRg+A=;
- b=oNU4gypWiBUH9cD+Fng0OE+e373khH6qrzpStMKtbtDl2o8qj+DPT4e6hHIAfsu8AwzwnijtcWHR55ls5bbvV/wuF9TAwQ1WPtmCsHQS0Zl/LJJwgcfKmR1HXTaN3ONZ4T4s5sBJTIwxSGapvNnt4WPh2V+WAYond3jzI/gfFIvqCPFCFeFLO9ZfMUkCQ1vM1oNThfMCxJNe/54BRJU/Rkw4l4SzeFd43nTO8KyNuK70/pHtVO/jZ/iQ9vjcCzJxN3x9nuDDRiZbxWNGFmEuvAmZaJaohyWmCYDZvHGEuSmD6bow/GXgiyZHc2Ls8WXs1BuhMMTNbMnUZSClbDtdGQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
- dkim=pass header.d=cherry.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OGI4FT1K/Zrdr3UeF4yAGP3ydqXH95UEPl4FfyiRg+A=;
- b=jvoY4w7yXirJ/vf6PW5OCdCKX/KWdjlE6ZNa20yzSm57fWg7RU8CFhW0t5uitDdKRFg2+q+YwjxLQfE0M5gWceL86junDBZw+7N7H4hbFRDGqNfKYag+qxwP6EwdAhhscMBgVUz9TAtSVVeWzWtsuuvizTkc11jImwT85EI8lvU=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cherry.de;
-Received: from AS8PR04MB8897.eurprd04.prod.outlook.com (2603:10a6:20b:42c::20)
- by AM0PR04MB7075.eurprd04.prod.outlook.com (2603:10a6:208:19e::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.14; Wed, 19 Feb
- 2025 16:07:05 +0000
-Received: from AS8PR04MB8897.eurprd04.prod.outlook.com
- ([fe80::35f6:bc7d:633:369a]) by AS8PR04MB8897.eurprd04.prod.outlook.com
- ([fe80::35f6:bc7d:633:369a%6]) with mapi id 15.20.8445.016; Wed, 19 Feb 2025
- 16:07:05 +0000
-Message-ID: <f4ef19f1-d1e6-4f06-a81d-c7e7e10605e6@cherry.de>
-Date: Wed, 19 Feb 2025 17:07:04 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] arm64: dts: rockchip: remove supports-cqe from rk3588
- tiger
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, lukasz.czechowski@thaumatec.com,
- Heiko Stuebner <heiko.stuebner@cherry.de>
-References: <20250219093303.2320517-1-heiko@sntech.de>
- <20250219093303.2320517-2-heiko@sntech.de>
-Content-Language: en-US
-From: Quentin Schulz <quentin.schulz@cherry.de>
-In-Reply-To: <20250219093303.2320517-2-heiko@sntech.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR3P281CA0135.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:94::19) To AS8PR04MB8897.eurprd04.prod.outlook.com
- (2603:10a6:20b:42c::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C46C31FDE10;
+	Wed, 19 Feb 2025 16:07:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739981262; cv=none; b=X/vQTCHScxggychgSRWC0dvmwRAZ4jIV5CuV1vQw+ZIj1E4hdbSL8pgX9TYzuo8se4vEoXTqTXkvfboGpZehAyuaK7pDal5k+uEPbtmUUskXG6/WLWWLWtUrcH+Uz+3o3jCtZ1XVD/bHlo2joYwNqK0pi6c7ydnFYqKIuFG/QKI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739981262; c=relaxed/simple;
+	bh=0ffD3GzZEOQ9UcQ1u0TFG+RKGkt81ixRU8Ke58Kp3pE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mZvpCrhBvuyYs8AkqnTnsWqDo5GL/10ZU5OT7XgYnwAp6hhnXcNEYYBMV1jwT/g3aPaWnxCMmWZN3ZC7EbEAbltDvRxfXePPR2rjcl/8qfzWQ+OYr2KitgfW4fjsaMjdL3+/70dUw0uUHfD++W9rtjg64RA9DMY8DhoI3Oh4z9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=lEB9CPIw; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id D97EB514;
+	Wed, 19 Feb 2025 17:06:15 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1739981176;
+	bh=0ffD3GzZEOQ9UcQ1u0TFG+RKGkt81ixRU8Ke58Kp3pE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lEB9CPIwWCNavSqqJCBHsF2FoGzZhlEk6bUDb+QtTFFhdqbFoyC/Ho/Ve48HYU+Fq
+	 vkVqV5oeKKwFSKnUaLPailKVUKoF1KlYxLOG/iTCuFCuHkzMH/CHqmKa7wKCdoi3MX
+	 uKr171qBRa+hPk7yqkLuRsfjcnNbgaDxdpMJzxZI=
+Date: Wed, 19 Feb 2025 18:07:23 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Willy Tarreau <w@1wt.eu>
+Cc: James Bottomley <James.Bottomley@HansenPartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Christoph Hellwig <hch@infradead.org>,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	rust-for-linux <rust-for-linux@vger.kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	David Airlie <airlied@gmail.com>, linux-kernel@vger.kernel.org,
+	ksummit@lists.linux.dev
+Subject: Re: Rust kernel policy
+Message-ID: <20250219160723.GB11480@pendragon.ideasonboard.com>
+References: <CANiq72m-R0tOakf=j7BZ78jDHdy=9-fvZbAT8j91Je2Bxy0sFg@mail.gmail.com>
+ <Z7SwcnUzjZYfuJ4-@infradead.org>
+ <b7a3958e-7a0a-482e-823a-9d6efcb4b577@stanley.mountain>
+ <2bcf7cb500403cb26ad04934e664f34b0beafd18.camel@HansenPartnership.com>
+ <yq1mseim24a.fsf@ca-mkp.ca.oracle.com>
+ <c1693d15d0a9c8b7d194535f88cbc5b07b5740e5.camel@HansenPartnership.com>
+ <20250219153350.GG19203@1wt.eu>
+ <e42e8e79a539849419e475ef8041e87b3bccbbfe.camel@HansenPartnership.com>
+ <20250219155617.GH19203@1wt.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8897:EE_|AM0PR04MB7075:EE_
-X-MS-Office365-Filtering-Correlation-Id: 65057695-6964-4ece-2168-08dd50ff7419
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dEcyclZsaDliUCsycVFaOW5OaHVWcWRRci83UHl4dWd1NUpsU3VzanJ4cHdw?=
- =?utf-8?B?WmJrWXNiTnVSc2RLNnZoMytSOE5VaXh3WG1VQWxHYWNWZVRYOTFWdXliNUxy?=
- =?utf-8?B?bmZOVVNIZ1RwUjlkR2RadzNmcGlDdGZoa0UwK3FPQXpVRlZmLzBCbXNVcUEv?=
- =?utf-8?B?dlN1a1k1clN0QWpYb2I2dXJOdkR1Y2lHVGtlaWw1Yjk5SFJteDBaSVRNemhX?=
- =?utf-8?B?TE84b290c3JuU2NiUDhDWXpyM2Q3c1lTY3JvNGNFTXJIN2xZc3h2dEc5eW9F?=
- =?utf-8?B?Z2Rkd2lPVlV6N0hMeFduMmF0dFN1ZDlSV3ZXenhRY0xoMGw5TmVQMCs2bDN4?=
- =?utf-8?B?ZmRoSWwrU3BaRWRlWmNLdGkxcGh1TWxIMGppd1BNbStmTWphQ0hsTjhnMU93?=
- =?utf-8?B?NHJ1YytHM0dXRnNWT1U4bnFDUFBnYk9tTklZeXRxNEVqQzRNRkhZNFozR0tJ?=
- =?utf-8?B?a0d5dXh4UW9nL2FaaU02RVYxWmRnaUdZYk5wTzBoSXJnRVNnWTBFTjNCMmxa?=
- =?utf-8?B?QmJnUnZ6cjR6T2t5d3hyWGVJVmpSemQrUEdwaXZZT0pNdnM2MWw3R21hU3pO?=
- =?utf-8?B?a21TaXhZNU5wV3FnemVYczlHc2RhRnlnemF4MFdBUVBrMHBWbTRMd1Z3NENU?=
- =?utf-8?B?UE5meENSbW5aVnd2SUJydGxkV21xQXF5QVdwUG9kTHB0QVhXbWpHOE0yMk1u?=
- =?utf-8?B?T2VnZ2xnN0dxK0crbUx3ZHJTeU1BdDJQT0dOWEtqT00xdkFmeFBTaXYwbjVr?=
- =?utf-8?B?R0lBWmlGbzZWdjhVWWlhRVF4Mm92QlNIRHhRNGdEUTlqTHZCdnV0VFRhNUM1?=
- =?utf-8?B?dkd1b0ZYQUYwMlZNSHVPdHZGWWQ2VTU4NUZFZjMrUlAxN2NWVXFOL1BYSldS?=
- =?utf-8?B?V0dwN0RraDVublpvcjhxWUpFbGl3SU1vd3dCSzB2REQzSkw3VCtOMm5jMUI2?=
- =?utf-8?B?TGRMd3VRY3B3eWdtc1FXazFHdEl2RkFoSmphRHpxYmZYb0kwcFZHVmowK2s2?=
- =?utf-8?B?RlBxak1pVS9EVDBqeXVJTDc1ZFBPeHljb3VOTERUK1VOaUcxZW5aMEpsYnFP?=
- =?utf-8?B?MEhPNEFFQldHdW5KZzRvTGduK3FvY2NWOW0zSnFkQnh3L0VGVTZ6bTV1cjZF?=
- =?utf-8?B?RFRJRGlNTS96ZmpRakh5bU1LbHBHSnR5V3czb1FMcDM5OENBU1FBV2RwSWY3?=
- =?utf-8?B?eTdVM3B4bXR1a0ZNVWhuMGEveXo1YVJwY1dBYUZvZHNsb3ptK1RzaklmQngw?=
- =?utf-8?B?WGw2WVdMcGlhVkw2OTIrUGV0VFJQVnM3UzU0b1pLN1FtT2JaMWMxTWt5MGFH?=
- =?utf-8?B?UUROS1FxVjByRGJSU1VzS1RDczRvY3lZWmNOK0JuN3ZlOElKdWNiRkZXVlBQ?=
- =?utf-8?B?aVZON2Q4QkxScWFXWFR3eitoV2F4ek4rcEJmNktVazFOeElsNWMxWW16dnVZ?=
- =?utf-8?B?S1pteU9mTTQ4ZjNlWkF0QldLMWxqK213T1R2UjNVa0duMDV6b0M1cEpoN0VJ?=
- =?utf-8?B?cE1JLzllSStaL1N3cWhqV2h2d3FjbFJwQWRHQkRsYlhWWm9abDgrUG0yOHRu?=
- =?utf-8?B?ZitOM3I2MmUxbzI3VGdVbTlRVDFBTWx3TUFQc0NDOE9jQkljYzBJb0ZWR3U0?=
- =?utf-8?B?S2hQamN4MVJMNE5KK2Z4RFVsS29TMEpYTHMrRVdFajArb2g4a0FEMmNNd1RX?=
- =?utf-8?B?UUNTeExOaEFxaUNjbXc1NkR2dllSVDJ3NnRhTGxCblJqalVPRUY3Y1RXMFpp?=
- =?utf-8?B?a0xqQXhEcC84NThmbk13dWUvNllldlFIdlhBKzFJTTJwc2pENXBuYzk3Y0J4?=
- =?utf-8?B?UEFXc0l0aDhpak1JZEZxeDlMVjBNU2hQSWw1MHo4NHF1UFVtNnNNZHNSMWU0?=
- =?utf-8?Q?tPyNBqz2xOsN/?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8897.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?T0dOMUFlSVcrMGlIL0xZWUJwa2o1ZnRTcDQ5SHA1N3gwKzZMUEFYK0x4VDl4?=
- =?utf-8?B?aWlVZDlmKzR3WWlyYk0rL1EvMUhKL2RCbnRzYnpoVVArYzRoTmpoSXR4NThk?=
- =?utf-8?B?NGU4ZUY4cGZkSkJlUFY0VFZuSWhXOXBCYWl4ZmNpYThwMS9zay9zckorbGh4?=
- =?utf-8?B?ZzE5c0hpZHEwMjhnL00wSG1xU1VVUzN2SG5OV0dZR3BqVVBBSVNjYVYwZFlU?=
- =?utf-8?B?aUhCTGpmclgrZWpYL3NkSitZSGR2ZkVKUUs1aktzUVg4b2RZTHovVm53cndR?=
- =?utf-8?B?dU10MnhzT29udnM1anQ1cTc3dGhwbkxrQ2J2T2QzUG1BQ0JZZ2w3SEE3S1Vz?=
- =?utf-8?B?c2tJOXZqRmZUTnFqa3JXS25oL2xpaWJITDUzMnNpYWI4amNSSHF5c1dodDk1?=
- =?utf-8?B?UEJEdXhUMmhubUFaSGI1SkJ3QmRXcTZ2cUxOSGRmMHkwUHRNdTNjc0lLTEd3?=
- =?utf-8?B?ak5iUkJrcHJla0lWUHdlbzVNSTVDRllBMGtFQ3V2c1h4TmRjbDlLdGoyMnNZ?=
- =?utf-8?B?eFF1QXh3L0kxQ00zWGJLTFA5N3F3SFZuSnhraTBZTHJweUFXL01CdzhFRlVF?=
- =?utf-8?B?VFJyQW92eWw3WG4xL3dmc1U4L29WMzFrS3FnTVI1SEtLSGI3OUcxcVFhNkQ5?=
- =?utf-8?B?emNLNGVSa25JMjlEeTlHZUgzcStyRlQxMWVobDFidU1FWjk5cUVJbGRkaTEv?=
- =?utf-8?B?cUpWRExDaHM5NTBGcWtTcXQ2ZjhGVCs0MFk0RlorU0dHWFBweml5ZjV5bCtz?=
- =?utf-8?B?MkorbE1VOXUycGh6NWlha2owbXQ2TEd3cUJTWjRlMXVUU2dTRXJtTGVucVgz?=
- =?utf-8?B?Nld0ei9CSGwzcEVJckU2Y3dsekx5blVOSm9FVU1wR0N6NjZYbFY1YUFGa2I1?=
- =?utf-8?B?VTFQSnhaRWYwQkVGdS9DN20zN2NIRi9qOVBOMkphdXNwZWNvOFVrNEhPZnNo?=
- =?utf-8?B?eHZ0TGQxQ1orTHZOci8zdVdvZ01qdXkyL1N0TUJ1cnp6ckxwRm5YZ1l3RDNU?=
- =?utf-8?B?Wi9wdnVWU1FiWlJ4UmRDVVprOTZsRUY5NDNBeHd6S0ZLYlVkRWk4TnFoVjFs?=
- =?utf-8?B?ZVRuVHdjalM1VWdVU3J2anpCUlU4dlJINHErRVZuU3RTdHhMMzNQdEhXa3Bw?=
- =?utf-8?B?a0dySFVPWmVnRzNlSmFENVErNm9lU3R2TFhwOEdQRFltL1JVRythOVRHMTBX?=
- =?utf-8?B?NlJtc1pJUE5XNm1JOUVaQ3hpczZVek1GZkNKYkhiNjd2UzFpK09HZ1lRZWVS?=
- =?utf-8?B?WnVUSGIrL0FMb1F3dTZVaUprSTRISTE4ZnMvbDBaWi9lQ05qelZScWozUXFw?=
- =?utf-8?B?S2t1eUJZSENvNmU2MFZCU0psOHpjOFdYTVFLNFNiL0w1aWNWQVNBL3NwYTNp?=
- =?utf-8?B?aXRvNkN5RUx4TUY1dW5nZS9CeFNLUWh1cXFkT3RHRVpQWUZtb0RGdmFGQ1J4?=
- =?utf-8?B?VGtHRjJRblNubEtKQkw3Mi83blEySzNtSUtDY2EzdEl1R1N6eC9GUTE1WjJz?=
- =?utf-8?B?cHhZeXFxK1NldkdMdS9XSy8wanFXZ3ArSUo0QTF2VmpTWjBSVFV5dUdxMGx5?=
- =?utf-8?B?eHdGWERHVE4vNUNjSHo4amI4SHN1YlZIWWlxU1MxUDdZbGlIYUdndU44YmJ4?=
- =?utf-8?B?emVxdXB6eXJzOThaSHpwOFFzWmpYeFFuRHVLbTJzWDZMOGFTS1VrbUlaYzhs?=
- =?utf-8?B?TXhtM1BzNWJEK08zdmhWN0hONGgzbVBaQmNiSFg5RVJxeGtHMEwySVE3cVpD?=
- =?utf-8?B?RklIYklhUXZUaC9hWWpLd0J2QUl5ZGdhdnFZcW5PRzBlZEo5VWdKV3A3RVhE?=
- =?utf-8?B?UEpxamk4WlJ6V0hUTlg2Mm8yZHdrKzM5Yi9iR2V1TExpM3YyN3FTMW9xUGh4?=
- =?utf-8?B?YUNwSExEdlk1dVRlcjZLOUF0ZWJ1K28vU2k5UVRMckxOeGx0Smd2UVZUaktp?=
- =?utf-8?B?L2ZpcCtRWndwT1BYb1piQzYyQkdnV2c5ajl3bmpScTMxSWl6cC9SR1FPYTM1?=
- =?utf-8?B?RHVybUJsU29GdW9Wa1dTbEMzNkViNE1lRjh0ZExJcHNqSlR5VTZHdVN2a2FT?=
- =?utf-8?B?YS9nc1JLODdrN2F5UUlPbUlXQlFXOFdKVGxrWjdDRjBNTmVUTzliazdvTDFj?=
- =?utf-8?B?dkJ6WTVwWWpsZXZPcXZmK1dwK2dUME43ZFRuelQ3anZXZWRZczA3Y3M3Wmlu?=
- =?utf-8?B?THc9PQ==?=
-X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: 65057695-6964-4ece-2168-08dd50ff7419
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8897.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2025 16:07:05.2689
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: kX5t1q5sSzTOX0CO7Yihiw6Rsjca8STXvJJuwlS0RkQVX6efWYB0GeBNXJpLFK/qSe6d0jnlvBBNNb3RunqTSBMG0Lfyq3fMVfh9P9LqYac=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB7075
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250219155617.GH19203@1wt.eu>
 
-Hi Heiko,
+On Wed, Feb 19, 2025 at 04:56:17PM +0100, Willy Tarreau wrote:
+> On Wed, Feb 19, 2025 at 10:46:03AM -0500, James Bottomley wrote:
+> > > > > I like using cleanup attributes for some error handling. However,
+> > > > > I'm finding that in many cases I want to do a bit more than a
+> > > > > simple kfree(). And at that point things get syntactically messy
+> > > > > in the variable declarations and harder to read than just doing a
+> > > > > classic goto style unwind.
+> > > > 
+> > > > So the way systemd solves this is that they define a whole bunch of
+> > > > _cleanup_<type>_ annotations which encode the additional logic.  It
+> > > > does mean you need a globally defined function for each cleanup
+> > > > type, but judicious use of cleanup types seems to mean they only
+> > > > have a few dozen of these.
+> > > 
+> > > I may be missing something obvious, but this seems super dangerous to
+> > > me to perform lightly without reference counting, as it increases the
+> > > risks of use-after-free and double-free in case one of the allocated
+> > > objects in question can sometimes be returned.
+> > 
+> > Who said anything about not reference counting?
+> 
+> Nobody, but it was not said either that they were used at all!
+> 
+> >  One the things the
+> > _cleanup_X annotations can do is drop references (or even locks).
+> 
+> OK then!
+> 
+> > >  Users of such mechanisms must be extremely cautious never to ever
+> > > return a pointer derivated from a variable tagged as such, or to
+> > > properly NULL-assign the original object for it not to double-free.
+> > > So it might in the end require to be careful about null-setting on
+> > > return instead of explicitly freeing what was explicitly allocated.
+> > > I'm not sure about the overall benefit.
+> > > Also I suspect it encourages to multiply the return points, which
+> > > makes it even more difficult to possibly fix what needs to be fixed
+> > > without coming from a locally allocated variable (e.g. restore a
+> > > state in a parser etc). Maybe it's just me not seeing the whole
+> > > picture, but as a general case I prefer to forget a free() call
+> > > (worst case: memory leak) than forget a foo=NULL that may result in a
+> > > double free, and the description here makes me think the latter might
+> > > more easily happen.
+> > 
+> > Well we could all speculate about the mess we'll make with any new
+> > tool.  All I'm saying is that another project with a large code base
+> > (systemd), which you can go an look at, managed to use these
+> > annotations very successfully to simplify their error legs. Perhaps
+> > there are reasons why the kernel can't be as successful, but I think
+> > assuming failure from the outset isn't the best way to flush these
+> > reasons out.
+> 
+> I'm not trying to assume failure or anything, just saying that it's
+> probably not always as simple as calling kfree() on anything locally
+> allocated for error paths to be magically cleaned, and it actually is
+> more subtle (and Laurent confirmed my concerns illustrating that this
+> case is precisely covered in glib using transfer of ownership).
+> 
+> And the temptation to return from everywhere since it's the only
+> required statement (instead of a goto to a collecting place) becomes
+> great and should sometimes be resisted to.
+> 
+> Regardless I do understand how these cleanups can help in a number of
+> case, at least to avoid some code duplication.
 
-On 2/19/25 10:33 AM, Heiko Stuebner wrote:
-> From: Heiko Stuebner <heiko.stuebner@cherry.de>
-> 
-> The sdhci controller supports cqe it seems and necessary code also is in
-> place - in theory.
-> 
-> At this point Jaguar and Tiger are the only boards enabling cqe support
-> on the rk3588 and we are seeing reliability issues under load.
-> 
-> This can be caused by either a controller-, hw- or driver-issue and
-> definitly needs more investigation to work properly it seems.
-> 
-> So disable cqe support on Tiger for now.
-> 
-> Fixes: 6173ef24b35b ("arm64: dts: rockchip: add RK3588-Q7 (Tiger) SoM")
-> Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
+They're particularly useful to "destroy" local variables that don't need
+to be returned. This allows implementing scope guards, to facilitate
+lock handling for instance. Once a mutex guard is instantiated, the
+mutex is locked, and it will be guaranteed to be unlocked in every
+return path.
 
-Reviewed-by: Quentin Schulz <quentin.schulz@cherry.de>
+-- 
+Regards,
 
-Thanks!
-Quentin
+Laurent Pinchart
 
