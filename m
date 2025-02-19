@@ -1,60 +1,90 @@
-Return-Path: <linux-kernel+bounces-521054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54CB7A3B353
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:10:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48B23A3B358
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:11:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0635B3AD052
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:10:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F45516EE1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:11:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D3301C5D5C;
-	Wed, 19 Feb 2025 08:10:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 793C21C5D4A;
+	Wed, 19 Feb 2025 08:11:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QNzeSBLU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Py8UWr1E"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF22F1C54B3;
-	Wed, 19 Feb 2025 08:10:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5532B192B66;
+	Wed, 19 Feb 2025 08:11:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739952627; cv=none; b=mljwB0n6MddHzsAqK8TY3DjKwBd8SOhozpbi7AffnrS66gXY0qlGvZXmN8fnoVa5cNLux8s32EiviR1HpeRPrgu0S1uK5A3Z3pfR3ZEkWsJKZHa4Izh2Fa1xYGJhlZKVKlKk187JNMHlCKbNCSlpHlLzyrTyYjUtVfYolmJSynw=
+	t=1739952679; cv=none; b=m5n7SrR0z7bEWgAa31RINHZqxY4VcziPi8P8/grO7Cbtxe2Dv2M0umaqUxuAQemOvJdcI8/uylx6iuwskt5AbZXJzH5NrYdXg9nDPylgY1b87AlicQglb8+38z4iUpMlr/HEZ2F5MwqhMvOlAxPLdnRUIdmQjOlC1QZMCd5Wxxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739952627; c=relaxed/simple;
-	bh=6daNzU34b0ai1+kOC+LbIJcJDSwe4SEgiE/l3fIVfMA=;
+	s=arc-20240116; t=1739952679; c=relaxed/simple;
+	bh=IPe8Mxi647OUSrYabRzCQyT6Z0JhgCU5DJgBF03pA2E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JgsnS1WTNsJrgVgJ01FdMcBRLgCbEARWtB6Lv01KWo5P0YsZr2LqjTVwHcesaTRfRWXG52clgS97oAw3bNlg+s35cNver6o6WyiUhtFF5HvSXfvCbEc4kXy52icYAaQl2O2r1JYkc3RDcrAIzk+76u9A+M23U+xDnO87fXeDXWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QNzeSBLU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FFD6C4CED1;
-	Wed, 19 Feb 2025 08:10:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739952627;
-	bh=6daNzU34b0ai1+kOC+LbIJcJDSwe4SEgiE/l3fIVfMA=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=nVoKBik1D5IJbp25bM3NMWAhg1GVgt67eWD9I8ODkfrMTj3gn1GYvacSx7r1Aj96XXIpHUjMw0ZBkaRAutIpCaz+psUL+cPhcYX5/v4egdMFznRmE9nyCU2wtpIW0Zo+bzMEfEc/xFjQk2dTNvfRI6cPCzY8F4gW8fruPcAB+iE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Py8UWr1E; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id F33AA40E01B2;
+	Wed, 19 Feb 2025 08:11:08 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id Yx0b9ewn8JZF; Wed, 19 Feb 2025 08:11:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1739952662; bh=ZxQ67/I/xzQUJoLjt+WwJVnLywiFGJ9l3cBldN2lLJM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QNzeSBLUOT97nZH9tDnbnfc6gmflk304SFgxL1unwfFOCyhooaU8RzZqp+WXq8U0k
-	 U6uEsCzPA2VBbZdp/WZoFESjQuI+vC/4h++NjJZ+Xxud10KCyX6kVhWDD+VfNHC02R
-	 aIbSK5QTmM6A91l7hsya6sWdfD9wrtb81eoRfFYcgt/EhQ0ZVhE9otfgn36YqRA1P9
-	 MSTxdZ6MQZRG/H+QWQrwyRz/9J30E011Ws5dUkkKLzZCm8dny/nXrJMEjlfXBWUxh1
-	 3jvnMD9ghZcEmywbwx3vIRm/UaRFbD9DIp2iK2+WGdZAmNHdlFAwYnXsI2MALTJOGP
-	 HcYPpc+DKBtSA==
-Date: Wed, 19 Feb 2025 09:10:24 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kaustabh Chakraborty <kauschluss@disroot.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 2/5] dt-bindings: clock: document exynos7870 clock
- driver CMU bindings
-Message-ID: <20250219-discerning-convivial-flamingo-6d9eb5@krzk-bin>
-References: <20250219-exynos7870-pmu-clocks-v3-0-0d1e415e9e3a@disroot.org>
- <20250219-exynos7870-pmu-clocks-v3-2-0d1e415e9e3a@disroot.org>
- <20250219-competent-bullfinch-of-justice-09cbfb@krzk-bin>
+	b=Py8UWr1Eb6EHHSx3RoMXjTfvLHvkvDTfvb8p0GcXlWgPHG91sJE/iBAnynl+p0hHF
+	 wW7ISwgyJh8TQHaFfruoOqqDZVdDGKq4E7hdMKzKmDT6xkzYiebfKFt2WH/+1gtV8I
+	 0Omb2B3LxXpbToMVtkjPwNRC2xLfzBER5LxdpGlewrdOD63wrz6rJQQPbWbEPYgf/N
+	 cmNirB0fA3yVLL41CuK8AACePAvELHEOBYF85EorLhlK5iITO68SqbZL9MtXLQ5C5v
+	 13b3RJMBrgOVZ6aTjxZ/Xd6ygp3KSGujA8qW8uCJt8nI+WQDQiN1B1HxZ/ZynhbjBl
+	 Lb/uY7zaSVQ3i9Oke8+LQkaypA/xcZgiLK86ua8Sq7QFQnXk0/kQrveQtWbslYhIMq
+	 GHobiU8DVOgKjJxYsb1qSesw/qqNOa1r9XRxJCuvVLJJ7tkFq+78n972yjXLML4KaK
+	 zAARqZl7NfKVPlmaEd7IhaBXSKPDeIOljMQ078aux8/EMVx3duclNqp+4qbvhnFUU5
+	 Ijb20n0NjbA5hZMtwWlSOJAB/lDTZr7y5CMJOJ+f7btjVVjMvSg8WcS+VxNedUcMhF
+	 4CKnTKRmY+og36kfc1wIWRHaHOUgOy2lCt0aSn36wLY/v9GxLotOTty/gjKU070lpS
+	 1jFpP5V551fnLIB7/bvB0f5Y=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id AF11440E0221;
+	Wed, 19 Feb 2025 08:10:44 +0000 (UTC)
+Date: Wed, 19 Feb 2025 09:10:37 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: "Luck, Tony" <tony.luck@intel.com>
+Cc: Shuai Xue <xueshuai@linux.alibaba.com>,
+	"nao.horiguchi@gmail.com" <nao.horiguchi@gmail.com>,
+	"tglx@linutronix.de" <tglx@linutronix.de>,
+	"mingo@redhat.com" <mingo@redhat.com>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+	"linmiaohe@huawei.com" <linmiaohe@huawei.com>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"peterz@infradead.org" <peterz@infradead.org>,
+	"jpoimboe@kernel.org" <jpoimboe@kernel.org>,
+	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>,
+	"tianruidong@linux.alibaba.com" <tianruidong@linux.alibaba.com>
+Subject: Re: [PATCH v2 0/5] mm/hwpoison: Fix regressions in memory failure
+ handling
+Message-ID: <20250219081037.GAZ7WR_YmRtRvN_LKA@fat_crate.local>
+References: <20250217063335.22257-1-xueshuai@linux.alibaba.com>
+ <20250218082727.GCZ7REb7OG6NTAY-V-@fat_crate.local>
+ <7393bcfb-fe94-4967-b664-f32da19ae5f9@linux.alibaba.com>
+ <20250218122417.GHZ7R78fPm32jKYUlx@fat_crate.local>
+ <SJ1PR11MB60836781C4CE26C4B43AFF0BFCFA2@SJ1PR11MB6083.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,27 +93,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250219-competent-bullfinch-of-justice-09cbfb@krzk-bin>
+In-Reply-To: <SJ1PR11MB60836781C4CE26C4B43AFF0BFCFA2@SJ1PR11MB6083.namprd11.prod.outlook.com>
 
-On Wed, Feb 19, 2025 at 09:05:55AM +0100, Krzysztof Kozlowski wrote:
-> On Wed, Feb 19, 2025 at 12:20:29AM +0530, Kaustabh Chakraborty wrote:
-> > +  Exynos7870 clock controller is comprised of several CMU units, generating
-> > +  clocks for different domains. Those CMU units are modeled as separate device
-> > +  tree nodes, and might depend on each other. The root clock in that root tree
-> > +  is an external clock: OSCCLK (26 MHz). This external clock must be defined
-> > +  as a fixed-rate clock in dts.
-> > +
-> > +  Each clock is assigned an identifier and client nodes can use this identifier
-> > +  to specify the clock which they consume. All clocks available for usage
-> > +  in clock consumer nodes are defined as preprocessor macros in
-> > +  'dt-bindings/clock/exynos7870.h' header.
+On Tue, Feb 18, 2025 at 05:30:19PM +0000, Luck, Tony wrote:
+First of all, thanks for explaining - that helps a lot!
+
+> That's how we ended up with *UN*corrected errors tied to *C*MCI.
 > 
-> Full path and drop quotes
+> Just to add to the confusion, Linux does take an action (in uc_decode_notifier())
+> to try to offline the page despite the UC*NA* signature name.
 
-And this filename becames:
-samsung,exynos7870-cmu.yaml
+So, AFAIU, hw folks are basically trying to tell us: well, this is
+*technically* an uncorrectable error but meh, not really important. We just
+met it while fetching some data while scrubbing so who knows whether you'll
+consume it or not. Meh...
 
-Best regards,
-Krzysztof
+So why don't we simply do that?
 
+We report the signature but we do not try to offline anything. When we get to
+*actually* consume it non-speculatively, *then* we run memory failure and then
+we offline the page.
+
+Hmmm?
+
+Would that solve that particular debacle?
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
