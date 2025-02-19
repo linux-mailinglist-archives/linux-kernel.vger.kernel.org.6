@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-521489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CBFBA3BDFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:28:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5731EA3BE03
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:30:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA046188D701
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:28:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 482591888F9B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:30:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5FF81DFE25;
-	Wed, 19 Feb 2025 12:28:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="tiz6X19K"
-Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E1F1E0B72;
+	Wed, 19 Feb 2025 12:29:57 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1502E1D52B;
-	Wed, 19 Feb 2025 12:28:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A951DFD91;
+	Wed, 19 Feb 2025 12:29:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739968111; cv=none; b=N64Vnvt3wxTz3gS4IVZOyaUtUUR8X/J3jL35XFltsakyXIZpMeTR0sQIGf14u0QFPFfyNBg0QLeopUGtF7K96rlh+UYhCCz6s2BdGeCJuZUPd5JelZpeQNJ9KzxBRC+fDKp/xkppyA+qrZg4FNOZ+YANagKgWvjaWjHFWxptdmc=
+	t=1739968197; cv=none; b=jD51Y2iDrl6YBv+go5rxZ2BrMSnmXNBRZPt0Gdi1Q2LLVX8JzM2rJGuo/Iwdtc/AZaY9zmyVePKtVkyzSC9GNfipGraFxXnPk3IeD3jSPJ3oAaecveVKC+7uOU06cwkrR5Rsrato7MGmmh/79R1VICSIJaIE7VYyBU4oZ7HRqjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739968111; c=relaxed/simple;
-	bh=6OYuPYLFFGSzAYcwYN9dlH4FnHdeBk6mh2HE/XQ2Xr0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IjMqHPvlLhmsV2oPRi56Jm3yw2IhJSIihys6fEFLSa/8rN3pZkqX8Rpy9oSsW1JzRyoBdirtldqYVwns+AapnVrRC0JxhPrPaSeoXTf4v1iZgufOcUzSNU5RVNeKu+gi4IULNgXWnhZQr+dFLIvb6muWV8wSggqXypOaxxHiN0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=tiz6X19K; arc=none smtp.client-ip=115.124.30.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1739968103; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=FK40UwTND3UC7WyjcHaw02QI5U346kVynN6H6JZkPro=;
-	b=tiz6X19Kd5S9vmqSrIhVuRE9B3YEccVl0JeOaf45DVnUAMFGJ17No9/A5lqYK8BGt60zky+RnntxmOnoPdwG17IVofGlw9z48xWwBjrJ0z9kkJLluYJcnaC27K5ioFFE90y6K0qKMH5jKMMRY6GCv8VrvF9SYLI/lB6m1vFC6wk=
-Received: from 30.246.161.128(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WPpI3nf_1739968102 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 19 Feb 2025 20:28:22 +0800
-Message-ID: <8880c4b6-233f-4b8a-a73f-398448169dfd@linux.alibaba.com>
-Date: Wed, 19 Feb 2025 20:28:21 +0800
+	s=arc-20240116; t=1739968197; c=relaxed/simple;
+	bh=FCJOtv41Agf4mc6AQxG+YamyhLe7kyxpnwVuSp1A3Ac=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=d5tr2WnoJ9yA9fPnkmCmYG8qBf/55Eg5SZnb1/cmfuOsHimtnFRVdrfJBrJ3DzzGAyLz3x1VA3obHmVDA7QUbtSVSZ999Eho2vHvSJAzjeAR0NVlWWn/chJqKU5/9UhVG0bUM5DQgcaBZusLArSYsFTAQGXofiAg3iTVrb92GZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4YybGW1tRNzhZx2;
+	Wed, 19 Feb 2025 20:26:11 +0800 (CST)
+Received: from kwepemg500008.china.huawei.com (unknown [7.202.181.45])
+	by mail.maildlp.com (Postfix) with ESMTPS id DA40A180116;
+	Wed, 19 Feb 2025 20:29:34 +0800 (CST)
+Received: from [127.0.0.1] (10.174.177.71) by kwepemg500008.china.huawei.com
+ (7.202.181.45) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 19 Feb
+ 2025 20:29:33 +0800
+Message-ID: <68912db5-bfce-427c-b523-3407e0804d15@huawei.com>
+Date: Wed, 19 Feb 2025 20:29:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,58 +47,96 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/7] dmaengine: idxd: fix memory leak in error handling
- path of idxd_pci_probe
-To: Fenghua Yu <fenghuay@nvidia.com>, vinicius.gomes@intel.com,
- dave.jiang@intel.com, vkoul@kernel.org
-Cc: nikhil.rao@intel.com, dmaengine@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250215054431.55747-1-xueshuai@linux.alibaba.com>
- <20250215054431.55747-6-xueshuai@linux.alibaba.com>
- <5959e316-19da-4d10-bc7c-75431b87b9e0@nvidia.com>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <5959e316-19da-4d10-bc7c-75431b87b9e0@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] jbd2: fix off-by-one while erasing journal
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+CC: <linux-ext4@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <tytso@mit.edu>, <adilger.kernel@dilger.ca>,
+	<jack@suse.cz>, <leah.rumancik@gmail.com>, <yi.zhang@huawei.com>,
+	<chengzhihao1@huawei.com>, <yukuai3@huawei.com>, <yangerkun@huawei.com>,
+	Baokun Li <libaokun1@huawei.com>
+References: <20250217065955.3829229-1-yi.zhang@huaweicloud.com>
+Content-Language: en-US
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <20250217065955.3829229-1-yi.zhang@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemg500008.china.huawei.com (7.202.181.45)
 
+On 2025/2/17 14:59, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
+>
+> In __jbd2_journal_erase(), the block_stop parameter includes the last
+> block of a contiguous region; however, the calculation of byte_stop is
+> incorrect, as it does not account for the bytes in that last block.
+> Consequently, the page cache is not cleared properly, which occasionally
+> causes the ext4/050 test to fail.
+>
+> Since block_stop operates on inclusion semantics, it involves repeated
+> increments and decrements by 1, significantly increasing the complexity
+> of the calculations. Optimize the calculation and fix the incorrect
+> byte_stop by make both block_stop and byte_stop to use exclusion
+> semantics.
+>
+> This fixes a failure in fstests ext4/050.
+>
+> Fixes: 01d5d96542fd ("ext4: add discard/zeroout flags to journal flush")
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+Looks good, thanks for the patch!
 
-
-在 2025/2/19 04:21, Fenghua Yu 写道:
-> Hi, Shuai,
-> 
-> On 2/14/25 21:44, Shuai Xue wrote:
->> Memory allocated for idxd is not freed if an error occurs during
->> idxd_pci_probe(). To fix it, free the allocated memory in the reverse
->> order of allocation before exiting the function in case of an error.
->>
->> Fixes: bfe1d56091c1 ("dmaengine: idxd: Init and probe for Intel data accelerators")
->> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
->> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
->> ---
->>   drivers/dma/idxd/init.c | 10 +++++++++-
->>   1 file changed, 9 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
->> index dc34830fe7c3..ac1cdc1d82bf 100644
->> --- a/drivers/dma/idxd/init.c
->> +++ b/drivers/dma/idxd/init.c
->> @@ -550,6 +550,14 @@ static void idxd_read_caps(struct idxd_device *idxd)
->>           idxd->hw.iaa_cap.bits = ioread64(idxd->reg_base + IDXD_IAACAP_OFFSET);
->>   }
->> +static void idxd_free(struct idxd_device *idxd)
->> +{
->> +    put_device(idxd_confdev(idxd));
->> +    bitmap_free(idxd->opcap_bmap);
->> +    ida_free(&idxd_ida, idxd->id);
->> +    kfree(idxd);
-> 
-> opcap_bmap, idxd_ida, idxd are NOT allocated during FLR re-init idxd device. In the FLR case, they should not be freed.
-
-Great catch, thanks.
-
-Will fix it in next version.
-
-Shuai
+Reviewed-by: Baokun Li <libaokun1@huawei.com>
+> ---
+>   fs/jbd2/journal.c | 15 ++++++---------
+>   1 file changed, 6 insertions(+), 9 deletions(-)
+>
+> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
+> index d8084b31b361..49a9e99cbc03 100644
+> --- a/fs/jbd2/journal.c
+> +++ b/fs/jbd2/journal.c
+> @@ -1965,17 +1965,15 @@ static int __jbd2_journal_erase(journal_t *journal, unsigned int flags)
+>   			return err;
+>   		}
+>   
+> -		if (block_start == ~0ULL) {
+> -			block_start = phys_block;
+> -			block_stop = block_start - 1;
+> -		}
+> +		if (block_start == ~0ULL)
+> +			block_stop = block_start = phys_block;
+>   
+>   		/*
+>   		 * last block not contiguous with current block,
+>   		 * process last contiguous region and return to this block on
+>   		 * next loop
+>   		 */
+> -		if (phys_block != block_stop + 1) {
+> +		if (phys_block != block_stop) {
+>   			block--;
+>   		} else {
+>   			block_stop++;
+> @@ -1994,11 +1992,10 @@ static int __jbd2_journal_erase(journal_t *journal, unsigned int flags)
+>   		 */
+>   		byte_start = block_start * journal->j_blocksize;
+>   		byte_stop = block_stop * journal->j_blocksize;
+> -		byte_count = (block_stop - block_start + 1) *
+> -				journal->j_blocksize;
+> +		byte_count = (block_stop - block_start) * journal->j_blocksize;
+>   
+>   		truncate_inode_pages_range(journal->j_dev->bd_mapping,
+> -				byte_start, byte_stop);
+> +				byte_start, byte_stop - 1);
+>   
+>   		if (flags & JBD2_JOURNAL_FLUSH_DISCARD) {
+>   			err = blkdev_issue_discard(journal->j_dev,
+> @@ -2013,7 +2010,7 @@ static int __jbd2_journal_erase(journal_t *journal, unsigned int flags)
+>   		}
+>   
+>   		if (unlikely(err != 0)) {
+> -			pr_err("JBD2: (error %d) unable to wipe journal at physical blocks %llu - %llu",
+> +			pr_err("JBD2: (error %d) unable to wipe journal at physical blocks [%llu, %llu)",
+>   					err, block_start, block_stop);
+>   			return err;
+>   		}
 
 
 
