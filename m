@@ -1,127 +1,190 @@
-Return-Path: <linux-kernel+bounces-521425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 704AEA3BD1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:38:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E8946A3BD1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:39:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D96AA167FCC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:38:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B75B816BB6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71EDC1DF97F;
-	Wed, 19 Feb 2025 11:37:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8C091DF27E;
+	Wed, 19 Feb 2025 11:39:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M0kMR+0s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Hfw54a2d"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6E871C3C15;
-	Wed, 19 Feb 2025 11:37:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82E361DED5E;
+	Wed, 19 Feb 2025 11:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739965075; cv=none; b=UJSt9U/aF4d9vKFafSQpJcq2wlE30WvA1Werva0nbwBWQxvPrQ74e1jpW59To/KcR/Uc/c0Fu3jIRoUoRQ4jzy0uLbK6JiHxQyhtePOs1Zrs//aCnzULV1ZRnja+loc/0ZqU+o3mZu8ShGg+o29YqZZrudGskQzCit4Aru04wWw=
+	t=1739965147; cv=none; b=K2V3bBnBGhNoV2Yn85wOhE4XpFwxuDe77e++ZuiZuTU4QZhSSaW+2Sdth89d19RbpZNouPdMbrDNWZUkv6yQCo84/LrgcUV7Z9u4Xe05pMMCixzdF+7O6WFbTeEXo0yMfThrfPo3Ya934Mh3PnAOdTcO/Bu7OdYonZtbMajhDU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739965075; c=relaxed/simple;
-	bh=KZYjJr32GoihH2r+zIe/05ep2vB4mY9HEap1vgQ1zdA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=LKR/3VoA1GNH4hfjhE2ohC5w2+4ycDIkXusop56hKi/+kLXEYC5M15akXGUiYGYbQkBZKZIKi3rwcoK4xEvq9BtvxNCS+tKvOi1Ian9RGq08VPjVpHMVNw4jA0qa2RoZa84sJ7OLghzI7Ih7KPuywoIxKNevBpThe6aYvLbyijE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M0kMR+0s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9C2BC4CEE6;
-	Wed, 19 Feb 2025 11:37:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739965075;
-	bh=KZYjJr32GoihH2r+zIe/05ep2vB4mY9HEap1vgQ1zdA=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=M0kMR+0sLcSwubstQzQgRBkpVvs/jnstbHaAND6nwsMm5q5MT2oRgWtGWjqquNTn/
-	 jFSCgpox/D7D0ue8wYybwjEgpF8H47gw7iXnRynIudd3Duh5RVgdTpG4LGoOXVvMqS
-	 LDbY2RJSt1T2T7S9WTGMOLL45yhHc4EakisNgWIgCUH9LJEQyWapIySa+KVO7Tle8t
-	 wYUnICMy5YWwWrpb42xcvYTGslWUayTMaOPPYawJ+MlzboUs+/5rEAvT8iHspY81d2
-	 jkn22W5faYzJTc7A0d6s755yoxrdln3l5a6dD23KSDNb9Am1O2d+EdAYttoIGu4iwe
-	 EXzpfTS4uGdEw==
-Message-ID: <c84254c0164de551189a1f92ddec71f5dc222e42.camel@kernel.org>
-Subject: Re: Rust kernel policy
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Dave Airlie <airlied@gmail.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Christoph Hellwig
- <hch@infradead.org>,  Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
- rust-for-linux <rust-for-linux@vger.kernel.org>, Linus Torvalds
- <torvalds@linux-foundation.org>, Greg KH <gregkh@linuxfoundation.org>, 
-	linux-kernel@vger.kernel.org, ksummit@lists.linux.dev
-Date: Wed, 19 Feb 2025 13:37:50 +0200
-In-Reply-To: <CAPM=9txBg1m=qp9=nHJXS1h2XB8TSL1tj6CF=Z802u=YX7hBDg@mail.gmail.com>
-References: <Z7SwcnUzjZYfuJ4-@infradead.org>
-	 <36783d51be7576fcdbf8facc3c94193d78240816.camel@kernel.org>
-	 <4cbd3baf81ca3ff5e8c967b16fc13673d84139e8.camel@kernel.org>
-	 <e63089e15c6f4d19e77d2920d576e0134d8b7aa7.camel@kernel.org>
-	 <Z7T5_WGX_VXBby9k@boqun-archlinux>
-	 <615ce44fa528ad7be28ba518e14a970f04481078.camel@kernel.org>
-	 <CAPM=9txBg1m=qp9=nHJXS1h2XB8TSL1tj6CF=Z802u=YX7hBDg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1739965147; c=relaxed/simple;
+	bh=kVjG+LoOvzKSybq/uXObFDAfsOKdr1OdI9hjeJTRd24=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=EHk97o6dDpAxBqc/gQmeAmHVlpm0O0nGgbnolhxO+Cp7FUyfOuBwqfl6/yj8h1pNlbKiACqOQJMvUgxlfnwvt5WQezEI60m8xWRWlayPR115u8HaQ9ZH1wQCg9+kul0HDa8tmDb+FHjiEzAhUTv7t8ea8BOmXIGRrh8r3ObVOfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Hfw54a2d; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51J8NNZE011711;
+	Wed, 19 Feb 2025 11:39:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Y/SO6Pd+Fmkr5dE7SqAMSVjcZpHTgtWNBhTIdgpRQd8=; b=Hfw54a2dCnCFzyDe
+	7TbJ8yTWX9MDa5s+xpcRthtP24X79AaCQX7U4XzOfiHxdIp/7fen9t2AE39Hev9r
+	7lteWGIvoTUEoM2x0fg/sETvxPhFbNDoROuUlsvS1F9MpXzv0lkOqbtMWAkndm+N
+	NZqovP5k1dsXFThDHvqkgbaUg9eUA0pcNhqkV5BUAtmQaQfaoEZ/CPnkvz+gX0PA
+	9fvzZ7VF+K2SKz+rie05U1pWERN3xg+Gks2nRvLaXCu3xXsb+umsWqTK+G+cQzwj
+	On3970eTKaO2CSE7mzuIGmVtbD5YVbaDLNriw7D87JQRdi7ehOIAZtV/YkME3QD1
+	Unc/DA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44vyy1jdgn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Feb 2025 11:39:01 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51JBd0iE018921
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Feb 2025 11:39:00 GMT
+Received: from [10.217.216.47] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 19 Feb
+ 2025 03:38:55 -0800
+Message-ID: <a8350d0f-2a63-46de-86f3-c156809cca0e@quicinc.com>
+Date: Wed, 19 Feb 2025 17:08:52 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/5] clk: qcom: videocc: Add support to attach multiple
+ power domains
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Bryan O'Donoghue
+	<bryan.odonoghue@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Ajit Pandey
+	<quic_ajipan@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        "Taniya
+ Das" <quic_tdas@quicinc.com>,
+        Satya Priya Kakitapalli
+	<quic_skakitap@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250218-videocc-pll-multi-pd-voting-v1-0-cfe6289ea29b@quicinc.com>
+ <20250218-videocc-pll-multi-pd-voting-v1-4-cfe6289ea29b@quicinc.com>
+ <eec2869a-fa8f-4aaf-9fc5-e7a8baf0f864@linaro.org>
+ <huluiiaqmunvmffoqadrhssd3kl2toutqtcw7rzamv3sqdglsf@7lz66x4sj3gv>
+Content-Language: en-US
+From: Jagadeesh Kona <quic_jkona@quicinc.com>
+In-Reply-To: <huluiiaqmunvmffoqadrhssd3kl2toutqtcw7rzamv3sqdglsf@7lz66x4sj3gv>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: oOeGINHUzLiYcTEsChkgG-PCW0m10dR9
+X-Proofpoint-ORIG-GUID: oOeGINHUzLiYcTEsChkgG-PCW0m10dR9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-19_05,2025-02-19_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1015
+ adultscore=0 malwarescore=0 mlxscore=0 priorityscore=1501
+ lowpriorityscore=0 mlxlogscore=999 suspectscore=0 phishscore=0 spamscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502190094
 
-On Wed, 2025-02-19 at 16:35 +1000, Dave Airlie wrote:
-> On Wed, 19 Feb 2025 at 16:20, Jarkko Sakkinen <jarkko@kernel.org>
-> wrote:
-> >=20
-> > On Tue, 2025-02-18 at 13:22 -0800, Boqun Feng wrote:
-> > > FWIW, usually Rust code has doc tests allowing you to run it with
-> > > kunit,
-> > > see:
-> > >=20
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 https://docs.kernel.org/rust/testing.h=
-tml
-> >=20
-> > I know this document and this was what I used to compile DMA
-> > patches.
-> > Then I ended up into "no test, no go" state :-)
-> >=20
-> > I put this is way. If that is enough, or perhaps combined with
-> > submitting-patches.rst, why this email thread exists?
->=20
-> There is users for the DMA stuff (now there should be some more
-> tests), the problem is posting the users involves all the precursor
-> patches for a bunch of other subsystems,
->=20
-> There's no nice way to get this all bootstrapped, two methods are:
->=20
-> a) posting complete series crossing subsystems, people get pissed off
-> and won't review because it's too much
-> b) posting series for review that don't have a full user in the
-> series, people get pissed off because of lack of users.
->=20
-> We are mostly moving forward with (b) initially, this gets rust folks
-> to give reviews and point out any badly thought out rust code, and
-> give others some ideas for what the code looks like and that it
-> exists
-> so others don't reinvent the wheel.
->=20
-> Maybe we can add more rust tests to that particular patch series? but
-> this is the wrong thread to discuss it, so maybe ask on that thread
-> rather on this generic thread.
 
-Here's one way to do it:
 
-1. Send the patch set as it is.
-2. Point out to Git tree with branch containing the patches + patches
-   for e.g. driver (hopefully for something that QEMU is able to emulate)
-   and other stuff/shenanigans that allows to test them.
+On 2/18/2025 10:49 PM, Dmitry Baryshkov wrote:
+> On Tue, Feb 18, 2025 at 03:46:15PM +0000, Bryan O'Donoghue wrote:
+>> On 18/02/2025 14:26, Jagadeesh Kona wrote:
+>>> During boot-up, the PLL configuration might be missed even after
+>>> calling pll_configure() from the clock controller probe. This can
+>>> happen because the PLL is connected to one or more rails that are
+>>> turned off, and the current clock controller code cannot enable
+>>> multiple rails during probe. Consequently, the PLL may be activated
+>>> with suboptimal settings, causing functional issues.
+>>>
+>>> To properly configure the video PLLs in the probe on SM8450, SM8475,
+>>> SM8550, and SM8650 platforms, the MXC rail must be ON along with MMCX.
+>>> Therefore, add support to attach multiple power domains to videocc on
+>>> these platforms.
+>>>
+>>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+>>> ---
+>>>   drivers/clk/qcom/videocc-sm8450.c | 4 ++++
+>>>   drivers/clk/qcom/videocc-sm8550.c | 4 ++++
+>>>   2 files changed, 8 insertions(+)
+>>>
+>>> diff --git a/drivers/clk/qcom/videocc-sm8450.c b/drivers/clk/qcom/videocc-sm8450.c
+>>> index f26c7eccb62e7eb8dbd022e2f01fa496eb570b3f..b50a14547336580de88a741f1d33b126e9daa848 100644
+>>> --- a/drivers/clk/qcom/videocc-sm8450.c
+>>> +++ b/drivers/clk/qcom/videocc-sm8450.c
+>>> @@ -437,6 +437,10 @@ static int video_cc_sm8450_probe(struct platform_device *pdev)
+>>>   	struct regmap *regmap;
+>>>   	int ret;
+>>> +	ret = qcom_cc_attach_pds(&pdev->dev, &video_cc_sm8450_desc);
+>>> +	if (ret)
+>>> +		return ret;
+>>> +
+>>>   	ret = devm_pm_runtime_enable(&pdev->dev);
+>>>   	if (ret)
+>>>   		return ret;
+>>> diff --git a/drivers/clk/qcom/videocc-sm8550.c b/drivers/clk/qcom/videocc-sm8550.c
+>>> index 7c25a50cfa970dff55d701cb24bc3aa5924ca12d..d4b223d1392f0721afd1b582ed35d5061294079e 100644
+>>> --- a/drivers/clk/qcom/videocc-sm8550.c
+>>> +++ b/drivers/clk/qcom/videocc-sm8550.c
+>>> @@ -542,6 +542,10 @@ static int video_cc_sm8550_probe(struct platform_device *pdev)
+>>>   	int ret;
+>>>   	u32 sleep_clk_offset = 0x8140;
+>>> +	ret = qcom_cc_attach_pds(&pdev->dev, &video_cc_sm8550_desc);
+>>> +	if (ret)
+>>> +		return ret;
+>>> +
+>>>   	ret = devm_pm_runtime_enable(&pdev->dev);
+>>>   	if (ret)
+>>>   		return ret;
+>>>
+>>
+>> What's the difference between doing the attach here or doing it in
+>> really_probe() ?
+> 
+> I'd second this. If the domains are to be attached before calling any
+> other functions, move the call to the qcom_cc_map(), so that all drivers
+> get all domains attached before configuring PLLs instead of manually
+> calling the function.
+> 
 
-Then I can go and do git remote add etc. and compile a BuildRoot image
-using my environment by setting LINUX_OVERRIDER_SRCIDR, test it and
-call it a day.
+I earlier tried moving the attach PDs call to qcom_cc_map(), but I faced the below issues
+1. desc passed to qcom_cc_map() has const qualifier, so updating desc->pd_list
+   inside qcom_cc_map() is leading to a warning.
+2. If we attach the PDs after calling get_sync() on device, I observed
+   that PDS are not getting enabled during probe. Currently qcom_cc_map()
+   is called after get_sync() is already called on device.
 
-> Dave.
+Probably, we can add a new function qcom_cc_attach_pds_map() where we can
+attach PDs and call qcom_cc_map() inside it. We can then invoke this new
+function at the start of probe before get_sync(). I will post this change
+in next version if this aligns with your thoughts.
 
-[1] https://codeberg.org/jarkko/linux-tpmdd-test
-
-BR, Jarkko
+Thanks,
+Jagadeesh
 
