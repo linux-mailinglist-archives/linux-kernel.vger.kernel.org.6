@@ -1,95 +1,124 @@
-Return-Path: <linux-kernel+bounces-521644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6996DA3C02F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:41:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93AC2A3C06F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:48:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D00A7A4EC4
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:40:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CCEF3B5A98
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:44:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E531E8339;
-	Wed, 19 Feb 2025 13:41:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12FFE1F3BBA;
+	Wed, 19 Feb 2025 13:43:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UwfrExLB"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MWJzavO3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EFD119CD01
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 13:41:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D3541F130C;
+	Wed, 19 Feb 2025 13:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739972483; cv=none; b=ShY/47ng8B1lZ9n/st0T7iGuUoUT5ZJgO8HLmOj3ADrTEW/7NPqrrkJ7CE0WeW75zonxn56TCKFM8OAH9cnlOvWBlntS/YRb1k7ViB49nGCD86ybPCUReqFbvyrTw/pRM0MSHOxrp+qNNQJ0Eu1n92o1AbZlfqmWuRvnqj32UJo=
+	t=1739972598; cv=none; b=h/vwF6V6paUu0iYTzwAiPNfzm8hAaLICzi4/XXjFEb9pRuuW7l0CVRHBuxLt0xt6vxl96hjTD4n8BsCg3p4ZhOS7jp+oc/rIPLFGWC7li6A30XAKUVUG1EQOzEJv9eOnbE4x4NG6eBA94kqEfUps/72fCC5MnbjuLjxg7Tom4jw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739972483; c=relaxed/simple;
-	bh=rFQyiZoEMUWMw2eEtfx4APQV76D89h6kfmj48FsyZdU=;
+	s=arc-20240116; t=1739972598; c=relaxed/simple;
+	bh=TXZhVpYKgO10ZCx7g7qCUdIYO/DTpFUKjvq9lXUUZqU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Af4z4Nom+n/T2+9t3YAzyDI6yh5yaAtn3++RVdG5y+KgyoFjYhGnfcECuQ/u3s+blTc2tavbnHPScT8CO09dsB5dLgSqiBD9L4mE0bP03yBtbdG8q5P6jNEcGl9oyOQwCYTNVqy92taE6IHQeZaxmWQEM3zv7MW4G1NIl/FYB8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UwfrExLB; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 7FFFF443EF;
-	Wed, 19 Feb 2025 13:41:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1739972479;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xcBRoz8d8kfVyEGHs3Q9+R3j8VA136sGzn8ZA7cE/sU=;
-	b=UwfrExLByhzPWOX2cZk++dnv8S1jfe7JPEOeEXBm2csPgjTE2VjZJVzVyFSGOWgjIFEzbK
-	FTPdvxd+zOEBb/MjKVg/J9c6gm4tXv53pzIHfbEjNnDkq4iML8+BQv7HuLGJY/mRPpzA/y
-	h+Y+TVSnYMF8U0D8gQfOwe4ucf0p2pPrmiVO9r/obAKnbMZT0+U3cBB7SH31cRej3SKxsZ
-	YlA05x5/xeF+n4p0UP09oSxFX27jlOatqbUqk29OSzJgEsz4jPNyHmWl9eMaiULJgP6pqv
-	Ku3m/aQQOQKmwQQKErQGD9TYBRDbLpqjzyGraVQm6FDs657tlXiTBxS3nqaj9g==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	linux@treblig.org,
-	Shen Lichuan <shenlichuan@vivo.com>,
-	Jinjie Ruan <ruanjinjie@huawei.com>,
-	u.kleine-koenig@baylibre.com,
-	nirav.rabara@altera.com,
-	linux-mtd@lists.infradead.org,
+	 MIME-Version; b=pWz2bUF9WjHQU2DCJWcdlwKErrLQJ7Zt8fu7EbCww2d/Hc4kpkYq+HZ/JIukZOG2PeIL44OA4EKH7DmHhSFj4grDXAt08WaptAbnAq/TbW7XG7zqHYtSMlXf8e/GmNC1YGmNtckjyX6W2pzWnX79dWkqFQQeGX01Mme1hWj/a/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MWJzavO3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26A66C4CED1;
+	Wed, 19 Feb 2025 13:43:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739972597;
+	bh=TXZhVpYKgO10ZCx7g7qCUdIYO/DTpFUKjvq9lXUUZqU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=MWJzavO3+oOZWuEasl4/8m7aTr+4LSnSIQf8z+3NXVJXF2Cy+R+djX/U0geUS7IOs
+	 uErfK+ehMpkYMVCnwyxyRidrMlGf8274ow7wKalpUIaNqa/JniqayV3u9jgIUA3e2f
+	 IAgV0cocm1vbv/+8zve4N3F9NfwJQJmUHp4HicJnrsPnncVLsjo6AvoRzCu7kpMI7D
+	 cjIgRLP5goqNQ6K6H08f54Eapb4xretT71O+E14b0ibRDi4EfOu/IE8AZNph19WO6O
+	 EIvy6NIO0UOgKuz1qiAS9SOy0DImXfw1bhic6PiZpCIHdsvQ/c4erKCsFZBrneZ5o3
+	 U/8cA5suQOq9g==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan+linaro@kernel.org>)
+	id 1tkkMI-0000000086k-26QM;
+	Wed, 19 Feb 2025 14:43:26 +0100
+From: Johan Hovold <johan+linaro@kernel.org>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Bjorn Andersson <andersson@kernel.org>
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Jonathan Marek <jonathan@marek.ca>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Maximilian Luz <luzmaximilian@gmail.com>,
+	Jens Glathe <jens.glathe@oldschoolsolutions.biz>,
+	Joel Stanley <joel@jms.id.au>,
+	Sebastian Reichel <sre@kernel.org>,
+	Steev Klimaszewski <steev@kali.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-rtc@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	niravkumar.l.rabara@intel.com
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Subject: Re: [PATCH mtd/fixes] mtd: rawnand: cadence: fix unchecked dereference
-Date: Wed, 19 Feb 2025 14:41:17 +0100
-Message-ID: <173997243493.1255269.588065932781621293.b4-ty@bootlin.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250216031536.3366360-1-niravkumar.l.rabara@intel.com>
-References: <20250216031536.3366360-1-niravkumar.l.rabara@intel.com>
+	Johan Hovold <johan+linaro@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: [PATCH v2 6/6] arm64: dts: qcom: x1e80100: enable rtc
+Date: Wed, 19 Feb 2025 14:41:18 +0100
+Message-ID: <20250219134118.31017-7-johan+linaro@kernel.org>
+X-Mailer: git-send-email 2.45.3
+In-Reply-To: <20250219134118.31017-1-johan+linaro@kernel.org>
+References: <20250219134118.31017-1-johan+linaro@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeigeefkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgjfhggtgfgsehtkeertdertdejnecuhfhrohhmpefoihhquhgvlhcutfgrhihnrghluceomhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepfeeugfdvffefhfduhfetfffgieeiudeugeffvdehvddvledujeejvedvgfdtvefgnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehffidrrddpmhgrihhlfhhrohhmpehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduvddprhgtphhtthhopehrihgthhgrrhgusehnohgurdgrthdprhgtphhtthhopehvihhgnhgvshhhrhesthhirdgtohhmpdhrtghpthhtoheplhhinhhugiesthhrvggslhhighdrohhrghdprhgtphhtthhopehshhgvnhhlihgthhhurghnsehvihhvohdrtghomhdprhgtphhtthhopehruhgrnhhjihhnjhhivgeshhhurgifvghirdgtohhmpdhrtghpthhtohepuhdrkhhlvghinhgvqdhkohgvnhhighessggrhihli
- hgsrhgvrdgtohhmpdhrtghpthhtohepnhhirhgrvhdrrhgrsggrrhgrsegrlhhtvghrrgdrtghomhdprhgtphhtthhopehlihhnuhigqdhmthgusehlihhsthhsrdhinhhfrhgruggvrggurdhorhhg
-X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Sun, 16 Feb 2025 11:15:36 +0800, niravkumar.l.rabara@intel.com wrote:
-> Add NULL check before variable dereference to fix static checker warning.
-> 
-> 
+On many Qualcomm platforms the PMIC RTC control and time registers are
+read-only so that the RTC time can not be updated. Instead an offset
+needs be stored in some machine-specific non-volatile memory, which a
+driver can take into account.
 
-Applied to mtd/fixes, thanks!
+On X1E based Windows on Arm machines the offset is stored in a Qualcomm
+specific UEFI variable.
 
-[1/1] mtd: rawnand: cadence: fix unchecked dereference
-      commit: 60255f3704fde70ed3c4d62f919aa4b46f841f70
+Unlike on previous platforms the alarm registers are also unaccessible
+on X1E as they are owned by the ADSP.
 
-Patche(s) should be available on mtd/linux.git and will be
-part of the next PR (provided that no robot complains by then).
+Assume all X1E machines use similar firmware and enable the RTC in the
+PMIC dtsi for now.
 
-Kind regards,
-Miquèl
+Based on a patch by Jonathan Marek. [1]
+
+Link: https://lore.kernel.org/r/20241015004945.3676-4-jonathan@marek.ca # [1]
+Tested-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+Tested-by: Joel Stanley <joel@jms.id.au>
+Tested-by: Sebastian Reichel <sre@kernel.org> # Lenovo T14s Gen6
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+---
+ arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi b/arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi
+index d7a2a2b8fc6c..a59aa8e7642d 100644
+--- a/arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi
++++ b/arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi
+@@ -223,8 +223,7 @@ pmk8550_rtc: rtc@6100 {
+ 			reg = <0x6100>, <0x6200>;
+ 			reg-names = "rtc", "alarm";
+ 			interrupts = <0x0 0x62 0x1 IRQ_TYPE_EDGE_RISING>;
+-			/* Not yet sure what blocks access */
+-			status = "reserved";
++			qcom,no-alarm; /* alarm owned by ADSP */
+ 		};
+ 
+ 		pmk8550_sdam_2: nvram@7100 {
+-- 
+2.45.3
+
 
