@@ -1,225 +1,156 @@
-Return-Path: <linux-kernel+bounces-520904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FD92A3B0E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 06:24:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 93CC0A3B0E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 06:26:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39EA2189137B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 05:24:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D8F91890A17
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 05:26:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBE054594A;
-	Wed, 19 Feb 2025 05:24:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D41C01B4F0F;
+	Wed, 19 Feb 2025 05:25:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Li9qNFQw"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2060.outbound.protection.outlook.com [40.107.244.60])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bpUqxIhC"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64DFA1ADC90;
-	Wed, 19 Feb 2025 05:24:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739942672; cv=fail; b=YC+Li7t9bNgNz/xZul0HU40dZ/e5W8INrToWUHY0QW86OH/D6vJI13hQxtDnqcUvB+8iVOQzlXKpxvpxXD1DILGBYpQU7ZY0QXFk/Hi4lcqUMrsWxk5Kl4Xr2TgQZR5cAmTEF4i4EJ/Mp55wYGLwG+SV4vL68bFxahHK+C1cacU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739942672; c=relaxed/simple;
-	bh=6iHzQfsT7r+g+a5lT8yWrvDPK4rF28/1CFXxXFbLLvs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=WyzF+bOMz5YuL5kl4ZbeLEpsd4WAaJa+dCU6ggUhRE0wRHfRmfJM2DY5aXJ+zm0Vg3eY4akxQBmz5dOY0vUfUprX3mwG2KCcAp1xpz9GGPFEXMdk5B7RHlKm5yEeyOluyMhHw+IxxH2iwWlFXF0YU1sdd/HWoF2pLVWR9Cnoy68=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Li9qNFQw; arc=fail smtp.client-ip=40.107.244.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xGLhdn8E1/phgX/vEOsBiS7lpzADqdiZXUv2AILG0XqfHl801PjNIQc3g+scleqZ9Ly8g9p0P79zdZGOJGMrM7MjfMaM+AyHh1wta1T1C+Q5rPn1TSGs9F2g4nuTS3Sp6JTPWfvWUCmCxGkI0D+iiHEtYHmMudoSk+mxHnQWEt7A7vqhI0h443UJxZWgw/tNKeScdC5bA/WWvCoJZ2yoeAEMSFQm1IB+AjnncsFrdpQylLPqavfHFsRlD21GBc0IgKLHaY4xNQjpS5s7LUhL5Vt+89UjvDbq9PRuenqcZVxA+htXUsLS1ILWALWF+rWy3MhxM3H8hHVs7DXXBLUwmA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/Pfq/Klm7pEcvzh4xuRsQ13JI7JgZJ33hsD7KYJHaMc=;
- b=OfCbwQvqhiY9gIa/FE/pkVJgX/TbLqFlkegnUh7l8H+u1qkUk/rQVhIP28I+3yXJkfm+1Wwj3CYnt4e/Ef1qRjyFD3ssQssd5pT38bhFeUiBsDnetZ3f+/Z+Ga3TYA8Ufbipkd3xKc4gKRiYM39WJy8vo3lG9okTmy7p3/tJ11m7mzUIC3SpKe2NJVTFMANjH/NLg3jrYfT+5egc/mwxQ6XRIEPwRHbs6MN7RnqDoQSsaUeaaEcARqAgLhMdpFcuOQ2f233W2aXYSOafB6a3ssTAAFQsdMCY5roMLGDN4/+A+64j3e4m0Jx6aMD1OcxOUU9cRyrBVCm7kFaHN/8TCQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/Pfq/Klm7pEcvzh4xuRsQ13JI7JgZJ33hsD7KYJHaMc=;
- b=Li9qNFQw/o5GENOji10hJnHzFTWXt0zzf5zOn17go1AmIURsH+bTAYoOPUJD68jia8B7uwN1e96QZH9YdXZ00LTCh6DnGXYB0wqmYGAxWZJMqBM28l1YCjRN/stwwgPmwq/wUDdU79Zg1o0y9fa5YuSllfYLp68/r2FO9wsVOso=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS7PR12MB8252.namprd12.prod.outlook.com (2603:10b6:8:ee::7) by
- CH3PR12MB9284.namprd12.prod.outlook.com (2603:10b6:610:1c7::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.14; Wed, 19 Feb
- 2025 05:24:26 +0000
-Received: from DS7PR12MB8252.namprd12.prod.outlook.com
- ([fe80::2d0c:4206:cb3c:96b7]) by DS7PR12MB8252.namprd12.prod.outlook.com
- ([fe80::2d0c:4206:cb3c:96b7%3]) with mapi id 15.20.8445.017; Wed, 19 Feb 2025
- 05:24:26 +0000
-Date: Wed, 19 Feb 2025 10:54:16 +0530
-From: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
-To: Mario Limonciello <superm1@kernel.org>
-Cc: Perry Yuan <perry.yuan@amd.com>,
-	Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>,
-	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>,
-	"open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Miroslav Pavleski <miroslav@pavleski.net>
-Subject: Re: [PATCH v3 01/18] cpufreq/amd-pstate: Invalidate cppc_req_cached
- during suspend
-Message-ID: <Z7VrADfrrPB7GtfX@BLRRASHENOY1.amd.com>
-References: <20250217220707.1468365-1-superm1@kernel.org>
- <20250217220707.1468365-2-superm1@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250217220707.1468365-2-superm1@kernel.org>
-X-ClientProxiedBy: PN3PR01CA0088.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:9a::23) To DS7PR12MB8252.namprd12.prod.outlook.com
- (2603:10b6:8:ee::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D7E31B4245;
+	Wed, 19 Feb 2025 05:25:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739942755; cv=none; b=NYTxGY9k80YkVPUp+Ah6HDK3pI2iiHVVIndjFmHT7O7M0ovs4GaGeEk/80EShUss4Y7WW78RvV0Z7yR7M1Fj6ul9AVEbKubFCC0wEKpu20Gl8yRyOR3hVM03BBT+tnQr2eO02nhdWq/ucd8CTlB7Qro350M/KsvlHsVXYfE+3MU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739942755; c=relaxed/simple;
+	bh=S8Bo1mBNhsHitvYqtIs6rp8B5fdMlpBSYkGUIFzfbm4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=joJTdnbLtuUzlk8q/5gn1wWpNAhcG0T0PIZ6cAFxVVrJer1zdJHMQWVRpEXeRpLWPptEK7IElQK+PHFTGorIzoc/9ZO0vxJP6bvDn46UXic8fTO6fYcGK7X0WLQwBA+8HHSynuklEyKjhfjotPLkYqPQBaMnjoOSQqLemcFIe5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bpUqxIhC; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739942754; x=1771478754;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=S8Bo1mBNhsHitvYqtIs6rp8B5fdMlpBSYkGUIFzfbm4=;
+  b=bpUqxIhCAB4UMAKaD730EzXR0FhlEPtnTfOJU2KmTfzx9gEDi/lTOWnZ
+   xiXtgCxqOhl0jOVXRhTsBT/CUn1JuUY7rmuWtKJv86C7zwFgUC8XWQIJB
+   9mf+Ek0g6w39c6a45Mrf6pNuEoDFYjm3IboFTN4aaSOnflb0qAIlkVErY
+   QD5UUC5mNmkcGnIsR3ZPin+1SjalfuXgHG64TJEwapvHtxehRjAZplRey
+   D4iPu/ydKLyMKBuC8qeS3Q/YuNnVzHZKLcSPpERXCwWmemSfwVbSWkRGq
+   pqlo6Vt1FbQBWzcqAScrti1UW6yMi6fuhEpQBQQb3Dum1vM0uIwsInW0c
+   g==;
+X-CSE-ConnectionGUID: y59jn+AoQOGSgJw3nHhwxQ==
+X-CSE-MsgGUID: 2E32wKYoRsSQ0ZpVsBcRrw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="40530056"
+X-IronPort-AV: E=Sophos;i="6.13,298,1732608000"; 
+   d="scan'208";a="40530056"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 21:25:53 -0800
+X-CSE-ConnectionGUID: 7coZRVwtRnuLC2mtXb/sSg==
+X-CSE-MsgGUID: eT5/0cxQQpum+SAVrkC6+w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,298,1732608000"; 
+   d="scan'208";a="114462839"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa006.fm.intel.com with ESMTP; 18 Feb 2025 21:25:50 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tkcaT-0001Gt-0i;
+	Wed, 19 Feb 2025 05:25:36 +0000
+Date: Wed, 19 Feb 2025 13:25:04 +0800
+From: kernel test robot <lkp@intel.com>
+To: oushixiong1025@163.com, Helge Deller <deller@gmx.de>
+Cc: oe-kbuild-all@lists.linux.dev, Thomas Zimmermann <tzimmermann@suse.de>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Lee Jones <lee@kernel.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	Arnd Bergmann <arnd@arndb.de>, linux-fbdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	Shixiong Ou <oushixiong@kylinos.cn>
+Subject: Re: [PATCH v2] fbdev: lcdcfb: add missing device_remove_file()
+Message-ID: <202502191200.AVwVc1DY-lkp@intel.com>
+References: <20250208092918.251733-1-oushixiong1025@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB8252:EE_|CH3PR12MB9284:EE_
-X-MS-Office365-Filtering-Correlation-Id: a080f473-9c8e-4e86-73bb-08dd50a5ad27
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?g15XYxW80YbRyrgPlMUjKczGox3tHimOELbvMQmpLafhvXSguYVPEWeyDvnK?=
- =?us-ascii?Q?Q2OqQLGy2qsRRALYVxaXybSIjHxAokiyPZWG4JRRq0vG8BbHiagTddckCfxN?=
- =?us-ascii?Q?pGpzTPqW/0Za+tJZJqeTyYFNz/5b/QgqEfrgu+yGYm4al97HInGf9SyRJbmP?=
- =?us-ascii?Q?WA2xJO8s/eB6J2drEwX84uEVY/DOxpAmCH5j7fQL4VGnlRONrP54Tbu8ruku?=
- =?us-ascii?Q?m/2vZQ5zB6oPBJZEQz4BFojxcySHs7xrVJIW/FFBPnbt/SOeFLW5M5uBksuB?=
- =?us-ascii?Q?dFmJhAuN29xUdxsL81v4Z0GsIjmcPNioRCxJshF0QR21+MpYChTdNq3hRLdl?=
- =?us-ascii?Q?LqF02P/WmzAtCbeZfRTxZF15iERUh+r9GeLIctN9Rpr9e4OwdBxL0wsK003R?=
- =?us-ascii?Q?2xrw+WE4c/81tKMgWqp7y1mQaLoccNqZz7011iY3LKHyFPVtZbPRw/N4J1VH?=
- =?us-ascii?Q?Kb3P8qw1XtGkKgMsWLhgvHqGNWFHbNfyARYilG14ZMIQ5cK80Fh+EjkYRuy5?=
- =?us-ascii?Q?VJmeY9gWQuDbnQV1HB/VZPYJPD56W9oaxb5e3TdNETfXcn0uUl+RdcfB2K6w?=
- =?us-ascii?Q?WKV/Uu9y5SpsXi1YnPaW3mwDXVo9oGpqCpRm9fA9ap+dOMFzBOH7io13R3+q?=
- =?us-ascii?Q?vqSicFQzcld7SFvJuRwEeBxgcGIPx6cwLTnkm7xooZV8htHvvFHujBaQe0Kt?=
- =?us-ascii?Q?gXHBtbg+wZ/SvdDVX5GithOwNAqbPioU4xndLBkAQCQENfYuHPpwZlm4iDn0?=
- =?us-ascii?Q?rP7apsA2bdt9QSQM+B/HRmaJJg2qnvIHZg11fkpGFXEYNkF+zaGvA4/H8MGH?=
- =?us-ascii?Q?VwDURLcZ80fQ3jHwsv+twZourheUjWkVfZbMkWuMYjKfOMutU4UU9rnxxQ9o?=
- =?us-ascii?Q?kRrekpBEH67QjHwgT+rD7IKr6jZb0PePIc2XCT+iqdD7SeE7KN7rU6HbB8cY?=
- =?us-ascii?Q?bjaiBn3jVqokmOExIw5cUyEBI4UG8Zzw/nF+S70pcfZhepRgkx4FLJS7keeq?=
- =?us-ascii?Q?kHC4vOx5ob7O8dd8l4LrcoSjutKB1ncdYpOUWwaN5Qo+x+QEQPR1sXpG2SbN?=
- =?us-ascii?Q?weLpQy95pHT3jSR1E5w+dTT91J8JKk4yifnj49gpEi3QwkSKCMZ2KuNjYqE/?=
- =?us-ascii?Q?Ep1JRdA9kTLCMC5tZX68a0Jun7wZp8lKRgK0so1UygusYOHWWLQ6BZ69mAPT?=
- =?us-ascii?Q?TBqczBfZTFn8UbLuv6vaO6YOKyOYXujicDrXIkKPH5wrgqQISh7315N65iHW?=
- =?us-ascii?Q?Cxzl8QUA7xPIMfPLlTZ21PnAS9U5s78CtHSQLiGmQZv4si5uG8Ianim3sy//?=
- =?us-ascii?Q?CiDoc6QwojM5GmfuSzLCXV1DvGxf8Y4bhfmzoXyOebNBBA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB8252.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?lZIgNEXNI2KjddBcm40urGLIDp+JevnPUxq6VLGZ86RI2PBOMHjfOy1bEXL8?=
- =?us-ascii?Q?JbKptYmQVRowIhzKZRVeS41oThcOFmsm5iqm4rgLW0lEeVuBFXe+cg7fY6sz?=
- =?us-ascii?Q?rtAQEBTweP7L6C1aOgqjSfWExFx1pcSxO/YKemqxpAkN+jvcXt6G9yykdVKB?=
- =?us-ascii?Q?8pRVVIZDNEHwKC+Q1Yz3DD7+G22hVXviSUhofMYlkMuRF9GmMzqLJcjBv0UP?=
- =?us-ascii?Q?btcHAFV/4hWUWb4qBzzMyLzoY7hBBEVpek2PdcFRbzaAXEDl6OZqs5IrMwau?=
- =?us-ascii?Q?Gchopb9S3M6IM8QvOW5kl/iBKdW87W9a04wjV90ZZ4Q8+kR+7B0rPZE+kceJ?=
- =?us-ascii?Q?h2FHcZ26pWq7ZYqWFJ+trF5+z/jf9FCEcFMFEI9kievJCIxTeJbyLFYaU3dB?=
- =?us-ascii?Q?0LLAnb+yTsko8m40wQ1towwdIUndfMqBsaMBJJe2msZoYVJYZlrU6/SDojsA?=
- =?us-ascii?Q?FGM0yBGsxzNkvoPUqUdu6utonOmw5k4dm4vlXrBGD09UDU8tmVIyEEIUKpzd?=
- =?us-ascii?Q?LERWwtuCdYJFCLt9gnl4LwgcpYgGIMzKFC320gyBcJrzo42lCURr4HDDRfxx?=
- =?us-ascii?Q?xW7uF0EcB9W/FGz5Dcak4rftyi7ZWkbdTZuSQWUvgMX0ATr909lcT4/AJd3o?=
- =?us-ascii?Q?aXkG3IsDQFfQnfT7pbVM3nk8/cXkH+eiUb02AS9SDlcvToclaDlhns0YvETY?=
- =?us-ascii?Q?Sl+OPVKvnrmbVeoOhpLIGPhk2EFkJjlEemM6An7gJAdtWvYDL7WmoTn9yoio?=
- =?us-ascii?Q?4wQNGJH/NY0Kt5Cnz6dHEcVKQmmuncmR8GG7mLOFCYW7K3K4mDB3rt7D1ZGZ?=
- =?us-ascii?Q?3WNv3DKBB4s4R22r07gCMktcA0qAgqcFaEqFWAhm57y56EN86DcHY9EkRxy0?=
- =?us-ascii?Q?0iSPBQy3OcWkEqrBjv9DbB1n2nZJ1AjqcSuPKye+4kOxLKN6XmD/9vp8qsz6?=
- =?us-ascii?Q?Xf3WnpHGXXXahrZyonjInZ8K92nXIOwQQusskXXD5l1t2UEj1qVAcbi63RxN?=
- =?us-ascii?Q?oknXH+QYlF78F6iWUDB5O/TnhEb4LpFeSqLF5EKQf7jGspeKYlhCX1yvU/qj?=
- =?us-ascii?Q?CPubum9zUmUlNrwUDFfFk4JUDxAR4G0qfi+Ez9BgfH2HnQJNTl0vBaCL7qZN?=
- =?us-ascii?Q?zrv12TtyDww/DE1TEzA06MFFiqGKGIhiF1/xKGd2ait6J3Rdpe6J7kCLJ3Sj?=
- =?us-ascii?Q?UXRYkWb1GL/S6Fadrp1y5wPoyWDnj29hV1VyExTR5JKHVmc6ikQNI16rm31y?=
- =?us-ascii?Q?mpcf1USUS2C3953zTXg6CUILytSxPpxZc+sc6Zk+ROv4UdLaJ36FS/yGAykJ?=
- =?us-ascii?Q?SZ6lWP/kROzoORKK9bE59NGj0bd75LzhBu1ScU0liLtOzOzj3Fr02vacxQg6?=
- =?us-ascii?Q?U8oq92/MJj8sfy1X3OAJNviQSkg0ZOUoTIo/IkiWBQWS7zzIK1vqFnyWsS47?=
- =?us-ascii?Q?6kE/0X8neTikC+yyxaVccFxdojEbk4tiqSNFODNkHopQeUTMJF8BUT5lkCRL?=
- =?us-ascii?Q?IhFd9a1jRIRytj4lqeRTKMxHBU7ef5Xj94f/SxJ2hrPmfqqKpbFfuiAyV4+X?=
- =?us-ascii?Q?Vohtrj+iC497fi+4CvGr7ZFBQYs7mgzjYB34PfnU?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a080f473-9c8e-4e86-73bb-08dd50a5ad27
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB8252.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2025 05:24:26.5182
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: AmKIYzw2mi0ZoXkfnX8426xAqIskFiMNOGS/tEdmTUnCZH4S218AX3tsX33iN8v4eRhOjyDS+KpVBRYEtMZ38g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9284
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250208092918.251733-1-oushixiong1025@163.com>
 
-Hello Mario,
+Hi,
 
+kernel test robot noticed the following build warnings:
 
-On Mon, Feb 17, 2025 at 04:06:50PM -0600, Mario Limonciello wrote:
-> From: Mario Limonciello <mario.limonciello@amd.com>
-> 
-> During resume it's possible the firmware didn't restore the CPPC request MSR
-> but the kernel thinks the values line up. This leads to incorrect performance
-> after resume from suspend.
-> 
-> To fix the issue invalidate the cached value at suspend. During resume use
-> the saved values programmed as cached limits.
-> 
-> Reported-by: Miroslav Pavleski <miroslav@pavleski.net>
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=217931
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
->  drivers/cpufreq/amd-pstate.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
-> index f425fb7ec77d7..12fb63169a24c 100644
-> --- a/drivers/cpufreq/amd-pstate.c
-> +++ b/drivers/cpufreq/amd-pstate.c
-> @@ -1611,7 +1611,7 @@ static int amd_pstate_epp_reenable(struct cpufreq_policy *policy)
->  					  max_perf, policy->boost_enabled);
->  	}
+[auto build test WARNING on lee-leds/for-leds-next]
+[also build test WARNING on linus/master v6.14-rc3 next-20250218]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-You can also remove the tracing code from amd_pstate_epp_reenable(), i.e,
+url:    https://github.com/intel-lab-lkp/linux/commits/oushixiong1025-163-com/fbdev-lcdcfb-add-missing-device_remove_file/20250208-173203
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/leds.git for-leds-next
+patch link:    https://lore.kernel.org/r/20250208092918.251733-1-oushixiong1025%40163.com
+patch subject: [PATCH v2] fbdev: lcdcfb: add missing device_remove_file()
+config: nios2-randconfig-r072-20250219 (https://download.01.org/0day-ci/archive/20250219/202502191200.AVwVc1DY-lkp@intel.com/config)
+compiler: nios2-linux-gcc (GCC) 14.2.0
 
-	if (trace_amd_pstate_epp_perf_enabled()) {
-		trace_amd_pstate_epp_perf(cpudata->cpu, cpudata->highest_perf,
-					  cpudata->epp_cached,
-					  FIELD_GET(AMD_CPPC_MIN_PERF_MASK, cpudata->cppc_req_cached),
-					  max_perf, policy->boost_enabled);
-	}
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502191200.AVwVc1DY-lkp@intel.com/
 
-Since amd_pstate_epp_update_limit() also has the the tracing code.
+smatch warnings:
+drivers/video/fbdev/sh_mobile_lcdcfb.c:1544 sh_mobile_lcdc_overlay_fb_register() warn: always true condition '(--i >= 0) => (0-u32max >= 0)'
+drivers/video/fbdev/sh_mobile_lcdcfb.c:1544 sh_mobile_lcdc_overlay_fb_register() warn: always true condition '(--i >= 0) => (0-u32max >= 0)'
+drivers/video/fbdev/sh_mobile_lcdcfb.c:2652 sh_mobile_lcdc_probe() warn: 'irq' from request_irq() not released on lines: 2652.
+drivers/video/fbdev/sh_mobile_lcdcfb.c:2652 sh_mobile_lcdc_probe() warn: 'priv->base' from ioremap() not released on lines: 2652.
 
-The patch looks good to me otherwise.
+vim +1544 drivers/video/fbdev/sh_mobile_lcdcfb.c
 
-Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
+  1517	
+  1518	static int
+  1519	sh_mobile_lcdc_overlay_fb_register(struct sh_mobile_lcdc_overlay *ovl)
+  1520	{
+  1521		struct sh_mobile_lcdc_priv *lcdc = ovl->channel->lcdc;
+  1522		struct fb_info *info = ovl->info;
+  1523		unsigned int i, error = 0;
+  1524		int ret;
+  1525	
+  1526		if (info == NULL)
+  1527			return 0;
+  1528	
+  1529		ret = register_framebuffer(info);
+  1530		if (ret < 0)
+  1531			return ret;
+  1532	
+  1533		dev_info(lcdc->dev, "registered %s/overlay %u as %dx%d %dbpp.\n",
+  1534			 dev_name(lcdc->dev), ovl->index, info->var.xres,
+  1535			 info->var.yres, info->var.bits_per_pixel);
+  1536	
+  1537		for (i = 0; i < ARRAY_SIZE(overlay_sysfs_attrs); ++i) {
+  1538			error = device_create_file(info->dev, &overlay_sysfs_attrs[i]);
+  1539			if (error)
+  1540				break;
+  1541		}
+  1542	
+  1543		if (error) {
+> 1544			while (--i >= 0)
+  1545				device_remove_file(info->dev, &overlay_sysfs_attrs[i]);
+  1546			return error;
+  1547		}
+  1548	
+  1549		return 0;
+  1550	}
+  1551	
 
 -- 
-Thanks and Regards
-gautham.
-
-
-
->  
-> -	return amd_pstate_update_perf(cpudata, 0, 0, max_perf, cpudata->epp_cached, false);
-> +	return amd_pstate_epp_update_limit(policy);
->  }
->  
->  static int amd_pstate_epp_cpu_online(struct cpufreq_policy *policy)
-> @@ -1660,6 +1660,9 @@ static int amd_pstate_epp_suspend(struct cpufreq_policy *policy)
->  	if (cppc_state != AMD_PSTATE_ACTIVE)
->  		return 0;
->  
-> +	/* invalidate to ensure it's rewritten during resume */
-> +	cpudata->cppc_req_cached = 0;
-> +
->  	/* set this flag to avoid setting core offline*/
->  	cpudata->suspended = true;
->  
-> -- 
-> 2.43.0
-> 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
