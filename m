@@ -1,112 +1,133 @@
-Return-Path: <linux-kernel+bounces-522371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A4C2A3C94B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:10:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C60C3A3C94F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:10:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 274733B0E96
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 20:09:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 141863B1E80
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 20:10:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03A3922D4E9;
-	Wed, 19 Feb 2025 20:09:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZPKBkBfA"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 195DD21B19E;
-	Wed, 19 Feb 2025 20:09:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C71D22D7BA;
+	Wed, 19 Feb 2025 20:10:28 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4054F21B9E0;
+	Wed, 19 Feb 2025 20:10:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739995797; cv=none; b=OaLrwDWI3jEqFSIvmAx1HxhFCmElVxbUGVlX2b4ejXQcZgkQAfHUxP1mCfO/AmQFB7S86V4N6kuR3CBtasfPzhkOArSLzG/7eaeGqKChCytBf0k2SyvZMAFvkzRhqUZVHzjxEtwXf3WPQ36fQ9peEF9e1mwIiCoitMoi8iKksoU=
+	t=1739995828; cv=none; b=XBes+jaCn8W3yKg9svOo2xXaux22+HM/LUuK15XdeTcqkeUmW8CFBoCgza2V7/tQ4bzNcDAcv2yLdDEVECvlX4cNRE8hy8wxS59wsePfAkM1qDrHQ0p6klFz3qPZ3Dbm2pA0kQx4gLkY+OYSnfexlIuVuQJBztr+hwJIieQvIj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739995797; c=relaxed/simple;
-	bh=WhudxD8gvZRLRlaAQPHkju/vck+43uwrkDgMJDCfjwQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=B4MVnldnLbZ0eqtv9Ff7RtBryuwvmV6ylwo3iFN3Cy0PwgfSMw2tDiGCGC3j2xSmIK2kNOvssNKZZv+1bOZfTMSsrcYCPXYn87/GW5aJChGXj1fUWZk3VOQm4GJFgWNxTj3rfNp0S84v1ArG7j7h6S2cA0A1CbXlnohGwFt7lyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZPKBkBfA; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51JGcR7i001826;
-	Wed, 19 Feb 2025 20:09:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	pG01oGH7fuiVs0VYeiiXtmylPqK5guGPOI0XpTEK1aQ=; b=ZPKBkBfAhyHSh50b
-	7KRRSj4NAZJlGcFpJuCyUoyACejL2yGE/g3EIg6n7ucjZjwB5/zYXvRm6Q9xn68m
-	IwJDynqmQcq5oa8GZ4pC9RaUGmYMJNcA8oTw+Fdo+0V81W66BiJjertZimZiU2yQ
-	KwjISE4VxpvlD8YTVtofFJ1gZsz9gg9qUhSF0haaOL/jJEtcMNqQ8G9xS63YsgEe
-	dlSTpWWSFP93Ipx0N8k83OempJVFpPm8vOWN6Mneq+uREqlRETDlRviFq60dAUTa
-	t0qZ0JdraMazynmb1SC0Lb9sZm7jBWm/xJXxFHN5lO1673vOC+d/Jd67sH9COCOS
-	J/GmWA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44vyy2buyx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Feb 2025 20:09:37 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51JK9afg001785
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Feb 2025 20:09:36 GMT
-Received: from [10.110.87.61] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 19 Feb
- 2025 12:09:36 -0800
-Message-ID: <0ad8db2c-b5aa-448b-bd4f-e4305bc64b86@quicinc.com>
-Date: Wed, 19 Feb 2025 12:09:28 -0800
+	s=arc-20240116; t=1739995828; c=relaxed/simple;
+	bh=zDq3K0cRUJ0dtWhls7Hgc8PZm4L+F8WCGJO3BOMagfA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pvXUDvODdqCbIsI8V1cfYdvGMuwaH52CdnsoNnVSUGdX8NxEqIyrybUoJ22FpTBA3DHiqO4qsKeRG5V858sCSTddYiOkE3xKOyToqrGWPe6BAmBLS0yZcIh4MX7kO3mbXVks3Ma4nUQGuYuwZ8eA+xGwPWHykyY34wxulAVvVoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A8856152B;
+	Wed, 19 Feb 2025 12:10:43 -0800 (PST)
+Received: from beelzebub.ast.arm.com (unknown [10.118.29.240])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0303F3F59E;
+	Wed, 19 Feb 2025 12:10:24 -0800 (PST)
+From: Stuart Yoder <stuart.yoder@arm.com>
+To: linux-integrity@vger.kernel.org,
+	jarkko@kernel.org,
+	peterhuewe@gmx.de,
+	jgg@ziepe.ca,
+	sudeep.holla@arm.com,
+	rafael@kernel.org,
+	lenb@kernel.org
+Cc: linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5 0/5] Add support for the TPM FF-A start method
+Date: Wed, 19 Feb 2025 14:10:09 -0600
+Message-Id: <20250219201014.174344-1-stuart.yoder@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/msm/dsi: Add check for devm_kstrdup()
-To: Haoxiang Li <haoxiang_li2024@163.com>, <robdclark@gmail.com>,
-        <dmitry.baryshkov@linaro.org>, <sean@poorly.run>,
-        <marijn.suijten@somainline.org>, <airlied@gmail.com>,
-        <simona@ffwll.ch>, <jonathan@marek.ca>, <quic_jesszhan@quicinc.com>,
-        <konradybcio@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>
-References: <20250219040712.2598161-1-haoxiang_li2024@163.com>
-Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <20250219040712.2598161-1-haoxiang_li2024@163.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: w6EFJGp3IeYKq0z9dpEfOIMw50JCv7dz
-X-Proofpoint-GUID: w6EFJGp3IeYKq0z9dpEfOIMw50JCv7dz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-19_09,2025-02-19_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- lowpriorityscore=0 clxscore=1011 adultscore=0 phishscore=0 mlxlogscore=864
- bulkscore=0 malwarescore=0 impostorscore=0 priorityscore=1501 mlxscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502190155
+Content-Transfer-Encoding: 8bit
 
+Firmware Framework for Arm A-profile (FF-A) is a messaging framework
+for Arm-based systems, and in the context of the TPM CRB driver is used
+to signal 'start' to a CRB-based TPM service which is hosted in an
+FF-A secure partition running in TrustZone.
 
+These patches add support for the CRB FF-A start method defined
+in the TCG ACPI specification v1.4 and the FF-A ABI defined
+in the Arm TPM Service CRB over FF-A (DEN0138) specification:
+https://developer.arm.com/documentation/den0138/latest/
 
-On 2/18/2025 8:07 PM, Haoxiang Li wrote:
-> Add check for the return value of devm_kstrdup() in
-> dsi_host_parse_dt() to catch potential exception.
-> 
-> Fixes: 958d8d99ccb3 ("drm/msm/dsi: parse vsync source from device tree")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
-> ---
->   drivers/gpu/drm/msm/dsi/dsi_host.c | 9 ++++++++-
->   1 file changed, 8 insertions(+), 1 deletion(-)
-> 
+The first patch adds an FF-A driver to handle the FF-A messaging when
+communicating with a CRB-based TPM secure partition built on FF-A.
+The driver is probed when the TPM secure partition is discovered by
+the Linux FF-A infrastructure.
 
-Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+The second patch consolidates the check for idle support in the CRB
+driver to one place.
+
+The third patch defines the new ACPI start method enumeration for
+CRB over FF-A.
+
+The fourth patch adds support for the FF-A ACPI start method to
+the TPM crb driver.
+
+The fifth patch adds documentation explaining how the CRB driver
+and FF-A relate.
+
+Version 5
+-tpm_ffa_crb patch: removed module version
+-tpm_ffa_crb patch: fixed module description
+-tpm_ffa_crb patch: updated comment on mutex declaration
+-reworded commit message for patch 2 as per Jarkko's 
+ suggestion
+-added Acked tag by Sudeep to patch 1 for FF-A changes 
+-added Reviewed-by tag to patches 3 and 4
+
+Version 4
+-fix warning from kernel test robot in patch 1
+-fix warnings from checkpatch.pl --strict
+-clean up unecessary parenthesis usage
+-update variable declaration to be reverse tree order
+-document exported functions in tpm_crb_ffa driver
+-remove unnecessary author and maintainer info in tpm_crb_ffa driver
+-fix declaration of variables to be in reverse tree order
+
+Version 3
+-changed prefixes used throughout patch series to tpm_crb_ffa*
+
+Version 2
+-updates to cover letter to define FF-A
+-added new patch with documentation
+-created pull request in ACPIA and added link to the patch
+ updating actbl3.h
+-added tpm_ prefix to the FF-A CRB driver
+
+Stuart Yoder (5):
+  tpm_crb: implement driver compliant to CRB over FF-A
+  tpm_crb: clean-up and refactor check for idle support
+  ACPICA: add start method for Arm FF-A
+  tpm_crb: add support for the Arm FF-A start method
+  Documentation: tpm: add documentation for the CRB FF-A interface
+
+ Documentation/security/tpm/tpm_ffa_crb.rst |  65 ++++
+ drivers/char/tpm/Kconfig                   |   9 +
+ drivers/char/tpm/Makefile                  |   1 +
+ drivers/char/tpm/tpm_crb.c                 | 105 +++++--
+ drivers/char/tpm/tpm_crb_ffa.c             | 348 +++++++++++++++++++++
+ drivers/char/tpm/tpm_crb_ffa.h             |  25 ++
+ include/acpi/actbl3.h                      |   1 +
+ 7 files changed, 535 insertions(+), 19 deletions(-)
+ create mode 100644 Documentation/security/tpm/tpm_ffa_crb.rst
+ create mode 100644 drivers/char/tpm/tpm_crb_ffa.c
+ create mode 100644 drivers/char/tpm/tpm_crb_ffa.h
+
+-- 
+2.34.1
+
 
