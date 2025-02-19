@@ -1,179 +1,126 @@
-Return-Path: <linux-kernel+bounces-522048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AF66A3C52C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:38:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EB56A3C4E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:25:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D371171336
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:37:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47E643B615D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:22:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E729020CCE5;
-	Wed, 19 Feb 2025 16:36:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D31001FECCD;
+	Wed, 19 Feb 2025 16:22:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="icstvHM6"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="up9c8D9n"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31A531FDA9D
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 16:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B49E1FDE11;
+	Wed, 19 Feb 2025 16:22:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739983013; cv=none; b=iv2FKNAdBWQEBWN78rt3gJWMOZEULrVVmEjyzfjJFGXWql+KZp31fUOl9FvZ891Gv/9UOPWcCTxDW3+Web/VrugPJ4pqq0uEiQr8qJbuTL7aYhs9GS4sJvzouKMPYXfdk7iO4ZIMK1rNlDfvvjUPVF9EHer+4tTxr+xwfECNHbw=
+	t=1739982174; cv=none; b=VAE7arczpIy0rPPVmZwe2nhYNSs64RiIlKAa9ZFDhnnoWwxjeToNWfEc592+09+KGdzxkSJtKSlz9anWT83S5ZOT0OPcowG54JGPohdHfktR3e1Zn7Lz94Ke5AHHzEjppS44dpy8OG4zt+nLkMQ2v2Cm/KyI4pNTX0LG7JG/Vwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739983013; c=relaxed/simple;
-	bh=vDtfpVS7JsMghIsD5j58iOIqHJHa3Hky7Gqd6rSqidY=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=GTMw64P/Sh+W1giK1/D4zvZ0vTMJzWh4SiwjhYAmrcZb+zrgOHm3tsbILVCClgz8ewkf0KDPcas74gYD55SGWdgjWjfPE1JWNE53U2jhBDVK78rJXsCMCRmiNmzs92fx+JpqA2PWvscaxe6S0rV1aeXQK+V9aH1Ozlr8F2TZodI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=icstvHM6; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:References:
-	Subject:Cc:To:From:Date:Message-ID:Sender:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To;
-	bh=4gavA9yGarxIk7e0bFuvMl3MjG58bvR3QzZc+2BZfSQ=; b=icstvHM6RG32kIawRuDSqrrKVk
-	7FPvn/ZNbpra7ukMgtjgDQjMn/RLg9WgoKyRuQliLnVq+1A1e0pAQfY8nZ+Ib/jJWWoepFV6hnG4b
-	pxcur5KAbvoyPkChjiQX6e8L6UFHhCas85NKSV+6Sp3MpEsH9wNBQmjgCNaQCvKBcyHo7cvwwnZGi
-	hoG5S9WVyUZ4cl6X20b4+wCJWGMFxEg9F3UnRZ2MPHRBMS2lweLo4uRMekhzyEfmO24+HP/d1gUlt
-	uuzzTwKQ19XEyxQraEOUheEtKDgTnfhSdv4vNEmvY6nQPuz8uWXhaPj+1SVDd8JWGD+UXmrS4rA1E
-	50XnRK8Q==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tkn40-00000006Whk-2OwH;
-	Wed, 19 Feb 2025 16:36:44 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
-	id 0A57F3021DF; Wed, 19 Feb 2025 17:36:43 +0100 (CET)
-Message-ID: <20250219163514.928125334@infradead.org>
-User-Agent: quilt/0.66
-Date: Wed, 19 Feb 2025 17:21:13 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: x86@kernel.org
-Cc: linux-kernel@vger.kernel.org,
- peterz@infradead.org,
- alyssa.milburn@intel.com,
- scott.d.constable@intel.com,
- joao@overdrivepizza.com,
- andrew.cooper3@citrix.com,
- jpoimboe@kernel.org,
- jose.marchesi@oracle.com,
- hjl.tools@gmail.com,
- ndesaulniers@google.com,
- samitolvanen@google.com,
- nathan@kernel.org,
- ojeda@kernel.org,
- kees@kernel.org,
- alexei.starovoitov@gmail.com,
- mhiramat@kernel.org,
- jmill@asu.edu
-Subject: [PATCH v3 06/10] x86/traps: Decode LOCK Jcc.d8 #UD
-References: <20250219162107.880673196@infradead.org>
+	s=arc-20240116; t=1739982174; c=relaxed/simple;
+	bh=QJygWqxo1Gm+lbSxhd/R3UrnFpOrkV+cHQEw/uDKvcM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JIjNGZUXbhxl3VyNhDRpYGR/cFGIdGq6wMTMuSbEgrTlxznNv4bkFlPqiVNGMp1QKj1xhmnmfxSXrLUtFTD1YFofpiNrLtGGRIc48Vc9tIwtm8vxN3n+MurFcY6tzLUqHsvU8q75+TCzWpvWIkO9Klq4VtCJP6ytn0D22O9Fr4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=up9c8D9n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 638E3C4CED1;
+	Wed, 19 Feb 2025 16:22:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739982173;
+	bh=QJygWqxo1Gm+lbSxhd/R3UrnFpOrkV+cHQEw/uDKvcM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=up9c8D9nt5ihb0WJ/XZ9jdFRx0BnSokN8qn6CTYZ/9mY5Lo5yWr7B6YKyBQK9626M
+	 cBHxIyDcyLYXUIDS9tZ//G0HvOhqi76JR4V1HiU8KVpxkysGkCqf+LK+/T3I9RXF7c
+	 /++zhSfLqqT2F4xWgicl5KSPr7d0PrC4TaEHuWZLvnokvm8b9FkiCCFnIiDyVEwdrL
+	 hFrR8BkFTz41/3nCZr8rhzWniPKmvuTk7zfPGOhualVnEKH8+x7mEQzRqsxOWdvkze
+	 Socd3ajj394hplnfaR1kPfa4dwSt5H6UbONTNVbRvF1hD77GkAGRk7fMLntkOJCaxQ
+	 2USG+dG3GOT7g==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Sunil Goutham <sgoutham@marvell.com>,
+	Geetha sowjanya <gakula@marvell.com>,
+	Subbaraya Sundeep <sbhatta@marvell.com>,
+	hariprasad <hkelam@marvell.com>,
+	Bharat Bhushan <bbhushan2@marvell.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Suman Ghosh <sumang@marvell.com>,
+	Sai Krishna <saikrishnag@marvell.com>,
+	Nithin Dabilpuram <ndabilpuram@marvell.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] [net-next v2] octeontx2: hide unused label
+Date: Wed, 19 Feb 2025 17:21:14 +0100
+Message-Id: <20250219162239.1376865-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Because overlapping code sequences are all the rage.
+From: Arnd Bergmann <arnd@arndb.de>
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+A previous patch introduces a build-time warning when CONFIG_DCB
+is disabled:
+
+drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c: In function 'otx2_probe':
+drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c:3217:1: error: label 'err_free_zc_bmap' defined but not used [-Werror=unused-label]
+drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c: In function 'otx2vf_probe':
+drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c:740:1: error: label 'err_free_zc_bmap' defined but not used [-Werror=unused-label]
+
+Add the same #ifdef check around it.
+
+Fixes: efabce290151 ("octeontx2-pf: AF_XDP zero copy receive support")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/x86/include/asm/bug.h |    2 ++
- arch/x86/kernel/traps.c    |   30 +++++++++++++++++++++++++-----
- 2 files changed, 27 insertions(+), 5 deletions(-)
+v2: fix typo s/CONfiG_DCB/CONFIG_DCB/
+---
+ drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c | 2 ++
+ drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c | 2 ++
+ 2 files changed, 4 insertions(+)
 
---- a/arch/x86/include/asm/bug.h
-+++ b/arch/x86/include/asm/bug.h
-@@ -17,6 +17,7 @@
-  * In clang we have UD1s reporting UBSAN failures on X86, 64 and 32bit.
-  */
- #define INSN_ASOP		0x67
-+#define INSN_LOCK		0xf0
- #define OPCODE_ESCAPE		0x0f
- #define SECOND_BYTE_OPCODE_UD1	0xb9
- #define SECOND_BYTE_OPCODE_UD2	0x0b
-@@ -26,6 +27,7 @@
- #define BUG_UD1			0xfffd
- #define BUG_UD1_UBSAN		0xfffc
- #define BUG_EA			0xffea
-+#define BUG_LOCK		0xfff0
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
+index c7c562f0f5e5..cfed9ec5b157 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
+@@ -3214,8 +3214,10 @@ static int otx2_probe(struct pci_dev *pdev, const struct pci_device_id *id)
  
- #ifdef CONFIG_GENERIC_BUG
+ 	return 0;
  
---- a/arch/x86/kernel/traps.c
-+++ b/arch/x86/kernel/traps.c
-@@ -97,6 +97,7 @@ __always_inline int is_valid_bugaddr(uns
-  * If it's a UD1, further decode to determine its use:
-  *
-  * FineIBT:      ea                      (bad)
-+ * FineIBT:      0f 75 f9                lock jne . - 6
-  * UBSan{0}:     67 0f b9 00             ud1    (%eax),%eax
-  * UBSan{10}:    67 0f b9 40 10          ud1    0x10(%eax),%eax
-  * static_call:  0f b9 cc                ud1    %esp,%ecx
-@@ -106,6 +107,7 @@ __always_inline int is_valid_bugaddr(uns
- __always_inline int decode_bug(unsigned long addr, s32 *imm, int *len)
- {
- 	unsigned long start = addr;
-+	bool lock = false;
- 	u8 v;
++#ifdef CONFIG_DCB
+ err_free_zc_bmap:
+ 	bitmap_free(pf->af_xdp_zc_qidx);
++#endif
+ err_sriov_cleannup:
+ 	otx2_sriov_vfcfg_cleanup(pf);
+ err_pf_sriov_init:
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c
+index 63ddd262d122..7ef3ba477d49 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c
+@@ -737,8 +737,10 @@ static int otx2vf_probe(struct pci_dev *pdev, const struct pci_device_id *id)
  
- 	if (addr < TASK_SIZE_MAX)
-@@ -114,12 +116,29 @@ __always_inline int decode_bug(unsigned
- 	v = *(u8 *)(addr++);
- 	if (v == INSN_ASOP)
- 		v = *(u8 *)(addr++);
--	if (v == 0xea) {
-+
-+	if (v == INSN_LOCK) {
-+		lock = true;
-+		v = *(u8 *)(addr++);
-+	}
-+
-+	switch (v) {
-+	case 0x70 ... 0x7f: /* Jcc.d8 */
-+		addr += 1; /* d8 */
-+		*len = addr - start;
-+		WARN_ON_ONCE(!lock);
-+		return BUG_LOCK;
-+
-+	case 0xea:
- 		*len = addr - start;
- 		return BUG_EA;
--	}
--	if (v != OPCODE_ESCAPE)
-+
-+	case OPCODE_ESCAPE:
-+		break;
-+
-+	default:
- 		return BUG_NONE;
-+	}
+ 	return 0;
  
- 	v = *(u8 *)(addr++);
- 	if (v == SECOND_BYTE_OPCODE_UD2) {
-@@ -315,7 +334,8 @@ static noinstr bool handle_bug(struct pt
- 
- 	switch (ud_type) {
- 	case BUG_EA:
--		if (handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
-+	case BUG_LOCK:
-+		if (handle_cfi_failure(ud_type, regs) == BUG_TRAP_TYPE_WARN) {
- 			if (regs->ip == addr)
- 				regs->ip += ud_len;
- 			handled = true;
-@@ -324,7 +344,7 @@ static noinstr bool handle_bug(struct pt
- 
- 	case BUG_UD2:
- 		if (report_bug(regs->ip, regs) == BUG_TRAP_TYPE_WARN ||
--		    handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
-+		    handle_cfi_failure(ud_type, regs) == BUG_TRAP_TYPE_WARN) {
- 			if (regs->ip == addr)
- 				regs->ip += ud_len;
- 			handled = true;
-
++#ifdef CONFIG_DCB
+ err_free_zc_bmap:
+ 	bitmap_free(vf->af_xdp_zc_qidx);
++#endif
+ err_unreg_devlink:
+ 	otx2_unregister_dl(vf);
+ err_shutdown_tc:
+-- 
+2.39.5
 
 
