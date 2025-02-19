@@ -1,99 +1,162 @@
-Return-Path: <linux-kernel+bounces-521497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CA5BA3BE26
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:32:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B40C6A3BE1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:32:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A978168C87
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:31:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 475C11894E0B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:31:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D4E1E25F1;
-	Wed, 19 Feb 2025 12:31:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C17F41E0E0A;
+	Wed, 19 Feb 2025 12:31:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SE+Bpsw3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nBm8Wdjm"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBA451E0E0A;
-	Wed, 19 Feb 2025 12:31:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EBAC1E1025;
+	Wed, 19 Feb 2025 12:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739968263; cv=none; b=bvpvxqtfZcLv0pwuJ3G1YML2xFHGkscAwXpt2L1blpRvkzpmqTfegXFm2CseEDd5qZmOG6Woo33VkfbEaTNdWTNj7iQwlGgb/RL2hShc/UVDLNdi85APSROXfQhBCLqFbqNWFav4gyjYIjePwz0ssam82dn1RHDnhry3rOFJZy0=
+	t=1739968270; cv=none; b=iXrJ/OpOYWbNDQVGdu/ZqEqRURc19MrZU/hIdPZZkkKu9k9G8YX6wPhhNIqD3vudOVIPubYgJUzs8ZJJ9MkrkG+nE4uVmnQQ96f3Ot4lkpJve3GgPwTsJ5Jd8hHkG4eAcKIimpHYQI+/OpvejRLcNerm84psoZMi1dsBm7hyMP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739968263; c=relaxed/simple;
-	bh=N127fdTUboMPXuJ362+JGpLt7EcgMa+g6C8TmK2MXBc=;
+	s=arc-20240116; t=1739968270; c=relaxed/simple;
+	bh=I3shXO9b9Bf/a89JD+NZvm3W9P/MGQLFbKoUjj5IlzA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FwSDsPY/08L8h3/0t7owGfEc2ZLy3OX0chARpF16AZq4Yg2PNwPVAFO6gsHyXX5vwFdPoxGsV3ABlJ0ot2ioBiL5Dv6ff8fzFe/Hb86U7nVWbKvgETbpTiNpQNfHMZTjCK0y3yHwCqK4J+j1EuXgY2H8nYTJEI0MKDW23L9jGyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SE+Bpsw3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D688DC4CED1;
-	Wed, 19 Feb 2025 12:31:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739968262;
-	bh=N127fdTUboMPXuJ362+JGpLt7EcgMa+g6C8TmK2MXBc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SE+Bpsw3ZkRmPo8/ZeJCgBP7lN7a+beE2wSqBGg5xUslnPJ4Bm3pPK+1ZRYf/FrVU
-	 r3yPik7sW/eYuCsNbplRwS7jdVDHN7m//uQG23yajxfsaDyiUCW+YwFXJvO3R7nv/L
-	 6+7wSBxGWQMGfP2341pGY+j23H90kr1VstsdzzGrfwGAB4MLiAkKIftt3dE6x9F1Zy
-	 7Gm/WqtilJT/EsxRp5ftv6x90f1npyRC8tRPHfXM/NvvJD61iSQlUxObr2B8U8j3vv
-	 pSo8x4VDq+e83n1xlhOt3peJ/lYQBgZOyvhxqk6dY7xp49conQm3bOpMiuuJpGy8TR
-	 42b8JJCBXwrBA==
-Date: Wed, 19 Feb 2025 14:30:57 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: Haoxiang Li <haoxiang_li2024@163.com>
-Cc: jgg@ziepe.ca, sd@queasysnail.net, phaddad@nvidia.com,
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] mlx5: Add check for get_macsec_device()
-Message-ID: <20250219123057.GF53094@unreal>
-References: <20250218100200.2535141-1-haoxiang_li2024@163.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=txet8K/Ki2V+umjLgAnJNBzVGTuOw0spuTKCmvf1wDFUDVYI/a659UMOftqS9JLMEuTihDiKuYwIzvDLwlpjHnYWcoQk6xYOBSnHJdXCRU6NhpfITr0AUttbPVNIhONlt08CbbkltCOpWAqHtPXKOMadXuyxqX7A6cinb8xGc+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nBm8Wdjm; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-546210287c1so3321515e87.2;
+        Wed, 19 Feb 2025 04:31:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739968266; x=1740573066; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XNzXBsdWjpLDVsAJfw/fASRvRFeX+ndkn8tRpPOZpL4=;
+        b=nBm8Wdjm6B4UUIdnPkxXMm2MXCOIk6RJXoJl9aramJjfd8uLkChm8yEZPw3NiW8fYM
+         t+jrrO/LiyZnFlOn+KP/YeNAVUzSs0eK3LynGp340lWyeJotu18gNL7xiy5a+RIPqHS5
+         jMSRwVFcArH8OgS3Y6HuM95sM7M66r8d0jfAPUy+GvNshlxNcrk2oq9UMfQ+XHI54ZR1
+         9HKf9vC9apwcHKIVY0PxT3IzLlowSUopccSS2jeo437lOFQMlaGBO9OffdE+J+4E7S7H
+         v+UtkLGgl8b50PMgKvS9NM2haKeAiEndmsK/fjaebp/E+0beG+v/4mbDczZjnCWkCBuL
+         TtYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739968266; x=1740573066;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XNzXBsdWjpLDVsAJfw/fASRvRFeX+ndkn8tRpPOZpL4=;
+        b=tIKucsXwpLKP2U8v+MzhBwl+uqC0nJoFsvKL+q85qes7GRqQuMZqMiKR+vIUwyJGJ9
+         k99e4PKVikycUYmuQD8/MTNq69voNLOvXPGyYBLZICIBhGJL8Ocd52z+c1ukfORDhZYc
+         +ZoArf5Z35AyF8OIaFcejNhY2WdS5SNVLOpqhFm+CxxlE38EzkeLnmeO09H0JdxBr2r6
+         FTTljsjFyKAIgvBJsvC9t9+X3UFxWkaDakM5HTpoB27DFKG8YI27XAy0eujuEMKAIqJ9
+         CbFAtm5mOyZMe8jbcbPE8LvlGFp5o6jK8g/V5KwXV6JAt5/796DJ7X6KzX85ZTwworcs
+         hONA==
+X-Forwarded-Encrypted: i=1; AJvYcCU7lEpqxmX7bj4faG74YfUWZ07XQNO27UK32kuLTiM6EUjEIys1oyjnkTa1biS/rzQcyY+hnan9jsz0O5P1@vger.kernel.org, AJvYcCUfaPKuzxH1OLETCUY1fO95aogA9pCAeEtTmAIybE3+2AUUGxLpFFtbJpuvGBdfrLejYCO3GnFYRb3YhQJ7Bmsaru0=@vger.kernel.org, AJvYcCVjtGhjZ5A29r522F2ro3L0Vm28/89xWdJGE5jFA8NrFrVm5chiUArgsoFg7gwcldxWPG48eMnezn94@vger.kernel.org, AJvYcCWXk/k7Bgl2N49VSQU9UkuOzZ0qIpbTkxgw1zZ2GWce7+4mqSg4pniiFawaw6hyJh+7veIFN1pSxunn@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzw1cqZ+krJlFq/iVaRR+slOgwVAYq1bKmjthg35nIIBcNPC943
+	CZ7stdNtXcTQo4qMqp7XBMlA6EdufeTs0Ch7XNXwO56v1xt989x4
+X-Gm-Gg: ASbGncvcBV/HEhES7EADwOpDRdS/SWs8J6d1gvfeqpaKL3V8hOGqt9I94nsPY2oQigd
+	rKMioS2VUIc6gX0kpTBnPHMSdPj3PEGKrsf+kJlqQdi8P5yb7rn9T88AnSF0dPsgPX4+cyTHUr/
+	FAtUXzY+XiQcXsg+Ve8/dueUy7Slgq22FW6hBhf9WM/+VzG1h+dASGu1nWWQt8T75jqiOfkP4LH
+	/HOaEhQ3LWWU7Wdv7fO/uB128RN+c5tmG32ngKK7ffzDPYvS4crO/HoDdYugD5qubeeXDWPvyJq
+	LV6Nu0TKK4B+r94jvWk++A==
+X-Google-Smtp-Source: AGHT+IGbVYVIJzf3Ky5RtSpHDBC96A6gAGmLe92KwdhKJGUa87dA9Nei6u7W+ae65z5/SkdH7rRhrA==
+X-Received: by 2002:a05:6512:114e:b0:545:b9a:b4b4 with SMTP id 2adb3069b0e04-5452fe8fd01mr6567349e87.52.1739968266349;
+        Wed, 19 Feb 2025 04:31:06 -0800 (PST)
+Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5461cfe3a7fsm1193290e87.34.2025.02.19.04.31.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2025 04:31:03 -0800 (PST)
+Date: Wed, 19 Feb 2025 14:30:58 +0200
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+	Nuno Sa <nuno.sa@analog.com>, David Lechner <dlechner@baylibre.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
+Subject: [PATCH v3 4/9] MAINTAINERS: Add IIO ADC helpers
+Message-ID: <65fa17207c7c716d66efb95733e6a37512465605.1739967040.git.mazziesaccount@gmail.com>
+References: <cover.1739967040.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="x07A89EJB3DmszZV"
+Content-Disposition: inline
+In-Reply-To: <cover.1739967040.git.mazziesaccount@gmail.com>
+
+
+--x07A89EJB3DmszZV
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250218100200.2535141-1-haoxiang_li2024@163.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 18, 2025 at 06:02:00PM +0800, Haoxiang Li wrote:
-> Add check for the return value of get_macsec_device() in
-> mlx5r_del_gid_macsec_operations() to prevent null pointer
-> dereference.
-> 
-> Fixes: 58dbd6428a68 ("RDMA/mlx5: Handles RoCE MACsec steering rules addition and deletion")
-> Cc: stable@vger.kernel.org
+Add undersigned as a maintainer for the IIO ADC helpers.
 
-Definitely not.
+Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+---
+Revision history:
+RFC v1 =3D> v2:
+ - New patch
+---
+ MAINTAINERS | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-> Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
-> ---
->  drivers/infiniband/hw/mlx5/macsec.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/infiniband/hw/mlx5/macsec.c b/drivers/infiniband/hw/mlx5/macsec.c
-> index 3c56eb5eddf3..623b0a58f721 100644
-> --- a/drivers/infiniband/hw/mlx5/macsec.c
-> +++ b/drivers/infiniband/hw/mlx5/macsec.c
-> @@ -354,6 +354,11 @@ void mlx5r_del_gid_macsec_operations(const struct ib_gid_attr *attr)
->  		}
->  	}
->  	macsec_device = get_macsec_device(ndev, &dev->macsec.macsec_devices_list);
+diff --git a/MAINTAINERS b/MAINTAINERS
+index a87ddad78e26..bfe2f53fa74d 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11099,6 +11099,13 @@ L:	linux-media@vger.kernel.org
+ S:	Maintained
+ F:	drivers/media/rc/iguanair.c
+=20
++IIO ADC HELPERS
++M:	Matti Vaittinen <mazziesaccount@gmail.com>
++L:	linux-iio@vger.kernel.org
++S:	Maintained
++F:	drivers/iio/adc/industrialio-adc.c
++F:	include/linux/iio/adc-helpers.h
++
+ IIO BACKEND FRAMEWORK
+ M:	Nuno Sa <nuno.sa@analog.com>
+ R:	Olivier Moysan <olivier.moysan@foss.st.com>
+--=20
+2.48.1
 
-At this stage macsec_device is valid.
 
-> +	if (!macsec_device) {
-> +		dev_put(ndev);
-> +		mutex_unlock(&dev->macsec.lock);
-> +		return;
-> +	}
->  	mlx5_macsec_del_roce_rule(attr->index, dev->mdev->macsec_fs,
->  				  &macsec_device->tx_rules_list, &macsec_device->rx_rules_list);
->  	mlx5_macsec_del_roce_gid(macsec_device, attr->index);
-> -- 
-> 2.25.1
-> 
+--x07A89EJB3DmszZV
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAme1zwIACgkQeFA3/03a
+ocU7HwgA0cGcPRNsovTvGC4vVEpqkMwltUbKNh1IXuvWu9i//o8vPhyV16w0TJ1q
+qXjZOjCBIzR/Gh0OORKYMUYpGOlunAk49/h1mv5EeKEbg9H5buLgthjE7aBj1O48
+fhz+HOVKIUJY9y7IkFjtVLqR6pHJfAjpqZ8HuubNkEKHegztdPvE8VjhB/4HDrxO
+GAgNaEuUevO9/7tBnDLyr1qpo6PkVkIZqAziP0ApIdf7l8hlmabuc4XYpvu4U6xZ
+pOpexx7LK7PCUUoaTXZX2sWrIxoEEQiM75Q5PPZvPvzftLgrCeDWy0u3syV9AO/J
+p3ZuHFMAMr3oTFvth9KbobVJNmSfPA==
+=TOaW
+-----END PGP SIGNATURE-----
+
+--x07A89EJB3DmszZV--
 
