@@ -1,137 +1,304 @@
-Return-Path: <linux-kernel+bounces-522250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16948A3C7D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:43:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA263A3C7CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:41:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41CD43B20F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:41:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8004E1675C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:41:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 800EA214203;
-	Wed, 19 Feb 2025 18:41:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="j+WLmP4x"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B016214A66;
+	Wed, 19 Feb 2025 18:41:49 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BED5249F9
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 18:41:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D919A249F9;
+	Wed, 19 Feb 2025 18:41:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739990514; cv=none; b=V1pZFhDHVHYIKIkvu9KgcZxjT4hKV7pBYGXM9UFMy26YbdL6qVtV0ewWuYguJvOqd6XxL78iZs4vGy9lvzymjzq8QmH3Dw3inhgkOQEGxULeJ5ClJ0ZNdiLC+ILuHhUmCmreWPUrGxw0mVcWEgovCD3VXBmJQZTH1jnyVL84VuA=
+	t=1739990508; cv=none; b=jr5jbd/XlCnj1n2D8r1u299GevMBOJmoIs0tUKm1dasen3bD1F7etNaOzOXHfuQ4TYRXC/MXfsYsDfrUyuLJfTQctNWEgL84GK44jZunW3CF/NKhCX/S3ZFbwG0Wu+2PVgUnsuv7t4UKNFteATYrP4pjCKHMPfi03u182RTOZrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739990514; c=relaxed/simple;
-	bh=CeWSF806tI+A4LRIXc0pO+Ayf7VYrhCrKZhGfPXXroY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GinKargPi0FRKygdAfcjndBhBrvHZ/6G7O2RRDHLr2MhH3zzgI9YMckK6m3qLCQ2Dww6QPdC+3QU7oiSj6ES1azlnCZrDaRnlg+Edl6al5YlA8mTig0LQl7nV+NbJDolPKLtPhL9PKWhozWRN6b5uoOe4BDzD7w5Oztmgi0LWJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=j+WLmP4x; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-471fa3b19bcso24831cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 10:41:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739990512; x=1740595312; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QZsInwnki9MnAGBRq/S0ls/asxZg4hCC2qcGATICrLg=;
-        b=j+WLmP4xmsgkq7B6JOsFUXvVWxXA3w3mPf7YWRgpYD1iQhM+7k+foWPERC/4xne2OY
-         yLzEOl7Li64kMEOJjVF93/6KhV41S/0B/C4XDbRSYMjSJmfGyfG6RUdf8gWg34aTkAs3
-         +Uv7DGIVbGA/XImCFaiakai8YVFbloZFlhojyndXdyb+dWmecVjVLpZGl6AfRolph5Yg
-         yRtoDiCGaxsxAxZld00DrxITqzemkbZzVWd1AEYdoL9ue0IudTpBonNxfwUpSdsn402G
-         L7IEiaOv5iwnSNZGAGpfGtKl71llqM9DyhQKRTgjg+/5MyuU6qcDWHNY/0+zUiF5r/Qw
-         dsBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739990512; x=1740595312;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QZsInwnki9MnAGBRq/S0ls/asxZg4hCC2qcGATICrLg=;
-        b=bIuax4pOmxsd9p1E3x0c7UaY98QfpI8eVQo2mWgcz1Dl8BHAxSQQoRO16iLN4TWV4r
-         ZEn3M2ZHbvDBQ61Or6QZhbqYcZ8/Qh7IFOK/n0XQShceHImUKS8Wafy9dkAGBrft50p0
-         bDSAwnE1HHYugXhYbVX/fH6teOoIFDIWRuxQ5GvOF3U2CSIDOo3tj2pzMZv1lrHLAJ0z
-         EGpDqJHPMVgUNun1KZOPTvRhM8m/tP0t+8LmT3DPKauxBGGeVY9HTkwcuP8sO7jkaIJ3
-         S2uz0SJatnXTcq5TeucdeK+q6GPegN7cVaZqVxTdugHrsLkkY7Y+LDiOgSk9HywJGnMc
-         Sd8g==
-X-Forwarded-Encrypted: i=1; AJvYcCXXxeoqddPDrca5kSdF4pWI2Sv/mTCExcu35qS3wi5iZyQYW09e1um23N8oPmv0Ohu1PXpVcTPK0vZbuQM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZDWa5Wg/I2p1bH5H5pEj8fXohplqEJ5zzH6gWXrkIXlG+gLJm
-	dtay68TXxoeDeEwE2whSuhfLIBZUfufByePkHX8uZaDf8qdETos8xVb+atU9Xk/ZwXeCAwzldBx
-	pd6kEDnTbRFCGVZ+4RuLaKK4+tjJW1Z6C2ktE
-X-Gm-Gg: ASbGncvKUMjyooRrqr2hH8w1pmCUzqKds5kAraeDDiOlsW7fLnOtnxaliKCx8qBhuNx
-	NtFgfX3dpqipOo8qT5W/Fya1ZyXGlwPHyRRT3lBmJDFplxx9TnEFBAen4zZsUO7KV+7zHWl4C
-X-Google-Smtp-Source: AGHT+IE1ZDyGJNTXurwi42sNWnRqldeA3h6FbIUn7Z65n1YxraI9aIUQ1Um93lFXWdBEA36O6OcZk0/e5Cmwbquusok=
-X-Received: by 2002:a05:622a:5a15:b0:471:e982:c73d with SMTP id
- d75a77b69052e-4720a4e31c5mr4288291cf.11.1739990511983; Wed, 19 Feb 2025
- 10:41:51 -0800 (PST)
+	s=arc-20240116; t=1739990508; c=relaxed/simple;
+	bh=aezWVaWkYkAZqIoprXKcGG4CTord/RI14ESEr2bVgHU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RvdhfrMnFGwCnZRz0ZKgz23SqQAzuApO73kXZXOpwK9UeFFri+64LWHJs4d6lXpbkJfKjv3mpMroxrQfQ8laCu/NDiN6zMsu/tiFQ+kMPe+lyivHPnr0ycSmwvuJ+uXhilbDx2ee2zYcAGtxoXWsXfUxgWyjRahXKelSyYjqQ9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FB53C4CED1;
+	Wed, 19 Feb 2025 18:41:46 +0000 (UTC)
+Date: Wed, 19 Feb 2025 13:42:10 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Jemmy Wong <jemmywong512@gmail.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Mark Rutland <mark.rutland@arm.com>,
+ Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@redhat.com>, Peter
+ Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann
+ <dietmar.eggemann@arm.com>, Ben Segall <bsegall@google.com>, Mel Gorman
+ <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org
+Subject: Re: [PATCH 1/2] sched: Refine scheduler naming for clarity and
+ specificity
+Message-ID: <20250219134210.51bdf447@gandalf.local.home>
+In-Reply-To: <20250219182020.393006-2-jemmywong512@gmail.com>
+References: <20250219182020.393006-1-jemmywong512@gmail.com>
+	<20250219182020.393006-2-jemmywong512@gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <6782483e.050a0220.216c54.001d.GAE@google.com> <Z7YkXTtINfuKY4F2@google.com>
-In-Reply-To: <Z7YkXTtINfuKY4F2@google.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Wed, 19 Feb 2025 10:41:40 -0800
-X-Gm-Features: AWEUYZmL-KmJcxm5Efn0bQqV_TYAtvQtCaLvUpj1Z1uhLVi6_5Xbi0buyf7Woxo
-Message-ID: <CAJuCfpFK7Axp1J8xPSnjprPyeG8T70mq_XRKnBvDxvTaoUnnmw@mail.gmail.com>
-Subject: Re: [syzbot] [kernel?] possible deadlock in binder_alloc_free_page
-To: Carlos Llamas <cmllamas@google.com>
-Cc: syzbot <syzbot+799a2d4576c454ac2693@syzkaller.appspotmail.com>, arve@android.com, 
-	brauner@kernel.org, gregkh@linuxfoundation.org, joel@joelfernandes.org, 
-	linux-kernel@vger.kernel.org, maco@android.com, 
-	syzkaller-bugs@googlegroups.com, tkjos@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 19, 2025 at 10:35=E2=80=AFAM Carlos Llamas <cmllamas@google.com=
-> wrote:
->
-> On Sat, Jan 11, 2025 at 02:30:22AM -0800, syzbot wrote:
-> > Hello,
-> >
-> > syzbot found the following issue on:
-> >
-> > HEAD commit:    7b4b9bf203da Add linux-next specific files for 20250107
-> > git tree:       linux-next
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D17d02dc4580=
-000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D63fa2c9d5e1=
-2faef
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D799a2d4576c45=
-4ac2693
-> > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for D=
-ebian) 2.40
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D10302dc45=
-80000
-> >
-> > Downloadable assets:
-> > disk image: https://storage.googleapis.com/syzbot-assets/c179cc0c7a3c/d=
-isk-7b4b9bf2.raw.xz
-> > vmlinux: https://storage.googleapis.com/syzbot-assets/fdea80f2ec16/vmli=
-nux-7b4b9bf2.xz
-> > kernel image: https://storage.googleapis.com/syzbot-assets/a277fcaff608=
-/bzImage-7b4b9bf2.xz
-> >
-> > IMPORTANT: if you fix the issue, please add the following tag to the co=
-mmit:
-> > Reported-by: syzbot+799a2d4576c454ac2693@syzkaller.appspotmail.com
->
-> Hey Suren, just FYI. I bisected this to commit e8f32ff00a66 ("mm:
-> replace vm_lock and detached flag with a reference count"), which was an
-> older version (v7) of your patchset. However, I've tested the same on
-> the newer linux-next tip with your v10 and it no longer reproduces the
-> problem.
+On Thu, 20 Feb 2025 02:20:19 +0800
+Jemmy Wong <jemmywong512@gmail.com> wrote:
 
-Thanks Carlos! There were a number of fixes since v7, including a
-memory ordering fix. That issue might have caused this.
+> +++ b/Documentation/trace/ftrace.rst
+> @@ -986,14 +986,14 @@ why a latency happened. Here is a typical trace::
+>    #  => ended at:   _raw_spin_unlock_irqrestore
+>    #
+>    #
+> -  #                  _------=> CPU#
+> -  #                 / _-----=> irqs-off
+> -  #                | / _----=> need-resched
+> -  #                || / _---=> hardirq/softirq
+> -  #                ||| / _--=> preempt-depth
+> -  #                |||| /     delay
+> -  #  cmd     pid   ||||| time  |   caller
+> -  #     \   /      |||||  \    |   /
+> +  #                  _------=> CPU#
+> +  #                 / _-----=> irqs-off
+> +  #                | / _----=> need-resched
+> +  #                || / _---=> hardirq/softirq
+> +  #                ||| / _--=> preempt-depth
+> +  #                |||| /     delay
+> +  #  cmd     pid   ||||| time  |   caller
+> +  #     \   /      |||||  \    |   /
 
->
-> Nothing else for me to do here.
->
-> Regards,
-> Carlos Llamas
+What exactly did you change for all these header updates?
+
+-- Steve
+
+>          ps-6143    2d...    0us!: trace_hardirqs_off <-__lock_task_sighand
+>          ps-6143    2d..1  259us+: trace_hardirqs_on <-_raw_spin_unlock_irqrestore
+>          ps-6143    2d..1  263us+: time_hardirqs_on <-_raw_spin_unlock_irqrestore
+> @@ -1490,14 +1490,14 @@ an example::
+>    #  => ended at:   run_timer_softirq
+>    #
+>    #
+> -  #                  _------=> CPU#
+> -  #                 / _-----=> irqs-off
+> -  #                | / _----=> need-resched
+> -  #                || / _---=> hardirq/softirq
+> -  #                ||| / _--=> preempt-depth
+> -  #                |||| /     delay
+> -  #  cmd     pid   ||||| time  |   caller
+> -  #     \   /      |||||  \    |   /
+> +  #                  _------=> CPU#
+> +  #                 / _-----=> irqs-off
+> +  #                | / _----=> need-resched
+> +  #                || / _---=> hardirq/softirq
+> +  #                ||| / _--=> preempt-depth
+> +  #                |||| /     delay
+> +  #  cmd     pid   ||||| time  |   caller
+> +  #     \   /      |||||  \    |   /
+>      <idle>-0       0d.s2    0us+: _raw_spin_lock_irq <-run_timer_softirq
+>      <idle>-0       0dNs3   17us : _raw_spin_unlock_irq <-run_timer_softirq
+>      <idle>-0       0dNs3   17us+: trace_hardirqs_on <-run_timer_softirq
+> @@ -1541,14 +1541,14 @@ function-trace, we get a much larger output::
+>    #  => ended at:   ata_scsi_queuecmd
+>    #
+>    #
+> -  #                  _------=> CPU#
+> -  #                 / _-----=> irqs-off
+> -  #                | / _----=> need-resched
+> -  #                || / _---=> hardirq/softirq
+> -  #                ||| / _--=> preempt-depth
+> -  #                |||| /     delay
+> -  #  cmd     pid   ||||| time  |   caller
+> -  #     \   /      |||||  \    |   /
+> +  #                  _------=> CPU#
+> +  #                 / _-----=> irqs-off
+> +  #                | / _----=> need-resched
+> +  #                || / _---=> hardirq/softirq
+> +  #                ||| / _--=> preempt-depth
+> +  #                |||| /     delay
+> +  #  cmd     pid   ||||| time  |   caller
+> +  #     \   /      |||||  \    |   /
+>        bash-2042    3d...    0us : _raw_spin_lock_irqsave <-ata_scsi_queuecmd
+>        bash-2042    3d...    0us : add_preempt_count <-_raw_spin_lock_irqsave
+>        bash-2042    3d..1    1us : ata_scsi_find_dev <-ata_scsi_queuecmd
+> @@ -1689,14 +1689,14 @@ is much like the irqsoff tracer.
+>    #  => ended at:   do_IRQ
+>    #
+>    #
+> -  #                  _------=> CPU#
+> -  #                 / _-----=> irqs-off
+> -  #                | / _----=> need-resched
+> -  #                || / _---=> hardirq/softirq
+> -  #                ||| / _--=> preempt-depth
+> -  #                |||| /     delay
+> -  #  cmd     pid   ||||| time  |   caller
+> -  #     \   /      |||||  \    |   /
+> +  #                  _------=> CPU#
+> +  #                 / _-----=> irqs-off
+> +  #                | / _----=> need-resched
+> +  #                || / _---=> hardirq/softirq
+> +  #                ||| / _--=> preempt-depth
+> +  #                |||| /     delay
+> +  #  cmd     pid   ||||| time  |   caller
+> +  #     \   /      |||||  \    |   /
+>        sshd-1991    1d.h.    0us+: irq_enter <-do_IRQ
+>        sshd-1991    1d..1   46us : irq_exit <-do_IRQ
+>        sshd-1991    1d..1   47us+: trace_preempt_on <-do_IRQ
+> @@ -1727,14 +1727,14 @@ was over.
+>    #  => ended at:   task_rq_unlock
+>    #
+>    #
+> -  #                  _------=> CPU#
+> -  #                 / _-----=> irqs-off
+> -  #                | / _----=> need-resched
+> -  #                || / _---=> hardirq/softirq
+> -  #                ||| / _--=> preempt-depth
+> -  #                |||| /     delay
+> -  #  cmd     pid   ||||| time  |   caller
+> -  #     \   /      |||||  \    |   /
+> +  #                  _------=> CPU#
+> +  #                 / _-----=> irqs-off
+> +  #                | / _----=> need-resched
+> +  #                || / _---=> hardirq/softirq
+> +  #                ||| / _--=> preempt-depth
+> +  #                |||| /     delay
+> +  #  cmd     pid   ||||| time  |   caller
+> +  #     \   /      |||||  \    |   /
+>        bash-1994    1d..1    0us : _raw_spin_lock_irqsave <-wake_up_new_task
+>        bash-1994    1d..1    0us : select_task_rq_fair <-select_task_rq
+>        bash-1994    1d..1    1us : __rcu_read_lock <-select_task_rq_fair
+> @@ -1841,14 +1841,14 @@ tracers.
+>    #  => ended at:   ata_scsi_queuecmd
+>    #
+>    #
+> -  #                  _------=> CPU#
+> -  #                 / _-----=> irqs-off
+> -  #                | / _----=> need-resched
+> -  #                || / _---=> hardirq/softirq
+> -  #                ||| / _--=> preempt-depth
+> -  #                |||| /     delay
+> -  #  cmd     pid   ||||| time  |   caller
+> -  #     \   /      |||||  \    |   /
+> +  #                  _------=> CPU#
+> +  #                 / _-----=> irqs-off
+> +  #                | / _----=> need-resched
+> +  #                || / _---=> hardirq/softirq
+> +  #                ||| / _--=> preempt-depth
+> +  #                |||| /     delay
+> +  #  cmd     pid   ||||| time  |   caller
+> +  #     \   /      |||||  \    |   /
+>          ls-2230    3d...    0us+: _raw_spin_lock_irqsave <-ata_scsi_queuecmd
+>          ls-2230    3...1  100us : _raw_spin_unlock_irqrestore <-ata_scsi_queuecmd
+>          ls-2230    3...1  101us+: trace_preempt_on <-ata_scsi_queuecmd
+> @@ -1894,14 +1894,14 @@ Here is a trace with function-trace set::
+>    #  => ended at:   mutex_unlock
+>    #
+>    #
+> -  #                  _------=> CPU#
+> -  #                 / _-----=> irqs-off
+> -  #                | / _----=> need-resched
+> -  #                || / _---=> hardirq/softirq
+> -  #                ||| / _--=> preempt-depth
+> -  #                |||| /     delay
+> -  #  cmd     pid   ||||| time  |   caller
+> -  #     \   /      |||||  \    |   /
+> +  #                  _------=> CPU#
+> +  #                 / _-----=> irqs-off
+> +  #                | / _----=> need-resched
+> +  #                || / _---=> hardirq/softirq
+> +  #                ||| / _--=> preempt-depth
+> +  #                |||| /     delay
+> +  #  cmd     pid   ||||| time  |   caller
+> +  #     \   /      |||||  \    |   /
+>    kworker/-59      3...1    0us : __schedule <-schedule
+>    kworker/-59      3d..1    0us : rcu_preempt_qs <-rcu_note_context_switch
+>    kworker/-59      3d..1    1us : add_preempt_count <-_raw_spin_lock_irq
+> @@ -1987,7 +1987,7 @@ wakeup
+>  One common case that people are interested in tracing is the
+>  time it takes for a task that is woken to actually wake up.
+>  Now for non Real-Time tasks, this can be arbitrary. But tracing
+> -it nonetheless can be interesting.
+> +it nonetheless can be interesting.
+> 
+>  Without function tracing::
+> 
+> @@ -2007,14 +2007,14 @@ Without function tracing::
+>    #    | task: kworker/3:1H-312 (uid:0 nice:-20 policy:0 rt_prio:0)
+>    #    -----------------
+>    #
+> -  #                  _------=> CPU#
+> -  #                 / _-----=> irqs-off
+> -  #                | / _----=> need-resched
+> -  #                || / _---=> hardirq/softirq
+> -  #                ||| / _--=> preempt-depth
+> -  #                |||| /     delay
+> -  #  cmd     pid   ||||| time  |   caller
+> -  #     \   /      |||||  \    |   /
+> +  #                  _------=> CPU#
+> +  #                 / _-----=> irqs-off
+> +  #                | / _----=> need-resched
+> +  #                || / _---=> hardirq/softirq
+> +  #                ||| / _--=> preempt-depth
+> +  #                |||| /     delay
+> +  #  cmd     pid   ||||| time  |   caller
+> +  #     \   /      |||||  \    |   /
+>      <idle>-0       3dNs7    0us :      0:120:R   + [003]   312:100:R kworker/3:1H
+>      <idle>-0       3dNs7    1us+: ttwu_do_activate.constprop.87 <-try_to_wake_up
+>      <idle>-0       3d..3   15us : __schedule <-schedule
+> @@ -2076,14 +2076,14 @@ Instead of performing an 'ls', we will run 'sleep 1' under
+>    #    | task: sleep-2389 (uid:0 nice:0 policy:1 rt_prio:5)
+>    #    -----------------
+>    #
+> -  #                  _------=> CPU#
+> -  #                 / _-----=> irqs-off
+> -  #                | / _----=> need-resched
+> -  #                || / _---=> hardirq/softirq
+> -  #                ||| / _--=> preempt-depth
+> -  #                |||| /     delay
+> -  #  cmd     pid   ||||| time  |   caller
+> -  #     \   /      |||||  \    |   /
+> +  #                  _------=> CPU#
+> +  #                 / _-----=> irqs-off
+> +  #                | / _----=> need-resched
+> +  #                || / _---=> hardirq/softirq
+> +  #                ||| / _--=> preempt-depth
+> +  #                |||| /     delay
+> +  #  cmd     pid   ||||| time  |   caller
+> +  #     \   /      |||||  \    |   /
+>      <idle>-0       3d.h4    0us :      0:120:R   + [003]  2389: 94:R sleep
+>      <idle>-0       3d.h4    1us+: ttwu_do_activate.constprop.87 <-try_to_wake_up
+>      <idle>-0       3d..3    5us : __schedule <-schedule
+> @@ -2125,19 +2125,19 @@ Doing the same with chrt -r 5 and function-trace set.
+>    #    | task: sleep-2448 (uid:0 nice:0 policy:1 rt_prio:5)
+>    #    -----------------
+>    #
+> -  #                  _------=> CPU#
+> -  #                 / _-----=> irqs-off
+> -  #                | / _----=> need-resched
+> -  #                || / _---=> hardirq/softirq
+> -  #                ||| / _--=> preempt-depth
+> -  #                |||| /     delay
+> -  #  cmd     pid   ||||| time  |   caller
+> -  #     \   /      |||||  \    |   /
+> +  #                  _------=> CPU#
+> +  #                 / _-----=> irqs-off
+> +  #                | / _----=> need-resched
+> +  #                || / _---=> hardirq/softirq
+> +  #                ||| / _--=> preempt-depth
+> +  #                |||| /     delay
+> +  #  cmd     pid   ||||| time  |   caller
+> +  #     \   /      |||||  \    |   /
 
