@@ -1,143 +1,107 @@
-Return-Path: <linux-kernel+bounces-521032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5153A3B2F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:59:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CF78A3B2D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:53:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCCA73ACABA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:59:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD7FC7A4A46
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:52:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F0C61C4A24;
-	Wed, 19 Feb 2025 07:58:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBE511C461F;
+	Wed, 19 Feb 2025 07:53:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="qrofjjdI"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="frd3p2yW"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCB731C3029;
-	Wed, 19 Feb 2025 07:58:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C8841BD9C1
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 07:53:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739951919; cv=none; b=p3YrGsyuMC1vmv1jQHm2kQirlpn29zcBG8O0XvcOfeL1i5KWVCkHR7El0H9WoHtgK2DCWzGNTsgdQ+7vr81yQQu1DChmGQiB8EXYFuYkdfVbibaCsVZs7qDLV6+/p/FWjiev7nNq5msUzV7XxNaHGobbup8VH/u5IZ3Ib5HvE2c=
+	t=1739951606; cv=none; b=DUak2ZmvMNy9C1pHyvJdRPswi5l3O0a7FY9Q/QADmru+1ON0nrO0gYE/xmcqu6pxB/7p7edATFI0jR84thRblvaZja+6LsWqm7FwJPVufaGnxAZ+QmnZvo9NRf9vPCUpeXfWcNT07r7Tt79CASgU4EJQ9ojtF4wjxGgczn5JzJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739951919; c=relaxed/simple;
-	bh=a2LKr/WX/y4caLjmK7olEcFpRmLm/fSiSAHkL/FlYyA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=CQVRuaw5ELgK8H0hDpTXss+FdKej1ZQ1BH3X+XomnrXsid6BhX8QicZoalfG23cv1btKvK2Gwm/T0julSaCCW1uS0Va1V5NBu9KczByMLGgDVMdJNNQo5ztS3DIKtio0BKrNsopOpAnDMtJDv52oNxdLvFjO/rKfir6KyNES034=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=qrofjjdI; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51J4sKAc024666;
-	Wed, 19 Feb 2025 08:58:07 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	3bBJS43pvAXXysK32UqQ0DdYgo9OZo0TPX7SlCS/zbM=; b=qrofjjdIBjqjCtpb
-	eXbj5Hjt98R97RAEso4phh094s2/DGVfjhBk9wOuOFTSjnzyQ5GMt39Hca+VHeI6
-	+6F0WqQwbljBlbKo6DUQxa/d/zVrSybRz6RwlkD5sEiYRUcSqf2+q0IpeANXZe5f
-	5hY7cOmdN5AmovgJE1ctS/U1beNebFZVyMVEBLJlkbcBdN1b1j6Kr1HwCqdLNL3G
-	tkHAg7150dqPbTeV4UPFl9zR2pqPNubn7WuB4ZDo12AdH8eiT26dfvvsUeSbKdYG
-	jW57vPUdO4wnQQmlNx1vp4EzwNmWoNEjqdGVx+p5yoLyseOiK4Xw06QG7HfllL7G
-	jptJmA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 44vyyn25qe-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Feb 2025 08:58:07 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id BB48C40053;
-	Wed, 19 Feb 2025 08:56:46 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 0D4984026F8;
-	Wed, 19 Feb 2025 08:52:52 +0100 (CET)
-Received: from [10.48.87.62] (10.48.87.62) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 19 Feb
- 2025 08:52:51 +0100
-Message-ID: <df73976e-12a5-4af9-b312-503ae68edcfc@foss.st.com>
-Date: Wed, 19 Feb 2025 08:52:50 +0100
+	s=arc-20240116; t=1739951606; c=relaxed/simple;
+	bh=o0ZVQ1Yg5DGbJ5wB18BjpWZFp5JxkdPvBDEOYEmNAZQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jk5pD/nGsQrBbIvePfq3k07Mo3BUvw7NkqqhslZykthguKR23jsM7w3wExxXaib2voom6h86UPuEIPiKieXkrJZqXjJvaSda5gfkJB0oI1dKGV5zxmWraR+5mIMZTYYjbe0jsCEBuw9bC3wzfZNA8dilMK2bWTGL4tyNqxLo9M4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=frd3p2yW; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-545316f80beso3471440e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 23:53:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1739951602; x=1740556402; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o0ZVQ1Yg5DGbJ5wB18BjpWZFp5JxkdPvBDEOYEmNAZQ=;
+        b=frd3p2yWth5IRMRSr1E+vnZgsYNrbpv4JzvJSSFK/Xl/hYGeR8bxJpuZAqRhaN9LMO
+         DS6No6srf9/oJVtpA4S0lkDstijL+YjRDJPCjTpUxS9jaeHQp+45/TcMoBkgFLMafvhs
+         MjRSvA8IiS48bH9DtWFAOl1VPNAwCfXbq2a/c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739951602; x=1740556402;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=o0ZVQ1Yg5DGbJ5wB18BjpWZFp5JxkdPvBDEOYEmNAZQ=;
+        b=f2QP2/XSjOTnZuNlglN6NGTLbIiMYZ58sqbqIGvcNwOPpo2mIwoIVrq+hJ0vtKxi2L
+         Ix3Ohfa6VA0pl6UmPZmi00NA1Kfwzr1UB8j87jgyS8ZAuwthOnOlpM927j3jb/DxcWoq
+         3wjDujZ0od+6hIvmRfB+rUhcrg5IJNhZI4jAzs7sWRGCTcYZ4j2WpxVTLG1dxpzCSIJq
+         d/OovekAdPg6jh9YFqPzkbKVSDzIOzOvv1GVSzNBm6lQsdFL6++/NJJTIf0YrLtChmBi
+         +gZ4tbR/37lEmOcg0e7K6M89pJEXYO22/7nbcLJ+4uDkm3/rRPy7sjPDb8wvVrcaQcdj
+         BYHw==
+X-Forwarded-Encrypted: i=1; AJvYcCXBsGDJOI08XwIBwLfQt4t4Vm33LWrNbx8GxSX+mbdMI7ETXPLsprFF7iWhkVl+jf7xg16VfZLjvub59gQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6WD8AAElxULwGOshbUfo9NpzROo5L+Q6f/FD+DMl1nqXI+OZO
+	O1XIfYMXcmfXabKqusXOr9kic9FbryIYUmXOUHPLFC2DAdz6xHYL9UCsteC0fpx0+JsH21CsEkr
+	whwyBbyWPqEDkJ23yV5Z+o7UUN3jgY/yXWUX+
+X-Gm-Gg: ASbGncsrHcMG+h0EgPEO4kI2QDn0FJkxy/mZyQyTuPCU2z34bFtZ9N2n9+73QplvdTD
+	+S1RUtP/XAt9BgLZz+fYXqwJbIFyyeN5oJaH0YpQWX86N9Z1GzgQhQzJ57+CY4zypCa1wfaMTlc
+	9J9Q2rIx1SErlbglVz71cr8qLH
+X-Google-Smtp-Source: AGHT+IGy4VRhutR0vRN13zFXFDojHsEJuy46LrrJBV/lkfpvoUaq2PR47QMvQ2pB0zIzS5cf5qZ8oAPqBxANqsj6Ktk=
+X-Received: by 2002:a05:6512:ba6:b0:545:22fe:616f with SMTP id
+ 2adb3069b0e04-5452fe45d87mr6468841e87.24.1739951602616; Tue, 18 Feb 2025
+ 23:53:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/8] Add STM32MP25 SPI NOR support
-To: Rob Herring <robh@kernel.org>
-CC: Mark Brown <broonie@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas
-	<catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, <linux-spi@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <christophe.kerello@foss.st.com>
-References: <20250218130000.87889-1-patrice.chotard@foss.st.com>
- <20250218212138.GA1092771-robh@kernel.org>
-Content-Language: en-US
-From: Patrice CHOTARD <patrice.chotard@foss.st.com>
-In-Reply-To: <20250218212138.GA1092771-robh@kernel.org>
+References: <20250125025145.14405-1-ot_chhao.chang@mediatek.com> <20250125025145.14405-3-ot_chhao.chang@mediatek.com>
+In-Reply-To: <20250125025145.14405-3-ot_chhao.chang@mediatek.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Wed, 19 Feb 2025 15:53:11 +0800
+X-Gm-Features: AWEUYZlvGLuYzddD01vTxGm9KhUE8PoFe7dSks8I_T3Q6YOVZu9GJJUxvzhxQB4
+Message-ID: <CAGXv+5HLmmNV9WZFjOoJdLQNvEW6-FVdgCDrgv2LCoYUrd2Bsw@mail.gmail.com>
+Subject: Re: [RESEND v3 2/2] pinctrl: mediatek: adapt to multi-base design
+To: Hao Chang <ot_chhao.chang@mediatek.com>
+Cc: Sean Wang <seann.wang@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Wenbin Mei <wenbin.mei@mediatek.com>, Axe Yang <axe.yang@mediatek.com>, 
+	Qingliang Li <qingliang.li@mediatek.com>, Hanks Chen <hanks.chen@mediatek.com>, 
+	Chunhui Li <chunhui.li@mediatek.com>, linux-mediatek@lists.infradead.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-19_03,2025-02-18_01,2024-11-22_01
+Content-Transfer-Encoding: quoted-printable
 
+On Sat, Jan 25, 2025 at 10:55=E2=80=AFAM Hao Chang <ot_chhao.chang@mediatek=
+.com> wrote:
+>
+> The eint num will obtain the operation address through pins.
+> Change the traversal method of irq handle from traversing a set of
+> registers to traversing one by one.
 
+The change only covers "eint", so please adjust the patch subject prefix
+to "pinctrl: mediatek: eint: ...".
 
-On 2/18/25 22:21, Rob Herring wrote:
-> On Tue, Feb 18, 2025 at 01:59:52PM +0100, patrice.chotard@foss.st.com wrote:
->> From: Patrice Chotard <patrice.chotard@foss.st.com>
->>
->> This series adds SPI NOR support for STM32MP25 SoCs from STMicroelectronics.
->>
->> On STM32MP25 SoCs family, an Octo Memory Manager block manages the muxing,
->> the memory area split, the chip select override and the time constraint 
->> between its 2 Octo SPI children.
->>
->> Due to these depedencies, this series adds support for: 
->>   - Octo Memory Manager driver.
->>   - Octo SPI driver.
->>   - yaml schema for Octo Memory Manager and Octo SPI drivers.
->>
->> The device tree files adds Octo Memory Manager and its 2 associated Octo 
->> SPI chidren in stm32mp251.dtsi and adds SPI NOR support in stm32mp257f-ev1
->> board.
->>
->> Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
->>
->> Changes in v4:
->>   - Add default value requested by Krzysztof for st,omm-req2ack-ns, 
->>     st,omm-cssel-ovr and st,omm-mux properties in st,stm32mp25-omm.yaml
->>   - Remove constraint in free form test for st,omm-mux property.
->>   - Fix drivers/memory/Kconfig by replacing TEST_COMPILE_ by COMPILE_TEST.
->>   - Fix SPDX-License-Identifier for stm32-omm.c.
->>   - Fix Kernel test robot by fixing dev_err() format in stm32-omm.c.
->>   - Add missing pm_runtime_disable() in the error handling path in
->>     stm32-omm.c.
->>   - Replace an int by an unsigned int in stm32-omm.c
->>   - Remove uneeded "," after terminator in stm32-omm.c.
->>   - Update cover letter description to explain dependecies between 
->>     Octo Memory Manager and its 2 Octo SPI children.
->>   - Add Reviewed-by Krzysztof Kozlowski for patch 1 and 3.
-> 
-> No, you didn't.
+> Change-Id: I3962b78042d32501a73153201cddf52c6b62a695
 
-Argh, sorry, i will send a v5
+Please remove the Change-Id when posting the patch.
 
-Patrice
+ChenYu
 
