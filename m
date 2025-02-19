@@ -1,66 +1,52 @@
-Return-Path: <linux-kernel+bounces-522238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B88CDA3C7C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:38:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EE06A3C7B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:35:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2A953B0578
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:33:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12AB41888563
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:34:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99458214A6E;
-	Wed, 19 Feb 2025 18:33:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B551214A6E;
+	Wed, 19 Feb 2025 18:34:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QpsU7O56"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V8Yxd6Fa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 783621F2B90
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 18:33:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 064C71B6CF5;
+	Wed, 19 Feb 2025 18:34:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739990019; cv=none; b=qXc0tmcRLDG1jR9rzU/b4OWFtigo3j1b4AEHwBly6kkzeSi0Q3PqoEzPlpcczw3bVs6Ds/aLooeCRaXPrp43Wb0GH+oZXF9f/YT4ns7OCjJltPxezXvye0SOl+ccwVbLpS8E3neQ62mcOK0Yh/wmveNgmzpzUf4Yq4SI4ks/jL8=
+	t=1739990067; cv=none; b=e+FkCKnYr+++rectbxW5qkcpnbThIbcCF8/AALoTplELnS93fkDXLhLcG0rdkMw8yMB07lvo3cxATuw3ebju8VdkdcdHDw8ksHISHmHSwF9huC5yAkI7HbE2brL4syH9j2hSUG3HYg0WFr05U5Uwv6PImCyJqtyuM5OJ+ok+v+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739990019; c=relaxed/simple;
-	bh=EbFxu9kg9SFvZErcQzeWPOnj22/5M19b8kPelw2TMck=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=maYfxg1GCw/WtQQY6tDEP34O7ZSOMk4LEVv+PAdiUgbssWiGeVtBQNDWFfFp8Rrx1bBMyP6JwrE2U40087Z3IncEu6m3wbxnWJiMTQT3ZBmvE4Xjq2k6VKEpq9Nr01gnzCcSM8Rt1v9eJrF3z7XaVzsULnCja2vliyeHpkNkiwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=QpsU7O56; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=9DoWqhQoXeetmL5De53u1+NINb5oRJLPj/qSvMJSdfA=; b=QpsU7O56muoBl+DDajhEj5xdbZ
-	orq/YN7tvBYZhoo+w6VWWOIGEBMYT0up5kiAgSv6nnNEQzdnn1CRWnELJjE7NRNgMLCUzL2+plSsO
-	f70ai8JYFrOHMC6dG4mQvcADChh41jKl4IjFIIyJIgU8bEhJvlBQKL/xXQkc+rR/HUBRh0UqzkUE0
-	hTD45SFm1j5WfPYZwNHypSDs7wucOm0JbNlWGr4L4zkrV7tR5LaQZmjYl1vwfDuBKoHA4WjKgt7eh
-	ChEo7k5B5LpwSZhlTtVJaCfZfiPGwRxAF061B00NrtB6ZBpDl6piZdaDA2wYqfZ+RIdeATUOiJlPM
-	ZeE9Rl5Q==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tkot0-00000006pH3-1yxo;
-	Wed, 19 Feb 2025 18:33:30 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 102CE300783; Wed, 19 Feb 2025 19:33:30 +0100 (CET)
-Date: Wed, 19 Feb 2025 19:33:29 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Kees Cook <kees@kernel.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, alyssa.milburn@intel.com,
-	scott.d.constable@intel.com, joao@overdrivepizza.com,
-	andrew.cooper3@citrix.com, jpoimboe@kernel.org,
-	jose.marchesi@oracle.com, hjl.tools@gmail.com,
-	ndesaulniers@google.com, samitolvanen@google.com, nathan@kernel.org,
-	ojeda@kernel.org, alexei.starovoitov@gmail.com, mhiramat@kernel.org,
-	jmill@asu.edu
-Subject: Re: [PATCH v3 06/10] x86/traps: Decode LOCK Jcc.d8 #UD
-Message-ID: <20250219183329.GE23004@noisy.programming.kicks-ass.net>
-References: <20250219162107.880673196@infradead.org>
- <20250219163514.928125334@infradead.org>
- <202502191013.72E4EFFF0@keescook>
+	s=arc-20240116; t=1739990067; c=relaxed/simple;
+	bh=+Gr+W2xAk5kXofwASKJV74AOXYxt+u2fVkdtmo2iq4c=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=vB0eqlmZDqVPeAGlNb+Esm+aO32v/Bo6WnlMrwcq0yrHaTu08M/N7nwTencziMZpNpJKuSNH2cUnuAQWfO/H3Z8h/9xL8cBUgdNugMGMc2mMQrmMMS/t+ja4toMSEh+E0XhBA7qrfLQ6opYznCeXzNyYuVXcjga+LXBixT+da4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V8Yxd6Fa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52518C4CED1;
+	Wed, 19 Feb 2025 18:34:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739990066;
+	bh=+Gr+W2xAk5kXofwASKJV74AOXYxt+u2fVkdtmo2iq4c=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=V8Yxd6FaXP00CWUeQjcORtvaAd/A7zAI398we8dMQTCDRfYcaaPyAl9JJy9vndVpu
+	 pL8WLa+nhsq0zsF/38OgxFK42CyEj00rhhXiC6FRmLd4Uv+5bikg8S2zmGYBAl5058
+	 gifYePgTAvdYttlOxHOrTQNvV/ipNek/bmsYzV3k43xhnKYpDfZmFKHZNGSzHiheWf
+	 RE5buoc1+lPE/NsWss+Q/LSK0e96MnipaIj8D3fi7JvkCQ9IiDBqgJpCX9qLsnnMRq
+	 7lGSbni8ZgQ6IA2q59sqsrMfkeGqlx9cNF/8RYHpDsGGIbuKZcLsZ1RvoMpF3Ori26
+	 i+kHtVtHo5mFQ==
+Date: Wed, 19 Feb 2025 12:34:24 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Zhiyuan Dai <daizhiyuan@phytium.com.cn>
+Cc: bhelgaas@google.com, christian.koenig@amd.com,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH v2] PCI: Update Resizable BAR Capability Register fields
+Message-ID: <20250219183424.GA226683@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,26 +55,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <202502191013.72E4EFFF0@keescook>
+In-Reply-To: <20250219022712.276287-1-daizhiyuan@phytium.com.cn>
 
-On Wed, Feb 19, 2025 at 10:20:25AM -0800, Kees Cook wrote:
-
-> I realize these are misplaced chunks, but passing ud_type into the
-> handler feels like a layering violation to me. I struggled with this
-> when making recommendations for the UBSAN handler too, so I'm not sure
-> I have any better idea. It feels like there should be a way to separate
-> this logic more cleanly. The handlers are all doing very similar things:
+On Wed, Feb 19, 2025 at 10:27:12AM +0800, Zhiyuan Dai wrote:
+> PCI Express Base Spec r6.0 defines BAR size up to 8 EB (2^63 bytes),
+> but supporting anything bigger than 128TB requires changes to pci_rebar_get_possible_sizes()
+> to read the additional Capability bits from the Control register.
 > 
-> 1- find the address where a bad thing happened
-> 2- report about it
-> 3- whether to continue execution
-> 4- where to continue execution
+> Signed-off-by: Zhiyuan Dai <daizhiyuan@phytium.com.cn>
+> ---
+>  drivers/pci/pci.c             | 14 ++++++++++----
+>  include/uapi/linux/pci_regs.h |  3 ++-
+>  2 files changed, 12 insertions(+), 5 deletions(-)
 > 
-> The variability happens with 1 and 4, where it depends on the instruction
-> sequences. Meh, I dunno. I can't see anything cleaner, so passing down
-> ud_type does seem best.
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index 661f98c6c63a..8903deb2d891 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -3752,12 +3752,13 @@ static int pci_rebar_find_pos(struct pci_dev *pdev, int bar)
+>   * @bar: BAR to query
+>   *
+>   * Get the possible sizes of a resizable BAR as bitmask defined in the spec
+> - * (bit 0=1MB, bit 19=512GB). Returns 0 if BAR isn't resizable.
+> + * (bit 0=1MB, bit 43=8EB). Returns 0 if BAR isn't resizable.
+>   */
+> -u32 pci_rebar_get_possible_sizes(struct pci_dev *pdev, int bar)
+> +u64 pci_rebar_get_possible_sizes(struct pci_dev *pdev, int bar)
 
-Yeah, agreed. I couldn't get rid of relying on ud_type entirely (it was
-worse), I'll see if I can come up something.
+Callers need to be updated so they're prepared for a u64 instead of a
+u32.
 
+If you don't actually need sizes bigger than 128TB right now, it's
+fine to keep this as a u32, only add support up to 128TB, and leave
+the >128TB support for later.
+
+Bjorn
 
