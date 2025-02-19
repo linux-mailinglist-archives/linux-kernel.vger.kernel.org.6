@@ -1,99 +1,117 @@
-Return-Path: <linux-kernel+bounces-522515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF3EFA3CB4F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:22:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8487CA3CB53
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:22:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6167189AA21
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:22:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 556D4189A8BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:22:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A8A25742D;
-	Wed, 19 Feb 2025 21:22:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D706A257430;
+	Wed, 19 Feb 2025 21:22:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BqsPhmw/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="GiELAy0I"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD1DE1B87EF;
-	Wed, 19 Feb 2025 21:22:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 299E01B87EF;
+	Wed, 19 Feb 2025 21:22:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740000126; cv=none; b=k7utzbuW8bMwlzVLfEFhF60p2O82S9X2Z/ZKmv/0+dS+K+r8KC9IrjHpu8MAY+jSu+KlvsJEWebmKSDtTgYNjpsmL+H5biZEUhWwKtKKo+Mojj7yMc2DgVbBpuKtE1J7mELXftXsFZQyY0X0WqDy/1n1tMqqyOb8ZMjC/Wf5+W0=
+	t=1740000157; cv=none; b=kb3nXrG08KpE/wQ6difxQ36r3Qh11ZdUWnRSW5VohmcC7g2UWtFAyJN1Lhz6+wlhfgN4bUu+9NBYTW4Dzrv9qiVKRRMftcxkg2cqaqxXHkQfX7lKejgRks+Yu71qoWUje0fSgIWIegrG/PUF6+JZpd0DCniw+Sqtxn7K/cSjc6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740000126; c=relaxed/simple;
-	bh=5vfdv1IWZ57ad6RST56MifY1lxkn1jnqlk1jC8vaDbI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iNqMCHjOJkycEmdYqwbPVbVkAdfipRdzSlrRhQeZkDEPRtZdPMX5U8SXlq+0GLgEHAz+U5yUkTuduzCJJyfICeY37V1Pv2IainfedUHQ99OUroIrsCJ7X7kh8vhquEFPe6az4KKHZDx+M36CGM1rTPT5Ku+gruZMcDAJijl6U1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BqsPhmw/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0681C4CED1;
-	Wed, 19 Feb 2025 21:22:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740000126;
-	bh=5vfdv1IWZ57ad6RST56MifY1lxkn1jnqlk1jC8vaDbI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BqsPhmw/qK0EANe/CvcEJA+8Z7bk/OxllNIVXqaqjXdKJa9fPaJ5OVNUTm11/oFnA
-	 GbgQw0Y8scZzq9p/96ioYDwCEMaPUPxOoglzl1CHxEP8QGyEY/WZBfrZgoQY6NLFaa
-	 +qxeTdGSE9i/bKK8QQIFqJf+COujvnJAewLTHnWIGeftIVwzmX62fuOYyQip1YQuvn
-	 ITkVywFW5CwyA2+mF6tjJA7Ut0FfHfUrbfJ8tSL7ySfoeVzGPmjvyhaZV4zIssUOC/
-	 9ea8OB0wJcEkk6Ifgn1aBTC6ncW/P51mCYd7Oj3Za/s++P62Gmxz4OVAsjKyMTZcIy
-	 L9kkJ6SaKnw7g==
-Date: Wed, 19 Feb 2025 15:22:04 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Inochi Amaoto <inochiama@gmail.com>
-Cc: Chen Wang <unicorn_wang@outlook.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Guo Ren <guoren@kernel.org>, linux-riscv@lists.infradead.org,
-	Yixun Lan <dlan@gentoo.org>, Conor Dooley <conor+dt@kernel.org>,
-	Longbin Li <looong.bin@gmail.com>,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>, devicetree@vger.kernel.org,
-	Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/8] dt-bindings: pinctrl: Add pinctrl for Sophgo
- SG2042 series SoC
-Message-ID: <174000012333.2976359.11039865592765348897.robh@kernel.org>
-References: <20250211051801.470800-1-inochiama@gmail.com>
- <20250211051801.470800-6-inochiama@gmail.com>
+	s=arc-20240116; t=1740000157; c=relaxed/simple;
+	bh=io4S/mQ1p7+x+USMolAyIwOlzTIeQ1GNlDhfS1HJeJE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=HxkoAnHrn3DT5IMD+9KMWqQwLBM3C94kOo8mo0HiiyN7bcqXGfJxCP9MyNFH70d1Bl4ViV4j0lTJl36X1B/eDV9/58UiBsWow5Mkjz8rr/m4qHY3vBBHo/AYLg3B6ejQySBIpJIy49pZQxBNISzO5QN0mzLND11wmjDp2LgWA84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=GiELAy0I; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1740000143;
+	bh=io4S/mQ1p7+x+USMolAyIwOlzTIeQ1GNlDhfS1HJeJE=;
+	h=From:Date:Subject:To:Cc:From;
+	b=GiELAy0ItUKfHMTPX1cuRnSKd4eUmDRy35/3KBGKHkeedlFE86Bp5A8vjunFuEMol
+	 IFtJWdO5vgsTNW6bHQ+6jTR+iizcRI+Nqot2hSwLzD7RNzWqhO7RSvDoIIAvTk1/sh
+	 Olo87GCh76WwFhmrZemkX+heNzteptF1ZcwPpbNk=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Date: Wed, 19 Feb 2025 22:22:13 +0100
+Subject: [PATCH v2] kbuild, rust: use -fremap-path-prefix to make paths
+ relative
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250211051801.470800-6-inochiama@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250219-rust-path-remap-v2-1-8ce2c10d4d66@weissschuh.net>
+X-B4-Tracking: v=1; b=H4sIAIRLtmcC/3WNwQ6CMBBEf4Xs2TXdRqV64j8Mh6Ysdg8C6RbUE
+ P7dyt3jm8m8WUE5CSvcqhUSL6IyDgXsoYIQ/fBglK4wWGPPxpLBNGvGyeeIiZ9+Qr7WgUNNfCE
+ PZTUl7uW9G+9t4Siax/TZDxb6pf9dCyFhacLJkXNdT82LRVVDnONx4Azttm1fkzGfabMAAAA=
+X-Change-ID: 20250210-rust-path-remap-e97cec71e61a
+To: Masahiro Yamada <masahiroy@kernel.org>, 
+ Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <benno.lossin@proton.me>, 
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ rust-for-linux@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1740000142; l=1557;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=io4S/mQ1p7+x+USMolAyIwOlzTIeQ1GNlDhfS1HJeJE=;
+ b=NVwL5O0oi8poWTcFiARqg/L9tle9872MtuveilYqtrG2g8esCAlGn8oBGbK1xdyDML5ga8FXI
+ IjhXYE4CluFBZiK+4JpFjn6QyZGc3aSRRcsvEXX7l37XnFha/C9ckCR
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
+Remap source path prefixes in all output, including compiler
+diagnostics, debug information, macro expansions, etc.
+This removes a few absolute paths from the binary and also makes it
+possible to use core::panic::Location properly.
 
-On Tue, 11 Feb 2025 13:17:53 +0800, Inochi Amaoto wrote:
-> SG2042 introduces a simple pinctrl device for all configurable pins.
-> For the SG2042 pinctl register file, each register (32 bits) is
-> responsible for two pins, each occupying the upper 16 bits and lower
-> 16 bits of the register. It supports setting pull up/down, drive
-> strength and input schmitt trigger.
-> 
-> Add support for SG2042 pinctrl device.
-> 
-> Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-> ---
->  .../pinctrl/sophgo,sg2042-pinctrl.yaml        | 129 ++++++++++
->  include/dt-bindings/pinctrl/pinctrl-sg2042.h  | 196 ++++++++++++++++
->  include/dt-bindings/pinctrl/pinctrl-sg2044.h  | 221 ++++++++++++++++++
->  3 files changed, 546 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/sophgo,sg2042-pinctrl.yaml
->  create mode 100644 include/dt-bindings/pinctrl/pinctrl-sg2042.h
->  create mode 100644 include/dt-bindings/pinctrl/pinctrl-sg2044.h
-> 
+Equivalent to the same configuration done for C sources in
+commit 1d3730f0012f ("kbuild: support -fmacro-prefix-map for external modules")
+and commit a73619a845d5 ("kbuild: use -fmacro-prefix-map to make __FILE__ a relative path").
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Link: https://doc.rust-lang.org/rustc/command-line-arguments.html#--remap-path-prefix-remap-source-names-in-output
+Acked-by: Miguel Ojeda <ojeda@kernel.org>
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+Changes in v2:
+- Drop the usage of $(call rustc-option)
+- Link to v1: https://lore.kernel.org/r/20250210-rust-path-remap-v1-1-021c48188df1@weissschuh.net
+---
+ Makefile | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Makefile b/Makefile
+index 9e0d63d9d94b90672f91929e5e148e5a0c346cb6..9ed2222fafd4fa37a367b87a5c681936368318e7 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1068,6 +1068,7 @@ endif
+ # change __FILE__ to the relative path to the source directory
+ ifdef building_out_of_srctree
+ KBUILD_CPPFLAGS += $(call cc-option,-fmacro-prefix-map=$(srcroot)/=)
++KBUILD_RUSTFLAGS += --remap-path-prefix=$(srcroot)/=
+ endif
+ 
+ # include additional Makefiles when needed
+
+---
+base-commit: beeb78d46249cab8b2b8359a2ce8fa5376b5ad2d
+change-id: 20250210-rust-path-remap-e97cec71e61a
+
+Best regards,
+-- 
+Thomas Weißschuh <linux@weissschuh.net>
 
 
