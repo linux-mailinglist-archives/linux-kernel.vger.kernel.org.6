@@ -1,109 +1,170 @@
-Return-Path: <linux-kernel+bounces-522407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 730FBA3C9E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:35:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 650CCA3C9E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:33:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1AFE3B80D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 20:31:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9082016CB5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 20:31:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B9C23F27B;
-	Wed, 19 Feb 2025 20:31:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="jhZQutJ+"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFF7B23BFBB;
+	Wed, 19 Feb 2025 20:31:06 +0000 (UTC)
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A1591B393D;
-	Wed, 19 Feb 2025 20:31:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F154D1B393D;
+	Wed, 19 Feb 2025 20:31:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739997072; cv=none; b=ZS/AGa+Db/c70LR84tCL0yqO3uwBUZlp6Vh2AXV9OeWzVgym86x+LAEZhyRhd3gxWb2Zi/EEi/71tamTrQsnDftxHkDSLOO7b2xuh7UXbSFJju1RgkK+OUDKU2aS/UjFocJ6UVXy6hXZd1YoPSfoaFH3Gksj5KR/4jCe/wtjJoc=
+	t=1739997066; cv=none; b=ifOK7KmGpQpQwy0yFJ8MuWvuBWn3E7ls+szqHnuoRm8gcE3NTpv/J9wrAIUQ8sXzC2u/jAbOrqAjbw24Ys9uP30gFocBhwLicYqpscGFv5FPmsF90gVNIPYkijMRkgb7NyZIQ39pQkvO8N0bitT5jjsw/nH0cF8YIvqzseWsjF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739997072; c=relaxed/simple;
-	bh=W4azDLkDiwBTrihwDksA0pWoXqaTH0WlElItmz2xVmw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hOlP4gn5Qb6ibhZV8sG3GBcxh7Z+lVGRtLr6BsbIcdSgrNN0VVgP3WTHaf+Ev9SRzsnrzTmkVVoVedtwMq1c1fz4/XuQx2+NJZpfsbQ2JU9uSmUQzEZFZWq9SqsNBwYza9VTQdT91BvWavbQQWdjdoGdXxV3tcxww8ypGxDLHX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=jhZQutJ+; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id ECF2E40E015D;
-	Wed, 19 Feb 2025 20:31:07 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id unM9zs4ln9tY; Wed, 19 Feb 2025 20:31:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1739997061; bh=kp1oT2W838eKIVFMU4ld+U/sKEoFPsgJksw8L1EP32M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jhZQutJ+C8XpbRvePMuUHuspU/o9D7qmOQ7L59v7dhDXOiAPmeHUDV2VaLhDPqlOG
-	 /aN/ZKr7Ne5zN2TS2Ay7ebA+X32+ww82+yw7AAwsh5v9rIxFrWyGmYupxGREDjl4dp
-	 ywc3JdIzUHtUpmcFO9G2j9tEJsuAfyu6bn3Pi/Mc2LliZrvVErSFIw+/Rtyh93k1BU
-	 7XjoKhgKr57kfib1WKTrvGuFwtELOcxqZuoAa9F9Z+0FGlEPBZHOduHKrPmhvd1sse
-	 nFQFHb7SuXbbuM8yNwiGMyfZ+7S147UgBlU19C5xWpxsnXUGhITUacj0rVabBDWyqD
-	 n1CcuQjYe5baL7gLyuIfCz9L96Mim1afjkvBh7QOZNzO0iCcOMHnuCU5rFXy/azwP9
-	 3vtn2AuNmpEs7GX2VfxyDYDS9XdV9a5fTT/c4Q6b94eimfM190AUFC3TGEqooQaMaT
-	 zgG97HynjfC+yC9Myqc+t1ThWmKF1333TTMoMj6qSkL2HmY9c0d0+pwV4X6KmAv2zf
-	 LmakqGhTMJ2PKTj37S50hNlL0Y9XLO1Y4g3fN6flDdmCAoB8+Mep9ioVEkvavJKDIP
-	 IUEbHUxuppOnnvS3zXuCBW7dW7s6O+C5D9kxS7rfal8bghqqqEZZHb6kDlQKJ1ZAuA
-	 NkLRtqoGg8hjMPj/s1M0XGHo=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id BF2DB40E015F;
-	Wed, 19 Feb 2025 20:30:45 +0000 (UTC)
-Date: Wed, 19 Feb 2025 21:30:39 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Ruidong Tian <tianruidong@linux.alibaba.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, lpieralisi@kernel.org,
-	guohanjun@huawei.com, sudeep.holla@arm.com,
-	xueshuai@linux.alibaba.com, baolin.wang@linux.alibaba.com,
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, rafael@kernel.org,
-	lenb@kernel.org, tony.luck@intel.com, yazen.ghannam@amd.com
-Subject: Re: [PATCH v3 0/5] ARM Error Source Table V2 Support
-Message-ID: <20250219203039.GQZ7Y_b2xE6GZo5pQv@fat_crate.local>
-References: <20250115084228.107573-1-tianruidong@linux.alibaba.com>
+	s=arc-20240116; t=1739997066; c=relaxed/simple;
+	bh=0bePGmfHtl35NTbAMyaoUBDGce9xhv6pmYnUXL5lbhU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ttOCthpflrTwB/G0indTRC5MLk6fpOy1fQSWQJ6cj+kTQM7plojN0MVIlub23EoSHaf3Au3m7QUWF/dbHHsh5/buhubTL7MPwh/pjq4ssWQudC57gQ+uG2fUsAIgRWI5AXKOTr2tTWeeEHEu6qZTBnmUARrovtb1+4FqUnG3I+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-22100006bc8so2943545ad.0;
+        Wed, 19 Feb 2025 12:31:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739997064; x=1740601864;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kRK2JfG2AGCjzGSvpwHXZ3foDZgl6m2wW0qbGdXRWqE=;
+        b=kSs3VvCK83MMo9i8V74pNYu77l4Wt6HnReAz07jue9F5QHguDhkvo3yomEUbzjix/c
+         Blg3jYvv1Uv6BBr8EmRmJywfDUsTgUCPbR9NNwFt5+lYCDs1iFzh1iUMEr23nV+UA9wf
+         rmHg/ET+Lz/VKid8sb3mQTM27aMYlw6fAnNYRFhHs+4QtF4kxMYYi3+LaNKaxZ2Wd5PB
+         mC2lJvwZ33y1qUzjEXEy1mXGzAxUYbzc+cXcUmYfxbjzHImyKk+wD9eVeoIZjOsMfRrk
+         bW+kTM0XqHmb+9zPbQ0mbXcg0QetYF9o0KV7br/fgm73rloTOUZMIxTIxJlsZqxc7Pfa
+         yaDA==
+X-Forwarded-Encrypted: i=1; AJvYcCUkhDu4Z+3hUvh76SAdG0fwhHF+b/qdNmdhXyYK+9V+NLMfJ9WyXLZHyW+pxLFPMSVcXjM8sbF0yjet4/c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYqit+1bPWGGZ9zcfcvS0O6MnfYF645z0WeljMpxUT67K+NcBz
+	1dmrbwPF0vDD4EYUMKo4gB5RVdsNqiO/Lh7G+hXb2+fDox7z90PEFTkY
+X-Gm-Gg: ASbGncuSLcCV9IrmvMx2e6oeyOrnoZ8aFm721V5lff22jLVEwxstLQ2d1ie8nMwk3Ws
+	4/xZMd9JR5kBJCHgUjpSLlLbYGd368n00uuieT9S/CteHSOdgG5NsHdZ7ze06c7HLTsFpLnwD9t
+	lxSnM9ssdAt5k3mcn5/UrowejmQzDPdmIn56mNVb491JXUsUFBaRFdf4x888HtcARLsmmXZOEz5
+	KWeccJK2KGJ4hMnlmGrUTN8TRDeDNwUk0TN9BdcNL5nEudY/4oCIL6LestLs4MwblpA1TNZvlzI
+	+je23ZGq/6u8dXE=
+X-Google-Smtp-Source: AGHT+IFT2XOWIrW/21fFy5EjwW01Qin5ADO++YJueG5kbDKcvcpEo3SznaoYKf8r8cA7PpXXITlWJA==
+X-Received: by 2002:a17:903:2351:b0:216:7ee9:220b with SMTP id d9443c01a7336-2210404e4e0mr367274285ad.22.1739997063934;
+        Wed, 19 Feb 2025 12:31:03 -0800 (PST)
+Received: from localhost ([2601:646:9e00:f56e:2844:3d8f:bf3e:12cc])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-2fcbab49a05sm805884a91.1.2025.02.19.12.31.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2025 12:31:03 -0800 (PST)
+From: Stanislav Fomichev <sdf@fomichev.me>
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux-kernel@vger.kernel.org,
+	ncardwell@google.com,
+	kuniyu@amazon.com,
+	dsahern@kernel.org,
+	horms@kernel.org,
+	almasrymina@google.com,
+	kaiyuanz@google.com,
+	asml.silence@gmail.com
+Subject: [PATCH net v2] tcp: devmem: don't write truncated dmabuf CMSGs to userspace
+Date: Wed, 19 Feb 2025 12:31:02 -0800
+Message-ID: <20250219203102.1053122-1-sdf@fomichev.me>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250115084228.107573-1-tianruidong@linux.alibaba.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jan 15, 2025 at 04:42:23PM +0800, Ruidong Tian wrote:
-> AEST provides a mechanism for hardware to directly notify Kernel to
-> handle RAS errors through interrupts, which is also known as Kernel-first
-> mode.
+Currently, we report -ETOOSMALL (err) only on the first iteration
+(!sent). When we get put_cmsg error after a bunch of successful
+put_cmsg calls, we don't signal the error at all. This might be
+confusing on the userspace side which will see truncated CMSGs
+but no MSG_CTRUNC signal.
 
-Kernel first? Srsly? No? Oh.
+Consider the following case:
+- sizeof(struct cmsghdr) = 16
+- sizeof(struct dmabuf_cmsg) = 24
+- total cmsg size (CMSG_LEN) = 40 (16+24)
 
-https://www.youtube.com/watch?v=pFjSDM6D500
+When calling recvmsg with msg_controllen=60, the userspace
+will receive two(!) dmabuf_cmsg(s), the first one will
+be a valid one and the second one will be silently truncated. There is no
+easy way to discover the truncation besides doing something like
+"cm->cmsg_len != CMSG_LEN(sizeof(dmabuf_cmsg))".
 
-So what, folks realized finally that firmware-first is simply a stinking pile,
-after a decade or so.
+Introduce new put_devmem_cmsg wrapper that reports an error instead
+of doing the truncation. Mina suggests that it's the intended way
+this API should work.
 
-> AEST's Advantage
-> ========================
-> 
-> 1. AEST uses EL1 interrupts to report CE/DE, making it more lightweight
->    than GHES (the Firmware First solution on Arm).
+Note that we might now report MSG_CTRUNC when the users (incorrectly)
+call us with msg_control == NULL.
 
-ROTFL.
+Fixes: 8f0b3cc9a4c1 ("tcp: RX path for devmem TCP")
+Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
+---
+ net/ipv4/tcp.c | 25 +++++++++++++++++--------
+ 1 file changed, 17 insertions(+), 8 deletions(-)
 
+diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+index 0d704bda6c41..ba77beba60c4 100644
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -2394,6 +2394,16 @@ static int tcp_xa_pool_refill(struct sock *sk, struct tcp_xa_pool *p,
+ 	return k ? 0 : err;
+ }
+ 
++static int put_devmem_cmsg(struct msghdr *msg, int level, int type, int len,
++			   void *data)
++{
++	/* Don't produce truncated CMSGs */
++	if (msg->msg_controllen < CMSG_LEN(len))
++		return -ETOOSMALL;
++
++	return put_cmsg(msg, level, type, len, data);
++}
++
+ /* On error, returns the -errno. On success, returns number of bytes sent to the
+  * user. May not consume all of @remaining_len.
+  */
+@@ -2438,10 +2448,10 @@ static int tcp_recvmsg_dmabuf(struct sock *sk, const struct sk_buff *skb,
+ 			 */
+ 			memset(&dmabuf_cmsg, 0, sizeof(dmabuf_cmsg));
+ 			dmabuf_cmsg.frag_size = copy;
+-			err = put_cmsg(msg, SOL_SOCKET, SO_DEVMEM_LINEAR,
+-				       sizeof(dmabuf_cmsg), &dmabuf_cmsg);
++			err = put_devmem_cmsg(msg, SOL_SOCKET, SO_DEVMEM_LINEAR,
++					      sizeof(dmabuf_cmsg),
++					      &dmabuf_cmsg);
+ 			if (err || msg->msg_flags & MSG_CTRUNC) {
+-				msg->msg_flags &= ~MSG_CTRUNC;
+ 				if (!err)
+ 					err = -ETOOSMALL;
+ 				goto out;
+@@ -2499,12 +2509,11 @@ static int tcp_recvmsg_dmabuf(struct sock *sk, const struct sk_buff *skb,
+ 				offset += copy;
+ 				remaining_len -= copy;
+ 
+-				err = put_cmsg(msg, SOL_SOCKET,
+-					       SO_DEVMEM_DMABUF,
+-					       sizeof(dmabuf_cmsg),
+-					       &dmabuf_cmsg);
++				err = put_devmem_cmsg(msg, SOL_SOCKET,
++						      SO_DEVMEM_DMABUF,
++						      sizeof(dmabuf_cmsg),
++						      &dmabuf_cmsg);
+ 				if (err || msg->msg_flags & MSG_CTRUNC) {
+-					msg->msg_flags &= ~MSG_CTRUNC;
+ 					if (!err)
+ 						err = -ETOOSMALL;
+ 					goto out;
 -- 
-Regards/Gruss,
-    Boris.
+2.48.1
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
