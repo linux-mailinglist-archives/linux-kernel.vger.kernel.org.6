@@ -1,201 +1,114 @@
-Return-Path: <linux-kernel+bounces-522307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F8F7A3C892
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 20:26:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68682A3C88E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 20:25:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2687D3B931C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:23:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90F9417814B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:23:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0E5C22A817;
-	Wed, 19 Feb 2025 19:21:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C02322B8D4;
+	Wed, 19 Feb 2025 19:22:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="j5kJaBRW"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 630A722A813;
-	Wed, 19 Feb 2025 19:21:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VC0GJR/z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E9F722ACC5;
+	Wed, 19 Feb 2025 19:22:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739992917; cv=none; b=O2kKj0oB8mUqdlLsgs78ATAfB8GPQOCrqnzeglXsv70Y43bwonzQAVu4K96x9HsyaZvW+WClCcg4rcl5j8soNp5fsxs5cH/bl9WIUY0na+h7K3IBJ1sOM6XvQTvHdy/mOrF6Ul40kYkc5WJFGwfMv2Q0IE1b6Xj9za+YhuTWviw=
+	t=1739992939; cv=none; b=iSvs4D3df/MAf4BjJENFs3to5VOGiBJAfcgbg2d3NAjA1lD8tTBwBMz3uyGETIGIqt1nJMVUUnjM1s5p1nVGAbBT4QWBLGaQbYQRuWAnHsMH0OS9U/D8Yz/k7xCxr5NKNIAX5VGlMLUDoggZ517rt9xpPK+SDGtDfjo6VWMDDKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739992917; c=relaxed/simple;
-	bh=adWKiQEJVT6/B9N5eQDBQYCGF9NVr8QvocoDPUjiRz0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jr5VZBRbwoNJfuBMgu5AiIgcmfgUMeC7AKPWjpHdURpIrHObDXmEaV3vRyp3mF4XiUxYCb9IIw6Ph+p3OhkURbXca0fmPNoKBogo2RA859YgPmOOiGI48A1ODSM/OLRqP5zsf3lTC2oYTQssORAc1uMXnsHU9kY8knqhpTxvim8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=j5kJaBRW; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.17.64.130] (unknown [131.107.147.130])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 9903B2043DE8;
-	Wed, 19 Feb 2025 11:21:54 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 9903B2043DE8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1739992914;
-	bh=pu/UW7PCLv8X83zZl5RWnpubpgAZ6B+Swf12/QdxSxQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=j5kJaBRWrM6equjNG9/ULVyGXaOGZkWvh/d9z/GERoOxMPje1JSbf/+HpyTUSdUZ2
-	 MTeGmqRCHLphVU8p/RB6vUleYWgDhv4FaXYdwfqMNqAwnlNDUjBwBrrVcdcFeAKHAH
-	 5LSb12vWUDz53yAyCcC6+JpCIUSLDSoIbnoDZlSc=
-Message-ID: <05eadac7-fa98-42a5-88a8-079e7c99c0b9@linux.microsoft.com>
-Date: Wed, 19 Feb 2025 11:21:54 -0800
+	s=arc-20240116; t=1739992939; c=relaxed/simple;
+	bh=La6YpO1quzw/PLTrDv6KYWGSnd+rPhsxECccWv9nqa0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LqAOPv49fPT7lwCAxBluKXWSXk3z5sjbH49adVGWOjp8gUqE+B+E5qn2dtG/SR+E4XITukBVf7pCNj8bJ7U3BkSMsHCsHM3YglFSUrMhsJU4XcSvR4ZLzR5eg9Vs3kA7Ta+CC5/A+liSSTt0yPO1TQlA4cKDqnwD2xHRRO7ryj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VC0GJR/z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8EBBC4CED1;
+	Wed, 19 Feb 2025 19:22:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739992938;
+	bh=La6YpO1quzw/PLTrDv6KYWGSnd+rPhsxECccWv9nqa0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VC0GJR/zH6HKyhpw5vHIdKm9LjePcxjRFfYB8b2TcZtQ95FVen8g0jWPJl3JTQ7FA
+	 Ikn8we5oMtT3QPFO5Bv4omRt/830AofvaCk1t20WKvkjoiSKkY+WWaQxt49kXP630D
+	 6dSln/zLQqd9tk/jnGSdUhBWXgpege5XIJe2Gho3eBACar6mv989kLx0mog3MOGU3N
+	 Qkbs5jZLYvcMqeZlL9FVCl2//CJgN3zTFR+NyOQv9zTLu6vqDeandpdB55nMZgmMyH
+	 7zM/3dX1epcTJmzjY4m+Oz30HFNBfe/9MRxjWfpoQVfsxNboP4lavzKXasMEbv2RBG
+	 UXPwMAA62QpZw==
+Date: Wed, 19 Feb 2025 20:22:13 +0100
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: vigneshr@ti.com, aaro.koskinen@iki.fi, khilman@baylibre.com, 
+	rogerq@kernel.org, tony@atomide.com, jmkrzyszt@gmail.com, reidt@ti.com, 
+	wsa@kernel.org, linux-omap@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@kernel.org
+Subject: Re: [PATCH] i2c: omap: fix IRQ storms
+Message-ID: <c3bcusjbn23z5yd2a3xtm7swnfizkl7rb6ufhicdhn52epnjvb@5uqm3g6jcony>
+References: <20250207185435.751878-1-andreas@kemnade.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 4/7] ima: kexec: define functions to copy IMA log at
- soft boot
-To: Stefan Berger <stefanb@linux.ibm.com>, zohar@linux.ibm.com,
- roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
- eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
- code@tyhicks.com, bauermann@kolabnow.com, linux-integrity@vger.kernel.org,
- kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
- James.Bottomley@HansenPartnership.com, bhe@redhat.com, vgoyal@redhat.com,
- dyoung@redhat.com
-References: <20250218225502.747963-1-chenste@linux.microsoft.com>
- <20250218225502.747963-5-chenste@linux.microsoft.com>
- <f102607b-963a-40c6-a14f-0803f8b059cc@linux.ibm.com>
-Content-Language: en-US
-From: steven chen <chenste@linux.microsoft.com>
-In-Reply-To: <f102607b-963a-40c6-a14f-0803f8b059cc@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250207185435.751878-1-andreas@kemnade.info>
 
-On 2/19/2025 7:37 AM, Stefan Berger wrote:
->
->
-> On 2/18/25 5:54 PM, steven chen wrote:
->> IMA log is copied to the new Kernel during kexec 'load' using
->
-> The IMA log is currently copied to the new kernel ...
->
->
->> ima_dump_measurement_list().  The log copy at kexec 'load' may result in
->> loss of IMA measurements during kexec soft reboot.  It needs to be 
->> copied
->
-> However, the log copied at kexec 'load' may result in loss of IMA 
-> measurements due to missed measurements that only occurred after kexec 
-> 'load'. Therefore, the log needs to be copied during kexec 'execute'. 
-> Setup the ...
->
->> over during kexec 'execute'.  Setup the needed infrastructure to move 
->> the
->> IMA log copy from kexec 'load' to 'execute'.
->>
->> Define a new IMA hook ima_update_kexec_buffer() as a stub function.
->> It will be used to call ima_dump_measurement_list() during kexec
->> 'execute'.
->>
->> Implement ima_kexec_post_load() function to be invoked after the new
->> Kernel image has been loaded for kexec. ima_kexec_post_load() maps the
->> IMA buffer to a segment in the newly loaded Kernel.  It also registers
->> the reboot notifier_block to trigger ima_update_kexec_buffer() at
->> exec 'execute'.
->
-> kexec 'execute'
->
->>
->> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
->> Signed-off-by: steven chen <chenste@linux.microsoft.com>
->
-> With the above changes:
->
-> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
->
->> ---
->>   include/linux/ima.h                |  3 ++
->>   security/integrity/ima/ima_kexec.c | 46 ++++++++++++++++++++++++++++++
->>   2 files changed, 49 insertions(+)
->>
->> diff --git a/include/linux/ima.h b/include/linux/ima.h
->> index 0bae61a15b60..8e29cb4e6a01 100644
->> --- a/include/linux/ima.h
->> +++ b/include/linux/ima.h
->> @@ -32,6 +32,9 @@ static inline void ima_appraise_parse_cmdline(void) {}
->>     #ifdef CONFIG_IMA_KEXEC
->>   extern void ima_add_kexec_buffer(struct kimage *image);
->> +extern void ima_kexec_post_load(struct kimage *image);
->> +#else
->> +static inline void ima_kexec_post_load(struct kimage *image) {}
->>   #endif
->>     #else
->> diff --git a/security/integrity/ima/ima_kexec.c 
->> b/security/integrity/ima/ima_kexec.c
->> index 704676fa6615..0fa65f91414b 100644
->> --- a/security/integrity/ima/ima_kexec.c
->> +++ b/security/integrity/ima/ima_kexec.c
->> @@ -12,10 +12,14 @@
->>   #include <linux/kexec.h>
->>   #include <linux/of.h>
->>   #include <linux/ima.h>
->> +#include <linux/reboot.h>
->> +#include <asm/page.h>
->>   #include "ima.h"
->>     #ifdef CONFIG_IMA_KEXEC
->>   static struct seq_file ima_kexec_file;
->> +static void *ima_kexec_buffer;
->> +static bool ima_kexec_update_registered;
->>     static void ima_reset_kexec_file(struct seq_file *sf)
->>   {
->> @@ -183,6 +187,48 @@ void ima_add_kexec_buffer(struct kimage *image)
->>       kexec_dprintk("kexec measurement buffer for the loaded kernel 
->> at 0x%lx.\n",
->>                 kbuf.mem);
->>   }
->> +
->> +/*
->> + * Called during kexec execute so that IMA can update the 
->> measurement list.
->> + */
->> +static int ima_update_kexec_buffer(struct notifier_block *self,
->> +                   unsigned long action, void *data)
->> +{
->> +    return NOTIFY_OK;
->> +}
->> +
->> +struct notifier_block update_buffer_nb = {
->> +    .notifier_call = ima_update_kexec_buffer,
->> +};
->> +
->> +/*
->> + * Create a mapping for the source pages that contain the IMA buffer
->> + * so we can update it later.
->> + */
->> +void ima_kexec_post_load(struct kimage *image)
->> +{
->> +    if (ima_kexec_buffer) {
->> +        kimage_unmap_segment(ima_kexec_buffer);
->> +        ima_kexec_buffer = NULL;
->> +    }
->> +
->> +    if (!image->ima_buffer_addr)
->> +        return;
->> +
->> +    ima_kexec_buffer = kimage_map_segment(image,
->> +                          image->ima_buffer_addr,
->> +                          image->ima_buffer_size);
->> +    if (!ima_kexec_buffer) {
->> +        pr_err("Could not map measurements buffer.\n");
->> +        return;
->> +    }
->> +
->> +    if (!ima_kexec_update_registered) {
->> +        register_reboot_notifier(&update_buffer_nb);
->> +        ima_kexec_update_registered = true;
->> +    }
->> +}
->> +
->>   #endif /* IMA_KEXEC */
->>     /*
+Hi,
 
-Hi Stefan, thanks for your comments. I will update in next version.
+On Fri, Feb 07, 2025 at 07:54:35PM +0100, Andreas Kemnade wrote:
+> On the GTA04A5 writing a reset command to the gyroscope causes IRQ
+> storms because NACK IRQs are enabled and therefore triggered but not
+> acked.
+> 
+> Sending a reset command to the gyroscope by
+> i2cset 1 0x69 0x14 0xb6
+> with an additional debug print in the ISR (not the thread) itself
+> causes
+> 
+> [ 363.353515] i2c i2c-1: ioctl, cmd=0x720, arg=0xbe801b00
+> [ 363.359039] omap_i2c 48072000.i2c: addr: 0x0069, len: 2, flags: 0x0, stop: 1
+> [ 363.366180] omap_i2c 48072000.i2c: IRQ LL (ISR = 0x1110)
+> [ 363.371673] omap_i2c 48072000.i2c: IRQ (ISR = 0x0010)
+> [ 363.376892] omap_i2c 48072000.i2c: IRQ LL (ISR = 0x0102)
+> [ 363.382263] omap_i2c 48072000.i2c: IRQ LL (ISR = 0x0102)
+> [ 363.387664] omap_i2c 48072000.i2c: IRQ LL (ISR = 0x0102)
+> repeating till infinity
+> [...]
+> (0x2 = NACK, 0x100 = Bus free, which is not enabled)
+> Apparently no other IRQ bit gets set, so this stalls.
+> 
+> Do not ignore enabled interrupts and make sure they are acked.
+> If the NACK IRQ is not needed, it should simply not enabled, but
+> according to the above log, caring about it is necessary unless
+> the Bus free IRQ is enabled and handled. The assumption that is
+> will always come with a ARDY IRQ, which was the idea behind
+> ignoring it, proves wrong.
+> It is true for simple reads from an unused address.
+> 
+> So revert
+> commit c770657bd261 ("i2c: omap: Fix standard mode false ACK readings").
+> 
+> The offending commit was used to reduce the false detections in
+> i2cdetect. i2cdetect warns for confusing the I2C bus, so having some
+> rare false detections (I have never seen such on my systems) is the
+> lesser devil than having basically the system hanging completely.
+> 
+> No more details came to light in the corresponding email thread since
+> several months:
+> https://lore.kernel.org/linux-omap/20230426194956.689756-1-reidt@ti.com/
+> so no better fix to solve both problems can be developed right now.
 
+I need someone from TI or someone who can test to ack here.
+
+Can someone help?
+
+Thanks,
+Andi
 
