@@ -1,152 +1,128 @@
-Return-Path: <linux-kernel+bounces-520958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99179A3B1B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:35:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA633A3B1B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:35:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAD69172731
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 06:35:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 480EE188A0FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 06:35:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97DA41BBBFD;
-	Wed, 19 Feb 2025 06:34:57 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 498B11B6CFF;
+	Wed, 19 Feb 2025 06:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nmXZreSO"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6E141B425D;
-	Wed, 19 Feb 2025 06:34:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C6581B6D0F;
+	Wed, 19 Feb 2025 06:35:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739946897; cv=none; b=HpRnZrSU/EERrdpchd/uUViviML0V8pGz22mWi+eQZnBrARa3SZBV6XJ5XV+Z397WPw3o40AxIS9Y9ly/3vC1435816rPi8RuP+yLaiqyWe+njBxlDgLIS4URWHCTovUMzB8phPwfypeNjsefBgisKaeedtyptXIgnVvgy5Env0=
+	t=1739946928; cv=none; b=ukAOCdupSIKzZD0XVGGo3VUj2SXr7eYUFJEhUcWxXTj5PX832cW27est+niRjTWvEfZ2WfieBIqXbQtIuJzz8HmVKJ+eb5eOMHcTLaE2xU4O9dLIJpGY6hpHOyLxg5d/PMp5jb3BPTZxqjTRfhbdMyJ5+PPTY73Vh8BS9SQY9R4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739946897; c=relaxed/simple;
-	bh=Nkk4tLvZQI67voOW8z5AeTYS2qk07OSNLO01/1b3FM4=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=YW6yNT4zYD8uryOehXxaH9qjj4usz1c6mcl6nhY1UNvkxc3YxBJYQ3kw/a1YzMKhWJOemBfQ7p/I7fVUKdH4y1WWxTmtt9pkyFfn5pa8No+QnjkqTnc7ECbr24L1jEVZIAloQAnyuK9We2PAilUaKZrZjxp7P16OjCb6irrBrZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4YyRMr1d4vz1Y1t2;
-	Wed, 19 Feb 2025 14:30:16 +0800 (CST)
-Received: from kwepemd200019.china.huawei.com (unknown [7.221.188.193])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0897A140159;
-	Wed, 19 Feb 2025 14:34:52 +0800 (CST)
-Received: from [10.173.127.72] (10.173.127.72) by
- kwepemd200019.china.huawei.com (7.221.188.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 19 Feb 2025 14:34:50 +0800
-Subject: Re: [PATCH v2 4/5] mm/hwpoison: Fix incorrect "not recovered" report
- for recovered clean pages
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-CC: <tglx@linutronix.de>, <mingo@redhat.com>, <dave.hansen@linux.intel.com>,
-	<x86@kernel.org>, <hpa@zytor.com>, <akpm@linux-foundation.org>,
-	<peterz@infradead.org>, <jpoimboe@kernel.org>, <linux-edac@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<baolin.wang@linux.alibaba.com>, <tianruidong@linux.alibaba.com>,
-	<tony.luck@intel.com>, <bp@alien8.de>, <nao.horiguchi@gmail.com>
-References: <20250217063335.22257-1-xueshuai@linux.alibaba.com>
- <20250217063335.22257-5-xueshuai@linux.alibaba.com>
-From: Miaohe Lin <linmiaohe@huawei.com>
-Message-ID: <ddd769c2-a17d-9e34-822d-66f72bd654ac@huawei.com>
-Date: Wed, 19 Feb 2025 14:34:50 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+	s=arc-20240116; t=1739946928; c=relaxed/simple;
+	bh=7cszKDQt9XMv02a+ZwGltOu4Yj63M69diOpbFNtrAPw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tWHVWLK0I+pXTEMAhvImDWIWlGWEV47zYMKg0RXDCpbmCahMtt0vSHBAr8dbyBBm2RMKnwEhazvKSgwYwQnfsgQshh+Zgpk6PK/Gfh7q+wmtq3MiqSu1/YBSLYlVbxeENcDb3U1l9XU8GdLk1jiE6cftpflzgDDFgAYjTYhFox0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nmXZreSO; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-abbda4349e9so29980266b.0;
+        Tue, 18 Feb 2025 22:35:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739946925; x=1740551725; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=57W5SvEFGc40K4otu3jc8MLgWskx5YF0tVueFcEL808=;
+        b=nmXZreSOyqWM/mzIx2IGS36RTa+1eumLWLZuPAy6a0uxdrIxbvjax6/2tQ4CQLjZjR
+         66I2ATtpQjqdFjRznNz0ilyrG6csSQdvpiYQftnIBTPx1B7I5omNezui3ikkcEbhbSZC
+         ZYxNp7uFa5sPdCQK8M5lJY7HDKzuOJHpdQDO86QrWKIOh7rgbfjCT99daHgYmID+WTgF
+         HOHpyqUvOQ6JAy+RR1Em31MrzXYPJ5vSRdXQauGa7oQ/6IY3JLeZihDBdrrhw1072cuw
+         j4yXCCopqa3Vj9aAO94D1ji6SGzDPVUz0D/9HGwv5epUWXa9WULh+OZjg+0OogQbJRtm
+         e0jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739946925; x=1740551725;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=57W5SvEFGc40K4otu3jc8MLgWskx5YF0tVueFcEL808=;
+        b=LCsveiANG56rQEuMPJLTOYltp7FMDw1B+ryUVXTLFcDpEzmyyCcS3TAKrCc3NiujRv
+         P/oLlF/AJmxsiZjnrRbYSwC2CvRrhXbY2eiNfRlaqDVk6pe5YgwpmkBROw+6AIVwlxjT
+         LelmLfC/1RI9MgIAyzOnBf+DlKor8TBEYOHvQdt/NXssPz9plSLffuaEij2/acCnXw1K
+         oHb+Y8+6vmRdKsvsfGwMD7hSK0k3VKFHOI7me7aayfzrctnq+S6wSkupy57fa/dB8kHO
+         ligXcnocLxjgzWOBSnfgi5VtSbjzFiEh8eCajZQz+P5WKBCc5gHdcQxpozVYGr4Lj9C9
+         FvHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW9KggovmWhWOz9UjGq/WMEVLR/6HYVVsznkf0R0TUOq9B2CPuEHP2sPqGIXo4Aj+tEbc6NDXaeQgeJEayr+VI=@vger.kernel.org, AJvYcCXx6LluWhjJ2HFoMYnrzApsOa8xU2IaSpBdVqU6A9cewPdluPBWHj9sNnZSiR1QPeijHB+sfrZUvOWlugU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPAyhoijKgaNqoV243/9Xr6ZZSZRXrPGRLiR3e2HDuoC5UgRO3
+	D0hwBfM+PLcRd1YNFqH5MHX09C/UxfenTvZuHO/Tj79OCRk1qj/wLbsWP6Y4ie6kCxN3GZL25Zh
+	FH92DoV6emsSY6pk8N7zvaMWcXvgOmg==
+X-Gm-Gg: ASbGncsptYGXzl00SAfFsGMyPscWTeP0ktaobYiOoxJVCmxQIpWRYKYMyGku98gRj6Z
+	aundOfbjKDhVelgNXHsAWsbS69L5r9/EAY6BAcgbozbZ5snSs078CthRKvM8k/XzPQSKfgCE=
+X-Google-Smtp-Source: AGHT+IHM8K/ufJhZwysVLMejsQ7FWat25JMEeR9lhuWlXykaokUltSn4JDH67VDt6SmdhK2xCiK9VCOQHkX9jfG6si8=
+X-Received: by 2002:a17:906:370c:b0:abb:519e:d395 with SMTP id
+ a640c23a62f3a-abb70a959d9mr1374646266b.20.1739946925026; Tue, 18 Feb 2025
+ 22:35:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250217063335.22257-5-xueshuai@linux.alibaba.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemd200019.china.huawei.com (7.221.188.193)
+References: <Z7SwcnUzjZYfuJ4-@infradead.org> <36783d51be7576fcdbf8facc3c94193d78240816.camel@kernel.org>
+ <4cbd3baf81ca3ff5e8c967b16fc13673d84139e8.camel@kernel.org>
+ <e63089e15c6f4d19e77d2920d576e0134d8b7aa7.camel@kernel.org>
+ <Z7T5_WGX_VXBby9k@boqun-archlinux> <615ce44fa528ad7be28ba518e14a970f04481078.camel@kernel.org>
+In-Reply-To: <615ce44fa528ad7be28ba518e14a970f04481078.camel@kernel.org>
+From: Dave Airlie <airlied@gmail.com>
+Date: Wed, 19 Feb 2025 16:35:13 +1000
+X-Gm-Features: AWEUYZk1tP58mZwBWrZ_OnI_ofVylDGmguJN0E4-Lra6JB37GljlIo3vIoHrYPs
+Message-ID: <CAPM=9txBg1m=qp9=nHJXS1h2XB8TSL1tj6CF=Z802u=YX7hBDg@mail.gmail.com>
+Subject: Re: Rust kernel policy
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Christoph Hellwig <hch@infradead.org>, 
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, 
+	rust-for-linux <rust-for-linux@vger.kernel.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Greg KH <gregkh@linuxfoundation.org>, 
+	linux-kernel@vger.kernel.org, ksummit@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On 2025/2/17 14:33, Shuai Xue wrote:
-> When an uncorrected memory error is consumed there is a race between
-> the CMCI from the memory controller reporting an uncorrected error
-> with a UCNA signature, and the core reporting and SRAR signature
-> machine check when the data is about to be consumed.
-> 
-> If the CMCI wins that race, the page is marked poisoned when
-> uc_decode_notifier() calls memory_failure(). For dirty pages,
-> memory_failure() invokes try_to_unmap() with the TTU_HWPOISON flag,
-> converting the PTE to a hwpoison entry. As a result,
-> kill_accessing_process():
-> 
-> - call walk_page_range() and return 1 regardless of whether
->   try_to_unmap() succeeds or fails,
-> - call kill_proc() to make sure a SIGBUS is sent
-> - return -EHWPOISON to indicate that SIGBUS is already sent to the
->   process and kill_me_maybe() doesn't have to send it again.
-> 
-> However, for clean pages, the TTU_HWPOISON flag is cleared, leaving the
-> PTE unchanged and not converted to a hwpoison entry. Conversely, for
-> clean pages where PTE entries are not marked as hwpoison,
-> kill_accessing_process() returns -EFAULT, causing kill_me_maybe() to
-> send a SIGBUS.
-> 
-> Console log looks like this:
-> 
->     Memory failure: 0x827ca68: corrupted page was clean: dropped without side effects
->     Memory failure: 0x827ca68: recovery action for clean LRU page: Recovered
->     Memory failure: 0x827ca68: already hardware poisoned
->     mce: Memory error not recovered
-> 
-> To fix it, return 0 for "corrupted page was clean", preventing an
-> unnecessary SIGBUS.
-> 
-> Fixes: 046545a661af ("mm/hwpoison: fix error page recovered but reported "not recovered"")
-> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
-> Cc: stable@vger.kernel.org
-> ---
->  mm/memory-failure.c | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
-> 
-> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> index 995a15eb67e2..b037952565be 100644
-> --- a/mm/memory-failure.c
-> +++ b/mm/memory-failure.c
-> @@ -881,12 +881,17 @@ static int kill_accessing_process(struct task_struct *p, unsigned long pfn,
->  	mmap_read_lock(p->mm);
->  	ret = walk_page_range(p->mm, 0, TASK_SIZE, &hwpoison_walk_ops,
->  			      (void *)&priv);
-> +	/*
-> +	 * ret = 1 when CMCI wins, regardless of whether try_to_unmap()
-> +	 * succeeds or fails, then kill the process with SIGBUS.
-> +	 * ret = 0 when poison page is a clean page and it's dropped, no
-> +	 * SIGBUS is needed.
-> +	 */
->  	if (ret == 1 && priv.tk.addr)
->  		kill_proc(&priv.tk, pfn, flags);
-> -	else
-> -		ret = 0;
->  	mmap_read_unlock(p->mm);
-> -	return ret > 0 ? -EHWPOISON : -EFAULT;
-> +
-> +	return ret > 0 ? -EHWPOISON : 0;
+On Wed, 19 Feb 2025 at 16:20, Jarkko Sakkinen <jarkko@kernel.org> wrote:
+>
+> On Tue, 2025-02-18 at 13:22 -0800, Boqun Feng wrote:
+> > FWIW, usually Rust code has doc tests allowing you to run it with
+> > kunit,
+> > see:
+> >
+> >       https://docs.kernel.org/rust/testing.html
+>
+> I know this document and this was what I used to compile DMA patches.
+> Then I ended up into "no test, no go" state :-)
+>
+> I put this is way. If that is enough, or perhaps combined with
+> submitting-patches.rst, why this email thread exists?
 
-The caller kill_me_maybe will do set_mce_nospec + sync_core again.
+There is users for the DMA stuff (now there should be some more
+tests), the problem is posting the users involves all the precursor
+patches for a bunch of other subsystems,
 
-static void kill_me_maybe(struct callback_head *cb)
-{
-	struct task_struct *p = container_of(cb, struct task_struct, mce_kill_me);
-	int flags = MF_ACTION_REQUIRED;
-	...
-	ret = memory_failure(pfn, flags);
-	if (!ret) {
-		set_mce_nospec(pfn);
-		sync_core();
-		return;
-	}
+There's no nice way to get this all bootstrapped, two methods are:
 
-Is this expected?
+a) posting complete series crossing subsystems, people get pissed off
+and won't review because it's too much
+b) posting series for review that don't have a full user in the
+series, people get pissed off because of lack of users.
 
-Thanks.
-.
+We are mostly moving forward with (b) initially, this gets rust folks
+to give reviews and point out any badly thought out rust code, and
+give others some ideas for what the code looks like and that it exists
+so others don't reinvent the wheel.
+
+Maybe we can add more rust tests to that particular patch series? but
+this is the wrong thread to discuss it, so maybe ask on that thread
+rather on this generic thread.
+
+Dave.
 
