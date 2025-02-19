@@ -1,125 +1,95 @@
-Return-Path: <linux-kernel+bounces-522189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B220A3C733
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:17:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00CA6A3C734
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:17:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A6F11889B2B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:17:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D36E0168A12
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:17:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C642215048;
-	Wed, 19 Feb 2025 18:17:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6845B1FECC1;
+	Wed, 19 Feb 2025 18:17:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SIaHwZEi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bOHkZNQi"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA171215044;
-	Wed, 19 Feb 2025 18:17:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDC3E8468
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 18:17:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739989024; cv=none; b=OkyLoCjALbeDThRA1I7I/lkzJKxYnNX15XZ1jCdN5BM/SZ1LKmquXjlXeb9iQgiwwTEduB6qWyXG1JNBHQuEbIetEJ0MlCUaJBVdGoz4J1+Ni4E23s/qiE6W9/HmInGzUNu/8g3DXotQ9EeH1wHWuWJHaPEjhMWGG7QDMYqQEiI=
+	t=1739989073; cv=none; b=kl3UdJQ8bmRvLLvjXvI3RTCXZir/38OAJLp4To+rsriHzTwm9k3ljd43lRvQ0z9Bc7iuYbV2ko53rf7jVgX1dJJEr7H5HtZeFsqINNLCUtOgpnIxLcedRFciu8vaesKjJ/h7GXwGSJ/jy7KCPmtIxh8IDXPPTJejpG34Nl67W/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739989024; c=relaxed/simple;
-	bh=DsGGofnDzKUQbDmEHUxv9uMf75t8hgC8FbDUK8smE60=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Q+ZNui8Ob8cCJcgpwxA6aHmw+QFEPLOzvxk0XiuNn0XZFm8RMIZFKQfuHvFQx10xaZ0kW6jyedxlZLZ740dlKj8yd2zvdnsGr4OvdQ13tmoW8mAOHFL+7TJ9n74liD+cK3DBvajmI9iUB+qWxkkGMScUzVMPBOS9UA/55Edle4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SIaHwZEi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33978C4CED1;
-	Wed, 19 Feb 2025 18:17:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739989024;
-	bh=DsGGofnDzKUQbDmEHUxv9uMf75t8hgC8FbDUK8smE60=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=SIaHwZEieT201WAL6Zk7NSYy7kj/ZnVkCqLA7vWQgDoXC/fx7GtDC6ohFzJatO4uj
-	 pz6eAx9/QPSV+jB+l87OzEnnG3nvlT8nR+spUptocIrUtqbcp0y431D3/KLkXWPn8c
-	 haE3dICihF53YjJ74YnU69bbFa+6jMRABfNzFGhcGblC/k2rAAw5jmYANWTVCK5e05
-	 YVm1c7TCBkAp4tFCIPYDTm6kX4l0JWP45o1CbUAwcIBLJVFyjxbus61QMONd+Q9Rlm
-	 HkEkpc34O1/Od1PWYzI2knIwJVAnxxKXDQspcziUX7+4JLUI/iyRRbBboeY61fBQ8r
-	 u6Fn453tm7DxA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tkod4-005v6y-0h;
-	Wed, 19 Feb 2025 18:17:02 +0000
-Date: Wed, 19 Feb 2025 18:17:00 +0000
-Message-ID: <861pvtsstf.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Oliver Upton <oliver.upton@linux.dev>
-Cc: kvmarm@lists.linux.dev,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Mingwei Zhang <mizhang@google.com>,
-	Colton Lewis <coltonlewis@google.com>,
-	Raghavendra Rao Ananta <rananta@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Janne Grunau <j@jannau.net>
-Subject: Re: [PATCH v2 10/14] KVM: arm64: Move PMUVer filtering into KVM code
-In-Reply-To: <20250203183111.191519-11-oliver.upton@linux.dev>
-References: <20250203183111.191519-1-oliver.upton@linux.dev>
-	<20250203183111.191519-11-oliver.upton@linux.dev>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1739989073; c=relaxed/simple;
+	bh=lU37Sg6PyrahHfNfLKPAqzxcihSuzQ+txq8x46xqlqo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kXDR5baONuGZa5AtFx9AYuMG1VPrHXOQ15ZisLX3VaWfspbL2ujNWfAg+ZHfoHYfEXnUnnkLFmUB01gINt9A6Gc/30FAlkyB2YLJW1NCX9U6KdT/a2CHpjGsDwzUxnEdq6ORCi0hW18WXUZs0WQfZWHwuVCeZNKaMcN93ApE+8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=bOHkZNQi; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=eWBQAAMPddjj3Cdkgcm0As+9ccEQtRdteotwa1RXgiM=; b=bOHkZNQiBmMVoDkhxwgFuEaR4z
+	sainPE4DoS5CJ0fd6E8tpE9EEnTBakROwxK2mhUabp6bVMIq4xtUUvRgIe2xjo2vSK3KAqvFIpaSc
+	vp2NcIAoHJqir5UjWXwkzYVcDZ6Nvvf8ZDCMplq01SvAyZimQ/tF7AAA3GkU3SrVOrRxnLOWPTN9h
+	3LuD5cqGW4lG5FcdS+cm2N1rGSE1dFfHLS0q1cRwaEVvzDWcBX8VbqspvA8Nka7TI95M8KBfC3jP9
+	0dCUpAo7PeJD17jQBFMlEhX1BKwK56+ABm7uLGB7abCr8TuZzsrVQ3zSiAhvTHIPAuLEOdyZi+6Ue
+	uZ0G3ciQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tkode-00000006mrh-0HjA;
+	Wed, 19 Feb 2025 18:17:38 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 5096B300787; Wed, 19 Feb 2025 19:17:37 +0100 (CET)
+Date: Wed, 19 Feb 2025 19:17:37 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Kees Cook <kees@kernel.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, alyssa.milburn@intel.com,
+	scott.d.constable@intel.com, joao@overdrivepizza.com,
+	andrew.cooper3@citrix.com, jpoimboe@kernel.org,
+	jose.marchesi@oracle.com, hjl.tools@gmail.com,
+	ndesaulniers@google.com, samitolvanen@google.com, nathan@kernel.org,
+	ojeda@kernel.org, alexei.starovoitov@gmail.com, mhiramat@kernel.org,
+	jmill@asu.edu
+Subject: Re: [PATCH v3 04/10] x86/traps: Allow custom fixups in handle_bug()
+Message-ID: <20250219181737.GC23004@noisy.programming.kicks-ass.net>
+References: <20250219162107.880673196@infradead.org>
+ <20250219163514.688460830@infradead.org>
+ <202502190953.53EA878FF@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: oliver.upton@linux.dev, kvmarm@lists.linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, mizhang@google.com, coltonlewis@google.com, rananta@google.com, catalin.marinas@arm.com, will@kernel.org, mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, j@jannau.net
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202502190953.53EA878FF@keescook>
 
-On Mon, 03 Feb 2025 18:31:07 +0000,
-Oliver Upton <oliver.upton@linux.dev> wrote:
+On Wed, Feb 19, 2025 at 09:55:10AM -0800, Kees Cook wrote:
+
+> > @@ -340,6 +343,9 @@ static noinstr bool handle_bug(struct pt
+> >  		break;
+> >  	}
+> >  
+> > +	if (!handled && regs->ip != addr)
+> > +		regs->ip = addr;
 > 
-> The supported guest PMU version on a particular platform is ultimately a
-> KVM decision. Move PMUVer filtering into KVM code.
+> Can you add a comment above this just to help with people scanning
+> through this code in the future, maybe:
 > 
-> Tested-by: Janne Grunau <j@jannau.net>
-> Signed-off-by: Oliver Upton <oliver.upton@linux.dev>
-> ---
->  arch/arm64/include/asm/cpufeature.h | 23 -----------------------
->  arch/arm64/kvm/pmu-emul.c           | 15 +++++++++------
->  2 files changed, 9 insertions(+), 29 deletions(-)
+> 	/* Restore failure location if we're not continuing execution. */
 > 
-> diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
-> index 0eff048848b8..c4326f1cb917 100644
-> --- a/arch/arm64/include/asm/cpufeature.h
-> +++ b/arch/arm64/include/asm/cpufeature.h
-> @@ -525,29 +525,6 @@ cpuid_feature_extract_unsigned_field(u64 features, int field)
->  	return cpuid_feature_extract_unsigned_field_width(features, field, 4);
->  }
->  
-> -/*
-> - * Fields that identify the version of the Performance Monitors Extension do
-> - * not follow the standard ID scheme. See ARM DDI 0487E.a page D13-2825,
-> - * "Alternative ID scheme used for the Performance Monitors Extension version".
-> - */
-> -static inline u64 __attribute_const__
-> -cpuid_feature_cap_perfmon_field(u64 features, int field, u64 cap)
-> -{
-> -	u64 val = cpuid_feature_extract_unsigned_field(features, field);
+> 
+> > +
+> >  	if (regs->flags & X86_EFLAGS_IF)
+> >  		raw_local_irq_disable();
+> >  	instrumentation_end();
 
-I guess this is where this idiom is coming from. I think it'd be worth
-revisiting it here as well as in the last patch.
-
-Thanks,
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+Done.
 
