@@ -1,151 +1,182 @@
-Return-Path: <linux-kernel+bounces-520966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 404D1A3B1CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:49:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22EF4A3B1CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:49:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28F5B3AD9F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 06:49:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A75F3ADA2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 06:49:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9651D1BEF78;
-	Wed, 19 Feb 2025 06:49:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25FDF1BD9C5;
+	Wed, 19 Feb 2025 06:49:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="A2f8rQ7h"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DE922AE95;
-	Wed, 19 Feb 2025 06:49:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="wZT3wI7v"
+Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C8C12AE95;
+	Wed, 19 Feb 2025 06:48:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739947750; cv=none; b=MGK0aDIL0UhekH1R7+/siWWeC49Ywz+071NpgzjjavridJt5D3bTSlLGpp9TrPd4Eed+8a7xcOUiwcqVQ2vfH6Kfw6+Fwpj6+fq/mGECNbBXfepBH6/woeVcddwV1HAsezTlA0sDLlN7uEShVbaOPneICNVbe988kXcVfvnPQ2M=
+	t=1739947743; cv=none; b=gbGKVcLtMF27pDcj0+Xbxvth0bP/zooAdt7++2kOfzZ/HxSAcIV1rgI3MA5DNXZgicB04VeFbEz4EjtNigDGKU9XEQbJfenragzNNbSt7EopQQkSxN/aQ54O+9sGf1pWjloAp0sNvkNHqPghQByM5mBIIgbtXIcZMYKEzN0TT3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739947750; c=relaxed/simple;
-	bh=mOQo+dRWL+KFhurI1PmD2LMYcJGzia9PwCw8wlNIS80=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gBM1N5hE0PdS1d3XO8iNXRkjuvQcFLisrdNocpylqG7P+hUBGy7ZyyVklzmCAHPL0ZKn9whdEKZ72eMO3CKgcYjFTrvuPtktKt9ccF/54LhkzoHVJExkodDt20Bazh2RbsVBvAvtBUPU3snxjsvV7MQOetu0PbGCe7F6Tm/jLYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=A2f8rQ7h; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=U1net
-	4T7Q6cu0QEL0E/9T25UtKWWEpm4SRfno/kdROI=; b=A2f8rQ7h+lFehOjJPbVZR
-	MY64dVxtPHCzKnRrHhYiwDk7gNSNUsGA6ThjL8PTNzJ28AtpbLsthuB/E4AFWCF7
-	fth/MVD+hC0cfvcbCutupu2X6V2YT7HwehZnxhyAGJgM2F0sQYgr/dKQVumACaSt
-	OeYp/NY5r5B94jiOz2zQic=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wDnz8qqfrVnPwaGNA--.2549S2;
-	Wed, 19 Feb 2025 14:48:11 +0800 (CST)
-From: oushixiong1025@163.com
-To: Helge Deller <deller@gmx.de>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Lee Jones <lee@kernel.org>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Shixiong Ou <oushixiong@kylinos.cn>
-Subject: [PATCH v3] fbdev: lcdcfb: add missing device_remove_file()
-Date: Wed, 19 Feb 2025 14:48:08 +0800
-Message-Id: <20250219064808.170517-1-oushixiong1025@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1739947743; c=relaxed/simple;
+	bh=XOiJb4SWQIvkOleohe95oWNnBc/qdNGIte6mJHCoDgU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C/cxRWhWtiKoccOUX/daZBiU7J/Wt8Y7fDdSMO8hTANsPNrtzeZxT9uSL6w5Jxdp5BpcatBF2Q+Gk4mMo7BXOJ7J9ZyA9brMijr+YmFBMKQ16C7+/oGdPNVISnF1IFCqoObcNXGYRnzKWaEjrZ0T0aqBl/jH13nG8e/6XQU5ENo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=wZT3wI7v; arc=none smtp.client-ip=115.124.30.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1739947735; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=6/jQax5rnvlh2BbJC5kEw9SnvVj7TrlZC5/fP2OvErs=;
+	b=wZT3wI7vsFiJhj5v4Ky/1ITBT8n/gjhnuTAmnP+4KAPlMVyyk50iiMKw3xqFbHEFNaBvhI1UFZAVePjsMCEnTRn42+D1jt2M0uqVhIQPgGtdKpcUJzzsdP22/h5+GA8IRjyDls1lV3iLA2N+PNUFQYOpQBw9lSTPXJuezui5Vtc=
+Received: from 30.221.144.226(mailfrom:guoheyi@linux.alibaba.com fp:SMTPD_---0WPoEUPx_1739947734 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 19 Feb 2025 14:48:54 +0800
+Message-ID: <0c5e1e72-f1c9-4ffc-853f-f094a6d7799c@linux.alibaba.com>
+Date: Wed, 19 Feb 2025 14:48:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] driver/aspeed-wdt: fix pretimeout for counting down
+ logic
+To: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>, Joel Stanley <joel@jms.id.au>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>,
+ Eddie James <eajames@linux.ibm.com>
+References: <20250218031709.103823-1-guoheyi@linux.alibaba.com>
+ <50ab5a0a-b807-4bd7-bda8-7c6f4bfc76fc@roeck-us.net>
+ <5a33f86d-d82c-4685-8da7-5e623487a40c@linux.alibaba.com>
+ <e692263e-a390-4611-b629-2b9feca1883a@roeck-us.net>
+Content-Language: en-US
+From: Heyi Guo <guoheyi@linux.alibaba.com>
+In-Reply-To: <e692263e-a390-4611-b629-2b9feca1883a@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDnz8qqfrVnPwaGNA--.2549S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7WFy8WFWDWw13Cr4xAF1rXrb_yoW5JrWxpF
-	4UGas0grZ5Zrn7ur43AF4Uua15urykta4DZr1xJw15C3s3Arn5W343J397JF17JFZ3GF1a
-	vrW0y343GF47uaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UPgAcUUUUU=
-X-CM-SenderInfo: xrxvxxx0lr0wirqskqqrwthudrp/xtbBYwj4D2e1fEcuXwAAsE
 
-From: Shixiong Ou <oushixiong@kylinos.cn>
 
-1. The device_remove_file() need to be called when driver is removing.
-2. The device_remove_file() need to be called if the call to
-   device_create_file() fails.
+On 2025/2/19 14:07, Guenter Roeck wrote:
+> On 2/18/25 19:41, Heyi Guo wrote:
+>> Hi Guenter,
+>>
+>> Thanks for your comments.
+>>
+>> On 2025/2/18 13:33, Guenter Roeck wrote:
+>>> On 2/17/25 19:16, Heyi Guo wrote:
+>>>> Aspeed watchdog uses counting down logic, so the value set to register
+>>>> should be the value of subtracting pretimeout from total timeout.
+>>>>
+>>>> Fixes: 9ec0b7e06835 ("watchdog: aspeed: Enable pre-timeout interrupt")
+>>>>
+>>>> Signed-off-by: Heyi Guo <guoheyi@linux.alibaba.com>
+>>>>
+>>>> Cc: Wim Van Sebroeck <wim@linux-watchdog.org>
+>>>> Cc: Guenter Roeck <linux@roeck-us.net>
+>>>> Cc: Joel Stanley <joel@jms.id.au>
+>>>> Cc: Andrew Jeffery <andrew@codeconstruct.com.au>
+>>>> Cc: Eddie James <eajames@linux.ibm.com>
+>>>> ---
+>>>>   drivers/watchdog/aspeed_wdt.c | 7 +++++++
+>>>>   1 file changed, 7 insertions(+)
+>>>>
+>>>> diff --git a/drivers/watchdog/aspeed_wdt.c 
+>>>> b/drivers/watchdog/aspeed_wdt.c
+>>>> index b4773a6aaf8c..520d8aba12a5 100644
+>>>> --- a/drivers/watchdog/aspeed_wdt.c
+>>>> +++ b/drivers/watchdog/aspeed_wdt.c
+>>>> @@ -187,6 +187,13 @@ static int aspeed_wdt_set_pretimeout(struct 
+>>>> watchdog_device *wdd,
+>>>>       u32 actual = pretimeout * WDT_RATE_1MHZ;
+>>>>       u32 s = wdt->cfg->irq_shift;
+>>>>       u32 m = wdt->cfg->irq_mask;
+>>>> +    u32 reload = readl(wdt->base + WDT_RELOAD_VALUE);
+>>>> +
+>>>
+>>> It is unusual to use a register value here and not the configured 
+>>> timeout
+>>> value. I would have assumed that pretimeout is compared against 
+>>> wdt->timout,
+>>> not against the register value, and that the multiplication with 
+>>> WDT_RATE_1MHZ
+>>> is done after validation. This needs an explanation.
+>> It was supposed to be a straight-forward way to check if the 
+>> pretimeout value is supported by the hardware. I can change to 
+>> wdt->timeout if it is better.
+>>
+>> Further, in the case of wdt->timeout > max_hw_heartbeat_ms, shall we 
+>> restrict the pretimeout to be larger than wdt->timeout - 
+>> max_hw_heartbeat_ms  / 2? For the watchdog_kworker works in 
+>> max_hw_heartbeat_ms  / 2 interval, pretimeout event may be triggered 
+>> unexpected when watchdog is not pinged in (max_hw_heartbeat_ms - 
+>> (timeout - pretimeout)).
+>>
+>
+> The kernel internal logic should handle that. If not, it needs to be 
+> modified/fixed.
+Do you mean the watchdog core should also handle the case in which 
+pretimeout < wdt->timeout - max_hw_heartbeat_ms  / 2?
+>
+>>>
+>>>> +    if (actual >= reload)
+>>>> +        return -EINVAL;
+>>>> +
+>>>
+>>> On top of that, you'll also need to explain why 
+>>> watchdog_pretimeout_invalid()
+>>> and with it the validation in watchdog_set_pretimeout() does not 
+>>> work for this
+>>> watchdog and why this extra validation is necessary.
+>>
+>> watchdog_pretimeout_invalid() will return false if wdt->timeout == 0, 
+>> but we can't determine the hardware pretimeout value if timeout == 0 
+>> here.
+>>
+>
+> Sorry, I don't understand what you mean. If watchdog_pretimeout_invalid()
+> returns false if timeout == 0, aspeed_wdt_set_pretimeout() won't be 
+> called.
+> Why does that preclude depending on it ?
 
-Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
----
-v1->v2:
-        add missing 'return error'.
-        call device_remove_file() in sh_mobile_lcdc_overlay_fb_unregister().
-v2->v3:
-	change the type of 'i' to int.
-	add overlay_sysfs_attrs_enabled flag.
+if timeout == 0, watchdog_pretimeout_invalid() returns false, so the 
+code will go on to call wdd->ops->set_pretimeout().
 
- drivers/video/fbdev/sh_mobile_lcdcfb.c | 25 +++++++++++++++++++++----
- 1 file changed, 21 insertions(+), 4 deletions(-)
+static int watchdog_set_pretimeout(struct watchdog_device *wdd,
+                    unsigned int timeout)
+{
+     int err = 0;
 
-diff --git a/drivers/video/fbdev/sh_mobile_lcdcfb.c b/drivers/video/fbdev/sh_mobile_lcdcfb.c
-index 4715dcb59811..eaf782133542 100644
---- a/drivers/video/fbdev/sh_mobile_lcdcfb.c
-+++ b/drivers/video/fbdev/sh_mobile_lcdcfb.c
-@@ -200,6 +200,8 @@ struct sh_mobile_lcdc_overlay {
- 	unsigned int pitch;
- 	int pos_x;
- 	int pos_y;
-+
-+	bool overlay_sysfs_attrs_enabled;
- };
- 
- struct sh_mobile_lcdc_priv {
-@@ -1504,10 +1506,16 @@ static void
- sh_mobile_lcdc_overlay_fb_unregister(struct sh_mobile_lcdc_overlay *ovl)
- {
- 	struct fb_info *info = ovl->info;
-+	unsigned int i;
- 
- 	if (info == NULL || info->dev == NULL)
- 		return;
- 
-+	if (ovl->overlay_sysfs_attrs_enabled) {
-+		for (i = 0; i < ARRAY_SIZE(overlay_sysfs_attrs); ++i)
-+			device_remove_file(info->dev, &overlay_sysfs_attrs[i]);
-+		ovl->overlay_sysfs_attrs_enabled =  false;
-+	}
- 	unregister_framebuffer(ovl->info);
- }
- 
-@@ -1516,7 +1524,7 @@ sh_mobile_lcdc_overlay_fb_register(struct sh_mobile_lcdc_overlay *ovl)
- {
- 	struct sh_mobile_lcdc_priv *lcdc = ovl->channel->lcdc;
- 	struct fb_info *info = ovl->info;
--	unsigned int i;
-+	int i, error = 0;
- 	int ret;
- 
- 	if (info == NULL)
-@@ -1530,10 +1538,19 @@ sh_mobile_lcdc_overlay_fb_register(struct sh_mobile_lcdc_overlay *ovl)
- 		 dev_name(lcdc->dev), ovl->index, info->var.xres,
- 		 info->var.yres, info->var.bits_per_pixel);
- 
-+	ovl->overlay_sysfs_attrs_enabled = true;
-+
- 	for (i = 0; i < ARRAY_SIZE(overlay_sysfs_attrs); ++i) {
--		ret = device_create_file(info->dev, &overlay_sysfs_attrs[i]);
--		if (ret < 0)
--			return ret;
-+		error = device_create_file(info->dev, &overlay_sysfs_attrs[i]);
-+		if (error)
-+			break;
-+	}
-+
-+	if (error) {
-+		while (--i >= 0)
-+			device_remove_file(info->dev, &overlay_sysfs_attrs[i]);
-+		ovl->overlay_sysfs_attrs_enabled = false;
-+		return error;
- 	}
- 
- 	return 0;
--- 
-2.25.1
+     if (!watchdog_have_pretimeout(wdd))
+         return -EOPNOTSUPP;
 
+     if (watchdog_pretimeout_invalid(wdd, timeout))
+         return -EINVAL;
+
+     if (wdd->ops->set_pretimeout && (wdd->info->options & 
+WDIOF_PRETIMEOUT))
+         err = wdd->ops->set_pretimeout(wdd, timeout);
+
+>
+> On a side note, I do wonder why the driver accepts a timeout value of 
+> 0 seconds.
+
+ From the code, it seems timeout == 0 / pretimeout == 0 will be 
+considered as a turn off switch.
+
+Thanks,
+
+Heyi
+
+>
+> Guenter
 
