@@ -1,164 +1,190 @@
-Return-Path: <linux-kernel+bounces-520831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0648BA3AFD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 03:54:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07B1FA3AFDF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 04:02:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DE811891C9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:54:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C795616E566
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 03:02:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F523192D87;
-	Wed, 19 Feb 2025 02:53:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BC7182D91;
+	Wed, 19 Feb 2025 03:02:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="bJBsQlMl"
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+	dkim=pass (2048-bit key) header.d=studer.dev header.i=@studer.dev header.b="TBUdQCJW"
+Received: from mail-b.studer.dev (mail-b.studer.dev [3.21.136.164])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F0C228628D;
-	Wed, 19 Feb 2025 02:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6A435977;
+	Wed, 19 Feb 2025 03:02:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.21.136.164
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739933633; cv=none; b=Klsz9NS68DpoSsjGLa61sr2wM3qKx+nfoBzVibTaYgXnYT8uwUyBrIIt1Vh0msE4nJgwZqs81RZ7QOFoviQkH9JS5wQxHe02wdU+PY1FT6x5ilOR4mWR+3CfClgLeVxMBIUoSMvb9xzCYthjCPdKmpeKxfZGlGIpdcpyze7+R1E=
+	t=1739934164; cv=none; b=KJYNGC3vMYMcxdf4xrQqC7v0HP67cZZuG0uZ4kfduMXjZowAeDCLRbPKbZPCoc7ESzREJtF3Xp2RG5mnsMiy9I5IPSw6zJErdmev5Y0VeTcbUoVtCsxqDkIL2BC/+mogLZ3BxFUSbkPJPvS3GbxDRscX5gbqjMAZqS+buifOCG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739933633; c=relaxed/simple;
-	bh=WTuA/6zlo3WaMfQgV0PxqQOUf5HaH/BzEORKfOTcQWM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RuPl7gc+WVrxZTy7cPYGnFMYnd9qE603e+6OySPpjS/KFaNwtXbn2PK6IeWsB+zuBT471fqEwD3mYKBCDWEl5iO6tXU5Sj1jadq/V560MEmyaTibVV3yqVqZxPEn0RqZA2Q6Dji+oizvIcJXxKAiXQ83A6rfoYiHty9blUosvks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=bJBsQlMl; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1739933627; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-	bh=IZzdzW1u5LTjOOJ1vaRZH/M9adQ7NyTBBe2vFRTsMKU=;
-	b=bJBsQlMlc+Pi/2ogGJZ9FH2r6wCz2bi3zSFSHuupBLfj0z5YHfapvSaOS7SjKLKHhomaOWtCo3DTE5qLotn8eQ8jL0jjBuYiVhPpx+znhnvnkVLTRk+G16BBHsGaywIbN63ZohXlGuoeoihMHyx52x67OZtrMfJZRW1yMqO7CsA=
-Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0WPnbXVJ_1739933626 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 19 Feb 2025 10:53:46 +0800
-Date: Wed, 19 Feb 2025 10:53:44 +0800
-From: Feng Tang <feng.tang@linux.alibaba.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Lukas Wunner <lukas@wunner.de>,
-	Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	Liguang Zhang <zhangliguang@linux.alibaba.com>,
-	Guanghui Feng <guanghuifeng@linux.alibaba.com>, rafael@kernel.org,
-	Markus Elfring <Markus.Elfring@web.de>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	ilpo.jarvinen@linux.intel.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] PCI/portdrv: Add necessary wait for disabling
- hotplug events
-Message-ID: <Z7VHuOFxilan4LX_@U-2FWC9VHC-2323.local>
-References: <20250218034859.40397-1-feng.tang@linux.alibaba.com>
- <20250218223354.GA196886@bhelgaas>
+	s=arc-20240116; t=1739934164; c=relaxed/simple;
+	bh=2F3LU4Eq0gKjABF4rvIZDq5JKefAkZzwch+Ft+j7CYg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CXm0bdssfR5+rZJqkSVECcC5PWiibAAUa4RX/s0xvR7nT/nuO5I2NeI7z5hlnId567pUkrB4/YuaYUoa18ETraYHY1BUdieXzcuONG//H1GobonOKKTR6mIbqF7DXtAU6pXU8OwHjLjvdG5Nm2b4G7hywtxoEVJD6VJt17eEBkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=studer.dev; spf=pass smtp.mailfrom=studer.dev; dkim=pass (2048-bit key) header.d=studer.dev header.i=@studer.dev header.b=TBUdQCJW; arc=none smtp.client-ip=3.21.136.164
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=studer.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=studer.dev
+Received: from mail.studer.dev (mail.studer.dev [168.62.161.121])
+	by mail-b.studer.dev (Postfix) with ESMTPSA id A4B6240047;
+	Wed, 19 Feb 2025 03:02:35 +0000 (UTC)
+dkim-signature: v=1; a=rsa-sha256; d=studer.dev; s=hmail;
+	c=relaxed/relaxed; q=dns/txt; h=From:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:References;
+	bh=qd6qp1+ybi0MHi3xmDnOya6FXacrtJVptDj7+jwoBCs=;
+	b=TBUdQCJWM1Gle0QybTdOW2kMgDrTXfMtboFQ20aQBjD5bfSQ92pWUNYKTZk543HV67pnT5HyOk7RHFoJ7TY/TuN283Ir1ce2yv9ggDuX82NPctt/pcJPqDEPxwqddiOcb3jOZ3RUPFOUc1a3DVtiMlPWTNAGYEauGTyAEW1Wc4g+NrrFoIZpgBsF60kybfL8NuxTaQmGRK7herpMtN/sHiFQQ/sNcpwdyNhynrpWFyaKLamRbdFJVKpUTS
+	vuZ7QUXTeIrE2qfQ03Lqpd5iwNtB5QXas5632DTZ+nByQd07N1mcMjTnNEZy7zZrUSYXVoRiaWH8gHkRqZi7MKgspVMw==
+Received: from [192.168.1.166] (pool-68-239-44-167.bstnma.fios.verizon.net [68.239.44.167])
+	by mail.studer.dev with ESMTPSA
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128)
+	; Wed, 19 Feb 2025 03:02:33 +0000
+Message-ID: <56fe8762-5b05-4b41-b7fd-f08f35012ba9@studer.dev>
+Date: Tue, 18 Feb 2025 22:02:32 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250218223354.GA196886@bhelgaas>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] riscv: dts: allwinner: d1: Add CPU thermal sensor and
+ zone
+To: =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@gmail.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Chen-Yu Tsai <wens@csie.org>,
+ Samuel Holland <samuel@sholland.org>
+Cc: devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20250218020629.1476126-1-alex@studer.dev>
+ <4628970.LvFx2qVVIh@jernej-laptop>
+From: Alex Studer <alex@studer.dev>
+Content-Language: en-US
+In-Reply-To: <4628970.LvFx2qVVIh@jernej-laptop>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Bjorn Helgaas,
-
-Thanks for the review!
-
-On Tue, Feb 18, 2025 at 04:33:54PM -0600, Bjorn Helgaas wrote:
-> On Tue, Feb 18, 2025 at 11:48:58AM +0800, Feng Tang wrote:
-> > There was problem reported by firmware developers that they received
-> > 2 pcie link control commands in very short intervals on an ARM server,
-> > which doesn't comply with pcie spec, and broke their state machine and
-> > work flow. According to PCIe 6.1 spec, section 6.7.3.2, software needs
-> > to wait at least 1 second for the command-complete event, before
-> > resending the cmd or sending a new cmd.
-> 
-> s/link control/hotplug/ (also below)
-> s/2/two/
-> s/pcie/PCIe/ (also below)
- 
-Will follow.
-
-> > And the first link control command firmware received is from
-> > get_port_device_capability(), which sends cmd to disable pcie hotplug
-> > interrupts without waiting for its completion.
-> > 
-> > Fix it by adding the necessary wait to comply with PCIe spec, referring
-> > pcie_poll_cmd().
-> > 
-> > Also make the interrupt disabling not dependent on whether pciehp
-> > service driver will be loaded as suggested by Lukas.
-> 
-> This sounds like maybe it should be two separate patches.
-
-OK.
-
-[...]
-> >  
-> > +static int pcie_wait_sltctl_cmd_raw(struct pci_dev *dev)
-> > +{
-> > +	u16 slot_status = 0;
-> > +	int ret, ret1, timeout_us;
-> > +
-> > +	/* 1 second, according to PCIe spec 6.1, section 6.7.3.2 */
-> > +	timeout_us = 1000000;
-> > +	ret = read_poll_timeout(pcie_capability_read_word, ret1,
-> > +				(slot_status & PCI_EXP_SLTSTA_CC), 10000,
-> > +				timeout_us, true, dev, PCI_EXP_SLTSTA,
-> > +				&slot_status);
-> > +	if (!ret)
-> > +		pcie_capability_write_word(dev, PCI_EXP_SLTSTA,
-> > +						PCI_EXP_SLTSTA_CC);
-> > +
-> > +	return  ret;
-> 
-> Ugh.  I really don't like the way this basically duplicates
-> pcie_poll_cmd().  I don't have a great suggestion to fix it; maybe we
-> need a way to build part of pciehp unconditionally.
-
-Yes, I also thought about this. One idea is to unify the two functions,
-and let pcie_poll_cmd() reuse this pcie_wait_sltctl_cmd_raw() here in
-portdrv.c. As CONFIG_HOTPLUG_PCI_PCIE depends on CONFIG_PCIEPORTBUS,
-there should be no dependency issue. How do you think? 
-
-> At the very least
-> we need a comment here pointing to pcie_poll_cmd().
-
-Aha, I mentioned 'referring pcie_poll_cmd()' in commit log, but forgot
-to add it here.
-
-> 
-> And IIUC this will add a one second delay for ports that don't need
-> command completed events.  I don't think that's fair to those ports.
-
-Good catch! So we should add a read of PCI_EXP_SLTCAP register and
-check if PCI_EXP_SLTCAP_HPC bit is set.
-
-> > +}
-> > +
-> > +void pcie_disable_hp_interrupts_early(struct pci_dev *dev)
-> > +{
-> > +	u16 slot_ctrl = 0;
-> > +
-> > +	pcie_capability_read_word(dev, PCI_EXP_SLTCTL, &slot_ctrl);
-> > +	/* Bail out early if it is already disabled */
-> > +	if (!(slot_ctrl & (PCI_EXP_SLTCTL_CCIE | PCI_EXP_SLTCTL_HPIE)))
-> > +		return;
-> > +
-> > +	pcie_capability_clear_word(dev, PCI_EXP_SLTCTL,
-> > +		  PCI_EXP_SLTCTL_CCIE | PCI_EXP_SLTCTL_HPIE);
-> > +
-> > +	if (pcie_wait_sltctl_cmd_raw(dev))
-> > +		pci_info(dev, "Timeout on disabling PCIE hot-plug interrupt\n");
-> 
-> s/PCIE/PCIe/
-
-Will change.
+On 2/18/25 12:23 PM, Jernej Škrabec wrote:
+> Dne torek, 18. februar 2025 ob 03:06:29 Srednjeevropski standardni čas je Alex Studer napisal(a):
+>> The sun20i THS (built in CPU thermal sensor) is supported in code, but
+>> was never added to the device tree. So, add it to the device tree,
+>> along with a thermal zone for the CPU.
+>>
+>> Signed-off-by: Alex Studer <alex@studer.dev>
+>> ---
+>>  arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi | 31 +++++++++++++++++++
+>>  .../boot/dts/allwinner/sunxi-d1s-t113.dtsi    | 16 ++++++++++
+>>  2 files changed, 47 insertions(+)
+>>
+>> diff --git a/arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi b/arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi
+>> index 6367112e6..bdde82aa8 100644
+>> --- a/arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi
+>> +++ b/arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi
+>> @@ -3,6 +3,8 @@
+>>  
+>>  #define SOC_PERIPHERAL_IRQ(nr)	(nr + 16)
+>>  
+>> +#include <dt-bindings/thermal/thermal.h>
+> Put above line on top (before SOC_PERIPHERAL_IRQ()).
+Will fix in v2.
+>> +
+>>  #include "sunxi-d1s-t113.dtsi"
+>>  
+>>  / {
+>> @@ -115,4 +117,33 @@ pmu {
+>>  			<0x00000000 0x0000000e 0xffffffff 0xffffffff 0x00010000>,
+>>  			<0x00000000 0x0000000f 0xffffffff 0xffffffff 0x00020000>;
+>>  	};
+>> +
+>> +	thermal-zones {
+>> +		cpu-thermal {
+>> +			polling-delay-passive = <0>;
+>> +			polling-delay = <0>;
+>> +			thermal-sensors = <&ths>;
+>> +
+>> +			cooling-maps {
+>> +				map0 {
+>> +					trip = <&cpu_alert>;
+>> +					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+>> +				};
+>> +			};
+>> +
+>> +			trips {
+>> +				cpu_alert: cpu-alert {
+>> +					temperature = <85000>;
+>> +					hysteresis = <2000>;
+>> +					type = "passive";
+>> +				};
+>> +
+>> +				cpu-crit {
+>> +					temperature = <100000>;
+>> +					hysteresis = <0>;
+>> +					type = "critical";
+>> +				};
+> Where do those limits come from?
+I took them from the definitions in
+arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi, which is what I generally
+based this patch on. I checked the D1s datasheet and it does specify a
+max "Ambient Operating Temperature" of 70 C and a max "Working Junction
+Temperature Range" of 110 C. So I could use those, but the dtsi files
+for the other sunxi chips don't seem to follow their respective
+datasheets, so I wasn't sure what to do here.
+>> +			};
+>> +		};
+>> +	};
+>>  };
+>> diff --git a/arch/riscv/boot/dts/allwinner/sunxi-d1s-t113.dtsi b/arch/riscv/boot/dts/allwinner/sunxi-d1s-t113.dtsi
+>> index e4175adb0..fcfcaf06c 100644
+>> --- a/arch/riscv/boot/dts/allwinner/sunxi-d1s-t113.dtsi
+>> +++ b/arch/riscv/boot/dts/allwinner/sunxi-d1s-t113.dtsi
+>> @@ -426,6 +426,10 @@ sid: efuse@3006000 {
+>>  			reg = <0x3006000 0x1000>;
+>>  			#address-cells = <1>;
+>>  			#size-cells = <1>;
+>> +
+>> +			ths_calibration: thermal-sensor-calibration@14 {
+>> +				reg = <0x14 0x8>;
+>> +			};
+>>  		};
+>>  
+>>  		crypto: crypto@3040000 {
+>> @@ -934,5 +938,17 @@ rtc: rtc@7090000 {
+>>  			clock-names = "bus", "hosc", "ahb";
+>>  			#clock-cells = <1>;
+>>  		};
+>> +
+>> +		ths: thermal-sensor@2009400 {
+>> +			compatible = "allwinner,sun20i-d1-ths";
+>> +			reg = <0x2009400 0x100>;
+> Size should be 0x400.
+Will fix in v2.
+>
+> Best regards,
+> Jernej
 
 Thanks,
-Feng
+Alex
+
+>
+>> +			interrupts = <SOC_PERIPHERAL_IRQ(58) IRQ_TYPE_LEVEL_HIGH>;
+>> +			clocks = <&ccu CLK_BUS_THS>;
+>> +			clock-names = "bus";
+>> +			resets = <&ccu RST_BUS_THS>;
+>> +			nvmem-cells = <&ths_calibration>;
+>> +			nvmem-cell-names = "calibration";
+>> +			#thermal-sensor-cells = <0>;
+>> +		};
+>>  	};
+>>  };
+>>
+>
+>
+>
+
 
