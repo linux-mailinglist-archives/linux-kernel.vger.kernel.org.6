@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-520872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB4FFA3B046
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 05:07:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1502CA3B048
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 05:07:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0CCE1728A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 04:07:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD08E18935C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 04:07:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F84B1B0F20;
-	Wed, 19 Feb 2025 04:06:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 289751B415B;
+	Wed, 19 Feb 2025 04:06:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MyurA9Kc"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fwlUtMqE"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E145B1AF0BC;
-	Wed, 19 Feb 2025 04:06:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC2381B3953;
+	Wed, 19 Feb 2025 04:06:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739937997; cv=none; b=T/Fi0OynEgfkJVwm3cC7xu5WAJfmX+B9R+S+OECPa5/g4fYWQOTAl0Tleqlu3S1jM0O6n13V/ZuiSS2WTXLV72GUkJgF+EIdNmCTU16e8tl5TDzT/L0tizynqhFofYEEnqvSYTz7VVXCdVIXMW5Bh5vIs6oqCUa9bGTmCAKr0TU=
+	t=1739938001; cv=none; b=CuCbSJJVTxlvyjT115G8Kje5VaGxj1ywAZLJGx0kOvyqwuwf25EmstTHEYZseUj1ccN3NmWApaGpKEHG14dQRd5oACXdW4Edb3oXi4eSjedFbHle+OtjpBv2Sps7KkHGNX5IyRh8h43NXNPQHNOOfK1cmWaCfQcz0U8+NnRLFSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739937997; c=relaxed/simple;
-	bh=syILJRFICNuwfc1hr1rVckmFJF5JIVDUFUmPw1y28sU=;
+	s=arc-20240116; t=1739938001; c=relaxed/simple;
+	bh=qv6BirrjVU0NWcV17jTzqJq8GK7JkoueKqhKnIlpvlU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NcbhsnOHfB7IR+wZmJ+vqm5sKqSxlweiRhr9TaLmVjK61qGzudHe2kVleGEJGXsf/uEqavgotqx5bIo2Nt1/f4b+rf/MvByrcvlny9xgucKOIy5yBXjSAuRQ2CFkgKa7i+d+YJY5TozwW1G/ZpF7rU9ltkOGWhCy2fcvMKQ0KX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MyurA9Kc; arc=none smtp.client-ip=192.198.163.12
+	 MIME-Version; b=Dle2+M3yERjN5RGcQuH8O3zZKMTeLw0gL1ROjExE497Qb3aCgY0d5G+nnOHctj4hVpaekIVCmHmmGPzvOJ5EOS9hv4og0ilod3K/C9buEkB7lXUzEOzW+STtj9SMkadfBsy+PjhRvJ6ewVKfd6pTsgx6n/6JQKXqzYkeiFImAHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fwlUtMqE; arc=none smtp.client-ip=192.198.163.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739937996; x=1771473996;
+  t=1739938000; x=1771474000;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=syILJRFICNuwfc1hr1rVckmFJF5JIVDUFUmPw1y28sU=;
-  b=MyurA9KcgBYfK3XOTaOXuTnzdE1y6iJjPyHMLWlvubC505Ps+EVS3JtT
-   WHzxqG2DEFzSZlpOUm0c6Zp5X2cWs7I3wRlLfHt4VQLf8FSihk0abVAYD
-   kDs5hbVIeZHm1NT8d4AP1tZgCIzQPFpZ9m5/NYORmVIWas91FqEvyO92M
-   ElH8GtxSE4fddcBq/886IgUZM7ESTUjTVovZEHkramOWyx3Ypxa4W+xQx
-   Rmmpwu4RSNTTkzKX+x8KSPuTcaOCvvxOiTMdRaBc7TWfGL6mdE5TzI4zS
-   Lk+lFBXraQAQ9y8SBU25cCw1475BmbNczG/bohKHT/21LuAqzbTrmWuHS
-   Q==;
-X-CSE-ConnectionGUID: bF2uM5nZSUyALFxMf1ZOzA==
-X-CSE-MsgGUID: bmr8g4NrQz6ANy79NBvYAw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="44579163"
+  bh=qv6BirrjVU0NWcV17jTzqJq8GK7JkoueKqhKnIlpvlU=;
+  b=fwlUtMqE5X2oLJragcPxqGRFxaTvtXV6HbqexxNGz/9aVzYYxzI/6AEM
+   xQHlOv3oRYFmemoAgE6CZUVAq8Ci7qNyIYU5T55wlOPT1xhCKgTFiJnIg
+   SF9e7ErJ95pybMbCASLGYikq3IpMhH1bK3KeGyw7frAXXfMXVpTnQNPWc
+   LtltYz8XHDaC5fPELdvzNmYneDKMYEWgOeudKqL/KoFRAJMnXT04UFHcB
+   BTSY8xxpn3tCb6ktAkaE3qfwpNSsya6M0mocqmdYvow1wmtsszJwlPE7x
+   uYNXJNykCZtWF9yDHVkw9PGP0SQlWbWvlBKlwNIaPdt7D1Af0yMr2wy/P
+   g==;
+X-CSE-ConnectionGUID: KFHQory9QgSOtAoMfKC15g==
+X-CSE-MsgGUID: WlHa29ziRZCk+7F8hIYsTA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="44579171"
 X-IronPort-AV: E=Sophos;i="6.13,296,1732608000"; 
-   d="scan'208";a="44579163"
+   d="scan'208";a="44579171"
 Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 20:06:36 -0800
-X-CSE-ConnectionGUID: RIQ/jYwtScS0e80qqyim9Q==
-X-CSE-MsgGUID: zzfwmuvcSJmLCx4Zej6V2w==
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 20:06:40 -0800
+X-CSE-ConnectionGUID: Qy/EUbnCTFuWIl/l5kQjHw==
+X-CSE-MsgGUID: eY1chkT4Ssasj26Y1d4uug==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.13,296,1732608000"; 
-   d="scan'208";a="119703828"
+   d="scan'208";a="119703838"
 Received: from inlubt0246.iind.intel.com ([10.191.24.87])
-  by fmviesa004.fm.intel.com with ESMTP; 18 Feb 2025 20:06:31 -0800
+  by fmviesa004.fm.intel.com with ESMTP; 18 Feb 2025 20:06:36 -0800
 From: subramanian.mohan@intel.com
 To: linux-kernel@vger.kernel.org,
 	linux-doc@vger.kernel.org,
@@ -72,9 +72,9 @@ Cc: eddie.dong@intel.com,
 	david.zage@intel.com,
 	srinivasan.chinnadurai@intel.com,
 	subramanian.mohan@intel.com
-Subject: [PATCH v15 3/4] Documentation: driver-api: pps: Add Intel Timed I/O PPS generator
-Date: Wed, 19 Feb 2025 09:36:17 +0530
-Message-Id: <20250219040618.70962-4-subramanian.mohan@intel.com>
+Subject: [PATCH v15 4/4] ABI: pps: Add ABI documentation for Intel TIO
+Date: Wed, 19 Feb 2025 09:36:18 +0530
+Message-Id: <20250219040618.70962-5-subramanian.mohan@intel.com>
 X-Mailer: git-send-email 2.35.3
 In-Reply-To: <20250219040618.70962-1-subramanian.mohan@intel.com>
 References: <20250219040618.70962-1-subramanian.mohan@intel.com>
@@ -88,50 +88,40 @@ Content-Transfer-Encoding: 8bit
 
 From: Subramanian Mohan <subramanian.mohan@intel.com>
 
-Add Intel Timed I/O PPS usage instructions.
+Document sysfs interface for Intel Timed I/O PPS driver.
 
-Co-developed-by: Pandith N <pandith.n@intel.com>
-Signed-off-by: Pandith N <pandith.n@intel.com>
 Signed-off-by: Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Acked-by: Rodolfo Giometti <giometti@enneenne.com>
 Signed-off-by: Subramanian Mohan <subramanian.mohan@intel.com>
 ---
- Documentation/driver-api/pps.rst | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ Documentation/ABI/testing/sysfs-pps-gen-tio | 6 ++++++
+ MAINTAINERS                                 | 1 +
+ 2 files changed, 7 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-pps-gen-tio
 
-diff --git a/Documentation/driver-api/pps.rst b/Documentation/driver-api/pps.rst
-index 04f1b88778fc..598729f9cd27 100644
---- a/Documentation/driver-api/pps.rst
-+++ b/Documentation/driver-api/pps.rst
-@@ -285,3 +285,27 @@ delay between assert and clear edge as small as possible to reduce system
- latencies. But if it is too small slave won't be able to capture clear edge
- transition. The default of 30us should be good enough in most situations.
- The delay can be selected using 'delay' pps_gen_parport module parameter.
-+
-+
-+Intel Timed I/O PPS signal generator
-+------------------------------------
-+
-+Intel Timed I/O is a high precision device, present on 2019 and newer Intel
-+CPUs, that can generate PPS signals.
-+
-+Timed I/O and system time are both driven by same hardware clock. The signal
-+is generated with a precision of ~20 nanoseconds. The generated PPS signal
-+is used to synchronize an external device with system clock. For example,
-+it can be used to share your clock with a device that receives PPS signal,
-+generated by Timed I/O device. There are dedicated Timed I/O pins to deliver
-+the PPS signal to an external device.
-+
-+Usage of Intel Timed I/O as PPS generator:
-+
-+Start generating PPS signal::
-+
-+        $echo 1 > /sys/class/pps-gen/pps-genx/enable
-+
-+Stop generating PPS signal::
-+
-+        $echo 0 > /sys/class/pps-gen/pps-genx/enable
+diff --git a/Documentation/ABI/testing/sysfs-pps-gen-tio b/Documentation/ABI/testing/sysfs-pps-gen-tio
+new file mode 100644
+index 000000000000..3c34ff17a335
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-pps-gen-tio
+@@ -0,0 +1,6 @@
++What:		/sys/class/pps-gen/pps-genx/enable
++Date:		April 2025
++KernelVersion:	6.15
++Contact:	Subramanian Mohan<subramanian.mohan@intel.com>
++Description:
++		Enable or disable PPS TIO generator output.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index efee40ea589f..35e254d0a9db 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -18912,6 +18912,7 @@ S:	Maintained
+ W:	http://wiki.enneenne.com/index.php/LinuxPPS_support
+ F:	Documentation/ABI/testing/sysfs-pps
+ F:	Documentation/ABI/testing/sysfs-pps-gen
++F:	Documentation/ABI/testing/sysfs-pps-gen-tio
+ F:	Documentation/devicetree/bindings/pps/pps-gpio.yaml
+ F:	Documentation/driver-api/pps.rst
+ F:	drivers/pps/
 -- 
 2.35.3
 
