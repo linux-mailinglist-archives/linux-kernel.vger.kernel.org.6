@@ -1,175 +1,336 @@
-Return-Path: <linux-kernel+bounces-521844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F58FA3C309
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:06:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B342AA3C30A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:06:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A009A16B2F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:05:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3299B1891086
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:06:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C23681F4179;
-	Wed, 19 Feb 2025 15:04:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 498911F4196;
+	Wed, 19 Feb 2025 15:05:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Dgl4nPGp"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Fj9DPHjt"
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2066.outbound.protection.outlook.com [40.107.102.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E331C1F3BB4
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 15:04:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739977493; cv=none; b=nZvtDWFMxHukOutxod0JMdeMi/t8b9bItlYOD4WkTkpjcJ1XRBYpESFTaXh43Vpc/iMY+8FywgDAF3U5zfBW1+sjDGgVItGGUU+dZ8pR7azT58pSKNhs3Yo77cvvcI8Z/h4oJa6MRWmbEDeHazCqOhqkttMlFghBBXMJOy053mk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739977493; c=relaxed/simple;
-	bh=7UoeG7sQosLXeI//h7JdA+3n2Sob6MRh1xFZZflejho=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ENtwPlesUoW6qDF4BiITKh9kmtXRhEVQ2uAbP5+5uS1a/DPP5NPtH702mlCivk/bcAOPHzoIZ/hZDSbRFJAQz5ZLYUXbXXtQfx458FZdvAADuANLZuBuzThGHUgRtXipIoqYcPfRQzxEKtQsGseDqD5/TTOyKooJjOk+eB6TMM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Dgl4nPGp; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-abb7f539c35so870749066b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 07:04:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1739977488; x=1740582288; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=d+Xyg2rx7Tazyz6RJ+FZigjB6taoqrNoJ/dCh8rwj6Q=;
-        b=Dgl4nPGpSY3WIl1M3hJCs1n2pKIeRorFWx7Xm/yWkXAorUU8BkYuf2v+g9fTvcDdEB
-         PCo3wvPkFITV937X8CLgZMEJu8y+6rB3br5NOo31Hw608snLlCY8QW7dci5ID2D4j6J6
-         wJZyTfsO3LUsHG61I3/qlVNAVZq0TFXZZHmZ/iLBLdmLuc4DhChL/2rVqZL1ykXRF678
-         7ThOkjUSko5ncyWwGg6oLFyu2q0Rk6aBsktrFS3dXFQ6jJuDzTj9t/0LnL2j9BtbIcWE
-         V/0cGbaNnh2LAPUUQdUl1aWbo4HlrA3YVjty+evzza8VaTcrXvjTVC1GspN0qI4lEKrS
-         PnLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739977488; x=1740582288;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=d+Xyg2rx7Tazyz6RJ+FZigjB6taoqrNoJ/dCh8rwj6Q=;
-        b=Vlvfv24s3qJOjuZYyfTJTs9yRr+il45rEzkkYFJoyWOjCBSZdjJu9utMppKb4j8KJK
-         TIKYOpETtoZpZXDUpTYmzhGUA0smukdeY55t1e/Gs5e2TXATHUd3R6ncVhhxyRGH17Rz
-         jSb7d0iXqt6C2OX22/6N6wXPeFD6QfwXI4q/A3DCVs45cUuXOv67QV0uW1YOY/v0wFQ1
-         +vP3i2/Aufn53TbTQFUVAuBeEhuzCFuUo7mw4AgYcf8aUAJ8O0A51S2BWVUanahOk7Xv
-         4XU8QOVmmRD9ycGjwKoFxucjD/o82TdUo+ZYQB6OoZ1A78gOHiDU3OKoKuV49izMIQOo
-         CedQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXwB2GynAB/2m2Bg56COLTH1e8Zm4kbuq6xdKvD0I/5cAEALVT/pjOqbge3c9qDmUG1aZKltIZsIB3XrkA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywfaa1SLlJcfP3r8Qo9CX7ZpLMujpJ/ZRLxgoWVR4ruq74nJ/JX
-	Ku+niPb25rfA10Tf55wwEMEfh24erPR5l6531+fOlERBM6iDvr1sjOz98bE/Wl4=
-X-Gm-Gg: ASbGncuSWC87yQTFJeCg+mw0HGlzZ/sS/AS7gc6uR6qm+cNdkVi3HAhpy6T6dFKfB5p
-	ekRxpKkfrUPwPdjR9U9/A08sM/XVumPYWtMJ9uQAYaN9vniLhG6SE3pYGURIGK9gQRalGOGeikp
-	DmCz84MS55bbFB6uacNHUfZabulRqcgzCOO3LdCoW3N5Y7Mthj0uVn5PqTEsb7P/69IBkNoVwqM
-	BXCoK5B75C8TOyfy05HgIVtl4LTiPK7DvRwZWTMjf6a2abBoqQ0ZKHzsIV9+guuqoWimdviDGbz
-	Bppix9qXv3s3SC0/Tk5PdbY=
-X-Google-Smtp-Source: AGHT+IE+EUxXj/MaS7xu14WHiywJ2YA+1PB0N9Csii7zF+MBOdg/1Z4jzE2+V+lT99mNIsTi85wemg==
-X-Received: by 2002:a17:906:4794:b0:ab7:e899:2de7 with SMTP id a640c23a62f3a-abb70b1eaccmr1817533966b.14.1739977486885;
-        Wed, 19 Feb 2025 07:04:46 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.25])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba533998e2sm1292855066b.134.2025.02.19.07.04.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Feb 2025 07:04:46 -0800 (PST)
-Message-ID: <289b6cba-b305-4de9-86a7-24520af16298@tuxon.dev>
-Date: Wed, 19 Feb 2025 17:04:45 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA9E1F3BBB;
+	Wed, 19 Feb 2025 15:05:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739977556; cv=fail; b=LNICMc0RfHU0nRH9Wpdeypy8HGJXcFSurx16IcviInI1ASxtnb2rJTEVSEEZ3MbNheSjksF3ddYag/JUP8IkELc50t4kr8Am89Z3M6UAyWrhl+3ckKUW024mYfSLH4fUyT6PiVQcKFu/HEYFVKrp5oXsZ5BO9x+wT51dRZRQTDA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739977556; c=relaxed/simple;
+	bh=6tV2Fnr8hRB5oyPLcltcpH6wnEo7heKapHqoi3wauFM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=OPwa08XkWFmbKY776i20XvEpNy1bVbtNTurfHKnyrnb5+Lna/Ov3HtgDDEhdUgVgd5xAJNtdHWU5RtQtL5dK7o0d4OILnFukunXwtu4MJLZxt6hmHFHW4/iWyjGF2lbzcy0rCivPvbkF0awjKW5RHjnUxpjcJg2dJUO9Cjciq2M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Fj9DPHjt; arc=fail smtp.client-ip=40.107.102.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cKAsFn867LSBUrRDJRgLFFcPuio7g1kVjax6/5B3BxnD0mNuzin6h5zIkyj+1kkBfP20/PYEZl78XAAuVXtV/8JhTTv8Ye2FTDBOcX1At7bF/CKblzCwCvqUdClYox/JR/+k9mfHJTS9zIwl5GGUkPkRIfW8dQODkLBuMPM2JL/BkhGOcyy5ZWRkr2+bH2sAKpYZi2qXMLICJhcYOFmtzJQ6JrPLhB8kXWtWoJViYO/+2fm1xH9xaSt37BuzaPrOXw+6uDkpQmTeaRhbjSW+Xr7KiVGPhF4a9NkeMh79IS4/u8HisN5cyzQFHYZUHvaAKmBPHw+Sm8NL7oglePKu8g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=A1iOID2bcXBamzPTPoVujjbZLDwoclMiI2auzlDjDSo=;
+ b=I85RKatiZQHPpuolBakFVS11n8M3WGNuWjC+VksaKcPWHqrkYJM8oeL4MqgHhIyrYgvTmAjGfFcV8lSgBNvC70BFUwH5lD///njvN8vD4fqauGvGJl2zSNQH++yWxug118rdBLMHz2v0DbKyvPqu574bdY6d4oA4TfsAR6bCWfWL+QXrccxYu/1PSDASPA8Zj/lC19a7vTnImjdxHU5WmmjtwWSIEzrOuKzrDYS7Dz79SaIJ7joZBJI0XNc+5/6FzY63RRzsWPLNGWSiEkKaQxK6ohMTm3oRjCw+zqJ5wNct5jWFZMWP1tS1YxkHFNpsfU8P3A+QoRBpPx03gvbUDw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=A1iOID2bcXBamzPTPoVujjbZLDwoclMiI2auzlDjDSo=;
+ b=Fj9DPHjtaPs3OTzO7PDyEwIr0fW8Gz9vCl1el9BDTe4MuD2iQ/7s2ibQICNGHSs09onYv1adA2uEnZ9LwXDupyWfUm7FAqLlZ8L/DVr8nBNyrzfX/9apfbw3PBgxKhAIvecBFLDQc4o4vm0dr9nDpgVpjSlaPZUw2OvPjFwvzlP6F6DD6No/P64jZTWnYkvNCoGWGwHvPDIdn13+8OFpb9WfS+ZfxneL+1k8L9L+S/5yGitdkFCRhfxa/7kfhRcUZ+ZYBFK6rOvOxI8u+N7KtMVNe9Ym20kF9X5iC2DlKWQsFNZljEd+vHtQR0P9Bj0IhMVbZQeCOJjgTRDx7hvzIg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by IA1PR12MB9029.namprd12.prod.outlook.com (2603:10b6:208:3f0::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Wed, 19 Feb
+ 2025 15:05:50 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%5]) with mapi id 15.20.8445.017; Wed, 19 Feb 2025
+ 15:05:50 +0000
+Date: Wed, 19 Feb 2025 10:05:47 -0500
+From: Joel Fernandes <joelagnelf@nvidia.com>
+To: Valentin Schneider <vschneid@redhat.com>
+Cc: Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org,
+	x86@kernel.org, virtualization@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev,
+	linux-riscv@lists.infradead.org, linux-perf-users@vger.kernel.org,
+	xen-devel@lists.xenproject.org, kvm@vger.kernel.org,
+	linux-arch@vger.kernel.org, rcu@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, bpf@vger.kernel.org,
+	bcm-kernel-feedback-list@broadcom.com,
+	Juergen Gross <jgross@suse.com>,
+	Ajay Kaher <ajay.kaher@broadcom.com>,
+	Alexey Makhalov <alexey.amakhalov@broadcom.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Jason Baron <jbaron@akamai.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Clark Williams <williams@redhat.com>,
+	Yair Podemsky <ypodemsk@redhat.com>,
+	Tomas Glozar <tglozar@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Kees Cook <kees@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@infradead.org>,
+	Shuah Khan <shuah@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Miguel Ojeda <ojeda@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+	"Mike Rapoport (Microsoft)" <rppt@kernel.org>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Rong Xu <xur@google.com>,
+	Nicolas Saenz Julienne <nsaenzju@redhat.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Yosry Ahmed <yosryahmed@google.com>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	Jinghao Jia <jinghao7@illinois.edu>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Tiezhu Yang <yangtiezhu@loongson.cn>
+Subject: Re: [PATCH v4 29/30] x86/mm, mm/vmalloc: Defer
+ flush_tlb_kernel_range() targeting NOHZ_FULL CPUs
+Message-ID: <20250219145302.GA480110@joelnvbox>
+References: <20250114175143.81438-1-vschneid@redhat.com>
+ <20250114175143.81438-30-vschneid@redhat.com>
+ <CAG48ez1Mh+DOy0ysOo7Qioxh1W7xWQyK9CLGNU9TGOsLXbg=gQ@mail.gmail.com>
+ <xhsmh34hhh37q.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <CAG48ez3H8OVP1GxBLdmFgusvT1gQhwu2SiXbgi8T9uuCYVK52w@mail.gmail.com>
+ <xhsmhzfjpfkky.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <xhsmhzfjpfkky.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+X-ClientProxiedBy: MN2PR18CA0005.namprd18.prod.outlook.com
+ (2603:10b6:208:23c::10) To SN7PR12MB8059.namprd12.prod.outlook.com
+ (2603:10b6:806:32b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] serial: sh-sci: Save and restore SCDL and SCCKS
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250219142454.2761556-1-geert+renesas@glider.be>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <20250219142454.2761556-1-geert+renesas@glider.be>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|IA1PR12MB9029:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5c25bda2-da56-4557-f687-08dd50f6e56c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|7416014|376014|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NkhIL1FkR2JpVzRHUFVNR1R2VzhJRGMwTW1xdlRCU0JVMk4rZ091MnNnQjZ4?=
+ =?utf-8?B?NXdkclVldTdJY1NjTnBjYUNDOG1MUjF3em8vR0lOcFJsWTFGL0xhS1BqbDVY?=
+ =?utf-8?B?S0xTdERaaFFGekFheFN5YjRrU2Z5ZURTSXBmRXcyK0tpTUxvaTBDNmk1Sjh1?=
+ =?utf-8?B?WjdIalJ1cURXYlBwMzM2V2k4SG5JRG9uT0M4bjdBMlJna0J3S2JCWVFmYW9V?=
+ =?utf-8?B?V1Joa1JHUEJ0eFJvdjRJenlPbVRDNFRDajF4SFMxRWNOVEljeFA1RVgvVHpR?=
+ =?utf-8?B?K0xFMVExdHZXKzk3bFFBTkk1OVo2TzRQUm42S3BiU3ZJK0pBNDRaRlEzbVBm?=
+ =?utf-8?B?Z3B3NmtTbk5LaHpkMDNuRnMxRjIzRFl6OFVkT1lsSG1aQnRVcHJUVWdXSXlU?=
+ =?utf-8?B?TDFmZTczTmlVTndTQ2I5WnhMdklDbU5FcFZscmNVMXhqcUUvcU5RRm9ENmxL?=
+ =?utf-8?B?ck0zeHZLcUIyMERLUFNaQWd4UTVmWHorc3FzNFl3dGl1ZjEwWjRBclozcGlB?=
+ =?utf-8?B?NDVtTTcxeGhWUDNtTnZrTE5JVjJpSXpxVko2c2IwcVR1eUV3MG1zb3Byb3hV?=
+ =?utf-8?B?Ynk3a3gzZWcwS2oyVitMVWdRVS8xMU1mcUtkUlVTbXk2QktyVm9GV01DU0VS?=
+ =?utf-8?B?K1MyUkhHR0FQaE5sV1RsUEhkeEpISnJ1T0xGRndxc3dkaTZDZFZRWGZkNmdO?=
+ =?utf-8?B?NXNxenNjLy9YdjJTa05ITThxVkdReGUrdHhOdkZOTjZLWXJHNmE2Z3N1VXJ1?=
+ =?utf-8?B?bmhUUGpzR3dsaVB3a3NQMWp6MCtnTFdjM3c0OUN3ZllHekpFMkl6RHh6STE4?=
+ =?utf-8?B?ZjdOTGE0Mjk1RHdHLzNZM245VDlScFd4WkZKYW5VQ2x3dlg5WGNwNTExTDd3?=
+ =?utf-8?B?ZUU0VmlZYXo5dUNOMjMzUDlRR25EbVEyMnhJQlhLR201emphN0hab0xGSStN?=
+ =?utf-8?B?ZHEwOVVzQVB1UjQwTTE3QkRqUDg4RU9LOEgwZkZ0VUR2LzRMNHB6anhDNldB?=
+ =?utf-8?B?QTFkWUVudFhHcE9lZlFGS0JXdHZnUGtuNC8rRHFkSExJdHpXbzZIMUNxcDVq?=
+ =?utf-8?B?ZGl3bVh0cDVKRzl0QnZyZENZM2xuNmJxSVFXT0lDdzRScW8vWjlEblp3RERI?=
+ =?utf-8?B?ZU9hZ0EwZDFlNFk5K0xvalVQMFo3OWtGcmNyVG04dFE2MEltbU5qNUtsMDBy?=
+ =?utf-8?B?OTY2NUZKWkFxZXBvT3YxTWw3a2o2R3ExL2l3VFlYZjdHT1BQeThJdElicHcx?=
+ =?utf-8?B?dlphMDNCVGtnQ1FKbjFkRHJEdFlEQWtQV2lzbVZMbVpGWmsyaDVzVlVteVYv?=
+ =?utf-8?B?RnhXc3JQdjc5MWJGWDlUSzRMQXcyYklEQnh2YkxkNGtVVFdhTnkzVU44OGNk?=
+ =?utf-8?B?dXMvNHZBdjI5bFBjb1RYemJCMmFvT1NrWFl3YThnU2VwZG10TFM1ZFdTZ0lj?=
+ =?utf-8?B?VXlLK1dNUXh4YzE1TTZnbi9jQ1JxUEhHbzViblBtblJxRWpHcEMyMzNacmFl?=
+ =?utf-8?B?TmVOdVlpMlpjbndPY0hqNkJaV20xaU9wazRqM21hZWlUUXM0TE9XU2twQm4v?=
+ =?utf-8?B?aWFzWnhkZS9ITTNETkVtQUQ3ZlJFdm43RU9OYlRGaTJJTWorVHZTR3Q0YUlK?=
+ =?utf-8?B?dUlyOVFyN2ZOSTZKeHdWUnUyU2w3alI0ZkdKdTJkcG5FTjJpTkJwVTlVWE1L?=
+ =?utf-8?B?VDlyTU5JSXdIZFJDa1JMWTYvRkFGZkUwb1ZXQWs2bkRTaWpScVB6RjltdnFD?=
+ =?utf-8?B?TDJBMktqM2tnRjRJekxNL2FIUW5SUDVEZkQvQ29qSnR3amppbzNZVG9FanFi?=
+ =?utf-8?B?OEI5Z24rSTN1dll0ZTJZWFc4Wk03eUd4by9KR2VEci9Nci9NRWdzTk1xZmpW?=
+ =?utf-8?Q?DKrgDoGj60ipC?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dG5QQjRJRTdQMXJBS3BQOUNjU21LdWw5SzdyRFlQakRERlFib3JuclBOOERN?=
+ =?utf-8?B?UWc3U0VTUFlLVVFGMFFGUEpyWWlRZTlUc0xieDAwbHYrblkvTys1dnVCZ0l1?=
+ =?utf-8?B?Y1pnWUI3Q0pSY1ZaL1htNThQekg2UCtTMEhTZ0MvWjliYlRtVXVPejRybnd3?=
+ =?utf-8?B?Q1RRdi9aV0ZxVjMwdUdVWEZ1ajFYak9ZdFlINU12WDFqN043SXhtSFFnVVpo?=
+ =?utf-8?B?NWNXeXJwSWd4RkxsYlUxa3FtSVNZRkpjT0RjMmlyck9QVDI2ZnZaQ2hoMHEz?=
+ =?utf-8?B?OUVQNVBsTnk3VjFoUVp2bmszNjRSTWVxdVIxdlZNbE5QL1U3S09PaU5BaDRE?=
+ =?utf-8?B?RERBTjNJS25INVFYSGRhVzYvUHRBMlVVRHgwRU85QitiUjI0cTJ0RzN3eU9s?=
+ =?utf-8?B?Q2FkTDY1ZEtzRHIxRk9Bd2R1SUJzaW1uek10Tm1BcXlyamFYVW4zV05WMnVw?=
+ =?utf-8?B?YzZtTThnelZDTmwxSGgwOWt3dy8zcVl3NEhTQi9iV1NpK1hUdndObEsrT0lq?=
+ =?utf-8?B?Y0VjNXBuYU5tRU5LRnBhRkpVV25EQzlBL0FxdU5MeHVPRndQa05ZaUliTmN4?=
+ =?utf-8?B?QVkwdGswQkxZb0lxUHV5RGwxdXNUNTlGNjcyRTdER0x1TEN2TXF0aGNPTWJ6?=
+ =?utf-8?B?aWUzTjFjWGNBMEszeUVLQmdhZ3FVdm85amgxSGloZWVZRDd1WFZwNXhKMTdt?=
+ =?utf-8?B?SEp0S0wvcS9kb2cvdWVnKzVyUjk3N1dIaWUycVZjWU84Q3E0S00zYUZxWkNZ?=
+ =?utf-8?B?VC84UGlEdE1qTTZMQnUzWlJzbE5KTjlLL3cwWi8zUFAvNWFzb09HWjR0Yzln?=
+ =?utf-8?B?ZXM1Q2RwUmhmR2puUHpuTWI1WUV4NFh0VG1VSTBYZUg0ckcxeGljZll6d2tQ?=
+ =?utf-8?B?c0lEUkZRSFpSdWg3WEJZbm9XQndiZ0hIallnODFjVGxnQ3RHTTN5WGFmdmxX?=
+ =?utf-8?B?M1JhL28vV3NBYmk0TmhjMkZZQklYRW4vWWd4aC9YaktXUWxUQW83ME9MRkxn?=
+ =?utf-8?B?dDZ5a1JIVmUrOWZRNmd2VnFHY1h4KzRKKyszcmh3MElmbHpTYlpzQmZmZlRr?=
+ =?utf-8?B?QUgrS0NMN1Z6Q2RDV3NRWUwwWnQ0elZMQlVBWSt2VDE4RHBSM293TmtEdlNQ?=
+ =?utf-8?B?MVFnZldMVWJTMTNLY3FBZWRvM0NnQ3phSzlWM3U4dVlKZkNlU1o2Z0Fnc0JO?=
+ =?utf-8?B?ZjR3T3VNZ2ZTNHJUUkVaamNnRHhvU3VyRVM2ZitrRlIxV1hIbEpBUFptRUtU?=
+ =?utf-8?B?OWF5R0tPUEdZRWFuWGtOUEVmSUpUclVSV3lVMXpVdlpHVWhSeGdxRkd1RFMx?=
+ =?utf-8?B?VUgzUVZ5d3gwQlhPK2FTZmU5SUVCSi9EMXNkZGNaditxRzc0SER2SkEwRDEw?=
+ =?utf-8?B?RDVhWHlJUEtaNmp1eHlUVVNSZWllTmh5TGJYcm8wNU5ua3kya1dTL2V2Q3Nj?=
+ =?utf-8?B?YnorRUw5UmM4K3MrbEVJRTdhZGFoNkdtVmRwRlpDUmxrYnNTSVlXbStuOGVZ?=
+ =?utf-8?B?c0luRGpqYXdDRHozcW5wYlI0bkNYUXhUZnJrR0NHMzFWY3hjM3FidEtYQUJQ?=
+ =?utf-8?B?Ri9GV3pMQ3RsVUVZSmF4SGhGOHExMjY0ajRyaGs2MTBkQ0h0Nzc3QlNlVVhw?=
+ =?utf-8?B?UmdoYkd0U0RwNVBWeHZ3S3VaeWUwNDZxSkhmcUI4U2RDdVVGZHlKcXU0VGRy?=
+ =?utf-8?B?QzhlcVlCclJZU3RmU0lMV04wOVhUWVhvMDZtYXE5TGdoRUJlV245dERQNnFQ?=
+ =?utf-8?B?OE1XUk1CaWRhNHhzSllPNkxBRytSTE9hcmNCeXVTSGhvQjRhenJ2OGdFMU9C?=
+ =?utf-8?B?KytoQlpNUkg4RnhHZm4zOXh6MWNtTWw0T1ZlMUdFdnEwVXZ5WGtkUDFRS3pH?=
+ =?utf-8?B?clM4Z1hweG5lSGdhTnlhUUlzZEQzWWEvejlvOTliS0xtR2ppK3p6QWZsTE1O?=
+ =?utf-8?B?MFBCVEExTWRhbXRPNWFmM3JaazcxSFVSODFIc2N4Znl0UVZEbGkwQXBhdnZ3?=
+ =?utf-8?B?Zk9RMU8wdTZrbSsvOTlvajc0VmpTOGxwb1U3NzBTczV0QjlpYU1ia0hoaHNU?=
+ =?utf-8?B?QWJYT1M0MjZrMUpNYjFRR0ZBMWthYlhmcUNES1lwdEUvZkZSUUpjMjJhUUxC?=
+ =?utf-8?Q?f37H3uFx36Kce1SweEEnpii7O?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5c25bda2-da56-4557-f687-08dd50f6e56c
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2025 15:05:49.9907
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: vENyi1BqIDH2Vmt4z2lQDPuELFOWe5ymrHLk0eJ/9UyBz/j89j0TliQZuvZyk7Hk6bMN/M4gsP9X/jwzE3I/VQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB9029
 
-Hi, Geert,
-
-On 19.02.2025 16:24, Geert Uytterhoeven wrote:
-> On (H)SCIF with a Baud Rate Generator for External Clock (BRG), there
-> are multiple ways to configure the requested serial speed.  If firmware
-> uses a different method than Linux, and if any debug info is printed
-> after the Bit Rate Register (SCBRR) is restored, but before termios is
-> reconfigured (which configures the alternative method), the system may
-> lock-up during resume.
+On Fri, Jan 17, 2025 at 05:53:33PM +0100, Valentin Schneider wrote:
+> On 17/01/25 16:52, Jann Horn wrote:
+> > On Fri, Jan 17, 2025 at 4:25 PM Valentin Schneider <vschneid@redhat.com> wrote:
+> >> On 14/01/25 19:16, Jann Horn wrote:
+> >> > On Tue, Jan 14, 2025 at 6:51 PM Valentin Schneider <vschneid@redhat.com> wrote:
+> >> >> vunmap()'s issued from housekeeping CPUs are a relatively common source of
+> >> >> interference for isolated NOHZ_FULL CPUs, as they are hit by the
+> >> >> flush_tlb_kernel_range() IPIs.
+> >> >>
+> >> >> Given that CPUs executing in userspace do not access data in the vmalloc
+> >> >> range, these IPIs could be deferred until their next kernel entry.
+> >> >>
+> >> >> Deferral vs early entry danger zone
+> >> >> ===================================
+> >> >>
+> >> >> This requires a guarantee that nothing in the vmalloc range can be vunmap'd
+> >> >> and then accessed in early entry code.
+> >> >
+> >> > In other words, it needs a guarantee that no vmalloc allocations that
+> >> > have been created in the vmalloc region while the CPU was idle can
+> >> > then be accessed during early entry, right?
+> >>
+> >> I'm not sure if that would be a problem (not an mm expert, please do
+> >> correct me) - looking at vmap_pages_range(), flush_cache_vmap() isn't
+> >> deferred anyway.
+> >
+> > flush_cache_vmap() is about stuff like flushing data caches on
+> > architectures with virtually indexed caches; that doesn't do TLB
+> > maintenance. When you look for its definition on x86 or arm64, you'll
+> > see that they use the generic implementation which is simply an empty
+> > inline function.
+> >
+> >> So after vmapping something, I wouldn't expect isolated CPUs to have
+> >> invalid TLB entries for the newly vmapped page.
+> >>
+> >> However, upon vunmap'ing something, the TLB flush is deferred, and thus
+> >> stale TLB entries can and will remain on isolated CPUs, up until they
+> >> execute the deferred flush themselves (IOW for the entire duration of the
+> >> "danger zone").
+> >>
+> >> Does that make sense?
+> >
+> > The design idea wrt TLB flushes in the vmap code is that you don't do
+> > TLB flushes when you unmap stuff or when you map stuff, because doing
+> > TLB flushes across the entire system on every vmap/vunmap would be a
+> > bit costly; instead you just do batched TLB flushes in between, in
+> > __purge_vmap_area_lazy().
+> >
+> > In other words, the basic idea is that you can keep calling vmap() and
+> > vunmap() a bunch of times without ever doing TLB flushes until you run
+> > out of virtual memory in the vmap region; then you do one big TLB
+> > flush, and afterwards you can reuse the free virtual address space for
+> > new allocations again.
+> >
+> > So if you "defer" that batched TLB flush for CPUs that are not
+> > currently running in the kernel, I think the consequence is that those
+> > CPUs may end up with incoherent TLB state after a reallocation of the
+> > virtual address space.
+> >
 > 
-> Fix this by saving and restoring the contents of the Frequency Division
-> (DL) and Clock Select (CKS) registers as well.
+> Ah, gotcha, thank you for laying this out! In which case yes, any vmalloc
+> that occurred while an isolated CPU was NOHZ-FULL can be an issue if said
+> CPU accesses it during early entry;
 
-Keeping the thinks RZ/G3S focused (as proposed in the first versions of
-this support), I missed there might be other registers on other IP variants.
+So the issue is:
 
-Reviewing the full list of registers from [1], maybe the HSSRR and
-SCPCR should be saved/restored as well?
+CPU1: unmappes vmalloc page X which was previously mapped to physical page
+P1.
 
-Thank you,
-Claudiu
+CPU2: does a whole bunch of vmalloc and vfree eventually crossing some lazy
+threshold and sending out IPIs. It then goes ahead and does an allocation
+that maps the same virtual page X to physical page P2.
 
+CPU3 is isolated and executes some early entry code before receving said IPIs
+which are supposedly deferred by Valentin's patches.
 
-[1]
-https://elixir.bootlin.com/linux/v6.13.3/source/drivers/tty/serial/sh-sci.h#L14
+It does not receive the IPI becuase it is deferred, thus access by early
+entry code to page X on this CPU results in a UAF access to P1.
 
-> 
-> Fixes: 22a6984c5b5df8ea ("serial: sh-sci: Update the suspend/resume support")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Is that the issue?
 
-For this patch:
-Tested-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+thanks,
 
-> ---
-> This can be reproduced on e.g. Salvator-X(S) by enabling the debug
-> print in sci_brg_calc(), and using s2ram with no_console_suspend.
-> ---
->  drivers/tty/serial/sh-sci.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-> index df6512c9c0ff28db..70f34b8a93888eb9 100644
-> --- a/drivers/tty/serial/sh-sci.c
-> +++ b/drivers/tty/serial/sh-sci.c
-> @@ -109,6 +109,8 @@ struct sci_suspend_regs {
->  	u16 scscr;
->  	u16 scfcr;
->  	u16 scsptr;
-> +	u16 scdl;
-> +	u16 sccks;
->  	u8 scbrr;
->  	u8 semr;
->  };
-> @@ -3571,6 +3573,10 @@ static void sci_console_save(struct sci_port *s)
->  		regs->scfcr = sci_serial_in(port, SCFCR);
->  	if (sci_getreg(port, SCSPTR)->size)
->  		regs->scsptr = sci_serial_in(port, SCSPTR);
-> +	if (sci_getreg(port, SCDL)->size)
-> +		regs->scdl = sci_serial_in(port, SCDL);
-> +	if (sci_getreg(port, SCCKS)->size)
-> +		regs->sccks = sci_serial_in(port, SCCKS);
->  	if (sci_getreg(port, SCBRR)->size)
->  		regs->scbrr = sci_serial_in(port, SCBRR);
->  	if (sci_getreg(port, SEMR)->size)
-> @@ -3590,6 +3596,10 @@ static void sci_console_restore(struct sci_port *s)
->  		sci_serial_out(port, SCFCR, regs->scfcr);
->  	if (sci_getreg(port, SCSPTR)->size)
->  		sci_serial_out(port, SCSPTR, regs->scsptr);
-> +	if (sci_getreg(port, SCDL)->size)
-> +		sci_serial_out(port, SCDL, regs->scdl);
-> +	if (sci_getreg(port, SCCKS)->size)
-> +		sci_serial_out(port, SCCKS, regs->sccks);
->  	if (sci_getreg(port, SCBRR)->size)
->  		sci_serial_out(port, SCBRR, regs->scbrr);
->  	if (sci_getreg(port, SEMR)->size)
+ - Joel
 
 
