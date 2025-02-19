@@ -1,106 +1,138 @@
-Return-Path: <linux-kernel+bounces-522457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A1C3A3CA97
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:59:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D775A3CAAA
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:01:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E14A616C708
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 20:58:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D4673B8BFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 20:58:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CEA921B9C5;
-	Wed, 19 Feb 2025 20:57:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 345BA24E4CD;
+	Wed, 19 Feb 2025 20:58:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LVULq6oP"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FWSowlse"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B84121516A
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 20:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D76E521B9C5;
+	Wed, 19 Feb 2025 20:58:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739998665; cv=none; b=tJRvYrvQZiakjH1SsokSHjbdgUN2AW/ThyT5XDNap8/XtWE0lHTgSHn8uypKcXhjQWmXFbzcMBcWUKJ0kGt2JZmOyvgP+p5KXEwcvp67f5NzfdxLHL+nOrrJyjwpI/H5eXPDrYmc+7hgGJE7PObhOxUS+mE14Iuf/XRC04F2fxk=
+	t=1739998728; cv=none; b=MObXfOAMi8oypJM8LqfavntAQPUoivkGxKpr2TggHQ/kdrIWH+3TUGIIGD6QaZTKn04/RKwVHiIp/BHaBU8fd8gCXc7plqNQB+mDFelfh3+7CePCDYxhqvu3OB+G3KtKPcqibdZGZn/5p7RxzVmm+KcQT3PJr5hBLn9hI5vHHCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739998665; c=relaxed/simple;
-	bh=hKJ8Hjb2YjJG6xMLzZjpgVeKjJRPKbszhNIn4r9AUWQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tr6pfuoWnUrr47S9bK4ApHraZn9bzjzXybv4HO2wEHKlAh8TSFSNblceTF/Eof8Y974yHoIWgoc0Hi+31lKFq2mrv9CK5hrcMROMihVMQwi4pwfeHDT4KjXIu5hMM60qUDMsvaqBwLTlvkaspOD8C0a51jJ1xqjowbFvQdKNSSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LVULq6oP; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=f94VpCiIl8a2I0qDr+LujsMvrVHieoe1sVcOcgeYMTE=; b=LVULq6oP2UzHNWOGK9KNudBmFg
-	06TwrTMhQne+4T3RQ/fRXzrSLkzdane8eDpIPFLP1e7PSPGlh/BapVTlQMh/76TjEx2XcxVbVV5qY
-	FEL3UFwAPkUfyh2XDgyHcM9vlxtvEpq92E41pyUWonGxU+OTuLRxgCrsrFrYA2Lc0OCW9RcHLemeD
-	TzmW6gLpNYs1uJOIhFV5d7jmmMNG+A34KPBMTwUz8CT7JfSWgqKlq8SGljwBMF0+U9YdUtqYsDkaG
-	jzTJ7CLcRy1w5XvtajVKtD77c9LbTmaXuUvVS4q2fNydYmGvhVqo9oXr6BkD4+N1o6ozTImz9pbPC
-	Sjobfsww==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tkr8T-00000007BID-1vcw;
-	Wed, 19 Feb 2025 20:57:37 +0000
-Date: Wed, 19 Feb 2025 20:57:37 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Barry Song <21cnbao@gmail.com>
-Cc: Suren Baghdasaryan <surenb@google.com>,
-	Lokesh Gidra <lokeshgidra@google.com>, linux-mm@kvack.org,
-	akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-	zhengtangquan@oppo.com, Barry Song <v-songbaohua@oppo.com>,
-	Andrea Arcangeli <aarcange@redhat.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	Brian Geffon <bgeffon@google.com>,
-	Christian Brauner <brauner@kernel.org>,
-	David Hildenbrand <david@redhat.com>,
-	Hugh Dickins <hughd@google.com>, Jann Horn <jannh@google.com>,
-	Kalesh Singh <kaleshsingh@google.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>,
-	Nicolas Geoffray <ngeoffray@google.com>,
-	Peter Xu <peterx@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-	Shuah Khan <shuah@kernel.org>, ZhangPeng <zhangpeng362@huawei.com>,
-	Yu Zhao <yuzhao@google.com>
-Subject: Re: [PATCH RFC] mm: Fix kernel BUG when userfaultfd_move encounters
- swapcache
-Message-ID: <Z7ZFwff-8StHCzWl@casper.infradead.org>
-References: <20250219112519.92853-1-21cnbao@gmail.com>
- <CAJuCfpEWFz14R1vD4Rezy98WBk25HWWX+6DsGBekeYMugKTsfQ@mail.gmail.com>
- <CAGsJ_4yx1=jaQmDG_9rMqHFFkoXqMJw941eYvtby28OqDq+S7g@mail.gmail.com>
+	s=arc-20240116; t=1739998728; c=relaxed/simple;
+	bh=1YnkwmqTBrxU2LC4IjJbS9rALrX2MyA+O3NS8Wavzwk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tNHyn74FFbamosXN0ErrD8AFFkEe8GG5fvbEQd7590OOSMxvD9sQLIv4HMIMwAd0eWjDGxM5O1Z36RWB6UHKm2EkV3PfDzJZ5j27SjnEwRyBJwi7WUNt5xxzSZtIUWKHh3p+HEi9WuqPQELLzn+lezAyeuA/pGjdf5JWXKKcl9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FWSowlse; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30615661f98so1878541fa.2;
+        Wed, 19 Feb 2025 12:58:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739998725; x=1740603525; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=29zpgtmqkMxdyASEnJJCIlnqLj+EywBz14CpRjuAKx4=;
+        b=FWSowlseyT47EW9v6ktzl5vc6swboIOyCQMzh/pauntE4B42MhigCVGrDp55s6oRli
+         rvv2QxHm0zxGCaJiaK075RseSf6ZQZvfVtcq5e/QDWxTKDsTYQRXvigL3blfHmX3nEja
+         sf3uyQTWu32jRrhwijZ7nltNtT3wbtP2ETPb2+EO//ttXjOEO2t82Tke+0Gr8NwvHrTE
+         +VPJqeKRQSNBGuJtuVjNCTiB1/AwVA5NIWZZ1oqigoD99STpD9VBaKwp8Z7+M2XdlDVW
+         bPUN6VGdqsJvAC3ikmb3ziwVrILokxxDLtD9kLSQ1FwXbSoSfsiUwSyEN0/cF7KHD3JV
+         xSAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739998725; x=1740603525;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=29zpgtmqkMxdyASEnJJCIlnqLj+EywBz14CpRjuAKx4=;
+        b=MyDZczhDHQ0txjGcq0fGl26h/GYgeCiptcGdtIRMGW3XGWiIfGip0ZSbCHsSd19T9T
+         l5H93w8oGN/KR7avOaen87KC44a+6GsJk5cBHG763nBaOiFT3lPV+cpShOQu09kdjS9b
+         u1hnlqlNePyHKHDsUjIRDRWcvTf+GJqIoKjP6qKRnjsgBAUoz60QwwqGDnUTVylvpoEa
+         lwy4Ij4QlzGNVoxm10N+Fym3MZiJl0DEHuWbx8G0MPXAVS0BitJPENL/UbLtR0k+wI5/
+         ssCsL3uUtTk47YgHTZbDXjDKk1pfvyl+F5mtLO/ViGMzlu1VeQbm/VqDIEBuR9pfYH9Z
+         u+dA==
+X-Forwarded-Encrypted: i=1; AJvYcCVUlT9AilP68JhPnN9Bolht6oA21c7JvbWTEfuSGFnfN+J/Xj25d0nH5Ul1W2AMd8vFSY3NvAMFlNw/0CDdoz1A@vger.kernel.org, AJvYcCWfOz2ag0raN8CG7STpVfkMhttfN6EXPTci5WuvYTsTjh4Rbmg3Do8LXO1oXjyxrbxFkJk45gsxanjRrXDw@vger.kernel.org, AJvYcCX3U8HviNzjo1Tab3j6KLMUF4WEsWi6tfxU5Yqh4xK4511/NIhjve7+HxXGSHvP8SAUIkDmOn7rSFw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBo05/NwirQtC1poN2asACreQ07tOr0SjezCzk5H27JJaBvL00
+	DJIo1fTCw+l/Dhc/+ClooD+zqaiUdyYBI5MWKi9366TQzqAzFyxTKK5xr9LcJKDH4a2l2BUsK5S
+	7Mj9RirkoxVQJREQ+mIgU29u5opg=
+X-Gm-Gg: ASbGnctLwhtqFb7AqYGClu6ld+VcfWQXetKxifL593OygAz7VWVhYtxkSgBe5FYG8+O
+	i5FQPpyy7mPWHX6SanEvXJFv5Dprlj2mkavGHojDcDtAaoomSRWI+jvxZ0wsBeupCM3AI54+Hpm
+	fBed1CcLp+aU3U
+X-Google-Smtp-Source: AGHT+IGoT3bsf2kdFagKyysGj4sdKTWGjnr/6od8iw5I/qyGVa7OesRWN+3jUei2+ekugunoU+v2tNYtkTv+DDddmPk=
+X-Received: by 2002:a2e:b60e:0:b0:308:f4cc:9505 with SMTP id
+ 38308e7fff4ca-30927a577c6mr53587141fa.2.1739998724732; Wed, 19 Feb 2025
+ 12:58:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGsJ_4yx1=jaQmDG_9rMqHFFkoXqMJw941eYvtby28OqDq+S7g@mail.gmail.com>
+References: <20250214-printf-kunit-convert-v4-0-c254572f1565@gmail.com>
+ <20250214-printf-kunit-convert-v4-3-c254572f1565@gmail.com> <CAKwiHFh52-_ssWjC3wdtZ=92AHAw7grnDugZpmf7T962VQrEbQ@mail.gmail.com>
+In-Reply-To: <CAKwiHFh52-_ssWjC3wdtZ=92AHAw7grnDugZpmf7T962VQrEbQ@mail.gmail.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Wed, 19 Feb 2025 15:58:08 -0500
+X-Gm-Features: AWEUYZllpGxIALFm_VU7C7f0caMYFvyxidAHTXkA2rezSlvudlun8QXj74kF6fQ
+Message-ID: <CAJ-ks9kadHvF3gKjZh-_oFdb1x_qOR6i1=Jamuaw9iq129gOnQ@mail.gmail.com>
+Subject: Re: [PATCH v4 3/3] printf: implicate test line in failure messages
+To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Arpitha Raghunandan <98.arpi@gmail.com>, David Gow <davidgow@google.com>, 
+	Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-m68k@lists.linux-m68k.org, linuxppc-dev@lists.ozlabs.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 20, 2025 at 09:37:50AM +1300, Barry Song wrote:
-> > How complex would that be? Is it a matter of adding
-> > folio_maybe_dma_pinned() checks, doing folio_move_anon_rmap() and
-> > folio->index = linear_page_index like in move_present_pte() or
-> > something more?
-> 
-> My main concern is still with large folios that require a split_folio()
-> during move_pages(), as the entire folio shares the same index and
-> anon_vma. However, userfaultfd_move() moves pages individually,
-> making a split necessary.
-> 
-> However, in split_huge_page_to_list_to_order(), there is a:
-> 
->         if (folio_test_writeback(folio))
->                 return -EBUSY;
-> 
-> This is likely true for swapcache, right?
+On Wed, Feb 19, 2025 at 3:41=E2=80=AFPM Rasmus Villemoes
+<linux@rasmusvillemoes.dk> wrote:
+>
+> On Fri, 14 Feb 2025 at 22:53, Tamir Duberstein <tamird@gmail.com> wrote:
+> >
+> > This improves the failure output by pointing to the failing line at the
+> > top level of the test, e.g.:
+> >       # test_number: EXPECTATION FAILED at lib/printf_kunit.c:103
+> >   lib/printf_kunit.c:167: vsnprintf(buf, 256, "%#-12x", ...) wrote '0x1=
+234abcd  ', expected '0x1234abce  '
+> >       # test_number: EXPECTATION FAILED at lib/printf_kunit.c:142
+> >   lib/printf_kunit.c:167: kvasprintf(..., "%#-12x", ...) returned '0x12=
+34abcd  ', expected '0x1234abce  '
+> >
+>
+> Actually, I'm not sure that is an improvement as-is, with the two
+> different line numbers being printed. It takes some thought to
+> recognize which one is relevant and which one is not.
 
-I don't see why?  When they get moved to the swap cache, yes, they're
-immediately written back, but after being swapped back in, they stay in
-the swap cache, so they don't have to be moved back to the swap cache.
-Right?
+They're both relevant -- `do_test` does a bunch of checks, so you want
+to know which particular check failed, but also which invocation at
+the top level resulted in that check failing.
 
+> Can't we have a variant of KUNIT_FAIL that allows one to pass the
+> file/line info when the caller has better info than the location of
+> the KUNIT_FAIL itself?
+>
+> >  static void __printf(5, 0)
+> > -do_test(struct kunit *kunittest, int bufsize, const char *expect, int =
+elen,
+> > -       const char *fmt, va_list ap)
+> > +do_test(struct kunit *kunittest, const char *file, const int line, int=
+ bufsize, const char *expect,
+> > +       int elen, const char *fmt, va_list ap)
+>
+> This can't be right, the __printf attribute must be updated accordingly.
+
+Good catch. Oddly I'm not able to reproduce any compiler complaints
+here, even with the attribute completely removed.
 
