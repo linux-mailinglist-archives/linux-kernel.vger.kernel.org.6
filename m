@@ -1,202 +1,260 @@
-Return-Path: <linux-kernel+bounces-522021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C7C9A3C4FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:28:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1394DA3C4F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:28:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D35B7170002
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:25:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 466663BA5B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:26:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 660731FDE10;
-	Wed, 19 Feb 2025 16:25:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93D901FECD3;
+	Wed, 19 Feb 2025 16:26:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gsuIcR7V"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="Me53PNRJ"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B610C1F417A
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 16:25:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739982327; cv=none; b=OFrPyIZcr3QcOU+/viajfalME5TkKvcxd2rOof2F92se3zZYCp7mRbeRD3SJAlNU22EgObUNWioW/0MVWWy3xmgbkoy2REfLgEzeNzzU6zj0RiW5eI8vsa0BKWo4LXDZtrhWH0MXfrvIu+YMt7BXcUrOLId71ShpLiM1kHIiczA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739982327; c=relaxed/simple;
-	bh=wfF5o1CDJal8cfQTpr0XKVI6lWBEXW9eOcdNhbClFU8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FS1b2YeTqs9zHghFVx7fZpwZmcX0iTfuhuJiqTaok18pjNv+CTvcIXWL8ZvZfJs49N1dtfAsFDCbxBYNE2XSVWKjab0wv+KoOOXLbEcQQDNSxBc1EeDMjPZkcakZ7V5Kh1oIAcdWA3bK0yVaLyN29GTxReRF3cz6V/rYlH/TCAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gsuIcR7V; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5e07897bf66so2992204a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 08:25:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739982324; x=1740587124; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vfr8xcnV6SOXQrnYOMtzUn70KMqxWnNTiIb61QR+9Ko=;
-        b=gsuIcR7VCb5OlnJS9CGGJL6XPSi4FHTUwdMP/m2NYl/5x1B80szfpHSwX0hKJLjbUL
-         FDAVYFxcCwc3j8wAyFObpCQqCCCYirYVSDGvxnWU1W+z8eRWt4axObX8hyXp7GC6YOJz
-         ESd5BXTalas46BO2WAxwarpv8CLAfeMK3SGDgL7rXJM7fe1IAPkqvR8GxUuartbBKaeF
-         KwGWEXFbzkmhtpkV5Slm0+mEGdB76m3eHW0hSAAmOfIukvBjuuDQHEpz+XR3YvlYlHT5
-         fImA9KpCmAREWq6el3dGhvLXWrM2iqPTcEVOQOspbQRHBrjGFaAgnFRBZ1JAB56R7w2K
-         xREg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739982324; x=1740587124;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Vfr8xcnV6SOXQrnYOMtzUn70KMqxWnNTiIb61QR+9Ko=;
-        b=Zw09Vzcg5SuLlCRi4dV1v98jzOzYSbUr/p2fyTTVGSzXq27SIGmElacaMwPI6DCcCJ
-         RdLy6r9yyls9MnZcDfjb0E3EU7u114izFIexSqeYIP4f8HoK4j3Z+R/SR14O2Kh+/4GJ
-         oJVTQEYRL2TbAId6EoYxeA+oZhJOT5ysQLFCY0DaOVmtWaooc6PgRDJdPw4F5lXvKTzI
-         5lb+vKjMGK3LW/AZa2cmRO9cWi0V/oMgxb2Y6UpVvRZ6VLW6R1L8eFC81yIKU0/JILg5
-         92qJaNp7xKd7WriRD0YekbL4li5E46+eQhvHGUD1u8i8UeW1iQTxbW9+rCF2G6aygB4e
-         hoAg==
-X-Forwarded-Encrypted: i=1; AJvYcCW3UuVWRV+noCIjnBKixWa6d0j8hFibAVsR86lkl2GNJBaGKMg2vb1RWOdRwS5hkyPC47Fcm8Vuh/Qywdg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywj49zDUsXb3V33WhTXLRiuyq8vZYMpo/P5y+2C8us/EUcApZAo
-	iAzOLrRrmU/10n3K+WBn5P2tG9iXSbveYvAyqtaMNGsS11nRk3t0lnC6fPUH+2o5PTbQ6UQTSFE
-	JaokSyAtqTzkQ4vlCU37v5EbJa4d0kGw8DiIycg==
-X-Gm-Gg: ASbGnctIR5LU3HYCblBB4Ajp2aJzIlY/Jqs65rBNJT8SX9uDeXMxamsriL2A1DisaBo
-	zXQFI7kHoYz3u6OzGiApOGqJ3JMZHsYUwI9Nt6kQS1/lvKkQc4zookqJZRrnlfmu3vIGhfJus5J
-	ZkGex0+eNc9/87uruI6VnbBthFrw==
-X-Google-Smtp-Source: AGHT+IHQBEIHsZVyeycE7fivGlzMEEtEwNHnuqIzam/OZZjAgHRnz6FJFxQCLkYEUS034I3fKZFwV69phIEn6tQXZi4=
-X-Received: by 2002:a05:6402:42c9:b0:5de:481a:cbc1 with SMTP id
- 4fb4d7f45d1cf-5e08951cbe6mr4299900a12.16.1739982323909; Wed, 19 Feb 2025
- 08:25:23 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF4611FDA9D;
+	Wed, 19 Feb 2025 16:26:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739982370; cv=pass; b=Qwlr0+Hqinp7A3qBiJOcZZuke8Efl/W/PFrX1y/STnDqgEIr+QxFwbXGmLDhQ0/uouvA6ihqGTvBKih2EYL8VeuDuGW2X7emQW5MuY2BVNTj2dgG5bg0TwjLmSnU1yD+zOjR3alJjstHyfZK9ieXG0IKuQfrhONif882kP93UTE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739982370; c=relaxed/simple;
+	bh=fnY+xRhs/mvmhcqrrOJoleU6kesLGIJG/3olYNCyL1k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y7HdSj14NaOD/ydUDnGt/Ob8uB3ULHt2gv9DxbCxt0YBxyBmRZHyhcWeOXlcQFmm8lWX4dBGbPG2kemntw7AFLjvHc+vHy4ufs7XkZx3AXwc4R/iOCBErCGGy3Swtd02dcBQNea4n1+S0Pn6WnYCbms5fhW+bvmfKLIPJZUG3iw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=Me53PNRJ; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1739982346; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=mHdTfssk3hO/gVSjbUBWQIgt+/aextPwhJBmYx2l1LALAtXke+PJBVC3ehWpndt/8GXW9YqXYnRQfxHUyeH1u+OyagIttWYVrK7zcpoq8GzEialDmTQkxODQ+C1UnRCxiMvYBzBlBRJyTbFxM6vItnfX10hkVATuJM72NF6jexY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1739982346; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=pJryDSJkCrzxd3hCCxQyAoikD3lNWruHuXg6LmIobnI=; 
+	b=kKHxBdK74Z+o2689NatXJRZuL9bfFDwypgrT6rx1ZejbrFml8cEwlEtokk6KvgG65oakSkRWd/DNoA/yMoJ/bcR1tFJ9Osi5mhTxuE3RTOpC31hpBvr7xAPl4vUCS6pl4SL+vauPBuHMuFs52Y7c4J6HyRmu9cqTMGE13V71qII=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1739982346;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=pJryDSJkCrzxd3hCCxQyAoikD3lNWruHuXg6LmIobnI=;
+	b=Me53PNRJII0FexdnI44sYwGiP82B3cKKaUkB+sNZGy9DbbABEBvokG649Sbpl+8l
+	M/M0TGPsS5+B3yX6vYBo9sXibiPODW388vOONDB1UWyRC+q6cnRoiYVkMQNPpqz71GW
+	fSyi2l9JlJAWozzG+JPzYuVbBjv9NAGlgTv5Zum4=
+Received: by mx.zohomail.com with SMTPS id 1739982344632512.1546033548996;
+	Wed, 19 Feb 2025 08:25:44 -0800 (PST)
+From: Daniel Almeida <daniel.almeida@collabora.com>
+To: lgirdwood@gmail.com,
+	broonie@kernel.org,
+	sebastian.reichel@collabora.com,
+	sjoerd.simons@collabora.co.uk,
+	ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	a.hindborg@kernel.org,
+	benno.lossin@proton.me,
+	aliceryhl@google.com,
+	tmgross@umich.edu,
+	dakr@kernel.org
+Cc: Daniel Almeida <daniel.almeida@collabora.com>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] rust: regulator: add a bare minimum regulator abstraction
+Date: Wed, 19 Feb 2025 13:25:16 -0300
+Message-ID: <20250219162517.278362-1-daniel.almeida@collabora.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250219093747.2612-1-xuewen.yan@unisoc.com> <20250219093747.2612-2-xuewen.yan@unisoc.com>
-In-Reply-To: <20250219093747.2612-2-xuewen.yan@unisoc.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Wed, 19 Feb 2025 17:25:12 +0100
-X-Gm-Features: AWEUYZnAy44goPgfZ57mSEh_j555Ws6BqhvsM4T9ShWk7WDHRvA05P6bJ_F-NAU
-Message-ID: <CAKfTPtDuZSL4UdCbjkAqy2bnKo_FrqEU33EcuuPwfTS+sO8R3w@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] sched/uclamp: Add uclamp_is_used() check before
- enable it
-To: Xuewen Yan <xuewen.yan@unisoc.com>
-Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
-	mgorman@suse.de, vschneid@redhat.com, christian.loehle@arm.com, 
-	hongyan.xia2@arm.com, ke.wang@unisoc.com, di.shen@unisoc.com, 
-	xuewen.yan94@gmail.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On Wed, 19 Feb 2025 at 10:40, Xuewen Yan <xuewen.yan@unisoc.com> wrote:
->
-> Because the static_branch_enable() would get the cpus_read_lock(),
-> and sometimes users may frequently set the uclamp value of tasks,
-> and this operation would call the static_branch_enable()
-> frequently, so add the uclamp_is_used() check to prevent calling
-> the cpus_read_lock() frequently.
-> And to make the code more concise, add a helper function to encapsulate
-> this and use it everywhere we enable sched_uclamp_used.
->
-> Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
+Add a bare minimum regulator abstraction to be used by Rust drivers.
+This abstraction adds a small subset of the regulator API, which is
+thought to be sufficient for the drivers we have now.
 
-Apart the small comment below
+Regulators provide the power needed by many hardware blocks and thus are
+likely to be needed by a lot of drivers.
 
-Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
+It was tested on rk3588, where it was used to power up the "mali"
+regulator in order to power up the GPU.
 
-> ---
-> V2:
-> - change some commit message;
-> - Add a helper function and use it everywhere when enable uclamp (Vincent)
-> ---
-> ---
->  kernel/sched/core.c     |  6 +++---
->  kernel/sched/sched.h    | 14 ++++++++++++++
->  kernel/sched/syscalls.c |  2 +-
->  3 files changed, 18 insertions(+), 4 deletions(-)
->
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index 38a7192bfc19..0466a2f61b99 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -1942,12 +1942,12 @@ static int sysctl_sched_uclamp_handler(const struct ctl_table *table, int write,
->         }
->
->         if (update_root_tg) {
-> -               static_branch_enable(&sched_uclamp_used);
-> +               sched_uclamp_enable();
->                 uclamp_update_root_tg();
->         }
->
->         if (old_min_rt != sysctl_sched_uclamp_util_min_rt_default) {
-> -               static_branch_enable(&sched_uclamp_used);
-> +               sched_uclamp_enable();
->                 uclamp_sync_util_min_rt_default();
->         }
->
-> @@ -9295,7 +9295,7 @@ static ssize_t cpu_uclamp_write(struct kernfs_open_file *of, char *buf,
->         if (req.ret)
->                 return req.ret;
->
-> -       static_branch_enable(&sched_uclamp_used);
-> +       sched_uclamp_enable();
->
->         guard(mutex)(&uclamp_mutex);
->         guard(rcu)();
-> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> index 3624fdce5536..bd22af347d0b 100644
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -3407,6 +3407,18 @@ static inline bool uclamp_is_used(void)
->         return static_branch_likely(&sched_uclamp_used);
->  }
->
-> +/*
-> + * Enabling static branches would get the cpus_read_lock(),
-> + * check whether uclamp_is_used before enable it to avoid always
-> + * calling cpus_read_lock(). Because we never disable this
-> + * static key once enable it.
+Note that each instance of [`Regulator`] obtained from
+`Regulator::get()` can only be enabled once. This ensures that the calls
+to enable and disable are perfectly balanced before `regulator_put()` is
+called, as mandated by the C API.
 
-Maybe, simply:
+Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
+---
+ rust/bindings/bindings_helper.h |   1 +
+ rust/kernel/lib.rs              |   2 +
+ rust/kernel/regulator.rs        | 120 ++++++++++++++++++++++++++++++++
+ 3 files changed, 123 insertions(+)
+ create mode 100644 rust/kernel/regulator.rs
 
-Enabling static branches would get the cpus_read_lock(),
-check uclamp_is_used before enabling it. There is no race issue
-because we never disable this static key once enabled.
+diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
+index 55354e4dec14..92504f19655e 100644
+--- a/rust/bindings/bindings_helper.h
++++ b/rust/bindings/bindings_helper.h
+@@ -28,6 +28,7 @@
+ #include <linux/poll.h>
+ #include <linux/property.h>
+ #include <linux/refcount.h>
++#include <linux/regulator/consumer.h>
+ #include <linux/sched.h>
+ #include <linux/security.h>
+ #include <linux/slab.h>
+diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+index 496ed32b0911..0224f4c248c0 100644
+--- a/rust/kernel/lib.rs
++++ b/rust/kernel/lib.rs
+@@ -68,6 +68,8 @@
+ pub mod prelude;
+ pub mod print;
+ pub mod rbtree;
++#[cfg(CONFIG_REGULATOR)]
++pub mod regulator;
+ pub mod revocable;
+ pub mod security;
+ pub mod seq_file;
+diff --git a/rust/kernel/regulator.rs b/rust/kernel/regulator.rs
+new file mode 100644
+index 000000000000..df6eb325d11a
+--- /dev/null
++++ b/rust/kernel/regulator.rs
+@@ -0,0 +1,120 @@
++// SPDX-License-Identifier: GPL-2.0
++
++//! Regulator abstractions.
++//!
++//! C header: [`include/linux/regulator/consumer.h`](srctree/include/linux/regulator/consumer.h)
++
++use crate::{
++    bindings,
++    device::Device,
++    error::{from_err_ptr, to_result, Result},
++    prelude::*,
++};
++
++use core::ptr::NonNull;
++
++/// A `struct regulator` abstraction.
++///
++/// Note that each instance of [`Regulator`] obtained from `Regulator::get()`
++/// can only be enabled once. This ensures that the calls to enable and disable
++/// are perfectly balanced before `regulator_put()` is called, as mandated by
++/// the C API.
++///
++/// # Invariants
++///
++/// - [`Regulator`] is a non-null wrapper over a pointer to a `struct regulator`
++///   obtained from `regulator_get()`.
++/// - Each instance of [`Regulator`] obtained from `Regulator::get()` can only
++///   be enabled once.
++pub struct Regulator {
++    inner: NonNull<bindings::regulator>,
++    enabled: bool,
++}
++
++impl Regulator {
++    /// Obtains a [`Regulator`] instance from the system.
++    pub fn get(dev: &Device, name: &CStr) -> Result<Self> {
++        // SAFETY: It is safe to call `regulator_get()`, on a device pointer
++        // earlier received from the C code.
++        let inner = from_err_ptr(unsafe { bindings::regulator_get(dev.as_raw(), name.as_ptr()) })?;
++
++        // SAFETY: We can safely trust `inner` to be a pointer to a valid
++        // regulator if `ERR_PTR` was not returned.
++        let inner = unsafe { NonNull::new_unchecked(inner) };
++
++        Ok(Self {
++            inner,
++            enabled: false,
++        })
++    }
++
++    /// Enable the regulator.
++    pub fn enable(&mut self) -> Result {
++        if self.enabled {
++            return Ok(());
++        }
++
++        // SAFETY: Safe as per the type invariants of `Regulator`.
++        let res = to_result(unsafe { bindings::regulator_enable(self.inner.as_ptr()) });
++        if res.is_ok() {
++            self.enabled = true;
++        }
++
++        res
++    }
++
++    /// Disable the regulator.
++    pub fn disable(&mut self) -> Result {
++        if !self.enabled {
++            return Ok(());
++        }
++
++        // SAFETY: Safe as per the type invariants of `Regulator`.
++        let res = to_result(unsafe { bindings::regulator_disable(self.inner.as_ptr()) });
++        if res.is_ok() {
++            self.enabled = false;
++        }
++
++        res
++    }
++
++    /// Set the voltage for the regulator.
++    pub fn set_voltage(&self, min_uv: Microvolt, max_uv: Microvolt) -> Result {
++        // SAFETY: Safe as per the type invariants of `Regulator`.
++        to_result(unsafe {
++            bindings::regulator_set_voltage(self.inner.as_ptr(), min_uv.0, max_uv.0)
++        })
++    }
++
++    /// Get the current voltage of the regulator.
++    pub fn get_voltage(&self) -> Result<Microvolt> {
++        // SAFETY: Safe as per the type invariants of `Regulator`.
++        let voltage = unsafe { bindings::regulator_get_voltage(self.inner.as_ptr()) };
++        if voltage < 0 {
++            Err(Error::from_errno(voltage))
++        } else {
++            Ok(Microvolt(voltage))
++        }
++    }
++}
++
++impl Drop for Regulator {
++    fn drop(&mut self) {
++        if self.enabled {
++            // It is a requirement from the C API that the calls to enable and
++            // disabled are balanced before calling `regulator_put()`.
++            self.disable();
++        }
++
++        // SAFETY: By the type invariants, we know that `self` owns a reference,
++        // so it is safe to relinquish it now.
++        unsafe { bindings::regulator_put(self.inner.as_ptr()) };
++    }
++}
++
++/// A voltage in microvolts.
++///
++/// The explicit type is used to avoid confusion with other multiples of the
++/// volt, which can be desastrous.
++#[repr(transparent)]
++pub struct Microvolt(pub i32);
+-- 
+2.48.1
 
-
-> + */
-> +static inline void sched_uclamp_enable(void)
-> +{
-> +       if (!uclamp_is_used())
-> +               static_branch_enable(&sched_uclamp_used);
-> +}
-> +
->  static inline unsigned long uclamp_rq_get(struct rq *rq,
->                                           enum uclamp_id clamp_id)
->  {
-> @@ -3486,6 +3498,8 @@ static inline bool uclamp_is_used(void)
->         return false;
->  }
->
-> +static inline void sched_uclamp_enable(void) {}
-> +
->  static inline unsigned long
->  uclamp_rq_get(struct rq *rq, enum uclamp_id clamp_id)
->  {
-> diff --git a/kernel/sched/syscalls.c b/kernel/sched/syscalls.c
-> index 456d339be98f..9100a77e9d79 100644
-> --- a/kernel/sched/syscalls.c
-> +++ b/kernel/sched/syscalls.c
-> @@ -368,7 +368,7 @@ static int uclamp_validate(struct task_struct *p,
->          * blocking operation which obviously cannot be done while holding
->          * scheduler locks.
->          */
-> -       static_branch_enable(&sched_uclamp_used);
-> +       sched_uclamp_enable();
->
->         return 0;
->  }
-> --
-> 2.25.1
->
 
