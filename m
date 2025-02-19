@@ -1,96 +1,125 @@
-Return-Path: <linux-kernel+bounces-520782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C899CA3AF2B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:55:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD29DA3AF2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:55:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA3E43ADFCF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 01:55:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CC9917366E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 01:55:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 114EC13E41A;
-	Wed, 19 Feb 2025 01:55:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 924641662FB;
+	Wed, 19 Feb 2025 01:55:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lanxincomputing-com.20200927.dkim.feishu.cn header.i=@lanxincomputing-com.20200927.dkim.feishu.cn header.b="k26LlSm5"
-Received: from va-2-35.ptr.blmpb.com (va-2-35.ptr.blmpb.com [209.127.231.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="s29znBnJ"
+Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F63A33E1
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 01:55:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.127.231.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2245156228;
+	Wed, 19 Feb 2025 01:55:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739930117; cv=none; b=dHF73avdhBgON3KNczSX2jKxmNyUrVEsOTuwIdwbqETG7fYXgkCI7XFN6ne2n/VhawekSpRglUDqZZYewLnTJiAsFC4xArJsC9v4EE8DdjnkCaLHOEjJwgqRMYFktBIixcDLsWsiof/5C106Bn3K/Xmvv7YrdseiYvJctwoQ1yU=
+	t=1739930123; cv=none; b=nOGhWOqH0V19MIdhX2a1RVAwb4/zMeSdLPQ+pzp1xiMOP0O4ZfPaXT1rvR5FA5/PoqLb5P/mZsozRN0e3ZIvMcQiwBAc1ymbkLiMgYsuiiHwHeCzxJngFGfq3qbAjXfDAR18aqzc0aXEfOeEsuiIUhSp7LjivvNqfcMK3OtSR7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739930117; c=relaxed/simple;
-	bh=U58Jx+9rEOcLurBCCRbc+xOiBgYN7pseBJjEBbRxXZU=;
-	h=Message-Id:Content-Type:To:Cc:Subject:Date:Mime-Version:From; b=tj0uovFEex+UxEJc+OfvpJZVNo/G89HQop4wh5138UpD3V4yDTq5hCDri6ACVWvw/3bc35arVPafvQKty5mhg9qjbM1am3VxEtvcAzvGHD3UmD7BNv3iwGgQfO/JikB1mt2I/B/iDfOWKKgMH3s+juLNFYg2LWawRUdw1RlmiRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lanxincomputing.com; spf=pass smtp.mailfrom=lanxincomputing.com; dkim=pass (2048-bit key) header.d=lanxincomputing-com.20200927.dkim.feishu.cn header.i=@lanxincomputing-com.20200927.dkim.feishu.cn header.b=k26LlSm5; arc=none smtp.client-ip=209.127.231.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lanxincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lanxincomputing.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=s1; d=lanxincomputing-com.20200927.dkim.feishu.cn; t=1739930102;
-  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
- reply-to:content-type:mime-version:in-reply-to:message-id;
- bh=cQPgSHvwewybXbQoyDuJoBkKJD1qHn20v1BZRnO8+8A=;
- b=k26LlSm53NadsMNE5zfLry2epZI+oanW9H3a21Xekfv6Spri6d4DXVSDqGl6sev9d4K7/j
- Wc+2zkusSy7LnQH7u8Dn2A7N8FKdHx6cbUv4eJpy/f9emjVuKVJ4cRnY6jE5i+OS91A1rr
- f8xrm1eJQUgI6WNgXT+YwCEYeM9Yz61b9FOWf5MvxrsUCN0UZqJseaOxNm8csb4HTvhzz+
- A+RoH3xxHEPuhVUahpK9RQIuuH51WR9u12NiOLrHKqZRL/cUoZYAY3H78ldB7ZXdRNO03W
- LYmRErJHmKZCn02bEZGYS4BchKR9+ZF7So/EVbsdTTzlx+j+8cLfh9ROIytMMw==
-Message-Id: <20250219015426.1939-1-xiangwencheng@lanxincomputing.com>
-X-Mailer: git-send-email 2.46.2.windows.1
-X-Lms-Return-Path: <lba+267b539f4+e64b55+vger.kernel.org+xiangwencheng@lanxincomputing.com>
-Content-Type: text/plain; charset=UTF-8
-To: <anup@brainfault.org>
-Content-Transfer-Encoding: 7bit
-X-Original-From: BillXiang <xiangwencheng@lanxincomputing.com>
-Received: from localhost.localdomain ([222.128.9.250]) by smtp.feishu.cn with ESMTP; Wed, 19 Feb 2025 09:54:59 +0800
-Cc: <ajones@ventanamicro.com>, <xiangwencheng@lanxincomputing.com>, 
-	<kvm-riscv@lists.infradead.org>, <kvm@vger.kernel.org>, 
-	<linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>, 
-	<atishp@atishpatra.org>, <paul.walmsley@sifive.com>, 
-	<palmer@dabbelt.com>, <aou@eecs.berkeley.edu>
-Subject: [PATCH] riscv: KVM: Remove unnecessary vcpu kick
-Date: Wed, 19 Feb 2025 09:54:26 +0800
+	s=arc-20240116; t=1739930123; c=relaxed/simple;
+	bh=ecaHx7TFn62428CUF1iaLNg/cOUrC12Q11faPMF6dAk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sf5u2JJOJe1DHoq/MX+cs17YNVFq0jh5pMPNSrFWqsvmRq86DDjT3gI4RAu4OIo8CnVV4DjUaCmnDit8Jl8+vrOP4kKOc1/WAEjpJoR0IYi4+V2yikCv0eSan1mfXqVvtzp2wpdq6YtRo0QlACj/a+1l1MlIe6LXTQIMf0AfNc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=s29znBnJ; arc=none smtp.client-ip=115.124.30.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1739930110; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=HO+oLkUCtd9RKcvmLT+yfCznp4OX/hFJFuB5S2j5XeM=;
+	b=s29znBnJJOxLC6aBcwMRIhtTHlWzRENUiJl9ZeQhvjAne7ypkW1yKoFtRLZ4QQf8I5VdDuQ5g2n9xg2mwatAw8CR6UzgQgu4uI32RTuV07IGaDdKOhiZtuL+s2v6CkccOIX3qcE74WKdBS7IDZiNz4Moa4wWZoTnRzgcU/e6Kxs=
+Received: from 30.221.145.137(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0WPnQNgX_1739930108 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 19 Feb 2025 09:55:09 +0800
+Message-ID: <fefdb1f7-bf14-4bae-8666-132d1ceaed66@linux.alibaba.com>
+Date: Wed, 19 Feb 2025 09:55:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: "BillXiang" <xiangwencheng@lanxincomputing.com>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] mm/truncate: don't skip dirty page in
+ folio_unmap_invalidate()
+To: Dave Chinner <david@fromorbit.com>
+Cc: axboe@kernel.dk, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ brauner@kernel.org, linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk
+References: <20250218120209.88093-1-jefflexu@linux.alibaba.com>
+ <20250218120209.88093-3-jefflexu@linux.alibaba.com>
+ <Z7UhllvPUxVuYOqf@dread.disaster.area>
+Content-Language: en-US
+From: Jingbo Xu <jefflexu@linux.alibaba.com>
+In-Reply-To: <Z7UhllvPUxVuYOqf@dread.disaster.area>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Thank you Andrew Jones, forgive my errors in the last email.
-I'm wondering whether it's necessary to kick the virtual hart
-after writing to the vsfile of IMSIC.
-From my understanding, writing to the vsfile should directly
-forward the interrupt as MSI to the virtual hart. This means that
-an additional kick should not be necessary, as it would cause the
-vCPU to exit unnecessarily and potentially degrade performance.
-I've tested this behavior in QEMU, and it seems to work perfectly
-fine without the extra kick.
-Would appreciate any insights or confirmation on this!
-Best regards.
 
-Signed-off-by: BillXiang <xiangwencheng@lanxincomputing.com>
----
- arch/riscv/kvm/aia_imsic.c | 1 -
- 1 file changed, 1 deletion(-)
 
-diff --git a/arch/riscv/kvm/aia_imsic.c b/arch/riscv/kvm/aia_imsic.c
-index a8085cd8215e..29ef9c2133a9 100644
---- a/arch/riscv/kvm/aia_imsic.c
-+++ b/arch/riscv/kvm/aia_imsic.c
-@@ -974,7 +974,6 @@ int kvm_riscv_vcpu_aia_imsic_inject(struct kvm_vcpu *vcpu,
- 
- 	if (imsic->vsfile_cpu >= 0) {
- 		writel(iid, imsic->vsfile_va + IMSIC_MMIO_SETIPNUM_LE);
--		kvm_vcpu_kick(vcpu);
- 	} else {
- 		eix = &imsic->swfile->eix[iid / BITS_PER_TYPE(u64)];
- 		set_bit(iid & (BITS_PER_TYPE(u64) - 1), eix->eip);
+On 2/19/25 8:11 AM, Dave Chinner wrote:
+> On Tue, Feb 18, 2025 at 08:02:09PM +0800, Jingbo Xu wrote:
+>> ... otherwise this is a behavior change for the previous callers of
+>> invalidate_complete_folio2(), e.g. the page invalidation routine.
+>>
+>> Fixes: 4a9e23159fd3 ("mm/truncate: add folio_unmap_invalidate() helper")
+>> Signed-off-by: Jingbo Xu <jefflexu@linux.alibaba.com>
+>> ---
+>>  mm/truncate.c | 2 --
+>>  1 file changed, 2 deletions(-)
+>>
+>> diff --git a/mm/truncate.c b/mm/truncate.c
+>> index e2e115adfbc5..76d8fcd89bd0 100644
+>> --- a/mm/truncate.c
+>> +++ b/mm/truncate.c
+>> @@ -548,8 +548,6 @@ int folio_unmap_invalidate(struct address_space *mapping, struct folio *folio,
+>>  
+>>  	VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
+>>  
+>> -	if (folio_test_dirty(folio))
+>> -		return 0;
+> 
+> Shouldn't that actually return -EBUSY because the folio could not be
+> invalidated?
+> 
+> Indeed, further down the function the folio gets locked and the
+> dirty test is repeated. If it fails there it returns -EBUSY....
+> 
+> -Dave.
+
+Yeah, the original logic of invalidate_inode_pages2_range() is like
+
+```
+invalidate_inode_pages2_range
+  # lock page
+  # launder the page if it's dirty
+
+  invalidate_complete_folio2
+    # recheck if it's dirty, and skip the dirty page (no idea how page
+could be redirtied after launder_page())
+```
+
+while after commit 4a9e23159fd3 ("mm/truncate: add
+folio_unmap_invalidate() helper"), this logic is changed to:
+
+```
+invalidate_inode_pages2_range
+  # lock page
+  folio_unmap_invalidate
+    # check if it's dirty, and skip dirty page
+    # launder the page if it's dirty (doubt if it's noops)
+
+    # recheck if it's dirty, and skip the dirty page
+```
+
+
 -- 
-2.46.2
+Thanks,
+Jingbo
 
