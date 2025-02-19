@@ -1,146 +1,230 @@
-Return-Path: <linux-kernel+bounces-522148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 689E0A3C6AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:50:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70503A3C6B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:51:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A41C17A44B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:50:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A04D0179ABC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:51:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EDFA2144D7;
-	Wed, 19 Feb 2025 17:49:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B9C2147F6;
+	Wed, 19 Feb 2025 17:51:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VU6TvLGm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i1OS2KG+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F7B21B4254;
-	Wed, 19 Feb 2025 17:49:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 694461B6CE1;
+	Wed, 19 Feb 2025 17:51:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739987395; cv=none; b=ir7RbxalP5A8+Ta8E60WvFqz95tksnzm8Z/bEn8S8gdE4bSri10yzsm/JEY+1NfsNJLZAlzaJB15aV2s4LIzwcAo5kn9lFLlyC0Nvmmby5YX+Lk313ZcJiQ5eWRxcL3vvCWhXoz46UYKhcAekx+UmEn4Vt1/GmMHM6oT4IYqbWo=
+	t=1739987467; cv=none; b=J/OaTET0PqnBUSqkhFhcu2wwhzSeGKQcWDKGxOmHfocNtYALWlTQznuyKxMS6uivnaZMsnVnB2YDEH9ny8F0EAk0ZNhPp/eHSmM7yoHOp//cBljnwu7LpX2oL/wlCwvR5ps3KDVIRlm7/lYfU27gpr/2KJkOkNZY4yoTep8taY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739987395; c=relaxed/simple;
-	bh=1QVCszsYwoEV4SPD2Ug+XLQ1X9GAtUaPJJ4JsX4DaVo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ANL5d593VSCPD8EoenhVeLXFmSXDa6QqLa4LuRxg4EwIivBtVSOOiAJrf4s2gcZDl84K3Uxl6crA1rymUDRsUY4J7pO/r/3Rkzukra1HXM5ykSiZ08g8CJuogwNjGml09M5+7RIOVqSBkhS2JQ80MoHfQ/fJNv06zQRWpNxrGpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VU6TvLGm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A33DC4CED1;
-	Wed, 19 Feb 2025 17:49:48 +0000 (UTC)
+	s=arc-20240116; t=1739987467; c=relaxed/simple;
+	bh=rZq5shPOxTksQy7eMPX745S268mJN4kuifZgD2XUNDE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Iild6iqgWcIjE0VnhZdMfDQCsTtX25KiLR7/E/x3W5cEZTmOgIUAZv5STaOx/TWoUH4k1PgEAlg0N7KH5bbnW70onrD6XTKzYJ0nraMSJv4aVW2J05O/pXDTGBFLiWj2loEx2DB/igIv/mMCrLWc9qkG7uFv/3JKYJpNbDgdi+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i1OS2KG+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8B3CC4CEE6;
+	Wed, 19 Feb 2025 17:51:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739987394;
-	bh=1QVCszsYwoEV4SPD2Ug+XLQ1X9GAtUaPJJ4JsX4DaVo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VU6TvLGm787LfvptS0TTvQUlSL9tWTKitMKogssmsUzNve619B3DbmezGV7OUvYD1
-	 j1CF/mlah6lrCOqVRSgVXTuGHxZvZkqaO/9OaG0R9rNRNXTVemqrNFgruLw6wp3VN5
-	 NqlXTgk9UzzloT/l6FNlGjeSa7JS/0uinbWLuQnGJvj4Qz84WAlgfuNvrc9M++btps
-	 jVAKdCXzTWfIpzkgnvmKyHkpxBEtLu+2ZkYsRlCp36apwuwxxQbhKbgDMCzqQ6FDav
-	 Koq33Va+CB8sus9jqhKzqWj855suAg352tPs9QAbz9G+CYhwkk+AXOyJCafOdGWQLr
-	 hMO67dR3MFGnA==
-Date: Wed, 19 Feb 2025 23:19:44 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Vitalii Mordan <mordan@ispras.ru>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Jeff Johnson <quic_jjohnson@quicinc.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Amit Singh Tomar <amittomer25@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-actions@lists.infradead.org,
-	Fedor Pchelkin <pchelkin@ispras.ru>,
-	Alexey Khoroshilov <khoroshilov@ispras.ru>,
-	Vadim Mutilin <mutilin@ispras.ru>, lvc-project@linuxtesting.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] tty: owl-uart: fix call balance of owl_port->clk
- handling routines
-Message-ID: <20250219174944.l3xdxrdy4lbkevw3@thinkpad>
-References: <20250213112416.1610678-1-mordan@ispras.ru>
+	s=k20201202; t=1739987466;
+	bh=rZq5shPOxTksQy7eMPX745S268mJN4kuifZgD2XUNDE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=i1OS2KG+o4RQ4riPqf1kn536az+uq1VE29UXllFEmktDRwvaxtqEm5MjOuWxqTOvo
+	 U86FKb8bSUgqcgC9tbboS5FX1KTXorjuJKBPpYNkm27Eg6Qg3pzJrrv72rIkL/4bbF
+	 bU7HTvbpzfbcpTN6T8EJHDpAkQMNb7xCBZeUcXKqmsb/WiPOXhvL+Of2Rs7kZ5z5pt
+	 Bz/2am8SNYOZrIl+XDKDotcWjf+3m7OpINQain3AAz5rTL9Fwb0r/tL3xmm6gvGUeV
+	 9xfqeduF8bl5MZXDZ9MDCwBLKZAl+dfq3cHpNBTHB3neq8zXvkupv2SfCWMO98sh5I
+	 lTMv9VSBHMGXw==
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5debbced002so174934a12.1;
+        Wed, 19 Feb 2025 09:51:06 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUD5HvrNhC+6ZhGhrqNAb8StLBJdZsidzElA6cSJJHBOIIRSo8F8jj1kFHCUIslKObKM9hDrT0Z2iUYUut7hNI=@vger.kernel.org, AJvYcCVQeK8DqEmYbyW6ibZXB9Q23x/HhLBB/s4pK3XqxehV626MNBeB79bD0ZD7CsvjfpHS6RAiThTCgwQq@vger.kernel.org, AJvYcCWkXn+pxpg6YF/SctZhKxo+eSCUM/tDtcnMt/ZsiekN27zEDM8J4G88vs0wEKb9gLcCx3NhSUgw3Jgt1Ysb@vger.kernel.org
+X-Gm-Message-State: AOJu0YwS/TP1S5ce2KWdOV1tcqcQ/AdTLrp1V+QEHMeGNfnghMwK+sz9
+	F10r/6faHl8Hzx2IFsh53g6d2rXqt/Thhz/ffsBGneDLtglRggOvIbLDffN+J1moGvjJezhQG6/
+	5/WJH0AWLZ4Lrha7m15/DH6h8a1k=
+X-Google-Smtp-Source: AGHT+IEcIR2sCxUot4XQbj6ANo59l5iFBJbJzbCYxaaMIQFtGd/3ncuB0BdMQ6St84iPMy5+WzS3SOBdcqQAMyhhJ/w=
+X-Received: by 2002:a05:6402:3215:b0:5dc:8fc1:b3b5 with SMTP id
+ 4fb4d7f45d1cf-5e0a12c7561mr128280a12.15.1739987465682; Wed, 19 Feb 2025
+ 09:51:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250213112416.1610678-1-mordan@ispras.ru>
+References: <Z6GDiLZo5u4CqxBr@kspp> <b16ac12f-166a-4d25-bf33-b1ccf6e0dac7@oracle.com>
+ <57b70bbc-c8d0-4181-98a9-5174517270a0@oracle.com> <CAFX2Jf=yktJ_Bz--c2VpoDmW13YyoY3MNSv5sJYSseWBGAV9Cw@mail.gmail.com>
+ <0e5cf4db-8a69-4416-8514-b76daed3455c@oracle.com>
+In-Reply-To: <0e5cf4db-8a69-4416-8514-b76daed3455c@oracle.com>
+From: Anna Schumaker <anna@kernel.org>
+Date: Wed, 19 Feb 2025 12:50:47 -0500
+X-Gmail-Original-Message-ID: <CAFX2JfnrYnV664Ri-GJHqO6R72D+NJh0wKQRiKeKQWsQVq_QyA@mail.gmail.com>
+X-Gm-Features: AWEUYZmlJVmxNQW2wPkxZPYr4I0e1aqLvM8sMvVGx2Y7icsiLY0AlDZFh7qSzZw
+Message-ID: <CAFX2JfnrYnV664Ri-GJHqO6R72D+NJh0wKQRiKeKQWsQVq_QyA@mail.gmail.com>
+Subject: Re: [RESEND PATCH][next] fs: nfs: acl: Avoid -Wflex-array-member-not-at-end
+ warning
+To: Chuck Lever <chuck.lever@oracle.com>
+Cc: Trond Myklebust <trondmy@kernel.org>, linux-nfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Dai Ngo <Dai.Ngo@oracle.com>, 
+	Jeff Layton <jlayton@kernel.org>, Olga Kornievskaia <okorniev@redhat.com>, Tom Talpey <tom@talpey.com>, 
+	Neil Brown <neilb@suse.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 13, 2025 at 02:24:16PM +0300, Vitalii Mordan wrote:
-> If owl_port->clk was enabled in owl_uart_probe(), it must be disabled in
-> all error paths to ensure proper cleanup. However, if uart_add_one_port()
-> returns an error in owl_uart_probe(), the owl_port->clk clock will not be
-> disabled.
-> 
-> Use the devm_clk_get_enabled() helper function to ensure proper call
-> balance for owl_port->clk.
-> 
-> Found by Linux Verification Center (linuxtesting.org) with Klever.
-> 
-> Fixes: abf42d2f333b ("tty: serial: owl: add "much needed" clk_prepare_enable()")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Vitalii Mordan <mordan@ispras.ru>
+On Wed, Feb 19, 2025 at 12:49=E2=80=AFPM Chuck Lever <chuck.lever@oracle.co=
+m> wrote:
+>
+> On 2/19/25 12:46 PM, Anna Schumaker wrote:
+> > Hi Chuck,
+> >
+> > On Tue, Feb 18, 2025 at 1:10=E2=80=AFPM Chuck Lever <chuck.lever@oracle=
+.com> wrote:
+> >>
+> >> On 2/10/25 2:48 PM, Chuck Lever wrote:
+> >>> On 2/3/25 10:03 PM, Gustavo A. R. Silva wrote:
+> >>>> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+> >>>> getting ready to enable it, globally.
+> >>>>
+> >>>> So, in order to avoid ending up with a flexible-array member in the
+> >>>> middle of other structs, we use the `struct_group_tagged()` helper
+> >>>> to create a new tagged `struct posix_acl_hdr`. This structure
+> >>>> groups together all the members of the flexible `struct posix_acl`
+> >>>> except the flexible array.
+> >>>>
+> >>>> As a result, the array is effectively separated from the rest of the
+> >>>> members without modifying the memory layout of the flexible structur=
+e.
+> >>>> We then change the type of the middle struct member currently causin=
+g
+> >>>> trouble from `struct posix_acl` to `struct posix_acl_hdr`.
+> >>>>
+> >>>> We also want to ensure that when new members need to be added to the
+> >>>> flexible structure, they are always included within the newly create=
+d
+> >>>> tagged struct. For this, we use `static_assert()`. This ensures that=
+ the
+> >>>> memory layout for both the flexible structure and the new tagged str=
+uct
+> >>>> is the same after any changes.
+> >>>>
+> >>>> This approach avoids having to implement `struct posix_acl_hdr` as a
+> >>>> completely separate structure, thus preventing having to maintain tw=
+o
+> >>>> independent but basically identical structures, closing the door to
+> >>>> potential bugs in the future.
+> >>>>
+> >>>> We also use `container_of()` whenever we need to retrieve a pointer =
+to
+> >>>> the flexible structure, through which we can access the flexible-arr=
+ay
+> >>>> member, if necessary.
+> >>>>
+> >>>> So, with these changes, fix the following warning:
+> >>>>
+> >>>> fs/nfs_common/nfsacl.c:45:26: warning: structure containing a flexib=
+le array member is not at the end of another structure [-Wflex-array-member=
+-not-at-end]
+> >>>>
+> >>>> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+> >>>> ---
+> >>>>  fs/nfs_common/nfsacl.c    |  8 +++++---
+> >>>>  include/linux/posix_acl.h | 11 ++++++++---
+> >>>>  2 files changed, 13 insertions(+), 6 deletions(-)
+> >>>>
+> >>>> diff --git a/fs/nfs_common/nfsacl.c b/fs/nfs_common/nfsacl.c
+> >>>> index ea382b75b26c..e2eaac14fd8e 100644
+> >>>> --- a/fs/nfs_common/nfsacl.c
+> >>>> +++ b/fs/nfs_common/nfsacl.c
+> >>>> @@ -42,7 +42,7 @@ struct nfsacl_encode_desc {
+> >>>>  };
+> >>>>
+> >>>>  struct nfsacl_simple_acl {
+> >>>> -    struct posix_acl acl;
+> >>>> +    struct posix_acl_hdr acl;
+> >>>>      struct posix_acl_entry ace[4];
+> >>>>  };
+> >>>>
+> >>>> @@ -112,7 +112,8 @@ int nfsacl_encode(struct xdr_buf *buf, unsigned =
+int base, struct inode *inode,
+> >>>>          xdr_encode_word(buf, base, entries))
+> >>>>              return -EINVAL;
+> >>>>      if (encode_entries && acl && acl->a_count =3D=3D 3) {
+> >>>> -            struct posix_acl *acl2 =3D &aclbuf.acl;
+> >>>> +            struct posix_acl *acl2 =3D
+> >>>> +                    container_of(&aclbuf.acl, struct posix_acl, hdr=
+);
+> >>>>
+> >>>>              /* Avoid the use of posix_acl_alloc().  nfsacl_encode()=
+ is
+> >>>>               * invoked in contexts where a memory allocation failur=
+e is
+> >>>> @@ -177,7 +178,8 @@ bool nfs_stream_encode_acl(struct xdr_stream *xd=
+r, struct inode *inode,
+> >>>>              return false;
+> >>>>
+> >>>>      if (encode_entries && acl && acl->a_count =3D=3D 3) {
+> >>>> -            struct posix_acl *acl2 =3D &aclbuf.acl;
+> >>>> +            struct posix_acl *acl2 =3D
+> >>>> +                    container_of(&aclbuf.acl, struct posix_acl, hdr=
+);
+> >>>>
+> >>>>              /* Avoid the use of posix_acl_alloc().  nfsacl_encode()=
+ is
+> >>>>               * invoked in contexts where a memory allocation failur=
+e is
+> >>>> diff --git a/include/linux/posix_acl.h b/include/linux/posix_acl.h
+> >>>> index e2d47eb1a7f3..62d497763e25 100644
+> >>>> --- a/include/linux/posix_acl.h
+> >>>> +++ b/include/linux/posix_acl.h
+> >>>> @@ -27,11 +27,16 @@ struct posix_acl_entry {
+> >>>>  };
+> >>>>
+> >>>>  struct posix_acl {
+> >>>> -    refcount_t              a_refcount;
+> >>>> -    unsigned int            a_count;
+> >>>> -    struct rcu_head         a_rcu;
+> >>>> +    /* New members MUST be added within the struct_group() macro be=
+low. */
+> >>>> +    struct_group_tagged(posix_acl_hdr, hdr,
+> >>>> +            refcount_t              a_refcount;
+> >>>> +            unsigned int            a_count;
+> >>>> +            struct rcu_head         a_rcu;
+> >>>> +    );
+> >>>>      struct posix_acl_entry  a_entries[] __counted_by(a_count);
+> >>>>  };
+> >>>> +static_assert(offsetof(struct posix_acl, a_entries) =3D=3D sizeof(s=
+truct posix_acl_hdr),
+> >>>> +          "struct member likely outside of struct_group_tagged()");
+> >>>>
+> >>>>  #define FOREACH_ACL_ENTRY(pa, acl, pe) \
+> >>>>      for(pa=3D(acl)->a_entries, pe=3Dpa+(acl)->a_count; pa<pe; pa++)
+> >>>
+> >>> Trond, Anna -
+> >>>
+> >>> Let me know if I need to take this one via the NFSD tree. If not,
+> >>>
+> >>> Acked-by: Chuck Lever <chuck.lever@oracle.com>
+> >>
+> >> Gentle ping: Still waiting for a response.
+> >
+> > If you want it, it's yours! :)
+> >
+> > I am planning a bugfixes pull request soon, so I don't mind taking it
+> > if you don't have anything else planned for 6.14 at the moment.
+>
+> This change doesn't look like a "fix" to me, so I would include it in
+> nfsd-testing / nfsd-next, as long as you (or Trond) can send me an
+> Acked-by.
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Acked-by: Anna Schumaker <anna.schumaker@oracle.com>
 
-- Mani
-
-> ---
->  drivers/tty/serial/owl-uart.c | 12 ++----------
->  1 file changed, 2 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/tty/serial/owl-uart.c b/drivers/tty/serial/owl-uart.c
-> index 0542882cfbbe..64446820437c 100644
-> --- a/drivers/tty/serial/owl-uart.c
-> +++ b/drivers/tty/serial/owl-uart.c
-> @@ -680,18 +680,12 @@ static int owl_uart_probe(struct platform_device *pdev)
->  	if (!owl_port)
->  		return -ENOMEM;
->  
-> -	owl_port->clk = devm_clk_get(&pdev->dev, NULL);
-> +	owl_port->clk = devm_clk_get_enabled(&pdev->dev, NULL);
->  	if (IS_ERR(owl_port->clk)) {
-> -		dev_err(&pdev->dev, "could not get clk\n");
-> +		dev_err(&pdev->dev, "could not get and enable clk\n");
->  		return PTR_ERR(owl_port->clk);
->  	}
->  
-> -	ret = clk_prepare_enable(owl_port->clk);
-> -	if (ret) {
-> -		dev_err(&pdev->dev, "could not enable clk\n");
-> -		return ret;
-> -	}
-> -
->  	owl_port->port.dev = &pdev->dev;
->  	owl_port->port.line = pdev->id;
->  	owl_port->port.type = PORT_OWL;
-> @@ -701,7 +695,6 @@ static int owl_uart_probe(struct platform_device *pdev)
->  	owl_port->port.uartclk = clk_get_rate(owl_port->clk);
->  	if (owl_port->port.uartclk == 0) {
->  		dev_err(&pdev->dev, "clock rate is zero\n");
-> -		clk_disable_unprepare(owl_port->clk);
->  		return -EINVAL;
->  	}
->  	owl_port->port.flags = UPF_BOOT_AUTOCONF | UPF_IOREMAP | UPF_LOW_LATENCY;
-> @@ -725,7 +718,6 @@ static void owl_uart_remove(struct platform_device *pdev)
->  
->  	uart_remove_one_port(&owl_uart_driver, &owl_port->port);
->  	owl_uart_ports[pdev->id] = NULL;
-> -	clk_disable_unprepare(owl_port->clk);
->  }
->  
->  static struct platform_driver owl_uart_platform_driver = {
-> -- 
-> 2.25.1
-> 
-
--- 
-மணிவண்ணன் சதாசிவம்
+>
+>
+> --
+> Chuck Lever
 
