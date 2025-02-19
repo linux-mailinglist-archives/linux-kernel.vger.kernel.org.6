@@ -1,70 +1,54 @@
-Return-Path: <linux-kernel+bounces-522381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66270A3C968
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:13:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50817A3C961
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:12:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F3C67A8531
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 20:12:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C090C1891160
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 20:11:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BDA622DFBE;
-	Wed, 19 Feb 2025 20:12:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E07622DFF3;
+	Wed, 19 Feb 2025 20:11:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hnmgCWNJ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="A7GIG5xo"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6F661BD00C;
-	Wed, 19 Feb 2025 20:12:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DCF921B9E0;
+	Wed, 19 Feb 2025 20:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739995975; cv=none; b=GUJtFbA90tnnbjN2niR58rh6YwvKJ8WPlz2iD6TFB+31Usq1ln6H1sV0oPkvsC02fG4u+k/NI9EyCmAAStqiNf6v8qpqExUPkh6LyuaibhvhXzeoFCJh6YndkzySi/UBwj3bt0h5+9+xR65t9vNUohzQ+Lfp4U+iA4GQ2sFA0fw=
+	t=1739995892; cv=none; b=UA8Qf5DNN4gLxZr14KlPcFpAv4ARVi/HjpGTsUwjxhKEYGzrLvfLDwt5FWn57WglLna/qbVqKn9vc03aOOK07hhs0SSujlUFXFcKKscqdXL57N1kqBJdBt8Vd8LAIGfs+fNzM3XovweGIagHaX+0FPzYIX/y0s7c+/UnokXpsdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739995975; c=relaxed/simple;
-	bh=ND/8Wxv5gQFIoFsWtPtheJF33IR5DdoAJv/lL7RafJE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bl5cgri923hnGEoZd/bCbeEIT7IAiatjp6t8LN0DvssE6BSYd5I7i7e4lUMABN9JDcOvqKcjmz7/gnz7OJFNwyG0rDzkK6WJ6FAw8Kl7co82PuQRorXaYZ3wKRgS65+7JSd4D2LArpUTTwrKMqg3kxgpAnfIaeNRWcFfmzY0i+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hnmgCWNJ; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739995975; x=1771531975;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=ND/8Wxv5gQFIoFsWtPtheJF33IR5DdoAJv/lL7RafJE=;
-  b=hnmgCWNJPE8qBDlG33mphgtS+E5GVm5/C6yPiWzgMEgKAyT2jIsoNlFS
-   0LERw3zi69ahOaOpKPniKEWMldaxa+EAZB7wg5TkSf0DVeQiRM2tbtXmY
-   QtYjK4+TKy+GIMQpZswQdo2XNfinzti3CWpb31WiWLeldScfn1FBXTV97
-   gm1z7AIlzgoCyecHWBTKhBkATXpmGU89TxJwLMDxGEnVQYhXl0Ks4DhiS
-   6GOgGA7WZxVAWmjXsEDfMDkP0UwCHL34s6hfcLvKBlZ92SH97Fq6Y8r8Z
-   9M+FcrFrlwc/s1nIM3E4oTctCUkJn7O/l3kDVxjgh/pY1GoD2jMysmnaS
-   Q==;
-X-CSE-ConnectionGUID: Ib2z7kGEQ8yUKJOB7OBH0g==
-X-CSE-MsgGUID: +X3WIQ8NTEafnITY/PyOig==
-X-IronPort-AV: E=McAfee;i="6700,10204,11350"; a="50965958"
-X-IronPort-AV: E=Sophos;i="6.13,299,1732608000"; 
-   d="scan'208";a="50965958"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 12:12:53 -0800
-X-CSE-ConnectionGUID: BZUk7FQcRcmkW+2oQKS2JA==
-X-CSE-MsgGUID: ivcYCpZ+RN28xNfCPYJ9fg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,299,1732608000"; 
-   d="scan'208";a="115480846"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 12:10:49 -0800
-Received: from [10.246.136.14] (kliang2-mobl1.ccr.corp.intel.com [10.246.136.14])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 341C420B5713;
-	Wed, 19 Feb 2025 12:10:43 -0800 (PST)
-Message-ID: <49c59a81-015f-46a1-88b9-f043ca2710d0@linux.intel.com>
-Date: Wed, 19 Feb 2025 15:10:42 -0500
+	s=arc-20240116; t=1739995892; c=relaxed/simple;
+	bh=vVc8kNeKRrfQX23z0vb9lTZ07UAQytComilfQtfkp3c=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=OsWIw45dOA5nIpCHuThGhI6gABD5jK7krv5UaNIs9hNznsq0igIa/+DdBndXaPKIKMRipTGxFfpotumALM8b7zw7JZ9oXD5n6vosgKGD9flt9QQHMb6uDLKgDIF1vlSXKk1rZtempcWmZsKVYKzIoncw3rYxuHYGESaZGzpv1qs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=A7GIG5xo; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1739995867; x=1740600667; i=markus.elfring@web.de;
+	bh=vVc8kNeKRrfQX23z0vb9lTZ07UAQytComilfQtfkp3c=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=A7GIG5xoQLXADczgbO0CvHCP644fS1ow9URsZy3kefibGZYUD94krXbiDwdPw2xy
+	 6XckxWP9jkpt6rqrOBAiUG7yrKsRZWGtDJITGT+xrO6coCFEaiIqQEmigEN7N+K1n
+	 8d8u7B3diTqYrYXo+TV/B3ROwLFDX6HrCB3gGURiu/+JumHczCujbAq5YsZruEaly
+	 iclkdC0f5hPFAdXv+Q2+8RvkATVy00VfmkspDVtFVGAv6zdrAI/RgijbgsIFVtvxU
+	 MKo1ead4vcNgQJ6rG7gfYsXtbM9uyxldfManPQdCNXl41rvCmdn5AvL+j44pOXFyT
+	 H3F9DXj7aIv9Q0xsrQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.10]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MI3p7-1tWDpF3qQp-008Xvw; Wed, 19
+ Feb 2025 21:11:06 +0100
+Message-ID: <8923aaae-becd-489a-bfe1-8c1c569d8d48@web.de>
+Date: Wed, 19 Feb 2025 21:10:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,159 +56,62 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 14/15] perf/x86: Simplify Intel PMU initialization
-To: Sohil Mehta <sohil.mehta@intel.com>, x86@kernel.org,
- Dave Hansen <dave.hansen@linux.intel.com>, Tony Luck <tony.luck@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>, Thomas Gleixner
- <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
- "H . Peter Anvin" <hpa@zytor.com>, "Rafael J . Wysocki" <rafael@kernel.org>,
- Len Brown <lenb@kernel.org>, Andy Lutomirski <luto@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>, Jean Delvare <jdelvare@suse.com>,
- Guenter Roeck <linux@roeck-us.net>, Zhang Rui <rui.zhang@intel.com>,
- Andrew Cooper <andrew.cooper3@citrix.com>,
- David Laight <david.laight.linux@gmail.com>,
- Dapeng Mi <dapeng1.mi@linux.intel.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
- linux-pm@vger.kernel.org
-References: <20250219184133.816753-1-sohil.mehta@intel.com>
- <20250219184133.816753-15-sohil.mehta@intel.com>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20250219184133.816753-15-sohil.mehta@intel.com>
+To: Josh Don <joshdon@google.com>, kernel-janitors@vger.kernel.org,
+ Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Ben Segall <bsegall@google.com>,
+ Chengming Zhou <chengming.zhou@linux.dev>,
+ Daniel Bristot de Oliveira <bristot@redhat.com>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ K Prateek Nayak <kprateek.nayak@amd.com>, Mel Gorman <mgorman@suse.de>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ Valentin Schneider <vschneid@redhat.com>
+References: <20250210195117.1074569-1-joshdon@google.com>
+Subject: Re: [PATCH] sched: fix potential use-after-free with cfs bandwidth
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250210195117.1074569-1-joshdon@google.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:X3d0E9WrjagRkba4BQm0pfUD+YOsvBTW2m2USxRtZE4oOAsiyi/
+ n8JSJAmZ+gc5ElVU0TBeloHmbm0LEk5tfjHFdNr4DddiSWCz0F0osNqophwlK/1cs1w84ka
+ ow40DtBp4665Y94uxzt5Q+aQjEtJJO8Usu+xGhxKLyPPY94Nu9Ptc7Nh/1p8nOsmbb9ArvG
+ ybxx5xNdhE2aGllDcVyyQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:MAC5JS6jmxM=;mXe69x3zsDUjeVuwGYCr1umOBbN
+ EYoBsIrLDJVE0kx5f08ZH2ujWwi3HFKVAjaQ7C9JGE/82OO8yn5QY17EuYHl8xD3pHclp5ZAd
+ Xv0odmOgC8Xn9XXIHPDxEXOiv4oVwHjzgrNxAI9ViEkUCNfOBxSNHqSocxyMLbQTcb+RXwK24
+ kT5+BEmv6MGkvpUODd1TPHIExeZ0jJ0uIKhvnqh4qwQ1eh2ntgOkBkpxjrK7clmT7yQ5rBllS
+ ykbHazLRVEP+UevlridiRj+P1bUZWaNZm9Or9GrC7GYtJhxMm07wIqvHGppfHRiTUuFgKn9Bn
+ fuqD26bEh/2PmqKh63VUit91Z6OV78D1AyvymppuA4c/x5rZHaVFewuz8CSzcSu6lERqMafL4
+ f8F7eoUhIk753QL185elJKmzgKS39+sAoknJ8p4xIRU1Ch5BH1byuZLAwX6toSiUliawyfQjd
+ t6aGlFMIgGtteK+Om4HyYHSwXxzgSECmcBMpenYOc/8G5Mem3M42SAarvFJ3oX4iCM4D5NyHg
+ qemFJL/UCNTO19X0oaBgoJtEfvzqGIO1m5dRyxgRlmmWm+4HFHgDR3+NSficsrtnry3T1h7/g
+ rQCsJLJqPJ1Fy98at0NE2Werl6iJF5eNe7cWjKvB9Vy3S0vBGPUUP9Re1wWMtZv5RXlxoqpwL
+ 2/o7f6sN8ywA5c4OPsZJ7trsz4XBUxsOZ0u6qhS8mkslPsL8ilZWEXVK7DC+NjRqj15FbI9Jv
+ gjlrDEwgfBUq8GeSxWFtRy/ou3ATf3ZkGxWPjxZtii5yRgKthjgl9Y87WFAp4iXbKBTy2cMeB
+ 9Nw+Aga0dfiqoFlSekloCImBiDy3EJhinpt4Qf8EGVnBUNg80Tolq35hYCmBO17G1hxMg4HWj
+ Z53uCHnjaF8xrcBHq1GpHj8ryrevxHCB+IxvrjQl791dLdaJfNutrOXUw5qVjay83oOgw3MaY
+ +JCW14aPH86s5MfiY/1pbo0IKFQrLbTld7+e/dJWCwpwZy/KY1Tmw5Wgc5MxkL8xMl3Iy9ROn
+ hc8G0kauWQGHxVgMPDf+2r3BOV6BL/lVNuiu0pBS0EkEYdKBOyezTom7XrSRMaCzWmQWhM7nC
+ ekoQeIR2L8MyXEvm2PoKZYgdthXb7iC95p+0j2CRaXodv5LaJDRGborB+nTsbWjrbSxjidb6H
+ H7/6ud+hxw+RkhO/y2WcTZyTJR3SGGTde9vJxff/O/1Nr5ZZmseXzSce9FbykciWGVyBQUVu0
+ ib9HntGxx6iA2n2DNYYcz7VaEWnnYSlDh7hLjx+1Hu5Q4kd0JHM82k3yFZ3yNm4ti1RCU2QVO
+ XQwprT1NLkU1l0im+sbbAQYUguO0cQFtxL73cvnzjRgdqXdr1Gg4X2v61YLW2MnrW0I0RR2CZ
+ Mq9z6FrknGJuBWWtTkKLFd1nZ5NjkDCR89nC2bQFoVQo4/ZOpYIzNWYdyxnpuUbo3N6Bd38Zx
+ el/SSb9+RU1CgjulB6UGYQWWvITU=
 
+=E2=80=A6
+> For full correctness, we should avoid removal from the list until after
+> we're done unthrottling in __cfsb_csd_unthrottle().
+=E2=80=A6
 
+How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and =
+=E2=80=9CCc=E2=80=9D) accordingly?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.14-rc3#n145
 
-On 2025-02-19 1:41 p.m., Sohil Mehta wrote:
-> Architectural Perfmon was introduced on the Family 6 "Core" processors
-> starting with Yonah. Processors before Yonah need their own customized
-> PMU initialization.
-> 
-> p6_pmu_init() is expected to provide that initialization for early
-> Family 6 processors. But, due to the unrestricted call to p6_pmu_init(),
-> it could get called for any Family 6 processor if the architectural
-> perfmon feature is disabled on that processor.
-> 
-> To simplify, restrict the call to p6_pmu_init() to early Family 6
-> processors that do not have architectural perfmon support. As a result,
-> the "unsupported" console print becomes practically unreachable because
-> all the released P6 processors are covered by the switch cases.
-> 
-> Move the console print to a common location where it can cover all
-> modern processors that do not have architectural perfmon support.
-> 
-> Also, use this opportunity to get rid of the unnecessary switch cases in
-> p6_pmu_init().  Only the Pentium Pro processor needs a quirk, and the
-> rest of the processors do not need any special handling. The gaps in the
-> case numbers are only due to no processor with those model numbers being
-> released.
-> 
-> Converting to a VFM based check gets rid of one last few Intel x86_model
-> comparisons.
-> 
-> Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
-> ---
-> v3: Restrict calling p6_pmu_init() to only when needed.
->     Move the console print to a common location.
-> 
-> v2: No change.
-> ---
->  arch/x86/events/intel/core.c | 16 +++++++++++-----
->  arch/x86/events/intel/p6.c   | 26 +++-----------------------
->  2 files changed, 14 insertions(+), 28 deletions(-)
-> 
-> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-> index 7601196d1d18..c645d8c8ab87 100644
-> --- a/arch/x86/events/intel/core.c
-> +++ b/arch/x86/events/intel/core.c
-> @@ -6466,16 +6466,22 @@ __init int intel_pmu_init(void)
->  	char *name;
->  	struct x86_hybrid_pmu *pmu;
->  
-> +	/* Architectural Perfmon was introduced starting with INTEL_CORE_YONAH */
->  	if (!cpu_has(&boot_cpu_data, X86_FEATURE_ARCH_PERFMON)) {
->  		switch (boot_cpu_data.x86) {
-> -		case 0x6:
-> -			return p6_pmu_init();
-> -		case 0xb:
-> +		case 6:
-> +			if (boot_cpu_data.x86_vfm < INTEL_CORE_YONAH)
-> +				return p6_pmu_init();
-> +			break;
-
-We may need a return -ENODEV here.
-
-I think it's possible that some weird hypervisor doesn't enumerate the
-ARCH_PERFMON for a modern CPU. Perf should not touch the leaf 10 if the
-ARCH_PERFMON is not supported.
-
-Thanks,
-Kan
-
-> +		case 11:
->  			return knc_pmu_init();
-> -		case 0xf:
-> +		case 15:
->  			return p4_pmu_init();
-> +		default:
-> +			pr_cont("unsupported CPU family %d model %d ",
-> +				boot_cpu_data.x86, boot_cpu_data.x86_model);
-> +			return -ENODEV;
->  		}
-> -		return -ENODEV;
->  	}
->  
->  	/*
-> diff --git a/arch/x86/events/intel/p6.c b/arch/x86/events/intel/p6.c
-> index a6cffb4f4ef5..65b45e9d7016 100644
-> --- a/arch/x86/events/intel/p6.c
-> +++ b/arch/x86/events/intel/p6.c
-> @@ -2,6 +2,8 @@
->  #include <linux/perf_event.h>
->  #include <linux/types.h>
->  
-> +#include <asm/cpu_device_id.h>
-> +
->  #include "../perf_event.h"
->  
->  /*
-> @@ -248,30 +250,8 @@ __init int p6_pmu_init(void)
->  {
->  	x86_pmu = p6_pmu;
->  
-> -	switch (boot_cpu_data.x86_model) {
-> -	case  1: /* Pentium Pro */
-> +	if (boot_cpu_data.x86_vfm == INTEL_PENTIUM_PRO)
->  		x86_add_quirk(p6_pmu_rdpmc_quirk);
-> -		break;
-> -
-> -	case  3: /* Pentium II - Klamath */
-> -	case  5: /* Pentium II - Deschutes */
-> -	case  6: /* Pentium II - Mendocino */
-> -		break;
-> -
-> -	case  7: /* Pentium III - Katmai */
-> -	case  8: /* Pentium III - Coppermine */
-> -	case 10: /* Pentium III Xeon */
-> -	case 11: /* Pentium III - Tualatin */
-> -		break;
-> -
-> -	case  9: /* Pentium M - Banias */
-> -	case 13: /* Pentium M - Dothan */
-> -		break;
-> -
-> -	default:
-> -		pr_cont("unsupported p6 CPU model %d ", boot_cpu_data.x86_model);
-> -		return -ENODEV;
-> -	}
->  
->  	memcpy(hw_cache_event_ids, p6_hw_cache_event_ids,
->  		sizeof(hw_cache_event_ids));
-
+Regards,
+Markus
 
