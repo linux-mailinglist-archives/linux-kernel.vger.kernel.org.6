@@ -1,101 +1,126 @@
-Return-Path: <linux-kernel+bounces-521948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA419A3C430
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:54:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C61E8A3C406
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:46:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF89F7A8A9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:52:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC84717A27C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:44:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 668CE1F9A86;
-	Wed, 19 Feb 2025 15:53:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 504BA1FC7F7;
+	Wed, 19 Feb 2025 15:44:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Cf9NEfrj"
-Received: from smtp.smtpout.orange.fr (smtp-71.smtpout.orange.fr [80.12.242.71])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QoSGvJO8"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35F61F5859;
-	Wed, 19 Feb 2025 15:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C551F941B
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 15:43:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739980396; cv=none; b=Gr9p0JNU74ag1C29PWbNdV11vkAbOLautLx+f0lCl0kE4rwe6kzB9USgwy7Eye3Y5TDpRxB8YDJU9xEsqqpcxf3dgCpNn0e2UipWu2zsN8zhMwTiIQ+ir/uU8OtU6DhKXbG/E+Z2stOVHML9+PhZ7IMRehSuTWOdmipWDdTsHqk=
+	t=1739979840; cv=none; b=MFceE7iso6OA2tBAyQqBAqK0IyvV60zDArZEkuYvMIJclU+E0WnVc5S/G8yDSLTtGyglSTxp9ZOne4k6O/YN2KfhkAyeo9XMhT7u7nTOcsOn3SVxnmDanrBO3iOB+282xhK4q+kdHs2TUCNHsWqnw2O+26xzHlb3ip8dzrWryEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739980396; c=relaxed/simple;
-	bh=Xa8cLWNo6MQoPtkyy2sS//G8kPvIovPGhvQYZ/Tdrjc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YB95qG6WnOUu3UoRn9f+aB6+Ui7V4M/PDHDl2+wPlfeqvbzICCFd7elVxLc0/doUI8AQcMobUqR9nM+qjc9evpAdyVBYjLZGOTZrYmIOvkVMw70P4GDfpK7rdJDtiklMkBRcQdgxlORuoghfzwDBWToF9t0blHMxJ6l/T+k57hY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Cf9NEfrj; arc=none smtp.client-ip=80.12.242.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id kmEZtrRX34oeSkmEcthrp6; Wed, 19 Feb 2025 16:43:43 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1739979823;
-	bh=XQ8xneqsJR4U2f2+Cb3h0f/Qqrrbkj3alXoGimUGJEU=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=Cf9NEfrjidve30jAN28I9mNsYgvDLIUTGNXoGbr0ILVHdxkoBii8SbKqntJAYgzKT
-	 yAa0A0YxmjIlZZOUKjUwFM65yd/COOO/OOnhiw+jVE4axlOvhLYw7vfhq4yTtNJrrN
-	 IivLFFlH59CQ8uoWoO6QIkWI6D8opciBZdtChjjUuJCcwDspCuWnCXDW4FgUwiPhd+
-	 Mmji+Bg6jAljVM96gMjAK3WMsDKuz1lBrRpTM7AQwcgs7eTe9SgiUSIueHPpPt77Y0
-	 BkNPXoc3pO3Q+EbXqDext+T9sf1CWLOUve9oeOElK4Lo47tymFNYiwZWW6fSyr92nT
-	 fa4BHqMrWsYHw==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 19 Feb 2025 16:43:43 +0100
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH] tracing/user_events: Slightly simplify user_seq_show()
-Date: Wed, 19 Feb 2025 16:43:33 +0100
-Message-ID: <845caa94b74cea8d72c158bf1994fe250beee28c.1739979791.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1739979840; c=relaxed/simple;
+	bh=YNmYlTClH6f57hMX0irzBAGNNqToOG6S23UwEJ2SIOI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fmb/KGyEsxB0TT2a3tDM3cXCyomjCarv4dA9dzl0FuHY1afKCLUJLje6GIMDYlY5kz4YT5W7OwX4Y0bOny9mwLfoXstMVYCTLIB9jwLmXYPyBDgNbHyDRQ4LIcuHU6NA3k6rZB5NpCJ7ugK39y1H+calh9Jrjk4LPjTGUGYfkwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QoSGvJO8; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5e050b1491eso1861382a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 07:43:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739979837; x=1740584637; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ztTcSqiM5jchwSh7zNDJUJXvpA9bZcVb5dRh9uYh8nc=;
+        b=QoSGvJO83q8cWOJJ8KKjrnClpNxrJ0kdQZzcO3aB88o1NUKX5dQSIXXXqUJfs3YR/5
+         6DVZQbJOqSLfag/Gm15Q6deG1TVw2E+Wj//os0FCD8Chr9/v1PH+UuEkEeTxrOutOl+2
+         tzcms0G5JyMZ4dtMhx+aY4kO+ZNkMtJYder+9p2yRGK6oY7JuQX7FXEfufSApqVPYqBs
+         CWMNn7ytav+OFZJv61mZNB24RzH97CIT6apKcohOToJj1YTkoNVAgGo8GNasIhWKqDbW
+         AuYQQsh19to4MC1wDMKWyni3kDwygPJl5adZztkb6KTwBA9tUu7JMJ8JBDuqMgxeu7V/
+         s0tA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739979837; x=1740584637;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ztTcSqiM5jchwSh7zNDJUJXvpA9bZcVb5dRh9uYh8nc=;
+        b=g/OK51rJ01/YxCgUJfE8oyqSvju5RUndTuXOOjTAtVGjQXKyVseSs3taaFhO0sI7om
+         ypEZ0GwmlnrmKsmpFRM+34urxdhz2sQEgcDlkFrBCh4MVENpQzM6T1mQpCudIWhJ8IL9
+         Ip1zG8FRedcgBPFDxykloCoDQuPmi+ycO0an/bDxd4qpIG0AYzYyPb+4hMBcO4KXTepk
+         sVe7Q4aLmWYBdDG9UOsBW4e41EzI+47ELxRpNBkxNgRq9iRWi60eDFllnZbylQOOxLUS
+         2bl+P2BHwkXk7scGmrgH46eU1k/OkyAujZcVau5hIYxWydr1bBwX8FSP/hUBfXriETNi
+         V3Og==
+X-Forwarded-Encrypted: i=1; AJvYcCWs/d3IVizymP5QoXfW4vHGtbU7h3QNAe1hNTxMNNErRGzLL1/cho85rtcD+m45p4UCTO5wh8F7663URGk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9uhlKT0T78FRN3mHjjQVo/hzT+58+iFIM0XdNLeKUbSS9dBq5
+	yarBSYhPD7fcdXJeI1ryXjUZaht8XgMiBYEoxNx5bpte1kB8cIJIpweyFjKhgLY=
+X-Gm-Gg: ASbGncurR4BdI4wTVKuHskeF7sBHEUcS9L/Conk0bHVr8WZP46ZqUIfjmWoWhx+gBEd
+	ILSUN8EsxmooMOpDW8+aq+qQgbjWo0EIUlzPi4I+QWctEXpoS8o+HBrs2joGjJx+4t3YvvSeyCZ
+	btTpJw2CD57QmgiW17TZn8qQNO+1X0dhM0kbpXLVsxgfspH6+3xo+pFHe/lXrk+/yt2Xaw1HgYc
+	UqtkB+OuQ7TMLNgQ1ZjRN2IpSYjWbMT780BiOp2ZiIhMe8323DtFaDbCin0x1YC5kXnaY0od3nF
+	SsTuiGUnhfFVxD7tcpx8
+X-Google-Smtp-Source: AGHT+IEuAZ/31Yw+onuB6dX7P6MBrwUPKEqWPMc6/GLwGLwgBLIZWvMyIkebqkSIVitXPRtyLX0fJg==
+X-Received: by 2002:a17:907:d307:b0:abb:aa8f:c9cd with SMTP id a640c23a62f3a-abbcc7f2ab3mr419789166b.28.1739979836924;
+        Wed, 19 Feb 2025 07:43:56 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-abbaa56026fsm491684066b.113.2025.02.19.07.43.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2025 07:43:56 -0800 (PST)
+Date: Wed, 19 Feb 2025 18:43:52 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+	Yang Shi <yang@os.amperecomputing.com>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Herbert Xu <herbert@gondor.apana.org.au>, willy@infradead.org,
+	Pankaj Raghav <p.raghav@samsung.com>,
+	Yang Shi <yang@os.amperecomputing.com>,
+	David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH 6.6 000/389] 6.6.76-rc2 review
+Message-ID: <b44dc8f6-7abf-4168-b96d-54f1562008e6@stanley.mountain>
+References: <20250206155234.095034647@linuxfoundation.org>
+ <CA+G9fYvKzV=jo9AmKH2tJeLr0W8xyjxuVO-P+ZEBdou6C=mKUw@mail.gmail.com>
+ <CA+G9fYtqBxt+JwSLCcVBchh94GVRhbo9rTP26ceJ=sf4MDo61Q@mail.gmail.com>
+ <Z7Xj-zIe-Sa1syG7@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z7Xj-zIe-Sa1syG7@arm.com>
 
-2 seq_puts() calls can be merged.
+Hi Catalin and Yang Shi,
 
-It saves a few lines of code and a few cycles, should it matter.
+What's happening is that we backport the latest kselftests and run
+them on the old kernels.  This is a supported thing so kselftests
+are supposed to be able to handle that.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-This is a left over from commit 7235759084a4 ("tracing/user_events: Use
-remote writes for event enablement")
----
- kernel/trace/trace_events_user.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+So we need to modify the testing/selftests/arm64/mte/check_hugetlb_options.c
+to check if the feature is present and disable the test for older
+kernels.
 
-diff --git a/kernel/trace/trace_events_user.c b/kernel/trace/trace_events_user.c
-index 97325fbd6283..bf2b5311d947 100644
---- a/kernel/trace/trace_events_user.c
-+++ b/kernel/trace/trace_events_user.c
-@@ -2793,11 +2793,8 @@ static int user_seq_show(struct seq_file *m, void *p)
- 
- 		seq_printf(m, "%s", EVENT_TP_NAME(user));
- 
--		if (status != 0)
--			seq_puts(m, " #");
--
- 		if (status != 0) {
--			seq_puts(m, " Used by");
-+			seq_puts(m, " # Used by");
- 			if (status & EVENT_STATUS_FTRACE)
- 				seq_puts(m, " ftrace");
- 			if (status & EVENT_STATUS_PERF)
--- 
-2.48.1
+This is not an issue with the stable kernel it's an issue with the
+new selftest.
+
+regards,
+dan carpenter
 
 
