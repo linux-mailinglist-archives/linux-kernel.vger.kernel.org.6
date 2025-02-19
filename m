@@ -1,203 +1,293 @@
-Return-Path: <linux-kernel+bounces-522526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8DADA3CB7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:32:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 411DCA3CB7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:32:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DD6C3A8913
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:32:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3270F1896B71
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:32:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D30822580DA;
-	Wed, 19 Feb 2025 21:32:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 174B52580D2;
+	Wed, 19 Feb 2025 21:32:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="GJoBwlpf"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11013031.outbound.protection.outlook.com [52.101.67.31])
+	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="oTfIrG0K";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="oINcBM6r"
+Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04F8D257438;
-	Wed, 19 Feb 2025 21:32:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.31
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740000732; cv=fail; b=WRSA+OGXN14tNx/gZ0p1CtaTRoanaXn7vBH6Aine6y3cGyOF4JMtRlSpy9yrswPE0QD9mgSfdG0Fg2ZC7svHhuk759fCwCvC+Z6d0/wuCHEIDTcQP6bVEpzD37Z/LogmZDOMm28SkpDDxTIgfLeblnpzj4/5CxZBMMe/9dIANPw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740000732; c=relaxed/simple;
-	bh=/RGnQrFMzdTyPhEHnxLqxMoB0bnnZtipKIXG3ygQnro=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Y6ZMy5LccsHkh4meL76q6HNoZKRi82RzGgBzb9vDQLegVZ+1QMmxP734v4aKFDfak6aeBA+NVnAYr8bONrtkrhVTm1IJPBqam+V2+b40U/Ku6On/PeiVcGNYtBluIXovTWpHdT+06EUoNZ9zzZGz8GUGorlXsU5LGa3uyzcFmYk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=GJoBwlpf; arc=fail smtp.client-ip=52.101.67.31
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=McAwegSF+fKftCHMeDMqVKwFh5ZcPHvRQWEw6X2E2viTOgpX8GBRPUwFXKWkAC8HKK+tV8pz7Gp2snkJjHgMCSOYtW+5/Podv30EermdKTVlYplMIXlrkhuid60cSYzYpXvN7u5TAEP2cvz6Mpz2J2T5aHpGJLo76nOJXkNnNMSRe8XyH4q6tNMjf9k+1usRTKp48dn0Y5+ITrpcK+MdJ2po5vtj6znu1BFMYgv31hcTaPiWhLcHf7gGaDA61dC0XbthogZb2/U27DYXOfYfjNhkNPDzeflqCJTWabnMeLyylgnpnlY7Z0rfFMFBCaYKL+oJbWnQe+xGLyMmz0AmIA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3yhl+sO09GgK7EpwYCMyl2uSe3tEPIGr8CxJyzS1CEQ=;
- b=Cp+g5uX2GRJ1YsOnSY457/Z/7zdW/9K1aVZ41m08NRRHHds4b6GiG8nQ4ZypgVKANstPbkAphuYJ1d8zuueZIrHYkMLrhPPLf2hlnis5qPJjJV3YTqoaCRPFClUHvOwp6GwpLhs10xUjGzggFEw+wbvbYwDFelXPKqTl5+GJOoz56dK1jRJ+NbFgbsDmrERbrezd8+Kd7nR16y62nFWnnzTIC83RUU+6D2HuaYrD1Ap75NsjbznfK5Rso/dSdNo0T55Nm+pI+hzC9sgHVxso26PJBg027T1xYhDA/r2x5gqtRtx2vbTv/1XEj2iVwYsk/Xawck1+vwZvm6dvo/iUsg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3yhl+sO09GgK7EpwYCMyl2uSe3tEPIGr8CxJyzS1CEQ=;
- b=GJoBwlpfZWCAOtXEpoWQ7sWeYDBIcRncNatG/XAn51VJLccnkbv2aC4WxrWXADQ4Fw/mEE2FgcMiSSsc9tDE7ZxCXGhz819C3ew0JxVsjrSdeHfuxVMaHvkNWkAgDU4bWYLyjuH9PsJ+xQL60+a6skKJv50h+PVv0z2IjDKF7Ko4vJjnCO0usn8EMpymMkBhm9VlOoYdA1c/f/zeB9dk5oqEmvCHLpqzpcZpHS48ZbgXa744FvsGDf30cfswzswjSKn5IBLLZXMiA1z687noI/DLYCVCv5o+qYd4H6qeYfi4qPqtGop2kay+Co+y4kzi/AxQw/+XiHHhm/gYqLupoA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by AS5PR04MB10058.eurprd04.prod.outlook.com (2603:10a6:20b:683::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.15; Wed, 19 Feb
- 2025 21:32:08 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8445.017; Wed, 19 Feb 2025
- 21:32:08 +0000
-Date: Wed, 19 Feb 2025 16:31:59 -0500
-From: Frank Li <Frank.li@nxp.com>
-To: Daniel Baluta <daniel.baluta@nxp.com>
-Cc: p.zabel@pengutronix.de, robh@kernel.org, shawnguo@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, s.hauer@pengutronix.de,
-	kernel@pengutronix.de, festevam@gmail.com,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	mathieu.poirier@linaro.org, shengjiu.wang@nxp.com, peng.fan@nxp.com,
-	laurentiu.mihalcea@nxp.com, iuliana.prodan@nxp.com
-Subject: Re: [PATCH v2 7/8] reset: imx8mp-audiomix: Add support for DSP
- run/stall
-Message-ID: <Z7ZNz4duF4okP2P2@lizhi-Precision-Tower-5810>
-References: <20250219192102.423850-1-daniel.baluta@nxp.com>
- <20250219192102.423850-8-daniel.baluta@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250219192102.423850-8-daniel.baluta@nxp.com>
-X-ClientProxiedBy: SJ0PR05CA0049.namprd05.prod.outlook.com
- (2603:10b6:a03:33f::24) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC9B124F59B;
+	Wed, 19 Feb 2025 21:32:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740000752; cv=none; b=a9C6luXqX3mgYyYPb2xVqPNRmaZjC9ayLsOvYMeubQFDFmgg6YqMDKhpF5LMUze9bOJuKaJGFAa1/KV5wYVfmv90bR/eRsN7n0yophJnlLn2Ef3lWDyjA0FxREyIFZkyDRuiwpR7+ZDFy4eN/pSPh8z6fTChb7bA/s/ohHK/3Fw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740000752; c=relaxed/simple;
+	bh=R1DT0LKXETP1mkKDAQ5SuvxP4ZXu8sX1cMCFdFI4olM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ilx7+Pw8BPa//qFePBEdTaHQ5Q2aVkZRslTZ0eWFroFnG728E9qxsFnJu+VEt2zsbOrU59QJNZp7dy6O8lG2UyZKUW6CmGCjZCOK0FVk0qUhI0teRfnAAChw8cStZKaJz5R2+YdI/7BVyaKSC8SoiP6IDhP+si+enF8EwMe0Ewo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=oTfIrG0K; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=oINcBM6r; arc=none smtp.client-ip=202.12.124.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 9E09D2540196;
+	Wed, 19 Feb 2025 16:32:28 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Wed, 19 Feb 2025 16:32:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1740000748; x=1740087148; bh=iYgnEhnSiY
+	4SDl7PRJM6FrAN6/BSW0DulOFqA3NUQeQ=; b=oTfIrG0KnniWyQgZjlq1G9ZTiG
+	zALJbtnnyh3NKgbdBJc49skNhpXnAQekoKJvyv1v6oqTs7JbPyBxbxt9mSNRAnFg
+	R46EwMkZ/KpbaUAIiFMpipqQllHyc0IymnG0nGP1XHF1cjDUrrXOz7aodFdD+c1/
+	Uutbraxb70sH/V2osQzJrpcICqkWHXYqUFpArd/dAwhm+9ttX/AUGUuhI1Cz7vFT
+	5mvfxfguS0VKMJdNjjZc+Bdli9ra3vDLPhykEQ/KYjg/DmRDOIoQdz+DkX0RpJeW
+	m3qaRwoek//5OQLpxf/iaAW7eEughLyHppPvOj4wLSgr4/uJayNGxA2wnSbA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1740000748; x=1740087148; bh=iYgnEhnSiY4SDl7PRJM6FrAN6/BSW0DulOF
+	qA3NUQeQ=; b=oINcBM6rrDfuJhePVu8wYiVR5Syw4P6kExWVV8gZCQI4tQt81Zc
+	mkpFj0kQDF1G3KURTKI5tYOfUJf6dL5Yvr7oN1AwxEdikgYWe2wTa6hHLhtbulPB
+	WG9YLk4M92y9jQDASvTMGxxmYSx28xcxiPEJjROJoeIP0X0f6jfFCwcbF0M2qEmI
+	C2LdpuEMkkDyCDg4F7RuaDhkMg0YaVu9fW7HlZcWzPdFh6uS5CjJiiLMcwh5DcDn
+	0d4bjuIxSwIywBADSdRT3B73P4ZfmhiJdxYnkOTEuECFF+ZUghNKIy2VX1ZzOdBC
+	A911j5XTrUWs7twMEcMkzunElBkcfNeg8Eg==
+X-ME-Sender: <xms:6022Z6A3cQm9sv8YH8SABmfrtY05vRO5FrxfVCnrnVablxBDJfI9jQ>
+    <xme:6022Z0iLpAxCBjjWTdgluLgLLIUbTQNfqJeWfXsaBmqm16ba0TYP3WtOXcCLzEaXK
+    AcS-nq1fEjdYnE74jI>
+X-ME-Received: <xmr:6022Z9lV8gTKwcYOWguv7LlfeMZY37X-ThUEW9iVWF6RpJbQRWDEJ2hhZbCV_h37xkCNf5wpmjT1CmjP72nkiV57q9sgzggsd8o>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeiheefhecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttdej
+    necuhfhrohhmpeflrghnnhgvucfirhhunhgruhcuoehjsehjrghnnhgruhdrnhgvtheqne
+    cuggftrfgrthhtvghrnhepgfdvffevleegudejfeefheehkeehleehfefgjefffeetudeg
+    tefhuedufeehfeetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilh
+    hfrhhomhepjhesjhgrnhhnrghurdhnvghtpdhnsggprhgtphhtthhopedugedpmhhouggv
+    pehsmhhtphhouhhtpdhrtghpthhtohepvhhitghtohhrshhhihhhghhlihesghhmrghilh
+    drtghomhdprhgtphhtthhopehulhhfrdhhrghnshhsohhnsehlihhnrghrohdrohhrghdp
+    rhgtphhtthhopegrughrihgrnhdrhhhunhhtvghrsehinhhtvghlrdgtohhmpdhrtghpth
+    htoheplhhinhhugidqmhhmtgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthho
+    pehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtth
+    hopegsvghntghhuhgrnhhgghhlihesghhmrghilhdrtghomhdprhgtphhtthhopehluhgt
+    rghsrdhlrghisehgvghnvghshihslhhoghhitgdrtghomhdrthifpdhrtghpthhtohephh
+    hlrdhlihhusehgvghnvghshihslhhoghhitgdrtghomhdrthifpdhrtghpthhtohepghhr
+    vghgrdhtuhesghgvnhgvshihshhlohhgihgtrdgtohhmrdhtfi
+X-ME-Proxy: <xmx:6022Z4zvPmvADj302GeodEWXhpqWjzRXsBF3U1mMuY6mhdWwJu4eyg>
+    <xmx:6022Z_SKV65Pqy3K6QtCT6-o0SIHvHZPgK7ydIru8o4JXBXMfrzNUQ>
+    <xmx:6022Zzb-8xMMjULWnILGJNc1TbjuTIkWHa4J5bvQ8KfByRKs05DGMQ>
+    <xmx:6022Z4RSrVV3DJ0_8Kl_Oxyjzq41lnGVhJfsq5ITmcbfcxn2f-5_EA>
+    <xmx:7E22Z7oHVMxT5Dh0GWOrqx7wSJg3ku7OuDx3xEhnWM7elPdiUtaCZrVb>
+Feedback-ID: i47b949f6:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 19 Feb 2025 16:32:26 -0500 (EST)
+Date: Wed, 19 Feb 2025 22:32:24 +0100
+From: Janne Grunau <j@jannau.net>
+To: Victor Shih <victorshihgli@gmail.com>
+Cc: ulf.hansson@linaro.org, adrian.hunter@intel.com,
+	linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	benchuanggli@gmail.com, Lucas.Lai@genesyslogic.com.tw,
+	HL.Liu@genesyslogic.com.tw, Greg.tu@genesyslogic.com.tw,
+	dlunev@chromium.org, Ben Chuang <ben.chuang@genesyslogic.com.tw>,
+	AKASHI Takahiro <takahiro.akashi@linaro.org>,
+	Victor Shih <victor.shih@genesyslogic.com.tw>,
+	asahi@lists.linux.dev
+Subject: Re: [PATCH V23 15/16] mmc: sdhci-pci-gli: enable UHS-II mode for
+ GL9755
+Message-ID: <20250219213224.GA57799@robin.jannau.net>
+References: <20241018105333.4569-1-victorshihgli@gmail.com>
+ <20241018105333.4569-16-victorshihgli@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AS5PR04MB10058:EE_
-X-MS-Office365-Filtering-Correlation-Id: 14c3380d-2bc9-4446-caeb-08dd512cdcf6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|52116014|7416014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?tm+Vwjqx8kaspTLz3eYd/4aRgt4spd5DEgj4v3bnPF5wxoez9SrFY6kWQW7H?=
- =?us-ascii?Q?3K8ggs92JZdf3iSKKw+LEezDRVXFYFDelcxigm5XV30bw4mmbhyKMYjwkKV8?=
- =?us-ascii?Q?2Nxa1lvd6E7EK7xCMwVkvp2Vf7ikhTpQ6xrbnDgKSeUAnVi9vkv/keMGxedb?=
- =?us-ascii?Q?EO8dHkGtRWaiNXh2jWLeoQBlgHiyTQ4Axz44RvOePFXDpxjTfSKMM2pX2Hww?=
- =?us-ascii?Q?Va5RErh3hRlivQBWRDi6LbL/W7ieUOBZ0/xCYOfji4nbHVC0qUUCgQ2o09am?=
- =?us-ascii?Q?DSwjgTs1+MNfQcTJXB6eTB2qKw2mQS+/16/cAtInZJ1gwV+G9dApyKYp57Sc?=
- =?us-ascii?Q?VQOBjVXH9QcebqmxvSvJjQoE3g2pZJwTayj69+zYEUDC0Mrjb8o+vY6MfFC1?=
- =?us-ascii?Q?8f2VDXHhbRFDVDKIqgB0urIqv2FeFpTB7DnntphWf0JnFPo+6TeuplynVLMh?=
- =?us-ascii?Q?VDMKv6EYNpKK1YdLDgseWv4OEpjhnz7hfCJJaD8wv/lZUOB5fRY/9Bs+EiyT?=
- =?us-ascii?Q?sWzG1BwMNPwuDgXjRj4xmklaRz4CxH3MLwbhNVeJ8ciU+489xRdToTxKw9Et?=
- =?us-ascii?Q?fSXlMkwDb+HlQ6mesLKWu/mgCFoughSNi07rMiUSjUfzt5RQw9YgRX0excjm?=
- =?us-ascii?Q?6YC5Lgvfvbufhd2D3635QPViOPxnYinzU4oSt+nQBWkzIZR5o42VkZM0fHfW?=
- =?us-ascii?Q?k+wOXOGYG5UGKQlKwT62JJhFtwjSLwcSfQAe4w/3fk0qu61TVJOkqwlvWsjL?=
- =?us-ascii?Q?tOdoW4SsdJ5jTWzQzuPdcmN8zQQzeIlKZI9lMwOHVQ4OtA6uMuycevFdu44D?=
- =?us-ascii?Q?JQndYh5hWhdtxmm0JaFPekDMw952RhgyyhFjONA8DWN2oQqAt/GNyEAigOU5?=
- =?us-ascii?Q?ykrWdW63ejehNcnNvY+AliD/8hng1NWe+Oy2BdCDwtaycTRO9AXc03mjDo2I?=
- =?us-ascii?Q?OWh5DM98yCo6l0Oe7wniWrriVw+JrvlVM/4LyPhQgsml1UNEST4CFN8uK9zB?=
- =?us-ascii?Q?2ejZ57I3Bh9QwLXVNqVvVgR/uV/ZY2LIWOk3KUk1DbNz6nw/rNr+6AcxGaDk?=
- =?us-ascii?Q?q3Y81KBkhHiWEU7OsCRJDfvg0L3D2zoheQBPhF26S4k//4FjL9+gqrF/y0XJ?=
- =?us-ascii?Q?mVeilp52lhnsFTUAsbiIObsuymNzbgZix/ZeQTs+n4ow8tKltJIhKCK4iQXA?=
- =?us-ascii?Q?XZ797sLoQHikDLxvmKDrRLdAMpWj6KRPdjgatYW1p9FZ5kgUqV/ZkQO+kUjD?=
- =?us-ascii?Q?BtLLeBNXnJHDFnGth25Vlv3qzUQX/YjPMoTWg2+x2J92b7gr6Ba8y47A1npf?=
- =?us-ascii?Q?wSZnf6/IlKAMz43dp1xAJnA9m8wv9Fwt1odn4pQpHzAsmvfP1KS4Xfu2Zcqi?=
- =?us-ascii?Q?QnaK4Jbo1aPYK0gocNlP3dFMiSBTJkf3m8VR7BZvt2O3vi+aP4vRFWT0gqoT?=
- =?us-ascii?Q?O+B8LsWsSz7Vd+YrfQrGm/XfL7tB8ACG?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(7416014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?rDMYk9Zf6SFKHXQFcIVyoukhNmZkw83BPznCLICy3UCjZSsuk2B7i4RSu6hn?=
- =?us-ascii?Q?LfdkADVDLIrXMG5ls3aVRvIshPQsiX0fFWzwZKt1L/ThJSkVEsof7Vad6Fu2?=
- =?us-ascii?Q?ZvUqW5cKoUHQT01IEyCMtBIZaOrFDJ2ai7RYJ0NjutjLlBSDl7BNu8RMS+ce?=
- =?us-ascii?Q?rT+8SDjtB/PoK3Qz077kqspKkytoUPqatjy8gFRg2cUWhN4jCjdOzrWC1q0u?=
- =?us-ascii?Q?4Ch5M1JtiCr8H2FPe16ReF5OI9SRCiPrI++1d/JcUFXUS6D/lhUGSSIEEtM/?=
- =?us-ascii?Q?XkpjvJfyW4PZDJP62VJNpaMfjpR0VR9xdtL8pU7vp+BYRYM8IQ4vvHRwrrcb?=
- =?us-ascii?Q?FZGgf/b49AwpO2iBSK+nPcf/RJvxI9tQ0sHEoZsbzkSuiskS52FnDAQZkhj5?=
- =?us-ascii?Q?5B211Ujew64VZRkfS/c0v8zg1PhNUDzGLS6c2Z3A2xfU737u9Lq+BrD71cxM?=
- =?us-ascii?Q?H+e52/YWh6jdMxn+W+83QN/cqoJAxJfzfOQGe/+aSGGF8X/w+i+04/c+eMNd?=
- =?us-ascii?Q?jFugj0XjsHTS12iYueOLmuZqvhazC4Op+qZoKfdJXvKsS7rOfhIYiDcpKx5D?=
- =?us-ascii?Q?qF9acu1Df6CVjbS13PWo1AaubQGi71LiN69ml0KYz3aKwadN0M8rU8iDDxyt?=
- =?us-ascii?Q?gRXeObqlfInjpwB6WIWOtTzuSPdsM/UrjIibbFi0YLFOa01zJpNxRLk1qdW4?=
- =?us-ascii?Q?jghaBgv6KpT31sLusx01dtGo+aPuVl16OOl6/hNIh9Rpi8m4Z9cUho6j60Iy?=
- =?us-ascii?Q?m9O69UI/xzZrdN3BelUk6/rBUUsDCYHZm3+0RG67IUZlGrXJKf8fZAENVx7V?=
- =?us-ascii?Q?GBYOHlHjgwOoRsX35K8EzUqIhCccwJLGLDvUUV55/p5Mb9cki3DVl69pUy9I?=
- =?us-ascii?Q?3EKBUmv0/n5XdyJZiOvv0XpRjOpnoHzQKpuxZHDfknlbWPUCqkoysvUhJoGF?=
- =?us-ascii?Q?ZB6OhtYfwlOAI+WSwxK31LF8/NdrvJvhF8MOR22NnFMp5MOw7HMrMCGQlT81?=
- =?us-ascii?Q?E0/uKpZQQUAOZAgkyB6YX2UNi4iH8y6fZLBE1HKDp5KFvAGpspdFSljtPLO0?=
- =?us-ascii?Q?THPD+B4Dhv6S1oy/bTLC1ZgACPQVWVgircW+/YoGINyh2GmqN5WOz11yutRS?=
- =?us-ascii?Q?NPRbBy6Ll5Kp4qe6CYyVGszxZe4mk0TAXwyooBJsQtBfQzGDdElL+FCHnkC4?=
- =?us-ascii?Q?Ze3vYCmUIQqgpJ4UhPlUKKfvznVHkHu146f2lpn1uwWGLlRTQchGsRqQCQ9w?=
- =?us-ascii?Q?GnX13oSEPiPpPgCkH352Yj+OBPGyog+55aQ2dtcPTh9b93eIeSM85SrZJNi2?=
- =?us-ascii?Q?eyLtWs+qXK7rOwoE7o+hTfu99uD50U2oNxtTUtKtwbt3MfeUvndwMb1yzJv/?=
- =?us-ascii?Q?r4w6BNjNVeUC/m8EuAuepEuSPavdmMZGNv0Cp+KCxx+R7Ek2UFpdLaLNR5eI?=
- =?us-ascii?Q?gxDsQeDjd6nqP/rsGRUV4usrr/JWa2LpgmGTwYOJyOZGiJadUz8wuN19pjaZ?=
- =?us-ascii?Q?z92bg8z3x/2sFH+0K2v6ar5dCxzslyRIFF74Z2XUtEhcY2Sj8km/0b+tLImy?=
- =?us-ascii?Q?mMjsvkdw5ikdyRzuuOw=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 14c3380d-2bc9-4446-caeb-08dd512cdcf6
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2025 21:32:08.5274
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: nbFu1T+EY4PjUjvXKf/HX7/uaQ14vc/XvmdjEwpI+NWx6cLswyTF5Pk2GMZzlsomO6k+tWbX6fDNqdiZkj/Tkw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS5PR04MB10058
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241018105333.4569-16-victorshihgli@gmail.com>
 
-On Wed, Feb 19, 2025 at 09:21:01PM +0200, Daniel Baluta wrote:
-> We can Run/Stall the DSP via audio block control bits found in audiomix.
-> Implement this functionality using the reset controller and use assert
-> for Stall and deassert for Run.
->
-> Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+Hej,
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
-
+On Fri, Oct 18, 2024 at 06:53:32PM +0800, Victor Shih wrote:
+> From: Victor Shih <victor.shih@genesyslogic.com.tw>
+> 
+> Changes are:
+>  * Disable GL9755 overcurrent interrupt when power on/off on UHS-II.
+>  * Enable the internal clock when do reset on UHS-II mode.
+>  * Increase timeout value before detecting UHS-II interface.
+>  * Add vendor settings fro UHS-II mode.
+>  * Remove sdhci_gli_enable_internal_clock functon unused clk_ctrl variable.
+>  * Make a function sdhci_gli_wait_software_reset_done() for gl9755 reset.
+>  * Remove unnecessary code from sdhci_gl9755_reset().
+> 
+> Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
+> Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
+> Signed-off-by: Victor Shih <victor.shih@genesyslogic.com.tw>
+> Signed-off-by: Lucas Lai <lucas.lai@genesyslogic.com.tw>
 > ---
->  drivers/reset/reset-imx8mp-audiomix.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
->
-> diff --git a/drivers/reset/reset-imx8mp-audiomix.c b/drivers/reset/reset-imx8mp-audiomix.c
-> index 42539cafbccc..4a713b772429 100644
-> --- a/drivers/reset/reset-imx8mp-audiomix.c
-> +++ b/drivers/reset/reset-imx8mp-audiomix.c
-> @@ -16,6 +16,9 @@
->  #define IMX8MP_AUDIOMIX_EARC_RESET_MASK		BIT(1)
->  #define IMX8MP_AUDIOMIX_EARC_PHY_RESET_MASK	BIT(2)
->
-> +#define IMX8MP_AUDIOMIX_DSP_OFFSET		0x108
-> +#define IMX8MP_AUDIOMIX_DSP_RUNSTALL_MASK	BIT(5)
-> +
->  struct imx8mp_reset_map {
->  	unsigned int offset;
->  	unsigned int mask;
-> @@ -33,6 +36,11 @@ static const struct imx8mp_reset_map reset_map[] = {
->  		.mask	= IMX8MP_AUDIOMIX_EARC_PHY_RESET_MASK,
->  		.active_low = true,
->  	},
-> +	[IMX8MP_AUDIOMIX_DSP] = {
-> +		.offset	= IMX8MP_AUDIOMIX_DSP_OFFSET,
-> +		.mask	= IMX8MP_AUDIOMIX_DSP_RUNSTALL_MASK,
-> +		.active_low = false,
-> +	},
->  };
->
->  struct imx8mp_audiomix_reset {
-> --
-> 2.25.1
->
+> 
+>  drivers/mmc/host/sdhci-pci-gli.c | 235 ++++++++++++++++++++++++++++++-
+>  1 file changed, 234 insertions(+), 1 deletion(-)
+
+This change results in error messages / timeout about UHS2 followed by
+register dumps with the GL9755 integrated in Apple silicon Macbook Pros
+and Mac Studio systems. Non UHS-II function of controller does not seem
+to be affected. Apple advertises the the SDXC slot as UHS-II capable.
+
+The only quirk we've experienced with gl9755 on this platform is that 8
+and 16 bit MMIO reads do not work. Workaround added in commit
+c064bb5c78c1b ("mmc: sdhci-pci-gli: GL975[50]: Issue 8/16-bit MMIO reads
+as 32-bit reads.").
+
+If you have ideas or patches to try I'm happy to do that. If not we can
+look into what MacOS does.
+
+See kernel log and lspci output below
+
+Thanks,
+Janne
+
+[   38.130033] kernel: sdhci: Secure Digital Host Controller Interface driver
+[   38.130141] kernel: sdhci: Copyright(c) Pierre Ossman
+[   38.133352] kernel: sdhci-pci 0000:02:00.0: Adding to iommu group 13
+[   38.160551] kernel: sdhci-pci 0000:02:00.0: SDHCI controller found [17a0:9755] (rev 1)
+[   38.160655] kernel: sdhci-pci 0000:02:00.0: enabling device (0000 -> 0002)
+[   38.160750] kernel: mmc0: SDHCI controller on PCI [0000:02:00.0] using ADMA 64-bit
+[   38.274617] kernel: mmc0: not detect UHS2 interface in 100ms.
+[   38.274717] kernel: mmc0: sdhci: ============ SDHCI REGISTER DUMP ===========
+[   38.274782] kernel: mmc0: sdhci: Sys addr:  0x00000000 | Version:  0x00000005
+[   38.277391] kernel: mmc0: sdhci: Blk size:  0x00000000 | Blk cnt:  0x00000000
+[   38.277475] kernel: mmc0: sdhci: Argument:  0x00000000 | Trn mode: 0x00000000
+[   38.280125] kernel: mmc0: sdhci: Present:   0x20070000 | Host ctl: 0x00000000
+[   38.280206] kernel: mmc0: sdhci: Power:     0x000000bf | Blk gap:  0x00000000
+[   38.284511] kernel: mmc0: sdhci: Wake-up:   0x00000000 | Clock:    0x0000032f
+[   38.284592] kernel: mmc0: sdhci: Timeout:   0x00000007 | Int stat: 0x00000000
+[   38.284636] kernel: mmc0: sdhci: Int enab:  0x00ff0083 | Sig enab: 0x00ff0083
+[   38.287200] kernel: mmc0: sdhci: ACmd stat: 0x00000000 | Slot int: 0x00000000
+[   38.287281] kernel: mmc0: sdhci: Caps:      0x396a3281 | Caps_1:   0x1803057f
+[   38.291212] kernel: mmc0: sdhci: Cmd:       0x00000000 | Max curr: 0x000000c8
+[   38.291292] kernel: mmc0: sdhci: Resp[0]:   0x00000000 | Resp[1]:  0x00000000
+[   38.291335] kernel: mmc0: sdhci: Resp[2]:   0x00000000 | Resp[3]:  0x00000000
+[   38.293513] kernel: mmc0: sdhci: Host ctl2: 0x00009107
+[   38.293604] kernel: mmc0: sdhci: ADMA Err:  0x00000000 | ADMA Ptr: 0x0000000000000000
+[   38.297842] kernel: mmc0: sdhci_uhs2: ==================== UHS2 ==================
+[   38.297923] kernel: mmc0: sdhci_uhs2: Blk Size:  0x00000000 | Blk Cnt:  0x00000000
+[   38.297968] kernel: mmc0: sdhci_uhs2: Cmd:       0x00000000 | Trn mode: 0x00000000
+[   38.300773] kernel: mmc0: sdhci_uhs2: Int Stat:  0x00000000 | Dev Sel : 0x00000000
+[   38.300853] kernel: mmc0: sdhci_uhs2: Dev Int Code:  0x00000000
+[   38.304739] kernel: mmc0: sdhci_uhs2: Reset:     0x00000000 | Timer:    0x000000a7
+[   38.304811] kernel: mmc0: sdhci_uhs2: ErrInt:    0x00000000 | ErrIntEn: 0x00030000
+[   38.304856] kernel: mmc0: sdhci_uhs2: ErrSigEn:  0x00030000
+[   38.307110] kernel: mmc0: sdhci: ============================================
+[   38.307201] kernel: mmc0: cannot detect UHS2 interface.
+[   38.310110] kernel: mmc0: failed to initial phy for UHS-II!
+[   38.424645] kernel: mmc0: not detect UHS2 interface in 100ms.
+[   38.424731] kernel: mmc0: sdhci: ============ SDHCI REGISTER DUMP ===========
+[   38.424758] kernel: mmc0: sdhci: Sys addr:  0x00000000 | Version:  0x00000005
+[   38.424782] kernel: mmc0: sdhci: Blk size:  0x00000000 | Blk cnt:  0x00000000
+[   38.424840] kernel: mmc0: sdhci: Argument:  0x00000000 | Trn mode: 0x00000000
+[   38.427603] kernel: mmc0: sdhci: Present:   0x20070000 | Host ctl: 0x00000000
+[   38.427659] kernel: mmc0: sdhci: Power:     0x000000bf | Blk gap:  0x00000000
+[   38.430579] kernel: mmc0: sdhci: Wake-up:   0x00000000 | Clock:    0x0000032f
+[   38.430626] kernel: mmc0: sdhci: Timeout:   0x00000007 | Int stat: 0x00000000
+[   38.433504] kernel: mmc0: sdhci: Int enab:  0x00ff0083 | Sig enab: 0x00ff0083
+[   38.433550] kernel: mmc0: sdhci: ACmd stat: 0x00000000 | Slot int: 0x00000000
+[   38.437596] kernel: mmc0: sdhci: Caps:      0x396a3281 | Caps_1:   0x1803057f
+[   38.437641] kernel: mmc0: sdhci: Cmd:       0x00000000 | Max curr: 0x000000c8
+[   38.437677] kernel: mmc0: sdhci: Resp[0]:   0x00000000 | Resp[1]:  0x00000000
+[   38.440318] kernel: mmc0: sdhci: Resp[2]:   0x00000000 | Resp[3]:  0x00000000
+[   38.440345] kernel: mmc0: sdhci: Host ctl2: 0x00009107
+[   38.444119] kernel: mmc0: sdhci: ADMA Err:  0x00000000 | ADMA Ptr: 0x0000000000000000
+[   38.444161] kernel: mmc0: sdhci_uhs2: ==================== UHS2 ==================
+[   38.444184] kernel: mmc0: sdhci_uhs2: Blk Size:  0x00000000 | Blk Cnt:  0x00000000
+[   38.446918] kernel: mmc0: sdhci_uhs2: Cmd:       0x00000000 | Trn mode: 0x00000000
+[   38.446958] kernel: mmc0: sdhci_uhs2: Int Stat:  0x00000000 | Dev Sel : 0x00000000
+[   38.450833] kernel: mmc0: sdhci_uhs2: Dev Int Code:  0x00000000
+[   38.450874] kernel: mmc0: sdhci_uhs2: Reset:     0x00000000 | Timer:    0x000000a7
+[   38.450907] kernel: mmc0: sdhci_uhs2: ErrInt:    0x00000000 | ErrIntEn: 0x00030000
+[   38.454625] kernel: mmc0: sdhci_uhs2: ErrSigEn:  0x00030000
+[   38.454665] kernel: mmc0: sdhci: ============================================
+[   38.454699] kernel: mmc0: cannot detect UHS2 interface.
+[   38.456705] kernel: mmc0: failed to initial phy for UHS-II!
+
+
+`lspci -vvvnn -d 17a0:9755` output:
+02:00.0 SD Host controller [0805]: Genesys Logic, Inc GL9755 SD Host Controller [17a0:9755] (rev 01) (prog-if 01)
+        Subsystem: Genesys Logic, Inc GL9755 SD Host Controller [17a0:9755]
+        Device tree node: /sys/firmware/devicetree/base/soc@200000000/pcie@590000000/pci@1,0/mmc@0,0
+        Control: I/O- Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr- Stepping- SERR- FastB2B- DisINTx+
+        Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort- <TAbort- <MAbort- >SERR- <PERR- INTx-
+        Latency: 0
+        Interrupt: pin A routed to IRQ 168
+        IOMMU group: 13
+        Region 0: Memory at 5c1e00000 (32-bit, non-prefetchable) [size=4K]
+        Capabilities: [80] Express (v2) Endpoint, IntMsgNum 0
+                DevCap: MaxPayload 256 bytes, PhantFunc 0, Latency L0s <4us, L1 unlimited
+                        ExtTag+ AttnBtn- AttnInd- PwrInd- RBE+ FLReset- SlotPowerLimit 0W TEE-IO-
+                DevCtl: CorrErr+ NonFatalErr+ FatalErr+ UnsupReq+
+                        RlxdOrd+ ExtTag+ PhantFunc- AuxPwr- NoSnoop+
+                        MaxPayload 128 bytes, MaxReadReq 512 bytes
+                DevSta: CorrErr- NonFatalErr- FatalErr- UnsupReq- AuxPwr+ TransPend-
+                LnkCap: Port #85, Speed 5GT/s, Width x1, ASPM L0s L1, Exit Latency L0s <4us, L1 unlimited
+                        ClockPM+ Surprise- LLActRep- BwNot- ASPMOptComp+
+                LnkCtl: ASPM Disabled; RCB 64 bytes, LnkDisable- CommClk+
+                        ExtSynch- ClockPM- AutWidDis- BWInt- AutBWInt-
+                LnkSta: Speed 5GT/s, Width x1
+                        TrErr- Train- SlotClk+ DLActive- BWMgmt- ABWMgmt-
+                DevCap2: Completion Timeout: Range ABCD, TimeoutDis+ NROPrPrP- LTR+
+                         10BitTagComp- 10BitTagReq- OBFF Via message/WAKE#, ExtFmt- EETLPPrefix-
+                         EmergencyPowerReduction Not Supported, EmergencyPowerReductionInit-
+                         FRS- TPHComp- ExtTPHComp-
+                         AtomicOpsCap: 32bit- 64bit- 128bitCAS-
+                DevCtl2: Completion Timeout: 50us to 50ms, TimeoutDis-
+                         AtomicOpsCtl: ReqEn-
+                         IDOReq- IDOCompl- LTR+ EmergencyPowerReductionReq-
+                         10BitTagReq- OBFF Disabled, EETLPPrefixBlk-
+                LnkCap2: Supported Link Speeds: 2.5-5GT/s, Crosslink- Retimer- 2Retimers- DRS-
+                LnkCtl2: Target Link Speed: 5GT/s, EnterCompliance- SpeedDis-
+                         Transmit Margin: Normal Operating Range, EnterModifiedCompliance- ComplianceSOS-
+                         Compliance Preset/De-emphasis: -6dB de-emphasis, 0dB preshoot
+                LnkSta2: Current De-emphasis Level: -6dB, EqualizationComplete- EqualizationPhase1-
+                         EqualizationPhase2- EqualizationPhase3- LinkEqualizationRequest-
+                         Retimer- 2Retimers- CrosslinkRes: unsupported
+        Capabilities: [e0] MSI: Enable+ Count=1/1 Maskable- 64bit+
+                Address: 00000000fffff000  Data: 0018
+        Capabilities: [f8] Power Management version 3
+                Flags: PMEClk- DSI- D1+ D2+ AuxCurrent=375mA PME(D0-,D1+,D2+,D3hot+,D3cold+)
+                Status: D0 NoSoftRst+ PME-Enable- DSel=0 DScale=0 PME+
+        Capabilities: [100 v1] Vendor Specific Information: ID=17a0 Rev=1 Len=008 <?>
+        Capabilities: [108 v1] Latency Tolerance Reporting
+                Max snoop latency: 0ns
+                Max no snoop latency: 0ns
+        Capabilities: [110 v1] L1 PM Substates
+                L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+ L1_PM_Substates+
+                          PortCommonModeRestoreTime=255us PortTPowerOnTime=3100us
+                L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2- ASPM_L1.1-
+                           T_CommonMode=0us LTR1.2_Threshold=3375104ns
+                L1SubCtl2: T_PwrOn=3100us
+        Capabilities: [200 v1] Advanced Error Reporting
+                UESta:  DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt- UnxCmplt- RxOF- MalfTLP-
+                        ECRC- UnsupReq- ACSViol- UncorrIntErr- BlockedTLP- AtomicOpBlocked- TLPBlockedErr-
+                        PoisonTLPBlocked- DMWrReqBlocked- IDECheck- MisIDETLP- PCRC_CHECK- TLPXlatBlocked-
+                UEMsk:  DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt- UnxCmplt- RxOF- MalfTLP-
+                        ECRC- UnsupReq- ACSViol- UncorrIntErr- BlockedTLP- AtomicOpBlocked- TLPBlockedErr-
+                        PoisonTLPBlocked- DMWrReqBlocked- IDECheck- MisIDETLP- PCRC_CHECK- TLPXlatBlocked-
+                UESvrt: DLP+ SDES+ TLP- FCP+ CmpltTO- CmpltAbrt- UnxCmplt- RxOF+ MalfTLP+
+                        ECRC- UnsupReq- ACSViol- UncorrIntErr- BlockedTLP- AtomicOpBlocked- TLPBlockedErr-
+                        PoisonTLPBlocked- DMWrReqBlocked- IDECheck- MisIDETLP- PCRC_CHECK- TLPXlatBlocked-
+                CESta:  RxErr- BadTLP- BadDLLP- Rollover- Timeout- AdvNonFatalErr- CorrIntErr- HeaderOF-
+                CEMsk:  RxErr- BadTLP- BadDLLP- Rollover- Timeout+ AdvNonFatalErr+ CorrIntErr- HeaderOF-
+                AERCap: First Error Pointer: 00, ECRCGenCap+ ECRCGenEn- ECRCChkCap+ ECRCChkEn-
+                        MultHdrRecCap- MultHdrRecEn- TLPPfxPres- HdrLogCap-
+                HeaderLog: 00000000 00000000 00000000 00000000
+        Kernel driver in use: sdhci-pci
+        Kernel modules: sdhci_pci
+
 
