@@ -1,47 +1,62 @@
-Return-Path: <linux-kernel+bounces-522172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D582A3C6FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:06:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6A48A3C702
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:06:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2ABD418867FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:06:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48B533AA2B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:06:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85A2F2147F2;
-	Wed, 19 Feb 2025 18:05:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23DC32147F9;
+	Wed, 19 Feb 2025 18:06:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SaEJREB5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="FMpXm0ed"
+Received: from 001.mia.mailroute.net (001.mia.mailroute.net [199.89.3.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D99068F7D;
-	Wed, 19 Feb 2025 18:05:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3EF1214221;
+	Wed, 19 Feb 2025 18:06:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739988359; cv=none; b=OUZm9FpScON5texNSrpLNfCwW1z0jy5hVr0rfGnDOMMuICWLZOpcqnprFQS8QlLpd0gSPQgPncJp5H//sT0eIBFWBcWn+nBU36jYZCIDx5XyJZ7EOYsVLjulC1vTVZwjmMvvrsMMjODgEN/6H7Q3yQQ8vOv3DoL3Uyl0o3GcFus=
+	t=1739988377; cv=none; b=S5htK2LQrPiYEW+vMI5S7IhHRk9S+xNSZUKwvwUbJeACuLAUVdTV8pX28HyV4xfX/MaGu9I6STUted3AcS9lb4PuNKpkO/0qLm3r7EqkiE1olASCL2DkwuOs2M1n2FIRacZZZkufYh3zzYfPcYR5ifoPobhKB/hsFjEozoSwl8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739988359; c=relaxed/simple;
-	bh=rmLqgVZ46zmjfiZfRiXtm3hs21qb1OdC4OcV8JEeWnY=;
+	s=arc-20240116; t=1739988377; c=relaxed/simple;
+	bh=31kRgLAZfDVOiQ8N1KRlmR/2G97vumycoIfpvwrBZh0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V+2jsVQx0OFu27NIpWeim+9DFXQRBCOYI3xRBnp01sXPmxxZpg48EB2F5wkhHzBGfvdjsuWJgcypUe3OfKoYZolRVjraeAJYgIFxtLQJFqsUBBDbol/r5p6BCJiT5zrmv3pS7pdxc/P4KTaKwcF2ldrc82F7eZB0Zd4GqNEJGIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SaEJREB5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D47B3C4CED1;
-	Wed, 19 Feb 2025 18:05:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739988358;
-	bh=rmLqgVZ46zmjfiZfRiXtm3hs21qb1OdC4OcV8JEeWnY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SaEJREB58NeGeSjmBxg/0nExTiXpnh6Q84pUBcA7IvrHNnkEVRwT/Pj9xCBkrPrkj
-	 D6arsBGguM/OYTfXJia8UXH/64lz9ZWjbH0ueSX45WDZMEgbpdtlFlKReN6xB44cCk
-	 gjMzRRyGrWue4wu1goWEVdxIyCZLZ0pZWv5XfNaKtJB12FJroAj0nU1uKxxp/6x88f
-	 emItFemMnYov45SvrZUpgnTutciuUiRSCdt6EDAx8eyWDOZNHilGwlM8q8Vugl2WXI
-	 dohAHFlC0MCrYcO+FyUCxZh8VI0RWaR6Zx+IJ+A6UnNdjXtreAKvjJVC8RAn+4lsx2
-	 CjCecO1xN9W4g==
-Message-ID: <fe9b5d8d-5cbb-4d0c-bd12-b15a8d44062d@kernel.org>
-Date: Wed, 19 Feb 2025 12:05:57 -0600
+	 In-Reply-To:Content-Type; b=ZpkHucB5h4Bi773KorpzKt7Jhs3E0J2+mvpfGlWf9P7EYqcITLvBZz629DLatBrhV55U//lwvl8pPwxygAtWff8gAId1suz8i1K1fs77Rv06Qz2cLJmL0N4i6vjt6ArwbMe/k4DXuD9ekw+4DQpfdFMUaSzhLlRu5scEY/ie6Ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=FMpXm0ed; arc=none smtp.client-ip=199.89.3.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 001.mia.mailroute.net (Postfix) with ESMTP id 4Yykpt53gTz1Xb87K;
+	Wed, 19 Feb 2025 18:06:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1739988373; x=1742580374; bh=yfMRDrYuIG3e1Afok2GQUBcC
+	RLQjngN5DOpHmYmKhgk=; b=FMpXm0ed77Zyn9TWpNXyUuBuHcdpgRNyx8C3ScMf
+	djZWfPA7VLL+szDPOruU+iTXa3CgCW/xIy74OjMXcjQnqAa1JDAD6IwX7/5v6O/f
+	Fjc+AfrehN4b9/sMygrKvuLcP63VrtWyhbyhSItVhssRoT6bwMRVMMlD80prZ7mC
+	C4hTnTvKp7YhjB5jE6ksZmmfH3/S1xo02XrLp3OTHMsx0iEhEDImsObf7LN8dBWL
+	dM3bCOTp/ePXf7wSk/I6BryBPdgVwSvlzjxYsQ3OeOCEY0pfkJWWlqfGfNT3y2dy
+	q3AUPmgAKx8znUn7FwMFRCYk2t6PWBN5g8fO20u4VbOONg==
+X-Virus-Scanned: by MailRoute
+Received: from 001.mia.mailroute.net ([127.0.0.1])
+ by localhost (001.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id hlYeEd01oGUK; Wed, 19 Feb 2025 18:06:13 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 001.mia.mailroute.net (Postfix) with ESMTPSA id 4Yykpp469yz1XY6MW;
+	Wed, 19 Feb 2025 18:06:09 +0000 (UTC)
+Message-ID: <03b1b927-fb33-46e8-b38d-08e986f45672@acm.org>
+Date: Wed, 19 Feb 2025 10:06:07 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,151 +64,68 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 17/18] cpufreq/amd-pstate: Rework CPPC enabling
-To: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
-Cc: Perry Yuan <perry.yuan@amd.com>,
- Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>,
- "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
- <linux-kernel@vger.kernel.org>,
- "open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>,
- Mario Limonciello <mario.limonciello@amd.com>
-References: <20250217220707.1468365-1-superm1@kernel.org>
- <20250217220707.1468365-18-superm1@kernel.org>
- <Z7X4BfEAbRwCg2Dg@BLRRASHENOY1.amd.com>
+Subject: Re: [PATCH] scsi: fix missing lock protection
+To: Chaohai Chen <wdhh66@163.com>, martin.petersen@oracle.com
+Cc: James.Bottomley@HansenPartnership.com, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250219081119.203295-1-wdhh66@163.com>
 Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <Z7X4BfEAbRwCg2Dg@BLRRASHENOY1.amd.com>
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20250219081119.203295-1-wdhh66@163.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 2/19/2025 09:25, Gautham R. Shenoy wrote:
-> On Mon, Feb 17, 2025 at 04:07:06PM -0600, Mario Limonciello wrote:
->> From: Mario Limonciello <mario.limonciello@amd.com>
->>
->> The CPPC enable register is configured as "write once".  That is
->> any future writes don't actually do anything.
->>
->> Because of this, all the cleanup paths that currently exist for
->> CPPC disable are non-effective.
->>
->> Rework CPPC enable to only enable after all the CAP registers have
->> been read to avoid enabling CPPC on CPUs with invalid _CPC or
->> unpopulated MSRs.
->>
->> As the register is write once, remove all cleanup paths as well.
->>
->> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
->> ---
->> v3:
->>   * Fixup for suspend/resume issue
->> ---
-> [..snip..]
+On 2/19/25 12:11 AM, Chaohai Chen wrote:
+> async_scan_lock is designed to protect the scanning_hosts list,
+> but there is no protection here.
 > 
->>   
->> -static int shmem_cppc_enable(bool enable)
->> +static int shmem_cppc_enable(struct cpufreq_policy *policy)
->>   {
->> -	int cpu, ret = 0;
->> +	struct amd_cpudata *cpudata = policy->driver_data;
->>   	struct cppc_perf_ctrls perf_ctrls;
->> +	int ret;
->>   
->> -	if (enable == cppc_enabled)
->> -		return 0;
->> +	ret = cppc_set_enable(cpudata->cpu, 1);
->> +	if (ret)
->> +		return ret;
->>   
->> -	for_each_present_cpu(cpu) {
->> -		ret = cppc_set_enable(cpu, enable);
->> +	/* Enable autonomous mode for EPP */
->> +	if (cppc_state == AMD_PSTATE_ACTIVE) {
->> +		/* Set desired perf as zero to allow EPP firmware control */
->> +		perf_ctrls.desired_perf = 0;
->> +		ret = cppc_set_perf(cpudata->cpu, &perf_ctrls);
->>   		if (ret)
->>   			return ret;
+> Signed-off-by: Chaohai Chen <wdhh66@163.com>
+> ---
+>   drivers/scsi/scsi_scan.c | 6 +++++-
+>   1 file changed, 5 insertions(+), 1 deletion(-)
 > 
-> We don't need the if condition here. There is nothing following this
-> inside the if block and the function return "ret" soon after coming
-> out of this if block.
-> 
-> 
->> -
->> -		/* Enable autonomous mode for EPP */
->> -		if (cppc_state == AMD_PSTATE_ACTIVE) {
->> -			/* Set desired perf as zero to allow EPP firmware control */
->> -			perf_ctrls.desired_perf = 0;
->> -			ret = cppc_set_perf(cpu, &perf_ctrls);
->> -			if (ret)
->> -				return ret;
->> -		}
->>   	}
->>   
->> -	cppc_enabled = enable;
->>   	return ret;
->>   }
->>   
->>   DEFINE_STATIC_CALL(amd_pstate_cppc_enable, msr_cppc_enable);
->>   
->> -static inline int amd_pstate_cppc_enable(bool enable)
-> [..snip..]
-> 
->>   
->> -static int amd_pstate_epp_reenable(struct cpufreq_policy *policy)
->> +static int amd_pstate_epp_cpu_online(struct cpufreq_policy *policy)
->>   {
->>   	struct amd_cpudata *cpudata = policy->driver_data;
->>   	union perf_cached perf = READ_ONCE(cpudata->perf);
->>   	int ret;
->>   
->> -	ret = amd_pstate_cppc_enable(true);
->> -	if (ret)
->> -		pr_err("failed to enable amd pstate during resume, return %d\n", ret);
->> -
->> -
->> -	return amd_pstate_epp_update_limit(policy);
->> -}
->> +	pr_debug("AMD CPU Core %d going online\n", cpudata->cpu);
->>   
->> -static int amd_pstate_epp_cpu_online(struct cpufreq_policy *policy)
->> -{
->> -	struct amd_cpudata *cpudata = policy->driver_data;
->> -	int ret;
->> +	ret = amd_pstate_cppc_enable(policy);
->> +	if (ret)
->> +		return ret;
->>   
->> -	pr_debug("AMD CPU Core %d going online\n", cpudata->cpu);
->>   
->> -	ret = amd_pstate_epp_reenable(policy);
->> +	ret = amd_pstate_update_perf(policy, 0, 0, perf.highest_perf, cpudata->epp_cached, false);
-> 
-> Previously, when a CPU came online, the callpath would be
-> amd_pstate_epp_cpu_online(policy)
-> --> amd_pstate_epp_reenable(policy)
->       --> amd_pstate_epp_update_limit(policy)
->            --> amd_pstate_epp_update_limit(policy)
-> 
-> which reevaluates the min_perf_limit and max_perf_limit based on
-> policy->min and policy->max and then calls
-> 
->        amd_pstate_update_perf(policy, min_limit_perf, 0, max_limit_perf, epp, false)
-> 
-> With this patch, we call
-> 
->        amd_pstate_update_perf(policy, 0, 0, perf.highest_perf, cpudata->epp_cached, false);
-> 
-> which would set CPPC.min_perf to 0.
-> 
-> I guess this should be ok since cpufreq_online() would eventually call
-> amd_pstate_verify() and amd_pstate_epp_set_policy() which should
-> re-initialize the the min_limit_perf and max_limit_perf. Though I
-> haven't verified if the behaviour changes with this patch when the CPU
-> is offlined and brought back online.
+> diff --git a/drivers/scsi/scsi_scan.c b/drivers/scsi/scsi_scan.c
+> index 087fcbfc9aaa..9a90e6ba5603 100644
+> --- a/drivers/scsi/scsi_scan.c
+> +++ b/drivers/scsi/scsi_scan.c
+> @@ -151,8 +151,12 @@ int scsi_complete_async_scans(void)
+>   	struct async_scan_data *data;
+>   
+>   	do {
+> -		if (list_empty(&scanning_hosts))
+> +		spin_lock(&async_scan_lock);
+> +		if (list_empty(&scanning_hosts)) {
+> +			spin_unlock(&async_scan_lock);
+>   			return 0;
+> +		}
+> +		spin_unlock(&async_scan_lock);
+>   		/* If we can't get memory immediately, that's OK.  Just
+>   		 * sleep a little.  Even if we never get memory, the async
+>   		 * scans will finish eventually.
 
-I'll double check with removing amd_pstate_update_perf() call from 
-amd_pstate_epp_cpu_online().  I think it will be clearer to let it get 
-set from the amd_pstate_epp_set_policy() call.
+Has it been considered to use scoped_guard() as in the untested patch
+below?
+
+Thanks,
+
+Bart.
+
+
+diff --git a/drivers/scsi/scsi_scan.c b/drivers/scsi/scsi_scan.c
+index 087fcbfc9aaa..efc90571ab47 100644
+--- a/drivers/scsi/scsi_scan.c
++++ b/drivers/scsi/scsi_scan.c
+@@ -151,8 +151,9 @@ int scsi_complete_async_scans(void)
+  	struct async_scan_data *data;
+
+  	do {
+-		if (list_empty(&scanning_hosts))
+-			return 0;
++		scoped_guard(spinlock, &async_scan_lock)
++			if (list_empty(&scanning_hosts))
++				return 0;
+  		/* If we can't get memory immediately, that's OK.  Just
+  		 * sleep a little.  Even if we never get memory, the async
+  		 * scans will finish eventually.
 
 
