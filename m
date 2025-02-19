@@ -1,114 +1,135 @@
-Return-Path: <linux-kernel+bounces-522460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 813D5A3CAA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:00:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B301A3CAA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:00:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDD74189ACC2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:00:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4B3218999AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:00:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27A5224E4CD;
-	Wed, 19 Feb 2025 20:59:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ECD3253324;
+	Wed, 19 Feb 2025 21:00:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HhATFANN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="EVaSHjwW"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75C8121516A;
-	Wed, 19 Feb 2025 20:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588C32528E9;
+	Wed, 19 Feb 2025 21:00:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739998790; cv=none; b=g3tVhqUaGs3eWqcJQerTYijw6bFpscciGzIHh/SELYdTf7c8mEVHKcsnPIWPPBOcthIKPscoz3dWi5tZvh6KkGLq/uAZsqFbWM55xU0ARpyUPfrGYY+2U5yPasOPevUTL6wh1y9c0jTrguYdfHSdkhFf4+evCsZnZ7j0qWBzVoM=
+	t=1739998828; cv=none; b=Tis9ryQtz3bS5mkfZqvGAfyRdONiL4uVJH0lgtmIONKM6U6PrypydQGUapC134CfsAnKQ8+jGGGauvS/WYZsqkyR2FANyQV1CAMc9x6lAEevab5xN0gXeVwpVo2iccu+FrKKryHU2Sg5WdftYUbSTiTUWYrg+yIaYQwCNa1ExJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739998790; c=relaxed/simple;
-	bh=dvKxf/qUFD6QnlirkXBKY1HZbjPnMYpsHH/KTkGADbQ=;
+	s=arc-20240116; t=1739998828; c=relaxed/simple;
+	bh=aX+a5w8XmINtfH48IXldc+6paaSi1c9fznZYSx8wZBY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AxjpOe3mj7cwaZV10B711vaTGgDDHeJ+sFRmYTyjGgXXYc2uDkg3A5ZN64esrgyeu+qPx8VYY0Yy4QYWylqBypTYZYicTnIXpDwdaZW2UC5p9JAQoUdcyaLtAo3EO5Pq5YPtr+9ZHi+/BhEh75LgG+ru/2wGTMSOwbxsrJHOcmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HhATFANN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF2A6C4CED1;
-	Wed, 19 Feb 2025 20:59:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739998789;
-	bh=dvKxf/qUFD6QnlirkXBKY1HZbjPnMYpsHH/KTkGADbQ=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=hYTo5b+rbcbtmo2t1sQ0Z19ejc0vG4sAgxS9+emUQBagOxswKy+3Kprj1u5STp0HVnm4SwSl840SXmxIjld0eG5zUbnyuSKGgrn2V3jHSocwZNn2CI00NV5dlSLsfTGc9EjsmM7M9u7nQ2aGLLd2GP2EWVj22ZWp1/5DtK/SMDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=EVaSHjwW; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3034E40E01B2;
+	Wed, 19 Feb 2025 21:00:25 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id YHqz74H1AW0s; Wed, 19 Feb 2025 21:00:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1739998820; bh=rjW6me5aey9H48hEN1KtzxQxnDbPM7NZTegKHKqDCWs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HhATFANN5fZNDsk2vd16D8hpEgGYsbMRmJeqAeSfBHaz7cDAOFvdLy8QWk/IQBFBx
-	 rA0MGTnHBTRjCI0fsh4mvP3wvwHCa32Zv43x0ELdFM/tXDEiM5NrKGXvKHa/ducPN0
-	 2pSUcI0esU7DUXb5AXPRGgPPNEOoqvP+5i+QApcLx/JIcMNXgjnVLySXMIGoqwPEnT
-	 iyw9BMNP9prbO2KJHF+draikDPyMS8YUnQzbr4f75DNalpnJ67s/WSugZW8bCiwVEh
-	 XwSKb+ojCI4PXWF5BOLZCm+CFUtuVVSDqAjTvbehcPKhr3b1HRBOvRa8uQCmNwAHOH
-	 /P+VXstLmdzOA==
-Date: Wed, 19 Feb 2025 14:59:48 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: linux-watchdog@vger.kernel.org, linux-clk@vger.kernel.org,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Biju Das <biju.das.jz@bp.renesas.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/9] dt-bindings: clock: rzv2h-cpg: Add syscon
- compatible for CPG
-Message-ID: <173999878831.2928343.14910610867424763036.robh@kernel.org>
-References: <20250210184910.161780-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250210184910.161780-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	b=EVaSHjwW22P+vF1AXfgkrBhlqKcMY6aPZjkYzyb3Unn8wSfHBuGpF82KiHzKcs4rD
+	 RDgZ5NMMlqYe7usuGitbOeZfiy0LnFMAG62t1TmjMOGJWLabXTN+fDd3EkQOMnIcgz
+	 2+WnZC0xl5sQyvk6K8DWKM+qaBoyDFlPc6qEDFXVI9XdvN2NWV7MvREVFd0fHJIy/Z
+	 WnCv00w94vrVDjP4gtCAiEaXTcxqs3DBPSti9J9SsjALQJnPFdT6DyTcSN59tm90vt
+	 E0HYdr/quNZQGlyGhtu+kD0yMY0//XgLYKJAqgzgV9EiTjZxcZkH6pk1P9lWsu4taV
+	 D4zie+Afwgyto4ZhBITYkFdUdv5NwKBu2K0VOj1nvFQNFBwopzE9quJJ9Tdji8iC5F
+	 tKidpAX1COfflmtwTh6rNfD0hcVR9CBeY9vVgMUlIYFbvkCJIJH/Ek5aXbPScoxGMj
+	 tE5fS4e8Gg2kRytdJLcZFsPFoEKk/D0bZPCwDX/Vj34PWrI36wjIpXw7ot5+dBEfu+
+	 Bluv0CdgiJ0SXPqLkhq7Rli/xZ5AILx+FCLEWT5cD9OKWJRFP99WeJrNUI54UhDnzq
+	 SVI0x2SXGK6iLvrWcvyuUel83sC5J7mNvJ5wXSOKu+PkzttmWsuZO9psynAwdch3Ja
+	 V6oZ+n7VGPb+FQCC2FcPNvIE=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6459040E015D;
+	Wed, 19 Feb 2025 21:00:05 +0000 (UTC)
+Date: Wed, 19 Feb 2025 22:00:04 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Ruidong Tian <tianruidong@linux.alibaba.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, lpieralisi@kernel.org,
+	guohanjun@huawei.com, sudeep.holla@arm.com,
+	xueshuai@linux.alibaba.com, baolin.wang@linux.alibaba.com,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, rafael@kernel.org,
+	lenb@kernel.org, tony.luck@intel.com, yazen.ghannam@amd.com
+Subject: Re: [PATCH v3 4/5] RAS/ATL: Unified ATL interface for ARM64 and AMD
+Message-ID: <20250219210004.GTZ7ZGVHn9h5h88_fJ@fat_crate.local>
+References: <20250115084228.107573-1-tianruidong@linux.alibaba.com>
+ <20250115084228.107573-5-tianruidong@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250210184910.161780-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250115084228.107573-5-tianruidong@linux.alibaba.com>
+
+On Wed, Jan 15, 2025 at 04:42:27PM +0800, Ruidong Tian wrote:
+> Subject: Re: [PATCH v3 4/5] RAS/ATL: Unified ATL interface for ARM64 and AMD
+
+The condensed patch description in the subject line should start with a
+uppercase letter and should be written in imperative tone.
 
 
-On Mon, 10 Feb 2025 18:49:02 +0000, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> The CPG block in the RZ/V2H(P) and RZ/G3E SoCs includes Error Reset Select
-> Registers (`CPG_ERRORRST_SELm`) and Error Reset Registers
-> (`CPG_ERROR_RSTm`). The `CPG_ERRORRST_SELm` register must be configured to
-> trigger a system reset in response to specific error conditions, while the
-> `CPG_ERROR_RSTm` registers store the error interrupt factors that caused
-> the system reset. These registers can be used by various IP blocks as
-> needed.
-> 
-> For example, in `CPG_ERRORRST_SEL2`, setting `BIT(1)` enables the WDT1 to
-> issue a system reset upon a watchdog timer underflow. Similarly, `BIT(1)`
-> in `CPG_ERROR_RST2` indicates whether the system reset was caused by a
-> WDT1 underflow. This functionality allows the watchdog driver to configure
-> the CPG_ERRORRST_SEL2 register and determine whether the system booted due
-> to a `Power-on Reset` or a `Watchdog Reset`.
-> 
-> Add the `syscon` compatible property to the RZ/V2H(P) and RZ/G3E CPG
-> blocks, enabling drivers to access the `CPG_ERRORRST_SELm` and
-> `CPG_ERROR_RSTm` registers as needed.
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Translate device normalize address in AMD, also named logical address,
+> to system physical address is a common interface in RAS. Provides common
+> interface both for AMD and ARM.
+
+This needs a lot more explanation.
+
+> Signed-off-by: Ruidong Tian <tianruidong@linux.alibaba.com>
 > ---
-> v3->v4
-> - Updated commit meessage
+>  drivers/edac/amd64_edac.c      |  2 +-
+>  drivers/ras/aest/aest-core.c   | 12 ++++++------
+>  drivers/ras/amd/atl/core.c     |  4 ++--
+>  drivers/ras/amd/atl/internal.h |  2 +-
+>  drivers/ras/amd/atl/umc.c      |  3 ++-
+>  drivers/ras/ras.c              | 24 +++++++++++-------------
+>  include/linux/ras.h            |  9 ++++-----
+>  7 files changed, 27 insertions(+), 29 deletions(-)
 > 
-> v2->v3
-> - No change
-> 
-> v1->v2
-> - No change
-> ---
->  .../devicetree/bindings/clock/renesas,rzv2h-cpg.yaml   | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
-> 
+> diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
+> index ddfbdb66b794..1e9c96e4daa8 100644
+> --- a/drivers/edac/amd64_edac.c
+> +++ b/drivers/edac/amd64_edac.c
+> @@ -2832,7 +2832,7 @@ static void decode_umc_error(int node_id, struct mce *m)
+>  	a_err.ipid = m->ipid;
+>  	a_err.cpu  = m->extcpu;
+>  
+> -	sys_addr = amd_convert_umc_mca_addr_to_sys_addr(&a_err);
+> +	sys_addr = convert_ras_la_to_spa(&a_err);
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+No, this is not how all this is done. You don't rename functions and make them
+generic - you *extract* generic functionality into generic functions and have
+other functions which use them, call them.
 
+And you do that when there are users, not before.
+
+Ok, that should be enough feedback for now.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
