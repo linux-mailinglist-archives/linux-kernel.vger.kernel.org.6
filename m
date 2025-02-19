@@ -1,243 +1,167 @@
-Return-Path: <linux-kernel+bounces-521330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA470A3BBB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:32:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E701A3BBB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:33:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6034175562
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:32:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C390175973
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:33:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ACC91DE2D7;
-	Wed, 19 Feb 2025 10:32:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C52851DE3BB;
+	Wed, 19 Feb 2025 10:33:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sa2oQAj4";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="I1jqpVEh";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gpkt3xYZ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="fMqq4Dss"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="W0PukoyZ"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B0A7DA95
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 10:32:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A85C2F41;
+	Wed, 19 Feb 2025 10:33:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739961149; cv=none; b=pJxgEJUB1cWU06bhfajRsNxBwRReysv9anbfco9amksKfNU7u5zIAcDVGe9F88dvNYwiuEX2uqnN8G5VDYNNyiKNJ+XZIPvkpwBFFjcvQ8R0fM1xsUz/WXlQwxjUv9TnHtXXEPL9AgDIp1JpkM/5PAO6lohGLmjLbL9zNSAyYw4=
+	t=1739961202; cv=none; b=jEW5lJywCHFQwHr/lrWK2IsuCQHoF5zgF0fyFEdBwjHLH8UeUBL1qOAJMKoQrDgesjsGrNkBTBKGwKC7uNl5/gp+qWe+Jcxw6du3rfLLcE969o06keeNiFpowIvCLz4y1weVJLoudnfNJ0ZnF/R79no0+drN8L0URKuiFexxiFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739961149; c=relaxed/simple;
-	bh=qIrWEi3ZC3axpcehFrxQOO9DVNkEWJ3VlRWxGRiYVJY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XAjwdNhjmgR61B95jIkSdIZfRuTqAmRGLJ1cEUTx2H9OhsnNMcsrsP3f8z/09uOS3D++GAuXvRaZY1vBjxTUfwVY8bhzRr/yzRd9Yiilhm7w7B2SFbRv58Vt3KIB+3BlAMcL29w3ngrtIcUlY6xGlA0sSp/8s7imuwASLTRKYkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=fail smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=sa2oQAj4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=I1jqpVEh; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gpkt3xYZ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=fMqq4Dss; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id D97FB2120F;
-	Wed, 19 Feb 2025 10:32:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1739961146; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Y+kkuBYJd/19NRvzUV1Wm8GdViJznSz/zdockMizPMQ=;
-	b=sa2oQAj48rVWb+C47CGLGDqf3/x91C+AhoZ3EgLTzrih79RnZFSI6iIHP8oHIWastkaI7K
-	3XgT8uh+Dfg0T+sBJvxQPGUEJFELCMNs6okHg7wVG8IaY7OzM11DxVHG5TOrU5jVZEtVmv
-	3HV6gk2qh60S2t+41/ipCHlx8JcoB3A=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1739961146;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Y+kkuBYJd/19NRvzUV1Wm8GdViJznSz/zdockMizPMQ=;
-	b=I1jqpVEh8njxarckSfGyJDxT7jNlyfDsLtqXysJzdRUB5hWcSyM5iH2PdyGZ6Wc6fvdyXI
-	O957BquzWOHYXcCA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1739961145; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Y+kkuBYJd/19NRvzUV1Wm8GdViJznSz/zdockMizPMQ=;
-	b=gpkt3xYZY77AXwFDAQIb501JGoe3wTI4A/FIHUQdcaNhVbWYOILWErtUhassomI/6OFqlE
-	i14gd/McoRH2PTFYrKqmjdqy/ZSxv7X2fheVxRlvah4I1YIJJ9K1j1Uds051HlGevjdQEm
-	T0y3PJHs9T5zh0IRd8G/dTK6Oyr37zE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1739961145;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Y+kkuBYJd/19NRvzUV1Wm8GdViJznSz/zdockMizPMQ=;
-	b=fMqq4Dsse+qu2p/vVEaXRxNBEaiKd83QTzs55xR+uRONDr2TVngLK+Djn8QCxh08wGOpM3
-	7G7Ndxo9fuY1xODw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AD22E137DB;
-	Wed, 19 Feb 2025 10:32:25 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id emDnKTmztWdfSQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 19 Feb 2025 10:32:25 +0000
-Message-ID: <6cc54680-3093-4d75-b688-91688023c41b@suse.cz>
-Date: Wed, 19 Feb 2025 11:32:25 +0100
+	s=arc-20240116; t=1739961202; c=relaxed/simple;
+	bh=e/jBCLCEMXLt2zyHShTUYjUTd+F+cErCr2KyPu1I/Io=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gt5b6GuzBVF0CsXAl79NwHXQMA5mjdy1DqN4oHom7HAyaOwbLkkXHH4PQ/LUxeQGfwKJaAZIIfG3X12FuT7bJ70NdVrzCJCRyxIG1ck0ZZk8JV3XblpPdzqfmn1diylF7szDofM43pzNJL8LFbS4D7ar4iZWMJX9TcMz/c6fiV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=W0PukoyZ; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb (31-10-206-125.static.upc.ch [31.10.206.125])
+	by mail11.truemail.it (Postfix) with ESMTPA id 1ECAC1FA98;
+	Wed, 19 Feb 2025 11:33:15 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1739961195;
+	bh=BPELQkHLLDnKGOkHJi+6/rCSbKkXPkV56KASAKI3mjs=; h=From:To:Subject;
+	b=W0PukoyZU+5Ia2v5WSdcRAjlfWkwMUAnZJc1DqtOeS5jDMTEi/M9oIoNLRgyxRbd0
+	 ZwqkxEdJtSNxto3GS8vx9DCTQIiIUBwX5gNj3ufdnUj1gzD8tigMyAwtY71o0tpnkt
+	 VFQ1err5mU5IRMXCuQZELvkIP2UdzlZhD62Les9Em7rMYdGBb93nBCtUhc7HkOu+UU
+	 1844H7YmRQJ7q48rxwy4UQSau9KCybTzvQ4pUaZE1nGWPJTUyDJY/T30Xiu7sk5IZm
+	 Q4lcCI59ySw/H9pT0CfN7ccZ2bEPjPNMYOibrhqwCrEl01RLyfw6OyOvkXQ5B3/ZjZ
+	 UgyTxUn+F5KRg==
+Date: Wed, 19 Feb 2025 11:33:07 +0100
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Quentin Schulz <quentin.schulz@cherry.de>
+Cc: Francesco Dolcini <francesco@dolcini.it>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Farouk Bouabid <farouk.bouabid@cherry.de>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/2] hwmon: (amc6821) Add PWM polarity configuration
+ with OF
+Message-ID: <20250219103307.GA22470@francesco-nb>
+References: <20250218165633.106867-1-francesco@dolcini.it>
+ <20250218165633.106867-3-francesco@dolcini.it>
+ <eb5c844a-e726-44c0-a0c1-7796d1a28ec3@cherry.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2] neighbour: Replace kvzalloc() with kzalloc()
- when GFP_ATOMIC is specified
-Content-Language: en-US
-To: Kohei Enju <enjuk@amazon.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: "David S . Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- Kuniyuki Iwashima <kuniyu@amazon.com>, Gilad Naaman <gnaaman@drivenets.com>,
- Joel Granados <joel.granados@kernel.org>, Li Zetao <lizetao1@huawei.com>,
- Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
- David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, Kohei Enju <kohei.enju@gmail.com>
-References: <20250219102227.72488-1-enjuk@amazon.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20250219102227.72488-1-enjuk@amazon.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Score: -2.80
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[davemloft.net,google.com,kernel.org,redhat.com,amazon.com,drivenets.com,huawei.com,linux.com,lge.com,linux-foundation.org,linux.dev,gmail.com];
-	RCPT_COUNT_TWELVE(0.00)[20];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <eb5c844a-e726-44c0-a0c1-7796d1a28ec3@cherry.de>
 
-On 2/19/25 11:22, Kohei Enju wrote:
-> kzalloc() uses page allocator when size is larger than
-> KMALLOC_MAX_CACHE_SIZE, so the intention of commit ab101c553bc1
-> ("neighbour: use kvzalloc()/kvfree()") can be achieved by using kzalloc().
-> 
-> When using GFP_ATOMIC, kvzalloc() only tries the kmalloc path,
-> since the vmalloc path does not support the flag.
-> In this case, kvzalloc() is equivalent to kzalloc() in that neither try
-> the vmalloc path, so this replacement brings no functional change.
-> This is primarily a cleanup change, as the original code functions
-> correctly.
-> 
-> This patch replaces kvzalloc() introduced by commit 41b3caa7c076
-> ("neighbour: Add hlist_node to struct neighbour"), which is called in
-> the same context and with the same gfp flag as the aforementioned commit
-> ab101c553bc1 ("neighbour: use kvzalloc()/kvfree()").
-> 
-> Signed-off-by: Kohei Enju <enjuk@amazon.com>
+Hello Quentin,
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+On Wed, Feb 19, 2025 at 11:08:43AM +0100, Quentin Schulz wrote:
+> On 2/18/25 5:56 PM, Francesco Dolcini wrote:
+> > From: Francesco Dolcini <francesco.dolcini@toradex.com>
+> > 
+> > Add support to configure the PWM-Out pin polarity based on a device
+> > tree property.
+> > 
+> > Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+> > ---
+> >   drivers/hwmon/amc6821.c | 7 +++++--
+> >   1 file changed, 5 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/hwmon/amc6821.c b/drivers/hwmon/amc6821.c
+> > index 1e3c6acd8974..1ea2d97eebca 100644
+> > --- a/drivers/hwmon/amc6821.c
+> > +++ b/drivers/hwmon/amc6821.c
+> > @@ -845,7 +845,7 @@ static int amc6821_detect(struct i2c_client *client, struct i2c_board_info *info
+> >   	return 0;
+> >   }
+> > -static int amc6821_init_client(struct amc6821_data *data)
+> > +static int amc6821_init_client(struct i2c_client *client, struct amc6821_data *data)
+> >   {
+> >   	struct regmap *regmap = data->regmap;
+> >   	int err;
+> > @@ -864,6 +864,9 @@ static int amc6821_init_client(struct amc6821_data *data)
+> >   		if (err)
+> >   			return err;
+> > +		if (of_property_read_bool(client->dev.of_node, "ti,pwm-inverted"))
+> 
+> I know that the AMC6821 is doing a lot of smart things, but this really
+> tickled me. PWM controllers actually do support that already via
+> PWM_POLARITY_INVERTED flag for example. See
+> Documentation/devicetree/bindings/hwmon/adt7475.yaml which seems to be
+> another HWMON driver which acts as a PWM controller. I'm not sure this is
+> relevant, applicable or desired but I wanted to highlight this.
 
-> ---
-> Notes:
->     One of the SLAB maintainers (Vlastimil Babka) looked at v1 patch and
->     double-checked kzalloc() is clearer in this context:
->     https://lore.kernel.org/netdev/b4a2bf18-c1ec-4ccd-bed9-671a2fd543a9@suse.cz/
+From the DT binding point of view, it seems to implement the same I am
+proposing here with adi,pwm-active-state property.
+
+Do you have anything more specific in mind?
+
 > 
-> Changes:
->     v1: https://lore.kernel.org/netdev/20250216163016.57444-1-enjuk@amazon.com/
->     v1->v2:
->         - Change commit message
->         - Remove the Fixes tag since there is no real bug now
-> ---
->  net/core/neighbour.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> > +			pwminv = 1;
+> > +
 > 
-> diff --git a/net/core/neighbour.c b/net/core/neighbour.c
-> index d8dd686b5287..344c9cd168ec 100644
-> --- a/net/core/neighbour.c
-> +++ b/net/core/neighbour.c
-> @@ -518,7 +518,7 @@ static struct neigh_hash_table *neigh_hash_alloc(unsigned int shift)
->  	if (!ret)
->  		return NULL;
->  
-> -	hash_heads = kvzalloc(size, GFP_ATOMIC);
-> +	hash_heads = kzalloc(size, GFP_ATOMIC);
->  	if (!hash_heads) {
->  		kfree(ret);
->  		return NULL;
-> @@ -536,7 +536,7 @@ static void neigh_hash_free_rcu(struct rcu_head *head)
->  						    struct neigh_hash_table,
->  						    rcu);
->  
-> -	kvfree(nht->hash_heads);
-> +	kfree(nht->hash_heads);
->  	kfree(nht);
->  }
->  
+> This is silently overriding the module parameter.
+> 
+> I don't think this is a good idea, at the very least not silently.
+
+I was thinking at the same, and in the end I do have proposed this
+solution in any case.
+
+Let's look at the 2 use cases in which the DT property and the module
+parameter are different.
+
+## 1
+
+module parameter pwminv=0
+ti,pwm-inverted DT property present
+
+=> we enable the PWM inversion
+
+I think this is fair, if someone has a DT based system we need to assume
+that the DT is correct. This is a HW configuration, not a module
+parameter.
+
+## 2
+
+module parameter pwminv=1
+ti,pwm-inverted DT property absent
+
+=> we enable the PWM inversion
+
+In this case the module parameter is overriding the DT. It means that
+someone explicitly set pwminv=1 module parameter. I think is fair to
+fulfill the module parameter request in this case, overriding the DT
+
+> I would suggest to add some logic in the probe function to set this value
+> and check its consistency.
+
+With that said I can implement something around the lines you proposed,
+if you still think is worth doing it. I would personally just keep the
+priority on the module parameter over the DT and add an info print on what
+is actually configured by the driver (not checking if they are
+different).
+	
+Or I can just add a dev_info() telling the user about the actual PWM
+polarity used, making this more transparent, without changing the logic
+proposed here.
+
+Francesco
 
 
