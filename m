@@ -1,91 +1,70 @@
-Return-Path: <linux-kernel+bounces-521336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DA36A3BBC8
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:40:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D55C6A3BBCA
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:41:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D9477A6DDA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:39:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B27EA3B011F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:41:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D80F1DE2D7;
-	Wed, 19 Feb 2025 10:40:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B5FF1DE3D6;
+	Wed, 19 Feb 2025 10:41:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tiDumWSU"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZZJ2z1F6"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ACA21DE2BD
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 10:40:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D734A1ACED2;
+	Wed, 19 Feb 2025 10:41:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739961625; cv=none; b=kbD4z6HHjhycD5SWAJXix9WwzyFedx+xj8CgCEfz3ehl4RlXrF/eoNX7zuxUisFbHvZdYbFLgM+SMyvV3hiQ3Cq6Jk25mRbMjfdldIaGUBkBTqLY2MlvnU7j8uj5/gTPxEacqVyF4mtfUZ/AQwl6xCyIpocbx+NKiSwdiJz8HOA=
+	t=1739961665; cv=none; b=eftCG/mJMaVZwH+0VbKp4womcMTg3+sQOhiibS7EdSyfJ5Bf/d/uoCbRBCt8syZmcdEQm13lFiA8zwJE5yhtRloAjfc8jgd59a/fckWwYQztvyBfdykIN807u9Q7sCjjlJ6wTg5wdJHnesXE6+OIWkLf64zM2d/djdYMp1UvP1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739961625; c=relaxed/simple;
-	bh=+Anp7Lg+FVfajyUS0vQIj16UIiLsxJxFxYN+q8tFg5Q=;
+	s=arc-20240116; t=1739961665; c=relaxed/simple;
+	bh=1ZifGDt6ZsCQyZDMlCaNaOvYPhCX16g7i+WBuMry1HM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AsD4ApqO5prcZ129OS1zsN9KlEuvsN14mYXQj4aHvWyMNI3d2vMhSs1RriV2C2L9ZLhkXqMrlpn9wIfjt5p9Y95oeO7zhGTuJelYFAQqCEhhTYVACgIa0lmnU7SyDHfBfg/ss74jYw2YxniLVLflWoYkd+3vbjSQJAO0QxX2SAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tiDumWSU; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-38f3ea6207cso2909955f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 02:40:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739961622; x=1740566422; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oTpEssmUoRIjX9Gc5CypTsWt0/nZ9V99gdm6sCPaUhg=;
-        b=tiDumWSUIen5vA5PEKbxRhze1OoAEXKqdQVOEKPbXK2dwq1GUIO2PP9INjhAMT+OuD
-         ATpTp89gX7FPZ2b57cu+BuA7v7AraLwLN3pDxegSQuozJ7Q0ujbwBiORytZnhRkG0Udh
-         mxoZjdpgWtrsOC4rvGpkEi0p+MVu/Ka9+c/QCS2oQIZrAHzXjvmK/pbN68w83cxyUzgP
-         bpHSZowD2Jgm44cUjTc9HjBRvYF/yHOre4KsKj9ZCdEwGMvNm6AjREINTSuzatNj5bVO
-         bvkpU9uQCe/Ez6MlAFBEXBXasoCkPttbwfvx9Es9BuzoU1nmoghlwtQtwdKlnpGm8scc
-         E7zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739961622; x=1740566422;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oTpEssmUoRIjX9Gc5CypTsWt0/nZ9V99gdm6sCPaUhg=;
-        b=Ocb0wI61abt5mqGHEx8nyqXnmHXBfZEGa06IsWzpeqgyxgxL0gMugqeZ1TqQANRyPq
-         B0/Ri7RLCQ+4qk824NVkg77iUVB1dbp6vSXgkA+UwGgUBz5fMYEMuBbhdEuJ3aYLSh/o
-         ZhhAO/TaPEP2rBLCbT7pspDuCzUy+qoJpCvHHIn6Rv1jgGUoZO+Q7M93kBvh+d3JnC/d
-         rtC65NR2zQgUemxaFR8x4zi2tYKvD0PV8QL0TpX3oJlXsKD5M03csS+gvvWgTWD0KnqR
-         K4GEFyHJneyNeJnkXPdZRXSqmdNze8zjob+toWfpTTUyaexVDIrrLlgn+pVC9rV4qV+4
-         ETIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVGURdHoZ1ZiZhbQbtpIlGfGP5pOa/tifBhnoK13jrTM24OnJc2fchNm5J+FznwEyngqPcvG0Sm0toRqqc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTv+4xjOkn+mShDBqrKRIA8aQRgsHr3cte5NhqMCHFL05tLtFh
-	sHgIPIwPv2mq2lKetar9abI1052Lp8Awlizh0dCWo+J5zSg0mC4FSrcpnzG7wH8=
-X-Gm-Gg: ASbGncvB7oaqD5170BYt0rwgQaGQloE5ahUtI0fax6ith8vtUIRFSutQap+5NLMuB/i
-	kiQmG/5YmRoHv74Z7WkPzji73sTvMcUsZhY1QjPxf3tc7xn0YiB8WrNunoLdVpWiH0japl//A4N
-	hobUpDhAnFT5EjH/HB9p1nUVHopqdDWh+Prj84NXFRw6StqtM8JDW5UPDkrAfGlhYKlh/qaAnbL
-	eLcIZNzEuGXohiQF9EEZqYaoFPAKgm5oB8CD24e/2plg5O+wE4lXRfh4PU+zLRpb4rf+40EyENm
-	uAM3CiHV9Zig61YL5FABZqPM6TQ=
-X-Google-Smtp-Source: AGHT+IEWjgG7pbgCzAJkKiubwvHKifXXf7rgGGj2vJdSFL2Ufsb0tZitD1EnLcEdqieTl59H6i3ZRw==
-X-Received: by 2002:adf:ef46:0:b0:38d:badf:9df5 with SMTP id ffacd0b85a97d-38f33f39223mr10831845f8f.17.1739961621535;
-        Wed, 19 Feb 2025 02:40:21 -0800 (PST)
-Received: from linaro.org ([2a02:2454:ff21:ef30:6f72:6161:57cf:1c9a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258eb141sm17162624f8f.41.2025.02.19.02.40.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2025 02:40:21 -0800 (PST)
-Date: Wed, 19 Feb 2025 11:40:16 +0100
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: Wolfram Sang <wsa@kernel.org>, Andy Gross <agross@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Konrad Dybcio <konradybcio@kernel.org>
-Subject: Re: [PATCH 3/3] i2c: qup: Vote for interconnect bandwidth to DRAM
-Message-ID: <Z7W1EJ7uGsaTZMRh@linaro.org>
-References: <20231128-i2c-qup-dvfs-v1-0-59a0e3039111@kernkonzept.com>
- <20231128-i2c-qup-dvfs-v1-3-59a0e3039111@kernkonzept.com>
- <5dr5ps4vb57xj2mfelgsxgoyrr3gg4ggwqggqchff6pda3ffsn@thxpg4h6kgel>
+	 Content-Type:Content-Disposition:In-Reply-To; b=P4teib9Y7jG91hF5T5pGdevT+Ef2U/OubM5/uvnISRZNhr8tanezHRGShVg9lafaeu5yUVfeV3TZjUoqiWFVkVBqPsvvDHM6yfAwEtG1T0VhgtRGzlTx0yBz/ia5vdiWC7ceCEqqiScGQAaV8Orb1Ss9cAvnhi2ivjRQpiF3lHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZZJ2z1F6; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=3G6kUYCeF3vQA0srZDA8CCP/Hwqz0yhm4jKVJ6oazFg=; b=ZZJ2z1F676sZRKBnsd2zd+5eNa
+	W7JGCVMwwTsxjM8oX9qzYCwG02vZ70AgwhgZtTFjVKjO2XvAaXBZHMToy7XFCMVlJIwdnLdxAnQ/z
+	55qm8Cd41GYNVm3OzFFPz9itzjIUgvZSjYEzXWld5ZDxMmojS9uTLyQdjT0qMC5TBEidMTVn2+7dd
+	5JhhufeQdigioyM77qdRhzoLJMGDLkDHT53t1Wnl86mpJItw9yW53Dp471njAcr3Y6OaF6cWbpc1o
+	syQdV6vWDR7HvAIfBJVeg4TkthkHP6S2rqM8EmGmTrIcAJGzXts4W548AYOTAL0bgTWn+rxYaRg2U
+	1IfeEkpw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tkhVO-00000005kiw-2Fle;
+	Wed, 19 Feb 2025 10:40:38 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 8EC60300783; Wed, 19 Feb 2025 11:40:37 +0100 (CET)
+Date: Wed, 19 Feb 2025 11:40:37 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Shuai Xue <xueshuai@linux.alibaba.com>, tony.luck@intel.com,
+	nao.horiguchi@gmail.com, tglx@linutronix.de, mingo@redhat.com,
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+	linmiaohe@huawei.com, akpm@linux-foundation.org,
+	jpoimboe@kernel.org, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	baolin.wang@linux.alibaba.com, tianruidong@linux.alibaba.com
+Subject: Re: [PATCH v2 3/5] x86/mce: add EX_TYPE_EFAULT_REG as in-kernel
+ recovery context to fix copy-from-user operations regression
+Message-ID: <20250219104037.GG40464@noisy.programming.kicks-ass.net>
+References: <20250217063335.22257-1-xueshuai@linux.alibaba.com>
+ <20250217063335.22257-4-xueshuai@linux.alibaba.com>
+ <20250218125408.GD40464@noisy.programming.kicks-ass.net>
+ <1ff716d3-eb3d-477e-ae30-1abe97eee01b@linux.alibaba.com>
+ <20250218141535.GC34567@noisy.programming.kicks-ass.net>
+ <20250218164800.GNZ7S5wL1A4dTaySOP@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,74 +73,187 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5dr5ps4vb57xj2mfelgsxgoyrr3gg4ggwqggqchff6pda3ffsn@thxpg4h6kgel>
+In-Reply-To: <20250218164800.GNZ7S5wL1A4dTaySOP@fat_crate.local>
 
-Hi Andi,
-
-On Wed, Feb 19, 2025 at 12:02:06AM +0100, Andi Shyti wrote:
+On Tue, Feb 18, 2025 at 05:48:00PM +0100, Borislav Petkov wrote:
+> On Tue, Feb 18, 2025 at 03:15:35PM +0100, Peter Zijlstra wrote:
+> > diff --git a/arch/x86/kernel/cpu/mce/severity.c b/arch/x86/kernel/cpu/mce/severity.c
+> > index dac4d64dfb2a..cfdae25eacd7 100644
+> > --- a/arch/x86/kernel/cpu/mce/severity.c
+> > +++ b/arch/x86/kernel/cpu/mce/severity.c
+> > @@ -301,18 +301,19 @@ static noinstr int error_context(struct mce *m, struct pt_regs *regs)
+> >  	instrumentation_end();
+> >  
+> >  	switch (fixup_type) {
+> > -	case EX_TYPE_UACCESS:
+> > -		if (!copy_user)
+> > -			return IN_KERNEL;
+> > -		m->kflags |= MCE_IN_KERNEL_COPYIN;
+> > -		fallthrough;
+> > -
+> >  	case EX_TYPE_FAULT_MCE_SAFE:
+> >  	case EX_TYPE_DEFAULT_MCE_SAFE:
+> >  		m->kflags |= MCE_IN_KERNEL_RECOV;
+> >  		return IN_KERNEL_RECOV;
+> >  
+> >  	default:
+> > +		if (copy_user) {
 > 
-> sorry for the very late reply here. Just one question.
-> 
+> As said on chat, if we can make is_copy_from_user() *always* correctly detect
+> user access, then sure but I'm afraid EX_TYPE_UACCESS being generated at the
+> handful places where we do user memory access is there for a reason as it
+> makes it pretty explicit.
 
-Thanks for bringing the patch back up after such a long time. I've been
-meaning to resend it, but never found the time to do so... :-)
+Thing is, we have copy routines that do not know if its user or not.
+is_copy_from_user() must be reliable.
 
-> 
-> > downstream/vendor driver [1]. Due to lack of documentation about the
-> > interconnect setup/behavior I cannot say exactly if this is right.
-> > Unfortunately, this is not implemented very consistently downstream...
-> 
-> Can we have someone from Qualcomm or Linaro taking a peak here?
-> 
+Anyway, if you all really want to go all funny, try the below.
 
-I suppose I count as someone from Linaro nowadays. However, since this
-driver is only used on really old platforms nowadays, I'm not sure where
-to look or who to ask...
+Someone has to go and stick some EX_FLAG_USER on things, but I just
+really don't believe that's doing to be useful. Because while you're
+doing that, you should also audit if is_copy_from_user() will catch it
+and if it does, you don't need the tag.
 
-At the end, the whole bus scaling/interconnect is always somewhat
-"imprecise". There is no clear "correct" or "wrong", since the ideal
-bandwidth depends heavily on the actual use case that we are not aware
-of in the driver. There is also overhead when voting for bandwidth,
-since that can take a couple of milliseconds.
+See how much tags you end up with..
 
-The most important part is that we vote for any bandwidth at all, since
-otherwise the bus path could potentially be completely off and it would
-get stuck. My patch implements one of the approaches that was used in
-the downstream/vendor drivers and matches what we already have upstream
-in the corresponding spi-qup driver. I think it's "good enough". If
-someone ever wants to fine tune this based on actual measurements they
-can just submit an incremental patch. Right now this series is blocking
-adding the necessary properties in the device tree and that's not good.
 
-Surprisingly this series still applies cleanly on top of linux-next. The
-dt-bindings have review tags and there was plenty of time for someone
-else to chime in for the driver. So maybe you can just pick them up? :D
-
-> > [1]: https://git.codelinaro.org/clo/la/kernel/msm-3.10/-/commit/67174e2624ea64814231e7e1e4af83fd882302c6
-> 
-> ...
-> 
-> > @@ -1745,6 +1775,11 @@ static int qup_i2c_probe(struct platform_device *pdev)
-> >  			goto fail_dma;
-> >  		}
-> >  		qup->is_dma = true;
-> > +
-> > +		qup->icc_path = devm_of_icc_get(&pdev->dev, NULL);
-> > +		if (IS_ERR(qup->icc_path))
-> > +			return dev_err_probe(&pdev->dev, PTR_ERR(qup->icc_path),
-> > +					     "failed to get interconnect path\n");
-> 
-> Can we live without it if it fails?
-> 
-
-of_icc_get() returns NULL if the interconnect API is disabled, or if
-"interconnects" is not defined in the device tree, so this is already
-handled. If "interconnects" is enabled and defined, I think we shouldn't
-ignore errors. Therefore, this should work as intended.
-
-Let me know if I should resend the patch or if you can apply it
-directly.
-
-Thanks,
-Stephan
+---
+diff --git a/arch/x86/include/asm/extable_fixup_types.h b/arch/x86/include/asm/extable_fixup_types.h
+index 906b0d5541e8..1d6c6ff51d28 100644
+--- a/arch/x86/include/asm/extable_fixup_types.h
++++ b/arch/x86/include/asm/extable_fixup_types.h
+@@ -31,6 +31,9 @@
+ #define EX_FLAG_CLEAR_DX		EX_DATA_FLAG(2)
+ #define EX_FLAG_CLEAR_AX_DX		EX_DATA_FLAG(3)
+ 
++#define EX_FLAG_USER			EX_DATA_FLAG(4)
++#define EX_FLAG_MCE			EX_DATA_FLAG(8)
++
+ /* types */
+ #define	EX_TYPE_NONE			 0
+ #define	EX_TYPE_DEFAULT			 1
+@@ -46,8 +49,6 @@
+ #define	EX_TYPE_RDMSR_SAFE		11 /* reg := -EIO */
+ #define	EX_TYPE_WRMSR_IN_MCE		12
+ #define	EX_TYPE_RDMSR_IN_MCE		13
+-#define	EX_TYPE_DEFAULT_MCE_SAFE	14
+-#define	EX_TYPE_FAULT_MCE_SAFE		15
+ 
+ #define	EX_TYPE_POP_REG			16 /* sp += sizeof(long) */
+ #define EX_TYPE_POP_ZERO		(EX_TYPE_POP_REG | EX_DATA_IMM(0))
+diff --git a/arch/x86/kernel/cpu/mce/severity.c b/arch/x86/kernel/cpu/mce/severity.c
+index dac4d64dfb2a..86a32fa020d2 100644
+--- a/arch/x86/kernel/cpu/mce/severity.c
++++ b/arch/x86/kernel/cpu/mce/severity.c
+@@ -300,21 +300,20 @@ static noinstr int error_context(struct mce *m, struct pt_regs *regs)
+ 	copy_user  = is_copy_from_user(regs);
+ 	instrumentation_end();
+ 
+-	switch (fixup_type) {
+-	case EX_TYPE_UACCESS:
+-		if (!copy_user)
+-			return IN_KERNEL;
+-		m->kflags |= MCE_IN_KERNEL_COPYIN;
+-		fallthrough;
+-
+-	case EX_TYPE_FAULT_MCE_SAFE:
+-	case EX_TYPE_DEFAULT_MCE_SAFE:
++	if (fixup_type == EX_TYPE_NONE)
++		return IN_KERNEL;
++
++	if (fixup_type & EX_FLAG_MCE) {
+ 		m->kflags |= MCE_IN_KERNEL_RECOV;
+ 		return IN_KERNEL_RECOV;
++	}
+ 
+-	default:
+-		return IN_KERNEL;
++	if ((fixup_type & EX_FLAG_USER) || copy_user) {
++		m->kflags |= MCE_IN_KERNEL_COPYIN | MCE_IN_KERNEL_RECOV;
++		return IN_KERNEL_RECOV;
+ 	}
++
++	return IN_KERNEL;
+ }
+ 
+ /* See AMD PPR(s) section Machine Check Error Handling. */
+diff --git a/arch/x86/kernel/fpu/legacy.h b/arch/x86/kernel/fpu/legacy.h
+index 098f367bb8a7..3f6036840d65 100644
+--- a/arch/x86/kernel/fpu/legacy.h
++++ b/arch/x86/kernel/fpu/legacy.h
+@@ -24,7 +24,7 @@ static inline void ldmxcsr(u32 mxcsr)
+ 	asm volatile(ASM_STAC "\n"					\
+ 		     "1: " #insn "\n"					\
+ 		     "2: " ASM_CLAC "\n"				\
+-		     _ASM_EXTABLE_TYPE(1b, 2b, EX_TYPE_FAULT_MCE_SAFE)	\
++		     _ASM_EXTABLE_TYPE(1b, 2b, EX_TYPE_FAULT | EX_FLAG_MCE)	\
+ 		     : [err] "=a" (err), output				\
+ 		     : "0"(0), input);					\
+ 	err;								\
+diff --git a/arch/x86/kernel/fpu/xstate.h b/arch/x86/kernel/fpu/xstate.h
+index aa16f1a1bbcf..eef534091105 100644
+--- a/arch/x86/kernel/fpu/xstate.h
++++ b/arch/x86/kernel/fpu/xstate.h
+@@ -115,7 +115,7 @@ static inline int update_pkru_in_sigframe(struct xregs_state __user *buf, u64 ma
+ 	asm volatile("1:" op "\n\t"					\
+ 		     "xor %[err], %[err]\n"				\
+ 		     "2:\n\t"						\
+-		     _ASM_EXTABLE_TYPE(1b, 2b, EX_TYPE_FAULT_MCE_SAFE)	\
++		     _ASM_EXTABLE_TYPE(1b, 2b, EX_TYPE_FAULT | EX_FLAG_MCE)	\
+ 		     : [err] "=a" (err)					\
+ 		     : "D" (st), "m" (*st), "a" (lmask), "d" (hmask)	\
+ 		     : "memory")
+diff --git a/arch/x86/lib/copy_mc_64.S b/arch/x86/lib/copy_mc_64.S
+index c859a8a09860..7977689ad46e 100644
+--- a/arch/x86/lib/copy_mc_64.S
++++ b/arch/x86/lib/copy_mc_64.S
+@@ -103,9 +103,9 @@ SYM_FUNC_START(copy_mc_fragile)
+ 	movl	%ecx, %edx
+ 	jmp copy_mc_fragile_handle_tail
+ 
+-	_ASM_EXTABLE_TYPE(.L_read_leading_bytes, .E_leading_bytes, EX_TYPE_DEFAULT_MCE_SAFE)
+-	_ASM_EXTABLE_TYPE(.L_read_words, .E_read_words, EX_TYPE_DEFAULT_MCE_SAFE)
+-	_ASM_EXTABLE_TYPE(.L_read_trailing_bytes, .E_trailing_bytes, EX_TYPE_DEFAULT_MCE_SAFE)
++	_ASM_EXTABLE_TYPE(.L_read_leading_bytes, .E_leading_bytes, EX_TYPE_DEFAULT | EX_FLAG_MCE)
++	_ASM_EXTABLE_TYPE(.L_read_words, .E_read_words, EX_TYPE_DEFAULT | EX_FLAG_MCE)
++	_ASM_EXTABLE_TYPE(.L_read_trailing_bytes, .E_trailing_bytes, EX_TYPE_DEFAULT | EX_FLAG_MCE)
+ 	_ASM_EXTABLE(.L_write_leading_bytes, .E_leading_bytes)
+ 	_ASM_EXTABLE(.L_write_words, .E_write_words)
+ 	_ASM_EXTABLE(.L_write_trailing_bytes, .E_trailing_bytes)
+@@ -143,7 +143,7 @@ SYM_FUNC_START(copy_mc_enhanced_fast_string)
+ 	movq %rcx, %rax
+ 	RET
+ 
+-	_ASM_EXTABLE_TYPE(.L_copy, .E_copy, EX_TYPE_DEFAULT_MCE_SAFE)
++	_ASM_EXTABLE_TYPE(.L_copy, .E_copy, EX_TYPE_DEFAULT | EX_FLAG_MCE)
+ 
+ SYM_FUNC_END(copy_mc_enhanced_fast_string)
+ #endif /* !CONFIG_UML */
+diff --git a/arch/x86/mm/extable.c b/arch/x86/mm/extable.c
+index 51986e8a9d35..7358bf10baba 100644
+--- a/arch/x86/mm/extable.c
++++ b/arch/x86/mm/extable.c
+@@ -293,8 +293,10 @@ static bool ex_handler_eretu(const struct exception_table_entry *fixup,
+ int ex_get_fixup_type(unsigned long ip)
+ {
+ 	const struct exception_table_entry *e = search_exception_tables(ip);
++	if (!e)
++		return EX_TYPE_NONE;
+ 
+-	return e ? FIELD_GET(EX_DATA_TYPE_MASK, e->data) : EX_TYPE_NONE;
++	return FIELD_GET(EX_DATA_TYPE_MASK, e->data) | (e->data & (EX_FLAG_USER | EX_FLAG_MCE));
+ }
+ 
+ int fixup_exception(struct pt_regs *regs, int trapnr, unsigned long error_code,
+@@ -327,10 +329,8 @@ int fixup_exception(struct pt_regs *regs, int trapnr, unsigned long error_code,
+ 
+ 	switch (type) {
+ 	case EX_TYPE_DEFAULT:
+-	case EX_TYPE_DEFAULT_MCE_SAFE:
+ 		return ex_handler_default(e, regs);
+ 	case EX_TYPE_FAULT:
+-	case EX_TYPE_FAULT_MCE_SAFE:
+ 		return ex_handler_fault(e, regs, trapnr);
+ 	case EX_TYPE_UACCESS:
+ 		return ex_handler_uaccess(e, regs, trapnr, fault_addr);
 
