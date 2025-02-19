@@ -1,228 +1,136 @@
-Return-Path: <linux-kernel+bounces-521028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FA68A3B2DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:56:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DE07A3B2E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:57:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3389D3ABA71
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:55:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E69803ABDD7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:57:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD4761C4A20;
-	Wed, 19 Feb 2025 07:55:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24E8E1C4604;
+	Wed, 19 Feb 2025 07:57:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fHJBZIai"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IYJwj5e3"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DCA51C3F04
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 07:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 494E51ADC84;
+	Wed, 19 Feb 2025 07:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739951742; cv=none; b=GKINF43eC4z6N4V2biz0R0hsIq/bzwlKo4gZAu+9cb5VyQkwvj439p8KkTa4ACLo0xC8DBXyBGjUk5Dfn5zPSEx+E8boj3QXoETMD5tdtcQCVSayHW0/8zuRBJl6pmYc8p0wD9sNN6Wjk5bFC25Cv+JLFcPhuKpEchUWGvK99uM=
+	t=1739951823; cv=none; b=sRNKqjnv5qz5Tk82FIiXIPiQQ/9WOCV/hA4o5I1OvmSQB1bOJVSh5ESXgqtQHNw5bwUgjQWRYzkQez6vut8HQADjA9lb4PJTlIivt8UM9WI3PNHWze+PtJ1HUldiwqqkzwYLnAz6FmOUGB0HcS3mD0ykqgp2PFxdEyHJ9oO2QC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739951742; c=relaxed/simple;
-	bh=ss6647Vq7Cy6U+GNIlcy6ezE7ATXTzSydGRry2X6VVk=;
+	s=arc-20240116; t=1739951823; c=relaxed/simple;
+	bh=P/kpZ0JFyS8K2bUvvNK9hIZS7U9RMBG2F3Uw3zx/60k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Phito54FzWyLc1k0NMWwpwqSse6v7PgkcnN6ofGatzhQwTqMQ2S6+XRITCENSzBtu3MR0c9So5PKceQCAzOS/Yb5tIGW9h0wbNFVvRi8QoQF2VedhESl20V8yV1Hx9KX9XXfMbZDUh45aXOW2JlKXJzMP1Mv+i2H9tEV11jTw1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fHJBZIai; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-220c4159f87so84798425ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 23:55:40 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=B8W1VT0URkKc9M39g140sAdl8gdmFAgcRoN7HObu3H+tHwXbf4RNShOpCfCOMuRkIDo/6iRObKGi+rVTOjXemB/aay6MKfEF2oespR9Ym3PbD46FLEQ8sIJOjaVXKmmLQbm39QbozBSZmVBnfSqc5UVrvslvJtcN1R2IYdgtlc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IYJwj5e3; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-221057b6ac4so66880535ad.2;
+        Tue, 18 Feb 2025 23:57:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739951739; x=1740556539; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=KQ8YbWKKN0JUEDEyejcT43K2AZBg1IVNzkk5e0M7RQ0=;
-        b=fHJBZIaiB+bzCM0QcuUFSBATA7NHiXJ+fGEharNp8aR62bTJmJ/Tz37czbMa/HpchK
-         5UVI3B2zuwdLMWOz2CmrdWgRG/WrPSC1sx+9uLlibXj7NEwa3utt9X9+d7qpfUWXoDo5
-         KMlpJVPX8KFIeBL5BIvLtdPqlPiqGU1aMnv7VHIExx2ggdCGaTyJGLfRyPxzwPRsMstL
-         CtE4w4qv7H9Np+7UHhB86MbHKgBTujhgecBVx1SSIbMCzqbvDnWqKGxR3IvYhOn/hNVB
-         y+8NRreta6VijmITbN09iIFZkXafyqNUsfaoqKnhiY8ixx2U3/VQC+uoRrmH0Pk9fhgQ
-         zHtg==
+        d=gmail.com; s=20230601; t=1739951821; x=1740556621; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=P/kpZ0JFyS8K2bUvvNK9hIZS7U9RMBG2F3Uw3zx/60k=;
+        b=IYJwj5e3s9/IRQs4FxunfeKczzTn4JXmeX/jUwkQaPlA6KWnGDaaEUwFDLhFiy5gRR
+         zEaOaSMb79s7l7SIo6OHc7zRp38cj6cxioSdXCxtanc13IehD6ipubuCGJMaJCf6h2qA
+         kKwJh9zu+HwUGwAJnLS1ZmDzcrLmZgtPD8ML1rzSssj8GiDgTg9sYvTNeXK53oQfFDKj
+         qin8QIXMdLx7R5xF2TwLFtV/I2Q5oQ3YKyZ/hyMZH7EHKJns9x4W7DJvwhVZ7vNTGhZx
+         a2p31DYrlJaEvlyp6JjSZB6zhy8+6DAr+HmHTaD9E4xH3KupxmvNH1anlbiRvIbVYa4N
+         rWlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739951739; x=1740556539;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KQ8YbWKKN0JUEDEyejcT43K2AZBg1IVNzkk5e0M7RQ0=;
-        b=l4ABEcHfMpjMVI2FhBWjT33xCqLoPyHymZ9vrkvtIKE/pkMoz/3EH/hytCnctLfXC5
-         UL1ELJsc6ejPFsiy9+KyPZVfbmuWddr+sAu4CTar3seb/mSWPjhUG5Ow8k+H+3wAkcM5
-         gz00yiGNLsVdbW4WfyP7GoP+ZVa4sRr18OpO7E1vnTwLQ1xn0jE54IKCT0v0BW4/rOgi
-         SZYG6VlZJLRIVlueBN+EhTriq0KjKNuJ3gOvvVZ2CQtePzp5FkX53TDmZOQMeNR8Ahnn
-         oWBpC34hOmCChIfFq9sVYVjb4W8MuOHC/Q7Z7u238BAMMvf5gODUdDmqmNXeCcT9kIhx
-         n58g==
-X-Forwarded-Encrypted: i=1; AJvYcCWfYau/M38aCHmHe0QvA7SaC2EnLZSKnEokDPX0+H3ofstWWfzghbm70BCTmA8gMNR8Ni1px5NWzfpzdtE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzO6WGbQIMrtS5IuyuNRdNVm1R+YcB173UZ9Xrc6VbWYlqvKRJK
-	6VX6C/rrwa/qo6hH2MWMAJACPiEsjhhaLHEDovnjeHBwLL6np6UR42V3g4jj+Q==
-X-Gm-Gg: ASbGncsEK9QupcllkmMD1Z13B4ah1KYvxYBzs+DvY6En2B9ucWqOfbj8V/X61wtYQLh
-	Dv7nOQ4yBq2xXv9fA/rniedSRevyfXF+O+Wt5n7INNZc42KHpHV8kp4epJzL2zxbQmxUpsX3KmZ
-	IKPvDzPRp0mFkV68E+q1rYKVWR+r64Df2dOimu4NLOWhQGW3vZC2Saf9fGNiInJ3PS5Tjr4GT21
-	WfFFemL+9csQwo07wDDTKrN2r9RXzvj7GHwR8G6P8GlE9sJe9QXGyB8vowchkPc+2ZITlR4AZ3P
-	ucNc8dvUrnq7KKkzNIHNSivOCas=
-X-Google-Smtp-Source: AGHT+IG4njE0mVfhwsbo461mQskQTrTqKLJp04nKx1lPyB6/OYKMHkjA+8znL3Lf5HXh3/3N1AgKoQ==
-X-Received: by 2002:a17:903:283:b0:215:ae3d:1dd7 with SMTP id d9443c01a7336-221040269bbmr278400085ad.19.1739951739441;
-        Tue, 18 Feb 2025 23:55:39 -0800 (PST)
-Received: from thinkpad ([120.56.197.245])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d53491ecsm99383825ad.9.2025.02.18.23.55.34
+        d=1e100.net; s=20230601; t=1739951821; x=1740556621;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=P/kpZ0JFyS8K2bUvvNK9hIZS7U9RMBG2F3Uw3zx/60k=;
+        b=TnFfMzuy7rECr6hqJ1KrPxjnTYyfCSEVSH67w9M2xkKWyNl0A0WuqeFnPeaTl5k7OY
+         ZiUKHthuLB5x5I4GqXke1BFdxzVULvAJFurwwOCrerGtQuD/eumWgyTp4eHRLOp81/2X
+         H2rMkDJYoBGDMCO2anF3K+oSz5+FX4Kn5eG8+h+UxUJIA509Zrf2998EvM2ZbhiYAMWm
+         Ep1Cjn5JMPpOL0vzK4nHJiQPtjna6Q3NT01e1ZMs/ln1MlmJgzfVhxSD49HBp/7z8wKJ
+         uPGYKDngHe8v3HzGw2H5CfxsRJL9UWFb2rJPUpOQiZhu/x6ImPnYBho30Y03EFe75MX7
+         kovg==
+X-Forwarded-Encrypted: i=1; AJvYcCWOqjKP5lE4pzEdTdpyUwL4vc62vj/13zKN+R7Jvdv5KNGBU8BeolnO4hVabE1uUmFUvz64x9FzjTi5LmM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQ6MefP0V7JYz6HdckU2xpJ5I24YiuOXWmW3GwHY/mnQ8pwdES
+	BIg+TZnvKZLzEJRFqTggUv+oDLm+S3FwMA3sf3OXlqlKse7SAqah
+X-Gm-Gg: ASbGncumWD4obgDeRMPfaTlH+ta5KQcHAUJcstwEq7oyCsBFPET+LeDsXQK7I/lmpXh
+	9Adp83jddRj30qoUR9xdamZUdS94unEYEDuavsECm7EiN0LbaDDtZpIFwovtjP+aBdjjd8nIPbp
+	m3uVAnA+YjVYam3tWzMNgp9itg5bmMvjhbvNzO+NdyXyyNw5saLmbzSWipHIIO1dcI5S36g75V/
+	SvuofmGFa94M2o/2Ift/XWRwZe3akx8YLgnRqj7SiYdsJNnflhalv0hdbvSFWMJ7/ZAJ9Hz7hXa
+	UebQH2e/lkfZDAM=
+X-Google-Smtp-Source: AGHT+IEJD6274fxtcOpikxcjTZmPbe/QYievTKtzYG/3d2LzY4XIXg6MjLwRdaeB83HEkRnMk5cYhw==
+X-Received: by 2002:a05:6a21:394c:b0:1ee:d7b1:38ad with SMTP id adf61e73a8af0-1eed7b139b5mr2915550637.0.1739951821365;
+        Tue, 18 Feb 2025 23:57:01 -0800 (PST)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73242546177sm11328548b3a.5.2025.02.18.23.56.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 23:55:39 -0800 (PST)
-Date: Wed, 19 Feb 2025 13:25:33 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Shuai Xue <xueshuai@linux.alibaba.com>,
-	Jing Zhang <renyu.zj@linux.alibaba.com>,
-	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Shradha Todi <shradha.t@samsung.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 1/4] perf/dwc_pcie: Move common DWC struct definitions to
- 'pcie-dwc.h'
-Message-ID: <20250219075533.dqj4rqeskilg76lj@thinkpad>
-References: <20250218-pcie-qcom-ptm-v1-0-16d7e480d73e@linaro.org>
- <20250218-pcie-qcom-ptm-v1-1-16d7e480d73e@linaro.org>
- <4nnikepf7ay4ml3audn34gmq5jttjcfz3syfnxeowmjb4no2cj@lyawl4saa3sa>
+        Tue, 18 Feb 2025 23:57:00 -0800 (PST)
+Received: by archie.me (Postfix, from userid 1000)
+	id 4BD094208F47; Wed, 19 Feb 2025 14:56:58 +0700 (WIB)
+Date: Wed, 19 Feb 2025 14:56:58 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Pranav Tyagi <pranav.tyagi03@gmail.com>
+Cc: Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux DRI Development <dri-devel@lists.freedesktop.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-kernel-mentees@lists.linux.dev, skhan@linuxfoundation.org,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH] vgaarbiter: documentation grammar correction
+Message-ID: <Z7WOym9fl8GNPJiO@archie.me>
+References: <20250207165325.3998-1-pranav.tyagi03@gmail.com>
+ <Z6bKR9K16-oYMLFl@archie.me>
+ <CAH4c4jKe7Q-E1LhA0KxOxEjK-gn=JY7e=2GN13X=yutaO8k3Pw@mail.gmail.com>
+ <CAH4c4j+kOYMfzO5QOBg+hGe2zt4kN4f7v+mrri-2GMLzYtCPrw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="BToSCmPd5dm/qara"
+Content-Disposition: inline
+In-Reply-To: <CAH4c4j+kOYMfzO5QOBg+hGe2zt4kN4f7v+mrri-2GMLzYtCPrw@mail.gmail.com>
+
+
+--BToSCmPd5dm/qara
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4nnikepf7ay4ml3audn34gmq5jttjcfz3syfnxeowmjb4no2cj@lyawl4saa3sa>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 18, 2025 at 06:31:02PM +0200, Dmitry Baryshkov wrote:
-> On Tue, Feb 18, 2025 at 08:06:40PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
-> > From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > 
-> > Since these are common to all Desginware PCIe IPs, move them to a new
-> > header, 'pcie-dwc.h' so that other drivers could make use of them.
-> 
-> Which drivers are going to use it? Please provide an explanation.
-> 
+On Thu, Feb 13, 2025 at 11:05:39PM +0530, Pranav Tyagi wrote:
+> Hi,
+>=20
+> Just a gentle follow-up on this patch. It has been reviewed but hasn't
+> been applied yet.
 
-I can certainly add reference as 'upcoming pcie-designware-sysfs' driver.
+You may need to resend the patch, but with scripts/get_maintainer.pl
+output Cc'ed so that DRM maintainers can be notified on the patch.
 
-> > 
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > ---
-> >  MAINTAINERS                 |  1 +
-> >  drivers/perf/dwc_pcie_pmu.c | 23 ++---------------------
-> >  include/linux/pcie-dwc.h    | 34 ++++++++++++++++++++++++++++++++++
-> >  3 files changed, 37 insertions(+), 21 deletions(-)
-> > 
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 896a307fa065..b4d09d52a750 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -18123,6 +18123,7 @@ S:	Maintained
-> >  F:	Documentation/devicetree/bindings/pci/snps,dw-pcie-ep.yaml
-> >  F:	Documentation/devicetree/bindings/pci/snps,dw-pcie.yaml
-> >  F:	drivers/pci/controller/dwc/*designware*
-> > +F:	include/linux/pcie-dwc.h
-> >  
-> >  PCI DRIVER FOR TI DRA7XX/J721E
-> >  M:	Vignesh Raghavendra <vigneshr@ti.com>
-> > diff --git a/drivers/perf/dwc_pcie_pmu.c b/drivers/perf/dwc_pcie_pmu.c
-> > index cccecae9823f..05b37ea7cf16 100644
-> > --- a/drivers/perf/dwc_pcie_pmu.c
-> > +++ b/drivers/perf/dwc_pcie_pmu.c
-> > @@ -13,6 +13,7 @@
-> >  #include <linux/errno.h>
-> >  #include <linux/kernel.h>
-> >  #include <linux/list.h>
-> > +#include <linux/pcie-dwc.h>
-> >  #include <linux/perf_event.h>
-> >  #include <linux/pci.h>
-> >  #include <linux/platform_device.h>
-> > @@ -99,26 +100,6 @@ struct dwc_pcie_dev_info {
-> >  	struct list_head dev_node;
-> >  };
-> >  
-> > -struct dwc_pcie_pmu_vsec_id {
-> > -	u16 vendor_id;
-> > -	u16 vsec_id;
-> > -	u8 vsec_rev;
-> > -};
-> > -
-> > -/*
-> > - * VSEC IDs are allocated by the vendor, so a given ID may mean different
-> > - * things to different vendors.  See PCIe r6.0, sec 7.9.5.2.
-> > - */
-> > -static const struct dwc_pcie_pmu_vsec_id dwc_pcie_pmu_vsec_ids[] = {
-> > -	{ .vendor_id = PCI_VENDOR_ID_ALIBABA,
-> > -	  .vsec_id = 0x02, .vsec_rev = 0x4 },
-> > -	{ .vendor_id = PCI_VENDOR_ID_AMPERE,
-> > -	  .vsec_id = 0x02, .vsec_rev = 0x4 },
-> > -	{ .vendor_id = PCI_VENDOR_ID_QCOM,
-> > -	  .vsec_id = 0x02, .vsec_rev = 0x4 },
-> > -	{} /* terminator */
-> > -};
-> > -
-> >  static ssize_t cpumask_show(struct device *dev,
-> >  					 struct device_attribute *attr,
-> >  					 char *buf)
-> > @@ -529,7 +510,7 @@ static void dwc_pcie_unregister_pmu(void *data)
-> >  
-> >  static u16 dwc_pcie_des_cap(struct pci_dev *pdev)
-> >  {
-> > -	const struct dwc_pcie_pmu_vsec_id *vid;
-> > +	const struct dwc_pcie_vsec_id *vid;
-> >  	u16 vsec;
-> >  	u32 val;
-> >  
-> > diff --git a/include/linux/pcie-dwc.h b/include/linux/pcie-dwc.h
-> > new file mode 100644
-> > index 000000000000..261ae11d75a4
-> > --- /dev/null
-> > +++ b/include/linux/pcie-dwc.h
-> > @@ -0,0 +1,34 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +/*
-> > + * Copyright (C) 2021-2023 Alibaba Inc.
-> > + *
-> > + * Copyright 2025 Linaro Ltd.
-> > + * Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > + */
-> > +
-> > +#ifndef LINUX_PCIE_DWC_H
-> > +#define LINUX_PCIE_DWC_H
-> > +
-> > +#include <linux/pci_ids.h>
-> > +
-> > +struct dwc_pcie_vsec_id {
-> > +	u16 vendor_id;
-> > +	u16 vsec_id;
-> > +	u8 vsec_rev;
-> > +};
-> > +
-> > +/*
-> > + * VSEC IDs are allocated by the vendor, so a given ID may mean different
-> > + * things to different vendors.  See PCIe r6.0, sec 7.9.5.2.
-> > + */
-> > +static const struct dwc_pcie_vsec_id dwc_pcie_pmu_vsec_ids[] = {
-> 
-> Having it in the header means that there are going to be several
-> copies of this data. Is that expected?
-> 
+Thanks.
 
-Yes. I wanted to consolidate these ids in a single file to make it easy to track
-them. Otherwise, these are spread across different subsystems, making it harder
-to maintain.
+--=20
+An old man doll... just what I always wanted! - Clara
 
-- Mani
+--BToSCmPd5dm/qara
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-மணிவண்ணன் சதாசிவம்
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZ7WOxQAKCRD2uYlJVVFO
+ozkoAP0eKLrhmoKPcsU785IBYgu8CdHmCLy3XmrPIMibyJI/QgD/ZJDL9komfCvv
+38f91wD0Ik059kbk8dCpCTrK/qTtIgA=
+=qgWc
+-----END PGP SIGNATURE-----
+
+--BToSCmPd5dm/qara--
 
