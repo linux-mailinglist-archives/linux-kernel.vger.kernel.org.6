@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-520686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDE61A3AD42
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 01:43:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48D21A3AD45
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 01:43:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B10933AF565
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 00:43:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A67351896E3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 00:43:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1C121D555;
-	Wed, 19 Feb 2025 00:42:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8677E17B402;
+	Wed, 19 Feb 2025 00:42:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="muGefaYQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QDtpfjec"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D39B4155398;
-	Wed, 19 Feb 2025 00:42:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B474145C14;
+	Wed, 19 Feb 2025 00:42:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739925741; cv=none; b=uZbdHQtFS91XskocOa8ejmnE6pDsancRzT1e/eRMDEcyDtIPRb3z7IMT3JprrIbTgcTdG7xrUnoPkkMysoX/g3QgQRXmWC8S0TatqOTeixVprDXtBGTJb77WkOfFE6v5Xfhi/RZQ2Mdn7hH/e+dZ9yaFlqz4HfEdN5MeDgffIH8=
+	t=1739925742; cv=none; b=nSN4tEWVE8tKtBxI0C7/mlYsPSEdroiXCJ0RecT8YS4Kny4lrRle6VeSLaOdZsnRltAcyNzNKVt3iCmU4kNZghh882r7/MiySvNt7WdN/ECVbD+DLApmO9dHVxei4jkEiKM5p7/XHmaHwzssBdr6/ClaXjy5Ylbz8Msq3axVWd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739925741; c=relaxed/simple;
-	bh=02Tesx/tnmO4sUGr6nhYrQU8H8jB+abH1mJP0cDsuII=;
+	s=arc-20240116; t=1739925742; c=relaxed/simple;
+	bh=9unwMkTo5UzoNGzJpdWJnYAWLU/BdNqcqKXaLoMLxPY=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=akvocFZeq5x90lNhfl0GFZJp2G8MQwD0ARgppJwul21DSraLxnun97czCJoI+jGZ6V+M9oRGiRHydBn9/cUmFrHZ1jdJl8Xw3c8IiFcrHDTlcC0bIqxYSbYF4+flhAMoij3fzcK9rc4c6OlSzbfpSFTHuNPYPxBJ4MwTy0ZimAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=muGefaYQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29DA4C4CEE2;
-	Wed, 19 Feb 2025 00:42:21 +0000 (UTC)
+	 Message-Id:Subject; b=F+pwCwGHmbQq7xbTmophjs7RH6/zFysNWT0iX2BfUg7UtjmsaeuMnI0RegW8osfaILSyfp0JvnVk2avAyS8g3P+01pkY8vSTqDw1ibbeDOXEUKCQuYb7hNGPXtIZjVTTkpO+YaY+VeA/zx3v9qRFAfkE35Ux83aDIPngSajv8dk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QDtpfjec; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CFAFC4CEEC;
+	Wed, 19 Feb 2025 00:42:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739925741;
-	bh=02Tesx/tnmO4sUGr6nhYrQU8H8jB+abH1mJP0cDsuII=;
+	s=k20201202; t=1739925742;
+	bh=9unwMkTo5UzoNGzJpdWJnYAWLU/BdNqcqKXaLoMLxPY=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=muGefaYQPYilDyUzERzYUgl8wn0lU0PrrmQ5XVqpHJn02KfLShDSo3hvYK/FhThCN
-	 X0k+geeZWeqClqLh5mdQ7G1MrxJZJS92f7+LFB6nSD6h1UtjEhv1O3Xuoc1ICoIb1R
-	 RX3IT+MK9hsvOlgV8E/U7roYVM8De2s6sCZYOl3aTg4GxR5xK7CvGzZcS8+E1upmiK
-	 fE5xvyg6CFunOR006XeBi2UknqCRrT76Kuqk1wkKE9KJQUMCKO1+NkFcHljYJ4xlFo
-	 7odRYME+YL3pgFHbMaYPTdW52zG0RkPNGc9sX8yqwLEjC3pXF4/kvTSNR5uUVnNMeb
-	 jILXXGP2fv3xA==
-Date: Tue, 18 Feb 2025 18:42:20 -0600
+	b=QDtpfjec+UbdsvZgwOPX2TIRpWCkD+eEOCskMLvCj+QA1av3cxtOrpadPyroDfI7p
+	 WeHeEZH5r/cE0RT9cdDGYQdf4y0Q5s/tUDiaHMFx+Yu0goDplFJ8n7b7o2bccsj+3K
+	 1fxadS+JuqKQHGVDTZ1an60l4xDF/yDme1b6x8h6YifQR6NLAjk90eM78sL1OoJb7F
+	 gAAI7zGkZTFNZaY4+Kdb2OY8t7UKB+X4VVbF0jFeejPcPd76720kYUNOjN2cZGNTfi
+	 9R0uMZcUFiS3a5nCEp42AHG1s5mBV8qOotxILzU8TB59bjYonQjEpM/uiow0IkGsZl
+	 d99CrK7nS5UPw==
+Date: Tue, 18 Feb 2025 18:42:21 -0600
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,45 +50,63 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Matthias Brugger <matthias.bgg@gmail.com>, Sen Chu <sen.chu@mediatek.com>, 
- Bear Wang <bear.wang@mediatek.com>, Conor Dooley <conor+dt@kernel.org>, 
- Chris-qj chen <chris-qj.chen@mediatek.com>, linux-usb@vger.kernel.org, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- linux-mediatek@lists.infradead.org, 
- Project_Global_Chrome_Upstream_Group@mediatek.com, 
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Alexandre Mergnat <amergnat@baylibre.com>, 
- linux-arm-kernel@lists.infradead.org, Macpaul Lin <macpaul@gmail.com>, 
- Pablo Sun <pablo.sun@mediatek.com>
-To: Macpaul Lin <macpaul.lin@mediatek.com>
-In-Reply-To: <20250217113736.1867808-1-macpaul.lin@mediatek.com>
-References: <20250217113736.1867808-1-macpaul.lin@mediatek.com>
-Message-Id: <173992516365.2065360.13568840928707086513.robh@kernel.org>
-Subject: Re: [PATCH v3] arm64: dts: mediatek: mt6359: fix dtbs_check error
- for audio-codec
+ Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ Alim Akhtar <alim.akhtar@samsung.com>, devicetree@vger.kernel.org
+To: Igor Belwon <igor.belwon@mentallysanemainliners.org>
+In-Reply-To: <20250217-exynos990-dt-changes-febuary-v1-0-99935218cbf4@mentallysanemainliners.org>
+References: <20250217-exynos990-dt-changes-febuary-v1-0-99935218cbf4@mentallysanemainliners.org>
+Message-Id: <173992516472.2065416.7202033506643575073.robh@kernel.org>
+Subject: Re: [PATCH 0/5] Add watchdog and USB nodes for the Exynos990 SoC
 
 
-On Mon, 17 Feb 2025 19:37:36 +0800, Macpaul Lin wrote:
-> This change fixes these dtbs_check errors for audio-codec:
-> 1. pmic: 'mt6359codec' does not match any of the regexes: 'pinctrl-[0-9]+'
->  - Replace device node name to generic 'audio-codec'
-> 2. pmic: regulators: 'compatible' is a required property
->  - Add 'mediatek,mt6359-codec' to compatible.
+On Mon, 17 Feb 2025 22:32:02 +0100, Igor Belwon wrote:
+> Hi all!
 > 
-> Fixes: 3b7d143be4b7 ("arm64: dts: mt6359: add PMIC MT6359 related nodes")
-> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> This series adds the nodes to enable the watchdog and USB support for
+> the Exynos990 SoC.
+> 
+> The watchdog consists of two clusters (cl0 and cl2). Unsure why Samsung has
+> skipped cl1 on this SoC. Both are enabled and working - tested on a
+> device from the -x1s family.
+> 
+> The USB controller of this SoC supports full-speed, high-speed and
+> super-speed operation modes. Due to my inability to get any of my
+> Exynos990 devices to enumerate as super-speed (even under the vendor
+> kernels) only the UTMI+ setup is done - as such, only the high-speed
+> mode is enabled. Dummy regulators are used in place of PMIC provided
+> ones until we implement PMIC.
+> 
+> This series depends on the following series:
+> - Watchdog commit: https://lore.kernel.org/all/20250217-exynos990-wdt-v2-0-3eb4fbc113f4@mentallysanemainliners.org
+> - USB commits:
+> 	- https://lore.kernel.org/all/20250217-exynos990-bindings-usb3-v2-1-3b3f0809f4fb@mentallysanemainliners.org/
+> 	- https://lore.kernel.org/all/20250214-exynos990-dwusb-v1-0-d68282c51ba8@mentallysanemainliners.org/
+> 
+> Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
 > ---
->  arch/arm64/boot/dts/mediatek/mt6359.dtsi | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> Igor Belwon (5):
+>       arm64: dts: exynos990: Enable watchdog timer
+>       arm64: dts: exynos990: Add USB nodes
+>       arm64: dts: exynos990-x1s-common: Enable USB
+>       arm64: dts: exynos990-c1s: Enable USB
+>       arm64: dts: exynos990-r8s: Enable USB
 > 
-> Changes for v2:
->  - No change. Because the 2/3 patch has been dropped from the v1 patch.
->    Hence the new patch set v2 needs to be updated.
+>  arch/arm64/boot/dts/exynos/exynos990-c1s.dts       | 16 +++++++
+>  arch/arm64/boot/dts/exynos/exynos990-r8s.dts       | 16 +++++++
+>  .../boot/dts/exynos/exynos990-x1s-common.dtsi      | 16 +++++++
+>  arch/arm64/boot/dts/exynos/exynos990.dtsi          | 55 ++++++++++++++++++++++
+>  4 files changed, 103 insertions(+)
+> ---
+> base-commit: 783ef70f458b28640a63dda599ae8628c3c7aa2e
+> change-id: 20250217-exynos990-dt-changes-febuary-fbc184e8049d
 > 
-> Changes for v3:
->  - Add "Reviewed-by:" tag. Thanks!.
+> Best regards,
+> --
+> Igor Belwon <igor.belwon@mentallysanemainliners.org>
+> 
+> 
 > 
 
 
@@ -106,52 +124,40 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/mediatek/' for 20250217113736.1867808-1-macpaul.lin@mediatek.com:
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/exynos/' for 20250217-exynos990-dt-changes-febuary-v1-0-99935218cbf4@mentallysanemainliners.org:
 
-arch/arm64/boot/dts/mediatek/mt8195-demo.dtb: pmic: '#sound-dai-cells', 'mt6359rtc' do not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/mfd/mediatek,mt6397.yaml#
-arch/arm64/boot/dts/mediatek/mt8195-cherry-tomato-r2.dtb: pmic: '#sound-dai-cells', 'mt6359rtc' do not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/mfd/mediatek,mt6397.yaml#
-arch/arm64/boot/dts/mediatek/mt8395-kontron-3-5-sbc-i1200.dtb: pmic: '#sound-dai-cells', 'mt6359rtc' do not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/mfd/mediatek,mt6397.yaml#
-arch/arm64/boot/dts/mediatek/mt8192-asurada-hayato-r1.dtb: pmic: '#sound-dai-cells', 'mt6359rtc' do not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/mfd/mediatek,mt6397.yaml#
-arch/arm64/boot/dts/mediatek/mt8192-asurada-spherion-r0.dtb: pmic: '#sound-dai-cells', 'mt6359rtc' do not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/mfd/mediatek,mt6397.yaml#
-arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dtb: pmic: '#sound-dai-cells', 'mt6359rtc' do not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/mfd/mediatek,mt6397.yaml#
-arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku4.dtb: pmic: '#sound-dai-cells', 'mt6359rtc' do not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/mfd/mediatek,mt6397.yaml#
-arch/arm64/boot/dts/mediatek/mt8370-genio-510-evk.dtb: pmic: '#sound-dai-cells', 'mt6359rtc' do not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/mfd/mediatek,mt6397.yaml#
-arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku1.dtb: pmic: '#sound-dai-cells', 'mt6359rtc' do not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/mfd/mediatek,mt6397.yaml#
-arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dtb: pmic: '#sound-dai-cells', 'mt6359rtc' do not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/mfd/mediatek,mt6397.yaml#
-arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dtb: pmic: '#sound-dai-cells', 'mt6359rtc' do not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/mfd/mediatek,mt6397.yaml#
-arch/arm64/boot/dts/mediatek/mt8188-evb.dtb: pmic: '#sound-dai-cells', 'mt6359rtc' do not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/mfd/mediatek,mt6397.yaml#
-arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku7.dtb: pmic: '#sound-dai-cells', 'mt6359rtc' do not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/mfd/mediatek,mt6397.yaml#
-arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku3.dtb: pmic: '#sound-dai-cells', 'mt6359rtc' do not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/mfd/mediatek,mt6397.yaml#
-arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku6.dtb: pmic: '#sound-dai-cells', 'mt6359rtc' do not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/mfd/mediatek,mt6397.yaml#
-arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku0.dtb: pmic: '#sound-dai-cells', 'mt6359rtc' do not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/mfd/mediatek,mt6397.yaml#
-arch/arm64/boot/dts/mediatek/mt8192-evb.dtb: pmic: '#sound-dai-cells', 'mt6359rtc' do not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/mfd/mediatek,mt6397.yaml#
-arch/arm64/boot/dts/mediatek/mt8195-cherry-dojo-r1.dtb: pmic: '#sound-dai-cells', 'mt6359rtc' do not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/mfd/mediatek,mt6397.yaml#
-arch/arm64/boot/dts/mediatek/mt8195-cherry-tomato-r3.dtb: pmic: '#sound-dai-cells', 'mt6359rtc' do not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/mfd/mediatek,mt6397.yaml#
-arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku2.dtb: pmic: '#sound-dai-cells', 'mt6359rtc' do not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/mfd/mediatek,mt6397.yaml#
-arch/arm64/boot/dts/mediatek/mt8195-cherry-tomato-r1.dtb: pmic: '#sound-dai-cells', 'mt6359rtc' do not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/mfd/mediatek,mt6397.yaml#
-arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku5.dtb: pmic: '#sound-dai-cells', 'mt6359rtc' do not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/mfd/mediatek,mt6397.yaml#
+arch/arm64/boot/dts/exynos/exynos990-c1s.dtb: /soc@0/watchdog@10050000: failed to match any schema with compatible: ['samsung,exynos990-wdt']
+arch/arm64/boot/dts/exynos/exynos990-r8s.dtb: /soc@0/watchdog@10050000: failed to match any schema with compatible: ['samsung,exynos990-wdt']
+arch/arm64/boot/dts/exynos/exynos990-c1s.dtb: /soc@0/watchdog@10060000: failed to match any schema with compatible: ['samsung,exynos990-wdt']
+arch/arm64/boot/dts/exynos/exynos990-r8s.dtb: /soc@0/watchdog@10060000: failed to match any schema with compatible: ['samsung,exynos990-wdt']
+arch/arm64/boot/dts/exynos/exynos990-x1slte.dtb: /soc@0/watchdog@10050000: failed to match any schema with compatible: ['samsung,exynos990-wdt']
+arch/arm64/boot/dts/exynos/exynos990-x1s.dtb: /soc@0/watchdog@10050000: failed to match any schema with compatible: ['samsung,exynos990-wdt']
+arch/arm64/boot/dts/exynos/exynos990-x1slte.dtb: /soc@0/watchdog@10060000: failed to match any schema with compatible: ['samsung,exynos990-wdt']
+arch/arm64/boot/dts/exynos/exynos990-x1s.dtb: /soc@0/watchdog@10060000: failed to match any schema with compatible: ['samsung,exynos990-wdt']
+arch/arm64/boot/dts/exynos/exynos990-c1s.dtb: usb@10e00000: compatible:0: 'samsung,exynos990-dwusb3' is not one of ['google,gs101-dwusb3', 'samsung,exynos5250-dwusb3', 'samsung,exynos5433-dwusb3', 'samsung,exynos7-dwusb3', 'samsung,exynos850-dwusb3']
+	from schema $id: http://devicetree.org/schemas/usb/samsung,exynos-dwc3.yaml#
+arch/arm64/boot/dts/exynos/exynos990-c1s.dtb: usb@10e00000: compatible: ['samsung,exynos990-dwusb3', 'samsung,exynos850-dwusb3'] is too long
+	from schema $id: http://devicetree.org/schemas/usb/samsung,exynos-dwc3.yaml#
+arch/arm64/boot/dts/exynos/exynos990-c1s.dtb: /soc@0/usb@10e00000: failed to match any schema with compatible: ['samsung,exynos990-dwusb3', 'samsung,exynos850-dwusb3']
+arch/arm64/boot/dts/exynos/exynos990-c1s.dtb: /soc@0/phy@10c00000: failed to match any schema with compatible: ['samsung,exynos990-usbdrd-phy']
+arch/arm64/boot/dts/exynos/exynos990-r8s.dtb: usb@10e00000: compatible:0: 'samsung,exynos990-dwusb3' is not one of ['google,gs101-dwusb3', 'samsung,exynos5250-dwusb3', 'samsung,exynos5433-dwusb3', 'samsung,exynos7-dwusb3', 'samsung,exynos850-dwusb3']
+	from schema $id: http://devicetree.org/schemas/usb/samsung,exynos-dwc3.yaml#
+arch/arm64/boot/dts/exynos/exynos990-r8s.dtb: usb@10e00000: compatible: ['samsung,exynos990-dwusb3', 'samsung,exynos850-dwusb3'] is too long
+	from schema $id: http://devicetree.org/schemas/usb/samsung,exynos-dwc3.yaml#
+arch/arm64/boot/dts/exynos/exynos990-r8s.dtb: /soc@0/usb@10e00000: failed to match any schema with compatible: ['samsung,exynos990-dwusb3', 'samsung,exynos850-dwusb3']
+arch/arm64/boot/dts/exynos/exynos990-x1slte.dtb: usb@10e00000: compatible:0: 'samsung,exynos990-dwusb3' is not one of ['google,gs101-dwusb3', 'samsung,exynos5250-dwusb3', 'samsung,exynos5433-dwusb3', 'samsung,exynos7-dwusb3', 'samsung,exynos850-dwusb3']
+	from schema $id: http://devicetree.org/schemas/usb/samsung,exynos-dwc3.yaml#
+arch/arm64/boot/dts/exynos/exynos990-x1slte.dtb: usb@10e00000: compatible: ['samsung,exynos990-dwusb3', 'samsung,exynos850-dwusb3'] is too long
+	from schema $id: http://devicetree.org/schemas/usb/samsung,exynos-dwc3.yaml#
+arch/arm64/boot/dts/exynos/exynos990-r8s.dtb: /soc@0/phy@10c00000: failed to match any schema with compatible: ['samsung,exynos990-usbdrd-phy']
+arch/arm64/boot/dts/exynos/exynos990-x1s.dtb: usb@10e00000: compatible:0: 'samsung,exynos990-dwusb3' is not one of ['google,gs101-dwusb3', 'samsung,exynos5250-dwusb3', 'samsung,exynos5433-dwusb3', 'samsung,exynos7-dwusb3', 'samsung,exynos850-dwusb3']
+	from schema $id: http://devicetree.org/schemas/usb/samsung,exynos-dwc3.yaml#
+arch/arm64/boot/dts/exynos/exynos990-x1s.dtb: usb@10e00000: compatible: ['samsung,exynos990-dwusb3', 'samsung,exynos850-dwusb3'] is too long
+	from schema $id: http://devicetree.org/schemas/usb/samsung,exynos-dwc3.yaml#
+arch/arm64/boot/dts/exynos/exynos990-x1slte.dtb: /soc@0/usb@10e00000: failed to match any schema with compatible: ['samsung,exynos990-dwusb3', 'samsung,exynos850-dwusb3']
+arch/arm64/boot/dts/exynos/exynos990-x1s.dtb: /soc@0/usb@10e00000: failed to match any schema with compatible: ['samsung,exynos990-dwusb3', 'samsung,exynos850-dwusb3']
+arch/arm64/boot/dts/exynos/exynos990-x1slte.dtb: /soc@0/phy@10c00000: failed to match any schema with compatible: ['samsung,exynos990-usbdrd-phy']
+arch/arm64/boot/dts/exynos/exynos990-x1s.dtb: /soc@0/phy@10c00000: failed to match any schema with compatible: ['samsung,exynos990-usbdrd-phy']
 
 
 
