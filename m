@@ -1,148 +1,164 @@
-Return-Path: <linux-kernel+bounces-521744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 156ACA3C1CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:18:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91635A3C1D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:19:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 225A73BEC58
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:11:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7D74170CC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:12:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D2191F1538;
-	Wed, 19 Feb 2025 14:08:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC7F91FCD13;
+	Wed, 19 Feb 2025 14:09:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="ttczPi8U"
-Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bfWKhPSD"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC1F21EDA1A
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 14:08:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 904621FCFD3
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 14:09:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739974120; cv=none; b=KMXKdM2EKI/gsbVEWCv40Zz59dfLpGVw1HjnmaYePsMH4bpLcgDwkpMdomiwDEUhNWUTA40wCLFcuQNg5BU9kW/LNgV6memdWR2Afs+EuuHJAGBphGyzr71sB56cNLpzDWKMG5TNRUH2IWl5RB9LGv/9Kyk2xZ39OfySGb98elw=
+	t=1739974189; cv=none; b=LS61mgmK6ATyAKKCbs8tT2/61NV1SSqzyQe5nNnFsLVHICs+9iRl2yi8ad8Glu1f5rRgV7fmTlLKIJ2fuwVj7SnTGR8ocLWBNTHdZ5vGowUr40olrHtE3KNsDsoJWwycbzOYot602b0rH1Z74tTnBvI8w/nWuc+bJhsRYYkNNhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739974120; c=relaxed/simple;
-	bh=On6UQ5PIVYWXg2TRlYXc2ylwk8HItltPnmNFKvQUTzk=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=KrA28kTr75Z6HDlI0HDkYslDViJG2fvLj5GCrksnDjtBpXXvytZEK65pj/sWOEvRVz2HybL8700KXVmvRbSlR3E8qGHvMaUjEaKku/5kzlFbiJpv5g75zS7IlDPWmwDu2W0DAy6m03xhvZDZBg58q2Xjqks5GJRdZPNPFG9XZG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=ttczPi8U; arc=none smtp.client-ip=162.62.57.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1739974112; bh=wkS7epA2A5s0pfsFXj5MssIur8auQ5akBvEzcoo0TMM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=ttczPi8UI3TtYX5ns+d/b4GUUertymizOFyBsVeJEYfmyqQRcc+1kae9Qc+5y9EDJ
-	 jotX7dCSYpfUzEjfo8bu3veaXVJfUj4yjLKxCIxYwoXcJTyCSg+fuQpPCKh/bSYMzH
-	 5VJD26O8bdiJdTyjx2064M23s9UJ9TseCYzRlVnc=
-Received: from pek-lxu-l1.wrs.com ([114.244.57.157])
-	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
-	id 21E8E872; Wed, 19 Feb 2025 22:08:30 +0800
-X-QQ-mid: xmsmtpt1739974110tgo10yank
-Message-ID: <tencent_83C97263B064441765B762E6CDD360637605@qq.com>
-X-QQ-XMAILINFO: NBOcPERDMH3AumCsObGr+Qx4l4zN3gpDjrf7APL71K86202YEhR2Y6WPTtGEfZ
-	 6nlnelOYcMeEI6j3sNPN/JPRJq6XZPyPL581jK9ZTTwjEO6mf7CaXvRRJArhD9/9zIvgpc8ABiRO
-	 elvKPTXmttPi9OHFQS3BDuk3LqhYgCPrYhTqEMQTBrvCg/ULRpWMtKVoGFN07bMD6n56w6dPHeyH
-	 PQ7g7Jym965CLVvEG2LjIR0O3/6QxAnCva/VO759VUHD4s/gqxfviYOcRvBV4/c8RE+hlPvJAKhO
-	 SVMtHE2bzG2LIACvvnt3R5czT8ctVFSX1U7yv/uApN/ZLp9sz898AeUuIVseVD3CUxs68/E+t4mA
-	 PIc+/OdDnT57OVlNU8ynD8g5lT2vrnW4j4AZ5U0L69rXGfmndOb53mB+j+ifEMaTPHt4dDf6rffR
-	 2bSLXuE/kKovznF3ZEZn6YphuYly8k8QuM41pcbnZQ3Je06rzbHpvQqXRZz7K/QCXKmmVLE5bRtf
-	 WnjRr7TT6hGSwf3FB5UJguNP+hLMHr3IgwOw9OAlCwK9gaC3d4M7CveFknU2qOQQryYs5AW8NLYM
-	 OkBDcFZ8co6JO4LTTvKg4maitHXkRPilP59aAsvBz+455jHJ54rEAQS8upi7VCHKJnlgWW3HxLim
-	 KLmyUguZ971FvzZn1JyhxF+65sCkHyg3jkaUhSO1smww2esAPI3sYi5nWxj9uJviTK7851aENfur
-	 qO8x6/HuMmi6IKC4ZrEQnhWZhr6u+zZzmG+zrNwaCJyWhDj/tbM9fhOhsrTmRwazCaKOJj1UrSyL
-	 U49HyAyYBD8BES/5UvFD5sZE4H0wTfk8KM7OLrayHJvr9Gonjt35LKFRysImiyN39McGXCHf36ER
-	 KuSN1fJgS4+jeR9B7UKo+uJeUu6il9XpTEwEdlfNfwvDKaNc9NSnc=
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+df6cdcb35904203d2b6d@syzkaller.appspotmail.com
-Cc: jfs-discussion@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	shaggy@kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH] jfs: set diskblock and maxag to zero when creating imap
-Date: Wed, 19 Feb 2025 22:08:31 +0800
-X-OQ-MSGID: <20250219140830.1594645-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <67b5d07e.050a0220.14d86d.00e6.GAE@google.com>
-References: <67b5d07e.050a0220.14d86d.00e6.GAE@google.com>
+	s=arc-20240116; t=1739974189; c=relaxed/simple;
+	bh=10jMimjxuVlCFGM2ZCcbo0fe9PRhXfBjVBsvwxGav90=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gtCIzZtR5vcD7Ry4+iLaJ+p7XN+Dj4I3TN6xObtkmYtNWoNpLf5X0k3DyGbl16PPbYRSw38RhqcHMr8AO1qouhZr5uTCe5o9E9dSgdAyCOHZE1q/QU9ncx3NkMEUolzWN6Cgfaxo9c2lhtyEsicInoUW5fdiVaviN/d5q73GlWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bfWKhPSD; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-aaf3c3c104fso1136822966b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 06:09:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739974186; x=1740578986; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=10jMimjxuVlCFGM2ZCcbo0fe9PRhXfBjVBsvwxGav90=;
+        b=bfWKhPSDk8e/Tj1SrdFTLWWe5QpJEeMVISVVjF1+oCcweeLf6nd9X/Kxo2dRMFjnNf
+         UpW1eAx4cb/tcvKIIhb3ua+uKsdd+p8Qmvy+IOzEZKj7/h+/iGPiAgicXMu2IRA7dSDa
+         rcNPgKidKV7vXL07YfBbQJ1O8OBlTLRMWL4wg8+FJzfcaPmyRzoNifjvMd5fHQ/imNxn
+         OYKsnbcNP32F3CBvcIXmXR4IIyOAGC0HsguB8nWVo5XXifOQGCw8j77+N1YBgfT02fDF
+         nG9MdtXG3gZSyXDgis9AWWqE1MvKAGZ5JsUFtJ9ZJ17R11WwRr8/uF/jNGsB7lOO4O4m
+         EByg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739974186; x=1740578986;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=10jMimjxuVlCFGM2ZCcbo0fe9PRhXfBjVBsvwxGav90=;
+        b=dSIxGBlkmnOgUXnYP0hN8mkVhk8wgTm8X6gtxx9I1+HsmEqqTEYHhUsZJ3Z/fBfxlA
+         Yieg7Ae5y7+s6CFoeaIaTmH49cWNGZEuCqRBZPBxRUfyvFrev5BGbWUNK/12MKhyWFb7
+         9/vkaCATVpgiAnknA9xpvojwqyymOSzFqR1+kZ9gF8Ur7BxvnFFsVTpeD3tJyVSZqWli
+         umrJxNVtx3HP8mu4lypFEBpWLarT8BwQiiXxXP3OC/vf86gJYIodx1VXrQuU8U/eksW5
+         J9IZq94t+QPDD7i2QsZCxbnasBM2KfxwkK+ky1IuJZriacD2kFKZUIUGPHbKkhfJmj1d
+         wWoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWI7fmeS98izW0pb1JJcQDO6agfsFdcnxOlHhGpvJAbMQweUFVewtgtzoLHrM27tr9/K0ly/qNW2Wevk58=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHJ/4shadRuasep5nWm+soaNpDBkKksvdKCJ/ezAzH6IjdTc9E
+	bEeA9z0Fc+j5j8kElvRSSUufu0V4m0h+xgxsO3jvbVTBUfHhIIJqrSOaMf7yqVz1QpHXOyL0JQ7
+	tSFGDn+dJqrsCm+iZkRLDQgJcQ1WPJJcuwtsnuTJ8Cn/OgeCd0lnjJ9o=
+X-Gm-Gg: ASbGncuv2330E/FO8pMcajAE+/B3TA/WA40ol0gez5e9n7fbmw6BjM7KmRxDdFNmUHR
+	gyjcJhzqi2nJrUQZpLISRzRriSbeZ3NKkx8G2EpSg34s7qK3wNRCO1efQ69zQLVQ8YXsiRjKnB7
+	xZ3KXsj4SiJCrCHPMg8KcJ0sIRzQ==
+X-Google-Smtp-Source: AGHT+IH8Kk8ypOlI+q0204bWOg0K+kei1efTO1AVFOuvMiUq/prv2i2qE+mN7M/RL4ubsnylAhdc2zfoJmjYvSACjtk=
+X-Received: by 2002:a17:906:18b2:b0:ab7:d10b:e200 with SMTP id
+ a640c23a62f3a-abb70aa66dfmr1211679466b.22.1739974166997; Wed, 19 Feb 2025
+ 06:09:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1737577229.git.babu.moger@amd.com> <2119b76ef8be21b1d8b2deedfab23e8e33ba724c.1737577229.git.babu.moger@amd.com>
+ <Z7XfcV05ZZkHm6bc@e133380.arm.com>
+In-Reply-To: <Z7XfcV05ZZkHm6bc@e133380.arm.com>
+From: Peter Newman <peternewman@google.com>
+Date: Wed, 19 Feb 2025 15:09:16 +0100
+X-Gm-Features: AWEUYZmLnt6t_Sm9Rq-kqfE53HCQG6LWj-INsRp5bS0oFoaS6xQL7aEZNuvjSPk
+Message-ID: <CALPaoCiPkjbTf2He2tXsguxHDtGF+YfVUZScL8dseVc6rvAfvA@mail.gmail.com>
+Subject: Re: [PATCH v11 17/23] x86/resctrl: Auto assign/unassign counters when
+ mbm_cntr_assign is enabled
+To: Dave Martin <Dave.Martin@arm.com>
+Cc: Babu Moger <babu.moger@amd.com>, corbet@lwn.net, reinette.chatre@intel.com, 
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, tony.luck@intel.com, fenghua.yu@intel.com, 
+	x86@kernel.org, hpa@zytor.com, paulmck@kernel.org, akpm@linux-foundation.org, 
+	thuth@redhat.com, rostedt@goodmis.org, xiongwei.song@windriver.com, 
+	pawan.kumar.gupta@linux.intel.com, daniel.sneddon@linux.intel.com, 
+	jpoimboe@kernel.org, perry.yuan@amd.com, sandipan.das@amd.com, 
+	kai.huang@intel.com, xiaoyao.li@intel.com, seanjc@google.com, 
+	xin3.li@intel.com, andrew.cooper3@citrix.com, ebiggers@google.com, 
+	mario.limonciello@amd.com, james.morse@arm.com, tan.shaopeng@fujitsu.com, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	maciej.wieczor-retman@intel.com, eranian@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-syzbot reported a uninit-value in diFree. [1]
+Hi Dave,
 
-When print_hex_dump() is called to print the first 32 bytes of imap, the
-first 8 members in struct dinomap are the first 32 bytes of imap, because
-in_diskblock and in_maxag are not initialized when imap is created.
+On Wed, Feb 19, 2025 at 2:41=E2=80=AFPM Dave Martin <Dave.Martin@arm.com> w=
+rote:
+>
+> Hi,
+>
+> On Wed, Jan 22, 2025 at 02:20:25PM -0600, Babu Moger wrote:
+> > Assign/unassign counters on resctrl group creation/deletion. Two counte=
+rs
+> > are required per group, one for MBM total event and one for MBM local
+> > event.
+> >
+> > There are a limited number of counters available for assignment. If the=
+se
+> > counters are exhausted, the kernel will display the error message: "Out=
+ of
+> > MBM assignable counters". However, it is not necessary to fail the
+> > creation of a group due to assignment failures. Users have the flexibil=
+ity
+> > to modify the assignments at a later time.
+>
+> If we are doing this, should turning mbm_cntr_assign mode on also
+> trigger auto-assingment for all extant monitoring groups?
+>
+> Either way though, this auto-assignment feels like a potential nuisance
+> for userspace.
+>
+> If the userspace use-case requires too many monitoring groups for the
+> available counters, then the kernel will auto-assign counters to a
+> random subset of groups which may or may not be the ones that userspace
+> wanted to monitor; then userspace must manually look for the assigned
+> counters and unassign some of them before they can be assigned where
+> userspace actually wanted them.
+>
+> This is not impossible for userspace to cope with, but it feels
+> awkward.
+>
+> Is there a way to inhibit auto-assignment?
+>
+> Or could automatic assignments be considered somehow "weak", so that
+> new explicit assignments can steal automatically assigned counters
+> without the need to unassign them explicitly?
 
-When creating imap, set in_diskblock and in_maxag to 0 to prevent this
-issue from happening.
+We had an incomplete discussion about this early on[1]. I guess I
+didn't revisit it because I found it was trivial to add a flag that
+inhibits the assignment behavior during mkdir and had moved on to
+bigger issues.
 
-[1]
-BUG: KMSAN: uninit-value in hex_dump_to_buffer+0x888/0x1100 lib/hexdump.c:171
- hex_dump_to_buffer+0x888/0x1100 lib/hexdump.c:171
- print_hex_dump+0x13d/0x3e0 lib/hexdump.c:276
- diFree+0x5ba/0x4350 fs/jfs/jfs_imap.c:876
- jfs_evict_inode+0x510/0x550 fs/jfs/inode.c:156
- evict+0x723/0xd10 fs/inode.c:796
- iput_final fs/inode.c:1946 [inline]
- iput+0x97b/0xdb0 fs/inode.c:1972
- txUpdateMap+0xf3e/0x1150 fs/jfs/jfs_txnmgr.c:2367
- txLazyCommit fs/jfs/jfs_txnmgr.c:2664 [inline]
- jfs_lazycommit+0x627/0x11d0 fs/jfs/jfs_txnmgr.c:2733
- kthread+0x6b9/0xef0 kernel/kthread.c:464
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+If an agent creating directories isn't coordinated with the agent
+managing counters, a series of creating and destroying a group could
+prevent a monitor assignment from ever succeeding because it's not
+possible to atomically discover the name of the new directory that
+stole the previously-available counter and reassign it.
 
-Uninit was created at:
- slab_post_alloc_hook mm/slub.c:4121 [inline]
- slab_alloc_node mm/slub.c:4164 [inline]
- __kmalloc_cache_noprof+0x8e3/0xdf0 mm/slub.c:4320
- kmalloc_noprof include/linux/slab.h:901 [inline]
- diMount+0x61/0x7f0 fs/jfs/jfs_imap.c:105
- jfs_mount+0xa8e/0x11d0 fs/jfs/jfs_mount.c:176
- jfs_fill_super+0xa47/0x17c0 fs/jfs/super.c:523
- get_tree_bdev_flags+0x6ec/0x910 fs/super.c:1636
- get_tree_bdev+0x37/0x50 fs/super.c:1659
- jfs_get_tree+0x34/0x40 fs/jfs/super.c:635
- vfs_get_tree+0xb1/0x5a0 fs/super.c:1814
- do_new_mount+0x71f/0x15e0 fs/namespace.c:3560
- path_mount+0x742/0x1f10 fs/namespace.c:3887
- do_mount fs/namespace.c:3900 [inline]
- __do_sys_mount fs/namespace.c:4111 [inline]
- __se_sys_mount+0x71f/0x800 fs/namespace.c:4088
- __x64_sys_mount+0xe4/0x150 fs/namespace.c:4088
- x64_sys_call+0x39bf/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:166
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+However, if the counter-manager can get all the counters assigned once
+and only move them with atomic reassignments, it will become
+impossible to snatch them with a mkdir.
 
-Reported-by: syzbot+df6cdcb35904203d2b6d@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=df6cdcb35904203d2b6d
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- fs/jfs/jfs_imap.c | 2 ++
- 1 file changed, 2 insertions(+)
+-Peter
 
-diff --git a/fs/jfs/jfs_imap.c b/fs/jfs/jfs_imap.c
-index a360b24ed320..ff32b614a09b 100644
---- a/fs/jfs/jfs_imap.c
-+++ b/fs/jfs/jfs_imap.c
-@@ -134,6 +134,8 @@ int diMount(struct inode *ipimap)
- 		imap->im_agctl[index].numfree =
- 		    le32_to_cpu(dinom_le->in_agctl[index].numfree);
- 	}
-+	imap->im_diskblock = 0;
-+	imap->im_maxag = 0;
- 
- 	/* release the buffer. */
- 	release_metapage(mp);
--- 
-2.43.0
-
+[1] https://lore.kernel.org/lkml/CALPaoCihfQ9VtLYzyHB9-PsQzXLc06BW8bzhBXwj9=
+-i+Q8RVFQ@mail.gmail.com/
 
