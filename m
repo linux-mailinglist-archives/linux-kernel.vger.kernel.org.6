@@ -1,137 +1,152 @@
-Return-Path: <linux-kernel+bounces-522352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6522AA3C901
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 20:42:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAA55A3C908
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 20:45:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5444C188E636
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:42:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AECAD3B3567
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:43:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B669322B5A4;
-	Wed, 19 Feb 2025 19:42:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5E9D22A813;
+	Wed, 19 Feb 2025 19:43:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Rw88Z40g"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=morinfr.org header.i=@morinfr.org header.b="1aVLDQ0Y"
+Received: from smtp2-g21.free.fr (smtp2-g21.free.fr [212.27.42.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3434E1B0F33;
-	Wed, 19 Feb 2025 19:42:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3EC922AE7B;
+	Wed, 19 Feb 2025 19:43:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.27.42.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739994133; cv=none; b=TnAVxSkposQyXfnNXF5zKEnoSwRH8ZKIaQK7kWweCBEXO+eO1rCL70rQ4tPej0g2ilo+hxnctliZiYaGreW5d2sHRatDsPGJQ5CWKwGmtcRNHi6F/jieMhleaZaY1NO2Qs31w2yIR/iglBMHd2v1xmGDMrcBu7oBSu4ON3AmF1U=
+	t=1739994194; cv=none; b=fWcBLgYsKYXP1KgDw1URGJSLBNQ+ude3MmNZgIi8GY+vNUiA2CnA6Je/NVm9qYaVuywnMVlYeMjfJuzJeJRVvii2SQ0eLkTc1d8m0zjH0Qe4Gl1znHo92maroOK8m+TKT+Vl+couzI0HnFk2n15auL19K2atEU7+ZL8kcC0ew5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739994133; c=relaxed/simple;
-	bh=jpDV+E4FWsQEf6WnMfXYCuqqpKYDdvTvL7ljXSS8Tos=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ZNQkvMbap0XW602u7Zfg1UheAhdaGozDOkzGyIQLlaA6J1G3jTpxhpV0mN3jvgaOc+EUibF2Gt7RAvw4VeImrj4KyZHakT9TVU3x2sqbQMytNxz/H8sI9GllAlJiMpGxLTJByFoAR2aLV72ZDZ7KXHUh7TEgTVPjKGnoNi3S3zA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Rw88Z40g; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 4E166442D1;
-	Wed, 19 Feb 2025 19:42:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1739994122;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Qu8bmC+bJMdyIbAzv6s6vSAzbmr6QSn1AGgHeToUVqk=;
-	b=Rw88Z40gvyY5CqmwimK116YrV7tj5ntXdd7LTq0BemhllU/nDMfdQlbs4Ta2Ula/8NzVie
-	ee07DdK4bNv3mdAxvsPzOYfMcp7RnOQU+D7mjOq7ga9ZtG+GLAIEVjOI6piQ+P+UQ7Zsc1
-	/9mTBcXJLYbPLY/JFlGJPg2Y+pkEtNzWpmPziHXVGuyXRcOz+jf7/+j2v79j4XKnUh3NjE
-	mC5RjZ8QfshPUC2qHzsHgsQwZyWNbb8E+6Fdv4+xobZCi+RIDiOg45iWgDMx+lz/oSzope
-	XMW7+OEojQjfUaXPL0OZ0C1J/Ld0okk7zInXhCVhRdaKJqSvZIPv6BjKVtg97g==
-From: =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
-Date: Wed, 19 Feb 2025 20:41:39 +0100
-Subject: [PATCH] selftests/bpf: DENYLIST.aarch64: enable kprobe_multi tests
- for ARM64
+	s=arc-20240116; t=1739994194; c=relaxed/simple;
+	bh=YIpOELEUVURB7qN1oJGE7S1MIfkFeVWHoXtoa5ojiSs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=rXzfwvdlyBpDUUv6jOxJjZLdHVWvJneDu1m01gTK9gnkpH4SEbw0Ew42ynsdxY4GEVvuIgzB0S8R7JvSxRiOlXOQ5xwuJCuZdIRyia79jAxElLff2T5DgnMkaivzL/YqIW5CpYWBDyPOqYeprV2qcJ6NCxrKrw7dwaE+5b3u5wI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=morinfr.org; spf=pass smtp.mailfrom=morinfr.org; dkim=pass (1024-bit key) header.d=morinfr.org header.i=@morinfr.org header.b=1aVLDQ0Y; arc=none smtp.client-ip=212.27.42.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=morinfr.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=morinfr.org
+Received: from bender.morinfr.org (unknown [82.66.66.112])
+	by smtp2-g21.free.fr (Postfix) with ESMTPS id 4D2212003B4;
+	Wed, 19 Feb 2025 20:43:06 +0100 (CET)
+Authentication-Results: smtp2-g21.free.fr;
+	dkim=pass (1024-bit key; unprotected) header.d=morinfr.org header.i=@morinfr.org header.a=rsa-sha256 header.s=20170427 header.b=1aVLDQ0Y;
+	dkim-atps=neutral
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=morinfr.org
+	; s=20170427; h=Content-Type:MIME-Version:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=GrKJx+/MbEDzZYuWfVXJ+zgryKzj0bF4dQ11RT3nh9w=; b=1aVLDQ0YWuX9ZokA/lP2xriXCr
+	GOu68BzMPU0r5YMrHMU+oojmJExheASm2GRDa97TaeXm4Eqt2b9Uz/3VBuo6kiynTrv/hrsmdKrfP
+	cgTnAlQrp8bYw1OVXftdY4gq6YmCPSyCuZnie7Y8eLXHm2kJY2Iz5u2ox8IexnSQrDWQ=;
+Received: from guillaum by bender.morinfr.org with local (Exim 4.96)
+	(envelope-from <guillaume@morinfr.org>)
+	id 1tkpyL-004t9q-1g;
+	Wed, 19 Feb 2025 20:43:05 +0100
+Date: Wed, 19 Feb 2025 20:43:05 +0100
+From: Guillaume Morin <guillaume@morinfr.org>
+To: linux-raid@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, song@kernel.org, yukuai3@huawei.com,
+	guillaume@morinfr.org
+Subject: [BUG] possible race between md_free_disk and md_notify_reboot
+Message-ID: <Z7Y0SURoA8xwg7vn@bender.morinfr.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250219-enable_kprobe_multi_tests-v1-1-faeec99240c8@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIAPIztmcC/x3MQQqDMBBG4avIrBvQhJTWq0gJmvxtBzVKJpaCe
- HeDy2/x3k6CxBBqq50Sfiy8xILmVpH/9vEDxaGYdK1trZunQuyHCW5c0zLAzduU2WVIFuUfwRp
- j7rA+UOnXhDf/r3f3Oo4TDjmk/WsAAAA=
-X-Change-ID: 20250219-enable_kprobe_multi_tests-c8d53336e5cd
-To: Alexei Starovoitov <ast@kernel.org>, 
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
- Martin KaFai Lau <martin.lau@linux.dev>, 
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, 
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, 
- Shuah Khan <shuah@kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, 
- Bastien Curutchet <bastien.curutchet@bootlin.com>, ebpf@linuxfoundation.org, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, bpf@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
-X-Mailer: b4 0.14.2
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeihedufecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephfffufggtgfgkffvvefosehtkeertdertdejnecuhfhrohhmpeetlhgvgihishcunfhothhhohhrroculdgvuefrhfcuhfhouhhnuggrthhiohhnmdcuoegrlhgvgihishdrlhhothhhohhrvgessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepjefghfeiudduffetfeehueduffdtteeigeehvdeludetueffvedvfedttdekieevnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepvdgrtddvmeekgedvkeemfhelgegtmegvtddtmeemfhekheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemkeegvdekmehfleegtgemvgdttdemmehfkeehpdhhvghloheplgduledvrdduieekrddurdduleejngdpmhgrihhlfhhrohhmpegrlhgvgihishdrlhhothhhohhrvgessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvddvpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohephihonhhghhhonhhgrdhsohhngheslhhinhhugidruggvvhdprhgtphhtthhop
- ehshhhurghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsughfsehfohhmihgthhgvvhdrmhgvpdhrtghpthhtohepvggsphhfsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheprghstheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghnughrihhisehkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhesihhoghgvrghrsghogidrnhgvth
-X-GND-Sasl: alexis.lothore@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The kprobe_multi feature was disabled on ARM64 due to the lack of fprobe
-support.
+Hello, we experienced the following GPF during a systemd shutdown
 
-The fprobe rewrite on function_graph has been recently merged and thus
-brought support for fprobes on arm64.  This then enables kprobe_multi
-support on arm64, and so the corresponding tests can now be run on this
-architecture.
+[ 1221.198632] systemd-shutdown[1]: Rebooting.                                                                                                                                                                        
+[ 1221.602276] md: md0: resync interrupted.                                                                                                                                                                           
+[ 1221.604492] general protection fault, probably for non-canonical address 0xdead000000000100: 0000 [#1] SMP NOPTI                                                                                                   
+[ 1221.613621] CPU: 87 PID: 1 Comm: systemd-shutdow Kdump: loaded Tainted: G           O       6.6.57 #1                                                                                                       
+[ 1221.632201] RIP: 0010:md_notify_reboot+0xe8/0x150                                                                                                                                                                  
+[ 1221.635868] Code: c6 58 59 40 b9 4c 89 f7 e8 65 d3 23 00 85 c0 74 08 4c 89 e7 e8 49 3b ff ff 48 c7 c7 58 59 40 b9 e8 ad 0f 28 00 b9 01 00 00 00 <48> 8b 83 d8 03 00 00 48 8d 93 d8 03 00 00 49 89 dc 48 2d d8 03 00
+[ 1221.653555] RSP: 0018:ffffa7f200067d28 EFLAGS: 00010202                                                                                                                                                            
+[ 1221.657740] RAX: 0000000000001002 RBX: deacfffffffffd28 RCX: 0000000000000001                                                                                                                                      
+[ 1221.663829] RDX: ffff8a32cf2c33d8 RSI: ffffffffb9405958 RDI: ffffffffb9405958                                                                                                                                      
+[ 1221.669918] RBP: ffffa7f200067d48 R08: 0000000000000000 R09: ffffa7f200067c70                                                                                                                                      
+[ 1221.676008] R10: 0000000000000005 R11: 0000000000000057 R12: ffff8a32cf2c3000                                                                                                                                      
+[ 1221.682097] R13: ffffffffb9405958 R14: ffff89b356ca0218 R15: ffffffffb8f03620                                                                                                                                      
+[ 1221.688186] FS:  00007f6877c24900(0000) GS:ffff8a30bffc0000(0000) knlGS:0000000000000000                                                                                                                           
+[ 1221.695226] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033                                                                                                                                                      
+[ 1221.699930] CR2: 00007f6877c015a0 CR3: 00000003bb402005 CR4: 0000000000770ee0                                                                                                                                      
+[ 1221.706019] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000                                                                                                                                      
+[ 1221.712110] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400                                                                                                                                      
+[ 1221.718197] PKRU: 55555554                                                                                                                                                                                         
+[ 1221.719885] Call Trace:                                                                                                                                                                                            
+[ 1221.721311]  <TASK>                                                                                                                                                                                                
+[ 1221.722394]  ? show_regs+0x6a/0x80                                                                                                                                                                                 
+[ 1221.724772]  ? die_addr+0x38/0xa0                                                                                                                                                                                  
+[ 1221.727065]  ? exc_general_protection+0x192/0x2f0                                                                                                                                                                  
+[ 1221.730739]  ? asm_exc_general_protection+0x27/0x30                                                                                                                                                                
+[ 1221.734589]  ? md_notify_reboot+0xe8/0x150                                                                                                                                                                         
+[ 1221.737660]  ? md_notify_reboot+0xe3/0x150                                                                                                                                                                         
+[ 1221.740727]  notifier_call_chain+0x5c/0xc0                                                                                                                                                                         
+[ 1221.743799]  blocking_notifier_call_chain+0x43/0x60                                                                                                                                                                
+[ 1221.747648]  kernel_restart+0x22/0xa0                                                                                                                                                                              
+[ 1221.750286]  __do_sys_reboot+0x1a2/0x220                                                                                                                                                                           
+[ 1221.753183]  ? vfs_writev+0xd8/0x150                                                                                                                                                                               
+[ 1221.755735]  ? __fput+0x198/0x320                                                                                                                                                                                  
+[ 1221.758028]  ? do_writev+0x75/0x120                                                                                                                                                                                
+[ 1221.760491]  __x64_sys_reboot+0x1e/0x30                                                                                                                                                                            
+[ 1221.763304]  x64_sys_call+0x2000/0x2020                                                                                                                                                                            
+[ 1221.766114]  do_syscall_64+0x33/0x80                                                                                                                                                                               
+[ 1221.768665]  entry_SYSCALL_64_after_hwframe+0x78/0xe2                                                                                                                                                              
+[ 1221.772689] RIP: 0033:0x7f68776d0453                                                                                                                                                                               
+[ 1221.775258] Code: 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 89 fa be 69 19 12 28 bf ad de e1 fe b8 a9 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 05 c3 0f 1f 40 00 48 8b 15 09 fa 52 00 f7 d8
+[ 1221.793040] RSP: 002b:00007ffdfee13e28 EFLAGS: 00000206 ORIG_RAX: 00000000000000a9                                                                                                                                 
+[ 1221.799570] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f68776d0453                                                                                                                                      
+[ 1221.805666] RDX: 0000000001234567 RSI: 0000000028121969 RDI: 00000000fee1dead                                                                                                                                      
+[ 1221.811764] RBP: 00007f6877c247b0 R08: 0000000000000000 R09: 00007ffdfee13230                                                                                                                                      
+[ 1221.817862] R10: 00007f6877c247b0 R11: 0000000000000206 R12: 0000000000000000                                                                                                                                      
+[ 1221.823960] R13: 00007ffdfee13e90 R14: 00000000ffffffff R15: 0000000000000000                                                                                                                                      
+[ 1221.830059]  </TASK>                                        
 
-Remove the tests depending on kprobe_multi from DENYLIST.aarch64 to
-allow those to run in CI. CONFIG_FPROBE is already correctly set in
-tools/testing/selftests/bpf/config
+md_notify_reboot() tried to load a list poison value which triggered the
+GPF.  The poison values are set during list_del(&mddev->all_mddevs). The
+only call for this list is in mddev_free() called by md_free_disk()
+(well it's also called in md_alloc() on failure but it's not relevant
+here).  The kdump show all cpus besides the one triggering the GPF to be
+idle.  Note that this crash happened on 6.6.x but afaict the related code
+is mostly the same in the current tree.
 
-Signed-off-by: Alexis Lothoré (eBPF Foundation) <alexis.lothore@bootlin.com>
----
-The tests being enabled with this series have been run locally in an
-ARM64 qemu environment, and in Github CI.
+We believe there is a simple race between the list_for_each_entry_safe()
+loop in md_notify_reboot() which releases all_mddevs_lock during its
+iteration over all_mddevs and mddev_free() which removes the mddev from
+this list.
+mddev_free() only grabs that lock before calling list_del().  If the
+item pointed by the "n" pointer passed to list_for_each_entry_safe() is
+removed while we're processing the current item, n->all_mddevs will
+contain poisoned values.  Additionally since mddev_free() also frees the
+mddev, there might be a possible use-after-free issue as well since
+mddev_free() seems to make no attempt to avoid concurrent access to the
+mddev.
 
-I only did some testing to ensure that the tests depending on kprobe_multi
-now run correctly on arm64, it is fair to stress that all the hard
-work has actually been done by M. Hiramatsu ([0])
+There seems to be nothing in the code that tries to prevent this
+specific race and not being familiar with this code I am not sure what
+the right fix would be. In the current state of the code, it does not
+seem safe to release all_mddevs_lock if mddev_free() can be called
+concurrently.
 
-[0] https://lore.kernel.org/bpf/173518987627.391279.3307342580035322889.stgit@devnote2/
----
- tools/testing/selftests/bpf/DENYLIST.aarch64 | 9 ---------
- 1 file changed, 9 deletions(-)
+Please let me know if we're missing anything or can provide some
+additional info.
 
-diff --git a/tools/testing/selftests/bpf/DENYLIST.aarch64 b/tools/testing/selftests/bpf/DENYLIST.aarch64
-index 901349da680fa67896d279d184db78e964d9ae27..6d8feda27ce9de07d77d6e384666082923e3dc76 100644
---- a/tools/testing/selftests/bpf/DENYLIST.aarch64
-+++ b/tools/testing/selftests/bpf/DENYLIST.aarch64
-@@ -1,12 +1,3 @@
--bpf_cookie/multi_kprobe_attach_api               # kprobe_multi_link_api_subtest:FAIL:fentry_raw_skel_load unexpected error: -3
--bpf_cookie/multi_kprobe_link_api                 # kprobe_multi_link_api_subtest:FAIL:fentry_raw_skel_load unexpected error: -3
--kprobe_multi_bench_attach                        # needs CONFIG_FPROBE
--kprobe_multi_test                                # needs CONFIG_FPROBE
--module_attach                                    # prog 'kprobe_multi': failed to auto-attach: -95
- fentry_test/fentry_many_args                     # fentry_many_args:FAIL:fentry_many_args_attach unexpected error: -524
- fexit_test/fexit_many_args                       # fexit_many_args:FAIL:fexit_many_args_attach unexpected error: -524
- tracing_struct/struct_many_args                  # struct_many_args:FAIL:tracing_struct_many_args__attach unexpected error: -524
--fill_link_info/kprobe_multi_link_info            # bpf_program__attach_kprobe_multi_opts unexpected error: -95
--fill_link_info/kretprobe_multi_link_info         # bpf_program__attach_kprobe_multi_opts unexpected error: -95
--fill_link_info/kprobe_multi_invalid_ubuff        # bpf_program__attach_kprobe_multi_opts unexpected error: -95
--missed/kprobe_recursion                          # missed_kprobe_recursion__attach unexpected error: -95 (errno 95)
+HTH
 
----
-base-commit: d3417ac824b98e8773bc04b93e09c4b93c2c6cad
-change-id: 20250219-enable_kprobe_multi_tests-c8d53336e5cd
+Guillaume.
 
-Best regards,
 -- 
-Alexis Lothoré, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+Guillaume Morin <guillaume@morinfr.org>
 
