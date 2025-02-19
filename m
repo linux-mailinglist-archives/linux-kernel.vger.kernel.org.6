@@ -1,62 +1,66 @@
-Return-Path: <linux-kernel+bounces-522459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2752CA3CA9B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:59:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 813D5A3CAA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:00:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4319189AD1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 20:59:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDD74189ACC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:00:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1E6C24E4CD;
-	Wed, 19 Feb 2025 20:59:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27A5224E4CD;
+	Wed, 19 Feb 2025 20:59:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="D+w2UoGr"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HhATFANN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A160124E4AD;
-	Wed, 19 Feb 2025 20:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75C8121516A;
+	Wed, 19 Feb 2025 20:59:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739998744; cv=none; b=SefpREr6hhQ8AR2kTEPr7eC8PfznMrl3F9sfQ9+bIEpFR7elWLgPyH+/AvBU0lLYbV5AfHRwodbKvP4zyC8uV5kS78niKEhTte7GCHbz5XeMaVIErRF65jjxQoGRViibRJoMUY7Do80/ziNBGW/8Kr+L7JopAuJrBCHCjfpuSdg=
+	t=1739998790; cv=none; b=g3tVhqUaGs3eWqcJQerTYijw6bFpscciGzIHh/SELYdTf7c8mEVHKcsnPIWPPBOcthIKPscoz3dWi5tZvh6KkGLq/uAZsqFbWM55xU0ARpyUPfrGYY+2U5yPasOPevUTL6wh1y9c0jTrguYdfHSdkhFf4+evCsZnZ7j0qWBzVoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739998744; c=relaxed/simple;
-	bh=ZHSwXiwOw9BSCREBbizXjK3EBY/6MOP6xU3lvA6h0Oc=;
+	s=arc-20240116; t=1739998790; c=relaxed/simple;
+	bh=dvKxf/qUFD6QnlirkXBKY1HZbjPnMYpsHH/KTkGADbQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A/CeYLpo3GvLPhgzYb41kq0k2fNfoGvII+3jt5cWPNygA496EZoainkZc5RaWYje5oV5NiNWQndQtxU+mXG8X+R6S33pLsvCl59+yshBvOWGEmky3IcKU6X5l4IAWDwePWo0LWaqLAwoZeMvWDqvwEdpCQUX6t9mR2touKnMscQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=D+w2UoGr; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=3/GiwpKUC0VtliLMyFOL/35TN1+gb3/FfpGPJqii808=; b=D+w2UoGrSsMdTv0D3jnY/TU3fF
-	l8BcDXVL7eyB5AetYcElVPSTZ1jHbRvSgYSNGpRJ5ywGtuVe2GNHmJx8mY7MQPL/k0uxAqWOcMxIB
-	PlMcPegfosEysh5UTLw3fMTMyMlPDNc/JY9RyjQ0MULufZPoXKL68hlcQ96Mrn9aPL/Q=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tkr9i-00FkMQ-FM; Wed, 19 Feb 2025 21:58:54 +0100
-Date: Wed, 19 Feb 2025 21:58:54 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Lukasz Majewski <lukma@denx.de>
-Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=AxjpOe3mj7cwaZV10B711vaTGgDDHeJ+sFRmYTyjGgXXYc2uDkg3A5ZN64esrgyeu+qPx8VYY0Yy4QYWylqBypTYZYicTnIXpDwdaZW2UC5p9JAQoUdcyaLtAo3EO5Pq5YPtr+9ZHi+/BhEh75LgG+ru/2wGTMSOwbxsrJHOcmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HhATFANN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF2A6C4CED1;
+	Wed, 19 Feb 2025 20:59:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739998789;
+	bh=dvKxf/qUFD6QnlirkXBKY1HZbjPnMYpsHH/KTkGADbQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HhATFANN5fZNDsk2vd16D8hpEgGYsbMRmJeqAeSfBHaz7cDAOFvdLy8QWk/IQBFBx
+	 rA0MGTnHBTRjCI0fsh4mvP3wvwHCa32Zv43x0ELdFM/tXDEiM5NrKGXvKHa/ducPN0
+	 2pSUcI0esU7DUXb5AXPRGgPPNEOoqvP+5i+QApcLx/JIcMNXgjnVLySXMIGoqwPEnT
+	 iyw9BMNP9prbO2KJHF+draikDPyMS8YUnQzbr4f75DNalpnJ67s/WSugZW8bCiwVEh
+	 XwSKb+ojCI4PXWF5BOLZCm+CFUtuVVSDqAjTvbehcPKhr3b1HRBOvRa8uQCmNwAHOH
+	 /P+VXstLmdzOA==
+Date: Wed, 19 Feb 2025 14:59:48 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: linux-watchdog@vger.kernel.org, linux-clk@vger.kernel.org,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH] arm: clk: Add ETH switch clock description for vf610 SoC
-Message-ID: <3cebe152-6326-454c-9da6-5cf5a64f71c9@lunn.ch>
-References: <20250219114936.3546530-1-lukma@denx.de>
+	Biju Das <biju.das.jz@bp.renesas.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/9] dt-bindings: clock: rzv2h-cpg: Add syscon
+ compatible for CPG
+Message-ID: <173999878831.2928343.14910610867424763036.robh@kernel.org>
+References: <20250210184910.161780-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250210184910.161780-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,18 +69,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250219114936.3546530-1-lukma@denx.de>
+In-Reply-To: <20250210184910.161780-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On Wed, Feb 19, 2025 at 12:49:36PM +0100, Lukasz Majewski wrote:
-> The NXP's vf610 soc is equipped with L2 switch IP block from More
-> Than IP (MTIP) vendor.
+
+On Mon, 10 Feb 2025 18:49:02 +0000, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > 
-> It requires special clock (VF610_CLK_ESW) to be operational.
+> The CPG block in the RZ/V2H(P) and RZ/G3E SoCs includes Error Reset Select
+> Registers (`CPG_ERRORRST_SELm`) and Error Reset Registers
+> (`CPG_ERROR_RSTm`). The `CPG_ERRORRST_SELm` register must be configured to
+> trigger a system reset in response to specific error conditions, while the
+> `CPG_ERROR_RSTm` registers store the error interrupt factors that caused
+> the system reset. These registers can be used by various IP blocks as
+> needed.
+> 
+> For example, in `CPG_ERRORRST_SEL2`, setting `BIT(1)` enables the WDT1 to
+> issue a system reset upon a watchdog timer underflow. Similarly, `BIT(1)`
+> in `CPG_ERROR_RST2` indicates whether the system reset was caused by a
+> WDT1 underflow. This functionality allows the watchdog driver to configure
+> the CPG_ERRORRST_SEL2 register and determine whether the system booted due
+> to a `Power-on Reset` or a `Watchdog Reset`.
+> 
+> Add the `syscon` compatible property to the RZ/V2H(P) and RZ/G3E CPG
+> blocks, enabling drivers to access the `CPG_ERRORRST_SELm` and
+> `CPG_ERROR_RSTm` registers as needed.
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> v3->v4
+> - Updated commit meessage
+> 
+> v2->v3
+> - No change
+> 
+> v1->v2
+> - No change
+> ---
+>  .../devicetree/bindings/clock/renesas,rzv2h-cpg.yaml   | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+> 
 
-So you have a driver for this switch? It has been talked about in the
-past, but nobody made any progress with it. Ah, it was you in 2020. It
-will be interesting to see what you came up with in the end, pure
-switchdev or a DSA driver.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-	Andrew
 
