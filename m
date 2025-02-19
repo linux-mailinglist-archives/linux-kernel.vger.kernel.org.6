@@ -1,209 +1,161 @@
-Return-Path: <linux-kernel+bounces-521471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64F79A3BDCD
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:08:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFCDBA3BDD2
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:10:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A53718957C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:08:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC4FB16E55C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:10:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2ECF1DFE14;
-	Wed, 19 Feb 2025 12:08:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC46E1DFE23;
+	Wed, 19 Feb 2025 12:10:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JLRk6MhQ"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MZxdlBkd"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0C71DF730
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 12:08:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E9A31BEF75;
+	Wed, 19 Feb 2025 12:10:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739966909; cv=none; b=Z94FlMjaz7ep4NxKgUbdd5Uvd1m+2VlX4XEidfgVAxoImH0CrHg3RNbzTpitiBKvv9fgJ8Vfu5TQwB6tStYoLbiPEf7xoPzgJ3v9rGBx3ZnK1gD0Evk2S/8QJcJoUG7GoGhePWgBTq84LDC+JXvqR0SW7eh+bk07JuexFT95264=
+	t=1739967041; cv=none; b=AAz/uBcZ765tpgs/M96IQWc43/EEb4gbt94NL0q6/NNGmDYyN9kIMe99Xsuh/N0oYw0srPIS6TY7txd0wuRgvuaI0mxX5A1d1l1eaCikFb+ET1bou7hIzt7T194I1RfDdGF2k9R77o0COZfyqpZrCYpxEAuB88z+rdlAJLNBaR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739966909; c=relaxed/simple;
-	bh=uE8CUjR58RLwuzsqmPJ2Twtd7ZBgQ7uMjtufoLK9fYs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bX9r7+FA6+NQmoYa5UvcHc2ZgYkmaXUYjTbj+AR4yqKGoI4dfFhI697cFBkJaZAaB7TQhnoErCBBWFL998/0t6CUaOpZz3HofjMB91cR7d4JE1xn/wpKyINOMtyKlLxkMEQE+Nh30WJMVITPitZ4yjeCts3dvSNLClnkfHRDRt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JLRk6MhQ; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-546202d633dso3273919e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 04:08:26 -0800 (PST)
+	s=arc-20240116; t=1739967041; c=relaxed/simple;
+	bh=uelRPMspazvWIvQv03QR03hG1Wv8PBMAk9WL0BITQwY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JvdcqVcTDX3OhU3DRTqRJCqgkqH/9AuXJjy5BsndD0jhCh2NbpRH+k34nvcDIZ5woDBeGQeKrL1RRjw0jbm3hSHEzeMQ2ApxPjWZiOtfl8qV1Y+Od74NuscSSgP0T1rJrBuVltwIoSXt0PKSDd62XNB8dwynuA/X03n2By/auLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MZxdlBkd; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5e04cb346eeso6846783a12.2;
+        Wed, 19 Feb 2025 04:10:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739966905; x=1740571705; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kfNES95aCHrH5DW7HOssGE1cf0vTi0kl2N0MBpHNSOY=;
-        b=JLRk6MhQsI0egle9P/i5LwAyjj3vcerxgF3i5jjK8fqWvJZ23Dcy49YQs/LKCz50ec
-         lpGbdcNdoF4soVNTBp/2BmH3BvqpXN6W12QDoasuLNhEwqLBi+kiEx3OyUMzph0CeJGG
-         cG29ZFq/O/0YXeiO6ILOZ8Ubxsu3A5VWUqnMTnkkyXqgJK+jaQ0i54JbPzLQeS+vfTCx
-         CgsuyfP7movhUeItO23to2InSpjGHsrsxY6oKvWiW7vvCjOjhpYZ2ZTTCwoLTCuAcTGq
-         Z2VzaJYxIclGqUrTmCSov7RCtO1sWUfeoOY4ItVPNVtp3WxsCCZsO6fat0KyNG7cWVx/
-         kF2Q==
+        d=gmail.com; s=20230601; t=1739967038; x=1740571838; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Qh3oxSLPnJCNWdMJZQBRKy79/s+ayH5Q/PT2U2DDC98=;
+        b=MZxdlBkdDC6kMtD/IFp7ITGvCDN3GgHei9B3xfzAkAh2WdFmqMDpyqu4zOivDkQv1s
+         WjOsedKJWNU4hBZL0ggVs2rRDGGSLpXBHsfBKj2aadgyQ5kjGoIp+x6mfnqlSuY6umt6
+         gwtfa4xCorcS2uE9MDboX25EgAWG4eNLfDQBaQT1A4lYbT3Q3bpMJfpdo8ibdxij2z1r
+         6DhVfVk+KGwq2CtX9aBCevFn4+hyLXpRVmvEm+9bStdiRC3ET7fVqWG5dL1xTBAJIr0q
+         99Rwq5F7xAyLk++kk0HadnEqpIM83KUfg2UNbiu+dDw56Ak7TICyA4n5dvY2FceGPVOH
+         jK2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739966905; x=1740571705;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kfNES95aCHrH5DW7HOssGE1cf0vTi0kl2N0MBpHNSOY=;
-        b=n9wF+GEl798KsN8Pcs5NR5mSLcvwKSHKErbq3G4xFrvgA4+VfCbGyS+wuUK9+PhQ9k
-         xWtVgr+4iR6EkVI6k6B6HIkG27JNbbmUruftBcLUU9hGShslbwEQkjPqS9tA5kKXV2PO
-         OMWrNWaRRsA2PdW72oVFMj0rSQGlB6RwSIz8mbwt0M1n42X4d8o6hFdjhwVm9I42FLs2
-         mmPcY2/imwCO4AGh/QddwDH/sTc1Us2GWetAUe9H/zwR77LN1Sk53FG0e9RaiJR07s4k
-         uClLzC+qWz/yT/j116nLMQi2SmV7Pz505YFHRLE+rrc39vLqYuRYigERKJeU5pQ+G6x4
-         GsFw==
-X-Forwarded-Encrypted: i=1; AJvYcCUk0VpvWDM2il43kxnevqBoRNjU19Z34iTLno4DmsFDxJSEljuFbkHMekBIcVznJ4GYN9ByqTQcWlzXmyE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzg+mmllW6ZCycXbWO0DqeHoYZyGna4brZ89yKYRQqE3/fsrC2y
-	4cqutsqIkESzNr01DCBUA/CPL8mhLd/+Yie9LDo+YXTxcJpO/Q1gqvD4ZWrCU+A=
-X-Gm-Gg: ASbGncug7g4oL3MGgtHwTPsmSWD2F0slubYefwyuHLHFWhWOs0saYH38F9YvOCDVU8u
-	9wLPSS9Wo0mOHmUukl966pJQlyhH/2LvSQxaDPeFIaFhP9QdB4VCmVI9qpbYh+yYpy6Mrj8lih2
-	SI7+626PmPTMxCP5WhHJ5f3DB1ff8/q42fxrJg39+5QugEqZO0YvGRNLpCarSmxi6zo4egF8r4r
-	RY4AP4zmHq7ByVXUNVlEBKYKlJllw1k2KssHgOXUNkSVjy2UVHmztl7HPpphT4yvAKITWaM5pEG
-	whlBUJU7qnvANGWQIu8HmLKZyjPzAN+rMomtD/q8ZP/3prEsEUm1pG/jAKBWZU61mdmH1MM=
-X-Google-Smtp-Source: AGHT+IFMLOpDHMHA4h3/Gxx2zV0fjSL0lgJbRphbGzyITSKOMSUgTcKxT5mQ7K/tT3lwL8tk5JoMMA==
-X-Received: by 2002:ac2:4e05:0:b0:545:62c:4b29 with SMTP id 2adb3069b0e04-5452fe5bedcmr6706804e87.22.1739966905285;
-        Wed, 19 Feb 2025 04:08:25 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5461cfdd5a2sm1148260e87.39.2025.02.19.04.08.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2025 04:08:24 -0800 (PST)
-Date: Wed, 19 Feb 2025 14:08:22 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, 
-	Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Danilo Krummrich <dakr@kernel.org>, Conor Dooley <conor.dooley@microchip.com>, 
-	Daire McNamara <daire.mcnamara@microchip.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Douglas Anderson <dianders@chromium.org>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Hans de Goede <hdegoede@redhat.com>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
-	Gregory CLEMENT <gregory.clement@bootlin.com>, =?utf-8?B?VGjDqW8=?= Lebrun <theo.lebrun@bootlin.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Kevin Hilman <khilman@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, dri-devel@lists.freedesktop.org, 
-	platform-driver-x86@vger.kernel.org, linux-mips@vger.kernel.org, linux-clk@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-amlogic@lists.infradead.org
-Subject: Re: [PATCH v4 1/8] driver core: auxiliary bus: add device creation
- helpers
-Message-ID: <eskvhtljnrkhm6vmqy52gkweexj3tcethejeywcoib4la72jcl@ojuqcazpvht4>
-References: <20250218-aux-device-create-helper-v4-0-c3d7dfdea2e6@baylibre.com>
- <20250218-aux-device-create-helper-v4-1-c3d7dfdea2e6@baylibre.com>
- <crtrciitrlqkxh5mxvnbdjy6zoxny5onse7xgbw7biozg6myux@grp3ketgl2uh>
- <2025021922-spongy-swirl-0746@gregkh>
+        d=1e100.net; s=20230601; t=1739967038; x=1740571838;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Qh3oxSLPnJCNWdMJZQBRKy79/s+ayH5Q/PT2U2DDC98=;
+        b=P/kleY2G6ymjaEsYSKNiQ64oKC4Qtapag87o0teyeWdmUOL6uuc6N85wdxBMPb3cNU
+         wbmSG5IlEW/sQK+HNB/mQ3KCEYlsclRr8RIcOnZL/x+Gj8D2bE0HRAOIuf5U7hNhaWmV
+         bGjHniL5FMfnmNsWBQNe7c5TZwe9Y9MRLLRXHlD9JtYuMj+t5QjBEqz/rWK5yuAu6AXM
+         gQXF44vGH3ChgAFyr1ZvBDrrCIXL7Msu2LF7mhEke8QzrezlWW7ZE+pYDw/2mLM1QkAy
+         K6vzYCtXKR9Jm8f5ojxQ6s8CMkiF9UBzMPZk/U0rUMTHOQgQoL+BeEpJnxHYV7xvcutf
+         eOfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVQV/JC6Y0LOMfRur13kSttn9bRf5XX2XbpfR/UKyLCqx8ze0iO2XRsCxMz43z5nd4zNvVqm+/7@vger.kernel.org, AJvYcCVlHDlnJzHkg9Widh00f5VTf2lqW+JCF2rIR6sR9hb7f+u5nyyhEcmJNpQIpp2b7PQtEa2OnkzRWw==@vger.kernel.org, AJvYcCW2yKDytxkxwfYB5XIfcc3OsT5YNHKRpHFTQ4kKfdP34LZMeEA7fQ1LQzN8almbW7UIhV26F1cA5PjPRDX7@vger.kernel.org
+X-Gm-Message-State: AOJu0YyK+yM5Lza3hyxnda4Fssjv+CTqhz1yaCTMddiLVnn8atu1061r
+	t5Zf15HF4Ix4PDe56upgwpOPkdwIkrUMPfz7OyCEe16ou7DsLRrQGJeKhA==
+X-Gm-Gg: ASbGncu3Ryd6wvL9l5otSEiimhU3P8t0NqEIeDwmgEyNpGJG9gszHlNivoa+wfbM7WW
+	PbCTxBqLMHSqMD16/1w6bGbQ67uDdB8qwjHGKIjdvoLUD6Y7Bu+3rVHW1iBjd5sNODrc4CoCI/4
+	46yoMUW3rbF1I2dhDbMCcV88d+EgunLDeN6bdR+zihGLci1bftMAkpqwHR8qSYizkKi3B2UAT2X
+	Gyx/uWOiYKVYnrxA5W5A4BS5/lA6srBBfGzv5bwbabpVSRsAdIvSseVGUNVTTkIFDaGMPEDbV6T
+	CaBT18KzbYc5DKc6yYEn8PttqdLC36DtCcFlmXB6QXIagUUg
+X-Google-Smtp-Source: AGHT+IHfxb44RH4Wj3q0fMrF7BI/R26lMIEkt3vqPx1xOZNEZa3WThGYF/3yac+ALaedDF8YNDmVpQ==
+X-Received: by 2002:a05:6402:2084:b0:5e0:8c55:532 with SMTP id 4fb4d7f45d1cf-5e08c55170bmr2068446a12.4.1739967036787;
+        Wed, 19 Feb 2025 04:10:36 -0800 (PST)
+Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:cfff])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dece1b4ed9sm10165964a12.10.2025.02.19.04.10.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Feb 2025 04:10:35 -0800 (PST)
+Message-ID: <408e230c-d098-4ecf-a5b1-1fae9daadb93@gmail.com>
+Date: Wed, 19 Feb 2025 12:11:40 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2025021922-spongy-swirl-0746@gregkh>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v5 00/27] io_uring zerocopy send
+To: Jinjie Ruan <ruanjinjie@huawei.com>, io-uring@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: "David S . Miller" <davem@davemloft.net>, Jakub Kicinski
+ <kuba@kernel.org>, Jonathan Lemon <jonathan.lemon@gmail.com>,
+ Willem de Bruijn <willemb@google.com>, Jens Axboe <axboe@kernel.dk>,
+ David Ahern <dsahern@kernel.org>, kernel-team@fb.com
+References: <cover.1657643355.git.asml.silence@gmail.com>
+ <30ac5cb5-ee1f-66fc-641f-5f42140f0045@huawei.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <30ac5cb5-ee1f-66fc-641f-5f42140f0045@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 19, 2025 at 11:13:14AM +0100, Greg Kroah-Hartman wrote:
-> On Wed, Feb 19, 2025 at 11:06:02AM +0200, Dmitry Baryshkov wrote:
-> > On Tue, Feb 18, 2025 at 08:29:46PM +0100, Jerome Brunet wrote:
-> > > Add helper functions to create a device on the auxiliary bus.
-> > > 
-> > > This is meant for fairly simple usage of the auxiliary bus, to avoid having
-> > > the same code repeated in the different drivers.
-> > > 
-> > > Suggested-by: Stephen Boyd <sboyd@kernel.org>
-> > > Cc: Arnd Bergmann <arnd@arndb.de>
-> > > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> > > ---
-> > >  drivers/base/auxiliary.c      | 108 ++++++++++++++++++++++++++++++++++++++++++
-> > >  include/linux/auxiliary_bus.h |  17 +++++++
-> > >  2 files changed, 125 insertions(+)
-> > > 
-> > > diff --git a/drivers/base/auxiliary.c b/drivers/base/auxiliary.c
-> > > index afa4df4c5a3f371b91d8dd8c4325495d32ad1291..a6d46c2759be81a0739f07528d5959c2a76eb8a8 100644
-> > > --- a/drivers/base/auxiliary.c
-> > > +++ b/drivers/base/auxiliary.c
-> > > @@ -385,6 +385,114 @@ void auxiliary_driver_unregister(struct auxiliary_driver *auxdrv)
-> > >  }
-> > >  EXPORT_SYMBOL_GPL(auxiliary_driver_unregister);
-> > >  
-> > > +static void auxiliary_device_release(struct device *dev)
-> > > +{
-> > > +	struct auxiliary_device *auxdev = to_auxiliary_dev(dev);
-> > > +
-> > > +	kfree(auxdev);
-> > > +}
-> > > +
-> > > +/**
-> > > + * auxiliary_device_create - create a device on the auxiliary bus
-> > > + * @dev: parent device
-> > > + * @modname: module name used to create the auxiliary driver name.
-> > > + * @devname: auxiliary bus device name
-> > > + * @platform_data: auxiliary bus device platform data
-> > > + * @id: auxiliary bus device id
-> > > + *
-> > > + * Helper to create an auxiliary bus device.
-> > > + * The device created matches driver 'modname.devname' on the auxiliary bus.
-> > > + */
-> > > +struct auxiliary_device *auxiliary_device_create(struct device *dev,
-> > > +						 const char *modname,
-> > > +						 const char *devname,
-> > > +						 void *platform_data,
-> > > +						 int id)
-> > > +{
-> > > +	struct auxiliary_device *auxdev;
-> > > +	int ret;
-> > > +
-> > > +	auxdev = kzalloc(sizeof(*auxdev), GFP_KERNEL);
-> > > +	if (!auxdev)
-> > > +		return NULL;
-> > > +
-> > > +	auxdev->id = id;
-> > > +	auxdev->name = devname;
-> > > +	auxdev->dev.parent = dev;
-> > > +	auxdev->dev.platform_data = platform_data;
-> > > +	auxdev->dev.release = auxiliary_device_release;
-> > > +	device_set_of_node_from_dev(&auxdev->dev, dev);
-> > > +
-> > > +	ret = auxiliary_device_init(auxdev);
-> > > +	if (ret) {
-> > > +		kfree(auxdev);
-> > > +		return NULL;
-> > > +	}
-> > > +
-> > > +	ret = __auxiliary_device_add(auxdev, modname);
-> > > +	if (ret) {
-> > 
-> > This loses possible error return values from __auxiliary_device_add().
+On 2/18/25 01:47, Jinjie Ruan wrote:
+> On 2022/7/13 4:52, Pavel Begunkov wrote:
+>> NOTE: Not to be picked directly. After getting necessary acks, I'll be
+>>        working out merging with Jakub and Jens.
+>>
+>> The patchset implements io_uring zerocopy send. It works with both registered
+>> and normal buffers, mixing is allowed but not recommended. Apart from usual
+>> request completions, just as with MSG_ZEROCOPY, io_uring separately notifies
+>> the userspace when buffers are freed and can be reused (see API design below),
+>> which is delivered into io_uring's Completion Queue. Those "buffer-free"
+>> notifications are not necessarily per request, but the userspace has control
+>> over it and should explicitly attaching a number of requests to a single
+>> notification. The series also adds some internal optimisations when used with
+>> registered buffers like removing page referencing.
+>>
+>> >From the kernel networking perspective there are two main changes. The first
+>> one is passing ubuf_info into the network layer from io_uring (inside of an
+>> in kernel struct msghdr). This allows extra optimisations, e.g. ubuf_info
+>> caching on the io_uring side, but also helps to avoid cross-referencing
+>> and synchronisation problems. The second part is an optional optimisation
+>> removing page referencing for requests with registered buffers.
+>>
+>> Benchmarking UDP with an optimised version of the selftest (see [1]), which
 > 
-> Why does that really matter?
-
-At the very least the caller (or caller of a caller) can call
-dev_err_probe() or dev_err("%pe"). With the current implementation as
-everybody maps NULL to -ENOMEM the error message will be cryptic.
-
-Or just having a cryptic value in the logs.
-
-> > I'd suggest to return ERR_PTR(ret) here and in the
-> > auxiliary_device_init() chunks and ERR_PTR(-ENOMEM) in case of kzalloc()
-> > failure.
+> Hi, Pavel, I'm interested in zero copy sending of io_uring, but I can't
+> reproduce its performance using zerocopy send selftest test case, such
+> as "bash io_uring_zerocopy_tx.sh 6 udp -m 0/1/2/3 -n 64", even baseline
+> performance may be the best.
 > 
-> Will the caller do something different based on the error value here?
-> All we care is that this worked or not, the specific error isn't going
-> to matter for device creation like this.
+>                 MB/s
+> NONZC         8379
+> ZC            5910
+> ZC_FIXED      6294
+> MIXED         6350
 
-The caller might not, the developer might.
+It's using veth, and zerocopy is effectively disabled for most of
+virtual devices, or to be specific "for paths that may loop packets
+to receive sockets".
+
+https://lore.kernel.org/netdev/20170803202945.70750-6-willemdebruijn.kernel@gmail.com/
+
+So that's the worst of the two, it copies data but also incurs the
+overhead for notifications. You can use a dummy device as a sink with
+no receiver, but you'll get more realistic numbers if you use a real
+device (that supports features required for zerocopy).
+
+> And the zero-copy example in [1] does not seem to work because the
+> kernel is modified by following commit:
+> 
+> https://lore.kernel.org/all/cover.1662027856.git.asml.silence@gmail.com/
+
+The right version was merged long ago and sits in
+
+liburing/examples/send-zerocopy.c
+
+It's brushed up more than the selftest version, so I'd suggest using
+that one. Arguments are a bit different, but it prints help.
+
+./send-zerocopy -6 udp -D <ip> -t 10 -n 1 -l0 -b1 -d -z1
 
 -- 
-With best wishes
-Dmitry
+Pavel Begunkov
+
 
