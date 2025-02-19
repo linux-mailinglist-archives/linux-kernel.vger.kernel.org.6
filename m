@@ -1,49 +1,73 @@
-Return-Path: <linux-kernel+bounces-520825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 659A9A3AFBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 03:40:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD634A3AFC7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 03:47:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 147E53A5A58
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:40:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0C851890FD2
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:47:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 285AE19D882;
-	Wed, 19 Feb 2025 02:40:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF92E19149F;
+	Wed, 19 Feb 2025 02:47:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XB+Iin3X"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="KL7JCiIF"
+Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 813D0190072;
-	Wed, 19 Feb 2025 02:40:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17D912862AC;
+	Wed, 19 Feb 2025 02:47:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739932809; cv=none; b=Rbz/NSdbvApzbvpxtzs0SnMm6ZQiS1FPBuhretimrlTCzmfgWyLDWxh6NxBR4lO4NBVyAde/Jq+i+UeWC3tWHyYZsNM7OFc0s480yGRkzI6sIUroSOmnI8YzjMjxWRTsXmpdZH/9x4VRyJP0jLLG7Av4nM/7vbOxZc7UN0j6zos=
+	t=1739933243; cv=none; b=JoIThteznS/HVIWHc8brMlDPavk7ioetY3HzMLLcOFOeXO6xugT9VqHWTGaoJL03soxabX8zWvPXCvc2B6odqKaECL4nEfnJhx1W0ofHVmJ8rYU25fNPImRcQAgnXKIJqKn2qE+ye1Pfl2+0JQbvbLZv8/nxbHEF+VxRgBl/OBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739932809; c=relaxed/simple;
-	bh=tiloIvKYtmvXtq9n1DhVPEZySCD0vWC9KJmidWCd6WI=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=egDJ6bc7qgYqTn9tVN6n7y34emiL2WMJu0nmWIIJGYFD3C/Of+gc3GJYjOY7YMlr1x66RbdmZhCidUmotVz5a/u/55C8/WABbsrY4N/A19g1PjdC+AluVfYgVSZfoa/yWNaV6SYk32SMoQqOHZpMDoX977ccP8tNIEcGDm45t74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XB+Iin3X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C97DC4CEE2;
-	Wed, 19 Feb 2025 02:40:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739932809;
-	bh=tiloIvKYtmvXtq9n1DhVPEZySCD0vWC9KJmidWCd6WI=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=XB+Iin3XPAjVvL9N79BtkHn77dq1a1SJnFIzHpUj16mDKcT2YG8XFxuYml5chlHL6
-	 aOno2cdTwrJ3pCGVsD1SWy0MpNbh3s+d6CzSmtNcY3VxWYs9OBUZWzglENxTvRk5o0
-	 9nKLAvNS6nefRCBLcu4r9rJPUA4TWiH+HjpA46Yowab/fx8w6ieu+vA6HfyDL/+tHT
-	 5SM8Ue9b+cqW4Nrcq+pUDHtwhlj+LhOF+I3sqyIcSmn/K6LdP9ySU+rgfv+Wo5Ex9f
-	 3cs50kXPb6OErfAJzQR83wdbHW35fJHF19A9LC9Glm58VAY4/ikfroaJjCOAnlQUMt
-	 hblzaZNmkiLUw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EBC00380AAE9;
-	Wed, 19 Feb 2025 02:40:40 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1739933243; c=relaxed/simple;
+	bh=2jUcymUQX+U55aj1eHYm4YWW8fcMiJF+Zlc06aTROcI=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=oW6TOwdMvJhwQBR7F/uKWoYkXm0PLH2gK5KyimPpqmyvO59d4FXEtyivmgAkxLa5WiwAI7qYmtHukQ5jQkUycuzJRuQyVNw08/O+Eh2LIFXKsmehpRkn+r0EXLNIWoRqasg0glqrWtztVzavK5IkKdO2F0N3J5sfQlZ0aDF+SJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=KL7JCiIF; arc=none smtp.client-ip=162.62.57.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1739932925;
+	bh=j/DlKSMN+0Gau2QXCxGFQb02s03fvPC0qY57NYcKGeg=;
+	h=From:To:Cc:Subject:Date;
+	b=KL7JCiIF2upyF19w66GzhmUo2TYxM5hWwnM7/Z1BQmot6lOI/o0Hz0dWIcG7oNDp3
+	 ioUBNQP4cmXofL1txlAyWkLgAiXbZH8ercI7tYJmbRsKB6TTLKiqlPV427hiZU3NCA
+	 GsShhI4mUhb5D+qLjVa+88oZhP4TqhOdMsx+7Sc8=
+Received: from localhost.localdomain ([116.128.244.169])
+	by newxmesmtplogicsvrszc16-0.qq.com (NewEsmtp) with SMTP
+	id A83B46A3; Wed, 19 Feb 2025 10:42:03 +0800
+X-QQ-mid: xmsmtpt1739932923t1kemos6h
+Message-ID: <tencent_3DF7518D407679C99C4CCCB1B8E64638700A@qq.com>
+X-QQ-XMAILINFO: NwU6Bou9okj/8UgLCzAiFtwOmoGDW4nAhghnmxCmf7HSURIcKRXvkaMUpUNaYN
+	 hDhUM3B1vjJ2oFExbiR9HukDUNI0pJmMrKIepU8w/95h7q4D1sc8ovzBiGP6Uaf+kRT/fOSOMzlu
+	 LIv9cuUYsg8UYVoyAJy20uR61ukEYbpkOuHoXQkU7zvgOthc/ENkWcRac/7boivQXkdRLUQO+uTz
+	 brxFfO5ngwlFjxfdCkNe+neeDUBh1CC6MFJtv6H9hZDWxq0nRAfsbapEbN1nj2j0jNJZ7r3WGhnE
+	 32cjnw2YGqNR+uFagm0cxXwagzOfdmpXOOXLKFGFc9gqS130Wx7b5iNfVxUDQh8Q/UrK7ktMFc1d
+	 JFtp7xeDqoprKR2VqUzo1gZjfxXiYCpSAztGNeFCy587ooA4Xk1NWBvXaJfE+6M2UvK/kRxtwRqv
+	 2A9iIwiK7wWOp8kYCy5yC6XLEG002Jp8GpLg/U2spAJTvKoPz0jjog/ZlyLsajL1BuSS20RWEPjv
+	 n934cJ4bePr7HcrRJi3ribsUkWhhrydyrXdQnj8FgET5YwvHm6mPmfBn5009tniWTn0XwJdw++Q9
+	 iXpdEg1irq6vQmqo4NP/LFiT4384sMrvxL9XQV0xTnBlIEOYOHeIbm6UaNgFymDKzUj720l3FU8t
+	 Zqjbz7OkFUpSCcfKYIa+8Z8nT8gEstzSXAA05nvFnwKSDZHLmJ03N9ET+291xlsDe0I0g60aCLHI
+	 mxfMxFQWXWbPADScPWTDMlG3EqXU0c2UZ4YmqrRjpuVsSTKJyI+x3iROhIdX0sErb7sU88dxSm7k
+	 bXqe+f0mML9qGskDu+y+o6m9feDQYvzMGnzvmhJmxzFsPSeZuaNW/6d7qoMJe/a03VvMoQVU/HZm
+	 kgYnMu8Sr5O/+BIDW7ZUIyGsN+21ogjjBzIas56LZw9VKg7AUG2eyxneTgeiAm6TDrhGD1o+nJ1c
+	 jtF+gUrANOYuIYWwrD7aZ971pELWXbT0ga+MpDFf0BHL2oSoa+GA==
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+From: xiaopeitux@foxmail.com
+To: vicentiu.galanopulo@remote-tech.co.uk,
+	linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lee@kernel.org,
+	pavel@kernel.org
+Cc: Pei Xiao <xiaopei01@kylinos.cn>,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH] leds: Refactor st1202_led_set to use !! operator for boolean conversion
+Date: Wed, 19 Feb 2025 10:42:02 +0800
+X-OQ-MSGID: <0f0dde44621e51c701d1998841967571770a9995.1739932807.git.xiaopei01@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,48 +75,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v2] net: stmmac: Use str_enabled_disabled() helper
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173993283976.110799.6484723718905539141.git-patchwork-notify@kernel.org>
-Date: Wed, 19 Feb 2025 02:40:39 +0000
-References: <20250217155833.3105775-1-eleanor15x@gmail.com>
-In-Reply-To: <20250217155833.3105775-1-eleanor15x@gmail.com>
-To: Yu-Chun Lin <eleanor15x@gmail.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
- alexandre.torgue@foss.st.com, netdev@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- jserv@ccns.ncku.edu.tw, visitorckw@gmail.com, lkp@intel.com,
- chenhuacai@loongson.cn, rmk+kernel@armlinux.org.uk
 
-Hello:
+From: Pei Xiao <xiaopei01@kylinos.cn>
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+cocci warnings:
+    drivers/leds/leds-st1202.c:194:66-71: WARNING: conversion to bool not
+needed here.
 
-On Mon, 17 Feb 2025 23:58:33 +0800 you wrote:
-> As kernel test robot reported, the following warning occurs:
-> 
-> cocci warnings: (new ones prefixed by >>)
-> >> drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c:582:6-8: opportunity for str_enabled_disabled(on)
-> 
-> Replace ternary (condition ? "enabled" : "disabled") with
-> str_enabled_disabled() from string_choices.h to improve readability,
-> maintain uniform string usage, and reduce binary size through linker
-> deduplication.
-> 
-> [...]
+st1202_led_set function now uses the !! operator to convert the
+enum led_brightness value to a boolean active state, which is then
+passed to the st1202_channel_set function. This change maintains the
+existing functionality.
 
-Here is the summary with links:
-  - [net-next,v2] net: stmmac: Use str_enabled_disabled() helper
-    https://git.kernel.org/netdev/net-next/c/3a03f9ec5d33
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202502181845.xESVrC61-lkp@intel.com/
+Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
+---
+ drivers/leds/leds-st1202.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-You are awesome, thank you!
+diff --git a/drivers/leds/leds-st1202.c b/drivers/leds/leds-st1202.c
+index b691c4886993..361c431a03c5 100644
+--- a/drivers/leds/leds-st1202.c
++++ b/drivers/leds/leds-st1202.c
+@@ -189,9 +189,8 @@ static int st1202_channel_set(struct st1202_chip *chip, int led_num, bool active
+ static int st1202_led_set(struct led_classdev *ldev, enum led_brightness value)
+ {
+ 	struct st1202_led *led = cdev_to_st1202_led(ldev);
+-	struct st1202_chip *chip = led->chip;
+ 
+-	return st1202_channel_set(chip, led->led_num, value == LED_OFF ? false : true);
++	return st1202_channel_set(led->chip, led->led_num, !!value);
+ }
+ 
+ static int st1202_led_pattern_clear(struct led_classdev *ldev)
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.25.1
 
 
