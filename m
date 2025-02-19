@@ -1,61 +1,71 @@
-Return-Path: <linux-kernel+bounces-522684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29F65A3CD47
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 00:17:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87F12A3CD4C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 00:19:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0990D177451
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 23:17:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47B803A9A46
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 23:19:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B1A423E259;
-	Wed, 19 Feb 2025 23:17:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4572125D526;
+	Wed, 19 Feb 2025 23:19:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QBi0WTAN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rEBMraJG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 999B61DE3AC;
-	Wed, 19 Feb 2025 23:17:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD161CAA65;
+	Wed, 19 Feb 2025 23:19:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740007065; cv=none; b=K/udneWfeHUBxNvELnFEfYDfHSYq925+NZEPr2BzusiDGeRHEpB6ZiEvSgp+leQhz0ONgwAbmi66dy+dfVx2lhT7MXRqBGslSPrtg4gbXdCjg/+NNKGFBEgXxEYSS9s5bWFwu+5jzGLdF9noSDFbb7TwJTae6GnIXn9dL/FiRZw=
+	t=1740007161; cv=none; b=GagW/PgfTllv8ctay6t5Upw/D76aiOmQ1WejqBHdOB5/RxAY4qakjOoRVGJdZN8kK1Q6f81LpzjEklU+rEanJSac1JNZGEWzyY53i5ugHCfje/JNkDBkfdNbi9MkD6JDda/P9POD/1WMddA0mZLE5UVVygKUWDMYb0yXhRzdpoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740007065; c=relaxed/simple;
-	bh=/sR/RM/+9K4Puu5LwxqGwGFVRF6ohXpNAUKGy0AUT3E=;
+	s=arc-20240116; t=1740007161; c=relaxed/simple;
+	bh=Um6KDVtjj/1Q+GA8/c1ulY+pNu3rjuUxz6Ww640jVDM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sESF/xesW0VH7mHyicZSOzpjgGKsWC+imfDKIa3G6AKdw/7PMYfTPDiR4nUDyFawtsDc6oHF/iC7QEBrl5pjrMjf0855yE4lSOnTPnOJSuvHhckHOZJLNqm/WC6DG+gr6oN9ECusEsEGM8uCjx6Ws2QrRtCiGvNNzzLpcYZToeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QBi0WTAN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE613C4CEE0;
-	Wed, 19 Feb 2025 23:17:43 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=aNhfagMhjJsqy8VTZznYHXnlIYhXk5cF8V0O0dLGTC3tQn4A7HJR/7V0eVrK9WxABwRNxXm4wjCXXgWKoEMPRLMbpr9Tg86yUvH9lKHrscQPy90tScRxWTetQX3OnSeT2Bdu8v/gN0TWdLsO2PxWDC9SaWvf2sCVMS2ajl2W9QU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rEBMraJG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6D54C4CED1;
+	Wed, 19 Feb 2025 23:19:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740007064;
-	bh=/sR/RM/+9K4Puu5LwxqGwGFVRF6ohXpNAUKGy0AUT3E=;
+	s=k20201202; t=1740007161;
+	bh=Um6KDVtjj/1Q+GA8/c1ulY+pNu3rjuUxz6Ww640jVDM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QBi0WTANtCHuQ+gNr0a+re90u3Y96eAtgAWJdl7LxDfiPppK/YHz1IF9q10hBXFOc
-	 2azg60d0TO6kwQoBrsns3412AY8r4RGMlFXgd9sMYRzqeGqbgO/vs5nniipuO/l5Qo
-	 xWicTptktSySQ6xA6k/ceex9rUmkA1q9kbesObak4WLlOOgk5f/06eL7K+OSASPOYu
-	 F1S8iTMpISBpEEHBFt3rBMKyPiVf/xCZqRNVw3WgGT0GrcMLdcUqTGZKxXNtmCJ1hn
-	 Lr/2Zg+Fyi0+mEY4zmmBKydLeEfiAQwUtctNuI7pMEPJLqGtrFuWh/bcFyGgzEqYrx
-	 5g8VN1JlJiENQ==
-Date: Wed, 19 Feb 2025 17:17:42 -0600
+	b=rEBMraJGAmvESM6pAv6dzebKxMKStV5tXLXYF9LU2CjsBcpShjQVOKYOemmh1NT9G
+	 u4Io0QJCw7Kau2a8GILje5TbO2bDbPIr2GXcoR5ocLiVEVonrBl7pDf1FlkFM07sOF
+	 XyO/WrcwpgjTqq3xzGH7G9OWOgELJCmMjST5L7Wruqxc0eCnFukoXx6Av/iMheARuC
+	 EBzTcBilNx0a61tQqMTapWHdoccjWQUm3odP2eiK2T2LIE5yeI6DoJFmIUrk0EkBMB
+	 q9jMH91Dfp1dV25TShmkBWNbKfaXEDeFmEg52JjSOOABQfOlmGcAl3sZMTz0pOuUU4
+	 P6fLJ9m/poJqQ==
+Date: Wed, 19 Feb 2025 17:19:20 -0600
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Robert Budai <robert.budai@analog.com>
-Cc: Ramona Gradinariu <ramona.gradinariu@analog.com>,
-	linux-iio@vger.kernel.org, linux-doc@vger.kernel.org,
-	devicetree@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Antoniu Miclaus <antoniu.miclaus@analog.com>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-	Nuno Sa <nuno.sa@analog.com>, Lars-Peter Clausen <lars@metafoo.de>
-Subject: Re: [RESEND PATCH v8 4/6] dt-bindings: iio: Add adis16550 bindings
-Message-ID: <174000706255.3157600.13765807090246524556.robh@kernel.org>
-References: <20250217105753.605465-1-robert.budai@analog.com>
- <20250217105753.605465-5-robert.budai@analog.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Kuogee Hsieh <quic_khsieh@quicinc.com>,
+	dri-devel@lists.freedesktop.org,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+	Rob Clark <robdclark@gmail.com>, freedreno@lists.freedesktop.org,
+	David Airlie <airlied@gmail.com>, devicetree@vger.kernel.org,
+	Krishna Manikandan <quic_mkrishn@quicinc.com>,
+	linux-kernel@vger.kernel.org,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Jonathan Marek <jonathan@marek.ca>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Srini Kandagatla <srinivas.kandagatla@linaro.org>,
+	Simona Vetter <simona@ffwll.ch>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Maxime Ripard <mripard@kernel.org>, Sean Paul <sean@poorly.run>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Subject: Re: [PATCH v2 01/16] dt-bindings: display/msm: dsi-controller-main:
+ Combine if:then: entries
+Message-ID: <174000715960.3160076.7982262940377785281.robh@kernel.org>
+References: <20250217-b4-sm8750-display-v2-0-d201dcdda6a4@linaro.org>
+ <20250217-b4-sm8750-display-v2-1-d201dcdda6a4@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,26 +74,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250217105753.605465-5-robert.budai@analog.com>
+In-Reply-To: <20250217-b4-sm8750-display-v2-1-d201dcdda6a4@linaro.org>
 
 
-On Mon, 17 Feb 2025 12:57:48 +0200, Robert Budai wrote:
-> Document the ADIS16550 device devicetree bindings.
+On Mon, 17 Feb 2025 17:41:22 +0100, Krzysztof Kozlowski wrote:
+> Several devices have the same clock inputs, thus they can be in the same
+> if:then: clause, making everything smaller.  No functional impact.
 > 
-> Co-developed-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-> Signed-off-by: Ramona Gradinariu <ramona.gradinariu@analog.com>
-> Signed-off-by: Robert Budai <robert.budai@analog.com>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
-> 
-> v8:
-> - added extra blank lines
-> - changes reset-gpios description according to suggested changes
-> 
->  .../bindings/iio/imu/adi,adis16550.yaml       | 74 +++++++++++++++++++
->  MAINTAINERS                                   | 10 +++
->  2 files changed, 84 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/imu/adi,adis16550.yaml
+>  .../bindings/display/msm/dsi-controller-main.yaml  | 64 ++--------------------
+>  1 file changed, 5 insertions(+), 59 deletions(-)
 > 
 
 Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
