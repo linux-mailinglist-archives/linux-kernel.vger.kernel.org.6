@@ -1,135 +1,91 @@
-Return-Path: <linux-kernel+bounces-521637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 790C7A3C04A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:44:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84569A3C027
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:40:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 086281701B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:39:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DB86188D9C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:39:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63F9D1EA7FC;
-	Wed, 19 Feb 2025 13:38:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B198D1E5B8F;
+	Wed, 19 Feb 2025 13:39:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="YRdx01fP"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tQVQO5dC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33AB81E8339
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 13:38:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B5319CD01;
+	Wed, 19 Feb 2025 13:39:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739972330; cv=none; b=kagiuJ2M2EDSi5IueSPZVma/LafoR3QA9PtNReCPtCWpjhgR+QZf9ZFQK20EXWmcVbHYqIDQdGUr9BucMglKljfnw+FciZsY+bjwktGQVAd8O6E/J9DVvrrRSNbWKJIK4qaAOVDRuotRlU7+xAbpUyO2RMh1TLmPkFZS0hmTqZ8=
+	t=1739972377; cv=none; b=Mnk7ksi5vNyJMU8L1OWbYv7m9LDIWmrEwVtTrzEf0aQTlEY9uYpVuDTYkasKqSKGPDyGxsH/6P3V/XWWU4fqdo05N2AGXOQRbZ3v60kOK88MeMeiEShGHy0f2+8S+CSSii6vP0N9QUmOPmdFWyR9w8F4OB1kmsJAoZHPS/R7/1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739972330; c=relaxed/simple;
-	bh=ww8qhd750yM/3V9soiIqSvERrd7hLK08TNlxdBwyh1c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rHknAydr6TxQQwqN52PEZg4zczeFp+WApWWneEu1C5v/5Paf/exIAL1a1NX89pc+TcwidMMHpNIEP3FH7KFT7Lu/3AbZQC97erEXOxRal5dEFfGoPO9cC0DRBfvVkVOHhTafw0PT7KNvFLqTFvTo0zDNK81d5OWIOpjRnSB8vd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=YRdx01fP; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-46fa764aac2so54676311cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 05:38:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1739972328; x=1740577128; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qmFgtXmk2eQOZz5aocdhBV3sp36pVIgMFye7f82uT/E=;
-        b=YRdx01fPrA06dLWOByy7Iyj7An5yKwm7iwNjpeVM7bZeTfa4Jr7/VUFhtjC9MIRqCF
-         2cEgMJUXWS8rkV+BdbWbYAU/VL4emmD7fRETcfWZJZ4QArKr2nh8E76sibrU+2e9Xlwi
-         r9554nfnAuK/+S9pkapCJ8829hl+sGES+LfD1o9Vuklh24SgrUXEiN8n6ziP5URnsWKn
-         WY85RMZyJkDEQC0yrYdRIesDmI9cbHL5zJW/NVZ/H3KIlev1h9l7LIlN3PjHrLCltVjK
-         nPnfLM1tPif/dHOn3sFD+ymWR7GyPJ26oeOzFovAs1/oyVNuYtPWUJJX6trSPaxxXVNQ
-         8bBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739972328; x=1740577128;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qmFgtXmk2eQOZz5aocdhBV3sp36pVIgMFye7f82uT/E=;
-        b=saCTEVrZk9w9mKEf8ot21S7x5EksVk3vPEj2Yf69vgBPmxs9hmkf9CxjIquKsr0/As
-         38vLsmbBvPOOVfse7F0dxRTQ/NmQIYL/69Etx2PqwbC/lavEapduCkhxklIuepz0AswZ
-         2xWARuneas1yqz47uAKE5h7SEOPSWOF/z7FhppR6CYUvSnvf6xL3MbotiL+sHFWforRa
-         NUriRI57dICIbvMBIGNbxSsrdOaaMQYSivP6TQAqmPox2l7U3PjwxSdFFt5kSL/74f/P
-         iPXyKdOAqmOlYh+wJVxE6XXSMwE9bjwnsi+wFFjjvPSXRVlnMzcJ1SLiCSKaJGFithIR
-         Xerw==
-X-Forwarded-Encrypted: i=1; AJvYcCUHBeWn0Fi2VAm4RfQHU0Fn2IEVELKEzlkValckpmpVXbkooGHXGp2AgRl5Axro14zfFZqHby42zKbUilE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSbVXu1Th6xEVOtXxHOvTcsiL9FcvEmeZRTpssjn4TAN4n6dJj
-	oQ0hvDJEeOCc94g6Q5lESyzmBsJ1MWKe5u+VcHFknouEV9s40YPHkVDCSlVnO8Y=
-X-Gm-Gg: ASbGncusDpdyRAieuGXDkv/k7HhApnLf3bEObwYV9VQkYNJVDuZXWi8dn9hG0F2P2eK
-	ZHKQ8hRJj23l7o3LNmDgF9NdX6/OYV0Y9BCMrvGi14ngtpT3Q0TXsUn/sbenIki1VWuW/ujV2Th
-	Xk0N7kxOAjXpGK3N9SgstdkNu3kqOSfANiOTaF7g/VP8YC4h9Coe18nopwcWRHvikcRk69+/xcD
-	lzMzDSPgoe+KrpKNrA85uRWV8WJPdmhzU6aizeTJv07JTv7RlNGR1+8tA3I18g8V4eie2OsBH+O
-	VorUvHhR+Y9F9uBgNw7qwrdUCafhEnZMrhX0fVv7DcPdN8RknURMZHKWWJ9Ikgal
-X-Google-Smtp-Source: AGHT+IGe+fO3k/hUtSTw1kQddphoKox1ngHNckiz5XU+GRYnYWcN3popRgflLMJK4dFjjHqz9YutFA==
-X-Received: by 2002:a05:622a:148d:b0:471:9721:7482 with SMTP id d75a77b69052e-471dbd5616bmr269631021cf.27.1739972328059;
-        Wed, 19 Feb 2025 05:38:48 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-471fdf8ac21sm22421101cf.19.2025.02.19.05.38.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2025 05:38:47 -0800 (PST)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1tkkHn-0000000067m-05Qh;
-	Wed, 19 Feb 2025 09:38:47 -0400
-Date: Wed, 19 Feb 2025 09:38:47 -0400
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: "Daisuke Matsuda (Fujitsu)" <matsuda-daisuke@fujitsu.com>
-Cc: "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-	"leon@kernel.org" <leon@kernel.org>,
-	"zyjzyj2000@gmail.com" <zyjzyj2000@gmail.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"rpearsonhpe@gmail.com" <rpearsonhpe@gmail.com>,
-	"Zhijian Li (Fujitsu)" <lizhijian@fujitsu.com>,
-	Joe Klein <joe.klein812@gmail.com>
-Subject: Re: [PATCH for-next v9 0/5] On-Demand Paging on SoftRoCE
-Message-ID: <20250219133847.GM3696814@ziepe.ca>
-References: <20241220100936.2193541-1-matsuda-daisuke@fujitsu.com>
- <CAHjRaAeXCC+AAV+Ne0cJMpZJYxbD8ox28kp966wkdVJLJdSC_g@mail.gmail.com>
- <OS3PR01MB98654FDD5E833D1C409B9C2CE5022@OS3PR01MB9865.jpnprd01.prod.outlook.com>
- <OS3PR01MB9865F967A8BE67AE332FC926E5032@OS3PR01MB9865.jpnprd01.prod.outlook.com>
- <20250103150546.GD26854@ziepe.ca>
- <CAHjRaAfuTDGP9TKqBWVDE32t0JzE3jpL8WPBpO_iMhrgMS6MFQ@mail.gmail.com>
- <CAHjRaAd+x1DapbWu0eMXdFuVru5Jw8jzTHyXo2-+RSZYUK9vgg@mail.gmail.com>
- <20250113201611.GI26854@ziepe.ca>
- <OS3PR01MB98659E07C0DAA1838FFBC70DE5E92@OS3PR01MB9865.jpnprd01.prod.outlook.com>
- <OS3PR01MB98651D06FEFF22AD1CFBABF8E5C52@OS3PR01MB9865.jpnprd01.prod.outlook.com>
+	s=arc-20240116; t=1739972377; c=relaxed/simple;
+	bh=UWC9kdLXpJE8pWaUx8hrJrZzvXD6tZ1xwRInfrnG3Ig=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=etp9CXVxJpLDfJMRjSz/l/wEib/Av+rxZwkn0yrvVgqAQJQgn69gHXCTuANzkFuocwQH30kgiX0pbBTj/u/bzeL4xe6oaQ58+eQuGOTYkZAbQRx5urJcylvdrbV8zNku4vwe0zJSEAPUaByZq5GehNsa/r0NjPSnHc1Et1OjwhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tQVQO5dC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9647C4CEE7;
+	Wed, 19 Feb 2025 13:39:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739972376;
+	bh=UWC9kdLXpJE8pWaUx8hrJrZzvXD6tZ1xwRInfrnG3Ig=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=tQVQO5dCEqKiUaWno2JGhXoPPQ3t/dpw4qmnD45kWzJ1NyE6ICEv2vauyi/feiOlS
+	 BUiV886IXKwAc93/rORADGCv2L6y7a4+uj6KG7p85hCdK++6LmSl3KpNq2mD+avVGi
+	 5LxCHpTeDDJfq5mJPbD3u5UHsXEFfrCsPYhxdtLeCDiiBP6sOkOMV1RHn1fvAevwNa
+	 vk9h6nslH7/S72hj73quC55agMn5OxUYrJfq+7PxE78DM8//r2q6SJ0MEs/4TvClcJ
+	 LZtFn5U2dR0sB62vXPzZQqJhqykJ8PXaUbUV2tJQBfeTLRG4wfMqSPg2tG5H21cPd4
+	 UiquDHFRX7jZg==
+Message-ID: <b728b5e7-e3bf-49d6-8829-554936850d5f@kernel.org>
+Date: Wed, 19 Feb 2025 07:39:34 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <OS3PR01MB98651D06FEFF22AD1CFBABF8E5C52@OS3PR01MB9865.jpnprd01.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] arm64: dts: socfpga: agilex5: fix gpio0 address
+To: niravkumar.l.rabara@intel.com, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, nirav.rabara@altera.com, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
+References: <20250213105036.3170943-1-niravkumar.l.rabara@intel.com>
+Content-Language: en-US
+From: Dinh Nguyen <dinguyen@kernel.org>
+In-Reply-To: <20250213105036.3170943-1-niravkumar.l.rabara@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 19, 2025 at 10:48:25AM +0000, Daisuke Matsuda (Fujitsu) wrote:
-> On Thu, Jan 30, 2025 7:52 PM Daisuke Matsuda (Fujitsu):
-> > On Tue, Jan 14, 2025 5:16 AM Jason Gunthorpe:
-> > > On Mon, Jan 13, 2025 at 02:15:27PM +0100, Joe Klein wrote:
-> > >
-> > > > > > > Possibly, there was a regression in libibverbs between v39.0-1 and v50.0-2build2.
-> > > > > > > We need to take a closer look to resolve the malfunction of rxe on Ubuntu 24.04.
-> > > > > >
-> > > > > > That's distressing.
-> > 
-> > I am going to start bisecting the root cause to fix it.
-> > It may take a while, so please stay patient.
+On 2/13/25 04:50, niravkumar.l.rabara@intel.com wrote:
+> From: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
 > 
-> On Ubuntu 22.04.5, both v50.0 branch and master branch pass the pyverbs testcases,
-> so it is not a regression of libibverbs. However, on Ubuntu 24.04.1, the test causes
-> segmentation fault with both branches. The issue looks specific to Ubuntu 24.04.
+> Use the correct gpio0 address for Agilex5.
 > 
-> Could it be possible the update of python version leads to the
-> failure? 
+> Fixes: 3f7c869e143a ("arm64: dts: socfpga: agilex5: Add gpio0 node and spi dma handshake id")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
+> ---
+> 
+> changes in v2:
+>    * Fix dtbs_check warning and update commit message for better
+>      clarity.
+> 
+> link to v1:
+>   - https://lore.kernel.org/all/20250212100131.2668403-1-niravkumar.l.rabara@intel.com/
+> 
+>   arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
 
-Or a cython update? It certainly could..
+Applied!
 
-So maybe there is nothing to worry about kernel side if the test case
-passes on older OS userspace
+Thanks,
+Dinh
 
-Jason
 
