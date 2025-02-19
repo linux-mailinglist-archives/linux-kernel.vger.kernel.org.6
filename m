@@ -1,135 +1,145 @@
-Return-Path: <linux-kernel+bounces-521393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89275A3BCA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:22:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82EE6A3BC96
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:19:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01DE57A57C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:21:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 173B8188C043
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:19:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32D7A1DEFCD;
-	Wed, 19 Feb 2025 11:22:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 132631DED5A;
+	Wed, 19 Feb 2025 11:19:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="NEzVym+W"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L1YKKohr"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BF1C43151
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 11:21:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6C241119A;
+	Wed, 19 Feb 2025 11:19:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739964120; cv=none; b=YjBbz595b+OgCpQMzqhMoa32Py38uldz3UtD0CU6A8KWBBDr2Q8vsTNUHNSq69N7Ry3rhmJUPGCI16P67rEtPHiXBswUg+pBJFOMS5ItUyLIum2SvaEDHYD2ItzjoNV0My56tiCfUhN9j+Z6VzRs8R1293hB0MCeR5N6pAmMcZA=
+	t=1739963945; cv=none; b=X4+r6J8WHfDP2mnO5NCAdYC9i3ZsDMu1Ce8bY+uhuODvmIlb0AgNHTwBVeY/WBTNlpHmQu9UB/hzW5FA4SxxMfYgTJvXtDF6mVCACwzBy9TXFSaaCb+n7AYGaLiMVNYIDtW7g0YyKi+NrQYq0sIWj0gyyxGwxKJBi8cD7VV6mZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739964120; c=relaxed/simple;
-	bh=vw7n+6Q82aUZc1be5yOiJLV0VU2XP9yUb2Yh/0QNfsc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EksBk96PK9lPnGz46g9uBqA3ALh4DDyDXdK5dYbGBbtE7Rthrg6iXSQYcU3WB3OskmPQFNnrTEZJUMFHWlK7KosBB967NTGBTtMRdvGNttsGQPNQcgrO2lQnCUsJzUbnwKdOejUq1Bx3yw0uwLyrekMZtmGVXknAL0rhys5vVxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=NEzVym+W; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A50A840E0221;
-	Wed, 19 Feb 2025 11:21:50 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id JQqlS3ylZ2JE; Wed, 19 Feb 2025 11:21:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1739964105; bh=eTUjwt5//DA+LtwykcARc8xiBAvEsEq/rmX8J9I+2jA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NEzVym+Wqml9nKrSyHOg0USrV+lln8p6KXwRZXlGOD+fD06ZYGHMy7xJXVMBhWhrf
-	 LH4zjdP1dgoQeBx4j2CzCC2kty6OIiQJsRo0NIIgfIiWhQiXgcK/J4o4t97uJUdw+O
-	 cjSv5iX7F3Ech98+B8qeUcN+Wp0jvlt/uwf58SOmnsl8sPnrQWQQkZltWkYHI+T0GZ
-	 1rEnP5iNhF9JA08X3NhLVD9YxMtX9c6rXDmVB/gzXoVwyD2otZHhJ+b6811+wKMbZG
-	 HK1YbaRh0+VIPJva36Al9ObTGLw7WpaK1+IAzpaW/Ari/DVhRx6bhzcoToquS1e9mB
-	 GHJjUTTIUTzk5h7o1QF2vPBKW7Fn5WP25OhMvC1xl+pllxI3HtyD7U6D4ebA3qYgBW
-	 w8uhfZtl3TBj5ctTR+HIdSSLHiSU0q3HKwLEYmBxyi8jZMc69HvXhatcHlif7OqaM2
-	 fTwuUkvCPwq9VUxdmsRPTr9YLBOWti0O0kZR7HFh5mImzVKoCITpDMBxuuZwU2Iedq
-	 Zp/9wCj85JskDDZIT8B+7tv6PzuWxr804ANGMmTPdyVXr/DbZHAdtqH02k1YvCXINo
-	 U3Orryzmvt7bKgIe/ohxIEPVm89C3oOUSAsOmr4k9dhH8y+EPcAzwWgurwoOPDYqRk
-	 eO7SaKuAvscarQMzSzuWW4Sg=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3297C40E01B2;
-	Wed, 19 Feb 2025 11:21:29 +0000 (UTC)
-Date: Wed, 19 Feb 2025 12:21:22 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Rik van Riel <riel@surriel.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org,
-	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
-	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
-	linux-mm@kvack.org, akpm@linux-foundation.org, jackmanb@google.com,
-	jannh@google.com, mhklinux@outlook.com, andrew.cooper3@citrix.com,
-	Dave Hansen <dave.hansen@intel.com>
-Subject: Re: [PATCH v11 03/12] x86/mm: consolidate full flush threshold
- decision
-Message-ID: <20250219112122.GLZ7W-sjOTi-LXlRp4@fat_crate.local>
-References: <20250213161423.449435-1-riel@surriel.com>
- <20250213161423.449435-4-riel@surriel.com>
+	s=arc-20240116; t=1739963945; c=relaxed/simple;
+	bh=mMdbW38/XOc7ricVDrBfRFQJ1TTdT42TWabOMpLqddw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=rYvfULzr2OccdYGFxnDqEpZR/BKmf97Gi4t8Ao8+dcAG0EOPDrtn4sKKAj2jy3qvEjXjb1mYHOdeyuQkCIr7t82TJs0sCwl9mxU6oNN7/SgLamgPylPz+B/T1xSycJpwSlV9CL5PUPH3ljPgn3i100GupB1z62HKJ7wzVDsGYnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L1YKKohr; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5439a6179a7so856652e87.1;
+        Wed, 19 Feb 2025 03:19:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739963942; x=1740568742; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Cd2NCkNZDZjp37qilTmvHMGFP/p5O96SvJn6CIg/Cec=;
+        b=L1YKKohrMRrWY3Dl8sci6tuoEEFiN488ymCSkBu0qT/mVBNrFFZMFnPnIGtibd5909
+         sGmluLA1hNzP6I+7RzDoCIFYD8qOdj3bpx3cXV2UjushQC88BYA+cNjUll4xhyW7syOT
+         P+qT83nuKcwun1WX2rmeQpGkEpBslSWmwwsMcR/dZO+LDXNP394/DTJmwtojADvdE0zo
+         DputEcHv0Z8SnCT3rKHcdjZHbSJbMt3//1+nSYUAJtzyQv/fX5AFRyqvfxyepFGEmnAa
+         fuFMf/vC2LKsA4ZXiJNGSVF4fnRZll8DW/tbx59OWUJlIsDth4rx4TBrPZQbWfsK74ik
+         R/iQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739963942; x=1740568742;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Cd2NCkNZDZjp37qilTmvHMGFP/p5O96SvJn6CIg/Cec=;
+        b=f7YZICuToUZkJTdX8LFGjEFgxU0l6i3PfZ8qBW2RbzPjn5ACBixlfWLe01Gu7tLmEz
+         adGdMVxrvmBCjf2waD8JRDmm3BuzVmHKHMQRN7+HSk62Yr1IQV+f8p+MxUrImUdQgsOm
+         /ebe4vxb53HG2/4P1DXpmJIo9XS71jtrVYRe4sYlexQ1URLY+Yky2NsP+Jy2+51ZQA6z
+         e1bKvLU/0AfFrN4kemMYg8XVIu+vMYHcUudMrmH99n+8E/b7vEKBVm3UT9wWnMFp5DkA
+         7vTR3AF774f6SXL+mnEx4CYNtnSWg1dymVUjo6CKMz+GmsGox/DnnPCON3Cc//YS30Yw
+         tfJg==
+X-Forwarded-Encrypted: i=1; AJvYcCVnOUmiy3CQrdTr+f40BV/iwVsgW2CQmBoh4cF+nWjL2ayjzc7DlgGya1RaegZltAr6qNfbzrba0LxEuIGg@vger.kernel.org, AJvYcCVusBzcBptA9mMbgWTvgRQ+Z9hP77+txDp1RVGdgIYD+Cto+oQzcmIrCgQvRCnvVlSaRiBeznRsaxGL@vger.kernel.org
+X-Gm-Message-State: AOJu0YzALNswME8lXq11qiq5qSTCaqOHW3aoglFCcORCz1j++YColzXu
+	gDW8FUz/et6UQXElf5p4LK/3zRvWiM2SiBKOHJcx7hNm1EWyfuakqvkFNwVSvXEPN4VMbkZDpmy
+	Va5wnVBdd0gW7qe1olwe9wp05Pjbs1Z5u
+X-Gm-Gg: ASbGnctP/JYs0Lr3wwo+vaRYB8Ex789sa5qtza7DrQJ05i4Ry/2w8oO0ZnzFZ6QQYT9
+	ABGkECvI5KeiHe1gxNREWBRfG9Jx0eVg4OM/FLxY3/GwCCMptrF23hl4Sh6OAJisWZw3CVT6uqA
+	==
+X-Google-Smtp-Source: AGHT+IE9pC7u6KFftCvbxSDZkvobXZDix534fzLwzUy6vJpZs0x418N/e34LzILF8rTI8dPZQjIQmrmXrkHKIA7NRi0=
+X-Received: by 2002:a05:6512:2252:b0:545:ec1:9fd3 with SMTP id
+ 2adb3069b0e04-5462eaa6becmr1281833e87.9.1739963941605; Wed, 19 Feb 2025
+ 03:19:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250213161423.449435-4-riel@surriel.com>
+References: <CAPhCUnV5ocw5HfW+jNRaRPgntoM4uXeHNcC03XL00wLZjSm1Vw@mail.gmail.com>
+ <CAH2r5muHVDfWM6vmRx85S2zfgh6v7mjc-ekOpkqJaLFvV9x1mA@mail.gmail.com>
+In-Reply-To: <CAH2r5muHVDfWM6vmRx85S2zfgh6v7mjc-ekOpkqJaLFvV9x1mA@mail.gmail.com>
+From: Oleh Nykyforchyn <oleh.nyk@gmail.com>
+Date: Wed, 19 Feb 2025 13:22:23 +0200
+X-Gm-Features: AWEUYZm_fU5RELTePp3rvmtSAETkzfjkTbqdRsDTdB55mmsqH4wmIDdPn_La3Aw
+Message-ID: <CAPhCUnU67i9caSS5E3vimEEaAVwyd5eSn7uZfL059aReTR98=g@mail.gmail.com>
+Subject: Re: Bug in getting file attributes with SMB3.1.1 and posix
+To: Steve French <smfrench@gmail.com>, linux-cifs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 13, 2025 at 11:13:54AM -0500, Rik van Riel wrote:
-> @@ -1009,6 +1009,15 @@ static struct flush_tlb_info *get_flush_tlb_info(struct mm_struct *mm,
->  	info->initiating_cpu	= smp_processor_id();
->  	info->trim_cpumask	= 0;
->  
-> +	/*
-> +	 * If the number of flushes is so large that a full flush
-> +	 * would be faster, do a full flush.
-> +	 */
-> +	if ((end - start) >> stride_shift > tlb_single_page_flush_ceiling) {
-> +		info->start = 0;
-> +		info->end = TLB_FLUSH_ALL;
-> +	}
+Hi,
 
-And if you move the range decision before the info-> struct members
-assignment, it becomes even more readable because you're using start and end
-in the check and then you assign it so a reader doesn't have to go and look
-whether start and end are the same as info->start and info->end:
+I confirm that the patch works flawlessly with samba-4.19.5 AND
+4.22.0rc2 (the latest) but NOT with samba-4.21.2 (mounting shares with
+ver=3D3.1.1, posix fails with rc=3D-32). I was to upgrade samba on all my
+computers.
+As for me, the issue is resolved.
 
-        /*
-         * If the number of flushes is so large that a full flush
-         * would be faster, do a full flush.
-         */
-        if ((end - start) >> stride_shift > tlb_single_page_flush_ceiling) {
-                start = 0;
-                end = TLB_FLUSH_ALL;
-        }
+Best regards
 
-        info->start             = start;
-        info->end               = end;
-        info->mm                = mm;
-        info->stride_shift      = stride_shift;
-        info->freed_tables      = freed_tables;
-        info->new_tlb_gen       = new_tlb_gen;
-        info->initiating_cpu    = smp_processor_id();
-        info->trim_cpumask      = 0;
+Oleh
 
-        return info;
-}
 
-with that:
-
-Reviewed-by: Borislav Petkov (AMD) <bp@alien8.de>
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+=D0=BF=D0=BD, 17 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 06:26 Stev=
+e French <smfrench@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> Oleh,
+> Good catch, and sorry about the delay (email had gotten missed).
+>
+> Here is a fix (see attached) for the problem you reported.  Let me
+> know if it also works for you or if you see any problems with it.
+>
+> This is important fix for SMB3.1.1 POSIX Extensions client implementation=
+.
+>
+>
+> On Wed, Jan 1, 2025 at 11:05=E2=80=AFAM Oleh Nykyforchyn <oleh.nyk@gmail.=
+com> wrote:
+> >
+> > Hello,
+> >
+> > I encountered a funny bug when a share is mounted with vers=3D3.1.1, po=
+six,... If a file size has bits 0x410 =3D ATTR_DIRECTORY | ATTR_REPARSE =3D=
+ 1040 set, then the file is regarded as a directory and its open fails. A s=
+implest test example is any file 1040 bytes long.
+> >
+> > The cause of this bug is that Attributes field in smb2_file_all_info st=
+ruct occupies the same place that EndOfFile field in smb311_posix_qinfo, an=
+d sometimes the latter struct is incorrectly processed as if it was the fir=
+st one. I attach an example patch that solves the problem for me, obviously=
+ not ready for submission, but just to show which places in the code are su=
+bject to problems. The patch is against linux-6.12.6 kernel, but, AFAICS, n=
+othing has changed since then in relevant places. If I have guessed more or=
+ less correctly what the intended functionality is, please feel free to use=
+ my patch as a basis for corrections.
+> >
+> > Best regards
+> >
+> > Olen Nykyforchyn
+>
+>
+>
+> --
+> Thanks,
+>
+> Steve
 
