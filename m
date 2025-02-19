@@ -1,229 +1,210 @@
-Return-Path: <linux-kernel+bounces-522431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34A36A3CA54
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:47:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4C7AA3CA57
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:48:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B1DF3A5741
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 20:46:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16D9A7A6EFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 20:47:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2B4B24C662;
-	Wed, 19 Feb 2025 20:46:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4679E24E4A3;
+	Wed, 19 Feb 2025 20:48:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Odg+V3NM"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FRZPRzEM"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6218024BD11;
-	Wed, 19 Feb 2025 20:46:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739998002; cv=fail; b=oJ+C0ovl6ZTN+fsMMCkLAtQyOo7W9eS6uLNhWpAc7N40fbBeLfVvnG7AV40RJmPzpms7kQVgjF6N0GzW+ZsRkZJFtr6cSK2MYNrd7xEnokM4jukLa4Z5DkU0xGyeMifq5s6rmV+XT+2d0nMsOl/HuUvagJYmELpHEqdjHHEcW9g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739998002; c=relaxed/simple;
-	bh=TdQ8lb6J600DWh9C4ALBEwYlQLss+zxA5pdXPGkJerA=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=RtdZbXVWyeIIjyr4ELOHKfAL61AcIvTMAOKabNK0vKsoXQzn97uegWt+BgP0eVTkAGTzAhU3qZYJ8aUXIQ3WusPv270y23Fp6gy2U3TNSACLPXMurnydoiTKWB0pymv25CVTJFqNqg8gJTl2YRjmXLTBhVyBSCGdbDYCi8lYIWI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Odg+V3NM; arc=fail smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739998001; x=1771534001;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=TdQ8lb6J600DWh9C4ALBEwYlQLss+zxA5pdXPGkJerA=;
-  b=Odg+V3NMhCnDSGxjvuuUjUM/uK6FIuE8vo98KY/weTUOfgT0o9cT4xRL
-   VTKikpMYQACTpkjRrwFvQT7z0FF5Us/IfnYHtCvQ8R4VQoeRAPeJs7OOA
-   yABml9+inNNxU/SvN2U1zJhvpTfrWY1e04mc/1AA9Bw11L9teHaqAZGQ5
-   AgKbgPb5P7vqWkWLHLtlMcrhFyTfLVJH2BMkhM7xOvmGEjmbLdo6K7U05
-   KhDo5/FRzwrzbgvBiev/SWi7d8wXRcEDC41xuv4UlSxyVKBRP52O33fj6
-   rk9RZBnWSFyhVtCwFZ3jwU62ytYy+BLcd7CrPl5c0oNuTPF58kivLzcRA
-   Q==;
-X-CSE-ConnectionGUID: outgpu0iQHuesfOPHrwkbw==
-X-CSE-MsgGUID: FLfkHxEdRDG4JwYxbDJLHQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11350"; a="43584463"
-X-IronPort-AV: E=Sophos;i="6.13,299,1732608000"; 
-   d="scan'208";a="43584463"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 12:46:41 -0800
-X-CSE-ConnectionGUID: 4iaCcliqQU2rEfp6vPHonw==
-X-CSE-MsgGUID: Qi7FBDPkT6WKAUQpLTqkKg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,299,1732608000"; 
-   d="scan'208";a="114660462"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 12:46:40 -0800
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Wed, 19 Feb 2025 12:46:40 -0800
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Wed, 19 Feb 2025 12:46:40 -0800
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.172)
- by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Wed, 19 Feb 2025 12:46:39 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LRhz5tB/LGT5zGpFxaXxJ7ZyR5vJ40NtMZ3GCXWyl3wKm/rX6IzK/L86/W+7jkEoBlX6Psw0ZuHG34vqm4A6bXhsFdggFFWhIY5UOeoj9n9y7h1h7iDZnQCT6Nzlhhd5SeohO3+F62cUzrQoomOqKq8/GlQMVcTKZDJyaYfDlTJS0k8CPbozJb4Tu+4xqYXwnSziZE5p5kJgiuWwfqSsehSn04Zo/whQb5QbQ4ypYk9e6g4z1fUnWBLKqq8y1EA6YLG3KcHouOTg7DObFdqUCQiLG8mTtEO8zhY5ScX/1+BooQy+1Bxk9j8EIJjol/87V6OL1FfYB2Brv9gKB5o5bw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WD7CW28WV4RL14Ht/QPt7ZRPbxKPLcw9NzYfmJv1yBQ=;
- b=MUCOxp81DBmpQW3wpQ3LmaFDop1E7ve3QxWg4+mtRNZZUvG5zqTkP2hvz0g+GuQEAjwpUS507uSPssXt3fFvFATxuFjr7oufBmo79UJi39rUPyJMm6/GMPe7jFP+Ck+u6S2veYaCbDUHG/2EcODj6TzaIzjSpnancZUIaiq4i9cvJSfoCPaBmVjFU+rGG0J7U6SfZqqXpH/nKfItyoRCmLvAKCT/zVGNjJn3MwFtVqtfXzNrxnVf0hChiWh7jkP/bzEjTR2yl+DLMzpC0xeELBpFblaJ9Khg0HY/wgS60Ss4d2he0sqZOMziqFWyHwoe5nP6hjC8Rf4FyKj190PCwQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SA1PR11MB6733.namprd11.prod.outlook.com (2603:10b6:806:25c::17)
- by SA0PR11MB4607.namprd11.prod.outlook.com (2603:10b6:806:9b::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Wed, 19 Feb
- 2025 20:46:32 +0000
-Received: from SA1PR11MB6733.namprd11.prod.outlook.com
- ([fe80::cf7d:9363:38f4:8c57]) by SA1PR11MB6733.namprd11.prod.outlook.com
- ([fe80::cf7d:9363:38f4:8c57%5]) with mapi id 15.20.8445.017; Wed, 19 Feb 2025
- 20:46:32 +0000
-Date: Wed, 19 Feb 2025 14:46:27 -0600
-From: Ira Weiny <ira.weiny@intel.com>
-To: Li Ming <ming.li@zohomail.com>, <dave@stgolabs.net>,
-	<jonathan.cameron@huawei.com>, <dave.jiang@intel.com>,
-	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
-	<ira.weiny@intel.com>, <dan.j.williams@intel.com>
-CC: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Li Ming
-	<ming.li@zohomail.com>
-Subject: Re: [PATCH v2 0/7] Use guard() instead of rwsem locking
-Message-ID: <67b64323dc4b1_2b6e4c294c6@iweiny-mobl.notmuch>
-References: <20250217144828.30651-1-ming.li@zohomail.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250217144828.30651-1-ming.li@zohomail.com>
-X-ClientProxiedBy: MW4PR04CA0173.namprd04.prod.outlook.com
- (2603:10b6:303:85::28) To SA1PR11MB6733.namprd11.prod.outlook.com
- (2603:10b6:806:25c::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 049BF24CED5;
+	Wed, 19 Feb 2025 20:48:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739998116; cv=none; b=RN7rmDZ4Ycgl+6A2uQKNnah/xVGdzcYIjUNULSOVULkZZl8jicKwUIPqm82QQLVmzAl7DRWmf3zB5sU8E0ymizPWYUqeP9zQeeDdANRUof5jv1T4jy2rjHYwNKeF0/CdiYF48vGZ7k/0+sTxylSu+Hchv4Fkt4TkYkwIqj0Qn+Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739998116; c=relaxed/simple;
+	bh=rPURpv5vgBdCwD9dat4BhYNy99e1kMDXzhacqzB6sQI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KFcOsKO0EznHHR9yiksWc34bMGv2b6QAgDEgtkbyDbi/47LuFUwjIJJkeue4OOi0mqbt6SzVF85lRkYKVV0wfa/0f5+3Ti4vxjq/oxHUbDrpmP2rl4BD07n1uuyr0liLQixdZevgHN+YKYugrN4pgLYNioqz0AZCHPSUnShWNsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FRZPRzEM; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-220bfdfb3f4so3332155ad.2;
+        Wed, 19 Feb 2025 12:48:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739998114; x=1740602914; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3rvvkoHBZqca1tBS0H2AmTF8C7cV1cWNOIDwXraLr7E=;
+        b=FRZPRzEMqwdSe3C+1rxXirhtvYM9M0I80q5S4PMCkNczdBFjgylg9AGXsBv17WuVFw
+         fm/j72ht9Y6h/x5b83Z57m6wnJ5DIEszCti/Y9Ce7gnd2C9JpO0DCbNaj7x9upcq+/in
+         1stJhgjAZs6RUDWBsXekAc/QrcFQPQx01WqaBLFNhjwXKWsMZgbqkEekCZYKzUMFndzD
+         hnmaA7BkgphB50jn8gpPPkqBNaayi8VGr42IxQNveVzWwoEbUZ7OYaB5SjYrkvlL19vB
+         ccQjQFW5ECoUG1VAMxjS/CWvwCXXucU5I1h5cpA27HhejPLhPiI0hUFsXhELN+HI+AQr
+         h1Bw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739998114; x=1740602914;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3rvvkoHBZqca1tBS0H2AmTF8C7cV1cWNOIDwXraLr7E=;
+        b=HrnNmbOzVtL/Les0c/9XUTwBVwrHyg/nMCkY7yIURGFoKvCgZ+CvCL42MLCxpBp6AB
+         gDjRfb7W33/G5z1t/bWNA12FyiwNqgYaHFQI/GCgalLK6TeG7KlBSo4lcSBQQjTxAaPm
+         mj0vPYYORXteZLKBYjaszbTwlT1M51w6ZYFdRRX0phgDMYjb+okvEw20gNgoN1orsfws
+         9C9nssrkxEmzKnkuR1mhOxpi6vZs0Ui50lD6zK8nDjR/SjivpCcMErnU4Uv2I0gQe+ma
+         autUiLuyu4WhrsDa5VsIEaO2dnbj2IWfu8G5poXdfpjBwEfJbg2Gcf+1Lfd84gd3a28D
+         hgfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV2SCiSnD3sKrnenHUQuo2OzMlwNxfCdOKfri1qlEW76PhHnOwBGTYSnCYM6pFJxF4++onGh7D3fo8H@vger.kernel.org, AJvYcCX224dJ7PON/8OGRKBURD1c2E+GEdbIyDknsPVEH9S1yfY+CzzrK1xAhXv3CSW0HOF5x9kaTfnXrjxZf8QP@vger.kernel.org, AJvYcCXrCp0NHd5/fWkDPQYXxK+9uONfbSFGMoDDrBssSu4zPSicTl4gbulh3aQThm9V+SgTMla4TLW8BKU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1CFLfRkq0bFhDwDwVszmrK/bgvHwq6FC9capEmSBV0oOqzQf4
+	IZHBX8R53DuPN+YecgMXD8QACweWbARKOQHhTr7reDW7KB829TAR
+X-Gm-Gg: ASbGnct6v/Qi3BYoWrm2ugF1obTX47ekXHeIg0zaDPHRnaNczeEaJZKEdtYcXUhrfnM
+	qXTuD3HzxD26Fd7lGIevPTPUD5Q/OHndn/xgWq+84es/Tt4EBNsukYooRNsu7of4ph5LrdnDIu9
+	RRyTaXCYxovFHL2NmKvbQxOq4uQLJ9CBFf0+z0tKVyi5T2rPcg3JKuBKTMD6k2fNBo53fNXknlI
+	sp1mVM8g2ZPOIea9z5IjGkzMBiFBvDbH9bLmNXZa1s0KAbo72NGhRR8Vy1XdV7pzYZxJe1bL75j
+	Vk3D7IZI9+PLQw4a3yesRocqVQ==
+X-Google-Smtp-Source: AGHT+IEuCSjf8eYGI2GnSpolCwQxLMU7Ni89VHflayt+Rt+Bn1K6etIV11qdtPH43Aahy+ZjkDUv+A==
+X-Received: by 2002:a17:902:ce81:b0:220:c4f0:4ed9 with SMTP id d9443c01a7336-221711b749cmr63305385ad.45.1739998112543;
+        Wed, 19 Feb 2025 12:48:32 -0800 (PST)
+Received: from localhost ([2804:30c:1f21:4300:1cf6:c485:6555:b1c5])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-2fbf98b3232sm14358927a91.5.2025.02.19.12.48.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2025 12:48:31 -0800 (PST)
+Date: Wed, 19 Feb 2025 17:49:18 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	jic23@kernel.org, lars@metafoo.de, corbet@lwn.net
+Subject: Re: [PATCH v3 1/1] Documentation: iio: Add ADC documentation
+Message-ID: <Z7ZDzg0KHZhfiLo3@debian-BULLSEYE-live-builder-AMD64>
+References: <c21b89367510c3d56d8d17adc24b46c7c63a14b2.1738759798.git.marcelo.schmitt@analog.com>
+ <5084aed7-1b39-4cbd-b136-610bceb05c92@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA1PR11MB6733:EE_|SA0PR11MB4607:EE_
-X-MS-Office365-Filtering-Correlation-Id: 880f0933-95b9-478d-dd75-08dd51267e2f
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?Xd8RGNSeN1k4aj8x++nbeZLyLuGPQ4C1+kGqC7YAJgWsmr1SOxDViZvwhpNk?=
- =?us-ascii?Q?LQGv2qcVs3fikwxKdgouW13Neug1rBXRDJvI1Bf8Uns990kbX5L38389Tpwo?=
- =?us-ascii?Q?765QTjSGF7hMz6CIS2Fglw2giZsR5yEiBTdnZq1mSAChKYWxPhKEAuAlVQTH?=
- =?us-ascii?Q?A6QlweURsxgOfK3iMUIO452B91HbAF5qm+bcb1ACo3qiVfvTyBSiRYhL/qpG?=
- =?us-ascii?Q?oDNtdNCAJPFdpI4VzL2d6z49/XIjp537WEF8ushWIlOQstwnZhzD3mmYIRaD?=
- =?us-ascii?Q?V925mcD8He+i+kL7L/vH8wcK2cvkvTR6exgvgJdXQ0souR9dBnZWUm1+9sL1?=
- =?us-ascii?Q?9GEePq3ftY1tfMJfeP6uUBq5+ZdNv+RafUHjfnIiKGP3bKeYbhx6uL/TIkkR?=
- =?us-ascii?Q?zoM/NgrvKPO5GyAjogPpZjXazGMau3462TetMZcWT/ykshtldOZX5AkFuSXG?=
- =?us-ascii?Q?5DsfDZLRXKumpUXww+AELrcVUMEG8/7IqKwk11zFEejaexEBEFQ9sF9OqKn5?=
- =?us-ascii?Q?Vs8MnIwb9xgSDx84d62CywSF0Np+2jU/ueMjEj+UOY/evl7GXKqT0aSW4UVk?=
- =?us-ascii?Q?HZUikoZ4jTPZPT9s5an+LTpDV9HCXY1PqWqs+1f6dM0rINfNPP2gXlQXitp3?=
- =?us-ascii?Q?2FdIu8IhqedNZv+2DeRT2aA1McGOxmL1gzEfLgY7W4j2UhgW0VBwiM5N+Eni?=
- =?us-ascii?Q?i9YFyAbxcGRPTJfyaCHa1W35KOCbEtrCNsED9kcFxw/BRv3yttnqNCNnUXn1?=
- =?us-ascii?Q?18WxnK5y3DPzd2P+OJGlfewhpdARrIXxSBFaTt7AHYa9gRheCaOV+MWfxcaC?=
- =?us-ascii?Q?JeSPaEy4j4pekiKZVd4OMwF+HMWeMmmzdOCUEKY45HVYEoCRhb2/Wq4W+Bu3?=
- =?us-ascii?Q?Q0eMvf7QVvLk0WZV2i7h/JcYRv2rU6DSOX+jGNElXrSqFsbw75RxSRmTIezf?=
- =?us-ascii?Q?DK6jc7yVZORUiB1D0RXJmgDZ7cKvtTeSq1r7KnP7TJU7iBcbRD97Z9Wb7mL+?=
- =?us-ascii?Q?d+4LKrlNZKNvup1of/mGMmSpct4LJyPA9LRZF6Wr09GeLwUZ4Wqxobda4Ixc?=
- =?us-ascii?Q?mLI1cTGKq1RK048wi2MJH4dAiGwXqic/+j8Mk6QModl+rTli7ArVNUolN6KS?=
- =?us-ascii?Q?pJtIWiGFKnJ/tqWG7LqfQMLIUkroK+coyWQM/jw2OUJqaDck0wxKcchf2tdN?=
- =?us-ascii?Q?OzS4nV6U2z4Jv/tqQmSB6Ynq9nE3t4E5CLtYQ/ZK2tnSU+9QHYwKHGP9wArJ?=
- =?us-ascii?Q?DCawoDfH+K/tn2IUZoYASARk2PBIp68a5yKkgmDRV0bSAXQbetk8OT4YuTOm?=
- =?us-ascii?Q?SiT7L1TQCLjwPK9xnwxM8mquVMY6pLJy6985zha4Q5tbDPEnjo2Ochu+k6ad?=
- =?us-ascii?Q?cu4bt/Eotnb1atz31l2YH8Vl6FSg?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB6733.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?it81WgfJucd0C7LR9qqowXz7nst+LhXJGbqeR3VZhi/Gx8r1sVXmTWKF9s41?=
- =?us-ascii?Q?KV5bu9oI/3bAs21iFGjEVUE3OPOdms7OBFPWUceh3E3hPqFVtfwvlMlrjCI7?=
- =?us-ascii?Q?5o/FXFXf1sxKt4bIjR3mkaciYWlnCOeTAuXOMslftJuXCuN669UEhKlEfYEm?=
- =?us-ascii?Q?AdBQ5oNvexRCHE2VLHCBDHCRuI0GXn0K5218RZVvgL68BXqE2XYrUaZMCWcF?=
- =?us-ascii?Q?zvkW519tvHzq8lOVrrg4Fi35PAmf8RV/tKm8wnu8h4awIXMOw+r/u1dnv+h7?=
- =?us-ascii?Q?/jYEXryEwzLk1AVvhvSe5TOuhXCXMkgLq962r8EqpoiK0gHVJboQqqM3tCHy?=
- =?us-ascii?Q?ZeDBqDXuOW6npKa8GdNfW/bkoM/DwDaSsaAFu29KcyCRkis4jqIL1dqZzj5r?=
- =?us-ascii?Q?c2gu8FyTa6+cPvbgcW0UFS+vKupSZmTghW+gicfHMucVF7kVLttwgFaTRQ3Z?=
- =?us-ascii?Q?D0TxkWK1CaQYvIAJ2Jplzlw5A0L+ZnKz7z/O+cdVYdJ5ak93hXnovEWpFi1s?=
- =?us-ascii?Q?orhYdwHP3sj4OwXzY9+d+papwj38MD8wpde3eflwkuQAILYjwq1ORr7MxgVp?=
- =?us-ascii?Q?UsOQL6gvLUBwVa2RDda1tOST81vSw1czYasyenTY5hTXY9dZIBGzDNJBal8g?=
- =?us-ascii?Q?qMyqvsWsTZbCIeyAlWSX1KmIORTWZw8goeNWetJy8zpVg52j7p2OHcmYFtut?=
- =?us-ascii?Q?lXrKBpFExnXS4fEUkODWZBGFWS+0n4rrhDCaa71FGvK3575bnjZM5Qt7NS0C?=
- =?us-ascii?Q?Zj4dt8oDf4u2+5XRoi0RA2AAfCYn2MJCtw80ihdukivFueERE2K3FnJ1sE6U?=
- =?us-ascii?Q?YCRgI6usMEX6RukqxLExufZy+IKSWRakdka2T3+1TxgGEaRym6R6yKO5PM/9?=
- =?us-ascii?Q?K/3br+mF5nxUDCWLbkOJR1ZH1iwaQyt/H8ZBa9bnPqGfHyANPuQ8Uz2WY6xR?=
- =?us-ascii?Q?GohqN7HEA0OQdMVr1VQIkCQ8ALuEStuYqaquDdRu+5JctYtg6UeUlQ3FGuoF?=
- =?us-ascii?Q?UKZ1Zg6Gxh5GQFIn59o7qojrV9UJwS8cgt5uGgFq1FDVEgfsaoDDtreZj0sg?=
- =?us-ascii?Q?VTq2uXU5dP8hvQcKyZVj7C9H4wBwAjQTE7N7d4w7yfyMrrDAzf1woEpKuXwZ?=
- =?us-ascii?Q?J/fdhITXk2pPIG95wF6Rmi1dUQKegXMdQwns2SuIJvnJgf6hQJuZ6GRX6Xpg?=
- =?us-ascii?Q?d60BGDBJ6iru33dqP2ftboa4HJ/OHRBb7VSAjhmtaRi62MTf1Y040yM5yXit?=
- =?us-ascii?Q?AfSvrSRmVZKL2Qa+Hsxlo2FfL2Rtr0BcbdCn4vUzchDDMozhzIfjoiqeyPnE?=
- =?us-ascii?Q?C2o1JQ/bP2FFywim58aIThegXJOzxQHLKV2zhraDRHyVQiHxnBnTaH79B1zz?=
- =?us-ascii?Q?3hwZr1Eh7puTOLQGCm7RhW1LHScqMlYWi8Vr+E2cL3alc/LZelLKZ7jUY5+G?=
- =?us-ascii?Q?YrsbhhVts4HKJvx4o1FGdT2EzE+dRbe9xmZb/M8HiZ3m6JtQdTUcZzftSlT1?=
- =?us-ascii?Q?f5oxXghuHKfzkJik85+dvfcyz5XW0G3NtIs+GqVkrNsqD8OdT6l0oZC3TbiA?=
- =?us-ascii?Q?k/PKC1nUk2r6h3w5MsHMPv6nFK0yOpTTt6rS/AWj?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 880f0933-95b9-478d-dd75-08dd51267e2f
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB6733.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2025 20:46:32.5412
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +uvMzHZCD9odVPXhDaBaAOJ66qEh3XzXMobZ2ePjqMw1/kU4BPnx5c5pYNHf5hOpjR8pTlvtrNJB0pqehuu/BQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR11MB4607
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5084aed7-1b39-4cbd-b136-610bceb05c92@baylibre.com>
 
-Li Ming wrote:
-> Use scoped resource management to replace open-coded locking operation
-> is recommended. CXL subsystem still remains some down_read()/up_read()
-> and down_write()/up_write() which can be replaced by guard() simply.
+A very slow re-spin time from my side but here we go ...
+I addressed most of the suggestions and am about to send a v4.
+Replying inline to the points I disagree with.
+
+Thanks,
+Marcelo
+
+On 02/05, David Lechner wrote:
+> On 2/5/25 6:53 AM, Marcelo Schmitt wrote:
+> > ADC inputs can be classified into a few different types according to how
+> > they measure the input signal, how restrained the signal is, and number of
+> > input pins. Even though datasheets tend to provide many details about their
+> > inputs and measurement procedures, it may not always be clear how to model
+> > those inputs into IIO channels.
+> > 
+> > For example, some differential ADCs can have their inputs configured into
+> > pseudo-differential channels. In that configuration, only one input
+> > connects to the signal of interest as opposed to using two inputs of a
+> > differential input configuration. Datasheets sometimes also refer to
+> > pseudo-differential inputs as single-ended inputs even though they have
+> > distinct physical configuration and measurement procedure.
+> > 
+> > Document consolidated ADC input types and how they are usually described
+> > and supported in device tree and IIO, respectively.
+> > 
+> > Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+> > ---
+...
+> > +There are three general types of ADC inputs (single-ended, differential,
+> > +pseudo-differential) and two possible polarities (unipolar, bipolar). The input
+> > +type (single-ended, differential, pseudo-differential) is one channel
+> > +characteristic, and is completely independent of the polarity (unipolar,
+> > +bipolar) aspect. A comprehensive article about ADC input types (on which this
+> > +doc is heavily based on) can be found at
+> > +https://www.analog.com/en/resources/technical-articles/sar-adc-input-types.html.
 > 
-> This patchset includes simply using guard() instead of some
-> down_read()/up_read() and down_write()/up_write() cases. Besides, it
-> also includes some function code cleanup after using guard().
+> It could be worth reiterating here that although there are 3 different input
+> types, in IIO, differential is only a bool, so there is no special distinction
+> between single-ended and pseduo-differential (other than possibly having a
+> common mode voltage input). And unipolar/bipolar is only considered on the
+> difference between the two inputs and not the individual input, so in IIO there
+> is no special distinction between bipolar and true biploar - they are modeled
+> the same.
+For v4, I'll be mentioning the differential field meaning and the bipolar / true
+bipolar (in)disctinction in other subsections bellow. Hope that will make those
+points more clear.
+
+...
+> > +1.2 Differential channels
+> > +-------------------------
+> > +
 > 
-> base-commit: a64dcfb451e254085a7daee5fe51bf22959d52d3 (tag: v6.14-rc2)
+> Suggest to insert here:
+> 
+> > +A differential voltage measurement,
+> 
+> sometimes also called "fully differential" or "true differential",
 
-For the series.
-
-Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+I think adding that would make the sentence harder to read and somewhat incorrect.
+The differential measurement has to do with how the ADC takes the input signals
+into account to generate an output code. The "true differential" has to do with
+the expected limits for the input signals. Fully differential input is yet
+another thing that I've been avoiding to describe because I think those can be
+supported as differential bipolar channels.
 
 > 
-> v2:
-> - Drop some local variables. (Jonathan)
-> - Rename __construct_region() to construct_auto_region(). (Jonathan and Dave)
+> > digitizes the voltage level at the positive
+> > +input (IN+) relative to the negative input (IN-) over the -VREF to +VREF span.
+> > +In other words, a differential channel measures the potential difference between
+> > +IN+ and IN-, which is often denoted by the IN+ - IN- formula.
+> > +
+...
+> > +1.2.2 Differential Unipolar Channels
+> > +^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> > +
+> > +For **differential unipolar** channels, 
 > 
-> Li Ming (7):
->   cxl/core: Use guard() to replace open-coded down_read/write()
->   cxl/core: cxl_mem_sanitize() cleanup
->   cxl/memdev: cxl_memdev_ioctl() cleanup
->   cxl/core: Use guard() to drop the goto pattern of cxl_dpa_free()
->   cxl/core: Use guard() to drop goto pattern of cxl_dpa_alloc()
->   cxl/region: Drop goto pattern in cxl_dax_region_alloc()
->   cxl/region: Drop goto pattern of construct_region()
-> 
->  drivers/cxl/core/hdm.c    | 68 +++++++++++-----------------
->  drivers/cxl/core/mbox.c   | 10 ++---
->  drivers/cxl/core/memdev.c | 17 +++----
->  drivers/cxl/core/port.c   |  8 +---
->  drivers/cxl/core/region.c | 95 +++++++++++++++++++--------------------
->  5 files changed, 85 insertions(+), 113 deletions(-)
-> 
-> -- 
-> 2.34.1
-> 
+> I think it would be nice to have a short first paragraph that just says that
+> this configuration is quite unusual and that the difference would have to always
+> be positive. Then follow with the rest of the info for the curious in a separate
+> paragraph. Then it will be easy for those not interested in the unusual case to
+> skip over that part.
 
+I think, reordering would make the explanation harder to follow.
+Even though currently not using those exact words, it can be inferred that the
+difference is expected to be always positive:
+"IN+ is allowed to swing with the measured analog signal and the input setup must
+guarantee IN+ will not go below IN- (nor IN- will raise above IN+)"
+The last phrase also somewhat hints that the differential unipolar setup is not usual.
+"Thus, differential unipolar setups can often be supported as pseudo-differential
+unipolar channels."
 
+> 
+> > the analog voltage at the positive input
+> > +must also be higher than the voltage at the negative input. Thus, the actual
+> > +input range allowed to a differential unipolar channel is IN- to +VREF. Because
+> > +IN+ is allowed to swing with the measured analog signal and the input setup must
+> > +guarantee IN+ will not go below IN- (nor IN- will raise above IN+), most
+> > +differential unipolar channel setups have IN- fixed to a known voltage that does
+> > +not fall within the voltage range expected for the measured signal. That leads
+> > +to a setup that is equivalent to a pseudo-differential channel. Thus,
+> > +differential unipolar setups can often be supported as pseudo-differential
+> > +unipolar channels.
+> 
+> I think we should just leave out the sentence about being supported as pseudo-
+> differential. There is already a different section that describes that and it
+> would be simpler to just stick with describing the fully differential case here.
+> The differential bipolar section also only describes the fully differential case
+> so mentioning pseduo-differential here seems inconsistent.
+
+I also disagree with that one. A differential unipolar setup is uncommon
+(at least) so the mention of pseduo-differential is to point to what would be
+the usual way of supporting those input configurations. Differential bipolar
+inputs are common so no need to mention other input types when talking about
+differential bipolar.
+
+Though, I'm fine with changing the explanations if Jonathan prefers so.
 
