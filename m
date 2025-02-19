@@ -1,110 +1,123 @@
-Return-Path: <linux-kernel+bounces-521372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A49CA3BC66
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:07:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B42EA3BC6D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:09:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45CD71891891
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:07:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A47B63AC878
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:08:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CD221DE8A9;
-	Wed, 19 Feb 2025 11:06:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D294C1DED4A;
+	Wed, 19 Feb 2025 11:08:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Y57cSCdA"
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LdfkQV3I"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C16081D0F5A;
-	Wed, 19 Feb 2025 11:06:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806C61A840D
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 11:08:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739963215; cv=none; b=coyxCRYEcGCtoyqzvauWdBtRI4pcNXJ8AKn/LyCH6GEMFVi2zZ/e02Xgq7LB2IyigSLySBl1W232NSAMksXOsoFhtgcIi/d69BKbP2y2xwr6veLqV78FvCOtY3fJo4OFG5PmEYvnt8VKVhENePqfbjUvCbmkvwqOK9vz/7pjD/0=
+	t=1739963323; cv=none; b=kqOO6GH7j0lZx+f8dwkt74CutPvcV9gr0g+h5+3lw69Ag+WmJKNxX7HU2d2zoMpvLsktOgVYyN0JQkgcQ1bM53TdKx6HyvKjYkPkyfvVOrloLyUCL+zIpdsQCigquv7UXfTN4DKmtf/0r7OpIoUldhuX4vrnhxPU2qtmybWGbw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739963215; c=relaxed/simple;
-	bh=ZjlQ5Y52N4jkWfrklIZGjG0Za/o7lSsCXqAaLOnqJ0Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=go11A1OMXPXR69ZsLTxTqTj/aGsssB6pU2PtTdU4t0GVY2ES1STeBi7RVl9LU/a9mdXjY7Q+/wR/w/KFLM94qtZme/G3jWMaTFD0D7tvXqJrb6gJ4+xmcZa0l3fyFvfx56WMtWrKaP7vyX+zaHzYsumVxA9sqQesfaWcnOdMvco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Y57cSCdA; arc=none smtp.client-ip=115.124.30.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1739963207; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=qaxsf0+7cd0xDTE8Ao8aNHOMzKhSEIOlJKgHocnKTqM=;
-	b=Y57cSCdAAEZxF0ODL3udnFbaGJ9TJtt8HH/iBCol1QjpOJAn4NDA3xSEmxKc83v0BtPnIkQO7/+B/mO/8m0pK03TtkikA1USYWJwrLRyTtx6voJx59P0yAmLlLy405i3+snUBOvTCh2YJydonT4iBUXfz+UXgrox488T5z+j7Zw=
-Received: from 30.246.161.128(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WPp68E4_1739963206 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 19 Feb 2025 19:06:46 +0800
-Message-ID: <17390c79-faea-497b-90a7-7572db7671e2@linux.alibaba.com>
-Date: Wed, 19 Feb 2025 19:06:45 +0800
+	s=arc-20240116; t=1739963323; c=relaxed/simple;
+	bh=d3hwHJnXhEL3U4lpXF9O3OIISXIqjdYjDDjV0op+bOM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=U4AIm2cQ7EOLrMNmylcVXfTq2CtWHOprFuJdpESoJDJwVpj3ctkuLwqAN9aezH129yvnyoN981zffDesXDh/O9D3p7DsZz1rs4lxr09ZVKp36YCXLdD7KxDHiw37sezdu1kdWJpkb5VKJGMi3hRT2VMlx5M/LeEMlwg1DItVJSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LdfkQV3I; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5dbf65c0c4fso1179065a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 03:08:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739963320; x=1740568120; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4WCJJBquXtU0xuWId0qAETv4tq4g6KwlnFXnMWiiOMA=;
+        b=LdfkQV3I9uFlaiHeZYjrm+4Wz9+psWWBUln9N+WPNAZVWJl1kO0akRrXF9pkH3xaKz
+         OSZbh63rO0PJUedgkL1UPmzYVzfxhS/ske8ofY5paug09iduLdNg65X9AKeGMuzzUrR/
+         S3YiOda4SUfD0Etj0C3IG0baJQTCz0Nd5QgwKH8ZB8BPbn6DhSVCCQMHkoqIaakEJ6r5
+         P+luwxzvp3q0LZZvZgkcMB15MI58CiT4bdxBeyrOH/RikWZ4nTdOzC9qdyI0vjsd2TlT
+         4nwtSaXZCH+CCb8ErAoWU/o7hMAzROzZ/v8CzSBe50go2Pt+PinqzTfDp0PYJ3VXY0v4
+         BHzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739963320; x=1740568120;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4WCJJBquXtU0xuWId0qAETv4tq4g6KwlnFXnMWiiOMA=;
+        b=O4fdaYuNQ/LZU/+n4gWoYYl0+EOrQU3MUIzpl4uHYRQZWab17q7HmW2qV/bi8S5/Aa
+         lotYUkBPc0xtT6xYbPUAQa7Zq+/U1D+cO+aOQOglbBg/XSJdnMoNkPwsOkVN34xaI55t
+         JufvxeFgswStTmX9ndym+JFYqtwzB9oCj5DUZ0fGxzEjp5jsF7VT4Hhm31gycQloceiU
+         BOT13ZMcJ+irvCHv2HOAGjAj69VRDSqw+Wj+Su0cYGhxleo5uE861ovKvVhuy/Tr8a93
+         xrPxwTVysAaLheH1ysfDu+CwqpBD+rYggTl5nEzoMN8wFrZjLdhNebDmScBML7AuGCFq
+         cEhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWhrD0uW3WRiTne0OkKKdyZYC4DWLefPUFEzdBKrkGVPz+YBCtgFQ466xC8eBLliP7eNNGcpDRyw3NCoI4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1ky/k1xlCosFpU01El5LD7scSmkLnQxMmgOPS5e1K4lBp8oCx
+	CYjQeCcdDpRg2kFUHUAdyApl8zlC7LZkIYk5gy65MBM1OXx7HqNuday92o4AaT0=
+X-Gm-Gg: ASbGnct8qRB126n/aLT5TJv0j55Mr8dylfpwgK9p4Ak3bGp3ucRR2MYd1rCOQf5Y4jg
+	IJVquEOMBieW0r+BGhF+dQxhXB7hKD4j65DevMIet9tcxAIMNlIwahdqv5cg5L2NcL1rRl/Gswp
+	aFo7E7hs+oXg/IqBHF2cojjT8gNmEfG2aWAlxTPVwCA9Y6G/y83wivaU7GCJ6aav76Npp6DyBFF
+	ai/HK1TJgWkCyUJG8OEX0mIuZnHO3XGAj8izG9+PBh8AaSwP8zY/ySjYyuS5/t7BA9/57xYLP94
+	2gLWoVe/8T9WmlbVb+jGr8gSvbAfzqE=
+X-Google-Smtp-Source: AGHT+IEfgYfUdIbS9nfRVc6N/GSxlxs4zzk9e7TbLbd8Y1WZWb4NpfyhDpkjxjKwSOnEvxlwN1WD4Q==
+X-Received: by 2002:a05:6402:2356:b0:5dc:d9c7:a61f with SMTP id 4fb4d7f45d1cf-5e036169cbfmr6699580a12.7.1739963319786;
+        Wed, 19 Feb 2025 03:08:39 -0800 (PST)
+Received: from [127.0.1.1] ([178.197.206.225])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dece1b4e8dsm10158156a12.14.2025.02.19.03.08.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2025 03:08:37 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250215112716.159110-1-ivo.ivanov.ivanov1@gmail.com>
+References: <20250215112716.159110-1-ivo.ivanov.ivanov1@gmail.com>
+Subject: Re: [PATCH v1 0/4] dt-bindings: soc: samsung: sysreg, pmu, chipid
+ for 2200
+Message-Id: <173996331626.137285.15610592693231757243.b4-ty@linaro.org>
+Date: Wed, 19 Feb 2025 12:08:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/7] dmaengine: idxd: fix memory leak in error handling
- path of idxd_setup_groups
-To: Fenghua Yu <fenghuay@nvidia.com>, vinicius.gomes@intel.com,
- dave.jiang@intel.com, vkoul@kernel.org
-Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250215054431.55747-1-xueshuai@linux.alibaba.com>
- <20250215054431.55747-4-xueshuai@linux.alibaba.com>
- <693fe8b5-ff99-4363-8c9d-9641ad24ba10@nvidia.com>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <693fe8b5-ff99-4363-8c9d-9641ad24ba10@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
 
-
-在 2025/2/19 04:20, Fenghua Yu 写道:
-> Hi, Shuai,
+On Sat, 15 Feb 2025 13:27:12 +0200, Ivaylo Ivanov wrote:
+> Hey folks,
 > 
-> On 2/14/25 21:44, Shuai Xue wrote:
->> Memory allocated for groups is not freed if an error occurs during
->> idxd_setup_groups(). To fix it, free the allocated memory in the reverse
->> order of allocation before exiting the function in case of an error.
->>
->> Fixes: defe49f96012 ("dmaengine: idxd: fix group conf_dev lifetime")
->> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
->> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
->> ---
->>   drivers/dma/idxd/init.c | 4 ++++
->>   1 file changed, 4 insertions(+)
->>
->> diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
->> index 4e47075c5bef..a2da68e6144d 100644
->> --- a/drivers/dma/idxd/init.c
->> +++ b/drivers/dma/idxd/init.c
->> @@ -328,6 +328,7 @@ static int idxd_setup_groups(struct idxd_device *idxd)
->>           rc = dev_set_name(conf_dev, "group%d.%d", idxd->id, group->id);
->>           if (rc < 0) {
->>               put_device(conf_dev);
->> +            kfree(group);
->>               goto err;
->>           }
->> @@ -352,7 +353,10 @@ static int idxd_setup_groups(struct idxd_device *idxd)
->>       while (--i >= 0) {
->>           group = idxd->groups[i];
->>           put_device(group_confdev(group));
->> +        kfree(group);
->>       }
->> +    kfree(idxd->groups);
->> +
+> This patchset adds support for chipid of Exynos 2200, as well as
+> documents sysreg, pmu and chipid compatibles for that SoC.
 > 
-> What happens to the memory areas previously allocated for wqs and engines after idxd_setup_groups() fails? They need to be freed as well, but currently they are not.
+> Best regards,
+> Ivaylo
 > 
-> Maybe a separate patch cleans up the previously allocated mem areas for wqs/engines/groups if there is any failure after the allocations?
-> 
+> [...]
 
-Agreed, will add a new patch to fix it.
+Applied, thanks!
 
-Thanks
-Shuai
+[1/4] dt-bindings: soc: samsung: exynos-sysreg: add sysreg compatibles for exynos2200
+      https://git.kernel.org/krzk/linux/c/cd6381a6ed69747fbe1f8ddb926b00786027894a
+[2/4] dt-bindings: soc: samsung: exynos-pmu: add exynos2200 compatible
+      https://git.kernel.org/krzk/linux/c/801a116bb82431446cedf942842561348a2c67e6
+[3/4] dt-bindings: hwinfo: samsung,exynos-chipid: add exynos2200 compatible
+      https://git.kernel.org/krzk/linux/c/28e113a133b5033b47ffaadfc3e96994e6c5e132
+[4/4] soc: samsung: exynos-chipid: add exynos2200 SoC support
+      https://git.kernel.org/krzk/linux/c/c86e967e6ba73ec6ac2a189073e0f7b0f1313788
+
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 
