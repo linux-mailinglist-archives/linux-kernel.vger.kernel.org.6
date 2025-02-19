@@ -1,158 +1,138 @@
-Return-Path: <linux-kernel+bounces-520954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11798A3B1A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:29:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF8F6A3B1A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:30:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 988A03B4243
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 06:28:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5938C188E78B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 06:30:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC651BC9FB;
-	Wed, 19 Feb 2025 06:28:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE6FB1BCA0F;
+	Wed, 19 Feb 2025 06:29:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="wIw3KPRA"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="biPcFKdN"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B420519D882;
-	Wed, 19 Feb 2025 06:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD54919D882;
+	Wed, 19 Feb 2025 06:29:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739946530; cv=none; b=QnMK5xgElIDzOmEOPi85dacApJ48BsbZys4noUs1zLynzbteKmPX0V6LFAdv4isA7gI2o+9Eoag7p2a78K1m31E2r5LJcNstxpQYaptCHgMyf8dYPljQWHKiKttOzxtbDLl2hoPvgxCKYWNF0iy312Bwgcya5Rskso4jbAE6PTY=
+	t=1739946596; cv=none; b=j/2QIRB0CYqettOsgGDrRcKlshGOZGmL8XbRM2ovOrKtQFJfhxSPs00A3XZ3oyq4IODLscLfqvRYPjkVbK7UuIJu7YYb4hwqcUWhik+g95ILQGqRQjeLkL0sbeOz+AgM2HLMn5W/GTzzyYQMpTJa2cp53G/4w/JciOHdEZM+fs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739946530; c=relaxed/simple;
-	bh=wRd9MxwjAKvHdz5YNG/3ydSOIM2uMQBUDKOW5lR1f4E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=j225kEItBA1Yd9sacSrv22uIMLw97aArdv+vjKr5ivfDTu4iRz5+BYPZKljm1DpFniXIBRMjdPEVVzXYWYrL6FAtXrfasKwMC8a9m9EFLHsHQjOcnM89ReTWmh542YJM5SE6jr0sHUPjcGN0gek4C6CdzOwiEIHJC9s8ggrBf7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=wIw3KPRA; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51J6SZ4Z212251
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 19 Feb 2025 00:28:35 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1739946515;
-	bh=c5uY6jQqkeSl7uiVV27dk2e2ndRObWC4Qz6fFQdPqYA=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=wIw3KPRASNCXDogScJjdjJicLQXwLY1p9c6FSca/g2JoLV6dcfOTPC4ly5vOI9rSy
-	 1gp3ekA0gcWHpGXxWYjisSmGLIQoSCYNCjAkMQf61qlT/czEovbNoQLyPGax3rxV2r
-	 l3YI7HzoQ5HmrfHunL4iT79IoByDBv/wQlLhLnQg=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51J6SZdH003119
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 19 Feb 2025 00:28:35 -0600
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 19
- Feb 2025 00:28:35 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 19 Feb 2025 00:28:35 -0600
-Received: from [172.24.20.199] (lt9560gk3.dhcp.ti.com [172.24.20.199])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51J6SUMb081700;
-	Wed, 19 Feb 2025 00:28:31 -0600
-Message-ID: <09b55ba7-d7a2-46dd-a64c-56f2c02c8552@ti.com>
-Date: Wed, 19 Feb 2025 11:58:29 +0530
+	s=arc-20240116; t=1739946596; c=relaxed/simple;
+	bh=ntuzchG/Hr2F2xWpq8JLrj2rfkLYJzfr6yeptdeGGaY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VCjqZrtYhyUYqdAeKum9UC2CCWruRCVMHoQTzjiw7pHvqKdT0dRbM9zhRTgsLJ1n7lVzo+5CO8EiAKtilVWSjoJhowFHs4TXLfPRK2qDPcScHFtlmv13+dqorF9QYZ0sZhMLF3V2WlaxPll3/YK/1R83EqGcaVvByxHj95jJbH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=biPcFKdN; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5e07897bf66so2211815a12.1;
+        Tue, 18 Feb 2025 22:29:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739946593; x=1740551393; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZsYOUZ7VYupgVMZLbTSsAmR2ItYD4Xskvl4pNm91OZw=;
+        b=biPcFKdNhl6xzbJD7XDr1EWUOdzM3H0118HgGo3UU3pgmQKAzXGPKpjVKzAJYrzwvl
+         GCvwsrZoDDpm4eVyE6ddPmHHiNTk0Cgy9SV2EavpR0I8NB1f3QsIH3CqDka22I2OGCiz
+         ZON9f9kR9aTMAsNmjeklsr3W1ChxkKeTc1BpO1IXZ3/Lc9RfRePMUREOfKf/yRkFZo3Q
+         f668wzMeTHhXZVFpQwqrpZH9KB8r0FCgbhsoNRZM6ex2QfHKb7PfJ/hfgNw0LtBgK0SQ
+         muHwuf+niXOB12PdZpiErVC2kfAAVRx323p7ehubl6uHAVK5j7eTq8GMn1ZQRviSLfzG
+         g5AQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739946593; x=1740551393;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZsYOUZ7VYupgVMZLbTSsAmR2ItYD4Xskvl4pNm91OZw=;
+        b=is3GGGDvF0/ILTt0/9pnthdcVXheevc6U9ZQGpPlNyMozG/5YP+sOi+OdNQTtJNzw2
+         DxWkv6rgQI4GeEwvrUhrQd4W1lIorZqdeAC5k/B6FupyGi1zayWoMGGzS/0FNGvn1Hyq
+         NTCepyiLW6wBOltEsjjDgFB/WP8M+45qbVzs3sHcrAWzazxrh+YU9Vd4t6ajinXolG8u
+         /neDwh3CFJjXxf2wlBo69osxta28UzdBojCNLOLt6A8IiKsCpi/MLNYxMiGOy6mD3vvD
+         yuB5/glJTPwupCxEaij0SHv3lZLb7+WZI2r+kv9ZvPPn7u1dsSnMbmmo6SsmvvQVLTSg
+         y11A==
+X-Forwarded-Encrypted: i=1; AJvYcCVg/mOfGPs+7JwjYHEJsPalCuWCEQKe8QdDkZ71DAwwMUqnr4krTtAzDaNa/Z0Zo4NMK6noR6txAM90ik0=@vger.kernel.org, AJvYcCWFtZjHYBMaya9vaY9UoxPnM0+N5QpfAmDEr5m2tw5Z78ZxsrMehIWge7o4YscZ+tvceRToViUi@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhUaJVbASwjwYRcuB8Mg+qvdxa58gOpZT8CRi17o9ZI+O9G55D
+	gZk/RngW9FxXfF9sicUvGngTFMsKtH2+TEuVp6wIbys3wIdbmPHW
+X-Gm-Gg: ASbGncv/ZMCRZoykf2SrlC2YVzbx0OMsWDSYbCBCdGSUAsOmtoMEuX1pRMfe3imiY9t
+	UVqnP+KKRlusFCvpAmh+5l7IAwBVH/Ish4naqyrti1uQSJ5Zn7j5wtqD3v0VZm2px6MYMl7k+rS
+	6zJq477N5pdcqdcoNkMZOAS8ZQu1PXm/HeaqaUWef4GW1w3sueGr/jh2JDSswmRmOBOzquvwDgB
+	Ec+lJwcLBKdUy83au3AM/TS9G/r6Lrt8sRm9CIveAhmTPjq3+LaK/bviChKy3HCkpT4nEhlqNw9
+	8sNO0cUlsdSPHusJbw==
+X-Google-Smtp-Source: AGHT+IGOt3QdVNqmR43n5+SSYVvm+kyR/aEwq+963NHUY2Gh64BTHOatJCKH5JYo/7Ox1YQGL0wM1Q==
+X-Received: by 2002:a05:6402:a00e:b0:5d0:e563:4475 with SMTP id 4fb4d7f45d1cf-5e089d1d1dfmr1877391a12.29.1739946592541;
+        Tue, 18 Feb 2025 22:29:52 -0800 (PST)
+Received: from eichest-laptop ([178.197.206.181])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dece1c418bsm10169699a12.24.2025.02.18.22.29.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2025 22:29:52 -0800 (PST)
+Date: Wed, 19 Feb 2025 07:29:49 +0100
+From: Stefan Eichenberger <eichest@gmail.com>
+To: Dimitri Fedrau <dima.fedrau@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
+	Gregor Herburger <gregor.herburger@ew.tq-group.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] net: phy: marvell-88q2xxx: Prevent reading
+ temperature with asserted reset
+Message-ID: <Z7V6XZ7VRTkYNi2G@eichest-laptop>
+References: <20250218-marvell-88q2xxx-hwmon-enable-at-probe-v1-0-999a304c8a11@gmail.com>
+ <20250218-marvell-88q2xxx-hwmon-enable-at-probe-v1-2-999a304c8a11@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [EXTERNAL] Re: [PATCH net 1/2] net: ti: icss-iep: Fix pwidth
- configuration for perout signal
-To: Simon Horman <horms@kernel.org>
-CC: Paolo Abeni <pabeni@redhat.com>, <javier.carrasco.cruz@gmail.com>,
-        <diogo.ivo@siemens.com>, <kuba@kernel.org>, <edumazet@google.com>,
-        <davem@davemloft.net>, <andrew+netdev@lunn.ch>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>,
-        Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>
-References: <20250211103527.923849-1-m-malladi@ti.com>
- <20250211103527.923849-2-m-malladi@ti.com>
- <3a979b56-e9d6-41c9-910b-63b5371b9631@redhat.com>
- <66f30c0f-dec8-4ad5-9578-a9dcc422355a@ti.com>
- <20250216161158.GH1615191@kernel.org>
-Content-Language: en-US
-From: "Malladi, Meghana" <m-malladi@ti.com>
-In-Reply-To: <20250216161158.GH1615191@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250218-marvell-88q2xxx-hwmon-enable-at-probe-v1-2-999a304c8a11@gmail.com>
 
-Hi Simon
+Hi Dimitri,
 
-On 2/16/2025 9:41 PM, Simon Horman wrote:
-> On Fri, Feb 14, 2025 at 11:35:07AM +0530, Malladi, Meghana wrote:
->>
->>
->> On 2/13/2025 4:53 PM, Paolo Abeni wrote:
->>> On 2/11/25 11: 35 AM, Meghana Malladi wrote: > @@ -419,8 +426,9 @@
->>> static int icss_iep_perout_enable_hw(struct icss_iep *iep, >
->>> regmap_write(iep->map, ICSS_IEP_CMP1_REG0, lower_32_bits(cmp)); > if
->>> (iep->plat_data->flags &
->>> ZjQcmQRYFpfptBannerStart
->>> This message was sent from outside of Texas Instruments.
->>> Do not click links or open attachments unless you recognize the source
->>> of this email and know the content is safe.
->>> Report Suspicious
->>> <https://us-phishalarm-ewt.proofpoint.com/EWT/v1/G3vK! updqdzavl0dbisXOnfkDHxHqGlQUHEro3tgnljLa7x4DRPBIRKu8Nqm3bW1LeMtXFyqz6yM7_tLlrvUmslKj9m_IL0hUlNU$>
->>> ZjQcmQRYFpfptBannerEnd
->>>
->>> On 2/11/25 11:35 AM, Meghana Malladi wrote:
->>>> @@ -419,8 +426,9 @@ static int icss_iep_perout_enable_hw(struct icss_iep *iep,
->>>>   			regmap_write(iep->map, ICSS_IEP_CMP1_REG0, lower_32_bits(cmp));
->>>>   			if (iep->plat_data->flags & ICSS_IEP_64BIT_COUNTER_SUPPORT)
->>>>   				regmap_write(iep->map, ICSS_IEP_CMP1_REG1, upper_32_bits(cmp));
->>>> -			/* Configure SYNC, 1ms pulse width */
->>>> -			regmap_write(iep->map, ICSS_IEP_SYNC_PWIDTH_REG, 1000000);
->>>> +			/* Configure SYNC, based on req on width */
->>>> +			regmap_write(iep->map, ICSS_IEP_SYNC_PWIDTH_REG,
->>>> +				     (u32)(ns_width / iep->def_inc));
->>>
->>> This causes build errors on 32bits:
->>>
->>> ERROR: modpost: "__udivdi3" [drivers/net/ethernet/ti/icssg/icss_iep.ko]
->>> undefined!
->>> make[3]: *** [../scripts/Makefile.modpost:147: Module.symvers] Error 1
->>> make[2]: *** [/home/nipa/net/wt-0/Makefile:1944: modpost] Error 2
->>> make[1]: *** [/home/nipa/net/wt-0/Makefile:251: __sub-make] Error 2
->>> make: *** [Makefile:251: __sub-make] Error 2
->>> ERROR: modpost: "__udivdi3" [drivers/net/ethernet/ti/icssg/icss_iep.ko]
->>>
->>> You should use div_u64()
->>>
->>
->> I see, thanks.
->> Can you tell me how can I reproduce this on my end for 32 bits.
->> Will fix this in v2.
+On Tue, Feb 18, 2025 at 07:33:10PM +0100, Dimitri Fedrau wrote:
+> If the PHYs reset is asserted it returns 0xffff for any read operation.
+> Prevent reading the temperature in this case and return with an I/O error.
+> Write operations are ignored by the device.
 > 
-> Hi Meghana,
+> Fixes: a197004cf3c2 ("net: phy: marvell-88q2xxx: Fix temperature measurement with reset-gpios")
+> Signed-off-by: Dimitri Fedrau <dima.fedrau@gmail.com>
+> ---
+>  drivers/net/phy/marvell-88q2xxx.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
-> FWIIW, I was able to reproduce this problem running the following
-> on an x86_64 system:
+> diff --git a/drivers/net/phy/marvell-88q2xxx.c b/drivers/net/phy/marvell-88q2xxx.c
+> index 30d71bfc365597d77c34c48f05390db9d63c4af4..c1ae27057ee34feacb31c2e3c40b2b1769596408 100644
+> --- a/drivers/net/phy/marvell-88q2xxx.c
+> +++ b/drivers/net/phy/marvell-88q2xxx.c
+> @@ -647,6 +647,12 @@ static int mv88q2xxx_hwmon_read(struct device *dev,
+>  	struct phy_device *phydev = dev_get_drvdata(dev);
+>  	int ret;
+>  
+> +	/* If the PHYs reset is asserted it returns 0xffff for any read
+> +	 * operation. Return with an I/O error in this case.
+> +	 */
+> +	if (phydev->mdio.reset_state == 1)
+> +		return -EIO;
+> +
+>  	switch (attr) {
+>  	case hwmon_temp_input:
+>  		ret = phy_read_mmd(phydev, MDIO_MMD_PCS,
 > 
-> ARCH=i386 make tinyconfig
-> 
-> echo CONFIG_COMPILE_TEST=y >> .config
-> echo CONFIG_PCI=y >> .config
-> echo CONFIG_SOC_TI=y >> .config
-> echo CONFIG_TI_PRUSS=y >> .config
-> echo CONFIG_NET=y >> .config
-> echo CONFIG_NETDEVICES=y >> .config
-> 
-> yes "" | ARCH=i386 make oldconfig
-> 
-> ARCH=i386 make -j$(nproc)
 
-Thanks for sharing this, I was able to reproduce and fix this locally.
+It makes sense to me. However, aren't most phys that allow reading
+sensors over MDIO affected by this issue? I couldn't find anything
+similar, are they ignoring that use-case?
 
+Regards,
+Stefan
 
