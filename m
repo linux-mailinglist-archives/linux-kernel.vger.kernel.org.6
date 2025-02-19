@@ -1,99 +1,180 @@
-Return-Path: <linux-kernel+bounces-521802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 576CEA3C271
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:47:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 287B1A3C257
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:39:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA7CA7A6986
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:45:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF6FD1887075
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:39:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86641F3BB2;
-	Wed, 19 Feb 2025 14:46:25 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D356B1F3BAE
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 14:46:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C987A1EEA31;
+	Wed, 19 Feb 2025 14:39:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NVeoQbZx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26D511F2B88;
+	Wed, 19 Feb 2025 14:39:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739976385; cv=none; b=iSt3P8BCxPFRIST1Db0mPy9mkGhsHHcjHZTqpItt69dGTz5s7F2lAHRM15qwbuk6vlObXmCcngZzptt5CReFkheFd4fCVGL+1f6YMbrSxPqUyc84a9faiXyE/ryZUFfJ2jfcP1r6PY8Ne4EXuAsk1WN0U3l7sfx9QTwzxbGuJC0=
+	t=1739975964; cv=none; b=hgYid5Qwd7rrJnC+U0amfp+GDQ/WF3ep3Q0SKYELHDknjlCPqCjWyRK8yQ5MnSVkhigigX+nK1is4iNqO/u6JnFPDMmXhP6W+2ZJs/msaj4wIRYuib1cxJttT+8A7lUamLkun0rltCveFTWnM/UeK+pUu/sCnK7udUS0MfDQ/MI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739976385; c=relaxed/simple;
-	bh=00S8SzVTUIlPAEjvwTNT51wKehEtr9/Cue1IlllhnSg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uoTI8SvWZN2d7e4QrIf5uyhqRpqFXatzKLVHA+3s1xRlWeWfWG7ZlibWoudUhEhPOycqB3hZRW9lRXP6CTJOaaOJXeAwIdL7I3JytPidifDZKVT4z96ELo5q66nS8vq+teYztMqMzYkSFLXWSu703V5Blhwy0yvZgcrpZ5lLumI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9499C202C;
-	Wed, 19 Feb 2025 06:46:41 -0800 (PST)
-Received: from mazurka.cambridge.arm.com (mazurka.cambridge.arm.com [10.2.80.18])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 40E293F59E;
-	Wed, 19 Feb 2025 06:46:20 -0800 (PST)
-From: =?UTF-8?q?Miko=C5=82aj=20Lenczewski?= <miko.lenczewski@arm.com>
-To: ryan.roberts@arm.com,
-	yang@os.amperecomputing.com,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	joey.gouly@arm.com,
-	broonie@kernel.org,
-	mark.rutland@arm.com,
-	james.morse@arm.com,
-	yangyicong@hisilicon.com,
-	robin.murphy@arm.com,
-	anshuman.khandual@arm.com,
-	maz@kernel.org,
-	liaochang1@huawei.com,
-	akpm@linux-foundation.org,
-	david@redhat.com,
-	baohua@kernel.org,
-	ioworker0@gmail.com,
-	oliver.upton@linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Miko=C5=82aj=20Lenczewski?= <miko.lenczewski@arm.com>
-Subject: [PATCH v1 3/3] arm64/mm: Elide tlbi in contpte_convert() under BBML2
-Date: Wed, 19 Feb 2025 14:38:40 +0000
-Message-ID: <20250219143837.44277-7-miko.lenczewski@arm.com>
-X-Mailer: git-send-email 2.45.3
-In-Reply-To: <20250219143837.44277-3-miko.lenczewski@arm.com>
-References: <20250219143837.44277-3-miko.lenczewski@arm.com>
+	s=arc-20240116; t=1739975964; c=relaxed/simple;
+	bh=zg41uxLeF1XqKwA/EMGTDy9ivzajg7Z1s3Ntido7yDE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cA1pdF6o0xmln5yyoDNYhBr+XCuRDP/iicYnEWEhIdJDvxJBREDRO8vIATV+XgbxLsWiiaUqEYuiwtg3pEg+/yJ7bdUEvWc32K1jspovpjEUurRDxLnOgdEWVlpQBGLRVXt5DfBkWSZ8oOpqz1jvA4E7PyAEaQLaxjKfuTeI6Dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NVeoQbZx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E1ACC4CED1;
+	Wed, 19 Feb 2025 14:39:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739975963;
+	bh=zg41uxLeF1XqKwA/EMGTDy9ivzajg7Z1s3Ntido7yDE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NVeoQbZxARTuIRRNLLoesbA03JgG5KpgfNhmlEu3lR68IBae4oYRHhWI94pSSWOy/
+	 AbhMSX7vQwNXOZ7ZYQ8rl/B8iZn9sp3FymfII5MdeRiv7vmb7RlDPNWCNsDFjFVrKD
+	 4EIWgbDJr7eyNPrSHARv0mOznmETq/Hjff9Pfrv5DSaZkQ+KbT+Ai7IqiAsSDe+1M5
+	 U9+sVQuoZe5BD7hPeM2Qj4wGe5hLxGWj9H3z2Xp+51EJmkV87TShPXWaH/iiz7LJ/A
+	 DKxZqFdufJYhkiNxvCIyli6Fm/0HbbR7j5Zzih+2MAZIteczEkZj6h8kVq/IAI1sL6
+	 Ou3HiYRiEI1nQ==
+Date: Wed, 19 Feb 2025 08:39:22 -0600
+From: Rob Herring <robh@kernel.org>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Woojung Huh <woojung.huh@microchip.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH v2 1/3] dt-bindings: sound: convert ICS-43432 binding to
+ YAML
+Message-ID: <20250219143922.GA2527138-robh@kernel.org>
+References: <20250210104748.396399-1-o.rempel@pengutronix.de>
+ <20250210104748.396399-2-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250210104748.396399-2-o.rempel@pengutronix.de>
 
-If we support bbml2 without conflict aborts, we can avoid the final
-flush and have hardware manage the tlb entries for us. Avoiding flushes
-is a win.
+On Mon, Feb 10, 2025 at 11:47:46AM +0100, Oleksij Rempel wrote:
+> Convert the ICS-43432 MEMS microphone device tree binding from text format
+> to YAML.
+> 
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> ---
+> changes v2:
+> - use "enum" instead "oneOf + const"
+> ---
+>  .../devicetree/bindings/sound/ics43432.txt    | 19 -------
+>  .../bindings/sound/invensense,ics43432.yaml   | 51 +++++++++++++++++++
+>  2 files changed, 51 insertions(+), 19 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/sound/ics43432.txt
+>  create mode 100644 Documentation/devicetree/bindings/sound/invensense,ics43432.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/sound/ics43432.txt b/Documentation/devicetree/bindings/sound/ics43432.txt
+> deleted file mode 100644
+> index e6f05f2f6c4e..000000000000
+> --- a/Documentation/devicetree/bindings/sound/ics43432.txt
+> +++ /dev/null
+> @@ -1,19 +0,0 @@
+> -Invensense ICS-43432-compatible MEMS microphone with I2S output.
+> -
+> -There are no software configuration options for this device, indeed, the only
+> -host connection is the I2S interface. Apart from requirements on clock
+> -frequency (460 kHz to 3.379 MHz according to the data sheet) there must be
+> -64 clock cycles in each stereo output frame; 24 of the 32 available bits
+> -contain audio data. A hardware pin determines if the device outputs data
+> -on the left or right channel of the I2S frame.
+> -
+> -Required properties:
+> -  - compatible: should be one of the following.
+> -     "invensense,ics43432": For the Invensense ICS43432
+> -     "cui,cmm-4030d-261": For the CUI CMM-4030D-261-I2S-TR
+> -
+> -Example:
+> -
+> -	ics43432: ics43432 {
+> -		compatible = "invensense,ics43432";
+> -	};
+> diff --git a/Documentation/devicetree/bindings/sound/invensense,ics43432.yaml b/Documentation/devicetree/bindings/sound/invensense,ics43432.yaml
+> new file mode 100644
+> index 000000000000..79ed8c8e8790
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/invensense,ics43432.yaml
+> @@ -0,0 +1,51 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/sound/invensense,ics43432.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Invensense ICS-43432-compatible MEMS Microphone with I2S Output
+> +
+> +maintainers:
+> +  - N/A
 
-Signed-off-by: Mikołaj Lenczewski <miko.lenczewski@arm.com>
-Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
----
- arch/arm64/mm/contpte.c | 3 ---
- 1 file changed, 3 deletions(-)
+If no one cares about this device, then we should just remove the 
+binding and driver.
 
-diff --git a/arch/arm64/mm/contpte.c b/arch/arm64/mm/contpte.c
-index e26e8f8cfb9b..26a86248f897 100644
---- a/arch/arm64/mm/contpte.c
-+++ b/arch/arm64/mm/contpte.c
-@@ -72,9 +72,6 @@ static void contpte_convert(struct mm_struct *mm, unsigned long addr,
- 		__flush_tlb_range(&vma, start_addr, addr, PAGE_SIZE, true, 3);
- 
- 	__set_ptes(mm, start_addr, start_ptep, pte, CONT_PTES);
--
--	if (system_supports_bbml2_noconflict())
--		__flush_tlb_range(&vma, start_addr, addr, PAGE_SIZE, true, 3);
- }
- 
- void __contpte_try_fold(struct mm_struct *mm, unsigned long addr,
--- 
-2.45.3
+> +
+> +description: |
 
+Don't need '|' if no formatting to preserve.
+
+> +  The ICS-43432 and compatible MEMS microphones output audio over an I2S
+> +  interface and require no software configuration. The only host connection
+> +  is the I2S bus. The microphone requires an I2S clock frequency between
+> +  460 kHz and 3.379 MHz and 64 clock cycles per stereo frame. Each frame
+> +  contains 32-bit slots per channel, with 24 bits carrying audio data.
+> +  A hardware pin determines whether the microphone outputs audio on the
+> +  left or right channel of the I2S frame.
+> +
+> +allOf:
+> +  - $ref: dai-common.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - invensense,ics43432
+> +      - cui,cmm-4030d-261
+> +
+> +  port:
+> +    $ref: audio-graph-port.yaml#
+> +    unevaluatedProperties: false
+> +
+> +required:
+> +  - compatible
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    ics43432: ics43432 {
+> +        compatible = "invensense,ics43432";
+> +
+> +        port {
+> +          endpoint {
+> +            remote-endpoint = <&i2s1_endpoint>;
+> +            dai-format = "i2s";
+> +          };
+> +        };
+> +
+> +    };
+> --
+> 2.39.5
+> 
 
