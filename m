@@ -1,121 +1,111 @@
-Return-Path: <linux-kernel+bounces-521854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB423A3C330
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:10:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 69EBAA3C333
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:11:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBBC8189B7A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:09:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92268189A511
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:09:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1097B1F3FDC;
-	Wed, 19 Feb 2025 15:09:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95E851F419E;
+	Wed, 19 Feb 2025 15:09:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="PCBXk/A3"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="RmpY+t28"
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1CF1F3D5D
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 15:08:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 623371F4199
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 15:09:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739977739; cv=none; b=szV7HHxEvbyrJ0mtd3epGXTNLHLiA3QX3UgevJBufxBL/R4XN5CqE/6L3pj+UqwZ6fy9PTDRhVJUDK/YdAVAZHeiqgC5ss5ZUdKtRnq4NhyXu8t0xhcDdbFCP9m3WvG7pOh2ez7+P4Iu3rYWaGAPT8b9JUk+JlqXl0GTVmIWpJU=
+	t=1739977747; cv=none; b=McjGPVVtqZy6Eo9wOL5RAINfr5yiccPPlMJ3yTc+7teSIZxtWP15CzYjpVjqMviIOVvwqCb+ihW4AucmEkpZ8Gyf2CqQmsEN/bR4pLsV8+Tq/ii5WxyKHbkjHLWA6nLlBPsSjIIWyNtRKdnrPiAy6qeMOLtX3Efv9PpVCXOZr9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739977739; c=relaxed/simple;
-	bh=4hH0ogfs3FxS01zx8vZqEEqA9ajbUWe7JPdrJDjl/cs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V0rTAjH5qtHI43ol05iDF18X2w3iHovAgXIPcgfeGVapPZIuZBDXfzeQdZfBTy7X2Bu5tWbKwfH790DohDHKQewV9EruUvLphDhE4jbDSPRBmTsYqWKvRW1IlOiZcCz+v/w0b5RNBQ1CqZzylegMgeXrwhxJLIEb9NGyYkz2D50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=PCBXk/A3; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 008C8169;
-	Wed, 19 Feb 2025 16:07:32 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1739977653;
-	bh=4hH0ogfs3FxS01zx8vZqEEqA9ajbUWe7JPdrJDjl/cs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PCBXk/A361zRuHfO14ueJVpPe1SKovsqAJpph7O9XWBCj4scQ/ibc7GwSrNakXkvR
-	 GFt+BfI+1exlxpJM2rSY/78i5jt8skVIJNKf2sASzuQ9uFDT3HDLReLnSEJMQkCYRy
-	 B+Wh05X/wsGSzqzT1mqV2Oah+pQciYQPHoxZ/A3A=
-Date: Wed, 19 Feb 2025 17:08:40 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Vishal Sagar <vishal.sagar@amd.com>,
-	Anatoliy Klymenko <anatoliy.klymenko@amd.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Michal Simek <michal.simek@amd.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v3 06/11] drm/fourcc: Add DRM_FORMAT_XVUY2101010
-Message-ID: <20250219150840.GA31825@pendragon.ideasonboard.com>
-References: <20250212-xilinx-formats-v3-0-90d0fe106995@ideasonboard.com>
- <20250212-xilinx-formats-v3-6-90d0fe106995@ideasonboard.com>
- <bdpw2g65uor77tijlhpabodog7haqvdcemnr3wzqkooerzuib5@hfdn5zsrbkgg>
- <7674314f-d95a-433a-81d2-ca78bc199359@ideasonboard.com>
- <naw67daoyb2lfmq4jovlwanz5niaolptwnug3c3kkrtlfoh6dd@trkctqyzvtb5>
- <23e71045-1ae2-4e02-9780-aa11a338d481@ideasonboard.com>
+	s=arc-20240116; t=1739977747; c=relaxed/simple;
+	bh=KpRZkJVpMER4ABmtHIWnu1sCwcyaQlJVM2PbewJQAHs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=aSYPIxzJlDMFEeJhdXAA0ObMPMTXFy976pM91vOcUIgN7qpaXlqIMiNMGBjZI6NhCKip0NdfQVGAJ9UgsffuyojJsB1YVYAjtW15vEjtxxR8UI5ACQDuZEhmK+4+m0Fj7I+MNMEzxsIDFXz7bR1Z8LMZeUW3iS9fC9Ouo/ciRUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=RmpY+t28; arc=none smtp.client-ip=209.85.166.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-855a5aa9604so52555439f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 07:09:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1739977744; x=1740582544; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iJiPIBuxHziy6xD4QyZZewHTaEeyt9GRiu24U+QynKk=;
+        b=RmpY+t28nCfbxkb7kWUvaAklOet4zESwRSWUFagB5BAbSY2a1VJbKueesXnjX8JxcV
+         w8dkyXpFJJhuGZdVR5ePHaL5LQi4ZKEYv2d1h3uP6aOgUbFN0/gkKemuM7GAn3v8MWLn
+         yq8EV835AOV4Xcl2MgBL6jMtNE+I1e04RrQuPRHFQhOSQ6Vh4V9ULgE3QLgZyKKcmlte
+         kInf8GiBJOABv4YM+APTA3zx6p1HfozPRugnEFBiAxG6LdAe3z01m/MTrOz81CtkyPR7
+         o9SkWrdE22EHffg4L9l6WLg3RPRrTCrGDxtRw63sZD8IHiyOjFrH8OHat7NcNvjDEa46
+         gvew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739977744; x=1740582544;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iJiPIBuxHziy6xD4QyZZewHTaEeyt9GRiu24U+QynKk=;
+        b=Aedtqh+XG7iCIjNb1pUtM7imjU0C62Iez01bSZy/KdpPF2egZGqGMttdPmEcBOnt+k
+         Y0892F/hWaI9bVv56GjmIukF+kl+z7eZRWszlmdQRsX6oLXUXvsxbWgxxb37RRqxhH29
+         OR8S3NXBdWMd78BYQVy3sVecigdaI55Cpiu+m7e18TRy1MSV+e+GucnqpistWmQ2X2uw
+         tW+AhlArJUGDs0EKMRWt+Rp6chSGA27/gP35COP4ZjU1BV/wIVhtWOJBbrxp7IzWpL1e
+         +O9ICcTjZk+3SI83dXy54gxy4BgiSUAZxYagcrwMhmn5spKF4U/zIXwp3bwiVbiNJQeb
+         WD7A==
+X-Forwarded-Encrypted: i=1; AJvYcCW0fGJBeMYcBbVI72I+9dxfTQhq9yMJ8iryU7XX8r7pVML+7VU3GAps21OI931mOhvderMLQ1echMk/GeA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwyokDn4inPd1+Uty9xg2f5naKdRqLoGZCh+eJkBlX6NG5L+FD
+	1R6imohi4XmnnUfV7Zm6snZhflhUEK1vLLLdP4YgCF2owTQn4YJBW5DAM2gsvGU=
+X-Gm-Gg: ASbGncuxLeLfiGt4DldByfqG9cEUWu1ugNiPXmt6TtK0E7DFW2xyQFI6m69wICqifyM
+	V8Vr+7+6t/ytk3szUDivlv6glsaQNT/A1z4ggFJ+AUQ2MP5/kpIkLxl9ZTIwLwNFT5KecS1DBFp
+	tqLl8CK1qEBWI0eTT5FH1Cz/5HSSpwW8FptdvLyFirnDWa8IPeVg+C6eNAiwAhjOSO7Bv+zoKs4
+	dvGP9f00wTnNqnEooDvh7ZCLxxQtuqtUVG81UO4O0rIvLtgThM/9RNXrr2q5TW82/I51Ym+l7kN
+	SfzSXw==
+X-Google-Smtp-Source: AGHT+IHYl6ZT9AhuTNpGUwh6j3kXJF8NvBTk0kQ3u8/3rbup/1cf5eYdnKcGywhE9gpaBSQ5fnD6KA==
+X-Received: by 2002:a05:6602:13d4:b0:855:683d:d451 with SMTP id ca18e2360f4ac-85579fbd60amr1738963439f.0.1739977744316;
+        Wed, 19 Feb 2025 07:09:04 -0800 (PST)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ee9c1a303bsm1491950173.26.2025.02.19.07.09.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2025 07:09:03 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>, 
+ Jakub Kicinski <kuba@kernel.org>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <5ae387c1465f54768b51a5a1ca87be7934c4b2ad.1739976387.git.geert+renesas@glider.be>
+References: <5ae387c1465f54768b51a5a1ca87be7934c4b2ad.1739976387.git.geert+renesas@glider.be>
+Subject: Re: [PATCH] io_uring: Rename KConfig to Kconfig
+Message-Id: <173997774341.1536543.15426787418429919089.b4-ty@kernel.dk>
+Date: Wed, 19 Feb 2025 08:09:03 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <23e71045-1ae2-4e02-9780-aa11a338d481@ideasonboard.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-14bd6
 
-On Wed, Feb 19, 2025 at 04:47:26PM +0200, Tomi Valkeinen wrote:
-> Hi,
-> 
-> On 18/02/2025 05:26, Dmitry Baryshkov wrote:
-> > On Mon, Feb 17, 2025 at 10:27:56PM +0200, Tomi Valkeinen wrote:
-> >> Hi,
-> >>
-> >> On 17/02/2025 22:15, Dmitry Baryshkov wrote:
-> >>> On Wed, Feb 12, 2025 at 04:56:10PM +0200, Tomi Valkeinen wrote:
-> >>>> Add XVUY2101010, a 10 bits per component YCbCr format in a 32 bit
-> >>>> container.
-> >>>
-> >>> Is there a more common name for this format? Otherwise googling for it
-> >>> reveals only your series.
-> >>
-> >> In the cover letter I mention the gstreamer names where available (this
-> >> particular format is not in gstreamer). AMD has these in their zynqmp
-> >> documentation (https://docs.amd.com/r/en-US/ug1085-zynq-ultrascale-trm/Video-Packer-Format).
-> >>
-> >> XVUY2101010 is YUV444_10BPC in AMD docs.
-> >>
-> >> X403 is Y444_10LE32 in gstreamer, and YV24_10BPC in AMD docs.
-> >>
-> >> I'm not sure you'll have much more luck googling with those names, though
-> >> =).
-> > 
-> > I'm asking, because include/uapi/drm/drm_fourcc.h has a pretty explicit
-> > waiver: GL, Vulkan or other open standards. Otherwise normal
-> > requirements apply and it's required to have an open-source usespace
-> > implementation, etc.
-> 
-> I can drop DRM_FORMAT_XVUY2101010 until we get it to gstreamer. I just 
-> had it ready, so I thought it's better to include it than leave out.
-> 
-> Is the current gstreamer support enough for the other formats to fulfill 
-> the userspace requirement?
 
-We've received a green light in the past to add formats to drm_fourcc.h
-that would be used by cameras only. There's no open formal standard there, but
-we have libcamera as a de-facto standard. I would assume GStreamer to be
-enough for a scanout format.
+On Wed, 19 Feb 2025 15:47:58 +0100, Geert Uytterhoeven wrote:
+> Kconfig files are traditionally named "Kconfig".
+> 
+> 
 
+Applied, thanks!
+
+[1/1] io_uring: Rename KConfig to Kconfig
+      commit: 5b760fc6e9c5f984629c217e559005dc3725e9cf
+
+Best regards,
 -- 
-Regards,
+Jens Axboe
 
-Laurent Pinchart
+
+
 
