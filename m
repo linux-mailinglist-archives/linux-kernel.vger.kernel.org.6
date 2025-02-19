@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-520684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFE3EA3AD3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 01:42:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A01DCA3AD40
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 01:43:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BA6317508B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 00:42:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0974A1896FC7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 00:43:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3AEE81724;
-	Wed, 19 Feb 2025 00:42:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0528013FD86;
+	Wed, 19 Feb 2025 00:42:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kg5wj8at"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lYoB9OQG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FE8545C14;
-	Wed, 19 Feb 2025 00:42:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41F0885626;
+	Wed, 19 Feb 2025 00:42:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739925739; cv=none; b=iDdtzwStNawu/NsdEuD/3yNo9yfosC+srtULt4ip6Iknw9LRj1JUEiH+1qcMW4Ix2UGLv5RewcZ+fALsLPlYivra0+T+WvBcq8GhTm2NVDC7+nYDlRkU6f8TQRVVGRsKixXp5T4uDecvxTgZn8V3XtiQRYsN3vFJVQdblHdjPjE=
+	t=1739925740; cv=none; b=ZVTICcQIxfz8RAo3REEDUYg3Mo/MJEh093zj0JyyJosm0y2eJpCX3sqVA8dX6DGaqcg1Uu/pkrlE2p5aungKO9dESSx+m8klCHt6Yk9afBbXFGCD1uuOA3AZ9cMynqXOWLaHu/AW0L4pk/CllGcwJsK67MMw5/ZHKs59cCQMfEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739925739; c=relaxed/simple;
-	bh=zG+3d+jK2sUhaf8drQjlMDVNhtlQCiLoKQFWapDKXGA=;
+	s=arc-20240116; t=1739925740; c=relaxed/simple;
+	bh=Lf1QSn2HFfzd/SJAB6st4xfz9SeWKWjYwHdfEcPhoBk=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=nAwQcagq7l5caXkXSl9TxLAVTPCqW3kka7tKRc1pbYAa/7ZdACq6LE19Zk4bgpeNAD9HPIVoYLpFTwMlTKdltsA7lZDi6Dw5icHMdmWpb55IWlT2/MJpPdlbutJg713+RvOM00k8bg3ZOesvb8+r4KdQYBURhsm5Icx+zlADaBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kg5wj8at; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0F67C4CEE6;
-	Wed, 19 Feb 2025 00:42:18 +0000 (UTC)
+	 Message-Id:Subject; b=f/1KfWajOxvlntPJpFXtPOsJ4QNpf7W+/yBtDtFo2VRZzU3vw+xr6Xc47Jez1TikbuhqlX3XDMNCOo3JKjrUVSSoKQI2WN94GCj0b+5g3P5AGRMxb+VDTmW3UPweMbE92f4G1cm7WUfm2C3s/rMVDezz9v8HxZnuhma4Zi9YTwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lYoB9OQG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBD75C4CEE2;
+	Wed, 19 Feb 2025 00:42:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739925738;
-	bh=zG+3d+jK2sUhaf8drQjlMDVNhtlQCiLoKQFWapDKXGA=;
+	s=k20201202; t=1739925740;
+	bh=Lf1QSn2HFfzd/SJAB6st4xfz9SeWKWjYwHdfEcPhoBk=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=kg5wj8at0QfyxVSxM5v0s37Toag4HrP7YhdZGI4jyeTWCytxNB+gLfkwGHou8Iu/7
-	 /1nkDrJ3uMvZXZDHubtlZS6VxK1SGBALtfzmA3cJIMx7xsBMmbQHrVX+kwI4wS6Nkz
-	 jwm2qsTyPdnhFQyjFJCUCHWKk7xcsjk3itb9fz0cTkPGKKj54faHYW8RjTZRZkMLUz
-	 xZweDRxsQ74XODQUx1EQulOdLuGy/hUPlXlomXX4Q0QrhQSPbEGSmhfX8dMlCabEWv
-	 zOYJF0WyprOtCZ6DScEOvg0owrlwsm3DinhDAtKZaLDxaQjYF1ZQzeDsFwOLRJpJJB
-	 AqF0cWswNDBRg==
-Date: Tue, 18 Feb 2025 18:42:17 -0600
+	b=lYoB9OQGTtF88lve82g8lz6dwRRjXBoOP31guouiMVWULq1dJ27jIGvPoipCNRNHY
+	 MB8rr6VETVLrK38XF56DgNMXbKy0E7H4uvBqWO9Xz9YjfKG6Ek9sHsRnm0NNPjmsMU
+	 3SpwY/OrEDZtSXw0G/pvPQQh/DvIR8nOq8GgYTBuIR4UXW/NZ+UEpoHycWMdtiQDP7
+	 skWUJD26QLqBW4qFBUdBoBpoCIfFKN0kRYd4/ZY4LLkedRgrLGqQM0psQ0PFSLw/ZM
+	 jdIGwAWfzl7eMqCeZxATVtGd1FSKXJa6bWv//VVJt+c0vuI5frK2B7XNhkqNlgusQP
+	 JYTU728Ue5gmg==
+Date: Tue, 18 Feb 2025 18:42:19 -0600
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,76 +50,98 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
- devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-In-Reply-To: <20250215130500.170738-1-ivo.ivanov.ivanov1@gmail.com>
-References: <20250215130500.170738-1-ivo.ivanov.ivanov1@gmail.com>
-Message-Id: <173992515772.2065079.17786828935224873560.robh@kernel.org>
-Subject: Re: [PATCH v1 0/3] arm64: dts: exynos: add initial support for
- Samsung Galaxy S22+
+Cc: Liam Girdwood <lgirdwood@gmail.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Conor Dooley <conor+dt@kernel.org>, Scott Branden <sbranden@broadcom.com>, 
+ linux-arm-kernel@lists.infradead.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ ~postmarketos/upstreaming@lists.sr.ht, Ray Jui <rjui@broadcom.com>, 
+ linux-kernel@vger.kernel.org, Stanislav Jakubek <stano.jakubek@gmail.com>, 
+ Lee Jones <lee@kernel.org>, Mark Brown <broonie@kernel.org>
+To: Artur Weber <aweber.kernel@gmail.com>
+In-Reply-To: <20250215-bcm59054-v4-0-dbfb2d76a855@gmail.com>
+References: <20250215-bcm59054-v4-0-dbfb2d76a855@gmail.com>
+Message-Id: <173992516047.2065189.12949590674422169603.robh@kernel.org>
+Subject: Re: [PATCH v4 0/9] mfd: bcm590xx: Add support for BCM59054
 
 
-On Sat, 15 Feb 2025 15:04:57 +0200, Ivaylo Ivanov wrote:
-> Hey folks,
+On Sat, 15 Feb 2025 10:39:35 +0100, Artur Weber wrote:
+> Add support for the BCM59054 MFD to the bcm590xx driver and fix a
+> couple of small bugs in it that also affected the already supported
+> BCM59056.
 > 
-> This patchset adds device tree files for Exynos 2200 and Samsung
-> Galaxy S22+.
+> While we're at it - convert the devicetree bindings to YAML format
+> and drop the bcm59056 DTS in favor of describing the PMU in users'
+> DTS files, as is done for most other MFDs.
 > 
-> Exynos 2200 SoC is an ARMv8 mobile SoC found in the Samsung Galaxy S22
-> (r0s), S22+ (g0s), S22 Ultra (b0s) Add minimal support for that SoC,
-> including psci, pmu, chipid, architecture timer and mct, pinctrl,
-> clocks and usb.
+> The BCM59054 is fairly similar to the BCM59056, with the primary
+> difference being the different number and layout of regulators.
+> It is primarily used in devices using the BCM21664 and BCM23550
+> chipsets.
 > 
-> The devices using this SoC suffer from an issue caused by the stock
-> Samsung bootloader, as it doesn't configure CNTFRQ_EL0. Hence it's
-> needed to hardcode the adequate frequency in the timer node,
-> otherwise the kernel panics.
+> This patchset has been tested on a Samsung Galaxy Grand Neo
+> (baffinlite rev02; DTS not in mainline yet) with a BCM59054 PMIC.
+> Testing on a BCM59056 would be appreciated.
 > 
-> Another issue is that cpu2 and cpu3 fail to come up consistently, which
-> leads to a hang later in the boot process. As A510 cores are clustered
-> by two, it makes sense for both of these cpus to fail if there is a
-> power issue. Disable them until the problem is figured out.
+> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+> ---
+> Changes in v4:
+> - Fix yamllint warnings in DT bindings
+> - Address miscelaneous review comments related to DT bindings
+>   - Note that I did not end up moving the regulator refs from
+>     allOf compatible matches; I explained my reasoning in [1].
+>     [1] https://lore.kernel.org/lkml/ab853605-859d-44c6-8cbd-44391cd677e6@gmail.com/
+> - Add PMU ID/revision parsing to MFD driver
+> - Fix instances of regulator data not matching vendor kernel for
+>   BCM59054
+> - Use different voltage table for BCM59054 VSR reg based on PMU
+>   revision
+> - Link to v3: https://lore.kernel.org/r/20250131-bcm59054-v3-0-bbac52a84787@gmail.com
 > 
-> Samsung Galaxy S22+ (SM-S906B), codenamed g0s, is a mobile phone from
-> 2022. It features 8GB RAM, 128/256GB UFS 3.1, Exynos 2200 SoC and a
-> 1080x2340 Dynamic AMOLED display.
+> Changes in v3:
+> - Split out regulator DT bindings into separate YAML
+> - Use tables of regulator info instead of get_XXX_register, reg_is_XXX
+>   functions
+> - Drop "regulator: bcm590xx: Add proper handling for PMMODE registers";
+>   it adds unnecessary noise to the series and will be submitted separately
+> - Link to v2: https://lore.kernel.org/r/20231030-bcm59054-v2-0-5fa4011aa5ba@gmail.com
 > 
-> Further platform support will be added over time.
+> Changes in v2:
+> - Fixed BCM59054 ID being passed to BCM59056 function in the
+>   regulator driver
+> - Dropped linux-rpi-kernel from the CC list
+> - Link to v1: https://lore.kernel.org/r/20231030-bcm59054-v1-0-3517f980c1e3@gmail.com
 > 
-> I expect [1], [2], [3], [4], [5], [6] to be merged before this patchset
-> because it relies on the aforementioned series for drivers and device
-> tree bindings.
+> ---
+> Artur Weber (9):
+>       dt-bindings: mfd: brcm,bcm59056: Convert to YAML
+>       dt-bindings: mfd: brcm,bcm59056: Add compatible for BCM59054
+>       ARM: dts: Drop DTS for BCM59056 PMU
+>       mfd: bcm590xx: Add support for multiple device types + BCM59054 compatible
+>       mfd: bcm590xx: Add PMU ID/revision parsing function
+>       regulator: bcm590xx: Use dev_err_probe for regulator register error
+>       regulator: bcm590xx: Store regulator descriptions in table
+>       regulator: bcm590xx: Rename BCM59056-specific data as such
+>       regulator: bcm590xx: Add support for BCM59054 regulators
 > 
-> [1] https://lore.kernel.org/all/20250215112716.159110-1-ivo.ivanov.ivanov1@gmail.com/
-> [2] https://lore.kernel.org/all/20250215113248.159386-1-ivo.ivanov.ivanov1@gmail.com/
-> [3] https://lore.kernel.org/all/20250215115433.161091-1-ivo.ivanov.ivanov1@gmail.com/
-> [4] https://lore.kernel.org/all/20250215122409.162810-1-ivo.ivanov.ivanov1@gmail.com/
-> [5] https://lore.kernel.org/all/20250215123453.163434-1-ivo.ivanov.ivanov1@gmail.com/
-> [6] https://lore.kernel.org/all/20250215123922.163630-1-ivo.ivanov.ivanov1@gmail.com/
+>  .../devicetree/bindings/mfd/brcm,bcm59056.txt      |   39 -
+>  .../devicetree/bindings/mfd/brcm,bcm590xx.yaml     |   76 ++
+>  .../bindings/regulator/brcm,bcm59054.yaml          |   56 +
+>  .../bindings/regulator/brcm,bcm59056.yaml          |   51 +
+>  arch/arm/boot/dts/broadcom/bcm28155-ap.dts         |   68 +-
+>  arch/arm/boot/dts/broadcom/bcm59056.dtsi           |   91 --
+>  drivers/mfd/bcm590xx.c                             |   86 +-
+>  drivers/regulator/bcm590xx-regulator.c             | 1294 ++++++++++++++++----
+>  include/linux/mfd/bcm590xx.h                       |   22 +
+>  9 files changed, 1377 insertions(+), 406 deletions(-)
+> ---
+> base-commit: 0c3836482481200ead7b416ca80c68a29cfdaabd
+> change-id: 20240816-bcm59054-a880695e41e8
 > 
 > Best regards,
-> Ivaylo
-> 
-> Ivaylo Ivanov (3):
->   dt-bindings: arm: samsung: document g0s board binding
->   arm64: dts: exynos: add initial support for exynos2200 SoC
->   arm64: dts: exynos: add initial support for Samsung Galaxy S22+
-> 
->  .../bindings/arm/samsung/samsung-boards.yaml  |    6 +
->  arch/arm64/boot/dts/exynos/Makefile           |    1 +
->  arch/arm64/boot/dts/exynos/exynos2200-g0s.dts |  178 ++
->  .../boot/dts/exynos/exynos2200-pinctrl.dtsi   | 1765 +++++++++++++++++
->  arch/arm64/boot/dts/exynos/exynos2200.dtsi    |  560 ++++++
->  5 files changed, 2510 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/exynos/exynos2200-g0s.dts
->  create mode 100644 arch/arm64/boot/dts/exynos/exynos2200-pinctrl.dtsi
->  create mode 100644 arch/arm64/boot/dts/exynos/exynos2200.dtsi
-> 
 > --
-> 2.43.0
+> Artur Weber <aweber.kernel@gmail.com>
 > 
 > 
 > 
@@ -139,34 +161,10 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/exynos/' for 20250215130500.170738-1-ivo.ivanov.ivanov1@gmail.com:
+New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/broadcom/' for 20250215-bcm59054-v4-0-dbfb2d76a855@gmail.com:
 
-In file included from arch/arm64/boot/dts/exynos/exynos2200-g0s.dts:9:
-arch/arm64/boot/dts/exynos/exynos2200.dtsi:8:10: fatal error: dt-bindings/clock/samsung,exynos2200.h: No such file or directory
-    8 | #include <dt-bindings/clock/samsung,exynos2200.h>
-      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-compilation terminated.
-make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/exynos/exynos2200-g0s.dtb] Error 1
-make[2]: *** [scripts/Makefile.build:465: arch/arm64/boot/dts/exynos] Error 2
-make[2]: Target 'arch/arm64/boot/dts/exynos/exynos2200-g0s.dtb' not remade because of errors.
-make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1464: exynos/exynos2200-g0s.dtb] Error 2
-make: *** [Makefile:251: __sub-make] Error 2
-make: Target 'exynos/exynos8895-dreamlte.dtb' not remade because of errors.
-make: Target 'exynos/exynos2200-g0s.dtb' not remade because of errors.
-make: Target 'exynos/exynos850-e850-96.dtb' not remade because of errors.
-make: Target 'exynos/exynos7885-jackpotlte.dtb' not remade because of errors.
-make: Target 'exynos/exynos990-x1slte.dtb' not remade because of errors.
-make: Target 'exynos/exynos5433-tm2.dtb' not remade because of errors.
-make: Target 'exynos/exynos990-r8s.dtb' not remade because of errors.
-make: Target 'exynos/exynos7-espresso.dtb' not remade because of errors.
-make: Target 'exynos/google/gs101-oriole.dtb' not remade because of errors.
-make: Target 'exynos/google/gs101-raven.dtb' not remade because of errors.
-make: Target 'exynos/exynosautov920-sadk.dtb' not remade because of errors.
-make: Target 'exynos/exynosautov9-sadk.dtb' not remade because of errors.
-make: Target 'exynos/exynos990-c1s.dtb' not remade because of errors.
-make: Target 'exynos/exynos9810-starlte.dtb' not remade because of errors.
-make: Target 'exynos/exynos990-x1s.dtb' not remade because of errors.
-make: Target 'exynos/exynos5433-tm2e.dtb' not remade because of errors.
+arch/arm/boot/dts/broadcom/bcm53340-ubnt-unifi-switch8.dtb: mpcore@19000000: $nodename:0: 'mpcore@19000000' does not match '^([a-z][a-z0-9\-]+-bus|bus|localbus|soc|axi|ahb|apb)(@.+)?$'
+	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
 
 
 
