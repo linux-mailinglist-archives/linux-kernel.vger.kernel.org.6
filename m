@@ -1,109 +1,103 @@
-Return-Path: <linux-kernel+bounces-522351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63B43A3C900
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 20:41:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3C9FA3C859
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 20:15:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 293453A916C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:40:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4E81188B82A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:16:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E0CE22B8D5;
-	Wed, 19 Feb 2025 19:40:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF15B22A4EF;
+	Wed, 19 Feb 2025 19:15:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=apitzsch.eu header.i=@apitzsch.eu header.b="znhrNoNg"
-Received: from www637.your-server.de (www637.your-server.de [168.119.26.117])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="aS1KptYa"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 904D1184F;
-	Wed, 19 Feb 2025 19:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.26.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9265C1FCCE4
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 19:15:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739994048; cv=none; b=FgNLmo069tdvD8646EMzIxE3ma1/qUpSQMfDzVbkUEo64ys5hAg04zML3WY15P4h1c8Xp7KQf852oxlgobz740Wi5DY5DwTFCBbSEYPEFRw2oPUQqB+y/Vw+4DDpr6FKB+8rNrm7OPVfXGxBgzxntCt5sTfiwkRSieHs4Qh4mUo=
+	t=1739992549; cv=none; b=PkJk1HwiyLVN7Ir2rVgkN1FBfGeoaBEal27l00Pf8nzEq0w1f2WNrTSYogq0nGY2txnilG6Dcyitcj3NppxTgAPmbssqC7TwN/lbYDryask5TKQOzx/qDVBb/Ih2WV10SagnakKsXBDFPtCLgCvvK05hS23naE5uGsJ2L2jLa9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739994048; c=relaxed/simple;
-	bh=IZvZQ+Z2ANgypM5Ai42o0D3/NeLsJT0qXFUyLp8/kH4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Pgv8KC8VucHzqIr5RU3VmxC9LVMX8DTLpeVwENd7DUslcqSMCntA779RV/N4mZD7JrNLB05ma+Z9sXuqIsg442YOt6YN5+Jw5hW/wDjmADdOifIjh32r2LKpMlkF+d5+IZOO47KmhdmOKgAFoaNiXNnsMUokbRpsKJ0bcezBdgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apitzsch.eu; spf=pass smtp.mailfrom=apitzsch.eu; dkim=pass (2048-bit key) header.d=apitzsch.eu header.i=@apitzsch.eu header.b=znhrNoNg; arc=none smtp.client-ip=168.119.26.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apitzsch.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=apitzsch.eu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=apitzsch.eu
-	; s=default2410; h=MIME-Version:Content-Transfer-Encoding:Content-Type:
-	References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=uE1hvjxXsUUC1et/VMLf8EeRBWH8/5FEEmjbMg7Vyu0=; b=znhrNoNg1jDWT+rZCye1OrEbRx
-	0pK4ORsezD6ZZI0kEsrUVLnU6Nx0x8S2UJ1UbY6pnDID5AlvQe1b8CG6EwezIt/o3eEXl0jl/IfYL
-	cy/U8xZrKX6LqsFnPRE2/jtOZluTSUT8AAVceZq74UIt14nOJlvlCNZ7unA+pQwZAzB6ojwewx5CY
-	PqnALiqnk25KM0q0xudc6bxFSUwLVuBnAdFM60aFGc4TCaPnNMb73oUD/TFkK5PaPNs6eHmGN3Wl0
-	jF8oWQ78Dgl877QN45H4KhVuaPCxNxsHXaLuXXBhn6uuktsd4Ya7Wh5+CKTBOct8rRmtbBvAsrBtv
-	BjblUO8Q==;
-Received: from sslproxy07.your-server.de ([78.47.199.104])
-	by www637.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <git@apitzsch.eu>)
-	id 1tkpVW-000Geo-2e;
-	Wed, 19 Feb 2025 20:13:18 +0100
-Received: from [92.206.120.88] (helo=framework.lan)
-	by sslproxy07.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <git@apitzsch.eu>)
-	id 1tkpVV-000N4n-0Z;
-	Wed, 19 Feb 2025 20:13:17 +0100
-Message-ID: <426de13199c560301ed0a148d9ecd0155dfcff0f.camel@apitzsch.eu>
-Subject: Re: [PATCH next] media: i2c: imx214: Fix uninitialized variable in
- imx214_set_ctrl()
-From: =?ISO-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Ricardo Ribalda <ribalda@kernel.org>, Sakari Ailus	
- <sakari.ailus@linux.intel.com>, Mauro Carvalho Chehab <mchehab@kernel.org>,
-  Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org, 	kernel-janitors@vger.kernel.org
-Date: Wed, 19 Feb 2025 20:13:15 +0100
-In-Reply-To: <1e4da85e-b975-4638-bd14-09ba0675d9d6@stanley.mountain>
-References: <1e4da85e-b975-4638-bd14-09ba0675d9d6@stanley.mountain>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 
+	s=arc-20240116; t=1739992549; c=relaxed/simple;
+	bh=6GjeiMlcBQkMiICgrbnKaNfeb3KYt/3xgEOZ/XboP3E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NBBbilM63Xq5byHUFS9mkKsMCyv6g9/JJPKGM2DrkDxDu8BpmKAGAhGRtCrIHAZYUA4Qkzj41kLdpEPKoCcBcMdgmJc2xo710J0eZXDpX3QZfSmW2Q76maEm+QfMxYmHfQP6nm073nc9SuESG1XRAH/RuX2fSNrRsuHf2CEmZ9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=aS1KptYa; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 19FCB40E015D;
+	Wed, 19 Feb 2025 19:15:45 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id FByxDcaAGTRa; Wed, 19 Feb 2025 19:15:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1739992541; bh=/Sm9f8CosVKerH6dIT1y6KUA7xfRLyxObBsshfAZM1M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aS1KptYa6T4FSZsPmIBAg2jfpj+xpns2ARKi+2GWSwMiv2sqJxBhCQb853+G8SMOm
+	 BPEUY1y7eeHmFDhB63IQhEtxMfBluBqdPd9bgL+wOgqs3NJXrF7CvIFYi+5QsO73fu
+	 +pR5bI2PsdkRS7w9vF1P+s0/ow0P3SrVlP8L6h8US2TY2pAZC5ZlTq7EU75/uRhV2D
+	 mDzYJwdV+dGq4NYOlMImLojcf2jeAQ+OGvxdgBo3yCVlsKHIgs2apkJ7QSMKL71NWC
+	 gCgTymr9HTn+vXmXB5+odAP0WGhWT1l9vVJDSKVlgWfdgvXYm+xfvGgipteZO9iPZL
+	 BCGf40y0Iw6Lbt0Rs2H5qWYM9ut2fHDldThihY3JoZ8a3yvcMV69iMrqhdXL7q/yqt
+	 Eoi4dhp2eIyflN6cg5hNeCaWPK4o9t8gLytG9PBHoJD+xGuxcfcPkC1JsymRooHfvR
+	 J8XQ5eE4M6Yx9SozAmC/oRXru4LuFDGcEH3oEQgSBZslscPoclAbwfjlsMA20tBzWN
+	 Dj9FgqQlsK4VntZq3GBGjcd+RQJFHMRDq5kB+NimaR51vJbc4bjicGL7Mz+bweThTL
+	 yjdFtMa6N9FQGh0Bc4v0/n0nNWKeLUrxPFYoyUTnzg7yEJOUXvTOhe+EezN2wv/n9U
+	 eRZ1OtkFpPNdV/34Cpdjcf1Y=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0385240E0191;
+	Wed, 19 Feb 2025 19:15:23 +0000 (UTC)
+Date: Wed, 19 Feb 2025 20:15:19 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Rik van Riel <riel@surriel.com>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, peterz@infradead.org,
+	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
+	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
+	linux-mm@kvack.org, akpm@linux-foundation.org, jackmanb@google.com,
+	jannh@google.com, mhklinux@outlook.com, andrew.cooper3@citrix.com,
+	Manali Shukla <Manali.Shukla@amd.com>
+Subject: Re: [PATCH v11 05/12] x86/mm: add INVLPGB support code
+Message-ID: <20250219191519.GDZ7YtxzBiMxz3wwlr@fat_crate.local>
+References: <20250213161423.449435-1-riel@surriel.com>
+ <20250213161423.449435-6-riel@surriel.com>
+ <20250219120441.GNZ7XI2aWWUmXh2H2m@fat_crate.local>
+ <2930024a88be186faa6a0338fc003e8ffefb710b.camel@surriel.com>
+ <cb55a019-50f1-4824-9a9f-9431d8b89ed7@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Authenticated-Sender: andre@apitzsch.eu
-X-Virus-Scanned: Clear (ClamAV 1.0.7/27554/Wed Feb 19 10:50:24 2025)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <cb55a019-50f1-4824-9a9f-9431d8b89ed7@intel.com>
 
-Am Dienstag, dem 18.02.2025 um 16:05 +0300 schrieb Dan Carpenter:
-> You can't pass uninitialized "ret" variables to cci_write().=C2=A0 It has
-> to start as zero.
->=20
-> Fixes: 4f0aeba4f155 ("media: i2c: imx214: Convert to CCI register
-> access helpers")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> =C2=A0drivers/media/i2c/imx214.c | 2 +-
-> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
-> index 6c3f6f3c8b1f..68775ee8256e 100644
-> --- a/drivers/media/i2c/imx214.c
-> +++ b/drivers/media/i2c/imx214.c
-> @@ -795,7 +795,7 @@ static int imx214_set_ctrl(struct v4l2_ctrl
-> *ctrl)
-> =C2=A0					=C2=A0=C2=A0=C2=A0=C2=A0 struct imx214, ctrls);
-> =C2=A0	const struct v4l2_mbus_framefmt *format =3D NULL;
-> =C2=A0	struct v4l2_subdev_state *state;
-> -	int ret;
-> +	int ret =3D 0;
-> =C2=A0
-> =C2=A0	if (ctrl->id =3D=3D V4L2_CID_VBLANK) {
-> =C2=A0		int exposure_max, exposure_def;
+On Wed, Feb 19, 2025 at 11:01:17AM -0800, Dave Hansen wrote:
+> But, either way, #ifdefs are a sign of weakness. Less so in a header and
+> more so in a .c file.
 
-Thanks.
+... and, as we just discussed and agreed on chat, we don't need the Kconfig
+option either.
 
-Reviewed-by: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
