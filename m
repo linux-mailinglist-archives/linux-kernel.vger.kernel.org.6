@@ -1,129 +1,150 @@
-Return-Path: <linux-kernel+bounces-522202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17837A3C75D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:25:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06A8EA3C763
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:26:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9A093B8800
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:23:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4E1E17AF5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:24:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81C1C215079;
-	Wed, 19 Feb 2025 18:22:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 414CA215058;
+	Wed, 19 Feb 2025 18:24:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BiDzNvJj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YPGrKe6W"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8AE021505D;
-	Wed, 19 Feb 2025 18:22:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94C4221481B;
+	Wed, 19 Feb 2025 18:24:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739989368; cv=none; b=Glu/bqqCDKNUwGZiN2H3/UBxIbrjJv5mIErlXNJ+R5FsUXZg2c1Zw/TPLz7uCfp1Zj23wL9lRIkDbI5Pb7Tm6QzCLglLEPAe37QkV0CEnxcVjgZI39LlaUtWCYIF5slS0ht4NKyIQ5UVt9StwpcJCAQaM/ZZSMjrkj+thOmWGPo=
+	t=1739989467; cv=none; b=d19bZMwWgawk+TKw4v5I7dW64ElJ7OD+hu/jFPFYsJhD4HqNPnsx6bqGfnq69Nk3cbNej3IDgA2EJ306bXsQ+pJV9BtA+3jZXEqprpb94Fnwt7kL7TUZeq9Mabb3pZVeA08k0UQnYuhtq/y5Mfq34czs5+MduQ05ldQvfUeJ/KU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739989368; c=relaxed/simple;
-	bh=faBN0IDEHn011JJ6CBEbtJMdZifBloW9Uki3sRQ2NFc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=qeWKV/puom1LUECqVpFIeR3Cc5kONz2sg0LF6n5+oLWWekUUT+OYiQIJ0Ge88OyeTYYA0n/sFMUUQUVttBs02IV0viWIhbKGbgO5fStmJh85OnbpJiIxOszubNcOrDQ9VX+lI+4qiIkxEMPilkM7asL0cs1CO5IaUTXzrFa9WwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BiDzNvJj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8ABDEC4CEE6;
-	Wed, 19 Feb 2025 18:22:48 +0000 (UTC)
+	s=arc-20240116; t=1739989467; c=relaxed/simple;
+	bh=MnAffNGuOsgnzdGST98He9D12GmU6n41qfc44ByLtiI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=j5VqRwoPvkuzNMdh85UBR/wameYTqVhYvozBMpEiaHsSJdZgE5GsrqZQ1LBKUe8avCsXdLmn5NNyj0GJlf7DC4JsjrThpYf1ltYdDvNdilsXZnr881kMv38wWsDEXnccFK4Zs6JuzePTAU+CXwN18WuQCKhbnLrx63kxWPTmbrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YPGrKe6W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 028C7C4CED1;
+	Wed, 19 Feb 2025 18:24:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739989368;
-	bh=faBN0IDEHn011JJ6CBEbtJMdZifBloW9Uki3sRQ2NFc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=BiDzNvJjL91V2HDPnBs7dKbPdXvA8S0BQ46CpANs2Oc4NEmRROuvTqAUbOosqJSmc
-	 ucLGRNjf0LoUsW3EC8/78mNlImUUpGRGLbWj2eh3/xr9xXd6spSqlKKc959yRA2dtM
-	 Q88ubglPWVKNTDsxFF0RquzIThh9F/6CQNgOSGwhlFWFOXRy7DnnihJbh5Ml0M/9sP
-	 +ObCE42MLKwCylSWckR1ATbINC39tseHs7lMFpnI4v3MTHolIXj4LWJmHHe0fBztN3
-	 c5BktpBJXnFlVwHUf1TOg36nIxXT0UBE9++JKOwMWfKsJMSk7wHZ5rdsitf+ER/LYb
-	 jj9gcm86rmXjA==
-Date: Wed, 19 Feb 2025 12:22:47 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Chen Wang <unicorn_wang@outlook.com>
-Cc: Chen Wang <unicornxw@gmail.com>, kw@linux.com,
-	u.kleine-koenig@baylibre.com, aou@eecs.berkeley.edu, arnd@arndb.de,
-	bhelgaas@google.com, conor+dt@kernel.org, guoren@kernel.org,
-	inochiama@outlook.com, krzk+dt@kernel.org, lee@kernel.org,
-	lpieralisi@kernel.org, manivannan.sadhasivam@linaro.org,
-	palmer@dabbelt.com, paul.walmsley@sifive.com, pbrobinson@gmail.com,
-	robh@kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-riscv@lists.infradead.org, chao.wei@sophgo.com,
-	xiaoguang.xing@sophgo.com, fengchun.li@sophgo.com
-Subject: Re: [PATCH v3 1/5] dt-bindings: pci: Add Sophgo SG2042 PCIe host
-Message-ID: <20250219182247.GA225989@bhelgaas>
+	s=k20201202; t=1739989467;
+	bh=MnAffNGuOsgnzdGST98He9D12GmU6n41qfc44ByLtiI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=YPGrKe6WopB9r+cQOljZNncGAxLtvjs3kio1C1TPdc1hr5wc2IbmljIQ0HIEX04u5
+	 Lo+MhcAOBaa4xQGvYOWA1fTchQLK0wJHUeTDJO+rqPEWbb0G2Rs+3zODzKXdbHFEHO
+	 ne8dna6ynngvy3kN0Q25j5APWOgUyFK4nFHbqMIdE0GqwsTFlLnAslFB0mxEOENvxp
+	 OeYVVv7U53y2gY960MRCRVbISIynQVsS3K8AQ1ZP4m82n0EntuYkCvheWCc42ZgTq3
+	 MJFX8zb4motA1Z3Q3jnmi84MIphZQC4ld8nvPh/oqubwLXHN3qAETDG0oLANRCjMXv
+	 jQ6ejMsHRSyaw==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH v3 00/19] crypto: scatterlist handling improvements
+Date: Wed, 19 Feb 2025 10:23:22 -0800
+Message-ID: <20250219182341.43961-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <BMXPR01MB24403F8CD6BF5D4D2DDC57A4FEFC2@BMXPR01MB2440.INDPRD01.PROD.OUTLOOK.COM>
 
-On Wed, Feb 12, 2025 at 01:54:11PM +0800, Chen Wang wrote:
-> On 2025/2/12 12:25, Bjorn Helgaas wrote:
-> [......]
-> > > pcie_rc1 and pcie_rc2 share registers in cdns_pcie1_ctrl. By using
-> > > different "sophgo,core-id" values, they can distinguish and access
-> > > the registers they need in cdns_pcie1_ctrl.
-> > Where does cdns_pcie1_ctrl fit in this example?  Does that enclose
-> > both pcie_rc1 and pcie_rc2?
-> 
-> cdns_pcie1_ctrl is defined as a syscon node,  which contains registers
-> shared by pcie_rc1 and pcie_rc2. In the binding yaml file, I drew a diagram
-> to describe the relationship between them, copy here for your quick
-> reference:
-> 
-> +                     +-- Core (Link0) <---> pcie_rc1  +-----------------+
-> +                     |                                |                 |
-> +      Cadence IP 2 --+                                | cdns_pcie1_ctrl |
-> +                     |                                |                 |
-> +                     +-- Core (Link1) <---> pcie_rc2  +-----------------+
-> 
-> The following is an example with cdns_pcie1_ctrl added. For simplicity, I
-> deleted pcie_rc0.
+This series can also be retrieved from:
 
-Looks good.  It would be nice if there were some naming similarity or
-comment or other hint to connect sophgo,core-id with the syscon node.
+    git fetch https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git crypto-scatterlist-v3
 
-> pcie_rc1: pcie@7062000000 {
->     compatible = "sophgo,sg2042-pcie-host";
->     ...... // host bride level properties
->     linux,pci-domain = <1>;
->     sophgo,core-id = <0>;
->     sophgo,syscon-pcie-ctrl = <&cdns_pcie1_ctrl>;
->     port {
->         // port level properties
->         vendor-id = <0x1f1c>;
->         device-id = <0x2042>;
->         num-lanes = <2>;
->     };
-> };
-> 
-> pcie_rc2: pcie@7062800000 {
->     compatible = "sophgo,sg2042-pcie-host";
->     ...... // host bride level properties
->     linux,pci-domain = <2>;
->     sophgo,core-id = <1>;
->     sophgo,syscon-pcie-ctrl = <&cdns_pcie1_ctrl>;
->     port {
->         // port level properties
->         vendor-id = <0x1f1c>;
->         device-id = <0x2042>;
->         num-lanes = <2>;
->     }
-> 
-> };
-> 
-> cdns_pcie1_ctrl: syscon@7063800000 {
->     compatible = "sophgo,sg2042-pcie-ctrl", "syscon";
->     reg = <0x70 0x63800000 0x0 0x800000>;
-> };
-> 
+This series cleans up and optimizes the code that translates between
+scatterlists (the input to the API) and virtual addresses (what software
+implementations operate on) for skcipher and aead algorithms.
+
+This takes the form of cleanups and optimizations to the skcipher_walk
+functions and a rework of the underlying scatter_walk functions.
+
+The unnecessary use of scatterlists still remains a huge pain point of
+many of the crypto APIs, with the exception of lib/crypto/, shash, and
+scomp which do it properly.  But this series at least reduces (but not
+eliminates) the impact on performance that the scatterlists have.
+
+An an example, this patchset improves IPsec throughput by about 5%, as
+measured using iperf3 bidirectional TCP between two c3d-standard-4 (AMD
+Genoa) instances in Google Compute Engine using transport mode IPsec
+with AES-256-GCM.
+
+This series is organized as follows:
+
+- Patch 1-5 improve scatter_walk, introducing easier-to-use functions
+  and optimizing performance in some cases.
+- Patch 6-17 convert users to use the new functions.
+- Patch 18 removes functions that are no longer needed.
+- Patch 19 optimizes the walker on !HIGHMEM platforms to start returning
+  data segments that can cross a page boundary.  This can significantly
+  improve performance in cases where messages can cross pages, such as
+  IPsec.  Previously there was a large overhead caused by packets being
+  unnecessarily divided into multiple parts by the walker, including
+  hitting skcipher_next_slow() which uses a single-block bounce buffer.
+
+Changed in v3:
+- Dropped patches that were upstreamed.
+- Added a Reviewed-by and Tested-by.
+
+Changed in v2:
+- Added comment to scatterwalk_done_dst().
+- Added scatterwalk_get_sglist() and use it in net/tls/.
+- Dropped the keywrap patch, as keywrap is being removed by
+  https://lore.kernel.org/r/20241227220802.92550-1-ebiggers@kernel.org
+
+Eric Biggers (19):
+  crypto: scatterwalk - move to next sg entry just in time
+  crypto: scatterwalk - add new functions for skipping data
+  crypto: scatterwalk - add new functions for iterating through data
+  crypto: scatterwalk - add new functions for copying data
+  crypto: scatterwalk - add scatterwalk_get_sglist()
+  crypto: skcipher - use scatterwalk_start_at_pos()
+  crypto: aegis - use the new scatterwalk functions
+  crypto: arm/ghash - use the new scatterwalk functions
+  crypto: arm64 - use the new scatterwalk functions
+  crypto: nx - use the new scatterwalk functions
+  crypto: s390/aes-gcm - use the new scatterwalk functions
+  crypto: s5p-sss - use the new scatterwalk functions
+  crypto: stm32 - use the new scatterwalk functions
+  crypto: x86/aes-gcm - use the new scatterwalk functions
+  crypto: x86/aegis - use the new scatterwalk functions
+  net/tls: use the new scatterwalk functions
+  crypto: skcipher - use the new scatterwalk functions
+  crypto: scatterwalk - remove obsolete functions
+  crypto: scatterwalk - don't split at page boundaries when !HIGHMEM
+
+ arch/arm/crypto/ghash-ce-glue.c       |  15 +-
+ arch/arm64/crypto/aes-ce-ccm-glue.c   |  17 +--
+ arch/arm64/crypto/ghash-ce-glue.c     |  16 +-
+ arch/arm64/crypto/sm4-ce-ccm-glue.c   |  27 ++--
+ arch/arm64/crypto/sm4-ce-gcm-glue.c   |  31 ++--
+ arch/s390/crypto/aes_s390.c           |  33 ++---
+ arch/x86/crypto/aegis128-aesni-glue.c |  10 +-
+ arch/x86/crypto/aesni-intel_glue.c    |  28 ++--
+ crypto/aegis128-core.c                |  10 +-
+ crypto/scatterwalk.c                  |  91 +++++++-----
+ crypto/skcipher.c                     |  65 +++------
+ drivers/crypto/nx/nx-aes-ccm.c        |  16 +-
+ drivers/crypto/nx/nx-aes-gcm.c        |  17 +--
+ drivers/crypto/nx/nx.c                |  31 +---
+ drivers/crypto/nx/nx.h                |   3 -
+ drivers/crypto/s5p-sss.c              |  38 ++---
+ drivers/crypto/stm32/stm32-cryp.c     |  34 ++---
+ include/crypto/scatterwalk.h          | 203 +++++++++++++++++++++-----
+ net/tls/tls_device_fallback.c         |  31 +---
+ 19 files changed, 363 insertions(+), 353 deletions(-)
+
+
+base-commit: c346fef6fef53fa57ff323b701e7bad82290d0e7
+-- 
+2.48.1
+
 
