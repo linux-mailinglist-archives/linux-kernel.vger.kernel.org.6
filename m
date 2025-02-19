@@ -1,124 +1,143 @@
-Return-Path: <linux-kernel+bounces-520856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE3C1A3B01F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 04:41:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1D04A3B025
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 04:41:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2790018982E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 03:41:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7ED8A3A9780
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 03:41:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0FE01A9B3B;
-	Wed, 19 Feb 2025 03:41:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE74C191F6A;
+	Wed, 19 Feb 2025 03:41:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PmRBnCLp"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="e6AGfs0e"
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 900278F7D;
-	Wed, 19 Feb 2025 03:41:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1663A1AA1FE;
+	Wed, 19 Feb 2025 03:41:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739936471; cv=none; b=Pz2LIGJfZjg1OYdFyhYvCaBbiebsfeONkxqbDI763Vq6By5GWUKz4YAui0aGJ9IsjP3l9wi0HpFTvcf9HgufYkcwtOfu76P6sKlKNaqZhoSLAwYxCefsj4GLl/5TcPcBawYQvcNm8FBMu/UjF2CvDekTpvxbE8tPpA2hp+Q/AIo=
+	t=1739936493; cv=none; b=m/Ox0moqtGcUvg0zdM7pE0OIxqxUShXRaWdmm2c803o8+91CjA+onOaewLlMkHcyc0kvcZGj8Cy2WEEz1700f9bLaRCXJbVBYj+xzbIo8wiX83leG20CT2F0io6Yo4gGqWJZwB0MBmxb3qP5KH7uPwC01RZuhgtfkg7ZWPc5VWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739936471; c=relaxed/simple;
-	bh=OQJsLAaWRSQtRgT91ofNhEcQyVmljU0Xl6XdqGkLg4M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E1nVLCmZT9zBOtI19cwjKr1/CUICILofh7wlXU3fr8gOMys4DIlXYm5H3NCqm3PYwUEocE6+sroNdmQ9xQ5/gVlnOWvGYARihWABmcDEaWVOILV2D6BElrh0Guf7gm8fqeish9ehVKdg463IIoLqG/ObAii2TP4gcknFJ77Nivs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PmRBnCLp; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43937cf2131so41722265e9.2;
-        Tue, 18 Feb 2025 19:41:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739936468; x=1740541268; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OQJsLAaWRSQtRgT91ofNhEcQyVmljU0Xl6XdqGkLg4M=;
-        b=PmRBnCLphKCuLPLy+Q8mfsRu9Q7W5+EJSwebfGZTcaoppvyrIJrl0IU8A86Ew7Jlat
-         6pJsRhbC3hkALrLLrAKnMJZcNkyv5stq9kJ3hqwWYgcvdX7S0RpwV1X+TQ/D2jrlN+PV
-         QdsMrAYxKbPu6ZfixXIpHEVK0KX4SfK7ZbQofv2Cov2Q+3Stmkh5BVwybPQ6pyA/xeby
-         mDngfb5Gcm04Aa6pOtQNsVXeH25tmDspiF9A3uUkfZx9hN1AO/0A4nzsoXTwAKtcOIFy
-         gVhDfxvzPKXD/0K+IZAn5r/HAoERGMbXkuScRXgoIdvrCZKFu8w32aoVobFyC93vx6jR
-         oQpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739936468; x=1740541268;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OQJsLAaWRSQtRgT91ofNhEcQyVmljU0Xl6XdqGkLg4M=;
-        b=CeoHVBrFcgWYQGdthEyCyi/f+zLIULl/zZBBiD1a1Wwq78ynz8qT3hxdzgU8tHzdMw
-         03wr1yCWGR+iZd/Kb6dLexNHomjdL7dZyahD50/NaOMXCGnVHll/qwq40FNNv4MKgcSp
-         VYZdWlDvnoC8Hk3913M9KMoqgprC5JfEbKePfUkUrF/6tHAbzM8yAPabbSAe3alTKTkU
-         7XxnCT67pxWvxr8cCcQ+GU3jmQ1WoDbeKRa24ZBfqDcYp1P+pbuUpV8PIuRlk6FcoBuf
-         5A1UvPBWZmkJXQ2Dtrocxj0LOjYrEobQYRkv2gi0JShjGg/naxpVW5coGvlfJj1E62UL
-         wGzA==
-X-Forwarded-Encrypted: i=1; AJvYcCVKWGkAQtCnkGHcK6wLZtRFaGYKwqhAwl27RLLo8drG2LgHIUcoKJOBCFBF0OPNEq3efFQ06NCWDSwQZrot@vger.kernel.org, AJvYcCWayh5HpfXMNiS6bxlrlhCcLoXgx2tpl/VbjxGzhs8iq6lEyVDjGjVw8JGzqyMsWLp+FcBftvxOp9QDMFBM17SE@vger.kernel.org, AJvYcCXiOT4CKWpWLpQf7YJeQSGGq6po+gy6B62TdLJSqxugRwYRZk2eAoDpBnuI/726ydsBgK4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJv+2uX1eYZO/N34mRTjbIMHxFvV/Ydp1xwG8bG3go6YHlTzVO
-	txxLsPsY7hnVTofFU/Jw0U4PSP+D+N2Nf/lHW0Mrm7GqycmBVxyc20hvD+jfkMngRIxGRwNnFRY
-	mqgeh3vOE4v9ARMP/p+GcSgMapM8=
-X-Gm-Gg: ASbGnctbH1LbnbnkTnkPsqP/xZ6f0Kt+xmhwuj+a9YoKdILt4xLvqXEuaJysPZJJRxp
-	cSO8jaPi8dWewRwxWCCv+mVz469xnUaXikqfFEiq5aYGrJtsDrkf7LeyU/3F+vXoOCF/hqUirPP
-	aHtGhy4xLrTQ1KkQjOv+Ca0WD8KqQe
-X-Google-Smtp-Source: AGHT+IEjXtc7cvnTaJFVDADpUCj/f/YPhCe4KyJbf7Wv4CggSX4y1UdOUGuLuRP3XxXmvQzXJMI+K7kra4Ey8mX0t7Y=
-X-Received: by 2002:a05:600c:3b0e:b0:439:987c:2309 with SMTP id
- 5b1f17b1804b1-439987c256dmr27353475e9.27.1739936467561; Tue, 18 Feb 2025
- 19:41:07 -0800 (PST)
+	s=arc-20240116; t=1739936493; c=relaxed/simple;
+	bh=K5Wk5zWfhuZpxBxJbPYOUUEVd9Twy5U2kBxJZXTy+nY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eoxgxpYEsB44PE4U9hUTqHhIQnpF+8GfrdPb85Lgm1t7KogEptUuW54iPlLYPpLU0J45o1BuDh0nDmTp0vzl57YKJCU0JXOJEOihQTOCmACoUF9/0Y0NPBOLS72J1CKQk/acth4cZKerc+zxYlmOOQ2FjwoewqPeI49pwYSbP3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=e6AGfs0e; arc=none smtp.client-ip=115.124.30.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1739936485; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=hIaBkE8+UmoWwYLNXAVzpAMzNdqrJST2j8vQ4BHyKd0=;
+	b=e6AGfs0emG8DaqVOAikp9/wZUpEXuZ0Ms4cIiUaL8D88z8WJde1r6DfjqwrAScFyh4JwWGkAIZ5WLTYD8TQ+tqe80vTHP8NU73suzG1vjzNMSjLwWITEZIbZX4eAbXrI+9fmOh1VihLIXZQXoeRbch8cm7REvTF4sW29+o6q8Ag=
+Received: from 30.221.144.226(mailfrom:guoheyi@linux.alibaba.com fp:SMTPD_---0WPnjerv_1739936484 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 19 Feb 2025 11:41:24 +0800
+Message-ID: <5a33f86d-d82c-4685-8da7-5e623487a40c@linux.alibaba.com>
+Date: Wed, 19 Feb 2025 11:41:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250217-tc_links-v1-0-27f7965e3dcd@bootlin.com> <Z7T6J4BpIrBcsWPM@mini-arch>
-In-Reply-To: <Z7T6J4BpIrBcsWPM@mini-arch>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Tue, 18 Feb 2025 19:40:56 -0800
-X-Gm-Features: AWEUYZliZx47mbsjIzoFIXea8OImVxQ_IY8T0Kgs_lM79Babu5crmU41bYtpQeM
-Message-ID: <CAADnVQLktLYJ5_jjve0A=oOWZFRvs3NGfuQUXwpCmw6q+U_Ltw@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 0/3] selftests/bpf: tc_links/tc_opts: Unserialize tests
-To: Stanislav Fomichev <stfomichev@gmail.com>
-Cc: "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Alexis Lothore <alexis.lothore@bootlin.com>, 
-	bpf <bpf@vger.kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] driver/aspeed-wdt: fix pretimeout for counting down
+ logic
+To: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>, Joel Stanley <joel@jms.id.au>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>,
+ Eddie James <eajames@linux.ibm.com>
+References: <20250218031709.103823-1-guoheyi@linux.alibaba.com>
+ <50ab5a0a-b807-4bd7-bda8-7c6f4bfc76fc@roeck-us.net>
+Content-Language: en-US
+From: Heyi Guo <guoheyi@linux.alibaba.com>
+In-Reply-To: <50ab5a0a-b807-4bd7-bda8-7c6f4bfc76fc@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 18, 2025 at 1:22=E2=80=AFPM Stanislav Fomichev <stfomichev@gmai=
-l.com> wrote:
->
-> On 02/17, Bastien Curutchet (eBPF Foundation) wrote:
-> > Hi all,
-> >
-> > Both tc_links.c and tc_opts.c do their tests on the loopback interface.
-> > It prevents from parallelizing their executions.
-> >
-> > Use namespaces and the new append_tid() helper to allow this
-> > parallelization.
-> >
-> > Signed-off-by: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@b=
-ootlin.com>
->
-> Acked-by: Stanislav Fomichev <sdf@fomichev.me>
->
-> LGTM, thank you! Optionally, if there is more to convert, we can think
-> about moving create_and_open_tid_ns to the test_progs itself. For example=
-,
-> if the test name starts with ns_, test_progs can probably do the
-> create_and_open_tid_ns/netns_free part?
+Hi Guenter,
 
-That's a good idea.
-Let's do it now.
-Otherwise most of the patch 2 will be reverted when it's introduced.
+Thanks for your comments.
 
-pw-bot: cr
+On 2025/2/18 13:33, Guenter Roeck wrote:
+> On 2/17/25 19:16, Heyi Guo wrote:
+>> Aspeed watchdog uses counting down logic, so the value set to register
+>> should be the value of subtracting pretimeout from total timeout.
+>>
+>> Fixes: 9ec0b7e06835 ("watchdog: aspeed: Enable pre-timeout interrupt")
+>>
+>> Signed-off-by: Heyi Guo <guoheyi@linux.alibaba.com>
+>>
+>> Cc: Wim Van Sebroeck <wim@linux-watchdog.org>
+>> Cc: Guenter Roeck <linux@roeck-us.net>
+>> Cc: Joel Stanley <joel@jms.id.au>
+>> Cc: Andrew Jeffery <andrew@codeconstruct.com.au>
+>> Cc: Eddie James <eajames@linux.ibm.com>
+>> ---
+>>   drivers/watchdog/aspeed_wdt.c | 7 +++++++
+>>   1 file changed, 7 insertions(+)
+>>
+>> diff --git a/drivers/watchdog/aspeed_wdt.c 
+>> b/drivers/watchdog/aspeed_wdt.c
+>> index b4773a6aaf8c..520d8aba12a5 100644
+>> --- a/drivers/watchdog/aspeed_wdt.c
+>> +++ b/drivers/watchdog/aspeed_wdt.c
+>> @@ -187,6 +187,13 @@ static int aspeed_wdt_set_pretimeout(struct 
+>> watchdog_device *wdd,
+>>       u32 actual = pretimeout * WDT_RATE_1MHZ;
+>>       u32 s = wdt->cfg->irq_shift;
+>>       u32 m = wdt->cfg->irq_mask;
+>> +    u32 reload = readl(wdt->base + WDT_RELOAD_VALUE);
+>> +
+>
+> It is unusual to use a register value here and not the configured timeout
+> value. I would have assumed that pretimeout is compared against 
+> wdt->timout,
+> not against the register value, and that the multiplication with 
+> WDT_RATE_1MHZ
+> is done after validation. This needs an explanation.
+It was supposed to be a straight-forward way to check if the pretimeout 
+value is supported by the hardware. I can change to wdt->timeout if it 
+is better.
+
+Further, in the case of wdt->timeout > max_hw_heartbeat_ms, shall we 
+restrict the pretimeout to be larger than wdt->timeout - 
+max_hw_heartbeat_ms  / 2? For the watchdog_kworker works in 
+max_hw_heartbeat_ms  / 2 interval, pretimeout event may be triggered 
+unexpected when watchdog is not pinged in (max_hw_heartbeat_ms - 
+(timeout - pretimeout)).
+
+>
+>> +    if (actual >= reload)
+>> +        return -EINVAL;
+>> +
+>
+> On top of that, you'll also need to explain why 
+> watchdog_pretimeout_invalid()
+> and with it the validation in watchdog_set_pretimeout() does not work 
+> for this
+> watchdog and why this extra validation is necessary.
+
+watchdog_pretimeout_invalid() will return false if wdt->timeout == 0, 
+but we can't determine the hardware pretimeout value if timeout == 0 here.
+
+Thanks,
+
+Heyi
+
+>
+> Guenter
+>
+>> +    /* watchdog timer is counting down */
+>> +    actual = reload - actual;
+>>         wdd->pretimeout = pretimeout;
+>>       wdt->ctrl &= ~m;
 
