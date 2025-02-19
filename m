@@ -1,67 +1,49 @@
-Return-Path: <linux-kernel+bounces-521940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34ECAA3C419
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:49:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2989AA3C417
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:48:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BC7C162A50
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:48:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 026B2188762D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:48:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6811F9413;
-	Wed, 19 Feb 2025 15:48:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEEFF1F9421;
+	Wed, 19 Feb 2025 15:48:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="wYl0ItI6"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="DSZG4m9r"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B31A13CA8A;
-	Wed, 19 Feb 2025 15:48:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1340F1DED60;
+	Wed, 19 Feb 2025 15:48:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739980086; cv=none; b=bvYc52DzuAnT8lTaerCVpp0xMbUkoCsVSpsbBgiPPGymHz2ZxvpLtGLBKy72mwx0lf3LcFPUGpkaYil4nSGXVO4pLo3VyWb2LIQAYJlgOFOqmuOxR/1a+zly0Zbe6g+C3Jtz2dsApe57M9nvW3FgXHUtffTvVb/oW3SSVOsS1hM=
+	t=1739980123; cv=none; b=A+UzsHq1dyX25v8vWVhC320mFBxwtKUKlVDXYw6vYuIBB9bvsRgSe+1lvmJiivlYzTPPC4OkBtOptP9v+sxT06jZg+E5QS8F1Rshiw/T3LkkxhPD36+pNls8LICsgjcQsb0sXO21SB3ghWrBU7krTF2x9eP203vXeQZxfthP3x0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739980086; c=relaxed/simple;
-	bh=/Ak6AYaW+NREAHqINtVDyh4urTouMrWD675Mi2sSLPI=;
+	s=arc-20240116; t=1739980123; c=relaxed/simple;
+	bh=kArum3zKXaRk2fpqNYtvOFMPtVi0en0S5USFtMcfk74=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=no/+dVLLpAmnKtZu1nC5RH/haSZmdkIjvfVTYNE7AyubtyN1pCEZMq/IqM4dkC/aLJ/ARWwunRiAemEP677H/Uct3YsO6inVEt4IHv8CRtQkCTF7SaAqXCUE6QOyPO4dbdqjP/t+kGYCA34veB8EmcgmZXUAtRzY64Sdgn9SyFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=wYl0ItI6; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=Gzj0SwPRaTNirTrm9WLzsRKYWUJkOtFVhEJhOoLZ8NU=; b=wYl0ItI6OysoRYTR2q06G8db9m
-	xrqJ+Qb/eBCyNzxAC5xNTOThx6DwY+l1zz0mkvDE1nW0Ef4+USboaTSwCkHkY62Awu71DRmFK/1lN
-	ZevniaXm6WXfyNWd/Nkl6CoJLI5K/f0jqwUbV2h58AxxTTDnM7bXkibhpQg+41z6r/js=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tkmIh-00Ffmc-UA; Wed, 19 Feb 2025 16:47:51 +0100
-Date: Wed, 19 Feb 2025 16:47:51 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Sky Huang <SkyLake.Huang@mediatek.com>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Qingfang Deng <dqfext@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Steven Liu <Steven.Liu@mediatek.com>
-Subject: Re: [PATCH net-next v2 3/3] net: phy: mediatek: add driver for
- built-in 2.5G ethernet PHY on MT7988
-Message-ID: <724eff11-c6d1-40e1-a99f-205f5426a07d@lunn.ch>
-References: <20250219083910.2255981-1-SkyLake.Huang@mediatek.com>
- <20250219083910.2255981-4-SkyLake.Huang@mediatek.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=H/9KU6QSn/zw7PiABpYblsrt+hQo3GNO3arnuCSuCzoyGTIp0D+Vt2wzjyY9SaV1coqqMXZmlWvuW9KGSKYQEHcBmGDOQ8uNMu2AOorFy5WsIGf5NQO06JyB9Y+/2YT40AOQHlgHIaanDYO4sjGOFOEtfqND3GElEFrEpfEw1aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=DSZG4m9r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26A08C4CED6;
+	Wed, 19 Feb 2025 15:48:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1739980122;
+	bh=kArum3zKXaRk2fpqNYtvOFMPtVi0en0S5USFtMcfk74=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DSZG4m9rJL0fIgtfhRh0pkPQR+1YBdPdnf/K1BgW7JpXkHLiGp4F3F0XBjt6ZYD/3
+	 gwrHtXwkxc9GJSVV/zm77lvZDxVVF+l1MVaixhzMKedWl15OS2v3OnzOAphj8eqJS2
+	 SarDGDS37sPJAuCA0bAZxG0BeMPpiV3W6qEQrngQ=
+Date: Wed, 19 Feb 2025 16:48:39 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Dave Penkler <dpenkler@gmail.com>
+Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/17] staging: gpib: Console messaging cleanup
+Message-ID: <2025021923-leverage-endpoint-c06e@gregkh>
+References: <20250214114708.28947-1-dpenkler@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,128 +52,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250219083910.2255981-4-SkyLake.Huang@mediatek.com>
+In-Reply-To: <20250214114708.28947-1-dpenkler@gmail.com>
 
-> +config MEDIATEK_2P5GE_PHY
-> +	tristate "MediaTek 2.5Gb Ethernet PHYs"
-> +	depends on (ARM64 && ARCH_MEDIATEK) || COMPILE_TEST
-> +	select MTK_NET_PHYLIB
-> +	help
-> +	  Supports MediaTek SoC built-in 2.5Gb Ethernet PHYs.
-> +
-> +	  This will load necessary firmware and add appropriate time delay.
-> +	  Accelerate this procedure through internal pbus instead of MDIO
-> +	  bus. Certain link-up issues will also be fixed here.
+On Fri, Feb 14, 2025 at 12:46:51PM +0100, Dave Penkler wrote:
+> The GPIB drivers printed a lot of spurious console messages. This
+> was linked to the level of code maturity, often using console
+> messages for debug.
+> 
+> This patch set cleans up the console messaging in the spirit of Greg's
+> recommendation: "When drivers are successful, they should be quiet"
+> 
+> All pr_info's have been removed except for one which is in the module
+> init of the common core driver indicating that the GPIB subsystem is
+> initialized.
+> 
+> All dev_info's have been removed or changed to dev_dbg except for the
+> attach and probe messages in the agilent and ni usb drivers. This is
+> to facilitate the creation of config and udev scripts to ensure that a
+> particular usb device is systematically attached to the same gpib
+> device file.
+> 
+> All custom debug and tty logging has been removed or replaced with
+> dev_dbg.
+> 
+> Error messages where the user can figure out what went wrong with
+> errno have also been removed, particularly timeouts and interrupts
+> during reads and writes which can occur quite frequently uneccessarily
+> cluttering up the console log.
+> 
+> The patches are 1 per driver.
 
-Please keep the file sorted, this should be the first entry.
+All but 4 of these applied, can you rebase and resend the remaining
+ones?
 
-> diff --git a/drivers/net/phy/mediatek/Makefile b/drivers/net/phy/mediatek/Makefile
-> index 814879d0abe5..c6db8abd2c9c 100644
-> --- a/drivers/net/phy/mediatek/Makefile
-> +++ b/drivers/net/phy/mediatek/Makefile
-> @@ -2,3 +2,4 @@
->  obj-$(CONFIG_MTK_NET_PHYLIB)		+= mtk-phy-lib.o
->  obj-$(CONFIG_MEDIATEK_GE_PHY)		+= mtk-ge.o
->  obj-$(CONFIG_MEDIATEK_GE_SOC_PHY)	+= mtk-ge-soc.o
-> +obj-$(CONFIG_MEDIATEK_2P5GE_PHY)	+= mtk-2p5ge.o
+thanks,
 
-I suppose you could say this file is sorted in reverse order so is
-correct?
-
-> diff --git a/drivers/net/phy/mediatek/mtk-2p5ge.c b/drivers/net/phy/mediatek/mtk-2p5ge.c
-> new file mode 100644
-> index 000000000000..adb03df331ab
-> --- /dev/null
-> +++ b/drivers/net/phy/mediatek/mtk-2p5ge.c
-> @@ -0,0 +1,346 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +#include <linux/bitfield.h>
-> +#include <linux/firmware.h>
-> +#include <linux/module.h>
-> +#include <linux/nvmem-consumer.h>
-
-Is this header needed?
-
-> +#include <linux/of_address.h>
-> +#include <linux/of_platform.h>
-> +#include <linux/pinctrl/consumer.h>
-> +#include <linux/phy.h>
-> +#include <linux/pm_domain.h>
-> +#include <linux/pm_runtime.h>
-
-And these two? Please only use those that are needed.
-
-> +static int mt798x_2p5ge_phy_load_fw(struct phy_device *phydev)
-> +{
-> +
-> +	writew(reg & ~MD32_EN, mcu_csr_base + MD32_EN_CFG);
-> +	writew(reg | MD32_EN, mcu_csr_base + MD32_EN_CFG);
-> +	phy_set_bits(phydev, MII_BMCR, BMCR_RESET);
-> +	/* We need a delay here to stabilize initialization of MCU */
-> +	usleep_range(7000, 8000);
-
-Does the reset bit clear when the MCU is ready? That is what 802.3
-defines. phy_poll_reset() might do what you need.
-
-> +	dev_info(dev, "Firmware loading/trigger ok.\n");
-
-dev_dbg(), if at all. You have already spammed the log with the
-firmware version, so this adds nothing useful.
-
-> +		phydev->duplex = DUPLEX_FULL;
-> +		/* FIXME:
-> +		 * The current firmware always enables rate adaptation mode.
-> +		 */
-> +		phydev->rate_matching = RATE_MATCH_PAUSE;
-
-Can we tell current firmware for future firmware? Is this actually
-fixable?
-
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-
-
-
-> +static int mt798x_2p5ge_phy_probe(struct phy_device *phydev)
-> +{
-> +	struct mtk_i2p5ge_phy_priv *priv;
-> +
-> +	priv = devm_kzalloc(&phydev->mdio.dev,
-> +			    sizeof(struct mtk_i2p5ge_phy_priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	switch (phydev->drv->phy_id) {
-> +	case MTK_2P5GPHY_ID_MT7988:
-> +		/* The original hardware only sets MDIO_DEVS_PMAPMD */
-
-What do you mean by "original hardware"? 
-
-You use PHY_ID_MATCH_MODEL(MTK_2P5GPHY_ID_MT7988), so do you mean
-revision 0 is broken, but revision 1 fixed it?
-
-
-> +		phydev->c45_ids.mmds_present |= MDIO_DEVS_PCS |
-> +						MDIO_DEVS_AN |
-> +						MDIO_DEVS_VEND1 |
-> +						MDIO_DEVS_VEND2;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	priv->fw_loaded = false;
-> +	phydev->priv = priv;
-> +
-> +	mtk_phy_leds_state_init(phydev);
-
-The LEDs work without firmware?
-
-    Andrew
-
----
-pw-bot: cr
+greg k-h
 
