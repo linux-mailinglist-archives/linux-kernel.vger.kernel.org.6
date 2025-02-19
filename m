@@ -1,95 +1,150 @@
-Return-Path: <linux-kernel+bounces-521998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC68BA3C4BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:18:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE9A2A3C4B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:17:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96E12176FDB
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:16:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2F5B3B04A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:15:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79C161FE474;
-	Wed, 19 Feb 2025 16:15:59 +0000 (UTC)
-Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E81451FE44B;
-	Wed, 19 Feb 2025 16:15:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACCD61FDE26;
+	Wed, 19 Feb 2025 16:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="NoKy3zm0"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57E8D1EB1B7
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 16:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739981759; cv=none; b=PORKhE7hvzPWbjw10xr6rTcsnkKKW7a2e+w+Mw6QToqHAcuO3F+7z3It9Bjj2nISLoBLoNfkiLEGzV5JGxpsXV+/30+NLX/f8Mnp9RtncJjDIAITDfne+9hTC6y4sxXRpi+8vv2yAKER/hSV4qRwxo18t3Hiw/VEXheZczHQDYA=
+	t=1739981755; cv=none; b=pFQ8ilKAc+HeoXfVuFaZ7KEsthwFxI+fYVrikA8Hz1zvl5C5fuJvC9q9kwth+gBs0e8T8AycdTLXu0/OQvdYEc0iNy6QTz2E9FFBQROZ4gbOMcA5otSnHof8uhNsjZEaR4zdOsTEGVxRFyy0Rp8ZpTB+YV6f18mfI5ErKlSMO9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739981759; c=relaxed/simple;
-	bh=5IKvBpIY6ht3t9ENjPzgnAa57QSsV7Y4M9VTaj8tbjA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MevOGphl4eS7NYsCty7NroTpt7sywbXB1i3k29DlBqiiPmMwS6qtfW7KU+JbAb+GFVwoeSAmneubZpWhPTXM/baA9UR4YRBxESMvGNaR54JKEhqLOkGNKlVfCXlSUZJxtH30JmFT8rYvUEQt7Lv/RYuo0mrUjXvqXVLxSSN/RzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
-Received: (from willy@localhost)
-	by pcw.home.local (8.15.2/8.15.2/Submit) id 51JGFhqM023043;
-	Wed, 19 Feb 2025 17:15:43 +0100
-Date: Wed, 19 Feb 2025 17:15:43 +0100
-From: Willy Tarreau <w@1wt.eu>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Dan Carpenter <dan.carpenter@linaro.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        rust-for-linux <rust-for-linux@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>, David Airlie <airlied@gmail.com>,
-        linux-kernel@vger.kernel.org, ksummit@lists.linux.dev
-Subject: Re: Rust kernel policy
-Message-ID: <20250219161543.GI19203@1wt.eu>
-References: <CANiq72m-R0tOakf=j7BZ78jDHdy=9-fvZbAT8j91Je2Bxy0sFg@mail.gmail.com>
- <Z7SwcnUzjZYfuJ4-@infradead.org>
- <b7a3958e-7a0a-482e-823a-9d6efcb4b577@stanley.mountain>
- <2bcf7cb500403cb26ad04934e664f34b0beafd18.camel@HansenPartnership.com>
- <yq1mseim24a.fsf@ca-mkp.ca.oracle.com>
- <c1693d15d0a9c8b7d194535f88cbc5b07b5740e5.camel@HansenPartnership.com>
- <20250219153350.GG19203@1wt.eu>
- <e42e8e79a539849419e475ef8041e87b3bccbbfe.camel@HansenPartnership.com>
- <20250219155617.GH19203@1wt.eu>
- <20250219160723.GB11480@pendragon.ideasonboard.com>
+	s=arc-20240116; t=1739981755; c=relaxed/simple;
+	bh=jYP3oUxOykgszQEZALo7cXOu9zDyqHi75sgn9lMVd8U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LnkZin0leUwpmgxP3EoOy0VrF9IzI/J482bTgQR55OFkpmAKmkEwhSVWeNmaz3+rDJcrfoLPh+CiCFWISK+hqm1/kcCggPcujKCIqF+rq6snS+0fziCHu7OIz4pWy/y/EOEugW223A6EMWxNMtw6eguJpay5qJ1RtBiSeRlbeUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=NoKy3zm0; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5e04861e7a6so7153430a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 08:15:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1739981751; x=1740586551; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=h89HTe/tN0B10+LNl92cdXHG46JoxeywocoM5Bh9DWc=;
+        b=NoKy3zm0rYeRNrEmxrEpvL7/Q9TuUVep2la9SgPOmI/Y3pL+UFWSjFFJkbctCscZJ2
+         S5ocIMHUqwBHky9gWoGfF3BI+GU1QdVEY9zuJuFWiAS9s8bVUi4TI65qZGvNqjfVnMsI
+         sk0x8YXtG0x+ebmMKcbTGSAzLD3nl71LiyLX7QNY1IaIwL1Go8RYNvFXQm7T/VKpN3OY
+         E45Z2ZYvDnUil2f1LWSa8DQSdBx+kIZtzfmwHKQiDfO51X1sYXI8hs810QEt1dLMP8iG
+         Yq+TiuorteRTMHX9ZXsSLSkara+0jJgngdaIlFiu+fE6L3du9g320oAUy7nVl9e2wQog
+         tiVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739981751; x=1740586551;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=h89HTe/tN0B10+LNl92cdXHG46JoxeywocoM5Bh9DWc=;
+        b=h/pkC9AYUEBlOpi14LrKR0BjuhXW33TBHcwN1FUf5/f5azfTW91IDt1BDxvPUjusgq
+         DHvz3iifZbW2ibQoVH6WE7SmieizhIzQSTbW5noDJN0diYwsE6j/LfNQtiLwkgh0PDTk
+         zEbiLIkwVsW6RGUr2vi7mcaP0l2M/gMvN2QiQqCoMh0pj61C+/Cv54UWViegc+5YoIJy
+         a4Rzhb3Qm6teLT3HJZ1wBJJPnPsfDHjuS2yCTwS1DqG+aDDgPJA3s7D4Nt0EvI8BQUpB
+         F7/SlKhaamLcHyOzTihgxXZSU7p8T4hSJ3DOatZWwFQoYtWONvxEIDwtYX2Alk7xzL5y
+         VBVg==
+X-Forwarded-Encrypted: i=1; AJvYcCX3c2AJm2wat4Z2fOdwFyvmlmJdfiWGBQyuX+d3ygpf8h8YIG3xzUDA+UZK5waS9jZfJ3DUi6xup+3LvF8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1fhbAdtmZarIbqDBacO8hXG4Kg8xbKrDtL3qR5M3xmQR4YS+N
+	MiqEvfEPDTXTOIDH4JgvhyhJCW1QF7DIJ+nJKq2NSZVMDkZjPZYZEw4ZnvmasH0=
+X-Gm-Gg: ASbGncvyw88MuXg1MuR353C+lSSQ67Wr6X+jAsoabneCOYLXlLHJexnyuTB2Yr+d++0
+	gyqNdxlDmJ10WMpcHg9/4o1lxieHq8KPrq+TPkRg/fIIHOSMjOSnzi/i/JsxV6KkTGiVj22sBYr
+	Z9VSR09/lC67ie8bP5AWVnFGz/lfadSfkfAg5CkOcwB9ORmTkPWJe8KrqOKTkvb/1iHia5I5QsY
+	fvR60wFgs6TgF5XKkbfRuz9q1HxOEbBrCVVX1aaGONDlB+9fruo5mlWgHlDrJwTuhuwRq7xz/8n
+	/bfkMXGpzYA9FiFc+J9nJlw=
+X-Google-Smtp-Source: AGHT+IFiFYqo71zXgrKVNjvpkw6kSC58U3/FltEHaZdAEiHjs1T3I77KF/UZNliKfKxYH2d2UsL+vA==
+X-Received: by 2002:a17:906:3118:b0:ab7:da56:af9f with SMTP id a640c23a62f3a-abb711c3de7mr1770699866b.49.1739981751230;
+        Wed, 19 Feb 2025 08:15:51 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.25])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb94e4d0adsm687953066b.56.2025.02.19.08.15.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Feb 2025 08:15:50 -0800 (PST)
+Message-ID: <b9b14a25-675e-4e3f-afcc-e82d5ed740a7@tuxon.dev>
+Date: Wed, 19 Feb 2025 18:15:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250219160723.GB11480@pendragon.ideasonboard.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFT 0/5] phy: renesas: rcar-gen3-usb2: Fixes for Renesas
+ RZ/G3S
+To: yoshihiro.shimoda.uh@renesas.com, vkoul@kernel.org, kishon@kernel.org,
+ horms+renesas@verge.net.au, fabrizio.castro@bp.renesas.com, robh@kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-phy@lists.infradead.org,
+ linux-kernel@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20250219160749.1750797-1-claudiu.beznea.uj@bp.renesas.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <20250219160749.1750797-1-claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 19, 2025 at 06:07:23PM +0200, Laurent Pinchart wrote:
+Adding reference to the missing series (see below).
 
-> > Regardless I do understand how these cleanups can help in a number of
-> > case, at least to avoid some code duplication.
+On 19.02.2025 18:07, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > 
-> They're particularly useful to "destroy" local variables that don't need
-> to be returned. This allows implementing scope guards, to facilitate
-> lock handling for instance. Once a mutex guard is instantiated, the
-> mutex is locked, and it will be guaranteed to be unlocked in every
-> return path.
+> Hi,
+> 
+> Series add fixes for the Renesas USB2 PHY driver identified while
+> working on the Renesas RZ/G3S USB support. These changes are
+> needed for the upcomming RZ/G3S USB support (especially for the
+> power management support).
+> 
+> Series (with [1] on top) was tested on Renesas RZ/G3S with consecutive
+> unbind/bind and data transfer tests before/after the unbind/bind.
+> 
+> The unbind/bind was also tested on the devices with the following
+> device trees but w/o checking the data transfer (as I only had
+> remote access w/o USB devices connected):
+> - r8a7742-iwg21d-q7.dts
+> - r8a7743-iwg20d-q7.dts
+> - r8a7744-iwg20d-q7.dts
+> - r8a7745-iwg22d-sodimm.dts
+> - r8a77470-iwg23s-sbc.dts
+> - r8a774a1-hihope-rzg2m-ex.dts
+> - r8a774b1-hihope-rzg2n-ex.dts
+> - r8a774e1-hihope-rzg2h-ex.dts
+> - r9a07g043u11-smarc.dts
+> - r9a07g044c2-smarc.dts
+> - r9a07g044l2-smarc.dts
+> - r9a07g054l2-smarc.dts
+> - r9a07g043f01-smarc.dts
+> 
+> Please give it a try also on your devices with [1] on top as well.
+> 
+> Thank you,
+> Claudiu Beznea
 
-Yeah absolutely. However I remember having faced code in the past where
-developers had abused this "unlock on return" concept resulting in locks
-lazily being kept way too long after an operation. I don't think this
-will happen in the kernel thanks to reviews, but typically all the stuff
-that's done after a locked retrieval was done normally is down outside
-of the lock, while here for the sake of not dealing with unlocks, quite
-a few lines were still covered by the lock for no purpose. Anyway
-there's no perfect solution.
+[1]
+https://lore.kernel.org/all/20250219161239.1751756-1-claudiu.beznea.uj@bp.renesas.com
 
-Ideally when a compiler is smart enough to say "I would have cleaned
-up here", it could be cool to just have a warning so that the developer
-decides where to perform it. The problem is that it'd quickly becomes
-a mess since the compiler cannot guess that you've done your own cleanup
-before (without yet other anotations), which precisely is the point of
-doing it unconditionally when leaving scope.
+> 
+> Claudiu Beznea (5):
+>   phy: renesas: rcar-gen3-usb2: Fix role detection on unbind/bind
+>   phy: renesas: rcar-gen3-usb2: Move IRQ request in probe
+>   phy: renesas: rcar-gen3-usb2: Lock around hardware registers and
+>     driver data
+>   phy: renesas: rcar-gen3-usb2: Assert PLL reset on PHY power off
+>   phy: renesas: rcar-gen3-usb2: Set timing registers only once
+> 
+>  drivers/phy/renesas/phy-rcar-gen3-usb2.c | 134 +++++++++++++----------
+>  1 file changed, 74 insertions(+), 60 deletions(-)
+> 
 
-Willy
 
