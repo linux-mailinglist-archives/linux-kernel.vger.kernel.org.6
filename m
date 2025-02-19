@@ -1,73 +1,63 @@
-Return-Path: <linux-kernel+bounces-521748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C0B7A3C1DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:20:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 939E5A3C1EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:22:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00B533A886B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:12:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25C1B16D713
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:19:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 819B51FDE12;
-	Wed, 19 Feb 2025 14:09:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5120D1EDA3B;
+	Wed, 19 Feb 2025 14:19:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SSsjidcM"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Iy8gBjDX"
+Received: from smtp.smtpout.orange.fr (smtp-80.smtpout.orange.fr [80.12.242.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3011D1F30A9;
-	Wed, 19 Feb 2025 14:09:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02651D5CFA;
+	Wed, 19 Feb 2025 14:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739974197; cv=none; b=l005Ln3ybregdTmUpAf1tidEfpJCYDFKp19oEWfhQvwNN1RXH+hjG4Obn/yY50bFvL29IFh/F5KD03t9FA6aSq2TNXecnwkz31WigGgTchVB2mE8kyl9JQYgPyI/p3L7vvFR57SADmDlY1JfGd8ueavWpC4SMKpOnj+5hUKR8Fc=
+	t=1739974760; cv=none; b=tAVXt5fyaYLFS4GjB5j9xwSxXsjznbpbX3uDLLGjxiv1WIoxHdMykptdLmz70gjxLr+oNU/kw5TiwvVQkmyASx0JIz9SkF0rh3LULIQmKL9PCjp3y0SlSUUXZW1MYTynRTUPBJcAZ/q+3wR5qjaHxcLrdUHBZy0PRk7jEddb04Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739974197; c=relaxed/simple;
-	bh=FmNh8i/+NBQdKhSxJQWTczf6sC4JYYzdaKEbQ/SujWk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=J5DIQ4NHpsu83y1FyujdNu7GNWMBJ5zI1Wf3gz2BZS0CMkNQqlSrU9j5QSpiSBTA/DUFTb/qBHvk9ym2ERYJKiDpWSn74zUy6zEiYKO9CJUlBSM8TGDqVxjkgN5FhnH9pDbkXW79DYtbOWffFbIGtokOnw9EJskbU2SxN12jojE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SSsjidcM; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739974196; x=1771510196;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=FmNh8i/+NBQdKhSxJQWTczf6sC4JYYzdaKEbQ/SujWk=;
-  b=SSsjidcMyZQcdGiy48krTE/TXJSb9Xt+ZrL248UBopobKcjA7bO5CFC/
-   vWgTUYYxFO90jDB10vzRZ9mg26KBWSYSiBy6+LoRNIYaPDk33JYOMzPq1
-   Tw4kqzEB99ChQzMBwr5RfJNdYQElrzMQRFMvuB9EyrPDw1AH3dga2Qr1/
-   H3tBTw14qImCEYsD7ZtwFA87FoGKwZ0sD7ZuIOo+V7HY+HcRq52ZE9fw/
-   uiw/Y3H+PweDyqA2KxQ5h14QUnnwvFr6/PF+yGCHoIUo8RYMZGXxyZoRR
-   IHaMraVHth2ag38kJkRk8WHCbsMZ3HTqf2rIJG0TYlyH9PAmBts9baxzW
-   g==;
-X-CSE-ConnectionGUID: kXmosbpmS+uWfQaqo/6oWQ==
-X-CSE-MsgGUID: zOmLAjNnQDWlgVy+XJD1mQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11350"; a="51351222"
-X-IronPort-AV: E=Sophos;i="6.13,299,1732608000"; 
-   d="scan'208";a="51351222"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 06:09:55 -0800
-X-CSE-ConnectionGUID: FHBLuRzJSRSY2NCfTF611Q==
-X-CSE-MsgGUID: Y9EvvsvVS0O0u6GzPtvajg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="118860004"
-Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
-  by fmviesa003.fm.intel.com with ESMTP; 19 Feb 2025 06:09:55 -0800
-From: kan.liang@linux.intel.com
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	linux-kernel@vger.kernel.org
-Cc: ak@linux.intel.com,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Amiri Khalil <amiri.khalil@intel.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] perf/x86/intel: Fix event constraints for LNC
-Date: Wed, 19 Feb 2025 06:10:05 -0800
-Message-Id: <20250219141005.2446823-1-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.38.1
+	s=arc-20240116; t=1739974760; c=relaxed/simple;
+	bh=xhOka5HrB/5l9DnPGh8I/d8vI/RjpFfgtquNt4qx9kk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GtbUXK1airPflb+BCP3ODWwLgbWTnnq4UqdJ9r1/BuR0s0kihMlBPrkfk0erGOdDKydnuxpZ2dUXUv5tACsS4Ie9mzRrvEG8U88rpB6eymZ5lAjGrHZanCgpDkyxFsyFYY0UnsDv9fadDwvWE/5lY4PgnhUu6DVr5pS2kADfiv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Iy8gBjDX; arc=none smtp.client-ip=80.12.242.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id kkmNtlwWuP1lPkkmQtAPTZ; Wed, 19 Feb 2025 15:10:27 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1739974227;
+	bh=/3VqG2Ixu4D/b/fBjdxtIHmnWs32ARGjXTBEBsZkq2k=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=Iy8gBjDXBxphsv6TAVjALjMVIWnok0wI4Cn6sv230TK+vh1OEefemFDGWNn93Q3dW
+	 mi6c47I+n2eTCn+vM0WVmX0SRdFkR1mbig/p1d4gFvyZ0+l6M0fJHGwlCqE5ZmgKJ6
+	 05lb5Beqs9gRPb9WW8e0Q6+v2f3v2XktqjQQH3DIFLLb5K5CMBpRsil+Aupeg2hsuH
+	 +9wnWbiqgkK3yf0SoktRsrp8WYCnzZZuwaztUh8kmED9XgKDcMCyCr1ozmRj0kUH8l
+	 tZpjHPXWUuFZxo/yydJ/XvXeiwDRCgNaIztMvQcAMWPgu8k4fMGEMS/Bc9fHFYoDGt
+	 eeEiSBiqY2xBg==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Wed, 19 Feb 2025 15:10:27 +0100
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-btrfs@vger.kernel.org
+Subject: [PATCH] btrfs: zoned: Remove some code duplication
+Date: Wed, 19 Feb 2025 15:10:21 +0100
+Message-ID: <74072f83285f96aba98add7d24c9f944d22a721b.1739974151.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,84 +66,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Kan Liang <kan.liang@linux.intel.com>
+This code snippet is written twice in row, so remove one of them.
 
-According to the latest event list, update the event constraint tables
-for Lion Cove core.
+This was apparently added by accident in commit efe28fcf2e47 ("btrfs:
+handle unexpected parent block offset in btrfs_alloc_tree_block()")
 
-The general rule (the event codes < 0x90 are restricted to counters
-0-3.) has been removed. There is no restriction for most of the
-performance monitoring events.
-
-Fixes: a932aa0e868f ("perf/x86: Add Lunar Lake and Arrow Lake support")
-Reported-by: Amiri Khalil <amiri.khalil@intel.com>
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Cc: stable@vger.kernel.org
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- arch/x86/events/intel/core.c | 20 +++++++-------------
- arch/x86/events/intel/ds.c   |  2 +-
- 2 files changed, 8 insertions(+), 14 deletions(-)
+ fs/btrfs/zoned.c | 9 ---------
+ 1 file changed, 9 deletions(-)
 
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index da70526194b0..051a5bea0568 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -397,34 +397,28 @@ static struct event_constraint intel_lnc_event_constraints[] = {
- 	METRIC_EVENT_CONSTRAINT(INTEL_TD_METRIC_FETCH_LAT, 6),
- 	METRIC_EVENT_CONSTRAINT(INTEL_TD_METRIC_MEM_BOUND, 7),
+diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
+index b5b9d16664a8..6c4534316aad 100644
+--- a/fs/btrfs/zoned.c
++++ b/fs/btrfs/zoned.c
+@@ -1663,15 +1663,6 @@ int btrfs_load_block_group_zone_info(struct btrfs_block_group *cache, bool new)
+ 	}
  
-+	INTEL_EVENT_CONSTRAINT(0x20, 0xf),
-+
-+	INTEL_UEVENT_CONSTRAINT(0x012a, 0xf),
-+	INTEL_UEVENT_CONSTRAINT(0x012b, 0xf),
- 	INTEL_UEVENT_CONSTRAINT(0x0148, 0x4),
- 	INTEL_UEVENT_CONSTRAINT(0x0175, 0x4),
- 
- 	INTEL_EVENT_CONSTRAINT(0x2e, 0x3ff),
- 	INTEL_EVENT_CONSTRAINT(0x3c, 0x3ff),
--	/*
--	 * Generally event codes < 0x90 are restricted to counters 0-3.
--	 * The 0x2E and 0x3C are exception, which has no restriction.
--	 */
--	INTEL_EVENT_CONSTRAINT_RANGE(0x01, 0x8f, 0xf),
- 
--	INTEL_UEVENT_CONSTRAINT(0x01a3, 0xf),
--	INTEL_UEVENT_CONSTRAINT(0x02a3, 0xf),
- 	INTEL_UEVENT_CONSTRAINT(0x08a3, 0x4),
- 	INTEL_UEVENT_CONSTRAINT(0x0ca3, 0x4),
- 	INTEL_UEVENT_CONSTRAINT(0x04a4, 0x1),
- 	INTEL_UEVENT_CONSTRAINT(0x08a4, 0x1),
- 	INTEL_UEVENT_CONSTRAINT(0x10a4, 0x1),
- 	INTEL_UEVENT_CONSTRAINT(0x01b1, 0x8),
-+	INTEL_UEVENT_CONSTRAINT(0x01cd, 0x3fc),
- 	INTEL_UEVENT_CONSTRAINT(0x02cd, 0x3),
--	INTEL_EVENT_CONSTRAINT(0xce, 0x1),
- 
- 	INTEL_EVENT_CONSTRAINT_RANGE(0xd0, 0xdf, 0xf),
--	/*
--	 * Generally event codes >= 0x90 are likely to have no restrictions.
--	 * The exception are defined as above.
--	 */
--	INTEL_EVENT_CONSTRAINT_RANGE(0x90, 0xfe, 0x3ff),
-+
-+	INTEL_UEVENT_CONSTRAINT(0x00e0, 0xf),
- 
- 	EVENT_CONSTRAINT_END
- };
-diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
-index df9499d6e4dc..a04618c47f05 100644
---- a/arch/x86/events/intel/ds.c
-+++ b/arch/x86/events/intel/ds.c
-@@ -1199,7 +1199,7 @@ struct event_constraint intel_lnc_pebs_event_constraints[] = {
- 	INTEL_FLAGS_UEVENT_CONSTRAINT(0x100, 0x100000000ULL),	/* INST_RETIRED.PREC_DIST */
- 	INTEL_FLAGS_UEVENT_CONSTRAINT(0x0400, 0x800000000ULL),
- 
--	INTEL_HYBRID_LDLAT_CONSTRAINT(0x1cd, 0x3ff),
-+	INTEL_HYBRID_LDLAT_CONSTRAINT(0x1cd, 0x3fc),
- 	INTEL_HYBRID_STLAT_CONSTRAINT(0x2cd, 0x3),
- 	INTEL_FLAGS_UEVENT_CONSTRAINT_DATALA_LD(0x11d0, 0xf),	/* MEM_INST_RETIRED.STLB_MISS_LOADS */
- 	INTEL_FLAGS_UEVENT_CONSTRAINT_DATALA_ST(0x12d0, 0xf),	/* MEM_INST_RETIRED.STLB_MISS_STORES */
+ out:
+-	/* Reject non SINGLE data profiles without RST */
+-	if ((map->type & BTRFS_BLOCK_GROUP_DATA) &&
+-	    (map->type & BTRFS_BLOCK_GROUP_PROFILE_MASK) &&
+-	    !fs_info->stripe_root) {
+-		btrfs_err(fs_info, "zoned: data %s needs raid-stripe-tree",
+-			  btrfs_bg_type_to_raid_name(map->type));
+-		return -EINVAL;
+-	}
+-
+ 	/* Reject non SINGLE data profiles without RST. */
+ 	if ((map->type & BTRFS_BLOCK_GROUP_DATA) &&
+ 	    (map->type & BTRFS_BLOCK_GROUP_PROFILE_MASK) &&
 -- 
-2.38.1
+2.48.1
 
 
