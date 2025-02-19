@@ -1,151 +1,206 @@
-Return-Path: <linux-kernel+bounces-521029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D921A3B2E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:56:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 16EFAA3B2DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:56:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 912A7188D156
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:56:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DFC9188FFC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:56:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F3B51C4A13;
-	Wed, 19 Feb 2025 07:55:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 231031C5D4B;
+	Wed, 19 Feb 2025 07:55:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="KxGzQ00f"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RrmAu3ub"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D74351C3029
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 07:55:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8730C1C173F;
+	Wed, 19 Feb 2025 07:55:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739951755; cv=none; b=Ms8suKa7fuMlScNVDU2LH3LDZd8o/2SFUDH3kKNvVXTaEbSSwHakgtE7D+MzUm6BM06qes/bCRkkeTaBxGcBOog+BAsnHVAxho5xn6FxrmjrMYgW+y3C++gCIxrbLKIIc0OJ+QA7hBdZN0aA9KZ3jDXHNi420sMFUVbSFnQ6EZ4=
+	t=1739951741; cv=none; b=clDJ3sj7sIRN4zbAtaySTZKcYBFiEQJXt6bRZSfNWRElCB4iofGjTP5DO611LjT7/fsgiHi5jmCNn3D6wLYe7CQ28M9PN1qf595hkNrwAfsNI4GyQrxY79cYf/CXpVOsfCHCKm0oVgEetEnKPYr7fdjJeyA1zpDo9PtPFpXpuhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739951755; c=relaxed/simple;
-	bh=UH32YQGrhQ8zsuamSIzMy12L0Zs1MOTArM5Sj6UWIbc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YZTX+POiNnQ8Br9asVaa1OBaIA28MLKHWdlH7nQTBb10GiypXgtg+HsPvVCu3Mmhj2PUYxj4AhQv7S0qiqf4CmEsQXnjeo+oF93/ZEGHKdprO1KR9ExXnejISEbBJyO3VXJ229xZI5xxBJ/Ze1DCJXJQz68vqjwixh339rMf41Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=KxGzQ00f; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.202] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 51J7tMhO1653376
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Tue, 18 Feb 2025 23:55:22 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 51J7tMhO1653376
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025021701; t=1739951723;
-	bh=oDgZq7gWYayOHoGByNh18uQgQ/WetppPuukdDrLGmII=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KxGzQ00fjj4NMMFTj0STMg35dePQevrF3uI1L3l8h6Ch6qMpUVknic1Pa7Ho6tdpq
-	 kJRqyNg9eBE1FumsT2aDoih3OASlw6943L0Ly/+rGM/rqafDgW1aj0bs3zy8wCENvt
-	 zaBHeJ99hJLOgGO55gQZngzYR7PomAo6uK5Pi/NMX2DXYxdmqpUxHCG0CMsHNiKfqJ
-	 sm/B8BshZR8VdjI7NitHPFbI2uIGRqZA+DaB/DIjEnobALNK0OR3FdCM7I816GCG95
-	 6DXEFloZrSATNt1W0lEQjiwwgwO4kQa/U5efLvOr2CuwZ78fZyQbekjuDamfs5cHhD
-	 qiInNBCzs0kqg==
-Message-ID: <cace0bfa-2de7-431b-9b4d-fd8ca5e7873d@zytor.com>
-Date: Tue, 18 Feb 2025 23:55:21 -0800
+	s=arc-20240116; t=1739951741; c=relaxed/simple;
+	bh=EbHYomzEGqBM/6gcsBpWHw7Pd+SrgcF93ylJpz/8wak=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=euE+6C/2T4bFwo8MBLdMaDam6E9cXnWDoDkbf5IZEtgTsU4wrG6c2uXJyuXJPaZ4mGo4xbio1DaUlXd63gL04NfWZi28mA73BxSehBn1Audc0JDoQ2dQV+rc2/eGP98K1a/Qpvhm1lsZb7KUHlL6h4M230Nuxfau+yaf/F2SWdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RrmAu3ub; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5ded46f323fso8400225a12.1;
+        Tue, 18 Feb 2025 23:55:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739951738; x=1740556538; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EbHYomzEGqBM/6gcsBpWHw7Pd+SrgcF93ylJpz/8wak=;
+        b=RrmAu3ubJWb5junSC/4qqCzgS62q4vxIoOVtv9yCgEFUvuMqkF3faPVGdYP1Xyzcdz
+         zTVZaa44yHTZgKLBoHbNZJJ5SR4NhozRO0QNm1SvV3bkv9X6ZH+C0D9lt6kxajxhftQK
+         tOmd1IONN5q586sNiAwWJL3aKzSJx6AlH2NaxT1Nh3aMscBtkmsVWrBD0wzEdecHzJxc
+         gTmlnJdLaSbIqCgpK0H1h37HfLa8qUstwY9s2UplDs3c7WI4uBRwJ3JtjJaV7BxO8cZc
+         i2jmPp2u0EmVoY9sZYXquVuAYug37uiva+wMaA8l43bpk0/CK90PwaKAwSH2m5KU1fyW
+         yhyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739951738; x=1740556538;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EbHYomzEGqBM/6gcsBpWHw7Pd+SrgcF93ylJpz/8wak=;
+        b=pI6qS1qrDNlTOYHLZ9nmlxrrezX1zhaQDvrrWe2bziv8SUHE/a/DMn4BFwSq/dGvXq
+         S91MCE1MPIL1hVoUoQaC9mNuWHl0JbpVmNxKnErN/nGoSyp/5GzsKsT51XTx227KYZbx
+         XwaCEsS5P/NZDHyGMFJEx4ltJA9Ezh5g7TP1ZXHiuqgh3HDAdzXsWtzGSYS9H9mhLZpg
+         xhtTZSfzCCf3ktyZxi8TOQHFmbJFTdCXJ9+RyubjNF8WDzwPUPLT6QT5oJjcSQBjtfT0
+         d5Ld2PwMtvidqPphvdeY6sGUS9ccRoE70z28zu2yKYl+acU6l9+pw5U/iiO3PwX/pauq
+         taTA==
+X-Forwarded-Encrypted: i=1; AJvYcCUyljzxfsQPaUjkFrMXzGw/8fgxhce3bLqnoLAsn6aUteVNBL2qfWN8UP6x/TD1rorHquLraajKrCui@vger.kernel.org, AJvYcCVIWbhN+Tko2Py71/LnOyqkZi0dq+prFmO0BTQ85tq0qQMUnYhBBuRF+DKDa4M8putwKsLrNcwBSo3TUXt1qA==@vger.kernel.org, AJvYcCVPy1aCjjLsrDIUeE+2i86rqVk+FTQ1igAjzE+z+kXsVkwUgD13xfPB6RoYggY2eB6z4FLitQA18+m23VKv@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNqt+4hcGhotndZFuooe2m7YK2QohH/yWSID/dZufElV7bGgs4
+	vN/kn2nKZO+ZrnTlBH3ufCpiDXeeNKIj9+rejZvMYP8sX39kgctrI00jVrgaNMJDJEBgvflwcvx
+	ck/USaMwO83KnZy7tuupxlT47Wi0=
+X-Gm-Gg: ASbGncuaH8cT30t0OVMuubvqtzV69gG4x/nzpPb8+TYbwwnlrSE/J3y+NMwYK1Ucr3u
+	JJzEpYCQJqGIck9cRt2zb5Pqvp6yZec0FoPrZHJMTJ5Uu9OprbddSvCRRJbPRzaHz0dKA64ha
+X-Google-Smtp-Source: AGHT+IE3aGxD6kSsZVNJxjQH8TGu4ReOyuVVJu1bMp8BPJ5HJ+l+n0dg4eEt8BRWfqenNWmrM0AaBc+z55xXgVbLjWc=
+X-Received: by 2002:a05:6402:50ca:b0:5e0:4a92:6b34 with SMTP id
+ 4fb4d7f45d1cf-5e089516998mr2204298a12.12.1739951737416; Tue, 18 Feb 2025
+ 23:55:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/1] x86/ia32: Leave NULL selector values 0~3 as is
-To: Andrew Cooper <andrew.cooper3@citrix.com>, linux-kernel@vger.kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        brgerst@gmail.com, ebiederm@xmission.com
-References: <20241126184529.1607334-1-xin@zytor.com>
- <fa3d0093-818d-4592-8415-3c2e287cc3e6@zytor.com>
- <36970ddb-c0d8-43e4-a94e-0d9ea3d55ced@zytor.com>
- <eb5f75e3-0882-4baa-be32-f363a8e411d8@citrix.com>
-Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <eb5f75e3-0882-4baa-be32-f363a8e411d8@citrix.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250216164029.20673-1-pali@kernel.org> <20250216164029.20673-2-pali@kernel.org>
+ <20250216183432.GA2404@sol.localdomain> <CAOQ4uxigYpzpttfaRc=xAxJc=f2bz89_eCideuftf3egTiE+3A@mail.gmail.com>
+ <20250216202441.d3re7lfky6bcozkv@pali> <CAOQ4uxj4urR70FmLB_4Qwbp1O5TwvHWSW6QPTCuq7uXp033B7Q@mail.gmail.com>
+ <Z7Pjb5tI6jJDlFZn@dread.disaster.area> <CAOQ4uxh6aWO7Emygi=dXCE3auDcZZCmDP+jmjhgdffuz1Vx6uQ@mail.gmail.com>
+ <20250218192701.4q22uaqdyjxfp4p3@pali> <Z7UQHL5odYOBqAvo@dread.disaster.area> <20250218230643.fuc546ntkq3nnnom@pali>
+In-Reply-To: <20250218230643.fuc546ntkq3nnnom@pali>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 19 Feb 2025 08:55:26 +0100
+X-Gm-Features: AWEUYZk6LPVJ6yh4ABnF4RMKDHcNJh_qDgkcHF5dnokJG42zcEIX4XZjn92Do0w
+Message-ID: <CAOQ4uxiAU7UorH1FLcPgoWMXMGRsOt77yRQ12Xkmzcxe8qYuVw@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/4] fs: Add FS_XFLAG_COMPRESSED & FS_XFLAG_ENCRYPTED
+ for FS_IOC_FS[GS]ETXATTR API
+To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
+Cc: Dave Chinner <david@fromorbit.com>, Eric Biggers <ebiggers@kernel.org>, 
+	"Darrick J. Wong" <djwong@kernel.org>, ronnie sahlberg <ronniesahlberg@gmail.com>, 
+	Chuck Lever <chuck.lever@oracle.com>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Steve French <sfrench@samba.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2/14/2025 6:01 AM, Andrew Cooper wrote:
-> On 14/02/2025 6:56 am, Xin Li wrote:
->> On 12/12/2024 10:44 AM, Xin Li wrote:
->>> On 11/26/2024 10:45 AM, Xin Li (Intel) wrote:
->>>> The first GDT descriptor is reserved as 'NULL descriptor'.  As bits 0
->>>> and 1 of a segment selector, i.e., the RPL bits, are NOT used to index
->>>> GDT, selector values 0~3 all point to the NULL descriptor, thus values
->>>> 0, 1, 2 and 3 are all valid NULL selector values.
->>>>
->>>> When a NULL selector value is to be loaded into a segment register,
->>>> reload_segments() sets its RPL bits.  Later IRET zeros ES, FS, GS, and
->>>> DS segment registers if any of them is found to have any nonzero NULL
->>>> selector value.  The two operations offset each other to actually
->>>> effect
->>>> a nop.
->>>>
->>>> Besides, zeroing of RPL in NULL selector values is an information leak
->>>> in pre-FRED systems as userspace can spot any interrupt/exception by
->>>> loading a nonzero NULL selector, and waiting for it to become zero.
->>>> But there is nothing software can do to prevent it before FRED.
->>>>
->>>> ERETU, the only legit instruction to return to userspace from kernel
->>>> under FRED, by design does NOT zero any segment register to avoid this
->>>> problem behavior.
->>>>
->>>> As such, leave NULL selector values 0~3 as is.
->>>
->>> Hi Andrew,
->>>
->>> Do you have any more comments?
->>
->> Hi Andrew,
->>
->> Are you okay to give a review-by to this patch?
-> 
-> Apologies.
-> 
-> Reviewed-by: Andrew Cooper <andrew.cooper3@citrix.com>
+On Wed, Feb 19, 2025 at 12:06=E2=80=AFAM Pali Roh=C3=A1r <pali@kernel.org> =
+wrote:
+>
+> On Wednesday 19 February 2025 09:56:28 Dave Chinner wrote:
+> > On Tue, Feb 18, 2025 at 08:27:01PM +0100, Pali Roh=C3=A1r wrote:
+> > > On Tuesday 18 February 2025 10:13:46 Amir Goldstein wrote:
+> > > > > and there is no need for whacky field
+> > > > > masks or anything like that. All it needs is a single bit to
+> > > > > indicate if the windows attributes are supported, and they are al=
+l
+> > > > > implemented as normal FS_XFLAG fields in the fsx_xflags field.
+> > > > >
+> > >
+> > > If MS adds 3 new attributes then we cannot add them to fsx_xflags
+> > > because all bits of fsx_xflags would be exhausted.
+> >
+> > And then we can discuss how to extend the fsxattr structure to
+> > implement more flags.
+> >
+> > In this scenario we'd also need another flag bit to indicate that
+> > there is a second set of windows attributes that are supported...
+> >
+> > i.e. this isn't a problem we need to solve right now.
+>
+> Ok, that is possible solution for now.
+>
+> > > Just having only one FS_XFLAGS_HAS_WIN_ATTRS flag for determining win=
+dows
+> > > attribute support is not enough, as it would not say anything useful =
+for
+> > > userspace.
+> >
+> > IDGI.
+> >
+> > That flag is only needed to tell userspace "this filesystem supports
+> > windows attributes". Then GET will return the ones that are set,
+> > and SET will return -EINVAL for those that it can't set (e.g.
+> > compress, encrypt). What more does userspace actually need?
 
-Thank you very much!
+Let me state my opinion clearly.
+I think this API smells.
+I do not object to it, but I think we can do better.
 
-Thanks!
-     Xin
+I do however object to treating different flags in fsx_xflags
+differently - this is unacceptable IMO.
 
+The difference I am referring to is a nuance, but IMO an important one -
+
+It's fine for GET to raise a flag "this filesystem does not accept SET
+of any unknown flags".
+
+It's not fine IMO for GET to raise a flag "this filesystem does not accept
+SET of unknown flags except for a constant subset of flags that filesystem
+may ignore".
+It's not fine IMO, because it makes userspace life harder for no good reaso=
+n.
+
+This former still allows filesystems to opt-in one by one to the extended A=
+PI,
+but it does not assume anything about the subset of windows attributes
+and legacy Linux attributes that need to be supported.
+
+For example, adding support for set/get hidden/system/archive/readonly
+fo fs/fat, does not require supporting all FS_XFLAG_COMMON by fs/fat
+and an attempt to set unsupported FS_XFLAG_COMMON flags would
+result in -EINVAL just as an attempt to set an unsupported win flag.
+
+But if we agree on setting one special flag in GET to say "new SET
+semantics", I do not understand the objection to fsx_xflags_mask.
+
+Dave, if you actually object to fsx_xflags_mask please explain why.
+"What more does userspace actually need?" is not a good enough
+reason IMO. Userspace could make use of fsx_xflags_mask.
+
+>
+> Userspace backup utility would like to backup as many attributes as
+> possible by what is supported by the target filesystem. What would such
+> utility would do if the target filesystem supports only HIDDEN
+> attribute, and source file has all windows attributes set? It would be
+> needed to issue 2*N syscalls in the worst case to set attributes.
+> It would be combination of GET+SET for every one windows attribute
+> because userspace does not know what is supported and what not.
+>
+> IMHO this is suboptimal. If filesystem would provide API to get list of
+> supported attributes then this can be done by 2-3 syscalls.
+
+I agree that getting the "attributes supported by filesystem" is important
+and even getting the "gettable" subset and "settable" subset and I also
+agree with Dave that this could be done once and no need to do it for
+every file (although different file types may support a different subsets).
+
+Let's stop for a moment to talk about statx.
+
+I think you should include a statx support path in your series - not later.
+If anything, statx support for exporting those flags should be done
+before adding the GET/SET API.
+
+Why? because there is nothing controversial about it.
+- add a bunch of new STATX_ATTR_ flags
+- filesystems that support them will publish that in stx_attributes_mask
+- COMPR/ENCRYPT are already exported in statx
+
+With that, backup/sync programs are able to query filesystem support
+even without fsx_xflags_mask.
+
+I think this is a hacky way around a proper GET/SET API, but possible.
+
+Thanks,
+Amir.
 
