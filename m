@@ -1,231 +1,196 @@
-Return-Path: <linux-kernel+bounces-521247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97726A3BA6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:42:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0F85A3B9C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:35:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B595168E38
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:33:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 938487A7D96
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:32:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D88651DFE22;
-	Wed, 19 Feb 2025 09:28:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y/OawoYI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D5AA28629E
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 09:28:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C1D1DE2C4;
+	Wed, 19 Feb 2025 09:29:27 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BBD01D416E;
+	Wed, 19 Feb 2025 09:29:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739957339; cv=none; b=FfI6cgGFd3RTcwD576dOOgHlttJ7ZwnhuCl4vrYdthBI8PuUGmj5GWJrcv+hnSjD+gXnlVfoItwF3ZFg+8btIh1vaJL4U3k25C8NLyA+tf6UjgTqjvjWoj3dHfRqWs+zHD2R/5OOLisOJkzspbwGig5CmcIsjfQN0hIkTF+GlZ4=
+	t=1739957367; cv=none; b=KubZ5tXI7pC9kjcFSnhMYzNcwMoiYNn+ypQnFPpH8iTXPVtdzwpVwuiLIh4YRGRu1x7KorDS8WsZF+VS8gH4tyfjNrct3SMZs/nsmnpkA4iBaKWMtJcqpxghoveZlINW2y5w7GtsUVQ/Bjp3fDVtOwASFP3R5OLhtFiN15beCyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739957339; c=relaxed/simple;
-	bh=2YoKx2TA+5+dia75YWBoUPKIALRgLf622XWlx8fTymc=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S81FWQd/sPL6BJ84T2kbvEKigpr48TNFC6nc3eqvgqIxmRqXi2iekiHpAMYn5ysDtVx8k0Jh8zIBeXiqfNaF4LpKcTq5mGXKG66D10M9bkMPGvbhn/E9J6p5zR3N8I4UP10i7O8nDCBuE17q8guv4XAhcWBzyhb61yMqBvA/kcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y/OawoYI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92E56C4CED1;
-	Wed, 19 Feb 2025 09:28:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739957338;
-	bh=2YoKx2TA+5+dia75YWBoUPKIALRgLf622XWlx8fTymc=;
-	h=Date:From:To:Subject:References:In-Reply-To:From;
-	b=Y/OawoYIG1YanwzyXgQHJASucgl7c83lWPCnd57U+zaG5W9+10Md34elMbKPqHBRh
-	 xCGnUNbKSEZ3RoktoQ6HSIYhRVpOEuCEQR5zMDyh+jMdIePuBkCw/fgGnatLC16vUN
-	 bXeOaeGZyVDlA7vUHEPBI+lY/dPPQmoqaZRLFmTfCleH3LbKW+0di4T1jZ8xsq3Ol1
-	 2LZer1jSbb+fuyUYl5XqUr43cG83+dbv8fYxIqc4dZ6strL8sltGzJtgQ8gOfrhAuo
-	 RqWwZNaeYnS08IX/8PQnw/+KEMphinLjjncNOXFsNoUx4/81BOgSjRNMqaaz1V3KSD
-	 wYEJf7mhZwk/w==
-Date: Wed, 19 Feb 2025 10:28:56 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, 
-	Melissa Wen <melissa.srw@gmail.com>, =?utf-8?B?TWHDrXJh?= Canal <mairacanal@riseup.net>, 
-	Haneen Mohammed <hamohammed.sa@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Simona Vetter <simona.vetter@ffwll.ch>, 
-	jose.exposito89@gmail.com, dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net, 
-	linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com, 
-	thomas.petazzoni@bootlin.com, seanpaul@google.com, nicolejadeyee@google.com
-Subject: Re: [PATCH RFC v2 00/16] drm/vkms: ConfigFS interface
-Message-ID: <20250219-versatile-smilodon-of-felicity-cbcc4d@houat>
-References: <20241122-google-config-fs-v2-0-4b7e6f183320@bootlin.com>
- <Z0DC8nd1ZFN4A82-@louis-chauvet-laptop>
- <20241126-overjoyed-knowing-cuttlefish-c8d0f6@houat>
- <Z2GqEOiVkdgB3IXy@louis-chauvet-laptop>
+	s=arc-20240116; t=1739957367; c=relaxed/simple;
+	bh=TiX5hKFzn5cHW3dXI+eazWWgHEaso2Kv4HnEi0UzIJ0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R4vDVNYTs9mDSJZhpEyg5ZJLYlYHJ4bwQm/m1NnmDqD9F3kNrtUKX3vrd7fLT5esfxaP14rrFHLXyz2hV/RAZ/nHCPS6tsVRrx2VAvKRAXBj3VkAlsuSDhf23M/SFQGxwRAwWen5+2m/Y7XMAG+Pi4udFXCHI22keO3rTuKZ0ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 13D371682;
+	Wed, 19 Feb 2025 01:29:43 -0800 (PST)
+Received: from [192.168.178.6] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F0BED3F59E;
+	Wed, 19 Feb 2025 01:29:20 -0800 (PST)
+Message-ID: <a0f03e3e-bced-4be7-8589-1e65042b39aa@arm.com>
+Date: Wed, 19 Feb 2025 10:29:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="5dyx5btulynwqir3"
-Content-Disposition: inline
-In-Reply-To: <Z2GqEOiVkdgB3IXy@louis-chauvet-laptop>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/2] sched/deadline: Check bandwidth overflow earlier
+ for hotplug
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>,
+ Christian Loehle <christian.loehle@arm.com>,
+ Thierry Reding <treding@nvidia.com>, Waiman Long <longman@redhat.com>,
+ Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+ Michal Koutny <mkoutny@suse.com>, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ Phil Auld <pauld@redhat.com>, Qais Yousef <qyousef@layalina.io>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+ Suleiman Souhlal <suleiman@google.com>, Aashish Sharma <shraash@google.com>,
+ Shin Kawamura <kawasin@google.com>,
+ Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
+ linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <Z6oysfyRKM_eUHlj@jlelli-thinkpadt14gen4.remote.csb>
+ <dbd2af63-e9ac-44c8-8bbf-84358e30bf0b@arm.com>
+ <Z6spnwykg6YSXBX_@jlelli-thinkpadt14gen4.remote.csb>
+ <78f627fe-dd1e-4816-bbf3-58137fdceda6@nvidia.com>
+ <Z62ONLX4OLisCLKw@jlelli-thinkpadt14gen4.remote.csb>
+ <30a8cda5-0fd0-4e47-bafe-5deefc561f0c@nvidia.com>
+ <151884eb-ad6d-458e-a325-92cbe5b8b33f@nvidia.com>
+ <Z7Ne49MSXS2I06jW@jlelli-thinkpadt14gen4.remote.csb>
+ <Z7RZ4141H-FnoQPW@jlelli-thinkpadt14gen4.remote.csb>
+ <d7cc3a3c-155e-4872-a426-cbd239d79cac@arm.com>
+ <Z7SWvr86RXlBbJlw@jlelli-thinkpadt14gen4.remote.csb>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Content-Language: en-US
+In-Reply-To: <Z7SWvr86RXlBbJlw@jlelli-thinkpadt14gen4.remote.csb>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+On 18/02/2025 15:18, Juri Lelli wrote:
+> On 18/02/25 15:12, Dietmar Eggemann wrote:
+>> On 18/02/2025 10:58, Juri Lelli wrote:
+>>> Hi!
+>>>
+>>> On 17/02/25 17:08, Juri Lelli wrote:
+>>>> On 14/02/25 10:05, Jon Hunter wrote:
+
+[...]
+
+>> Yeah, looks like suspend/resume behaves differently compared to CPU hotplug.
+>>
+>> On my Juno [L b b L L L]
+>>                 ^^^
+>>                 isolcpus=[2,3]
+>>
+>> # ps2 | grep DLN
+>>    98    98 S 140      0   - DLN sugov:0
+>>    99    99 S 140      0   - DLN sugov:1
+>>
+>> # taskset -p 98; taskset -p 99
+>> pid 98's current affinity mask: 39
+>> pid 99's current affinity mask: 6
+>>
+>>
+>> [   87.679282] partition_sched_domains() called
+>> ...
+>> [   87.684013] partition_sched_domains() called
+>> ...
+>> [   87.687961] partition_sched_domains() called
+>> ...
+>> [   87.689419] psci: CPU3 killed (polled 0 ms)
+>> [   87.689715] __dl_bw_capacity() mask=2-5 cap=1024
+>> [   87.689739] dl_bw_cpus() cpu=6 rd->span=2-5 cpu_active_mask=0-2 cpus=1
+>> [   87.689757] dl_bw_manage: cpu=2 cap=0 fair_server_bw=52428
+>> total_bw=209712 dl_bw_cpus=1 type=DEF span=2-5
+>> [   87.689775] dl_bw_cpus() cpu=6 rd->span=2-5 cpu_active_mask=0-2 cpus=1
+>> [   87.689789] dl_bw_manage() cpu=2 cap=0 overflow=1 return=-16
+>> [   87.689864] Error taking CPU2 down: -16                       <-- !!!
+>> ...
+>> [   87.690674] partition_sched_domains() called
+>> ...
+>> [   87.691496] partition_sched_domains() called
+>> ...
+>> [   87.693702] partition_sched_domains() called
+>> ...
+>> [   87.695819] partition_and_rebuild_sched_domains() called
+>>
+> 
+> Ah, OK. Did you try with my last proposed change?
+
+I did now. 
+
+Patch-wise I have:
+
+(1) Putting 'fair_server's __dl_server_[de|at]tach_root() under if  
+    '(cpumask_test_cpu(rq->cpu, [old_rd->online|cpu_active_mask))' in 
+    rq_attach_root()
+
+    https://lkml.kernel.org/r/Z7RhNmLpOb7SLImW@jlelli-thinkpadt14gen4.remote.csb
+
+(2) Create __dl_server_detach_root() and call it in rq_attach_root()
+
+    https://lkml.kernel.org/r/Z4fd_6M2vhSMSR0i@jlelli-thinkpadt14gen4.remote.csb
+
+plus debug patch:
+
+    https://lkml.kernel.org/r/Z6M5fQB9P1_bDF7A@jlelli-thinkpadt14gen4.remote.csb
+
+plus additional debug.
+
+The suspend issue still persists.
+
+My hunch is that it's rather an issue with having 0 CPUs left in DEF
+while deactivating the last isol CPU (CPU3) so we set overflow = 1 w/o
+calling __dl_overflow(). We want to account fair_server_bw=52428
+against 0 CPUs. 
+
+l B B l l l
+
+      ^^^
+      isolcpus=[3,4]
 
 
---5dyx5btulynwqir3
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH RFC v2 00/16] drm/vkms: ConfigFS interface
-MIME-Version: 1.0
+cpumask_and(mask, rd->span, cpu_active_mask)
 
-On Tue, Dec 17, 2024 at 05:42:56PM +0100, Louis Chauvet wrote:
-> Hi,
->=20
-> > > Hi all,
-> > >=20
-> > > I am also currently working on MST emulation for VKMS. If someone can=
- read=20
-> > > what I already did and at tell me if my implementation seems on the r=
-ight=20
-> > > track it could be nice.
-> > >=20
-> > > The current status is not very advanced: I can emulate a mst HUB, but=
- not=20
-> > > a screen. I am currently working on properly emulating the HUB by usi=
-ng an=20
-> > > other hub.
-> > >=20
-> > > You can find the branch for this work here:
-> > > https://gitlab.freedesktop.org/louischauvet/kernel/-/tree/b4/vkms-mst
-> >=20
-> > I think this is exactly the kind of things where we'll want eBPF I
-> > think. There's no way you'll be able to model each possible test
-> > scenarios for MST through configfs, even more so with a stable
-> > interface.
->=20
-> I just spent some time to think about it. I agree that eBPF seems=20
-> applicable: we want to allows userspace to emulate any MST device, and we=
-=20
-> don't want to create huge uAPI + whole emulation in the kernel.
->=20
-> As most of the protocol is similar accros device kind, I currently built=
-=20
-> my code around the struct vkms_mst_sideband_helpers to specify only the=
-=20
-> changed behavior (this way the "write to registers" "parse command"... is=
-=20
-> only done in one place). The choice of function is not definitive at all=
-=20
-> (it was just practical at this moment).
->=20
-> With eBPF, I know three different way to attach programs to the kernel:
->  - Using a kprobe/attaching to a function: I can change the behavior of=
-=20
->    all the device, there is no way "attach prog1 to hub" and "attach prog=
-2=20
->    to screen1", it will be "attach prog1 to the function=20
->    `vkms_mst_emulator_handle_transfer_write`, and all the device will be=
-=20
->    affected. This should be very easy to implement (maybe it already=20
->    works without modification?), but very limited / make userspace stuff=
-=20
->    very ugly =3D> Not ideal at all
->  - Creating a whole architecture to attach eBPF programs in vkms: VKMS=20
->    manage the list of attached eBPF programs, call them when it needs...=
-=20
->    This is probably the "most flexible" option (in the sense "VKMS can do=
-=20
->    whatever we need to fit our usecase"). This seems not trivial to=20
->    implement (drm complexity + MST complexity + BPF complexity in the sam=
-e=20
->    driver seems a bad idea, espicially because VKMS don't have a lot of=
-=20
->    maintainance and I don't feel confident introducing more complexity)
->    =3D> Can work, require some work, but may bring more complexity in VKMS
->  - Using BPF struct_ops: I can "simply" create/complete a struct ops for=
-=20
->    diverse mst callbacks (see the proposition bellow). I looked at some=
-=20
->    example, this seems to be "easy" to do, and the work in VKMS should be=
-=20
->    limited.
->    =3D> Can work, a bit less flexible than the previous solution, but avo=
-id=20
->    a lot of complexity
->=20
-> I don't know if I will be able to finish the implementation but I imagine=
-=20
-> something like that may be a nice interface (may be not possible "as is"):
->=20
-> // vkms_mst.c struct_ops that can be filled by userspace with custom=20
-> // functions
-> // Known limitation: maximum 64 functions in this table
-> struct vkms_mst_ops {
-> 	// Completly overide the transfer function, so the userspace can=20
-> 	// do whatever he wants (even emulating a complex MST tree=20
-> 	// without using stuff in vkms)
-> 	handle_transfer(drm_dp_aux_msg);=20
->=20
-> 	// If default transfer function is used, those are the callback=20
-> 	// you can use (again, they will come with default=20
-> 	// implementation)
-> 	clear_payload_id_table(..);
-> 	link_address(..);
-> 	enum_path_ressources(..);
-> 	[...]
->=20
-> 	// Used to identify this kind of device, in my example the=20
-> 	// userspace could register "LG_screen", "dell dock", "HP screen",=20
-> 	// and then configure each mst device with the correct kind
-> 	name =3D "<unique name for this device kind>",
->=20
-> 	// If you want to use the default "hub" implementation, but only=20
-> 	// tweak one specific behavior, you can use this
-> 	base =3D "<name of the other structops>"
-> }
->=20
->=20
-> // Needed to implement eBPF struct_ops, called when userspace registers a
-> // struct_ops of type vkms_mst_ops
-> void register_struct_ops(new_ops...) {
-> 	vkms_registered_ops.append(new_ops).
-> }
->=20
-> // In vkms_connector.c
-> // Callback called by drm core to do transfer on the connector
-> void vkms_mst_transfer(aux, msg) {
-> 	mst_emulator =3D get_mst_emulator(aux);
->=20
-> 	ops =3D vkms_registered_ops.search_for(mst_emulator.name);
-> 	ops->handle_transfer(msg);
-> }
->=20
-> // mst_ebpf.c In the BPF program, userspace side
-> void handle_transfer(...) {
-> 	[...]
-> }
-> struct vkms_mst_ops {
-> 	handle_transfer =3D handle_transfer;
-> 	name =3D "lg-screen";
-> 	base =3D "default-screen"
-> }
+mask = [3-5] & [0-3] = [3] -> dl_bw_cpus(3) = 1
 
-I don't think MST is the right abstraction there. We should have MST
-related helper functions available to eBPF programs, but we should load
-them at the connector level, ie, implement a full blown connector
-atomic_check for example. It's more flexible and will allow to implement
-other use-cases people have been interested in (like panels).
+---
 
-Maxime
+dl_bw_deactivate() called cpu=5
 
---5dyx5btulynwqir3
-Content-Type: application/pgp-signature; name="signature.asc"
+dl_bw_deactivate() called cpu=4
 
------BEGIN PGP SIGNATURE-----
+dl_bw_deactivate() called cpu=3
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ7WkVwAKCRAnX84Zoj2+
-doFcAYC9HgMlrj9WYV3EnakLXo2nwaDCK95rzk/ZxsNzM6i3k3SvH8/2NjkDtx4F
-ePU9yu8Bfjbnbg4P3dN6CXDb8pdmbCZiiQnOzLAgK6B+uEaKTGgnUFeL+Hdd1lyW
-Rj2kUfHx8w==
-=jqNE
------END PGP SIGNATURE-----
+dl_bw_cpus() cpu=6 rd->span=3-5 cpu_active_mask=0-3 cpus=1 type=DEF
+                   ^^^^^^^^^^^^ ^^^^^^^^^^^^^^^^^^^
+  cpumask_subset(rd->span, cpu_active_mask) is false
 
---5dyx5btulynwqir3--
+  for_each_cpu_and(i, rd->span, cpu_active_mask)
+    cpus++                                       <-- cpus is 1 !!!
+
+dl_bw_manage: cpu=3 cap=0 fair_server_bw=52428 total_bw=104856 dl_bw_cpus=1 type=DEF span=3-5
+
+  called w/ 'req = dl_bw_req_deactivate'
+
+  dl_b->total_bw - fair_server_bw = 104856 - 52428 > 0
+
+    dl_bw_cpus(cpu) - 1 = 0
+   
+      overflow = 1
+
+So there is simply no capacity left in DEF for DL but
+'dl_b->total_bw - old_bw + new_bw' = 52428 > 0
 
