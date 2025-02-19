@@ -1,150 +1,111 @@
-Return-Path: <linux-kernel+bounces-520737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CC99A3AE7C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:06:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 836F2A3AE96
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:09:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC434167CDC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 01:04:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CE25188BD74
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 01:07:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD8A91DFE1;
-	Wed, 19 Feb 2025 01:04:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5450E3595B;
+	Wed, 19 Feb 2025 01:07:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="ck4KNK93"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="f4ke4FVD"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C4A91D555
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 01:04:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 114D81DFE1;
+	Wed, 19 Feb 2025 01:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739927085; cv=none; b=GbD7yjNGEDZGBgnPTCPOcqJSDCV2YhHqahIgaVD0MoTrTepxX6dvBCGuUHBCpUGDgjroMSfcHan8apBGW9E+xL/Fg95eUd+cREfaBX+ibq1sEhBePaQu5v+ddwPqjIxPWcOriPsyYdmSJAqEUG1iXIc9/EupOiheLTEXOHtA+Es=
+	t=1739927248; cv=none; b=l1+nt+DYinUU7Ei1rFv4MWQKG32tIBIUk8p9cp86OdqOOJ0EIStCt3KLRBjzcLoLYSS+mm58bwNgi36Ap7jRrvXcrjVT6oZrhysmZGf85874DDl+BF7ZbWiG/ZwVz+DKx+oWLAydmQV4orbdbFVHSBPP2KDF3pHH9UOtA1BJ7Bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739927085; c=relaxed/simple;
-	bh=exNED4G2Car6wsxXN9whsq4jxw9tN1sQJRhqHQV+x+4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=gy0pASSyNPVlGBvqR/Xn50U4qRmZAy4A7MMMR6pdVrnUVqnR4jHTgXj36dxCFKQ7Bu8DwqKRCH2obIlm5oXaPrtwpT4crTgCJdFeRnEQ5oEb9rkxQ2nZGOPCio7RNPCchXAiYVf3ok+68Nv6zeTtvS7jzVwNiySCyD9ubeQyYxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=ck4KNK93; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1739927074;
-	bh=exNED4G2Car6wsxXN9whsq4jxw9tN1sQJRhqHQV+x+4=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=ck4KNK93oNFOKpL0t5ECzFTFAm6r2CgNMF/Tb2zwmGPh+HR2xnErZiTYVLNQdKXgL
-	 b9boyAHmUkwvivRGZstj7UDqgmciRPlIeOtoimn3N5XRZQ6R9oBC/M0ly8Sc4ufX5l
-	 iiiJ5a4lHOH+MruCaCiyuLeZVijM6HV5+Pg33m1vdW4PDBYkBQrD/Wo08jABrGmPCY
-	 PWJg87ONt1ShjPxtzyysKYv9nhK5UScccXz6DNKMPRPZhquFavdn9I6NnhsNA3ixmE
-	 1abdUpm6UGviduDtzScA7R5JClHHRENS8TC1ThX8eHK0db+PRcKwQ7Naofn8YS3cQ8
-	 KFDL8tsJqlCCA==
-Received: from [192.168.68.112] (203-173-1-6.dyn.iinet.net.au [203.173.1.6])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id CF2B976191;
-	Wed, 19 Feb 2025 09:04:31 +0800 (AWST)
-Message-ID: <d4945482509cad0bf3e8cd93c1fb21bac2e0c7f2.camel@codeconstruct.com.au>
-Subject: Re: [PATCH v1 3/3] soc: aspeed: lpc-pcc: Add PCC controller support
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Kevin Chen <kevin_chen@aspeedtech.com>, "joel@jms.id.au"
- <joel@jms.id.au>,  Z-ChiaWei Wang <chiawei_wang@aspeedtech.com>,
- "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>, 
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, Mo Elbadry <elbadrym@google.com>
-Cc: "tomer.maimon" <tomer.maimon@nuvoton.com>, Krzysztof Kozlowski
-	 <krzk@kernel.org>, "lee@kernel.org" <lee@kernel.org>, "robh@kernel.org"
-	 <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>, 
-	"conor+dt@kernel.org"
-	 <conor+dt@kernel.org>
-Date: Wed, 19 Feb 2025 11:34:31 +1030
-In-Reply-To: <PSAPR06MB4949C65DF5C034BD6B40C9B589FA2@PSAPR06MB4949.apcprd06.prod.outlook.com>
-References: <20250217114831.3225970-1-kevin_chen@aspeedtech.com>
-	 <20250217114831.3225970-4-kevin_chen@aspeedtech.com>
-	 <e43b5f8f-37e4-4468-b3ca-5059a5e6f3c3@kernel.org>
-	 <6fd7cd57261ddf9831f57dc4c637b24e9f8982d9.camel@codeconstruct.com.au>
-	 <PSAPR06MB4949C65DF5C034BD6B40C9B589FA2@PSAPR06MB4949.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1739927248; c=relaxed/simple;
+	bh=1kYpNdNswqEKqHoA7xUZIEZTpC/TVQMSfLkBfXk1KaM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gMxr9yLYNCfvNcHYhO7/s/2VNdztlb26ZFXDE4Wd35OJ5dxYlcgelwi2FKr4qW1H19x6XP8zU1TPh4FSG5jdqpWDSmCFMSIxcqSQEygNeYo3OuOKtVWeCWlC5AOkH1BI0qwWDarIVMawphlXUaG0pbFGxb2l0lwixFEh2WJF1qk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=f4ke4FVD; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51IMg7tY007173;
+	Wed, 19 Feb 2025 01:07:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2023-11-20; bh=vC65oQ0d9y1/m/p52u5CLaY0PWXZTDCshaVJaUJwIiY=; b=
+	f4ke4FVDSqCjG1aZHFaNTl64eetvs9dUKysIC+pn1/8+PmGBYm8lkBqXxL8+m6p8
+	IUlc/ae5wRQOyiHf8VrPB4iWympF0xPsdU2H2tfIHxKb0ijbP6gqHHBpmTzdfT8Z
+	aek4s9XQaDOkoSlgp7jRRZ3Y3pREXh1RIyVYXJbT199tYfB6BxUD7hpdhTczZCAK
+	hV6fKYvJ1jekxzinS3RSYLwHQxF/AWycHnLJfxZmCFrY9Hsj6bV43HpzC4zX8Py/
+	x2C1JXG35t3TZaqhNwRRaCDnTGNA4xZJLcvo8ZHFIUM1pSGhc5wiRV58fcML8Kie
+	3/dbd/QarVOoCruuVpxvtA==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 44w00n0jy7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 19 Feb 2025 01:07:21 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 51J09Yom002048;
+	Wed, 19 Feb 2025 01:07:21 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 44w0tk1rqk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 19 Feb 2025 01:07:21 +0000
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 51J17KeJ000669;
+	Wed, 19 Feb 2025 01:07:20 GMT
+Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 44w0tk1rq5-1;
+	Wed, 19 Feb 2025 01:07:20 +0000
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+To: Eric Biggers <ebiggers@google.com>, Ard Biesheuvel <ardb@kernel.org>,
+        Andrew Kreimer <algonell@gmail.com>
+Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] scsi: target: iscsi: Fix typos
+Date: Tue, 18 Feb 2025 20:06:49 -0500
+Message-ID: <173992713066.526057.2711978174410450492.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250206084905.11327-1-algonell@gmail.com>
+References: <20250206084905.11327-1-algonell@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-18_11,2025-02-18_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 malwarescore=0
+ mlxscore=0 spamscore=0 phishscore=0 suspectscore=0 mlxlogscore=802
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502100000
+ definitions=main-2502190006
+X-Proofpoint-ORIG-GUID: lKxiJP9NB8igtyu8-npPRq2NsGbM3_kZ
+X-Proofpoint-GUID: lKxiJP9NB8igtyu8-npPRq2NsGbM3_kZ
 
-On Tue, 2025-02-18 at 11:11 +0000, Kevin Chen wrote:
-> > On Mon, 2025-02-17 at 13:00 +0100, Krzysztof Kozlowski wrote:
-> > > On 17/02/2025 12:48, Kevin Chen wrote:
-> > > > +
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0pcc->mdev.parent =3D dev=
-;
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0pcc->mdev.minor =3D MISC=
-_DYNAMIC_MINOR;
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0pcc->mdev.name =3D devm_=
-kasprintf(dev, GFP_KERNEL,
-> > > > "%s%d",
-> > > > DEVICE_NAME,
-> > > >=20
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0pcc->mdev_id);
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0pcc->mdev.fops =3D &pcc_=
-fops;
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0rc =3D misc_register(&pc=
-c->mdev);
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (rc) {
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0dev_err(dev, "Couldn't register misc
-> > > > device\n");
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0goto err_free_kfifo;
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
-> > >=20
-> > > You cannot expose user-space interfaces from SoC drivers. Use
-> > > appropriate subsystem for this with proper ABI documentation.
-> > >=20
-> > > See:
-> > > https://lore.kernel.org/all/bc5118f2-8982-46ff-bc75-d0c71475e909@app.=
-f
-> > > astmail.com/
-> > > and more discussions on LKML
-> >=20
-> > Further, drivers/misc/aspeed-lpc-snoop.c already exists:
-> >=20
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/comm=
-it/?id=3D
-> > 9f4f9ae81d0affc182f54dd00285ddb90e0b3ae1
-> >=20
-> > Kevin: Did you consider reworking it?
-> Andrew: No, I do not rework it but add the post code capture driver
-> using the SNOOP registers. As a result, I add some code in
-> aspeed_a2600_15 to check the SNOOP enable bit. PCC driver probe abort
-> if snoop is enabled.
+On Thu, 06 Feb 2025 10:47:03 +0200, Andrew Kreimer wrote:
 
-Hmm, I think OpenBMC's history regarding POST code support caused some
-confusion on my part. For whatever reason, the snoop device was used as
-a source of POST codes despite the existence of the dedicated POST code
-hardware since at least the AST2400, but...
+> There are some typos in comments/messages:
+>  - Nin -> Min
+>  - occuring -> occurring
+> 
+> Fix them via codespell.
+> 
+> 
+> [...]
 
-> PCC is used for port I/O byte snooping over eSPI.
+Applied to 6.15/scsi-queue, thanks!
 
-... it seems that they're largely interchangeable, just with different
-hardware features (PCC has DMA)? My impression is that the snoop device
-could also be used over eSPI?
+[1/1] scsi: target: iscsi: Fix typos
+      https://git.kernel.org/mkp/scsi/c/035b9fa023fb
 
->=20
->=20
-> >=20
-> > Nuvoton have a similar capability in their NPCM BMC SoC(s) with the
-> > "BPC"
-> > ("BIOS POST Code" controller). There should be some consensus on
-> > the binding
-> > and userspace interface.
-
-This is still the case.
-
-Andrew
+-- 
+Martin K. Petersen	Oracle Linux Engineering
 
