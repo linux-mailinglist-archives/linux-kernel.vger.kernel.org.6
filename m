@@ -1,87 +1,134 @@
-Return-Path: <linux-kernel+bounces-520757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9A88A3AED2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:23:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AD58A3AEDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:25:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C3B9170B0F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 01:23:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BE9A1709BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 01:25:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8619F81741;
-	Wed, 19 Feb 2025 01:23:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE3F581749;
+	Wed, 19 Feb 2025 01:25:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="L8exmLHQ"
-Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="avb2FyYT"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4272522097;
-	Wed, 19 Feb 2025 01:23:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7957A920;
+	Wed, 19 Feb 2025 01:25:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739928209; cv=none; b=dBaFSfU5XcnyjhCbw4hFSd9VwVk5Rxv+49Kdahs7gyPQ1Vq376UdfzQ7lUXDBm9p89k74yH//RVCmaLMMrwEDz4tNzyN8WS054QPri3TQi1jzmHLX+MNurzWs34luIeS6WhzAM4xNpQktNXyIrJodJhx/bi7BTjig85fp8Q8eV0=
+	t=1739928326; cv=none; b=BLirSqfFrWOWhaFnQ6lVJjguuLYVuB5KPQKJkwdWI4jtlPzyPOAItRFFjtC++xN2+hPQC4RQx3DiDgdUfnGrNsw0OkAIQJ9izsGGtkDt3202tcLibbhRW6qjiSpKueHALeH9044pD/s8zK1iiZKDwcf69sh5wSzw873x3iWNa6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739928209; c=relaxed/simple;
-	bh=fwOmitL1Usk4JDJgeMpXF7Ztd9uPEE6ejz8pYVJyOeM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CMgdyBuCSx3UMIXd6uyX0NnWq257/2Z7NTrQl+ycOF/MLUPiZyHuH5RvEpGvPJLDliVkOR/vR0WTapGY400Ys8FHt4T+TggzVLkpq/W5OWcl8YyhdG7aHj7+4s6uzMmuVukmi01l4zn0HrfZLW+L7XoQj5Pju6M6YW55QK9XKMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=L8exmLHQ; arc=none smtp.client-ip=115.124.30.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1739928197; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=RKKB/bnDibpzm10Y361PXYXPsCzqwGtf81SgiyAceQo=;
-	b=L8exmLHQvUmMFLdQ84gayTLbs27i/g4vT7AtnMH12LyLor0vQHh+TCtfF7SJdR2kHE16oyuuwSckDq3Sl/PGK8+ulcagL91mgWb4Gc3csHWtRLGtOczVZbZmouqJfXhz8eoyifcJYzwvq3VpgwhFGqBvI74n3sl/KPzSkrLK5Yw=
-Received: from 30.221.145.137(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0WPnAzoo_1739928196 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 19 Feb 2025 09:23:16 +0800
-Message-ID: <b2248d8c-1f80-4806-80fb-cbc40ad713e6@linux.alibaba.com>
-Date: Wed, 19 Feb 2025 09:23:13 +0800
+	s=arc-20240116; t=1739928326; c=relaxed/simple;
+	bh=dkFhdB0sw0/QyG+CwpMOC58rxh7WXIHCwBFRv+IGTiY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=fzzvN56yX6zH+1pxlyAUQw/w7rplvCD0vl9/xKPutW5noBWLLYm9Qn3dnQraZ/jDgK/CuVT6g3XvHX66gVTH3lK9qGKfwvHUAslPWy1ElTL+1jR/aSAzq4DJBJ9zTP5FZqhREaI/VDQZiGfPxsBEunYEO2dNl9ISH3xcF14O/5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=avb2FyYT; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1739928321;
+	bh=dkFhdB0sw0/QyG+CwpMOC58rxh7WXIHCwBFRv+IGTiY=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=avb2FyYTTBY0LlkaOkCWpVHdubriDy15YcVmzOXNlQiNvvVH4Edal4xm7c3TFeLde
+	 caVsMWd0Y6xZbmPtPyQAIMN6ycCu92Xcth4M+4NFXk+EsV9VN7YJVYQkUqQkgmQhRU
+	 Y0vm11gVt7B7X5KmbiK3eTG3nOGez8xNILAhcwg6LdXRToDky4FlSSQUbU43PPpRV/
+	 r4cn6rq8yEU/tQoV1drbOEanUU0THtZFkx/WHZVt8C7ky5Ezx3LKZ6QFXm5lw3zPXu
+	 rsC9l5oM5TKZMmRfK5nWOi1FzlwDH19cuBy955S20HlvKh9uAgIoPNCabIJZvGL1uE
+	 r+E+cydkmu7KA==
+Received: from [192.168.68.112] (203-173-1-6.dyn.iinet.net.au [203.173.1.6])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 41B3476191;
+	Wed, 19 Feb 2025 09:25:19 +0800 (AWST)
+Message-ID: <201b57c00043e2c3590c77a4d1aba413aa576b01.camel@codeconstruct.com.au>
+Subject: Re: [PATCH 1/2] driver/aspeed-wdt: fix pretimeout for counting down
+ logic
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Guenter Roeck <linux@roeck-us.net>, Heyi Guo
+ <guoheyi@linux.alibaba.com>,  devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,  linux-aspeed@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org,  linux-watchdog@vger.kernel.org
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>, Joel Stanley
+ <joel@jms.id.au>,  Eddie James <eajames@linux.ibm.com>
+Date: Wed, 19 Feb 2025 11:55:19 +1030
+In-Reply-To: <50ab5a0a-b807-4bd7-bda8-7c6f4bfc76fc@roeck-us.net>
+References: <20250218031709.103823-1-guoheyi@linux.alibaba.com>
+	 <50ab5a0a-b807-4bd7-bda8-7c6f4bfc76fc@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] mm/truncate: don't skip dirty page in
- folio_unmap_invalidate()
-To: "Kirill A. Shutemov" <kirill@shutemov.name>, Jens Axboe <axboe@kernel.dk>
-Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, brauner@kernel.org,
- linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk
-References: <20250218120209.88093-1-jefflexu@linux.alibaba.com>
- <20250218120209.88093-3-jefflexu@linux.alibaba.com>
- <cedbmhuivcr2imkzuqebrrihdkfsmgqmplqqn7s2fusk3v4ezq@7jbz26dds76d>
-Content-Language: en-US
-From: Jingbo Xu <jefflexu@linux.alibaba.com>
-In-Reply-To: <cedbmhuivcr2imkzuqebrrihdkfsmgqmplqqn7s2fusk3v4ezq@7jbz26dds76d>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
+On Mon, 2025-02-17 at 21:33 -0800, Guenter Roeck wrote:
+> On 2/17/25 19:16, Heyi Guo wrote:
+> > Aspeed watchdog uses counting down logic, so the value set to register
+> > should be the value of subtracting pretimeout from total timeout.
+> >=20
+> > Fixes: 9ec0b7e06835 ("watchdog: aspeed: Enable pre-timeout interrupt")
+> >=20
+> > Signed-off-by: Heyi Guo <guoheyi@linux.alibaba.com>
+> >=20
+> > Cc: Wim Van Sebroeck <wim@linux-watchdog.org>
+> > Cc: Guenter Roeck <linux@roeck-us.net>
+> > Cc: Joel Stanley <joel@jms.id.au>
+> > Cc: Andrew Jeffery <andrew@codeconstruct.com.au>
+> > Cc: Eddie James <eajames@linux.ibm.com>
+> > ---
+> > =C2=A0 drivers/watchdog/aspeed_wdt.c | 7 +++++++
+> > =C2=A0 1 file changed, 7 insertions(+)
+> >=20
+> > diff --git a/drivers/watchdog/aspeed_wdt.c b/drivers/watchdog/aspeed_wd=
+t.c
+> > index b4773a6aaf8c..520d8aba12a5 100644
+> > --- a/drivers/watchdog/aspeed_wdt.c
+> > +++ b/drivers/watchdog/aspeed_wdt.c
+> > @@ -187,6 +187,13 @@ static int aspeed_wdt_set_pretimeout(struct watchd=
+og_device *wdd,
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0u32 actual =3D pretimeo=
+ut * WDT_RATE_1MHZ;
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0u32 s =3D wdt->cfg->irq=
+_shift;
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0u32 m =3D wdt->cfg->irq=
+_mask;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0u32 reload =3D readl(wdt->ba=
+se + WDT_RELOAD_VALUE);
+> > +
+>=20
+> It is unusual to use a register value here and not the configured timeout
+> value. I would have assumed that pretimeout is compared against wdt->timo=
+ut,
+> not against the register value, and that the multiplication with WDT_RATE=
+_1MHZ
+> is done after validation. This needs an explanation.
 
++1
 
-On 2/18/25 8:32 PM, Kirill A. Shutemov wrote:
-> On Tue, Feb 18, 2025 at 08:02:09PM +0800, Jingbo Xu wrote:
->> ... otherwise this is a behavior change for the previous callers of
->> invalidate_complete_folio2(), e.g. the page invalidation routine.
-> 
-> Hm. Shouldn't the check be moved to caller of the helper in mm/filemap.c?
-> 
-> Otherwise we would drop pages without writing them back. And lose user's
-> data.
-> 
+>=20
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (actual >=3D reload)
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0return -EINVAL;
+> > +
+>=20
+> On top of that, you'll also need to explain why watchdog_pretimeout_inval=
+id()
+> and with it the validation in watchdog_set_pretimeout() does not work for=
+ this
+> watchdog and why this extra validation is necessary.
 
-IMHO this check is not needed as the following folio_launder() called
-inside folio_unmap_invalidate() will write back the dirty page.
++1 as well.
 
-Hi Jens,
+Further, the logic looks broken regardless for the AST2400 where
+there's no pretimeout support. aspeed_wdt_set_pretimeout() should error
+out if wdt->cfg->irq_mask is 0.
 
-What do you think about it?
+Andrew
 
--- 
-Thanks,
-Jingbo
 
