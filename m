@@ -1,63 +1,75 @@
-Return-Path: <linux-kernel+bounces-522547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89A72A3CBB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:43:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42542A3CBB1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:43:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87C2E3B310B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:41:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73A8B16273F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:43:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 742632580DE;
-	Wed, 19 Feb 2025 21:42:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A75A02580C6;
+	Wed, 19 Feb 2025 21:42:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z4JYosSZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gi0eqFel"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C35FA256C98;
-	Wed, 19 Feb 2025 21:42:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99B8F2580CA
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 21:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740001321; cv=none; b=TepCmA53TeZztGm986VMncYQVc0x0kguUKZSM6YFO02l8HoYbXku3RznoWH4NBGEyR/IASuQrRwqJeVeXQXm8chl0nD2nqR8TfPrnplapVTybVtWip1ElNdnS0qFSvB3R274WIOSP1q9t4PkzFpM7tOLGV41NLRqZXiZRKjwsG4=
+	t=1740001378; cv=none; b=D9PJA+nbWP/4jAmFJ6yxnm6wo3Yay+DIt/bRfr2FrhkRYCaA4QI0yBrnQVjvtosW2/T70Jr6Zh9hiDCgWXdCyOjrSPVofUhDw/SWTc8gl3u7eYFtvlNum4WKMecGMBcbuLWHrPDbnqCBstAkHeu84943PfsW8dj7zZiURl95l6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740001321; c=relaxed/simple;
-	bh=MaNSLEh2lxgU6f14YdTbvhpQpN1QDoQniPT9z9CW54E=;
+	s=arc-20240116; t=1740001378; c=relaxed/simple;
+	bh=ktyqg6VXobNyUJyUjF636V9vxWs46tGUa7a+rwBx2Ic=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OBCzsCcDH8gcerBXehP1l5lC9vJQdm0OlA8Fv14Fsw69UGtIOmE2CMQdC+EMyw9euWSI94E3XtD17YZYy17EGv0N9rGEJ05Pg92WghyPbHcb3JMjrXb/aA45VfXbRk88s0SbYKPKRzPzVEhoMVf+Vanj36juv29Bsp+ZEtmE2vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z4JYosSZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05E82C4CED1;
-	Wed, 19 Feb 2025 21:42:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740001321;
-	bh=MaNSLEh2lxgU6f14YdTbvhpQpN1QDoQniPT9z9CW54E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Z4JYosSZl2iv95aFKCoDpHX2qIof0HN5UG74BJxqR32jQSI/1ka1o5YajAAeXAi/v
-	 MFmIGEAEJXwi+uh70T0/iJoF+B758rwBESxablb2cMqv/4JZJQ8qBnh4E4mrSXVI/o
-	 BGpfi8YMDS+dYbaaoQNHmQN7y30sOXoUd1zP2mlDLHHZrRuZjurI6ljZe/ayElw5x4
-	 YOx1OHSbairIEopQQh256xMjnyq7EVA/1H2VAMt+0rPLe15hVfydeadhfCNlPCGpvd
-	 n7E1AmC/FFf32MPq3HmrpxtqS790hnWBOIhsRW0Jcn17kglYXbmenU8g16Zae8lBnm
-	 /As5ZJBV2GX/g==
-Date: Wed, 19 Feb 2025 15:42:00 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Xianwei Zhao <xianwei.zhao@amlogic.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	linux-kernel@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>,
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v5 1/5] dt-bindings: pinctrl: Add support for Amlogic A4
- SoC
-Message-ID: <174000131935.3003574.5536314067516042941.robh@kernel.org>
-References: <20250212-amlogic-pinctrl-v5-0-282bc2516804@amlogic.com>
- <20250212-amlogic-pinctrl-v5-1-282bc2516804@amlogic.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=F028oFP4bYADLCfi/Ebv4s0E9fedhDcsl8U9CaMMvXLf+enKae1LMeXB2kczK3qItM+bdUuSXEdInZt5YTqubwwR732jllmzoA48b8yR4NpAxGdYCpCCjvN1veXh78GjUuLbEw064xLpTQ+TqFH8y3cTBooKvNoxSoAZ/gTybms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gi0eqFel; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740001375;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=U1k6JUYebl5L/ZIBngi7EsN3JLNc4iz6NkCHr2NsZmU=;
+	b=gi0eqFelbBuxz/SdnYRR7IKfJh7uX16LjQDA128DigkKqexYOrj3T9hHpUfQDkchakmrDa
+	S5NzsBf7BIP741XWczjwj0fvSO7wcOzvKasoc+lnFFL3Af8QOsOgcDJfZqsszTMjhhO+J1
+	BlwHNYQhULeoiaEMH7MIvsQkRnUd1AM=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-463-0AFJFrZ3NJul3J6p6D4m-w-1; Wed,
+ 19 Feb 2025 16:42:52 -0500
+X-MC-Unique: 0AFJFrZ3NJul3J6p6D4m-w-1
+X-Mimecast-MFC-AGG-ID: 0AFJFrZ3NJul3J6p6D4m-w_1740001371
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9B05E180087F;
+	Wed, 19 Feb 2025 21:42:50 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.33.102])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 2F689180056F;
+	Wed, 19 Feb 2025 21:42:47 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Wed, 19 Feb 2025 22:42:22 +0100 (CET)
+Date: Wed, 19 Feb 2025 22:42:18 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Kees Cook <kees@kernel.org>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] yama: don't abuse rcu_read_lock/get_task_struct in
+ yama_task_prctl()
+Message-ID: <20250219214218.GF5948@redhat.com>
+References: <20250219161417.GA20851@redhat.com>
+ <202502191125.1A6F07E@keescook>
+ <20250219201742.GD5948@redhat.com>
+ <20250219210042.GE5948@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,21 +78,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250212-amlogic-pinctrl-v5-1-282bc2516804@amlogic.com>
+In-Reply-To: <20250219210042.GE5948@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
+Damn, sorry for the spam ;)
 
-On Wed, 12 Feb 2025 13:20:50 +0800, Xianwei Zhao wrote:
-> Add the dt-bindings for Amlogic pin controller, and add a new
-> dt-binding header file which document the GPIO bank names of
-> Amlogic A4 SoC.
-> 
-> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
-> ---
->  .../bindings/pinctrl/amlogic,pinctrl-a4.yaml       | 126 +++++++++++++++++++++
->  include/dt-bindings/pinctrl/amlogic,pinctrl.h      |  46 ++++++++
->  2 files changed, 172 insertions(+)
-> 
+On 02/19, Oleg Nesterov wrote:
+>
+> Forgot to say...
+>
+> with or without this patch the usage of ptrace_relation->tracer/tracee
+> doesn't look right (safe) to me... but probably I missed something
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Yes I did. I didn't realize that put_task_struct(tracer/tracee) calls
+security_task_free() -> yama_task_free().
+
+Sorry fo the noise.
+
+Oleg.
 
 
