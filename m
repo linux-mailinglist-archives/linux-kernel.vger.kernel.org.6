@@ -1,223 +1,92 @@
-Return-Path: <linux-kernel+bounces-521012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19CCFA3B2AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:41:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ACD3A3B2B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:42:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4811A1762DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:40:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4059D3A3240
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:41:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8488D1C3C06;
-	Wed, 19 Feb 2025 07:40:11 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 503CB1BEF71
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 07:40:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D0421C3C15;
+	Wed, 19 Feb 2025 07:41:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="UCOvT3/Y"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C0C21C3C00;
+	Wed, 19 Feb 2025 07:41:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739950811; cv=none; b=A6TMS+IzTb6/q9TxCW6U75/K92gG4nUnQj0myUq9ZuyjnW8QqA+Q+GjDTggxdosxnBcp2fwNNSvnH7bdKMrs1PCptlBlzmQrJ0tCQsMbIBbETmP4iSxF/ydon0z9oGjG3/6orIEEvfYZtGkRKGEf2ZFXbCyUDENxCJjPhxNDXis=
+	t=1739950905; cv=none; b=oRwU0pIjcjsl9+i+I5yWkKeijjRFlI0mnqK3AnIOUUpeVyM1Xb247F2mNDyayQ2+60IAZySxmpnBOwhpgHt1kQ3GsRQhndAqZGU9qN3f7H0nBDJ1qjn8j/N9nuKrvGK5a9NE/u+w8dwoazxwLTRlLM96+8JP/ia0xE7mzoFSBSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739950811; c=relaxed/simple;
-	bh=es94BAnj1wPyd8NvB1PRFG0AufwHJW56zkZ6xzozj2I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Ryaitazjes1X9NknEwpuu7+v6jw5j5hpYHPJAMbe3fBOenWlkzNHho3K9IaCTgOXWKETVgvMJkxR8p5JbzlXAv+G7DcyTweCusQ/wbBsvzy/XC2a5zgOfuu2hv1sQXKERSwCwpQoPcrKyXBWvSJ/E8fZ5UxrBk4ozT/7vGYVFUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4YySrR4dSjzhZqH;
-	Wed, 19 Feb 2025 15:36:39 +0800 (CST)
-Received: from kwepemd500013.china.huawei.com (unknown [7.221.188.12])
-	by mail.maildlp.com (Postfix) with ESMTPS id 315D214034E;
-	Wed, 19 Feb 2025 15:40:03 +0800 (CST)
-Received: from [10.159.166.136] (10.159.166.136) by
- kwepemd500013.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Wed, 19 Feb 2025 15:40:01 +0800
-Message-ID: <a049b7ae-e3b2-4300-81ee-76f677804135@huawei.com>
-Date: Wed, 19 Feb 2025 15:40:00 +0800
+	s=arc-20240116; t=1739950905; c=relaxed/simple;
+	bh=kpxkBPCKlGNnhVjQVf+dePC+MVJfA5gCHGVc1xxZzzc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lgZYRYdKSVt6GvhKbOlrLaj0lFNQ+GR9JUec9VPNPdOD8dzUxmi7OFI2/eRyg9WdL04Tkh4D00EZN3MnV+8RwHhsUBU/fJSIf6txm0TOhcqcKJc33JoDvyftMlCGkAJvAVxFeZNKNAI66AfKcF6vKNc9hKaWnI1a6MaLhnYQGVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=UCOvT3/Y; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=7MpbM+6fg3KAR60DstuyWUUcvrlrvQHDRX+TIlD+t/0=;
+	b=UCOvT3/YJxIJ/U0B3iewDL6gKAru25jZTp4Du1ehaY8k1imzPXDTh3ByTiAM6v
+	cWL5LLLxpXBiL57bw8cS84lqZ5XtNgadDlEcBw7qnDcez9CQaw6Nu8fuzoLm/ULH
+	egALyum2WypNKmIa/bRuTm+/3pypLFd2LoujAS0cmQNa4=
+Received: from [10.42.20.80] (unknown [])
+	by gzsmtp4 (Coremail) with SMTP id PygvCgBXM9XoirVnAf0OAQ--.45861S2;
+	Wed, 19 Feb 2025 15:40:25 +0800 (CST)
+Message-ID: <437a0a0e-f61d-45bf-b859-d527381a9763@163.com>
+Date: Wed, 19 Feb 2025 15:40:24 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 drm-dp 4/7] drm/hisilicon/hibmc: Add colorbar-cfg: set
- color bar cfg
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-	<kong.kongxinwei@hisilicon.com>, <liangjian010@huawei.com>,
-	<chenjianmin@huawei.com>, <lidongming5@huawei.com>, <libaihan@huawei.com>,
-	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-References: <20250210144959.100551-1-shiyongbang@huawei.com>
- <20250210144959.100551-5-shiyongbang@huawei.com>
- <msjbkixuc27nxqzqgewvtwaa3yszfp3fwrv4qiot4petpxrtyu@3n6crntdm2ay>
-From: Yongbang Shi <shiyongbang@huawei.com>
-In-Reply-To: <msjbkixuc27nxqzqgewvtwaa3yszfp3fwrv4qiot4petpxrtyu@3n6crntdm2ay>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemd500013.china.huawei.com (7.221.188.12)
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v2] fbdev: lcdcfb: add missing device_remove_file()
+To: Arnd Bergmann <arnd@arndb.de>, Helge Deller <deller@gmx.de>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+ Lee Jones <lee@kernel.org>, =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?=
+ <u.kleine-koenig@baylibre.com>, linux-fbdev@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ oushixiong <oushixiong@kylinos.cn>
+References: <20250208092918.251733-1-oushixiong1025@163.com>
+ <4f2ae439-1bdc-4593-9151-e15981509344@app.fastmail.com>
+Content-Language: en-US
+From: Shixiong Ou <oushixiong1025@163.com>
+In-Reply-To: <4f2ae439-1bdc-4593-9151-e15981509344@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PygvCgBXM9XoirVnAf0OAQ--.45861S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrAr1UAFWktrWDZF1UJr4xWFg_yoWxXFg_ua
+	10vF93uw1UXr1kXa47GFsrtFyDKw1qv398JF4rJF1rXas7tasFvrW29rZFvr1UKF4kCr1a
+	qrWYqrW2kr1I9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xR_Ksj7UUUUU==
+X-CM-SenderInfo: xrxvxxx0lr0wirqskqqrwthudrp/1tbiXQz4D2e1iPoyfgAAsK
 
-> On Mon, Feb 10, 2025 at 10:49:56PM +0800, Yongbang Shi wrote:
->> From: Baihan Li <libaihan@huawei.com>
+
+在 2025/2/19 14:47, Arnd Bergmann 写道:
+> On Sat, Feb 8, 2025, at 10:29, oushixiong1025@163.com wrote:
+>> From: Shixiong Ou <oushixiong@kylinos.cn>
 >>
->> This is a DP IP controller's feature. It can be used as a debug method
->> which can check DP controller is working good. The colorbar displaying
->> doesn't rely on other IPs work in the chip, like: GPU or DDR (vram) and
->> so on, because colorbar diplaying data is generated by controller itself
->> inside the DP IP.
-> You are describing it in a pretty strange manner. Does this sound
-> better?
+>> 1. The device_remove_file() need to be called when driver is removing.
+>> 2. The device_remove_file() need to be called if the call to
+>>     device_create_file() fails.
+> This should probably use device_add_group() instead of
+> individual files to simplify both creation and removal.
+> It would also avoid the bug you introduced that gcc warns
+> about.
 >
-> DP controller can support generating a color bar signal over the
-> DisplayPort interface. This can be useful to check for possible memory
-> or GPU problems, as the signal generator resides completely in the DP
-> block. Add debugfs file that controls colorbar generator.
->
-> This also requires having corresponding debugfs entry here.
+>        Arnd
 
-Hi Dmitry,
-Thank you for your guidance, I got it.
+Thank you for your suggestion. I will incorporate your advice and resend a patch.
 
+Thanks and Regards,
+Shixiong Ou.
 
->> Signed-off-by: Baihan Li <libaihan@huawei.com>
->> Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
->> ---
->> ChangeLog:
->> v1 -> v2:
->>    - add colorbar introduction in commit, suggested by Dmitry Baryshkov.
->>    - splittting colorbar and debugfs in different patches, suggested by Dmitry Baryshkov.
->> ---
->>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c  | 43 +++++++++++++++++++++
->>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h  | 29 ++++++++++++++
->>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h |  2 +
->>   3 files changed, 74 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
->> index 77f02d5151f7..8adace0befde 100644
->> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
->> @@ -226,3 +226,46 @@ int hibmc_dp_mode_set(struct hibmc_dp *dp, struct drm_display_mode *mode)
->>   
->>   	return 0;
->>   }
->> +
->> +static const struct hibmc_dp_color_raw g_rgb_raw[] = {
->> +	{CBAR_COLOR_BAR, 0x000, 0x000, 0x000},
->> +	{CBAR_WHITE,     0xfff, 0xfff, 0xfff},
->> +	{CBAR_RED,       0xfff, 0x000, 0x000},
->> +	{CBAR_ORANGE,    0xfff, 0x800, 0x000},
->> +	{CBAR_YELLOW,    0xfff, 0xfff, 0x000},
->> +	{CBAR_GREEN,     0x000, 0xfff, 0x000},
->> +	{CBAR_CYAN,      0x000, 0x800, 0x800},
->> +	{CBAR_BLUE,      0x000, 0x000, 0xfff},
->> +	{CBAR_PURPLE,    0x800, 0x000, 0x800},
->> +	{CBAR_BLACK,     0x000, 0x000, 0x000},
->> +};
->> +
->> +void hibmc_dp_set_cbar(struct hibmc_dp *dp, const struct hibmc_dp_cbar_cfg *cfg)
->> +{
->> +	struct hibmc_dp_dev *dp_dev = dp->dp_dev;
->> +	struct hibmc_dp_color_raw raw_data;
->> +
->> +	if (cfg->enable) {
->> +		hibmc_dp_reg_write_field(dp_dev, HIBMC_DP_COLOR_BAR_CTRL, BIT(9),
->> +					 cfg->self_timing);
->> +		hibmc_dp_reg_write_field(dp_dev, HIBMC_DP_COLOR_BAR_CTRL, GENMASK(8, 1),
->> +					 cfg->dynamic_rate);
->> +		if (cfg->pattern == CBAR_COLOR_BAR) {
->> +			hibmc_dp_reg_write_field(dp_dev, HIBMC_DP_COLOR_BAR_CTRL, BIT(10), 0);
->> +		} else {
->> +			raw_data = g_rgb_raw[cfg->pattern];
->> +			drm_dbg_dp(dp->drm_dev, "r:%x g:%x b:%x\n", raw_data.r_value,
->> +				   raw_data.g_value, raw_data.b_value);
->> +			hibmc_dp_reg_write_field(dp_dev, HIBMC_DP_COLOR_BAR_CTRL, BIT(10), 1);
->> +			hibmc_dp_reg_write_field(dp_dev, HIBMC_DP_COLOR_BAR_CTRL, GENMASK(23, 12),
->> +						 raw_data.r_value);
->> +			hibmc_dp_reg_write_field(dp_dev, HIBMC_DP_COLOR_BAR_CTRL1, GENMASK(23, 12),
->> +						 raw_data.g_value);
->> +			hibmc_dp_reg_write_field(dp_dev, HIBMC_DP_COLOR_BAR_CTRL1, GENMASK(11, 0),
->> +						 raw_data.b_value);
->> +		}
->> +	}
->> +
->> +	hibmc_dp_reg_write_field(dp_dev, HIBMC_DP_COLOR_BAR_CTRL, BIT(0), cfg->enable);
->> +	writel(HIBMC_DP_SYNC_EN_MASK, dp_dev->base + HIBMC_DP_TIMING_SYNC_CTRL);
->> +}
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
->> index 53b6d0beecea..621a0a1d7eb7 100644
->> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
->> @@ -14,6 +14,33 @@
->>   
->>   struct hibmc_dp_dev;
->>   
->> +enum hibmc_dp_cbar_pattern {
->> +	CBAR_COLOR_BAR,
->> +	CBAR_WHITE,
->> +	CBAR_RED,
->> +	CBAR_ORANGE,
->> +	CBAR_YELLOW,
->> +	CBAR_GREEN,
->> +	CBAR_CYAN,
->> +	CBAR_BLUE,
->> +	CBAR_PURPLE,
->> +	CBAR_BLACK,
->> +};
->> +
->> +struct hibmc_dp_color_raw {
->> +	enum hibmc_dp_cbar_pattern pattern;
->> +	u32 r_value;
->> +	u32 g_value;
->> +	u32 b_value;
->> +};
->> +
->> +struct hibmc_dp_cbar_cfg {
->> +	bool enable;
->> +	bool self_timing;
->> +	u8 dynamic_rate; /* 0:static, 1-255(frame):dynamic */
->> +	enum hibmc_dp_cbar_pattern pattern;
->> +};
->> +
->>   struct hibmc_dp {
->>   	struct hibmc_dp_dev *dp_dev;
->>   	struct drm_device *drm_dev;
->> @@ -21,10 +48,12 @@ struct hibmc_dp {
->>   	struct drm_connector connector;
->>   	void __iomem *mmio;
->>   	struct drm_dp_aux aux;
->> +	struct hibmc_dp_cbar_cfg cfg;
->>   };
->>   
->>   int hibmc_dp_hw_init(struct hibmc_dp *dp);
->>   int hibmc_dp_mode_set(struct hibmc_dp *dp, struct drm_display_mode *mode);
->>   void hibmc_dp_display_en(struct hibmc_dp *dp, bool enable);
->> +void hibmc_dp_set_cbar(struct hibmc_dp *dp, const struct hibmc_dp_cbar_cfg *cfg);
->>   
->>   #endif
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
->> index f2fa9807d8ab..c43ad6b30c2c 100644
->> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
->> @@ -23,6 +23,8 @@
->>   #define HIBMC_DP_VIDEO_MSA1			0x11c
->>   #define HIBMC_DP_VIDEO_MSA2			0x120
->>   #define HIBMC_DP_VIDEO_HORIZONTAL_SIZE		0X124
->> +#define HIBMC_DP_COLOR_BAR_CTRL			0x260
->> +#define HIBMC_DP_COLOR_BAR_CTRL1		0x264
->>   #define HIBMC_DP_TIMING_GEN_CONFIG0		0x26c
->>   #define HIBMC_DP_TIMING_GEN_CONFIG2		0x274
->>   #define HIBMC_DP_TIMING_GEN_CONFIG3		0x278
->> -- 
->> 2.33.0
->>
 
