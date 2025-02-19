@@ -1,191 +1,104 @@
-Return-Path: <linux-kernel+bounces-522164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF69AA3C6E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:01:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ECA6A3C6E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:00:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 999781894A63
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:59:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 601A23B6295
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:00:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD9D0214A6E;
-	Wed, 19 Feb 2025 17:59:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2703C214A66;
+	Wed, 19 Feb 2025 18:00:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="PscXiEyB"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PiYsOzsu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA6982147F4
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 17:58:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C6E316F858;
+	Wed, 19 Feb 2025 18:00:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739987941; cv=none; b=PquYUSnzFo8zHWYT+g+ml6xYyH8/w2YPaVBExplukVjVcArZkJ8Ulg6ZjIkn8IcKR9zbatYoATt05vT89JUZpcaQoeZN2oWJpqFkPRMmM62hsqcZujrs+rb4y6PVfzKBUjcRjDCcw2vhIdT5ex20XVgDIh00K06dclL7RxxGZPQ=
+	t=1739988002; cv=none; b=rpdlCWog6FdEzh8Z9BasB8/lFQUDynkgaVnupSkX6WyEC7NN5bTegy5c4rbPfL0h59aSirVW+rJ2AaAHgZFHiPMgu+Hs9to60CZYbALDM1jZ8eb0Nb0+ODqVZMxAmaVO6ZxxVu1PWDqPBsDYJGOUw3Gz/nU0x21iCA18YlEiacQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739987941; c=relaxed/simple;
-	bh=bca4/lOlAI/66D+6VdDDMQS936BD6LQ3sNTZwS+FImM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BBCm5lAuUP75IBzYQdRx2XS/k1xppUyyBlYHft71dp6Z2dKcnHMJUySqmulekdKvnZc40PoTqE/BlHp1dSQlyR8u35AHHSEzeJrxtyCc8D7Qj4JHLaUXU/Ysi1E7ngC45xQFcsuk1e72pl7ARQqOjlqUcOK4vYel263tyu/myUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=PscXiEyB; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51JGfPWc008504
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 17:58:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	RZPYXYhznydRoNkH0Kcvg2U8jDI9yURgtXY5VTKjyko=; b=PscXiEyBqT9oImjr
-	DFubEALiRiOyR2Gck+mvk+zM7IYu3Zd6Lu+mYqBLHt6p5SjWEk9/HJVlYhTYQz60
-	j1QXksRrA3taY8NCfFDngNHvgoop6FXffcl1BBJ43j9eeMSCecXOZwwUo96ARn3j
-	GKZWpVIh45VZbmTsroHh+xzwIHYVrgHh9eLscZ+2BKqxb3FQOgzMvNnZRn5zZQLe
-	n+fCVkTUbKjHERsTCKYqgfwr3nfvcacsSM80R+4uWAQi6hkK2IpOQPF/8HW4Vdd6
-	ZitGL/o5uWzT+BPlLjhCpJNaqKz9Gt30ZKVpB6jzuH58QsgQHzleB9D1o3fXmZPt
-	NSa0xw==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44vyy3bhd7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 17:58:58 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-220d9d98ea6so180285995ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 09:58:58 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739987937; x=1740592737;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RZPYXYhznydRoNkH0Kcvg2U8jDI9yURgtXY5VTKjyko=;
-        b=Zzwl+Ij5CyHNJTwxQ69ljL8K3SdDtr3DXnhUzXjvFcWGoATcNwWRpw2GiGKU91oTN5
-         IOwZ00uf6Iq6jkHm59ttZyAo5SBA09iLE6p2/kX6pALVXAMf7Lsupum4Jgllhh9aEZ3M
-         usJinDVurpnMCcWJzYWahdBVmmaZQDchp/6cgEHhfr3ScC8uefwSxNF5xK7qHW/+yEGZ
-         YIqBq7JIUUDYhD79Z27r57p+Qp3QbqKreoMNlJsR8vm4LrdAjodty9ej+CJ+doKrGyta
-         OfUR1GsNBjaHW81d1PNHSYSUGhCBA4XRhHctAypwPwlpLbTf7pkdmKnXwL23CkgGYX6G
-         +qCA==
-X-Forwarded-Encrypted: i=1; AJvYcCU9Xi4sTOYhCFRUh2S1IWQxHyAZbqHGAIECwCAnw72KsHKTGvdqbfZPa09+AmwGAeC/I6V4v6qV2hztU+4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNjuOwh+fNar2OBQZ97PqV/grRoIj4HFqybyav5QaCn38cUNDp
-	0TznATqCS5hISEDmFGM8Mo5/kniCo1C/QzJ7sNxcx+Y5rMlzdkONVa9sG0HpxEfFq2UTn2lVKY9
-	RX86haacW7qJP8DMU8vhwQZUvjb9BzwmPVPD7b4W3f0czuPZ2AwMrhjXZcfVBNXE=
-X-Gm-Gg: ASbGncux9mP4Xb42oJSm54JfY3bHg8Yu2JIVXMwe8ohY0bryXUyzQ0jFoWmVZk6g3RO
-	+oT0oUJXaCWB6WfRjZcLRWuDv+4uETQi0Iv7csWyoRtZEg+Jin4SUsm07mYprSN6uOcgeDPuQ4F
-	sbxGbzo+keXxgBSS8xWG8SvwX36riX3h2K3aSCJfzGCGXH1sPvq0QAX2WXnzgwB+BLG0fQqLxG6
-	AOAzOiy72hIBTBoyKF72fDxu98SKdKwkm411aqdJqVAnb4pubpqJ3nWG0v1J8AV7LQ5xjs8EWNL
-	z8NFCRVpUUJyxdIu+FM6Kuehg4WIQvE9UHI=
-X-Received: by 2002:a17:902:f543:b0:21f:542e:dd0a with SMTP id d9443c01a7336-221040a99d9mr278372665ad.41.1739987937128;
-        Wed, 19 Feb 2025 09:58:57 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHUYFCEoZHriB5wecTnOAu53AMlZezfTLFnsL8ikE+PkMeZB3Iwnzg0FnHSPGIoH3cIgQ5kgg==
-X-Received: by 2002:a17:902:f543:b0:21f:542e:dd0a with SMTP id d9443c01a7336-221040a99d9mr278372065ad.41.1739987936755;
-        Wed, 19 Feb 2025 09:58:56 -0800 (PST)
-Received: from [192.168.29.92] ([49.43.231.99])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d536b047sm107696615ad.101.2025.02.19.09.58.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Feb 2025 09:58:56 -0800 (PST)
-Message-ID: <f0e5efb7-8ea0-a064-21e4-6d7596b1a9ae@oss.qualcomm.com>
-Date: Wed, 19 Feb 2025 23:28:47 +0530
+	s=arc-20240116; t=1739988002; c=relaxed/simple;
+	bh=8GH4isiEtxx4zmx1wFTQsbmQVm37L4dBhX2XWViqAXk=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=aHSts+aFNUyBydfD3mrt01qM51z4VF3LougY3wV6CAAzcmdReJ03DNV57cn7XptfmYZgrfgORWbCkzJBLF44heyxc4lLlN+O5YWb+ggCWbbQTNUHx8YQ41JwU/tLGPkXQ1ZJ4BjX0HumhHN44CR+nrdUE3yTRp67x6lJ1jKdRM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PiYsOzsu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40003C4CED1;
+	Wed, 19 Feb 2025 18:00:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739988002;
+	bh=8GH4isiEtxx4zmx1wFTQsbmQVm37L4dBhX2XWViqAXk=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=PiYsOzsuNs20ekgUQWtFKLhp3iI9HdjZqHxXNpUVfi/VPSEiMv8mA6oTQoe9j4OzQ
+	 4749m/XzzGYqiNjKk6DRhXTl7nc6X4+yRWllT48Pc06bvnwFUDYrWl9lzys+7DUAD9
+	 S2uW6qoDoHwsObEbeCwiIKxDBRlT+HrrmCJka4VZBHqAWXp9tzWMjm/LhRq/nBa47d
+	 EZimEsEiFsTBRDhSKH1sCxw92o9+enV2eb7Ufkq17omvSKcwb93mXDQQ1puEjUrm8X
+	 GhDoiN55tLd4R1iB9p3UHwbebeRiKwU4pzR+Xp3/chLQuTTTFPVJxYFoTGRIkL1uE1
+	 BWsHtKThPWinQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EC895380AAE9;
+	Wed, 19 Feb 2025 18:00:33 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH 4/8] PCI: dwc: qcom: Update ICC & OPP votes based upon the
- requested speed
-Content-Language: en-US
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-        =?UTF-8?Q?Ilpo_J=c3=a4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>,
-        Rob Herring <robh@kernel.org>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Jeff Johnson <jjohnson@kernel.org>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        mhi@lists.linux.dev, linux-wireless@vger.kernel.org,
-        ath11k@lists.infradead.org, quic_jjohnson@quicinc.com,
-        quic_pyarlaga@quicinc.com, quic_vbadigan@quicinc.com,
-        quic_vpernami@quicinc.com, quic_mrana@quicinc.com
-References: <20250218220728.GA194681@bhelgaas>
-From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-In-Reply-To: <20250218220728.GA194681@bhelgaas>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: o63OaOR9vYJdY1oJ5b0GI0BPSEQ42b3l
-X-Proofpoint-GUID: o63OaOR9vYJdY1oJ5b0GI0BPSEQ42b3l
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-19_07,2025-02-19_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
- phishscore=0 adultscore=0 lowpriorityscore=0 bulkscore=0 impostorscore=0
- priorityscore=1501 malwarescore=0 spamscore=0 mlxlogscore=999 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2502190139
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH bpf-next v2 0/4] selftests/bpf: tc_links/tc_opts:
+ Unserialize tests
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173998803276.698021.4187184444862727581.git-patchwork-notify@kernel.org>
+Date: Wed, 19 Feb 2025 18:00:32 +0000
+References: <20250219-b4-tc_links-v2-0-14504db136b7@bootlin.com>
+In-Reply-To: <20250219-b4-tc_links-v2-0-14504db136b7@bootlin.com>
+To: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, mykolal@fb.com,
+ shuah@kernel.org, alexis.lothore@bootlin.com, thomas.petazzoni@bootlin.com,
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+
+Hello:
+
+This series was applied to bpf/bpf-next.git (master)
+by Alexei Starovoitov <ast@kernel.org>:
+
+On Wed, 19 Feb 2025 15:52:59 +0100 you wrote:
+> Hi all,
+> 
+> Both tc_links.c and tc_opts.c do their tests on the loopback interface.
+> It prevents from parallelizing their executions.
+> 
+> Add a new behaviour to the test_progs framework that creates and opens a
+> new network namespace to run a test in it. This is done automatically on
+> tests whose names start with 'ns_'.
+> 
+> [...]
+
+Here is the summary with links:
+  - [bpf-next,v2,1/4] selftests/bpf: ns_current_pid_tgid: Rename the test function
+    https://git.kernel.org/bpf/bpf-next/c/4a06c5251ae3
+  - [bpf-next,v2,2/4] selftests/bpf: Optionally open a dedicated namespace to run test in it
+    https://git.kernel.org/bpf/bpf-next/c/c047e0e0e435
+  - [bpf-next,v2,3/4] selftests/bpf: tc_links/tc_opts: Unserialize tests
+    https://git.kernel.org/bpf/bpf-next/c/207cd7578ad1
+  - [bpf-next,v2,4/4] selftests/bpf: ns_current_pid_tgid: Use test_progs's ns_ feature
+    https://git.kernel.org/bpf/bpf-next/c/157feaaf18ce
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
-
-On 2/19/2025 3:37 AM, Bjorn Helgaas wrote:
-> Make subject line match history for this file.
-> 
-> On Mon, Feb 17, 2025 at 12:04:11PM +0530, Krishna Chaitanya Chundru wrote:
->> QCOM PCIe controllers needs to disable ASPM before initiating link
->> re-train. So as part of pre_bw_scale() disable ASPM and as part of
->> post_scale_bus_bw() enable ASPM back.
-> 
-> s/needs/need/
-> 
-> Why does Qcom need to disable ASPM?  Is there a PCIe spec restriction
-> about this that should be applied to all PCIe host bridges?  Or is
-> this a Qcom defect?
-> 
-It is QCOM controller issue, PCIe spec doesn't mention to disable ASPM.
->> Update ICC & OPP votes based on the requested speed so that RPMh votes
->> gets updated based on the speed.
-> 
-> s/gets/get/
-> 
->> Bring out the core logic from qcom_pcie_icc_opp_update() to new function
->> qcom_pcie_set_icc_opp().
-> 
-> This refactoring possibly could be a separate patch to make the meat
-> of this change clearer.
-> 
-ack.
-
-- Krishna Chaitanya.
->> +static int qcom_pcie_set_icc_opp(struct qcom_pcie *pcie, int speed, int width)
->> +{
->> +	struct dw_pcie *pci = pcie->pci;
->> +	unsigned long freq_kbps;
->> +	struct dev_pm_opp *opp;
->> +	int ret, freq_mbps;
->> +
->> +	if (pcie->icc_mem) {
->> +		ret = icc_set_bw(pcie->icc_mem, 0,
->> +				 width * QCOM_PCIE_LINK_SPEED_TO_BW(speed));
->> +		if (ret) {
->> +			dev_err(pci->dev, "Failed to set bandwidth for PCIe-MEM interconnect path: %d\n",
->> +				ret);
->> +		}
->> +	} else if (pcie->use_pm_opp) {
->> +		freq_mbps = pcie_dev_speed_mbps(pcie_link_speed[speed]);
->> +		if (freq_mbps < 0)
->> +			return -EINVAL;
->> +
->> +		freq_kbps = freq_mbps * KILO;
->> +		opp = dev_pm_opp_find_freq_exact(pci->dev, freq_kbps * width,
->> +						 true);
->> +		if (!IS_ERR(opp)) {
->> +			ret = dev_pm_opp_set_opp(pci->dev, opp);
->> +			if (ret)
->> +				dev_err(pci->dev, "Failed to set OPP for freq (%lu): %d\n",
->> +					freq_kbps * width, ret);
->> +			dev_pm_opp_put(opp);
->> +		}
->> +	}
->> +
->> +	return ret;
-> 
-> Looks uninitialized in some paths.
 
