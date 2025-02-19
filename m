@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-520824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FD63A3AFB7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 03:40:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 659A9A3AFBA
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 03:40:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C9C07A4F6D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:39:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 147E53A5A58
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:40:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8922D190072;
-	Wed, 19 Feb 2025 02:40:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 285AE19D882;
+	Wed, 19 Feb 2025 02:40:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IJ3Obrke"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XB+Iin3X"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4C5642A87;
-	Wed, 19 Feb 2025 02:40:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 813D0190072;
+	Wed, 19 Feb 2025 02:40:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739932801; cv=none; b=nBvwEyjTO2Fofy2tFg+5zqFgW1cs3L78tiW0T/SYa+Xy4n13arkYdFqcdvxXFtguFGzGGyAZ12stASep9CQVFYcyXuItiSWMAtJX6KWb+3263QGD7L1S3mJmZNDwzrVMy3ddDWcwY0MyPwR7ErdpmOONFQKh9HxP/yab4vb595Y=
+	t=1739932809; cv=none; b=Rbz/NSdbvApzbvpxtzs0SnMm6ZQiS1FPBuhretimrlTCzmfgWyLDWxh6NxBR4lO4NBVyAde/Jq+i+UeWC3tWHyYZsNM7OFc0s480yGRkzI6sIUroSOmnI8YzjMjxWRTsXmpdZH/9x4VRyJP0jLLG7Av4nM/7vbOxZc7UN0j6zos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739932801; c=relaxed/simple;
-	bh=RNBnfQbcPyk0DjK9e2uSGqyoJkPgva5JS7gLsql0E0w=;
+	s=arc-20240116; t=1739932809; c=relaxed/simple;
+	bh=tiloIvKYtmvXtq9n1DhVPEZySCD0vWC9KJmidWCd6WI=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=J6B2F2shWIxWIfJlTcnhrIkaGc/29Cbd0kJP+QagdK6yVdthsm3xUh+y1ElO8OSN21bx6Jr/oLYLbaU1jxmzh916oaaArT4dwm/i47cNR5quGYQ2CCfwT/dosXDMRhYtTfkAFq95efeLRfgKwwN7dJ4VBemcXtVBq8ph/bJvioA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IJ3Obrke; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D70BC4CEE2;
-	Wed, 19 Feb 2025 02:40:00 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=egDJ6bc7qgYqTn9tVN6n7y34emiL2WMJu0nmWIIJGYFD3C/Of+gc3GJYjOY7YMlr1x66RbdmZhCidUmotVz5a/u/55C8/WABbsrY4N/A19g1PjdC+AluVfYgVSZfoa/yWNaV6SYk32SMoQqOHZpMDoX977ccP8tNIEcGDm45t74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XB+Iin3X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C97DC4CEE2;
+	Wed, 19 Feb 2025 02:40:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739932800;
-	bh=RNBnfQbcPyk0DjK9e2uSGqyoJkPgva5JS7gLsql0E0w=;
+	s=k20201202; t=1739932809;
+	bh=tiloIvKYtmvXtq9n1DhVPEZySCD0vWC9KJmidWCd6WI=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=IJ3Obrkeuxq9xRjxhtPLSG+LWd8qRt/kxcp90nddOVJnCtTuyDDaPupZNt5G4JpTx
-	 45SS5ZyEIIsuTSYHmYxyag0RyioXqkvr8/pJjujYpZMq2M7YHAOvfCe0Zy6sXSNiAH
-	 3ITH6hf78p3YT81JBTYCcesywLecFztBPMC7UYNnclSH11MRbLImrBJoTN+fVZrSzO
-	 gPpq5hvWFunNT9xMpRv/ArkC9kK2SJu7TYUG6PIzcT/3GkA7txjlk6dEEVGF9ogimG
-	 3ZU0USdG5nzScuyu3hG9/lw2rca4ntbiHxz+1QWz14sbxVmNlp3UTmvQeCNSD+ZVBM
-	 ExC0xm/pQKayw==
+	b=XB+Iin3XPAjVvL9N79BtkHn77dq1a1SJnFIzHpUj16mDKcT2YG8XFxuYml5chlHL6
+	 aOno2cdTwrJ3pCGVsD1SWy0MpNbh3s+d6CzSmtNcY3VxWYs9OBUZWzglENxTvRk5o0
+	 9nKLAvNS6nefRCBLcu4r9rJPUA4TWiH+HjpA46Yowab/fx8w6ieu+vA6HfyDL/+tHT
+	 5SM8Ue9b+cqW4Nrcq+pUDHtwhlj+LhOF+I3sqyIcSmn/K6LdP9ySU+rgfv+Wo5Ex9f
+	 3cs50kXPb6OErfAJzQR83wdbHW35fJHF19A9LC9Glm58VAY4/ikfroaJjCOAnlQUMt
+	 hblzaZNmkiLUw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAD7B380AAE9;
-	Wed, 19 Feb 2025 02:40:31 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EBC00380AAE9;
+	Wed, 19 Feb 2025 02:40:40 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,39 +51,43 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] net: pse-pd: pd692x0: Fix power limit retrieval
+Subject: Re: [PATCH net-next v2] net: stmmac: Use str_enabled_disabled() helper
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <173993283078.110799.14750805778268266261.git-patchwork-notify@kernel.org>
-Date: Wed, 19 Feb 2025 02:40:30 +0000
-References: <20250217134812.1925345-1-kory.maincent@bootlin.com>
-In-Reply-To: <20250217134812.1925345-1-kory.maincent@bootlin.com>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: kuba@kernel.org, o.rempel@pengutronix.de, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- pabeni@redhat.com
+ <173993283976.110799.6484723718905539141.git-patchwork-notify@kernel.org>
+Date: Wed, 19 Feb 2025 02:40:39 +0000
+References: <20250217155833.3105775-1-eleanor15x@gmail.com>
+In-Reply-To: <20250217155833.3105775-1-eleanor15x@gmail.com>
+To: Yu-Chun Lin <eleanor15x@gmail.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
+ alexandre.torgue@foss.st.com, netdev@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ jserv@ccns.ncku.edu.tw, visitorckw@gmail.com, lkp@intel.com,
+ chenhuacai@loongson.cn, rmk+kernel@armlinux.org.uk
 
 Hello:
 
-This patch was applied to netdev/net.git (main)
+This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Mon, 17 Feb 2025 14:48:11 +0100 you wrote:
-> Fix incorrect data offset read in the pd692x0_pi_get_pw_limit callback.
-> The issue was previously unnoticed as it was only used by the regulator
-> API and not thoroughly tested, since the PSE is mainly controlled via
-> ethtool.
+On Mon, 17 Feb 2025 23:58:33 +0800 you wrote:
+> As kernel test robot reported, the following warning occurs:
 > 
-> The function became actively used by ethtool after commit 3e9dbfec4998
-> ("net: pse-pd: Split ethtool_get_status into multiple callbacks"),
-> which led to the discovery of this issue.
+> cocci warnings: (new ones prefixed by >>)
+> >> drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c:582:6-8: opportunity for str_enabled_disabled(on)
+> 
+> Replace ternary (condition ? "enabled" : "disabled") with
+> str_enabled_disabled() from string_choices.h to improve readability,
+> maintain uniform string usage, and reduce binary size through linker
+> deduplication.
 > 
 > [...]
 
 Here is the summary with links:
-  - [net] net: pse-pd: pd692x0: Fix power limit retrieval
-    https://git.kernel.org/netdev/net/c/f6093c5ec74d
+  - [net-next,v2] net: stmmac: Use str_enabled_disabled() helper
+    https://git.kernel.org/netdev/net-next/c/3a03f9ec5d33
 
 You are awesome, thank you!
 -- 
