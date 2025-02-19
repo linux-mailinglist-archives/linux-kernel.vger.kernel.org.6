@@ -1,215 +1,256 @@
-Return-Path: <linux-kernel+bounces-522623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34CC6A3CC8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 23:40:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24328A3CC93
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 23:43:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B4D61665A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:40:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15071170050
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:43:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0490325B661;
-	Wed, 19 Feb 2025 22:40:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F01CE25A348;
+	Wed, 19 Feb 2025 22:43:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q6TzPoW1"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mMqv0luy"
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28BCE1CAA65;
-	Wed, 19 Feb 2025 22:40:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 909D421B9C5
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 22:43:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740004824; cv=none; b=ryl92xBNjNLQvn+M1BCJkf8lpvzrBNAHv6Ys6CEtvm8qUM2ASrOyo3Xoj7SGNpxKgjTeMGdL496xdgC2yq/OOcwinG68g4hKsdlWz/7kaB3iXl2mpJQKtgAOnXcZEHCAS5cgT3Qs23cXDo7mH3b0FUxKaon0iTkqp6fz2AYmW8U=
+	t=1740005004; cv=none; b=IieRsoya2FBZqB8UNROSeuXiQJuW7zHxDnO56QE8ggqu65ZAlOD9NbW+kMS6ukipt7MqnW/DiJmrtt7DblTkz2KaMTcSpNnjAqZXIV7Tjn7XQI0H03+vSQTADqjaPdZgg8nvvjlLZsoh5ADhHpFzmuv+nxk06DR1PZ/9AtxSnow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740004824; c=relaxed/simple;
-	bh=8Mg75jClpkM1YDf5jhDaw+K4gMVsBWTTRKTduk5CQ0g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZxwUNesSq2UlLOUp4HQP6wI3CyURdgB9qbmrvX4eGBoPMVTC6mT7PosnKTrswOKOmkwgstszFLK2iYWJ48YkPK4KwMgWdqsCL+syw++Y6DSX7LCflXpK4SFYk/4UtrpCh3XGuWU1FpL9o8shbS1mUB4Sd/E2+ktCjGCkNBnhImg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q6TzPoW1; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43690d4605dso1706385e9.0;
-        Wed, 19 Feb 2025 14:40:20 -0800 (PST)
+	s=arc-20240116; t=1740005004; c=relaxed/simple;
+	bh=h2NRHjDecopR8l5RP8zzvh9LJ1iSzbV/geHRFqci76I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QtmR6mpmk10ctONTh2aLCxvfOi+7+vUXwqlAqjXqqHPgM8cenEVKb8DHNTnHEn7iRQBa4NADiZUZBwJYlwxGe0GvdW0s2HZeRQOcDOvvp+3bKVsCecQuHhxiLFTRKnx+ikcYCUdT+5MdOnW7Pf/TrOFGDMKDjRqr7mrfMbsV2+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mMqv0luy; arc=none smtp.client-ip=209.85.166.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3d19702f977so24355ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 14:43:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740004819; x=1740609619; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Vrp/fBKUqrg/kv/ORpAWE3DQJG3A8sYFw9zN0z92NYg=;
-        b=Q6TzPoW1qI6ujyeH+iEvVIg9bDfD6i8mHmR237RKULCI8fYs28tD46YWtgnk3Mar7R
-         +e43tmUa23Vc1j8Ohl8rRUdYM8M7w7qw3wImjjvF3nFC5RYZfzNQpp0ls6zLvv3Niydl
-         3xtppNSGtQaHGK30FjpN4GPhCQhNroItdRCbJB962GS0OyCBQJOo24h8jBAWpNmUoSGj
-         MLWcIZS8k0Ocqof0kt+bzfU6zlnsmPtgVM0gseL8nqD0reON88mpcOODfCUZKpFoOAef
-         HjILNW4MsIQu1xqIBQ0yWYcjdyNnHgSDc1Gr/oatoydPTE9mQBWeUFG0YzVbHtBcI7Ev
-         y0RA==
+        d=google.com; s=20230601; t=1740005001; x=1740609801; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0Y/dovmWdG7T+i+r2MZlIGAZJzk/xUKUEy1yv6P218A=;
+        b=mMqv0luy66O8ENb8LNhwhXuum3LvjFy5ryhIpXUTzfyBXlblf79DI0drVNLJmCttZu
+         ZPAxDBEJ5OGOJUmirrC+gc+iYJ/w/6vgbcULK9Y8/oWDJl8osiJ7dopAq6KF1GILAG3f
+         v4fqhdUIAkVQ1yunvXMpJoDqAxdkUJSeZaw3GoHZWqbca/CM6jtsQ8NEyz/WYn95NR8m
+         7LYd44yRU3bgVT5rnjfq4a5BKSq5axEguTUFpicDS8U8rVU8aPkF30O+yInJ4YmgL0ik
+         saqmGWQ03fVpsbD1DbIzSKb2EM6VoZDOeeo3dQrWnW9F3tu58o6F6Zjkf+Vi9UZ0gLIV
+         UtRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740004819; x=1740609619;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vrp/fBKUqrg/kv/ORpAWE3DQJG3A8sYFw9zN0z92NYg=;
-        b=J91ke25T1vT94+RrDyS95ZlY4WoEAWJKVdMkIyEo75+gwPyt5E4+IP9JeKGB3Njnsf
-         me8p9JSvOWH90XgXSGlJZtUCmEOmLtlXOAgDHoot1Y3IVHUDA0zyYVc1PkNttwSCUN43
-         sTm/Z+9cF5K6nnk1yRjqhZq/Kyegs6xVNLmfWyJGQm38FUtohNxfU1m2Dt7LsCTzsDkf
-         xS5GQoCHtB4qG0nSfuwPWVlpaPrcx+Hh7M1gjBqy2OZnJm7iECXfx5xXaTCYz90Genil
-         otgByfHL+49QPEeRvdr8v9tigkJOMRwWVo4R71nQxWwtsq2WKVM3EPNTzNpTvgUrikdG
-         gf/g==
-X-Forwarded-Encrypted: i=1; AJvYcCU6zbMKmzHLa+NjQEtjxdg/pywcC7oMjXaLuC0D0/DUmxLW2kUVyqp21pbKkc8xEMMsf+XtcKKws6eIDuN4rhrp@vger.kernel.org, AJvYcCUPJExUNyXjOJrrnVfOHICL3mBdwpoQsuG1uXL51lCzLXjGrXnEHPJkULM2ej0t3KjYWCq9gJwGA7oZ+lEO@vger.kernel.org, AJvYcCUSbHs3tAyODEzuOROPR9RMUy+kv1kc/g5vpCeFAYnDclSVs7JdBltmxBzusxi8AadbVZs=@vger.kernel.org, AJvYcCVfBk6rSIJoaPPAaY7bct/TmrVeBIoQdPU+q1DUTzzg7eHIglgllKV/XwnbvELNTj9myTqA2NAGnJaz@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwBdJj1M7PZwNO17sMQ3/b9Nkd9LCn1ytyUqKLncpd/HHdV6Zt
-	5E7glC+oBxgj/y3C7klFdvBmTL91fB9zux12xhhvcFk3Uh6zu9VH
-X-Gm-Gg: ASbGncuvTvCaOTJB84AeXpU/rhDRaPN459mVS5yUVM8FDNt7zQRAOmZl4D4Q58xI+cg
-	OAn8obWjwWErLRwbv+i2ZhVlJkl+drH2n6Yct0Ii133NeDlqDXyeUUN0Gfxhdtlew1fS0oUq9R9
-	+3gqIt1OgPcPqSU53tuUQj7NnF7a6AR1Yi7JHMQdC1kVkdH83pO/p29U0axUjHHuErUY00AZXh4
-	k80Ly3utt3xfbjuZ6e3QpLHfdYIowd/3CKYng5v1wJgZpj8tL+guoXK93mwo2oMxKVvw3KuQl88
-	7K5XcuiReKFL6O6lwi1pomvQ
-X-Google-Smtp-Source: AGHT+IHdEPtErxH8tweBsaBsHHLXYXev0UX3+JoIgfASCAjj1RolZY34QS5v5Mk2MKGpYvQ0fbmuAA==
-X-Received: by 2002:a05:600c:458f:b0:439:8a8c:d3e1 with SMTP id 5b1f17b1804b1-4398a8cd6b3mr103365215e9.22.1740004819062;
-        Wed, 19 Feb 2025 14:40:19 -0800 (PST)
-Received: from [192.168.8.100] ([148.252.145.15])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43994f0c10csm58014075e9.26.2025.02.19.14.40.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Feb 2025 14:40:17 -0800 (PST)
-Message-ID: <4cdfaff8-0623-4d3a-9204-5165ccbb84db@gmail.com>
-Date: Wed, 19 Feb 2025 22:41:17 +0000
+        d=1e100.net; s=20230601; t=1740005001; x=1740609801;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0Y/dovmWdG7T+i+r2MZlIGAZJzk/xUKUEy1yv6P218A=;
+        b=ATEPdb2BOyLzy4GSG2hFtV2L16w0BiMBgHyLAdevsOqRN+mcff59hj47KOQipLtZ26
+         0fM0ieIDr3m2pRzAaz6ZWdBc4N2WAMl2jrkRoA7S+KYwvkbMvrBkl7VRcaXDB6VF4crh
+         22ueE8q62JYoPkKeBExRPwbkOiUm2pahqsIVzDvThxmj4QvVB8k1K13GaSfH88Ax2CVr
+         W4n/PML/l2K29hS3SHoI3wg9iH51GNeQsy+1fyWEDpswrTF1Xo5hMnUTewKt9UgHI5bS
+         iHKM+dqUIXIiHRuCToSrBIsEYDb6Bn7LvMfKwIctRGjUVOQXmpwnkbgRYSLdrXYhliSo
+         +p2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU3Tyzq7v2+fsHoWF/aviv7c3iascXiNdC4L2/H1e/dH621KCjjWd3XUkna1iAOVa4Y0CGmwXjz0IvHpkQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyueNMeihR5aK3QD1FJQZ1D3TGrYuS2zZKX+rckJdaY5yuXGDdK
+	5y70ZF9WzixBTyO4xtnm5UMCqrr13O9A96luITMbliIEWQKUPX8RxXw7q7aC+1quGGTM9w8yCVR
+	6CXL9LMaZJKyub0Ppm7GfcVAUb1Holba+ktiL
+X-Gm-Gg: ASbGncvEv3R0Z/RMSA+phpo72ZFn+VZTRF997wbOUMBqG9NE/dKfr4exk3e65/z0ezR
+	PTbbCW2dMWReWkQ6liJT36NtxIoZ77f2diBBXgm6nimphA0WKzNOFebObAOsgUhlF2mGwDrMzuW
+	LXIuhfjuBpxL7UJdgFNP2DJ7Zcxg==
+X-Google-Smtp-Source: AGHT+IFC0YKr6ge+vQ0BA0jbZopO8H5aIWcwki6w0/svHfg5XzmpQ8wqSVmBQuHa6Wl6ARptthNty7N4A/x29IJdE8Y=
+X-Received: by 2002:a05:6e02:1b05:b0:3d0:bd4:e46e with SMTP id
+ e9e14a558f8ab-3d2c0b75924mr1079235ab.22.1740005001493; Wed, 19 Feb 2025
+ 14:43:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 5/6] net: devmem: Implement TX path
-To: Mina Almasry <almasrymina@google.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, kvm@vger.kernel.org,
- virtualization@lists.linux.dev, linux-kselftest@vger.kernel.org,
- Donald Hunter <donald.hunter@gmail.com>, Jakub Kicinski <kuba@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>, Andrew Lunn <andrew+netdev@lunn.ch>,
- Neal Cardwell <ncardwell@google.com>, David Ahern <dsahern@kernel.org>,
- "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
- <eperezma@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>,
- Stefano Garzarella <sgarzare@redhat.com>, Shuah Khan <shuah@kernel.org>,
- sdf@fomichev.me, dw@davidwei.uk, Jamal Hadi Salim <jhs@mojatatu.com>,
- Victor Nogueira <victor@mojatatu.com>, Pedro Tammela
- <pctammela@mojatatu.com>, Samiullah Khawaja <skhawaja@google.com>,
- Kaiyuan Zhang <kaiyuanz@google.com>
-References: <20250203223916.1064540-1-almasrymina@google.com>
- <20250203223916.1064540-6-almasrymina@google.com>
- <abc22620-d509-4b12-80ac-0c36b08b36d9@gmail.com>
- <CAHS8izNOqaFe_40gFh09vdBz6-deWdeGu9Aky-e7E+Wu2qtfdw@mail.gmail.com>
- <28343e83-6d93-4002-a691-f8273d4d24a8@gmail.com>
- <CAHS8izOE-JzMszieHEXtYBs7_6D-ngVx2kJyMwp8eCWLK-c0cQ@mail.gmail.com>
- <9210a12c-9adb-46ba-b92c-90fd07e1980f@gmail.com>
- <CAHS8izPHtk5x-W05_svxU53X-V4+++PiYErCgfr-3iDGgEaUig@mail.gmail.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <CAHS8izPHtk5x-W05_svxU53X-V4+++PiYErCgfr-3iDGgEaUig@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250109175401.161340-1-irogers@google.com> <CAP-5=fWghT8+pBFVxn9JDbqHU9NPy9mgyT8Ee=pTdkCKxRoJgA@mail.gmail.com>
+ <CAP-5=fWZAk7XqtL+=CanefkuFxhDsJ22+-uHkrxXi4g8123oew@mail.gmail.com>
+ <Z7ZD5phOOCbKggrn@google.com> <CAP-5=fXeZM7iWNQq0ar1HmAwWrH4HAHqD3F=ueB=jaw-2UMn_w@mail.gmail.com>
+ <Z7Za30xyVUQWI1tV@google.com>
+In-Reply-To: <Z7Za30xyVUQWI1tV@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 19 Feb 2025 14:43:10 -0800
+X-Gm-Features: AWEUYZkoW8uinawVDJYMzpveA0ZEuCIE2CtPCeO_4HSgxaqFzd9JHRM-ml0me0g
+Message-ID: <CAP-5=fW=_4j43-mY3B02BavaOdTA469kUjEZaahTUA5S7Ma4sQ@mail.gmail.com>
+Subject: Re: [PATCH v1] perf parse-events: Tidy name token matching
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Andi Kleen <ak@linux.intel.com>, Dominique Martinet <asmadeus@codewreck.org>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2/17/25 23:26, Mina Almasry wrote:
-> On Thu, Feb 13, 2025 at 5:17 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
-...
->>>>> It's asserting that sizeof(ubuf_info_msgzc) <= sizeof(skb->cb), and
->>>>> I'm guessing increasing skb->cb size is not really the way to go.
->>>>>
->>>>> What I may be able to do here is stash the binding somewhere in
->>>>> ubuf_info_msgzc via union with fields we don't need for devmem, and/or
->>>>
->>>> It doesn't need to account the memory against the user, and you
->>>> actually don't want that because dmabuf should take care of that.
->>>> So, it should be fine to reuse ->mmp.
->>>>
->>>> It's also not a real sk_buff, so maybe maintainers wouldn't mind
->>>> reusing some more space out of it, if that would even be needed.
->>>>
->>>
->>> netmem skb are real sk_buff, with the modification that frags are not
->>
->> We were discussing ubuf_info allocation, take a look at
->> msg_zerocopy_alloc(), it has nothing to do with netmems and all that.
->>
-> 
-> Yes. My response was regarding the suggestion that we can use space in
-> devmem skbs however we want though.
+On Wed, Feb 19, 2025 at 2:27=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+> On Wed, Feb 19, 2025 at 02:11:43PM -0800, Ian Rogers wrote:
+> > On Wed, Feb 19, 2025 at 12:49=E2=80=AFPM Namhyung Kim <namhyung@kernel.=
+org> wrote:
+> > >
+> > > Hi Ian,
+> > >
+> > > On Wed, Feb 19, 2025 at 11:02:40AM -0800, Ian Rogers wrote:
+> > > > On Mon, Feb 10, 2025 at 11:23=E2=80=AFAM Ian Rogers <irogers@google=
+.com> wrote:
+> > > > >
+> > > > > On Thu, Jan 9, 2025 at 9:54=E2=80=AFAM Ian Rogers <irogers@google=
+.com> wrote:
+> > > > > >
+> > > > > > Prior to commit 70c90e4a6b2f ("perf parse-events: Avoid scannin=
+g PMUs
+> > > > > > before parsing") names (generally event names) excluded hyphen =
+(minus)
+> > > > > > symbols as the formation of legacy names with hyphens was handl=
+ed in
+> > > > > > the yacc code. That commit allowed hyphens supposedly making
+> > > > > > name_minus unnecessary. However, changing name_minus to name ha=
+s
+> > > > > > issues in the term config tokens as then name ends up having pr=
+iority
+> > > > > > over numbers and name allows matching numbers since commit
+> > > > > > 5ceb57990bf4 ("perf parse: Allow tracepoint names to start with=
+ digits
+> > > > > > "). It is also permissable for a name to match with a colon (':=
+') in
+> > > > > > it when its in a config term list. To address this rename name_=
+minus
+> > > > > > to term_name, make the pattern match name's except for the colo=
+n, add
+> > > > > > number matching into the config term region with a higher prior=
+ity
+> > > > > > than name matching. This addresses an inconsistency and allows =
+greater
+> > > > > > matching for names inside of term lists, for example, they may =
+start
+> > > > > > with a number.
+> > > > > >
+> > > > > > Rename name_tag to quoted_name and update comments and helper
+> > > > > > functions to avoid str detecting quoted strings which was alrea=
+dy done
+> > > > > > by the lexer.
+> > > > > >
+> > > > > > Signed-off-by: Ian Rogers <irogers@google.com>
+> > > > >
+> > > > > Ping. This patch addresses name parsing inconsistencies, in parti=
+cular
+> > > > > events may start with a number without a PMU, but not with. It al=
+so
+> > > > > aims to give better names to patterns than name_minus and name_ta=
+g
+> > > > > (with term_name and quoted_name respectively) that have drifted f=
+rom
+> > > > > their original meaning and become to me less than intention revea=
+ling.
+> > > >
+> > > > Ping.
+> > >
+> > > Sorry for the delay.  Can you please give an example for better
+> > > understanding if there's a change in the behavior?
+> >
+> > The example in:
+> > https://lore.kernel.org/r/20240510-perf_digit-v4-3-db1553f3233b@codewre=
+ck.org
+> > is `perf trace -e '9p:*'` which allows the number to start a
+> > tracepoint name, but what is true for tracepoint names is also true
+> > for event names. I lack the tracepoint but the patch here is making
+> > that work if the event/tracepoint is specified with a PMU, so:
+> >
+> > Before the input is just seen as broken:
+> > ```
+> > $ perf stat -e 'tracepoint/9p:9p/' true
+> > event syntax error: 'tracepoint/9p:9p/'
+> >                                \___ Unrecognized input
+> > Run 'perf list' for a list of valid events
+> >
+> > Usage: perf stat [<options>] [<command>]
+> >
+> >    -e, --event <event>   event selector. use 'perf list' to list
+> > available events
+> > ```
+> >
+> > After the input fails because the event wasn't found:
+> > ```
+> > $ perf stat -e 'tracepoint/9p:9p/' true
+> > event syntax error: 'tracepoint/9p:9p/'
+> >                     \___ Bad event or PMU
+> >
+> > Unable to find PMU or event on a PMU of 'tracepoint'
+> >
+> > event syntax error: 'tracepoint/9p:9p/'
+> >                                \___ unknown term '9p:9p' for pmu 'trace=
+point'
+> >
+> > valid terms: config,config1,config2,config3,name,period,percore,metric-=
+id
+> >
+> > event syntax error: 'tracepoint/9p:9p/'
+> >                                \___ unknown term '9p:9p' for pmu 'trace=
+point'
+> >
+> > valid terms: config,config1,config2,config3,name,period,percore,metric-=
+id
+> > Run 'perf list' for a list of valid events
+> >
+> > Usage: perf stat [<options>] [<command>]
+> >
+> >    -e, --event <event>   event selector. use 'perf list' to list
+> > available events
+> > ```
+> >
+> > But the patch is just about making the name term more consistent and
+> > cleaner, the weirdness above wasn't its main point, I want the code to
+> > be easy to read and understand.
+>
+> Ok, so I guess there's no behavior change from the users perspective in
+> this patchset.  Do you plan to add support for the tracepoint name in
+> the config term (like tracepoint/9p:9p/) later?
 
-Well, at least I didn't suggest that, assuming "devmem skbs" are skbs
-filled with devmem frags. I think the confusion here is thinking
-that skb->cb you mentioned above is about "devmem skbs", while it's
-special skbs without data used only to piggy back ubuf allocation.
-Functionally speaking, it'd be perfectly fine to get rid of the
-warning and allocate it with kmalloc().
+I think we treat tracepoints much as we do regular PMU perf events
+except in the encoding of the config. There is also a sysfs PMU:
+```
+$ ls -al /sys/bus/event_source/devices/tracepoint
+/
+total 0
+drwxr-xr-x  3 root root    0 Feb 19 14:35 .
+drwxr-xr-x 78 root root    0 Feb 19 08:13 ..
+-rw-r--r--  1 root root 4096 Feb 19 14:34 perf_event_mux_interval_ms
+drwxr-xr-x  2 root root    0 Feb 19 08:13 power
+lrwxrwxrwx  1 root root    0 Feb 19 08:13 subsystem -> ../../bus/event_sour=
+ce
+-r--r--r--  1 root root 4096 Feb 19 10:53 type
+-rw-r--r--  1 root root 4096 Feb 19 08:13 uevent
+```
+with the type reflecting the perf_event_attr type (3 aka
+PERF_TYPE_TRACEPOINT). So I think much like with the hwmon_pmu.c it
+makes sense to have a tracepoint_pmu.c and move logic like
+parse-events add_tracepoint in there:
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
+ee/tools/perf/util/parse-events.c?h=3Dperf-tools-next#n523
+in that case tracepoint/9p:9p/ would be a valid tracepoint event name.
+For now this code is cleaning up that if you had a 9p on say the cpu
+PMU, 9p would wildcard match with it but cpu/9p/ would be a parse
+error - as the event name currently doesn't allow a number to start it
+when it is part of the term list, what this patch fixes as part of
+tidying up the code.
 
-...
->>> But MSG_ZEROCOPY doesn't set msg->msg_ubuf. And not setting
->>> msg->msg_ubuf fails to trigger msg->sg_from_iter altogether.
->>>
->>> And also currently sg_from_iter isn't set up to take in a ubuf_info.
->>> We'd need that if we stash the binding in the ubuf_info.
->>
->> https://github.com/isilence/linux.git sg-iter-ops
->>
->> I have old patches for all of that, they even rebased cleanly. That
->> should do it for you, and I need to send then regardless of devmem.
->>
->>
-> 
-> These patches help a bit, but do not make any meaningful dent in
-> addressing the concern I have in the earlier emails.
-> 
-> The concern is that we're piggybacking devmem TX on MSG_ZEROCOPY, and
-> currently the MSG_ZEROCOPY code carefully avoids any code paths
-> setting msg->[sg_from_iter|msg_ubuf].
+Thanks,
+Ian
 
-Fwiw, with that branch you don't need ->msg_ubuf at all, just pass
-it as an argument from tcp_sendmsg_locked() as usual, and
-->sg_from_iter is gone from there as well.
-
-> If we want devmem to reuse both the MSG_ZEROCOPY mechanisms and the
-> msg->[sg_from_iter|ubuf_info] mechanism, I have to dissect the
-> MSG_ZEROCOPY code carefully so that it works with and without
-> setting msg->[ubuf_info|msg->sg_from_iter]. Having gone through this
-> rabbit hole so far I see that it complicates the implementation and
-> adds more checks to the fast MSG_ZEROCOPY paths.
-
-If you've already done, maybe you can post it as a draft? At least
-it'll be obvious why you say it's more complicated.
-
-> The complication could be worth it if there was some upside, but I
-> don't see one tbh. Passing the binding down to
-> zerocopy_fill_skb_from_devmem seems like a better approach to my eye
-> so far
-
-The upside is that 1) you currently you add overhead to common
-path (incl copy), 2) passing it down through all the function also
-have overhead to the zerocopy and MSG_ZEROCOPY path, which I'd
-assume is comparable to those extra checks you have. 3) tcp would
-need to know about devmem tcp and its bindings, while it all could
-be in one spot under the MSG_ZEROCOPY check. 4) When you'd want
-another protocol to support that, instead of a simple
-
-ubuf = get_devmem_ubuf();
-
-You'd need to plumb binding passing through the stack there as
-well.
-
-5) And keeping it in one place makes it easier to keep around.
-
-I just don't see why it'd be complicated, but maybe I miss
-something, which is why a draft prototype would explain it
-better than any words.
-
-> I'm afraid I'm going to table this for now. If there is overwhelming
-> consensus that msg->sg_from_iter is the right approach here I will
-> revisit, but it seems to me to complicate code without a significant
-> upside.
-
--- 
-Pavel Begunkov
-
+>
+> Thanks,
+> Namhyung
+>
 
