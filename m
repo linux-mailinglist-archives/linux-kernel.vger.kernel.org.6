@@ -1,150 +1,101 @@
-Return-Path: <linux-kernel+bounces-522206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06A8EA3C763
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:26:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0F47A3C752
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:24:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4E1E17AF5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:24:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78AC2188DA7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:24:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 414CA215058;
-	Wed, 19 Feb 2025 18:24:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C7A3214A6E;
+	Wed, 19 Feb 2025 18:23:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YPGrKe6W"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="FSh8FygM"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94C4221481B;
-	Wed, 19 Feb 2025 18:24:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADBC11FCFD2
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 18:23:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739989467; cv=none; b=d19bZMwWgawk+TKw4v5I7dW64ElJ7OD+hu/jFPFYsJhD4HqNPnsx6bqGfnq69Nk3cbNej3IDgA2EJ306bXsQ+pJV9BtA+3jZXEqprpb94Fnwt7kL7TUZeq9Mabb3pZVeA08k0UQnYuhtq/y5Mfq34czs5+MduQ05ldQvfUeJ/KU=
+	t=1739989427; cv=none; b=DYhQ0DyxG4GFJ+WUirlnyHEeSJ2hoFNmgCbMaKTv7yzc1zzF32+3/ANbEaGWuqdfxyu45/ckyx9P6MlorxiW5rUvjwGC5kaFMI9QQKjkCW78winKnJgVjvaR8+pjsonhl1hzm6salKpSRwjH1dU24dh8DN3d27A1uaSjp90bzso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739989467; c=relaxed/simple;
-	bh=MnAffNGuOsgnzdGST98He9D12GmU6n41qfc44ByLtiI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=j5VqRwoPvkuzNMdh85UBR/wameYTqVhYvozBMpEiaHsSJdZgE5GsrqZQ1LBKUe8avCsXdLmn5NNyj0GJlf7DC4JsjrThpYf1ltYdDvNdilsXZnr881kMv38wWsDEXnccFK4Zs6JuzePTAU+CXwN18WuQCKhbnLrx63kxWPTmbrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YPGrKe6W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 028C7C4CED1;
-	Wed, 19 Feb 2025 18:24:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739989467;
-	bh=MnAffNGuOsgnzdGST98He9D12GmU6n41qfc44ByLtiI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=YPGrKe6WopB9r+cQOljZNncGAxLtvjs3kio1C1TPdc1hr5wc2IbmljIQ0HIEX04u5
-	 Lo+MhcAOBaa4xQGvYOWA1fTchQLK0wJHUeTDJO+rqPEWbb0G2Rs+3zODzKXdbHFEHO
-	 ne8dna6ynngvy3kN0Q25j5APWOgUyFK4nFHbqMIdE0GqwsTFlLnAslFB0mxEOENvxp
-	 OeYVVv7U53y2gY960MRCRVbISIynQVsS3K8AQ1ZP4m82n0EntuYkCvheWCc42ZgTq3
-	 MJFX8zb4motA1Z3Q3jnmi84MIphZQC4ld8nvPh/oqubwLXHN3qAETDG0oLANRCjMXv
-	 jQ6ejMsHRSyaw==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH v3 00/19] crypto: scatterlist handling improvements
-Date: Wed, 19 Feb 2025 10:23:22 -0800
-Message-ID: <20250219182341.43961-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1739989427; c=relaxed/simple;
+	bh=F3QQLn5iHEqa61zNY6HqpiLPzAagm6AWvPWfS3ckb3U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MvnLUkO7iosLCTcv003bTUNC9rSMBTjsM8Q9HfT8vdyQerXzwaayZYqykiElaEi05ZoTIR+TpdBppWl7nOcoEEaYD1PAY4oCPdH3pEoYsOeWXwOx+0SALjjg179YuxdncZ64HbT6iG+18jsLZ5cnCjYKT9mIxNedL0wCi9RiHCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=FSh8FygM; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D8C8540E015F;
+	Wed, 19 Feb 2025 18:23:42 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id M-9yfGl9isMo; Wed, 19 Feb 2025 18:23:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1739989419; bh=v0HTPPPJwvOYn4e7z6j0xoj8hH1coAAx24Lf63l4oeE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FSh8FygMwhSOUfjaGnlTdRKcC6BR/AiyuJB2sUSS5Jf51d7CxQT/TJ+EgfzIQJmVa
+	 UeqGLDJ2Ktx3AHls5U/2lHSRB6Z57WgoGMCGJJTfmEIupnOTqZQmrI4TUfM5HjQFEO
+	 /ILWWahkfZXx19PADct2AiG0bxIOOdlO180Fz6wPp+MqFtlZ9l92jw75PAErXTTYkR
+	 SfxKJw0J0k7fB3jX2yGdzbFLHvmsG4r7pznYn9pxh6qUbPBT23JNjmD0+eRUFefb0e
+	 oeb+o/wWTwRBJZpvNOhze42XXWbBGR3dVnPi0OleQy91t+8q5ha94NuG9BodzukeTs
+	 Xlsnc1eDMTDTiirky4Dal1Z+phevYuBYpW+StIBrELOAfwzAAyFfWkgH/4o1tO23Ud
+	 hlBEXRng82XhOiOI5OI1qxqQzCLuh+FZX0NmLWeiehkujuMPjjGu5hgffG5uwjB4u9
+	 YkhLT9CNipXxBNtc73HsHB7W95UfMWdnPiQ5XEgsBqVnZi3ycfYIFeUAu3UAdYJXqm
+	 rRm1ioN1PMXTZKi1UGKeXVvLovyNVS1ENkV2X+y+AUgT+qv05CFl/b4c6dsqN2ERX7
+	 T4dchjZVbMwaPaxBRxA1D0eSkw3mC3ZOVr9o9nLE2NhbXUCqppt6SkoYAu2qycFvHj
+	 odJ/x9ySPL6jopfW4PJ7GHUA=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1AC5840E0176;
+	Wed, 19 Feb 2025 18:23:23 +0000 (UTC)
+Date: Wed, 19 Feb 2025 19:23:22 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Rik van Riel <riel@surriel.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org,
+	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
+	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
+	linux-mm@kvack.org, akpm@linux-foundation.org, jackmanb@google.com,
+	jannh@google.com, mhklinux@outlook.com, andrew.cooper3@citrix.com,
+	Manali Shukla <Manali.Shukla@amd.com>
+Subject: Re: [PATCH v11 04/12] x86/mm: get INVLPGB count max from CPUID
+Message-ID: <20250219182322.GBZ7YhmoQw13Welm_d@fat_crate.local>
+References: <20250213161423.449435-1-riel@surriel.com>
+ <20250213161423.449435-5-riel@surriel.com>
+ <20250219115626.GMZ7XG6s-5ftg1XLoZ@fat_crate.local>
+ <b749384b7dea020880057359d06d4e9172c7aaec.camel@surriel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <b749384b7dea020880057359d06d4e9172c7aaec.camel@surriel.com>
 
-This series can also be retrieved from:
+On Wed, Feb 19, 2025 at 12:52:56PM -0500, Rik van Riel wrote:
+> Should I modify get_cpu_cap() to store
+> c->x86_capabilities[CPUID_8000_0008_EDX] ?
+> 
+> Currently only the EBX data is stored there,
+> while invlpgb_count_max comes from EDX.
 
-    git fetch https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git crypto-scatterlist-v3
+No, you should simply assign invlpgb_count_max there.
 
-This series cleans up and optimizes the code that translates between
-scatterlists (the input to the API) and virtual addresses (what software
-implementations operate on) for skcipher and aead algorithms.
-
-This takes the form of cleanups and optimizations to the skcipher_walk
-functions and a rework of the underlying scatter_walk functions.
-
-The unnecessary use of scatterlists still remains a huge pain point of
-many of the crypto APIs, with the exception of lib/crypto/, shash, and
-scomp which do it properly.  But this series at least reduces (but not
-eliminates) the impact on performance that the scatterlists have.
-
-An an example, this patchset improves IPsec throughput by about 5%, as
-measured using iperf3 bidirectional TCP between two c3d-standard-4 (AMD
-Genoa) instances in Google Compute Engine using transport mode IPsec
-with AES-256-GCM.
-
-This series is organized as follows:
-
-- Patch 1-5 improve scatter_walk, introducing easier-to-use functions
-  and optimizing performance in some cases.
-- Patch 6-17 convert users to use the new functions.
-- Patch 18 removes functions that are no longer needed.
-- Patch 19 optimizes the walker on !HIGHMEM platforms to start returning
-  data segments that can cross a page boundary.  This can significantly
-  improve performance in cases where messages can cross pages, such as
-  IPsec.  Previously there was a large overhead caused by packets being
-  unnecessarily divided into multiple parts by the walker, including
-  hitting skcipher_next_slow() which uses a single-block bounce buffer.
-
-Changed in v3:
-- Dropped patches that were upstreamed.
-- Added a Reviewed-by and Tested-by.
-
-Changed in v2:
-- Added comment to scatterwalk_done_dst().
-- Added scatterwalk_get_sglist() and use it in net/tls/.
-- Dropped the keywrap patch, as keywrap is being removed by
-  https://lore.kernel.org/r/20241227220802.92550-1-ebiggers@kernel.org
-
-Eric Biggers (19):
-  crypto: scatterwalk - move to next sg entry just in time
-  crypto: scatterwalk - add new functions for skipping data
-  crypto: scatterwalk - add new functions for iterating through data
-  crypto: scatterwalk - add new functions for copying data
-  crypto: scatterwalk - add scatterwalk_get_sglist()
-  crypto: skcipher - use scatterwalk_start_at_pos()
-  crypto: aegis - use the new scatterwalk functions
-  crypto: arm/ghash - use the new scatterwalk functions
-  crypto: arm64 - use the new scatterwalk functions
-  crypto: nx - use the new scatterwalk functions
-  crypto: s390/aes-gcm - use the new scatterwalk functions
-  crypto: s5p-sss - use the new scatterwalk functions
-  crypto: stm32 - use the new scatterwalk functions
-  crypto: x86/aes-gcm - use the new scatterwalk functions
-  crypto: x86/aegis - use the new scatterwalk functions
-  net/tls: use the new scatterwalk functions
-  crypto: skcipher - use the new scatterwalk functions
-  crypto: scatterwalk - remove obsolete functions
-  crypto: scatterwalk - don't split at page boundaries when !HIGHMEM
-
- arch/arm/crypto/ghash-ce-glue.c       |  15 +-
- arch/arm64/crypto/aes-ce-ccm-glue.c   |  17 +--
- arch/arm64/crypto/ghash-ce-glue.c     |  16 +-
- arch/arm64/crypto/sm4-ce-ccm-glue.c   |  27 ++--
- arch/arm64/crypto/sm4-ce-gcm-glue.c   |  31 ++--
- arch/s390/crypto/aes_s390.c           |  33 ++---
- arch/x86/crypto/aegis128-aesni-glue.c |  10 +-
- arch/x86/crypto/aesni-intel_glue.c    |  28 ++--
- crypto/aegis128-core.c                |  10 +-
- crypto/scatterwalk.c                  |  91 +++++++-----
- crypto/skcipher.c                     |  65 +++------
- drivers/crypto/nx/nx-aes-ccm.c        |  16 +-
- drivers/crypto/nx/nx-aes-gcm.c        |  17 +--
- drivers/crypto/nx/nx.c                |  31 +---
- drivers/crypto/nx/nx.h                |   3 -
- drivers/crypto/s5p-sss.c              |  38 ++---
- drivers/crypto/stm32/stm32-cryp.c     |  34 ++---
- include/crypto/scatterwalk.h          | 203 +++++++++++++++++++++-----
- net/tls/tls_device_fallback.c         |  31 +---
- 19 files changed, 363 insertions(+), 353 deletions(-)
-
-
-base-commit: c346fef6fef53fa57ff323b701e7bad82290d0e7
 -- 
-2.48.1
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
