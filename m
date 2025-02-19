@@ -1,94 +1,135 @@
-Return-Path: <linux-kernel+bounces-522256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8CCEA3C7E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:48:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F1C1A3C7DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:47:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD9AE176C82
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:47:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFDA03B22EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:46:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB3221481A;
-	Wed, 19 Feb 2025 18:47:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC341215040;
+	Wed, 19 Feb 2025 18:46:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="UL0RVFUn"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jNe2cJC4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69A6B214A8C
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 18:47:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CC071E4AB;
+	Wed, 19 Feb 2025 18:46:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739990856; cv=none; b=kN6TwovN1Tm1f1headL8NS/h36f96T2ouXt4hzDL9XoqadJdV7Ca3V1Y66HhqoJqc9RqjcprbLuUSHrILMvTXWU0LWJGdqKlDq9hfS8Km6qYSIpcbWsKg9yBfjdzASbRGkfOLpiXzU9pBhZiG8xK396/d2BmtJHkBExAjB4bWIs=
+	t=1739990809; cv=none; b=icTnEk46DZCihD6sHyajfplPrbJMB7Nf+ZPMZ5w2h15o3DlH5KuG2us1yZZh6aqBrHyG3wah6uCSkZ1qjPqWMqiP4oIB+1hJTwcDShHxok4H0/O3TYJnYQEhTgWiX8SdU53I1elxQnB8Wel9lZ6lKIHFWRNs3JTWE1a5HMi0d3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739990856; c=relaxed/simple;
-	bh=XYhJ4WrFAoGFn3uC1pUi2Wtq7YiJ6MiWDQHpsJPopu8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=R54JYNHi5vjr3ib6fLxJFXSHwUG4ENbUcvoztb+XHz6ZPRY4+QHGRMbhcGMMo2uKgU2pAw6xC5sqmwu7tg2xANA3KwrIh8Ycy8mbev5/M3lx3n2os5zNh2NyJQLNqD4matNtQN3YOzsC0pxgPOn1MrcsH12ounvgBnfBxfCvGsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=UL0RVFUn; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=6r+svG78jzF9diT/8IAIF2P/yXmCgWfDm7zl/U5Du6M=; b=UL0RVFUnmLnPZOlRVdEqGxSfgu
-	neyCfCC5o83udL4W/hHni5zcy8Pxl4CqWlXw5u3kokWoWRjx5N7H5McL+hG4Crt5WPys448z+VJTl
-	44nryhDIcb3YrFVcJu6TioFoh0IqsXjjMpqBAtDOidpSzjI9lYT9dujME+G1lcmsDjRk2LdTkgZzX
-	fFKSN+yvyuaH4Mo9l3awCCLc1kRasqaLcHDLxHGPVz43ojbNIBDHwCGuiy6nCquK8yOW00XodVpOT
-	l7nEn9sp+5vwkPD2PGOrQv8TtV9omUZUHjONSg5eW919PVRy4Z5AG0tgTAB93oFNEQveNgO1nG93K
-	GllISfvA==;
-Received: from d162-157-58-14.abhsia.telus.net ([162.157.58.14] helo=maloca.localdomain)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1tkp6P-00EwF0-W5; Wed, 19 Feb 2025 19:47:28 +0100
-From: Rodrigo Siqueira <siqueira@igalia.com>
-To: Alex Deucher <alexander.deucher@amd.com>,
-	Harry Wentland <harry.wentland@amd.com>,
-	Leo Li <sunpeng.li@amd.com>
-Cc: amd-gfx@lists.freedesktop.org,
-	kernel-dev@igalia.com,
-	linux-kernel@vger.kernel.org,
-	Rodrigo Siqueira <siqueira@igalia.com>
-Subject: [PATCH 2/2] mailmap: Add entry for Rodrigo Siqueira
-Date: Wed, 19 Feb 2025 11:46:20 -0700
-Message-ID: <20250219184702.242924-3-siqueira@igalia.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250219184702.242924-1-siqueira@igalia.com>
-References: <20250219184702.242924-1-siqueira@igalia.com>
+	s=arc-20240116; t=1739990809; c=relaxed/simple;
+	bh=aWMFQ2zDDAVtHHfcPcX1+CRkmv36nV0yhax/HAyClbg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=jrakmitzmvKUa5QJvBOF9WDlH5SxbDFU2YL84KElIZ6a+AAakZcZY4NdjoojOKKr7UNhmleQ76XuJP3Ysqk8O+d9xONZ01ARGUPp2Y5bi/Y74pkNedUoU57219aXnP9IfJEzsk1wTebUWg3FLmjKtMqofowaS15tUF3NM36ZX1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jNe2cJC4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6961EC4CED1;
+	Wed, 19 Feb 2025 18:46:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739990808;
+	bh=aWMFQ2zDDAVtHHfcPcX1+CRkmv36nV0yhax/HAyClbg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=jNe2cJC4XJAIb4Qj59HQFTi4BzSldncwzHKet61psAIarl/gT3lsxzGlT5AZfhw1s
+	 wn3CuUMXIKwKoOhE2Tzwctu8rmbQWHsIoinIWmgXoOHJnjYbcRnna3Y/IObqPm4n1h
+	 Qu6nLLutEgGoJ6s/OrX5xAxGZWujPwSOp2UKRpNQGsNdbyPHAECggmxs7IE1wF/adc
+	 1Eon0TT6U18qR/3tMLzuzQM8t9drxCV9S5llRVapA8nuly2wKoCTxefXWeqym3m7pN
+	 ad1+TOnET1Uw1tWlMYcywYcF/E9UV1/blNKu/2wd/fk4825mw9Wv8JO5DrFqReZCMQ
+	 Q36G+bNd/64vQ==
+Date: Wed, 19 Feb 2025 12:46:46 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Kai-Heng Feng <kaihengf@nvidia.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: bhelgaas@google.com, mika.westerberg@linux.intel.com,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	AceLan Kao <acelan.kao@canonical.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH v2] PCI/PM: Put devices to low power state on shutdown'
+Message-ID: <20250219184646.GA226882@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241208074147.22945-1-kaihengf@nvidia.com>
 
-Map all of my previously used email addresses to my @igalia.com address.
+[+to Rafael, +cc linux-pm]
 
-Signed-off-by: Rodrigo Siqueira <siqueira@igalia.com>
----
- .mailmap | 2 ++
- 1 file changed, 2 insertions(+)
+On Sun, Dec 08, 2024 at 03:41:47PM +0800, Kai-Heng Feng wrote:
+> Some laptops wake up after poweroff when HP Thunderbolt Dock G4 is
+> connected.
+> 
+> The following error message can be found during shutdown:
+> pcieport 0000:00:1d.0: AER: Correctable error message received from 0000:09:04.0
+> pcieport 0000:09:04.0: PCIe Bus Error: severity=Correctable, type=Data Link Layer, (Receiver ID)
+> pcieport 0000:09:04.0:   device [8086:0b26] error status/mask=00000080/00002000
+> pcieport 0000:09:04.0:    [ 7] BadDLLP
+> 
+> Calling aer_remove() during shutdown can quiesce the error message,
+> however the spurious wakeup still happens.
 
-diff --git a/.mailmap b/.mailmap
-index 5e829da09e7f..64413bbc286c 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -583,6 +583,8 @@ Richard Leitner <richard.leitner@linux.dev> <me@g0hl1n.net>
- Richard Leitner <richard.leitner@linux.dev> <richard.leitner@skidata.com>
- Robert Foss <rfoss@kernel.org> <robert.foss@linaro.org>
- Rocky Liao <quic_rjliao@quicinc.com> <rjliao@codeaurora.org>
-+Rodrigo Siqueira <siqueira@igalia.com> <rodrigosiqueiramelo@gmail.com>
-+Rodrigo Siqueira <siqueira@igalia.com> <Rodrigo.Siqueira@amd.com>
- Roman Gushchin <roman.gushchin@linux.dev> <guro@fb.com>
- Roman Gushchin <roman.gushchin@linux.dev> <guroan@gmail.com>
- Roman Gushchin <roman.gushchin@linux.dev> <klamm@yandex-team.ru>
--- 
-2.48.1
+aer_remove() disables AER interrupts, so I guess there must be a
+non-AER interrupt being generated during shutdown?
 
+If so, AER is a red herring and including the AER details above is a
+distraction from whatever the real interrupt cause is.
+
+> The issue won't happen if the device is in D3 before system shutdown, so
+> putting device to low power state before shutdown to solve the issue.
+> 
+> ACPI Spec 6.5, "7.4.2.5 System \_S4 State" says "Devices states are
+> compatible with the current Power Resource states. In other words, all
+> devices are in the D3 state when the system state is S4."
+> 
+> The following "7.4.2.6 System \_S5 State (Soft Off)" states "The S5
+> state is similar to the S4 state except that OSPM does not save any
+> context." so it's safe to assume devices should be at D3 for S5.
+> 
+> Link: https://bugzilla.kernel.org/show_bug.cgi?id=219036
+> Cc: AceLan Kao <acelan.kao@canonical.com>
+> Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
+> Tested-by: Mario Limonciello <mario.limonciello@amd.com>
+> Signed-off-by: Kai-Heng Feng <kaihengf@nvidia.com>
+> ---
+>  drivers/pci/pci-driver.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
+> index 35270172c833..248e0c9fd161 100644
+> --- a/drivers/pci/pci-driver.c
+> +++ b/drivers/pci/pci-driver.c
+> @@ -510,6 +510,14 @@ static void pci_device_shutdown(struct device *dev)
+>  	if (drv && drv->shutdown)
+>  		drv->shutdown(pci_dev);
+>  
+> +	/*
+> +	 * If driver already changed device's power state, it can mean the
+> +	 * wakeup setting is in place, or a workaround is used. Hence keep it
+> +	 * as is.
+> +	 */
+> +	if (!kexec_in_progress && pci_dev->current_state == PCI_D0)
+> +		pci_prepare_to_sleep(pci_dev);
+
+
+I don't know enough to draw inferences about PCI_D0 meaning a wakeup
+setting is in place or a workaround being used.  That doesn't seem
+like enough to be useful for me to maintain this in the future.  But
+my power management understanding is pretty meager.
+
+Would like an ack from Rafael for this.
+
+>  	/*
+>  	 * If this is a kexec reboot, turn off Bus Master bit on the
+>  	 * device to tell it to not continue to do DMA. Don't touch
+> -- 
+> 2.47.0
+> 
 
