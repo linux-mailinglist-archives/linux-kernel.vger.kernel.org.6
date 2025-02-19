@@ -1,82 +1,140 @@
-Return-Path: <linux-kernel+bounces-522086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28833A3C5AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:09:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F171A3C5B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:10:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9D1B3A6495
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:08:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2F60179FB9
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:09:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10972214225;
-	Wed, 19 Feb 2025 17:08:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B25B42144C2;
+	Wed, 19 Feb 2025 17:09:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="F6AlDrlU"
-Received: from YQZPR01CU011.outbound.protection.outlook.com (mail-canadaeastazon11020119.outbound.protection.outlook.com [52.101.191.119])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="PcIAafat"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2068.outbound.protection.outlook.com [40.107.223.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7F452862B2
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 17:08:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.191.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBDA22862B2;
+	Wed, 19 Feb 2025 17:09:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.68
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739984924; cv=fail; b=EEj+6GWMxmUqXSIv22TLW2enkmwYOGvuDfIL9L54Z094k4TuXtj07sOfT0uj0+qIqWNrsNt3q88U+Isotkegqe+I6n9OAfx+D18mjrDFGhmkkLHs6tGculMLflS5KdZ6zstaorE+X4tS4DYZne2pDC9z8zsenzbwd9/jOhxconY=
+	t=1739984944; cv=fail; b=t16b+Ph+UjlCsfe6ROiGWZ6M2Yn0uNFdhKN3LpDP5PuOTUbWffXsKzov49gPPtiNihcp7DXLq1DQ/waWTlrQKFhDU3aaWt/nm5txsTv/oJgOcQkP9hY/UjsxikhW9TMLFg1fhxK+nhpnmMpHcG8jyXt+a1FL2/9KPT4aClJfJ2I=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739984924; c=relaxed/simple;
-	bh=FqGcLkvnvbWNspz2cxuPRMbWOiDvMLhfPfGPpKO/3MY=;
+	s=arc-20240116; t=1739984944; c=relaxed/simple;
+	bh=+g2iqS7gxNKDGKjCrOh+NNsr62KDCK8zIhbL9qRQS/Q=;
 	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ojiwZkKm1/lxaHF2IavMLPKz0JDNFjIZxIAcqHCryCRB3BlOljmAv/h0clDTYF349tfiZrTfAH1GsUdsbSvBCcJrxKhmeHbuEmwPFEPSYp/1wMh/DCwX6H3ZkU8z5UufwhGTeJqYxPahEH5QnEIEptrzLmowfnT603+ztpoT8Oo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=F6AlDrlU; arc=fail smtp.client-ip=52.101.191.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+	 Content-Type:MIME-Version; b=p/f3DfQaQgH/1pRtmiDfwVZyBkMU9CrWrAkuBf9XP4Y0HsUsd4ZczHrnq7l2rwy3oJnXuOQ9U2UCnqVGm16+RtYFBbqE+O6T8u+CNrkSSX42xTrqqf56hLUqYcu2DGjYzdWUKTmMbqLsioNRMg7X6zt1BGadEWPNg6hMMJ5Ag54=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=PcIAafat; arc=fail smtp.client-ip=40.107.223.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lzg//5S0sSIY+ql6204BWGibsTyBnV/UY6CGoi5Nusskjhrl+TPGZHuhVGZWuRfd+FGUM830dbO6migLLdEFfvUchKZiBhwQNLQDlhT9hk7OFWbWa2ZSvSY/QJpjzAwnI64zBl/3Hb6qb6nmY8sXwfMLmWZm8q8fgLHobtT+D/X8DeBMT4eUckSf5EGpSJBc6uDR0HEZs57rA5a5eU4fD8Pt9MoLf8PNyGV3yHfYN7cjcPuodF/78yyaUC3fjw1mfnWr0vUEXxt2DDHh+Dm8Nf3kF6JecLwdT03PtCqNpWGwpAcUAcu184Ql1GU/7UE5mSwhb7XSzOtC11aVYDE36w==
+ b=VhEdIPwfVVwAv8rljE8SxK8GW9KWf0SLx+k1Yn8U8cDXV8zeGOUUU5tiNKVjgg1im51ajVrsgK1lw5HDQ7ApHqBRc2gSG8qUMLqoQlqyRffnEoj8mXBqmoGzJLMDQQCa6zaSekZvP3CqkGX2gPWdtVB1hT+bAAwHeDDONArQwRjyPcFlweGRVtPi/+Qqx3IogTAMBg8jwqvJnwyKWF1h8vEKv+txXbtm7R7sNSpHxRM41zO22FUXtvJgBD23CQuImxa2KUG2xq13ddf/IXJg/okpgJQR+ijxU+ReYVS1DQr8XrcuXPwZoCapH8VGBrgafh8ZDp/kcWwHuDoraIGd2g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Ufg8erVuoILmsE+vKWt1EuxSvhMwPapDWNygyoUY4ys=;
- b=sorMjtLorrUi+ZWD8P+nrMvMyI+PCHOnk8u9T3oyLswD75UYDT1lZTmDPOXX4iDfkW8Zb1YE0koKWhwqo8kJPLijL3tX3obdP6FZ+EylPfSnReCGMzaBgDkavgdSyuuGvZz0C3DKOI2p0Iny5MqW7xUqecvnp6Eo8sGOLOhHwTj4b7gHxOQ5D1Xl8OviUki6iJOqUHh7nuvCa1ulbMKPD0i9gixyANRn42fVeVa5c7r0eMWGo7jKmy6WeDm2i2eq7QnCGjUMcRl9O56k+ZSUwdyBjQSRnwqNBaUYYMLKpcjOb9IituXuHPHUzWd+xO1674hv8XZiEJ4QsuqXejefcw==
+ bh=a71Dy6govVGCK2C4BT/D2qhMEQcwf3/MOIxsWp/NsjE=;
+ b=ZyNNOM9ElvZfPFNfglEQUOLEegGiaH0XlWpv0OZPZQ1Sc6pvMYswZhpVwv80xJ8mjSIBNb/k45oJK8AOjVtPrah5tH4PF6LHFREP2MgdmYv8sEXM5KGmLK8jsuMq7algEPRCagJ9wMMIoQazxHPd8Jvrpp+8B1rqa1pdBgAGLGG8l8BJ9v7crWkZafi84w6x/B9445QOc9X0raz37WXC+hS5moRF9OFAfZH1aSIoLrZ7TSOsCwXrF4ulnOu8FKeecs2oJ3CLITctkeu20TqnlL68CzS00uQxbT4644000YHBS6NanS15d/lC4xS5N3KkVyfirIXXyd2RG4JIatEOrA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
- dkim=pass header.d=efficios.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
- s=selector1;
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ufg8erVuoILmsE+vKWt1EuxSvhMwPapDWNygyoUY4ys=;
- b=F6AlDrlUyM4B4eJ/iW5LHUFJv3BZ7mA4zgU07uxRrUh3c+3a6MJwsyuY+YyWyDEs2NY9p5TjNi9p93tcMYLpIqvL5YdISEvB7PxcnGerlrb3/RQVAilg6wqQye//c8zrSlSGhuE1mM3a2D5e6wN8fYuHq/+qlZgGgNUJfLvykOt7NsbfrImyVO8Pc/euJCs6JmoR2M3G0YUOVXixrvmZEmByWbZJQo/C5UI1eGr7Q5MOy7OqNP1tBqA6ttjp442c5fUcHGgk9iv55Iw2ieo/Dj2Ril7F4k78APy2eSBSS3lwRM30XxX445bZxE8US9YYroA1O56lyEV/iuYFfPOB0g==
+ bh=a71Dy6govVGCK2C4BT/D2qhMEQcwf3/MOIxsWp/NsjE=;
+ b=PcIAafatks0d49krke/tF/+jeCas3jCRsBx7ZdOOv99wpQS3m7JPCMdX6AeZcmSmd6M5OqFtJycPBC3rAKhQ/pBItJ3vIiGxMy8IjORfam7Lr0RvGAWJExJ+b8utfvQ3HW5pJRBSD6KSTBsCqme/JQ3FyiHLru7hOL4w48kttrDYwYbvZNB4qzpxVsuKsLkEwBU1P9Hmkzgi6DlW395Es/7/MJKBGP7zpBBHcFhp7kk1Uf59UkIMbgKJ7z63TRAFu+XTHgJ76TGBE93owMAb7QCq3cvg1MvXH7+to3aOWvZK+cDWnvohzJmegzgq9DAaDxBwAQuhpCn2aQ4SkrbD7g==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=efficios.com;
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
- by YT1PR01MB9116.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:cf::8) with
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by SN7PR12MB8791.namprd12.prod.outlook.com (2603:10b6:806:32a::12) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Wed, 19 Feb
- 2025 17:08:36 +0000
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4%4]) with mapi id 15.20.8466.015; Wed, 19 Feb 2025
- 17:08:36 +0000
-Message-ID: <0493b3c4-c37f-4ddd-93ee-6d7946e42846@efficios.com>
-Date: Wed, 19 Feb 2025 12:08:35 -0500
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.14; Wed, 19 Feb
+ 2025 17:08:58 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%5]) with mapi id 15.20.8445.017; Wed, 19 Feb 2025
+ 17:08:58 +0000
+Message-ID: <adcf012e-57ef-4b54-8b19-2273aca41ec6@nvidia.com>
+Date: Wed, 19 Feb 2025 12:08:50 -0500
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 1/2] sched: Move task_mm_cid_work to mm work_struct
-To: Gabriele Monaco <gmonaco@redhat.com>, linux-kernel@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, "Paul E. McKenney"
- <paulmck@kernel.org>, linux-mm@kvack.org
-Cc: Ingo Molnar <mingo@kernel.org>, Shuah Khan <shuah@kernel.org>
-References: <20250219113108.325545-1-gmonaco@redhat.com>
- <20250219113108.325545-2-gmonaco@redhat.com>
- <8fc793e3-cdfc-4603-afe6-d2ed6785ffbb@efficios.com>
- <86fad2bd-643d-4d3a-bd41-8ffd9389428b@redhat.com>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH v4 29/30] x86/mm, mm/vmalloc: Defer
+ flush_tlb_kernel_range() targeting NOHZ_FULL CPUs
+To: Valentin Schneider <vschneid@redhat.com>
+Cc: Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org,
+ x86@kernel.org, virtualization@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev,
+ linux-riscv@lists.infradead.org, linux-perf-users@vger.kernel.org,
+ xen-devel@lists.xenproject.org, kvm@vger.kernel.org,
+ linux-arch@vger.kernel.org, rcu@vger.kernel.org,
+ linux-hardening@vger.kernel.org, linux-mm@kvack.org,
+ linux-kselftest@vger.kernel.org, bpf@vger.kernel.org,
+ bcm-kernel-feedback-list@broadcom.com, Juergen Gross <jgross@suse.com>,
+ Ajay Kaher <ajay.kaher@broadcom.com>,
+ Alexey Makhalov <alexey.amakhalov@broadcom.com>,
+ Russell King <linux@armlinux.org.uk>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+ Josh Poimboeuf <jpoimboe@kernel.org>,
+ Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+ Sean Christopherson <seanjc@google.com>, Paolo Bonzini
+ <pbonzini@redhat.com>, Andy Lutomirski <luto@kernel.org>,
+ Arnd Bergmann <arnd@arndb.de>, Frederic Weisbecker <frederic@kernel.org>,
+ "Paul E. McKenney" <paulmck@kernel.org>, Jason Baron <jbaron@akamai.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ard Biesheuvel <ardb@kernel.org>,
+ Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Josh Triplett <josh@joshtriplett.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Uladzislau Rezki <urezki@gmail.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
+ Juri Lelli <juri.lelli@redhat.com>, Clark Williams <williams@redhat.com>,
+ Yair Podemsky <ypodemsk@redhat.com>, Tomas Glozar <tglozar@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall
+ <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+ Kees Cook <kees@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
+ Christoph Hellwig <hch@infradead.org>, Shuah Khan <shuah@kernel.org>,
+ Sami Tolvanen <samitolvanen@google.com>, Miguel Ojeda <ojeda@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ "Mike Rapoport (Microsoft)" <rppt@kernel.org>,
+ Samuel Holland <samuel.holland@sifive.com>, Rong Xu <xur@google.com>,
+ Nicolas Saenz Julienne <nsaenzju@redhat.com>,
+ Geert Uytterhoeven <geert@linux-m68k.org>,
+ Yosry Ahmed <yosryahmed@google.com>,
+ "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+ Jinghao Jia <jinghao7@illinois.edu>, Luis Chamberlain <mcgrof@kernel.org>,
+ Randy Dunlap <rdunlap@infradead.org>, Tiezhu Yang <yangtiezhu@loongson.cn>
+References: <20250114175143.81438-1-vschneid@redhat.com>
+ <20250114175143.81438-30-vschneid@redhat.com>
+ <CAG48ez1Mh+DOy0ysOo7Qioxh1W7xWQyK9CLGNU9TGOsLXbg=gQ@mail.gmail.com>
+ <xhsmh34hhh37q.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <CAG48ez3H8OVP1GxBLdmFgusvT1gQhwu2SiXbgi8T9uuCYVK52w@mail.gmail.com>
+ <xhsmhzfjpfkky.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <20250219145302.GA480110@joelnvbox>
+ <xhsmhecztj4c9.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Content-Language: en-US
-In-Reply-To: <86fad2bd-643d-4d3a-bd41-8ffd9389428b@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Joel Fernandes <joelagnelf@nvidia.com>
+In-Reply-To: <xhsmhecztj4c9.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: YQBPR0101CA0293.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:c01:6d::27) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:be::5)
+X-ClientProxiedBy: BN9PR03CA0508.namprd03.prod.outlook.com
+ (2603:10b6:408:130::33) To SN7PR12MB8059.namprd12.prod.outlook.com
+ (2603:10b6:806:32b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,270 +142,191 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YT1PR01MB9116:EE_
-X-MS-Office365-Filtering-Correlation-Id: d72f6565-a390-4cfa-7c8a-08dd51080c58
+X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|SN7PR12MB8791:EE_
+X-MS-Office365-Filtering-Correlation-Id: 36a04553-16df-484a-fc0e-08dd51081954
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bUtaa3FCMjdhbG9JQUphZXNWRitTRkRnTlBickdrQ0tJdDJ5Z3BINDFtT29q?=
- =?utf-8?B?cC9tbkh2RVViSkluQklrV3l1bVhhVW5hZWVrTzZ3SlUwMVJxbkhBdHpKS2hF?=
- =?utf-8?B?QkNxZXMrMG5HRGpZTEJ5ZnVBakZqaUs0Q1VwcWU5cTVwUG15dzRUbDNTczNM?=
- =?utf-8?B?K0pHNmRCbTBLd3RWaTFXOU9hZVV2Q1cydEs0bDlIVmMwb2J6ZEtJMHloRFN2?=
- =?utf-8?B?TWEveDlWano3akVBQThwL3FoMWdTT054aUN6ZytvWmY5REt2VFBORzJCaHl3?=
- =?utf-8?B?dEVXb05pZWliSGhaeFp6WDZIQWlCR3lrVlpORnRIeUFwZVV5bVJMdXI3eFVt?=
- =?utf-8?B?UkNKYTVXR3RWb00zU09DZzFWZXNadEJHN29tQTZhMmVDUnliYVYrblhEdCtV?=
- =?utf-8?B?aDRkTFQ5N3BLc0tGYVpFK2c5bytjM3N2d2RUL05NQUNtZGJoSHRXbmdydWts?=
- =?utf-8?B?aEpmeU5CdzRSdG55bytaTzBrRHBNckJqY0ZUQ0p3OFMrdzNaS1hoS0tRWG1W?=
- =?utf-8?B?N29YeHhHd2NmWEVtaGo3cFJ4ZWw2T3FhdDVuSHJzSk9XUUJtRTk4bkdpK05i?=
- =?utf-8?B?cGppV0JQa3puT3dkVnpTcVJKcTYvSElYRDZBNVR6OXN3QlNiN1RxM0gwaEph?=
- =?utf-8?B?clhJWnlVd08yRTdQS051YXJzdEtTMHRaU2NBRXFncmJ6UTBlWVYxTjRLcndq?=
- =?utf-8?B?UktZQWFQNTdDZUQrNENVMWd3ZytZZ1hyWk1lbis0Nk9WRzd4dG9wN0J2ejZm?=
- =?utf-8?B?a3pDOER1SC9sWUZhQkRuK1VVOHNKcEl0VFRPTXVDWFBPOHl2cEg4dVJJVVRt?=
- =?utf-8?B?d21BaENXYUgwNjVlbWlROG5oN2hxU05iL3JhUGFlQjJWYndyaUhiK3lCdDZk?=
- =?utf-8?B?TmRvQVRTeHgwdFVSN1hkYWZraHZ3MzlMVUZBZ2FmYUlDMGFLVkZqNW5rYTJL?=
- =?utf-8?B?MWRjN3I4eitFSFh0czhRZ21rcGRER01hUGZGTHk5YUdEd2wzUEY1Wk1vblRW?=
- =?utf-8?B?bFFETm9nUzZKeGZXdVdEczhWL0t4MUpHd2RaMjZkKzdNcGxXRFZURzlNdkpR?=
- =?utf-8?B?NmRaZzQ5WWd3L3Z0Yk9UTUI4VCtNbnNLUEMyNFoxZnF4VlZ6Y3I2WmNpaW1R?=
- =?utf-8?B?bUlFUlpXMmxCZmUxcEdDdTRXTFRmRFZVZWRpd0gxRjV0dDZUNlNRVHk5MVV3?=
- =?utf-8?B?SDVzRXhUNDREOG5aTElHOGkvYU9ab0NLRnhISElSL1l3QU5BRng2ZXJyYklN?=
- =?utf-8?B?N2NJdUpzKzV2Y201OER0U1pnMnBYb2c3SE9xSFNpMSswWXFNa3FJU2VoOUtB?=
- =?utf-8?B?RGFRSFg3SHNoUE9jWWtoT1FpeGhsMEZHSGt2OG9RT1JuOHFDdnZBZWl1RWYx?=
- =?utf-8?B?NVloLy8rU2p2SFBxVS9tTGpsRFJaOXM3dHBHM3FJNmlZUXR2b2k2WUJJRzdH?=
- =?utf-8?B?dTdjOTF5TGpiTVdJYXdYUE9zdWxzMXZteGRXVkNhQjN2RndHODdEbHo5ZWc2?=
- =?utf-8?B?U1BPdnJUdDg0VkZnRU0vajhTSTEvSW5RbkV0WVp5NkF1NlRCN2wvVXpoN3B1?=
- =?utf-8?B?OVQyV1ovZVpsVVNkODhqMzZhNHdEZllXWnVUOEhIQlF4OUlQd0xIdWpiSGJs?=
- =?utf-8?B?NXFvOVJzMmpjMURnMXhPeDhWQStoMkxjcGw0NFM2OFhVN2h1QXdNbFc3aUVM?=
- =?utf-8?B?N1JPQStNMThvem1KcnN5QTFYWjExc2FsS1UyS2dYUGdwNGYwb2FCQ0dVbXRH?=
- =?utf-8?Q?g+V11dWxF9kNzs7vmALEyx4bQXcv6P2SuHstitg?=
+	=?utf-8?B?eTNROEVvZVFZU21NZ3RVS2lMaFNFN09ZUjVnZlZkWG1WL2QybGxkNzNqNzRC?=
+ =?utf-8?B?UjlwVkFYS29uQU9sM1BzSlVaWk5kdWJZYWNKK2xwL1BhYUV0RThGVVBvOWly?=
+ =?utf-8?B?WjgxbEEreit4aDJQSEx5VG5YMEh2aHpVU3FTK3JKZGZ1a1RDWFA5QTIwTzdy?=
+ =?utf-8?B?d2w0eklQTnBUQkhwRHN0QWxCZTd1TFRTWlJCbUVKdDJnN1dwbzRyanFaSW9X?=
+ =?utf-8?B?cUlxWlIzdUZUdHU1dlQ4MU5YQStLRE9CK3BtdGZzZG9TTXhxVFJLUzg5TGRm?=
+ =?utf-8?B?cWFBeGJrLzEyL2FlSDU0TVZGdlpIYitCS2RlWCt5L0I4VXQ2VW5TY243UVZh?=
+ =?utf-8?B?dFF5VlpWdTkwN0U4Qzc1MStEMkV2cnUvM29MNldnK25DazNkZ3RXYm5nOVAv?=
+ =?utf-8?B?TjBhbHphUWhlR0YxRm5kV0VIMXRaMUNoUHJjWENpMjUvQmo4S2xOelRqaFkv?=
+ =?utf-8?B?dnhqWlZ2QW9CYXZtTHVyWmR5a0hkeVAyVE1Bdm4rZlRYSGUyZndndTJheEQ0?=
+ =?utf-8?B?MFRGamNjU0hISDcxSW5YZllsdEM1NktUdG9SZnFxT2t2ZG9MUzVyL1J2WlU3?=
+ =?utf-8?B?WkZFYkxzY3lSNEdqLzFjaXZZWlk2OHlVZ1dkTm5nZzluSHZHZWc2Mkk2NXpH?=
+ =?utf-8?B?TkFCcEZ1TldVaWtrNnZ3TlJrWDhkTkpLeG9tYTBSaVpydSt5c2lTVHAxeUg1?=
+ =?utf-8?B?N2hUc2JWZ24rakw1L1RsZlZDVHVzeEs4c1c1MDk2Z0lTSEQybjh4OE1CRytp?=
+ =?utf-8?B?S0NPSXJIQjJiaTFrSUJmQ29NaC84WXlwQ1ZTbTVXYXdhRmVTVGpVR0NnRk1q?=
+ =?utf-8?B?WFBPb2RWMlZUWDlWTWwydUZkaTZuc2JhZjRuWkpOM0J4RzhyckdUUWNGYm5B?=
+ =?utf-8?B?VXZFWkUxK3Z4WDQzNkJidWlDTHdHSWRscHBsR0NsZ25MWi9IZmY5bkxkQzhF?=
+ =?utf-8?B?QW9hcGd2SDNxTVFSWlBRZnJZekNwZVVZd3cvdzg1aTlTVHViM0U3RkJiR0xy?=
+ =?utf-8?B?SEcyY1VYaW9YN0R1R0VNaHlZb01WTjhxcitQUkFLbk9wL1VhUkF4MUVCc2N3?=
+ =?utf-8?B?UjdSdFR4RHMwbjk3RlZveG5HcVMwZGxuMUYybVc0ZTBYU0Z4OVRGN255T0dK?=
+ =?utf-8?B?OTB6Mjd5T1pnRk9mWFlHN0lsR0swc3FsL1BsZTZmUkg2MHU0cjZJMVZnTVl0?=
+ =?utf-8?B?QXBwSDhkWFNSVklhUzlYZEVtMEN3ZWF0ZHFSNVhUZmY0bVpXV3M2RXVJR2ds?=
+ =?utf-8?B?aG15Qk5yK2FCZlFhWUxnaUNuYmVYKzY4R3UyVmMzT1lRL3dSeXJMWU12SmlX?=
+ =?utf-8?B?M3ZGSGZLMTdnZTJ0eVNrWUpqa3ppY21WK0Z5UXdsTkFQSk8vVGxVZFNXN0Yy?=
+ =?utf-8?B?TW15ZSsraHlFZ2lWSmVFT0JHbVR0Y3lVVmpNMmRFVmFDN2R0emRHYWdNUDJl?=
+ =?utf-8?B?NElwcXZWRjJjREQxL05sWFVZejA3cWN0WVhka2Y3bkd0c2lUZkpmZ0JuYnJt?=
+ =?utf-8?B?RFYya21sL1hVOHAySFFxWWxDdTJXWllJblRXb3N1SU14MTZNcndXYmgwMFRy?=
+ =?utf-8?B?aUNIQ1R6MktvMG9XOUdGTnBGOForSXlrSWRSTmNyaDJUMm9mU3JzelVhYi9u?=
+ =?utf-8?B?d3hPaS93Ym1CZXluQ0NRNUkyOURPbDBHTjhKcnNDRjlGOHBqajdtNk5FRGVU?=
+ =?utf-8?B?WW5qSkNZVG5md1hGNGEwVHhIKzREUnVWOHh2RXZEQjN0bEpiZVhOV0NPeVV0?=
+ =?utf-8?B?NDk0OHJLS3ZHYVZwb1FxUzFtVjJMMGlpbnNhVnRDVmk4YUowMGFIQVk4ODRu?=
+ =?utf-8?B?cjliVzlud3JvWVhrZUUwTm01bXh1cFJwR2FKTDJYWk9zb3dxVkFKQmRObDdk?=
+ =?utf-8?Q?QK2simDBBEOC0?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1102;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?c2c3ODBNbSs1U0N4Ump3d21KQ2tqbVJsSEYzRDlrTDl1aEFpRUxveU5NYWVu?=
- =?utf-8?B?aUl6b3MxcllFNEpNZEpmTlNyb1IzQ3JuSnFiOE9USDdnbzh1bktrcUllby9C?=
- =?utf-8?B?VnVIam5SVDk1c0puWVREUTc3YXJxV0U2bXhvRWdvWnFhc0pyMVVXeGo2bjF3?=
- =?utf-8?B?cTFad3FWc2ZQRG5GWDZPRDJhUm1zUDRJbWhMRXlYQUVJMHFrUTArZzhUblBH?=
- =?utf-8?B?cWR1ZW0rSCt4c1AreHA5eWhNN244enRVUUVRZ2FwMmh3QXZTU2JCQUJlRTA4?=
- =?utf-8?B?SlZuSERPMnllM1ltbWF6RXdCdW9BWW1TeWt5T0c5TUhRT1dBSmZRcHBLWUNu?=
- =?utf-8?B?UGZQODFYNElwMXl4NVVKcE42c2dlaS9pMUpmR0Mva1hIM2N5NG90SEZxd1E2?=
- =?utf-8?B?eGhJTDBFa1pwaUEybUNtVFhQYmpYRzFucCtJeFRYNTliMnF5c0N6clh1UmJ0?=
- =?utf-8?B?L0p4azV0L0s2eEY5bnRmNUNuZFFuTGZNRXZRRUxDNnU1RXRvTEVaeGtIcExR?=
- =?utf-8?B?UTlFNVJqdThldTNZejFJbkJqcEpiRUN1bjQwWU92L09ZOFo1ZHVlcGdEYVNU?=
- =?utf-8?B?RXQ4N0VlZXRjRTVXQTdvRVhQVGpVbUs2VVRoWklHVlErSGp1cElhSE1IZ21E?=
- =?utf-8?B?a0J6bTYzRHVaNFF3RExqUE9wMkYwY2Q1b2huTlg5WW5JUEpMcnlIS2F2ZXor?=
- =?utf-8?B?TDZjRnpQVTI2UEpFb1JaNExNUCtHRXRxOGpnUmlmTno4V0tlZDQyOEhnczRn?=
- =?utf-8?B?VmxOb0RBY243N3FoNjkvaU5LWUpuaTVYR1dFd2FOQlFZREFHUEdOSjBEZ0Vy?=
- =?utf-8?B?MGZtOHJnYWwxdHJKK0l6bCt1NTJSSk9RREtvczRKb25Oclo3cUVpVVpGQmlN?=
- =?utf-8?B?NzdYbTdkRVp2UFh4d0JTUFB0NTdaVmFOMEVmckk5aGZHbjcwZ2h4L0ptWStK?=
- =?utf-8?B?enJYQzEwY3JFOFdMaHArSFpXaHlsM0twUHFYTUh6M000SlJkTExtUUZ4UllM?=
- =?utf-8?B?SWZrSlIxUnZCd1Zvem13TU8yV2NOTXh1eUMrUG9zK1gxMzVFakJoeXJQTHF2?=
- =?utf-8?B?VVp4MWpvcHhCRnpySVJlUVlldXh3WFI5SmJIcUdhRmJrOUtVbzVTQ1ZWWUxT?=
- =?utf-8?B?K2tDSzNqK0VNWFplampPRTMvN2pVdGpCQnE1QXhka0QvTWZBeUpmd05oY0Nz?=
- =?utf-8?B?WFpmd2JxWmFZU0NRL3ZLT09aL2pXQ1BOY3h1MHhYamZTN3ZRR3lvTkpVSlJM?=
- =?utf-8?B?cFhTNnpvbmY4YWZGT0dyMk1OSnBiVWRjYVQ5UldzU2x0MVcxL0krUWdjY2RI?=
- =?utf-8?B?U0VibDBRMm9wZ3NBVDhwdlVJL1F3blg3cERRaXZBd3BoR3RWaGdOOGROM3lZ?=
- =?utf-8?B?ZDhoRVJ0Q1VLZldzUEtxaUtoQU80OUVPQmRpWkdrU3lONS8xdDNxUEgvM1Bn?=
- =?utf-8?B?MUQ1WTMrTnFJdTVoQlVubXQ0dlVPdXlRbUZyYUc4dDcxSGgwRGpIOTlFQUpV?=
- =?utf-8?B?eElaTmhrVmRiUG9hTHlnbHQ5czVmVWtwY3dmUU43MnlPOFhHOGQrV2Y2SGZ1?=
- =?utf-8?B?S3o4dThkVE5Dd3pzeG9qd05mNWNoY3FSUGw0emUwQ1ZLVStCYnVqSjZ3Z0JN?=
- =?utf-8?B?eDFKVk1TTE5LN0hjWEVUdlZwT2VuSFFBZUhBalIvdGM1c2hHMVJTeDJ1UnJZ?=
- =?utf-8?B?bm1RNUVXS05KVFo5S2NXS1FlUEt3U0V6R0w3eGV2ZCtveXMvUVVmaFMreC85?=
- =?utf-8?B?QmtlQUJpUHdmWVVMdndVdGJxTk0rVEMvUnBkQUdEazA1L29NMFI5VmFGQUpo?=
- =?utf-8?B?dGlnUmw4MWtyMVcrZk9URVJSMDZES3M2dDNyRXhtcHdXd1NTQ2tBekZJNVdy?=
- =?utf-8?B?WjJBbmNvQmVsZTdnUFZzWmRZV05iNXdhLzV1amVId0w3b1lMYkI5T2RuS0N4?=
- =?utf-8?B?N09jc0t2cEVvVkc2cWJvMG5IZjdLcUx3ei9mM3BvWXJRUXU3K3loNW42dlEr?=
- =?utf-8?B?cG1lVWtEekJLZWp3cnlURTV1YWpHVHFnNmNjektHY3JJTlBkQWlBUTJ2NUN5?=
- =?utf-8?B?cDVQM1dLc05Tckk2eURLSlYzZTRhSnMyODlwVnpwQTNzTFFCU25WV01OOWw4?=
- =?utf-8?B?eHJNbnNnN1ZnWmNWcDBCSGRuWEVEVzdKeStpTHR6VU4zZ2dabit2TUFqVUMv?=
- =?utf-8?Q?gj9hKFv9AdAqHoTuTH7gBkI=3D?=
-X-OriginatorOrg: efficios.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d72f6565-a390-4cfa-7c8a-08dd51080c58
-X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+	=?utf-8?B?S09NWnJEbEZxTVZYemVXN1lxNGFGbjMreUhlWW5sdSs4VmQzR25ZemM5MGpk?=
+ =?utf-8?B?dnljRjg1azhEKytSZkg4eFRLYVJsbXNxcjRPZXdRRnhEczVyYTNJay8wSFZa?=
+ =?utf-8?B?cXV5Q2EyeFVQc0VLMXJkOVlOV3BiWFFYUkgrdHdxbTRZc2V3aDdZbER5a3Jo?=
+ =?utf-8?B?RSt3ZVcyM0x5aWNMZm1HaHNNcGU3ZFNEM0xBSzFmUEtQS1hEU0dOYk5GNUto?=
+ =?utf-8?B?ZzIwaS9xajBVK0dKQTU5aERiamVGTVFWdUpKWWZEMVJ0VWZJemVzcmZHN25k?=
+ =?utf-8?B?TlNNZnAxYUNmcDlFblhjMUpSUnRITHBWZ1cwSXlsTXYwZnViUWhQcjQ1N3pT?=
+ =?utf-8?B?S2tkZjl2aGIxMk1PZlFQZngwa2FxWkl5L1kzNjh5Nm42UU5wU2wxQnhYLy9v?=
+ =?utf-8?B?ZTdUT2pxWkQwTDg2S3M3WWRFaGUyRlF4aE82d0ZqTWY5Rmhkc1hHZnhHVEJE?=
+ =?utf-8?B?WmNJSGRpOXduNnRBeVI2RTYyb2ZPUDVsRE04Rkp4L2xxV0ZVRi93b2h1QURi?=
+ =?utf-8?B?ZUFLWEJwR2FzdHAwZEVRa2o2TUJkL1NWZjJZMEFua2VFMkFsQy80bVBVN21Z?=
+ =?utf-8?B?K0hQRis4UEJ4M1dNSGRlSFI5M29UM2VqcExFMFFXOENjbkFaN0kzeEFVd0tO?=
+ =?utf-8?B?Y1JLMWZSWWppc1BkZmtGdVNxL0VOZmlNdWZlampoM0ZhNURCeU1BOFZ4OGli?=
+ =?utf-8?B?eUQvVjRaYkRRbGxGM3NLRytoaTNpWWE2MmExdkFEQkk1RVp1MitxSndPM3Rv?=
+ =?utf-8?B?eUIvSWF5S0d2c1VDNTdBbGp1RkgxTnoxUm56ZWJVaEdEVFYxSmZmV3F5aiti?=
+ =?utf-8?B?RERVT2xzTnZhVG9RaGh6NjVCVlFPd0hHckhybzR2QmRTMzZOcllzZ09vanlw?=
+ =?utf-8?B?T2dGck1jYkZWSzNJQ0lFZzVudnBDY200eGxpTi9uQUlyeXJZWFJIRVBWVVBH?=
+ =?utf-8?B?a3JMSlNhTEo3NjdwYWlsMVVvRkZvSkdOMHMyakVGVzU4aXVtZnFCRWVVdzBZ?=
+ =?utf-8?B?WHRWNVpaaFRZZDZuR21DUEM5c2tzUzE4Nklwa0FRN0E2ckd6YmhWK09OdHFk?=
+ =?utf-8?B?bFh0NnZpSDkzZWFGakRHeURZUkNsVVhiRzhaZWtnTFo5aC8xSGJ1OVdIdW5j?=
+ =?utf-8?B?VWdpZ0hhcVcwSFY2YjRaTUJ5TWN6MjBGSzFhRDJiaStjdGdqanZwYWF3eFYx?=
+ =?utf-8?B?Y0NQUjNxN2Z3dWZGUTQyYzdGUkFLUXU5VTRoYXRxcHFuTGVOK3hSMVdEcS83?=
+ =?utf-8?B?dzUxUS82T1pCWDg1WkZQSG5WN2pxbS91SWpMelZIT0MvMGF1NU9oSjZuMXhR?=
+ =?utf-8?B?K2JMWDBSaTJEVlNKQlovK2l1M09sV2pZNzZpM1NubDdSSmNMcFRkWGNtZlRV?=
+ =?utf-8?B?OEVreTRtZVNIVTc1OE9nay9aSkYxV0NiUGxKZjNkR0hYN1VLMUtuVzJWZ3E4?=
+ =?utf-8?B?Q3NRRFRycXpGOGtYNm9VeXdJQVFKdUdNd1FJVkQ3dGtjaWs4cndNckVPYkNt?=
+ =?utf-8?B?dzI5T3RaNzZFc0ZVQk1ZY1VLYThMcWgrVkkrRkFwYjhDTFZqQVZiaWhWdkdo?=
+ =?utf-8?B?SDd3a1JPdHM4MWFJcGNjMXdzVzBQVXRuVHVCY29Fa2VBSzlTQW1nUWhSTHZT?=
+ =?utf-8?B?Ymh2dHBYR1MxTFY3dmF1YysyOHM1eWt0WkxUaUpoVW9yVUdaei9ZNFdQWXdp?=
+ =?utf-8?B?VWZET0YvWmwyOUY1WVV4ekg5alFsQmZGeTVtZ1AwM2lhSjhvcVNFR0N5UThS?=
+ =?utf-8?B?VkgrNHBEd0NTaUZnRjk2VHlZRFpiSTEvK3U2ZGZZc1Y5RVo3dFRyREZyV1Uy?=
+ =?utf-8?B?dUlhWTZDTm1HRXdXaitkODlBVnpMT2d0dWpUUnVDbmhtTGNGQXE4RXJLTGhX?=
+ =?utf-8?B?VWROUTloQytWcERsaXVlb2srLzVqMlppajNyK2F4UUZLWGxQMWJmbXM2NlFG?=
+ =?utf-8?B?L2M0K1A1UTRhdlBad1RYNEZBdFZDcGZ1RUhMZGFoT3BXNnBGRU8rSEx0bFJP?=
+ =?utf-8?B?K0V2eGRBQlFialVhRTdVenZYNjkwMTl4WmRQUE42cnEzZWI4b245R0tlbnlq?=
+ =?utf-8?B?ekRUL25ZRk82aitQb1BrLzB3bm05OHN0UE8yYS9Rdi81bDFrZlhpKzNDV3ps?=
+ =?utf-8?Q?bxxoboLhp81jX5XyI3OZ92N8h?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 36a04553-16df-484a-fc0e-08dd51081954
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2025 17:08:36.6216
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2025 17:08:58.5442
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: WBdAb9rY6bLB2KqzAdDMGabKkKX6sI6jCJwKkNjmw/8+APoLRKPCoo7FgoZwNKQdS3/Hb/+Lw/sCvYet2A55B96hXMzLm6uE/8z9IZc2Y68=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT1PR01MB9116
+X-MS-Exchange-CrossTenant-UserPrincipalName: CtOCbLN5mBwxeNT2wo6/ysIHFlRbIu1bJHIYLN+BTf6uBnYzMazev/cV31RgYeIC7NTsOki1riW1f1/ghuRh1g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8791
 
-On 2025-02-19 11:32, Gabriele Monaco wrote:
-> 
-> 
-> On Wed, 2025-02-19 at 10:13 -0500, Mathieu Desnoyers wrote:
->>> On 2025-02-19 06:31, Gabriele Monaco wrote:
->>>>> Currently, the task_mm_cid_work function is called in a task work
->>>>> triggered by a scheduler tick to frequently compact the mm_cids of
->>>>> each
->>>>> process. This can delay the execution of the corresponding thread
->>>>> for
->>>>> the entire duration of the function, negatively affecting the
->>>>> response
->>>>> in case of real time tasks. In practice, we observe
->>>>> task_mm_cid_work
->>>>> increasing the latency of 30-35us on a 128 cores system, this order
->>>>> of
->>>>> magnitude is meaningful under PREEMPT_RT.
+
+
+On 2/19/2025 11:18 AM, Valentin Schneider wrote:
+> On 19/02/25 10:05, Joel Fernandes wrote:
+>> On Fri, Jan 17, 2025 at 05:53:33PM +0100, Valentin Schneider wrote:
+>>> On 17/01/25 16:52, Jann Horn wrote:
+>>>> On Fri, Jan 17, 2025 at 4:25 PM Valentin Schneider <vschneid@redhat.com> wrote:
+>>>>> On 14/01/25 19:16, Jann Horn wrote:
+>>>>>> On Tue, Jan 14, 2025 at 6:51 PM Valentin Schneider <vschneid@redhat.com> wrote:
+>>>>>>> vunmap()'s issued from housekeeping CPUs are a relatively common source of
+>>>>>>> interference for isolated NOHZ_FULL CPUs, as they are hit by the
+>>>>>>> flush_tlb_kernel_range() IPIs.
+>>>>>>>
+>>>>>>> Given that CPUs executing in userspace do not access data in the vmalloc
+>>>>>>> range, these IPIs could be deferred until their next kernel entry.
+>>>>>>>
+>>>>>>> Deferral vs early entry danger zone
+>>>>>>> ===================================
+>>>>>>>
+>>>>>>> This requires a guarantee that nothing in the vmalloc range can be vunmap'd
+>>>>>>> and then accessed in early entry code.
+>>>>>>
+>>>>>> In other words, it needs a guarantee that no vmalloc allocations that
+>>>>>> have been created in the vmalloc region while the CPU was idle can
+>>>>>> then be accessed during early entry, right?
 >>>>>
->>>>> Run the task_mm_cid_work in a new work_struct connected to the
->>>>> mm_struct rather than in the task context before returning to
->>>>> userspace.
+>>>>> I'm not sure if that would be a problem (not an mm expert, please do
+>>>>> correct me) - looking at vmap_pages_range(), flush_cache_vmap() isn't
+>>>>> deferred anyway.
+>>>>
+>>>> flush_cache_vmap() is about stuff like flushing data caches on
+>>>> architectures with virtually indexed caches; that doesn't do TLB
+>>>> maintenance. When you look for its definition on x86 or arm64, you'll
+>>>> see that they use the generic implementation which is simply an empty
+>>>> inline function.
+>>>>
+>>>>> So after vmapping something, I wouldn't expect isolated CPUs to have
+>>>>> invalid TLB entries for the newly vmapped page.
 >>>>>
->>>>> This work_struct is initialised with the mm and disabled before
->>>>> freeing
->>>>> it. Its execution is no longer triggered by scheduler ticks: the
->>>>> queuing
->>>>> of the work happens while returning to userspace in
->>>>> __rseq_handle_notify_resume, maintaining the checks to avoid
->>>>> running
->>>>> more frequently than MM_CID_SCAN_DELAY.
+>>>>> However, upon vunmap'ing something, the TLB flush is deferred, and thus
+>>>>> stale TLB entries can and will remain on isolated CPUs, up until they
+>>>>> execute the deferred flush themselves (IOW for the entire duration of the
+>>>>> "danger zone").
 >>>>>
->>>>> The main advantage of this change is that the function can be
->>>>> offloaded
->>>>> to a different CPU and even preempted by RT tasks.
->>>>>
->>>>> Moreover, this new behaviour is more predictable with periodic
->>>>> tasks
->>>>> with short runtime, which may rarely run during a scheduler tick.
->>>>> Now, the work is always scheduled when the task returns to
->>>>> userspace.
->>>>>
->>>>> The work is disabled during mmdrop, since the function cannot sleep
->>>>> in
->>>>> all kernel configurations, we cannot wait for possibly running work
->>>>> items to terminate. We make sure the mm is valid in case the task
->>>>> is
->>>>> terminating by reserving it with mmgrab/mmdrop, returning
->>>>> prematurely if
->>>>> we are really the last user before mmgrab.
->>>>> This situation is unlikely since we don't schedule the work for
->>>>> exiting
->>>>> tasks, but we cannot rule it out.
->>>>>
->>>>> Fixes: 223baf9d17f2 ("sched: Fix performance regression introduced
->>>>> by mm_cid")
->>>>> Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
->>>>> ---
->>>>> diff --git a/kernel/rseq.c b/kernel/rseq.c
->>>>> index 442aba29bc4cf..f8394ebbb6f4d 100644
->>>>> --- a/kernel/rseq.c
->>>>> +++ b/kernel/rseq.c
->>>>> @@ -419,6 +419,7 @@ void __rseq_handle_notify_resume(struct ksignal
->>>>> *ksig, struct pt_regs *regs)
->>>>>     }
->>>>>     if (unlikely(rseq_update_cpu_node_id(t)))
->>>>>     goto error;
->>>>> + task_queue_mm_cid(t);
->>>>>     return;
->>>>>   
->>>>>    error:
->>>>> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
->>>>> index 9aecd914ac691..ee35f9962444b 100644
->>>>> --- a/kernel/sched/core.c
->>>>> +++ b/kernel/sched/core.c
->>>>> @@ -5663,7 +5663,6 @@ void sched_tick(void)
->>>>>     resched_latency = cpu_resched_latency(rq);
->>>>>     calc_global_load_tick(rq);
->>>>>     sched_core_tick(rq);
->>>>> - task_tick_mm_cid(rq, donor);
+>>>>> Does that make sense?
+>>>>
+>>>> The design idea wrt TLB flushes in the vmap code is that you don't do
+>>>> TLB flushes when you unmap stuff or when you map stuff, because doing
+>>>> TLB flushes across the entire system on every vmap/vunmap would be a
+>>>> bit costly; instead you just do batched TLB flushes in between, in
+>>>> __purge_vmap_area_lazy().
+>>>>
+>>>> In other words, the basic idea is that you can keep calling vmap() and
+>>>> vunmap() a bunch of times without ever doing TLB flushes until you run
+>>>> out of virtual memory in the vmap region; then you do one big TLB
+>>>> flush, and afterwards you can reuse the free virtual address space for
+>>>> new allocations again.
+>>>>
+>>>> So if you "defer" that batched TLB flush for CPUs that are not
+>>>> currently running in the kernel, I think the consequence is that those
+>>>> CPUs may end up with incoherent TLB state after a reallocation of the
+>>>> virtual address space.
+>>>>
 >>>
->>> I agree that this approach is promising, however I am concerned about
->>> the fact that a task running alone on its runqueue (thus without
->>> preemption) for a long time will never recompact mm_cid, and also
->>> will never update its mm_cid field.
->>>
->>> So I am tempted to insert this in the sched_tick to cover that
->>> scenario:
->>>
->>>        rseq_preempt(current);
->>>
->>> This would ensure that the task runs __rseq_handle_notify_resume() at
->>> least each tick.
->>>
+>>> Ah, gotcha, thank you for laying this out! In which case yes, any vmalloc
+>>> that occurred while an isolated CPU was NOHZ-FULL can be an issue if said
+>>> CPU accesses it during early entry;
+>>
+>> So the issue is:
+>>
+>> CPU1: unmappes vmalloc page X which was previously mapped to physical page
+>> P1.
+>>
+>> CPU2: does a whole bunch of vmalloc and vfree eventually crossing some lazy
+>> threshold and sending out IPIs. It then goes ahead and does an allocation
+>> that maps the same virtual page X to physical page P2.
+>>
+>> CPU3 is isolated and executes some early entry code before receving said IPIs
+>> which are supposedly deferred by Valentin's patches.
+>>
+>> It does not receive the IPI becuase it is deferred, thus access by early
+>> entry code to page X on this CPU results in a UAF access to P1.
+>>
+>> Is that the issue?
+>>
 > 
-> Right, I thought about this scenario but forgot to add it in the final patch.
-> We could have a test doing that: instead of sleeping, the task busy waits.
-> 
-> Does __rseq_handle_notify_resume need to run in this case, besides for the cid compaction, I mean? Otherwise we could again just enqueu
-> the work from there.
+> Pretty much so yeah. That is, *if* there such a vmalloc'd address access in
+> early entry code - testing says it's not the case, but I haven't found a
+> way to instrumentally verify this.
+Ok, thanks for confirming. Maybe there is an address sanitizer way of verifying,
+but yeah it is subtle and there could be more than one way of solving it. Too
+much 'fun' ;)
 
-Yes we need to do both:
-
-- compact cid,
-- run __rseq_handle_notify_resume to update the mm_cid.
-
-We we don't care much if compacting the cid is done at some point
-and __rseq_handle_notify_resume only updates the mm_cid field on
-the following tick.
-
-So enqueuing the work is not sufficient there, I would really
-issue rseq_preempt(current) which makes sure a busy thread both
-triggers cid compaction *and* gets its mm_cid updated.
-
-> 
-> I'll give a shot for both.
-> 
-> 
->>>>>     scx_tick(rq);
->>>>>   
->>>>>     rq_unlock(rq, &rf);
->>>>> @@ -10530,22 +10529,16 @@ static void
->>>>> sched_mm_cid_remote_clear_weight(struct mm_struct *mm, int cpu,
->>>>>     sched_mm_cid_remote_clear(mm, pcpu_cid, cpu);
->>>>>    }
->>>>>   
->>>>> -static void task_mm_cid_work(struct callback_head *work)
->>>>> +void task_mm_cid_work(struct work_struct *work)
->>>>>    {
->>>>>     unsigned long now = jiffies, old_scan, next_scan;
->>>>> - struct task_struct *t = current;
->>>>>     struct cpumask *cidmask;
->>>>> - struct mm_struct *mm;
->>>>> + struct mm_struct *mm = container_of(work, struct mm_struct,
->>>>> cid_work);
->>>>>     int weight, cpu;
->>>>>   
->>>>> - SCHED_WARN_ON(t != container_of(work, struct task_struct,
->>>>> cid_work));
->>>>> -
->>>>> - work->next = work; /* Prevent double-add */
->>>>> - if (t->flags & PF_EXITING)
->>>>> - return;
->>>>> - mm = t->mm;
->>>>> - if (!mm)
->>>>> + if (!atomic_read(&mm->mm_count))
->>>>>     return;
->>>>> + mmgrab(mm);
->>>
->>> AFAIU this is racy with respect to re-use of mm struct.
->>>
->>> I recommend that you move mmgrab() to task_queue_mm_cid() just before
->>> invoking schedule_work. That way you ensure that the mm count never
->>> reaches 0 while there is work in flight (and therefore guarantee that
->>> the mm is not re-used).
->>>
-> 
-> 
-> Mmh good point, in that case I think we can still keep on testing the mm_count and return prematurely if it's 1 (we are the only user and the task exited before the work got scheduled).
-> That would be a safe assumption if we don't get to 0, wouldn't it?
-
-Yes, although don't forget the mmdrop in that case ;)
-
-Thanks,
-
-Mathieu
+ - Joel
 
 
-> 
-> Thanks,
-> Gabriele
-> 
-
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
 
