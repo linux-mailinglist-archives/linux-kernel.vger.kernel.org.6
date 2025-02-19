@@ -1,132 +1,224 @@
-Return-Path: <linux-kernel+bounces-522107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5CA8A3C619
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:24:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12C5FA3C61B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:25:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A8BC1899BA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:24:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72A3D7A6D01
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:24:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B35072144C9;
-	Wed, 19 Feb 2025 17:24:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77FC62144A7;
+	Wed, 19 Feb 2025 17:24:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="USYItg2a"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G1SEali3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8138120E6F9
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 17:24:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17FAA20E6F9;
+	Wed, 19 Feb 2025 17:24:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739985868; cv=none; b=TuniDCCEJFlE9QhU77fjjH0hGhE6qv/HefkeHCAIOedErmMtLuE9pcIPgmfqo5ErVhq5zbWcEokeUqzLl+tuMoJV5Mb3kZSfwXLlbLKzYdrU0s4CrotwzRpJSB+bFLPhz/xakQfvNb+P/bNz7qIDfT+b/xQ0+LESbDASry2BJ7g=
+	t=1739985893; cv=none; b=s4ixSisqy8cO3aeZDQgOQ21zZSjG8IzNYRmXxgfF/LVb4/myAapsZaF6Tozxjj+yen6LQ/usf57Mz6SrusInR9Jj7rDEgOPyC5dMHSzn36QIMobdRIjZ7My5zxqEcMX3HzRW5swoTjokkoadX3Dch/fPntLmxxMKtzcuqH+McbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739985868; c=relaxed/simple;
-	bh=T4rhPGu2ce6iGJAzGw9LsW3+86E8MFAkFApyKPgUGY8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lO98sip3pzXXEa10LF3L9vbwmEzgBMfJBMHuErrqzss8sg0IQpZv837Oc+VTYii+CDHB+wDVkM3ZUQmJlcA0QT1E/LtV4gla0TMe1/dNYBNE+veV4JVEfGeloyjLzi8f9S7HVWHKldR5Rvph16hKbdGgDIOIKPobjzYjTdmFEds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=USYItg2a; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6f9625c0fccso58845817b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 09:24:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739985865; x=1740590665; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=0cr90zEajdAaEBjcRfisPPDqVdNWUpvTZCFRKVO9Uh4=;
-        b=USYItg2am6boBNLd50xfUs2toBOCLT5QK7hQ+Na9cSN2hijH2ZLVOrxyATQngnj2C+
-         RFrijO+J5aOC+XS2UXnerjjtsIRLyiZf++e3SF85MzIRZr7mC9bIHI6Q3SfbKKFntiFm
-         gwxm3c93yDBmm+YhwFxK3iVaZBHSYASG9A1ZwV/QJQUGxxvSDRaKs+zX3iImdeN6bnpZ
-         WmGSPO4TZ2O6shy+H4uTm4Sry+jXb5I9LPtLZmpdI37RFCSxs1wKgE5W6xOMTVBxac7d
-         GZ8ZQavutbVPy8NTpawwvbD9L7v3FNWwO+BVqufnHCnVCgGnzWpauk+dZrhn1oLx+5SP
-         pGfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739985865; x=1740590665;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0cr90zEajdAaEBjcRfisPPDqVdNWUpvTZCFRKVO9Uh4=;
-        b=t1kUISOIe0yVl5G2gxAfIanxf5B9eLA6iMhUaj5yXuwb626S7Pv2MQlJxQ/7UykM7c
-         it5p6Wgb+1SMPJhL1Wtw+4ZnKdtl7yjowILoGvhzXaApSIL9J+Mh7VT9mW/qYahIiyvh
-         4fpQCgu5WQx6GnhqlMjCOp1X6Vr8FKAk6B695rEepAb3iAuzNz5wrAWy4nf55coyE03C
-         0NJQ+33bC9EbUZlGdLldZLqZJ3IZn1hZhimmwV9PLZKcPRsX2xj4xvUjcVsjFkhIMHPP
-         ml1MEpwb8RJHeMzCtVhpv5JqGdGEPnltEDYCwpNCQEIwfvwYzw1e9bcJ0ffIFL0NWhHB
-         quxg==
-X-Forwarded-Encrypted: i=1; AJvYcCUM6TnNBDCd0EGp4EssHZJpuxC76+j+APxjZCLdwDODpwOsVV2pA0/PW/1LQaMXApeK2SxvpKQqyHLjag0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrdDSo5UxgbpBk1e0dvQr8aJmA1qWKyAgerGz3emoaYIWv8fAK
-	dZa+IDER6gi9jJzO4AmwbvfHLyYopChxCTBKVi7XXWdMSO1IQP6vtWhl5uAA3TZquit5F78cOqc
-	cUIH1T2w5+3ZPU1JiAN4yLz+1Zh/Z/1dYrjpIuA==
-X-Gm-Gg: ASbGncsXa/wyRxhfz2Rl/NCoFFEDRr7eKFYGZrm7eaDD4/rzdjYI3juNEHk9gBo3+24
-	2vL0OLy1657Q89rxkK0CkqsAHCcbmoQkWwSGp1L2L1hVm9apFvSvCjRGsfalHD+eEqHUwMNTp5c
-	S1Cq0tb+J6/aI=
-X-Google-Smtp-Source: AGHT+IHPYcZfjn7eucK8FvixqCR2I2msLnTZntlahztuzdBpXoxW57EO45la9a3FzKXUns8U3FOZ+w7YFPg8lisWjjs=
-X-Received: by 2002:a05:690c:7445:b0:6ef:7dde:bdef with SMTP id
- 00721157ae682-6fb58359ca6mr143804167b3.23.1739985865461; Wed, 19 Feb 2025
- 09:24:25 -0800 (PST)
+	s=arc-20240116; t=1739985893; c=relaxed/simple;
+	bh=4zbsz1fjaHsLbK4aRx1S+C3TaO1gYP/gaDkgLiYhaTU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d4wuqCUeSY/J5+20YrWY4Ovi/GetZlTOKxTbV/gt8tsG/i04AzYAFtAetxyCtcSPftJSJ4kP6Bie9WDAmQwKwoymOUIXAOu430Ve1kRQEiIWCcebWbb90LsvHLXA1oh+j6iNTES9SrNGObDPX8Ky8Zbd4kKRiUYL0JzhL9OnorU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G1SEali3; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739985891; x=1771521891;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=4zbsz1fjaHsLbK4aRx1S+C3TaO1gYP/gaDkgLiYhaTU=;
+  b=G1SEali3rdTmQDWcTcGgMqqS+HyAOqa0igAXNZxKC0ZjbOWNc4cPW/SK
+   BWCj0WUa/We8zCT33LxUMoyDMXArbX1FC8lXOMPvtWsTwtt7K0CmWZFjt
+   z4wDsO4EO4bWjHkSWSW8K+Y7sWPgwGPHqEvZohqIZ1vcPVXDRQoirlq9o
+   uBBPXnmql+zjtHWTdKl2sbc32DCxBD96OncxcICsgMgirE99zNkZhSY0Z
+   gORcOKeqmV23s67fetyrsqQx5sxQMiCl46FHC0G+yLlGyi/SIOVUCsCkj
+   DGAxQSpjUzHUwqldgEw34aphT1mZ01Sa7ziyIQURZsAN5PxD4nNjkVWCG
+   g==;
+X-CSE-ConnectionGUID: 3vQvTSZjQsKKhBGubjos2A==
+X-CSE-MsgGUID: ThT3w46lReKqRYNf0oyKZA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11350"; a="44382707"
+X-IronPort-AV: E=Sophos;i="6.13,299,1732608000"; 
+   d="scan'208";a="44382707"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 09:24:50 -0800
+X-CSE-ConnectionGUID: wrExgqd1R8yjf7dpiYwP2Q==
+X-CSE-MsgGUID: m4sAUlNOTVe6V952FSwHBw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="115257008"
+Received: from inaky-mobl1.amr.corp.intel.com (HELO [10.125.110.11]) ([10.125.110.11])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 09:24:42 -0800
+Message-ID: <4e30257f-5535-4333-abf5-d424436ee853@intel.com>
+Date: Wed, 19 Feb 2025 10:24:33 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250217-b4-sm8750-display-v2-0-d201dcdda6a4@linaro.org>
- <20250217-b4-sm8750-display-v2-15-d201dcdda6a4@linaro.org>
- <qlotuliwnm5spneolztca7avmh2a46pz2xqlxzqbw5kwa53m6q@oyhnzz7fhay3> <4b2426d2-a7bb-4c19-9ebe-77f6a90caf5e@linaro.org>
-In-Reply-To: <4b2426d2-a7bb-4c19-9ebe-77f6a90caf5e@linaro.org>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 19 Feb 2025 19:24:14 +0200
-X-Gm-Features: AWEUYZmAr3QYLaFayeHeppxyHSH1mnwXmz4zOX0FGc46bc3FPvsfNyKPQb2_VV4
-Message-ID: <CAA8EJpquBhQeac0E66NqeagkxP-qY0whmah2ND0xziUQdxc_7g@mail.gmail.com>
-Subject: Re: [PATCH v2 15/16] drm/msm/dpu: Implement new v12.0 DPU differences
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Krishna Manikandan <quic_mkrishn@quicinc.com>, Jonathan Marek <jonathan@marek.ca>, 
-	Kuogee Hsieh <quic_khsieh@quicinc.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Srini Kandagatla <srinivas.kandagatla@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 7/7] cxl/region: Drop goto pattern of
+ construct_region()
+To: Li Ming <ming.li@zohomail.com>, dave@stgolabs.net,
+ jonathan.cameron@huawei.com, alison.schofield@intel.com,
+ vishal.l.verma@intel.com, ira.weiny@intel.com, dan.j.williams@intel.com
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250217144828.30651-1-ming.li@zohomail.com>
+ <20250217144828.30651-8-ming.li@zohomail.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250217144828.30651-8-ming.li@zohomail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 19 Feb 2025 at 19:04, Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> On 17/02/2025 20:18, Dmitry Baryshkov wrote:
-> > On Mon, Feb 17, 2025 at 05:41:36PM +0100, Krzysztof Kozlowski wrote:
-> >> Implement new features and differences coming in v12.0 of DPU present on
-> >> Qualcomm SM8750 SoC:
-> >> 1. 10-bit color alpha.
-> >> 2. New CTL_PIPE_ACTIVE and CTL_LAYER_ACTIVE registers for pipes and
-> >>    layer mixers.
-> >> 2. Several differences in LM registers (also changed offsets) for LM
-> >>    crossbar hardware changes.
-> >
-> > I'd really prefer for this patch to be split into a logical chunks
-> > rather than "everything for 12.x"
-> everything 12.x is still logical chunk. I can split more, but without
-> guidance what is here logical chunk, will be tricky.
->
-> For example 10-bit color alpha looks like separate feature. But
-> remaining PIPE/LAYER active - not sure.
->
-> I can split them but I would not call such split necessarily logical.
 
-I'd say, the following items are logical chunks:
-- ctl->ops.active_fetch_pipes in dpu_encoder_helper_reset_mixers() and
-dpu_hw_ctl_reset_intf_cfg_v1() (with a proper Fixes tag?)
-- 10-bit alpha, border color,
-- active_pipes
-- blend stage in LM + set_active_lms
 
--- 
-With best wishes
-Dmitry
+On 2/17/25 7:48 AM, Li Ming wrote:
+> Some operations need to be protected by the cxl_region_rwsem in
+> construct_region(). Currently, construct_region() uses down_write() and
+> up_write() for the cxl_region_rwsem locking, so there is a goto pattern
+> after down_write() invoked to release cxl_region_rwsem.
+> 
+> construct region() can be optimized to remove the goto pattern. The
+> changes are creating a new function called construct_auto_region() which
+> will include all checking and operations protected by the
+> cxl_region_rwsem, and using guard(rwsem_write) to replace down_write()
+> and up_write() in construct_auto_region().
+> 
+> Signed-off-by: Li Ming <ming.li@zohomail.com>
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+
+> ---
+> v2:
+> - Rename __construct_region() to construct_auto_region(). (Jonathan and Dave)
+> ---
+>  drivers/cxl/core/region.c | 71 +++++++++++++++++++++------------------
+>  1 file changed, 39 insertions(+), 32 deletions(-)
+> 
+> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+> index 320a3f218131..7a9e51aba9f4 100644
+> --- a/drivers/cxl/core/region.c
+> +++ b/drivers/cxl/core/region.c
+> @@ -3216,49 +3216,31 @@ static int match_region_by_range(struct device *dev, const void *data)
+>  	return 0;
+>  }
+>  
+> -/* Establish an empty region covering the given HPA range */
+> -static struct cxl_region *construct_region(struct cxl_root_decoder *cxlrd,
+> -					   struct cxl_endpoint_decoder *cxled)
+> +static int construct_auto_region(struct cxl_region *cxlr,
+> +				 struct cxl_root_decoder *cxlrd,
+> +				 struct cxl_endpoint_decoder *cxled)
+>  {
+>  	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
+> -	struct cxl_port *port = cxlrd_to_port(cxlrd);
+>  	struct range *hpa = &cxled->cxld.hpa_range;
+>  	struct cxl_region_params *p;
+> -	struct cxl_region *cxlr;
+>  	struct resource *res;
+>  	int rc;
+>  
+> -	do {
+> -		cxlr = __create_region(cxlrd, cxled->mode,
+> -				       atomic_read(&cxlrd->region_id));
+> -	} while (IS_ERR(cxlr) && PTR_ERR(cxlr) == -EBUSY);
+> -
+> -	if (IS_ERR(cxlr)) {
+> -		dev_err(cxlmd->dev.parent,
+> -			"%s:%s: %s failed assign region: %ld\n",
+> -			dev_name(&cxlmd->dev), dev_name(&cxled->cxld.dev),
+> -			__func__, PTR_ERR(cxlr));
+> -		return cxlr;
+> -	}
+> -
+> -	down_write(&cxl_region_rwsem);
+> +	guard(rwsem_write)(&cxl_region_rwsem);
+>  	p = &cxlr->params;
+>  	if (p->state >= CXL_CONFIG_INTERLEAVE_ACTIVE) {
+>  		dev_err(cxlmd->dev.parent,
+>  			"%s:%s: %s autodiscovery interrupted\n",
+>  			dev_name(&cxlmd->dev), dev_name(&cxled->cxld.dev),
+>  			__func__);
+> -		rc = -EBUSY;
+> -		goto err;
+> +		return -EBUSY;
+>  	}
+>  
+>  	set_bit(CXL_REGION_F_AUTO, &cxlr->flags);
+>  
+>  	res = kmalloc(sizeof(*res), GFP_KERNEL);
+> -	if (!res) {
+> -		rc = -ENOMEM;
+> -		goto err;
+> -	}
+> +	if (!res)
+> +		return -ENOMEM;
+>  
+>  	*res = DEFINE_RES_MEM_NAMED(hpa->start, range_len(hpa),
+>  				    dev_name(&cxlr->dev));
+> @@ -3281,7 +3263,7 @@ static struct cxl_region *construct_region(struct cxl_root_decoder *cxlrd,
+>  
+>  	rc = sysfs_update_group(&cxlr->dev.kobj, get_cxl_region_target_group());
+>  	if (rc)
+> -		goto err;
+> +		return rc;
+>  
+>  	dev_dbg(cxlmd->dev.parent, "%s:%s: %s %s res: %pr iw: %d ig: %d\n",
+>  		dev_name(&cxlmd->dev), dev_name(&cxled->cxld.dev), __func__,
+> @@ -3290,14 +3272,39 @@ static struct cxl_region *construct_region(struct cxl_root_decoder *cxlrd,
+>  
+>  	/* ...to match put_device() in cxl_add_to_region() */
+>  	get_device(&cxlr->dev);
+> -	up_write(&cxl_region_rwsem);
+>  
+> -	return cxlr;
+> +	return 0;
+> +}
+>  
+> -err:
+> -	up_write(&cxl_region_rwsem);
+> -	devm_release_action(port->uport_dev, unregister_region, cxlr);
+> -	return ERR_PTR(rc);
+> +/* Establish an empty region covering the given HPA range */
+> +static struct cxl_region *construct_region(struct cxl_root_decoder *cxlrd,
+> +					   struct cxl_endpoint_decoder *cxled)
+> +{
+> +	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
+> +	struct cxl_port *port = cxlrd_to_port(cxlrd);
+> +	struct cxl_region *cxlr;
+> +	int rc;
+> +
+> +	do {
+> +		cxlr = __create_region(cxlrd, cxled->mode,
+> +				       atomic_read(&cxlrd->region_id));
+> +	} while (IS_ERR(cxlr) && PTR_ERR(cxlr) == -EBUSY);
+> +
+> +	if (IS_ERR(cxlr)) {
+> +		dev_err(cxlmd->dev.parent,
+> +			"%s:%s: %s failed assign region: %ld\n",
+> +			dev_name(&cxlmd->dev), dev_name(&cxled->cxld.dev),
+> +			__func__, PTR_ERR(cxlr));
+> +		return cxlr;
+> +	}
+> +
+> +	rc = construct_auto_region(cxlr, cxlrd, cxled);
+> +	if (rc) {
+> +		devm_release_action(port->uport_dev, unregister_region, cxlr);
+> +		return ERR_PTR(rc);
+> +	}
+> +
+> +	return cxlr;
+>  }
+>  
+>  int cxl_add_to_region(struct cxl_port *root, struct cxl_endpoint_decoder *cxled)
+
 
