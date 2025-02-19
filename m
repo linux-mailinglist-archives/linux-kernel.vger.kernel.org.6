@@ -1,131 +1,125 @@
-Return-Path: <linux-kernel+bounces-522012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17DF7A3C4E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:24:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 130FAA3C4E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:24:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C994718961DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:23:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B263189D64F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:23:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EE8E1FECB0;
-	Wed, 19 Feb 2025 16:22:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFA3E1FE443;
+	Wed, 19 Feb 2025 16:23:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bHwMpgY8"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="jDTON8jY"
+Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E3D21FE45E
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 16:22:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0F31F4620
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 16:23:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739982174; cv=none; b=UWyoZkyMEW/SM967D64QgZLDxEMWGsi7dJUwS0TRpROdbpJR75UBpx+IbR0uGTa3uoP4977eW/E+uLMWY4qi2vqhcQuWOVPjMYQOnqon9t96SdUhKUxuISbwME4+JiJB7Mg+aORtJn0G4DTz4sJyOS1wIGZHRzqVOqI0x321bsc=
+	t=1739982187; cv=none; b=JTftgyhqEOC+PB34Oq5xNJzqbdwYaAUvisudj2NCDnm03Zkg1nOfJaTfPVWiloOGGOLMPYe02WiGx7A60T7jh0IOpBf4zeP2Lyj8cg75PdpFhGacu9/7IT7H3V91xNHoG54/cncPRpMKAntT7pR5Wj19Iq4YjwQaQVm96WIgA/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739982174; c=relaxed/simple;
-	bh=BfUU3tj0y61ulsrpxN8DkNxpVjymHHmrTW8yGNh/Ipo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WuD5LzozMS5z3UqWxN45pQBk6DE8G3gm/EBRFgF1pYyTW3s5KTzquwplatMu8kyB320ZuWY05mHMiik23fDJIciqzo5mH2GrNPqo7Pqavni/zczl5ejNyFEQkE9qHwxN8qSwNR0FfSxAtWSH5mj9qZVJuTw80ZnOFIv43OMIKMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bHwMpgY8; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43932b9b09aso76648225e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 08:22:51 -0800 (PST)
+	s=arc-20240116; t=1739982187; c=relaxed/simple;
+	bh=NvID/kMg36Diao3OFuD2pJOuu3vylpBwx2YN0l8Evok=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GuUCLPayT4B0dFvKDHVlicLLnDdl3oE5WanCOAagm1S/zfFFVnE0eOxD/j/heT963hJwdVlJ31pFkfq0G13qS9cMFJvaKCmFiLvNuzQ78UGaQUzh7rpt7sSNR4ACvoM69Vip/oZ8yFisxG2GpXJRKF8gX4WI8FyO96eWE6MjUnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=jDTON8jY; arc=none smtp.client-ip=209.85.166.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-8559020a76aso91690639f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 08:23:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739982169; x=1740586969; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=xZxkylCpxcKqeTMhEvFKzvh12lirSDj2kbldlCMXfnk=;
-        b=bHwMpgY8CYkFr/NxvgVROGYx68K5HXtW/2KMZxqpIYrFdvvAKjkOg3z1Qlk2MvRvBQ
-         S7bgRAZhmPXvR6gmU/0WoeHnFEb/MAdUnkEIjOenpsMHKz6TtkvTBk/9Ar8TzNz9BKHr
-         iIa9FIo+8xNMC5ur0Jdn9Uv2pFqRc9Dj9QH35F7K4cy8NKKsIWvt/hu9Q1ScZus2pEvx
-         CGm5m4zJTPOq0ppUdaobZ1402Q/VmJkfF/e1FMc6oNQvI1N7UhtIJes6CtWWEpkaybMp
-         kmocCzr+aQneHOhcsclbahfYzv6hT/K9TCrE6EeO7KQNg1UXLF7hp4pT/YN4gc5t72lI
-         lMMA==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1739982183; x=1740586983; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=67TYMpkqxY5mExKnmZVTE77hxJr9qVBfzvrOMIP8NRY=;
+        b=jDTON8jYgvmi1TsE5gCn12hB9s6ARl3WruyKmqI7gUlgX7GEVlGvbWZ0Gj2g6vji9w
+         1x5zJnaWxxXiTaToNxoN97dFSXKQLDc3gLeqKUnW851aanfswQntEKsygwEVN7+it5An
+         9zUbQfOR8spWXmgH0aIgQLU0xoFg47XqEDUauquqr1+dWgoygqnVy3BoZykcjEW4KllX
+         Rc1DbRtWWPZmcs2mHb+Sx4FQw7kX7f0hwRhdLIL0gHgvk6vnHZPo7k0+uUBY+8WTc9KN
+         GEMGi5zagKFa3479AFmda+tMeZQQulU2F8jMiXyXZhV0krSJq4BI0o/9VDpSxYDWzc1x
+         U9Gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739982169; x=1740586969;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1739982183; x=1740586983;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xZxkylCpxcKqeTMhEvFKzvh12lirSDj2kbldlCMXfnk=;
-        b=uPL2kJjQNixTKySFmEB4VcZ89cZI860Sm9Oxrynh3vowhRyhHF23+4S8fijMkp8Re4
-         wfwDFdkziJYvZWd2q4HTV+aKAjjx6AI+AD4g8lAwdNDSdUv7eyaYFRyJAA6xtVlVCxte
-         hXB+KKbTksALuQspCL6zNgsbX4aoHuK4dyHGO3DpdRfEtQ525Ps0RiIutOAhfsLgEJom
-         EHGZ2IUrU+6D4FjESghiNssKHIiWIfvxQB275AJUDAYeog4vf/18A4hTdwX34MNtIIgf
-         IZ/pC3TCtLaw5EenBVIV9qtZp6MuukSgcsAFF2XIWW/XPcVZY0nAT1PazusOGu7T/jl8
-         sJOw==
-X-Forwarded-Encrypted: i=1; AJvYcCVdy2fRwxEp7N5BzHwGTPHou2lYFFl4G1dktMH86Ne9hBS4IMaKXO3HlYF11ei7XcTy19994P/cdPZD2Nw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxdsC2YrEUyU1agD220FbnhQX6FOxfVsYH/GB4sFbUWNbipDal
-	ZvMaJV0lllzMsc7w5Qbkqv3drgal/4g3X1YPBcINlK8wjs2NLlGEWkWAba92xTM=
-X-Gm-Gg: ASbGncsi12sW76L9Zwgd9aFVN+/n8wXCTo/RqCNsB6w7E2SJvdo4jurK8srGfcHfSSZ
-	vPIOYzeOy+rrJi3ATiEAenFVg6O1U+PF7kzCe0dVqXP4fQ9yphTVtMM06yjLinRe2Ijo7FWmrVk
-	d09u6vtxoh93Q71q639197K6K6vPtrA7t0MzCVHFR6rkQctMKnmbe/PlPz5oyQKExmOEL/0qag2
-	yBr9SbjaMzIk8G1fk/gJlYV+un+kByghHirOvXs7o3sCqwqDMIz4Ypjmsw+atBxjnPkN1aGfnX5
-	Q5jyS5HWMIWuPRBSxZxTerixyoA=
-X-Google-Smtp-Source: AGHT+IFrg3yf4JcqaRp6NZLS1mkHW305I0jkYCCmmdyg3hiS2qC7EOcbCl06hDkIssNpoO94V+nypg==
-X-Received: by 2002:a05:600c:4e87:b0:439:9274:81cd with SMTP id 5b1f17b1804b1-439927484b2mr86162505e9.4.1739982169458;
-        Wed, 19 Feb 2025 08:22:49 -0800 (PST)
-Received: from linaro.org ([2a02:2454:ff21:ef30:c59a:9aec:ce42:c01f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259d8dd6sm18476087f8f.62.2025.02.19.08.22.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2025 08:22:49 -0800 (PST)
-Date: Wed, 19 Feb 2025 17:22:45 +0100
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-To: Johan Hovold <johan@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Akhil P Oommen <quic_akhilpo@quicinc.com>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH 1/4] arm64: dts: qcom: x1e80100: Fix video thermal zone
-Message-ID: <Z7YFVZ5usWjrjabg@linaro.org>
-References: <20250219-x1e80100-thermal-fixes-v1-0-d110e44ac3f9@linaro.org>
- <20250219-x1e80100-thermal-fixes-v1-1-d110e44ac3f9@linaro.org>
- <Z7X4niv6g89LyBP1@hovoldconsulting.com>
+        bh=67TYMpkqxY5mExKnmZVTE77hxJr9qVBfzvrOMIP8NRY=;
+        b=ac0LaBkuQM5eiyVnMhZAm6Z5SJrhcmSUf07ZSqyRnDF8o5jFxD2MSwSt1rnJSvC1JN
+         D7Rdqo+ZdNI3eJkCUfr3lJtDzvudzJPV7vkxtlN538cxf+KM4TRgqjjmd8iVjGu8ebNP
+         Ju9EKKNMmLun6qCUHRWxMV7w9fy61RykaoiYDDHxTNHeTNBL1y5ht+FwK9JqgDu9p5tg
+         hBK9iqcxHictZemCuJxw3MiRBzZYnh4HIJvCWS8kJa57SVaZDiKkXetycSe0Va3ij2fG
+         2ZCRbINlq/DlwcLUIn4rkDP61NdMcQrBF5PEoCdBCyfg5MHRgIi5BWNRQ0VS9vVSUIEN
+         usrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWq/UK+RFak46RDsiInFZEIW6uQ4yYWLGijJetXsoyLejlsfLB1cVzPbnchbBxgRK6TY23RSbHCAOQOK98=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyswKYZqYmVfW5OT2Z7HekgwkXpCMTNKvzTR8VGvnN0RLWc9J33
+	eAJfTBkvKRNepZ/gid8y3zAihpyN0qYumytAeYFe1r/3Lc+e2srClDUfxC272V0=
+X-Gm-Gg: ASbGncuioDE4Od68h8nHFgIcr+cALkK9n4SryRLcNfhN4y8bJuWs1l7rLCGsqxXAcsa
+	NZmyb2laMHpWlcRcLV8wOF43cfXF61Ce4j0Fl5WWFX6hjiaO4OYLsVlo5qqWqHcSkUBrnl/5sTr
+	JIaLbshBwuIOzNv7H1xS7XyHYo9rN1G6EA3yOBwYtRMcggbk+S95mlqxW3v2tJU5UxRgq3f9u0G
+	s20eKgYSl8ktLNDQVkUQszl8D5pB7yAsxstvsYPLBgXItOXzdFJRPYZV5+HDuzOwLlPt7UzLRSm
+	+93zAVGoIGI=
+X-Google-Smtp-Source: AGHT+IGsP9WAlYtkUYVoWjhz3+vnzS72BFbKRaFhdh7G4oojUtLjlV/F9FheozGc1GxCuDhK7ilFlw==
+X-Received: by 2002:a05:6e02:1d85:b0:3d1:a75e:65dd with SMTP id e9e14a558f8ab-3d2807905e3mr162742745ab.10.1739982183443;
+        Wed, 19 Feb 2025 08:23:03 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ee8809c5d1sm2144921173.38.2025.02.19.08.23.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Feb 2025 08:23:02 -0800 (PST)
+Message-ID: <65e5ddcd-642b-4671-b814-d4a66b2039d3@kernel.dk>
+Date: Wed, 19 Feb 2025 09:23:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z7X4niv6g89LyBP1@hovoldconsulting.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] mm/truncate: don't skip dirty page in
+ folio_unmap_invalidate()
+To: Jingbo Xu <jefflexu@linux.alibaba.com>,
+ "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, brauner@kernel.org,
+ linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk
+References: <20250218120209.88093-1-jefflexu@linux.alibaba.com>
+ <20250218120209.88093-3-jefflexu@linux.alibaba.com>
+ <cedbmhuivcr2imkzuqebrrihdkfsmgqmplqqn7s2fusk3v4ezq@7jbz26dds76d>
+ <b2248d8c-1f80-4806-80fb-cbc40ad713e6@linux.alibaba.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <b2248d8c-1f80-4806-80fb-cbc40ad713e6@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 19, 2025 at 04:28:30PM +0100, Johan Hovold wrote:
-> On Wed, Feb 19, 2025 at 12:36:18PM +0100, Stephan Gerhold wrote:
-> > A passive trip point at 125°C is pretty high, this is usually the
-> > temperature for the critical shutdown trip point. Also, we don't have any
-> > passive cooling devices attached to the video thermal zone.
-> > 
-> > Change this to be a critical trip point, and add a "hot" trip point at
-> > 90°C for consistency with the other thermal zones.
-> > 
-> > Cc: stable@vger.kernel.org
+On 2/18/25 6:23 PM, Jingbo Xu wrote:
 > 
-> Perhaps not needed since we don't have a video driver enabled yet.
 > 
+> On 2/18/25 8:32 PM, Kirill A. Shutemov wrote:
+>> On Tue, Feb 18, 2025 at 08:02:09PM +0800, Jingbo Xu wrote:
+>>> ... otherwise this is a behavior change for the previous callers of
+>>> invalidate_complete_folio2(), e.g. the page invalidation routine.
+>>
+>> Hm. Shouldn't the check be moved to caller of the helper in mm/filemap.c?
+>>
+>> Otherwise we would drop pages without writing them back. And lose user's
+>> data.
+>>
+> 
+> IMHO this check is not needed as the following folio_launder() called
+> inside folio_unmap_invalidate() will write back the dirty page.
+> 
+> Hi Jens,
+> 
+> What do you think about it?
 
-It will be needed to backport the next patch (and reordering the patches
-wouldn't have made sense).
+Yep agree on that.
 
-> > Fixes: 4e915987ff5b ("arm64: dts: qcom: x1e80100: Enable tsens and thermal zone nodes")
-> > Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
-> 
-> Looks to good to me either way:
-> 
-> Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
-> 
+-- 
+Jens Axboe
 
-Thanks!
-Stephan
 
