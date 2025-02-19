@@ -1,572 +1,272 @@
-Return-Path: <linux-kernel+bounces-522528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAA2CA3CB80
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:33:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D30F3A3CB82
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:33:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 873DA166925
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:33:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E29293A8F2D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:33:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C846A23536C;
-	Wed, 19 Feb 2025 21:32:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D67332580CC;
+	Wed, 19 Feb 2025 21:33:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="15EpI+ma"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="lD1imvK0"
+Received: from AS8PR03CU001.outbound.protection.outlook.com (mail-westeuropeazon11012013.outbound.protection.outlook.com [52.101.71.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E7992147E4
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 21:32:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740000775; cv=none; b=lYKxv9Q8Wfzitr6KgwiTxLVVQgoUpJfzLmnTUMTDlSXpa4WEWT6L+hJkbCTo9RUZ/k+nLEc2Y2Ry1niqcE7JDSvpj83k7+CyxBLvKZslLqJ2s13McMBXVd4st7Xx0aJWFcmynfLfZIQ5h/fyEx8Wr7riiK5ETTb+xM1Ziou529E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740000775; c=relaxed/simple;
-	bh=hMaYnjbh9lqlTPJZZICdChPQiwTgPXAxEwaeNQ2wGkM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ij0wo/ZUFfDU3jPnEYxAvGaPv+t2kx5wLVFS200bVhjDxGAQ/bJkucPNWVOYy7I9RXIMZAoGr0QfFVF/36VzwMo4UK1JhavUfiOou8paeF4R3iAinXuP46P4oYSVmA01KAcKpOS7KaFy+/tbktZrv+71xt6YJy+toH9/dRoO1dY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=15EpI+ma; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-471fbfe8b89so107461cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 13:32:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740000772; x=1740605572; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KIaw+f80MFSgJb1e4JyC6NagP2gJp69BacIvDqHkFjA=;
-        b=15EpI+ma4655M4hzUFbArxhz2T4roIEnlkNjFwgCAm7tVN9JJyvbSBuq2CpTQkxj2Y
-         Vo1f8ngz9MQD4GxluTO5rIsAVMPuCp5tmv2PN34xFgQtOIU9dGGrBZLWYFfb2gPcGSFe
-         et+9vGtKUapxw7AoX+hBwdZoUswfgAbAHAD2lptBSG6+A9THND3cYdGfg05i8GooRtQd
-         iOq2ZOrCs/CjwgI/wglrC9t6GJhMgID4RW130Mm0aR/kzsM7QDldZfqk0mU53PWrxDFQ
-         wPlxYAXVwQj287L8fHxaRsNNdNjXOvQwb1YtG4KWwO6bRWZRZgFAMhNX4Fp961wVipnr
-         7U7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740000772; x=1740605572;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KIaw+f80MFSgJb1e4JyC6NagP2gJp69BacIvDqHkFjA=;
-        b=PB6QBcJ3JoNgFyV9V4HgSO3DjV/TLRS03iBI9v/yKCX2Z0y7cAi2Rln8k3/02CgBPk
-         rKzg4ozxB6zqdy0lOPe26Ikrn6B2VMI/fOXgjgu9gV6w8EhCZbGYPjiqk3UlzTe94PP+
-         MZLz+iKhQCamcs98V+mQQYuZzt8f4nDkbFqyalJkJNf1c+LJ/XnM+iVlNjPSlOPKi7PI
-         fWgeaq4MN7OxBKZtnGSRRhAXZ9xh52qs4JMXziT4dLZ1irb4Ol/IzPE24mBrYvS2kYiL
-         wrj1RA/EX7Ua4/b1S28xzZ1ZK96DRRCevbxvF+cQ27ZUeX0yKTqlNjcLAIxhthp0T6Jq
-         I38w==
-X-Forwarded-Encrypted: i=1; AJvYcCU/Ren35Qk2NcQh5OJ+guR4Alw91bgIV/EMaqJ+TGM/Jvk41Bfuu3QyNoIas/Jv7wLckqcOAs+7jr7Sd0Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyD2i2d7l3rh1s8PazN5lHtMyxIxcjk3H2DJtaaQJutrTe7Fnew
-	MpqO0cmO8W03TwEzDJHkkugu9QRr8eZ5om+hYfwjCx/sZmpU1YbWh+UnxOuESZwpuBq5MfBP3cL
-	3oNYODZPGLw2sOo/TpfiqFT3EYiW31L65aBdF
-X-Gm-Gg: ASbGncs6J7rDoSb0b7MsDlkLZhfRWHIFaLPt/uxNXNUxYYher1/UWYorTLDJYhJHsfF
-	bnu0Q6fLIkq7MqBZOLbQYaovX55NfXXsBEaPOQVGL/TnvQbCZzrWQr9DBh+4xV5BNcjnOiakgrE
-	BYB/dgZ2d5erYYHALjOpBj/RZjiLQ=
-X-Google-Smtp-Source: AGHT+IHCYtqFnkyoQRwL3mWknnUoXwCQvFuzO8VOEeSND8HSJin9ripKWYAXw8vPFeEdAXY28dOtPo3SUk5Ewtd1Hc0=
-X-Received: by 2002:a05:622a:1882:b0:472:f91:2935 with SMTP id
- d75a77b69052e-47215c97dbbmr944881cf.24.1740000771794; Wed, 19 Feb 2025
- 13:32:51 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE9452147E4;
+	Wed, 19 Feb 2025 21:33:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.71.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740000795; cv=fail; b=n75MeVehnHeGhaCk3E/XM7viMQt/eyZtIk7/bvPSJ46tgwjtYw9deL++kZv1ucMOyngqdbH5vBe/l1sopxYzWv2vPCbDOHabhbHG8AUE3OBcE/td2uFFwk3qkVCSWsGIWrqbq7AO3KPY4Rnnm12780bnGon+hZsEnMZKXJGqLWY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740000795; c=relaxed/simple;
+	bh=V0RrQvQS59nGzQkJfZOlOX/tf+9TzVo7yWQ3X9XC9nI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=p//iWk8aIniOKP0nKw9dS8gWscIvLXpBnqxz7UV44MWyk8rxABzWftzQOFmeZ6Q/PX3Kx/faFubOOuYovH07rFHHPHQcyiU77q8AmXys1a6KUC3J0y7OQDxVOMiCdcvfogJ9RPCzTHzyFigjHSbZBOcSrHA2lKg7Yjfqrvy/ZgA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=lD1imvK0; arc=fail smtp.client-ip=52.101.71.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DqAO59vthm2xf4pjGT5tXVm1wNQCEl/9/EhzNM2Lhu6Xm5p7/shfQFcCq2Q+YI85U3ilDeDg7ceY22sIj6pgBPVHDOmd/P6ykXYyX/QesB5e1KlH58rDvTIvjDgGBUUQaQx9xycXvztTz0NJxr19t61/t0W62qnNlNcMB06eyvRtibfcibPo+xbw2rl873UpsDfH/Esf44Ket0WuMcnxnQ5IAGqWFpzMfNABw4qJY1H6mIRuodmPHlMpT237NNWmNl2+SSPKIPYqkxt+ww66DI+JIGMpoeDyRdn9txQOJ5euEzaC+REQZtsnfe6YPXcnC1eIuCW8ZSfkjawLWfYY5g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SFuaSnrc68rqu34kpKA6/Z0ITdEvHIFEpnGvEbxv4fY=;
+ b=D4EKLXbfg0+r8AFa/U2Hkv0n/Ws2ztdC6yAzxXituXcb5U9jCiOtPZ31Byl1pxp9cQrThoQ8ThdjXjDC0pfPE4lYsFcORioF2Fu0ONZ40p4uXqGXTq36CEboc/wCxFCoJWDlHqSOgVmnACzJPSi5yJQ2GtXUOzdrLKYcgf/dL8gy0081wrnItO6rrGFKXs5mrA9L6E1KqvaEMgwXtRnaFYk10em+nTLC9hWFh8Hpcsk4iO+TjU0+EcDg55pH5L4Hk61Mbrw3hWiVgEAGs+JknOfseFq3+ujRfeVHmctqVhMxKLPtTz60Dm3RyvDPxAI4h9uJh34b3gryrySjU7N5QQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SFuaSnrc68rqu34kpKA6/Z0ITdEvHIFEpnGvEbxv4fY=;
+ b=lD1imvK01jGDYvnwBjMQRameaymp3Nqpm5tuFICiaXFPQ50EvwJhktKpeiW2h7MileQ2eb7KXGSu0xjs3ynIlP+fnVBSgrL4GM8TWsFfO4zWH1jJgMUacupuChG+vJZq2yQFdLvrFklAyN3Vlj6k6syKoLVy1BN3xDiZA5fIv1LJw+6DF9E5moHjF3e4rIA7Zy1GIkgUvWuFE9v1u5a8e3bACkqT9LDLpU5Q5115QWB+0+KocFJeXmmgrDj0Ygr53avihaUARNCRav5YfgH0RGfbSGOZkYiqPXcdBOMvZLhaJGLDsGfkfuu4qKTq2q1Mxwo5reCK74yBx+NjygNcOA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by AS5PR04MB10058.eurprd04.prod.outlook.com (2603:10a6:20b:683::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.15; Wed, 19 Feb
+ 2025 21:33:10 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8445.017; Wed, 19 Feb 2025
+ 21:33:10 +0000
+Date: Wed, 19 Feb 2025 16:33:04 -0500
+From: Frank Li <Frank.li@nxp.com>
+To: Daniel Baluta <daniel.baluta@nxp.com>
+Cc: p.zabel@pengutronix.de, robh@kernel.org, shawnguo@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, s.hauer@pengutronix.de,
+	kernel@pengutronix.de, festevam@gmail.com,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	mathieu.poirier@linaro.org, shengjiu.wang@nxp.com, peng.fan@nxp.com,
+	laurentiu.mihalcea@nxp.com, iuliana.prodan@nxp.com
+Subject: Re: [PATCH v2 8/8] imx_dsp_rproc: Use reset controller API to
+ control the DSP
+Message-ID: <Z7ZOEDV3GnO7mAwx@lizhi-Precision-Tower-5810>
+References: <20250219192102.423850-1-daniel.baluta@nxp.com>
+ <20250219192102.423850-9-daniel.baluta@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250219192102.423850-9-daniel.baluta@nxp.com>
+X-ClientProxiedBy: SA1P222CA0022.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:806:22c::19) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250219112519.92853-1-21cnbao@gmail.com> <CAJuCfpEWFz14R1vD4Rezy98WBk25HWWX+6DsGBekeYMugKTsfQ@mail.gmail.com>
- <CAGsJ_4yx1=jaQmDG_9rMqHFFkoXqMJw941eYvtby28OqDq+S7g@mail.gmail.com>
- <CA+EESO651xc=jR7DyX9XhEtyxFe_Cys8XwT8WDr4phC97ssW-w@mail.gmail.com> <CAGsJ_4xzaTYcJuP+a=NqPX6-75YcSsdvTr_uxxYzpe0QwP08xg@mail.gmail.com>
-In-Reply-To: <CAGsJ_4xzaTYcJuP+a=NqPX6-75YcSsdvTr_uxxYzpe0QwP08xg@mail.gmail.com>
-From: Lokesh Gidra <lokeshgidra@google.com>
-Date: Wed, 19 Feb 2025 13:32:40 -0800
-X-Gm-Features: AWEUYZk7ntNj3SpVNad2rUqj_45g4CRdsdywvoZxdt7ONZvztjocrwcBEdPtc8s
-Message-ID: <CA+EESO5RKG3Kbkww5a2cGQbhiPHrJFLKYO9rieJvJcCDoSD8sg@mail.gmail.com>
-Subject: Re: [PATCH RFC] mm: Fix kernel BUG when userfaultfd_move encounters swapcache
-To: Barry Song <21cnbao@gmail.com>
-Cc: Suren Baghdasaryan <surenb@google.com>, linux-mm@kvack.org, akpm@linux-foundation.org, 
-	linux-kernel@vger.kernel.org, zhengtangquan@oppo.com, 
-	Barry Song <v-songbaohua@oppo.com>, Andrea Arcangeli <aarcange@redhat.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Axel Rasmussen <axelrasmussen@google.com>, 
-	Brian Geffon <bgeffon@google.com>, Christian Brauner <brauner@kernel.org>, 
-	David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>, Jann Horn <jannh@google.com>, 
-	Kalesh Singh <kaleshsingh@google.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
-	Matthew Wilcox <willy@infradead.org>, Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>, 
-	Nicolas Geoffray <ngeoffray@google.com>, Peter Xu <peterx@redhat.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Shuah Khan <shuah@kernel.org>, 
-	ZhangPeng <zhangpeng362@huawei.com>, Yu Zhao <yuzhao@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AS5PR04MB10058:EE_
+X-MS-Office365-Filtering-Correlation-Id: 64d847d2-8e68-4ed5-2b55-08dd512d01a7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|52116014|7416014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?3nXg0WX+3kTBjYurkMiYXuL1z/t90qSunGg64CUl7RufJ2lrWmVsnXiDpYkz?=
+ =?us-ascii?Q?09u8khe8coI/FqfPvT9PU2ZE4qorLDk2+FhgfrHWj1DeNzy02Ca6Y+JZSQmJ?=
+ =?us-ascii?Q?cXkrXC6bGx13t/B89IgBZA/SFRNpqBhnl+SKT5xmL+/R0eOoNlnnGRfqhawq?=
+ =?us-ascii?Q?Gk089WLQfuVLyVpSE2x4B5yiy6+vT83ab6LrGKsAGQC8/6fh8certnb48u5L?=
+ =?us-ascii?Q?QzOgYNnmB3rboTYUsf/Vf26PcrBN7+ttybGFWxla1BWV1034tK2G/ohgRnMC?=
+ =?us-ascii?Q?rnfXAA9IMW5eWSSIKev4gp1sOmwcJCAWP71s0XcwyhoWIJOyUj0ASj90uo9M?=
+ =?us-ascii?Q?ArTfN4K4BKlwg+0hPnyqSTBJXm32BeiyAPLrxoABe+2E6yzzQUe30zL1HbI8?=
+ =?us-ascii?Q?WTj2VRqxLnR4k2c1YNE2MFY9nWvtMTW5cgKv+EgARqh2YqXsCm7vUeXAy+QP?=
+ =?us-ascii?Q?nWXkOYXr92pwd4Rrd9hH3WiWTidBZFpJ7khHhoHKQh6liiCBgRVMC4vYQqX1?=
+ =?us-ascii?Q?Tr6H/QkH2J5jNoY88lK/3vC1sWP/6tYgvj9sqdALdAqV6irtOdSA2R5CFrWa?=
+ =?us-ascii?Q?TrfY0G4Z+YmBC45ilhBrLuHflbhl0dpoojYdjgogjXL3jKm98Bn9zVtT3qrR?=
+ =?us-ascii?Q?ID64VeK0lvA7HpxI6psgcdRFZVxgmBddaCwWj+ZfgaYJyiDQyqHffEzW9hPE?=
+ =?us-ascii?Q?xcWnRsMZPY5/F9qXJBDAaWvGKjbR5EgAK85kTnoZpL0aoLsh4nBOAPupizE+?=
+ =?us-ascii?Q?9FvUJ0oQ8w+BnWtzTYU40aN0jwb8tR7GjuUC4eAVJiu5dCdjrMlC+875UFxO?=
+ =?us-ascii?Q?mkAJME8JV+TH1vJ49aMSpTB0XgysaYrqfLjugRI2m6Qq7qNgTLBCjqgVcOM6?=
+ =?us-ascii?Q?azP0SE9i6h9IISPnbDmvGqky4Xuv8gJ3GOuOWmAwqCa5C+7gl/lBeIbZIgxZ?=
+ =?us-ascii?Q?1ZP8LoT4iIgotz4WUxoaX7ZxPV0nsk44WLrzqwjk09Ex2LvvveXyKjqanVYN?=
+ =?us-ascii?Q?iE8JspLkQ54mVXT8AUReZAcDrrYF76KAA7GiDbI06xdBPtBz+NeipKqc3756?=
+ =?us-ascii?Q?Ut11v/gzulIWTVoyaF2QEqFcBG3EBZb0irhxy7I94xVEC/wvsY9+W3d32pMq?=
+ =?us-ascii?Q?hYAYMxVODlXMlnWX3ZdDJA7k6lY2OUpgVdOWjP0hcPRE+mSDvvkxkB8sWvBc?=
+ =?us-ascii?Q?XPtZM8uNL0WJo0hjtdIHd1YAL6tefXO8IOJ0YOavId1KaEhckQgGY/U0tjT2?=
+ =?us-ascii?Q?BQWFYoWUFgHHeIb07Az/YMFCI6SSPq+E130JC04miIv9gXiy1XdN75pe31O7?=
+ =?us-ascii?Q?CYofUq70O6zdqQkdcDQNGVTPjBWvIMHF/nV5DAuQVYOL2EV1G9N2o3z9+Z4w?=
+ =?us-ascii?Q?ObmIMpmQvSWBS2K8R6GJGXZscGNqEpfJ4IzTnCgy4EL85i8FDIDjgHnclrDW?=
+ =?us-ascii?Q?pq4w9SRSZcWfpNdKvwwIATNjoH+t6xNo?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(7416014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?2aXyXDhGqmQ2xn9NZhRGyPU5MV0z0qjwFvYiRDW8ZLXVzNJz0zb+7E4FiSXJ?=
+ =?us-ascii?Q?UNzSqGGI+xYh5v6TFVLcCeenQhULrm+eJWx1UOx2Sk+nqDvlL0Ad/nbnff4V?=
+ =?us-ascii?Q?O9CyFb7V6KRCscA0PtAJEmwNftpyamLTlaR2aITt41eoW2Bt5lbjeb59047p?=
+ =?us-ascii?Q?iCJMxFf5Xcigai7UKkgaU3DaFady/uqaWmLi5QAASczpWARK5MUN1aNpz+bA?=
+ =?us-ascii?Q?DeGntoXs/DQbTb4aFCXVkUtrRi/pvV5duX5WGf6SPGqWOeB7lSeamvZTtr9U?=
+ =?us-ascii?Q?6wBnbfOgGbPFPEPGQophGwkRTqXRm7vEuQAMuSJM/D7FwzdGx9gmYSv+vFRk?=
+ =?us-ascii?Q?bpJkOKWDVPdKBcgjyCx3hPdvMI7PsVEP136k0fPL0tjMQcq4jw0gBOoO5VIH?=
+ =?us-ascii?Q?YAssil6XOS6kOslnZpeNxxn+DiSXPwGdRZNp+YHzpHh/0ANPsrB6YYlsdnEK?=
+ =?us-ascii?Q?H1inrw2FZQ5UvKBoqOixabuumgMfo9pZZ3+E548iXulxuH8fB/pJpokzVL9z?=
+ =?us-ascii?Q?WC0Kv0p5/YYzpS+QALs/9nqBCrKgNCvHprtJ7LyZFo6MEnhIcsTcQ9RYTfYY?=
+ =?us-ascii?Q?H0f2R1Dp8CXf36ABDX2NEQPh8iF8J+KkSKvIw1zeTSM6kOBSb1spG4wxRuai?=
+ =?us-ascii?Q?ycdNUf59S96s+BWKO9OYQLqHiMbrLNslGcQzQBbhKp8AYwVoVtFpF+7g+8nu?=
+ =?us-ascii?Q?ReT2YFnxRC1aJ15+eTO1I3U7XPscdg5ueyHq+MGUMT+zhBwQTCqSnPjZrJNg?=
+ =?us-ascii?Q?G5N+2GhEl0XSbhpSi5tHDmKMyZSbH2F8rZMjRsMerdlj9E8bkUfhAtiWainE?=
+ =?us-ascii?Q?Bf4UH0Q/qv4tTeo1ISxMo3yLACBqjUgO7NIMWQyULsbPfmA/W8AuOby3I10f?=
+ =?us-ascii?Q?Zk+ybzt80TOb+wOAPsiqaTviGW4uxqjU5RFr+Ey+m6PjpkttEjP8RIEDnsBv?=
+ =?us-ascii?Q?YLP+jFBt2xl+ZptVyd1fWWWUxR0CNqyx9OO5kq7E9WPGSNc8py/64P7/Xk4R?=
+ =?us-ascii?Q?ce+suPyk2SHcVT+ac543dcwZ7mZjEV7HKv0R6n+iEFDt534tajMsZgaTymJy?=
+ =?us-ascii?Q?PcBEfm0faEtbdL7RaYbd/RS0ahAmqiWzYRlBOM6WrKDA5VFWAABk0ejZB0iE?=
+ =?us-ascii?Q?wD4PEP3k8vkLSFrWmDVrFig/a+/2c7zG1Ym2OeScWmr2f3SbVTDHRH4r/nfz?=
+ =?us-ascii?Q?P+nNQbmlfcD9O5PCl5Eh6+OxaPKB4wCWIwrapVp2JeJHMIeZjbmBN+17skuY?=
+ =?us-ascii?Q?mpYQF9iN5wkCPDAwWp/LeyxDrinVGriML+TQVMDidm1fgj6WHxmLxAyv7SK9?=
+ =?us-ascii?Q?Lywc5P7ViGL6Gp+kDzKxnLxlvJWRqawKwsVKingeBUga+YK0YBtv+kLko+iG?=
+ =?us-ascii?Q?n5CTjGlTb9trZfkgm++nJtVO2kJSHYZ2ulBrCLhdVcJHptBMVcnkMuuq+E+r?=
+ =?us-ascii?Q?x4Y+XhzlbKSmQzey5FL964Ydt9QZG2SPeUf07Qi9evmzlixjLbRhVBI2Cjbu?=
+ =?us-ascii?Q?/Jssihf3Mu1Slx5QarmKtN+9PZNtGIoB3s7IoVD+T11UsgAwXIXP3oUpqJ9s?=
+ =?us-ascii?Q?7NJoWL+Te38Ljf0LABPAZFOJ8heD8uwa2AdR0KtZ?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 64d847d2-8e68-4ed5-2b55-08dd512d01a7
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2025 21:33:10.1714
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: aTFiMEW3nGMjWTxAQTXAfyvow3pVC4kU0frUcJuaNo9+/vTORi5dT+flh0iXaiGxjcuu8D9I0RjYjjQ6rl7Svg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS5PR04MB10058
 
-On Wed, Feb 19, 2025 at 1:26=E2=80=AFPM Barry Song <21cnbao@gmail.com> wrot=
-e:
+On Wed, Feb 19, 2025 at 09:21:02PM +0200, Daniel Baluta wrote:
+> Use the reset controller API to control the DSP on i.MX8MP. This way
+> we can have a better control of the resources and avoid using a syscon
+> to access the audiomix bits.
 >
-> On Thu, Feb 20, 2025 at 10:03=E2=80=AFAM Lokesh Gidra <lokeshgidra@google=
-.com> wrote:
-> >
-> > On Wed, Feb 19, 2025 at 12:38=E2=80=AFPM Barry Song <21cnbao@gmail.com>=
- wrote:
-> > >
-> > > On Thu, Feb 20, 2025 at 7:27=E2=80=AFAM Suren Baghdasaryan <surenb@go=
-ogle.com> wrote:
-> > > >
-> > > > On Wed, Feb 19, 2025 at 3:25=E2=80=AFAM Barry Song <21cnbao@gmail.c=
-om> wrote:
-> > > > >
-> > > > > From: Barry Song <v-songbaohua@oppo.com>
-> > > > >
-> > > > > userfaultfd_move() checks whether the PTE entry is present or a
-> > > > > swap entry.
-> > > > >
-> > > > > - If the PTE entry is present, move_present_pte() handles folio
-> > > > >   migration by setting:
-> > > > >
-> > > > >   src_folio->index =3D linear_page_index(dst_vma, dst_addr);
-> > > > >
-> > > > > - If the PTE entry is a swap entry, move_swap_pte() simply copies
-> > > > >   the PTE to the new dst_addr.
-> > > > >
-> > > > > This approach is incorrect because even if the PTE is a swap
-> > > > > entry, it can still reference a folio that remains in the swap
-> > > > > cache.
-> > > > >
-> > > > > If do_swap_page() is triggered, it may locate the folio in the
-> > > > > swap cache. However, during add_rmap operations, a kernel panic
-> > > > > can occur due to:
-> > > > >  page_pgoff(folio, page) !=3D linear_page_index(vma, address)
-> > > >
-> > > > Thanks for the report and reproducer!
-> > > >
-> > > > >
-> > > > > $./a.out > /dev/null
-> > > > > [   13.336953] page: refcount:6 mapcount:1 mapping:00000000f43db1=
-9c index:0xffffaf150 pfn:0x4667c
-> > > > > [   13.337520] head: order:2 mapcount:1 entire_mapcount:0 nr_page=
-s_mapped:1 pincount:0
-> > > > > [   13.337716] memcg:ffff00000405f000
-> > > > > [   13.337849] anon flags: 0x3fffc0000020459(locked|uptodate|dirt=
-y|owner_priv_1|head|swapbacked|node=3D0|zone=3D0|lastcpupid=3D0xffff)
-> > > > > [   13.338630] raw: 03fffc0000020459 ffff80008507b538 ffff8000850=
-7b538 ffff000006260361
-> > > > > [   13.338831] raw: 0000000ffffaf150 0000000000004000 00000006000=
-00000 ffff00000405f000
-> > > > > [   13.339031] head: 03fffc0000020459 ffff80008507b538 ffff800085=
-07b538 ffff000006260361
-> > > > > [   13.339204] head: 0000000ffffaf150 0000000000004000 0000000600=
-000000 ffff00000405f000
-> > > > > [   13.339375] head: 03fffc0000000202 fffffdffc0199f01 ffffffff00=
-000000 0000000000000001
-> > > > > [   13.339546] head: 0000000000000004 0000000000000000 00000000ff=
-ffffff 0000000000000000
-> > > > > [   13.339736] page dumped because: VM_BUG_ON_PAGE(page_pgoff(fol=
-io, page) !=3D linear_page_index(vma, address))
-> > > > > [   13.340190] ------------[ cut here ]------------
-> > > > > [   13.340316] kernel BUG at mm/rmap.c:1380!
-> > > > > [   13.340683] Internal error: Oops - BUG: 00000000f2000800 [#1] =
-PREEMPT SMP
-> > > > > [   13.340969] Modules linked in:
-> > > > > [   13.341257] CPU: 1 UID: 0 PID: 107 Comm: a.out Not tainted 6.1=
-4.0-rc3-gcf42737e247a-dirty #299
-> > > > > [   13.341470] Hardware name: linux,dummy-virt (DT)
-> > > > > [   13.341671] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -S=
-SBS BTYPE=3D--)
-> > > > > [   13.341815] pc : __page_check_anon_rmap+0xa0/0xb0
-> > > > > [   13.341920] lr : __page_check_anon_rmap+0xa0/0xb0
-> > > > > [   13.342018] sp : ffff80008752bb20
-> > > > > [   13.342093] x29: ffff80008752bb20 x28: fffffdffc0199f00 x27: 0=
-000000000000001
-> > > > > [   13.342404] x26: 0000000000000000 x25: 0000000000000001 x24: 0=
-000000000000001
-> > > > > [   13.342575] x23: 0000ffffaf0d0000 x22: 0000ffffaf0d0000 x21: f=
-ffffdffc0199f00
-> > > > > [   13.342731] x20: fffffdffc0199f00 x19: ffff000006210700 x18: 0=
-0000000ffffffff
-> > > > > [   13.342881] x17: 6c203d2120296567 x16: 6170202c6f696c6f x15: 6=
-62866666f67705f
-> > > > > [   13.343033] x14: 6567617028454741 x13: 2929737365726464 x12: f=
-fff800083728ab0
-> > > > > [   13.343183] x11: ffff800082996bf8 x10: 0000000000000fd7 x9 : f=
-fff80008011bc40
-> > > > > [   13.343351] x8 : 0000000000017fe8 x7 : 00000000fffff000 x6 : f=
-fff8000829eebf8
-> > > > > [   13.343498] x5 : c0000000fffff000 x4 : 0000000000000000 x3 : 0=
-000000000000000
-> > > > > [   13.343645] x2 : 0000000000000000 x1 : ffff0000062db980 x0 : 0=
-00000000000005f
-> > > > > [   13.343876] Call trace:
-> > > > > [   13.344045]  __page_check_anon_rmap+0xa0/0xb0 (P)
-> > > > > [   13.344234]  folio_add_anon_rmap_ptes+0x22c/0x320
-> > > > > [   13.344333]  do_swap_page+0x1060/0x1400
-> > > > > [   13.344417]  __handle_mm_fault+0x61c/0xbc8
-> > > > > [   13.344504]  handle_mm_fault+0xd8/0x2e8
-> > > > > [   13.344586]  do_page_fault+0x20c/0x770
-> > > > > [   13.344673]  do_translation_fault+0xb4/0xf0
-> > > > > [   13.344759]  do_mem_abort+0x48/0xa0
-> > > > > [   13.344842]  el0_da+0x58/0x130
-> > > > > [   13.344914]  el0t_64_sync_handler+0xc4/0x138
-> > > > > [   13.345002]  el0t_64_sync+0x1ac/0x1b0
-> > > > > [   13.345208] Code: aa1503e0 f000f801 910f6021 97ff5779 (d421000=
-0)
-> > > > > [   13.345504] ---[ end trace 0000000000000000 ]---
-> > > > > [   13.345715] note: a.out[107] exited with irqs disabled
-> > > > > [   13.345954] note: a.out[107] exited with preempt_count 2
-> > > > >
-> > > > > Fully fixing it would be quite complex, requiring similar handlin=
-g
-> > > > > of folios as done in move_present_pte.
-> > > >
-> > > > How complex would that be? Is it a matter of adding
-> > > > folio_maybe_dma_pinned() checks, doing folio_move_anon_rmap() and
-> > > > folio->index =3D linear_page_index like in move_present_pte() or
-> > > > something more?
-> > >
-> > > My main concern is still with large folios that require a split_folio=
-()
-> > > during move_pages(), as the entire folio shares the same index and
-> > > anon_vma. However, userfaultfd_move() moves pages individually,
-> > > making a split necessary.
-> > >
-> > > However, in split_huge_page_to_list_to_order(), there is a:
-> > >
-> > >         if (folio_test_writeback(folio))
-> > >                 return -EBUSY;
-> > >
-> > > This is likely true for swapcache, right? However, even for move_pres=
-ent_pte(),
-> > > it simply returns -EBUSY:
-> > >
-> > > move_pages_pte()
-> > > {
-> > >                 /* at this point we have src_folio locked */
-> > >                 if (folio_test_large(src_folio)) {
-> > >                         /* split_folio() can block */
-> > >                         pte_unmap(&orig_src_pte);
-> > >                         pte_unmap(&orig_dst_pte);
-> > >                         src_pte =3D dst_pte =3D NULL;
-> > >                         err =3D split_folio(src_folio);
-> > >                         if (err)
-> > >                                 goto out;
-> > >
-> > >                         /* have to reacquire the folio after it got s=
-plit */
-> > >                         folio_unlock(src_folio);
-> > >                         folio_put(src_folio);
-> > >                         src_folio =3D NULL;
-> > >                         goto retry;
-> > >                 }
-> > > }
-> > >
-> > > Do we need a folio_wait_writeback() before calling split_folio()?
-> > >
-> > > By the way, I have also reported that userfaultfd_move() has a fundam=
-ental
-> > > conflict with TAO (Cc'ed Yu Zhao), which has been part of the Android=
- common
-> > > kernel. In this scenario, folios in the virtual zone won=E2=80=99t be=
- split in
-> > > split_folio(). Instead, the large folio migrates into nr_pages small =
-folios.
-> > >
-> > > Thus, the best-case scenario would be:
-> > >
-> > > mTHP -> migrate to small folios in split_folio() -> move small folios=
- to
-> > > dst_addr
-> > >
-> > > While this works, it negates the performance benefits of
-> > > userfaultfd_move(), as it introduces two PTE operations (migration in
-> > > split_folio() and move in userfaultfd_move() while retry), nr_pages m=
-emory
-> > > allocations, and still requires one memcpy(). This could end up
-> > > performing even worse than userfaultfd_copy(), I guess.
-> > >
-> > > The worst-case scenario would be failing to allocate small folios in
-> > > split_folio(), then userfaultfd_move() might return -ENOMEM?
-> > >
-> > > Given these issues, I strongly recommend that ART hold off on upgradi=
-ng
-> > > to userfaultfd_move() until these problems are fully understood and
-> > > resolved. Otherwise, we=E2=80=99re in for a rough ride!
-> >
-> > At the moment, ART GC doesn't work taking mTHP into consideration. We
-> > don't try to be careful in userspace to be large-page aligned or
-> > anything. Also, the MOVE ioctl implementation works either on
-> > huge-pages or on normal pages. IIUC, it can't handle mTHP large pages
-> > as a whole. But that's true for other userfaultfd ioctls as well. If
-> > we were to continue using COPY, it's not that it's in any way more
-> > friendly to mTHP than MOVE. In fact, that's one of the reasons I'm
-> > considering making the ART heap NO_HUGEPAGE to avoid the need for
-> > folio-split entirely.
->
-> Disabling mTHP is one way to avoid potential bugs. However, as long as
-> UFFDIO_MOVE is available, we can=E2=80=99t prevent others, aside from ART=
- GC,
-> from using it, right? So, we still need to address these issues with mTHP=
-.
->
-> If a trend-following Android app discovers the UFFDIO_MOVE API, it might
-> use it, and it may not necessarily know to disable hugepages. Doesn=E2=80=
-=99t that
-> pose a risk?
->
-I absolutely agree that these issues need to be addressed.
-Particularly the correctness bugs must be resolved at the earliest
-possible.
+> Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+> Reviewed-by: Peng Fan <peng.fan@nxp.com>
 
-I was just trying to answer your question as to why we want to use it,
-now that it is available, instead of continuing with COPY ioctl. As
-and when MOVE ioctl will start handling mTHP efficiently, I will make
-the required changes in the userspace to leverage mTHP benefits.
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
-> >
-> > Furthermore, there are few cases in which COPY ioctl's overhead just
-> > doesn't make sense for ART GC. So starting to use MOVE ioctl is the
-> > right thing to do.
-> >
-> > What we need eventually to gain mTHP benefits is both MOVE ioctl to
-> > support large-page migration as well as GC code in userspace to work
-> > with mTHP in mind.
-> > >
-> > > >
-> > > > > For now, a quick solution
-> > > > > is to return -EBUSY.
-> > > > > I'd like to see others' opinions on whether a full fix is worth
-> > > > > pursuing.
-> > > > >
-> > > > > For anyone interested in reproducing it, the a.out test program i=
-s
-> > > > > as below,
-> > > > >
-> > > > >  #define _GNU_SOURCE
-> > > > >  #include <stdio.h>
-> > > > >  #include <stdlib.h>
-> > > > >  #include <string.h>
-> > > > >  #include <sys/mman.h>
-> > > > >  #include <sys/ioctl.h>
-> > > > >  #include <sys/syscall.h>
-> > > > >  #include <linux/userfaultfd.h>
-> > > > >  #include <fcntl.h>
-> > > > >  #include <pthread.h>
-> > > > >  #include <unistd.h>
-> > > > >  #include <poll.h>
-> > > > >  #include <errno.h>
-> > > > >
-> > > > >  #define PAGE_SIZE 4096
-> > > > >  #define REGION_SIZE (512 * 1024)
-> > > > >
-> > > > >  #ifndef UFFDIO_MOVE
-> > > > >  struct uffdio_move {
-> > > > >      __u64 dst;
-> > > > >      __u64 src;
-> > > > >      __u64 len;
-> > > > >      #define UFFDIO_MOVE_MODE_DONTWAKE        ((__u64)1<<0)
-> > > > >      #define UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES ((__u64)1<<1)
-> > > > >      __u64 mode;
-> > > > >      __s64 move;
-> > > > >  };
-> > > > >  #define _UFFDIO_MOVE  (0x05)
-> > > > >  #define UFFDIO_MOVE   _IOWR(UFFDIO, _UFFDIO_MOVE, struct uffdio_=
-move)
-> > > > >  #endif
-> > > > >
-> > > > >  void *src, *dst;
-> > > > >  int uffd;
-> > > > >
-> > > > >  void *madvise_thread(void *arg) {
-> > > > >      if (madvise(src, REGION_SIZE, MADV_PAGEOUT) =3D=3D -1) {
-> > > > >          perror("madvise MADV_PAGEOUT");
-> > > > >      }
-> > > > >      return NULL;
-> > > > >  }
-> > > > >
-> > > > >  void *fault_handler_thread(void *arg) {
-> > > > >      struct uffd_msg msg;
-> > > > >      struct uffdio_move move;
-> > > > >      struct pollfd pollfd =3D { .fd =3D uffd, .events =3D POLLIN =
-};
-> > > > >
-> > > > >      pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
-> > > > >      pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, NULL);
-> > > > >
-> > > > >      while (1) {
-> > > > >          if (poll(&pollfd, 1, -1) =3D=3D -1) {
-> > > > >              perror("poll");
-> > > > >              exit(EXIT_FAILURE);
-> > > > >          }
-> > > > >
-> > > > >          if (read(uffd, &msg, sizeof(msg)) <=3D 0) {
-> > > > >              perror("read");
-> > > > >              exit(EXIT_FAILURE);
-> > > > >          }
-> > > > >
-> > > > >          if (msg.event !=3D UFFD_EVENT_PAGEFAULT) {
-> > > > >              fprintf(stderr, "Unexpected event\n");
-> > > > >              exit(EXIT_FAILURE);
-> > > > >          }
-> > > > >
-> > > > >          move.src =3D (unsigned long)src + (msg.arg.pagefault.add=
-ress - (unsigned long)dst);
-> > > > >          move.dst =3D msg.arg.pagefault.address & ~(PAGE_SIZE - 1=
-);
-> > > > >          move.len =3D PAGE_SIZE;
-> > > > >          move.mode =3D 0;
-> > > > >
-> > > > >          if (ioctl(uffd, UFFDIO_MOVE, &move) =3D=3D -1) {
-> > > > >              perror("UFFDIO_MOVE");
-> > > > >              exit(EXIT_FAILURE);
-> > > > >          }
-> > > > >      }
-> > > > >      return NULL;
-> > > > >  }
-> > > > >
-> > > > >  int main() {
-> > > > >  again:
-> > > > >      pthread_t thr, madv_thr;
-> > > > >      struct uffdio_api uffdio_api =3D { .api =3D UFFD_API, .featu=
-res =3D 0 };
-> > > > >      struct uffdio_register uffdio_register;
-> > > > >
-> > > > >      src =3D mmap(NULL, REGION_SIZE, PROT_READ | PROT_WRITE, MAP_=
-PRIVATE | MAP_ANONYMOUS, -1, 0);
-> > > > >      if (src =3D=3D MAP_FAILED) {
-> > > > >          perror("mmap src");
-> > > > >          exit(EXIT_FAILURE);
-> > > > >      }
-> > > > >      memset(src, 1, REGION_SIZE);
-> > > > >
-> > > > >      dst =3D mmap(NULL, REGION_SIZE, PROT_READ | PROT_WRITE, MAP_=
-PRIVATE | MAP_ANONYMOUS, -1, 0);
-> > > > >      if (dst =3D=3D MAP_FAILED) {
-> > > > >          perror("mmap dst");
-> > > > >          exit(EXIT_FAILURE);
-> > > > >      }
-> > > > >
-> > > > >      uffd =3D syscall(SYS_userfaultfd, O_CLOEXEC | O_NONBLOCK);
-> > > > >      if (uffd =3D=3D -1) {
-> > > > >          perror("userfaultfd");
-> > > > >          exit(EXIT_FAILURE);
-> > > > >      }
-> > > > >
-> > > > >      if (ioctl(uffd, UFFDIO_API, &uffdio_api) =3D=3D -1) {
-> > > > >          perror("UFFDIO_API");
-> > > > >          exit(EXIT_FAILURE);
-> > > > >      }
-> > > > >
-> > > > >      uffdio_register.range.start =3D (unsigned long)dst;
-> > > > >      uffdio_register.range.len =3D REGION_SIZE;
-> > > > >      uffdio_register.mode =3D UFFDIO_REGISTER_MODE_MISSING;
-> > > > >
-> > > > >      if (ioctl(uffd, UFFDIO_REGISTER, &uffdio_register) =3D=3D -1=
-) {
-> > > > >          perror("UFFDIO_REGISTER");
-> > > > >          exit(EXIT_FAILURE);
-> > > > >      }
-> > > > >
-> > > > >      if (pthread_create(&madv_thr, NULL, madvise_thread, NULL) !=
-=3D 0) {
-> > > > >          perror("pthread_create madvise_thread");
-> > > > >          exit(EXIT_FAILURE);
-> > > > >      }
-> > > > >
-> > > > >      if (pthread_create(&thr, NULL, fault_handler_thread, NULL) !=
-=3D 0) {
-> > > > >          perror("pthread_create fault_handler_thread");
-> > > > >          exit(EXIT_FAILURE);
-> > > > >      }
-> > > > >
-> > > > >      for (size_t i =3D 0; i < REGION_SIZE; i +=3D PAGE_SIZE) {
-> > > > >          char val =3D ((char *)dst)[i];
-> > > > >          printf("Accessing dst at offset %zu, value: %d\n", i, va=
-l);
-> > > > >      }
-> > > > >
-> > > > >      pthread_join(madv_thr, NULL);
-> > > > >      pthread_cancel(thr);
-> > > > >      pthread_join(thr, NULL);
-> > > > >
-> > > > >      munmap(src, REGION_SIZE);
-> > > > >      munmap(dst, REGION_SIZE);
-> > > > >      close(uffd);
-> > > > >      goto again;
-> > > > >      return 0;
-> > > > >  }
-> > > > >
-> > > > > As long as you enable mTHP (which likely increases the residency
-> > > > > time of swapcache), you can reproduce the issue within a few
-> > > > > seconds. But I guess the same race condition also exists with
-> > > > > small folios.
-> > > > >
-> > > > > Fixes: adef440691bab ("userfaultfd: UFFDIO_MOVE uABI")
-> > > > > Cc: Andrea Arcangeli <aarcange@redhat.com>
-> > > > > Cc: Suren Baghdasaryan <surenb@google.com>
-> > > > > Cc: Al Viro <viro@zeniv.linux.org.uk>
-> > > > > Cc: Axel Rasmussen <axelrasmussen@google.com>
-> > > > > Cc: Brian Geffon <bgeffon@google.com>
-> > > > > Cc: Christian Brauner <brauner@kernel.org>
-> > > > > Cc: David Hildenbrand <david@redhat.com>
-> > > > > Cc: Hugh Dickins <hughd@google.com>
-> > > > > Cc: Jann Horn <jannh@google.com>
-> > > > > Cc: Kalesh Singh <kaleshsingh@google.com>
-> > > > > Cc: Liam R. Howlett <Liam.Howlett@oracle.com>
-> > > > > Cc: Lokesh Gidra <lokeshgidra@google.com>
-> > > > > Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
-> > > > > Cc: Michal Hocko <mhocko@suse.com>
-> > > > > Cc: Mike Rapoport (IBM) <rppt@kernel.org>
-> > > > > Cc: Nicolas Geoffray <ngeoffray@google.com>
-> > > > > Cc: Peter Xu <peterx@redhat.com>
-> > > > > Cc: Ryan Roberts <ryan.roberts@arm.com>
-> > > > > Cc: Shuah Khan <shuah@kernel.org>
-> > > > > Cc: ZhangPeng <zhangpeng362@huawei.com>
-> > > > > Signed-off-by: Barry Song <v-songbaohua@oppo.com>
-> > > > > ---
-> > > > >  mm/userfaultfd.c | 11 +++++++++++
-> > > > >  1 file changed, 11 insertions(+)
-> > > > >
-> > > > > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-> > > > > index 867898c4e30b..34cf1c8c725d 100644
-> > > > > --- a/mm/userfaultfd.c
-> > > > > +++ b/mm/userfaultfd.c
-> > > > > @@ -18,6 +18,7 @@
-> > > > >  #include <asm/tlbflush.h>
-> > > > >  #include <asm/tlb.h>
-> > > > >  #include "internal.h"
-> > > > > +#include "swap.h"
-> > > > >
-> > > > >  static __always_inline
-> > > > >  bool validate_dst_vma(struct vm_area_struct *dst_vma, unsigned l=
-ong dst_end)
-> > > > > @@ -1079,9 +1080,19 @@ static int move_swap_pte(struct mm_struct =
-*mm,
-> > > > >                          pmd_t *dst_pmd, pmd_t dst_pmdval,
-> > > > >                          spinlock_t *dst_ptl, spinlock_t *src_ptl=
-)
-> > > > >  {
-> > > > > +       struct folio *folio;
-> > > > > +       swp_entry_t entry;
-> > > > > +
-> > > > >         if (!pte_swp_exclusive(orig_src_pte))
-> > > > >                 return -EBUSY;
-> > > > >
-> > > >
-> > > > Would be helpful to add a comment explaining that this is the case
-> > > > when the folio is in the swap cache.
-> > > >
-> > > > > +       entry =3D pte_to_swp_entry(orig_src_pte);
-> > > > > +       folio =3D filemap_get_folio(swap_address_space(entry), sw=
-ap_cache_index(entry));
-> > > > > +       if (!IS_ERR(folio)) {
-> > > > > +               folio_put(folio);
-> > > > > +               return -EBUSY;
-> > > > > +       }
-> > > > > +
-> > > > >         double_pt_lock(dst_ptl, src_ptl);
-> > > > >
-> > > > >         if (!is_pte_pages_stable(dst_pte, src_pte, orig_dst_pte, =
-orig_src_pte,
-> > > > > --
-> > > > > 2.39.3 (Apple Git-146)
-> > > > >
-> > >
+> ---
+>  drivers/remoteproc/imx_dsp_rproc.c | 25 +++++++++++++++++--------
+>  drivers/remoteproc/imx_rproc.h     |  2 ++
+>  2 files changed, 19 insertions(+), 8 deletions(-)
 >
-> Thanks
-> Barry
+> diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
+> index ea5024919c2f..631563e4f86d 100644
+> --- a/drivers/remoteproc/imx_dsp_rproc.c
+> +++ b/drivers/remoteproc/imx_dsp_rproc.c
+> @@ -19,6 +19,7 @@
+>  #include <linux/pm_runtime.h>
+>  #include <linux/regmap.h>
+>  #include <linux/remoteproc.h>
+> +#include <linux/reset.h>
+>  #include <linux/slab.h>
+>
+>  #include "imx_rproc.h"
+> @@ -111,6 +112,7 @@ enum imx_dsp_rp_mbox_messages {
+>   */
+>  struct imx_dsp_rproc {
+>  	struct regmap				*regmap;
+> +	struct reset_control			*reset;
+>  	struct rproc				*rproc;
+>  	const struct imx_dsp_rproc_dcfg		*dsp_dcfg;
+>  	struct clk_bulk_data			clks[DSP_RPROC_CLK_MAX];
+> @@ -192,9 +194,7 @@ static int imx8mp_dsp_reset(struct imx_dsp_rproc *priv)
+>  	/* Keep reset asserted for 10 cycles */
+>  	usleep_range(1, 2);
+>
+> -	regmap_update_bits(priv->regmap, IMX8M_AudioDSP_REG2,
+> -			   IMX8M_AudioDSP_REG2_RUNSTALL,
+> -			   IMX8M_AudioDSP_REG2_RUNSTALL);
+> +	reset_control_assert(priv->reset);
+>
+>  	/* Take the DSP out of reset and keep stalled for FW loading */
+>  	pwrctl = readl(dap + IMX8M_DAP_PWRCTL);
+> @@ -231,13 +231,9 @@ static int imx8ulp_dsp_reset(struct imx_dsp_rproc *priv)
+>
+>  /* Specific configuration for i.MX8MP */
+>  static const struct imx_rproc_dcfg dsp_rproc_cfg_imx8mp = {
+> -	.src_reg	= IMX8M_AudioDSP_REG2,
+> -	.src_mask	= IMX8M_AudioDSP_REG2_RUNSTALL,
+> -	.src_start	= 0,
+> -	.src_stop	= IMX8M_AudioDSP_REG2_RUNSTALL,
+>  	.att		= imx_dsp_rproc_att_imx8mp,
+>  	.att_size	= ARRAY_SIZE(imx_dsp_rproc_att_imx8mp),
+> -	.method		= IMX_RPROC_MMIO,
+> +	.method		= IMX_RPROC_RESET_CONTROLLER,
+>  };
+>
+>  static const struct imx_dsp_rproc_dcfg imx_dsp_rproc_cfg_imx8mp = {
+> @@ -329,6 +325,9 @@ static int imx_dsp_rproc_start(struct rproc *rproc)
+>  					  true,
+>  					  rproc->bootaddr);
+>  		break;
+> +	case IMX_RPROC_RESET_CONTROLLER:
+> +		ret = reset_control_deassert(priv->reset);
+> +		break;
+>  	default:
+>  		return -EOPNOTSUPP;
+>  	}
+> @@ -369,6 +368,9 @@ static int imx_dsp_rproc_stop(struct rproc *rproc)
+>  					  false,
+>  					  rproc->bootaddr);
+>  		break;
+> +	case IMX_RPROC_RESET_CONTROLLER:
+> +		ret = reset_control_assert(priv->reset);
+> +		break;
+>  	default:
+>  		return -EOPNOTSUPP;
+>  	}
+> @@ -995,6 +997,13 @@ static int imx_dsp_rproc_detect_mode(struct imx_dsp_rproc *priv)
+>
+>  		priv->regmap = regmap;
+>  		break;
+> +	case IMX_RPROC_RESET_CONTROLLER:
+> +		priv->reset = devm_reset_control_get_exclusive(dev, NULL);
+> +		if (IS_ERR(priv->reset)) {
+> +			dev_err(dev, "Failed to get DSP reset control\n");
+> +			return PTR_ERR(priv->reset);
+> +		}
+> +		break;
+>  	default:
+>  		ret = -EOPNOTSUPP;
+>  		break;
+> diff --git a/drivers/remoteproc/imx_rproc.h b/drivers/remoteproc/imx_rproc.h
+> index 17a7d051c531..cfd38d37e146 100644
+> --- a/drivers/remoteproc/imx_rproc.h
+> +++ b/drivers/remoteproc/imx_rproc.h
+> @@ -24,6 +24,8 @@ enum imx_rproc_method {
+>  	IMX_RPROC_SMC,
+>  	/* Through System Control Unit API */
+>  	IMX_RPROC_SCU_API,
+> +	/* Through Reset Controller API */
+> +	IMX_RPROC_RESET_CONTROLLER,
+>  };
+>
+>  /* dcfg flags */
+> --
+> 2.25.1
+>
 
