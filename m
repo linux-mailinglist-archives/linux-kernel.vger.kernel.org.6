@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-521604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 447DFA3BFD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:26:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0907A3BFE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:27:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DD233AE8AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:25:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE79A173CC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:26:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E611E8323;
-	Wed, 19 Feb 2025 13:25:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0218F1EEA54;
+	Wed, 19 Feb 2025 13:25:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="I3DA9XkE"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2076.outbound.protection.outlook.com [40.107.20.76])
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="Q3HCftJf"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2040.outbound.protection.outlook.com [40.107.20.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FDE21E5B90;
-	Wed, 19 Feb 2025 13:25:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 105331EB5CF;
+	Wed, 19 Feb 2025 13:25:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.40
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739971512; cv=fail; b=CDqLPKEv6bin8hHwNj1E2FOvAgg4REiiybG3GNndbdf8lkViAyTEFWoyWRQFBRbqBVADeXVvwNO7V83qu0RkpJv6ZmbnM+Y7NrdOvpLuDhQGi8LPaGgXazumCDZBNjnPIl6J3syOV1d87TZFJJSqYjxl8QAt0mcWca8qRL3fYXo=
+	t=1739971517; cv=fail; b=eSH1BilN3KiTt4TeTw4Yr70NHijRUYcWPKNMEHB9kq9v6gUnen9UWXAagAbAHJREeG21VYPqCgv51crShF2sTQN7qbai5avS+9W7fzQ1j2IffaqKYN0MjqXhMAfEyd4uN0ifZfo8LBp8hpjgTuszhhIONo9MJgD5AzFt3fO+KiI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739971512; c=relaxed/simple;
-	bh=VFZfnHjb8CjNF1WZF0jTQTAOh8wy34GjoxnyRQ8L/wQ=;
+	s=arc-20240116; t=1739971517; c=relaxed/simple;
+	bh=xIgw2+eL8ODswzKm6W5fB/BXnzUktpNZoWPzfbe1qTs=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=nTOwp8IGYTJjZzAE2fYJIGYcQj86lb3m2P6AWMK1J035q7wpjhRUOPJcsARZArg5mqNLeU6CUeSHmNOcPHZO8gEExpjeBBxP0ThupjJSeS5T4eSYPFoX49MxurVcUIOg8oQr9m2l+cItcz2Km8L+JKUOww5rJm2is0DH0jCIxuU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=I3DA9XkE; arc=fail smtp.client-ip=40.107.20.76
+	 Content-Type:MIME-Version; b=i1lfHWUGwlfTxEhVVqp3s922bjib0V+CKIsvTw5P3icvAxgcEv8Rd/gr8PtgwJTLRrHVxAWwbs0dzyVK/PEM+kQfCxBW/69R+35p2UjQSsII0jV0l5sNvM1X6hal6eYk3gb/pRFBz5rOV4WYs1r1ybDRQ5SDDp+WDZbhLz8URro=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=Q3HCftJf; arc=fail smtp.client-ip=40.107.20.40
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=B7O0Uiol5lmOXimUAj8iStbnZPWtWRhDwZVtMvrWJHU+t6fW+P4bdVJxpj+M8gqSVlE+UTXqzBCekiqiPkI5sY+7VSO2jU/HTs5RERc3gLuRYdCWTOfoc/Wo9+uAVKu0ZBZC0TW2wMCBkNQlfhDOqjILuo6xPP27y9Rmzs0qeiaC7xkIln8kb37hy7+C1y3iYimu1TzTgx4EECUlQrq9r4lYS/16yoQUzXIPv2pK2bi1N98JnQksP+KtPVw2OmN8UTpmJD2cALr0J4KksTpMSw2u6msBtQaVxxPuM4SUC0Kdjpoxj6ju5TJ0xB99QJPDo4ef4kH0O1Ui0VLbkDo/qA==
+ b=G3fYUKxmlAmonPWIeAdMzw3sOOUvuSAOeJLR6foKyk85kApIPGRk9roFiOBdMhbpvd4T30c123nHOjyM0yAHHxuYg378pnPAddghBF/igt8WyBQ/Cem8Do5WEtDFpekSqhGbEMmOI2jdaXnkgEMdpSPN1rysmeflS1136iWZ4FulAxvDHYsXon7/4Bc+169OT9gGL+ZKjQBUgGLDS9E7PJuLQwgtuNbUiz+OTFW0wojs7TC71igC+KWdcMTdEqOZBPbdjO1lCRsGILRFyIo9FR9cOok2KJoeainR8YwBs9l4wj5Qr+SYwDxc/ghKeLG5XQN19fJcmR5pGQ+QcrPDeA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=a6osgqR47X1FSReNJfAwrFn0LJiEUyimjeR1zsSJlmU=;
- b=lBzeC2tov3QDqavW6hHCOIyFwVjoQzr80NJpEjhf0iXlpHT0DV8M7PB2TWwjJMRTKdVKV0XE1l8z8hL9eD9NFPpXJFbIdDSFSRN5syNBAB6IFy8Ja9s7HMSmCvX/JUEj2y/9ImZoHhthL+71pxtrT01DmdzNwmhhePeQ0NSfjygID8bKd/VMnWooNsmXaNcxrTfjZUM4oKcLoDY7Jq0sWJXBMbWqcQruiOgZqQyEUbgSaCSuY847HOxxvKXH9SflLqq/bx2RGccyh0wBS1jNNKjQVxASNAFN4c2Q74vCJB4TtuHvntqp6P+Zce8kOJOWoZYe3HdZGIzGhoNXpEitpA==
+ bh=N/XGQLfUCI0PztX2Lwl607VDPtxV3dWv1OLmp4kurYw=;
+ b=y6AI11JpLXei+2bO9c6G1afCd7MBjRODS9mJGun7xpk86MyHZh0Y4iPd5uVuBYUSQEbZIW20fijS0lVaayBXljUTVnah9DzPj/iJoRpYt1HEIQmRIak7eJgqhubv4UpJ2W/uNg9Ia/Lo+aF9kZEg0RSqz89CPm5hFOFlR1MYmyTxaQwf9ivTvi29fFfn4VKnjSJDtz9zmeyoeShUNVqsMHOtnsxnX0eunx9ohxKXbT/zMxG0YUiMGXgIClG0+oZfzqlByGvxZvoN/s0ZKRuQMlie8lYwgOtcrSft081NBUD5CuaXaJj362yo7bHFH9T0+ZHSIVxlz3Xb7vtaRjrE7A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
  dkim=pass header.d=oss.nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
  s=selector1-NXP1-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=a6osgqR47X1FSReNJfAwrFn0LJiEUyimjeR1zsSJlmU=;
- b=I3DA9XkE/BNSU9vm0jfTQt6rimBtC93WzKvQw6kRfFYZzOFCEiqolRqxyZiw9mf+8z/axj922Gj30t2D9LZv/zEFxanlgILX3/PDuZ/An28xT9WDISzYZtqDrrkkHZBWNQbAcrA8qQgx55VA48sFKW8R7G/z+hroNF56Wl8b9uxOstF9LatfL+IGBKT2hb5+dWmclOLwNaLeltdHnLVGyd3fGvxtJS05J0tF6E7hwmu1XvRa1iLL3Hzwm4G3M0tdTmeAajc43GlzKj8qDhhXxql3RMyfMdCFFG98RARZpcH0FL/hLdZBVG12HIPi6WUrSv4W7nockRHkD3QnfNkGKg==
+ bh=N/XGQLfUCI0PztX2Lwl607VDPtxV3dWv1OLmp4kurYw=;
+ b=Q3HCftJfGlo7EzWzHh39eJfXWto4vyzEQwxf658QnxRiFsVRSZNscOnDxa/0LxJ4VWaBllMCQXzOH7w3DMOP7Fc1fuaHyWF+BSMH0T6JxtmmfcIeG/tx4JHQjiedw4P47JJiJmmCUGMaEG4v3fOd2AHgdl3+k1FYlfmJealu45F0+35G+AD7t5b11ZTwclmzt0eOnwwQ5rXkpX7AqR+CjTTNF8eIm08JtMfO3Y65M6/VfHj9VcYZTgNrlsrflmK3+GNe1l7+VUllT4fDGPqrvCXHagkN0gXPaTogPpB6OGBkB2/es1nod1Ob2aSPghorRgHFTNObVPfaw9FEPnt5iQ==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=oss.nxp.com;
 Received: from DU7PR04MB11163.eurprd04.prod.outlook.com (2603:10a6:10:5b3::14)
  by PA1PR04MB10841.eurprd04.prod.outlook.com (2603:10a6:102:487::17) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8422.19; Wed, 19 Feb
- 2025 13:25:07 +0000
+ 2025 13:25:12 +0000
 Received: from DU7PR04MB11163.eurprd04.prod.outlook.com
  ([fe80::3a74:80e4:4144:62db]) by DU7PR04MB11163.eurprd04.prod.outlook.com
  ([fe80::3a74:80e4:4144:62db%2]) with mapi id 15.20.8398.021; Wed, 19 Feb 2025
- 13:25:07 +0000
+ 13:25:12 +0000
 From: florin.leotescu@oss.nxp.com
 To: Jean Delvare <jdelvare@suse.com>,
 	Guenter Roeck <linux@roeck-us.net>,
@@ -71,16 +71,16 @@ Cc: viorel.suman@nxp.com,
 	linux-arm-kernel@lists.infradead.org,
 	imx@lists.linux.dev,
 	Florin Leotescu <florin.leotescu@nxp.com>
-Subject: [PATCH v2 2/3] hwmon: emc2305: Add device tree support for polarity and pwm output
-Date: Wed, 19 Feb 2025 15:32:20 +0200
-Message-Id: <20250219133221.2641041-3-florin.leotescu@oss.nxp.com>
+Subject: [PATCH v2 3/3] dt-bindings: hwmon: emc2305: Add YAML binding documentation for emc2305 driver
+Date: Wed, 19 Feb 2025 15:32:21 +0200
+Message-Id: <20250219133221.2641041-4-florin.leotescu@oss.nxp.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250219133221.2641041-1-florin.leotescu@oss.nxp.com>
 References: <20250219133221.2641041-1-florin.leotescu@oss.nxp.com>
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BLAPR03CA0099.namprd03.prod.outlook.com
- (2603:10b6:208:32a::14) To DU7PR04MB11163.eurprd04.prod.outlook.com
+X-ClientProxiedBy: MN2PR08CA0011.namprd08.prod.outlook.com
+ (2603:10b6:208:239::16) To DU7PR04MB11163.eurprd04.prod.outlook.com
  (2603:10a6:10:5b3::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -91,144 +91,194 @@ MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: DU7PR04MB11163:EE_|PA1PR04MB10841:EE_
-X-MS-Office365-Filtering-Correlation-Id: 13a2e8a0-07d5-40ee-b176-08dd50e8d3c9
+X-MS-Office365-Filtering-Correlation-Id: c5fe2077-734c-4074-e1d9-08dd50e8d6b4
 X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
 X-Microsoft-Antispam-Message-Info:
-	=?iso-8859-1?Q?5769OmXFfVWjP53/xQJ0YYlsGYc9/5nvKgZczfMve9i0b3H1IqavMRx16t?=
- =?iso-8859-1?Q?6bZAA2PwahqicHvas5Kh4egpSGUvpJpklYwLZ20F/VDvOhkyBHI3fZxPuI?=
- =?iso-8859-1?Q?fvh38r88nkpNfVFokfwzpiHZTvIJNyhtNIcK5ei2FpvMGnK07Y10ciyPLA?=
- =?iso-8859-1?Q?ATpcSueGPjflrZw/q+upOj5kOUltPMZKVfWfmoVOCqOUL2ffSM24+OC66u?=
- =?iso-8859-1?Q?Eaj/V19oAEgG8eS7pr8UXJEdd7e5k8h7Kha51K6wc1J6O1xcPB6+5qea/r?=
- =?iso-8859-1?Q?fW+gQrsDeN8OyUI1TBjCaEoeXXxwGXVihIzIrTeCde+hLEnvuJbGwkdA6O?=
- =?iso-8859-1?Q?Hoe6YcHcfy1IDdI1g6J5pFYvE7w6ZA8Pa1KlyLbUI7EQrpPB2UL0xpOYMM?=
- =?iso-8859-1?Q?IOHsY5sCojYp51iz4c04kRBrWUxr796h5cpv8p4oEV9KAECoyPYU9Tb1CX?=
- =?iso-8859-1?Q?rfDTOYaK3PgE9nu6wxP8QEWNBVSZ0TzfJqT7uS6XrUKvihpYvsk23zrhSW?=
- =?iso-8859-1?Q?odADjS/AQshogsB1bQGCFQ0Eg/9FdnAb+6TjuY1vbpDENapSd8dCby6L60?=
- =?iso-8859-1?Q?46UecawXCcdWpVpZqCMYers7N27HikDf5KgyxZrziwfnaSUNeZb7BwYb8z?=
- =?iso-8859-1?Q?5h05FD/tF0rzCFnOUoIfn5ITStnAaUnYF1jR0ssPrQItoIjAW/2mm0xQqW?=
- =?iso-8859-1?Q?8Y3hEBmhBIU5IDQ5eqVKZTPAhSqf5Y3D5cGlToPosSbsSlgzNZzVZMYZYL?=
- =?iso-8859-1?Q?n3HViwERpAMSTiaAzBrq03kl0Cl31YI8vi+gA3sSgQZJcjQObltDQjCG5u?=
- =?iso-8859-1?Q?OKhAqOcGfPYAxxbQvbEmVTuPNIVeLhwf8tg6NNjH2WNj1deJCmVFUYdYp6?=
- =?iso-8859-1?Q?EvqvWX3ov3LfM4M8Xp3nI4tisGmOWmI2xG3QWO9Wn7mwVG54qGyv+FNVtv?=
- =?iso-8859-1?Q?Az+tO6luS+IpbsyuXdwEW8CeYCDwce3uD2jG3ogh6S3ZC4+Y1XT6qO6LJt?=
- =?iso-8859-1?Q?gmSldJTZ9lSshZ8b9KTSRiL9DGdSyYcBmv8+CdIbw9I6YYugXNo2S3MIG7?=
- =?iso-8859-1?Q?1exiJcEHCjt3tcK/BiqyhNKlupgviGHqz2yzXLb/69NSlMEhbXAYhBbYt3?=
- =?iso-8859-1?Q?lcPNbIeAmoTWojWP5lC/divhSL9YDzcfXoIglbkfl5bxk4tj6l+ger//a6?=
- =?iso-8859-1?Q?YaB7l9arpzrzPliVwZ9eC+VemD95bqWurzam4pPr3cwee0CaXLTbBq1/v7?=
- =?iso-8859-1?Q?jvjsDLUCReJb74HW6RuA9fJdLwruKIu8uvGHDiauWJ2TJPOJN8/A8p2e5T?=
- =?iso-8859-1?Q?bB7SjlQXbY2UlNyZjI5gySqZSZ+fu5JgbLN6wUDKXKN5JwXx9esdu98ANX?=
- =?iso-8859-1?Q?VhOhpS0n13LpQsVte98V95l3hydvTBl0sr34rk1gI4xBv1uCwwYr+gPz74?=
- =?iso-8859-1?Q?9ZVlt7Cbabib72lY?=
+	=?iso-8859-1?Q?5wLe5bmSU8WbWuJ/CpsulhpnZoajP8tqYrWCxPrzlMJGDf98cP1JLp23MH?=
+ =?iso-8859-1?Q?UDj5pAZMNFOSsxIxReExpVmHe9nuMmeRn9Djy4bqx/if4qH2dyaPpmued5?=
+ =?iso-8859-1?Q?xqNAd7PLmUxAyihrx97qvcvCIDFIg9XKIFDWKWDE/kPQ2AZVZY9WGR4Tki?=
+ =?iso-8859-1?Q?6uOq5QRnvkk7t5Ey+Z74HA0qG5BDgYgwuYkAAecY40cj83a8quQS86kBZU?=
+ =?iso-8859-1?Q?P8LsmDaJbL8Pj7VMTC/+5NCqBdUDFLvdM+cj2voc2AJnuhEGeSE5Vop0sD?=
+ =?iso-8859-1?Q?Mv2u5HzrIO7Y5o4Bs7U1Ie7iSurFx8vak7dBurL7zHUoJxaBS2bFmJ0Ic4?=
+ =?iso-8859-1?Q?gwS4u3U415ThyEgxr19jgg+lYHV2V598qkT//c1oYhAIAaM08M0DKfi1Xo?=
+ =?iso-8859-1?Q?px+VtInAR7zvBJp6i2QvvBEFibUDJ1++bwD9pDhg2eIOQp9ZNZnh2n+PtE?=
+ =?iso-8859-1?Q?9f5+usC/2Kavz7qkM9Z5G3rjq8fXNVECl6owFS0j/aSUVRusDcS6TFQugi?=
+ =?iso-8859-1?Q?HoCeUrkBCrQRnbkBNIdYjlqSQaG/mYYZ+gWtGKH5WvxbpD4vXMP02T0ya2?=
+ =?iso-8859-1?Q?KFDeDQn2sxKHoXGpMS2hix7dcd21LxZBeDVG0of39v0JNdbw8CKpeBdU5F?=
+ =?iso-8859-1?Q?W1ufAGtJjQaA5YiP13wIozW2/HJ3mJV3XDePyy7g4Gw03MDeT4K6q3G6Q1?=
+ =?iso-8859-1?Q?Lvtoj5N5kPjbWSzUZvYxG4z1ZqtokKJBotisKupk4YZf+Zqyb+iHEjkolh?=
+ =?iso-8859-1?Q?9pBWm3X3bGubbQnmGsoMvmEdv0v+6048lxdXSb8VWCaIjZz5UF/RbusMGX?=
+ =?iso-8859-1?Q?DiKuwfHbv/BvnKqY1RyXYtMeLCKxP4NYErikUg+jHdnhUN79g4nZ+GItCg?=
+ =?iso-8859-1?Q?y3cBazkFnWgBklpmL+K75W6v9jBYCRgnpwVgwcZMbr2FmVTOz47IaAiGMC?=
+ =?iso-8859-1?Q?GpMr7//R6rsuPY0wzDkrYVzrXcXl8LbRHK/jc7/ujF0SkMf5I2QTMhKPRY?=
+ =?iso-8859-1?Q?klK9lT9eQ8aJKJuRhoDnc+PE4FZaPUeE8+Wyr6JtUqeSa1lfoXFxJjnpuB?=
+ =?iso-8859-1?Q?Ct7imjRYC+RYd27aIg9CHIwbL+pVyC1ZzJp/evkB1bnY/hUmCpotH0MCPo?=
+ =?iso-8859-1?Q?tDe3HnuamUZMxSRmdJzrbjHYdgT+iXqdYyLL5hgxWfrWKS4aTf3TKyoUeQ?=
+ =?iso-8859-1?Q?6cPExXthiDa+r8PZig+OdiU/DTf9lSLufwxIRDwkwxsskjsbgF9yZGhRmx?=
+ =?iso-8859-1?Q?nATyqnY3y96FvOm3g+/78+h/6CLJqDQbI4uTp1PckRmKHZJvCsPqLJe5qO?=
+ =?iso-8859-1?Q?OAUUixVdhwqGMHWT1wFQgdl/fATRrKLpJv7vrAY9G1ha2ivb/BytOF9G5G?=
+ =?iso-8859-1?Q?qtxgm2PBpQ?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU7PR04MB11163.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?iso-8859-1?Q?gFO6ZrW8byEL5XeAlODYR8LnuT/ZwFEOlhPDBlRDVRY6YMncqatYUdfUFv?=
- =?iso-8859-1?Q?8UUV/Ymm18Zv2QB7yB8iY5oG/xZ/jz1zrJjjsRx3/tUn2JD8nQhoBcSdt9?=
- =?iso-8859-1?Q?qacXbYCDdmWEmpmAGJ4LxUeAj45VGDdmiCXEYZ0q3U9zahxl466Vh3TaNe?=
- =?iso-8859-1?Q?GKBg8ksiC89+dCILRQX7lv3QldN4ZR9XdETBC/QRBypeMieS76Ig25waIT?=
- =?iso-8859-1?Q?a8L5OkzncCz2ta1yJVbHCOERxokJfCtmPE734HoznKXtSQ7Fa4LXvFNBiO?=
- =?iso-8859-1?Q?v6/AEgY/VVgN6/4nD5UEE3VLOGuSaCE6MZFqgwWJXlstsqnWfIjwMjaex7?=
- =?iso-8859-1?Q?MJqTzexv1HlADFxT6SBQ42I9EQpk/pngahP/axXesXeBJGE3X/ZkGiNGT2?=
- =?iso-8859-1?Q?KHQTq2X7c642V5AnglBaAvykTY6gwIBzNXUr0Swep1+Tp+kCs4uOJ3eFBe?=
- =?iso-8859-1?Q?qVDfeitQdo04bW6GqTGqbMfwLNtS7OXpxoS5iyTTbupm4GVSXmO+BdlAfP?=
- =?iso-8859-1?Q?YzuOx3EcQL9KZWnatQF/FDjIBa97k6hKHonrKgvUdd20pzHxttBSLeFQsx?=
- =?iso-8859-1?Q?z/A0Gwf1AjUwFDu+I42h0cypDr7UQWkyYUJ52PBkvZ6D56ynbpiF08BHSD?=
- =?iso-8859-1?Q?K5gjJwxL76KdTDQ9feUMouIPBwwfkNR+sT5z69vcXwF6lelhEh5wup3kAW?=
- =?iso-8859-1?Q?JVDgnbMDWo0688ZpB11d0AFSl+46qlrMVJ0zgNYnu9rW/gu4nBLjmXIozb?=
- =?iso-8859-1?Q?bKwroyCHkqpKti7YWaSlas44dB8k9S75TIFeKcfkO5L9Fgz0Zm6bDWZUer?=
- =?iso-8859-1?Q?Zb0CCZsw0LFSk93s2MfrTIjbScx2k/ViEWDQzG7rgOtraeXtZOlcNj6AzF?=
- =?iso-8859-1?Q?nJrbnzaV0mU+h9dJWQ6ELSjJfEJLyfGNRYL33oPZ2a8VHhU8M3wKO2YWYQ?=
- =?iso-8859-1?Q?2+P4rV85PIdbOJ1IvRiPrFtSfpqM0WPV0e6zQVOjGpUg5otoxGiMpC+DY7?=
- =?iso-8859-1?Q?b49yx2E58yh7MpWfupo7nglzd8x2rj7OPNKY5NdY0rZdjAS1uQLpqRM5Ab?=
- =?iso-8859-1?Q?y4PcRKNQeMrqZKk0V2HbMpKX0gKcVMqAgS0pa3WgqPpOsDVq8zXxpUE4k1?=
- =?iso-8859-1?Q?RmKxRFRTd1jngMprbj8YO4GsGpvAg+6qAdxwfuLl9gx0fx/MTkVNObeB1S?=
- =?iso-8859-1?Q?LYXDFxryukAA6RVdCIwL2pj6Sv+84nzxIQGtMAnl6dS1M9R1bqYbnKM3/A?=
- =?iso-8859-1?Q?dLenDjnqP4eXUY7vDOaWgXWmYNycSOomF2sT2+Qn+81HXAFOsvbM/Z385e?=
- =?iso-8859-1?Q?xFJwooKl9Tm6ryvBbxfLS2nyccHQX592rj5qlPgnGw0PhmJDJ1K2pbO5gy?=
- =?iso-8859-1?Q?V+FwsoElZcs5JviEVgHVUTzZS6JyJnR0E1rxvHmG/kropMQaeO8sgcW4/K?=
- =?iso-8859-1?Q?AHp9mrKryEzIojJoIP1la/CWWBQcsbNQL85vEsh/FsVBkJ8HnszstYJABS?=
- =?iso-8859-1?Q?18YCVbFsN1UcB/FZtzc4AV2hqS/L0Nlrgeh0eE4E543N/p7HuTPD8Goich?=
- =?iso-8859-1?Q?fOHEb7XlYWbxoW9ESfmH+LOzY9c15dNHT/7FSAcyP88YHvsu8vH8YUJsVp?=
- =?iso-8859-1?Q?MSsoP+aswjgCqJ0F8x/O6O3tc9IYeK9lg0R3tm9MYenxnQ84hyM89esw?=
+	=?iso-8859-1?Q?1OAiZWYpyNZO4ZD3fCv6Afq2Yfg7MyJrhaAS1b+l2toSUAmjVHy4WKh/N5?=
+ =?iso-8859-1?Q?kufY8Uv4xRNZIi+LjO1hq3l2X4fbfRp7ioYfZKielxoHXC4PgT8Kg2Ud0v?=
+ =?iso-8859-1?Q?FYf/s5l1+uhMT/VpYj9rAiYvduAHSxaG1jYMSiNFLOUOf1SUPHIY278igB?=
+ =?iso-8859-1?Q?VxeLs6oGhj1I60CE/s6s0rCj6jHRWxJLgj9sf0G7Hjeb3QZ5SSapQS5pQs?=
+ =?iso-8859-1?Q?R/+54jZ7JMCUTHOng/SseYde3Un8KqrA9pYj6Y+ir5g9CCdHXYrtyc2Riv?=
+ =?iso-8859-1?Q?3uQh7rUBa1ZCb9vIg5A1WKHzYIBj+BQUWtSmluGSAHgGqMdvIKFzIRi5RG?=
+ =?iso-8859-1?Q?p/VYKEFco0B150+ApQoRKD7kOIu90w1ZtszN5ptLuyCJlaJZMYZae5DWUd?=
+ =?iso-8859-1?Q?dTsKn891pvgBcXoeUWxGiUjDhUlQaSHESLn6MdJOIoFTlquqM+nOrEuoMX?=
+ =?iso-8859-1?Q?7E3Y0hg/P9DhiOIQmj1tr6kT1l4M19TZWcq9hSu38Bc7605+/l+0W+kij+?=
+ =?iso-8859-1?Q?y2j6OC80kcSjdLB/ifN6jK6og14HH0BZ+wEWydVcVC2HIA6PN56eyfzP1l?=
+ =?iso-8859-1?Q?eNhXueNNzXz7lieowx70Um0gNVmpu0ZT5/pJRh/GpivWnaysVrJ4LUjeps?=
+ =?iso-8859-1?Q?FPFVKTQFfE6QOrAZi3pdHhu5WPyKwipHldfO+Rb7jJWh17GcGJotWJmOvz?=
+ =?iso-8859-1?Q?TOcR6e/GaSFS/PVnwuoourCHYljo5LrmQm4z7iiUlwquhhFVaEfu8yq/ig?=
+ =?iso-8859-1?Q?qgJiSrSwhA+segBU+XN2wu6FbWZXgMqHb/etgiYbTy3h87E7Q1zQEI/D9w?=
+ =?iso-8859-1?Q?gYtt+/1gzBuXGqMvHQVEYcLjNZaHSuPt7uoosFIvV56wqNLG2I+Rm7oXs3?=
+ =?iso-8859-1?Q?+IUtRP0MDpjCygyju+xfCV7bphFq7TYbRkgrkp+eKTyu9t7MPyTvQc498k?=
+ =?iso-8859-1?Q?kdNstqx6AYBC/js1l/tgHSbpom0lK4O05k4nzF+mhlZht3X4DdcWaTPvrd?=
+ =?iso-8859-1?Q?HFH5PKR76nOeszqUI/1eztjB/D/NHMW7dUBYNz3Sk8akGakbirznP0awcG?=
+ =?iso-8859-1?Q?7c2Pz+2JLGT5Eapt3GYQBMmt8OO9mjSx7z2rUYtCYyBW3Xp0CzMJHSP4XO?=
+ =?iso-8859-1?Q?+QS+hDXUtmdeSO80vw1/fCwGOuMpHEg47L+Vj0+ziHPATLMB410Z/AqT54?=
+ =?iso-8859-1?Q?aq8b9GZ/i2dl5FvzyX3phj7vJq6wQd0A95A0+Uvv1EoWsHrXGQq8Aofg9X?=
+ =?iso-8859-1?Q?BD2lRkhSScuN57EUH9GHRiTQ9aoKAfLCXj6+Q75O08u5HeisTBqcWilmqT?=
+ =?iso-8859-1?Q?wuz7YfdNV+6pobeOmF0KoSLU8M2sQlNWnzwIAf/aDQmmbXCEn8E7yqPzVw?=
+ =?iso-8859-1?Q?thq2y5OOuk/cHlgc4yVA7pemEM6dW4om3krB0s+I1e5QU2ZMDK1FeheYNP?=
+ =?iso-8859-1?Q?oRh0SzIOIGQ84o2Qj1tvI2FVTModrunilb59AqJ4SUZLK98UZt4knbVF7U?=
+ =?iso-8859-1?Q?hVitziECbHHu1QcgRqIPQXORRiyDVzBiAIqpo4WGXcWxblW8CC+HpktWmv?=
+ =?iso-8859-1?Q?X79FBHJgphCnp9cZqmmp4EmI0D1UchQTQ+KIQ9vbw8pZssU9XAwyZt0sRx?=
+ =?iso-8859-1?Q?An4L0mDMrPh7S+CzEjinHp0eWCbZZGH2ZwDP91eaOVO8hsYwSZzCWZ5Q?=
  =?iso-8859-1?Q?=3D=3D?=
 X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 13a2e8a0-07d5-40ee-b176-08dd50e8d3c9
+X-MS-Exchange-CrossTenant-Network-Message-Id: c5fe2077-734c-4074-e1d9-08dd50e8d6b4
 X-MS-Exchange-CrossTenant-AuthSource: DU7PR04MB11163.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2025 13:25:07.3757
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2025 13:25:12.2572
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: wzTL8YIBScRsE3C5H+R/l8oJN3jdRVvWylO9LElWVWr3MVEBVUMdL/OPvjKxIH8VHBGW5aeetgnQflZTU57xAA==
+X-MS-Exchange-CrossTenant-UserPrincipalName: gN3bLgK1m6JUy4WKaL4kKZxxnw1oa+jhKnNS8WkuZeRDqYI3b9sxOrVOAsWfEvwAiXXTX7q7IpdZT4VbyTJbrg==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB10841
 
 From: Florin Leotescu <florin.leotescu@nxp.com>
 
-The patch enhances emc2305 driver by adding support for configuring
-pwm output and polarity via Device Tree properties.
+Add yaml-based Device Tree bindings documentation for emc2305 driver
+The file provides the necessary structure, configuration
+and other parameters for Device Tree definition.
 
 Signed-off-by: Florin Leotescu <florin.leotescu@nxp.com>
 ---
- drivers/hwmon/emc2305.c | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+ .../devicetree/bindings/hwmon/emc2305.yaml    | 95 +++++++++++++++++++
+ 1 file changed, 95 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/hwmon/emc2305.yaml
 
-diff --git a/drivers/hwmon/emc2305.c b/drivers/hwmon/emc2305.c
-index 5d8fb7526e23..e646221ab65d 100644
---- a/drivers/hwmon/emc2305.c
-+++ b/drivers/hwmon/emc2305.c
-@@ -23,6 +23,8 @@
- #define EMC2305_TACH_REGS_UNUSE_BITS	3
- #define EMC2305_TACH_CNT_MULTIPLIER	0x02
- #define EMC2305_TACH_RANGE_MIN		480
-+#define EMC2305_REG_DRIVE_PWM_OUT_CONFIG 0x2b
-+#define EMC2305_REG_POLARITY 0x2a
- 
- #define EMC2305_PWM_DUTY2STATE(duty, max_state, pwm_max) \
- 	DIV_ROUND_CLOSEST((duty) * (max_state), (pwm_max))
-@@ -523,6 +525,8 @@ static int emc2305_probe(struct i2c_client *client)
- 	int vendor;
- 	int ret;
- 	int i;
-+	int pwm_polarity;
-+	int pwm_output;
- 
- 	if (!i2c_check_functionality(adapter, I2C_FUNC_SMBUS_BYTE_DATA | I2C_FUNC_SMBUS_WORD_DATA))
- 		return -ENODEV;
-@@ -576,6 +580,29 @@ static int emc2305_probe(struct i2c_client *client)
- 			return ret;
- 	}
- 
-+	if (!of_property_read_u32(dev->of_node, "pwm_output", &pwm_output)) {
-+		dev_dbg(dev, "Configuring pwm output\n");
-+		if (pwm_output >= 0 && pwm_output <= ((1 << data->pwm_num) - 1)) {
-+			ret = i2c_smbus_write_byte_data(client, EMC2305_REG_DRIVE_PWM_OUT_CONFIG,
-+							 pwm_output);
-+			if (ret < 0)
-+				dev_err(dev, "Failed to configure pwm output, using default\n");
-+		} else {
-+			dev_err(dev, "Wrong PWM output config provided: %u\n", pwm_output);
-+		}
-+	}
+diff --git a/Documentation/devicetree/bindings/hwmon/emc2305.yaml b/Documentation/devicetree/bindings/hwmon/emc2305.yaml
+new file mode 100644
+index 000000000000..51e2a82d8f25
+--- /dev/null
++++ b/Documentation/devicetree/bindings/hwmon/emc2305.yaml
+@@ -0,0 +1,95 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/hwmon/emc2305.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+	if (!of_property_read_u32(dev->of_node, "pwm_polarity", &pwm_polarity)) {
-+		dev_dbg(dev, "Configuring pwm polarity\n");
-+		if (pwm_polarity >= 0 && pwm_polarity  <= ((1 << data->pwm_num) - 1)) {
-+			ret = i2c_smbus_write_byte_data(client, EMC2305_REG_POLARITY, pwm_polarity);
-+			if (ret < 0)
-+				dev_err(dev, "Failed to configure pwm polarity, using default\n");
-+		} else {
-+			dev_err(dev, "Wrong PWM polarity config provided: %u\n", pwm_polarity);
-+		}
-+	}
++title: EMC2305 i2c pwm fan controller
 +
- 	for (i = 0; i < data->pwm_num; i++) {
- 		ret = i2c_smbus_write_byte_data(client, EMC2305_REG_FAN_MIN_DRIVE(i),
- 						data->pwm_min[i]);
++maintainers:
++  - Michael Shych <michaelsh@nvidia.com>
++
++description: |
++  The driver implements support for Microchip EMC2301/2/3/5 PWM Fan Controller.
++  The EMC2301 Fan Controller supports only one controlled PWM fan channel.
++  The EMC2305 Fan Controller supports up to 5 independently
++  controlled PWM fan drives.
++
++properties:
++  compatible:
++    enum:
++      - hwmon,emc2301
++      - hwmon,emc2302
++      - hwmon,emc2303
++      - hwmon,emc2305
++
++  reg:
++    description: I2C address of the emc2305 device
++
++  pwm_output:
++    description: "PWM output type Push-Pull/ Open Drain"
++    maxItems: 1
++
++  pwm_polarity:
++    description: "PWM polarity"
++    maxItems: 1
++
++  '#cooling-cells':
++    description: "cooling state range"
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    thermal_zones {
++        a55-thermal {
++                trips {
++                        atrip0: trip0 {
++                                temperature = <55000>;
++                                hysteresis = <2000>;
++                                type = "active";
++                        };
++
++                        atrip1: trip1 {
++                                temperature = <65000>;
++                                hysteresis = <2000>;
++                                type = "active";
++                        };
++
++                        atrip2: trip2 {
++                                temperature = <75000>;
++                                hysteresis = <2000>;
++                                type = "active";
++                        };
++                };
++
++                cooling-maps {
++                        map1 {
++                                trip = <&atrip0>;
++                                cooling-device = <&emc2301 4 6>;
++                        };
++
++                        map2 {
++                                trip = <&atrip1>;
++                                cooling-device = <&emc2301 6 8>;
++                        };
++
++                        map3 {
++                                trip = <&atrip2>;
++                                cooling-device = <&emc2301 8 10>;
++                        };
++                };
++        };
++
++    }
++    emc2301: pwm@2f {
++       compatible = "hwmon,emc2301";
++       reg = <0x2f>;
++       #cooling-cells = <2>;
++       pwm_output = <0x1>;
++       pwm_polarity = <0x1>;
++    };
 -- 
 2.34.1
 
