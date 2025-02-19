@@ -1,97 +1,98 @@
-Return-Path: <linux-kernel+bounces-522670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF5D0A3CD1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 00:11:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9939FA3CD16
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 00:10:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88DB37A90EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 23:09:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FBBE189A645
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 23:10:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F4D2144C8;
-	Wed, 19 Feb 2025 23:10:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEB8425EF92;
+	Wed, 19 Feb 2025 23:10:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iJSlo3Kv"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HU1gUmcH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19EAD25E449;
-	Wed, 19 Feb 2025 23:10:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D91D2144C8;
+	Wed, 19 Feb 2025 23:10:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740006622; cv=none; b=Ee/aABQLy/c+gjVqOizYGb3eBn1hopeogJggmA6/2Dh90GE/kzIHRJZMFeKeh722wGJt2tmufI+u+ZvuANxWbgGPUUTGwqCCnwjJq2RfLdgBmQ3LV7fYTRz4sGn43sKAnH8QotjbhVf64Dh2yGPq1qLkDYJ+DiJpvjeTE1p9nSE=
+	t=1740006602; cv=none; b=OIiyjugW3gQOd9zIa/Z+c/86LPZjaidQYToCFDdnOZXmXmLZMtCm/ONNgv0DtzkYYFKFsgucngK157shx5mQanUO2oaHJE84XSO79KUiE1T6UsFS7gLl0cU/DwgJT9vtzIuJbO4lGC8lPYY05Syaa/uxFRu1S4r7c3AEqzpcC8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740006622; c=relaxed/simple;
-	bh=R+drP0ZeDBQHDs3Y/gXGGFAVwGvsC3oJl4MozRcpvvs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ta6C6evgWrcvOO2rJb+AuP314KJzdzl6izjJJsy5E8eoRR+i+b4/LyiZlnyno3Gvn2d0EmtnejAmKotrHWcIDuyFjgOUOQ1L8Kg+tKi799dMAw13uBvArxe2+DGpho4ngqgYpJh/tmNM+LkXLVl6UGZVdj/Wp4XTKKw9S4hvCo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iJSlo3Kv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44B96C4CED1;
-	Wed, 19 Feb 2025 23:10:21 +0000 (UTC)
+	s=arc-20240116; t=1740006602; c=relaxed/simple;
+	bh=8oBBrsO2Q2hbr24I2v3A4+lL9lPI8diFVStP1Tt1eGI=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=IUZ1JQ3H5hkTpLgi3xZrGcNw+JTa9mI3fzlIt7EJyjM667ObdB8J11Mug0XbbbSrNM+qqDQDMJPhjqco6NGAl1K0bg6Dh3TYUdC4yZenrKo5dm2OJ3Jpc7j6pGb0XMZmAafpt6qzgFQOEkzbFnTIqJWTSvjS/eSXufC57yyj5zE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HU1gUmcH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC40AC4CEE7;
+	Wed, 19 Feb 2025 23:10:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740006621;
-	bh=R+drP0ZeDBQHDs3Y/gXGGFAVwGvsC3oJl4MozRcpvvs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iJSlo3Kv4DtbBJBKiyIqxLFY/RQ5rk0qvA0ji03CHG89wssUXR2CeY15hzKp/1QWx
-	 +FRPn7HCVdYT3eD2VSdOXg+doGGKsLEn+awrf37MaVUpA8z8vQR4AUqmYPuF9amleZ
-	 rDKHD1zsgYtMQTa48P1bMqCeG3ds2wEcJCOf7QfCnEVLcrFvhvONRIaOJ/TXizxuzp
-	 5QlBYQLw6TYIcA/th4RS4kqnxV17IvjHEsHkunw2RxeJtzT3i0z3lb1aVePVFDY2so
-	 mt/v7nrXXv28vxhKCx2jANH+XyvqrzPBFrAR+nSIVw0aXTSwI5wiUJDLBgiSJd0kWA
-	 GkUgeJ5YwPRlQ==
-Date: Wed, 19 Feb 2025 23:10:19 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com
-Subject: Re: [PATCH 6.13 000/274] 6.13.4-rc1 review
-Message-ID: <Z7Zk2x8qHLaV1oBf@finisterre.sirena.org.uk>
-References: <20250219082609.533585153@linuxfoundation.org>
+	s=k20201202; t=1740006601;
+	bh=8oBBrsO2Q2hbr24I2v3A4+lL9lPI8diFVStP1Tt1eGI=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=HU1gUmcH3zsjRr6O+cDJnYBaVwqSrmjyujaE708reHzQJyuVpkYPCvNZvdMFRR4zI
+	 yoEQmo/HltSGWBcrXj0aLuApT9DFz/T1k39slI9GSQTIxXVFEIfIpwXNGc8+UVMQdk
+	 69mGO5IdzbExx/FHgTJFpfb2oBmSs377ZYnKCHNqAOR1SAnO78Yy0Xt+mY/jm1L3UA
+	 VfHJt7QdGfxQRfQ6VJCV4lDUZ5HHPpVZbzmkbzVdM5pQJhNAQgk0gKlk6Xq3W89VJJ
+	 aWT2edeWh7icT7Vx5lV4fjAMmal234U1F3JGGZrhManSH1h99rHzUKGSvooIal4GqZ
+	 6XqlrDYLJN0JQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 716A9380AAEC;
+	Wed, 19 Feb 2025 23:10:33 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="TPvJc1INWGlJ4w32"
-Content-Disposition: inline
-In-Reply-To: <20250219082609.533585153@linuxfoundation.org>
-X-Cookie: Editing is a rewording activity.
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] selftests/bpf: DENYLIST.aarch64: enable kprobe_multi tests
+ for ARM64
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174000663227.777997.10197622694803757950.git-patchwork-notify@kernel.org>
+Date: Wed, 19 Feb 2025 23:10:32 +0000
+References: <20250219-enable_kprobe_multi_tests-v1-1-faeec99240c8@bootlin.com>
+In-Reply-To: <20250219-enable_kprobe_multi_tests-v1-1-faeec99240c8@bootlin.com>
+To: =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29_=3Calexis=2Elothore=40bo?=@codeaurora.org,
+	=?utf-8?q?otlin=2Ecom=3E?=@codeaurora.org
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, mykolal@fb.com,
+ shuah@kernel.org, mhiramat@kernel.org, bastien.curutchet@bootlin.com,
+ ebpf@linuxfoundation.org, thomas.petazzoni@bootlin.com, bpf@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+
+Hello:
+
+This patch was applied to bpf/bpf-next.git (master)
+by Andrii Nakryiko <andrii@kernel.org>:
+
+On Wed, 19 Feb 2025 20:41:39 +0100 you wrote:
+> The kprobe_multi feature was disabled on ARM64 due to the lack of fprobe
+> support.
+> 
+> The fprobe rewrite on function_graph has been recently merged and thus
+> brought support for fprobes on arm64.  This then enables kprobe_multi
+> support on arm64, and so the corresponding tests can now be run on this
+> architecture.
+> 
+> [...]
+
+Here is the summary with links:
+  - selftests/bpf: DENYLIST.aarch64: enable kprobe_multi tests for ARM64
+    https://git.kernel.org/bpf/bpf-next/c/ac13c5087299
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
---TPvJc1INWGlJ4w32
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Wed, Feb 19, 2025 at 09:24:14AM +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.13.4 release.
-> There are 274 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-
-Tested-by: Mark Brown <broonie@kernel.org>
-
---TPvJc1INWGlJ4w32
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAme2ZNoACgkQJNaLcl1U
-h9Bwzgf+OwQr9fsN70XZLLo965eCAZujezE47/OkGUOiPc/R0AQ+IEPO/s8VTESQ
-m6iRbXCXG+L9W8NjS/Ynt9yR9DrMbLIDcWtsdQZ5I9I8F/fmk5PN3PRK0v6dhxMO
-4FZad/pAbVh3oed5M2paqnhFoImmcr63QkyPSCwWoEd447aI35PQyh+XYARJP2L0
-Jc+Z0gpzXo2E62KOyidykQSoZUf+thjyJaQKfHGru21O+d8+gQloPj0BNosVWxav
-b3uaVhGFldsPXvSv72rNEpJlFmNuWsuv2xYTgUF13d0OwzSsUuMNTMpuFECO8kDY
-eClPNEOWIkrqZTAfMPsU2HEo6PLciQ==
-=QSOx
------END PGP SIGNATURE-----
-
---TPvJc1INWGlJ4w32--
 
