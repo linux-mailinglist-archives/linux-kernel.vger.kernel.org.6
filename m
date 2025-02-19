@@ -1,146 +1,126 @@
-Return-Path: <linux-kernel+bounces-522180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBF56A3C70F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:10:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E5F90A3C713
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:10:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54D3F1891198
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:09:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CBB9188E7C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:10:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB8D021481D;
-	Wed, 19 Feb 2025 18:09:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86245214810;
+	Wed, 19 Feb 2025 18:10:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CZ02JXKJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UjLtBxaW"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DDE12147E8;
-	Wed, 19 Feb 2025 18:09:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 738DC2147E8
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 18:10:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739988581; cv=none; b=VdPt9cVkwUW75U8/7q7BAk27kn4tU8BaXF6cAKTE3NCD38E4I6QP/2+3ziTqMeL/tB+x1tthsQCAbqlUtA91UGHrSd5swUDhsM1cMllf2sPhydzboHxwYwFzAqD9OwDjpfDQjiXeO50HCaPBRJX5UK+UCJCDJ/qTSsPaJRUwj4I=
+	t=1739988604; cv=none; b=Q+uyW+MuQQJBf0m2Pq5pswQYZVOI1eyCl5eVl9/SPcHs3ebhE5Bsc6haWfUcT04Wiu+YeuUDS40vROZBt4yzcIUXTCmELYKXhLeleIyKaEoUo+0Ph9U3nsY+jicO8R80jxazfQTGBYy1tlMRNgpvcoMFem064GMr73YoXZmf4uw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739988581; c=relaxed/simple;
-	bh=4CxYRZkWyD6Ejg4xLiukBqtsPa11yzy8EicFjLzbH3I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tLqpSKyTUWflgsIzZS0MQX7HkFGYuCMsk8rM7dY1Sa+cziVeSBuXecF0/bAUIK4LWGA0Ux0dYzR77Xqn7ciqoSnDsFZSPtp5c9bmMlSlDZV/pPJR2nD5y98VgRRY2f/Ze8AVoKEYLCaAGbDi4v9EXU2WIweXJMwx6PJ+kSxfSmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CZ02JXKJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A78FC4CED1;
-	Wed, 19 Feb 2025 18:09:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739988579;
-	bh=4CxYRZkWyD6Ejg4xLiukBqtsPa11yzy8EicFjLzbH3I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CZ02JXKJVjeAgrdas8ShzzUrpGobXk99E7iY+Qlc9mZl04+0iuFgAUb247SAdgYgG
-	 snK2YZGaQer1p6c1rJgpmvu7mvmpZWcQxXyDvY7gq3a8aPAgoPOAUpwnpQNlOmPap9
-	 OzFjvB1QdTKa5hkK81hU/1Xej6yew2eFjF0T0YNgLAI+61NrnbJTPcLRLzlBzQsOPd
-	 oGfDvbI0KoF2Gxz/BCi2FKrlcM2HptPVzUs3t0FrkfWkMzEZdimQwOHAUOm3LjVgD/
-	 oHybYmi/5fYPI35GhROlVDWTWN2rPHuTjAkYzDQLD/2cl1J5syTy6NOlVYQuZyzDCj
-	 d5b/ovfPHhfFg==
-Date: Wed, 19 Feb 2025 23:39:31 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Brian Norris <briannorris@chromium.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Tsai Sung-Fu <danielsftsai@google.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andrew Chant <achant@google.com>, Sajid Dalvi <sdalvi@google.com>
-Subject: Re: [PATCH] PCI: dwc: Separate MSI out to different controller
-Message-ID: <20250219180931.mjhvibbq3xyppv5g@thinkpad>
-References: <20250115083215.2781310-1-danielsftsai@google.com>
- <20250127100740.fqvg2bflu4fpqbr5@thinkpad>
- <CAK7fddC6eivmD0-CbK5bbwCUGUKv2m9a75=iL3db=CRZy+A5sg@mail.gmail.com>
- <20250211075654.zxjownqe5guwzdlf@thinkpad>
- <CAK7fddDkQX1aj5ZyTjh1_Pk+XME3AY=m5ouEFRgmLuJjBJytbA@mail.gmail.com>
- <20250214071552.l4fufap6q5latcit@thinkpad>
- <Z6-fjJv3LXTir1Yj@google.com>
- <20250219175119.vjfdgvltutpzyyp5@thinkpad>
- <8634g9sthr.wl-maz@kernel.org>
+	s=arc-20240116; t=1739988604; c=relaxed/simple;
+	bh=0QQq27YBG3+AKBQOtcEugn3bVvs8Z0bAKu+xmqQXcMg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n3cmOYu7dF4xBKDxe+Ml0Ct1gUfw6IctutiXeorYUMpwVtM2q5qZ/Lq4baJADEGmR/URMeyz9T/ITELE0aOMhIuWPUViizzRg2rVGY1KfmFji18DM8z/5JBIBmtywZursmV7thbXBE0k44hzY+ZJauyzmbEMEn3qGtl5dvGD6BM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UjLtBxaW; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-471fbfe8b89so22091cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 10:10:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739988601; x=1740593401; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=cN2Rqb9pVr1wEbelwivZbg+NdO1vHfBTI3BqVx7m8tI=;
+        b=UjLtBxaWaR+fXP4A043gVWuueXciFurX0c0/bBRcabEG1vbh18roNoOhzhtxLjAsEE
+         xYO8WBAEwNBR5iez3z9orqHp3DxV38g5u5v6+YRaAaHChsGXepwaRD4dIP1oYd8kd7/y
+         kJ8qSTuvfeh54kC7Tsust38Jg9wttJR1mZLkTz1DfFQ3br8O6QDH/tJmpLYNiIZtzb76
+         on4dP8EKhmPMjeTGtjZ5dn0hV4so01iqDuYftR2lDVFTikI5n6Yte+xbmBxv1YHsi3lu
+         JZd5khTfZ+vUAmr719DYkPIeeMEMr495t4P6otphBXlFv2tRpBrFnRFdOXOKb005u3rs
+         +S2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739988601; x=1740593401;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cN2Rqb9pVr1wEbelwivZbg+NdO1vHfBTI3BqVx7m8tI=;
+        b=jr+v2B74OO4uv76fvxbg2ut+BBSSDeyp9A8nc5bAflIMhC+3Ivyz4YQCMn1iYF/1DG
+         0DIM0GZFhYrpPnf3mNx+2kIJ/xyNxCZk/098tP6r8J1RjXoGmlDJFicWlW3L0S5BHS+f
+         UNTOXkuwuvdjqNhp5uflPJH9CKtLyDujz/8noiYYiw96CrSc06wp9HPSYz+t7U7vWd4W
+         Yosc5UJokNPstUVFMCTuf1weUb6ss+gIhN/3w9Hx8xizHVn4vwYgFS0x1ZI5L5P7XNfb
+         ZzrimRT1bmf9Y7MBDhFlBXgzV3mSj5zi+NnNYkkJB0FEr9XKw7lMzsnTnzkdnw99uaTT
+         RLvA==
+X-Forwarded-Encrypted: i=1; AJvYcCXksIYDBwKlGTuK7J2FtT1uG5CSCzgFAuBjt0Dge6ZSSyLS3rIZJhHXvHD98nxOjiYCjFZ9JZahmDwaY2k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0kuDY6WH/Ar7jbeM8hM74HSy5IvDrIBMld5DxoZDSTMtRLBGF
+	vLv489lpSZAUhoe7VzcjQn4UZ2n6GuUDenYfWdLSHEe7APdY9noMuvWHris2Zma2MhxuaoINSe6
+	+5PNq+d3J2bpU2+ckvwrFNiRCPJ+qJexUJUrzuHPjGG1XN+X4xA==
+X-Gm-Gg: ASbGnctTrjsFbbQC/4W3jx+YGe5M7J74oJhxV6TaP8CCyMSCF5c+6TMtlOIbjN/eVXZ
+	r7wzb6PTes2xWWux8H1f1psybyrvySt5Vk0tltRRCpTiQaL3w3PLrSxtvvDtC1jAMdyyGSQ==
+X-Google-Smtp-Source: AGHT+IFECn4l0B9qOC1a0Jsue3I+n7DzaMiiOTXZNUAt2jIlFgFxSsUbpq4Nx4VMcy+s7Y4gzhzjGXJZ4X33VbqUPyY=
+X-Received: by 2002:a05:622a:14c7:b0:471:f8af:3231 with SMTP id
+ d75a77b69052e-4720a541b6cmr3830931cf.19.1739988601038; Wed, 19 Feb 2025
+ 10:10:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8634g9sthr.wl-maz@kernel.org>
+References: <20250218181656.207178-1-fvdl@google.com>
+In-Reply-To: <20250218181656.207178-1-fvdl@google.com>
+From: Frank van der Linden <fvdl@google.com>
+Date: Wed, 19 Feb 2025 10:09:49 -0800
+X-Gm-Features: AWEUYZlgmyBY-mj3iRaq8vXknIOGgntMAabmV3Q9iZKJkWDq1xSamLvU_YJ7u4w
+Message-ID: <CAPTztWY8iGZjYpsESNByt9My9H+YvrLiNVJAe+L_j1C4CUaEFg@mail.gmail.com>
+Subject: Re: [PATCH v4 00/27] hugetlb/CMA improvements for large systems
+To: akpm@linux-foundation.org, muchun.song@linux.dev, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Cc: yuzhao@google.com, usamaarif642@gmail.com, joao.m.martins@oracle.com, 
+	roman.gushchin@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Feb 19, 2025 at 06:02:24PM +0000, Marc Zyngier wrote:
-> On Wed, 19 Feb 2025 17:51:19 +0000,
-> Manivannan Sadhasivam <mani@kernel.org> wrote:
-> > 
-> > On Fri, Feb 14, 2025 at 11:54:52AM -0800, Brian Norris wrote:
-> > > On Fri, Feb 14, 2025 at 12:45:52PM +0530, Manivannan Sadhasivam wrote:
-> > > > On Tue, Feb 11, 2025 at 04:23:53PM +0800, Tsai Sung-Fu wrote:
-> > > > > >Because you cannot set affinity for chained MSIs as these MSIs are muxed to
-> > > > > >another parent interrupt. Since the IRQ affinity is all about changing which CPU
-> > > > > >gets the IRQ, affinity setting is only possible for the MSI parent.
-> > > > > 
-> > > > > So if we can find the MSI parent by making use of chained
-> > > > > relationships (32 MSI vectors muxed to 1 parent),
-> > > > > is it possible that we can add that implementation back ?
-> > > > > We have another patch that would like to add the
-> > > > > dw_pci_msi_set_affinity feature.
-> > > > > Would it be a possible try from your perspective ?
-> > > > > 
-> > > > 
-> > > > This question was brought up plenty of times and the concern from the irqchip
-> > > > maintainer Marc was that if you change the affinity of the parent when the child
-> > > > MSI affinity changes, it tends to break the userspace ABI of the parent.
-> > > > 
-> > > > See below links:
-> > > > 
-> > > > https://lore.kernel.org/all/87mtg0i8m8.wl-maz@kernel.org/
-> > > > https://lore.kernel.org/all/874k0bf7f7.wl-maz@kernel.org/
-> > > 
-> > > It's hard to meaningfully talk about a patch that hasn't been posted
-> > > yet, but the implementation we have at least attempts to make *some*
-> > > kind of resolution to those ABI questions. For one, it rejects affinity
-> > > changes that are incompatible (by some definition) with affinities
-> > > requested by other virqs shared on the same parent line. It also updates
-> > > their effective affinities upon changes.
-> > > 
-> > > Those replies seem to over-focus on dynamic, user-space initiated
-> > > changes too. But how about for "managed-affinity" interrupts? Those are
-> > > requested by drivers internally to the kernel (a la
-> > > pci_alloc_irq_vectors_affinity()), and can't be changed by user space
-> > > afterward. It seems like there'd be room for supporting that, provided
-> > > we don't allow conflicting/non-overlapping configurations.
-> > > 
-> > > I do see that Marc sketched out a complex sysfs/hierarchy API in some of
-> > > his replies. I'm not sure that would provide too much value to the
-> > > managed-affinity cases we're interested in, but I get the appeal for
-> > > user-managed affinity.
-> > > 
-> > 
-> > Whatever your proposal is, please get it reviewed by Marc.
-> 
-> Please see b673fe1a6229a and avoid dragging me into discussion I have
-> purposely removed myself from. I'd also appreciate if you didn't
-> volunteer me for review tasks I have no intention to perform (this is
-> the second time you are doing it, and that's not on).
-> 
+I forgot to add this to the cover letter:
 
-Apologies for not catching up with the MAINTAINERS update. Since you were pretty
-much involved in the affinity discussion, I thought about asking your help.
+These first 4 are the multi-range CMA support, and can be reviewed as
+an independent series:
+>   mm/cma: export total and free number of pages for CMA areas
+>   mm, cma: support multiple contiguous ranges, if requested
+>   mm/cma: introduce cma_intersects function
+>   mm, hugetlb: use cma_declare_contiguous_multi
 
-Regarding looping you in, I thought you only wanted to avoid reviewing the new
-driver changes that were deviating from the spec too much.
+These implement huge/gigantic page pre-HVO, and can also be reviewed
+as a separate series if that's more convenient:
+>   mm/hugetlb: remove redundant __ClearPageReserved
+>   mm/hugetlb: use online nodes for bootmem allocation
+>   mm/hugetlb: convert cmdline parameters from setup to early
+>   x86/mm: make register_page_bootmem_memmap handle PTE mappings
+>   mm/bootmem_info: export register_page_bootmem_memmap
+>   mm/sparse: allow for alternate vmemmap section init at boot
+>   mm/hugetlb: set migratetype for bootmem folios
+>   mm: define __init_reserved_page_zone function
+>   mm/hugetlb: check bootmem pages for zone intersections
+>   mm/sparse: add vmemmap_*_hvo functions
+>   mm/hugetlb: deal with multiple calls to hugetlb_bootmem_alloc
+>   mm/hugetlb: move huge_boot_pages list init to hugetlb_bootmem_alloc
+>   mm/hugetlb: add pre-HVO framework
+>   mm/hugetlb_vmemmap: fix hugetlb_vmemmap_restore_folios definition
+>   mm/hugetlb: do pre-HVO for bootmem allocated pages
+>   x86/setup: call hugetlb_bootmem_alloc early
+>   x86/mm: set ARCH_WANT_SPARSEMEM_VMEMMAP_PREINIT
 
-But anyway, now it is clear to me that you are not maintaining the irqchip
-drivers, so I will not bother you anymore. Sorry about that.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+These implement early allocations from CMA, enabling pre-HVO of
+pre-allocated CMA hugepages. It depends on the previous two groups of
+patches:
+>   mm/cma: simplify zone intersection check
+>   mm/cma: introduce a cma validate function
+>   mm/cma: introduce interface for early reservations
+>   mm/hugetlb: add hugetlb_cma_only cmdline option
+>   mm/hugetlb: enable bootmem allocation from CMA areas
+>   mm/hugetlb: move hugetlb CMA code in to its own file
+>
 
