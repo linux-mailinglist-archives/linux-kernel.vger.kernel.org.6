@@ -1,119 +1,103 @@
-Return-Path: <linux-kernel+bounces-520950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BD8FA3B19B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:26:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53EA1A3B1A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:28:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07A80189856E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 06:26:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08FF53A9E2D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 06:27:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D8E81BE238;
-	Wed, 19 Feb 2025 06:26:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 326E71BDAAA;
+	Wed, 19 Feb 2025 06:27:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SmPRWQ0b"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="f2SEqBwm"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 886BD17BB21;
-	Wed, 19 Feb 2025 06:26:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D445C1AE01B;
+	Wed, 19 Feb 2025 06:27:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739946378; cv=none; b=ccj7fF6549MzA6WjIgMJ2KtBLgPysQmrD+7sPpDVYN1cfwUlLQMA9qke2KUrity81t8SeA5po5e/5I2h6U6Lakl3ynUij/DdsJChol4doth8PzGZXiOpsheRqr7m+G12hVCqJa8gwHRRiVGgO/B7sTwsuwFSQYQQOjbK4FWak64=
+	t=1739946455; cv=none; b=VlgqyWCGpDdRcaBZI5XIFKQ1TBD82RLXRSQl4Fe6YPpq61/R6AAc9XqP2F27gptYI7mA/Pqo4miNh23loMHsLdo435mBK/YxDjyDhkFilGeqG2B1ggQNL3s0SXFZU9HYRtItfdupZCqctiM5Yxqn+b5pt98sl3Kzv24u+23NXy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739946378; c=relaxed/simple;
-	bh=gs8Atg05EuB92ani/mTzwjxh1rZsnVOwZpA1oIUYdO8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QsgS7h2pfFau7BrZfozQWsTKG/u6Ld3X/5lSSUQaCLnIUVK+L+LBhVQkiWxEP4EfJkRpjHva7JdDx4I7228ToYYgJSjrGzoT5ChsNsG4x1W7lw8mcr2F0XHNtzXllNlVWiJSWKXMeNzgOucVO7dIDX4IoNWWsMXYqE7n4j6Tj3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SmPRWQ0b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2579AC4CEE6;
-	Wed, 19 Feb 2025 06:26:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739946378;
-	bh=gs8Atg05EuB92ani/mTzwjxh1rZsnVOwZpA1oIUYdO8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SmPRWQ0bmA8r6JDNq4EQiZtBOZyVsOxTjzVaOEV2ISiy5eUfCjSB1DfbVPDihvLv4
-	 rigP2iikysJ3QL7ln1Ll/HKk/8bprzAgDn5XeHheKtplFQ0rx9YnfzVpOlh5L8PYaM
-	 8RQpTF2U0wNX6WqjkyKh4ANqSE1we9bWm64Jf9aF783B0uDvYZeUG+gCcxMkWHSrzQ
-	 pHu1uUeMXdGk/i7vhskBB44omPDnLMmq/v2BBwNQkC557xkuDn5Btwdo/X3WRzXQ+s
-	 qhoBXy0/nLt7cJlCfbe4D7e86v5gIySR3A7cWFSCBYMPezP1X7dbhS1BGaEuFPxEPs
-	 TWgO97Yev6g/g==
-Message-ID: <54cb52eb-9429-40d9-8b16-368c517746fd@kernel.org>
-Date: Wed, 19 Feb 2025 07:26:15 +0100
+	s=arc-20240116; t=1739946455; c=relaxed/simple;
+	bh=ch91csYqldJAAFJXY0iGyEIskueLGR4UkxCERiY/Pvs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=U3pSbBa+DbzfdPc2gY3NDSLfEopq9NdcrMMSc8tPCOP6vcHudxxpKM8bZQglWDtvxD02wC8wiSWRTpTwJ/vc+ej0et2kIhb1MWSLjTo1Ai+vQULdQmg3N5nDZW/1usoYhY8ucLJb5OV1upC9tNC+7XObAD2hAUDyG6c42cku3DI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=f2SEqBwm; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51J6R9Ad186657
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Wed, 19 Feb 2025 00:27:09 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1739946429;
+	bh=h17FbokfSERqNK3i9fAiWbwKGfwvwhKNe949xpUZ578=;
+	h=From:To:CC:Subject:Date;
+	b=f2SEqBwmhI+BDWAyCq+M7oJz6idx+3QRfKBuCGHbnMm7p2e/85iSOdEUQuzw/vYiP
+	 Lz/BwHbTBNuSVWzWci3cpIIPaGXHUmf3QxkaZxBJzEJFykwfIqU0DFsSUV65JCdlQn
+	 amBgJNLACy9FyzeDYnnWQnoAou4JYFxGQt+rcNwE=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51J6R9BU109076;
+	Wed, 19 Feb 2025 00:27:09 -0600
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 19
+ Feb 2025 00:27:08 -0600
+Received: from fllvsmtp7.itg.ti.com (10.64.40.31) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 19 Feb 2025 00:27:08 -0600
+Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
+	by fllvsmtp7.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51J6R88e019383;
+	Wed, 19 Feb 2025 00:27:08 -0600
+Received: from localhost (meghana-pc.dhcp.ti.com [10.24.69.13] (may be forged))
+	by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 51J6R7g7009522;
+	Wed, 19 Feb 2025 00:27:08 -0600
+From: Meghana Malladi <m-malladi@ti.com>
+To: <lokeshvutla@ti.com>, <vigneshr@ti.com>, <javier.carrasco.cruz@gmail.com>,
+        <diogo.ivo@siemens.com>, <m-malladi@ti.com>, <horms@kernel.org>,
+        <pabeni@redhat.com>, <kuba@kernel.org>, <edumazet@google.com>,
+        <davem@davemloft.net>, <andrew+netdev@lunn.ch>
+CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
+        Roger Quadros
+	<rogerq@kernel.org>, <danishanwar@ti.com>
+Subject: [PATCH net v2 0/2] Fixes for perout configuration in IEP driver
+Date: Wed, 19 Feb 2025 11:56:59 +0530
+Message-ID: <20250219062701.995955-1-m-malladi@ti.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] tty/vt: Gather the code that outputs char with
- utf8 in mind
-To: Alexey Gladkov <legion@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-serial@vger.kernel.org
-References: <cover.1739881707.git.legion@kernel.org>
- <35c2ae96b68b64ee71b636df0e0c1907e0766a24.1739881707.git.legion@kernel.org>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <35c2ae96b68b64ee71b636df0e0c1907e0766a24.1739881707.git.legion@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 18. 02. 25, 13:29, Alexey Gladkov wrote:
-> When we putting character to the tty, we take into account the keyboard
-> mode to properly handle utf8. This code is duplicated few times.
-> 
-> Signed-off-by: Alexey Gladkov <legion@kernel.org>
+IEP driver supports both pps and perout signal generation using testptp
+application. Currently the driver is missing to incorporate the perout
+signal configuration. This series introduces fixes in the driver to
+configure perout signal based on the arguments passed by the perout
+request.
 
-Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
+v1: https://lore.kernel.org/all/20250211103527.923849-1-m-malladi@ti.com/
 
-thanks,
+Meghana Malladi (2):
+  net: ti: icss-iep: Fix pwidth configuration for perout signal
+  net: ti: icss-iep: Fix phase offset configuration for perout signal
+
+ drivers/net/ethernet/ti/icssg/icss_iep.c | 44 ++++++++++++++++++++++--
+ 1 file changed, 41 insertions(+), 3 deletions(-)
+
+
+base-commit: 071ed42cff4fcdd89025d966d48eabef59913bf2
 -- 
-js
-suse labs
+2.43.0
+
 
