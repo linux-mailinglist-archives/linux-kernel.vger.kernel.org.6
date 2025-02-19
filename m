@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-520822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72E49A3AFAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 03:36:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 611F6A3AFB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 03:37:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62B87188C5D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:36:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 212BF16EBD3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:37:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E34E188938;
-	Wed, 19 Feb 2025 02:36:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C039118FDC5;
+	Wed, 19 Feb 2025 02:37:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="qktJbkdw"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="afv7hQDu"
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB54322EE4
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 02:36:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57ACC157A55
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 02:37:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739932600; cv=none; b=J1wzz519TPUe6kawMo00opug3ZRtmjc/RAF3IrIRZ2TpeNr3GMN9QopAvOX2UPLdyU6Kp/TXcgcAv1SK/OvLSTpIOLU9o7rdRhFlwUnXkUFBOVQ3iJ5ZRIBmjKxYFDzIXgE29rR6ewztrWYM7wN0Y5xcw7gZm+lX6ASDfUPWdNw=
+	t=1739932664; cv=none; b=mBGpSu+gir0tRzxb8zn1qr7nh6kMEpQGv46sWVeGNHazelC4AXfaTwZRC9cLmyc6DHuOkMgv6IhETSwQgpHAaj1uEnADffJepabrjDwoT2i+a1nL/3ZCRp7OIlukYsm9C4rrcRD+Sm0LZVX3bccN/tF9Kc0BVgOdd5NgPWfA/nM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739932600; c=relaxed/simple;
-	bh=rveXvfpNgj3V/3uXAGCU7hGmO4dBjIcMbwqqZkqK26s=;
+	s=arc-20240116; t=1739932664; c=relaxed/simple;
+	bh=0HSYr8AtBOLoWK5iWmiAHyWKunqueCUl6Dc7EF0/I7o=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UZN3/OOVORVmnm1IlhyBS6yuzSItlRflx5AXCoUiKlfMkB3mzJYEzMTycFboKxQWWyP5Kb/jkbtbhzOuVMnVg1QVzLh9xM1FDBOOqi+dX7BePD+IECtuDkczq0ziK2oP1G5yIIwORjQsbd3QN9PxZ6oN6Q9Gyqj6sQv3VibVWDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=qktJbkdw; arc=none smtp.client-ip=185.125.188.122
+	 To:Cc:Content-Type; b=mYttWwx0BeZWjjJwIgH27j2zDB5sOCCrdD8xKNlGymgAfdb6yfAYT2pAvHlbm3xWa21ZvprF7iOLSxnf0+z09bdWNvYXJoFRbdkf8dnTKf5R7b58Orosam6NHKYxuYhPapH7sEPfutRuYJflfB2q2l3vR7Bf8awTAl37I14sYDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=afv7hQDu; arc=none smtp.client-ip=185.125.188.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com [209.85.208.70])
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com [209.85.218.71])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 9DC223F87A
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 02:36:35 +0000 (UTC)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 5A5193F1DD
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 02:37:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1739932595;
-	bh=vf1qvK2by+jGV65Pqs0eS1MS94gVUz7y9vFh+Qb3c+8=;
+	s=20210705; t=1739932660;
+	bh=xpF/uqVgz1DIPu42/nvkTgDWLM87bKVH+JDh7HeEf0M=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
 	 To:Cc:Content-Type;
-	b=qktJbkdwNbeRr6cAwvD0TgeJ8Ykk0sx1wwLgfc8mWoPMKVnnoG65HDUml6STTMloT
-	 ZGTWmzzythbINA8stwbDdGFG5DGQYxZWAWVQRVSgPqE6FxeGvO6BT0pKvZq7qfuLWK
-	 TFHDh2g3O4POoj2KkHkaDX9ZnZGp/3qWknyD9yjVkA89+vc0HplZQGP3EBPJ5hckNR
-	 iBfHo++OxXGo4ytqzUMaVsS6YCeTznY+2tPvwer7sgBtG5PDz9VCDU6oNzCKQpDDb6
-	 soaRBYIgN0utILRzxzyVnjLaYJXs3Fb652y/UeOWGX1ONrc90vzm0prMgO6tfNAFi7
-	 xEhzFajBgiCmw==
-Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-5dec9d39295so6141766a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 18:36:35 -0800 (PST)
+	b=afv7hQDue6C3v+a69bc1QvYEMPi0cZ6jJaZ+zm+kHOAWtWqtWU3PlXOxf2fv31MPh
+	 ddnBMZsm7hRH+SRydGUMk27JjeDNIzDL0FB/FFsnlu3nLQw2XnV8vFCooO+23AMCqE
+	 UxnpJq+JV/rehv4v0BrWXBMKL3nW7fR4Yw4YsaMzTiJLJ/SNCmJMteHW30tBf89tae
+	 VozA96dobaQITTvbVjSjCA6kaKnfdtSLqX/odzT7QMcPemq/43nuD8Zt3lU5QGoIBk
+	 DiD4xjspP2MAt0gucnib01e+irD/z/63161NZHOH1qPLWRE3B5sf9jeEqHNV483hVp
+	 SgWvA9BJ167YQ==
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-abb7e837a7aso362588666b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 18:37:40 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739932594; x=1740537394;
+        d=1e100.net; s=20230601; t=1739932660; x=1740537460;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=vf1qvK2by+jGV65Pqs0eS1MS94gVUz7y9vFh+Qb3c+8=;
-        b=P3PoCs01PQ4QjaM4uhe43cZ4Bx1nitqX8jRVcJsBtX0LBRgCxJgVnSWl9/RlV1B1R2
-         LP6KyRv3WE5/gXcUzgkoVt1s2zTcjqtG16/mRsAjqify9YkvbDBEmulnoafTBR9b2hMf
-         7Hufn9qfDR3Q5tVFH4h32fMLMNKgQRac8Ta4/lz6Ivs2Z4/qs7zevSk39Yrsw28VTD4o
-         KZpZpSC21sQ/Rp+uvacusS7qXaqgBRK1VSFmSO5IzirKFTEgXwe2F0QjcN0513Q6okkM
-         dDrN+PmrV10OEljDnThiP+9mVkEj5wKXGh/YBHDr8F66Oc6Bvkonc6V5f4Ko1ejN06KU
-         fVyw==
-X-Forwarded-Encrypted: i=1; AJvYcCUDirwHmbeDY7nxAwRKa71OfXYma95An93PzQHml7vZYOK12p0BoW7r8XHLEKkTSQhajqXmAj0FWGfbdrA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXl2Ff1r8xGnCjbPk96EdXkLZUGVApRiu/kKv/IuPF0UvkYcEF
-	oP3fLmuzIfV/4ezoh6NplV+Pta6wi3ReQEjEKBKjdtxlcZrHDwlEIUrNB4ISkQ7COf8XwMcb9+C
-	VvVeU06kMLtjjHamndPIELqZrFh+9qSlISVKVnpEVGFz8Mo2q47PIDxM/sv55OGDAZKDR7qC3X6
-	IZdjN0whjGwQvoEv/XlyGDWbMYT0wdO/tUMbou3TInc39g9hwyimwO
-X-Gm-Gg: ASbGncshWhWsivr5mZpbMAhyBAcNaxwZ6BMtDaaSPTuHYdebbYylg9W9Q632DGkpxet
-	RTzbx5XohDGlWdcM/KPNB0XAHC4wxJ/3NhBp4KG445onDJgK8jyxavP0Tgpuc
-X-Received: by 2002:a05:6402:520e:b0:5dc:7fbe:72ff with SMTP id 4fb4d7f45d1cf-5e0894f7a93mr1494025a12.2.1739932594170;
-        Tue, 18 Feb 2025 18:36:34 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGoq/ug3HpCJUOAUDpRyTkhBQF1qeEo0BUuVH4+X+SQxLUDIiWnGDZ38SmRisv8NVYqjTO25htXjWKz7FVPjZg=
-X-Received: by 2002:a05:6402:520e:b0:5dc:7fbe:72ff with SMTP id
- 4fb4d7f45d1cf-5e0894f7a93mr1494002a12.2.1739932593834; Tue, 18 Feb 2025
- 18:36:33 -0800 (PST)
+        bh=xpF/uqVgz1DIPu42/nvkTgDWLM87bKVH+JDh7HeEf0M=;
+        b=D5XFsSu93dZbJQYIFSw+kadH8CswzT14cpx8dB7UqHJLdSsnbFu7Q0eKLFrsaM2goG
+         8Pb9E2CEEn1jUhXxYHkCUWmVIo1PxiBMex44uJ2tBGHuDu1lecxz1kv7aKFwPMX1vh/U
+         TjWydukYSPbVYDwHuB6BuzNgiqEjhjy4x9QLdFl9K5F8s+0l1kiT7IfaVYNH2DpQFvWy
+         nVymOpOAjasM4bjYuMj0WI9LodMz6OWvM9qBorABvfwY+eFsu20Oh/nFqVLAAwFbj9iS
+         xbyZMBIJ7fWUbiWoWUA6OipFB/yJr7PpzFu/0oI9CeX3CtgeLlC3WPxSMY7ao5I2QRcI
+         187A==
+X-Forwarded-Encrypted: i=1; AJvYcCViyGK4oqwBI3tFvb9FslJcvaJwekawt/L6cvK9JMYXgJmQ66/iA5WKKvzGFqocdkd2Vpo53lkONN5ie2E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxkx6P/2BAnC7jOeUzlxoTMPHXnxiUouulF5Iz4Q+Nls/+fkenj
+	y7AHs8Ynv9a/FOf+FXHo5R3+keL710LDsYOFCeoJB+kFx4wDc7mA0kbKV5QSbzAyCRdBdR45HbG
+	1lSop3Vt8flTisQxtjlE2eTprYz8cFAKvcHVzPRMmqStM9qLcIPTGQM0VtVDvdjeBxsUbX+TuyX
+	gpXhllUyMYCHtnSa2lTm5MvdHTZU9xNtkDZlrYjiEaiFBd+P33cg4W
+X-Gm-Gg: ASbGncu/ec/8Mx+5lE8BoBr+FahWIHENcLrfGvcyszCvA/7Wr2Na+IWpeNRQbRIRFyZ
+	1vXTOEUwRBarRyvSjtCNSBh9q9CYy5hGz5dwNm9F8vjqYpJWfRAp1NPO23J/Y
+X-Received: by 2002:a17:906:c154:b0:aaf:74dc:5dbc with SMTP id a640c23a62f3a-abb70bbe128mr1861184266b.29.1739932659916;
+        Tue, 18 Feb 2025 18:37:39 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IECXTzTfK1hucT5By1Vc8OsQKE7WAN8jPGAEpn8NtOS1yJ+2Zh+7oQ/9jhpxrBKBlUn80fC/zEsdNt+HBs+mbo=
+X-Received: by 2002:a17:906:c154:b0:aaf:74dc:5dbc with SMTP id
+ a640c23a62f3a-abb70bbe128mr1861181666b.29.1739932659564; Tue, 18 Feb 2025
+ 18:37:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,137 +81,94 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20250218222209.1382449-1-alex.williamson@redhat.com>
- <20250218222209.1382449-7-alex.williamson@redhat.com> <Z7UOEpgH5pdTBcJP@x1.local>
- <20250218161407.6ae2b082.alex.williamson@redhat.com>
-In-Reply-To: <20250218161407.6ae2b082.alex.williamson@redhat.com>
+In-Reply-To: <20250218222209.1382449-1-alex.williamson@redhat.com>
 From: Mitchell Augustin <mitchell.augustin@canonical.com>
-Date: Tue, 18 Feb 2025 20:36:22 -0600
-X-Gm-Features: AWEUYZkz1cZnARvZskS0-aLz8NUwEBuzeFL49ZTvzIP2huZXOoCnDbKLjmz8aDk
-Message-ID: <CAHTA-ua8mTgNkDs0g=_8gMyT1NkgZqCE0J7QjOU=+cmZ2xqd7Q@mail.gmail.com>
-Subject: Re: [PATCH v2 6/6] vfio/type1: Use mapping page mask for pfnmaps
+Date: Tue, 18 Feb 2025 20:37:28 -0600
+X-Gm-Features: AWEUYZnajB3rq8CyRdBuSpSrOypipt2nxnKQMlTKOQA6kaKkIZVRcB0xmWVuT9o
+Message-ID: <CAHTA-uZciMceCK3OF6krjoPx1kaoeQRuYhkpfZ_tZJQ4dmhzJQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/6] vfio: Improve DMA mapping performance for huge pfnmaps
 To: Alex Williamson <alex.williamson@redhat.com>
-Cc: Peter Xu <peterx@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	clg@redhat.com, jgg@nvidia.com, willy@infradead.org
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, peterx@redhat.com, 
+	clg@redhat.com, jgg@nvidia.com, akpm@linux-foundation.org, linux-mm@kvack.org, 
+	david@redhat.com, willy@infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-/s/follow_pfnmap_args.pgmask/follow_pfnmap_args.addr_mask/ in v2
-commit log. Aside from that, it works as expected.
+No change in behavior observed from v1 on my config (DGX H100). Thanks!
 
 Reviewed-by: "Mitchell Augustin" <mitchell.augustin@canonical.com>
 Tested-by: "Mitchell Augustin" <mitchell.augustin@canonical.com>
 
-
-On Tue, Feb 18, 2025 at 5:14=E2=80=AFPM Alex Williamson
+On Tue, Feb 18, 2025 at 4:22=E2=80=AFPM Alex Williamson
 <alex.williamson@redhat.com> wrote:
 >
-> On Tue, 18 Feb 2025 17:47:46 -0500
-> Peter Xu <peterx@redhat.com> wrote:
+> v2:
+>  - Rewrapped comment block in 3/6
+>  - Added 4/6 to use consistent types (Jason)
+>  - Renamed s/pgmask/addr_mask/ (David)
+>  - Updated 6/6 with proposed epfn algorithm (Jason)
+>  - Applied and retained sign-offs for all but 6/6 where the epfn
+>    calculation changed
 >
-> > On Tue, Feb 18, 2025 at 03:22:06PM -0700, Alex Williamson wrote:
-> > > vfio-pci supports huge_fault for PCI MMIO BARs and will insert pud an=
-d
-> > > pmd mappings for well aligned mappings.  follow_pfnmap_start() walks =
-the
-> > > page table and therefore knows the page mask of the level where the
-> > > address is found and returns this through follow_pfnmap_args.pgmask.
-> > > Subsequent pfns from this address until the end of the mapping page a=
-re
-> > > necessarily consecutive.  Use this information to retrieve a range of
-> > > pfnmap pfns in a single pass.
-> > >
-> > > With optimal mappings and alignment on systems with 1GB pud and 4KB
-> > > page size, this reduces iterations for DMA mapping PCI BARs by a
-> > > factor of 256K.  In real world testing, the overhead of iterating
-> > > pfns for a VM DMA mapping a 32GB PCI BAR is reduced from ~1s to
-> > > sub-millisecond overhead.
-> > >
-> > > Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
-> > > ---
-> > >  drivers/vfio/vfio_iommu_type1.c | 23 ++++++++++++++++-------
-> > >  1 file changed, 16 insertions(+), 7 deletions(-)
-> > >
-> > > diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iomm=
-u_type1.c
-> > > index ce661f03f139..0ac56072af9f 100644
-> > > --- a/drivers/vfio/vfio_iommu_type1.c
-> > > +++ b/drivers/vfio/vfio_iommu_type1.c
-> > > @@ -520,7 +520,7 @@ static void vfio_batch_fini(struct vfio_batch *ba=
-tch)
-> > >
-> > >  static int follow_fault_pfn(struct vm_area_struct *vma, struct mm_st=
-ruct *mm,
-> > >                         unsigned long vaddr, unsigned long *pfn,
-> > > -                       bool write_fault)
-> > > +                       unsigned long *addr_mask, bool write_fault)
-> > >  {
-> > >     struct follow_pfnmap_args args =3D { .vma =3D vma, .address =3D v=
-addr };
-> > >     int ret;
-> > > @@ -544,10 +544,12 @@ static int follow_fault_pfn(struct vm_area_stru=
-ct *vma, struct mm_struct *mm,
-> > >                     return ret;
-> > >     }
-> > >
-> > > -   if (write_fault && !args.writable)
-> > > +   if (write_fault && !args.writable) {
-> > >             ret =3D -EFAULT;
-> > > -   else
-> > > +   } else {
-> > >             *pfn =3D args.pfn;
-> > > +           *addr_mask =3D args.addr_mask;
-> > > +   }
-> > >
-> > >     follow_pfnmap_end(&args);
-> > >     return ret;
-> > > @@ -590,15 +592,22 @@ static long vaddr_get_pfns(struct mm_struct *mm=
-, unsigned long vaddr,
-> > >     vma =3D vma_lookup(mm, vaddr);
-> > >
-> > >     if (vma && vma->vm_flags & VM_PFNMAP) {
-> > > -           ret =3D follow_fault_pfn(vma, mm, vaddr, pfn, prot & IOMM=
-U_WRITE);
-> > > +           unsigned long addr_mask;
-> > > +
-> > > +           ret =3D follow_fault_pfn(vma, mm, vaddr, pfn, &addr_mask,
-> > > +                                  prot & IOMMU_WRITE);
-> > >             if (ret =3D=3D -EAGAIN)
-> > >                     goto retry;
-> > >
-> > >             if (!ret) {
-> > > -                   if (is_invalid_reserved_pfn(*pfn))
-> > > -                           ret =3D 1;
-> > > -                   else
-> > > +                   if (is_invalid_reserved_pfn(*pfn)) {
-> > > +                           unsigned long epfn;
-> > > +
-> > > +                           epfn =3D (*pfn | (~addr_mask >> PAGE_SHIF=
-T)) + 1;
-> > > +                           ret =3D min_t(long, npages, epfn - *pfn);
-> >
-> > s/long/unsigned long/?
+> v1: https://lore.kernel.org/all/20250205231728.2527186-1-alex.williamson@=
+redhat.com/
 >
-> ret is signed long since it's the function return and needs to be able
-> to return -errno, so long was the intention here.  Thanks,
+> As GPU BAR sizes increase, the overhead of DMA mapping pfnmap ranges has
+> become a significant overhead for VMs making use of device assignment.
+> Not only does each mapping require upwards of a few seconds, but BARs
+> are mapped in and out of the VM address space multiple times during
+> guest boot.  Also factor in that multi-GPU configurations are
+> increasingly commonplace and BAR sizes are continuing to increase.
+> Configurations today can already be delayed minutes during guest boot.
+>
+> We've taken steps to make Linux a better guest by batching PCI BAR
+> sizing operations[1], but it only provides and incremental improvement.
+>
+> This series attempts to fully address the issue by leveraging the huge
+> pfnmap support added in v6.12.  When we insert pfnmaps using pud and pmd
+> mappings, we can later take advantage of the knowledge of the mapping
+> level page mask to iterate on the relevant mapping stride.  In the
+> commonly achieved optimal case, this results in a reduction of pfn
+> lookups by a factor of 256k.  For a local test system, an overhead of
+> ~1s for DMA mapping a 32GB PCI BAR is reduced to sub-millisecond (8M
+> page sized operations reduced to 32 pud sized operations).
+>
+> Please review, test, and provide feedback.  I hope that mm folks can
+> ack the trivial follow_pfnmap_args update to provide the mapping level
+> page mask.  Naming is hard, so any preference other than pgmask is
+> welcome.  Thanks,
 >
 > Alex
 >
-> > Reviewed-by: Peter Xu <peterx@redhat.com>
-> >
-> > > +                   } else {
-> > >                             ret =3D -EFAULT;
-> > > +                   }
-> > >             }
-> > >     }
-> > >  done:
-> > > --
-> > > 2.48.1
-> > >
-> >
+> [1]https://lore.kernel.org/all/20250120182202.1878581-1-alex.williamson@r=
+edhat.com/
+>
+>
+> Alex Williamson (6):
+>   vfio/type1: Catch zero from pin_user_pages_remote()
+>   vfio/type1: Convert all vaddr_get_pfns() callers to use vfio_batch
+>   vfio/type1: Use vfio_batch for vaddr_get_pfns()
+>   vfio/type1: Use consistent types for page counts
+>   mm: Provide address mask in struct follow_pfnmap_args
+>   vfio/type1: Use mapping page mask for pfnmaps
+>
+>  drivers/vfio/vfio_iommu_type1.c | 123 ++++++++++++++++++++------------
+>  include/linux/mm.h              |   2 +
+>  mm/memory.c                     |   1 +
+>  3 files changed, 80 insertions(+), 46 deletions(-)
+>
+> --
+> 2.48.1
 >
 
 
---
+--=20
 Mitchell Augustin
 Software Engineer - Ubuntu Partner Engineering
+Email:mitchell.augustin@canonical.com
+Location:United States of America
+
+
+canonical.com
+ubuntu.com
 
