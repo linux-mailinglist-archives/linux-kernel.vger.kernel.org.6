@@ -1,156 +1,161 @@
-Return-Path: <linux-kernel+bounces-521466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4660CA3BDBB
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:05:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A16DA3BDBE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:06:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17EF916D2D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:05:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 734321895A70
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:06:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D188D1DED57;
-	Wed, 19 Feb 2025 12:05:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C27711DFDBB;
+	Wed, 19 Feb 2025 12:06:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="KIvsZxZP"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gUJ8OugU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B60A1CF5E2
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 12:05:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EF701CF5E2;
+	Wed, 19 Feb 2025 12:06:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739966709; cv=none; b=jLLqHnZy/rQN7Z4BscJVYzSxn4hKSkXY33r4e46ixrK9xQmGnK3DMMLzgxgY8SZ9QpIjTJRwxrO32at4Wtgzcn2QNlwZ6B9ybRxg5/L1Cj1lGNEf07dv1oQWag333THt3GbowErT2PqyFtywGBoE5EzgaiOah5lcvQW7TjEHV+k=
+	t=1739966799; cv=none; b=mdrFKjbbu8uVzeRrIXYdZ52mEfS2npy6pGV9mUKrwRHIHKvWd22jfharFGCV6pvVuJImrkmWEctZqrKlFgKRykDS0RveUeuQnynsPaqL5PRsVur+thyySTBnFu/gcJijP5Z8qQL7ck8fTDWch896cpFLGmd8hWLk58eP2YS0P3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739966709; c=relaxed/simple;
-	bh=5s/ZgHzBUDq1mtrGfLxwMGn2ZXY2/6NZLF5GPClAWxk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oVQyBtTJv6doc2sdTrX2+eEbd3iUKsrEEplNZXqKThgDuBAW7XsLilBLCzrAR+xf0+wnyhilfxX+cgWLRvVYAEyaqslku6IJf0C4WBeZkjS4PvEnpnK0rPa1Dg5jChWJwwjGdC0QctTF9v9sdpRbFrj4ssaV7sLJlBWj8IsYaC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=KIvsZxZP; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 819F340E0221;
-	Wed, 19 Feb 2025 12:05:03 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Bh14lVrcUpQq; Wed, 19 Feb 2025 12:04:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1739966698; bh=IlEwYGsWU+HgFJw77Yn9NIdwvzcfp45kelarRrAI4mE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KIvsZxZPY0a6o6WJhwtxdezGe4Uiy20yMdMpxP6FYqbu44KgSczMiKnruyzFqfnyA
-	 l7dan9nOmgIU7dhqKXLfNQRfNyHAticSbZ3LBesmKQBj4v9HQ19rVBwyutUI0663Qr
-	 SYiPeamIYDYzGNdtHN7bp1lOLERAcOljOW7nGDP/o/s2PwSLmC4OvL81bqfzNO5362
-	 r7c+MKBNtvO10r5kEyRu7CXChvkgDOuUhtPaDHAa3LI/tks/kV6rOfOHsEezgT15Gc
-	 mDUDiBV/EeOBXFufVwa7rcMb5C8VtQezwTNSz/Efl/9cs+IBBj8f2451mhGhVPJ4cU
-	 KATPfUuMjtxwgKkFIdoMqhOK229JrYQvfFm43ihq+X8bmmJZD61mN0gtdjRwcrrfk8
-	 4oXK8tn6sH1oM443FikbakoCj0Q42dQyHgg4bSd7dKwOyJHhJAirlSwBb2bcbPjdUW
-	 UQVmf2BIDcxwH82Y0uDhAImbgCuvtL4CNHg4YIRshYmqgrITZpQF8RwPqcOgEQhX6h
-	 bwsQ0+L2Jz2/syfPQ9eKKqmWjs/nsW0MRFLrWssUWCN3O3hWwTpJnnNa0etsURyM0k
-	 5g6XcQjATVT/CV8dbHEpdBZFe+SH4jAp6+ttVs1SmekDC3LaWLRAdkH2anBJgPu9W/
-	 o0Mweqmc3Hwp/wyn4a3rzpBk=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2FC2240E0220;
-	Wed, 19 Feb 2025 12:04:42 +0000 (UTC)
-Date: Wed, 19 Feb 2025 13:04:41 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Rik van Riel <riel@surriel.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org,
-	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
-	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
-	linux-mm@kvack.org, akpm@linux-foundation.org, jackmanb@google.com,
-	jannh@google.com, mhklinux@outlook.com, andrew.cooper3@citrix.com,
-	Manali Shukla <Manali.Shukla@amd.com>
-Subject: Re: [PATCH v11 05/12] x86/mm: add INVLPGB support code
-Message-ID: <20250219120441.GNZ7XI2aWWUmXh2H2m@fat_crate.local>
-References: <20250213161423.449435-1-riel@surriel.com>
- <20250213161423.449435-6-riel@surriel.com>
+	s=arc-20240116; t=1739966799; c=relaxed/simple;
+	bh=l5MR+J2ZG/jDwhC3KAMELQZM2LJbnY4ck6sKdNuSfug=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aH7l94+sOJNbPJk2j1+DwrEqJQoePwlyt2547RHGChEy8OlgPUAVplZvYB84B+RsBH/KSYFqaHeYryuHGktjQKTuoh0ZTtcII9MzdS7Ty6ks+dAAsBbFJG71JWzi72/m9EPAoUCULlR5dlCuSFuohqIm3n6OEo/zUF64TE2rs3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gUJ8OugU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECC23C4CED1;
+	Wed, 19 Feb 2025 12:06:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739966798;
+	bh=l5MR+J2ZG/jDwhC3KAMELQZM2LJbnY4ck6sKdNuSfug=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gUJ8OugU1aSnFNqaMh4N2p+SiNyqwZepOoaUhr+LGQmUCeVZ9EQ2z1iDpNzfK9Pjs
+	 ynZLtbmfBbJEGrKKgniG8l3a4Rj9epUDPl5OVXM9IJ2fuvD7GlsV94DjOqXpGRvoDR
+	 kBEHiH3KWmEA6Q0f9vsGiggg4TOqZuX5U74IBSIFoxO+qfVSTBt/xbDm5WDnehdj7t
+	 gtJnI1IfsvuY6jiesB3PuaVgwcRoc1HLW+7hYpQ/Dp7s2xBrhdJRX1yA8w7rqt2xTY
+	 f/1aDafMQCBu8mbYWjdXeiK8YrTV911igHyTHfrvdYS8s8hRWzWQnK3XC+Oh6W3bPj
+	 6Ak2PESU2zYFQ==
+Message-ID: <56e56623-9cef-48b9-8a57-ef7840f0a8f3@kernel.org>
+Date: Wed, 19 Feb 2025 13:06:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250213161423.449435-6-riel@surriel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm: clk: Add ETH switch clock description for vf610 SoC
+To: Lukasz Majewski <lukma@denx.de>, Abel Vesa <abelvesa@kernel.org>,
+ Peng Fan <peng.fan@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-clk@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20250219114936.3546530-1-lukma@denx.de>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250219114936.3546530-1-lukma@denx.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Feb 13, 2025 at 11:13:56AM -0500, Rik van Riel wrote:
-> Add invlpgb.h with the helper functions and definitions needed to use
-> broadcast TLB invalidation on AMD EPYC 3 and newer CPUs.
+On 19/02/2025 12:49, Lukasz Majewski wrote:
+> The NXP's vf610 soc is equipped with L2 switch IP block from More
+> Than IP (MTIP) vendor.
 > 
-> Signed-off-by: Rik van Riel <riel@surriel.com>
-> Tested-by: Manali Shukla <Manali.Shukla@amd.com>
-> Tested-by: Brendan Jackman <jackmanb@google.com>
-> Tested-by: Michael Kelley <mhklinux@outlook.com>
+> It requires special clock (VF610_CLK_ESW) to be operational.
+> 
+> Signed-off-by: Lukasz Majewski <lukma@denx.de>
 > ---
->  arch/x86/include/asm/disabled-features.h |   8 +-
->  arch/x86/include/asm/invlpgb.h           | 101 +++++++++++++++++++++++
->  arch/x86/include/asm/tlbflush.h          |   1 +
->  3 files changed, 109 insertions(+), 1 deletion(-)
->  create mode 100644 arch/x86/include/asm/invlpgb.h
+>  drivers/clk/imx/clk-vf610.c             | 1 +
+>  include/dt-bindings/clock/vf610-clock.h | 3 ++-
+
+
+Bindings are a separate patch.
+
+>  2 files changed, 3 insertions(+), 1 deletion(-)
 > 
-> diff --git a/arch/x86/include/asm/disabled-features.h b/arch/x86/include/asm/disabled-features.h
-> index c492bdc97b05..625a89259968 100644
-> --- a/arch/x86/include/asm/disabled-features.h
-> +++ b/arch/x86/include/asm/disabled-features.h
-> @@ -129,6 +129,12 @@
->  #define DISABLE_SEV_SNP		(1 << (X86_FEATURE_SEV_SNP & 31))
->  #endif
+> diff --git a/drivers/clk/imx/clk-vf610.c b/drivers/clk/imx/clk-vf610.c
+> index 9e11f1c7c397..405bf48a1d28 100644
+> --- a/drivers/clk/imx/clk-vf610.c
+> +++ b/drivers/clk/imx/clk-vf610.c
+> @@ -309,6 +309,7 @@ static void __init vf610_clocks_init(struct device_node *ccm_node)
+>  	clk[VF610_CLK_ENET_TS] = imx_clk_gate("enet_ts", "enet_ts_sel", CCM_CSCDR1, 23);
+>  	clk[VF610_CLK_ENET0] = imx_clk_gate2("enet0", "ipg_bus", CCM_CCGR9, CCM_CCGRx_CGn(0));
+>  	clk[VF610_CLK_ENET1] = imx_clk_gate2("enet1", "ipg_bus", CCM_CCGR9, CCM_CCGRx_CGn(1));
+> +	clk[VF610_CLK_ESW] = imx_clk_gate2("esw", "ipg_bus", CCM_CCGR10, CCM_CCGRx_CGn(8));
 >  
-> +#ifdef CONFIG_X86_BROADCAST_TLB_FLUSH
-> +#define DISABLE_INVLPGB		0
-> +#else
-> +#define DISABLE_INVLPGB		(1 << (X86_FEATURE_INVLPGB & 31))
-> +#endif
-> +
+>  	clk[VF610_CLK_PIT] = imx_clk_gate2("pit", "ipg_bus", CCM_CCGR1, CCM_CCGRx_CGn(7));
+>  
+> diff --git a/include/dt-bindings/clock/vf610-clock.h b/include/dt-bindings/clock/vf610-clock.h
+> index 373644e46747..95446f1bee16 100644
+> --- a/include/dt-bindings/clock/vf610-clock.h
+> +++ b/include/dt-bindings/clock/vf610-clock.h
+> @@ -197,6 +197,7 @@
+>  #define VF610_CLK_TCON1			188
+>  #define VF610_CLK_CAAM			189
+>  #define VF610_CLK_CRC			190
+> -#define VF610_CLK_END			191
+> +#define VF610_CLK_ESW			191
+> +#define VF610_CLK_END			192
 
-What does that bring you really in savings?
 
->  /*
->   * Make sure to add features to the correct mask
->   */
-> @@ -146,7 +152,7 @@
->  #define DISABLED_MASK11	(DISABLE_RETPOLINE|DISABLE_RETHUNK|DISABLE_UNRET| \
->  			 DISABLE_CALL_DEPTH_TRACKING|DISABLE_USER_SHSTK)
->  #define DISABLED_MASK12	(DISABLE_FRED|DISABLE_LAM)
-> -#define DISABLED_MASK13	0
-> +#define DISABLED_MASK13	(DISABLE_INVLPGB)
->  #define DISABLED_MASK14	0
->  #define DISABLED_MASK15	0
->  #define DISABLED_MASK16	(DISABLE_PKU|DISABLE_OSPKE|DISABLE_LA57|DISABLE_UMIP| \
-> diff --git a/arch/x86/include/asm/invlpgb.h b/arch/x86/include/asm/invlpgb.h
-> new file mode 100644
-> index 000000000000..a1d5dedd5217
-> --- /dev/null
-> +++ b/arch/x86/include/asm/invlpgb.h
+This defiine should not change. If you need to change it, means it is
+not an ABI. Just like for other cases, I suggest to drop the define in
+preparatory patch.
 
-I remember asking you to add all that gunk to arch/x86/include/asm/tlb.h.
-Please do so.
 
-> +#define INVLPGB_VA			BIT(0)
-> +#define INVLPGB_PCID			BIT(1)
-> +#define INVLPGB_ASID			BIT(2)
-> +#define INVLPGB_INCLUDE_GLOBAL		BIT(3)
-> +#define INVLPGB_FINAL_ONLY		BIT(4)
-> +#define INVLPGB_INCLUDE_NESTED		BIT(5)
-> +
-> +/* Flush all mappings for a given pcid and addr, not including globals. */
-> +static inline void invlpgb_flush_user(unsigned long pcid,
-> +				      unsigned long addr)
-
-Please drop this unused function.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Best regards,
+Krzysztof
 
