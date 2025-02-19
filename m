@@ -1,91 +1,140 @@
-Return-Path: <linux-kernel+bounces-520812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFBF4A3AF85
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 03:22:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56D43A3AF94
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 03:27:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD1CA7A5BF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:20:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37A281886CF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:27:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 531EF17BB21;
-	Wed, 19 Feb 2025 02:21:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UyuuiCyr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F9435953;
-	Wed, 19 Feb 2025 02:21:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB3E317A308;
+	Wed, 19 Feb 2025 02:27:42 +0000 (UTC)
+Received: from zg8tmja5ljk3lje4ms43mwaa.icoremail.net (zg8tmja5ljk3lje4ms43mwaa.icoremail.net [209.97.181.73])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABF4D15B543;
+	Wed, 19 Feb 2025 02:27:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.97.181.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739931692; cv=none; b=CyL5hXY7iede0i3+dhhptH99iX/5FWvyXXnfYBGsJWfOkSpB5ZHWBKD+7POeeJIYpgX0NMHysgqB3S54DQDuu69hwM9sjPDAU9trb12EnIXZHlH9sQxXAE8rjISnM74SEmD7hm9mxMT1nx7cR6c8nNU7QbTnhMHlfq3pH3LtvVo=
+	t=1739932062; cv=none; b=SvR0XvM8B//94rwpT2fkhdt7KsJT09x7sZ+FUBgEh47NmfR++qx2+7JRkH0cRVYlT8Xewt/3TfKZJEnszyELSSkrhovIGXa8Aewhx2FKMibrhmi8joo2IocAB/WqIQ1QM2ol3nV57gzWXzHfjLVCTOCcEn/m1NtIzfFkdxS7D9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739931692; c=relaxed/simple;
-	bh=XCg+HFXg8G/7UErPkHwbpxI9yQdsASnPzjA2vlPAjG0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SVRYtZgnspuby1sK0znrg8j4LnpUTN6XyI69dlzuQkeMtE/4GG4Cjp/VLbm/CkgHPLKUitqtpbD7jMR3RG4mZ06vsg1HkHaUygw5J1PPACCAUzmFp6Z9921D2hwtXyqmMMBav0cRGtu7uxGYPoGY4jWNQboonr03omt8ZsBsKeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UyuuiCyr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BC6CC4CEE2;
-	Wed, 19 Feb 2025 02:21:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739931692;
-	bh=XCg+HFXg8G/7UErPkHwbpxI9yQdsASnPzjA2vlPAjG0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=UyuuiCyraaJ3RBFeLCP7vqL8tYaTdXcF7MHcbSiI9SJPa6BDPCUIu1i80BW4gcF4+
-	 9yOB4ZdardNg9zjt4R8Kmr4gzT5KtK0rGS93utfj/xVSOfp0dTnjT43nuD610wtRdR
-	 QfAZvAFvOuOgYLaJtFHvTWQEBiJVvic4kYUy8Fmw4Px9MBSaIrlHM1v2yic20CUcMl
-	 CTpkZxSxtljvQN/PtOpQsAzW5O2ZHYOUMiarGqc0PUSZsvRsHxEXur49lQTWCGR6zX
-	 KTi4Wo2UodccJOtN6SEWoTqF9cZQWMez6dBmCLZVxrGM/Bsym6WOYk3M3iIU1Ffq3m
-	 2MYdVReOFY36g==
-Date: Tue, 18 Feb 2025 18:21:30 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Jiri Pirko <jiri@resnulli.us>
-Cc: Tariq Toukan <tariqt@nvidia.com>, "David S. Miller"
- <davem@davemloft.net>, Paolo Abeni <pabeni@redhat.com>, Eric Dumazet
- <edumazet@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>, Jiri Pirko
- <jiri@nvidia.com>, Cosmin Ratiu <cratiu@nvidia.com>, Carolina Jubran
- <cjubran@nvidia.com>, Gal Pressman <gal@nvidia.com>, Mark Bloch
- <mbloch@nvidia.com>, Donald Hunter <donald.hunter@gmail.com>, Jonathan
- Corbet <corbet@lwn.net>, Saeed Mahameed <saeedm@nvidia.com>, Leon
- Romanovsky <leon@kernel.org>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-rdma@vger.kernel.org
-Subject: Re: [PATCH net-next 03/10] devlink: Serialize access to rate
- domains
-Message-ID: <20250218182130.757cc582@kernel.org>
-In-Reply-To: <ieeem2dc5mifpj2t45wnruzxmo4cp35mbvrnsgkebsqpmxj5ib@hn7gphf6io7x>
-References: <20250213180134.323929-1-tariqt@nvidia.com>
-	<20250213180134.323929-4-tariqt@nvidia.com>
-	<ieeem2dc5mifpj2t45wnruzxmo4cp35mbvrnsgkebsqpmxj5ib@hn7gphf6io7x>
+	s=arc-20240116; t=1739932062; c=relaxed/simple;
+	bh=GHv/arb+LD6QvPJoEEjCWKKQwB2btzeVJ/8m5os1omg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=rc/BE76ycWDO/Gu7f1miC+B0cQuMc2lE2HyY+cnO4OYnXZaOshaa0dgxoK0WK90aCDlcnEjEx0nW2yQwlbeQCT/T7MkHwdMijXeAlZ59/pN974tkyrFLkLqzCkyqxL1uBFd5yYdsJhqUpwkJjnN/19u/u+5RDqI0mcsfR/wFwfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytium.com.cn; spf=pass smtp.mailfrom=phytium.com.cn; arc=none smtp.client-ip=209.97.181.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytium.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytium.com.cn
+Received: from prodtpl.icoremail.net (unknown [10.12.1.20])
+	by hzbj-icmmx-6 (Coremail) with SMTP id AQAAfwAHaT6KQbVnOSWrAw--.23116S2;
+	Wed, 19 Feb 2025 10:27:22 +0800 (CST)
+Received: from localhost.localdomain (unknown [219.142.137.151])
+	by mail (Coremail) with SMTP id AQAAfwD3+ISDQbVni6wrAA--.6812S2;
+	Wed, 19 Feb 2025 10:27:20 +0800 (CST)
+From: Zhiyuan Dai <daizhiyuan@phytium.com.cn>
+To: helgaas@kernel.org
+Cc: bhelgaas@google.com,
+	christian.koenig@amd.com,
+	daizhiyuan@phytium.com.cn,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: [PATCH v2] PCI: Update Resizable BAR Capability Register fields
+Date: Wed, 19 Feb 2025 10:27:12 +0800
+Message-ID: <20250219022712.276287-1-daizhiyuan@phytium.com.cn>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250218202545.GA177904@bhelgaas>
+References: <20250218202545.GA177904@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:AQAAfwD3+ISDQbVni6wrAA--.6812S2
+X-CM-SenderInfo: hgdl6xpl1xt0o6sk53xlxphulrpou0/
+Authentication-Results: hzbj-icmmx-6; spf=neutral smtp.mail=daizhiyuan
+	@phytium.com.cn;
+X-Coremail-Antispam: 1Uk129KBjvJXoWxAFWDXFWfGFW3Ww1fGF43Awb_yoW5Cr1kpr
+	WDCa97Gr4rGFZF9w1kZ3W0yw45K393ZFy5CrWSg39ruFn0k3Z2qr1jka45Ja4rJrs7ZF45
+	Gr9rt345Wrn8JaUanT9S1TB71UUUUUJqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
+	DUYxn0WfASr-VFAU7a7-sFnT9fnUUIcSsGvfJ3UbIYCTnIWIevJa73UjIFyTuYvj4RJUUU
+	UUUUU
 
-On Fri, 14 Feb 2025 13:54:43 +0100 Jiri Pirko wrote:
-> For the record, I'm still not convinced that introducing this kind of
-> shared inter-devlink lock is good idea. We spent quite a bit of painful
-> times getting rid of global devlink_mutex and making devlink locking
-> scheme nice and simple as it currently is.
->=20
-> But at the same time I admit I can't think of any other nicer solution
-> to the problem this patchset is trying to solve.
->=20
-> Jakub, any thoughts?
+PCI Express Base Spec r6.0 defines BAR size up to 8 EB (2^63 bytes),
+but supporting anything bigger than 128TB requires changes to pci_rebar_get_possible_sizes()
+to read the additional Capability bits from the Control register.
 
-The problem comes from having a devlink instance per function /
-port rather than for the ASIC. Spawn a single instance and the
-problem will go away =F0=9F=A4=B7=EF=B8=8F
+Signed-off-by: Zhiyuan Dai <daizhiyuan@phytium.com.cn>
+---
+ drivers/pci/pci.c             | 14 ++++++++++----
+ include/uapi/linux/pci_regs.h |  3 ++-
+ 2 files changed, 12 insertions(+), 5 deletions(-)
 
-I think we talked about this multiple times, I think at least
-once with Jake, too. Not that I remember all the details now..
---=20
-pw-bot: cr
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index 661f98c6c63a..8903deb2d891 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -3752,12 +3752,13 @@ static int pci_rebar_find_pos(struct pci_dev *pdev, int bar)
+  * @bar: BAR to query
+  *
+  * Get the possible sizes of a resizable BAR as bitmask defined in the spec
+- * (bit 0=1MB, bit 19=512GB). Returns 0 if BAR isn't resizable.
++ * (bit 0=1MB, bit 43=8EB). Returns 0 if BAR isn't resizable.
+  */
+-u32 pci_rebar_get_possible_sizes(struct pci_dev *pdev, int bar)
++u64 pci_rebar_get_possible_sizes(struct pci_dev *pdev, int bar)
+ {
+ 	int pos;
+-	u32 cap;
++	u64 cap;
++	u32 cap2;
+ 
+ 	pos = pci_rebar_find_pos(pdev, bar);
+ 	if (pos < 0)
+@@ -3766,6 +3767,11 @@ u32 pci_rebar_get_possible_sizes(struct pci_dev *pdev, int bar)
+ 	pci_read_config_dword(pdev, pos + PCI_REBAR_CAP, &cap);
+ 	cap = FIELD_GET(PCI_REBAR_CAP_SIZES, cap);
+ 
++	pci_read_config_dword(pdev, pos + PCI_REBAR_CTRL, &cap2);
++	cap2 = FIELD_GET(PCI_REBAR_CTRL_CAP_SIZES, cap2);
++
++	cap |= (cap2 << 32);
++
+ 	/* Sapphire RX 5600 XT Pulse has an invalid cap dword for BAR 0 */
+ 	if (pdev->vendor == PCI_VENDOR_ID_ATI && pdev->device == 0x731f &&
+ 	    bar == 0 && cap == 0x700)
+@@ -3800,7 +3806,7 @@ int pci_rebar_get_current_size(struct pci_dev *pdev, int bar)
+  * pci_rebar_set_size - set a new size for a BAR
+  * @pdev: PCI device
+  * @bar: BAR to set size to
+- * @size: new size as defined in the spec (0=1MB, 19=512GB)
++ * @size: new size as defined in the spec (0=1MB, 43=8EB)
+  *
+  * Set the new size of a BAR as defined in the spec.
+  * Returns zero if resizing was successful, error code otherwise.
+diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
+index 1601c7ed5fab..345f45264567 100644
+--- a/include/uapi/linux/pci_regs.h
++++ b/include/uapi/linux/pci_regs.h
+@@ -1013,13 +1013,14 @@
+ 
+ /* Resizable BARs */
+ #define PCI_REBAR_CAP		4	/* capability register */
+-#define  PCI_REBAR_CAP_SIZES		0x00FFFFF0  /* supported BAR sizes */
++#define  PCI_REBAR_CAP_SIZES		0xFFFFFFF0  /* supported BAR sizes */
+ #define PCI_REBAR_CTRL		8	/* control register */
+ #define  PCI_REBAR_CTRL_BAR_IDX		0x00000007  /* BAR index */
+ #define  PCI_REBAR_CTRL_NBAR_MASK	0x000000E0  /* # of resizable BARs */
+ #define  PCI_REBAR_CTRL_NBAR_SHIFT	5	    /* shift for # of BARs */
+ #define  PCI_REBAR_CTRL_BAR_SIZE	0x00001F00  /* BAR size */
+ #define  PCI_REBAR_CTRL_BAR_SHIFT	8	    /* shift for BAR size */
++#define  PCI_REBAR_CTRL_CAP_SIZES	0xFFFF0000  /* supported BAR sizes */
+ 
+ /* Dynamic Power Allocation */
+ #define PCI_DPA_CAP		4	/* capability register */
+-- 
+2.43.0
+
 
