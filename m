@@ -1,135 +1,116 @@
-Return-Path: <linux-kernel+bounces-520915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D093BA3B115
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 06:50:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDAF6A3B112
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 06:49:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 620E71896BF1
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 05:50:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6FDC3AFB00
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 05:49:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0D501B86E9;
-	Wed, 19 Feb 2025 05:49:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1A2E8BF8;
+	Wed, 19 Feb 2025 05:49:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="g8O6Yc6F"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RG10Z7Hb"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5FC61AF0DC;
-	Wed, 19 Feb 2025 05:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D26381AF0DC
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 05:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739944196; cv=none; b=GeRDNuZrjhQuyNvhQxGNfFt4zrsuMFjbsKEHJMqnxIFfvh/oh9/JwkRYR3D9YGnYPYCwAbaLSGWzOuTcLuJDWRlts9rWSAByY9T7lzPKGqLj1egFlR56l8JZ2BNkGCJqVnpWGgLjpi8kk1AZkjbazPsKbg0c5rag2i+5YIXLhH0=
+	t=1739944189; cv=none; b=q2OqQkS1ChhBWyb+MGzWem5atmWqx2Jn1jBIL91Y5M9BXcEI+9o9toZqzhsXoCVgfxYpT60rlGBlyAUtly2FbVFt47t3R/t1VaH7JG6G42uW95aR5t674ehNtifvz77S6O3NyXhF8KhnmhpF2q3PEUSAbQsB9znhWWg/xsEjwSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739944196; c=relaxed/simple;
-	bh=OyNwxmbNs7YpwqFUGZwNvqSdBj8u14YfhIt4c+byVbQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bm3YIh7X+TKQUcKwQjIb/yd1bPQtHQKj/F91aHOiMfqDXEZWdiaXHDndWdF/juCQDtfyd9KmjW8vc9kyYnbKDCcFPOEM5gYv8AVPHK5n1GpthTpwxr+/Zu/iqDMjGJRwj7rh6HoM7CHAdsdCLe5cVEk0g+KSRxuit0dorBIJHVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=g8O6Yc6F; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51IIxluG007930;
-	Wed, 19 Feb 2025 05:49:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=DlSMfg
-	iPnDwuemdvuxNC8ndrB15CyhAUTewsr6te6to=; b=g8O6Yc6F2jtIJvPuJxlAW8
-	sElBdow1C0Q1Yk+L8Hhts727xqsE2IR4TnsbuG58R4OsmVd2OnKYMnYc4Boqhsjb
-	s+lADZSYSqn0eVZRQoxVjiIqO6WG2ZAPzUZ8PZBm4Rlfg4jvPoHC6ZgPG6de4UHr
-	/vI1cJJq+nuL5n0frkjYPeNs1uADAA+gcw9SKotrGYPcwr+EBEojtEVFSqpmAH+K
-	4PsevT1TjkiN1Y0SXZJzomhwWXS5uZD4lnP53aUDCgUVEiYOo0BObqqolyRfHshf
-	/odjXB5BwlxoyySpeczb3fnW0VJm+LYVaknOuTfsyNP4/r7u3+mm5mWjet0gRHKQ
-	==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44vyyq25gk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Feb 2025 05:49:39 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51J2uP1c002323;
-	Wed, 19 Feb 2025 05:49:39 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 44w03x2cn7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Feb 2025 05:49:38 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51J5nbsx60555620
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 19 Feb 2025 05:49:37 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 59C2F20040;
-	Wed, 19 Feb 2025 05:49:37 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E824020043;
-	Wed, 19 Feb 2025 05:49:36 +0000 (GMT)
-Received: from ozlabs.au.ibm.com (unknown [9.63.197.14])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 19 Feb 2025 05:49:36 +0000 (GMT)
-Received: from jarvis.ozlabs.ibm.com (haven.au.ibm.com [9.63.198.114])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 68DD76015C;
-	Wed, 19 Feb 2025 16:49:33 +1100 (AEDT)
-Message-ID: <866cbf9a3a5b9605b368b694f1ed333eb9394923.camel@linux.ibm.com>
-Subject: Re: linux-next: build warning after merge of the powerpc tree
-From: Andrew Donnellan <ajd@linux.ibm.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
-        Madhavan Srinivasan
-	 <maddy@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        PowerPC
-	 <linuxppc-dev@lists.ozlabs.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Date: Wed, 19 Feb 2025 16:49:21 +1100
-In-Reply-To: <20250219154649.49986660@canb.auug.org.au>
-References: <20250219154649.49986660@canb.auug.org.au>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1739944189; c=relaxed/simple;
+	bh=gGRwfgPpTpK82Oyia/6u3CHtfQpPTB9d5xrWF187gz0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hkkFnyuIZgDuJKCSu4Fhy8afDcrOqb+oHuM8J1JClkSitWK30vHu76EC/T044ZS6WNkPm8BQohzdmmlhg4NabVLfebM/YLU0OSCXTPwRl6IUJztO0cYzA7sD3G0KzOMBRRx2hFd6cZ5zbgX82gD3dxGT4ZXtOobLVAzcRiJ2FA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RG10Z7Hb; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2211acda7f6so69693745ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 21:49:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739944187; x=1740548987; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Nf8/3/DreRNzXlFHg2AgTTtfjDRLaudroEyy156u0qE=;
+        b=RG10Z7HbWIm0Eh41GAQyiQ17uV4pN8Qf4586+QXFdrEvwgC4m/musdMUcIM5bZ4uLG
+         3Va4Q4Vhl9ZR8ZfIOZRrFa631KSOc3ve4I+T1J1KRpLWGp1KX8oBb8f6TAq4/SV+4xoV
+         /Lzct7iImH1z5hkVIqhMJKgqNy71FfR2TB1doIQGKNN1JiPnXo4TdkUvml6g4VQpYyog
+         s72XU2ufT0epoxc8xKxVvS+N5qxhUTw5mkZt9rkYD3em0/rvroI/epy8OkGfsoXkzVzo
+         5nT/ydb297wFVxU8NRm4qwMZEoDV3qG0qdTRUi9NnZJe+K2SSMx3wlQbkMrlE0OxQsq0
+         dVsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739944187; x=1740548987;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Nf8/3/DreRNzXlFHg2AgTTtfjDRLaudroEyy156u0qE=;
+        b=MCdILjhKKAL0p8pbDBQ7GniNuNkEUD/bqIlZoLzEk53asPNelhMnCj5RoE7b7Te1B7
+         8As2KMMmnt+Gv685zg1QHQR6vAaNJUj/f7XTtRRM5ul6MNsVdWexqpIqylRVKpSUAr/m
+         Yg82IIvtPFJGM2hFuhQQ3ZYtiqjxVBzilXGpRSFFQTe/EDpwSJptzdJy5Fl1VvGjUxaR
+         ougaPJPgYrHIe7/oXLt4eo1VQZg1jXT/N5/THDQUqV+2IdMukZhQIJeN/j6huhViEMnk
+         hj1nPXFf7BHzjC4MtuQ1tw5FtSU6SzhEa2yB1nxxOcB0fIUrdn1qw4wetYWKilhYDRGZ
+         0YdA==
+X-Forwarded-Encrypted: i=1; AJvYcCW2WZflBVDZiSFN8jIN3DO52C3EKgPbFjKm+OI4/kPrwp5hDSLobSkPtN/Ggs93A3G62I71efOwceXbUaM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5mdA+oFB7ZZs5RXrQWB5C4bVf20CLkmLff288bhZv0EUxgMtX
+	/S3Om9WKTazPZjEYlRVxJnKe1JQObs66ulfIp+6Pofz+3jjFvzWF9QMi6mnzIt8=
+X-Gm-Gg: ASbGncubpqS4EKt2UC9eotyPInrXCppQYu/3YdGtm60lOK2Uwlr4PqHVCjlUvG/+FY4
+	9fg0GTJxY/RBt6pAEs/0hKW3iA1w9vxhcmHXVLyeq93PXVFPmnA4qjCnoVIhjP/iedY0rms+hki
+	zHiDAgkS7enGpxUZdh6g4inVkYJtaUevN8L49oLBk0OAtE3iIgxLDtTuAb0TuVulRznD2Ta52HM
+	IqsShBD5wM9Vd4XggvTOIYlAT9Tqa3NBi9A60fZljY1NZz35MMQicVvrDkXCeSRpVS9XABzddhE
+	J6bfLxFT11TKtqd1BQ==
+X-Google-Smtp-Source: AGHT+IGTrwUiHai/F6Gc6jLbRLvEYwLeRI5NCdNzX1yb+2FEyc1a3QDq5aXdiTbSDtTZsAlf5lbhwQ==
+X-Received: by 2002:a05:6a20:b58b:b0:1ee:8bd5:81c4 with SMTP id adf61e73a8af0-1eed4fb2d4bmr3091062637.28.1739944187132;
+        Tue, 18 Feb 2025 21:49:47 -0800 (PST)
+Received: from localhost ([122.172.84.139])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73274399467sm5972331b3a.140.2025.02.18.21.49.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2025 21:49:46 -0800 (PST)
+Date: Wed, 19 Feb 2025 11:19:44 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Mark Tseng <chun-jen.tseng@mediatek.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
+	MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Project_Global_Chrome_Upstream_Group@mediatek.com
+Subject: Re: [PATCH v3 3/3] cpufreq: mediatek: data safety protect
+Message-ID: <20250219054944.4kztb6rtumdt3x7h@vireshk-i7>
+References: <20250214074353.1169864-1-chun-jen.tseng@mediatek.com>
+ <20250214074353.1169864-4-chun-jen.tseng@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: rt1nlQhdMa46Ko5gKqHA2HVVCa65_Fb7
-X-Proofpoint-ORIG-GUID: rt1nlQhdMa46Ko5gKqHA2HVVCa65_Fb7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-19_02,2025-02-18_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 adultscore=0 bulkscore=0 mlxscore=0 clxscore=1011
- spamscore=0 suspectscore=0 phishscore=0 mlxlogscore=888 priorityscore=1501
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502190040
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250214074353.1169864-4-chun-jen.tseng@mediatek.com>
 
-On Wed, 2025-02-19 at 15:46 +1100, Stephen Rothwell wrote:
-> Hi all,
->=20
-> After merging the powerpc tree, today's linux-next build (htmldocs)
-> produced this warning:
->=20
-> WARNING: Documentation/ABI/testing/sysfs-class-cxl not found
->=20
-> Introduced by commit
->=20
-> =C2=A0 5731d41af924 ("cxl: Deprecate driver")
->=20
-> The reference is from Documentation/arch/powerpc/cxl.rst
->=20
-> I don't know why this has appeared just now.
+On 14-02-25, 15:43, Mark Tseng wrote:
+> get policy data in global lock session avoid get wrong data.
+> 
+> Signed-off-by: Mark Tseng <chun-jen.tseng@mediatek.com>
+> ---
+>  drivers/cpufreq/mediatek-cpufreq.c | 15 ++++++++++-----
+>  1 file changed, 10 insertions(+), 5 deletions(-)
 
-I think this warning is added by ff7ff6eb4f809 ("docs: media: Allow
-creating cross-references for RC ABI").
+I think there is some confusion on why exactly locking is required and where
+exactly you need it. This patch is incorrect.
 
-I can send a patch to fix the reference in cxl.rst.
+If you really think some locking issue is present here, please explain in
+detail how a race can happen between different threads.
 
---=20
-Andrew Donnellan    OzLabs, ADL Canberra
-ajd@linux.ibm.com   IBM Australia Limited
+-- 
+viresh
 
