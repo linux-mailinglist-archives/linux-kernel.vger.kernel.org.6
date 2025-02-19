@@ -1,199 +1,202 @@
-Return-Path: <linux-kernel+bounces-520846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F8B1A3B007
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 04:25:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDEC7A3B00B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 04:32:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8C143B0E68
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 03:25:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5634418979DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 03:32:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0CA81A724C;
-	Wed, 19 Feb 2025 03:25:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D527C1A5BA9;
+	Wed, 19 Feb 2025 03:31:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="jg2r1ftG"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2088.outbound.protection.outlook.com [40.107.92.88])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ayTxPLa/"
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B5E17BA5;
-	Wed, 19 Feb 2025 03:25:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.88
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739935510; cv=fail; b=Q/FDuoENUGTtci1nNuusKPc+M8GuZOcDJAjKl425BNRDzPBvseNCFxXP9Kfle7l8wcxATPgHaVk5Ijcl+LuMXJq0+x5xPg27uw4PS+xw4BUmgr+NGRw9VHQ/VE70PfCBJbzkIax0WFe2CBtmWG4Mrlo6dKru+hABv07RrCRdf9Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739935510; c=relaxed/simple;
-	bh=2ENdQ7r34LlfdLWzm7G0/O/B/XvMJZUI3TJr2HVREgo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=VNI8iJlqdWovbwHngaXb4ZD21L7uGn2HPvCr80/vGrKSoFkTxKj92cYf4Om2yxZyy3xGbbbqTjaHzggm7BUQlORDmu0QWWQwoa/gOMg0LEBQwpPS27BkM3/hSfDfELYlWRbmQsUR9HNYahIJwRRP+By3Og12qNJjPilzUEEAdz0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=jg2r1ftG; arc=fail smtp.client-ip=40.107.92.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cBvu86BIvh4tj0Iu1BXRWNzOk48IdxREPgo1QPqPyFcBVE0Us6yu+PDFdOhM3aDfX8f3hgr4i76/cs3Dx7XtwsjMZzl9IlebH9KJNPbYbOZa/vCAYaUXYDhJ3IxYN88vyXgDVQsoIEsbWIIqlYio9lNgYMFxyLVZ9+rH+ZJtMgod4BUcia1Y1Z0s/RZPyS0KG/IMHuwlNEw2cgNh1/Xc8eGKp/LpPc4UxbjahMMogNJu4cuer5EI27P2iNh7Vg2h9ou5HXrgAHG85v+ep0cW9IVxOvX8lX72fogXytU/eM2Z6iM/65eYS846svwGPwEZLX9rMjaUlWJo3TJdYrGjTw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=c33txVUUg2gtuZogOul79AdBP1UxIP1EWq/aITDWj9w=;
- b=a8HSXNAwyPBaOUd5g6kcrMXG5N3eqFfPaZwQWvnkkVZxeT/5bXiWS4MN+jydlMppVGFYVxnv0J46sJa2ajcPQe+q4bLZE9fH8v0PjavSxSBMPb11udnssg+AqR++cwp1Y56b9Bu+h2/OonRBdaa3TWHbgrOmU8381RiYhvzLPHGo/8JaHI8u60aZcPiKPbxtvCu2SdchGc7ZITRBM0rKTB1aLAorHfOMpiWzi9U1/spSbaMvjFyfm+03rkBbOJk6d16lF6BNS2DzLGpEgHqV42FviRgWdiiEzwM1cmgm2UhVbM03Ns8fyw+TUSs+9vtzfWb0dRyxX6xaEGBFe1IQyA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=collabora.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=c33txVUUg2gtuZogOul79AdBP1UxIP1EWq/aITDWj9w=;
- b=jg2r1ftGpUOzmCWnGVE9VZM1zuHbTyrgkbLCuAyEy746vo/RaQfrFRMcDi5b7tt8dEQ4NYo4DLogWzq8BnZVT/z9DMY0BBNic5ZF+d7waWMHevvSHBXhcjyeVjpiIjFhyxfj2IH2jGS0UwJtX8BhA03dS/JocDg1aRV1i7XihnvQdgOBrIvbNh9pwGZ+Dx69jVORaoH/xL/WA/E3phH2+SpgbSInaJpzrRxRmcaverqZdjUwitev/hvf4dGIzAgylezgF0KUo6cI93zPLeCecaNWor9+PWQSJYk82Os93jJW84FM+ly7XmdpXb0Gf1q6+kL7PSH1F6Vpy79R4jvskw==
-Received: from SA0PR11CA0145.namprd11.prod.outlook.com (2603:10b6:806:131::30)
- by DM6PR12MB4153.namprd12.prod.outlook.com (2603:10b6:5:212::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Wed, 19 Feb
- 2025 03:25:04 +0000
-Received: from SA2PEPF000015C6.namprd03.prod.outlook.com
- (2603:10b6:806:131:cafe::2c) by SA0PR11CA0145.outlook.office365.com
- (2603:10b6:806:131::30) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8445.19 via Frontend Transport; Wed,
- 19 Feb 2025 03:25:04 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- SA2PEPF000015C6.mail.protection.outlook.com (10.167.241.196) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8466.11 via Frontend Transport; Wed, 19 Feb 2025 03:25:04 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 18 Feb
- 2025 19:24:54 -0800
-Received: from [10.110.48.28] (10.126.231.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 18 Feb
- 2025 19:24:54 -0800
-Message-ID: <e6322f90-08bd-4e86-8dad-2ddbd7e5cece@nvidia.com>
-Date: Tue, 18 Feb 2025 19:24:53 -0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A57ED136A;
+	Wed, 19 Feb 2025 03:31:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739935919; cv=none; b=dZ3ZC+O4HZcvtLccigecqlPc80+48uTrNNuEZkLWB6cGrS+ZNA89atj44GRaqe/TIrMDbtugrmaGZsenkYRxcwzIFFvj5/3ffjydwlJmlmoMxkHAlrq39LOcfhexuQVYxp3CYMCUifm0QMMTbxd3HJ/qy8/CXkmuJYh9mN6Rb2s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739935919; c=relaxed/simple;
+	bh=okHOJqxKpAgGDK5EYqVExz7WeDz4/LDo6DEtsGqv/hw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dlm3ueJrl4sIdqTmPgz/mk28uVXLYhD+7cJ0u4rwYHg4kul/lWHybih0W8yM1NJtnikqhgUtHpP2laOXeyLTRozxwIuQ4NT98vtxjbT8/QgFZqHZKehqCRLVgo2dQXXzo3rNHxDcbANcac8DYhS/S44p6vTE9CNETEsSP7vKODs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ayTxPLa/; arc=none smtp.client-ip=209.85.166.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-85517db52a2so125348339f.3;
+        Tue, 18 Feb 2025 19:31:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739935916; x=1740540716; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=e+OUaaJXwOMrUhgWSUKQkkYMtzqTZvR6HK4jSYX4dyc=;
+        b=ayTxPLa/I7bh+Z8Bv4oOxhUsLk3x9+nSTPajJL5w+HTU2vH63U+EThKVczcw5nmf7K
+         fs2X1fDWTYuj3wMF4n1bUCcspwEwIqg6i9XFO3Wv124qati6XFL2ChKueiOfGk7tABdu
+         LcEqV/E9dL/U7nHf4/pT8k/XP8mTeVlbKTJks7C7mQl1DvbW650zwL2N8jl8iDI3Bi7T
+         x83Ny9HcArxK6A3DBod9o6k9oq/jPJMMf16cYapCVvasXo6kD/uMODwZ7kcSVT/fJcI/
+         jzRXixSBoZfVzpl5M8JOyDLdchNbiXKyzjYnW1z7YyFFbabIkZFc3+eHy68W5p3gAySq
+         BqZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739935916; x=1740540716;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=e+OUaaJXwOMrUhgWSUKQkkYMtzqTZvR6HK4jSYX4dyc=;
+        b=cjDGUx5aSe72otUeXtwD9wW8+Lnrj9ipvPaqEsGlyJun9pbGYNnrdTMEtNM6x35f+D
+         WGQqmP/vRWQ9wEXMznanzA2Ex9MzycjJQqozlZ08pgg4Wh1Jdy+xwmnoanG8oQZJihIj
+         /wSAW6TTSIzubh+G8fevlfNK9UD44mevf6Akz9GH2BW2AXtNrK7aKloapf1QRkVuT5oN
+         wArz45kKqIcgD4k+j4NMXxmQqlUJmV8yzZIeZOk4+IXFtJVhc9PRZtpjFhp255G84Xez
+         CXT3mbFlQiJzul27P+5MpaLSOlyu5YuGP2V0ReMZeJgW3hLsatzldN+TFAeE8nb0vbBt
+         6H4A==
+X-Forwarded-Encrypted: i=1; AJvYcCUvod2OdYLUsTJ1hBnqwdBxfNxrpJQnZmpPDDckM7FobAJ+fNw7n49nQJBm/356XG6cvFhpX26q@vger.kernel.org, AJvYcCVu1dh+e5PTu1lRCaB7ym/yb/3hRv9TEMg4CwX1NeGFzH1eaP/NdDZgs0GxABS553uTxyY0G8hq3us+36Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsrTCI0RKEwXRDY1ThiDlnBakRkSsG3t0JV4BW9N2zIieT20M8
+	ehl79f80iMMgcI82qHOoriTV7DA1/IiWSpPK7d2RJjJ8u+XS3sr87ibcRs4hq4n5C4HBnPjcjN5
+	xqG9ixThZ2onRt0gFwc4fSqW1yJA=
+X-Gm-Gg: ASbGnctTTqXS3HMR2ZWkglGHHVNIMlp+56Ntd68AXPlnBnMtEn6s5lH8ygsfGNTP3Ge
+	Su0bfl7mVEhziavuoZr2WBNkV4Htn5s9sY9GW4teMtBNwCjAlNgR++ZywfKF7KOw3Dr2cPOGU
+X-Google-Smtp-Source: AGHT+IGFIM48LDWdSa0fM5fv6vkMF0cAOM3ChwQmFZppyg/pXLCL/7tj9VQDGyJHhFNYXTkM8ptCDG5YY7aMJdcAcEA=
+X-Received: by 2002:a05:6e02:3182:b0:3d0:1ee6:731b with SMTP id
+ e9e14a558f8ab-3d28092be7cmr151318145ab.15.1739935916079; Tue, 18 Feb 2025
+ 19:31:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 1/3] rust: add useful ops for u64
-To: Alexandre Courbot <acourbot@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
-	"daniel.almeida@collabora.com" <daniel.almeida@collabora.com>
-CC: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
-	"dakr@kernel.org" <dakr@kernel.org>, "airlied@gmail.com" <airlied@gmail.com>,
-	Ben Skeggs <bskeggs@nvidia.com>
-References: <20250217-nova_timer-v1-0-78c5ace2d987@nvidia.com>
- <20250217-nova_timer-v1-1-78c5ace2d987@nvidia.com>
- <C1FF4314-C013-4AE1-A94E-444AFACDB4AC@collabora.com>
- <D7VLMD31YB0V.OKHDSVUPAZTE@nvidia.com>
- <1b8921d46f7d70c7467ea0940d60220f05cccc5d.camel@nvidia.com>
- <D7W119MHCCWH.IS600FTIOV8O@nvidia.com>
-Content-Language: en-US
-From: John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <D7W119MHCCWH.IS600FTIOV8O@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF000015C6:EE_|DM6PR12MB4153:EE_
-X-MS-Office365-Filtering-Correlation-Id: 87bdf88a-8523-4053-4081-08dd509500b2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WmFkcy95d3gyV0RXYk1JMEIzT1NUY0NVSFBhMnpNaGNRenNBL0h5elBVcVFt?=
- =?utf-8?B?RWdvelVXWFlrWWRkdHQ0dFBUekhWZVorN1RBRVBrbEcyM3NZZGdoTGxYZG8y?=
- =?utf-8?B?c2g0d2ZkQXdRRTJvV2hPeXV2YkZLWm5qa0k5WkdXMmdrR0xtUXRkbGI0d2xW?=
- =?utf-8?B?YmxVRFdpb05rUzdLQU9iczNaT3EwaElia2lSUU8zWmEySnBHa0xUT0xQVWhv?=
- =?utf-8?B?ckowUFZpSUsyWXZNWmpUNjA1NVdGWTZjZHdhcGVWM2Y4L1dpVFovc1FSUUgr?=
- =?utf-8?B?MS81MEwyalhHbEtSaGxyNWhaYUZ4cjhsZFFVWXQ3bEgzYW9KUFQ4R2JBV3hx?=
- =?utf-8?B?NGljK2dDVUkyVWFwckt5a1VMaFdiNzhoMng3UG9JR0hRZVBTdnVrdWZlNjZu?=
- =?utf-8?B?Qm1EMFZHQWlUOFFyeDlTdFVkLzRDemRpUnVCNWJudnZvSmhiMnBYcjIrRW9q?=
- =?utf-8?B?aTZPdDRIcjR1ZU9pZXNMYXhzbnZEZHFlOWV5VFBabmMzckRaMk4zMFZ6d2Ev?=
- =?utf-8?B?TEFFa3QwUytobldHSFhvcWZ3NGxqdUxqM2h6U1hQK0FEQmxNM2lDWUJkY0F4?=
- =?utf-8?B?Ryt3ZXdHVXhlTmJaSklzaW4ycElzeHRQbi9qRHdYMnlibWlkNHpWcUFTOUVL?=
- =?utf-8?B?aDQxdnBPNHRUR3UreFJiYkdMN29jeS9oL2NHQ0dOUDZjdUo3djdGbS9hUzUw?=
- =?utf-8?B?Y1JaUHN3cVhGVkUyc0lvODIxbEFTYjhOZ1FSeVl3VjlMaFhsb2g2Y0tudlVH?=
- =?utf-8?B?bDBocjQ0QXEzYmlhTGxsSU1VUlcwUEdOSEcycGQ4UEtpY250RE5DbDlIOXA3?=
- =?utf-8?B?NFFyaVlOcytXdUExRFJ4WkdzTkFlUHFLRkU5a3dVLytwQTFkY2NpMFJ0YVhy?=
- =?utf-8?B?OWNoZ1NSVGtDdlZTTWJvaWEzdThVaWNvbVJVOUx4VCswWHRsUHozRGpHTEVs?=
- =?utf-8?B?eTJHOHExU1ZsMjV6eEJFcTV4dEJDcmdXb1dOQWN6UTNVVXQ3QVJEaURuYzhU?=
- =?utf-8?B?USt2aXZoSzNSc3FGNHZ1R0UvL1hxQ3dqVU05SWdPNWplWEY5VTg4dlNXMFN2?=
- =?utf-8?B?KzJudndJTWtkMFgzTGUwYlBSbVFMbUpMMG5DdlZScVV2ZmxHd0ZvQTZTdVQv?=
- =?utf-8?B?VUY3d2Y0b3gxa2N6MHFQWVZjU3d2bnBldGlDL3BkTjZLSUtDWDhtRklnY2Y3?=
- =?utf-8?B?Ly9sNkVaMk5HMStnMlk3eURWZXpEdk9BWHN1M1hnMjhSTVg1d0x3MWVhM1FC?=
- =?utf-8?B?dnRDWVkwb2FvRGtpWDh5VDdXR0hUdlErR2w2QXRpcTBKb2pEaWtJRGR4V1lG?=
- =?utf-8?B?MmJ2RDRTR0JONVRYNC9nVHcvRU1mUy8yVTV3MExhb3ExSXlJNWhGREJrSWlh?=
- =?utf-8?B?UmRxNVVlYnRNTStwY2ZEMUtyUHh3elcvNTQzQ3kxd05vTktseXlUM24vVWFt?=
- =?utf-8?B?RUdETGI2eE1XNS9iNGlzYW91eEFKcHJLb2xBZFlLS2NIYThsUnBPL3FkaXJk?=
- =?utf-8?B?Mm9wL2dkT1hnWWZBUCtXYmhpTXFYYksyRnQ3T2N1OVRzOElMY2ZzRXNLUERG?=
- =?utf-8?B?cUt5QUxaY0RvTW1RY2swTzc3NFpnY2I4QzVCN3Q3Z0d5bklZL3d6VFF1US9H?=
- =?utf-8?B?VDdUdk5PRmcySS9hQmUvUlcwdWV3Qm5jY3h0NjZhalJMSUR1NWUzOGUvbXhC?=
- =?utf-8?B?YUxCMUtkQ1VQcXJ3SG40RkpmdEpDTjdGd0s3SnEvdHM2OUNUVFpmNHRKS2Rk?=
- =?utf-8?B?NXo0NDExbEQvOE91NEtXUjZqWFZyWnpjRDh1SFNpVDg3SlUzQTZEb1ZvOXlo?=
- =?utf-8?B?UmVVb2xpQzhMTWZ4RkNDaEFaRlJ0VkR3UmVkNCtRaWtMVTMwVkhCUEVkd1gr?=
- =?utf-8?B?WjQrTFVqK1o2L3BBK2ZleUIyNExZRVpNRm81OS9RcHpWMzdENStXTmxlME96?=
- =?utf-8?B?ZUdUNjBvVko2V3M3anNXYmZYeGY1SUpBNXYvUmFONERqM1ZoUzdUWmhNQU5X?=
- =?utf-8?Q?ot3TCIVhQyk6qN0X5rnuEJibbO7814=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2025 03:25:04.7415
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 87bdf88a-8523-4053-4081-08dd509500b2
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF000015C6.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4153
+References: <20250218105824.34511-1-wanghai38@huawei.com> <CANn89iKF+LC_isruAAd+nyxgytr4LPeFTe9=ey0j=Xy5URMvkg@mail.gmail.com>
+ <f3b279ea-92c3-457f-915a-2f4963746838@huawei.com>
+In-Reply-To: <f3b279ea-92c3-457f-915a-2f4963746838@huawei.com>
+From: Jason Xing <kerneljasonxing@gmail.com>
+Date: Wed, 19 Feb 2025 11:31:19 +0800
+X-Gm-Features: AWEUYZmOxzFEIzfrWT_r5uxgZ41XeOzvhnB8B6r_lhXCBrI3iq_vYTcDYDlZm9w
+Message-ID: <CAL+tcoByx13C1Bk1E33C_TqhpXydNNMe=PF93-5daRQeUC=V7A@mail.gmail.com>
+Subject: Re: [PATCH net] tcp: Fix error ts_recent time during three-way handshake
+To: Wang Hai <wanghai38@huawei.com>
+Cc: Eric Dumazet <edumazet@google.com>, ncardwell@google.com, kuniyu@amazon.com, 
+	davem@davemloft.net, dsahern@kernel.org, kuba@kernel.org, pabeni@redhat.com, 
+	horms@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2/18/25 5:21 PM, Alexandre Courbot wrote:
-> On Wed Feb 19, 2025 at 5:51 AM JST, Timur Tabi wrote:
->> On Tue, 2025-02-18 at 22:16 +0900, Alexandre Courbot wrote:
-...
-> More likely this would be something like:
-> 
->    let SplitU64 { high: some_u32, .. } = some_u64;
-> 
-> Which is still a bit verbose, but a single-liner.
-> 
-> Actually. How about adding methods to this trait that return either
-> component?
-> 
->    let some_u32 = some_u64.high_half();
->    let another_u32 = some_u64.low_half();
-> 
-> These should be used most of the times, and using destructuring/tuple
-> would only be useful for a few select cases.
+On Wed, Feb 19, 2025 at 10:16=E2=80=AFAM Wang Hai <wanghai38@huawei.com> wr=
+ote:
+>
+>
+>
+> On 2025/2/18 21:35, Eric Dumazet wrote:
+> > On Tue, Feb 18, 2025 at 12:00=E2=80=AFPM Wang Hai <wanghai38@huawei.com=
+> wrote:
+> >>
+> >> If two ack packets from a connection enter tcp_check_req at the same t=
+ime
+> >> through different cpu, it may happen that req->ts_recent is updated wi=
+th
+> >> with a more recent time and the skb with an older time creates a new s=
+ock,
+> >> which will cause the tcp_validate_incoming check to fail.
+> >>
+> >> cpu1                                cpu2
+> >> tcp_check_req
+> >>                                      tcp_check_req
+> >> req->ts_recent =3D tmp_opt.rcv_tsval =3D t1
+> >>                                      req->ts_recent =3D tmp_opt.rcv_ts=
+val =3D t2
+> >>
+> >> newsk->ts_recent =3D req->ts_recent =3D t2 // t1 < t2
+> >> tcp_child_process
+> >> tcp_rcv_state_process
+> >> tcp_validate_incoming
+> >> tcp_paws_check
+> >> if ((s32)(rx_opt->ts_recent - rx_opt->rcv_tsval) <=3D paws_win) // fai=
+led
+> >>
+> >> In tcp_check_req, restore ts_recent to this skb's to fix this bug.
+> >>
+> >> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> >> Signed-off-by: Wang Hai <wanghai38@huawei.com>
+> >> ---
+> >>   net/ipv4/tcp_minisocks.c | 4 ++++
+> >>   1 file changed, 4 insertions(+)
+> >>
+> >> diff --git a/net/ipv4/tcp_minisocks.c b/net/ipv4/tcp_minisocks.c
+> >> index b089b08e9617..0208455f9eb8 100644
+> >> --- a/net/ipv4/tcp_minisocks.c
+> >> +++ b/net/ipv4/tcp_minisocks.c
+> >> @@ -878,6 +878,10 @@ struct sock *tcp_check_req(struct sock *sk, struc=
+t sk_buff *skb,
+> >>          sock_rps_save_rxhash(child, skb);
+> >>          tcp_synack_rtt_meas(child, req);
+> >>          *req_stolen =3D !own_req;
+> >> +       if (own_req && tcp_sk(child)->rx_opt.tstamp_ok &&
+> >> +           unlikely(tcp_sk(child)->rx_opt.ts_recent !=3D tmp_opt.rcv_=
+tsval))
+> >> +               tcp_sk(child)->rx_opt.ts_recent =3D tmp_opt.rcv_tsval;
+> >> +
+> >>          return inet_csk_complete_hashdance(sk, child, req, own_req);
+> >
+> > Have you seen the comment at line 818 ?
+> >
+> > /* TODO: We probably should defer ts_recent change once
+> >   * we take ownership of @req.
+> >   */
+> >
+> > Plan was clear and explained. Why implement something else (and buggy) =
+?
+> >
+> Hi Eric,
+>
+> Currently we have a real problem, so we want to solve it. This bug
+> causes the upper layers to be unable to be notified to call accept after
+> the successful three-way handshake.
+>
+> Skb from cpu1 that fails at tcp_paws_check (which it could have
+> succeeded) will not be able to enter the TCP_ESTABLISHED state, and
+> therefore parent->sk_data_ready(parent) will not be triggered, and skb
+> from cpu2 can complete the three-way handshake, but there is also no way
+> to call parent->sk_data_ready(parent) to notify the upper layer, which
+> will result
+> in the upper layer not being able to sense and call accept to obtain the
+> nsk.
+>
+> cpu1                                cpu2
+> tcp_check_req
+>                                      tcp_check_req
+> req->ts_recent =3D tmp_opt.rcv_tsval =3D t1
+>                                      req->ts_recent=3Dtmp_opt.rcv_tsval=
+=3D t2
+>
+> newsk->ts_recent =3D req->ts_recent =3D t2 // t1 < t2
+> tcp_child_process
+>   tcp_rcv_state_process
+>    tcp_validate_incoming
+>     tcp_paws_check // failed
+>   parent->sk_data_ready(parent); // will not be called
+>                                      tcp_v4_do_rcv
+>                                      tcp_rcv_state_process // Complete th=
+e three-way handshake
+>                                                                          =
+                               // missing parent->sk_data_ready(parent);
 
-I think I like this approach best so far, because that is actually how
-drivers tend to use these values: one or the other 32 bits at a time.
-Registers are often grouped into 32-bit named registers, and driver code
-wants to refer to them one at a time (before breaking some of them down
-into smaller named fields)>
+IIUC, the ack received from cpu1 triggered calling
+inet_csk_complete_hashdance() so its state transited from
+TCP_NEW_SYN_RECV to TCP_SYN_RECV, right? If so, the reason why not
+call sk_data_ready() if the skb entered into tcp_child_process() is
+that its state failed to transit to TCP_ESTABLISHED?
 
-The .high_half() and .low_half() approach matches that very closely.
-And it's simpler to read than the SplitU64 API, without losing anything
-we need, right?
+Here is another question. How did the skb on the right side enter into
+tcp_v4_do_rcv() after entering tcp_check_req() if the state of sk
+which the skb belongs to is TCP_NEW_SYN_RECV? Could you elaborate more
+on this point?
 
-  
-thanks,
--- 
-John Hubbard
-
+Thanks,
+Jason
 
