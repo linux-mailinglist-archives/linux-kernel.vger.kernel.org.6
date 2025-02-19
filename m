@@ -1,137 +1,119 @@
-Return-Path: <linux-kernel+bounces-520949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AD97A3B199
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:26:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BD8FA3B19B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:26:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E713B1701F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 06:26:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07A80189856E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 06:26:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11DA41BCA0C;
-	Wed, 19 Feb 2025 06:26:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D8E81BE238;
+	Wed, 19 Feb 2025 06:26:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eHvSeb2f"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SmPRWQ0b"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C9B217BB21;
-	Wed, 19 Feb 2025 06:26:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 886BD17BB21;
+	Wed, 19 Feb 2025 06:26:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739946374; cv=none; b=hvD2vcuJDd/pD0EYrJBjlpS8AGdNniAvpBuHedIbr/3iiVOUvC/1xVnzJtEO1IR0JKg+mjyZQhVym/xKYVoQeHACBYTO5sk7EZRHVwD3bnOhUvIPtLqgZz8EpJi87Ze2rVNGz79bMlvIh6YcqWxKMsXCSUteDT3nTqvrJUX0gUs=
+	t=1739946378; cv=none; b=ccj7fF6549MzA6WjIgMJ2KtBLgPysQmrD+7sPpDVYN1cfwUlLQMA9qke2KUrity81t8SeA5po5e/5I2h6U6Lakl3ynUij/DdsJChol4doth8PzGZXiOpsheRqr7m+G12hVCqJa8gwHRRiVGgO/B7sTwsuwFSQYQQOjbK4FWak64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739946374; c=relaxed/simple;
-	bh=YLRfZjNmZEwt2J4sS1CuWL+Dyi6Eo3SE1Lf0l46ZiwY=;
-	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=nJ7qeKUtcohGR1zhTKSB6x+ivxLVq3drcZwfPuQZ5VXq7t8W00X8Kmoa2FFxS6vDQYDZsoTfXxC0rPrRMQAeFttc99Y5V0CcZuPKUZjhH9AeSM5EBI6gUaVxfXPQ63tQ9RDWy3uEbo0hTsy/olwRC2ECRVrhJBcVdTW/LAif7ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eHvSeb2f; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2f44353649aso8921499a91.0;
-        Tue, 18 Feb 2025 22:26:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739946372; x=1740551172; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3kZElKND3kCKGrS1g7RYXmXU6YgLKTvquyxfdR0pRBg=;
-        b=eHvSeb2fT4bXIWF3jfazaay8rfw/7JBEp19VWt1Ap0ba98MYZJUQ/2OtTHq1BSs5JS
-         XMQfz5KTb57AfMToe/GOAbFfuYdhabg/hnHdKSQGWoTsembCD14weUcFstxwPzKPBapy
-         CV9C4ZbwhdoUzWcnrN3lt4jdNqYRqRQwuX3AF9xt/k0HqXHnOBfwbH6zSb8Mr0IJvZNZ
-         +V5jzxgGiY9JMVLcIQF5k19hErd7F6rq2YRN8R8SBJNSd54twQf37eRwsZqvKbsL+H2U
-         7UJCDqBeBtwGYANpk1EtrL7B5JFVuwdOKXUI1Mm/Q2ljvpze3p4aHuvfhjfBKl0qBz5D
-         eOXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739946372; x=1740551172;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=3kZElKND3kCKGrS1g7RYXmXU6YgLKTvquyxfdR0pRBg=;
-        b=ZEMWFW9mcolkL49S2PflFR99RJuoPdTuShTpn7bqY+VuYZhSwMEDgOxP2Y7eUyolsm
-         A4BSGpqkr6D60u9ji6w/7mOxPreJsZrCeIiun83Q3FSoSNAUa8wTiyZMiSfWYfSbATby
-         SFXTYUneS4olUsniSA/M0SMGoI9vXIUMiKaaQeOYp1FWQGv9eTpXp4e7J6SHTFdHlCTE
-         GcZY3hHK8QjJCQ6xVPU0OznEyPYPD/VZLUtUINhDGd+dYG3MMx07PiN0Yx2hd9P+d0gh
-         7Fl3GiBMlNajMYiJ3T9HxjF3Rn3jKKDAhEIxrkRA7Ntry7OPCBNWrHGzzYPQqchHMv+7
-         IwNg==
-X-Forwarded-Encrypted: i=1; AJvYcCVHOtdtsmEH7RoRAyE/Fa5Ly4wgIbGFAgLFX5jGYapcnWJ0Hiq6d+2f/qGXH0IyjpPQB3NfQjZ0@vger.kernel.org, AJvYcCVlt4EUaiItHco1yW8IRCR3Nd56AQAPqKMyTUHhBIxZptD7TAnCngCWoWYj3R5Aam27hj3qUUwP2sNW72Ax5Rc=@vger.kernel.org, AJvYcCVpVGZQTIyxpEJ3dqzvJvLj50KxqkNonT28EqIPsETIXZ0i/mjjfO9RlHRuA9wKi61DcILuyv7SJCTQqDk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFs8dLpDGZ73ennXJqwhOsuOh3dI7ERX9rxqpjgTTP1poUTQBp
-	5sxZ0tytzLwLp6HS9lZUGH3GLQ9BqcpLQ7GbHg+vWySwhmRHYCpQ
-X-Gm-Gg: ASbGncu9+ojZEQRCFiT4Alu5CXoTuVkdhE1uyVjwAhV3LUOpBWEuDFm4wvxN2dzo+F8
-	m9JURbsq6j2FA0XQ8g6t2jInAvO11hU1/fnK2Akc7gVZeZCz0mCwZZBi9hZnFYcE4W6wtf1VnS7
-	V+xdaLqApaPtCaDz57i5ksKWb9QDhIw6qxGV+9NH3+DoyZsVu7i/H65RcvwNX0jQDacmnK9HY39
-	WVHpX/gptfmeCQ+ZJVHLNwhsqVJFLmtMi2DRR5JutevXZuTivKWRr9PJ2CLpcWBswMsKpWC5aIg
-	8Eeq+gBsrDMIvrr9y1c2t4n0bbHP7og4afAHse10i0Va+S4P1k8ns9DzLTQJX84Dq+RO5ZRN
-X-Google-Smtp-Source: AGHT+IE7Ce4LdfDebhYA+Q4CG7Lr1YqDWI7NHJxGkePySSwowWVZA/9C6wEyMSCkX4JxZx62eXof3Q==
-X-Received: by 2002:aa7:88d5:0:b0:725:e4b9:a600 with SMTP id d2e1a72fcca58-732618e50d1mr25994703b3a.16.1739946372290;
-        Tue, 18 Feb 2025 22:26:12 -0800 (PST)
-Received: from localhost (p3882177-ipxg22501hodogaya.kanagawa.ocn.ne.jp. [180.15.148.177])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73274a11a0bsm5866711b3a.123.2025.02.18.22.26.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 22:26:11 -0800 (PST)
-Date: Wed, 19 Feb 2025 15:26:02 +0900 (JST)
-Message-Id: <20250219.152602.1131699707200242344.fujita.tomonori@gmail.com>
-To: frederic@kernel.org
-Cc: fujita.tomonori@gmail.com, anna-maria@linutronix.de,
- tglx@linutronix.de, jstultz@google.com, sboyd@kernel.org,
- linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
- netdev@vger.kernel.org, andrew@lunn.ch, hkallweit1@gmail.com,
- tmgross@umich.edu, ojeda@kernel.org, alex.gaynor@gmail.com,
- gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
- a.hindborg@samsung.com, aliceryhl@google.com, arnd@arndb.de,
- mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
- vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org,
- bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
- tgunders@redhat.com, me@kloenk.dev
-Subject: Re: [PATCH v10 6/8] MAINTAINERS: rust: Add TIMEKEEPING and TIMER
- abstractions
-From: FUJITA Tomonori <fujita.tomonori@gmail.com>
-In-Reply-To: <Z7M8IDI_caXqBvMp@localhost.localdomain>
-References: <20250207132623.168854-7-fujita.tomonori@gmail.com>
-	<20250217.091008.1729482605084144345.fujita.tomonori@gmail.com>
-	<Z7M8IDI_caXqBvMp@localhost.localdomain>
+	s=arc-20240116; t=1739946378; c=relaxed/simple;
+	bh=gs8Atg05EuB92ani/mTzwjxh1rZsnVOwZpA1oIUYdO8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QsgS7h2pfFau7BrZfozQWsTKG/u6Ld3X/5lSSUQaCLnIUVK+L+LBhVQkiWxEP4EfJkRpjHva7JdDx4I7228ToYYgJSjrGzoT5ChsNsG4x1W7lw8mcr2F0XHNtzXllNlVWiJSWKXMeNzgOucVO7dIDX4IoNWWsMXYqE7n4j6Tj3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SmPRWQ0b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2579AC4CEE6;
+	Wed, 19 Feb 2025 06:26:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739946378;
+	bh=gs8Atg05EuB92ani/mTzwjxh1rZsnVOwZpA1oIUYdO8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=SmPRWQ0bmA8r6JDNq4EQiZtBOZyVsOxTjzVaOEV2ISiy5eUfCjSB1DfbVPDihvLv4
+	 rigP2iikysJ3QL7ln1Ll/HKk/8bprzAgDn5XeHheKtplFQ0rx9YnfzVpOlh5L8PYaM
+	 8RQpTF2U0wNX6WqjkyKh4ANqSE1we9bWm64Jf9aF783B0uDvYZeUG+gCcxMkWHSrzQ
+	 pHu1uUeMXdGk/i7vhskBB44omPDnLMmq/v2BBwNQkC557xkuDn5Btwdo/X3WRzXQ+s
+	 qhoBXy0/nLt7cJlCfbe4D7e86v5gIySR3A7cWFSCBYMPezP1X7dbhS1BGaEuFPxEPs
+	 TWgO97Yev6g/g==
+Message-ID: <54cb52eb-9429-40d9-8b16-368c517746fd@kernel.org>
+Date: Wed, 19 Feb 2025 07:26:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/2] tty/vt: Gather the code that outputs char with
+ utf8 in mind
+To: Alexey Gladkov <legion@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-serial@vger.kernel.org
+References: <cover.1739881707.git.legion@kernel.org>
+ <35c2ae96b68b64ee71b636df0e0c1907e0766a24.1739881707.git.legion@kernel.org>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <35c2ae96b68b64ee71b636df0e0c1907e0766a24.1739881707.git.legion@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Mon, 17 Feb 2025 14:39:44 +0100
-Frederic Weisbecker <frederic@kernel.org> wrote:
-
->> > diff --git a/MAINTAINERS b/MAINTAINERS
->> > index c8d9e8187eb0..987a25550853 100644
->> > --- a/MAINTAINERS
->> > +++ b/MAINTAINERS
->> > @@ -10353,6 +10353,7 @@ F:	kernel/time/sleep_timeout.c
->> >  F:	kernel/time/timer.c
->> >  F:	kernel/time/timer_list.c
->> >  F:	kernel/time/timer_migration.*
->> > +F:	rust/kernel/time/delay.rs
->> >  F:	tools/testing/selftests/timers/
->> >  
->> >  HIGH-SPEED SCC DRIVER FOR AX.25
->> > @@ -23852,6 +23853,7 @@ F:	kernel/time/timeconv.c
->> >  F:	kernel/time/timecounter.c
->> >  F:	kernel/time/timekeeping*
->> >  F:	kernel/time/time_test.c
->> > +F:	rust/kernel/time.rs
->> >  F:	tools/testing/selftests/timers/
->> 
->> TIMERS and TIMEKEEPING maintainers,
->> 
->> You would prefer to add rust files to a separate entry for Rust? Or
->> you prefer a different option?
+On 18. 02. 25, 13:29, Alexey Gladkov wrote:
+> When we putting character to the tty, we take into account the keyboard
+> mode to properly handle utf8. This code is duplicated few times.
 > 
-> It's probably a better idea to keep those rust entries to their own sections.
-> This code will be better handled into your more capable hands.
+> Signed-off-by: Alexey Gladkov <legion@kernel.org>
 
-Got it. I'll create new sections for Rust's TIMERS and TIMEKEEPING.
+Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
 
-Thanks!
+thanks,
+-- 
+js
+suse labs
 
