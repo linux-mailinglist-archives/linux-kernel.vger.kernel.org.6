@@ -1,293 +1,572 @@
-Return-Path: <linux-kernel+bounces-522527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 411DCA3CB7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:32:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAA2CA3CB80
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:33:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3270F1896B71
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:32:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 873DA166925
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:33:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 174B52580D2;
-	Wed, 19 Feb 2025 21:32:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C846A23536C;
+	Wed, 19 Feb 2025 21:32:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="oTfIrG0K";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="oINcBM6r"
-Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="15EpI+ma"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC9B124F59B;
-	Wed, 19 Feb 2025 21:32:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E7992147E4
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 21:32:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740000752; cv=none; b=a9C6luXqX3mgYyYPb2xVqPNRmaZjC9ayLsOvYMeubQFDFmgg6YqMDKhpF5LMUze9bOJuKaJGFAa1/KV5wYVfmv90bR/eRsN7n0yophJnlLn2Ef3lWDyjA0FxREyIFZkyDRuiwpR7+ZDFy4eN/pSPh8z6fTChb7bA/s/ohHK/3Fw=
+	t=1740000775; cv=none; b=lYKxv9Q8Wfzitr6KgwiTxLVVQgoUpJfzLmnTUMTDlSXpa4WEWT6L+hJkbCTo9RUZ/k+nLEc2Y2Ry1niqcE7JDSvpj83k7+CyxBLvKZslLqJ2s13McMBXVd4st7Xx0aJWFcmynfLfZIQ5h/fyEx8Wr7riiK5ETTb+xM1Ziou529E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740000752; c=relaxed/simple;
-	bh=R1DT0LKXETP1mkKDAQ5SuvxP4ZXu8sX1cMCFdFI4olM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ilx7+Pw8BPa//qFePBEdTaHQ5Q2aVkZRslTZ0eWFroFnG728E9qxsFnJu+VEt2zsbOrU59QJNZp7dy6O8lG2UyZKUW6CmGCjZCOK0FVk0qUhI0teRfnAAChw8cStZKaJz5R2+YdI/7BVyaKSC8SoiP6IDhP+si+enF8EwMe0Ewo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=oTfIrG0K; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=oINcBM6r; arc=none smtp.client-ip=202.12.124.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 9E09D2540196;
-	Wed, 19 Feb 2025 16:32:28 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Wed, 19 Feb 2025 16:32:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1740000748; x=1740087148; bh=iYgnEhnSiY
-	4SDl7PRJM6FrAN6/BSW0DulOFqA3NUQeQ=; b=oTfIrG0KnniWyQgZjlq1G9ZTiG
-	zALJbtnnyh3NKgbdBJc49skNhpXnAQekoKJvyv1v6oqTs7JbPyBxbxt9mSNRAnFg
-	R46EwMkZ/KpbaUAIiFMpipqQllHyc0IymnG0nGP1XHF1cjDUrrXOz7aodFdD+c1/
-	Uutbraxb70sH/V2osQzJrpcICqkWHXYqUFpArd/dAwhm+9ttX/AUGUuhI1Cz7vFT
-	5mvfxfguS0VKMJdNjjZc+Bdli9ra3vDLPhykEQ/KYjg/DmRDOIoQdz+DkX0RpJeW
-	m3qaRwoek//5OQLpxf/iaAW7eEughLyHppPvOj4wLSgr4/uJayNGxA2wnSbA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1740000748; x=1740087148; bh=iYgnEhnSiY4SDl7PRJM6FrAN6/BSW0DulOF
-	qA3NUQeQ=; b=oINcBM6rrDfuJhePVu8wYiVR5Syw4P6kExWVV8gZCQI4tQt81Zc
-	mkpFj0kQDF1G3KURTKI5tYOfUJf6dL5Yvr7oN1AwxEdikgYWe2wTa6hHLhtbulPB
-	WG9YLk4M92y9jQDASvTMGxxmYSx28xcxiPEJjROJoeIP0X0f6jfFCwcbF0M2qEmI
-	C2LdpuEMkkDyCDg4F7RuaDhkMg0YaVu9fW7HlZcWzPdFh6uS5CjJiiLMcwh5DcDn
-	0d4bjuIxSwIywBADSdRT3B73P4ZfmhiJdxYnkOTEuECFF+ZUghNKIy2VX1ZzOdBC
-	A911j5XTrUWs7twMEcMkzunElBkcfNeg8Eg==
-X-ME-Sender: <xms:6022Z6A3cQm9sv8YH8SABmfrtY05vRO5FrxfVCnrnVablxBDJfI9jQ>
-    <xme:6022Z0iLpAxCBjjWTdgluLgLLIUbTQNfqJeWfXsaBmqm16ba0TYP3WtOXcCLzEaXK
-    AcS-nq1fEjdYnE74jI>
-X-ME-Received: <xmr:6022Z9lV8gTKwcYOWguv7LlfeMZY37X-ThUEW9iVWF6RpJbQRWDEJ2hhZbCV_h37xkCNf5wpmjT1CmjP72nkiV57q9sgzggsd8o>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeiheefhecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttdej
-    necuhfhrohhmpeflrghnnhgvucfirhhunhgruhcuoehjsehjrghnnhgruhdrnhgvtheqne
-    cuggftrfgrthhtvghrnhepgfdvffevleegudejfeefheehkeehleehfefgjefffeetudeg
-    tefhuedufeehfeetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilh
-    hfrhhomhepjhesjhgrnhhnrghurdhnvghtpdhnsggprhgtphhtthhopedugedpmhhouggv
-    pehsmhhtphhouhhtpdhrtghpthhtohepvhhitghtohhrshhhihhhghhlihesghhmrghilh
-    drtghomhdprhgtphhtthhopehulhhfrdhhrghnshhsohhnsehlihhnrghrohdrohhrghdp
-    rhgtphhtthhopegrughrihgrnhdrhhhunhhtvghrsehinhhtvghlrdgtohhmpdhrtghpth
-    htoheplhhinhhugidqmhhmtgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthho
-    pehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtth
-    hopegsvghntghhuhgrnhhgghhlihesghhmrghilhdrtghomhdprhgtphhtthhopehluhgt
-    rghsrdhlrghisehgvghnvghshihslhhoghhitgdrtghomhdrthifpdhrtghpthhtohephh
-    hlrdhlihhusehgvghnvghshihslhhoghhitgdrtghomhdrthifpdhrtghpthhtohepghhr
-    vghgrdhtuhesghgvnhgvshihshhlohhgihgtrdgtohhmrdhtfi
-X-ME-Proxy: <xmx:6022Z4zvPmvADj302GeodEWXhpqWjzRXsBF3U1mMuY6mhdWwJu4eyg>
-    <xmx:6022Z_SKV65Pqy3K6QtCT6-o0SIHvHZPgK7ydIru8o4JXBXMfrzNUQ>
-    <xmx:6022Zzb-8xMMjULWnILGJNc1TbjuTIkWHa4J5bvQ8KfByRKs05DGMQ>
-    <xmx:6022Z4RSrVV3DJ0_8Kl_Oxyjzq41lnGVhJfsq5ITmcbfcxn2f-5_EA>
-    <xmx:7E22Z7oHVMxT5Dh0GWOrqx7wSJg3ku7OuDx3xEhnWM7elPdiUtaCZrVb>
-Feedback-ID: i47b949f6:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 19 Feb 2025 16:32:26 -0500 (EST)
-Date: Wed, 19 Feb 2025 22:32:24 +0100
-From: Janne Grunau <j@jannau.net>
-To: Victor Shih <victorshihgli@gmail.com>
-Cc: ulf.hansson@linaro.org, adrian.hunter@intel.com,
-	linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	benchuanggli@gmail.com, Lucas.Lai@genesyslogic.com.tw,
-	HL.Liu@genesyslogic.com.tw, Greg.tu@genesyslogic.com.tw,
-	dlunev@chromium.org, Ben Chuang <ben.chuang@genesyslogic.com.tw>,
-	AKASHI Takahiro <takahiro.akashi@linaro.org>,
-	Victor Shih <victor.shih@genesyslogic.com.tw>,
-	asahi@lists.linux.dev
-Subject: Re: [PATCH V23 15/16] mmc: sdhci-pci-gli: enable UHS-II mode for
- GL9755
-Message-ID: <20250219213224.GA57799@robin.jannau.net>
-References: <20241018105333.4569-1-victorshihgli@gmail.com>
- <20241018105333.4569-16-victorshihgli@gmail.com>
+	s=arc-20240116; t=1740000775; c=relaxed/simple;
+	bh=hMaYnjbh9lqlTPJZZICdChPQiwTgPXAxEwaeNQ2wGkM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ij0wo/ZUFfDU3jPnEYxAvGaPv+t2kx5wLVFS200bVhjDxGAQ/bJkucPNWVOYy7I9RXIMZAoGr0QfFVF/36VzwMo4UK1JhavUfiOou8paeF4R3iAinXuP46P4oYSVmA01KAcKpOS7KaFy+/tbktZrv+71xt6YJy+toH9/dRoO1dY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=15EpI+ma; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-471fbfe8b89so107461cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 13:32:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740000772; x=1740605572; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KIaw+f80MFSgJb1e4JyC6NagP2gJp69BacIvDqHkFjA=;
+        b=15EpI+ma4655M4hzUFbArxhz2T4roIEnlkNjFwgCAm7tVN9JJyvbSBuq2CpTQkxj2Y
+         Vo1f8ngz9MQD4GxluTO5rIsAVMPuCp5tmv2PN34xFgQtOIU9dGGrBZLWYFfb2gPcGSFe
+         et+9vGtKUapxw7AoX+hBwdZoUswfgAbAHAD2lptBSG6+A9THND3cYdGfg05i8GooRtQd
+         iOq2ZOrCs/CjwgI/wglrC9t6GJhMgID4RW130Mm0aR/kzsM7QDldZfqk0mU53PWrxDFQ
+         wPlxYAXVwQj287L8fHxaRsNNdNjXOvQwb1YtG4KWwO6bRWZRZgFAMhNX4Fp961wVipnr
+         7U7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740000772; x=1740605572;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KIaw+f80MFSgJb1e4JyC6NagP2gJp69BacIvDqHkFjA=;
+        b=PB6QBcJ3JoNgFyV9V4HgSO3DjV/TLRS03iBI9v/yKCX2Z0y7cAi2Rln8k3/02CgBPk
+         rKzg4ozxB6zqdy0lOPe26Ikrn6B2VMI/fOXgjgu9gV6w8EhCZbGYPjiqk3UlzTe94PP+
+         MZLz+iKhQCamcs98V+mQQYuZzt8f4nDkbFqyalJkJNf1c+LJ/XnM+iVlNjPSlOPKi7PI
+         fWgeaq4MN7OxBKZtnGSRRhAXZ9xh52qs4JMXziT4dLZ1irb4Ol/IzPE24mBrYvS2kYiL
+         wrj1RA/EX7Ua4/b1S28xzZ1ZK96DRRCevbxvF+cQ27ZUeX0yKTqlNjcLAIxhthp0T6Jq
+         I38w==
+X-Forwarded-Encrypted: i=1; AJvYcCU/Ren35Qk2NcQh5OJ+guR4Alw91bgIV/EMaqJ+TGM/Jvk41Bfuu3QyNoIas/Jv7wLckqcOAs+7jr7Sd0Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyD2i2d7l3rh1s8PazN5lHtMyxIxcjk3H2DJtaaQJutrTe7Fnew
+	MpqO0cmO8W03TwEzDJHkkugu9QRr8eZ5om+hYfwjCx/sZmpU1YbWh+UnxOuESZwpuBq5MfBP3cL
+	3oNYODZPGLw2sOo/TpfiqFT3EYiW31L65aBdF
+X-Gm-Gg: ASbGncs6J7rDoSb0b7MsDlkLZhfRWHIFaLPt/uxNXNUxYYher1/UWYorTLDJYhJHsfF
+	bnu0Q6fLIkq7MqBZOLbQYaovX55NfXXsBEaPOQVGL/TnvQbCZzrWQr9DBh+4xV5BNcjnOiakgrE
+	BYB/dgZ2d5erYYHALjOpBj/RZjiLQ=
+X-Google-Smtp-Source: AGHT+IHCYtqFnkyoQRwL3mWknnUoXwCQvFuzO8VOEeSND8HSJin9ripKWYAXw8vPFeEdAXY28dOtPo3SUk5Ewtd1Hc0=
+X-Received: by 2002:a05:622a:1882:b0:472:f91:2935 with SMTP id
+ d75a77b69052e-47215c97dbbmr944881cf.24.1740000771794; Wed, 19 Feb 2025
+ 13:32:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241018105333.4569-16-victorshihgli@gmail.com>
+References: <20250219112519.92853-1-21cnbao@gmail.com> <CAJuCfpEWFz14R1vD4Rezy98WBk25HWWX+6DsGBekeYMugKTsfQ@mail.gmail.com>
+ <CAGsJ_4yx1=jaQmDG_9rMqHFFkoXqMJw941eYvtby28OqDq+S7g@mail.gmail.com>
+ <CA+EESO651xc=jR7DyX9XhEtyxFe_Cys8XwT8WDr4phC97ssW-w@mail.gmail.com> <CAGsJ_4xzaTYcJuP+a=NqPX6-75YcSsdvTr_uxxYzpe0QwP08xg@mail.gmail.com>
+In-Reply-To: <CAGsJ_4xzaTYcJuP+a=NqPX6-75YcSsdvTr_uxxYzpe0QwP08xg@mail.gmail.com>
+From: Lokesh Gidra <lokeshgidra@google.com>
+Date: Wed, 19 Feb 2025 13:32:40 -0800
+X-Gm-Features: AWEUYZk7ntNj3SpVNad2rUqj_45g4CRdsdywvoZxdt7ONZvztjocrwcBEdPtc8s
+Message-ID: <CA+EESO5RKG3Kbkww5a2cGQbhiPHrJFLKYO9rieJvJcCDoSD8sg@mail.gmail.com>
+Subject: Re: [PATCH RFC] mm: Fix kernel BUG when userfaultfd_move encounters swapcache
+To: Barry Song <21cnbao@gmail.com>
+Cc: Suren Baghdasaryan <surenb@google.com>, linux-mm@kvack.org, akpm@linux-foundation.org, 
+	linux-kernel@vger.kernel.org, zhengtangquan@oppo.com, 
+	Barry Song <v-songbaohua@oppo.com>, Andrea Arcangeli <aarcange@redhat.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Axel Rasmussen <axelrasmussen@google.com>, 
+	Brian Geffon <bgeffon@google.com>, Christian Brauner <brauner@kernel.org>, 
+	David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>, Jann Horn <jannh@google.com>, 
+	Kalesh Singh <kaleshsingh@google.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	Matthew Wilcox <willy@infradead.org>, Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>, 
+	Nicolas Geoffray <ngeoffray@google.com>, Peter Xu <peterx@redhat.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Shuah Khan <shuah@kernel.org>, 
+	ZhangPeng <zhangpeng362@huawei.com>, Yu Zhao <yuzhao@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hej,
+On Wed, Feb 19, 2025 at 1:26=E2=80=AFPM Barry Song <21cnbao@gmail.com> wrot=
+e:
+>
+> On Thu, Feb 20, 2025 at 10:03=E2=80=AFAM Lokesh Gidra <lokeshgidra@google=
+.com> wrote:
+> >
+> > On Wed, Feb 19, 2025 at 12:38=E2=80=AFPM Barry Song <21cnbao@gmail.com>=
+ wrote:
+> > >
+> > > On Thu, Feb 20, 2025 at 7:27=E2=80=AFAM Suren Baghdasaryan <surenb@go=
+ogle.com> wrote:
+> > > >
+> > > > On Wed, Feb 19, 2025 at 3:25=E2=80=AFAM Barry Song <21cnbao@gmail.c=
+om> wrote:
+> > > > >
+> > > > > From: Barry Song <v-songbaohua@oppo.com>
+> > > > >
+> > > > > userfaultfd_move() checks whether the PTE entry is present or a
+> > > > > swap entry.
+> > > > >
+> > > > > - If the PTE entry is present, move_present_pte() handles folio
+> > > > >   migration by setting:
+> > > > >
+> > > > >   src_folio->index =3D linear_page_index(dst_vma, dst_addr);
+> > > > >
+> > > > > - If the PTE entry is a swap entry, move_swap_pte() simply copies
+> > > > >   the PTE to the new dst_addr.
+> > > > >
+> > > > > This approach is incorrect because even if the PTE is a swap
+> > > > > entry, it can still reference a folio that remains in the swap
+> > > > > cache.
+> > > > >
+> > > > > If do_swap_page() is triggered, it may locate the folio in the
+> > > > > swap cache. However, during add_rmap operations, a kernel panic
+> > > > > can occur due to:
+> > > > >  page_pgoff(folio, page) !=3D linear_page_index(vma, address)
+> > > >
+> > > > Thanks for the report and reproducer!
+> > > >
+> > > > >
+> > > > > $./a.out > /dev/null
+> > > > > [   13.336953] page: refcount:6 mapcount:1 mapping:00000000f43db1=
+9c index:0xffffaf150 pfn:0x4667c
+> > > > > [   13.337520] head: order:2 mapcount:1 entire_mapcount:0 nr_page=
+s_mapped:1 pincount:0
+> > > > > [   13.337716] memcg:ffff00000405f000
+> > > > > [   13.337849] anon flags: 0x3fffc0000020459(locked|uptodate|dirt=
+y|owner_priv_1|head|swapbacked|node=3D0|zone=3D0|lastcpupid=3D0xffff)
+> > > > > [   13.338630] raw: 03fffc0000020459 ffff80008507b538 ffff8000850=
+7b538 ffff000006260361
+> > > > > [   13.338831] raw: 0000000ffffaf150 0000000000004000 00000006000=
+00000 ffff00000405f000
+> > > > > [   13.339031] head: 03fffc0000020459 ffff80008507b538 ffff800085=
+07b538 ffff000006260361
+> > > > > [   13.339204] head: 0000000ffffaf150 0000000000004000 0000000600=
+000000 ffff00000405f000
+> > > > > [   13.339375] head: 03fffc0000000202 fffffdffc0199f01 ffffffff00=
+000000 0000000000000001
+> > > > > [   13.339546] head: 0000000000000004 0000000000000000 00000000ff=
+ffffff 0000000000000000
+> > > > > [   13.339736] page dumped because: VM_BUG_ON_PAGE(page_pgoff(fol=
+io, page) !=3D linear_page_index(vma, address))
+> > > > > [   13.340190] ------------[ cut here ]------------
+> > > > > [   13.340316] kernel BUG at mm/rmap.c:1380!
+> > > > > [   13.340683] Internal error: Oops - BUG: 00000000f2000800 [#1] =
+PREEMPT SMP
+> > > > > [   13.340969] Modules linked in:
+> > > > > [   13.341257] CPU: 1 UID: 0 PID: 107 Comm: a.out Not tainted 6.1=
+4.0-rc3-gcf42737e247a-dirty #299
+> > > > > [   13.341470] Hardware name: linux,dummy-virt (DT)
+> > > > > [   13.341671] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -S=
+SBS BTYPE=3D--)
+> > > > > [   13.341815] pc : __page_check_anon_rmap+0xa0/0xb0
+> > > > > [   13.341920] lr : __page_check_anon_rmap+0xa0/0xb0
+> > > > > [   13.342018] sp : ffff80008752bb20
+> > > > > [   13.342093] x29: ffff80008752bb20 x28: fffffdffc0199f00 x27: 0=
+000000000000001
+> > > > > [   13.342404] x26: 0000000000000000 x25: 0000000000000001 x24: 0=
+000000000000001
+> > > > > [   13.342575] x23: 0000ffffaf0d0000 x22: 0000ffffaf0d0000 x21: f=
+ffffdffc0199f00
+> > > > > [   13.342731] x20: fffffdffc0199f00 x19: ffff000006210700 x18: 0=
+0000000ffffffff
+> > > > > [   13.342881] x17: 6c203d2120296567 x16: 6170202c6f696c6f x15: 6=
+62866666f67705f
+> > > > > [   13.343033] x14: 6567617028454741 x13: 2929737365726464 x12: f=
+fff800083728ab0
+> > > > > [   13.343183] x11: ffff800082996bf8 x10: 0000000000000fd7 x9 : f=
+fff80008011bc40
+> > > > > [   13.343351] x8 : 0000000000017fe8 x7 : 00000000fffff000 x6 : f=
+fff8000829eebf8
+> > > > > [   13.343498] x5 : c0000000fffff000 x4 : 0000000000000000 x3 : 0=
+000000000000000
+> > > > > [   13.343645] x2 : 0000000000000000 x1 : ffff0000062db980 x0 : 0=
+00000000000005f
+> > > > > [   13.343876] Call trace:
+> > > > > [   13.344045]  __page_check_anon_rmap+0xa0/0xb0 (P)
+> > > > > [   13.344234]  folio_add_anon_rmap_ptes+0x22c/0x320
+> > > > > [   13.344333]  do_swap_page+0x1060/0x1400
+> > > > > [   13.344417]  __handle_mm_fault+0x61c/0xbc8
+> > > > > [   13.344504]  handle_mm_fault+0xd8/0x2e8
+> > > > > [   13.344586]  do_page_fault+0x20c/0x770
+> > > > > [   13.344673]  do_translation_fault+0xb4/0xf0
+> > > > > [   13.344759]  do_mem_abort+0x48/0xa0
+> > > > > [   13.344842]  el0_da+0x58/0x130
+> > > > > [   13.344914]  el0t_64_sync_handler+0xc4/0x138
+> > > > > [   13.345002]  el0t_64_sync+0x1ac/0x1b0
+> > > > > [   13.345208] Code: aa1503e0 f000f801 910f6021 97ff5779 (d421000=
+0)
+> > > > > [   13.345504] ---[ end trace 0000000000000000 ]---
+> > > > > [   13.345715] note: a.out[107] exited with irqs disabled
+> > > > > [   13.345954] note: a.out[107] exited with preempt_count 2
+> > > > >
+> > > > > Fully fixing it would be quite complex, requiring similar handlin=
+g
+> > > > > of folios as done in move_present_pte.
+> > > >
+> > > > How complex would that be? Is it a matter of adding
+> > > > folio_maybe_dma_pinned() checks, doing folio_move_anon_rmap() and
+> > > > folio->index =3D linear_page_index like in move_present_pte() or
+> > > > something more?
+> > >
+> > > My main concern is still with large folios that require a split_folio=
+()
+> > > during move_pages(), as the entire folio shares the same index and
+> > > anon_vma. However, userfaultfd_move() moves pages individually,
+> > > making a split necessary.
+> > >
+> > > However, in split_huge_page_to_list_to_order(), there is a:
+> > >
+> > >         if (folio_test_writeback(folio))
+> > >                 return -EBUSY;
+> > >
+> > > This is likely true for swapcache, right? However, even for move_pres=
+ent_pte(),
+> > > it simply returns -EBUSY:
+> > >
+> > > move_pages_pte()
+> > > {
+> > >                 /* at this point we have src_folio locked */
+> > >                 if (folio_test_large(src_folio)) {
+> > >                         /* split_folio() can block */
+> > >                         pte_unmap(&orig_src_pte);
+> > >                         pte_unmap(&orig_dst_pte);
+> > >                         src_pte =3D dst_pte =3D NULL;
+> > >                         err =3D split_folio(src_folio);
+> > >                         if (err)
+> > >                                 goto out;
+> > >
+> > >                         /* have to reacquire the folio after it got s=
+plit */
+> > >                         folio_unlock(src_folio);
+> > >                         folio_put(src_folio);
+> > >                         src_folio =3D NULL;
+> > >                         goto retry;
+> > >                 }
+> > > }
+> > >
+> > > Do we need a folio_wait_writeback() before calling split_folio()?
+> > >
+> > > By the way, I have also reported that userfaultfd_move() has a fundam=
+ental
+> > > conflict with TAO (Cc'ed Yu Zhao), which has been part of the Android=
+ common
+> > > kernel. In this scenario, folios in the virtual zone won=E2=80=99t be=
+ split in
+> > > split_folio(). Instead, the large folio migrates into nr_pages small =
+folios.
+> > >
+> > > Thus, the best-case scenario would be:
+> > >
+> > > mTHP -> migrate to small folios in split_folio() -> move small folios=
+ to
+> > > dst_addr
+> > >
+> > > While this works, it negates the performance benefits of
+> > > userfaultfd_move(), as it introduces two PTE operations (migration in
+> > > split_folio() and move in userfaultfd_move() while retry), nr_pages m=
+emory
+> > > allocations, and still requires one memcpy(). This could end up
+> > > performing even worse than userfaultfd_copy(), I guess.
+> > >
+> > > The worst-case scenario would be failing to allocate small folios in
+> > > split_folio(), then userfaultfd_move() might return -ENOMEM?
+> > >
+> > > Given these issues, I strongly recommend that ART hold off on upgradi=
+ng
+> > > to userfaultfd_move() until these problems are fully understood and
+> > > resolved. Otherwise, we=E2=80=99re in for a rough ride!
+> >
+> > At the moment, ART GC doesn't work taking mTHP into consideration. We
+> > don't try to be careful in userspace to be large-page aligned or
+> > anything. Also, the MOVE ioctl implementation works either on
+> > huge-pages or on normal pages. IIUC, it can't handle mTHP large pages
+> > as a whole. But that's true for other userfaultfd ioctls as well. If
+> > we were to continue using COPY, it's not that it's in any way more
+> > friendly to mTHP than MOVE. In fact, that's one of the reasons I'm
+> > considering making the ART heap NO_HUGEPAGE to avoid the need for
+> > folio-split entirely.
+>
+> Disabling mTHP is one way to avoid potential bugs. However, as long as
+> UFFDIO_MOVE is available, we can=E2=80=99t prevent others, aside from ART=
+ GC,
+> from using it, right? So, we still need to address these issues with mTHP=
+.
+>
+> If a trend-following Android app discovers the UFFDIO_MOVE API, it might
+> use it, and it may not necessarily know to disable hugepages. Doesn=E2=80=
+=99t that
+> pose a risk?
+>
+I absolutely agree that these issues need to be addressed.
+Particularly the correctness bugs must be resolved at the earliest
+possible.
 
-On Fri, Oct 18, 2024 at 06:53:32PM +0800, Victor Shih wrote:
-> From: Victor Shih <victor.shih@genesyslogic.com.tw>
-> 
-> Changes are:
->  * Disable GL9755 overcurrent interrupt when power on/off on UHS-II.
->  * Enable the internal clock when do reset on UHS-II mode.
->  * Increase timeout value before detecting UHS-II interface.
->  * Add vendor settings fro UHS-II mode.
->  * Remove sdhci_gli_enable_internal_clock functon unused clk_ctrl variable.
->  * Make a function sdhci_gli_wait_software_reset_done() for gl9755 reset.
->  * Remove unnecessary code from sdhci_gl9755_reset().
-> 
-> Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
-> Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
-> Signed-off-by: Victor Shih <victor.shih@genesyslogic.com.tw>
-> Signed-off-by: Lucas Lai <lucas.lai@genesyslogic.com.tw>
-> ---
-> 
->  drivers/mmc/host/sdhci-pci-gli.c | 235 ++++++++++++++++++++++++++++++-
->  1 file changed, 234 insertions(+), 1 deletion(-)
+I was just trying to answer your question as to why we want to use it,
+now that it is available, instead of continuing with COPY ioctl. As
+and when MOVE ioctl will start handling mTHP efficiently, I will make
+the required changes in the userspace to leverage mTHP benefits.
 
-This change results in error messages / timeout about UHS2 followed by
-register dumps with the GL9755 integrated in Apple silicon Macbook Pros
-and Mac Studio systems. Non UHS-II function of controller does not seem
-to be affected. Apple advertises the the SDXC slot as UHS-II capable.
-
-The only quirk we've experienced with gl9755 on this platform is that 8
-and 16 bit MMIO reads do not work. Workaround added in commit
-c064bb5c78c1b ("mmc: sdhci-pci-gli: GL975[50]: Issue 8/16-bit MMIO reads
-as 32-bit reads.").
-
-If you have ideas or patches to try I'm happy to do that. If not we can
-look into what MacOS does.
-
-See kernel log and lspci output below
-
-Thanks,
-Janne
-
-[   38.130033] kernel: sdhci: Secure Digital Host Controller Interface driver
-[   38.130141] kernel: sdhci: Copyright(c) Pierre Ossman
-[   38.133352] kernel: sdhci-pci 0000:02:00.0: Adding to iommu group 13
-[   38.160551] kernel: sdhci-pci 0000:02:00.0: SDHCI controller found [17a0:9755] (rev 1)
-[   38.160655] kernel: sdhci-pci 0000:02:00.0: enabling device (0000 -> 0002)
-[   38.160750] kernel: mmc0: SDHCI controller on PCI [0000:02:00.0] using ADMA 64-bit
-[   38.274617] kernel: mmc0: not detect UHS2 interface in 100ms.
-[   38.274717] kernel: mmc0: sdhci: ============ SDHCI REGISTER DUMP ===========
-[   38.274782] kernel: mmc0: sdhci: Sys addr:  0x00000000 | Version:  0x00000005
-[   38.277391] kernel: mmc0: sdhci: Blk size:  0x00000000 | Blk cnt:  0x00000000
-[   38.277475] kernel: mmc0: sdhci: Argument:  0x00000000 | Trn mode: 0x00000000
-[   38.280125] kernel: mmc0: sdhci: Present:   0x20070000 | Host ctl: 0x00000000
-[   38.280206] kernel: mmc0: sdhci: Power:     0x000000bf | Blk gap:  0x00000000
-[   38.284511] kernel: mmc0: sdhci: Wake-up:   0x00000000 | Clock:    0x0000032f
-[   38.284592] kernel: mmc0: sdhci: Timeout:   0x00000007 | Int stat: 0x00000000
-[   38.284636] kernel: mmc0: sdhci: Int enab:  0x00ff0083 | Sig enab: 0x00ff0083
-[   38.287200] kernel: mmc0: sdhci: ACmd stat: 0x00000000 | Slot int: 0x00000000
-[   38.287281] kernel: mmc0: sdhci: Caps:      0x396a3281 | Caps_1:   0x1803057f
-[   38.291212] kernel: mmc0: sdhci: Cmd:       0x00000000 | Max curr: 0x000000c8
-[   38.291292] kernel: mmc0: sdhci: Resp[0]:   0x00000000 | Resp[1]:  0x00000000
-[   38.291335] kernel: mmc0: sdhci: Resp[2]:   0x00000000 | Resp[3]:  0x00000000
-[   38.293513] kernel: mmc0: sdhci: Host ctl2: 0x00009107
-[   38.293604] kernel: mmc0: sdhci: ADMA Err:  0x00000000 | ADMA Ptr: 0x0000000000000000
-[   38.297842] kernel: mmc0: sdhci_uhs2: ==================== UHS2 ==================
-[   38.297923] kernel: mmc0: sdhci_uhs2: Blk Size:  0x00000000 | Blk Cnt:  0x00000000
-[   38.297968] kernel: mmc0: sdhci_uhs2: Cmd:       0x00000000 | Trn mode: 0x00000000
-[   38.300773] kernel: mmc0: sdhci_uhs2: Int Stat:  0x00000000 | Dev Sel : 0x00000000
-[   38.300853] kernel: mmc0: sdhci_uhs2: Dev Int Code:  0x00000000
-[   38.304739] kernel: mmc0: sdhci_uhs2: Reset:     0x00000000 | Timer:    0x000000a7
-[   38.304811] kernel: mmc0: sdhci_uhs2: ErrInt:    0x00000000 | ErrIntEn: 0x00030000
-[   38.304856] kernel: mmc0: sdhci_uhs2: ErrSigEn:  0x00030000
-[   38.307110] kernel: mmc0: sdhci: ============================================
-[   38.307201] kernel: mmc0: cannot detect UHS2 interface.
-[   38.310110] kernel: mmc0: failed to initial phy for UHS-II!
-[   38.424645] kernel: mmc0: not detect UHS2 interface in 100ms.
-[   38.424731] kernel: mmc0: sdhci: ============ SDHCI REGISTER DUMP ===========
-[   38.424758] kernel: mmc0: sdhci: Sys addr:  0x00000000 | Version:  0x00000005
-[   38.424782] kernel: mmc0: sdhci: Blk size:  0x00000000 | Blk cnt:  0x00000000
-[   38.424840] kernel: mmc0: sdhci: Argument:  0x00000000 | Trn mode: 0x00000000
-[   38.427603] kernel: mmc0: sdhci: Present:   0x20070000 | Host ctl: 0x00000000
-[   38.427659] kernel: mmc0: sdhci: Power:     0x000000bf | Blk gap:  0x00000000
-[   38.430579] kernel: mmc0: sdhci: Wake-up:   0x00000000 | Clock:    0x0000032f
-[   38.430626] kernel: mmc0: sdhci: Timeout:   0x00000007 | Int stat: 0x00000000
-[   38.433504] kernel: mmc0: sdhci: Int enab:  0x00ff0083 | Sig enab: 0x00ff0083
-[   38.433550] kernel: mmc0: sdhci: ACmd stat: 0x00000000 | Slot int: 0x00000000
-[   38.437596] kernel: mmc0: sdhci: Caps:      0x396a3281 | Caps_1:   0x1803057f
-[   38.437641] kernel: mmc0: sdhci: Cmd:       0x00000000 | Max curr: 0x000000c8
-[   38.437677] kernel: mmc0: sdhci: Resp[0]:   0x00000000 | Resp[1]:  0x00000000
-[   38.440318] kernel: mmc0: sdhci: Resp[2]:   0x00000000 | Resp[3]:  0x00000000
-[   38.440345] kernel: mmc0: sdhci: Host ctl2: 0x00009107
-[   38.444119] kernel: mmc0: sdhci: ADMA Err:  0x00000000 | ADMA Ptr: 0x0000000000000000
-[   38.444161] kernel: mmc0: sdhci_uhs2: ==================== UHS2 ==================
-[   38.444184] kernel: mmc0: sdhci_uhs2: Blk Size:  0x00000000 | Blk Cnt:  0x00000000
-[   38.446918] kernel: mmc0: sdhci_uhs2: Cmd:       0x00000000 | Trn mode: 0x00000000
-[   38.446958] kernel: mmc0: sdhci_uhs2: Int Stat:  0x00000000 | Dev Sel : 0x00000000
-[   38.450833] kernel: mmc0: sdhci_uhs2: Dev Int Code:  0x00000000
-[   38.450874] kernel: mmc0: sdhci_uhs2: Reset:     0x00000000 | Timer:    0x000000a7
-[   38.450907] kernel: mmc0: sdhci_uhs2: ErrInt:    0x00000000 | ErrIntEn: 0x00030000
-[   38.454625] kernel: mmc0: sdhci_uhs2: ErrSigEn:  0x00030000
-[   38.454665] kernel: mmc0: sdhci: ============================================
-[   38.454699] kernel: mmc0: cannot detect UHS2 interface.
-[   38.456705] kernel: mmc0: failed to initial phy for UHS-II!
-
-
-`lspci -vvvnn -d 17a0:9755` output:
-02:00.0 SD Host controller [0805]: Genesys Logic, Inc GL9755 SD Host Controller [17a0:9755] (rev 01) (prog-if 01)
-        Subsystem: Genesys Logic, Inc GL9755 SD Host Controller [17a0:9755]
-        Device tree node: /sys/firmware/devicetree/base/soc@200000000/pcie@590000000/pci@1,0/mmc@0,0
-        Control: I/O- Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr- Stepping- SERR- FastB2B- DisINTx+
-        Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort- <TAbort- <MAbort- >SERR- <PERR- INTx-
-        Latency: 0
-        Interrupt: pin A routed to IRQ 168
-        IOMMU group: 13
-        Region 0: Memory at 5c1e00000 (32-bit, non-prefetchable) [size=4K]
-        Capabilities: [80] Express (v2) Endpoint, IntMsgNum 0
-                DevCap: MaxPayload 256 bytes, PhantFunc 0, Latency L0s <4us, L1 unlimited
-                        ExtTag+ AttnBtn- AttnInd- PwrInd- RBE+ FLReset- SlotPowerLimit 0W TEE-IO-
-                DevCtl: CorrErr+ NonFatalErr+ FatalErr+ UnsupReq+
-                        RlxdOrd+ ExtTag+ PhantFunc- AuxPwr- NoSnoop+
-                        MaxPayload 128 bytes, MaxReadReq 512 bytes
-                DevSta: CorrErr- NonFatalErr- FatalErr- UnsupReq- AuxPwr+ TransPend-
-                LnkCap: Port #85, Speed 5GT/s, Width x1, ASPM L0s L1, Exit Latency L0s <4us, L1 unlimited
-                        ClockPM+ Surprise- LLActRep- BwNot- ASPMOptComp+
-                LnkCtl: ASPM Disabled; RCB 64 bytes, LnkDisable- CommClk+
-                        ExtSynch- ClockPM- AutWidDis- BWInt- AutBWInt-
-                LnkSta: Speed 5GT/s, Width x1
-                        TrErr- Train- SlotClk+ DLActive- BWMgmt- ABWMgmt-
-                DevCap2: Completion Timeout: Range ABCD, TimeoutDis+ NROPrPrP- LTR+
-                         10BitTagComp- 10BitTagReq- OBFF Via message/WAKE#, ExtFmt- EETLPPrefix-
-                         EmergencyPowerReduction Not Supported, EmergencyPowerReductionInit-
-                         FRS- TPHComp- ExtTPHComp-
-                         AtomicOpsCap: 32bit- 64bit- 128bitCAS-
-                DevCtl2: Completion Timeout: 50us to 50ms, TimeoutDis-
-                         AtomicOpsCtl: ReqEn-
-                         IDOReq- IDOCompl- LTR+ EmergencyPowerReductionReq-
-                         10BitTagReq- OBFF Disabled, EETLPPrefixBlk-
-                LnkCap2: Supported Link Speeds: 2.5-5GT/s, Crosslink- Retimer- 2Retimers- DRS-
-                LnkCtl2: Target Link Speed: 5GT/s, EnterCompliance- SpeedDis-
-                         Transmit Margin: Normal Operating Range, EnterModifiedCompliance- ComplianceSOS-
-                         Compliance Preset/De-emphasis: -6dB de-emphasis, 0dB preshoot
-                LnkSta2: Current De-emphasis Level: -6dB, EqualizationComplete- EqualizationPhase1-
-                         EqualizationPhase2- EqualizationPhase3- LinkEqualizationRequest-
-                         Retimer- 2Retimers- CrosslinkRes: unsupported
-        Capabilities: [e0] MSI: Enable+ Count=1/1 Maskable- 64bit+
-                Address: 00000000fffff000  Data: 0018
-        Capabilities: [f8] Power Management version 3
-                Flags: PMEClk- DSI- D1+ D2+ AuxCurrent=375mA PME(D0-,D1+,D2+,D3hot+,D3cold+)
-                Status: D0 NoSoftRst+ PME-Enable- DSel=0 DScale=0 PME+
-        Capabilities: [100 v1] Vendor Specific Information: ID=17a0 Rev=1 Len=008 <?>
-        Capabilities: [108 v1] Latency Tolerance Reporting
-                Max snoop latency: 0ns
-                Max no snoop latency: 0ns
-        Capabilities: [110 v1] L1 PM Substates
-                L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+ L1_PM_Substates+
-                          PortCommonModeRestoreTime=255us PortTPowerOnTime=3100us
-                L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2- ASPM_L1.1-
-                           T_CommonMode=0us LTR1.2_Threshold=3375104ns
-                L1SubCtl2: T_PwrOn=3100us
-        Capabilities: [200 v1] Advanced Error Reporting
-                UESta:  DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt- UnxCmplt- RxOF- MalfTLP-
-                        ECRC- UnsupReq- ACSViol- UncorrIntErr- BlockedTLP- AtomicOpBlocked- TLPBlockedErr-
-                        PoisonTLPBlocked- DMWrReqBlocked- IDECheck- MisIDETLP- PCRC_CHECK- TLPXlatBlocked-
-                UEMsk:  DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt- UnxCmplt- RxOF- MalfTLP-
-                        ECRC- UnsupReq- ACSViol- UncorrIntErr- BlockedTLP- AtomicOpBlocked- TLPBlockedErr-
-                        PoisonTLPBlocked- DMWrReqBlocked- IDECheck- MisIDETLP- PCRC_CHECK- TLPXlatBlocked-
-                UESvrt: DLP+ SDES+ TLP- FCP+ CmpltTO- CmpltAbrt- UnxCmplt- RxOF+ MalfTLP+
-                        ECRC- UnsupReq- ACSViol- UncorrIntErr- BlockedTLP- AtomicOpBlocked- TLPBlockedErr-
-                        PoisonTLPBlocked- DMWrReqBlocked- IDECheck- MisIDETLP- PCRC_CHECK- TLPXlatBlocked-
-                CESta:  RxErr- BadTLP- BadDLLP- Rollover- Timeout- AdvNonFatalErr- CorrIntErr- HeaderOF-
-                CEMsk:  RxErr- BadTLP- BadDLLP- Rollover- Timeout+ AdvNonFatalErr+ CorrIntErr- HeaderOF-
-                AERCap: First Error Pointer: 00, ECRCGenCap+ ECRCGenEn- ECRCChkCap+ ECRCChkEn-
-                        MultHdrRecCap- MultHdrRecEn- TLPPfxPres- HdrLogCap-
-                HeaderLog: 00000000 00000000 00000000 00000000
-        Kernel driver in use: sdhci-pci
-        Kernel modules: sdhci_pci
-
+> >
+> > Furthermore, there are few cases in which COPY ioctl's overhead just
+> > doesn't make sense for ART GC. So starting to use MOVE ioctl is the
+> > right thing to do.
+> >
+> > What we need eventually to gain mTHP benefits is both MOVE ioctl to
+> > support large-page migration as well as GC code in userspace to work
+> > with mTHP in mind.
+> > >
+> > > >
+> > > > > For now, a quick solution
+> > > > > is to return -EBUSY.
+> > > > > I'd like to see others' opinions on whether a full fix is worth
+> > > > > pursuing.
+> > > > >
+> > > > > For anyone interested in reproducing it, the a.out test program i=
+s
+> > > > > as below,
+> > > > >
+> > > > >  #define _GNU_SOURCE
+> > > > >  #include <stdio.h>
+> > > > >  #include <stdlib.h>
+> > > > >  #include <string.h>
+> > > > >  #include <sys/mman.h>
+> > > > >  #include <sys/ioctl.h>
+> > > > >  #include <sys/syscall.h>
+> > > > >  #include <linux/userfaultfd.h>
+> > > > >  #include <fcntl.h>
+> > > > >  #include <pthread.h>
+> > > > >  #include <unistd.h>
+> > > > >  #include <poll.h>
+> > > > >  #include <errno.h>
+> > > > >
+> > > > >  #define PAGE_SIZE 4096
+> > > > >  #define REGION_SIZE (512 * 1024)
+> > > > >
+> > > > >  #ifndef UFFDIO_MOVE
+> > > > >  struct uffdio_move {
+> > > > >      __u64 dst;
+> > > > >      __u64 src;
+> > > > >      __u64 len;
+> > > > >      #define UFFDIO_MOVE_MODE_DONTWAKE        ((__u64)1<<0)
+> > > > >      #define UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES ((__u64)1<<1)
+> > > > >      __u64 mode;
+> > > > >      __s64 move;
+> > > > >  };
+> > > > >  #define _UFFDIO_MOVE  (0x05)
+> > > > >  #define UFFDIO_MOVE   _IOWR(UFFDIO, _UFFDIO_MOVE, struct uffdio_=
+move)
+> > > > >  #endif
+> > > > >
+> > > > >  void *src, *dst;
+> > > > >  int uffd;
+> > > > >
+> > > > >  void *madvise_thread(void *arg) {
+> > > > >      if (madvise(src, REGION_SIZE, MADV_PAGEOUT) =3D=3D -1) {
+> > > > >          perror("madvise MADV_PAGEOUT");
+> > > > >      }
+> > > > >      return NULL;
+> > > > >  }
+> > > > >
+> > > > >  void *fault_handler_thread(void *arg) {
+> > > > >      struct uffd_msg msg;
+> > > > >      struct uffdio_move move;
+> > > > >      struct pollfd pollfd =3D { .fd =3D uffd, .events =3D POLLIN =
+};
+> > > > >
+> > > > >      pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
+> > > > >      pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, NULL);
+> > > > >
+> > > > >      while (1) {
+> > > > >          if (poll(&pollfd, 1, -1) =3D=3D -1) {
+> > > > >              perror("poll");
+> > > > >              exit(EXIT_FAILURE);
+> > > > >          }
+> > > > >
+> > > > >          if (read(uffd, &msg, sizeof(msg)) <=3D 0) {
+> > > > >              perror("read");
+> > > > >              exit(EXIT_FAILURE);
+> > > > >          }
+> > > > >
+> > > > >          if (msg.event !=3D UFFD_EVENT_PAGEFAULT) {
+> > > > >              fprintf(stderr, "Unexpected event\n");
+> > > > >              exit(EXIT_FAILURE);
+> > > > >          }
+> > > > >
+> > > > >          move.src =3D (unsigned long)src + (msg.arg.pagefault.add=
+ress - (unsigned long)dst);
+> > > > >          move.dst =3D msg.arg.pagefault.address & ~(PAGE_SIZE - 1=
+);
+> > > > >          move.len =3D PAGE_SIZE;
+> > > > >          move.mode =3D 0;
+> > > > >
+> > > > >          if (ioctl(uffd, UFFDIO_MOVE, &move) =3D=3D -1) {
+> > > > >              perror("UFFDIO_MOVE");
+> > > > >              exit(EXIT_FAILURE);
+> > > > >          }
+> > > > >      }
+> > > > >      return NULL;
+> > > > >  }
+> > > > >
+> > > > >  int main() {
+> > > > >  again:
+> > > > >      pthread_t thr, madv_thr;
+> > > > >      struct uffdio_api uffdio_api =3D { .api =3D UFFD_API, .featu=
+res =3D 0 };
+> > > > >      struct uffdio_register uffdio_register;
+> > > > >
+> > > > >      src =3D mmap(NULL, REGION_SIZE, PROT_READ | PROT_WRITE, MAP_=
+PRIVATE | MAP_ANONYMOUS, -1, 0);
+> > > > >      if (src =3D=3D MAP_FAILED) {
+> > > > >          perror("mmap src");
+> > > > >          exit(EXIT_FAILURE);
+> > > > >      }
+> > > > >      memset(src, 1, REGION_SIZE);
+> > > > >
+> > > > >      dst =3D mmap(NULL, REGION_SIZE, PROT_READ | PROT_WRITE, MAP_=
+PRIVATE | MAP_ANONYMOUS, -1, 0);
+> > > > >      if (dst =3D=3D MAP_FAILED) {
+> > > > >          perror("mmap dst");
+> > > > >          exit(EXIT_FAILURE);
+> > > > >      }
+> > > > >
+> > > > >      uffd =3D syscall(SYS_userfaultfd, O_CLOEXEC | O_NONBLOCK);
+> > > > >      if (uffd =3D=3D -1) {
+> > > > >          perror("userfaultfd");
+> > > > >          exit(EXIT_FAILURE);
+> > > > >      }
+> > > > >
+> > > > >      if (ioctl(uffd, UFFDIO_API, &uffdio_api) =3D=3D -1) {
+> > > > >          perror("UFFDIO_API");
+> > > > >          exit(EXIT_FAILURE);
+> > > > >      }
+> > > > >
+> > > > >      uffdio_register.range.start =3D (unsigned long)dst;
+> > > > >      uffdio_register.range.len =3D REGION_SIZE;
+> > > > >      uffdio_register.mode =3D UFFDIO_REGISTER_MODE_MISSING;
+> > > > >
+> > > > >      if (ioctl(uffd, UFFDIO_REGISTER, &uffdio_register) =3D=3D -1=
+) {
+> > > > >          perror("UFFDIO_REGISTER");
+> > > > >          exit(EXIT_FAILURE);
+> > > > >      }
+> > > > >
+> > > > >      if (pthread_create(&madv_thr, NULL, madvise_thread, NULL) !=
+=3D 0) {
+> > > > >          perror("pthread_create madvise_thread");
+> > > > >          exit(EXIT_FAILURE);
+> > > > >      }
+> > > > >
+> > > > >      if (pthread_create(&thr, NULL, fault_handler_thread, NULL) !=
+=3D 0) {
+> > > > >          perror("pthread_create fault_handler_thread");
+> > > > >          exit(EXIT_FAILURE);
+> > > > >      }
+> > > > >
+> > > > >      for (size_t i =3D 0; i < REGION_SIZE; i +=3D PAGE_SIZE) {
+> > > > >          char val =3D ((char *)dst)[i];
+> > > > >          printf("Accessing dst at offset %zu, value: %d\n", i, va=
+l);
+> > > > >      }
+> > > > >
+> > > > >      pthread_join(madv_thr, NULL);
+> > > > >      pthread_cancel(thr);
+> > > > >      pthread_join(thr, NULL);
+> > > > >
+> > > > >      munmap(src, REGION_SIZE);
+> > > > >      munmap(dst, REGION_SIZE);
+> > > > >      close(uffd);
+> > > > >      goto again;
+> > > > >      return 0;
+> > > > >  }
+> > > > >
+> > > > > As long as you enable mTHP (which likely increases the residency
+> > > > > time of swapcache), you can reproduce the issue within a few
+> > > > > seconds. But I guess the same race condition also exists with
+> > > > > small folios.
+> > > > >
+> > > > > Fixes: adef440691bab ("userfaultfd: UFFDIO_MOVE uABI")
+> > > > > Cc: Andrea Arcangeli <aarcange@redhat.com>
+> > > > > Cc: Suren Baghdasaryan <surenb@google.com>
+> > > > > Cc: Al Viro <viro@zeniv.linux.org.uk>
+> > > > > Cc: Axel Rasmussen <axelrasmussen@google.com>
+> > > > > Cc: Brian Geffon <bgeffon@google.com>
+> > > > > Cc: Christian Brauner <brauner@kernel.org>
+> > > > > Cc: David Hildenbrand <david@redhat.com>
+> > > > > Cc: Hugh Dickins <hughd@google.com>
+> > > > > Cc: Jann Horn <jannh@google.com>
+> > > > > Cc: Kalesh Singh <kaleshsingh@google.com>
+> > > > > Cc: Liam R. Howlett <Liam.Howlett@oracle.com>
+> > > > > Cc: Lokesh Gidra <lokeshgidra@google.com>
+> > > > > Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
+> > > > > Cc: Michal Hocko <mhocko@suse.com>
+> > > > > Cc: Mike Rapoport (IBM) <rppt@kernel.org>
+> > > > > Cc: Nicolas Geoffray <ngeoffray@google.com>
+> > > > > Cc: Peter Xu <peterx@redhat.com>
+> > > > > Cc: Ryan Roberts <ryan.roberts@arm.com>
+> > > > > Cc: Shuah Khan <shuah@kernel.org>
+> > > > > Cc: ZhangPeng <zhangpeng362@huawei.com>
+> > > > > Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+> > > > > ---
+> > > > >  mm/userfaultfd.c | 11 +++++++++++
+> > > > >  1 file changed, 11 insertions(+)
+> > > > >
+> > > > > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+> > > > > index 867898c4e30b..34cf1c8c725d 100644
+> > > > > --- a/mm/userfaultfd.c
+> > > > > +++ b/mm/userfaultfd.c
+> > > > > @@ -18,6 +18,7 @@
+> > > > >  #include <asm/tlbflush.h>
+> > > > >  #include <asm/tlb.h>
+> > > > >  #include "internal.h"
+> > > > > +#include "swap.h"
+> > > > >
+> > > > >  static __always_inline
+> > > > >  bool validate_dst_vma(struct vm_area_struct *dst_vma, unsigned l=
+ong dst_end)
+> > > > > @@ -1079,9 +1080,19 @@ static int move_swap_pte(struct mm_struct =
+*mm,
+> > > > >                          pmd_t *dst_pmd, pmd_t dst_pmdval,
+> > > > >                          spinlock_t *dst_ptl, spinlock_t *src_ptl=
+)
+> > > > >  {
+> > > > > +       struct folio *folio;
+> > > > > +       swp_entry_t entry;
+> > > > > +
+> > > > >         if (!pte_swp_exclusive(orig_src_pte))
+> > > > >                 return -EBUSY;
+> > > > >
+> > > >
+> > > > Would be helpful to add a comment explaining that this is the case
+> > > > when the folio is in the swap cache.
+> > > >
+> > > > > +       entry =3D pte_to_swp_entry(orig_src_pte);
+> > > > > +       folio =3D filemap_get_folio(swap_address_space(entry), sw=
+ap_cache_index(entry));
+> > > > > +       if (!IS_ERR(folio)) {
+> > > > > +               folio_put(folio);
+> > > > > +               return -EBUSY;
+> > > > > +       }
+> > > > > +
+> > > > >         double_pt_lock(dst_ptl, src_ptl);
+> > > > >
+> > > > >         if (!is_pte_pages_stable(dst_pte, src_pte, orig_dst_pte, =
+orig_src_pte,
+> > > > > --
+> > > > > 2.39.3 (Apple Git-146)
+> > > > >
+> > >
+>
+> Thanks
+> Barry
 
