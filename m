@@ -1,161 +1,149 @@
-Return-Path: <linux-kernel+bounces-521472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFCDBA3BDD2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:10:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E293A3BDD9
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:15:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC4FB16E55C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:10:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17B78161719
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:13:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC46E1DFE23;
-	Wed, 19 Feb 2025 12:10:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A85221DFE30;
+	Wed, 19 Feb 2025 12:13:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MZxdlBkd"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="sdwpvn88"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E9A31BEF75;
-	Wed, 19 Feb 2025 12:10:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D72631BD4E4;
+	Wed, 19 Feb 2025 12:13:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739967041; cv=none; b=AAz/uBcZ765tpgs/M96IQWc43/EEb4gbt94NL0q6/NNGmDYyN9kIMe99Xsuh/N0oYw0srPIS6TY7txd0wuRgvuaI0mxX5A1d1l1eaCikFb+ET1bou7hIzt7T194I1RfDdGF2k9R77o0COZfyqpZrCYpxEAuB88z+rdlAJLNBaR4=
+	t=1739967216; cv=none; b=idRTBhOupZUklHxxhh1pvv4lAreBtgqFjhm7p2tRnHL4B6EHgL61O766gIWFpUQKnn5I6HDxcSxydlEdacb55fB02Ot6WD/WKpLpapFgKN4uJutdf+SAxjVe71fmK9ciZYcqQzVpux/HimR25P/DiJs/s5tm8K5Cr0uKsj4x4TE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739967041; c=relaxed/simple;
-	bh=uelRPMspazvWIvQv03QR03hG1Wv8PBMAk9WL0BITQwY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JvdcqVcTDX3OhU3DRTqRJCqgkqH/9AuXJjy5BsndD0jhCh2NbpRH+k34nvcDIZ5woDBeGQeKrL1RRjw0jbm3hSHEzeMQ2ApxPjWZiOtfl8qV1Y+Od74NuscSSgP0T1rJrBuVltwIoSXt0PKSDd62XNB8dwynuA/X03n2By/auLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MZxdlBkd; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5e04cb346eeso6846783a12.2;
-        Wed, 19 Feb 2025 04:10:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739967038; x=1740571838; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Qh3oxSLPnJCNWdMJZQBRKy79/s+ayH5Q/PT2U2DDC98=;
-        b=MZxdlBkdDC6kMtD/IFp7ITGvCDN3GgHei9B3xfzAkAh2WdFmqMDpyqu4zOivDkQv1s
-         WjOsedKJWNU4hBZL0ggVs2rRDGGSLpXBHsfBKj2aadgyQ5kjGoIp+x6mfnqlSuY6umt6
-         gwtfa4xCorcS2uE9MDboX25EgAWG4eNLfDQBaQT1A4lYbT3Q3bpMJfpdo8ibdxij2z1r
-         6DhVfVk+KGwq2CtX9aBCevFn4+hyLXpRVmvEm+9bStdiRC3ET7fVqWG5dL1xTBAJIr0q
-         99Rwq5F7xAyLk++kk0HadnEqpIM83KUfg2UNbiu+dDw56Ak7TICyA4n5dvY2FceGPVOH
-         jK2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739967038; x=1740571838;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Qh3oxSLPnJCNWdMJZQBRKy79/s+ayH5Q/PT2U2DDC98=;
-        b=P/kleY2G6ymjaEsYSKNiQ64oKC4Qtapag87o0teyeWdmUOL6uuc6N85wdxBMPb3cNU
-         wbmSG5IlEW/sQK+HNB/mQ3KCEYlsclRr8RIcOnZL/x+Gj8D2bE0HRAOIuf5U7hNhaWmV
-         bGjHniL5FMfnmNsWBQNe7c5TZwe9Y9MRLLRXHlD9JtYuMj+t5QjBEqz/rWK5yuAu6AXM
-         gQXF44vGH3ChgAFyr1ZvBDrrCIXL7Msu2LF7mhEke8QzrezlWW7ZE+pYDw/2mLM1QkAy
-         K6vzYCtXKR9Jm8f5ojxQ6s8CMkiF9UBzMPZk/U0rUMTHOQgQoL+BeEpJnxHYV7xvcutf
-         eOfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVQV/JC6Y0LOMfRur13kSttn9bRf5XX2XbpfR/UKyLCqx8ze0iO2XRsCxMz43z5nd4zNvVqm+/7@vger.kernel.org, AJvYcCVlHDlnJzHkg9Widh00f5VTf2lqW+JCF2rIR6sR9hb7f+u5nyyhEcmJNpQIpp2b7PQtEa2OnkzRWw==@vger.kernel.org, AJvYcCW2yKDytxkxwfYB5XIfcc3OsT5YNHKRpHFTQ4kKfdP34LZMeEA7fQ1LQzN8almbW7UIhV26F1cA5PjPRDX7@vger.kernel.org
-X-Gm-Message-State: AOJu0YyK+yM5Lza3hyxnda4Fssjv+CTqhz1yaCTMddiLVnn8atu1061r
-	t5Zf15HF4Ix4PDe56upgwpOPkdwIkrUMPfz7OyCEe16ou7DsLRrQGJeKhA==
-X-Gm-Gg: ASbGncu3Ryd6wvL9l5otSEiimhU3P8t0NqEIeDwmgEyNpGJG9gszHlNivoa+wfbM7WW
-	PbCTxBqLMHSqMD16/1w6bGbQ67uDdB8qwjHGKIjdvoLUD6Y7Bu+3rVHW1iBjd5sNODrc4CoCI/4
-	46yoMUW3rbF1I2dhDbMCcV88d+EgunLDeN6bdR+zihGLci1bftMAkpqwHR8qSYizkKi3B2UAT2X
-	Gyx/uWOiYKVYnrxA5W5A4BS5/lA6srBBfGzv5bwbabpVSRsAdIvSseVGUNVTTkIFDaGMPEDbV6T
-	CaBT18KzbYc5DKc6yYEn8PttqdLC36DtCcFlmXB6QXIagUUg
-X-Google-Smtp-Source: AGHT+IHfxb44RH4Wj3q0fMrF7BI/R26lMIEkt3vqPx1xOZNEZa3WThGYF/3yac+ALaedDF8YNDmVpQ==
-X-Received: by 2002:a05:6402:2084:b0:5e0:8c55:532 with SMTP id 4fb4d7f45d1cf-5e08c55170bmr2068446a12.4.1739967036787;
-        Wed, 19 Feb 2025 04:10:36 -0800 (PST)
-Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:cfff])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dece1b4ed9sm10165964a12.10.2025.02.19.04.10.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Feb 2025 04:10:35 -0800 (PST)
-Message-ID: <408e230c-d098-4ecf-a5b1-1fae9daadb93@gmail.com>
-Date: Wed, 19 Feb 2025 12:11:40 +0000
+	s=arc-20240116; t=1739967216; c=relaxed/simple;
+	bh=VwZvAjw6hrQKHNmoh6jgmw70TBaConXEcu8BQE9Ymbs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BkbiNzRHXlNQMNSpHTpgvzAZVOiMoXPI5xV5403kfuN8EqBK4mRochLkW0luPo8nhqiSzPkjVXflpdKcVC2XESsJXjvqzc6RPky+CZtn5K/7DL3a1ThuDyB1Sba2TBZvrl2cTNf+hk25RVAnY0NFlmykXyD0SDmwrbETeSOg7KE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=sdwpvn88; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C37CFC4CED1;
+	Wed, 19 Feb 2025 12:13:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1739967215;
+	bh=VwZvAjw6hrQKHNmoh6jgmw70TBaConXEcu8BQE9Ymbs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sdwpvn88YqYn+PFnG/VmA6j5cmCZfbkJa0i5Cs+LZQt5dXQSGcZTxEL/0KeLMYYl/
+	 UFxkcA4dBqGez51nO+VC+/fspD6+etar/FDZKN0IvjV/7KupJYA+oWu2Cbd7JK6JBs
+	 TDEWnQPHp2pGaXO3fkphVMRt0Bpql3vyOC8gjEig=
+Date: Wed, 19 Feb 2025 13:13:32 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Herbert Xu <herbert@gondor.apana.org.au>, willy@infradead.org,
+	Pankaj Raghav <p.raghav@samsung.com>,
+	Yang Shi <yang@os.amperecomputing.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH 6.6 000/389] 6.6.76-rc2 review
+Message-ID: <2025021901-silenced-phonebook-9b81@gregkh>
+References: <20250206155234.095034647@linuxfoundation.org>
+ <CA+G9fYvKzV=jo9AmKH2tJeLr0W8xyjxuVO-P+ZEBdou6C=mKUw@mail.gmail.com>
+ <CA+G9fYtqBxt+JwSLCcVBchh94GVRhbo9rTP26ceJ=sf4MDo61Q@mail.gmail.com>
+ <2025021739-jackpot-lip-09f9@gregkh>
+ <CA+G9fYtJzD8+BkyBZEss9Vvv2f=8tJUcSyWDGjyOshj1D5hMyA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v5 00/27] io_uring zerocopy send
-To: Jinjie Ruan <ruanjinjie@huawei.com>, io-uring@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: "David S . Miller" <davem@davemloft.net>, Jakub Kicinski
- <kuba@kernel.org>, Jonathan Lemon <jonathan.lemon@gmail.com>,
- Willem de Bruijn <willemb@google.com>, Jens Axboe <axboe@kernel.dk>,
- David Ahern <dsahern@kernel.org>, kernel-team@fb.com
-References: <cover.1657643355.git.asml.silence@gmail.com>
- <30ac5cb5-ee1f-66fc-641f-5f42140f0045@huawei.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <30ac5cb5-ee1f-66fc-641f-5f42140f0045@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+G9fYtJzD8+BkyBZEss9Vvv2f=8tJUcSyWDGjyOshj1D5hMyA@mail.gmail.com>
 
-On 2/18/25 01:47, Jinjie Ruan wrote:
-> On 2022/7/13 4:52, Pavel Begunkov wrote:
->> NOTE: Not to be picked directly. After getting necessary acks, I'll be
->>        working out merging with Jakub and Jens.
->>
->> The patchset implements io_uring zerocopy send. It works with both registered
->> and normal buffers, mixing is allowed but not recommended. Apart from usual
->> request completions, just as with MSG_ZEROCOPY, io_uring separately notifies
->> the userspace when buffers are freed and can be reused (see API design below),
->> which is delivered into io_uring's Completion Queue. Those "buffer-free"
->> notifications are not necessarily per request, but the userspace has control
->> over it and should explicitly attaching a number of requests to a single
->> notification. The series also adds some internal optimisations when used with
->> registered buffers like removing page referencing.
->>
->> >From the kernel networking perspective there are two main changes. The first
->> one is passing ubuf_info into the network layer from io_uring (inside of an
->> in kernel struct msghdr). This allows extra optimisations, e.g. ubuf_info
->> caching on the io_uring side, but also helps to avoid cross-referencing
->> and synchronisation problems. The second part is an optional optimisation
->> removing page referencing for requests with registered buffers.
->>
->> Benchmarking UDP with an optimised version of the selftest (see [1]), which
+On Wed, Feb 19, 2025 at 05:16:19PM +0530, Naresh Kamboju wrote:
+> On Mon, 17 Feb 2025 at 17:07, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Mon, Feb 17, 2025 at 05:00:43PM +0530, Naresh Kamboju wrote:
+> > > On Sat, 8 Feb 2025 at 16:54, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+> > > >
+> > > > On Thu, 6 Feb 2025 at 21:36, Greg Kroah-Hartman
+> > > > <gregkh@linuxfoundation.org> wrote:
+> > > > >
+> > > > > This is the start of the stable review cycle for the 6.6.76 release.
+> > > > > There are 389 patches in this series, all will be posted as a response
+> > > > > to this one.  If anyone has any issues with these being applied, please
+> > > > > let me know.
+> > > > >
+> > > > > Responses should be made by Sat, 08 Feb 2025 15:51:12 +0000.
+> > > > > Anything received after that time might be too late.
+> > > > >
+> > > > > The whole patch series can be found in one patch at:
+> > > > >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.76-rc2.gz
+> > > > > or in the git tree and branch at:
+> > > > >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> > > > > and the diffstat can be found below.
+> > > > >
+> > > > > thanks,
+> > > > >
+> > > > > greg k-h
+> > > >
+> > > >
+> > > > There are three different regressions found and reporting here,
+> > > > We are working on bisecting and investigating these issues,
+> > >
+> > > We observed a kernel warning on QEMU-ARM64 and FVP while running the
+> > > newly added selftest: arm64: check_hugetlb_options. This issue appears
+> > > on 6.6.76 onward and 6.12.13 onward, as reported in the stable review [1].
+> > > However, the test case passes successfully on stable 6.13.
+> > >
+> > > The selftests: arm64: check_hugetlb_options test was introduced following
+> > > the recent upgrade of kselftest test sources to the stable 6.13 branch.
+> > > As you are aware, LKFT runs the latest kselftest sources (from stable
+> > > 6.13.x) on 6.12.x, 6.6.x, and older kernels for validation purposes.
+> > >
+> > > >From Anders' bisection results, we identified that the missing patch on
+> > > 6.12 is likely causing this regression:
+> > >
+> > > First fixed commit:
+> > > [25c17c4b55def92a01e3eecc9c775a6ee25ca20f]
+> > > hugetlb: arm64: add MTE support
+> > >
+> > > Could you confirm whether this patch is eligible for backporting to
+> > > 6.12 and 6.6 kernels?
+> > > If backporting is not an option, we will need to skip running this
+> > > test case on older kernels.
+> >
+> > The test case itself should properly "skip" if the feature is not
+> > present in the kernel.  Why not fix that up instead?
 > 
-> Hi, Pavel, I'm interested in zero copy sending of io_uring, but I can't
-> reproduce its performance using zerocopy send selftest test case, such
-> as "bash io_uring_zerocopy_tx.sh 6 udp -m 0/1/2/3 -n 64", even baseline
-> performance may be the best.
+> The reported test gets PASS at the end, but generates kernel warning
+> while running the test case (always reproducible) on 6.12 and 6.6.
 > 
->                 MB/s
-> NONZC         8379
-> ZC            5910
-> ZC_FIXED      6294
-> MIXED         6350
+> The reported warning was not seen on stable 6.13.
 
-It's using veth, and zerocopy is effectively disabled for most of
-virtual devices, or to be specific "for paths that may loop packets
-to receive sockets".
+So this implies that userspace can cause a kernel warning?  That means
+it can cause a DoS, that's not good at all.
 
-https://lore.kernel.org/netdev/20170803202945.70750-6-willemdebruijn.kernel@gmail.com/
+So the commit you mention actually fixes a bug then?  Otherwise this
+feels really odd, as that means that any kernel without that change can
+crash this way.  What changed to cause this to happen?
 
-So that's the worst of the two, it copies data but also incurs the
-overhead for notifications. You can use a dummy device as a sink with
-no receiver, but you'll get more realistic numbers if you use a real
-device (that supports features required for zerocopy).
+thanks,
 
-> And the zero-copy example in [1] does not seem to work because the
-> kernel is modified by following commit:
-> 
-> https://lore.kernel.org/all/cover.1662027856.git.asml.silence@gmail.com/
-
-The right version was merged long ago and sits in
-
-liburing/examples/send-zerocopy.c
-
-It's brushed up more than the selftest version, so I'd suggest using
-that one. Arguments are a bit different, but it prints help.
-
-./send-zerocopy -6 udp -D <ip> -t 10 -n 1 -l0 -b1 -d -z1
-
--- 
-Pavel Begunkov
-
+greg k-h
 
