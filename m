@@ -1,39 +1,87 @@
-Return-Path: <linux-kernel+bounces-521248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0F85A3B9C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:35:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 85C4FA3B9D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:36:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 938487A7D96
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:32:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8036D7A16C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:33:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C1D1DE2C4;
-	Wed, 19 Feb 2025 09:29:27 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BBD01D416E;
-	Wed, 19 Feb 2025 09:29:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 695B11DE4E9;
+	Wed, 19 Feb 2025 09:30:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cT4wwKf+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF2901CAA93
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 09:30:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739957367; cv=none; b=KubZ5tXI7pC9kjcFSnhMYzNcwMoiYNn+ypQnFPpH8iTXPVtdzwpVwuiLIh4YRGRu1x7KorDS8WsZF+VS8gH4tyfjNrct3SMZs/nsmnpkA4iBaKWMtJcqpxghoveZlINW2y5w7GtsUVQ/Bjp3fDVtOwASFP3R5OLhtFiN15beCyc=
+	t=1739957412; cv=none; b=KWW4ilGAoVHk//ODF6DVu9U8ChunyhBVst3/agnBt/GfQF52Cru1cTHMdp7XNsRTyhPuLlGqDtfUAKuu9ja1CZTFQAF2Ar41HZeDCezpWYjrY+UOc/tupMtfB5nd+EPB0br3pecbaNSRyJTeLhXBgiTagsXr+j8iA5/3QWREQPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739957367; c=relaxed/simple;
-	bh=TiX5hKFzn5cHW3dXI+eazWWgHEaso2Kv4HnEi0UzIJ0=;
+	s=arc-20240116; t=1739957412; c=relaxed/simple;
+	bh=BwrkMBkfh1SYfD28nSg6SK6f6HVCmlZD6kv6Sm1q4p0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R4vDVNYTs9mDSJZhpEyg5ZJLYlYHJ4bwQm/m1NnmDqD9F3kNrtUKX3vrd7fLT5esfxaP14rrFHLXyz2hV/RAZ/nHCPS6tsVRrx2VAvKRAXBj3VkAlsuSDhf23M/SFQGxwRAwWen5+2m/Y7XMAG+Pi4udFXCHI22keO3rTuKZ0ko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 13D371682;
-	Wed, 19 Feb 2025 01:29:43 -0800 (PST)
-Received: from [192.168.178.6] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F0BED3F59E;
-	Wed, 19 Feb 2025 01:29:20 -0800 (PST)
-Message-ID: <a0f03e3e-bced-4be7-8589-1e65042b39aa@arm.com>
-Date: Wed, 19 Feb 2025 10:29:03 +0100
+	 In-Reply-To:Content-Type; b=LF5ndGJfucIfHiSnQDg13ixk8wHNaV7efELZ96xIWLdcz9uAu5AQIlJ9H9/tU9ViI1LDYNQPcM3Gq/ScZWCR2RiWwmU/7uJvd1IW6i10zH29avTeR7g68f5E60/zaQIbKFkj9iqcz/OvMZx07uMJa/hkZIDhBiGFTsowCbBNpYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cT4wwKf+; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739957409;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=O6iIs/bRi4LNStonXoF+PjfPP76cxf5o1pRHRm2Ecos=;
+	b=cT4wwKf+rpUU0wn2RruEF76U1e0fW574P+1KN0TENKUycQ5CqJe/lqLnbOCyBeW1tgi9G+
+	CZlccq2vxFcTA39fhj+zo+PCgT43nXy/TMV1YPEpS2KS5DuBWe1OYsfzyJLrTuwx1jysLL
+	KkyC7StVdvsuRGR4Ws3c+kcivmey5/o=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-387-3L3s3lGUPT-uhkTLtxLPtA-1; Wed, 19 Feb 2025 04:30:08 -0500
+X-MC-Unique: 3L3s3lGUPT-uhkTLtxLPtA-1
+X-Mimecast-MFC-AGG-ID: 3L3s3lGUPT-uhkTLtxLPtA_1739957407
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43942e82719so54086315e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 01:30:07 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739957407; x=1740562207;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=O6iIs/bRi4LNStonXoF+PjfPP76cxf5o1pRHRm2Ecos=;
+        b=imkL72cuTgsWqAvnKZ2Z/zmQwu+WVV7Al7dKe/Y9RmhD+xz+cZJKSFDnOd6RWKOjxj
+         Xw3oa2M92qdaXj8h/9JDFN1zZX0gu4fiOGxBUUVoBE0ZQQLVEPnNTUpTvzZ8iGT/vx+R
+         c0K3KnxtU/c/1U6+JsAjLWq98eIUdwtK3GlZpAxNydM8fh4T6vG1vtmPNzJNTh8xHEqC
+         qolr9ZZg1zqeE75/z9sx9tNuqDuZ0OG8Ru95SA4i+4jhk8VJHJOtTVuvBE/fv00Lr5jD
+         IOgaiscjrEJx+pmVK7FYaIPzjMv6f/4co1zdSuOsEvLcJ2GcqB7/niANTB18Y7JMbyyk
+         gaMA==
+X-Forwarded-Encrypted: i=1; AJvYcCXX+KWb+k9SE9prH48c3wDrFf2aheVd0824ZdpJS4xM6x9D5RXIFL52VrXRxdVjoMiR2qxKG5XOXYyNtC8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyFYfFevf9Fr6f8LFjwdXt1qtLOktXW7YY8s2adSMjMVeYdhf5
+	kSKssWJBkK2P9eNYY0U/rob9U7w/PIP0qesbx5Wc/3alXmWgWY/mag8duAY60ccPXSAa/dkWbtK
+	QslFyyHbdSKpH64ncwCU237R8kcB7Z3JRtcdWt+4Ykm2okd4XOW+fpMonqvtVZg==
+X-Gm-Gg: ASbGncts1SmDw7aDYd9BbFLD9M8mdJLMHDABK7jUo2jvcKALOIq4bU6MX33Mi8iv/Nw
+	DF1elx4EGjTW8Ibpp89IqAKPojKHHA6YxdFyUmPTOtA6GMgjPKag9YKMrP1naqX0ScJa+D6i73Y
+	3oWuvP01rvF39+zHXnUSwYbRL5iJLXEqOhp4SyyE28jZS9pPQclIERTKtElEXrcKx47S3jIOKs4
+	3a3+JSlk9biPTMT4m+MmT9jVoeNypULEgAYCLjhMu8Ge2MJEYicB6Ip18ciBuaCIuRPRtS+1ZAQ
+	NAfARb9ya9b3j+bH2X1kCI7RhIzVqJSDDSaa3oMWoSt4M4aLS/jTbsziHEw/aOfsNwD06CErAnL
+	oP/HXqxj83QSnLJaunUrGq1A7srbzZpcT
+X-Received: by 2002:a05:600c:350b:b0:439:30bd:7df9 with SMTP id 5b1f17b1804b1-43999d8de25mr23617525e9.9.1739957406836;
+        Wed, 19 Feb 2025 01:30:06 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEGcnkciXYFZBMbQtiqRGmrfj7AGbzSt3LRKWsRgsBPbNWJxOgzptCl2hNOgyjgZkRalfiXnQ==
+X-Received: by 2002:a05:600c:350b:b0:439:30bd:7df9 with SMTP id 5b1f17b1804b1-43999d8de25mr23617315e9.9.1739957406478;
+        Wed, 19 Feb 2025 01:30:06 -0800 (PST)
+Received: from ?IPV6:2003:cb:c712:8400:50d0:d1c1:90d6:e2e0? (p200300cbc712840050d0d1c190d6e2e0.dip0.t-ipconnect.de. [2003:cb:c712:8400:50d0:d1c1:90d6:e2e0])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4399be79d92sm10851015e9.0.2025.02.19.01.30.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Feb 2025 01:30:06 -0800 (PST)
+Message-ID: <9a1199e0-38ab-4a5c-afc8-c571187f3377@redhat.com>
+Date: Wed, 19 Feb 2025 10:30:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,156 +89,116 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/2] sched/deadline: Check bandwidth overflow earlier
- for hotplug
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>,
- Christian Loehle <christian.loehle@arm.com>,
- Thierry Reding <treding@nvidia.com>, Waiman Long <longman@redhat.com>,
- Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
- Michal Koutny <mkoutny@suse.com>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Phil Auld <pauld@redhat.com>, Qais Yousef <qyousef@layalina.io>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- "Joel Fernandes (Google)" <joel@joelfernandes.org>,
- Suleiman Souhlal <suleiman@google.com>, Aashish Sharma <shraash@google.com>,
- Shin Kawamura <kawasin@google.com>,
- Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
- linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <Z6oysfyRKM_eUHlj@jlelli-thinkpadt14gen4.remote.csb>
- <dbd2af63-e9ac-44c8-8bbf-84358e30bf0b@arm.com>
- <Z6spnwykg6YSXBX_@jlelli-thinkpadt14gen4.remote.csb>
- <78f627fe-dd1e-4816-bbf3-58137fdceda6@nvidia.com>
- <Z62ONLX4OLisCLKw@jlelli-thinkpadt14gen4.remote.csb>
- <30a8cda5-0fd0-4e47-bafe-5deefc561f0c@nvidia.com>
- <151884eb-ad6d-458e-a325-92cbe5b8b33f@nvidia.com>
- <Z7Ne49MSXS2I06jW@jlelli-thinkpadt14gen4.remote.csb>
- <Z7RZ4141H-FnoQPW@jlelli-thinkpadt14gen4.remote.csb>
- <d7cc3a3c-155e-4872-a426-cbd239d79cac@arm.com>
- <Z7SWvr86RXlBbJlw@jlelli-thinkpadt14gen4.remote.csb>
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Subject: Re: [PATCH] selftests/mm: run_vmtests.sh: fix half_ufd_size_MB
+ calculation
+To: Rafael Aquini <aquini@redhat.com>, linux-kselftest@vger.kernel.org
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Peter Xu <peterx@redhat.com>, Shuah Khan <shuah@kernel.org>
+References: <20250218192251.53243-1-aquini@redhat.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-In-Reply-To: <Z7SWvr86RXlBbJlw@jlelli-thinkpadt14gen4.remote.csb>
-Content-Type: text/plain; charset=UTF-8
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250218192251.53243-1-aquini@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 18/02/2025 15:18, Juri Lelli wrote:
-> On 18/02/25 15:12, Dietmar Eggemann wrote:
->> On 18/02/2025 10:58, Juri Lelli wrote:
->>> Hi!
->>>
->>> On 17/02/25 17:08, Juri Lelli wrote:
->>>> On 14/02/25 10:05, Jon Hunter wrote:
-
-[...]
-
->> Yeah, looks like suspend/resume behaves differently compared to CPU hotplug.
->>
->> On my Juno [L b b L L L]
->>                 ^^^
->>                 isolcpus=[2,3]
->>
->> # ps2 | grep DLN
->>    98    98 S 140      0   - DLN sugov:0
->>    99    99 S 140      0   - DLN sugov:1
->>
->> # taskset -p 98; taskset -p 99
->> pid 98's current affinity mask: 39
->> pid 99's current affinity mask: 6
->>
->>
->> [   87.679282] partition_sched_domains() called
->> ...
->> [   87.684013] partition_sched_domains() called
->> ...
->> [   87.687961] partition_sched_domains() called
->> ...
->> [   87.689419] psci: CPU3 killed (polled 0 ms)
->> [   87.689715] __dl_bw_capacity() mask=2-5 cap=1024
->> [   87.689739] dl_bw_cpus() cpu=6 rd->span=2-5 cpu_active_mask=0-2 cpus=1
->> [   87.689757] dl_bw_manage: cpu=2 cap=0 fair_server_bw=52428
->> total_bw=209712 dl_bw_cpus=1 type=DEF span=2-5
->> [   87.689775] dl_bw_cpus() cpu=6 rd->span=2-5 cpu_active_mask=0-2 cpus=1
->> [   87.689789] dl_bw_manage() cpu=2 cap=0 overflow=1 return=-16
->> [   87.689864] Error taking CPU2 down: -16                       <-- !!!
->> ...
->> [   87.690674] partition_sched_domains() called
->> ...
->> [   87.691496] partition_sched_domains() called
->> ...
->> [   87.693702] partition_sched_domains() called
->> ...
->> [   87.695819] partition_and_rebuild_sched_domains() called
->>
+On 18.02.25 20:22, Rafael Aquini wrote:
+> From: Rafael Aquini <raquini@redhat.com>
 > 
-> Ah, OK. Did you try with my last proposed change?
+> We noticed that uffd-stress test was always failing to run when invoked
+> for the hugetlb profiles on x86_64 systems with a processor count of 64
+> or bigger:
+>    ...
+>    # ------------------------------------
+>    # running ./uffd-stress hugetlb 128 32
+>    # ------------------------------------
+>    # ERROR: invalid MiB (errno=9, @uffd-stress.c:459)
+>    ...
+>    # [FAIL]
+>    not ok 3 uffd-stress hugetlb 128 32 # exit=1
+>    ...
+> 
+> The problem boils down to how run_vmtests.sh (mis)calculates the size
+> of the region it feeds to uffd-stress. The latter expects to see an
+> amount of MiB while the former is just giving out the number of free
+> hugepages halved down. This measurement discrepancy ends up violating
+> uffd-stress' assertion on number of hugetlb pages allocated per CPU,
+> causing it to bail out with the error above.
+> 
+> This commit fixes that issue by adjusting run_vmtests.sh's half_ufd_size_MB
+> calculation so it properly renders the region size in MiB, as expected,
+> while maintaining all of its original constraints in place.
+> 
+> Fixes: 2e47a445d7b3 ("selftests/mm: run_vmtests.sh: fix hugetlb mem size calculation")
+> Signed-off-by: Rafael Aquini <raquini@redhat.com>
+> ---
+>   tools/testing/selftests/mm/run_vmtests.sh | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/mm/run_vmtests.sh b/tools/testing/selftests/mm/run_vmtests.sh
+> index 333c468c2699..157d07e5aaa3 100755
+> --- a/tools/testing/selftests/mm/run_vmtests.sh
+> +++ b/tools/testing/selftests/mm/run_vmtests.sh
+> @@ -304,7 +304,9 @@ uffd_stress_bin=./uffd-stress
+>   CATEGORY="userfaultfd" run_test ${uffd_stress_bin} anon 20 16
+>   # Hugetlb tests require source and destination huge pages. Pass in half
+>   # the size of the free pages we have, which is used for *each*.
+> -half_ufd_size_MB=$((freepgs / 2))
+> +# uffd-stress expects a region expressed in MiB, so we adjust
+> +# half_ufd_size_MB accordingly.
+> +half_ufd_size_MB=$(((freepgs * hpgsize_KB) / 1024 / 2))
 
-I did now. 
+LGTM
 
-Patch-wise I have:
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
-(1) Putting 'fair_server's __dl_server_[de|at]tach_root() under if  
-    '(cpumask_test_cpu(rq->cpu, [old_rd->online|cpu_active_mask))' in 
-    rq_attach_root()
+-- 
+Cheers,
 
-    https://lkml.kernel.org/r/Z7RhNmLpOb7SLImW@jlelli-thinkpadt14gen4.remote.csb
+David / dhildenb
 
-(2) Create __dl_server_detach_root() and call it in rq_attach_root()
-
-    https://lkml.kernel.org/r/Z4fd_6M2vhSMSR0i@jlelli-thinkpadt14gen4.remote.csb
-
-plus debug patch:
-
-    https://lkml.kernel.org/r/Z6M5fQB9P1_bDF7A@jlelli-thinkpadt14gen4.remote.csb
-
-plus additional debug.
-
-The suspend issue still persists.
-
-My hunch is that it's rather an issue with having 0 CPUs left in DEF
-while deactivating the last isol CPU (CPU3) so we set overflow = 1 w/o
-calling __dl_overflow(). We want to account fair_server_bw=52428
-against 0 CPUs. 
-
-l B B l l l
-
-      ^^^
-      isolcpus=[3,4]
-
-
-cpumask_and(mask, rd->span, cpu_active_mask)
-
-mask = [3-5] & [0-3] = [3] -> dl_bw_cpus(3) = 1
-
----
-
-dl_bw_deactivate() called cpu=5
-
-dl_bw_deactivate() called cpu=4
-
-dl_bw_deactivate() called cpu=3
-
-dl_bw_cpus() cpu=6 rd->span=3-5 cpu_active_mask=0-3 cpus=1 type=DEF
-                   ^^^^^^^^^^^^ ^^^^^^^^^^^^^^^^^^^
-  cpumask_subset(rd->span, cpu_active_mask) is false
-
-  for_each_cpu_and(i, rd->span, cpu_active_mask)
-    cpus++                                       <-- cpus is 1 !!!
-
-dl_bw_manage: cpu=3 cap=0 fair_server_bw=52428 total_bw=104856 dl_bw_cpus=1 type=DEF span=3-5
-
-  called w/ 'req = dl_bw_req_deactivate'
-
-  dl_b->total_bw - fair_server_bw = 104856 - 52428 > 0
-
-    dl_bw_cpus(cpu) - 1 = 0
-   
-      overflow = 1
-
-So there is simply no capacity left in DEF for DL but
-'dl_b->total_bw - old_bw + new_bw' = 52428 > 0
 
