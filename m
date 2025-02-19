@@ -1,70 +1,94 @@
-Return-Path: <linux-kernel+bounces-521563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C35BCA3BF5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:04:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD191A3BF5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:04:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B33217876C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:00:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC73A189A798
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:00:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51891EB1BB;
-	Wed, 19 Feb 2025 12:57:44 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E10081E1C1F;
+	Wed, 19 Feb 2025 12:58:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="PUcv/jhy"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B26F61EB1B3
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 12:57:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F4A2198E81
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 12:58:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739969864; cv=none; b=AStk6JsF1FCEUeHxhgEEDpTXUuJ9pLirrJZ0cG8r2DpptppxZFLNqD5ktvxDRbAAeNPIS4oB+KnVlrVXWVqNBJwdk6xv8cwpmCTgVhHdAgNcdQFYP+4w9U5av3vm1s5jNWejpy91T9EbHSwJjpPDpfY34/hDGmzV1UR0OLC9de8=
+	t=1739969924; cv=none; b=FUsfA2Ag+taXH5fZuxtHyJsrD5uZnuE54DlcNtgnNDW5vv98RreSHn59lcvhZeEHKx5ULgmuXpJc1Cq/IoC/8NClq5ltdlTeJRe+MVCDKeDkYBPocg9ySc9F+C9QWRRmzfnvbGemND3fVZEh6z/djbHRBL+6xB4Irw+OT6VwCXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739969864; c=relaxed/simple;
-	bh=LsHm5DFOAzJVrE/IsotrdHQDGxc68/y9hgt7yhREGTw=;
+	s=arc-20240116; t=1739969924; c=relaxed/simple;
+	bh=mFyDWsE7J9ZW8FmEHWh+K0Jf/vn8Ov7C5joVUJWT04s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WNhpPWdl1+X8f+RjKWvn1mXS4DFlSErKbL7QDxN4b61MaLszu5brU77Hg748NS/dIf7ybJOe6svivelJD5WOHxscneOXzqhu4Iv1MyvGijFX85dFCHFnZUE8BGx8iqC0WD1KhwPt3c+XuldI3Eaqoz90Rew7Ht/RcPG82k7piJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tkjdd-0006Hn-38; Wed, 19 Feb 2025 13:57:17 +0100
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tkjdc-001lmY-0U;
-	Wed, 19 Feb 2025 13:57:16 +0100
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tkjdc-006G9p-02;
-	Wed, 19 Feb 2025 13:57:16 +0100
-Date: Wed, 19 Feb 2025 13:57:15 +0100
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Pengfei Li <pengfei.li_1@nxp.com>, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	ye.li@nxp.com, joy.zou@nxp.com,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v5 1/2] dt-bindings: thermal: fsl,imx91-tmu: add bindings
- for NXP i.MX91 thermal module
-Message-ID: <20250219125715.octrfw47q2rxy7ai@pengutronix.de>
-References: <20250218-imx91tmu-v5-0-76c0b27673e6@nxp.com>
- <20250218-imx91tmu-v5-1-76c0b27673e6@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HUKAQinUMtuM9XGy6mFSL1aLBA1OwQQ5DusHaQ+PziTMoTwQ0nPyM/hc9GxBNo6arlLJhlDt65GRpI6awWSTD+ifb1dlLHxajrj4qrTEWuWogIqN4C4n7hgJnW0Jm4QRHiU26Y0aemf33NUat5y9amTEyjIYEyfty5D1BWeumpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=PUcv/jhy; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43996e95114so11919095e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 04:58:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google; t=1739969921; x=1740574721; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=34sVOinnrdUpopDeZt0X3vBKN/d5vCnq4SYbVGcMLpU=;
+        b=PUcv/jhyl3Oz6a/O1c1xGJ+/KgQnUmo4aS5WPqLdqL2WlkrIn/d+/EVQlccO5XTQob
+         cHeZrc52ut8+SfxHGobx+afvEacmOi9L8BbMJ8Lldcco3Grs7QKdI45xyLC/G29NYckN
+         lvbZ+nJ8J9VPLZZyXCqQfOk6S7fXWlQyUDtiQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739969921; x=1740574721;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=34sVOinnrdUpopDeZt0X3vBKN/d5vCnq4SYbVGcMLpU=;
+        b=IYMTlrtDELG4udJ8RiEIQuzh1rqnCg9tWjy++s3LIoGXSua9dFvMs+WlUsGmepBGSJ
+         xTA+5BbTHJAOOotdDOH4zwdwIrtALhBzRqCoZL6uzqUKYRITU4iUKgntasRNr4aH9pIf
+         XbPkPfbrrThB6WLQMB0/PBQuTOI/cVmaq/ZOt3bULpOsTTjknjFM/K0XaERvurnB+Jr2
+         20JRJ1WvxIHHW7p7iH7zbVI7S1/vMFO4LqepQgc4T6/pu8BMkZll7zrQrLVpqg2XCcZF
+         ZvVqjqIJ/SCZdQbkchMZi2We3McWOXTDwA3pn+02hZnsAk6HcYpoL6Ojr7jXdMxUH3Pu
+         zi0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVref51OuSx59brCNVpXDgh9d34raeCrB5mSTHkb56GK9Se4AnG0mZ3h3+8VRZcZMLmtSMFBVJAqEOYRxw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnBXJtZernRUHGW0wa2wY+3oQqk9Aj9mc734jYrn+A9dUdne24
+	DyNQ1Hdtb+QY2mWng6j+Lm/HOtSgrtD8YFcgijDs0Q58+WCdmM4VJOf8fJpqPLk=
+X-Gm-Gg: ASbGncsvqDv3sqHP6pKFM3aTwxnL70w8XzIGOa0bt5b/S1EPKKKwHf+2oZMYBH356/N
+	9/94XAvUgt8FQoshQ6RyAa/1+4llMcICrBxEyeowmdnle5ZZHdwwxHEMEPv1EcVTOlCTDCiuxht
+	9YRrB8wKH0SHsOnGYqEIDhbCE7vkpGseUpIhr3Pf5NjNWG2QmsjhrSG0qKDwVpjcQXZFUJyyFb4
+	feQTtlO5K5mKAJlngsz0nIzFDaZGqod4n7l2bLKb/Bfsb/ViVterPWS7yvLTWX0P8zfcQToDvWj
+	rSSHMccoRH43/l86rNcZ8d4HT0M=
+X-Google-Smtp-Source: AGHT+IGzbUBUg/56lBAekqPCOphT5RTECYUG5Q84fY/+IOL0ZwxmdTe8Ny3WUiTLHfIX8hhDw7t+4Q==
+X-Received: by 2002:a05:600c:1c98:b0:439:88bb:d026 with SMTP id 5b1f17b1804b1-43988bbd48cmr104447115e9.5.1739969920700;
+        Wed, 19 Feb 2025 04:58:40 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:5485:d4b2:c087:b497])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a1aa7c7sm214383535e9.27.2025.02.19.04.58.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2025 04:58:40 -0800 (PST)
+Date: Wed, 19 Feb 2025 13:58:38 +0100
+From: Simona Vetter <simona.vetter@ffwll.ch>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Dave Airlie <airlied@gmail.com>,
+	Alexandre Courbot <acourbot@nvidia.com>,
+	John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Subject: Re: [RFC PATCH 0/3] gpu: nova-core: add basic timer subdevice
+ implementation
+Message-ID: <Z7XVfnnrRKrtQbB6@phenom.ffwll.local>
+Mail-Followup-To: Danilo Krummrich <dakr@kernel.org>,
+	Dave Airlie <airlied@gmail.com>,
+	Alexandre Courbot <acourbot@nvidia.com>,
+	John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+References: <20250217-nova_timer-v1-0-78c5ace2d987@nvidia.com>
+ <Z7OrKX3zzjrzZdyz@pollux>
+ <CAPM=9tyu84z4Xk5X0fykO3Dazby2UqRgwtN4woNKe4Z2yMyDZg@mail.gmail.com>
+ <Z7RgOd_57wcSUyB0@pollux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,76 +97,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250218-imx91tmu-v5-1-76c0b27673e6@nxp.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <Z7RgOd_57wcSUyB0@pollux>
+X-Operating-System: Linux phenom 6.12.11-amd64 
 
-On 25-02-18, Frank Li wrote:
-> From: Pengfei Li <pengfei.li_1@nxp.com>
+On Tue, Feb 18, 2025 at 11:26:01AM +0100, Danilo Krummrich wrote:
+> On Tue, Feb 18, 2025 at 11:46:26AM +1000, Dave Airlie wrote:
+> > > 1. How to avoid unnecessary calls to try_access().
+> > >
+> > > This is why I made Boot0.read() take a &RevocableGuard<'_, Bar0> as argument. I
+> > > think we can just call try_access() once and then propage the guard through the
+> > > callchain, where necessary.
+> > 
+> > Nope, you can't do that, RevocableGuard holds a lock and things
+> > explode badly in lockdep if you do.
 > 
-> Add bindings documentation for i.MX91 thermal modules.
+> Yes, try_access() marks the begin of an RCU read side critical section. Hence,
+> sections holding the guard should be kept as short as possible.
 > 
-> Signed-off-by: Pengfei Li <pengfei.li_1@nxp.com>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
-> change from v3 to v4
-> - add interrupts propperty
+> What I meant is that for a series of I/O operations we can still pass the guard
+> to subsequent functions doing the actual I/O ops.
 > 
-> Change from v2 to v3
-> - add ref thermal-sensor
-> - restrict #thermal-sensor-cells to 0 only
-> - Change to unevaluatedProperties
-> ---
->  .../devicetree/bindings/thermal/fsl,imx91-tmu.yaml | 79 ++++++++++++++++++++++
->  1 file changed, 79 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/thermal/fsl,imx91-tmu.yaml b/Documentation/devicetree/bindings/thermal/fsl,imx91-tmu.yaml
-> new file mode 100644
-> index 0000000000000..2dafec8b37024
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/thermal/fsl,imx91-tmu.yaml
-> @@ -0,0 +1,79 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/thermal/fsl,imx91-tmu.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NXP i.MX91 Thermal
-> +
-> +maintainers:
-> +  - Pengfei Li <pengfei.li_1@nxp.com>
-> +
-> +description:
-> +  i.MX91 features a new temperature sensor. It includes programmable
-> +  temperature threshold comparators for both normal and privileged
-> +  accesses and allows a programmable measurement frequency for the
-> +  Periodic One-Shot Measurement mode. Additionally, it provides
-> +  status registers for indicating the end of measurement and threshold
-> +  violation events.
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - const: fsl,imx91-tmu
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    items:
-> +      - description: Comparator 1 irq
-> +      - description: Comparator 2 irq
-> +      - description: Data ready irq
+> More generally, I also thought about whether we should also provide an SRCU
+> variant of Revocable and hence Devres. Maybe we even want to replace it with
+> SRCU entirely to ensure that drivers can't stall the RCU grace period for too
+> long by accident.
 
-missing "interrupt-names" property.
+The issue with srcu is that the revocation on driver unload or hotunplug
+becomes unbound. Which is very, very uncool, and the fundamental issue
+that also drm_dev_enter/exit() struggles with. So unless the kernel has a
+concept of "bound-time mutex only, but not unbounded sleeps of any sort" I
+think we should try really, really hard to introduce srcu revocables on
+the rust side. And at least for mmio I don't think any driver needs more
+than maybe some retry loops while holding a spinlock, which is fine under
+standard rcu. It does mean that drivers need to have fairly fine-grained
+fallible paths for dealing with revocable resources, but I think that's
+also a good thing - mmio to an unplugged device times out and is really
+slow, so doing too many of those isn't a great idea either.
 
-Regards,
-  Marco
+Ofc on the C side of things the balance shits a lot, and we just want to
+at least make "no uaf on driver hotunplug" something achievable and hence
+are much more ok with the risk that it's just stuck forever or driver
+calls take an undue amount of time until they've finished timing out
+everything.
+
+Cheers, Sima
+-- 
+Simona Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
