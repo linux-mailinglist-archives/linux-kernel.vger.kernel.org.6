@@ -1,129 +1,122 @@
-Return-Path: <linux-kernel+bounces-521481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 397EDA3BDF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:25:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B813AA3BDF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:24:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 363093B72B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:23:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D1B6188CE25
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:24:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE17B1DFE25;
-	Wed, 19 Feb 2025 12:23:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 352F11DFE20;
+	Wed, 19 Feb 2025 12:24:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R3WqKKWJ"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="Lgzde8Id"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76B551DF24B;
-	Wed, 19 Feb 2025 12:23:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F10A01C84A9;
+	Wed, 19 Feb 2025 12:24:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739967784; cv=none; b=V6X8mUGiinEmAGKoi4+OorL3hFHZnwIdqWqvQFoMN0rwI5nnl3BAVVEvUrHfIxHa4IawlZUReU5sY2cKusWh8hidJ5H/hMcSP/WrIqKdAuCtcTFh+ifH+XUMfrAjScVjrgKfhYZaH7OCyFWpNoQpyOTYP2UP7nMYjdcTVIBQ00c=
+	t=1739967870; cv=none; b=Bfwc665A1cn3tQhS24Dga6mhkB9DPlwOWydatA20SznREMvTwetPCJga4b1Zc7pLrVFnHrYlTd5E2fA012sJlrWKgSeOGLG4Ulw3HqRr1SzhupDWX/dgodVhwjCbGND6VKqacjEZJ47MwqiaSBoWI/+d9ECls+rOyTey1Jc0n3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739967784; c=relaxed/simple;
-	bh=wcPgPvt7xFuou44taFEPq4RZvM4AiyrEyzV2wScCqBE=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=XVAOtTqSYpMuCId2KLdZw/5y1zTaQ+y1eDWEkvS4ACxPmtjoPsbU6jsxtAgBI7Ii9g4Dr2lMMLJBGBfpSvkphcRe4VUjD+RJU9F+lJQP0Q/gWxskHszyUzLVnM7YhFlx0Ehy1ZfJDAVEJMtglCKwNtMofWhHs4Ibjkg3hmdt3Sk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R3WqKKWJ; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-30613802a04so70378611fa.2;
-        Wed, 19 Feb 2025 04:23:02 -0800 (PST)
+	s=arc-20240116; t=1739967870; c=relaxed/simple;
+	bh=Wvowdqymf5/Dqdnx+M8deGxluothZgxktjlHvQgPEC8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H7ysKD1dfH9zTocLpUY3Yk8crc30dHVOQa0AiSrBqTJ030PgPTK7eKvLcjhmaE3Vm9Pf8AVMGFTiCYtdPWOJu0QCwQQHlo8tznaBZK63VwIf17VdbtekbrZD/ZNoGO6VOwMnCgOM1uBKBfDS4Wtpis7Q3bZkGl+XkxKD9jbZIKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=Lgzde8Id; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4396f579634so26378085e9.1;
+        Wed, 19 Feb 2025 04:24:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739967780; x=1740572580; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=obLMw1YZNp4QVfdT8ixQobBxsvfZhlM96MKwlYaSHKo=;
-        b=R3WqKKWJeoctFSUDse82CvF1qAS37S95aUUMKq054bdFfnMFOBL2sV36lIeI1VpKdB
-         dPi2Y65m79rle/3C/v1Gxx0t2X83OnxegbVcN78UIra/KwJLyib5WasdJSzQMR4TrKsf
-         HD4rgCWLG6uq260+GwpLFz/Me5UQzMexszzc2SlKXmJ0be5dpaKklumgY3aDNrA4i/kn
-         wIH40FJSZKYZifxpU7wzo/UOk8erFu5Svn+PPg49hVE/24iSGfRoaS5YcQQOEK3c3Y5O
-         DVzgtnHd00Ao8cY97D+3K6iejykR+q9q1V7RRYHZZ+ysool/oOeeHdIsoZtfmlCBRc7O
-         lPFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739967780; x=1740572580;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+        d=googlemail.com; s=20230601; t=1739967867; x=1740572667; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=obLMw1YZNp4QVfdT8ixQobBxsvfZhlM96MKwlYaSHKo=;
-        b=Pyix+s8te+7ZqbvGHl6Ejj721q7UAdiLKhL4b+SNOH4DdIcaNpP2+zGG3UVfOukyd7
-         2WaPd5ikYnkGeklI7R7ATPmjtdna6X9CBmd75st90BAw5tCTH1k0VAa6sGnQg7EchW7q
-         L8x4rnqD6OUB9gsADg8/5nuJrmS0QVZBnR/+WfsSv/K7cqCkjr4iDF/vAUxVurd/b6cN
-         sqc0FNmKJxtfTQJ/V4IMB1jidW0an2qrRqFc1PIu7COUNPEEK9SlUBSxVdfUro+fKsB7
-         iHifr8/C2hPljAc87QvbnuJSkV2TXDrCaoieJZc6zRyys6gSrGMEZIzYMU663eXU+LnL
-         KoAA==
-X-Gm-Message-State: AOJu0Yy8cz1CNweRU8yIYnXrW/w7QZnKDAWNS4jtJR8sP5zZ7gJPCkKf
-	nuvnZhFYKfs1556nqVGjvrKX9oaSuAvUjr7Va9BLXD4i8MsAegpX+qhaIPTwdXm80NJ4X0Uiblq
-	kFeMnLCU8fTDjHfxXmD1PtYZv6oUWcBM=
-X-Gm-Gg: ASbGncsW1KXsFhvp1R4t/AYNBlEIbsh5fKsHS+RDqllS4H9hfAre0qiad1ba7lDV2iK
-	AzmzNOMgE4RZw1PrjC9QuHOEOoQ1/pThrxTtm0qd1pdf73ZYyI4zIMQoLzzR6K7IveykIaPRS
-X-Google-Smtp-Source: AGHT+IEbloDRf96LKl3Shyqgq2lYsmT2UDmjR+IfoRJZKQQMG4b3p2NeKyCpXjPzTYxNTzZdI2bk97P5PjxERg/gE9E=
-X-Received: by 2002:a05:6512:3e23:b0:546:3136:f03d with SMTP id
- 2adb3069b0e04-5463136f074mr878474e87.35.1739967779329; Wed, 19 Feb 2025
- 04:22:59 -0800 (PST)
+        bh=HYKifUeShoq6767eZBZs5H40X1Lc9yEO/hHyexjEF2E=;
+        b=Lgzde8IdJ64gXVRoF+BiHcsiRiHxw7NaMF8CPGYfI8lymirj1ciNvSkOhrFZ4AgGDE
+         cVvHpqfImbSJ39fcFwz5vvRv+8S5Qg8tqAhkQDpci3YGnAXjk2qsg+zbUQ0rdKuD0I2H
+         gNrFADaAtCCUoV8F8pRUrJEm2RMAR64Qy2xEnvKeHh4dRJLdwJ5iHKv0rNHwa8Kqw2m6
+         7nJqDEejZ+ZJ8uhM1hTViRinVEanXjWNwQ5DQPODmNnqslRtORdOQ5nU/Y1ba+OGYJ07
+         N/TUXCVCBI55ynMTBVXePzz4JDQkfowuyktrApYe2e02DFsHGwxcLl1ym9E744Ld+FHF
+         5vDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739967867; x=1740572667;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HYKifUeShoq6767eZBZs5H40X1Lc9yEO/hHyexjEF2E=;
+        b=TQIuS72F68b0FNJEAjh8H3oD+F8H0RNe5KDZLIrZYPMoux/K8LH4O+C7+iOq5PHBjM
+         9mi6ADPWw170Y9reY1zCgl8lHrzuOEKqaLKW5X54CvW5EqpWPsOqXdwSFLb5ixd4ZExJ
+         e8L4zdF9z4rk5j6zOBdcVRXDX0gl/ebaiZKNB+FSmWHO9YkVOrsx4rLUNHiFDLrSWb3U
+         pOLS+bUzp175OHss9BCanZmEZEXr1gxheHM91tO1iJ7aZEkoKg7qD9SW1exuCk3jxGkt
+         tTgdl+K+ydZgUp4gUF+D7aDZ60Flxh8khXIsdKTCJmzuT030gGmTjCFFvxlSaa8WuGfu
+         JP1A==
+X-Forwarded-Encrypted: i=1; AJvYcCVchWmo36zeE6q5awa8Vto2xHWAa87VGoZE069x++DQHlLYB2OgO0x5MkU2OdxZCQZqx8HxqMPsc7Eh0RQ=@vger.kernel.org, AJvYcCXMN2n2EskPUSGAII1n1HPQ0cYBtjoKXeCZ8XwewP0sR5Z3k1puDPRz44hPEOU6wIUrMAjNfLL7@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyv2m2fi05UE/763OQ8uwzJY5NbavM6qMSbPKKWYmkwFV4LHKlJ
+	Bu6HVkEqqNI642O7NZP1W5u2EiqiK38mkLXXwLjbuH98hXRcMRxwj+xJUm8=
+X-Gm-Gg: ASbGncvmcETC8VspFKDgrwZrUe4lQB34lq1O8/xgRYUGUn/aX2IzPEtIGAxyxR9fnal
+	HvSEvHO+KOYBlYFWqtI8lgEBH0uT9KbgIO3Tty8DUZOyHOZfnIZIazLIs5opD2YTGwySeo0LUCh
+	frS2bNcTKpUa/vh1tIgayQCwzq3V/nkfXvIwysyVPDpmIz+sYRrg5T4p984ZE3ZstKu0GAtAk40
+	HwB0xaQKRFC50xTsFeVx+VhwgJRSU12LhX1cQzTTjaQnuUhHBGVixN+NKYM1hASU2KP2kiLFQnH
+	VfnpFvLt+9MTh8WvT8f76/sD1OaBvgOH3endovv8LrQnCALXZd+0i9wpMS6euFNssr4D
+X-Google-Smtp-Source: AGHT+IECUoOne8WCiWHuMOBx74a4ScsTJCgDD8KlsTM6vvMn1KSLw2JesZOIE6aOV7faWfyLfsUaAA==
+X-Received: by 2002:a05:600c:1c21:b0:439:98ca:e3a4 with SMTP id 5b1f17b1804b1-43999dd21a4mr23992985e9.19.1739967866834;
+        Wed, 19 Feb 2025 04:24:26 -0800 (PST)
+Received: from [192.168.1.3] (p5b2b4e7c.dip0.t-ipconnect.de. [91.43.78.124])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a1b84bcsm218515835e9.40.2025.02.19.04.24.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Feb 2025 04:24:26 -0800 (PST)
+Message-ID: <a53ecf4c-ab0a-4434-a329-0d2e917fdcd4@googlemail.com>
+Date: Wed, 19 Feb 2025 13:24:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Naveen Kumar P <naveenkumar.parna@gmail.com>
-Date: Wed, 19 Feb 2025 17:52:47 +0530
-X-Gm-Features: AWEUYZkFcgq0ZIxP1LRBGTMevJO9cYiAMOwpXrpvdc1uwSNH49ITMWw-snaxU-Q
-Message-ID: <CAMciSVU4vv7=WjVUhuP3PJHdpnYqrgMPCmz-HnijEbhyxk54eQ@mail.gmail.com>
-Subject: PCI: hotplug_event: PCIe PLDA Device BAR Reset
-To: linux-pci@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Bjorn Helgaas <helgaas@kernel.org>, 
-	kernelnewbies <kernelnewbies@kernelnewbies.org>, 
-	Naveen Kumar P <naveenkumar.parna@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.6 000/152] 6.6.79-rc1 review
+Content-Language: de-DE
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250219082550.014812078@linuxfoundation.org>
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20250219082550.014812078@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi all,
+Am 19.02.2025 um 09:26 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.6.79 release.
+> There are 152 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-I am writing to seek assistance with an issue we are experiencing with
-a PCIe device (PLDA Device 5555) connected through PCI Express Root
-Port 1 to the host bridge.
+Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
+oddities or regressions found.
 
-We have observed that after booting the system, the Base Address
-Register (BAR0) memory of this device gets reset to 0x0 after
-approximately one hour or more (the timing is inconsistent). This was
-verified using the lspci output and the setpci -s 01:00.0
-BASE_ADDRESS_0 command.
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
 
-To diagnose the issue, we checked the dmesg log, but it did not
-provide any relevant information. I then enabled dynamic debugging for
-the PCI subsystem (drivers/pci/*) and noticed the following messages
-related ACPI hotplug in the dmesg log:
 
-[    0.465144] pci 0000:01:00.0: reg 0x10: [mem 0xb0400000-0xb07fffff]
-...
-[ 6710.000355] ACPI: \_SB_.PCI0.RP01: acpiphp_glue: Bus check in hotplug_event()
-[ 7916.250868] perf: interrupt took too long (4072 > 3601), lowering
-kernel.perf_event_max_sample_rate to 49000
-[ 7984.719647] perf: interrupt took too long (5378 > 5090), lowering
-kernel.perf_event_max_sample_rate to 37000
-[11051.409115] ACPI: \_SB_.PCI0.RP01: acpiphp_glue: Bus check in hotplug_event()
-[11755.388727] ACPI: \_SB_.PCI0.RP01: acpiphp_glue: Bus check in hotplug_event()
-[12223.885715] ACPI: \_SB_.PCI0.RP01: acpiphp_glue: Bus check in hotplug_event()
-[14303.465636] ACPI: \_SB_.PCI0.RP01: acpiphp_glue: Bus check in hotplug_event()
-After these messages appear, reading the device BAR memory results in
-0x0 instead of the expected value.
+Beste Grüße,
+Peter Schneider
 
-I would like to understand the following:
+-- 
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
 
-1. What could be causing these hotplug_event debug messages?
-2. Why does this result in the BAR memory being reset?
-3. How can we resolve this issue?
-
-I have verified that the issue occurs even without loading the driver
-for the PLDA Device 5555, so it does not appear to be related to the
-device driver.
-
-Any help or guidance on debugging this issue would be greatly appreciated.
-
-Thank you for your assistance.
-
-Best regards,
-Naveen
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
