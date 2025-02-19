@@ -1,170 +1,84 @@
-Return-Path: <linux-kernel+bounces-521267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DCB7A3BAC3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:48:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C758FA3BAE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:55:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A438E1889C8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:45:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2376162E11
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:46:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EE751DDC11;
-	Wed, 19 Feb 2025 09:44:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB59C1C68A6;
+	Wed, 19 Feb 2025 09:46:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ook6ip7K"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2560F1CD213;
-	Wed, 19 Feb 2025 09:44:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="CCsAnE4o"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.19])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16B781C8617
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 09:46:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739958273; cv=none; b=qAxn2Jjt6vfuZc6Ct1vzTmsPh5AqEgx84qbp0DkMiPwXxfKDAwRuhTsqwpktaPuDucNl2bCslaJnBBZPpSD8PIPEOnH5+l0gwWFC/3Y6mbmWjUreriq+6x66A6n6oUZBXgB/GGjiOIY3L9RQh/OaH/v7RQ0IHMAtBaqh10ln9HU=
+	t=1739958404; cv=none; b=Av2yqcaVXzW5YAKlhH0x3V8zG3kJ61/Ea+OQl662sIPp4l4fQN7HmJlF5ZKTpTkiDrktc0ti/Ipa9t5yReLpu2c7g5nOwWuN7RxHqyzstBrtysaDnR9b6X/eMeb8Ew8y8m3nJMRkZQZyrx8tQKyIOV/YTPweMDeNnn9CYHUC2K8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739958273; c=relaxed/simple;
-	bh=3aGNDO4JPGcz2XPIJhdm7F9SVuX+jTc81pEhyWCKxhI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YuhrSW+QiKlNtUoi5l7e62FyjD/k6pMB/+DLr/pnip0WcBmeZgZScKXgI28Lrsnkm7potvOeRpqqp+oX/2ZJtNhhgS6XWSzHsEFkE713w1RKyL4HDHWLfpnMtindfwkmH3hzB+vm8K9ThJtn/67jN6wKVyk4ei5dkoJMm+O2tB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ook6ip7K; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [127.0.1.1] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7C6EED21;
-	Wed, 19 Feb 2025 10:43:04 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1739958184;
-	bh=3aGNDO4JPGcz2XPIJhdm7F9SVuX+jTc81pEhyWCKxhI=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=ook6ip7KEZmPutIEMqsGQficvTdxqcrR6VZggTSxlZdVjEEauX2We9C16073Q0hwq
-	 iTyjjlBsrYb92k3YY1H+FFnIde1nYciwmlEWRAL25bFTfq6uGHauPgmBxnZJbVQGIa
-	 HVv/mvDsnusQuJk3qzbepdzeoDrKjrikXchdK9iw=
-From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Date: Wed, 19 Feb 2025 11:44:09 +0200
-Subject: [PATCH v2 3/3] media: i2c: ds90ub913: Use
- v4l2_get_frame_desc_passthrough
+	s=arc-20240116; t=1739958404; c=relaxed/simple;
+	bh=nqcf569tnHBYYnblboGbp3DFWVxOzvikyDaKLTRVL84=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MYgp3HvExQ4GNY8+g9MceDudEDNjZh13NEcV0t+QYfHQG80zctAJ0PYMUrJxTSQwBwD6wyiUrC65RenywaZ+T3iK/yak/cmatSUiX+V5sqFJGLCvZOSiZMCJFFlIwrvgAG0L9O9RG4ruj2qm5L2DrmMdq725ob9cSTWX7n5Mr5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=CCsAnE4o; arc=none smtp.client-ip=220.197.32.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=JTw76i4BbtQyQih5Zo0i9+iSWSO7S3QZcD6OOv8jjac=;
+	b=CCsAnE4oKb7Sp6POYvhvLDSp2ItTrN1MPTzYHaSuV4u89vhRSxu/w1L3VmrzYK
+	NAIQbSFZ0fGBL+Gv+A6Og301Ph35ZVPKfbggrbhn/E/t1keW1Lg90qTkqNgKPz3D
+	O6DCodh+JvbscRvJJoN+yEQTSEGjSXoTYLDqxKzyowD2s=
+Received: from dragon (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id Mc8vCgA3e85RqLVnYuNOCQ--.19638S3;
+	Wed, 19 Feb 2025 17:45:55 +0800 (CST)
+Date: Wed, 19 Feb 2025 17:45:53 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Ahmad Fatoum <a.fatoum@pengutronix.de>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: match mxc in file names by IMX / MXC entry
+Message-ID: <Z7WoUSBvNZLAEm0K@dragon>
+References: <20250113-b4-mxc-imx-maintainers-v1-1-7605d3d8e35f@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250219-frame-desc-passthrough-v2-3-5135d57ecd6a@ideasonboard.com>
-References: <20250219-frame-desc-passthrough-v2-0-5135d57ecd6a@ideasonboard.com>
-In-Reply-To: <20250219-frame-desc-passthrough-v2-0-5135d57ecd6a@ideasonboard.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2612;
- i=tomi.valkeinen+renesas@ideasonboard.com; h=from:subject:message-id;
- bh=3aGNDO4JPGcz2XPIJhdm7F9SVuX+jTc81pEhyWCKxhI=;
- b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBntaf4z7ZLOrBGD/K17IhmUXio4xWHAQT52VRq0
- IbUyql9CGiJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCZ7Wn+AAKCRD6PaqMvJYe
- 9aWwD/4g4IdEzXw9peib70gAmY3Ndm22YVviyzgRWtez6ZntuOwlUtM90ZP9LT6+z0cmSyNEca9
- hPEyt3d9F3C+InY1FCVlzwUbHClpeDAc/oUHt+oJMjopbAKXk80SCIS5Fu4Ag1D4zO9vtLC7Rzg
- rxoFzoyjNQZBnenfsSIPafGBs5HVaGx5Qy/yS1LoPXxoYcbIHki/LVCPSpNdVPQfZPombhQ4mjz
- UE50QVtQxY4xuihyrJ6El6ZJhskVBmQxTzb5gy4LBi+i79P7WUHeHlA+hhW3WAyOe/Z0d7gBBgq
- 4JuTgQUwOdXY0GsFd1eqFXMvrvxPEhz5nJJ1wIcys9d7u7OXnRJUnDcLCDAPCBwDqV+a3xj+UXR
- YoU1pza8jTzOLeHEJ1upBxcafmjk9JwT+YVzuN4Gv5kakIkCc7IcD/vtER3yvd+LnXOzcoRE9+N
- btt2V8n804o2pdZNMg2LMZGycB5tK7B9Kiswo+g9uVL8W0KYl+ETN/QzIblc0JhW3De3FQqYU4q
- mP9wtADl/rMVrwdL6VdTuhWndDMMIEijZrRU365FqbH+BvQG2rTb9hJ0ICe8gNno7CaON2U74lG
- N7oUZTmLG6j6/pGKCXWY8zpDqgeH2S0ju109pjGtrn77Fs1xbHBOUJ2HKzWd10nSrR6th5mEN0W
- QI8p8TK8YU+m5+g==
-X-Developer-Key: i=tomi.valkeinen+renesas@ideasonboard.com; a=openpgp;
- fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250113-b4-mxc-imx-maintainers-v1-1-7605d3d8e35f@pengutronix.de>
+X-CM-TRANSID:Mc8vCgA3e85RqLVnYuNOCQ--.19638S3
+X-Coremail-Antispam: 1Uf129KBjvdXoW5tw43WryfKrWDZryDZryrWFg_yoWxWrc_uF
+	Wqq3s3GrZrK3W7JFs3tr1jvryaka1UArn2qryYgwsIgayfZrZYyFyv9r1DJa40grnI939r
+	uFZ0qwn3try7ZjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUUppB3UUUUU==
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCR-4ZWe1nVcu1AAAsp
 
-Use the new v4l2_get_frame_desc_passthrough helper for .get_frame_desc.
+On Mon, Jan 13, 2025 at 11:13:01PM +0100, Ahmad Fatoum wrote:
+> There is a number of i.MX-related drivers that have mxc in their name,
+> but are not matched by the i.MX MAINTAINERS entry, most notably the GPIO
+> driver, which is still being used on current SoCs.
+> 
+> Looking at current files containing mxc in their name, all of them are
+> related to i.MX, except for:
+> 
+>   drivers/iio/accel/mxc4005.c
+>   drivers/iio/accel/mxc6255.c
+>   tools/testing/selftests/powerpc/tm/tm-vmxcopy.c
+> 
+> Therefore adapt the regex to match all mxc files, except those above.
+> 
+> Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
 
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
----
- drivers/media/i2c/ds90ub913.c | 59 +------------------------------------------
- 1 file changed, 1 insertion(+), 58 deletions(-)
-
-diff --git a/drivers/media/i2c/ds90ub913.c b/drivers/media/i2c/ds90ub913.c
-index fd2d2d5272bf..9ae761d7e3a5 100644
---- a/drivers/media/i2c/ds90ub913.c
-+++ b/drivers/media/i2c/ds90ub913.c
-@@ -358,63 +358,6 @@ static int ub913_set_routing(struct v4l2_subdev *sd,
- 	return _ub913_set_routing(sd, state, routing);
- }
- 
--static int ub913_get_frame_desc(struct v4l2_subdev *sd, unsigned int pad,
--				struct v4l2_mbus_frame_desc *fd)
--{
--	struct ub913_data *priv = sd_to_ub913(sd);
--	const struct v4l2_subdev_krouting *routing;
--	struct v4l2_mbus_frame_desc source_fd;
--	struct v4l2_subdev_route *route;
--	struct v4l2_subdev_state *state;
--	int ret;
--
--	if (pad != UB913_PAD_SOURCE)
--		return -EINVAL;
--
--	ret = v4l2_subdev_call(priv->source_sd, pad, get_frame_desc,
--			       priv->source_sd_pad, &source_fd);
--	if (ret)
--		return ret;
--
--	fd->type = V4L2_MBUS_FRAME_DESC_TYPE_PARALLEL;
--
--	state = v4l2_subdev_lock_and_get_active_state(sd);
--
--	routing = &state->routing;
--
--	for_each_active_route(routing, route) {
--		unsigned int i;
--
--		if (route->source_pad != pad)
--			continue;
--
--		for (i = 0; i < source_fd.num_entries; i++) {
--			if (source_fd.entry[i].stream == route->sink_stream)
--				break;
--		}
--
--		if (i == source_fd.num_entries) {
--			dev_err(&priv->client->dev,
--				"Failed to find stream from source frame desc\n");
--			ret = -EPIPE;
--			goto out_unlock;
--		}
--
--		fd->entry[fd->num_entries].stream = route->source_stream;
--		fd->entry[fd->num_entries].flags = source_fd.entry[i].flags;
--		fd->entry[fd->num_entries].length = source_fd.entry[i].length;
--		fd->entry[fd->num_entries].pixelcode =
--			source_fd.entry[i].pixelcode;
--
--		fd->num_entries++;
--	}
--
--out_unlock:
--	v4l2_subdev_unlock_state(state);
--
--	return ret;
--}
--
- static int ub913_set_fmt(struct v4l2_subdev *sd,
- 			 struct v4l2_subdev_state *state,
- 			 struct v4l2_subdev_format *format)
-@@ -514,7 +457,7 @@ static const struct v4l2_subdev_pad_ops ub913_pad_ops = {
- 	.enable_streams = ub913_enable_streams,
- 	.disable_streams = ub913_disable_streams,
- 	.set_routing = ub913_set_routing,
--	.get_frame_desc = ub913_get_frame_desc,
-+	.get_frame_desc = v4l2_get_frame_desc_passthrough,
- 	.get_fmt = v4l2_subdev_get_fmt,
- 	.set_fmt = ub913_set_fmt,
- };
-
--- 
-2.43.0
+Applied, thanks!
 
 
