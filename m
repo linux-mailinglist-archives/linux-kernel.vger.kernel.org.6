@@ -1,123 +1,145 @@
-Return-Path: <linux-kernel+bounces-520986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76BFDA3B242
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:25:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C30AA3B247
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:25:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60F883A9AD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:25:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8577E16B8A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:25:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55CAD1C1F08;
-	Wed, 19 Feb 2025 07:25:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDC471BCA19;
+	Wed, 19 Feb 2025 07:25:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VUmNgnCH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jo0MN+L4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEF221BBBC6;
-	Wed, 19 Feb 2025 07:25:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BF411BD9D3;
+	Wed, 19 Feb 2025 07:25:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739949913; cv=none; b=DBIV402Lpuo0E83r7JM2iPFoLV/ffcMYRE1egC8ZRNGYmZkD+PsZY+WRHLNcxiQnVS9+JwqqGBz57WHmV1A0b8FfdHLw8G5IffJ0+EyROcvUpmf4hVMe5Ylot2+0L9mayVOS+3seiB9Wu6WNMqlieDfM3jT/vev4d8Wzte4DeaU=
+	t=1739949944; cv=none; b=YOA/dyoGQFUoJBlK3wrauNpte3IAc/kYa8bxYpoV2U6/m3v5QGqFJk4tDFuKYFqNFBI0ZIgIqnUEv85WHy9Wv2Q9xRugCRovu9SpU4Va640zuaODcYAcETsir7kCjgjVL8NDdt3kQcqKWNdpZxHkJVOJrJ4qhUydXZ5YOp0JeIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739949913; c=relaxed/simple;
-	bh=rnE5diAoNTSFE9SCHBRipNtxziK2J/4LOo7YbT+G7YI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NcC2HA+mMHTO3X1Vz4Co6zNVpHn6nk/eUHVM/WOgkscNERydFIpFXYBy6g1tUXIIkBIrYPTgrLdimCBedWanSn2aToXWQLhl42aU9q03diGjEG0R/bqBis/h7vllUvQ07BfgQjPqWPhHMPoS+g6q+jV/hqhCsTSH5lVBdDi6P+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VUmNgnCH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B787C4CED1;
-	Wed, 19 Feb 2025 07:25:10 +0000 (UTC)
+	s=arc-20240116; t=1739949944; c=relaxed/simple;
+	bh=mn7g0i0MWinLv2YGo+kZxHpbfVUa4TgH6wIWEUwX83A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i9Vtnuuog5HLsRwRScIWnSFA+cSWr2//q+Fjk42ny6l6gP7u3n7QCnlc7nPbwK1iHyn+UIgkJBX1O2bXwFqh28GyEboPQQnXyIj1s0oddljr5JtP4fVG8nm14pRNgj6lRa3MvfQscfe6nZspHiPRl81fgH9GsuaZc8DqHeGSSVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jo0MN+L4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25288C4CED1;
+	Wed, 19 Feb 2025 07:25:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739949913;
-	bh=rnE5diAoNTSFE9SCHBRipNtxziK2J/4LOo7YbT+G7YI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VUmNgnCHbnR+cjXxFafn98XZKqpsaEL741lVDRzEQqygK7RvOVvMcAXUbSh/Ux750
-	 8EK8Dq8VYGJdMe6QMowl92WGv4CbJrHvXcsKhjWVdjmfW0LLbBKIOT1WJAAMCVdPAD
-	 f2HMlG6ySxajRzH4qWMUN6YaOBzwIa7mEwdhlItRsxtLiiw4kf0nLtgzRr0+i1/p49
-	 ljKd6CBpqD+co31lioFoVrylmVZi4zTNn9arms3rZkOTD2rleqqq6ctVvFCFk0pRDa
-	 xgysEyoNP0OqCgqQO9ikdVuk1RqbHCJeEx7XWCQf0pm/zQu70XSC33SDz+MSxvtCHs
-	 CTvwouTDuvYmw==
-Message-ID: <69b10d11-72d3-42b4-a7af-8c9e72476674@kernel.org>
-Date: Wed, 19 Feb 2025 08:25:07 +0100
+	s=k20201202; t=1739949943;
+	bh=mn7g0i0MWinLv2YGo+kZxHpbfVUa4TgH6wIWEUwX83A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Jo0MN+L40nZsA1Z3XLmqtTAFU4+nInYDLglMHXNfS2AWgOzeetC9vn00TVjVV+H9+
+	 rQaOBtcGPzPXGVyyTiFcCpL/nBV8pOM8Q4gmV4co22EBNknyhAhIQ5IzurwH1xZs5D
+	 9ZupQiXqdfdhBvy4JD5VrKUeuKr1eVOMSSkdgtpySL+EufzrfLjrRGqbFNvu3nHa6B
+	 /b5W+Y0ntMGSBuAk5O+mNwS70ivu6sfNCZi3UJ8fCaFpIZ1/CRE0Cn1aAnZq16m/Q5
+	 Um3231KPD8ZPih0fAIySoNxdGrfA0cv8JPQSfDj/hyxBae0+mQMSkcmUV9eOwlWzAf
+	 EzSsDgPrKpVQQ==
+Date: Wed, 19 Feb 2025 09:25:23 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Wei Yang <richard.weiyang@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Alexander Graf <graf@amazon.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Anthony Yznaga <anthony.yznaga@oracle.com>,
+	Arnd Bergmann <arnd@arndb.de>, Ashish Kalra <ashish.kalra@amd.com>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Ingo Molnar <mingo@redhat.com>, James Gowans <jgowans@amazon.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Pratyush Yadav <ptyadav@amazon.de>,
+	Rob Herring <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Usama Arif <usama.arif@bytedance.com>,
+	Will Deacon <will@kernel.org>, devicetree@vger.kernel.org,
+	kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
+Subject: Re: [PATCH v4 13/14] memblock: Add KHO support for reserve_mem
+Message-ID: <Z7WHY5RBJc9YxPPY@kernel.org>
+References: <20250206132754.2596694-1-rppt@kernel.org>
+ <20250206132754.2596694-14-rppt@kernel.org>
+ <20250217040448.56xejbvsr2a73h4c@master>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] nfc: hci: Remove unused nfc_llc_unregister
-To: linux@treblig.org, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, horms@kernel.org
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250219020258.297995-1-linux@treblig.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250219020258.297995-1-linux@treblig.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250217040448.56xejbvsr2a73h4c@master>
 
-On 19/02/2025 03:02, linux@treblig.org wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Mon, Feb 17, 2025 at 04:04:48AM +0000, Wei Yang wrote:
+> On Thu, Feb 06, 2025 at 03:27:53PM +0200, Mike Rapoport wrote:
+> >From: Alexander Graf <graf@amazon.com>
+> >
+> >Linux has recently gained support for "reserve_mem": A mechanism to
+> >allocate a region of memory early enough in boot that we can cross our
+> >fingers and hope it stays at the same location during most boots, so we
+> >can store for example ftrace buffers into it.
+> >
+> >Thanks to KASLR, we can never be really sure that "reserve_mem"
+> >allocations are static across kexec. Let's teach it KHO awareness so
+> >that it serializes its reservations on kexec exit and deserializes them
+> >again on boot, preserving the exact same mapping across kexec.
+> >
+> >This is an example user for KHO in the KHO patch set to ensure we have
+> >at least one (not very controversial) user in the tree before extending
+> >KHO's use to more subsystems.
+> >
+> >Signed-off-by: Alexander Graf <graf@amazon.com>
+> >Co-developed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> >Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> >---
+> > mm/memblock.c | 131 ++++++++++++++++++++++++++++++++++++++++++++++++++
+> > 1 file changed, 131 insertions(+)
+> >
+> >diff --git a/mm/memblock.c b/mm/memblock.c
+> >index 84df96efca62..fdb08b60efc1 100644
+> >--- a/mm/memblock.c
+> >+++ b/mm/memblock.c
+> >@@ -16,6 +16,9 @@
+> > #include <linux/kmemleak.h>
+> > #include <linux/seq_file.h>
+> > #include <linux/memblock.h>
+> >+#include <linux/kexec_handover.h>
 > 
-> nfc_llc_unregister() has been unused since it was added in 2012's
-> commit 67cccfe17d1b ("NFC: Add an LLC Core layer to HCI")
+> Looks this one breaks the memblock test in tools/testing/memblock.
+> 
+> memblock.c:19:10: fatal error: linux/kexec_handover.h: No such file or directory
+>    19 | #include <linux/kexec_handover.h>
+>       |          ^~~~~~~~~~~~~~~~~~~~~~~~
 
-... and it is basically part of nfc_llc_exit() already, so no need to
-call it.
+Thanks, will fix.
+ 
+> >+#include <linux/kexec.h>
+> >+#include <linux/libfdt.h>
+> > 
+> 
+> -- 
+> Wei Yang
+> Help you, Help me
 
-I would like to see that you actually investigated that this cleanup
-should not be called, instead of just blindly removing code.
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-
-Best regards,
-Krzysztof
+-- 
+Sincerely yours,
+Mike.
 
