@@ -1,164 +1,143 @@
-Return-Path: <linux-kernel+bounces-522158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9127A3C6CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:55:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1C0EA3C6CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:55:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 342B0189C38A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:55:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF947168F1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:55:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C28D92147FE;
-	Wed, 19 Feb 2025 17:55:25 +0000 (UTC)
-Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD5BC2144C2;
+	Wed, 19 Feb 2025 17:55:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MboJA81K"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 985901F61C
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 17:55:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C0B51F61C
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 17:55:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739987725; cv=none; b=PnEcfM8i95glDsJdYpi1boa2WYKF6gBgwN5xY5Fozf1IVTTXTraOXc0YarodjwFzneYxgLrrRjxSf6LARPYewQ0iPaoYhllxbJ+qclqPU3MCbPFVLEX6i1RDa8aEJaTYHbVgoDOYu6zK4ux1h9jLVznE+EZg/9nqdLLQjiJsrJU=
+	t=1739987714; cv=none; b=ScpY/ZWydqhtAD7AE8sFWt1GjH2541emxyuwuv/ymbwRQcmSJHBVYgUN6LrF0enuW/hFR42d7Be9chIl4UMwDjGkF7sTSsoOW6foDaHKkWbqkX25jP5iP9a+CkZz05Ko32Hkt3sgr9UmiLY6DRa3gDdxxI8r6wC1/tvL7Aqn3o0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739987725; c=relaxed/simple;
-	bh=E2Ms2pbjUGWhkeqoWiLqRScsd0rM2hpKWGJH2iAeGtk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=PwcpUSDIhjKOl4xOieAiQiNqFh9maJKdGkk1bKjpgtsOJQuH5IX7O60ChGBYnxDWzocx4r4aFWSsz38F1FWW7+B5oXhjKIZCfbsE6gN2nV0/W6twtg+Rka4DbaUNeRJMbF8LiXsnxwwXJ5RbtYna/DrrfwwpWF6cPz0rANu7dLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
-Received: from fangorn.home.surriel.com ([10.0.13.7])
-	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.97.1)
-	(envelope-from <riel@shelob.surriel.com>)
-	id 1tkoFk-000000003Xr-0mcr;
-	Wed, 19 Feb 2025 12:52:56 -0500
-Message-ID: <b749384b7dea020880057359d06d4e9172c7aaec.camel@surriel.com>
-Subject: Re: [PATCH v11 04/12] x86/mm: get INVLPGB count max from CPUID
-From: Rik van Riel <riel@surriel.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org, 
-	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
- nadav.amit@gmail.com, 	thomas.lendacky@amd.com, kernel-team@meta.com,
- linux-mm@kvack.org, 	akpm@linux-foundation.org, jackmanb@google.com,
- jannh@google.com, 	mhklinux@outlook.com, andrew.cooper3@citrix.com, Manali
- Shukla	 <Manali.Shukla@amd.com>
-Date: Wed, 19 Feb 2025 12:52:56 -0500
-In-Reply-To: <20250219115626.GMZ7XG6s-5ftg1XLoZ@fat_crate.local>
-References: <20250213161423.449435-1-riel@surriel.com>
-	 <20250213161423.449435-5-riel@surriel.com>
-	 <20250219115626.GMZ7XG6s-5ftg1XLoZ@fat_crate.local>
-Autocrypt: addr=riel@surriel.com; prefer-encrypt=mutual;
- keydata=mQENBFIt3aUBCADCK0LicyCYyMa0E1lodCDUBf6G+6C5UXKG1jEYwQu49cc/gUBTTk33A
- eo2hjn4JinVaPF3zfZprnKMEGGv4dHvEOCPWiNhlz5RtqH3SKJllq2dpeMS9RqbMvDA36rlJIIo47
- Z/nl6IA8MDhSqyqdnTY8z7LnQHqq16jAqwo7Ll9qALXz4yG1ZdSCmo80VPetBZZPw7WMjo+1hByv/
- lvdFnLfiQ52tayuuC1r9x2qZ/SYWd2M4p/f5CLmvG9UcnkbYFsKWz8bwOBWKg1PQcaYHLx06sHGdY
- dIDaeVvkIfMFwAprSo5EFU+aes2VB2ZjugOTbkkW2aPSWTRsBhPHhV6dABEBAAG0HlJpayB2YW4gU
- mllbCA8cmllbEByZWRoYXQuY29tPokBHwQwAQIACQUCW5LcVgIdIAAKCRDOed6ShMTeg05SB/986o
- gEgdq4byrtaBQKFg5LWfd8e+h+QzLOg/T8mSS3dJzFXe5JBOfvYg7Bj47xXi9I5sM+I9Lu9+1XVb/
- r2rGJrU1DwA09TnmyFtK76bgMF0sBEh1ECILYNQTEIemzNFwOWLZZlEhZFRJsZyX+mtEp/WQIygHV
- WjwuP69VJw+fPQvLOGn4j8W9QXuvhha7u1QJ7mYx4dLGHrZlHdwDsqpvWsW+3rsIqs1BBe5/Itz9o
- 6y9gLNtQzwmSDioV8KhF85VmYInslhv5tUtMEppfdTLyX4SUKh8ftNIVmH9mXyRCZclSoa6IMd635
- Jq1Pj2/Lp64tOzSvN5Y9zaiCc5FucXtB9SaWsgdmFuIFJpZWwgPHJpZWxAc3VycmllbC5jb20+iQE
- +BBMBAgAoBQJSLd2lAhsjBQkSzAMABgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDOed6ShMTe
- g4PpB/0ZivKYFt0LaB22ssWUrBoeNWCP1NY/lkq2QbPhR3agLB7ZXI97PF2z/5QD9Fuy/FD/jddPx
- KRTvFCtHcEzTOcFjBmf52uqgt3U40H9GM++0IM0yHusd9EzlaWsbp09vsAV2DwdqS69x9RPbvE/Ne
- fO5subhocH76okcF/aQiQ+oj2j6LJZGBJBVigOHg+4zyzdDgKM+jp0bvDI51KQ4XfxV593OhvkS3z
- 3FPx0CE7l62WhWrieHyBblqvkTYgJ6dq4bsYpqxxGJOkQ47WpEUx6onH+rImWmPJbSYGhwBzTo0Mm
- G1Nb1qGPG+mTrSmJjDRxrwf1zjmYqQreWVSFEt26tBpSaWsgdmFuIFJpZWwgPHJpZWxAZmIuY29tP
- okBPgQTAQIAKAUCW5LbiAIbIwUJEswDAAYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQznneko
- TE3oOUEQgAsrGxjTC1bGtZyuvyQPcXclap11Ogib6rQywGYu6/Mnkbd6hbyY3wpdyQii/cas2S44N
- cQj8HkGv91JLVE24/Wt0gITPCH3rLVJJDGQxprHTVDs1t1RAbsbp0XTksZPCNWDGYIBo2aHDwErhI
- omYQ0Xluo1WBtH/UmHgirHvclsou1Ks9jyTxiPyUKRfae7GNOFiX99+ZlB27P3t8CjtSO831Ij0Ip
- QrfooZ21YVlUKw0Wy6Ll8EyefyrEYSh8KTm8dQj4O7xxvdg865TLeLpho5PwDRF+/mR3qi8CdGbkE
- c4pYZQO8UDXUN4S+pe0aTeTqlYw8rRHWF9TnvtpcNzZw==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1739987714; c=relaxed/simple;
+	bh=kXadW/dHwTIdTIZrEuYnpWCMkkyj97m63e5oA0Rgb6I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Uaj/kzIWftu0ihKZ9IzEuitMn8krGFfR+XJxMiXb+iQtDlaMVwwTK4XlAGs1h7EbNS1CkQi0iDlVso43O5deWhQLlzXc456ZSDSs/900WIjcFVYYCldd3XGBrvrphf1qfSuPN5bJoFzwEMM3QraJfoPnr70jxaWqxYeGVS8lrRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MboJA81K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EAEAC4CED1;
+	Wed, 19 Feb 2025 17:55:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739987714;
+	bh=kXadW/dHwTIdTIZrEuYnpWCMkkyj97m63e5oA0Rgb6I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MboJA81K5ANnPh9UWaKO0Uw/SSLXWzIkDiIxIjp+AVKY3uA3+7vDm2EQkS0m1SDJW
+	 /rfeAN3NMd5jNcPPaglyBA2Pe8sgMmWW8jl3ZBqPkafjQLSP2sDGej5K2PiDJqJK3K
+	 H80B6MDhdih1s5yOUHnaJGcm+R+c0tF8n0rzo/2nir7bPdo9BdlNNbbvHeGGoA33/s
+	 vFC++1qOIKLshLgUjaYaWF70HrXgqm7dplf7NUXODMsQPhOg2irqQUFwE44cWdt9zI
+	 k7hoI2gv+AuwrqbnRTuVK1JctLxqV9qlo5PBlNYWU2H1dxPm6jr5LW/boBmE7lpvTa
+	 NWUNQz4jbGsGQ==
+Date: Wed, 19 Feb 2025 09:55:10 -0800
+From: Kees Cook <kees@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, alyssa.milburn@intel.com,
+	scott.d.constable@intel.com, joao@overdrivepizza.com,
+	andrew.cooper3@citrix.com, jpoimboe@kernel.org,
+	jose.marchesi@oracle.com, hjl.tools@gmail.com,
+	ndesaulniers@google.com, samitolvanen@google.com, nathan@kernel.org,
+	ojeda@kernel.org, alexei.starovoitov@gmail.com, mhiramat@kernel.org,
+	jmill@asu.edu
+Subject: Re: [PATCH v3 04/10] x86/traps: Allow custom fixups in handle_bug()
+Message-ID: <202502190953.53EA878FF@keescook>
+References: <20250219162107.880673196@infradead.org>
+ <20250219163514.688460830@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Sender: riel@surriel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250219163514.688460830@infradead.org>
 
-On Wed, 2025-02-19 at 12:56 +0100, Borislav Petkov wrote:
-> On Thu, Feb 13, 2025 at 11:13:55AM -0500, Rik van Riel wrote:
-> > The CPU advertises the maximum number of pages that can be shot
-> > down
-> > with one INVLPGB instruction in the CPUID data.
-> >=20
-> > Save that information for later use.
-> >=20
-> > Signed-off-by: Rik van Riel <riel@surriel.com>
-> > Tested-by: Manali Shukla <Manali.Shukla@amd.com>
-> > Tested-by: Brendan Jackman <jackmanb@google.com>
-> > Tested-by: Michael Kelley <mhklinux@outlook.com>
-> > ---
-> > =C2=A0arch/x86/Kconfig.cpu=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 5 +++++
-> > =C2=A0arch/x86/include/asm/cpufeatures.h | 1 +
-> > =C2=A0arch/x86/include/asm/tlbflush.h=C2=A0=C2=A0=C2=A0 | 7 +++++++
-> > =C2=A0arch/x86/kernel/cpu/amd.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 | 8 ++++++++
-> > =C2=A04 files changed, 21 insertions(+)
-> >=20
-> > diff --git a/arch/x86/Kconfig.cpu b/arch/x86/Kconfig.cpu
-> > index 2a7279d80460..abe013a1b076 100644
-> > --- a/arch/x86/Kconfig.cpu
-> > +++ b/arch/x86/Kconfig.cpu
-> > @@ -395,6 +395,10 @@ config X86_VMX_FEATURE_NAMES
-> > =C2=A0	def_bool y
-> > =C2=A0	depends on IA32_FEAT_CTL
-> > =C2=A0
-> > +config X86_BROADCAST_TLB_FLUSH
-> > +	def_bool y
-> > +	depends on CPU_SUP_AMD && 64BIT
-> > +
-> > =C2=A0menuconfig PROCESSOR_SELECT
-> > =C2=A0	bool "Supported processor vendors" if EXPERT
-> > =C2=A0	help
-> > @@ -431,6 +435,7 @@ config CPU_SUP_CYRIX_32
-> > =C2=A0config CPU_SUP_AMD
-> > =C2=A0	default y
-> > =C2=A0	bool "Support AMD processors" if PROCESSOR_SELECT
-> > +	select X86_BROADCAST_TLB_FLUSH
->=20
-> CPU_SUP_AMD selects X86_BROADCAST_TLB_FLUSH which depends on
-> CPU_SUP_AMD which
-> selects X86_BROADCAST_TLB_FLUSH which depends on CPU_SUP_AMD...
->=20
-> Why do you really need yet another Kconfig symbol? Just whack
-> X86_BROADCAST_TLB_FLUSH - it'll be enabled by default on everything
-> anyway.
+On Wed, Feb 19, 2025 at 05:21:11PM +0100, Peter Zijlstra wrote:
+> The normal fixup in handle_bug() is simply continuing at the next
+> instruction. However upcomming patches make this the wrong thing, so
+> allow handlers (specifically handle_cfi_failure()) to over-ride
+> regs->ip.
+> 
+> The callchain is such that the fixup needs to be done before it is
+> determined if the exception is fatal, as such, revert any changes in
+> that case.
+> 
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> ---
+>  arch/x86/kernel/traps.c |   12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
+> 
+> --- a/arch/x86/kernel/traps.c
+> +++ b/arch/x86/kernel/traps.c
+> @@ -287,11 +287,12 @@ static inline void handle_invalid_op(str
+>  
+>  static noinstr bool handle_bug(struct pt_regs *regs)
+>  {
+> +	unsigned long addr = regs->ip;
+>  	bool handled = false;
+>  	int ud_type, ud_len;
+>  	s32 ud_imm;
+>  
+> -	ud_type = decode_bug(regs->ip, &ud_imm, &ud_len);
+> +	ud_type = decode_bug(addr, &ud_imm, &ud_len);
+>  	if (ud_type == BUG_NONE)
+>  		return handled;
+>  
+> @@ -315,7 +316,8 @@ static noinstr bool handle_bug(struct pt
+>  	switch (ud_type) {
+>  	case BUG_EA:
+>  		if (handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
+> -			regs->ip += ud_len;
+> +			if (regs->ip == addr)
+> +				regs->ip += ud_len;
+>  			handled = true;
+>  		}
+>  		break;
+> @@ -323,7 +325,8 @@ static noinstr bool handle_bug(struct pt
+>  	case BUG_UD2:
+>  		if (report_bug(regs->ip, regs) == BUG_TRAP_TYPE_WARN ||
+>  		    handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
+> -			regs->ip += ud_len;
+> +			if (regs->ip == addr)
+> +				regs->ip += ud_len;
+>  			handled = true;
+>  		}
+>  		break;
+> @@ -340,6 +343,9 @@ static noinstr bool handle_bug(struct pt
+>  		break;
+>  	}
+>  
+> +	if (!handled && regs->ip != addr)
+> +		regs->ip = addr;
 
-Dave specifically asked me to do things that way.
+Can you add a comment above this just to help with people scanning
+through this code in the future, maybe:
 
->=20
-> > @@ -1139,6 +1141,12 @@ static void cpu_detect_tlb_amd(struct
-> > cpuinfo_x86 *c)
-> > =C2=A0		tlb_lli_2m[ENTRIES] =3D eax & mask;
-> > =C2=A0
-> > =C2=A0	tlb_lli_4m[ENTRIES] =3D tlb_lli_2m[ENTRIES] >> 1;
-> > +
-> > +	/* Max number of pages INVLPGB can invalidate in one shot
-> > */
-> > +	if (boot_cpu_has(X86_FEATURE_INVLPGB)) {
-> > +		cpuid(0x80000008, &eax, &ebx, &ecx, &edx);
-> > +		invlpgb_count_max =3D (edx & 0xffff) + 1;
-> > +	}
->=20
-> get_cpu_cap() already reads that leaf. You don't need to do it here
-> again.
->=20
-Should I modify get_cpu_cap() to store
-c->x86_capabilities[CPUID_8000_0008_EDX] ?
+	/* Restore failure location if we're not continuing execution. */
 
-Currently only the EBX data is stored there,
-while invlpgb_count_max comes from EDX.
 
---=20
-All Rights Reversed.
+> +
+>  	if (regs->flags & X86_EFLAGS_IF)
+>  		raw_local_irq_disable();
+>  	instrumentation_end();
+
+But yeah, seems fine:
+
+Reviewed-by: Kees Cook <kees@kernel.org>
+
+
+-- 
+Kees Cook
 
