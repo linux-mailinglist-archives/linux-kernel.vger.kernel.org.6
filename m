@@ -1,380 +1,106 @@
-Return-Path: <linux-kernel+bounces-522456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F08B8A3CAA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:00:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A1C3A3CA97
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:59:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DF653B42A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 20:57:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E14A616C708
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 20:58:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 720652505AD;
-	Wed, 19 Feb 2025 20:56:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CEA921B9C5;
+	Wed, 19 Feb 2025 20:57:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cS8/Y9/j"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LVULq6oP"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E1724F5B5
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 20:56:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B84121516A
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 20:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739998605; cv=none; b=dquu5NqaO+mMMsODtsFNmTMsiLwBoP703g3Xvb9gBMaAaC/i8Rhi9sVNRkEGzreIius7kr65qCY7VhLuPuqsCsUTUTMw2gGQqooIluYcnEenu2qQfZ/umw2tJLlbBaLHErIaEG8KCd86olrsXnOU0xeO9nK0NMlxydx0dibE7iE=
+	t=1739998665; cv=none; b=tJRvYrvQZiakjH1SsokSHjbdgUN2AW/ThyT5XDNap8/XtWE0lHTgSHn8uypKcXhjQWmXFbzcMBcWUKJ0kGt2JZmOyvgP+p5KXEwcvp67f5NzfdxLHL+nOrrJyjwpI/H5eXPDrYmc+7hgGJE7PObhOxUS+mE14Iuf/XRC04F2fxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739998605; c=relaxed/simple;
-	bh=QnG8SEamObBuiIMCf7KmVArDMeAn6Gi4mO2vSDLCQt0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ON0fL1IedPGTXN1H1/pmADMjkfmBKrTXgMvr59T3DI0JkOCSAeot8crabQGQJQwvBc7hDnXpiBNa/TtYartuyR/zfeUy3eZBxyRLBf7CysD1+q1wd3l6IjDLg1ZeWgWXYkHtCMwYHDyzqjm+t8JJapIziHW9oat/k0JGnfmDslA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cS8/Y9/j; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2212222d4cdso37435ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 12:56:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739998603; x=1740603403; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QnG8SEamObBuiIMCf7KmVArDMeAn6Gi4mO2vSDLCQt0=;
-        b=cS8/Y9/jpsiQgjkKSWR42u3QNW7sYnizn7Po5GKizgz7m0HLt7VY+eWgZc3TuqEs5D
-         ItczCY7D37cqQIXgJsYQueINM6rac772LDHofk29ZJMCx4QwxkB+LuSktZTX8MaDL7xn
-         0HLJUionlg4jDtbD2vRq6w+RkFozB0JNjRauB2p6BiAgadA9JPuie+V55GiWkce/CCYr
-         DYj6DVMDn5mOK7L+xvnahXUSyGPNu2bW37SkTnoBgrfwnVY4ZOOrov7080oTDjEQkEev
-         P5kFqcxxyRnVhFigRnh+vRYpc/wYGbnSQZFw7Krf6S7cse1wXKDM6dh6ADkJOnriRFyE
-         6CJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739998603; x=1740603403;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QnG8SEamObBuiIMCf7KmVArDMeAn6Gi4mO2vSDLCQt0=;
-        b=VT2nScXdHbjd5g9R86vxzCRV22Ikd1v3FMZ703BusWV7/ZMw2mWleEqzZUTGgLnYQ5
-         C9DftfzEqIv0fKBoTSi+qWktSUR0UJTX0ohgnczdjPFXE+UGEVudh4A1wLZL6SyW9tlT
-         PMJH5q5X954D+bSFigFb4pJwDlMolNW+MCby4zJwpofuJ/hS75pBmJO5Z1pd17aINUVQ
-         rUr/xADbLZUvQLzsYNMnQ5XkUU8K2IcZ+KlKDOfi5JZyNtQX172zz38j7aiTYAUnUX8p
-         ObyWVX4LHYV69gtYyTT+IDQoMmC7a3RDiEQePJ6/5ieiNpRF5OCf1xR6WLaBRVp/mGny
-         eAEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWDgzEUWryGgNj+IDuYz9d9Bjf92kjE3MYKrw4jsmHDgX3IHcvyOyl5JgaeHd5lYV5wJG6cRLv2NySmcOk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7yfpQW23+ovowy02mc/HEGoHJ36ezEOUWZe4GRGF7dpMG1l4z
-	RYP2DWdhhZ53Rm/Yyj+50bDvePreeNKE3L34X3JwlM97lBgjGJ347wAA1j1TYX2cWKJeFJRGs1i
-	4TM81B7+Erez032ZB9U5yM0An6R/O/c0kejWo
-X-Gm-Gg: ASbGncsy2CoWoxcM+8U7vt6NtMKT5YYFox1AczQLiMFXNQSYqCfSYOKrMtWnzDSJgG4
-	bDN1SEYzzhCwfgDyyoGQnGWow5rUHW1rkUHXb8TwLSXr7ys51z+iA7xwZj/zHoaCvLTDvTnBOpO
-	KHrYrNl9mPo/mBpgRNRcot9QZj0ZA=
-X-Google-Smtp-Source: AGHT+IFe/qAXXHMG11QgG9tLNjslwzcmEjlHXjncZ98KGM4VEwqJXA9x482HDiIZJNWdb53GcTKtRVIS9ahIvNUCJ8c=
-X-Received: by 2002:a17:902:f68c:b0:216:7aaa:4c5f with SMTP id
- d9443c01a7336-2218e0f2c10mr437695ad.3.1739998602713; Wed, 19 Feb 2025
- 12:56:42 -0800 (PST)
+	s=arc-20240116; t=1739998665; c=relaxed/simple;
+	bh=hKJ8Hjb2YjJG6xMLzZjpgVeKjJRPKbszhNIn4r9AUWQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tr6pfuoWnUrr47S9bK4ApHraZn9bzjzXybv4HO2wEHKlAh8TSFSNblceTF/Eof8Y974yHoIWgoc0Hi+31lKFq2mrv9CK5hrcMROMihVMQwi4pwfeHDT4KjXIu5hMM60qUDMsvaqBwLTlvkaspOD8C0a51jJ1xqjowbFvQdKNSSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LVULq6oP; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=f94VpCiIl8a2I0qDr+LujsMvrVHieoe1sVcOcgeYMTE=; b=LVULq6oP2UzHNWOGK9KNudBmFg
+	06TwrTMhQne+4T3RQ/fRXzrSLkzdane8eDpIPFLP1e7PSPGlh/BapVTlQMh/76TjEx2XcxVbVV5qY
+	FEL3UFwAPkUfyh2XDgyHcM9vlxtvEpq92E41pyUWonGxU+OTuLRxgCrsrFrYA2Lc0OCW9RcHLemeD
+	TzmW6gLpNYs1uJOIhFV5d7jmmMNG+A34KPBMTwUz8CT7JfSWgqKlq8SGljwBMF0+U9YdUtqYsDkaG
+	jzTJ7CLcRy1w5XvtajVKtD77c9LbTmaXuUvVS4q2fNydYmGvhVqo9oXr6BkD4+N1o6ozTImz9pbPC
+	Sjobfsww==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tkr8T-00000007BID-1vcw;
+	Wed, 19 Feb 2025 20:57:37 +0000
+Date: Wed, 19 Feb 2025 20:57:37 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Barry Song <21cnbao@gmail.com>
+Cc: Suren Baghdasaryan <surenb@google.com>,
+	Lokesh Gidra <lokeshgidra@google.com>, linux-mm@kvack.org,
+	akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+	zhengtangquan@oppo.com, Barry Song <v-songbaohua@oppo.com>,
+	Andrea Arcangeli <aarcange@redhat.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	Brian Geffon <bgeffon@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	David Hildenbrand <david@redhat.com>,
+	Hugh Dickins <hughd@google.com>, Jann Horn <jannh@google.com>,
+	Kalesh Singh <kaleshsingh@google.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>,
+	Nicolas Geoffray <ngeoffray@google.com>,
+	Peter Xu <peterx@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Shuah Khan <shuah@kernel.org>, ZhangPeng <zhangpeng362@huawei.com>,
+	Yu Zhao <yuzhao@google.com>
+Subject: Re: [PATCH RFC] mm: Fix kernel BUG when userfaultfd_move encounters
+ swapcache
+Message-ID: <Z7ZFwff-8StHCzWl@casper.infradead.org>
+References: <20250219112519.92853-1-21cnbao@gmail.com>
+ <CAJuCfpEWFz14R1vD4Rezy98WBk25HWWX+6DsGBekeYMugKTsfQ@mail.gmail.com>
+ <CAGsJ_4yx1=jaQmDG_9rMqHFFkoXqMJw941eYvtby28OqDq+S7g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1739469950.git.lorenzo.stoakes@oracle.com>
- <CAC_TJveMB1_iAUt81D5-+z8gArbVcbfDM=djCZG_bRVaCEMRmg@mail.gmail.com>
- <45297010-a0a4-4a42-84e8-6f4764eab3b3@lucifer.local> <41af4ffb-0383-4d00-9639-0bf16e1f5f37@redhat.com>
- <a2e12142-3eb2-48c9-b0d9-35a86cb56eec@lucifer.local> <CAC_TJvf6fOACObzR0ANFFrD+ecrP8MbXEZ_ZdzRu0Lg4RunS9g@mail.gmail.com>
- <e07dfd31-197c-49d0-92bd-12aad02daa7e@lucifer.local>
-In-Reply-To: <e07dfd31-197c-49d0-92bd-12aad02daa7e@lucifer.local>
-From: Kalesh Singh <kaleshsingh@google.com>
-Date: Wed, 19 Feb 2025 12:56:31 -0800
-X-Gm-Features: AWEUYZkrEux9sPcJzlJVUSGba3dMcQMqfgKzAP1pAI9URr8_0NHa8B2vfhArMAE
-Message-ID: <CAC_TJvfBvZZc=xyB0jez2VCDit-rettfQf7H4xhQbN7bYxKw-A@mail.gmail.com>
-Subject: Re: [PATCH 0/4] mm: permit guard regions for file-backed/shmem mappings
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: David Hildenbrand <david@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Suren Baghdasaryan <surenb@google.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
-	Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>, 
-	"Paul E . McKenney" <paulmck@kernel.org>, Jann Horn <jannh@google.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Shuah Khan <shuah@kernel.org>, 
-	linux-kselftest@vger.kernel.org, linux-api@vger.kernel.org, 
-	John Hubbard <jhubbard@nvidia.com>, Juan Yescas <jyescas@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGsJ_4yx1=jaQmDG_9rMqHFFkoXqMJw941eYvtby28OqDq+S7g@mail.gmail.com>
 
-On Wed, Feb 19, 2025 at 11:20=E2=80=AFAM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
->
-> On Wed, Feb 19, 2025 at 10:52:04AM -0800, Kalesh Singh wrote:
-> > On Wed, Feb 19, 2025 at 1:17=E2=80=AFAM Lorenzo Stoakes
-> > <lorenzo.stoakes@oracle.com> wrote:
-> > >
-> > > On Wed, Feb 19, 2025 at 10:15:47AM +0100, David Hildenbrand wrote:
-> > > > On 19.02.25 10:03, Lorenzo Stoakes wrote:
-> > > > > On Wed, Feb 19, 2025 at 12:25:51AM -0800, Kalesh Singh wrote:
-> > > > > > On Thu, Feb 13, 2025 at 10:18=E2=80=AFAM Lorenzo Stoakes
-> > > > > > <lorenzo.stoakes@oracle.com> wrote:
-> > > > > > >
-> > > > > > > The guard regions feature was initially implemented to suppor=
-t anonymous
-> > > > > > > mappings only, excluding shmem.
-> > > > > > >
-> > > > > > > This was done such as to introduce the feature carefully and =
-incrementally
-> > > > > > > and to be conservative when considering the various caveats a=
-nd corner
-> > > > > > > cases that are applicable to file-backed mappings but not to =
-anonymous
-> > > > > > > ones.
-> > > > > > >
-> > > > > > > Now this feature has landed in 6.13, it is time to revisit th=
-is and to
-> > > > > > > extend this functionality to file-backed and shmem mappings.
-> > > > > > >
-> > > > > > > In order to make this maximally useful, and since one may map=
- file-backed
-> > > > > > > mappings read-only (for instance ELF images), we also remove =
-the
-> > > > > > > restriction on read-only mappings and permit the establishmen=
-t of guard
-> > > > > > > regions in any non-hugetlb, non-mlock()'d mapping.
-> > > > > >
-> > > > > > Hi Lorenzo,
-> > > > > >
-> > > > > > Thank you for your work on this.
-> > > > >
-> > > > > You're welcome.
-> > > > >
-> > > > > >
-> > > > > > Have we thought about how guard regions are represented in /pro=
-c/*/[s]maps?
-> > > > >
-> > > > > This is off-topic here but... Yes, extensively. No they do not ap=
-pear
-> > > > > there.
-> > > > >
-> > > > > I thought you had attended LPC and my talk where I mentioned this
-> > > > > purposefully as a drawback?
-> > > > >
-> > > > > I went out of my way to advertise this limitation at the LPC talk=
-, in the
-> > > > > original series, etc. so it's a little disappointing that this is=
- being
-> > > > > brought up so late, but nobody else has raised objections to this=
- issue so
-> > > > > I think in general it's not a limitation that matters in practice=
-.
-> > > > >
-> >
-> > Sorry for raising this now, yes at the time I believe we discussed
-> > reducing the vma slab memory usage for the PROT_NONE mappings. I
-> > didn't imagine that apps could have dependencies on the mapped ELF
-> > ranges in /proc/self/[s]maps until recent breakages from a similar
-> > feature. Android itself doesn't depend on this but what I've seen is
-> > banking apps and apps that have obfuscation to prevent reverse
-> > engineering (the particulars of such obfuscation are a black box).
->
-> Ack ok fair enough, sorry, but obviously you can understand it's
-> frustrating when I went to great lengths to advertise this not only at th=
-e
-> talk but in the original series.
->
-> Really important to have these discussions early. Not that really we can =
-do
-> much about this, as inherently this feature cannot give you what you need=
-.
->
-> Is it _only_ banking apps that do this? And do they exclusively read
-> /proc/$pid/maps? I mean there's nothing we can do about that, sorry.
+On Thu, Feb 20, 2025 at 09:37:50AM +1300, Barry Song wrote:
+> > How complex would that be? Is it a matter of adding
+> > folio_maybe_dma_pinned() checks, doing folio_move_anon_rmap() and
+> > folio->index = linear_page_index like in move_present_pte() or
+> > something more?
+> 
+> My main concern is still with large folios that require a split_folio()
+> during move_pages(), as the entire folio shares the same index and
+> anon_vma. However, userfaultfd_move() moves pages individually,
+> making a split necessary.
+> 
+> However, in split_huge_page_to_list_to_order(), there is a:
+> 
+>         if (folio_test_writeback(folio))
+>                 return -EBUSY;
+> 
+> This is likely true for swapcache, right?
 
-Not only banking apps but that's a common category.
+I don't see why?  When they get moved to the swap cache, yes, they're
+immediately written back, but after being swapped back in, they stay in
+the swap cache, so they don't have to be moved back to the swap cache.
+Right?
 
-> If that's immutable, then unless you do your own very, very, very slow cu=
-stom
-> android maps implementation (that will absolutely break the /proc/$pid/ma=
-ps
-> scalability efforts atm) this is just a no-go.
->
-
-Yeah unfortunately that's immutable as app versions are mostly
-independent from the OS version.
-
-We do have something that handles this by encoding the guard regions
-in the vm_flags, but as you can imagine it's not generic enough for
-upstream.
-
-> >
-> > > > > >
-> > > > > > In the field, I've found that many applications read the ranges=
- from
-> > > > > > /proc/self/[s]maps to determine what they can access (usually r=
-elated
-> > > > > > to obfuscation techniques). If they don't know of the guard reg=
-ions it
-> > > > > > would cause them to crash; I think that we'll need similar entr=
-ies to
-> > > > > > PROT_NONE (---p) for these, and generally to maintain consisten=
-cy
-> > > > > > between the behavior and what is being said from /proc/*/[s]map=
-s.
-> > > > >
-> > > > > No, we cannot have these, sorry.
-> > > > >
-> > > > > Firstly /proc/$pid/[s]maps describes VMAs. The entire purpose of =
-this
-> > > > > feature is to avoid having to accumulate VMAs for regions which a=
-re not
-> > > > > intended to be accessible.
-> > > > >
-> > > > > Secondly, there is no practical means for this to be accomplished=
- in
-> > > > > /proc/$pid/maps in _any_ way - as no metadata relating to a VMA i=
-ndicates
-> > > > > they have guard regions.
-> > > > >
-> > > > > This is intentional, because setting such metadata is simply not =
-practical
-> > > > > - why? Because when you try to split the VMA, how do you know whi=
-ch bit
-> > > > > gets the metadata and which doesn't? You can't without _reading p=
-age
-> > > > > tables_.
-> >
-> > Yeah the splitting becomes complicated with any vm flags for this...
-> > meaning any attempt to expose this in /proc/*/maps have to
-> > unconditionally walk the page tables :(
->
-> It's not really complicated, it's _impossible_ unless you made literally
-> all VMA code walk page tables for every single operation. Which we are
-> emphatically not going to do :)
->
-> And no, /proc/$pid/maps is _never_ going to walk page tables. For obvious
-> performance reasons.
->
-> >
-> > > > >
-> > > > > /proc/$pid/smaps _does_ read page tables, but we can't start pret=
-ending
-> > > > > VMAs exist when they don't, this would be completely inaccurate, =
-would
-> > > > > break assumptions for things like mremap (which require a single =
-VMA) and
-> > > > > would be unworkable.
-> > > > >
-> > > > > The best that _could_ be achieved is to have a marker in /proc/$p=
-id/smaps
-> > > > > saying 'hey this region has guard regions somewhere'.
-> > > >
-> > > > And then simply expose it in /proc/$pid/pagemap, which is a better =
-interface
-> > > > for this pte-level information inside of VMAs. We should still have=
- a spare
-> > > > bit for that purpose in the pagemap entries.
-> > >
-> > > Ah yeah thanks David forgot about that!
-> > >
-> > > This is also a possibility if that'd solve your problems Kalesh?
-> >
-> > I'm not sure what is the correct interface to advertise these. Maybe
-> > smaps as you suggested since we already walk the page tables there?
-> > and pagemap bit for the exact pages as well? It won't solve this
-> > particular issue, as 1000s of in field apps do look at this through
-> > /proc/*/maps. But maybe we have to live with that...
->
-> I mean why are we even considering this if you can't change this anywhere=
-?
-> Confused by that.
->
-> I'm afraid upstream can't radically change interfaces to suit this
-> scenario.
->
-> We also can't change smaps in the way you want, it _has_ to still give
-> output per VMA information.
-
-Sorry I wasn't suggesting to change the entries in smaps, rather
-agreeing to your marker suggestion. Maybe a set of ranges for each
-smaps entry that has guards? It doesn't solve the use case, but does
-make these regions visible to userspace.
-
->
-> The proposed change that would be there would be a flag or something
-> indicating that the VMA has guard regions _SOMEWHERE_ in it.
->
-> Since this doesn't solve your problem, adds complexity, and nobody else
-> seems to need it, I would suggest this is not worthwhile and I'd rather n=
-ot
-> do this.
->
-> Therefore for your needs there are literally only two choices here:
->
-> 1. Add a bit to /proc/$pid/pagemap OR
-> 2. a new interface.
->
-> I am not in favour of a new interface here, if we can just extend pagemap=
-.
->
-> What you'd have to do is:
->
-> 1. Find virtual ranges via /proc/$pid/maps
-> 2. iterate through /proc/$pid/pagemaps to retrieve state for all ranges.
->
-
-Could we also consider an smaps field like:
-
-VmGuards: [AAA, BBB), [CCC, DDD), ...
-
-or something of that sort?
-
-
-> Since anything that would retrieve guard region state would need to walk
-> page tables, any approach would be slow and I don't think this would be a=
-ny
-> less slow than any other interface.
->
-> This way you'd be able to find all guard regions all the time.
->
-> This is just the trade-off for this feature unfortunately - its whole
-> design ethos is to allow modification of -faulting- behaviour without
-> having to modify -VMA- behaviour.
->
-> But if it's banking apps whose code you can't control (surprised you don'=
-t
-> lock down these interfaces), I mean is this even useful to you?
->
-> If your requirement is 'you have to change /proc/$pid/maps to show guard
-> regions' I mean the answer is that we can't.
->
-> >
-> > We can argue that such apps are broken since they may trip on the
-> > SIGBUS off the end of the file -- usually this isn't the case for the
-> > ELF segment mappings.
->
-> Or tearing of the maps interface, or things getting unmapped or or
-> or... It's really not a sane thing to do.
->
-> >
-> > This is still useful for other cases, I just wanted to get some ideas
-> > if this can be extended to further use cases.
->
-> Well I'm glad that you guys find it useful for _something_ ;)
->
-> Again this wasn't written only for you (it is broadly a good feature for
-> upstream), but I did have your use case in mind, so I'm a little
-> disappointed that it doesn't help, as I like to solve problems.
->
-> But I'm glad it solves at least some for you...
-
-I recall Liam had a proposal to store the guard ranges in the maple tree?
-
-I wonder if that can be used in combination with this approach to have
-a better representation of this?
-
->
-> >
-> > Thanks,
-> > Kalesh
-> >
-> >
-> > >
-> > > This bit will be fought over haha
-> > >
-> > > >
-> > > > --
-> > > > Cheers,
-> > > >
-> > > > David / dhildenb
-> > > >
 
