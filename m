@@ -1,157 +1,124 @@
-Return-Path: <linux-kernel+bounces-520857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F06BDA3B021
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 04:41:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE3C1A3B01F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 04:41:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CD7E3A94AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 03:41:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2790018982E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 03:41:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F261A8F9E;
-	Wed, 19 Feb 2025 03:41:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0FE01A9B3B;
+	Wed, 19 Feb 2025 03:41:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="PmBfPsb0"
-Received: from m16.mail.126.com (m16.mail.126.com [117.135.210.9])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CEBC191F6A;
-	Wed, 19 Feb 2025 03:41:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.9
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PmRBnCLp"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 900278F7D;
+	Wed, 19 Feb 2025 03:41:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739936486; cv=none; b=H689w5ix8PhbgMjcLzXFTIL/vMJSgYZr+7tLCPUG8IILrhYsum4r9TDP2P+/DWT/Q18mG4jD+qsY3gwx2zf2+CaLE1CZGyyEEhJu2NXl77R1/adHrehgpjJaWrEx1lDETzvP14QhcP4TA8ZWW6QZHXnHkSbvnIhlijOBqTG9a5I=
+	t=1739936471; cv=none; b=Pz2LIGJfZjg1OYdFyhYvCaBbiebsfeONkxqbDI763Vq6By5GWUKz4YAui0aGJ9IsjP3l9wi0HpFTvcf9HgufYkcwtOfu76P6sKlKNaqZhoSLAwYxCefsj4GLl/5TcPcBawYQvcNm8FBMu/UjF2CvDekTpvxbE8tPpA2hp+Q/AIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739936486; c=relaxed/simple;
-	bh=lYmU3jNMFnWvp4qwM/KagSvdxMoE3OdWx4ePB/DRziA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Tm57ds7eKDIL5ULjPnck8wmn9Gli9U5gR7G0CDoFS/VALZ2PbzsANb0jVkJ7tiuhBF3GCs0+OO+++9ybL7+oN+ZQE/H0Oqi956CdOYiDsBJEiN8r5AKR9gOZigUtYQcsD+7QyG1nyL4U8F52B5D0InIJOtnULPI/izjKgR7QsWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=PmBfPsb0; arc=none smtp.client-ip=117.135.210.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=VskwbQNxxGXSCd9W0yEExCUDqdZuOrvg+FF0QwLaHys=;
-	b=PmBfPsb0HiGDtL3NfDx3O1o1ajAsex+lnq3k3gCigLM5JJV9Nme/u2NlizN+sG
-	gv/ZFVnXui9EqAYC4CCP8YOdE8o2x4b01drz/qh7qegzdi0vWEyi/SLHespbB2Kr
-	4y/Ciz0tchOPs9bnvQekW4GTvjF3Yi28cImNZKS9dE04E=
-Received: from [172.19.20.199] (unknown [])
-	by gzsmtp3 (Coremail) with SMTP id PikvCgD3306SUrVnoI4wBA--.1330S2;
-	Wed, 19 Feb 2025 11:40:03 +0800 (CST)
-Message-ID: <462e8d90-c0d0-474b-851c-46a44282b768@126.com>
-Date: Wed, 19 Feb 2025 11:40:02 +0800
+	s=arc-20240116; t=1739936471; c=relaxed/simple;
+	bh=OQJsLAaWRSQtRgT91ofNhEcQyVmljU0Xl6XdqGkLg4M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=E1nVLCmZT9zBOtI19cwjKr1/CUICILofh7wlXU3fr8gOMys4DIlXYm5H3NCqm3PYwUEocE6+sroNdmQ9xQ5/gVlnOWvGYARihWABmcDEaWVOILV2D6BElrh0Guf7gm8fqeish9ehVKdg463IIoLqG/ObAii2TP4gcknFJ77Nivs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PmRBnCLp; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43937cf2131so41722265e9.2;
+        Tue, 18 Feb 2025 19:41:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739936468; x=1740541268; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OQJsLAaWRSQtRgT91ofNhEcQyVmljU0Xl6XdqGkLg4M=;
+        b=PmRBnCLphKCuLPLy+Q8mfsRu9Q7W5+EJSwebfGZTcaoppvyrIJrl0IU8A86Ew7Jlat
+         6pJsRhbC3hkALrLLrAKnMJZcNkyv5stq9kJ3hqwWYgcvdX7S0RpwV1X+TQ/D2jrlN+PV
+         QdsMrAYxKbPu6ZfixXIpHEVK0KX4SfK7ZbQofv2Cov2Q+3Stmkh5BVwybPQ6pyA/xeby
+         mDngfb5Gcm04Aa6pOtQNsVXeH25tmDspiF9A3uUkfZx9hN1AO/0A4nzsoXTwAKtcOIFy
+         gVhDfxvzPKXD/0K+IZAn5r/HAoERGMbXkuScRXgoIdvrCZKFu8w32aoVobFyC93vx6jR
+         oQpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739936468; x=1740541268;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OQJsLAaWRSQtRgT91ofNhEcQyVmljU0Xl6XdqGkLg4M=;
+        b=CeoHVBrFcgWYQGdthEyCyi/f+zLIULl/zZBBiD1a1Wwq78ynz8qT3hxdzgU8tHzdMw
+         03wr1yCWGR+iZd/Kb6dLexNHomjdL7dZyahD50/NaOMXCGnVHll/qwq40FNNv4MKgcSp
+         VYZdWlDvnoC8Hk3913M9KMoqgprC5JfEbKePfUkUrF/6tHAbzM8yAPabbSAe3alTKTkU
+         7XxnCT67pxWvxr8cCcQ+GU3jmQ1WoDbeKRa24ZBfqDcYp1P+pbuUpV8PIuRlk6FcoBuf
+         5A1UvPBWZmkJXQ2Dtrocxj0LOjYrEobQYRkv2gi0JShjGg/naxpVW5coGvlfJj1E62UL
+         wGzA==
+X-Forwarded-Encrypted: i=1; AJvYcCVKWGkAQtCnkGHcK6wLZtRFaGYKwqhAwl27RLLo8drG2LgHIUcoKJOBCFBF0OPNEq3efFQ06NCWDSwQZrot@vger.kernel.org, AJvYcCWayh5HpfXMNiS6bxlrlhCcLoXgx2tpl/VbjxGzhs8iq6lEyVDjGjVw8JGzqyMsWLp+FcBftvxOp9QDMFBM17SE@vger.kernel.org, AJvYcCXiOT4CKWpWLpQf7YJeQSGGq6po+gy6B62TdLJSqxugRwYRZk2eAoDpBnuI/726ydsBgK4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJv+2uX1eYZO/N34mRTjbIMHxFvV/Ydp1xwG8bG3go6YHlTzVO
+	txxLsPsY7hnVTofFU/Jw0U4PSP+D+N2Nf/lHW0Mrm7GqycmBVxyc20hvD+jfkMngRIxGRwNnFRY
+	mqgeh3vOE4v9ARMP/p+GcSgMapM8=
+X-Gm-Gg: ASbGnctbH1LbnbnkTnkPsqP/xZ6f0Kt+xmhwuj+a9YoKdILt4xLvqXEuaJysPZJJRxp
+	cSO8jaPi8dWewRwxWCCv+mVz469xnUaXikqfFEiq5aYGrJtsDrkf7LeyU/3F+vXoOCF/hqUirPP
+	aHtGhy4xLrTQ1KkQjOv+Ca0WD8KqQe
+X-Google-Smtp-Source: AGHT+IEjXtc7cvnTaJFVDADpUCj/f/YPhCe4KyJbf7Wv4CggSX4y1UdOUGuLuRP3XxXmvQzXJMI+K7kra4Ey8mX0t7Y=
+X-Received: by 2002:a05:600c:3b0e:b0:439:987c:2309 with SMTP id
+ 5b1f17b1804b1-439987c256dmr27353475e9.27.1739936467561; Tue, 18 Feb 2025
+ 19:41:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3] mm/hugetlb: wait for hugetlb folios to be freed
-To: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org,
- 21cnbao@gmail.com, baolin.wang@linux.alibaba.com, muchun.song@linux.dev,
- osalvador@suse.de, liuzixing@hygon.cn
-References: <1739878828-9960-1-git-send-email-yangge1116@126.com>
- <f5c31616-41e8-464b-84ec-8aa0cedfa556@redhat.com>
- <17ad5bf5-545c-4418-8d08-459ce6ef54cb@126.com>
- <950cae5a-bff0-49e6-8fe4-a2447c63d8bc@redhat.com>
-From: Ge Yang <yangge1116@126.com>
-In-Reply-To: <950cae5a-bff0-49e6-8fe4-a2447c63d8bc@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PikvCgD3306SUrVnoI4wBA--.1330S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxWFy5KrW7tFyrXF4fWF47XFb_yoW5ZFW7pF
-	W5KF13GFWkJr9IyrnFqw1qkw1vkrWjvFW0gr4rtw13CFnIyrn3KFWayw1Y9ayrAr10kF40
-	qr40qrZxWF1UAaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jjoGQUUUUU=
-X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbifgL4G2e1Un4BNgAAsW
+References: <20250217-tc_links-v1-0-27f7965e3dcd@bootlin.com> <Z7T6J4BpIrBcsWPM@mini-arch>
+In-Reply-To: <Z7T6J4BpIrBcsWPM@mini-arch>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 18 Feb 2025 19:40:56 -0800
+X-Gm-Features: AWEUYZliZx47mbsjIzoFIXea8OImVxQ_IY8T0Kgs_lM79Babu5crmU41bYtpQeM
+Message-ID: <CAADnVQLktLYJ5_jjve0A=oOWZFRvs3NGfuQUXwpCmw6q+U_Ltw@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 0/3] selftests/bpf: tc_links/tc_opts: Unserialize tests
+To: Stanislav Fomichev <stfomichev@gmail.com>
+Cc: "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Alexis Lothore <alexis.lothore@bootlin.com>, 
+	bpf <bpf@vger.kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Feb 18, 2025 at 1:22=E2=80=AFPM Stanislav Fomichev <stfomichev@gmai=
+l.com> wrote:
+>
+> On 02/17, Bastien Curutchet (eBPF Foundation) wrote:
+> > Hi all,
+> >
+> > Both tc_links.c and tc_opts.c do their tests on the loopback interface.
+> > It prevents from parallelizing their executions.
+> >
+> > Use namespaces and the new append_tid() helper to allow this
+> > parallelization.
+> >
+> > Signed-off-by: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@b=
+ootlin.com>
+>
+> Acked-by: Stanislav Fomichev <sdf@fomichev.me>
+>
+> LGTM, thank you! Optionally, if there is more to convert, we can think
+> about moving create_and_open_tid_ns to the test_progs itself. For example=
+,
+> if the test name starts with ns_, test_progs can probably do the
+> create_and_open_tid_ns/netns_free part?
 
+That's a good idea.
+Let's do it now.
+Otherwise most of the patch 2 will be reverted when it's introduced.
 
-在 2025/2/19 1:22, David Hildenbrand 写道:
-> On 18.02.25 13:19, Ge Yang wrote:
->>
->>
->> 在 2025/2/18 19:45, David Hildenbrand 写道:
->>> On 18.02.25 12:40, yangge1116@126.com wrote:
->>>> From: Ge Yang <yangge1116@126.com>
->>>>
->>>> Since the introduction of commit c77c0a8ac4c52 ("mm/hugetlb: defer
->>>> freeing
->>>> of huge pages if in non-task context"), which supports deferring the
->>>> freeing of hugetlb pages, the allocation of contiguous memory through
->>>> cma_alloc() may fail probabilistically.
->>>>
->>>> In the CMA allocation process, if it is found that the CMA area is
->>>> occupied
->>>> by in-use hugetlb folios, these in-use hugetlb folios need to be 
->>>> migrated
->>>> to another location. When there are no available hugetlb folios in the
->>>> free hugetlb pool during the migration of in-use hugetlb folios, new
->>>> folios
->>>> are allocated from the buddy system. A temporary state is set on the
->>>> newly
->>>> allocated folio. Upon completion of the hugetlb folio migration, the
->>>> temporary state is transferred from the new folios to the old folios.
->>>> Normally, when the old folios with the temporary state are freed, it is
->>>> directly released back to the buddy system. However, due to the 
->>>> deferred
->>>> freeing of hugetlb pages, the PageBuddy() check fails, ultimately 
->>>> leading
->>>> to the failure of cma_alloc().
->>>>
->>>> Here is a simplified call trace illustrating the process:
->>>> cma_alloc()
->>>>       ->__alloc_contig_migrate_range() // Migrate in-use hugetlb folios
->>>>           ->unmap_and_move_huge_page()
->>>>               ->folio_putback_hugetlb() // Free old folios
->>>>       ->test_pages_isolated()
->>>>           ->__test_page_isolated_in_pageblock()
->>>>                ->PageBuddy(page) // Check if the page is in buddy
->>>>
->>>> To resolve this issue, we have implemented a function named
->>>> wait_for_freed_hugetlb_folios(). This function ensures that the hugetlb
->>>> folios are properly released back to the buddy system after their
->>>> migration
->>>> is completed. By invoking wait_for_freed_hugetlb_folios() before 
->>>> calling
->>>> PageBuddy(), we ensure that PageBuddy() will succeed.
->>>>
->>>> Fixes: c77c0a8ac4c52 ("mm/hugetlb: defer freeing of huge pages if in
->>>> non-task context")
->>>> Signed-off-by: Ge Yang <yangge1116@126.com>
->>>> Cc: <stable@vger.kernel.org>
->>>
->>>
->>>
->>> Acked-by: David Hildenbrand <david@redhat.com>
->>>> +void wait_for_freed_hugetlb_folios(void)
->>>> +{
->>>> +    flush_work(&free_hpage_work);
->>>
->>> BTW, I was wondering if we could optimize out some calls here by sensing
->>> if there is actually work.
->>>
->> for_each_hstate(h) {
->>     if (hugetlb_vmemmap_optimizable(h)) {
->>         flush_work(&free_hpage_work);
->  >         break;>     }
->> }
->> Is this adjustment okay?
-> 
-> I think that's better, except that it would still trigger in scenarios 
-> where hugetlb is completely unused if 
-> CONFIG_HUGETLB_PAGE_OPTIMIZE_VMEMMAP is around.
-> 
-> Can't we check hpage_freelist?
-> 
-> if (llist_empty(&hpage_freelist))
->      return;
-> flush_work(&free_hpage_work);
-> 
-Ok, thanks.
-> It should be able to deal with races (we don't care if something is 
-> getting added concurrently, only if there is something right now).
-> 
-
+pw-bot: cr
 
