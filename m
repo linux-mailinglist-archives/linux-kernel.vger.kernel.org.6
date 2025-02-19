@@ -1,188 +1,127 @@
-Return-Path: <linux-kernel+bounces-521683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66392A3C0B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:56:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 39DC1A3C07E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:50:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B94571892DFC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:54:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8328A18913B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:50:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F4E1FF1DE;
-	Wed, 19 Feb 2025 13:50:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D010D1EB197;
+	Wed, 19 Feb 2025 13:49:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="nshLEZ4e"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZY6tDS7x"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36D301FECBB;
-	Wed, 19 Feb 2025 13:50:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D2ED199E80
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 13:49:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739973016; cv=none; b=EnH1NTM9gjwTJqI8TOmqv7IaYOeLKHIOg1OomRp2UEjtb/JBRhmq8T7WkBJY7aR/xRc7hLECIBu7zx7OuhQrFF8fP1ApCJfdCmTFTQcCj8GwTRrCbKKQWmcAhqr1MGPTXTw8nSpQQMmUf9j3pxAZj4D/E9Yf6jNnwxKYpNnGIjo=
+	t=1739972987; cv=none; b=ALTOXbUpM9qPmzNK5e6Cf0x7Sr9rzjFw6kp5SpHQBjy+g70Jy9yoYU0IOPX3iqqedvxqKReJdNY0D6h20lyqOdncPBALRWH9IAzv1tZKP7/abz9Qql+A3KUfdtXXOtueWvUTBcnG4iP4fsolvZU+AEudUk57AeBuj07g5SRkJAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739973016; c=relaxed/simple;
-	bh=Smanb1nxDtTi2Zz0q9/a7xzSW0wrYV97VOh/qP6VxeE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=iTVIPIWRQ/uAizuFHeqAVKgPVWk6/yskjf6m8nCTpRRewo24RN1J16nI2Xa0CHroAwG+OfRlvsCRL+PQGQB7Al4VYBPh7MyN8+4IhQD4wh/d4j1ThdDDqJ5sNzED92+DnDt5R9HAQ4yNvBTOuPLWazibtNALqKE3shTrSGCRlPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=nshLEZ4e; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [127.0.1.1] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 99F86D21;
-	Wed, 19 Feb 2025 14:48:33 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1739972914;
-	bh=Smanb1nxDtTi2Zz0q9/a7xzSW0wrYV97VOh/qP6VxeE=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=nshLEZ4em0TViY1OPTIr4VJ0p4XwSX2RmakEqFz5B2s4lEPCXUF2YLaZHxZn5BgWD
-	 0yNCq0FcEkHeiM2ar/FU0bUqaUcJ56gpefFjC3c50Q6xutgZiUEDuV+vv/pdY9gH46
-	 j7zyw+5y5XJebumqUv9XY6wiZkGF8iDyOASdWwwI=
-From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Date: Wed, 19 Feb 2025 15:49:12 +0200
-Subject: [PATCH 18/18] media: rcar-isp: Add full streams support
+	s=arc-20240116; t=1739972987; c=relaxed/simple;
+	bh=ozAI7jPkN+E+ln8TQn9XKg6f9kSqAye64Nz9Y0rCWKI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=tl6Siig1yba4XMrYqzupLVyL4uCxjhlXETlwHAltHDo5iX55y0XCEQ87ThFAGXjkO9f21YZ1rGt5dUjD8sJZz7e3IAQDxjip3InathFAQWlSqNF3FNDLbBN8DqwRvzo18vf3DtFuUzWOFDBxl6koF9y4E8VrDEDDMezpbUDgp44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZY6tDS7x; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-abb7520028bso559516866b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 05:49:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739972983; x=1740577783; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kH0pAU2X6UA0aC7rynWRidtqvLm/P00AqNLgxfvX0o8=;
+        b=ZY6tDS7xi0FEYdG86plch0lnsA4kaPxA1ei+LFFXqVJSYhA7iYK8iftEy+jvPEroD+
+         T8FI54dHGxr6BIS00f8DUS/RcAFnLlwGWS93Y8aq0DHT1uFzt1Ivm78gSWrg23gJ9NGs
+         lWBYTvetmdZN3b1h+t2y2bu5ul5RPXumb5Twg3A0qh4LLvFCuo3PLgbEzc9em8YgOeQ+
+         DgZ0lhAAypYCUYjXx++yIqP0r9hKcKorXol+kCrMcTmptFCgAW1O5JXK9jkOjYASgb1k
+         Z5WxN4j1IcZQN17kudb/d8lzd01PL3HGyMK6lfsH4wZsEHoZJMLMMeWYujG9v6mk0fzp
+         ei4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739972983; x=1740577783;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kH0pAU2X6UA0aC7rynWRidtqvLm/P00AqNLgxfvX0o8=;
+        b=oBz+bGxbmn2IplXiO6d3TZI0MB5cnNiclVYX8JuZARkWyndYyKNYrDlLR1/y+Qxe7D
+         qFf2mTEy1+4m/eGr77+9/Heo3GMMPSrF84jx/m/iiYHoa8xdPkdiOULFwJ5OinuDfLb+
+         zzDMADLVIFpzEuyetSgyO8dTPYzyWLf52irATalGuAgqaQEqTCwTtoLpcp8rylbvC9pr
+         doAvERTuZooZyi3Y6fMGQ3+oK6hL8qobmv9JtFfcsRlgrKQWjJiPObFM5cRHXGXGIGbX
+         m9Om+xce0mMgPQlHn9yi6AUtSpaDb15KqMmQ6sYrWJl7zpCC7x4Xij7UJY3xiMcBbjg0
+         Ii3A==
+X-Forwarded-Encrypted: i=1; AJvYcCW+G8V5pefqc0FgYCadSwMUUjp2lH941WTL4lno4JB6idXePM334Nkpmkxhm0EeGEOyWYR5jegGPiZuDag=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznvlLtoxiND1jVptf4y7XR0m52wBG/inFaAG/o6VkKiGff9ZHN
+	7zHlJrsoNGU2CHqgrnqDWdpT0PSKmg8C5MrBfa1D6Jra9HErxGRrAjbk6DVgWfI=
+X-Gm-Gg: ASbGncs53WlLKLqA7nRsghzZyQEE3sevSy8Yk6mEkz2J0HFAjd8Nr0LGcWkyEcgcNsk
+	tvrm69M1A4DLYJpwTbd3zrDZZKMA/Gv7CR36Xx1X3Q0EspR8dwK/yM0dqfg+QYRGEn4N7BLI4oI
+	elOuNPMsdExYC8Huk3RSpHRrEglrL7D0l4y2Kj/QD3rMnEgmXWoDUDnzVlGQsmZYwdV50z2yUb7
+	p8J4wSaZ5i+bDE7MEXAhTArr84WuPGw4s5KNCTqZW0yMWLlj84tNY4BQ4+0JIR0Pj6/T/ZBm+tn
+	0Ua4LoSKav5YbbwUc8Xu
+X-Google-Smtp-Source: AGHT+IEh++Dcbz3VxYv3Ivg8FCqcPYBovAh++mRW2ZFn7DD63wkwuldCqvj/jtkuwogNSm04zdgAcQ==
+X-Received: by 2002:a17:907:2d93:b0:abb:b36e:5350 with SMTP id a640c23a62f3a-abbcd059da6mr292239766b.44.1739972983435;
+        Wed, 19 Feb 2025 05:49:43 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-abbdac1015dsm117494966b.127.2025.02.19.05.49.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2025 05:49:43 -0800 (PST)
+Date: Wed, 19 Feb 2025 16:49:39 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Jim Qu <Jim.Qu@amd.com>
+Cc: Lukas Wunner <lukas@wunner.de>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Takashi Iwai <tiwai@suse.de>, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Su Hui <suhui@nfschina.com>
+Subject: [PATCH] vgaswitcheroo: Fix error checking in
+ vga_switcheroo_register_audio_client()
+Message-ID: <ae24cd32-1e78-4656-b983-051ed22d86b9@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250219-rcar-streams-v1-18-f1b93e370aab@ideasonboard.com>
-References: <20250219-rcar-streams-v1-0-f1b93e370aab@ideasonboard.com>
-In-Reply-To: <20250219-rcar-streams-v1-0-f1b93e370aab@ideasonboard.com>
-To: =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>, 
- Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-X-Mailer: b4 0.15-dev-42535
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3060;
- i=tomi.valkeinen+renesas@ideasonboard.com; h=from:subject:message-id;
- bh=Smanb1nxDtTi2Zz0q9/a7xzSW0wrYV97VOh/qP6VxeE=;
- b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBnteF2TKP55dh9y4fRAgzn5VEG7cB9lTg/djK8H
- F0h7bqdTX2JAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCZ7XhdgAKCRD6PaqMvJYe
- 9ZakD/431OIpfc5/fs1J7MrnfGxvhNgTlfcrBD3tigwuGvyVLL2m0BEMVaiysdI5vxuSL7wFKAR
- Y/woicudI8aeLOIQI3n6PrwAd643+00Ud2he9rsXY0YmBW+noupBcUV1Pjquvy+rZ4cW4ZfqOkT
- xaTR+6lLon/HYdjlX+eLRrQMaK60as/DWpvWw9+E30q/eSqy6Lr13o/0AQLbQm4n1Ge5qhD9YfP
- KUxM2vBqqyWcVkCzbD61+tUMTfwQ0JLfilvIW6/aR/BavHk3kaqk/nn5hlLZxoXZP+TDeU6JCTU
- IKfAZ/f/p5X0FCEIwghddDX138m7e3UoUG5wgbbFy82Or1ayW9JxzqMz45b2Oki1+zmEvc5jHsC
- 74ZaJTCYcLKpGOZkl5tz/MFzA8VtFDN//MN/ysatuIozk36yF3wnLidBWIuo+fMYHR7IELXO2or
- cf99U4oXgB1Ei87CO61DkOFsC3rKvzYiSby3a0lxO1trg/P9rBbw/QIgPxr4cGV0Lsu51Rkt82Q
- sMcho3Xmbj5XyA0A+aYVkuVyGEWfzi03RciiIN0TMFm58+nJxqGNNEdYfSQPnIm7lopUA5uoZOr
- 8DI9qluCFpkdNeNIPpN9YrXo66K7Rd48c2f/BUQyqIY4QwXbWpBoGRpQ7J2vaeet2HnJ1/owET0
- MZkvfszaaNR7+Kg==
-X-Developer-Key: i=tomi.valkeinen+renesas@ideasonboard.com; a=openpgp;
- fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-Add the missing pieces to enable full streams support:
+The "id" variable is an enum and in this context it's treated as an
+unsigned int so the error handling can never trigger.  The
+->get_client_id() functions do not currently return any errors but
+I imagine that if they did, then the intention was to return
+VGA_SWITCHEROO_UNKNOWN_ID on error.  Let's check for both negatives
+and UNKNOWN_ID so we'll catch it either way.
 
-- Add set_routing
-- Drop the explicit uses of a single stream, and instead use the streams
-  mask.
-
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Reported-by: Su Hui <suhui@nfschina.com>
+Closes: https://lore.kernel.org/all/20231026021056.850680-1-suhui@nfschina.com/
+Fixes: 4aaf448fa975 ("vga_switcheroo: set audio client id according to bound GPU id")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/media/platform/renesas/rcar-isp.c | 41 +++++++++++++++++++++++++++++--
- 1 file changed, 39 insertions(+), 2 deletions(-)
+ drivers/gpu/vga/vga_switcheroo.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/renesas/rcar-isp.c b/drivers/media/platform/renesas/rcar-isp.c
-index 53927954ba73..20aa451cc64f 100644
---- a/drivers/media/platform/renesas/rcar-isp.c
-+++ b/drivers/media/platform/renesas/rcar-isp.c
-@@ -342,6 +342,7 @@ static int risp_enable_streams(struct v4l2_subdev *sd,
- {
- 	struct rcar_isp *isp = sd_to_isp(sd);
- 	int ret = 0;
-+	u64 sink_streams;
- 
- 	if (source_streams_mask != 1)
- 		return -EINVAL;
-@@ -355,8 +356,13 @@ static int risp_enable_streams(struct v4l2_subdev *sd,
- 			return ret;
- 	}
- 
-+	sink_streams = v4l2_subdev_state_xlate_streams(state,
-+						       source_pad,
-+						       RCAR_ISP_SINK,
-+						       &source_streams_mask);
-+
- 	ret = v4l2_subdev_enable_streams(isp->remote, isp->remote_pad,
--					 BIT_ULL(0));
-+					 sink_streams);
- 	if (ret) {
- 		risp_stop(isp);
- 		return ret;
-@@ -372,6 +378,7 @@ static int risp_disable_streams(struct v4l2_subdev *sd,
- 				u64 source_streams_mask)
- {
- 	struct rcar_isp *isp = sd_to_isp(sd);
-+	u64 sink_streams;
- 
- 	if (source_streams_mask != 1)
- 		return -EINVAL;
-@@ -379,7 +386,12 @@ static int risp_disable_streams(struct v4l2_subdev *sd,
- 	if (!isp->remote)
- 		return -ENODEV;
- 
--	v4l2_subdev_disable_streams(isp->remote, isp->remote_pad, BIT_ULL(0));
-+	sink_streams = v4l2_subdev_state_xlate_streams(state,
-+						       source_pad,
-+						       RCAR_ISP_SINK,
-+						       &source_streams_mask);
-+
-+	v4l2_subdev_disable_streams(isp->remote, isp->remote_pad, sink_streams);
- 
- 	if (isp->stream_count == 1)
- 		risp_stop(isp);
-@@ -419,12 +431,37 @@ static int risp_set_pad_format(struct v4l2_subdev *sd,
- 	return 0;
- }
- 
-+static int risp_set_routing(struct v4l2_subdev *sd,
-+			    struct v4l2_subdev_state *state,
-+			    enum v4l2_subdev_format_whence which,
-+			    struct v4l2_subdev_krouting *routing)
-+{
-+	int ret;
-+
-+	if (routing->num_routes > V4L2_FRAME_DESC_ENTRY_MAX)
-+		return -EINVAL;
-+
-+	ret = v4l2_subdev_routing_validate(sd, routing,
-+					   V4L2_SUBDEV_ROUTING_ONLY_1_TO_1 |
-+					   V4L2_SUBDEV_ROUTING_NO_SOURCE_MULTIPLEXING);
-+	if (ret)
-+		return ret;
-+
-+	ret = v4l2_subdev_set_routing_with_fmt(sd, state, routing,
-+					       &risp_default_fmt);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
- static const struct v4l2_subdev_pad_ops risp_pad_ops = {
- 	.enable_streams = risp_enable_streams,
- 	.disable_streams = risp_disable_streams,
- 	.set_fmt = risp_set_pad_format,
- 	.get_fmt = v4l2_subdev_get_fmt,
- 	.link_validate = v4l2_subdev_link_validate_default,
-+	.set_routing = risp_set_routing,
- };
- 
- static const struct v4l2_subdev_ops rcar_isp_subdev_ops = {
-
+diff --git a/drivers/gpu/vga/vga_switcheroo.c b/drivers/gpu/vga/vga_switcheroo.c
+index 18f2c92beff8..216fb208eb31 100644
+--- a/drivers/gpu/vga/vga_switcheroo.c
++++ b/drivers/gpu/vga/vga_switcheroo.c
+@@ -375,7 +375,7 @@ int vga_switcheroo_register_audio_client(struct pci_dev *pdev,
+ 	mutex_lock(&vgasr_mutex);
+ 	if (vgasr_priv.active) {
+ 		id = vgasr_priv.handler->get_client_id(vga_dev);
+-		if (id < 0) {
++		if ((int)id < 0 || id == VGA_SWITCHEROO_UNKNOWN_ID) {
+ 			mutex_unlock(&vgasr_mutex);
+ 			return -EINVAL;
+ 		}
 -- 
-2.43.0
+2.47.2
 
 
