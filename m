@@ -1,304 +1,96 @@
-Return-Path: <linux-kernel+bounces-520781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCB9DA3AF27
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:54:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C899CA3AF2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:55:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2FC73ADF56
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 01:54:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA3E43ADFCF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 01:55:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BCD814B08C;
-	Wed, 19 Feb 2025 01:54:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 114EC13E41A;
+	Wed, 19 Feb 2025 01:55:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RCkKPdSx"
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	dkim=pass (2048-bit key) header.d=lanxincomputing-com.20200927.dkim.feishu.cn header.i=@lanxincomputing-com.20200927.dkim.feishu.cn header.b="k26LlSm5"
+Received: from va-2-35.ptr.blmpb.com (va-2-35.ptr.blmpb.com [209.127.231.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DBDE7081D
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 01:54:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F63A33E1
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 01:55:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.127.231.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739930079; cv=none; b=e1+mu82eXj3cqDUUJWyjhHqvwej2Jy/YZSfyJuQzzW9rBSDQ7En/EjRxO609klwgef9RebuOwcq+mTwuMGCB6AEv9/0EizQltwduRWoQ/2Qo9AjpxV9nF4BfivEnvQH+zF26fTGYUlQ65zP2WeSRPAKiOZ6+KA+XMQvcVi1pAn8=
+	t=1739930117; cv=none; b=dHF73avdhBgON3KNczSX2jKxmNyUrVEsOTuwIdwbqETG7fYXgkCI7XFN6ne2n/VhawekSpRglUDqZZYewLnTJiAsFC4xArJsC9v4EE8DdjnkCaLHOEjJwgqRMYFktBIixcDLsWsiof/5C106Bn3K/Xmvv7YrdseiYvJctwoQ1yU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739930079; c=relaxed/simple;
-	bh=c8GDYqlbgIMRWWO2sf77W+DHpA5uVuBQxbt73RzgXOI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dbkqSbALzjFCzppWcNBzw4ng33tpKqjwU2UJGo2FARGhF95c7e2DLS+yZ2PoNOS3xiJ/NG4iXQ/NBMGDDR+ZY+U0JSi+44jUTu0jBEM8MGFH/Yvc43BQlJkXcZNeJS6rQX5vrtHlYdPiA7xihGMPdsR/l70mptwzavQIVy72n0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RCkKPdSx; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e5df8468d6eso1876807276.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 17:54:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739930076; x=1740534876; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P7evDSaXnUit0j7oV94MbFS+YZGrtfrFgOO3rHeTxyk=;
-        b=RCkKPdSxERhDZOR5t8KVf0n4RJNNocbQlooR0ze1QAocUW2Kaz/A7v3Kw6vcFLbMBU
-         YcrVnSYZCvlDa6S0SVDLqNoRgAVTU1Adx6MBcoND9aM/qQ+18D7S4rRJ9CGK0vD/Q259
-         LU4ZMsCzTmmwRMgc76N08uR7Tu0jhnoA9p5Eh2fWVk76hIqiGUCR+71KktS3I+c5FzcP
-         q/q7M4BTVJD6iW3h42P5usNV3K8768froN5c8fVT+85QvYcHD7bJHgHi5lU5SGaGjCyh
-         96YVN03R0JwjK/kEJykKZu20Tok2dF2Q0e4u4LVfY9E8UudF5f8BpC13FwglBtAwZnyE
-         Entw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739930076; x=1740534876;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=P7evDSaXnUit0j7oV94MbFS+YZGrtfrFgOO3rHeTxyk=;
-        b=skILKksflr6PnhQf1LJOY/cd2MkKRFfLyzcHHA8RlkgQtrd+1NTV9+mhXv9gr73wJR
-         4VIi8mxloMThpDkj/494B52p9pLeKPtuRe7TjHnjhTUf1SdaoTwIj7jUkizaztSwTB5G
-         NsrkM17CaAnnuKpUzCL2tUtvpyKC5qmjImM1Y1S7YGDwgygOUVI2jXA0Z8UU7lswb+z0
-         KMJUV7WTVrRoKn18qXAKZen4Kccxyr5cbQ3r/R7zrnhXKjKAdEjrCmyt4dSq9daV/s4I
-         sDyH8FxyPJqzFEeB7PdIxF2s/MtH4BRizRGi21gGa9Zgh2cdlok/cZHxoP9oE3e2CVUF
-         ibJA==
-X-Forwarded-Encrypted: i=1; AJvYcCXtAMBzo3FYDzIf3mrl5Cm2t6R50lQYvcKV9TIhWaqYt8EYZ7roZIRBP5Ea7uA5gIok4OHmfa4KImDzuHs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWN8Gmxg5OBdJZB15JCYRL34/9nBLq/hOP+KLppXluIBC8MYvI
-	ve8yEGv3fjiYnZZq8iIaoqW2Li7z/yNoyAedhhxiCJCWgeTL7CLSklSgBlR1EsMtkxgGouwuBdC
-	5OoSCxO6yo+hapqYyX/sGqCM/JYnvBh0p6mWb
-X-Gm-Gg: ASbGncsIjXuPAesLH0zzd24ICEzHNuMu0DVrLw285lqnGFjM7ccCO83pMUvRgtajoRq
-	jpZiqC+iMLVPtdYjwmq6+CvUVD0fALWG/r5veNlXEdMIPNsXIzBpcL3w5/MO8IuMiRBAh8h80D6
-	cB1EhHzWxaiSoh9VuWD3FKjOdX
-X-Google-Smtp-Source: AGHT+IF/kLMYr7be5Y33dHtm4KpedctJM1JrBgkcfSrp8OXbr50OnQgeO4FKsxUlWgnsWYDAUVcmqvHvUuuyhZCxqOg=
-X-Received: by 2002:a05:6902:1b12:b0:e5b:21e4:d891 with SMTP id
- 3f1490d57ef6-e5e0a0de7c5mr1595011276.29.1739930076241; Tue, 18 Feb 2025
- 17:54:36 -0800 (PST)
+	s=arc-20240116; t=1739930117; c=relaxed/simple;
+	bh=U58Jx+9rEOcLurBCCRbc+xOiBgYN7pseBJjEBbRxXZU=;
+	h=Message-Id:Content-Type:To:Cc:Subject:Date:Mime-Version:From; b=tj0uovFEex+UxEJc+OfvpJZVNo/G89HQop4wh5138UpD3V4yDTq5hCDri6ACVWvw/3bc35arVPafvQKty5mhg9qjbM1am3VxEtvcAzvGHD3UmD7BNv3iwGgQfO/JikB1mt2I/B/iDfOWKKgMH3s+juLNFYg2LWawRUdw1RlmiRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lanxincomputing.com; spf=pass smtp.mailfrom=lanxincomputing.com; dkim=pass (2048-bit key) header.d=lanxincomputing-com.20200927.dkim.feishu.cn header.i=@lanxincomputing-com.20200927.dkim.feishu.cn header.b=k26LlSm5; arc=none smtp.client-ip=209.127.231.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lanxincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lanxincomputing.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ s=s1; d=lanxincomputing-com.20200927.dkim.feishu.cn; t=1739930102;
+  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
+ reply-to:content-type:mime-version:in-reply-to:message-id;
+ bh=cQPgSHvwewybXbQoyDuJoBkKJD1qHn20v1BZRnO8+8A=;
+ b=k26LlSm53NadsMNE5zfLry2epZI+oanW9H3a21Xekfv6Spri6d4DXVSDqGl6sev9d4K7/j
+ Wc+2zkusSy7LnQH7u8Dn2A7N8FKdHx6cbUv4eJpy/f9emjVuKVJ4cRnY6jE5i+OS91A1rr
+ f8xrm1eJQUgI6WNgXT+YwCEYeM9Yz61b9FOWf5MvxrsUCN0UZqJseaOxNm8csb4HTvhzz+
+ A+RoH3xxHEPuhVUahpK9RQIuuH51WR9u12NiOLrHKqZRL/cUoZYAY3H78ldB7ZXdRNO03W
+ LYmRErJHmKZCn02bEZGYS4BchKR9+ZF7So/EVbsdTTzlx+j+8cLfh9ROIytMMw==
+Message-Id: <20250219015426.1939-1-xiangwencheng@lanxincomputing.com>
+X-Mailer: git-send-email 2.46.2.windows.1
+X-Lms-Return-Path: <lba+267b539f4+e64b55+vger.kernel.org+xiangwencheng@lanxincomputing.com>
+Content-Type: text/plain; charset=UTF-8
+To: <anup@brainfault.org>
+Content-Transfer-Encoding: 7bit
+X-Original-From: BillXiang <xiangwencheng@lanxincomputing.com>
+Received: from localhost.localdomain ([222.128.9.250]) by smtp.feishu.cn with ESMTP; Wed, 19 Feb 2025 09:54:59 +0800
+Cc: <ajones@ventanamicro.com>, <xiangwencheng@lanxincomputing.com>, 
+	<kvm-riscv@lists.infradead.org>, <kvm@vger.kernel.org>, 
+	<linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>, 
+	<atishp@atishpatra.org>, <paul.walmsley@sifive.com>, 
+	<palmer@dabbelt.com>, <aou@eecs.berkeley.edu>
+Subject: [PATCH] riscv: KVM: Remove unnecessary vcpu kick
+Date: Wed, 19 Feb 2025 09:54:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250214191615.v5.1.If6f14aa2512336173a53fc3552756cd8a332b0a3@changeid>
- <2025021425-surgical-wackiness-0940@gregkh> <CADg1FFd3H0DLV-WX8jTB1VGyOZYEzchP99QvYxWmg1XCOo1ttg@mail.gmail.com>
- <2025021717-prepay-sharpener-37fb@gregkh> <CADg1FFf7fONc+HJT8rq55rVFRnS_UxnEPnAGQ476WVe+208_pA@mail.gmail.com>
- <2025021829-clamor-lavish-9126@gregkh> <CADg1FFd=PbnNSBWk4KGV85jvvRQBBGG4QD2VHM6ABY-mqC8+Lg@mail.gmail.com>
- <2025021807-ultimate-ascent-f5e0@gregkh> <CADg1FFdLA8LCafbQA=x5onSj6FKS=0ihpYPpSjQmDpGG2iOb5A@mail.gmail.com>
- <2025021812-expedited-fanning-d5d0@gregkh> <CADg1FFdXNEDN7hXX2bw91YKbJzpk4ZiLP+ut9QBRkuK=vDmDJw@mail.gmail.com>
-In-Reply-To: <CADg1FFdXNEDN7hXX2bw91YKbJzpk4ZiLP+ut9QBRkuK=vDmDJw@mail.gmail.com>
-From: Hsin-chen Chuang <chharry@google.com>
-Date: Wed, 19 Feb 2025 09:54:09 +0800
-X-Gm-Features: AWEUYZmNb725GSfA6SGcNuEFOzHPTodWRw4o1ZG5KtE-iCNlbAS_tFXNkGdpOes
-Message-ID: <CADg1FFcQzRbVhx+hcWpjzkTCzbE2wY+KLMYz0O-NUUOfv=XyDg@mail.gmail.com>
-Subject: Re: [PATCH v5] Bluetooth: Fix possible race with userspace of sysfs isoc_alt
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: linux-bluetooth@vger.kernel.org, luiz.dentz@gmail.com, 
-	chromeos-bluetooth-upstreaming@chromium.org, 
-	Hsin-chen Chuang <chharry@chromium.org>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Johan Hedberg <johan.hedberg@gmail.com>, Marcel Holtmann <marcel@holtmann.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Ying Hsu <yinghsu@chromium.org>, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+From: "BillXiang" <xiangwencheng@lanxincomputing.com>
 
-Hi Greg,
+Thank you Andrew Jones, forgive my errors in the last email.
+I'm wondering whether it's necessary to kick the virtual hart
+after writing to the vsfile of IMSIC.
+From my understanding, writing to the vsfile should directly
+forward the interrupt as MSI to the virtual hart. This means that
+an additional kick should not be necessary, as it would cause the
+vCPU to exit unnecessarily and potentially degrade performance.
+I've tested this behavior in QEMU, and it seems to work perfectly
+fine without the extra kick.
+Would appreciate any insights or confirmation on this!
+Best regards.
 
-On Tue, Feb 18, 2025 at 8:24=E2=80=AFPM Hsin-chen Chuang <chharry@google.co=
-m> wrote:
->
-> Hi Greg,
->
-> On Tue, Feb 18, 2025 at 6:56=E2=80=AFPM Greg KH <gregkh@linuxfoundation.o=
-rg> wrote:
-> >
-> > On Tue, Feb 18, 2025 at 06:01:42PM +0800, Hsin-chen Chuang wrote:
-> > > Hi Greg,
-> > >
-> > > On Tue, Feb 18, 2025 at 5:21=E2=80=AFPM Greg KH <gregkh@linuxfoundati=
-on.org> wrote:
-> > > >
-> > > > On Tue, Feb 18, 2025 at 04:57:38PM +0800, Hsin-chen Chuang wrote:
-> > > > > Hi Greg,
-> > > > >
-> > > > > On Tue, Feb 18, 2025 at 4:23=E2=80=AFPM Greg KH <gregkh@linuxfoun=
-dation.org> wrote:
-> > > > > >
-> > > > > > On Tue, Feb 18, 2025 at 12:24:07PM +0800, Hsin-chen Chuang wrot=
-e:
-> > > > > > > Hi Greg,
-> > > > > > >
-> > > > > > > On Mon, Feb 17, 2025 at 4:53=E2=80=AFPM Greg KH <gregkh@linux=
-foundation.org> wrote:
-> > > > > > > >
-> > > > > > > > On Mon, Feb 17, 2025 at 04:44:35PM +0800, Hsin-chen Chuang =
-wrote:
-> > > > > > > > > On Fri, Feb 14, 2025 at 7:37=E2=80=AFPM Greg KH <gregkh@l=
-inuxfoundation.org> wrote:
-> > > > > > > > > >
-> > > > > > > > > > On Fri, Feb 14, 2025 at 07:16:17PM +0800, Hsin-chen Chu=
-ang wrote:
-> > > > > > > > > > > From: Hsin-chen Chuang <chharry@chromium.org>
-> > > > > > > > > > >
-> > > > > > > > > > > Expose the isoc_alt attr with device group to avoid t=
-he racing.
-> > > > > > > > > > >
-> > > > > > > > > > > Now we create a dev node for btusb. The isoc_alt attr=
- belongs to it and
-> > > > > > > > > > > it also becomes the parent device of hci dev.
-> > > > > > > > > > >
-> > > > > > > > > > > Fixes: b16b327edb4d ("Bluetooth: btusb: add sysfs att=
-ribute to control USB alt setting")
-> > > > > > > > > >
-> > > > > > > > > > Wait, step back, why is this commit needed if you can c=
-hange the alt
-> > > > > > > > > > setting already today through usbfs/libusb without need=
-ing to mess with
-> > > > > > > > > > the bluetooth stack at all?
-> > > > > > > > >
-> > > > > > > > > In short: We want to configure the alternate settings wit=
-hout
-> > > > > > > > > detaching the btusb driver, while detaching seems necessa=
-ry for
-> > > > > > > > > libusb_set_interface_alt_setting to work (Please correct =
-me if I'm
-> > > > > > > > > wrong!)
-> > > > > > > >
-> > > > > > > > I think changing the alternate setting should work using us=
-bfs as you
-> > > > > > > > would send that command to the device, not the interface, s=
-o the driver
-> > > > > > > > bound to the existing interface would not need to be remove=
-d.
-> > > > > > >
-> > > > > > > I thought USBDEVFS_SETINTERFACE was the right command to begi=
-n with,
-> > > > > > > but it seems not working in this case.
-> > > > > > > The command itself attempts to claim the interface, but the i=
-nterface
-> > > > > > > is already claimed by btusb so it failed with Device or resou=
-rce busy
-> > > > > > >
-> > > > > > > drivers/usb/core/devio.c:
-> > > > > > >   USBDEVFS_SETINTERFACE -> proc_setintf -> checkintf -> claim=
-intf
-> > > > > >
-> > > > > > Ah, ok, thanks for checking.  So as you control this device, wh=
-y not
-> > > > > > just disconnect it, change the setting, and then reconnect it?
-> > > > >
-> > > > > After dis/reconnecting, a Bluetooth chipset would lose all its st=
-ate:
-> > > > > Existing connections/scanners/advertisers are all dropped.
-> > > >
-> > > > If you are changing the alternate USB configuration, all state shou=
-ld be
-> > > > dropped, right?  If not, huh how does the device know to keep that
-> > > > state?
-> > >
-> > > No, the Bluetooth chip doesn't drop any info when the alt is changed.
-> > > It only affects the data transfer bandwidth on that interface.
-> > >
-> > > >
-> > > > > This is as bad as (just an analogy) "Whenever you access a http w=
-eb
-> > > > > page, you need to bring your ethernet interface down and up, and =
-after
-> > > > > the page is downloaded, do that again".
-> > > >
-> > > > Your ethernet interface does not contain state like this, we handle
-> > > > chainging IP addresses and devices all the time, so perhaps wrong
-> > > > analogy :)
-> > > >
-> > > > > > Also, see my other review comment, how does BlueZ do this today=
-?
-> > > > >
-> > > > > BlueZ handles that in their MGMT command, that is, through Contro=
-l
-> > > > > channel -> BlueZ kernel space code -> driver callbacks.
-> > > > > Once a Bluetooth chipset is opened with the User channel, it can'=
-t be
-> > > > > used with the Control channel simultaneously, and vice versa.
-> > > >
-> > > > So why not use that same control channel in your code?  Why are you
-> > >
-> > > Because we're using the User channel, and they can't be used at the s=
-ame time.
-> >
-> > This doesn't make sense.  Either BlueZ has this same problem, or it
-> > doesn't.  As you say it does not, then again, why can't you use the
-> > exact same user/kernel api to achieve this?
-> >
-> > The user/kernel api is "fixed" right now, if you wish to replace the
-> > userspace side of the BlueZ code with your own, then you should/must us=
-e
-> > that same user/kernel api.  Don't go adding duplicate interfaces please=
-.
->
-> I would say the kernel provides 2 sets of the API, Control and User,
-> and now the User channel is missing something.
-> I think it makes sense to add support for it.
->
-> >
-> > > > reinventing a new control channel for something that is obviously t=
-here
-> > > > already?
-> > >
-> > > Not quite the same as "reinventing". The Control channel command does
-> > > much more than just setting the alt; It just doesn't work with the
-> > > User channel.
-> > >
-> > > >
-> > > > So in short, what's preventing you from using the same exact driver
-> > > > callbacks, OR the same exact kernel api.  Surely you all are not
-> > >
-> > > The answer is the same as the above. This feature is missing in the
-> > > User channel, and I'm completing it with this patch.
-> >
-> > Again, that seems to be your userspace's issue, not the kernel's.  Just
-> > use the same api that bluez uses here.
-> >
-> > > > replacing all of the in-kernel BlueZ code with an external kernel d=
-river
-> > > > just for this, right?  If so, that's not ok at all.
-> > >
-> > > Sorry I don't quite get it. What do you mean by the external kernel d=
-river?
-> >
-> > You said you are not using the bluez kernel code, right?  So you must
-> > have some kernel code to implement this instead for the same
-> > functionality.  Otherwise you are using the bluez kernel api here.
->
-> No, we don't have kernel code for Bluetooth. We have everything in user s=
-pace.
->
-> >
-> > Again, just use the same api please, don't go adding new one-off apis
-> > through sysfs for this when it is not needed.
-> >
-> > I'll also step back further and say, why not use bluez?  What is so
-> > wrong with that that you all need a totally different bluetooth stack?
-> > Why not just fix the bluez code for anything that is currently missing
-> > or lacking there that required you to write a new one.
->
-> I think the main purpose is moving the stack to the user space.
-> When the user hits a Bluetooth issue, it's much easier to reset the stack=
-.
-> Also, a simple Bluetooth bug just won't crash your kernel and we could
-> even crash MORE to detect an incorrect chipset behavior earlier.
-> Of course BlueZ has its own advantages, but it's just all trade-offs.
->
-> >
-> > And yes, I know the inclination of Android to constantly rewrite the
-> > bluetooth stack, it's on the what, third or fourth iteration already?
-> > What's to guarantee that this really will be the last one?  :)
->
-> That's incorrect. Android is still using and maintaining the same
-> stack since it left BlueZ.
->
-> --
-> Best Regards,
-> Hsin-chen
+Signed-off-by: BillXiang <xiangwencheng@lanxincomputing.com>
+---
+ arch/riscv/kvm/aia_imsic.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-I'm moving forward and sending out v6 for review as there's no more
-comment related to the struct device usage.
-We could continue the discussion on v6, thanks.
-
---=20
-Best Regards,
-Hsin-chen
+diff --git a/arch/riscv/kvm/aia_imsic.c b/arch/riscv/kvm/aia_imsic.c
+index a8085cd8215e..29ef9c2133a9 100644
+--- a/arch/riscv/kvm/aia_imsic.c
++++ b/arch/riscv/kvm/aia_imsic.c
+@@ -974,7 +974,6 @@ int kvm_riscv_vcpu_aia_imsic_inject(struct kvm_vcpu *vcpu,
+ 
+ 	if (imsic->vsfile_cpu >= 0) {
+ 		writel(iid, imsic->vsfile_va + IMSIC_MMIO_SETIPNUM_LE);
+-		kvm_vcpu_kick(vcpu);
+ 	} else {
+ 		eix = &imsic->swfile->eix[iid / BITS_PER_TYPE(u64)];
+ 		set_bit(iid & (BITS_PER_TYPE(u64) - 1), eix->eip);
+-- 
+2.46.2
 
