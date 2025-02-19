@@ -1,205 +1,193 @@
-Return-Path: <linux-kernel+bounces-522058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50540A3C54C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:43:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBC0FA3C564
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:47:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6AE717699C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:42:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E433919C084E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:42:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B27DE1FECDE;
-	Wed, 19 Feb 2025 16:41:39 +0000 (UTC)
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C63DF20E002;
+	Wed, 19 Feb 2025 16:42:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mt.com header.i=@mt.com header.b="XYh/VsjC"
+Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2080.outbound.protection.outlook.com [40.107.103.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644071FECA9;
-	Wed, 19 Feb 2025 16:41:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739983299; cv=none; b=Xwd2FrTt6AJzAfMDV0yfiht8CXiK3+aEEyO52FFdAHxT6vWIuSYLLfBe/9nvJyql5UcmyGi+L0uapF5Zzpq2ZePp2b8DjBEgKXZTwZNVls9bdpwt2tlB+myH1XjmmrOZyhf/92QlB6L+/G3uffeb06tkcMwcSbVup6SjKHMIpLU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739983299; c=relaxed/simple;
-	bh=yKqC4ySa0GGYhnBuRaIQj26Sn1XtOBOC8Lq+InnucGc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=NNh/R6Y4y/+MQK241tSjf/BPaZkbTVHZlh9CytnCvhBZnlvkiiagbaeqDPm8BL4hLLznQVxHwwTup79DhAH0bREOjGy5lnTV4MiaHXJV3+8SyacY13LKQLSvQSZoD87JpEYTGh9EYjouuMb3/z1uZB4dtOdT1+mTd9yRDbaonTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-abb7f539c35so4933766b.1;
-        Wed, 19 Feb 2025 08:41:37 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739983296; x=1740588096;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vfCwk0fcIEqa4ZcVJEGvI7w5MrLD/F4qjXaZqGHjJQQ=;
-        b=odT58/nLOgO4PrL00/A8L0IXAxvg8HS1ufeL4i7yHOuaRZ0jl587yP6WIgtX5O3ijC
-         4qhS5v0awbwsZDU/i5tWnYtTDp5pBslQXfSGUay28Fj/D6FCnWpl5ni9wbUYrrAabZow
-         5qW7UYuOATxLG+bPkhdnWzhuL2w3c9etfJmGo5LPAkIpI7dm8lmUuALjIVJeGsbfhM/j
-         3492tfBQegh8+GgAbKXFCJ4lUpFqd6C4w/69LBtFpqD6GhOtV1tuPb+IqPxAaQCTE/0s
-         3iDFvCrdZu4zL/YVbAibHCz2xt1osbNuS3zEzFNmFCbWagPM009clxkwWqgDjs7qlR2J
-         ulkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWe1dQKmSAGV3bvES6I1qyi4EBF8dNzm6rq8UA6JLP0vtf8DXa+kg7KpD1jKRI/5gfgNoyxBHGTQQ578p8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHeLoia1upa/4OXbEQdDaSH2yfrYYbtGMWRKgCNlsZt1a9Pd/h
-	2iQHGlg72w3eV5htDt+JWlsgs7UcHNXfNdsAElWYr8903azqY2Mr
-X-Gm-Gg: ASbGncvicnBNVVod+MkjItvIRarKVI5nEWRHUvBr4XP5XUVGLY7WkcxGz6B9rnGVeA0
-	GpRTYxnNcvTTjWgoQCFiA9atkCrCmytI14g+1/f3UCmalrKSzhzz18zzi2gfK4StArGpbnz6s2V
-	aJMNphX1YC6wOW/E/NmIp6QzTK4JsZCMJSjWx3eWo4u6euA1SzWKkVroHPemd0+oNh4Nfc7Bbtr
-	HBpu4riz8hf/fayeHeuYF8GtsUKjpU+GhHATJy/hLZZ6DbjrIlGAur5qQ/TsVOfkb0qEB8MCUIx
-	gvvL0g==
-X-Google-Smtp-Source: AGHT+IGMqbBs9mwDkW+BmfLXoXJ27HtXA3PHEWUCUzurZDICTOEqCAt4PlBDvtw8KKKwGrJsDJWKkA==
-X-Received: by 2002:a17:907:2da0:b0:ab6:f789:6668 with SMTP id a640c23a62f3a-abb70b1e60amr1811786866b.17.1739983295223;
-        Wed, 19 Feb 2025 08:41:35 -0800 (PST)
-Received: from localhost ([2a03:2880:30ff:8::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba532594a0sm1327405866b.68.2025.02.19.08.41.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2025 08:41:34 -0800 (PST)
-From: Breno Leitao <leitao@debian.org>
-Date: Wed, 19 Feb 2025 08:41:20 -0800
-Subject: [PATCH net-next v3] netdevsim: call napi_schedule from a timer
- context
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 593371FF1DE;
+	Wed, 19 Feb 2025 16:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.103.80
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739983327; cv=fail; b=WD+NIAFPPIwjC06zsbOHhqf0KWuyr7OKQ9S7JjFbjeQ3lB/o3NGfsiUwoRo4++kRR0A5lix9FvYevuQhe9bw2Vyx/yZmmF35GdBJHuQakKRj4N/Ax5UwqC3FJdDb5WvVW9rwa+M11L+ZUI1ttpUsE1ViUjIS/qrVJHOdRX6jBsQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739983327; c=relaxed/simple;
+	bh=1yvkT8HjENIetB/rw3UBhKC8VGvGCykTxqmz+6l/C7E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Hd3QXeVy9ZidnzSSWYbeYR6L67vA0xr/YmXqUeHFjBGfAR97+5QdG70V3KfsDsDRYB6xpX4g7FSIVf8Pqf1/tgNyorSjBwseXSmotEwSWrmnVit+7txVnXo0TS5DoNcPYcIMPdYTXc0yZG6DQ538ePv+7anbREWiMBMnJForw3o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mt.com; spf=pass smtp.mailfrom=mt.com; dkim=pass (2048-bit key) header.d=mt.com header.i=@mt.com header.b=XYh/VsjC; arc=fail smtp.client-ip=40.107.103.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mt.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LBMEJ+YxqCvyuoqxD2vTBe59XI5UeOG6FHKRtD9RNri06SnH9Q90ZDqxDhysE3rBpnqm/iUla+cNz1R8e0XnwuBupV8/n/pt04ifCkwExrdtgNsk9V2UyWdJJx4Ltkam0mJYQUSAWaZCwFhQnrB5A4lpi7wVqdkMHUoOVyula+8mZvdeDnJ7OBtbL+aUw2feEMVI1tXKX5Jn0mDusHtNmgoUh+PMMiJ/cyU3xVmDo7eVxzhViwjWRArSwc0zbaMAtO3pmn5rk3gczBjfMtipAE7PPnLCuM0OCHDjoqzc4p6z6nOgjJEQoOEaV8qZr2XD/Erz7XIlb/rHvo3XkXoGzw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4ONb0TyHRHBZIP8AqklbOZSfQASkdIRav7y/hq/1nck=;
+ b=ma7r/6HurREmJu0OTewX+ypL0UOrV3fKv4e5Pd78lKvAnOL+iV5CmZZ4hwMKD/7CuWH4IZPRpKbrwfEIhk/vBAL81N8GMdWQw8Fd2PDet9MC/QuR+Mt4YnGQKCeNjj7iNPYLU9KD10NcU5AxssTqhh/c46DPpdfGx3KNbLmYn66pmtbDcuPvPp671EpnNXKZDyhAGJ8tNgk3UfZpP9iETwLiCzUYrYRoS90YIZCNOxUo3GGaa4MH47Dz2JCblyTdkgaEd6FtAQtcb/rW/wuHzhcscE7mWnr2bRDzDF1NWbzJWVQ1DT/vbA1HCs5I/c+2EznGsR+GtldCq3hgmovEcw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mt.com; dmarc=pass action=none header.from=mt.com; dkim=pass
+ header.d=mt.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4ONb0TyHRHBZIP8AqklbOZSfQASkdIRav7y/hq/1nck=;
+ b=XYh/VsjCrcMWVW2iA/5XOPE77yh/+Ei72iAEvx5b4iPjVYJ9Y43/gMLEdCzHlnzmmq+aYmIZZuAluT7HvjyFpxcSoxL54Tt3KKklMek0RP9qf3m/h5mwJbsp+/T3iUqnX6k7+uEeLg0TGUOsVimhNWLyc3WUyJyJknDE+/JXV1ngGR0/bABLJCYp1aXhUGQDu+3z+TCFHITuXXg2u1JZZGODYSbRhkLV5sITVcf0vf2Oadh5yDX2GkKrvnkjdbhcFrsdc8S7nAbHMS4TrFGgttoyJwgXlBmV0/rJpyjxH4IiLBOZybbK6gXIHhEsnJdp4N2xIVu/6UmgItbK3FgnpA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=mt.com;
+Received: from AS8PR03MB6775.eurprd03.prod.outlook.com (2603:10a6:20b:29d::16)
+ by DB9PR03MB7385.eurprd03.prod.outlook.com (2603:10a6:10:222::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.14; Wed, 19 Feb
+ 2025 16:42:02 +0000
+Received: from AS8PR03MB6775.eurprd03.prod.outlook.com
+ ([fe80::8a03:2bdb:89c5:32e8]) by AS8PR03MB6775.eurprd03.prod.outlook.com
+ ([fe80::8a03:2bdb:89c5:32e8%4]) with mapi id 15.20.8466.015; Wed, 19 Feb 2025
+ 16:42:02 +0000
+Date: Wed, 19 Feb 2025 17:42:00 +0100
+From: Manuel Traut <manuel.traut@mt.com>
+To: Markus Burri <markus.burri@mt.com>
+Cc: linux-kernel@vger.kernel.org,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marek Vasut <marek.vasut@gmail.com>, linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 4/7] dt-bindings: input: matrix_keypad - add missing
+ property
+Message-ID: <Z7YJ2ENZ04Nktnwf@mt.com>
+References: <20250110054906.354296-1-markus.burri@mt.com>
+ <20250110054906.354296-5-markus.burri@mt.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250110054906.354296-5-markus.burri@mt.com>
+X-ClientProxiedBy: MI1P293CA0019.ITAP293.PROD.OUTLOOK.COM
+ (2603:10a6:290:3::16) To AS8PR03MB6775.eurprd03.prod.outlook.com
+ (2603:10a6:20b:29d::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250219-netdevsim-v3-1-811e2b8abc4c@debian.org>
-X-B4-Tracking: v=1; b=H4sIAK8JtmcC/23NQQ7CIBCF4auQWXdMGa1gV97DuKBlaFlIDRBS0
- /TuJqxq4vrl+98GiaPnBL3YIHLxyS8BenFuBIyzCROjt9ALoJa6liRh4Gy5JP9C6rQleyUtVQe
- NgHdk59faekDgjIHXDM9GwOxTXuKnnhRZ9z+9IlEitTzy7WKNYX23PHgTTkucaqbQkaojJZToR
- uVYKjXctPuh+75/AQ3rAOnoAAAA
-X-Change-ID: 20250212-netdevsim-258d2d628175
-To: Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Paolo Abeni <pabeni@redhat.com>, David Wei <dw@davidwei.uk>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Breno Leitao <leitao@debian.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3669; i=leitao@debian.org;
- h=from:subject:message-id; bh=yKqC4ySa0GGYhnBuRaIQj26Sn1XtOBOC8Lq+InnucGc=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBntgm9+9ihFOxpJunxmla1PEccV6PPjN00NryTu
- gIgTKW4VkaJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCZ7YJvQAKCRA1o5Of/Hh3
- bVKWD/9T21B/9atgWB6NZk0JFfi2RVremJMU1SxLhO47kfINTQpGGqogCEjA20vDV1+fLpLRMSv
- J/fcApremB3mku5ylmWp/UzF6rhvQBOzlFdrvHvoAs5Fznuz+O3ps53K1ufTpbypWeHd1yRQ5mz
- zuaY4Kq69opDOYvtVdnRu9916PzfBi46sn9K9SYSBhwNhe7+I/yjnjBMMlXpuB8s5MhAbDp7++t
- aB/dVcv9/Za+TmLGnpVzhslBSVO4IFh6C/psaw9jAI4qpT8yMJ9cpCSE/Gvim3/aceUW/xZ88Pz
- N4zEvLqOBRrdvvF9Kyn2MVd8O0Qv79zCpUTukJKj6LXgaHC/I3z6SEZTIsT05o8Qm1qi0qD08Oj
- WTkOoRqTHaksX5f4LXt32wTAcBOlurmpyyGRnZUZwKPvnzCGSmZWR+VEOp7DH53QvX2M8YI8QfY
- 9+QFllWV+BTav6tOr9wn2fxKVSLfCCZiKHwzFdz/EEH8mv9MOK0f14LrGrtIWliO9ZJt2trN/qI
- syTWdccffzWeZC3DuLYwl8t3idZWeb17XxnlPW/5c1drsWYyvd3mcq+0ownjverzmXGq/N+fWbZ
- SM8c3k9aX+HM15DZb1S6sBK3P5KV7mak06Vh+lz1vcSPpCTh4JjMa5V5cqtZ/xykMz0gz2jLF08
- OS+euky/tXsBIwA==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR03MB6775:EE_|DB9PR03MB7385:EE_
+X-MS-Office365-Filtering-Correlation-Id: 031c3836-c399-4249-2b54-08dd5104560c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|52116014|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?4qrpfcNYbiVkF0gjRUcgxu6S72ieb2VFmDzv0sX9h7KTLCnyh3vJ0ySJv+Kv?=
+ =?us-ascii?Q?L83RT2pP8stUKpidGvHm3fA5TlZNVjz4JksSTuzzNpRervyz+wn67ITVlieB?=
+ =?us-ascii?Q?t6Jc1QdHBny2B/E9/jGvyhR33uY5+/rdGIXHBiWi6iEdQLaWxolTItCLSTUj?=
+ =?us-ascii?Q?zU0Qlt/wfz87FjJuUiytP7z4HjmHyEfPIXUVH4oVolz1/hh/axTynG0QuR74?=
+ =?us-ascii?Q?RkQSO9IBB8jn222cjbG43rAkvT89rbg6EnRK+Ls3Gqd7bHdRoNRacDecn95U?=
+ =?us-ascii?Q?8Py+A/GOtZHlWzGFDDnmodpp9HTstHZNpZcfWUmeDbwj6PjCfWZqVxSt8wHA?=
+ =?us-ascii?Q?LBqkpEKFBDEQ/7dtHT/vP++ynC5MOg1YVQhGEbTmwxoFi0+FUxl+tiNorAPD?=
+ =?us-ascii?Q?ZYg2Cv4qpR0z20eHY0jl0i7rXzy+MxedskFBNsER2eGrI6QQ24rL7TcSvg3C?=
+ =?us-ascii?Q?431dkqt48MSdjX1jJEnY78s48T4GK2yAuS7LQq9ReEikZJSum2yY32GC2RzG?=
+ =?us-ascii?Q?Svs9udm1Zmuoy4Dszmr0SS+e/hvpSyXsbABNuQ4+YbZIJILKr1KOwvpgSQic?=
+ =?us-ascii?Q?yMkeVMDTkSpT3vE5HGG1Nun87wbl6MiVD2g7dmzZbO3nLEzEWNVRUh4YW8r2?=
+ =?us-ascii?Q?WBj948DcKaM0Fj5esxjx0XYm8IhvQI/n3z61ahvVU7g47CPqJXLcCd6FDwYx?=
+ =?us-ascii?Q?tcA6WANkvF2gn3witirmOLSmncdK4lLf8jdiFZ8DZL5bKipjuyxSZQMYjv37?=
+ =?us-ascii?Q?NrF8QlRl5WJ/ZBBXlTQhfz9ymo0u+9HvF3eU08dgniTOi1WhQaF4N/6oYyYK?=
+ =?us-ascii?Q?47Yfi9ztobCA/XL5TQP3kCnT93QgsLnZQZO+T5L+K4XYMSpjxacN3N0C/iPf?=
+ =?us-ascii?Q?K8ic6nLSN5Dd+1wrxEvM8+R1MkIIudB6joPV7CuQhmpB1GW+agj2bl/DzB2L?=
+ =?us-ascii?Q?o8SLmRXmd5sSXJb77SRsby83yWqy+opCN1kH6GPg25uXBiLIr05RHmN/S3a0?=
+ =?us-ascii?Q?uvyir2ugxBshRFYvq/5cmt1BptVsTwsJGFco4Y6Yq6Lpi4r5gpkMVsdh+fsF?=
+ =?us-ascii?Q?ldPW5Cm+iK4iLwsoy3qhSIYPCE3NQ+eMwEGovLKknSVJ6H4vZyiiZcfFrUGV?=
+ =?us-ascii?Q?2Cc8xgj6HU0zHEkqfILQPAz5xNBWi3uQbwFdLkYhiSHvh5dYCm58NoNUgQGY?=
+ =?us-ascii?Q?N0YQN+S2aOg2cS8rxelqD4fgNCs+uFPhHv8ZHN6PRvzRCzaWHzmFnN+Z4iRI?=
+ =?us-ascii?Q?jzdvawbsIgb/tao3noxJzxiqEFE4HeY4k76RWUX5D7ONA31asbdF9cIKVpxI?=
+ =?us-ascii?Q?JzUw2a4bPnj0XgmFNJs0GEmXPiGixUwwz6jti4l/ecAg8Dw3fnFTgcHOxUUm?=
+ =?us-ascii?Q?VXWtErn3wjvLBbPUmtZWU7AjWVL2RimB6tcV/8iUjd1N62J0pe8Jjs1ddzED?=
+ =?us-ascii?Q?T0q3NJyLPwFhpFJtQGFqri2b6FYZzBrC?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR03MB6775.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?g5lBJBGNUOQquxQF+l3r1XT0saXJdrd2jcluCy2/Otm47xmwhBa/N1g29Mx/?=
+ =?us-ascii?Q?AAsFEXLbp68p4WiNDd1qZ8V4YVeSGn+drth+hGrh0xsO0vDNtsWEGJx8Vc/S?=
+ =?us-ascii?Q?RbRl3b0hJNR5/10QagxQK+rx7AJds876cHPsjTu0MHq4kZ0qm15XlAzEAXnI?=
+ =?us-ascii?Q?jyBO0UXAcWlJCT0uGe+Jq3i69kJu2U/CF/UcAJPZpvcH/fldKRm8qW8GMrbO?=
+ =?us-ascii?Q?l0N+o4Hx2P53qUoy82IlgpMczwOV0rETPELP4AuXsXmhYt5LVqJtFC5QDrry?=
+ =?us-ascii?Q?Jwxwev83dxxRbaUssWlo887dO91VzXb66n5ntbnQsc3l0u/NDd3FqehwFrUD?=
+ =?us-ascii?Q?VXtyCkjmdztwBe90JjF1B6rdDBy0uVnrISQm5u1DNPFUN0fCcOd4lFZcvnoH?=
+ =?us-ascii?Q?svqU1eMnpz//tSBmRjeiH0l2RZ4K60WAyD/yZlSQPfirYKqaCQOsjo6zXh2O?=
+ =?us-ascii?Q?4tEEsK1N477N/wFsd9r+u9ZOS5dJNBaqMW0+R9IothD91Ln2Jfxxaev2Nvb1?=
+ =?us-ascii?Q?jVWlUS6XOZnAlv7aN/L2LKbGLTYMpZnfSaaNhG0j20D1Lj76HmwklY4xQQvG?=
+ =?us-ascii?Q?1i1jdXTK2XKjJ/yng/GXYrxjjjPLmAwlIWwSdsUZePxDy9Qi8BN8fVfOUzre?=
+ =?us-ascii?Q?0PSu2AsmIkvc4tOmklY2utHQYLDb1n9JwZdPQzylNm5gQjz9jGbiEa142bR4?=
+ =?us-ascii?Q?2QXwtnYX1XuzS0cs7kr8voTT2HLt+XqXF83KY0ql/lmHfjA/sAwKdvPx97bY?=
+ =?us-ascii?Q?9F8Hge4JqTFaldX/xFZLT+zbrRFpMdQMRBLvhP9yrdIHboUXprMDonH+tbcu?=
+ =?us-ascii?Q?oFt7LsKDNjsaNCsieYfuZjplDZxUm7ymOm4+kD5vGALT4cghtoY0vD8ahRgV?=
+ =?us-ascii?Q?TeOyMwcTpEuwIQdIuPhXfvgkgUWNV/8EwPUoYHKiA1188kWI9nFt6khtQg8I?=
+ =?us-ascii?Q?DN7pPSm96ONwmBB1okqq9/LIA3NnJmwkC4xmSU337czouv1ExZaw5ps/uYMt?=
+ =?us-ascii?Q?85m239cHCI0OcR2d8JZP6WAXvXXacOr5uv0207Y9Ec40s5t17gP0cxWx+OC0?=
+ =?us-ascii?Q?w3XHj733ystCjmjTupOAcDgSeqGzpZLAVd/dmrC000qkCJHxUfYJXpqhMQkf?=
+ =?us-ascii?Q?XJ9m1zQ1WcyjbiUuy/chwvPnl09q1jFoEiNLBSRTXJCu6ItDksQMvHGQ6V4d?=
+ =?us-ascii?Q?t3IZt7R7kvQMZ9r2S59P/Dmmx70XnDTH1wTsVgFKOMNgQJ052K+1QCss4Jyg?=
+ =?us-ascii?Q?eeVPM5pmVxoBO0FU0972Q7q2HYtSFtM2wDsu1gnQij5hY2NcrZOtYV4kaXGl?=
+ =?us-ascii?Q?o6zy9lLXJtKTuXtWlvcZZXL/9CcmhCpvgR6dA/JJNS34f9SOgQeW2N/Foqn5?=
+ =?us-ascii?Q?Ds05a2iNgGc4aTTNoMBlgTIW8EKZlpZOWPYKtGDHIZ433PptFAOpUwPhgYey?=
+ =?us-ascii?Q?Lepjbwp4y2kR4jNFXk20lWY0Xhwxc3qJ4Oy26oqoTzM2QRaoD5mlcDDateHt?=
+ =?us-ascii?Q?Ym0ps6maYMdCqngXiYjrucDUH+9x3fYtU0ft/20WVnMRFDSKtPE+ErCXHprv?=
+ =?us-ascii?Q?EErj6lb2cdJc+6vtFukq2uSehUrtKvqX2Hhougmo?=
+X-OriginatorOrg: mt.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 031c3836-c399-4249-2b54-08dd5104560c
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR03MB6775.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2025 16:42:02.2756
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fb4c0aee-6cd2-482f-a1a5-717e7c02496b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: AK0tAu34kFQUYg2V+BQBpM8UysdupQCRGb0AOdCSCOesCDALGiCLSjyHzqeIJlP1Us7OPON3LIX0MiFWzMmZKQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR03MB7385
 
-The netdevsim driver was experiencing NOHZ tick-stop errors during packet
-transmission due to pending softirq work when calling napi_schedule().
-This issue was observed when running the netconsole selftest, which
-triggered the following error message:
+On Fri, Jan 10, 2025 at 06:49:03AM +0100, Markus Burri wrote:
+> The property is implemented in the driver but not described in dt-bindings.
+> Add missing property 'gpio-activelow' to DT schema.
+> 
+> Signed-off-by: Markus Burri <markus.burri@mt.com>
 
-  NOHZ tick-stop error: local softirq work is pending, handler #08!!!
+Reviewed-by: Manuel Traut <manuel.traut@mt.com>
 
-To fix this issue, introduce a timer that schedules napi_schedule()
-from a timer context instead of calling it directly from the TX path.
-
-Create an hrtimer for each queue and kick it from the TX path,
-which then schedules napi_schedule() from the timer context.
-
-Suggested-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
-Changes in v3:
-- Move the timer initialization and cancel close to the queue
-  allocation/free (Jakub)
-- Link to v2: https://lore.kernel.org/r/20250217-netdevsim-v2-1-fc7fe177b98f@debian.org
-
-Changes in v2:
-- The approach implemented in v1 will not work, given that
-  ndo_start_xmit() can be called with interrupt disable, and calling
-  local_bh_enable() inside that function has nasty side effected.
-  Jakub suggested creating a timer and calling napi_schedule() from that
-  timer. 
-- Link to v1: https://lore.kernel.org/r/20250212-netdevsim-v1-1-20ece94daae8@debian.org
----
- drivers/net/netdevsim/netdev.c    | 21 ++++++++++++++++++++-
- drivers/net/netdevsim/netdevsim.h |  1 +
- 2 files changed, 21 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/netdevsim/netdev.c b/drivers/net/netdevsim/netdev.c
-index 9b394ddc5206a7a5ca5440341551aac50c43e20c..a41dc79e9c2e082367af156b10b61f04be8c41fb 100644
---- a/drivers/net/netdevsim/netdev.c
-+++ b/drivers/net/netdevsim/netdev.c
-@@ -87,7 +87,8 @@ static netdev_tx_t nsim_start_xmit(struct sk_buff *skb, struct net_device *dev)
- 	if (unlikely(nsim_forward_skb(peer_dev, skb, rq) == NET_RX_DROP))
- 		goto out_drop_cnt;
- 
--	napi_schedule(&rq->napi);
-+	if (!hrtimer_active(&rq->napi_timer))
-+		hrtimer_start(&rq->napi_timer, us_to_ktime(5), HRTIMER_MODE_REL);
- 
- 	rcu_read_unlock();
- 	u64_stats_update_begin(&ns->syncp);
-@@ -426,6 +427,22 @@ static int nsim_init_napi(struct netdevsim *ns)
- 	return err;
- }
- 
-+static enum hrtimer_restart nsim_napi_schedule(struct hrtimer *timer)
-+{
-+	struct nsim_rq *rq;
-+
-+	rq = container_of(timer, struct nsim_rq, napi_timer);
-+	napi_schedule(&rq->napi);
-+
-+	return HRTIMER_NORESTART;
-+}
-+
-+static void nsim_rq_timer_init(struct nsim_rq *rq)
-+{
-+	hrtimer_init(&rq->napi_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
-+	rq->napi_timer.function = nsim_napi_schedule;
-+}
-+
- static void nsim_enable_napi(struct netdevsim *ns)
- {
- 	struct net_device *dev = ns->netdev;
-@@ -615,11 +632,13 @@ static struct nsim_rq *nsim_queue_alloc(void)
- 		return NULL;
- 
- 	skb_queue_head_init(&rq->skb_queue);
-+	nsim_rq_timer_init(rq);
- 	return rq;
- }
- 
- static void nsim_queue_free(struct nsim_rq *rq)
- {
-+	hrtimer_cancel(&rq->napi_timer);
- 	skb_queue_purge_reason(&rq->skb_queue, SKB_DROP_REASON_QUEUE_PURGE);
- 	kfree(rq);
- }
-diff --git a/drivers/net/netdevsim/netdevsim.h b/drivers/net/netdevsim/netdevsim.h
-index 96d54c08043d3a62b0731efd43bc6a313998bf01..e757f85ed8617bb13ed0bf0e367803e4ddbd8e95 100644
---- a/drivers/net/netdevsim/netdevsim.h
-+++ b/drivers/net/netdevsim/netdevsim.h
-@@ -97,6 +97,7 @@ struct nsim_rq {
- 	struct napi_struct napi;
- 	struct sk_buff_head skb_queue;
- 	struct page_pool *page_pool;
-+	struct hrtimer napi_timer;
- };
- 
- struct netdevsim {
-
----
-base-commit: 0784d83df3bfc977c13252a0599be924f0afa68d
-change-id: 20250212-netdevsim-258d2d628175
-
-Best regards,
--- 
-Breno Leitao <leitao@debian.org>
-
+> ---
+>  .../devicetree/bindings/input/gpio-matrix-keypad.yaml       | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/input/gpio-matrix-keypad.yaml b/Documentation/devicetree/bindings/input/gpio-matrix-keypad.yaml
+> index 0f348b9..9c91224 100644
+> --- a/Documentation/devicetree/bindings/input/gpio-matrix-keypad.yaml
+> +++ b/Documentation/devicetree/bindings/input/gpio-matrix-keypad.yaml
+> @@ -40,6 +40,12 @@ properties:
+>      type: boolean
+>      description: Do not enable autorepeat feature.
+>  
+> +  gpio-activelow:
+> +    type: boolean
+> +    deprecated: true
+> +    description:
+> +      The GPIOs are low active (deprecated).
+> +      Use the GPIO-flags in gpio controller instead of this property.
+>  
+>    debounce-delay-ms:
+>      description: Debounce interval in milliseconds.
+> -- 
+> 2.39.5
+> 
 
