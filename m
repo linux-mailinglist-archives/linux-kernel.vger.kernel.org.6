@@ -1,143 +1,97 @@
-Return-Path: <linux-kernel+bounces-520947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C14A4A3B192
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:25:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83393A3B197
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:25:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 380947A61B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 06:24:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70F1917214D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 06:25:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA1AE1BC099;
-	Wed, 19 Feb 2025 06:24:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jkSNw4m4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1690D1BC073;
+	Wed, 19 Feb 2025 06:25:11 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49EEC17BB21;
-	Wed, 19 Feb 2025 06:24:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D39C21B4153;
+	Wed, 19 Feb 2025 06:25:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739946296; cv=none; b=lvA0AeoiO1f3pNat41xsC1KqM2E+zzSM9XRYYkFNw5Vgx09+ociz4M+m8sPkff2tgDAvAkz8F8AsSdysgKM6D/E+UkU7QSZedJahak3AW2A0b+P/NtD0po4BsCE1agEbu54iPfqAFbdKbsfCk2q7mEak2dKIi0roWh9tpy7XYkY=
+	t=1739946310; cv=none; b=DbNAF2Dgx5yb/vanouTpLtVj0XjsSjSVxx15EbcIZieZXdIgvG5xC1ZHFkzUUBrtmitchV80Hmebes49qd105j+5qVQZSC533/I2ajSQx+83qeNrq3jOxf2jTilt7fLIGKn3FNTIDYC1I535kfeEXbKJfHLta4pU63YxswTSw7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739946296; c=relaxed/simple;
-	bh=/WPyWqy6uz1A6d3DyTISknBJVadCdZToLl9t/SRP2Q8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=go/IRKnjCZhtfmItPopHA/DSoGDd6sQAEoa6J0U0hSv2KFUxxQEqeX3JDNRBhwSSA95kukSohWBVFx/LlRdRN5c2NEN24jMIcieIjz4jXgOVMjyWHyq1i6aSbBI59G88ve7DQ+ovUsX9knIS07AlMcxZkGIYsF0NzrHE4RSk7/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jkSNw4m4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2D32C4CED1;
-	Wed, 19 Feb 2025 06:24:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739946295;
-	bh=/WPyWqy6uz1A6d3DyTISknBJVadCdZToLl9t/SRP2Q8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jkSNw4m4M9cgbdFImN1aPwiLVHWUXmCxwA2sJKFr4PSMlFUkgmTsXMEOfy3P55d+S
-	 QatrkkZ6Omik/jXbZx+RC7MMtQd33e6HEwT6Khh8aJqxEFfc1lVaWl8N7AJx25ucJQ
-	 UbUwYZlq5yUFZUdWARz6zQ8ApLc/S7lp7o5foCucLXX6RwzMv787+bFuj/3I/OTQ30
-	 AmTNov4MB5BEV0Vxnh7uJ+DQdarRllJkNfyl6RPPSsh3A6WEJqCTYA+eBo634NDQs6
-	 9tbRUm0iMwz1TmLaTYNp3hiTxpswfX+jmXc6/ykJ+gi3pFX6d2cSQYf9LVppVsQtB3
-	 LBARGiYo8oYbA==
-Message-ID: <3d96896d-5bb7-4ae5-a6c9-b586337eaa3f@kernel.org>
-Date: Wed, 19 Feb 2025 07:24:52 +0100
+	s=arc-20240116; t=1739946310; c=relaxed/simple;
+	bh=RnnYDsoQxBRKq7+3ID676QXf2lCJ2IDRIn/vWknGnW0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=RUo7EN3dqohVdMvYLK25vCzpIVY6OYREB7Gw7uczDasGMgZJZFLoqEESYuN0syUWFHQ+e52pev5EMKso1RJQzuVLWKGO0OAvXpTEyvt8MJBNPYSrApveMXrn8bFUxb58noF4Ekq4bwSsPJPsH/rKisnMWJMwyWSS5kQw4Q7ye/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4YyR8X6dsgzjYF5;
+	Wed, 19 Feb 2025 14:20:28 +0800 (CST)
+Received: from kwepemd200011.china.huawei.com (unknown [7.221.188.251])
+	by mail.maildlp.com (Postfix) with ESMTPS id 08E0D18010B;
+	Wed, 19 Feb 2025 14:25:05 +0800 (CST)
+Received: from kwepemd500012.china.huawei.com (7.221.188.25) by
+ kwepemd200011.china.huawei.com (7.221.188.251) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Wed, 19 Feb 2025 14:25:04 +0800
+Received: from kwepemd500012.china.huawei.com ([7.221.188.25]) by
+ kwepemd500012.china.huawei.com ([7.221.188.25]) with mapi id 15.02.1258.034;
+ Wed, 19 Feb 2025 14:25:04 +0800
+From: lizetao <lizetao1@huawei.com>
+To: Caleb Sander Mateos <csander@purestorage.com>
+CC: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
+	"io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] io_uring/rsrc: remove unused constants
+Thread-Topic: [PATCH] io_uring/rsrc: remove unused constants
+Thread-Index: AQHbgn9Ll4Ev2kd5F0iFmZ8cjznzrrNOKNuA
+Date: Wed, 19 Feb 2025 06:25:04 +0000
+Message-ID: <d00aa2f3083b48189667355d938089ec@huawei.com>
+References: <20250219033444.2020136-1-csander@purestorage.com>
+In-Reply-To: <20250219033444.2020136-1-csander@purestorage.com>
+Accept-Language: en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] tty/vt: Use KVAL instead of use bit operation
-To: Alexey Gladkov <legion@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-serial@vger.kernel.org
-References: <cover.1739881707.git.legion@kernel.org>
- <01ee8849ef8dc49c93a77bc4961ad56b9d435b8a.1739881707.git.legion@kernel.org>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <01ee8849ef8dc49c93a77bc4961ad56b9d435b8a.1739881707.git.legion@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 18. 02. 25, 13:29, Alexey Gladkov wrote:
-> The K_HANDLERS always gets KVAL as an argument. It is better to use the
-> KVAL macro itself instead of bit operation.
-> 
-> Signed-off-by: Alexey Gladkov <legion@kernel.org>
-> ---
->   drivers/tty/vt/keyboard.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/tty/vt/keyboard.c b/drivers/tty/vt/keyboard.c
-> index 804355da46f5..7df041ac4d5c 100644
-> --- a/drivers/tty/vt/keyboard.c
-> +++ b/drivers/tty/vt/keyboard.c
-> @@ -885,7 +885,7 @@ static void k_shift(struct vc_data *vc, unsigned char value, char up_flag)
->   		if (kbd->kbdmode == VC_UNICODE)
->   			to_utf8(vc, npadch_value);
->   		else
-> -			put_queue(vc, npadch_value & 0xff);
-> +			put_queue(vc, KVAL(npadch_value));
-
-While the mask is the same, this is not a kval, right?
-
->   		npadch_active = false;
->   	}
->   }
-> @@ -1519,7 +1519,7 @@ static void kbd_keycode(unsigned int keycode, int down, bool hw_raw)
->   	if ((raw_mode || kbd->kbdmode == VC_OFF) && type != KT_SPEC && type != KT_SHIFT)
->   		return;
->   
-> -	(*k_handler[type])(vc, keysym & 0xff, !down);
-> +	(*k_handler[type])(vc, KVAL(keysym), !down);
-
-This makes sense.
-
--- 
-js
-suse labs
+SGksDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQ2FsZWIgU2FuZGVy
+IE1hdGVvcyA8Y3NhbmRlckBwdXJlc3RvcmFnZS5jb20+DQo+IFNlbnQ6IFdlZG5lc2RheSwgRmVi
+cnVhcnkgMTksIDIwMjUgMTE6MzUgQU0NCj4gVG86IEplbnMgQXhib2UgPGF4Ym9lQGtlcm5lbC5k
+az47IFBhdmVsIEJlZ3Vua292IDxhc21sLnNpbGVuY2VAZ21haWwuY29tPg0KPiBDYzogQ2FsZWIg
+U2FuZGVyIE1hdGVvcyA8Y3NhbmRlckBwdXJlc3RvcmFnZS5jb20+OyBpby0NCj4gdXJpbmdAdmdl
+ci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+IFN1YmplY3Q6IFtQ
+QVRDSF0gaW9fdXJpbmcvcnNyYzogcmVtb3ZlIHVudXNlZCBjb25zdGFudHMNCj4gDQo+IElPX05P
+REVfQUxMT0NfQ0FDSEVfTUFYIGhhcyBiZWVuIHVudXNlZCBzaW5jZSBjb21taXQgZmJiYjhlOTkx
+ZDg2DQo+ICgiaW9fdXJpbmcvcnNyYzogZ2V0IHJpZCBvZiBpb19yc3JjX25vZGUgYWxsb2NhdGlv
+biBjYWNoZSIpIHJlbW92ZWQgdGhlDQo+IHJzcmNfbm9kZV9jYWNoZS4NCj4gDQo+IElPX1JTUkNf
+VEFHX1RBQkxFX1NISUZUIGFuZCBJT19SU1JDX1RBR19UQUJMRV9NQVNLIGhhdmUgYmVlbg0KPiB1
+bnVzZWQgc2luY2UgY29tbWl0IDcwMjlhY2Q4YTk1MCAoImlvX3VyaW5nL3JzcmM6IGdldCByaWQg
+b2YgcGVyLXJpbmcNCj4gaW9fcnNyY19ub2RlIGxpc3QiKSByZW1vdmVkIHRoZSBzZXBhcmF0ZSB0
+YWcgdGFibGUgZm9yIHJlZ2lzdGVyZWQgbm9kZXMuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBDYWxl
+YiBTYW5kZXIgTWF0ZW9zIDxjc2FuZGVyQHB1cmVzdG9yYWdlLmNvbT4NCj4gLS0tDQo+ICBpb191
+cmluZy9yc3JjLmggfCA2IC0tLS0tLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDYgZGVsZXRpb25zKC0p
+DQo+IA0KPiBkaWZmIC0tZ2l0IGEvaW9fdXJpbmcvcnNyYy5oIGIvaW9fdXJpbmcvcnNyYy5oIGlu
+ZGV4DQo+IGE2ZDg4M2M2MmIyMi4uMDI5N2RhZjAyYWM3IDEwMDY0NA0KPiAtLS0gYS9pb191cmlu
+Zy9yc3JjLmgNCj4gKysrIGIvaW9fdXJpbmcvcnNyYy5oDQo+IEBAIC0yLDE2ICsyLDEwIEBADQo+
+ICAjaWZuZGVmIElPVV9SU1JDX0gNCj4gICNkZWZpbmUgSU9VX1JTUkNfSA0KPiANCj4gICNpbmNs
+dWRlIDxsaW51eC9sb2NrZGVwLmg+DQo+IA0KPiAtI2RlZmluZSBJT19OT0RFX0FMTE9DX0NBQ0hF
+X01BWCAzMg0KPiAtDQo+IC0jZGVmaW5lIElPX1JTUkNfVEFHX1RBQkxFX1NISUZUCShQQUdFX1NI
+SUZUIC0gMykNCj4gLSNkZWZpbmUgSU9fUlNSQ19UQUdfVEFCTEVfTUFYCSgxVSA8PCBJT19SU1JD
+X1RBR19UQUJMRV9TSElGVCkNCj4gLSNkZWZpbmUgSU9fUlNSQ19UQUdfVEFCTEVfTUFTSwkoSU9f
+UlNSQ19UQUdfVEFCTEVfTUFYIC0gMSkNCj4gLQ0KPiAgZW51bSB7DQo+ICAJSU9SSU5HX1JTUkNf
+RklMRQkJPSAwLA0KPiAgCUlPUklOR19SU1JDX0JVRkZFUgkJPSAxLA0KPiAgfTsNCj4gDQo+IC0t
+DQo+IDIuNDUuMg0KPiANCg0KUmV2aWV3ZWQtYnk6IExpIFpldGFvIDxsaXpldGFvMUBodWF3ZWku
+Y29tPg0KDQotLS0NCkxpIFpldGFvDQoNCg==
 
