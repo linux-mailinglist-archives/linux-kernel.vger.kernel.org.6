@@ -1,81 +1,80 @@
-Return-Path: <linux-kernel+bounces-520739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42CF5A3AEAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:12:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04305A3AE89
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:08:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 086983AB56E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 01:07:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83FB17A36A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 01:07:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83093450F2;
-	Wed, 19 Feb 2025 01:07:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3FF25761;
+	Wed, 19 Feb 2025 01:07:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="nop5DK9y"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="NR5beZfq"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 415381E4AB;
-	Wed, 19 Feb 2025 01:07:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB84C219E0;
+	Wed, 19 Feb 2025 01:07:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739927249; cv=none; b=YqgMEt4y1C9rv+/T+IjgKrUDY8iBU0Lmj8O++1GmwEB9myUsOb23DAj/nOF9B2MbG0Ef7rDGETLht3EOMUnyqLnE0grOy4YF3dksD41CDzpxsLE/t1sSwUX9rDARjls7tXh9+HqWTrLmxlMO5w13nZELSxe4mRC3sLfv00N7LFU=
+	t=1739927261; cv=none; b=MxOx++RXtxlwPHEphP/XNOzQe/Hn5v3RqtdgNDDqPxAnmLwnHQdSs8eFBHwNVi28yoIBprUw+nWyjQqG7Dd8Oca+dn+4SPuN8bqBhv37rakp67VohD+KHk2CP4l563jBSxwQzyNvQkKGYMytjJ3QCuDG068ubIks9nRj239iOVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739927249; c=relaxed/simple;
-	bh=/Rf65F85pkUiV5nrOq8Au0uE/3xruaDXFJ2mQw85668=;
+	s=arc-20240116; t=1739927261; c=relaxed/simple;
+	bh=cjgz1uNG96Lycd9+lrfpP12gnfIGm6u995enqdGw4o4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NsMELqWkgbRwuOwswVOKhiz+Guk5IpdxmgAb7J+aECFg8OzNb6+mHMAlHHHZZijxGEiCjXxqeo/OfnWa+0WsBFjq0XvV3rOi9SnrgemWTtL0c/TLT2IfRrk5BXJks1X5ngRN2/QXip0gtVetEHxf+PgfkpG6s6IFuahFKC020JQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=nop5DK9y; arc=none smtp.client-ip=205.220.177.32
+	 MIME-Version:Content-Type; b=m/FBaVLE2s9b9wNd3dN5lq6cYfLkJEGaPkQFFf5bHNEsYrttspxm4NbIPkgk2rdvuEh9Y1uigZI42OW3TVHfA4s+L9BspTTmyLUuQoWQmOobjlUV/el9CUIZJutZk+AH5gFfbqcJsWpqPnU7cH4zs1K9Rlm4tvoP2tNlFKw2WgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=NR5beZfq; arc=none smtp.client-ip=205.220.165.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51IMfWXM006244;
-	Wed, 19 Feb 2025 01:07:24 GMT
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51IMfZkH003776;
+	Wed, 19 Feb 2025 01:07:26 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=gsjkC1bMzt9H36MIm7lCtfrmrPip0k5gLjrM6k3FpCk=; b=
-	nop5DK9yrBOOETguhc0hiB+NEocRd5ExX62rNZNnGEVa9M2GKr7b8vnLl/I5c2OH
-	uXO4nZERvMgviLDoZEfdcYItI0YGlBnrTZ3FTZ2UL/1RF9pJkDfB/4ukDymxhbLN
-	tn3V0OFXMXJaU3W99rbSL6rlZYElk5cNiUNnUb6366FVRHrACN4xUp5dY8i2wqjU
-	QxRpr4uF2xqoUk+IGr01eSTpGhAQwcmPIC8FuQHmYPdfZicJ2SWzi9EBbrAziZs8
-	GhvUm9NaCi5IU0KC0+pFseL019e9fk6A3MDZqp0jmBW2KhYAsW+l9InRJI5Z/ROr
-	+FZwrSzAII/43OctZBGPrQ==
+	corp-2023-11-20; bh=osjTj04gBbUr1US/hfIxtUbMQoOUsZVR+jnA8SFFFuQ=; b=
+	NR5beZfq2TGC2sCEJYJodznjduOYEfqkKOGBS+NRclQCL/PuKNd6t1NTZDKYHMsw
+	sQTM1fCXFxMAPkiLjllLFV7R6MGaDBpqqr2WBDAWyWkH5PlhMuvslFi7irzCQIHw
+	DfrOY7+vNhu12224jznj8NIzs9pgR9NPP28SFrv2LYNMEft5MFlq7v9MDgX/TZHF
+	vbgMFC9ioVFV3+/+fyPWvtAYyzmYTs9in7fg7+/H34V0n/uqThTRHgMh7yhjZBrr
+	E4FEmzP2zMDwDgdF+2DEPcApX4kq5eG6Hn9Lnwzb9EkY1rytWBS68t8jJyrEWgeH
+	rJVExhQaxs41NsH+91EGQA==
 Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 44w00n0jy8-1
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 44w00ngkkd-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 19 Feb 2025 01:07:24 +0000 (GMT)
+	Wed, 19 Feb 2025 01:07:25 +0000 (GMT)
 Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 51J0EZSi002092;
-	Wed, 19 Feb 2025 01:07:23 GMT
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 51J06mD0002149;
+	Wed, 19 Feb 2025 01:07:24 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 44w0tk1rrj-1
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 44w0tk1rrw-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 19 Feb 2025 01:07:23 +0000
+	Wed, 19 Feb 2025 01:07:24 +0000
 Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 51J17KeR000669;
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 51J17KeV000669;
 	Wed, 19 Feb 2025 01:07:23 GMT
 Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 44w0tk1rq5-5;
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 44w0tk1rq5-7;
 	Wed, 19 Feb 2025 01:07:23 +0000
 From: "Martin K. Petersen" <martin.petersen@oracle.com>
-To: Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>,
-        Kashyap Desai <kashyap.desai@broadcom.com>,
-        Sumit Saxena <sumit.saxena@broadcom.com>,
+To: Sathya Prakash <sathya.prakash@broadcom.com>,
         Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
+        Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>,
         "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
-        mpi3mr-linuxdrv.pdl@broadcom.com, linux-scsi@vger.kernel.org,
-        Colin Ian King <colin.i.king@gmail.com>
+        Paul Menzel <pmenzel@molgen.mpg.de>
 Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] scsi: mpi3mr: Fix spelling mistake "skiping" -> "skipping"
-Date: Tue, 18 Feb 2025 20:06:53 -0500
-Message-ID: <173992713064.526057.3708376196614857729.b4-ty@oracle.com>
+        Tomas Henzl <thenzl@redhat.com>, MPT-FusionLinux.pdl@broadcom.com,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scsi: mpt3sas: Reduce log level of `set ignore_delay_remove for handle(0x%04x)` to info
+Date: Tue, 18 Feb 2025 20:06:55 -0500
+Message-ID: <173992713061.526057.1776061314538121010.b4-ty@oracle.com>
 X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250205091119.715630-1-colin.i.king@gmail.com>
-References: <20250205091119.715630-1-colin.i.king@gmail.com>
+In-Reply-To: <20250131171640.30721-1-pmenzel@molgen.mpg.de>
+References: <20250131171640.30721-1-pmenzel@molgen.mpg.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,22 +87,27 @@ X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-02-18_11,2025-02-18_01,2024-11-22_01
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 malwarescore=0
- mlxscore=0 spamscore=0 phishscore=0 suspectscore=0 mlxlogscore=863
+ mlxscore=0 spamscore=0 phishscore=0 suspectscore=0 mlxlogscore=999
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502100000
  definitions=main-2502190006
-X-Proofpoint-ORIG-GUID: fa9Ey9byn7A8mJvTZMOM7WDgrM6Y6Li7
-X-Proofpoint-GUID: fa9Ey9byn7A8mJvTZMOM7WDgrM6Y6Li7
+X-Proofpoint-ORIG-GUID: fex-3gynrVsUpM1ALhZlZsYKuyRRg16y
+X-Proofpoint-GUID: fex-3gynrVsUpM1ALhZlZsYKuyRRg16y
 
-On Wed, 05 Feb 2025 09:11:18 +0000, Colin Ian King wrote:
+On Fri, 31 Jan 2025 18:16:40 +0100, Paul Menzel wrote:
 
-> There is a spelling mistake in a dprint_bsg_err message. Fix it.
+> On several systems with Dell HBA controller Linux prints the warning below:
 > 
+>     $ dmesg | grep -e "Linux version" -e "DMI: Dell"  -e "ignore_delay_remove"
+>     [    0.000000] Linux version 6.12.11.mx64.479 (root@lucy.molgen.mpg.de) (gcc (GCC) 12.3.0, GNU ld (GNU Binutils) 2.41) #1 SMP PREEMPT_DYNAMIC Fri Jan 24 13:30:47 CET 2025
+>     [    0.000000] DMI: Dell Inc. PowerEdge R7625/0M7YXP, BIOS 1.10.6 12/06/2024
+>     [    9.386551] scsi 0:0:4:0: set ignore_delay_remove for handle(0x0012)
 > 
+> [...]
 
 Applied to 6.15/scsi-queue, thanks!
 
-[1/1] scsi: mpi3mr: Fix spelling mistake "skiping" -> "skipping"
-      https://git.kernel.org/mkp/scsi/c/7c1b882ccb13
+[1/1] scsi: mpt3sas: Reduce log level of `set ignore_delay_remove for handle(0x%04x)` to info
+      https://git.kernel.org/mkp/scsi/c/fb27da6e06a0
 
 -- 
 Martin K. Petersen	Oracle Linux Engineering
