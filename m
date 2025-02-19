@@ -1,74 +1,61 @@
-Return-Path: <linux-kernel+bounces-522227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90C6AA3C79F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:33:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40C28A3C663
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:40:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E06A217DC24
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:30:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F25BE189AD2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:39:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9CD21516C;
-	Wed, 19 Feb 2025 18:26:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA5B521423C;
+	Wed, 19 Feb 2025 17:39:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H4QxGeeh"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tC1eUyJW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF1BE126BFA;
-	Wed, 19 Feb 2025 18:26:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A6721B415B;
+	Wed, 19 Feb 2025 17:39:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739989595; cv=none; b=p+QZ3hCu7YeH/TwdJw+EoJVXzINHB83MHFfbh1Eg05IeoaX608QctCADb3PjkFELjkjFr9OCjvHZ7BfcKg8PaJ+B7qudrtcJQqo6mcPrckU8h+XJ+XUfw2Y0U7tn68h7IzLoo0fed1Hrv1eGi7dhoFsKP+0z9iwtE4UnzcBfCKA=
+	t=1739986756; cv=none; b=Ui4oeySEif6lhqyDsmgdAFHoxSqI+i2Eslr97lVdza3gY3VciH4mf1mHtnISdUTwDVFXRLLWhMsUjppJUQebADOShAOzN2X2wuChBbpmJieUke54kDac3OaXkspQJ0KjgdgfDdXSnTBlr+uTi+dP3z8MSU0akPSu0LB4D5RSA3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739989595; c=relaxed/simple;
-	bh=J9nejIYo+VlPUsyivsCMZuxiVZl3v9sewy19d7xGe48=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ONUrTPk4vFRk5ug4ovRGJiEqWIKUp8TkfSFk9tGYTfgf9cf9OqS1tTpdKoxEgwsD7GAy2iHOmEaqj0DLcBmbZP4iatU+uqzy0DZ+73lmYn24NUF4f2O/0QynGS1uKETtjOl1U/MNylH//JLnmu57fApx8QrzZAQOGp8EM9ucq/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H4QxGeeh; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739989594; x=1771525594;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=J9nejIYo+VlPUsyivsCMZuxiVZl3v9sewy19d7xGe48=;
-  b=H4QxGeehUZ7edq4AWjIP+cA/lucqo3jatXeK+m4uCdnVFbW5HJUrWnXJ
-   Birrt7Zdt9HPV4t48EJA7DMYEC5gvorFgkEJ3Z5knjVJMH1eWFVMmBOeJ
-   UlvKeMvTXHq5g5jIEk2mlT+yy4irxI3psm6IGhtdRJ45nqo2L5cmG3ibS
-   zP2DD0PXBZFsT4sUM3eIEwTFSL7RZ9mKJLl1rS2gZv0GUhjBzESl81zN4
-   KLlx9kk0St3KFTwb/nRvfEmKVNDOkONX+1jZjsbtpAh4CzKy+hZhYhVfH
-   cMW0AhJGF/KOH2V5GPa/kwOJnf7Gp8tLdSUCs8J5ceasFzx0eXwVIMdd6
-   Q==;
-X-CSE-ConnectionGUID: ix4thxFmQQKKBKBzk7r+Sw==
-X-CSE-MsgGUID: TKN9qzLFQxCsMF7noZeCnQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11350"; a="51725362"
-X-IronPort-AV: E=Sophos;i="6.13,299,1732608000"; 
-   d="scan'208";a="51725362"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 10:26:33 -0800
-X-CSE-ConnectionGUID: 75iN1BC6SciVEJA1N4GuFA==
-X-CSE-MsgGUID: 3nOx3ntqRpaO2ywTgdjifg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,299,1732608000"; 
-   d="scan'208";a="119907906"
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2.lan) ([10.125.110.15])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 09:38:48 -0800
-Date: Wed, 19 Feb 2025 09:38:39 -0800
-From: Alison Schofield <alison.schofield@intel.com>
-To: Li Ming <ming.li@zohomail.com>
-Cc: dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com,
-	vishal.l.verma@intel.com, ira.weiny@intel.com,
-	dan.j.williams@intel.com, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 7/7] cxl/region: Drop goto pattern of
- construct_region()
-Message-ID: <Z7YXHwN2LSSC5rVe@aschofie-mobl2.lan>
-References: <20250217144828.30651-1-ming.li@zohomail.com>
- <20250217144828.30651-8-ming.li@zohomail.com>
+	s=arc-20240116; t=1739986756; c=relaxed/simple;
+	bh=envBoeOud7Q/RcNE6x7hX9HI5r3dhh7frxZMCujiSME=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=XrTZ4M66cn8H06shjg9DSYdn40Jx3ryr/cGQpkLregYTrPcTsvXmfr8udgVD9u8m1aU7ZCxwAq+xDy4ZRlWA4bvGennfQUP2DEAWLwVKExxL4/UVWvMWNaaql17RDytnx4s0yQPecPH1Y7eGs46QYXKzVSVXiKCv+D7ukjNGPh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tC1eUyJW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84CB5C4CED1;
+	Wed, 19 Feb 2025 17:39:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739986754;
+	bh=envBoeOud7Q/RcNE6x7hX9HI5r3dhh7frxZMCujiSME=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=tC1eUyJWR+wzlPDrec1L/z+XhGm3pnnj3ygbLrIUrDmK/LjKH+gMMbRadY1HvZtLb
+	 7+h3u/S7JjH4xun86GlfvkW9TmsSbC0rK8txbiCswoaxY9jPLm5zvOsr73zMjNY+Aw
+	 u7XOZ5r6OCQ/Z8sCjbtFZePJNA0OfqxX9Zyq6OnbIiUmLgGyq6gYIv+LEmkiXLm2xN
+	 sBsSShEY0Si7dqMFlEJPt2x+kJeR866cJOmdMPVLrxYwleyj9Ezkyl2JhxWUYXOqLh
+	 lCoxVZh8ZTC2RFl9ukjx4x0MZ/h/y6nQdFX4/wNx1i9lxxizLu2gNEV0FTc2gAQ9px
+	 wilA2sN0QymLA==
+Date: Wed, 19 Feb 2025 11:39:12 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, Lizhi Hou <lizhi.hou@amd.com>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	Allan Nielsen <allan.nielsen@microchip.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Steen Hegelund <steen.hegelund@microchip.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v7 5/5] PCI: of: Create device-tree PCI host bridge node
+Message-ID: <20250219173912.GA224527@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,23 +64,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250217144828.30651-8-ming.li@zohomail.com>
+In-Reply-To: <20250204073501.278248-6-herve.codina@bootlin.com>
 
-On Mon, Feb 17, 2025 at 10:48:28PM +0800, Li Ming wrote:
-> Some operations need to be protected by the cxl_region_rwsem in
-> construct_region(). Currently, construct_region() uses down_write() and
-> up_write() for the cxl_region_rwsem locking, so there is a goto pattern
-> after down_write() invoked to release cxl_region_rwsem.
+On Tue, Feb 04, 2025 at 08:35:00AM +0100, Herve Codina wrote:
+> PCI devices device-tree nodes can be already created. This was
+> introduced by commit 407d1a51921e ("PCI: Create device tree node for
+> bridge").
 > 
-> construct region() can be optimized to remove the goto pattern. The
-> changes are creating a new function called construct_auto_region() which
-> will include all checking and operations protected by the
-> cxl_region_rwsem, and using guard(rwsem_write) to replace down_write()
-> and up_write() in construct_auto_region().
+> In order to have device-tree nodes related to PCI devices attached on
+> their PCI root bus (the PCI bus handled by the PCI host bridge), a PCI
+> root bus device-tree node is needed. This root bus node will be used as
+> the parent node of the first level devices scanned on the bus. On
+> device-tree based systems, this PCI root bus device tree node is set to
+> the node of the related PCI host bridge. The PCI host bridge node is
+> available in the device-tree used to describe the hardware passed at
+> boot.
 > 
-> Signed-off-by: Li Ming <ming.li@zohomail.com>
+> On non device-tree based system (such as ACPI), a device-tree node for
+> the PCI host bridge or for the root bus does not exist. Indeed, the PCI
+> host bridge is not described in a device-tree used at boot simply
+> because no device-tree are passed at boot.
+> 
+> The device-tree PCI host bridge node creation needs to be done at
+> runtime. This is done in the same way as for the creation of the PCI
+> device nodes. I.e. node and properties are created based on computed
+> information done by the PCI core. Also, as is done on device-tree based
+> systems, this PCI host bridge node is used for the PCI root bus.
 
-Reviewed-by: Alison Schofield <alison.schofield@intel.com>
+This is a detailed low-level description of what this patch does.  Can
+we include a high level outline of what the benefit is and why we want
+this patch?
 
-snip
+Based on 185686beb464 ("misc: Add support for LAN966x PCI device"), I
+assume the purpose is to deal with some kind of non-standard PCI
+topology, e.g., a single B/D/F function contains several different
+pieces of functionality to be driven by several different drivers, and
+we build a device tree description of those pieces and then bind those
+drivers to the functionality using platform_device interfaces?
+
+Bjorn
 
