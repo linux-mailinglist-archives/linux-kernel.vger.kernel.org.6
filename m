@@ -1,291 +1,208 @@
-Return-Path: <linux-kernel+bounces-521847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7555BA3C328
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:09:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85505A3C30C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:06:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F56C3AA03B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:06:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBFCD1898527
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:06:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 121AF1F4160;
-	Wed, 19 Feb 2025 15:06:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 556F21F4622;
+	Wed, 19 Feb 2025 15:06:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="HNz74Uzy"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b="C6oc98/c"
+Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02olkn2049.outbound.protection.outlook.com [40.92.50.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36E311F417E;
-	Wed, 19 Feb 2025 15:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739977573; cv=none; b=os0D4qxaw6yquRWigf0yVlB88rBbul86/YWa8Jv7aXD2VY1LuQqgB6t0bLtvEyigNjjTHmLUXHexF2zZEnlPfIwDu49sMk+Qymp/HYIog+RC1ocXqLlWHbadGUG6JymuqUzSBrfmWUTyQT/4ke6upl1y5P9yMcTGBOqYAVM+sjs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739977573; c=relaxed/simple;
-	bh=tIxf2kJ2DG7gfisurkYdaFjSbgVpZ/DLEHxNk3gVMlk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hHzeVB1spOltKHA+tN/CB71XLKIFfMIyEWkUzeQ6YvHFM4XenfDMg1vqyXpbbICD9DriLwi5fjfovbNV1rWEl88/+s8W+FcW+ws8elEFsa6gxxfUrC/SzCpby3U/V7lkcQ9OJn3KgH5sKyEHxkAvt9nkirkppnbHwBOoP2Qdgdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=HNz74Uzy; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9AF8F169;
-	Wed, 19 Feb 2025 16:04:46 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1739977486;
-	bh=tIxf2kJ2DG7gfisurkYdaFjSbgVpZ/DLEHxNk3gVMlk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HNz74Uzy/VJyMGqyVU0Nk9FpWHneFQB0fd33CfjnvFpWXk6UMP05dAQ0PPD3Y0QP3
-	 LR34ZO1NHrtSN2T4a0o86H5/2nI1sPbz3PujXu7KOLX0iVQ6xOhboVYMVumxhWMkjb
-	 pX+Ts5a9M24ej97lpllzij/9/OjfuKU95ZqBRkOg=
-Date: Wed, 19 Feb 2025 17:05:53 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>, "H. Peter Anvin" <hpa@zytor.com>,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	rust-for-linux <rust-for-linux@vger.kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	David Airlie <airlied@gmail.com>, linux-kernel@vger.kernel.org,
-	ksummit@lists.linux.dev
-Subject: Re: Rust kernel policy
-Message-ID: <20250219150553.GD15114@pendragon.ideasonboard.com>
-References: <CANiq72m-R0tOakf=j7BZ78jDHdy=9-fvZbAT8j91Je2Bxy0sFg@mail.gmail.com>
- <Z7SwcnUzjZYfuJ4-@infradead.org>
- <CANiq72myjaA3Yyw_yyJ+uvUrZQcSLY_jNp65iKH8Y5xGY5tXPQ@mail.gmail.com>
- <326CC09B-8565-4443-ACC5-045092260677@zytor.com>
- <CANiq72m+r1BZVdVHn2k8XeU37ZeY6VT2S9KswMuFA=ZO3e4uvQ@mail.gmail.com>
- <a7c5973a-497c-4f31-a7be-b3123bddb6dd@zytor.com>
- <Z7VKW3eul-kGaIT2@Mac.home>
- <2025021954-flaccid-pucker-f7d9@gregkh>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE4B1F426F;
+	Wed, 19 Feb 2025 15:05:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.50.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739977560; cv=fail; b=MbHtPofSVx7Q8gcQgSBlm3CpFsaU/HoYmoA/q6sWql0SccfA5Fp4MuUD3VZgRu8vwXqOrZJsSDY+b+vfCIdDjxlRwCoOXIWpFlXPAXpcsc6VtySc0wqiJlMDUls8oH4fetwh1FZdXMSHWVgJ93pNqXP/8ywdvfziToSxqHsJeIc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739977560; c=relaxed/simple;
+	bh=uIsFiPVN46DhWPwg+v8vLFSizs4KjygYozxTHzBYpv8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=u3fmNVAdv9tT9UPn5S912zDeDOt548yNKrB61Vmj2D3UE62D5bwHkbNogqI0LiPjQMwexmgesWZDccEsidZOUOLONBAVxoEZjCRkhiHZ09Or/KkxUW2bFWhIwHnUMXzaPMj0v5SFog4Iq0Mt5kgKLVoqI4X7lzaPn1jZAsBpmkI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com; spf=pass smtp.mailfrom=hotmail.com; dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b=C6oc98/c; arc=fail smtp.client-ip=40.92.50.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hotmail.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lxmt5XKdsF9rcxPfcGdggxg24pDZWuwCUJcIKB80jHO0VGcXifgrXoYvF6+VqJG8+LxZduS0ovWtJAYLNa4NkdBAKshp7bZDHzYS8qiqZ8s2iJ5tRVu+h7cNepaU55c3Po55YgUKsD2uWDihMAoFAJR1K2+mMr64F+ya9hxvUpehO+alsCRFKmgjgVcjHdtcjfOlb/9QxTNCo0Bdf3uFbGeuKv0b7vfDm+YJ3J/AY6WwyKNfIhCDLdKMGGL0nRvWgkJV+tWxay0MkSdliiXLP6wi3H2pFOPTXa51x4sYSyyBnYpFKxPB106FV5Y76oP2RmDVTPHoe8iglkEok1OHaw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XxenyQmpsC6nEdCAFBQzPGy6VJEFVMeu0MEn2p9V+Qg=;
+ b=mCUZLlDzHYmHY6GudVD7gUwC2KwZZU1eqrvuScWxZjL8v9H0cKuWxRTKfcKIm149oStrn75p4OAN8479OWcUyXMW2brFVNR4oqO4sVeRjTGKEMonNscGtBccVteanNeUHVapirQ6ap6dNKlxFmaAVyddgxx4q3F5LIW4TnTWL+00mFmxpqT36PbcUuQk5XqL0pcBCU1o6HfuJwJJpgdsqZOjLTVOXlwv+4y5csnS6KLYhdWSy+lSWnbElLmCkR+xhGnZG13+p3L5oJp+k+nT6SYXPDJ2MWcCgsbc96CX2RSV6BTyQSIPzlxW3cAB8zDGldlhfjytssrmQVPVKfsjNw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotmail.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XxenyQmpsC6nEdCAFBQzPGy6VJEFVMeu0MEn2p9V+Qg=;
+ b=C6oc98/clVRTG1iMazzWYMuOlCJ78Y8iio9TRw559r8n3XJNejsReu/XSHkahscbwM/wmKnymtwGr24JPpRPwHZIcTBQSIn1p/p5Nz0tYfxUjGxk4y28FipjyyJlGbrLxSnd0fMDK0RfzCxOZoJ8RvgMLrgE6IH8HrDIhbyaip4tCqnBIbQ6tubIFw3I4NOV82eBEp6CGkaHI3etvv8K/MXaau5KdHXBne8rBY5XhdQGwFimJBfgYpH8gnSpjC6tv+kyOqqTnrW8FKNW/hGq7/DnKzgIYDz3RVZgaycwz9TwmpjIE1MSXBXpATnJo04hEPgHXWEzJiNxnYFv4SicJg==
+Received: from AM7P189MB1009.EURP189.PROD.OUTLOOK.COM (2603:10a6:20b:175::17)
+ by AM0P189MB0675.EURP189.PROD.OUTLOOK.COM (2603:10a6:208:1a2::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.15; Wed, 19 Feb
+ 2025 15:05:56 +0000
+Received: from AM7P189MB1009.EURP189.PROD.OUTLOOK.COM
+ ([fe80::e9f1:a878:e797:ee1a]) by AM7P189MB1009.EURP189.PROD.OUTLOOK.COM
+ ([fe80::e9f1:a878:e797:ee1a%2]) with mapi id 15.20.8466.015; Wed, 19 Feb 2025
+ 15:05:56 +0000
+Message-ID:
+ <AM7P189MB100973D1DC0164099067E2AEE3C52@AM7P189MB1009.EURP189.PROD.OUTLOOK.COM>
+Date: Wed, 19 Feb 2025 16:05:55 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] riscv: dts: starfive: fml13v01: increase eMMC bus speed
+To: Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+ Maud Spierings via B4 Relay <devnull+maud_spierings.hotmail.com@kernel.org>,
+ Conor Dooley <conor@kernel.org>, Emil Renner Berthing <kernel@esmil.dk>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>
+Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250215-fml13v01_emmc_speed-v1-1-e3bd224ae0e8@hotmail.com>
+ <CAJM55Z9GJr3BtbQeFpNU2P=nomsOvQ6dsVYFX_s=tHznu75ptQ@mail.gmail.com>
+Content-Language: en-US
+From: Maud Spierings <maud_spierings@hotmail.com>
+In-Reply-To: <CAJM55Z9GJr3BtbQeFpNU2P=nomsOvQ6dsVYFX_s=tHznu75ptQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: AM0PR01CA0171.eurprd01.prod.exchangelabs.com
+ (2603:10a6:208:aa::40) To AM7P189MB1009.EURP189.PROD.OUTLOOK.COM
+ (2603:10a6:20b:175::17)
+X-Microsoft-Original-Message-ID:
+ <4f84e2ce-9f0a-4cba-9610-9a087e297169@hotmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <2025021954-flaccid-pucker-f7d9@gregkh>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM7P189MB1009:EE_|AM0P189MB0675:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4bbafeb3-ff85-4578-76b6-08dd50f6e92a
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|15080799006|5072599009|461199028|19110799003|8060799006|6090799003|3412199025|440099028;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZUhqWkM1WXM0bVdmS3BmMEN6WHhCc1ZEZjQ5K3I4UGVuMDdoZjBxOVJ4VWpH?=
+ =?utf-8?B?VmtlcTd3YVJ4ME4yb3pWVmt0OXo2eDNXdVFobkhpZE1Fbm51VUN2Y2lWaXJZ?=
+ =?utf-8?B?QWxJdlNmVzhLMnZMWENCbUtVakQyNmVGRkxOUzJVMDFoWXZlUmN0MHVmb1V6?=
+ =?utf-8?B?aFlhMTROSldxZEV2QnJvSmwvY0RQV1JrS3JEUGloOU9RNXdsTDd3UjdMb0pz?=
+ =?utf-8?B?dGlMWDd1dHhHem8vL0hFM3dCYmxTTUxVbjUzOGI1dVF2ZHJEblkyL0cvTVNV?=
+ =?utf-8?B?eTFSamRhdzhnczBqL1h3MWZ6QTh1ODFsKzZXZUVvSTZVeW1RR05ZTStPU0FP?=
+ =?utf-8?B?cG40N1N6OHFzM3lBNFU5bnkrYm1SK2RscVozTDV6R3M2QkhEczJCVjlGRUpX?=
+ =?utf-8?B?K2J1ZThIQTZ2QjZ4Q3lrb0R2ZzNJd3pCWUdLTVNXMVJyMDRUbld2YUx5MmMz?=
+ =?utf-8?B?aERkRjE5VTNoK3c1QnpwV2tFVnZ5WkNVQldPRmFEbXNsZzE5SXdLRW9oUmpn?=
+ =?utf-8?B?SGt3djNwYWFJVWxFWkk3UmJKd0Q0akhBd1FlUmppeVNmS0NuSHVsYk5ZSVVW?=
+ =?utf-8?B?Z3pxOWYzQkhLNVYvblR6MkNaWHFwVDcwdmRyczFKcmMvZGdDY0YzOTNpZHZY?=
+ =?utf-8?B?Y1FvN3E0VVU0Umx6aVQ2cE90bU9EWFhEbGZibWlNWnZjZ1R2M2tWS2dpWDhx?=
+ =?utf-8?B?N1MwaXJjeGZwVzNqcEtDSThTMVhiNTVmMHh1bk44SDdub3JRRFhoQUFwVUxj?=
+ =?utf-8?B?TXhyYitoQ1FKTHA2YjNVUGhhZTZMSjRVL0MvQTlQOXNsKzNhaFM3d3VDOGgv?=
+ =?utf-8?B?TGtHQkw1ZXd4aW1Uc29TTURxbDBTRmFhVEw3NHcrUGQzeERoakR4Q3hhT0ow?=
+ =?utf-8?B?OVBTTXVwQjRjNG8vUmdCYUhSeDVPM25lbmRkZzdCbGdoWlRrUmZpWlBpUDk1?=
+ =?utf-8?B?dmRnb2dwWmlYTW40Z2dYcVJHOHpxVGdySDdrbW9MVVQwRm1ZcCtwVkswNWpP?=
+ =?utf-8?B?T3p3bzlNNXUxaUFVc0dvM2lYM3ZxcFB2dHQ5SCtyR21Zc25Pb250VEMvaWE5?=
+ =?utf-8?B?c0UrcG50T3ZJd0VtNXRHSDZqR1VSdDNUVFRFK28rOGtKY2hUMGYzMkdWT0Zi?=
+ =?utf-8?B?cWFCQmhYSUliN1JFTjI2L0R1TnpWekdzWHpzY1ppTWhPeTVRTWpERmQ4cWow?=
+ =?utf-8?B?bmVWRVJoR0V5RGJ5dXFPRk4vb3NsSXc5anpuOW5RNXZpWXYrUGd3bDFEZzN2?=
+ =?utf-8?B?b2FwTGZUbTVvTWV3bHhPN3F4U0Z3cEoyejZmYU8wRUFkNVBsZzZPSFZ5U3BI?=
+ =?utf-8?B?enllU2ZjL3kwWVJDMlJsRWY1YmxEdGV6alNSb0RVck1sNCsvRnhMenJZckhq?=
+ =?utf-8?B?U1ZmQWFocUZ3UEhsMHdRWjROdDRGYzZlT0VNQVUvNFVKbkdVM3l1VDkvQk5n?=
+ =?utf-8?B?WmVHSVJzMWlsUEtWdDJYbkZyV1ltMlJFaENvZUh3PT0=?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?L1ZaNXBGcUszcEtKVlBLRjA3bGVxNzAvQXloRzkwemNxVi9XcXkveGhyZjZx?=
+ =?utf-8?B?b1hDN2RwTEpPL2VrWTcrNVlRL1JOdWVIK1Y3SWErNVBiTG9TbllRZFNOOWov?=
+ =?utf-8?B?OSt2WTNCa3Z4QmhxeDdBeVU5VHdNdEIxMzJTd042WU9xUk9WOFdyMWRGcUZi?=
+ =?utf-8?B?Mld1cXcvV0hyV1VKNm1MZWdsTEV0ZkEzdTNUM2E0TGx4QitkT3JMdnVtZFZ0?=
+ =?utf-8?B?MDl2Z01hWitrYnorRWZsUVdnS1QvMzhNRk5sZ0tjRjlrYUpIREkrTHh2Z3NN?=
+ =?utf-8?B?bUtnTDBGYUIydjZvTHBnVnJ2WVYvQjFzcExxL2dWRmxOaU02Y25kT0VlSE1Y?=
+ =?utf-8?B?S2YzQ3dqT3ZrWEI5NENvR2tDSkVHOFlFcHZ6OUllSTdtaG9Ka0ZqRHFQZEQz?=
+ =?utf-8?B?cFlneW5kd1Vlckx4a0QzVmZ4MG9LUHdJVUh6SDJFWS9aTDlpcTJ1WmFEdWRZ?=
+ =?utf-8?B?bHhKS29UYmlDbFJJWnhPcXpSMEllWjdBQWR4UkZKSHhnbytWVVowMzhwdHEx?=
+ =?utf-8?B?dHdzcTdpVDhjMm9JK3djRFZodzQreFhUdEFPU1ZpdzBhNkpGZTgva3FVeU9h?=
+ =?utf-8?B?U1lLZjJhL0o5VzIrSGozNmpGSkFKYkVQNDlIZVZpV1BMempRUFkzU3Y0UDRK?=
+ =?utf-8?B?aDFSR1pnb0c2aDBlK2JqZndMdDgrUDlFeW5CalEwY3dFYUNXeTVPR3p4cE82?=
+ =?utf-8?B?UmdqL3F6SkNNSlhjVjdQNElSSVBjNnE3T1BwL1Y4UDdrVXRScW1EVS9lQk9u?=
+ =?utf-8?B?SzE1eHdLQkppaFR0d0gzbVU2d3VLUFV5aXFhbkhiQTZrL3RuODdaTDhNU200?=
+ =?utf-8?B?V2FteDF5Z21ndVFzditPV1VkaEJ1VHgwWXhuNnlPQnp5MFpUUXFWTmN0MkVF?=
+ =?utf-8?B?eTJsT3hFaHVrYzVDMlJDbzZ0eGVQSkhHc3VXZzVlQUp2aHdoWHBDNEwvcGZp?=
+ =?utf-8?B?dkxBekVLcGZPcUZtVG14VklNZ0ZXdEdhMnZOQzA4dUs5a3VoQUNtZ2RKUXFJ?=
+ =?utf-8?B?d1p4WEdnbkZ5Q2Uxbzd4aHlTVjZTUHRzNTEvSUhQdCt1b3AxRU1Ra1llbkdF?=
+ =?utf-8?B?bHU4U00rb0I2QVFuTmVDK3ZSK3NKM1g2VGU2eUV2VHdXN29TTGdMbHZad3kv?=
+ =?utf-8?B?WmJNeTdDeThDL1NyZ3FKS1ZmYjY4c0NROWx0Ly8xVDVjYjQ1NzlabmlQVUV1?=
+ =?utf-8?B?dFU0Y25lbkNjN2VNR3NMTkVHdDZ0RnRwTXZEREdkVXowNWxuTERrdHFTMFhY?=
+ =?utf-8?B?cFFTRlVLS0lKYXJYRTFXRmNNTDM4R0J4RUJGTG05TFB4c0N0U0cwYWRZMXRn?=
+ =?utf-8?B?YU9yYXc2MThGWDJYbURWQWs3RzVGUTd3RVdCVU1oeS82b2RPRmV6azNqQmdn?=
+ =?utf-8?B?VHNWT0FGK1BEcU1vOHE1bWxja0xGc0txR3E0ZGxHMXRIcHd5dHNTeEo3SytD?=
+ =?utf-8?B?bGFlZ3NKOEVKOWFNdzFhTVhKV1dGNnNhcCtmSHg1Z1ppOUJzdm1Ebmk3eFBi?=
+ =?utf-8?B?UUQyV3RMMEw5eUxHbzJ5N1ljUzB1SkxhN0VyUzlub2pJQU9kd0lUelVYZmFB?=
+ =?utf-8?B?cmYzbWNYUm9mWGpDWE8zbkY5dzBqQitWRm8wN3U1VG9HQzlEVlU2MlNQL0ll?=
+ =?utf-8?B?OWVKWUxlcXFrZlF2N3hiTUQ2aXhXWE0vMERBcEpORjlNMFRId3ZBcHh0ckxO?=
+ =?utf-8?B?VDJQblhEZ0NJN3FOVmVJMDB5eDE2MnMvMlluTjc3TllQY1cxZTJOdC9MZkhN?=
+ =?utf-8?Q?7QzLdcO50S0N/k9gZUuok+VXpzV4vQp/C2XE3c5?=
+X-OriginatorOrg: sct-15-20-7719-19-msonline-outlook-3b3e0.templateTenant
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4bbafeb3-ff85-4578-76b6-08dd50f6e92a
+X-MS-Exchange-CrossTenant-AuthSource: AM7P189MB1009.EURP189.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2025 15:05:56.4814
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0P189MB0675
 
-On Wed, Feb 19, 2025 at 06:39:10AM +0100, Greg KH wrote:
-> On Tue, Feb 18, 2025 at 07:04:59PM -0800, Boqun Feng wrote:
-> > On Tue, Feb 18, 2025 at 04:58:27PM -0800, H. Peter Anvin wrote:
-> > [...]
-> > > > > David Howells did a patch set in 2018 (I believe) to clean up
-> > > > > the C code in the kernel so it could be compiled with either C
-> > > > > or C++; the patchset wasn't particularly big and mostly
-> > > > > mechanical in nature, something that would be impossible with
-> > > > > Rust. Even without moving away from the common subset of C and
-> > > > > C++ we would immediately gain things like type safe linkage.
-> > > > 
-> > > > That is great, but that does not give you memory safety and everyone
-> > > > would still need to learn C++.
-> > > 
-> > > The point is that C++ is a superset of C, and we would use a subset of C++
-> > > that is more "C+"-style. That is, most changes would occur in header files,
-> > > especially early on. Since the kernel uses a *lot* of inlines and macros,
-> > > the improvements would still affect most of the *existing* kernel code,
-> > > something you simply can't do with Rust.
-> > > 
-> > 
-> > I don't think that's the point of introducing a new language, the
-> > problem we are trying to resolve is when writing a driver or some kernel
-> > component, due to the complexity, memory safety issues (and other
-> > issues) are likely to happen. So using a language providing type safety
-> > can help that. Replacing inlines and macros with neat template tricks is
-> > not the point, at least from what I can tell, inlines and macros are not
-> > the main source of bugs (or are they any source of bugs in production?).
-> > Maybe you have an example?
-> 
-> As someone who has seen almost EVERY kernel bugfix and security issue
-> for the past 15+ years (well hopefully all of them end up in the stable
-> trees, we do miss some at times when maintainers/developers forget to
-> mark them as bugfixes), and who sees EVERY kernel CVE issued, I think I
-> can speak on this topic.
-> 
-> The majority of bugs (quantity, not quality/severity) we have are due to
-> the stupid little corner cases in C that are totally gone in Rust.
-> Things like simple overwrites of memory (not that rust can catch all of
-> these by far), error path cleanups, forgetting to check error values,
-> and use-after-free mistakes.  That's why I'm wanting to see Rust get
-> into the kernel, these types of issues just go away, allowing developers
-> and maintainers more time to focus on the REAL bugs that happen (i.e.
-> logic issues, race conditions, etc.)
-> 
-> I'm all for moving our C codebase toward making these types of problems
-> impossible to hit, the work that Kees and Gustavo and others are doing
-> here is wonderful and totally needed, we have 30 million lines of C code
-> that isn't going anywhere any year soon.  That's a worthy effort and is
-> not going to stop and should not stop no matter what.
-
-I'd say it should accelerate. Ironically, I think it's also affected by
-the same maintainer burn out issue that is hindering adoption of rust.
-When time is limited, short term urgencies are very often prioritized
-over long term improvements.
-
-As a maintainer of some code in the kernel, I sometimes find it very
-hard to strike the right balance of yak shaving. Some of it is needed
-given the large scale of the project and the contributors/maintainers
-ratio, but tolerance to yak shaving isn't high. It varies drastically
-depending on the contributors (both individuals and companies), and I've
-recently felt in my small area of the kernel that some very large
-companies fare significantly worse than smaller ones.
-
-(More on this below)
-
-> But for new code / drivers, writing them in rust where these types of
-> bugs just can't happen (or happen much much less) is a win for all of
-> us, why wouldn't we do this?  C++ isn't going to give us any of that any
-> decade soon, and the C++ language committee issues seem to be pointing
-> out that everyone better be abandoning that language as soon as possible
-> if they wish to have any codebase that can be maintained for any length
-> of time.
-> 
-> Rust also gives us the ability to define our in-kernel apis in ways that
-> make them almost impossible to get wrong when using them.  We have way
-> too many difficult/tricky apis that require way too much maintainer
-> review just to "ensure that you got this right" that is a combination of
-> both how our apis have evolved over the years (how many different ways
-> can you use a 'struct cdev' in a safe way?) and how C doesn't allow us
-> to express apis in a way that makes them easier/safer to use.  Forcing
-> us maintainers of these apis to rethink them is a GOOD thing, as it is
-> causing us to clean them up for EVERYONE, C users included already,
-> making Linux better overall.
-> 
-> And yes, the Rust bindings look like magic to me in places, someone with
-> very little Rust experience, but I'm willing to learn and work with the
-> developers who have stepped up to help out here.  To not want to learn
-> and change based on new evidence (see my point about reading every
-> kernel bug we have.)
-> 
-> Rust isn't a "silver bullet" that will solve all of our problems, but it
-> sure will help in a huge number of places, so for new stuff going
-> forward, why wouldn't we want that?
-> 
-> Linux is a tool that everyone else uses to solve their problems, and
-> here we have developers that are saying "hey, our problem is that we
-> want to write code for our hardware that just can't have all of these
-> types of bugs automatically".
-> 
-> Why would we ignore that?
-> 
-> Yes, I understand our overworked maintainer problem (being one of these
-> people myself), but here we have people actually doing the work!
-
-This got me thinking, this time with thoughts that are taking shape.
-Let's see if they make sense for anyone else.
-
-First, a summary of where we stand, in the particular area I'd like to
-discuss. Hopefully the next paragraph won't be controversial (but who
-knows, I may have an unclear or biased view).
-
-Maintainability, and maintainer burn out, are high in the lirst of the
-many arguments I've heard against rust in the kernel. Nobody really
-disputes the fact that we have a shortage of maintainers compared to the
-amount of contributions we receive. I have seen this argument being
-flipped by many proponents of rust in the kernel: with rust making some
-classes of bugs disappear, maintainers will have more time to focus on
-other issue (as written above by Greg himself). Everybody seems to agree
-that there will be an increased workload for maintainers in a transition
-period as they would need to learn a new language, but that increased
-workload would not be too significant as maintainers would be assisted
-by rust developers who will create (and to some extent maintain) rust
-bindings to kernel APIs. The promise of greener pastures is that
-everybody will be better off once the transition is over, including
-maintainers.
-
-In my experience, chasing bugs is neither the hardest nor the most
-mental energy consuming part of the technical maintenance [*]. What I
-find difficult is designing strong and stable foundations (either in
-individual drivers, or in subsystems as a whole) to build a maintainable
-code base on top. What I find even more horrendous is fixing all the
-mistakes we've made in this regard. As Greg also mentioned above, many
-of our in-kernel APIs were designed at a time when we didn't know better
-(remember device handling before the rewrite of the device/driver model
-? I was fortunately too inexperienced back then to understand how
-horrible things were, which allowed me to escape PTSD), and the amount
-of constraints that the C language allows compilers to enforce at
-compile time is very limited. I believe the former is a worse problem
-than the latter at this time: for lots of the in-kernel APIs,
-compile-time constraints enforcement to prevent misuse doesn't matter,
-because those APIs don't provide *any* way to be used safely. Looking at
-the two subsystems I know the best, V4L2 and DRM, handling the life time
-of objects safely in drivers isn't just hard, it's often plain
-impossible. I'd be surprised if I happened to have picked as my two
-main subsystems the only ones that suffer from this, so I expect this
-kind of issue to be quite widespread.
-
-History is history, I'm not blaming anyone here. There are mistakes we
-just wouldn't repeat the same way today. We have over the years tried to
-improve in-kernel APIs to fix this kind of issues. It's been painful
-work, which sometimes introduced more (or just different) problems than
-it fixed, again because we didn't know better (devm_kzalloc is *still*
-very wrong in the majority of cases). One of the promises of rust for
-the kernel is that it will help in this very precise area, thanks to its
-stronger philosophy of focussing efforts on interface design. As Greg
-mentioned above, it will also lead to improvements for the C users of
-the APIs. As part of their work on creating those rust bindings, rust
-for Linux developers and maintainers improving the situation for
-everybody. This is great. On paper.
-
-In reality, in order to provide API that are possible to use correctly,
-we have many areas deep in kernel code that will require a complete
-redesign (similar in effort to the introduction of the device model),
-affecting all the drivers using them. I understand that the development
-of rust bindings has already helped improving some in-kernel C APIs, but
-I have only seen such improvements of a relatively small scale compared
-to what would be needed to fix life time management of objects in V4L2.
-I would be very surprised if I was working in the only area in the
-kernel that is considered broken beyond repair by many people related to
-life time management, so I think this kind of maintainer nightmare is
-not an isolated case.
-
-The theory is that rust bindings would come with C API improvements and
-fixes. However, when I expressed the fact that rust bindings for V4L2
-would first require a complete rewrite of object life time management in
-the subsystem, I was told this was way too much yak shaving. As a
-maintainer facing the horrendous prospect of fixing this one day, I just
-can't agree to rust bindings being built on top of such a bad
-foundation, as it would very significantly increase the amount of work
-needed to fix the problem.
-
-If we want real maintainer buy-in for rust in the kernel, I believe this
-is the kind of problem space we should start looking into. Helping
-maintainers solve these issues will help decreasing their work load and
-stress level significantly in the long term, regardless of other
-benefits rust as a language may provide. I believe that cooperation
-between the C and rust camps on such issues would really improve mutual
-understanding, and ultimately create a lot of trust that seems to be
-missing. If someone were to be interested in rust bindings for V4L2 and
-willing to put significant time and effort in fixing the underlying
-issue, I would be very happy to welcome them, and willing to learn
-enough rust to review the rust API.
+On 2/19/25 3:21 PM, Emil Renner Berthing wrote:
+> Maud Spierings via B4 Relay wrote:
+>> From: Maud Spierings <maud_spierings@hotmail.com>
+>>
+>> The assigned clock speed of 50 MHz is and max-frequency of 100MHz are
+>> limitting this interface which is SDIO 5.0 capable. Sadly at 200MHz it
+>> fails to mount an eMMC drive, 150MHz (really 132 MHz) is the highest it
+>> was able to get.
+>>
+>> This improves the seq read/write performance by 2x~
+>>
+>> Signed-off-by: Maud Spierings <maud_spierings@hotmail.com>
+>> ---
+>> I put this in this specific dts instead of the common one as I cannot
+>> test if other boards are also able to handle these speeds.
+> Hi Maud,
+>
+> Thanks for the patch!
+>
+> These settings work on my Milk-V Mars board booting off eMMC, but I'm not sure
+> if that means we can just raise the frequency across all the JH7110 boards.
+> The eMMC on my Milk-V mars is a detachable module that identifies as
+>
+>    mmcblk0: mmc0:0001 DG4016 14.7 GiB
+>
+> I guess what works might depend on the module too. Is the eMMC on the framework
+> board soldered on?
 
 
-[*] I'm leaving out here community building, which is the other
-important part of a maintainer's work, and also requires lots of
-efforts. How rust could help or hinder this is interesting but out of my
-scope right now. If you feel inclined to share your thoughts on this
-mine field, please do so in a reply to this e-mail separate from
-feedback on the technical subject to avoid mixing topics.
+No it is also a detachable module, it supports the same interface as 
+most eMMC modules seem to.
 
-> Yes, mixed language codebases are rough, and hard to maintain, but we
-> are kernel developers dammit, we've been maintaining and strengthening
-> Linux for longer than anyone ever thought was going to be possible.
-> We've turned our development model into a well-oiled engineering marvel
-> creating something that no one else has ever been able to accomplish.
-> Adding another language really shouldn't be a problem, we've handled
-> much worse things in the past and we shouldn't give up now on wanting to
-> ensure that our project succeeds for the next 20+ years.  We've got to
-> keep pushing forward when confronted with new good ideas, and embrace
-> the people offering to join us in actually doing the work to help make
-> sure that we all succeed together.
+> Raising the max-frequency to 200MHz seems right for all boards since we're
+> already saying mmc0 supports HS200 mode.
+>
+> Maybe we could begin by raising the max frequency to 200MHz for all boards,
+> but only assign the 150MHz rate on the framework board?
 
--- 
-Regards,
+That seems alright with me, I'll send a v2 with max-frequency adjusted 
+in jh7110-common instead.
 
-Laurent Pinchart
+> /Emil
+kind regards,
+Maud
 
