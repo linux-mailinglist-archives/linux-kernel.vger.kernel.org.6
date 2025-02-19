@@ -1,98 +1,169 @@
-Return-Path: <linux-kernel+bounces-522668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9939FA3CD16
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 00:10:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03D90A3CD1B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 00:11:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FBBE189A645
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 23:10:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDEA73B7704
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 23:10:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEB8425EF92;
-	Wed, 19 Feb 2025 23:10:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E126025EFA1;
+	Wed, 19 Feb 2025 23:10:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HU1gUmcH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ssGYmnJ9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D91D2144C8;
-	Wed, 19 Feb 2025 23:10:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AD9225A334;
+	Wed, 19 Feb 2025 23:10:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740006602; cv=none; b=OIiyjugW3gQOd9zIa/Z+c/86LPZjaidQYToCFDdnOZXmXmLZMtCm/ONNgv0DtzkYYFKFsgucngK157shx5mQanUO2oaHJE84XSO79KUiE1T6UsFS7gLl0cU/DwgJT9vtzIuJbO4lGC8lPYY05Syaa/uxFRu1S4r7c3AEqzpcC8o=
+	t=1740006638; cv=none; b=FQGw3yfvm6wNqJ4ZuD6LQ6fyudaPmnOnq00g/W6l5YZSvOYeXj+DD9JrZ6UFAWamKE9Hnmp0oKT1xoMTDj03IBXlw3F88y5CKw0Iyrp7M+cWvt7lBu1zk5lH+Qhg4ARQJttKKFD7ZSAIovwzqseL/Ffmx8sB5/ZMoUBTvLCm5kc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740006602; c=relaxed/simple;
-	bh=8oBBrsO2Q2hbr24I2v3A4+lL9lPI8diFVStP1Tt1eGI=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=IUZ1JQ3H5hkTpLgi3xZrGcNw+JTa9mI3fzlIt7EJyjM667ObdB8J11Mug0XbbbSrNM+qqDQDMJPhjqco6NGAl1K0bg6Dh3TYUdC4yZenrKo5dm2OJ3Jpc7j6pGb0XMZmAafpt6qzgFQOEkzbFnTIqJWTSvjS/eSXufC57yyj5zE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HU1gUmcH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC40AC4CEE7;
-	Wed, 19 Feb 2025 23:10:01 +0000 (UTC)
+	s=arc-20240116; t=1740006638; c=relaxed/simple;
+	bh=CYLczoHD6qvbYSNlRY5igolvyzZvd2e9ewBvJXOSbIw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T4EcFv9klRyyDuVV0XcPBjZuj7m0EEMb/3fDZduONNGKjLsYNmDjo62iGu34HYTeXxFcUfJwg+MlVPOHdG4Q376f4LL9eiiqS4ogpJQgywGyKJCMvmEu03E0cWEWkCzAKf60iEviRP3RqZOHz6OOp8sfnELfjBuZwdwTavhwblY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ssGYmnJ9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EA85C4CED1;
+	Wed, 19 Feb 2025 23:10:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740006601;
-	bh=8oBBrsO2Q2hbr24I2v3A4+lL9lPI8diFVStP1Tt1eGI=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=HU1gUmcH3zsjRr6O+cDJnYBaVwqSrmjyujaE708reHzQJyuVpkYPCvNZvdMFRR4zI
-	 yoEQmo/HltSGWBcrXj0aLuApT9DFz/T1k39slI9GSQTIxXVFEIfIpwXNGc8+UVMQdk
-	 69mGO5IdzbExx/FHgTJFpfb2oBmSs377ZYnKCHNqAOR1SAnO78Yy0Xt+mY/jm1L3UA
-	 VfHJt7QdGfxQRfQ6VJCV4lDUZ5HHPpVZbzmkbzVdM5pQJhNAQgk0gKlk6Xq3W89VJJ
-	 aWT2edeWh7icT7Vx5lV4fjAMmal234U1F3JGGZrhManSH1h99rHzUKGSvooIal4GqZ
-	 6XqlrDYLJN0JQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 716A9380AAEC;
-	Wed, 19 Feb 2025 23:10:33 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1740006637;
+	bh=CYLczoHD6qvbYSNlRY5igolvyzZvd2e9ewBvJXOSbIw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ssGYmnJ9qxwuROAsGnBlSTwZir7tTkewQhMyWzapIUf0BfmMOI2Ju3oj8Vr49jREA
+	 lUF4QK8E0rZiO07qAKQLe0etXjkWtMS5tNUHq8pqqbknRdEIOnVI8XmdBSfze0riaJ
+	 QmWNOZmUeyzjZtAbiLv7WJLTu+X/breMLqPTt1Z563RcmmbjqUJMTPzpZcTuICsr13
+	 gyJYadZesKuK9+AnT7OrceSijZnMd92ubLhHUpUhSN+5jkVVB0NW1sZeFsyqGDr2Qb
+	 IxULEIJhGfskmfeCtB9KknZYkDsKvA6jpYULrSeRQ3CnTcVFr4P9ETmWiUq39Zt9+b
+	 AU2rl7Sggwogw==
+Date: Wed, 19 Feb 2025 17:10:36 -0600
+From: Rob Herring <robh@kernel.org>
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	kernel@collabora.com, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/6] dt-bindings: thermal: rockchip: document otp thermal
+ trim
+Message-ID: <20250219231036.GA3137058-robh@kernel.org>
+References: <20250216-rk3576-tsadc-upstream-v1-0-6ec969322a14@collabora.com>
+ <20250216-rk3576-tsadc-upstream-v1-4-6ec969322a14@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] selftests/bpf: DENYLIST.aarch64: enable kprobe_multi tests
- for ARM64
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174000663227.777997.10197622694803757950.git-patchwork-notify@kernel.org>
-Date: Wed, 19 Feb 2025 23:10:32 +0000
-References: <20250219-enable_kprobe_multi_tests-v1-1-faeec99240c8@bootlin.com>
-In-Reply-To: <20250219-enable_kprobe_multi_tests-v1-1-faeec99240c8@bootlin.com>
-To: =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29_=3Calexis=2Elothore=40bo?=@codeaurora.org,
-	=?utf-8?q?otlin=2Ecom=3E?=@codeaurora.org
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, mykolal@fb.com,
- shuah@kernel.org, mhiramat@kernel.org, bastien.curutchet@bootlin.com,
- ebpf@linuxfoundation.org, thomas.petazzoni@bootlin.com, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250216-rk3576-tsadc-upstream-v1-4-6ec969322a14@collabora.com>
 
-Hello:
+On Sun, Feb 16, 2025 at 12:34:53AM +0100, Nicolas Frattaroli wrote:
+> Several Rockchip SoCs, such as the RK3576, can store calibration trim
+> data for thermal sensors in OTP cells. This capability should be
+> documented.
 
-This patch was applied to bpf/bpf-next.git (master)
-by Andrii Nakryiko <andrii@kernel.org>:
+Is several most or a minority as this change is enabled for everyone.
 
-On Wed, 19 Feb 2025 20:41:39 +0100 you wrote:
-> The kprobe_multi feature was disabled on ARM64 due to the lack of fprobe
-> support.
 > 
-> The fprobe rewrite on function_graph has been recently merged and thus
-> brought support for fprobes on arm64.  This then enables kprobe_multi
-> support on arm64, and so the corresponding tests can now be run on this
-> architecture.
+> Such a rockchip thermal sensor may reference cell handles that store
+> both a chip-wide trim for all the sensors, as well as cell handles
+> for each individual sensor channel pointing to that specific sensor's
+> trim value.
 > 
-> [...]
+> Additionally, the thermal sensor may optionally reference cells which
+> store the base in terms of degrees celsius and decicelsius that the trim
+> is relative to.
+> 
+> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+> ---
+>  .../bindings/thermal/rockchip-thermal.yaml         | 44 ++++++++++++++++++++++
+>  1 file changed, 44 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/thermal/rockchip-thermal.yaml b/Documentation/devicetree/bindings/thermal/rockchip-thermal.yaml
+> index 49ceed68c92ce5a32ed8d4f39bd88fd052de0e80..8d27ddefcc64e29f0faab059888805802c948b41 100644
+> --- a/Documentation/devicetree/bindings/thermal/rockchip-thermal.yaml
+> +++ b/Documentation/devicetree/bindings/thermal/rockchip-thermal.yaml
+> @@ -40,6 +40,21 @@ properties:
+>        - const: tsadc
+>        - const: apb_pclk
+>  
+> +  nvmem-cells:
+> +    items:
+> +      - description: cell handle of the low byte of the chip fallback trim value
+> +      - description: cell handle of the high byte of the chip fallback trim value
+> +      - description: cell handle to where the trim's base temperature is stored
+> +      - description:
+> +          cell handle to where the trim's tenths of Celsius base value is stored
+> +
+> +  nvmem-cell-names:
+> +    enum:
+> +      - trim_l
+> +      - trim_h
+> +      - trim_base
+> +      - trim_base_frac
+> +
+>    resets:
+>      minItems: 1
+>      maxItems: 3
+> @@ -51,6 +66,12 @@ properties:
+>        - const: tsadc
+>        - const: tsadc-phy
+>  
+> +  "#address-cells":
+> +    const: 1
+> +
+> +  "#size-cells":
+> +    const: 0
+> +
+>    "#thermal-sensor-cells":
+>      const: 1
+>  
+> @@ -72,6 +93,29 @@ properties:
+>      $ref: /schemas/types.yaml#/definitions/uint32
+>      enum: [0, 1]
+>  
+> +patternProperties:
+> +  "^([a-z]+)@[0-9]+$":
 
-Here is the summary with links:
-  - selftests/bpf: DENYLIST.aarch64: enable kprobe_multi tests for ARM64
-    https://git.kernel.org/bpf/bpf-next/c/ac13c5087299
+If each node is a sensor or channel, then make that the node name.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+> +    type: object
+> +    properties:
+> +      reg:
+> +        maxItems: 1
+> +        description: sensor ID, a.k.a. channel number
+> +
+> +      nvmem-cells:
+> +        items:
+> +          - description: handle of cell containing low byte of calibration data
+> +          - description: handle of cell containing high byte of calibration data
+> +
+> +      nvmem-cell-names:
+> +        items:
+> +          - const: trim_l
+> +          - const: trim_h
+> +
+> +    required:
+> +      - reg
+> +
+> +    unevaluatedProperties: false
+> +
+>  required:
+>    - compatible
+>    - reg
+> 
+> -- 
+> 2.48.1
+> 
 
