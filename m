@@ -1,228 +1,115 @@
-Return-Path: <linux-kernel+bounces-522430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19BF4A3CA4F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:46:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFE67A3CA4E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:46:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8410C1898FFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 20:46:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5A3B1898DC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 20:46:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C7DB24418C;
-	Wed, 19 Feb 2025 20:46:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lmESpHeI"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 117B9243953;
+	Wed, 19 Feb 2025 20:45:48 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C04124337D;
-	Wed, 19 Feb 2025 20:46:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9593D1DF24F;
+	Wed, 19 Feb 2025 20:45:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739997971; cv=none; b=SOX1Flh7h+bfhJo0k+hZkYBsHtEoIeB3zW2aP5jfkbz5XUIwT06PS7I1sMVl0aPaYHa3Mvym4svp+1xjpXG2VXd5mDkuzozRU7vzEZTVISs3n0u4mXlM1YYqm4gRs0yF8MzbsCdoXjZA6tB/MlkKU+tPv8HnIyfFmJiErbd2kC8=
+	t=1739997947; cv=none; b=W+zw+t0dNUSce8I7d0DgZp0AC3XrTUOXVPksUYwwMerIE7SCpY36z/O+W3zFhQQfRzaEBLE37kMum6wMTMCeyxwXR4OZwop5j/GV+/7ebm681eSAxIlnQwuDTzDAqv8ZfZ5y/BDgCClmKvgbH2Uz46/3NQ4CN15usUbkA+dNqf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739997971; c=relaxed/simple;
-	bh=Oo0TXfXOy2oQwP/CDP4amItNOuFRoteUL2oJUYaC9EE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r7NXAeZ9WK/2zFotTGLMMUohlRqBaJzRMedliT0mmYIeF1NvxnlIARls2gykGJQAEPCD6XEbWaPXTxrdioybasj9nxX1TqADEu4wwD516EmobtU4zZtNhGpUaHti2RNx5vLjQbp8ix+v7yZQiOn8jpoDNC/N3nKiNwYmmbiu81U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lmESpHeI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A96C0C4CED1;
-	Wed, 19 Feb 2025 20:46:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739997970;
-	bh=Oo0TXfXOy2oQwP/CDP4amItNOuFRoteUL2oJUYaC9EE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lmESpHeI3jXR+hEkMFW0dxI+aBNHz73BTDyiphFGWRJsvHLoeMFZ0mx8x8qjQH51P
-	 4ixZSYByDRXHAMH0EEW7knZZFAez2Sbk3aYdZz6KJcWa2/r99xtVilR1Hz6uxigD6Y
-	 fvwe1YLz6GC4fxgSVD7LealoUejoYd5p2KZ/IslZ7NZLjd9BYwtfZfhIaxzGQxKqzJ
-	 C9v489INZXlBqf7Y9WxPqMVMKlqXN7ncowdk1yfgXFH6xzCslWawMAK8yv+Mwnqi15
-	 swH2Mo62ZUYSurWT66e6TA1VmKhQ7MM7KrfJGGjDw6IY1LHDJXENSrkRCRRwWe3q1S
-	 7IRMK48rjqqbw==
-Date: Wed, 19 Feb 2025 14:46:08 -0600
-From: Rob Herring <robh@kernel.org>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, Lizhi Hou <lizhi.hou@amd.com>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Steen Hegelund <steen.hegelund@microchip.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v7 0/5] Add support for the PCI host bridge device-tree
- node creation.
-Message-ID: <20250219204608.GA2870764-robh@kernel.org>
-References: <20250204073501.278248-1-herve.codina@bootlin.com>
+	s=arc-20240116; t=1739997947; c=relaxed/simple;
+	bh=RYwHnw45/MEFs5Axvyvrt2KBWzat47/DZtEE1DHf4NI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FETad1JojANTJv4WrRdl4OQHeQHY7UB+VDMjfJCwHj6qNHah2qzlzZQvogp3nkvrzHOIY/VFUotJaaxTPwdT4wAk5EqutAcDRasVqWwhNn3SPNWdISWl+3EaGbOKIVuEXYbIG+8TXC+Admv1m2ojWMOdQpkDsu3+7iRR/2u2O8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCB25C4CEE6;
+	Wed, 19 Feb 2025 20:45:45 +0000 (UTC)
+Date: Wed, 19 Feb 2025 15:46:10 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Kees Cook <kees@kernel.org>, Miguel Ojeda
+ <miguel.ojeda.sandonis@gmail.com>, Christoph Hellwig <hch@infradead.org>,
+ rust-for-linux <rust-for-linux@vger.kernel.org>, Linus Torvalds
+ <torvalds@linux-foundation.org>, Greg KH <gregkh@linuxfoundation.org>,
+ David Airlie <airlied@gmail.com>, linux-kernel@vger.kernel.org,
+ ksummit@lists.linux.dev
+Subject: Re: Rust kernel policy
+Message-ID: <20250219154610.30dc6223@gandalf.local.home>
+In-Reply-To: <20250219202751.GA42073@nvidia.com>
+References: <CANiq72m-R0tOakf=j7BZ78jDHdy=9-fvZbAT8j91Je2Bxy0sFg@mail.gmail.com>
+	<Z7SwcnUzjZYfuJ4-@infradead.org>
+	<CANiq72myjaA3Yyw_yyJ+uvUrZQcSLY_jNp65iKH8Y5xGY5tXPQ@mail.gmail.com>
+	<202502191026.8B6FD47A1@keescook>
+	<20250219140821.27fa1e8a@gandalf.local.home>
+	<202502191117.8E1BCD4615@keescook>
+	<20250219202751.GA42073@nvidia.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250204073501.278248-1-herve.codina@bootlin.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Feb 04, 2025 at 08:34:55AM +0100, Herve Codina wrote:
-> Hi,
-> 
-> This series adds support for creating a device-tree node for the PCI
-> host bridge on non device-tree based system.
-> 
-> Creating device-tree nodes for PCI devices and PCI-PCI bridges already
-> exists upstream. It was added in commit 407d1a51921e ("PCI: Create
-> device tree node for bridge"). Created device-tree nodes need a parent
-> node to be attached to. For the first level devices, on device-tree
-> based system, this parent node (i.e. the PCI host bridge) is described
-> in the base device-tree. The PCI bus related to this bridge (PCI root
-> bus) inherit of the PCI host bridge device-tree node.
-> 
-> The LAN966x PCI device driver, available since commit 185686beb464
-> ("misc: Add support for LAN966x PCI device"), relies on this feature.
-> 
-> On system where the base hardware is not described by a device-tree, the
-> PCI host bridge to which first level created PCI devices need to be
-> attach to does not exist. This is the case for instance on ACPI
-> described systems such as x86.
-> 
-> This series goal is to handle this case.
-> 
-> In order to have the PCI host bridge device-tree node available even
-> on x86, this top level node is created (if not already present) based on
-> information computed by the PCI core. It follows the same mechanism as
-> the one used for PCI devices device-tree node creation.
-> 
-> As for device-tree based system, the PCI root bus handled by the PCI
-> host bridge inherit of this created node.
-> 
-> In order to have this feature available, a number of changes are needed:
->   - Patch 1 and 2: Introduce and use device_{add,remove}_of_node().
->     This function will also be used in the root PCI bus node creation.
-> 
->   - Patch 3 and 4: Improve existing functions to reuse them in the root
->     PCI bus node creation.
-> 
->   - Patch 5: The PCI host bridge device-tree node creation itself.
-> 
-> With those modifications, the LAN966x PCI device is working on x86 systems
-> and all device-tree kunit tests (including the of_unittest_pci_node test)
-> pass successfully with the following command:
->   qemu-system-x86_64 -machine q35 -nographic \
->     -kernel arch/x86_64/boot/bzImage --append console=ttyS0 \
->     -device pcie-root-port,port=0x10,chassis=9,id=pci.9,bus=pcie.0,multifunction=on,addr=0x3 \
->     -device pcie-root-port,port=0x11,chassis=10,id=pci.10,bus=pcie.0,addr=0x3.0x1 \
->     -device x3130-upstream,id=pci.11,bus=pci.9,addr=0x0 \
->     -device xio3130-downstream,port=0x0,chassis=11,id=pci.12,bus=pci.11,multifunction=on,addr=0x0 \
->     -device i82801b11-bridge,id=pci.13,bus=pcie.0,addr=0x4 \
->     -device pci-bridge,chassis_nr=14,id=pci.14,bus=pci.13,addr=0x0 \
->     -device pci-testdev,bus=pci.12,addr=0x0
-> 
-> Compare to previous iteration, this v7 series is the v6 series rebased
-> on top of v6.14-rc1 without other modifications.
-> 
-> Best regards,
-> Hervé Codina
-> 
-> Changes v6 -> v7
->   v6: https://lore.kernel.org/lkml/20250110082143.917590-1-herve.codina@bootlin.com/
-> 
->   Rebase on top of v6.14-rc1
-> 
-> Changes v5 -> v6
->   v5: https://lore.kernel.org/lkml/20241209130339.81354-1-herve.codina@bootlin.com/
-> 
->   - Patch 1
->     Add a return error code in device_add_of_node()
-> 
->   - Patches 2 and 5
->     Handle the device_add_of_node() error code
-> 
->   - Patches 3 and 4
->     No changes
-> 
-> Changes v4 -> v5
->   v4: https://lore.kernel.org/lkml/20241202131522.142268-1-herve.codina@bootlin.com/
-> 
->   - Patch 1
->     Use dev_warn() instead of WARN()
-> 
->   - Patches 2 to 4
->     No changes
-> 
->   - Patch 5 (v4 patch 6)
->     Use dev_err()
->     Fix a typo in commit log
-> 
->   Patch removed in v5
->     - Patch 5 in v4
->       Already applied
-> 
-> Changes v3 -> v4
->   v3: https://lore.kernel.org/lkml/20241114165446.611458-1-herve.codina@bootlin.com/
-> 
->   Rebase on top of v6.13-rc1
-> 
->   - Patches 1 to 6
->     No changes
-> 
-> Changes v2 -> v3
->   v2: https://lore.kernel.org/lkml/20241108143600.756224-1-herve.codina@bootlin.com/
-> 
->   - Patch 5
->     Fix commit log.
->     Use 2 for #size-cells.
-> 
->   - Patches 1 to 4 and 6
->     No changes
-> 
-> Changes v1 -> v2
->   v1: https://lore.kernel.org/lkml/20241104172001.165640-1-herve.codina@bootlin.com/
-> 
->   - Patch 1
->     Remove Cc: stable
-> 
->   - Patch 2
->     Remove Fixup tag and Cc: stable
-> 
->   - Patches 3 and 4
->     No changes
-> 
->   - Patch 5
->     Add #address-cells/#size-cells in the empty root DT node instead of
->     updating default values for x86.
->     Update commit log and commit title.
-> 
->   - Patch 6
->     Create device-tree node for the PCI host bridge and reuse it for
->     the PCI root bus. Rename functions accordingly.
->     Use "pci" instead of "pci-root" for the PCI host bridge node name.
->     Use "res->start - windows->offset" for the PCI bus addresses.
->     Update commit log and commit title.
-> 
-> Herve Codina (5):
->   driver core: Introduce device_{add,remove}_of_node()
->   PCI: of: Use device_{add,remove}_of_node() to attach of_node to
->     existing device
->   PCI: of_property: Add support for NULL pdev in of_pci_set_address()
->   PCI: of_property: Constify parameter in of_pci_get_addr_flags()
->   PCI: of: Create device-tree PCI host bridge node
-> 
->  drivers/base/core.c       |  61 ++++++++++++++++++++
->  drivers/pci/of.c          | 115 +++++++++++++++++++++++++++++++++++++-
->  drivers/pci/of_property.c | 114 +++++++++++++++++++++++++++++++++++--
->  drivers/pci/pci.h         |   6 ++
->  drivers/pci/probe.c       |   2 +
->  drivers/pci/remove.c      |   2 +
->  include/linux/device.h    |   2 +
->  7 files changed, 295 insertions(+), 7 deletions(-)
+On Wed, 19 Feb 2025 16:27:51 -0400
+Jason Gunthorpe <jgg@nvidia.com> wrote:
 
-For the series,
+> Can someone do some data mining and share how many "rust
+> opportunities" are there per cycle? Ie entirely new drivers introduced
+> (maybe bucketed per subsystem) and lines-of-code of C code in those
+> drivers.
+> 
+> My gut feeling is that the security argument is not so strong, just
+> based on numbers. We will still have so much code flowing in that will
+> not be Rust introducing more and more bugs. Even if every new driver
+> is Rust the reduction in bugs will be percentage small.
+> 
+> Further, my guess is the majority of new drivers are embedded
+> things. I strongly suspect entire use cases, like a hypervisor kernel,
+> server, etc, will see no/minimal Rust adoption or security improvement
+> at all as there is very little green field / driver work there that
+> could be in Rust.
+> 
+> Meaning, if you want to make the security argument strong you must
+> also argue for strategically rewriting existing parts of the kernel,
+> and significantly expanding the Rust footprint beyond just drivers. ie
+> more like binder is doing.
+> 
+> I think this is also part of the social stress here as the benefits of
+> Rust are not being evenly distributed across the community.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Drivers is the biggest part of the Linux kernel and has the biggest churn.
+A lot of them are "drive by" submissions too (Let's add a driver for our
+new device and work on something else). These are written by people that
+are not kernel maintainers but just people trying to get their devices
+working on Linux. That means they are the ones to introduce the most bugs
+that Rust would likely prevent.
+
+I was going through my own bugs to see how much Rust would help, and the
+percentage was rather small. I did have a few ref counter bugs. Not the
+kind for freeing, but for which left things in a state that the system
+couldn't be modified (the ref count was to lock access). I'm not sure Rust
+would have solved that.
+
+So most of the bugs were accounting issues. I found a couple that were
+memory safety bugs but those are not as common. I guess that's because I do
+test with kmemleak which will usually detect that.
+
+Perhaps I wouldn't need to do all the memory tests if I wrote the code in
+Rust? But that's not what you are asking. As a maintainer of core code, I
+run a lot of tests before sending to Linus. Which I would hope keeps the
+number of bugs I introduce to a minimum. But I can't say the same for the
+driver code. That's a much different beast, as to test that code, you also
+need the hardware that the driver is for.
+
+I do feel that new drivers written in Rust would help with the
+vulnerabilities that new drivers usually add to the kernel.
+
+-- Steve
 
