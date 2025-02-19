@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-521478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99734A3BDF2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:24:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 420BBA3BDEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:22:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 186603B086D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:22:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28E04188D68B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:22:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B1F1E0DCD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2BEE1E0E08;
 	Wed, 19 Feb 2025 12:22:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="i5+Mfzr4"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Yk2wDoVx"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D5401DE89D;
-	Wed, 19 Feb 2025 12:22:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5089F1DE8BE;
+	Wed, 19 Feb 2025 12:22:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739967734; cv=none; b=gtDxHicwwzkTdbk+SR1uXfmQvDhWkmvquut5PqfWpxRSGLvSbAiov5/9+Rf9nXNEPEYKFlnWe8rCh9aVfsZvxUAxhPfnaHAmanTrJF/o0jpHKecbpOGS/ey55XYXSiRKRUkUs9G7vgo9INJVazVkYmW45OKFsrjb8CdqVD2V9ZM=
+	t=1739967735; cv=none; b=JtTiTvgAItUyOzrCzZ9XMV2AsnIJMqSnt88G9mhcV20t4pKE7ee2SWLYllCyTq6xiiwLoKh/SJhnVb0ZRaRal7ZO5yFYCjsx/+pv55O/1v5kAtXapxcVhEf0fWp6pkXODtQgstp+GKSgvt8HRSLYGcaFUeqnBeMVn0r00lFfnYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739967734; c=relaxed/simple;
-	bh=VZcpZOExLYYrTPAdbIs9tmOF3woEkgLeHqKPUO4W0Bs=;
+	s=arc-20240116; t=1739967735; c=relaxed/simple;
+	bh=B7yMogAYJNxLn7fYb3PggxlyL8doB57WH2k5L7pR6qY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=i3B9f0THXpd70fAsma11zuPn/1Xce2+bYy2/D/BRI33Ih9weFEoaD4bpDjj586x4ta3/bnav9EKQuFWR8ZKz5K+I0/UKKX1zBo3XGvWvY+SlEOiviD6hdsSRu0ayHuyvAdaBxGfy4LnZEGGBqUEcUpDL4nRzJfvIN3DSH4i3Zok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=i5+Mfzr4; arc=none smtp.client-ip=148.251.105.195
+	 MIME-Version; b=otBzyEwP4B2o1/5+ojQkVnNaHgrvkthYgITxszODk88vSUo72NOWwO8IEHhQMzPoyYzBnMExkI4zQTSvN29xoYrD82UHeb62J/tHMmqMJ8w+uJkuJuv1HiQJ6+y/IzcjPtrhSKVUlneFoGFcU0FcGSPapJ/9QbMC5ZzQEYLXwEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Yk2wDoVx; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1739967730;
-	bh=VZcpZOExLYYrTPAdbIs9tmOF3woEkgLeHqKPUO4W0Bs=;
+	s=mail; t=1739967731;
+	bh=B7yMogAYJNxLn7fYb3PggxlyL8doB57WH2k5L7pR6qY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=i5+Mfzr453y2ACTWtOOE3D9tvfohKg6v2r5LJ+ZZy4C1WggCdoAW+GS7+IzSsDErR
-	 m50g+np3/kfR27FqqB/j6nGlqgn83bIzrU0OJO4ZDmfIZKrRzvyWLs+/qtA/RTALiM
-	 2eT/503JPf1Una3P37gu7+wR2plLa8XMBZ5Wr57Z+bZjYHrJbtQN/fkRXN4quTGTpG
-	 5yG0D5HIKhrXFDCzSiGjixZoEQf46pnHDDIMZnf4mLdzw6XQrqK6qEi28ahyKf1NAd
-	 zm/PQHh44uyw0X+AyclAtch+FFRhEvaD+nPf+3vP/RH1JwZTapsKjcbEwlFfT90HCQ
-	 12EEQ7U5ajSPQ==
+	b=Yk2wDoVxGDit/enUVx/kChc6yIHjf3EnUhy5QU1OJUi5u0cUkmQBcvOt+QTpkYs+h
+	 6XIj0BVMuC85EuWa/MZfNUAkjqn5DjNHEC/a87M+fFHu8Si6Tag0v4lma7dqwp7bEa
+	 VGYQRieRGq1JeFtxZygjDqViwbv2Dt53lOO1nBOX5LnwEH4HhogqtT3SwBd6F2h866
+	 OY2iqamC+sfOiqKpkZ7IIudZV2uE9q2oS8D3KQg2GfVe2wqVS0LlkR52/P/OA0X5PC
+	 Y6OY1Pv3pvZVFOR9BHNhWZXO/omNAqm+Bq7G1mMzGWgynzebJ/7sRvt+nEd5GQXx9j
+	 ZKvv3gm1W/H8w==
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 440CF17E14D5;
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0574717E1566;
 	Wed, 19 Feb 2025 13:22:10 +0100 (CET)
 From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 To: heikki.krogerus@linux.intel.com
@@ -58,9 +58,9 @@ Cc: gregkh@linuxfoundation.org,
 	linux-kernel@vger.kernel.org,
 	kernel@collabora.com,
 	pablo.sun@mediatek.com
-Subject: [PATCH v2 1/2] arm64: dts: mediatek: mt8188: Add MTU3 nodes and correctly describe USB
-Date: Wed, 19 Feb 2025 13:22:05 +0100
-Message-ID: <20250219122206.46695-2-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH v2 2/2] arm64: dts: mediatek: mt8390-genio: Add USB, TypeC Controller, MUX
+Date: Wed, 19 Feb 2025 13:22:06 +0100
+Message-ID: <20250219122206.46695-3-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250219122206.46695-1-angelogioacchino.delregno@collabora.com>
 References: <20250219122206.46695-1-angelogioacchino.delregno@collabora.com>
@@ -72,283 +72,233 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The MT8188 SoC has three USB controllers, and all of them are behind
-the MTU3 DRD controller.
+This board features multiple USB connectors:
+ * One Type-C connector with Power Delivery and Alt. Modes;
+ * One MicroUSB connector, also used for bootloader SW download;
+ * One USB through the RaspberryPi-compatible pins header.
 
-Add the missing MTU3 nodes, default disabled, for all USB controllers
-and move the related XHCI nodes to be children of their MTU3 DRD to
-correctly describe the SoC.
+Add configuration for the MTU3 controllers providing OTG support
+with role switching both on the MicroUSB port, RPi pins header,
+and the Type-C port found on this board.
 
-In order to retain USB functionality on all of the MT8188 and MT8390
-boards, also move the vusb33 supply and enable the relevant MTU3 nodes
-with special attention to the MT8188 Geralt Chromebooks, where it was
-necessary to set the dr_mode of all MTU3 controllers to host to avoid
-interfering with the EC performing DRD on its own.
+Moreover, add the Richtek RT1715 Type-C Power Delivery Controller
+which manages current source/sink, linked to the iTE IT5205 Type-C
+Alternate Mode Passive Mux, handling both mode switching between
+USB (up to 3.1 Gen2 10Gbps) and DisplayPort (four lanes, DP1.4,
+op to 8.1Gbps) and plug orientation switching.
+
+All USB ports reside on different controller instances, and all of
+them support host or gadget and can be configured as desired at
+runtime.
 
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- .../boot/dts/mediatek/mt8188-geralt.dtsi      |  18 +++
- arch/arm64/boot/dts/mediatek/mt8188.dtsi      | 121 ++++++++++++------
- .../dts/mediatek/mt8390-genio-common.dtsi     |  28 ++++
- 3 files changed, 125 insertions(+), 42 deletions(-)
+ .../dts/mediatek/mt8390-genio-common.dtsi     | 141 +++++++++++++++++-
+ 1 file changed, 133 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8188-geralt.dtsi b/arch/arm64/boot/dts/mediatek/mt8188-geralt.dtsi
-index b6abecbcfa81..faed5c8bc721 100644
---- a/arch/arm64/boot/dts/mediatek/mt8188-geralt.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8188-geralt.dtsi
-@@ -1103,6 +1103,12 @@ &u3phy2 {
- };
- 
- /* USB detachable base */
-+&ssusb0 {
-+	dr_mode = "host";
-+	vusb33-supply = <&pp3300_s3>;
-+	status = "okay";
-+};
-+
- &xhci0 {
- 	/* controlled by EC */
- 	vbus-supply = <&pp3300_z1>;
-@@ -1110,6 +1116,12 @@ &xhci0 {
- };
- 
- /* USB3 hub */
-+&ssusb1 {
-+	dr_mode = "host";
-+	vusb33-supply = <&pp3300_s3>;
-+	status = "okay";
-+};
-+
- &xhci1 {
- 	vusb33-supply = <&pp3300_s3>;
- 	vbus-supply = <&pp5000_usb_vbus>;
-@@ -1117,6 +1129,12 @@ &xhci1 {
- };
- 
- /* USB BT */
-+&ssusb2 {
-+	dr_mode = "host";
-+	vusb33-supply = <&pp3300_s3>;
-+	status = "okay";
-+};
-+
- &xhci2 {
- 	/* no power supply since MT7921's power is controlled by PCIe */
- 	/* MT7921's USB BT has issues with USB2 LPM */
-diff --git a/arch/arm64/boot/dts/mediatek/mt8188.dtsi b/arch/arm64/boot/dts/mediatek/mt8188.dtsi
-index d2e1ff7236b1..2b797f160556 100644
---- a/arch/arm64/boot/dts/mediatek/mt8188.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8188.dtsi
-@@ -1649,6 +1649,38 @@ spi5: spi@11019000 {
- 			status = "disabled";
- 		};
- 
-+		ssusb1: usb@11201000 {
-+			compatible = "mediatek,mt8188-mtu3", "mediatek,mtu3";
-+			reg = <0 0x11201000 0 0x2dff>, <0 0x11203e00 0 0x0100>;
-+			reg-names = "mac", "ippc";
-+			ranges = <0 0 0 0x11200000 0 0x3f00>;
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			interrupts-extended = <&gic GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH 0>;
-+			assigned-clocks = <&topckgen CLK_TOP_USB_TOP>;
-+			assigned-clock-parents = <&topckgen CLK_TOP_UNIVPLL_D5_D4>;
-+			clocks = <&pericfg_ao CLK_PERI_AO_SSUSB_BUS>,
-+				 <&topckgen CLK_TOP_SSUSB_TOP_REF>,
-+				 <&pericfg_ao CLK_PERI_AO_SSUSB_XHCI>;
-+			clock-names = "sys_ck", "ref_ck", "mcu_ck";
-+			phys = <&u2port1 PHY_TYPE_USB2>, <&u3port1 PHY_TYPE_USB3>;
-+			wakeup-source;
-+			mediatek,syscon-wakeup = <&pericfg 0x468 2>;
-+			status = "disabled";
-+
-+			xhci1: usb@0 {
-+				compatible = "mediatek,mt8188-xhci", "mediatek,mtk-xhci";
-+				reg = <0 0 0 0x1000>;
-+				reg-names = "mac";
-+				interrupts = <GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH 0>;
-+				assigned-clocks = <&topckgen CLK_TOP_SSUSB_XHCI>;
-+				assigned-clock-parents = <&topckgen CLK_TOP_UNIVPLL_D5_D4>;
-+				clocks = <&pericfg_ao CLK_PERI_AO_SSUSB_XHCI>;
-+				clock-names = "sys_ck";
-+				status = "disabled";
-+			};
-+		};
-+
- 		eth: ethernet@11021000 {
- 			compatible = "mediatek,mt8188-gmac", "mediatek,mt8195-gmac",
- 				     "snps,dwmac-5.10a";
-@@ -1746,27 +1778,6 @@ queue3 {
- 			};
- 		};
- 
--		xhci1: usb@11200000 {
--			compatible = "mediatek,mt8188-xhci", "mediatek,mtk-xhci";
--			reg = <0 0x11200000 0 0x1000>,
--			      <0 0x11203e00 0 0x0100>;
--			reg-names = "mac", "ippc";
--			interrupts = <GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH 0>;
--			phys = <&u2port1 PHY_TYPE_USB2>,
--			       <&u3port1 PHY_TYPE_USB3>;
--			assigned-clocks = <&topckgen CLK_TOP_USB_TOP>,
--					  <&topckgen CLK_TOP_SSUSB_XHCI>;
--			assigned-clock-parents = <&topckgen CLK_TOP_UNIVPLL_D5_D4>,
--						 <&topckgen CLK_TOP_UNIVPLL_D5_D4>;
--			clocks = <&pericfg_ao CLK_PERI_AO_SSUSB_BUS>,
--				 <&topckgen CLK_TOP_SSUSB_TOP_REF>,
--				 <&pericfg_ao CLK_PERI_AO_SSUSB_XHCI>;
--			clock-names = "sys_ck", "ref_ck", "mcu_ck";
--			mediatek,syscon-wakeup = <&pericfg 0x468 2>;
--			wakeup-source;
--			status = "disabled";
--		};
--
- 		mmc0: mmc@11230000 {
- 			compatible = "mediatek,mt8188-mmc", "mediatek,mt8183-mmc";
- 			reg = <0 0x11230000 0 0x10000>,
-@@ -1867,42 +1878,68 @@ imp_iic_wrap_c: clock-controller@11283000 {
- 			#clock-cells = <1>;
- 		};
- 
--		xhci2: usb@112a0000 {
--			compatible = "mediatek,mt8188-xhci", "mediatek,mtk-xhci";
--			reg = <0 0x112a0000 0 0x1000>,
--			      <0 0x112a3e00 0 0x0100>;
-+		ssusb2: usb@112a1000 {
-+			compatible = "mediatek,mt8188-mtu3", "mediatek,mtu3";
-+			reg = <0 0x112a1000 0 0x2dff>, <0 0x112a3e00 0 0x0100>;
- 			reg-names = "mac", "ippc";
--			interrupts = <GIC_SPI 536 IRQ_TYPE_LEVEL_HIGH 0>;
--			phys = <&u2port2 PHY_TYPE_USB2>;
--			assigned-clocks = <&topckgen CLK_TOP_SSUSB_XHCI_3P>,
--					  <&topckgen CLK_TOP_USB_TOP_3P>;
--			assigned-clock-parents = <&topckgen CLK_TOP_UNIVPLL_D5_D4>,
--						 <&topckgen CLK_TOP_UNIVPLL_D5_D4>;
-+			ranges = <0 0 0 0x112a0000 0 0x3f00>;
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			interrupts-extended = <&gic GIC_SPI 535 IRQ_TYPE_LEVEL_HIGH 0>;
-+			assigned-clocks = <&topckgen CLK_TOP_USB_TOP_3P>;
-+			assigned-clock-parents = <&topckgen CLK_TOP_UNIVPLL_D5_D4>;
- 			clocks = <&pericfg_ao CLK_PERI_AO_SSUSB_3P_BUS>,
- 				 <&topckgen CLK_TOP_SSUSB_TOP_P3_REF>,
- 				 <&pericfg_ao CLK_PERI_AO_SSUSB_3P_XHCI>;
- 			clock-names = "sys_ck", "ref_ck", "mcu_ck";
-+			phys = <&u2port2 PHY_TYPE_USB2>;
-+			wakeup-source;
-+			mediatek,syscon-wakeup = <&pericfg 0x470 2>;
- 			status = "disabled";
-+
-+			xhci2: usb@0 {
-+				compatible = "mediatek,mt8188-xhci", "mediatek,mtk-xhci";
-+				reg = <0 0 0 0x1000>;
-+				reg-names = "mac";
-+				interrupts = <GIC_SPI 536 IRQ_TYPE_LEVEL_HIGH 0>;
-+				assigned-clocks = <&topckgen CLK_TOP_SSUSB_XHCI_3P>;
-+				assigned-clock-parents = <&topckgen CLK_TOP_UNIVPLL_D5_D4>;
-+				clocks = <&pericfg_ao CLK_PERI_AO_SSUSB_3P_XHCI>;
-+				clock-names = "sys_ck";
-+				status = "disabled";
-+			};
- 		};
- 
--		xhci0: usb@112b0000 {
--			compatible = "mediatek,mt8188-xhci", "mediatek,mtk-xhci";
--			reg = <0 0x112b0000 0 0x1000>,
--			      <0 0x112b3e00 0 0x0100>;
-+		ssusb0: usb@112b1000 {
-+			compatible = "mediatek,mt8188-mtu3", "mediatek,mtu3";
-+			reg = <0 0x112b1000 0 0x2dff>, <0 0x112b3e00 0 0x0100>;
- 			reg-names = "mac", "ippc";
--			interrupts = <GIC_SPI 533 IRQ_TYPE_LEVEL_HIGH 0>;
--			phys = <&u2port0 PHY_TYPE_USB2>;
--			assigned-clocks = <&topckgen CLK_TOP_SSUSB_XHCI_2P>,
--					  <&topckgen CLK_TOP_USB_TOP_2P>;
--			assigned-clock-parents = <&topckgen CLK_TOP_UNIVPLL_D5_D4>,
--						 <&topckgen CLK_TOP_UNIVPLL_D5_D4>;
-+			ranges = <0 0 0 0x112b0000 0 0x3f00>;
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			interrupts-extended = <&gic GIC_SPI 532 IRQ_TYPE_LEVEL_HIGH 0>;
-+			assigned-clocks = <&topckgen CLK_TOP_SSUSB_XHCI_2P>;
-+			assigned-clock-parents = <&topckgen CLK_TOP_UNIVPLL_D5_D4>;
- 			clocks = <&pericfg_ao CLK_PERI_AO_SSUSB_2P_BUS>,
- 				 <&topckgen CLK_TOP_SSUSB_TOP_P2_REF>,
- 				 <&pericfg_ao CLK_PERI_AO_SSUSB_2P_XHCI>;
- 			clock-names = "sys_ck", "ref_ck", "mcu_ck";
--			mediatek,syscon-wakeup = <&pericfg 0x460 2>;
-+			phys = <&u2port0 PHY_TYPE_USB2>;
- 			wakeup-source;
-+			mediatek,syscon-wakeup = <&pericfg 0x460 2>;
- 			status = "disabled";
-+
-+			xhci0: usb@0 {
-+				compatible = "mediatek,mt8188-xhci", "mediatek,mtk-xhci";
-+				reg = <0 0 0 0x1000>;
-+				reg-names = "mac";
-+				interrupts = <GIC_SPI 533 IRQ_TYPE_LEVEL_HIGH 0>;
-+				assigned-clocks = <&topckgen CLK_TOP_USB_TOP_2P>;
-+				assigned-clock-parents = <&topckgen CLK_TOP_UNIVPLL_D5_D4>;
-+				clocks = <&pericfg_ao CLK_PERI_AO_SSUSB_2P_XHCI>;
-+				clock-names = "sys_ck";
-+				status = "disabled";
-+			};
- 		};
- 
- 		pcie: pcie@112f0000 {
 diff --git a/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi b/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi
-index a37cf102a6e9..fd977daa4185 100644
+index fd977daa4185..a6c8abf371aa 100644
 --- a/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi
 +++ b/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi
-@@ -1011,13 +1011,25 @@ &u3phy2 {
+@@ -260,6 +260,22 @@ &i2c1 {
+ 	pinctrl-0 = <&i2c1_pins>;
+ 	clock-frequency = <400000>;
  	status = "okay";
++
++	typec-mux@48 {
++		compatible = "ite,it5205";
++		reg = <0x48>;
++
++		mode-switch;
++		orientation-switch;
++
++		vcc-supply = <&mt6359_vcn33_1_bt_ldo_reg>;
++
++		port {
++			it5205_sbu_mux: endpoint {
++				remote-endpoint = <&typec_sbu_out>;
++			};
++		};
++	};
  };
  
-+&ssusb0 {
-+	dr_mode = "host";
-+	vusb33-supply = <&mt6359_vusb_ldo_reg>;
-+	status = "okay";
-+};
-+
- &xhci0 {
+ &i2c2 {
+@@ -281,6 +297,66 @@ &i2c4 {
+ 	pinctrl-0 = <&i2c4_pins>;
+ 	clock-frequency = <1000000>;
  	status = "okay";
-+};
 +
-+&ssusb1 {
-+	dr_mode = "host";
++	rt1715@4e {
++		compatible = "richtek,rt1715";
++		reg = <0x4e>;
++		interrupts-extended = <&pio 12 IRQ_TYPE_LEVEL_LOW>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&tcpci_int_pins>;
++		vbus-supply = <&usb_p1_vbus>;
++
++		connector {
++			compatible = "usb-c-connector";
++			label = "USB-C";
++			data-role = "dual";
++			op-sink-microwatt = <10000000>;
++			power-role = "dual";
++			try-power-role  = "sink";
++			pd-revision = /bits/ 8 <0x03 0x00 0x01 0x08>;
++
++			sink-pdos = <PDO_FIXED(5000, 2000,
++					       PDO_FIXED_DUAL_ROLE |
++					       PDO_FIXED_DATA_SWAP)>;
++			source-pdos = <PDO_FIXED(5000, 2000,
++						 PDO_FIXED_DUAL_ROLE |
++						 PDO_FIXED_DATA_SWAP)>;
++
++			altmodes {
++				displayport {
++					svid = /bits/ 16 <0xff01>;
++					vdo = <0x001c1c47>;
++				};
++			};
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					typec_con_hs: endpoint {
++						remote-endpoint = <&mtu3_hs1_role_sw>;
++					};
++				};
++
++				port@1 {
++					reg = <1>;
++					typec_con_ss: endpoint {
++						remote-endpoint = <&xhci_ss_ep>;
++					};
++				};
++
++				port@2 {
++					reg = <2>;
++					typec_sbu_out: endpoint {
++						remote-endpoint = <&it5205_sbu_mux>;
++					};
++
++				};
++			};
++		};
++	};
+ };
+ 
+ &i2c5 {
+@@ -849,6 +925,14 @@ pins-reset {
+ 		};
+ 	};
+ 
++	tcpci_int_pins: tcpci-int-pins {
++		pins-int-n {
++			pinmux = <PINMUX_GPIO12__FUNC_B_GPIO12>;
++			bias-pull-up;
++			input-enable;
++		};
++	};
++
+ 	uart0_pins: uart0-pins {
+ 		pins {
+ 			pinmux = <PINMUX_GPIO31__FUNC_O_UTXD0>,
+@@ -904,6 +988,14 @@ pins-usb-hub-3v3-en {
+ 		};
+ 	};
+ 
++	usb2_default_pins: usb2-default-pins {
++		pins-iddig {
++			pinmux = <PINMUX_GPIO89__FUNC_B_GPIO89>;
++			input-enable;
++			bias-pull-up;
++		};
++	};
++
+ 	wifi_pwrseq_pins: wifi-pwrseq-pins {
+ 		pins-wifi-enable {
+ 			pinmux = <PINMUX_GPIO127__FUNC_B_GPIO127>;
+@@ -1012,9 +1104,21 @@ &u3phy2 {
+ };
+ 
+ &ssusb0 {
+-	dr_mode = "host";
++	dr_mode = "otg";
++	maximum-speed = "high-speed";
++	usb-role-switch;
++	wakeup-source;
  	vusb33-supply = <&mt6359_vusb_ldo_reg>;
-+	status = "okay";
++	pinctrl-0 = <&usb_default_pins>;
++	pinctrl-names = "default";
+ 	status = "okay";
++
++	connector {
++		compatible = "gpio-usb-b-connector", "usb-b-connector";
++		type = "micro";
++		id-gpios = <&pio 83 GPIO_ACTIVE_HIGH>;
++		vbus-supply = <&usb_p0_vbus>;
++	};
+ };
+ 
+ &xhci0 {
+@@ -1022,9 +1126,19 @@ &xhci0 {
+ };
+ 
+ &ssusb1 {
+-	dr_mode = "host";
++	dr_mode = "otg";
++	usb-role-switch;
++	wakeup-source;
+ 	vusb33-supply = <&mt6359_vusb_ldo_reg>;
++	pinctrl-0 = <&usb1_default_pins>;
++	pinctrl-names = "default";
+ 	status = "okay";
++
++	port {
++		mtu3_hs1_role_sw: endpoint {
++			remote-endpoint = <&typec_con_hs>;
++		};
++	};
  };
  
  &xhci1 {
- 	status = "okay";
-+	vdd-supply = <&usb_hub_fixed_3v3>;
+@@ -1058,17 +1172,28 @@ xhci_ss_ep: endpoint {
+ };
+ 
+ &ssusb2 {
+-	interrupts-extended = <&gic GIC_SPI 536 IRQ_TYPE_LEVEL_HIGH 0>,
+-			      <&pio 220 IRQ_TYPE_LEVEL_HIGH>;
+-	interrupt-names = "host", "wakeup";
+-
+-	dr_mode = "host";
++	dr_mode = "otg";
++	maximum-speed = "high-speed";
++	usb-role-switch;
  	vusb33-supply = <&mt6359_vusb_ldo_reg>;
- 	#address-cells = <1>;
- 	#size-cells = <0>;
-@@ -1037,6 +1049,22 @@ hub_3_0: hub@2 {
- 		reset-gpios = <&pio 7 GPIO_ACTIVE_HIGH>;
- 		vdd-supply = <&usb_hub_fixed_3v3>;
- 	};
++	wakeup-source;
++	pinctrl-names = "default";
++	pinctrl-0 = <&usb2_default_pins>;
+ 	status = "okay";
 +
-+	port {
-+		xhci_ss_ep: endpoint {
-+			remote-endpoint = <&typec_con_ss>;
-+		};
++	connector {
++		compatible = "gpio-usb-b-connector", "usb-b-connector";
++		type = "micro";
++		id-gpios = <&pio 89 GPIO_ACTIVE_HIGH>;
++		vbus-supply = <&usb_p2_vbus>;
 +	};
-+};
-+
-+&ssusb2 {
+ };
+ 
+ &xhci2 {
+-	status = "okay";
 +	interrupts-extended = <&gic GIC_SPI 536 IRQ_TYPE_LEVEL_HIGH 0>,
 +			      <&pio 220 IRQ_TYPE_LEVEL_HIGH>;
 +	interrupt-names = "host", "wakeup";
-+
-+	dr_mode = "host";
-+	vusb33-supply = <&mt6359_vusb_ldo_reg>;
+ 	vusb33-supply = <&mt6359_vusb_ldo_reg>;
+ 	vbus-supply = <&sdio_fixed_3v3>; /* wifi_3v3 */
 +	status = "okay";
  };
- 
- &xhci2 {
 -- 
 2.48.1
 
