@@ -1,57 +1,53 @@
-Return-Path: <linux-kernel+bounces-522082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A94CA3C5A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:07:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A945FA3C5A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:06:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 853CD7A84D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:06:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7D767A6E54
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:05:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6EC52144A0;
-	Wed, 19 Feb 2025 17:06:44 +0000 (UTC)
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5E621422D;
+	Wed, 19 Feb 2025 17:06:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N3GT3MVn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9723E1AC88B
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 17:06:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D233214216;
+	Wed, 19 Feb 2025 17:06:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739984804; cv=none; b=uORADgKQVLf+tG2XStB5BBbQc+sYzaX/FaJFn9uI9v3rtf39nKvlJqm4Pd2RXlZlCGEsxK1dMLQiFIVLgPDYao6uQSwkyqyLmY2P15aFpdBke4R0UE2LhcAgvOF9eSlcOnkI4w+6nbxl39kQ6Iy7bdJWbl8iwG/WFkZl/u23nFo=
+	t=1739984803; cv=none; b=giZujX1v9PcLaLUBSRLf9wca3k8OHVzTVAI9w+qv63T9etyx5GrRrb4E2GpdCDIQZN0E4Uw7gdKY6Bi7U54xSGuhIpUONuYpWcj0NwHfuOT37zDARIELyFbzxJla801A6OoXa5g5Iii2/bGONrm72eH6pVMS4GSRZ7EhNH/+vEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739984804; c=relaxed/simple;
-	bh=Vwkc4kdAV45hUA3h7Hf6neKlLMmm2gyPbfb7wCifIyA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u89S4+TS7mFka0TNDmdm3AJjJEba7NQr7BtJ7/eiWKqugI3dR+kL5zEKLpc4tStmg/qsTgqZw9ZMc7HKH2pDG3r/nk/AqTQZamsO5m6/xv/VQLDpI3yFZm+G4k8eAwL4hDDU6/g6i1qj3t5oS9cK98OwpBNJRLye1jfGDgV0EIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from trampoline.thunk.org (pool-173-48-127-146.bstnma.fios.verizon.net [173.48.127.146])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 51JH6NSu022319
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Feb 2025 12:06:24 -0500
-Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id A79B22E011A; Wed, 19 Feb 2025 12:06:23 -0500 (EST)
-Date: Wed, 19 Feb 2025 12:06:23 -0500
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        rust-for-linux <rust-for-linux@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>, David Airlie <airlied@gmail.com>,
-        linux-kernel@vger.kernel.org, ksummit@lists.linux.dev
-Subject: Re: Rust kernel policy
-Message-ID: <20250219170623.GB1789203@mit.edu>
-References: <Z7SwcnUzjZYfuJ4-@infradead.org>
- <b0a8ee53b767b7684de91eeb6924ecdf5929d31e.camel@HansenPartnership.com>
- <CANiq72nnnOsGZDrPDm8iWxYn2FL=wJqx-P8aS63dFYez3_FEOg@mail.gmail.com>
- <a627845f73f2f7bedc7a820cfdf476be9993e30f.camel@HansenPartnership.com>
- <CANiq72m5KB-X1zck1E43yffXOTeD4xRmZgDx_oUiNwR941ce0w@mail.gmail.com>
+	s=arc-20240116; t=1739984803; c=relaxed/simple;
+	bh=MyfLEvfS7yxTS8fAcMru9YtZORPP55M03oOVf1wJwag=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=kGF4R4ivL5cPuYYMHOeN62bV+uZoua9l5HE/vWz/zrb7uGP/iXNWHOh7eKwZmpcuaBbMao50w8fPXDIUOfnpzJVphel55AyuLdI1SwXhjx9QkHEg2bVzYO28nrdmo6R/5QK3KSqKG5JLTNG+2v0S7/IispFUILwwf9EHmH3LXXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N3GT3MVn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93FBAC4CED1;
+	Wed, 19 Feb 2025 17:06:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739984802;
+	bh=MyfLEvfS7yxTS8fAcMru9YtZORPP55M03oOVf1wJwag=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=N3GT3MVnRSqdikNeUBuH8nooDmDSlHq7qhQNbdzQQCBEGY3dgQF0c2xzPbt3cCgiA
+	 lhHU9ac9zww9+54xp2eKqSDGZxs75xiSiOssp9krqAWzxWE+s6Oe9DhqUR77zl4qrc
+	 A6EmmpD2rftmBbwBcwNpj0lgDLE1HXFvJl+Dd28ZnoM1iO2OC5HGl973pPhUaPIZlq
+	 0hmYPkmqrNwb1egOEbiaDPZ2azBpMG8b2a49onzyMIiRwc2pDpqLzb8M1DYWorRpPR
+	 b9JuBolf8uORmuCE3CnN2fH5FMWgUs0XAJCEvfHt/da38pNyBNJQOXY5+pBaG2Q7VS
+	 SkQqm5nFNM+jw==
+Date: Wed, 19 Feb 2025 11:06:40 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Naveen Kumar P <naveenkumar.parna@gmail.com>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernelnewbies <kernelnewbies@kernelnewbies.org>,
+	linux-acpi@vger.kernel.org
+Subject: Re: PCI: hotplug_event: PCIe PLDA Device BAR Reset
+Message-ID: <20250219170640.GA219612@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,45 +56,75 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CANiq72m5KB-X1zck1E43yffXOTeD4xRmZgDx_oUiNwR941ce0w@mail.gmail.com>
+In-Reply-To: <CAMciSVU4vv7=WjVUhuP3PJHdpnYqrgMPCmz-HnijEbhyxk54eQ@mail.gmail.com>
 
-On Wed, Feb 19, 2025 at 05:44:16PM +0100, Miguel Ojeda wrote:
-> Hmm... I am not sure exactly what you mean here. Are you referring to
-> Wedson's FS slides from LSF/MM/BPF? i.e are you referring to Rust
-> signatures?
+[+cc linux-acpi]
+
+On Wed, Feb 19, 2025 at 05:52:47PM +0530, Naveen Kumar P wrote:
+> Hi all,
 > 
-> If yes, those signatures are manually written, they are not the
-> generated bindings. We typically refer to those as "abstractions", to
-> differentiate from the generated stuff.
+> I am writing to seek assistance with an issue we are experiencing with
+> a PCIe device (PLDA Device 5555) connected through PCI Express Root
+> Port 1 to the host bridge.
+> 
+> We have observed that after booting the system, the Base Address
+> Register (BAR0) memory of this device gets reset to 0x0 after
+> approximately one hour or more (the timing is inconsistent). This was
+> verified using the lspci output and the setpci -s 01:00.0
+> BASE_ADDRESS_0 command.
+> 
+> To diagnose the issue, we checked the dmesg log, but it did not
+> provide any relevant information. I then enabled dynamic debugging for
+> the PCI subsystem (drivers/pci/*) and noticed the following messages
+> related ACPI hotplug in the dmesg log:
+> 
+> [    0.465144] pci 0000:01:00.0: reg 0x10: [mem 0xb0400000-0xb07fffff]
+> ...
+> [ 6710.000355] ACPI: \_SB_.PCI0.RP01: acpiphp_glue: Bus check in hotplug_event()
+> [ 7916.250868] perf: interrupt took too long (4072 > 3601), lowering
+> kernel.perf_event_max_sample_rate to 49000
+> [ 7984.719647] perf: interrupt took too long (5378 > 5090), lowering
+> kernel.perf_event_max_sample_rate to 37000
+> [11051.409115] ACPI: \_SB_.PCI0.RP01: acpiphp_glue: Bus check in hotplug_event()
+> [11755.388727] ACPI: \_SB_.PCI0.RP01: acpiphp_glue: Bus check in hotplug_event()
+> [12223.885715] ACPI: \_SB_.PCI0.RP01: acpiphp_glue: Bus check in hotplug_event()
+> [14303.465636] ACPI: \_SB_.PCI0.RP01: acpiphp_glue: Bus check in hotplug_event()
+> After these messages appear, reading the device BAR memory results in
+> 0x0 instead of the expected value.
+> 
+> I would like to understand the following:
+> 
+> 1. What could be causing these hotplug_event debug messages?
 
-The problem with the bindings in Wedson's FS slides is that it's
-really unreasonable to expect C programmers to understand them.  In my
-opinion, it was not necessarily a wise decision to use bindings as
-hyper-complex as a way to convince C developers that Rust was a net
-good thing.
+This is an ACPI Notify event.  Basically the platform is telling us to
+re-enumerate the hierarchy below RP01 because a device might have been
+added or removed.
 
-I do understand (now) what Wedson was trying to do, was to show off
-how expressive and powerful Rust can be, even in the face of a fairly
-complex interface.  It turns out there were some good reasons for why
-the VFS handles inode creation, but in general, I'd encourage us to
-consider whether there are ways to change the abstractions on the C
-side so that:
+Unfortunately the only real information we get is the ACPI device
+(RP01) and the notification value (ACPI_NOTIFY_BUS_CHECK).
 
-   (a) it makes it easier to maintain the Rust bindings, perhaps even
-       using automatically generation tools,
-   (b) it allows Rust newbies having at least some *hope* of updating
-       the manually maintained bindings,
-   (c) without causing too much performance regressions, especially
-       on hot paths, and
-   (d) hopefully making things easier for new C programmers from
-       understanding the interface in question.
+You could instrument acpiphp_check_bridge() to see what path we take.
+The main paths look like enable_slot() or disable_slot(), but those
+both include a pr_debug() than you apparently don't see.
 
-So it might not be that increasing C safety isn't the primary goal, in
-general, one of the ways that we evaluate a particular patchset is
-whether addresses multiple problems at the same time.  If it does,
-that's a signal that perhaps it's the right direction for us to go.
+A remove followed by add would definitely reset the device, including
+its BARs.  But you would normally see some messages related to
+enumerating a new device.
 
-Cheers,
+If this doesn't help, try to reproduce the problem with a recent
+kernel, e.g., v6.13, and post the complete dmesg log.
 
-						- Ted
+> 2. Why does this result in the BAR memory being reset?
+> 3. How can we resolve this issue?
+> 
+> I have verified that the issue occurs even without loading the driver
+> for the PLDA Device 5555, so it does not appear to be related to the
+> device driver.
+> 
+> Any help or guidance on debugging this issue would be greatly appreciated.
+> 
+> Thank you for your assistance.
+> 
+> Best regards,
+> Naveen
 
