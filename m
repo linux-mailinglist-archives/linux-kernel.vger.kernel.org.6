@@ -1,202 +1,245 @@
-Return-Path: <linux-kernel+bounces-520754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EAC2A3AEC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:21:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B792BA3AECB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:21:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5ACA716AF7C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 01:21:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A22F3A9EC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 01:21:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D89ED7DA95;
-	Wed, 19 Feb 2025 01:21:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2028881741;
+	Wed, 19 Feb 2025 01:21:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HtRveGUe"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="KtVBV5UW"
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2070.outbound.protection.outlook.com [40.107.96.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E5F346447
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 01:20:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739928062; cv=none; b=AbpNZ2pmes8uqmtWOrHgLa8ejLCsbdN6lweksh6bZtvTf1TJYtSezjPqDQ3Yplie1hxawIsUCBUpt3TtPK0XaYHxpU54yF51u5Y4eZJpDTFvlosQjSoz5HSIhGew3nIlX/J4//3xETUvUwfV+s2zhLcnlo92WJlADu0hWMf3/Ek=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739928062; c=relaxed/simple;
-	bh=bmGa4eWhcR5L/dcLtERr3EI/+tCNKeqmsPcoVSPYgqo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=qTVrsmjVa/3jvuzEvlbzPqur5/AGgH0UqtZz++RkH7RkVPgnhYX2M4e/Y3JXl9VsuJUrAouGPbpIRsL6mMkHhAEz09DmY1Pnd2q2t+kAaTwj8vcGNXHhZ8uAxEBtTTLhhe2sKyTMtXYj4A6u77ZSkt6bwfEtFvSTOwVpNOANfrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HtRveGUe; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739928059; x=1771464059;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=bmGa4eWhcR5L/dcLtERr3EI/+tCNKeqmsPcoVSPYgqo=;
-  b=HtRveGUeFH19MNEtYGdGWlecAJX5h4rD90YP9f14CUDget/U5yBMEKAu
-   MxjSX09LAYG0JDUN3sRAYk2tnFtoAp/UPCt/BD2aKrqN+SpT/26eIZ02J
-   e5Vwp5ammT01HcG98eZtDH99CxayO2xEjsnJPO1OTU5bG+owjJ+hLs0R9
-   RRyaX0ADq4x7WoobPwvp/HzWxPTnlTE+atuaYVZ+2PmUZlpinPSK/+SQ6
-   ePOqE0VhDuqXedVwctNcJJWT36R85bLTGPzswp8JYtwF+ivi7kzcLIkKG
-   LRk08G8KkpzNY7mbic89uLrBGTIIVIi4VDzwfdYyLICRE+1nEX5QlV6RF
-   w==;
-X-CSE-ConnectionGUID: UnC7H9oFQneujfmqat6T5w==
-X-CSE-MsgGUID: 3Y2+WoFSTuanOIuZOkZHpA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="40664950"
-X-IronPort-AV: E=Sophos;i="6.13,296,1732608000"; 
-   d="scan'208";a="40664950"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 17:20:59 -0800
-X-CSE-ConnectionGUID: 996Lsse9T463d1aJofebNg==
-X-CSE-MsgGUID: JeTMi8TOSAWz1KALl72DPw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,296,1732608000"; 
-   d="scan'208";a="114304361"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by orviesa009.jf.intel.com with ESMTP; 18 Feb 2025 17:20:57 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tkYlj-00013i-0g;
-	Wed, 19 Feb 2025 01:20:55 +0000
-Date: Wed, 19 Feb 2025 09:20:30 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Yury Norov <yury.norov@gmail.com>
-Subject: lib/test_bitmap.c:1269:2: error: call to '__compiletime_assert_135'
- declared with 'error' attribute: BUILD_BUG_ON failed:
- !__builtin_constant_p(res)
-Message-ID: <202502190910.LTEnPYuL-lkp@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE83246447;
+	Wed, 19 Feb 2025 01:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739928108; cv=fail; b=eRlq00TMThte7q3oYlIDfU4T/s8Y78tI7Y94zCoNACdOc9IkIRL/TU5mzSZOzss3LjCWb9OO0vxGrTsRU/LTxWrYZCwpWA0ZeN/2lTVDc6BGzBwkqiCM1SoB9+JMiZtYSd8hKJwMEfnrWQrTdhdocqw5kRSgyE72cy79Oj9Sb00=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739928108; c=relaxed/simple;
+	bh=1iq68DtojOzEzbPaAg2K4vZy6tn+nUBPGUoT7ViRn9c=;
+	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
+	 In-Reply-To:MIME-Version; b=SZctRKK2Ozqvqa6vFkvvPMvpxj8Y8dMc+MlF8CSvxPVurezy7TopTNFBPPlm6dFgzO9Cy179/rJsOJWoJ1iebP1yS0fzveqaz0dkYHvrXuVsTCqBfb61DthanYI5QZkS2FZdppOyejjvNqAsifnDJIFRdHbvk5duKecblE1qpv0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=KtVBV5UW; arc=fail smtp.client-ip=40.107.96.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XLAJSwU6UiCLA0iqIMurL8+V/ZEEhLGWh+LSkkCiQaqsqXe3E+ypIaaSp2nhT6McLjyEmJNCDQsWehflVQYJ5fUZBfM2SkHbW2yTGZdpLfuY67duRKXxM7oYyGZvXA+CfZJYhklWekfDtROfmu8VRTiSwHH4BV5xPWnCRNYG4M0UpzCSsYgJ2yilpQJVNdvuQz1Tube8whgUX1twJ7PMqotdlEveUhLn6C+RUEO2cXIgKBCwseW22lu/+S55ZwQINH5auVbkrWomFnmtvbyD8h15hAloBXQDfJ2lnMHDQVQ0c6mV4aFkkOvPsLr6ri10XYHbhkrx6308ak440+ip+g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iUhhhAW7132e4vs7ozelPqy3ZytRAuG043zBXRY+Ifw=;
+ b=LXSHhaL+rp/H6KlDD3taoPVHFKoNN2H1WVu4rr0NE0E5SnWaRETqrsgpj2AlSpODB9CUbg52wQy0NTCALLgnsxw+28eU5jB70TWMkVPtol/on2taaS861rHlPbQ8db2E72pzLK0FzFIBMQskqvRyxqYFI+c0F0EacZgqrJXEE3yVeAkDzy6/2BlvJ9ZApP2yUqzFL/CJWI9BwDoN84QEBRq+Q2lgu7RZgg5R68Y4Vid9t9+69KaT+OHEHZGKDV7xR6jJjaMyYuNNhIhZAWl7wejvGv4tDhOr8JDmyv3BDewAqip2JmUGNC4dXIlptePjkffpxby7BMLH2oigt4EYVw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iUhhhAW7132e4vs7ozelPqy3ZytRAuG043zBXRY+Ifw=;
+ b=KtVBV5UWgsh5+UWGal5vkhTXP+c5RaWLMSZ3SYIvGPWnrBWE5mdISNojfN0p0knuw6tQIduDR13P1drvXiUhFg3ISyFfAGMf9a14mIwH+a/ga8C3wMrITmP0oIoD31XeMOuFGBERdH+XC54W5JKoMo+2we1M09zNoUtW0+MrXzNAdt1GFqkQsYZj4t3J2YJWZKHXYgMzyiSytBKqNa812DHkpUURVyoX48JwJZyHPYm2r8k0E1VmNjXyyENe8+Vq4Fs5zJ7qX0PY7DPWu3VD+K9UZolwkYX8J6PrmfOHjCrafVVEK+fsD7j9ej9RrBnrHNDRqnQxTBUyExTSBDLo6g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by BY5PR12MB4260.namprd12.prod.outlook.com (2603:10b6:a03:206::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.14; Wed, 19 Feb
+ 2025 01:21:43 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99%6]) with mapi id 15.20.8445.017; Wed, 19 Feb 2025
+ 01:21:43 +0000
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 19 Feb 2025 10:21:38 +0900
+Message-Id: <D7W119MHCCWH.IS600FTIOV8O@nvidia.com>
+Cc: "John Hubbard" <jhubbard@nvidia.com>, "dri-devel@lists.freedesktop.org"
+ <dri-devel@lists.freedesktop.org>, "rust-for-linux@vger.kernel.org"
+ <rust-for-linux@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "nouveau@lists.freedesktop.org"
+ <nouveau@lists.freedesktop.org>, "dakr@kernel.org" <dakr@kernel.org>,
+ "airlied@gmail.com" <airlied@gmail.com>, "Ben Skeggs" <bskeggs@nvidia.com>
+Subject: Re: [PATCH RFC 1/3] rust: add useful ops for u64
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Timur Tabi" <ttabi@nvidia.com>, "Alexandre Courbot"
+ <acourbot@nvidia.com>, "daniel.almeida@collabora.com"
+ <daniel.almeida@collabora.com>
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20250217-nova_timer-v1-0-78c5ace2d987@nvidia.com>
+ <20250217-nova_timer-v1-1-78c5ace2d987@nvidia.com>
+ <C1FF4314-C013-4AE1-A94E-444AFACDB4AC@collabora.com>
+ <D7VLMD31YB0V.OKHDSVUPAZTE@nvidia.com>
+ <1b8921d46f7d70c7467ea0940d60220f05cccc5d.camel@nvidia.com>
+In-Reply-To: <1b8921d46f7d70c7467ea0940d60220f05cccc5d.camel@nvidia.com>
+X-ClientProxiedBy: OS3P301CA0021.JPNP301.PROD.OUTLOOK.COM
+ (2603:1096:604:21f::15) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|BY5PR12MB4260:EE_
+X-MS-Office365-Filtering-Correlation-Id: 85bc1b3b-b65a-45e0-046e-08dd5083c516
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?N3RMN3ZrR0UyakJ3ZEZkd3ErdHpKcURVcTE2M0dsMkNWN1hyN0liT1pLV3Nl?=
+ =?utf-8?B?K1JMQUs3NkRpTVNRYmdYSTZNTzBLb2c2aXBjVHBzMXd2QzV3MkxJNzBZbmZz?=
+ =?utf-8?B?MlZSVGFrcXlmR0twUUhHQUlvSUtiSDJaaDNPQyt6b2NBMFZVcW9kZm5hNE5a?=
+ =?utf-8?B?QjFLcFJTOEFTckx5ZmdRQmp5WVo2SzlyRW9WOVhUZ0VlMDB5Uk9Ldk9abXFr?=
+ =?utf-8?B?eVd0YkgzbWxXZmlKaGI0K3FsNk1xT04yNmVpV2N6ckJtVUU2eUhJd1JrczMx?=
+ =?utf-8?B?QmE4QXdaN0hKQk5KY0Z3WGZmWmNDT1N6eXZaWkxGVmNuSWdJb01BSGNOSElG?=
+ =?utf-8?B?aDhaNitrOEk4YURwSUtRcWFINVMwWmxUOEFzN1VFN25tTXVtMEYvWlQ5ZVJR?=
+ =?utf-8?B?UVl5dm5xSkRtcGJKV1VmN05iRXpKOGx2YUxRSjBlVFMyYUNQZjVBQjN2TElG?=
+ =?utf-8?B?eHpsY2pwUTRrYWozOHUvSUE2dnBSQVRHWkhoTTV2OG5ZNWZMT3M0TFJtbHd2?=
+ =?utf-8?B?VjdqTEFBdjBFN0JNY2N4MFloZU83NEVSUWdqUUJKMjFLbW9rMi9pa01tMmM1?=
+ =?utf-8?B?WTFVRDFkYTRwUzFFeTJXOXBEVWJkVzJ1Y1dJaEtTZVNDT0dUeS83S29GNEJz?=
+ =?utf-8?B?Z09mNXpNUUltSndOMlFTUVVoY1FseHZPY3FFQzZlMXhUVERhR25tV09uVVBl?=
+ =?utf-8?B?NysvbFJPd2pURVByekdIRm56Rk1MalhKQ2ZjbjdjRVlFbGNLdXByeGU5Qy90?=
+ =?utf-8?B?TDZ5VGc0OGNFa1QxM21oRlpYd0tucUJ2Y1JRa3ZFNW5QeTZSQjdmVjVVdU9q?=
+ =?utf-8?B?Q2IyRytKUG8xSC9KUXExYis2TjZIc0wrcDNjRDJXNk1PK2pCUldHNG5Qdjdl?=
+ =?utf-8?B?YnArTFBPMzF5YTN5MHdEbWNwOWtadlJ1UjNVVGRuWTlxQmMyYjMwMk9MdEdr?=
+ =?utf-8?B?ZlZyTmZNc240eFFvMVlGanZ6M0JqZDhrb2ZnMFF6NmtBUzFTTXpxaDNuSXZD?=
+ =?utf-8?B?a1FWVE9taFNkdGJKd3orNk5iUnY3QXhCZWIra29YMnV0cm0zS2Q5K2NTdTkr?=
+ =?utf-8?B?WkdxTEszbnRDeUZSNUNPM3lGcUUyTzdaeEdXbDlPNndHcHZNbi9lcU5IYzVp?=
+ =?utf-8?B?bDh2cUo4TWNMNjFNR1pFL0xGeHBNV0ZrZFI2K0VHclRmck9rSEpwWTlGa3BN?=
+ =?utf-8?B?QTBCenRCY2pmNGRDd1k4Y0tFL3VBbDMwNmZaa0Z0SVVsUG9rT1ZkZUpVdU4w?=
+ =?utf-8?B?VVBlVXhoV2NncWYrYkNOQXpKMDFpb0NJNFpxOHpMWGxHZU0vcHl5NEhrVERy?=
+ =?utf-8?B?VS91NUwvVkk0VGJ1bk42YjJjTEppVjcvcTU5OU9tYmtwUGVLcG9CNXViZWR5?=
+ =?utf-8?B?aG9Ia3BYdTByRDg1bmtrNVlVRk1uNXN2TEZyNWdHMkpmMWFrTjJ2aitZZThX?=
+ =?utf-8?B?SmV1YldJaHExdmNNd0xodEFSWjA4MWhlWGFOSnJiVEF2ZVlIZ1U1amtqQ2Uy?=
+ =?utf-8?B?NGZkRVowOWdYVHY1eGtnU3VBN3JhK2ZzUkZDV2tQTXViZUEvbmxnalduR1Y2?=
+ =?utf-8?B?VnQ5LzVHTUJFMWNJQ2JvRU56ekJ5WDUvNCtXMHl4MkZOaW1pQ2tpYXBpYVlx?=
+ =?utf-8?B?azlsQUNvc29yL0ZXSlkrcGZSVG9ma0JGTXZBcVhrL0E1ejBvcnF0ZEhGQ21W?=
+ =?utf-8?B?SXZVL2VlbE1rU1hYS0tDemdQeGNzQ21MSkNxbTQwTU1PZnhrK3UzblhFa09w?=
+ =?utf-8?B?ckJIMUd0bkEvY0RaenRuUnZ1dVk4T29Za2JVQjlRbnVxTERsYWNJRDF4RVhI?=
+ =?utf-8?B?V2RqenA2bnZQU25zeWJGWTh0MTRtcnAxbmZaUHVPbkcrT1R3WGxmZ2xNMUgx?=
+ =?utf-8?Q?5zJGggtZFQ2xr?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?MEkwdzNIYkw1VThyblNMV1ZZTVozaC83dDRZK25DbkpVdXlRR1g4K05KcXhW?=
+ =?utf-8?B?LzVRS3d5d0dFTWVRMS9EZlpFZ05XODZZMGpoSGkrb2tNYjRiaWh6WTB5YWJF?=
+ =?utf-8?B?UWhxS1NFNC8yVGdjaW5VbVlFa3pFYzlsamxVbmU1YUN2eXcwd0JvSkJidlpK?=
+ =?utf-8?B?L21ndXZiOVpHVEZGVUgyVUhJQ3I5UDdXMVpUbzNvNXNzL1l5WmJzU0RxeEZL?=
+ =?utf-8?B?eUtDd0dSSUhVVHlEendKRTRCSWZDMEdoWVhGQWo4LzlyYmdtZnZjQUgwL21K?=
+ =?utf-8?B?Y1lrRHpkTjVieGJFS25ydWdwbnUwKzNWa0ZhSXpnUWxNeUx3WEdMQ0h1NWox?=
+ =?utf-8?B?QUtmVmxKdHVad0UydzNWYlFkSkZ0N2lGWWxJejlFTDhoK0hyKzFDY29IdW5W?=
+ =?utf-8?B?MFR0M0JvYWZEaEdKc1FHajRXckFmOXorTWdlUzl3OC94d2ZQTTR3djBRb1Y3?=
+ =?utf-8?B?NDMzU2dxSElQaU1qRU1NZjdGcWJqVUxVNWFia1Nic2FWZEV3Y1VVdjV1U28r?=
+ =?utf-8?B?YWZTT2czRTN5Um1iOXJUTno0RmNjd1VpSnZkVVExdGpOL2xNS2FObURMSkVX?=
+ =?utf-8?B?Zk02OWxESW5IdmdmRFVMdFpOVktVSmJUa08wWEhWSlN0U0M0WTVxUjZHaXZQ?=
+ =?utf-8?B?TFRTd3JqejhZTkVFSHhxL2VoMFFrcGd6dGdiZkltaXZTQXFCVTRabUIxVXRE?=
+ =?utf-8?B?bVFNdllRM0hZQ3locnU5OGlQcDJ5UCtSYUxHazZBdVQyUHBNQlBaaFZrK1RL?=
+ =?utf-8?B?OGhDV3ZyTWNqd1p4aGFWRGtEQTd0a0NvR2NndGhtbkJQZlZ5WWFOWW9kUlVT?=
+ =?utf-8?B?WitmR1pZUkZQS2tWNXZmTEZoZTVwa1dURUVNSE93Qm9sUkdmUEdsVVFwaUtk?=
+ =?utf-8?B?TjFzS1cwOWplbXAxQ2ZLTTVva2hFdzArTFlZTXJYNWlIR2E4ZUVZbGxaMVcr?=
+ =?utf-8?B?eXg2VFVwdFFVWlR2djhVZ3N1S09lcDNSOTJYdmh6RGZ5ZHN5NnYwVm04eUw5?=
+ =?utf-8?B?S2ZsREcxN3RNNWw0YURPVklTVVdxbE1meGVlR2R1cldUcFBTekJMTEVzMDRL?=
+ =?utf-8?B?ZGNMbmRYaUE0TCt3NHJsRWVteUkxZy9pSDV2WXpMNWlHRjI0ZXpzZUtjaU5a?=
+ =?utf-8?B?YkdLVmJCMlRIb0kydW5rVDhDMHpBM0hTRzJGZEF1aGNxSjcrd3BEOTlXVHhS?=
+ =?utf-8?B?SWFyN3RsZUdwMHlpdllyYjRZVTlmYS9ZQW11UXZ5RWM0MFJaMis4bHF2V0kx?=
+ =?utf-8?B?alhsNlhKbzJYUzlIeUxDRDE5VVBJSzIrM1RjdHlxNnovRTJjUlBHWGtSSklN?=
+ =?utf-8?B?WFJaNmZIYy80QythVnpBRi92UDhYV0ljOEJOUXVpU3hYZXdGbUNVVUtmanNw?=
+ =?utf-8?B?amRmVDFOc2twNkNIVE5rYm5JOXZBbnlUNXZCaWp4VGlFRVdpRWo1Sk9HUXJo?=
+ =?utf-8?B?cjJVdlZHVmVOUWpwRzVsaVpsUTk4U3Z4d0dmYXRmem5jNG1ja0pMMTF2T1hO?=
+ =?utf-8?B?SUtCa09KSFRtcmZXQW9vVHBRNFp1OTFVS2tKTUY2QkRoUUVYT2loT1JWQ0tO?=
+ =?utf-8?B?QnJrZnVnalNsQ0Yrbm9YeVEydGtORHlTMkJMNjlqY0hHaHV1ckxEMWdibDlX?=
+ =?utf-8?B?WS8xdTVaeHdjOExvRzdXQVpmZ1FIVDc2Kzd2Q2l6ZGNBL0VDZVgvaFU5WjdG?=
+ =?utf-8?B?OFlSckhKM2ZMNWkzWWdrTnZla3d0UjNpV0lPaWw2UVVheWFYVm9LeHVqbm5F?=
+ =?utf-8?B?cGFIVm5UQWd4MitYT3dBMURWb2pMQmpYWmNpZU43N3pzd3BQNVg4eUdZb0JE?=
+ =?utf-8?B?U2E4VFhZcmowcFg3VXVraHU0OUtTcW14bXBianFNME9ZbzRDODZVSnBoMGRp?=
+ =?utf-8?B?YklTQW1JYXBJMVJwSWNxaFdTUHhlank3aDBTbjd4bUI5bXVnR21zRWx2SGpS?=
+ =?utf-8?B?TUk2V1VWb1JOY1g2R3MxMEhxZUE2S29pNjZQSkFLQ1RKdHdDWlFJREFYRnVO?=
+ =?utf-8?B?U3p4ZjNBQmRLOWtDYUFnS3BQOERVY2Z1RW9HRHp0bFdBSjF0NWJyTFlsUzZ4?=
+ =?utf-8?B?dGFxc2FjaGVDKzJ5bXM4dlpvS1Z0Y1RPWm1KT1JQZTU2eVBISnQ5YXM0cDBI?=
+ =?utf-8?Q?1Gbyc66jRybfNhP3ELzVzOLI2?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 85bc1b3b-b65a-45e0-046e-08dd5083c516
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2025 01:21:43.5878
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: wYLP4VlzOOdK5L/5isSgSq8rZWkw7lVx/LgYhMbSZHaAagbBQ65O0YATdPrDxEx7m/do6uqD7c84nnQg3g4UEw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4260
 
-Hi Alexander,
+On Wed Feb 19, 2025 at 5:51 AM JST, Timur Tabi wrote:
+> On Tue, 2025-02-18 at 22:16 +0900, Alexandre Courbot wrote:
+>> > A proper struct with `high` and `low` might be more verbose, but
+>> > it rules out this issue.
+>>=20
+>> Mmm indeed, so we would have client code looking like:
+>>=20
+>> =C2=A0 let SplitU64 { high, low } =3D some_u64.into_u32();
+>>=20
+>> instead of=20
+>>=20
+>> =C2=A0 let (high, low) =3D some_u64.into_u32();
+>>=20
+>> which is correct, and
+>>=20
+>> =C2=A0 let (low, high) =3D some_u64.into_u32();
+>>=20
+>> which is incorrect, but is likely to not be caught.
+>
+> I'm new to Rust, so let me see if I get this right.
+>
+> struct SplitU64 {
+>   high: u32,
+>   low: u32
+> }
+>
+> So if you want to extract the upper 32 bits of a u64, you have to do this=
+:
+>
+> let split =3D some_u64.into_u32s();
+> let some_u32 =3D split.high;
 
-FYI, the error/warning still remains.
+More likely this would be something like:
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   6537cfb395f352782918d8ee7b7f10ba2cc3cbf2
-commit: 7adaf37f7f104a7ee5f150af491674ccbbfc4114 lib/bitmap: add compile-time test for __assign_bit() optimization
-date:   11 months ago
-config: um-randconfig-002-20250219 (https://download.01.org/0day-ci/archive/20250219/202502190910.LTEnPYuL-lkp@intel.com/config)
-compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project 910be4ff90d7d07bd4518ea03b85c0974672bf9c)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250219/202502190910.LTEnPYuL-lkp@intel.com/reproduce)
+  let SplitU64 { high: some_u32, .. } =3D some_u64;
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502190910.LTEnPYuL-lkp@intel.com/
+Which is still a bit verbose, but a single-liner.
 
-All errors (new ones prefixed by >>):
+Actually. How about adding methods to this trait that return either
+component?
 
->> lib/test_bitmap.c:1269:2: error: call to '__compiletime_assert_135' declared with 'error' attribute: BUILD_BUG_ON failed: !__builtin_constant_p(res)
-    1269 |         BUILD_BUG_ON(!__builtin_constant_p(res));
-         |         ^
-   include/linux/build_bug.h:50:2: note: expanded from macro 'BUILD_BUG_ON'
-      50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
-         |         ^
-   include/linux/build_bug.h:39:37: note: expanded from macro 'BUILD_BUG_ON_MSG'
-      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
-         |                                     ^
-   include/linux/compiler_types.h:460:2: note: expanded from macro 'compiletime_assert'
-     460 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |         ^
-   include/linux/compiler_types.h:448:2: note: expanded from macro '_compiletime_assert'
-     448 |         __compiletime_assert(condition, msg, prefix, suffix)
-         |         ^
-   include/linux/compiler_types.h:441:4: note: expanded from macro '__compiletime_assert'
-     441 |                         prefix ## suffix();                             \
-         |                         ^
-   <scratch space>:252:1: note: expanded from here
-     252 | __compiletime_assert_135
-         | ^
-   1 error generated.
+  let some_u32 =3D some_u64.high_half();
+  let another_u32 =3D some_u64.low_half();
 
+These should be used most of the times, and using destructuring/tuple
+would only be useful for a few select cases.
 
-vim +1269 lib/test_bitmap.c
+>
+> as opposed to your original design:
+>
+> let (some_u32, _) =3D some_u64.into_u32s();
+>
+> Personally, I prefer the latter.  The other advantage is that into_u32s a=
+nd
+> from_u32s are reciprocal:
+>
+> assert_eq!(u64::from_u32s(u64::into_u32s(some_u64)), some_u64);
+>
+> (or something like that)
 
-291f93ca339f5b5 Barry Song        2021-08-06  1227  
-2356d198d2b4dde Yury Norov        2023-07-17  1228  /*
-2356d198d2b4dde Yury Norov        2023-07-17  1229   * FIXME: Clang breaks compile-time evaluations when KASAN and GCOV are enabled.
-2356d198d2b4dde Yury Norov        2023-07-17  1230   * To workaround it, GCOV is force-disabled in Makefile for this configuration.
-2356d198d2b4dde Yury Norov        2023-07-17  1231   */
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1232  static void __init test_bitmap_const_eval(void)
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1233  {
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1234  	DECLARE_BITMAP(bitmap, BITS_PER_LONG);
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1235  	unsigned long initvar = BIT(2);
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1236  	unsigned long bitopvar = 0;
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1237  	unsigned long var = 0;
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1238  	int res;
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1239  
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1240  	/*
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1241  	 * Compilers must be able to optimize all of those to compile-time
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1242  	 * constants on any supported optimization level (-O2, -Os) and any
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1243  	 * architecture. Otherwise, trigger a build bug.
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1244  	 * The whole function gets optimized out then, there's nothing to do
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1245  	 * in runtime.
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1246  	 */
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1247  
-7adaf37f7f104a7 Alexander Lobakin 2024-03-27  1248  	/* Equals to `unsigned long bitmap[1] = { GENMASK(6, 5), }` */
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1249  	bitmap_clear(bitmap, 0, BITS_PER_LONG);
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1250  	if (!test_bit(7, bitmap))
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1251  		bitmap_set(bitmap, 5, 2);
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1252  
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1253  	/* Equals to `unsigned long bitopvar = BIT(20)` */
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1254  	__change_bit(31, &bitopvar);
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1255  	bitmap_shift_right(&bitopvar, &bitopvar, 11, BITS_PER_LONG);
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1256  
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1257  	/* Equals to `unsigned long var = BIT(25)` */
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1258  	var |= BIT(25);
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1259  	if (var & BIT(0))
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1260  		var ^= GENMASK(9, 6);
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1261  
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1262  	/* __const_hweight<32|64>(GENMASK(6, 5)) == 2 */
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1263  	res = bitmap_weight(bitmap, 20);
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1264  	BUILD_BUG_ON(!__builtin_constant_p(res));
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1265  	BUILD_BUG_ON(res != 2);
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1266  
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1267  	/* !(BIT(31) & BIT(18)) == 1 */
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1268  	res = !test_bit(18, &bitopvar);
-dc34d5036692c61 Alexander Lobakin 2022-06-24 @1269  	BUILD_BUG_ON(!__builtin_constant_p(res));
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1270  	BUILD_BUG_ON(!res);
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1271  
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1272  	/* BIT(2) & GENMASK(14, 8) == 0 */
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1273  	res = initvar & GENMASK(14, 8);
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1274  	BUILD_BUG_ON(!__builtin_constant_p(res));
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1275  	BUILD_BUG_ON(res);
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1276  
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1277  	/* ~BIT(25) */
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1278  	BUILD_BUG_ON(!__builtin_constant_p(~var));
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1279  	BUILD_BUG_ON(~var != ~BIT(25));
-7adaf37f7f104a7 Alexander Lobakin 2024-03-27  1280  
-7adaf37f7f104a7 Alexander Lobakin 2024-03-27  1281  	/* ~BIT(25) | BIT(25) == ~0UL */
-7adaf37f7f104a7 Alexander Lobakin 2024-03-27  1282  	bitmap_complement(&var, &var, BITS_PER_LONG);
-7adaf37f7f104a7 Alexander Lobakin 2024-03-27  1283  	__assign_bit(25, &var, true);
-7adaf37f7f104a7 Alexander Lobakin 2024-03-27  1284  
-7adaf37f7f104a7 Alexander Lobakin 2024-03-27  1285  	/* !(~(~0UL)) == 1 */
-7adaf37f7f104a7 Alexander Lobakin 2024-03-27  1286  	res = bitmap_full(&var, BITS_PER_LONG);
-7adaf37f7f104a7 Alexander Lobakin 2024-03-27  1287  	BUILD_BUG_ON(!__builtin_constant_p(res));
-7adaf37f7f104a7 Alexander Lobakin 2024-03-27  1288  	BUILD_BUG_ON(!res);
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1289  }
-dc34d5036692c61 Alexander Lobakin 2022-06-24  1290  
-
-:::::: The code at line 1269 was first introduced by commit
-:::::: dc34d5036692c614eef23c1130ee42a201c316bf lib: test_bitmap: add compile-time optimization/evaluations assertions
-
-:::::: TO: Alexander Lobakin <alexandr.lobakin@intel.com>
-:::::: CC: Yury Norov <yury.norov@gmail.com>
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Yeah, having symmetry is definitely nice. OTOH there are no safeguards
+against mixing up the order and the high and low components, so a
+compromise will have to be made one way or the other. But if we also add
+the methods I proposed above, that question should matter less.
 
