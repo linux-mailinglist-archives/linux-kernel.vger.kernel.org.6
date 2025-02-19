@@ -1,47 +1,64 @@
-Return-Path: <linux-kernel+bounces-522103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D1A3A3C604
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:21:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADBFFA3C614
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:24:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 405C23A94E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:21:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E24F179647
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:23:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2B3E2144A1;
-	Wed, 19 Feb 2025 17:21:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29A9D286284;
+	Wed, 19 Feb 2025 17:23:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ddjY5H2g"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cVi2y6ni"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AEFE286284;
-	Wed, 19 Feb 2025 17:21:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 578E820E6F9;
+	Wed, 19 Feb 2025 17:23:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739985668; cv=none; b=CNF96jRmBMPzxABAltJ06ptpXjKAVKwSnihRu+N8UQtWIXNfW5uxtZ6tOfU++00rX43FewsSopPKT0qnHS88KojO9ePkKPr4TxRwxUvv0nOVZ8I00+UtsIVY1eUG6l+1CyrpLuDwgtw1HsDrVZzuaMj+hxaJIQLbSnDhbsTkUh4=
+	t=1739985795; cv=none; b=pEXYYJxnBCIVUPgSjY4Py+OJxri6j83R32wZDz2WHrDQjCjCFVo6V0Z+fDO1aDkalhLnJu0u9tVuE70vakLR1enmYKc5XrX3LzcjYYNZQbFecie7r00fRZgFlAIJD8mqAcAPmrofdZsWFcMQ5cvlZ5TckPddULJQWXquoYQYT0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739985668; c=relaxed/simple;
-	bh=ov+u5w/5fC+8oMPN7+g0AbEGhh+S1mUoX5U15HsZ72o=;
+	s=arc-20240116; t=1739985795; c=relaxed/simple;
+	bh=YpqD/2RNhKSTvzdaWKryDCLiVoHvYEhNXe3Yxf6NceU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Tn/IGmrLLWIbHs34UqDccWGWiP2ab5WC3Y40zFJhDC/Bgyy0R+Jh2eod/oPJuf4FVRuXlO7oiu1numFKLviVRx9Vw9P7MHFAugac72KjPjS0WygbjzwbhVVhzbSV9ouPaLK/g0xnCyjJVQMYCMagqSKXofNA0p9X5d/z8oxqVS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ddjY5H2g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AEA7C4CED1;
-	Wed, 19 Feb 2025 17:21:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739985667;
-	bh=ov+u5w/5fC+8oMPN7+g0AbEGhh+S1mUoX5U15HsZ72o=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ddjY5H2gWfTW5YwRCxyJV9CWSepJjZTICyTk07K9DUtj+yeVFHNvc6fOag0o9SUJ+
-	 I+wuk1RwlU5tiP8cbZp++09mdD30s89q2UjmifyxpMtk6J7/VZ5jOP6PfFFuMGjSzK
-	 dib1HPv1FSWr2c3KeFtrc9RaOgKnK7vqDtyNu8Hqe6sgVfZygvpY9ViAE6jjbSjYS/
-	 bLOwmWsD+xD2KCyuPqicoLbEJsz06yMKT54QvpIxgytMphAwMMZki/BDqk/kCbS/Ug
-	 yeg7pc7SE1yFntGZUToQph+lp+xLc5zUbSkrMw5G51oJqm/krY4VkjmTaKIN8PI6b6
-	 I+V2qN3M/NW1A==
-Message-ID: <740725e2-0580-4a52-baa1-44e722d4ce35@kernel.org>
-Date: Wed, 19 Feb 2025 11:21:05 -0600
+	 In-Reply-To:Content-Type; b=D7h85++Xn5UJ+1hCBqnlFOp46AP+zoBkZKoQiZrc8VP/XjUxTvRkVPBtO7KGWih/K1uv1oTaHmCulKA01pdJMVsIaaxwBQHR/g8IL9j+XcnoMhUFB8s+Hb5kxwIHDbNDveaBjR+xb7OCVFDU77QEEGjzUBGj7ghcvX5gzLVsjVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cVi2y6ni; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739985792; x=1771521792;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=YpqD/2RNhKSTvzdaWKryDCLiVoHvYEhNXe3Yxf6NceU=;
+  b=cVi2y6nieWcxIs8xwIFKYCubgWvnG90LiPxKWpm0J9R5ri1g0+XGrVm9
+   IViTZbr+NryilKN95SazLycW0lVywDXbYkrNGI2X+Jd1hlKgZaDkmPtp3
+   2VfS7Y0hykifXoih+bqaqmXL+AYRFPTBB428TJua/Z1za9cuJeyJ+Jp3c
+   xTvvOWPhV0nl5phIeHnLj3sD6WGVK3/ZgE3Q9+NQvoy0IRIXIXWs8kG8Z
+   BsOjPOTLedkWAxB6rbvYDRU/vwZEx1khqNcmLIENnxghe/jYExv2XLdeX
+   +WluZ65r3OWCkf9XQeNgIvv2kF22UP2Xz3ZYiwOrwwOFDE8rB/EVoB/jJ
+   A==;
+X-CSE-ConnectionGUID: JMLXBUgORWSlh2JknJMf+w==
+X-CSE-MsgGUID: AhameNDAQWGXDMqmy94Uyg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11350"; a="44382578"
+X-IronPort-AV: E=Sophos;i="6.13,299,1732608000"; 
+   d="scan'208";a="44382578"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 09:23:12 -0800
+X-CSE-ConnectionGUID: LrOTcfd6Qy29I64ToWCOHw==
+X-CSE-MsgGUID: 0XMICjJsQQOTttwlrVJxXw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="115256755"
+Received: from inaky-mobl1.amr.corp.intel.com (HELO [10.125.110.11]) ([10.125.110.11])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 09:23:12 -0800
+Message-ID: <d3e99ce2-b2c4-42d5-95da-3711b27fd5de@intel.com>
+Date: Wed, 19 Feb 2025 10:23:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,74 +66,72 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 01/18] cpufreq/amd-pstate: Invalidate cppc_req_cached
- during suspend
-To: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
-Cc: Perry Yuan <perry.yuan@amd.com>,
- Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>,
- "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
- <linux-kernel@vger.kernel.org>,
- "open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>,
- Mario Limonciello <mario.limonciello@amd.com>,
- Miroslav Pavleski <miroslav@pavleski.net>
-References: <20250217220707.1468365-1-superm1@kernel.org>
- <20250217220707.1468365-2-superm1@kernel.org>
- <Z7VrADfrrPB7GtfX@BLRRASHENOY1.amd.com>
+Subject: Re: [PATCH v2 6/7] cxl/region: Drop goto pattern in
+ cxl_dax_region_alloc()
+To: Li Ming <ming.li@zohomail.com>, dave@stgolabs.net,
+ jonathan.cameron@huawei.com, alison.schofield@intel.com,
+ vishal.l.verma@intel.com, ira.weiny@intel.com, dan.j.williams@intel.com
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250217144828.30651-1-ming.li@zohomail.com>
+ <20250217144828.30651-7-ming.li@zohomail.com>
 Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <Z7VrADfrrPB7GtfX@BLRRASHENOY1.amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250217144828.30651-7-ming.li@zohomail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 2/18/2025 23:24, Gautham R. Shenoy wrote:
-> Hello Mario,
-> 
-> 
-> On Mon, Feb 17, 2025 at 04:06:50PM -0600, Mario Limonciello wrote:
->> From: Mario Limonciello <mario.limonciello@amd.com>
->>
->> During resume it's possible the firmware didn't restore the CPPC request MSR
->> but the kernel thinks the values line up. This leads to incorrect performance
->> after resume from suspend.
->>
->> To fix the issue invalidate the cached value at suspend. During resume use
->> the saved values programmed as cached limits.
->>
->> Reported-by: Miroslav Pavleski <miroslav@pavleski.net>
->> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=217931
->> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
->> ---
->>   drivers/cpufreq/amd-pstate.c | 5 ++++-
->>   1 file changed, 4 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
->> index f425fb7ec77d7..12fb63169a24c 100644
->> --- a/drivers/cpufreq/amd-pstate.c
->> +++ b/drivers/cpufreq/amd-pstate.c
->> @@ -1611,7 +1611,7 @@ static int amd_pstate_epp_reenable(struct cpufreq_policy *policy)
->>   					  max_perf, policy->boost_enabled);
->>   	}
-> 
-> You can also remove the tracing code from amd_pstate_epp_reenable(), i.e,
-> 
-> 	if (trace_amd_pstate_epp_perf_enabled()) {
-> 		trace_amd_pstate_epp_perf(cpudata->cpu, cpudata->highest_perf,
-> 					  cpudata->epp_cached,
-> 					  FIELD_GET(AMD_CPPC_MIN_PERF_MASK, cpudata->cppc_req_cached),
-> 					  max_perf, policy->boost_enabled);
-> 	}
-> 
-> Since amd_pstate_epp_update_limit() also has the the tracing code.
 
-Yeah; the tracing code gets updated later in the series.
-My plan is this commit is a minimal fix, and will go to 6.14, the rest 
-will be in 6.15.
 
+On 2/17/25 7:48 AM, Li Ming wrote:
+> In cxl_dax_region_alloc(), there is a goto pattern to release the rwsem
+> cxl_region_rwsem when the function returns, the down_read() and up_read
+> can be replaced by a guard(rwsem_read) then the goto pattern can be
+> removed.
 > 
-> The patch looks good to me otherwise.
-> 
-> Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
-> 
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: Li Ming <ming.li@zohomail.com>
 
-Thanks!
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+
+> ---
+>  drivers/cxl/core/region.c | 16 +++++-----------
+>  1 file changed, 5 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+> index d8a71f9f9fa5..320a3f218131 100644
+> --- a/drivers/cxl/core/region.c
+> +++ b/drivers/cxl/core/region.c
+> @@ -3038,17 +3038,13 @@ static struct cxl_dax_region *cxl_dax_region_alloc(struct cxl_region *cxlr)
+>  	struct cxl_dax_region *cxlr_dax;
+>  	struct device *dev;
+>  
+> -	down_read(&cxl_region_rwsem);
+> -	if (p->state != CXL_CONFIG_COMMIT) {
+> -		cxlr_dax = ERR_PTR(-ENXIO);
+> -		goto out;
+> -	}
+> +	guard(rwsem_read)(&cxl_region_rwsem);
+> +	if (p->state != CXL_CONFIG_COMMIT)
+> +		return ERR_PTR(-ENXIO);
+>  
+>  	cxlr_dax = kzalloc(sizeof(*cxlr_dax), GFP_KERNEL);
+> -	if (!cxlr_dax) {
+> -		cxlr_dax = ERR_PTR(-ENOMEM);
+> -		goto out;
+> -	}
+> +	if (!cxlr_dax)
+> +		return ERR_PTR(-ENOMEM);
+>  
+>  	cxlr_dax->hpa_range.start = p->res->start;
+>  	cxlr_dax->hpa_range.end = p->res->end;
+> @@ -3061,8 +3057,6 @@ static struct cxl_dax_region *cxl_dax_region_alloc(struct cxl_region *cxlr)
+>  	dev->parent = &cxlr->dev;
+>  	dev->bus = &cxl_bus_type;
+>  	dev->type = &cxl_dax_region_type;
+> -out:
+> -	up_read(&cxl_region_rwsem);
+>  
+>  	return cxlr_dax;
+>  }
+
 
