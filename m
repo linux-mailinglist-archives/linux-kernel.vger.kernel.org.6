@@ -1,147 +1,150 @@
-Return-Path: <linux-kernel+bounces-520842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D1B4A3AFFC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 04:18:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54E49A3B001
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 04:21:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98C033B0E95
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 03:18:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 130211749F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 03:21:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2A751A8F7F;
-	Wed, 19 Feb 2025 03:17:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38CC419B5B8;
+	Wed, 19 Feb 2025 03:21:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MhqPCc3K"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xmETNANS"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98BD715A85A
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 03:17:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6CEA13CA8A
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 03:21:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739935079; cv=none; b=QMaa5gXwh0xlkYFnesDVfMnH/jsezKWdemSCW/JXOXmvppu/dIMLSXC8L6WM/3eYAEy8sHGt/DtwwcaQRBQGDdkL5v9jPn9exXMbwlNXn70guvW+JkN2sjAf/RKlXKHoZFJvI7K7BZNhnKJjx9zko1cggiZ+//FlySpgbvrT8Gs=
+	t=1739935298; cv=none; b=AQL25FXkh9SWZUb8Y1ekfWEtREwqhxFN19EhOuIIUFQf/DX9Rgj88Db2odDhMk6VgoVsWDuHrEeipYtqe62lDZRy21n9DKI6gJnjE7byd/nZXKxy6y0XDoFsq5Q3yNz38m/fzxRtamG/4uHq3T90akKKynykUM2sXKru3YvYY90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739935079; c=relaxed/simple;
-	bh=AXiI9tXfD/bRXn+8Y0AETb2ngSu6A5KTjMGOKhztDro=;
+	s=arc-20240116; t=1739935298; c=relaxed/simple;
+	bh=zQZ72noBMjWgnUpzvtmi4E18hq/KrvTADHps9Ta+qv0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LwhQFQeQEDjfhucsqc/WFt/mnRx2W/MYFR2+Oe6VViQDz92pjM9sbTEjmVEMmxtVTr0Yc2ku1XL9R92MTRcRMtDVMCYunJLECIQ/pSdZk+tURqNrWy16WKH8wBJzeX/JsiRhy3hoqaN0FMs0zgRVnmmzB39VG/swwpG26uJXcjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MhqPCc3K; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739935076;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VKadPNxi6muCmVb//eXomLPYTLJo7paJFVc00B3IJME=;
-	b=MhqPCc3KjN/9IXEEKoKRXL772m547JDHmTpAV3VoaKkPJQZRxe7KEq2NApT8eOyshO0Zet
-	Nh9NM05vE3aKgxNp+lkT2vsQjXJ6e6amBE5BmJAnEs40AM3j7Syk/wIqQXDjHTJAxB4QR8
-	Ry/HkkXK3k1NXUfCDrbh0YCDEsreNK8=
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
- [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-145-cQWJJrEtMFeNUy1QF4GYQQ-1; Tue, 18 Feb 2025 22:17:53 -0500
-X-MC-Unique: cQWJJrEtMFeNUy1QF4GYQQ-1
-X-Mimecast-MFC-AGG-ID: cQWJJrEtMFeNUy1QF4GYQQ_1739935073
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2f46b7851fcso19941134a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 19:17:53 -0800 (PST)
+	 To:Cc:Content-Type; b=ColKSaDwlwnQKxiNiQkGpHHoMFKns6/cizOVd+gwQfCzv5L4U90+K4nJxZZNZKUgz0pNyH8L/ERwVQaHzbWeNewlJEyu9rQVyj0SlSjf4wlqTpC36s98kw+OdVj4H9K7zEmAoT9fgDLgU9sSgqN5ls1xWfaDiqynb+OBOi+c1sA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xmETNANS; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5ded6c31344so7693389a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 19:21:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739935295; x=1740540095; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zQZ72noBMjWgnUpzvtmi4E18hq/KrvTADHps9Ta+qv0=;
+        b=xmETNANSkuNDsxcLroPQqmRUkxlMD8bLtJp72WroSTVmdMaI4VJVG+zVICLTl/c5EE
+         G/enS7jNdMtLZagoow49w6Zxs4rydYqU0MRRZJrLazKlIid3muxb+AvR1KS9xGA5KYWu
+         buYOpZ+9UTbhXC6d1yYTlQhkaOtgo1Aqc3DmpEk9jh6ZSViGm7c0Xivvt9nOlLCUaQs0
+         wsOBazxwmwkwnGPv9+O8KGNMEDKMfXpMjdPvjUxtV+dNlOUOaKHN0+0MEP9b2RGWUbPG
+         ujWHo5by84WZNckscxMlsRyYiXOYepMA2Mv0I8cjKiccTZVi5EHGWTJ4ZmH1VyoGeke7
+         Up5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739935073; x=1740539873;
+        d=1e100.net; s=20230601; t=1739935295; x=1740540095;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=VKadPNxi6muCmVb//eXomLPYTLJo7paJFVc00B3IJME=;
-        b=iWvYih0c8y0joh+rYcPrviMQad5gl7F08FyVeMVZCQQqnvxiMNo38E49lm5z7IPRxJ
-         DAMYBW3Wc+n/8BmVDQrKvpmfzUPaTFlE9a7QGSjbx/USZM49Gn2EO4imTNv8wTdoE7hq
-         AbMJgQQBaaIi5niRqkWaRY9DQKoeTKUnAu6zyTfu5eE697r5wuVpM0sZsPHmg5bsBT+b
-         8bYRZKDQzhKqwReA+yH03A/qXLtE3NOXc1eDhTHeF75ypveCUcjFn9x2PnLUNGodAyLo
-         LAnWMpvU71ELKVq0UsTSQOjVCYELMWt2dB3kOXNZAjuPZ5GAzHdMZO8BgvyVnt054jKd
-         Wsog==
-X-Forwarded-Encrypted: i=1; AJvYcCVDAOUu2yW+r4zvvWyTEBNRC7jYmGYz2JDibqEi8Zam62OH7zRznYRiaVki0n53UkQPxJtmFq+xqWhERj8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRRkZ6ytzPs9cLtd3gdORsSvVIQZ8+xAQ1MiOLtISURwHnjhNB
-	/+k14/fLha9mKhH4iIZp4SXy13wq5T0YuUNC13IsfifNgQY34qnMrnO+ioIYnm7XnwqGTtBfGmb
-	UUhvsPYnalh9TYosSItPioSjHdsW4TDcJmmlElT0SgeHdkSgraEImKsyC/n5IjpjZbSupLWFUN2
-	1vaMQ6ALWfGbdMJPLENHIkPW0GGa75Tqws0+tp
-X-Gm-Gg: ASbGncsK0yh98fJ/P8300Rhzd9h4B2YeejlsKHPJkEpUyUlxuDCACgGHmrwP7qHzNAr
-	rLU4ouUlC+it+cWqGc+8wll4QdJxhLRa9ii4Yvxb3jQKCPNbAD4Odw/iE6snN6l4=
-X-Received: by 2002:a17:90a:f495:b0:2fc:a3b7:1096 with SMTP id 98e67ed59e1d1-2fca3b71328mr6689791a91.27.1739935072843;
-        Tue, 18 Feb 2025 19:17:52 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF6PN3buhsj4JUJy+Dzc+p8dgfIJT6zMzIfOOj/oagvGFTtsM5768bTiKiPfmJPIJEOxIzO0imrO6+0oAlHP4A=
-X-Received: by 2002:a17:90a:f495:b0:2fc:a3b7:1096 with SMTP id
- 98e67ed59e1d1-2fca3b71328mr6689759a91.27.1739935072464; Tue, 18 Feb 2025
- 19:17:52 -0800 (PST)
+        bh=zQZ72noBMjWgnUpzvtmi4E18hq/KrvTADHps9Ta+qv0=;
+        b=NWog3g7oBko+N6et/aqms5Qnltvop7tNN5Unoc4kecYFo2a6XMZdxScV3rsteyROxS
+         RUsMpePXu1VLh4GJ3oP+jrmup82wjI07puzbiatI0KQLAzFIXCFqsGTURTjOL2KIWfJR
+         gOO+lD6uYCqsOfcEjA8pesY4EkMyCapGzt2QUwNKysmlc1EXmTwT2AgrKn+ufOrdtN3F
+         +0kdXIqLuAsgmTL4EcTV8np8Lsh26bwDFkW/t8d4ogIfDoNBAIOhN3Z/Xm1SsLLPvC3D
+         O34IVxrR2Kqb5Ze/XfeZv+SiHppKoZLgbr9c+PSSezxA93iXjZSYkDUbVbjCeNLTaOc1
+         F6bQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWbMc4gW2EkHtW8i/tJNR1QZwimpr1ot21pyjs9XZWlpNaF4oFQCNp8TkJFVpMspuk2SCNpC9Go+hhquag=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwC8jGFQGdTBByGTMTUG4RxCmQZDIYXR2T+2zwTDpYYrPHTx9f8
+	/n/E+bIVmsAtNJI9upvrjGB0bvLd4utmyH3OxH6MUuylalb63EmJBK5RAWKHSbDvXka7QCFOv6K
+	IUZQgNbYbKz22MoJwqGsSUFO8oSCAikma8LWo
+X-Gm-Gg: ASbGncvrt9fnlhE/dw3Idu/7KANkLAoZqJC5otP/qqZcTzyKavMFTTogCn0jglXYJig
+	4wnV3Xtbpvxj4nE/8KJnYBzdWKRX36mZ85lDTnd8f3z7qQ9n9jtHVC02+VlA0/2vF/etIDnyY
+X-Google-Smtp-Source: AGHT+IEnGbryBeBhChWrRvIMKHLS/nYVH9GuCmrhXCKrLhI46whs35vEsS7hGUKNaTHSWl6ye+CZMmasW6Vxzw7o0U4=
+X-Received: by 2002:a05:6402:35cb:b0:5dc:caab:9447 with SMTP id
+ 4fb4d7f45d1cf-5e036063e6amr41083363a12.18.1739935295010; Tue, 18 Feb 2025
+ 19:21:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250217172308.3291739-1-marcus.wichelmann@hetzner-cloud.de> <20250217172308.3291739-2-marcus.wichelmann@hetzner-cloud.de>
-In-Reply-To: <20250217172308.3291739-2-marcus.wichelmann@hetzner-cloud.de>
-From: Jason Wang <jasowang@redhat.com>
-Date: Wed, 19 Feb 2025 11:17:40 +0800
-X-Gm-Features: AWEUYZmQkycRwSOsaFbHJhebPYbtJJ3xrSXwIHRYXHCed3Hqat2E_8Ie-BS422U
-Message-ID: <CACGkMEu0amsUNZS_EoJc40B=av90OJkpivDw3vCWwYJYAB68kA@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v2 1/6] net: tun: enable XDP metadata support
-To: Marcus Wichelmann <marcus.wichelmann@hetzner-cloud.de>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, willemdebruijn.kernel@gmail.com, 
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, ast@kernel.org, daniel@iogearbox.net, 
-	andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
-	yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org, 
-	sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, mykolal@fb.com, 
-	shuah@kernel.org, hawk@kernel.org
+References: <20250212-tdx-rtmr-v1-0-9795dc49e132@intel.com>
+ <15c69d57-4ffb-4ea1-8cbc-0ba6d3d7b14f@intel.com> <be7e3c9d-208a-4bda-b8cf-9119f3e0c4ce@intel.com>
+ <015cdddb-7f74-4205-af8a-b15cad7ddc22@intel.com> <d8f3eb33-d902-4391-adc7-005e4895b471@intel.com>
+ <c7894df2-2b27-4f67-b428-3eca312503f9@intel.com> <c2cf2184-7753-454e-ac99-8c4f3c9c3d16@intel.com>
+ <01fc0997-a0e7-4086-b0aa-67b4a51b328a@intel.com> <12ed2ab1-e97d-4a20-8370-8c60cabffc77@intel.com>
+ <ab2036d5-5b6f-4fa9-995a-fba63c0a5209@linux.intel.com> <f4d344de-70c2-4fd4-bb18-2912cf0f3f98@intel.com>
+ <CAAH4kHYq7_3vLXQaCA7iKF+mC5Pg0cn-1FsB-iCbN7Jim9a-OQ@mail.gmail.com> <650b6236-50d3-4932-b5bc-056fd29c93a7@intel.com>
+In-Reply-To: <650b6236-50d3-4932-b5bc-056fd29c93a7@intel.com>
+From: Dionna Amalie Glaze <dionnaglaze@google.com>
+Date: Tue, 18 Feb 2025 19:21:23 -0800
+X-Gm-Features: AWEUYZkxt4Uz_DEgnqnT-wIOC0NHjgfy5WtvAXnbdvc8enIGlu1IN6n1oU029Q4
+Message-ID: <CAAH4kHYye2ApqYb3GmHSt2Ge4B1m55mA54Ch-f1RCzh3GZuHOw@mail.gmail.com>
+Subject: Re: [PATCH 0/4] tsm: Unified Measurement Register ABI for TVMs
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Dan Middleton <dan.middleton@linux.intel.com>, "Xing, Cedric" <cedric.xing@intel.com>, 
+	Dan Williams <dan.j.williams@intel.com>, 
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev, 
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 18, 2025 at 1:23=E2=80=AFAM Marcus Wichelmann
-<marcus.wichelmann@hetzner-cloud.de> wrote:
+On Tue, Feb 18, 2025 at 4:41=E2=80=AFPM Dave Hansen <dave.hansen@intel.com>=
+ wrote:
 >
-> Enable the support for the bpf_xdp_adjust_meta helper function for XDP
-> buffers initialized by the tun driver. This allows to reserve a metadata
-> area that is useful to pass any information from one XDP program to
-> another one, for example when using tail-calls.
+> On 2/18/25 15:57, Dionna Amalie Glaze wrote:
+> >> If there are actual end users who care about this, it would be great t=
+o
+> >> see their acks on it as well.
+> >>
+> > We would like to have this for Google Confidential Space and Kubernetes=
+ Engine.
+> >
+> > Acked-by: Dionna Glaze <dionnaglaze@google.com>
 >
-> Whether this helper function can be used in an XDP program depends on
-> how the xdp_buff was initialized. Most net drivers initialize the
-> xdp_buff in a way, that allows bpf_xdp_adjust_meta to be used. In case
-> of the tun driver, this is currently not the case.
->
-> There are two code paths in the tun driver that lead to a
-> bpf_prog_run_xdp and where metadata support should be enabled:
->
-> 1. tun_build_skb, which is called by tun_get_user and is used when
->    writing packets from userspace into the device. In this case, the
->    xdp_buff created in tun_build_skb has no support for
->    bpf_xdp_adjust_meta and calls of that helper function result in
->    ENOTSUPP.
->
->    For this code path, it's sufficient to set the meta_valid argument of
->    the xdp_prepare_buff call. The reserved headroom is large enough
->    already.
->
-> 2. tun_xdp_one, which is called by tun_sendmsg which again is called by
->    other drivers (e.g. vhost_net). When the TUN_MSG_PTR mode is used,
->    another driver may pass a batch of xdp_buffs to the tun driver. In
->    this case, that other driver is the one initializing the xdp_buff.
->
->    See commit 043d222f93ab ("tuntap: accept an array of XDP buffs
->    through sendmsg()") for details.
->
->    For now, the vhost_net driver is the only one using TUN_MSG_PTR and
->    it already initializes the xdp_buffs with metadata support and
->    sufficient headroom. But the tun driver disables it again, so the
->    xdp_set_data_meta_invalid call has to be removed.
->
-> Signed-off-by: Marcus Wichelmann <marcus.wichelmann@hetzner-cloud.de>
-> ---
+> Great! Thanks for chiming in. Can you talk for a second, though, about
+> why this is useful and how you plan to use it? Is it for debugging?
 
-Acked-by: Jason Wang <jasowang@redhat.com>
+Confidential space on SEV depends on the hypervisor-provided vTPM to
+provide remotely attestable quotes of its PCRs, and the corresponding
+event logs.
+https://github.com/google/go-tpm-tools/blob/main/launcher/agent/agent.go#L9=
+7
 
-Thanks
+On TDX and ARM CCA (maybe RISC-V CoVE someday), we don't want to have
+to depend on the vTPM.
+There are runtime measurement registers and the CCEL.
+When we have a sysfs interface to extend these registers, it makes the
+user space evidence manager's life easier.
+When Dan Williams forced the issue about configfs-tsm, we were told
+that it is bad for the kernel to have many platform-specific
+interfaces for attestation operations.
+This patch series is a way to unify behind the tsm.
 
+As for the ability to read the registers through sysfs instead of just
+extend-on-write, that's not something Confidential Space depends on
+specifically.
+Our attestation policies are evaluated in a verification service
+rather than on-node.
+
+For on-node policy evaluation, for instance in kubectl, there is a
+benefit to being able to generically read measurement registers that
+have been extended generically to execute policy that a certain action
+if a measurement register isn't an exact expected value.
+This is not far-fetched, since it is used for confidential containers,
+and is being discussed for kubernetes engine as a way to poison an
+instance when an ssh session is terminated for a human operator.
+
+To have that same capability without a generic read interface, we need
+to stuff kubectl with quote parsers of every attestation technology.
+
+Hope that helps.
+--=20
+-Dionna Glaze, PhD, CISSP, CCSP (she/her)
 
