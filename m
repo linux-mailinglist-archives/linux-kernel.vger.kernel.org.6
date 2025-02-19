@@ -1,135 +1,125 @@
-Return-Path: <linux-kernel+bounces-521133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B94C3A3B4E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:49:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7071A3B4C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:46:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8FDB1885AF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:43:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 582273AFCC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:42:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECDE31EFFBD;
-	Wed, 19 Feb 2025 08:37:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E15B1E25F1;
+	Wed, 19 Feb 2025 08:36:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bbf+Sdyw"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kNj/xDKj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 908B01EA7CE;
-	Wed, 19 Feb 2025 08:37:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 025771E1A2B;
+	Wed, 19 Feb 2025 08:36:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739954277; cv=none; b=cccRghZ9IPhBWzN2gJWrZwbE5ck6oIuruhMWs5dR0N9bOQ3A/vlJmXD3STWVpEQ3EspfUTD6LpaDM/Qb+2LbgzCzyN7QB6W55jmdOOoiOrRerqG3p3+UAuGAAYZWTOTybTRqbHooQkWBQEfqrrsWxwFz6Po6aCj8awuDC08dCVs=
+	t=1739954216; cv=none; b=H9BWxrXuuXRnz8gt0WVErAXf4oA9zDTLZBKJyE/CPSeqlwKrvWWfBfFmjE/ZwBNo1v3GguOLTWq78JhrmYPvTaungQgXkeyE/qb85O/7Qaj0tLLq9TT7Ek+d3yrb91Oke3h0uvzosQSxrTp2SLzDURzwNblkxBjP2aekVNBkZbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739954277; c=relaxed/simple;
-	bh=/XLK+daHIrD0JUs6qF5Tb18zmYYnPeTNEGxJ9lAE7MU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ALcrvaGCPLVnkynGMdA/rh61Pwg8RJFPdgsAnOXCOIdCDlIzpXqTqZuthCTrmGqOH9gBZvccf4DahNB8d+E5XXfNuGgg2Rp1LQxf/3pNsvuEx7zKANBaLVaC6uJs7dIFq8pJDJeEigMdn4uztHm3kHeF1eQeJq789K1ItGnjMAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bbf+Sdyw; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-abbb12bea54so399944066b.0;
-        Wed, 19 Feb 2025 00:37:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739954274; x=1740559074; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=aEMQm4psPyovFJMOlQxIsVIRwEzwiIeGeanslSFpEok=;
-        b=Bbf+SdywspqMpK4KjsHvvn6RQQniQ9FrOQkaAMh+dDKGKkb2HZpxHNhRbWp1uvQj8p
-         FpsCTrUfWoCea3W6Gi/Ec/OfYQ6hT7LFpjIhwHA164dDE0q1wbFEQnxTA4SiaXsq2yLb
-         gHnn94yWPglIuaFLSnTE7UaW6xcPEW4C5e/t7ZYiHsThMSkzxmfhskGZnfj5NfcVRdN1
-         r6r4Dan0vniSkdCks9iul0M9AqD6EFn+AnfsaK/aojrGim9g1/a7GXxZPcZroZWhi1yv
-         ervgjoxhNFbH7GROxnwW2HePtqes306SSYVVaKuAlYVUWu/ChBVC04uB/aI+0OAYncvM
-         1xBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739954274; x=1740559074;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aEMQm4psPyovFJMOlQxIsVIRwEzwiIeGeanslSFpEok=;
-        b=l9aT6Y5exMfzQpspjMNhtXP0kM8YYmHqlRJ7JUZdJ384nrlPo6mvO1EbdCD6Uu2MJ5
-         3tIjzipQZmgIn/pb4wT9qyM/WRMaI063dKXjxjqYrPzKMhH82WHk6xZbPCJ6iGyQwduP
-         ypz2SM4Z+9ORDK5XTYkN9DXha5tzi/FfHt3zN5X5YialKOoyz1N8LhxUGNo8TiTrPBck
-         BkTq1JmcLrEy+ZuMN5+siesQDiQXKomfn4D3isIIiEUcLvV8gS2JxtS1oRRJvW2KzWFR
-         +aF5rJZdocjhBabH6sd/YfyB3OhC6vWbZi/LoJcoYuHjklmQM+/GhMsJiupXvn9PKap9
-         ylPw==
-X-Forwarded-Encrypted: i=1; AJvYcCXG7sE9vM+U125PhggEcuLJVhLLNe6uJjx2A1E8gOuJ56I7Y7Rv87IDZVsnuGO4gCOxb4LIbMTEUPSMoUo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzx+qJuNP3zqizXsC+wO27czd+MnC80WJyxVtWPSLPyFAxol7Ef
-	dRchLKV0HEz4nh60X2xLplxeNrzGlUWE4lVyah4WEu0oDNMnBhJA
-X-Gm-Gg: ASbGncupDQ54zukoI+2sxMWgIVbtC6RRM8PAset5yYuNN8QBha0vMB7tbo2mWUN2+Ob
-	SYcZwuRtB1hBH3WSv2Dzrn0TY2FXMDOg/e/a4Q+BELlWGUj14XQhFPsUH0pMN0vh+Z2eSNpHFWR
-	p8PBzxlhIV+8DLljeeAuF44FvZLhiODAF4O9534E3yi2Pm9WOb+Ls3SbVk3FZZeAGG02JCecKwh
-	JKT6OkHkw8SoTlHSSmzoRNHhpJZewTOtKrndD0gaYM4hefzpzdLrB1mSWEzj74P4WO7W6oBu/vI
-	uzb1vb+V5rjxLA+tSpnMDN4iIdfiDdq7IpE1OxVuL9eWuYhXJMBur0pAOOdCiAvX6Q==
-X-Google-Smtp-Source: AGHT+IFIfgmIsE9od5jUiVuNIYBBGDleFzsDrKi//m+gjFVpl/fUNq/U0YkPAcRxvV7z/FjZnsJYRA==
-X-Received: by 2002:a17:907:7706:b0:abb:2334:af2f with SMTP id a640c23a62f3a-abb70b18461mr1371333066b.13.1739954273806;
-        Wed, 19 Feb 2025 00:37:53 -0800 (PST)
-Received: from eichest-laptop.corp.toradex.com (31-10-206-125.static.upc.ch. [31.10.206.125])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba532322b9sm1224319066b.37.2025.02.19.00.37.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2025 00:37:53 -0800 (PST)
-From: Stefan Eichenberger <eichest@gmail.com>
-To: gregkh@linuxfoundation.org,
-	stern@rowland.harvard.edu
-Cc: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Stefan Eichenberger <stefan.eichenberger@toradex.com>
-Subject: [PATCH v1] usb: core: replace usb_sndaddr0pipe macro with usb_sndctrlpipe
-Date: Wed, 19 Feb 2025 09:36:44 +0100
-Message-ID: <20250219083745.10406-1-eichest@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1739954216; c=relaxed/simple;
+	bh=rgJvidjAQMDoQVWGBwJ2leXpTN2OG2+kgUkDZ7AeZQQ=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=JAGhon7zgdoBesQg74pe039NtA0Tt8wnU3bw86CRtVAtrF/KxmdzJSfYTnatnIqoynjHc9pppDr+x4fxLSnw2uKduL1lqJsyvjRf9/Ti0cSb3IUUwK8ECkbFP9dc10JpIUl2GnSrt6QClRcFueM+/z7snLcdb6nlPAGJeAh/8SY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kNj/xDKj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93432C4CED1;
+	Wed, 19 Feb 2025 08:36:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739954214;
+	bh=rgJvidjAQMDoQVWGBwJ2leXpTN2OG2+kgUkDZ7AeZQQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kNj/xDKjpNDb/OyA58zXZSI/uowZdiwP3jlGB0BsxCp/GZY+e5QsVeA7f7ecNP4YU
+	 r7GBP0/GW0yFUmRdYKQyND0fjqmVBWtT8/kkYq0qBWQcFz8eZ3lInPWKy/xXO5hU0P
+	 lbrGs6+3zhuIAsokBOVuQg0p9yX46gFFqxgb/22T8bYI+bfKuK7rNxT4gzAEgkI5UV
+	 VSeiIAfeCEvgBFH1pnlTf4eTEw0HPAJ38cUkKb1YvS4F8kJ4rJvnNG6vUttO9i3a1c
+	 anyxhXUOvP5yni6wnAEIe7u3426OVqYxkwdpVNN64g7gNWf/N1W9oKvx6QXx9Qe7K2
+	 21YMRo4iWIfPQ==
+Date: Wed, 19 Feb 2025 17:36:52 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Thomas =?UTF-8?B?V2Vpw59zY2h1aA==?= <thomas.weissschuh@linutronix.de>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH] tracing/user_events: Don't use %pK through printk
+Message-Id: <20250219173652.183b22ff533301c5206b9743@kernel.org>
+In-Reply-To: <20250219081236-812a157c-5c60-41af-a7c8-f75f9da5e92a@linutronix.de>
+References: <20250217-restricted-pointers-trace-v1-1-bbe9ea279848@linutronix.de>
+	<20250219091023.f17833aea92a3d90e1bbc7da@kernel.org>
+	<20250219081236-812a157c-5c60-41af-a7c8-f75f9da5e92a@linutronix.de>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+On Wed, 19 Feb 2025 08:14:34 +0100
+Thomas Weißschuh <thomas.weissschuh@linutronix.de> wrote:
 
-The usb_sndaddr0pipe macro is only used in the hub_set_address function.
-Replace it with usb_sndctrlpipe which provides the same functionality
-but would also consider the endpoint device number.
+> On Wed, Feb 19, 2025 at 09:10:23AM +0900, Masami Hiramatsu wrote:
+> > On Mon, 17 Feb 2025 14:16:12 +0100
+> > Thomas Weißschuh <thomas.weissschuh@linutronix.de> wrote:
+> > 
+> > > Restricted pointers ("%pK") are not meant to be used through printk().
+> > > It can unintentionally expose security sensitive, raw pointer values.
+> > > 
+> > > Use regular pointer formatting instead.
+> > > 
+> > > Link: https://lore.kernel.org/lkml/20250113171731-dc10e3c1-da64-4af0-b767-7c7070468023@linutronix.de/
+> > 
+> > This is only for the kernel pointer, but the "uaddr" below means it
+> > has a user space address. So I think this does not need to be applied.
+> 
+> "uaddr" is formatted with %llx, which is fine.
+> "%pK" is used for mm->mm, which is a kernel pointer.
 
-If the device has not been initialised, it is safe to use
-usb_sndctrlpipe in this context because udev->devnum is set to 0.
-Therefore, this change does not affect behaviour, but reduces code
-complexity by reusing the existing macro.
+Oops, I misread it. OK. looks good to me.
 
-Signed-off-by: Stefan Eichenberger <stefan.eichenberger@toradex.com>
----
-Even though this patch does not fix a bug it is related to the following
-discussion and addresses the change proposed by Alan:
-https://lore.kernel.org/all/aa0c06f6-f997-4bcf-a5a3-6b17f6355fca@rowland.harvard.edu/
----
- drivers/usb/core/hub.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-index 59e38780f76d0..66dfdf0bab90b 100644
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -4697,8 +4697,6 @@ void usb_ep0_reinit(struct usb_device *udev)
- }
- EXPORT_SYMBOL_GPL(usb_ep0_reinit);
- 
--#define usb_sndaddr0pipe()	(PIPE_CONTROL << 30)
--
- static int hub_set_address(struct usb_device *udev, int devnum)
- {
- 	int retval;
-@@ -4722,7 +4720,7 @@ static int hub_set_address(struct usb_device *udev, int devnum)
- 	if (hcd->driver->address_device)
- 		retval = hcd->driver->address_device(hcd, udev, timeout_ms);
- 	else
--		retval = usb_control_msg(udev, usb_sndaddr0pipe(),
-+		retval = usb_control_msg(udev, usb_sndctrlpipe(udev, 0),
- 				USB_REQ_SET_ADDRESS, 0, devnum, 0,
- 				NULL, 0, timeout_ms);
- 	if (retval == 0) {
+
+Thank you,
+
+> 
+> > Thank you,
+> > 
+> > > Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+> > > ---
+> > >  kernel/trace/trace_events_user.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/kernel/trace/trace_events_user.c b/kernel/trace/trace_events_user.c
+> > > index 97325fbd62836f4fb477c4a2b2936eff544291ec..3effc6fce20e65a8077de5221eb69db04fb1a775 100644
+> > > --- a/kernel/trace/trace_events_user.c
+> > > +++ b/kernel/trace/trace_events_user.c
+> > > @@ -455,7 +455,7 @@ static void user_event_enabler_fault_fixup(struct work_struct *work)
+> > >  	if (ret && ret != -ENOENT) {
+> > >  		struct user_event *user = enabler->event;
+> > >  
+> > > -		pr_warn("user_events: Fault for mm: 0x%pK @ 0x%llx event: %s\n",
+> > > +		pr_warn("user_events: Fault for mm: 0x%p @ 0x%llx event: %s\n",
+> > >  			mm->mm, (unsigned long long)uaddr, EVENT_NAME(user));
+> > >  	}
+> > >  
+> > > 
+> > > ---
+> > > base-commit: 0ad2507d5d93f39619fc42372c347d6006b64319
+> > > change-id: 20250217-restricted-pointers-trace-a0fb12707ac6
+> > > 
+> > > Best regards,
+> > > -- 
+> > > Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+
+
 -- 
-2.45.2
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
