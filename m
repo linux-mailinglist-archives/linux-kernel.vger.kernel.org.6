@@ -1,129 +1,120 @@
-Return-Path: <linux-kernel+bounces-520996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16532A3B26B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:32:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D0EFA3B272
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:33:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00A223A4E1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:31:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F56A1890896
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:33:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 276521C1F20;
-	Wed, 19 Feb 2025 07:31:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uaxkr/R9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B1C17A2F0;
-	Wed, 19 Feb 2025 07:31:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65F1D1C3C12;
+	Wed, 19 Feb 2025 07:32:59 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B88F17A307;
+	Wed, 19 Feb 2025 07:32:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739950308; cv=none; b=b+0Ygn8X9PJLOriXqo2Jtvb1b3esoxeYz4ZcvzFPF2g8qFGWPEjSazERT4x+vZ4WV+bJI0Bt+US0fHLFnqJ1HdU+1i9lbzqp4no5HBwxQ++OcpQ3xpMoZspeR/ysZaj9tTjrychiUNbfP43xcufKyHbktRE13aNLqbJNkGvDYGY=
+	t=1739950378; cv=none; b=AQyLdNSbAkVf/QnCPoTgpwkWmpmsT/QjRbD58Old6ZXu8lIYR3K9Yi/SyGjAqvG0tjb3CZBrwTKhAYdCvJYI2Q0AvGai5s/YXwiJvPJd+KE97Qr7M3urjvkPfLsQOU/KN6TheDLaThfr+fBevk6+vAsR6zGj+NywO1H0RSZt83M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739950308; c=relaxed/simple;
-	bh=cxAT0ceE2wLTrNYv8eY/CEz1rQUPy7iHSg5zXmpc9n8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lmxZyCoFP5oMT6TVclZGEvyWp9KsuOWPSD4eRDBHo0xxjE7vv2ZzE/WVwu+zc5zOcFw7jo+IHwF407Eq+7VIB+9VSJkRhk5OzoXNUdIvKGUTs9qq+gf6poCVtJotF7eH1Ej882dtIfCNm1nkaswCQ5jptWt24Kfg/Vh+Z/iRqpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uaxkr/R9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15317C4CED1;
-	Wed, 19 Feb 2025 07:31:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739950307;
-	bh=cxAT0ceE2wLTrNYv8eY/CEz1rQUPy7iHSg5zXmpc9n8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Uaxkr/R9E8VISGogaXUl3S39rxJYlScQTItOVGAGXOm82J+uw/6b8O0xNkBskHLfj
-	 BaopC4Kkdbt19FXX9DGC+0VR1o9LKXUle/V3+ZhwFRYs50DGUWH9WTvXF0cqEE5C3j
-	 dsSkOiARUplDbDxJV4u6CmABulSrYYBYdIoteyHI/OdJr2KSAusM9jq3f1bZFKWcSi
-	 N04viYHJHD+jrNmHH3f77vQ0aH4v37hhJY3gqRHFp3aEL7lzJHR1xsnN7WujVROr2D
-	 HowKXKxkdGrcO2lFLG44n1t67zqMxST8/mE+5zd9L1NpwjT9wy0E/BPVKr/kabx+7e
-	 nL7yN5GiLJruw==
-Message-ID: <61b658bd-be0f-4f1d-a1ee-56660dd2810d@kernel.org>
-Date: Wed, 19 Feb 2025 08:31:40 +0100
+	s=arc-20240116; t=1739950378; c=relaxed/simple;
+	bh=WgiOFIEinVea8mtpI1tDJE0Ypcap5EdHprwgezfaCoA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OAnCSrtno9GzVT809p5VO8yW31ps+6hs8r02Y0oUj3n+vx1IheqzwuiSgze4ggj6Q12fLRCTXCT3obvPHhU8ZKAMxYpHEYX2MAFB6+XstmspbYWQxf9/xxcQJ5kcod4ucQ68KtwFW2y11mv3efzsenESfikgLGcsxva3SwvjtxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.40.54.90])
+	by gateway (Coremail) with SMTP id _____8DxjXIcibVnbbl6AA--.15142S3;
+	Wed, 19 Feb 2025 15:32:44 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.40.54.90])
+	by front1 (Coremail) with SMTP id qMiowMCxPscUibVnO7IbAA--.40817S2;
+	Wed, 19 Feb 2025 15:32:36 +0800 (CST)
+From: Qunqin Zhao <zhaoqunqin@loongson.cn>
+To: lee@kernel.org,
+	herbert@gondor.apana.org.au,
+	davem@davemloft.net,
+	peterhuewe@gmx.de,
+	jarkko@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	linux-crypto@vger.kernel.org,
+	jgg@ziepe.ca,
+	linux-integrity@vger.kernel.org,
+	Qunqin Zhao <zhaoqunqin@loongson.cn>
+Subject: [PATCH V3 0/6] Drivers for Loongson security engine
+Date: Wed, 19 Feb 2025 15:32:08 +0800
+Message-Id: <20250219073214.16866-1-zhaoqunqin@loongson.cn>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] phy: exynos5-usbdrd: Add support for the Exynos990
- usbdrd phy
-To: Igor Belwon <igor.belwon@mentallysanemainliners.org>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org
-References: <20250214-exynos990-dwusb-v1-0-d68282c51ba8@mentallysanemainliners.org>
- <20250214-exynos990-dwusb-v1-2-d68282c51ba8@mentallysanemainliners.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250214-exynos990-dwusb-v1-2-d68282c51ba8@mentallysanemainliners.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMCxPscUibVnO7IbAA--.40817S2
+X-CM-SenderInfo: 52kd01pxqtx0o6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj93XoW7Ar47Gw47tF4fKrWUXr15ZFc_yoW8WF4kpF
+	45Aa4rCr4UJrZrGrn3J348uFyfXa4fXrW3KrW2qwn8Wr9IyFy8J3yakFyUAFsrJF1UJryI
+	qFZ3Cr4UGF1UZacCm3ZEXasCq-sJn29KB7ZKAUJUUUUx529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUB0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1ln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
+	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1D
+	McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr4
+	1lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_
+	Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67
+	AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8I
+	cVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI
+	8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v2
+	6r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU4SoGDUUUU
 
-On 14/02/2025 18:21, Igor Belwon wrote:
-> The Exynos990 usbdrd PHY is a combo PHY which supports USB SS, HS and
-> DisplayPort outputs. This commit adds support only for UTMI+ (USB HS).
-> 
-> Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
-> ---
->  drivers/phy/samsung/phy-exynos5-usbdrd.c    | 32 +++++++++++++++++++++++++++++
->  include/linux/soc/samsung/exynos-regs-pmu.h |  3 +++
->  2 files changed, 35 insertions(+)
+Loongson security engine supports random number generation, hash,
+symmetric encryption and asymmetric encryption. Based on these
+encryption functions, TPM2 have been implemented in it.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+mfd is the baser driver, crypto and tpm are users.
 
-Best regards,
-Krzysztof
+v3: Put the updates to the MAINTAINERS in a separate patch.
+v2: Removed misc driver. Added tpm driver.
+
+Qunqin Zhao (6):
+  mfd: Add support for Loongson Security Module
+  MAINTAINERS: Add maintainer for Loongson Security Module driver
+  crypto: loongson - add Loongson RNG driver support
+  MAINTAINERS: Add maintainer for Loongson RNG driver
+  tpm: Add a driver for Loongson TPM device
+  MAINTAINERS: Add tpm_lsse.c to LOONGSON CRYPTO DRIVER entry
+
+ MAINTAINERS                            |  14 +
+ drivers/char/tpm/Kconfig               |   9 +
+ drivers/char/tpm/Makefile              |   1 +
+ drivers/char/tpm/tpm_lsse.c            | 104 +++++++
+ drivers/crypto/Kconfig                 |   1 +
+ drivers/crypto/Makefile                |   1 +
+ drivers/crypto/loongson/Kconfig        |   6 +
+ drivers/crypto/loongson/Makefile       |   2 +
+ drivers/crypto/loongson/ls6000se-rng.c | 190 +++++++++++++
+ drivers/mfd/Kconfig                    |   9 +
+ drivers/mfd/Makefile                   |   2 +
+ drivers/mfd/ls6000se.c                 | 374 +++++++++++++++++++++++++
+ include/linux/mfd/ls6000se.h           |  75 +++++
+ 13 files changed, 788 insertions(+)
+ create mode 100644 drivers/char/tpm/tpm_lsse.c
+ create mode 100644 drivers/crypto/loongson/Kconfig
+ create mode 100644 drivers/crypto/loongson/Makefile
+ create mode 100644 drivers/crypto/loongson/ls6000se-rng.c
+ create mode 100644 drivers/mfd/ls6000se.c
+ create mode 100644 include/linux/mfd/ls6000se.h
+
+
+base-commit: 2816b0c949af89640b8dc05de53e650cbf1d55fb
+-- 
+2.43.0
+
 
