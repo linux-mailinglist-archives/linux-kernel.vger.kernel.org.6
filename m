@@ -1,116 +1,180 @@
-Return-Path: <linux-kernel+bounces-521049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B583A3B337
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:07:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60782A3B32B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:06:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84CF218988EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:06:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74CA716B1C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:06:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA69E1C5F01;
-	Wed, 19 Feb 2025 08:06:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A4D41C5D45;
+	Wed, 19 Feb 2025 08:05:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OP0ZWc5S"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LtTs7k54"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 946F9191F77
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 08:05:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E317F1B87F4;
+	Wed, 19 Feb 2025 08:05:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739952361; cv=none; b=lPx5eQcloca5Jto0xVeKdidkwyFsyNxzhwwIYY6RpYiefzqSJNrFfgeYCSTawonVEFHAEnS0ojcaYRdzVEa0KpqKPw8CJ4IZEqr7bq4H80G79JuE5ofQJ0ustEa0YTDKHYcrcbk+D9M37tGUsHKqAl+QJo2oS7NjarwicNBfygU=
+	t=1739952359; cv=none; b=AyLkEb94OovgOHgySarSHlwsmsemFf3ZgLPXV4qypw2CL5forC62ZDov9mnxdgptosB6HhrR+L5sx0GGiDTqDBGTYn7JV5HqFgoUMvJCrSJGXOeHcLVAIBQo9DNCbPESjInBTAVZGSk1wJZYQAk5kHh6D1BkA3npWsh3/ZpAyXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739952361; c=relaxed/simple;
-	bh=6b/FYVUKFZW/rZzPAqlMXsdGXCeCSu0N5Kd+DJjdp7I=;
+	s=arc-20240116; t=1739952359; c=relaxed/simple;
+	bh=mjCUzREEp607MSaIY9+burmTdQYRMJRZfKMZFQK9qjU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Adyr3QGUQfSq4JDpHQTTMB59Q89+iXmwNV0YXCigDbMiFlYv9JaHtVR+syg7JMJQvr/ol66Gu/UpJ6F7t3aAQRd3RbF/RHLwncjY0uh/sbcZ1iZnIv59IwtbVPGGgcmukeVcf2hk7ZEBkBVuJgqUQ/d6AUY2QbQjMqdbnSMrPuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OP0ZWc5S; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-abadccdfe5aso825957366b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 00:05:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739952354; x=1740557154; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wLGc0PhsYQqjnufHmhSBlNvjs6ldgEolpYxIgynjQOs=;
-        b=OP0ZWc5SESZewczmU4FGe0a8AgI4gtgDFl/IwY9sYT3Za7fNJT9i5NqT2W3xCuBQIf
-         TrJZzWXu+vo/PqlX2Zwy7+Yw7xFLcTvuPfgoeRRLSuXzUTndXRoaeI4OSKMcVvWxNdnC
-         /QZBHXJUhIpL3PG60Uuw5XEd3lfFevbS9XdFskpRhrroZ8JNxmlx1+0tgb6LgX74CDXX
-         bd84sQVbuXkLxmFeomxiX+rAZ5nIlKfPMMMN7v4CegZ+LqAtZodxN8JPHCLWR2+CZD2P
-         3equ3fiYigPR5vGksIGlTSwqyOcMqBBG88MKv4mF0ks7nNojOy4142pIeYRs9zlUY6HR
-         2fwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739952354; x=1740557154;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wLGc0PhsYQqjnufHmhSBlNvjs6ldgEolpYxIgynjQOs=;
-        b=M3tfI73lT8tW605xgV8XmVFGT8I9nGLigNNuBO7RPRW0vhxb5GNffPoEy01MDmzpWP
-         4MpXLgxvc/mmT8cJoHVIR+oR6jnCCadVrNFWSvsSIhssEw0N5W6Y65vzXIUH72aSji2M
-         2BG/nmO0YZtFm4Rt+OokMLMRe5f8cKhxWJnZSa6S9MlslBvBOCTkI3wORziDZaPPROWV
-         f/jQwb2Zw9z0K2MXo/84wqVe/LOdtZ1u0Tj/XUGRvTmadmNoCU1/4JLV5RJIAI4OYiOR
-         PPJZ9JAUKUTDllM5w0vXg0XH45/scBqacrGWHbLrEnYZqFc47wLH0BkwEzpQ4nAfIhQC
-         5IQg==
-X-Forwarded-Encrypted: i=1; AJvYcCWQ9FBknTI9CR/7eNom6hhWRK/5NzxQ1g6r3xA3/FOxfk5vfz92255MMXJ/lfk4XfHjKTM41UIzTb01NAQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFHS8PK814L+ldnlszYGiJkUryfQ2447Q+fuXQUd5+x/arvvYP
-	1B5ZkRnDFIK/L0etSZAJGJw5HrPtAjiKjUbkmwsZpp4bL2hyGpPCAZo731yfXfQ=
-X-Gm-Gg: ASbGncslrxouLsbg1cO3PgEBD3Xyqtp3Sdu9OHoyBjQ9NuU2Y4edUhuYUk/vfyUXI2G
-	Q52mE2/+1WliKCssuwTnP+1wxvmJOEeDCXp287qi5UfICGRQeiHv7P10OATt0j05u2zndr1X3Uw
-	hD9ZyNVG8K5h8Hpd4tYCmgYKxpmAzgiY2ug0ocdTiuqVZkKQzyMJfzTzUD2r5a025OW7RgVv+Nx
-	6MsxMuvo3dlJBbHZrW/N/kwGOLsAvSH2lA3vUmJY8y4kHFD9flTMA3GCM2fPU0GcBV2h83kRuq/
-	9AueboQHwPwq0SRVmRAM
-X-Google-Smtp-Source: AGHT+IGBEq/z6D6qnilsHC3+mDce/VGZCnHMT6t2e1BeXhqvd14hXzgZOEYBBCCaEPZH9/ztZFe9uQ==
-X-Received: by 2002:a17:907:7247:b0:ab7:c6f4:9522 with SMTP id a640c23a62f3a-abb70921334mr1722647266b.9.1739952353901;
-        Wed, 19 Feb 2025 00:05:53 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-abb8915db0dsm690660166b.145.2025.02.19.00.05.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2025 00:05:53 -0800 (PST)
-Date: Wed, 19 Feb 2025 11:05:49 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	rust-for-linux <rust-for-linux@vger.kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	David Airlie <airlied@gmail.com>, linux-kernel@vger.kernel.org,
-	ksummit@lists.linux.dev
-Subject: Re: Rust kernel policy
-Message-ID: <b7a3958e-7a0a-482e-823a-9d6efcb4b577@stanley.mountain>
-References: <CANiq72m-R0tOakf=j7BZ78jDHdy=9-fvZbAT8j91Je2Bxy0sFg@mail.gmail.com>
- <Z7SwcnUzjZYfuJ4-@infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pRpEHFW5Ux7QYNZDTJNfMqmYd3wtVqWaEr/H7hlNwlZV6GpyUfXMtgP+YO28pCmIx/5K2kjfMw/+wwKF5VN4E/ui07OI4Y34g/1n6vjlKf6BUXsb+KtnteDAxrt1TwiRDb3SiGAgE/OyIKRrm0FmMQzURrwCv0UjutPTb5yLdpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LtTs7k54; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89A40C4CEE6;
+	Wed, 19 Feb 2025 08:05:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739952358;
+	bh=mjCUzREEp607MSaIY9+burmTdQYRMJRZfKMZFQK9qjU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LtTs7k5448c55/qTkprhKuOd2Qy3r5GNrqgGlI3kmpGlLZauRS0NkATXtOr23HMVF
+	 oQv7yvc3HvB+7UwiknxrUblX+ci0rfWpcvSgff6Oo8/RpQl3SwAN9H9obgkP8x6r+z
+	 YsBct4IZ5DzMQ+OUvPTVsPsJuXSLOElcyMwi+/lEYITH1jeR/3iiDJJVoJLzt4v2NF
+	 GrEbwq2RWX2ALB3lRyEpGig0PpiGPmxmTyLkeSS0WR0jO74JDap/ZzYw7hoy4bOb/b
+	 9C5DnzJRAxpGTp3xHScogUvHC6w+MqkDBrHTi7Wxs3dCCxZ6874M6KpSwnEphYyVlO
+	 uw7so1h4DQJYg==
+Date: Wed, 19 Feb 2025 09:05:55 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kaustabh Chakraborty <kauschluss@disroot.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 2/5] dt-bindings: clock: document exynos7870 clock
+ driver CMU bindings
+Message-ID: <20250219-competent-bullfinch-of-justice-09cbfb@krzk-bin>
+References: <20250219-exynos7870-pmu-clocks-v3-0-0d1e415e9e3a@disroot.org>
+ <20250219-exynos7870-pmu-clocks-v3-2-0d1e415e9e3a@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Z7SwcnUzjZYfuJ4-@infradead.org>
+In-Reply-To: <20250219-exynos7870-pmu-clocks-v3-2-0d1e415e9e3a@disroot.org>
 
-On Tue, Feb 18, 2025 at 08:08:18AM -0800, Christoph Hellwig wrote:
-> But that also shows how core maintainers
-> are put off by trivial things like checking for integer overflows or
-> compiler enforced synchronization (as in the clang thread sanitizer).
-> How are we're going to bridge the gap between a part of the kernel that
-> is not even accepting relatively easy rules for improving safety vs
-> another one that enforces even strong rules.
+On Wed, Feb 19, 2025 at 12:20:29AM +0530, Kaustabh Chakraborty wrote:
+> +  Exynos7870 clock controller is comprised of several CMU units, generating
+> +  clocks for different domains. Those CMU units are modeled as separate device
+> +  tree nodes, and might depend on each other. The root clock in that root tree
+> +  is an external clock: OSCCLK (26 MHz). This external clock must be defined
+> +  as a fixed-rate clock in dts.
+> +
+> +  Each clock is assigned an identifier and client nodes can use this identifier
+> +  to specify the clock which they consume. All clocks available for usage
+> +  in clock consumer nodes are defined as preprocessor macros in
+> +  'dt-bindings/clock/exynos7870.h' header.
 
-Yeah.  It's an ironic thing...
+Full path and drop quotes
 
-	unsigned long total = nr * size;
 
-	if (nr > ULONG_MAX / size)
-		return -EINVAL;
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - samsung,exynos7870-cmu-mif
+> +      - samsung,exynos7870-cmu-dispaud
+> +      - samsung,exynos7870-cmu-fsys
+> +      - samsung,exynos7870-cmu-g3d
+> +      - samsung,exynos7870-cmu-isp
+> +      - samsung,exynos7870-cmu-mfcmscl
+> +      - samsung,exynos7870-cmu-peri
+> +
+> +  clocks:
+> +    minItems: 1
+> +    maxItems: 10
+> +
+> +  clock-names:
+> +    minItems: 1
+> +    maxItems: 10
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - "#clock-cells"
 
-In an ideal world, people who write code like that should receive a
-permanent ban from promoting Rust.
+This goes after clock-names, to keep the same order. No need to repeat
+old mistakes.
 
-regards,
-dan carpenter
+> +  - clocks
+> +  - clock-names
+> +  - reg
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: samsung,exynos7870-cmu-mif
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: External reference clock (26 MHz)
+> +
+> +        clock-names:
+> +          items:
+> +            - const: oscclk
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: samsung,exynos7870-cmu-dispaud
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: External reference clock (26 MHz)
+> +            - description: CMU_DISPAUD bus clock (from CMU_MIF)
+> +            - description: DECON external clock (from CMU_MIF)
+> +            - description: DECON vertical clock (from CMU_MIF)
+> +
+> +        clock-names:
+> +          items:
+> +            - const: oscclk
+> +            - const: bus
+> +            - const: decon_eclk
+> +            - const: decon_vclk
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: samsung,exynos7870-cmu-fsys
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: External reference clock (26 MHz)
+> +            - description: CMU_FSYS bus clock (from CMU_MIF)
+> +            - description: USB20DRD clock (from CMU_MIF)
+> +
+> +        clock-names:
+> +          items:
+> +            - const: oscclk
+> +            - const: bus
+> +            - const: usb20drd_refclk
+
+Drop _refclk suffix
+
+Best regards,
+Krzysztof
+
 
