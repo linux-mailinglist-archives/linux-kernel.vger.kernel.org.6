@@ -1,129 +1,96 @@
-Return-Path: <linux-kernel+bounces-520784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4E2EA3AF31
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:56:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AA76A3AF36
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:57:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F8D5167760
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 01:56:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85E7016AE43
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 01:57:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA7A712CDAE;
-	Wed, 19 Feb 2025 01:56:33 +0000 (UTC)
-Received: from mta21.hihonor.com (mta21.hihonor.com [81.70.160.142])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C20F169397;
+	Wed, 19 Feb 2025 01:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uXJHssyx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A8314F70
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 01:56:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.160.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00DBC14F70;
+	Wed, 19 Feb 2025 01:57:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739930193; cv=none; b=p8440ujxnhP7zCrBb4oWn2PmldYgTqqldCHPXLGG+Q8hWNuPzBNcfKP8sa52Xdg2aF/3LmCfltscxu6ro6dlsqoLa6C7Z4JP0G/23gBCxXQYgR+RcytoFnLAxOCELyYpZW2hbY7QiZAzLwjVJEMBfgfkiptbGvE4XF94WSbGIi4=
+	t=1739930222; cv=none; b=c9VnFVveAFfiHUyeZM/ITHeuQIf9xic4eBs2pLG7YpWVzqSzaTut3H0YswFS01z3XGIwLWk4Vt8PSo5SYfuQz9kC2PWJpYbcaVMycA2kOfEgr6PrhwDJ7A6K4fxnbMjxSK2D4h6svcbC/06Pwrrjy6v8/99NcatkfJvd4LcA7BI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739930193; c=relaxed/simple;
-	bh=Mc+kH8GEon/PVfC0HKf5NV/vmITYzF+FwowKOyfCJMk=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=hUQeej+J+PKeJGJqKb4ifL31a4V6aa7RPcj9oY4mWB18htxAf/iIl0Cv5yQqNOpxOIbqNqQI7B8KkuYNl7PTwJXEbkFtVkbYUYW3v15r72KU5JUYW6dv3jqk57pb9oSjrpJBhCwPJlbkGOdjoQ5FMnWudGh+HOPn9KhIz8bqbvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.160.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-Received: from w011.hihonor.com (unknown [10.68.20.122])
-	by mta21.hihonor.com (SkyGuard) with ESMTPS id 4YyKGw4XmzzYky7j;
-	Wed, 19 Feb 2025 09:55:36 +0800 (CST)
-Received: from a005.hihonor.com (10.68.18.24) by w011.hihonor.com
- (10.68.20.122) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 19 Feb
- 2025 09:56:29 +0800
-Received: from a007.hihonor.com (10.68.22.31) by a005.hihonor.com
- (10.68.18.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 19 Feb
- 2025 09:56:28 +0800
-Received: from a007.hihonor.com ([fe80::e866:83ac:f23b:c25c]) by
- a007.hihonor.com ([fe80::e866:83ac:f23b:c25c%10]) with mapi id
- 15.02.1544.011; Wed, 19 Feb 2025 09:56:28 +0800
-From: gaoxu <gaoxu2@honor.com>
-To: Andrew Morton <akpm@linux-foundation.org>, "linux-mm@kvack.org"
-	<linux-mm@kvack.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Suren
- Baghdasaryan" <surenb@google.com>, Barry Song <21cnbao@gmail.com>, "Yosry
- Ahmed" <yosry.ahmed@linux.dev>, Yosry Ahmed <yosry.ahmed@linux.dev>
-Subject: [PATCH v4] mm: Fix possible NULL pointer dereference in
- __swap_duplicate
-Thread-Topic: [PATCH v4] mm: Fix possible NULL pointer dereference in
- __swap_duplicate
-Thread-Index: AduCcQRTKSEr86o5RfKgi/48SSQ2Jw==
-Date: Wed, 19 Feb 2025 01:56:28 +0000
-Message-ID: <e223b0e6ba2f4924984b1917cc717bd5@honor.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1739930222; c=relaxed/simple;
+	bh=P2bCTM49kWzcXVkhkmaaeprhN/yl8fx/rlVARBMiD04=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=L8rwxG/pJO/NDdBhHxywyuSTklsXEMsyria4A9ruGoAw4hP29zQ9lNrUwhJNukt5B3LIknyYlLynV1vlfYf1ZTriKw+pUSHwY0zE2bIP9hr9djT0d+mjowp7Y53zk7aYcpDIFZL45QPHO1xIBGiEgSZD6F0ZuCnbW7C6HrQjP4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uXJHssyx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A82BC4CEE2;
+	Wed, 19 Feb 2025 01:57:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739930221;
+	bh=P2bCTM49kWzcXVkhkmaaeprhN/yl8fx/rlVARBMiD04=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=uXJHssyxDiMYlDJF1P7twCBv3ITsGPDivWPay8d8la+1Cgt9/X48uoRqit6Eptcqn
+	 js5FiYg+cqMK1A+rG70NWn7N9OJfD8kEqqeHL4Ak6ATU9KK9LJIZ+tGkeiKYUMOMaB
+	 KCnmBIx1mRpIJxJ+0aFIQdex0XNkDaolYD2ZPEZQO/U+83hDWR9a6Mfi7fzmk1TpFF
+	 wUiYEp1MK1oyg9MlBwV2/Ix09NSWvTjZVAqisfjYW0mekZ4Vc9xdQ0YS23M0ZCJau5
+	 +aPS8G4NLBr1vGW8wIZy+z7fMHNwey4m5Tfn78IZkoxI0yAVIBU2lZVPd5Yr1esQd3
+	 nV2r255W3cMDg==
+Date: Tue, 18 Feb 2025 17:57:00 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>, Claudiu Beznea
+ <claudiu.beznea@tuxon.dev>, netdev@vger.kernel.org, "David S . Miller"
+ <davem@davemloft.net>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ linux-kernel@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>, Eric Dumazet
+ <edumazet@google.com>
+Subject: Re: [PATCH net-next] net: cadence: macb: Implement BQL
+Message-ID: <20250218175700.4493dc49@kernel.org>
+In-Reply-To: <20250214211643.2617340-1-sean.anderson@linux.dev>
+References: <20250214211643.2617340-1-sean.anderson@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-QWRkIGEgTlVMTCBjaGVjayBvbiB0aGUgcmV0dXJuIHZhbHVlIG9mIHN3cF9zd2FwX2luZm8gaW4g
-X19zd2FwX2R1cGxpY2F0ZQ0KdG8gcHJldmVudCBjcmFzaGVzIGNhdXNlZCBieSBOVUxMIHBvaW50
-ZXIgZGVyZWZlcmVuY2UuDQoNClRoZSByZWFzb24gd2h5IHN3cF9zd2FwX2luZm8oKSByZXR1cm5z
-IE5VTEwgaXMgdW5jbGVhcjsgaXQgbWF5IGJlIGR1ZSB0bw0KQ1BVIGNhY2hlIGlzc3VlcyBvciBE
-RFIgYml0IGZsaXBzLiBUaGUgcHJvYmFiaWxpdHkgb2YgdGhpcyBpc3N1ZSBpcyB2ZXJ5DQpzbWFs
-bCwgYW5kIHRoZSBzdGFjayBpbmZvIHdlIGVuY291bnRlcmVkIGlzIGFzIGZvbGxvd3PvvJoNClVu
-YWJsZSB0byBoYW5kbGUga2VybmVsIE5VTEwgcG9pbnRlciBkZXJlZmVyZW5jZSBhdCB2aXJ0dWFs
-IGFkZHJlc3MNCjAwMDAwMDAwMDAwMDAwNTgNCltSQi9FXXJiX3NyZWFzb25fc3RyX3NldDogc3Jl
-YXNvbl9zdHIgc2V0IG51bGxfcG9pbnRlcg0KTWVtIGFib3J0IGluZm86DQogIEVTUiA9IDB4MDAw
-MDAwMDA5NjAwMDAwNQ0KICBFQyA9IDB4MjU6IERBQlQgKGN1cnJlbnQgRUwpLCBJTCA9IDMyIGJp
-dHMNCiAgU0VUID0gMCwgRm5WID0gMA0KICBFQSA9IDAsIFMxUFRXID0gMA0KICBGU0MgPSAweDA1
-OiBsZXZlbCAxIHRyYW5zbGF0aW9uIGZhdWx0DQpEYXRhIGFib3J0IGluZm86DQogIElTViA9IDAs
-IElTUyA9IDB4MDAwMDAwMDUsIElTUzIgPSAweDAwMDAwMDAwDQogIENNID0gMCwgV25SID0gMCwg
-VG5EID0gMCwgVGFnQWNjZXNzID0gMA0KICBHQ1MgPSAwLCBPdmVybGF5ID0gMCwgRGlydHlCaXQg
-PSAwLCBYcyA9IDANCnVzZXIgcGd0YWJsZTogNGsgcGFnZXMsIDM5LWJpdCBWQXMsIHBnZHA9MDAw
-MDAwMDhhODBlNTAwMA0KWzAwMDAwMDAwMDAwMDAwNThdIHBnZD0wMDAwMDAwMDAwMDAwMDAwLCBw
-NGQ9MDAwMDAwMDAwMDAwMDAwMCwNCnB1ZD0wMDAwMDAwMDAwMDAwMDAwDQpJbnRlcm5hbCBlcnJv
-cjogT29wczogMDAwMDAwMDA5NjAwMDAwNSBbIzFdIFBSRUVNUFQgU01QDQpTa2lwIG1kIGZ0cmFj
-ZSBidWZmZXIgZHVtcCBmb3I6IDB4MTYwOWUwDQouLi4NCnBjIDogc3dhcF9kdXBsaWNhdGUrMHg0
-NC8weDE2NA0KbHIgOiBjb3B5X3BhZ2VfcmFuZ2UrMHg1MDgvMHgxZTc4DQpzcCA6IGZmZmZmZmMw
-ZjJhNjk5ZTANCngyOTogZmZmZmZmYzBmMmE2OTllMCB4Mjg6IGZmZmZmZjhhNWIyOGQzODggeDI3
-OiBmZmZmZmY4YjA2NjAzMzg4DQp4MjY6IGZmZmZmZmRmNzI5MWZlNzAgeDI1OiAwMDAwMDAwMDAw
-MDAwMDA2IHgyNDogMDAwMDAwMDAwMDEwMDA3Mw0KeDIzOiAwMDAwMDAwMDAwMmQyZDJmIHgyMjog
-MDAwMDAwMDAwMDAwMDAwOCB4MjE6IDAwMDAwMDAwMDAwMDAwMDANCngyMDogMDAwMDAwMDAwMDJk
-MmQyZiB4MTk6IDE4MDAwMDAwMDAyZDJkMmYgeDE4OiBmZmZmZmZkZjcyNmZhZWMwDQp4MTc6IDAw
-MDAwMDAwMDAwMDAwMDAgeDE2OiAwMDEwMDAwMDAwMDAwMDAxIHgxNTogMDA0MDAwMDAwMDAwMDAw
-MQ0KeDE0OiAwNDAwMDAwMDAwMDAwMDAxIHgxMzogZmY3ZmZmZmZmZmZmZmI3ZiB4MTI6IGZmZWZm
-ZmZmZmZmZmZiZmYNCngxMTogZmZmZmZmOGE1YzdlMTg5OCB4MTA6IDAwMDAwMDAwMDAwMDAwMTgg
-eDkgOiAwMDAwMDAwMDAwMDAwMDA2DQp4OCA6IDE4MDAwMDAwMDAwMDAwMDAgeDcgOiAwMDAwMDAw
-MDAwMDAwMDAwIHg2IDogZmZmZmZmODA1N2MwMWYxMA0KeDUgOiAwMDAwMDAwMDAwMDBhMzE4IHg0
-IDogMDAwMDAwMDAwMDAwMDAwMCB4MyA6IDAwMDAwMDAwMDAwMDAwMDANCngyIDogMDAwMDAwNmRh
-ZjIwMDAwMCB4MSA6IDAwMDAwMDAwMDAwMDAwMDEgeDAgOiAxODAwMDAwMDAwMmQyZDJmDQpDYWxs
-IHRyYWNlOg0KIHN3YXBfZHVwbGljYXRlKzB4NDQvMHgxNjQNCiBjb3B5X3BhZ2VfcmFuZ2UrMHg1
-MDgvMHgxZTc4DQogY29weV9wcm9jZXNzKzB4MTI3OC8weDIxY2MNCiBrZXJuZWxfY2xvbmUrMHg5
-MC8weDQzOA0KIF9fYXJtNjRfc3lzX2Nsb25lKzB4NWMvMHg4Yw0KIGludm9rZV9zeXNjYWxsKzB4
-NTgvMHgxMTANCiBkb19lbDBfc3ZjKzB4OGMvMHhlMA0KIGVsMF9zdmMrMHgzOC8weDljDQogZWww
-dF82NF9zeW5jX2hhbmRsZXIrMHg0NC8weGVjDQogZWwwdF82NF9zeW5jKzB4MWE4LzB4MWFjDQpD
-b2RlOiA5MTM5YzM1YSA3MTAwNmYzZiA1NDAwMDU2OCBmODc5N2I1NSAoZjk0MDJlYTgpDQotLS1b
-IGVuZCB0cmFjZSAwMDAwMDAwMDAwMDAwMDAwIF0tLS0NCktlcm5lbCBwYW5pYyAtIG5vdCBzeW5j
-aW5nOiBPb3BzOiBGYXRhbCBleGNlcHRpb24NClNNUDogc3RvcHBpbmcgc2Vjb25kYXJ5IENQVXMN
-Cg0KVGhlIHBhdGNoIHNlZW1zIHRvIG9ubHkgcHJvdmlkZSBhIHdvcmthcm91bmQsIGJ1dCB0aGVy
-ZSBhcmUgbm8gbW9yZQ0KZWZmZWN0aXZlIHNvZnR3YXJlIHNvbHV0aW9ucyB0byBoYW5kbGUgdGhl
-IGJpdCBmbGlwcyBwcm9ibGVtLiBUaGlzIHBhdGgNCndpbGwgY2hhbmdlIHRoZSBpc3N1ZSBmcm9t
-IGEgc3lzdGVtIGNyYXNoIHRvIGEgcHJvY2VzcyBleGNlcHRpb24sIHRoZXJlYnkNCnJlZHVjaW5n
-IHRoZSBpbXBhY3Qgb24gdGhlIGVudGlyZSBtYWNoaW5lLg0KDQpTaWduZWQtb2ZmLWJ5OiBnYW8g
-eHUgPGdhb3h1MkBob25vci5jb20+DQotLS0NCnYxIC0+IHYyOiANCi0gQWRkIFdBUk5fT05fT05D
-RS4NCi0gdXBkYXRlIHRoZSBjb21taXQgaW5mby4NCnYyIC0+IHYzOiBEZWxldGUgdGhlIHJldmll
-dyB0YWdzIChUaGlzIGlzIG15IGlzc3VlLCBhbmQgSSBhcG9sb2dpemUpLg0KVjMgLT4gdjQ6IEFk
-ZCBzd2FwIGVudHJ5IGxvZ2dpbmcgcGVyIEJhcnJ5IFNvbmcncyBzdWdnZXN0aW9uLg0KLS0tDQog
-bW0vc3dhcGZpbGUuYyB8IDQgKysrKw0KIDEgZmlsZSBjaGFuZ2VkLCA0IGluc2VydGlvbnMoKykN
-Cg0KZGlmZiAtLWdpdCBhL21tL3N3YXBmaWxlLmMgYi9tbS9zd2FwZmlsZS5jDQppbmRleCA3NDQ4
-YTM4NzYuLjQwM2RmMTgxNyAxMDA2NDQNCi0tLSBhL21tL3N3YXBmaWxlLmMNCisrKyBiL21tL3N3
-YXBmaWxlLmMNCkBAIC0zNTIxLDYgKzM1MjEsMTAgQEAgc3RhdGljIGludCBfX3N3YXBfZHVwbGlj
-YXRlKHN3cF9lbnRyeV90IGVudHJ5LCB1bnNpZ25lZCBjaGFyIHVzYWdlLCBpbnQgbnIpDQogCWlu
-dCBlcnIsIGk7DQogDQogCXNpID0gc3dwX3N3YXBfaW5mbyhlbnRyeSk7DQorCWlmIChXQVJOX09O
-X09OQ0UoIXNpKSkgew0KKwkJcHJfZXJyKCIlcyUwOGx4XG4iLCBCYWRfZmlsZSwgZW50cnkudmFs
-KTsNCisJCXJldHVybiAtRUlOVkFMOw0KKwl9DQogDQogCW9mZnNldCA9IHN3cF9vZmZzZXQoZW50
-cnkpOw0KIAlWTV9XQVJOX09OKG5yID4gU1dBUEZJTEVfQ0xVU1RFUiAtIG9mZnNldCAlIFNXQVBG
-SUxFX0NMVVNURVIpOw0KLS0gDQoyLjE3LjENCg==
+On Fri, 14 Feb 2025 16:16:43 -0500 Sean Anderson wrote:
+> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+> index 48496209fb16..63c65b4bb348 100644
+> --- a/drivers/net/ethernet/cadence/macb_main.c
+> +++ b/drivers/net/ethernet/cadence/macb_main.c
+> @@ -1081,6 +1081,9 @@ static void macb_tx_error_task(struct work_struct *work)
+>  						      tx_error_task);
+>  	bool			halt_timeout = false;
+>  	struct macb		*bp = queue->bp;
+> +	u32			queue_index = queue - bp->queues;
+
+nit: breaking reverse xmas tree here
+
+> +	u32			packets = 0;
+> +	u32			bytes = 0;
+>  	struct macb_tx_skb	*tx_skb;
+>  	struct macb_dma_desc	*desc;
+>  	struct sk_buff		*skb;
+
+
+> @@ -3019,6 +3033,7 @@ static int macb_close(struct net_device *dev)
+>  	netif_tx_stop_all_queues(dev);
+>  
+>  	for (q = 0, queue = bp->queues; q < bp->num_queues; ++q, ++queue) {
+> +		netdev_tx_reset_queue(netdev_get_tx_queue(dev, q));
+>  		napi_disable(&queue->napi_rx);
+>  		napi_disable(&queue->napi_tx);
+
+I think you should reset after napi_disable()? 
+Lest NAPI runs after the reset and tries to complete on an empty queue..
+-- 
+pw-bot: cr
 
