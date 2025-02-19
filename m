@@ -1,271 +1,332 @@
-Return-Path: <linux-kernel+bounces-521174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0833AA3B630
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:05:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E894CA3B658
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:06:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F38B1886C31
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:59:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E57417AB2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:00:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 215851DFD80;
-	Wed, 19 Feb 2025 08:51:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DB8B1E0B86;
+	Wed, 19 Feb 2025 08:52:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Hu3XFiON"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k/JMEo72"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92DF01D79BE
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 08:51:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4410F1CB518;
+	Wed, 19 Feb 2025 08:52:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739955107; cv=none; b=hY6fW4t7Z/GxWhSwM4kcfZy38DFiDrdS6gDb5CcYKvXYCdpmQRokoNDHVku21waoW2ma5galUq5IKSzni1pQ+94GBvMoTOxZP02xU/085nFicl2DunyFvHgTUKzBTLoXRwM288g9tOaFc3lMpvCQAmiR+zekFbBZ2jYG159FIU0=
+	t=1739955177; cv=none; b=Fjg0M6YXs45R1TKckkq7RX163pH9gHHECZexpiyBM04WFTeUubxHpQOWUoG3RMbUTkDNZxMLVN6OUGkIjd3sEYw7WdcS+vgbXDqyzX42WVqzZc5Rxgkdkk0xA9hjvMw//8soLDpT2QdLShUyV/HEKvn3lygXgC3SYhXG7m/5F2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739955107; c=relaxed/simple;
-	bh=4hEJCtsnqq4IxG0/jdpykXd8yIpqzDbGLFMkp9yeVds=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=q+lgHTp6i7ob/qYEFLZXDzy+0egIZTa7VWuZFEkIDtYy/JKrjv7JHi86cYXyLSb4yfvlciXhriIBBTO6qsyZ1gWEQHVVsRhpiuW5iEGgDRdEsF4p9l8hVOYmxnoytCC7sOsqHj+VaDYZ0KWd0uidpRVoJaKEfnIsi7kyXLIbN2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Hu3XFiON; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-abbc38adeb1so229600466b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 00:51:44 -0800 (PST)
+	s=arc-20240116; t=1739955177; c=relaxed/simple;
+	bh=jci8wU+mUppwHF3MfleP7kdhnU5A1Un1W0SKGtlKO6Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L5mPFnX1eGaufRM0t9Wl28zQLltMly5hGQLQpXbGrk5M8xqIdQRWzOOyiLG2aNGVVtqUWwanYk4/6joooJewbW4D9nmrkcic4mR+lPcX1ru9bXrKU2aw0Zwf07qKe/Bai2DIrLPjDTFXehZmgMGQ4h4+zbjdGDSlBsbuivslfFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k/JMEo72; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2fcb6c42c47so1021730a91.1;
+        Wed, 19 Feb 2025 00:52:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1739955103; x=1740559903; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=J2dopUOEbkWXudLU7sGnWO1wuCY7VI0h4RAqKInLyyw=;
-        b=Hu3XFiONQpWzzuRi4ikpbNt8qydWJDT0R5Ca+gCgpyhAfkvYpeSMA9wY4il7MdmQ6M
-         TmWdGmH2aCCs5QF05WSI07+TORMvgt0huv/n+cFNVJUdme88KWknGoBOZtFbYKeyoFjX
-         Q7qMMmaNeG8tofiGPxNC2U9mMKWNAglh9bnBeGxB9ABOheMnKrTwg+aTFyqdQDx4REjP
-         iVidBNJI9GQX0Nf65dDgSB5jQZXq5h0QVKFOgEgyNi9Jf8h+u0LW/hetagL4+1rhiEDM
-         DVq4H1bycmr/asrrDgHtEx9J2Q2zZgWbVjpWhvOq8GsPp9ZLhvlxoS1wq+Ja35ezc3dZ
-         3/2g==
+        d=gmail.com; s=20230601; t=1739955171; x=1740559971; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NG1o86OYTiLAxzL3Ree3H8BihYn463hfbH7TMewO7RI=;
+        b=k/JMEo721U3hzRpg0tzQNwd8CM8Jm58GKl4sGmCqMKQrpxlezJ6NEpRzC8drnoghfR
+         g6V2O6/5D0vxBTAIKxAjKNbVIZ/24+I9Irug2WSYiTkRdfdoKAVUnnDQ3n018nZ9MBAB
+         W0qOQt9ejRl6hKYkXIq6h5/WjqsZWh1m20X7cWmeQUNG0WAKndFu0jVM64pAy0Tu67wI
+         W29lSB1L2Wzc9YoL8xGLObupof6JCZnuyI7/zWrCTNJCcIFB6mIof0hyXnkZ1MtfBokt
+         yQa8Dt5kdAuvhxJJTbIJoPIJX1cRkRCv21ucIdq3vrHUOvIRkiaHDutGo4cHdXcbnZJB
+         w+hQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739955103; x=1740559903;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=J2dopUOEbkWXudLU7sGnWO1wuCY7VI0h4RAqKInLyyw=;
-        b=cbHUEdLaQJ9cBelcq1FOb4tGUkfD2+nQUuxdCrNo3BXDpXPVGXd+st+etCHuN3DoHh
-         spfP9CnMXlJfCrc/PAFQueQlz3TBk3IY7m0cQS9D4owkqxHdpjSoOEOvYhlZIrxYRfu4
-         yobbj+lgokPwp0X0mYNccdj3jN5e6M7P9MPi5jsnU240DLrQWqOtMICXG2RyVRUtDwrC
-         qKdqIKKybqwHIrnhIBS/AllLVAPTYty0+ae4EFHy9RIEYWH6TfUs+DShs3DCTPCPWhhf
-         0QA2ihafSHsz4pT//Mr3qIxzknhwxgooRfXH4VSRQQ87ItYCVgfnAq3gbT70P9Nj1IWb
-         NJcg==
-X-Forwarded-Encrypted: i=1; AJvYcCWAHxUeF6dXJAZUCWhzvRHvwZjvWv1lVXSwMlXhRufapvOvqmYDNOmSKiStnq4zWpdClLaV1hyEJhQzBXo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwVVtIwExY4pCSm/5VwB3/pQ5174K0LErrJk1hobF+nI/AOPHM
-	RG3Cy1D3D30G/RXknnF9FxHQDeYQ6yPLOCwX5b3Ot+Hd8oxzFOKEy7KUbi3Cufc=
-X-Gm-Gg: ASbGnctvGkQmwrp5T8BK14M+0KwTnVtbFZy6x16giHfxtqN4ekcD5eTka3KSkNba51j
-	L4K+wWbXVIMSYV5fWaLKd0EFNzi/54Fvasplvl44pKkA8LG//O8fERtPnqVXHNe/MG2GzytS64L
-	KVzu3wlFmERYT2QODAbPUEPPEvQrAi/5cqKgMZC9uY2eWHR//E0OMpbQSTYofeOlgQyciBZJQLa
-	JdMZwccLx3Lzo5izHVwYeDJJ23Slbk5ifVeHedp4Rq/2Rt94G5Z64lURBBRz7yyqcQU3lPtagAo
-	S/hxeCahjKoKgdbJCgDASVE=
-X-Google-Smtp-Source: AGHT+IFy5LMwjMHF+lyBsWbylZGlIxP2bWCWlwmQuf2NyzqyYPCLtQrAK5Xis2XKpiM0bordtD+JoA==
-X-Received: by 2002:a17:907:96a1:b0:ab6:fd1d:ef6b with SMTP id a640c23a62f3a-abbccebec04mr281429866b.27.1739955102477;
-        Wed, 19 Feb 2025 00:51:42 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.25])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba532594a0sm1246033266b.68.2025.02.19.00.51.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Feb 2025 00:51:41 -0800 (PST)
-Message-ID: <a99ab8eb-274b-449c-8bb6-be9422c5b2a2@tuxon.dev>
-Date: Wed, 19 Feb 2025 10:51:40 +0200
+        d=1e100.net; s=20230601; t=1739955171; x=1740559971;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NG1o86OYTiLAxzL3Ree3H8BihYn463hfbH7TMewO7RI=;
+        b=fHpOmc2Cd1j79VUF8GIuVX2KXlv9AKhtKyqrO3/j/O3AYoon63TcO00u7zsWpjOdMf
+         OoTjlOobwtWheibkrOUhN9WYJ99xmYkWtLiHn3uzO5YlWvIhPYXF+TWmf3DQSpso4g0c
+         97H/KWQO9yQzXxdKdkSm9K1/VIEWVWXCN513DV6oj3HnmnwmR/4Ib3gz3mDOmC/AMetO
+         HclC5DU6ANG1Et99yxD4XHLfJmZD+OchAG1GnxliBgd/h0cbbJaM267ZnnuD/RnEzU6n
+         //Iu8O5xDIpfHrc0SaZubZuOwhqAaCsYPFyXyoX5zTgjOj2endxi37LAnf+Mk/JNT7Nm
+         zEWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWY66zNKhCAaS/hjJa9IzcglfXPTbNbOVSDcGDbbGuial/O4hxepQlx/S20JV1m0KKcfD0GpnpUerz3mflR@vger.kernel.org, AJvYcCXYwgEoQ9Bw0vmwtozEDS1Hfhbf8v9wHHj8HjOQU5O97p09mYytEDHQHLNcw3ZNrwRNiraii4BAd+H2HA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+UEEGec8uLM6OfcvfTfXnFjf+JU4Nqzgu4ckOUUnAf6B7eRGT
+	Dzd3ZcMKQbsCjFUdRsn+Cly3lWVSTToKAF1PykbJDljZkfT5lV7DOtmxDNi1Ki1IGmQ27Zvgs46
+	aatsNtzG5t+Af7Wyz+TMoSmWJEZQ=
+X-Gm-Gg: ASbGncsdULuPizM5T10LfkUBjSBpDKojlsA9iN3h2ciUtGqv7qZ2KU8uH/bHIEyaqXj
+	BRnw53Yy/Oo4bPmfHA1/q71LuFASW6VAZqrJNLoel36rYr0U0FS0DzbohTEMJqJbuZFID7wcLUw
+	==
+X-Google-Smtp-Source: AGHT+IFlt/omkNd9yvjQ73i9iaP39l+q+ypgb3SsHdAC/r/nv82+7zRg5B57SfeafGSmOVpFNOG1UumfxX2ZcPCwwRE=
+X-Received: by 2002:a17:90b:2252:b0:2ee:c9b6:c26a with SMTP id
+ 98e67ed59e1d1-2fc40f1086amr26350955a91.11.1739955171341; Wed, 19 Feb 2025
+ 00:52:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/16] dt-bindings: clock: at91: Split up per SoC
- partially
-To: Nicolas Ferre <nicolas.ferre@microchip.com>,
- Ryan Wanner <ryan.wanner@microchip.com>,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alexander Dahl <ada@thorsis.com>
-References: <20250210164506.495747-1-ada@thorsis.com>
- <20250210164506.495747-2-ada@thorsis.com>
- <a1dff4af-d771-4424-869f-15d3b6bca013@tuxon.dev>
- <20250217-shortwave-scoreless-38cb49fe5548@thorsis.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <20250217-shortwave-scoreless-38cb49fe5548@thorsis.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250208073829.1176287-1-zhenghaoran154@gmail.com>
+ <CAL3q7H5JgQkFavwrjOsvxDt9mMjVUK_nPOha-WYU-muLW=Orug@mail.gmail.com>
+ <CAPjX3FeaL2+oRz81OEkLKjWwr1XuOOa3t-kgCrc51we-C-GVng@mail.gmail.com>
+ <CAL3q7H7iFQ0pS+TB8NNj5CDA=c1cmurSiGsuXDn61O6A5=mBSQ@mail.gmail.com>
+ <CAPjX3Feo9=hkptSxOMREKVckbvhfbmjHAWYBL2sBryDcVzp0NA@mail.gmail.com> <CAL3q7H7eSw0gg=JQwiEe9_pSEqcxugpgOWJDdv45UHrZbsFhzw@mail.gmail.com>
+In-Reply-To: <CAL3q7H7eSw0gg=JQwiEe9_pSEqcxugpgOWJDdv45UHrZbsFhzw@mail.gmail.com>
+From: haoran zheng <zhenghaoran154@gmail.com>
+Date: Wed, 19 Feb 2025 16:52:40 +0800
+X-Gm-Features: AWEUYZl0AqWU4PSGnrD1gRPn8X09Y09pv6l1WfgF5DpjbcufmseVqHpio1YeBqM
+Message-ID: <CAKa5YKjymZzRWy6WhVhu+mMzENunsM6URBL3o-_yy1wPGhdV-A@mail.gmail.com>
+Subject: Re: [PATCH] btrfs: fix data race when accessing the block_group's
+ used field
+To: Filipe Manana <fdmanana@kernel.org>
+Cc: Daniel Vacek <neelx@suse.com>, clm@fb.com, josef@toxicpanda.com, dsterba@suse.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	baijiaju1990@gmail.com, 21371365@buaa.edu.cn
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi, Alexander,
+On Wed, Feb 19, 2025 at 12:29=E2=80=AFAM Filipe Manana <fdmanana@kernel.org=
+> wrote:
+>
+> On Tue, Feb 18, 2025 at 4:14=E2=80=AFPM Daniel Vacek <neelx@suse.com> wro=
+te:
+> >
+> > On Tue, 18 Feb 2025 at 11:19, Filipe Manana <fdmanana@kernel.org> wrote=
+:
+> > >
+> > > On Tue, Feb 18, 2025 at 8:08=E2=80=AFAM Daniel Vacek <neelx@suse.com>=
+ wrote:
+> > > >
+> > > > On Mon, 10 Feb 2025 at 12:11, Filipe Manana <fdmanana@kernel.org> w=
+rote:
+> > > > >
+> > > > > On Sat, Feb 8, 2025 at 7:38=E2=80=AFAM Hao-ran Zheng <zhenghaoran=
+154@gmail.com> wrote:
+> > > > > >
+> > > > > > A data race may occur when the function `btrfs_discard_queue_wo=
+rk()`
+> > > > > > and the function `btrfs_update_block_group()` is executed concu=
+rrently.
+> > > > > > Specifically, when the `btrfs_update_block_group()` function is=
+ executed
+> > > > > > to lines `cache->used =3D old_val;`, and `btrfs_discard_queue_w=
+ork()`
+> > > > > > is accessing `if(block_group->used =3D=3D 0)` will appear with =
+data race,
+> > > > > > which may cause block_group to be placed unexpectedly in discar=
+d_list or
+> > > > > > discard_unused_list. The specific function call stack is as fol=
+lows:
+> > > > > >
+> > > > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3DDATA_RACE=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D
+> > > > > >  btrfs_discard_queue_work+0x245/0x500 [btrfs]
+> > > > > >  __btrfs_add_free_space+0x3066/0x32f0 [btrfs]
+> > > > > >  btrfs_add_free_space+0x19a/0x200 [btrfs]
+> > > > > >  unpin_extent_range+0x847/0x2120 [btrfs]
+> > > > > >  btrfs_finish_extent_commit+0x9a3/0x1840 [btrfs]
+> > > > > >  btrfs_commit_transaction+0x5f65/0xc0f0 [btrfs]
+> > > > > >  transaction_kthread+0x764/0xc20 [btrfs]
+> > > > > >  kthread+0x292/0x330
+> > > > > >  ret_from_fork+0x4d/0x80
+> > > > > >  ret_from_fork_asm+0x1a/0x30
+> > > > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3DOTHER_INFO=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D
+> > > > > >  btrfs_update_block_group+0xa9d/0x2430 [btrfs]
+> > > > > >  __btrfs_free_extent+0x4f69/0x9920 [btrfs]
+> > > > > >  __btrfs_run_delayed_refs+0x290e/0xd7d0 [btrfs]
+> > > > > >  btrfs_run_delayed_refs+0x317/0x770 [btrfs]
+> > > > > >  flush_space+0x388/0x1440 [btrfs]
+> > > > > >  btrfs_preempt_reclaim_metadata_space+0xd65/0x14c0 [btrfs]
+> > > > > >  process_scheduled_works+0x716/0xf10
+> > > > > >  worker_thread+0xb6a/0x1190
+> > > > > >  kthread+0x292/0x330
+> > > > > >  ret_from_fork+0x4d/0x80
+> > > > > >  ret_from_fork_asm+0x1a/0x30
+> > > > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > > > >
+> > > > > > Although the `block_group->used` was checked again in the use o=
+f the
+> > > > > > `peek_discard_list` function, considering that `block_group->us=
+ed` is
+> > > > > > a 64-bit variable, we still think that the data race here is an
+> > > > > > unexpected behavior. It is recommended to add `READ_ONCE` and
+> > > > > > `WRITE_ONCE` to read and write.
+> > > > > >
+> > > > > > Signed-off-by: Hao-ran Zheng <zhenghaoran154@gmail.com>
+> > > > > > ---
+> > > > > >  fs/btrfs/block-group.c | 4 ++--
+> > > > > >  fs/btrfs/discard.c     | 2 +-
+> > > > > >  2 files changed, 3 insertions(+), 3 deletions(-)
+> > > > > >
+> > > > > > diff --git a/fs/btrfs/block-group.c b/fs/btrfs/block-group.c
+> > > > > > index c0a8f7d92acc..c681b97f6835 100644
+> > > > > > --- a/fs/btrfs/block-group.c
+> > > > > > +++ b/fs/btrfs/block-group.c
+> > > > > > @@ -3678,7 +3678,7 @@ int btrfs_update_block_group(struct btrfs=
+_trans_handle *trans,
+> > > > > >         old_val =3D cache->used;
+> > > > > >         if (alloc) {
+> > > > > >                 old_val +=3D num_bytes;
+> > > > > > -               cache->used =3D old_val;
+> > > > > > +               WRITE_ONCE(cache->used, old_val);
+> > > > > >                 cache->reserved -=3D num_bytes;
+> > > > > >                 cache->reclaim_mark =3D 0;
+> > > > > >                 space_info->bytes_reserved -=3D num_bytes;
+> > > > > > @@ -3690,7 +3690,7 @@ int btrfs_update_block_group(struct btrfs=
+_trans_handle *trans,
+> > > > > >                 spin_unlock(&space_info->lock);
+> > > > > >         } else {
+> > > > > >                 old_val -=3D num_bytes;
+> > > > > > -               cache->used =3D old_val;
+> > > > > > +               WRITE_ONCE(cache->used, old_val);
+> > > > > >                 cache->pinned +=3D num_bytes;
+> > > > > >                 btrfs_space_info_update_bytes_pinned(space_info=
+, num_bytes);
+> > > > > >                 space_info->bytes_used -=3D num_bytes;
+> > > > > > diff --git a/fs/btrfs/discard.c b/fs/btrfs/discard.c
+> > > > > > index e815d165cccc..71c57b571d50 100644
+> > > > > > --- a/fs/btrfs/discard.c
+> > > > > > +++ b/fs/btrfs/discard.c
+> > > > > > @@ -363,7 +363,7 @@ void btrfs_discard_queue_work(struct btrfs_=
+discard_ctl *discard_ctl,
+> > > > > >         if (!block_group || !btrfs_test_opt(block_group->fs_inf=
+o, DISCARD_ASYNC))
+> > > > > >                 return;
+> > > > > >
+> > > > > > -       if (block_group->used =3D=3D 0)
+> > > > > > +       if (READ_ONCE(block_group->used) =3D=3D 0)
+> > > > >
+> > > > > There are at least 3 more places in discard.c where we access ->u=
+sed
+> > > > > without being under the protection of the block group's spinlock.
+> > > > > So let's fix this for all places and not just a single one...
+> > > > >
+> > > > > Also, this is quite ugly to spread READ_ONCE/WRITE_ONCE all over =
+the place.
+> > > > > What we typically do in btrfs is to add helpers that hide them, s=
+ee
+> > > > > block-rsv.h for example.
+> > > > >
+> > > > > Also, I don't think we need READ_ONCE/WRITE_ONCE.
+> > > > > We could use data_race(), though I think that could be subject to
+> > > > > load/store tearing, or just take the lock.
+> > > > > So adding a helper like this to block-group.h:
+> > > > >
+> > > > > static inline u64 btrfs_block_group_used(struct btrfs_block_group=
+ *bg)
+> > > > > {
+> > > > >    u64 ret;
+> > > > >
+> > > > >    spin_lock(&bg->lock);
+> > > > >    ret =3D bg->used;
+> > > > >    spin_unlock(&bg->lock);
+> > > > >
+> > > > >     return ret;
+> > > > > }
 
-On 17.02.2025 11:47, Alexander Dahl wrote:
-> Hello Claudiu,
-> 
-> Am Mon, Feb 17, 2025 at 11:11:44AM +0200 schrieb Claudiu Beznea:
->> Hi, Alexander,
->>
->> On 10.02.2025 18:44, Alexander Dahl wrote:
->>> Before adding even more new indexes creating more holes in the
->>> clk at91 drivers pmc_data->chws arrays, split this up.
->>>
->>> This is a partial split up only for SoCs affected by upcoming changes
->>> and by that PMC_MAIN + x hack, others could follow by the same scheme.
->>>
->>> Binding splitup was proposed for several reasons:
->>>
->>> 1) keep the driver code simple, readable, and efficient
->>> 2) avoid accidental array index duplication
->>> 3) avoid memory waste by creating more and more unused array members.
->>>
->>> Old values are kept to not break dts, and to maintain dt ABI.
->>>
->>> Link: https://lore.kernel.org/linux-devicetree/20250207-jailbird-circus-bcc04ee90e05@thorsis.com/T/#u
->>> Signed-off-by: Alexander Dahl <ada@thorsis.com>
->>> ---
->>>
->>> Notes:
->>>     v2:
->>>     - new patch, not present in v1
->>>
->>>  .../dt-bindings/clock/microchip,sam9x60-pmc.h | 19 +++++++++++
->>>  .../dt-bindings/clock/microchip,sam9x7-pmc.h  | 25 +++++++++++++++
->>>  .../clock/microchip,sama7d65-pmc.h            | 32 +++++++++++++++++++
->>>  .../dt-bindings/clock/microchip,sama7g5-pmc.h | 24 ++++++++++++++
->>>  4 files changed, 100 insertions(+)
->>>  create mode 100644 include/dt-bindings/clock/microchip,sam9x60-pmc.h
->>>  create mode 100644 include/dt-bindings/clock/microchip,sam9x7-pmc.h
->>>  create mode 100644 include/dt-bindings/clock/microchip,sama7d65-pmc.h
->>>  create mode 100644 include/dt-bindings/clock/microchip,sama7g5-pmc.h
->>>
->>
->> [ ...]
->>
->>> diff --git a/include/dt-bindings/clock/microchip,sama7g5-pmc.h b/include/dt-bindings/clock/microchip,sama7g5-pmc.h
->>> new file mode 100644
->>> index 0000000000000..ad69ccdf9dc78
->>> --- /dev/null
->>> +++ b/include/dt-bindings/clock/microchip,sama7g5-pmc.h
->>> @@ -0,0 +1,24 @@
->>> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
->>> +/*
->>> + * The constants defined in this header are being used in dts and in
->>> + * at91 sama7g5 clock driver.
->>> + */
->>> +
->>> +#ifndef _DT_BINDINGS_CLOCK_MICROCHIP_SAMA7G5_PMC_H
->>> +#define _DT_BINDINGS_CLOCK_MICROCHIP_SAMA7G5_PMC_H
->>> +
->>> +#include <dt-bindings/clock/at91.h>
->>> +
->>> +/* old from before bindings splitup */
->>> +#define SAMA7G5_PMC_MCK0	PMC_MCK		/* 1 */
->>> +#define SAMA7G5_PMC_UTMI	PMC_UTMI	/* 2 */
->>> +#define SAMA7G5_PMC_MAIN	PMC_MAIN	/* 3 */
->>> +#define SAMA7G5_PMC_CPUPLL	PMC_CPUPLL	/* 4 */
->>> +#define SAMA7G5_PMC_SYSPLL	PMC_SYSPLL	/* 5 */
->>> +
->>> +#define SAMA7G5_PMC_AUDIOPMCPLL	PMC_AUDIOPMCPLL	/* 9 */
->>> +#define SAMA7G5_PMC_AUDIOIOPLL	PMC_AUDIOIOPLL	/* 10 */
->>> +
->>> +#define SAMA7G5_PMC_MCK1	PMC_MCK1	/* 13 */
->>> +
->>> +#endif
->>
->> I would have expected this to be something like:
->>
->> #ifndef __DT_BINDINGS_CLOCK_MICROCHIP_SAMA7G5_PMC_H__
->> #define __DT_BINDINGS_CLOCK_MICROCHIP_SAMA7G5_PMC_H__
->>
->> /* Core clocks. */
->> #define SAMA7G5_MCK0			1
->> #define SAMA7G5_UTMI			2
->> #define SAMA7G5_MAIN			3
->> #define SAMA7G5_CPUPLL			4
->> #define SAMA7G5_SYSPLL			5
->> #define SAMA7G5_DDRPLL			6
->> #define SAMA7G5_IMGPLL			7
->> #define SAMA7G5_BAUDPLL			8
-> 
-> Okay no reference to the old header, but numbers.  Got that.
-> 
-> I'm not sure where you got the 7 and 8 from here, according to my
-> analysis, sama7g5 does not use those.
+I understand that using lock to protect block_group->used
+in discard.c file is feasible. In addition, I looked at the code
+of block-group.c and found that locks have been added in
+some places where block_group->used are used. , it
+seems that it is not appropriate to call
+btrfs_block_group_used again to obtain (because it will
+cause deadlock). I would like to ask other similar places
+where block_group->used needs to call
+btrfs_block_group_used function in addition to the four
+places in discard.c?
 
-From include/dt-bindings/clock/at91.sh
+> > > >
+> > > > Would memory barriers be sufficient here? Taking a lock just for
+> > > > reading one member seems excessive...
 
-#define PMC_IMGPLL              (PMC_MAIN + 4)
+Do I need to perform performance testing to ensure the impact if I lock it?
 
-#define PMC_BAUDPLL             (PMC_MAIN + 5)
-
-
-> 
->>
->> // ...
->>
->> #define SAMA7G5_MCK1			13
->>
->> #endif /* __DT_BINDINGS_CLOCK_MICROCHIP_SAMA7G5_PMC_H__ */
->>
->> Same for the other affected SoCs.
->>
->> The content of include/dt-bindings/clock/at91.h would be limited eventually
->> only to the PMC clock types.
-> 
-> What does this mean?  The clocks split out are no PMC clocks?  
-
-Still PMC clocks. Keeping the types in separate header allows keeping the
-code PMC code common for all SoCs. Then the newly added headers will be
-used only in the SoC DTes and SoC clock driver (e.g. in your case
-drivers/clk/at91/sam9x60.c)
-
-> Then
-> the old PMC_MAIN etc. definitions were named wrong?  All or only some
-> of them?  Or is this different between older and newer SoC variants of
-> the at91 family?
-> 
-> From a quick glance in the SAM9X60 datasheet for example the clock
-> generator provides MD_SLCK, TD_SLCK, MAINCK, and PLL clocks, while the
-> PMC provides MCK, USB clocks, GCLK, PCK, and the peripheral clocks.
-
-drivers splits this into:
-- core clocks
-- peripheral clocks
-- generic clocks
-- system clocks
-- programmable
-
-It's how the code sees it, just a logical split.
-
-Thank you,
-Claudiu
-
-> 
-> The chws array in drivers/clk/at91/sam9x60.c however gets main_rc_osc
-> (from clock generator), mainck (clock generator), pllack (clock
-> generator), upllck (clock generator, UTMI), but also mck (from PMC).
-> 
-> This creates the impression things are mixed up here.  I find all this
-> quite confusing to be honest.
-> 
->> The other "#define PMC_*" defines will eventually go to SoC specific
->> bindings. "#define AT91_PMC_*" seems to not belong here anyway and these
->> would in the end removed, as well.
-> 
-> Okay, you seem to have an idea how this should look like in the long
-> run.  Are there any plans at Microchip or at91 clock maintainer side
-> to clean this up in the near future?
-> 
-> I would like to rather put my small changes for otpc on top of a clean
-> tree, instead of trying to clean up clock drivers and bindings for a
-> whole family of SoCs and boards, where I can test only one of them.
-> O:-)
-> 
-> Greets
-> Alex
-> 
-
+> > >
+> > > Do you think there's heavy contention on this lock?
+> >
+> > This is not about contention. Spin lock should just never be used this
+> > way. Or any lock actually. The critical section only contains a single
+> > fetch operation which does not justify using a lock.
+> > Hence the only guarantee such lock usage provides are the implicit
+> > memory barriers (from which maybe only one of them is really needed
+> > depending on the context where this helper is going to be used).
+> >
+> > Simply put, the lock is degraded into a memory barrier this way. So
+> > why not just use the barriers in the first place if only ordering
+> > guarantees are required? It only makes sense.
+>
+> As said earlier, it's a lot easier to reason about lock() and unlock()
+> calls rather than spreading memory barriers in the write and read
+> sides.
+> Historically he had several mistakes with barriers, they're simply not
+> as straightforward to reason as locks.
+>
+> Plus spreading the barriers in the read and write sides makes the code
+> not so easy to read, not to mention in case of any new sites updating
+> the member, we'll have to not forget adding a barrier.
+>
+> It's just easier to reason and maintain.
+>
+>
+> >
+> > > Usually I prefer to go the simplest way, and using locks is a lot mor=
+e
+> > > straightforward and easier to understand than memory barriers.
+> >
+> > How so? Locks provide the same memory barriers implicitly.
+>
+> I'm not saying they don't.
+> I'm talking about easier code to read and maintain.
+>
+> >
+> > > Unless it's clear there's an observable performance penalty, keeping
+> > > it simple is better.
+> >
+> > Exactly. Here is where our opinions differ. For me 'simple' means
+> > without useless locking.
+> > I mean especially with locks they should only be used when absolutely
+> > necessary. In a sense of 'use the right tool for the job'. There are
+> > more lightweight tools possible in this context. Locks provide
+> > additional guarantees which are not needed here.
+> >
+> > On the other hand I understand that using a lock is a 'better safe
+> > than sorry' approach which should also work. Just keep in mind that
+> > spinlock may sleep on RT.
+>
+> It's not about a better safe than sorry, but easier to read, reason
+> and maintain.
+>
+> >
+> > > data_race() may be ok here, at least for one of the unprotected
+> > > accesses it's fine, but would have to analyse the other 3 cases.
+> >
+> > That's exactly my thoughts. Maybe not even the barriers are needed
+> > after all. This needs to be checked on a per-case basis.
+> >
+> > > >
+> > > > > And then use btrfs_bock_group_used() everywhere in discard.c wher=
+e we
+> > > > > aren't holding a block group's lock.
+> > > > >
+> > > > > Thanks.
+> > > > >
+> > > > >
+> > > > > >                 add_to_discard_unused_list(discard_ctl, block_g=
+roup);
+> > > > > >         else
+> > > > > >                 add_to_discard_list(discard_ctl, block_group);
+> > > > > > --
+> > > > > > 2.34.1
+> > > > > >
+> > > > > >
+> > > > >
 
