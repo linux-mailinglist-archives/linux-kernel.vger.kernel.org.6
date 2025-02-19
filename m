@@ -1,99 +1,185 @@
-Return-Path: <linux-kernel+bounces-522454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E34AA3CA84
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:57:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C88BA3CA80
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:57:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EC0D7A5BA0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 20:56:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B488C189949B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 20:57:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C37F24E4CB;
-	Wed, 19 Feb 2025 20:56:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB8F324FC08;
+	Wed, 19 Feb 2025 20:56:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="aVkq3dIg"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g//3XvXs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E7B247DE1;
-	Wed, 19 Feb 2025 20:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AC3324F5A5;
+	Wed, 19 Feb 2025 20:56:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739998580; cv=none; b=usdhf+rHUqj3rG13FZQxngAKDT6AbnIS45Ox1j1LSO1id+af/3/VnIgJOyBZIHJ0ylhAjO7319FShmMdC5ryaca2xBkUcLII3kciJDcrptG7NtvwOOmoh4jbbl0Qhy9w3X8p7o0WoLOZ1UAFFObuu/w3dD8MIFV0FVeQfR/SgZI=
+	t=1739998582; cv=none; b=llVjL7spUpNhiK/VsegzqTYl9uki/4CUHfZKFKlgOecyPp90Q8mQ592txGIPwfbrlVQh2C5qlYkrDKmAsgzEFFLoRKPnMhBYnWIBsjKDsCSHM3srx5GzjG6kbrsBTztBoWvtQ2ZyEypru2tAVCPBKWk5cWZxK5F3+GMUPJufv6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739998580; c=relaxed/simple;
-	bh=j3Z1m9Hj7+QyCu8uQvcw8xqLLqcrNWzvxMOS2qVC2J4=;
+	s=arc-20240116; t=1739998582; c=relaxed/simple;
+	bh=SwVFKxSc+q+/Fk6lprZYJUu87KetLTJcBHlaby5JfD0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KTYhAjS1Ra89uEM40uC8MQIpjqi1egv/nAt3AKgiendOX2IJMu6HAtHCJvQSKVMVZj8QqeneRvdrw/WLFP77FF2l7yI8z11zxk0db14kI/veSxpHfu05Nl2A/tj6O2pzzQDS+pSdfzESBc2ezxr33XxUIXNggAcb/KmcuympnAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=aVkq3dIg; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 526C840E015F;
-	Wed, 19 Feb 2025 20:56:17 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id sylMmaoy6Uec; Wed, 19 Feb 2025 20:56:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1739998572; bh=BzSk146EZPdEuoi3fRzTjgIcSI+I1KqFNXTcwx/L4Bc=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=nxMJIk4LXF/hr6buN3vskF2N14t4h72e61LGk9cFmo6gTD1U3nzvTHH2DO33v5w1wqiIDJCws5eVm5FBkBMkyKr2hm9iSUjsAw7Ucy9qUQbFob9s8RWD8XJivq1AekKpnDNMWqdoz4qOMiQCnmKoXuyr0QcZixkkIpbD0hjQQY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g//3XvXs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78CF9C4CEE6;
+	Wed, 19 Feb 2025 20:56:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739998581;
+	bh=SwVFKxSc+q+/Fk6lprZYJUu87KetLTJcBHlaby5JfD0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aVkq3dIgPr6+5o1k3zYpUi4eS1vWXA2yWgboIFcAiLRGdxot0OWfOmMJD8cmcQfET
-	 u60oS07EkLaLM2rqBXDWYDhT1Yk1iCeGB3k5EjQo7348HK8MZuHhvNaqKwHHmDnZ88
-	 8eEMMVrZramrswk7Myjw0GM8iRBd32XJmXLCF8ML2K7F6jTu8kKxRnbEuvmcI0PNN9
-	 Ex3AKfASEDn+9HkY3HYF27f6iSg1YMhdto1FVaJeNlLvvAyUFQOAZNOArqNX84ru18
-	 e7R/FgZieLXkmidmG4qcvPS17I916+k0xG5zJRuiyzC7XIOzVcFEDxvcRufJdu6RF5
-	 GPLApVlOzRtqqg3ilMMkaapKBfMlZL2V2CLZnPyt7I43YHsB9dVbuaDpwYqAk9hEQK
-	 Pq62XBNGabRcHr7A3EoUg3C8DwCH3uvBxhI6LheWeCihDS3M9T3RC1Et8HjFQAO9Kz
-	 SK9yt8bpxtu+OxGVHZzlInnKN0cRhsmikPnLxDMsx10SS047lnbounb6GxZwF4wAB/
-	 ENsGPeCmZ+Ia8gS/pW89+4TmaufrjOoedJTnpxL6/FBQinE1K4oXqEKlHpESXUGqBB
-	 BlIjV85hfV122bQ/hvdLs2ylzDYA2/Y2fkmtQY3KRkYf2CN0T4pAVLYFmzSEzAOQDf
-	 Ffnx3AKuELfYb+9D49NOXvNM=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3FB2A40E015D;
-	Wed, 19 Feb 2025 20:55:57 +0000 (UTC)
-Date: Wed, 19 Feb 2025 21:55:56 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Ruidong Tian <tianruidong@linux.alibaba.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, lpieralisi@kernel.org,
-	guohanjun@huawei.com, sudeep.holla@arm.com,
-	xueshuai@linux.alibaba.com, baolin.wang@linux.alibaba.com,
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, rafael@kernel.org,
-	lenb@kernel.org, tony.luck@intel.com, yazen.ghannam@amd.com
-Subject: Re: [PATCH v3 2/5] RAS/AEST: Introduce AEST driver sysfs interface
-Message-ID: <20250219205556.GSZ7ZFXL0In8nPzRIm@fat_crate.local>
-References: <20250115084228.107573-1-tianruidong@linux.alibaba.com>
- <20250115084228.107573-3-tianruidong@linux.alibaba.com>
+	b=g//3XvXseCTgecaubv9AFYITuKjsv0klarkoDHLZpSRf7EuHldOjnCEQqpDPkCIFe
+	 WjVpoJmy+hDof+8PzYw3CJiBYQ+TZ7HsClDeJzmxzD8rvBCO7dv6NHJrI4KzFCAP/u
+	 qiexEJG77DV9LckiMfeHH7IHpTTPpMaERQJYbMx/bpp1MVphxAGD0QvwfnQq3wY8uG
+	 dYB4s5aup4KU9qfnnLYshDpAcgPWcrKmIGfdxaEC9LPjMlmJQAC674HE9rs/kbs2pg
+	 R8jWVjb5CCdTPN0r4Hr0fV6+tnC3Ojcszd+exZSU5ZfdW27LSll/g2fEOBeKv6BEeT
+	 1THu592Sqa84A==
+Date: Wed, 19 Feb 2025 14:56:20 -0600
+From: Rob Herring <robh@kernel.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Tommaso Merciai <tomm.merciai@gmail.com>,
+	linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+	biju.das.jz@bp.renesas.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/8] media: dt-bindings: renesas,rzg2l-csi2: Document
+ Renesas RZ/V2H(P) SoC
+Message-ID: <20250219205620.GA2912221-robh@kernel.org>
+References: <20250210114540.524790-1-tommaso.merciai.xr@bp.renesas.com>
+ <20250210114540.524790-3-tommaso.merciai.xr@bp.renesas.com>
+ <20250214002951.GB8393@pendragon.ideasonboard.com>
+ <20250219145139.GA2551711-robh@kernel.org>
+ <20250219151237.GB31825@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250115084228.107573-3-tianruidong@linux.alibaba.com>
+In-Reply-To: <20250219151237.GB31825@pendragon.ideasonboard.com>
 
-On Wed, Jan 15, 2025 at 04:42:25PM +0800, Ruidong Tian wrote:
-> Exposes certain AEST driver information to userspace.
+On Wed, Feb 19, 2025 at 05:12:37PM +0200, Laurent Pinchart wrote:
+> On Wed, Feb 19, 2025 at 08:51:39AM -0600, Rob Herring wrote:
+> > On Fri, Feb 14, 2025 at 02:29:51AM +0200, Laurent Pinchart wrote:
+> > > Hi Tommaso, Prabhakar,
+> > > 
+> > > Thank you for the patch.
+> > > 
+> > > On Mon, Feb 10, 2025 at 12:45:34PM +0100, Tommaso Merciai wrote:
+> > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > > 
+> > > > The MIPI CSI-2 block on the Renesas RZ/V2H(P) SoC is similar to the one
+> > > > found on the Renesas RZ/G2L SoC, with the following differences:
+> > > > - A different D-PHY
+> > > > - Additional registers for the MIPI CSI-2 link
+> > > > - Only two clocks
+> > > > 
+> > > > Add a new compatible string, `renesas,r9a09g057-csi2`, for the RZ/V2H(P)
+> > > > SoC.
+> > > > 
+> > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > > Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+> > > > ---
+> > > >  .../bindings/media/renesas,rzg2l-csi2.yaml    | 63 ++++++++++++++-----
+> > > >  1 file changed, 48 insertions(+), 15 deletions(-)
+> > > > 
+> > > > diff --git a/Documentation/devicetree/bindings/media/renesas,rzg2l-csi2.yaml b/Documentation/devicetree/bindings/media/renesas,rzg2l-csi2.yaml
+> > > > index 7faa12fecd5b..0d07c55a3f35 100644
+> > > > --- a/Documentation/devicetree/bindings/media/renesas,rzg2l-csi2.yaml
+> > > > +++ b/Documentation/devicetree/bindings/media/renesas,rzg2l-csi2.yaml
+> > > > @@ -17,12 +17,15 @@ description:
+> > > >  
+> > > >  properties:
+> > > >    compatible:
+> > > > -    items:
+> > > > -      - enum:
+> > > > -          - renesas,r9a07g043-csi2       # RZ/G2UL
+> > > > -          - renesas,r9a07g044-csi2       # RZ/G2{L,LC}
+> > > > -          - renesas,r9a07g054-csi2       # RZ/V2L
+> > > > -      - const: renesas,rzg2l-csi2
+> > > > +    oneOf:
+> > > > +      - items:
+> > > > +          - enum:
+> > > > +              - renesas,r9a07g043-csi2 # RZ/G2UL
+> > > > +              - renesas,r9a07g044-csi2 # RZ/G2{L,LC}
+> > > > +              - renesas,r9a07g054-csi2 # RZ/V2L
+> > > > +          - const: renesas,rzg2l-csi2
+> > > > +
+> > > 
+> > > I'd drop the empty line.
+> > > 
+> > > > +      - const: renesas,r9a09g057-csi2 # RZ/V2H(P)
+> > > >  
+> > > >    reg:
+> > > >      maxItems: 1
+> > > > @@ -31,16 +34,24 @@ properties:
+> > > >      maxItems: 1
+> > > >  
+> > > >    clocks:
+> > > > -    items:
+> > > > -      - description: Internal clock for connecting CRU and MIPI
+> > > > -      - description: CRU Main clock
+> > > > -      - description: CRU Register access clock
+> > > > +    oneOf:
+> > > > +      - items:
+> > > > +          - description: Internal clock for connecting CRU and MIPI
+> > > > +          - description: CRU Main clock
+> > > > +          - description: CRU Register access clock
+> > > > +      - items:
+> > > > +          - description: CRU Main clock
+> > > > +          - description: CRU Register access clock
+> > > >  
+> > > >    clock-names:
+> > > > -    items:
+> > > > -      - const: system
+> > > > -      - const: video
+> > > > -      - const: apb
+> > > > +    oneOf:
+> > > > +      - items:
+> > > > +          - const: system
+> > > > +          - const: video
+> > > > +          - const: apb
+> > > > +      - items:
+> > > > +          - const: video
+> > > > +          - const: apb
+> > > 
+> > > I would move the clocks and clock-names definitions to the conditional
+> > > below. Otherwise I think a device tree that has two clocks only but
+> > > incorrectly uses "system" and "video" instead of "video" and "apb" will
+> > > validate.
+> > 
+> > No, that wouldn't be allowed. The preference is to have it like this 
+> > because it discourages creating more variations. If the names are all 
+> > defined in if/then schema, then you can just add a new one with any 
+> > names you want. Though if the variations become such a mess, then 
+> > defining them in the if/then schemas would probably be better.
+> > 
+> > It would be better if 'clocks' could be reworked to avoid the 'oneOf' 
+> > though (oneOf == poor error messages). It just needs a 'minItems: 2' 
+> > added and the descriptions reworded for both cases.
+> 
+> Don't the items in clocks need to match the items in clock-names ? We
+> can't reorder clock-names items as that would be an ABI breakage, so we
+> can't reorder clocks items either.
 
-Why?
+Validation wise, the only thing we check is is it 2 or 3 entries. No way 
+to enforce it's the right clock. The description is just for humans. So 
+you could just put "(optional)" on the first entry though there is no 
+way in json-schema to really do that. If you prefer as-is with the 
+oneOf, that's fine too.
 
-Why do we need to support a debug interface indefinitely.
-
-If "no real reason", then drop it.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Rob
 
