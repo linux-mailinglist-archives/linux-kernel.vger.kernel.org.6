@@ -1,124 +1,134 @@
-Return-Path: <linux-kernel+bounces-520752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C41DA3AEC3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:16:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4515EA3AEC5
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:17:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D77A23A619F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 01:16:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 558D11888860
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 01:17:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 794B05A4D5;
-	Wed, 19 Feb 2025 01:16:09 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9DF95A4D5;
+	Wed, 19 Feb 2025 01:17:37 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1582620B22;
-	Wed, 19 Feb 2025 01:16:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A0A2208CA;
+	Wed, 19 Feb 2025 01:17:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739927769; cv=none; b=gk4Fm2JT9PMvAjpVsWfHmhsSTinJXYsGQJSAbjPsz1gDUW9WPsmfVx2xrOr+jn5vmRWBIcMJFhOW8kdogOC/k9yZCGGqBAzpYB9MyF2I94EO9OB0sIYdEXaWB9gpsmxLP+SlxyCK23S/UBDpOnO5l9ZoGjoGMhzwfE5q93fGM3g=
+	t=1739927857; cv=none; b=njFxVgRTXpGTEWEJTPAb3dxC5Fw88Slx1hVt4/lnybjMKWdKalTRWv6G0Ob1FGGyZqR0754dEtJmgkF9WSrKLFZwYQfZL3HtEfmqR3zmMqsqsNSmS9KpZp5j9Efca5lCBbtNHJy0MTGrfej1sykkqRaZwIOynouC5JAvNP9cdJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739927769; c=relaxed/simple;
-	bh=VA3PzZokyA+t9wlNxEe2RTywxMNWG4864YQjFM2ElAE=;
-	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=bSP7PeWZONxVuo024iioEEmtspK5x7xw4X5GHii543N+QDk14gcNYhQZPDHeAP+QH1FgXUa3Mi4m+EtpmA3rvmeVe7uzxBIE78YkIsFlE2/V5Db+iJsVCB77RWnyL1vxR8U8Cc5i5LsZFq2F75ytx49xy/CH+PEIcIXnS6fDmdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4YyJHs6VNKz1Y1qY;
-	Wed, 19 Feb 2025 09:11:21 +0800 (CST)
-Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6C2E01800DB;
-	Wed, 19 Feb 2025 09:15:57 +0800 (CST)
-Received: from [10.67.120.192] (10.67.120.192) by
- kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 19 Feb 2025 09:15:56 +0800
-Message-ID: <810b96bb-205a-4e21-88a6-c1fb1edd846d@huawei.com>
-Date: Wed, 19 Feb 2025 09:15:54 +0800
+	s=arc-20240116; t=1739927857; c=relaxed/simple;
+	bh=aR/2VqVfOeqn48qHKxBJmPg0zx7e1qwGT596CwOzOeU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=REAPUZRcUZ/FffdlqyvprK07ju0AvgPcY1tciKeeQN4zaPs7fLL1WvKP98v0TBml8ASRIVfO5gsD0sD4kyxpLBYKtcsK6AV4sJU3q29iQcXgFOIkFvvl0lfFlED7n/IpuT3yMF7fiY+4ViNnuSRu/HGlPDSftlNR4WifEuwkot4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AECAC4CEE2;
+	Wed, 19 Feb 2025 01:17:36 +0000 (UTC)
+Date: Tue, 18 Feb 2025 17:17:34 -0800
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	kernel test robot <lkp@intel.com>, llvm@lists.linux.dev,
+	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>
+Subject: Re: ERROR: modpost: "kmsan_handle_dma"
+ [drivers/virtio/virtio_ring.ko] undefined!
+Message-ID: <20250219011734.ig2sgadr7jmf7k7e@jpoimboe>
+References: <202502150634.qjxwSeJR-lkp@intel.com>
+ <20250218114857.oBuLvPYs@linutronix.de>
+ <20250218132855.GE40464@noisy.programming.kicks-ass.net>
+ <20250218164724.uxcwotv3wgc5y3id@jpoimboe>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-CC: <shaojijie@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <andrew+netdev@lunn.ch>,
-	<shenjian15@huawei.com>, <wangpeiyang1@huawei.com>, <liuyonglong@huawei.com>,
-	<chenhao418@huawei.com>, <sudongming1@huawei.com>, <xujunsheng@huawei.com>,
-	<shiyongbang@huawei.com>, <libaihan@huawei.com>,
-	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
-	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next 3/7] net: hibmcge: Add rx checksum offload
- supported in this module
-To: Simon Horman <horms@kernel.org>, Kalesh Anakkur Purayil
-	<kalesh-anakkur.purayil@broadcom.com>
-References: <20250213035529.2402283-1-shaojijie@huawei.com>
- <20250213035529.2402283-4-shaojijie@huawei.com>
- <20250217154028.GM1615191@kernel.org>
- <14b562d6-7006-4fe0-be61-48fe1abebe49@huawei.com>
- <CAH-L+nM0axD3QWXixe6p7U4dyVx=qn9zh5crOXLTxTH9Gpd9dQ@mail.gmail.com>
- <9d55d0a8-7a85-4caf-8358-7e04621813cc@huawei.com>
- <20250218134214.GY1615191@kernel.org>
-From: Jijie Shao <shaojijie@huawei.com>
-In-Reply-To: <20250218134214.GY1615191@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemk100013.china.huawei.com (7.202.194.61)
+In-Reply-To: <20250218164724.uxcwotv3wgc5y3id@jpoimboe>
 
+On Tue, Feb 18, 2025 at 08:47:26AM -0800, Josh Poimboeuf wrote:
+> On Tue, Feb 18, 2025 at 02:28:55PM +0100, Peter Zijlstra wrote:
+> > On Tue, Feb 18, 2025 at 12:48:57PM +0100, Sebastian Andrzej Siewior wrote:
+> > > On 2025-02-15 06:42:36 [+0800], kernel test robot wrote:
+> > > > >> arch/x86/kvm/cpuid.o: warning: objtool: do_cpuid_func+0x2428: undefined stack state
+> > > 
+> > 
+> > > From the assembly it seems to make sense:
+> > > |   110ae:       49 89 e0                mov    %rsp,%r8
+> > > stash for later
+> > > |   110b1:       48 85 db                test   %rbx,%rbx
+> > > |   110b4:       c7 00 00 00 00 00       movl   $0x0,(%rax)
+> > > |   110ba:       45 89 7e 14             mov    %r15d,0x14(%r14)
+> > > |   110be:       0f 85 40 01 00 00       jne    11204 <do_cpuid_func+0x22f4>
+> > > …
+> > > |   11204:       44 8b 74 24 38          mov    0x38(%rsp),%r14d
+> > > |   11209:       44 89 f7                mov    %r14d,%edi
+> > > |   1120c:       4d 89 c7                mov    %r8,%r15
 
-on 2025/2/18 21:42, Simon Horman wrote:
-> On Tue, Feb 18, 2025 at 04:27:28PM +0800, Jijie Shao wrote:
->> on 2025/2/18 10:46, Kalesh Anakkur Purayil wrote:
->>> On Tue, Feb 18, 2025 at 7:47 AM Jijie Shao <shaojijie@huawei.com> wrote:
->>>> on 2025/2/17 23:40, Simon Horman wrote:
->>>>> On Thu, Feb 13, 2025 at 11:55:25AM +0800, Jijie Shao wrote:
->>>>>> This patch implements the rx checksum offload feature
->>>>>> including NETIF_F_IP_CSUM NETIF_F_IPV6_CSUM and NETIF_F_RXCSUM
->>>>>>
->>>>>> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
->>>>> ...
->>>>>
->>>>>> diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_txrx.c b/drivers/net/ethernet/hisilicon/hibmcge/hbg_txrx.c
->>>>>> index 8c631a9bcb6b..aa1d128a863b 100644
->>>>>> --- a/drivers/net/ethernet/hisilicon/hibmcge/hbg_txrx.c
->>>>>> +++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_txrx.c
->>>>>> @@ -202,8 +202,11 @@ static int hbg_napi_tx_recycle(struct napi_struct *napi, int budget)
->>>>>>     }
->>>>>>
->>>>>>     static bool hbg_rx_check_l3l4_error(struct hbg_priv *priv,
->>>>>> -                                struct hbg_rx_desc *desc)
->>>>>> +                                struct hbg_rx_desc *desc,
->>>>>> +                                struct sk_buff *skb)
->>>>>>     {
->>>>>> +    bool rx_checksum_offload = priv->netdev->features & NETIF_F_RXCSUM;
->>>>> nit: I think this would be better expressed in a way that
->>>>>         rx_checksum_offload is assigned a boolean value (completely untested).
->>>>>
->>>>>         bool rx_checksum_offload = !!(priv->netdev->features & NETIF_F_RXCSUM);
->>>> Okay, I'll modify it in v2.
->>> Maybe you can remove " in this module" from the patch title as it is
->>> implicit. This comment/suggestion applies to all patches in this
->>> series.
->> Sorry this may not have any bad effect,
->> so I don't plan to change it in V2.
->> If anyone else thinks it should be modified,
->> I will modify it.
-> I agree that a shorter subject would be better.
+[ Adding Masahiro for #1 ]
 
-ok,
-v2 has been sent, I'll modify it if need to send v3.
+1)
 
-Thanks,
-Jijie Shao
+Masahiro, one problem we've seen is that "make LLVM=1
+arch/x86/kvm/cpuid.s" doesn't match the final compiled .o binary.  Is it
+a problem with cmd_cc_s_c?  The original .config is here:
 
+  https://lore.kernel.org/202502150634.qjxwSeJR-lkp@intel.com
 
+If I manually run the original gcc command with -S, cpuid.s looks right.
 
+2)
+
+Peter, Sebastian, the objtool warning is caused by Clang interpreting
+ASM_CALL_CONSTRAINT a little too literally.  It's stashing the stack
+pointer and restoring it later to comply with the "+r" rsp constraint.
+Which makes perfect sense, but is also 100% unexpected.
+
+I "fixed" it with the below, but it's not a proper fix as
+ASM_CALL_CONSTRAINT is still needed for CONFIG_UNWINDER_FRAME_POINTER.
+
+So I think the options are:
+
+  - Make objtool smarter
+
+  - Improve ASM_CALL_CONSTRAINT somehow.  /me wonders if "memory"
+    clobber has the same effect?
+
+  - Drop support for x86-64 frame pointers altogether, along with
+    ASM_CALL_CONSTRAINT.  Is there any reason to keep frame pointers
+    around anymore for 64 bit?  AFAICT objtool is 100% mandatory for all
+    configs, and ORC has proven to be solid.
+
+diff --git a/arch/x86/include/asm/paravirt_types.h b/arch/x86/include/asm/paravirt_types.h
+index fea56b04f436..7414f0c7cc0e 100644
+--- a/arch/x86/include/asm/paravirt_types.h
++++ b/arch/x86/include/asm/paravirt_types.h
+@@ -394,7 +394,7 @@ int paravirt_disable_iospace(void);
+ 		PVOP_TEST_NULL(op);					\
+ 		asm volatile(ALTERNATIVE(PARAVIRT_CALL, ALT_CALL_INSTR,	\
+ 				ALT_CALL_ALWAYS)			\
+-			     : call_clbr, ASM_CALL_CONSTRAINT		\
++			     : call_clbr				\
+ 			     : paravirt_ptr(op),			\
+ 			       ##__VA_ARGS__				\
+ 			     : "memory", "cc" extra_clbr);		\
+@@ -409,7 +409,7 @@ int paravirt_disable_iospace(void);
+ 		asm volatile(ALTERNATIVE_2(PARAVIRT_CALL,		\
+ 				 ALT_CALL_INSTR, ALT_CALL_ALWAYS,	\
+ 				 alt, cond)				\
+-			     : call_clbr, ASM_CALL_CONSTRAINT		\
++			     : call_clbr				\
+ 			     : paravirt_ptr(op),			\
+ 			       ##__VA_ARGS__				\
+ 			     : "memory", "cc" extra_clbr);		\
+
+-- 
+Josh
 
