@@ -1,187 +1,328 @@
-Return-Path: <linux-kernel+bounces-521021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77F7FA3B2CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:49:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D6116A3B2D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:52:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E33587A60A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:48:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD8A77A4C16
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:51:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AC9D1C173F;
-	Wed, 19 Feb 2025 07:49:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5A091C1AB4;
+	Wed, 19 Feb 2025 07:52:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GXsCk5vt"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="rl2zTfwK";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="sWHwxNoj";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="cDEB3+Uh";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="NGK7xgbS"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B5911BD9C5
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 07:49:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE64E1805A
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 07:52:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739951362; cv=none; b=JduKfCXP81CN72sLwXiAFOhyFn46m3ig33bxzgZB2RC8zhnKls8HtlQWQKoPDzs/SgRd/KbFHRB7iYivdpymprcKb7Q9k2x1venhVRglx9DA7THcKgQj7isZhRAZN+FoOK0mWLQMA3CcvwVE7a4C+ifNN3v+QnX7YQNIh+T8RYo=
+	t=1739951568; cv=none; b=g91oeVvtmTC5uJ4t1Lbwnh1RKgbGtIFRrp37GMizL8879ZPBW8Ah9N0J0w61Jqt6+01RjwiRf9P114DPJEFGPqXZJ75kPV2X4QiOZJ7SxH7ECfnmotPLI1pb3RsG6k4e328ShRPnFS9X63eZISOfLulgjSv90YoQ8z7aVjKH5Og=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739951362; c=relaxed/simple;
-	bh=9W51922lZcRv+WfFDa8r/ahBXeZgRii7HNNotr9H40A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AoZc86LntMyaQyhOfJ6Rd7owmkFjRi9TsWlRU65HhBPtizTRIfMj4xnwM5RpM0d2KkTD+jpiatrB10jA6kjT5Ere61Ge1RpB3f31ybB9YH/sNz0zDvtB7V6nQLmtX287qGUmysKqTYX5Sw6EMFozXaJ0PJLI7frykeb2aU/xtqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GXsCk5vt; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-220bfdfb3f4so129406215ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 23:49:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739951360; x=1740556160; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=9sOSWz9/b/A8wxbS7QG6N98UoPE8+0el0tVSZ986HeU=;
-        b=GXsCk5vtZXWbfyUxd6XjAq2xuH65zsHjsXCvFr1C5CT3/RIJqmJKYJCWm+/bS1s1Pq
-         ZV0uEGGiXETFK06QHk1SNbOPVZbmUTeG9Vt5VD9biKBZUtCPcx/E9p/w1ADwtUFHUFOv
-         mDOmmc1V0hGySc9PydoflYRDMr5GydahqeXgECmJwSLRR1+A0J5T23y19mWC2GMjc1XD
-         9PhTzb0hTz9fd52R54WraenDme75YJQcICBWAlr7l1GhqeGXqwkIbfp+0NzrrvBTQX1B
-         wL3jo/e+1fCpGBf6/ecccVke7EHG1VSVL4eT5afGbwB8RV/m559dMDTqWXU6uQrL826B
-         JScQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739951360; x=1740556160;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9sOSWz9/b/A8wxbS7QG6N98UoPE8+0el0tVSZ986HeU=;
-        b=DQkeh32TyEUDhrAc/K2OY1Xu6jrFjgfPGXDfqaqBkxJgMrl8wLLSxWpVr7/cqp69wF
-         G2iT6Y0UcBsgHHU9duaiI1uE4531BVqEfMkREp5+ZfGe5Q67IyichqXgRLxIW+Plgs/1
-         xstEkoCxxM6toJWFayk3JvCZpw3GOf0oFwoziP4nB59ZIOtIeuvJGPhjChZQ9Yg9VyKy
-         6qhHlSPJpSu/m4/9fRjQYKaFtq72CestPhbVysGoQts+fylDP5i5VFwnoEnmopALktPL
-         UO8L/KPOlDCsaUn1y9Y3GcHs8G9AAzT9eL6NzZDspjytaCjcueS/A5lJpZKx9/W6wI+D
-         lv+w==
-X-Forwarded-Encrypted: i=1; AJvYcCUdAd/VyfZWokX2X/K/wRYbe7TXQMpCEP3jdE2+hKUWJEoB9DdT0EAo8VM5QMENHG521F6yfPZHkd6Ipio=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxetxAzCFaBxtqQb8/u2dr3OMd5Y/EcuB4/HNtlQv8jDICFQWp
-	RR6v2RWQqzi99lF1i2rATUXy9OkBXZZP8mnYfXqhin9GWChlT+TbF6MQo0lo2w==
-X-Gm-Gg: ASbGncsUYIuQWJLiAlyYUvSQr8CqYuQIWHgJfWtCL3b4jTCCzrSI4QI+PjgRDubr2jt
-	htYZpHYbivnLxhiNkCsy1nW3bt0iT5ZNKxx2+pPTCyvC9Ijyh1DAw21CAJBJMN9foKa6dpVJhAO
-	HOxoPAqiESFFuXHVWXO9EPrF2Vfh/XHZopvHFpFxkN/Z1bfeBERByAGYGqsFCRnDXDjtg+sw+xT
-	IdDGYsJPConR6cbVMwOwmNv8ZNqEFaDYtct6L4V69ulJzf64dAwQYVVB44LwBpspa7voe13Z37I
-	LPB22wzjEqWSPdKJEE+TjxgTupU=
-X-Google-Smtp-Source: AGHT+IFoGyzNx30oj5QPZ8kXyITKzcMTpTQ6sfoOeGpNaqW8WOSxc+hSdJl3P3R9gIDdbaeQkXzR7w==
-X-Received: by 2002:a05:6a21:103:b0:1ee:c7c8:c9e with SMTP id adf61e73a8af0-1eed4e5240fmr4788072637.2.1739951360379;
-        Tue, 18 Feb 2025 23:49:20 -0800 (PST)
-Received: from thinkpad ([120.56.197.245])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-732425467d1sm11672713b3a.12.2025.02.18.23.49.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 23:49:20 -0800 (PST)
-Date: Wed, 19 Feb 2025 13:19:13 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Shuai Xue <xueshuai@linux.alibaba.com>,
-	Jing Zhang <renyu.zj@linux.alibaba.com>,
-	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Shradha Todi <shradha.t@samsung.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 0/4] PCI: dwc: Add PTM sysfs support
-Message-ID: <20250219074913.e4rtyup3m3yv66po@thinkpad>
-References: <20250218-pcie-qcom-ptm-v1-0-16d7e480d73e@linaro.org>
- <Z7Syf2LXEuKFToV4@lizhi-Precision-Tower-5810>
+	s=arc-20240116; t=1739951568; c=relaxed/simple;
+	bh=/Wl17ej4seCN6jJH4LB4uhpDCl6l3mssQJPq7D5B9Os=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ktfHEvCaNuOFWhC1ioujYiABdP3u7OuKJ8t7Dh+UwJpMB1LqbAjtsEY79VgGRRJoTczO5NJwXyCN2aN0VsGjV1MvyLxQbNpDIDLySRM9i9FNDmvzrXIzfLJGPtzTEGW+CY2HT3on6WUgXE1dckprEl4i+6LkYICNHkzts/UEhZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=fail smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=rl2zTfwK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=sWHwxNoj; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=cDEB3+Uh; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=NGK7xgbS; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id D34A12006C;
+	Wed, 19 Feb 2025 07:52:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1739951565; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=NiBKhZsiY2b98hm7xTMwglv3qnpUo93r3aqWRvunnls=;
+	b=rl2zTfwK7L//C50LZAOckVuSlGUHQCKwddZsmHWgnIrMV1LD4wT8ia1CgkzjAIGqFBAvAy
+	/3Nyib6O99LmxsjlONctwSsN28/zAVDT/Mo1mZeOD9Tj0Lys3Xu1B0BxJyfo7B7KsrE4ES
+	owY1dQEx7zEU0qRZchJY+gaXVDIMfU8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1739951565;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=NiBKhZsiY2b98hm7xTMwglv3qnpUo93r3aqWRvunnls=;
+	b=sWHwxNojIHjRCT3wbN5wB4F0P3IsdRaNBOcKXi7syl3XIEWSRDLuopN4hgJZno2FirDakP
+	pmW/VVXsz7ELgDBA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1739951564; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=NiBKhZsiY2b98hm7xTMwglv3qnpUo93r3aqWRvunnls=;
+	b=cDEB3+Uhv/t1sHq2C4XjwvzQSk4db3C/HNn6nIeIyNXsUg8wn2a0q9Ea+/MhowiSBdxxIi
+	68y1QzWRZWGBHCtDIzQM+xcv6/f2UxEti9z9JUcW1z5L+K6/TRoymPmZuA767/LNvKZ44q
+	4La0d2P0zh9kAGRKqMtQoiRxBuTVyVQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1739951564;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=NiBKhZsiY2b98hm7xTMwglv3qnpUo93r3aqWRvunnls=;
+	b=NGK7xgbSn9DCY/onvN1GFyQIbPR0itWfJODohO23f7Lefc3k63/emgMUoNyornwO8AnHfK
+	MY5gSFQwxw6qQ5Aw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9014E13806;
+	Wed, 19 Feb 2025 07:52:44 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id owKgIcyNtWcFEgAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Wed, 19 Feb 2025 07:52:44 +0000
+Message-ID: <a88a6e48-8c55-410b-b553-8942dac3608a@suse.de>
+Date: Wed, 19 Feb 2025 08:52:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] drm/tiny: add driver for Apple Touch Bars in x86 Macs
+To: Aditya Garg <gargaditya08@live.com>
+Cc: "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+ "mripard@kernel.org" <mripard@kernel.org>,
+ "airlied@gmail.com" <airlied@gmail.com>, "simona@ffwll.ch"
+ <simona@ffwll.ch>, Kerem Karabay <kekrby@gmail.com>,
+ Atharva Tiwari <evepolonium@gmail.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+References: <4BAFD886-84E0-4C4C-94B3-90BF911ED0E7@live.com>
+ <F16BB9EB-632C-4BC4-A8BA-492BF32E43C1@live.com>
+ <d9304ed0-911b-4877-a15c-981b3335bbf9@suse.de>
+ <8051F1F7-C1B0-428E-BE12-353C242EA650@live.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <8051F1F7-C1B0-428E-BE12-353C242EA650@live.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z7Syf2LXEuKFToV4@lizhi-Precision-Tower-5810>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.997];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,live.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[live.com];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linux.intel.com,kernel.org,gmail.com,ffwll.ch,vger.kernel.org,lists.freedesktop.org];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[bootlin.com:url,suse.de:mid]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
-On Tue, Feb 18, 2025 at 11:17:03AM -0500, Frank Li wrote:
-> On Tue, Feb 18, 2025 at 08:06:39PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
-> > Hi,
-> >
-> > This series adds sysfs support for PCIe PTM in Synopsys Designware IPs.
-> >
-> > First patch moves the common DWC struct definitions (dwc_pcie_vsec_id) to
-> > include/pci/pcie-dwc.h from dwc-pcie-pmu driver. This allows reusing the same
-> > definitions in pcie-designware-sysfs driver introduced in this series and also
-> > in the debugfs series by Shradha [1].
-> >
-> > Second patch adds support for searching the Vendor Specific Extended Capability
-> > (VSEC) in the pcie-designware driver. This patch was originally based on
-> > Shradha's patch [2], but modified to accept 'struct dwc_pcie_vsec_id' to avoid
-> > iterating through the vsec_ids in the driver.
-> >
-> > Third patch adds the actual sysfs support for PTM in a new file
-> > pcie-designware-sysfs.c built along with pcie-designware.c.
-> >
-> > Finally, fourth patch masks the PTM_UPDATING interrupt in the pcie-qcom-ep
-> > driver to avoid processing the interrupt for each PTM context update.
-> >
-> > Testing
-> > =======
-> >
-> > This series is tested on Qcom SA8775p Ride Mx platform where one SA8775p acts as
-> > RC and another as EP with following instructions:
-> >
-> > RC
-> > --
-> >
-> > $ echo 1 > /sys/devices/platform/1c10000.pcie/dwc/ptm/ptm_context_valid
-> >
-> > EP
-> > --
-> >
-> > $ echo auto > /sys/devices/platform/1c10000.pcie-ep/dwc/ptm/ptm_context_update
-> >
-> > $ cat /sys/devices/platform/1c10000.pcie-ep/dwc/ptm/ptm_local_clock
-> > 159612570424
-> >
-> > $ cat /sys/devices/platform/1c10000.pcie-ep/dwc/ptm/ptm_master_clock
-> > 159609466232
-> >
-> > $ cat /sys/devices/platform/1c10000.pcie-ep/dwc/ptm/ptm_t1
-> > 159609466112
-> >
-> > $ cat /sys/devices/platform/1c10000.pcie-ep/dwc/ptm/ptm_t4
-> > 159609466518
-> 
-> 
-> I am not sure what real means by only show these number.
+Hi
 
-These values are supposed to be consumed by the userspace applications to make
-sure that whether the PTM feature is working as expected or not. For instance,
-once the PTM dialog is established with PTM root, PTM requester's local clock
-should be synchronized with PTM master clock. And these can be verified using
-these sysfs attributes.
+Am 18.02.25 um 14:49 schrieb Aditya Garg:
+[...]
+>> This code runs in the middle of the atomic update. It's then too late to do error handling. If these allocs fail, the display hardware will remain in undefined state.
+>>
+>> It is much preferable to allocate this memory in the atomic_check. To do so, you need a plane-state structure. Allocate the memory for request and response in the plane's atomic-check helper. If that fails, you can return an error there. Store the pointers and the request size in your plane-state structure and fetch them here.  The memory should later be freed in the plane's destroy callback. For an example, see how the ssd130x driver treats a buffer for a similar use case at [1].
+>>
+>> [1] https://elixir.bootlin.com/linux/v6.13.2/source/drivers/gpu/drm/solomon/ssd130x.c#L1136
+> I’ve tried these changes, seem to be breaking the driver:
+>
+> —>8—
+>  From 16c920cabf65ec664663ebe1611c0ccf6e81de4a Mon Sep 17 00:00:00 2001
+> From: Aditya Garg <gargaditya08@live.com>
+> Date: Tue, 18 Feb 2025 18:54:10 +0530
+> Subject: [PATCH] better error handling
+>
+> ---
+>   .../apple-touchbar-advanced-0.1/appletbdrm.c  | 68 +++++++++++++------
+>   1 file changed, 46 insertions(+), 22 deletions(-)
+>
+> diff --git a/usr/src/apple-touchbar-advanced-0.1/appletbdrm.c b/usr/src/apple-touchbar-advanced-0.1/appletbdrm.c
+> index f2d9113..cb13b36 100644
+> --- a/usr/src/apple-touchbar-advanced-0.1/appletbdrm.c
+> +++ b/usr/src/apple-touchbar-advanced-0.1/appletbdrm.c
+> @@ -133,6 +133,17 @@ struct appletbdrm_device {
+>   	struct drm_encoder encoder;
+>   };
+>   
+> +struct appletbdrm_plane_state {
+> +	struct drm_shadow_plane_state base;
+> +	u8 *request_buffer;
+> +	u8 *response_buffer;
+> +};
+> +
+> +static inline struct appletbdrm_plane_state *to_appletbdrm_plane_state(struct drm_plane_state *state)
+> +{
+> +	return container_of(state, struct appletbdrm_plane_state, base.base);
+> +}
+> +
+>   static int appletbdrm_send_request(struct appletbdrm_device *adev,
+>   				   struct appletbdrm_msg_request_header *request, size_t size)
+>   {
+> @@ -311,24 +322,6 @@ static int appletbdrm_flush_damage(struct appletbdrm_device *adev,
+>   	if (!frames_size)
+>   		return 0;
+>   
+> -	request_size = ALIGN(sizeof(*request) + frames_size + sizeof(*footer), 16);
+> -
+> -	request = kzalloc(request_size, GFP_KERNEL);
+> -	if (!request)
+> -		return -ENOMEM;
+> -
+> -	response = kzalloc(sizeof(*response), GFP_KERNEL);
+> -	if (!response) {
+> -		ret = -ENOMEM;
+> -		goto free_request;
+> -	}
+> -
+> -	ret = drm_gem_fb_begin_cpu_access(fb, DMA_FROM_DEVICE);
+> -	if (ret) {
+> -		drm_err(drm, "Failed to start CPU framebuffer access (%d)\n", ret);
+> -		goto free_response;
+> -	}
+> -
+>   	request->header.unk_00 = cpu_to_le16(2);
+>   	request->header.unk_02 = cpu_to_le16(0x12);
+>   	request->header.unk_04 = cpu_to_le32(9);
+> @@ -389,10 +382,6 @@ static int appletbdrm_flush_damage(struct appletbdrm_device *adev,
+>   
+>   end_fb_cpu_access:
+>   	drm_gem_fb_end_cpu_access(fb, DMA_FROM_DEVICE);
+> -free_response:
+> -	kfree(response);
+> -free_request:
+> -	kfree(request);
+>   
+>   	return ret;
+>   }
+> @@ -415,6 +404,15 @@ static int appletbdrm_primary_plane_helper_atomic_check(struct drm_plane *plane,
+>   	struct drm_plane_state *new_plane_state = drm_atomic_get_new_plane_state(state, plane);
+>   	struct drm_crtc *new_crtc = new_plane_state->crtc;
+>   	struct drm_crtc_state *new_crtc_state = NULL;
+> +	struct appletbdrm_plane_state *appletbdrm_state = to_appletbdrm_plane_state(new_plane_state);
+> +	struct drm_device *drm = plane->dev;
+> +	struct drm_plane_state *plane_state = plane->state;
+> +	struct appletbdrm_fb_request_response *response;
+> +	struct appletbdrm_fb_request_footer *footer;
+> +	struct drm_framebuffer *fb = plane_state->fb;
+> +	struct appletbdrm_fb_request *request;
+> +	size_t frames_size = 0;
+> +	size_t request_size;
+>   	int ret;
+>   
+>   	if (new_crtc)
+> @@ -429,6 +427,22 @@ static int appletbdrm_primary_plane_helper_atomic_check(struct drm_plane *plane,
+>   	else if (!new_plane_state->visible)
+>   		return 0;
+>   
+> +	request_size = ALIGN(sizeof(*request) + frames_size + sizeof(*footer), 16);
+> +
+> +	appletbdrm_state->request_buffer = kzalloc(request_size, GFP_KERNEL);
+> +	if (!request)
+> +		return -ENOMEM;
+> +
+> +	appletbdrm_state->response_buffer = kzalloc(sizeof(*response), GFP_KERNEL);
+> +	if (!response) {
+> +		ret = -ENOMEM;
+> +	}
+> +
+> +	ret = drm_gem_fb_begin_cpu_access(fb, DMA_FROM_DEVICE);
+> +	if (ret) {
+> +		drm_err(drm, "Failed to start CPU framebuffer access (%d)\n", ret);
+> +	}
+> +
+>   	return 0;
+>   }
+>   
+> @@ -464,6 +478,15 @@ static void appletbdrm_primary_plane_helper_atomic_disable(struct drm_plane *pla
+>   	drm_dev_exit(idx);
+>   }
+>   
+> +static void appletbdrm_primary_plane_destroy_state(struct drm_plane *plane,
+> +						struct drm_plane_state *state)
+> +{
+> +	struct appletbdrm_plane_state *appletbdrm_state = to_appletbdrm_plane_state(state);
+> +
+> +	kfree(appletbdrm_state->request_buffer);
+> +	kfree(appletbdrm_state->response_buffer);
+> +}
+> +
+>   static const struct drm_plane_helper_funcs appletbdrm_primary_plane_helper_funcs = {
+>   	DRM_GEM_SHADOW_PLANE_HELPER_FUNCS,
+>   	.atomic_check = appletbdrm_primary_plane_helper_atomic_check,
+> @@ -474,6 +497,7 @@ static const struct drm_plane_helper_funcs appletbdrm_primary_plane_helper_funcs
+>   static const struct drm_plane_funcs appletbdrm_primary_plane_funcs = {
+>   	.update_plane = drm_atomic_helper_update_plane,
+>   	.disable_plane = drm_atomic_helper_disable_plane,
+> +	.atomic_destroy_state = appletbdrm_primary_plane_destroy_state,
+>   	.destroy = drm_plane_cleanup,
+>   	DRM_GEM_SHADOW_PLANE_FUNCS,
 
-> It is quite
-> similar to network 1588, ptp. There were already linux-ptp
-> https://www.kernel.org/doc/html/v5.5/driver-api/ptp.html
-> 
+You don't allocate struct appletbdrm_plane_state. Instead of this macro, 
+you also have to set your own helpers for the plane's .reset and 
+.atomic_duplicate_state There's again example code in the ssd130x driver.
 
-PTP and PTM are different even though both are meant to synchronize times across
-devices. PTM is limited to PCIe hierarchy and the actual synchronization is
-performed at the hw level, limited to PCIe clock source (core_clk in DWC terms).
+Best regards
+Thomas
 
-> Can we use similar method to sync local timer to master? I think it is real
-> purpuse of PTM.
-> 
-
-Actual synchronization happens in the hardware itself as I explained above.
-Software is not intended to do anything (if not using any external master clock
-source) to synchronize the clocks.
-
-I think you are referring to synchronizing the global clock source (the one used
-by the kernel) of the endpoint based on PTM. But I don't think that is what
-intended by this feature.
-
-- Mani
+>   };
 
 -- 
-மணிவண்ணன் சதாசிவம்
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
 
