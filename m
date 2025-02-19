@@ -1,133 +1,117 @@
-Return-Path: <linux-kernel+bounces-521363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 616FAA3BC49
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:00:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4865DA3BC5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:03:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDF797A7AF4
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:59:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3A3A3B7B1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:02:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 436DE1D90DD;
-	Wed, 19 Feb 2025 11:00:36 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A994F1DE8BC;
+	Wed, 19 Feb 2025 11:02:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SZjF2gev";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rvVsCTRB"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34E0523DE
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 11:00:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A1D91DE8AA;
+	Wed, 19 Feb 2025 11:01:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739962835; cv=none; b=l5z/NYRKFpTwnqhm13ZAxEVXB7duMCOxU7riAOf5BtHyM8MzNReMH9ty0ez+dUbrhZkQiaAN/oAyhjIvVq1TuRI354UfG2ebmRf+p93fY4THiQUrwlsDwlNgL9jwZN3ze4GmyOA45r3g9ekfwU2rirvOsRtmjF7BC+96l3f4TSw=
+	t=1739962921; cv=none; b=RTuAfyJEXyyMux045UdMG2IdpPD/jOzvJ1t4pdHRVbDeXEJqie8QIeWeIgNnLduTjMruUuQZTa52RWxfGGXVbauzPIj3FORNZUQuYq3ykk6I1dkZXRzU1O8yqsoxmRXwRslnQ/wX6Jl8W5Pa7GRlROgYK3Kd1Co/udFMk0cVpwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739962835; c=relaxed/simple;
-	bh=MG3xGBAkVKmKkqiO52O8AdqSHtZcQiyeNK+723bu6Vs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jfXFSGdmVXWOve0fuQjP/khQ0i8SyULtwjIImfrkCq0PaGHVoHhEcyw2iQiwh1vXCYYGvE8hbNGIt4pS2/dJC9isUx6o92y3esBT2Pxq/k/jNav/+YuABQirTewYMSNI4fBo048eVp6d8Rna8gbqM/SpOEIpat5Rkg+nNUGJgWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tkhoS-0004su-Oc; Wed, 19 Feb 2025 12:00:20 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tkhoR-001kbf-2H;
-	Wed, 19 Feb 2025 12:00:19 +0100
-Received: from pengutronix.de (p5b164285.dip0.t-ipconnect.de [91.22.66.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 5272A3C6891;
-	Wed, 19 Feb 2025 11:00:19 +0000 (UTC)
-Date: Wed, 19 Feb 2025 12:00:17 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Dimitri Fedrau <dima.fedrau@gmail.com>
-Cc: Dimitri Fedrau via B4 Relay <devnull+dimitri.fedrau.liebherr.com@kernel.org>, 
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-Subject: Re: [PATCH 2/2] can: flexcan: add transceiver capabilities
-Message-ID: <20250219-xanthic-elephant-of-jest-9b5720-mkl@pengutronix.de>
-References: <20250211-flexcan-add-transceiver-caps-v1-0-c6abb7817b0f@liebherr.com>
- <20250211-flexcan-add-transceiver-caps-v1-2-c6abb7817b0f@liebherr.com>
- <20250219-garnet-gorilla-of-will-6e389e-mkl@pengutronix.de>
- <20250219103955.GB3888@debian>
+	s=arc-20240116; t=1739962921; c=relaxed/simple;
+	bh=5P+xspsgpq/j8nae3I8KGFxbFgd5WITr/xi2lU7d4Zc=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=Uz9FTA6vq5+zygSCcz91qbYOWK7jB/aekxeONtzVaAVh3AIGavP9qY/y+jvml3leQIYgzjxs5PcVYKjzh7nmhIs6CNORaA6JySqOeKBymJ4ajFQupaVAGAu+xvriPORQf89LIlF/tn1W1ykhJYsbNM/UX8+JxP8mat9JHdBAvc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SZjF2gev; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rvVsCTRB; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 19 Feb 2025 11:01:39 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1739962917;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UZyvLTjKoVdG+MXmJXxqDrvBXC3SChHTB02YpcJow14=;
+	b=SZjF2gevtBr8g0XITEyNzWrJSb1f5OHbItr6k2by3lQZLET2lxpAkFAHQ3R4Fd7T2YHDEF
+	RxRl2rrYCj7tmdCl3rTNT/e7DZhY9zDNqCEqOFmrfa/ZABqTUqOb9M18AEyu03uay67S05
+	skfEz9O7FZvf56oVmTNrYtIVV45wCCN7yDulzPnkcsi3AjoJ9zpFV9SFZ/gbZM0w7AJm2v
+	ZMB2ZUjiqLheYZBP7k2IyH78bLCM7nImsemtAOU0+3sRB2uHRIKN7Bawi3A5Yk27qDFmW9
+	hAKWzATeyqptzA6jhXKXK/23+SZGuz/zz781cEa+FcNfw0VojXAySrZqh60dMQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1739962917;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UZyvLTjKoVdG+MXmJXxqDrvBXC3SChHTB02YpcJow14=;
+	b=rvVsCTRBaUmhP229O1g4tCOyoXffGNb7+Re4lT9yPgNUdeTUMijAzu3DlmolF7a4jD5hOo
+	e1zw8QstUCQL2lCw==
+From: "tip-bot2 for Ravi Bangoria" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: perf/core] perf amd ibs: Sync arch/x86/include/asm/amd-ibs.h
+ header with the kernel
+Cc: Ravi Bangoria <ravi.bangoria@amd.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250205060547.1337-4-ravi.bangoria@amd.com>
+References: <20250205060547.1337-4-ravi.bangoria@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="l2mzcqrvw6yumylm"
-Content-Disposition: inline
-In-Reply-To: <20250219103955.GB3888@debian>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Message-ID: <173996290231.10177.11960731856088166114.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
+The following commit has been merged into the perf/core branch of tip:
 
---l2mzcqrvw6yumylm
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 2/2] can: flexcan: add transceiver capabilities
-MIME-Version: 1.0
+Commit-ID:     3201bfa368fee5e70927e45222ff0b235352c01c
+Gitweb:        https://git.kernel.org/tip/3201bfa368fee5e70927e45222ff0b235352c01c
+Author:        Ravi Bangoria <ravi.bangoria@amd.com>
+AuthorDate:    Wed, 05 Feb 2025 06:05:43 
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Mon, 17 Feb 2025 15:20:05 +01:00
 
-On 19.02.2025 11:39:55, Dimitri Fedrau wrote:
-> > > diff --git a/drivers/net/can/flexcan/flexcan.h b/drivers/net/can/flex=
-can/flexcan.h
-> > > index 4933d8c7439e62b5d6fcc445d88c2b5ccbfa13bb..56be40875eee24aee9297=
-c4bc7c2fc4380e682ff 100644
-> > > --- a/drivers/net/can/flexcan/flexcan.h
-> > > +++ b/drivers/net/can/flexcan/flexcan.h
-> > > @@ -103,6 +103,7 @@ struct flexcan_priv {
-> > >  	struct clk *clk_per;
-> > >  	struct flexcan_devtype_data devtype_data;
-> > >  	struct regulator *reg_xceiver;
-> > > +	struct phy *xceiver;
-> >=20
-> > All other drivers name this variable "transceiver", does it make sense
-> > to use this name here, too?
-> >=20
-> I have no preference on this, but my intention was to name it xceiver
-> according to reg_xceiver, so people familiar with the code would know
-> what it is about. I can change it to transceiver, what do you think ?
+perf amd ibs: Sync arch/x86/include/asm/amd-ibs.h header with the kernel
 
-Please use transceiver.
+Sync load latency related bit fields into the tool's header copy
 
-regards,
-Marc
+Signed-off-by: Ravi Bangoria <ravi.bangoria@amd.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Link: https://lkml.kernel.org/r/20250205060547.1337-4-ravi.bangoria@amd.com
+---
+ tools/arch/x86/include/asm/amd-ibs.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---l2mzcqrvw6yumylm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAme1ub4ACgkQDHRl3/mQ
-kZzwZwf/V0UbOs2j2oZzUGx3EQAySIQ843epnVc8qB11S6fhhnBq+2/cCc3ABqpO
-QkZ4w0HomALIB2wT9Weqiv2QhbgzlN+jJK+C9gjTm8hEK91v28uzR7JcO+Zod7eO
-/eDYaHx5UrGooB2f5MH4mwWwH6W3kDYoFerMhM9rwcgDLJ8BByBdi5aKgnzCb5wU
-Sn1L5eD02YQEb42iOIVdmJxnGhWQKC3jCM25Lo4PNVP+iRtol2uMqXLYJrZFle0t
-XUO3QL/Qv9g2q7amwHfgQewjbWc8ZgOZ4Lpni5trJUIiqOrQzSF0b1tVIqV6Ahjk
-yxxexAh0DUC6cwIjOlheDS8Cw967og==
-=81Ih
------END PGP SIGNATURE-----
-
---l2mzcqrvw6yumylm--
+diff --git a/tools/arch/x86/include/asm/amd-ibs.h b/tools/arch/x86/include/asm/amd-ibs.h
+index 93807b4..cb1740b 100644
+--- a/tools/arch/x86/include/asm/amd-ibs.h
++++ b/tools/arch/x86/include/asm/amd-ibs.h
+@@ -64,7 +64,8 @@ union ibs_op_ctl {
+ 			opmaxcnt_ext:7,	/* 20-26: upper 7 bits of periodic op maximum count */
+ 			reserved0:5,	/* 27-31: reserved */
+ 			opcurcnt:27,	/* 32-58: periodic op counter current count */
+-			reserved1:5;	/* 59-63: reserved */
++			ldlat_thrsh:4,	/* 59-62: Load Latency threshold */
++			ldlat_en:1;	/* 63: Load Latency enabled */
+ 	};
+ };
+ 
 
