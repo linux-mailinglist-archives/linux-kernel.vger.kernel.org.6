@@ -1,188 +1,121 @@
-Return-Path: <linux-kernel+bounces-521820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53298A3C2C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:56:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A71B3A3C2CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:57:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B42CB172C70
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:53:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DCDA3B913D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:53:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1599A1F3BAA;
-	Wed, 19 Feb 2025 14:52:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FB291F3FEC;
+	Wed, 19 Feb 2025 14:53:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WSbOlnUw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LyT6VsPh"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8441F30DD;
-	Wed, 19 Feb 2025 14:52:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C8DB1E3DE5;
+	Wed, 19 Feb 2025 14:53:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739976776; cv=none; b=OMWZYdi9LKs27x0f1eO66+U+dOBfDQ/yvqrd3P8U01+rHM6imc2dkc3RfNl/P8WxiopSvkNd5mKVSZqIUJxFXNJ3wXow5X2VQBkTWDqSHwxEydmFCKpxvnzBLAADEPUCg/MAB+HTD3ygxY4P8FrHJ240q9QSvBiTnd7uQAkk70Y=
+	t=1739976786; cv=none; b=C9YuSDhAqI3JBspFvKxEnWcGPGaHSnwdzK2DCgmhvlXh7liIGVGlUuu4zVRpMEjKKLfP0KwWqD5SAJKPLFISDvlrn3QQno0XZeeBhG9W4SIzdMuX4UZhg/V7da45KfZaQl6Tue3D2R1vbDujIUyY3IxXi7HUNgbAUMcRdVN9OZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739976776; c=relaxed/simple;
-	bh=5fdkaYxmkiuS0O2wwH2fC6Bj9UIsx/wgYIAqJHd76ZY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f/xzchMBwdmiV/TbpW3bApDtQW+vDXUzvHlMvZKZziab/ICjkjpy1bZY1d/ye5Lf0GbeNzffzZ93Fb1pJv7nTNrQDyVfW6k8spwvtUGPS+F14JwKQqvTl+WHtj8kIQ0Aj+qwIzSIKO5s3zqG11cSuFWZx/eqAJF85k0c1tV28l0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WSbOlnUw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FD4FC4CEE7;
-	Wed, 19 Feb 2025 14:52:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739976775;
-	bh=5fdkaYxmkiuS0O2wwH2fC6Bj9UIsx/wgYIAqJHd76ZY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WSbOlnUwbyx21Kk/13KAa/JxRDtuzPKpq1ztPse4WrCPyCst6Fw+tSGq0q5hmw34B
-	 Nu0XGfVnc9RAYS36Qxzb4Vy+/E3CrEzwy+X3ya8wbyhFpGS1ZuHr+MIL0nzC1ky9mm
-	 orMm5HqFKfbSkYtp7bMTQ8yuzSDgJKn5dUC0vuHSiPrOemOBVPjk2Z0w2/UC2cQopm
-	 tIgkRj443UV7jvYcj/cYIuEPQzH2Qx66RCvRCXM7pJkckThQNrvE2a+L6cJMV++8wD
-	 GVEQ7+p8yJeZo8Hr8NG7VTDJaVwZT/CEMFf1G0HDJkZSpJ//0HDQMwFndb8KvlDTHy
-	 74MKVMAOifiuw==
-Date: Wed, 19 Feb 2025 08:52:54 -0600
-From: Rob Herring <robh@kernel.org>
-To: Tommaso Merciai <tomm.merciai@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-	biju.das.jz@bp.renesas.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/8] media: dt-bindings: renesas,rzg2l-csi2: Document
- Renesas RZ/V2H(P) SoC
-Message-ID: <20250219145254.GB2551711-robh@kernel.org>
-References: <20250210114540.524790-1-tommaso.merciai.xr@bp.renesas.com>
- <20250210114540.524790-3-tommaso.merciai.xr@bp.renesas.com>
+	s=arc-20240116; t=1739976786; c=relaxed/simple;
+	bh=tu4WVIJF223rTpEWbwlaBpWytn6iFw+i67smhB6epTo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Em89OJavj6lUV+vq400Ns/P8MB87rSC7DyyU4BkAUKlamOoLR7ZbhkZninlTFsCnHTgSAzf/Z0F82dFZoqyGjvIeYtfMPTGR1kebkNi8SKleKAwGOjBGTP1dC6URRrntaF2CpIFupD9B2HYuD7Ttn32qF2rkTdhAFLFIWsJ6LCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LyT6VsPh; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2C3F6204CD;
+	Wed, 19 Feb 2025 14:53:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1739976782;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=5VDkGsDaDqbgamfigdNa+cYCENWw5QBOSl85Mw3UIMc=;
+	b=LyT6VsPhl+pvcQIO2zUtl6bglOwUhWceF20npCaK3/UFQw4v+q2dgy1oEKmehAl9AmXHQx
+	URT+uPMmCyfpykc2qE367F52w3i+G8dQSTQOLK/N6j2jP7zCc6dSxXcRQBVr6E48fXBtTu
+	qjxdCOY3b+3rAKRR/XI1fgg1Q9c4AZGLIU7DbtlKyuUYbNsDq1Tt5MH+bq7Zo02G1vQ6F/
+	pac6Blb251w0qGc0wkhb3SSdQgiU07+yYnaUPrtZP3RN6iVRuZyg70+lyv8IJGr114ZLSS
+	GEi+Py71NK7whaoDiCYikFdktwRW0UpqOy5iuHa15w/sQ8+W/0Sd8/3uc9gV+Q==
+From: "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
+Subject: [PATCH bpf-next v2 0/4] selftests/bpf: tc_links/tc_opts:
+ Unserialize tests
+Date: Wed, 19 Feb 2025 15:52:59 +0100
+Message-Id: <20250219-b4-tc_links-v2-0-14504db136b7@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250210114540.524790-3-tommaso.merciai.xr@bp.renesas.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEvwtWcC/x3MSwqAMAwA0atI1gZq8YNeRUSsphqUKG2Rgnh3i
+ 8u3mHnAk2Py0GUPOLrZ8ykJOs9g3iZZCXlJBq10pXTRoikxzOPBsns09VIZ26iWCgupuBxZjv+
+ tB3NZFIoBhvf9AIZovXtnAAAA
+X-Change-ID: 20250219-b4-tc_links-b6d5bf709e1f
+To: Alexei Starovoitov <ast@kernel.org>, 
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, 
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: Alexis Lothore <alexis.lothore@bootlin.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, bpf@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
+X-Mailer: b4 0.14.2
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeigeehgecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffufffkgggtgffvvefosehtjeertdertdejnecuhfhrohhmpedfuegrshhtihgvnhcuvehurhhuthgthhgvthculdgvuefrhfcuhfhouhhnuggrthhiohhnmddfuceosggrshhtihgvnhdrtghurhhuthgthhgvthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhephffgheekudehgeduiedufeevtdejjedvffekffetudejiefgkefgieeuheeftdejnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrddtrddugegnpdhmrghilhhfrhhomhepsggrshhtihgvnhdrtghurhhuthgthhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvddtpdhrtghpthhtoheprghnughrihhisehkvghrnhgvlhdrohhrghdprhgtphhtthhopehhrgholhhuohesghhoohhglhgvrdgtohhmpdhrtghpthhtohepsghpfhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegrshhtsehkvghrnhgvlhdro
+ hhrghdprhgtphhtthhopeihohhnghhhohhnghdrshhonhhgsehlihhnuhigrdguvghvpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepshhonhhgsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjohhlshgrsehkvghrnhgvlhdrohhrgh
+X-GND-Sasl: bastien.curutchet@bootlin.com
 
-On Mon, Feb 10, 2025 at 12:45:34PM +0100, Tommaso Merciai wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> The MIPI CSI-2 block on the Renesas RZ/V2H(P) SoC is similar to the one
-> found on the Renesas RZ/G2L SoC, with the following differences:
-> - A different D-PHY
-> - Additional registers for the MIPI CSI-2 link
-> - Only two clocks
-> 
-> Add a new compatible string, `renesas,r9a09g057-csi2`, for the RZ/V2H(P)
-> SoC.
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> ---
->  .../bindings/media/renesas,rzg2l-csi2.yaml    | 63 ++++++++++++++-----
->  1 file changed, 48 insertions(+), 15 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/renesas,rzg2l-csi2.yaml b/Documentation/devicetree/bindings/media/renesas,rzg2l-csi2.yaml
-> index 7faa12fecd5b..0d07c55a3f35 100644
-> --- a/Documentation/devicetree/bindings/media/renesas,rzg2l-csi2.yaml
-> +++ b/Documentation/devicetree/bindings/media/renesas,rzg2l-csi2.yaml
-> @@ -17,12 +17,15 @@ description:
->  
->  properties:
->    compatible:
-> -    items:
-> -      - enum:
-> -          - renesas,r9a07g043-csi2       # RZ/G2UL
-> -          - renesas,r9a07g044-csi2       # RZ/G2{L,LC}
-> -          - renesas,r9a07g054-csi2       # RZ/V2L
-> -      - const: renesas,rzg2l-csi2
-> +    oneOf:
-> +      - items:
-> +          - enum:
-> +              - renesas,r9a07g043-csi2 # RZ/G2UL
-> +              - renesas,r9a07g044-csi2 # RZ/G2{L,LC}
-> +              - renesas,r9a07g054-csi2 # RZ/V2L
-> +          - const: renesas,rzg2l-csi2
-> +
-> +      - const: renesas,r9a09g057-csi2 # RZ/V2H(P)
->  
->    reg:
->      maxItems: 1
-> @@ -31,16 +34,24 @@ properties:
->      maxItems: 1
->  
->    clocks:
-> -    items:
-> -      - description: Internal clock for connecting CRU and MIPI
-> -      - description: CRU Main clock
-> -      - description: CRU Register access clock
-> +    oneOf:
-> +      - items:
-> +          - description: Internal clock for connecting CRU and MIPI
-> +          - description: CRU Main clock
-> +          - description: CRU Register access clock
-> +      - items:
-> +          - description: CRU Main clock
-> +          - description: CRU Register access clock
->  
->    clock-names:
-> -    items:
-> -      - const: system
-> -      - const: video
-> -      - const: apb
-> +    oneOf:
-> +      - items:
-> +          - const: system
-> +          - const: video
-> +          - const: apb
-> +      - items:
-> +          - const: video
-> +          - const: apb
->  
->    power-domains:
->      maxItems: 1
-> @@ -48,7 +59,7 @@ properties:
->    resets:
->      items:
->        - description: CRU_PRESETN reset terminal
-> -      - description: CRU_CMN_RSTB reset terminal
-> +      - description: CRU_CMN_RSTB reset terminal or D-PHY reset
->  
->    reset-names:
->      items:
-> @@ -101,6 +112,28 @@ required:
->    - reset-names
->    - ports
->  
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: renesas,r9a09g057-csi2
-> +    then:
-> +      properties:
-> +        clocks:
-> +          maxItems: 2
-> +
-> +        clock-names:
-> +          maxItems: 2
+Hi all,
 
-These are correct, but...
+Both tc_links.c and tc_opts.c do their tests on the loopback interface.
+It prevents from parallelizing their executions.
 
-> +
-> +    else:
-> +      properties:
-> +        clocks:
-> +          maxItems: 3
-> +
-> +        clock-names:
-> +          maxItems: 3
+Add a new behaviour to the test_progs framework that creates and opens a
+new network namespace to run a test in it. This is done automatically on
+tests whose names start with 'ns_'.
 
-3 is already the max. You need 'minItems' here.
+One test already has a name starting with 'ns_', so PATCH 1 renames it
+to avoid conflicts. PATCH 2 introduces the test_progs 'feature'.
+PATCH 3 & 4 convert some tests to use these dedicated namespaces.
 
-Rob
+Signed-off-by: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
+---
+Changes in v2:
+ - Handle the netns creation / opening directly in test_progs
+ - Link to v1: https://lore.kernel.org/bpf/e3838d93-04e3-4e96-af53-e9e63550d7ba@bootlin.com
+
+---
+Bastien Curutchet (eBPF Foundation) (4):
+      selftests/bpf: ns_current_pid_tgid: Rename the test function
+      selftests/bpf: Optionally open a dedicated namespace to run test in it
+      selftests/bpf: tc_links/tc_opts: Unserialize tests
+      selftests/bpf: ns_current_pid_tgid: Use test_progs's ns_ feature
+
+ .../selftests/bpf/prog_tests/ns_current_pid_tgid.c | 47 ++++++++--------------
+ tools/testing/selftests/bpf/prog_tests/tc_links.c  | 28 ++++++-------
+ tools/testing/selftests/bpf/prog_tests/tc_opts.c   | 40 +++++++++---------
+ tools/testing/selftests/bpf/test_progs.c           | 12 ++++++
+ 4 files changed, 63 insertions(+), 64 deletions(-)
+---
+base-commit: a814b9be27fb3c3f49343aee4b015b76f5875558
+change-id: 20250219-b4-tc_links-b6d5bf709e1f
+
+Best regards,
+-- 
+Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
+
 
