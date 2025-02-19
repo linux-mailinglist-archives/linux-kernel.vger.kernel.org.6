@@ -1,96 +1,139 @@
-Return-Path: <linux-kernel+bounces-521842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD0F5A3C300
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:05:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8A7FA3C317
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:07:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5637176DC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:04:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0D633B7321
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:04:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B1241F4619;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AEB91F4620;
 	Wed, 19 Feb 2025 15:03:43 +0000 (UTC)
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fSidz4Hi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C79501F30A4
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 15:03:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0BA31F3B98;
+	Wed, 19 Feb 2025 15:03:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739977422; cv=none; b=kBew6h+Z/6ul9ElP+ICFsB1jIgFiF08jp15BMEO4yzJqnLnQmrakKwR+vLHHEKDXrAPXsO4HWIqYjG62WqmZc40UK920tSLH1ibsUTPYlni8QJ5Qp2w0Er3psH8MF+U0Q3nBr8+AqYsllIgSfYDavp8kIR5Gj8Wnt4UkBTYm8iU=
+	t=1739977422; cv=none; b=Ph7m5M39hUXMX8e4eRYPTYPQ/f8nRlfRXbDy57Kv7CAbm0P4/gLOjK1+kFohq9i5BLq/jjlaLU95GqTc0mw6FhBS0o8q02h7pi7fqjhXDA4QdrK7oLEgmQQS8y5oSPFdXLDyNto6tJ5KYGVTKd96Wg3gcMuD3i3gLUn/RSV1BTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1739977422; c=relaxed/simple;
-	bh=2c/AWmO5i6aMpMjJu+qQZg9qk31xvfT1rHjn+iDPNOU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TaT6bAbiTAJmeZCQ5ODXzXAToV85rQJshSOxr0DvYJysuqcC2ZQn4XQ1ot1C0QhAb7uZWKoV2z2ozSuRDL9tsAl1mZ6PaStY0ujsD1cPQ///oE+/fjyV9xwnKhfnVDuBH+iGEH1J+geKJMlnQlunCvnnf0PYxVJE6fbKtndFIsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:47f6:a1ad:ad8e:b945])
-	by baptiste.telenet-ops.be with cmsmtp
-	id FT3a2E00L57WCNj01T3apE; Wed, 19 Feb 2025 16:03:37 +0100
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.97)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1tklbX-0000000B3WS-46QB;
-	Wed, 19 Feb 2025 16:03:34 +0100
-Received: from geert by rox.of.borg with local (Exim 4.97)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1tklbq-0000000BbJe-2PpY;
-	Wed, 19 Feb 2025 16:03:34 +0100
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Olivia Mackall <olivia@selenic.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Dragan Simic <dsimic@manjaro.org>
-Cc: linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] hwrng: Fix indentation of HW_RANDOM_CN10K help text
-Date: Wed, 19 Feb 2025 16:03:32 +0100
-Message-ID: <54eae580e3ee5686db692dd6c0927b23134a1cec.1739977165.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
+	bh=Ihey6bM0KEqokvaXGeRGp7RDOvBa+4Xze6lMRnn8bWw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HharGTYiFiUZ63IHxkJOWeHlrFQOfG8knEAJtSrTo8C1u0UDBEsB+q4vPeXoRS2zxKM2ho+uYn/ZRA+oWc3dPuywW0ye/gUhsDusK+7B5s69B63qx3qaRULFsv59vQiFVCKMIhQHVGASQaGEtjfy58rOnsroeiOjke7DuPJf2q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fSidz4Hi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70775C4CED1;
+	Wed, 19 Feb 2025 15:03:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739977422;
+	bh=Ihey6bM0KEqokvaXGeRGp7RDOvBa+4Xze6lMRnn8bWw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fSidz4HiRaNXDKsQCBR8kxW69/w5fJu/gVN5czdFRmsSHU3zvJ9yo3FfHrm6Ely0X
+	 qFoLV182c8rBO5MYWrSvGRJl/LDllw6dTfUmHo2UcImgmFKLDPH86G7pUCWSSvcFJa
+	 GdHDUIz81cw9POgrq14CEojGEQ9EauJVTbjk2CdoRgGylFvnzLW20pW3e/jB5fz29w
+	 SVWJ5cS2EYmQXiw6iE3Nb+ZlNxb1CyiD+cGymcdMnPtZsUUF1Wg+lYW7TomNImUI4I
+	 hhIZFsiEycQ2m4FEOSxVFdlK+d+VDYt2OPWrtWmrInjoqUoCqvT5Uo+aWRm2wzEli0
+	 ZUXjkGQEzsTRA==
+Date: Wed, 19 Feb 2025 15:03:38 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Neal Gompa <neal@gompa.dev>
+Cc: Hector Martin <marcan@marcan.st>,
+	Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>, Dave Airlie <airlied@gmail.com>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>, phasta@kernel.org,
+	Christoph Hellwig <hch@lst.de>,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Abdiel Janulgue <abdiel.janulgue@gmail.com>,
+	daniel.almeida@collabora.com, aliceryhl@google.com,
+	robin.murphy@arm.com, rust-for-linux@vger.kernel.org,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Valentin Obst <kernel@valentinobst.de>,
+	open list <linux-kernel@vger.kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	David Airlie <airlied@redhat.com>,
+	"open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>,
+	DRI Development <dri-devel@lists.freedesktop.org>
+Subject: Re: On community influencing (was Re: [PATCH v8 2/2] rust: add dma
+ coherent allocator abstraction.)
+Message-ID: <Z7XyykBB1lXJXXaf@finisterre.sirena.org.uk>
+References: <2025013148-reversal-pessimism-1515@gregkh>
+ <1bbdf8b7-a70b-4994-865e-7fcb8d53ebef@marcan.st>
+ <20250207-prehistoric-married-dormouse-3e1aa7@lemur>
+ <7742420.9J7NaK4W3v@skuld-framework>
+ <d6cae188-28e5-409f-86ed-7ddf374fd354@sirena.org.uk>
+ <CAEg-Je9BiTsTmaadVz7S0=Mj3PgKZSu4EnFixf+65bcbuu7+WA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="J95nyL2d79o8vBJ/"
+Content-Disposition: inline
+In-Reply-To: <CAEg-Je9BiTsTmaadVz7S0=Mj3PgKZSu4EnFixf+65bcbuu7+WA@mail.gmail.com>
+X-Cookie: Editing is a rewording activity.
 
-Change the indentation of the help text of the HW_RANDOM_CN10K symbol
-from one TAB plus one space to one TAB plus two spaces, as is customary.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-While commit 67b78a34e48b9810 ("hwrng: Kconfig - Use tabs as leading
-whitespace consistently in Kconfig") fixed some indentation for the
-HW_RANDOM_CN10K symbol, it did not fix everything...
----
- drivers/char/hw_random/Kconfig | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+--J95nyL2d79o8vBJ/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kconfig
-index 1ec4cad1e210a2ac..c67de9579664c762 100644
---- a/drivers/char/hw_random/Kconfig
-+++ b/drivers/char/hw_random/Kconfig
-@@ -583,11 +583,11 @@ config HW_RANDOM_CN10K
- 	depends on HW_RANDOM && PCI && (ARM64 || (64BIT && COMPILE_TEST))
- 	default HW_RANDOM if ARCH_THUNDER
- 	help
--	 This driver provides support for the True Random Number
--	 generator available in Marvell CN10K SoCs.
-+	  This driver provides support for the True Random Number
-+	  generator available in Marvell CN10K SoCs.
- 
--	 To compile this driver as a module, choose M here.
--	 The module will be called cn10k_rng. If unsure, say Y.
-+	  To compile this driver as a module, choose M here.
-+	  The module will be called cn10k_rng. If unsure, say Y.
- 
- config HW_RANDOM_JH7110
- 	tristate "StarFive JH7110 Random Number Generator support"
--- 
-2.43.0
+On Fri, Feb 14, 2025 at 02:10:57AM -0500, Neal Gompa wrote:
+> On Mon, Feb 10, 2025 at 12:28=E2=80=AFPM Mark Brown <broonie@kernel.org> =
+wrote:
 
+> > We do actually have some people using forges already, for example the
+> > SOF people do a bunch of their review on github and then turn that into
+> > patch serieses which they send via the normal email route when they're
+> > happy with them.  I think tree wide stuff flows in via back merges or
+> > rebases, one of the benefits of delegation is that it's not my problem.
+> > This all works perfectly well from my side, as far as I know it's fine
+> > for the SOF people too.  It certainly doesn't seem insurmountable.
+
+> It might be working as long as a subsystem continues to allow
+> receiving patches via email. As soon as a subsystem decides to stop
+> doing that (which is absolutely their right given the model of
+> subsystem maintenance that the Linux project has), I think this will
+> break down very quickly.
+
+Eh, probably they'll just get bypassed for the affected patches if they
+really just drop everything on the floor.  That's effectively what's
+happening with SOF in that I take patches for it (which seems to work
+for everyone, people do review stuff that comes in on the list).  That
+tends to be what happens if people are unresponsive.  More likely
+there'f be some bridging effort of some kind with pressure applied to
+get substantial work done on the forge.
+
+--J95nyL2d79o8vBJ/
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAme18skACgkQJNaLcl1U
+h9BHtgf/Uk+Ho/XGWD8rCa0jk/SX36P4ngxCJ3LodfwMlQxRBmL1DPfN+WhjMsGI
+dydDV273By4Z5rCdU7HCtoXC+bKjjUYe/OlmKmdPU3Mtx7RJBmy8c2YJbZBVmnaP
+Yeg7Nsg9mIeQuyGKryPK9/aHK6Fz/4MzLoGZfUej3ykClbOHwuQPdgbdRku3i15J
+K4g2toTLAT3BxX/YuU6873WfoLLeGXbYh/N4sOi9b4EMHcwLYrq2kmwPbQz3MctB
+v8DKBGUv0equxwY2tPGWKwyAxhOjC81+QDZV9bBD5Qc/1xydcscsQ+qIFoTpL8rP
+a+82UH6b3buQf0n/D9g6+FUfoyIJgQ==
+=Ciae
+-----END PGP SIGNATURE-----
+
+--J95nyL2d79o8vBJ/--
 
