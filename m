@@ -1,203 +1,125 @@
-Return-Path: <linux-kernel+bounces-520833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 639C6A3AFE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 04:03:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54DF3A3AFE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 04:05:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E168174384
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 03:03:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 522F6174436
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 03:05:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EFA216EB7C;
-	Wed, 19 Feb 2025 03:03:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDAED1A08A8;
+	Wed, 19 Feb 2025 03:05:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JLgVTn4F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VT8WpD9M"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58EA128628D;
-	Wed, 19 Feb 2025 03:03:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D486528628D;
+	Wed, 19 Feb 2025 03:05:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739934217; cv=none; b=X3N/tDOSkZL3PDiKZFhx+DVWqhkyjCOyQzm7XwsQSTKR3M+CI2QIj75LyY3WvT/H0afLkn9eLlHJ9twosbHdt3INR9xNeaqiUdFFoSCFwRLzSc5RDy+bG5Tofi1Vqxa7qTiEwuqnZZYe4rWRKlHtKhJwSnQ8RPfR+ZtnyYYSKCU=
+	t=1739934306; cv=none; b=heOb3AOZ3l+npFT3ACxMJ41/+A5xZ9RS5RG1OgcWAh5FeO9lCatmYosTCFCurvEsZOB8eeRjyHc95osTDnoBz0FZ5UpOl+f5YZVhoP6k5IWpmS6YzAY/tm3yQKiSBRriW8lmPQu4gbH/pMPY5YG03UZsUZAX2tx4IMHBQ+JzAjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739934217; c=relaxed/simple;
-	bh=823YSGjZ/fts8Pi6bH2rMVqoh69XMYl9RqrZLvNxu8M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fRTo5Kyxty/7nLQ5vUWi99TZVkJCpmO8sDD05FUUC7EtDzrIbcaIfWegdIKGZhCMQQKB75VHcXVB3bvg93YEMJG+2QEZYaJxALDEMN5Dwm2ylC555Nj2Y80X3D20aWmGeLM3TdG1/o8ntIPPHrPyT5H5z0U0mTVHEjnHsHgMeAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JLgVTn4F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA279C4CEE7;
-	Wed, 19 Feb 2025 03:03:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739934216;
-	bh=823YSGjZ/fts8Pi6bH2rMVqoh69XMYl9RqrZLvNxu8M=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=JLgVTn4FgXFMrOnavtyFMsGJ8f1SeqmyTt857+q9K/pzuzdjFMn+p/pvwDNPb74OD
-	 cEK2vlV2d1yqoQwbYjrRMjZwKFWsOhvMbz2n17l6tKRqrk4+zwFs6FYR76ymj2x8WF
-	 y8aTjG81BXAS1FeGuvyEP233SRJ8nAHUZ4gSqk7dUpOGSbwJU/iZt6ox7W4jBG/pje
-	 6XD23kjDBr5OOSWleXHb2dU9cn/kUo93k6AKJNfG+t1oJpThIw8AN70AzfsKsDcoUV
-	 MbNktgNiBVvvoXK1Ns7yf61TJ8+V6GgoRnbTenDH9D5anqAn5Z1vZGEEHVGEG2L5O8
-	 orOM0OKa5qr3Q==
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5e04f87584dso4542674a12.3;
-        Tue, 18 Feb 2025 19:03:36 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU/9vBbMKMR4yKTZAT6LccxvKGMQbpT2O4Id6cQpUhPnjzag0tUki2mY6qNmzYq/uPhuH6gzXrtD8z69w==@vger.kernel.org, AJvYcCXXbH3Sse66VcWPe7xum0lgyz1STyI9hcVcfw2TLaKZWZf69dCvsFCBAJoo4X/TQoa0ZapA/nYvWnGMCVk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzd8dCUEGCPGAt2IDdGaLDC0PMWa1yK00MzKBkyxO8gPMHqwcss
-	RRqS8H7eMWWvTQwz5MD+nY+dCfgI84EsqBogMiFJtGijprCPAVVd49JVfN0n9ZjMaOhSU1yPyTE
-	T9wpEs8nXKZO64EbAfiZidqONG6w=
-X-Google-Smtp-Source: AGHT+IE2X9/VM9AUZTraUPRmg4QJ5cYjqTloHovVNqu75KCSz8bGRkLf2c/KZFgTwjSWHd44Akd+FzRmk3bdyyI1Huc=
-X-Received: by 2002:a17:906:478d:b0:aba:5e50:6984 with SMTP id
- a640c23a62f3a-abbcccd156amr156510866b.2.1739934215330; Tue, 18 Feb 2025
- 19:03:35 -0800 (PST)
+	s=arc-20240116; t=1739934306; c=relaxed/simple;
+	bh=xqhXmRmGt10WILRVRFX0nFpaOglQ51zq5WCAt+bSjhs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IWmRO7+CtR04iNTa+eCJb6eIGcWb6NrA0w3E54IApqJybhMhLD1IzVi3l7rRZE66u9YnGavXAoRAzPPGAe00NCK8GyHFW8o+SDHUO7JjhkrVuuLHyDM/Ftn6VwaaR31did4JOx7IyxAsNE6h66C+lD7mS0dOv85r4EpaTMIRGBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VT8WpD9M; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-220d601886fso82953745ad.1;
+        Tue, 18 Feb 2025 19:05:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739934304; x=1740539104; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WP6ht26zVx1Wk1KNOxJ+ObaR5Ff/xn1pNGU7t1suOmA=;
+        b=VT8WpD9M3QqXLF4hQASrJnSP+8jI6R5kiOpxrwI6y7dKpzvnN45jyavRKPTkLcFuiQ
+         QC9+g4Z7KXDCB7SyXR5hCAyQQmhaJ/eQsu89exVxJwLoJMhvfYecQdlSgEmZINuMg0ET
+         9fVzONA3k4tM82+7x7u6fjFqwq313GV65g9GfLV1V7knGZqIWud3xsbMkG+DKNSJZf+o
+         MVP1x+stPlwZ8SvXvpyL9eT2pgWR83Ca81kwU2jSbPUihOWAdSL6C6/aIC+N7r52pcdy
+         /RgK3hul0jbq8M+X64+lsYWaPI9kp6gg2HNtrm5qNPSbwRarQjnIlpmZ9MUGJP9IP9j0
+         SkHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739934304; x=1740539104;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WP6ht26zVx1Wk1KNOxJ+ObaR5Ff/xn1pNGU7t1suOmA=;
+        b=trGjE91a4eB1l6UQvtAsNzOqHnd83WPiAREJwXYO2G/+td0p1MUkhMMN3aj0uvCsRa
+         /x0uducI23OKyziyjuQLSRiQgMaut12UZk6xe4YN9KclTGBnDmGHBnqEVAP35MZNbJs6
+         mnfsWBr4lXrVJxYYCvDKFl03JHjkK3mxXHlxKFZhrFbaVMIH7TU/Su37elisA039ueRD
+         rpd13A/+XhSSRzpGboFu4z0L+EpzOBQ60AJ8tbgi/QSvt5ur+fOf5FRLmC3ZuQVKa/7K
+         W/cDPab0sNVr/QnEDOgbNahgFNwikjA1iNQ0AtQ7J2CAp3oqG8yFaY97Y0NlZx1zFm5w
+         TGCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUZSRifTC7dDxza+dcM50mSs5Ap7x7gle3/Rhz1hRGu5g1zInvu4Iz57ytjVlFGtuxI0FRy6wKKf5GCfSSEpEo0@vger.kernel.org, AJvYcCVnPfqhq4x+wrND1/WuflMXVOZ3Flp2y2QmB/yBfc18Dw7v9e577IC5QXthTtE6fxsfT23pFCY9YUr1EuzE@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCKjzSgObyGRF7eWDBB1OR/YHLvWuPzG8kd/mU6J9GhE1Z47EF
+	dTKx0OFyYjOqBi7Fza7llkN4JiBuddSEPOgwvNlmN5yJKfPdinWBUTaBiit7
+X-Gm-Gg: ASbGncvQMTDoZZV1PlLQXUgQXCjsXLwjuymCgMYsWEqwXjcrc0LNvYn0C4zsoufz4ba
+	8iRj9py1jLmLAYZlZjDd4uoJBDF3GVfzQI3Mqntnd1mF75i039DiXAy7dCcZysf5WJ23i83FtIf
+	+rSE3X0f9gGgdIiT/xrUgvmvABN8/gy4XQzoyqpV9rsnEemTmX/WqIVi1Wz43qDuV+c0UF8csCe
+	CAwNg6/RQz9a0u8sjBoDreZgn/ws5Cs2fAE4qAotLaluUB0ZaTjGMHeeJ/A4+MJKia3DxvUspU8
+	SkPFwVZsWRmlH5AEtzzR8EvrbXl2HJF4ScOXRQHMad3uobsRcMCdNdImeS+klHmpcy6iIKbFKw=
+	=
+X-Google-Smtp-Source: AGHT+IFZiOAQJB8BaTDOEtDlzQBo8iYTkzBhRlEHPrbyWC5TMjZeIu0sOTh7QRiax5maNSNHhbXl8Q==
+X-Received: by 2002:a05:6a21:7888:b0:1ea:ddd1:2fcf with SMTP id adf61e73a8af0-1ee8cb1ddf0mr27931861637.4.1739934303922;
+        Tue, 18 Feb 2025 19:05:03 -0800 (PST)
+Received: from node0.suho-242436.threadtune-pg0.utah.cloudlab.us ([128.110.217.182])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-adb5a52af2esm9960126a12.54.2025.02.18.19.05.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2025 19:05:03 -0800 (PST)
+From: Sumya Hoque <sumyahoque2012@gmail.com>
+To: sumyahoque2012@gmail.com,
+	skhan@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org,
+	shuah@kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	kees@kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel-mentees@lists.linuxfoundation.org
+Subject: [PATCH] selftests:sysctl:Fix minor grammers in sysctl test
+Date: Wed, 19 Feb 2025 03:04:51 +0000
+Message-Id: <20250219030451.39782-1-sumyahoque2012@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250218090203.43137-1-marco.crivellari@suse.com>
- <20250218090203.43137-2-marco.crivellari@suse.com> <Z7R2GqWOufd8l6NZ@alpha.franken.de>
- <CAAhV-H7ygGqCYyQf_tvFrgEBR6uva35auGP9yhxQFqw4mpQBwA@mail.gmail.com> <Z7SQNhL0FYGkX0Ng@alpha.franken.de>
-In-Reply-To: <Z7SQNhL0FYGkX0Ng@alpha.franken.de>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Wed, 19 Feb 2025 11:03:25 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H7cizXw-zta7sW+AKP3UiqRE52K7YdDhH7YoCr=LaCGWA@mail.gmail.com>
-X-Gm-Features: AWEUYZnoQ-H6kd4mjCfLOeaxVKSFbu3Y_rLlZZyNV02vMzdET83OZIZqllnOTKY
-Message-ID: <CAAhV-H7cizXw-zta7sW+AKP3UiqRE52K7YdDhH7YoCr=LaCGWA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] MIPS: Fix idle VS timer enqueue
-To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: Marco Crivellari <marco.crivellari@suse.com>, linux-mips@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Frederic Weisbecker <frederic@kernel.org>, 
-	Anna-Maria Behnsen <anna-maria@linutronix.de>, Thomas Gleixner <tglx@linutronix.de>, 
-	Peter Zijlstra <peterz@infradead.org>, "Maciej W . Rozycki" <macro@orcam.me.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 18, 2025 at 9:51=E2=80=AFPM Thomas Bogendoerfer
-<tsbogend@alpha.franken.de> wrote:
->
-> On Tue, Feb 18, 2025 at 08:14:43PM +0800, Huacai Chen wrote:
-> > Hi, Thomas,
-> >
-> > On Tue, Feb 18, 2025 at 7:59=E2=80=AFPM Thomas Bogendoerfer
-> > <tsbogend@alpha.franken.de> wrote:
-> > >
-> > > On Tue, Feb 18, 2025 at 10:02:03AM +0100, Marco Crivellari wrote:
-> > > > MIPS re-enables interrupts on its idle routine and performs
-> > > > a TIF_NEED_RESCHED check afterwards before putting the CPU to sleep=
-.
-> > > >
-> > > > The IRQs firing between the check and the 'wait' instruction may se=
-t the
-> > > > TIF_NEED_RESCHED flag. In order to deal with this possible race, IR=
-Qs
-> > > > interrupting __r4k_wait() rollback their return address to the
-> > > > beginning of __r4k_wait() so that TIF_NEED_RESCHED is checked
-> > > > again before going back to sleep.
-> > > >
-> > > > However idle IRQs can also queue timers that may require a tick
-> > > > reprogramming through a new generic idle loop iteration but those t=
-imers
-> > > > would go unnoticed here because __r4k_wait() only checks
-> > > > TIF_NEED_RESCHED. It doesn't check for pending timers.
-> > > >
-> > > > Fix this with fast-forwarding idle IRQs return address to the end o=
-f the
-> > > > idle routine instead of the beginning, so that the generic idle loo=
-p
-> > > > handles both TIF_NEED_RESCHED and pending timers.
-> > > >
-> > > > Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
-> > > > ---
-> > > >  arch/mips/kernel/genex.S | 39 +++++++++++++++++++++---------------=
+Hello everyone,
+Some minor grammer issues that I have fixed:
+1. echo "If an error every occurs -->  echo "If an error occurs, every execution
+2. Example uses --> Example Usage 
+
+Signed-off-by: Sumya Hoque <sumyahoque2012@gmail.com>
 ---
-> > > >  arch/mips/kernel/idle.c  |  1 -
-> > > >  2 files changed, 21 insertions(+), 19 deletions(-)
-> > > >
-> > > > diff --git a/arch/mips/kernel/genex.S b/arch/mips/kernel/genex.S
-> > > > index a572ce36a24f..9747b216648f 100644
-> > > > --- a/arch/mips/kernel/genex.S
-> > > > +++ b/arch/mips/kernel/genex.S
-> > > > @@ -104,25 +104,27 @@ handle_vcei:
-> > > >
-> > > >       __FINIT
-> > > >
-> > > > -     .align  5       /* 32 byte rollback region */
-> > > > +     .align  5
-> > > >  LEAF(__r4k_wait)
-> > > >       .set    push
-> > > >       .set    noreorder
-> > > > -     /* start of rollback region */
-> > > > -     LONG_L  t0, TI_FLAGS($28)
-> > > > -     nop
-> > > > -     andi    t0, _TIF_NEED_RESCHED
-> > > > -     bnez    t0, 1f
-> > > > -      nop
-> > > > -     nop
-> > > > -     nop
-> > > > -#ifdef CONFIG_CPU_MICROMIPS
-> > > > -     nop
-> > > > -     nop
-> > > > -     nop
-> > > > -     nop
-> > > > -#endif
-> > >
-> > > My quick search didnn't find the reason for the extra NOPs on MICROMI=
-PS, but
-> > > they are here for a purpose. I might still need them...
-> > The original code needs #ifdef CONFIG_CPU_MICROMIPS because nop in
-> > MICROMIPS is 2 bytes, so need another four nop to align. But _ssnop is
-> > always 4 bytes, so we can remove #ifdefs.
->
-> ic
->
-> > > > +     _ssnop
-> > > > +     _ssnop
-> > > > +     _ssnop
-> > >
-> > > instead of handcoded hazard nops, use __irq_enable_hazard for that
-> > No, I don't think so, this region should make sure be 32 bytes on each
-> > platform, but __irq_enable_hazard is not consistent, 3 _ssnop is the
-> > fallback implementation but available for all MIPS.
->
-> you are right for most cases, but there is one case
->
-> #elif (defined(CONFIG_CPU_MIPSR1) && !defined(CONFIG_MIPS_ALCHEMY)) || \
->         defined(CONFIG_CPU_BMIPS)
->
-> which uses
->
-> #define __irq_enable_hazard                                             \
->         ___ssnop;                                                       \
->         ___ssnop;                                                       \
->         ___ssnop;                                                       \
->         ___ehb
->
-> if MIPSR1 || BMIPS needs "rollback" handler 3 ssnnop would be wrong as
-> irq enable hazard.
-Emm, this is a problem. I think we can add _ehb after 3 _ssnop. And
-then change the below "daddiu k0, 1" to "PTR_ADDIU k0, 5".
+ tools/testing/selftests/sysctl/sysctl.sh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Maybe there is a better solution, but I think this is the simplest.
+diff --git a/tools/testing/selftests/sysctl/sysctl.sh b/tools/testing/selftests/sysctl/sysctl.sh
+index 84472b436c07..a4d76147ed8a 100755
+--- a/tools/testing/selftests/sysctl/sysctl.sh
++++ b/tools/testing/selftests/sysctl/sysctl.sh
+@@ -891,11 +891,11 @@ usage()
+ 	echo "    -l      List all test ID list"
+ 	echo " -h|--help  Help"
+ 	echo
+-	echo "If an error every occurs execution will immediately terminate."
++	echo "If an error occurs, every execution will immediately terminate."
+ 	echo "If you are adding a new test try using -w <test-ID> first to"
+ 	echo "make sure the test passes a series of tests."
+ 	echo
+-	echo Example uses:
++	echo Example usage:
+ 	echo
+ 	echo "$TEST_NAME.sh            -- executes all tests"
+ 	echo "$TEST_NAME.sh -t 0002    -- Executes test ID 0002 number of times is recomended"
+-- 
+2.34.1
 
-Huacai
-
->
-> > > But I doubt this works, because the wait instruction is not aligned t=
-o
-> > > a 32 byte boundary, but the code assuemes this, IMHO.
-> > Why? After this patch we only use 4 byte instructions.
->
-> I've should have looked at the compiled output, sorry for the noise
->
-> Still this construct feels rather fragile.
->
-> Thomas.
->
-> --
-> Crap can work. Given enough thrust pigs will fly, but it's not necessaril=
-y a
-> good idea.                                                [ RFC1925, 2.3 =
-]
 
