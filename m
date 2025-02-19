@@ -1,180 +1,129 @@
-Return-Path: <linux-kernel+bounces-520727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10040A3AE55
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:03:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11968A3AE63
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:03:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11C523AA46C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 01:00:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 600B03B0FA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 01:00:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 823E81A8F98;
-	Wed, 19 Feb 2025 00:53:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D9141AE01B;
+	Wed, 19 Feb 2025 00:54:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FKsPac5q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iHdvqZpV"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE42F19D8A7;
-	Wed, 19 Feb 2025 00:53:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C6B22557A
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 00:54:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739926416; cv=none; b=NNFIqFHzLHVr0Wv92MsofwwBQntn+Q2LhbPyqNYLxKjda4QRnNJAtCyuUARDlmBm+53Q/fvCAmZcAZ4ky2hDzBr98wfCCUIJzHxf93YBGGTkIFuSS2m2MW7vxjHHkm2l5nlHep9TyDznJsOIxSJDUlqCggVrG/7ll0uprHvAcio=
+	t=1739926496; cv=none; b=VBi76Rj65RIJapjngDGqHlrm5W6vWpGEClYxhzi3I039QOR0Z0QaxTgw9XIYSYkB6h6F5RrgpmifpDcGR+G8SaTL2u+xXoX7+jf+cZhcEGD8IeOT/hC3AVcPS1DoayFOmb1HSxU7LuP2TV8dw9/MhIVt7myqQBOfBTlDnigjQg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739926416; c=relaxed/simple;
-	bh=l8wDuRqJ/CejzfL8HrHYbXhxxF4iBq5obOtIyGJ7yDI=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=pMHlOfj46TWpgeMm5BCbwdx9SF0dtHLf/NpWfymx1mt74TSnNesfAlpBkoeabPyLfoR7jOWIg5zQq/KImbOuWWRzugZWmEfdW/hlqBzWYAqe4xa86hNDxylaCCsiisUWNdKVv3x694Q94xSgOa5lkXcwIZqCT3UDAKe/AsQS5VQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FKsPac5q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A4FCC4CEE2;
-	Wed, 19 Feb 2025 00:53:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739926416;
-	bh=l8wDuRqJ/CejzfL8HrHYbXhxxF4iBq5obOtIyGJ7yDI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=FKsPac5qFYVOu/eypD1DMagX/ta6fHybw+efTDnTqM1WWXUsZwRzuN4RNTI3H9I+O
-	 zagN4+q654nuN65pE0Uvwiek1r9Z2vXIkMT8Cf4w1i/3cu2VpfUL/toI7RcgFhb05T
-	 +p7z0TwTDAsls14C15wJ2lxLQS4gxHEGqkUQxTIF49FQc4jCwPU1MXpRe2wX0vmDqb
-	 4THOOVs0gUSFc5p6HrwBmjMOkbShm1C2gxop6nMieL8cFY6nN+bBDVVkmSGnS8deJR
-	 1A9D3P4yAMUPCnfT6T5KVH03v+hzR0GueaPIvlkCmfOrs3vwDbkauF0OSDoN1B0aft
-	 Jd41HG7LyQ5dw==
-Date: Wed, 19 Feb 2025 09:53:32 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
- Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>, Heiko Carstens <hca@linux.ibm.com>, Sven
- Schnelle <svens@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>, stable@vger.kernel.org
-Subject: Re: [PATCH 3/5] fprobe: Fix accounting of when to unregister from
- function graph
-Message-Id: <20250219095332.f9667fe4f414ec9945093b73@kernel.org>
-In-Reply-To: <20250218193126.619197190@goodmis.org>
-References: <20250218193033.338823920@goodmis.org>
-	<20250218193126.619197190@goodmis.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1739926496; c=relaxed/simple;
+	bh=x3RPoMgClhFCt1lMFR9y6/g2w/dNOeOD2RyoSpfCcNQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=CN11V0e6Z5WjSexGLSNtCYwTimx17JF300Je5HXrubrBccfbqPM+M9oAu00GM30TigB45Sprugj92mHEbrcrRg8mRrmEZexLPupQsLAWAflv3ZIQ5OvHDlXWjoX5SEoCp/LAWdBzh6zf/w274TDV+2/aVtter2e1a3aUHXpeGRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iHdvqZpV; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-220ff7d7b67so86728735ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 16:54:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739926493; x=1740531293; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=t46C7YC0Fd2kjhrwUymr7qDRo6+1mzmJx//VkrOA+Ek=;
+        b=iHdvqZpV75I1ZIck3eCmNFFNQCGqZrDDrRKRLFoAoJLXLTmwlWwHEJwlnig6U64O5D
+         3/J3A+kPtyqaOmmy+nAHacpf6jQM72h0LF1Zb039yX/qxIWKpm0HfgM23gCJBvdeQJ5t
+         EGrMxB70S34OJtpjTwI4WHzy2zGTPZaQRE+WRXhfl+eWNNTQUbQWXmve/pb5Q0qja5On
+         X0oyjuAT1BJJh/IyTqKzDP2gKYB91ShFtH3oNdiZrcZmob064hxYoZ3oJtRJbAIeY+Mb
+         CPBkvygSCMj3KIqeZaneu8l42a4iE06//N7C44chUeN5cPBBhNsDEVVlgpF1R8L9AbKU
+         Tjrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739926493; x=1740531293;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=t46C7YC0Fd2kjhrwUymr7qDRo6+1mzmJx//VkrOA+Ek=;
+        b=kffwmHbArwWTPYb5fikLZWxxUyV785R8wWqr/5vPsI+e+Q2qGPwgYQmfoMpr17u47M
+         z24HfCQHzjZ31NV6g0u9cmDgPRqjDNFxgxrbkS6C8kJZwVyGmiNkzmhA8ttVi1hVCVTb
+         Vzbkgm+BPtsfKH5djP1yYL0wd4g1xjnDypN/bKt5bGaS5/qZFK2WdzzOmpTBcH7qrnes
+         gQPdFBAg57dea7SBqs+1iqSJNUGL1Al/b59+943xX5rDERhj3BKsdjFWty+VMvuXqgOY
+         0FceMydMk2BfQB5A71TjX2oqLA8r/pFg9E83BYxB5y85MyV8v0SlmqhyK3G5u41Qo3Sf
+         Qqhg==
+X-Gm-Message-State: AOJu0YxEg1XvKb5uIaS8FBPiiVIMKqLdffZN8dDxQPGoyu3NJtaO/Gqw
+	z1UeHFDdNlZPmcem08JxMCEDgtfy91ZneLNKlcnknLYIpr3QfCs8ky41ezKdelyAIFuQk/bsbGU
+	qGw==
+X-Google-Smtp-Source: AGHT+IFoS17LPJHddOQYgLraCie+jUqiUNgSY4BvAPXCIbSdRL9BrOE7UFqk4VCrHI3npo5kmzEKCjCQGtA=
+X-Received: from pfbkq16.prod.google.com ([2002:a05:6a00:4b10:b0:730:98b0:1c58])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:7a4c:b0:1ee:c8e7:203c
+ with SMTP id adf61e73a8af0-1eec8e7219amr8474405637.24.1739926493632; Tue, 18
+ Feb 2025 16:54:53 -0800 (PST)
+Date: Tue, 18 Feb 2025 16:54:52 -0800
+In-Reply-To: <e3136d20-977a-4e2d-ad7b-c04be1dca1db@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250203223205.36121-1-prsampat@amd.com> <20250203223205.36121-10-prsampat@amd.com>
+ <Z6wIDsbjt2ZaiX0I@google.com> <e3136d20-977a-4e2d-ad7b-c04be1dca1db@amd.com>
+Message-ID: <Z7Ur3HyM15vFBEvR@google.com>
+Subject: Re: [PATCH v6 9/9] KVM: selftests: Add a basic SEV-SNP smoke test
+From: Sean Christopherson <seanjc@google.com>
+To: Pratik Rajesh Sampat <prsampat@amd.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, kvm@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	pbonzini@redhat.com, thomas.lendacky@amd.com, tglx@linutronix.de, 
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, shuah@kernel.org, 
+	pgonda@google.com, ashish.kalra@amd.com, nikunj@amd.com, pankaj.gupta@amd.com, 
+	michael.roth@amd.com, sraithal@amd.com
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, 18 Feb 2025 14:30:36 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On Fri, Feb 14, 2025, Pratik Rajesh Sampat wrote:
+> 
+> 
+> On 2/11/25 8:31 PM, Sean Christopherson wrote:
+> > On Mon, Feb 03, 2025, Pratik R. Sampat wrote:
+> >> @@ -217,5 +244,20 @@ int main(int argc, char *argv[])
+> >>  		}
+> >>  	}
+> >>  
+> >> +	if (kvm_cpu_has(X86_FEATURE_SEV_SNP)) {
+> >> +		uint64_t snp_policy = snp_default_policy();
+> >> +
+> >> +		test_snp(snp_policy);
+> >> +		/* Test minimum firmware level */
+> >> +		test_snp(snp_policy | SNP_FW_VER_MAJOR(SNP_MIN_API_MAJOR) |
+> >> +			SNP_FW_VER_MINOR(SNP_MIN_API_MINOR));
+> > 
+> > Ah, this is where the firmware policy stuff is used.  Refresh me, can userspace
+> > request _any_ major/minor as the min, and expect failure if the version isn't
+> > supported?  If so, the test should iterate over the major/minor combinations that
+> > are guaranteed to fail.  And if userspace can query the supported minor/major,
+> > the test should iterate over all the happy versions too. 
+> > 
+> 
+> Yes, any policy greater than the min policy (defined in sev-dev.c)
+> should be supported. The sad path tests were intended to be added in the
+> upcoming negative test patch series so that we could have the proper
+> infrastructure to handle and report failures.
+> 
+> > Unless there's nothing interesting to test, I would move the major/minor stuff to
+> > a separate patch.
+> 
+> Would you rather prefer I do the happy tests here (something like -
+> min_policy and min_policy + 1?) and defer the failure tests for the
+> next patchset? Or, I can remove policy testing from here entirely and
+> introduce it only when the sad path testing infrastructure is ready, so
+> that we can test this completely at once?
 
-> From: Steven Rostedt <rostedt@goodmis.org>
-> 
-> When adding a new fprobe, it will update the function hash to the
-> functions the fprobe is attached to and register with function graph to
-> have it call the registered functions. The fprobe_graph_active variable
-> keeps track of the number of fprobes that are using function graph.
-> 
-> If two fprobes attach to the same function, it increments the
-> fprobe_graph_active for each of them. But when they are removed, the first
-> fprobe to be removed will see that the function it is attached to is also
-> used by another fprobe and it will not remove that function from
-> function_graph. The logic will skip decrementing the fprobe_graph_active
-> variable.
-> 
-> This causes the fprobe_graph_active variable to not go to zero when all
-> fprobes are removed, and in doing so it does not unregister from
-> function graph. As the fgraph ops hash will now be empty, and an empty
-> filter hash means all functions are enabled, this triggers function graph
-> to add a callback to the fprobe infrastructure for every function!
-> 
->  # echo "f:myevent1 kernel_clone" >> /sys/kernel/tracing/dynamic_events
->  # echo "f:myevent2 kernel_clone%return" >> /sys/kernel/tracing/dynamic_events
->  # cat /sys/kernel/tracing/enabled_functions
-> kernel_clone (1)           	tramp: 0xffffffffc0024000 (ftrace_graph_func+0x0/0x60) ->ftrace_graph_func+0x0/0x60
-> 
->  # > /sys/kernel/tracing/dynamic_events
->  # cat /sys/kernel/tracing/enabled_functions
-> trace_initcall_start_cb (1)             tramp: 0xffffffffc0026000 (function_trace_call+0x0/0x170) ->function_trace_call+0x0/0x170
-> run_init_process (1)            tramp: 0xffffffffc0026000 (function_trace_call+0x0/0x170) ->function_trace_call+0x0/0x170
-> try_to_run_init_process (1)             tramp: 0xffffffffc0026000 (function_trace_call+0x0/0x170) ->function_trace_call+0x0/0x170
-> x86_pmu_show_pmu_cap (1)                tramp: 0xffffffffc0026000 (function_trace_call+0x0/0x170) ->function_trace_call+0x0/0x170
-> cleanup_rapl_pmus (1)                   tramp: 0xffffffffc0026000 (function_trace_call+0x0/0x170) ->function_trace_call+0x0/0x170
-> uncore_free_pcibus_map (1)              tramp: 0xffffffffc0026000 (function_trace_call+0x0/0x170) ->function_trace_call+0x0/0x170
-> uncore_types_exit (1)                   tramp: 0xffffffffc0026000 (function_trace_call+0x0/0x170) ->function_trace_call+0x0/0x170
-> uncore_pci_exit.part.0 (1)              tramp: 0xffffffffc0026000 (function_trace_call+0x0/0x170) ->function_trace_call+0x0/0x170
-> kvm_shutdown (1)                tramp: 0xffffffffc0026000 (function_trace_call+0x0/0x170) ->function_trace_call+0x0/0x170
-> vmx_dump_msrs (1)               tramp: 0xffffffffc0026000 (function_trace_call+0x0/0x170) ->function_trace_call+0x0/0x170
-> [..]
-> 
->  # cat /sys/kernel/tracing/enabled_functions | wc -l
-> 54702
-> 
-> If a fprobe is being removed and all its functions are also traced by
-> other fprobes, still decrement the fprobe_graph_active counter.
-> 
-
-
-Ah, thanks! But I would like to change the fix a bit since
-fprobe_graph_remove_ips() must be paired with fprobe_graph_add_ips()
-to hide fprobe_graph_active counting.
-
-Can you use this version?
-
-diff --git a/kernel/trace/fprobe.c b/kernel/trace/fprobe.c
-index 2560b312ad57..7d282c08549e 100644
---- a/kernel/trace/fprobe.c
-+++ b/kernel/trace/fprobe.c
-@@ -409,7 +409,8 @@ static void fprobe_graph_remove_ips(unsigned long *addrs, int num)
- 		return;
- 	}
- 
--	ftrace_set_filter_ips(&fprobe_graph_ops.ops, addrs, num, 1, 0);
-+	if (num)
-+		ftrace_set_filter_ips(&fprobe_graph_ops.ops, addrs, num, 1, 0);
- }
- 
- static int symbols_cmp(const void *a, const void *b)
-@@ -679,8 +680,7 @@ int unregister_fprobe(struct fprobe *fp)
- 	}
- 	del_fprobe_hash(fp);
- 
--	if (count)
--		fprobe_graph_remove_ips(addrs, count);
-+	fprobe_graph_remove_ips(addrs, count);
- 
- 	kfree_rcu(hlist_array, rcu);
- 	fp->hlist_array = NULL;
-
-
-> Cc: stable@vger.kernel.org
-> Fixes: 4346ba1604093 ("fprobe: Rewrite fprobe on function-graph tracer")
-> Closes: https://lore.kernel.org/all/20250217114918.10397-A-hca@linux.ibm.com/
-> Reported-by: Heiko Carstens <hca@linux.ibm.com>
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> ---
->  kernel/trace/fprobe.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/kernel/trace/fprobe.c b/kernel/trace/fprobe.c
-> index 2560b312ad57..90241091ca61 100644
-> --- a/kernel/trace/fprobe.c
-> +++ b/kernel/trace/fprobe.c
-> @@ -681,6 +681,8 @@ int unregister_fprobe(struct fprobe *fp)
->  
->  	if (count)
->  		fprobe_graph_remove_ips(addrs, count);
-> +	else
-> +		fprobe_graph_active--;
->  
->  	kfree_rcu(hlist_array, rcu);
->  	fp->hlist_array = NULL;
-> -- 
-> 2.47.2
-> 
-> 
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Let's do the latter.  For the initial series, do the bare minimum so that we can
+get that merged, and then focus on the min API version stuff in a separate series.
+The version testing shouldn't be terribly complex, but it doesn't seem like it's
+entirely trivial either, and I don't want it to block the base SNP support.
 
