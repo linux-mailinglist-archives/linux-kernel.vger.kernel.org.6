@@ -1,160 +1,127 @@
-Return-Path: <linux-kernel+bounces-521171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9B62A3B674
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:07:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38C15A3B65D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:07:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2C973BE213
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:57:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4066C17CF04
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:58:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BF6B1DE4C4;
-	Wed, 19 Feb 2025 08:48:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 191C61DF24F;
+	Wed, 19 Feb 2025 08:51:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="R9s+9nrn"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="o1FeUPlN"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32CAC1DE3BE;
-	Wed, 19 Feb 2025 08:48:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13B691DF258
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 08:51:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739954937; cv=none; b=cwCRJLBLrj6gXlCm51862FsDNl5LvcazUzZLbKCtUJ0lBZYbuBT8aFOJjl0dzS4UCxGw2xOYtydQAg/8rCL8+UoZ4jkhzQF5PINwvA9y6wWi5GFcVkrBkhWW0Hi4pAepEIcgQiSdm2NTR+nxw8HsBLj3vE3KnUykhThxgp8STA4=
+	t=1739955072; cv=none; b=stxaj/MSYrhNM8bbxKZ/3gG0Bo/jB2cSWxgzpdkHUHhMzCnfbyupbhc7+GtEn5ta+/qNPRXMdndaAWudEBMy2Wf1ftO9aF4jFdqpdgjl46IyEjpWx3s/meCPq2vzmCDlabb5RtRG53yfKGazFEv2xS6ETED1+JFx8ff/cEeeExo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739954937; c=relaxed/simple;
-	bh=fQbJ1QkpxFm4SGCWfxJzdDPB5fI9jirKoaXycqEgolc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MT6NMfG85tj9q2PT/6HKdLkW8O5FXRffpAkLx0wyTkZXc86oZyFfrntU+dnLmRXT/P/ki6CZt7oNdVHve2z3jMlHDO7eNSsj1efFtScPKd9tjiNM7SnQ+Q3lDGX5B0F94eFkfhl7nFX4nH2QV7gwkcT+biknlxofH6Aci4cYiB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=R9s+9nrn; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id DC92F44443;
-	Wed, 19 Feb 2025 08:48:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1739954933;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7uQR7Ryzn6i4UNyU9zcKaYBUdL/qVB7QaGkD/Wt9o6k=;
-	b=R9s+9nrniofjhO95BXMJmUUr1CFUhslXjgpUMJM3tORBZZdAUyzU+/rBYKvpVY8zZjdOU0
-	uaZp1o2BSikw69d3XAqTIfWKsQT2EeFq+fk8C+cxbp0wv1bip5cQYY5GQABxk0DLgBuw9l
-	Tq9D5WolkMPizxMWtpO4HuyPH2nuUbCr+62N9QUG8qZtuxm9BHLVViF0hOaHIQnMXWIrHB
-	emQggSTYM08I4edTDTUoGs56F8N6dJp3N5qdG+FagwyYglnAE6b30Fn+hV35vNtGpnujYN
-	j7nttnbBAHcJVmielnnOyhqE6rHl8kMgzogvip3onh6hiqQiQraj2ak6wsN6mA==
-Date: Wed, 19 Feb 2025 09:48:51 +0100
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>, Claudiu Beznea
- <claudiu.beznea@tuxon.dev>, netdev@vger.kernel.org, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- linux-kernel@vger.kernel.org, "David S . Miller" <davem@davemloft.net>,
- Andrew Lunn <andrew+netdev@lunn.ch>, Jakub Kicinski <kuba@kernel.org>
-Subject: Re: [PATCH net] net: cadence: macb: Synchronize stats calculations
-Message-ID: <20250219094851.0419759f@2a02-8440-d103-5c0b-874f-3af8-c06f-cd89.rev.sfr.net>
-In-Reply-To: <20250218195036.37137-1-sean.anderson@linux.dev>
-References: <20250218195036.37137-1-sean.anderson@linux.dev>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1739955072; c=relaxed/simple;
+	bh=QlRt4GjR1jTQddX7TI/CWL55VeGCGZqXC6zBvzHvQVE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ba+Fy+/r1Qe5WPbmj6tkPYbimGAX59RJ3+EZmJ22aNF2rTBvXWogDo1nKJP3BT6ZNPTGUCssj4Zulso/m50TLrGOtigT2h4iDcfIi7g4ubvvJBvsKaG35WcwJsN/ZmcCihUrxibgFI22BllH4xH7XWU8DXCaRrqa2uRbBB32haA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=o1FeUPlN; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5439e331cceso7400144e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 00:51:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1739955068; x=1740559868; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QlRt4GjR1jTQddX7TI/CWL55VeGCGZqXC6zBvzHvQVE=;
+        b=o1FeUPlNj2ECx+vKbeYadrDGg39J25so27tgeLPmCS/x4a6J+K6GZlwiCkRVHdy0R8
+         M3wwgKL1zOi25+dvSjevUgqVN+OC1cZOWQf2HdbeMzamttbQRs61n7SbHB43eqPQTbC0
+         NkRAOWk1BzEcdQx1l/VdRF5EsH0OUcgydRaA41Cc7MWBaMRGDg6cJ0dFgozWdp1w4qOU
+         +u22E4K0wISQkFfMvYhRo0Pe///PNz7BZYhYsQkoh+6wFu/BmrmtgrZMm+j1oFCFbx2g
+         nrjt12vBoBij+AJs3scQfRBy0HufJPXNO4xe9YgWIY/3SpJS6s5j70G+5GvowhnYVCQu
+         z4eA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739955068; x=1740559868;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QlRt4GjR1jTQddX7TI/CWL55VeGCGZqXC6zBvzHvQVE=;
+        b=Vic4HRLiI+pNcOukvtKFzQXz3jg7SbykoDGnKtdAGTvojmYA2XDs2JdO2P3gJqKe1O
+         fHianRwWy/tobhtiqX1G45XcJ+PsszYLa8sZQBTIkLXB4SRnD/6iKem8x0WJzLoRSPvu
+         z+ah/cNPyC1+GJVRuwXQBy2gZDF1ppLkJNguD7Htu4r3DWfgn/BbwpIHxL8aMlT429KN
+         9OzG4nooQnUhZ4dV6PFIGe3V65DliTUyLi66hJ3flKaaQj5aE3NrtilblbuJcSNQXlyW
+         sax9QKP8JJRsqAaVtrlQhHNc0NxTm7vxIsHxl6er/6P8fH8fQsH/R1Rb6t+TckpeZBz+
+         ZyYA==
+X-Forwarded-Encrypted: i=1; AJvYcCWdMgs0zXqnn1w1zcSa4wFq4leljjYyM1C94T7epKTw9lgtVssC0MzNENbfKBeofGI8fEhj+rsQ3AAMoi0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznUpnoMcjJ/iS1Br0ybj9umYeJymidooJPm7PkRrx21R8YJq2F
+	YLuegXvk3Ldycyd6C49MTpU2Aj+8NUD+S5/Qzfa2Htp9XwQ+rCef+A++V552NndTgxHzqEdEHit
+	DEhgrUovObaLo4N+/OJcQ5Z4Pb8H6vUkLbTLuSQ==
+X-Gm-Gg: ASbGncvZDhU+k1fW4HG6OFEdtOrFM+ty1j0z9x8/UfcImeOunuho8PhG+u1UE0v7YOm
+	6ER1cJjgQ8DZ/i1Jf/nUzLEeEzLtUMuQPSdCJ6MVb2oJE8c3q4cNmiNf1PzwpiM1MrkTim4AErW
+	EoNDrZ0+HhdzMpjt7JASQeZ+s9JS8=
+X-Google-Smtp-Source: AGHT+IH64ll7H5Pnr+AXMsIuNzl9rxkEnslGqgkEA+cDQgfdDUoTUpRoWEehaV1nkpYxzRdLERpqNeVg5AkiS0DCNsY=
+X-Received: by 2002:a05:6512:3e23:b0:545:b28:2fa2 with SMTP id
+ 2adb3069b0e04-5462eed85e0mr1036454e87.7.1739955067864; Wed, 19 Feb 2025
+ 00:51:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeifeekudcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegveeltddvveeuhefhvefhlefhkeevfedtgfeiudefffeiledttdfgfeeuhfeukeenucfkphepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvpdhhvghlohepvdgrtddvqdekgeegtddqugdutdefqdehtgdtsgdqkeejgehfqdefrghfkedqtgdtiehfqdgtugekledrrhgvvhdrshhfrhdrnhgvthdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedutddprhgtphhtthhopehsvggrnhdrrghnuggvrhhsohhnsehlihhnuhigrdguvghvpdhrtghpthhtohepnhhitghol
- hgrshdrfhgvrhhrvgesmhhitghrohgthhhiphdrtghomhdprhgtphhtthhopegtlhgruhguihhurdgsvgiinhgvrgesthhugihonhdruggvvhdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvght
-X-GND-Sasl: maxime.chevallier@bootlin.com
+References: <20250210-gpio-sanitize-retvals-v1-0-12ea88506cb2@linaro.org>
+ <CGME20250219083836eucas1p1b7ecc6e5fdc34d66ef7565bfcf399254@eucas1p1.samsung.com>
+ <20250210-gpio-sanitize-retvals-v1-1-12ea88506cb2@linaro.org> <dfe03f88-407e-4ef1-ad30-42db53bbd4e4@samsung.com>
+In-Reply-To: <dfe03f88-407e-4ef1-ad30-42db53bbd4e4@samsung.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 19 Feb 2025 09:50:55 +0100
+X-Gm-Features: AWEUYZmqO0kHQqF5k5xCw4NLQbgyDdiC_HWCKvZXBPIn3qhchpNyNDYCJKAkPtE
+Message-ID: <CAMRc=MduJK0_gat2aVQbR9udYNj9oDcoN=me0wa4K6L8dX_52Q@mail.gmail.com>
+Subject: Re: [PATCH 1/8] gpiolib: check the return value of gpio_chip::get_direction()
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Sean,
+On Wed, Feb 19, 2025 at 9:38=E2=80=AFAM Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+>
+> Hi Bartosz,
+>
+> On 10.02.2025 11:51, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > As per the API contract - gpio_chip::get_direction() may fail and retur=
+n
+> > a negative error number. However, we treat it as if it always returned =
+0
+> > or 1. Check the return value of the callback and propagate the error
+> > number up the stack.
+> >
+>
+> This change breaks bcm2835 pincontrol/gpio driver (and probably others)
+> in next-20250218. The problem is that some gpio lines are initially
+> configured as alternate function (i.e. uart) and .get_direction returns
+> -EINVAL for them, what in turn causes the whole gpio chip fail to
+> register. Here is the log with WARN_ON() added to line
+> drivers/pinctrl/bcm/pinctrl-bcm2835.c:350 from Raspberry Pi 4B:
+>
+> Any suggestions how to fix this issue? Should we add
+> GPIO_LINE_DIRECTION_UNKNOWN?
+>
 
-On Tue, 18 Feb 2025 14:50:36 -0500
-Sean Anderson <sean.anderson@linux.dev> wrote:
+That would be quite an intrusive change and not something for the
+middle of the release cycle. I think we need to revert to the previous
+behavior for this particular use-case: check ret for EINVAL and assume
+it means input as it's the "safe" setting. Now the question is - can
+this only happen during the chip registration or should we filter out
+EINVAL at each gpiod_get_direction() call?
 
-> Stats calculations involve a RMW to add the stat update to the existing
-> value. This is currently not protected by any synchronization mechanism,
-> so data races are possible. Add a spinlock to protect the update. The
-> reader side could be protected using u64_stats, but we would still need
-> a spinlock for the update side anyway. And we always do an update
-> immediately before reading the stats anyway.
-> 
-> Fixes: 89e5785fc8a6 ("[PATCH] Atmel MACB ethernet driver")
-> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
-> ---
-> 
->  drivers/net/ethernet/cadence/macb.h      |  2 ++
->  drivers/net/ethernet/cadence/macb_main.c | 12 ++++++++++--
->  2 files changed, 12 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/cadence/macb.h b/drivers/net/ethernet/cadence/macb.h
-> index 5740c98d8c9f..2847278d9cd4 100644
-> --- a/drivers/net/ethernet/cadence/macb.h
-> +++ b/drivers/net/ethernet/cadence/macb.h
-> @@ -1279,6 +1279,8 @@ struct macb {
->  	struct clk		*rx_clk;
->  	struct clk		*tsu_clk;
->  	struct net_device	*dev;
-> +	/* Protects hw_stats and ethtool_stats */
-> +	spinlock_t		stats_lock;
->  	union {
->  		struct macb_stats	macb;
->  		struct gem_stats	gem;
-> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
-> index 48496209fb16..990a3863c6e1 100644
-> --- a/drivers/net/ethernet/cadence/macb_main.c
-> +++ b/drivers/net/ethernet/cadence/macb_main.c
-> @@ -1978,10 +1978,12 @@ static irqreturn_t macb_interrupt(int irq, void *dev_id)
->  
->  		if (status & MACB_BIT(ISR_ROVR)) {
->  			/* We missed at least one packet */
-> +			spin_lock(&bp->stats_lock);
->  			if (macb_is_gem(bp))
->  				bp->hw_stats.gem.rx_overruns++;
->  			else
->  				bp->hw_stats.macb.rx_overruns++;
-> +			spin_unlock(&bp->stats_lock);
->  
->  			if (bp->caps & MACB_CAPS_ISR_CLEAR_ON_WRITE)
->  				queue_writel(queue, ISR, MACB_BIT(ISR_ROVR));
-> @@ -3102,6 +3104,7 @@ static struct net_device_stats *gem_get_stats(struct macb *bp)
->  	if (!netif_running(bp->dev))
->  		return nstat;
->  
-> +	spin_lock(&bp->stats_lock);
->  	gem_update_stats(bp);
->  
->  	nstat->rx_errors = (hwstat->rx_frame_check_sequence_errors +
-> @@ -3131,6 +3134,7 @@ static struct net_device_stats *gem_get_stats(struct macb *bp)
->  	nstat->tx_aborted_errors = hwstat->tx_excessive_collisions;
->  	nstat->tx_carrier_errors = hwstat->tx_carrier_sense_errors;
->  	nstat->tx_fifo_errors = hwstat->tx_underrun;
-> +	spin_unlock(&bp->stats_lock);
->  
->  	return nstat;
->  }
-> @@ -3138,12 +3142,13 @@ static struct net_device_stats *gem_get_stats(struct macb *bp)
->  static void gem_get_ethtool_stats(struct net_device *dev,
->  				  struct ethtool_stats *stats, u64 *data)
->  {
-> -	struct macb *bp;
-> +	struct macb *bp = netdev_priv(dev);
->  
-> -	bp = netdev_priv(dev);
-> +	spin_lock(&bp->stats_lock);
-
-Sorry if I missed something, but as you're using that lock within the
-macb_interrupt(), shouldn't it be a spin_lock_irqsave() for all the
-callsites that aren't in irq context ?
-
-You would risk a deadlock otherwise.
-
-Thanks,
-
-Maxime
+Bart
 
