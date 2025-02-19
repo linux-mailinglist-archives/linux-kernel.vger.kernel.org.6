@@ -1,239 +1,257 @@
-Return-Path: <linux-kernel+bounces-522135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B380AA3C673
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:44:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AC849A3C5D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:16:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AF7F3B6425
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:44:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9841A3AE26F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:15:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A89942144A9;
-	Wed, 19 Feb 2025 17:44:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EUcX1AzN"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26087A944;
-	Wed, 19 Feb 2025 17:44:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739987067; cv=fail; b=FhfXpvdLgbPGi8hq7M0vmU9mjhmXoxP7WtkRAk6Q28Mp+NwQ0BSKGWq5hz9rT0GbY1LE+ETONc2GlSVoyKzSfsd1LOZeqY/zAJHOnJ/y5zTgu1O75AO0tmxd+8NOWarzmag/tlzBaTs1lnE/5wlE82/2wJ5sBbqo4AO1YeqF21I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739987067; c=relaxed/simple;
-	bh=270FKZueewluMOtunA4s8efRoYTvV/d9aGXMrkKA9Ro=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=LrjmvrM3vR9MP90iOtALTcvyKJ1BR2DCzFc5yCQwLappFEG+aSQJTPa29AqXDTZRCJ6pWVvcUfo5Gw5jQWZxLwB1kTmhVsxIWPdKzHmEPiw4ajcCc1G3tBPmr7DrDdiDNQCGKfM/7ZdFzkdhUl/m7JPa2lvtd3y1qQKLvJMSFa0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EUcX1AzN; arc=fail smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739987066; x=1771523066;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=270FKZueewluMOtunA4s8efRoYTvV/d9aGXMrkKA9Ro=;
-  b=EUcX1AzNsPWnjOIs4FUXFR3h8T6MNrnNKuCeieCyC9zrzWSxSN92D625
-   lk3LsHRHRrRAVDbTlBuy/ZkB2nJ2QKjFaduNP2lw5wTbUgc3dNm6tF3KO
-   sjJHoLNhy5nxdl2X14evOgcHPSt+IPFZSsAwqBxz4AUHyEtKDCODmAxHi
-   QyQtLSKXwJf84pBZgXTEwZ/qpq3FgSLhGeL4wp1n4iTeyUzYKc2YtquFP
-   CvHSp4mFNILfEvYX01MmpVCGXXGQXVFUyl+IycQ+zUe64CZ1VABJk6N6t
-   bgbmlO4W0Et2iHuxFzQUd1F4poGRrexWoMaYsf1LTChKAsz5Vv50JOXuZ
-   w==;
-X-CSE-ConnectionGUID: lm2jhWE3R9W6JOz7VX6qfQ==
-X-CSE-MsgGUID: tOaUAQ9kTR6I1Cg+hgPYEg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11350"; a="66094245"
-X-IronPort-AV: E=Sophos;i="6.13,299,1732608000"; 
-   d="scan'208";a="66094245"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 09:44:25 -0800
-X-CSE-ConnectionGUID: G6QYcfFdTvCktH7XivRYMw==
-X-CSE-MsgGUID: lkDnVODkQhWiOz2Hwo5c5w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,299,1732608000"; 
-   d="scan'208";a="114516580"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 09:16:30 -0800
-Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1544.14; Wed, 19 Feb 2025 09:16:29 -0800
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44 via Frontend Transport; Wed, 19 Feb 2025 09:16:29 -0800
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (104.47.56.42) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Wed, 19 Feb 2025 09:16:21 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SJWYUTewFe0GVJIckxVgPT4ecgo6HEANS3MvcZUsEvf8PnyqjKR0lTiTfAq5K5CwnfH9YuswQskW25YpQ26d08CwL/umNMo7DVGNi4djdMGwb92uxmwK+8d21qe81tcnKIyCO/x3hZjdEXb44EwBGZ+wB3CPi7sXoBsl0ZE3F7PTTuwG4MNvQZYrs/OcJWhBQQBdSZqAGoSkNKF+O9PG9NAWPLugS4HPvuxohA26FYoCQSWurtSNjdcajZ0QB84O0tyIik2+SIjAVbqwuBALovunGe7qdp23ppSLv5pe4Dsb7oHKIOfaSVlFJaFLZ5H5Z2XOBmLZ5Id6Cos/jCSikw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=270FKZueewluMOtunA4s8efRoYTvV/d9aGXMrkKA9Ro=;
- b=GpwbX4/u9EkAsK8308qpHojCFLYdjCbFMYg2771x8qFMvkXP3QjVqnPur0BdQr1ZI9zGVXYQkjMrWzX4i0RTvpGaNyD7Nf0DLuWFp5fqPnaJtrSLR+tC3InbnIBoFbGnmgBu4QotVB86CVwSYPeN5FaTWOqIQJSefj52kVyL369d/D1G1npQ25Dtt29FnHdjTknfYeu3dSDJ3gclaIm6LMIzUxWfj575Uc/vTjI/xe8Phw6NkvPBVPP2lwvr67NBffiiDbRxOYG/7/bWLPTZKa/FmTuklJTHj3z6mC1HRxbdswzWfKHlsWjgALL6GSE8I8MGC3deiB4t0z+eddSzQw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from SJ1PR11MB6083.namprd11.prod.outlook.com (2603:10b6:a03:48a::9)
- by DS0PR11MB7190.namprd11.prod.outlook.com (2603:10b6:8:132::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.20; Wed, 19 Feb
- 2025 17:15:37 +0000
-Received: from SJ1PR11MB6083.namprd11.prod.outlook.com
- ([fe80::acfd:b7e:b73b:9361]) by SJ1PR11MB6083.namprd11.prod.outlook.com
- ([fe80::acfd:b7e:b73b:9361%7]) with mapi id 15.20.8445.017; Wed, 19 Feb 2025
- 17:15:37 +0000
-From: "Luck, Tony" <tony.luck@intel.com>
-To: Shuai Xue <xueshuai@linux.alibaba.com>, Miaohe Lin <linmiaohe@huawei.com>
-CC: "tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com"
-	<mingo@redhat.com>, "dave.hansen@linux.intel.com"
-	<dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>,
-	"hpa@zytor.com" <hpa@zytor.com>, "akpm@linux-foundation.org"
-	<akpm@linux-foundation.org>, "peterz@infradead.org" <peterz@infradead.org>,
-	"jpoimboe@kernel.org" <jpoimboe@kernel.org>, "linux-edac@vger.kernel.org"
-	<linux-edac@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>,
-	"tianruidong@linux.alibaba.com" <tianruidong@linux.alibaba.com>,
-	"bp@alien8.de" <bp@alien8.de>, "nao.horiguchi@gmail.com"
-	<nao.horiguchi@gmail.com>
-Subject: RE: [PATCH v2 4/5] mm/hwpoison: Fix incorrect "not recovered" report
- for recovered clean pages
-Thread-Topic: [PATCH v2 4/5] mm/hwpoison: Fix incorrect "not recovered" report
- for recovered clean pages
-Thread-Index: AQHbgQXqknHuofGPgUGBTzisw8EteLNOLrQAgAAm8wCAAIuSIA==
-Date: Wed, 19 Feb 2025 17:15:37 +0000
-Message-ID: <SJ1PR11MB608384612B78AF0D65ECC545FCC52@SJ1PR11MB6083.namprd11.prod.outlook.com>
-References: <20250217063335.22257-1-xueshuai@linux.alibaba.com>
- <20250217063335.22257-5-xueshuai@linux.alibaba.com>
- <ddd769c2-a17d-9e34-822d-66f72bd654ac@huawei.com>
- <be78641b-becc-4cdb-a90e-574734638869@linux.alibaba.com>
-In-Reply-To: <be78641b-becc-4cdb-a90e-574734638869@linux.alibaba.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SJ1PR11MB6083:EE_|DS0PR11MB7190:EE_
-x-ms-office365-filtering-correlation-id: 27e9c04f-fa31-4e2f-a47c-08dd51090763
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7416014|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?ZzV2WStsUFV4dk9ha0JUdFFTWHY4cUtpOTNxRVBmNUg5dXVsOFNtV2RlcHlu?=
- =?utf-8?B?SlhOWDdUdlhrZXVZNmtOakhicDRCUDd2elNiNS9YU2EyZ0lFa1NZb3k5NG1z?=
- =?utf-8?B?T2FqcFRxaTRtL2RTRU9nUVRsOENwL01ZWlAzSG1kRmJadzZwZWpnZHYrYTFw?=
- =?utf-8?B?VWE0R3AxVHovVmRLQnJUL1lDVlI0VXprbTZzZTVQdE9OQkIxMkZyU2FyNDZX?=
- =?utf-8?B?aW1YSlZraDBzV1dEblRMcW5TR0NxOFZJWmR2U1RZUWhOS09sQVV1eXYxOE8x?=
- =?utf-8?B?aFhJQzUyUmdMd242dmF0SVFydXZNZW83LzFPS1M5UVpFVjFJUGhoRlpwYnk4?=
- =?utf-8?B?NmsyOEF2eFZWU3ZRY2U0MHR2ZU95djJMZ3dPdDhFOHZHYmRSWktxeTg5RUlO?=
- =?utf-8?B?TlhFQkFlcWVSU1pvdzJ5dGgzcjNrSER1azBSVkFpTzRrMEZWR3FGVmtGWkdB?=
- =?utf-8?B?VVNFZ3pRaDF0TVR0UGtYMXBYYVA0eTI3MXFVTDlacWZGNU0wQnVrUk5rUjEv?=
- =?utf-8?B?M1FieWI1ZFlwMWhNajFuaTVIREY3RTlBaEhvYkhMQ28xNXVEVGFYZDNQVzNa?=
- =?utf-8?B?YWhRajJDMkRHK3JzbUxKQjhHeHRsaXY3N01GU01SbnRCa01Nb0VGdWdUUmxU?=
- =?utf-8?B?c2h6MGRuWDhGYXNPemRUd0pSVzNvMmFsT2dFVzRObkdqcjVYNkhIVWJjT2tB?=
- =?utf-8?B?L2ErNjdKc2o3aVZySXZQVStJUUJMdjU0dnRqamZRc3huSUpZUWtPcFJYRG5H?=
- =?utf-8?B?V1A0UVdBUGlCQjBmK3pRUzQ1WVNsVnEvSzFVaDVQOW8wNzdadDRMcDNoVlQz?=
- =?utf-8?B?TWJsdUZSVGZydFNTRlY2WWhGZjhmVWJ5ZS9NYjNpRGpaWXgzL25ZeEtlR1pR?=
- =?utf-8?B?ZnFNYy9scDQvT002YjNEMzBSMG55bWFlREd4bjM2cFVqcDE1Y2lkR3VjdzFL?=
- =?utf-8?B?c0NmbVA4Y3NDTGREOG5GcC9admdlRHJEb3JwZFEyczQ1VXRsWElzbTZ3dHAw?=
- =?utf-8?B?VjgvbkFubzBaejFVSTRYUXNUQ2hTVjVhOURhSk9HOU1rd2lxdUlGZUJtN3lG?=
- =?utf-8?B?UGZyTjIzQzVEWjVGVE5TUTVqWmQ4TVUvVmxkTlNHRnhFMEJxT2JKTm4ydzhr?=
- =?utf-8?B?MWVPOXh6czFqN05zbmtBVFc4WE1WVzhMSDU3ODdFSGRuTTQ0aVVyZVAvRFkz?=
- =?utf-8?B?TXNqbEI0dVU5WWxKKzFRdm1icFRsSHNpVnlNMWwwZUd5ZUw0MkRJSTE3ZkZH?=
- =?utf-8?B?blBQTThPeFpHdHZHOXhOWkphVm5RdWpDc1pXVWVna0lrVStzVkNPSGlGZm1X?=
- =?utf-8?B?b0NwditNaDFWU2dlMDA1Ziswc0xGelhIbi9ZblowVW1kclh0T1kwY0F4R3dX?=
- =?utf-8?B?V3BmQnFyUDdMK0xKY3NMT0JCcGw1aTVRWncwZEU2Q0JySHk1eVNuTzd2aGFn?=
- =?utf-8?B?aHhtSU1qWjVPZ1N5VmNobjIzVzFjcVJ3WHEweEswTzh6UWNsdDJvMkE5eHFH?=
- =?utf-8?B?a1BldElhUmp3OER0UHQ1aFBCVEJlYU9TdDVEOVdqNTN0aDZqdzlsdjNraUJN?=
- =?utf-8?B?a3dvVTE0V1kxODBCaFhMaXI3emFrbkV4WmFiRGlRdTRyaWxDREVHaTJHODZj?=
- =?utf-8?B?bVNId0J5QnFBTjV4NXJnVG12cExXelVlUi90UHlmcUhoODR1ckdJVjVwQU5T?=
- =?utf-8?B?MnB4dG41T0piN1JnUHdGcEh3UGM0REY0L3E3YjBSYllrY0N2UG9JdkVjRUlo?=
- =?utf-8?B?dWdZSm9uR0gzT3dmSzUvOUJQb25qQndCWW1UWjRBRkFSUFR1SkZoMmNaUWN0?=
- =?utf-8?B?dXhkdjNiSnkzR1o0MVBVNzBKVGYzMjlHN0FEMmkzWjJwc0pWRE5rSmhSV2pt?=
- =?utf-8?B?VVlPYnl4VTNPajdsRENBK0Y5TmxKS0ZCcXFpRzVvMityaHc9PQ==?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR11MB6083.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7416014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?VFdqWE9ybm15S2JGRU9xNnBxWFVqR1NMbXhteEVlRkN5clZ3c1M3SjhvWk5z?=
- =?utf-8?B?TTdEeEI4VC9OL3ZkNlhRVlpqU2sxVzR4UkloU25wejJqRkpERjFYOWdycHpx?=
- =?utf-8?B?SHk3MTBDY1VuRlE3dGRzaXRGdFpzaUY0azJ4VG1pV1U3R04xSmREN3NUSlVt?=
- =?utf-8?B?K1NpYlhnOHNLa1NuSlo0ZFBZN3kzbHAwNS9pQ2dvWkpDK2p4WTdZY0ZrR0VQ?=
- =?utf-8?B?WDJIVDRzVkdXM0NSM0E1TDA2emh6OVlnemU5eTYrSDducE5NeDdwcnBSb04r?=
- =?utf-8?B?Y1E3Rks2SUpINUZVY29RZHZqUVVNenJDNkxvT3I1b3BzUjBUK2ZiOTZaRk5m?=
- =?utf-8?B?ak5QM0VMS3d3L2hLMStTb2dya0xRdW1qMHhiUExoZzR2L2FLVkZUUGRLdW9F?=
- =?utf-8?B?Y3JscXRoNGg0N044cHNZc3N6TlhYYXpFSHRaMTRQUGNWejdOemUvZnNXbG5W?=
- =?utf-8?B?ZFd4UHZUbE5qeGVyMkhNSy8rU3cwNGhSenBHejdmSzNOU21iZnkyTjZldmdh?=
- =?utf-8?B?bTU0U3JSQlQybHB0bGNkVHEwMlAzR1NwaVFjc1FEMXVrV0x4NVVzUGluTUtq?=
- =?utf-8?B?NURrd0dYVnVURFlWYWxqcGlONDBzWS9STnF5WVQyK3VQNCtqOCs0akI2azlp?=
- =?utf-8?B?M0hOMlUwT3ZOU3J4RVFCK2dzRWxiejBZc2xYUDJTVlRhSzhFOUp0L1hCajU2?=
- =?utf-8?B?ejVLd3ovc25oMmt4Z3A2dHhBNFR1YzdYWWhUYldHbEE0RjJMMjNMRWRuR2Ni?=
- =?utf-8?B?TE5vYUV4dFFONXFYY25hU3E5MW9IclF3N3Bkd04ycXRJUUU3ZzBTbjYwMlpo?=
- =?utf-8?B?d0k3SmpFQ2ZYVldla3FsU0hWeFhHM01EZnJ6NzE0a3FMS05JREVqbnhPUDdH?=
- =?utf-8?B?Vy9aQ2ZjYnJ4L2lram9IM0x3MTNhdzZMZnlQVERUY0xiTklQYjNXSzM4Wi9v?=
- =?utf-8?B?bVhhRWo4WTBLUExROGxlYUR6TktjWDFRQlRoYnZ4ZHVGZlptUXRaV0JIMmRV?=
- =?utf-8?B?N2ZYYnlFY3MxaFg2WkcwU1lWL3JwK0NHT1ZpSUdxcWxTWWhQVWpGWTY4L1l0?=
- =?utf-8?B?UGdXcHhod2YwQ2cwSDdFWUxFemRUcTlmejRLemNFLzhjSHVFSHcwSmY0ZFFF?=
- =?utf-8?B?T1J4MGtXL1VRUmE4c3lvd1h3NGF2YlRidmNjVFA2ajc0aUt2UGlRdVJXcEtO?=
- =?utf-8?B?NDcyUG54Vjdoa2pBR1B2UmRhL3c4aVBiQ1pkSkxUSWxKbEZOYXJUajVKaHMz?=
- =?utf-8?B?dkZvUnhqcklxUDJDQjVDdjIzb1Y5ZW1ESHZzeTlOMGtqTmxheEt0MGFSOERz?=
- =?utf-8?B?NWpmckdtMFNtdWthdVQwM25xbGJsV1FsVWxySG9ndnZRd0xneGx3dTdtdlFp?=
- =?utf-8?B?SUs1OVZYbVpOMVFORFh6aXdGVndMeWx5allDalllS2J5VzZhZ0cvbkJzaHU5?=
- =?utf-8?B?WTlxMVhtT1VKcUpCenNNSFFaWkt0d2J5cFBkWVFFM2NWbUhwNDdpdzJiT1V2?=
- =?utf-8?B?RXloWHQ3SkZoOVdDU2RHSVVxWW5IT0RJWUtOaTk3MVBnTGNqUFRxQzN2N3Q2?=
- =?utf-8?B?R0VYalBjK2dQd1Rpd1V2elRucWtSQ2w1aHp0VmZHWG9XWktMRXJOVHF0VERH?=
- =?utf-8?B?M1BnTE9BL2JkRUgyVjNGT00wODQxd3EzRFlyRktDNGM0MXNOL3dDNUd0cm9W?=
- =?utf-8?B?MTlacFZpQUZxTTV6bjZ3QlFlU3BoeVlNbDc5QlVRT3VMUW1ZQ1FmMmI3K1Vh?=
- =?utf-8?B?ZytmcUI2OW5vcER0SmRLemxId2d3cU9kMkRHVG1wSytnT1VGcnovWW5BRURZ?=
- =?utf-8?B?eUUxL241amdrZE1pT3pGUWM3NVNOMUQxNGZpbTFLRDJVTzNPVVBEcWFNMGhC?=
- =?utf-8?B?Zmw4bjk4QWZBM2NLZEVyaXh4ZEZORTVKa01nMzBZVVdxeWdSbG9Qb3MwQW1p?=
- =?utf-8?B?aGd0ZXF4aEE2R3pyWkZNV3N6K0pmRTRzVUt5Z1dxU1l3c3J6MmMwZWxLZTJX?=
- =?utf-8?B?Sml6d3d0NkM1dHhKaURkTk04dXcrMWZhSTN6eW9EdE5NUDJiNjZROTNwNzVh?=
- =?utf-8?B?d3BZYXpHNUxXVGlQc0JSWkx1TFUwUDB5M2RtY1puS1hpcGxlRTBYMnpqeFFs?=
- =?utf-8?Q?rbNodKcCBfUmxacrfP3Mc/72w?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 831622144B7;
+	Wed, 19 Feb 2025 17:15:54 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1E181F61C;
+	Wed, 19 Feb 2025 17:15:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739985353; cv=none; b=aKGWe1XA4P+QRhOsRBNI6IcudALJSxxONNqPqE7obIuJd5/dzlolxyeKXLlRkrjdS4wKfQr4aC0LIHbebdqgL1qwqyOr1RhrqFVg3j5hyhglDbDUydCwxJnrdZ32mfRf2E539H4fGbA3Z12bZGrxcb+hA39bhBa3onRtu5/xeEA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739985353; c=relaxed/simple;
+	bh=QvmJAcxumbdGw5pVgtb8a1HCfpeuwZB04qMbZpB9Smg=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=GGR/3iYAxCmO+J78hbWDYTwmAovxgKYZ8+6vYxk5pHXvqAT4fjqJq+fsEmalQ7zScmX/ySV1ARKHPO6u9sU8dyILvUrDW8epq+vKTPiavd+xuYgHKvIjEipgkHVw7CAxX+GS5i8gSoH4Dw8MeO5VGAkL9fGeVFofvGUbPgVPyC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id 7D21992009C; Wed, 19 Feb 2025 18:15:48 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id 7875792009B;
+	Wed, 19 Feb 2025 17:15:48 +0000 (GMT)
+Date: Wed, 19 Feb 2025 17:15:48 +0000 (GMT)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: "Dmitry V. Levin" <ldv@strace.io>
+cc: Andrew Morton <akpm@linux-foundation.org>, Oleg Nesterov <oleg@redhat.com>, 
+    Alexey Gladkov <legion@kernel.org>, 
+    Eugene Syromyatnikov <evgsyr@gmail.com>, 
+    Charlie Jenkins <charlie@rivosinc.com>, Helge Deller <deller@gmx.de>, 
+    Mike Frysinger <vapier@gentoo.org>, Renzo Davoli <renzo@cs.unibo.it>, 
+    Davide Berardi <berardi.dav@gmail.com>, Vineet Gupta <vgupta@kernel.org>, 
+    Russell King <linux@armlinux.org.uk>, Will Deacon <will@kernel.org>, 
+    Guo Ren <guoren@kernel.org>, Brian Cain <bcain@quicinc.com>, 
+    Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
+    Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+    Dinh Nguyen <dinguyen@kernel.org>, Jonas Bonn <jonas@southpole.se>, 
+    Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>, 
+    Stafford Horne <shorne@gmail.com>, 
+    "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
+    Madhavan Srinivasan <maddy@linux.ibm.com>, 
+    Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+    Christophe Leroy <christophe.leroy@csgroup.eu>, 
+    Naveen N Rao <naveen@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+    Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+    Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+    Alexander Gordeev <agordeev@linux.ibm.com>, 
+    Christian Borntraeger <borntraeger@linux.ibm.com>, 
+    Sven Schnelle <svens@linux.ibm.com>, 
+    Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
+    John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
+    "David S. Miller" <davem@davemloft.net>, 
+    Andreas Larsson <andreas@gaisler.com>, Richard Weinberger <richard@nod.at>, 
+    Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
+    Johannes Berg <johannes@sipsolutions.net>, 
+    Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+    Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+    x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+    Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
+    Arnd Bergmann <arnd@arndb.de>, strace-devel@lists.strace.io, 
+    linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org, 
+    linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org, 
+    linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev, 
+    linux-mips@vger.kernel.org, linux-openrisc@vger.kernel.org, 
+    linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+    linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, 
+    linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, 
+    linux-um@lists.infradead.org, linux-arch@vger.kernel.org
+Subject: Re: [PATCH v6 2/6] syscall.h: add syscall_set_arguments()
+In-Reply-To: <20250217091020.GC18175@strace.io>
+Message-ID: <alpine.DEB.2.21.2502191642590.65342@angie.orcam.me.uk>
+References: <20250217091020.GC18175@strace.io>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ1PR11MB6083.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 27e9c04f-fa31-4e2f-a47c-08dd51090763
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Feb 2025 17:15:37.6465
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Oxvj0kztWjQpsGr9k3701BC5UbqOPZIRRiiyrSo25m/ln150NXF2ahq3MLXZc9jHLQgyZz3fIv4mHhR67/IMvw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7190
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=US-ASCII
 
-PiA+IFRoZSBjYWxsZXIga2lsbF9tZV9tYXliZSB3aWxsIGRvIHNldF9tY2Vfbm9zcGVjICsgc3lu
-Y19jb3JlIGFnYWluLg0KPiA+DQo+ID4gc3RhdGljIHZvaWQga2lsbF9tZV9tYXliZShzdHJ1Y3Qg
-Y2FsbGJhY2tfaGVhZCAqY2IpDQo+ID4gew0KPiA+ICAgICBzdHJ1Y3QgdGFza19zdHJ1Y3QgKnAg
-PSBjb250YWluZXJfb2YoY2IsIHN0cnVjdCB0YXNrX3N0cnVjdCwgbWNlX2tpbGxfbWUpOw0KPiA+
-ICAgICBpbnQgZmxhZ3MgPSBNRl9BQ1RJT05fUkVRVUlSRUQ7DQo+ID4gICAgIC4uLg0KPiA+ICAg
-ICByZXQgPSBtZW1vcnlfZmFpbHVyZShwZm4sIGZsYWdzKTsNCj4gPiAgICAgaWYgKCFyZXQpIHsN
-Cj4gPiAgICAgICAgICAgICBzZXRfbWNlX25vc3BlYyhwZm4pOw0KPiA+ICAgICAgICAgICAgIHN5
-bmNfY29yZSgpOw0KPiA+ICAgICAgICAgICAgIHJldHVybjsNCj4gPiAgICAgfQ0KPiA+DQo+ID4g
-SXMgdGhpcyBleHBlY3RlZD8NCj4gPg0KPg0KPiB0aGUgc2Vjb25kIHNldF9tY2Vfbm9zcGVjIGRv
-IG5vdGhpbmcgYW5kIGhhdmUgbm8gc2lkZSBhZmZlY3QuDQo+DQo+IHN5bmNfY29yZSgpIGlzIGlu
-dHJvZHVjZWQgYnkgVG9ueSBbMV06DQo+DQo+IEFsc28gbW92ZWQgc3luY19jb3JlKCkuIFRoZSBj
-b21tZW50cyBmb3IgdGhpcyBmdW5jdGlvbiBzYXkgdGhhdCBpdCBzaG91bGQNCj4gb25seSBiZSBj
-YWxsZWQgd2hlbiBpbnN0cnVjdGlvbnMgaGF2ZSBiZWVuIGNoYW5nZWQvcmUtbWFwcGVkLiBSZWNv
-dmVyeSBmb3INCj4gYW4gaW5zdHJ1Y3Rpb24gZmV0Y2ggbWF5IGNoYW5nZSB0aGUgcGh5c2ljYWwg
-YWRkcmVzcy4gQnV0IHRoYXQgZG9lc24ndCBoYXBwZW4NCj4gdW50aWwgdGhlIHNjaGVkdWxlZCB3
-b3JrIHJ1bnMgKHdoaWNoIGNvdWxkIGJlIG9uIGFub3RoZXIgQ1BVKS4NCj4NCj4gWzFdaHR0cHM6
-Ly9sb3JlLmtlcm5lbC5vcmcvYWxsLzIwMjAwODI0MjIxMjM3LjUzOTctMS10b255Lmx1Y2tAaW50
-ZWwuY29tL1QvI3UNCj4NCj4gSU1ITywgSSB0aGluayBpdCBhbHNvIGhhcyBubyBzaWRlIGFmZmVj
-dC4NCj4NCj4gQFRvbnksIGNvdWxkIHlvdSBoZWxwIHRvIGNvbmZpcm0gdGhpcz8NCg0KQ29ycmVj
-dC4gUmUtcnVuaW5nIHRoZXNlIGNhbGxzIGlzIGhhcm1sZXNzLg0KDQotVG9ueQ0K
+On Mon, 17 Feb 2025, Dmitry V. Levin wrote:
+
+> This function is going to be needed on all HAVE_ARCH_TRACEHOOK
+> architectures to implement PTRACE_SET_SYSCALL_INFO API.
+> 
+> This partially reverts commit 7962c2eddbfe ("arch: remove unused
+> function syscall_set_arguments()") by reusing some of old
+> syscall_set_arguments() implementations.
+> 
+> Signed-off-by: Dmitry V. Levin <ldv@strace.io>
+> Tested-by: Charlie Jenkins <charlie@rivosinc.com>
+> Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
+> Acked-by: Helge Deller <deller@gmx.de> # parisc
+> ---
+>  arch/arc/include/asm/syscall.h        | 14 +++++++++++
+>  arch/arm/include/asm/syscall.h        | 13 ++++++++++
+>  arch/arm64/include/asm/syscall.h      | 13 ++++++++++
+>  arch/csky/include/asm/syscall.h       | 13 ++++++++++
+>  arch/hexagon/include/asm/syscall.h    |  7 ++++++
+>  arch/loongarch/include/asm/syscall.h  |  8 ++++++
+>  arch/mips/include/asm/syscall.h       | 32 ++++++++++++++++++++++++
+>  arch/nios2/include/asm/syscall.h      | 11 ++++++++
+>  arch/openrisc/include/asm/syscall.h   |  7 ++++++
+>  arch/parisc/include/asm/syscall.h     | 12 +++++++++
+>  arch/powerpc/include/asm/syscall.h    | 10 ++++++++
+>  arch/riscv/include/asm/syscall.h      |  9 +++++++
+>  arch/s390/include/asm/syscall.h       |  9 +++++++
+>  arch/sh/include/asm/syscall_32.h      | 12 +++++++++
+>  arch/sparc/include/asm/syscall.h      | 10 ++++++++
+>  arch/um/include/asm/syscall-generic.h | 14 +++++++++++
+>  arch/x86/include/asm/syscall.h        | 36 +++++++++++++++++++++++++++
+>  arch/xtensa/include/asm/syscall.h     | 11 ++++++++
+>  include/asm-generic/syscall.h         | 16 ++++++++++++
+>  19 files changed, 257 insertions(+)
+> 
+> diff --git a/arch/arc/include/asm/syscall.h b/arch/arc/include/asm/syscall.h
+> index 9709256e31c8..89c1e1736356 100644
+> --- a/arch/arc/include/asm/syscall.h
+> +++ b/arch/arc/include/asm/syscall.h
+> @@ -67,6 +67,20 @@ syscall_get_arguments(struct task_struct *task, struct pt_regs *regs,
+>  	}
+>  }
+>  
+> +static inline void
+> +syscall_set_arguments(struct task_struct *task, struct pt_regs *regs,
+> +		      unsigned long *args)
+> +{
+> +	unsigned long *inside_ptregs = &regs->r0;
+> +	unsigned int n = 6;
+> +	unsigned int i = 0;
+> +
+> +	while (n--) {
+> +		*inside_ptregs = args[i++];
+> +		inside_ptregs--;
+> +	}
+> +}
+> +
+>  static inline int
+>  syscall_get_arch(struct task_struct *task)
+>  {
+> diff --git a/arch/arm/include/asm/syscall.h b/arch/arm/include/asm/syscall.h
+> index fe4326d938c1..21927fa0ae2b 100644
+> --- a/arch/arm/include/asm/syscall.h
+> +++ b/arch/arm/include/asm/syscall.h
+> @@ -80,6 +80,19 @@ static inline void syscall_get_arguments(struct task_struct *task,
+>  	memcpy(args, &regs->ARM_r0 + 1, 5 * sizeof(args[0]));
+>  }
+>  
+> +static inline void syscall_set_arguments(struct task_struct *task,
+> +					 struct pt_regs *regs,
+> +					 const unsigned long *args)
+> +{
+> +	memcpy(&regs->ARM_r0, args, 6 * sizeof(args[0]));
+> +	/*
+> +	 * Also copy the first argument into ARM_ORIG_r0
+> +	 * so that syscall_get_arguments() would return it
+> +	 * instead of the previous value.
+> +	 */
+> +	regs->ARM_ORIG_r0 = regs->ARM_r0;
+> +}
+> +
+>  static inline int syscall_get_arch(struct task_struct *task)
+>  {
+>  	/* ARM tasks don't change audit architectures on the fly. */
+> diff --git a/arch/arm64/include/asm/syscall.h b/arch/arm64/include/asm/syscall.h
+> index ab8e14b96f68..76020b66286b 100644
+> --- a/arch/arm64/include/asm/syscall.h
+> +++ b/arch/arm64/include/asm/syscall.h
+> @@ -73,6 +73,19 @@ static inline void syscall_get_arguments(struct task_struct *task,
+>  	memcpy(args, &regs->regs[1], 5 * sizeof(args[0]));
+>  }
+>  
+> +static inline void syscall_set_arguments(struct task_struct *task,
+> +					 struct pt_regs *regs,
+> +					 const unsigned long *args)
+> +{
+> +	memcpy(&regs->regs[0], args, 6 * sizeof(args[0]));
+> +	/*
+> +	 * Also copy the first argument into orig_x0
+> +	 * so that syscall_get_arguments() would return it
+> +	 * instead of the previous value.
+> +	 */
+> +	regs->orig_x0 = regs->regs[0];
+> +}
+> +
+>  /*
+>   * We don't care about endianness (__AUDIT_ARCH_LE bit) here because
+>   * AArch64 has the same system calls both on little- and big- endian.
+> diff --git a/arch/csky/include/asm/syscall.h b/arch/csky/include/asm/syscall.h
+> index 0de5734950bf..30403f7a0487 100644
+> --- a/arch/csky/include/asm/syscall.h
+> +++ b/arch/csky/include/asm/syscall.h
+> @@ -59,6 +59,19 @@ syscall_get_arguments(struct task_struct *task, struct pt_regs *regs,
+>  	memcpy(args, &regs->a1, 5 * sizeof(args[0]));
+>  }
+>  
+> +static inline void
+> +syscall_set_arguments(struct task_struct *task, struct pt_regs *regs,
+> +		      const unsigned long *args)
+> +{
+> +	memcpy(&regs->a0, args, 6 * sizeof(regs->a0));
+> +	/*
+> +	 * Also copy the first argument into orig_x0
+                                                  ^
+ Typo here, s/orig_x0/orig_a0/; see below.
+
+> +	 * so that syscall_get_arguments() would return it
+> +	 * instead of the previous value.
+> +	 */
+> +	regs->orig_a0 = regs->a0;
+
+ Also:
+
+> diff --git a/arch/mips/include/asm/syscall.h b/arch/mips/include/asm/syscall.h
+> index 056aa1b713e2..ea050b23d428 100644
+> --- a/arch/mips/include/asm/syscall.h
+> +++ b/arch/mips/include/asm/syscall.h
+> @@ -120,6 +137,21 @@ static inline void syscall_get_arguments(struct task_struct *task,
+>  		mips_get_syscall_arg(args++, task, regs, i++);
+>  }
+>  
+> +static inline void syscall_set_arguments(struct task_struct *task,
+> +					 struct pt_regs *regs,
+> +					 unsigned long *args)
+> +{
+> +	unsigned int i = 0;
+> +	unsigned int n = 6;
+> +
+> +	/* O32 ABI syscall() */
+> +	if (mips_syscall_is_indirect(task, regs))
+> +		i++;
+
+-- given MIPS syscall_set_nr() implementation in 3/6 this conditional is 
+supposed to never be true.  Should it be BUG_ON() or discarded entirely?
+
+> +
+> +	while (n--)
+> +		mips_set_syscall_arg(args++, task, regs, i++);
+> +}
+> +
+>  extern const unsigned long sys_call_table[];
+>  extern const unsigned long sys32_call_table[];
+>  extern const unsigned long sysn32_call_table[];
+
+  Maciej
 
