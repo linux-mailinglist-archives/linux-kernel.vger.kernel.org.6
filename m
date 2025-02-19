@@ -1,150 +1,370 @@
-Return-Path: <linux-kernel+bounces-522114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15ADFA3C63B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:29:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A1ABA3C63D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:30:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0FE83B4544
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:29:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DCAD189A0E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:30:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84BB52144DF;
-	Wed, 19 Feb 2025 17:28:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A5A72144D7;
+	Wed, 19 Feb 2025 17:29:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="avo39MrW"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CoITrMkC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BDE4214A61
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 17:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2056421423C;
+	Wed, 19 Feb 2025 17:29:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739986130; cv=none; b=hCLHwoXMgcXUKSg3BFg5DLB53Gge3ng2cnf5itQajQTsEwoYwtVXguEU4pmKRopVf3GfZLs4DMSjYK4+LC+Uddwd0i+F0TWeq0bkweoAGkHbpaRZtQquo8TAC6CfKUCqWoQp2A48oJPO9uyTOog61fUwti8YLgYrnofkA1vlXu0=
+	t=1739986185; cv=none; b=ufEHRc6ZuYa2rzsnDyurc6iDI7kmqrQJLmsy12c+dKnZrRpJVx4tdqB6j+xOyHWELztq9/eTTuhjr+j71qo6eTwN+t1POvyk3moTXTi3TFIfcJ/i0fbPfYVCP6SHTUw3k7BL8qjB8X1j5/pA4BfnwGK+GVGMZtU4hRzkV8pVH3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739986130; c=relaxed/simple;
-	bh=wiKA6crcfmssShR/ta8Drn5DX3qFyslaa5mzRdNL4Tk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IcxcQGQFe+WK9RpRNyTDOtvhwO53gfMgTGGeuBRk7RIEpt78E6iuRVRvRd7l3C4M1BgFyPg89fsqA8lBaRgWMESX49wpuTmAc3inbl+TYhKPoenW4cL6OkweqsVY4YhqqCt0tyLb5UrAE23YKw53gB3eF8sfUMF86uI168hzCmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=avo39MrW; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-30761be8fa7so71470481fa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 09:28:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739986127; x=1740590927; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zCXULtz+TfbEIUzv+aPcSIYu9fSixmaT70fYxAi2ec0=;
-        b=avo39MrWzc8q0rAmZeTE33gdbeDsismoSwOTvFxRT0i/WZkXY5cDStjBn6/v+Q+0Ng
-         aS8E76P0505gsG0WO9Hl0vBaRku3TMvP0WItLlBHyfpNK893ggQDc517Cm7CptHN3Lr5
-         sM6AnBklNUqNmghhSuy/yKimOeiEzESgyUhawTH3fne/quKEePrCtmAgqY+f8DhaEdtI
-         KmXeD25+mlL/R5fokRxZhfXfIpnc3NmXhwkJnIGvugkFQ+wROxLeugGQ0nlBKUwhJX9v
-         CgKXj57nPuvI1IGF+pdIJsnkcIyClkw8PDvB37ENYdcSSy7nPoMiWLVXoyLgHOM7+Z9C
-         xXOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739986127; x=1740590927;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zCXULtz+TfbEIUzv+aPcSIYu9fSixmaT70fYxAi2ec0=;
-        b=jdNllfxbxDLNBBaAQROjBjuboSdHsAmmIc2HPKycLAd3x7p7NuVr9N3WC0PtszJYyV
-         Gbs//xCd83oQ0OY6m4+Tq87o7WZqtLaLE/wpoHuiAMymkCGdTLzSs8547JgUR9guSrCm
-         yz8eq88QdF9oDNkQQ3MJzeFW7+G6dLeKHwUt1b+HPVXkFLbSD6tkBzL5sURI/E2Hw9s+
-         orgG2nlkl1zchPWDB9MVWYbPcA8m15/05DeeRIDgM6cGA0rFLsEfH5Ej9/pFsSfOHnDP
-         KEiBWzPSUU+cSQf8B+xw6QEAV5QIQsUOPBN8MnCU0HTBCHs/7A1hFU1DcP6rspzvjKlE
-         jzGg==
-X-Forwarded-Encrypted: i=1; AJvYcCXtxcIox/0UP/aE2w6g5pBroyUWiELogADQQdLd5h+n8mqmanR1MxkEfz9TZPMNyH/Z0OxZOM9DmtImVmg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGCFBNEY3ChxIwjBwdQeWsbmy95KhzBmMJiyhoqt14LszU+8NI
-	4SAoJxEyvWpVUM93li6OJmfx9EkUCaFJGfKhGx0ALU4zSHZHon2pCZIDTfiQDnc=
-X-Gm-Gg: ASbGncvvBtkOm8EEGA1TlOAZ9ubRSJp7eEVF16xLj6EFozfxSVEzT3Po2JiSPCL5qVF
-	aRAcRs2Phd0YQGAB0UqgVgQZ0cMjn3FXlYCQOTDRn4XJd2a0LKLPEBh5Quqq5CkSFep/xGLXo4j
-	lsK7KXh7kELlsq8a6CXzoKvVV/tRRL2HSMN6TD0aWWqwdf6vZdl4KEwG+UbUCpfcdJ6sJcAjk5N
-	Y97mVY2Eo7SBVPXJ5eJvodFlzkyED5hIdQisJZ7hZVFXnei1QWJH+nYHtMvhVnni0D1rDQeNse2
-	Or52hO4Zp7u5CiZuf/Od0bUBzF2TwGKae745uNcOGkTo+ixOFULA9gMDDp655BZNYwoXcU4=
-X-Google-Smtp-Source: AGHT+IESuJWqXNXUiZl0M/R+WM8qXHx9smX+DwiL2S6QGonn1pTBFk2AxnVmvzXppPQRcAtEABXWIw==
-X-Received: by 2002:a2e:9b0c:0:b0:309:20b4:b6d5 with SMTP id 38308e7fff4ca-30a4502608bmr15251471fa.28.1739986127105;
-        Wed, 19 Feb 2025 09:28:47 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-309216aa863sm19168511fa.98.2025.02.19.09.28.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2025 09:28:45 -0800 (PST)
-Date: Wed, 19 Feb 2025 19:28:44 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
-	Vishal Sagar <vishal.sagar@amd.com>, Anatoliy Klymenko <anatoliy.klymenko@amd.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Michal Simek <michal.simek@amd.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v3 06/11] drm/fourcc: Add DRM_FORMAT_XVUY2101010
-Message-ID: <gkqq3c6pew5etfmjqqzgxtddlu7h3tbscrijkbymls524vfrrz@uy7qysfecrjk>
-References: <20250212-xilinx-formats-v3-0-90d0fe106995@ideasonboard.com>
- <20250212-xilinx-formats-v3-6-90d0fe106995@ideasonboard.com>
- <bdpw2g65uor77tijlhpabodog7haqvdcemnr3wzqkooerzuib5@hfdn5zsrbkgg>
- <7674314f-d95a-433a-81d2-ca78bc199359@ideasonboard.com>
- <naw67daoyb2lfmq4jovlwanz5niaolptwnug3c3kkrtlfoh6dd@trkctqyzvtb5>
- <23e71045-1ae2-4e02-9780-aa11a338d481@ideasonboard.com>
- <20250219150840.GA31825@pendragon.ideasonboard.com>
+	s=arc-20240116; t=1739986185; c=relaxed/simple;
+	bh=z83ueweR+RlrtVXKdG4SNso1GhHBkFmUl/Da6H9R1kY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cfhTniEk/jsYZsl0ivTJltznTanDZctbK63xSqG4C1v+nrBznDxeo3OmVPQ9q12kyq2F5DZ2JADSmUzAk4CjLlT16lrxuZicU4q4zu4PrlD2+PCd5wlvbA4tKnF4bXbiBW5wD2bxapmQFjlmhfjbWs5w3ZYZao+le7lnVUSqdCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CoITrMkC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23819C4CED1;
+	Wed, 19 Feb 2025 17:29:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739986184;
+	bh=z83ueweR+RlrtVXKdG4SNso1GhHBkFmUl/Da6H9R1kY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=CoITrMkCD6vV2f4sc9dvYR2ngbo5pYU7zcC+2Zx+f3YPayA6Hf4hcAsZ2RN3oskXC
+	 MBl4UzMrOIZQGNVJSOafrl+5mmGZQhCwFix/RP2MgdboedUITge/B7hhY+qyFwuL1C
+	 1cQOweU0aBJAQ7sHKCwD/wNxP31udV4VmdK+r2dDIgM+R+OIe6uOP1lAoV6t6EUg5e
+	 0GZj1aIpDdH0ugQQif9ddKjF6A95ud5KvbcRAzSq6Sd9MZpZsrtvv+x8sHiQLpdJC/
+	 QuBXpK6N/bCUYiG2s3ckIQ1FyIE8HACOMJdH1vEF/NdZ5spoob9evsdaW4hoYiE1v1
+	 5vDlVrluEHBcw==
+Message-ID: <f11f3eae-76cc-4e77-93fb-3ee60003e127@kernel.org>
+Date: Wed, 19 Feb 2025 11:29:43 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250219150840.GA31825@pendragon.ideasonboard.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 03/18] cpufreq/amd-pstate: Drop min and max cached
+ frequencies
+To: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>,
+ "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+ Perry Yuan <perry.yuan@amd.com>
+Cc: "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
+ <linux-kernel@vger.kernel.org>,
+ "open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>,
+ Mario Limonciello <mario.limonciello@amd.com>
+References: <20250217220707.1468365-1-superm1@kernel.org>
+ <20250217220707.1468365-4-superm1@kernel.org>
+ <87a59577-3b66-49ff-a0b5-0cddaa670a27@amd.com>
+Content-Language: en-US
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <87a59577-3b66-49ff-a0b5-0cddaa670a27@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 19, 2025 at 05:08:40PM +0200, Laurent Pinchart wrote:
-> On Wed, Feb 19, 2025 at 04:47:26PM +0200, Tomi Valkeinen wrote:
-> > Hi,
-> > 
-> > On 18/02/2025 05:26, Dmitry Baryshkov wrote:
-> > > On Mon, Feb 17, 2025 at 10:27:56PM +0200, Tomi Valkeinen wrote:
-> > >> Hi,
-> > >>
-> > >> On 17/02/2025 22:15, Dmitry Baryshkov wrote:
-> > >>> On Wed, Feb 12, 2025 at 04:56:10PM +0200, Tomi Valkeinen wrote:
-> > >>>> Add XVUY2101010, a 10 bits per component YCbCr format in a 32 bit
-> > >>>> container.
-> > >>>
-> > >>> Is there a more common name for this format? Otherwise googling for it
-> > >>> reveals only your series.
-> > >>
-> > >> In the cover letter I mention the gstreamer names where available (this
-> > >> particular format is not in gstreamer). AMD has these in their zynqmp
-> > >> documentation (https://docs.amd.com/r/en-US/ug1085-zynq-ultrascale-trm/Video-Packer-Format).
-> > >>
-> > >> XVUY2101010 is YUV444_10BPC in AMD docs.
-> > >>
-> > >> X403 is Y444_10LE32 in gstreamer, and YV24_10BPC in AMD docs.
-> > >>
-> > >> I'm not sure you'll have much more luck googling with those names, though
-> > >> =).
-> > > 
-> > > I'm asking, because include/uapi/drm/drm_fourcc.h has a pretty explicit
-> > > waiver: GL, Vulkan or other open standards. Otherwise normal
-> > > requirements apply and it's required to have an open-source usespace
-> > > implementation, etc.
-> > 
-> > I can drop DRM_FORMAT_XVUY2101010 until we get it to gstreamer. I just 
-> > had it ready, so I thought it's better to include it than leave out.
-> > 
-> > Is the current gstreamer support enough for the other formats to fulfill 
-> > the userspace requirement?
+On 2/19/2025 02:00, Dhananjay Ugwekar wrote:
+> On 2/18/2025 3:36 AM, Mario Limonciello wrote:
+>> From: Mario Limonciello <mario.limonciello@amd.com>
+>>
+>> Use the perf_to_freq helpers to calculate this on the fly.
 > 
-> We've received a green light in the past to add formats to drm_fourcc.h
-> that would be used by cameras only. There's no open formal standard there, but
-> we have libcamera as a de-facto standard. I would assume GStreamer to be
-> enough for a scanout format.
+> Can we call out the below change (in the -1550,7 +1525,8 code chunk) in
+> the commit message, or split it out to different patch
+> 
+> * Adding the if check in amd_pstate_epp_update_limit()
+> 
+Yeah will add to commit meesage.
 
-Thanks for the clarification!
+>>
+>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+>> --
+> We need one more hyphen here I think i.e."---", otherwise the version info is
+> showing up in the commit message
+Ack
+> 
+>> v3:
+>>   * Fix calc error for min_freq
+>> v2:
+>>   * Keep cached limits
+>> ---
+>>   drivers/cpufreq/amd-pstate-ut.c | 14 +++----
+>>   drivers/cpufreq/amd-pstate.c    | 70 +++++++++++----------------------
+>>   drivers/cpufreq/amd-pstate.h    |  9 +----
+>>   3 files changed, 32 insertions(+), 61 deletions(-)
+>>
+>> diff --git a/drivers/cpufreq/amd-pstate-ut.c b/drivers/cpufreq/amd-pstate-ut.c
+>> index 3a0a380c3590c..445278cf40b61 100644
+>> --- a/drivers/cpufreq/amd-pstate-ut.c
+>> +++ b/drivers/cpufreq/amd-pstate-ut.c
+>> @@ -214,14 +214,14 @@ static void amd_pstate_ut_check_freq(u32 index)
+>>   			break;
+>>   		cpudata = policy->driver_data;
+>>   
+>> -		if (!((cpudata->max_freq >= cpudata->nominal_freq) &&
+>> +		if (!((policy->cpuinfo.max_freq >= cpudata->nominal_freq) &&
+>>   			(cpudata->nominal_freq > cpudata->lowest_nonlinear_freq) &&
+>> -			(cpudata->lowest_nonlinear_freq > cpudata->min_freq) &&
+>> -			(cpudata->min_freq > 0))) {
+>> +			(cpudata->lowest_nonlinear_freq > policy->cpuinfo.min_freq) &&
+>> +			(policy->cpuinfo.min_freq > 0))) {
+>>   			amd_pstate_ut_cases[index].result = AMD_PSTATE_UT_RESULT_FAIL;
+>>   			pr_err("%s cpu%d max=%d >= nominal=%d > lowest_nonlinear=%d > min=%d > 0, the formula is incorrect!\n",
+>> -				__func__, cpu, cpudata->max_freq, cpudata->nominal_freq,
+>> -				cpudata->lowest_nonlinear_freq, cpudata->min_freq);
+>> +				__func__, cpu, policy->cpuinfo.max_freq, cpudata->nominal_freq,
+>> +				cpudata->lowest_nonlinear_freq, policy->cpuinfo.min_freq);
+>>   			goto skip_test;
+>>   		}
+>>   
+>> @@ -233,13 +233,13 @@ static void amd_pstate_ut_check_freq(u32 index)
+>>   		}
+>>   
+>>   		if (cpudata->boost_supported) {
+>> -			if ((policy->max == cpudata->max_freq) ||
+>> +			if ((policy->max == policy->cpuinfo.max_freq) ||
+>>   					(policy->max == cpudata->nominal_freq))
+>>   				amd_pstate_ut_cases[index].result = AMD_PSTATE_UT_RESULT_PASS;
+>>   			else {
+>>   				amd_pstate_ut_cases[index].result = AMD_PSTATE_UT_RESULT_FAIL;
+>>   				pr_err("%s cpu%d policy_max=%d should be equal cpu_max=%d or cpu_nominal=%d !\n",
+>> -					__func__, cpu, policy->max, cpudata->max_freq,
+>> +					__func__, cpu, policy->max, policy->cpuinfo.max_freq,
+>>   					cpudata->nominal_freq);
+>>   				goto skip_test;
+>>   			}
+>> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
+>> index 87c605348a3dc..a7c41f915b46e 100644
+>> --- a/drivers/cpufreq/amd-pstate.c
+>> +++ b/drivers/cpufreq/amd-pstate.c
+>> @@ -717,7 +717,7 @@ static int amd_pstate_cpu_boost_update(struct cpufreq_policy *policy, bool on)
+>>   	int ret = 0;
+>>   
+>>   	nominal_freq = READ_ONCE(cpudata->nominal_freq);
+>> -	max_freq = READ_ONCE(cpudata->max_freq);
+>> +	max_freq = perf_to_freq(cpudata, READ_ONCE(cpudata->highest_perf));
+>>   
+>>   	if (on)
+>>   		policy->cpuinfo.max_freq = max_freq;
+>> @@ -901,35 +901,26 @@ static u32 amd_pstate_get_transition_latency(unsigned int cpu)
+>>   static int amd_pstate_init_freq(struct amd_cpudata *cpudata)
+>>   {
+>>   	int ret;
+>> -	u32 min_freq, max_freq;
+>> -	u32 nominal_freq, lowest_nonlinear_freq;
+>> +	u32 min_freq, nominal_freq, lowest_nonlinear_freq;
+>>   	struct cppc_perf_caps cppc_perf;
+>>   
+>>   	ret = cppc_get_perf_caps(cpudata->cpu, &cppc_perf);
+>>   	if (ret)
+>>   		return ret;
+>>   
+>> -	if (quirks && quirks->lowest_freq)
+>> -		min_freq = quirks->lowest_freq;
+>> -	else
+>> -		min_freq = cppc_perf.lowest_freq;
+>> -
+>>   	if (quirks && quirks->nominal_freq)
+>>   		nominal_freq = quirks->nominal_freq;
+>>   	else
+>>   		nominal_freq = cppc_perf.nominal_freq;
+>>   
+>> -	min_freq *= 1000;
+>>   	nominal_freq *= 1000;
+>> -
+>>   	WRITE_ONCE(cpudata->nominal_freq, nominal_freq);
+>> -	WRITE_ONCE(cpudata->min_freq, min_freq);
+>> -
+>> -	max_freq = perf_to_freq(cpudata, cpudata->highest_perf);
+>> -	lowest_nonlinear_freq = perf_to_freq(cpudata, cpudata->lowest_nonlinear_perf);
+>>   
+>> -	WRITE_ONCE(cpudata->lowest_nonlinear_freq, lowest_nonlinear_freq);
+>> -	WRITE_ONCE(cpudata->max_freq, max_freq);
+>> +	if (quirks && quirks->lowest_freq) {
+> 
+> We can avoid the "{" for single line if statement, to keep checkpatch happy
 
--- 
-With best wishes
-Dmitry
+This is one of the reason that I don't like to treat checkpatch as 
+gospil.  I added it specficially to avoid back and forth for the new 
+patch.  In this case I plan to keep it for that reason.
+
+> 
+>> +		min_freq = quirks->lowest_freq;
+>> +	} else
+>> +		min_freq = cppc_perf.lowest_freq;
+>> +	min_freq *= 1000;
+> 
+> I see that this min_freq part of the code is unchanged, just moved few lines below.
+> If the moving is unintended can we avoid it, so that the diff is optimal.
+
+Sure I'll see if I can re-order it a bit to keep it the same.
+
+> 
+>>   
+>>   	/**
+>>   	 * Below values need to be initialized correctly, otherwise driver will fail to load
+>> @@ -937,12 +928,15 @@ static int amd_pstate_init_freq(struct amd_cpudata *cpudata)
+>>   	 * lowest_nonlinear_freq is a value between [min_freq, nominal_freq]
+>>   	 * Check _CPC in ACPI table objects if any values are incorrect
+>>   	 */
+>> -	if (min_freq <= 0 || max_freq <= 0 || nominal_freq <= 0 || min_freq > max_freq) {
+> 
+> Shouldn't we retain these sanity checks for min_freq and max_freq?
+
+Now that we're using the helpers isn't it impossible to end up with 
+negative values?
+
+> 
+> Thanks,
+> Dhananjay
+> 
+>> -		pr_err("min_freq(%d) or max_freq(%d) or nominal_freq(%d) value is incorrect\n",
+>> -			min_freq, max_freq, nominal_freq);
+>> +	if (nominal_freq <= 0) {
+>> +		pr_err("nominal_freq(%d) value is incorrect\n",
+>> +			nominal_freq);
+>>   		return -EINVAL;
+>>   	}
+>>   
+>> +	lowest_nonlinear_freq = perf_to_freq(cpudata, cpudata->lowest_nonlinear_perf);
+>> +	WRITE_ONCE(cpudata->lowest_nonlinear_freq, lowest_nonlinear_freq);
+>> +
+>>   	if (lowest_nonlinear_freq <= min_freq || lowest_nonlinear_freq > nominal_freq) {
+>>   		pr_err("lowest_nonlinear_freq(%d) value is out of range [min_freq(%d), nominal_freq(%d)]\n",
+>>   			lowest_nonlinear_freq, min_freq, nominal_freq);
+>> @@ -954,9 +948,9 @@ static int amd_pstate_init_freq(struct amd_cpudata *cpudata)
+>>   
+>>   static int amd_pstate_cpu_init(struct cpufreq_policy *policy)
+>>   {
+>> -	int min_freq, max_freq, ret;
+>> -	struct device *dev;
+>>   	struct amd_cpudata *cpudata;
+>> +	struct device *dev;
+>> +	int ret;
+>>   
+>>   	/*
+>>   	 * Resetting PERF_CTL_MSR will put the CPU in P0 frequency,
+>> @@ -987,17 +981,11 @@ static int amd_pstate_cpu_init(struct cpufreq_policy *policy)
+>>   	if (ret)
+>>   		goto free_cpudata1;
+>>   
+>> -	min_freq = READ_ONCE(cpudata->min_freq);
+>> -	max_freq = READ_ONCE(cpudata->max_freq);
+>> -
+>>   	policy->cpuinfo.transition_latency = amd_pstate_get_transition_latency(policy->cpu);
+>>   	policy->transition_delay_us = amd_pstate_get_transition_delay_us(policy->cpu);
+>>   
+>> -	policy->min = min_freq;
+>> -	policy->max = max_freq;
+>> -
+>> -	policy->cpuinfo.min_freq = min_freq;
+>> -	policy->cpuinfo.max_freq = max_freq;
+>> +	policy->cpuinfo.min_freq = policy->min = perf_to_freq(cpudata, cpudata->lowest_perf);
+>> +	policy->cpuinfo.max_freq = policy->max = perf_to_freq(cpudata, cpudata->highest_perf);
+>>   
+>>   	policy->boost_enabled = READ_ONCE(cpudata->boost_supported);
+>>   
+>> @@ -1021,9 +1009,6 @@ static int amd_pstate_cpu_init(struct cpufreq_policy *policy)
+>>   		goto free_cpudata2;
+>>   	}
+>>   
+>> -	cpudata->max_limit_freq = max_freq;
+>> -	cpudata->min_limit_freq = min_freq;
+>> -
+>>   	policy->driver_data = cpudata;
+>>   
+>>   	if (!current_pstate_driver->adjust_perf)
+>> @@ -1081,14 +1066,10 @@ static int amd_pstate_cpu_suspend(struct cpufreq_policy *policy)
+>>   static ssize_t show_amd_pstate_max_freq(struct cpufreq_policy *policy,
+>>   					char *buf)
+>>   {
+>> -	int max_freq;
+>>   	struct amd_cpudata *cpudata = policy->driver_data;
+>>   
+>> -	max_freq = READ_ONCE(cpudata->max_freq);
+>> -	if (max_freq < 0)
+>> -		return max_freq;
+>>   
+>> -	return sysfs_emit(buf, "%u\n", max_freq);
+>> +	return sysfs_emit(buf, "%u\n", perf_to_freq(cpudata, READ_ONCE(cpudata->highest_perf)));
+>>   }
+>>   
+>>   static ssize_t show_amd_pstate_lowest_nonlinear_freq(struct cpufreq_policy *policy,
+>> @@ -1446,10 +1427,10 @@ static bool amd_pstate_acpi_pm_profile_undefined(void)
+>>   
+>>   static int amd_pstate_epp_cpu_init(struct cpufreq_policy *policy)
+>>   {
+>> -	int min_freq, max_freq, ret;
+>>   	struct amd_cpudata *cpudata;
+>>   	struct device *dev;
+>>   	u64 value;
+>> +	int ret;
+>>   
+>>   	/*
+>>   	 * Resetting PERF_CTL_MSR will put the CPU in P0 frequency,
+>> @@ -1480,19 +1461,13 @@ static int amd_pstate_epp_cpu_init(struct cpufreq_policy *policy)
+>>   	if (ret)
+>>   		goto free_cpudata1;
+>>   
+>> -	min_freq = READ_ONCE(cpudata->min_freq);
+>> -	max_freq = READ_ONCE(cpudata->max_freq);
+>> -
+>> -	policy->cpuinfo.min_freq = min_freq;
+>> -	policy->cpuinfo.max_freq = max_freq;
+>> +	policy->cpuinfo.min_freq = policy->min = perf_to_freq(cpudata, cpudata->lowest_perf);
+>> +	policy->cpuinfo.max_freq = policy->max = perf_to_freq(cpudata, cpudata->highest_perf);
+>>   	/* It will be updated by governor */
+>>   	policy->cur = policy->cpuinfo.min_freq;
+>>   
+>>   	policy->driver_data = cpudata;
+>>   
+>> -	policy->min = policy->cpuinfo.min_freq;
+>> -	policy->max = policy->cpuinfo.max_freq;
+>> -
+>>   	policy->boost_enabled = READ_ONCE(cpudata->boost_supported);
+>>   
+>>   	/*
+>> @@ -1550,7 +1525,8 @@ static int amd_pstate_epp_update_limit(struct cpufreq_policy *policy)
+>>   	struct amd_cpudata *cpudata = policy->driver_data;
+>>   	u8 epp;
+>>   
+>> -	amd_pstate_update_min_max_limit(policy);
+>> +	if (policy->min != cpudata->min_limit_freq || policy->max != cpudata->max_limit_freq)
+>> +		amd_pstate_update_min_max_limit(policy);
+>>   
+>>   	if (cpudata->policy == CPUFREQ_POLICY_PERFORMANCE)
+>>   		epp = 0;
+>> diff --git a/drivers/cpufreq/amd-pstate.h b/drivers/cpufreq/amd-pstate.h
+>> index 19d405c6d805e..0149933692458 100644
+>> --- a/drivers/cpufreq/amd-pstate.h
+>> +++ b/drivers/cpufreq/amd-pstate.h
+>> @@ -46,8 +46,6 @@ struct amd_aperf_mperf {
+>>    * @max_limit_perf: Cached value of the performance corresponding to policy->max
+>>    * @min_limit_freq: Cached value of policy->min (in khz)
+>>    * @max_limit_freq: Cached value of policy->max (in khz)
+>> - * @max_freq: the frequency (in khz) that mapped to highest_perf
+>> - * @min_freq: the frequency (in khz) that mapped to lowest_perf
+>>    * @nominal_freq: the frequency (in khz) that mapped to nominal_perf
+>>    * @lowest_nonlinear_freq: the frequency (in khz) that mapped to lowest_nonlinear_perf
+>>    * @cur: Difference of Aperf/Mperf/tsc count between last and current sample
+>> @@ -77,11 +75,8 @@ struct amd_cpudata {
+>>   	u8	prefcore_ranking;
+>>   	u8	min_limit_perf;
+>>   	u8	max_limit_perf;
+>> -	u32     min_limit_freq;
+>> -	u32     max_limit_freq;
+>> -
+>> -	u32	max_freq;
+>> -	u32	min_freq;
+>> +	u32	min_limit_freq;
+>> +	u32	max_limit_freq;
+>>   	u32	nominal_freq;
+>>   	u32	lowest_nonlinear_freq;
+>>   
+> 
+
 
