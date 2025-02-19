@@ -1,181 +1,199 @@
-Return-Path: <linux-kernel+bounces-521860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C0ACA3C344
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:14:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33376A3C343
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:14:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53F43189A9BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:13:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF85C7A69BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:13:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AE871F419D;
-	Wed, 19 Feb 2025 15:13:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B50461F416B;
+	Wed, 19 Feb 2025 15:13:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GW9GPyek"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lwjf7v7P"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B15A71F55EF
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 15:13:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B771DE3DB;
+	Wed, 19 Feb 2025 15:13:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739977989; cv=none; b=OtyQWK43koAvmr0JYOjCTKGH284aGrng+N9kCZ+HDZ+AdJ43C6ydRC+A6WQr4XKUUvaVDtDrzUmaSLT2jUd2QEtLs+ZDDyYO5tQfAjh9ABNCmc+1ztR0i8/iKinLdZL8WLW75SGTuUw6CPljLTBhHuyMg/qrLs2wPMp0QFBdQSc=
+	t=1739978010; cv=none; b=A73BEtmI0WtJXtiYP0EMpix2uMEVyGoX9bsj4g1um1fHSLm9lGCH7sgsbPTIl5QP3/qpOsiKg3ZDXiBPzk2kLXjDBvyyPd1m6IVlGfOwyPrraAuHWtu7thRZdEJVXNAOH4g21qEyDDccKrjIdV7m66icUf8+LGKdow3IwH+P/P8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739977989; c=relaxed/simple;
-	bh=YEDFkhBYjRhP5Z93Fy/FXNH8qcO0tYdixMhBiEsACWQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ERSmJ+lB583A6mMspK40mrkHw7sIFcsCVEzhKlrT0JgUY6jvdtMv6B32MkbAnF12ARjdtOG3YdLRJE77KYhILm/XA2UzAe6azxKPkN4O0X/z3Hsik5iqyo/Gk+RHlVEnO/boSvg4qeDAZGiQOP5kOrHnTDTFrssS+JK8Zd+unLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GW9GPyek; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739977986;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YEDFkhBYjRhP5Z93Fy/FXNH8qcO0tYdixMhBiEsACWQ=;
-	b=GW9GPyekQTHonsiuL57zD47+u+pvv3Zl7lMu41Z4O6mg0ReVmlHevyBl3eQBcru2N3jwZu
-	k9R27JRRiNS53QWSMhSBaGNB9Ms8uh7mZTmLrVdVRZfz0VvxIJoPta3YcWzLr6/O0bp4GK
-	9E3HzKLwpohKweKhoeD8s1HfvoR3VBA=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-685-Yq-AMrhnNYqGOM8RxwLgaA-1; Wed, 19 Feb 2025 10:13:05 -0500
-X-MC-Unique: Yq-AMrhnNYqGOM8RxwLgaA-1
-X-Mimecast-MFC-AGG-ID: Yq-AMrhnNYqGOM8RxwLgaA_1739977984
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4394c747c72so34917415e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 07:13:05 -0800 (PST)
+	s=arc-20240116; t=1739978010; c=relaxed/simple;
+	bh=heG+JSCrMhZza5YuqnAywconlxDmO02WZfs3lNmw9Bg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dIlB5xS2L0D2IFXKeIHVu+J6kvKGXqX/zaB7eDp90xKR1Fyc7fBkIqUuKtw9uD7pkagD+fyZ8H9vmtTbeXpv53xfR1AQ5TWa/6I22+2Tl8A2OCvrNseWZAVBvWJV/5XQjJ4H3JLSeWXjTcaJKEbnBeXykGdJA64qVVz0uADXSVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lwjf7v7P; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4398e839cd4so6184195e9.0;
+        Wed, 19 Feb 2025 07:13:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739978006; x=1740582806; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=drt0+j9GwUEYRUPa0Msh+AZlxPlFbPJs9VWQL5t8VpM=;
+        b=Lwjf7v7PdDf4mMOlt8lMlilhGB5p6pDB0ILCE48LPI0R/ZV+dQ/W1rqfk2hacCUagI
+         o/Jdc1Bv50fkT4BYH7PiixWoNad9VzMCO/Q7TwyHFvPR1+4PLkszCBDPRb4fdYoFrMTj
+         aOWYHI8W6uafgN51U2yk3JUaOAR1pyFuyy9C7m8TBYTcG/A96OXN1aQcLiJC/52b4rz2
+         ysXu/DO0wxB4I010RJ8KhPDjA5FjX+RdVUvqaSxFOrYxTMPjuJ7nzs6lxmyZLFiiIhtx
+         70sPMmUdHKkslqItYql0UVanOehjbHhx4Bu5f1tMvt/GsNCHJnkLoTuLlWY8xY62Dwxo
+         6dDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739977984; x=1740582784;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YEDFkhBYjRhP5Z93Fy/FXNH8qcO0tYdixMhBiEsACWQ=;
-        b=I065qn3dSAJKKItTLCeDRe7aWwcdif8MTWAOYLYkXJg3Dd/zdAwc276zzSY+/fcBJd
-         g8dPCCMsWOVnfEwU5t2hRlM0kowJXbmndRUNgK9QS6THayXCCzkXK2O3jKHCBYVSZEJo
-         1/Yk361C8laQe4dgU5q9+yhE8pHGWq5fXDyuedL2WjoAHUyq5mlANBeLfLYSJQqNeySZ
-         bRpujMy2Z7TwtLiRcBjULXBGab98JM8c3rtK+DAoI6IOJ6DZtJHU8K0KOqsGEmlsFzi9
-         i3OYwDnVb4vFWTU5FDzSQurPs25iNJXavEXvo+TC7Ax9hwHcNvf9JGb0wsspUVO0XuQr
-         cdwg==
-X-Gm-Message-State: AOJu0Yw+7FM4WHxXzjhQPrvuv2vkf0LrYlYt2ihwSYuJU5vPcvSEC6gB
-	08CNPE0qJbt7WaMBp8qZSejW857W8foN6401AQhQuAV9dX92TcDLu9sQsaF7BnH24kyWAMUn1RE
-	tNPtzWy9U6IlhpBYgP5LZKMkWU59lSWVZRvLlV2rcsCWoqTh34OXz9EnhXu0AvA==
-X-Gm-Gg: ASbGncuAnu7br9tWyPKKOAJcrLP/IFfccvV95MesCtm1erbYvxRU7qkenOeJCosY2UV
-	mm5f7+esn+Qq90ZHM6x4C28WYwWlfjZNBuJRryy9BAvKQFQPzVxR1AlOrPwJwBE0vopVb9w4E/o
-	pAIHsLpi6NZKv6Dx4sLbYXz+8R6/rHK8kF+w10AybZrRlkJcbQzvOU5pAgspk6XJIBY/1IwzNaj
-	AKrgD9Z//1qdwQ9od/AJXbCdXgkEYvzg1H9ziV9Awygg0wxIdh9d8MNPbiy8tXYYMzP6UEZqL8c
-	JROfK4xsZVPbH06bbomG+2CaayPtu/NcDHHuQjImAf4Ik9I4Rb5TIAeZTAMlI8FHIQ==
-X-Received: by 2002:a05:600c:3d0b:b0:439:88bb:d02d with SMTP id 5b1f17b1804b1-43988bbd322mr97619285e9.2.1739977984084;
-        Wed, 19 Feb 2025 07:13:04 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHqXB0SvUjV4zwF8A6smqwc0vRSLTkn6r2mJurV/wBBuDlOIkQeOJi/olfCVvoVfIVGXKI8cw==
-X-Received: by 2002:a05:600c:3d0b:b0:439:88bb:d02d with SMTP id 5b1f17b1804b1-43988bbd322mr97618455e9.2.1739977983617;
-        Wed, 19 Feb 2025 07:13:03 -0800 (PST)
-Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439858ec5fasm88121225e9.29.2025.02.19.07.13.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2025 07:13:02 -0800 (PST)
-From: Valentin Schneider <vschneid@redhat.com>
-To: Dave Hansen <dave.hansen@intel.com>, Jann Horn <jannh@google.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
- virtualization@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- loongarch@lists.linux.dev, linux-riscv@lists.infradead.org,
- linux-perf-users@vger.kernel.org, xen-devel@lists.xenproject.org,
- kvm@vger.kernel.org, linux-arch@vger.kernel.org, rcu@vger.kernel.org,
- linux-hardening@vger.kernel.org, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org, bpf@vger.kernel.org,
- bcm-kernel-feedback-list@broadcom.com, Juergen Gross <jgross@suse.com>,
- Ajay Kaher <ajay.kaher@broadcom.com>, Alexey Makhalov
- <alexey.amakhalov@broadcom.com>, Russell King <linux@armlinux.org.uk>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, Paul
- Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave
- Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
- Peter Zijlstra <peterz@infradead.org>, Arnaldo Carvalho de Melo
- <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Mark Rutland
- <mark.rutland@arm.com>, Alexander Shishkin
- <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Ian
- Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>, Boris Ostrovsky
- <boris.ostrovsky@oracle.com>, Josh Poimboeuf <jpoimboe@kernel.org>, Pawan
- Gupta <pawan.kumar.gupta@linux.intel.com>, Sean Christopherson
- <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, Andy Lutomirski
- <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Frederic Weisbecker
- <frederic@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>, Jason
- Baron <jbaron@akamai.com>, Steven Rostedt <rostedt@goodmis.org>, Ard
- Biesheuvel <ardb@kernel.org>, Neeraj Upadhyay
- <neeraj.upadhyay@kernel.org>, Joel Fernandes <joel@joelfernandes.org>,
- Josh Triplett <josh@joshtriplett.org>, Boqun Feng <boqun.feng@gmail.com>,
- Uladzislau Rezki <urezki@gmail.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Lai Jiangshan <jiangshanlai@gmail.com>,
- Zqiang <qiang.zhang1211@gmail.com>, Juri Lelli <juri.lelli@redhat.com>,
- Clark Williams <williams@redhat.com>, Yair Podemsky <ypodemsk@redhat.com>,
- Tomas Glozar <tglozar@redhat.com>, Vincent Guittot
- <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Kees Cook
- <kees@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Christoph
- Hellwig <hch@infradead.org>, Shuah Khan <shuah@kernel.org>, Sami Tolvanen
- <samitolvanen@google.com>, Miguel Ojeda <ojeda@kernel.org>, Alice Ryhl
- <aliceryhl@google.com>, "Mike Rapoport (Microsoft)" <rppt@kernel.org>,
- Samuel Holland <samuel.holland@sifive.com>, Rong Xu <xur@google.com>,
- Nicolas Saenz Julienne <nsaenzju@redhat.com>, Geert Uytterhoeven
- <geert@linux-m68k.org>, Yosry Ahmed <yosryahmed@google.com>, "Kirill A.
- Shutemov" <kirill.shutemov@linux.intel.com>, "Masami Hiramatsu (Google)"
- <mhiramat@kernel.org>, Jinghao Jia <jinghao7@illinois.edu>, Luis
- Chamberlain <mcgrof@kernel.org>, Randy Dunlap <rdunlap@infradead.org>,
- Tiezhu Yang <yangtiezhu@loongson.cn>
-Subject: Re: [PATCH v4 29/30] x86/mm, mm/vmalloc: Defer
- flush_tlb_kernel_range() targeting NOHZ_FULL CPUs
-In-Reply-To: <d0450bc8-6585-49ca-9cad-49e65934bd5c@intel.com>
-References: <20250114175143.81438-1-vschneid@redhat.com>
- <20250114175143.81438-30-vschneid@redhat.com>
- <CAG48ez1Mh+DOy0ysOo7Qioxh1W7xWQyK9CLGNU9TGOsLXbg=gQ@mail.gmail.com>
- <xhsmh34hhh37q.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <CAG48ez3H8OVP1GxBLdmFgusvT1gQhwu2SiXbgi8T9uuCYVK52w@mail.gmail.com>
- <xhsmh5xlhk5p2.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <CAG48ez1EAATYcX520Nnw=P8XtUDSr5pe+qGH1YVNk3xN2LE05g@mail.gmail.com>
- <xhsmh34gkk3ls.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <352317e3-c7dc-43b4-b4cb-9644489318d0@intel.com>
- <xhsmhjz9mj2qo.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <d0450bc8-6585-49ca-9cad-49e65934bd5c@intel.com>
-Date: Wed, 19 Feb 2025 16:13:00 +0100
-Message-ID: <xhsmhh64qhssj.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+        d=1e100.net; s=20230601; t=1739978006; x=1740582806;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=drt0+j9GwUEYRUPa0Msh+AZlxPlFbPJs9VWQL5t8VpM=;
+        b=WuLjwOoYQzN6/trbiteqy88sPNV4H4DQx61bBn7aYxTaYtoDv0mXz2D2GgmqMISxmE
+         QjPpUpb2nmTzFkJz12EESETvctg8nkLoNip5D5vOTk24GdBOTeDAAUFH5t5sb/86VBWB
+         UMfMc978ZAxELWIZn0DedtxjG2UYwBw1eaxAEbO1Ngx7mB0cjN5oc5uLjj/emFbggqwz
+         kdmE4/6eFFQGLKGutS6zyWDt3sF4PdVe34wDRyX6yBWJyy0jEDGp8G7QnvSNi0yZ+5+a
+         peLfXi9pNnbvsZG6fx85yyIqllbThttOo4YqZsrUe/dDItkbKK5UfOWN8bpP3rxR2ZkN
+         UV6w==
+X-Forwarded-Encrypted: i=1; AJvYcCVxbz+iIqb2Wz/h2fyMvsBGIVBJwJBr4FRP7B3ozsf+QBqOE2mwRuS0G0HwBzKZhEhnHAnf5f08aZ7G@vger.kernel.org, AJvYcCW6JhEA7w6VYTcuLzlXl41xdJl6V7IluLtwMmFGO71u4rUuEwA6dl/TXtTQiLcmR7FLcAKL+M73jafR@vger.kernel.org, AJvYcCW6VqydYS4MnuTX5ZVAauN8ug8ZMLG07Y12KjKCyj2Hv2G+DHqllTT/xBUDhiqfaBi1giOXlqTnXMDCtmA=@vger.kernel.org, AJvYcCWTBkHIJmi33EqNs3OkJEN1kmSvqDXTpjO8FPZ3IX3JCuED2kpS5jFNXqaqxdfPFxF/h3KkjZxyAzq9bLyu@vger.kernel.org, AJvYcCXA7cZOt8zMS77X+iuH9QqyEVllPLn0C0S94YyTayuyKuaE/BdUO+4lbj6N1/M+i9hDoNF2x1Yfy+o1EA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYmN6/V+lh440R0pyJ2GfV/xHfOX85W2wH2PFj+/3/JPvW8hI7
+	YO6cfSiWjMzCTZOnOPSkUXRHlr/0HqLjR+qJtetHPTasRh6JauGfHnDsbK1a5T/0r/IFA2RqCcP
+	8QZXUc/C2EpCPuOGGa8oLQmarSc8=
+X-Gm-Gg: ASbGncsQs+W51MTGRYpxhKM25kwYAi590rRcLChepQe6R2/InIdEYnTmf64sakETWRi
+	y9/5vBZBHiyzN+2b6zufYEgh/j4PLAlPFV2H4HAwScThrsjFFgSVJWTQdMx214KMiMh1+zF9lGw
+	==
+X-Google-Smtp-Source: AGHT+IGZjyYv7inH5rGul4/nFCxLPjiYnaafDWPgkEdRu9+5PeRR1GZ+8z1ALgaPlmJj0wiSt+tzaqhh5lN+rJfpqVs=
+X-Received: by 2002:a05:6000:1fa1:b0:38d:c6b8:9fe1 with SMTP id
+ ffacd0b85a97d-38f57ea1cfcmr3735864f8f.24.1739978006290; Wed, 19 Feb 2025
+ 07:13:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250218132702.114669-1-clamor95@gmail.com> <20250218132702.114669-3-clamor95@gmail.com>
+ <Z7XqKcOUt5niXzpv@smile.fi.intel.com> <CAPVz0n1_WQyOHhtEVAh53uhEUhZvqqZSEJh6XALtSrVfkMSLYw@mail.gmail.com>
+ <Z7XzgfHcjyK_UZKv@smile.fi.intel.com>
+In-Reply-To: <Z7XzgfHcjyK_UZKv@smile.fi.intel.com>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Wed, 19 Feb 2025 17:13:15 +0200
+X-Gm-Features: AWEUYZkkApm2pdMCm-ce2W0NUEFkWtCs86nFAeRIR60gASygQyZJcvz4RbQHc2Q
+Message-ID: <CAPVz0n2WwAOb1UU7J7aDTdhXXCaAZkCpYjW_nc_CBRgkGWdEOw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] mfd: lm3533: convert to use OF
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Pavel Machek <pavel@ucw.cz>, 
+	Daniel Thompson <danielt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-iio@vger.kernel.org, linux-leds@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 18/02/25 16:39, Dave Hansen wrote:
-> On 2/18/25 14:40, Valentin Schneider wrote:
->>> In practice, it's mostly limited like that.
->>>
->>> Architecturally, there are no promises from the CPU. It is within its
->>> rights to cache anything from the page tables at any time. If it's in
->>> the CR3 tree, it's fair game.
->>>
->> So what if the VMEMMAP range *isn't* in the CR3 tree when a CPU is
->> executing in userspace?
->>
->> AIUI that's the case with kPTI - the remaining kernel pages should mostly
->> be .entry.text and cpu_entry_area, at least for x86.
+=D1=81=D1=80, 19 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 17:07 Andy=
+ Shevchenko
+<andriy.shevchenko@linux.intel.com> =D0=BF=D0=B8=D1=88=D0=B5:
 >
-> Having part of VMEMMAP not in the CR3 tree should be harmless while
-> running userspace. VMEMMAP is a purely software structure; the hardware
-> doesn't do implicit supervisor accesses to it. It's also not needed in
-> super early entry.
+> On Wed, Feb 19, 2025 at 04:36:38PM +0200, Svyatoslav Ryhel wrote:
+> > =D1=81=D1=80, 19 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 16:27 =
+Andy Shevchenko
+> > <andriy.shevchenko@linux.intel.com> =D0=BF=D0=B8=D1=88=D0=B5:
+> > > On Tue, Feb 18, 2025 at 03:27:00PM +0200, Svyatoslav Ryhel wrote:
+> > > > Remove platform data and fully relay on OF and device tree
+> > > > parsing and binding devices.
+> > >
+> > > Thanks for following the advice, but the problem with this change as =
+it does
+> > > too much at once. It should be split to a few simpler ones.
+> > > On top of that, this removes MFD participation from the driver but le=
+aves it
+> > > under MFD realm. Moreover, looking briefly at the code it looks like =
+it open
+> > > codes the parts of MFD. The latter needs a very goo justification whi=
+ch commit
+> > > message is missing.
 >
-> Maybe I missed part of the discussion though. Is VMEMMAP your only
-> concern? I would have guessed that the more generic vmalloc()
-> functionality would be harder to pin down.
+> ...
+>
+> > Splitting this into a set of commits would be nearly impossible,
+>
+> I don't buy this.
+> One patch can introduce device property support.
+> Another one removes the old platform data interface.
+>
+> So, at bare minimum there will be two patches. (Besides the advice to hav=
+e
+> two more.)
+>
+> > original driver does not relay on OF, it relays on platform data.
+>
+> And?..
+>
+> > Ripping out platform data will leave behind a broken useless driver.
+>
+> Hmm... This cna be the case if and only if we have the user in kernel.
+> Is this the case?
+>
+> > So it has to be done simultaneously.
+>
+> Nope.
+>
+> > MFD part is removed since MFD cells binding is unconditional, while
+> > the device supports any amount of children grater then one. For
+> > example, my  device uses only backlight at bank A, while all other
+> > subdevices are not present and used. This patch switches to dynamic
+> > bind of children.
+>
+> MFD does the same. Please, take your time and get familiar with how MFD w=
+orks.
+>
 
-Urgh, that'll teach me to send emails that late - I did indeed mean the
-vmalloc() range, not at all VMEMMAP. IIUC *neither* are present in the user
-kPTI page table and AFAICT the page table swap is done before the actual vmap'd
-stack (CONFIG_VMAP_STACK=y) gets used.
+It does not. I have tried. If mfd cell binding is missing, driver will
+complain and fail.
 
+> ...
+>
+> > > > +     device_property_read_string(&pdev->dev, "linux,default-trigge=
+r",
+> > > > +                                 &led->cdev.default_trigger);
+> > >
+> > > One prerequisite patch you probably want is an introduction of
+> > >
+> > >         struct device *dev =3D &pdev->dev;
+> > >
+> > > in the respective ->probe() implementations. This, in particular, mak=
+es the
+> > > above lines shorter and fit one line.
+> >
+> > This is not a scope of this patchset. Original driver uses &pdev->dev
+>
+> Indirectly it is. The change you are proposing tries to continue using th=
+is
+> construction with making needlessly longer.
+>
+> ...
+>
+> > > > +             if (!strcmp(comatible, "ti,lm3533-als"))
+> > > > +                     lm3533->have_als =3D 1;
+> > >
+> > > If you end up having this, it's not the best what we can do. OF ID ta=
+bles have
+> > > a driver_data field exactly for the cases like this.
+> >
+> > This is required by core driver to handle some attributes and is here
+> > solely not to touch those in this patch.
+>
+> What does this mean?
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
+
+Let this driver rot for now, I might return to it. At some point
 
