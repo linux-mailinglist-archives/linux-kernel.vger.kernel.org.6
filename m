@@ -1,205 +1,193 @@
-Return-Path: <linux-kernel+bounces-521485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D8E4A3BDFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:26:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DA8CA3BDFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:29:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E9B11618BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:26:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A694B3AFF62
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:27:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 538891DFE36;
-	Wed, 19 Feb 2025 12:26:44 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12B8F1DE2DA;
-	Wed, 19 Feb 2025 12:26:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E662E1DFE3D;
+	Wed, 19 Feb 2025 12:27:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c7Wikjao"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E261BC073;
+	Wed, 19 Feb 2025 12:27:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739968003; cv=none; b=IpPTUJZyIQRoK0vCSXQwRRh29IEhu6aBXae4MAVknBsVxIU/CrqFC92181FjGkV1VKd6egCtIZG4Q6RY65nIfhcIaR2Xx+nUpc2NvIHjeWDhD4Gunp21PCp6WWvzvp80Ivfn6jS5yYWf0mtiBcJVq/ewSEeF9vbA6dqj5nuFF3w=
+	t=1739968025; cv=none; b=QvqkAZ05fceQx6Q2TKeSGsBqOER5Y5KP9EEOB3tdFHwPLp3Fq40+cUP+DKO1vQxspXHTHaIy+SOVwYODYBJbbYcQccgkwP4zFGTifCiGoG+vHgDGvG7yD+S1YfRbl6KSojySCM7mNmQZEi8U8GbhRkFEP1uh6JI8+Qt1wnjWGn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739968003; c=relaxed/simple;
-	bh=wKWQbnzY5lHPIE77gLaiE7Yx+5qWZmbyNDaFreqyVRo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kMV82+ECICwk1nWae75g0svBx4Y1rAAIR3aOPXsppntUL4mmd2+zIbcD+RRahUZlIc2T/oiGRsOL25RoEqQIuPMvifzG3e2e5R/OnfcRE8fStflz/i6HaDtJPd5JVAkt3BrZGfyKNy1HyzS2lXhlPEgMJWPJRWmr8tsGj06Qi6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 91ACB1682;
-	Wed, 19 Feb 2025 04:26:59 -0800 (PST)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.43])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 376973F6A8;
-	Wed, 19 Feb 2025 04:26:37 -0800 (PST)
-Date: Wed, 19 Feb 2025 12:26:34 +0000
-From: Dave Martin <Dave.Martin@arm.com>
-To: Peter Newman <peternewman@google.com>
-Cc: Reinette Chatre <reinette.chatre@intel.com>,
-	"Moger, Babu" <bmoger@amd.com>, Babu Moger <babu.moger@amd.com>,
-	corbet@lwn.net, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, tony.luck@intel.com, x86@kernel.org,
-	hpa@zytor.com, paulmck@kernel.org, akpm@linux-foundation.org,
-	thuth@redhat.com, rostedt@goodmis.org, xiongwei.song@windriver.com,
-	pawan.kumar.gupta@linux.intel.com, daniel.sneddon@linux.intel.com,
-	jpoimboe@kernel.org, perry.yuan@amd.com, sandipan.das@amd.com,
-	kai.huang@intel.com, xiaoyao.li@intel.com, seanjc@google.com,
-	xin3.li@intel.com, andrew.cooper3@citrix.com, ebiggers@google.com,
-	mario.limonciello@amd.com, james.morse@arm.com,
-	tan.shaopeng@fujitsu.com, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, maciej.wieczor-retman@intel.com,
-	eranian@google.com
-Subject: Re: [PATCH v11 00/23] x86/resctrl : Support AMD Assignable Bandwidth
- Monitoring Counters (ABMC)
-Message-ID: <Z7XN+iO10LnuoENO@e133380.arm.com>
-References: <cover.1737577229.git.babu.moger@amd.com>
- <Z6zeXby8ajh0ax6i@e133380.arm.com>
- <9e849476-7c4b-478b-bd2a-185024def3a3@intel.com>
- <Z64tw2NbJXbKpLrH@e133380.arm.com>
- <76b02daf-1b45-473e-9d75-5988a11c6887@intel.com>
- <8ef51f28-e01a-4a7d-ba86-059437edb60b@amd.com>
- <a07fca4c-c8fa-41a6-b126-59815b9a58f9@intel.com>
- <CALPaoCh7WpohzpXhSAbumjSZBv1_+1bXON7_V1pwG4bdEBr52Q@mail.gmail.com>
- <ccd9c5d7-0266-4054-879e-e084b6972ad5@intel.com>
- <CALPaoCj1TH+GN6+dFnt5xuN406u=tB-8mj+UuMRSm5KWPJW2wg@mail.gmail.com>
+	s=arc-20240116; t=1739968025; c=relaxed/simple;
+	bh=TYCGDez3pcD8qU831Qfzul3cfHRwJuc0keDc4AylRkA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L3RcVW8L/MSnvRiTvjJKJaE9KRZHiTWg7k3I2ChQGwLeM5ccOqRP+sTryK7ozxFlZrJ3nMcldvqK79tNCkXiAcJqQoYBLLnUxSVKgiFggPMYhEgfLatX8KYh9GEp9jEFlpfajte6jbs2TvyQZTeBSnU8FpRzZ3pxwfiUwxIug28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c7Wikjao; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1710C4CEDD;
+	Wed, 19 Feb 2025 12:27:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739968024;
+	bh=TYCGDez3pcD8qU831Qfzul3cfHRwJuc0keDc4AylRkA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=c7WikjaoQrpPnZisY5dzS6ElGXsulTd73ELB01ocwIP46YkIrQ1qllb1M+HoJRnbG
+	 LVzosMkhk90u7LfcUnt9IZeFfq48G8Pj/G0HFlC8xP6pTkaAfOGbjj6KxRCfj65PTj
+	 0i340AQbKXsRmqkQVoyaLMKKhayNwV2Wjk4X/D9rYvn8g8Gr8LDyHnIzEpKoovkzUe
+	 P5EQrxS+mBoIhSq5yEzfKvBE0GW4KiubEfscgwCEt7aTE3WXSWW70mTYN8BbChl8EE
+	 6T/xIoMzokT57kZPHRlQTg/klRLyjMsZfG/rHIDGtZGbwXX8Y4zQ5pB9hG7x0ZIigc
+	 EflQXecNz4jSw==
+Message-ID: <5cd11aac-52ea-4440-8a07-9b5b2fd8216b@kernel.org>
+Date: Wed, 19 Feb 2025 13:26:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALPaoCj1TH+GN6+dFnt5xuN406u=tB-8mj+UuMRSm5KWPJW2wg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2 1/3] net: phy: mediatek: Add 2.5Gphy firmware
+ dt-bindings and dts node
+To: Sky Huang <SkyLake.Huang@mediatek.com>, Andrew Lunn <andrew@lunn.ch>,
+ Heiner Kallweit <hkallweit1@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Daniel Golle <daniel@makrotopia.org>,
+ Qingfang Deng <dqfext@gmail.com>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+Cc: Steven Liu <Steven.Liu@mediatek.com>
+References: <20250219083910.2255981-1-SkyLake.Huang@mediatek.com>
+ <20250219083910.2255981-2-SkyLake.Huang@mediatek.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <20250219083910.2255981-2-SkyLake.Huang@mediatek.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
-
-On Wed, Feb 19, 2025 at 12:28:16PM +0100, Peter Newman wrote:
-> Hi Reinette,
+On 19/02/2025 09:39, Sky Huang wrote:
+> From: Sky Huang <skylake.huang@mediatek.com>
 > 
-> On Tue, Feb 18, 2025 at 6:50 PM Reinette Chatre
-> <reinette.chatre@intel.com> wrote:
-> >
-> > Hi Peter,
-> >
-> > On 2/17/25 2:26 AM, Peter Newman wrote:
-> > > Hi Reinette,
-> > >
-> > > On Fri, Feb 14, 2025 at 8:18 PM Reinette Chatre
-> > > <reinette.chatre@intel.com> wrote:
-
-[...]
-
-> > >> As mentioned above, one possible issue with existing interface is that
-> > >> it is limited to 26 events (assuming only lower case letters are used). The limit
-> > >> is low enough to be of concern.
-> > >
-> > > The events which can be monitored by a single counter on ABMC and MPAM
-> > > so far are combinable, so 26 counters per group today means it limits
-> > > breaking down MBM traffic for each group 26 ways. If a user complained
-> > > that a 26-way breakdown of a group's MBM traffic was limiting their
-> > > investigation, I would question whether they know what they're looking
-> > > for.
-> >
-> > The key here is "so far" as well as the focus on MBM only.
-> >
-> > It is impossible for me to predict what we will see in a couple of years
-> > from Intel RDT, AMD PQoS, and Arm MPAM that now all rely on resctrl interface
-> > to support their users. Just looking at the Intel RDT spec the event register
-> > has space for 32 events for each "CPU agent" resource. That does not take into
-> > account the "non-CPU agents" that are enumerated via ACPI. Tony already mentioned
-> > that he is working on patches [1] that will add new events and shared the idea
-> > that we may be trending to support "perf" like events associated with RMID. I
-> > expect AMD PQoS and Arm MPAM to provide related enhancements to support their
-> > customers.
-> > This all makes me think that resctrl should be ready to support more events than 26.
+> Add 2.5Gphy firmware dt-bindings and dts node since mtk-2p5ge
+> driver requires firmware to run. Also, update MAINTAINERS for
+> MediaTek's built-in 2.5Gphy dt-bindings and change MAINTAINER's name.
 > 
-> I was thinking of the letters as representing a reusable, user-defined
-> event-set for applying to a single counter rather than as individual
-> events, since MPAM and ABMC allow us to choose the set of events each
-> one counts. Wherever we define the letters, we could use more symbolic
-> event names.
-> 
-> In the letters as events model, choosing the events assigned to a
-> group wouldn't be enough information, since we would want to control
-> which events should share a counter and which should be counted by
-> separate counters. I think the amount of information that would need
-> to be encoded into mbm_assign_control to represent the level of
-> configurability supported by hardware would quickly get out of hand.
-> 
-> Maybe as an example, one counter for all reads, one counter for all
-> writes in ABMC would look like...
-> 
-> (L3_QOS_ABMC_CFG.BwType field names below)
-> 
-> (per domain)
-> group 0:
->  counter 0: LclFill,RmtFill,LclSlowFill,RmtSlowFill
->  counter 1: VictimBW,LclNTWr,RmtNTWr
-> group 1:
->  counter 2: LclFill,RmtFill,LclSlowFill,RmtSlowFill
->  counter 3: VictimBW,LclNTWr,RmtNTWr
-> ...
-> 
-> I assume packing all of this info for a group's desired counter
-> configuration into a single line (with 32 domains per line on many
-> dual-socket AMD configurations I see) would be difficult to look at,
-> even if we could settle on a single letter to represent each
-> universally.
-> 
-> >
-> > My goal is for resctrl to have a user interface that can as much as possible
-> > be ready for whatever may be required from it years down the line. Of course,
-> > I may be wrong and resctrl would never need to support more than 26 events per
-> > resource (*). The risk is that resctrl *may* need to support more than 26 events
-> > and how could resctrl support that?
-> >
-> > What is the risk of supporting more than 26 events? As I highlighted earlier
-> > the interface I used as demonstration may become unwieldy to parse on a system
-> > with many domains that supports many events. This is a concern for me. Any suggestions
-> > will be appreciated, especially from you since I know that you are very familiar with
-> > issues related to large scale use of resctrl interfaces.
-> 
-> It's mainly just the unwieldiness of all the information in one file.
-> It's already at the limit of what I can visually look through.
-> 
-> I believe that shared assignments will take care of all the
-> high-frequency and performance-intensive batch configuration updates I
-> was originally concerned about, so I no longer see much benefit in
-> finding ways to textually encode all this information in a single file
-> when it would be more manageable to distribute it around the
-> filesystem hierarchy.
-> 
-> -Peter
+> Signed-off-by: Sky Huang <skylake.huang@mediatek.com>
 
-This was sort of what I had in my mind.
+Please use subject prefixes matching the subsystem. You can get them for
+example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+your patch is touching. For bindings, the preferred subjects are
+explained here:
+https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
 
-I think it may make some sense to support "t" and "l" out of the box,
-as intuitively backwards-compatible event names, but provide a way to
-create new "letters" as needed, with well-defined way (customisable or
-not) of mapping these to event names visible in resctrlfs.  I just used
-the digits for this purpose, but we could have an explicit interface
-for it.
+<form letter>
+Please use scripts/get_maintainers.pl to get a list of necessary people
+and lists to CC. It might happen, that command when run on an older
+kernel, gives you outdated entries. Therefore please be sure you base
+your patches on recent Linux kernel.
 
-In order for this series to stabilise though, does it make sense to put
-this out of scope just for now?
+Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+people, so fix your workflow. Tools might also fail if you work on some
+ancient tree (don't, instead use mainline) or work on fork of kernel
+(don't, instead use mainline). Just use b4 and everything should be
+fine, although remember about `b4 prep --auto-to-cc` if you added new
+patches to the patchset.
 
-The current series provides a way to provide the mbm_total_bytes and
-mbm_local_bytes counters on AMBC and MPAM systems, without having to
-limit the total number of monitoring groups (MPAM's current approach)
-or overcommit the counters so that they may not be continuously
-reliable when there are too many groups (AMD?).
+You missed at least devicetree list (maybe more), so this won't be
+tested by automated tooling. Performing review on untested code might be
+a waste of time.
 
-That seems immediately useful.
+Please kindly resend and include all necessary To/Cc entries.
+</form letter>
 
-The ability to assign arbitrarily many counters to a group is a new
-feature however.  Does it make sense to consider this on its own merits
-when the baseline ABMC interface has been settled?
 
-May main concern right now (from the Arm side) is to be confident that
-the initial ABMC interface definition doesn't paint us into a corner.
+> ---
+>  .../bindings/net/mediatek,2p5gphy-fw.yaml     | 37 +++++++++++++++++++
+>  MAINTAINERS                                   |  3 +-
+>  2 files changed, 39 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/devicetree/bindings/net/mediatek,2p5gphy-fw.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/net/mediatek,2p5gphy-fw.yaml b/Documentation/devicetree/bindings/net/mediatek,2p5gphy-fw.yaml
+> new file mode 100644
+> index 000000000000..56ebe88b8921
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/net/mediatek,2p5gphy-fw.yaml
+> @@ -0,0 +1,37 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/net/mediatek,2p5gphy-fw.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: MediaTek Built-in 2.5G Ethernet PHY
+> +
+> +maintainers:
+> +  - Sky Huang <SkyLake.Huang@mediatek.com>
+> +
+> +description: |
+> +  MediaTek Built-in 2.5G Ethernet PHY needs to load firmware so it can
+> +  run correctly.
+> +
+> +properties:
+> +  compatible:
+> +    const: "mediatek,2p5gphy-fw"
 
-Cheers
----Dave
+
+Not tested.
+
+I have doubts that's a real device... Model name looks exactly like 2.5G
+phy. "FW" suggests you do it for driver.
+
+Read writing and submitting bindings documents.
+
+Best regards,
+Krzysztof
 
