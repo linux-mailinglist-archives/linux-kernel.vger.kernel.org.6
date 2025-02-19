@@ -1,64 +1,45 @@
-Return-Path: <linux-kernel+bounces-520934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E2DEA3B159
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:04:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A783AA3B160
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:05:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2945188B147
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 06:03:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 063DC188AA87
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 06:05:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 808941B87F4;
-	Wed, 19 Feb 2025 06:02:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 008771AF4EA;
+	Wed, 19 Feb 2025 06:04:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hPfxm+V6"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="knduSAl/"
+Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA2051BAEF8
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 06:02:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E3BC1A8F7F;
+	Wed, 19 Feb 2025 06:04:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739944927; cv=none; b=TKuw21fKmoGold9udEagSE+3gP5v+W3DThCZFsnm0meX7f31Lw5hPGoBeaYf6aQF62/iLFsJjrDE1zeTljwjwRajxvbyQeCrr1hb5HMOzgzHdBcNdtC8y92sxe9htSipTt3Zyj/ss5JzTHdUy5lNwOQegON+3X0skrljamO79Zs=
+	t=1739945096; cv=none; b=ewarqwBcseZVk2vpl7sB+lgZ9Z54r4sVEQww37q5ut0/iXt59GKNPd4FwKp20VDA8//q5LoswrSsG7ZF7FqaQ6JrPOPqAE7J5IWnfg9lcOOD45AeV0PmjNcyXHK47/nzoU0U4b56zgbXR6mH7WqHWpu2q1vWHJ19o+Ya2ZXPaG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739944927; c=relaxed/simple;
-	bh=KjpYYG/KKSxKeVYVZIzx1tumhkfjES6+uEjUpium104=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=MT8zyFdyVG24yJiLpzdYkane5ZgyVd1+l36Seo+aL9s3Z6F6GmLFADRp4SiWZOBLU2LRoI40yKaki4xTa10Gq5vqiG/WZVVFRyJa0S6NoMQ2J9Eyh9YSQ0UKhM7nS0sBeC4LMslORhlP942Rk+ccVhy7BG1ZOTcRCnN+N2Y+R38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hPfxm+V6; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739944926; x=1771480926;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=KjpYYG/KKSxKeVYVZIzx1tumhkfjES6+uEjUpium104=;
-  b=hPfxm+V6DAYPTvBuz9fxEky4oGTUhZh7GQ8iMhxUYk0jczAWXS+p5qCq
-   3tT5SeSgdZYU4cQ1/iE23u5e5hp5i9wJHcrIJL4juDJC80N/qctu0q+Iv
-   WU+fi4DJZLHQTPSbcqHiI8rSRW48dTkX5TWxeLQETva8ktnEaLovov8EN
-   zOGERLe4XaJbDtf0tt7xjUUbAdy3EntwDHe6EVHo1RxB68mM/egO8/AyE
-   i9rzxo9FamCfhUsO7KoBSUKqA/EpcBcU1lEkLfXXKxwbQyk1rNa9T6Tza
-   NQtP5G6J3R4S3bpWxClX1cXKxMorYLvuar+pnRffia8/JKqkBphZdH+I8
-   A==;
-X-CSE-ConnectionGUID: AylTHuovTsyWOJMq4QWHlg==
-X-CSE-MsgGUID: +zbHQvqCQPmsvwk2zIT6+A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="40925466"
-X-IronPort-AV: E=Sophos;i="6.13,298,1732608000"; 
-   d="scan'208";a="40925466"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 22:02:05 -0800
-X-CSE-ConnectionGUID: qmJ6BvPDR9a4Gg0Lh5N98A==
-X-CSE-MsgGUID: IEs/MSOVRRqefGp8wzDFYw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,298,1732608000"; 
-   d="scan'208";a="119729197"
-Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.124.240.17]) ([10.124.240.17])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 22:02:02 -0800
-Message-ID: <e21e71c4-d627-4150-996b-893fe5bd4726@linux.intel.com>
-Date: Wed, 19 Feb 2025 14:02:00 +0800
+	s=arc-20240116; t=1739945096; c=relaxed/simple;
+	bh=L9lhN3ilKtmL2zG8PvbZYD0i1c8yFuaKYcME16EVnEg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GIbU+jicgDIEE08pgYZY9wHIIiNur2Sc7LMayUgaO3IML3xbI3Kx8ztt5kqu6/ELnEjr4u/Gg0fnOtd8wW267MvTLuhobhw20eP4JX3ouzQ55q2u+Rp5CyQCAq0N9Q+PNt9BGfXFHrooTwJW5W4CQ8ht2x9U9xrrHcwAIb03LkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=knduSAl/; arc=none smtp.client-ip=115.124.30.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1739945083; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=DZZPumA5Upa6XmHFJ6/5ZqK43Kre79RXvyxCQ8Q750M=;
+	b=knduSAl/+Jh/fOglTFd1q0bBli5gYI6tKnuO8luOsm5wvgsiNdk78SV/zxVGrwbzmWkY3SElMXsLHZC3loBFJC76vtoks1fBX4HAGvaupoAJiuWPGh07Mm4GR8DuzI7fzJfuekDLcU98jCcgbBOFzO+Rs/XWrie7bbPFbmaHvzk=
+Received: from 30.246.161.128(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WPo8aUr_1739945080 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 19 Feb 2025 14:04:41 +0800
+Message-ID: <3437892f-60ed-4e76-9028-7feac46425e4@linux.alibaba.com>
+Date: Wed, 19 Feb 2025 14:04:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,38 +47,50 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, Dave Jiang <dave.jiang@intel.com>,
- Vinod Koul <vkoul@kernel.org>, Zhangfei Gao <zhangfei.gao@linaro.org>,
- Zhou Wang <wangzhou1@hisilicon.com>, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/12] dmaengine: idxd: Remove unnecessary
- IOMMU_DEV_FEAT_IOPF
-To: Fenghua Yu <fenghuay@nvidia.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>
-References: <20250214061104.1959525-1-baolu.lu@linux.intel.com>
- <20250214061104.1959525-10-baolu.lu@linux.intel.com>
- <94b6f4fa-8a92-47a1-8938-b838ce19d122@nvidia.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <94b6f4fa-8a92-47a1-8938-b838ce19d122@nvidia.com>
+Subject: Re: [PATCH v2 0/5] mm/hwpoison: Fix regressions in memory failure
+ handling
+To: "Luck, Tony" <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>
+Cc: "nao.horiguchi@gmail.com" <nao.horiguchi@gmail.com>,
+ "tglx@linutronix.de" <tglx@linutronix.de>,
+ "mingo@redhat.com" <mingo@redhat.com>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+ "linmiaohe@huawei.com" <linmiaohe@huawei.com>,
+ "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+ "peterz@infradead.org" <peterz@infradead.org>,
+ "jpoimboe@kernel.org" <jpoimboe@kernel.org>,
+ "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>,
+ "tianruidong@linux.alibaba.com" <tianruidong@linux.alibaba.com>
+References: <20250217063335.22257-1-xueshuai@linux.alibaba.com>
+ <20250218082727.GCZ7REb7OG6NTAY-V-@fat_crate.local>
+ <7393bcfb-fe94-4967-b664-f32da19ae5f9@linux.alibaba.com>
+ <20250218122417.GHZ7R78fPm32jKYUlx@fat_crate.local>
+ <02164ab7-c65b-4b2e-8686-5539bdcb8f43@linux.alibaba.com>
+ <SJ1PR11MB60830555A8B1621CA62D4FC3FCFA2@SJ1PR11MB6083.namprd11.prod.outlook.com>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <SJ1PR11MB60830555A8B1621CA62D4FC3FCFA2@SJ1PR11MB6083.namprd11.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2025/2/19 6:55, Fenghua Yu wrote:
-> On 2/13/25 22:11, Lu Baolu wrote:
->> The IOMMU_DEV_FEAT_IOPF implementation in the iommu driver is just a 
->> no-op.
->> It will also be removed from the iommu driver in the subsequent patch.
->> Remove it to avoid dead code.
+
+
+在 2025/2/19 01:59, Luck, Tony 写道:
+>>> What do futexes have to do with copying user memory?
 >>
->> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-> Reviewed-by: Fenghua Yu <fenghuay@nvidia.com>
+>> Return -EFAULT to userspace.
+> 
+> Missed this bit. Kernel code for futex does a get_user() to read the
+> value of the futex from user memory.
+> 
+> -Tony
+> 
+> 
 
-Thank you, Fenghua.
+Tony, you saved me.
 
-Can you please update your contact email in MAINTAINERS file.
-
-Thanks,
-baolu
+Thanks.
+Shuai
 
