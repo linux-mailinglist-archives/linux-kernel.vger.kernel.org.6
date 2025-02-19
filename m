@@ -1,142 +1,200 @@
-Return-Path: <linux-kernel+bounces-521874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27056A3C364
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:18:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60607A3C369
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:18:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 597D517597A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:17:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0FB0189A115
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:18:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B08371F55EF;
-	Wed, 19 Feb 2025 15:17:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C506B1F4628;
+	Wed, 19 Feb 2025 15:17:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="vHQOQRek"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XRvSHVDE"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 389861F4634
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 15:17:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D421E0DFE
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 15:17:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739978231; cv=none; b=LFRvbRcWBFXq4+3qBSG0B7Wei56y0LytjTc1JxPMaEXfWVrBH7LLuLeSeRI0eGMMbX2EbTfUuaPmuzgDEneTlwMAmAWvzm2m9vlNcnVkoyCmPZhCGs5it/xOkN0PCyHnc3j4m/oKaEkDpmL527iZYKq03VraYAJ0rGe/1bapBeU=
+	t=1739978260; cv=none; b=Z0P/cb5MRB/TCJbIVLR+hBpUCdYQxgX2p79prxHvsaSvPK2qO/PWdrhsni1qapgC2WLQ+uMxI2IHAzo29GKXki4iGfWxosLasLB0/rhc19ZeF+VcL4EGBSZaYFl6sX/ZZZjhKkIn+ECRKzyj9E+hyaVU55yx24oQkd1N57X7+B0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739978231; c=relaxed/simple;
-	bh=w7fP5VJsqdJFhYmueyYdah4nlb2jc1Wn/053sE2nQdU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gDrNQf2mkKeM5bweg6/8lkiKqGgK5tLWO+GvHL29ILXpu8PeqtnJ89jh2MhexIh4JmLBJN8C/Q6PGQ8QyEJXWUKE8/9oqwbo3ynxf0l0xDbak8wufRKKckupeq4lkxhRhSoO/4jvg0lw0/+IbRWSlWJNz+B5tdsqdCbgTlJbO9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=vHQOQRek; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7be6fdeee35so1216739085a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 07:17:08 -0800 (PST)
+	s=arc-20240116; t=1739978260; c=relaxed/simple;
+	bh=WdGj3mg26niazdgEpCLUBe5M4rDcTiqLPV6+jLJxCFM=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=q83XpFuPvtjmNlLYHkQRLnO/p0oDx7UzpygagOATpR5cjwZlB9NBXnNjZ6ptI28ap/udWH7bYo8V6e70RVeqf82KY3hJXOvzAXL25LUwShivDGJww6Z4FQisKV0f/j2w+Tsva1Z3rPYwrB7DJJBcDXkQb8PwazPP6RvSOL3ROmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XRvSHVDE; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-220d9d98ea6so176544885ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 07:17:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1739978228; x=1740583028; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZLngn1c7OgszDhQYwrs3tuXmUNGW9guC8b5guhMRolg=;
-        b=vHQOQRek3SAuGGm5hZzY+o0gjg1WMNFjb6vlzofW6dsTijWzWQ4n4MXFp2SMqbdwWb
-         ZqOJQqIu/+0Gq4f8cHOJocdeyMLvAabxxNqI3AORcwEFdLOu+dCCrQNulEzZEIB2L/61
-         Ia6cqOAbxwPtHQLilAJm07+tJ1yOFgLJh/xYkZ2+jdRzP48y2nJjf045ilRbJllEnKQ5
-         BXj0vGJMn6YnU0G29HEmZ/cxlwn4MqNOD32knoRy9GDdEb8bZdSMRGxwkUQkgYXn9uhG
-         N8vJrQOV3HAwKY3w67pLt4WCMKLofdByGJfJBz1fPlYJTQn3D0/IOuZf0wb7Q/2R9DvX
-         oJbw==
+        d=google.com; s=20230601; t=1739978258; x=1740583058; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lr0FQ+nYVzOkkkQbsOIsH4v20fYzY6BEtN0DQJbkPgo=;
+        b=XRvSHVDEdz5XsuTDNMtGI0NP01Ti8dc3XPgsiwmHhIKEXQI70rixKHjXXZjCE+P8EY
+         RGD2TZPoT6KHufpkILd2BRI8A/8iXbHhNi/exh7Y1Q/fXuTHE8r0cnEejYmg5Yz/llSc
+         wkns5oqZetP5TScABKi3w2kCCpsQq6pYjC0l4tfj7Oun7VM5n+RzhUq9SgHzZRlAdtlk
+         TqLBIZ3HxP9jTK9TU2z8/8qh7ckfSnt/ouXClq4eySgjgsJQ37ZM/eDpqBNzFTOYaVrO
+         Qz95FF9dmtaSs1uq1dW/r/ONBcecGIvaTdzJPAsshGCK7eUvZPklBHR5KIPvBSGFvedi
+         E6qQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739978228; x=1740583028;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZLngn1c7OgszDhQYwrs3tuXmUNGW9guC8b5guhMRolg=;
-        b=jk0pMXcVolQQzqsxRGtH/gBI4IbOjudwry4Q29B1cGr/ISel+jPYUZOWpRsIz4QHHX
-         S7jrq6tzSXjo5dEg1JICrWY2DuFAg5yMPRcq18mcAXvCfYZ0RgXraD2pRCjVIb9J11ek
-         Z9EdO8n7QKymUho8jW7RxRaj9fEynwscuHVD0R6++5cHztJ7XA/lTLimgwn3XQ9dY/rP
-         tC45a4VHTfFGCRlua2pIG67JPWsOzYpX49koa899mAAFlwcv9Bo+J4UcAIK184oFy+mb
-         4a8uXJDrfvtE7pqBjZntS+h7L06XZ+mlP1knpRipLiCVNa+wn5s0kjw1rKOiqloWRiq/
-         lSwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU57S1xi4wWgHg74ed8EjIwArGsqWLIO/H/MFJ/eZHY28AFoilWIbKB5mGS9yxI3PR//auMJv1zalrM5jA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxKSuYR7Kl+Ihbm/tzfnovn0+MeT3lIKupmIFKG8fdRlgC+N0Q
-	KSas19IdCo0h/dA+1r3K92ZYccpMhEZ7Z4MV43zTcSIs5z9pzm5/1w9I4S32gA==
-X-Gm-Gg: ASbGncu60D44KeZZTO/eOZjBnZAcRpDpmEW9jMQaHQEk1TwiNLYP2ffIetJA+KHzYKQ
-	HMrPA6Pdoie7lFh49yLJ0UKiUH97VVQhEtvOczcz5c5fFW39h4zP99CefK2Tz/fzi7KuNeMgkAE
-	LcrpLpgRzfsizloJupdDVTGcujSZlQafwF1uGCsR+FGPAZcQgu8ENADxl4nAk87QdH5J0S2NZHQ
-	2kZd294VmKocCDC140x0O5pf1My4Kzg4hqoxv39hAfZa21NOPKQkdZXo5of85gXhTtPDoMFh2PE
-	X66sdtkzfcaJ/pr7bVEZF8Vvb6X/HVaNDg==
-X-Google-Smtp-Source: AGHT+IFU4MYbB6zopLM4Vw6VY01SbuBIlw1aYMolPw19EYJwiK6vA3t38BJTotpTUC2Ignn7JMiZCg==
-X-Received: by 2002:a05:620a:4550:b0:7c0:c0d7:580e with SMTP id af79cd13be357-7c0c0d75998mr89190785a.45.1739978227894;
-        Wed, 19 Feb 2025 07:17:07 -0800 (PST)
-Received: from rowland.harvard.edu ([140.247.181.15])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e65d9f36f5sm75044706d6.75.2025.02.19.07.17.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2025 07:17:07 -0800 (PST)
-Date: Wed, 19 Feb 2025 10:17:05 -0500
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Stefan Eichenberger <eichest@gmail.com>
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Stefan Eichenberger <stefan.eichenberger@toradex.com>
-Subject: Re: [PATCH v1] usb: core: replace usb_sndaddr0pipe macro with
- usb_sndctrlpipe
-Message-ID: <8fba35c4-fe72-4dc3-85cf-270efb0c7765@rowland.harvard.edu>
-References: <20250219083745.10406-1-eichest@gmail.com>
+        d=1e100.net; s=20230601; t=1739978258; x=1740583058;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lr0FQ+nYVzOkkkQbsOIsH4v20fYzY6BEtN0DQJbkPgo=;
+        b=X34pUOXQKCOyhz4MVL8ND8q3I5P6e75VRk2UaoM21wfX7aK0UsH/RCOcd3qZDsxXcO
+         Yv5YLWTUAXv3DXhyhXtWpgZyG6ThAtXoqiGNofCRLkrVsWvU3NANujGXEAjXtL6uf5zQ
+         fCYJfwdR6532nvnmqXMnTcBnPRXxKKApaeAuP0r2uBYGLGHRZIYjZrloP0ptGvBmh7mt
+         HPerUkq7J+spcmivpNa6xwqkZuDe2OcsAwRpyPd61OByArZ9zOI4eI2xy3yYuS+BN5Hl
+         nvlrDw7ZzumsL/LIJbCAfUgr71lNSdgWGS2oGNhSDnYQpiAMJCHDQEn9ca8+7WxBGuZt
+         NyZA==
+X-Forwarded-Encrypted: i=1; AJvYcCV3MrozLz3cEP213aKGSR1BGkkTM9ehgLGgOc3KvCv7JsZeBmg9vqN9iKs39DWg5+T0j/wHO444tXuwCcs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyhh6nqVQdjAEh0+GBX63I/PX7SRgUWWmeTRZXrkszYQOdas8CP
+	8CaG4iqKSKWTPLQMFjRlmehKz61Y4+Y4xTbRUrWySEVBJ4TeR1v4Wkl/kpOPVVCEEfrswTz8X50
+	DnQ==
+X-Google-Smtp-Source: AGHT+IFm8swAf6amSZphHdCPuf7jq3DdJqtSa9LycPSODogg0yG2aBnIIzAy7tiqpzumfMEInPxKCrl9oII=
+X-Received: from pfbcw22.prod.google.com ([2002:a05:6a00:4516:b0:731:9461:420e])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:d807:b0:1ee:6a20:1778
+ with SMTP id adf61e73a8af0-1ee8cb85299mr28927616637.20.1739978257735; Wed, 19
+ Feb 2025 07:17:37 -0800 (PST)
+Date: Wed, 19 Feb 2025 07:17:36 -0800
+In-Reply-To: <a7080c07-0fc5-45ce-92f7-5f432a67bc63@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250219083745.10406-1-eichest@gmail.com>
+Mime-Version: 1.0
+References: <20241118123948.4796-1-kalyazin@amazon.com> <Z6u-WdbiW3n7iTjp@google.com>
+ <a7080c07-0fc5-45ce-92f7-5f432a67bc63@amazon.com>
+Message-ID: <Z7X2EKzgp_iN190P@google.com>
+Subject: Re: [RFC PATCH 0/6] KVM: x86: async PF user
+From: Sean Christopherson <seanjc@google.com>
+To: Nikita Kalyazin <kalyazin@amazon.com>
+Cc: pbonzini@redhat.com, corbet@lwn.net, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, rostedt@goodmis.org, 
+	mhiramat@kernel.org, mathieu.desnoyers@efficios.com, kvm@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, jthoughton@google.com, david@redhat.com, 
+	peterx@redhat.com, oleg@redhat.com, vkuznets@redhat.com, gshan@redhat.com, 
+	graf@amazon.de, jgowans@amazon.com, roypat@amazon.co.uk, derekmn@amazon.com, 
+	nsaenz@amazon.es, xmarcalx@amazon.com
+Content-Type: text/plain; charset="us-ascii"
 
-On Wed, Feb 19, 2025 at 09:36:44AM +0100, Stefan Eichenberger wrote:
-> From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+On Wed, Feb 12, 2025, Nikita Kalyazin wrote:
+> On 11/02/2025 21:17, Sean Christopherson wrote:
+> > On Mon, Nov 18, 2024, Nikita Kalyazin wrote:
+> > And it's not just the code itself, it's all the structures and concepts.  Off the
+> > top of my head, I can't think of any reason there needs to be a separate queue,
+> > separate lock(s), etc.  The only difference between kernel APF and user APF is
+> > what chunk of code is responsible for faulting in the page.
 > 
-> The usb_sndaddr0pipe macro is only used in the hub_set_address function.
-> Replace it with usb_sndctrlpipe which provides the same functionality
-> but would also consider the endpoint device number.
+> There are two queues involved:
+>  - "queue": stores in-flight faults. APF-kernel uses it to cancel all works
+> if needed.  APF-user does not have a way to "cancel" userspace works, but it
+> uses the queue to look up the struct by the token when userspace reports a
+> completion.
+>  - "ready": stores completed faults until KVM finds a chance to tell guest
+> about them.
 > 
-> If the device has not been initialised, it is safe to use
-> usb_sndctrlpipe in this context because udev->devnum is set to 0.
-> Therefore, this change does not affect behaviour, but reduces code
-> complexity by reusing the existing macro.
-> 
-> Signed-off-by: Stefan Eichenberger <stefan.eichenberger@toradex.com>
-> ---
-> Even though this patch does not fix a bug it is related to the following
-> discussion and addresses the change proposed by Alan:
-> https://lore.kernel.org/all/aa0c06f6-f997-4bcf-a5a3-6b17f6355fca@rowland.harvard.edu/
-> ---
+> I agree that the "ready" queue can be shared between APF-kernel and -user as
+> it's used in the same way.  As for the "queue" queue, do you think it's ok
+> to process its elements differently based on the "type" of them in a single
+> loop [1] instead of having two separate queues?
 
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Yes.
 
->  drivers/usb/core/hub.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+> [1] https://elixir.bootlin.com/linux/v6.13.2/source/virt/kvm/async_pf.c#L120
 > 
-> diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-> index 59e38780f76d0..66dfdf0bab90b 100644
-> --- a/drivers/usb/core/hub.c
-> +++ b/drivers/usb/core/hub.c
-> @@ -4697,8 +4697,6 @@ void usb_ep0_reinit(struct usb_device *udev)
->  }
->  EXPORT_SYMBOL_GPL(usb_ep0_reinit);
->  
-> -#define usb_sndaddr0pipe()	(PIPE_CONTROL << 30)
-> -
->  static int hub_set_address(struct usb_device *udev, int devnum)
->  {
->  	int retval;
-> @@ -4722,7 +4720,7 @@ static int hub_set_address(struct usb_device *udev, int devnum)
->  	if (hcd->driver->address_device)
->  		retval = hcd->driver->address_device(hcd, udev, timeout_ms);
->  	else
-> -		retval = usb_control_msg(udev, usb_sndaddr0pipe(),
-> +		retval = usb_control_msg(udev, usb_sndctrlpipe(udev, 0),
->  				USB_REQ_SET_ADDRESS, 0, devnum, 0,
->  				NULL, 0, timeout_ms);
->  	if (retval == 0) {
-> -- 
-> 2.45.2
+> > I suspect a good place to start would be something along the lines of the below
+> > diff, and go from there.  Given that KVM already needs to special case the fake
+> > "wake all" items, I'm guessing it won't be terribly difficult to teach the core
+> > flows about userspace async #PF.
 > 
+> That sounds sensible.  I can certainly approach it in a "bottom up" way by
+> sparingly adding handling where it's different in APF-user rather than
+> adding it side by side and trying to merge common parts.
+> 
+> > I'm also not sure that injecting async #PF for all userfaults is desirable.  For
+> > in-kernel async #PF, KVM knows that faulting in the memory would sleep.  For
+> > userfaults, KVM has no way of knowing if the userfault will sleep, i.e. should
+> > be handled via async #PF.  The obvious answer is to have userspace only enable
+> > userspace async #PF when it's useful, but "an all or nothing" approach isn't
+> > great uAPI.  On the flip side, adding uAPI for a use case that doesn't exist
+> > doesn't make sense either :-/
+> 
+> I wasn't able to locate the code that would check whether faulting would
+> sleep in APF-kernel.  KVM spins APF-kernel whenever it can ([2]). Please let
+> me know if I'm missing something here.
+
+kvm_can_do_async_pf() will be reached if and only if faulting in the memory
+requires waiting.  If a page is swapped out, but faulting it back in doesn't
+require waiting, e.g. because it's in zswap and can be uncompressed synchronously,
+then the initial __kvm_faultin_pfn() with FOLL_NO_WAIT will succeed.
+
+	/*
+	 * If resolving the page failed because I/O is needed to fault-in the
+	 * page, then either set up an asynchronous #PF to do the I/O, or if
+	 * doing an async #PF isn't possible, retry with I/O allowed.  All
+	 * other failures are terminal, i.e. retrying won't help.
+	 */
+	if (fault->pfn != KVM_PFN_ERR_NEEDS_IO)
+		return RET_PF_CONTINUE;
+
+	if (!fault->prefetch && kvm_can_do_async_pf(vcpu)) {
+		trace_kvm_try_async_get_page(fault->addr, fault->gfn);
+		if (kvm_find_async_pf_gfn(vcpu, fault->gfn)) {
+			trace_kvm_async_pf_repeated_fault(fault->addr, fault->gfn);
+			kvm_make_request(KVM_REQ_APF_HALT, vcpu);
+			return RET_PF_RETRY;
+		} else if (kvm_arch_setup_async_pf(vcpu, fault)) {
+			return RET_PF_RETRY;
+		}
+	}
+
+The conundrum with userspace async #PF is that if userspace is given only a single
+bit per gfn to force an exit, then KVM won't be able to differentiate between
+"faults" that will be handled synchronously by the vCPU task, and faults that
+usersepace will hand off to an I/O task.  If the fault is handled synchronously,
+KVM will needlessly inject a not-present #PF and a present IRQ.
+
+But that's a non-issue if the known use cases are all-or-nothing, i.e. if all
+userspace faults are either synchronous or asynchronous.
+
+> [2] https://elixir.bootlin.com/linux/v6.13.2/source/arch/x86/kvm/mmu/mmu.c#L4360
+> 
+> > Exiting to userspace in vCPU context is also kludgy.  It makes sense for base
+> > userfault, because the vCPU can't make forward progress until the fault is
+> > resolved.  Actually, I'm not even sure it makes sense there.  I'll follow-up in
+> 
+> Even though we exit to userspace, in case of APF-user, userspace is supposed
+> to VM enter straight after scheduling the async job, which is then executed
+> concurrently with the vCPU.
+> 
+> > James' series.  Anyways, it definitely doesn't make sense for async #PF, because
+> > the whole point is to let the vCPU run.  Signalling userspace would definitely
+> > add complexity, but only because of the need to communicate the token and wait
+> > for userspace to consume said token.  I'll think more on that.
+> 
+> By signalling userspace you mean a new non-exit-to-userspace mechanism
+> similar to UFFD?
+
+Yes.
+
+> What advantage can you see in it over exiting to userspace (which already exists
+> in James's series)?
+
+It doesn't exit to userspace :-)
+
+If userspace simply wakes a different task in response to the exit, then KVM
+should be able to wake said task, e.g. by signalling an eventfd, and resume the
+guest much faster than if the vCPU task needs to roundtrip to userspace.  Whether
+or not such an optimization is worth the complexity is an entirely different
+question though.
 
