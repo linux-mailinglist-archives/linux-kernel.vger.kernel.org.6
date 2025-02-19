@@ -1,156 +1,138 @@
-Return-Path: <linux-kernel+bounces-521608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2077A3BFE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:28:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0F60A3BFED
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:29:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 662E23B537C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:26:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D277E3A8725
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:27:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C4A01EA7F0;
-	Wed, 19 Feb 2025 13:26:17 +0000 (UTC)
-Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC021E32D3;
+	Wed, 19 Feb 2025 13:27:11 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5E941E8339;
-	Wed, 19 Feb 2025 13:26:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 098521E378C
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 13:27:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739971577; cv=none; b=LnuTvNdI6GUMDT+XZTWDWGDeLfIJ0TPziP71JDV+bBr5GVULt1kh6WELyFa+3U0FXXsspHdmSMmdoJZvuqcP9lO1zY+r22s/nVm/l6/0120cOUkdXaSjkfk41oZscV7oF/wklPs6lB9agugoYqVzF6elepeyjII7w/OMKMDKKrI=
+	t=1739971630; cv=none; b=FUnvA5DC7cbrMCmkx0NfXltA5SUL5jjtgOuI/IMm5LK7f8uuNSH6iomJIbl7X3ZrXuLSSo6lSLW1/Gc4vucA9SQD+iVyfJPyqTMgSf6HjD2rCwqBcyCSKPQTe0fKw0+hNkGrhf6D9k3Qvd0zpKFjD3zKRJTH6O1XvJY7iHJ2MDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739971577; c=relaxed/simple;
-	bh=HYlKWCDdRQA017nK/x1uUpaYrn41MgwmoI5QgAxA2hU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ajkp/uW6Y5TUcgAX2KFGuvD443jAKPB47DMPronqHFsjxLRu53RIjvZmALMCfg1aRcs1Fp0T+OfDyiP0bNk57t8TEAG3JjvlhQH31UwnX/Y6NquVWmkDTAR7nQXLofX6Ko4gC1L6peuF/rcNtAderQFjKtuCt5QkF8vygJMc0Dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-51e902b58c0so4047359e0c.0;
-        Wed, 19 Feb 2025 05:26:15 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739971573; x=1740576373;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JOe7FxW1+GHMaHIpdwnQzHku6W752ees95gkUS64ZLg=;
-        b=t++DC1W16HtPz8sV8jMEyMTM9PUZWXLTCyB6O14dxgysE40rjgWlcokKkyieEbjD3r
-         DgkmZnmn8+lEzD3DQ3X1aZ1f7fA0PO6LeWTuedBpX4TaTFLdRelN4OJd69yubz7PsIBW
-         TorZCNiWyiMaeLmm6zAwh3hErR/qpLrcYAxEUxslE5fu0QnxuAeqAAuL1wqxQulHSC8V
-         QlBO6kCvSFqgNp1PCCqd9vwDVcsj3D/AymDdzznF8uKdpDJz/YjuyyY9OcIEi7mX5jRH
-         RP14rqjwR0ATlaonz1i53lwMxHtuNBxWIEKeY/L5dK7X92HYus4KstZ97FSUWry5pwBQ
-         G1XA==
-X-Forwarded-Encrypted: i=1; AJvYcCUzNK01n3SQrAXWX5+i1PUGBULIAGssgBg96zhyAinlYCY/c/uTSLVALEzIbB5R4+kivL1R1j5Elrta4Fo=@vger.kernel.org, AJvYcCWzh5Dw4a38RpMf/48GeL73f5Z4zVdxSW3aAvT2IGCQ0c1gsYDG7B/hNnaM957VOcc8CdNd23yOX3z99TgSN0k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1dCsXd9yx7WaiZKNQL7R3wDgpbwLDrxGxPJPZl6MkqIPiSL/5
-	0KFmcNTz+Pv15b2ikdkQ1IhkbVDGnGtkfkzz4bPNW4Rm5PF1gE07bSuO16sG
-X-Gm-Gg: ASbGncvSj4CcED5neaST6T1/8pn0LFTHKAV0s2Is1Z6vGLD7HRvYiPbzRaurH1ZRLx5
-	LiUAeyAAIVgsd21cxOcf/4msqHAV7GU90bn2e+f4gKSADkhdHK2ugw4b8VEmhI6hBHBCRR4swY+
-	Osa06OkVfWh7OXXTkMLZtcyd3uF4/Z9R3IgpxzZ2FCqfBHqQNVRG9mVcvcalpwlDCCuqQq48plW
-	F65mulrw4m7t51oB+TEuRjb/i2zxHIPGpSddIScpdA5w96Bm+4RTLJUCLDetzqcwYcTDNCM3Xnz
-	dq92TAgxvOIsFXiutazcnbGe2q23XDaaoLuBvmFP4cZsvdliU2kJeQ==
-X-Google-Smtp-Source: AGHT+IEy7x1pOQEULOMJQvQTcrsHZUpY/lyapLK7k74AH78pYQYsVyNt2Tl97l1QAR7PzdvOUsFh6Q==
-X-Received: by 2002:a05:6122:91c:b0:520:63e6:79d1 with SMTP id 71dfb90a1353d-5209dcea152mr7181974e0c.10.1739971573429;
-        Wed, 19 Feb 2025 05:26:13 -0800 (PST)
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com. [209.85.217.47])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-520d028985csm1436268e0c.12.2025.02.19.05.26.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Feb 2025 05:26:11 -0800 (PST)
-Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-4be25046fceso2465599137.3;
-        Wed, 19 Feb 2025 05:26:11 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV0kHBPhuT7BDnrwc9eRn3pOUxQ/is5ZPp4DePmcvKYbnQ/2T7P3YpJm72ZnBStnwpyhVX7RTaOjNoCk/BcJsc=@vger.kernel.org, AJvYcCXQQWxUgliolEQSGuy8h/e+hL5W7h0M94gdQPv9m4r9ze6npTx28yZXYOxVuRqzxML7kKnIA30cJA1btZI=@vger.kernel.org
-X-Received: by 2002:a05:6102:80a3:b0:4bb:edc9:f95c with SMTP id
- ada2fe7eead31-4bd3fd57f40mr9878304137.15.1739971571449; Wed, 19 Feb 2025
- 05:26:11 -0800 (PST)
+	s=arc-20240116; t=1739971630; c=relaxed/simple;
+	bh=fmJ5QXeJPJUSguLtVVuCwb23B1PIzp7T7lxo3a7/k7E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uwCYU7RY6IC98wXLtxSHU8INI08PXnTylnPhsBtMJj9R4GV9bwJECjvNxk1v8MQEu0PKueV17isMRUU7KClWuhFFQzAqgWEW/97aX3FR7VcfNkuBaN7Tvk6HoT5MCNHo10HmM5zTQzqUKC1NiMJuIlvSe/Dqtmg5XBFyfgH9jF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <a.fatoum@pengutronix.de>)
+	id 1tkk6L-0003h1-Mj; Wed, 19 Feb 2025 14:26:57 +0100
+Message-ID: <37d2a7bb-1c8c-4c33-a277-dc1a7448433b@pengutronix.de>
+Date: Wed, 19 Feb 2025 14:26:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Z7SwcnUzjZYfuJ4-@infradead.org> <36783d51be7576fcdbf8facc3c94193d78240816.camel@kernel.org>
- <4cbd3baf81ca3ff5e8c967b16fc13673d84139e8.camel@kernel.org>
- <e63089e15c6f4d19e77d2920d576e0134d8b7aa7.camel@kernel.org>
- <Z7T5_WGX_VXBby9k@boqun-archlinux> <615ce44fa528ad7be28ba518e14a970f04481078.camel@kernel.org>
- <CAPM=9txBg1m=qp9=nHJXS1h2XB8TSL1tj6CF=Z802u=YX7hBDg@mail.gmail.com> <c84254c0164de551189a1f92ddec71f5dc222e42.camel@kernel.org>
-In-Reply-To: <c84254c0164de551189a1f92ddec71f5dc222e42.camel@kernel.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 19 Feb 2025 14:25:59 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWNQfmNgMBkkMezeUt573fczzyf7FhXKEo7621xuhWC4Q@mail.gmail.com>
-X-Gm-Features: AWEUYZn4XOlU3xEA8NygLrT4kEbl_JLjkhKpcGEqNeKU7F_TibfeVbW1m0EArKo
-Message-ID: <CAMuHMdWNQfmNgMBkkMezeUt573fczzyf7FhXKEo7621xuhWC4Q@mail.gmail.com>
-Subject: Re: Rust kernel policy
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Dave Airlie <airlied@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Christoph Hellwig <hch@infradead.org>, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, 
-	rust-for-linux <rust-for-linux@vger.kernel.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Greg KH <gregkh@linuxfoundation.org>, 
-	linux-kernel@vger.kernel.org, ksummit@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 05/10] dt-bindings: display/lvds-codec: add
+ ti,sn65lvds822
+To: Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>
+Cc: devicetree@vger.kernel.org, imx@lists.linux.dev,
+ Frank Li <Frank.li@nxp.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Jonas Karlman <jonas@kwiboo.se>,
+ "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Oleksij Rempel <o.rempel@pengutronix.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Oleksij Rempel
+ <o.rempel@pengutronix.de>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Thierry Reding <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>
+References: <20250106-skov-dt-updates-v2-0-4504d3f00ecb@pengutronix.de>
+ <20250106-skov-dt-updates-v2-5-4504d3f00ecb@pengutronix.de>
+Content-Language: en-US
+From: Ahmad Fatoum <a.fatoum@pengutronix.de>
+In-Reply-To: <20250106-skov-dt-updates-v2-5-4504d3f00ecb@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi Jarkko,
+Dear DRM bridge maintainers,
 
-On Wed, 19 Feb 2025 at 12:39, Jarkko Sakkinen <jarkko@kernel.org> wrote:
-> On Wed, 2025-02-19 at 16:35 +1000, Dave Airlie wrote:
-> > On Wed, 19 Feb 2025 at 16:20, Jarkko Sakkinen <jarkko@kernel.org>
-> > wrote:
-> > > On Tue, 2025-02-18 at 13:22 -0800, Boqun Feng wrote:
-> > > > FWIW, usually Rust code has doc tests allowing you to run it with
-> > > > kunit,
-> > > > see:
-> > > >
-> > > >       https://docs.kernel.org/rust/testing.html
-> > >
-> > > I know this document and this was what I used to compile DMA
-> > > patches.
-> > > Then I ended up into "no test, no go" state :-)
-> > >
-> > > I put this is way. If that is enough, or perhaps combined with
-> > > submitting-patches.rst, why this email thread exists?
-> >
-> > There is users for the DMA stuff (now there should be some more
-> > tests), the problem is posting the users involves all the precursor
-> > patches for a bunch of other subsystems,
-> >
-> > There's no nice way to get this all bootstrapped, two methods are:
-> >
-> > a) posting complete series crossing subsystems, people get pissed off
-> > and won't review because it's too much
-> > b) posting series for review that don't have a full user in the
-> > series, people get pissed off because of lack of users.
-> >
-> > We are mostly moving forward with (b) initially, this gets rust folks
-> > to give reviews and point out any badly thought out rust code, and
-> > give others some ideas for what the code looks like and that it
-> > exists
-> > so others don't reinvent the wheel.
-> >
-> > Maybe we can add more rust tests to that particular patch series? but
-> > this is the wrong thread to discuss it, so maybe ask on that thread
-> > rather on this generic thread.
->
-> Here's one way to do it:
->
-> 1. Send the patch set as it is.
+On 06.01.25 17:06, Ahmad Fatoum wrote:
+> Add compatible strings for TI SN65LVDS822, a FlatLink LVDS receiver.
+> 
+> Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
 
-You mean the series from b) above, right?
-(To be repeated for each subsystem for which you have such a series).
+Shawn has asked that the DT or display maintainers take this one patch
+through their tree. He has already applied the remainder of the series.
 
-> 2. Point out to Git tree with branch containing the patches + patches
->    for e.g. driver (hopefully for something that QEMU is able to emulate)
->    and other stuff/shenanigans that allows to test them.
+Can you take a look? DT maintainers already acked it.
 
-Exactly.
+Thanks,
+Ahmad
 
-Gr{oetje,eeting}s,
+> ---
+> v1 -> v2:
+>   - Add Rob's Acked-by
+> 
+> To: Andrzej Hajda <andrzej.hajda@intel.com> (maintainer:DRM DRIVERS FOR BRIDGE CHIPS)
+> To: Neil Armstrong <neil.armstrong@linaro.org> (maintainer:DRM DRIVERS FOR BRIDGE CHIPS)
+> To: Robert Foss <rfoss@kernel.org> (maintainer:DRM DRIVERS FOR BRIDGE CHIPS)
+> Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com> (reviewer:DRM DRIVERS FOR BRIDGE CHIPS,in file)
+> Cc: Jonas Karlman <jonas@kwiboo.se> (reviewer:DRM DRIVERS FOR BRIDGE CHIPS)
+> Cc: Jernej Skrabec <jernej.skrabec@gmail.com> (reviewer:DRM DRIVERS FOR BRIDGE CHIPS)
+> Cc: David Airlie <airlied@gmail.com> (maintainer:DRM DRIVERS)
+> Cc: Simona Vetter <simona@ffwll.ch> (maintainer:DRM DRIVERS)
+> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com> (maintainer:DRM DRIVERS AND MISC GPU PATCHES)
+> Cc: Maxime Ripard <mripard@kernel.org> (maintainer:DRM DRIVERS AND MISC GPU PATCHES)
+> Cc: Thomas Zimmermann <tzimmermann@suse.de> (maintainer:DRM DRIVERS AND MISC GPU PATCHES)
+> Cc: dri-devel@lists.freedesktop.org (open list:DRM DRIVERS)
+> ---
+>  Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml b/Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml
+> index 6ceeed76e88ece6d86ecd6588ead7a65362dfe62..0487bbffd7f7c4bcce3f71df19548d601715fb98 100644
+> --- a/Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml
+> +++ b/Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml
+> @@ -41,6 +41,7 @@ properties:
+>            - enum:
+>                - ti,ds90cf364a # For the DS90CF364A FPD-Link LVDS Receiver
+>                - ti,ds90cf384a # For the DS90CF384A FPD-Link LVDS Receiver
+> +              - ti,sn65lvds822  # For the SN65LVDS822 FlatLink LVDS Receiver
+>                - ti,sn65lvds94 # For the SN65DS94 LVDS serdes
+>            - const: lvds-decoder # Generic LVDS decoders compatible fallback
+>        - enum:
+> 
 
-                        Geert
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
