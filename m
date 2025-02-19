@@ -1,64 +1,47 @@
-Return-Path: <linux-kernel+bounces-522110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19018A3C61F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:25:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D1A3A3C604
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:21:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 996F43B562A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:25:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 405C23A94E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:21:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C52542144C9;
-	Wed, 19 Feb 2025 17:25:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2B3E2144A1;
+	Wed, 19 Feb 2025 17:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bUkMQ/Dx"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ddjY5H2g"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CA1C286284;
-	Wed, 19 Feb 2025 17:25:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AEFE286284;
+	Wed, 19 Feb 2025 17:21:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739985952; cv=none; b=i/QXMsjWPYEYRt1Hv8k4eX16uXTNeaSdb+3tjE87zikQK8yn8wvCEwGOMedX3QyBMp0MHr5EMP9HYc5TtiD6mXaA8xhreiQv8F6p2SBDkV9Sq1qqp5IwqSoPjFpnpYjEYTpFSaC2TzZ2QG2HWtW6AwnAMkGQCxuxtUmssWXS+ME=
+	t=1739985668; cv=none; b=CNF96jRmBMPzxABAltJ06ptpXjKAVKwSnihRu+N8UQtWIXNfW5uxtZ6tOfU++00rX43FewsSopPKT0qnHS88KojO9ePkKPr4TxRwxUvv0nOVZ8I00+UtsIVY1eUG6l+1CyrpLuDwgtw1HsDrVZzuaMj+hxaJIQLbSnDhbsTkUh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739985952; c=relaxed/simple;
-	bh=9JHKrilHo2Kinz4pnuf983yiSc2MnI+9wUWr1Zn9CMk=;
+	s=arc-20240116; t=1739985668; c=relaxed/simple;
+	bh=ov+u5w/5fC+8oMPN7+g0AbEGhh+S1mUoX5U15HsZ72o=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H0jcKnuc6CbWe9kBoyFmwyPH0gSvYuVxohWvtt4Uo+10J/232i9hQ0Iu068iehuIBWKjunJ96mnWrmrNaoYd18vgO5k6MEtRTLSQvg9isdv1DPQ62BX4rF+siEEofRzTbXT5XUs0a5bgPAMKmbYGprYfueikuL9pKhygpSZzX1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bUkMQ/Dx; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739985951; x=1771521951;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=9JHKrilHo2Kinz4pnuf983yiSc2MnI+9wUWr1Zn9CMk=;
-  b=bUkMQ/DxVhwSw6LpqYroDF/uJ/Td4Rp/6F/lj+GbDpP7XlrCwr/X3RqD
-   02E2+P9aN5l7uPl8xl2JJTzxCpZzTQJEst20E0DpEZhpHv4L8hDxJdZ2H
-   b2Nndl0Y9Epgxuz9QecYyyj8UST0SPj0wmM9pucGqeZJut34P2opcaMTd
-   LpXqXHiQimrcrm7Hy2ir1sTXcSxdkzVEf0dy8lcHYxlMPejHt6dbsjRQD
-   HgsnzRzvR5Vqqy4M6EWo5jDQudphxdWK4UAC2fTzznre2ZXGHfzdJh80o
-   fKLeXlbfQjvOdqFmTFmcqVOcBjuhRhqGX3ijwbVbqSvonj3A7wmWEnOfj
-   Q==;
-X-CSE-ConnectionGUID: d6ObvQyZTsefWACBJmkTJw==
-X-CSE-MsgGUID: 3gyRxBb9Ruit187z+P3Xig==
-X-IronPort-AV: E=McAfee;i="6700,10204,11350"; a="58279437"
-X-IronPort-AV: E=Sophos;i="6.13,299,1732608000"; 
-   d="scan'208";a="58279437"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 09:25:50 -0800
-X-CSE-ConnectionGUID: HQJrQhxVRSuFpHD4Og5x0w==
-X-CSE-MsgGUID: szGNfWYnRDCIz4FZq7ecnw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,299,1732608000"; 
-   d="scan'208";a="115306445"
-Received: from inaky-mobl1.amr.corp.intel.com (HELO [10.125.110.11]) ([10.125.110.11])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 09:21:11 -0800
-Message-ID: <8cbe06d8-2715-497b-85eb-73a317cd2a42@intel.com>
-Date: Wed, 19 Feb 2025 10:21:02 -0700
+	 In-Reply-To:Content-Type; b=Tn/IGmrLLWIbHs34UqDccWGWiP2ab5WC3Y40zFJhDC/Bgyy0R+Jh2eod/oPJuf4FVRuXlO7oiu1numFKLviVRx9Vw9P7MHFAugac72KjPjS0WygbjzwbhVVhzbSV9ouPaLK/g0xnCyjJVQMYCMagqSKXofNA0p9X5d/z8oxqVS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ddjY5H2g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AEA7C4CED1;
+	Wed, 19 Feb 2025 17:21:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739985667;
+	bh=ov+u5w/5fC+8oMPN7+g0AbEGhh+S1mUoX5U15HsZ72o=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ddjY5H2gWfTW5YwRCxyJV9CWSepJjZTICyTk07K9DUtj+yeVFHNvc6fOag0o9SUJ+
+	 I+wuk1RwlU5tiP8cbZp++09mdD30s89q2UjmifyxpMtk6J7/VZ5jOP6PfFFuMGjSzK
+	 dib1HPv1FSWr2c3KeFtrc9RaOgKnK7vqDtyNu8Hqe6sgVfZygvpY9ViAE6jjbSjYS/
+	 bLOwmWsD+xD2KCyuPqicoLbEJsz06yMKT54QvpIxgytMphAwMMZki/BDqk/kCbS/Ug
+	 yeg7pc7SE1yFntGZUToQph+lp+xLc5zUbSkrMw5G51oJqm/krY4VkjmTaKIN8PI6b6
+	 I+V2qN3M/NW1A==
+Message-ID: <740725e2-0580-4a52-baa1-44e722d4ce35@kernel.org>
+Date: Wed, 19 Feb 2025 11:21:05 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,112 +49,74 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/7] cxl/core: Use guard() to drop goto pattern of
- cxl_dpa_alloc()
-To: Li Ming <ming.li@zohomail.com>, dave@stgolabs.net,
- jonathan.cameron@huawei.com, alison.schofield@intel.com,
- vishal.l.verma@intel.com, ira.weiny@intel.com, dan.j.williams@intel.com
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250217144828.30651-1-ming.li@zohomail.com>
- <20250217144828.30651-6-ming.li@zohomail.com>
+Subject: Re: [PATCH v3 01/18] cpufreq/amd-pstate: Invalidate cppc_req_cached
+ during suspend
+To: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
+Cc: Perry Yuan <perry.yuan@amd.com>,
+ Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>,
+ "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
+ <linux-kernel@vger.kernel.org>,
+ "open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>,
+ Mario Limonciello <mario.limonciello@amd.com>,
+ Miroslav Pavleski <miroslav@pavleski.net>
+References: <20250217220707.1468365-1-superm1@kernel.org>
+ <20250217220707.1468365-2-superm1@kernel.org>
+ <Z7VrADfrrPB7GtfX@BLRRASHENOY1.amd.com>
 Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250217144828.30651-6-ming.li@zohomail.com>
-Content-Type: text/plain; charset=UTF-8
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <Z7VrADfrrPB7GtfX@BLRRASHENOY1.amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-
-
-On 2/17/25 7:48 AM, Li Ming wrote:
-> In cxl_dpa_alloc(), some checking and operations need to be protected by
-> a rwsem called cxl_dpa_rwsem, so there is a goto pattern in
-> cxl_dpa_alloc() to release the rwsem. The goto pattern can be optimized
-> by using guard() to hold the rwsem.
+On 2/18/2025 23:24, Gautham R. Shenoy wrote:
+> Hello Mario,
 > 
-> Creating a new function called __cxl_dpa_alloc() to include all checking
-> and operations needed to be procted by cxl_dpa_rwsem. Using
-s/procted/protected/
-
-> guard(rwsem_write()) to hold cxl_dpa_rwsem at the beginning of the new
-> function.
 > 
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Signed-off-by: Li Ming <ming.li@zohomail.com>
-
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> ---
->  drivers/cxl/core/hdm.c | 29 ++++++++++++++---------------
->  1 file changed, 14 insertions(+), 15 deletions(-)
+> On Mon, Feb 17, 2025 at 04:06:50PM -0600, Mario Limonciello wrote:
+>> From: Mario Limonciello <mario.limonciello@amd.com>
+>>
+>> During resume it's possible the firmware didn't restore the CPPC request MSR
+>> but the kernel thinks the values line up. This leads to incorrect performance
+>> after resume from suspend.
+>>
+>> To fix the issue invalidate the cached value at suspend. During resume use
+>> the saved values programmed as cached limits.
+>>
+>> Reported-by: Miroslav Pavleski <miroslav@pavleski.net>
+>> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=217931
+>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+>> ---
+>>   drivers/cpufreq/amd-pstate.c | 5 ++++-
+>>   1 file changed, 4 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
+>> index f425fb7ec77d7..12fb63169a24c 100644
+>> --- a/drivers/cpufreq/amd-pstate.c
+>> +++ b/drivers/cpufreq/amd-pstate.c
+>> @@ -1611,7 +1611,7 @@ static int amd_pstate_epp_reenable(struct cpufreq_policy *policy)
+>>   					  max_perf, policy->boost_enabled);
+>>   	}
 > 
-> diff --git a/drivers/cxl/core/hdm.c b/drivers/cxl/core/hdm.c
-> index 874a791f8292..1edbf7873471 100644
-> --- a/drivers/cxl/core/hdm.c
-> +++ b/drivers/cxl/core/hdm.c
-> @@ -442,29 +442,25 @@ int cxl_dpa_set_mode(struct cxl_endpoint_decoder *cxled,
->  	return 0;
->  }
->  
-> -int cxl_dpa_alloc(struct cxl_endpoint_decoder *cxled, unsigned long long size)
-> +static int __cxl_dpa_alloc(struct cxl_endpoint_decoder *cxled, unsigned long long size)
->  {
->  	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
->  	resource_size_t free_ram_start, free_pmem_start;
-> -	struct cxl_port *port = cxled_to_port(cxled);
->  	struct cxl_dev_state *cxlds = cxlmd->cxlds;
->  	struct device *dev = &cxled->cxld.dev;
->  	resource_size_t start, avail, skip;
->  	struct resource *p, *last;
-> -	int rc;
->  
-> -	down_write(&cxl_dpa_rwsem);
-> +	guard(rwsem_write)(&cxl_dpa_rwsem);
->  	if (cxled->cxld.region) {
->  		dev_dbg(dev, "decoder attached to %s\n",
->  			dev_name(&cxled->cxld.region->dev));
-> -		rc = -EBUSY;
-> -		goto out;
-> +		return -EBUSY;
->  	}
->  
->  	if (cxled->cxld.flags & CXL_DECODER_F_ENABLE) {
->  		dev_dbg(dev, "decoder enabled\n");
-> -		rc = -EBUSY;
-> -		goto out;
-> +		return -EBUSY;
->  	}
->  
->  	for (p = cxlds->ram_res.child, last = NULL; p; p = p->sibling)
-> @@ -504,21 +500,24 @@ int cxl_dpa_alloc(struct cxl_endpoint_decoder *cxled, unsigned long long size)
->  		skip = skip_end - skip_start + 1;
->  	} else {
->  		dev_dbg(dev, "mode not set\n");
-> -		rc = -EINVAL;
-> -		goto out;
-> +		return -EINVAL;
->  	}
->  
->  	if (size > avail) {
->  		dev_dbg(dev, "%pa exceeds available %s capacity: %pa\n", &size,
->  			cxl_decoder_mode_name(cxled->mode), &avail);
-> -		rc = -ENOSPC;
-> -		goto out;
-> +		return -ENOSPC;
->  	}
->  
-> -	rc = __cxl_dpa_reserve(cxled, start, size, skip);
-> -out:
-> -	up_write(&cxl_dpa_rwsem);
-> +	return __cxl_dpa_reserve(cxled, start, size, skip);
-> +}
-> +
-> +int cxl_dpa_alloc(struct cxl_endpoint_decoder *cxled, unsigned long long size)
-> +{
-> +	struct cxl_port *port = cxled_to_port(cxled);
-> +	int rc;
->  
-> +	rc = __cxl_dpa_alloc(cxled, size);
->  	if (rc)
->  		return rc;
->  
+> You can also remove the tracing code from amd_pstate_epp_reenable(), i.e,
+> 
+> 	if (trace_amd_pstate_epp_perf_enabled()) {
+> 		trace_amd_pstate_epp_perf(cpudata->cpu, cpudata->highest_perf,
+> 					  cpudata->epp_cached,
+> 					  FIELD_GET(AMD_CPPC_MIN_PERF_MASK, cpudata->cppc_req_cached),
+> 					  max_perf, policy->boost_enabled);
+> 	}
+> 
+> Since amd_pstate_epp_update_limit() also has the the tracing code.
 
+Yeah; the tracing code gets updated later in the series.
+My plan is this commit is a minimal fix, and will go to 6.14, the rest 
+will be in 6.15.
+
+> 
+> The patch looks good to me otherwise.
+> 
+> Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
+> 
+
+Thanks!
 
