@@ -1,92 +1,95 @@
-Return-Path: <linux-kernel+bounces-521056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21A44A3B35D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:12:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52B88A3B35F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:12:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B134188C9D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:12:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01051172482
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:12:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DF301C5D52;
-	Wed, 19 Feb 2025 08:11:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BDE11C5D6F;
+	Wed, 19 Feb 2025 08:12:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="eA12FOcn"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 838921C54BE;
-	Wed, 19 Feb 2025 08:11:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xxib5cAQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B42B1C5D4D;
+	Wed, 19 Feb 2025 08:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739952708; cv=none; b=hEFcJUoaXQXgGNAz6S4CWOTq+3vPnJbQ2Qq4JGgGQsNEqhy8qK52vQlWYt/LJRN7PF0nD9j5KO5V23dXIdxRAIVjqcnuoFzUJkp03tCgRedxmqgxEoO3EKiHt3Ao9My80Y/Ho+d8sqoUBOvvL5yY6uJJHeP7hJEWZrrthHojXj0=
+	t=1739952719; cv=none; b=lERg8q56s6OCsrTGPfIoW/irFrs18wdxi7KNyIZ0f96RYtmYu1wdeiWMog6nATvYR3lMY1VFLT0EjZfJCSigbTHOE3Y2YiFK915OtXTH5lSDxyeoYKgc/RY5maG7OvNkxA/O5QPSDIGPMyocf+s1bYaBMz7nFt0l0yELeBgkCCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739952708; c=relaxed/simple;
-	bh=elTfSUpJus9Dh01GMc0HZ/JUEutfoMK622ZRG8wXE/I=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nC0s8D82ognkC+1xOdFo25Z82giKA4W2DwTAv6q/MB9ZQQL5s37hlQR7pSfq8B0877Ck4vydAhmqmws7fVht2kZRiygewh+Zm8dcoMRCuZQSfk4LkyYi8vu+80dRmpKTc6hPVwNdeqwVj+18N//CS3H22Puz6osja1h2Uq6mUWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=eA12FOcn; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=pIf9b
-	39a574X2F7JDmFa9sO7taNTVX9ScalIAYOkPeA=; b=eA12FOcnM6eKw6cUarc1H
-	PJwxMDweb5TS0nk0TMPsWFhF/sIRtPrlHNL8fFL5+JfiKgzi6Hv8ekaZ2VawjwT/
-	ZZfbHGP+KlkExh69yB26OMNL9w1lmIAPpCOjNrBQ/U3SUrxDooRZnQ47Ly9/2+rG
-	XLQgQR06cZ5YpQk9UgZxMc=
-Received: from wdhh6.sugon.cn (unknown [60.29.3.194])
-	by gzsmtp5 (Coremail) with SMTP id QCgvCgB3I7Q1krVnIyHBOQ--.44615S2;
-	Wed, 19 Feb 2025 16:11:34 +0800 (CST)
-From: Chaohai Chen <wdhh66@163.com>
-To: martin.petersen@oracle.com
-Cc: James.Bottomley@HansenPartnership.com,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chaohai Chen <wdhh66@163.com>
-Subject: [PATCH] scsi: fix missing lock protection
-Date: Wed, 19 Feb 2025 16:11:19 +0800
-Message-Id: <20250219081119.203295-1-wdhh66@163.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1739952719; c=relaxed/simple;
+	bh=Y5C9D/vFHq4rZfOa6tjHQU7RIYN7P5MhUkxZQyexirU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J1u3Ud6sV549U+GrUYm8AdYy7Svwd5Z8doO0l5Cjwj1+zEqJ/aC3zyoHu1zAyJgG4O8lrC3gHWl9yiHAm8CDtSydnn9PgRqVXocg0nTojExrN8FlWokeoVEvEv1UXw5hDedBvXo2X1W4vaNqvvFVDycF57ApKWmGXg8LuJE1Jb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xxib5cAQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13EA2C4CED1;
+	Wed, 19 Feb 2025 08:11:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739952719;
+	bh=Y5C9D/vFHq4rZfOa6tjHQU7RIYN7P5MhUkxZQyexirU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Xxib5cAQRAHBXgg/XZIb5FeRnQ76iLxR+ijhdedzKV62UHDAff2Uxg+sB7ZfMSm41
+	 lieXAdHOB6oaxNk7+MrR5O6UPFaaqvs4qZIYulVMdtAiNnCfNmUK9EGVd6nGEbj3IG
+	 38OI3b01ulJ+OLGmFSu+CRgsL5lMGfcspLdLTxzptWXN0ENocKkOa+G88BWM+qyLAB
+	 Uh69vR9QRo2K/F7SZOB9uIhqWvWP06LZDRt1nKCmlSQrFn8oBBP9KhFkLvwgZOrvu4
+	 xvqs7mBrui87AkpYW71HwO4Qc78agSRRrH/iHCRLQVimTGDCHtTFVvDXyx2ZyoSJmO
+	 v61Tf+FY2u2hg==
+Date: Wed, 19 Feb 2025 09:11:55 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kaustabh Chakraborty <kauschluss@disroot.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 5/5] clk: samsung: add exynos7870 CLKOUT support
+Message-ID: <20250219-discerning-affable-chital-1fdff4@krzk-bin>
+References: <20250219-exynos7870-pmu-clocks-v3-0-0d1e415e9e3a@disroot.org>
+ <20250219-exynos7870-pmu-clocks-v3-5-0d1e415e9e3a@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:QCgvCgB3I7Q1krVnIyHBOQ--.44615S2
-X-Coremail-Antispam: 1Uf129KBjvdXoW7Jry7Gr48tr4fGw48Xr1rtFb_yoWfXFX_ur
-	Zaqr97Jr4jkr43tws5tay3Gr9F9r4rXr1v9F1fta43Z3yrX3Wktas3tr43Z3y3CrWkCw15
-	Aw1DZryFyr1DGjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xR_L0ePUUUUU==
-X-CM-SenderInfo: hzgkxlqw6rljoofrz/1tbiKAz41me1j+ZBLQAAsd
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250219-exynos7870-pmu-clocks-v3-5-0d1e415e9e3a@disroot.org>
 
-async_scan_lock is designed to protect the scanning_hosts list,
-but there is no protection here.
+On Wed, Feb 19, 2025 at 12:20:32AM +0530, Kaustabh Chakraborty wrote:
+> Exynos7870's CLKOUT registers are the same as Exynos5's. Add the PMU
+> compatible to the existing CLKOUT ID list.
+> 
+> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+> ---
+>  drivers/clk/samsung/clk-exynos-clkout.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
+> index 2ef5748c139b37ca5429b9071ee0e06f44fcf28e..9a31b1c311b45096f1d680b6724571854c08725c 100644
+> --- a/drivers/clk/samsung/clk-exynos-clkout.c
+> +++ b/drivers/clk/samsung/clk-exynos-clkout.c
+> @@ -75,6 +75,9 @@ static const struct of_device_id exynos_clkout_ids[] = {
+>  	}, {
+>  		.compatible = "samsung,exynos5433-pmu",
+>  		.data = &exynos_clkout_exynos5,
+> +	}, {
+> +		.compatible = "samsung,exynos7870-pmu",
+> +		.data = &exynos_clkout_exynos5,
 
-Signed-off-by: Chaohai Chen <wdhh66@163.com>
----
- drivers/scsi/scsi_scan.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+I wonder why do we need to keep growing this list? All devices are
+compatible, aren't they?
 
-diff --git a/drivers/scsi/scsi_scan.c b/drivers/scsi/scsi_scan.c
-index 087fcbfc9aaa..9a90e6ba5603 100644
---- a/drivers/scsi/scsi_scan.c
-+++ b/drivers/scsi/scsi_scan.c
-@@ -151,8 +151,12 @@ int scsi_complete_async_scans(void)
- 	struct async_scan_data *data;
- 
- 	do {
--		if (list_empty(&scanning_hosts))
-+		spin_lock(&async_scan_lock);
-+		if (list_empty(&scanning_hosts)) {
-+			spin_unlock(&async_scan_lock);
- 			return 0;
-+		}
-+		spin_unlock(&async_scan_lock);
- 		/* If we can't get memory immediately, that's OK.  Just
- 		 * sleep a little.  Even if we never get memory, the async
- 		 * scans will finish eventually.
--- 
-2.34.1
+Do you use clkout, BTW?
+
+Best regards,
+Krzysztof
 
 
