@@ -1,150 +1,93 @@
-Return-Path: <linux-kernel+bounces-522533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A532A3CB90
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:36:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E46CA3CB9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:38:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0951D178578
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:36:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F24B189980A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 576AC2586EC;
-	Wed, 19 Feb 2025 21:35:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B2672586CF;
+	Wed, 19 Feb 2025 21:36:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="rIr77q9B"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF4BC2580EB
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 21:35:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="O/X3ZfTS"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E5C12580D3;
+	Wed, 19 Feb 2025 21:36:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740000943; cv=none; b=VKA8dzRfLq95cfhMHreuNVb9Qu35TEk7H6nATNou3awX/gjy+i0vsaHB7qHYKcuz0BKUD54Y0UnfccCSqsbzumQePuW+fikkMKt8bWIhvecW/50F8yq5KC0/QK63lcWRrBlfoXrcBCdqy9tgGCW4S2cRJviWBFxrPStHYyKCaIg=
+	t=1740001006; cv=none; b=J5yM33S/WhbwyP7EREIoTvI/4Gc/CLZiSmgWNsWMc7iCNfoPJ7W5BE9JlbjAqvR+SCaEcMmWOCVcdyxrxYXvib1oyOT9eHTaZgX50dMchnS1Vcanf5csDIEGnjXx0oBPkr8c6ZJ56vxnraUT0t017o0a56exUbgEU46wAja0fFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740000943; c=relaxed/simple;
-	bh=WsDGpL2fEviDXSUWkU+RRcxY5xlZyjNnyRn8isw5Jbw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=T4xfsoc9CtREwTG9I9YJ2D0nN+84g5t3eksVH6QPdVC0XzjOogQTVakMWnK8riwrJPLElcSLz1IYs/LLKhWNImXl6SDy2e+4PC+V+7sAutGyo3ZnkwjSahcqBsTfJT/wxpsTEcWKKa18pLbieNy9d5wcs2lgbw4jQpYX+NThX18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=rIr77q9B; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
-	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=aMp0X/kKH/xLP0BxZclKAhaRvsa7RWoi/0q4q55kxFc=; b=rIr77q9B5LxPxJh7jMvZAl/XZX
-	UviseiwzgTaV41nYBP7AVP7cQ7PeQiAm1ocoZmibLfvV+/wWgKmKKvQq/pHx3jkKTWePT8XLAPA5y
-	QU2b5+tKsqEAdJiI0ZOCsBCuUpV+pczr6EpuWQzJOcMtuuy+RUUI+K6DR2MK/2nixKtA2KFVmwlCB
-	HzkbdiOCoK/lEQmTZrQb0vmtkSYJjqw3kZnhJnpEvQNcYEqQn8sL8Nko37X3HX2CPLwIbRl7CiQhw
-	Mx3L38qYYFWgKQyACSB3MUjkNowrxUhXNxgdRHQN3x6kg9uUurOzehZu86LI1cigsFnrKFscTGxeX
-	WSdL6PEQ==;
-Received: from [191.204.194.148] (helo=localhost.localdomain)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1tkrj9-00F1SN-HI; Wed, 19 Feb 2025 22:35:37 +0100
-From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-To: Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?=27Christian=20K=C3=B6nig=27?= <christian.koenig@amd.com>,
-	Xinhui Pan <Xinhui.Pan@amd.com>,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	kernel-dev@igalia.com,
-	siqueira@igalia.com
-Cc: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-Subject: [PATCH 3/3] drm/amdgpu: Trigger a wedged event for every type of reset
-Date: Wed, 19 Feb 2025 18:35:17 -0300
-Message-ID: <20250219213517.281556-4-andrealmeid@igalia.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250219213517.281556-1-andrealmeid@igalia.com>
-References: <20250219213517.281556-1-andrealmeid@igalia.com>
+	s=arc-20240116; t=1740001006; c=relaxed/simple;
+	bh=eOIIOKhiW1Xu7b9qMPmsnDL7HrgT8rqstOwTWW9wsag=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=SzJXf1Zdk3qVuYMRG0RZR3d7tvo4zPfGVkR4imi1qeVKQJR3+lU8DvResFPfJK0aSjmoD5rx+LEMutvyM6zqF5foLEScOmvbfvHRJjgt4UfTrAsBZTqYk0cW/qBmmryTw0uYGkk/odQb1Sasav9wHlmerDQKRx09Fll/VwBmhdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=O/X3ZfTS; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from eahariha-devbox.internal.cloudapp.net (unknown [40.91.112.99])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 05EE22043DEB;
+	Wed, 19 Feb 2025 13:36:45 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 05EE22043DEB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1740001005;
+	bh=Yd7cXuhx3A67eG4TqzBUquDu4YnydVpvFJBPeMbis+g=;
+	h=From:Subject:Date:To:Cc:From;
+	b=O/X3ZfTSBFy3WXcpAdkLH/U0NQDg25LPLP8fXLuami4zHVXonCtT40a7iiMy3z4+3
+	 KfExHbnika6Eo+zPkPw34mWtQ34gJqWtemv1yzBBRty4ICZwy23RhAyrBi1Ga02vpM
+	 eG4WOsL2tyMdCiC4qvzXSn9q4x/WQWW+ApQTKP+0=
+From: Easwar Hariharan <eahariha@linux.microsoft.com>
+Subject: [PATCH 0/2] rdma: Converge on using secs_to_jiffies()
+Date: Wed, 19 Feb 2025 21:36:38 +0000
+Message-Id: <20250219-rdma-secs-to-jiffies-v1-0-b506746561a9@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOZOtmcC/x3MMQqAMAxA0atIZgNtxUGvIg7VJhrBVhoRQby7x
+ fEP7z+glIUU+uqBTJeopFjC1hXMq48LoYTS4IxrjbMd5rB7VJoVz4SbMBeNzvLUGTNRwwSFHpl
+ Y7n87jO/7AVeXZJpmAAAA
+X-Change-ID: 20250219-rdma-secs-to-jiffies-21fb900be3fe
+To: Yishai Hadas <yishaih@nvidia.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
+ Leon Romanovsky <leon@kernel.org>
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Easwar Hariharan <eahariha@linux.microsoft.com>
+X-Mailer: b4 0.14.2
 
-Instead of only triggering a wedged event for complete GPU resets,
-trigger for all types, like soft resets and ring resets. Regardless of
-the reset, it's useful for userspace to know that it happened because
-the kernel will reject further submissions from that app.
+This series converts users of msecs_to_jiffies() that either use the
+multiply pattern of either of:
+- msecs_to_jiffies(N*1000) or
+- msecs_to_jiffies(N*MSEC_PER_SEC)
 
-Signed-off-by: André Almeida <andrealmeid@igalia.com>
+where N is a constant or an expression, to avoid the multiplication.
+
+The conversion is made with Coccinelle with the secs_to_jiffies() script
+in scripts/coccinelle/misc. Attention is paid to what the best change
+can be rather than restricting to what the tool provides.
+
+This series is based on next-20250219
+
+Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_device.c |  3 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_job.c    | 16 +++++++++-------
- 2 files changed, 9 insertions(+), 10 deletions(-)
+Easwar Hariharan (2):
+      RDMA/mlx4: convert timeouts to secs_to_jiffies()
+      RDMA/mlx5: convert timeouts to secs_to_jiffies()
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-index 24ba52d76045..36738c1a5b59 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-@@ -6123,9 +6123,6 @@ int amdgpu_device_gpu_recover(struct amdgpu_device *adev,
- 
- 	atomic_set(&adev->reset_domain->reset_res, r);
- 
--	if (!r)
--		drm_dev_wedged_event(adev_to_drm(adev), DRM_WEDGE_RECOVERY_NONE);
--
- 	return r;
- }
- 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
-index 698e5799e542..1082b957e7b1 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
-@@ -91,8 +91,7 @@ static enum drm_gpu_sched_stat amdgpu_job_timedout(struct drm_sched_job *s_job)
- 	struct amdgpu_job *job = to_amdgpu_job(s_job);
- 	struct amdgpu_task_info *ti;
- 	struct amdgpu_device *adev = ring->adev;
--	int idx;
--	int r;
-+	int idx, ret = 0;
- 
- 	if (!drm_dev_enter(adev_to_drm(adev), &idx)) {
- 		dev_info(adev->dev, "%s - device unplugged skipping recovery on scheduler:%s",
-@@ -141,8 +140,8 @@ static enum drm_gpu_sched_stat amdgpu_job_timedout(struct drm_sched_job *s_job)
- 		 * we'll fall back to full GPU reset.
- 		 */
- 		drm_sched_wqueue_stop(&ring->sched);
--		r = amdgpu_ring_reset(ring, job->vmid);
--		if (!r) {
-+		ret = amdgpu_ring_reset(ring, job->vmid);
-+		if (!ret) {
- 			if (amdgpu_ring_sched_ready(ring))
- 				drm_sched_stop(&ring->sched, s_job);
- 			atomic_inc(&ring->adev->gpu_reset_counter);
-@@ -170,9 +169,9 @@ static enum drm_gpu_sched_stat amdgpu_job_timedout(struct drm_sched_job *s_job)
- 		 */
- 		set_bit(AMDGPU_SKIP_COREDUMP, &reset_context.flags);
- 
--		r = amdgpu_device_gpu_recover(ring->adev, job, &reset_context);
--		if (r)
--			dev_err(adev->dev, "GPU Recovery Failed: %d\n", r);
-+		ret = amdgpu_device_gpu_recover(ring->adev, job, &reset_context);
-+		if (ret)
-+			dev_err(adev->dev, "GPU Recovery Failed: %d\n", ret);
- 	} else {
- 		drm_sched_suspend_timeout(&ring->sched);
- 		if (amdgpu_sriov_vf(adev))
-@@ -180,6 +179,9 @@ static enum drm_gpu_sched_stat amdgpu_job_timedout(struct drm_sched_job *s_job)
- 	}
- 
- exit:
-+	if (!ret)
-+		drm_dev_wedged_event(adev_to_drm(adev), DRM_WEDGE_RECOVERY_NONE);
-+
- 	drm_dev_exit(idx);
- 	return DRM_GPU_SCHED_STAT_NOMINAL;
- }
+ drivers/infiniband/hw/mlx4/alias_GUID.c | 2 +-
+ drivers/infiniband/hw/mlx5/mr.c         | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+---
+base-commit: 8936cec5cb6e27649b86fabf383d7ce4113bba49
+change-id: 20250219-rdma-secs-to-jiffies-21fb900be3fe
+
+Best regards,
 -- 
-2.48.1
+Easwar Hariharan <eahariha@linux.microsoft.com>
 
 
