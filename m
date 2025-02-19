@@ -1,52 +1,58 @@
-Return-Path: <linux-kernel+bounces-521705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5178A3C12F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:05:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 925EBA3C13C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:06:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 169A81890DA8
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:00:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9077B17C4A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:00:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CE2F1EEA2C;
-	Wed, 19 Feb 2025 14:00:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="f7vKqKd9"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DBB41EEA31;
+	Wed, 19 Feb 2025 14:00:36 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 789171EDA3C;
-	Wed, 19 Feb 2025 14:00:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 182781E1A3B;
+	Wed, 19 Feb 2025 14:00:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739973611; cv=none; b=j1gsY6cWejYJ0ky94blXMReXnZX6d2nbktbkDlogxTumKF7Dt1jE2XrlezTBNSUereYDQo72Y3Bp6+m6qMzIUSMo+v+rdUH/jHprjinMqBJKstxnZMG+rkr1pIf2Z8lCBuLeP4EfTTw5wBshMLHRk/au2LHmlz9ii7/ZLk0DMOU=
+	t=1739973636; cv=none; b=fN60iAVogz15l9nFLg04/CIrRDOsYUBd/WGEQMCHL5csu9tRYg1baJ1iUxDD+nkOUnNMVZ5eMmcnSqhH8k/0P0CiESqsLM3JpkSS52WxMEBHa1RHZRsWu8rO1QyjYnQXOACZbiyZ0NBF4077yabm+G9vXB7Uo3tW4oPQJsW3xGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739973611; c=relaxed/simple;
-	bh=EY09SFdHtRPeZXAlbD6hFzotyh8FFxTZ+cq5uNKGjmU=;
+	s=arc-20240116; t=1739973636; c=relaxed/simple;
+	bh=X+M3x8vareZ1kGwEPWZ3GJcEu+0g9qcC+YP820OHeSY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jMMcfHdkiZBGq+I/W+rjCGbrqKNne8u+tJKGEo1HkHHpaPgrQPuEAOreRR/8zfU+3hTSRzdmpEu35qOh9xov/EWOuae6R5ORH2Nl3KL8j/95SvirXhZVwJu9bVWg8d8A1jgRrQglM1ZbXOLzVknJd3qQWdcsw8xg6f5fhTydcAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=f7vKqKd9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 810B6C4CED1;
-	Wed, 19 Feb 2025 14:00:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1739973609;
-	bh=EY09SFdHtRPeZXAlbD6hFzotyh8FFxTZ+cq5uNKGjmU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=f7vKqKd9crmk6J/X1lgZNe9GrTEwfUdDsSd+YEISVB3HlKRbmwWWmm6uJmYXdSWZK
-	 CTBvqoNYHBhQSWhFQW2uWqiHc904G50ret2XU742tpzFVY+9sl02fLMMPJNj2aFrPP
-	 8W+clV9WLQQV3Jfqd/8LLEr9aPAXiiSPH9sYptA4=
-Date: Wed, 19 Feb 2025 15:00:07 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: adamsimonelli@gmail.com
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jiri Slaby <jirislaby@kernel.org>
-Subject: Re: [PATCH v2 1/2] ttynull: Add an option to allow ttynull to be
- used as a console device
-Message-ID: <2025021920-uproot-antsy-e2c7@gregkh>
-References: <20250217040748.2017975-1-adamsimonelli@gmail.com>
- <20250217040748.2017975-2-adamsimonelli@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PdJnZu0djCyCsV5qbTbTWtyRNZyTcjcbyL1VAOyaF9nbvBSXaKoFJOE1aSDFzJqQIx6r3ew/RNZFm7CGUFBqrp4HFmtIu0z7ZasToxsXB6X+b9oWV8AlSgX5ICdZkR+MZDHl/A4r/bbmZVSDcaJ02r0USR4DSL30JhvOJqNUD5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B8DAC4CED1;
+	Wed, 19 Feb 2025 14:00:30 +0000 (UTC)
+Date: Wed, 19 Feb 2025 14:00:27 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org,
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	hargar@microsoft.com, broonie@kernel.org,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Herbert Xu <herbert@gondor.apana.org.au>, willy@infradead.org,
+	Pankaj Raghav <p.raghav@samsung.com>,
+	Yang Shi <yang@os.amperecomputing.com>,
+	David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH 6.6 000/389] 6.6.76-rc2 review
+Message-ID: <Z7Xj-zIe-Sa1syG7@arm.com>
+References: <20250206155234.095034647@linuxfoundation.org>
+ <CA+G9fYvKzV=jo9AmKH2tJeLr0W8xyjxuVO-P+ZEBdou6C=mKUw@mail.gmail.com>
+ <CA+G9fYtqBxt+JwSLCcVBchh94GVRhbo9rTP26ceJ=sf4MDo61Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,93 +61,97 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250217040748.2017975-2-adamsimonelli@gmail.com>
+In-Reply-To: <CA+G9fYtqBxt+JwSLCcVBchh94GVRhbo9rTP26ceJ=sf4MDo61Q@mail.gmail.com>
 
-On Sun, Feb 16, 2025 at 11:07:47PM -0500, adamsimonelli@gmail.com wrote:
-> From: Adam Simonelli <adamsimonelli@gmail.com>
+On Mon, Feb 17, 2025 at 05:00:43PM +0530, Naresh Kamboju wrote:
+> On Sat, 8 Feb 2025 at 16:54, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+[...]
+> We observed a kernel warning on QEMU-ARM64 and FVP while running the
+> newly added selftest: arm64: check_hugetlb_options. This issue appears
+> on 6.6.76 onward and 6.12.13 onward, as reported in the stable review [1].
+> However, the test case passes successfully on stable 6.13.
 > 
-> Add a config option CONFIG_NULL_TTY_CONSOLE that will have ttynull be
-> initialized by console_initcall() and selected as a possible console
-> device.
+> The selftests: arm64: check_hugetlb_options test was introduced following
+> the recent upgrade of kselftest test sources to the stable 6.13 branch.
+> As you are aware, LKFT runs the latest kselftest sources (from stable
+> 6.13.x) on 6.12.x, 6.6.x, and older kernels for validation purposes.
 > 
-> Signed-off-by: Adam Simonelli <adamsimonelli@gmail.com>
-> ---
->  drivers/tty/Kconfig   | 18 +++++++++++++++++-
->  drivers/tty/ttynull.c | 16 +++++++++++++++-
->  2 files changed, 32 insertions(+), 2 deletions(-)
+> From Anders' bisection results, we identified that the missing patch on
+> 6.12 is likely causing this regression:
 > 
-> diff --git a/drivers/tty/Kconfig b/drivers/tty/Kconfig
-> index 63a494d36a1f..afe4e7722d4c 100644
-> --- a/drivers/tty/Kconfig
-> +++ b/drivers/tty/Kconfig
-> @@ -383,7 +383,23 @@ config NULL_TTY
->  	  available or desired.
->  
->  	  In order to use this driver, you should redirect the console to this
-> -	  TTY, or boot the kernel with console=ttynull.
-> +	  TTY, boot the kernel with console=ttynull, or enable
-> +	  CONFIG_NULL_TTY_CONSOLE.
-> +
-> +	  If unsure, say N.
-> +
-> +config NULL_TTY_CONSOLE
-> +        bool "Supports /dev/ttynull as a console automatically"
-> +        depends on NULL_TTY=y && !VT_CONSOLE
-> +	help
-> +	  Say Y here if you want the NULL TTY to be used as a /dev/console
-> +	  device.
-> +
-> +	  This is useful for userspace applications that expect a working
-> +	  console device, without changing the kernel boot options, such as a
-> +	  distribuition or environment that historically had CONFIG_VT_CONSOLE
-> +	  enabled, and have now disabled it, but still need /dev/console to be
-> +	  working for userspace applications.
->  
->  	  If unsure, say N.
->  
-> diff --git a/drivers/tty/ttynull.c b/drivers/tty/ttynull.c
-> index 6b2f7208b564..8ba629ae426b 100644
-> --- a/drivers/tty/ttynull.c
-> +++ b/drivers/tty/ttynull.c
-> @@ -57,6 +57,10 @@ static struct tty_driver *ttynull_device(struct console *c, int *index)
->  static struct console ttynull_console = {
->  	.name = "ttynull",
->  	.device = ttynull_device,
-> +#ifdef CONFIG_NULL_TTY_CONSOLE
-> +	.index = -1,
-> +	.flags = CON_PRINTBUFFER,
-> +#endif
+> First fixed commit:
+> [25c17c4b55def92a01e3eecc9c775a6ee25ca20f]
+> hugetlb: arm64: add MTE support
 
-There's no way to do this without #ifdef in the .c files?
+I wouldn't backport this and it's definitely not a fix for the problem
+reported.
 
->  };
->  
->  static int __init ttynull_init(void)
-> @@ -90,10 +94,20 @@ static int __init ttynull_init(void)
->  	}
->  
->  	ttynull_driver = driver;
-> -	register_console(&ttynull_console);
-> +	if (!console_is_registered(&ttynull_console))
-> +		register_console(&ttynull_console);
-> +
+> Could you confirm whether this patch is eligible for backporting to
+> 6.12 and 6.6 kernels?
+> If backporting is not an option, we will need to skip running this
+> test case on older kernels.
+> 
+> > 1)
+> > Regression on qemu-arm64 and FVP noticed this kernel warning running
+> > selftests: arm64: check_hugetlb_options test case on 6.6.76-rc1 and
+> > 6.6.76-rc2.
+> >
+> > Test regression: WARNING-arch-arm64-mm-copypage-copy_highpage
+> >
+> > ------------[ cut here ]------------
+> > [   96.920028] WARNING: CPU: 1 PID: 3611 at
+> > arch/arm64/mm/copypage.c:29 copy_highpage
+> > (arch/arm64/include/asm/mte.h:87)
+> > [   96.922100] Modules linked in: crct10dif_ce sm3_ce sm3 sha3_ce
+> > sha512_ce sha512_arm64 fuse drm backlight ip_tables x_tables
+> > [   96.925603] CPU: 1 PID: 3611 Comm: check_hugetlb_o Not tainted 6.6.76-rc2 #1
+> > [   96.926956] Hardware name: linux,dummy-virt (DT)
+> > [   96.927695] pstate: 43402009 (nZcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+> > [   96.928687] pc : copy_highpage (arch/arm64/include/asm/mte.h:87)
+> > [   96.929037] lr : copy_highpage
+> > (arch/arm64/include/asm/alternative-macros.h:232
+> > arch/arm64/include/asm/cpufeature.h:443
+> > arch/arm64/include/asm/cpufeature.h:504
+> > arch/arm64/include/asm/cpufeature.h:814 arch/arm64/mm/copypage.c:27)
+> > [   96.929399] sp : ffff800088aa3ab0
+> > [   96.930232] x29: ffff800088aa3ab0 x28: 00000000000001ff x27: 0000000000000000
+> > [   96.930784] x26: 0000000000000000 x25: 0000ffff9b800000 x24: 0000ffff9b9ff000
+> > [   96.931402] x23: fffffc0003257fc0 x22: ffff0000c95ff000 x21: ffff0000c93ff000
+> > [   96.932054] x20: fffffc0003257fc0 x19: fffffc000324ffc0 x18: 0000ffff9b800000
+> > [   96.933357] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
+> > [   96.934091] x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
+> > [   96.935095] x11: 0000000000000000 x10: 0000000000000000 x9 : 0000000000000000
+> > [   96.935982] x8 : 0bfffc0001800000 x7 : 0000000000000000 x6 : 0000000000000000
+> > [   96.936536] x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
+> > [   96.937089] x2 : 0000000000000000 x1 : ffff0000c9600000 x0 : ffff0000c9400080
+> > [   96.939431] Call trace:
+> > [   96.939920] copy_highpage (arch/arm64/include/asm/mte.h:87)
+> > [   96.940443] copy_user_highpage (arch/arm64/mm/copypage.c:40)
+> > [   96.940963] copy_user_large_folio (mm/memory.c:5977 mm/memory.c:6109)
+> > [   96.941535] hugetlb_wp (mm/hugetlb.c:5701)
+> > [   96.941948] hugetlb_fault (mm/hugetlb.c:6237)
+> > [   96.942344] handle_mm_fault (mm/memory.c:5330)
+> > [   96.942794] do_page_fault (arch/arm64/mm/fault.c:513
+> > arch/arm64/mm/fault.c:626)
+> > [   96.943341] do_mem_abort (arch/arm64/mm/fault.c:846)
+> > [   96.943797] el0_da (arch/arm64/kernel/entry-common.c:133
+> > arch/arm64/kernel/entry-common.c:144
+> > arch/arm64/kernel/entry-common.c:547)
+> > [   96.944229] el0t_64_sync_handler (arch/arm64/kernel/entry-common.c:0)
+> > [   96.944765] el0t_64_sync (arch/arm64/kernel/entry.S:599)
+> > [   96.945383] ---[ end trace 0000000000000000 ]---
 
-Why do you register this twice?
+Prior to commit 25c17c4b55de ("hugetlb: arm64: add mte support"), there
+was no hugetlb support with MTE, so the above code path should not
+happen - it seems to get a PROT_MTE hugetlb page which should have been
+prevented by arch_validate_flags(). Or something else corrupts the page
+flags and we end up with some random PG_mte_tagged set.
 
-> +	return 0;
-> +}
->  
-> +#ifdef CONFIG_NULL_TTY_CONSOLE
-> +static int __init ttynull_register(void)
-> +{
-> +	register_console(&ttynull_console);
+Does this happen with vanilla 6.6? I wonder whether we always had this
+issue, only that we haven't noticed until the hugetlb MTE kselftest.
+There were some backports in this area but I don't see how they would
+have caused this.
 
-Here, why is this registered again?
-
-You should only have to do this once, and not need to check before
-trying again, right?
-
-thanks,
-
-greg k-h
+-- 
+Catalin
 
