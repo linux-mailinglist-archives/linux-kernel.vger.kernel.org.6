@@ -1,178 +1,197 @@
-Return-Path: <linux-kernel+bounces-521828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDC4BA3C2C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:56:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84027A3C2D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:58:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A928A188FD90
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:56:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D5317A5377
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:57:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF72C1F30DD;
-	Wed, 19 Feb 2025 14:56:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0C581F2B90;
+	Wed, 19 Feb 2025 14:58:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="JiDQbEx9";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="u/C2NemX"
-Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e80Hwn69"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE85C1B983E;
-	Wed, 19 Feb 2025 14:56:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7D511EEA54;
+	Wed, 19 Feb 2025 14:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739976987; cv=none; b=B4YpJOyQJjC9yTnJZ0sqX8JYjVHQHz6/+t5wCw4LvW/aiZ84awTEfTgvlwv5FZavABqf70rh46rKXf1SaPfPQitipc038Vx8T/jDXOORSTEDPdUs8+87HJr/sg6IepGxVg+cHoFV65WeQJdq63EdNyi9yIfs6cRgnwSNUoaEjjw=
+	t=1739977118; cv=none; b=ABWRpLYb4dBE4vlL2l7T7CBsF4bZG89LKNevAnbSqj1vXjEcsmpH8b5ARjtH+3Ist+c/0+VYuCnxLrUsc9+JB/U2t/5WtwhGITLyiufoRp2qU9B9xfPuBxWI812zAzwYpr5dll+6owz0zV1B3Q2PMQwDlwTrNAqSDGOSMzqoxHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739976987; c=relaxed/simple;
-	bh=hR3pO6KTteWkTo9C497TPWT6ySgwTGHJOqundddEj3w=;
+	s=arc-20240116; t=1739977118; c=relaxed/simple;
+	bh=oYk4H1atTJGw8DMfE19z+D1ECLWGgsgD/yiuFGFYVBo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WRfA98xl6z/YlXjDY83J25cuMZS0C8sDm6cRsmpi6G62gnO56+4xP5w3X90EpsE6npGA/mSMFjNTGfr7rkmt+nK3Pr5CToyBmCZw2yP/pwg0XanM2SKI0oq6Au35pNgqmAwVW3lmTY3kx5JR2ZG7SMQa+Cjx9DoIwoCgZfB+AIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=JiDQbEx9; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=u/C2NemX; arc=none smtp.client-ip=202.12.124.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfout.stl.internal (Postfix) with ESMTP id CD293114010E;
-	Wed, 19 Feb 2025 09:56:23 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-04.internal (MEProxy); Wed, 19 Feb 2025 09:56:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1739976983;
-	 x=1740063383; bh=P6i6jY4QW85OEFrlOLbVW616jftQqlo8JpydnCZnZu4=; b=
-	JiDQbEx9Hby5iwPE7St7dyppXw0T9m17PG4IQo7+d1ja5E6kKwrLyM2fkrBZy4pp
-	tuyeObVy7REtziyV9BCJOG6KJ+eNpZnJVT0H22KsARf/XzHlQxWLbAt2ZmE8LRbt
-	HXgWFyP+CDK69GF2pc37CYBXixJ6oNGzIwXEpqY8lt0i8F/6rjCmVgGY9YHQcYe2
-	RiUvesslUpmU/NMb7e+Efun0V14cyVtYpZ+Sp+vsYnCsHcbHEtH4Wu0M3al1dbco
-	zbQ+pY2vBYf+SScXMNHI9wLK2UC1ALCyPpn207FjQj+9JuWZpywFRDoqAShmgwLE
-	UHkSDhqdBfWfVxqayYU8vA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1739976983; x=
-	1740063383; bh=P6i6jY4QW85OEFrlOLbVW616jftQqlo8JpydnCZnZu4=; b=u
-	/C2NemXGDCSG73LZZWkHp1g0uTO3PgRyLFCnxBInzJc92foqZzS44tm3JgWDg2nG
-	Oza75t8icnQKSe1zP8gnntVsb5NQ1kbxupxABpkYtwztm+rIY/+EqiXQHGjLDxnQ
-	Apj/+6EpaB/O8Sxuz7L8utKzbK3g8jwffGuxAXICLbZgIm8AIvDSMq+tbN8lddnn
-	IBiOWzJ60oRKE4yWg4GJU7aAdgcEJFfw6gjoBsElzYY/H5gLipxwXYQo59HXYjTv
-	i8oltXkQTL9nnOcYNKDfkgLaQhtprheYrWJU2j9u1XXijCFAPxR/3mamvzCmF+fY
-	haYezdUrYb+t5sszeU/Yg==
-X-ME-Sender: <xms:F_G1Z-S_tAYD_Jaf2afpRZpM0Q2tAjk4wdgKFf3oHdNeCYBMx6l-9w>
-    <xme:F_G1ZzyogiW0j2tqgVyJx1A-NXYsxjiWmMYW3EdBS6oBWPnCp7BwagXWGdQD1Q00v
-    39-j9vXHqH-YMa1v8M>
-X-ME-Received: <xmr:F_G1Z73hd3JIS3KrdtIwu13rhdUJ9wJuipt_4WDMI1x3MhCS8zc-eSn2DKlTBYO0VhNsQikVqG2djTWlKAIUpbBwy_jx6LQVLA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeigeehhecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddt
-    jeenucfhrhhomheppfhikhhlrghsucfunpguvghrlhhunhguuceonhhikhhlrghsrdhsoh
-    guvghrlhhunhgusehrrghgnhgrthgvtghhrdhsvgeqnecuggftrfgrthhtvghrnhepveet
-    gedtvddvhfdtkeeghfeffeehteehkeekgeefjeduieduueelgedtheekkeetnecuvehluh
-    hsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhhikhhlrghsrdhs
-    ohguvghrlhhunhgusehrrghgnhgrthgvtghhrdhsvgdpnhgspghrtghpthhtohepledpmh
-    houggvpehsmhhtphhouhhtpdhrtghpthhtohepthhomhhirdhvrghlkhgvihhnvghnodhr
-    vghnvghsrghssehiuggvrghsohhnsghorghrugdrtghomhdprhgtphhtthhopehmtghhvg
-    hhrggssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsrghkrghrihdrrghilhhushes
-    lhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehlihhnuhigqdhmvgguihgrse
-    hvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrhgvnhgvshgr
-    shdqshhotgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqd
-    hkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehmtghhvghh
-    rggsodhhuhgrfigviheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhgruhhrvghnth
-    drphhinhgthhgrrhhtsehiuggvrghsohhnsghorghrugdrtghomhdprhgtphhtthhopehj
-    rggtohhpohdrmhhonhguihesihguvggrshhonhgsohgrrhgurdgtohhm
-X-ME-Proxy: <xmx:F_G1Z6BX-rbQrIA_xv0cquHCLkK6ZeXpjLNf3X8oGwmVNOdoXF61dg>
-    <xmx:F_G1Z3jTFJehWNHOGUFYfsYR-7BVSMv3OaVOr93NeRNtpP22OCOlZQ>
-    <xmx:F_G1Z2p2Yo2vRj8P4p7AU-FK8WpkIhBVUpoFxEBPi7ALIDJMah3Z9w>
-    <xmx:F_G1Z6g4pTEYgm7FF_5M6-cux-MiFNuV9mqV_TCqNx4-5XkAbpyvlw>
-    <xmx:F_G1Z2Og1DtaBKxCngzjq0qPmhAa8dqQSHDhkFuyWqGkXx-SRw71C-Qt>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 19 Feb 2025 09:56:22 -0500 (EST)
-Date: Wed, 19 Feb 2025 15:56:20 +0100
-From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Subject: Re: [PATCH 00/18] media: rcar: Streams support
-Message-ID: <20250219145620.GB515486@ragnatech.se>
-References: <20250219-rcar-streams-v1-0-f1b93e370aab@ideasonboard.com>
- <20250219142256.GA512344@ragnatech.se>
- <f3795f3b-8d38-40cd-abcc-723b18d6dc70@ideasonboard.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uEW6nKpDpUeMwibytK4LYPyzD+9tQ2g9qqpxcLGTJfrK89/iKK+iz/vqEbimhrvtIPTsLsr/TV0jilYR1lqkCsyRHTGROf05rlaet80m75LEEj4eOc/ARvioCenVdYQMQTAR+qFAR3FZchvhukO8z3YXhO4hJ39d0bSytOXC6GM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e80Hwn69; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5881CC4CED1;
+	Wed, 19 Feb 2025 14:58:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739977117;
+	bh=oYk4H1atTJGw8DMfE19z+D1ECLWGgsgD/yiuFGFYVBo=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=e80Hwn69SJHmdsFk624FrUD5GHN8JmMfUllNO0H11/Yaj0y9xA3VotfxfCIDeDt9U
+	 U50pv+G9Dgsvtyzv3oNvpPdi/+jAFCT9AwcWf/th9w+xvqfDAC9cjHWkBw9rYSx+vG
+	 3nhiWiEw9NopsD6Ee6hQPsQ0RBgfuRolJBVwNDF1cv6A4rFr9gOxFPAy7zTmz7q3d1
+	 DmB3wJd7DUbSzaqq5iAj6HlRvmGXjcvb7TJEZ/D30YSOGbcZGVALK4KpmKAVbXkMHF
+	 0jAA5e82qSv7LOm2xPHXpcg79SmguyLAvRqc0qQw7+f7laQaBdSYsYyNLtbPU4ECbQ
+	 a260jlsQiAEFw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id E4AA2CE0885; Wed, 19 Feb 2025 06:58:36 -0800 (PST)
+Date: Wed, 19 Feb 2025 06:58:36 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>
+Subject: Re: [PATCH 3/3] rcu/exp: Remove needless CPU up quiescent state
+ report
+Message-ID: <c5ea9684-291f-4952-b834-ed8e39cfdf8f@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250213232559.34163-1-frederic@kernel.org>
+ <20250213232559.34163-4-frederic@kernel.org>
+ <fe931d3a-bf97-4be5-8420-f1fcb55e6a46@paulmck-laptop>
+ <Z68yzBURiIr_7Lmy@pavilion.home>
+ <610596cf-9836-473f-bcdc-15c69b7e0cd4@paulmck-laptop>
+ <Z7ET8S4HKqSPubQY@pavilion.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <f3795f3b-8d38-40cd-abcc-723b18d6dc70@ideasonboard.com>
+In-Reply-To: <Z7ET8S4HKqSPubQY@pavilion.home>
 
-On 2025-02-19 16:41:24 +0200, Tomi Valkeinen wrote:
-> Hi,
-> 
-> On 19/02/2025 16:22, Niklas SÃ¶derlund wrote:
-> > Hi Tomi,
+On Sat, Feb 15, 2025 at 11:23:45PM +0100, Frederic Weisbecker wrote:
+> Le Sat, Feb 15, 2025 at 02:38:04AM -0800, Paul E. McKenney a écrit :
+> > On Fri, Feb 14, 2025 at 01:10:52PM +0100, Frederic Weisbecker wrote:
+> > > Le Fri, Feb 14, 2025 at 01:01:56AM -0800, Paul E. McKenney a écrit :
+> > > > On Fri, Feb 14, 2025 at 12:25:59AM +0100, Frederic Weisbecker wrote:
+> > > > > A CPU coming online checks for an ongoing grace period and reports
+> > > > > a quiescent state accordingly if needed. This special treatment that
+> > > > > shortcuts the expedited IPI finds its origin as an optimization purpose
+> > > > > on the following commit:
+> > > > > 
+> > > > > 	338b0f760e84 (rcu: Better hotplug handling for synchronize_sched_expedited()
+> > > > > 
+> > > > > The point is to avoid an IPI while waiting for a CPU to become online
+> > > > > or failing to become offline.
+> > > > > 
+> > > > > However this is pointless and even error prone for several reasons:
+> > > > > 
+> > > > > * If the CPU has been seen offline in the first round scanning offline
+> > > > >   and idle CPUs, no IPI is even tried and the quiescent state is
+> > > > >   reported on behalf of the CPU.
+> > > > > 
+> > > > > * This means that if the IPI fails, the CPU just became offline. So
+> > > > >   it's unlikely to become online right away, unless the cpu hotplug
+> > > > >   operation failed and rolled back, which is a rare event that can
+> > > > >   wait a jiffy for a new IPI to be issued.
 > > 
-> > I'm happy to see this, nice work.
-> > 
-> > Unfortunately it does not apply to the media-tree. As this series is a
+> > But the expedited grace period might be preempted for an arbitrarily
+> > long period, especially if a hypervisor is in play.  And we do drop
+> > that lock midway through...
 > 
-> It should, if you apply the dependencies first. But one of the dependencies
-> from you is a bit old and that doesn't apply without some conflicts
-> resolved. So... Yes, doesn't apply =).
+> Well, then that delays the expedited grace period as a whole anyway...
 
-:-)
+Fair enough.  Part of this is the paranoia that has served me so well.
+But which can also cause the occasional problem.  On the other hand,
+we really do occasionally lose things during CPU hotplug operations...
 
-> 
-> > mix of fixes and new features as well as covering multiple drivers. Do
-> > you think it would make sens to break out the fixes per driver which we
-> > could review and apply ASAP and the new features which we can review but
-> > need to wait until the dependencies are meet?
-> 
-> Yes. I think that's the RAW8 and RAW10 fixes. However, I can't test them
-> without streams and GMSL2, so...
-
-Sure but the fixes for the format setup registers don't depend on 
-streams support, right? The fixes are properly tested but depend on new 
-features to enable hardware to produce the test environment. It's miles 
-better then the BSP testing done when these things where first 
-written...
-
-> 
-> > If the new features depends on stuff that is hard to upport, maybe just
-> > focus on the fixes to get them out of the way?
-> > 
-> > On 2025-02-19 15:48:54 +0200, Tomi Valkeinen wrote:
-> > > Add streams support to Renesas rcar platform driver.
+> > > > > For all those reasons, remove this optimization that doesn't look worthy
+> > > > > to keep around.
+> > > > 
+> > > > Thank you for digging into this!
+> > > > 
+> > > > When I ran tests that removed the call to sync_sched_exp_online_cleanup()
+> > > > a few months ago, I got grace-period hangs [1].  Has something changed
+> > > > to make this safe?
 > > > 
-> > > The series attempts to keep compatibility with the current upstream.
-> > > However, in upstream there's some kind of custom multi-stream support
-> > > implemented to the rcar driver, which breaks at patch "media: rcar-csi2:
-> > > Simplify rcsi2_calc_mbps()".
+> > > Hmm, but was it before or after "rcu: Fix get_state_synchronize_rcu_full()
+> > > GP-start detection" ?
 > > 
-> > I would not worry about breaking the make shift multi-stream, it was
-> > based on our first attempt to allow streams for GMSL many years ago and
-> > it was bonkers ;-) As long as it don't break a single streams, even from
-> > subdevs that do not themself support streams I'm happy.
+> > Before.  There was also some buggy debug code in play.  Also, to get the
+> > failure, it was necessary to make TREE03 disable preemption, as stock
+> > TREE03 has an empty sync_sched_exp_online_cleanup() function.
+> > 
+> > I am rerunning the test with a WARN_ON_ONCE() after the early exit from
+> > the sync_sched_exp_online_cleanup().  Of course, lack of a failure does
+> > not necessairly indicate
 > 
-> Alright. Then you're happy with this series. I hope =). I don't have
-> anything to test this with, and only the v4h board.
+> Cool, thanks!
 
-You can test single stream on V4H using the staging GMSL2 driver and the 
-TPG. I will ofc also test it so no need if it's troublesome for you to 
-rewire the V4H you have to this configuration.
+No failures.  But might it be wise to put this WARN_ON_ONCE() in,
+let things go for a year or two, and complete the removal if it never
+triggers?  Or is the lack of forward progress warning enough?
 
--- 
-Kind Regards,
-Niklas SÃ¶derlund
+> > > And if after do we know why?
+> > 
+> > Here are some (possibly bogus) possibilities that came to mind:
+> > 
+> > 1.	There is some coming-online race that deprives the incoming
+> > 	CPU of an IPI, but nevertheless marks that CPU as blocking the
+> > 	current grace period.
+> 
+> Arguably there is a tiny window between rcutree_report_cpu_starting()
+> and set_cpu_online() that could make ->qsmaskinitnext visible before
+> cpu_online() and therefore delay the IPI a bit. But I don't expect
+> more than a jiffy to fill up the gap. And if that's relevant, note that
+> only !PREEMPT_RCU is then "fixed" by sync_sched_exp_online_cleanup() here.
+
+Agreed.  And I vaguely recall that there was some difference due to
+preemptible RCU's ability to clean up at the next rcu_read_unlock(),
+though more recently, possibly deferred.
+
+> > 2.	Some strange scenario involves the CPU going offline for just a
+> > 	little bit, so that the IPI gets wasted on the outgoing due to
+> > 	neither of the "if" conditions in rcu_exp_handler() being true.
+> > 	The outgoing CPU just says "I need a QS", then leaves and
+> > 	comes back.  (The expedited grace period doesn't retry because
+> > 	it believes that it already sent that IPI.)
+> 
+> I don't think this is possible. Once the CPU enters CPUHP_TEARDOWN_CPU with
+> stop_machine, no more IPIs can be issued. The remaining ones are executed
+> at CPUHP_AP_SMPCFD_DYING, still in stop_machine. So this is the last call
+> for rcu_exp_handler() execution. And this last call has to be followed
+> by rcu_note_context_switch() between stop_machine and the final schedule to
+> idle. And that rcu_note_context_switch() must report the rdp exp context
+> switch.
+
+Makes sense to me.
+
+> One easy way to assert that is:
+> 
+> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> index 86935fe00397..40d6090a33f5 100644
+> --- a/kernel/rcu/tree.c
+> +++ b/kernel/rcu/tree.c
+> @@ -4347,6 +4347,12 @@ void rcutree_report_cpu_dead(void)
+>  	 * may introduce a new READ-side while it is actually off the QS masks.
+>  	 */
+>  	lockdep_assert_irqs_disabled();
+> +	/*
+> +	 * CPUHP_AP_SMPCFD_DYING was the last call for rcu_exp_handler() execution.
+> +	 * The requested QS must have been reported on the last context switch
+> +	 * from stop machine to idle.
+> +	 */
+> +	WARN_ON_ONCE(rdp->cpu_no_qs.b.exp);
+>  	// Do any dangling deferred wakeups.
+>  	do_nocb_deferred_wakeup(rdp);
+
+I fired off a 30-minute run of 100*TREE03 with this change also.
+
+> > 3.	Your ideas here!  ;-)
+> 
+> :-)
+
+							Thanx, Paul
 
