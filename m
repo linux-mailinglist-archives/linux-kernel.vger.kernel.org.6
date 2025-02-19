@@ -1,145 +1,113 @@
-Return-Path: <linux-kernel+bounces-521390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82EE6A3BC96
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:19:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3970A3BCAA
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:24:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 173B8188C043
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:19:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 516913B6A04
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:23:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 132631DED5A;
-	Wed, 19 Feb 2025 11:19:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 652811DEFD8;
+	Wed, 19 Feb 2025 11:23:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L1YKKohr"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gA3SQhHi"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6C241119A;
-	Wed, 19 Feb 2025 11:19:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 833D143151;
+	Wed, 19 Feb 2025 11:23:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739963945; cv=none; b=X4+r6J8WHfDP2mnO5NCAdYC9i3ZsDMu1Ce8bY+uhuODvmIlb0AgNHTwBVeY/WBTNlpHmQu9UB/hzW5FA4SxxMfYgTJvXtDF6mVCACwzBy9TXFSaaCb+n7AYGaLiMVNYIDtW7g0YyKi+NrQYq0sIWj0gyyxGwxKJBi8cD7VV6mZA=
+	t=1739964189; cv=none; b=Z3DnkiFQNY6VjJg1BPy1C2UZDex/RjrJy3ftY30BheCJt8/TunsRI9Ik16EQmWL96IEpZfuG2VdhkVBoDTFkQCglaQaXmHVT/DrQQm37OSRaV+1crVE/mT1XRxEnXkjxiU12/cNOB9jigaowjH6UgzScr9Bncc7olwZQ+fWoNSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739963945; c=relaxed/simple;
-	bh=mMdbW38/XOc7ricVDrBfRFQJ1TTdT42TWabOMpLqddw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=rYvfULzr2OccdYGFxnDqEpZR/BKmf97Gi4t8Ao8+dcAG0EOPDrtn4sKKAj2jy3qvEjXjb1mYHOdeyuQkCIr7t82TJs0sCwl9mxU6oNN7/SgLamgPylPz+B/T1xSycJpwSlV9CL5PUPH3ljPgn3i100GupB1z62HKJ7wzVDsGYnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L1YKKohr; arc=none smtp.client-ip=209.85.167.45
+	s=arc-20240116; t=1739964189; c=relaxed/simple;
+	bh=NrL6ZoW8DJpJUtu6w7iSlxtNi/MMqeTdi8RjmOi3iD0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IMQNZqWoYIMzKZktICTYHvul7Rd27Ogg6j0WtxvAPlPCrrSadfSId7ySRnzTYgUqtC7DvscT53H11cOwpRfNRFgO2DpMRudz06hFS/n2ph4we0wbbDaW3jS/vJ4qJwLzKVdrRAgSpxBUFnTTColYsJLeKmPoRw0CCRrzVIV8drI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gA3SQhHi; arc=none smtp.client-ip=209.85.214.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5439a6179a7so856652e87.1;
-        Wed, 19 Feb 2025 03:19:03 -0800 (PST)
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-220e6028214so114278145ad.0;
+        Wed, 19 Feb 2025 03:23:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739963942; x=1740568742; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Cd2NCkNZDZjp37qilTmvHMGFP/p5O96SvJn6CIg/Cec=;
-        b=L1YKKohrMRrWY3Dl8sci6tuoEEFiN488ymCSkBu0qT/mVBNrFFZMFnPnIGtibd5909
-         sGmluLA1hNzP6I+7RzDoCIFYD8qOdj3bpx3cXV2UjushQC88BYA+cNjUll4xhyW7syOT
-         P+qT83nuKcwun1WX2rmeQpGkEpBslSWmwwsMcR/dZO+LDXNP394/DTJmwtojADvdE0zo
-         DputEcHv0Z8SnCT3rKHcdjZHbSJbMt3//1+nSYUAJtzyQv/fX5AFRyqvfxyepFGEmnAa
-         fuFMf/vC2LKsA4ZXiJNGSVF4fnRZll8DW/tbx59OWUJlIsDth4rx4TBrPZQbWfsK74ik
-         R/iQ==
+        d=gmail.com; s=20230601; t=1739964188; x=1740568988; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VZm1dJAwKAk/F8vlE+OX9d9jmGJPVXQxsC5N5HXvT/w=;
+        b=gA3SQhHi/PFZ5SKYrHoF+LQflr7M7TZ1lkpIwcDcfhyv2AUcOA6ymUmhMljugIrT7/
+         xK1OfERdqop2gc3lvodVL3umNAbeqtsacAN0aODZEivQJ0Ydl+gOU28Bele9pQ7+gMPF
+         LNs5KdvE/SGPJ8tmsd7s8lBDIBl7DbWbGWQztxFm3ndD36vXK1alHmkPpiOJp8r/4QuO
+         RU5+4KFVQcRFbE/+KJSGj7FFTZO2d/GgZL8GGjp6SDKRdbkBTjgINX5WfTHdSH1r/i9r
+         spR2cVBz5C3ksEW5fwjr64eq328K2HUwVutrRpipjzQo0a9CuvrDIn5g2DAnaiQngBGt
+         2XRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739963942; x=1740568742;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Cd2NCkNZDZjp37qilTmvHMGFP/p5O96SvJn6CIg/Cec=;
-        b=f7YZICuToUZkJTdX8LFGjEFgxU0l6i3PfZ8qBW2RbzPjn5ACBixlfWLe01Gu7tLmEz
-         adGdMVxrvmBCjf2waD8JRDmm3BuzVmHKHMQRN7+HSk62Yr1IQV+f8p+MxUrImUdQgsOm
-         /ebe4vxb53HG2/4P1DXpmJIo9XS71jtrVYRe4sYlexQ1URLY+Yky2NsP+Jy2+51ZQA6z
-         e1bKvLU/0AfFrN4kemMYg8XVIu+vMYHcUudMrmH99n+8E/b7vEKBVm3UT9wWnMFp5DkA
-         7vTR3AF774f6SXL+mnEx4CYNtnSWg1dymVUjo6CKMz+GmsGox/DnnPCON3Cc//YS30Yw
-         tfJg==
-X-Forwarded-Encrypted: i=1; AJvYcCVnOUmiy3CQrdTr+f40BV/iwVsgW2CQmBoh4cF+nWjL2ayjzc7DlgGya1RaegZltAr6qNfbzrba0LxEuIGg@vger.kernel.org, AJvYcCVusBzcBptA9mMbgWTvgRQ+Z9hP77+txDp1RVGdgIYD+Cto+oQzcmIrCgQvRCnvVlSaRiBeznRsaxGL@vger.kernel.org
-X-Gm-Message-State: AOJu0YzALNswME8lXq11qiq5qSTCaqOHW3aoglFCcORCz1j++YColzXu
-	gDW8FUz/et6UQXElf5p4LK/3zRvWiM2SiBKOHJcx7hNm1EWyfuakqvkFNwVSvXEPN4VMbkZDpmy
-	Va5wnVBdd0gW7qe1olwe9wp05Pjbs1Z5u
-X-Gm-Gg: ASbGnctP/JYs0Lr3wwo+vaRYB8Ex789sa5qtza7DrQJ05i4Ry/2w8oO0ZnzFZ6QQYT9
-	ABGkECvI5KeiHe1gxNREWBRfG9Jx0eVg4OM/FLxY3/GwCCMptrF23hl4Sh6OAJisWZw3CVT6uqA
-	==
-X-Google-Smtp-Source: AGHT+IE9pC7u6KFftCvbxSDZkvobXZDix534fzLwzUy6vJpZs0x418N/e34LzILF8rTI8dPZQjIQmrmXrkHKIA7NRi0=
-X-Received: by 2002:a05:6512:2252:b0:545:ec1:9fd3 with SMTP id
- 2adb3069b0e04-5462eaa6becmr1281833e87.9.1739963941605; Wed, 19 Feb 2025
- 03:19:01 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739964188; x=1740568988;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VZm1dJAwKAk/F8vlE+OX9d9jmGJPVXQxsC5N5HXvT/w=;
+        b=InCdmBnJdU627Pr/TSmKRdx78Httx2xHr8liexthDdhqNRfpKh4K7alD5BG3fXx28X
+         +ANAj0HTVMZKDOu0zFrMgDQCgqdVbd2QDxNdI0P/nMrx21TbfgImOfLKMHro9/aGlAX2
+         ertzH01RexRENJ1I7aIq7EBxMXOnVo/stFF8tg4kwv2WTFqc0kUEXrahGxbQ7uIiMzNZ
+         VQbYRDTEL366Z+Sa0IeASwuaBhWjUvmSSfYKtsVCmSpEuu2w15MyXZvXlZe0l212Qyhg
+         ckD6FTsFJMtiImBaC8fJDiOBE0iGg0VJ0oFtAfoQn+qaolf/qgmKXu75mleamTrECWB7
+         yGyg==
+X-Forwarded-Encrypted: i=1; AJvYcCX4nTEBsGUI+KfYoQlVQnCK/VbibuUMbsVVcs2OhUk97F281pMbh59NRs5pKBdsvLn/IB/x3q7faUs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9dhTVuXwy/kGcHPA0ECp3R85MZ1KXpXanQlYgYfmULwCpZ1Be
+	Up8GqQANbEGi9sCvAxIk1rcnYivjw9SpGmaIJWCZy91Omrafv603
+X-Gm-Gg: ASbGnctps/2rRFkZjz0TcbqzIwmm2e6B/G4GUwKWTDO3J4VS96CwO50eOXuitpI7mv9
+	2CS6/T50po+E4WvmPZjv/GptNO434Eqf77LaXWfGTFMPWTnSblfv1pDFb5VKz0IN/2/WDN4VYYX
+	TyPbhWQMJFIFbYWZGcPHKu6XhR58Gy2UugX7UYbWMCXU1/3NT4kGZKGoPTR1XfmxrhLVFMHUWLx
+	nqsrbSHdvkRRYdmCnmRlt1/399rhKIhmJkMlODbSPykgYabs5Ni94Y1UEg6r0wWy585Szl0hl8Z
+	e6+Lu8YfNer168jKZzEuwe1I
+X-Google-Smtp-Source: AGHT+IHOhv6/aSNiuotCAFumVgXlWpVdHc0na20KYdVn/2hnOPdXJvK9hfqyYxmMU6iW6Q+ux4gGKw==
+X-Received: by 2002:a17:903:2286:b0:220:fce7:d3a6 with SMTP id d9443c01a7336-2211c551bdcmr224224985ad.23.1739964187571;
+        Wed, 19 Feb 2025 03:23:07 -0800 (PST)
+Received: from archlinux.nitk.ac.in ([2400:4f20:11:c00::101:7e79])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d5366242sm103277995ad.87.2025.02.19.03.23.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2025 03:23:07 -0800 (PST)
+From: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+To: corbet@lwn.net,
+	linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Suchit Karunakaran <suchitkarunakaran@gmail.com>
+Subject: [PATCH] docs: scheduler: fix spelling in sched-bwc documentation
+Date: Wed, 19 Feb 2025 16:52:54 +0530
+Message-ID: <20250219112254.28691-1-suchitkarunakaran@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAPhCUnV5ocw5HfW+jNRaRPgntoM4uXeHNcC03XL00wLZjSm1Vw@mail.gmail.com>
- <CAH2r5muHVDfWM6vmRx85S2zfgh6v7mjc-ekOpkqJaLFvV9x1mA@mail.gmail.com>
-In-Reply-To: <CAH2r5muHVDfWM6vmRx85S2zfgh6v7mjc-ekOpkqJaLFvV9x1mA@mail.gmail.com>
-From: Oleh Nykyforchyn <oleh.nyk@gmail.com>
-Date: Wed, 19 Feb 2025 13:22:23 +0200
-X-Gm-Features: AWEUYZm_fU5RELTePp3rvmtSAETkzfjkTbqdRsDTdB55mmsqH4wmIDdPn_La3Aw
-Message-ID: <CAPhCUnU67i9caSS5E3vimEEaAVwyd5eSn7uZfL059aReTR98=g@mail.gmail.com>
-Subject: Re: Bug in getting file attributes with SMB3.1.1 and posix
-To: Steve French <smfrench@gmail.com>, linux-cifs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi,
+Fix spelling of "interference" in the CFS bandwidth control documentation. 
+The word was misspelled as "interferenece".
 
-I confirm that the patch works flawlessly with samba-4.19.5 AND
-4.22.0rc2 (the latest) but NOT with samba-4.21.2 (mounting shares with
-ver=3D3.1.1, posix fails with rc=3D-32). I was to upgrade samba on all my
-computers.
-As for me, the issue is resolved.
+Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+---
+ Documentation/scheduler/sched-bwc.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best regards
+diff --git a/Documentation/scheduler/sched-bwc.rst b/Documentation/scheduler/sched-bwc.rst
+index 41ed2ceafc92..e881a945c188 100644
+--- a/Documentation/scheduler/sched-bwc.rst
++++ b/Documentation/scheduler/sched-bwc.rst
+@@ -59,7 +59,7 @@ At the same time, we can say that the worst case deadline miss, will be
+ \Sum e_i; that is, there is a bounded tardiness (under the assumption
+ that x+e is indeed WCET).
+ 
+-The interferenece when using burst is valued by the possibilities for
++The interference when using burst is valued by the possibilities for
+ missing the deadline and the average WCET. Test results showed that when
+ there many cgroups or CPU is under utilized, the interference is
+ limited. More details are shown in:
+-- 
+2.48.1
 
-Oleh
-
-
-=D0=BF=D0=BD, 17 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 06:26 Stev=
-e French <smfrench@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> Oleh,
-> Good catch, and sorry about the delay (email had gotten missed).
->
-> Here is a fix (see attached) for the problem you reported.  Let me
-> know if it also works for you or if you see any problems with it.
->
-> This is important fix for SMB3.1.1 POSIX Extensions client implementation=
-.
->
->
-> On Wed, Jan 1, 2025 at 11:05=E2=80=AFAM Oleh Nykyforchyn <oleh.nyk@gmail.=
-com> wrote:
-> >
-> > Hello,
-> >
-> > I encountered a funny bug when a share is mounted with vers=3D3.1.1, po=
-six,... If a file size has bits 0x410 =3D ATTR_DIRECTORY | ATTR_REPARSE =3D=
- 1040 set, then the file is regarded as a directory and its open fails. A s=
-implest test example is any file 1040 bytes long.
-> >
-> > The cause of this bug is that Attributes field in smb2_file_all_info st=
-ruct occupies the same place that EndOfFile field in smb311_posix_qinfo, an=
-d sometimes the latter struct is incorrectly processed as if it was the fir=
-st one. I attach an example patch that solves the problem for me, obviously=
- not ready for submission, but just to show which places in the code are su=
-bject to problems. The patch is against linux-6.12.6 kernel, but, AFAICS, n=
-othing has changed since then in relevant places. If I have guessed more or=
- less correctly what the intended functionality is, please feel free to use=
- my patch as a basis for corrections.
-> >
-> > Best regards
-> >
-> > Olen Nykyforchyn
->
->
->
-> --
-> Thanks,
->
-> Steve
 
