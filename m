@@ -1,103 +1,72 @@
-Return-Path: <linux-kernel+bounces-522292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3C9FA3C859
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 20:15:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E19AA3C85C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 20:16:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4E81188B82A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:16:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CB9317570E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:16:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF15B22A4EF;
-	Wed, 19 Feb 2025 19:15:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="aS1KptYa"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9265C1FCCE4
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 19:15:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A63E22A4F6;
+	Wed, 19 Feb 2025 19:16:09 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE12922A4E0;
+	Wed, 19 Feb 2025 19:16:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739992549; cv=none; b=PkJk1HwiyLVN7Ir2rVgkN1FBfGeoaBEal27l00Pf8nzEq0w1f2WNrTSYogq0nGY2txnilG6Dcyitcj3NppxTgAPmbssqC7TwN/lbYDryask5TKQOzx/qDVBb/Ih2WV10SagnakKsXBDFPtCLgCvvK05hS23naE5uGsJ2L2jLa9U=
+	t=1739992568; cv=none; b=jwuEHjqkFC3EpIW3ZuV86+kMUiTWRmwIOarTgGdtdoCmLzA/HJT4eJApI/zHY/AIqyceL/OFNlInw2Ws1FOdW4I5aOlc/cMEurv0ba4ryWNJnng96POXlQleVxrOc7ai3i+tyAKk0F71Aj3U1lXFRblvGZit+ONHVVTjo7BDeBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739992549; c=relaxed/simple;
-	bh=6GjeiMlcBQkMiICgrbnKaNfeb3KYt/3xgEOZ/XboP3E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NBBbilM63Xq5byHUFS9mkKsMCyv6g9/JJPKGM2DrkDxDu8BpmKAGAhGRtCrIHAZYUA4Qkzj41kLdpEPKoCcBcMdgmJc2xo710J0eZXDpX3QZfSmW2Q76maEm+QfMxYmHfQP6nm073nc9SuESG1XRAH/RuX2fSNrRsuHf2CEmZ9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=aS1KptYa; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 19FCB40E015D;
-	Wed, 19 Feb 2025 19:15:45 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id FByxDcaAGTRa; Wed, 19 Feb 2025 19:15:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1739992541; bh=/Sm9f8CosVKerH6dIT1y6KUA7xfRLyxObBsshfAZM1M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aS1KptYa6T4FSZsPmIBAg2jfpj+xpns2ARKi+2GWSwMiv2sqJxBhCQb853+G8SMOm
-	 BPEUY1y7eeHmFDhB63IQhEtxMfBluBqdPd9bgL+wOgqs3NJXrF7CvIFYi+5QsO73fu
-	 +pR5bI2PsdkRS7w9vF1P+s0/ow0P3SrVlP8L6h8US2TY2pAZC5ZlTq7EU75/uRhV2D
-	 mDzYJwdV+dGq4NYOlMImLojcf2jeAQ+OGvxdgBo3yCVlsKHIgs2apkJ7QSMKL71NWC
-	 gCgTymr9HTn+vXmXB5+odAP0WGhWT1l9vVJDSKVlgWfdgvXYm+xfvGgipteZO9iPZL
-	 BCGf40y0Iw6Lbt0Rs2H5qWYM9ut2fHDldThihY3JoZ8a3yvcMV69iMrqhdXL7q/yqt
-	 Eoi4dhp2eIyflN6cg5hNeCaWPK4o9t8gLytG9PBHoJD+xGuxcfcPkC1JsymRooHfvR
-	 J8XQ5eE4M6Yx9SozAmC/oRXru4LuFDGcEH3oEQgSBZslscPoclAbwfjlsMA20tBzWN
-	 Dj9FgqQlsK4VntZq3GBGjcd+RQJFHMRDq5kB+NimaR51vJbc4bjicGL7Mz+bweThTL
-	 yjdFtMa6N9FQGh0Bc4v0/n0nNWKeLUrxPFYoyUTnzg7yEJOUXvTOhe+EezN2wv/n9U
-	 eRZ1OtkFpPNdV/34Cpdjcf1Y=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0385240E0191;
-	Wed, 19 Feb 2025 19:15:23 +0000 (UTC)
-Date: Wed, 19 Feb 2025 20:15:19 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Rik van Riel <riel@surriel.com>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, peterz@infradead.org,
-	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
-	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
-	linux-mm@kvack.org, akpm@linux-foundation.org, jackmanb@google.com,
-	jannh@google.com, mhklinux@outlook.com, andrew.cooper3@citrix.com,
-	Manali Shukla <Manali.Shukla@amd.com>
-Subject: Re: [PATCH v11 05/12] x86/mm: add INVLPGB support code
-Message-ID: <20250219191519.GDZ7YtxzBiMxz3wwlr@fat_crate.local>
-References: <20250213161423.449435-1-riel@surriel.com>
- <20250213161423.449435-6-riel@surriel.com>
- <20250219120441.GNZ7XI2aWWUmXh2H2m@fat_crate.local>
- <2930024a88be186faa6a0338fc003e8ffefb710b.camel@surriel.com>
- <cb55a019-50f1-4824-9a9f-9431d8b89ed7@intel.com>
+	s=arc-20240116; t=1739992568; c=relaxed/simple;
+	bh=mKvCNIT+ibSxfEwKXH5CvEfHloKAbhX7isPwSRQQc8U=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=b6Kn7Wup7z4UAQ1K3Ior+s7NFug0ZceyJ2TuZT33BBjw7cZ5AybqJFc0nOAJysEBmYMLr2q4K/u9P2Ub1786W4p1igORPs/Yvn7AAXe+ggfdbzgiRO3uETByzSx1iyfxeUWl2he6Z8VV3RJbGD41trC4r82/IIU5SCzOwpQY3Fs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id 3060B92009C; Wed, 19 Feb 2025 20:16:04 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id 2936D92009B;
+	Wed, 19 Feb 2025 19:16:04 +0000 (GMT)
+Date: Wed, 19 Feb 2025 19:16:04 +0000 (GMT)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: "Dmitry V. Levin" <ldv@strace.io>
+cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+    Guo Ren <guoren@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+    Oleg Nesterov <oleg@redhat.com>, Alexey Gladkov <legion@kernel.org>, 
+    Eugene Syromyatnikov <evgsyr@gmail.com>, strace-devel@lists.strace.io, 
+    linux-mips@vger.kernel.org, linux-csky@vger.kernel.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 2/6] syscall.h: add syscall_set_arguments()
+In-Reply-To: <20250219184852.GB14216@strace.io>
+Message-ID: <alpine.DEB.2.21.2502191855130.65342@angie.orcam.me.uk>
+References: <20250217091020.GC18175@strace.io> <alpine.DEB.2.21.2502191642590.65342@angie.orcam.me.uk> <20250219184852.GB14216@strace.io>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <cb55a019-50f1-4824-9a9f-9431d8b89ed7@intel.com>
+Content-Type: text/plain; charset=US-ASCII
 
-On Wed, Feb 19, 2025 at 11:01:17AM -0800, Dave Hansen wrote:
-> But, either way, #ifdefs are a sign of weakness. Less so in a header and
-> more so in a .c file.
+On Wed, 19 Feb 2025, Dmitry V. Levin wrote:
 
-... and, as we just discussed and agreed on chat, we don't need the Kconfig
-option either.
+> > -- given MIPS syscall_set_nr() implementation in 3/6 this conditional is 
+> > supposed to never be true.  Should it be BUG_ON() or discarded entirely?
+> 
+> I agree it should be discarded: given that the syscall number read from
+> regs[2] after syscall_trace_enter() invocation is not treated in any
+> special way with regards to __NR_syscall, it would be incorrect to do
+> it here either.  In fact, user space is allowed to set regs[2] to
+> __NR_syscall, even though it's pointless, but it's definitely not a
+> BUG_ON() situation.
 
-Thx.
+ Right, good point, the conditional indeed can do harm even.  Thanks for 
+double-checking.
 
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+  Maciej
 
