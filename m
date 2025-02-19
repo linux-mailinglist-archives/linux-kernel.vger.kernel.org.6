@@ -1,160 +1,207 @@
-Return-Path: <linux-kernel+bounces-521163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C889EA3B5AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:00:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E38AA3B5C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:01:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 810F11884DA9
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:54:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 431003B692E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:55:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A18301F37D1;
-	Wed, 19 Feb 2025 08:45:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AlmgRuI4"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4A4D1E8855;
-	Wed, 19 Feb 2025 08:45:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66B6A1F5423;
+	Wed, 19 Feb 2025 08:46:03 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 135D01F2BA1;
+	Wed, 19 Feb 2025 08:46:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739954752; cv=none; b=MIvc+ES/+k+/Jm+N3LYDhkJZOz/fEULA6ZZuILTv79Ro9Y+8OxwEFCMMx1LoyhZPyrw8NIw9gPoaCj+7xlo6wIYCXIzI/vLFgtLDgDz/VD04A8YOvmrHxg7ATHxyjGmH59CEGey5TI/eLCbuD2cB+R4/lXRIrGDuIdD2APGqVck=
+	t=1739954762; cv=none; b=BTxK2TTjUvplNezL7MJn4RoqRvGW4jZbrn3gvCUIlGZmUXAz59sWa5B3/NuMlX0V2qgQVghGfF4KWelCGTRjgmG5ZVO9ivhwEELbGsV7UER+nkUfLw0nouUNrJSf54qwcw28TLrLvv5ijThbfmB2zVw+ObQnoDp1nHRmwtAPNTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739954752; c=relaxed/simple;
-	bh=7R1XgXvH4k6kWI4gbUxzVizRcGgBTxxEExScXUbKaIc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jjFj14fhHPy4gU5n56W/lmyA9CiPQV8xHB2GH3uvAU7UlND9OnrwVKhYl1tSsnj7tmQzYzPumiLRR45ZYF/DN8NaoBA7ld3HqfM+ntq6A/IrxznVA2oRQLDcLZDWX0S+ctY6L4+r0UzpteXD1e/WRfCuMRLvG5KQwP0ZRWL5gf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AlmgRuI4; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-220bfdfb3f4so130316975ad.2;
-        Wed, 19 Feb 2025 00:45:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739954746; x=1740559546; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TyzPIrh5uPcfgejnraHvrZOB70D7n28gMQT0mt8KoNg=;
-        b=AlmgRuI4UWzUcP7eteoCRldxO3fiKuR3jfvZepb9Awi9sBeNyaGVriiqriZFtm8f/+
-         f2/F0BJ806P6/s3lJc/Y/QzAz0PIrVjiySo67sAbLym9SVNdhBc7MrblJrN7tIgTtZq2
-         uHf+ONC8Ln3KWp6D/iEvdrVtI8Ra1gGHDpvj2b2DxWb858YKnGL1L/+EHUZMOePoY5tk
-         khW59rH1vGEUAtFXT0wWOC7TCuOcHKbmdzzVAK53AcBl/zWg7yARdcCw9uzHyay6lzCl
-         g5SXqk5ZPQUQNwproPZk/zO889J0JtAS+noShuZdMcXrE8qoTc1l4r2dcDu6vQILC0Ek
-         HYTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739954746; x=1740559546;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TyzPIrh5uPcfgejnraHvrZOB70D7n28gMQT0mt8KoNg=;
-        b=VtKezb7XEaa13AqAmrDyaHW+s/q7QmcpYhMDm8uPL2woPlTFQU+AP8Q8tcOHY25hIP
-         cZCMAHvSZuB/WVIWp/nvf+c9dQM8O9A6YmYILVxz2SjxeqZj85JXNwsJlS+XKqjak2GL
-         j9FABgRByWriKdPtQqk4+VdVs2ccH+ugtsINwsoO5SVXdN5FmlIcMgj0q/Jko/hPOzmC
-         INmmiyoVVvKw21KmIg2nUPwGfiwaIjAS4Mav6NRqOoYaK50wePfjlyAiFe/2M0H5n3OQ
-         1UuJXIoXBLayqR9Ph1i1f6zgYSlmOIPM6kFTg+1BAt1ev647LcBewMOA5R8RyKxuM9xN
-         bgNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUEx8kcB26hxlIEdYH4CBApnn67PzgZqJq92H99HDOuykoJa866QKFdoeuQPXp7MtjsU+BEN5bDUTTHnQ==@vger.kernel.org, AJvYcCXaPD6eKRat0Ax6yiQNLMjlXPn5HgWmjHcO4qOqbA5cE1lsKVgpRhrpv2Wola83zNL8iKeLtXSEKBfPlek=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFiUcwS35AvecRrqJNDWUA8Ekqujk7wklZ1SkJwi9ApNv9DF9X
-	0pfftAOS+zA6UPgNKBry96s/AHxnurWgYCkhKWEs8aktZzdap6fW
-X-Gm-Gg: ASbGnctyxETFp/P34ebyK3ji8nX4PYlnk4u+pJAoZhMErKBx3OpVFVIeCAZ8Pn+IgRw
-	nwq15ciyogeeJRd4Ph0cAnQx6wxDxT0aY61BMaFcMtsPyHYjK48b8PZ+jVvVlXwkP3hZrx5MUDP
-	ysUFHrFLYiNpCDjujxYX3b9OwrS+PqJSXUalStcgsRoj9BtQJG6LogNJPGHii7L27dEomOQKI0g
-	suyxFJCP7zEKEm+5MQ0Yacxlc7K1TLuL1gRYmTA2szdGQeXDBD4DJNfWhYwZyvlI2CbLDFW377A
-	bAxV3JmgdoaDaXM=
-X-Google-Smtp-Source: AGHT+IEadsqAT7HDWxhECrTjMWGYniQebpKUIG+KG1kh3Rxji0Yr4BRPTOwkOehWMk4RuFyZK58OWg==
-X-Received: by 2002:a17:902:ecca:b0:220:e9ef:ec98 with SMTP id d9443c01a7336-221709622b7mr51696985ad.19.1739954745827;
-        Wed, 19 Feb 2025 00:45:45 -0800 (PST)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d55908a7sm100814075ad.240.2025.02.19.00.45.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2025 00:45:44 -0800 (PST)
-Received: by archie.me (Postfix, from userid 1000)
-	id A59804208F47; Wed, 19 Feb 2025 15:45:41 +0700 (WIB)
-Date: Wed, 19 Feb 2025 15:45:41 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
-	Christian Brauner <brauner@kernel.org>
-Cc: NeilBrown <neilb@suse.de>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the vfs-brauner tree
-Message-ID: <Z7WaNWHRkqt2rFGA@archie.me>
-References: <20250219153444.0046e433@canb.auug.org.au>
+	s=arc-20240116; t=1739954762; c=relaxed/simple;
+	bh=/YM69NyeXToXoYl863l8m7IiKZJ+g4qrds2ofWwdqjY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RmEf31y2ET93FCcs2M+JpEhL5Df/9tvHuti9ZwP9sRBsYYN0rLlAn5I79F9iXe5N7k79/ugleijl1yVeXnNVGNoFJxvXrC0OHZQooII4PHRWNiR+ZQd4wVCGQ/SXNCLBr8RHolTKHjsupS4xvnD1VKhJYRr2gapIYLwUOm29SKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BAC461682;
+	Wed, 19 Feb 2025 00:46:18 -0800 (PST)
+Received: from [10.162.42.6] (unknown [10.162.42.6])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E695D3F5A1;
+	Wed, 19 Feb 2025 00:45:47 -0800 (PST)
+Message-ID: <e26a59a1-ff9a-49c7-b10a-c3f5c096a2c4@arm.com>
+Date: Wed, 19 Feb 2025 14:15:44 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="x4wbRtB/Z/s8aFtD"
-Content-Disposition: inline
-In-Reply-To: <20250219153444.0046e433@canb.auug.org.au>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/4] arm64: hugetlb: Fix huge_ptep_get_and_clear() for
+ non-present ptes
+To: Ryan Roberts <ryan.roberts@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ Helge Deller <deller@gmx.de>, Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Naveen N Rao <naveen@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>,
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+ "David S. Miller" <davem@davemloft.net>,
+ Andreas Larsson <andreas@gaisler.com>, Arnd Bergmann <arnd@arndb.de>,
+ Muchun Song <muchun.song@linux.dev>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Uladzislau Rezki <urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>,
+ David Hildenbrand <david@redhat.com>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Mark Rutland <mark.rutland@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Kevin Brodsky <kevin.brodsky@arm.com>,
+ Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20250217140419.1702389-1-ryan.roberts@arm.com>
+ <20250217140419.1702389-3-ryan.roberts@arm.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20250217140419.1702389-3-ryan.roberts@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
---x4wbRtB/Z/s8aFtD
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 19, 2025 at 03:34:44PM +1100, Stephen Rothwell wrote:
-> Hi all,
->=20
-> After merging the vfs-brauner tree, today's linux-next build (htmldocs)
-> produced this warning:
->=20
-> Documentation/filesystems/porting.rst:1173: ERROR: Unexpected indentation=
-=2E [docutils]
->=20
-> Introduced by commit
->=20
->   20c2c1baa9ab ("VFS: add common error checks to lookup_one_qstr_excl()")
->=20
+On 2/17/25 19:34, Ryan Roberts wrote:
+> arm64 supports multiple huge_pte sizes. Some of the sizes are covered by
+> a single pte entry at a particular level (PMD_SIZE, PUD_SIZE), and some
+> are covered by multiple ptes at a particular level (CONT_PTE_SIZE,
+> CONT_PMD_SIZE). So the function has to figure out the size from the
+> huge_pte pointer. This was previously done by walking the pgtable to
+> determine the level and by using the PTE_CONT bit to determine the
+> number of ptes at the level.
+> 
+> But the PTE_CONT bit is only valid when the pte is present. For
+> non-present pte values (e.g. markers, migration entries), the previous
+> implementation was therefore erroniously determining the size. There is
+> at least one known caller in core-mm, move_huge_pte(), which may call
+> huge_ptep_get_and_clear() for a non-present pte. So we must be robust to
+> this case. Additionally the "regular" ptep_get_and_clear() is robust to
+> being called for non-present ptes so it makes sense to follow the
+> behaviour.
+> 
+> Fix this by using the new sz parameter which is now provided to the
+> function. Additionally when clearing each pte in a contig range, don't
+> gather the access and dirty bits if the pte is not present.
+> 
+> An alternative approach that would not require API changes would be to
+> store the PTE_CONT bit in a spare bit in the swap entry pte for the
+> non-present case. But it felt cleaner to follow other APIs' lead and
+> just pass in the size.
+> 
+> As an aside, PTE_CONT is bit 52, which corresponds to bit 40 in the swap
+> entry offset field (layout of non-present pte). Since hugetlb is never
+> swapped to disk, this field will only be populated for markers, which
+> always set this bit to 0 and hwpoison swap entries, which set the offset
+> field to a PFN; So it would only ever be 1 for a 52-bit PVA system where
+> memory in that high half was poisoned (I think!). So in practice, this
+> bit would almost always be zero for non-present ptes and we would only
+> clear the first entry if it was actually a contiguous block. That's
+> probably a less severe symptom than if it was always interpretted as 1
+> and cleared out potentially-present neighboring PTEs.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 66b3923a1a0f ("arm64: hugetlb: add support for PTE contiguous bit")
+> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+> ---
+>  arch/arm64/mm/hugetlbpage.c | 40 ++++++++++++++++---------------------
+>  1 file changed, 17 insertions(+), 23 deletions(-)
+> 
+> diff --git a/arch/arm64/mm/hugetlbpage.c b/arch/arm64/mm/hugetlbpage.c
+> index 06db4649af91..614b2feddba2 100644
+> --- a/arch/arm64/mm/hugetlbpage.c
+> +++ b/arch/arm64/mm/hugetlbpage.c
+> @@ -163,24 +163,23 @@ static pte_t get_clear_contig(struct mm_struct *mm,
+>  			     unsigned long pgsize,
+>  			     unsigned long ncontig)
+>  {
+> -	pte_t orig_pte = __ptep_get(ptep);
+> -	unsigned long i;
+> -
+> -	for (i = 0; i < ncontig; i++, addr += pgsize, ptep++) {
+> -		pte_t pte = __ptep_get_and_clear(mm, addr, ptep);
+> -
+> -		/*
+> -		 * If HW_AFDBM is enabled, then the HW could turn on
+> -		 * the dirty or accessed bit for any page in the set,
+> -		 * so check them all.
+> -		 */
+> -		if (pte_dirty(pte))
+> -			orig_pte = pte_mkdirty(orig_pte);
+> -
+> -		if (pte_young(pte))
+> -			orig_pte = pte_mkyoung(orig_pte);
+> +	pte_t pte, tmp_pte;
+> +	bool present;
+> +
+> +	pte = __ptep_get_and_clear(mm, addr, ptep);
+> +	present = pte_present(pte);
 
-Separating the bullet list should suffice (plus s/recommend/recommended/
-for consistency with the rest of docs):
+pte_present() may not be evaluated for standard huge pages at [PMD|PUD]_SIZE
+e.g when ncontig = 1 in the argument.
 
----- >8 ----
-diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesyst=
-ems/porting.rst
-index 3b6622fbd66be9..cfac50a7258db6 100644
---- a/Documentation/filesystems/porting.rst
-+++ b/Documentation/filesystems/porting.rst
-@@ -1166,10 +1166,11 @@ kern_path_locked() and user_path_locked() no longer=
- return a negative
- dentry so this doesn't need to be checked.  If the name cannot be found,
- ERR_PTR(-ENOENT) is returned.
-=20
--** recommend**
-+** recommended**
-=20
- lookup_one_qstr_excl() is changed to return errors in more cases, so
--these conditions don't require explicit checks.
-+these conditions don't require explicit checks:
-+
-  - if LOOKUP_CREATE is NOT given, then the dentry won't be negative,
-    ERR_PTR(-ENOENT) is returned instead
-  - if LOOKUP_EXCL IS given, then the dentry won't be positive,
+> +	while (--ncontig) {
 
-Let me know if I should send the formal patch.
+Should this be converted into a for loop instead just to be in sync with other
+similar iterators in this file.
 
-Thanks.
+for (i = 1; i < ncontig; i++, addr += pgsize, ptep++)
+{
+	tmp_pte = __ptep_get_and_clear(mm, addr, ptep);
+	if (present) {
+		if (pte_dirty(tmp_pte))
+			pte = pte_mkdirty(pte);
+		if (pte_young(tmp_pte))
+			pte = pte_mkyoung(pte);
+	}
+}
 
---=20
-An old man doll... just what I always wanted! - Clara
-
---x4wbRtB/Z/s8aFtD
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZ7WaMAAKCRD2uYlJVVFO
-o7WUAQCpjVqxu4vPorEol6QTiRkibN5z05gM8EUTcxtmaA8jnQD/S576gdOuXSQZ
-zAqe9RIwNg7riMbvpjeZvaqwRfCKHgQ=
-=ClpC
------END PGP SIGNATURE-----
-
---x4wbRtB/Z/s8aFtD--
+> +		ptep++;
+> +		addr += pgsize;
+> +		tmp_pte = __ptep_get_and_clear(mm, addr, ptep);
+> +		if (present) {
+> +			if (pte_dirty(tmp_pte))
+> +				pte = pte_mkdirty(pte);
+> +			if (pte_young(tmp_pte))
+> +				pte = pte_mkyoung(pte);
+> +		}
+>  	}
+> -	return orig_pte;
+> +	return pte;
+>  }
+>  
+>  static pte_t get_clear_contig_flush(struct mm_struct *mm,
+> @@ -401,13 +400,8 @@ pte_t huge_ptep_get_and_clear(struct mm_struct *mm, unsigned long addr,
+>  {
+>  	int ncontig;
+>  	size_t pgsize;
+> -	pte_t orig_pte = __ptep_get(ptep);
+> -
+> -	if (!pte_cont(orig_pte))
+> -		return __ptep_get_and_clear(mm, addr, ptep);
+> -
+> -	ncontig = find_num_contig(mm, addr, ptep, &pgsize);
+>  
+> +	ncontig = num_contig_ptes(sz, &pgsize);
+>  	return get_clear_contig(mm, addr, ptep, pgsize, ncontig);
+>  }
+>  
 
