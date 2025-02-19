@@ -1,158 +1,147 @@
-Return-Path: <linux-kernel+bounces-522101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2947EA3C5F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:19:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7920AA3C61E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:25:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E6491884FBC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:18:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D50C179528
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:25:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BB4D2144A9;
-	Wed, 19 Feb 2025 17:18:33 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD0882144D3;
+	Wed, 19 Feb 2025 17:25:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nNHcKml6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBA35286284;
-	Wed, 19 Feb 2025 17:18:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A738E21423F;
+	Wed, 19 Feb 2025 17:25:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739985513; cv=none; b=n+vkqaGfi+s1rq88fESmo37QCQiO2obys74PNfd6qG7hgC3wMFYvASLfbRSPds2nrx7yh0qFEPOT85+MUH9oQarSHuX69TRxIWJZt8xtPygwKOzndFlELK+04QOKuyCyLPl1wsv40QkCdbJZC5dpdbYinqH3sGozocI1/1dpSLQ=
+	t=1739985929; cv=none; b=gbRtzqCORGCjuMeQrmTmuak12lGo+tPzD8eO4kulkJRDILnixOShJZ6UMSNMQhyzf9dHT4fEtX5wxJvjFMzkcxHW2/dXKiOnwPnq6wsnoD5p26OxGR+yjPFWaijZKJXsBkKxu7pF8H+4l/C7bJ0EnYsXzwz94ZnLn5CQE9xouMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739985513; c=relaxed/simple;
-	bh=Axex9ugl2cp1Mnn+czrujd78B3to4P86gl7uF640N9c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lAfpFm2X5BhcubaymMPd4bacljPfkuFkNW9L5v5L0iovcYYVgXjoUdRnKghTXg2SHcJVrULcEV1JJeeF/pqhin8+Xz08yvOhFsekrvf/dY5rY/sf/xyk6hWkcjx+COwU544KopoWgnwwEMkIAe72DuGeGt/unPlOQsiOhtFHD7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 358C4C4CEE0;
-	Wed, 19 Feb 2025 17:18:27 +0000 (UTC)
-Date: Wed, 19 Feb 2025 17:18:24 +0000
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Herbert Xu <herbert@gondor.apana.org.au>, willy@infradead.org,
-	Pankaj Raghav <p.raghav@samsung.com>,
-	Yang Shi <yang@os.amperecomputing.com>,
-	David Hildenbrand <david@redhat.com>
-Subject: Re: [PATCH 6.6 000/389] 6.6.76-rc2 review
-Message-ID: <Z7YSYArXkRFEy6FO@arm.com>
-References: <20250206155234.095034647@linuxfoundation.org>
- <CA+G9fYvKzV=jo9AmKH2tJeLr0W8xyjxuVO-P+ZEBdou6C=mKUw@mail.gmail.com>
- <CA+G9fYtqBxt+JwSLCcVBchh94GVRhbo9rTP26ceJ=sf4MDo61Q@mail.gmail.com>
- <Z7Xj-zIe-Sa1syG7@arm.com>
+	s=arc-20240116; t=1739985929; c=relaxed/simple;
+	bh=XGSkKIwZw3PqTPka1ddYLycO5ruHPaESYlAcuJunJrE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XYfGbrdOY5a3J82oHmp1pMzj3NVuguYl90Epa/adofEeqowCwVuiyMRWcyeCUBlhRrTJng/8+kQyT6OTprzDWbYfHXjHyzARRI9pdYcEvw4DzEEblOJrEeZyN2Y44vXgUppFm4tPITk1VPPrdz6/F7WfogEbyd1AeRBnw18/XSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nNHcKml6; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739985927; x=1771521927;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=XGSkKIwZw3PqTPka1ddYLycO5ruHPaESYlAcuJunJrE=;
+  b=nNHcKml6fmE0a5jdVmdSWoGILGjcrZLPemr85Qe6iKHv0sE1T7sYjMkd
+   o/wQ6vQDxFmfMX9pM17y5AusWcqOk9knEHC8DkQzf3HRgTI32bK7TlpzP
+   iqiDJphewMNJAfMj8msCXLp9ZWq1DiEMSe5vkvAmovTZunArMsXqJPmfb
+   UBVdWxcUS6gVzrB4t0nm0pBYmTn3blwJauPCYtExwrWnBVopYQnrXE5UC
+   BuLKP1UZOOU01X+/ZrVSH4L9biO7QZASV4+adWU4dM91PidXS0ArsIxna
+   Ls7QrMEI0+Zb2OnrudiOSZE4IUD1Og5SbvVWHaQ/Wl+PC0ydCLTOtyrtI
+   Q==;
+X-CSE-ConnectionGUID: SZRoHlGcRROuuvK7SdohWQ==
+X-CSE-MsgGUID: kmz9oyfQS4Ss9KebsGdsuA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11350"; a="58279380"
+X-IronPort-AV: E=Sophos;i="6.13,299,1732608000"; 
+   d="scan'208";a="58279380"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 09:25:26 -0800
+X-CSE-ConnectionGUID: PUNdUEe2QH+TCT91695bFw==
+X-CSE-MsgGUID: Z/af/wW6TmKB0wSnv6GLOg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,299,1732608000"; 
+   d="scan'208";a="115306255"
+Received: from inaky-mobl1.amr.corp.intel.com (HELO [10.125.110.11]) ([10.125.110.11])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 09:19:38 -0800
+Message-ID: <1c00cbcf-e133-4fe0-b423-897c2b5c7dcc@intel.com>
+Date: Wed, 19 Feb 2025 10:19:31 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z7Xj-zIe-Sa1syG7@arm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/7] cxl/core: Use guard() to drop the goto pattern of
+ cxl_dpa_free()
+To: Li Ming <ming.li@zohomail.com>, dave@stgolabs.net,
+ jonathan.cameron@huawei.com, alison.schofield@intel.com,
+ vishal.l.verma@intel.com, ira.weiny@intel.com, dan.j.williams@intel.com
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250217144828.30651-1-ming.li@zohomail.com>
+ <20250217144828.30651-5-ming.li@zohomail.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250217144828.30651-5-ming.li@zohomail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 19, 2025 at 02:00:27PM +0000, Catalin Marinas wrote:
-> > On Sat, 8 Feb 2025 at 16:54, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
-> > > Regression on qemu-arm64 and FVP noticed this kernel warning running
-> > > selftests: arm64: check_hugetlb_options test case on 6.6.76-rc1 and
-> > > 6.6.76-rc2.
-> > >
-> > > Test regression: WARNING-arch-arm64-mm-copypage-copy_highpage
-> > >
-> > > ------------[ cut here ]------------
-> > > [   96.920028] WARNING: CPU: 1 PID: 3611 at
-> > > arch/arm64/mm/copypage.c:29 copy_highpage
-> > > (arch/arm64/include/asm/mte.h:87)
-> > > [   96.922100] Modules linked in: crct10dif_ce sm3_ce sm3 sha3_ce
-> > > sha512_ce sha512_arm64 fuse drm backlight ip_tables x_tables
-> > > [   96.925603] CPU: 1 PID: 3611 Comm: check_hugetlb_o Not tainted 6.6.76-rc2 #1
-> > > [   96.926956] Hardware name: linux,dummy-virt (DT)
-> > > [   96.927695] pstate: 43402009 (nZcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
-> > > [   96.928687] pc : copy_highpage (arch/arm64/include/asm/mte.h:87)
-> > > [   96.929037] lr : copy_highpage
-> > > (arch/arm64/include/asm/alternative-macros.h:232
-> > > arch/arm64/include/asm/cpufeature.h:443
-> > > arch/arm64/include/asm/cpufeature.h:504
-> > > arch/arm64/include/asm/cpufeature.h:814 arch/arm64/mm/copypage.c:27)
-> > > [   96.929399] sp : ffff800088aa3ab0
-> > > [   96.930232] x29: ffff800088aa3ab0 x28: 00000000000001ff x27: 0000000000000000
-> > > [   96.930784] x26: 0000000000000000 x25: 0000ffff9b800000 x24: 0000ffff9b9ff000
-> > > [   96.931402] x23: fffffc0003257fc0 x22: ffff0000c95ff000 x21: ffff0000c93ff000
-> > > [   96.932054] x20: fffffc0003257fc0 x19: fffffc000324ffc0 x18: 0000ffff9b800000
-> > > [   96.933357] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
-> > > [   96.934091] x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
-> > > [   96.935095] x11: 0000000000000000 x10: 0000000000000000 x9 : 0000000000000000
-> > > [   96.935982] x8 : 0bfffc0001800000 x7 : 0000000000000000 x6 : 0000000000000000
-> > > [   96.936536] x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
-> > > [   96.937089] x2 : 0000000000000000 x1 : ffff0000c9600000 x0 : ffff0000c9400080
-> > > [   96.939431] Call trace:
-> > > [   96.939920] copy_highpage (arch/arm64/include/asm/mte.h:87)
-> > > [   96.940443] copy_user_highpage (arch/arm64/mm/copypage.c:40)
-> > > [   96.940963] copy_user_large_folio (mm/memory.c:5977 mm/memory.c:6109)
-> > > [   96.941535] hugetlb_wp (mm/hugetlb.c:5701)
-> > > [   96.941948] hugetlb_fault (mm/hugetlb.c:6237)
-> > > [   96.942344] handle_mm_fault (mm/memory.c:5330)
-> > > [   96.942794] do_page_fault (arch/arm64/mm/fault.c:513
-> > > arch/arm64/mm/fault.c:626)
-> > > [   96.943341] do_mem_abort (arch/arm64/mm/fault.c:846)
-> > > [   96.943797] el0_da (arch/arm64/kernel/entry-common.c:133
-> > > arch/arm64/kernel/entry-common.c:144
-> > > arch/arm64/kernel/entry-common.c:547)
-> > > [   96.944229] el0t_64_sync_handler (arch/arm64/kernel/entry-common.c:0)
-> > > [   96.944765] el0t_64_sync (arch/arm64/kernel/entry.S:599)
-> > > [   96.945383] ---[ end trace 0000000000000000 ]---
+
+
+On 2/17/25 7:48 AM, Li Ming wrote:
+> cxl_dpa_free() has a goto pattern to call up_write() for cxl_dpa_rwsem,
+> it can be removed by using a guard() to replace the down_write() and
+> up_write().
 > 
-> Prior to commit 25c17c4b55de ("hugetlb: arm64: add mte support"), there
-> was no hugetlb support with MTE, so the above code path should not
-> happen - it seems to get a PROT_MTE hugetlb page which should have been
-> prevented by arch_validate_flags(). Or something else corrupts the page
-> flags and we end up with some random PG_mte_tagged set.
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: Li Ming <ming.li@zohomail.com>
 
-The problem is in the arm64 arch_calc_vm_flag_bits() as it returns
-VM_MTE_ALLOWED for any MAP_ANONYMOUS ignoring MAP_HUGETLB (it's been
-doing this since day 1 of MTE). The implementation does handle the
-hugetlb file mmap() correctly but not the MAP_ANONYMOUS case.
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> ---
+>  drivers/cxl/core/hdm.c | 24 ++++++++----------------
+>  1 file changed, 8 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/cxl/core/hdm.c b/drivers/cxl/core/hdm.c
+> index 4a578092377e..874a791f8292 100644
+> --- a/drivers/cxl/core/hdm.c
+> +++ b/drivers/cxl/core/hdm.c
+> @@ -382,35 +382,27 @@ int cxl_dpa_free(struct cxl_endpoint_decoder *cxled)
+>  {
+>  	struct cxl_port *port = cxled_to_port(cxled);
+>  	struct device *dev = &cxled->cxld.dev;
+> -	int rc;
+>  
+> -	down_write(&cxl_dpa_rwsem);
+> -	if (!cxled->dpa_res) {
+> -		rc = 0;
+> -		goto out;
+> -	}
+> +	guard(rwsem_write)(&cxl_dpa_rwsem);
+> +	if (!cxled->dpa_res)
+> +		return 0;
+>  	if (cxled->cxld.region) {
+>  		dev_dbg(dev, "decoder assigned to: %s\n",
+>  			dev_name(&cxled->cxld.region->dev));
+> -		rc = -EBUSY;
+> -		goto out;
+> +		return -EBUSY;
+>  	}
+>  	if (cxled->cxld.flags & CXL_DECODER_F_ENABLE) {
+>  		dev_dbg(dev, "decoder enabled\n");
+> -		rc = -EBUSY;
+> -		goto out;
+> +		return -EBUSY;
+>  	}
+>  	if (cxled->cxld.id != port->hdm_end) {
+>  		dev_dbg(dev, "expected decoder%d.%d\n", port->id,
+>  			port->hdm_end);
+> -		rc = -EBUSY;
+> -		goto out;
+> +		return -EBUSY;
+>  	}
+> +
+>  	devm_cxl_dpa_release(cxled);
+> -	rc = 0;
+> -out:
+> -	up_write(&cxl_dpa_rwsem);
+> -	return rc;
+> +	return 0;
+>  }
+>  
+>  int cxl_dpa_set_mode(struct cxl_endpoint_decoder *cxled,
 
-The fix would be something like below:
-
------------------8<--------------------------
-diff --git a/arch/arm64/include/asm/mman.h b/arch/arm64/include/asm/mman.h
-index 5966ee4a6154..8ff5d88c9f12 100644
---- a/arch/arm64/include/asm/mman.h
-+++ b/arch/arm64/include/asm/mman.h
-@@ -28,7 +28,8 @@ static inline unsigned long arch_calc_vm_flag_bits(unsigned long flags)
- 	 * backed by tags-capable memory. The vm_flags may be overridden by a
- 	 * filesystem supporting MTE (RAM-based).
- 	 */
--	if (system_supports_mte() && (flags & MAP_ANONYMOUS))
-+	if (system_supports_mte() &&
-+	    ((flags & MAP_ANONYMOUS) && !(flags & MAP_HUGETLB)))
- 		return VM_MTE_ALLOWED;
-
- 	return 0;
--------------------8<-----------------------
-
-This fix won't make sense for mainline since it supports MAP_HUGETLB
-already.
-
-Greg, are you ok with a stable-only fix as above or you'd rather see the
-full 25c17c4b55de ("hugetlb: arm64: add mte support") backported?
-
-Thanks.
-
--- 
-Catalin
 
