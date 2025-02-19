@@ -1,162 +1,93 @@
-Return-Path: <linux-kernel+bounces-522162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F040A3C6DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:58:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99A06A3C6DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:58:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B9877A6B2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:57:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2D7B173033
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:58:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC6A2147FE;
-	Wed, 19 Feb 2025 17:57:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D422147F6;
+	Wed, 19 Feb 2025 17:58:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a44ocDxA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AqMhpBlj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B7E11ADC86;
-	Wed, 19 Feb 2025 17:57:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 429D41ADC86;
+	Wed, 19 Feb 2025 17:58:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739987867; cv=none; b=VaFV5HPEinBQkS4xAeEjsjVpDar2OmzcGeXnccsgOBr56uQvL/Dd+2r4EyeQi2C8QQi177UJXdKckOWOCRGIWRcGK+EyiFwdjPdmMA+t8R6EdBoa5GU5TbTqImOyZ3Nu3i3xvrX1a5kj2H0hVhMZ7njvJG69+97clGKX6g37Jog=
+	t=1739987895; cv=none; b=hKDDYdFbzzWNpKSL7wm8r9tUAtpUVP1Sni+iu2wqMYA+fybD93BdWHK8wkVFp+XXsW0tE7lcyRHbhTEVO2az+5/US8sFf+mzC33q7KjxXtvzbB911AVCmaurIalxhfRFoiEawrIUfjr5p6UJyntHOAUE5/TXFsEc1bHH/NWGVRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739987867; c=relaxed/simple;
-	bh=bNlAhfaAmhX6VaFyFfgt8A57xz33sy1WuFva1LsY4j8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aJaLkLSJtaoCKvkavLYJKqUIbyzSa+jqF00deYDyb+a4yYHD6cD6c4xe+3MCw5r/s2PaSlkI/mh2dptWDVEUQ6Rv04uDvp7mKP9EkpQfuP7JMAAclD7OF1tkks9snunbMWfTJriFitf0bzqxbjIvN7KuEY50HsHZ/YdgssHEqyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a44ocDxA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3C23C4CED1;
-	Wed, 19 Feb 2025 17:57:39 +0000 (UTC)
+	s=arc-20240116; t=1739987895; c=relaxed/simple;
+	bh=twv1E+swy9QjZdA/OrEkjl50LDIDwsj5YvoXhji/Pjo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qaURfG6OiG45LTQ1U+/KqT4Lta4TWpUpp5NkvGZhjIvhSEtJ/QwJLR9WkWHcqjs2/zI1qGoQQ4LUyPUGF2OdRwCT+HDobyKfgWntot3bx1IH+NfCmyJiO5JH9hKIG05My5f2+PZd7VDLCRYxRnZ1RXCdLDxCfFE1Z0wyuShAu2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AqMhpBlj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A57DCC4CED1;
+	Wed, 19 Feb 2025 17:58:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739987867;
-	bh=bNlAhfaAmhX6VaFyFfgt8A57xz33sy1WuFva1LsY4j8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=a44ocDxACxnXGyjoxzQcz8G/7t/hSKnD6q+yY4uNYd9R/XkNjCO5VpBkUh8uzL8q8
-	 7K4C3RNO1rGNm1B1VodEgPZKREmqoW0j1TOdVtogiePmEg5wBMM2gvXjHZp/sllm1Y
-	 c/WeL4usFP/oxisjnHLEMszr6mMqPm/CJ7B1Toljm18PLaNTW8TiI0VbLjMbZsEz7g
-	 fNp/Yjekg+e77sJZrR+JYlIAaOYQEprh7r+dL6KR8HyMYjgSWIxYNAxEy2F2BVy9A4
-	 QbyU4bAVT+KCKw6iWW/0qZOCmhf4M95s/FK1n7NaxJBCgMowosJMuXYlU9vApK5/YA
-	 txJlAQEyRLPMA==
-Date: Wed, 19 Feb 2025 23:27:35 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Chen Wang <unicorn_wang@outlook.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	maz@kernel.org, Chen Wang <unicornxw@gmail.com>, kw@linux.com,
-	u.kleine-koenig@baylibre.com, aou@eecs.berkeley.edu, arnd@arndb.de,
-	bhelgaas@google.com, conor+dt@kernel.org, guoren@kernel.org,
-	inochiama@outlook.com, krzk+dt@kernel.org, lee@kernel.org,
-	lpieralisi@kernel.org, palmer@dabbelt.com, paul.walmsley@sifive.com,
-	pbrobinson@gmail.com, robh@kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-riscv@lists.infradead.org, chao.wei@sophgo.com,
-	xiaoguang.xing@sophgo.com, fengchun.li@sophgo.com,
-	helgaas@kernel.org
-Subject: Re: [PATCH v3 2/5] PCI: sg2042: Add Sophgo SG2042 PCIe driver
-Message-ID: <20250219175735.ruwt7s5rbwswvsi6@thinkpad>
-References: <cover.1736923025.git.unicorn_wang@outlook.com>
- <ddedd8f76f83fea2c6d3887132d2fe6f2a6a02c1.1736923025.git.unicorn_wang@outlook.com>
- <20250119122353.v3tzitthmu5tu3dg@thinkpad>
- <BM1PR01MB254540560C1281CE9898A5A0FEE12@BM1PR01MB2545.INDPRD01.PROD.OUTLOOK.COM>
- <20250122173451.5c7pdchnyee7iy6t@thinkpad>
- <MA0PR01MB56715414B26AA601CFFB54C8FEFB2@MA0PR01MB5671.INDPRD01.PROD.OUTLOOK.COM>
+	s=k20201202; t=1739987894;
+	bh=twv1E+swy9QjZdA/OrEkjl50LDIDwsj5YvoXhji/Pjo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=AqMhpBljSFUlDyIEXwrOznVdkZpmv48Kx1hP2MidjiyJwvP1p1oaHR02m/FTcBWqh
+	 MTKOcuMrTUHA+dyFB061kBvwr4ic9iAPFELd9C95lq+CICq9jdk7ClbES65fMfwtxU
+	 72HxCDWs9x3TScmjIMPGES+/13Ev2tOnnnvTvKQfV/RVIOfGbHvI0uww2WbZHXfyhN
+	 GS4EWf3shFUYU/kqLoy7SccqmhnH4TRFQTafN2gcCkIf27FKA+0x5Wm0DrqKJjFVeT
+	 iDT+OtJnTZVFpNKfcT1NeorvQ4kN5szwUplfGSwGlrrMzCdc0wdU/Pz7WfPX1jtR5q
+	 BktYVhBJXZ6EQ==
+From: cel@kernel.org
+To: Jeff Layton <jlayton@kernel.org>,
+	Neil Brown <neilb@suse.de>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>,
+	Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Chuck Lever <chuck.lever@oracle.com>,
+	linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [RESEND PATCH][next] fs: nfs: acl: Avoid -Wflex-array-member-not-at-end warning
+Date: Wed, 19 Feb 2025 12:58:10 -0500
+Message-ID: <173998787836.10421.7389404025921854937.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <Z6GDiLZo5u4CqxBr@kspp>
+References: <Z6GDiLZo5u4CqxBr@kspp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <MA0PR01MB56715414B26AA601CFFB54C8FEFB2@MA0PR01MB5671.INDPRD01.PROD.OUTLOOK.COM>
 
-On Mon, Feb 17, 2025 at 04:22:08PM +0800, Chen Wang wrote:
-> 
-> On 2025/1/23 1:34, Manivannan Sadhasivam wrote:
-> 
-> [......]
-> > > > > +/*
-> > > > > + * SG2042 PCIe controller supports two ways to report MSI:
-> > > > > + *
-> > > > > + * - Method A, the PCIe controller implements an MSI interrupt controller
-> > > > > + *   inside, and connect to PLIC upward through one interrupt line.
-> > > > > + *   Provides memory-mapped MSI address, and by programming the upper 32
-> > > > > + *   bits of the address to zero, it can be compatible with old PCIe devices
-> > > > > + *   that only support 32-bit MSI address.
-> > > > > + *
-> > > > > + * - Method B, the PCIe controller connects to PLIC upward through an
-> > > > > + *   independent MSI controller "sophgo,sg2042-msi" on the SOC. The MSI
-> > > > > + *   controller provides multiple(up to 32) interrupt sources to PLIC.
-> > > > > + *   Compared with the first method, the advantage is that the interrupt
-> > > > > + *   source is expanded, but because for SG2042, the MSI address provided by
-> > > > > + *   the MSI controller is fixed and only supports 64-bit address(> 2^32),
-> > > > > + *   it is not compatible with old PCIe devices that only support 32-bit MSI
-> > > > > + *   address.
-> > > > > + *
-> > > > > + * Method A & B can be configured in DTS, default is Method B.
-> > > > How to configure them? I can only see "sophgo,sg2042-msi" in the binding.
-> > > 
-> > > The value of the msi-parent attribute is used in dts to distinguish them,
-> > > for example:
-> > > 
-> > > ```dts
-> > > 
-> > > msi: msi-controller@7030010300 {
-> > >      ......
-> > > };
-> > > 
-> > > pcie_rc0: pcie@7060000000 {
-> > >      msi-parent = <&msi>;
-> > > };
-> > > 
-> > > pcie_rc1: pcie@7062000000 {
-> > >      ......
-> > >      msi-parent = <&msi_pcie>;
-> > >      msi_pcie: interrupt-controller {
-> > >          ......
-> > >      };
-> > > };
-> > > 
-> > > ```
-> > > 
-> > > Which means:
-> > > 
-> > > pcie_rc0 uses Method B
-> > > 
-> > > pcie_rc1 uses Method A.
-> > > 
-> > Ok. you mentioned 'default method' which is not accurate since the choice
-> > obviously depends on DT. Maybe you should say, 'commonly used method'? But both
-> > the binding and dts patches make use of in-built MSI controller only (method A).
-> 
-> "commonly used method" looks ok to me.
-> 
-> Binding example only shows the case for Method A, due to I think the writing
-> of case for Method A  covers the writing of case for Method B.
-> 
-> DTS patches use both Method A and B. You can see patch 4 of this patchset,
-> pcie_rc1 uses Method A, pcie_rc0 & pcie_rc2 use Method B.
-> 
-> > In general, for MSI implementations inside the PCIe IP, we don't usually add a
-> > dedicated devicetree node since the IP is the same. But in your reply to the my
-> > question on the bindings patch, you said it is a separate IP. I'm confused now.
-> 
-> I learned the writing of DTS from "brcm,iproc-pcie", see
-> arch/arm/boot/dts/broadcom/bcm-cygnus.dtsi for example. Wouldn't it be
-> clearer to embed an msi controller in topo?
-> 
-> And regarding what you said, "we don't usually add a dedicated devicetree
-> node", do you have any example I can refer to?
-> 
+From: Chuck Lever <chuck.lever@oracle.com>
 
-You can refer all DWC glue drivers under drivers/pci/controller/dwc/ and their
-corresponding DT bindings.
+On Tue, 04 Feb 2025 13:33:36 +1030, Gustavo A. R. Silva wrote:
+> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+> getting ready to enable it, globally.
+> 
+> So, in order to avoid ending up with a flexible-array member in the
+> middle of other structs, we use the `struct_group_tagged()` helper
+> to create a new tagged `struct posix_acl_hdr`. This structure
+> groups together all the members of the flexible `struct posix_acl`
+> except the flexible array.
+> 
+> [...]
 
-- Mani
+Applied to nfsd-testing, thanks!
 
--- 
-மணிவண்ணன் சதாசிவம்
+[1/1] fs: nfs: acl: Avoid -Wflex-array-member-not-at-end warning
+      commit: 5aea7cd1e98f11108d019c3b629fce37f526377f
+
+--
+Chuck Lever
+
 
