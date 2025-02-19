@@ -1,180 +1,183 @@
-Return-Path: <linux-kernel+bounces-520734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3642DA3AE70
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:04:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CA65A3AE82
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:07:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99EA41887D28
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 01:02:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F5A13A924F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 01:02:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECD481925AF;
-	Wed, 19 Feb 2025 01:00:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98C2C19F47E;
+	Wed, 19 Feb 2025 01:01:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="aDKsDhJg"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L5cOSEhZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 085FC7DA95;
-	Wed, 19 Feb 2025 01:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6D719DF6A;
+	Wed, 19 Feb 2025 01:01:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739926852; cv=none; b=Swpo1cZ1ebUEJxYH5kjFke1Pdc6I8P83W3UFnUgX6fP2tvhQMGpnCWRM6Dt/uUZphczUYaO+LlPFm2dp8/eH1VcRzd9gjPrdkpMtdYbZQhtZ3Jkzqhbt6sm9BoIVUPRlz8Z2rBEyVfsl9DWqeKHphDU2Km7jc5uEy1m/gLZVtT4=
+	t=1739926876; cv=none; b=i5HywoRQQSYqwdZc+S0Fzelo0q+qNjuHEAsYONTWijAU5suT0XyztvYlbMZsA10Iax8OaISySILW6/Frvp45xhsWfLrpVcc+/gXyncClTFWp/fvuxYMgQhpzuPvMc6PMrwp/FC7LTNMqN2LYZhSM79YEegsmyK+NdPF7i2fgBjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739926852; c=relaxed/simple;
-	bh=vV2D+GMbSCNS9cysj5oqLuuwY43GbGL4ZDsBupCeyYs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TlSxgld9ZHrJQiGVRv8ths5vXcuafXNl7+uCxTg4SJVehaBgnyA37qZ16bBvuLzKMbPb6BnA9uiSvnMqvCFUq2zCtEpdXUkqyfENGkqyV/h7NI3StC3Gx4SJh3M5t8xa2P42qaacAgL9tRuxxysRXyjEdqrJXntKGwNaCm5hL5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=aDKsDhJg; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [172.27.3.244] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 51J10emT1542300
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Tue, 18 Feb 2025 17:00:41 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 51J10emT1542300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025021701; t=1739926843;
-	bh=e4r1WlzGt+tt37TywQHGre3Fqi+PlceQuuKabeTUd3o=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=aDKsDhJgHbm5ZZJH5SnUXkoPaBc32IDsNvv1qVT597Fn50TiUeI/wGDmEhDsvbWt9
-	 p4nFgvp8haFXwgKAuP4EwDqkiBn9ialPrc4f6nTxoEB8r2Z9OezUl23rwdQ0+hKIvE
-	 v0WVKM8QOPek76bjiPs0YjMQlLsM46+0mYFtR7Fi8cIQMPZ/m2UsAb6GjxB4+xSOzA
-	 g3wKk9j+QWyRAYvJtW60KL5N++MX1zaKI2C2COVjxXm/ycCJsSLk9CN7EMX8YwjjlT
-	 fpwIVV9rfIs3oEjSrQvTha7Y0mBQ2lJ3d3luSzCnzy/FT23yaAhMT9r3lwgNrFjlyC
-	 1YkxGC2MwyWUg==
-Message-ID: <a7c5973a-497c-4f31-a7be-b3123bddb6dd@zytor.com>
-Date: Tue, 18 Feb 2025 16:58:27 -0800
+	s=arc-20240116; t=1739926876; c=relaxed/simple;
+	bh=K27M5LdL2W/vFFCCuRxbGFedU1ZjRtE2yaMRw2l/oCg=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=tUlGzNpC5qhrfukWlp0egjmXVaG6FrmQp3xQ3eAuuR39hai+G9y39W/zKoPO8On8qcPdqucpLgJrhkNOXd1NcJwGqQnndpP1kF0iQS7TPfTkeQCBoSNYZ4vs0pH+HDtmkBz2kUjkwSzrIa8mYMyqzpAdSSyMispCeYlV8pAqyPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L5cOSEhZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AC61C4CEE2;
+	Wed, 19 Feb 2025 01:01:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739926875;
+	bh=K27M5LdL2W/vFFCCuRxbGFedU1ZjRtE2yaMRw2l/oCg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=L5cOSEhZ8vPUegAMpU7zp7peFtj48ey9OcxCeUVCT16T8MI6Y1U9C1OYIbwQp27tl
+	 XD4KsvsqshxLDeFkJ8rymxUBl9dDtEO19+LwcVa5YeJWiM1OZg2mifRBGVdge7c9N+
+	 wLEYV8moRPaq33RZ5ddB+BKkpU8CdmtLMC5He7o5pevINW8FzR0LljCCN/qk5RdWxa
+	 O+S0gI59tiu93Zf717qCWOcTYGp74nPuYdclnpWhIkPTzi+hyvUYubj08+mALyZlFs
+	 wNSs9kxyzOCAxhUPyHdTPewncfPOA25OL7HSyqm6IEkEATS3lfYITAjIiA7ugPYvcW
+	 XyG5GUodgJtWg==
+Date: Wed, 19 Feb 2025 10:01:11 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
+ Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Heiko Carstens <hca@linux.ibm.com>, Sven
+ Schnelle <svens@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>
+Subject: Re: [PATCH 5/5] selftests/ftrace: Update fprobe test to check
+ enabled_functions file
+Message-Id: <20250219100111.6e2c749e17b0f5e451cd6be0@kernel.org>
+In-Reply-To: <20250218193126.956559192@goodmis.org>
+References: <20250218193033.338823920@goodmis.org>
+	<20250218193126.956559192@goodmis.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Rust kernel policy
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Christoph Hellwig <hch@infradead.org>,
-        rust-for-linux <rust-for-linux@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>, David Airlie <airlied@gmail.com>,
-        linux-kernel@vger.kernel.org, ksummit@lists.linux.dev
-References: <CANiq72m-R0tOakf=j7BZ78jDHdy=9-fvZbAT8j91Je2Bxy0sFg@mail.gmail.com>
- <Z7SwcnUzjZYfuJ4-@infradead.org>
- <CANiq72myjaA3Yyw_yyJ+uvUrZQcSLY_jNp65iKH8Y5xGY5tXPQ@mail.gmail.com>
- <326CC09B-8565-4443-ACC5-045092260677@zytor.com>
- <CANiq72m+r1BZVdVHn2k8XeU37ZeY6VT2S9KswMuFA=ZO3e4uvQ@mail.gmail.com>
-Content-Language: en-US
-From: "H. Peter Anvin" <hpa@zytor.com>
-In-Reply-To: <CANiq72m+r1BZVdVHn2k8XeU37ZeY6VT2S9KswMuFA=ZO3e4uvQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 2/18/25 14:54, Miguel Ojeda wrote:
-> On Tue, Feb 18, 2025 at 10:49 PM H. Peter Anvin <hpa@zytor.com> wrote:
->>
->> I have a few issues with Rust in the kernel:
->>
->> 1. It seems to be held to a *completely* different and much lower standard than the C code as far as stability. For C code we typically require that it can compile with a 10-year-old version of gcc, but from what I have seen there have been cases where Rust level code required not the latest bleeding edge compiler, not even a release version.
+On Tue, 18 Feb 2025 14:30:38 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
+
+> From: Steven Rostedt <rostedt@goodmis.org>
 > 
-> Our minimum version is 1.78.0, as you can check in the documentation.
-> That is a very much released version of Rust, last May. This Thursday
-> Rust 1.85.0 will be released.
+> A few bugs were found in the fprobe accounting logic along with it using
+> the function graph infrastructure. Update the fprobe selftest to catch
+> those bugs in case they or something similar shows up in the future.
 > 
-> You can already build the kernel with the toolchains provided by some
-> distributions, too.
+> The test now checks the enabled_functions file which shows all the
+> functions attached to ftrace or fgraph. When enabling a fprobe, make sure
+> that its corresponding function is also added to that file. Also add two
+> more fprobes to enable to make sure that the fprobe logic works properly
+> with multiple probes.
+
+This looks good to me.
+
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+BTW, would I pick the last 3 patches via probes/fixes branch?
+
+Thanks,
+
+> 
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> ---
+>  .../test.d/dynevent/add_remove_fprobe.tc      | 54 +++++++++++++++++++
+>  1 file changed, 54 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe.tc b/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe.tc
+> index dc25bcf4f9e2..449f9d8be746 100644
+> --- a/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe.tc
+> +++ b/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe.tc
+> @@ -7,12 +7,38 @@ echo 0 > events/enable
+>  echo > dynamic_events
+>  
+>  PLACE=$FUNCTION_FORK
+> +PLACE2="kmem_cache_free"
+> +PLACE3="schedule_timeout"
+>  
+>  echo "f:myevent1 $PLACE" >> dynamic_events
+> +
+> +# Make sure the event is attached and is the only one
+> +grep -q $PLACE enabled_functions
+> +cnt=`cat enabled_functions | wc -l`
+> +if [ $cnt -ne 1 ]; then
+> +	exit_fail
+> +fi
+> +
+>  echo "f:myevent2 $PLACE%return" >> dynamic_events
+>  
+> +# It should till be the only attached function
+> +cnt=`cat enabled_functions | wc -l`
+> +if [ $cnt -ne 1 ]; then
+> +	exit_fail
+> +fi
+> +
+> +# add another event
+> +echo "f:myevent3 $PLACE2" >> dynamic_events
+> +
+> +grep -q $PLACE2 enabled_functions
+> +cnt=`cat enabled_functions | wc -l`
+> +if [ $cnt -ne 2 ]; then
+> +	exit_fail
+> +fi
+> +
+>  grep -q myevent1 dynamic_events
+>  grep -q myevent2 dynamic_events
+> +grep -q myevent3 dynamic_events
+>  test -d events/fprobes/myevent1
+>  test -d events/fprobes/myevent2
+>  
+> @@ -21,6 +47,34 @@ echo "-:myevent2" >> dynamic_events
+>  grep -q myevent1 dynamic_events
+>  ! grep -q myevent2 dynamic_events
+>  
+> +# should still have 2 left
+> +cnt=`cat enabled_functions | wc -l`
+> +if [ $cnt -ne 2 ]; then
+> +	exit_fail
+> +fi
+> +
+>  echo > dynamic_events
+>  
+> +# Should have none left
+> +cnt=`cat enabled_functions | wc -l`
+> +if [ $cnt -ne 0 ]; then
+> +	exit_fail
+> +fi
+> +
+> +echo "f:myevent4 $PLACE" >> dynamic_events
+> +
+> +# Should only have one enabled
+> +cnt=`cat enabled_functions | wc -l`
+> +if [ $cnt -ne 1 ]; then
+> +	exit_fail
+> +fi
+> +
+> +echo > dynamic_events
+> +
+> +# Should have none left
+> +cnt=`cat enabled_functions | wc -l`
+> +if [ $cnt -ne 0 ]; then
+> +	exit_fail
+> +fi
+> +
+>  clear_trace
+> -- 
+> 2.47.2
+> 
 > 
 
-So at this point Rust-only kernel code (other than experimental/staging) 
-should be deferred to 2034 -- or later if the distributions not included 
-in the "same" are considered important -- if Rust is being held to the 
-same standard as C.
 
-> I think you may be referring to the "unstable features". There remain
-> just a few language features (which are the critical ones to avoid
-> source code changes), but upstream Rust is working to get them stable
-> as soon as possible -- the Linux kernel has been twice, in 2024H2 and
-> 2025H1, a flagship goal of theirs for this reason:
-> 
->      https://rust-lang.github.io/rust-project-goals/2025h1/goals.html#flagship-goals
->      https://rust-lang.github.io/rust-project-goals/2024h2/index.html
-> 
-> Meanwhile that happens, upstream Rust requires every PR to
-> successfully build a simple configuration of the Linux kernel, to
-> avoid mistakenly breaking us in a future release. This has been key
-> for us to be able to establish a minimum version with some confidence.
-> 
-> This does not mean there will be no hiccups, or issues here and there
-> -- we are doing our best.
-
-Well, these cases predated 2024 and the 1.78 compiler you mentioned above.
-
->> 2. Does Rust even support all the targets for Linux?
-> 
-> Rust has several backends. For the main (LLVM) one, there is no reason
-> why we shouldn't be able to target everything LLVM supports, and we
-> already target several architectures.
-> 
-> There is also a GCC backend, and an upcoming Rust compiler in GCC.
-> Both should solve the GCC builds side of things. The GCC backend built
-> and booted a Linux kernel with Rust enabled a couple years ago. Still,
-> it is a work in progress.
-> 
-> Anyway, for some of the current major use cases for Rust in the
-> kernel, there is no need to cover all architectures for the time
-> being.
-
-That is of course pushing the time line even further out.
-
->> 3. I still feel that we should consider whether it would make sense to compile the *entire* kernel with a C++ compiler. I know there is a huge amount of hatred against C++, and I agree with a lot of it – *but* I feel that the last few C++ releases (C++14 at a minimum to be specific, with C++17 a strong want) actually resolved what I personally consider to have been the worst problems.
-> 
-> Existing Rust as a realistic option nowadays, and not having any
-> existing C++ code nor depending on C++ libraries, I don't see why the
-> kernel would want to jump to C++.
-
-You can't convert the *entire existing kernel code base* with a single 
-patch set, most of which can be mechanically or semi-mechanically 
-generated (think Coccinelle) while retaining the legibility and 
-maintainability of the code (which is often the hard part of automatic 
-code conversion.)
-
-Whereas C++ syntax is very nearly a superset of C, Rust syntax is 
-drastically different -- sometimes in ways that seem, at least to me, 
-purely gratuitous. That provides a huge barrier, both technical (see 
-above) and mental.
-
->> As far as I understand, Rust-style memory safety is being worked on for C++; I don't know if that will require changes to the core language or if it is implementable in library code.
-> 
-> Rust-style memory safety for C++ is essentially the "Safe C++"
-> proposal. My understanding is that C++ is going with "Profiles" in the
-> end, which is not Rust-style memory safety (and remains to be seen how
-> they achieve it). "Contracts" aren't it, either.
-> 
-> My hope would be, instead, that C is the one getting an equivalent
-> "Safe C" proposal with Rust-style memory safety, and we could start
-> using that, including better interop with Rust.
-
-So, in other words, another long horizon project... and now we need 
-people with considerable expertise to change the C code.
-
->> David Howells did a patch set in 2018 (I believe) to clean up the C code in the kernel so it could be compiled with either C or C++; the patchset wasn't particularly big and mostly mechanical in nature, something that would be impossible with Rust. Even without moving away from the common subset of C and C++ we would immediately gain things like type safe linkage.
-> 
-> That is great, but that does not give you memory safety and everyone
-> would still need to learn C++.
-
-The point is that C++ is a superset of C, and we would use a subset of 
-C++ that is more "C+"-style. That is, most changes would occur in header 
-files, especially early on. Since the kernel uses a *lot* of inlines and 
-macros, the improvements would still affect most of the *existing* 
-kernel code, something you simply can't do with Rust.
-
-It is, however, an enabling technology. Consider the recent introduction 
-of patchable immediates. Attaching them to types allows for that to be a 
-matter of declaration, instead of needing to change every single call 
-site to use a function-like syntax.
-
-	-hpa
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
