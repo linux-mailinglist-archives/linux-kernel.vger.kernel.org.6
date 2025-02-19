@@ -1,86 +1,79 @@
-Return-Path: <linux-kernel+bounces-521795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1286DA3C265
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:42:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BC0EA3C266
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:43:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04DD57A5AFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:41:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D60501888DCF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:43:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48E971EB195;
-	Wed, 19 Feb 2025 14:42:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D101F30A4;
+	Wed, 19 Feb 2025 14:43:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="CRjEBzTr"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pnOOdhmR"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 459CF1DF962
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 14:42:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E27FF1EB195
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 14:43:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739976166; cv=none; b=tiJQYX2i7tPj7z4phJU/Bu11f1N8YuslC5RdgwPd71+xQtjLrifUvTB4I5sOtu7Fkh8s6JbapilTQck9BSJcBsfK7VBkJx4glw3Cy/TucMVsJzoAmRLasKI1Omgz/Cd02nOzXDQ0KUpnjyOj1cnt3uFBx0EicDB/4RVRaX8i+hA=
+	t=1739976223; cv=none; b=TnPQvsnjIdi8tLmhBFEGUd+aufRy7/B+0s7WpHLpAOWvmFJp082JussKiGxgblTUrIpxuDYawlo8TEX7QweGgsfoF59yToFPzCzy3+GmZBUZ5Ra/8lkCZqXL0WYTV6gYwwngyJ6Zvl3hAkYJplUR+0xWN4I4ZERQSgGY0493dx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739976166; c=relaxed/simple;
-	bh=2/cg0CLMQpDd2SRP2VcBmhFX4ih79DdQEz7YxZKjcJs=;
+	s=arc-20240116; t=1739976223; c=relaxed/simple;
+	bh=XXJzkYspgnpCWCcrBdndAxSLHrm5YJblVEb/RtSh968=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rV6gRT4r/cBgOKf8f12JBlNag/Z2K8yINqcnvnIEIS/g3eWSM7LDlqbhv+ezVpkb6nW1CNhOLvx47/yHkuOYPOJoOXbqzCaYdOcexJWLDzeOhnpV1rNJDFqldxWRkIeqA04xENnO9zsQXZooFSdKy9zuCoqfWfWTxH4WBlwz7G8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=CRjEBzTr; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51J8kYTn011610
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 14:42:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	KbthUQGiUHpb4rkYFXNHNn9fqm2ZNwMaGsqaUP4qiQY=; b=CRjEBzTrz5k8SYYq
-	0xOYDKKjueZkThTzSi3YeUbnytbBserM5tfB9qCNLpBplVrctkkaSwq0r2yEdK3U
-	SgEtv6vrcuq3BR9KQ998F8irEV3+UB0rnf+KioptzeUfZ4bSh0G4zLQgCsbD94Xz
-	71fHAqQM/s32iwqFzK27wDZGCLVU8yzjGHZDJrU6rnFZIJz1mxy+I6H5eBJfa/k0
-	Tu1for1IDNaTnGS0fxcg5QkFA4VzcCngBhRV8vZ75NTmuWxfWIS80r5oG6OWGV/X
-	bb1G2cNK2uPymKBKIk/oSTwJlFyY5ql3lYFymVQIXLZ/gC5vWvzaAdqCMDFojlLT
-	nSBN5w==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44vyy3jybv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 14:42:44 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6e65862f4e0so8351946d6.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 06:42:43 -0800 (PST)
+	 In-Reply-To:Content-Type; b=DnaQnMa+aLzfV2UpiPf4t2ufkYWe2niOxSd/BWKsNECyDnlZIblmO6p7hLSdiV2gRvh4cegPCrnrCqd25aQGJlAogbWYbaZPanwT5m+3HvEyyHFpt3Q7LvLkb2SiMgzmaan/fdulEbQDDju/V7zzS42/1KFxtdYeimmgIRCjk4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pnOOdhmR; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4396f579634so27804725e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 06:43:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739976219; x=1740581019; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CB7D/FiNY5baVQEMZN1/IzSqi1RBp0oVyn9FeISCPkE=;
+        b=pnOOdhmRlMo/WlZGZDnxvr+T4F8yUMF5xRSVrM0+8zV8AfNKuyikLBzaSir99kif1V
+         cBloXPgwQEY2h05qHFbRKmqntdSgmbeveArYEdqE81hUIPba1qpyAg7P1f2csBgtkGcG
+         dGr/FH4448npeMtIo+ICVsxCL/SUzuNr2kUGuxPZjMmpvc8EA8MFfjs/xY0qHbqrpRJV
+         gtUA7i5gpPVq/u3r1XmlUmpyxOL2PiQSl+d3PKgbw39BZCk+BEL7DXiq1zAeuQWh6rDa
+         eJ3HuG9tjjM00f9Ipekxefzox+3KQlXXPsy+79R29Qxg71ya3EJhQgDXYrlorLBmpwyz
+         xB9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739976148; x=1740580948;
+        d=1e100.net; s=20230601; t=1739976219; x=1740581019;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KbthUQGiUHpb4rkYFXNHNn9fqm2ZNwMaGsqaUP4qiQY=;
-        b=Ak64uNIPQE5HnaO3u4CWmh74tGT/wveWkAJCfjpC0XULkkdR4KOVtXuDbz7eacFNdy
-         M2e+5jk26iCXzyNdcAB3j6+DGrcD1I6Ed/kjkI7nm9PQ+kaX/14NIU2Lt3ZVm7Jgp8Vi
-         1pK+9N0yoe9Opcg6lYpxQ4KezHrG24zBgOvzThLNP7o3xaHzFsLxRIAM/cXgRbLMXSL7
-         zL+6Rk/056WLcuX/ThsgXA0nx/xC1ZzdSUcQQmdrbAw6JUvtKh3r5zvUp8kkX5ph4VMk
-         XzV4q8eROt9xCafz981RECkZUF9c1Sbic5KwXeMX3GHVv/a4a72bEi8cJxKD90SuLm8b
-         ToJA==
-X-Forwarded-Encrypted: i=1; AJvYcCVBEzw0QUJbURqqr/wj5Qz3xu+hKesjtl0ON86hEtB5EJNvEBslazY4sBIeINulnuyHwmKt6pOaRj6nCuI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRiRZQ/kVn0BCGG/ZvlqawJEfwRvVcz2ikj8ZYDilsaL7yF5iH
-	nSKZfI3rk4WGzo4cqhGkWexrq5DFfJ4E4rAb4T0U/bvfbvvWCHF9MWXyXlvgBzwxPtoF4EtQ/iq
-	6pnr0to9c/auFVKr3EiOqEzET2GTJ+xmD+RZHqQGSGtwVB8mL0d+1TC2tiwitit8=
-X-Gm-Gg: ASbGncuHBE9ErjH+bze0NRqBp59Ox6cG7eKIaciBSPSQ7sK4THPuGLxr0imPIOAef8z
-	94ZrDWI6MGcpfxloQ2D8XRvd8/Jq9oxABYBxtHHAYV63ksefXytjt7KV+tjOBe9RYZAzTcVJ2LO
-	aWSvivg1PJnCH6DIZ1vj8I2dj/gJtbIgahWNSUK9AZgjSz3LkIwvQJNq1CXWI25QputZzI6iLc9
-	55JDMf0LC6O7NAK88AuJWyc49HCC9yh+IjTJGFabAzjULe56b+L0BJ/Ju1jo1DOG6jrs4m4rCY/
-	litk42UhS7OCDtZ1p4Y6GaqFuxslb9Zzp30p0GGWhuZhPpuWK3+Z93h0iH8=
-X-Received: by 2002:ad4:5766:0:b0:6d8:8283:445c with SMTP id 6a1803df08f44-6e66ccc47d9mr88788086d6.4.1739976148121;
-        Wed, 19 Feb 2025 06:42:28 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHpAj+Xqw9qSXsdwXUvLSdDHBpi+ry1U1ggEwkzdRQ/MVC50YQowsUTy3N3zJnQoanhNQNYfw==
-X-Received: by 2002:ad4:5766:0:b0:6d8:8283:445c with SMTP id 6a1803df08f44-6e66ccc47d9mr88787916d6.4.1739976147828;
-        Wed, 19 Feb 2025 06:42:27 -0800 (PST)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb9654a6b2sm652600366b.135.2025.02.19.06.42.26
+        bh=CB7D/FiNY5baVQEMZN1/IzSqi1RBp0oVyn9FeISCPkE=;
+        b=hTSIrxqBPQSeH41GKZ5CkhEze8ABxlP54NNt921wxnW/xG8nkyye61Ua28tWdy9Y/P
+         FggCryGsLqEIJ99/3Vu0WcvZXxj8cK7VDgOLv5L2LokEbRlsxG3A8MpXCkCgogaumQRR
+         NWvrcbQMvXwaVGAjS8nPxBL4CJeCPq98LfxAidWsTgxoq+UUIBBTmViBQBUdMnNKngCP
+         Jjs0y9QeL8SK6pnK4kX+sR41jEr8q7BYFqGzmuut8xjgREOYh+eLp6GVcrR76ohL1THL
+         dtm7bvHh1dXRfto9b0UY+xYO39HfII8+eLx0aHhivu9mHL8LL0k9MhB1Hpuf+Q7iq0Je
+         /gGg==
+X-Forwarded-Encrypted: i=1; AJvYcCUQBqqmNcTh6t0QqkYVFpq137xu9VVQWWE5bi1MgFPDngj1wtYbpX20kiPlZvFlv3yDsvwWaA4+lw+1lgk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9jqqI+xvo1I4t2f+7v4i2oPtcsQ33aZy4M3LS13pJGLBAkHdn
+	g96MEk8fPPWPCSDrAzZaZpCCo02Gl49sP+e/M7626bYe/jDIjrNfRXgmDYShUVBxlU+Ymi/7mVf
+	Cg8c=
+X-Gm-Gg: ASbGncut9LQcPYl+1oo6k9w84/YZMokWNWV4gcag6tjvpMJsg5NBdnXCzEEj9S2WCfo
+	SnE/c+eZD4OZx6ocFUChxIRSq8/wyhytRB+svbC8Ps+Fp4GmJYhjPIWlbF212IZqURqt/5I1Y5n
+	j3aJ7IeQwl7JHUkay6W151354hoECA5CWd8vaoIWnkKIWdiioUe5A1C7HzILpFQTI6dbvRXw1NV
+	XCnIGDfveglnOkPD3+JQlXK1PBFYk9bEk18Vehl8ODFMLpzWHx3DMBs4BGpspiYlym7vQL7N2yA
+	yAb2xu/T8dOe1VSCpJkBarEIRGZ5/EI3hiJ8/AaTjmqsWUuUDzzJw5Q=
+X-Google-Smtp-Source: AGHT+IGG9It8D+g9Z+h38+jTAPsXA4RAxVB1cY9lICrXMt4960TT9OySBuKZmnHsRJt+WQCSqCRTvQ==
+X-Received: by 2002:a5d:47a3:0:b0:38f:278f:58e4 with SMTP id ffacd0b85a97d-38f5878c88dmr2421933f8f.12.1739976219017;
+        Wed, 19 Feb 2025 06:43:39 -0800 (PST)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4398a64febasm75324215e9.1.2025.02.19.06.43.38
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Feb 2025 06:42:27 -0800 (PST)
-Message-ID: <27a0f921-437d-4744-ae99-d1f5020fd55d@oss.qualcomm.com>
-Date: Wed, 19 Feb 2025 15:42:25 +0100
+        Wed, 19 Feb 2025 06:43:38 -0800 (PST)
+Message-ID: <d7484ab2-6da0-4bb9-a2ae-9388dac15038@linaro.org>
+Date: Wed, 19 Feb 2025 15:43:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,41 +81,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: Drop `tx-sched-sp` property
-To: Lad Prabhakar <prabhakar.csengg@gmail.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20250218125157.412701-1-prabhakar.csengg@gmail.com>
+Subject: Re: [PATCH 2/2] irqchip: clocksource: fix jcore-pit irq request
+To: Artur Rojek <contact@artur-rojek.eu>,
+ Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ Thomas Gleixner <tglx@linutronix.de>, Uros Bizjak <ubizjak@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+ "D . Jeff Dionne" <jeff@coresemi.io>, Rob Landley <rob@landley.net>,
+ linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250216175545.35079-1-contact@artur-rojek.eu>
+ <20250216175545.35079-3-contact@artur-rojek.eu>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250218125157.412701-1-prabhakar.csengg@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: BKXHZV7OAlS_HtrlmVpPlK-eKQicA87e
-X-Proofpoint-GUID: BKXHZV7OAlS_HtrlmVpPlK-eKQicA87e
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-19_06,2025-02-19_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 mlxlogscore=999 bulkscore=0 mlxscore=0 spamscore=0
- lowpriorityscore=0 phishscore=0 priorityscore=1501 clxscore=1015
- malwarescore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2502100000 definitions=main-2502190117
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20250216175545.35079-3-contact@artur-rojek.eu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 18.02.2025 1:51 PM, Lad Prabhakar wrote:
-> The `tx-sched-sp` property was removed in commit aed6864035b1 ("net:
-> stmmac: platform: Delete a redundant condition branch").
+On 16/02/2025 18:55, Artur Rojek wrote:
+> The jcore-aic irqchip does not have separate interrupt numbers reserved
+> for cpu-local vs global interrupts. Instead, the task of selecting this
+> property is being delegated to the device drivers requesting the given
+> irq.
 > 
-> Therefore, it can be safely removed from the device tree.
+> This quirk has not been taken into account while migrating jcore-pit to
+> request_percpu_irq(), resulting in a failure to register PIT interrupts.
 > 
-> Signed-off-by: Lad Prabhakar <prabhakar.csengg@gmail.com>
+> Fix this behavior by making the following changes:
+> 1) Explicitly register irq_set_percpu_devid() in jcore-pit.
+> 2) Provide enable_percpu_irq()/disable_percpu_irq() calls in jcore-pit.
+> 3) Make jcore-aic pass the correct per-cpu cookie to the irq handler by
+>     using handle_percpu_devid_irq() instead of handle_percpu_irq().
+> 
+> Fixes: 69a9dcbd2d65 ("clocksource/drivers/jcore: Use request_percpu_irq()")
+> 
+> Signed-off-by: Artur Rojek <contact@artur-rojek.eu>
 > ---
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+How this patch should be merged ?
 
-Konrad
+It is touching irqchip and clocksource at the same time.
+
+May I pick it in the clocksource tree ?
+
+
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
