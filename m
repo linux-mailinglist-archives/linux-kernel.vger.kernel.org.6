@@ -1,39 +1,45 @@
-Return-Path: <linux-kernel+bounces-521609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0F60A3BFED
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:29:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53996A3BFF9
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:31:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D277E3A8725
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:27:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43E41166DB9
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:28:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC021E32D3;
-	Wed, 19 Feb 2025 13:27:11 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 776E11E520E;
+	Wed, 19 Feb 2025 13:28:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="o/u2j1HJ"
+Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 098521E378C
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 13:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34D461DEFE1;
+	Wed, 19 Feb 2025 13:28:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739971630; cv=none; b=FUnvA5DC7cbrMCmkx0NfXltA5SUL5jjtgOuI/IMm5LK7f8uuNSH6iomJIbl7X3ZrXuLSSo6lSLW1/Gc4vucA9SQD+iVyfJPyqTMgSf6HjD2rCwqBcyCSKPQTe0fKw0+hNkGrhf6D9k3Qvd0zpKFjD3zKRJTH6O1XvJY7iHJ2MDU=
+	t=1739971706; cv=none; b=tT4FL4gZc96dUBrUz+XXmFFfZzlqw0st6dS3DWZ3R+DPGDrWaWmMEDd3qam4Olia4I83l1w27Lmw9iyPkKwa3VsAimMcZ1PPkcoUnzE2Swy8razqcggh7K/swKyED9U0l55NSprXBkELqEbDRPAhiOp+7yrABGINcRBP0X2zkFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739971630; c=relaxed/simple;
-	bh=fmJ5QXeJPJUSguLtVVuCwb23B1PIzp7T7lxo3a7/k7E=;
+	s=arc-20240116; t=1739971706; c=relaxed/simple;
+	bh=1e016EqTQZdP7kuufHE6tQ1LhaOiDE00JtzdrCEtDOk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uwCYU7RY6IC98wXLtxSHU8INI08PXnTylnPhsBtMJj9R4GV9bwJECjvNxk1v8MQEu0PKueV17isMRUU7KClWuhFFQzAqgWEW/97aX3FR7VcfNkuBaN7Tvk6HoT5MCNHo10HmM5zTQzqUKC1NiMJuIlvSe/Dqtmg5XBFyfgH9jF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tkk6L-0003h1-Mj; Wed, 19 Feb 2025 14:26:57 +0100
-Message-ID: <37d2a7bb-1c8c-4c33-a277-dc1a7448433b@pengutronix.de>
-Date: Wed, 19 Feb 2025 14:26:52 +0100
+	 In-Reply-To:Content-Type; b=PKDK3yXJAq+DtBLkyhrIbgDre+3eOa8ipGUXmwTA4I3aXjG/YOLXK9t50p5l1riwSyl7pD0dP5E14Edv8rHfPhZ+tNdTidS8f1NPycoNePAmxcFAAawWGK+UzXulHXIqRAbuULE4TcCngO1LeUJ44XGEdS1ti76vMfi9IHR44kQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=o/u2j1HJ; arc=none smtp.client-ip=115.124.30.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1739971698; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=PZFTmiWgIWK8Z5wC1s1Fh0TDUD2HKL3tvr0e+ik4nUg=;
+	b=o/u2j1HJC0q6BFcG3NTEFjNfFPaMINeKkR4hgRRBR5U41LGoQeR8ac7n4yzKv/9EReNfKJ9azQeT6ZZoupxCyEXHaPtw9a6tpb76lFfmCMMu0/fjKrH9fz1dOeE5iYAJh19L0FOeCBqHpLctL/SCMmPMhJvrsA6ldCS8lOgf+fc=
+Received: from 30.246.161.128(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WPpRZwU_1739971697 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 19 Feb 2025 21:28:18 +0800
+Message-ID: <5dfdb75c-e532-4a5e-8098-7650c6494d78@linux.alibaba.com>
+Date: Wed, 19 Feb 2025 21:28:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,98 +47,99 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 05/10] dt-bindings: display/lvds-codec: add
- ti,sn65lvds822
-To: Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>
-Cc: devicetree@vger.kernel.org, imx@lists.linux.dev,
- Frank Li <Frank.li@nxp.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Jonas Karlman <jonas@kwiboo.se>,
- "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Oleksij Rempel <o.rempel@pengutronix.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Oleksij Rempel
- <o.rempel@pengutronix.de>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Jessica Zhang <quic_jesszhan@quicinc.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Thierry Reding <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>
-References: <20250106-skov-dt-updates-v2-0-4504d3f00ecb@pengutronix.de>
- <20250106-skov-dt-updates-v2-5-4504d3f00ecb@pengutronix.de>
-Content-Language: en-US
-From: Ahmad Fatoum <a.fatoum@pengutronix.de>
-In-Reply-To: <20250106-skov-dt-updates-v2-5-4504d3f00ecb@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 7/7] dmaengine: idxd: Refactor remove call with
+ idxd_cleanup() helper
+To: Fenghua Yu <fenghuay@nvidia.com>, vinicius.gomes@intel.com,
+ dave.jiang@intel.com, vkoul@kernel.org
+Cc: nikhil.rao@intel.com, dmaengine@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250215054431.55747-1-xueshuai@linux.alibaba.com>
+ <20250215054431.55747-8-xueshuai@linux.alibaba.com>
+ <4b5b45b3-76a1-4850-aeba-ff4d6777e97c@nvidia.com>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <4b5b45b3-76a1-4850-aeba-ff4d6777e97c@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Dear DRM bridge maintainers,
 
-On 06.01.25 17:06, Ahmad Fatoum wrote:
-> Add compatible strings for TI SN65LVDS822, a FlatLink LVDS receiver.
+
+在 2025/2/19 05:01, Fenghua Yu 写道:
+> Hi, Shuai,
 > 
-> Acked-by: Rob Herring (Arm) <robh@kernel.org>
-> Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
-
-Shawn has asked that the DT or display maintainers take this one patch
-through their tree. He has already applied the remainder of the series.
-
-Can you take a look? DT maintainers already acked it.
-
-Thanks,
-Ahmad
-
-> ---
-> v1 -> v2:
->   - Add Rob's Acked-by
+> On 2/14/25 21:44, Shuai Xue wrote:
+>> The idxd_cleanup() helper clean up perfmon, interrupts, internals and so
 > 
-> To: Andrzej Hajda <andrzej.hajda@intel.com> (maintainer:DRM DRIVERS FOR BRIDGE CHIPS)
-> To: Neil Armstrong <neil.armstrong@linaro.org> (maintainer:DRM DRIVERS FOR BRIDGE CHIPS)
-> To: Robert Foss <rfoss@kernel.org> (maintainer:DRM DRIVERS FOR BRIDGE CHIPS)
-> Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com> (reviewer:DRM DRIVERS FOR BRIDGE CHIPS,in file)
-> Cc: Jonas Karlman <jonas@kwiboo.se> (reviewer:DRM DRIVERS FOR BRIDGE CHIPS)
-> Cc: Jernej Skrabec <jernej.skrabec@gmail.com> (reviewer:DRM DRIVERS FOR BRIDGE CHIPS)
-> Cc: David Airlie <airlied@gmail.com> (maintainer:DRM DRIVERS)
-> Cc: Simona Vetter <simona@ffwll.ch> (maintainer:DRM DRIVERS)
-> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com> (maintainer:DRM DRIVERS AND MISC GPU PATCHES)
-> Cc: Maxime Ripard <mripard@kernel.org> (maintainer:DRM DRIVERS AND MISC GPU PATCHES)
-> Cc: Thomas Zimmermann <tzimmermann@suse.de> (maintainer:DRM DRIVERS AND MISC GPU PATCHES)
-> Cc: dri-devel@lists.freedesktop.org (open list:DRM DRIVERS)
-> ---
->  Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml | 1 +
->  1 file changed, 1 insertion(+)
+> s/clean/cleans/
 > 
-> diff --git a/Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml b/Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml
-> index 6ceeed76e88ece6d86ecd6588ead7a65362dfe62..0487bbffd7f7c4bcce3f71df19548d601715fb98 100644
-> --- a/Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml
-> +++ b/Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml
-> @@ -41,6 +41,7 @@ properties:
->            - enum:
->                - ti,ds90cf364a # For the DS90CF364A FPD-Link LVDS Receiver
->                - ti,ds90cf384a # For the DS90CF384A FPD-Link LVDS Receiver
-> +              - ti,sn65lvds822  # For the SN65LVDS822 FlatLink LVDS Receiver
->                - ti,sn65lvds94 # For the SN65DS94 LVDS serdes
->            - const: lvds-decoder # Generic LVDS decoders compatible fallback
->        - enum:
+> 
+>> on. Refactor remove call with idxd_cleanup() helper to avoid code
+> s/idxd_cleanup()/the idxd_cleanup()/
+>> duplication. Note, this also fixes the missing put_device() for idxd
+>> groups, enginces and wqs.
+>>
+>> Fixes: bfe1d56091c1 ("dmaengine: idxd: Init and probe for Intel data accelerators")
+>> Suggested-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+>> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+>> ---
+>>   drivers/dma/idxd/init.c | 13 ++-----------
+>>   1 file changed, 2 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
+>> index f40f1c44a302..0fbfbe024c29 100644
+>> --- a/drivers/dma/idxd/init.c
+>> +++ b/drivers/dma/idxd/init.c
+>> @@ -1282,20 +1282,11 @@ static void idxd_remove(struct pci_dev *pdev)
+>>       get_device(idxd_confdev(idxd));
+> get_device() is called here.
+>>       device_unregister(idxd_confdev(idxd));
+>>       idxd_shutdown(pdev);
+>> -    if (device_pasid_enabled(idxd))
+>> -        idxd_disable_system_pasid(idxd);
+>>       idxd_device_remove_debugfs(idxd);
+>> -
+>> -    irq_entry = idxd_get_ie(idxd, 0);
+>> -    free_irq(irq_entry->vector, irq_entry);
+>> -    pci_free_irq_vectors(pdev);
+>> +    idxd_cleanup(idxd);
+>>       pci_iounmap(pdev, idxd->reg_base);
+>> -    if (device_user_pasid_enabled(idxd))
+>> -        idxd_disable_sva(pdev);
+>> -    pci_disable_device(pdev);
+>> -    destroy_workqueue(idxd->wq);
+>> -    perfmon_pmu_remove(idxd);
+>>       idxd_free(idxd);
+> 
+> put_device() is called inside idxd_free(). Seems not easy to read code to match the pair.
+
+IMHO, idxd_free() is paired with idxd_alloc() which grap a reference count by
+device_initialize(). So, we should match that right pair.
+
+> * When ->release() is called for the idxd->conf_dev, it frees all the memory related
+> * to the idxd context.
+
+I did not figure out why you explictly grab reference count of
+idxd_confdev(idxd).
+
+idxd_unregister_devices() is paired with idxd_register_devices(), it only
+decrease reference through wqs, engines, and groups. So a refcnt of
+idxd->conf_dev is still hold by idxd_alloc().
+
+Please correct me, if I missed anything.
+
+> 
+> Plus idxd_free() is called only in non FLR case.
+> 
+> Maybe it's better to change this code to:
+> 
+> 1. call put_device() outside idxd_free() so that it's easy to match the get_device() and put_deivce in the same level of function.
+
+See my comments above.
+> 
+> 2. idxd_free() called here is OK because this is not in FLR handler. But only call it in non FLR path in idxd_pci_probe_alloc()
 > 
 
+Exactly, so, shoud I add a protection in idxd_free() in a fact that non FLR case will not call it.
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Thanks.
+Shuai
 
