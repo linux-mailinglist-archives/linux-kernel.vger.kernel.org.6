@@ -1,176 +1,168 @@
-Return-Path: <linux-kernel+bounces-522512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FDFDA3CB46
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:20:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 49180A3CB47
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:21:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F004C189B1FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:20:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 077F6189B876
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:20:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C33EC257430;
-	Wed, 19 Feb 2025 21:19:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18F56257421;
+	Wed, 19 Feb 2025 21:20:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KkrbaubE"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SGSzxpem"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFD5124FC0D;
-	Wed, 19 Feb 2025 21:19:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E5CB24FC0D;
+	Wed, 19 Feb 2025 21:20:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739999990; cv=none; b=WIkDJsUoKbzfGPOjSTGtkLEIoqTgP6uK2mWqD/lh94cJLkIiv6WhnLt2Z8g7OVjv/YmA0Oq0GK9vj8c2J4jBa7Rwmu5s9TT4usJfrQAxGhvkkJKXSK9eQNHIFCxcuJ1woKOnHlxV9X+pLsVMETnD/ns9fYQKWuen7i+7Gu/VtO0=
+	t=1740000010; cv=none; b=Qu5zNFX0KVit4Jf3yaIhI4XMe9sjrnHNZyncPurtu3GNcqfcMUfkTkUaFHIBYilx5qItLLcxBgPulqqTBmklOVTpaWtAs1upjofH1jKaZ6wYGQygQGcpSWMbtYt6m1Xo/LzA/4FtUB7+Mwo07oGy0gHyzHKcXl0QM7JfAMkVuYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739999990; c=relaxed/simple;
-	bh=75ui6nl2Lj23eOogl749Qaa1rMyP3cwXE5XVvyryc5o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=S+AkaLrSExAo3V9AEUFXv+YssVSqXaaeCgxLW2oGfAbXephz3mOX2RCkpzDd3Wm5E/r8yqSLJ7XhyjslBCRI0uTkXwJ6qVUy9ju8e7L5QPRBOMw05VN2nMInhjddA0wcvN8+/gaVmSn9jG1XUD6NrWdy7RcFZRdPk6WR/zOT5xY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KkrbaubE; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51JGg3jo012227;
-	Wed, 19 Feb 2025 21:19:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	8oCfFGa51JBGORxzIi2TNJZ+UytYNtHDQbFeh3ASuv0=; b=KkrbaubEHHexQUlo
-	SN5yiPG+T86xnbPKUCcFSNgewhWNH/msSJVJU5mPuKl6CSEcgnurbvshoa9u+mU2
-	7FCo4xCkqp9iasCgcUXNr+xGWr+iWLFwCLkCPZfj3oJ3xBKt8U59x3er+18jOGwz
-	7xdXKLHPN5nVTpuAj9A3sqQxE718y/WSuOnDMGCIQO0V57nE4oGDsZVcLUFWm2PF
-	Fu6mH4X5ZbpgbARnYJsM7XY5G39geemKEQgxLeP/cPSfCoIWLZuU/zTPwnGX2QqF
-	dJbV5HKkd7bUFTp/DEZRWT4HyMfeqxwA+eHdAUUvTm8eaPy5ObLn9Nh2/0z/cJJ6
-	mgNIvw==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44vyy1m0ww-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Feb 2025 21:19:26 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51JLJQ4i019756
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Feb 2025 21:19:26 GMT
-Received: from [10.134.70.212] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 19 Feb
- 2025 13:19:25 -0800
-Message-ID: <987f0dae-be8e-4818-b69b-dde03134d440@quicinc.com>
-Date: Wed, 19 Feb 2025 13:19:25 -0800
+	s=arc-20240116; t=1740000010; c=relaxed/simple;
+	bh=Z0rIEzHSNJzDYz0lpdKgc1HXdQuUbUWngzVqExCfsqw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nYKrOU6GcuyzGP44ZnKtexvQGLhptLcBy77PoBS0UPH5iPc4E89njGDPMvFwvK32cVRAdb4+uDRQBB1/9ZQ6f3il56i2r4UH97xfmB/pGXKIzgJ93PoxJJ3AhZhSeMbYLiprwzzzuvKXjgHmlGWwO9GE6LJEuKnQs4lFj2MLtuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SGSzxpem; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5653CC4CEDD;
+	Wed, 19 Feb 2025 21:20:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740000009;
+	bh=Z0rIEzHSNJzDYz0lpdKgc1HXdQuUbUWngzVqExCfsqw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SGSzxpemh8Udu9H28hUtPpbAS5D1OG7CZLOG08m1vN+KtIknrfHJkE0sfF2SJ7k0Y
+	 CnIDA5SkHy+nJm2xQjVbiIXbMeUu8eOJXFTifq4hubnyKzsVAom2f9ZA9107HMMHYb
+	 M4fljMwLPqmf+CV0phFLWgEsH+5xzoWUc51MiRs7QpN2Ugu5JFXi9LA60y3MHJQVxy
+	 LAurVZhsuYPMjmHSlhZDNe7LXi4uGFHCflPsEoIABdgqtjE1miiTfYvxFvJmlCPbEK
+	 Dum7nXv5EOCZ4rKrn9QEW1PLKH7GE+PtmVVTQVVPDJnNGnBAm9u9t5pW01H/67+0HG
+	 /vQv2ClCRtHVA==
+Date: Wed, 19 Feb 2025 13:20:07 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Samuel Holland <samuel.holland@sifive.com>,
+	linux-riscv@lists.infradead.org
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>,
+	Ian Rogers <irogers@google.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	linux-perf-users@vger.kernel.org,
+	Mark Rutland <mark.rutland@arm.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	linux-kernel@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>
+Subject: Re: [RESEND PATCH 0/7] perf vendor events riscv: Update SiFive CPU
+ PMU events
+Message-ID: <Z7ZLB-wZY9wTZSBZ@google.com>
+References: <20250213220341.3215660-1-samuel.holland@sifive.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 08/16] drm/msm/dpu: Drop useless comments
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Rob Clark
-	<robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        "Dmitry
- Baryshkov" <dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        "Marijn Suijten" <marijn.suijten@somainline.org>,
-        David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Krishna Manikandan <quic_mkrishn@quicinc.com>,
-        Jonathan Marek
-	<jonathan@marek.ca>,
-        Kuogee Hsieh <quic_khsieh@quicinc.com>,
-        Neil Armstrong
-	<neil.armstrong@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Srini Kandagatla
-	<srinivas.kandagatla@linaro.org>
-References: <20250217-b4-sm8750-display-v2-0-d201dcdda6a4@linaro.org>
- <20250217-b4-sm8750-display-v2-8-d201dcdda6a4@linaro.org>
-From: Jessica Zhang <quic_jesszhan@quicinc.com>
-In-Reply-To: <20250217-b4-sm8750-display-v2-8-d201dcdda6a4@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: k-Yxar1IVXQjraktZ64UKNHG2hCZZXEx
-X-Proofpoint-ORIG-GUID: k-Yxar1IVXQjraktZ64UKNHG2hCZZXEx
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-19_09,2025-02-19_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1011
- adultscore=0 malwarescore=0 mlxscore=0 priorityscore=1501
- lowpriorityscore=0 mlxlogscore=999 suspectscore=0 phishscore=0 spamscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502190160
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250213220341.3215660-1-samuel.holland@sifive.com>
 
+Hello,
 
-
-On 2/17/2025 8:41 AM, Krzysztof Kozlowski wrote:
-> Drop comments about SoC before each 'struct dpu_lm_sub_blks' for given
-> SoC because it's duplicating the actual name of structure.
+On Wed, Feb 12, 2025 at 05:21:33PM -0800, Samuel Holland wrote:
+> This series updates the PMU event JSON files to add support for newer
+> SiFive CPUs, including those used in the HiFive Premier P550 board.
+> Since most changes are incremental, symbolic links are used when a set
+> of events is unchanged from the previous CPU series.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
-
-> ---
->   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c | 8 --------
->   1 file changed, 8 deletions(-)
+> I originally sent this series about a year ago[1], but received no
+> feedback. The P550 board is now available (and I have tested this series
+> on it), so it would be good to get perf support for it upstream.
 > 
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c
-> index 7ea424d7c1b75e06312692225f4e888e81621283..4ff29be965c39b29cf7e3b9761634b7f39ca97b0 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c
-> @@ -362,8 +362,6 @@ static const struct dpu_sspp_sub_blks dpu_dma_sblk = _DMA_SBLK();
->    * MIXER sub blocks config
->    *************************************************************/
->   
-> -/* MSM8998 */
-> -
->   static const struct dpu_lm_sub_blks msm8998_lm_sblk = {
->   	.maxwidth = DEFAULT_DPU_OUTPUT_LINE_WIDTH,
->   	.maxblendstages = 7, /* excluding base layer */
-> @@ -373,8 +371,6 @@ static const struct dpu_lm_sub_blks msm8998_lm_sblk = {
->   	},
->   };
->   
-> -/* SDM845 */
-> -
->   static const struct dpu_lm_sub_blks sdm845_lm_sblk = {
->   	.maxwidth = DEFAULT_DPU_OUTPUT_LINE_WIDTH,
->   	.maxblendstages = 11, /* excluding base layer */
-> @@ -384,8 +380,6 @@ static const struct dpu_lm_sub_blks sdm845_lm_sblk = {
->   	},
->   };
->   
-> -/* SC7180 */
-> -
->   static const struct dpu_lm_sub_blks sc7180_lm_sblk = {
->   	.maxwidth = DEFAULT_DPU_OUTPUT_LINE_WIDTH,
->   	.maxblendstages = 7, /* excluding base layer */
-> @@ -394,8 +388,6 @@ static const struct dpu_lm_sub_blks sc7180_lm_sblk = {
->   	},
->   };
->   
-> -/* QCM2290 */
-> -
->   static const struct dpu_lm_sub_blks qcm2290_lm_sblk = {
->   	.maxwidth = DEFAULT_DPU_LINE_WIDTH,
->   	.maxblendstages = 4, /* excluding base layer */
+> [1]: https://lore.kernel.org/linux-perf-users/20240509021531.680920-1-samuel.holland@sifive.com/
+> 
+> 
+> Eric Lin (5):
+>   perf vendor events riscv: Update SiFive Bullet events
+>   perf vendor events riscv: Add SiFive Bullet version 0x07 events
+>   perf vendor events riscv: Add SiFive Bullet version 0x0d events
+>   perf vendor events riscv: Add SiFive P550 events
+>   perf vendor events riscv: Add SiFive P650 events
+> 
+> Samuel Holland (2):
+>   perf vendor events riscv: Rename U74 to Bullet
+>   perf vendor events riscv: Remove leading zeroes
+
+It'd be nice if anyone in the RISC-V community can review this.
+
+Thanks,
+Namhyung
+
+> 
+>  tools/perf/pmu-events/arch/riscv/mapfile.csv  |  6 +-
+>  .../cycle-and-instruction-count.json          | 12 +++
+>  .../arch/riscv/sifive/bullet-07/firmware.json |  1 +
+>  .../riscv/sifive/bullet-07/instruction.json   |  1 +
+>  .../arch/riscv/sifive/bullet-07/memory.json   |  1 +
+>  .../riscv/sifive/bullet-07/microarch.json     | 62 +++++++++++++
+>  .../riscv/sifive/bullet-07/watchpoint.json    | 42 +++++++++
+>  .../cycle-and-instruction-count.json          |  1 +
+>  .../arch/riscv/sifive/bullet-0d/firmware.json |  1 +
+>  .../riscv/sifive/bullet-0d/instruction.json   |  1 +
+>  .../arch/riscv/sifive/bullet-0d/memory.json   |  1 +
+>  .../riscv/sifive/bullet-0d/microarch.json     | 72 +++++++++++++++
+>  .../riscv/sifive/bullet-0d/watchpoint.json    |  1 +
+>  .../sifive/{u74 => bullet}/firmware.json      |  0
+>  .../arch/riscv/sifive/bullet/instruction.json | 92 +++++++++++++++++++
+>  .../arch/riscv/sifive/bullet/memory.json      | 32 +++++++
+>  .../arch/riscv/sifive/bullet/microarch.json   | 57 ++++++++++++
+>  .../arch/riscv/sifive/p550/firmware.json      |  1 +
+>  .../arch/riscv/sifive/p550/instruction.json   |  1 +
+>  .../arch/riscv/sifive/p550/memory.json        | 47 ++++++++++
+>  .../arch/riscv/sifive/p550/microarch.json     |  1 +
+>  .../p650/cycle-and-instruction-count.json     |  1 +
+>  .../arch/riscv/sifive/p650/firmware.json      |  1 +
+>  .../arch/riscv/sifive/p650/instruction.json   |  1 +
+>  .../arch/riscv/sifive/p650/memory.json        | 57 ++++++++++++
+>  .../arch/riscv/sifive/p650/microarch.json     | 62 +++++++++++++
+>  .../arch/riscv/sifive/p650/watchpoint.json    |  1 +
+>  .../arch/riscv/sifive/u74/instructions.json   | 92 -------------------
+>  .../arch/riscv/sifive/u74/memory.json         | 32 -------
+>  .../arch/riscv/sifive/u74/microarch.json      | 57 ------------
+>  30 files changed, 555 insertions(+), 182 deletions(-)
+>  create mode 100644 tools/perf/pmu-events/arch/riscv/sifive/bullet-07/cycle-and-instruction-count.json
+>  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/bullet-07/firmware.json
+>  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/bullet-07/instruction.json
+>  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/bullet-07/memory.json
+>  create mode 100644 tools/perf/pmu-events/arch/riscv/sifive/bullet-07/microarch.json
+>  create mode 100644 tools/perf/pmu-events/arch/riscv/sifive/bullet-07/watchpoint.json
+>  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/bullet-0d/cycle-and-instruction-count.json
+>  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/bullet-0d/firmware.json
+>  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/bullet-0d/instruction.json
+>  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/bullet-0d/memory.json
+>  create mode 100644 tools/perf/pmu-events/arch/riscv/sifive/bullet-0d/microarch.json
+>  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/bullet-0d/watchpoint.json
+>  rename tools/perf/pmu-events/arch/riscv/sifive/{u74 => bullet}/firmware.json (100%)
+>  create mode 100644 tools/perf/pmu-events/arch/riscv/sifive/bullet/instruction.json
+>  create mode 100644 tools/perf/pmu-events/arch/riscv/sifive/bullet/memory.json
+>  create mode 100644 tools/perf/pmu-events/arch/riscv/sifive/bullet/microarch.json
+>  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/p550/firmware.json
+>  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/p550/instruction.json
+>  create mode 100644 tools/perf/pmu-events/arch/riscv/sifive/p550/memory.json
+>  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/p550/microarch.json
+>  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/p650/cycle-and-instruction-count.json
+>  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/p650/firmware.json
+>  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/p650/instruction.json
+>  create mode 100644 tools/perf/pmu-events/arch/riscv/sifive/p650/memory.json
+>  create mode 100644 tools/perf/pmu-events/arch/riscv/sifive/p650/microarch.json
+>  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/p650/watchpoint.json
+>  delete mode 100644 tools/perf/pmu-events/arch/riscv/sifive/u74/instructions.json
+>  delete mode 100644 tools/perf/pmu-events/arch/riscv/sifive/u74/memory.json
+>  delete mode 100644 tools/perf/pmu-events/arch/riscv/sifive/u74/microarch.json
 > 
 > -- 
-> 2.43.0
+> 2.47.0
 > 
-
 
