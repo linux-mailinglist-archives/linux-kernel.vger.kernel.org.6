@@ -1,90 +1,97 @@
-Return-Path: <linux-kernel+bounces-522102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E74CA3C5F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:19:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41743A3C608
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:21:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CFC316B8EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:19:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8FC43B00BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:21:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A28D20FA85;
-	Wed, 19 Feb 2025 17:19:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC7862144A7;
+	Wed, 19 Feb 2025 17:21:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iXI18d0F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Oec9H/gA"
+Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5D0C8F58
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 17:19:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2AB8286284;
+	Wed, 19 Feb 2025 17:21:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739985578; cv=none; b=I1hqp8+9V4V8x0t+lzACpmtJjIH9ySUPMlDOKVW8GS806HjizTua+2+cBvE3zcsOM4mML7nR2+uL8r2/6kn+SFYGmLoctElmNoEefGdbUjUv0b7nS/F4087sTWymJsipE2GJSqetgFe6l3DX32oKD/k/Bh1xdq2zVGxpU8PSHLw=
+	t=1739985701; cv=none; b=HMC2di0GF4pYYw792aHM2oe/WprrjXffyHDNB2jdtPa18JtgXhomNJts/G+WDuZD4kKXWpp76NxIXdC0WrxN8okC+708ltKuvCHjNSBQuqs01H4X/YB9mCDhrD81k83AUpSgek6l3dJViqtrJ8xTiYIcv9Hf2Wuch11ryLOKyQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739985578; c=relaxed/simple;
-	bh=jRaaaPzgZngfk9sFey0Anhz6QM5JDJJWTP/YbpTvGWc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mfe6W4uaVubAZ4Qnn6nMYvcxro734RP3e8M8AhEA1aswMx/qPHyNrrusi9tOVvooy3MPGZ9WQRsUDsqoxwFWjbx7C3IygbIBsBCDM4M6nYZ6JBjw16v06rl/lDkx3xP5CGZDCsc5QZs9RueQfmeCrCUo0iitDul3qDs/nzTJph4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iXI18d0F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45555C4CED1;
-	Wed, 19 Feb 2025 17:19:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739985578;
-	bh=jRaaaPzgZngfk9sFey0Anhz6QM5JDJJWTP/YbpTvGWc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iXI18d0Fx16fHHcafXC2fk4JSnbA+/iz1jk8ot0FOsaI5CmPkJIIKqEjJg7FXAv+r
-	 dsZivjl6gD4vJ9zn7sq2c2gRuGkhAujdr9SQqQr+eNXs0oVo4EbsytfhRlMkqy61hK
-	 wgN5h+sif/UxhhhBKWfJgkiSP9pr/uMjUHiCkfBdYXB2r+YuMrHG/rq3i/kcZXaHjC
-	 BVWMxZxJciTnpQ2W0bqOlPnf6UYkmBiMZi94zqPV38uXBv5McKvsEFdDBm8VojRIyA
-	 hqjey8kPiRzXvh+mmFJuZHq5M2TahIsEq/W4renhohYXDWImt5y/24EyWpVlMPFc23
-	 dbJxrWWCIxz5A==
-Date: Wed, 19 Feb 2025 09:19:34 -0800
-From: Kees Cook <kees@kernel.org>
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: krisman@collabora.com, tglx@linutronix.de, luto@kernel.org,
-	peterz@infradead.org, gregory.price@memverge.com,
-	Marco Elver <elver@google.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] selftests: Fix errno checking in
- syscall_user_dispatch test
-Message-ID: <202502190917.5A3251484@keescook>
-References: <cover.1739894594.git.dvyukov@google.com>
- <d83f45b96a9c8d3c1a20a4ff518cf4c13bcacbe4.1739894594.git.dvyukov@google.com>
+	s=arc-20240116; t=1739985701; c=relaxed/simple;
+	bh=1Me3lu0fX9NUSPq+Ggrr4DEAwkU4l3ce4Mld2GXKtg0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BYce3WBAjfXjpI+8r0FQv3NDprBDJIBahSS0rVG0rhUh1ZcE5qvw0X4IACDsTW/fueh4hT1DG5xW8fiVqjUn9bSLwnTTJlVQrvji0/MCnREvKN7UFzntUJVkWGY3qCxzZfITm6+UkZReUgkUHEVIV5rFVUzHebpZ4LqMw9imMtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Oec9H/gA; arc=none smtp.client-ip=80.12.242.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id knkEt082zsC0pknkHtl0HU; Wed, 19 Feb 2025 18:20:26 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1739985626;
+	bh=QW6x6Fz8XX5peZDa2MJO8SZhs7Tp8RyNuh/Nt9PBXRE=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=Oec9H/gAZMMuSXgE68f9B/TYvkhyYCZxwWie6NgYFH0TjbLCByUDa3Vx7BDcXSPgF
+	 HSoZn/z6jWtYw9sMKm1BuxGRC70Bw93hdBbF5yrprmV4/nZrGU6bVCmedccal8JVOk
+	 W7CK8OP7Qxpd750ShNiWHS5aQNGyaNrKB4LboofPf8Rk8rIpVfVhaxITnBgpD++Iy1
+	 CDClym/uMUSGPmXEEoWxJAYGzU/jbSyLJUsIYfN93078Way/gUF0RfQj6WMDB0vJcT
+	 EkNcj8b3Nif4ctnAPHE2N0b1GLTcRonx498ixCGMm9fyuUP+SQwA2fmrciBnELr9s9
+	 bM59H7wDOfXnQ==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Wed, 19 Feb 2025 18:20:26 +0100
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-leds@vger.kernel.org
+Subject: [PATCH] leds: st1202: Fix an error handling path in st1202_probe()
+Date: Wed, 19 Feb 2025 18:20:20 +0100
+Message-ID: <4afa457713874729eb61eec533a4674a51d1d242.1739985599.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d83f45b96a9c8d3c1a20a4ff518cf4c13bcacbe4.1739894594.git.dvyukov@google.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 18, 2025 at 05:04:35PM +0100, Dmitry Vyukov wrote:
-> Successful syscalls don't change errno, so checking errno is wrong
-> to ensure that a syscall has failed. For example for the following
-> sequence:
-> 
-> 	prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x0, 0xff, 0);
-> 	EXPECT_EQ(EINVAL, errno);
-> 	prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x0, 0x0, &sel);
-> 	EXPECT_EQ(EINVAL, errno);
-> 
-> only the first syscall may fail and set errno, but the second may succeed
-> and keep errno intact, and the check will falsely pass.
-> Or if errno happened to be EINVAL before, even the first check may falsely
-> pass.
-> 
-> Also use EXPECT/ASSERT consistently. Currently there is an inconsistent mix
-> without obvious reasons for usage of one or another.
-> 
-> Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
+devm_mutex_init() may return -ENOMEM.
+So this error should be handled in st1202_probe().
 
-Reviewed-by: Kees Cook <kees@kernel.org>
+Fixes: 259230378c65 ("leds: Add LED1202 I2C driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/leds/leds-st1202.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-Yeah, these all look good to me.
-
+diff --git a/drivers/leds/leds-st1202.c b/drivers/leds/leds-st1202.c
+index b691c4886993..4fc17d518292 100644
+--- a/drivers/leds/leds-st1202.c
++++ b/drivers/leds/leds-st1202.c
+@@ -356,7 +356,10 @@ static int st1202_probe(struct i2c_client *client)
+ 	if (!chip)
+ 		return -ENOMEM;
+ 
+-	devm_mutex_init(&client->dev, &chip->lock);
++	ret = devm_mutex_init(&client->dev, &chip->lock);
++	if (ret < 0)
++		return ret;
++
+ 	chip->client = client;
+ 
+ 	ret = st1202_dt_init(chip);
 -- 
-Kees Cook
+2.48.1
+
 
