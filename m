@@ -1,136 +1,217 @@
-Return-Path: <linux-kernel+bounces-520821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1B2CA3AFA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 03:35:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72E49A3AFAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 03:36:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 625F6188C4F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:35:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62B87188C5D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:36:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A045E19149F;
-	Wed, 19 Feb 2025 02:35:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E34E188938;
+	Wed, 19 Feb 2025 02:36:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="e2HbqkuL"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="qktJbkdw"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D63F189F3B
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 02:35:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB54322EE4
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 02:36:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739932514; cv=none; b=ReqzJGaMwXPgEv4zHmlciCoMuBOYpf16Ur6mVimttEYA+KkkdwhAJs0veDa9NipBYCbzJmCYGGZIndw8admuNqchMMaWwpLHOAiNfn+kWoEaL60dUmOWZOQwaM9DGICPOP8G3XQuQ3lWFTjykURv0ibFL3pQ452NdJM9T2J5dP4=
+	t=1739932600; cv=none; b=J1wzz519TPUe6kawMo00opug3ZRtmjc/RAF3IrIRZ2TpeNr3GMN9QopAvOX2UPLdyU6Kp/TXcgcAv1SK/OvLSTpIOLU9o7rdRhFlwUnXkUFBOVQ3iJ5ZRIBmjKxYFDzIXgE29rR6ewztrWYM7wN0Y5xcw7gZm+lX6ASDfUPWdNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739932514; c=relaxed/simple;
-	bh=xMj+a3horZECbsUTp70ryecXzS79kAANH3UKAZQH/Xw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=afI5c6B+RuzVtzBjZeiiN1aO65rpo/1uCCeyJAG2pNuR4zOhOC3Ls8xihtNMJ8JBEgT/EmN5GyklKsmJPLLc2xTzZY1LrwxMZ+bS9SrRap2KPk4guSVcOAZGiaGQpREXhIw0rrk+R+ZTx7ED1656zTBYFleuzIqol0h7Wha14VU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=e2HbqkuL; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2f2f5e91393so1385432a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 18:35:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1739932511; x=1740537311; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=09crVdPJ6DNP+ajj0y1kahMC/P/o19M63rERtGCBZHg=;
-        b=e2HbqkuLFJ/mt4R0UWp4sT+2Bqcn4b/CYi4Dane/K5t80w/lQDB6cSm4no++NHXil3
-         uNWH8p3Oxw2Yj8h4NhKxHsoKuNIYo7oVvAnIOs4kGEurVKF5c/+TErGu0TLOfmffY1Qm
-         /wpHZ33A709N195F+NcORyUkaHDK1TJPYh2c+7csaVKsCo611RIo2tCsSKvnEKOvw7Yv
-         4w6xK1K8fBGaKSCBhXg9UMMQuT9YQ/o1GymYUM0fix9VLcv66XJrSvW8SU3O+Z5701HU
-         XQBWG9t0H8DAWolRAk54BUaLdHnmezTs09su9KhWVbRs4q4kbUT530vi79X2YyNnwouD
-         ygFg==
+	s=arc-20240116; t=1739932600; c=relaxed/simple;
+	bh=rveXvfpNgj3V/3uXAGCU7hGmO4dBjIcMbwqqZkqK26s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UZN3/OOVORVmnm1IlhyBS6yuzSItlRflx5AXCoUiKlfMkB3mzJYEzMTycFboKxQWWyP5Kb/jkbtbhzOuVMnVg1QVzLh9xM1FDBOOqi+dX7BePD+IECtuDkczq0ziK2oP1G5yIIwORjQsbd3QN9PxZ6oN6Q9Gyqj6sQv3VibVWDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=qktJbkdw; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com [209.85.208.70])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 9DC223F87A
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 02:36:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1739932595;
+	bh=vf1qvK2by+jGV65Pqs0eS1MS94gVUz7y9vFh+Qb3c+8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=qktJbkdwNbeRr6cAwvD0TgeJ8Ykk0sx1wwLgfc8mWoPMKVnnoG65HDUml6STTMloT
+	 ZGTWmzzythbINA8stwbDdGFG5DGQYxZWAWVQRVSgPqE6FxeGvO6BT0pKvZq7qfuLWK
+	 TFHDh2g3O4POoj2KkHkaDX9ZnZGp/3qWknyD9yjVkA89+vc0HplZQGP3EBPJ5hckNR
+	 iBfHo++OxXGo4ytqzUMaVsS6YCeTznY+2tPvwer7sgBtG5PDz9VCDU6oNzCKQpDDb6
+	 soaRBYIgN0utILRzxzyVnjLaYJXs3Fb652y/UeOWGX1ONrc90vzm0prMgO6tfNAFi7
+	 xEhzFajBgiCmw==
+Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-5dec9d39295so6141766a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 18:36:35 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739932511; x=1740537311;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=09crVdPJ6DNP+ajj0y1kahMC/P/o19M63rERtGCBZHg=;
-        b=FHU+X0Xm+BRPDVJoOcXFVVybcIs3VdZ/NjWBuAk8H7Ajw6k1rBjdJc1YWjXFeMsarg
-         G6/Mw2JRezQ4BSj4A0cJuIWSpebfIWxl1thbGCQNlvU1BxRObPZHQ7e25RMgDX/zJvSV
-         ZH+9O33XBWJraTCRQGNafhv7Jh4ikeX8rS6LRXEfQWyBOqffWmD6+WL1XdnlcvhQDEPO
-         suFGcm7bUzUNjeAaptYwqasF2oSyUSr/1sVVde0CdnNRPvF19VEWGD+rW3p9/bvdfq2Y
-         PnuX3wQteGrS/oIwvWnp0ycHP7Gl5DFUL+d7at5CPvDHBacS57Ff6JbRKw4fkPZ1VRIg
-         A5Og==
-X-Forwarded-Encrypted: i=1; AJvYcCXO8w3vNMuBIIzuy2T/IEG575de7zBZ17dFZwqJ4qR/WqdH7mK+V7ZJbGj3+iV7v/0GpD5YCZhgYnJmGys=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjVa90qMeT/E/HULISeoJbrw7m1E3NGDa5SzXp9/qCkybd06UC
-	jiIxoox7O+Pnz4yF8Wck1kplKSk5hVSNNpRihTijgnzl3zgenKIA50mLzGYpr/8=
-X-Gm-Gg: ASbGnctY3ji/URinQ6EyZZ5Q5hTKkaj/nSMrKzYYuVEOJQJ4qKu4ma8RoFa9pdUHPdu
-	rlDxVvey5IEvaIaj1oiYkaDiC3zoGa8uomKRX1ABjgY0gR9Q+CuM3tJneBfMRD/ivXL7zUGb7xl
-	EFF8u0dsboDvzvshjS6dk+a/1p4fDTeVj+txUc+C+MOH8LuLlS48059jaUcqxuj81PQ6eQ6yvO+
-	jyaSV236kt2pSs3XdXYa5f5DgmshYgJfZLnpRkcXQgOK0Kiq0GcP+5qGEkQUfepWb+Rzd0+UCD9
-	Z9sLtr7uZcJID9fZLC3D9yV2vxoQxKXTP8pq+w==
-X-Google-Smtp-Source: AGHT+IFm/ezzRUBSTF5ubokeL2y3X3qw2EPgW1gleUK8zJWAXhnpg5Xa99tIuiNpk1+QV7gj49PhRw==
-X-Received: by 2002:a05:6a00:1256:b0:730:8526:5db2 with SMTP id d2e1a72fcca58-73261914657mr8861999b3a.5.1739932511607;
-        Tue, 18 Feb 2025 18:35:11 -0800 (PST)
-Received: from [10.4.186.143] ([139.177.225.228])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-add5a4cb306sm7248480a12.3.2025.02.18.18.35.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Feb 2025 18:35:11 -0800 (PST)
-Message-ID: <cc25136d-ca21-492c-9708-cd72d7d7f2bf@bytedance.com>
-Date: Wed, 19 Feb 2025 10:34:58 +0800
+        d=1e100.net; s=20230601; t=1739932594; x=1740537394;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vf1qvK2by+jGV65Pqs0eS1MS94gVUz7y9vFh+Qb3c+8=;
+        b=P3PoCs01PQ4QjaM4uhe43cZ4Bx1nitqX8jRVcJsBtX0LBRgCxJgVnSWl9/RlV1B1R2
+         LP6KyRv3WE5/gXcUzgkoVt1s2zTcjqtG16/mRsAjqify9YkvbDBEmulnoafTBR9b2hMf
+         7Hufn9qfDR3Q5tVFH4h32fMLMNKgQRac8Ta4/lz6Ivs2Z4/qs7zevSk39Yrsw28VTD4o
+         KZpZpSC21sQ/Rp+uvacusS7qXaqgBRK1VSFmSO5IzirKFTEgXwe2F0QjcN0513Q6okkM
+         dDrN+PmrV10OEljDnThiP+9mVkEj5wKXGh/YBHDr8F66Oc6Bvkonc6V5f4Ko1ejN06KU
+         fVyw==
+X-Forwarded-Encrypted: i=1; AJvYcCUDirwHmbeDY7nxAwRKa71OfXYma95An93PzQHml7vZYOK12p0BoW7r8XHLEKkTSQhajqXmAj0FWGfbdrA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXl2Ff1r8xGnCjbPk96EdXkLZUGVApRiu/kKv/IuPF0UvkYcEF
+	oP3fLmuzIfV/4ezoh6NplV+Pta6wi3ReQEjEKBKjdtxlcZrHDwlEIUrNB4ISkQ7COf8XwMcb9+C
+	VvVeU06kMLtjjHamndPIELqZrFh+9qSlISVKVnpEVGFz8Mo2q47PIDxM/sv55OGDAZKDR7qC3X6
+	IZdjN0whjGwQvoEv/XlyGDWbMYT0wdO/tUMbou3TInc39g9hwyimwO
+X-Gm-Gg: ASbGncshWhWsivr5mZpbMAhyBAcNaxwZ6BMtDaaSPTuHYdebbYylg9W9Q632DGkpxet
+	RTzbx5XohDGlWdcM/KPNB0XAHC4wxJ/3NhBp4KG445onDJgK8jyxavP0Tgpuc
+X-Received: by 2002:a05:6402:520e:b0:5dc:7fbe:72ff with SMTP id 4fb4d7f45d1cf-5e0894f7a93mr1494025a12.2.1739932594170;
+        Tue, 18 Feb 2025 18:36:34 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGoq/ug3HpCJUOAUDpRyTkhBQF1qeEo0BUuVH4+X+SQxLUDIiWnGDZ38SmRisv8NVYqjTO25htXjWKz7FVPjZg=
+X-Received: by 2002:a05:6402:520e:b0:5dc:7fbe:72ff with SMTP id
+ 4fb4d7f45d1cf-5e0894f7a93mr1494002a12.2.1739932593834; Tue, 18 Feb 2025
+ 18:36:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/3] Fix and cleanup and extend cpu.stat
-Content-Language: en-US
-To: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
- =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
- Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>, Yury Norov
- <yury.norov@gmail.com>, Thomas Gleixner <tglx@linutronix.de>,
- Bitao Hu <yaoma@linux.alibaba.com>, Chen Ridong <chenridong@huawei.com>
-Cc: "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
- "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20250125052521.19487-1-wuyun.abel@bytedance.com>
-From: Abel Wu <wuyun.abel@bytedance.com>
-In-Reply-To: <20250125052521.19487-1-wuyun.abel@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250218222209.1382449-1-alex.williamson@redhat.com>
+ <20250218222209.1382449-7-alex.williamson@redhat.com> <Z7UOEpgH5pdTBcJP@x1.local>
+ <20250218161407.6ae2b082.alex.williamson@redhat.com>
+In-Reply-To: <20250218161407.6ae2b082.alex.williamson@redhat.com>
+From: Mitchell Augustin <mitchell.augustin@canonical.com>
+Date: Tue, 18 Feb 2025 20:36:22 -0600
+X-Gm-Features: AWEUYZkz1cZnARvZskS0-aLz8NUwEBuzeFL49ZTvzIP2huZXOoCnDbKLjmz8aDk
+Message-ID: <CAHTA-ua8mTgNkDs0g=_8gMyT1NkgZqCE0J7QjOU=+cmZ2xqd7Q@mail.gmail.com>
+Subject: Re: [PATCH v2 6/6] vfio/type1: Use mapping page mask for pfnmaps
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: Peter Xu <peterx@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	clg@redhat.com, jgg@nvidia.com, willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Gentle ping :)
+/s/follow_pfnmap_args.pgmask/follow_pfnmap_args.addr_mask/ in v2
+commit log. Aside from that, it works as expected.
 
-The latest series:
-https://lore.kernel.org/lkml/20250209061322.15260-1-wuyun.abel@bytedance.com/
+Reviewed-by: "Mitchell Augustin" <mitchell.augustin@canonical.com>
+Tested-by: "Mitchell Augustin" <mitchell.augustin@canonical.com>
 
-On 1/25/25 1:25 PM, Abel Wu Wrote:
-> Patch 1: fixes an issue that forceidle time can be inconsistant with
-> other cputimes.
-> 
-> Patch 2: cleans up the #ifdef mess in cpu.stat.
-> 
-> Patch 3: extend run_delay accounting to cgroup to show how severely
-> a cgroup is stalled.
-> 
-> v2:
->   - Fix internal function naming. (Michal Koutny)
-> 
-> Abel Wu (3):
->    cgroup/rstat: Fix forceidle time in cpu.stat
->    cgroup/rstat: Cleanup cpu.stat once for all
->    cgroup/rstat: Add run_delay accounting for cgroups
-> 
->   Documentation/admin-guide/cgroup-v2.rst |  1 +
->   include/linux/cgroup-defs.h             |  3 +
->   include/linux/kernel_stat.h             | 14 +++++
->   kernel/cgroup/rstat.c                   | 75 ++++++++++++++++---------
->   kernel/sched/cputime.c                  | 12 ++++
->   kernel/sched/stats.h                    |  2 +
->   6 files changed, 79 insertions(+), 28 deletions(-)
-> 
 
+On Tue, Feb 18, 2025 at 5:14=E2=80=AFPM Alex Williamson
+<alex.williamson@redhat.com> wrote:
+>
+> On Tue, 18 Feb 2025 17:47:46 -0500
+> Peter Xu <peterx@redhat.com> wrote:
+>
+> > On Tue, Feb 18, 2025 at 03:22:06PM -0700, Alex Williamson wrote:
+> > > vfio-pci supports huge_fault for PCI MMIO BARs and will insert pud an=
+d
+> > > pmd mappings for well aligned mappings.  follow_pfnmap_start() walks =
+the
+> > > page table and therefore knows the page mask of the level where the
+> > > address is found and returns this through follow_pfnmap_args.pgmask.
+> > > Subsequent pfns from this address until the end of the mapping page a=
+re
+> > > necessarily consecutive.  Use this information to retrieve a range of
+> > > pfnmap pfns in a single pass.
+> > >
+> > > With optimal mappings and alignment on systems with 1GB pud and 4KB
+> > > page size, this reduces iterations for DMA mapping PCI BARs by a
+> > > factor of 256K.  In real world testing, the overhead of iterating
+> > > pfns for a VM DMA mapping a 32GB PCI BAR is reduced from ~1s to
+> > > sub-millisecond overhead.
+> > >
+> > > Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+> > > ---
+> > >  drivers/vfio/vfio_iommu_type1.c | 23 ++++++++++++++++-------
+> > >  1 file changed, 16 insertions(+), 7 deletions(-)
+> > >
+> > > diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iomm=
+u_type1.c
+> > > index ce661f03f139..0ac56072af9f 100644
+> > > --- a/drivers/vfio/vfio_iommu_type1.c
+> > > +++ b/drivers/vfio/vfio_iommu_type1.c
+> > > @@ -520,7 +520,7 @@ static void vfio_batch_fini(struct vfio_batch *ba=
+tch)
+> > >
+> > >  static int follow_fault_pfn(struct vm_area_struct *vma, struct mm_st=
+ruct *mm,
+> > >                         unsigned long vaddr, unsigned long *pfn,
+> > > -                       bool write_fault)
+> > > +                       unsigned long *addr_mask, bool write_fault)
+> > >  {
+> > >     struct follow_pfnmap_args args =3D { .vma =3D vma, .address =3D v=
+addr };
+> > >     int ret;
+> > > @@ -544,10 +544,12 @@ static int follow_fault_pfn(struct vm_area_stru=
+ct *vma, struct mm_struct *mm,
+> > >                     return ret;
+> > >     }
+> > >
+> > > -   if (write_fault && !args.writable)
+> > > +   if (write_fault && !args.writable) {
+> > >             ret =3D -EFAULT;
+> > > -   else
+> > > +   } else {
+> > >             *pfn =3D args.pfn;
+> > > +           *addr_mask =3D args.addr_mask;
+> > > +   }
+> > >
+> > >     follow_pfnmap_end(&args);
+> > >     return ret;
+> > > @@ -590,15 +592,22 @@ static long vaddr_get_pfns(struct mm_struct *mm=
+, unsigned long vaddr,
+> > >     vma =3D vma_lookup(mm, vaddr);
+> > >
+> > >     if (vma && vma->vm_flags & VM_PFNMAP) {
+> > > -           ret =3D follow_fault_pfn(vma, mm, vaddr, pfn, prot & IOMM=
+U_WRITE);
+> > > +           unsigned long addr_mask;
+> > > +
+> > > +           ret =3D follow_fault_pfn(vma, mm, vaddr, pfn, &addr_mask,
+> > > +                                  prot & IOMMU_WRITE);
+> > >             if (ret =3D=3D -EAGAIN)
+> > >                     goto retry;
+> > >
+> > >             if (!ret) {
+> > > -                   if (is_invalid_reserved_pfn(*pfn))
+> > > -                           ret =3D 1;
+> > > -                   else
+> > > +                   if (is_invalid_reserved_pfn(*pfn)) {
+> > > +                           unsigned long epfn;
+> > > +
+> > > +                           epfn =3D (*pfn | (~addr_mask >> PAGE_SHIF=
+T)) + 1;
+> > > +                           ret =3D min_t(long, npages, epfn - *pfn);
+> >
+> > s/long/unsigned long/?
+>
+> ret is signed long since it's the function return and needs to be able
+> to return -errno, so long was the intention here.  Thanks,
+>
+> Alex
+>
+> > Reviewed-by: Peter Xu <peterx@redhat.com>
+> >
+> > > +                   } else {
+> > >                             ret =3D -EFAULT;
+> > > +                   }
+> > >             }
+> > >     }
+> > >  done:
+> > > --
+> > > 2.48.1
+> > >
+> >
+>
+
+
+--
+Mitchell Augustin
+Software Engineer - Ubuntu Partner Engineering
 
