@@ -1,103 +1,132 @@
-Return-Path: <linux-kernel+bounces-521463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E056DA3BDB7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:03:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05163A3BDB1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:01:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3ED7189AD9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:00:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5AD116E7C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:01:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89B4F1E0084;
-	Wed, 19 Feb 2025 12:00:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0A111C3C1D;
+	Wed, 19 Feb 2025 12:01:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rgospYIl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pau3xtXW"
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D74601DFE0F;
-	Wed, 19 Feb 2025 12:00:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D944F1D8DFE
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 12:01:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739966410; cv=none; b=D2CcOr3ZIXEc2eU4iclw49jLI0FZSgl9KXIR9wCmQfR9dXzHnLcKAN2j6B+IkDP5kGHKSZW8mBNRqKrsKEY/nyPvvRuXHWSl6pXlrYE0PeGpKe20HF4e6OXEyxNBs4LF7YKBWhWxfWGys4Dt+KldSqiLralE8WrosvHgVajTaOM=
+	t=1739966502; cv=none; b=TXTz5lN7g6Lw8eLYvaI9K85WnkDMCc7D4YwaKi+/a+aelKVJsUe4AA4yihtihPWPUUQR/HfRe/YYPBimsRhIEfUcIWteVAw3rO9p61hhnBN+fqrCno8Lyj7mPiueS/JLyzyPoWKvWK7AwCSqyzGfzmNgovQSq9UEOCsxr3gU8HU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739966410; c=relaxed/simple;
-	bh=aE9HcyCajEVazPonKG1AgVf+pWUFmjDMzHCSFMYcyfI=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=l/knugZPOSsscgtp0eXCaNYTdN66t02IvflzV1TRa9rZg/MPinQ5djNSupAAQr1HFvLJQoXBoRpa/mFMGab5iuZC6c0hTQ7fV9LppKR2T3Op//aaScrEqRCrPdyzcor/RSB6Ds/0PuoDuI0rsKoFtDckTonmEVo/JI2tdDK719E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rgospYIl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48CC8C4CED1;
-	Wed, 19 Feb 2025 12:00:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739966409;
-	bh=aE9HcyCajEVazPonKG1AgVf+pWUFmjDMzHCSFMYcyfI=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=rgospYIlvA1eSB9k8RYiFMU16h8uommpo2RvbUGoGdny06TzZ+fNJ4CGyeW0kq6tt
-	 z6WjQtoG25Pdsc+6iwPWi7MZupz6OIztBpicHzep6kqcLukAsVbD79MABn/INTLeAW
-	 nvnL4Xwb7IC23NkVwsIBk7u4QyrVUYhZOXAHmNsB9Uct4LZ8m4+bhyY6ziQ4NvI1ZO
-	 xyCovxaG4paRwXK2aRzdDU9BrAFTQlNr5cJumkZFyUPQRH3ZhHff9yo8GBcu8O8iUQ
-	 iKhO7HEzvyPJiQezAuJIQWQ9svJfShrvK5zEHvKmjskqgw1ZWLxqoXXGrQyd9qvbu1
-	 0c3d1Gu7Q8d9w==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB2A8380AAE9;
-	Wed, 19 Feb 2025 12:00:40 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1739966502; c=relaxed/simple;
+	bh=wcsXtdgQQL4VCUgznJrOnipwQmYIc9S+M6D4qteZ+tw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=itLAB+KxMf4tHk2ntXTS18hBMO7p4Pp5UB6hSkIniLS6O9eSUsZpWL0UkezijJdPublpqJ6xC43kSHcRe4mH9I6VMGO0DQ4nzRSQmnIYFbLZGEYnGbn2VXSkyS6GgKxxx4vck2rdckTgZzAFMRYC0aytmi8hw4OyX/bOtCEAc+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pau3xtXW; arc=none smtp.client-ip=209.85.219.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e5ad75ca787so707919276.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 04:01:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739966500; x=1740571300; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=5xe0n90tbsq5x/xPm1Llh+2RuD6r7msq/tuY+Ym3TsA=;
+        b=pau3xtXWvcHV/N/aolWv4okCW4Bvv7aos+tfJcokETECbzduPTP/t4s5xok9swS4Hb
+         zrweubnff8o/sP+48kM9pyzsVh4ABc89tSz5h/ZXpHtsxj+53c5P69tEmW1DoWWAnuKg
+         LUDQf/L0deKnN+P0nMcE8tWCxb0pZCoBov5aYmjbNIoAG3Dj7PihtbJKJycnINIM5jGv
+         Oc0389vqXjx7rxrouQq0XrLTiHPu9XJZYF/4vQtlSlur8g7qdbztC5p+Ket4vqmnezqZ
+         VAeuxLsji94Ti5PmvPmbt6EcaVzWdCzPgWgFT6mXyP8B9/GFM2iP//kgSiNTuAEcS1sU
+         gOmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739966500; x=1740571300;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5xe0n90tbsq5x/xPm1Llh+2RuD6r7msq/tuY+Ym3TsA=;
+        b=mzz86izMLp5o1w2edbJZvxkdYp5HlpwqoLHGvKu+eF2PQu+qqUY/BVfh+tlwEHaJf8
+         hESQabiy0F72fljW4GB70D/6XLjaPOLWz937aPatxe/pdPowTSkYjCf5Z/FmoiBTPQLm
+         pPaqmuCa9OeLOc7ewzVBfsawE5js1HSUwl5i4/70IydJwP2iIA/KPH2ADwl20Ar/gZx2
+         e4CPBeJqHZONJfE96vU9grt/d6mHzbq54gpYg24OR747Ze4ZfJl8iqiAzwExSIP2KrBl
+         +kbv2jQ1o3bPY/DnBHh1zyLpI8j11XchRwZ0UgfVlz0PBUAIrRRww6T1lX2/Z1ca7XCj
+         /BPg==
+X-Forwarded-Encrypted: i=1; AJvYcCW/6u5BuOXM4P4vlLWndqH7LFovQ/HPmW0ZosLyb+vrGwM3h3QEnXx4YGV3WubkV3+YQ0FzsNin6Uoq04k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydEjmvBaC6KXRBIpAkGbUbwlY7rDABXtHVqxsfQbidzDCIkb1z
+	KZjVWBd43YGrUdiectk5QCSPfsX7SaFXJpWJ3ZZsWPJKGdLewJu7zBW8bsWgWU2ZMYHdV4qAoas
+	QQ+IAbKrzjspVLAQndb7RTXXcGe0Ymf89NKGIkQ==
+X-Gm-Gg: ASbGncsHUV7ekBG2YF8xsiKWc2oxVEmt1LEylkmveXkOckFf+95rW4Cj8K7N95bzLnr
+	aOyTSRQxam4N0QDl6Q50+Q0h/9ZsCCOG0//k9AvXGl/kTq9OU2phH0DvFS1ccCCybJII0pHh+FA
+	==
+X-Google-Smtp-Source: AGHT+IGZ/+8xQ6gwL9boFRNAF7KVM22iCnqEax+j9Sk0drg1U/1wYEwbpzOiKk0ZPA6neRnIXD7xoQxd3GTjDpsqxfA=
+X-Received: by 2002:a05:6902:1027:b0:e5d:f98f:6f33 with SMTP id
+ 3f1490d57ef6-e5e09a34021mr2671796276.10.1739966496117; Wed, 19 Feb 2025
+ 04:01:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next 0/5] net: ethernet: ti: am65-cpsw: drop multiple
- functions and code cleanup
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173996643977.565726.11256296514242997941.git-patchwork-notify@kernel.org>
-Date: Wed, 19 Feb 2025 12:00:39 +0000
-References: <20250217-am65-cpsw-zc-prep-v1-0-ce450a62d64f@kernel.org>
-In-Reply-To: <20250217-am65-cpsw-zc-prep-v1-0-ce450a62d64f@kernel.org>
-To: Roger Quadros <rogerq@kernel.org>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, ast@kernel.org, daniel@iogearbox.net,
- hawk@kernel.org, john.fastabend@gmail.com, s-vadapalli@ti.com,
- danishanwar@ti.com, srk@ti.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+References: <20250218-gpcv2-of-property-present-v1-1-3bb1a9789654@pengutronix.de>
+In-Reply-To: <20250218-gpcv2-of-property-present-v1-1-3bb1a9789654@pengutronix.de>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 19 Feb 2025 13:01:00 +0100
+X-Gm-Features: AWEUYZkq7YJtxfAEssq6nuztkZ1WzoS_qm-UMarQYj6y8mBUO7XjlBb-t9JXEpQ
+Message-ID: <CAPDyKFrEHXhb42rnpjv0KqaUtRzKhX11w70ZoTM8+u9rYDJyuA@mail.gmail.com>
+Subject: Re: [PATCH] pmdomain: imx: gpcv2: use proper helper for property detection
+To: Ahmad Fatoum <a.fatoum@pengutronix.de>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, linux-pm@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hello:
+On Tue, 18 Feb 2025 at 20:18, Ahmad Fatoum <a.fatoum@pengutronix.de> wrote:
+>
+> Starting with commit c141ecc3cecd7 ("of: Warn when of_property_read_bool()
+> is used on non-boolean properties"), probing the gpcv2 device on i.MX8M
+> SoCs leads to warnings when LOCKDEP is enabled.
+>
+> Fix this by checking property presence with of_property_present as
+> intended.
+>
+> Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
 
-This series was applied to netdev/net-next.git (main)
-by David S. Miller <davem@davemloft.net>:
+Applied for next, thanks!
 
-On Mon, 17 Feb 2025 09:31:45 +0200 you wrote:
-> We have 2 tx completion functions to handle single-port vs multi-port
-> variants. Merge them into one function to make maintenance easier.
-> 
-> We also have 2 functions to handle TX completion for SKB vs XDP.
-> Get rid of them too.
-> 
-> Also do some minor cleanups.
-> 
-> [...]
-
-Here is the summary with links:
-  - [net-next,1/5] net: ethernet: ti: am65-cpsw: remove am65_cpsw_nuss_tx_compl_packets_2g()
-    https://git.kernel.org/netdev/net-next/c/9a369ae3d143
-  - [net-next,2/5] net: ethernet: ti: am65_cpsw: remove cpu argument am65_cpsw_run_xdp
-    https://git.kernel.org/netdev/net-next/c/1ae26bf61517
-  - [net-next,3/5] net: ethernet: ti: am65-cpsw: use return instead of goto in am65_cpsw_run_xdp()
-    https://git.kernel.org/netdev/net-next/c/09057ce3774e
-  - [net-next,4/5] net: ethernet: ti: am65_cpsw: move am65_cpsw_put_page() out of am65_cpsw_run_xdp()
-    https://git.kernel.org/netdev/net-next/c/6d6c7933cea6
-  - [net-next,5/5] net: ethernet: ti am65_cpsw: Drop separate TX completion functions
-    https://git.kernel.org/netdev/net-next/c/ce643fa62a70
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Kind regards
+Uffe
 
 
+> ---
+>  drivers/pmdomain/imx/gpcv2.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/pmdomain/imx/gpcv2.c b/drivers/pmdomain/imx/gpcv2.c
+> index 958d34d4821b1be68d730ad345037b8f0a56c45a..105fcaf13a34c787b2d568bc64e7fee9bfc23393 100644
+> --- a/drivers/pmdomain/imx/gpcv2.c
+> +++ b/drivers/pmdomain/imx/gpcv2.c
+> @@ -1361,7 +1361,7 @@ static int imx_pgc_domain_probe(struct platform_device *pdev)
+>         }
+>
+>         if (IS_ENABLED(CONFIG_LOCKDEP) &&
+> -           of_property_read_bool(domain->dev->of_node, "power-domains"))
+> +           of_property_present(domain->dev->of_node, "power-domains"))
+>                 lockdep_set_subclass(&domain->genpd.mlock, 1);
+>
+>         ret = of_genpd_add_provider_simple(domain->dev->of_node,
+>
+> ---
+> base-commit: 0ad2507d5d93f39619fc42372c347d6006b64319
+> change-id: 20250218-gpcv2-of-property-present-158f8dbfe2dc
+>
+> Best regards,
+> --
+> Ahmad Fatoum <a.fatoum@pengutronix.de>
+>
 
