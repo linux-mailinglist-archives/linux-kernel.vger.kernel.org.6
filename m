@@ -1,127 +1,148 @@
-Return-Path: <linux-kernel+bounces-521173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38C15A3B65D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:07:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 227E7A3B61C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:05:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4066C17CF04
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:58:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1E24189B772
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:58:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 191C61DF24F;
-	Wed, 19 Feb 2025 08:51:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28F931DF260;
+	Wed, 19 Feb 2025 08:51:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="o1FeUPlN"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="bgN1B5LU"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13B691DF258
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 08:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A80F51DE3BB
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 08:51:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739955072; cv=none; b=stxaj/MSYrhNM8bbxKZ/3gG0Bo/jB2cSWxgzpdkHUHhMzCnfbyupbhc7+GtEn5ta+/qNPRXMdndaAWudEBMy2Wf1ftO9aF4jFdqpdgjl46IyEjpWx3s/meCPq2vzmCDlabb5RtRG53yfKGazFEv2xS6ETED1+JFx8ff/cEeeExo=
+	t=1739955070; cv=none; b=JrPkg/vNsqa5RANRP/8kwgvYJ36R+uJ5bS0N7cnhmI3lA01yMEM6EJDOWGRVk6N8a7IMqE12p9E+5TAn9dS+g4VGV5lHBIw06ywCWyG89q70+jW8/9WchkrZPtFS5/SJEf1LAYZIyWW5hwEvG8VNVEGAXyuhfYuR8tV9RF/q/GY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739955072; c=relaxed/simple;
-	bh=QlRt4GjR1jTQddX7TI/CWL55VeGCGZqXC6zBvzHvQVE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ba+Fy+/r1Qe5WPbmj6tkPYbimGAX59RJ3+EZmJ22aNF2rTBvXWogDo1nKJP3BT6ZNPTGUCssj4Zulso/m50TLrGOtigT2h4iDcfIi7g4ubvvJBvsKaG35WcwJsN/ZmcCihUrxibgFI22BllH4xH7XWU8DXCaRrqa2uRbBB32haA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=o1FeUPlN; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5439e331cceso7400144e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 00:51:09 -0800 (PST)
+	s=arc-20240116; t=1739955070; c=relaxed/simple;
+	bh=aB7wbo6LJoP8fuqHyehR1qLit5d+ohfBtEaefLRZGSs=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
+	 References:In-Reply-To; b=Sxtczq4DaOKy4BFgdYrBTDASsROs50rc36TYLK2scEKl/XtjYmwMVqd7aBpIl7pez7zkC4Oe9ZZCD+xj61Mry/Nma2LYbubB4/Gisu3wfm/amC3pgkofwIUpYIRt8q3jAbPXLzIvOd5C6RRTf//C1ySZEYC+QVOVYenlRxi52/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=bgN1B5LU; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4399509058dso2194425e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 00:51:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1739955068; x=1740559868; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=ventanamicro.com; s=google; t=1739955067; x=1740559867; darn=vger.kernel.org;
+        h=in-reply-to:references:cc:subject:from:to:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QlRt4GjR1jTQddX7TI/CWL55VeGCGZqXC6zBvzHvQVE=;
-        b=o1FeUPlNj2ECx+vKbeYadrDGg39J25so27tgeLPmCS/x4a6J+K6GZlwiCkRVHdy0R8
-         M3wwgKL1zOi25+dvSjevUgqVN+OC1cZOWQf2HdbeMzamttbQRs61n7SbHB43eqPQTbC0
-         NkRAOWk1BzEcdQx1l/VdRF5EsH0OUcgydRaA41Cc7MWBaMRGDg6cJ0dFgozWdp1w4qOU
-         +u22E4K0wISQkFfMvYhRo0Pe///PNz7BZYhYsQkoh+6wFu/BmrmtgrZMm+j1oFCFbx2g
-         nrjt12vBoBij+AJs3scQfRBy0HufJPXNO4xe9YgWIY/3SpJS6s5j70G+5GvowhnYVCQu
-         z4eA==
+        bh=cyOr3ZD32WYQ578+kdBxZIoR9hORXh2QvsH9UB3Wz3E=;
+        b=bgN1B5LU3P2E5gi+YoAnACHUGWg5tz6LQ4wQXKu7ycAUC/E0YPPd4Bh7y+ofcrefz2
+         4wQmOOmxSYtbakVZnUBgmrF0+Kqc8WwHDmEejlWp5r8v3mB92JYibBIWCMuCl9KkatS2
+         xSLHsJZsdQ6JBz5v1WNZAocsi0onG35oXx+mPIChBvh8jzQKPVw6+ZXrjWTIarkF54vI
+         hJ437QoKXXP9stCkAFPcMiiDg7xVYHGAOO95o0RpZ9I+G3xUjVqCu3rSbd2hLpjgh0Hz
+         vo9ayxF+bW8uU2xardh+S7h7OF4XYdmVT13evYfYBTnPgZsLD5/zrT5VVlz52ALDyO/G
+         SPsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739955068; x=1740559868;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QlRt4GjR1jTQddX7TI/CWL55VeGCGZqXC6zBvzHvQVE=;
-        b=Vic4HRLiI+pNcOukvtKFzQXz3jg7SbykoDGnKtdAGTvojmYA2XDs2JdO2P3gJqKe1O
-         fHianRwWy/tobhtiqX1G45XcJ+PsszYLa8sZQBTIkLXB4SRnD/6iKem8x0WJzLoRSPvu
-         z+ah/cNPyC1+GJVRuwXQBy2gZDF1ppLkJNguD7Htu4r3DWfgn/BbwpIHxL8aMlT429KN
-         9OzG4nooQnUhZ4dV6PFIGe3V65DliTUyLi66hJ3flKaaQj5aE3NrtilblbuJcSNQXlyW
-         sax9QKP8JJRsqAaVtrlQhHNc0NxTm7vxIsHxl6er/6P8fH8fQsH/R1Rb6t+TckpeZBz+
-         ZyYA==
-X-Forwarded-Encrypted: i=1; AJvYcCWdMgs0zXqnn1w1zcSa4wFq4leljjYyM1C94T7epKTw9lgtVssC0MzNENbfKBeofGI8fEhj+rsQ3AAMoi0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznUpnoMcjJ/iS1Br0ybj9umYeJymidooJPm7PkRrx21R8YJq2F
-	YLuegXvk3Ldycyd6C49MTpU2Aj+8NUD+S5/Qzfa2Htp9XwQ+rCef+A++V552NndTgxHzqEdEHit
-	DEhgrUovObaLo4N+/OJcQ5Z4Pb8H6vUkLbTLuSQ==
-X-Gm-Gg: ASbGncvZDhU+k1fW4HG6OFEdtOrFM+ty1j0z9x8/UfcImeOunuho8PhG+u1UE0v7YOm
-	6ER1cJjgQ8DZ/i1Jf/nUzLEeEzLtUMuQPSdCJ6MVb2oJE8c3q4cNmiNf1PzwpiM1MrkTim4AErW
-	EoNDrZ0+HhdzMpjt7JASQeZ+s9JS8=
-X-Google-Smtp-Source: AGHT+IH64ll7H5Pnr+AXMsIuNzl9rxkEnslGqgkEA+cDQgfdDUoTUpRoWEehaV1nkpYxzRdLERpqNeVg5AkiS0DCNsY=
-X-Received: by 2002:a05:6512:3e23:b0:545:b28:2fa2 with SMTP id
- 2adb3069b0e04-5462eed85e0mr1036454e87.7.1739955067864; Wed, 19 Feb 2025
- 00:51:07 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739955067; x=1740559867;
+        h=in-reply-to:references:cc:subject:from:to:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=cyOr3ZD32WYQ578+kdBxZIoR9hORXh2QvsH9UB3Wz3E=;
+        b=ufFLT0ybUOy2hNBtgZedMMmZNEhSNGjg4CikHBELoVBrpLhQQEgnaWrjoXTAHQbWkB
+         mKje/sc58eGypDKSl8XmeUSkF0p1Wkf6GRKaAal3lObbQFkEdsc7HmwJsqFo2muOIdef
+         XkLA/dvWgd8sojya+Mbm87Ldhmuj2fzSO2jlKgN1o9Y83tLMokS9pVraLUOc+zdad+iD
+         pbU30LheTb1r/+pj+cm+3qc0a7YIwLFQwuqX7IWpLRl3XiGmOISEFC8LHgHp9w+uIFzm
+         n3QWxZtLZ88p11lJr2jVuGF0hHbNe+RCbhhfRXQwCV5tHUwRVb0oyr5cu/xDOIGiVn6Z
+         HYEA==
+X-Forwarded-Encrypted: i=1; AJvYcCVAIE9rqpnYnVuYGkxummNBE1MlDuvDzXHIe5bYJJ9vbZWplpGrxMBfjfMWli0MoeI1o+Ko5snhJRNsCUI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBl5jQVNLm/U0qfVRnFp3wpn3M+1h+qb7qKAfvsdTJ1muPBbIJ
+	+fGxOb5kMvJKR/2I08pa3Xoklutss4FSxU+iUXqX6KkllIdOLNkzkxrxva4kLfIH9ktrN+Dkpkh
+	i
+X-Gm-Gg: ASbGnct2zjf4JYA0fqVGGU4QSdMg+kPHi2yazbcOZGF+L+Mq2gwMVtBe/HMiR4aYJUV
+	EDZW13Gl4ns8od22ckl4Iy5b5OySf3BXdb4Z9/E50SHAojZd8KzEUrQlqAYHF5SPU0rjoHZTep+
+	hwPUE9/BIuwoptjjcEHj3aqlQeL8a0+z9zxIXI3a1azUrcCbeAmQQpNi4wkk7BchrruyA9mwxO/
+	1rWTaGAw7U1aQ75dvyTjpEwcus3+U9lqftzQUyrEEFUUctbPctXDxZV1FsDc8ajubGnf2rD9/uZ
+	LL1mS5T3whXCnSzBygIrBONq83lQCUC9f3wJ3PXcUsnZZ8u5bn4=
+X-Google-Smtp-Source: AGHT+IH6D4plZNYfuEYjbGdATaVAlFztkIrp/rClPpYzS5dL67Gt7zhXEE8RN1q+8mV+NLcuY45v6A==
+X-Received: by 2002:a05:600c:524a:b0:439:4d1c:bf72 with SMTP id 5b1f17b1804b1-4396e77b89dmr62388815e9.6.1739955066877;
+        Wed, 19 Feb 2025 00:51:06 -0800 (PST)
+Received: from localhost (ip-89-103-73-235.bb.vodafone.cz. [89.103.73.235])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259f8730sm17632219f8f.93.2025.02.19.00.51.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2025 00:51:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250210-gpio-sanitize-retvals-v1-0-12ea88506cb2@linaro.org>
- <CGME20250219083836eucas1p1b7ecc6e5fdc34d66ef7565bfcf399254@eucas1p1.samsung.com>
- <20250210-gpio-sanitize-retvals-v1-1-12ea88506cb2@linaro.org> <dfe03f88-407e-4ef1-ad30-42db53bbd4e4@samsung.com>
-In-Reply-To: <dfe03f88-407e-4ef1-ad30-42db53bbd4e4@samsung.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 19 Feb 2025 09:50:55 +0100
-X-Gm-Features: AWEUYZmqO0kHQqF5k5xCw4NLQbgyDdiC_HWCKvZXBPIn3qhchpNyNDYCJKAkPtE
-Message-ID: <CAMRc=MduJK0_gat2aVQbR9udYNj9oDcoN=me0wa4K6L8dX_52Q@mail.gmail.com>
-Subject: Re: [PATCH 1/8] gpiolib: check the return value of gpio_chip::get_direction()
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 19 Feb 2025 09:51:05 +0100
+Message-Id: <D7WALEFMK28X.13HQ0UL1S3NM5@ventanamicro.com>
+To: "BillXiang" <xiangwencheng@lanxincomputing.com>, <anup@brainfault.org>
+From: =?utf-8?q?Radim_Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@ventanamicro.com>
+Subject: Re: [PATCH] riscv: KVM: Remove unnecessary vcpu kick
+Cc: <ajones@ventanamicro.com>, <kvm-riscv@lists.infradead.org>,
+ <kvm@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
+ <linux-kernel@vger.kernel.org>, <atishp@atishpatra.org>,
+ <paul.walmsley@sifive.com>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
+ "linux-riscv" <linux-riscv-bounces@lists.infradead.org>
+References: <20250219015426.1939-1-xiangwencheng@lanxincomputing.com>
+In-Reply-To: <20250219015426.1939-1-xiangwencheng@lanxincomputing.com>
 
-On Wed, Feb 19, 2025 at 9:38=E2=80=AFAM Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
->
-> Hi Bartosz,
->
-> On 10.02.2025 11:51, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > As per the API contract - gpio_chip::get_direction() may fail and retur=
-n
-> > a negative error number. However, we treat it as if it always returned =
-0
-> > or 1. Check the return value of the callback and propagate the error
-> > number up the stack.
-> >
->
-> This change breaks bcm2835 pincontrol/gpio driver (and probably others)
-> in next-20250218. The problem is that some gpio lines are initially
-> configured as alternate function (i.e. uart) and .get_direction returns
-> -EINVAL for them, what in turn causes the whole gpio chip fail to
-> register. Here is the log with WARN_ON() added to line
-> drivers/pinctrl/bcm/pinctrl-bcm2835.c:350 from Raspberry Pi 4B:
->
-> Any suggestions how to fix this issue? Should we add
-> GPIO_LINE_DIRECTION_UNKNOWN?
->
+2025-02-19T09:54:26+08:00, BillXiang <xiangwencheng@lanxincomputing.com>:
+> Thank you Andrew Jones, forgive my errors in the last email.
+> I'm wondering whether it's necessary to kick the virtual hart
+> after writing to the vsfile of IMSIC.
+> From my understanding, writing to the vsfile should directly
+> forward the interrupt as MSI to the virtual hart. This means that
+> an additional kick should not be necessary, as it would cause the
+> vCPU to exit unnecessarily and potentially degrade performance.
 
-That would be quite an intrusive change and not something for the
-middle of the release cycle. I think we need to revert to the previous
-behavior for this particular use-case: check ret for EINVAL and assume
-it means input as it's the "safe" setting. Now the question is - can
-this only happen during the chip registration or should we filter out
-EINVAL at each gpiod_get_direction() call?
+Andrew proposed to avoid the exit overhead, but do a wakeup if the VCPU
+is "sleeping".  I talked with Andrew and thought so as well, but now I
+agree with you that we shouldn't have anything extra here.
 
-Bart
+Direct MSIs from IOMMU or other harts won't perform anything afterwards,
+so what you want to do correct and KVM has to properly handle the memory
+write alone.
+
+> I've tested this behavior in QEMU, and it seems to work perfectly
+> fine without the extra kick.
+
+If the rest of KVM behaves correctly is a different question.
+A mistake might result in a very rare race condition, so it's better to
+do verification rather than generic testing.
+
+For example, is `vsfile_cpu >=3D 0` the right condition for using direct
+interrupts?
+
+I don't see KVM setting vsfile_cpu to -1 before descheduling after
+emulating WFI, which could cause a bug as a MSI would never cause a wake
+up.  It might still look like it works, because something else could be
+waking the VCPU up and then the VCPU would notice this MSI as well.
+
+Please note that I didn't actualy verify the KVM code, so it can be
+correct, I just used this to give you an example of what can go wrong
+without being able to see it in testing.
+
+I would like to know if KVM needs fixing before this change is accepted.
+(It could make bad things worse.)
+
+> Would appreciate any insights or confirmation on this!
+
+Your patch is not acceptable because of its commit message, though.
+Please look again at the document that Andrew posted and always reply
+the previous thread if you do not send a new patch version.
+
+The commit message should be on point.
+Please avoid extraneous information that won't help anyone reading the
+commit.  Greeting and commentary can go below the "---" line.
+(And possibly above a "---8<---" line, although that is not official and
+ may cause issues with some maintainers.)
+
+Thanks.
 
