@@ -1,92 +1,101 @@
-Return-Path: <linux-kernel+bounces-521933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 603F6A3C400
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:45:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA419A3C430
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:54:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8C9F1887297
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:43:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF89F7A8A9A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:52:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83BAC1FE45E;
-	Wed, 19 Feb 2025 15:42:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 668CE1F9A86;
+	Wed, 19 Feb 2025 15:53:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gdt7bzMW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Cf9NEfrj"
+Received: from smtp.smtpout.orange.fr (smtp-71.smtpout.orange.fr [80.12.242.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D681A1F8ADD;
-	Wed, 19 Feb 2025 15:42:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35F61F5859;
+	Wed, 19 Feb 2025 15:53:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739979727; cv=none; b=F81SVJZT2mFN7CtVFqI4yF5y3phFKbgnC+x1q2QIsdosSjQsgG0WfYItmTTIPkMAbXirEoVE4pH7C0agNO4XVrVybJQNVGGFEkScSyWq082frWAff5/YxBHJ0R7X/kGRkk84T7So5dNTbFGWPGPePcE0aOWiKjX3OmUCzlvpCyg=
+	t=1739980396; cv=none; b=Gr9p0JNU74ag1C29PWbNdV11vkAbOLautLx+f0lCl0kE4rwe6kzB9USgwy7Eye3Y5TDpRxB8YDJU9xEsqqpcxf3dgCpNn0e2UipWu2zsN8zhMwTiIQ+ir/uU8OtU6DhKXbG/E+Z2stOVHML9+PhZ7IMRehSuTWOdmipWDdTsHqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739979727; c=relaxed/simple;
-	bh=geER51S41RNCfVdmfqtnicROAYVEJrmu19y32aczQfw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=phbAdx1yqTzpumJtG7sU0hS1GXnU1j2O+LPJ5YE1Fd37BxgKEIAlkK9xT5DdIrCreKnOVwxrGaP4JHkkaKXAVvQQy6Pij8DD/xE/aqZgkJAWjunhr/oUHYAj354f+WuzSloagfoF4haJ4R2o46kenqlZEzKmsHn6QR3eGf8dGJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gdt7bzMW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41D13C4CED6;
-	Wed, 19 Feb 2025 15:42:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739979725;
-	bh=geER51S41RNCfVdmfqtnicROAYVEJrmu19y32aczQfw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gdt7bzMWG2DKA6OmrGxPnnu4t2JoVnq06fY0IvQ/+4tV6w3GOcV+fxZ2Jai68XsHB
-	 oEjSu7lNqpG8cfjHcP1p4cL2muXLm4odthSv+zau1+a8b+vMQ3CyeUXvu4v7JBofx8
-	 wIadLU4eTKJ1MujLt7vZF56WIsTDHThFWHeVshicXCsqxHqlEzwBfvcScSmSO18/hm
-	 tthBmT3CEdwQ9x8rp8L2HefrHxfD/nm7xhkptba9ax5Vtw/YimP6R5tjPDPFT4mcZ/
-	 d5I21o996uoa1WQ3EnwIolpPP79VfJY36fzlpJgreSPSg6hkwSXcSJ32MUzobMgEUt
-	 AZJDFlZvVK+6Q==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1tkmDF-000000003Xl-3bav;
-	Wed, 19 Feb 2025 16:42:14 +0100
-Date: Wed, 19 Feb 2025 16:42:13 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Akhil P Oommen <quic_akhilpo@quicinc.com>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH 3/4] arm64: dts: qcom: x1e80100: Add GPU cooling
-Message-ID: <Z7X71VDghr_UxAdm@hovoldconsulting.com>
-References: <20250219-x1e80100-thermal-fixes-v1-0-d110e44ac3f9@linaro.org>
- <20250219-x1e80100-thermal-fixes-v1-3-d110e44ac3f9@linaro.org>
+	s=arc-20240116; t=1739980396; c=relaxed/simple;
+	bh=Xa8cLWNo6MQoPtkyy2sS//G8kPvIovPGhvQYZ/Tdrjc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YB95qG6WnOUu3UoRn9f+aB6+Ui7V4M/PDHDl2+wPlfeqvbzICCFd7elVxLc0/doUI8AQcMobUqR9nM+qjc9evpAdyVBYjLZGOTZrYmIOvkVMw70P4GDfpK7rdJDtiklMkBRcQdgxlORuoghfzwDBWToF9t0blHMxJ6l/T+k57hY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Cf9NEfrj; arc=none smtp.client-ip=80.12.242.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id kmEZtrRX34oeSkmEcthrp6; Wed, 19 Feb 2025 16:43:43 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1739979823;
+	bh=XQ8xneqsJR4U2f2+Cb3h0f/Qqrrbkj3alXoGimUGJEU=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=Cf9NEfrjidve30jAN28I9mNsYgvDLIUTGNXoGbr0ILVHdxkoBii8SbKqntJAYgzKT
+	 yAa0A0YxmjIlZZOUKjUwFM65yd/COOO/OOnhiw+jVE4axlOvhLYw7vfhq4yTtNJrrN
+	 IivLFFlH59CQ8uoWoO6QIkWI6D8opciBZdtChjjUuJCcwDspCuWnCXDW4FgUwiPhd+
+	 Mmji+Bg6jAljVM96gMjAK3WMsDKuz1lBrRpTM7AQwcgs7eTe9SgiUSIueHPpPt77Y0
+	 BkNPXoc3pO3Q+EbXqDext+T9sf1CWLOUve9oeOElK4Lo47tymFNYiwZWW6fSyr92nT
+	 fa4BHqMrWsYHw==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Wed, 19 Feb 2025 16:43:43 +0100
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH] tracing/user_events: Slightly simplify user_seq_show()
+Date: Wed, 19 Feb 2025 16:43:33 +0100
+Message-ID: <845caa94b74cea8d72c158bf1994fe250beee28c.1739979791.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250219-x1e80100-thermal-fixes-v1-3-d110e44ac3f9@linaro.org>
 
-On Wed, Feb 19, 2025 at 12:36:20PM +0100, Stephan Gerhold wrote:
-> Unlike the CPU, the GPU does not throttle its speed automatically when it
-> reaches high temperatures. With certain high GPU loads it is possible to
-> reach the critical hardware shutdown temperature of 120°C, endangering the
-> hardware and making it impossible to run certain applications.
-> 
-> Set up GPU cooling similar to the ACPI tables, by throttling the GPU speed
-> when reaching 95°C and polling every 200ms.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 721e38301b79 ("arm64: dts: qcom: x1e80100: Add gpu support")
-> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+2 seq_puts() calls can be merged.
 
-Thanks for fixing this, looks good to me:
+It saves a few lines of code and a few cycles, should it matter.
 
-Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This is a left over from commit 7235759084a4 ("tracing/user_events: Use
+remote writes for event enablement")
+---
+ kernel/trace/trace_events_user.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/kernel/trace/trace_events_user.c b/kernel/trace/trace_events_user.c
+index 97325fbd6283..bf2b5311d947 100644
+--- a/kernel/trace/trace_events_user.c
++++ b/kernel/trace/trace_events_user.c
+@@ -2793,11 +2793,8 @@ static int user_seq_show(struct seq_file *m, void *p)
+ 
+ 		seq_printf(m, "%s", EVENT_TP_NAME(user));
+ 
+-		if (status != 0)
+-			seq_puts(m, " #");
+-
+ 		if (status != 0) {
+-			seq_puts(m, " Used by");
++			seq_puts(m, " # Used by");
+ 			if (status & EVENT_STATUS_FTRACE)
+ 				seq_puts(m, " ftrace");
+ 			if (status & EVENT_STATUS_PERF)
+-- 
+2.48.1
+
 
