@@ -1,125 +1,166 @@
-Return-Path: <linux-kernel+bounces-520835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54DF3A3AFE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 04:05:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F1F8A3AFEA
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 04:05:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 522F6174436
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 03:05:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED26A3AD6DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 03:05:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDAED1A08A8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA9719F47E;
 	Wed, 19 Feb 2025 03:05:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VT8WpD9M"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ipTFm6cj"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D486528628D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9599485C5E;
 	Wed, 19 Feb 2025 03:05:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739934306; cv=none; b=heOb3AOZ3l+npFT3ACxMJ41/+A5xZ9RS5RG1OgcWAh5FeO9lCatmYosTCFCurvEsZOB8eeRjyHc95osTDnoBz0FZ5UpOl+f5YZVhoP6k5IWpmS6YzAY/tm3yQKiSBRriW8lmPQu4gbH/pMPY5YG03UZsUZAX2tx4IMHBQ+JzAjc=
+	t=1739934306; cv=none; b=fghzTU15o/vybaNrvU12ytRap129JUu/8xT5mwdM9kb/TaDhTArbXCHHnYPDqDnawFBR+pT5Ss1R55MXumv3JpSUT33E1uj7IKlwk14NtjGGkFyuVG6f43mmTR27xqwOGptWnkFqfzw8sgVhliSXKdrZPvMAqZBe/yOoEA2cjng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1739934306; c=relaxed/simple;
-	bh=xqhXmRmGt10WILRVRFX0nFpaOglQ51zq5WCAt+bSjhs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IWmRO7+CtR04iNTa+eCJb6eIGcWb6NrA0w3E54IApqJybhMhLD1IzVi3l7rRZE66u9YnGavXAoRAzPPGAe00NCK8GyHFW8o+SDHUO7JjhkrVuuLHyDM/Ftn6VwaaR31did4JOx7IyxAsNE6h66C+lD7mS0dOv85r4EpaTMIRGBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VT8WpD9M; arc=none smtp.client-ip=209.85.214.173
+	bh=e8A+H2y7XktQhmsGL/DgdGADtxCo9djA5AXEHoodIj0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VGoDcmx+CVTn/J80XHpz71dStyUVIHA6WS+jCU4eKlWYFtXPyfsS38aCoMWo5nkKPM+GzLha+KL73WjpbI9rKRlPzYiwhfXOSsA4fmgNOleNE4djElMu2fsMP838WPy6rcvhtGjYGmQKXfdZQda3gtGP4t9ZJ3kgI04q8PDp5yE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ipTFm6cj; arc=none smtp.client-ip=209.85.219.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-220d601886fso82953745ad.1;
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6dd15d03eacso4365616d6.0;
         Tue, 18 Feb 2025 19:05:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739934304; x=1740539104; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WP6ht26zVx1Wk1KNOxJ+ObaR5Ff/xn1pNGU7t1suOmA=;
-        b=VT8WpD9M3QqXLF4hQASrJnSP+8jI6R5kiOpxrwI6y7dKpzvnN45jyavRKPTkLcFuiQ
-         QC9+g4Z7KXDCB7SyXR5hCAyQQmhaJ/eQsu89exVxJwLoJMhvfYecQdlSgEmZINuMg0ET
-         9fVzONA3k4tM82+7x7u6fjFqwq313GV65g9GfLV1V7knGZqIWud3xsbMkG+DKNSJZf+o
-         MVP1x+stPlwZ8SvXvpyL9eT2pgWR83Ca81kwU2jSbPUihOWAdSL6C6/aIC+N7r52pcdy
-         /RgK3hul0jbq8M+X64+lsYWaPI9kp6gg2HNtrm5qNPSbwRarQjnIlpmZ9MUGJP9IP9j0
-         SkHQ==
+        d=gmail.com; s=20230601; t=1739934303; x=1740539103; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9BYvLma230HuNlMIuMla/WdfRB1EHLePrdfB/AY0iYo=;
+        b=ipTFm6cjNy5FvbQOeE1Psw7tZGHKLs9XGkOWZPd0d8RITSrWcXTVER4uYMHRigiKJ7
+         4dB96xIhFPBm6VUtKECj/l5H+9y/glT3SiGhiZNYDIj01UvI3XtaxlISvodainJ4fmcX
+         7o4bWzA9hHjXs8bdQCWrbCzK21ypF80NloHmqXabc+BkUySrvclX5s5ET7hKAV5Fx6U1
+         CpaFoclX/psv9c8Q0KPs2J0yKMcweScHiat18LDzvMFLePdajO2eEfODJgzVYSnI2WkF
+         +r4Tu2ITZRHpnB4EZ4udaFFL5ujnpcK35mXMXCkjkVB6BKkvn92w7cN6UpRekXHA/SM8
+         NI8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739934304; x=1740539104;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WP6ht26zVx1Wk1KNOxJ+ObaR5Ff/xn1pNGU7t1suOmA=;
-        b=trGjE91a4eB1l6UQvtAsNzOqHnd83WPiAREJwXYO2G/+td0p1MUkhMMN3aj0uvCsRa
-         /x0uducI23OKyziyjuQLSRiQgMaut12UZk6xe4YN9KclTGBnDmGHBnqEVAP35MZNbJs6
-         mnfsWBr4lXrVJxYYCvDKFl03JHjkK3mxXHlxKFZhrFbaVMIH7TU/Su37elisA039ueRD
-         rpd13A/+XhSSRzpGboFu4z0L+EpzOBQ60AJ8tbgi/QSvt5ur+fOf5FRLmC3ZuQVKa/7K
-         W/cDPab0sNVr/QnEDOgbNahgFNwikjA1iNQ0AtQ7J2CAp3oqG8yFaY97Y0NlZx1zFm5w
-         TGCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUZSRifTC7dDxza+dcM50mSs5Ap7x7gle3/Rhz1hRGu5g1zInvu4Iz57ytjVlFGtuxI0FRy6wKKf5GCfSSEpEo0@vger.kernel.org, AJvYcCVnPfqhq4x+wrND1/WuflMXVOZ3Flp2y2QmB/yBfc18Dw7v9e577IC5QXthTtE6fxsfT23pFCY9YUr1EuzE@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCKjzSgObyGRF7eWDBB1OR/YHLvWuPzG8kd/mU6J9GhE1Z47EF
-	dTKx0OFyYjOqBi7Fza7llkN4JiBuddSEPOgwvNlmN5yJKfPdinWBUTaBiit7
-X-Gm-Gg: ASbGncvQMTDoZZV1PlLQXUgQXCjsXLwjuymCgMYsWEqwXjcrc0LNvYn0C4zsoufz4ba
-	8iRj9py1jLmLAYZlZjDd4uoJBDF3GVfzQI3Mqntnd1mF75i039DiXAy7dCcZysf5WJ23i83FtIf
-	+rSE3X0f9gGgdIiT/xrUgvmvABN8/gy4XQzoyqpV9rsnEemTmX/WqIVi1Wz43qDuV+c0UF8csCe
-	CAwNg6/RQz9a0u8sjBoDreZgn/ws5Cs2fAE4qAotLaluUB0ZaTjGMHeeJ/A4+MJKia3DxvUspU8
-	SkPFwVZsWRmlH5AEtzzR8EvrbXl2HJF4ScOXRQHMad3uobsRcMCdNdImeS+klHmpcy6iIKbFKw=
-	=
-X-Google-Smtp-Source: AGHT+IFZiOAQJB8BaTDOEtDlzQBo8iYTkzBhRlEHPrbyWC5TMjZeIu0sOTh7QRiax5maNSNHhbXl8Q==
-X-Received: by 2002:a05:6a21:7888:b0:1ea:ddd1:2fcf with SMTP id adf61e73a8af0-1ee8cb1ddf0mr27931861637.4.1739934303922;
+        d=1e100.net; s=20230601; t=1739934303; x=1740539103;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9BYvLma230HuNlMIuMla/WdfRB1EHLePrdfB/AY0iYo=;
+        b=jr+bgUQp8028/bY5QZRJ4YOgfE0Mz6iSiWlKBhv0muxmVDPXjVE525lPQeZkiFD3T5
+         2NMfVTgL1fdf2CTmXRU0BrGNi/XYvaWb1PRtqHaRG5M+6HWuiXK24ACwMo0nWfW6mXpu
+         RznNBAapK3TY8gOkuO3h9fwfxWqG2jpvD1dicX6D7jiQVoiSot7ZzhEHTdNrj+bzsRq3
+         cARlZMvTmDzBcz+qwWvb17I2HjyjOknwdFbed95N/y8LY8dQzAbQW5mWwL6dISAjlLy9
+         qFpb1MUB4GVmJ5VBcmaRpdH7AFJ4tEy484oeXR0eeMrojjWbrnDUz3/lczf5PLvcA2q2
+         EpVw==
+X-Forwarded-Encrypted: i=1; AJvYcCUL2nXRM8vGlPYami4HG911b7jtfx3GXcjlPt+YG8pE9dd7gFhKPRzxXrVuju2Tn5SGtaVnt5dk0XrMDjQ=@vger.kernel.org, AJvYcCX5vPdcm6w8mq1RIufou31pFXrzrhPCD1nAZX6m0HUofHDS1X8GZbnxY5Q/LByaOR/oOuDIhqZsQ0kOKTFVmn8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwausbT0ORfovqKZyLRYcTz/BsT0LFU8MiJX3WvdvsiEvhnL6SX
+	l4ACBfPnP4X4jXxF15IIjflVRJimfT03ZJPXwVby5C6mI552Eyky
+X-Gm-Gg: ASbGnctdQ8pQ6XMxh8r3it5rNHubXTx3+7+LAtf9PFAyQn7CoX+J31DEAdCTIYuppCE
+	V5JsEuuW5LAKFzWRtjFNoeAASNGOZgPc5sCrz5mRtNYWDGChJGMml2Zire9QXCuEWCorua/GISd
+	8pp1PiYjuDs/LA3LdYTHSDooUDeLbOyIpUgixHgWPifI/1WNPi75V+4LvEaMncIG93qWl/3Xk/g
+	BEm9BW1d2q3UgtXOeTuxwhn+IGySrD4UY9Oot6IwtzziS+UYGBGGo9X++IngPB+xa64ULxnaaPk
+	kWzkKPBLWMMlVspvgPtuze2BROPe6EfjU7Gz1yFVR0jkyFNEXW78O6iiS5MhSgy52S6kvM3Tr1G
+	2EBizBg==
+X-Google-Smtp-Source: AGHT+IEpwLJUfuLuhmgXxM1P44u6J5PghjbG8Z0zrez13XdfxdvL+e3xMCDuDpHACWHGgbPI08KK1Q==
+X-Received: by 2002:a05:6214:29e8:b0:6d8:b81c:ecc1 with SMTP id 6a1803df08f44-6e6970a062cmr27704776d6.13.1739934303405;
         Tue, 18 Feb 2025 19:05:03 -0800 (PST)
-Received: from node0.suho-242436.threadtune-pg0.utah.cloudlab.us ([128.110.217.182])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-adb5a52af2esm9960126a12.54.2025.02.18.19.05.02
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e65dce9b56sm70371876d6.112.2025.02.18.19.05.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 19:05:03 -0800 (PST)
-From: Sumya Hoque <sumyahoque2012@gmail.com>
-To: sumyahoque2012@gmail.com,
-	skhan@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org,
-	shuah@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	kees@kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org
-Subject: [PATCH] selftests:sysctl:Fix minor grammers in sysctl test
-Date: Wed, 19 Feb 2025 03:04:51 +0000
-Message-Id: <20250219030451.39782-1-sumyahoque2012@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Tue, 18 Feb 2025 19:05:02 -0800 (PST)
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 3C2C51200043;
+	Tue, 18 Feb 2025 22:05:01 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Tue, 18 Feb 2025 22:05:01 -0500
+X-ME-Sender: <xms:XUq1Z6tK4ps1TBNrszKb6OYR1jJLYLxzgSMg55hZskBqMSHduihTXA>
+    <xme:XUq1Z_eICRaGMKv6le5sJyERTAtqHH06lmmIe-phZJEWC63BUQKPKGOvUJaDrXa0C
+    JG19SnpSiRObxTOfA>
+X-ME-Received: <xmr:XUq1Z1yTMWAOfIEpRgiqLyIO0yu1B8S_AfivWLecuJGPXDMMui9a7FHq-w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeifedtlecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
+    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
+    drtghomheqnecuggftrfgrthhtvghrnhephedugfduffffteeutddvheeuveelvdfhleel
+    ieevtdeguefhgeeuveeiudffiedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghl
+    ihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepgh
+    hmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopedutddpmhho
+    uggvpehsmhhtphhouhhtpdhrtghpthhtohephhhprgesiiihthhorhdrtghomhdprhgtph
+    htthhopehmihhguhgvlhdrohhjvggurgdrshgrnhguohhnihhssehgmhgrihhlrdgtohhm
+    pdhrtghpthhtohephhgthhesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehruh
+    hsthdqfhhorhdqlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthho
+    pehtohhrvhgrlhgusheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpth
+    htohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthht
+    oheprghirhhlihgvugesghhmrghilhdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvg
+    hrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehkshhumhhmihht
+    sehlihhsthhsrdhlihhnuhigrdguvghv
+X-ME-Proxy: <xmx:XUq1Z1PSM2WIqYp5_V8nHtKpf6OiFsq3fOe0Ir7UYPRbDsJwEGUYUg>
+    <xmx:XUq1Z6_jzsChztG1BEB1qD9bxXDBs-vdaoNy1LxF_YS0s42KcsTEKA>
+    <xmx:XUq1Z9XH4CAn_ISf4VA8-ar0avdJz9VAgjkbpFpQleOcoBmxbFL0gA>
+    <xmx:XUq1ZzcFOFTTDIEClzgQ3_1kFg6eRaIbP3UT9fZIp5zaNTWcMx9h3g>
+    <xmx:XUq1Z0dv7rkKMWgmOzawS2Pmzl5a9C6eMw8vrSwlb2TlMe7E2k19acGz>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 18 Feb 2025 22:05:00 -0500 (EST)
+Date: Tue, 18 Feb 2025 19:04:59 -0800
+From: Boqun Feng <boqun.feng@gmail.com>
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	rust-for-linux <rust-for-linux@vger.kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	David Airlie <airlied@gmail.com>, linux-kernel@vger.kernel.org,
+	ksummit@lists.linux.dev
+Subject: Re: Rust kernel policy
+Message-ID: <Z7VKW3eul-kGaIT2@Mac.home>
+References: <CANiq72m-R0tOakf=j7BZ78jDHdy=9-fvZbAT8j91Je2Bxy0sFg@mail.gmail.com>
+ <Z7SwcnUzjZYfuJ4-@infradead.org>
+ <CANiq72myjaA3Yyw_yyJ+uvUrZQcSLY_jNp65iKH8Y5xGY5tXPQ@mail.gmail.com>
+ <326CC09B-8565-4443-ACC5-045092260677@zytor.com>
+ <CANiq72m+r1BZVdVHn2k8XeU37ZeY6VT2S9KswMuFA=ZO3e4uvQ@mail.gmail.com>
+ <a7c5973a-497c-4f31-a7be-b3123bddb6dd@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a7c5973a-497c-4f31-a7be-b3123bddb6dd@zytor.com>
 
-Hello everyone,
-Some minor grammer issues that I have fixed:
-1. echo "If an error every occurs -->  echo "If an error occurs, every execution
-2. Example uses --> Example Usage 
+On Tue, Feb 18, 2025 at 04:58:27PM -0800, H. Peter Anvin wrote:
+[...]
+> > > David Howells did a patch set in 2018 (I believe) to clean up the C code in the kernel so it could be compiled with either C or C++; the patchset wasn't particularly big and mostly mechanical in nature, something that would be impossible with Rust. Even without moving away from the common subset of C and C++ we would immediately gain things like type safe linkage.
+> > 
+> > That is great, but that does not give you memory safety and everyone
+> > would still need to learn C++.
+> 
+> The point is that C++ is a superset of C, and we would use a subset of C++
+> that is more "C+"-style. That is, most changes would occur in header files,
+> especially early on. Since the kernel uses a *lot* of inlines and macros,
+> the improvements would still affect most of the *existing* kernel code,
+> something you simply can't do with Rust.
+> 
 
-Signed-off-by: Sumya Hoque <sumyahoque2012@gmail.com>
----
- tools/testing/selftests/sysctl/sysctl.sh | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I don't think that's the point of introducing a new language, the
+problem we are trying to resolve is when writing a driver or some kernel
+component, due to the complexity, memory safety issues (and other
+issues) are likely to happen. So using a language providing type safety
+can help that. Replacing inlines and macros with neat template tricks is
+not the point, at least from what I can tell, inlines and macros are not
+the main source of bugs (or are they any source of bugs in production?).
+Maybe you have an example?
 
-diff --git a/tools/testing/selftests/sysctl/sysctl.sh b/tools/testing/selftests/sysctl/sysctl.sh
-index 84472b436c07..a4d76147ed8a 100755
---- a/tools/testing/selftests/sysctl/sysctl.sh
-+++ b/tools/testing/selftests/sysctl/sysctl.sh
-@@ -891,11 +891,11 @@ usage()
- 	echo "    -l      List all test ID list"
- 	echo " -h|--help  Help"
- 	echo
--	echo "If an error every occurs execution will immediately terminate."
-+	echo "If an error occurs, every execution will immediately terminate."
- 	echo "If you are adding a new test try using -w <test-ID> first to"
- 	echo "make sure the test passes a series of tests."
- 	echo
--	echo Example uses:
-+	echo Example usage:
- 	echo
- 	echo "$TEST_NAME.sh            -- executes all tests"
- 	echo "$TEST_NAME.sh -t 0002    -- Executes test ID 0002 number of times is recomended"
--- 
-2.34.1
+Regards,
+Boqun
 
+[...]
 
