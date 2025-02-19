@@ -1,138 +1,97 @@
-Return-Path: <linux-kernel+bounces-521868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6E02A3C359
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:16:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64144A3C357
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:16:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 200CA171CD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:16:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CC047A6C09
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:15:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456D015CD52;
-	Wed, 19 Feb 2025 15:15:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="i+HrCPnr"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3186195B33
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 15:15:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 452711DEFF5;
+	Wed, 19 Feb 2025 15:16:13 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3421E1E885
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 15:16:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739978149; cv=none; b=j/rIqb9iEdBZQQ/Ee98Lt/UIWeEU5Xz4iWRzQ/XXgB2ceg/xmtX+5eAbIkTeVJfxjGiQA1OY0RLGxolQ9Qial14W9UM+VhZvCtwlIyPLZntybzZvkEvEnMNUvokg8O++0ftJ36+mrXOQSc+OkjmCor9v0Gh+tZyg078S42OzgEU=
+	t=1739978172; cv=none; b=IlFevPyLcR0NOj3jtYpYPzoPQSDcco3f1FxFbxcwzf/wLkVRVtHVmGQc4KMYJNWprRINDZ0Vizi2Fi2i2PyRCMVraCEmivEHb5PkSuAxSF6RjjKilDMBMivuhBAWL4yg0B6SIxIY9iVx9ULLuygAa57JDDEdh1eldOVrgOEpbYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739978149; c=relaxed/simple;
-	bh=Iv6t7FRn2B5grw2+MtJh7t4h4IagAcD/o0AdA80NfQU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=T7CvM/sAUFdIjXLVvfqKdC3+ZavjrF1oGQ9n5dPwVQXf4zrO3jUejGVmnH/9r/J1OGpMRgPJQynhYKsoEbcHdMLk3JFNb9M3LQuB70QB1gA48TkXLmkjpqlcbpALnDZvSqqgCmnj6IOMFb/mZDp2PyB0mPzqMrirLw4x+mX9Elo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=i+HrCPnr; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-471f88518c8so16548781cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 07:15:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739978147; x=1740582947; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=i4BufmELc/H5oLk6Se7bfRixYeydt1UGAVr8rJzEKPM=;
-        b=i+HrCPnr7hj8spFtYLMmbJN4GrwJ4dfHSMUILPd3nugBjV6Pnep62sVeUZiv4uLgPh
-         T5XfHCpv0+RcshyV3tbuhiiWfnT2ld6d1s3K5xQdkNuz8mkTHXtYcR0ice9zLOF65Fw1
-         ubEkNcCK8a3lh8bd8Ah5syIhn5dN4swl3Ut1rbLkYuaXN7hFqruJ4qtoWtOc/1b+FlFK
-         ID9D2uAu2/J8lYsiNKaKaN4vKCZoTW0QTfXgK/LFcVaKetL5+vvGWn8YNipDnGOKGlq4
-         osbUvYG3abppm0KL0QsL1qi4AbwA5jcnintQewvvdc8dhBb9guGgDedOfqhdp1+IJ3tV
-         9mHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739978147; x=1740582947;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=i4BufmELc/H5oLk6Se7bfRixYeydt1UGAVr8rJzEKPM=;
-        b=t+NQJL3pks5XXVOJspi9u9PM8YjYxX+vsYGSNwt7J/OFZb02FuwkQnwnCG3r2q959E
-         e0xhb2QwLSua0uIzFNtu72V/ejxnqUv9bu9Py6VS5KyMC5Q2WURcS2LJPZi/VoJQ30pH
-         MNgnY7+ZF++l7KR73KATFXIaJH2xi06IHqIx1hdJSb+/CN3b0CVaV/H/AOI3brE4mshB
-         8gzibEyt/jQyCTW2vF7BrOlK3T6GLFvYirA2SH4LUUZ7mEYKQPY3hLlDrKtoo7mXQ28W
-         Kesp4ecYRPPl3alyI+JLcZFNyJOEjX+oN0tEaq91IGWOlg3qMJuFyYhKe0PL0Rm8L9ev
-         kECw==
-X-Forwarded-Encrypted: i=1; AJvYcCWfXlOgIHQwTNLXAiZzQ5AfymMdo3GTQo5gz3ZvTU3MeL4imYvSdUocgpPiOYUWomdYgimLWiePpzXqk44=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwogiMyF8prMSY2NP/I+rgcvQaezMUpPqCiU8xW8uOewvdnZsXv
-	D+2PjjIokae/k7xJl+J1ejdt5WOoktgFl/L9ZkpZqL9jLPguzB92TdTRm59cu3dV4Q/XPCUoLaY
-	+ohOid5JkiIC+wH0QBOW8qVLeZkeSYQoMIcUg6Q==
-X-Gm-Gg: ASbGncs7nMUG7/u9UI1BCj4jIrZHxnfUPeJ1uWrf7C4sU3dJj6T2agi8dESy8hKJOlG
-	tfN3E1UIaowI16guH0qKakCTtwDh3GWAXgibB1p+RR0vWTT5w4yQZ+rXuXE1AkFtRtYuWZAGrzl
-	4=
-X-Google-Smtp-Source: AGHT+IFOL53hLpR9huwVKcdEp9S5ol3K22XXCd3/mcd/L2bQqRKMnRbCt0AScL5oNtTya9R/VDI/ycGal6VHuQEUFVs=
-X-Received: by 2002:a05:6214:1d2c:b0:6e6:5d61:4f01 with SMTP id
- 6a1803df08f44-6e6974fc658mr68832166d6.8.1739978146707; Wed, 19 Feb 2025
- 07:15:46 -0800 (PST)
+	s=arc-20240116; t=1739978172; c=relaxed/simple;
+	bh=MpYdKaUscPRH/iamTUXOGwIyLCFTHDfqMIQ7NaihEz0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T8KB0E1rNwGHvtofDvtYCd37BJG0gP/rr5lBlaCmuqHKrB3wLSkeqGj0oVaxUhNE8FJsEjYhd6SPUK4nC+ARzHQndds/xnzDsBA4dQduBi1V76oAVKnHJ1fT4NMkqZkb7vuVdGUfyXTZFem/6G97Nz1+HUHMqiUTeQaW0VFbgsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 08BD213D5;
+	Wed, 19 Feb 2025 07:16:29 -0800 (PST)
+Received: from [10.57.35.204] (unknown [10.57.35.204])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 738203F59E;
+	Wed, 19 Feb 2025 07:16:09 -0800 (PST)
+Message-ID: <a88b0a48-f7a0-4791-8ea7-a1e599c3313a@arm.com>
+Date: Wed, 19 Feb 2025 15:16:06 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250215075701.840225877@linuxfoundation.org> <CA+G9fYsBu8DOLEDQoGrdZmjwZKvz72tMmrVPnQSJLNMbefYymw@mail.gmail.com>
-In-Reply-To: <CA+G9fYsBu8DOLEDQoGrdZmjwZKvz72tMmrVPnQSJLNMbefYymw@mail.gmail.com>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 19 Feb 2025 20:45:34 +0530
-X-Gm-Features: AWEUYZmBriKaF0g7ZN6AKPL4WUNipNS0LvWaItl7Uel4aGCuiaCeYdtgGR_kvUY
-Message-ID: <CA+G9fYugvbR5jJrOUHd==_h2MXKDfVjivRnaXxvwWL_dzBXdGw@mail.gmail.com>
-Subject: Re: [PATCH 6.12 000/418] 6.12.14-rc3 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] iommu: Spelling s/KConfig/Kconfig/
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>
+Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <ff5b7c88eea8b126ed76029fb57254f29542aa22.1739976486.git.geert+renesas@glider.be>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <ff5b7c88eea8b126ed76029fb57254f29542aa22.1739976486.git.geert+renesas@glider.be>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, 17 Feb 2025 at 13:08, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
->
-> On Sat, 15 Feb 2025 at 13:29, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > This is the start of the stable review cycle for the 6.12.14 release.
-> > There are 418 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Mon, 17 Feb 2025 07:52:41 +0000.
-> > Anything received after that time might be too late.
-> >
-> > The whole patch series can be found in one patch at:
-> >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.14-rc3.gz
-> > or in the git tree and branch at:
-> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
-> > and the diffstat can be found below.
-> >
-> > thanks,
-> >
-> > greg k-h
->
-> Regression on qemu-arm64, qemu-armv7 and qemu-x86-64 on 6.12.14-rc3
-> We will investigate this and get back to you.
->
-> Test regression: arm64, arm, x86 selftests: memfd: run_fuse_test.sh
->
-> * fvp-aemva, kselftest-memfd
->   - memfd_run_fuse_test_sh
-> * qemu-armv7, kselftest-memfd
->   - memfd_run_fuse_test_sh
-> * qemu-arm64, kselftest-memfd
->   - memfd_run_fuse_test_sh
-> * qemu-x86_64, kselftest-memfd
->   - memfd_run_fuse_test_sh
->
-> # Test log
-> selftests: memfd: run_fuse_test.sh
-> ./fuse_mnt: error while loading shared libraries: libfuse.so.2: cannot
-> open shared object file: No such file or directory
-> not ok 2 selftests: memfd: run_fuse_test.sh  exit=127
+On 2025-02-19 2:48 pm, Geert Uytterhoeven wrote:
+> Fix two misspellings of "Kconfig".
 
-We are installing libfuse2 in our rootfs to fix this at our end.
+Honestly after 6 years and no obvious complaints I'd be inclined to just 
+drop those two paragraphs referring to v4.x kernel behaviour, or indeed 
+maybe make a move on the aforementioned removal of the whole thing....
 
-- Naresh
+Otherwise, frankly when the same thing is referred to 4 different ways 
+in the space of 6 sentences - "this Kconfig", "this config", "this 
+option", "This Kconfig option", "this config" - I would argue that 
+capitalisation is not the biggest issue with this text ;)
+
+Thanks,
+Robin.
+
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>   drivers/iommu/Kconfig | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
+> index 6cfd1b5b6e07f038..6c46e1d58987cd11 100644
+> --- a/drivers/iommu/Kconfig
+> +++ b/drivers/iommu/Kconfig
+> @@ -348,14 +348,14 @@ config ARM_SMMU_DISABLE_BYPASS_BY_DEFAULT
+>   	  an iommu domain will report an abort back to the device and
+>   	  will not be allowed to pass through the SMMU.
+>   
+> -	  Any old kernels that existed before this KConfig was
+> +	  Any old kernels that existed before this Kconfig was
+>   	  introduced would default to _allowing_ bypass (AKA the
+>   	  equivalent of NO for this config).  However the default for
+>   	  this option is YES because the old behavior is insecure.
+>   
+>   	  There are few reasons to allow unmatched stream bypass, and
+>   	  even fewer good ones.  If saying YES here breaks your board
+> -	  you should work on fixing your board.  This KConfig option
+> +	  you should work on fixing your board.  This Kconfig option
+>   	  is expected to be removed in the future and we'll simply
+>   	  hardcode the bypass disable in the code.
+>   
+
 
