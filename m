@@ -1,168 +1,210 @@
-Return-Path: <linux-kernel+bounces-520909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34890A3B0FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 06:39:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55463A3B0FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 06:41:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6B17173BF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 05:39:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BD3E3AE742
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 05:41:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33A1E1B85D3;
-	Wed, 19 Feb 2025 05:39:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45EF01B6D0F;
+	Wed, 19 Feb 2025 05:41:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="gNbcKA7s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K4fBGo19"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FAF61B6CF5;
-	Wed, 19 Feb 2025 05:39:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD47E25760;
+	Wed, 19 Feb 2025 05:41:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739943554; cv=none; b=J40dKHIV/LPqlNRyg06B36qQA6Jcif9Jh5p0GqkillNHZp13cHhe6LIZROa4fyg7qz0djY3EFTrNHO9H3IBCud4XHpOjTOiPEoavNkLn8kVxjIeUz5g4k73Z5/EhT9qiFNwHmFcKinkEejG+V0N1rm7DxJpY1HrTWyCLUKwwtqU=
+	t=1739943701; cv=none; b=k55Zi/e8S1k95ZmKNNWmGcnCTlByMmTz/RwOyod2r5fT3Lwkav3ShQX4h5ia9mGCJ1G9Lhyf32M4HRwZsrvJ4YBYxlg0/RnY8tC9zZEYv20+P0A7Y1mi6eQV8kzLvgIb7N4Fcw1dhyghA2xHLc7XDMX5mHyYclTmq/Aaqd/6DVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739943554; c=relaxed/simple;
-	bh=oKbdu5vxvrH/+KgQ9L3W4XVVFt99O7X/wIVK3KrLAGA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kmoNqwFuWGjgLUKHKsBUmeflZ2jy9W8hIT7w3+pvCG8OOYCyftQ4gSi9xpd8X+h32gMc+fUP6IDUP0YcMIZ+TbRv3EKprVwmwbZTIuAszvZ8+CpYb7zCFMV8Xi8By9oBY07eEQ93LEgaRMiSo0FnDm5fdbUz9b7+EhPo9b9XbMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=gNbcKA7s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8595CC4CED1;
-	Wed, 19 Feb 2025 05:39:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1739943553;
-	bh=oKbdu5vxvrH/+KgQ9L3W4XVVFt99O7X/wIVK3KrLAGA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gNbcKA7s/VvC6/xgEwpnwnWIuzUzqFuPUXwfMk2xYhsG6mUQINRicdWA2hJoptEQR
-	 ddFyY7xCcUfUDPtT90ZxB1znK+iIVM/ZgFSURS72GtW9bLATp23ha/jOEvU/vWV2vV
-	 4r6dRuEPct6WAfqn+ToyhH8uzkXAD2VNNI6jqWWY=
-Date: Wed, 19 Feb 2025 06:39:10 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	rust-for-linux <rust-for-linux@vger.kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	David Airlie <airlied@gmail.com>, linux-kernel@vger.kernel.org,
-	ksummit@lists.linux.dev
-Subject: Re: Rust kernel policy
-Message-ID: <2025021954-flaccid-pucker-f7d9@gregkh>
-References: <CANiq72m-R0tOakf=j7BZ78jDHdy=9-fvZbAT8j91Je2Bxy0sFg@mail.gmail.com>
- <Z7SwcnUzjZYfuJ4-@infradead.org>
- <CANiq72myjaA3Yyw_yyJ+uvUrZQcSLY_jNp65iKH8Y5xGY5tXPQ@mail.gmail.com>
- <326CC09B-8565-4443-ACC5-045092260677@zytor.com>
- <CANiq72m+r1BZVdVHn2k8XeU37ZeY6VT2S9KswMuFA=ZO3e4uvQ@mail.gmail.com>
- <a7c5973a-497c-4f31-a7be-b3123bddb6dd@zytor.com>
- <Z7VKW3eul-kGaIT2@Mac.home>
+	s=arc-20240116; t=1739943701; c=relaxed/simple;
+	bh=NH/GYPtUq6MwTSuRGjCkV3AXLDR9tKW3R/QsctmHmpY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FT2L7V7+K/qgDFHAiEvWSKQNpsIoX1fxl8o1zS2QDxwZpJ30ZlqHGXqnHBe7IAv3SZW6cUPNdM6UebdGIbaMhzn0Ar3lYJhZq/zaEBZpAu+2k42z9RXIqFL70vScKUqXJaP6IC4YeTrWPDYCnzg37fsQbAVoM8hSW6A4+sfbB4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K4fBGo19; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5e0939c6456so89594a12.3;
+        Tue, 18 Feb 2025 21:41:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739943698; x=1740548498; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LRcsV6GoFajL/k7gPCeavo6eC1d5s36mJUqIVFTMKHA=;
+        b=K4fBGo19J3m2615iz5O0KwpPwprOacy3H9DSzOdhs9dCcyX4XiIWejH6VcjCEdMxRT
+         vpB7QJMWsnC+Sm5KEKoM0EKFB0OpOGUZVVa1LQJGe8Z3YgaUDuIbSP8qcr2KrPSCmMAA
+         VSCJOwaBsBx3YYEOvcxXCKuyAKh7phU1e69FxfvCbTL6POkJHmwOWPz4jkPL6vu6EAyw
+         zhOlug7ZV9uGiGk52Nf5aGz/MDA2h3pZTApPy27t+6VU8QZ90ZnY/p6G85zeTwyjdol6
+         5VWvix3y85W/z4fgAoLt7bCDOribWlNeJoKBU6M+xcwJC1g0B15jnbB1+PB2jiBiycBw
+         fCJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739943698; x=1740548498;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LRcsV6GoFajL/k7gPCeavo6eC1d5s36mJUqIVFTMKHA=;
+        b=FFEGQ7Xgmw7+pIY67sR+/PP/2aSAc8HmKeEGDt9/qoFfOr2KC6rHIUPfUP2zMl0oPv
+         Sj528AsRe1VD++SPv+aHApDlP4VpIDkagqYKXE050GgVwh1SMUyYyiswe8NXhTQIczmp
+         kKwNjubVQTAmvYCCqhwHI4QFZyVgWVL3ojtEhEBPSsnSl4jRCtj8h9N/6IcPoP6/bS+4
+         QsnOX3QGTFQOtpvn8gBYTo38cqKqgpdNsbykMR9JujUmNeh8BmsgblnoYgu0lAArjU4J
+         b6dABPEwcuYD/ugK5eOpUbofdBbXqwugysDy14tYXXIfWH2W8zvMtRMGjt/Lr1alL1N+
+         ot+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCULnYBKGNjKhz3EMY5aDnWF55A9c0Y/MsyaPTnaTv9blzlzIshCszaT9oGgeCk7COR+UymBArXpDruOtKrl@vger.kernel.org, AJvYcCXigee2wP9xutSNGK/CnF+A8KoVARgh/GihfXxZfvBhDNyjCz9JpqsofTVT+xeKHg4Qid8tnOJcIzEf@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqVCl+JapWuL8G3yv6bXWNeyakPdtaEQghHSQd3EoFyI1sBDVB
+	aqqphWESdoTOx0EfuZzrDzhsn0H3Q3DVRkv4j9xrSELQTtVzEraA
+X-Gm-Gg: ASbGncuYHdMSActuE53da4EjMRFinXVutnUDgz8nXU8mKBUsxlpFKHRX8QKTTkIzhjT
+	ZET+nyWxrIn+Nnk1fsLZ1tYa2cn45oDVosf5SnjX2rd0DLIXAQJqGBX0Kxy39CQ/z/kEm3jNg/7
+	oLpgBIE0kq/uxsWjqU4SsrJsDL1JpHtEADeWR5aQ3kvQFbKyYiqPTSBNIdhG/3ZCavx4lH5arN8
+	bvtWafXdoXnOWF68XwZl7ENd1Eo7jBEDPd2Cch/ngzeUOehQ+gnYibDYI6f1QSRokLR1UV67I/M
+	TUE+1CA0od5Hq5KMYaGWIzOor9YDiaBgC1gzPoU23H/6plQtCWRKnkonnMgHTEadgQ==
+X-Google-Smtp-Source: AGHT+IE6McCybXsclJruyebbY+EIZW3bx08t3CeM0dcMArcOBNQnZGaXHD1Epi61kkrMMUgHgWugUw==
+X-Received: by 2002:a17:907:7b83:b0:ab7:eda3:3612 with SMTP id a640c23a62f3a-abb70de2909mr1830140366b.50.1739943697665;
+        Tue, 18 Feb 2025 21:41:37 -0800 (PST)
+Received: from [192.168.50.244] (83.8.115.239.ipv4.supernova.orange.pl. [83.8.115.239])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba9cf8a262sm904238066b.22.2025.02.18.21.41.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Feb 2025 21:41:37 -0800 (PST)
+Message-ID: <d6f8713d-fd7d-4de5-af71-cbb1fbe0f771@gmail.com>
+Date: Wed, 19 Feb 2025 06:41:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z7VKW3eul-kGaIT2@Mac.home>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/9] mfd: bcm590xx: Add support for BCM59054
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Conor Dooley <conor+dt@kernel.org>,
+ Scott Branden <sbranden@broadcom.com>, linux-arm-kernel@lists.infradead.org,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ ~postmarketos/upstreaming@lists.sr.ht, Ray Jui <rjui@broadcom.com>,
+ linux-kernel@vger.kernel.org, Stanislav Jakubek <stano.jakubek@gmail.com>,
+ Lee Jones <lee@kernel.org>, Mark Brown <broonie@kernel.org>
+References: <20250215-bcm59054-v4-0-dbfb2d76a855@gmail.com>
+ <173992516047.2065189.12949590674422169603.robh@kernel.org>
+From: Artur Weber <aweber.kernel@gmail.com>
+Content-Language: en-US
+In-Reply-To: <173992516047.2065189.12949590674422169603.robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Feb 18, 2025 at 07:04:59PM -0800, Boqun Feng wrote:
-> On Tue, Feb 18, 2025 at 04:58:27PM -0800, H. Peter Anvin wrote:
-> [...]
-> > > > David Howells did a patch set in 2018 (I believe) to clean up the C code in the kernel so it could be compiled with either C or C++; the patchset wasn't particularly big and mostly mechanical in nature, something that would be impossible with Rust. Even without moving away from the common subset of C and C++ we would immediately gain things like type safe linkage.
-> > > 
-> > > That is great, but that does not give you memory safety and everyone
-> > > would still need to learn C++.
-> > 
-> > The point is that C++ is a superset of C, and we would use a subset of C++
-> > that is more "C+"-style. That is, most changes would occur in header files,
-> > especially early on. Since the kernel uses a *lot* of inlines and macros,
-> > the improvements would still affect most of the *existing* kernel code,
-> > something you simply can't do with Rust.
-> > 
+On 19.02.2025 01:42, Rob Herring (Arm) wrote:
 > 
-> I don't think that's the point of introducing a new language, the
-> problem we are trying to resolve is when writing a driver or some kernel
-> component, due to the complexity, memory safety issues (and other
-> issues) are likely to happen. So using a language providing type safety
-> can help that. Replacing inlines and macros with neat template tricks is
-> not the point, at least from what I can tell, inlines and macros are not
-> the main source of bugs (or are they any source of bugs in production?).
-> Maybe you have an example?
+> On Sat, 15 Feb 2025 10:39:35 +0100, Artur Weber wrote:
+>> Add support for the BCM59054 MFD to the bcm590xx driver and fix a
+>> couple of small bugs in it that also affected the already supported
+>> BCM59056.
+>>
+>> While we're at it - convert the devicetree bindings to YAML format
+>> and drop the bcm59056 DTS in favor of describing the PMU in users'
+>> DTS files, as is done for most other MFDs.
+>>
+>> The BCM59054 is fairly similar to the BCM59056, with the primary
+>> difference being the different number and layout of regulators.
+>> It is primarily used in devices using the BCM21664 and BCM23550
+>> chipsets.
+>>
+>> This patchset has been tested on a Samsung Galaxy Grand Neo
+>> (baffinlite rev02; DTS not in mainline yet) with a BCM59054 PMIC.
+>> Testing on a BCM59056 would be appreciated.
+>>
+>> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+>> ---
+>> Changes in v4:
+>> - Fix yamllint warnings in DT bindings
+>> - Address miscelaneous review comments related to DT bindings
+>>    - Note that I did not end up moving the regulator refs from
+>>      allOf compatible matches; I explained my reasoning in [1].
+>>      [1] https://lore.kernel.org/lkml/ab853605-859d-44c6-8cbd-44391cd677e6@gmail.com/
+>> - Add PMU ID/revision parsing to MFD driver
+>> - Fix instances of regulator data not matching vendor kernel for
+>>    BCM59054
+>> - Use different voltage table for BCM59054 VSR reg based on PMU
+>>    revision
+>> - Link to v3: https://lore.kernel.org/r/20250131-bcm59054-v3-0-bbac52a84787@gmail.com
+>>
+>> Changes in v3:
+>> - Split out regulator DT bindings into separate YAML
+>> - Use tables of regulator info instead of get_XXX_register, reg_is_XXX
+>>    functions
+>> - Drop "regulator: bcm590xx: Add proper handling for PMMODE registers";
+>>    it adds unnecessary noise to the series and will be submitted separately
+>> - Link to v2: https://lore.kernel.org/r/20231030-bcm59054-v2-0-5fa4011aa5ba@gmail.com
+>>
+>> Changes in v2:
+>> - Fixed BCM59054 ID being passed to BCM59056 function in the
+>>    regulator driver
+>> - Dropped linux-rpi-kernel from the CC list
+>> - Link to v1: https://lore.kernel.org/r/20231030-bcm59054-v1-0-3517f980c1e3@gmail.com
+>>
+>> ---
+>> Artur Weber (9):
+>>        dt-bindings: mfd: brcm,bcm59056: Convert to YAML
+>>        dt-bindings: mfd: brcm,bcm59056: Add compatible for BCM59054
+>>        ARM: dts: Drop DTS for BCM59056 PMU
+>>        mfd: bcm590xx: Add support for multiple device types + BCM59054 compatible
+>>        mfd: bcm590xx: Add PMU ID/revision parsing function
+>>        regulator: bcm590xx: Use dev_err_probe for regulator register error
+>>        regulator: bcm590xx: Store regulator descriptions in table
+>>        regulator: bcm590xx: Rename BCM59056-specific data as such
+>>        regulator: bcm590xx: Add support for BCM59054 regulators
+>>
+>>   .../devicetree/bindings/mfd/brcm,bcm59056.txt      |   39 -
+>>   .../devicetree/bindings/mfd/brcm,bcm590xx.yaml     |   76 ++
+>>   .../bindings/regulator/brcm,bcm59054.yaml          |   56 +
+>>   .../bindings/regulator/brcm,bcm59056.yaml          |   51 +
+>>   arch/arm/boot/dts/broadcom/bcm28155-ap.dts         |   68 +-
+>>   arch/arm/boot/dts/broadcom/bcm59056.dtsi           |   91 --
+>>   drivers/mfd/bcm590xx.c                             |   86 +-
+>>   drivers/regulator/bcm590xx-regulator.c             | 1294 ++++++++++++++++----
+>>   include/linux/mfd/bcm590xx.h                       |   22 +
+>>   9 files changed, 1377 insertions(+), 406 deletions(-)
+>> ---
+>> base-commit: 0c3836482481200ead7b416ca80c68a29cfdaabd
+>> change-id: 20240816-bcm59054-a880695e41e8
+>>
+>> Best regards,
+>> --
+>> Artur Weber <aweber.kernel@gmail.com>
+>>
+>>
+>>
+> 
+> 
+> My bot found new DTB warnings on the .dts files added or changed in this
+> series.
+> 
+> Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+> are fixed by another series. Ultimately, it is up to the platform
+> maintainer whether these warnings are acceptable or not. No need to reply
+> unless the platform maintainer has comments.
+> 
+> If you already ran DT checks and didn't see these error(s), then
+> make sure dt-schema is up to date:
+> 
+>    pip3 install dtschema --upgrade
+> 
+> 
+> New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/broadcom/' for 20250215-bcm59054-v4-0-dbfb2d76a855@gmail.com:
+> 
+> arch/arm/boot/dts/broadcom/bcm53340-ubnt-unifi-switch8.dtb: mpcore@19000000: $nodename:0: 'mpcore@19000000' does not match '^([a-z][a-z0-9\-]+-bus|bus|localbus|soc|axi|ahb|apb)(@.+)?$'
+> 	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
+> 
 
-As someone who has seen almost EVERY kernel bugfix and security issue
-for the past 15+ years (well hopefully all of them end up in the stable
-trees, we do miss some at times when maintainers/developers forget to
-mark them as bugfixes), and who sees EVERY kernel CVE issued, I think I
-can speak on this topic.
+Looks like a false-positive; this patchset does not modify this DTS at
+all.
 
-The majority of bugs (quantity, not quality/severity) we have are due to
-the stupid little corner cases in C that are totally gone in Rust.
-Things like simple overwrites of memory (not that rust can catch all of
-these by far), error path cleanups, forgetting to check error values,
-and use-after-free mistakes.  That's why I'm wanting to see Rust get
-into the kernel, these types of issues just go away, allowing developers
-and maintainers more time to focus on the REAL bugs that happen (i.e.
-logic issues, race conditions, etc.)
-
-I'm all for moving our C codebase toward making these types of problems
-impossible to hit, the work that Kees and Gustavo and others are doing
-here is wonderful and totally needed, we have 30 million lines of C code
-that isn't going anywhere any year soon.  That's a worthy effort and is
-not going to stop and should not stop no matter what.
-
-But for new code / drivers, writing them in rust where these types of
-bugs just can't happen (or happen much much less) is a win for all of
-us, why wouldn't we do this?  C++ isn't going to give us any of that any
-decade soon, and the C++ language committee issues seem to be pointing
-out that everyone better be abandoning that language as soon as possible
-if they wish to have any codebase that can be maintained for any length
-of time.
-
-Rust also gives us the ability to define our in-kernel apis in ways that
-make them almost impossible to get wrong when using them.  We have way
-too many difficult/tricky apis that require way too much maintainer
-review just to "ensure that you got this right" that is a combination of
-both how our apis have evolved over the years (how many different ways
-can you use a 'struct cdev' in a safe way?) and how C doesn't allow us
-to express apis in a way that makes them easier/safer to use.  Forcing
-us maintainers of these apis to rethink them is a GOOD thing, as it is
-causing us to clean them up for EVERYONE, C users included already,
-making Linux better overall.
-
-And yes, the Rust bindings look like magic to me in places, someone with
-very little Rust experience, but I'm willing to learn and work with the
-developers who have stepped up to help out here.  To not want to learn
-and change based on new evidence (see my point about reading every
-kernel bug we have.)
-
-Rust isn't a "silver bullet" that will solve all of our problems, but it
-sure will help in a huge number of places, so for new stuff going
-forward, why wouldn't we want that?
-
-Linux is a tool that everyone else uses to solve their problems, and
-here we have developers that are saying "hey, our problem is that we
-want to write code for our hardware that just can't have all of these
-types of bugs automatically".
-
-Why would we ignore that?
-
-Yes, I understand our overworked maintainer problem (being one of these
-people myself), but here we have people actually doing the work!
-
-Yes, mixed language codebases are rough, and hard to maintain, but we
-are kernel developers dammit, we've been maintaining and strengthening
-Linux for longer than anyone ever thought was going to be possible.
-We've turned our development model into a well-oiled engineering marvel
-creating something that no one else has ever been able to accomplish.
-Adding another language really shouldn't be a problem, we've handled
-much worse things in the past and we shouldn't give up now on wanting to
-ensure that our project succeeds for the next 20+ years.  We've got to
-keep pushing forward when confronted with new good ideas, and embrace
-the people offering to join us in actually doing the work to help make
-sure that we all succeed together.
-
-thanks,
-
-greg k-h
+Best regards
+Artur
 
