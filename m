@@ -1,187 +1,114 @@
-Return-Path: <linux-kernel+bounces-522193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AE95A3C742
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:20:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EC27A3C749
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 19:21:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E65C3AD3B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:20:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 247297A7678
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:20:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A55BB1FDE27;
-	Wed, 19 Feb 2025 18:20:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEBA3215052;
+	Wed, 19 Feb 2025 18:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uW2akTXo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="BwE8op6y"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EA2E1494DF
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 18:20:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A537214A91
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 18:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739989229; cv=none; b=kAdYmk54/Yl2qczLUNIXRxXv2EgA3hZ1YNLlOLcA2Y5oT9gJlhMYB4iTilAc1Rpi9QmgvQy61Pw3Bmvy05VJToT+a5ZX2rjEMPGoSw3dF1pp1LJHJCXck0dMlejloZjRL8a9Fqv51+goH39qQA33bIK9S0yuAFdDuRnpqjSUlIE=
+	t=1739989267; cv=none; b=RTZGAjfyOQOPtB738YSnKJbSo+4pE7LVKoyrMwm8nPPeIbxWV6HD7rPwP03o+Las5UDiTQAYio1XjbkMUI/Yiocw+LV2y/vTH5lUUh03SnezP/0V16Oi9MZ/b+HwYhTvfTU8Ep7oUYnD89jU2c38sv0Fm1E/6+qvQUzfWu/8OUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739989229; c=relaxed/simple;
-	bh=DCjk6dDVCRMWeL58L3QZn9z12drE+ckbb/rbzxaBZj4=;
+	s=arc-20240116; t=1739989267; c=relaxed/simple;
+	bh=8CgxNFyMM7zmFDu9EisOs7jtPU4pHFGMxPxBbuPvqOA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CeaSGwIXybQevoUxak0uniRNAKkalhJmPX4xrMMbOWfSjvqL0bzyVy3sZEB2wjIAG8gNqjsR7AiFmfARLlUC2x3TnuqSp9+Vun0zPwj+HbFvwZQc/9mGa4JYG8kg52hHzkKoTMuw20hRUfaosLftkGoSQKrF5x5mBP/9BDzet94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uW2akTXo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD170C4CED1;
-	Wed, 19 Feb 2025 18:20:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739989228;
-	bh=DCjk6dDVCRMWeL58L3QZn9z12drE+ckbb/rbzxaBZj4=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=UOTklPlRcY7QUGgkkGxxu4iiFJB9KTVApQf3W1ldKgon8TnzTsttAG4KMUp49Tzi3+XbrYSvc2nQXAQQOu2UuA5Pz4A9IWyOpoK03idtc1ntZBOvnKhpqIhJICIIuj9tOBY2p333PTkNnqwksoLGF15xBxdpJ+ki1WfQFymduDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=BwE8op6y; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id AE63340E015F;
+	Wed, 19 Feb 2025 18:21:01 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id zmtvIYp5kkgb; Wed, 19 Feb 2025 18:20:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1739989257; bh=ATO75li95qD/O2WQMMZ9TytqExWfoWWTxFG2Bb0yENQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uW2akTXoAwcO/+ojDy+ryGkKmLSXP+Wht5ZN3QW3CStdi5nU/nhCDlOMYz+B63/ip
-	 WuQKPyKWCITWZ7cQvkWibNk9bk0Ou3F6FH2z4L6rr4GJfThxHj/oMpH5egD0O3El8p
-	 pTiNFklhcJIvutAgWXyA4xggT8p7Gzg02etNsbWsbEaoHDI3N2yvN0zK3dXsF6Kv2L
-	 wj0AyHVtZ3tmX2yAhWfHyRgHV00VktvtOuPGzpXMse/BWeilM+bhjlb985prfll/tX
-	 66H8LeJ/7nvLF5hz1YlG9hrhbbQL4icWgM2BRjRyUR2DbuJRrWGSnfWT4bOI/Tw5A+
-	 +Q86/S+1FozYA==
-Date: Wed, 19 Feb 2025 10:20:25 -0800
-From: Kees Cook <kees@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, alyssa.milburn@intel.com,
-	scott.d.constable@intel.com, joao@overdrivepizza.com,
-	andrew.cooper3@citrix.com, jpoimboe@kernel.org,
-	jose.marchesi@oracle.com, hjl.tools@gmail.com,
-	ndesaulniers@google.com, samitolvanen@google.com, nathan@kernel.org,
-	ojeda@kernel.org, alexei.starovoitov@gmail.com, mhiramat@kernel.org,
-	jmill@asu.edu
-Subject: Re: [PATCH v3 06/10] x86/traps: Decode LOCK Jcc.d8 #UD
-Message-ID: <202502191013.72E4EFFF0@keescook>
-References: <20250219162107.880673196@infradead.org>
- <20250219163514.928125334@infradead.org>
+	b=BwE8op6ynPbNPhzPkCqY9XBmtMaxuvE7/JuEnaPopXjClTXqGVxKinHkv/KlUcBr9
+	 c0bZ9mnvzHcLE8Hs6NTuhX8t8QQKTBbcKsCM6v1gtLNj+Pd3hBDc83MFo2YfFqqWhU
+	 he/5GEa3bL3ou04JQX4mAEPQXPd4SPdjUPjI+eTCivizg0YgQ1lrDi+iNR2p29Y1dz
+	 urUjNRjvxtuXGJgVC6JtIONyN1U1oO6fgQusxDWzJjUxY0WSQXehQ+RWkhTEgGdARS
+	 jtksNZICB9Wy/omBI/GICo4APOeZcW+oFf68MwTbi/rAqLAyu2LN82TWE9BZONGc0Y
+	 hL1N4RyvvGKpmidXrv8qATHM7jI0pBjjqi99Vr7J3IU+2eSH5hq9Vakv+ydFIAcgZB
+	 psNaENzHh93XyDA5ya2lIjKKQeexCSMoNnedTQoFXKC1boZcoefL8/CNTP0J8TziT0
+	 owPGdRLuXXsXjB0JIyKEUfHXUR42wLobWNKBrErVzajsyM+BeIod5Na2ypFSuAQ3qB
+	 mSI3WRdgKjM+xym1KgXiXU4v59wflB/JMJYfajtaXDQutIUb9UPzR6g8O9EOTGvap5
+	 Z9RnlJoSAMBkgKsZ2Qezsg8CbJ/IC6TDxyklNYfPfhKN+qg4Po04OQGyPSZVC8YN1m
+	 2ApBS8iVNR7a81GWPmmlMQg8=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A52A040E0176;
+	Wed, 19 Feb 2025 18:20:47 +0000 (UTC)
+Date: Wed, 19 Feb 2025 19:20:41 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: "Kaplan, David" <David.Kaplan@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 06/35] x86/bugs: Restructure mmio mitigation
+Message-ID: <20250219182041.GOZ7Yg-VlXLdgX7-3Z@fat_crate.local>
+References: <20250108202515.385902-1-david.kaplan@amd.com>
+ <20250108202515.385902-7-david.kaplan@amd.com>
+ <20250210232951.x4mbmpjy57jpunb5@jpoimboe>
+ <LV3PR12MB926503692B759DF39113626294FD2@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <20250211231839.bmcgj4vnvjyba74d@jpoimboe>
+ <LV3PR12MB9265E88D27667AE6BAD9F7F394FC2@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <20250212231646.gyf4zbqlq7f6kqqf@jpoimboe>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250219163514.928125334@infradead.org>
+In-Reply-To: <20250212231646.gyf4zbqlq7f6kqqf@jpoimboe>
 
-On Wed, Feb 19, 2025 at 05:21:13PM +0100, Peter Zijlstra wrote:
-> Because overlapping code sequences are all the rage.
-> 
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+On Wed, Feb 12, 2025 at 03:16:46PM -0800, Josh Poimboeuf wrote:
+> static bool __init verw_mitigation_enabled(void)
+> {
+> 	return mds_mitigation != MDS_MITIGATION_OFF ||
+> 		(taa_mitigation != TAA_MITIGATION_OFF && taa_vulnerable()) ||
+> 		(mmio_mitigation != MMIO_MITIGATION_OFF && mmio_needs_verw());
+> 		(rfds_mitigation != RFDS_MITIGATION_OFF && !rfds_needs_ucode());
+> }
 
-Reviewed-by: Kees Cook <kees@kernel.org>
+Instead of turning it into a head-scratching madness, it might be a lot easier
+if all the places which enable VERW mitigation, would do
 
-Semi-pointless stream of consciousness below...
+	verw_mitigation_enabled = true;
 
-> ---
->  arch/x86/include/asm/bug.h |    2 ++
->  arch/x86/kernel/traps.c    |   30 +++++++++++++++++++++++++-----
->  2 files changed, 27 insertions(+), 5 deletions(-)
-> 
-> --- a/arch/x86/include/asm/bug.h
-> +++ b/arch/x86/include/asm/bug.h
-> @@ -17,6 +17,7 @@
->   * In clang we have UD1s reporting UBSAN failures on X86, 64 and 32bit.
->   */
->  #define INSN_ASOP		0x67
-> +#define INSN_LOCK		0xf0
->  #define OPCODE_ESCAPE		0x0f
->  #define SECOND_BYTE_OPCODE_UD1	0xb9
->  #define SECOND_BYTE_OPCODE_UD2	0x0b
-> @@ -26,6 +27,7 @@
->  #define BUG_UD1			0xfffd
->  #define BUG_UD1_UBSAN		0xfffc
->  #define BUG_EA			0xffea
-> +#define BUG_LOCK		0xfff0
->  
->  #ifdef CONFIG_GENERIC_BUG
->  
-> --- a/arch/x86/kernel/traps.c
-> +++ b/arch/x86/kernel/traps.c
-> @@ -97,6 +97,7 @@ __always_inline int is_valid_bugaddr(uns
->   * If it's a UD1, further decode to determine its use:
->   *
->   * FineIBT:      ea                      (bad)
-> + * FineIBT:      0f 75 f9                lock jne . - 6
->   * UBSan{0}:     67 0f b9 00             ud1    (%eax),%eax
->   * UBSan{10}:    67 0f b9 40 10          ud1    0x10(%eax),%eax
->   * static_call:  0f b9 cc                ud1    %esp,%ecx
-> @@ -106,6 +107,7 @@ __always_inline int is_valid_bugaddr(uns
->  __always_inline int decode_bug(unsigned long addr, s32 *imm, int *len)
->  {
->  	unsigned long start = addr;
-> +	bool lock = false;
->  	u8 v;
->  
->  	if (addr < TASK_SIZE_MAX)
-> @@ -114,12 +116,29 @@ __always_inline int decode_bug(unsigned
->  	v = *(u8 *)(addr++);
->  	if (v == INSN_ASOP)
->  		v = *(u8 *)(addr++);
-> -	if (v == 0xea) {
-> +
-> +	if (v == INSN_LOCK) {
-> +		lock = true;
-> +		v = *(u8 *)(addr++);
-> +	}
-> +
-> +	switch (v) {
-> +	case 0x70 ... 0x7f: /* Jcc.d8 */
-> +		addr += 1; /* d8 */
-> +		*len = addr - start;
-> +		WARN_ON_ONCE(!lock);
-> +		return BUG_LOCK;
-> +
-> +	case 0xea:
->  		*len = addr - start;
->  		return BUG_EA;
-> -	}
-> -	if (v != OPCODE_ESCAPE)
-> +
-> +	case OPCODE_ESCAPE:
-> +		break;
-> +
-> +	default:
->  		return BUG_NONE;
-> +	}
->  
->  	v = *(u8 *)(addr++);
->  	if (v == SECOND_BYTE_OPCODE_UD2) {
-> @@ -315,7 +334,8 @@ static noinstr bool handle_bug(struct pt
->  
->  	switch (ud_type) {
->  	case BUG_EA:
-> -		if (handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
-> +	case BUG_LOCK:
-> +		if (handle_cfi_failure(ud_type, regs) == BUG_TRAP_TYPE_WARN) {
->  			if (regs->ip == addr)
->  				regs->ip += ud_len;
->  			handled = true;
-> @@ -324,7 +344,7 @@ static noinstr bool handle_bug(struct pt
->  
->  	case BUG_UD2:
->  		if (report_bug(regs->ip, regs) == BUG_TRAP_TYPE_WARN ||
-> -		    handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
-> +		    handle_cfi_failure(ud_type, regs) == BUG_TRAP_TYPE_WARN) {
->  			if (regs->ip == addr)
->  				regs->ip += ud_len;
->  			handled = true;
-
-I realize these are misplaced chunks, but passing ud_type into the
-handler feels like a layering violation to me. I struggled with this
-when making recommendations for the UBSAN handler too, so I'm not sure
-I have any better idea. It feels like there should be a way to separate
-this logic more cleanly. The handlers are all doing very similar things:
-
-1- find the address where a bad thing happened
-2- report about it
-3- whether to continue execution
-4- where to continue execution
-
-The variability happens with 1 and 4, where it depends on the instruction
-sequences. Meh, I dunno. I can't see anything cleaner, so passing down
-ud_type does seem best.
+and then the code can simply check that static var...
 
 -- 
-Kees Cook
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
