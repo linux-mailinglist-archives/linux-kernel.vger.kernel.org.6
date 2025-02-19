@@ -1,89 +1,112 @@
-Return-Path: <linux-kernel+bounces-522131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84ABDA3C662
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:40:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4168DA3C668
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:41:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DDA6179A25
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:40:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DF543B23CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:41:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CF22214233;
-	Wed, 19 Feb 2025 17:40:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 188B22144D7;
+	Wed, 19 Feb 2025 17:41:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YdxvxqnW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nC/KdewT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A04FD21481F;
-	Wed, 19 Feb 2025 17:40:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50973214226;
+	Wed, 19 Feb 2025 17:41:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739986807; cv=none; b=VvHeR2qWKixozP5cQPyLZdbJm3hMeK/A5QalCSbype4+KlXc8UWgaVZ5quFDltKgXpVl/vjbXoLPcc+dCP0I0AQWIAbkObDgOLDr4y24jTgVl5MLLU2hQYXqnll7Q98c/cOlzbhuToXaM1Yew9xp3wcAnou5O7Dds0UJnqXD1Yg=
+	t=1739986893; cv=none; b=XUyc9ru/Lo0leczBCO6s347npG6pTDNHbe0AtFQ37RlTrKRf2ySwVoHSs6S5DJc0eJOC5Yx/hea6zHcmBzqmoqZhuyVBrT+9jnUlfDJUSONHd8ZbgfuNHb8d/mMPSeUM5eibZzj0gUk18qbHYCzsPsyAwPWa9bC9Q/TLhYp2CII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739986807; c=relaxed/simple;
-	bh=7e64/5L6MTYJPbB9Fmi1eekyUsrDKLbg0aRRMYqYpc4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ULZDvVaXTx0bdG4nwo9iGK4sHNo9bz9kXX3fpgeMJTUkKr3AGDO00wrL+TprypE3wo3wHg7cV4+y6ZR+v144QvKZCFViArWHmsOrbklGXdleVLAVbqPTG+LMG2ZKISKwj3fBvdPhoSe/k56lPRbocJ6NMYq1o0MaW/LuvfO5Jiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YdxvxqnW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D01BFC4CED1;
-	Wed, 19 Feb 2025 17:40:04 +0000 (UTC)
+	s=arc-20240116; t=1739986893; c=relaxed/simple;
+	bh=kIkXxFdDl1vputqcWWA/PGngcXIL7N9KY7LhHR64CNg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fxfpmE4e+EHG0mX7ZKJsOyng0J1PQmDwwt0JLv5vBiHxl+mdE1075ziUgefp4ZJppP2uiIjJFML2ypHpN03yoThtzSYQmPZO3VB/OLaQifwgIrihmEHt55PX6K0ZZAHb193/JzGPsDCJkx0/6mYDuSzRSUf2ajNzI5PisKajdFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nC/KdewT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B940AC4CEEC;
+	Wed, 19 Feb 2025 17:41:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739986807;
-	bh=7e64/5L6MTYJPbB9Fmi1eekyUsrDKLbg0aRRMYqYpc4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YdxvxqnW1P/AncAt7m6XOxd8JCuA+52zJHPOSCtvwSZF8m58ZRnUQ/akVIb/gCjcQ
-	 YLKc5g8sqOQATo5QJ96iLIC4otFSbzeliRutoVLPkATX1SR9m0BCpTO/FZfnG5gOEa
-	 Rrc8MiJVWs4uolDRfFgs6D//mVricSqFGpUb21Y45ndiFimfqpsFZ3jj37036CEvsx
-	 YHzcCO18oIn+8DIvwVJa+8yx6SASJeR3i/8DCaekujdsucqHwZYHO7fTyRRlqt2XFE
-	 Rut6WyDcjHBrjEYa0uixeVBllxKbE6sB9hcolXOArgMocmoY6nwOgq+FUhKcatkA5m
-	 mT6seqAYuuUhA==
-From: Conor Dooley <conor@kernel.org>
-To: linux-riscv@lists.infradead.org,
-	Conor Dooley <conor@kernel.org>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Sandie Cao <sandie.cao@deepcomputing.io>
-Cc: Conor Dooley <conor.dooley@microchip.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>
-Subject: Re: [PATCH] riscv: dts: starfive: fml13v01: enable pcie1
-Date: Wed, 19 Feb 2025 17:39:56 +0000
-Message-ID: <20250219-sudoku-brewery-196094c5a506@spud>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250207093618.126636-1-sandie.cao@deepcomputing.io>
-References: <20250207093618.126636-1-sandie.cao@deepcomputing.io>
+	s=k20201202; t=1739986892;
+	bh=kIkXxFdDl1vputqcWWA/PGngcXIL7N9KY7LhHR64CNg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=nC/KdewTBAob2JJ1uqMwVsBBzE8m/TwQa2UUkrzR1wbB+TmeoXa4Nw13KbhS/5EqF
+	 W7Z6VHUBcp/13jIZIMD/YiYUh8/sQLkkljM+rQjbkTWuvyE/murE9n1wF3wD8eCpiK
+	 80SrE4pwpKM8FFav0gmUyu/zXrN80vr+OgQhU0iL6tql3oaENPPEQS1ptWsRM2tuOl
+	 S07xKvSvnnnHNHtEk75UmTNq/yKrOfk+VCXc6IeMk0tsjyIV0BHz/NUYTrS8IQgbCB
+	 PuMFpyTQLjRJO79a4LysY4gCx2Pp8VyD4WWlXcl2CPfvHeTwAKlv2ZQToeqehQnzpy
+	 eM2rMogfgWkBQ==
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3d2acdea3acso54415ab.0;
+        Wed, 19 Feb 2025 09:41:32 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWzPaFgJkMR2KdWndYyZ1DySWr9gI+XaBZJ1AiBW7jGFu+PLOYhYWRMx1ny6mkHntvlLDuXYDaWrEuXUPWD@vger.kernel.org, AJvYcCXA8D8V8kynNxhLiOjTw20c/WFjcI0tGi4uVZTuc7jZTzwzhAkgDcP0vBOEmtPU3ShnvIU6EooSAbbEVLpTFGw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZVKTwhpuqbio+UgNhfdlH23HMnW8HikXFYlDdGcmu1sGL1SiE
+	mNEERL7Z95PdGAvLnTNokFP6A71ZUWqocFPGguZ8ZszsSKRgMJ3WOWDxALwA62GZJnxvKAbHp05
+	Ee2C9twIplJyVD9vpqCHG9hecyJE=
+X-Google-Smtp-Source: AGHT+IHb2AivR32bAhoSImkfZXBTi8hepDC23rVgdSlJiw648cpS3OEqQW4LY10/pxCZAXe2LrWKJDC73oUpaG0w3po=
+X-Received: by 2002:a05:6e02:1a8b:b0:3d0:10a6:99b9 with SMTP id
+ e9e14a558f8ab-3d2b526d97dmr47301155ab.3.1739986891944; Wed, 19 Feb 2025
+ 09:41:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=446; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=vxuzSktMxnzfKt2p1RVJeC5rLdC7Hwpf1ExvcuVO114=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDOnbxHNKhE9Lrt12bMGu8hzXQxN6r0iGrNPeEZfk/9aDS +6wY41cRykLgxgHg6yYIkvi7b4WqfV/XHY497yFmcPKBDKEgYtTACZis4mRodOHdbF3tvr8S5la fx7Ux3JfOXwn0eFvStjSIjkph1jfmwx/BVobGy0nMmSa2886fzby4/bcLw6cHmLejM9SG1axqpV xAAA=
-X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
-Content-Transfer-Encoding: 8bit
+References: <fcbb2f57-0714-4139-b441-8817365c16a1@stanley.mountain>
+In-Reply-To: <fcbb2f57-0714-4139-b441-8817365c16a1@stanley.mountain>
+From: Song Liu <song@kernel.org>
+Date: Wed, 19 Feb 2025 09:41:21 -0800
+X-Gmail-Original-Message-ID: <CAPhsuW7z=rQoGRmWaEihtmxb=QNcuiM8aTgtaR0wZ6G049YjkQ@mail.gmail.com>
+X-Gm-Features: AWEUYZl3TM-I84V7hE6jNxKt7ipYmmXW-aQkPh2AuOoX7b837qicOk9GqelBzsM
+Message-ID: <CAPhsuW7z=rQoGRmWaEihtmxb=QNcuiM8aTgtaR0wZ6G049YjkQ@mail.gmail.com>
+Subject: Re: [PATCH] x86/module: remove unnecessary check in module_finalize()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, "Mike Rapoport (Microsoft)" <rppt@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Conor Dooley <conor.dooley@microchip.com>
+On Wed, Feb 19, 2025 at 5:48=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
+.org> wrote:
+>
+> The "calls" pointer can no longer be NULL after commit ab9fea59487d
+> ("x86/alternative: Simplify callthunk patching") was merged.  Delete
+> this unnecessary check.
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-On Fri, 07 Feb 2025 17:36:18 +0800, Sandie Cao wrote:
-> Starfive Soc common defines GPIO28 as pcie1 reset, GPIO21 as pcie1 wakeup;
-> But the FML13V01 board uses GPIO21 as pcie1 reset, GPIO28 as pcie1 wakeup;
-> redefine pcie1 gpio and enable pcie1 for pcie based Wi-Fi.
-> 
-> 
+Acked-by: Song Liu <song@kernel.org>
 
-Applied to riscv-dt-for-next, thanks!
-
-[1/1] riscv: dts: starfive: fml13v01: enable pcie1
-      https://git.kernel.org/conor/c/57b5369f3668
-
-Thanks,
-Conor.
+> ---
+>  arch/x86/kernel/module.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+>
+> diff --git a/arch/x86/kernel/module.c b/arch/x86/kernel/module.c
+> index cb9d295e67cb..615f74c4bd6c 100644
+> --- a/arch/x86/kernel/module.c
+> +++ b/arch/x86/kernel/module.c
+> @@ -278,10 +278,8 @@ int module_finalize(const Elf_Ehdr *hdr,
+>         if (calls) {
+>                 struct callthunk_sites cs =3D {};
+>
+> -               if (calls) {
+> -                       cs.call_start =3D (void *)calls->sh_addr;
+> -                       cs.call_end =3D (void *)calls->sh_addr + calls->s=
+h_size;
+> -               }
+> +               cs.call_start =3D (void *)calls->sh_addr;
+> +               cs.call_end =3D (void *)calls->sh_addr + calls->sh_size;
+>
+>                 callthunks_patch_module_calls(&cs, me);
+>         }
+> --
+> 2.47.2
+>
 
