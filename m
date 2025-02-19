@@ -1,55 +1,54 @@
-Return-Path: <linux-kernel+bounces-521005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12A75A3B286
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:35:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 557C0A3B292
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:37:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D68AD3A5EF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:35:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79867174BEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:37:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E786A1C1F27;
-	Wed, 19 Feb 2025 07:35:14 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3531717A2F4;
-	Wed, 19 Feb 2025 07:35:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 057F21C2309;
+	Wed, 19 Feb 2025 07:37:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="b8qPXQjA"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0438DDF42;
+	Wed, 19 Feb 2025 07:37:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739950514; cv=none; b=d3DE1vWmETk6pCO5gQA5C2YHR85yfbRll3lWvDxzmUQFxX1D+UAfkm0ofanZAyehdQk2eNH607OWRklTTdTdWeykh5ORQFO0R3ISrL8Ot4WlNreLDw3EEtTaeg3CWlLp5zpnNMyZkgbpxNMevVPIm92+couldftzmFvdhRygDUY=
+	t=1739950625; cv=none; b=cUKLrZADvO8p3GY6kkpIW8kE5II+alBiZ6S7MMo2AWP8MQwiYlBLh3fv1bmmlVPLV3rdELpRviRc902FCTxJ0cXLm2LwEO0Iu/vy2WVmxiZsGf6FKiQJA82WhL10g1LQV7H3pJzLHf4w5iwHi+wlcAm1ybdESavFQUGS+6K0RUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739950514; c=relaxed/simple;
-	bh=c4mcpZGj7Ra/WCctpHeRdBVkm2x1ABUNsmZo/BB/ZN4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=I+fI2W2oPNAEVgOy9iUn6m6UY04hUZzQ6wcx1rWdLcQY4zD18BBBRsGireMLic6eSuR2A8ZxazKLiYUY/2cbPmrEzMywLK60/yEj0Rj7sliniGWTeBSXJ+/MMKpcFQ2tny9HU6B/ZZGYbBWg+iSW6wTpUsw+ZePGOr8GEqScgSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.40.54.90])
-	by gateway (Coremail) with SMTP id _____8Bx63GnibVnG7p6AA--.15109S3;
-	Wed, 19 Feb 2025 15:35:03 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.40.54.90])
-	by front1 (Coremail) with SMTP id qMiowMCx_cZyibVn17IbAA--.40645S4;
-	Wed, 19 Feb 2025 15:34:53 +0800 (CST)
-From: Qunqin Zhao <zhaoqunqin@loongson.cn>
-To: lee@kernel.org,
-	herbert@gondor.apana.org.au,
-	davem@davemloft.net,
-	peterhuewe@gmx.de,
-	jarkko@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linux-crypto@vger.kernel.org,
-	jgg@ziepe.ca,
-	linux-integrity@vger.kernel.org,
-	Qunqin Zhao <zhaoqunqin@loongson.cn>
-Subject: [PATCH V3 6/6] MAINTAINERS: Add tpm_lsse.c to LOONGSON CRYPTO DRIVER entry
-Date: Wed, 19 Feb 2025 15:33:50 +0800
-Message-Id: <20250219073350.16915-3-zhaoqunqin@loongson.cn>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20250219073350.16915-1-zhaoqunqin@loongson.cn>
-References: <20250219073350.16915-1-zhaoqunqin@loongson.cn>
+	s=arc-20240116; t=1739950625; c=relaxed/simple;
+	bh=Zelml0koJq2/JmuMepQyucU39402Cnj9yWoggcBMct8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=elfza7wGXPG56ImhUWembuKRV/yqlam5nQAOYjZwHzLUfXFF/7SMZtgDXSBJwujY6LPOeDXvtAw/wptqQ4TrkZ4MmrS5MCKNvhA4+7Soao9fUAH6lQUlDdseblCvq7DOgP7F0MVQvlH0t53i2lWafqbhYTqBWN8yxzSrssWrHFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=b8qPXQjA; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=xdkDq
+	LjR5Z+dYInLH0e7CH51P78c+EQ+kVf0T1lavAM=; b=b8qPXQjAKYNztz1Sy6Eq4
+	/PLDwCZB7Equy/HvYSD/E9OkK1lILtEnYlTOl2M1q6DQKRQwJ46R6TG96kXHpNlN
+	EkxOl+8hnO2C2kF7gJ4tPwDFXVPAK+aF8SP345oTED0EJOm0jpvKccYQ17OPcnsN
+	EV7NSbBggBf8GH5HEt2sls=
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [])
+	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wDnj8oDirVnUyGpMg--.50010S4;
+	Wed, 19 Feb 2025 15:36:36 +0800 (CST)
+From: Haoxiang Li <haoxiang_li2024@163.com>
+To: linuxdrivers@attotech.com,
+	James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com,
+	bvanassche@acm.org
+Cc: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Haoxiang Li <haoxiang_li2024@163.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] scsi: esas2r: Add check for alloc_ordered_workqueue()
+Date: Wed, 19 Feb 2025 15:36:33 +0800
+Message-Id: <20250219073633.2604697-1-haoxiang_li2024@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,46 +56,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMCx_cZyibVn17IbAA--.40645S4
-X-CM-SenderInfo: 52kd01pxqtx0o6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
-	ZEXasCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29K
-	BjDU0xBIdaVrnRJUUUPYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26c
-	xKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vE
-	j48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxV
-	AFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x02
-	67AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI
-	0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWrXVW3AwAv7VC2z280
-	aVAFwI0_Cr0_Gr1UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCF04k20x
-	vY0x0EwIxGrwCF54CYxVAaw2AFwI0_JF0_Jw1l4c8EcI0Ec7CjxVAaw2AFwI0_JF0_Jw1l
-	4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxV
-	WUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI
-	7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Ar0_tr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26F
-	4j6r4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Cr0_Gr1U
-	MIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07j7qXQUUU
-	UU=
+X-CM-TRANSID:_____wDnj8oDirVnUyGpMg--.50010S4
+X-Coremail-Antispam: 1Uf129KBjvdXoW7Jr18GF13Gw1fJr1xCFyUWrg_yoWkGwc_ur
+	ZFvr12yrsrCF48K348JFyavrWvvr48Zr4F9F4Yyas3A3yfWr1Yqrs3ZrnxZwsrC34UuFWD
+	Cw4YqrW8Ar17ZjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRGXdbUUUUUU==
+X-CM-SenderInfo: xkdr5xpdqjszblsqjki6rwjhhfrp/xtbB0h34bme1hDXAswAAsJ
 
-Changes to Loongson TPM driver would be best reviewed by the Loongson
-crypto driver maintainers.
+Add check for the return value of alloc_ordered_workqueue()
+in esas2r_init_adapter() to catch potential exception.
 
-Signed-off-by: Qunqin Zhao <zhaoqunqin@loongson.cn>
+Fixes: 4cb1b41a5ee4 ("scsi: esas2r: Simplify an alloc_ordered_workqueue() invocation")
+Cc: stable@vger.kernel.org
+Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
 ---
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/scsi/esas2r/esas2r_init.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 6493d58436..6aad0f08ad 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -13484,6 +13484,7 @@ LOONGSON CRYPTO DRIVER
- M:	Qunqin Zhao <zhaoqunqin@loongson.com>
- L:	linux-crypto@vger.kernel.org
- S:	Maintained
-+F:	drivers/char/tpm/tpm_lsse.c
- F:	drivers/crypto/loongson/
+diff --git a/drivers/scsi/esas2r/esas2r_init.c b/drivers/scsi/esas2r/esas2r_init.c
+index 0cea5f3d1a08..48bb8aaf9df4 100644
+--- a/drivers/scsi/esas2r/esas2r_init.c
++++ b/drivers/scsi/esas2r/esas2r_init.c
+@@ -314,6 +314,11 @@ int esas2r_init_adapter(struct Scsi_Host *host, struct pci_dev *pcid,
+ 	a->fw_event_q =
+ 		alloc_ordered_workqueue("esas2r/%d", WQ_MEM_RECLAIM, a->index);
  
- LOONGSON-2 APB DMA DRIVER
++	if (!a->fw_event_q) {
++		esas2r_log(ESAS2R_LOG_CRIT, "failed to create work queue\n");
++		esas2r_kill_adapter(index);
++		return 0;
++	}
+ 	init_waitqueue_head(&a->buffered_ioctl_waiter);
+ 	init_waitqueue_head(&a->nvram_waiter);
+ 	init_waitqueue_head(&a->fm_api_waiter);
 -- 
-2.43.0
+2.25.1
 
 
