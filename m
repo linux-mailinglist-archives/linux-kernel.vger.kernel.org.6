@@ -1,134 +1,109 @@
-Return-Path: <linux-kernel+bounces-521903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8C81A3C3AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:32:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E3C1A3C3B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:32:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E1403BAFB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:29:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FB203B6A0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:30:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA2541F4635;
-	Wed, 19 Feb 2025 15:29:56 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8192F199237;
-	Wed, 19 Feb 2025 15:29:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BD8C1F8BCD;
+	Wed, 19 Feb 2025 15:30:47 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 163D51E3DE5;
+	Wed, 19 Feb 2025 15:30:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739978996; cv=none; b=S1338PcEQZjuQw4ppyEoiYCGPgfJ/T3sxnRzk07n0+6LUtZnMUT3+YK2XrZ2DUu2jP84DFhwVldJhFSDa6QNb4R613S3l+Nu88DhfeQ/NiHWOQQtUrJJ8JjnS48bxupyKtvur9emKWd5c95atdDc8UJZkgKsKFVnKV5M/h0plm8=
+	t=1739979046; cv=none; b=N5W1q3DZtLTtpwvtyIny28gyu0OBB2P0S9isrAIdWubpD4FACSDeoKAAIQT33BVs1gUO7cLbagqj+4JxTnVQ64wJXTLoUESAQlh/JH2Okmud5CMMtRhx2QzbrdZdi62gCdgnS1wbbaH+IVh6CamGI6Ur3gc7vSLpOIEHzI5mm6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739978996; c=relaxed/simple;
-	bh=8BSiMyKZOdyFw/92729oiwxfXkyUH7puwGPtfJpZwT8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EHOrTe10XdvtULyEVmRd8RfIsD/Q2j1hRE655H8OmkVfYSTkFC2WXnJjMtjhTAEv1wsm0J5e5HCodabXv9Msc84rixF/zMgdAzqBg0LSHGzMPKdYTsuuMqxOiQQokoNEunQ0iEpAIbOX59G4ASzOrC1RqBvymFYfP324aaEf9jM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 149B8152B;
-	Wed, 19 Feb 2025 07:30:12 -0800 (PST)
-Received: from [10.57.84.233] (unknown [10.57.84.233])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B000F3F59E;
-	Wed, 19 Feb 2025 07:29:45 -0800 (PST)
-Message-ID: <6cdc1de1-f760-4084-8eae-102ca16fee20@arm.com>
-Date: Wed, 19 Feb 2025 15:29:44 +0000
+	s=arc-20240116; t=1739979046; c=relaxed/simple;
+	bh=i6P248GcdM52UmE54vdAeMVf7Z015Qxcro/CvG4KqiY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W3C3h+6fhMBrWZorLe0BHwDetpt3ZrE5Isw5/zzBfswQqfVkfGyYzFv3WdNa4Ogy1EJeCXdZZttLehn4GaN0jYHRSfNHN5rgq3WhpK4aSrgamxyotZVGfhCU2CxZMN8pxok3MZ27XxMuJhTplHpeOawdWmxalwoOv+fpHFpIrPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1tkm1p-000000000at-2efA;
+	Wed, 19 Feb 2025 15:30:25 +0000
+Date: Wed, 19 Feb 2025 15:30:22 +0000
+From: Daniel Golle <daniel@makrotopia.org>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Sky Huang <SkyLake.Huang@mediatek.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Qingfang Deng <dqfext@gmail.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Steven Liu <Steven.Liu@mediatek.com>
+Subject: Re: [PATCH net-next v2 1/3] net: phy: mediatek: Add 2.5Gphy firmware
+ dt-bindings and dts node
+Message-ID: <Z7X5Dta3oUgmhnmk@makrotopia.org>
+References: <20250219083910.2255981-1-SkyLake.Huang@mediatek.com>
+ <20250219083910.2255981-2-SkyLake.Huang@mediatek.com>
+ <a15cfd5d-7c1a-45b2-af14-aa4e8761111f@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v2 4/9] khugepaged: generalize alloc_charge_folio for mTHP
- support
-Content-Language: en-GB
-To: Nico Pache <npache@redhat.com>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org
-Cc: anshuman.khandual@arm.com, catalin.marinas@arm.com, cl@gentwo.org,
- vbabka@suse.cz, mhocko@suse.com, apopple@nvidia.com,
- dave.hansen@linux.intel.com, will@kernel.org, baohua@kernel.org,
- jack@suse.cz, srivatsa@csail.mit.edu, haowenchao22@gmail.com,
- hughd@google.com, aneesh.kumar@kernel.org, yang@os.amperecomputing.com,
- peterx@redhat.com, ioworker0@gmail.com, wangkefeng.wang@huawei.com,
- ziy@nvidia.com, jglisse@google.com, surenb@google.com,
- vishal.moola@gmail.com, zokeefe@google.com, zhengqi.arch@bytedance.com,
- jhubbard@nvidia.com, 21cnbao@gmail.com, willy@infradead.org,
- kirill.shutemov@linux.intel.com, david@redhat.com, aarcange@redhat.com,
- raquini@redhat.com, dev.jain@arm.com, sunnanyong@huawei.com,
- usamaarif642@gmail.com, audra@redhat.com, akpm@linux-foundation.org,
- rostedt@goodmis.org, mathieu.desnoyers@efficios.com, tiwai@suse.de
-References: <20250211003028.213461-1-npache@redhat.com>
- <20250211003028.213461-5-npache@redhat.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20250211003028.213461-5-npache@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a15cfd5d-7c1a-45b2-af14-aa4e8761111f@lunn.ch>
 
-On 11/02/2025 00:30, Nico Pache wrote:
-> alloc_charge_folio allocates the new folio for the khugepaged collapse.
-> Generalize the order of the folio allocations to support future mTHP
-> collapsing.
+On Wed, Feb 19, 2025 at 04:26:21PM +0100, Andrew Lunn wrote:
+> > +description: |
+> > +  MediaTek Built-in 2.5G Ethernet PHY needs to load firmware so it can
+> > +  run correctly.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: "mediatek,2p5gphy-fw"
+> > +
+> > +  reg:
+> > +    items:
+> > +      - description: pmb firmware load address
+> > +      - description: firmware trigger register
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    phyfw: phy-firmware@f000000 {
+> > +      compatible = "mediatek,2p5gphy-fw";
+> > +      reg = <0 0x0f100000 0 0x20000>,
+> > +            <0 0x0f0f0018 0 0x20>;
+> > +    };
 > 
-> No functional changes in this patch.
+> This is not a device in itself is it? There is no driver for this.
 > 
-> Signed-off-by: Nico Pache <npache@redhat.com>
-> ---
->  mm/khugepaged.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> index c834ea842847..0cfcdc11cabd 100644
-> --- a/mm/khugepaged.c
-> +++ b/mm/khugepaged.c
-> @@ -1074,14 +1074,14 @@ static int __collapse_huge_page_swapin(struct mm_struct *mm,
->  }
->  
->  static int alloc_charge_folio(struct folio **foliop, struct mm_struct *mm,
-> -			      struct collapse_control *cc)
-> +			      struct collapse_control *cc, int order)
->  {
->  	gfp_t gfp = (cc->is_khugepaged ? alloc_hugepage_khugepaged_gfpmask() :
->  		     GFP_TRANSHUGE);
->  	int node = khugepaged_find_target_node(cc);
->  	struct folio *folio;
->  
-> -	folio = __folio_alloc(gfp, HPAGE_PMD_ORDER, node, &cc->alloc_nmask);
-> +	folio = __folio_alloc(gfp, order, node, &cc->alloc_nmask);
->  	if (!folio) {
->  		*foliop = NULL;
->  		count_vm_event(THP_COLLAPSE_ALLOC_FAILED);
+> It seems like these should be properties in the PHY node, since it is
+> the PHY driver which make use of them. This cannot be the first SoC
+> device which is both on some sort of serial bus, but also has memory
+> mapped registers.
 
-Stats management is different for PMD-sized THP vs mTHP. All the PMD-sized THP
-stats continue to be accumulated in /proc/meminfo (or whatever its called).
-Other THP sizes are not accounted here. All mTHP sizes (*including* PMD-sized)
-should accounted in
-/sys/kernel/mm/transparent_hugepage/hugepages-<size>kB/stats/*. There is a file
-for each stat.
+I'm afraid it is...
 
-We decided to do it this way for fear of breaking unenlightened user space that
-only understands PMD-sized THP.
+> Please look around and find the correct way to do this.
 
-You can find the mTHP stats machinery at count_mthp_stat().
-
-> @@ -1125,7 +1125,7 @@ static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
->  	 */
->  	mmap_read_unlock(mm);
->  
-> -	result = alloc_charge_folio(&folio, mm, cc);
-> +	result = alloc_charge_folio(&folio, mm, cc, HPAGE_PMD_ORDER);
->  	if (result != SCAN_SUCCEED)
->  		goto out_nolock;
->  
-> @@ -1851,7 +1851,7 @@ static int collapse_file(struct mm_struct *mm, unsigned long addr,
->  	VM_BUG_ON(!IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS) && !is_shmem);
->  	VM_BUG_ON(start & (HPAGE_PMD_NR - 1));
->  
-> -	result = alloc_charge_folio(&new_folio, mm, cc);
-> +	result = alloc_charge_folio(&new_folio, mm, cc, HPAGE_PMD_ORDER);
->  	if (result != SCAN_SUCCEED)
->  		goto out;
->  
-
+Would using a 'reserved-memory' region be an option maybe?
 
