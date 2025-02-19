@@ -1,39 +1,64 @@
-Return-Path: <linux-kernel+bounces-522022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EA53A3C502
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:29:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05A58A3C500
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:29:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 662E8189DFE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:26:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 123863A7F10
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:27:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B091FDE27;
-	Wed, 19 Feb 2025 16:26:07 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E456A1FA267
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 16:26:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBB4D1FDA9D;
+	Wed, 19 Feb 2025 16:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="dpJr42FC"
+Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43A831FA267
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 16:27:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739982367; cv=none; b=aBkAasEcef3O41DtqyX7e61fq3Gl9YRQhQjwDI4poIDgIOC3gOMw97r7hcsIQpNZXKTMbQoZKJ74OaIBD8A0G89V9zA1DESaqz6jIgTfWgORCUBT401n8kMxa8dFh/gmnNwVEhexOtGjZrHvS/vNxJ3C7tDftAFhGnAIVYHm+oE=
+	t=1739982432; cv=none; b=JhvF9hc1+ZxhgBNtREJKJzHiHEipLMeamac8jDYYH19/muupGe1JjqzJpUB4lBwINE5UUPDHig2eA2R4bRwRThZw6Vu1FS071jXOOV2+m23QLNaFB6UqMAK+fThl/MaIjxZ1cSNVJ+GLndXLw6Vg04SgtzL/8Rp5OCHkNOGzZpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739982367; c=relaxed/simple;
-	bh=cRNKMwVBDiApieG+xjL/3lFQ/G1OmBO29LbAVz/Ag/Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=F8FOYljfjQ7QjC5OJQYDc6URBDZL3m/ESz2qCulThbL6vH560ymS5RaGfRLm3M2bWvnSuWCw1GZTPdwd44q+26WkC9v0EHMX26o29uZKYRtcrcociWaGOU1eQDvRlfetYSU+7OcK/hiHnhS8THpQNsjXLaTyq7XQWnZPNDj4Jus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A4EB81682;
-	Wed, 19 Feb 2025 08:26:22 -0800 (PST)
-Received: from [10.57.35.204] (unknown [10.57.35.204])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 40A3C3F6A8;
-	Wed, 19 Feb 2025 08:25:58 -0800 (PST)
-Message-ID: <e0a6308f-5628-4698-95a7-ec1b918358b0@arm.com>
-Date: Wed, 19 Feb 2025 16:25:56 +0000
+	s=arc-20240116; t=1739982432; c=relaxed/simple;
+	bh=fY7kQvrXBSicPzpDTSxsGdCK4jMtvwuoyE7YHeUdqBQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=CsDLEbHs7f6vyUd+zbiqe+NSY5qIXBW98q/iqv/61gnjG8f/uTRECa/HVveQcTbkvej+xMYVIpFBZiBxW0eX+zV0q9AtIAmqlTyIL6W3rh6VjCImfkI8z70Hn1K7qJRVdIh/bkt/Lt7Bar1rx7cbLnGPed8AoeQnwWaYhK4LzVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=dpJr42FC; arc=none smtp.client-ip=67.231.152.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51JFu336022079;
+	Wed, 19 Feb 2025 10:26:57 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	PODMain02222019; bh=Liiu3C5LRMrFCCEl8pUDANPi+XZvIfaCdvYtbsdrqKk=; b=
+	dpJr42FCZd7BDgIuR+wHQmWTLY1Sxz6A5PDCVDHri8zmvMFP6SxcxKnIdNQmJ5yX
+	z6aUsElyGLbS5jYioRlmHuEXB/MHnZSIAbosHyrpAa9CzzJMLw810Jk1LrjWimIa
+	O9oH8nTmOjmiZALKD0p81Y3nWCfRdO+pd84BaiVTaXal1Vg6/ChSOLQ4Hgo/YU4r
+	4LrAlIrULVfbOq14KCriI3+mFk9pshv31MANHfHjgj0LHu3foPNIp/IWGWsHBYfm
+	+jLEB51lH3TMqGtw83Vs929/BS7LuQ5gnKg554fJUQq+Un6w0FpvhNhYyh6SWpH1
+	cQwTWh0uYMzkhwHaahakQg==
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 44wjcag36b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Feb 2025 10:26:56 -0600 (CST)
+Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 19 Feb
+ 2025 16:26:55 +0000
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
+ 15.2.1544.14 via Frontend Transport; Wed, 19 Feb 2025 16:26:55 +0000
+Received: from [198.90.208.18] (ediswws06.ad.cirrus.com [198.90.208.18])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 24D3D82025A;
+	Wed, 19 Feb 2025 16:26:55 +0000 (UTC)
+Message-ID: <8d15d138-658c-4083-885b-62495023bb9a@opensource.cirrus.com>
+Date: Wed, 19 Feb 2025 16:26:55 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,68 +66,68 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/3] arm64: Add BBM Level 2 cpu feature
-To: Ryan Roberts <ryan.roberts@arm.com>,
- =?UTF-8?Q?Miko=C5=82aj_Lenczewski?= <miko.lenczewski@arm.com>,
- yang@os.amperecomputing.com, catalin.marinas@arm.com, will@kernel.org,
- joey.gouly@arm.com, broonie@kernel.org, mark.rutland@arm.com,
- james.morse@arm.com, yangyicong@hisilicon.com, anshuman.khandual@arm.com,
- maz@kernel.org, liaochang1@huawei.com, akpm@linux-foundation.org,
- david@redhat.com, baohua@kernel.org, ioworker0@gmail.com,
- oliver.upton@linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250219143837.44277-3-miko.lenczewski@arm.com>
- <20250219143837.44277-5-miko.lenczewski@arm.com>
- <a6846db8-9efa-46f8-9939-7727c83d1601@arm.com>
- <cbc3f62b-8890-42ca-81ff-66f1e4ea1cf3@arm.com>
-From: Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [PATCH 0/2] firmware: cs_dsp: Remove usage of GFP_DMA
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+        "Mark
+ Brown" <broonie@kernel.org>
+CC: Simon Trimmer <simont@opensource.cirrus.com>,
+        Charles Keepax
+	<ckeepax@opensource.cirrus.com>,
+        <patches@opensource.cirrus.com>, <linux-kernel@vger.kernel.org>
+References: <20250211-cs_dsp-gfp_dma-v1-0-afc346363832@linutronix.de>
+ <0e9c1cca-592f-4983-93f4-ab2f76a3c97e@opensource.cirrus.com>
+ <e93d1b72-43da-4e96-9523-e1bbf3853031@opensource.cirrus.com>
+ <1e251815-5d58-436b-9120-e88f75a7ecaa@sirena.org.uk>
+ <20250213161059-a4c53711-fdf6-480c-af49-f9f36227ba42@linutronix.de>
 Content-Language: en-GB
-In-Reply-To: <cbc3f62b-8890-42ca-81ff-66f1e4ea1cf3@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
+In-Reply-To: <20250213161059-a4c53711-fdf6-480c-af49-f9f36227ba42@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=aplICTZV c=1 sm=1 tr=0 ts=67b60650 cx=c_pps a=uGhh+3tQvKmCLpEUO+DX4w==:117 a=uGhh+3tQvKmCLpEUO+DX4w==:17 a=IkcTkHD0fZMA:10 a=T2h4t0Lz3GQA:10 a=VwQbUJbxAAAA:8 a=jBZ0p1ap1sntT-lPAfcA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: DBGSOnuPSOOY7aoIsPZDKJuIlufE9EzX
+X-Proofpoint-GUID: DBGSOnuPSOOY7aoIsPZDKJuIlufE9EzX
+X-Proofpoint-Spam-Reason: safe
 
-On 2025-02-19 3:43 pm, Ryan Roberts wrote:
-> On 19/02/2025 15:39, Robin Murphy wrote:
->> Hi Miko,
+On 13/02/2025 3:16 pm, Thomas Weißschuh wrote:
+> On Thu, Feb 13, 2025 at 03:06:59PM +0000, Mark Brown wrote:
+>> On Thu, Feb 13, 2025 at 02:28:06PM +0000, Richard Fitzgerald wrote:
+>>> On 11/02/2025 5:21 pm, Richard Fitzgerald wrote:
 >>
->> On 2025-02-19 2:38 pm, Mikołaj Lenczewski wrote:
->>> The Break-Before-Make cpu feature supports multiple levels (levels 0-2),
->>> and this commit adds a dedicated BBML2 cpufeature to test against
->>> support for.
->>>
->>> This is a system feature as we might have a big.LITTLE architecture
->>> where some cores support BBML2 and some don't, but we want all cores to
->>> be available and BBM to default to level 0 (as opposed to having cores
->>> without BBML2 not coming online).
->>>
->>> To support BBML2 in as wide a range of contexts as we can, we want not
->>> only the architectural guarantees that BBML2 makes, but additionally
->>> want BBML2 to not create TLB conflict aborts. Not causing aborts avoids
->>> us having to prove that no recursive faults can be induced in any path
->>> that uses BBML2, allowing its use for arbitrary kernel mappings.
->>> Support detection of such CPUs.
+>>>>> Not tested on real hardware.
+>>>>> This came up while porting kunit to mips64.
+>>>>> Apparently GFP_DMA does not work there, but IMO the usage of GFP_DMA by
 >>
->> If this may be used for splitting/compacting userspace mappings, then similarly
->> to 6e192214c6c8 ("iommu/arm-smmu-v3: Document SVA interaction with new pagetable
->> features"), strictly we'll also want a check in arm_smmu_sva_supported() to make
->> sure that the SMMU is OK with BBML2 behaviour too, and disallow SVA if not. Note
->> that the corresponding SMMUv3.2-BBML2 feature is already strict about TLB
->> conflict aborts, so is comparatively nice and straightforward.
+>>> I would say that is a bug in mips64 that should be fixed in mips64.
+>>> It is not reasonable to expect generic drivers to have special cases for
+>>> platforms that don't handle GFP_DMA.
 > 
-> Thanks for catching this, Robin, as I completely forgot to pass this onto Miko
-> yesterday after our conversation. I suggest we tack a commit on to the end of
-> this series to cover that?
+> Indeed, I did that, too.
 > 
-> I think that strictly this is not needed for Yang's series since that only uses
-> BBML2 for kernel mappings, and those pgtables would never be directly shared
-> with the SMMU.
+>> What specifically is the issue?  If it's a build time issue I'd
+>> definitely agree that we should just be able to assume that platforms at
+>> least build.  IIRC there is a Kconfig you can depend on for DMA but it
+>> seems more trouble than it's worth to fix all users.
+> 
+> More details in [0], It's only a runtime issue.
+> 
+> I'm still wondering how all the on-stack buffers used with regmap_raw_read()
+> and regmap_raw_write() by cs_dsp are satisfying the DMA requirements.
+> 
+There are 3 suspicious regmap_raw_read(). The others are all integers,
+which are guaranteed not to cross a page boundary.
 
-Yup, it's really more just a theoretical correctness concern - certainly 
-Arm's implementations from MMU-700 onwards do support BBML2, while 
-MMU-600 is now sufficiently old that nobody is likely to pair it with 
-new BBML-capable CPUs anyway - so it's just to cover the gap that in 
-principle there may be 3rd-party implementations which might get confused.
+However, it looks like it might be safe to remove the GFP_DMA flags
+now. regmap_raw_read() calls spi_write_then_read() which specifically
+says that the buffers do not need to be DMA-safe and internally uses a
+DMA-safe buffer. regmap_raw_write() uses either a temporary physically
+contiguous buffer or GFP_DMA buffer (the implementation is terrifyingly
+complex so it's difficult to determine exactly what it does).
 
-Cheers,
-Robin.
+(Some older systems could only use certain special memory areas for DMA
+but we haven't seen any of those used with cs_dsp.)
+
+
+> [0] https://lore.kernel.org/lkml/20250212-kunit-mips-v1-1-eb49c9d76615@linutronix.de/
+
 
