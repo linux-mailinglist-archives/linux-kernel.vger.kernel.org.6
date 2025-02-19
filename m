@@ -1,106 +1,173 @@
-Return-Path: <linux-kernel+bounces-521643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07D56A3C054
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:45:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA6E4A3C044
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:43:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A0F917829A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:41:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E4FC18861C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:43:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 353C81E9B0B;
-	Wed, 19 Feb 2025 13:41:14 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5718A45C14;
-	Wed, 19 Feb 2025 13:41:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B1B01EDA3C;
+	Wed, 19 Feb 2025 13:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ADRBu+Xs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C689F1E3790;
+	Wed, 19 Feb 2025 13:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739972473; cv=none; b=PMnU75GFHLwE0m6UBiSqjECu2+HmSEGGh7hx+2bNrBQJ18Q3+5aGC+GrYsnRd8XmCsg1TYT1/8P4WxlFXr9HlvJVavE4jQ8489QV2dghjDoNb7si8ZpArpQ1D5uqVtOkpWZEolHQJWVKk6bMgyFnx8XKiddFN+2e9Y4GRn+lOQA=
+	t=1739972596; cv=none; b=AvHWt2XOBT9kWZHvjmNLKikg/mozW4ogPhiTBXIZEBQTjFSq9ekaxMtX2LsHLLMDHXDvwMEGF8kxm4D4j/F0k6NXFSY4kqqmHTNaqTN+G3jDJ70CMPLnrZYthIJuE2MkM6qXpjW4grm3XxqckAoL/kmUkZdI3HD4fOaJFvv3fXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739972473; c=relaxed/simple;
-	bh=z3oU/+k+ZI8AERKJpGKypXZmHNAT00Wj8hIykkcfdNs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FP4FdtqGgOZNziWhbXdkXvf3XL6+ZwUtPZgDJUeDLN52hMG3KFk2apnfn9vxyiAj/J4xio1Z8cTvIN2JuYmKPX5BFiA5zSnDYAarXh87APrVkNAS9sMlQUWTxYWnIjIvvuPbQ5D+pbZPtZNojNqi4ex5+sF5uooYAliR8YoVmC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 056F61682;
-	Wed, 19 Feb 2025 05:41:30 -0800 (PST)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.43])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8C9773F59E;
-	Wed, 19 Feb 2025 05:41:07 -0800 (PST)
-Date: Wed, 19 Feb 2025 13:41:05 +0000
-From: Dave Martin <Dave.Martin@arm.com>
-To: Babu Moger <babu.moger@amd.com>
-Cc: corbet@lwn.net, reinette.chatre@intel.com, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	tony.luck@intel.com, peternewman@google.com, fenghua.yu@intel.com,
-	x86@kernel.org, hpa@zytor.com, paulmck@kernel.org,
-	akpm@linux-foundation.org, thuth@redhat.com, rostedt@goodmis.org,
-	xiongwei.song@windriver.com, pawan.kumar.gupta@linux.intel.com,
-	daniel.sneddon@linux.intel.com, jpoimboe@kernel.org,
-	perry.yuan@amd.com, sandipan.das@amd.com, kai.huang@intel.com,
-	xiaoyao.li@intel.com, seanjc@google.com, xin3.li@intel.com,
-	andrew.cooper3@citrix.com, ebiggers@google.com,
-	mario.limonciello@amd.com, james.morse@arm.com,
-	tan.shaopeng@fujitsu.com, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, maciej.wieczor-retman@intel.com,
-	eranian@google.com
-Subject: Re: [PATCH v11 17/23] x86/resctrl: Auto assign/unassign counters
- when mbm_cntr_assign is enabled
-Message-ID: <Z7XfcV05ZZkHm6bc@e133380.arm.com>
-References: <cover.1737577229.git.babu.moger@amd.com>
- <2119b76ef8be21b1d8b2deedfab23e8e33ba724c.1737577229.git.babu.moger@amd.com>
+	s=arc-20240116; t=1739972596; c=relaxed/simple;
+	bh=8KfB7rbIPBnSY0LnsccyH07FlsHh2P9Fjsmpuh3Qk5A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RZ2B6/C2yhK/m3XZsO52HyaOgk9H8JftbMCW2xT7R2Q/ya3Cd/12CDNnYZZFk43h8RIZ9c8b6ae6VCLS9xQ0m4RJp/St5kiLU35Mq/dHcU6boAPgE9BLuWRnc0/pDxTZOMp2JtzdKoo+E5I5tVse9jCsQJoJFcwcg7Kqh4I8s9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ADRBu+Xs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 976B5C4CED1;
+	Wed, 19 Feb 2025 13:43:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739972596;
+	bh=8KfB7rbIPBnSY0LnsccyH07FlsHh2P9Fjsmpuh3Qk5A=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ADRBu+Xscq6HB/bnLjQc7B/pSVUMUly00qRmYbisVJDnrT7vj1/a5oO1dlq7275Cf
+	 1oFUiixlAjAWRDqEG5JehFUxMMWmcmMEIXAFGznnE8t+AcpVGHB728D4eOMzsc8ZPI
+	 zaGMU0U3k3e1MDwpANA9x4k3sWbXTbhP+yaNtEzO8OiXEMAmky52wuK83XvTL9odE2
+	 4J02Sh/M9JdWG6dOdBfvcpr3VOhg1EyofJfmwy158dyTn9HWTHEW2WtbulwZdNJR1Y
+	 F+c/ASYqLex8ag4K2HSyzfalnoGXW7QeEn+aW9ZbXjIO2r/4hEtM8xgTzqgxESPqrI
+	 1G3Qg732CQscQ==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan+linaro@kernel.org>)
+	id 1tkkMH-0000000086W-0s5D;
+	Wed, 19 Feb 2025 14:43:25 +0100
+From: Johan Hovold <johan+linaro@kernel.org>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Bjorn Andersson <andersson@kernel.org>
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Jonathan Marek <jonathan@marek.ca>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Maximilian Luz <luzmaximilian@gmail.com>,
+	Jens Glathe <jens.glathe@oldschoolsolutions.biz>,
+	Joel Stanley <joel@jms.id.au>,
+	Sebastian Reichel <sre@kernel.org>,
+	Steev Klimaszewski <steev@kali.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-rtc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Johan Hovold <johan+linaro@kernel.org>
+Subject: [PATCH v2 0/6] arm64: dts: qcom: x1e80100: enable rtc
+Date: Wed, 19 Feb 2025 14:41:12 +0100
+Message-ID: <20250219134118.31017-1-johan+linaro@kernel.org>
+X-Mailer: git-send-email 2.45.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2119b76ef8be21b1d8b2deedfab23e8e33ba724c.1737577229.git.babu.moger@amd.com>
+Content-Transfer-Encoding: 8bit
 
-Hi,
+This series adds support for utilising the UEFI firmware RTC offset to
+the Qualcomm PMIC RTC driver and uses that to enable the RTC on all X
+Elite machines.
 
-On Wed, Jan 22, 2025 at 02:20:25PM -0600, Babu Moger wrote:
-> Assign/unassign counters on resctrl group creation/deletion. Two counters
-> are required per group, one for MBM total event and one for MBM local
-> event.
-> 
-> There are a limited number of counters available for assignment. If these
-> counters are exhausted, the kernel will display the error message: "Out of
-> MBM assignable counters". However, it is not necessary to fail the
-> creation of a group due to assignment failures. Users have the flexibility
-> to modify the assignments at a later time.
+Included is also a patch to switch the Lenovo ThinkPad X13s over to
+using the UEFI offset.
 
-If we are doing this, should turning mbm_cntr_assign mode on also
-trigger auto-assingment for all extant monitoring groups?
+The RTCs in many Qualcomm devices are effectively broken due to the time
+registers being read-only. Instead some other non-volatile memory can be
+used to store an offset which a driver can take into account. On Windows
+on Arm laptops, the UEFI firmware (and Windows) use a UEFI variable for
+storing such an offset.
 
-Either way though, this auto-assignment feels like a potential nuisance
-for userspace.
+When RTC support for the X13s was added two years ago we did not yet
+have UEFI variable support for these machines in mainline and there were
+also some concerns regarding flash wear. [1] As not all Qualcomm
+platforms have UEFI firmware anyway, we instead opted to use a PMIC
+scratch register for storing the offset. [2]
 
-If the userspace use-case requires too many monitoring groups for the
-available counters, then the kernel will auto-assign counters to a
-random subset of groups which may or may not be the ones that userspace
-wanted to monitor; then userspace must manually look for the assigned
-counters and unassign some of them before they can be assigned where
-userspace actually wanted them.
+On the UEFI machines in question this is however arguably not correct
+as it means that the RTC time can differ between the UEFI firmware (and
+Windows) and Linux.
 
-This is not impossible for userspace to cope with, but it feels
-awkward.
+Now that the (reverse engineered) UEFI variable implementation has been
+merged and thoroughly tested, let's switch to using that to store the
+RTC offset also on Linux. The flash wear concerns can be mitigated by
+deferring writes due to clock drift until shutdown.
 
-Is there a way to inhibit auto-assignment?
+Note that this also avoids having to wait for months for Qualcomm to
+provide a free PMIC SDAM scratch register for X1E and future platforms,
+and specifically allows us to enable the RTC on X1E laptops today.
 
-Or could automatic assignments be considered somehow "weak", so that
-new explicit assignments can steal automatically assigned counters
-without the need to unassign them explicitly?
+The first version of this series (and the RFC) used a DT property to
+determine whether the UEFI firmware uses a variable for storing the RTC
+offset. This is strictly only needed if we ever are to allow (further)
+modular efivars implementations as otherwise a driver can just check if
+the variable is there during probe (and assume efivars are available at
+module init time).
 
-[...]
+The Qualcomm efivars implementation (qcom_qseecom_uefisecapp) cannot be
+built as a module currently to avoid similar problems with user space
+expecting efivarfs to be available during early boot. As changing this
+now would cause a regression, let's assume at least the Qualcomm
+implementation will remain built-in indefinitely.
 
-Cheers
----Dave
+Hopefully this all goes away (for future platforms) once Qualcomm fix
+their UEFI implementation so that the UEFI time (and variable) services
+can be used directly.
+
+Johan
+
+
+Changes in v2
+ - drop DT property in favour of probing for the UEFI variable (Rob)
+ - rebase on 6.14-rc1; use bool constant for device_init_wakeup()
+ - fix flash wear commit message (X13s typo, example)
+
+Changes since UEFI offset RFC [1]:
+ - clarify that UEFI variable format is not arbitrary (Alexandre)
+ - add missing use_uefi kernel doc
+ - use dev_dbg() instead of dev_err() (Alexandre)
+ - rename epoch define RTC_TIMESTAMP_EPOCH_GPS (Alexandre)
+ - mitigate flash wear by deferring writes due to clock drift until
+   shutdown
+
+Changes since Jonathan's X1E series v3 [3]:
+ - tweak qcom,no-alarm binding update (and drop Krystzof's Reviewed-by tag)
+ - drop no-alarm flag and restructure probe() to clear feature flag before
+   registering RTC
+ - use UEFI variable offset on X1E
+
+[1] https://lore.kernel.org/lkml/20230126142057.25715-1-johan+linaro@kernel.org/
+[2] https://lore.kernel.org/lkml/20230202155448.6715-1-johan+linaro@kernel.org/
+[3] https://lore.kernel.org/lkml/20241015004945.3676-1-jonathan@marek.ca/
+
+
+Johan Hovold (4):
+  rtc: pm8xxx: add support for uefi offset
+  rtc: pm8xxx: mitigate flash wear
+  arm64: dts: qcom: sc8280xp-x13s: switch to uefi rtc offset
+  arm64: dts: qcom: x1e80100: enable rtc
+
+Jonathan Marek (2):
+  dt-bindings: rtc: qcom-pm8xxx: document qcom,no-alarm flag
+  rtc: pm8xxx: implement qcom,no-alarm flag for non-HLOS owned alarm
+
+ .../bindings/rtc/qcom-pm8xxx-rtc.yaml         |   5 +
+ .../qcom/sc8280xp-lenovo-thinkpad-x13s.dts    |  11 -
+ arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi  |   3 +-
+ drivers/rtc/rtc-pm8xxx.c                      | 225 ++++++++++++++----
+ include/linux/rtc.h                           |   1 +
+ 5 files changed, 189 insertions(+), 56 deletions(-)
+
+-- 
+2.45.3
+
 
