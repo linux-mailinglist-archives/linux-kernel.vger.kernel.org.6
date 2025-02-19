@@ -1,117 +1,127 @@
-Return-Path: <linux-kernel+bounces-521356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33D17A3BC26
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:56:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB591A3BC27
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:56:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D501A3B6714
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:55:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D7141782C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:56:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D37F1DE899;
-	Wed, 19 Feb 2025 10:56:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE5EA1DED51;
+	Wed, 19 Feb 2025 10:56:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="A94TBx4P"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JY6YUIY4"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAD9F1DE4FA
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 10:56:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B4ED1CD210
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 10:56:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739962566; cv=none; b=kpZ/1kt3Lyqm4D1b8ss85XPLk5YDPzmPh8aN7gD//YYTJgyfgbEXXNgDi6K2erMZBW/TeRxg58PaHXItSPp7BXAgNjVT0cHUZ+amlehewZMkM98eEjMOOS3DZIM3Uj/MUweL1bGkIcUc3Rb9KrXhOXJyoV0EZ0RZismIUAqm3pM=
+	t=1739962568; cv=none; b=r4Je8izaH/qRU1GClaBa/1P73OGTzm3HpulwuHnItNkTRCXA7923Jkh+enT9vQBlokP+hm7L4EwiTrWmZFoFJVOugZiw3wUv0+WfD/c8bPubccK4WTuwpfiT5GrtwjqA8DNFysnu03lfjc/QYhQa9oR7mlrbqvpRZ1J3L2tfjrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739962566; c=relaxed/simple;
-	bh=cF0+Y6p/EkkU1e7y3Q/w7PZ8ECL+RmyCTsNBFV3FKtc=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=J1HefAw+Erj2KSrAyS2XWPh3k3Ufg0HWLawLX7Yxboe5wfK0V7Al69Gvki38A/bZE8ePF7sF6Kz1t6hPEnQnwspOwjP0wHX+wQXO3baBIrNdhPMbev7u7ISffAxnrhWRoVMSkxQtTNh/MZiCrBYK+lXrl2k8ZWRAPpix7/cQJ14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=A94TBx4P; arc=none smtp.client-ip=209.85.128.74
+	s=arc-20240116; t=1739962568; c=relaxed/simple;
+	bh=eaG/GbWLBDk4/YJIcaFIY6f9h1iZspXbx7Ba+G69v9A=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=sh1dla6WA3nTZHAfsJyALsVAIH9D5i7ebLOaoV5YjDIDIoCz8lvbuTLyzup73Y7B2s4almKGEzRV8Z+zbt9tXon5Qj0kBd1GwW9Y00QS1yjejDwhoAhIE4rXDG6k9BoU7qR7sVR2CS3K5WurLeetQKpn+FIH9DX6k9i44NKxW+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JY6YUIY4; arc=none smtp.client-ip=209.85.128.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43988b9ecfbso14641295e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 02:56:04 -0800 (PST)
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-4394b8bd4e1so38212515e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 02:56:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739962563; x=1740567363; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=FsXUS9CeowPMfI55zYwVGQzkKFBgfU5GEvUXhIe1vDY=;
-        b=A94TBx4P/Y+Rq0SbepZkKfZPD/sFUykoJxgYsnkC35Uk7gH9O3gSXMC5AWHw3hHvx/
-         93d4VK7EjP1O2CZK02xRHblwLjcA/K/xX+ep1otfp+n/auVbxgWPCd6klgRr7XJsm3jB
-         4XeCNC0KGRIyNH+2RhNhZKrDnqYVQ9aKksI+rlpxRyKyro183AnT8usiwAH+GECqSAcf
-         pP4/A+AYswccEx0QMgyi1eTqzde+ZJomBE0EhWbaq/10MII1xA5I5DPibXxEytPFUb2s
-         CO3Xx1A0D9iL5SUNX7/ze3hZaVYo051JjFDWo8cFdeRzOCQTse5kOqlTSOzTGEviFWOH
-         JAhQ==
+        d=google.com; s=20230601; t=1739962565; x=1740567365; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=r9qTS4Uc1tQ2R+88yELo0rnzGgf96mYUsGo/xuWB5/Y=;
+        b=JY6YUIY4xxn5OBFi3bijk9+3ydD7I2oES18JMesVCCO9RzYvX6MErobQig6j5y2uvC
+         ew6+yRb3MW82rUkrvBDn722JC26ateZbhJpDuW9JE9xxKDcpdZZiZtIu7iQ7/k5NvwsR
+         z1Ga2Y67+rvxWbz909HfX/Ze9QTi+0iKQZhfoKD+b2L+571wlfZwwUBYAu86Awm2SYxK
+         tZzR35u4FMuqp5K1/Dxi35rSGB44NvLsFged4j4NsrAfjH0qR4Yf+78+CgtxBptsNWby
+         NLgNLeC35xrghsVOby6jZSU0RTuo1d95Fac/D3e/jji3xtlRYnS98VgIvT3j/WXYqCKD
+         NwXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739962563; x=1740567363;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FsXUS9CeowPMfI55zYwVGQzkKFBgfU5GEvUXhIe1vDY=;
-        b=FQ+oH46pX9Swm6+I2QOPxNipwUeWkuy3iTJQYJOh4maC3Jl7Mwi28WlEJV7nYXqMUX
-         VskP7Xegz9qoaSa8OKHMpXbXXP5mAWBvodKgC7pKfEUBK4TyiSO6RbILEqIn16KHs+iw
-         /NX7mq1WRS5xDgnMSFQmewyqa91OG2KsxZjZ+gS47mAgM2ydzqO9qMGyzCRAMpbQO7z9
-         dA0xbs/BlrjYsZTcEScMYIf0z8yd4KXqMxGWomDnEUI4I32iCPjlwJJ9aQv5cAXagINd
-         og9VBtzHiTlveiV+Ny/15vrd5lTINOPCXz0ixlgIoXZ33sOKvLPgvjF5jxzUD328hZwv
-         ADGg==
-X-Gm-Message-State: AOJu0YwnwPba4lz1qkOopRD9Oa00eEb6rBwtuteefi2QgZ1l+rdeK5xq
-	fZHsH1vGl8WIsGzsjt5zPviNeAFi4SU+Is/t+738QBE0pYyQrZVbcCe1LvcV1u3fjcScTrfxqiP
-	HNNbUs0dcxEGUwgeRTagcJgBc/kDmx9pyvPQSqF5KL92KtvzsON00VjQxN8gSa8beRG43CNF659
-	DLwIPt8oEZp3vo9J+jHZLMzQGpysMJqA==
-X-Google-Smtp-Source: AGHT+IFm3H06hlJlG6v4lgMB9xk2MWch77NDL3YqhIK/Xn/ajJQEy3uIIjFN4wGCklDaaOiKgUyhWQa5
-X-Received: from wmbg23.prod.google.com ([2002:a05:600c:a417:b0:439:95b9:9200])
- (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:1c86:b0:439:8346:505f
- with SMTP id 5b1f17b1804b1-43999dd21e9mr26792855e9.20.1739962563056; Wed, 19
- Feb 2025 02:56:03 -0800 (PST)
-Date: Wed, 19 Feb 2025 11:55:43 +0100
+        d=1e100.net; s=20230601; t=1739962565; x=1740567365;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=r9qTS4Uc1tQ2R+88yELo0rnzGgf96mYUsGo/xuWB5/Y=;
+        b=hUqEBBHxCz5R2N87wS6XF3ffXK8HR9MY1CW53DBGtbvUlSvmDq7YzTmQRbjgG++OX8
+         f26yo2jQOd+PdxyQzjzl39XS+R3B95qcrblGOgFItkf20SqcufcRgUMRyRIp0vuTkjrm
+         gA2d9C/VYrHG1z4D5zu/KUrI3NaSSnaW9rLFVVPSQ+SQBsTP0IaLRxQfnB86xYuCe1gm
+         1lIe9HAcjFiC4FTVu2a5MG3j0mFxmSnIUVY+8QXM5z1se5fbDxLnaVgsZLyA+iIC0QZX
+         yDVsNthB8z8DpALj6Lbox+9sPXovVkGsXg7gtJRfr7DqUC9g45Gi93p1fOzOFI3cVj3Y
+         7Png==
+X-Gm-Message-State: AOJu0YwzbQyjadXjJWm2yIxLtDoMOmOFAqZObUllcpw1RKcrVqdJS/c4
+	TzXGEAj3159LmQp7T2gCMifiiSbx0rNzXkkFbnB8UJL7Ej9EaZwYab4C4fKKO3Dpc+g/NuL+e8A
+	bkqhekXk59oQ1HkvvxA1+Cawsfz7oBzOFtnlvlVDgsCbmtRAIWFVIrOg0SwpiMyCCwJ3VQe21Ud
+	yD7n66IKmwipWHlfQagXbsJRTQut1q0Q==
+X-Google-Smtp-Source: AGHT+IHoREA2ePDbR8mhOuh0W0YArGHABmjjWj+HtOC3f43DWme5eakY/sEFJdfRLZliHhEDJEk89fAn
+X-Received: from wmbbi18.prod.google.com ([2002:a05:600c:3d92:b0:439:7d73:d8fc])
+ (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:1f0f:b0:439:8653:20bb
+ with SMTP id 5b1f17b1804b1-439865322ddmr103214025e9.14.1739962565036; Wed, 19
+ Feb 2025 02:56:05 -0800 (PST)
+Date: Wed, 19 Feb 2025 11:55:44 +0100
+In-Reply-To: <20250219105542.2418786-4-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20250219105542.2418786-4-ardb+git@google.com>
 X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=969; i=ardb@kernel.org;
- h=from:subject; bh=aUT9I+MQdR2FNRJfxqBoAlTHUCqvqY5/1Vn0rSgbDXE=;
- b=owGbwMvMwCFmkMcZplerG8N4Wi2JIX3rjvXcF0K+xOv4/r7u4P7v8o+qw9fjH81IvST6MSSSY
- Z4tv9zpjlIWBjEOBlkxRRaB2X/f7Tw9UarWeZYszBxWJpAhDFycAjARR3NGhllJTvH6/cl6VcGb
- GadZymx8vDDPjeukREP+POGfTOXLHjP8lep0Fjhz6aXEV4FEhn1W/CsD/sT2Ox2+v3JZx4wm7z1 MLAA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1436; i=ardb@kernel.org;
+ h=from:subject; bh=HkjZ8co7JO5kD2Q6DjKKl8vHVJcbPC4E7rJMS59Tps8=;
+ b=owGbwMvMwCFmkMcZplerG8N4Wi2JIX3rjg2sU0snRccvDPzP8KLlg0DiHoaknAi2kyuDbK0+H
+ VkWVNXcUcrCIMbBICumyCIw+++7nacnStU6z5KFmcPKBDKEgYtTACbyYwkjw6UELeZFsydvv/f/
+ YJ7bEfvgrKCv/esDw+r/b9i4eINo8xqG/8FHvQuVzKWbNj9+fExZZruTyRbjx/Vc63tm935gXbN IgBMA
 X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
-Message-ID: <20250219105542.2418786-4-ardb+git@google.com>
-Subject: [PATCH v2 0/2] Handle .data.rel.ro correctly and use it for BPF
+Message-ID: <20250219105542.2418786-5-ardb+git@google.com>
+Subject: [PATCH v2 1/2] asm-generic/vmlinux.lds: Move .data.rel.ro input into
+ .rodata segment
 From: Ard Biesheuvel <ardb+git@google.com>
 To: linux-kernel@vger.kernel.org
 Cc: x86@kernel.org, Huacai Chen <chenhuacai@kernel.org>, Ard Biesheuvel <ardb@kernel.org>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Tiezhu Yang <yangtiezhu@loongson.cn>
+	stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
 From: Ard Biesheuvel <ardb@kernel.org>
 
-LoongArch uses PIE codegen for the entire kernel, which has some
-implications for how .rodata is populated and emitted into vmlinux.
+When using -fPIE codegen, the compiler will emit const global objects
+(which are useless unless statically initialized) into .data.rel.ro
+rather than .rodata if the object contains fields that carry absolute
+addresses of other code or data objects. This permits the linker to
+annotate such regions as requiring read-write access only at load time,
+but not at execution time (in user space).
 
-Changes since v1: [0]
+This distinction does not matter for the kernel, but it does imply that
+const data will end up in writable memory if the .data.rel.ro sections
+are not treated in a special way.
 
-- Always use .data.rel.ro.c_jump_table for C jump tables
-- Add Tiezhu Yang's Tested-by
-- Split into two patches and rebase onto Linus's tree
+So emit .data.rel.ro into the .rodata segment.
 
-[0] https://lore.kernel.org/all/20250218092538.1903204-2-ardb+git@google.com/T/#u
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+---
+ include/asm-generic/vmlinux.lds.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Tiezhu Yang <yangtiezhu@loongson.cn>
-
-Ard Biesheuvel (2):
-  asm-generic/vmlinux.lds: Move .data.rel.ro input into .rodata segment
-  objtool: Use fPIE compatible ELF sections for C jump tables
-
- include/asm-generic/vmlinux.lds.h       | 2 +-
- include/linux/compiler.h                | 2 +-
- tools/objtool/check.c                   | 7 ++++---
- tools/objtool/include/objtool/special.h | 2 +-
- 4 files changed, 7 insertions(+), 6 deletions(-)
-
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index 02a4adb4a999..0d5b186abee8 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -457,7 +457,7 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
+ 	. = ALIGN((align));						\
+ 	.rodata           : AT(ADDR(.rodata) - LOAD_OFFSET) {		\
+ 		__start_rodata = .;					\
+-		*(.rodata) *(.rodata.*)					\
++		*(.rodata) *(.rodata.*) *(.data.rel.ro*)		\
+ 		SCHED_DATA						\
+ 		RO_AFTER_INIT_DATA	/* Read only after init */	\
+ 		. = ALIGN(8);						\
 -- 
 2.48.1.601.g30ceb7b040-goog
 
