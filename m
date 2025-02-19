@@ -1,145 +1,116 @@
-Return-Path: <linux-kernel+bounces-522571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32711A3CBF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 23:02:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5FFAA3CBFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 23:05:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 449147A7DEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:01:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E7111799A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:04:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D0E72586CA;
-	Wed, 19 Feb 2025 22:02:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Fbm4edc/"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0BEF2586EB;
+	Wed, 19 Feb 2025 22:04:46 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2DF822CBC7
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 22:02:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 560521B87D3;
+	Wed, 19 Feb 2025 22:04:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740002545; cv=none; b=H3jybuGb4ken05NDYjDpDInGzjBFJ6cz9nm64/SMNsAi+b2FQmmURrbaUZxdkuQbisA4dmvNCwNfqlsf0OyYJYpPm29r+ztq2phVt687RlasqJyMEQ4969AtzP8P9xazNU7ZEyKlWPa9FzP46GZPLgvNhI0c6ffLqGcyzzUQM54=
+	t=1740002686; cv=none; b=eDf4CXRzYqPZcHr/8NRK5rucHBdJkjlfgwcI+ER8LtpABDjpdOgxFrEBGtBNjV8/avMGJnXSzvWltUEEE9+wg0VkTVqCqQynWkWX5X6O9d3+oa6CHzbxif4N1gcAwxnQ7/4s8uSaeZQT9B8LgVnBP2kn26A3incbCIHMrVZHnOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740002545; c=relaxed/simple;
-	bh=g3mRNuX2xpJTljzE4dMGM4jTNrlqKgJ1nYwtEHsNtYk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e8HceSHqAC7avTGOYL2wPOahPObZ2YxiTT4TODUtsAERblrAmvgP4pn3Y7vBAyKRXF+Qmkkh8OU+03f61NzMhzmKrMzPbWCDPL6wfiwElsoy7cEEeu/B18Fzf1ZGQOaYYv+fHa3Xhemb0se+nl9TsTZbV5zo53DnpWnSA3f3GqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Fbm4edc/; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-30a317e4c27so2189071fa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 14:02:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740002542; x=1740607342; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oXHpN0DWqjhN0hLE65VSAtbnzicm1GUQhBz/HJwZ43M=;
-        b=Fbm4edc/8iSQEmOEeBQippKsbgpcgZjsiJq/pur4Hfp82w4LaZeXOS/87Y5qrCRM1E
-         6mXmHRTfpwd5y9UIlb+0sx2yA/qE5fUIjKnCQNOHfNnf5KXhDJrX/SWVFWnHzqdGoWeY
-         sSvHd0Mqi0o0fStv3ZwEssjNzEvZfvD4VFw/72vjrDNcU4uExeevKLeEApZL9JdHb9Wo
-         pfFwY7y1C1AUUejcl56FsPUbfOS117yqBaJsVk7k1swu/RF59rAqCuRaZzWz8BVDcTII
-         YrA7kH03pTFd4CKd0i11+yQsN7CFqtYXg8QY4HyiEcFCT+csJTHeu2m9CjrJZHZguVCh
-         tAaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740002542; x=1740607342;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oXHpN0DWqjhN0hLE65VSAtbnzicm1GUQhBz/HJwZ43M=;
-        b=Ci0czNgdyVo6LcWPaTK0pY84b0hmo/FFTbQ/CgIDw0kTYTDKiy/3qyrXUED7X24KNo
-         +mq7w8/Zbjfp8sqqrff1RZiX26gC2Q1vl0S8AmekYNWDNg9yNc+KFiZyDSGVy9wjIQcq
-         u9GV55O2UvgrAHT2vEFZqyB93KmJJhpn45KnnDSctJiviRtvJ23E/4jWnicHkdrG++zn
-         fuvevFcIinwVu93vHbN2tCwIBiRkFVqjofDwh/GLpKrBxFieykP0EyxQlkcsUjax5dQd
-         BouPedhl1ofoaVLNufaxPcYWIpCzT7DAWxnAK1yFWPepD+QiEu5eTfBcznFZPGS1/8P5
-         jPvw==
-X-Forwarded-Encrypted: i=1; AJvYcCX2DgYohm4Ok+Jrc1J9CaqSh7rJu8yVDhY3cl6l2JRCC7yImTgHflbNa6kSesSTD5iZ1Ek//9hbzJ6oFyE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8VZ4RODWe4N1Af1AwzarzX6r4HQjghmgNRlPHVsQvhByShyi2
-	/O6Sd88G1xrw0pzTFJ5MEvyRibTUxoiqDM5I7ta/dsAkw3Gnf6pjFSPghXbfct0=
-X-Gm-Gg: ASbGnctqvdfXwBdZ/iJJhL1tzrs/bS0oCd+ZDWn2M8dub4pGjepslRBmibNIT6RD1zA
-	EA02K+JcYtA85fA+6958MtwQKPoNVYHIcaFU+5riumns306u+r8AgxEgDiVuYgBAWtbIjL95h30
-	qnkUSIZr/f0OqyYjV+/xUEAmBlmLmvYgR68+4VY5MqvsEYnaidTUr9uFgVdwMkVe4euBbM6DHHx
-	PMM7NimUf51XNJO/RvHdK5SVofDggnQkII9vfaR2d5tu0z8NymE8L2/6xsinF0druaTT2KFxDt+
-	RfScHAxJpbh0T1Bp6bpbF/aaPldQbAweD1JY4otFrbaPQt6XDAbNr548LyB0khqkZEQt/CM=
-X-Google-Smtp-Source: AGHT+IH3qwpCZJIIRtXoLdJAC5M4Yj195wVlXHneaiHgEATwNAfneT8LPoyDLjdolhf1GGkQ1/U9CQ==
-X-Received: by 2002:a2e:a302:0:b0:304:d8e7:7ea1 with SMTP id 38308e7fff4ca-30927ad5151mr58261401fa.23.1740002541724;
-        Wed, 19 Feb 2025 14:02:21 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30a2b50c78esm13466611fa.74.2025.02.19.14.02.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2025 14:02:20 -0800 (PST)
-Date: Thu, 20 Feb 2025 00:02:17 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jessica Zhang <quic_jesszhan@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, 
-	Marijn Suijten <marijn.suijten@somainline.org>, Rob Herring <robh@kernel.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Simona Vetter <simona@ffwll.ch>, 
-	David Airlie <airlied@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	dri-devel@lists.freedesktop.org, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Kuogee Hsieh <quic_khsieh@quicinc.com>, 
-	freedreno@lists.freedesktop.org, Jonathan Marek <jonathan@marek.ca>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Srini Kandagatla <srinivas.kandagatla@linaro.org>, 
-	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Krishna Manikandan <quic_mkrishn@quicinc.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH v2 00/16] drm/msm: Add support for SM8750
-Message-ID: <h6rm4zlj2xoqp6ze34cwu6y5xxx423l7lrdrbkezp7ct5pwms2@jmrlxr6hyhb7>
-References: <20250217-b4-sm8750-display-v2-0-d201dcdda6a4@linaro.org>
- <eedf08c5-d781-45c8-a5f7-b0369e3efac9@quicinc.com>
+	s=arc-20240116; t=1740002686; c=relaxed/simple;
+	bh=bzNkENwQdrTOadtC9w/UN+qCR6d50MjQKbBBUkFR95U=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=WZNvbZgRZ94IXe9Y15klmA3SyYkp8lP7h41cOTMiw1m9qGrafCaHuj45+LXBexW0lho/t6WsrevyX0kfh4gfbQnamxNoMIGWaACI7QAJexIjl2IuregA38jgTCLokhJsvBcVctUOaD3vziP+3X1LBAnBIZWpZENgETzixUInOzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2D5AC4CED1;
+	Wed, 19 Feb 2025 22:04:45 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1tksBq-00000004qbb-3bi8;
+	Wed, 19 Feb 2025 17:05:10 -0500
+Message-ID: <20250219220436.498041541@goodmis.org>
+User-Agent: quilt/0.68
+Date: Wed, 19 Feb 2025 17:04:36 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Heiko Carstens <hca@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>,
+ Vasily Gorbik <gor@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>
+Subject: [PATCH v2 0/5] ftrace: Fix fprobe with function graph accounting
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <eedf08c5-d781-45c8-a5f7-b0369e3efac9@quicinc.com>
 
-On Wed, Feb 19, 2025 at 01:17:35PM -0800, Jessica Zhang wrote:
-> 
-> 
-> On 2/17/2025 8:41 AM, Krzysztof Kozlowski wrote:
-> > Hi,
-> > 
-> > Dependency / Rabased on top of:
-> > https://lore.kernel.org/all/20241214-dpu-drop-features-v1-0-988f0662cb7e@linaro.org/
-> > 
-> > Changes in v2:
-> > - Implement LM crossbar, 10-bit alpha and active layer changes:
-> >    New patch: drm/msm/dpu: Implement new v12.0 DPU differences
-> > - New patch: drm/msm/dpu: Add missing "fetch" name to set_active_pipes()
-> > - Add CDM
-> > - Split some DPU patch pieces into separate patches:
-> >    drm/msm/dpu: Drop useless comments
-> >    drm/msm/dpu: Add LM_7, DSC_[67], PP_[67] and MERGE_3D_5
-> >    drm/msm/dpu: Add handling of LM_6 and LM_7 bits in pending flush mask
-> > - Split DSI and DSI PHY patches
-> > - Mention CLK_OPS_PARENT_ENABLE in DSI commit
-> > - Mention DSI PHY PLL work:
-> >    https://patchwork.freedesktop.org/patch/542000/?series=119177&rev=1
-> > - DPU: Drop SSPP_VIG4 comments
-> > - DPU: Add CDM
-> > - Link to v1: https://lore.kernel.org/r/20250109-b4-sm8750-display-v1-0-b3f15faf4c97@linaro.org
-> > 
-> > Description:
-> > =============
-> > I got modetest writeback working, but DSI panel on MTP8750 still shows
-> > darkness.
-> 
-> Hey Dmitry,
-> 
-> Just wanted to emphasize this note on Krzysztof's cover letter.
-> 
-> Can we hold off on picking up the DSI parts of this series until the DSI
-> panel comes up for MTP8750?
-> 
+Heiko Carstens reported[1] a bug when running the ftrace selftests.
+After running them, he noticed that the enabled_functions file had
+all functions enabled in it. That means something was registered to
+ftrace that shouldn't be.
 
-Ack, I will try to remember it.
+The issue was with the accounting of the new fprobe logic which was
+built on top of the function graph infrastructure. Patch 3 of this
+series is the fix for that bug, but while debugging that, 3 other
+accounting bugs were discovered.
 
--- 
-With best wishes
-Dmitry
+The bug fix for the reported bug was that fprobes would update its counter
+every time a new fprobe was added, even if a new fprobe was attached to a
+function that was already attached to another fprobe. But when removing the
+fprobe, it would not decrement the counter of an fprobe with a duplicate.
+This left the fprobe ops attached to function graph and when it removed the
+last probe from the hash, it would create an empty filter hash which would
+tell function graph that it wanted to trace all functions. The solution was
+to always decrement the counter when a fprobe was removed.
+
+The first of the other bugs was that when enabling a second subops to the
+function graph infrastructure, it would add all functions to be called back
+and not just the functions for the two subops for tracing. This was due to
+the creation of the filter hash for the manager ops that controls the
+subops. The first iteration where the manage ops hash was NULL was mistaken
+as an "empty hash" which means to trace all functions.
+
+The second bug was when adding a function to the hash where the hash already
+had that function, it would allocate and create a new entry for it.  This
+leaves duplicates and causes unnecessary overhead and memory wastage.
+
+The third bug was when the last fprobe was removed, it would just unregister
+from function graph but it did not remove the function from its own ops
+hash. When adding a new fprobe, it would not only enable the function for
+that new fprobe, but it would also enable the function of the last fprobe
+that was removed.
+
+Finally, a test was added to check and fail if any of the bugs were
+introduced, with the exception of the duplicate hash entries, as that
+was more of a memory waste and not something visible by user space.
+
+[1] https://lore.kernel.org/all/20250217114918.10397-A-hca@linux.ibm.com/
+
+Changes since v1: https://lore.kernel.org/all/20250218193033.338823920@goodmis.org/
+
+- Moved the "Always unregister fgraph function from ops" to patch 3
+
+- Change the "Fix accounting" patch to do the update in
+  fprobe_graph_remove_ips() to make it match fprobe_graph_add_ips().
+
+Steven Rostedt (5):
+      ftrace: Fix accounting of adding subops to a manager ops
+      ftrace: Do not add duplicate entries in subops manager ops
+      fprobe: Always unregister fgraph function from ops
+      fprobe: Fix accounting of when to unregister from function graph
+      selftests/ftrace: Update fprobe test to check enabled_functions file
+
+----
+ kernel/trace/fprobe.c                              | 12 ++---
+ kernel/trace/ftrace.c                              | 33 +++++++++----
+ .../ftrace/test.d/dynevent/add_remove_fprobe.tc    | 54 ++++++++++++++++++++++
+ 3 files changed, 82 insertions(+), 17 deletions(-)
 
