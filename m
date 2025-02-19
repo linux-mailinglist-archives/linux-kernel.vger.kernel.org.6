@@ -1,136 +1,101 @@
-Return-Path: <linux-kernel+bounces-521283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63027A3BB1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:03:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73274A3BAF5
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:59:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 811463AEDCA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:58:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30572188C2AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:59:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 169671D9A50;
-	Wed, 19 Feb 2025 09:58:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07FC91D5AC0;
+	Wed, 19 Feb 2025 09:59:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Y0LRxil+"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BpO64UFb"
+Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 200821D54E9;
-	Wed, 19 Feb 2025 09:57:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A431CEAC2
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 09:59:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739959081; cv=none; b=BO9fO8Tzx4Qfvfw+/x/XkrZAeh+LKV8onXZd7/51TUDsLdbpoIUBkfjg9huLpOIRGbCaSyay3j3oS2TINfRjVm7MwdROTz0Su47s12whGkDbjcXanrf01DFSP83yEKR3yxxwLtMiHGH/n+h/W1KftLpGI7iuDUH/GL4XucI8rBE=
+	t=1739959158; cv=none; b=OJegAeKJRYnBFwTaq0INpXVuPX0uWZ3/pslyuwSht735GVHmXlya803SnPbcb4eRPp1TbcyU3G+F/VVl+YtBLiyrYamWI0sbHylKZW/SOCUHRAiwgMaKgP4eszgJglvLISPawTykxTaWsZaepd0H/+KcJ3T2pJEwomLAK6EGpSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739959081; c=relaxed/simple;
-	bh=IWQTacATixglJV1HkIVQv0kxR85MThPqwYpCD3PVCWA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=AS3v34AsQGdAOJf6fletoQY55BNJqhaFwhXKaBLGJjqAMj/7yx0i08WeycpMRsuwdkkqrf32rf0kjvzzu74CneHHoSLCd7enpnj5Fon280TupgJetaqgoov00pppFI1Ee9AbnJGXbAIY9kFy9rts+KtjOARdUBY1tAYMppjHFik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Y0LRxil+; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51J8NRDi014898;
-	Wed, 19 Feb 2025 09:57:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	e+Y6uJd/xXeJBd5CsDTMCofnOrJ10iEDcFO4zAYh/+w=; b=Y0LRxil+C/MqoCkQ
-	+ozYGpRzO8xPrWR/2k/uZ1ZnvYfxtZqy6eeMEla2PECOEByIuGHxtvB+SR97v6S4
-	4WiGKg5ZzWvvqGpFQuM7T8EMHdRbFRsPxVLfxT/zEMDmxyHM+VYDxgt1AnaCGWhY
-	vxoYl7QPhB1OXUvHh7onkfLaTa6hk0+8Vx5F66nYz3Q3U2TR0m+4qcCssZO2MyJ/
-	79YCHjbz3TtWkFmuE1V4vRr/T8hGwRBe8STh1QJJwW2PyL1iHgGyZTLiRGfICyO8
-	f3Bydt1lBtcpfH/T5Mv8oy1omAuTTm0qrCKE2lND5CI2c+pgaKi7ZZVVk81ilN9q
-	W+2y5A==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44vyy120nw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Feb 2025 09:57:48 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51J9vljs022139
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Feb 2025 09:57:47 GMT
-Received: from [10.64.68.119] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 19 Feb
- 2025 01:57:42 -0800
-Message-ID: <584fda76-bc17-47dc-ab9f-9203eab3b3d3@quicinc.com>
-Date: Wed, 19 Feb 2025 17:57:39 +0800
+	s=arc-20240116; t=1739959158; c=relaxed/simple;
+	bh=FhaKrLYYFvH6JlBWj6iAfNEu2nFL5Z0xJ5LSfPsqzcY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UJtGYhS8dQJT8v8OH/oiLISbANDXN19xNXDQkztxirlfc202GdN04yvUpBEBZyBHlyVzbScm4M50PCRIoLv6NgLi1TsfmtGw206ZzZ/FmIXoNanknfBMVVkmRLTyn0fSSwgDW0XIk/xBQdc+usEJO/tgmdt6V2KULVdWAEhRZIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BpO64UFb; arc=none smtp.client-ip=209.85.161.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5fc13355a5bso2905713eaf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 01:59:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739959155; x=1740563955; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=D4ZmBE3k4+dA0yLJE7EIrqUujBLBu3hVMfqxrFcWbfY=;
+        b=BpO64UFbnjMRx/6L+nVqHYe3AfCiBG/5l4cnEQnM4+m5xCL36iZhaHtesV0BFFcRZE
+         eSe8BnKRU6XwSQn1RGrRP99GXHUFDTrtFctEWeXKrgg+z3OTX63/eyiW6QxdUom9BSbe
+         crXNgu7biaetcx+KlOGV9D9REfl0kqBqB+t+f5FbsjtzTt0VBfYr2XSeMeSSEMBknPG1
+         WGVrFaDcezkQZcZ04I4APN2LJNiRTM7jbM7xc02VJnD8fExC3JenpQsVRcP2JWEZskbA
+         QcGMinX9JXpkibAlP4S4JNM+vM/GlRpKbkqdAIVq2J2S29vo99zjS2AbRkhWkfH9M44f
+         4JMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739959155; x=1740563955;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=D4ZmBE3k4+dA0yLJE7EIrqUujBLBu3hVMfqxrFcWbfY=;
+        b=Ii23wRDQEC1PSUlJWD2ST6D/jM7JOYPHH0vRcUANTQAgb5qcwXR4fw3mafVo27txpE
+         UvMGNuQGKoPwcDiUTPYD1Uj6lxxmM896rusXdTjBkdcFSWtvjf+rADfBE69xX2k6bzO/
+         55veenUIVDRZ2W96jA1bMs/wY2fmDpOxxrjH8yJFN4LAHYI7sRsvsR6zFSw9iIgVYcnL
+         jAd1Vrenn/ZWFbuKy4T0gC1ziCIUmPGHUHOX2J9Qxg5cLJ/XDu23PlfIWL1jLqaPU+GU
+         IsKutLY2dQEpxZ8AxFcdgBp3TGu1+aCj2ucObpz/8pjjmjHN0+Wx7SIozH4thZ3CipzJ
+         zoPw==
+X-Forwarded-Encrypted: i=1; AJvYcCUxSXGW/KUgSx9AYZsaMO7J7SH8DPyvaBTA/Y4jd7akn9NWI7h03u2XdE0LZTNbHj6slcpiz/JgVgm5TvM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+KLuHNrAxyl/B7H9GO0Ky4464TFCQ+vKqtt875cwb1QVd8UqQ
+	oP6v9ATXyjkfCanvL1a7Z4ckvGJ8BEy82IurrVTMJ4nDEVLOo+c7ZMs5hRMsxwQvkTZVkcptlE4
+	QRjqFLf8VMzZnp+LdVeqpTIRcFubbwG3GvzTUDg==
+X-Gm-Gg: ASbGncuVVQma8wWu89o79Krnlx5NZPALfX+Emas6BwNb+KSwqLdIyxxWDQH+0reqd22
+	A0CRWTx1HJoi69yfN/LudOuEOyyL3Vsa1BoYSLcUrHBbSdyrIMgrx/PG/m3oRMExth5tEGBao+3
+	k=
+X-Google-Smtp-Source: AGHT+IFxGDj5iXV1hVx+bDjQHTZUVRM73dPTifEk8a7TEg/x0Tcm1arIcMDlwwFyHGQfiRO96zZV23RSVt9oTTe+p/Y=
+X-Received: by 2002:a4a:ee1a:0:b0:5fc:dd26:a087 with SMTP id
+ 006d021491bc7-5fcdd26a30cmr8214839eaf.5.1739959154922; Wed, 19 Feb 2025
+ 01:59:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] dt-bindings: display/msm: Redocument the
- dp-controller for QCS8300
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar
-	<quic_abhinavk@quicinc.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Simona
- Vetter" <simona@ffwll.ch>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Kuogee Hsieh <quic_khsieh@quicinc.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250212-mst_qcs8300-v1-0-38a8aa08394b@quicinc.com>
- <20250212-mst_qcs8300-v1-1-38a8aa08394b@quicinc.com>
- <brm43v5kzsum6hc6ahs3lqzgww55kczjzwzxsmx5a6alw3xxvh@3mdqqjvo2b5k>
-Content-Language: en-US
-From: Yongxing Mou <quic_yongmou@quicinc.com>
-In-Reply-To: <brm43v5kzsum6hc6ahs3lqzgww55kczjzwzxsmx5a6alw3xxvh@3mdqqjvo2b5k>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: QY95XrtDUeGVvXoxLwRIf6L_Ngjtlcwg
-X-Proofpoint-ORIG-GUID: QY95XrtDUeGVvXoxLwRIf6L_Ngjtlcwg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-19_04,2025-02-18_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- priorityscore=1501 lowpriorityscore=0 phishscore=0 clxscore=1015
- suspectscore=0 spamscore=0 mlxlogscore=999 mlxscore=0 bulkscore=0
- malwarescore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2502100000 definitions=main-2502190079
+References: <20250219085726.70824-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20250219085726.70824-1-krzysztof.kozlowski@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Wed, 19 Feb 2025 09:59:02 +0000
+X-Gm-Features: AWEUYZny13PhyIgLlHGS6LqU655W9VTKBSuguA9ge6dMXGv73qgyazJplG-xt5w
+Message-ID: <CADrjBPrg4eV+fT9XsuMTwG3WprPq5Qqre9+XTwYURCp_==6diw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] arm64: dts: exynos: gs101: Change labels to lower-case
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, linux-fsd@tesla.com, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Wed, 19 Feb 2025 at 08:57, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> DTS coding style expects labels to be lowercase.  No functional impact.
+> Verified with comparing decompiled DTB (dtx_diff and fdtdump+diff).
+>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
 
-
-On 2025/2/12 18:42, Dmitry Baryshkov wrote:
-> On Wed, Feb 12, 2025 at 03:12:24PM +0800, Yongxing Mou wrote:
->> We need to enable mst for qcs8300, dp0 controller will support 2 streams
->> output. So not reuse sm8650 dp controller driver and will add a new driver
->> patch for qcs8300 mst feature. Modify the corresponding dt-bingding file
->> to compatible with the qcs8300-dp.
-> 
-> Forgot to mention that in the quick response: please fix usage of
-> capital or lowercase letters in the commit message. If you are unusure,
-> 'git log' will help you.
-> 
->>
->> Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
->> ---
->>   Documentation/devicetree/bindings/display/msm/dp-controller.yaml | 5 +----
->>   1 file changed, 1 insertion(+), 4 deletions(-)
->>
-> 
-Got it , thanks. Will correct it in new patch.
-
+Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
 
