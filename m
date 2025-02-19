@@ -1,124 +1,120 @@
-Return-Path: <linux-kernel+bounces-521430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69EE5A3BD2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:42:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C0DDA3BD57
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:47:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AAE218991CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:42:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B24301695CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:46:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 242EF1DF75A;
-	Wed, 19 Feb 2025 11:42:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD59F1DF754;
+	Wed, 19 Feb 2025 11:46:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="bxxFiskj"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YKkTuZqD"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2FC1DF731
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 11:41:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C14BB1B87C7
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 11:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739965319; cv=none; b=jxPvZBgwWrf2U1/UC+U7tJ1XaErnapNtlMpDygbuGtnoBAK+XjNmaa7pSZoxHQBdMizp5PEL7QIibO3gYhhZqFsUaGhfsPzSRHkL3xabWbrsf0oYJsm7jKvTH9pjRL5jJW4x73VfSdY22CwSDYdnpxhY2zhQZ0u1QHpnEwU6dKM=
+	t=1739965565; cv=none; b=TiQebOnahioMfYHQ7ilZAhVTUNEHj5f2i19vgmY0L4Cp++DAq0ZLfMUFWgKZQLK2MCvWlcqUNUdfmDE22JluuirxPIwWXerjUoFbuYvopgrS6r7NMy7Df6TsUnQxTjJveQlPE8rhE2xps2QGfZpZkPy6x65sGLZVfCecqNgbqP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739965319; c=relaxed/simple;
-	bh=0dn2PeNhoOQUTbhx3injG0rRhyEL8HprCAWRAhEWq4M=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=Fa0gB6oitSSfvezhxQ4y4qH02xsucur9MsFEngCnq43SDE4fueRGoewPV55EnbDemH0sL4UV2BhudcjZ0XN2A3yCluWJ2GqFrptv4hLIyc4bCX8fcJSW4oobYakwtpBXyg5yC9WSXainWKXrGq6h/55nI8IyN0iDyEyAgmWc3t4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=bxxFiskj; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-22113560c57so74642395ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 03:41:57 -0800 (PST)
+	s=arc-20240116; t=1739965565; c=relaxed/simple;
+	bh=iVVfLZ/Xexilj6DGdqpQ7mA+qvUkkMr2moH3ow9D3GE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Zm4SfLeWTiDM4J0V7J0lMFwvQsvXuifes1tOIHJA6NlsMPC1W8BSALCH60g7Ikk4RsdEku6/BUxmtuhgjDYx3O1bjuoQQALxAXcG5kbuJicESnCk3FV4KMGRARO2YF/Bb5sq9oq5l6RORwBEom4bqGBo6XfZ08gW9CrC0phclCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YKkTuZqD; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4399d14334aso3869245e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 03:46:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1739965317; x=1740570117; darn=vger.kernel.org;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=vklkpg4jT7Yqa+MBRKwFAsqmVQ4XSjs4oAO0nIa6Dj0=;
-        b=bxxFiskjrB22IdU18E1JgjHvjCnrkTiJPT+ZPWNGOXfRVH5Kb/1wgDhN9ea9BBwOJF
-         3M5DthPc3IkBibxjal6MM5PJf1OqwafvfZbj9EQ5v2sfEN8PHyxPq2Uk72fmC/64PKR2
-         bzNEVsbXXuWNIEJqOtyKbSo1X7EHcxDN3PDPgfVn5FbgoEGBapy1TdUpsMR2hsJmT9B+
-         16zDVanX/VFTUcdiJtnnkOE5V1y50t0ZUfSqZgxjGVkjveTSx6nLkS4+yrJWK8MveArS
-         N6gRe/KLQPbf/VG1nOC3gXZgrOXlkt91X7rX6LEkj7ryG89ZAZO2Yaed4LinIqFhvsuS
-         /mDQ==
+        d=linaro.org; s=google; t=1739965561; x=1740570361; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=grVqY1qROVcqXbe9nYwk1uHL1rEHylCVGnje1QZKs3g=;
+        b=YKkTuZqDO+eHlwH7hL+meqItmH/zuWnx/Wtl6j02Aq/s8b5chOnCJ1snpEo7kY4iKX
+         2rzAw1SJc6IrBuFo4vQd+S37abp74kvo2ca/nKtXPEmKcnDBwcPUV8prvpy8SzaWXxmr
+         a+6yvJqXK3n7PBxQSf8UVK9liFsrgyQxXYN6EgkFiXjxncUHxx+jkYeci/PDADTh259c
+         wqieq4/9/o/T9NnGWyuW0CXfpYdjWsiFHQSeqGsUolYVEuKciPVApEbcKpEFR+9R/u1D
+         c30vqNvnEWYNaZsbmevkk+woO9ltFWmrm71wSEHdG9KdXGOgu9QxaQwLjCj26z8dSRS3
+         mObw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739965317; x=1740570117;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
+        d=1e100.net; s=20230601; t=1739965561; x=1740570361;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vklkpg4jT7Yqa+MBRKwFAsqmVQ4XSjs4oAO0nIa6Dj0=;
-        b=chEFdZOxnYATmq5xk3m0g1T8NQFLSnapUg8trH550G7F2o0nB6auF6D+bMGVbblZTt
-         qWLXTugICdoyL9WZGx1Yf54TNKx08tkB6l3Se7h45F0xuD9l8Nycj3ZkXOqfDY8elVf8
-         0NkvDGPWD36vpIZsidUvJGN7SUEQ48KY6Woqsib9iNNpkNqgHppCJkqcZdR13mYSDjM9
-         YTqpdfTNp6G/uSZUSh7Viqx4E7imQOtlEsDTAI3hcL8NWl3oz5IdnIg+5NaSNPOyHlx2
-         ExRT8XbLOc40zoI9SPMbdQsrgBrSF/wNMO99fBA5lB14mDOAvwJN1E71hrLAvo5pfZDL
-         fHLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWKxWNnyJ/KyMHdJZaKNo/xO512P8+HXNNZmyuCxQi5DXMy/B4WA4mRGlKUt3DlxAnXO10jRHKCoI0giwQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmcPxFxT9nkfnwuhQ344TLAvRcXcOL4y/LQtD9l9tAjhjxr2RS
-	ysQdJ1fmV1b8ZyPR4JrIcVcUJkgYXlMB1oSplfyGbR8LXy+XnFtYasgIhC4y1Wo=
-X-Gm-Gg: ASbGnctHwEHhQxsc6gfQADV3R9I8UeIHp5k8vw3rX8QY4TR2aIc3BZYVEwl0yrHAI1L
-	Y72Jfa84W7nwHLMMN/UP+E4uvSQyt8w+0iFwvplR6hFzf4ycovDlbkm/MqFxJfptlDmQhVM5XQ/
-	vneJ9UAtU0culYrOXnrumUcdA0c/XWsQMhRAIXrSRMLbqb1AD6uRRLHgFmu1B0LHOe/yTl6r3PS
-	Lp/gVdaCricU4g9lKGLhfKELr5pl+vLVsgOfmB38HTn5LPXze61ZlfjMtlS0qBCWQMqrkbeOpRA
-	8U4C2yyQbbmEHLnGu0Y+ozQXFxKjxvzXpPh9sA==
-X-Google-Smtp-Source: AGHT+IFvUGCxrEtU2DX0SrdIbNORvhPcIZJPoieuSk/WRd8FcbtSdqlslOM+6SkiVjV1leDekkTRwA==
-X-Received: by 2002:a17:903:2f8c:b0:21f:b483:2ad5 with SMTP id d9443c01a7336-22104038460mr260923585ad.20.1739965317390;
-        Wed, 19 Feb 2025 03:41:57 -0800 (PST)
-Received: from hsinchu26.internal.sifive.com ([210.176.154.34])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d545d507sm103218545ad.145.2025.02.19.03.41.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2025 03:41:57 -0800 (PST)
-From: Nick Hu <nick.hu@sifive.com>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>
-Cc: Nick Hu <nick.hu@sifive.com>,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: [PATCH v4 2/2] clocksource/drivers/timer-riscv: Stop stimecmp when cpu hotplug
-Date: Wed, 19 Feb 2025 19:41:35 +0800
-Message-Id: <20250219114135.27764-3-nick.hu@sifive.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20250219114135.27764-1-nick.hu@sifive.com>
-References: <20250219114135.27764-1-nick.hu@sifive.com>
+        bh=grVqY1qROVcqXbe9nYwk1uHL1rEHylCVGnje1QZKs3g=;
+        b=LT98TUwDUr3M39dPhLoJFaDkgSlpEWFSoL1tD56d5VS1v6Wr1sUSeoZmMEWhIq/GA4
+         TphhrPMQNgEDPOOnr75R1Ho6m6BJGzjM1Ojgi+JoftqODbAmARq4BGGlyA0ROgzVpFYZ
+         gsgdC7FqM8WvQVyOm/fmBqRL+opt7lJqLO4qX2H3cOT09SCUA/jYW1GBtjO0JdyuFXT0
+         tBLpqmqiG3iVr64IzqVsbx66pOE7Lsc4Jd71RKs2VCl/I/LSwVL4zcFkdcfK4odWglYO
+         ADrWLtrvU2yvS51Cq5NSvsrCJpJ4vu0WLR4xV4bA2bp7BUs4sewGRk1MpZ9pSBHgKUP9
+         s5Qw==
+X-Forwarded-Encrypted: i=1; AJvYcCV7DaFp/0xik8wV7p0BGfPLFNwS5tWMRnBhakeZWaPkGydlvLBcSH4zf3sMXXcIZX0qLSexXugYgYgkias=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzroQSbV8gcIbsNjVoPqlEG+HiB9XamyAv+CrpMJ0QmfjfPJvWq
+	++Hg7S8gSTz3XliRC99Lop4Ztpclp0abH++N4Sy/Tb0/9RWUMkmk6MLQZvYKRiY=
+X-Gm-Gg: ASbGncuUJ9UpIHaun9VZCPoUVghlV9GextAYbWA0oC8Rtdj8AvadTkT17muCD+n0SHY
+	0rR8eSBxhi2/ou8Zq18kluawxTOeu4O1AyNkFmVWjkgHgvpGnhBCl69U+F2XJET3M8xNS6Ha8b5
+	SGTlt93+vSzj7JUwdEhkUJUao26P4AZ3I7TTmhvOwrm5wAYnCqYgSsaM+vO77cX1J74BYP3UYGm
+	yUqyjGDDH+xRjl1D8a2B57L9Y8GSNVfy7Jor5ot8JwU12DLCiLq7Mc46bRIWMPwfvh0/564eSBO
+	Kyxx+qSldfUAEZ91I3fj7QC6e8+bcRbX37e6Wg3mr3QLpDtokcR5j1E=
+X-Google-Smtp-Source: AGHT+IEPrAp7TfB1wuRgwHmXZYaORWGATsE4Btm3PHkL+64VjJn57We6CAzaMyjRJEOlvwankmW89w==
+X-Received: by 2002:a05:600c:3110:b0:439:9985:6984 with SMTP id 5b1f17b1804b1-43999de0cc2mr33956895e9.30.1739965561108;
+        Wed, 19 Feb 2025 03:46:01 -0800 (PST)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-43989087517sm77002015e9.8.2025.02.19.03.46.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Feb 2025 03:46:00 -0800 (PST)
+Message-ID: <47c11da5-6235-4e13-ab91-580cfef508c2@linaro.org>
+Date: Wed, 19 Feb 2025 12:46:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] dt-bindings: timer: exynos4210-mct: add
+ samsung,exynos2200-mct-peris compatible
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250215123922.163630-1-ivo.ivanov.ivanov1@gmail.com>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20250215123922.163630-1-ivo.ivanov.ivanov1@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Stop the timer when the cpu is going to be offline otherwise the
-timer interrupt may be pending while performing power-down.
+On 15/02/2025 13:39, Ivaylo Ivanov wrote:
+> Whilst having a new multicore timer that differs from the old designs in
+> functionality and registers (marked as MCTv2 in vendor kernels),
+> Exynos2200 also keeps an additional multicore timer connected over PERIS
+> that reuses the same design as older exynos socs.
+> 
+> Add a compatible for the legacy multicore timer of Exynos2200. Rather
+> than differentiating it based on the block version, mark it as the
+> one connected over PERIS.
+> 
+> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+> ---
 
-Suggested-by: Anup Patel <anup@brainfault.org>
-Link: https://lore.kernel.org/lkml/20240829033904.477200-3-nick.hu@sifive.com/T/#u
-Signed-off-by: Nick Hu <nick.hu@sifive.com>
-Reviewed-by: Anup Patel <anup@brainfault.org>
----
- drivers/clocksource/timer-riscv.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+Applied, thanks
 
-diff --git a/drivers/clocksource/timer-riscv.c b/drivers/clocksource/timer-riscv.c
-index 48ce50c5f5e6..4d7cf338824a 100644
---- a/drivers/clocksource/timer-riscv.c
-+++ b/drivers/clocksource/timer-riscv.c
-@@ -126,7 +126,13 @@ static int riscv_timer_starting_cpu(unsigned int cpu)
- 
- static int riscv_timer_dying_cpu(unsigned int cpu)
- {
-+	/*
-+	 * Stop the timer when the cpu is going to be offline otherwise
-+	 * the timer interrupt may be pending while performing power-down.
-+	 */
-+	riscv_clock_event_stop();
- 	disable_percpu_irq(riscv_clock_event_irq);
-+
- 	return 0;
- }
- 
+
 -- 
-2.17.1
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
