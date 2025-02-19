@@ -1,185 +1,102 @@
-Return-Path: <linux-kernel+bounces-520878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D53CA3B060
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 05:31:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CAF7A3B062
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 05:35:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 292AD7A4393
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 04:30:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E47116B214
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 04:35:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 792D01ADC82;
-	Wed, 19 Feb 2025 04:31:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 473291ADC79;
+	Wed, 19 Feb 2025 04:34:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bJVVe53W"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="kx2zNAVx"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 708771D554;
-	Wed, 19 Feb 2025 04:31:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 937201D554;
+	Wed, 19 Feb 2025 04:34:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739939501; cv=none; b=ICw1BuIaieHlqSoAW5BQl6krDjKjnhrphSn9+RVbAbFxYt4ffSCbO0TIR5kEylpdys0N7YZ1wr73YdSkQwc/VJ+GCpDyDqct6JpPRS7PP/sV8VFJessI2BeMD3GyFIRYAGTiUPfp4iLJM+RqJ1sjeEyN3pOQohkbcUg5GiKI4h8=
+	t=1739939694; cv=none; b=fvg26+zn8B6zb+jqLoSkjTJN2XjODpW3e+GXTlFvLD0+jdkzSfGYKME68nz7V2/KQB/9mpwqbNYCSfLdiCA3ht233JojbtMkB3tiBppDbso7IWLYZml4zojGpeKYDX8m4kH914p+F/SUNqVCzyPscuxGfN9W0gjH4zSEJRBIGj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739939501; c=relaxed/simple;
-	bh=AAXRzVWm6+QKbg0q7VhMuL2NH/Rn8BgKA9ElBx5Gpkk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ulSETpBB2WCiDBXeaAN62Olm2I6+KxOZSxOGqSQMs9h5lAeECzeiJWTNkAU3QLnrdiCVm35A6/TQ43xgd07JFAGzqnxdzR80FKqIzV5cH48sqrJPk3VCOJ8k8aJtsJdNWK513cqoUwsbsmTExgJOoB+lO4kOkTaF3be4VBlbG7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bJVVe53W; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739939499; x=1771475499;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=AAXRzVWm6+QKbg0q7VhMuL2NH/Rn8BgKA9ElBx5Gpkk=;
-  b=bJVVe53WpXFSGwGjs9mqUhDGSG2kE6p/v0iuw/upFPWIed7RDabgRt1g
-   4q6+oYPkjDa4S36YVFajqgqizDlElpLULvZWWLYtiLA8QU6sO0if/npBM
-   Shy7GTqb91Ohs66ax0RD1OlngeXkNcTdvVvlW0i52D811kG2/ltp7ZUsp
-   ZEMbUZ2PVi65TvUsIgwcuY5w1dBQ6yeFIqaJ76LzRhhFlvkNZRX1Cx2Sw
-   Odnzmnwa4LbBsZuVltZGC8242xv5qeibNLg3qL7vPm7WktGPyyLolzu+u
-   lr1RUqgWsTQmMlK+mU/fDZ/So/DkO9tGITx5i55EtkjUvfcWVWEKzwKf9
-   g==;
-X-CSE-ConnectionGUID: 23Uo4ECjTXuxIhT2VIAbQA==
-X-CSE-MsgGUID: oV8RF4W4SVyogouH1h8m5Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="63138301"
-X-IronPort-AV: E=Sophos;i="6.13,296,1732608000"; 
-   d="scan'208";a="63138301"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 20:31:38 -0800
-X-CSE-ConnectionGUID: anHUsH6hT9agwGAAhvmeDA==
-X-CSE-MsgGUID: df/rmvh4QZyzvdSOMK+S+A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="137837363"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa002.fm.intel.com with ESMTP; 18 Feb 2025 20:31:34 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tkbjw-0001Ep-2g;
-	Wed, 19 Feb 2025 04:31:22 +0000
-Date: Wed, 19 Feb 2025 12:29:47 +0800
-From: kernel test robot <lkp@intel.com>
-To: Kyle Hendry <kylehendrydev@gmail.com>, Lee Jones <lee@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	=?iso-8859-1?Q?Fern=E1ndez?= Rojas <noltari@gmail.com>,
-	Jonas Gorski <jonas.gorski@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
-	Kyle Hendry <kylehendrydev@gmail.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] net: phy: bcm63xx: add support for BCM63268 GPHY
-Message-ID: <202502191246.zER47JXl-lkp@intel.com>
-References: <20250218013653.229234-2-kylehendrydev@gmail.com>
+	s=arc-20240116; t=1739939694; c=relaxed/simple;
+	bh=Hil1dVQh9TQS79BbJ6/GD+DnwoXBA5f7kNHmi7ngWK0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=pk5+FYoUZW01CnHvysu1xMsn6tazjy1pYmU3rtRN56Rdu+PZaYCvIECknmrghTT6dVDQOgn0qbSv7LTdLx9K/4DrQigEspR9pKGLlkKgfmZ4VEcYplBJn6ntGXlRO+ePSEEf5VVj3HccnXDx05MFA+GftESPgEv80yRA3VR13u8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=kx2zNAVx; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1739939686;
+	bh=2X1ltTdN3jNCBpOVwhieOIU7nIvRgCyT3knYIMBMzEU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=kx2zNAVxUXkhM+WoVGfYW4T57nBEGmc2Y0m9g7YJrIJQA+g/UdrJ3TRIB7BSyspHf
+	 ezeaUt7ly2OI9S9aJ01rrq/ZO7jqW60eCHOZDobetRbpNEbsZ0TrpJ9OMG3EovyAZO
+	 tsy4WY45d5w4iHyOlbVd8a7H5uL5XN/V3I9R/3KcYXndt0S1MBdRLhgVQv6gqHvJej
+	 bN1LfcMQPk5IEWAdmAeq55G0GJYQzeLGttfVc1NiOzSEHBagsdD8YVrCrDt6dJlCWx
+	 ZaS6yJoFj+wnh5UWoDUrP8lvTJEXvRhYNctsFHPNP6GJr3a1E4HR+vAoNJ9ABKjQvv
+	 2THAsZhqvzb6g==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4YyNpZ1n16z4wcw;
+	Wed, 19 Feb 2025 15:34:46 +1100 (AEDT)
+Date: Wed, 19 Feb 2025 15:34:44 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Christian Brauner <brauner@kernel.org>
+Cc: NeilBrown <neilb@suse.de>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build warning after merge of the vfs-brauner tree
+Message-ID: <20250219153444.0046e433@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250218013653.229234-2-kylehendrydev@gmail.com>
+Content-Type: multipart/signed; boundary="Sig_/b6Wy0AQxaO+1e8FbPIcH1Qf";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hi Kyle,
+--Sig_/b6Wy0AQxaO+1e8FbPIcH1Qf
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-kernel test robot noticed the following build warnings:
+Hi all,
 
-[auto build test WARNING on lee-mfd/for-mfd-next]
-[also build test WARNING on robh/for-next lee-leds/for-leds-next linus/master lee-mfd/for-mfd-fixes v6.14-rc3 next-20250218]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+After merging the vfs-brauner tree, today's linux-next build (htmldocs)
+produced this warning:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Kyle-Hendry/net-phy-bcm63xx-add-support-for-BCM63268-GPHY/20250218-094117
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git for-mfd-next
-patch link:    https://lore.kernel.org/r/20250218013653.229234-2-kylehendrydev%40gmail.com
-patch subject: [PATCH v2 1/5] net: phy: bcm63xx: add support for BCM63268 GPHY
-config: loongarch-randconfig-001-20250219 (https://download.01.org/0day-ci/archive/20250219/202502191246.zER47JXl-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250219/202502191246.zER47JXl-lkp@intel.com/reproduce)
+Documentation/filesystems/porting.rst:1173: ERROR: Unexpected indentation. =
+[docutils]
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502191246.zER47JXl-lkp@intel.com/
+Introduced by commit
 
-All warnings (new ones prefixed by >>):
+  20c2c1baa9ab ("VFS: add common error checks to lookup_one_qstr_excl()")
 
->> drivers/net/phy/bcm63xx.c:84:5: warning: no previous prototype for 'bcm63268_gphy_set' [-Wmissing-prototypes]
-      84 | int bcm63268_gphy_set(struct phy_device *phydev, bool enable)
-         |     ^~~~~~~~~~~~~~~~~
->> drivers/net/phy/bcm63xx.c:100:5: warning: no previous prototype for 'bcm63268_gphy_resume' [-Wmissing-prototypes]
-     100 | int bcm63268_gphy_resume(struct phy_device *phydev)
-         |     ^~~~~~~~~~~~~~~~~~~~
->> drivers/net/phy/bcm63xx.c:115:5: warning: no previous prototype for 'bcm63268_gphy_suspend' [-Wmissing-prototypes]
-     115 | int bcm63268_gphy_suspend(struct phy_device *phydev)
-         |     ^~~~~~~~~~~~~~~~~~~~~
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/b6Wy0AQxaO+1e8FbPIcH1Qf
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-vim +/bcm63268_gphy_set +84 drivers/net/phy/bcm63xx.c
+-----BEGIN PGP SIGNATURE-----
 
-    83	
-  > 84	int bcm63268_gphy_set(struct phy_device *phydev, bool enable)
-    85	{
-    86		struct bcm_gphy_priv *priv = phydev->priv;
-    87		u32 pwr_bits;
-    88		int ret;
-    89	
-    90		pwr_bits = GPHY_CTRL_IDDQ_BIAS | GPHY_CTRL_LOW_PWR;
-    91	
-    92		if (enable)
-    93			ret = regmap_update_bits(priv->gphy_ctrl, 0, pwr_bits, 0);
-    94		else
-    95			ret = regmap_update_bits(priv->gphy_ctrl, 0, pwr_bits, pwr_bits);
-    96	
-    97		return ret;
-    98	}
-    99	
- > 100	int bcm63268_gphy_resume(struct phy_device *phydev)
-   101	{
-   102		int ret;
-   103	
-   104		ret = bcm63268_gphy_set(phydev, true);
-   105		if (ret)
-   106			return ret;
-   107	
-   108		ret = genphy_resume(phydev);
-   109		if (ret)
-   110			return ret;
-   111	
-   112		return 0;
-   113	}
-   114	
- > 115	int bcm63268_gphy_suspend(struct phy_device *phydev)
-   116	{
-   117		int ret;
-   118	
-   119		ret = genphy_suspend(phydev);
-   120		if (ret)
-   121			return ret;
-   122	
-   123		ret = bcm63268_gphy_set(phydev, false);
-   124		if (ret)
-   125			return ret;
-   126	
-   127		return 0;
-   128	}
-   129	
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAme1X2QACgkQAVBC80lX
+0GydBAgAmWf6IzBb0aNoPAV+XPe3Ide7t36lPtdmUOrfIi3S54pnq6sRLAgN7+T/
+Mg9Hds8sg5JmujGZAYlp6NLFtQbE6onu5nN1/6UqnT+10SpJ3F8hHFF4ay5wf8G8
+GrfsQOm/p1IQbq7KY+WfiasPOrri/n3gLJ9UO9Pby/b1pqOye9yWlrR6CCWpKPkj
+XAaaj7icQ1f0PqzmUNlNJEq5AekYEdgeqCVfutpNuPRW+03wjtVu4VdK/hFcS3bi
+iNEYD8xoCQ249uEIQaBoDIg0HOgtuQQ8glqWIy54h4D4UJLo5i6Lm8ShxmLtb/dy
+G1f7M+899JoooIdFIi1Ocv2vO6Q8hA==
+=azwl
+-----END PGP SIGNATURE-----
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--Sig_/b6Wy0AQxaO+1e8FbPIcH1Qf--
 
