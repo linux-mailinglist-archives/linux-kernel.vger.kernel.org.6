@@ -1,45 +1,64 @@
-Return-Path: <linux-kernel+bounces-520935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A783AA3B160
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:05:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E701CA3B164
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:06:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 063DC188AA87
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 06:05:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A6997A284B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 06:05:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 008771AF4EA;
-	Wed, 19 Feb 2025 06:04:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E26B21AE863;
+	Wed, 19 Feb 2025 06:06:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="knduSAl/"
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SmChwW+U"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E3BC1A8F7F;
-	Wed, 19 Feb 2025 06:04:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0124F192D7E
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 06:06:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739945096; cv=none; b=ewarqwBcseZVk2vpl7sB+lgZ9Z54r4sVEQww37q5ut0/iXt59GKNPd4FwKp20VDA8//q5LoswrSsG7ZF7FqaQ6JrPOPqAE7J5IWnfg9lcOOD45AeV0PmjNcyXHK47/nzoU0U4b56zgbXR6mH7WqHWpu2q1vWHJ19o+Ya2ZXPaG0=
+	t=1739945182; cv=none; b=EUl4bb8C+ydPsYCkYvwu255vwVHXDzPkYDXK+Ewu1tiAUOz7usGtSxWILyeQk5oNtJBsF/Ao33qvtClSb1uCjGbQkM/3rlHz9PyNeUs560Zk2xRlHmZFvaPmCVOR8FstHosb+5/OjOW6kOGnkHTBUJgw1vOTl1Ecr6UWQKMZU9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739945096; c=relaxed/simple;
-	bh=L9lhN3ilKtmL2zG8PvbZYD0i1c8yFuaKYcME16EVnEg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GIbU+jicgDIEE08pgYZY9wHIIiNur2Sc7LMayUgaO3IML3xbI3Kx8ztt5kqu6/ELnEjr4u/Gg0fnOtd8wW267MvTLuhobhw20eP4JX3ouzQ55q2u+Rp5CyQCAq0N9Q+PNt9BGfXFHrooTwJW5W4CQ8ht2x9U9xrrHcwAIb03LkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=knduSAl/; arc=none smtp.client-ip=115.124.30.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1739945083; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=DZZPumA5Upa6XmHFJ6/5ZqK43Kre79RXvyxCQ8Q750M=;
-	b=knduSAl/+Jh/fOglTFd1q0bBli5gYI6tKnuO8luOsm5wvgsiNdk78SV/zxVGrwbzmWkY3SElMXsLHZC3loBFJC76vtoks1fBX4HAGvaupoAJiuWPGh07Mm4GR8DuzI7fzJfuekDLcU98jCcgbBOFzO+Rs/XWrie7bbPFbmaHvzk=
-Received: from 30.246.161.128(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WPo8aUr_1739945080 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 19 Feb 2025 14:04:41 +0800
-Message-ID: <3437892f-60ed-4e76-9028-7feac46425e4@linux.alibaba.com>
-Date: Wed, 19 Feb 2025 14:04:39 +0800
+	s=arc-20240116; t=1739945182; c=relaxed/simple;
+	bh=Q0vDJ4/yiYVAbhNp0b6zWsQL6kY+rh0THMX+K0cEdWY=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=XpQGU239i7rJIWEVzXllmlJdodgMpzcmN31ydp4ZrDcHcTzbknwMZxkiPONNUSHXccEcnmj1fkfvB6s4OAOe5GChj8nB1ySCsOa2WIC4He0RmIkeVhzOGp7Pz6WxYvkGTjgLFJuTLQ+e5ACMkNDtUFwrdwe4TSTCpa0OkTVG05s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SmChwW+U; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739945179; x=1771481179;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Q0vDJ4/yiYVAbhNp0b6zWsQL6kY+rh0THMX+K0cEdWY=;
+  b=SmChwW+UmDcmJ27gFoMzP63Zs2wGPFjMPjQtSK/5vYF++sd9+fb9oXim
+   4NEia2nM6F7DOxl+7FxeVVtzKbxCP2JZiGhupqAjjy5YkFQiWt2mXB5la
+   GJ/J+sF8SOidqVwwYesRwOdou0AqK6tilpCM5km1DL4qfOWUVlCoGtJqM
+   ya7cpcndj+kG+bV8pSpbN4JE9yNGkDTn2nKEOhZQ+WiIXUvpCwitIxlLX
+   KnoJi+goe9czpwAdsav6YVcDLzF+kmCgS6hvU98J1orWBu5mXRJeNbjqR
+   szvb0dKqrJ5ZgpirKzs8yj1qUovZ6VcL0EZBXiScmmrDSHRHkedsHgYL9
+   w==;
+X-CSE-ConnectionGUID: kwz/H1LcTeSvblBd0QLSzA==
+X-CSE-MsgGUID: ZILul6gfSVW37fHi3AMMmQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="44316091"
+X-IronPort-AV: E=Sophos;i="6.13,298,1732608000"; 
+   d="scan'208";a="44316091"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 22:06:19 -0800
+X-CSE-ConnectionGUID: d+QKcR/OSi6tLcQA+DoR8A==
+X-CSE-MsgGUID: MHlpaKrSTlC7nHsJBJ0nAw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,298,1732608000"; 
+   d="scan'208";a="114469593"
+Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.124.240.17]) ([10.124.240.17])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 22:06:17 -0800
+Message-ID: <c3d31f11-2a27-49a5-9e80-087a98d31cce@linux.intel.com>
+Date: Wed, 19 Feb 2025 14:06:15 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,50 +66,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/5] mm/hwpoison: Fix regressions in memory failure
- handling
-To: "Luck, Tony" <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>
-Cc: "nao.horiguchi@gmail.com" <nao.horiguchi@gmail.com>,
- "tglx@linutronix.de" <tglx@linutronix.de>,
- "mingo@redhat.com" <mingo@redhat.com>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
- "linmiaohe@huawei.com" <linmiaohe@huawei.com>,
- "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
- "peterz@infradead.org" <peterz@infradead.org>,
- "jpoimboe@kernel.org" <jpoimboe@kernel.org>,
- "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>,
- "baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>,
- "tianruidong@linux.alibaba.com" <tianruidong@linux.alibaba.com>
-References: <20250217063335.22257-1-xueshuai@linux.alibaba.com>
- <20250218082727.GCZ7REb7OG6NTAY-V-@fat_crate.local>
- <7393bcfb-fe94-4967-b664-f32da19ae5f9@linux.alibaba.com>
- <20250218122417.GHZ7R78fPm32jKYUlx@fat_crate.local>
- <02164ab7-c65b-4b2e-8686-5539bdcb8f43@linux.alibaba.com>
- <SJ1PR11MB60830555A8B1621CA62D4FC3FCFA2@SJ1PR11MB6083.namprd11.prod.outlook.com>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <SJ1PR11MB60830555A8B1621CA62D4FC3FCFA2@SJ1PR11MB6083.namprd11.prod.outlook.com>
+Cc: baolu.lu@linux.intel.com, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Kevin Tian <kevin.tian@intel.com>, Fenghua Yu <fenghua.yu@intel.com>,
+ Dave Jiang <dave.jiang@intel.com>, Vinod Koul <vkoul@kernel.org>,
+ Zhou Wang <wangzhou1@hisilicon.com>, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org,
+ Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
+Subject: Re: [PATCH 00/12] iommu: Remove IOMMU_DEV_FEAT_SVA/_IOPF
+To: Jason Gunthorpe <jgg@ziepe.ca>, Zhangfei Gao <zhangfei.gao@linaro.org>
+References: <20250214061104.1959525-1-baolu.lu@linux.intel.com>
+ <CABQgh9FMy7oVt9+enSpJxXvkux+czMFqbsPZVgmBV+rFWWvhGA@mail.gmail.com>
+ <20250214125600.GA3696814@ziepe.ca>
+ <CABQgh9FQYe46hfjcs+o6GfLaS7OfSqrmvXUzOKd6PRK8oBF8Jw@mail.gmail.com>
+ <d578bf4c-f475-42bf-9cb8-21941fc7af88@linux.intel.com>
+ <CABQgh9EG3gjtw19qvr7OhxKmR8E6+xwBf9b3=WPNrXRc-m9DjQ@mail.gmail.com>
+ <59998dcc-9452-4efd-be69-d95754217633@linux.intel.com>
+ <20250218135751.GH3696814@ziepe.ca>
+ <CABQgh9F8BJr_bkEQD6s6DSsLw2jwpgq-p73YL=439_WwH8P5zw@mail.gmail.com>
+ <20250218165312.GJ3696814@ziepe.ca>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20250218165312.GJ3696814@ziepe.ca>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-
-
-在 2025/2/19 01:59, Luck, Tony 写道:
->>> What do futexes have to do with copying user memory?
->>
->> Return -EFAULT to userspace.
+On 2025/2/19 0:53, Jason Gunthorpe wrote:
+> On Tue, Feb 18, 2025 at 11:25:59PM +0800, Zhangfei Gao wrote:
 > 
-> Missed this bit. Kernel code for futex does a get_user() to read the
-> value of the futex from user memory.
-> 
-> -Tony
-> 
-> 
+>> I have tested it, and it solved the issue.
+> Great, thanks, Baolu can you updated the patch?
 
-Tony, you saved me.
+Yes, sure. Will be included in the next version.
 
-Thanks.
-Shuai
+Thanks,
+baolu
 
