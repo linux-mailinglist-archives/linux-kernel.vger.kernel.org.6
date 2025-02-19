@@ -1,171 +1,160 @@
-Return-Path: <linux-kernel+bounces-521177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBABEA3B667
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:07:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48261A3B6D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:10:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51CA217DE0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:01:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C7BF3BD86F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:01:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DABB11E520A;
-	Wed, 19 Feb 2025 08:54:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 955291E8323;
+	Wed, 19 Feb 2025 08:54:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="fJ7KdH/K"
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ciyfwvkG"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFF221E503C;
-	Wed, 19 Feb 2025 08:54:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2827C1E8331
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 08:54:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739955265; cv=none; b=YDzzBOF7DWmwL2wLhb3EZyu6FpP6ry7QzuNJfvbur5IwH3j1oZg4Bw8OuPza5HGVwLbeX4SG6ZDlDediIf+ruy+2hW28P+SV7QnrLRqPnOHG2QrN4X2Oq3nci2ARGtDSN9BMwYLe6v+bPqkO5lmxVf+4UcTegTmbP3k+WH5Y0/U=
+	t=1739955283; cv=none; b=QXSp8DbYl7EBWLJLZdaSQafkcQ6XK1iXgKcY7RsUTmSDkYvxNN1iKdjH/xXmHvfFuQXZ53vIDjyq8jKxMl+rdNJooGkcXVsiORKo/QY18NLkDuc5ukfcL56WBUxQAYRaivmvSwDhVZzc3jl1+7rtYdR/0KpX9VLB+gyf/Ecw1j0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739955265; c=relaxed/simple;
-	bh=WbVaw2/nHiWPAhg2Q5UF4l7mCXnfTdBf8CKGlpNFqWQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LsOHJSQLG0SwzDgFnvkXkbm51DLn51a7pv/ibTEN/M+mtQ2ZOujvPr60jy4NnWeUVt/51mKBtWBV9+h84/mD3ptyZPIM4mzurHZI3iiDDSeZ/HjQ3fUnQTQjkfcYxi5QxaSoiQ7R0cB9VTNzrDf/SDsl5zNpW2Zrd/okptxZ4nM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=fJ7KdH/K; arc=none smtp.client-ip=115.124.30.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1739955257; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=/XNFU2Vaq0TopySEX+e+5ydilqlPx+5/Lqq5YswmjCo=;
-	b=fJ7KdH/KwGsWmCoFasmc0bfMTFXFLdHq+P0ppH+zTtQrkWYAuZWqMNiBFOGAzIoAYQMgxOnNd7DQs3LKxd1HajrK1XFdd7stn2opcdRVfMuLlff0hBYYNkmxq7KC6UJdFTSNLIlMwLIZx/3n6Qnn8ahwrpqniuMOi947/75R2rE=
-Received: from 30.246.161.128(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WPoiyp9_1739955255 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 19 Feb 2025 16:54:16 +0800
-Message-ID: <be78641b-becc-4cdb-a90e-574734638869@linux.alibaba.com>
-Date: Wed, 19 Feb 2025 16:54:14 +0800
+	s=arc-20240116; t=1739955283; c=relaxed/simple;
+	bh=hI6lzFU9GH4lhUpDYV/NVDPee81sTSfLySLouta9/2s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Oa12sjqjYfG/S/pNRHrJ884za2ElL/ykPPDPYsEJL2LipdIuZDt8a8SDt9fpoDc3fi1mmEv5/OEFLxGbea2aJpNLrPeLmqBUkSD7FgpbNtrzv9U+6+CUxjnaCcPtZI0mq54D30kK2WcxevMW0N5qOd6ac4AVdaoSlh7VYzLcKP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ciyfwvkG; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-3078fb1fa28so58538591fa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 00:54:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739955280; x=1740560080; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=M7ZGnNuhN0CVE7mBuptCvnZnUrT3C/sQYpFdgDU/kXc=;
+        b=ciyfwvkGxcPBp4pD2DFUu2EpIDZcliR1xjyo1b4UG7V5wsWLN+/4p/X+9LsuByyyZE
+         07eC85zzSNUCr0eBEEq5Offq6l6vVD4mjrWokejkKZesNucxyj7WMEYXQm97igwbSKIm
+         dJPyZ/3OPB1SPmqIEuFiIjTtQR1EkzMxKERElxRfvd/pvBqbwfWf/+MbVhVWOjIhXONu
+         3cp5m+3lH703atKcSrJrsUF+p0KnuYGyZzzA0UV9WXlGtqrUFchDlpKn5vvW2EtqAaCR
+         1VxpMlrpDHBXcIz/UVeI+ixEZ0JRrcYepG7KFpG6nL60aqsLqqruMEokANMK3noLkPvf
+         pl4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739955280; x=1740560080;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=M7ZGnNuhN0CVE7mBuptCvnZnUrT3C/sQYpFdgDU/kXc=;
+        b=XKOQV6SsInFWvEzWR8qS+5IiorTAUmw8ICK0smXIC5CbzXGV5JedZt0O8XLFx16nhB
+         HuvpVIaytEYByxnIXiTgJp4j/qQOvLIhTOdvs7nMIgz9VxFB+akAzNhHgogHfT2PLfgV
+         Yp1G1TQBW2LAmySR9TLtfxSX0uegaHsOmdbHFLXpM+GoYem6xQliZWAhDrv1/AOfRBHd
+         rX54vxjuTAACDB+zIxBSlgATo5653KfAr3A9T9z8IjUHn4IHSHUfJ9nycr/sD50AS9C4
+         I+r1XwqO++nPFq9+wXB1ywYP2dGzx+KklsxJao/O9Pyz+rTJV+kVLpP/Ad7EWL5BqUOJ
+         +ciw==
+X-Forwarded-Encrypted: i=1; AJvYcCUA4RAcJF7BvUlmDJzuAWXoAyd8m/+cVLBzwc1BCHUY/PQSs/rmK0VeEwYJkYvwbP2dllnBlF4C296wocE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcuE0z8GkkVRS6BoL94m+nwGrGy3d8A2nHgGAHh2L7QPRxxUHY
+	OIkJ7izIF3jg0AxTGR7bdBnVM2tSGoL+sXVzSkckMrg+IV8sg/H+lA3FKyY+atNJkaTimwlga42
+	LEWDgwB+mr99l6A4dAio0mfrks3tTMkokPBus
+X-Gm-Gg: ASbGncve1FtSK+uNOW4a5LkoKUF18/cMmcf1OSsHgE3BhGXXacSpEGw/W7nMgGEvdTC
+	UMC0J0tFmc+pzKZFBkoQ3iUopORcOKJcuY1XqMLSYP5IjMOxgKb/07rzjJeoDZxZ+I7sI2LLANJ
+	Z0F6g5iJJYNCGi4ky2zWElOlMNvZp8
+X-Google-Smtp-Source: AGHT+IEP2+jeuwwYmMiagIAHh0VM1ScsRe90WNyN5wOQxB/zxn47k8htPTq9a+NJd6BjsC6cVYnkYzBacchoLRHJJZg=
+X-Received: by 2002:a2e:9b50:0:b0:308:fd11:7715 with SMTP id
+ 38308e7fff4ca-30927b283e5mr50897561fa.33.1739955279996; Wed, 19 Feb 2025
+ 00:54:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/5] mm/hwpoison: Fix incorrect "not recovered" report
- for recovered clean pages
-To: Miaohe Lin <linmiaohe@huawei.com>, "Luck, Tony" <tony.luck@intel.com>
-Cc: tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
- x86@kernel.org, hpa@zytor.com, akpm@linux-foundation.org,
- peterz@infradead.org, jpoimboe@kernel.org, linux-edac@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- baolin.wang@linux.alibaba.com, tianruidong@linux.alibaba.com,
- tony.luck@intel.com, bp@alien8.de, nao.horiguchi@gmail.com
-References: <20250217063335.22257-1-xueshuai@linux.alibaba.com>
- <20250217063335.22257-5-xueshuai@linux.alibaba.com>
- <ddd769c2-a17d-9e34-822d-66f72bd654ac@huawei.com>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <ddd769c2-a17d-9e34-822d-66f72bd654ac@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <cover.1739894594.git.dvyukov@google.com> <607562bf50ddc81ebd404e8dc1710e5221f80342.1739894594.git.dvyukov@google.com>
+ <Z7S8SAGt8blFiFTg@gourry-fedora-PF4VCD3F> <CACT4Y+Z3ismwdeqa7iMo0JVD-u-nvSmN2eS5qJ5tUqXT9NjWcw@mail.gmail.com>
+ <Z7TKvdjvmtzfjza6@gourry-fedora-PF4VCD3F>
+In-Reply-To: <Z7TKvdjvmtzfjza6@gourry-fedora-PF4VCD3F>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Wed, 19 Feb 2025 09:54:28 +0100
+X-Gm-Features: AWEUYZme0VYqkJSfzdcPdzITmicCJ99Vg0vZCzncurdthUSOHxOZyNTjx9Mqd7I
+Message-ID: <CACT4Y+ZJhCD3Y-nNKb42K0561tOceYKRNm6Yi8r9-KwoWfvkbQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] syscall_user_dispatch: Allow allowed range wrap-around
+To: Gregory Price <gourry@gourry.net>
+Cc: krisman@collabora.com, tglx@linutronix.de, luto@kernel.org, 
+	peterz@infradead.org, keescook@chromium.org, gregory.price@memverge.com, 
+	Marco Elver <elver@google.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+
+On Tue, 18 Feb 2025 at 19:00, Gregory Price <gourry@gourry.net> wrote:
+>
+> On Tue, Feb 18, 2025 at 06:34:34PM +0100, Dmitry Vyukov wrote:
+> > On Tue, 18 Feb 2025 at 17:58, Gregory Price <gourry@gourry.net> wrote:
+> > > If the intent is to load and re-use a single foreign-OS library, this
+> > > change seems to be the question of "why not allow multiple ranges?",
+> > > and you'd be on your way to reimplementing seccomp or BPF.
+> >
+> > The problem with seccomp BPF is that the filter is inherited across
+> > fork/exec which can't be used with SIGSYS and fine-grained custom
+> > user-space policy. USER_DISPATCH is much more flexible in this regard.
+>
+> It's also fundamentally not a security-sufficient interposition system.
+>
+> > Re allocating resources outside of monitored bounds: this is exactly
+> > what syscall filtering is for, right :)
+>
+> No.  SUD's purpose is to catch foreign-OS syscall execution.
+
+My understanding is that aiming at concrete end problems is not the
+kernel approach and design philosophy. Instead it aims at providing
+flexible _primitives_ that can be used to solve various end problems.
+It's like you are not selling pencils to draw trees, instead you just
+sell good pencils.
+
+E.g. if there are 2 end problems A and B that require 98% of the same
+primitives, the kernel wouldn't implement 2 completely independent
+subsystems to solve A and B that duplicate 98% of the code. Instead it
+would provide flexible primitives that can be used to solve A and B
+(and yet unknown C and D in future).
 
 
+> You *can* do hacky stuff like interposing on libc, but it you can do
+> hacky things with bpf too.
+>
+> > If we install a filter on a library/sandbox, we can control and
+> > prevent it from allocating any more executable pages outside of the
+> > range.
+> >
+> > The motivation is sandboxing of libraries loaded within a known fixed
+> > address range, while non-sandboxed code can live on both sides of the
+> > sandboxed range (say, non-pie binary at lower addresses, and libc at
+> > higher addresses).
+>
+> My question is why you aren't doing the opposite.  Exempt the known good
+> ranges and hook everything else.  This actually makes it easier to
+> ensure the software you're hooking doesn't escape interposition.
 
-在 2025/2/19 14:34, Miaohe Lin 写道:
-> On 2025/2/17 14:33, Shuai Xue wrote:
->> When an uncorrected memory error is consumed there is a race between
->> the CMCI from the memory controller reporting an uncorrected error
->> with a UCNA signature, and the core reporting and SRAR signature
->> machine check when the data is about to be consumed.
->>
->> If the CMCI wins that race, the page is marked poisoned when
->> uc_decode_notifier() calls memory_failure(). For dirty pages,
->> memory_failure() invokes try_to_unmap() with the TTU_HWPOISON flag,
->> converting the PTE to a hwpoison entry. As a result,
->> kill_accessing_process():
->>
->> - call walk_page_range() and return 1 regardless of whether
->>    try_to_unmap() succeeds or fails,
->> - call kill_proc() to make sure a SIGBUS is sent
->> - return -EHWPOISON to indicate that SIGBUS is already sent to the
->>    process and kill_me_maybe() doesn't have to send it again.
->>
->> However, for clean pages, the TTU_HWPOISON flag is cleared, leaving the
->> PTE unchanged and not converted to a hwpoison entry. Conversely, for
->> clean pages where PTE entries are not marked as hwpoison,
->> kill_accessing_process() returns -EFAULT, causing kill_me_maybe() to
->> send a SIGBUS.
->>
->> Console log looks like this:
->>
->>      Memory failure: 0x827ca68: corrupted page was clean: dropped without side effects
->>      Memory failure: 0x827ca68: recovery action for clean LRU page: Recovered
->>      Memory failure: 0x827ca68: already hardware poisoned
->>      mce: Memory error not recovered
->>
->> To fix it, return 0 for "corrupted page was clean", preventing an
->> unnecessary SIGBUS.
->>
->> Fixes: 046545a661af ("mm/hwpoison: fix error page recovered but reported "not recovered"")
->> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
->> Cc: stable@vger.kernel.org
->> ---
->>   mm/memory-failure.c | 11 ++++++++---
->>   1 file changed, 8 insertions(+), 3 deletions(-)
->>
->> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
->> index 995a15eb67e2..b037952565be 100644
->> --- a/mm/memory-failure.c
->> +++ b/mm/memory-failure.c
->> @@ -881,12 +881,17 @@ static int kill_accessing_process(struct task_struct *p, unsigned long pfn,
->>   	mmap_read_lock(p->mm);
->>   	ret = walk_page_range(p->mm, 0, TASK_SIZE, &hwpoison_walk_ops,
->>   			      (void *)&priv);
->> +	/*
->> +	 * ret = 1 when CMCI wins, regardless of whether try_to_unmap()
->> +	 * succeeds or fails, then kill the process with SIGBUS.
->> +	 * ret = 0 when poison page is a clean page and it's dropped, no
->> +	 * SIGBUS is needed.
->> +	 */
->>   	if (ret == 1 && priv.tk.addr)
->>   		kill_proc(&priv.tk, pfn, flags);
->> -	else
->> -		ret = 0;
->>   	mmap_read_unlock(p->mm);
->> -	return ret > 0 ? -EHWPOISON : -EFAULT;
->> +
->> +	return ret > 0 ? -EHWPOISON : 0;
-> 
-> The caller kill_me_maybe will do set_mce_nospec + sync_core again.
-> 
-> static void kill_me_maybe(struct callback_head *cb)
-> {
-> 	struct task_struct *p = container_of(cb, struct task_struct, mce_kill_me);
-> 	int flags = MF_ACTION_REQUIRED;
-> 	...
-> 	ret = memory_failure(pfn, flags);
-> 	if (!ret) {
-> 		set_mce_nospec(pfn);
-> 		sync_core();
-> 		return;
-> 	}
-> 
-> Is this expected?
-> 
+The restricted code is a single continuous region. Allowed code lives
+on both sides (non-pie binary at the lowest addresses, dynamic libs at
+the highest addresses, and there is not enough space before and after
+to map a large enough contiguous region for restricted code).
 
-the second set_mce_nospec do nothing and have no side affect.
+> You can use the SIGSYS register data (instruction pointer) to determine
+> whether to act on the syscall or pass it through.
 
-sync_core() is introduced by Tony [1]:
+Too expensive (few additional instructions vs microseconds for kernel
+transition, sigcontext setup, and sigreturn).
 
-Also moved sync_core(). The comments for this function say that it should
-only be called when instructions have been changed/re-mapped. Recovery for
-an instruction fetch may change the physical address. But that doesn't happen
-until the scheduled work runs (which could be on another CPU).
+> Like I said, I don't necessarily disagree with the change, just a bit
+> concerned about the direction this takes SUD.  It's not a sufficient
+> interface to isolate the behavior of a single library, and this change
+> naturally begs the question "If we do this, why not implement an entire
+> multi-range filtering system? Why stop at one range?"
 
-[1]https://lore.kernel.org/all/20200824221237.5397-1-tony.luck@intel.com/T/#u
-
-IMHO, I think it also has no side affect.
-
-@Tony, could you help to confirm this?
-
-Thank.
-Shuai
-
-
-
+That's a harder question. I think we don't need to answer it right
+now. We can just consider this proposal in isolation. This is where we
+stop now.
+It preserves all of the existing uses intact + allows more cases with
+a trivial code change (actually deleting code).
 
