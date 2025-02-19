@@ -1,138 +1,255 @@
-Return-Path: <linux-kernel+bounces-520674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED272A3AD11
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 01:29:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF683A3AD16
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 01:31:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2764816646E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 00:29:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF278189640A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 00:31:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 771B017BA5;
-	Wed, 19 Feb 2025 00:29:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE114819;
+	Wed, 19 Feb 2025 00:31:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qeNf4p7s"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Hc/bXMVp"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D2B6EAC7
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 00:29:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3796136A
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 00:31:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739924984; cv=none; b=oxnj/CaAHrRetqX29WwTCUCHFoMV60UEqqFPns72wbiz7a9UV8xlGXBzdMZt6bmL1fE/ErdkgXStW0q8Rsvox+kyRREd7jF6wZWj/s0GET7KscQEwi4qkQC+bKJDf17cDXnSM4Wi7tjUtY7Km73swKhu7MJbJ4ZugLw7ib1XPrM=
+	t=1739925095; cv=none; b=qlVo/FNJPXv9FtTTuLzI343aVyVFfd6tKVULvUv9+DgEPAwfm6h1674rRXyH6QIwJBFUCRiM9WUELFANjnrsxK2jUHZbXd3rnDOumGzagTf9ZrngJTlIsWLfBECUwFfiT1lNtPX9sdUzUw206kedCCie29JWXAERp2/5owUPoug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739924984; c=relaxed/simple;
-	bh=MSY6ULYMMJWtOasisY6DXM9ZtoSI4zZXGfWXzlWsE9o=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=dTuJeATRxaJ4sBFMttuRFrPnNWYy6bGOE7TQIneY3sR8nZmFoMkaVj5VcXJUL+znAFZe/aFAG1EDizxnGX8VpupP2HNschGpYDeKQyHDwfU+V09Ia2lV+OdCw4mANwdB1pJOgbM21IXMr1zVpUcisMdfnoRRGI0jYoXyVY+s3aI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qeNf4p7s; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2f81a0d0a18so12273110a91.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 16:29:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739924982; x=1740529782; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rAXzhHin3ZjxLT2liyUySrKbjCNx65P5j8lmrfvopPs=;
-        b=qeNf4p7sXNgfEIKmT3TkRQzp465buHW5ug7nYA3vSstWi6lUuBvC4FtmLc87kEddrH
-         Wyin+tW35q8VJR3BPazJUDTBZOCxOyJt2Ng2Pese1xYtoNia3gQjuoWPFqUm/yeHAXgz
-         nSKDfudnHKdCu5UJK1Wknh/OlUZ8zMjQXLBxnIu8V5qKXW/j+xnKAUELGaO6+OPgYhVa
-         P3cTI2RNmWhUs/jsSWxWrOKUOHOHl8DIf162bYTSCksdNIkNsaRlGL5G/kHWhSQMdybf
-         MpWcQ+z6woeZgNU8vBX8baR2FGQy5M6iu24pfY4FTtD3NejOeL93wZJKKZomYpGquGPv
-         I8Hg==
+	s=arc-20240116; t=1739925095; c=relaxed/simple;
+	bh=Na0GNiLT4L4zLHxrtoE/rvr4Nade4nh6Grlkymh5FJ4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tXArDNQciRCsxjCJyvvQutq6LeP3ZNmYVqASoUN3bczhzVLplLRxkW4LIOqO8quINWnYySLOQznZa78lGFPhUk+916i795JHLC84FVrw0MA5ESoWWzS9ywPwKN1ahym1AuUv9j32s6ZN51glwoBqkXWANqjD7UxW/twfcz+ccSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Hc/bXMVp; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739925090;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YAmwz/TJol3C4T2p6erXBkDQSw4VvEw2r6fPlWa4qmk=;
+	b=Hc/bXMVpULIJn3JRLj6s6TznCVkSTkccg4S/LKT5zPf6DSZmx02zg67MgfwW7Vj/8LuF67
+	SxwawP1WFTnsnkyWrLSd7MpIKWbIelpJFA3NjKl4UFC+KLDb+Tdn8dmWE03vzF6skz05qg
+	WWWSQJIxjOX3pxyIB1/wHfYDo8E9XO4=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-78-pw3xOkZGPT-VZbnPUkT30Q-1; Tue, 18 Feb 2025 19:31:29 -0500
+X-MC-Unique: pw3xOkZGPT-VZbnPUkT30Q-1
+X-Mimecast-MFC-AGG-ID: pw3xOkZGPT-VZbnPUkT30Q_1739925088
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2f816a85facso12004552a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 16:31:29 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739924982; x=1740529782;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rAXzhHin3ZjxLT2liyUySrKbjCNx65P5j8lmrfvopPs=;
-        b=qH3Y8kpI2Vd61J7j8Up8n0VPOfWK4l0L9MU4+Kib5z8lI/D1xgCNkYf+O0uX9cpEhg
-         UotmVDrTa5sJPvRcXrThGwVzuFg9v1v1xnqYtLKiW6CFwQp8kGt+0rxH9Wmb/+jDLJuX
-         7E0XeFOW/UlQdg8S2kkOlcT3woLU4Gntv821E1GvMwq5I/yI7CiFBJwg8LV/8FerqqcR
-         gIHBHdrOpa5SVtd8xhNW1R9i3+YjF89vZJ5k/EbbWDtKZg9/rdL0o7GpumfNMTbx4lm0
-         zfPQeEA+f3cRD51mfKHiQBlJbzFGgueGSK4htj9VSYESOadtX4ORuor1fQy6ZJw8CBnp
-         HkFA==
-X-Forwarded-Encrypted: i=1; AJvYcCV1b9A5fPKwg5pyJdCqv92N9Dgd7c+EzR2+xwotu4Amedl7+rNh45rhCCVYIKul+Vktg7BcLQ77FzWicqM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOY5zivlyY+B9ZKxZDlcBt/utRH6zcntvOG424DBguVS1s8mt5
-	h0KJnKQPWJpTM6GfVvNZvRCLQ8qy/fwiZ+LbM3c7jv8g5tIOAQGJi4HPpbBMrKbrwY04BH9RbXy
-	/QQ==
-X-Google-Smtp-Source: AGHT+IH3qQKoHeOB4uTnpvP3H/tcvAM/Tw+6sd4dITiILuCuL5QapHtrj1o4BTK7CB9iRs/yltwSJC9ONC4=
-X-Received: from pjbdj7.prod.google.com ([2002:a17:90a:d2c7:b0:2ef:973a:3caf])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4c45:b0:2ee:964e:67ce
- with SMTP id 98e67ed59e1d1-2fc40d131cbmr24311104a91.3.1739924982582; Tue, 18
- Feb 2025 16:29:42 -0800 (PST)
-Date: Tue, 18 Feb 2025 16:29:40 -0800
-In-Reply-To: <bcb80309-10ec-44e3-90db-259de6076183@linux.intel.com>
+        d=1e100.net; s=20230601; t=1739925088; x=1740529888;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YAmwz/TJol3C4T2p6erXBkDQSw4VvEw2r6fPlWa4qmk=;
+        b=q9KmFPqCzXI4mfRy1r66ppGSib2wSsQxHNuwFnSY8VUtu5u4ttMeoGrFcrPdF1RPzt
+         mx4KtiCrrV67JuORyhRg633px/5KS8CdHAhUv6ibQmIqErMD4QVBp5YKdiiP1XW5vm/V
+         plS0mQNZDZiX1dFZ/KXZbO2pihb8+HONFkKatUrVvoSBba76sqlITH06b8cSTxV4OT21
+         wW+B/HWEvm9KjJnuC4OXRVqfciwOA2S16V5SGTZMu6CtVJS8z2Q2mgni2cojnjbgugcV
+         3qF+JJ8KzRXedBHwJRhXtAr9jJZ2XMkkgvH7nrzs8EifIlr2vLgqIyNIVBOSuq/njbEk
+         Cu/w==
+X-Forwarded-Encrypted: i=1; AJvYcCW/3orIrW4xQOxak4ZHYCIKN0Z1FgvCvgzp7qCKlOW/331y4PH+ylExzmBUto5fRr8LloDCq0oyh7a8Py0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyo/D3vGAFVSaqzERJpWTaL4mtm2GzSpGmaWtg0HezHqByhSe18
+	d5VizVxl6nKjQV3OFu0f2tyu/wIH9VdH3ch3+m7qk34yqeaBubA56vuv8tG+ay1c/vN6jSdzjff
+	1X2NtJJzTwz0NSJscjxTaro8zGetkTeasVrlFoOOKqM+AtpESlbfjquD40kbC8ZpMi6ntYn2bJB
+	9AfqE7a40/G1tjcvPpAq6xU4szhZTx3wpdx6qd
+X-Gm-Gg: ASbGncuqPKLmE2gVPIgN8vJSF6t6N34qpvpC+JLgXOzRO0U/1Agxv12FF6SxpsMmaS9
+	JDmbUVryzYhdNMeGjudP5OFJa70SxHQ0ZthdAjd03f8n9IrXe1Nmsqq8223OGD6Y=
+X-Received: by 2002:a17:90b:3d86:b0:2fa:e9b:33b8 with SMTP id 98e67ed59e1d1-2fc40f22d67mr28344810a91.18.1739925088338;
+        Tue, 18 Feb 2025 16:31:28 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEN+NiCiTEw2BOo1eSpKQjrIpmFz6sGzkC9hWo0e38VXbikFKkp+S2HXR9/BCBMga/6/gY/Qx+e/Anbnv7VRik=
+X-Received: by 2002:a17:90b:3d86:b0:2fa:e9b:33b8 with SMTP id
+ 98e67ed59e1d1-2fc40f22d67mr28344773a91.18.1739925087954; Tue, 18 Feb 2025
+ 16:31:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <Z6r0Q/zzjrDaHfXi@yzhao56-desk.sh.intel.com> <926a035f-e375-4164-bcd8-736e65a1c0f7@linux.intel.com>
- <Z6sReszzi8jL97TP@intel.com> <Z6vvgGFngGjQHwps@google.com>
- <3033f048-6aa8-483a-b2dc-37e8dfb237d5@linux.intel.com> <Z6zu8liLTKAKmPwV@google.com>
- <f12e1c06-d38d-4ed0-b471-7f016057f604@linux.intel.com> <c47f0fa1-b400-4186-846e-84d0470d887e@linux.intel.com>
- <Z64M_r64CCWxSD5_@google.com> <bcb80309-10ec-44e3-90db-259de6076183@linux.intel.com>
-Message-ID: <Z7Ul9ORPitXpQAV5@google.com>
-Subject: Re: [PATCH v2 5/8] KVM: TDX: Handle TDG.VP.VMCALL<MapGPA>
-From: Sean Christopherson <seanjc@google.com>
-To: Binbin Wu <binbin.wu@linux.intel.com>
-Cc: Chao Gao <chao.gao@intel.com>, Yan Zhao <yan.y.zhao@intel.com>, pbonzini@redhat.com, 
-	kvm@vger.kernel.org, rick.p.edgecombe@intel.com, kai.huang@intel.com, 
-	adrian.hunter@intel.com, reinette.chatre@intel.com, xiaoyao.li@intel.com, 
-	tony.lindgren@intel.com, isaku.yamahata@intel.com, 
+MIME-Version: 1.0
+References: <20250218023908.1755-1-jasowang@redhat.com> <20250218034919-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20250218034919-mutt-send-email-mst@kernel.org>
+From: Jason Wang <jasowang@redhat.com>
+Date: Wed, 19 Feb 2025 08:31:16 +0800
+X-Gm-Features: AWEUYZmcRGjFhBQePkw-Og0LRELmpBWQ_jYA7oPxy5AXeKWPLYOKXF4KpjxgiY4
+Message-ID: <CACGkMEu5UtkDvVuNd5fxsbVSOtqzNE92R6SzjsREaLFTJ8=NUA@mail.gmail.com>
+Subject: Re: [PATCH net-next] virtio-net: tweak for better TX performance in
+ NAPI mode
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
+	pabeni@redhat.com, xuanzhuo@linux.alibaba.com, eperezma@redhat.com, 
+	virtualization@lists.linux.dev, netdev@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 17, 2025, Binbin Wu wrote:
-> On 2/13/2025 11:17 PM, Sean Christopherson wrote:
-> > On Thu, Feb 13, 2025, Binbin Wu wrote:
-> > > On 2/13/2025 11:23 AM, Binbin Wu wrote:
-> > > > On 2/13/2025 2:56 AM, Sean Christopherson wrote:
-> > > > > On Wed, Feb 12, 2025, Binbin Wu wrote:
-> > > > > > On 2/12/2025 8:46 AM, Sean Christopherson wrote:
-> > > > > > > I am completely comfortable saying that KVM doesn't care about STI/SS shadows
-> > > > > > > outside of the HALTED case, and so unless I'm missing something, I think it makes
-> > > > > > > sense for tdx_protected_apic_has_interrupt() to not check RVI outside of the HALTED
-> > > > > > > case, because it's impossible to know if the interrupt is actually unmasked, and
-> > > > > > > statistically it's far, far more likely that it _is_ masked.
-> > > > > > OK. Will update tdx_protected_apic_has_interrupt() in "TDX interrupts" part.
-> > > > > > And use kvm_vcpu_has_events() to replace the open code in this patch.
-> > > > > Something to keep an eye on: kvm_vcpu_has_events() returns true if pv_unhalted
-> > > > > is set, and pv_unhalted is only cleared on transitions KVM_MP_STATE_RUNNABLE.
-> > > > > If the guest initiates a spurious wakeup, pv_unhalted could be left set in
-> > > > > perpetuity.
-> > > > Oh, yes.
-> > > > KVM_HC_KICK_CPU is allowed in TDX guests.
-> > And a clever guest can send a REMRD IPI.
-> > 
-> > > > The change below looks good to me.
-> > > > 
-> > > > One minor issue is when guest initiates a spurious wakeup, pv_unhalted is
-> > > > left set, then later when the guest want to halt the vcpu, in
-> > > > __kvm_emulate_halt(), since pv_unhalted is still set and the state will not
-> > > > transit to KVM_MP_STATE_HALTED.
-> > > > But I guess it's guests' responsibility to not initiate spurious wakeup,
-> > > > guests need to bear the fact that HLT could fail due to a previous
-> > > > spurious wakeup?
-> > > Just found a patch set for fixing the issue.
-> > FWIW, Jim's series doesn't address spurious wakeups per se, it just ensures
-> > pv_unhalted is cleared when transitioning to RUNNING.  If the vCPU is already
-> > RUNNING, __apic_accept_irq() will set pv_unhalted and nothing will clear it
-> > until the next transition to RUNNING (which implies at least an attempted
-> > transition away from RUNNING).
-> > 
-> Indeed.
-> 
-> I am wondering why KVM doesn't clear pv_unhalted before the vcpu entering guest?
-> Is the additional memory access a concern or is there some other reason?
+On Tue, Feb 18, 2025 at 4:49=E2=80=AFPM Michael S. Tsirkin <mst@redhat.com>=
+ wrote:
+>
+> On Tue, Feb 18, 2025 at 10:39:08AM +0800, Jason Wang wrote:
+> > There are several issues existed in start_xmit():
+> >
+> > - Transmitted packets need to be freed before sending a packet, this
+> >   introduces delay and increases the average packets transmit
+> >   time. This also increase the time that spent in holding the TX lock.
+> > - Notification is enabled after free_old_xmit_skbs() which will
+> >   introduce unnecessary interrupts if TX notification happens on the
+> >   same CPU that is doing the transmission now (actually, virtio-net
+> >   driver are optimized for this case).
+> >
+> > So this patch tries to avoid those issues by not cleaning transmitted
+> > packets in start_xmit() when TX NAPI is enabled and disable
+> > notifications even more aggressively. Notification will be since the
+> > beginning of the start_xmit(). But we can't enable delayed
+> > notification after TX is stopped as we will lose the
+> > notifications. Instead, the delayed notification needs is enabled
+> > after the virtqueue is kicked for best performance.
+> >
+> > Performance numbers:
+> >
+> > 1) single queue 2 vcpus guest with pktgen_sample03_burst_single_flow.sh
+> >    (burst 256) + testpmd (rxonly) on the host:
+> >
+> > - When pinning TX IRQ to pktgen VCPU: split virtqueue PPS were
+> >   increased 55% from 6.89 Mpps to 10.7 Mpps and 32% TX interrupts were
+> >   eliminated. Packed virtqueue PPS were increased 50% from 7.09 Mpps to
+> >   10.7 Mpps, 99% TX interrupts were eliminated.
+> >
+> > - When pinning TX IRQ to VCPU other than pktgen: split virtqueue PPS
+> >   were increased 96% from 5.29 Mpps to 10.4 Mpps and 45% TX interrupts
+> >   were eliminated; Packed virtqueue PPS were increased 78% from 6.12
+> >   Mpps to 10.9 Mpps and 99% TX interrupts were eliminated.
+> >
+> > 2) single queue 1 vcpu guest + vhost-net/TAP on the host: single
+> >    session netperf from guest to host shows 82% improvement from
+> >    31Gb/s to 58Gb/s, %stddev were reduced from 34.5% to 1.9% and 88%
+> >    of TX interrupts were eliminated.
+> >
+> > Signed-off-by: Jason Wang <jasowang@redhat.com>
+>
+> can you pls also test perf with tx irq disabled mode, to be sure?
 
-Not clearing pv_unhalted when entering the guest is necessary to avoid races.
-Stating the obvious, the guest must set up all of its lock tracking before executing
-HLT, which means that the soon-to-be-blocking vCPU is eligible for wakeup *before*
-it executes HLT.  If an asynchronous exit happens on the vCPU at just the right
-time, KVM could clear pv_unhalted before the vCPU executes HLT.
+Yes, performance doesn't change in orphan mode (both PPS and throughput).
+
+This matches the patch that doesn't not change any logic for orphan mode.
+
+Thanks
+
+>
+> > ---
+> >  drivers/net/virtio_net.c | 45 ++++++++++++++++++++++++++++------------
+> >  1 file changed, 32 insertions(+), 13 deletions(-)
+> >
+> > diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+> > index 7646ddd9bef7..ac26a6201c44 100644
+> > --- a/drivers/net/virtio_net.c
+> > +++ b/drivers/net/virtio_net.c
+> > @@ -1088,11 +1088,10 @@ static bool is_xdp_raw_buffer_queue(struct virt=
+net_info *vi, int q)
+> >               return false;
+> >  }
+> >
+> > -static void check_sq_full_and_disable(struct virtnet_info *vi,
+> > -                                   struct net_device *dev,
+> > -                                   struct send_queue *sq)
+> > +static bool tx_may_stop(struct virtnet_info *vi,
+> > +                     struct net_device *dev,
+> > +                     struct send_queue *sq)
+> >  {
+> > -     bool use_napi =3D sq->napi.weight;
+> >       int qnum;
+> >
+> >       qnum =3D sq - vi->sq;
+> > @@ -1114,6 +1113,25 @@ static void check_sq_full_and_disable(struct vir=
+tnet_info *vi,
+> >               u64_stats_update_begin(&sq->stats.syncp);
+> >               u64_stats_inc(&sq->stats.stop);
+> >               u64_stats_update_end(&sq->stats.syncp);
+> > +
+> > +             return true;
+> > +     }
+> > +
+> > +     return false;
+> > +}
+> > +
+> > +static void check_sq_full_and_disable(struct virtnet_info *vi,
+> > +                                   struct net_device *dev,
+> > +                                   struct send_queue *sq)
+> > +{
+> > +     bool use_napi =3D sq->napi.weight;
+> > +     int qnum;
+> > +
+> > +     qnum =3D sq - vi->sq;
+> > +
+> > +     if (tx_may_stop(vi, dev, sq)) {
+> > +             struct netdev_queue *txq =3D netdev_get_tx_queue(dev, qnu=
+m);
+> > +
+> >               if (use_napi) {
+> >                       if (unlikely(!virtqueue_enable_cb_delayed(sq->vq)=
+))
+> >                               virtqueue_napi_schedule(&sq->napi, sq->vq=
+);
+> > @@ -3253,15 +3271,10 @@ static netdev_tx_t start_xmit(struct sk_buff *s=
+kb, struct net_device *dev)
+> >       bool use_napi =3D sq->napi.weight;
+> >       bool kick;
+> >
+> > -     /* Free up any pending old buffers before queueing new ones. */
+> > -     do {
+> > -             if (use_napi)
+> > -                     virtqueue_disable_cb(sq->vq);
+> > -
+> > +     if (!use_napi)
+> >               free_old_xmit(sq, txq, false);
+> > -
+> > -     } while (use_napi && !xmit_more &&
+> > -            unlikely(!virtqueue_enable_cb_delayed(sq->vq)));
+> > +     else
+> > +             virtqueue_disable_cb(sq->vq);
+> >
+> >       /* timestamp packet in software */
+> >       skb_tx_timestamp(skb);
+> > @@ -3287,7 +3300,10 @@ static netdev_tx_t start_xmit(struct sk_buff *sk=
+b, struct net_device *dev)
+> >               nf_reset_ct(skb);
+> >       }
+> >
+> > -     check_sq_full_and_disable(vi, dev, sq);
+> > +     if (use_napi)
+> > +             tx_may_stop(vi, dev, sq);
+> > +     else
+> > +             check_sq_full_and_disable(vi, dev,sq);
+> >
+> >       kick =3D use_napi ? __netdev_tx_sent_queue(txq, skb->len, xmit_mo=
+re) :
+> >                         !xmit_more || netif_xmit_stopped(txq);
+> > @@ -3299,6 +3315,9 @@ static netdev_tx_t start_xmit(struct sk_buff *skb=
+, struct net_device *dev)
+> >               }
+> >       }
+> >
+> > +     if (use_napi && kick && unlikely(!virtqueue_enable_cb_delayed(sq-=
+>vq)))
+> > +             virtqueue_napi_schedule(&sq->napi, sq->vq);
+> > +
+> >       return NETDEV_TX_OK;
+> >  }
+> >
+> > --
+> > 2.34.1
+>
+
 
