@@ -1,179 +1,106 @@
-Return-Path: <linux-kernel+bounces-522631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87B08A3CCA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 23:51:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A878DA3CCAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 23:52:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6710217861E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:51:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1B1018973C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:52:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF8A225B67A;
-	Wed, 19 Feb 2025 22:51:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44E5225EF84;
+	Wed, 19 Feb 2025 22:51:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="m+dF/oRw"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C759023C8CC;
-	Wed, 19 Feb 2025 22:51:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="ckcgofDE"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3644E23C8CC;
+	Wed, 19 Feb 2025 22:51:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740005485; cv=none; b=CdfBwr5Op1rtsVpWLVqcolE+K94HiqKj4YhbUml/lTS/gaUVgzq7jglDeNJXQeUvOM+hiumZnSz5X0UkrK89PE/+JJDtrdlwSa7l8RoAE1rl+5lkQ/fS57UNbJHqHKSReMBpPc055u6vnWDtGdck13qFKudmrzIylWa7HasRULk=
+	t=1740005492; cv=none; b=MCtWpS0bzr3bBFFQ8XriaJ82ADX3cC140agz5UJT6AejoP3YtsXW+4t/b/F3IjsHYyntckN/NcDlcWY61qz1DLiQoqrjZzFoYygoILMTQ2QvOFpjkSytLu1wMPAjEde0I0aBwPwhH4TQnOqHGeDF8G6KyjPAqraxxWh+ChQNtpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740005485; c=relaxed/simple;
-	bh=YaqNAzVcaPa2EnpUmSOLCSRYurwsI9uT/T9+XNUlP+8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jsFSFOQVCKC8wqbOwhnYn9LgN0hgMFRRDbT2DEAsytUmFCkVluI9+AJjpzRAaJT8dDzTdiDk7E8faqt0HwEw0EUNRwkAQ5XRqY8BmCPeBVRSY1JH9eOQK5CQc8jEo3oJINYsxp+HvZO1Fk36ai8516zMUCr4d9yA0BM/hnGld0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=m+dF/oRw; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=CBLCEogiLTx2PTS7BtILZh9Og4OzIj+0Y+joFEKIYq4=; b=m+dF/oRwCmIwDs9a3/gn0ZWjaG
-	by0scE3rRECPq7eEcr+YBVFEDrA6UEl/oC/bfhGt3CleKhMf1SN/UlUKD2Fuc2ghd2CnLGJfe1Z5E
-	ydDkHobvR4LfVUO/hIewM6/8tDwVk1XR6Rk2WmJ55DqxF7Q6faylgVknyfq8JgNnW8CqO6G4Ffo4Q
-	K1MeesZWZHWGPV7eCQalek8p3TZ63+pWYhU+sN6t0TP9Q70VI44BXsMWyDGGVdni6IoJt4AIJ/hDe
-	6Qj5pp+AQ0mY0aqckgZdFIUlP+7p89Bbpc2QuUz4l+l/SJYwjxzL5OOFFLAYyTo3psioRsukZNbBh
-	o1dI0G5g==;
-Received: from i53875bc0.versanet.de ([83.135.91.192] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tksuR-00067C-PW; Wed, 19 Feb 2025 23:51:15 +0100
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: Vinod Koul <vkoul@kernel.org>
-Cc: kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, quentin.schulz@cherry.de,
- sebastian.reichel@collabora.com, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- dse@thaumatec.com, Heiko Stuebner <heiko.stuebner@cherry.de>
-Subject: Re: [PATCH v6 2/2] phy: rockchip: Add Samsung MIPI D-/C-PHY driver
-Date: Wed, 19 Feb 2025 23:51:14 +0100
-Message-ID: <2030933.8hb0ThOEGa@diego>
-In-Reply-To: <Z68zdiIl75k2Vv9i@vaman>
-References:
- <20250213210554.1645755-1-heiko@sntech.de>
- <20250213210554.1645755-3-heiko@sntech.de> <Z68zdiIl75k2Vv9i@vaman>
+	s=arc-20240116; t=1740005492; c=relaxed/simple;
+	bh=pZjpSlTU9Gu1+mrJmipjqNGPZ19IIS+zBmhe//BAogQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=LGQZt/No/3UZLtpAiABcszOyRSp98T5lIVx1T5KszJkamNVmOyX7voUwnzZGtj+siR7g+Emlj0oWRn2hWg+h+BUy+OpJQzIkNOiumMUOxP7TBRG9yRniHs8wP+pESIliJHu6utHt70Z2lpAwvMjdS02QsNCuTZEnEXLJW7wK3lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=ckcgofDE; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from eahariha-devbox.internal.cloudapp.net (unknown [40.91.112.99])
+	by linux.microsoft.com (Postfix) with ESMTPSA id A6D112043DEB;
+	Wed, 19 Feb 2025 14:51:30 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A6D112043DEB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1740005490;
+	bh=kOHh9LYrSJLeelyupZnwHRYiV4YeXv4E28YqBvlGdQU=;
+	h=From:Subject:Date:To:Cc:From;
+	b=ckcgofDESTqrDjkAKYJcGMCKIwRyKk0HKgG5MUVCq+D6CYywX7jzELu1NqWGeTLAj
+	 IJe8BcCAT/TeJF+kEr+38Sye4i2lh44uIoYFdvfVfAb9P/0HibbhiHf1CbkmdLCnrV
+	 sjUfr2b18T1uNMJ2fdb2Zv0wJJoKI87uaxFKdRjs=
+From: Easwar Hariharan <eahariha@linux.microsoft.com>
+Subject: [PATCH 0/4] Bluetooth: Converge on using secs_to_jiffies()
+Date: Wed, 19 Feb 2025 22:51:28 +0000
+Message-Id: <20250219-bluetooth-converge-secs-to-jiffies-v1-0-6ab896f5fdd4@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHBgtmcC/x2NQQqDQAwAvyI5N7CGFrVfkR7aNVsjZSObVQri3
+ xt6HBhmDjAuwgb35oDCu5hodmgvDcT5md+MMjkDBboFagd8fTauqnXGqHnn4oZxNKyKi6TkLST
+ qr10cwpS4Aw+thZN8/5PxcZ4/GwAfiHQAAAA=
+X-Change-ID: 20250219-bluetooth-converge-secs-to-jiffies-22847c90dfe7
+To: Marcel Holtmann <marcel@holtmann.org>, 
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
+ Johan Hedberg <johan.hedberg@gmail.com>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Simon Horman <horms@kernel.org>
+Cc: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ netdev@vger.kernel.org, Easwar Hariharan <eahariha@linux.microsoft.com>
+X-Mailer: b4 0.14.2
 
-Hi Vinod,
+This series converts users of msecs_to_jiffies() that either use the
+multiply pattern of either of:
+- msecs_to_jiffies(N*1000) or
+- msecs_to_jiffies(N*MSEC_PER_SEC)
 
-thanks for the review.
-I've dropped all the parts that would've just gotten a "ok, changed" ;-)
+where N is a constant or an expression, to avoid the multiplication.
 
-Am Freitag, 14. Februar 2025, 13:13:42 MEZ schrieb Vinod Koul:
-> On 13-02-25, 22:05, Heiko Stuebner wrote:
+The conversion is made with Coccinelle with the secs_to_jiffies() script
+in scripts/coccinelle/misc. Attention is paid to what the best change
+can be rather than restricting to what the tool provides.
 
-> > +	{ 200,  7,   1,  0, 33,  9,  0, 26,  5,  0, 11},
-> > +	{ 190,  7,   1,  0, 32,  9,  0, 25,  5,  0, 11},
-> > +	{ 180,  6,   1,  0, 32,  8,  0, 25,  5,  0, 10},
-> > +	{ 170,  6,   0,  0, 32,  8,  0, 25,  5,  0, 10},
-> > +	{ 160,  5,   0,  0, 31,  8,  0, 24,  4,  0,  9},
-> > +	{ 150,  5,   0,  0, 31,  8,  0, 24,  5,  0,  9},
-> > +	{ 140,  5,   0,  0, 31,  8,  0, 24,  5,  0,  8},
-> > +	{ 130,  4,   0,  0, 30,  6,  0, 23,  3,  0,  8},
-> > +	{ 120,  4,   0,  0, 30,  6,  0, 23,  3,  0,  7},
-> > +	{ 110,  3,   0,  0, 30,  6,  0, 23,  3,  0,  7},
-> > +	{ 100,  3,   0,  0, 29,  5,  0, 22,  2,  0,  6},
-> > +	{  90,  3,   0,  0, 29,  5,  0, 22,  2,  0,  6},
-> > +	{  80,  2,   0,  0, 28,  5,  0, 22,  2,  0,  5},
-> > +};
-> 
-> any word on where this table came from, maybe worth documenting that
-> part
+While here, convert a couple instances where the timeouts are
+denominated in seconds manually.
 
-sadly not.
+This series is based on next-20250219
 
-The table itself came from the vendor-kernel, and I would assume there
-it came from some super-secret additional documentation Rockchip
-got with the IP documentation.
+Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
+---
+Easwar Hariharan (4):
+      Bluetooth: hci_vhci: convert timeouts to secs_to_jiffies()
+      Bluetooth: MGMT: convert timeouts to secs_to_jiffies()
+      Bluetooth: SMP: convert timeouts to secs_to_jiffies()
+      Bluetooth: L2CAP: convert timeouts to secs_to_jiffies()
 
-It is sadly not part of the RK3588 manual.
+ drivers/bluetooth/hci_vhci.c  | 4 ++--
+ include/net/bluetooth/l2cap.h | 4 ++--
+ net/bluetooth/hci_sync.c      | 2 +-
+ net/bluetooth/l2cap_core.c    | 4 ++--
+ net/bluetooth/mgmt.c          | 6 +++---
+ net/bluetooth/smp.c           | 2 +-
+ 6 files changed, 11 insertions(+), 11 deletions(-)
+---
+base-commit: 8936cec5cb6e27649b86fabf383d7ce4113bba49
+change-id: 20250219-bluetooth-converge-secs-to-jiffies-22847c90dfe7
 
-
-> > +
-> > +static void samsung_mipi_dcphy_bias_block_enable(struct samsung_mipi_dcphy *samsung)
-> > +{
-> > +	u32 bias_con2 = 0x3223;
-> 
-> magic value?
-
-Converted over to some more meaningful constants.
-Did the same to bias_con0+1 below that one too.
-
-
-> > +static void samsung_mipi_dphy_lane_disable(struct samsung_mipi_dcphy *samsung)
-> > +{
-> > +	regmap_update_bits(samsung->regmap, DPHY_MC_GNR_CON0, PHY_ENABLE, 0);
-> > +	regmap_update_bits(samsung->regmap, COMBO_MD0_GNR_CON0, PHY_ENABLE, 0);
-> > +	regmap_update_bits(samsung->regmap, COMBO_MD1_GNR_CON0, PHY_ENABLE, 0);
-> > +	regmap_update_bits(samsung->regmap, COMBO_MD2_GNR_CON0, PHY_ENABLE, 0);
-> > +	regmap_update_bits(samsung->regmap, DPHY_MD3_GNR_CON0, PHY_ENABLE, 0);
-> 
-> Is writing to a register (mmio) faster than a switch case for checking
-> lane count and disabling specific lanes?
-
-It might make sense to mimic the lane_enable way of doing things, even if
-just for things looking the same in both functions.
-
-I guess disabling lanes does not really care about minimal speed differences
-a switch/case would cause :-)
-
-> 
-> > +static void samsung_mipi_dcphy_pll_configure(struct samsung_mipi_dcphy *samsung)
-> > +{
-> > +	regmap_update_bits(samsung->regmap, PLL_CON0, S_MASK | P_MASK,
-> > +			   S(samsung->pll.scaler) | P(samsung->pll.prediv));
-> > +
-> > +	if (samsung->pll.dsm < 0) {
-> > +		u16 dsm_tmp;
-> > +
-> > +		/* Using opposite number subtraction to find complement */
-> > +		dsm_tmp = abs(samsung->pll.dsm);
-> > +		dsm_tmp = dsm_tmp - 1;
-> > +		dsm_tmp ^= 0xffff;
-> > +		regmap_write(samsung->regmap, PLL_CON1, dsm_tmp);
-> > +	} else {
-> > +		regmap_write(samsung->regmap, PLL_CON1, samsung->pll.dsm);
-> > +	}
-> > +
-> > +	regmap_update_bits(samsung->regmap, PLL_CON2,
-> > +			   M_MASK, M(samsung->pll.fbdiv));
-> > +
-> > +	if (samsung->pll.ssc_en) {
-> > +		regmap_write(samsung->regmap, PLL_CON3,
-> > +			     MRR(samsung->pll.mrr) | MFR(samsung->pll.mfr));
-> > +		regmap_update_bits(samsung->regmap, PLL_CON4, SSCG_EN, SSCG_EN);
-> > +	}
-> > +
-> > +	regmap_write(samsung->regmap, PLL_CON5, RESET_N_SEL | PLL_ENABLE_SEL);
-> > +	regmap_write(samsung->regmap, PLL_CON7, PLL_LOCK_CNT(0xf000));
-> > +	regmap_write(samsung->regmap, PLL_CON8, PLL_STB_CNT(0xf000));
-> 
-> I guess you are writing to upper nibble, maybe define that, if we can
-
-Nope ... the value is defined as bits [15:0] and both being pll lock and
-stabilization timing control registers. Sadly yet again, their usage detail
-is not documented, the manual even does not supply a unit for the 
-register value :-(
-
-
-Heiko
-
+Best regards,
+-- 
+Easwar Hariharan <eahariha@linux.microsoft.com>
 
 
