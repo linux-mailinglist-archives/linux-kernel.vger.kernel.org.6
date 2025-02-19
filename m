@@ -1,197 +1,138 @@
-Return-Path: <linux-kernel+bounces-521025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C481FA3B2D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:54:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA778A3B2D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:55:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 917F43AD439
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:53:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 503247A6114
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:54:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3C681C3F04;
-	Wed, 19 Feb 2025 07:54:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C29E91C4A0A;
+	Wed, 19 Feb 2025 07:55:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RwfHN8sn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YLyRVCgm"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B2E81BD9CD
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 07:54:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC3BB1A8F7F;
+	Wed, 19 Feb 2025 07:55:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739951644; cv=none; b=niC8nMxNYAPi0K9qFypCGsSmbxitiMjUZvL1+Yn86ugMdFbBNHgyMMVrsh8mPzJ9EsghB7pCCxye6ub35R63YBlMLmTFu5VFqThhmIrHH6wW/ucPfqjzPQXid1mKECuXL4/OS+r9NtQFhdVI/kVbCjV7gYTcSIkAXOUEqafx0Bs=
+	t=1739951729; cv=none; b=tgOBY1si+Ia59zWZjbVyeLhtgXt4qQEZXspTV3hCe4EcFx/pc8CADIeMmjSkMXqfe2vF3AOqiVM5hXj+DhHVe1sMe6YteNGiEKnFwf7wOTQs0NcZXpY3E8HRBrmIO3t74811mftcAg7FzXJutLfUblN2MMJRHWjpRT/gyCG+wnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739951644; c=relaxed/simple;
-	bh=j8Yp7X5WW0mWWmcOczTYAl4+eQ/L6jnws2W4QYdTmIM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tAQ1Km1yX8rDp7dzk2eM2yLgI0Lq+PvOWwDHz58D8+RYOVqnBGl6MUx0QyGJZO+ZGBsooBNGf88QnSPHyz7ymhAmOswv+g96R3cgxopATLGivuVEaR+qiXvOD5C+raG0KK6ln49e173Sk1FcvBeVZLccNhIdS9xO2BoGm26qj2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RwfHN8sn; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739951641;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2ehLyl7Fs/LrWVTjQBcmkAJn6qcYboCHZr47QQOhS8U=;
-	b=RwfHN8snn+5RfggJj3Y/TnAk/OgGdBW5j5fGTU83IaOYceZFNPmR1iPOWQnZpuFOrERm0t
-	RML4QSmidNw6J2w8NmDe61qguOwuHOXszIF/WbIBMkFWTR1MDBSP6LLYEHqNdtkCqdmsn1
-	DbVzlbKPxNf2CnHM6kMJwU+e3wSvYoU=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-511-ZFcCn7E3OlWf0teHfGmaeA-1; Wed,
- 19 Feb 2025 02:53:56 -0500
-X-MC-Unique: ZFcCn7E3OlWf0teHfGmaeA-1
-X-Mimecast-MFC-AGG-ID: ZFcCn7E3OlWf0teHfGmaeA_1739951634
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E4D9B18EB2C3;
-	Wed, 19 Feb 2025 07:53:53 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.127])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 28CC51955BCB;
-	Wed, 19 Feb 2025 07:53:51 +0000 (UTC)
-Date: Wed, 19 Feb 2025 15:53:46 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Kairui Song <kasong@tencent.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-	Chris Li <chrisl@kernel.org>, Barry Song <v-songbaohua@oppo.com>,
-	Hugh Dickins <hughd@google.com>,
-	Yosry Ahmed <yosryahmed@google.com>,
-	"Huang, Ying" <ying.huang@linux.alibaba.com>,
-	Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>,
-	Kalesh Singh <kaleshsingh@google.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/7] mm, swap: use percpu cluster as allocation fast path
-Message-ID: <Z7WOCvQq3xi9wxnt@MiWiFi-R3L-srv>
-References: <20250214175709.76029-1-ryncsn@gmail.com>
- <20250214175709.76029-6-ryncsn@gmail.com>
+	s=arc-20240116; t=1739951729; c=relaxed/simple;
+	bh=0T91u26FuvHz9I5q8l105S0ZpkjMvtoe9M6NGv137uE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GjAZOfamGMexVQQSpUrwehwjKR1hFyrwGTm1VeIPMLknva9vwYGoaBET5LPiUkZURL/wASusSyQANM/NCV22hdgiJ4Fv6/0uJcPqRSwsAyOPOBnNevNQ7ziBtYXHmnMjSPWfcdsEg103SITbU8hz0gTBXN8DvVC0g2TfQHAI/oQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YLyRVCgm; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2fa5af6d743so9716937a91.3;
+        Tue, 18 Feb 2025 23:55:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739951727; x=1740556527; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JWtcjl0x86FhVNmHfSGOr/xtEH1Fj+zWBHjBvIxj7Hg=;
+        b=YLyRVCgmMAlUrX8Tnel7t19bWZa24c+IH0Clhrbh7hucSSzT9RhNpchFEV/jTBIMoI
+         gCrwbvtwmjN3LO+sAxcZlBkA1/caC8hwPj6o0B6OUs746FbbQFACesmjPW8oFw/2XO3R
+         CYeKjXp8b66inTEk4BdtWbMVQZA5PT5X6z1HYvVUSv3tdkqm/EGffdADh43yMYblFnTY
+         AgNdQsKvGrL8anD+JjaPXd9aqMrIlqgqm3t32g8O4iKSznPhQE44CWL/k9qKOTwWSoZL
+         VZcU0/MHWDqibQKj81Q0HQnvaCsPzgGC/xuo9aViJb+OazT7JsCBhd5+KUq4n0regqI2
+         00aQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739951727; x=1740556527;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JWtcjl0x86FhVNmHfSGOr/xtEH1Fj+zWBHjBvIxj7Hg=;
+        b=JV4WFKYihrKRM6VVdfM7+5fSb3WA+I7XL9fIav2GvHOaWywiZLexqUaFZTJTtgU6cN
+         dUdMt4EX5RVX64L22gdOgk+TsFlHje+Fr/K81vk+xEWqINYfDdSBiWwlyJFVRHRSf8ni
+         zZMjlCXwGk+6t54+vR9SwCpYepWMDmfXgSyxNw4Lne8gRFjZ5Guk2tCR38y0KKYguXK6
+         mf8k5yq+Z4iloYjB0mJkOPYn+Q7YPz95CshniN2tHR/zxcfJ12812uj3slaY/Z02nfg7
+         2l9OG9+rM1psBEIuoJkYQXZ8lD+9kvfhgZyWcReHTy5N1EfAK32sHJeFw1ke9lB8tvdv
+         XBIA==
+X-Forwarded-Encrypted: i=1; AJvYcCUtuLe1MTr3B2Yhf+EFTbihbGz6KKIKCStG2ImmrxkjSM9VRo1tvi+UrhQcW0HNtMClsJAdoAdlsa3r5Hc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkqfgoGmEgGfNGuxjMueheP8FMJq37NF62XZeAfm97dsI0hOis
+	L919UJ7+ZKkH+I7zMvIGQaSkVq5DoDe8c0qSE5JoXe3OvCMmc8bkdFaDJr6D7h7MiQ==
+X-Gm-Gg: ASbGncszAylYW391s6xuR1mq6PbLHyw49Tm/qVykUJ0xDhUIkdxwlgOSINyMXDUZDBW
+	mG+74l80TOJp8oE3CWqviK23QY1qaaTA2hoVRZe+jAPNXBTYdfYlFsdmAMebKi9KwCETVmJxjXB
+	wFWlwmllhiNDCkM0yaXX0wJy+7AlCP6C0UmXXF3Zz0/IaAKia2vDZDy4pUuIJFcwQQBWSdwjEG4
+	J+b7IDmDjW35rMR0b4viyEFL5+nnhj9+s1eSSTSzNI2fi0WDlDHVtmWnKDeSvHzEgta3chU0dWN
+	xrh+uOp7E2/Kb+Yjp0QZa+wpK0AyB+eWSTk=
+X-Google-Smtp-Source: AGHT+IEHDd0Hegcc3TcxsJEEA+nOXyQiiRkURBPST7ApOlpPE5UvOh63CmM6PJnhrps9MHJA7+WS8w==
+X-Received: by 2002:a05:6a00:a15:b0:724:bf30:147d with SMTP id d2e1a72fcca58-732617c1105mr24832053b3a.11.1739951726662;
+        Tue, 18 Feb 2025 23:55:26 -0800 (PST)
+Received: from fedora.dns.podman ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73287ed12e8sm4059355b3a.180.2025.02.18.23.55.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2025 23:55:26 -0800 (PST)
+From: Hangbin Liu <liuhangbin@gmail.com>
+To: netdev@vger.kernel.org
+Cc: Jay Vosburgh <jv@jvosburgh.net>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Nikolay Aleksandrov <razor@blackwall.org>,
+	Simon Horman <horms@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Hangbin Liu <liuhangbin@gmail.com>
+Subject: [PATCH net-next] bonding: report duplicate MAC address in all situations
+Date: Wed, 19 Feb 2025 07:55:15 +0000
+Message-ID: <20250219075515.1505887-1-liuhangbin@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250214175709.76029-6-ryncsn@gmail.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 02/15/25 at 01:57am, Kairui Song wrote:
-> From: Kairui Song <kasong@tencent.com>
-> 
-> Current allocation workflow first traverses the plist with a global lock
-> held, after choosing a device, it uses the percpu cluster on that swap
-> device. This commit moves the percpu cluster variable out of being tied
-> to individual swap devices, making it a global percpu variable, and will
-> be used directly for allocation as a fast path.
-> 
-> The global percpu cluster variable will never point to a HDD device, and
-> allocation on HDD devices is still globally serialized.
-> 
-> This improves the allocator performance and prepares for removal of the
-> slot cache in later commits. There shouldn't be much observable behavior
-> change, except one thing: this changes how swap device allocation
-> rotation works.
-> 
-> Currently, each allocation will rotate the plist, and because of the
-> existence of slot cache (64 entries), swap devices of the same priority
-> are rotated for every 64 entries consumed. And, high order allocations
-> are different, they will bypass the slot cache, and so swap device is
-> rotated for every 16K, 32K, or up to 2M allocation.
-> 
-> The rotation rule was never clearly defined or documented, it was changed
-> several times without mentioning too.
-> 
-> After this commit, once slot cache is gone in later commits, swap device
-> rotation will happen for every consumed cluster. Ideally non-HDD devices
-> will be rotated if 2M space has been consumed for each order, this seems
+Normally, a bond uses the MAC address of the first added slave as the
+bond’s MAC address. And the bond will set active slave’s MAC address to
+bond’s address if fail_over_mac is set to none (0) or follow (2).
 
-This breaks the rule where the high priority swap device is always taken
-to allocate as long as there's free space in the device. After this patch,
-it will try the percpu cluster firstly which is lower priority even though
-the higher priority device has free space. However, this only happens when
-the higher priority device is exhausted, not a generic case. If this is
-expected, it may need be mentioned in log or doc somewhere at least.
+When the first slave is removed, the bond will still use the removed
+slave’s MAC address, which can lead to a duplicate MAC address and
+potentially cause issues with the switch. To avoid confusion, let's warn
+the user in all situations, including when fail_over_mac is set to 2 or
+in active-backup mode.
 
-> reasonable. HDD devices is rotated for every allocation regardless of the
-> allocation order, which should be OK and trivial.
-> 
-> Signed-off-by: Kairui Song <kasong@tencent.com>
-> ---
->  include/linux/swap.h |  11 ++--
->  mm/swapfile.c        | 120 +++++++++++++++++++++++++++----------------
->  2 files changed, 79 insertions(+), 52 deletions(-)
-......
-> diff --git a/mm/swapfile.c b/mm/swapfile.c
-> index ae3bd0a862fc..791cd7ed5bdf 100644
-> --- a/mm/swapfile.c
-> +++ b/mm/swapfile.c
-> @@ -116,6 +116,18 @@ static atomic_t proc_poll_event = ATOMIC_INIT(0);
->  
-......snip....
->  int get_swap_pages(int n_goal, swp_entry_t swp_entries[], int entry_order)
->  {
->  	int order = swap_entry_order(entry_order);
-> @@ -1211,19 +1251,28 @@ int get_swap_pages(int n_goal, swp_entry_t swp_entries[], int entry_order)
->  	int n_ret = 0;
->  	int node;
->  
-> +	/* Fast path using percpu cluster */
-> +	local_lock(&percpu_swap_cluster.lock);
-> +	n_ret = swap_alloc_fast(swp_entries,
-> +				SWAP_HAS_CACHE,
-> +				order, n_goal);
-> +	if (n_ret == n_goal)
-> +		goto out;
-> +
-> +	n_goal = min_t(int, n_goal - n_ret, SWAP_BATCH);
+Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+---
+ drivers/net/bonding/bond_main.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-Here, the behaviour is changed too. In old allocation, partial
-allocation will jump out to return. In this patch, you try the percpu
-cluster firstly, then call scan_swap_map_slots() to try best and will
-jump out even though partial allocation succeed. But the allocation from
-scan_swap_map_slots() could happen on different si device, this looks
-bizarre. Do you think we need reconsider the design?
-
-> +	/* Rotate the device and switch to a new cluster */
->  	spin_lock(&swap_avail_lock);
->  start_over:
->  	node = numa_node_id();
->  	plist_for_each_entry_safe(si, next, &swap_avail_heads[node], avail_lists[node]) {
-> -		/* requeue si to after same-priority siblings */
->  		plist_requeue(&si->avail_lists[node], &swap_avail_heads[node]);
->  		spin_unlock(&swap_avail_lock);
->  		if (get_swap_device_info(si)) {
-> -			n_ret = scan_swap_map_slots(si, SWAP_HAS_CACHE,
-> -					n_goal, swp_entries, order);
-> +			n_ret += scan_swap_map_slots(si, SWAP_HAS_CACHE, n_goal,
-> +					swp_entries + n_ret, order);
->  			put_swap_device(si);
->  			if (n_ret || size > 1)
-> -				goto check_out;
-> +				goto out;
->  		}
->  
->  		spin_lock(&swap_avail_lock);
-> @@ -1241,12 +1290,10 @@ int get_swap_pages(int n_goal, swp_entry_t swp_entries[], int entry_order)
->  		if (plist_node_empty(&next->avail_lists[node]))
->  			goto start_over;
->  	}
-> -
->  	spin_unlock(&swap_avail_lock);
-> -
-> -check_out:
-> +out:
-> +	local_unlock(&percpu_swap_cluster.lock);
->  	atomic_long_sub(n_ret * size, &nr_swap_pages);
-> -
->  	return n_ret;
->  }
->  
-......snip...
+diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
+index e45bba240cbc..ca66107776cc 100644
+--- a/drivers/net/bonding/bond_main.c
++++ b/drivers/net/bonding/bond_main.c
+@@ -2551,13 +2551,11 @@ static int __bond_release_one(struct net_device *bond_dev,
+ 
+ 	RCU_INIT_POINTER(bond->current_arp_slave, NULL);
+ 
+-	if (!all && (!bond->params.fail_over_mac ||
+-		     BOND_MODE(bond) != BOND_MODE_ACTIVEBACKUP)) {
+-		if (ether_addr_equal_64bits(bond_dev->dev_addr, slave->perm_hwaddr) &&
+-		    bond_has_slaves(bond))
+-			slave_warn(bond_dev, slave_dev, "the permanent HWaddr of slave - %pM - is still in use by bond - set the HWaddr of slave to a different address to avoid conflicts\n",
+-				   slave->perm_hwaddr);
+-	}
++	if (!all &&
++	    ether_addr_equal_64bits(bond_dev->dev_addr, slave->perm_hwaddr) &&
++	    bond_has_slaves(bond))
++		slave_warn(bond_dev, slave_dev, "the permanent HWaddr of slave - %pM - is still in use by bond - set the HWaddr of slave to a different address to avoid conflicts\n",
++			   slave->perm_hwaddr);
+ 
+ 	if (rtnl_dereference(bond->primary_slave) == slave)
+ 		RCU_INIT_POINTER(bond->primary_slave, NULL);
+-- 
+2.39.5 (Apple Git-154)
 
 
