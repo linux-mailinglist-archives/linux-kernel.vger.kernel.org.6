@@ -1,191 +1,169 @@
-Return-Path: <linux-kernel+bounces-521628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C356A3C016
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:37:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DDF7A3C010
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:36:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE5B63A48E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:35:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C24CF188BB92
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:36:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E98871E8322;
-	Wed, 19 Feb 2025 13:35:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 357DF1E32D3;
+	Wed, 19 Feb 2025 13:36:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IV04VHIT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EHph9ofT"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA321E0080;
-	Wed, 19 Feb 2025 13:35:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BACB01E5718;
+	Wed, 19 Feb 2025 13:36:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739972140; cv=none; b=cefs4QRmhJ9drWwOqPUhiRDXrHiHU72zqElZ2//hKN/Y0MZJ1UlP+PaRs7JTVA10IOxwlOqObmkP3Kfnxk77LHUw7Uj8kNC3XD3EesN8WfZCiE5cO1olVMJOP91UtOkPx0mYy2yGY/F9u0LPz6z0FtplqsoNDirgt+W0sR0lH2Q=
+	t=1739972183; cv=none; b=VJwwMY6iJrOKP99qj6QqthQbtI7AGHyGpU834S8dNgyHYa4/hqm43eEEEuSMfZ+3uEXE5AfgzPtYRpI0lLhGh0ca0gVNV0uMzvYfDDJmYr7fpn1kLsQNPBrujoz6v/5bsS6fTAmR1jK9orvV60X+NIDP/HMwACHNaEhIJBWbMik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739972140; c=relaxed/simple;
-	bh=6dQCoBcaN3M8jj8L/pn5TacJEiDTodGAhACpPrrYv4g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lPw+oF6lp2tNg4rx1Rr60lPv3BuZV9OBuFSlmoK1tLslS4pQ4ghc1C3RD58aFwHVp0R/8LcIx6IFt1XaaeloJ0IXwEvuS6xolzggwZyE2VT3CZSM5ZoYBk2v8YjzacipuSgTpwezQu2sKuQamsp/g1l5T2/lKZKGHmJII/aOh0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IV04VHIT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 609DFC4CEDD;
-	Wed, 19 Feb 2025 13:35:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739972139;
-	bh=6dQCoBcaN3M8jj8L/pn5TacJEiDTodGAhACpPrrYv4g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IV04VHITAhLiaZdnPNUjoHFWXVbobXWFLWtWG2UhHL31C9uC9j85j4r7rqvIfmymM
-	 fLl0gAU64SSOat/LtfB99WovVL8164waJbE2dA88AFO8hrZeI7CZZ6iPniQoDcBudv
-	 KB0k+A9LllhAHONhVB0NyDf3HDt7Z48yqwIAPIz7HIc96Jm5o9llCg05amJbi/BHce
-	 YRGKUT3mK8oeWOjI1hKiRwsYecPR2p/s+mjpi6fgEz0+mk7GwZ15WMUGVNQ2BIoLqa
-	 +t00SLkqMPDhHPsrdBHRADVUv6FIvL5HXcVHITDFKX5cFZ+hJESYF7Ymjz0BHLg+kl
-	 mxNfVv7YYJMlQ==
-Date: Wed, 19 Feb 2025 14:35:37 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Doug Anderson <dianders@chromium.org>, 
-	Anusha Srivatsa <asrivats@redhat.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Joel Selvaraj <jo@jsfamily.in>, Ondrej Jirman <megi@xff.cz>, 
-	Javier Martinez Canillas <javierm@redhat.com>, Jianhua Lu <lujianhua000@gmail.com>, 
-	Robert Chiras <robert.chiras@nxp.com>, Artur Weber <aweber.kernel@gmail.com>, 
-	Jonathan Corbet <corbet@lwn.net>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, Tejas Vipin <tejasvipin76@gmail.com>
-Subject: Re: [PATCH 00/20] drm/panel: Move to using mipi_dsi_*_multi()
- variants when available
-Message-ID: <20250219-marvellous-calculating-piculet-f6b9ec@houat>
-References: <20250213-mipi_cocci_multi-v1-0-67d94ff319cc@redhat.com>
- <CAD=FV=Vyx8vAeRohw3W11Tuv26_-zi-GV__G2cXFxF+e76MJkw@mail.gmail.com>
- <20250218-fabulous-agile-corgi-9a5ee0@houat>
- <ynmxaimdwkwfiryz5le5vpnfh5fzh5se4ebyqzkbnq355me76x@yxtyan3niivb>
- <20250218-primitive-kickass-seagull-008bf2@houat>
- <rg4mctlqofydzexa7uwnmcsv66dhx5u2wrmytslpyltraz6p5q@ohvo7ab2ws7q>
+	s=arc-20240116; t=1739972183; c=relaxed/simple;
+	bh=7ihWjXMDbjH1f4hkfj9yu5zjMSN4SJcUGVD62F9f64Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F6P3613P6eq+5a2tpssHQKIS3befUcA6LUF1rQIAphQ4IHBWYaRs3vU7bYArqsti07r5Y/mAP8Yvx2eZh2q0TcA434/Gu85+BHAz7179Orq6R9Z6KU5EZOucccKVheyd8S5LNRbkzVtro9vwB4bnKPEEZa2aS54N+HJTvXT4pcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EHph9ofT; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-30737db1aa9so63425071fa.1;
+        Wed, 19 Feb 2025 05:36:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739972179; x=1740576979; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HSsnV19R3euCe7A+mmLLwP9bRWysONanwRs/f83625E=;
+        b=EHph9ofTvDHNDUiWoC5q9QoZazOKIE+mXp9G1Q9LoaK7hTUOsGe1QfgVmaB6QaQ156
+         ZccPgs6KyZBUT1o59d0GhKl7DgNP/4YlkN/FnhSe8eAq01AWKyP/rHsSNTmazugBg0K7
+         PBRJfTN/vvaISoQeKAuH7pXHMc3KwH1+rc111zvK4ftR+FhGR5DSGlO7l8JTvwgU/xKC
+         5EJFxhxzvXVp7MkQLmOvbRrdaXaboGsYfP7/Itbtc5gLFRn5xTCY/O8ZAvdXmm1QtIap
+         W6wO/7JcHTvRKu9rDQMkrvxlB4R2dhgCifcMTkonhn4kHw+c94PWLCEX5IGpSsR2jBc/
+         FJLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739972179; x=1740576979;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HSsnV19R3euCe7A+mmLLwP9bRWysONanwRs/f83625E=;
+        b=RflRrUdlzLEAYFjHlbQHGnVdSE79TAPWd4CUhuUCivBPVkNwtBnamio48f0UG4h9Na
+         WkGRbFjQuG3czAItUlgpLHCpJ+8FWe4N1WMrYGSrDYjSMP5obmyiz78nBW3l5oH+zp8B
+         cA7bojwC5YiysS46aaOnELX1tsWZV9ozzeFEPQzs1499Ndg8wujoWJ4ZQIkHZ4ADVEZ8
+         D+NERPB9/MLcF/lGsQoJf2QJbflQ1FMpj6fgmxg4V3GwkP5nQ6Ti7qT7wl3B0zwuM+uD
+         GznHG4fA5kBeaD9NUGehhOJKAYTHO4IOz/IgEmRyUAXjdL1hYE+qjy270jITIq9zsNmQ
+         h86g==
+X-Forwarded-Encrypted: i=1; AJvYcCVlAafVaG1XGUPmAWa6lJ3ra7QzrZF2OhXG0F+GAxMEZwcHmadcKY3GEbTh9ZTtLGZHpCNqKDG6Cx96@vger.kernel.org, AJvYcCX1gtrW92ZbAYc5xAOA9FG0Fj+TCoa9D91VdsKk0Tow036k0HEzWKVJlQ2Oiv7KUjTk0HF/O7NkozRj6APy@vger.kernel.org, AJvYcCX6AR8svjcZ73abSVUYw/2fs+9Y2EpfGIA0AIBmFaxw0pv04L+5Ifb2D+2fgM9NI6E58ehKted8QPoi@vger.kernel.org, AJvYcCXnBJrzY47FM7s6JYFUyqDenI8UGvf3udMzLOUiu9dKX4vcGyxLISy97iFjj2badw1J2llMdvy61qToygH2MiH+jA0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztFpwL6O4+LO3DopVY7a0X3YusvLDS923Jxs6SwGGwrAznEbw+
+	x8WOlSDzdyHl6hrAMfOhpERB44e514dpagreT3i2hLUvglClSlH8MlEzhg==
+X-Gm-Gg: ASbGncvI10lddu6egYTdZJBK7aideVykkyh1U5YIEAeJpIWUfx84LRzl7NjeEPX+e5M
+	TxCdkH+ILU5N1whDfCZVmWf8+ehEORSAD++AmMCglemYT0wJeU+RhqWg6A78DjWtql3uPDfreEv
+	uFIIpOPJ9ZlMPYruum4ThRMgrk4IQwBV55qWpbmZu1UBO4fZ1Vkw8AsV0b0e6TSERsG7gYSiTo/
+	oZ3Pyh/j/lHaoCLv2AvU4wD18NZ9GX20+0ZbwhJgWlOpm7OGqls6Nw2NC21tNqYJZtkLzuyi6Md
+	V48qT4cqVP8NxA0PCviZPb5lDnJnUULyCqVEAiLIG+AyMeCun1bTKPLvtp1xmNY20vqZpIKT
+X-Google-Smtp-Source: AGHT+IECONOuwKIydK//bT3AGqnTWMmCdF2rv/KJJHD8I1175BIY8l67zp+r+qNFr42gMLhOkEmBmA==
+X-Received: by 2002:a05:651c:2222:b0:308:f4cc:951b with SMTP id 38308e7fff4ca-30a45035a2fmr14037951fa.23.1739972178597;
+        Wed, 19 Feb 2025 05:36:18 -0800 (PST)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30a258703c9sm13795701fa.7.2025.02.19.05.36.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Feb 2025 05:36:16 -0800 (PST)
+Message-ID: <f1c6078e-39bf-499f-b7ab-17526b3e60a9@gmail.com>
+Date: Wed, 19 Feb 2025 15:36:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="elwcbsq7xwvzgu3j"
-Content-Disposition: inline
-In-Reply-To: <rg4mctlqofydzexa7uwnmcsv66dhx5u2wrmytslpyltraz6p5q@ohvo7ab2ws7q>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 6/9] iio: adc: rzg2l_adc: Use adc-helpers
+To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
+ <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>,
+ Hugo Villeneuve <hvilleneuve@dimonoff.com>, Nuno Sa <nuno.sa@analog.com>,
+ David Lechner <dlechner@baylibre.com>,
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
+References: <cover.1739967040.git.mazziesaccount@gmail.com>
+ <25c5d22f6f0cbd1355eee2e9d9103c3ee71cebdc.1739967040.git.mazziesaccount@gmail.com>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <25c5d22f6f0cbd1355eee2e9d9103c3ee71cebdc.1739967040.git.mazziesaccount@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 19/02/2025 14:31, Matti Vaittinen wrote:
+> The new devm_iio_adc_device_alloc_chaninfo() -helper is intended to help
+> drivers avoid open-coding the for_each_node -loop for getting the
+> channel IDs. The helper provides standard way to detect the ADC channel
+> nodes (by the node name), and a standard way to convert the "reg",
+> "diff-channels", "single-channel" and the "common-mode-channel" to
+> channel identification numbers used in the struct iio_chan_spec.
+> Furthermore, the helper checks the ID is in range of 0 ... num-channels.
+> 
+> The original driver treated all found child nodes as channel nodes. The
+> new helper requires channel nodes to be named channel[@N]. This should
+> help avoid problems with devices which may contain also other but ADC
+> child nodes. Quick grep from arch/* with the rzg2l_adc's compatible
+> string didn't reveal any in-tree .dts with channel nodes named
+> othervice. Also, same grep shows all the .dts seem to have channel IDs
+> between 0..num of channels.
+> 
+> Use the new helper.
+> 
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> 
+> ---
+> Revision history:
+> v2 => v3:
+>   - New patch
+> 
+> I picked the rzg2l_adc in this series because it has a straightforward
+> approach for populating the struct iio_chan_spec. Only other member
+> in the stuct besides the .channel, which can't use a 'template' -data,
+> is the .datasheet_name. This makes the rzg2l_adc well suited for example
+> user of this new helper. I hope this patch helps to evaluate whether these
+> helpers are worth the hassle.
+> 
+> The change is compile tested only!! Testing before applying is highly
+> appreciated (as always!).
+> ---
+>   drivers/iio/adc/rzg2l_adc.c | 41 ++++++++++++++++++-------------------
+>   1 file changed, 20 insertions(+), 21 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
+> index cd3a7e46ea53..3e1c74019785 100644
+> --- a/drivers/iio/adc/rzg2l_adc.c
+> +++ b/drivers/iio/adc/rzg2l_adc.c
+> @@ -11,6 +11,7 @@
 
---elwcbsq7xwvzgu3j
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 00/20] drm/panel: Move to using mipi_dsi_*_multi()
- variants when available
-MIME-Version: 1.0
+...
 
-On Wed, Feb 19, 2025 at 11:11:33AM +0200, Dmitry Baryshkov wrote:
-> On Tue, Feb 18, 2025 at 04:52:53PM +0100, Maxime Ripard wrote:
-> > On Tue, Feb 18, 2025 at 02:14:43PM +0200, Dmitry Baryshkov wrote:
-> > > On Tue, Feb 18, 2025 at 10:55:49AM +0100, Maxime Ripard wrote:
-> > > > On Fri, Feb 14, 2025 at 08:26:02AM -0800, Doug Anderson wrote:
-> > > > > Hi,
-> > > > >=20
-> > > > > On Thu, Feb 13, 2025 at 12:44=E2=80=AFPM Anusha Srivatsa <asrivat=
-s@redhat.com> wrote:
-> > > > > >
-> > > > > > A lot of mipi API are deprecated and have a _multi() variant
-> > > > > > which is the preferred way forward. This covers  TODO in the
-> > > > > > gpu Documentation:[1]
-> > > > > >
-> > > > > > An incomplete effort was made in the previous version
-> > > > > > to address this[2]. It removed on the mipi_dsi_dcs_write_seq()
-> > > > > > and mipi_dsi_generic_write_seq_multi() with the respective
-> > > > > > replacemts and not the rest of the API.
-> > > > >=20
-> > > > > You didn't seem to take most of the suggestions I gave in respons=
-e to
-> > > > > your v1 [3]. Specifically:
-> > > > >=20
-> > > > > a) I asked that you CC Tejas. I've added him again.
-> > > > >=20
-> > > > > b) I asked that you CC me on the whole patch series, which you di=
-dn't
-> > > > > do. I can find them, but I'd find it convenient in this case for =
-them
-> > > > > to be in my Inbox.
-> > > > >=20
-> > > > > The first patch conflicts with what Tejas already landed in
-> > > > > drm-misc-next. See commit 8025f23728e9 ("drm/panel:
-> > > > > xinpeng-xpp055c272: transition to mipi_dsi wrapped functions"). T=
-he
-> > > > > second patch _also_ conflicts with what Tejas already landed. See
-> > > > > commit f4dd4cb79f9e ("drm/panel: visionox-r66451: transition to
-> > > > > mipi_dsi wrapped functions"). Later patches also also conflict. S=
-ee
-> > > > > commit 0d6c9edf9e5b ("drm/panel: ebbg-ft8719: transition to mipi_=
-dsi
-> > > > > wrapped functions"), commit ce8c69ec90ca ("drm/panel:
-> > > > > samsung-s6e88a0-ams452ef01: transition to mipi_dsi wrapped
-> > > > > functions"), and commit 7e3bf00047cd ("drm/panel: sharp-ls060t1sx=
-01:
-> > > > > transition to mipi_dsi wrapped functions"). Maybe you should sync=
- up
-> > > > > with drm-misc-next before submitting.
-> > > >=20
-> > > > Yes, you should definitely work from drm-misc-next there, and sync =
-with
-> > > > Tejas.
-> > > >=20
-> > > > > I also questioned whether this really made sense to try to do wit=
-h a
-> > > > > Coccinelle script and I still don't think so. It looks like Dmitr=
-y has
-> > > > > already reviewed the first few of your patches and has repeated my
-> > > > > advice. If you want to help with the effort of addressing this TO=
-DO
-> > > > > item then that's great, but I'll stop reviewing (and start silent=
-ly
-> > > > > deleting) any future submissions of yours that say that they're d=
-one
-> > > > > entirely with a Coccinelle script unless you address this point a=
-nd
-> > > > > convince me that your Coccinelle script is really smart enough to
-> > > > > handle all the corner cases. I'll also assert that you should rev=
-iew
-> > > > > Tejas's submissions to see how these conversions are expected to =
-go.
-> > > >=20
-> > > > I couldn't find that in your first answer though. What corner cases=
- do
-> > > > you have in mind, and why do you think coccinelle can't handle them?
-> > >=20
-> > > As can be seen from the reviews:
-> > >=20
-> > > - sleeps between DSI calls
-> > > - properly propagating the error at the end of the function
-> >=20
-> > These two are legitimate feedback, but I don't see how coccinelle cannot
-> > deal with them.
->=20
-> Maybe it can. both issues were pointed out during review of the first
-> series, there was no improvement here. I'd really ask to perform
-> conversion of a single driver, so that the script (or post-script
-> fixups) can be improved. I'd still expect that Anusha actually reviews
-> the changed driver before posting it and verifies that there is no
-> regression in the logic / error reporting.
+>   
+> +static const struct iio_chan_spec rzg2l_adc_chan_template = {
+> +	.type = IIO_VOLTAGE,
 
-Yeah, it makes sense, thanks!
-Maxime
+I just rebased this to v6.14-rc3 and noticed the channel type can no 
+longer come from the template. There are also some other minor changes. 
+I'll fix this in v4 if this same approach is kept.
 
---elwcbsq7xwvzgu3j
-Content-Type: application/pgp-signature; name="signature.asc"
+> +	.indexed = 1,
+> +	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+> +};
+> +
 
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ7XeKAAKCRAnX84Zoj2+
-dq1zAYCKf0VaKTwdDAgifOhtr6CZmQ0xXsHGqPSRQeDxj1kxtni5jzUQECUY0jJ6
-AlH5icIBfA4QxeNdZJINU7DbFY3UXzHVx0W83MCWHK4WzTXVICVt6PrAf3nL92l8
-WWTv4RhA4Q==
-=3az7
------END PGP SIGNATURE-----
-
---elwcbsq7xwvzgu3j--
+Yours,
+	-- Matti
 
