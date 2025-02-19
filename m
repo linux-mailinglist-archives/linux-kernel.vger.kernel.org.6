@@ -1,136 +1,186 @@
-Return-Path: <linux-kernel+bounces-521925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDC41A3C3F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:43:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51577A3C3E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:42:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71A2F3A906D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:41:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3086A177FC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:41:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F362C20D4EA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3C1420CCE5;
 	Wed, 19 Feb 2025 15:39:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b="TQvtLg8D";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PLBxrmDm"
-Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KQ+39GUp"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF757200BA8
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 15:39:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49DBE2046AA;
+	Wed, 19 Feb 2025 15:39:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739979598; cv=none; b=QtUagDq4OZ+nzANKwjXVWCPNq0Ku+w3wuQXpNPVbGYRQm2r/UvpKH/q5sS/F5/jy8VjxpObDzGHuVNKMphCsNcW5B3Y5Min+2o5792Hxr0LjNS3ggyavf4Fnb83+jz587khpLPr/UvnM1nNYdormVAnijTRYp9RA6xOgSI3BBrk=
+	t=1739979598; cv=none; b=E4gIBmLoNGaI9Q402TRSwZnuTYBV0rE4xYSOHnMxJ3dM7IuxXHByjiRMTf9SdtjSNDBxgVB6ARfRNYPSByKjO3YwHoqSycpH4Qs5dEuYGG3vb7dRI2ickrZbGZ7bhTzL6jdEKLM3qyIoIyws1eANMMSju9/9V1Z2awasxUCFsbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1739979598; c=relaxed/simple;
-	bh=yM8i5FvIFIlmOfv14Kb5YSEjxQ5hZ6nkxPnVmlMU1Wg=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=R4MHVnEnwJ+0cVATK8q1oQ+ezS5XGZ4wuOqtRDAcz9SDF940DBvISdXAJM6d+BDTUa41HT6y96N8modxVGUEfEPOe8pVBv8xJeubCgGGE2CcD5PTDPGuM/ROWXJV19WdeQ8eLI26iG1NWQA+WTzLNU1pUF9iPVC1BJKg6kjBjCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev; spf=pass smtp.mailfrom=svenpeter.dev; dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b=TQvtLg8D; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=PLBxrmDm; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svenpeter.dev
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id AE183138099A;
+	bh=ucZpDd+h/0BrzfDrAYPhXrlYDhjDQwzQx+8935dd2Mo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=sVdgrkLTNzkcMWT73KXy6oJ+AyKeuy5Ts7YSTHS8s4g6LdYW9IEVz8YCZYnvb6OwRduC5B7JSm1p8sPRjA+bpBakh8c6FwyyA4fxDq8MUqIzxUM3iUpVwxIeIe/of42D0/T7eigDXZUInE7/0VEBArU6CQKYjp7C59e4RH1NA8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KQ+39GUp; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-471f16f4b73so30066781cf.1;
+        Wed, 19 Feb 2025 07:39:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739979596; x=1740584396; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:feedback-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=aNyDehr5fYPZ7Ty7IjzjEdr8XsN1kQiCm3uBct3StSE=;
+        b=KQ+39GUpL7b8qG5/lZ1osEAv6eT+F4cNfc5ethdUfoeoe5oqFuJ7O15RX8U9xKFYIA
+         hdQChsBjMHkR4A1r5IUCd09xmqJQp0PADJeWnw1eQra4FqEFnZJqdnnIZCWUDNF8dP7U
+         62fLwBPkcKd2R2hLngTlBZV1E9W3cMvuI+1zQt/QPazu1BUl4zYC33oStJAC5QwowGeH
+         V8LSkq33A5XMHG+lkGtnnCkGzjqyyW32p34yJo9JtPV69CFwEuXQeagZykGOnfOv8uKk
+         RUE8G0uwROnXXrK1oifauXLXV+qImTCxRKFpu2eYGY5fpY3T4/eMkmGu3WJkN4TMw0yu
+         mA8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739979596; x=1740584396;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:feedback-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aNyDehr5fYPZ7Ty7IjzjEdr8XsN1kQiCm3uBct3StSE=;
+        b=EfELrAftlYI29HQ3rxFpEMjiXJ+QjbzyNe7xyEMoa42ojaPBnR5SwzaPjF9F1DofbJ
+         UIec8VMk9b+SWMwa/Ta3TWTAl8fuio+LKnMIjpRNNbTQVxFv2bipgZK42ouek1db6/qc
+         sQTZ9j12FYwvVjwDadJFzaokP+w43cquwMMjiEfwEGFkPM66CUAvXjxrx8xXlpqhS5k0
+         8KKlgLgs82k+WNvbrovncjX1VTpRGhyPsWrVg94mrbZZGhELlO3xbuEk6IImC4dJmiXC
+         nJ68Ub9UsKApyANFgCOe8gg2KG5IKjXgWfVHeHgdA1h6moQacmXUqOmuqv2gKJ65uURT
+         rzag==
+X-Forwarded-Encrypted: i=1; AJvYcCUGWql1TLwUN76KakETUrsv4PvcIB2AkA6mA6yxVIPxCFFRd90NIrQHQMrbvYfuvlf+hcyKjWo6WkRn+XkV@vger.kernel.org, AJvYcCUTMRuVEo4Q/mB0OIyCJz5INU++JSSD4DLGAYPHxaD+axBh8ESCluVYP6yaG7recwoOLbXOJeX4tBZyA/r0TbrY@vger.kernel.org, AJvYcCVxFTrDi35nV2xz1DjJ1vmzqU3RDDcWj1i5XmsVxDsowdJDKYEyyoL+ZNIB/1NGlefiiuC2ApeJGVQ=@vger.kernel.org, AJvYcCX8Ja51RHTIgwcHbgNcNdJkLmoF0j4KQPpwXVLBU21ntpwK4o4z4x2EkoKLwXfqMYiLK4Ik7K9KGqPDS0YqvV3BEjoA@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywg71I+M5eCR1qj8Gq+u66NECPV99Ztq7X8BP+vq6IbYX6IY/89
+	+eakRxG7dl0mBpJlyodBqTWUwWVL46A3a+TmcXemLaC43vVVTwub
+X-Gm-Gg: ASbGnctH5iMN+cwaDm6fzSHN61p0a0w3dQ3GJ9TGvW+X/rd1vBkOoh4ZhwYG5jyQ+kT
+	BcuesD744BIGBxLmNpqmWtXK7t8EhgY7tFyG3K8yfOZQop7PxsXpgRIgAv4xkUsPBjL1XcGySzX
+	g6q1mLV9NjWcpuHKM0/ur49tfR9YGrgJeGcXnhEuFx+fMEgJGtC8ptb2Y+w32RfjAc1+fpvmCY3
+	3N+gZzCOFNYQ1O8MkWlOA7nih/q1xfIukki8EVz8C0XGlPMgzlt9B+6acNDSuEGNzRYJSC7diEV
+	5/3Jz0ODLVKJX1P9PjBV454hgUdbblB+B3tf6cVBThqT6gChdpMyEygqrPEVl/GJTxeL1GfM8gG
+	FSn5d6w==
+X-Google-Smtp-Source: AGHT+IETAAN9vGlK/RY9wl5vH0WLgUlBki9V/4jDclpZL+w3WZFnPU1VP8c8MqdFIGGfDqb7vNq8gA==
+X-Received: by 2002:a05:622a:1807:b0:472:7ce:2340 with SMTP id d75a77b69052e-4720824e081mr67377391cf.14.1739979596237;
+        Wed, 19 Feb 2025 07:39:56 -0800 (PST)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-47202260758sm18792281cf.15.2025.02.19.07.39.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2025 07:39:55 -0800 (PST)
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 4553C1200043;
 	Wed, 19 Feb 2025 10:39:55 -0500 (EST)
-Received: from phl-imap-07 ([10.202.2.97])
-  by phl-compute-10.internal (MEProxy); Wed, 19 Feb 2025 10:39:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svenpeter.dev;
-	 h=cc:cc:content-transfer-encoding:content-type:content-type
-	:date:date:from:from:in-reply-to:in-reply-to:message-id
-	:mime-version:references:reply-to:subject:subject:to:to; s=fm1;
-	 t=1739979595; x=1740065995; bh=yM8i5FvIFIlmOfv14Kb5YSEjxQ5hZ6nk
-	xPnVmlMU1Wg=; b=TQvtLg8DSzJSEQUXeOqOIDlcnH9qkH0bSZyu7i7UdvzbIlgl
-	TL1f1XqGWUSPD2B0OMJczkCLj7yObX5qlym/C1qDOcPaLUaJJdisU6DWyd3qQiCW
-	WbyWd0Kwlzzx1LRcktUvztHOKd3kwgDqzZzGLnSEBtmPybEsOyxLuSzheJla1fc6
-	P3iG06UelS0uvjlkUSZc+NRqrWN1d4QgzHzxJnzu3xAu+Co3djHoC0JLlvptszAv
-	3pccvsVNf0ND4iveqrHnRklhO16/DST+HuGBAkmRHMjCg6AWTU0N5NkOiSd+c+bo
-	CvNQOJ583gEJthBuY4+aPk8Ga+OvE0rZIDruiQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1739979595; x=
-	1740065995; bh=yM8i5FvIFIlmOfv14Kb5YSEjxQ5hZ6nkxPnVmlMU1Wg=; b=P
-	LBxrmDmWKXdq5Q95t82qxGvq8dPQ3F3xQorIhnQnh9UqPEVwj0sugo8gRNsFvXdl
-	WAONl11zXFmuQUXscbMNkplIQ4/EvB3ljbf7A16XzGruCykLkoYqcS6QnYDZCX1V
-	w+is2BVlaAhz93L+/0wgtYoKEb8va7xmmFt5TmcvwbhjnnbMG3szJo0lzUL45/yy
-	IpziIiSplzjJXdmOVIuFT0hG4JeD1ucpqCGFYJ8+seK0WyOkcTgQnrRTmc3JDfuT
-	zPFQ/EoKuZHZIywOu58o7yR5diVXk2Trm625bXwDiX/36mP4JTbBmmmUcqedR3Mr
-	3I7X/u+idOjPVKHCNURtw==
-X-ME-Sender: <xms:Svu1ZzJLfe0cVjoF9LdBJtgfXAKqp7C2poRQx-1g-TUCJq8U0PhVig>
-    <xme:Svu1Z3IM9qVJkCNDiYPD2Kmf7JtRJX2ObB_-yX4mfDmmNFsujTaK1c2PM6bI8FbZP
-    xQ0ucokGzKykZmzMKA>
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-06.internal (MEProxy); Wed, 19 Feb 2025 10:39:55 -0500
+X-ME-Sender: <xms:S_u1Z5I3P3ZTB-cHrxGaE6FBCYCQi-L_rL25iX_jDKxGA3xJDcT0Ww>
+    <xme:S_u1Z1LxZUMI6NyPDv8iTrbVS45QB4G4F7gVoNoCYr1Z3BF7y7aIKRFLfTSJZaN6I
+    9pzyfBRkZmrtAE0Yg>
+X-ME-Received: <xmr:S_u1ZxvEL9R4UxHfkEb2s7jiJrao0JII63fVgcOH1LiH9JG8dmkKxzRBsg>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeigeeifecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
     uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdfuvhgvnhcurfgvthgvrhdfuceoshhvvghnsehsvhgvnhhpvghtvg
-    hrrdguvghvqeenucggtffrrghtthgvrhhnpeelfeetueegudduueduuefhfeehgeevkeeu
-    feffvdffkedtffffleevffdvvdeuffenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpehsvhgvnhesshhvvghnphgvthgvrhdruggvvhdpnhgspghr
-    tghpthhtohepudegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehjohhroheske
-    gshihtvghsrdhorhhgpdhrtghpthhtoheprhhosghinhdrmhhurhhphhihsegrrhhmrdgt
-    ohhmpdhrtghpthhtoheplhhinhgrsegrshgrhhhilhhinhgrrdhnvghtpdhrtghpthhtoh
-    epfhhnkhhlrdhkvghrnhgvlhesghhmrghilhdrtghomhdprhgtphhtthhopehjsehjrghn
-    nhgruhdrnhgvthdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpth
-    htohepfihilhhlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhm
-    qdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhope
-    grshgrhhhisehlihhsthhsrdhlihhnuhigrdguvghv
-X-ME-Proxy: <xmx:Svu1Z7sQagXCXImMH_hnqANaHEBR4ZfrQ8jM-MuSFz8jvG0d3O-FKA>
-    <xmx:Svu1Z8aNeHRscB1mqVgv9NvRU6e-SbuLDDsnCSbI9hA2Ya7aJkpRhA>
-    <xmx:Svu1Z6YFgIm3EL2_H3oH3SuUGc3w7h1aW9ioyyFo-9bX98s6o1Yh_A>
-    <xmx:Svu1ZwAohDpAkzRn2IiemR9ieb6u7ER4JTQvIdSeawV6yy5_PijJmQ>
-    <xmx:S_u1Zyp5COJntRW17ipM7Ayu_QstX7Z7hBh8yjM7wZAlsRgHUv_hhhHU>
-Feedback-ID: i51094778:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 9B8C6BA0070; Wed, 19 Feb 2025 10:39:54 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+    hnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddt
+    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
+    drtghomheqnecuggftrfgrthhtvghrnhepgffhffevhffhvdfgjefgkedvlefgkeegveeu
+    heelhfeivdegffejgfetuefgheeinecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenuc
+    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhn
+    odhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejje
+    ekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhn
+    rghmvgdpnhgspghrtghpthhtohepvdelpdhmohguvgepshhmthhpohhuthdprhgtphhtth
+    hopehrtghusehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghorhgsvght
+    sehlfihnrdhnvghtpdhrtghpthhtoheprhhoshhtvgguthesghhoohgumhhishdrohhrgh
+    dprhgtphhtthhopehmhhhirhgrmhgrtheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
+    mhgrthhhihgvuhdruggvshhnohihvghrshesvghffhhitghiohhsrdgtohhmpdhrtghpth
+    htohepphgruhhlmhgtkheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepfhhrvgguvghr
+    ihgtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehnvggvrhgrjhdruhhprgguhhihrg
+    ihsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjohgvlhesjhhovghlfhgvrhhnrghn
+    uggvshdrohhrgh
+X-ME-Proxy: <xmx:S_u1Z6YtTrqxl1QiNTSEGpqf-vJrX0PUJ1JgBoEwoRB9c5Jz78xf-w>
+    <xmx:S_u1ZwZYmNV5r17GEREZK-9I51FV_rXF8VLAcy3U7r-O9Fmgwjg1rQ>
+    <xmx:S_u1Z-B6YasqnO8A3xs6IWMEj9Sp1skjX4lJxskxIbaD5_OLKTiISw>
+    <xmx:S_u1Z-YiBIbLAId_itzODocDF4qhjNMoB9dMZXaMFJttIOIDKENMcw>
+    <xmx:S_u1Z8pM1m-UBBCaQR9LtpT4bdhRFz_lPeDFTFK_utruBl7VcOSHMDSL>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 19 Feb 2025 10:39:54 -0500 (EST)
+From: Boqun Feng <boqun.feng@gmail.com>
+To: rcu@vger.kernel.org
+Cc: Jonathan Corbet <corbet@lwn.net>,	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,	Boqun Feng <boqun.feng@gmail.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,	Davidlohr Bueso <dave@stgolabs.net>,
+	Shuah Khan <shuah@kernel.org>,	Andrew Morton <akpm@linux-foundation.org>,
+	Thomas Huth <thuth@redhat.com>,	"Borislav Petkov (AMD)" <bp@alien8.de>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,	Yury Norov <yury.norov@gmail.com>,
+	Valentin Schneider <vschneid@redhat.com>,	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,	linux-trace-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	kernel test robot <oliver.sang@intel.com>
+Subject: [PATCH rcu 08/11] rcutorture: Move RCU_TORTURE_TEST_{CHK_RDR_STATE,LOG_CPU} to bool
+Date: Wed, 19 Feb 2025 07:39:35 -0800
+Message-Id: <20250219153938.24966-9-boqun.feng@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20250219153938.24966-1-boqun.feng@gmail.com>
+References: <20250219153938.24966-1-boqun.feng@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 19 Feb 2025 16:39:34 +0100
-From: "Sven Peter" <sven@svenpeter.dev>
-To: "Sasha Finkelstein" <fnkl.kernel@gmail.com>,
- "Alyssa Rosenzweig" <alyssa@rosenzweig.io>, "Joerg Roedel" <joro@8bytes.org>,
- "Will Deacon" <will@kernel.org>, "Robin Murphy" <robin.murphy@arm.com>,
- "Hector Martin" <marcan@marcan.st>, "Rob Herring" <robh@kernel.org>,
- "Janne Grunau" <j@jannau.net>
-Cc: "Joerg Roedel" <jroedel@suse.de>, asahi@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org, "Asahi Lina" <lina@asahilina.net>
-Message-Id: <d6f24197-7f2b-4c12-9014-94e31a9aa6aa@app.fastmail.com>
-In-Reply-To: <20250219-dart2-no-sp-disable-v1-1-9f324cfa4e70@gmail.com>
-References: <20250219-dart2-no-sp-disable-v1-1-9f324cfa4e70@gmail.com>
-Subject: Re: [PATCH] iommu/io-pgtable-dart: Only set subpage protection disable for
- DART 1
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+From: "Paul E. McKenney" <paulmck@kernel.org>
 
+The RCU_TORTURE_TEST_CHK_RDR_STATE and RCU_TORTURE_TEST_LOG_CPU Kconfig
+options are pointlessly defined as tristate.  This commit therefore
+converts them to bool.
 
-On Wed, Feb 19, 2025, at 10:13, Sasha Finkelstein via B4 Relay wrote:
-> From: Asahi Lina <lina@asahilina.net>
->
-> Subpage protection can't be disabled on t6000-style darts,
-> as such the disable flag no longer applies, and probably
-> even affects something else.
->
-> Fixes: dc09fe1c5edd ("iommu/io-pgtable-dart: Add DART PTE support for t6000")
-> Signed-off-by: Asahi Lina <lina@asahilina.net>
-> Signed-off-by: Sasha Finkelstein <fnkl.kernel@gmail.com>
-> ---
+Reported-by: kernel test robot <oliver.sang@intel.com>
+Closes: https://lore.kernel.org/oe-lkp/202412241458.150d082b-lkp@intel.com
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+---
+ kernel/rcu/Kconfig.debug | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Reviewed-by: Sven Peter <sven@svenpeter.dev>
+diff --git a/kernel/rcu/Kconfig.debug b/kernel/rcu/Kconfig.debug
+index 25a9dc2be0dc..12e4c64ebae1 100644
+--- a/kernel/rcu/Kconfig.debug
++++ b/kernel/rcu/Kconfig.debug
+@@ -54,7 +54,7 @@ config RCU_TORTURE_TEST
+ 	  Say N if you are unsure.
+ 
+ config RCU_TORTURE_TEST_CHK_RDR_STATE
+-	tristate "Check rcutorture reader state"
++	bool "Check rcutorture reader state"
+ 	depends on RCU_TORTURE_TEST
+ 	default n
+ 	help
+@@ -70,7 +70,7 @@ config RCU_TORTURE_TEST_CHK_RDR_STATE
+ 	  Say N if you are unsure.
+ 
+ config RCU_TORTURE_TEST_LOG_CPU
+-	tristate "Log CPU for rcutorture failures"
++	bool "Log CPU for rcutorture failures"
+ 	depends on RCU_TORTURE_TEST
+ 	default n
+ 	help
+-- 
+2.39.5 (Apple Git-154)
 
-
-Thanks,
-
-
-Sven
 
