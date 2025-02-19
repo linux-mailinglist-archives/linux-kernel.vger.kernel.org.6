@@ -1,122 +1,118 @@
-Return-Path: <linux-kernel+bounces-522590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D234AA3CC16
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 23:11:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F84DA3CC05
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 23:08:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 371A97A79AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:10:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8042177075
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:08:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02B272586D8;
-	Wed, 19 Feb 2025 22:09:44 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C999B25A2C4
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 22:09:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DEF42580FF;
+	Wed, 19 Feb 2025 22:08:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gxWd9+vK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8CC01B4F21
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 22:08:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740002983; cv=none; b=IAfLtlikm9TEfSQ0Ah9tzPfDGeuP4SqwNdI1e2TrXnAGtCcqKI3q9zYCZhWe9jd19UE+u7FurQVM2/rMIAtkgoHNr9uPOVu022sh1AEzS9Fu6jUVaON+5QO5b6u8irdQnxEBGXDHL8BwXx2K/GwKl6wkcVCaG4yrd5QrfcbPK3g=
+	t=1740002889; cv=none; b=omQQa9BJbpq2mgMyf4+XlFZ4zpX4biea/Hx5f5a9V0GHG4gn7/8rFilkaXO0RXPfxfehmSnN1rZSJ6S+P2/tfjGfu2NVdEv0HOfrr59wkVaNIvDqp86LDkrJ1bEO7kVvPIugt7h2vMjtiSSzwe5VMaks5aayGbJwkhn/g8VIzWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740002983; c=relaxed/simple;
-	bh=82rdocLjg7bYXR3a/TcdwqXAYcr+mVrMdClya9NXNxc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=h73xmr/om1Gp5VPGFpYjNXBBO3/zT52KzSpZu0TvfstbW7KOn6BwG8Jmnlz3on+Q6psvQfF0GYHLM4+lQPE+gbwibuTJ+d3h8fj2lDpranUmywS60rViBWbEUc9NSNOtnjqqkxi0vH4moSnFPdnAupEglaQ4tJhCtHtR0cc+E7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8989B153B;
-	Wed, 19 Feb 2025 14:09:59 -0800 (PST)
-Received: from ewhatever.cambridge.arm.com (ewhatever.cambridge.arm.com [10.1.197.1])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A20153F6A8;
-	Wed, 19 Feb 2025 14:09:39 -0800 (PST)
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-To: will@kernel.org,
-	robin.murphy@arm.com,
-	catalin.marinas@arm.com
-Cc: maz@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	gregkh@linuxfoundation.org,
-	aneesh.kumar@kernel.org,
-	steven.price@arm.com,
-	suzuki.poulose@arm.com,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Christoph Hellwig <hch@lst.de>,
-	Tom Lendacky <thomas.lendacky@amd.com>
-Subject: [PATCH v2 3/3] arm64: realm: Use aliased addresses for device DMA to shared buffers
-Date: Wed, 19 Feb 2025 22:07:51 +0000
-Message-ID: <20250219220751.1276854-4-suzuki.poulose@arm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250219220751.1276854-1-suzuki.poulose@arm.com>
-References: <20250219220751.1276854-1-suzuki.poulose@arm.com>
+	s=arc-20240116; t=1740002889; c=relaxed/simple;
+	bh=V7vQwxlXblaaAQl8viuJCWdjhEPlGxq1ACXzj2mXEOk=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=plYnpqGHjx1xPyKZh7Z1bT0cVGYAz2i+q9GhWjgDh8C2QNZE9rw0FndpW98yzyv6RLMHzcphvxI4QEzOsadVrVsRhfYa4+F+yRYPPxL2ClZjpo/ULxqi1YHQRVuJ8vUEnW8Pr+4qXynXISWHFDZpTJNlu4h4IkI2JVGrOxFZlMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gxWd9+vK; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740002885;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type;
+	bh=y53EOOATlCn2DG42QtqaHZJ4PEMtSyt/jgLIyo3SRRQ=;
+	b=gxWd9+vKCKlaJ55+jwVFgA/H6XlvGP1d6G2S5/H1VnkCJqqcQTQUG9XpFuq3NDwaVDNWYK
+	ZfoPsJmVaxAZqq4/nOym4vY7ngsTqc+qnp6Rsw7As/miaAYs5Gs9CsQEZlHoJZOofgIh3F
+	KwH9IvdJ2JDP3qyf7ykLcI+Tea+PCP0=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-341-eBS3boTROP-p1xkX01lmLg-1; Wed,
+ 19 Feb 2025 17:08:02 -0500
+X-MC-Unique: eBS3boTROP-p1xkX01lmLg-1
+X-Mimecast-MFC-AGG-ID: eBS3boTROP-p1xkX01lmLg_1740002880
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C83231800874;
+	Wed, 19 Feb 2025 22:07:59 +0000 (UTC)
+Received: from localhost (unknown [10.22.64.40])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6131D1800877;
+	Wed, 19 Feb 2025 22:07:58 +0000 (UTC)
+Date: Wed, 19 Feb 2025 19:07:56 -0300
+From: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
+To: LKML <linux-kernel@vger.kernel.org>,
+	linux-rt-users <linux-rt-users@vger.kernel.org>,
+	stable-rt <stable-rt@vger.kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Carsten Emde <C.Emde@osadl.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Daniel Wagner <daniel.wagner@suse.com>,
+	Tom Zanussi <tom.zanussi@linux.intel.com>,
+	Clark Williams <williams@redhat.com>,
+	Mark Gross <markgross@kernel.org>, Pavel Machek <pavel@denx.de>,
+	Jeff Brady <jeffreyjbrady@gmail.com>,
+	Luis Goncalves <lgoncalv@redhat.com>
+Subject: [ANNOUNCE] 5.10.234-rt126
+Message-ID: <Z7ZWPGBt4Pv9o54T@uudg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-When a device performs DMA to a shared buffer using physical addresses,
-(without Stage1 translation), the device must use the "{I}PA address" with the
-top bit set in Realm. This is to make sure that a trusted device will be able
-to write to shared buffers as well as the protected buffers. Thus, a Realm must
-always program the full address including the "protection" bit, like AMD SME
-encryption bits.
+Hello RT-list!
 
-Enable this by providing arm64 specific dma_{encrypted,decrypted,clear_encryption}
-helpers for Realms. Please note that the VMM needs to similarly make sure that
-the SMMU Stage2 in the Non-secure world is setup accordingly to map IPA at the
-unprotected alias.
+I'm pleased to announce the 5.10.234-rt126 stable release.
 
-Cc: Will Deacon <will@kernel.org>
-Cc: Jean-Philippe Brucker <jean-philippe@linaro.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Robin Murphy <robin.murphy@arm.com>
-Cc: Steven Price <steven.price@arm.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
----
- arch/arm64/include/asm/mem_encrypt.h | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+This release is just an update to the new stable 5.10.234 version and
+no RT-specific changes have been made.
 
-diff --git a/arch/arm64/include/asm/mem_encrypt.h b/arch/arm64/include/asm/mem_encrypt.h
-index f8f78f622dd2..aeda3bba255e 100644
---- a/arch/arm64/include/asm/mem_encrypt.h
-+++ b/arch/arm64/include/asm/mem_encrypt.h
-@@ -21,4 +21,26 @@ static inline bool force_dma_unencrypted(struct device *dev)
- 	return is_realm_world();
- }
- 
-+static inline dma_addr_t dma_decrypted(dma_addr_t daddr)
-+{
-+	if (is_realm_world())
-+		daddr |= prot_ns_shared;
-+	return daddr;
-+}
-+#define dma_decrypted dma_decrypted
-+
-+static inline dma_addr_t dma_encrypted(dma_addr_t daddr)
-+{
-+	if (is_realm_world())
-+		daddr &= prot_ns_shared - 1;
-+	return daddr;
-+}
-+#define dma_encrypted dma_encrypted
-+
-+static inline dma_addr_t dma_clear_encryption(dma_addr_t daddr)
-+{
-+	return dma_encrypted(daddr);
-+}
-+#define dma_clear_encryption dma_clear_encryption
-+
- #endif	/* __ASM_MEM_ENCRYPT_H */
--- 
-2.43.0
+You can get this release via the git tree at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
+
+  branch: v5.10-rt
+  Head SHA1: 5c5f37fc0ab0914da38776700e77a46ca3e30bf6
+
+Or to build 5.10.234-rt126 directly, the following patches should be applied:
+
+  https://www.kernel.org/pub/linux/kernel/v5.x/linux-5.10.tar.xz
+
+  https://www.kernel.org/pub/linux/kernel/v5.x/patch-5.10.234.xz
+
+  https://www.kernel.org/pub/linux/kernel/projects/rt/5.10/older/patch-5.10.234-rt126.patch.xz
+
+Signing key fingerprint:
+
+  9354 0649 9972 8D31 D464  D140 F394 A423 F8E6 7C26
+
+All keys used for the above files and repositories can be found on the
+following git repository:
+
+   git://git.kernel.org/pub/scm/docs/kernel/pgpkeys.git
+
+Enjoy!
+Luis
 
 
