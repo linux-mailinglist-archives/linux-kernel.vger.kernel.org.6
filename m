@@ -1,61 +1,60 @@
-Return-Path: <linux-kernel+bounces-522674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B10E8A3CD24
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 00:13:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1305DA3CD2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 00:14:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C95D51895C4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 23:13:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B0A218898AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 23:14:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5703525C710;
-	Wed, 19 Feb 2025 23:13:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA2E25D528;
+	Wed, 19 Feb 2025 23:14:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XzKjMpVZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nY2CMqq2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABED81B2193;
-	Wed, 19 Feb 2025 23:13:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32BC52417C3;
+	Wed, 19 Feb 2025 23:14:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740006809; cv=none; b=O7AFlkDn5YQPzwUQrkANzg0YU8v6c67AyG2nsWiW4xx4lkApd/EjTCQ7l6rPzzr0ACcBOC+4c2o3/2FG2olA+JW2utcibu+1GVZFG+KngeacqRbN2HM5dxXyEyhYN1wNttWqpMUnxMiO7F+b3uRLeEXUeFNP0vxRr0QjqQd/DTA=
+	t=1740006880; cv=none; b=AQX08YUY8O+zSsOrv8NDWOgQ1eK3FG3szowdbYzHkv+WHm9cGk0KYKbuHZiBCEJ7qpeQipcZ387loFcytdxA2ufUsR0cKALA/lwzRbLyRGl5Vrc3sVCGiOw/0a9IS4CGBEC8Vu9CPWDpkH0s6Q8b11tDP8Sae6zvqAAETumFCGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740006809; c=relaxed/simple;
-	bh=1hogxnuECIzSV/Tm1A6DPdaKyUbceozlacoXk8KBzwo=;
+	s=arc-20240116; t=1740006880; c=relaxed/simple;
+	bh=VmordyIhW2jsBJrIyaa7b8c8pt16sf7W9iv8wIfp9E8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EA4z8H/c5C/tPxpuVeZtWmwczWdBV2PMvshutya96Vjf3Krz7snDqM9du0BKKdXyfdPk9XlDK3QiTLDo6zWDmsd+clCJzmqCqj0RgTOu62SSIdqd/ftOOwrcbZi7ddd1KWdqx3vkgk/gcg5eZXUD4bBiGGAejuaAHqQH88ct2RU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XzKjMpVZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEDA2C4CED1;
-	Wed, 19 Feb 2025 23:13:28 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=AI8aUOaC8MrWcRsCEahITuYuQwZl+oihYBKeddwvkK1DfEarlrRf1VvgdIUaa3wg0n6t1W3Ghusv+HmRMOXbulzMrcABz/ejwDjrIAqoeQC0KC9rRpRiIxdzJsvWDoutWd2ridzW2M+zsVWgQNnKmEaXrKzf0S5kTBcZFpXShTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nY2CMqq2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D7EFC4CED1;
+	Wed, 19 Feb 2025 23:14:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740006809;
-	bh=1hogxnuECIzSV/Tm1A6DPdaKyUbceozlacoXk8KBzwo=;
+	s=k20201202; t=1740006879;
+	bh=VmordyIhW2jsBJrIyaa7b8c8pt16sf7W9iv8wIfp9E8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XzKjMpVZTHiOg2EJoOlVL4olptH5P+B4qffLfXz7wGY66guDlrYX+4e5KUQkW9sKY
-	 6R2AFlEJugpdEnFSQ/H2mlGKdXx+tdG3k60h6YqhneYWj1cIjubwOvc8uf0lWHFl24
-	 GgA+JrgVRpMpG56fLXy48jK7Wbe8yPsBC/s9M8RoqDFRCgNcV26n7c4r9PLszkqtr3
-	 F58GOyDBrW/fBfUUInEQz3HpjhKovHygjHOpeEinKTG+VCqsXO3B0oT61JLltE1rMQ
-	 BxWYAOUo22Dhf1nKmmHbXpWSW9L7WEbKobvm/IhASjJ5FS/bntuL24BQh7wgdjowg6
-	 A+oCUMMd+oG3Q==
-Date: Wed, 19 Feb 2025 17:13:28 -0600
+	b=nY2CMqq2OZGY70thcRvYniLFFxRx9A0uBmD63qmvu+SrQ9O79w9JLgMD/OnuNZqyF
+	 wMtWdlABL24Jfq33zG8i7FaCY5cnuGZr0M1ymmxG8WPmXSmiEruNAWduLSA6UcyZnL
+	 jnPUpuaIIpuADlHuKLRfvo9oWWwcn72jUKY3EacgqvT7OFgfwQSr2LOSF8Bqys4YZp
+	 vPm7cSeMuggaLIPvHtyhIthMQDM00pT+kGE6DXzHWzecLRBP+FemVTU3JhwMyCvi1z
+	 9Eq1ngna8nwuDNGXMel7wjvTe5Y50SBLaRMNQCP3I+soDo1iH/pLSwYeMcdEauKDA8
+	 hqZNrVQy9+RhA==
+Date: Wed, 19 Feb 2025 17:14:38 -0600
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc: shengjiu.wang@gmail.com, festevam@gmail.com, krzk+dt@kernel.org,
-	lgirdwood@gmail.com, linux-sound@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org,
-	s.hauer@pengutronix.de, kernel@pengutronix.de, shawnguo@kernel.org,
-	tiwai@suse.com, nicoleotsuka@gmail.com, conor+dt@kernel.org,
-	perex@perex.cz, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	broonie@kernel.org, Xiubo.Lee@gmail.com
-Subject: Re: [PATCH v3 1/2] ASoC: dt-bindings: imx-card: Add playback-only
- and capture-only property
-Message-ID: <174000680771.3151442.2014916167117128565.robh@kernel.org>
-References: <20250217021715.284951-1-shengjiu.wang@nxp.com>
- <20250217021715.284951-2-shengjiu.wang@nxp.com>
+To: Claus Stovgaard <claus.stovgaard@gmail.com>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, netdev@vger.kernel.org,
+	Jakub Kicinski <kuba@kernel.org>, linux-kernel@vger.kernel.org,
+	Andrew Lunn <andrew@lunn.ch>, Paolo Abeni <pabeni@redhat.com>,
+	Vladimir Oltean <olteanv@gmail.com>, claus.stovgaard@prevas.dk,
+	"David S. Miller" <davem@davemloft.net>, devicetree@vger.kernel.org,
+	Eric Dumazet <edumazet@google.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>
+Subject: Re: [PATCH 2/2] dt-bindings: net: dsa: b53: add BCM53101 support
+Message-ID: <174000687793.3153374.474074963070616968.robh@kernel.org>
+References: <20250217080503.1390282-1-claus.stovgaard@gmail.com>
+ <20250217080503.1390282-2-claus.stovgaard@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,20 +63,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250217021715.284951-2-shengjiu.wang@nxp.com>
+In-Reply-To: <20250217080503.1390282-2-claus.stovgaard@gmail.com>
 
 
-On Mon, 17 Feb 2025 10:17:14 +0800, Shengjiu Wang wrote:
-> Refer to audio graph card, add playback-only and capture-only property
-> for imx-audio-card.yaml for the case that only playback or capture is
-> supported.
+On Mon, 17 Feb 2025 09:05:02 +0100, Claus Stovgaard wrote:
+> From: Claus Stovgaard <claus.stovgaard@prevas.dk>
 > 
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
-> Reviewed-by: Iuliana Prodan <iuliana.prodan@nxp.com>
+> BCM53101 is a ethernet switch, very similar to the BCM53115.
+> 
+> Signed-off-by: Claus Stovgaard <claus.stovgaard@prevas.dk>
 > ---
->  .../devicetree/bindings/sound/imx-audio-card.yaml  | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
+>  Documentation/devicetree/bindings/net/dsa/brcm,b53.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
 
 Acked-by: Rob Herring (Arm) <robh@kernel.org>
