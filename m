@@ -1,91 +1,175 @@
-Return-Path: <linux-kernel+bounces-522464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 919BEA3CAAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:01:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C17C0A3CAB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:02:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDC1F189AD3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:01:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D96117A2BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:01:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74A0725334E;
-	Wed, 19 Feb 2025 21:01:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74BE62528E7;
+	Wed, 19 Feb 2025 21:01:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="b404JmWl"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Mw5LELFG"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDB6724FBE5
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 21:01:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B65252917
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 21:01:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739998862; cv=none; b=eLXcdJ197zngwBDZTRWS7s2jiVaJ7c8Jbg9eZAPJcVx618hQKbjzUsfMUvgNVpVxOOaUebPaiLJ7GqakJ1OcMO2hFEHsIgKrbl8AyOWIx9t75cLeUv78Q6svepCc86hdohzbHtI/5jvR8sN79+FagGdeY0JVFiKHBP1c6WPaYEw=
+	t=1739998885; cv=none; b=HBeylok3LPDtzI8/yH95cTsMBdkH36tcLEY37IsNGYvAwwBRQVMa0eUI2mkGvHHssKvxFReXDUktWPukXde9Tduc4eP1GmONLTNKsGmEJJLVKvlv7GWFXsrfvWPWIpdDS44d1geuOwQVHc6WyCCMDS7clmKq30SqB2DMLXriid8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739998862; c=relaxed/simple;
-	bh=xYjr57grpWT/STxWuEDHFwIohcZWguBHLQd3Ple1A84=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=swZyYwHQbDe5vwNN36aMjQLWVLj3HuFxC2vDhyljaAndP1M/bx5uuR3r9jll1JwpvJaq+TM2rnaJ7ftWq1NIWhvGcwWpPEbV50TndXjSQla+nYK36zn9xHpVlWMzUD0A7+girwC3SgK0t4UldyJEo7L0+52zFTwpXfiQXsEpkug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=b404JmWl; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1739998858;
+	s=arc-20240116; t=1739998885; c=relaxed/simple;
+	bh=88XueeWXpqj5kjhuB+Fm6H2p7SzVpzBLwq4pINslf2I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rdFQFpp5uN9CFWwfCLgbp6qydFE64PC1LcM1aYcM69+DufgAXCcoPoELiTacUEsC+lEKAIBFIPmFrbSbTWdoH+XJJf1MmHGzKywySHbkQOg6CFGfhFW4fqAWbY8uWbY+JF/E4rXn6VNenyn56UNEg3nJi8QUyTiiU4eI/nZXjdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Mw5LELFG; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739998882;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=ckywdOMAiK5RU7FTng5uRut6ZDZUFai0vbpS3/G+qwo=;
-	b=b404JmWl/z+bKeCvatzkoURRjmQSOSE3BdL/Piy043BoBCno+RAzFz77AcASnfNDUF41Xn
-	z2kW5XwwXr6oWsCN/PcgcVXjgzhNXdoNAG7+g1fkh2S2e3cESO7a5ZQqLsSP2xiPNbMYnC
-	UslL0vPuPO3+KDwJ9Fsdr7lVYIqVVSk=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: "Theodore Ts'o" <tytso@mit.edu>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] random: Add missing words in function comments
-Date: Wed, 19 Feb 2025 22:00:31 +0100
-Message-ID: <20250219210031.28963-2-thorsten.blum@linux.dev>
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sYjxlUd4Pezfp7IGcM3InFoEs5RX7Q1Y8T88vEWSPEY=;
+	b=Mw5LELFGY11dfmqWrlASe7GlpPEoP0MSXHn8lGzXY/W+KrhsFf2VG4XraeAwkChlYo0ycA
+	shG3yZLn9ghRzykZI7HG+6W9eDd7ZIhz9U0oyaP1lph1P9GlwMiekAX5TfUzfIfutAU+ci
+	oSJ6bjHDzCgi4XjFGlKrIW39hmX58f8=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-557-8ZgrR-_ZNOODZdi42zo02Q-1; Wed,
+ 19 Feb 2025 16:01:18 -0500
+X-MC-Unique: 8ZgrR-_ZNOODZdi42zo02Q-1
+X-Mimecast-MFC-AGG-ID: 8ZgrR-_ZNOODZdi42zo02Q_1739998876
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A0D811800879;
+	Wed, 19 Feb 2025 21:01:15 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.33.102])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id BF5AF190C54A;
+	Wed, 19 Feb 2025 21:01:12 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Wed, 19 Feb 2025 22:00:47 +0100 (CET)
+Date: Wed, 19 Feb 2025 22:00:43 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Kees Cook <kees@kernel.org>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] yama: don't abuse rcu_read_lock/get_task_struct in
+ yama_task_prctl()
+Message-ID: <20250219210042.GE5948@redhat.com>
+References: <20250219161417.GA20851@redhat.com>
+ <202502191125.1A6F07E@keescook>
+ <20250219201742.GD5948@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250219201742.GD5948@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-s/good as/as good as/
+Forgot to say...
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- drivers/char/random.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+with or without this patch the usage of ptrace_relation->tracer/tracee
+doesn't look right (safe) to me... but probably I missed something and
+this is another story. Currently I am trying to audit the usage of
+task->group_leader.
 
-diff --git a/drivers/char/random.c b/drivers/char/random.c
-index 2581186fa61b..b63372af9bce 100644
---- a/drivers/char/random.c
-+++ b/drivers/char/random.c
-@@ -427,7 +427,7 @@ static void _get_random_bytes(void *buf, size_t len)
- 
- /*
-  * This returns random bytes in arbitrary quantities. The quality of the
-- * random bytes is good as /dev/urandom. In order to ensure that the
-+ * random bytes is as good as /dev/urandom. In order to ensure that the
-  * randomness provided by this function is okay, the function
-  * wait_for_random_bytes() should be called and return 0 at least once
-  * at any point prior.
-@@ -490,7 +490,7 @@ static ssize_t get_random_bytes_user(struct iov_iter *iter)
- 
- /*
-  * Batched entropy returns random integers. The quality of the random
-- * number is good as /dev/urandom. In order to ensure that the randomness
-+ * number is as good as /dev/urandom. In order to ensure that the randomness
-  * provided by this function is okay, the function wait_for_random_bytes()
-  * should be called and return 0 at least once at any point prior.
-  */
--- 
-2.48.1
+On 02/19, Oleg Nesterov wrote:
+>
+> On 02/19, Kees Cook wrote:
+> >
+> > On Wed, Feb 19, 2025 at 05:14:17PM +0100, Oleg Nesterov wrote:
+> > > current->group_leader is stable, no need to take rcu_read_lock() and do
+> > > get/put_task_struct().
+> >
+> > Can you explain why this is true? In trying to figure this out again,
+> > it seems that the only way current->group_leader can vanish is if
+> > the entire process vanishes (fork or thread exec), in which case the
+> > "current" in this prctl can't be happening; this appears to be locked
+> > behind tsk->sighand->siglock ?
+> 
+> Well, almost, but this has nothing to do with tsk->sighand->siglock...
+> 
+> task->group_leader can only be changed by thread exec, when a non leader
+> thread does exec, see de_thread(). But de_thread() can't succeed and change
+> ->group_leader until all other threads exit, see the "Kill all other threads
+> in the thread group" code in de_thread(). The "current" task can't exit, so
+> current->group_leader is stable.
+> 
+> Note also that we already have a lot of current->group_leader users which
+> don't use rcu/get_task_struct.
+> 
+> That said, we have a lot of buggy users of tsk->group_leader when
+> same_thread_group(tsk, current) != true ;) For example, sys_prlimit64().
+> And note that rcu_read_lock/get_task_struct can't help in this case.
+> I am going to send some fixes.
+> 
+> Oleg.
+> 
+> > 
+> > -Kees
+> > 
+> > > 
+> > > Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+> > > ---
+> > >  security/yama/yama_lsm.c | 9 ++-------
+> > >  1 file changed, 2 insertions(+), 7 deletions(-)
+> > > 
+> > > diff --git a/security/yama/yama_lsm.c b/security/yama/yama_lsm.c
+> > > index 1971710620c1..3d064dd4e03f 100644
+> > > --- a/security/yama/yama_lsm.c
+> > > +++ b/security/yama/yama_lsm.c
+> > > @@ -222,7 +222,7 @@ static int yama_task_prctl(int option, unsigned long arg2, unsigned long arg3,
+> > >  			   unsigned long arg4, unsigned long arg5)
+> > >  {
+> > >  	int rc = -ENOSYS;
+> > > -	struct task_struct *myself = current;
+> > > +	struct task_struct *myself;
+> > >  
+> > >  	switch (option) {
+> > >  	case PR_SET_PTRACER:
+> > > @@ -232,11 +232,7 @@ static int yama_task_prctl(int option, unsigned long arg2, unsigned long arg3,
+> > >  		 * leader checking is handled later when walking the ancestry
+> > >  		 * at the time of PTRACE_ATTACH check.
+> > >  		 */
+> > > -		rcu_read_lock();
+> > > -		if (!thread_group_leader(myself))
+> > > -			myself = rcu_dereference(myself->group_leader);
+> > > -		get_task_struct(myself);
+> > > -		rcu_read_unlock();
+> > > +		myself = current->group_leader;
+> > >  
+> > >  		if (arg2 == 0) {
+> > >  			yama_ptracer_del(NULL, myself);
+> > > @@ -255,7 +251,6 @@ static int yama_task_prctl(int option, unsigned long arg2, unsigned long arg3,
+> > >  			}
+> > >  		}
+> > >  
+> > > -		put_task_struct(myself);
+> > >  		break;
+> > >  	}
+> > >  
+> > > -- 
+> > > 2.25.1.362.g51ebf55
+> > > 
+> > > 
+> > 
+> > -- 
+> > Kees Cook
+> > 
 
 
