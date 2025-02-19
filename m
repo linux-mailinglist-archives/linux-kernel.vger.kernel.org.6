@@ -1,142 +1,155 @@
-Return-Path: <linux-kernel+bounces-521156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D26FA3B572
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:57:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAC6AA3B599
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:59:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D70F163C67
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:50:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6549C3BBA3B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:52:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42F981DF74E;
-	Wed, 19 Feb 2025 08:41:41 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E8B01DE2B8
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 08:41:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4AE81E5204;
+	Wed, 19 Feb 2025 08:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Wsn2lKd6"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C7151C3BE9;
+	Wed, 19 Feb 2025 08:45:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739954500; cv=none; b=kyFO4Cm08ypN0RIvFLGMwDwU017xo6WrAzETrB3Ch5fS1NWV1F3ir0TCXWfwdqtT3Ou9XCK+9LKsg3FnfHZr0+N7xggIoLzow68apUbxFxsJQPu6cZbRDxbaIJI2XeE1KTkiMuUlQL5TxuCCdbgfM3DDkmlibXEdod/mbYHt7wQ=
+	t=1739954719; cv=none; b=mczqoHtobOBbV8hI4msBUwlDiYHzb5tmzcgnM/jsUO8YH4kcx/uLcq/dVM6WE0i+6K5cvgT1yEXL45HikW3VeblDi6J9kVXhvilzwF20H2lVg3HJDbY917xNmWkY4+CAZFT8YGv3xwsEy0aTz2dLfhPRggLz+pLDN2/mq//l9P0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739954500; c=relaxed/simple;
-	bh=SMg51oO931TLeNepJkpbxQflNB7xepGXXX7uE6Z2IBs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TzRrDryxkEpJliAYh3cAvN0GnsKvRW5q1C2iVy10F+toS81l1XuMzFx3HqJZHKK21gvCL3TMCcMIm5vkh8k4uuoaewAzXZ7XmbHkW1UdpwAaLhBRrS43VUM76uIFVGRbT3elr3rC16wHJrxByG177+qRaBqK5Z57dF1ih5iLCJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1FCE41682;
-	Wed, 19 Feb 2025 00:41:57 -0800 (PST)
-Received: from [10.57.84.233] (unknown [10.57.84.233])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D45833F5A1;
-	Wed, 19 Feb 2025 00:41:37 -0800 (PST)
-Message-ID: <fe95f4c8-4b09-4d8e-99c9-987ddc2761e3@arm.com>
-Date: Wed, 19 Feb 2025 08:41:36 +0000
+	s=arc-20240116; t=1739954719; c=relaxed/simple;
+	bh=uqDkMFscgjPk/BMHb/9eP3O3a+4r4MiJI9Q1LbjQu0k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sMQzIpFDT2t3WmFn2vvev9bzrdJGBqx+k4eRwECnaFUVs4SmJClkx4OzY7gYnp2DBsUrHL0JvEWRYb9WfH2kT40PRwZlMJkZxsMNapbdxtBFxPgjzRRwY2tvUftvbrWy/+QfcOhnLbWGWHMf6j7f/vcSTTRP5a233fKsUfcMkuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Wsn2lKd6; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=guiet
+	ZmiXVKbF39X5NOgGjs2hx7xw8u9MtGsuFXnqDs=; b=Wsn2lKd6seRXMMgXZfJp5
+	VEn0CvfrvDhiNAIA0uN0NdHRncBhvUAOEmGqY1dc2N+Zw8qfgy58mIXPyDGGZ0Ek
+	DRChE1y7wH3WLXXyCMq/qLXmRh8l4Jv+1AxkMOXlTmAGNxtL4Z7Od/JOksYsUI3+
+	h5c1PC2bHgctiOIGFxyJh8=
+Received: from localhost.localdomain (unknown [116.128.244.169])
+	by gzsmtp5 (Coremail) with SMTP id QCgvCgCXXdnwmbVnvOLDOQ--.51003S2;
+	Wed, 19 Feb 2025 16:44:34 +0800 (CST)
+From: oushixiong1025@163.com
+To: Helge Deller <deller@gmx.de>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Lee Jones <lee@kernel.org>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	linux-fbdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Shixiong Ou <oushixiong@kylinos.cn>
+Subject: [PATCH] fbdev: lcdcfb: Register sysfs groups through driver core
+Date: Wed, 19 Feb 2025 16:44:27 +0800
+Message-Id: <20250219084427.244985-1-oushixiong1025@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: kernel BUG at arch/arm64/mm/mmu.c:185!
-Content-Language: en-GB
-To: Luiz Capitulino <luizcap@redhat.com>, LKML
- <linux-kernel@vger.kernel.org>, linux-mm@kvack.org
-Cc: ardb@kernel.org
-References: <a3d9acbe-07c2-43b6-9ba9-a7585f770e83@redhat.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <a3d9acbe-07c2-43b6-9ba9-a7585f770e83@redhat.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:QCgvCgCXXdnwmbVnvOLDOQ--.51003S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxGFyrAF1kXr1fGFW8AF1rXrb_yoW5Cr48pF
+	4UAa4YgrW3ZwsxWrs8Aa17uFWru3WrtFyUZr10yw1rGasxAr1YqFyfJ397Jry3JFWkWr13
+	trWDA345CF47uw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jn2-5UUUUU=
+X-CM-SenderInfo: xrxvxxx0lr0wirqskqqrwthudrp/1tbiXAf4D2e1kK-QWQAAsI
 
-On 19/02/2025 02:27, Luiz Capitulino wrote:
-> Hi,
-> 
-> I'm getting the crash below with Linus tree commit
-> 2408a807bfc3f738850ef5ad5e3fd59d66168996 on a Ampere Mt. Jade with two sockets
-> (backtrace below).
+From: Shixiong Ou <oushixiong@kylinos.cn>
 
-Thanks for the bug report, I'll take a look this morning, but I'm off work
-tomorrow and Friday so if I can't figure it out before end of day I won't be
-able to look again until Monday, unless someone can pick it up in the meantime.
+[WHY]
+   1. The driver forgot to call device_remove_file()
+   in sh_mobile_lcdc_overlay_fb_unregister(), and there was
+   no error handling when calling device_create_file() failed.
 
-Anyway, is there a specific config you're compiling for? And what about kernel
-command line args?
+   2. This should probably use device_add_group() instead of
+   individual files to simplify both creation and removal. [Arnd]
 
-Is it 100% reproducible for you? How much RAM does your system have? (I have 2
-socket Mt. Jade with 512G; I'll try to repro on that).
+   3. The driver core can register and cleanup sysfs groups already.
+   as commit 95cdd538e0e5 ("fbdev: efifb: Register sysfs groups
+   through driver core").
 
-> 
-> It happens very early during boot. Passing 'nokaslr' in the command-line works
-> around the issue (ie. I can boot and use the system normally). Doesn't seem to
-> happen with 6.13. I tried bisecting it but got nowhere...
-> 
-> [    0.000000] ------------[ cut here ]------------
-> [    0.000000] kernel BUG at arch/arm64/mm/mmu.c:185!
+[HOW]
+   Register sysfs groups through driver core.
 
-This is:
+Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
+---
+ drivers/video/fbdev/sh_mobile_lcdcfb.c | 29 ++++++++++++--------------
+ 1 file changed, 13 insertions(+), 16 deletions(-)
 
-/*
- * After the PTE entry has been populated once, we
- * only allow updates to the permission attributes.
- */
-BUG_ON(!pgattr_change_is_safe(pte_val(old_pte), pte_val(__ptep_get(ptep))));
-
-So we have a valid -> valid PTE transition where either the PFNs are changing,
-we are trying to change permissions on a contiguous entry, we are trying to
-transition from non-global to global, or we are trying to change other
-explicitly disallowed bits.
-
-> [    0.000000] Internal error: Oops - BUG: 00000000f2000800 [#1] SMP
-> [    0.000000] Modules linked in:
-> [    0.000000] CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.14.0-rc3+ #8
-> [    0.000000] pstate: 400000c9 (nZcv daIF -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> [    0.000000] pc : alloc_init_cont_pte+0x20c/0x3d0
-> [    0.000000] lr : alloc_init_cont_pte+0x204/0x3d0
-> [    0.000000] sp : ffffb45836ec78b0
-> [    0.000000] x29: ffffb45836ec7940 x28: ffff6fea00000000 x27: 0068000000000f07
-> [    0.000000] x26: ffff6fea00200000 x25: 0000400000000000 x24: ffffffffff433000
-> [    0.000000] x23: dfff800000000000 x22: 0000d01600000000 x21: 0068000000000f07
-> [    0.000000] x20: ffff6fea00000000 x19: ffff6fea00010000 x18: 00000000ae5a3fb1
-> [    0.000000] x17: 0000000000001114 x16: 00000000bfc60000 x15: 0000000000000200
-> [    0.000000] x14: 0000000000000000 x13: 1ffff68b06dd8f1c x12: 00000000f1f1f1f1
-> [    0.000000] x11: ffff768b06dd8f1c x10: ffffb45835a1ca38 x9 : 0000000000000000
-> [    0.000000] x8 : 0000000041b58ab3 x7 : 0000000000000000 x6 : 0000000000000000
-> [    0.000000] x5 : 006840000a861f07 x4 : 000000000000a861 x3 : 000000000000a861
-> [    0.000000] x2 : 006840000a861f03 x1 : 0068400000000f07 x0 : 0000000000000000
-> [    0.000000] Call trace:
-> [    0.000000]  alloc_init_cont_pte+0x20c/0x3d0 (P)
-> [    0.000000]  alloc_init_cont_pmd+0x20c/0x4d0
-> [    0.000000]  alloc_init_pud+0x244/0x400
-> [    0.000000]  create_kpti_ng_temp_pgd+0xf8/0x1c8
-
-This is an alias for __create_pgd_mapping_locked() so I suspect we are actually
-in __map_memblock().
-
-> [    0.000000]  map_mem.constprop.0+0x1d8/0x3b8
-> [    0.000000]  paging_init+0x98/0x330
-> [    0.000000]  setup_arch+0xac/0x170
-> [    0.000000]  start_kernel+0x74/0x3c8
-> [    0.000000]  __primary_switched+0x8c/0xa0
-> [    0.000000] Code: f9400301 97ffff64 72001c1f 54fffe21 (d4210000)
-> [    0.000000] ---[ end trace 0000000000000000 ]---
-> [    0.000000] Kernel panic - not syncing: Oops - BUG: Fatal exception
-> [    0.000000] ---[ end Kernel panic - not syncing: Oops - BUG: Fatal
-> exception ]---
-> 
-
-So I guess either we are setting a PTE entry into a table for the first time,
-where somehow the table has not been initially cleared (very unlikely) or we are
-trying to update the permissions of an already mapped pte. In that latter case,
-I think we should only be remapping the kernel image portion of the linear map.
-
-I can't see any obvious recent changes in this area. I'll see if I can repro and
-poke around a bit more.
-
-Thanks,
-Ryan
+diff --git a/drivers/video/fbdev/sh_mobile_lcdcfb.c b/drivers/video/fbdev/sh_mobile_lcdcfb.c
+index 4715dcb59811..dd950e4ab5ce 100644
+--- a/drivers/video/fbdev/sh_mobile_lcdcfb.c
++++ b/drivers/video/fbdev/sh_mobile_lcdcfb.c
+@@ -1338,16 +1338,19 @@ overlay_rop3_store(struct device *dev, struct device_attribute *attr,
+ 	return count;
+ }
+ 
+-static const struct device_attribute overlay_sysfs_attrs[] = {
+-	__ATTR(ovl_alpha, S_IRUGO|S_IWUSR,
+-	       overlay_alpha_show, overlay_alpha_store),
+-	__ATTR(ovl_mode, S_IRUGO|S_IWUSR,
+-	       overlay_mode_show, overlay_mode_store),
+-	__ATTR(ovl_position, S_IRUGO|S_IWUSR,
+-	       overlay_position_show, overlay_position_store),
+-	__ATTR(ovl_rop3, S_IRUGO|S_IWUSR,
+-	       overlay_rop3_show, overlay_rop3_store),
++static DEVICE_ATTR_RW(overlay_alpha);
++static DEVICE_ATTR_RW(overlay_mode);
++static DEVICE_ATTR_RW(overlay_position);
++static DEVICE_ATTR_RW(overlay_rop3);
++
++static struct attribute *overlay_sysfs_attrs[] = {
++	&dev_attr_overlay_alpha.attr,
++	&dev_attr_overlay_mode.attr,
++	&dev_attr_overlay_position.attr,
++	&dev_attr_overlay_rop3.attr,
++	NULL,
+ };
++ATTRIBUTE_GROUPS(overlay_sysfs);
+ 
+ static const struct fb_fix_screeninfo sh_mobile_lcdc_overlay_fix  = {
+ 	.id =		"SH Mobile LCDC",
+@@ -1516,7 +1519,6 @@ sh_mobile_lcdc_overlay_fb_register(struct sh_mobile_lcdc_overlay *ovl)
+ {
+ 	struct sh_mobile_lcdc_priv *lcdc = ovl->channel->lcdc;
+ 	struct fb_info *info = ovl->info;
+-	unsigned int i;
+ 	int ret;
+ 
+ 	if (info == NULL)
+@@ -1530,12 +1532,6 @@ sh_mobile_lcdc_overlay_fb_register(struct sh_mobile_lcdc_overlay *ovl)
+ 		 dev_name(lcdc->dev), ovl->index, info->var.xres,
+ 		 info->var.yres, info->var.bits_per_pixel);
+ 
+-	for (i = 0; i < ARRAY_SIZE(overlay_sysfs_attrs); ++i) {
+-		ret = device_create_file(info->dev, &overlay_sysfs_attrs[i]);
+-		if (ret < 0)
+-			return ret;
+-	}
+-
+ 	return 0;
+ }
+ 
+@@ -2641,6 +2637,7 @@ static int sh_mobile_lcdc_probe(struct platform_device *pdev)
+ static struct platform_driver sh_mobile_lcdc_driver = {
+ 	.driver		= {
+ 		.name		= "sh_mobile_lcdc_fb",
++		.dev_groups	= overlay_sysfs_groups,
+ 		.pm		= &sh_mobile_lcdc_dev_pm_ops,
+ 	},
+ 	.probe		= sh_mobile_lcdc_probe,
+-- 
+2.25.1
 
 
