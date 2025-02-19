@@ -1,149 +1,308 @@
-Return-Path: <linux-kernel+bounces-522681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 995D9A3CD3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 00:17:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AAA9A3CD42
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 00:17:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 019583B7ED2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 23:16:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37CCB17368E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 23:17:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE8E91CC8B0;
-	Wed, 19 Feb 2025 23:16:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79A6125C712;
+	Wed, 19 Feb 2025 23:17:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MbRx+KKe"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="mUs3XIes"
+Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazolkn19011028.outbound.protection.outlook.com [52.103.14.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B32651C0DED
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 23:16:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740006977; cv=none; b=Tzbc4mL8TKhX81q95e7D+UNg22/Rb9/nfkjw+Wnfn0e9SEuwIVhBWjYUgMbVQh3D7dCRjbdmBh2VZSgqGNpxvBFykNW8MrA2UWkY3jt11eDSD1l6vgTcO6PnRDwgvwdAJfs7jcul7cfaVv5prZPNmk0C/mqxyFbSLLDQZnWMqKM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740006977; c=relaxed/simple;
-	bh=v34G1esLBZXaAKmdauy1fpUMAwGoN76yBW71sn8HJdU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uEVfD/hp2gBYcQQodxLkjWljPpawDG5vJb5Ay5oH8+Yo8Ot5NwwGZV1T7H2Ud+v8n8VZZQQcakhuvQyG7il1hzFbC7opfA2KdkqPq2SmqVJAw9bT9iIBA47YpS4slT2pkU678kXR3gOmUgSdlP1DBpalkT8yUojstZPWieb5BZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MbRx+KKe; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740006976; x=1771542976;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=v34G1esLBZXaAKmdauy1fpUMAwGoN76yBW71sn8HJdU=;
-  b=MbRx+KKeIQjV/tcGup7ek0uPH2wHo5beABi+BxI64I8AASL1Ep9xxWS1
-   ovujH5rbNDgXejOkZN7X8lpm4ruwokqVEs3FJRd59NI4RbH9nRe7E1Xam
-   /MMqezS+3GUzliCPv+7FfyZBDrK/f9txnB0lGemGE8ObJD2P7Z6dv2X9J
-   g5ghpGkALH7pB2+eQELuQCrzfUsUiPtYxcY4ekTntxsnwJE6L0HlKgXzV
-   wfBO1VhcNZ4srY3p2HzaKtqG1rG2h79nnHFYq0zN4gP8CoNGMIy/yKJTB
-   //9F0ApBdOMMdc9sUQAcF+tRhOTFldN0KbZ8/IlF7pQh6aV6jF82Q+8xQ
-   w==;
-X-CSE-ConnectionGUID: Q6SlUH+PR+6VSSnSTABKFA==
-X-CSE-MsgGUID: owfcDeh5RKupe5eGHnwUBQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="40974514"
-X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
-   d="scan'208";a="40974514"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 15:16:16 -0800
-X-CSE-ConnectionGUID: Ic7EysGdQW64EyjdROkCZA==
-X-CSE-MsgGUID: 2BWnipDbRPaqhqV2HSR8aQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,299,1732608000"; 
-   d="scan'208";a="115057454"
-Received: from kinlongk-mobl1.amr.corp.intel.com (HELO [10.125.109.250]) ([10.125.109.250])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 15:16:14 -0800
-Message-ID: <5007ae91-f4d5-430b-a403-aff9af1d6375@intel.com>
-Date: Wed, 19 Feb 2025 15:16:14 -0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA202862A5;
+	Wed, 19 Feb 2025 23:17:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.14.28
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740007052; cv=fail; b=mcmM2egujixqwQADVzj0HaDzOHPIrFBw4tbb6PTCd26VxaHWC5JvuV8pSzlxUOzSs/HfLKPkhtVsTFSMuJFNl0qiYgEs28ib+kB4WY5iJJXQIXnPzmYttb6Au2bUCiIBDT3nio9a7KOLsbwLOdi2NOINyFfl2kUFJG1ZfB+iV6A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740007052; c=relaxed/simple;
+	bh=b8rI24b89dEGeyxNiYmx7uFtBFB+lxCvdilpp51FY34=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=hlrpu/hJA5oIM2VGBejA6RYDx21RLEcIFOfIuj7vYiBgN61SaW/cHwImFeGBRXkvg+ffnimPJgL23anjKMGsBiL1GSNBe/960TK0NDaueCzKWMu1qsl5MAN8aX02ClI4C2Zn4Gc5QW2V6Cu2ewuQkozl2dTpg+dFKTG7ZCx4AI0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=mUs3XIes; arc=fail smtp.client-ip=52.103.14.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=MNQVGvOskhCJ6mOg3wr8lQ4tEK4t5uXqA5gqPdkmrD0pFbsCsf1HGsQZGoc6FsUSzrO2iuy69ePCUnjauVviDo2Io5nCz+I7sjfuRZ0yelUNkj/YEMPQ63nv/17Fs3+8upOgE+Nz7vUrMTM4fJndQAykoXr215Xp5Vz2bhMEEMkxxQ6wwI0vS5AazPKSZJogYGAZJHxW+1YQBlSpUlpxSRj1B3t3AMwxwdNbU19cRx7pa3QkXEcruiNQLn56WCP/+87FVwDDWcD1PIpg/PZW15tVsphI4t3v46WFlqvP9YKtznVkHOaRx4zxF3Whbl4yZvdI/aiNlrzS6OhB/Lo84w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=U1Ty9bO4kNZqQoF45hc3T5YXnh5usLNhP9qMKfVRUYs=;
+ b=HS3nSSIk9FVPr1+lZmDQlp08nKxIjYOXPkxK/dt72qxfEqKksS0lsms99FFzq1y5FGY7FEUtgLjITSn0Og138KDiqN/onr9QWinE0d2RDJ5phY/gRa0ZGcRbNDOY6ijNuzuaKCd4Fuhx6HFQAOrZHIwSenDC5zl34oF0MJd4BkiU3tYuv9juYAx1SNnNqmdyZOgdBV/UG+BEf+0PIDLPv6fOGA0Foq7k/KbtBdyplIRyITdrL20LRx6Me51fKXrMfIc+UXH7ZS6v00f7njwwsYHvEN1orPdoZ+5oqBgn9dQLpc1SO3Ipp3jSAj2LdhvIIyU75WdT893uoSHpbUZ3uw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=U1Ty9bO4kNZqQoF45hc3T5YXnh5usLNhP9qMKfVRUYs=;
+ b=mUs3XIesnyShDYIDgOEnLiCbIt7R9NZLp0X1Q+mVNy7Vc3PgfzijS2b0JC1eF3h6AlovBTGcoquv7AERKjag5yvrm7AkHwDmHZ28E6lPO6x8F7ThDjwbjXDBxl8kTaK3YUW59vrMfeJIf8bDb0UQo/xSvt9aknRR8T0atw5fUFfJTeP/sOHlge6xYpEJLCcTSNWMKZA4QBLJUGheRU9YtIWPEgjubVPZCpwNRhfQFjaxYuyxqGvSeCGiDtEljmXgN/F1xp6/YxdRVhafdAiWw64pwTfyHi1aK+D6MT8abMizfK8sDyrf2hRTZRl7QFvA52r/e1FGu4+x03r4SblKow==
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
+ by DM4PR02MB9192.namprd02.prod.outlook.com (2603:10b6:8:108::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.18; Wed, 19 Feb
+ 2025 23:17:28 +0000
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df%4]) with mapi id 15.20.8466.013; Wed, 19 Feb 2025
+ 23:17:28 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: Roman Kisel <romank@linux.microsoft.com>, "arnd@arndb.de" <arnd@arndb.de>,
+	"bhelgaas@google.com" <bhelgaas@google.com>, "bp@alien8.de" <bp@alien8.de>,
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>, "conor+dt@kernel.org"
+	<conor+dt@kernel.org>, "dave.hansen@linux.intel.com"
+	<dave.hansen@linux.intel.com>, "decui@microsoft.com" <decui@microsoft.com>,
+	"haiyangz@microsoft.com" <haiyangz@microsoft.com>, "hpa@zytor.com"
+	<hpa@zytor.com>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>, "kw@linux.com"
+	<kw@linux.com>, "kys@microsoft.com" <kys@microsoft.com>,
+	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+	"manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>,
+	"mingo@redhat.com" <mingo@redhat.com>, "robh@kernel.org" <robh@kernel.org>,
+	"ssengar@linux.microsoft.com" <ssengar@linux.microsoft.com>,
+	"tglx@linutronix.de" <tglx@linutronix.de>, "wei.liu@kernel.org"
+	<wei.liu@kernel.org>, "will@kernel.org" <will@kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-hyperv@vger.kernel.org"
+	<linux-hyperv@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-pci@vger.kernel.org"
+	<linux-pci@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>
+CC: "benhill@microsoft.com" <benhill@microsoft.com>, "bperkins@microsoft.com"
+	<bperkins@microsoft.com>, "sunilmut@microsoft.com" <sunilmut@microsoft.com>
+Subject: RE: [PATCH hyperv-next v4 3/6] Drivers: hv: Provide arch-neutral
+ implementation of get_vtl()
+Thread-Topic: [PATCH hyperv-next v4 3/6] Drivers: hv: Provide arch-neutral
+ implementation of get_vtl()
+Thread-Index: AQHbfO+sIeS3ah0DEkWXeltDBl+Ad7NPTrrA
+Date: Wed, 19 Feb 2025 23:17:28 +0000
+Message-ID:
+ <SN6PR02MB4157164CE9A332EF62C6C037D4C52@SN6PR02MB4157.namprd02.prod.outlook.com>
+References: <20250212014321.1108840-1-romank@linux.microsoft.com>
+ <20250212014321.1108840-4-romank@linux.microsoft.com>
+In-Reply-To: <20250212014321.1108840-4-romank@linux.microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|DM4PR02MB9192:EE_
+x-ms-office365-filtering-correlation-id: 6235255e-c217-4304-52f5-08dd513b93c9
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|8062599003|19110799003|461199028|8060799006|15080799006|3412199025|440099028|12091999003|41001999003|102099032;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?UdKbV8bZEt0nYSS1mlHl35Ary+jWje9hhQ3Ru7m6nrUMuhOX1Ti6tTomi9G8?=
+ =?us-ascii?Q?r1oYwlqDcqHeY8oFqjcAA+2ZwBHfMuiWnaG+yPfZ5ZPzCfQBN5259uSbLQhb?=
+ =?us-ascii?Q?gEqJLy6Ghv2PdgP2FD2EAxeD/yHuKhP2lWTar7zVo93k9/knebO47uYETthr?=
+ =?us-ascii?Q?miBp7nzSYgQCyTcEYCTtHZl2Y8QbycQvvaA5TJ8mARrEbCMUdp66zov9XUB+?=
+ =?us-ascii?Q?7z5B6M6GzM37FpS+Po7Nd5Fw5Af1QasT5HXfc9JdEcqDUxO69W685IwA11Pz?=
+ =?us-ascii?Q?ngaHfto0WWY7zFRN1C9jw0KM9ynorYuQQpTnydKXVA7sRVMwE0ote6Z0g5Fj?=
+ =?us-ascii?Q?uGkN+NcE8AbRiepRPVqizlfjFgX7kHSCFOiXc074fCYipqEF4jliKOPs0hme?=
+ =?us-ascii?Q?2Q76pY+hruVOTq8In2Lnh2joTjeDezsPDBF/BUVt132+yeA3+juSsYLlEZD9?=
+ =?us-ascii?Q?sTT7R7QsR04o33ogX/joo69uah3Oa534NRtsWP6tZse8Lq16zfgd/nD6Ydto?=
+ =?us-ascii?Q?1m9GV0jLRyQ3A+MdktVsBJ2gJ0Qt5hr8Ong+MATeDw6sGCo5D6exdJCuA/xJ?=
+ =?us-ascii?Q?MtyQOvxM4LIMu3AkC3Ma97R3d7kSBKwwErEXAFW7zgr0Cl7BKDhmT7/ptHdJ?=
+ =?us-ascii?Q?CsO3iNi4TTieaCe6Fe3Or9+6dcekF2I2f1Zru2k+zSXF1/9MKTBWuDCtMm5j?=
+ =?us-ascii?Q?XSEcJfal+R6TKSmSXptAPNvFcG6KlDlCXj102B/7yxRjxPnQ4nV5Qy1WPy9n?=
+ =?us-ascii?Q?mIVYj+WcOT+FblOVJgS3kmdv1b+t7eIAJiRA7fe9dUZ1Y9PfNQxqmeMKGb8i?=
+ =?us-ascii?Q?RfgsNAmEyDcwg66aMd59n/rbVmj8combkhTS4RtahLBRJl0AOybXB1IcLpfT?=
+ =?us-ascii?Q?l82mHLZBYkZ38PpuooAM9KGSLz68xmpQ7nvtzttPpOpMlrmm+2xYe9TbcrAV?=
+ =?us-ascii?Q?HOV9ndGX1DngRqT5zzGCm9Q2vKKWg+6DbfKZLYW/B74XksOCK9V7H0zx5pkL?=
+ =?us-ascii?Q?2RkzRkyj+6ZNJEuQb+6X+3nGre6t9z83s7aPQKkcxvfuUxIwhwKKm8kuk3rG?=
+ =?us-ascii?Q?9Q/yfdRmqC27UKhsrm+2yWltniVNoUyOgDOhBfIqkhzsWJi5erU=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?3R0DfessYq5QArI41JXwnGahd0FuxJn1AKKlYMUl/OQn6lcu9N/y1SkcPoJZ?=
+ =?us-ascii?Q?JgbBfPJEbQNFDYieauYxNdoVREcxraiuUsPw9e4Q8zYTXRPhx2vfsOX1IlUJ?=
+ =?us-ascii?Q?sWt3/RwHdl67yiWfb3zrYdThYC0icZOYJYqgDTMo1KDX+GuxB0FrW2s2bacj?=
+ =?us-ascii?Q?IyfCYGDVWQRWycfI6WK/sWwKFMm+KqPSKhkpFK+N3tPO9cp0NSLqqbwaEUgK?=
+ =?us-ascii?Q?ytMdqHoL0RxnytAsrEsug2Ay4H9T2vdwWlMfBrV3Yy0gTq+iPG4mv393qCgv?=
+ =?us-ascii?Q?XIJYxlHvONbh6oPtJrufzwhVKNtcALwWyuJFAsacb4vOA84Y+5OlDeX3a1Qa?=
+ =?us-ascii?Q?y/vHfmdaShj0Ysvgd1HQ+HAI/rnZlzXaX/RqC7yfKQp/rkkcQR8I6pl3EDbf?=
+ =?us-ascii?Q?A9z8tDQ0ngIoO0H+vQ2F1v3/vRm1KL8jg2BTXDBQV07a6mLZy/7RKG6qSXdS?=
+ =?us-ascii?Q?YcKXVE/Wn4XMO/ycRqxQv4I15KVHBxal5D9vUX5G/zwEUDpyg72hKnlRvTv2?=
+ =?us-ascii?Q?Sc+OvYRSgaYFG9u3hxJBgvUv/XLO9gvQwvHSiBtoy1QJZPhYj03hyrdqoYwx?=
+ =?us-ascii?Q?3rEPRr0k1XQt4LEwhnGFszDm75oksHBcfa9ydbXc37zqQhgjabQexhtil8S5?=
+ =?us-ascii?Q?3n89VdWZj4p/Mrb20khdDEWMPEViODoxUDvSVZ39+LS4uPl9U3/pz5KRuEI7?=
+ =?us-ascii?Q?cBp1t5eRhyaDHCSPkkhVAN6gqAdcogBk8RBNOa3kDCkTwmRN3IdVnOoF3jc5?=
+ =?us-ascii?Q?rNO3tFDhQLOV98tpbducAn++pTIyLSTNCHzyZprQLsp/wJJV0IsSRdc5hcKN?=
+ =?us-ascii?Q?XMCmyqQAAQTdanKKv3ZJSmOtJOHt335UDt1W6LudYT1gtu4bXEJDnu2KGPOQ?=
+ =?us-ascii?Q?BKD9wViS1y+GRR8UuHJ2e8mfSgN3Ux3aKrLWdeTWZ5pKmiMTn+o0rFNCeNcO?=
+ =?us-ascii?Q?FiTVxQLdrDiQz69Oor21SSCikG0CiyvAwGeIzjFl5QXwjC7Xfpz//es6vT0R?=
+ =?us-ascii?Q?DTdvaR9X+SNeX0Ymr6OXlrtmZuUrjJVmpytvBSHuSe2P9kbWmi9joWcHtPA3?=
+ =?us-ascii?Q?5h57lySDsFf/PI63olETtrFUhGsqyJll6w+FKR+r2zp+xve00QbaSBeJEI8d?=
+ =?us-ascii?Q?zBkrJZWh4ZGJ/j0Bp+VuamVF3UWN1fJfP5+eJUgiK7FXhjnvgr4/VKdnqIh1?=
+ =?us-ascii?Q?feL8ZqCCVkDo5HPJhRHNBHSpnpLj/XmP3xG66yVX9f2pUAuAXN/jHJATiM4?=
+ =?us-ascii?Q?=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] kexec_core: Accept unaccepted kexec segments'
- destination addresses
-To: Yan Zhao <yan.y.zhao@intel.com>, ebiederm@xmission.com
-Cc: kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-coco@lists.linux.dev, x86@kernel.org, rick.p.edgecombe@intel.com,
- kirill.shutemov@linux.intel.com, bhe@redhat.com,
- Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>
-References: <20241213094930.748-1-yan.y.zhao@intel.com>
- <20241213095449.881-1-yan.y.zhao@intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
- oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
- 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
- ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
- VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
- iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
- c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
- pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
- ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
- QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
- c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
- LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
- lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
- MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
- IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
- aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
- I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
- E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
- F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
- CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
- P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
- 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
- GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
- MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
- Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
- lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
- 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
- qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
- BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
- 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
- vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
- FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
- l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
- yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
- +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
- asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
- WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
- sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
- KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
- MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
- hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
- vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
-In-Reply-To: <20241213095449.881-1-yan.y.zhao@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6235255e-c217-4304-52f5-08dd513b93c9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Feb 2025 23:17:28.0626
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR02MB9192
 
-On 12/13/24 01:54, Yan Zhao wrote:
-> Accept the destination addresses during the kexec load, immediately after
-> they pass sanity checks. This ensures the code is located in a common place
-> shared by both the kexec_load and kexec_file_load system calls.
+From: Roman Kisel <romank@linux.microsoft.com> Sent: Tuesday, February 11, =
+2025 5:43 PM
+>=20
+> To run in the VTL mode, Hyper-V drivers have to know what
+> VTL the system boots in, and the arm64/hyperv code does not
+> have the means to compute that.
+>=20
+> Refactor the code to hoist the function that detects VTL,
+> make it arch-neutral to be able to employ it to get the VTL
+> on arm64.
+>=20
+> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
+> ---
+>  arch/x86/hyperv/hv_init.c      | 34 ----------------------------------
+>  drivers/hv/hv_common.c         | 32 ++++++++++++++++++++++++++++++++
+>  include/asm-generic/mshyperv.h |  6 ++++++
+>  include/hyperv/hvgdk_mini.h    |  2 +-
+>  4 files changed, 39 insertions(+), 35 deletions(-)
+>=20
+> diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
+> index 173005e6a95d..383bca1a3ae2 100644
+> --- a/arch/x86/hyperv/hv_init.c
+> +++ b/arch/x86/hyperv/hv_init.c
+> @@ -411,40 +411,6 @@ static void __init hv_get_partition_id(void)
+>  	local_irq_restore(flags);
+>  }
+>=20
+> -#if IS_ENABLED(CONFIG_HYPERV_VTL_MODE)
+> -static u8 __init get_vtl(void)
+> -{
+> -	u64 control =3D HV_HYPERCALL_REP_COMP_1 | HVCALL_GET_VP_REGISTERS;
+> -	struct hv_input_get_vp_registers *input;
+> -	struct hv_output_get_vp_registers *output;
+> -	unsigned long flags;
+> -	u64 ret;
+> -
+> -	local_irq_save(flags);
+> -	input =3D *this_cpu_ptr(hyperv_pcpu_input_arg);
+> -	output =3D *this_cpu_ptr(hyperv_pcpu_output_arg);
+> -
+> -	memset(input, 0, struct_size(input, names, 1));
+> -	input->partition_id =3D HV_PARTITION_ID_SELF;
+> -	input->vp_index =3D HV_VP_INDEX_SELF;
+> -	input->input_vtl.as_uint8 =3D 0;
+> -	input->names[0] =3D HV_REGISTER_VSM_VP_STATUS;
+> -
+> -	ret =3D hv_do_hypercall(control, input, output);
+> -	if (hv_result_success(ret)) {
+> -		ret =3D output->values[0].reg8 & HV_X64_VTL_MASK;
+> -	} else {
+> -		pr_err("Failed to get VTL(error: %lld) exiting...\n", ret);
+> -		BUG();
+> -	}
+> -
+> -	local_irq_restore(flags);
+> -	return ret;
+> -}
+> -#else
+> -static inline u8 get_vtl(void) { return 0; }
+> -#endif
+> -
+>  /*
+>   * This function is to be invoked early in the boot sequence after the
+>   * hypervisor has been detected.
+> diff --git a/drivers/hv/hv_common.c b/drivers/hv/hv_common.c
+> index af5d1dc451f6..70f754710170 100644
+> --- a/drivers/hv/hv_common.c
+> +++ b/drivers/hv/hv_common.c
+> @@ -283,6 +283,38 @@ static inline bool hv_output_page_exists(void)
+>  	return hv_root_partition || IS_ENABLED(CONFIG_HYPERV_VTL_MODE);
+>  }
+>=20
+> +#if IS_ENABLED(CONFIG_HYPERV_VTL_MODE)
+> +u8 __init get_vtl(void)
+> +{
+> +	u64 control =3D HV_HYPERCALL_REP_COMP_1 | HVCALL_GET_VP_REGISTERS;
+> +	struct hv_input_get_vp_registers *input;
+> +	struct hv_output_get_vp_registers *output;
+> +	unsigned long flags;
+> +	u64 ret;
+> +
+> +	local_irq_save(flags);
+> +	input =3D *this_cpu_ptr(hyperv_pcpu_input_arg);
+> +	output =3D *this_cpu_ptr(hyperv_pcpu_output_arg);
+> +
+> +	memset(input, 0, struct_size(input, names, 1));
+> +	input->partition_id =3D HV_PARTITION_ID_SELF;
+> +	input->vp_index =3D HV_VP_INDEX_SELF;
+> +	input->input_vtl.as_uint8 =3D 0;
+> +	input->names[0] =3D HV_REGISTER_VSM_VP_STATUS;
+> +
+> +	ret =3D hv_do_hypercall(control, input, output);
+> +	if (hv_result_success(ret)) {
+> +		ret =3D output->values[0].reg8 & HV_VTL_MASK;
+> +	} else {
+> +		pr_err("Failed to get VTL(error: %lld) exiting...\n", ret);
+> +		BUG();
+> +	}
+> +
+> +	local_irq_restore(flags);
+> +	return ret;
+> +}
+> +#endif
+> +
+>  int __init hv_common_init(void)
+>  {
+>  	int i;
+> diff --git a/include/asm-generic/mshyperv.h b/include/asm-generic/mshyper=
+v.h
+> index a7bbe504e4f3..bb36856c3467 100644
+> --- a/include/asm-generic/mshyperv.h
+> +++ b/include/asm-generic/mshyperv.h
+> @@ -314,4 +314,10 @@ static inline enum hv_isolation_type
+> hv_get_isolation_type(void)
+>  }
+>  #endif /* CONFIG_HYPERV */
+>=20
+> +#if IS_ENABLED(CONFIG_HYPERV_VTL_MODE)
+> +u8 __init get_vtl(void);
+> +#else
+> +static inline u8 get_vtl(void) { return 0; }
+> +#endif
+> +
+>  #endif
+> diff --git a/include/hyperv/hvgdk_mini.h b/include/hyperv/hvgdk_mini.h
+> index 155615175965..0f8443595732 100644
+> --- a/include/hyperv/hvgdk_mini.h
+> +++ b/include/hyperv/hvgdk_mini.h
+> @@ -1202,7 +1202,7 @@ struct hv_send_ipi {	 /*
+> HV_INPUT_SEND_SYNTHETIC_CLUSTER_IPI */
+>  	u64 cpu_mask;
+>  } __packed;
+>=20
+> -#define	HV_X64_VTL_MASK			GENMASK(3, 0)
+> +#define	HV_VTL_MASK			GENMASK(3, 0)
+>=20
+>  /* Hyper-V memory host visibility */
+>  enum hv_mem_host_visibility {
+> --
+> 2.43.0
+>=20
 
-So, we've got an end-user-visible bug. Eric raised some good concerns
-about the hardware and firmware design, but I think they've all been
-addressed. The only other even solution I've seen proposed is to not do
-unaccepted memory in the first place. I don't think that's viable or
-justified, especially since we've got at least one end user[1] that
-seems to think unaccepted memory fits their needs.
+Reviewed-by: Michael Kelley <mhklinux@outlook.com>
 
-This bug can _probably_ be fixed in arch/x86 as well, but having the
-solution in general code seems like the right place to me:
-
-Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
-
-Andrew, it seems like a lot of kexec work flows through you. Are you the
-right one to pick this up?
-
-1.
-https://lore.kernel.org/all/CAMGD6P3r-S-Va-TRvVjZ808on9+-wFJ_VeTpQ+FEN1jBbhmnXw@mail.gmail.com/
 
