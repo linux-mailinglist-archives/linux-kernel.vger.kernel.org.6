@@ -1,105 +1,199 @@
-Return-Path: <linux-kernel+bounces-522504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75262A3CB2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:15:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE797A3CB2E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:15:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D23127A750C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:12:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAFAD189EAA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:13:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCBA4254AE6;
-	Wed, 19 Feb 2025 21:12:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 316FE255E3F;
+	Wed, 19 Feb 2025 21:12:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eTAWZnXg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JB8kVsz8";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zy+SKcQh";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WQ5DtBRR";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="2vtti/c4"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A8F024E4C4;
-	Wed, 19 Feb 2025 21:12:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D806253F0B
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 21:12:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739999535; cv=none; b=kH9OOdUMaUFXlN56U9+Wy8ByGvS+d9G/dYq/hIzwVtc579i96XWutLeiWgBVE15iDGb8TgD5755rV+Eejp2MEX1jCX2OYJfGr/ekTvQSkCSq1Tvx9A/AhvCzdial4Hx/kBOdHOjy0ZjaGnWzkPamsClN0BfA3ReKeEtPIg6lZKc=
+	t=1739999563; cv=none; b=kMuCcUGpHL19kbM3BUKkRHx1Y55H3W6K+TdVuQVmXGZPtrBe2cpbcQRZSF3LIR+PeAlj8F8tITXr3jspowHOuVZQppKhBeSsu+Gb7Vzb1iJXS4+6Cjiq+elw23eK740qvm0hKe5FdqES+RPkIKvi4XeVTMJhrTrMA/ATIlRPuZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739999535; c=relaxed/simple;
-	bh=RH2S874a9p3OcwC5UMWnwGLvCd8mOlpI7+gBBPGe02k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PkwiPKMKspobKPegH+WtqoHWdFXM8PzsV9dnv5zhC6wkOE3flu7mI8dbo5hYMY11avrMwcuFoNEA2bUUye+PDVW04FqNSqHgy667kmA5RuOQ4JfUSKJxVGJKGAqXFOTaRewu6JsULHsHGJa0g+m1cAdZZ4ZokwMkKO6Pz3yxVhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eTAWZnXg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56649C4CED1;
-	Wed, 19 Feb 2025 21:12:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739999534;
-	bh=RH2S874a9p3OcwC5UMWnwGLvCd8mOlpI7+gBBPGe02k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eTAWZnXgtZ8AVs9p1jhneACdx3Wj7FIOWsubcJNQ8Uq3Lhy/j0COgROUsFS7UeCqV
-	 1FIYWON4Zjvnv4HKULOq1JfQREuNZVA94ZvZSwyHaJ0tu5hGKEy8VS2fFQU+CgJJQ6
-	 rBbGTIrJTEI4SV03yNjTGiKoVHVs5OAog/OsHyAnzZFmK5KjTD30A/GBDVEIfFLnYc
-	 pYdkUTUoTjaJjkJHOuFIc7Ror+Du0xs2yoztCTnTqbDbKiqPa+2KDg4TdpcbcDHzJ/
-	 SCpZanryjZLF0LiAVm4rLeDe5tekQ9LsZUPMFxxJBM75sJ4RomBYfciicrYYsAL1Bl
-	 wQtSdsIMjXwfg==
-Date: Wed, 19 Feb 2025 15:12:13 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Rui Miguel Silva <rmfrfs@gmail.com>,
-	Martin Kepplinger <martink@posteo.de>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
-	Purism Kernel Team <kernel@puri.sm>,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Robert Chiras <robert.chiras@nxp.com>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	"Guoniu.zhou" <guoniu.zhou@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 06/12] media: dt-bindings: nxp,imx8mq-mipi-csi2: Add
- i.MX8QM(QXP) compatible strings
-Message-ID: <173999953304.2962619.18320580606066581337.robh@kernel.org>
-References: <20250210-8qxp_camera-v3-0-324f5105accc@nxp.com>
- <20250210-8qxp_camera-v3-6-324f5105accc@nxp.com>
+	s=arc-20240116; t=1739999563; c=relaxed/simple;
+	bh=cRtn6DLNU/SjK8wv/JWpI/qrM+g7kwfGr63Ft/6txWk=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=nG2CQt1DnYYacgAOj7YF6ELaqOn5OcYwl4ygw+qrEbZM75QqIYtzLkWSsqNdmRNGyS/i7WCo8XGzvom4C6kMfTUXu4OL+bJDJ00w4LsGvTMqGXSdmAgm6H7D0iQMM1qsEylLk3L4eUFeaCMWVTbw32Z8S9uye/EBZwMoQhX6Qmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JB8kVsz8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zy+SKcQh; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WQ5DtBRR; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=2vtti/c4; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id DF2481F86C;
+	Wed, 19 Feb 2025 21:12:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1739999554; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VpldkGZefhNxtKiLXQCmXZ8Zj1sa/cliTtoWiaTp7II=;
+	b=JB8kVsz8FkGzsf4H/dCAqb0IWrFSr43o+rlV2ORYi0kkdGREn1c2PMz+9XVe1R1iNTFZDy
+	C7nETKuOuqQi1p1nxFtK23hgSvEnBttJl0Lk9qJStf83TNAWV1UPmpedBETstXqumA63Lj
+	RiFZUhKO9eKsWDc02a5R7cUSknSPJKc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1739999554;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VpldkGZefhNxtKiLXQCmXZ8Zj1sa/cliTtoWiaTp7II=;
+	b=zy+SKcQh3ivV9gUJG6EcN4SGHHKH978jACHycR5dMdagcN/MVDdYiyOs0IqFg8LDoffn3+
+	MS67G7lozbYoj2CQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=WQ5DtBRR;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="2vtti/c4"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1739999553; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VpldkGZefhNxtKiLXQCmXZ8Zj1sa/cliTtoWiaTp7II=;
+	b=WQ5DtBRR9tfa2qlW25hhkchumb8HLqFG7YrYYnpCq+6HnuwPeSiYnGYb1naSTCd49Jhic9
+	mAXKtvuQ+Vi6IJFqzwiIXVCIWIzeuzaxx3DfQsWz7m1hReEjrf9MD8gjT9+cPM7JdQaNAt
+	tvtMOO99H9bZOE4NSFTM2UT8esYiH0o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1739999553;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VpldkGZefhNxtKiLXQCmXZ8Zj1sa/cliTtoWiaTp7II=;
+	b=2vtti/c4sqXdKs463U2ojTwqf87l+ggXZbSD1a4ZVrqbnIw/hKNuMlRzyxM7IDh5fTBK+B
+	TLDamDIwvnMRY8Dg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1949F1366F;
+	Wed, 19 Feb 2025 21:12:31 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 3+HtLz9Jtmf7IAAAD6G6ig
+	(envelope-from <neilb@suse.de>); Wed, 19 Feb 2025 21:12:31 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250210-8qxp_camera-v3-6-324f5105accc@nxp.com>
+From: "NeilBrown" <neilb@suse.de>
+To: "Bagas Sanjaya" <bagasdotme@gmail.com>
+Cc: "Stephen Rothwell" <sfr@canb.auug.org.au>,
+ "Christian Brauner" <brauner@kernel.org>,
+ "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+ "Linux Next Mailing List" <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of the vfs-brauner tree
+In-reply-to: <Z7WaNWHRkqt2rFGA@archie.me>
+References:
+ <20250219153444.0046e433@canb.auug.org.au>, <Z7WaNWHRkqt2rFGA@archie.me>
+Date: Thu, 20 Feb 2025 08:12:28 +1100
+Message-id: <173999954863.3118120.1592139865849565534@noble.neil.brown.name>
+X-Rspamd-Queue-Id: DF2481F86C
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
+X-Spam-Flag: NO
+
+On Wed, 19 Feb 2025, Bagas Sanjaya wrote:
+> On Wed, Feb 19, 2025 at 03:34:44PM +1100, Stephen Rothwell wrote:
+> > Hi all,
+> >=20
+> > After merging the vfs-brauner tree, today's linux-next build (htmldocs)
+> > produced this warning:
+> >=20
+> > Documentation/filesystems/porting.rst:1173: ERROR: Unexpected indentation=
+. [docutils]
+> >=20
+> > Introduced by commit
+> >=20
+> >   20c2c1baa9ab ("VFS: add common error checks to lookup_one_qstr_excl()")
+> >=20
+>=20
+> Separating the bullet list should suffice (plus s/recommend/recommended/
+> for consistency with the rest of docs):
+>=20
+> ---- >8 ----
+> diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesyst=
+ems/porting.rst
+> index 3b6622fbd66be9..cfac50a7258db6 100644
+> --- a/Documentation/filesystems/porting.rst
+> +++ b/Documentation/filesystems/porting.rst
+> @@ -1166,10 +1166,11 @@ kern_path_locked() and user_path_locked() no longer=
+ return a negative
+>  dentry so this doesn't need to be checked.  If the name cannot be found,
+>  ERR_PTR(-ENOENT) is returned.
+> =20
+> -** recommend**
+> +** recommended**
+> =20
+>  lookup_one_qstr_excl() is changed to return errors in more cases, so
+> -these conditions don't require explicit checks.
+> +these conditions don't require explicit checks:
+> +
+>   - if LOOKUP_CREATE is NOT given, then the dentry won't be negative,
+>     ERR_PTR(-ENOENT) is returned instead
+>   - if LOOKUP_EXCL IS given, then the dentry won't be positive,
+>=20
+> Let me know if I should send the formal patch.
+
+Thanks a lot for correcting these for me!
+NeilBrown
 
 
-On Mon, 10 Feb 2025 15:59:25 -0500, Frank Li wrote:
-> From: Robert Chiras <robert.chiras@nxp.com>
-> 
-> Add compatible strings for i.MX8QM/i.MX8QXP platform. Remove
-> fsl,mipi-phy-gpr from required properties and add new reg space, since
-> i.MX8QM and i.MX8QXP use dedicate control and status register(csr) space.
-> 
-> Keep the same restriction for other compatible strings.
-> 
-> Signed-off-by: Robert Chiras <robert.chiras@nxp.com>
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
-> change from v2 to v3
-> - use dedicate csr register space
-> change from v1 to v2
-> - remove internal review tags
-> - remove reg maxitems:1
-> - remove 8ulp part
-> - add 8qxp compatible string and make 8qm failback to 8qxp
-> - limit reset and power domain number to 1 for 8qxp and 8qm
-> - remove power-domains change because 8qm/8qxp only need 1 power domain
-> ---
->  .../bindings/media/nxp,imx8mq-mipi-csi2.yaml       | 38 +++++++++++++++++++---
->  1 file changed, 34 insertions(+), 4 deletions(-)
-> 
-
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+>=20
+> Thanks.
+>=20
+> --=20
+> An old man doll... just what I always wanted! - Clara
+>=20
 
 
