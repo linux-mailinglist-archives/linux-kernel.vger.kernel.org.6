@@ -1,191 +1,152 @@
-Return-Path: <linux-kernel+bounces-522112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E928DA3C634
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:28:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F53AA3C63A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:29:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8579A3B3CD9
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:28:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90C01189A2F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:29:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72E292144D1;
-	Wed, 19 Feb 2025 17:28:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F4A1214802;
+	Wed, 19 Feb 2025 17:28:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WMIIVk5X"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gD8UzGxH"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 131741F61C
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 17:28:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CA102144D7;
+	Wed, 19 Feb 2025 17:28:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739986084; cv=none; b=flSk9IvrVX1c+aAjjcZvxnrIqmUb+bc1vEo8gZBhjeREqDULk9Xp2eVw3R2ot9EEA6i3QvNy+zMRrTU12+rFxUFM/doB1cG6W2QTRflnE4fOR+w3y8nbRwr9CMs1hLGLHpJ6GBHTqY/UmoS+3DVu2Vo5gkPCM4jB8HfOr7G9uyA=
+	t=1739986127; cv=none; b=nv29lZebVoujQhHZlM5P6mTFSmJ6C261C16piiN404TyH3QeO/lu44zcK7MWI5c/7CuzxA82RFapM012A/RjTQEpIYJbnxw1eKZjR4CO+XHXct5RiDA2tmxV3o/J86SNFCIuhPiqbXDFx+sDOaLfNEmtFYHnBYVzDFVUFX6hm7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739986084; c=relaxed/simple;
-	bh=A2+HN4X0kozADOMd8HPrxpMBAxhu8YWTaMSPkwDk7qU=;
+	s=arc-20240116; t=1739986127; c=relaxed/simple;
+	bh=KeHrbq9+/KLUuc3o4CRJqpjQacIlopX9KXp8AMmZgpk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q25Geu2LWnqKExmGM06prZYOc5kQAKlKE90dz+k3zliqZgDXeLmZ7VzdUjhIQSzgh8p+CbnmDV5mrXxCVgBbrO8FX7q6/A//Ujvu6d/RW72SrgrtqxLzj5T4ffa/YVa0n033qv97wv6JxYzAK1yzMoqV8G5ghpDIZhO+NSkl1U8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WMIIVk5X; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2fbf5c2f72dso69232a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 09:28:01 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=WQvte8rGbwqmXOiebGC76wko8ObsUfyTysM6YzKqLpHbNsnXNoQLNuXoJXYWjGg5oRjGXAJX/ky7UbHUjZrsnJaUx2INV02zQnO+ILo4soFYg8aBbm7HiKfROsAJ7pjPMGRsgSAqBhhne+/ODdFdwZAxX+u37wF89dx35YpAk+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gD8UzGxH; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-abbc38adeb1so13870966b.1;
+        Wed, 19 Feb 2025 09:28:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739986081; x=1740590881; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=6NzngaP+OJcFLsyG7y1oBQVz797WX/iYaGWrcxV/1GA=;
-        b=WMIIVk5X/P+UcTpYed8sUaeBw6DrbuXb7SgnrczGTSV8LecrH+o+PyTU3QQcdj+E15
-         Y2LPES0UK3byQR0gsU5DLnrE1Q9hVq4H/FSpF3HnSQ7VboN5lyJieC0B9SSKcDZmqtut
-         OpzXX2/Od0w9rDn82DN8c/Nz0YNoMn9V2jxYorO9EPqhN5z69JpHX4HvwyT3Y0fqGcRp
-         u5uHrVKTf7EbafgQtPj6pXS4LEjLpshA3no4C9tKoTF+q/nvI4OxiOoMGQH20tdrOBeS
-         mN1h9gbNSiqN2oI5RKT5DtO0WDDZNSsQDViQYbIzMBX3v+fHq3pv//8vQ64/iQR41Ijc
-         IzbQ==
+        d=gmail.com; s=20230601; t=1739986123; x=1740590923; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oJvk3PzO8UJcQqRvZYSLjrxNTJFPtwx8YpqkUT72Kbo=;
+        b=gD8UzGxH3B+/K6WcJhXfXNoL+WnEi7+M3TSTtwsitytCRbW7HuuTt9CGL31hfe3Nau
+         89StpOx7xQkdy9cj6wfNK0tof1I9nTXUAzVwVpgM1NFuNuXv/Fl8YZeorDg0yMghpJ3v
+         x4j1gpOcSkHuewEoPDRbnAAUFRdmUIvVETYQlJrkwbbWcXTGfEwbAr4psbsudAZaHRpT
+         zHFhK0ojsT4MSSHYZ7uFwOgXh2ieoBrG7eWipjJBCWsN3UwsiFKg7TooDXSG86/qfghs
+         34I3AsO70qRrr2nPlyBI0OB9ViKmvjEIQebfaZTw2f0/5wVysJDA2keu7UrIfuC41ssJ
+         Efmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739986081; x=1740590881;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6NzngaP+OJcFLsyG7y1oBQVz797WX/iYaGWrcxV/1GA=;
-        b=wPWWVhSF6IAgIKUCPjwhKLLGHUnlWcTdwnlBzMtW/dUDchtaHA7lLCSO6KmHT7VY7V
-         bL0ZX9X0ug9NvMquFDd+6upYolvv/HlYUrTvYQWH17r8T3PDvLrphAsOln3dO6RJsKr4
-         gZXW3oK1ZPJTQmJk8hifXR2dUkJJTJRviWkrncL2zhlKsXUXsB8WNj82ZqANLqb2V4p6
-         rPOENeGXwxq0bo5vPwKorpowbG6IxxkxSKyWQQgv3POqZfweUAYUgGwoQIzsCWdd9Jun
-         4OBVTA2WrpJYVKVc0D0BktWd10IdKTg9eB1EByPWyafCDu9ZSd3bhXQR1krO/gJYT/j4
-         e1sA==
-X-Forwarded-Encrypted: i=1; AJvYcCVtS5BLYzpiD3hU9lgKEqQa1mK3Cq/Zp7FFyZjdLEgA2gASM4evZ4dtSdvdbojTuXYTnKtc6+qTe6fFiwY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwD4pRhkNfK0qEfrvYnJv+q9BagfseVN5ltfhCJxA42gtSwVUEZ
-	1glUc++2d9NV9ghiPEtUjvm8tmSuGyFSpGVKuQEaTrGN5DrT6OMZbVsVQq2iQg==
-X-Gm-Gg: ASbGncvzXEGrZYE9XOFYZ8kv4aRJBQrCqtY6HjzUGdrl3SNMtkbuRytalJd6Ptr46MQ
-	IrnKGPF48zxhBKhNSMnjgGYOjbGon8sr94aTVSDCF+O+QeR+bC39uPbtR06JfAr6izgFSJ3QtYH
-	oD1984QQ8XhPTzIf4kNxCco7glU1EmKneP3sFw1EhkscyJLj7EvJP3xNJIevsJQwcNvKbimqDE2
-	Fvuk+ElnYWSXcjbt0Izf539/cPwtnl7Q1g5j/Nz5RgkJ4nOihtYOEJ/lxLE08ypQKaBPKF1BAG7
-	vY/9fazRqH6R9BZySC4D23pWCw==
-X-Google-Smtp-Source: AGHT+IHOShpnSsF84pZmQWIv/xBAmLajjHNqHii8bXec9NnuKW9M7BOSWjuz/fRYPwl+0byTPs9X6w==
-X-Received: by 2002:a17:90b:1b06:b0:2ea:2a8d:dd2a with SMTP id 98e67ed59e1d1-2fcb5a996cdmr6581509a91.27.1739986081323;
-        Wed, 19 Feb 2025 09:28:01 -0800 (PST)
-Received: from thinkpad ([120.60.141.99])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fbf999b5b4sm15735500a91.30.2025.02.19.09.27.57
+        d=1e100.net; s=20230601; t=1739986123; x=1740590923;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oJvk3PzO8UJcQqRvZYSLjrxNTJFPtwx8YpqkUT72Kbo=;
+        b=jDP0IsDlLhR3BcVDEHBP/Jpw2X6TB+b2+crCfBm7+INgMPF9RxTTOAgLV9dWF12OIb
+         XsA5ICo+Msx2aAbvJeGS4XD6HaxCSt25/7jbjwAE7ROS5zncI0lReJxpmZjtnRtIzxgf
+         UA2DWkS1SGp45Tp/jnpHhE4fbCfvlEVxb4KZK22alsNTicgFgAAL5e5av29a55arZwLc
+         DC2K/zCe5dgirbGtUyATRPe2PZrgPGFHFTyK7GyFKDum0RRc/JRRoNUaC9nH18Ps/riL
+         IpbGZN77CsiwOlpKxLudR5ZLyxXUsy1ICeTeT7vIs48hu5/++FIO+IkJJonY/WKQ+Plj
+         mk1g==
+X-Forwarded-Encrypted: i=1; AJvYcCVjkN0SltzWwgNPJ4W514PhhK2Cn8s+sCMQLBTtt1nEiA1EcAWwzM8m4SD12+7Sn0dogvvmPJj+CesuiLE=@vger.kernel.org, AJvYcCXS7rnKJuQtEsL23yeGou6/u2r5TvoUihDZaNSf4zpf167F5KavL+b0M90Slv4HpbSHTNZV+TI2@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDTA7Fk1XQ4tM/iA1J8AReLIFmRTZfsRHvIQ9h0ZZRuuxojgBM
+	COlQsabXmheNivGYX8SogM0S5wpFuNLTdJN7ZdluBLA93APL5mOW
+X-Gm-Gg: ASbGnct6x22L1gSKskr3/gMDW54aw/KF0pkYDGnpDAXMAx+Ns7+vmsZrfDKOicGE0UK
+	uOr4F3eesO4BwVsPe4ObrreS4GywJCZpedf2pjK7WuFKXW7skHYPhiVDEKAdQmtgq2vjX+DJFnP
+	cStUtbJscrcxWUOakGg6xuUViIYx0vz8p7uE1y6FmBcpOph8gd9rUeiRNpyECbiws8ItsIvY2Z8
+	5cwqkcZ7Bv0PVm306jLD/kCX6gTCTXKxn5USndpeF1J3mw3MkP+1WMUxVuA/Y3ODxUa3bNamxrI
+	9e0kNe/7j9rmTL8/Bw==
+X-Google-Smtp-Source: AGHT+IFNf4fdkqEc+24rmFUK+6430USqOj02thhBl42cygp+gf745aITOrh4dTndmQTFda58zcNp5A==
+X-Received: by 2002:a17:906:2718:b0:abb:ebfe:d5eb with SMTP id a640c23a62f3a-abbebfed7admr25133666b.18.1739986123228;
+        Wed, 19 Feb 2025 09:28:43 -0800 (PST)
+Received: from eichest-laptop ([178.197.206.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abbab339807sm496018966b.162.2025.02.19.09.28.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2025 09:28:01 -0800 (PST)
-Date: Wed, 19 Feb 2025 22:57:55 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: "Bao D. Nguyen" <quic_nguyenb@quicinc.com>
-Cc: quic_cang@quicinc.com, quic_nitirawa@quicinc.com, bvanassche@acm.org,
-	avri.altman@wdc.com, peter.wang@mediatek.com, minwoo.im@samsung.com,
-	adrian.hunter@intel.com, martin.petersen@oracle.com,
-	linux-scsi@vger.kernel.org,
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"open list:UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER..." <linux-arm-msm@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/1] scsi: ufs: qcom: Remove dead code in
- ufs_qcom_cfg_timers()
-Message-ID: <20250219172755.b2jq5joh7nrrf6rr@thinkpad>
-References: <547c484ce80fe3624ee746954b84cae28bd38a09.1739985266.git.quic_nguyenb@quicinc.com>
+        Wed, 19 Feb 2025 09:28:42 -0800 (PST)
+Date: Wed, 19 Feb 2025 18:28:40 +0100
+From: Stefan Eichenberger <eichest@gmail.com>
+To: Dimitri Fedrau <dima.fedrau@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
+	Gregor Herburger <gregor.herburger@ew.tq-group.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] net: phy: marvell-88q2xxx: Prevent reading
+ temperature with asserted reset
+Message-ID: <Z7YUyNVR3mI35pel@eichest-laptop>
+References: <20250218-marvell-88q2xxx-hwmon-enable-at-probe-v1-0-999a304c8a11@gmail.com>
+ <20250218-marvell-88q2xxx-hwmon-enable-at-probe-v1-2-999a304c8a11@gmail.com>
+ <Z7V6XZ7VRTkYNi2G@eichest-laptop>
+ <20250219105458.GD3888@debian>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <547c484ce80fe3624ee746954b84cae28bd38a09.1739985266.git.quic_nguyenb@quicinc.com>
+In-Reply-To: <20250219105458.GD3888@debian>
 
-On Wed, Feb 19, 2025 at 09:16:06AM -0800, Bao D. Nguyen wrote:
-> Since 'commit 104cd58d9af8 ("scsi: ufs: qcom:
-> Remove support for host controllers older than v2.0")',
-> some of the parameters passed into the ufs_qcom_cfg_timers()
-> function have become dead code. Clean up ufs_qcom_cfg_timers()
-> function to improve the readability.
+Hi Dimitri,
+
+On Wed, Feb 19, 2025 at 11:54:58AM +0100, Dimitri Fedrau wrote:
+> Hi Stefan,
 > 
-> Signed-off-by: Bao D. Nguyen <quic_nguyenb@quicinc.com>
+> Am Wed, Feb 19, 2025 at 07:29:49AM +0100 schrieb Stefan Eichenberger:
+> > Hi Dimitri,
+> > 
+> > On Tue, Feb 18, 2025 at 07:33:10PM +0100, Dimitri Fedrau wrote:
+> > > If the PHYs reset is asserted it returns 0xffff for any read operation.
+> > > Prevent reading the temperature in this case and return with an I/O error.
+> > > Write operations are ignored by the device.
+> > > 
+> > > Fixes: a197004cf3c2 ("net: phy: marvell-88q2xxx: Fix temperature measurement with reset-gpios")
+> > > Signed-off-by: Dimitri Fedrau <dima.fedrau@gmail.com>
+> > > ---
+> > >  drivers/net/phy/marvell-88q2xxx.c | 6 ++++++
+> > >  1 file changed, 6 insertions(+)
+> > > 
+> > > diff --git a/drivers/net/phy/marvell-88q2xxx.c b/drivers/net/phy/marvell-88q2xxx.c
+> > > index 30d71bfc365597d77c34c48f05390db9d63c4af4..c1ae27057ee34feacb31c2e3c40b2b1769596408 100644
+> > > --- a/drivers/net/phy/marvell-88q2xxx.c
+> > > +++ b/drivers/net/phy/marvell-88q2xxx.c
+> > > @@ -647,6 +647,12 @@ static int mv88q2xxx_hwmon_read(struct device *dev,
+> > >  	struct phy_device *phydev = dev_get_drvdata(dev);
+> > >  	int ret;
+> > >  
+> > > +	/* If the PHYs reset is asserted it returns 0xffff for any read
+> > > +	 * operation. Return with an I/O error in this case.
+> > > +	 */
+> > > +	if (phydev->mdio.reset_state == 1)
+> > > +		return -EIO;
+> > > +
+> > >  	switch (attr) {
+> > >  	case hwmon_temp_input:
+> > >  		ret = phy_read_mmd(phydev, MDIO_MMD_PCS,
+> > > 
+> > 
+> > It makes sense to me. However, aren't most phys that allow reading
+> > sensors over MDIO affected by this issue? I couldn't find anything
+> > similar, are they ignoring that use-case?
+> >
+> Yes, you are right, but only if the PHYs hard reset is controlled with
+> "reset-gpios" or similar. I didn't find anything about it too.
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Okay, I see. Maybe at one point it can be generalized, but for now this
+sounds good to me. Just address the inputs from Andrew.
 
-- Mani
-
-> ---
->  drivers/ufs/host/ufs-qcom.c | 25 ++++---------------------
->  1 file changed, 4 insertions(+), 21 deletions(-)
-> 
-> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-> index 23b9f6e..d89faf6 100644
-> --- a/drivers/ufs/host/ufs-qcom.c
-> +++ b/drivers/ufs/host/ufs-qcom.c
-> @@ -509,16 +509,10 @@ static int ufs_qcom_hce_enable_notify(struct ufs_hba *hba,
->   * ufs_qcom_cfg_timers - Configure ufs qcom cfg timers
->   *
->   * @hba: host controller instance
-> - * @gear: Current operating gear
-> - * @hs: current power mode
-> - * @rate: current operating rate (A or B)
-> - * @update_link_startup_timer: indicate if link_start ongoing
->   * @is_pre_scale_up: flag to check if pre scale up condition.
->   * Return: zero for success and non-zero in case of a failure.
->   */
-> -static int ufs_qcom_cfg_timers(struct ufs_hba *hba, u32 gear,
-> -			       u32 hs, u32 rate, bool update_link_startup_timer,
-> -			       bool is_pre_scale_up)
-> +static int ufs_qcom_cfg_timers(struct ufs_hba *hba, bool is_pre_scale_up)
->  {
->  	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
->  	struct ufs_clk_info *clki;
-> @@ -534,11 +528,6 @@ static int ufs_qcom_cfg_timers(struct ufs_hba *hba, u32 gear,
->  	if (host->hw_ver.major < 4 && !ufshcd_is_intr_aggr_allowed(hba))
->  		return 0;
->  
-> -	if (gear == 0) {
-> -		dev_err(hba->dev, "%s: invalid gear = %d\n", __func__, gear);
-> -		return -EINVAL;
-> -	}
-> -
->  	list_for_each_entry(clki, &hba->clk_list_head, list) {
->  		if (!strcmp(clki->name, "core_clk")) {
->  			if (is_pre_scale_up)
-> @@ -574,8 +563,7 @@ static int ufs_qcom_link_startup_notify(struct ufs_hba *hba,
->  
->  	switch (status) {
->  	case PRE_CHANGE:
-> -		if (ufs_qcom_cfg_timers(hba, UFS_PWM_G1, SLOWAUTO_MODE,
-> -					0, true, false)) {
-> +		if (ufs_qcom_cfg_timers(hba, false)) {
->  			dev_err(hba->dev, "%s: ufs_qcom_cfg_timers() failed\n",
->  				__func__);
->  			return -EINVAL;
-> @@ -831,9 +819,7 @@ static int ufs_qcom_pwr_change_notify(struct ufs_hba *hba,
->  		}
->  		break;
->  	case POST_CHANGE:
-> -		if (ufs_qcom_cfg_timers(hba, dev_req_params->gear_rx,
-> -					dev_req_params->pwr_rx,
-> -					dev_req_params->hs_rate, false, false)) {
-> +		if (ufs_qcom_cfg_timers(hba, false)) {
->  			dev_err(hba->dev, "%s: ufs_qcom_cfg_timers() failed\n",
->  				__func__);
->  			/*
-> @@ -1348,12 +1334,9 @@ static int ufs_qcom_set_core_clk_ctrl(struct ufs_hba *hba, bool is_scale_up)
->  
->  static int ufs_qcom_clk_scale_up_pre_change(struct ufs_hba *hba)
->  {
-> -	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
-> -	struct ufs_pa_layer_attr *attr = &host->dev_req_params;
->  	int ret;
->  
-> -	ret = ufs_qcom_cfg_timers(hba, attr->gear_rx, attr->pwr_rx,
-> -				  attr->hs_rate, false, true);
-> +	ret = ufs_qcom_cfg_timers(hba, true);
->  	if (ret) {
->  		dev_err(hba->dev, "%s ufs cfg timer failed\n", __func__);
->  		return ret;
-> -- 
-> 2.7.4
-> 
-
--- 
-மணிவண்ணன் சதாசிவம்
+Regards,
+Stefan
 
