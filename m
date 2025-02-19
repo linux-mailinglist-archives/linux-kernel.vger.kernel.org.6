@@ -1,194 +1,130 @@
-Return-Path: <linux-kernel+bounces-520788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18DAAA3AF3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 03:01:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F9A9A3AF42
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 03:02:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08DC0188AA93
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:01:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F178188B0AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:02:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D118B2AD0C;
-	Wed, 19 Feb 2025 02:01:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3AA27081D;
+	Wed, 19 Feb 2025 02:02:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UYJcvvdU"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Eg5/jUfE"
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6C991632DF
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 02:01:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91CE02AD0C;
+	Wed, 19 Feb 2025 02:02:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739930486; cv=none; b=aC2CpLl8tu0KpG46Z+U4H/YdX0K5GjJKYjwimzjfXGbHa/UzjHFrNeu3riHSnlFa/UNRTg54VvwbCgDrosu2gL+DV4cIq5ti8lLQt1FtfeNe1m4hM0hMMEHr4nQiFClK/ZeDR8/Hvwuryvj+yC57zIFx00APxDTsC9Fc3azs8yM=
+	t=1739930558; cv=none; b=LFyWim/pI3ffPP60Q+2A8G7QuOQzZ18+c5hWF9IrNclAlbXugDXorC9fOh96VN80+2P7Tx3cS0Ay0JiA1mVrA8rTdCgkhujGNaO3nAJk/Jk7Wcuevg3fCeOgb+feM24/izBNaTnOPvqDQkk9q2OidyIwOmJpmQ4LT4YElecqaOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739930486; c=relaxed/simple;
-	bh=gZqQM7O9ByYPgtbt8cvoz84LcIYYYPm2MVl/usKmDxM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z5kSp1po10SCY5mB1uUDIpWiXXw0z0CjGHwS5hQtMl4W5o/lZzsX0if7MpjjeOFLfLoylEoKxn0LK/m/g9Cu2es+ldUONRN0MFeWgWGpTi7mgXXs1KIZPKid7D+kark26E6catJx++tUwy18/0hkCqq2IiSyCpdhrOkrNkFS9CE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UYJcvvdU; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739930482;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TTYk5mPgovr+xjBEyGONMlriCe8a4cY2bYNbOhvz11I=;
-	b=UYJcvvdU4UIOvsZlyZYMJFvhDEVZBMzzgdbHU5ntq/yqpZidzx/35t6jfmXTQhFar97G/l
-	sBJ+gj2Qi5UYXtZw3aqmxCwvuqHxYz22Zczi1eCf9OWwlnY/+hwDKHv1fzGW/IttkLlIVO
-	hi2KfIDCX3lArQWgXcBtXBYBi7mAjXA=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-642-uHOYB5vsO6mICsb6iqyLHA-1; Tue,
- 18 Feb 2025 21:01:19 -0500
-X-MC-Unique: uHOYB5vsO6mICsb6iqyLHA-1
-X-Mimecast-MFC-AGG-ID: uHOYB5vsO6mICsb6iqyLHA_1739930477
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id ACDF81800875;
-	Wed, 19 Feb 2025 02:01:16 +0000 (UTC)
-Received: from localhost (unknown [10.2.16.53])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0B788300019F;
-	Wed, 19 Feb 2025 02:01:14 +0000 (UTC)
-Date: Wed, 19 Feb 2025 10:01:12 +0800
-From: Stefan Hajnoczi <stefanha@redhat.com>
-To: Ferry Meng <mengferry@linux.alibaba.com>
-Cc: "Michael S . Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>, linux-block@vger.kernel.org,
-	Jens Axboe <axboe@kernel.dk>, virtualization@lists.linux.dev,
-	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
-	Christoph Hellwig <hch@infradead.org>,
-	Joseph Qi <joseph.qi@linux.alibaba.com>,
-	Jeffle Xu <jefflexu@linux.alibaba.com>
-Subject: Re: [PATCH v1 0/3] virtio-blk: add io_uring passthrough support.
-Message-ID: <20250219020112.GB38164@fedora>
-References: <20241218092435.21671-1-mengferry@linux.alibaba.com>
+	s=arc-20240116; t=1739930558; c=relaxed/simple;
+	bh=tSVYR1llQvTI5Kv99pwKgISlYZrlOljaKobqaa3fY8A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UA9R7kUdDeoGUiHLTlrRcB5CGnFKPZA7qnHhr5jQQ5UEG4fT7MpDssn3Np2tseLKsKxQXwX46kPrTbKzak1E2hMKkQ7Z2YUiC2BMFLlnjRqtAta4s0U1rkycn247rZPGmpBM1t1VnrWe/BjjfoGAohBoBu2EiHRfXGR4nRA9w4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Eg5/jUfE; arc=none smtp.client-ip=209.85.219.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6dd43aa1558so56487246d6.0;
+        Tue, 18 Feb 2025 18:02:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739930555; x=1740535355; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=980SAjG821KkBNdaRx+A15s8OgNFk4ezjXKzzUAttK8=;
+        b=Eg5/jUfE+NE5zZo+10y4yc/As8NxAr9hvl+ao/gmFFSeRdbTIfC1OtOjfBzVtQJBk0
+         A3tQuQNM82Lu1UMfrBvXxuKiENZwy3Uu7gZzHaDhmLI5HBrnvxS4yk31zIay7jM9QNYR
+         Q05wu8sFvcvhKXwslhpf9UXNKKmOtU+DHQVyBdQDVJhzmgxlTV5rSxZ6lcLLnokyeRZU
+         QHRrJ4czSqFpFGx8mI9lCx/DmP366HE57+ZdsDGkbudmuBCs81KHQ+vMnDhsL3SLYTbL
+         5Z4PGirQf0/4hky5EUSqGovHkl8uNtGGmWkLYevuEEFHsvWBGEwj1XgmyAquwaYveLE5
+         SoHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739930555; x=1740535355;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=980SAjG821KkBNdaRx+A15s8OgNFk4ezjXKzzUAttK8=;
+        b=pNnxGjlbsAO7ma8TGslyfEvaJVRpBdy5ZwgsRkXXU6LEwlo9Bxow1CXhL67RK4cQy7
+         mC2XEoaEAWTofJ3gNpDAV7WyLFWVrhQ0J14RGdlVVj2+jR9WV0lKHsL0va910vIBb29f
+         sBB1BnTelGL2DT1WUJZpnkLmnPuKhlHzeP3tzVCSeILFDIW7F2aYEOnzM0lZC2mUvpGC
+         eTyjINDk+QEj6GcUTvMObDLge2FGaLCd/iu1eyVOO0F8uiCAwU/czsdcUXDvxmvj7b94
+         sWeHrVEGW9NTgV+B1027/tbajBrYd0Q0GfO5QGRkvtZqWjA3IQMSBM39m9IND4sYtV91
+         qnaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVBPUpx6Wo/Jvg5VXRiKsJEdP3pRkpGx+RN+wnvFZl55+ZmmnHrb92mf08zrbegESIsh4cXikXRygI4@vger.kernel.org, AJvYcCWrVTyQHrKIUBDqtbm8SYzpuKvZbr1WlqCXu1vl+H6UVyNMZuPDGVuWLIe/LT+FeeUYA5xpUl8Yu54hmIJ4@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcomCzy//sq5s8Yk3QaB0N7YYlY82WTKdfeNJjrCLuxPDgXRDe
+	WG3i5k0hGZQ2v97v5qjw0IGp9Yy/2sI3QY3Cj6PyWuu9TxtVdA+v
+X-Gm-Gg: ASbGncuIOBI2wELyP32kCqMjCsP2aOGEKTSgPwAjo4JgXnC/coISfe30GTynm2cGvsT
+	Z7Mj9ZPLHl6BXL5LhtpcD8LqPNGnEKR0SDXTfns0KcbNZGIT5LBja8/c7CkfajD9My7hEbG+B7O
+	kgrj9HX/eAIPEa7go/GOPpiwYd/adZBzKXFcR5UIfo/TcEEmE31YEygeCQkFI0ef5ZpVPprUv82
+	8RynTCQYu0jQ9qKqD7rMi7OMm1pgAvJQ2P+mr//6NniDddQvypwTSlllfZ1bfDxEn0=
+X-Google-Smtp-Source: AGHT+IFao5uYt/opWCP18gBhrPbDbhzTsVioAhM4PEXmi9PCMUnZww8XRVKOU3gkOFPTX9L4VDhHrw==
+X-Received: by 2002:ad4:5f0a:0:b0:6d3:fa03:23f1 with SMTP id 6a1803df08f44-6e66ccc1141mr227209846d6.13.1739930555333;
+        Tue, 18 Feb 2025 18:02:35 -0800 (PST)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6e67ac30bafsm32452896d6.111.2025.02.18.18.02.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2025 18:02:34 -0800 (PST)
+From: Inochi Amaoto <inochiama@gmail.com>
+To: aou@eecs.berkeley.edu,
+	unicorn_wang@outlook.com,
+	conor+dt@kernel.org,
+	guoren@kernel.org,
+	inochiama@outlook.com,
+	krzk+dt@kernel.org,
+	palmer@dabbelt.com,
+	paul.walmsley@sifive.com,
+	robh@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	chao.wei@sophgo.com,
+	xiaoguang.xing@sophgo.com,
+	chunzhi.lin@sophgo.com,
+	sophgo@lists.linux.dev,
+	Chen Wang <unicornxw@gmail.com>
+Cc: Inochi Amaoto <inochiama@gmail.com>
+Subject: Re: [PATCH 0/2] Add pwm-fan for Milk-V Pioneer
+Date: Wed, 19 Feb 2025 10:02:19 +0800
+Message-ID: <173993053303.993263.3269292978255036963.b4-ty@gmail.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <cover.1739351437.git.unicorn_wang@outlook.com>
+References: <cover.1739351437.git.unicorn_wang@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="0EDesKCYBKGeMMyG"
-Content-Disposition: inline
-In-Reply-To: <20241218092435.21671-1-mengferry@linux.alibaba.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
+On Wed, 12 Feb 2025 17:41:44 +0800, Chen Wang wrote:
+> From: Chen Wang <unicorn_wang@outlook.com>
+> 
+> Milk-V Pioneer uses fan as cooling-device, and speed of the fan is
+> controlled by the first channel of pwm controller of SG2042.
+> 
+> This patchset depends on another patchset for the SG2042 pwm controller,
+> the driver part is now on pwm/for-next [pwm-for-next] and the dts part is
+> now on sophgo/for-next [sophgo-for-next]. If you want to have a test,
+> you need to apply the corresponding patchset.
+> 
+> [...]
 
---0EDesKCYBKGeMMyG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Applied to for-next, thanks!
 
-On Wed, Dec 18, 2024 at 05:24:32PM +0800, Ferry Meng wrote:
-> This patchset implements io_uring passthrough surppot in virtio-blk
-> driver, bypass vfs and part of block layer logic, resulting in lower
-> submit latency and increased flexibility when utilizing virtio-blk.
+[1/2] riscv: sophgo: dts: add pwm-fan for Milk-V Pioneer
+      https://github.com/sophgo/linux/commit/62cdf0a06dd5a650e4ca95b6f3a13daa48cf517a
+[2/2] riscv: sophgo: dts: add cooling maps for Milk-V Pioneer
+      https://github.com/sophgo/linux/commit/f047a9285f9f3fd5c0d5ae53af350b8b619e470a
 
-Hi,
-What is the status of this patch series?
-
-Stefan
-
->=20
-> In this version, currently only supports READ/WRITE vec/no-vec operations,
-> others like discard or zoned ops not considered in. So the userspace-rela=
-ted
-> struct is not complicated.
->=20
-> struct virtblk_uring_cmd {
-> 	__u32 type;
-> 	__u32 ioprio;
-> 	__u64 sector;
-> 	/* above is related to out_hdr */
-> 	__u64 data;  // user buffer addr or iovec base addr.
-> 	__u32 data_len; // user buffer length or iovec count.
-> 	__u32 flag;  // only contains whether a vector rw or not.
-> };=20
->=20
-> To test this patch series, I changed fio's code:=20
-> 1. Added virtio-blk support to engines/io_uring.c.
-> 2. Added virtio-blk support to the t/io_uring.c testing tool.
-> Link: https://github.com/jdmfr/fio
->=20
->=20
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> Performance
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->=20
-> Using t/io_uring-vblk, the performance of virtio-blk based on uring-cmd
-> scales better than block device access. (such as below, Virtio-Blk with Q=
-EMU,
-> 1-depth fio)=20
-> (passthru) read: IOPS=3D17.2k, BW=3D67.4MiB/s (70.6MB/s)=20
-> slat (nsec): min=3D2907, max=3D43592, avg=3D3981.87, stdev=3D595.10=20
-> clat (usec): min=3D38, max=3D285,avg=3D53.47, stdev=3D 8.28=20
-> lat (usec): min=3D44, max=3D288, avg=3D57.45, stdev=3D 8.28
-> (block) read: IOPS=3D15.3k, BW=3D59.8MiB/s (62.7MB/s)=20
-> slat (nsec): min=3D3408, max=3D35366, avg=3D5102.17, stdev=3D790.79=20
-> clat (usec): min=3D35, max=3D343, avg=3D59.63, stdev=3D10.26=20
-> lat (usec): min=3D43, max=3D349, avg=3D64.73, stdev=3D10.21
->=20
-> Testing the virtio-blk device with fio using 'engines=3Dio_uring_cmd'
-> and 'engines=3Dio_uring' also demonstrates improvements in submit latency.
-> (passthru) taskset -c 0 t/io_uring-vblk -b4096 -d8 -c4 -s4 -p0 -F1 -B0 -O=
-0 -n1 -u1 /dev/vdcc0=20
-> IOPS=3D189.80K, BW=3D741MiB/s, IOS/call=3D4/3
-> IOPS=3D187.68K, BW=3D733MiB/s, IOS/call=3D4/3=20
-> (block) taskset -c 0 t/io_uring-vblk -b4096 -d8 -c4 -s4 -p0 -F1 -B0 -O0 -=
-n1 -u0 /dev/vdc=20
-> IOPS=3D101.51K, BW=3D396MiB/s, IOS/call=3D4/3
-> IOPS=3D100.01K, BW=3D390MiB/s, IOS/call=3D4/4
->=20
-> =3D=3D=3D=3D=3D=3D=3D
-> Changes
-> =3D=3D=3D=3D=3D=3D=3D
->=20
-> Changes in v1:
-> --------------
-> * remove virtblk_is_write() helper
-> * fix rq_flags type definition (blk_opf_t), add REQ_ALLOC_CACHE flag.
-> https://lore.kernel.org/io-uring/202412042324.uKQ5KdkE-lkp@intel.com/
->=20
-> RFC discussion:
-> ---------------
-> https://lore.kernel.org/io-uring/20241203121424.19887-1-mengferry@linux.a=
-libaba.com/
->=20
-> Ferry Meng (3):
->   virtio-blk: add virtio-blk chardev support.
->   virtio-blk: add uring_cmd support for I/O passthru on chardev.
->   virtio-blk: add uring_cmd iopoll support.
->=20
->  drivers/block/virtio_blk.c      | 320 +++++++++++++++++++++++++++++++-
->  include/uapi/linux/virtio_blk.h |  16 ++
->  2 files changed, 331 insertions(+), 5 deletions(-)
->=20
-> --=20
-> 2.43.5
->=20
-
---0EDesKCYBKGeMMyG
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAme1O2gACgkQnKSrs4Gr
-c8g5MAf+O8k3P8AmJJwDbR4DW92CZdhXuLHVJZkQLtaxAhrAyTMb9MkmxoqnWQRc
-/hlcNOeoe3xO9vu53lnY5LiTjh1K77qW7abGrAtzLL4+2VGNmd8rfh/sy+E9Fgse
-LY4YnOupHx/1YlCn3KYabbToQcNqybbfgDD/Lv8zqt+2pFF7lWkAd+1FGOgYFyl2
-5kQhEWRwUiN9GRP7KfnESxjA92QSOFMYtqlhjy4FjYfgaPKePPVXAphfjGeqS1I/
-2IQSETYLfiXAMW6Q6AbL4HMYeSx0OPeozx7SJvG4m5g5aZBbq6tdgqVNvPWUDI1H
-kI7ySFuZWYp+g3EO9+COaYXrk6iJWQ==
-=X8Wb
------END PGP SIGNATURE-----
-
---0EDesKCYBKGeMMyG--
+Thanks,
+Inochi
 
 
