@@ -1,127 +1,150 @@
-Return-Path: <linux-kernel+bounces-520964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6580AA3B1C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:47:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EDA9A3B1D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:49:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE74E3A6753
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 06:47:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8028F1893B31
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 06:49:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 228E01AF0C0;
-	Wed, 19 Feb 2025 06:47:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50F2C1BD9DE;
+	Wed, 19 Feb 2025 06:49:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="OFXPhAWh";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="S8cN9Grw"
-Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="fBnW6z16"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADF5D1B87F8;
-	Wed, 19 Feb 2025 06:47:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CAEA1B87F8;
+	Wed, 19 Feb 2025 06:49:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739947663; cv=none; b=sZmpBdkPl2meWOOpoXe365WRcvgcf1EAlpGcrHyauPN3cncb1W4745gDGpzh5UCWdF+QcoEsMQenYsDk7um0Aef2YBSDqvAU+LFugoK16wT9n8C33zYkbGPyE30ZhvRPVIX5aUGmYB98fznpBberI8EoLN1pBjAE5Nm6OauU0sE=
+	t=1739947771; cv=none; b=TCj+vkBojpgSLqpGOIPGAllloFIJUkoq0Ftw5ukjygDz0XsPls1kft9XGJpyzZ1xx432uL7BFDMm/oJYrGg01Uag/1mG/OAHatrfEXYc3JklqWTg/8hIktI2yyRAmupQn4oo8Bxs0VG19SA8vbWGKS9SR6Din46z05+5+T2YNwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739947663; c=relaxed/simple;
-	bh=lLC828cf4EMsaJ1JTfrov2AKE1L5G0zPb43ehUPW7Yc=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=QjhpJ4D98qNmxAlJMNF8Lk5I/r6flL5GOP+afd3pA55T8fxjyrXVZ6nyPWw7vZ1FJpCY6OPB+CEwTqssEnrF+ioSzHXjD87oFp6fQ+SuHQPhOWZXVPZxZ9koyAEo1TNzQKI2pf+sIESBMG4etEonKLR63cRJjiS8GPfWjzsI/Ko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=OFXPhAWh; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=S8cN9Grw; arc=none smtp.client-ip=103.168.172.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailfout.phl.internal (Postfix) with ESMTP id 7C4401380861;
-	Wed, 19 Feb 2025 01:47:39 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-11.internal (MEProxy); Wed, 19 Feb 2025 01:47:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1739947659;
-	 x=1740034059; bh=J36qZr4XlQJHghLHCEZehAHjZbscRnNTmQ9ugnTYxVo=; b=
-	OFXPhAWhRehitF6GSNzJuzWZoC9i+FkscVRs9xpeC0DjoI8ljDc2hB0HEdM+sfIh
-	xjXTMyLSXAPttxAu/Rbg5OlNq8KVnSBtRGj34virrlToENk9Yt1AI03oSr17GP/p
-	ItE6NA8QtriiHRFspzmdgWlOGL/BRcW6eNKuHkiJJW2W3E0NiyJ8AZQy5PT8VHlB
-	Af4zuEKF3lKXgZZaN6m9nqivj5Xr4a1+vYIW0Recnh1I3/DOeRNO2lgxoWV9HhIk
-	t1P3kyL3oDDjUtJ5nxIO8tsRHpeYkJoURtKdmsZEr0VOboByMV7L/p2WoQqnysDO
-	Qj7WjF+3yA/plTuYqxfqcA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1739947659; x=
-	1740034059; bh=J36qZr4XlQJHghLHCEZehAHjZbscRnNTmQ9ugnTYxVo=; b=S
-	8cN9GrwjiCFlRI4BSr7oLDPMvEOAMFRL0/lhW26MFviJ9W0LX7rWlZ/MAVbrX7+o
-	KXLCRFf4hnvRyU8JAj0OxmjeNzCBBXwxM03tCwNU+LKIbyDzWmVjxTBnvYC9Vyis
-	E7SZdc8aRTWjzh04UvyxKf43YSMFB0vFzFx3GxLb++rgsj3aHfAAp69SizicXllz
-	MC+Sj4xdIFf3DHnM3yUeLdR4Dna61+S13fjv9Gujzgbo9eqip08uBCbpDvXiAvj5
-	PXZYLjB378W4dT5AbvEGsuZwIMLa6t/hr0IQ9fVY3NWrHP7WaESxoTg5t1MWxUdG
-	d7yGQn9MDZkquAXmzpbzw==
-X-ME-Sender: <xms:iX61ZyPZshRIVa-De3lhnUd8ev5oTNVqwRG8IBT7N6jjeIJ4Jab8Lg>
-    <xme:iX61Zw8Cdk3v-pSafSh2TKhqROR0trG-RdXSjc_guD8jBzw_VnfLFoVmlypyK2JmP
-    75ncgaeToNeM3E8LWg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeifeehhecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
-    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedu
-    tddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepohhushhhihigihhonhhguddtvd
-    ehseduieefrdgtohhmpdhrtghpthhtohepuhdrkhhlvghinhgvqdhkohgvnhhighessggr
-    hihlihgsrhgvrdgtohhmpdhrtghpthhtohepuggvlhhlvghrsehgmhigrdguvgdprhgtph
-    htthhopehlrghurhgvnhhtrdhpihhntghhrghrthdorhgvnhgvshgrshesihguvggrshho
-    nhgsohgrrhgurdgtohhmpdhrtghpthhtoheplhgvvgeskhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtohepohhushhhihigihhonhhgsehkhihlihhnohhsrdgtnhdprhgtphhtthhopegu
-    rhhiqdguvghvvghlsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpth
-    htohepthiiihhmmhgvrhhmrghnnhesshhushgvrdguvgdprhgtphhtthhopehlihhnuhig
-    qdhfsgguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:iX61Z5SyTODmXICOp_WXU3NSDFy1s_FTtNbLc1gOCPdibSHLmS1lww>
-    <xmx:iX61ZyttbKacXZ9qlo-Pw5b8KuvM-yTc0w3qHB8Pw_eSJaraQFybbw>
-    <xmx:iX61Z6fhJnCSyXSQ6ZuOoUJdm596mkMwKo225NV-CHVuxl3TSNuOvw>
-    <xmx:iX61Z226JAg3E-s_OB-Nr0DNGmrggT029C1mUx7bTU02ok-QVsAbhA>
-    <xmx:i361Z64u886KwNja_d7rD4JlceV124kFry1zhn9OT4MmYloJ7kdd4R1O>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 9AACC2220072; Wed, 19 Feb 2025 01:47:37 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1739947771; c=relaxed/simple;
+	bh=+0eLFlIBfQ8y8y7pcWXdF3wI0SvdIlmcIUNSt62uA98=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JAWUHM+rhitWYmizsOd32H881EQpYJ2Q6YusWyGPESda7v/CEKx4fYdVrvlLk/zrh0Q7SYMvGDH9Rus/J01T3uEXRiut/2VTHtSEVqK7Rkc/RxkAraoXgzVzBNokLbkAepBpM2bJl8LxvWG1/C4/v4neoaooGu0I4MQI7h28hUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=fBnW6z16; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51J6gvDZ024457;
+	Wed, 19 Feb 2025 06:49:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=5Td/1EBVEkgD1oa1Ju/ZgrZ3KbHXNrdWKjxKieYz8
+	30=; b=fBnW6z16fRCvNb5vI9ApM/mHHLjarfGEpr17e+jABWyHkSbVgEGZjrQlv
+	lA6t0nAWsF1EhVIoxtbWmAg3oa2F9NIuh2zTQECE61QAvg8oshH8PRi6M/uPLyKp
+	ecFXyXf9UApBYP7ETVWIUpiKYTfP6W6A+UiB4kyYu3g8+ITFI9OoZhsnUG28jd3C
+	FBZBemwLBzSHFMg/Vp7cP6kcf6UBDkJgJ6aCCjZLyt9wyEfw6DAwUdFYsJL5RKwQ
+	MkYXhAsr7du6/5yjl1/q0HJkesjnrMTHRaJaux049l2iQj2XjFocG+3ftat1Okfz
+	z+5ehb51masl896R3kh5bqq5GoWnQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44w6508wb5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Feb 2025 06:49:10 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51J6jJRc031675;
+	Wed, 19 Feb 2025 06:49:09 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44w6508wb1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Feb 2025 06:49:09 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51J2qdRc027077;
+	Wed, 19 Feb 2025 06:49:09 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 44w0252mk4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Feb 2025 06:49:09 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51J6n76Y46268910
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 19 Feb 2025 06:49:07 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7319E20043;
+	Wed, 19 Feb 2025 06:49:07 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0BAC920040;
+	Wed, 19 Feb 2025 06:49:07 +0000 (GMT)
+Received: from ozlabs.au.ibm.com (unknown [9.63.197.14])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 19 Feb 2025 06:49:07 +0000 (GMT)
+Received: from jarvis.ozlabs.ibm.com (haven.au.ibm.com [9.63.198.114])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 5A6F26033C;
+	Wed, 19 Feb 2025 17:49:03 +1100 (AEDT)
+From: Andrew Donnellan <ajd@linux.ibm.com>
+To: linuxppc-dev@lists.ozlabs.org
+Cc: fbarrat@linux.ibm.com, sfr@canb.auug.org.au, linux-next@vger.kernel.org,
+        mchehab+huawei@kernel.org, corbet@lwn.net, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Bagas Sanjaya <bagasdotme@gmail.com>
+Subject: [PATCH] cxl: Fix cross-reference in documentation and add deprecation warning
+Date: Wed, 19 Feb 2025 17:48:07 +1100
+Message-ID: <20250219064807.175107-1-ajd@linux.ibm.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 19 Feb 2025 07:47:06 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: oushixiong <oushixiong1025@163.com>, "Helge Deller" <deller@gmx.de>
-Cc: "Thomas Zimmermann" <tzimmermann@suse.de>,
- "Laurent Pinchart" <laurent.pinchart+renesas@ideasonboard.com>,
- "Lee Jones" <lee@kernel.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, oushixiong <oushixiong@kylinos.cn>
-Message-Id: <4f2ae439-1bdc-4593-9151-e15981509344@app.fastmail.com>
-In-Reply-To: <20250208092918.251733-1-oushixiong1025@163.com>
-References: <20250208092918.251733-1-oushixiong1025@163.com>
-Subject: Re: [PATCH v2] fbdev: lcdcfb: add missing device_remove_file()
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: tKFk8PXlKl9yYgUusz0jIcGvdHrDIO3i
+X-Proofpoint-GUID: NBVEZ2Lae_W2v6McCmKondep1aMQe1KH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-19_02,2025-02-18_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=558 spamscore=0
+ impostorscore=0 suspectscore=0 mlxscore=0 clxscore=1015 bulkscore=0
+ adultscore=0 phishscore=0 lowpriorityscore=0 malwarescore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502190049
 
-On Sat, Feb 8, 2025, at 10:29, oushixiong1025@163.com wrote:
-> From: Shixiong Ou <oushixiong@kylinos.cn>
->
-> 1. The device_remove_file() need to be called when driver is removing.
-> 2. The device_remove_file() need to be called if the call to
->    device_create_file() fails.
+commit 5731d41af924 ("cxl: Deprecate driver") labelled the cxl driver as
+deprecated and moved the ABI documentation to the obsolete/ subdirectory,
+but didn't update cxl.rst, causing a warning once ff7ff6eb4f809 ("docs:
+media: Allow creating cross-references for RC ABI") was merged.
 
-This should probably use device_add_group() instead of
-individual files to simplify both creation and removal.
-It would also avoid the bug you introduced that gcc warns
-about.
+Fix the cross-reference, and also add a deprecation warning.
 
-      Arnd
+Fixes: 5731d41af924 ("cxl: Deprecate driver")
+Reported-by: Bagas Sanjaya <bagasdotme@gmail.com>
+Signed-off-by: Andrew Donnellan <ajd@linux.ibm.com>
+
+---
+
+Maddy: can we take this by powerpc-fixes?
+---
+ Documentation/arch/powerpc/cxl.rst | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/arch/powerpc/cxl.rst b/Documentation/arch/powerpc/cxl.rst
+index d2d77057610e..778adda740d2 100644
+--- a/Documentation/arch/powerpc/cxl.rst
++++ b/Documentation/arch/powerpc/cxl.rst
+@@ -18,6 +18,7 @@ Introduction
+     both access system memory directly and with the same effective
+     addresses.
+ 
++    **This driver is deprecated and will be removed in a future release.**
+ 
+ Hardware overview
+ =================
+@@ -453,7 +454,7 @@ Sysfs Class
+ 
+     A cxl sysfs class is added under /sys/class/cxl to facilitate
+     enumeration and tuning of the accelerators. Its layout is
+-    described in Documentation/ABI/testing/sysfs-class-cxl
++    described in Documentation/ABI/obsolete/sysfs-class-cxl
+ 
+ 
+ Udev rules
+-- 
+2.48.1
+
 
