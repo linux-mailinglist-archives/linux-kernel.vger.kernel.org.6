@@ -1,122 +1,133 @@
-Return-Path: <linux-kernel+bounces-521578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F72DA3BF7C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:09:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9F9AA3BF8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:12:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 510D73AE694
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:08:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D58C61891536
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:10:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69CD71E25EB;
-	Wed, 19 Feb 2025 13:08:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8310B1E231A;
+	Wed, 19 Feb 2025 13:09:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b="ip/TB7ID"
-Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UZqr+ilV"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B493C1E0DE6
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 13:08:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4546B12B73;
+	Wed, 19 Feb 2025 13:09:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739970502; cv=none; b=t7hYmYOTIl5RPuHSdlltiLN1kVOxKybc14nyq2pdrqShTMPP1Xy4vyBM2lhIwmNvhFmaUorrQ66GyTevNhsjpBCvzJBJuWWgdV4jp8WbNpE4vg+M98YQI2ir2sjP/eN7MOs1sxTam6YA6eT3l856cKtQ5pK8peaMoMC9rMFLQi8=
+	t=1739970596; cv=none; b=TU2Bu4VuPQ/MU+0BM5GRKkh6lOFUu4et4zpFCEdOcUuXSd7YWMS7rz0oBxnxCIr+JZrWBIApdPQGYPUvYDvUe95a+Y30DNgwYZxpnZYKD8fzA2qFT3cS/N+rYZwJ8MR9f23XUUPHyMWWPq/PLVCutVurXFIhbtGcFHWNXX83qsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739970502; c=relaxed/simple;
-	bh=MUhvxhHnTvoE+duYjJ7YbfPA0nuYQDtOLydS3RR3bNA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=di2Ua+RBCZqm2YCyYiB0qetgcuA+5fZjIr2B3NoqTf5tNgKhPd4XdAzFDozLBUvwvu3XGy6JjfwaO+m9DnQuIr/E0PxM8ZSzFsfuPVL3BagYyyaxYiEqSqtnT7ZiQJ1r0roJQg/R8C5dTSB+eQ4zbzZYA6F9Zdi3XslL4APBhDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b=ip/TB7ID; arc=none smtp.client-ip=185.67.36.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout02.posteo.de (Postfix) with ESMTPS id DB479240103
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 14:08:18 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.net; s=2017;
-	t=1739970498; bh=MUhvxhHnTvoE+duYjJ7YbfPA0nuYQDtOLydS3RR3bNA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
-	 From;
-	b=ip/TB7IDhMIQBrxv5ZON8tNAZXnoPpCv7swSA+9nyHr9JlsuQkJR0Oa/vvntc9oVx
-	 sBGRthB9zPcW17zuXayNeZQZGS8UBdN3V1WuYMKBsMEK1thvF2L+EW2DCw7IqzgZbw
-	 DTCTZRTQFonfQlrxL2QB1Lmb317ygzAtLvrcLynAh6/HpyGiTqwrq0PMAhuvBQetXP
-	 iuyUnl15TN9jko8YbXw2N2YYV5VDjhQl+zyO1S3ZEDlkrWQxV5g0KynaKfp14+aYe4
-	 f+kPDRX94qlyIGUvYzLqkR5HJUKmbsR9X+a+8mNndFx/+AqryeXOmP9OtjH1/FPwrD
-	 e0QfjGqX80W4Q==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4YycC36ZPlz9rxQ;
-	Wed, 19 Feb 2025 14:08:15 +0100 (CET)
-From: Charalampos Mitrodimas <charmitro@posteo.net>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: FUJITA Tomonori <fujita.tomonori@gmail.com>,  tmgross@umich.edu,
-  hkallweit1@gmail.com,  linux@armlinux.org.uk,  davem@davemloft.net,
-  edumazet@google.com,  kuba@kernel.org,  pabeni@redhat.com,
-  netdev@vger.kernel.org,  rust-for-linux@vger.kernel.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: phy: qt2025: Fix hardware revision check comment
-In-Reply-To: <c83a4d5f-3e98-4fec-a84a-669f04677774@lunn.ch>
-References: <20250218-qt2025-comment-fix-v1-1-743e87c0040c@posteo.net>
-	<20250219.100200.440798533601878204.fujita.tomonori@gmail.com>
-	<c83a4d5f-3e98-4fec-a84a-669f04677774@lunn.ch>
-Date: Wed, 19 Feb 2025 13:08:07 +0000
-Message-ID: <87jz9m13rc.fsf@posteo.net>
+	s=arc-20240116; t=1739970596; c=relaxed/simple;
+	bh=lbm9EMvHSC3HGg8sbayokeiGq1GS4Q8HOslmFXwOhlw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ldMhzAqJeQflk4ZxcmJQO0MDQCSbdPFU05QSmd2b3cfov9Tzh/ATJMhXiobL7R+JeFhGij78LwM1+4Y2wAlwuk/BS6aXdb6nHtxoH8M80m/qRgENMTv4FshuTV66sxOj3f2jNGVKfSf+Zbvv8gDen97OyxpXva/3/HYVOrSHzzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UZqr+ilV; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-38dd9b3419cso3614753f8f.0;
+        Wed, 19 Feb 2025 05:09:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739970593; x=1740575393; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=z0Kbyp7CupAYs5UbQsl7w/FVHCaTEohFav94XT7tXLI=;
+        b=UZqr+ilVTqQQq+vAJlF+eiF0EYBu519vGaoATPDBR2qVufM/JsKw0je0lQFVvYZxre
+         x/DuRLNC7McYKVZxcRn/lNJZzfhVorJWsl+ocAer71OUmbRlQ5g+JRRsawL9y8tVnGzM
+         M2+Rgx5hkW1nVRcGBbHY17UtmdfflrpMAdsEXDYhjhhxyjvzGT8S39AhB7W0NwqMX2hB
+         Jh5tMzIcUM3w9Gwf27YlUyDKGJWE1g+JnRasdFwNXrScCNqdw7mD5/g1kPObJcwQpwEX
+         OdzXLNXMHmUJqt4at0v59F62WoPZJMufaGmXlJNCdHGuf92LolhLcnUGwxalvcuymPGh
+         f79A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739970593; x=1740575393;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=z0Kbyp7CupAYs5UbQsl7w/FVHCaTEohFav94XT7tXLI=;
+        b=LIBRXeO0oDAvsKYMl0gtQIZRvdC1TDICxggi+b1lO932HSaLfDhN4qdoL1HYGvTzi1
+         78rCfyiDsqLCp2aHLhnLeoJ396+E8WP90acNgZmcBLeK40hMn6FxYyMONuWt9GwW0N2N
+         jcUQWu6F1sn1JJzAehDhLKmjpQE0PkbmJeiHyxCblgq7g2NWIdWIkYNTrBFMvyiRP41m
+         Vn9BscpEyN1jmiOLSWj1zZwKhApnc/Srb6bkvzNkqnX7593CXUa1zrvVZMSySINly9Wa
+         81W3Iu9Yhjji1IhHRiECtp3ktE4rHqK31WiYLPhlsniorpbfFWpBKzKt81fmpgts1Hh7
+         QdvA==
+X-Forwarded-Encrypted: i=1; AJvYcCU9l6XC6lli1qeSqEp2qw9q9AQ8Nkd3ccwGBTZ3/A2Xv0TVuBAYmZh7x7Y4w332tEBy5DDXnO/KJgLGs70g@vger.kernel.org, AJvYcCUrfH6JurghnjrONS5kwrq65XDpb0qSArkGhELMQ6EpjEXfWNRpeHfxJcqIOOIgsd2yCqEGkPo3@vger.kernel.org, AJvYcCUrjzgwqpR2gR3rpWQNpdqj84ZN8PcyAdVO8vBCo1LBHwBYjRVWhRFHiKOhuBkBINUjg3gKBWcU4BazEUW/@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiRgpODYwImhTzosGp8UXQa021fcydT780Vu/QLPM6TYqFZWzo
+	FAG62wS8NKyYstDNyDiML1WhWINflo2H3ePl8pqGRZFUs6urBQey
+X-Gm-Gg: ASbGnctJcjesBzxOjNf3oaRmvry/JSL8mQGOEY46uIQ/m7xrVdvybGyrgo3Y1CLeZ8g
+	/gnY0Io8u1gfHrOHpspVmP2SpTV2d8aM8njv9eL7m8SKp/6SoEB5B45yXUXK3Ob+wT0z0a5R9Sg
+	6YHe+xx+Zus6JRdkQlDscqIp4bgfhzcITr/YEj9ywwkrLzsClc0GfKD6loKwS9RbO8VCp2jbvbi
+	k9tkhL8QJx/a5wsq6Mu/IpHO8jMOoRQjHksGPq5WcFra8Ch8Zw0Q+nAyZdGHoobGy37xYpE3EX6
+	TO+lbIoah80rjS7DsuIQhqqZE6SMqxin1lqcAkxLkCIl1H7qjlEoyKGg690aIQ3My8NJstI=
+X-Google-Smtp-Source: AGHT+IFCaHY0kzUOzM91PMiUlVU3mwEfBxBS9L99pdJlK6WgwXE5yUiGE5nRgxRPTq9PSpDKdeDk5g==
+X-Received: by 2002:a05:6000:154f:b0:38f:2093:6e75 with SMTP id ffacd0b85a97d-38f33f3599fmr17480037f8f.33.1739970593210;
+        Wed, 19 Feb 2025 05:09:53 -0800 (PST)
+Received: from localhost.localdomain (host-87-11-14-46.retail.telecomitalia.it. [87.11.14.46])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-38f259f7979sm17576873f8f.83.2025.02.19.05.09.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2025 05:09:52 -0800 (PST)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"Rob Herring (Arm)" <robh@kernel.org>,
+	Robert Marko <robimarko@gmail.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	George Moussalem <george.moussalem@outlook.com>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	linux-arm-msm@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
+Subject: [net PATCH] net: phy: qcom: qca807x fix condition for DAC_DSP_BIAS_CURRENT
+Date: Wed, 19 Feb 2025 14:09:21 +0100
+Message-ID: <20250219130923.7216-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-Andrew Lunn <andrew@lunn.ch> writes:
+From: George Moussalem <george.moussalem@outlook.com>
 
-> On Wed, Feb 19, 2025 at 10:02:00AM +0900, FUJITA Tomonori wrote:
->> On Mon, 17 Feb 2025 23:53:50 +0000
->> Charalampos Mitrodimas <charmitro@posteo.net> wrote:
->> 
->> > Correct the hardware revision check comment in the QT2025 driver. The
->> > revision value was documented as 0x3b instead of the correct 0xb3,
->> > which matches the actual comparison logic in the code.
->> > 
->> > Signed-off-by: Charalampos Mitrodimas <charmitro@posteo.net>
->> > ---
->> >  drivers/net/phy/qt2025.rs | 2 +-
->> >  1 file changed, 1 insertion(+), 1 deletion(-)
->> > 
->> > diff --git a/drivers/net/phy/qt2025.rs b/drivers/net/phy/qt2025.rs
->> > index 1ab065798175b4f54c5f2fd6c871ba2942c48bf1..7e754d5d71544c6d6b6a6d90416a5a130ba76108 100644
->> > --- a/drivers/net/phy/qt2025.rs
->> > +++ b/drivers/net/phy/qt2025.rs
->> > @@ -41,7 +41,7 @@ impl Driver for PhyQT2025 {
->> >  
->> >      fn probe(dev: &mut phy::Device) -> Result<()> {
->> >          // Check the hardware revision code.
->> > -        // Only 0x3b works with this driver and firmware.
->> > +        // Only 0xb3 works with this driver and firmware.
->> >          let hw_rev = dev.read(C45::new(Mmd::PMAPMD, 0xd001))?;
->> >          if (hw_rev >> 8) != 0xb3 {
->> >              return Err(code::ENODEV);
->> 
->> Oops,
->> 
->> Reviewed-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
->> 
->> Given that this patch is expected to be merged via netdev, you might
->> need to resend with a proper subject:
->> 
->> https://elixir.bootlin.com/linux/v6.13/source/Documentation/process/maintainer-netdev.rst
->
-> Please also include a Fixes: tag.
->
-> 	Andrew
+While setting the DAC value, the wrong boolean value is evaluated to set
+the DSP bias current. So let's correct the conditional statement and use
+the right boolean value read from the DTS set in the priv.
 
-Hi Andrew,
+Cc: stable@vger.kernel.org
+Fixes: d1cb613efbd3 ("net: phy: qcom: add support for QCA807x PHY Family")
+Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+---
+ drivers/net/phy/qcom/qca807x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Included it, as the documentation states.
+diff --git a/drivers/net/phy/qcom/qca807x.c b/drivers/net/phy/qcom/qca807x.c
+index 3279de857b47..2ad8c2586d64 100644
+--- a/drivers/net/phy/qcom/qca807x.c
++++ b/drivers/net/phy/qcom/qca807x.c
+@@ -774,7 +774,7 @@ static int qca807x_config_init(struct phy_device *phydev)
+ 	control_dac &= ~QCA807X_CONTROL_DAC_MASK;
+ 	if (!priv->dac_full_amplitude)
+ 		control_dac |= QCA807X_CONTROL_DAC_DSP_AMPLITUDE;
+-	if (!priv->dac_full_amplitude)
++	if (!priv->dac_full_bias_current)
+ 		control_dac |= QCA807X_CONTROL_DAC_DSP_BIAS_CURRENT;
+ 	if (!priv->dac_disable_bias_current_tweak)
+ 		control_dac |= QCA807X_CONTROL_DAC_BIAS_CURRENT_TWEAK;
+-- 
+2.47.1
 
-A v2 patch is up[1].
-
-C. Mitrodimas
-
-[1]: https://lore.kernel.org/rust-for-linux/20250219-qt2025-comment-fix-v2-1-029f67696516@posteo.net
 
