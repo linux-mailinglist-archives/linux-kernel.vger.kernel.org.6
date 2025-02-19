@@ -1,116 +1,120 @@
-Return-Path: <linux-kernel+bounces-520997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6489A3B270
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:32:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA5CDA3B28B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:36:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2BF8188AEE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:33:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CBF0175F8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:34:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8794A1C1F13;
-	Wed, 19 Feb 2025 07:32:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bA71nhcL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEBBE17A307;
-	Wed, 19 Feb 2025 07:32:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D48E31C1F27;
+	Wed, 19 Feb 2025 07:34:27 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F74217A307;
+	Wed, 19 Feb 2025 07:34:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739950372; cv=none; b=eaNgB89r4S+bcN5i6xMDkPXrBam/F9zs01Sm03lG5SMB2ymGgifJLCwtkPrgzy8uyuSF0RKra1JojnqA2nEDFS56W8SIwq1fKpcqjGVtb+SVrgtUCbAuGKdvywl4zzoKOgvqBZyggH+nGaA1qpRZkWXpc3RZA7iQecNlyvcf4KI=
+	t=1739950467; cv=none; b=IJNm3dM94fm2JC6iKftjwkF9UgN5uYgBAorwK+30/GldUTIQELsTDvuFCs+4V/SeKb3dVKewYrCInl0i17X2YNWjh0AU8ZlsLwX/W9EAiUBCXDy05o1B3ErB00TWWZKXW/f0AcEPzBSNdHNB0Nln78Rukc0kFAh1kd5EN/g8U5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739950372; c=relaxed/simple;
-	bh=IU+pHUXldmRuJqluDgSiOT9EDGFnrS7y3gSj3xCGbVo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gE9DRKUH9EoTFMmt3i4S1vkJoinby0DJcKKOzjztUIYF2p08h3Hmr42JAdJR/exQflXrJSkK2yQ1dGyagyLeAn6VBp3/bBDHcAwstg5m5RtqCLlrNahdndreABU0WdDDvMBkJrrk5bLwDvCXCKfHc7cYnZ3tyQKWaaR+ajexXvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bA71nhcL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15F07C4CED1;
-	Wed, 19 Feb 2025 07:32:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739950371;
-	bh=IU+pHUXldmRuJqluDgSiOT9EDGFnrS7y3gSj3xCGbVo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bA71nhcLnBv4vVc6bzgMzt4pcW92PdxJcYfbTt8KMC68oKcFO7FfjZsO6EXrZWchl
-	 Nmf7yFEHV+k3l6FR4r5n/w9/dOE/MgAfqavsjDv3Gxl6m2kgk0td6LefolW/tdq4vk
-	 IQGJ71D7cCbtmVBKFWdpdylHgF1T4KHDqMxX/3ifie06MKaZHrdtFXOMHJVsfhd2gu
-	 4P4M5HUSM3yduXdDxCu6tEG4DMvehgF39yoJqdbeJUI5cTCWgLsXZpSwZcWgYKkLNm
-	 FTFZnXtSVFsFSCIsXBBp5pAB1gXIC0M5l2+gRyX7OFT9Mo9AFvCtwqfqTYSiu7XvFT
-	 Ds0vM/Iq+dYLA==
-Date: Wed, 19 Feb 2025 09:32:31 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: RuiRui Yang <ruyang@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Alexander Graf <graf@amazon.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	Anthony Yznaga <anthony.yznaga@oracle.com>,
-	Arnd Bergmann <arnd@arndb.de>, Ashish Kalra <ashish.kalra@amd.com>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Ingo Molnar <mingo@redhat.com>, James Gowans <jgowans@amazon.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Pratyush Yadav <ptyadav@amazon.de>,
-	Rob Herring <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Usama Arif <usama.arif@bytedance.com>,
-	Will Deacon <will@kernel.org>, devicetree@vger.kernel.org,
-	kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
-Subject: Re: [PATCH v4 00/14] kexec: introduce Kexec HandOver (KHO)
-Message-ID: <Z7WJD6eBLuIRnLwk@kernel.org>
-References: <20250206132754.2596694-1-rppt@kernel.org>
- <CALu+AoRMQyRDFS_4L0KQkmrFT_S+yk=uZ-Mqt86JQYKKnj-5Ug@mail.gmail.com>
+	s=arc-20240116; t=1739950467; c=relaxed/simple;
+	bh=WgiOFIEinVea8mtpI1tDJE0Ypcap5EdHprwgezfaCoA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EmtRUHuYOoC0hLRoIROfivVX5Hj59iWK8A2H2cmArpaR0OqU7du+DA89MCITk0GySDDXO9a7LdDUdU+t4+HC6sy43USSf0o4hQKNvsCt1Cb0JCAINU0EvQjoy0crwBq6DzZNGWs0OecMRRL1bMR2JBeBbxetLG3C+9gXCDAgZ3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.40.54.90])
+	by gateway (Coremail) with SMTP id _____8DxWOF6ibVn5Ll6AA--.15205S3;
+	Wed, 19 Feb 2025 15:34:18 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.40.54.90])
+	by front1 (Coremail) with SMTP id qMiowMCx_cZyibVn17IbAA--.40645S2;
+	Wed, 19 Feb 2025 15:34:16 +0800 (CST)
+From: Qunqin Zhao <zhaoqunqin@loongson.cn>
+To: lee@kernel.org,
+	herbert@gondor.apana.org.au,
+	davem@davemloft.net,
+	peterhuewe@gmx.de,
+	jarkko@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	linux-crypto@vger.kernel.org,
+	jgg@ziepe.ca,
+	linux-integrity@vger.kernel.org,
+	Qunqin Zhao <zhaoqunqin@loongson.cn>
+Subject: [PATCH V3 0/6] Drivers for Loongson security engine
+Date: Wed, 19 Feb 2025 15:33:48 +0800
+Message-Id: <20250219073350.16915-1-zhaoqunqin@loongson.cn>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALu+AoRMQyRDFS_4L0KQkmrFT_S+yk=uZ-Mqt86JQYKKnj-5Ug@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMCx_cZyibVn17IbAA--.40645S2
+X-CM-SenderInfo: 52kd01pxqtx0o6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj93XoW7Ar47Gw47tF4fKrWUXr15ZFc_yoW8WF4kpF
+	45Aa4rCr4UJrZrGrn3J348uFyfXa4fXrW3KrW2qwn8Wr9IyFy8J3yakFyUAFsrJF1UJryI
+	qFZ3Cr4UGF1UZacCm3ZEXasCq-sJn29KB7ZKAUJUUUUA529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUBFb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6rxl6s0DM2kKe7AKxVWUtVW8ZwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
+	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWrXVW3
+	AwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI4
+	8JMxkF7I0En4kS14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j
+	6r4UMxCIbckI1I0E14v26r1q6r43MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwV
+	AFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv2
+	0xvE14v26F1j6w1UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWxJVW8Jr1lIxAIcVCF04k26c
+	xKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAF
+	wI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07b1UUUUUUUU=
 
-On Mon, Feb 17, 2025 at 11:19:45AM +0800, RuiRui Yang wrote:
-> On Thu, 6 Feb 2025 at 21:34, Mike Rapoport <rppt@kernel.org> wrote:
-> > == Limitations ==
-> >
-> > Currently KHO is only implemented for file based kexec. The kernel
-> > interfaces in the patch set are already in place to support user space
-> > kexec as well, but it is still not implemented it yet inside kexec tools.
-> >
-> 
-> What architecture exactly does this KHO work fine?   Device Tree
-> should be ok on arm*, x86 and power*, but how about s390?
+Loongson security engine supports random number generation, hash,
+symmetric encryption and asymmetric encryption. Based on these
+encryption functions, TPM2 have been implemented in it.
 
-KHO does not use device tree as the boot protocol, it uses FDT as a data
-structure and adds architecture specific bits to the boot structures to
-point to that data, very similar to how IMA_KEXEC works.
+mfd is the baser driver, crypto and tpm are users.
 
-Currently KHO is implemented on arm64 and x86, but there is no fundamental
-reason why it wouldn't work on any architecture that supports kexec.
- 
-> Thanks
-> Dae
-> 
+v3: Put the updates to the MAINTAINERS in a separate patch.
+v2: Removed misc driver. Added tpm driver.
 
+Qunqin Zhao (6):
+  mfd: Add support for Loongson Security Module
+  MAINTAINERS: Add maintainer for Loongson Security Module driver
+  crypto: loongson - add Loongson RNG driver support
+  MAINTAINERS: Add maintainer for Loongson RNG driver
+  tpm: Add a driver for Loongson TPM device
+  MAINTAINERS: Add tpm_lsse.c to LOONGSON CRYPTO DRIVER entry
+
+ MAINTAINERS                            |  14 +
+ drivers/char/tpm/Kconfig               |   9 +
+ drivers/char/tpm/Makefile              |   1 +
+ drivers/char/tpm/tpm_lsse.c            | 104 +++++++
+ drivers/crypto/Kconfig                 |   1 +
+ drivers/crypto/Makefile                |   1 +
+ drivers/crypto/loongson/Kconfig        |   6 +
+ drivers/crypto/loongson/Makefile       |   2 +
+ drivers/crypto/loongson/ls6000se-rng.c | 190 +++++++++++++
+ drivers/mfd/Kconfig                    |   9 +
+ drivers/mfd/Makefile                   |   2 +
+ drivers/mfd/ls6000se.c                 | 374 +++++++++++++++++++++++++
+ include/linux/mfd/ls6000se.h           |  75 +++++
+ 13 files changed, 788 insertions(+)
+ create mode 100644 drivers/char/tpm/tpm_lsse.c
+ create mode 100644 drivers/crypto/loongson/Kconfig
+ create mode 100644 drivers/crypto/loongson/Makefile
+ create mode 100644 drivers/crypto/loongson/ls6000se-rng.c
+ create mode 100644 drivers/mfd/ls6000se.c
+ create mode 100644 include/linux/mfd/ls6000se.h
+
+
+base-commit: 2816b0c949af89640b8dc05de53e650cbf1d55fb
 -- 
-Sincerely yours,
-Mike.
+2.43.0
+
 
