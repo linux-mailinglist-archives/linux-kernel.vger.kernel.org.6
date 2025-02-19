@@ -1,182 +1,233 @@
-Return-Path: <linux-kernel+bounces-520965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22EF4A3B1CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:49:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15837A3B1D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:54:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A75F3ADA2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 06:49:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2C823ADFE4
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 06:53:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25FDF1BD9C5;
-	Wed, 19 Feb 2025 06:49:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8245F1BD9D5;
+	Wed, 19 Feb 2025 06:53:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="wZT3wI7v"
-Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="eUGjJ8c0"
+Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C8C12AE95;
-	Wed, 19 Feb 2025 06:48:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA6731B425D;
+	Wed, 19 Feb 2025 06:53:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739947743; cv=none; b=gbGKVcLtMF27pDcj0+Xbxvth0bP/zooAdt7++2kOfzZ/HxSAcIV1rgI3MA5DNXZgicB04VeFbEz4EjtNigDGKU9XEQbJfenragzNNbSt7EopQQkSxN/aQ54O+9sGf1pWjloAp0sNvkNHqPghQByM5mBIIgbtXIcZMYKEzN0TT3Q=
+	t=1739948035; cv=none; b=NeVF7o2AKMc5j0hBSW0zfrgKwirFvSyhxbk5a/ZX/I0M56+9V+Jx4qDDBBTQcSu4ZE5zN/7FMUxlTUdTTNUzag1omqudhvX7iqSGRuhJtv3kUUzqRuhi3gKqVdOokA0BkbxxHZwk/vO8aIHMZyNBEBoCqBSKlZUbxp0T2p5LcOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739947743; c=relaxed/simple;
-	bh=XOiJb4SWQIvkOleohe95oWNnBc/qdNGIte6mJHCoDgU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C/cxRWhWtiKoccOUX/daZBiU7J/Wt8Y7fDdSMO8hTANsPNrtzeZxT9uSL6w5Jxdp5BpcatBF2Q+Gk4mMo7BXOJ7J9ZyA9brMijr+YmFBMKQ16C7+/oGdPNVISnF1IFCqoObcNXGYRnzKWaEjrZ0T0aqBl/jH13nG8e/6XQU5ENo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=wZT3wI7v; arc=none smtp.client-ip=115.124.30.98
+	s=arc-20240116; t=1739948035; c=relaxed/simple;
+	bh=koRbriV2FJHYpkx4yetqvAA3ugjCmnG0nn4gTbjWO0E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nw1uhGT+TutPEoozAP+wBQ+zDV4J3JLryjKgUxb4/mvd1C3Z1KxPF4yTVB7DO83eO8Uo6EFlhZFep28QDHdpWh2HOLUT9XIqhLKcADS1EDbzjlq6mIv7uyM6ooWx+dkdgBs7w4+6CBPCHITrF5kRhTQt5b9f8AGHNMo4t7Rbe60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=eUGjJ8c0; arc=none smtp.client-ip=115.124.30.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
-	t=1739947735; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=6/jQax5rnvlh2BbJC5kEw9SnvVj7TrlZC5/fP2OvErs=;
-	b=wZT3wI7vsFiJhj5v4Ky/1ITBT8n/gjhnuTAmnP+4KAPlMVyyk50iiMKw3xqFbHEFNaBvhI1UFZAVePjsMCEnTRn42+D1jt2M0uqVhIQPgGtdKpcUJzzsdP22/h5+GA8IRjyDls1lV3iLA2N+PNUFQYOpQBw9lSTPXJuezui5Vtc=
-Received: from 30.221.144.226(mailfrom:guoheyi@linux.alibaba.com fp:SMTPD_---0WPoEUPx_1739947734 cluster:ay36)
+	t=1739948027; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+	bh=2FnyiGRSEFSuMDZlvV3tsUAzNH+mhZyEV7s87LjUa9Q=;
+	b=eUGjJ8c0njfS5WYJBWfFMVJTxbLVgtk8VKHJiLhs17/oteW13z4t9MRdhSkkxQJ6U3LYQYJ1/czqMe8gD0uYIBfaudQkI3yRZgg4S3zGnjZRnmLhe0hmL8HrLAmsIfoTEjXCLIE3heUrBOjqzKJldI1boNGZD2iVkJw+dFpecoo=
+Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0WPoD3cj_1739948026 cluster:ay36)
           by smtp.aliyun-inc.com;
-          Wed, 19 Feb 2025 14:48:54 +0800
-Message-ID: <0c5e1e72-f1c9-4ffc-853f-f094a6d7799c@linux.alibaba.com>
-Date: Wed, 19 Feb 2025 14:48:53 +0800
+          Wed, 19 Feb 2025 14:53:46 +0800
+Date: Wed, 19 Feb 2025 14:53:44 +0800
+From: Feng Tang <feng.tang@linux.alibaba.com>
+To: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Lukas Wunner <lukas@wunner.de>,
+	Liguang Zhang <zhangliguang@linux.alibaba.com>,
+	Guanghui Feng <guanghuifeng@linux.alibaba.com>, rafael@kernel.org,
+	Markus Elfring <Markus.Elfring@web.de>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	ilpo.jarvinen@linux.intel.com, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] PCI/portdrv: Add necessary wait for disabling
+ hotplug events
+Message-ID: <Z7V_-KuL483hU8Dw@U-2FWC9VHC-2323.local>
+References: <20250218034859.40397-1-feng.tang@linux.alibaba.com>
+ <99d1cd4d-2526-4ce0-aabd-508fa03cb100@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] driver/aspeed-wdt: fix pretimeout for counting down
- logic
-To: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
- linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org
-Cc: Wim Van Sebroeck <wim@linux-watchdog.org>, Joel Stanley <joel@jms.id.au>,
- Andrew Jeffery <andrew@codeconstruct.com.au>,
- Eddie James <eajames@linux.ibm.com>
-References: <20250218031709.103823-1-guoheyi@linux.alibaba.com>
- <50ab5a0a-b807-4bd7-bda8-7c6f4bfc76fc@roeck-us.net>
- <5a33f86d-d82c-4685-8da7-5e623487a40c@linux.alibaba.com>
- <e692263e-a390-4611-b629-2b9feca1883a@roeck-us.net>
-Content-Language: en-US
-From: Heyi Guo <guoheyi@linux.alibaba.com>
-In-Reply-To: <e692263e-a390-4611-b629-2b9feca1883a@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <99d1cd4d-2526-4ce0-aabd-508fa03cb100@linux.intel.com>
 
+Hi Sathyanarayanan,
 
-On 2025/2/19 14:07, Guenter Roeck wrote:
-> On 2/18/25 19:41, Heyi Guo wrote:
->> Hi Guenter,
->>
->> Thanks for your comments.
->>
->> On 2025/2/18 13:33, Guenter Roeck wrote:
->>> On 2/17/25 19:16, Heyi Guo wrote:
->>>> Aspeed watchdog uses counting down logic, so the value set to register
->>>> should be the value of subtracting pretimeout from total timeout.
->>>>
->>>> Fixes: 9ec0b7e06835 ("watchdog: aspeed: Enable pre-timeout interrupt")
->>>>
->>>> Signed-off-by: Heyi Guo <guoheyi@linux.alibaba.com>
->>>>
->>>> Cc: Wim Van Sebroeck <wim@linux-watchdog.org>
->>>> Cc: Guenter Roeck <linux@roeck-us.net>
->>>> Cc: Joel Stanley <joel@jms.id.au>
->>>> Cc: Andrew Jeffery <andrew@codeconstruct.com.au>
->>>> Cc: Eddie James <eajames@linux.ibm.com>
->>>> ---
->>>>   drivers/watchdog/aspeed_wdt.c | 7 +++++++
->>>>   1 file changed, 7 insertions(+)
->>>>
->>>> diff --git a/drivers/watchdog/aspeed_wdt.c 
->>>> b/drivers/watchdog/aspeed_wdt.c
->>>> index b4773a6aaf8c..520d8aba12a5 100644
->>>> --- a/drivers/watchdog/aspeed_wdt.c
->>>> +++ b/drivers/watchdog/aspeed_wdt.c
->>>> @@ -187,6 +187,13 @@ static int aspeed_wdt_set_pretimeout(struct 
->>>> watchdog_device *wdd,
->>>>       u32 actual = pretimeout * WDT_RATE_1MHZ;
->>>>       u32 s = wdt->cfg->irq_shift;
->>>>       u32 m = wdt->cfg->irq_mask;
->>>> +    u32 reload = readl(wdt->base + WDT_RELOAD_VALUE);
->>>> +
->>>
->>> It is unusual to use a register value here and not the configured 
->>> timeout
->>> value. I would have assumed that pretimeout is compared against 
->>> wdt->timout,
->>> not against the register value, and that the multiplication with 
->>> WDT_RATE_1MHZ
->>> is done after validation. This needs an explanation.
->> It was supposed to be a straight-forward way to check if the 
->> pretimeout value is supported by the hardware. I can change to 
->> wdt->timeout if it is better.
->>
->> Further, in the case of wdt->timeout > max_hw_heartbeat_ms, shall we 
->> restrict the pretimeout to be larger than wdt->timeout - 
->> max_hw_heartbeat_ms  / 2? For the watchdog_kworker works in 
->> max_hw_heartbeat_ms  / 2 interval, pretimeout event may be triggered 
->> unexpected when watchdog is not pinged in (max_hw_heartbeat_ms - 
->> (timeout - pretimeout)).
->>
->
-> The kernel internal logic should handle that. If not, it needs to be 
-> modified/fixed.
-Do you mean the watchdog core should also handle the case in which 
-pretimeout < wdt->timeout - max_hw_heartbeat_ms  / 2?
->
->>>
->>>> +    if (actual >= reload)
->>>> +        return -EINVAL;
->>>> +
->>>
->>> On top of that, you'll also need to explain why 
->>> watchdog_pretimeout_invalid()
->>> and with it the validation in watchdog_set_pretimeout() does not 
->>> work for this
->>> watchdog and why this extra validation is necessary.
->>
->> watchdog_pretimeout_invalid() will return false if wdt->timeout == 0, 
->> but we can't determine the hardware pretimeout value if timeout == 0 
->> here.
->>
->
-> Sorry, I don't understand what you mean. If watchdog_pretimeout_invalid()
-> returns false if timeout == 0, aspeed_wdt_set_pretimeout() won't be 
-> called.
-> Why does that preclude depending on it ?
+On Tue, Feb 18, 2025 at 10:58:19AM -0800, Sathyanarayanan Kuppuswamy wrote:
+> 
+> On 2/17/25 7:48 PM, Feng Tang wrote:
+> > There was problem reported by firmware developers that they received
+> > 2 pcie link control commands in very short intervals on an ARM server,
+> > which doesn't comply with pcie spec, and broke their state machine and
+> > work flow. According to PCIe 6.1 spec, section 6.7.3.2, software needs
+> > to wait at least 1 second for the command-complete event, before
+> > resending the cmd or sending a new cmd.
+> > 
+> > And the first link control command firmware received is from
+> > get_port_device_capability(), which sends cmd to disable pcie hotplug
+> > interrupts without waiting for its completion.
+> 
+> Were you able to narrow down the source of the second command? The
+> reason I am asking is, the commit you are trying to fix seems to have
+> existed for 10+ years and no one had faced any issues with it. So
+> I am wondering whether this needs to fixed at this place or before
+> executing the second command.
 
-if timeout == 0, watchdog_pretimeout_invalid() returns false, so the 
-code will go on to call wdd->ops->set_pretimeout().
+The second command comes from pcie_enable_notification(), which in our
+case will send command to enable hotplug interrupt again.
 
-static int watchdog_set_pretimeout(struct watchdog_device *wdd,
-                    unsigned int timeout)
-{
-     int err = 0;
+The firmware developer found the problem when handling some device
+hotplug case, kind of stress case. 
 
-     if (!watchdog_have_pretimeout(wdd))
-         return -EOPNOTSUPP;
+I think maybe it's better to add the wait after this first command,
+which follows the PCIe spec naturally. Also v2 patch adds the logic
+of skipping the interrupt-disabling command, if it has been disabled
+earlier, either by kernel or BIOS.
 
-     if (watchdog_pretimeout_invalid(wdd, timeout))
-         return -EINVAL;
+> 
+> > 
+> > Fix it by adding the necessary wait to comply with PCIe spec, referring
+> > pcie_poll_cmd().
+> > 
+> > Also make the interrupt disabling not dependent on whether pciehp
+> > service driver will be loaded as suggested by Lukas.
+> 
+> May be this needs a new patch?
 
-     if (wdd->ops->set_pretimeout && (wdd->info->options & 
-WDIOF_PRETIMEOUT))
-         err = wdd->ops->set_pretimeout(wdd, timeout);
+Yes, will do.
 
->
-> On a side note, I do wonder why the driver accepts a timeout value of 
-> 0 seconds.
+> > 
+> > Fixes: 2bd50dd800b5 ("PCI: PCIe: Disable PCIe port services during port initialization")
+> > Originally-by: Liguang Zhang <zhangliguang@linux.alibaba.com>
+> > Suggested-by: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>
+> > Signed-off-by: Feng Tang <feng.tang@linux.alibaba.com>
+> > ---
+> 
+> Code wise it looks fine to me.
 
- From the code, it seems timeout == 0 / pretimeout == 0 will be 
-considered as a turn off switch.
+Thanks for the review!
 
-Thanks,
+- Feng
 
-Heyi
-
->
-> Guenter
+> > Changlog:
+> > 
+> >    since v1:
+> >      * Add the Originally-by for Liguang. The issue was found on a 5.10 kernel,
+> >        then 6.6. I was initially given a 5.10 kernel tar bar without git info to
+> >        debug the issue, and made the patch. Thanks to Guanghui who recently pointed
+> >        me to tree https://gitee.com/anolis/cloud-kernel which show the wait logic
+> >        in 5.10 was originally from Liguang, and never hit mainline.
+> >      * Make the irq disabling not dependent on wthether pciehp service driver
+> >        will be loaded (Lukas Wunner)
+> >      * Use read_poll_timeout() API to simply the waiting logic (Sathyanarayanan
+> >        Kuppuswamy)
+> >      * Add logic to skip irq disabling if it is already disabled.
+> > 
+> >   drivers/pci/pci.h          |  2 ++
+> >   drivers/pci/pcie/portdrv.c | 44 +++++++++++++++++++++++++++++++++-----
+> >   2 files changed, 41 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+> > index 01e51db8d285..c1e234d1b81d 100644
+> > --- a/drivers/pci/pci.h
+> > +++ b/drivers/pci/pci.h
+> > @@ -759,12 +759,14 @@ static inline void pcie_ecrc_get_policy(char *str) { }
+> >   #ifdef CONFIG_PCIEPORTBUS
+> >   void pcie_reset_lbms_count(struct pci_dev *port);
+> >   int pcie_lbms_count(struct pci_dev *port, unsigned long *val);
+> > +void pcie_disable_hp_interrupts_early(struct pci_dev *dev);
+> >   #else
+> >   static inline void pcie_reset_lbms_count(struct pci_dev *port) {}
+> >   static inline int pcie_lbms_count(struct pci_dev *port, unsigned long *val)
+> >   {
+> >   	return -EOPNOTSUPP;
+> >   }
+> > +static inline void pcie_disable_hp_interrupts_early(struct pci_dev *dev) {}
+> >   #endif
+> >   struct pci_dev_reset_methods {
+> > diff --git a/drivers/pci/pcie/portdrv.c b/drivers/pci/pcie/portdrv.c
+> > index 02e73099bad0..2470333bba2f 100644
+> > --- a/drivers/pci/pcie/portdrv.c
+> > +++ b/drivers/pci/pcie/portdrv.c
+> > @@ -18,6 +18,7 @@
+> >   #include <linux/string.h>
+> >   #include <linux/slab.h>
+> >   #include <linux/aer.h>
+> > +#include <linux/iopoll.h>
+> >   #include "../pci.h"
+> >   #include "portdrv.h"
+> > @@ -205,6 +206,40 @@ static int pcie_init_service_irqs(struct pci_dev *dev, int *irqs, int mask)
+> >   	return 0;
+> >   }
+> > +static int pcie_wait_sltctl_cmd_raw(struct pci_dev *dev)
+> > +{
+> > +	u16 slot_status = 0;
+> > +	int ret, ret1, timeout_us;
+> > +
+> > +	/* 1 second, according to PCIe spec 6.1, section 6.7.3.2 */
+> > +	timeout_us = 1000000;
+> > +	ret = read_poll_timeout(pcie_capability_read_word, ret1,
+> > +				(slot_status & PCI_EXP_SLTSTA_CC), 10000,
+> > +				timeout_us, true, dev, PCI_EXP_SLTSTA,
+> > +				&slot_status);
+> > +	if (!ret)
+> > +		pcie_capability_write_word(dev, PCI_EXP_SLTSTA,
+> > +						PCI_EXP_SLTSTA_CC);
+> > +
+> > +	return  ret;
+> > +}
+> > +
+> > +void pcie_disable_hp_interrupts_early(struct pci_dev *dev)
+> > +{
+> > +	u16 slot_ctrl = 0;
+> > +
+> > +	pcie_capability_read_word(dev, PCI_EXP_SLTCTL, &slot_ctrl);
+> > +	/* Bail out early if it is already disabled */
+> > +	if (!(slot_ctrl & (PCI_EXP_SLTCTL_CCIE | PCI_EXP_SLTCTL_HPIE)))
+> > +		return;
+> > +
+> > +	pcie_capability_clear_word(dev, PCI_EXP_SLTCTL,
+> > +		  PCI_EXP_SLTCTL_CCIE | PCI_EXP_SLTCTL_HPIE);
+> > +
+> > +	if (pcie_wait_sltctl_cmd_raw(dev))
+> > +		pci_info(dev, "Timeout on disabling PCIE hot-plug interrupt\n");
+> > +}
+> > +
+> >   /**
+> >    * get_port_device_capability - discover capabilities of a PCI Express port
+> >    * @dev: PCI Express port to examine
+> > @@ -222,16 +257,15 @@ static int get_port_device_capability(struct pci_dev *dev)
+> >   	if (dev->is_hotplug_bridge &&
+> >   	    (pci_pcie_type(dev) == PCI_EXP_TYPE_ROOT_PORT ||
+> > -	     pci_pcie_type(dev) == PCI_EXP_TYPE_DOWNSTREAM) &&
+> > -	    (pcie_ports_native || host->native_pcie_hotplug)) {
+> > -		services |= PCIE_PORT_SERVICE_HP;
+> > +	     pci_pcie_type(dev) == PCI_EXP_TYPE_DOWNSTREAM)) {
+> > +		if (pcie_ports_native || host->native_pcie_hotplug)
+> > +			services |= PCIE_PORT_SERVICE_HP;
+> >   		/*
+> >   		 * Disable hot-plug interrupts in case they have been enabled
+> >   		 * by the BIOS and the hot-plug service driver is not loaded.
+> >   		 */
+> > -		pcie_capability_clear_word(dev, PCI_EXP_SLTCTL,
+> > -			  PCI_EXP_SLTCTL_CCIE | PCI_EXP_SLTCTL_HPIE);
+> > +		pcie_disable_hp_interrupts_early(dev);
+> >   	}
+> >   #ifdef CONFIG_PCIEAER
+> 
+> -- 
+> Sathyanarayanan Kuppuswamy
+> Linux Kernel Developer
 
