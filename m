@@ -1,330 +1,98 @@
-Return-Path: <linux-kernel+bounces-521275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6F13A3BAF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:59:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC46BA3BAD3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:52:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 749683A2788
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:49:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7156188CDBA
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:50:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01A6E1C5F1F;
-	Wed, 19 Feb 2025 09:49:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BADC1CDA0B;
+	Wed, 19 Feb 2025 09:50:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="EciNQtMQ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="VXx/4wy4";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="EciNQtMQ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="VXx/4wy4"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hSYCHDPA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66D881C6889
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 09:49:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFB9B1CD215;
+	Wed, 19 Feb 2025 09:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739958583; cv=none; b=ek8Dft3ygIN/8M5so/1P4mtKb+IYvs0PfAKKryjK6Qw598YywrfAeCeQ/NcN1BgND6gOSsgUVa0CnOfSnu4JkMEY+m3TJrOg6IwWftje2Pe3u8P3wnaxxkIaM3TfCkEiWC8ay9LMnUOoLuZrBCI73N8SGvhOeO4N31PNO0wzPrU=
+	t=1739958600; cv=none; b=KlYet1a0+GKorH9IMSBtOMp2x8RKn9h06dQzTHEg5MkuGc/VS5L1T7GhfkVG3fchiLVJF0qEQLa/H7r8DmQWOO+XJht5fGb35NvA4poDGUCyjCcHxr6FrW5DTbTirTTj1gJNRdzx3i8+Zk+OzErZKqg/9DnGrCDTJK0ZRMNV8y0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739958583; c=relaxed/simple;
-	bh=ZvBa2kBOcQCE9ExJwxFznqfQmH2OCiHhoKbgXy+upps=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FgsL28tGSNGQzQlKSHMbkZKpHlWBtRVXWWw8B4N3JPTx04XWfjwml1Gh9yA+N9/ISYUP7UxISqHyqE/O1KYwxzLUBhbz/fUCS8vzKMu0MseRJnuzlL6OnVfmYzVwd6S2jNKHt95oBekihToPIl9Yjw63oMVWg0PuYbsaL5IR2dI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=fail smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=EciNQtMQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=VXx/4wy4; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=EciNQtMQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=VXx/4wy4; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 5460F21176;
-	Wed, 19 Feb 2025 09:49:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739958578; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=cS9epS7evsUYDH97zcJKsfxUiDtQ6N8sItfOFs2DspQ=;
-	b=EciNQtMQ3vKGDFt2NcqGdvODxYiZWZjbuCDX/pXXSudYLkfVSwrIPpZSe0OarGsYxfsUPQ
-	DV67pHK6MEtgzRu5Lcjvov46Q/OcUjSFpqZp9Fb5vOUmYnpBHoTlaiAhFCv5KRrmO7hyRh
-	rsvV9VQUxgcqdlVghyPKNtJtI50Msxs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739958578;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=cS9epS7evsUYDH97zcJKsfxUiDtQ6N8sItfOFs2DspQ=;
-	b=VXx/4wy4RVd3BeX2qG71wh9VagBfe8bTuugRpYXy7hYNrJIy51urC4oZosPxxmmWaRSth1
-	7jN9F7Hx5NyDNICg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=EciNQtMQ;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="VXx/4wy4"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739958578; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=cS9epS7evsUYDH97zcJKsfxUiDtQ6N8sItfOFs2DspQ=;
-	b=EciNQtMQ3vKGDFt2NcqGdvODxYiZWZjbuCDX/pXXSudYLkfVSwrIPpZSe0OarGsYxfsUPQ
-	DV67pHK6MEtgzRu5Lcjvov46Q/OcUjSFpqZp9Fb5vOUmYnpBHoTlaiAhFCv5KRrmO7hyRh
-	rsvV9VQUxgcqdlVghyPKNtJtI50Msxs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739958578;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=cS9epS7evsUYDH97zcJKsfxUiDtQ6N8sItfOFs2DspQ=;
-	b=VXx/4wy4RVd3BeX2qG71wh9VagBfe8bTuugRpYXy7hYNrJIy51urC4oZosPxxmmWaRSth1
-	7jN9F7Hx5NyDNICg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 146F413715;
-	Wed, 19 Feb 2025 09:49:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id izaoAzKptWepOgAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Wed, 19 Feb 2025 09:49:38 +0000
-Message-ID: <81731c1c-b74d-4b60-8c01-cda9a92d9c1b@suse.de>
-Date: Wed, 19 Feb 2025 10:49:37 +0100
+	s=arc-20240116; t=1739958600; c=relaxed/simple;
+	bh=gGKRQVXQErbi8eRaHJ2DfyuebdYQXMVvxp5XwekQrqA=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=PGfZYIsR25e64j0lQgCmdC1ScuuRjxmoKA/PDbX/n19cp3J9Fw55rUFbWOvbjCQoIqzHLCCUZC1JWyIQPVaku1sGUF6bUQZCFGl7z3Oo3HJI9Xv/ZlIrRi9UYlg4LYPaj8BYvTRRw+CEN6xZPKLDm+86vjeusQHJzDhnMCfeTaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hSYCHDPA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 847F8C4CEE7;
+	Wed, 19 Feb 2025 09:50:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739958600;
+	bh=gGKRQVXQErbi8eRaHJ2DfyuebdYQXMVvxp5XwekQrqA=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=hSYCHDPAETBpj9sPX1Y09vTfClkSm0DPiqvwLdeMZ5gSatNhMQvFxHnQmhodCE240
+	 nhYzlB66Qhby3oFM0nmJFKDwu27Dt4otZms536TrIWcsEmtApCvLsS7+DqaddFcO5Q
+	 SisMBy4H08XB7/f+Pp/9C+h2Q91b2ilvsx+T4FzZ3nhxz2ie6yNFY/LC93vNPRyBPv
+	 Aae5jh2TgO9/0hUa6QBB+mOUi8+kYn2RTy+dr349Ct6aa8k8TraP7R5BxzAYqahNU0
+	 tOFueu/c6QxK9eoWbbBLfx8u7W196oF2eWW7PIwsSnsZTccgAsuup1kr2SPo6sh99l
+	 q4sGTWxTkUrOw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33B6F380AAE9;
+	Wed, 19 Feb 2025 09:50:32 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] drm/tiny: add driver for Apple Touch Bars in x86 Macs
-To: Aditya Garg <gargaditya08@live.com>
-Cc: "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
- "mripard@kernel.org" <mripard@kernel.org>,
- "airlied@gmail.com" <airlied@gmail.com>, "simona@ffwll.ch"
- <simona@ffwll.ch>, Kerem Karabay <kekrby@gmail.com>,
- Atharva Tiwari <evepolonium@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-References: <4BAFD886-84E0-4C4C-94B3-90BF911ED0E7@live.com>
- <F16BB9EB-632C-4BC4-A8BA-492BF32E43C1@live.com>
- <d9304ed0-911b-4877-a15c-981b3335bbf9@suse.de>
- <8051F1F7-C1B0-428E-BE12-353C242EA650@live.com>
- <a88a6e48-8c55-410b-b553-8942dac3608a@suse.de>
- <858CA9AF-6128-4974-9C98-9EC01FF4FDB1@live.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <858CA9AF-6128-4974-9C98-9EC01FF4FDB1@live.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 5460F21176
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,live.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	FREEMAIL_TO(0.00)[live.com];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	FREEMAIL_CC(0.00)[linux.intel.com,kernel.org,gmail.com,ffwll.ch,vger.kernel.org,lists.freedesktop.org];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
-X-Spam-Flag: NO
+Subject: Re: [PATCH v3 net-next 0/2] Enable Big TCP for MANA devices
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173995863100.531989.91959446814814394.git-patchwork-notify@kernel.org>
+Date: Wed, 19 Feb 2025 09:50:31 +0000
+References: <1739763715-28412-1-git-send-email-shradhagupta@linux.microsoft.com>
+In-Reply-To: <1739763715-28412-1-git-send-email-shradhagupta@linux.microsoft.com>
+To: Shradha Gupta <shradhagupta@linux.microsoft.com>
+Cc: linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kys@microsoft.com, haiyangz@microsoft.com,
+ wei.liu@kernel.org, decui@microsoft.com, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ longli@microsoft.com, kotaranov@microsoft.com,
+ schakrabarti@linux.microsoft.com, erick.archer@outlook.com,
+ shradhagupta@microsoft.com
 
-Hi
+Hello:
 
-Am 19.02.25 um 10:37 schrieb Aditya Garg:
-> Hi
->
->>> I’ve tried these changes, seem to be breaking the driver:
->>>
->>> —>8—
->>>  From 16c920cabf65ec664663ebe1611c0ccf6e81de4a Mon Sep 17 00:00:00 2001
->>> From: Aditya Garg <gargaditya08@live.com>
->>> Date: Tue, 18 Feb 2025 18:54:10 +0530
->>> Subject: [PATCH] better error handling
->>>
->>> ---
->>>   .../apple-touchbar-advanced-0.1/appletbdrm.c  | 68 +++++++++++++------
->>>   1 file changed, 46 insertions(+), 22 deletions(-)
->>>
->>> diff --git a/usr/src/apple-touchbar-advanced-0.1/appletbdrm.c b/usr/src/apple-touchbar-advanced-0.1/appletbdrm.c
->>> index f2d9113..cb13b36 100644
->>> --- a/usr/src/apple-touchbar-advanced-0.1/appletbdrm.c
->>> +++ b/usr/src/apple-touchbar-advanced-0.1/appletbdrm.c
->>> @@ -133,6 +133,17 @@ struct appletbdrm_device {
->>>    struct drm_encoder encoder;
->>>   };
->>>   +struct appletbdrm_plane_state {
->>> + struct drm_shadow_plane_state base;
->>> + u8 *request_buffer;
->>> + u8 *response_buffer;
->>> +};
->>> +
->>> +static inline struct appletbdrm_plane_state *to_appletbdrm_plane_state(struct drm_plane_state *state)
->>> +{
->>> + return container_of(state, struct appletbdrm_plane_state, base.base);
->>> +}
->>> +
->>>   static int appletbdrm_send_request(struct appletbdrm_device *adev,
->>>      struct appletbdrm_msg_request_header *request, size_t size)
->>>   {
->>> @@ -311,24 +322,6 @@ static int appletbdrm_flush_damage(struct appletbdrm_device *adev,
->>>    if (!frames_size)
->>>    return 0;
->>>   - request_size = ALIGN(sizeof(*request) + frames_size + sizeof(*footer), 16);
->>> -
->>> - request = kzalloc(request_size, GFP_KERNEL);
->>> - if (!request)
->>> - return -ENOMEM;
->>> -
->>> - response = kzalloc(sizeof(*response), GFP_KERNEL);
->>> - if (!response) {
->>> - ret = -ENOMEM;
->>> - goto free_request;
->>> - }
->>> -
->>> - ret = drm_gem_fb_begin_cpu_access(fb, DMA_FROM_DEVICE);
->>> - if (ret) {
->>> - drm_err(drm, "Failed to start CPU framebuffer access (%d)\n", ret);
->>> - goto free_response;
->>> - }
->>> -
->>>    request->header.unk_00 = cpu_to_le16(2);
->>>    request->header.unk_02 = cpu_to_le16(0x12);
->>>    request->header.unk_04 = cpu_to_le32(9);
->>> @@ -389,10 +382,6 @@ static int appletbdrm_flush_damage(struct appletbdrm_device *adev,
->>>     end_fb_cpu_access:
->>>    drm_gem_fb_end_cpu_access(fb, DMA_FROM_DEVICE);
->>> -free_response:
->>> - kfree(response);
->>> -free_request:
->>> - kfree(request);
->>>      return ret;
->>>   }
->>> @@ -415,6 +404,15 @@ static int appletbdrm_primary_plane_helper_atomic_check(struct drm_plane *plane,
->>>    struct drm_plane_state *new_plane_state = drm_atomic_get_new_plane_state(state, plane);
->>>    struct drm_crtc *new_crtc = new_plane_state->crtc;
->>>    struct drm_crtc_state *new_crtc_state = NULL;
->>> + struct appletbdrm_plane_state *appletbdrm_state = to_appletbdrm_plane_state(new_plane_state);
->>> + struct drm_device *drm = plane->dev;
->>> + struct drm_plane_state *plane_state = plane->state;
->>> + struct appletbdrm_fb_request_response *response;
->>> + struct appletbdrm_fb_request_footer *footer;
->>> + struct drm_framebuffer *fb = plane_state->fb;
->>> + struct appletbdrm_fb_request *request;
->>> + size_t frames_size = 0;
->>> + size_t request_size;
->>>    int ret;
->>>      if (new_crtc)
->>> @@ -429,6 +427,22 @@ static int appletbdrm_primary_plane_helper_atomic_check(struct drm_plane *plane,
->>>    else if (!new_plane_state->visible)
->>>    return 0;
->>>   + request_size = ALIGN(sizeof(*request) + frames_size + sizeof(*footer), 16);
->>> +
->>> + appletbdrm_state->request_buffer = kzalloc(request_size, GFP_KERNEL);
->>> + if (!request)
->>> + return -ENOMEM;
->>> +
->>> + appletbdrm_state->response_buffer = kzalloc(sizeof(*response), GFP_KERNEL);
->>> + if (!response) {
->>> + ret = -ENOMEM;
->>> + }
->>> +
->>> + ret = drm_gem_fb_begin_cpu_access(fb, DMA_FROM_DEVICE);
->>> + if (ret) {
->>> + drm_err(drm, "Failed to start CPU framebuffer access (%d)\n", ret);
->>> + }
->>> +
->>>    return 0;
->>>   }
->>>   @@ -464,6 +478,15 @@ static void appletbdrm_primary_plane_helper_atomic_disable(struct drm_plane *pla
->>>    drm_dev_exit(idx);
->>>   }
->>>   +static void appletbdrm_primary_plane_destroy_state(struct drm_plane *plane,
->>> + struct drm_plane_state *state)
->>> +{
->>> + struct appletbdrm_plane_state *appletbdrm_state = to_appletbdrm_plane_state(state);
->>> +
->>> + kfree(appletbdrm_state->request_buffer);
->>> + kfree(appletbdrm_state->response_buffer);
->>> +}
->>> +
->>>   static const struct drm_plane_helper_funcs appletbdrm_primary_plane_helper_funcs = {
->>>    DRM_GEM_SHADOW_PLANE_HELPER_FUNCS,
->>>    .atomic_check = appletbdrm_primary_plane_helper_atomic_check,
->>> @@ -474,6 +497,7 @@ static const struct drm_plane_helper_funcs appletbdrm_primary_plane_helper_funcs
->>>   static const struct drm_plane_funcs appletbdrm_primary_plane_funcs = {
->>>    .update_plane = drm_atomic_helper_update_plane,
->>>    .disable_plane = drm_atomic_helper_disable_plane,
->>> + .atomic_destroy_state = appletbdrm_primary_plane_destroy_state,
->>>    .destroy = drm_plane_cleanup,
->>>    DRM_GEM_SHADOW_PLANE_FUNCS,
->> You don't allocate struct appletbdrm_plane_state. Instead of this macro, you also have to set your own helpers for the plane's .reset and .atomic_duplicate_state There's again example code in the ssd130x driver.
-> Any attempt make to allocate request and response outside appletdrm_flush_damage seems to be breaking the driver.
->
-> If I understand correctly, you want me to allocate them outside appletdrm_flush_damage, in appletbdrm_primary_plane_helper_atomic_check, return -ENOMEM if they fail. After that add kfree(return) and kfree(response) in appletbdrm_primary_plane_destroy_state.
->
-> The ssd130x driver example isn’t really helping me. Could you please help me out here?
+This series was applied to netdev/net-next.git (main)
+by David S. Miller <davem@davemloft.net>:
 
-What's the exact error message?
+On Sun, 16 Feb 2025 19:41:55 -0800 you wrote:
+> Allow the max gso/gro aggregated pkt size to go up to GSO_MAX_SIZE for
+> MANA NIC. On Azure, this not possible without allowing the same for
+> netvsc NIC (as the NICs are bonded together).
+> Therefore, we use netif_set_tso_max_size() to set max aggregated pkt
+> size
+> to VF's tso_max_size for netvsc too, when the data path is switched over
+> to the VF
+> 
+> [...]
 
-Best regards
-Thomas
+Here is the summary with links:
+  - [v3,net-next,1/2] net: mana: Allow tso_max_size to go up-to GSO_MAX_SIZE
+    https://git.kernel.org/netdev/net-next/c/27315836f4bc
+  - [v3,net-next,2/2] hv_netvsc: Use VF's tso_max_size value when data path is VF
+    https://git.kernel.org/netdev/net-next/c/685920920e3d
 
-
+You are awesome, thank you!
 -- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
