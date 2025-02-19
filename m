@@ -1,252 +1,183 @@
-Return-Path: <linux-kernel+bounces-522003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CE24A3C4C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:20:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D003A3C4CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:21:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E46F3188E421
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:18:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA2B418993A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:19:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00D431FECD3;
-	Wed, 19 Feb 2025 16:18:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09C6E1FDE39;
+	Wed, 19 Feb 2025 16:19:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="co6lGl8f"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="UEJ0ScxJ"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2049.outbound.protection.outlook.com [40.107.94.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB27C1F8BDC
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 16:18:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739981906; cv=none; b=S8FyHiS1XGla/YIsp0zHueg149xFB9bOe2B9ip5HWVFFaqBp67O28L2aa/wF99zPDWP1HlM4kkhk6fJ6mn76rV73cedTO3Uxw6sRvAs3NylOvy28wRfx5Gzd1+MyqEHYNXrbrNsCGakKUWrJMs+nmvZ+Xz2K/7yhIkpcS5PEoJY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739981906; c=relaxed/simple;
-	bh=b38N2G5pI18KXCo6dYoQ0A/4T04VhxVdQ6rNeU31Ph8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=IwK07nNcO17gEAbwGQgK9+lW968a7shLs8qFSntp3Nk3JtJzca8B3GsEZaN4vYdK9L+VOVDtoouh/dHq9olyEXkQJy4y995hx0Rvck9r7xG/666dNQQjMY/nHPDZifUUCimpRZSFE+1cobye05HC0qn9pMBkLnSbjYJOiCCZSfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=co6lGl8f; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739981902;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=b38N2G5pI18KXCo6dYoQ0A/4T04VhxVdQ6rNeU31Ph8=;
-	b=co6lGl8fYC4dTkPOxYlwGM/Z7S5GyonXvd/YAfs4hEqu0oXze8tm1RGXV5k0vYdtSL4v+0
-	8eLl32wh/UsRYvsICmYHGARtgbSYp8NxVzdWp+0vVQEks3E60lwnIVBkIQ5Bejz3QuHyyB
-	r1ohSdWEL/wQ+q8/w2C1C2Z/tCCP+hg=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-52-IBYaj3XxMz6qT21iQnuN-w-1; Wed, 19 Feb 2025 11:18:20 -0500
-X-MC-Unique: IBYaj3XxMz6qT21iQnuN-w-1
-X-Mimecast-MFC-AGG-ID: IBYaj3XxMz6qT21iQnuN-w_1739981900
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43945f32e2dso58176515e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 08:18:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739981900; x=1740586700;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b38N2G5pI18KXCo6dYoQ0A/4T04VhxVdQ6rNeU31Ph8=;
-        b=lgcclroPsRCzdrEzqTi0zKG+IjC1XxcZJq/UE/ZcXC4qtckEUrMbw7uHVSi37XRYsh
-         h2uGhhK1gLAHzwfAxc1R0Y/p90o1FeH1dOVRMBfPE97+Fa5xhvnrak7W0tKYUK+dNGzt
-         xjVy128hV14XbzBo+vMxV7DP5gB5v+h6BtEt+ndKdnDYsNRtwkpwtHiJX9q8ryQtdpKf
-         CnKNWO1bT6ikl9na35tRA7lG/MJkVds7Xt9XzjONYD4KAHd+9qx17aglrMHWl1c3ztwT
-         iQivQ58Ztw6aI3pfqUJ04p8f92Kq5HKCIvLD/BrE6DMoGbEdA08iKs0dtG6SQqDcunY7
-         4xyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWpOV0ru/zToBOfhX2nLksOjWCGlx9Iz1gA2jjndyGgsSXyQNUKXZ1XjBvq4B+gJINOeAiTAFGryGJXZFk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3VRxm9Ht+pGZHa+uwp2CKwDjvBKYSeO/ZJZbcd9mhy3ftp8Yj
-	BXCCeZQb1Uq6x7aqp707CmVUbn5afbbzU3qjEY/fvkBePBLbU3TMTXbQgpZkQYgTPPYEcKjlJsZ
-	Rq+JjPIiu90nuSYKWMCv9Cdns0Gx9plAm+SvMUIwkTOccZ3Or8XXRmavByjpQHQ==
-X-Gm-Gg: ASbGnct8uNCcGfR7BX8RWJMtjckyRFJPGRYSYU2Hd02LtLnIMZ8XeLdDsuxnDKZSxVD
-	lntWVvL6czNeFx88daEwTxwd15dIFes2XBH0h9mHO4kK3exsI1QAhf6XP55Cr0TeUQUVShkjMFH
-	t82vAhETHjL3v2drbyiCNi9xtqHI3g0UYnIhFCpZQxP1+mpozQuOlyVcDerA7iGGVIb+nnZJN5k
-	CPVjXu4+tiwTuZ8v+HlCUJb2+/PZV1jssPPN6VFOwcP2OZxLmB/72OnIqsSVCB0aVL3DUXjKNId
-	HzQPqKX1wLFHM1eeClm5Qyaqe7NioD/AlK13RrXgnoNB0RfDj5YN41YUSgeYY4+ycQ==
-X-Received: by 2002:a05:600c:5246:b0:439:9d75:9e92 with SMTP id 5b1f17b1804b1-4399d75b257mr27951675e9.28.1739981899402;
-        Wed, 19 Feb 2025 08:18:19 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGrgaKWzB18Ksr+NPSQeT1o3+i2kAVUfh7lIILUz6n7wULpVTIiD8VAP1UIlBXohEkgY6+FYQ==
-X-Received: by 2002:a05:600c:5246:b0:439:9d75:9e92 with SMTP id 5b1f17b1804b1-4399d75b257mr27950675e9.28.1739981898863;
-        Wed, 19 Feb 2025 08:18:18 -0800 (PST)
-Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f2591570esm18461449f8f.59.2025.02.19.08.18.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2025 08:18:17 -0800 (PST)
-From: Valentin Schneider <vschneid@redhat.com>
-To: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org,
- x86@kernel.org, virtualization@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev,
- linux-riscv@lists.infradead.org, linux-perf-users@vger.kernel.org,
- xen-devel@lists.xenproject.org, kvm@vger.kernel.org,
- linux-arch@vger.kernel.org, rcu@vger.kernel.org,
- linux-hardening@vger.kernel.org, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org, bpf@vger.kernel.org,
- bcm-kernel-feedback-list@broadcom.com, Juergen Gross <jgross@suse.com>,
- Ajay Kaher <ajay.kaher@broadcom.com>, Alexey Makhalov
- <alexey.amakhalov@broadcom.com>, Russell King <linux@armlinux.org.uk>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, Paul
- Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave
- Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
- Peter Zijlstra <peterz@infradead.org>, Arnaldo Carvalho de Melo
- <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Mark Rutland
- <mark.rutland@arm.com>, Alexander Shishkin
- <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Ian
- Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>, Boris Ostrovsky
- <boris.ostrovsky@oracle.com>, Josh Poimboeuf <jpoimboe@kernel.org>, Pawan
- Gupta <pawan.kumar.gupta@linux.intel.com>, Sean Christopherson
- <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, Andy Lutomirski
- <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Frederic Weisbecker
- <frederic@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>, Jason
- Baron <jbaron@akamai.com>, Steven Rostedt <rostedt@goodmis.org>, Ard
- Biesheuvel <ardb@kernel.org>, Neeraj Upadhyay
- <neeraj.upadhyay@kernel.org>, Joel Fernandes <joel@joelfernandes.org>,
- Josh Triplett <josh@joshtriplett.org>, Boqun Feng <boqun.feng@gmail.com>,
- Uladzislau Rezki <urezki@gmail.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Lai Jiangshan <jiangshanlai@gmail.com>,
- Zqiang <qiang.zhang1211@gmail.com>, Juri Lelli <juri.lelli@redhat.com>,
- Clark Williams <williams@redhat.com>, Yair Podemsky <ypodemsk@redhat.com>,
- Tomas Glozar <tglozar@redhat.com>, Vincent Guittot
- <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Kees Cook
- <kees@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Christoph
- Hellwig <hch@infradead.org>, Shuah Khan <shuah@kernel.org>, Sami Tolvanen
- <samitolvanen@google.com>, Miguel Ojeda <ojeda@kernel.org>, Alice Ryhl
- <aliceryhl@google.com>, "Mike Rapoport (Microsoft)" <rppt@kernel.org>,
- Samuel Holland <samuel.holland@sifive.com>, Rong Xu <xur@google.com>,
- Nicolas Saenz Julienne <nsaenzju@redhat.com>, Geert Uytterhoeven
- <geert@linux-m68k.org>, Yosry Ahmed <yosryahmed@google.com>, "Kirill A.
- Shutemov" <kirill.shutemov@linux.intel.com>, "Masami Hiramatsu (Google)"
- <mhiramat@kernel.org>, Jinghao Jia <jinghao7@illinois.edu>, Luis
- Chamberlain <mcgrof@kernel.org>, Randy Dunlap <rdunlap@infradead.org>,
- Tiezhu Yang <yangtiezhu@loongson.cn>
-Subject: Re: [PATCH v4 29/30] x86/mm, mm/vmalloc: Defer
- flush_tlb_kernel_range() targeting NOHZ_FULL CPUs
-In-Reply-To: <20250219145302.GA480110@joelnvbox>
-References: <20250114175143.81438-1-vschneid@redhat.com>
- <20250114175143.81438-30-vschneid@redhat.com>
- <CAG48ez1Mh+DOy0ysOo7Qioxh1W7xWQyK9CLGNU9TGOsLXbg=gQ@mail.gmail.com>
- <xhsmh34hhh37q.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <CAG48ez3H8OVP1GxBLdmFgusvT1gQhwu2SiXbgi8T9uuCYVK52w@mail.gmail.com>
- <xhsmhzfjpfkky.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <20250219145302.GA480110@joelnvbox>
-Date: Wed, 19 Feb 2025 17:18:14 +0100
-Message-ID: <xhsmhecztj4c9.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C44031FDE0E;
+	Wed, 19 Feb 2025 16:19:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739981982; cv=fail; b=r0qEQ8atEQQ0YIzJ7x74njp2c+XJd6aQKJLskQuvtasUzn92wlShV064919LKVyQRFu29oFEcuipkfGFolpKqjXQKzLrK6YkPzdHAAdUDRrnES2KdvXgly4T8CXJ7Ky7bqj8aIhHzfIZ+tZ5MWP8Tkh95FyAwD9W4F0+5h8d5t0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739981982; c=relaxed/simple;
+	bh=L94gtMjxLFolPX2INljIOqRYKS5OCRU5azHQNS3atJQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=sGTXwtP9BHJL2XWedKRV7QwT1Q0QUQ8Ds9URZIYPO/diptywFC/hlZVeHTSFJ7vpLJlhTGUNYATr6qp4LfpxV3MveJfd980n9aQb/46I/+2Ca0d0dYW4NIHbVmhiaWubxe3jowpXJhVsNkj56xcUA+yxptnGRyrQindVUlkCnRo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=UEJ0ScxJ; arc=fail smtp.client-ip=40.107.94.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=BvnstxLKIPb5ghNmFgBy3ZbBYYIA3zeGk8pd4pxxdBiuE+WbG2e2yHAJWdu43TfYhPLbk6iMiUe8mTBBC9FDRvRBt5pJV7H5R2UrZwh2ItSw/mhU9j3Ql/IfE+3Wl7OKIrUIJ2xuK6djyAWdh7PaD+z3OO3/JI/zlqt4eXCafVmPh5edyfWCV+i3bbLM/Txhmb91vMcYRrm8Ss+/M3DbAE9iaRK5XhCFGgh/sdU6pK/0FZ+Yae0na8OF9az/zrqEP+aN0uVKAuw8CSbCC2IqPVhsb008VkXggV3ZBocLgqnY7zLltP646P91m8nv2Isb39kGrll60m12RmG5YVk+Bg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7O5gzM6SBtbJE02k8f3lbb7XwqgL2qfrnD5Q4ZLgir0=;
+ b=mvj0+C/j+XEEjR0r+9h7sweHIKnYHBmbn0P3qY7o1h6Gz8bLe/UJVonMM+LxXEh453cQX2vGg5r2c1pg/wySU/XT5kGsyYundxnwdR4e91FdPGZxmPbHmX4lLPZ6H4gULd5t5MeFsAv5wbzk5qCAD5QDgOVjYajcMOeyEIyVjkqk5Vqh3NZmeLqFvNKI62scCxj2CtkP+vVPFAY8SjxN+YanXRt8i0Om3bXKkM07QTsDWEN3q/1XdDtW773sW0P97pBq2L5nsEgPwy0zUYUtJ1DuDOaQTP2nCbkhIjddrFyi4VVUQORBzhvQJtmo4Rb8zgKNEwWAS2hRbEVdyA/zjg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7O5gzM6SBtbJE02k8f3lbb7XwqgL2qfrnD5Q4ZLgir0=;
+ b=UEJ0ScxJeMK/qHaoI6koTkzg/Z8GnvWUHJv8VDC/WlF8wNbtYiX0rUMHCLUJd9w+LakEZO4+jAEFzUutOJ6WLKlVpSj47j39eyYLx0XAeom+NnH3Iu12B46+YefsCViDJydlz5+ho1SvIYFss0dsrmOxmLcVQc8NMjlgdB8oHqU=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB6373.namprd12.prod.outlook.com (2603:10b6:8:a4::7) by
+ DS0PR12MB8768.namprd12.prod.outlook.com (2603:10b6:8:14f::20) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8466.14; Wed, 19 Feb 2025 16:19:38 +0000
+Received: from DM4PR12MB6373.namprd12.prod.outlook.com
+ ([fe80::12f7:eff:380b:589f]) by DM4PR12MB6373.namprd12.prod.outlook.com
+ ([fe80::12f7:eff:380b:589f%5]) with mapi id 15.20.8445.017; Wed, 19 Feb 2025
+ 16:19:38 +0000
+Date: Wed, 19 Feb 2025 11:19:34 -0500
+From: Yazen Ghannam <yazen.ghannam@amd.com>
+To: "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>
+Cc: "x86@kernel.org" <x86@kernel.org>, "Luck, Tony" <tony.luck@intel.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+	"Smita.KoralahalliChannabasappa@amd.com" <Smita.KoralahalliChannabasappa@amd.com>
+Subject: Re: [PATCH v2 15/16] x86/mce/amd: Support SMCA Corrected Error
+ Interrupt
+Message-ID: <20250219161934.GH337534@yaz-khff2.amd.com>
+References: <20250213-wip-mca-updates-v2-0-3636547fe05f@amd.com>
+ <20250213-wip-mca-updates-v2-15-3636547fe05f@amd.com>
+ <CY8PR11MB713471B0264788235FA9079389FA2@CY8PR11MB7134.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CY8PR11MB713471B0264788235FA9079389FA2@CY8PR11MB7134.namprd11.prod.outlook.com>
+X-ClientProxiedBy: LV3P220CA0023.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:408:234::24) To DM4PR12MB6373.namprd12.prod.outlook.com
+ (2603:10b6:8:a4::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB6373:EE_|DS0PR12MB8768:EE_
+X-MS-Office365-Filtering-Correlation-Id: 31704148-166a-4f0b-9f04-08dd5101351b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?F0sr45IkGCRFfCoszbB5sTO0/afpv4AmQt8qtsoJ3YovI8mVVgb7wQ0VgRVC?=
+ =?us-ascii?Q?qRoXNJhHlDajwbsCiuIdmamCzDF9dWK5IQC8ZQMywHLPpf3AEluneJpQ0ndB?=
+ =?us-ascii?Q?3unIPUUv4QmhTR4/RmuK1sK1gOObF1LGCKRkJbLm3xvI/47+c5xvS35LtcPz?=
+ =?us-ascii?Q?YKkTsSn4MZV4GATw2rRcsDZcpPefd60nXVGTy2rmUdCDRbYk5+H4T0PebLcB?=
+ =?us-ascii?Q?mvxhKvKprOLDFYYZay/bxy2dIKG0FUl28/afzA46gfU2jnPUZ8HQWHIT/Cp8?=
+ =?us-ascii?Q?e7tUXCSLszGBVA1Fo93OPJCn6JI9iPCNO5522zTArxg9cXnSybfltprJ4b2j?=
+ =?us-ascii?Q?MNnw1v00gfZ4o5Txdu9YoyLufAINRVVAfNHxhSGPQwJYlzEaC/+lE3PijE8p?=
+ =?us-ascii?Q?aTXxUTWLojBOXzEDtG9VsSTAbpaOuJCHj863b2c7emw+xBE/lV0jk0IWefKR?=
+ =?us-ascii?Q?V1mvYnUq/WwquY5BB1+G3jXjwzntpdO0PZVjLRedhDzxvQ/0GtUHOjOTjGjB?=
+ =?us-ascii?Q?UBIF0LBF65zy1NeHpQBfTDpTbW6lh8MiGprcS7xPF8xj6ZDUkZbuiPOM8f+S?=
+ =?us-ascii?Q?KDfwi5zv2fODrB8iDJ/bzAedD3H4n4WkiCpS4k+HixgTtmf1pc1wTIhxN2Pl?=
+ =?us-ascii?Q?20pi+dbGrd3vTQYAQg8s+Kg2pueZTYJV6UdZllwIoUnAwiF8PodKd7LLY9P/?=
+ =?us-ascii?Q?bofIxpzGwg/wfsMzyg+gbVYazTF1rwgUFxloyIFRk/nMX4Ql65EWtlzYR7YO?=
+ =?us-ascii?Q?N6elxe4BKEOzEenNmL6YsYTfQzRWKJWLL5EUBCY3n1+eM1GkObEQ8nrIRIeQ?=
+ =?us-ascii?Q?IJuD3ZlhAh7577iLdTXCRBk0V0LY010FrnvWk6Ana9JlzBxnG+w6XWvNqmh0?=
+ =?us-ascii?Q?HCMB7NM9NQC1Y8nwdiflmHogE8R8e65eZLeZ2hMymqpLuOdLRkEERe3+pKz0?=
+ =?us-ascii?Q?no/kD7zrNmap+AelMyQhHVyWhxOcuv2Px1iUCDepcXQnVYR55a8YujRNZCx1?=
+ =?us-ascii?Q?4Miv/C77TPeqFysQIqHEwgUfkDXpRebyyHKifmT11g84oH05eo6w4SFfWRNu?=
+ =?us-ascii?Q?bQGvjTIu1PwfGU8fNwkfqryJ+1vs+RS+agq7dQsb/itlAGEE0C7E6v/TBwfR?=
+ =?us-ascii?Q?Au+z18ZD5tSbfgzEG14J2H53TkmVDLAVm1dRvqnB2/gQe1FDa5i7NMoK+eBu?=
+ =?us-ascii?Q?dUhqt4HRYTLiNnkxml9JgL59Fxz2EJb9qnE0QZIA7QDYqnlUbRlKtExTJpUo?=
+ =?us-ascii?Q?t9vrx7XL6litqCZcPZPuJHrJS8JKuqbEEYxlMNjI6nKF0Z9NCfvhGzk30UxY?=
+ =?us-ascii?Q?EtCPpVlLFEGoSKxQrYFgHo75bT5yZo2InJUIvQeTLdmVkzrVpxaJwsSdxiC/?=
+ =?us-ascii?Q?EAQzZf72Jsx4XbySKg62TElqbKBS?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6373.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?T2FMX2erOyzHmjlKTb2e4dqMTdoDhjxZxcMm32OdH6PD8twXoZxjZvc06SAq?=
+ =?us-ascii?Q?1kDEU78uTgYH5x1rVEdew5M0fomcF270Uy/KvALTob+cqBnI/jO2kx646R9u?=
+ =?us-ascii?Q?4WGNxqxgqzj83YW1G3WVA+iovgxI9H6RDPE2RtBIt6p1+N42LaJHmVgLZp80?=
+ =?us-ascii?Q?boOtqL5ImoCTPhdwyvmbkL6QKCJrgHILJMNQT+zKS1REuJLaq+iEHqQMgc1J?=
+ =?us-ascii?Q?N9kND4qh84B7hP4KWGcz1KUCD7eeL8O21REt/5TXubWXgnd+oBSELI4N/VdX?=
+ =?us-ascii?Q?lfdJ0EZxA4A4kx25Kea8KGEhBQHYnSrZCV+StqHZd+b7axxF/rSeQkMh+3xq?=
+ =?us-ascii?Q?sPqwzdlnwq5t6gcgvPkofGaASm8pWG9ryl7ns62XrwYKbN8b011rGrvZW/qM?=
+ =?us-ascii?Q?ldYIApXCjyXQswVL3PZrsIyfEEaKDYhgQluZs5ejeGtyZ4Wp4HDFYksZtsUx?=
+ =?us-ascii?Q?GSeHq9IVIb1gOZelrjy+eDjJ22L1IY8k25tllwqiUZLvDOVUqSU6Fi+waVHN?=
+ =?us-ascii?Q?2F4MG7YRty+0ZrAud9Lz9UiaxHzn1yPXVf6pgYYXOlFRBe9RdDzAqwpvjAqe?=
+ =?us-ascii?Q?AC4xRqKXRMVXHK4gvG+8KR22ODmubDu4E4ZutBzXibCJ7WeugrX67XFcLPFM?=
+ =?us-ascii?Q?SSuQUjzVBjFYWW+z+2Obshrg0e2JOC1K8Mule6xWGaiYSxBLpGsuhER8hV18?=
+ =?us-ascii?Q?eoxIJkQqnHkdAr/OS+/Bf6rToU6g4F8yovDjKoUl26L9qyMNBpYoiK3M1GUc?=
+ =?us-ascii?Q?6golHk/i4K75m6CSCmA1coN4UY1h5p2egq2r4p5JkT7u3gRsf5wTnaY5YopP?=
+ =?us-ascii?Q?NgxWotrEBgGSCJhb+IL7b52RpOapEoAIeosdhw2xSfj6gGn4PumFTbuSlx9W?=
+ =?us-ascii?Q?hU9ZfujcRBuwHNdDrZQSE1x73YkIMOm/zA0ZWeDu/p93Bqu94WtledLb2EFt?=
+ =?us-ascii?Q?1sX/Lh6I5asIVEloR5PmapFJnaP4hL4VCIVz+5hGBfATACz0K6YV2Tcd0O83?=
+ =?us-ascii?Q?Tje5wwqj0VQrf7Vg6izw0tDAP9XRQOozjj+GCkkrSV0VLijbwyqj02iYriIN?=
+ =?us-ascii?Q?0jRj07L8PEAVWKjzRkBUclbI+A5sXrfuQi6d/da6RINj/b/lcorrenHMWj7b?=
+ =?us-ascii?Q?YOLqZnvuWgJWI6HAvZdwnSjJxdaZrW9CunT4GuJOrG/sxiO0iHqKUR07gA3t?=
+ =?us-ascii?Q?6pmQVAu0DnoNecSi48/r4WH2yfPgLrFryux8gbYs0isDZw+My1DmmmxOkgoN?=
+ =?us-ascii?Q?4iaMI7rLfqQwN/bUw5vkijMHL9cKDHmhtreDzFx54zKx0Z3jQE8vTFd4uzGN?=
+ =?us-ascii?Q?1+15kbIie0121hBay1IHBNZ4otTfTQQUnYfXSTRJGGqmuS27vVsvx0hWtPOR?=
+ =?us-ascii?Q?mHSLw53FEdQN5dkhOSQpZYyy4tT0loefS/zfbb7UUghohFseiiMhQ9oJLm54?=
+ =?us-ascii?Q?nad3cCDWclmYNY/WL6IQ4MyTkup5qZW/Han9erDGmb4V5pw941xOU1U4BPMJ?=
+ =?us-ascii?Q?ESsD/ueVvvbICYswW1GorD3goq77BEvFamaIBbbJaNt5XRpsd7hWwksAaNYG?=
+ =?us-ascii?Q?StKRHv1fwzJ3+OoXGJ9EzcnyM5neLGDeDOQEmq9x?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 31704148-166a-4f0b-9f04-08dd5101351b
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6373.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2025 16:19:38.5980
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: J1LJvPjfnxrFpQrHb8co9VPcZv6Od64ooQAidg6ZL9GU8QDRU9ijmVWocpVsWsq02harQnuigarg6AkfJqPb1Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8768
 
-On 19/02/25 10:05, Joel Fernandes wrote:
-> On Fri, Jan 17, 2025 at 05:53:33PM +0100, Valentin Schneider wrote:
->> On 17/01/25 16:52, Jann Horn wrote:
->> > On Fri, Jan 17, 2025 at 4:25=E2=80=AFPM Valentin Schneider <vschneid@r=
-edhat.com> wrote:
->> >> On 14/01/25 19:16, Jann Horn wrote:
->> >> > On Tue, Jan 14, 2025 at 6:51=E2=80=AFPM Valentin Schneider <vschnei=
-d@redhat.com> wrote:
->> >> >> vunmap()'s issued from housekeeping CPUs are a relatively common s=
-ource of
->> >> >> interference for isolated NOHZ_FULL CPUs, as they are hit by the
->> >> >> flush_tlb_kernel_range() IPIs.
->> >> >>
->> >> >> Given that CPUs executing in userspace do not access data in the v=
-malloc
->> >> >> range, these IPIs could be deferred until their next kernel entry.
->> >> >>
->> >> >> Deferral vs early entry danger zone
->> >> >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->> >> >>
->> >> >> This requires a guarantee that nothing in the vmalloc range can be=
- vunmap'd
->> >> >> and then accessed in early entry code.
->> >> >
->> >> > In other words, it needs a guarantee that no vmalloc allocations th=
-at
->> >> > have been created in the vmalloc region while the CPU was idle can
->> >> > then be accessed during early entry, right?
->> >>
->> >> I'm not sure if that would be a problem (not an mm expert, please do
->> >> correct me) - looking at vmap_pages_range(), flush_cache_vmap() isn't
->> >> deferred anyway.
->> >
->> > flush_cache_vmap() is about stuff like flushing data caches on
->> > architectures with virtually indexed caches; that doesn't do TLB
->> > maintenance. When you look for its definition on x86 or arm64, you'll
->> > see that they use the generic implementation which is simply an empty
->> > inline function.
->> >
->> >> So after vmapping something, I wouldn't expect isolated CPUs to have
->> >> invalid TLB entries for the newly vmapped page.
->> >>
->> >> However, upon vunmap'ing something, the TLB flush is deferred, and th=
-us
->> >> stale TLB entries can and will remain on isolated CPUs, up until they
->> >> execute the deferred flush themselves (IOW for the entire duration of=
- the
->> >> "danger zone").
->> >>
->> >> Does that make sense?
->> >
->> > The design idea wrt TLB flushes in the vmap code is that you don't do
->> > TLB flushes when you unmap stuff or when you map stuff, because doing
->> > TLB flushes across the entire system on every vmap/vunmap would be a
->> > bit costly; instead you just do batched TLB flushes in between, in
->> > __purge_vmap_area_lazy().
->> >
->> > In other words, the basic idea is that you can keep calling vmap() and
->> > vunmap() a bunch of times without ever doing TLB flushes until you run
->> > out of virtual memory in the vmap region; then you do one big TLB
->> > flush, and afterwards you can reuse the free virtual address space for
->> > new allocations again.
->> >
->> > So if you "defer" that batched TLB flush for CPUs that are not
->> > currently running in the kernel, I think the consequence is that those
->> > CPUs may end up with incoherent TLB state after a reallocation of the
->> > virtual address space.
->> >
->>
->> Ah, gotcha, thank you for laying this out! In which case yes, any vmalloc
->> that occurred while an isolated CPU was NOHZ-FULL can be an issue if said
->> CPU accesses it during early entry;
->
-> So the issue is:
->
-> CPU1: unmappes vmalloc page X which was previously mapped to physical page
-> P1.
->
-> CPU2: does a whole bunch of vmalloc and vfree eventually crossing some la=
-zy
-> threshold and sending out IPIs. It then goes ahead and does an allocation
-> that maps the same virtual page X to physical page P2.
->
-> CPU3 is isolated and executes some early entry code before receving said =
-IPIs
-> which are supposedly deferred by Valentin's patches.
->
-> It does not receive the IPI becuase it is deferred, thus access by early
-> entry code to page X on this CPU results in a UAF access to P1.
->
-> Is that the issue?
->
+On Tue, Feb 18, 2025 at 01:27:04PM +0000, Zhuo, Qiuxu wrote:
+> > From: Yazen Ghannam <yazen.ghannam@amd.com>
+> > [...]
+> > --- a/arch/x86/kernel/cpu/mce/amd.c
+> > +++ b/arch/x86/kernel/cpu/mce/amd.c
+> > @@ -306,6 +306,11 @@ static void smca_configure(unsigned int bank,
+> > unsigned int cpu)
+> >  			high |= BIT(5);
+> >  		}
+> > 
+> 
+> Do you think it would be better to have some comments on the thresholding 
+> interrupt here (as the bits 10/8 look like magic numbers), similar to the 
+> comments above for the deferred interrupt?
+> 
+> > +		if ((low & BIT(10)) && data->thr_intr_en) {
+> > +			__set_bit(bank, data->thr_intr_banks);
+> > +			high |= BIT(8);
+> > +		}
+> > +
+> > [...]
 
-Pretty much so yeah. That is, *if* there such a vmalloc'd address access in
-early entry code - testing says it's not the case, but I haven't found a
-way to instrumentally verify this.
+Yes, I'd like to convert these to defines. I left that idea, for now, to
+simplify the changes.
 
+Thanks,
+Yazen
 
