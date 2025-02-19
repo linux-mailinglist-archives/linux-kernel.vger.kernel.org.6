@@ -1,237 +1,243 @@
-Return-Path: <linux-kernel+bounces-522019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC639A3C4F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:27:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C9049A3C4F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:27:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F28FB17BE7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:24:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E514416D507
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:24:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D848A1FECCD;
-	Wed, 19 Feb 2025 16:24:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4148D1FDE10;
+	Wed, 19 Feb 2025 16:24:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="KRzTfYF6"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=mt.com header.i=@mt.com header.b="GpxOnN5c"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2041.outbound.protection.outlook.com [40.107.22.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 432221FECAF;
-	Wed, 19 Feb 2025 16:24:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739982244; cv=none; b=VAT4EenQ3LXtNiJys727dJNhff8+8HDycIyNLVVa5/Z4sGF3VjRsin1BUitJ6dTg2SfKq3K/bI3DG93j1fbDbv5CzYRaxI8sSBOmafPPSZw+jIfu2oURRugRixbJvcPRZI9kC0WrYYB61rfKgHw2K8gEbJsqXpfNkfYhM6eca7Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739982244; c=relaxed/simple;
-	bh=xFii1HDVuyc02x4WnVdnzMmIcfDY0tQZ3HrsNPXfVFM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dYbsF7AVMfA00KOzXdRtkR1C34Wqy437Pabya2hqL8CkQpxjhBbfdZvEjpeNDN/PuxvG5nOhQ3Kquf/1kZ+Bujdwdwu1rsrkiA1iwSUgJJC6/UOF8BSAbGnqXdB3yf8YJebohEDTwLrSEE+yZKiCTd4mjc6owRiyzJu+XygAFaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=KRzTfYF6; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51J7Wi95002867;
-	Wed, 19 Feb 2025 16:23:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=/ByoZq
-	d8u++NPkeRg9hvAGqzK470D8TBdBzDzkEQn4E=; b=KRzTfYF6TH1zKrTXX0r3dg
-	G7tToRBYs5Uy5gAR00atpLlXLL+XPwux0asgkXJX+/LGYgxuCrY+kKG62O/HxgFc
-	PvvbnfEJGQl588yC3s3fOLfEt0de40V+zl8suI5stZCj6liUmPIswAgWwAk5sSjK
-	2R1/fH2VzUDkkasvgxCuC+GKk2DwGxqL0v7yDRsgjtwaYUxQlQVrTABZUC458Mkk
-	QfnSGquMKszWleqyT6/tUIuccHaQssqtFfFbCEwH30JHbshn7+MWdUNllZz2VGHm
-	CBQFMdybn3lX5SwMeCBplUhJSeQdbT9GKnWITbgr2uUmC9R1f4k8TeybKEVFeMBg
-	==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44wb0ntk8h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Feb 2025 16:23:43 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51JEA4wi002323;
-	Wed, 19 Feb 2025 16:23:42 GMT
-Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 44w03x4y7t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Feb 2025 16:23:42 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51JGNfGK65470814
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 19 Feb 2025 16:23:41 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 695A858043;
-	Wed, 19 Feb 2025 16:23:41 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6FDAD5805F;
-	Wed, 19 Feb 2025 16:23:40 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 19 Feb 2025 16:23:40 +0000 (GMT)
-Message-ID: <152e2efc-732f-40bf-9aeb-6e50faa018c0@linux.ibm.com>
-Date: Wed, 19 Feb 2025 11:23:40 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8903E1FE469;
+	Wed, 19 Feb 2025 16:23:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739982239; cv=fail; b=rd3X8X4tpk6iCqTTHmSWKmHu3sGR9qYpMnu+HQOJhdOypLIsBFHwyJwdmTk6QTRrjBFwLMTD5RktoiFc2NJ1Yvro3NFvJC3PSCAqrf7HCgQUyPmZXkQtOb9J/4uMBtrd5Rh71osnckEYtgcTAbgB3HD2WWOSxb47I0b86/HwP5k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739982239; c=relaxed/simple;
+	bh=JtLb3V2v26WXatdwaZxzFsoT2kCIQkygyNxnUxZYg3k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=duzFjloK2ifkG3AbfHU4oLW85zqMj8M3/WntjkG4lWWD+mn8esNHSAj9LccW/zP5r3dCSc/SVjwo2gecElUnQg5LS5CKp3zoi3XPiiUC65tyK9WIIMgUvNN2VkxOel8NHe783ML1sJ+u90ckw/bm67CMAcWj8eez6FngVM2JOeA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mt.com; spf=pass smtp.mailfrom=mt.com; dkim=pass (2048-bit key) header.d=mt.com header.i=@mt.com header.b=GpxOnN5c; arc=fail smtp.client-ip=40.107.22.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mt.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fFHbcm8aDJlU1CbQ1sRlnXNkPFtyazzegRVSYFZfEKhqVACp9Hoxn2MOxrllzQ9cYp5pIpvK28smMHNwdc81LgSuKNHJMzuvpv5xUlpfpLkWfo/sEhEFm/2+M1nk1EPoffT1H8pari5sESrHY/6KktelOvA5OqmVS6EpHUgHPwLkx+g0mp8y0vQkk3QxY1Lf+4aHbYVuOSmb3fM4Z6nIQmfQHhZ0wsb2wVQ7d8enbRXLDi2HZu2/R+2IaR8lFBEmFdoGzNLfYiSuc8sWDpOPztspQE0R+Qq8OP/tiW0a8UpYwp2xZktPHABnGGDmoZMB1oDOhDeoCCTIkJLoNS4JaA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=acWuaP7/tiffKcycS+rRgZfZGxHSkrHJbwJhE0LtJN4=;
+ b=JOdmvIWZLzAYVl34PQ/7pMPmDfNGL8RWufecFaWOmx7XJzqeDJ8C91TiYSGg+6+9Iyxehce0ZjPc4VsH+r3CGTVz9IVFFj/fiMu11NEmb14R9MaE6KtMOI8f3dPze0RF7kx9ZKnQLDvH3104UxAT3PlzogY3om0AmNNYgpctgCCeFpJnZoCSD0Plmu0VJM1DN1IFRIoMq9LRWfDaYChwOLH28RYlUFYsBi5SxhIRwFP2YCbPtl+UPek1KPAtk33Rn3YU4IApvuUKZjYRYIksIR1VP0moYtphe08hXyiPw29tt1rgJQZUmsS+Bt7cCZohOW8sxbewLeRhxcNmIb+crg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mt.com; dmarc=pass action=none header.from=mt.com; dkim=pass
+ header.d=mt.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=acWuaP7/tiffKcycS+rRgZfZGxHSkrHJbwJhE0LtJN4=;
+ b=GpxOnN5cRBUVy52R+UzZ+7zN3ebQaXxP77uQkyPxksQSFYVyQMVzzf10+6ST+mnPpHPNVeYosPyiGzANhudhAAmTX24h/KR5K4CS3iYZdZ5WQXwHB/BbVqm6nAPcdN3MMnkKZSUh0N3ATjNJsYejXsfxiFuKM+nMTohc/f6NeXP40W2xm4mBRRmgLzUFO9Ign86s/1VKQldjpJGU73UUvD8VBDRnhiqDzeXQhEgJq7oQdGY3tLFfG7m/ESIvGA67FWkYJcbI1+2HqLkH8yaU5eGJU45HKYS3aGxWPgb+R7urGSGNZ3DN0iQBby1I3LQfFwrEhJBU7zMN30WneduufQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=mt.com;
+Received: from AS8PR03MB6775.eurprd03.prod.outlook.com (2603:10a6:20b:29d::16)
+ by AM9PR03MB7186.eurprd03.prod.outlook.com (2603:10a6:20b:270::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Wed, 19 Feb
+ 2025 16:23:54 +0000
+Received: from AS8PR03MB6775.eurprd03.prod.outlook.com
+ ([fe80::8a03:2bdb:89c5:32e8]) by AS8PR03MB6775.eurprd03.prod.outlook.com
+ ([fe80::8a03:2bdb:89c5:32e8%4]) with mapi id 15.20.8466.015; Wed, 19 Feb 2025
+ 16:23:54 +0000
+Date: Wed, 19 Feb 2025 17:23:47 +0100
+From: Manuel Traut <manuel.traut@mt.com>
+To: Markus Burri <markus.burri@mt.com>
+Cc: linux-kernel@vger.kernel.org,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Marek Vasut <marex@denx.de>,
+	linux-rtc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 4/5] rtc-rv8803: extend sysfs to trigger internal
+ ts-event
+Message-ID: <Z7YFk_SqDaucs092@mt.com>
+References: <20250116131532.471040-1-markus.burri@mt.com>
+ <20250116131532.471040-5-markus.burri@mt.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250116131532.471040-5-markus.burri@mt.com>
+X-ClientProxiedBy: CH0PR03CA0246.namprd03.prod.outlook.com
+ (2603:10b6:610:e5::11) To AS8PR03MB6775.eurprd03.prod.outlook.com
+ (2603:10a6:20b:29d::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 7/7] ima: measure kexec load and exec events as
- critical data
-To: steven chen <chenste@linux.microsoft.com>, zohar@linux.ibm.com,
-        roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
-        eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
-        code@tyhicks.com, bauermann@kolabnow.com,
-        linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
-        James.Bottomley@HansenPartnership.com, bhe@redhat.com,
-        vgoyal@redhat.com, dyoung@redhat.com
-References: <20250218225502.747963-1-chenste@linux.microsoft.com>
- <20250218225502.747963-8-chenste@linux.microsoft.com>
-Content-Language: en-US
-From: Stefan Berger <stefanb@linux.ibm.com>
-In-Reply-To: <20250218225502.747963-8-chenste@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: UD3M901qbtwd14gJmin1wBVnIcZ3kR0j
-X-Proofpoint-GUID: UD3M901qbtwd14gJmin1wBVnIcZ3kR0j
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-19_07,2025-02-19_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxlogscore=999
- malwarescore=0 lowpriorityscore=0 mlxscore=0 phishscore=0
- priorityscore=1501 suspectscore=0 clxscore=1015 bulkscore=0 adultscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502190124
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR03MB6775:EE_|AM9PR03MB7186:EE_
+X-MS-Office365-Filtering-Correlation-Id: 34a99deb-947d-484b-2b29-08dd5101cdce
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|376014|366016|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?wEwFAzk97Npciu0tVpTN+spqJpLcmhzLWDpX5HYJGy6sbMzMMesRBPd6KQps?=
+ =?us-ascii?Q?B383F6Z0vfCR6sTuNyJsE3EBxKQMIPzvRJ7JGtsVkbftxJKZa8WSxSsFhX/m?=
+ =?us-ascii?Q?nQfjQmx244dIAq/RVgk44SVtEb3NjPG4wCPECJ/mWHS5Djozt77gDynJPTPK?=
+ =?us-ascii?Q?Y9KUCSAojRfcEZRr9woe829inKDXnoY5YvjP9rtXtszgUEl2WuBesFHMZsrN?=
+ =?us-ascii?Q?EzVhSkJiHvQMuh7yVVQjMZfolt8UpbGy606RkZr/VOg1YfLM/Bka+/vp7GQK?=
+ =?us-ascii?Q?0KUS++hmKvn+sEOKyqtrVVsBpetJKVAoyxFID4Ct7+/YuqXl7Z1yDLZcjlrR?=
+ =?us-ascii?Q?nWXeaDyxizj4NDMqcb3W///UPjFXGlOKoeEycakF3SW8FOnblBh4GnK9h63q?=
+ =?us-ascii?Q?PKdxqmZCbgzgtI56wgSPG89y0Xv33ZpJ5s58ZLgxX9Z6jo9/g39oOU6vk/uZ?=
+ =?us-ascii?Q?ieKaWwOUMumfivL079m48d2VokkrTUPRpZGX6sIPVjDu30e5OGztI16ksJQ9?=
+ =?us-ascii?Q?zHtF5O1m5FW1tPGp2aUQ6u3a/qGyyWpj3HKjV0gVy/hocPAbxUXRli4nyuD6?=
+ =?us-ascii?Q?zMUE/aee5LXg0TLZw+qTsRGRy3NFg2eaj9GeIRJ/6W6cgp6KWctdPkml6pKw?=
+ =?us-ascii?Q?wzADcAUdV4x1OJY6o+tc2JFMlC2eZCfXJXol5caZPiR9ikuKmkZo7zFs+EpG?=
+ =?us-ascii?Q?Tpwyog3Phbim9vgDQYgmeovt8l+eU6q5NLHaNx3cQxFc9Bu6K5WjADe67VGE?=
+ =?us-ascii?Q?7Meu8fflz9B8Vk2oY6/207qClcjlk8GKMNflxtiOVhbZT1BhDZ57Z51RwAad?=
+ =?us-ascii?Q?v0s3PKmF+39kDN9XsFlfwRVgcEedyrj0hlCS3ED1TdYXcvz2rVsU0WcCarMZ?=
+ =?us-ascii?Q?GQQnDixhrXCxnGPVMsWEZL6u60I5DNcka36DnX3qY6Zg0OoapTNFf/1u+5W6?=
+ =?us-ascii?Q?qaC9p5Cqq3n6KA88zYGGPLFkS/AcloQdb/8aj7Ep0QHypI69t2spW0IImqd7?=
+ =?us-ascii?Q?XvSMRaLtwq1t/YcxPOdH0dVCjYHKaTGeqnmgzv0tLskvRwHvVeFN/gnvvGRZ?=
+ =?us-ascii?Q?eAr+EQVQWODVDnGxHOby8O1o+4GJj5GQI3ANIBuVesD6g2l7FImMSuhaYMNj?=
+ =?us-ascii?Q?WIYGFE/65XOFZmqrsxrOywZC1xw9+uqVuX4yRXvCXBQKlxLMmBrE9QZoSXsL?=
+ =?us-ascii?Q?XQ1LD0BOKYA+AdDQjaCmknL0WYWsIEOgsS8izoZgxw4AyIsW+x/WiU70FN/E?=
+ =?us-ascii?Q?SZVQlgT6BoM5RL6YwRAEUJ/K+cpAjjtbZ+3bWbae4ypZ1r59IsLjYctXOc8u?=
+ =?us-ascii?Q?tLRXMOfSb9r9QjGGi+hN/FeY+JKOULdDJsdryWCU4sK0mF4YRp6gej/kLsma?=
+ =?us-ascii?Q?MZznfvukxGX5qNn4nr0AyVDh16ewLFgnPDf0YisvIjtoiNtd4Ed8WEl4tZf9?=
+ =?us-ascii?Q?+mY+kTBAD+UuiKKnAMhsk6ier97ezXSN?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR03MB6775.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?aozmmgBghvoihEKNBnKKJ3G2jhBRg0HIij4TlH+5e+VIiAiSca71TnqhChbO?=
+ =?us-ascii?Q?5i2JupdjN1Dl/oz7RXR0S/qVDZiNVqpAByxpdblue5pmDTvm3UNqP7jckurB?=
+ =?us-ascii?Q?NIIHHkJmGC9o3PfG7I0u/WiXo5Hk++7sNnQDghAhB3kTo3O8hkA9H3WVyJ5F?=
+ =?us-ascii?Q?6EA5FYo/AUWUTANw3ZkYBhI43VjwVQZhhIBw1cdm4VuAH6faInO4bxTMbUNw?=
+ =?us-ascii?Q?rQ4YxcJh0/PytYE6YtdVSfg0YZ4hoTx+XwV9GB2q7lusBE+KrWqa+KXbIbKg?=
+ =?us-ascii?Q?rU9P3lMMjV5v8vAYVwW155NVp/YRYR18/FhuoqDa0kBJpM8USUyYmva8UPAv?=
+ =?us-ascii?Q?6EVF7lADyjbWkbAF4bIXuPj5CZocsQ/DWwmzMO8UhQ/374Fr+jaEWjTx3igy?=
+ =?us-ascii?Q?80hlXJZekyIOpyl265gbeysjBVhb5bfmLzT3pcwNDKJZyok1K2Tat99u5wIK?=
+ =?us-ascii?Q?UWMbVIghv7V2sYrTpOVIn0oXLxgn/2qlLtzCwP11F5EA1Tw2/91eT2nmvJ1B?=
+ =?us-ascii?Q?ww49cKg4o7QnF5JC139hSQIh/ohi0Lz9dw1paXM71KbuKyWpkychWPXieM69?=
+ =?us-ascii?Q?85LyLSWGSQORoNox5rXMHz8OCMyzb50aM7lTLJ+ZMGAlGvk8Xg3WhOEx2j+g?=
+ =?us-ascii?Q?RfyGqgrd7cQDu2UcysEodO1w7jS82x2dzGbuFhVTzLmwR6BCAuhItTjJJzMJ?=
+ =?us-ascii?Q?7ZBmGwkrPb07t9v90hLCqWYJCH/53ZcyAZL/JGiYH1XudMuB0+F/koS9CEZF?=
+ =?us-ascii?Q?frxn/HHQTOu2jKmE1ofB7DnEROgzr3GyE9XIt8Nxald87MxlitGfdWCuT+kS?=
+ =?us-ascii?Q?AQ+WnpghYYKBf7vlkQx8M2XooCqAyMb8VvfVj7M6A+Eh6KJnKXiCJ0MrDKta?=
+ =?us-ascii?Q?bMW8z7HVIGsnMjbqm2BeYzyKGbfGBr3JxZ41MFQGiMv0KYFWN8GAkUrOlL3t?=
+ =?us-ascii?Q?kk3pMuphUF+aYKU0aC3dzQG1rU4ktlb6zxmmEyfV4pTr+ZSPr5MEN2LfT5mR?=
+ =?us-ascii?Q?jL/Mb/MG4zTD6J3+d3QHK4EelLgp2zOVnMiVwer/EIXcw/ig1hKWBeh5HTLW?=
+ =?us-ascii?Q?TZHZyRqvCP4l880L7mRUxAnnsijmvVLFVgzdgnUzNV4qwggziIhleCQjXj+W?=
+ =?us-ascii?Q?v+dZE8K+pL5E8te5tKm81zcHyVBgzuU5GinYLCVHuGmPQjiVbyU9kS/2VsML?=
+ =?us-ascii?Q?2+c4r2UKo2fC5hjS0z8UKh8CzsJfSHhEv635/QH0HVfkZbVzvw4mxdQA82QH?=
+ =?us-ascii?Q?/3BldLNHALHWneUS08SdXCGI098Nt6/rJFh0+6uG3ePH4OjseZc6CPFgGOQx?=
+ =?us-ascii?Q?6n5j5TnXzHQ0bSO8X5nG4L0fnbIo+r0fk5ttSu1GH2lVksqCDYRhCetbqy6W?=
+ =?us-ascii?Q?YzEyaVxIXd4k96ciiZi6uR2eZR4rR3o9F3qLbTq0bmWrXbvZKen0S2zp0XFM?=
+ =?us-ascii?Q?33US3YzGikc/1vOq9rgB2PhPeeXkkfCCH1LhgPi0hkFPRUKxsnEwSoRqBOKp?=
+ =?us-ascii?Q?JImfap13ZAB5frjHxt0a5VOErBf7T07E1dbS/TEIkVvwxZWFVzo20EluPPLH?=
+ =?us-ascii?Q?uMiQ/+P0m3dN+z0kxw+Y9D+gXDVcAPtUYnuDCAuU?=
+X-OriginatorOrg: mt.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 34a99deb-947d-484b-2b29-08dd5101cdce
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR03MB6775.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2025 16:23:54.7206
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fb4c0aee-6cd2-482f-a1a5-717e7c02496b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0h0hZ0IY571UcUgRLZ9RayfPbnVWTiISo6zGWKRTlCv/u1rs5/IBmd+yewI38n6fReU222qgeHnjsaSWGCLcIw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR03MB7186
 
+On Thu, Jan 16, 2025 at 02:15:31PM +0100, Markus Burri wrote:
+> Extend sysfs to trigger an internal time-stamp event.
+> 
+> The trigger function can be used from an application to trigger an
+> internal time-stamp event.
+> 
+> Signed-off-by: Markus Burri <markus.burri@mt.com>
+Reviewed-by: Manuel Traut <manuel.traut@mt.com>
 
-
-On 2/18/25 5:55 PM, steven chen wrote:
-> The amount of memory allocated at kexec load, even with the extra memory
-> allocated, might not be large enough for the entire measurement list.  The
-> indeterminate interval between kexec 'load' and 'execute' could exacerbate
-> this problem.
-> 
-> Define two new IMA events, 'kexec_load' and 'kexec_execute', to be
-> measured as critical data at kexec 'load' and 'execute' respectively.
-> Report the allocated kexec segment size, IMA binary log size and the
-> runtime measurements count as part of those events.
-> 
-> These events, and the values reported through them, serve as markers in
-> the IMA log to verify the IMA events are captured during kexec soft
-> reboot.  The presence of a 'kexec_load' event in between the last two
-> 'boot_aggregate' events in the IMA log implies this is a kexec soft
-> reboot, and not a cold-boot. And the absence of 'kexec_execute' event
-> after kexec soft reboot implies missing events in that window which
-> results in inconsistency with TPM PCR quotes, necessitating a cold boot
-> for a successful remote attestation.
-> 
-> The 'kexec_load' event IMA log can be found using the following command:
-> sudo cat /sys/kernel/security/integrity/ima/ascii_runtime_measurements |
->     grep kexec_load
-> 
-> The 'kexec_load' event IMA log can be found using the following command:
-> sudo cat /sys/kernel/security/integrity/ima/ascii_runtime_measurements |
->     grep kexec_execute
-> 
-> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-> Signed-off-by: steven chen <chenste@linux.microsoft.com>
 > ---
->   security/integrity/ima/ima.h       |  6 ++++++
->   security/integrity/ima/ima_kexec.c | 21 +++++++++++++++++++++
->   security/integrity/ima/ima_queue.c |  5 +++++
->   3 files changed, 32 insertions(+)
+>  .../ABI/testing/sysfs-class-rtc-tamper        |  7 ++++
+>  drivers/rtc/rtc-rv8803.c                      | 33 +++++++++++++++++++
+>  2 files changed, 40 insertions(+)
 > 
-> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-> index 4428fcf42167..1452c98242a4 100644
-> --- a/security/integrity/ima/ima.h
-> +++ b/security/integrity/ima/ima.h
-> @@ -240,6 +240,12 @@ void ima_post_key_create_or_update(struct key *keyring, struct key *key,
->   				   unsigned long flags, bool create);
->   #endif
->   
-> +#ifdef CONFIG_IMA_KEXEC
-> +void ima_measure_kexec_event(const char *event_name);
-> +#else
-> +static inline void ima_measure_kexec_event(const char *event_name) {}
-> +#endif
-> +
->   /*
->    * The default binary_runtime_measurements list format is defined as the
->    * platform native format.  The canonical format is defined as little-endian.
-> diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
-> index 6c8c203ad81e..8d0782e51ffa 100644
-> --- a/security/integrity/ima/ima_kexec.c
-> +++ b/security/integrity/ima/ima_kexec.c
-> @@ -17,6 +17,8 @@
->   #include "ima.h"
->   
->   #ifdef CONFIG_IMA_KEXEC
-> +#define IMA_KEXEC_EVENT_LEN 256
-> +
->   static struct seq_file ima_kexec_file;
->   static void *ima_kexec_buffer;
->   static size_t kexec_segment_size;
-> @@ -36,6 +38,24 @@ static void ima_free_kexec_file_buf(struct seq_file *sf)
->   	ima_reset_kexec_file(sf);
->   }
->   
-> +void ima_measure_kexec_event(const char *event_name)
+> diff --git a/Documentation/ABI/testing/sysfs-class-rtc-tamper b/Documentation/ABI/testing/sysfs-class-rtc-tamper
+> index f035d0fa5..2fd6578a6 100644
+> --- a/Documentation/ABI/testing/sysfs-class-rtc-tamper
+> +++ b/Documentation/ABI/testing/sysfs-class-rtc-tamper
+> @@ -18,4 +18,11 @@ Description:	(RO) Attribute to read the stored timestamps form buffer FIFO.
+>  		- "1234.567 EVIN1=1" for a trigger from EVIN1 changed from low to high
+>  		- "1234.567 EVIN1=0 EVIN2=1 for a simultaneous trigger of EVIN1 changed to low and
+>  		  EVIN2 changed to high.
+> +		- "1234.567 CMD=0" for a internal trigger
+>  
+> +What:		/sys/class/rtc/rtcX/tamper/trigger
+> +Date:		January 2025
+> +KernelVersion:	6.13
+> +Contact:	Markus Burri <markus.burri@mt.com>
+> +Description:	(WO) Attribute to trigger an internal timestamp event
+> +		Write a '1' to trigger an internal event and store a timestamp.
+> diff --git a/drivers/rtc/rtc-rv8803.c b/drivers/rtc/rtc-rv8803.c
+> index 764e654c2..ca3a19162 100644
+> --- a/drivers/rtc/rtc-rv8803.c
+> +++ b/drivers/rtc/rtc-rv8803.c
+> @@ -904,12 +904,45 @@ static ssize_t read_show(struct device *dev, struct device_attribute *attr, char
+>  	return offset;
+>  }
+>  
+> +static ssize_t trigger_store(struct device *dev, struct device_attribute *attr, const char *buf,
+> +			     size_t count)
 > +{
-> +	char ima_kexec_event[IMA_KEXEC_EVENT_LEN];
-> +	size_t buf_size = 0;
-> +	long len;
+> +	struct rv8803_data *rv8803 = dev_get_drvdata(dev->parent);
+> +	struct i2c_client *client = rv8803->client;
+> +	int ret;
+> +	unsigned long tmo;
 > +
-> +	buf_size = ima_get_binary_runtime_size();
-> +	len = atomic_long_read(&ima_htable.len);
+> +	guard(mutex)(&rv8803->flags_lock);
 > +
-> +	scnprintf(ima_kexec_event, IMA_KEXEC_EVENT_LEN,
-> +		  "kexec_segment_size=%lu;ima_binary_runtime_size=%lu;"
-> +		 "ima_runtime_measurements_count=%ld;",
-> +		 kexec_segment_size, buf_size, len);
-
-Indentation and n = scnprintf(...), as Mimi mentioned in v7.
-
+> +	/* CMDTRGEN */
+> +	ret = rv8803_write_reg(client, RX8901_WRCMD_CFG, BIT(0));
+> +	if (ret < 0)
+> +		return ret;
+> +	ret = rv8803_write_reg(client, RX8901_WRCMD_TRG, 0xFF);
+> +	if (ret < 0)
+> +		return ret;
 > +
-> +	ima_measure_critical_data("ima_kexec", event_name, ima_kexec_event,
-> +				  strlen(ima_kexec_event), false, NULL, 0);
-
-Replace strlen(ima_kexec_event) with 'n'.
-
-With these fixes:
-
-Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-
+> +	tmo = jiffies + msecs_to_jiffies(100); /* timeout 100ms */
+> +	do {
+> +		usleep_range(10, 2000);
+> +		ret = rv8803_read_reg(client, RX8901_WRCMD_TRG);
+> +		if (ret < 0)
+> +			return ret;
+> +		if (time_after(jiffies, tmo))
+> +			return -EBUSY;
+> +	} while (ret);
+> +
+> +	return count;
 > +}
 > +
->   static int ima_alloc_kexec_file_buf(size_t segment_size)
->   {
->   	/*
-> @@ -58,6 +78,7 @@ static int ima_alloc_kexec_file_buf(size_t segment_size)
->   out:
->   	ima_kexec_file.read_pos = 0;
->   	ima_kexec_file.count = sizeof(struct ima_kexec_hdr);	/* reserved space */
-> +	ima_measure_kexec_event("kexec_load");
->   
->   	return 0;
->   }
-> diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
-> index 3dfd178d4292..6afb46989cf6 100644
-> --- a/security/integrity/ima/ima_queue.c
-> +++ b/security/integrity/ima/ima_queue.c
-> @@ -241,6 +241,11 @@ static int ima_reboot_notifier(struct notifier_block *nb,
->   			       unsigned long action,
->   			       void *data)
->   {
-> +#ifdef CONFIG_IMA_KEXEC
-> +	if (action == SYS_RESTART && data && !strcmp(data, "kexec reboot"))
-> +		ima_measure_kexec_event("kexec_execute");
-> +#endif
-> +
->   	ima_measurements_suspend();
->   
->   	return NOTIFY_DONE;
-
+>  static DEVICE_ATTR_WO(enable);
+>  static DEVICE_ATTR_RO(read);
+> +static DEVICE_ATTR_WO(trigger);
+>  
+>  static struct attribute *rv8803_rtc_event_attrs[] = {
+>  	&dev_attr_enable.attr,
+>  	&dev_attr_read.attr,
+> +	&dev_attr_trigger.attr,
+>  	NULL
+>  };
+>  
+> -- 
+> 2.39.5
+> 
 
