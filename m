@@ -1,106 +1,94 @@
-Return-Path: <linux-kernel+bounces-520808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E767A3AF86
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 03:22:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E99AA3AF87
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 03:22:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 113FE18996F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:20:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B9FD1899BB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:20:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47164160783;
-	Wed, 19 Feb 2025 02:19:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D4CB195B37;
+	Wed, 19 Feb 2025 02:20:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ubN6Iskt"
-Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Il+Dr8Nd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 249CF35953;
-	Wed, 19 Feb 2025 02:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78AF4191F72;
+	Wed, 19 Feb 2025 02:20:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739931597; cv=none; b=dAv62xyBan0Xtq0X4dpFSYOTSGj8Z2P2e64N7QncGY2za/F+eudfFqviJeCMd5GsEKEf8wGGi0l8qpIieysx6VGU5GOCsU2em+wIFBnfv9mT0h9Fw3HNJvCZa6IN+elakufL3f+zbav0kx7D/q85D3DJDa1ShMdkPiEh9F/Ko3M=
+	t=1739931613; cv=none; b=RDImCNN7epK44SEjrUSohaKdmcIM5IXqwH+nail2SP1q0HeVox7gALxcfW3HYyhCErm1N1m4+5x/g6IDT2nasiYin+zjmvQHQGmp//JYRZhRBv5D4KbGAx7vV29/Qk6aSvJsSXE9ciANnvUnVPr3h3NPvfRst/FnMn7M4h4lvIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739931597; c=relaxed/simple;
-	bh=XCO7aG0qdH8I+G0ipRw03stO6RiIv2I3oVc7k1eZLdk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YoJg+UkgTJ1j7ieOXulevVlNSEEzrEjs5+G2oputMo2DRccMlLXNV+iNZ2B4O0Lvbbw0FrCrsNn3MHWXzcL/f5QQAm29//jLf0nuMLpYRiBtQ+3qmFCgrFE1sQUqX+SVBWMMQCtBiAzOyycUGry6vTdvFxgWWEbE+znxujkwPfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ubN6Iskt; arc=none smtp.client-ip=115.124.30.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1739931590; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-	bh=kNmeRWaY/Gzx67QUsazLWRkGga4wXBt2+ae+XANxPFs=;
-	b=ubN6IsktplmGv6rxvIF4EBaNeE10OWih16NkuhfArgiudBVGAXZF5weDmizf3shEdkE97nXjCktP7TtG8iobDaA98M10iuCn6SM3o0iPprd1CoxLi8SyqbJ4FzoYFOEJ0X0oJG/njjUtV692kdWwh2ujc0Ingy3DyidVNkOVC3o=
-Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0WPnQaEn_1739931588 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 19 Feb 2025 10:19:49 +0800
-Date: Wed, 19 Feb 2025 10:19:48 +0800
-From: Feng Tang <feng.tang@linux.alibaba.com>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-	Guanghui Feng <guanghuifeng@linux.alibaba.com>,
-	Liguang Zhang <zhangliguang@linux.alibaba.com>,
-	Lukas Wunner <lukas@wunner.de>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH v2 1/2] PCI/portdrv: Add necessary wait for disabling
- hotplug events
-Message-ID: <Z7U_xNsQ04_tcTgB@U-2FWC9VHC-2323.local>
-References: <20250218034859.40397-1-feng.tang@linux.alibaba.com>
- <a7ebd733-3fdd-4163-8fd4-9f70ee40c6be@web.de>
+	s=arc-20240116; t=1739931613; c=relaxed/simple;
+	bh=0CyhWYhXDBlIB6Qh2fGk05QwoUJ2RZHUJnVpXYQBqwA=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=l1yLhq/kzB4fpu1EjXT7xNj+sKqHOwYjOznoiQNGng1vSJ49sQGweHD+PPC1maI6RaV2cHLmf/kF6PLT8YV0aKNN5/Rr7t57YgiWJ6zD3M9f9m/Tft1y5KGggCAS0r2YRZy4GiHAI2mCX6WEFrbGhSkjLx2Ug4OMWMBT4iFQ99w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Il+Dr8Nd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54185C4CEE6;
+	Wed, 19 Feb 2025 02:20:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739931613;
+	bh=0CyhWYhXDBlIB6Qh2fGk05QwoUJ2RZHUJnVpXYQBqwA=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=Il+Dr8NdQfuUvY05MSV16sGLzKBHYhg5eedR3VJUC86DKgwUa6I/u/M5UDnlyjy96
+	 NVs47Xuw1omZ38o7OqU5rciKOcxMbl9LU2lWrvaXrCkVJz4SwOvvz5ZdAQJYkKz/NU
+	 qX8bBCER6rY9i7cry7egoRFiV2OgVwqk4aENNLiMahdD70JMKw1bLrXi9H6g+YqzPj
+	 PlaxE75+x17PTDSK34ObHjjM4DbvwXlkBIU8xyaFzaPMsLhm71DwbgjpKrdpQn4Kio
+	 58bGbXAWjL5Aob34zatKTdMnPwWE/u33ruZqjS5FncXv5YIZe4HxDMdygRWSilMcod
+	 +6TzwcGpM3DnQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAFBC380AAE9;
+	Wed, 19 Feb 2025 02:20:44 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <a7ebd733-3fdd-4163-8fd4-9f70ee40c6be@web.de>
+Subject: Re: [PATCH V2] net: freescale: ucc_geth: make ugeth_mac_ops be static
+ const
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173993164374.106119.1367597441437405463.git-patchwork-notify@kernel.org>
+Date: Wed, 19 Feb 2025 02:20:43 +0000
+References: <tencent_30122FBA93E93911578208176E68AA00C807@qq.com>
+In-Reply-To: <tencent_30122FBA93E93911578208176E68AA00C807@qq.com>
+To: None <xiaopeitux@foxmail.com>
+Cc: andrew+netdev@lunn.ch, maxime.chevallier@bootlin.com,
+ netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org, xiaopei01@kylinos.cn, lkp@intel.com
 
-Hi Markus,
+Hello:
 
-On Tue, Feb 18, 2025 at 10:00:33AM +0100, Markus Elfring wrote:
-> > There was problem reported by firmware developers that they received
-> > 2 pcie link control commands in very short intervals on an ARM server,
-> > which doesn't comply with pcie spec, and broke their state machine and
-> > work flow. According to PCIe 6.1 spec, section 6.7.3.2, software needs
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Mon, 17 Feb 2025 09:29:30 +0800 you wrote:
+> From: Pei Xiao <xiaopei01@kylinos.cn>
 > 
-> Would you like to use key words in consistent ways also in such a change description?
-
-Will do. thanks
-
+> sparse warning:
+>     sparse: symbol 'ugeth_mac_ops' was not declared. Should it be
+> static.
 > 
-> > to wait at least 1 second for the command-complete event, before
-> > resending the cmd or …
+> Add static to fix sparse warnings and add const. phylink_create() will
+> accept a const struct.
 > 
->                 command?
+> [...]
 
-Yes.
+Here is the summary with links:
+  - [V2] net: freescale: ucc_geth: make ugeth_mac_ops be static const
+    https://git.kernel.org/netdev/net-next/c/9faaaef27c5d
 
-> …
-> > ---
-> > Changlog:
-> >
-> >   since v1:
-> …
-> 
-> Are cover letters generally desirable for patch series?
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-The 2 patches solve different issue, and not logically relevant. But
-I'll try in next version.
 
-Thanks,
-Feng
-
-> Regards,
-> Markus
 
