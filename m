@@ -1,88 +1,55 @@
-Return-Path: <linux-kernel+bounces-521840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B5C8A3C2FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:04:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD0F5A3C300
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:05:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 468E91889D55
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:03:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5637176DC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:04:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2843A1F4194;
-	Wed, 19 Feb 2025 15:03:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a8mzHaMW"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B1241F4619;
+	Wed, 19 Feb 2025 15:03:43 +0000 (UTC)
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 402ED1F30A4;
-	Wed, 19 Feb 2025 15:03:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C79501F30A4
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 15:03:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739977413; cv=none; b=Da9ndOX5ybJBt7b6N3DIDXJme/iR2RNSZzJW/N6rbQp312x3f6Na25OltI/LGFRWLD6Wm6r/cCC+ciEiXHQgUEPGBxm/NJzkH8VE84MVBveWxMBCMineig6LAsPwdaYTQd2f35c+O0rJEVoeY+96t268pWSRGgA9NHDQf/KnrcI=
+	t=1739977422; cv=none; b=kBew6h+Z/6ul9ElP+ICFsB1jIgFiF08jp15BMEO4yzJqnLnQmrakKwR+vLHHEKDXrAPXsO4HWIqYjG62WqmZc40UK920tSLH1ibsUTPYlni8QJ5Qp2w0Er3psH8MF+U0Q3nBr8+AqYsllIgSfYDavp8kIR5Gj8Wnt4UkBTYm8iU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739977413; c=relaxed/simple;
-	bh=Gd9SxygxTLKOh9h22adGoLu8IsmJ5HnvKN/I+YS9u5w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jLjAFnwLSwwE1fkArO2oVP3B2eGl7LkwCsaTIaISeRB+vBVuhtyeCkJNClqxa169D9egwdF7Q2WGF0Ysu9NHTto6K4b/HoslT9qZV+bJmtoMjGQLqdW/4U0L4WRVbjXHto7+9nGv52YOBwXG+0bpcadE7i1VVWWt/pZ1N1HuS0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a8mzHaMW; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-220c8cf98bbso139380195ad.1;
-        Wed, 19 Feb 2025 07:03:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739977411; x=1740582211; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xDtM3LKTpyGDe7HA8GkkT9qfwrfKuIszVf5WOPbYasI=;
-        b=a8mzHaMWsFL8xWqN3N0LFTCesH1QYB5WpNPCJsy9rGIG1dRXpVLIcbsj0WLVW8bovg
-         mcWs5CUmZr6DgwCsiU/1YJR4VoD0Bzde4c7DpSJQM0B2ItuvnF0tim3rUEhKZAkpY+bN
-         2YEhMwPstjuzSLTwNB2mGEQD45Gk+siwEra3jXthQuBnX2af/jSTzPGBkFV2poYRWU8I
-         BILkcGRhGqi1FqvLHe6OKv2jNhlQ+0ouLxw0vYDBkD2hW4ibDIvn62YVfeE/9lOvASf7
-         ganjfcQEeCAA57CRotzrxOFRDD0Qaqlm0nyj16oo18JNQpMC/U6Bg70xB3OrEMcl7osP
-         +Z0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739977411; x=1740582211;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xDtM3LKTpyGDe7HA8GkkT9qfwrfKuIszVf5WOPbYasI=;
-        b=qoAPYEfNPCUoztlGYtUDMKPmTotXT+kNmXm961eBb1VT2WNjlyYsVf0jOYMp2D3tX4
-         WXiCVZCUl5e7+lxP11/3gd42aXeYfwE5fhB7zAqlUa81nic26bVQ6o6rSgA0G7/OnuWc
-         xNt5ZYA4oQw2hip7u3ksjnMtf2amVfSPN3zd1evb8nxTr0hpznb2Q52fyb+ASSnpT8tr
-         R19+A7RonbBHTNXmoZydw22CfSrgi6/zFNrWx6x1VaACLXguIptU9LdURFLRA2K5XbOa
-         4Pkcf+1sqa1DxhyC0grU3YP1mAA9/nLbVZcd/IKY/uJW62278eW6U3sxQ/zA8jo8x8b4
-         HfEA==
-X-Forwarded-Encrypted: i=1; AJvYcCUSz9PcukZx6RA48gbpkeCCfQc76YtXGiPGD1GAyWzi2AcVL+pGiJuPJzA+wkV++wy8x0yynaXnpZ4=@vger.kernel.org, AJvYcCVPooWILIE0O1amiMnLdIMJs7Wo3/Wr4jEOZc4Rek/tkxzLpwWA1gFxm3UToBpaI2WRCmiVr2MsNHIfsRxL@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlomlLjGqcPRCDArFHZU+M//J78Qj83tUjL12G65K1OIh2MIlo
-	oEuTUc0490zKPO/uoYj5y9F+4iQcSgPbO1Dx046YIaihwFcdFt1nf17kohdpw/w=
-X-Gm-Gg: ASbGncuEvmY8gJzJxWitLDxvi8G7ib8l9RY63e2BilR/xVRc6UGvOd610YktDPGCE7p
-	sp1c/dcm9LMpvtXCcKLpyc0Yh+GkAZ0tn7htM0KacEe2275Q4bPnMYeEBBP8Xb5Svx5R/1R2LMK
-	eYm/EKgHa4Lm1zO1LCIAhRP7aR6+PcMfuVeJEI/Xk5VlcAk7Z5eIQDM6UWjoHbfgQXN2vFJIFWR
-	c0HdjRGIYObULKzZi1Lvkq01omeLZtiWr0BmnVc9zPDQ/kzGPFoXLEeShsHh0nRR775VSpn/FaG
-	MlPq97OcRd51H+Xp
-X-Google-Smtp-Source: AGHT+IHkDejfe/yAHHkUx5kZZEC4mfz3BQpuGVy/zfvCnCYcXyOj3DMpndIP1CZsEyVIvXI5iR/iSw==
-X-Received: by 2002:a05:6a21:32aa:b0:1ee:cf5d:c05e with SMTP id adf61e73a8af0-1eecf5dc1f1mr8860724637.9.1739977411460;
-        Wed, 19 Feb 2025 07:03:31 -0800 (PST)
-Received: from arch.localdomain ([2a09:bac5:cb26:1541::21e:92])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7327367a960sm6888976b3a.150.2025.02.19.07.03.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2025 07:03:31 -0800 (PST)
-From: Jun Yan <jerrysteve1101@gmail.com>
-To: jic23@kernel.org
-Cc: lars@metafoo.de,
-	linux-iio@vger.kernel.org,
+	s=arc-20240116; t=1739977422; c=relaxed/simple;
+	bh=2c/AWmO5i6aMpMjJu+qQZg9qk31xvfT1rHjn+iDPNOU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TaT6bAbiTAJmeZCQ5ODXzXAToV85rQJshSOxr0DvYJysuqcC2ZQn4XQ1ot1C0QhAb7uZWKoV2z2ozSuRDL9tsAl1mZ6PaStY0ujsD1cPQ///oE+/fjyV9xwnKhfnVDuBH+iGEH1J+geKJMlnQlunCvnnf0PYxVJE6fbKtndFIsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:47f6:a1ad:ad8e:b945])
+	by baptiste.telenet-ops.be with cmsmtp
+	id FT3a2E00L57WCNj01T3apE; Wed, 19 Feb 2025 16:03:37 +0100
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.97)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1tklbX-0000000B3WS-46QB;
+	Wed, 19 Feb 2025 16:03:34 +0100
+Received: from geert by rox.of.borg with local (Exim 4.97)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1tklbq-0000000BbJe-2PpY;
+	Wed, 19 Feb 2025 16:03:34 +0100
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Olivia Mackall <olivia@selenic.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Dragan Simic <dsimic@manjaro.org>
+Cc: linux-crypto@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Jun Yan <jerrysteve1101@gmail.com>
-Subject: [PATCH 2/2] iio: gyro: bmg160_i2c: add BMI088 to of_match_table
-Date: Wed, 19 Feb 2025 23:02:54 +0800
-Message-ID: <20250219150254.24664-3-jerrysteve1101@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250219150254.24664-1-jerrysteve1101@gmail.com>
-References: <20250219150254.24664-1-jerrysteve1101@gmail.com>
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] hwrng: Fix indentation of HW_RANDOM_CN10K help text
+Date: Wed, 19 Feb 2025 16:03:32 +0100
+Message-ID: <54eae580e3ee5686db692dd6c0927b23134a1cec.1739977165.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,26 +58,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-BMI088 is missing from the of_match_table. Let's complete it.
+Change the indentation of the help text of the HW_RANDOM_CN10K symbol
+from one TAB plus one space to one TAB plus two spaces, as is customary.
 
-Signed-off-by: Jun Yan <jerrysteve1101@gmail.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/iio/gyro/bmg160_i2c.c | 1 +
- 1 file changed, 1 insertion(+)
+While commit 67b78a34e48b9810 ("hwrng: Kconfig - Use tabs as leading
+whitespace consistently in Kconfig") fixed some indentation for the
+HW_RANDOM_CN10K symbol, it did not fix everything...
+---
+ drivers/char/hw_random/Kconfig | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/iio/gyro/bmg160_i2c.c b/drivers/iio/gyro/bmg160_i2c.c
-index 9c5d7e8ee99c..e6caab49f98a 100644
---- a/drivers/iio/gyro/bmg160_i2c.c
-+++ b/drivers/iio/gyro/bmg160_i2c.c
-@@ -58,6 +58,7 @@ MODULE_DEVICE_TABLE(i2c, bmg160_i2c_id);
- static const struct of_device_id bmg160_of_match[] = {
- 	{ .compatible = "bosch,bmg160" },
- 	{ .compatible = "bosch,bmi055_gyro" },
-+	{ .compatible = "bosch,bmi088_gyro" },
- 	{ }
- };
+diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kconfig
+index 1ec4cad1e210a2ac..c67de9579664c762 100644
+--- a/drivers/char/hw_random/Kconfig
++++ b/drivers/char/hw_random/Kconfig
+@@ -583,11 +583,11 @@ config HW_RANDOM_CN10K
+ 	depends on HW_RANDOM && PCI && (ARM64 || (64BIT && COMPILE_TEST))
+ 	default HW_RANDOM if ARCH_THUNDER
+ 	help
+-	 This driver provides support for the True Random Number
+-	 generator available in Marvell CN10K SoCs.
++	  This driver provides support for the True Random Number
++	  generator available in Marvell CN10K SoCs.
  
+-	 To compile this driver as a module, choose M here.
+-	 The module will be called cn10k_rng. If unsure, say Y.
++	  To compile this driver as a module, choose M here.
++	  The module will be called cn10k_rng. If unsure, say Y.
+ 
+ config HW_RANDOM_JH7110
+ 	tristate "StarFive JH7110 Random Number Generator support"
 -- 
-2.48.1
+2.43.0
 
 
