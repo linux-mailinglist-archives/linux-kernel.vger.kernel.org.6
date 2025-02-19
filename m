@@ -1,245 +1,302 @@
-Return-Path: <linux-kernel+bounces-520755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B792BA3AECB
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:21:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AE0EA3AECD
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 02:22:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A22F3A9EC0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 01:21:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 234B5188BE2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 01:22:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2028881741;
-	Wed, 19 Feb 2025 01:21:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFDEA81724;
+	Wed, 19 Feb 2025 01:21:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="KtVBV5UW"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2070.outbound.protection.outlook.com [40.107.96.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YGvoaW+5"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE83246447;
-	Wed, 19 Feb 2025 01:21:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739928108; cv=fail; b=eRlq00TMThte7q3oYlIDfU4T/s8Y78tI7Y94zCoNACdOc9IkIRL/TU5mzSZOzss3LjCWb9OO0vxGrTsRU/LTxWrYZCwpWA0ZeN/2lTVDc6BGzBwkqiCM1SoB9+JMiZtYSd8hKJwMEfnrWQrTdhdocqw5kRSgyE72cy79Oj9Sb00=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739928108; c=relaxed/simple;
-	bh=1iq68DtojOzEzbPaAg2K4vZy6tn+nUBPGUoT7ViRn9c=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To:MIME-Version; b=SZctRKK2Ozqvqa6vFkvvPMvpxj8Y8dMc+MlF8CSvxPVurezy7TopTNFBPPlm6dFgzO9Cy179/rJsOJWoJ1iebP1yS0fzveqaz0dkYHvrXuVsTCqBfb61DthanYI5QZkS2FZdppOyejjvNqAsifnDJIFRdHbvk5duKecblE1qpv0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=KtVBV5UW; arc=fail smtp.client-ip=40.107.96.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XLAJSwU6UiCLA0iqIMurL8+V/ZEEhLGWh+LSkkCiQaqsqXe3E+ypIaaSp2nhT6McLjyEmJNCDQsWehflVQYJ5fUZBfM2SkHbW2yTGZdpLfuY67duRKXxM7oYyGZvXA+CfZJYhklWekfDtROfmu8VRTiSwHH4BV5xPWnCRNYG4M0UpzCSsYgJ2yilpQJVNdvuQz1Tube8whgUX1twJ7PMqotdlEveUhLn6C+RUEO2cXIgKBCwseW22lu/+S55ZwQINH5auVbkrWomFnmtvbyD8h15hAloBXQDfJ2lnMHDQVQ0c6mV4aFkkOvPsLr6ri10XYHbhkrx6308ak440+ip+g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iUhhhAW7132e4vs7ozelPqy3ZytRAuG043zBXRY+Ifw=;
- b=LXSHhaL+rp/H6KlDD3taoPVHFKoNN2H1WVu4rr0NE0E5SnWaRETqrsgpj2AlSpODB9CUbg52wQy0NTCALLgnsxw+28eU5jB70TWMkVPtol/on2taaS861rHlPbQ8db2E72pzLK0FzFIBMQskqvRyxqYFI+c0F0EacZgqrJXEE3yVeAkDzy6/2BlvJ9ZApP2yUqzFL/CJWI9BwDoN84QEBRq+Q2lgu7RZgg5R68Y4Vid9t9+69KaT+OHEHZGKDV7xR6jJjaMyYuNNhIhZAWl7wejvGv4tDhOr8JDmyv3BDewAqip2JmUGNC4dXIlptePjkffpxby7BMLH2oigt4EYVw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iUhhhAW7132e4vs7ozelPqy3ZytRAuG043zBXRY+Ifw=;
- b=KtVBV5UWgsh5+UWGal5vkhTXP+c5RaWLMSZ3SYIvGPWnrBWE5mdISNojfN0p0knuw6tQIduDR13P1drvXiUhFg3ISyFfAGMf9a14mIwH+a/ga8C3wMrITmP0oIoD31XeMOuFGBERdH+XC54W5JKoMo+2we1M09zNoUtW0+MrXzNAdt1GFqkQsYZj4t3J2YJWZKHXYgMzyiSytBKqNa812DHkpUURVyoX48JwJZyHPYm2r8k0E1VmNjXyyENe8+Vq4Fs5zJ7qX0PY7DPWu3VD+K9UZolwkYX8J6PrmfOHjCrafVVEK+fsD7j9ej9RrBnrHNDRqnQxTBUyExTSBDLo6g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by BY5PR12MB4260.namprd12.prod.outlook.com (2603:10b6:a03:206::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.14; Wed, 19 Feb
- 2025 01:21:43 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99%6]) with mapi id 15.20.8445.017; Wed, 19 Feb 2025
- 01:21:43 +0000
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 19 Feb 2025 10:21:38 +0900
-Message-Id: <D7W119MHCCWH.IS600FTIOV8O@nvidia.com>
-Cc: "John Hubbard" <jhubbard@nvidia.com>, "dri-devel@lists.freedesktop.org"
- <dri-devel@lists.freedesktop.org>, "rust-for-linux@vger.kernel.org"
- <rust-for-linux@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "nouveau@lists.freedesktop.org"
- <nouveau@lists.freedesktop.org>, "dakr@kernel.org" <dakr@kernel.org>,
- "airlied@gmail.com" <airlied@gmail.com>, "Ben Skeggs" <bskeggs@nvidia.com>
-Subject: Re: [PATCH RFC 1/3] rust: add useful ops for u64
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Timur Tabi" <ttabi@nvidia.com>, "Alexandre Courbot"
- <acourbot@nvidia.com>, "daniel.almeida@collabora.com"
- <daniel.almeida@collabora.com>
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250217-nova_timer-v1-0-78c5ace2d987@nvidia.com>
- <20250217-nova_timer-v1-1-78c5ace2d987@nvidia.com>
- <C1FF4314-C013-4AE1-A94E-444AFACDB4AC@collabora.com>
- <D7VLMD31YB0V.OKHDSVUPAZTE@nvidia.com>
- <1b8921d46f7d70c7467ea0940d60220f05cccc5d.camel@nvidia.com>
-In-Reply-To: <1b8921d46f7d70c7467ea0940d60220f05cccc5d.camel@nvidia.com>
-X-ClientProxiedBy: OS3P301CA0021.JPNP301.PROD.OUTLOOK.COM
- (2603:1096:604:21f::15) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0E3813D62B
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 01:21:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739928119; cv=none; b=hR8QpG/8r8dwsxBHJ5vFndb6lCAvqHsp55VgrkLGZ/MQGJfvRLN6EaKwzcShGLWemPjB4imtnR287wTGIi6I5YfC5p2RFiH32KxWE/Q+FTXWRQ+83vnCx0z5Y1mrH5RB5zPME0eBodJCYiOETDHipYetTdq6lkc2w2DJwSttMeA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739928119; c=relaxed/simple;
+	bh=NUt+WhfYOlp4kXMW9MxPdyJMSiWLp/jAUdJTomvveTY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k2A0776hWNyj/5TPVpliEs8L5vggB0NrsWzoBKZQeIc3+EOofLtLBVWjv4apBqBvOlq9tQOKrz6v8B+1xh4F/GzgP54/Bn6hmmS0NwbP63V8HyvbJ4F39I0K4dVm+ZGGbbiMKBGq7g0iDl3Ji6tub1HzUp95UhdLp+YxgvB/aGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YGvoaW+5; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-38f488f3161so1257954f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 17:21:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739928115; x=1740532915; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AXv+OqhH2y0iO9EGU1OunJFaKUzVPNS3CZeDRTVc1uU=;
+        b=YGvoaW+5rChOpqDI+5lnBJRCR256D6A9zqeb2aVv29OQAM4LyH11cGpVUIEBnGoyIv
+         GAifX078dGv+XeMwCzR20fu4V7TSQSiDQkxMK81DqOnME+bFUPJwljocvumwXPSKspG/
+         oJ02xeqmKIo+dCu7u+SUudC8ba8AjspA1St1pgkv+/45mioxTp1dlam81yUngHULeOHS
+         2HPU/Jc1HmFFgFsn4NYWwni/XN9j1p2ubUWW0eXQqggG4NYt5K4BuGzkWuiUPqZPZXtV
+         KIr+iEYxzV30AZfZ274oNxfTu8j0s0c3QwpnEs8MZdtFM3+SSd1RGY7vdT5TmS0dgpsb
+         0s7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739928115; x=1740532915;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AXv+OqhH2y0iO9EGU1OunJFaKUzVPNS3CZeDRTVc1uU=;
+        b=Et/RlFMBRkXT62vLMpQqsdc0/cM5z8f6DnBznempkVzyeLhvCpoU8dHAO/lUjhQHnD
+         A3bqoa5xNsuvF2TQyN18HZdHCtxwpPegCWJPdK1V3cvIKvvr9kxztDl9F64dPxY6moYv
+         pwJ8Ae9kV1Aa51HrL0bShGY7SvFpJQalgEksECIjRCIoEUzujv4i0vs5Tzdvc0iUIZ+Q
+         0iba+wAgaVW0bg9Z0JeXR8oXV18JZOJ23q8JbCmyrFyB/haFbtU5ETZn9y2qLmToFg4q
+         f6RB+9CkBAyabIF7M0usHrI7o0n9L3vAkfxaXcCT8+WoLgXXH1fEUsxudthR7WUpOcTK
+         K8zg==
+X-Forwarded-Encrypted: i=1; AJvYcCU6XIFyBuUUYuem3genH7c3Dq56lT362VO6QaDLvYFAuJrLKFS9+xl65RoYpbkfgpmqoArzro3Jwn6H+xA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxK55wG7vYgUooi6tVo+AbYI+5tBE5qaP+RzL/F0MbEhpWg6EUD
+	+jL5j/9PzsQtSzv9/FEOYKZeDYbFfI6XkAzb6mIhyMJbtHJQFoNiHe+gxbVO5Kg=
+X-Gm-Gg: ASbGncvQzxEa2Cs51KHwwyRQ9pRMroidWCnb4/VSkldqklm2OeOVQTC/deaEyLGeozF
+	Gz0oPxW+JhyAVaAtTt0UvUZEIs2XWSTx45CmhS/hwvCrbjhBpuosl8Dn8lAQwOqVVoAd4+LkzEc
+	bgUKH05zKISxL8BqWpdxe+bL40MbklizEFew2m37diSqVXk/YmPaOy3S1qaHQmN1XDn5+pkaqX9
+	U6u1VYNVCLdm4eEACxxCfIWHTpABe2t7q8pjXSd/9ScEwPT/lOysUhaWxpQw4nLrIo2twfjBmi2
+	/Oc2w7/MVFS05GeL+7STp4JJnCyB++adujTiz6r0mjuQ5rxEcOIvDsMn
+X-Google-Smtp-Source: AGHT+IEKrVqXypAbKMrnTv54YSf/dcmvvAPJzuYbJwPUXuclFLGqTqLof2muT/Jy+9xFYqZ8jwa6Ww==
+X-Received: by 2002:a05:6000:1fa5:b0:38f:4fa5:58ce with SMTP id ffacd0b85a97d-38f4fa55a25mr5789399f8f.6.1739928115216;
+        Tue, 18 Feb 2025 17:21:55 -0800 (PST)
+Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f561bee3esm1834665f8f.21.2025.02.18.17.21.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Feb 2025 17:21:54 -0800 (PST)
+Message-ID: <d4c4ecf0-9094-4341-8711-78a48e5d1344@linaro.org>
+Date: Wed, 19 Feb 2025 01:21:53 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|BY5PR12MB4260:EE_
-X-MS-Office365-Filtering-Correlation-Id: 85bc1b3b-b65a-45e0-046e-08dd5083c516
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?N3RMN3ZrR0UyakJ3ZEZkd3ErdHpKcURVcTE2M0dsMkNWN1hyN0liT1pLV3Nl?=
- =?utf-8?B?K1JMQUs3NkRpTVNRYmdYSTZNTzBLb2c2aXBjVHBzMXd2QzV3MkxJNzBZbmZz?=
- =?utf-8?B?MlZSVGFrcXlmR0twUUhHQUlvSUtiSDJaaDNPQyt6b2NBMFZVcW9kZm5hNE5a?=
- =?utf-8?B?QjFLcFJTOEFTckx5ZmdRQmp5WVo2SzlyRW9WOVhUZ0VlMDB5Uk9Ldk9abXFr?=
- =?utf-8?B?eVd0YkgzbWxXZmlKaGI0K3FsNk1xT04yNmVpV2N6ckJtVUU2eUhJd1JrczMx?=
- =?utf-8?B?QmE4QXdaN0hKQk5KY0Z3WGZmWmNDT1N6eXZaWkxGVmNuSWdJb01BSGNOSElG?=
- =?utf-8?B?aDhaNitrOEk4YURwSUtRcWFINVMwWmxUOEFzN1VFN25tTXVtMEYvWlQ5ZVJR?=
- =?utf-8?B?UVl5dm5xSkRtcGJKV1VmN05iRXpKOGx2YUxRSjBlVFMyYUNQZjVBQjN2TElG?=
- =?utf-8?B?eHpsY2pwUTRrYWozOHUvSUE2dnBSQVRHWkhoTTV2OG5ZNWZMT3M0TFJtbHd2?=
- =?utf-8?B?VjdqTEFBdjBFN0JNY2N4MFloZU83NEVSUWdqUUJKMjFLbW9rMi9pa01tMmM1?=
- =?utf-8?B?WTFVRDFkYTRwUzFFeTJXOXBEVWJkVzJ1Y1dJaEtTZVNDT0dUeS83S29GNEJz?=
- =?utf-8?B?Z09mNXpNUUltSndOMlFTUVVoY1FseHZPY3FFQzZlMXhUVERhR25tV09uVVBl?=
- =?utf-8?B?NysvbFJPd2pURVByekdIRm56Rk1MalhKQ2ZjbjdjRVlFbGNLdXByeGU5Qy90?=
- =?utf-8?B?TDZ5VGc0OGNFa1QxM21oRlpYd0tucUJ2Y1JRa3ZFNW5QeTZSQjdmVjVVdU9q?=
- =?utf-8?B?Q2IyRytKUG8xSC9KUXExYis2TjZIc0wrcDNjRDJXNk1PK2pCUldHNG5Qdjdl?=
- =?utf-8?B?YnArTFBPMzF5YTN5MHdEbWNwOWtadlJ1UjNVVGRuWTlxQmMyYjMwMk9MdEdr?=
- =?utf-8?B?ZlZyTmZNc240eFFvMVlGanZ6M0JqZDhrb2ZnMFF6NmtBUzFTTXpxaDNuSXZD?=
- =?utf-8?B?a1FWVE9taFNkdGJKd3orNk5iUnY3QXhCZWIra29YMnV0cm0zS2Q5K2NTdTkr?=
- =?utf-8?B?WkdxTEszbnRDeUZSNUNPM3lGcUUyTzdaeEdXbDlPNndHcHZNbi9lcU5IYzVp?=
- =?utf-8?B?bDh2cUo4TWNMNjFNR1pFL0xGeHBNV0ZrZFI2K0VHclRmck9rSEpwWTlGa3BN?=
- =?utf-8?B?QTBCenRCY2pmNGRDd1k4Y0tFL3VBbDMwNmZaa0Z0SVVsUG9rT1ZkZUpVdU4w?=
- =?utf-8?B?VVBlVXhoV2NncWYrYkNOQXpKMDFpb0NJNFpxOHpMWGxHZU0vcHl5NEhrVERy?=
- =?utf-8?B?VS91NUwvVkk0VGJ1bk42YjJjTEppVjcvcTU5OU9tYmtwUGVLcG9CNXViZWR5?=
- =?utf-8?B?aG9Ia3BYdTByRDg1bmtrNVlVRk1uNXN2TEZyNWdHMkpmMWFrTjJ2aitZZThX?=
- =?utf-8?B?SmV1YldJaHExdmNNd0xodEFSWjA4MWhlWGFOSnJiVEF2ZVlIZ1U1amtqQ2Uy?=
- =?utf-8?B?NGZkRVowOWdYVHY1eGtnU3VBN3JhK2ZzUkZDV2tQTXViZUEvbmxnalduR1Y2?=
- =?utf-8?B?VnQ5LzVHTUJFMWNJQ2JvRU56ekJ5WDUvNCtXMHl4MkZOaW1pQ2tpYXBpYVlx?=
- =?utf-8?B?azlsQUNvc29yL0ZXSlkrcGZSVG9ma0JGTXZBcVhrL0E1ejBvcnF0ZEhGQ21W?=
- =?utf-8?B?SXZVL2VlbE1rU1hYS0tDemdQeGNzQ21MSkNxbTQwTU1PZnhrK3UzblhFa09w?=
- =?utf-8?B?ckJIMUd0bkEvY0RaenRuUnZ1dVk4T29Za2JVQjlRbnVxTERsYWNJRDF4RVhI?=
- =?utf-8?B?V2RqenA2bnZQU25zeWJGWTh0MTRtcnAxbmZaUHVPbkcrT1R3WGxmZ2xNMUgx?=
- =?utf-8?Q?5zJGggtZFQ2xr?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MEkwdzNIYkw1VThyblNMV1ZZTVozaC83dDRZK25DbkpVdXlRR1g4K05KcXhW?=
- =?utf-8?B?LzVRS3d5d0dFTWVRMS9EZlpFZ05XODZZMGpoSGkrb2tNYjRiaWh6WTB5YWJF?=
- =?utf-8?B?UWhxS1NFNC8yVGdjaW5VbVlFa3pFYzlsamxVbmU1YUN2eXcwd0JvSkJidlpK?=
- =?utf-8?B?L21ndXZiOVpHVEZGVUgyVUhJQ3I5UDdXMVpUbzNvNXNzL1l5WmJzU0RxeEZL?=
- =?utf-8?B?eUtDd0dSSUhVVHlEendKRTRCSWZDMEdoWVhGQWo4LzlyYmdtZnZjQUgwL21K?=
- =?utf-8?B?Y1lrRHpkTjVieGJFS25ydWdwbnUwKzNWa0ZhSXpnUWxNeUx3WEdMQ0h1NWox?=
- =?utf-8?B?QUtmVmxKdHVad0UydzNWYlFkSkZ0N2lGWWxJejlFTDhoK0hyKzFDY29IdW5W?=
- =?utf-8?B?MFR0M0JvYWZEaEdKc1FHajRXckFmOXorTWdlUzl3OC94d2ZQTTR3djBRb1Y3?=
- =?utf-8?B?NDMzU2dxSElQaU1qRU1NZjdGcWJqVUxVNWFia1Nic2FWZEV3Y1VVdjV1U28r?=
- =?utf-8?B?YWZTT2czRTN5Um1iOXJUTno0RmNjd1VpSnZkVVExdGpOL2xNS2FObURMSkVX?=
- =?utf-8?B?Zk02OWxESW5IdmdmRFVMdFpOVktVSmJUa08wWEhWSlN0U0M0WTVxUjZHaXZQ?=
- =?utf-8?B?TFRTd3JqejhZTkVFSHhxL2VoMFFrcGd6dGdiZkltaXZTQXFCVTRabUIxVXRE?=
- =?utf-8?B?bVFNdllRM0hZQ3locnU5OGlQcDJ5UCtSYUxHazZBdVQyUHBNQlBaaFZrK1RL?=
- =?utf-8?B?OGhDV3ZyTWNqd1p4aGFWRGtEQTd0a0NvR2NndGhtbkJQZlZ5WWFOWW9kUlVT?=
- =?utf-8?B?WitmR1pZUkZQS2tWNXZmTEZoZTVwa1dURUVNSE93Qm9sUkdmUEdsVVFwaUtk?=
- =?utf-8?B?TjFzS1cwOWplbXAxQ2ZLTTVva2hFdzArTFlZTXJYNWlIR2E4ZUVZbGxaMVcr?=
- =?utf-8?B?eXg2VFVwdFFVWlR2djhVZ3N1S09lcDNSOTJYdmh6RGZ5ZHN5NnYwVm04eUw5?=
- =?utf-8?B?S2ZsREcxN3RNNWw0YURPVklTVVdxbE1meGVlR2R1cldUcFBTekJMTEVzMDRL?=
- =?utf-8?B?ZGNMbmRYaUE0TCt3NHJsRWVteUkxZy9pSDV2WXpMNWlHRjI0ZXpzZUtjaU5a?=
- =?utf-8?B?YkdLVmJCMlRIb0kydW5rVDhDMHpBM0hTRzJGZEF1aGNxSjcrd3BEOTlXVHhS?=
- =?utf-8?B?SWFyN3RsZUdwMHlpdllyYjRZVTlmYS9ZQW11UXZ5RWM0MFJaMis4bHF2V0kx?=
- =?utf-8?B?alhsNlhKbzJYUzlIeUxDRDE5VVBJSzIrM1RjdHlxNnovRTJjUlBHWGtSSklN?=
- =?utf-8?B?WFJaNmZIYy80QythVnpBRi92UDhYV0ljOEJOUXVpU3hYZXdGbUNVVUtmanNw?=
- =?utf-8?B?amRmVDFOc2twNkNIVE5rYm5JOXZBbnlUNXZCaWp4VGlFRVdpRWo1Sk9HUXJo?=
- =?utf-8?B?cjJVdlZHVmVOUWpwRzVsaVpsUTk4U3Z4d0dmYXRmem5jNG1ja0pMMTF2T1hO?=
- =?utf-8?B?SUtCa09KSFRtcmZXQW9vVHBRNFp1OTFVS2tKTUY2QkRoUUVYT2loT1JWQ0tO?=
- =?utf-8?B?QnJrZnVnalNsQ0Yrbm9YeVEydGtORHlTMkJMNjlqY0hHaHV1ckxEMWdibDlX?=
- =?utf-8?B?WS8xdTVaeHdjOExvRzdXQVpmZ1FIVDc2Kzd2Q2l6ZGNBL0VDZVgvaFU5WjdG?=
- =?utf-8?B?OFlSckhKM2ZMNWkzWWdrTnZla3d0UjNpV0lPaWw2UVVheWFYVm9LeHVqbm5F?=
- =?utf-8?B?cGFIVm5UQWd4MitYT3dBMURWb2pMQmpYWmNpZU43N3pzd3BQNVg4eUdZb0JE?=
- =?utf-8?B?U2E4VFhZcmowcFg3VXVraHU0OUtTcW14bXBianFNME9ZbzRDODZVSnBoMGRp?=
- =?utf-8?B?YklTQW1JYXBJMVJwSWNxaFdTUHhlank3aDBTbjd4bUI5bXVnR21zRWx2SGpS?=
- =?utf-8?B?TUk2V1VWb1JOY1g2R3MxMEhxZUE2S29pNjZQSkFLQ1RKdHdDWlFJREFYRnVO?=
- =?utf-8?B?U3p4ZjNBQmRLOWtDYUFnS3BQOERVY2Z1RW9HRHp0bFdBSjF0NWJyTFlsUzZ4?=
- =?utf-8?B?dGFxc2FjaGVDKzJ5bXM4dlpvS1Z0Y1RPWm1KT1JQZTU2eVBISnQ5YXM0cDBI?=
- =?utf-8?Q?1Gbyc66jRybfNhP3ELzVzOLI2?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 85bc1b3b-b65a-45e0-046e-08dd5083c516
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2025 01:21:43.5878
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: wYLP4VlzOOdK5L/5isSgSq8rZWkw7lVx/LgYhMbSZHaAagbBQ65O0YATdPrDxEx7m/do6uqD7c84nnQg3g4UEw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4260
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/5] clk: qcom: videocc: Add support to attach multiple
+ power domains
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Jagadeesh Kona <quic_jkona@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ Ajit Pandey <quic_ajipan@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
+ Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250218-videocc-pll-multi-pd-voting-v1-0-cfe6289ea29b@quicinc.com>
+ <20250218-videocc-pll-multi-pd-voting-v1-4-cfe6289ea29b@quicinc.com>
+ <eec2869a-fa8f-4aaf-9fc5-e7a8baf0f864@linaro.org>
+ <huluiiaqmunvmffoqadrhssd3kl2toutqtcw7rzamv3sqdglsf@7lz66x4sj3gv>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <huluiiaqmunvmffoqadrhssd3kl2toutqtcw7rzamv3sqdglsf@7lz66x4sj3gv>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed Feb 19, 2025 at 5:51 AM JST, Timur Tabi wrote:
-> On Tue, 2025-02-18 at 22:16 +0900, Alexandre Courbot wrote:
->> > A proper struct with `high` and `low` might be more verbose, but
->> > it rules out this issue.
->>=20
->> Mmm indeed, so we would have client code looking like:
->>=20
->> =C2=A0 let SplitU64 { high, low } =3D some_u64.into_u32();
->>=20
->> instead of=20
->>=20
->> =C2=A0 let (high, low) =3D some_u64.into_u32();
->>=20
->> which is correct, and
->>=20
->> =C2=A0 let (low, high) =3D some_u64.into_u32();
->>=20
->> which is incorrect, but is likely to not be caught.
->
-> I'm new to Rust, so let me see if I get this right.
->
-> struct SplitU64 {
->   high: u32,
->   low: u32
-> }
->
-> So if you want to extract the upper 32 bits of a u64, you have to do this=
-:
->
-> let split =3D some_u64.into_u32s();
-> let some_u32 =3D split.high;
+On 18/02/2025 17:19, Dmitry Baryshkov wrote:
+> On Tue, Feb 18, 2025 at 03:46:15PM +0000, Bryan O'Donoghue wrote:
+>> On 18/02/2025 14:26, Jagadeesh Kona wrote:
+>>> During boot-up, the PLL configuration might be missed even after
+>>> calling pll_configure() from the clock controller probe. This can
+>>> happen because the PLL is connected to one or more rails that are
+>>> turned off, and the current clock controller code cannot enable
+>>> multiple rails during probe. Consequently, the PLL may be activated
+>>> with suboptimal settings, causing functional issues.
+>>>
+>>> To properly configure the video PLLs in the probe on SM8450, SM8475,
+>>> SM8550, and SM8650 platforms, the MXC rail must be ON along with MMCX.
+>>> Therefore, add support to attach multiple power domains to videocc on
+>>> these platforms.
+>>>
+>>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+>>> ---
+>>>    drivers/clk/qcom/videocc-sm8450.c | 4 ++++
+>>>    drivers/clk/qcom/videocc-sm8550.c | 4 ++++
+>>>    2 files changed, 8 insertions(+)
+>>>
+>>> diff --git a/drivers/clk/qcom/videocc-sm8450.c b/drivers/clk/qcom/videocc-sm8450.c
+>>> index f26c7eccb62e7eb8dbd022e2f01fa496eb570b3f..b50a14547336580de88a741f1d33b126e9daa848 100644
+>>> --- a/drivers/clk/qcom/videocc-sm8450.c
+>>> +++ b/drivers/clk/qcom/videocc-sm8450.c
+>>> @@ -437,6 +437,10 @@ static int video_cc_sm8450_probe(struct platform_device *pdev)
+>>>    	struct regmap *regmap;
+>>>    	int ret;
+>>> +	ret = qcom_cc_attach_pds(&pdev->dev, &video_cc_sm8450_desc);
+>>> +	if (ret)
+>>> +		return ret;
+>>> +
+>>>    	ret = devm_pm_runtime_enable(&pdev->dev);
+>>>    	if (ret)
+>>>    		return ret;
+>>> diff --git a/drivers/clk/qcom/videocc-sm8550.c b/drivers/clk/qcom/videocc-sm8550.c
+>>> index 7c25a50cfa970dff55d701cb24bc3aa5924ca12d..d4b223d1392f0721afd1b582ed35d5061294079e 100644
+>>> --- a/drivers/clk/qcom/videocc-sm8550.c
+>>> +++ b/drivers/clk/qcom/videocc-sm8550.c
+>>> @@ -542,6 +542,10 @@ static int video_cc_sm8550_probe(struct platform_device *pdev)
+>>>    	int ret;
+>>>    	u32 sleep_clk_offset = 0x8140;
+>>> +	ret = qcom_cc_attach_pds(&pdev->dev, &video_cc_sm8550_desc);
+>>> +	if (ret)
+>>> +		return ret;
+>>> +
+>>>    	ret = devm_pm_runtime_enable(&pdev->dev);
+>>>    	if (ret)
+>>>    		return ret;
+>>>
+>>
+>> What's the difference between doing the attach here or doing it in
+>> really_probe() ?
+> 
+> I'd second this. If the domains are to be attached before calling any
+> other functions, move the call to the qcom_cc_map(), so that all drivers
+> get all domains attached before configuring PLLs instead of manually
+> calling the function.
+> 
+>> There doesn't seem to be any difference except that we will have an
+>> additional delay introduced.
+>>
+>> Are you describing a race condition ?
+>>
+>> I don't see _logic_ here to moving the call into the controller's higher
+>> level probe.
+>>
+>> Can you describe some more ?
+>>
+>> ---
+>> bod
+> 
 
-More likely this would be something like:
+Here's one way this could work
 
-  let SplitU64 { high: some_u32, .. } =3D some_u64;
+Author: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Date:   Tue Feb 18 19:46:55 2025 +0000
 
-Which is still a bit verbose, but a single-liner.
+     clk: qcom: common: Add configure_plls callback prototype
 
-Actually. How about adding methods to this trait that return either
-component?
+     Add a configure_plls() callback so that we can stage 
+qcom_cc_attach_pds()
+     before configuring PLLs and ensure that the power-domain rail list is
+     switched on prior to configuring PLLs.
 
-  let some_u32 =3D some_u64.high_half();
-  let another_u32 =3D some_u64.low_half();
+     Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
-These should be used most of the times, and using destructuring/tuple
-would only be useful for a few select cases.
+diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+index 9e3380fd71819..1924130814600 100644
+--- a/drivers/clk/qcom/common.c
++++ b/drivers/clk/qcom/common.c
+@@ -304,6 +304,9 @@ int qcom_cc_really_probe(struct device *dev,
+         if (ret < 0 && ret != -EEXIST)
+                 return ret;
 
->
-> as opposed to your original design:
->
-> let (some_u32, _) =3D some_u64.into_u32s();
->
-> Personally, I prefer the latter.  The other advantage is that into_u32s a=
-nd
-> from_u32s are reciprocal:
->
-> assert_eq!(u64::from_u32s(u64::into_u32s(some_u64)), some_u64);
->
-> (or something like that)
++       if (desc->configure_plls)
++               desc->configure_plls(regmap);
++
+         reset = &cc->reset;
+         reset->rcdev.of_node = dev->of_node;
+         reset->rcdev.ops = &qcom_reset_ops;
+diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
+index 7ace5d7f5836a..4955085ff8669 100644
+--- a/drivers/clk/qcom/common.h
++++ b/drivers/clk/qcom/common.h
+@@ -38,6 +38,7 @@ struct qcom_cc_desc {
+         const struct qcom_icc_hws_data *icc_hws;
+         size_t num_icc_hws;
+         unsigned int icc_first_node_id;
++       void (*configure_plls)(struct regmap *regmap);
+  };
 
-Yeah, having symmetry is definitely nice. OTOH there are no safeguards
-against mixing up the order and the high and low components, so a
-compromise will have to be made one way or the other. But if we also add
-the methods I proposed above, that question should matter less.
+and
+
+% git diff drivers/clk/qcom/camcc-x1e80100.c
+diff --git a/drivers/clk/qcom/camcc-x1e80100.c 
+b/drivers/clk/qcom/camcc-x1e80100.c
+index b73524ae64b1b..c9748d1f8a15b 100644
+--- a/drivers/clk/qcom/camcc-x1e80100.c
++++ b/drivers/clk/qcom/camcc-x1e80100.c
+@@ -2426,6 +2426,21 @@ static const struct regmap_config 
+cam_cc_x1e80100_regmap_config = {
+         .fast_io = true,
+  };
+
++static void cam_cc_x1e80100_configure_plls(struct regmap *regmap)
++{
++       clk_lucid_ole_pll_configure(&cam_cc_pll0, regmap, 
+&cam_cc_pll0_config);
++       clk_lucid_ole_pll_configure(&cam_cc_pll1, regmap, 
+&cam_cc_pll1_config);
++       clk_rivian_evo_pll_configure(&cam_cc_pll2, regmap, 
+&cam_cc_pll2_config);
++       clk_lucid_ole_pll_configure(&cam_cc_pll3, regmap, 
+&cam_cc_pll3_config);
++       clk_lucid_ole_pll_configure(&cam_cc_pll4, regmap, 
+&cam_cc_pll4_config);
++       clk_lucid_ole_pll_configure(&cam_cc_pll6, regmap, 
+&cam_cc_pll6_config);
++       clk_lucid_ole_pll_configure(&cam_cc_pll8, regmap, 
+&cam_cc_pll8_config);
++
++       /* Keep clocks always enabled */
++       qcom_branch_set_clk_en(regmap, 0x13a9c); /* CAM_CC_GDSC_CLK */
++       qcom_branch_set_clk_en(regmap, 0x13ab8); /* CAM_CC_SLEEP_CLK */
++}
++
+  static const struct qcom_cc_desc cam_cc_x1e80100_desc = {
+         .config = &cam_cc_x1e80100_regmap_config,
+         .clks = cam_cc_x1e80100_clocks,
+@@ -2434,6 +2449,7 @@ static const struct qcom_cc_desc 
+cam_cc_x1e80100_desc = {
+         .num_resets = ARRAY_SIZE(cam_cc_x1e80100_resets),
+         .gdscs = cam_cc_x1e80100_gdscs,
+         .num_gdscs = ARRAY_SIZE(cam_cc_x1e80100_gdscs),
++       .configure_plls = cam_cc_x1e80100_configure_plls,
+  };
+
+  static const struct of_device_id cam_cc_x1e80100_match_table[] = {
+@@ -2461,18 +2477,6 @@ static int cam_cc_x1e80100_probe(struct 
+platform_device *pdev)
+                 return PTR_ERR(regmap);
+         }
+
+-       clk_lucid_ole_pll_configure(&cam_cc_pll0, regmap, 
+&cam_cc_pll0_config);
+-       clk_lucid_ole_pll_configure(&cam_cc_pll1, regmap, 
+&cam_cc_pll1_config);
+-       clk_rivian_evo_pll_configure(&cam_cc_pll2, regmap, 
+&cam_cc_pll2_config);
+-       clk_lucid_ole_pll_configure(&cam_cc_pll3, regmap, 
+&cam_cc_pll3_config);
+-       clk_lucid_ole_pll_configure(&cam_cc_pll4, regmap, 
+&cam_cc_pll4_config);
+-       clk_lucid_ole_pll_configure(&cam_cc_pll6, regmap, 
+&cam_cc_pll6_config);
+-       clk_lucid_ole_pll_configure(&cam_cc_pll8, regmap, 
+&cam_cc_pll8_config);
+-
+-       /* Keep clocks always enabled */
+-       qcom_branch_set_clk_en(regmap, 0x13a9c); /* CAM_CC_GDSC_CLK */
+-       qcom_branch_set_clk_en(regmap, 0x13ab8); /* CAM_CC_SLEEP_CLK */
+-
+         ret = qcom_cc_really_probe(&pdev->dev, &cam_cc_x1e80100_desc, 
+regmap);
+
+         pm_runtime_put(&pdev->dev);
+
+Or a least it works for me.
+
+New clock controllers would then use this callback mechanism and 
+potentially all of the controllers to have uniformity.
+
+---
+bod
 
