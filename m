@@ -1,110 +1,190 @@
-Return-Path: <linux-kernel+bounces-520884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9319A3B07B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 05:52:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E072A3B080
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 05:54:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A423416A095
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 04:52:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 819253A6263
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 04:54:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0DFD1A9B3B;
-	Wed, 19 Feb 2025 04:52:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B5621AF0C8;
+	Wed, 19 Feb 2025 04:54:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="HGp0Wb9i"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="eRT/Ovjf"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D090F19AD89;
-	Wed, 19 Feb 2025 04:52:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 030261A9B3B
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 04:54:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739940743; cv=none; b=LRENrfVsHwWnIf+5Duq32q/fah1Fa3KqL/1MXFJN8Do5PKNL0HWn3Q4FZfHz6dOyb6+uA7TAKOrZp4WbO0a2/aezu5zznIHEi7MNsv/XBHbc1cLA+VEx8mcakA7F0pQ7n8oYucypO9+FiCiLZ6a2+ERAZcXjet3B/qrbCDYUleI=
+	t=1739940842; cv=none; b=eRfifMvVfDPpgICrtnOqQ1TumH4HL3gYD57FSRJ9LBZkfQg920n3tBqvaL3Y3AEviRpUcOb8InkFfDXNwkOyvzuTGeb3D/lGOZ6wzuXdTdwa/tvpck6LrzWxjqvu/E60+CpMD4QFph/Ba9tDBW93UwsRdk/kUPGDM+6l05dlZC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739940743; c=relaxed/simple;
-	bh=YSfN6hCXtUpwOadsANbH/yLK72rbl+zzC1MR0KNgMOY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=OzdPp4TP+G++fqQxrTJvv2Int/P/fqenVklvRCfk+TbNpcaXnE5C9MjYKS7auyvgo4wlAHjb5oPaN66qXoUz5W228djASgOMVwOk4b/8Lstzp9yp3ffyxdgEi7I3X2LfZrhdcAwR2jNja2zQr6trIkdSujDSRtovTBFnUdH81ng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=HGp0Wb9i; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1739940735;
-	bh=3+iU7EKoX/5Rk4/IeFtgoM5sUCK2YoGoITIMcv+fEY4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=HGp0Wb9iPZJ39IBiDYnTl+ci8j4eK5TKkqFfxPseAaqdPo8R0/uY4I11rNjv0/rIh
-	 kSKg2zanR7M1yfYiSorPeVZpnPZF/Wvt1i6g+Pp5zl0FBXFS+jgIO1ql0QqDj8R0DT
-	 bwlGeGERfbAHrwbnVZuFMwhTYzTeYj58kRO+FnwHbnmZkzEt/8z0Wg/eO05/P/GbfL
-	 YGBniM6BsqCm3rlcBEI1U2zYkXxpAHvCODBmBttq0y6+AJG6Tf5ie+kdIOvDBKkEeK
-	 RVYuwpIQp3Smw4behBlpS9tWBMzoIxwPnWQCubYoRNsq47jShD3MpPO6Bxe9+TOpbZ
-	 abwQt2pMnn5dg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4YyPBl383Rz4wcr;
-	Wed, 19 Feb 2025 15:52:15 +1100 (AEDT)
-Date: Wed, 19 Feb 2025 15:52:14 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Shuai Xue <xueshuai@linux.alibaba.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the mm tree
-Message-ID: <20250219155214.1661ce53@canb.auug.org.au>
+	s=arc-20240116; t=1739940842; c=relaxed/simple;
+	bh=+MPXouWWo8ux+uZt1AeDx00Ai1tkcltzKCU14kdllKM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G+sDsUFeGPLEMeeyML06JQLmjHTL3bV0QlTFGbaDIpL8NR7xhyywd0WRorFPUA/9C2T5/YmNRy6AF1HivKZcziIx6SQIIhHYNIqbMinQ8zZxGU+2fj6RAP6NBmDEHw7CR2M455sBUsqz1If94L+m6XBK3XZ8zf1mfyzQVCd9+7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=eRT/Ovjf; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-220e989edb6so127450325ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 20:54:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1739940840; x=1740545640; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=+MPXouWWo8ux+uZt1AeDx00Ai1tkcltzKCU14kdllKM=;
+        b=eRT/Ovjf3Xf+/Xm//a7Nl7E/VLd/nE4bCMdr38gnFG0pPjnNb5byu8q4DkfAZ/FWuH
+         fN3rHt4mkXvr1iVDNzBw4E5/RDXY9Coe65DvVO5TBh822lWjxHx/2//FMlHU8jX6rD85
+         VU4ursFnpnLuhtpeaOf6HfQ9a82Ir7T/PbUbU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739940840; x=1740545640;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+MPXouWWo8ux+uZt1AeDx00Ai1tkcltzKCU14kdllKM=;
+        b=wpvbunMNFuIKOLI/qXl7qlJreZCxBUBSPlA3ubNbPXzS9aj1QIO8oQQo1NmasDnvJ1
+         /UUo/yAYQfsWKGZrTlg2JfdirqBtObkR2MKJ7RIspw4dYHnv8GA0Rf+1AhHQOsgSKBOM
+         oXMCetn6Mrbc3naUeQ+q0YxLH92wRVLF33suUNEj2L5JmxZzXTJ84xKLPeLpiQ/n5YYm
+         rfkDwBNt5VyncttNHEtt1mLWz5EO7gsA6VxdQpIV991aZSYVcfmD9hfuTE483+5uHIrO
+         d8JT59lRQvKhRbCj65QgsWYcYdtb+Ka5LA6+3arQTfl1XF9gYUKWQn5nZkhEy0rJcwgg
+         A+aA==
+X-Forwarded-Encrypted: i=1; AJvYcCW4EeN1UgYH+PyqZCYxVb5y6xM7gAkj24DA7zsUVHtkegyRuT9kqzODrx7uCOsru7P2XoZs1WiC3TcOMXc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJ/2PJnR4BQzKxPvGq2ICFHq07mG9+ZArrZNGPYd+cCT2kG5tU
+	F8hkOOIaGLLMIR3LcQLJZB0CXniUd/sNqkmRAdBQJ8INzHQ5DBo94lySEUNrSeM4Lqz0ks6xpHm
+	s9fEQzck1Ifdtfe8/teTpH7N8npz5ciqtaeUH
+X-Gm-Gg: ASbGncvp9ZmmokrHPaSSnfE4P04gI2vD3aphPMniLZDq5CJbxmmTKBfVxllUJ2AlV5o
+	IOdjgkbw3fTDYuqhxo1tYpR6pkHP5P7GYRqTIS1rVT/tzL1lfWMDk02v07HIxDmixnsTaK4ELcA
+	==
+X-Google-Smtp-Source: AGHT+IG/RrH2Gp4tS+rCM1xSREb1bnlsLSH8T97TpdCfNAkpfULv6+O3b8dnuMcRtVb+zQIRiyqQr3HT6Hzm8wCvkBI=
+X-Received: by 2002:a05:6a00:244e:b0:725:ffe:4dae with SMTP id
+ d2e1a72fcca58-73261799c4dmr25218293b3a.10.1739940840197; Tue, 18 Feb 2025
+ 20:54:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/76=95djz/ART0IKxNG4pDLL";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+References: <20250219020258.297995-1-linux@treblig.org>
+In-Reply-To: <20250219020258.297995-1-linux@treblig.org>
+From: Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>
+Date: Wed, 19 Feb 2025 10:23:48 +0530
+X-Gm-Features: AWEUYZlHj_sP4xRtnvpFZB314U6_7JFNpIkL9EkjAGRv2jEIasXn2A4lwwu_fz4
+Message-ID: <CAH-L+nNRHAHuKCigHgBPEDJdi0x4Vf4wOOjTVU75bgnG-TmnRA@mail.gmail.com>
+Subject: Re: [PATCH net-next] nfc: hci: Remove unused nfc_llc_unregister
+To: linux@treblig.org
+Cc: krzk@kernel.org, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	pabeni@redhat.com, horms@kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="000000000000bb960d062e778bc4"
 
---Sig_/76=95djz/ART0IKxNG4pDLL
-Content-Type: text/plain; charset=US-ASCII
+--000000000000bb960d062e778bc4
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Wed, Feb 19, 2025 at 7:33=E2=80=AFAM <linux@treblig.org> wrote:
+>
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+>
+> nfc_llc_unregister() has been unused since it was added in 2012's
+> commit 67cccfe17d1b ("NFC: Add an LLC Core layer to HCI")
+>
+> Remove it.
+>
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 
-After merging the mm tree, today's linux-next build (i386 defconfig)
-failed like this:
+Reviewed-by: Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
 
-arch/x86/kernel/cpu/mce/severity.c: In function 'error_context':
-arch/x86/kernel/cpu/mce/severity.c:305:22: error: implicit declaration of f=
-unction 'FIELD_GET' [-Wimplicit-function-declaration]
-  305 |         fixup_type =3D FIELD_GET(EX_DATA_TYPE_MASK, e->data);
-      |                      ^~~~~~~~~
-
-Caused by commit
-
-  599382062e7b ("x86/mce: add EX_TYPE_EFAULT_REG as in-kernel recovery cont=
-ext to fix copy-from-user operations regression")
-
-from the mm-unstable branch of the mm tree.
-
-I have reverted that commit for today.
 
 --=20
-Cheers,
-Stephen Rothwell
+Regards,
+Kalesh AP
 
---Sig_/76=95djz/ART0IKxNG4pDLL
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+--000000000000bb960d062e778bc4
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAme1Y34ACgkQAVBC80lX
-0GxAGwf/dgCch+KvutSgP6qZ5jVqAMmipfOD1PtJbMxrlh1vSfSFYtHD9TJjomQO
-eead77a20J0rgs4BImAvOTAQln83WiO+y3nId40BYqf58cu5hFbCk7kdnjr2Zskc
-EeYcyq7Gj9UDidoniWHhAQjUGkTn4gV/nyyhlvM669A8kkpoy6KzZCH6Zdb6WeNt
-PwoAMNPLf94DaqUgnrjxvZMlgBScMaYuzQQ/JCyYGq5m6rpfP963Hd+CoUL5Mkr8
-x4Li8SdS4iKTe4TzDMf50PPUUn0if3Gof2MN1Zpphl44Zo/WV+PHsL44a2K/UZcX
-iywHt59pH2k0vSkISrmTcpMtOC57pw==
-=XCO/
------END PGP SIGNATURE-----
-
---Sig_/76=95djz/ART0IKxNG4pDLL--
+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
+riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
+QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
+UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
+M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
+Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
+14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
+a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
+XzCCBWowggRSoAMCAQICDDfBRQmwNSI92mit0zANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
+RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
+UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAwODI5NTZaFw0yNTA5MTAwODI5NTZaMIGi
+MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
+BgNVBAoTDUJyb2FkY29tIEluYy4xHzAdBgNVBAMTFkthbGVzaCBBbmFra3VyIFB1cmF5aWwxMjAw
+BgkqhkiG9w0BCQEWI2thbGVzaC1hbmFra3VyLnB1cmF5aWxAYnJvYWRjb20uY29tMIIBIjANBgkq
+hkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxnv1Reaeezfr6NEmg3xZlh4cz9m7QCN13+j4z1scrX+b
+JfnV8xITT5yvwdQv3R3p7nzD/t29lTRWK3wjodUd2nImo6vBaH3JbDwleIjIWhDXLNZ4u7WIXYwx
+aQ8lYCdKXRsHXgGPY0+zSx9ddpqHZJlHwcvas3oKnQN9WgzZtsM7A8SJefWkNvkcOtef6bL8Ew+3
+FBfXmtsPL9I2vita8gkYzunj9Nu2IM+MnsP7V/+Coy/yZDtFJHp30hDnYGzuOhJchDF9/eASvE8T
+T1xqJODKM9xn5xXB1qezadfdgUs8k8QAYyP/oVBafF9uqDudL6otcBnziyDBQdFCuAQN7wIDAQAB
+o4IB5DCCAeAwDgYDVR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZC
+aHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJj
+YTIwMjAuY3J0MEEGCCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3Iz
+cGVyc29uYWxzaWduMmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcC
+ARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNV
+HR8EQjBAMD6gPKA6hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNp
+Z24yY2EyMDIwLmNybDAuBgNVHREEJzAlgSNrYWxlc2gtYW5ha2t1ci5wdXJheWlsQGJyb2FkY29t
+LmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGP
+zzAdBgNVHQ4EFgQUI3+tdStI+ABRGSqksMsiCmO9uDAwDQYJKoZIhvcNAQELBQADggEBAGfe1o9b
+4wUud0FMjb/FNdc433meL15npjdYWUeioHdlCGB5UvEaMGu71QysfoDOfUNeyO9YKp0h0fm7clvo
+cBqeWe4CPv9TQbmLEtXKdEpj5kFZBGmav69mGTlu1A9KDQW3y0CDzCPG2Fdm4s73PnkwvemRk9E2
+u9/kcZ8KWVeS+xq+XZ78kGTKQ6Wii3dMK/EHQhnDfidadoN/n+x2ySC8yyDNvy81BocnblQzvbuB
+a30CvRuhokNO6Jzh7ZFtjKVMzYas3oo6HXgA+slRszMu4pc+fRPO41FHjeDM76e6P5OnthhnD+NY
+x6xokUN65DN1bn2MkeNs0nQpizDqd0QxggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYD
+VQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25h
+bFNpZ24gMiBDQSAyMDIwAgw3wUUJsDUiPdpordMwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcN
+AQkEMSIEIPEsFh5Jo7dBh1FXQlXs8yfdn8+2m6nNfpM2wtwokJTAMBgGCSqGSIb3DQEJAzELBgkq
+hkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDIxOTA0NTQwMFowaQYJKoZIhvcNAQkPMVwwWjAL
+BglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG
+9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQB6pnf0s7+H
+49pc27yM4kZqnNeVkberW5NK+fJJJaiqhGxqwtgWj5lIe+U7LvvUO37ZcpqA8oUtrSVYHLuLmS1o
+Fo27g9Oc5Cww1Ozd0NmZWd741tlzE4/X5NULbwoo7A4SilDf3emPwXeTeWKFZisb3CxEH+3RLMBV
+4RRDjOc3SSdb0rkwmjOiXL1nzEIYkZ/N5bQyl78ztl39UL5A0piF5XRbLSK80qRVaXssOL64wI9e
+83l3QPT9+tpaenKDfYrikfbiJwjb1ZvprJ+N1LLsndD7g6MYXZGQqzgpZ2wV7TEdFsbRawvgs2QM
+umZqldOc1CoQgBprFvYCn/EgqTE8
+--000000000000bb960d062e778bc4--
 
