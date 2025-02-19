@@ -1,77 +1,161 @@
-Return-Path: <linux-kernel+bounces-522153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B017EA3C6BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:52:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57C71A3C6C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:53:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D4FA3B67C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:51:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C6A116CE2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:53:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B1942147EE;
-	Wed, 19 Feb 2025 17:51:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 320CD214809;
+	Wed, 19 Feb 2025 17:52:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xrm3ZVYw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Ls6dW2V6"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D4792144D4
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 17:51:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FCF11FECAE;
+	Wed, 19 Feb 2025 17:52:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739987509; cv=none; b=ijUkxLWYhU9nwgET343xMAsKO671DfiGrE57gRbXYdZvD30N/jtxH8CFI2n64yv2jCQXBknWr3vSUb21hAmJ6jXTsCY/aVi2MsXXbJK0GE6N2Qbv+MvY2al/GBV5GtIrbylJQtb7TZg3QTFYvATzwV3g3Utp8joqV8hTLO7Rlos=
+	t=1739987574; cv=none; b=ZpsR6rB2/qP9oOA0Mt7SMC7H4MdYZkEQqnyokBG+Fi308hK/EoyecZTlDE4uqdrElSk9pu0TKWZ8cCNek6C45PrbjvLm+sFKopkg79+OEGqYlt84MOTbSuXSGAesy+N1FoOreuWCUjrfAsyLjRzC/86YWYFglfAE9/DjsI/tx6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739987509; c=relaxed/simple;
-	bh=/ff/0UXg38aLKctMxnvl4lnVr5VfBll5+fjnRPFJIaY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cVB3yTUxXPojldRJvYUVTD9K7drb1VjdpV73pj2jw0dBGP+48UL8F066asyqQiLriMajnbcKylpjs+aaaxZd9ZD/oJ1hTULJoV72tIzpXIEdw3oGRqlnVUY3Gw+xjqiu+OqOArdaWoVPDYuH5s4nRERFmnK+K1P04gb2ZoDUIWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xrm3ZVYw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBAB9C4CEE0;
-	Wed, 19 Feb 2025 17:51:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739987508;
-	bh=/ff/0UXg38aLKctMxnvl4lnVr5VfBll5+fjnRPFJIaY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Xrm3ZVYwqo9lWjAu1UeDN/ZPOARWANfqIiLsNRgQjzigWtrX53M8XXYbBf7LVRUvq
-	 /p1a8beL96o7lRI38FrZEdcg39tcOegeeKZtVkXvux6n3+7T/SqbAq2E89/1hcstF8
-	 TMFbQ0Vl6KGZM9l92uKB3WpTQH8FauXfkPU2HiPUceR+uQh/e0EIcqnDeyCyRjWXdv
-	 86gRVUTdhzRktYct0gjh2ZSzoGPQ6VwpW9aETXCTzDUNAzMqjDQmuVn3XKm+Qp3Udn
-	 R6lC+QvKr1hL93hDUY+QOCTjeswChuCcZyGzg0Wp9+p0HVF8IAQQLgHHP5LgYJ+32p
-	 2Cpo5TCpo4oEQ==
-Date: Wed, 19 Feb 2025 09:51:45 -0800
-From: Kees Cook <kees@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, alyssa.milburn@intel.com,
-	scott.d.constable@intel.com, joao@overdrivepizza.com,
-	andrew.cooper3@citrix.com, jpoimboe@kernel.org,
-	jose.marchesi@oracle.com, hjl.tools@gmail.com,
-	ndesaulniers@google.com, samitolvanen@google.com, nathan@kernel.org,
-	ojeda@kernel.org, alexei.starovoitov@gmail.com, mhiramat@kernel.org,
-	jmill@asu.edu
-Subject: Re: [PATCH v3 02/10] x86/ibt: Add exact_endbr() helper
-Message-ID: <202502190951.8772BC254@keescook>
-References: <20250219162107.880673196@infradead.org>
- <20250219163514.475718637@infradead.org>
+	s=arc-20240116; t=1739987574; c=relaxed/simple;
+	bh=dlmR4Na0OX/qKkccPY4vem3xExkWHBIdlfSNvg2r00g=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=XEgHa+YR1yG5YuLnHYiOQaOuDoL/ShIl1Fn54kABgTismeowt3A8yBkpLjXeZugpCuMVlgZ0fXhHgbTR1K/DM2dQRdsw38qwHItt1IpsJG6IpCDYgZnubBnKjv8s5hNnRQcbi9KuzsMibteGvIv4+t636lqD4XYCnc4/aROUOWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Ls6dW2V6; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1739987519; x=1740592319; i=markus.elfring@web.de;
+	bh=2GFYDHqlQzpJl9rL6j0rWVOfQYmcKGDAiJjmIMqNelc=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Ls6dW2V6JhYAwKGdHgNr/DTHAWjJwlQtCquFJT2nKaDxW63cQO2iesbwNIF6O2KU
+	 h+qFPye0rWU9F4QJpcdy3Ts8TgkjDCyoEDFJOEhIclyUYD2C+ASKBxsvjv9YYgtgg
+	 o7NUpTaChyQpJLl1unnJiNxJZg40gdpjL/24NHpi3Y8hgHIvsdzLpNjCucxN5c600
+	 2npkcTUTGfHhb2ZY2mNafQniwFHAZMfm4YiXQv/3doE2hIUykkoJtD5fPMfk3SozG
+	 Tqswrfd0wvMLtRewFipCtbIMX8whVvnQoQsvL+8kRI4lKy38OkxJZZBt5jvnvZIeX
+	 yeLOEHpRbUWcWCPyvQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.10]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MCGSU-1tbUZ30T2o-00EK2P; Wed, 19
+ Feb 2025 18:51:59 +0100
+Message-ID: <c929975d-6928-4161-b062-64636a4f278e@web.de>
+Date: Wed, 19 Feb 2025 18:51:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250219163514.475718637@infradead.org>
+User-Agent: Mozilla Thunderbird
+To: Sebastian LaVine <slavine@d3embedded.com>,
+ Stuart Burtner <sburtner@d3embedded.com>, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel@pengutronix.de,
+ Abel Vesa <abel.vesa@linaro.org>,
+ Alexander Stein <alexander.stein@ew.tq-group.com>,
+ Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Ard Biesheuvel <ardb@kernel.org>,
+ Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+ Biju Das <biju.das.jz@bp.renesas.com>,
+ Bjorn Andersson <quic_bjorande@quicinc.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley
+ <conor+dt@kernel.org>, Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ Devarsh Thakkar <devarsht@ti.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Elinor Montmasson <elinor.montmasson@savoirfairelinux.com>,
+ Fabio Estevam <festevam@gmail.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Hans Verkuil <hverkuil@xs4all.nl>,
+ Javier Carrasco <javier.carrasco@wolfvision.net>, Jianzhong Xu <xuj@ti.com>,
+ Julien Massot <julien.massot@collabora.com>,
+ Kieran Bingham <kieran.bingham@ideasonboard.com>,
+ Kory Maincent <kory.maincent@bootlin.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Mikhail Rudenko <mike.rudenko@gmail.com>,
+ =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
+ Nishanth Menon <nm@ti.com>, Rob Herring <robh@kernel.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
+ Spencer Hill <shill@d3engineering.com>, Tero Kristo <kristo@kernel.org>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Umang Jain <umang.jain@ideasonboard.com>, Vaishnav Achath
+ <vaishnav.a@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Will Deacon <will@kernel.org>, Zhi Mao <zhi.mao@mediatek.com>
+References: <20250212195656.69528-3-slavine@d3embedded.com>
+Subject: Re: [PATCH 2/4] media: i2c: Add driver for Sony IMX728
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250212195656.69528-3-slavine@d3embedded.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:UWazyhhgLJErNLDk5cBHjE48IdmfMZl8bvuL5WGtFrLv7QPsGnV
+ xjhR0feAbp68V6Z3PT/3/ImwcTznMRu9DAvUPD6DCggY0RbYRSY14gzXfxMaC+EuFD8AXmW
+ B0D2Joi7xZMmkZvzIU4foa3mUl8raYFA/0nlrHD0vjV9T8qDORZBB1aXaf6XANrszKwUIN6
+ v+rFLWtUXoW68aPdcecog==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:lPNuBB8wTIQ=;iBOV+TkYE/qZL4SzQiFuEJC5f3Z
+ tITcdP7QCl52zwd+QpvMmDFB4zEfWKmFcWiijEKOFYMHJ3WCeFpE8s2+cMqywIUAPLfy/h8Rb
+ KgdOFeFxjh1vnEeNjFB6sdTNdajlUVi7O2pST6N43G2fE5GEtwqB+CJ3Vhdvldnbkp5Vx7SFQ
+ 4hIOLQn9cDVj3JhvogOh8dFfLFq6kqzsSZ27XWMzJOoNPh9s2cKl2czqywDb8RfIF0liYIrgK
+ FuJK/ExanfdV2omcDTTnwJEzxWL6v4CdVxChCR1UyHPisF5UL6umEYaI7mgJ5WK56FFBvXORB
+ kCYCJQIwfJA85p33j8uRvvRxrGzQMC2NdDMlaUQm86Jj697ohFvVw4LCHzdC3mB+z+ljPCx3E
+ hOqrTAsxmG+W+A6rvc0HG8CctPsUiomTQQacTXGMQXgrOO7qzDq7yPaQlG5cUqYZoSu2HXTRh
+ VbE1ygM6VzsgHuOr1RUBVCX1BTkT7uR+fhiyZ+MkdUG3K9r9h/Wdx/zDBbVVBbgoqF0rVVVnV
+ /Gbp49BgrwCrhK3UhdXaQ7fzqSfUt5/mcOK5hIENzfIMmAdkADg18h9loJBmLm1HlJ/maaM5u
+ STe0CAGjQai498NGHY8pQvGoJswriXRBvhyca/NLka7IsXheqgZeEkV+k4ObGxStK8McJ7FYF
+ Hmil4pmIcDJos8LU6xWcQXx8mNzi69u/M/MFtXAiF53d7ELxoNzIAlFrB5JSIVFUUXsRwe/8L
+ d6cs6QOlAuds9cfAp5JjlTYXYifGUomc0hct9Lcxc8N9YPkQOVXF51j/vku3xh2CzSXiQWjQs
+ etEXrJyJjifpTzmuFFXtYKrrXRVK0ArVq29OH/8JYYxEiPqXWtZH667tjb23sfPnWIOtDqnb5
+ mCMX8zGzowpd7VKElSowTEcGC2/xoWXstOIbhMzTo3PhN/k7Ka1CLMPBkX8Bi2/JjMKjEOGS4
+ gEZY7M7XFk6jyDalb2MsqFTrF45FWEvlztm3umru5dQA7dRl24B4+RWtiogreiaeTCTsA42jl
+ 6lZE6NThPiKp955LeGXd1exxpUymWGFvPZ5mz5X/DSPO0pf6N+71srsQd62OwuHP6YlNusRb1
+ 4MWIwjNECl9pbOZ5dZ5ag6Z7QhuFS+wozJkgi36tpA2HX/uxZCsI7SqZ58cCjS9Jt8QZ4FRtx
+ Q+OIRAXIFtuSEFMH0zOF4fo5XiQ4qTczKTwcEHeqk/Iq/5RGIxLWJGYsaS8xvyYd0blIUsSGU
+ nyqTs720/yeYI+3X86RiS44fJaQ9aFzPCwkv48nBaiXVtXEsS8c2o6aDr0osUwYIfIaYar8h1
+ N3tU+nE3mg3fkhe6YvJAwKJZIgXA1UG1uFsMwdK9oiNjcJQSsx/h3OBQ8ygkFEYgbaNZWPHyJ
+ 1XRAQStkyXq60TUULOAYf5oxcvPtPe0vf/Jmr/at5qE0y2sqvmeU3Ra2g6AdIvcaDH/QwYqYL
+ cuIgYfa6Wqlv498T/zfjVg5kujRU=
 
-On Wed, Feb 19, 2025 at 05:21:09PM +0100, Peter Zijlstra wrote:
-> For when we want to exactly match ENDBR, and not everything that we
-> can scribble it with.
-> 
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Adds a driver for the Sony IMX728 image sensor.
 
-Reviewed-by: Kees Cook <kees@kernel.org>
+See also:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.14-rc3#n94
 
--- 
-Kees Cook
+
+=E2=80=A6
+> +++ b/drivers/media/i2c/imx728.c
+> @@ -0,0 +1,9655 @@
+=E2=80=A6
+> +static int imx728_set_stream(struct v4l2_subdev *sd, int enable)
+> +{
+> +       struct imx728 *imx728 =3D to_imx728(sd);
+> +       int ret;
+> +
+> +       mutex_lock(&imx728->lock);
+=E2=80=A6
+> +       __v4l2_ctrl_grab(imx728->ctrl.v_flip, enable);
+> +
+> +       mutex_unlock(&imx728->lock);
+=E2=80=A6
+
+Under which circumstances would you become interested to apply a statement
+like =E2=80=9Cguard(mutex)(&imx728->lock);=E2=80=9D?
+https://elixir.bootlin.com/linux/v6.14-rc3/source/include/linux/mutex.h#L2=
+01
+
+Regards,
+Markus
 
