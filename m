@@ -1,132 +1,138 @@
-Return-Path: <linux-kernel+bounces-521406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4AEAA3BCCF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:30:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7F84A3BCD1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:30:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 146C71721EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:29:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B3E6189A112
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:30:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 988A01DED57;
-	Wed, 19 Feb 2025 11:29:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89C901DF726;
+	Wed, 19 Feb 2025 11:29:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="HBwcvFSA"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M73jB6XR"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BD241DF755;
-	Wed, 19 Feb 2025 11:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 888341DF263
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 11:29:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739964566; cv=none; b=YsJ987xCgl/FXjBmHFeo1xeq3WezZGI6D35yyLvqRDO8mLgSu9j3dvgUnbYToKnnYhH/xW5spGZuxS8wpd/rDBURRwZLZPodK4wKFKMwIuN/R/htglFEZIZJVPLYhz64hlOTRJB2qznKnSBxFElF2DcLPXOrt5Zj6cMc/1MotlA=
+	t=1739964576; cv=none; b=qyKHp6D4ElegWJx+481Ol/v0P13tTmSMI7VkfiqU9bmlKhtc/lxzNqIBohXLZ+9OzViESzcqGnE466F+njnr9pHH3rz2Gjl/PMX9Dnc7+JDJXbj5L8QdRmUDtipw6ORO2Q9Sv/z4cG8miHc7toUNlKju0uRSerdIaikhpv3VwZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739964566; c=relaxed/simple;
-	bh=tN6WEDR1AiRFyMbMUMu3VS4saSRBZMCNYL/A1DybkbI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C4W74QLv9bdPYx4yrJvJZdLoJcpm+ql7PEX3Xb3YiStR+Ij59K8OzbBfnAiaIhI+KgL/n/H1BjKzoUCwab3WnBJbyVvPWyG/FQj7HBaVXYbcZFF+AQqJbv96/b/Pv4fbvFLZYhNNHFe4TRV9p+QDqG64Pu72oLrHmpSScGBkZF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=HBwcvFSA; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1739964562;
-	bh=tN6WEDR1AiRFyMbMUMu3VS4saSRBZMCNYL/A1DybkbI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HBwcvFSAJBqL0cqZaEXuOVDLwC85LkTybMrZkelTOGsFm/2GE5cwAP1wxNpgIC5oB
-	 03D8YMmlDT44THbtloNW03EnzqJeRHjglYQTj/in5ZLYwdtA4WgTKAvNJVBLJ+DoAA
-	 ccS6oJk05pETwYZTtQBcvxgpKnKFsGR9t1NgDx7E/szT1L47y9GI3UFJBpV/cKf4d0
-	 bOR9db3RnHE2GnWL6T3mmqS7tvICsitVxqvmR0FH4tg7vkhclcvbpMWz1dT7ZMgtTb
-	 clhwNcAOXlNpWAKpI1h4jjNNqHd/0vSPS+udXawIXharMCWecWWd8HpAgPvonA2WtL
-	 BC6Qr2w9BtSxg==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9A7E617E00F0;
-	Wed, 19 Feb 2025 12:29:21 +0100 (CET)
-Message-ID: <1dc0da53-0bc1-41f2-8478-f72bd0f33115@collabora.com>
-Date: Wed, 19 Feb 2025 12:29:21 +0100
+	s=arc-20240116; t=1739964576; c=relaxed/simple;
+	bh=g3V+8dM6PJF1zoiI5WkU8Q5Ll2EqB8S0Nz4V7dxVGro=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uPy7QyupH5eZal0CHUdWSXTIbSFgLf4uWethAas/+1x0A8sXUjvnD192eXFNMR1oaXkH5LpT9iFsbigeg5pyAPJ2tnz55Or2fe3de97pPNfc2Um0uk3dtRSD6STf/5x5gbXDlg0zncEQZBZ+8yozhk7KAcdDLqEXgGrJZ0qSwUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M73jB6XR; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2fc0bd358ccso13151469a91.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 03:29:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739964574; x=1740569374; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5vU+z7o1n0G7VQ2M0U6SHnojITFeeAuqpaQx8uuT8Do=;
+        b=M73jB6XRjEgyzQcFC/fEVboJgZtMSLW7jyoBeu3Kk/J2G7a+4WbYB1EYzPWZWVlCMF
+         r5rwp71uWbxJjnu4zAo/1ghGG6coPyEYghpZe+UaS4kGyzrC9zLeQInFKfaBdkLV9Z6u
+         KQD7JsodnyQfVqFULlyd/F7eZZKZ15e0uztxosgc8d3noqi3on8fR8sW5LmGi6H09xd2
+         sslgj1pcqmoE44ET/h39S3JEDXzb3hNw+91cYVifPRAV+9d5q52+wH/KWKqGy0YSum/x
+         u3XJ9uKgC39OcYLPtQy1kdgvjqwTX3BBBnc7jp6/9ih3aQXoBfULIS2jGPkc3EO42vLW
+         /pJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739964574; x=1740569374;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5vU+z7o1n0G7VQ2M0U6SHnojITFeeAuqpaQx8uuT8Do=;
+        b=gccgmyz03/1oJoieJs7aOjTq+ac4vsfCX61N3FA4o33NnYcswtBvNCjXQzPQpQ4vaP
+         sDw/lt5H5SO91H9Feco09DKgVhFTroDTu7V9uWFb7GvDmp7Ald4CaDSR5Lx/0Z2jid57
+         bxSStbdGOwcVbmsOYTcYSgQz8jhA1FNk/n7EsWCyWAcKj5xXK13pkJM1GKXAnFGZP59d
+         izwzsXB+3sgMKGdaiE+Ms65ifPEFFrHxwiibmQj+8kvlE8QWdkFo6EI23FQAZn4S/nJR
+         ajeQd80wCiS/1tW1olcdn1Jn0BmV85tPYHXggEe9Jl5OxqN4umRk1HijZAhWezrHdkHZ
+         eEMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUWjZwUhm4geg2V+y3di7Se66d9qZVFffRCI74VfOtyF32krRdatm6v+NlkqWaeMJZc0CWL0pgt+0KgS5U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdIGIK/BmaO5FT16x4UDG3zjGL82v5AL3o6pYSmFEbd3Qn0B8K
+	d1jdFu87JpykX904mBJtCpf9cJNxRxq/PLE69vRCykmcd4oJuZ0F5B7/ElO/ufynoHLLBadf8hX
+	8CSLfPx7mN4ltCdinf0lQUi2a5hw=
+X-Gm-Gg: ASbGnct/JOVIJ23r8ZECBrI4MeMTCe2uSRDLDFFipStjdLp9TDXC83Rzp0eFftXJXQu
+	m0vGjxHq24P1Z0vvk84sH/mvgHsOojQsSIzvfsYghx8kJzEay1p/aajaofMHADL7cbIelB5qE
+X-Google-Smtp-Source: AGHT+IEy3gIKsA2IQeCpKMMMuYndacoBsWC4Zu0rpUgMg6vNtThISaOrAnvzXl+MwdwzMRvuz0JKxEz5n2ulPBpyU6U=
+X-Received: by 2002:a17:90b:3b4b:b0:2ee:fdf3:390d with SMTP id
+ 98e67ed59e1d1-2fc4115087fmr24105113a91.31.1739964573544; Wed, 19 Feb 2025
+ 03:29:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/6] ASoC: mediatek: mt8188: Add reference for dmic clocks
-To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: kernel@collabora.com, linux-sound@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org
-References: <20250218-genio700-dmic-v1-0-6bc653da60f7@collabora.com>
- <20250218-genio700-dmic-v1-2-6bc653da60f7@collabora.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250218-genio700-dmic-v1-2-6bc653da60f7@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <cover.1739961770.git.guchongchong@xiaomi.com> <19ac11d6b9e5988d190025255c5ffe08c57c8023.1739961770.git.guchongchong@xiaomi.com>
+In-Reply-To: <19ac11d6b9e5988d190025255c5ffe08c57c8023.1739961770.git.guchongchong@xiaomi.com>
+From: Adam Ford <aford173@gmail.com>
+Date: Wed, 19 Feb 2025 05:29:22 -0600
+X-Gm-Features: AWEUYZn24v6r2D4b5o-SiBzC1qYQfPa9B6_jswODdfypF4PixQVAxs6BawZcytI
+Message-ID: <CAHCN7xKtu2y=757_mAmR64vCKCo-g78U-qWYT+j5_Rv5Gc+USQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/1] phy: freescale: limit div value in FIELD_PREP()
+To: Chongchong Gu <chongchonggu21@gmail.com>
+Cc: vkoul@kernel.org, kishon@kernel.org, linux-phy@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, guchongchong <guchongchong@xiaomi.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Il 18/02/25 21:52, Nícolas F. R. A. Prado ha scritto:
-> Add the names for the dmic clocks, aud_afe_dmic* and aud_dmic_hires*, so
-> they can be acquired and enabled by the platform driver.
-> 
-> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+On Wed, Feb 19, 2025 at 4:54=E2=80=AFAM Chongchong Gu <chongchonggu21@gmail=
+.com> wrote:
+>
+> From: guchongchong <guchongchong@xiaomi.com>
+>
+> In fsl_samsung_hdmi_phy_configure_pll_lock_det, the variable named
+> div becomes 4 after loop. It must less than 4 in function named
+> FIELD_PREP(REG12_CK_DIV_MASK, div).
+>
+
+
+There has already been a fix applied to linux-next to address this
+[1].  Have you tried this to see if it works with your compiler?
+
+adam
+[1] - https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/c=
+ommit/drivers/phy/freescale?h=3Dnext-20250219&id=3Dcd57e4327707126dca3f9517=
+b84274c001d4c184
+
+
+
+
+> A way to reproduce when run the following shell command
+> make ARCH=3Darm64 CROSS_COMPILE=3Daarch64-linux-gnu- defconfig
+> make ARCH=3Darm64 CROSS_COMPILE=3Daarch64-linux-gnu- -j4
+>
+> Fixes: <d567679f2b6a> ("phy: freescale: fsl-samsung-hdmi: Clean up")
+> Signed-off-by: guchongchong <guchongchong@xiaomi.com>
 > ---
->   sound/soc/mediatek/mt8188/mt8188-afe-clk.c | 8 ++++++++
->   sound/soc/mediatek/mt8188/mt8188-afe-clk.h | 8 ++++++++
->   2 files changed, 16 insertions(+)
-> 
-> diff --git a/sound/soc/mediatek/mt8188/mt8188-afe-clk.c b/sound/soc/mediatek/mt8188/mt8188-afe-clk.c
-> index e69c1bb2cb239596dee50b166c20192d5408be10..44c25b6e3d873448163b22e70f5b94cb5070654d 100644
-> --- a/sound/soc/mediatek/mt8188/mt8188-afe-clk.c
-> +++ b/sound/soc/mediatek/mt8188/mt8188-afe-clk.c
-> @@ -58,6 +58,14 @@ static const char *aud_clks[MT8188_CLK_NUM] = {
->   	[MT8188_CLK_AUD_ADC] = "aud_adc",
->   	[MT8188_CLK_AUD_DAC_HIRES] = "aud_dac_hires",
->   	[MT8188_CLK_AUD_A1SYS_HP] = "aud_a1sys_hp",
-> +	[MT8188_CLK_AUD_AFE_DMIC1] = "aud_afe_dmic1",
-> +	[MT8188_CLK_AUD_AFE_DMIC2] = "aud_afe_dmic2",
-> +	[MT8188_CLK_AUD_AFE_DMIC3] = "aud_afe_dmic3",
-> +	[MT8188_CLK_AUD_AFE_DMIC4] = "aud_afe_dmic4",
-> +	[MT8188_CLK_AUD_DMIC_HIRES1] = "aud_dmic_hires1",
-> +	[MT8188_CLK_AUD_DMIC_HIRES2] = "aud_dmic_hires2",
-> +	[MT8188_CLK_AUD_DMIC_HIRES3] = "aud_dmic_hires3",
-> +	[MT8188_CLK_AUD_DMIC_HIRES4] = "aud_dmic_hires4",
->   	[MT8188_CLK_AUD_ADC_HIRES] = "aud_adc_hires",
->   	[MT8188_CLK_AUD_I2SIN] = "aud_i2sin",
->   	[MT8188_CLK_AUD_TDM_IN] = "aud_tdm_in",
-> diff --git a/sound/soc/mediatek/mt8188/mt8188-afe-clk.h b/sound/soc/mediatek/mt8188/mt8188-afe-clk.h
-> index ec53c171c170a8b4b47900e63ef79d53641e9b12..68c46feb72271b950d4e538f63cedf524354147e 100644
-> --- a/sound/soc/mediatek/mt8188/mt8188-afe-clk.h
-> +++ b/sound/soc/mediatek/mt8188/mt8188-afe-clk.h
-> @@ -54,6 +54,14 @@ enum {
->   	MT8188_CLK_AUD_ADC,
->   	MT8188_CLK_AUD_DAC_HIRES,
->   	MT8188_CLK_AUD_A1SYS_HP,
-> +	MT8188_CLK_AUD_AFE_DMIC1,
-> +	MT8188_CLK_AUD_AFE_DMIC2,
-> +	MT8188_CLK_AUD_AFE_DMIC3,
-> +	MT8188_CLK_AUD_AFE_DMIC4,
-> +	MT8188_CLK_AUD_DMIC_HIRES1,
-> +	MT8188_CLK_AUD_DMIC_HIRES2,
-> +	MT8188_CLK_AUD_DMIC_HIRES3,
-> +	MT8188_CLK_AUD_DMIC_HIRES4,
->   	MT8188_CLK_AUD_ADC_HIRES,
-
-Following the comments from audsys, put those after CLK_AUD_ADC_HIRES.
-
-Cheers,
-Angelo
-
->   	MT8188_CLK_AUD_I2SIN,
->   	MT8188_CLK_AUD_TDM_IN,
-> 
-
+>  drivers/phy/freescale/phy-fsl-samsung-hdmi.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c b/drivers/phy/f=
+reescale/phy-fsl-samsung-hdmi.c
+> index 45004f598e4d..0ad766359cbe 100644
+> --- a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
+> +++ b/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
+> @@ -337,7 +337,7 @@ fsl_samsung_hdmi_phy_configure_pll_lock_det(struct fs=
+l_samsung_hdmi_phy *phy,
+>         /* Find int_pllclk speed */
+>         for (div =3D 0; div < 4; div++) {
+>                 int_pllclk =3D pclk / (1 << div);
+> -               if (int_pllclk < (50 * MHZ))
+> +               if (int_pllclk < (50 * MHZ) || div =3D=3D 3)
+>                         break;
+>         }
+>
+> --
+> 2.48.1
+>
 
