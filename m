@@ -1,167 +1,120 @@
-Return-Path: <linux-kernel+bounces-521766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32B55A3C210
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:25:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9910A3C217
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:27:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F63116CA39
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:25:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68CA31891E42
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:25:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD3CE1EDA1A;
-	Wed, 19 Feb 2025 14:25:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gxzZeqmp"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F5701F2B90;
+	Wed, 19 Feb 2025 14:25:09 +0000 (UTC)
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73BF01DFE25
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 14:24:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9DA01F17EB
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 14:25:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739975100; cv=none; b=FML4zRA9dnEI/yzYGBgEErJs/PPIeWpCnvP2Wrd5DEzvYIDIvYfVFFaTyh32qn7LtBOXCNnQLdk4+GnFmXqDfqTNp+2wedHEEHJbznIsmD0ErHwHffMi9WhsOimwAm+2RwoEnRCC0Yyh3yx7+58AY97dGLlsGVa9RWpND4jwE+8=
+	t=1739975109; cv=none; b=KwL/tTVv3Yd+Iss3i7bN3F+cqCECHG4AQ8QY+1mV/dNBfmwQOUAA5w5IxDTbSdpMlTLSsbS74rI5UGA6cAxTXOLhjF6wnPQ8yoNc4WsyZaXTBxduPwGdkzgem/Kin+q4PowghUYfjhR/qzThcUGXMI7l5seysPZoRZjPqQJUJ4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739975100; c=relaxed/simple;
-	bh=NEpwjvWwd3zdH87q00QcMAth/YL8+NIAVMkbiMlaE5w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SK0fWu3jFEKMGD2dAP0JZ3elN0AY9hboi3TrmHpaeU6b2IZzeUV8CBM+KUARzRiwWB7AFkgARytWLc//Nb5hsVK7Ap34VePRKBdRph1vOE4KmpSz1AYwM+G43ZGIztj74B85p0X1BiGsydmaSZqcr+eJv8f/6m7VlSJ4iGEE4Pw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gxzZeqmp; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4399d14334aso5707135e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 06:24:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739975097; x=1740579897; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2OhlGluAjXb17F8YGQfin1m4bYC+4YIL3i7B/no4Yxo=;
-        b=gxzZeqmpYgX6f6aIFf2pbDuWbM5zwxs+Lo1LYslU89rkI3nbTup/TpHe8iB/Eib2f6
-         GtJiynh0gar4/zcsQXlaOO8i7cDiIZkKLZaj6uZtsfOQd3NgugjgmdKX3NDjwzBECeg/
-         W+JTZSBrWezCKsXZyPhbCy2qC4XSFiQdhozYdg2th9SgIBZyLI0fmo29T9bg2sP3nuDH
-         xCkbmVmJX94vLwdcY2WqxVlasOXCE8wkvfXI8y+9PMIquS6dtAaQg1RrpZdvSSZ/8Mqq
-         PRO6DDlLc1p1B3P20A5ImQZ6Qwe8Bxa6gF6fejF5b3nUgh2ZWIqinA+7YLd6YFDG5Ysl
-         JwLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739975097; x=1740579897;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2OhlGluAjXb17F8YGQfin1m4bYC+4YIL3i7B/no4Yxo=;
-        b=QmS1InXmzsBrZRr6q1pN8FWORR9XMAGAgL8bpVCB9MsEk5M4H3qnpjjZH4JODGi0qW
-         0x8mTye8bQLbxNrbmkmboFgwnrMZsuksjnN8uVXN5kcoS4SfPWIOzA6wXPKvkX8I8WDA
-         zv1wd0LoZwo/bLuN0EGHhh5crqte+XkFJkCHM7PQsobm0jRuyCaWgxdiNqsP1xQvUBm9
-         9eOHl8noVR1av8SGyE2mfQBWvaPbnTXjTtU/REwLEUQg02LwixTvMv9SSbwcy4VQudy1
-         MebhpPhp+Sd1bbUfk7ZMYo/J1TlmKaB0gnYLKK35u5mlhPuqHpA/UmDzXQdpi9vM6uaq
-         pTPQ==
-X-Gm-Message-State: AOJu0Yy/ZoWLnBCfwHLOLYFfElwxGKYycmJ/M2Cz+gUy8krpfYRSl7gx
-	Y3SoRFpe76lU5IKh2uGp68aQHq9xO2jI30zNIM5nXWk4JZtEyqWc
-X-Gm-Gg: ASbGncvIPyYwsJzCA0fFQ4a4sy12SmHKrh3n65PevQrClspf0FuoT340D0fV+SJQ33j
-	Kx9cx8A/h67GYXlPzhcJ/BOsvXjUNWxl7HmS4Oo04bkgvFCu1RbkIZDS3UtKEtl4ZtBMejviF2y
-	hnNhVsXNGX2v8XBR/AqJmpluJGmzex5iG8Gi8O5OA2RQDPyrj4xqIlGMyNkx3VuR5Nc5APgihjz
-	itF1gfmcU0Z7wNgxvYI17FtnP1n1Vo6vxCRdjOBuKSYV13No8Bl4FEKjxUlfsErKrg0jkYvDhkG
-	TDlnD/Ko3OBgwQgI
-X-Google-Smtp-Source: AGHT+IFRVNEisW/f14MpMOb3gWBHyE2+Pgpe6vOLOm5HWgt/KqZ5Xa02RMEhjsGEzDID9RoC34JmwQ==
-X-Received: by 2002:a05:600c:4f48:b0:439:8bb1:14b1 with SMTP id 5b1f17b1804b1-43999d91255mr46587815e9.11.1739975096579;
-        Wed, 19 Feb 2025 06:24:56 -0800 (PST)
-Received: from localhost ([194.120.133.72])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-38f258b410dsm17968582f8f.5.2025.02.19.06.24.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2025 06:24:56 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH] sched: add unlikey branch hints to several system calls
-Date: Wed, 19 Feb 2025 14:24:23 +0000
-Message-ID: <20250219142423.45516-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1739975109; c=relaxed/simple;
+	bh=ltI4g7nPmJeeGqiwBzK/MJgSPoL3ykRP0wBimvKDGws=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nVBkwXg8n5uqyDTAZFlofQFDXkpfdxWb1BkJL5PTz5OS0pQJvoyRJBmF7pvvcqW45qZbASBoPaBLycld4xbD2ihGeYO1fyktNDRET0YTcmK2UXUZm4kU/t2bI9I6wMsXGNp7mWoVbcTsNmPjrXQ4d1E8hmTOj7iT0O7dPO93tSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:47f6:a1ad:ad8e:b945])
+	by baptiste.telenet-ops.be with cmsmtp
+	id FSQw2E00557WCNj01SQwj5; Wed, 19 Feb 2025 15:24:58 +0100
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.97)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1tkl09-0000000B3Sy-2RlP;
+	Wed, 19 Feb 2025 15:24:56 +0100
+Received: from geert by rox.of.borg with local (Exim 4.97)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1tkl0S-0000000BaPR-105W;
+	Wed, 19 Feb 2025 15:24:56 +0100
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-serial@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] serial: sh-sci: Save and restore SCDL and SCCKS
+Date: Wed, 19 Feb 2025 15:24:54 +0100
+Message-ID: <20250219142454.2761556-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Adding an unlikely() hint on early error return paths improves the
-run-time performance of several sched related system calls.
+On (H)SCIF with a Baud Rate Generator for External Clock (BRG), there
+are multiple ways to configure the requested serial speed.  If firmware
+uses a different method than Linux, and if any debug info is printed
+after the Bit Rate Register (SCBRR) is restored, but before termios is
+reconfigured (which configures the alternative method), the system may
+lock-up during resume.
 
-Benchmarking on an i9-12900 shows the following per system call
-performance improvements:
+Fix this by saving and restoring the contents of the Frequency Division
+(DL) and Clock Select (CKS) registers as well.
 
-		       before     after     improvement
-sched_getattr          182.4ns    170.6ns      ~6.5%
-sched_setattr          284.3ns    267.6ns      ~5.9%
-sched_getparam         161.6ns    148.1ns      ~8.4%
-sched_setparam        1265.4ns   1227.6ns      ~3.0%
-sched_getscheduler     129.4ns    118.2ns      ~8.7%
-sched_setscheduler    1237.3ns   1216.7ns      ~1.7%
-
-Results are based on running 20 tests with turbo disabled (to reduce
-clock freq turbo changes), with 10 second run per test based on the
-number of system calls per second. The % standard deviation of the
-measurements for the 20 tests was 0.05% to 0.40%, so the results are
-reliable.
-
-Tested on kernel build with gcc 14.2.1
-
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Fixes: 22a6984c5b5df8ea ("serial: sh-sci: Update the suspend/resume support")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- kernel/sched/syscalls.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+This can be reproduced on e.g. Salvator-X(S) by enabling the debug
+print in sci_brg_calc(), and using s2ram with no_console_suspend.
+---
+ drivers/tty/serial/sh-sci.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/kernel/sched/syscalls.c b/kernel/sched/syscalls.c
-index 456d339be98f..9f40348f1dc7 100644
---- a/kernel/sched/syscalls.c
-+++ b/kernel/sched/syscalls.c
-@@ -875,7 +875,7 @@ do_sched_setscheduler(pid_t pid, int policy, struct sched_param __user *param)
- {
- 	struct sched_param lparam;
- 
--	if (!param || pid < 0)
-+	if (unlikely(!param || pid < 0))
- 		return -EINVAL;
- 	if (copy_from_user(&lparam, param, sizeof(struct sched_param)))
- 		return -EFAULT;
-@@ -984,7 +984,7 @@ SYSCALL_DEFINE3(sched_setattr, pid_t, pid, struct sched_attr __user *, uattr,
- 	struct sched_attr attr;
- 	int retval;
- 
--	if (!uattr || pid < 0 || flags)
-+	if (unlikely(!uattr || pid < 0 || flags))
- 		return -EINVAL;
- 
- 	retval = sched_copy_attr(uattr, &attr);
-@@ -1049,7 +1049,7 @@ SYSCALL_DEFINE2(sched_getparam, pid_t, pid, struct sched_param __user *, param)
- 	struct task_struct *p;
- 	int retval;
- 
--	if (!param || pid < 0)
-+	if (unlikely(!param || pid < 0))
- 		return -EINVAL;
- 
- 	scoped_guard (rcu) {
-@@ -1085,8 +1085,8 @@ SYSCALL_DEFINE4(sched_getattr, pid_t, pid, struct sched_attr __user *, uattr,
- 	struct task_struct *p;
- 	int retval;
- 
--	if (!uattr || pid < 0 || usize > PAGE_SIZE ||
--	    usize < SCHED_ATTR_SIZE_VER0 || flags)
-+	if (unlikely(!uattr || pid < 0 || usize > PAGE_SIZE ||
-+		      usize < SCHED_ATTR_SIZE_VER0 || flags))
- 		return -EINVAL;
- 
- 	scoped_guard (rcu) {
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index df6512c9c0ff28db..70f34b8a93888eb9 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -109,6 +109,8 @@ struct sci_suspend_regs {
+ 	u16 scscr;
+ 	u16 scfcr;
+ 	u16 scsptr;
++	u16 scdl;
++	u16 sccks;
+ 	u8 scbrr;
+ 	u8 semr;
+ };
+@@ -3571,6 +3573,10 @@ static void sci_console_save(struct sci_port *s)
+ 		regs->scfcr = sci_serial_in(port, SCFCR);
+ 	if (sci_getreg(port, SCSPTR)->size)
+ 		regs->scsptr = sci_serial_in(port, SCSPTR);
++	if (sci_getreg(port, SCDL)->size)
++		regs->scdl = sci_serial_in(port, SCDL);
++	if (sci_getreg(port, SCCKS)->size)
++		regs->sccks = sci_serial_in(port, SCCKS);
+ 	if (sci_getreg(port, SCBRR)->size)
+ 		regs->scbrr = sci_serial_in(port, SCBRR);
+ 	if (sci_getreg(port, SEMR)->size)
+@@ -3590,6 +3596,10 @@ static void sci_console_restore(struct sci_port *s)
+ 		sci_serial_out(port, SCFCR, regs->scfcr);
+ 	if (sci_getreg(port, SCSPTR)->size)
+ 		sci_serial_out(port, SCSPTR, regs->scsptr);
++	if (sci_getreg(port, SCDL)->size)
++		sci_serial_out(port, SCDL, regs->scdl);
++	if (sci_getreg(port, SCCKS)->size)
++		sci_serial_out(port, SCCKS, regs->sccks);
+ 	if (sci_getreg(port, SCBRR)->size)
+ 		sci_serial_out(port, SCBRR, regs->scbrr);
+ 	if (sci_getreg(port, SEMR)->size)
 -- 
-2.47.2
+2.43.0
 
 
