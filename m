@@ -1,199 +1,182 @@
-Return-Path: <linux-kernel+bounces-521584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 210B4A3BF95
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:13:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B31E4A3BF9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:14:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FC13179919
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:11:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 298BE188384F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:12:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A8641E8323;
-	Wed, 19 Feb 2025 13:11:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="e9lUC+XE"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2074.outbound.protection.outlook.com [40.107.92.74])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92E9C1E9B0B;
+	Wed, 19 Feb 2025 13:11:27 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E88541E2312;
-	Wed, 19 Feb 2025 13:11:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.74
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739970683; cv=fail; b=hmZdD1Z+NZ3w7iA4MWJEwxDiMyR6ChX+xtv5uh2T3V+JlYCg/8+ZvXHnyHErFGR9iLijhaimep2y4wsRCTuFPA0lW0gx3yG98RthYiiI6Ey9me+rY8UvOv6y/SSrqdPZlxSv3zJWR0f1wZ+SVtTtnbkQTONzlpHZoC1wT12+C/8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739970683; c=relaxed/simple;
-	bh=ro0vbjTZlLSHNpgErpZtpQBryLcDHoy0CM9BZrAd7hc=;
-	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID:Date; b=ZAshjEZ5tka6wkr0F3nEqKTaiaWphBIsX8ccTGIxTINaNBi+SlVtrQzcGkEGC68IWCfMunzbX7IVcIEiMYKhvqzyURlCpJG90iF18LDsyQYd0/mb2YmRc4fnwhxvOEbVZRvvFkleKjPApY31WY1Erf2A2waCcEIO9EXCPPKtp0E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=e9lUC+XE; arc=fail smtp.client-ip=40.107.92.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Xo5zAInVsv0pTsjueOEPTHuxYy1NWeHo7279tdE2HhrSL7YLap0P0ztMt6UaJLxF8Y5GRlXHmojT5yPGyxS1G+JrKxpDm06VYplNdlBFxDW+vEqSz2bRu9dAlIoQlorEj+s8cmJvYwhU/+Z3PpIVs8VSY80ORPPYtLb+h9HJQ+ofOstgieuvLwhSoG4qYHxY03L4qf3WekQQzcBfvzPb8M9UBgaDnQFBPhqb3PERNFLIw1ptFYUHalbPrFw+ZX5yRpABFts+B2P/nROPIYBHJjeMg4Lo+XMvumKpz3vD3HfSgOxMgOkLhCwQ+JI18iLTAVRyOZzDh09ZLkZ5l6GQHg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UN6KRCD6QY6zws9n/+2hBboZo93CxnknC+zOgc9gS8k=;
- b=cS3/Fy5ihjojSlSBjjFK/hBkroOazwmU6wbLk0h8Rez+FKzq4uCPYUefd81Cs3RZR+dHwQEk7jKlxzlHceiLeL7eqIS04ZpSPbnwzfp2tzsZ3ja04Qd3zbip6vpZ/S9PMj11wZV0iNCeN6Lhkb4AmkbwSyYUDLW+AvlexiVuiDkL2tub7d5YwEaUyGldYD7ixciSWRLgC6DoLn2NxFbG1RtVLL1mXj8wvt1jtqefqAtqtn4z3xqtCqhMpjgu8Qlf2UEOClhGblKKqitbjzSqTn0ryiunAd/xVxRe+Sp6WQVLW97uDtwYSj/7w3Ilem0gZCKqy7mmMQO4R97kXOUKeA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UN6KRCD6QY6zws9n/+2hBboZo93CxnknC+zOgc9gS8k=;
- b=e9lUC+XEX5ZKgO2NoMWE/BdRU1DbZgBVWPvfccxvTCGuMLiB71biO7zzn13hHKxlujS+od5M6A91iLPLZpixa0aT4HzOvNzVbl32+7N5ow4KayxxjJKQF5nje+KUzYxdPQxO/UozzkmBbmmQ5kf5iZlu2XmbO0RVsw3Tp9Z9Th6t7cz3N9P/+dPJWYV44o+FFa6yd0Rr+W1CCH6KFGwu5gZ45WRRty1wNECn3f97RWtLDX2bX7pAtccawLPB7lrK/XDLbahUT85klv67j9f/UH5O9h6r6eF+jAIs+858ixvK7ri1NnxbJoV6Zjbk8vERhjtkgW7fKdy/tnkb7y52IQ==
-Received: from BN9PR03CA0137.namprd03.prod.outlook.com (2603:10b6:408:fe::22)
- by DM6PR12MB4218.namprd12.prod.outlook.com (2603:10b6:5:21b::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.14; Wed, 19 Feb
- 2025 13:11:15 +0000
-Received: from BL6PEPF0001AB4E.namprd04.prod.outlook.com
- (2603:10b6:408:fe:cafe::d6) by BN9PR03CA0137.outlook.office365.com
- (2603:10b6:408:fe::22) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8445.19 via Frontend Transport; Wed,
- 19 Feb 2025 13:11:15 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BL6PEPF0001AB4E.mail.protection.outlook.com (10.167.242.72) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8466.11 via Frontend Transport; Wed, 19 Feb 2025 13:11:15 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 19 Feb
- 2025 05:10:58 -0800
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 19 Feb
- 2025 05:10:58 -0800
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Wed, 19 Feb 2025 05:10:57 -0800
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
-	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-	<rwarsow@gmx.de>, <conor@kernel.org>, <hargar@microsoft.com>,
-	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH 6.13 000/274] 6.13.4-rc1 review
-In-Reply-To: <20250219082609.533585153@linuxfoundation.org>
-References: <20250219082609.533585153@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC3FA1E5B97;
+	Wed, 19 Feb 2025 13:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739970687; cv=none; b=lI3lCvs2R3g3hddNWzNVZK8OMxHrRcd5e4zdker6FF3OgIiRBXyrCxEp0GzwEp6XCc/JPQQ455ITrFTKkqqTcASILKwPlLJ46eYNdgUzpihG8hz5/Z7M6+DhczKaUceYZuRTqWvaLCDzxkSOlbTfihV/mCSEe9A6dat8GKdijb8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739970687; c=relaxed/simple;
+	bh=IZPWOWfdVpOQpOW8h2ZxKykyu2r3t9RE7R/ymrdQ8Ko=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=fYaKmQV/s+sEin1wVp948mCtH8OjHMyGDtQ6YdhpqpBirBa7P+U75dmCLanUlfQ3/MnSpBkSPUmzN4odQpAVUTAauo8qquf3nnruM/FD4tafUFh/LE88wbpsocHGsWQdoyId2vm2jXWJFgc1Lu0mi30w2O/hB1DMy9714Ywktgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4YycBN5xsNzkXPk;
+	Wed, 19 Feb 2025 21:07:40 +0800 (CST)
+Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1C38C1402CF;
+	Wed, 19 Feb 2025 21:11:21 +0800 (CST)
+Received: from kwepemn100006.china.huawei.com (7.202.194.109) by
+ dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 19 Feb 2025 21:11:20 +0800
+Received: from [10.174.176.245] (10.174.176.245) by
+ kwepemn100006.china.huawei.com (7.202.194.109) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 19 Feb 2025 21:11:19 +0800
+Message-ID: <5fa8fc14-b67b-4da1-ac8e-339fd3e536c2@huawei.com>
+Date: Wed, 19 Feb 2025 21:11:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <8e95a8de-8c16-4119-9a8e-0475bc119d84@rnnvmail204.nvidia.com>
-Date: Wed, 19 Feb 2025 05:10:57 -0800
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB4E:EE_|DM6PR12MB4218:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6af7c693-3949-4781-547b-08dd50e6e3f2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|36860700013|1800799024|82310400026|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bnpkdnFDa2xJY3IxSldhdHk0ODNvUDEreU04RGNaeHJMNzBiVTI0Q01GcGFJ?=
- =?utf-8?B?R0pDUFRIL003T2dieStLSUVBWXFXRUh2SUp0a2RaTFFiOG1DTzZHZE5lcWto?=
- =?utf-8?B?SytyZHZEWFV2MGl4MjVNeDEvODRRdGF1K3RSQlk0bnU1UFFiYjR6WWphQ1Nx?=
- =?utf-8?B?VE9ic3BkdlMzZU1zb1lLSHNub0VkT2lJZ3NNU1ArRjRCN3Jrd1QrNFZvVEJN?=
- =?utf-8?B?MDU5WDZiNjlXZGdhT0MxenZLZ1RiaklWakJiVHA2UTJjYVZySkw3czEyZzN6?=
- =?utf-8?B?dWVlb3AwKzJxYmZBSlhxZG1qd3VFZkJZY2UvaGVNekZBMGtXNEFMVUU3TXhG?=
- =?utf-8?B?WWRzT0dXd0pYR3V6WGtheFZHZVdYbXBUdTNsNG40ZWxKaXcySC9MZWZHbG5U?=
- =?utf-8?B?Yy9kdEFnTkM0TXV2S2d2VE5YSVdjalRzYkZBWnhQSk95OHZCNHYraDBDcUpj?=
- =?utf-8?B?bktWN2hQZFJGYTdMTzZqdHNrTlZTZjZudTV3NE1ESExWb09sZjJsSU84bEdK?=
- =?utf-8?B?eVpOY0ZjQlRFcTVUcHVKMXdnNmdPSmY1QndSekxoc25LRTFRQzJITmErTHVR?=
- =?utf-8?B?a2s2UmJvRzc1cktlZTZyQnZyZU5WYUdveVBQNWNNMmNONXB3cFFDbkowWjZ3?=
- =?utf-8?B?RlFFTUdFMHdiT2Q4Qi9aa29kUHdFQ0NRamlPNzg3dHlmaDFBNkV6N0dONU85?=
- =?utf-8?B?VEp2SDVENkgwbGF6ZHhMNlllT0dQTE9SbUZ3Sk1JUi9QNEpwYWoxeEptejgw?=
- =?utf-8?B?dnJXSEZ4SWRuWGEvazU3ZXFkQTlVczNYYk9jSFRnallvYU1TWHdLYzBoMEEx?=
- =?utf-8?B?Vmk3ejlHNlptQzY0V2ZBVjhGbnQwZ0szb1BRV0FYdTkxTU9wNWpZcll3SUV5?=
- =?utf-8?B?K0E0SXBXQzZvdWlWQmI1K2ZBNDcvR2lJNm12UmxOaks4cDRhSDZib0Z2UG0w?=
- =?utf-8?B?WUxEQlY5VjEvc05Eb3BZL2lMOWFuc3RCK3BOc2dxNW41cVNaVUQwNFNwWmxr?=
- =?utf-8?B?cFZ6ampCQ2lXanhWOFZtMk1YQXMrUldCNDZzSXZ6a3BEWisxT2ROOEFpTzM1?=
- =?utf-8?B?eVF4Y1JmcmxJY2QwRlM2aC9URm51YUJJeHBSMEJtc2ZYdEZDUDhRUmtxRUx1?=
- =?utf-8?B?a2NaYXcwNU9FUnAxUkwxMHpxVzhoRE1jelhqZWNZc2plaTZDdDZkRExPd2lj?=
- =?utf-8?B?RlFYbVFRTzNVbHhMU3pZajcrRzJMaDlidDduNU5Tbm1qaWlacm1TdWV5RlNh?=
- =?utf-8?B?ZmJveHlHUWdqanpHR3ZlSTFMYStnZXpBTmJmc05xb0dNb1RBSUdsUmRXbWtv?=
- =?utf-8?B?OFJjTXpCOVp0VWpTazFEZm9HZU4wQWVOK3R2M2RheWVIcUJ2T3VVVGZQQ25L?=
- =?utf-8?B?MCtwNFhmUHRuL0I0QW40MUdobkkxK2phSzZWdUpURTdlZ3lCOGNEMXZMYnEy?=
- =?utf-8?B?VVhGQ3hRVHJUZ0Qwa3dtcTVyVy9TU0p0RkIrKzE0RnFhSFQrMTZvVWl5VENV?=
- =?utf-8?B?WGFtOFNJWVQ4cFB3Ynp6TTJ6RzZQcDNFV3hVdFYwbTg2TXFLVGtpWC9haWRu?=
- =?utf-8?B?SnpQTjZVUFV3ODJibFVYbnZ6T2lTQWdmM2JKRGh0THhHVGhNWXU1L24zbmZ3?=
- =?utf-8?B?K0VtcEsyeVZwSFcvV3I3MVNmWFgyWm0vWVNja1A0dGdEaUh2RHZLNVc0RDd3?=
- =?utf-8?B?cVpTRUd3WEVPcXVtVlNnWFF3RHcrR3FvRThmenRwSVFvZTh1SVF0ZU8xK2Z2?=
- =?utf-8?B?eTgrWFhEUnhhQXA4bWMwTHhzWm9hbG9DYlo1cEhaRm93QUJUcjJBWWErTUk1?=
- =?utf-8?B?dG81SEZpZnJLTzFzZVI5MUwzc1UwVTdwTW4yYlJGZk9HNE9ibllGSGtWUEls?=
- =?utf-8?B?Qm5maVAzeER4VXpkM3k0Q2hVWkN0cFRwY1E4WG1QTUdrK3dHRUZ1cG1UYzZI?=
- =?utf-8?B?YldmakNQYnY5RDdNYS9GbFc2TC9pNTFMZitFT0QzdmR5VHFhMWFDZkk5cWJ6?=
- =?utf-8?Q?VsJInj1BAALoP4S3TFnw8Levuf99Mg=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(376014)(36860700013)(1800799024)(82310400026)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2025 13:11:15.1456
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6af7c693-3949-4781-547b-08dd50e6e3f2
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF0001AB4E.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4218
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] tcp: Fix error ts_recent time during three-way
+ handshake
+To: Jason Xing <kerneljasonxing@gmail.com>
+CC: Eric Dumazet <edumazet@google.com>, <ncardwell@google.com>,
+	<kuniyu@amazon.com>, <davem@davemloft.net>, <dsahern@kernel.org>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250218105824.34511-1-wanghai38@huawei.com>
+ <CANn89iKF+LC_isruAAd+nyxgytr4LPeFTe9=ey0j=Xy5URMvkg@mail.gmail.com>
+ <f3b279ea-92c3-457f-915a-2f4963746838@huawei.com>
+ <CAL+tcoByx13C1Bk1E33C_TqhpXydNNMe=PF93-5daRQeUC=V7A@mail.gmail.com>
+Content-Language: en-US
+From: Wang Hai <wanghai38@huawei.com>
+In-Reply-To: <CAL+tcoByx13C1Bk1E33C_TqhpXydNNMe=PF93-5daRQeUC=V7A@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemn100006.china.huawei.com (7.202.194.109)
 
-On Wed, 19 Feb 2025 09:24:14 +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.13.4 release.
-> There are 274 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+
+
+On 2025/2/19 11:31, Jason Xing wrote:
+> On Wed, Feb 19, 2025 at 10:16 AM Wang Hai <wanghai38@huawei.com> wrote:
+>>
+>>
+>>
+>> On 2025/2/18 21:35, Eric Dumazet wrote:
+>>> On Tue, Feb 18, 2025 at 12:00 PM Wang Hai <wanghai38@huawei.com> wrote:
+>>>>
+>>>> If two ack packets from a connection enter tcp_check_req at the same time
+>>>> through different cpu, it may happen that req->ts_recent is updated with
+>>>> with a more recent time and the skb with an older time creates a new sock,
+>>>> which will cause the tcp_validate_incoming check to fail.
+>>>>
+>>>> cpu1                                cpu2
+>>>> tcp_check_req
+>>>>                                       tcp_check_req
+>>>> req->ts_recent = tmp_opt.rcv_tsval = t1
+>>>>                                       req->ts_recent = tmp_opt.rcv_tsval = t2
+>>>>
+>>>> newsk->ts_recent = req->ts_recent = t2 // t1 < t2
+>>>> tcp_child_process
+>>>> tcp_rcv_state_process
+>>>> tcp_validate_incoming
+>>>> tcp_paws_check
+>>>> if ((s32)(rx_opt->ts_recent - rx_opt->rcv_tsval) <= paws_win) // failed
+>>>>
+>>>> In tcp_check_req, restore ts_recent to this skb's to fix this bug.
+>>>>
+>>>> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+>>>> Signed-off-by: Wang Hai <wanghai38@huawei.com>
+>>>> ---
+>>>>    net/ipv4/tcp_minisocks.c | 4 ++++
+>>>>    1 file changed, 4 insertions(+)
+>>>>
+>>>> diff --git a/net/ipv4/tcp_minisocks.c b/net/ipv4/tcp_minisocks.c
+>>>> index b089b08e9617..0208455f9eb8 100644
+>>>> --- a/net/ipv4/tcp_minisocks.c
+>>>> +++ b/net/ipv4/tcp_minisocks.c
+>>>> @@ -878,6 +878,10 @@ struct sock *tcp_check_req(struct sock *sk, struct sk_buff *skb,
+>>>>           sock_rps_save_rxhash(child, skb);
+>>>>           tcp_synack_rtt_meas(child, req);
+>>>>           *req_stolen = !own_req;
+>>>> +       if (own_req && tcp_sk(child)->rx_opt.tstamp_ok &&
+>>>> +           unlikely(tcp_sk(child)->rx_opt.ts_recent != tmp_opt.rcv_tsval))
+>>>> +               tcp_sk(child)->rx_opt.ts_recent = tmp_opt.rcv_tsval;
+>>>> +
+>>>>           return inet_csk_complete_hashdance(sk, child, req, own_req);
+>>>
+>>> Have you seen the comment at line 818 ?
+>>>
+>>> /* TODO: We probably should defer ts_recent change once
+>>>    * we take ownership of @req.
+>>>    */
+>>>
+>>> Plan was clear and explained. Why implement something else (and buggy) ?
+>>>
+>> Hi Eric,
+>>
+>> Currently we have a real problem, so we want to solve it. This bug
+>> causes the upper layers to be unable to be notified to call accept after
+>> the successful three-way handshake.
+>>
+>> Skb from cpu1 that fails at tcp_paws_check (which it could have
+>> succeeded) will not be able to enter the TCP_ESTABLISHED state, and
+>> therefore parent->sk_data_ready(parent) will not be triggered, and skb
+>> from cpu2 can complete the three-way handshake, but there is also no way
+>> to call parent->sk_data_ready(parent) to notify the upper layer, which
+>> will result
+>> in the upper layer not being able to sense and call accept to obtain the
+>> nsk.
+>>
+>> cpu1                                cpu2
+>> tcp_check_req
+>>                                       tcp_check_req
+>> req->ts_recent = tmp_opt.rcv_tsval = t1
+>>                                       req->ts_recent=tmp_opt.rcv_tsval= t2
+>>
+>> newsk->ts_recent = req->ts_recent = t2 // t1 < t2
+>> tcp_child_process
+>>    tcp_rcv_state_process
+>>     tcp_validate_incoming
+>>      tcp_paws_check // failed
+>>    parent->sk_data_ready(parent); // will not be called
+>>                                       tcp_v4_do_rcv
+>>                                       tcp_rcv_state_process // Complete the three-way handshake
+>>                                                                                                          // missing parent->sk_data_ready(parent);
 > 
-> Responses should be made by Fri, 21 Feb 2025 08:25:11 +0000.
-> Anything received after that time might be too late.
+> IIUC, the ack received from cpu1 triggered calling
+> inet_csk_complete_hashdance() so its state transited from
+> TCP_NEW_SYN_RECV to TCP_SYN_RECV, right? If so, the reason why not
+> call sk_data_ready() if the skb entered into tcp_child_process() is
+> that its state failed to transit to TCP_ESTABLISHED?
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.13.4-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.13.y
-> and the diffstat can be found below.
+Yes, because it didn't switch to TCP_ESTABLISHED
+> Here is another question. How did the skb on the right side enter into
+> tcp_v4_do_rcv() after entering tcp_check_req() if the state of sk
+> which the skb belongs to is TCP_NEW_SYN_RECV? Could you elaborate more
+> on this point?
+Since cpu1 successfully created the child sock, cpu2 will return
+null in tcp_check_req and req_stolen is set to true, so that it will
+subsequently go to 'goto lookup' to re-process the packet, and at
+this point, sk->sk_state is already in TCP_SYN_RECV state, and then
+then tcp_v4_do_rcv is called.
 > 
-> thanks,
-> 
-> greg k-h
+> Thanks,
+> Jason
 
-Failures detected for Tegra ...
-
-Test results for stable-v6.13:
-    10 builds:	10 pass, 0 fail
-    26 boots:	26 pass, 0 fail
-    116 tests:	115 pass, 1 fail
-
-Linux version:	6.13.4-rc1-gdf042386d398
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
-
-Test failures:	tegra186-p2771-0000: pm-system-suspend.sh
-
-
-Jon
 
