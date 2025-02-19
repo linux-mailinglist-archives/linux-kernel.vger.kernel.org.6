@@ -1,94 +1,64 @@
-Return-Path: <linux-kernel+bounces-521023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6116A3B2D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:52:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5153A3B2F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:59:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD8A77A4C16
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:51:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCCA73ACABA
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:59:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5A091C1AB4;
-	Wed, 19 Feb 2025 07:52:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F0C61C4A24;
+	Wed, 19 Feb 2025 07:58:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="rl2zTfwK";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="sWHwxNoj";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="cDEB3+Uh";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="NGK7xgbS"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="qrofjjdI"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE64E1805A
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 07:52:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCB731C3029;
+	Wed, 19 Feb 2025 07:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739951568; cv=none; b=g91oeVvtmTC5uJ4t1Lbwnh1RKgbGtIFRrp37GMizL8879ZPBW8Ah9N0J0w61Jqt6+01RjwiRf9P114DPJEFGPqXZJ75kPV2X4QiOZJ7SxH7ECfnmotPLI1pb3RsG6k4e328ShRPnFS9X63eZISOfLulgjSv90YoQ8z7aVjKH5Og=
+	t=1739951919; cv=none; b=p3YrGsyuMC1vmv1jQHm2kQirlpn29zcBG8O0XvcOfeL1i5KWVCkHR7El0H9WoHtgK2DCWzGNTsgdQ+7vr81yQQu1DChmGQiB8EXYFuYkdfVbibaCsVZs7qDLV6+/p/FWjiev7nNq5msUzV7XxNaHGobbup8VH/u5IZ3Ib5HvE2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739951568; c=relaxed/simple;
-	bh=/Wl17ej4seCN6jJH4LB4uhpDCl6l3mssQJPq7D5B9Os=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ktfHEvCaNuOFWhC1ioujYiABdP3u7OuKJ8t7Dh+UwJpMB1LqbAjtsEY79VgGRRJoTczO5NJwXyCN2aN0VsGjV1MvyLxQbNpDIDLySRM9i9FNDmvzrXIzfLJGPtzTEGW+CY2HT3on6WUgXE1dckprEl4i+6LkYICNHkzts/UEhZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=fail smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=rl2zTfwK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=sWHwxNoj; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=cDEB3+Uh; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=NGK7xgbS; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id D34A12006C;
-	Wed, 19 Feb 2025 07:52:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739951565; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=NiBKhZsiY2b98hm7xTMwglv3qnpUo93r3aqWRvunnls=;
-	b=rl2zTfwK7L//C50LZAOckVuSlGUHQCKwddZsmHWgnIrMV1LD4wT8ia1CgkzjAIGqFBAvAy
-	/3Nyib6O99LmxsjlONctwSsN28/zAVDT/Mo1mZeOD9Tj0Lys3Xu1B0BxJyfo7B7KsrE4ES
-	owY1dQEx7zEU0qRZchJY+gaXVDIMfU8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739951565;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=NiBKhZsiY2b98hm7xTMwglv3qnpUo93r3aqWRvunnls=;
-	b=sWHwxNojIHjRCT3wbN5wB4F0P3IsdRaNBOcKXi7syl3XIEWSRDLuopN4hgJZno2FirDakP
-	pmW/VVXsz7ELgDBA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739951564; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=NiBKhZsiY2b98hm7xTMwglv3qnpUo93r3aqWRvunnls=;
-	b=cDEB3+Uhv/t1sHq2C4XjwvzQSk4db3C/HNn6nIeIyNXsUg8wn2a0q9Ea+/MhowiSBdxxIi
-	68y1QzWRZWGBHCtDIzQM+xcv6/f2UxEti9z9JUcW1z5L+K6/TRoymPmZuA767/LNvKZ44q
-	4La0d2P0zh9kAGRKqMtQoiRxBuTVyVQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739951564;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=NiBKhZsiY2b98hm7xTMwglv3qnpUo93r3aqWRvunnls=;
-	b=NGK7xgbSn9DCY/onvN1GFyQIbPR0itWfJODohO23f7Lefc3k63/emgMUoNyornwO8AnHfK
-	MY5gSFQwxw6qQ5Aw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9014E13806;
-	Wed, 19 Feb 2025 07:52:44 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id owKgIcyNtWcFEgAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Wed, 19 Feb 2025 07:52:44 +0000
-Message-ID: <a88a6e48-8c55-410b-b553-8942dac3608a@suse.de>
-Date: Wed, 19 Feb 2025 08:52:44 +0100
+	s=arc-20240116; t=1739951919; c=relaxed/simple;
+	bh=a2LKr/WX/y4caLjmK7olEcFpRmLm/fSiSAHkL/FlYyA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=CQVRuaw5ELgK8H0hDpTXss+FdKej1ZQ1BH3X+XomnrXsid6BhX8QicZoalfG23cv1btKvK2Gwm/T0julSaCCW1uS0Va1V5NBu9KczByMLGgDVMdJNNQo5ztS3DIKtio0BKrNsopOpAnDMtJDv52oNxdLvFjO/rKfir6KyNES034=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=qrofjjdI; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51J4sKAc024666;
+	Wed, 19 Feb 2025 08:58:07 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	3bBJS43pvAXXysK32UqQ0DdYgo9OZo0TPX7SlCS/zbM=; b=qrofjjdIBjqjCtpb
+	eXbj5Hjt98R97RAEso4phh094s2/DGVfjhBk9wOuOFTSjnzyQ5GMt39Hca+VHeI6
+	+6F0WqQwbljBlbKo6DUQxa/d/zVrSybRz6RwlkD5sEiYRUcSqf2+q0IpeANXZe5f
+	5hY7cOmdN5AmovgJE1ctS/U1beNebFZVyMVEBLJlkbcBdN1b1j6Kr1HwCqdLNL3G
+	tkHAg7150dqPbTeV4UPFl9zR2pqPNubn7WuB4ZDo12AdH8eiT26dfvvsUeSbKdYG
+	jW57vPUdO4wnQQmlNx1vp4EzwNmWoNEjqdGVx+p5yoLyseOiK4Xw06QG7HfllL7G
+	jptJmA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 44vyyn25qe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Feb 2025 08:58:07 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id BB48C40053;
+	Wed, 19 Feb 2025 08:56:46 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 0D4984026F8;
+	Wed, 19 Feb 2025 08:52:52 +0100 (CET)
+Received: from [10.48.87.62] (10.48.87.62) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 19 Feb
+ 2025 08:52:51 +0100
+Message-ID: <df73976e-12a5-4af9-b312-503ae68edcfc@foss.st.com>
+Date: Wed, 19 Feb 2025 08:52:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,233 +66,78 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] drm/tiny: add driver for Apple Touch Bars in x86 Macs
-To: Aditya Garg <gargaditya08@live.com>
-Cc: "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
- "mripard@kernel.org" <mripard@kernel.org>,
- "airlied@gmail.com" <airlied@gmail.com>, "simona@ffwll.ch"
- <simona@ffwll.ch>, Kerem Karabay <kekrby@gmail.com>,
- Atharva Tiwari <evepolonium@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-References: <4BAFD886-84E0-4C4C-94B3-90BF911ED0E7@live.com>
- <F16BB9EB-632C-4BC4-A8BA-492BF32E43C1@live.com>
- <d9304ed0-911b-4877-a15c-981b3335bbf9@suse.de>
- <8051F1F7-C1B0-428E-BE12-353C242EA650@live.com>
+Subject: Re: [PATCH v4 0/8] Add STM32MP25 SPI NOR support
+To: Rob Herring <robh@kernel.org>
+CC: Mark Brown <broonie@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas
+	<catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, <linux-spi@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <christophe.kerello@foss.st.com>
+References: <20250218130000.87889-1-patrice.chotard@foss.st.com>
+ <20250218212138.GA1092771-robh@kernel.org>
 Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <8051F1F7-C1B0-428E-BE12-353C242EA650@live.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.997];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,live.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[live.com];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux.intel.com,kernel.org,gmail.com,ffwll.ch,vger.kernel.org,lists.freedesktop.org];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[bootlin.com:url,suse.de:mid]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+From: Patrice CHOTARD <patrice.chotard@foss.st.com>
+In-Reply-To: <20250218212138.GA1092771-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-19_03,2025-02-18_01,2024-11-22_01
 
-Hi
 
-Am 18.02.25 um 14:49 schrieb Aditya Garg:
-[...]
->> This code runs in the middle of the atomic update. It's then too late to do error handling. If these allocs fail, the display hardware will remain in undefined state.
+
+On 2/18/25 22:21, Rob Herring wrote:
+> On Tue, Feb 18, 2025 at 01:59:52PM +0100, patrice.chotard@foss.st.com wrote:
+>> From: Patrice Chotard <patrice.chotard@foss.st.com>
 >>
->> It is much preferable to allocate this memory in the atomic_check. To do so, you need a plane-state structure. Allocate the memory for request and response in the plane's atomic-check helper. If that fails, you can return an error there. Store the pointers and the request size in your plane-state structure and fetch them here.  The memory should later be freed in the plane's destroy callback. For an example, see how the ssd130x driver treats a buffer for a similar use case at [1].
+>> This series adds SPI NOR support for STM32MP25 SoCs from STMicroelectronics.
 >>
->> [1] https://elixir.bootlin.com/linux/v6.13.2/source/drivers/gpu/drm/solomon/ssd130x.c#L1136
-> I’ve tried these changes, seem to be breaking the driver:
->
-> —>8—
->  From 16c920cabf65ec664663ebe1611c0ccf6e81de4a Mon Sep 17 00:00:00 2001
-> From: Aditya Garg <gargaditya08@live.com>
-> Date: Tue, 18 Feb 2025 18:54:10 +0530
-> Subject: [PATCH] better error handling
->
-> ---
->   .../apple-touchbar-advanced-0.1/appletbdrm.c  | 68 +++++++++++++------
->   1 file changed, 46 insertions(+), 22 deletions(-)
->
-> diff --git a/usr/src/apple-touchbar-advanced-0.1/appletbdrm.c b/usr/src/apple-touchbar-advanced-0.1/appletbdrm.c
-> index f2d9113..cb13b36 100644
-> --- a/usr/src/apple-touchbar-advanced-0.1/appletbdrm.c
-> +++ b/usr/src/apple-touchbar-advanced-0.1/appletbdrm.c
-> @@ -133,6 +133,17 @@ struct appletbdrm_device {
->   	struct drm_encoder encoder;
->   };
->   
-> +struct appletbdrm_plane_state {
-> +	struct drm_shadow_plane_state base;
-> +	u8 *request_buffer;
-> +	u8 *response_buffer;
-> +};
-> +
-> +static inline struct appletbdrm_plane_state *to_appletbdrm_plane_state(struct drm_plane_state *state)
-> +{
-> +	return container_of(state, struct appletbdrm_plane_state, base.base);
-> +}
-> +
->   static int appletbdrm_send_request(struct appletbdrm_device *adev,
->   				   struct appletbdrm_msg_request_header *request, size_t size)
->   {
-> @@ -311,24 +322,6 @@ static int appletbdrm_flush_damage(struct appletbdrm_device *adev,
->   	if (!frames_size)
->   		return 0;
->   
-> -	request_size = ALIGN(sizeof(*request) + frames_size + sizeof(*footer), 16);
-> -
-> -	request = kzalloc(request_size, GFP_KERNEL);
-> -	if (!request)
-> -		return -ENOMEM;
-> -
-> -	response = kzalloc(sizeof(*response), GFP_KERNEL);
-> -	if (!response) {
-> -		ret = -ENOMEM;
-> -		goto free_request;
-> -	}
-> -
-> -	ret = drm_gem_fb_begin_cpu_access(fb, DMA_FROM_DEVICE);
-> -	if (ret) {
-> -		drm_err(drm, "Failed to start CPU framebuffer access (%d)\n", ret);
-> -		goto free_response;
-> -	}
-> -
->   	request->header.unk_00 = cpu_to_le16(2);
->   	request->header.unk_02 = cpu_to_le16(0x12);
->   	request->header.unk_04 = cpu_to_le32(9);
-> @@ -389,10 +382,6 @@ static int appletbdrm_flush_damage(struct appletbdrm_device *adev,
->   
->   end_fb_cpu_access:
->   	drm_gem_fb_end_cpu_access(fb, DMA_FROM_DEVICE);
-> -free_response:
-> -	kfree(response);
-> -free_request:
-> -	kfree(request);
->   
->   	return ret;
->   }
-> @@ -415,6 +404,15 @@ static int appletbdrm_primary_plane_helper_atomic_check(struct drm_plane *plane,
->   	struct drm_plane_state *new_plane_state = drm_atomic_get_new_plane_state(state, plane);
->   	struct drm_crtc *new_crtc = new_plane_state->crtc;
->   	struct drm_crtc_state *new_crtc_state = NULL;
-> +	struct appletbdrm_plane_state *appletbdrm_state = to_appletbdrm_plane_state(new_plane_state);
-> +	struct drm_device *drm = plane->dev;
-> +	struct drm_plane_state *plane_state = plane->state;
-> +	struct appletbdrm_fb_request_response *response;
-> +	struct appletbdrm_fb_request_footer *footer;
-> +	struct drm_framebuffer *fb = plane_state->fb;
-> +	struct appletbdrm_fb_request *request;
-> +	size_t frames_size = 0;
-> +	size_t request_size;
->   	int ret;
->   
->   	if (new_crtc)
-> @@ -429,6 +427,22 @@ static int appletbdrm_primary_plane_helper_atomic_check(struct drm_plane *plane,
->   	else if (!new_plane_state->visible)
->   		return 0;
->   
-> +	request_size = ALIGN(sizeof(*request) + frames_size + sizeof(*footer), 16);
-> +
-> +	appletbdrm_state->request_buffer = kzalloc(request_size, GFP_KERNEL);
-> +	if (!request)
-> +		return -ENOMEM;
-> +
-> +	appletbdrm_state->response_buffer = kzalloc(sizeof(*response), GFP_KERNEL);
-> +	if (!response) {
-> +		ret = -ENOMEM;
-> +	}
-> +
-> +	ret = drm_gem_fb_begin_cpu_access(fb, DMA_FROM_DEVICE);
-> +	if (ret) {
-> +		drm_err(drm, "Failed to start CPU framebuffer access (%d)\n", ret);
-> +	}
-> +
->   	return 0;
->   }
->   
-> @@ -464,6 +478,15 @@ static void appletbdrm_primary_plane_helper_atomic_disable(struct drm_plane *pla
->   	drm_dev_exit(idx);
->   }
->   
-> +static void appletbdrm_primary_plane_destroy_state(struct drm_plane *plane,
-> +						struct drm_plane_state *state)
-> +{
-> +	struct appletbdrm_plane_state *appletbdrm_state = to_appletbdrm_plane_state(state);
-> +
-> +	kfree(appletbdrm_state->request_buffer);
-> +	kfree(appletbdrm_state->response_buffer);
-> +}
-> +
->   static const struct drm_plane_helper_funcs appletbdrm_primary_plane_helper_funcs = {
->   	DRM_GEM_SHADOW_PLANE_HELPER_FUNCS,
->   	.atomic_check = appletbdrm_primary_plane_helper_atomic_check,
-> @@ -474,6 +497,7 @@ static const struct drm_plane_helper_funcs appletbdrm_primary_plane_helper_funcs
->   static const struct drm_plane_funcs appletbdrm_primary_plane_funcs = {
->   	.update_plane = drm_atomic_helper_update_plane,
->   	.disable_plane = drm_atomic_helper_disable_plane,
-> +	.atomic_destroy_state = appletbdrm_primary_plane_destroy_state,
->   	.destroy = drm_plane_cleanup,
->   	DRM_GEM_SHADOW_PLANE_FUNCS,
+>> On STM32MP25 SoCs family, an Octo Memory Manager block manages the muxing,
+>> the memory area split, the chip select override and the time constraint 
+>> between its 2 Octo SPI children.
+>>
+>> Due to these depedencies, this series adds support for: 
+>>   - Octo Memory Manager driver.
+>>   - Octo SPI driver.
+>>   - yaml schema for Octo Memory Manager and Octo SPI drivers.
+>>
+>> The device tree files adds Octo Memory Manager and its 2 associated Octo 
+>> SPI chidren in stm32mp251.dtsi and adds SPI NOR support in stm32mp257f-ev1
+>> board.
+>>
+>> Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
+>>
+>> Changes in v4:
+>>   - Add default value requested by Krzysztof for st,omm-req2ack-ns, 
+>>     st,omm-cssel-ovr and st,omm-mux properties in st,stm32mp25-omm.yaml
+>>   - Remove constraint in free form test for st,omm-mux property.
+>>   - Fix drivers/memory/Kconfig by replacing TEST_COMPILE_ by COMPILE_TEST.
+>>   - Fix SPDX-License-Identifier for stm32-omm.c.
+>>   - Fix Kernel test robot by fixing dev_err() format in stm32-omm.c.
+>>   - Add missing pm_runtime_disable() in the error handling path in
+>>     stm32-omm.c.
+>>   - Replace an int by an unsigned int in stm32-omm.c
+>>   - Remove uneeded "," after terminator in stm32-omm.c.
+>>   - Update cover letter description to explain dependecies between 
+>>     Octo Memory Manager and its 2 Octo SPI children.
+>>   - Add Reviewed-by Krzysztof Kozlowski for patch 1 and 3.
+> 
+> No, you didn't.
 
-You don't allocate struct appletbdrm_plane_state. Instead of this macro, 
-you also have to set your own helpers for the plane's .reset and 
-.atomic_duplicate_state There's again example code in the ssd130x driver.
+Argh, sorry, i will send a v5
 
-Best regards
-Thomas
-
->   };
-
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
+Patrice
 
