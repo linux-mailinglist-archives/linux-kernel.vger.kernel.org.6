@@ -1,320 +1,131 @@
-Return-Path: <linux-kernel+bounces-521059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98CD3A3B36E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:15:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C8D8A3B377
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:19:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94C5518922C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:15:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 595B43A7D6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:18:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA0911C5D72;
-	Wed, 19 Feb 2025 08:14:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 679A91BC9FB;
+	Wed, 19 Feb 2025 08:18:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yXZKsptq"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="AY4pmSJr";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="KAtWtUNt"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 788421C54B3
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 08:14:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D3691925AF;
+	Wed, 19 Feb 2025 08:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739952889; cv=none; b=IX/SH180r/3DTPc3oEfUocAQkT0+dr6rNRoFzbtMraRMqFzgIERtjwRg92mvdZSD4JBniHSDtZsGycmpDq0dgll+BBLQCbhH/HO41OebbBFWct0VqWbzFOGVxCeK6tb52hg2cAwV6E2OmCqEr5YlvHPLnAO9yQFr9qlA6CBZLZU=
+	t=1739953093; cv=none; b=IqhXRJlkUS300eX2tePWCeJxzox0QCj1TRq8OMbc7BXSkPevuM72ZiDER86evqZ7usEysJk2FD8EVSdi7ECzimZ9nuzw8JuqVYfKwLnuCrx5geAKjuPCGcsleYxUwz4hDwFf2zMxso9PDF4G5MCSUs9qzY4zFRRod2kWCL81XQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739952889; c=relaxed/simple;
-	bh=aOW+Yf0535bZ0SI0BsWWcmOtsx/1+kasCAcIMhgpuLQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sJIYxg/+4yCE2EoZD6htQLuQbdrp6g2JOD2mwqzvqFZX1oDgCzGJVF85dYY9YWV7pyNVhOnRpGJp7FO/JQlAJPbRn0VGKpGEofHM6A2EqOPw5SF0SOLr5IFk3iLWCgf1iKdGN+Je4DEk3r4olfdPBswpD3BRnCJ5V6MEpPywuAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yXZKsptq; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-219f8263ae0so117679395ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 00:14:43 -0800 (PST)
+	s=arc-20240116; t=1739953093; c=relaxed/simple;
+	bh=vpAIVpzd9OWt29yPFoglHU6zTWF9chogs2LZMYQsgHQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OtPBxZfqdT6RM6Hh8Q/vjWW+x2JAyYE2J6Ck6qSi9PQTUxfUTcZfc/8zDt4u75JUhoKy/w4IY+jcJIgyCKPrZMI4MZXFeCqEgi6tsHdbxxL6xoGtt4LnjExnL7f21UNKk8PihlMCjAfg/Pn4gWoOPrp3zUrYQIM5fL8klozdTLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=AY4pmSJr; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=KAtWtUNt reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739952883; x=1740557683; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=MsT69ZOLMdFZIvD1YxUdjLqp4nB+JO3UK8B0xhjxIJ4=;
-        b=yXZKsptqDyWGo4CC4vHOOH2FUo+i31JbNYKU9WH3lOvs5UUQUG2bYyLk8gSvDUEAzV
-         WPSmslSmy/BWEoMftjV62Js4hHJhftjW3+QO04XOVTKX4DP6ByUe7q2qnIu9FXDN46tR
-         2dEMj1sWLgqLalbNvZ1aDSOv3Ta7B+imPbkzuFUkvBiaXRzDmZ0FqPchr8g5Vwkz9qgV
-         2uCP8ZtQjVg1K4N8PqesACMUHA81NwXg+SgwvVFTup94lBl42MYGPvGLljisiHLlP3Ct
-         GKTBBCmnntBF/xwe+VpYypAHbAFI0fcWJO7sQHPGb+lw2nHEj7xkipaCHzbxQb5TvQpf
-         4P8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739952883; x=1740557683;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MsT69ZOLMdFZIvD1YxUdjLqp4nB+JO3UK8B0xhjxIJ4=;
-        b=kwwLsCNkQJAt3WgH/LN9Q4zFJr/qRIkiQPe3xWsVhLs1VoNXWyV7ny0hHOLJTdWKhh
-         Ys8CXRJ+fsVmB7VSZ9rf96b/hdRdtTsM7q/dF2SNgCVn1cLg/cHYsXwwddr60BWeVWtp
-         YTy7r0VyGXhBIf88xxjrgpULZf2+isqHp01TGbSz+2GSbmT5Lp/hPfAU0Lg+Gh0pqRir
-         LTgBWxWeZsICdBgozBiL0Q8+SwxTch0tk1R6LX/vsVYz6T1mMHB/Sd8vjTN6X7Ui1BdJ
-         gwGCbsWVZrQnOzDrqFq3JZgjN6C5BYejFelIomo1tWvLBqc/IC7/5Z7cnfFs8RFt8V2A
-         EFdg==
-X-Forwarded-Encrypted: i=1; AJvYcCVN5T3ybvd4DEutPqJNCdaw4hHQaxNsX41++LrRiMxX+x0S6DRzv81QjdAaYZh0aHIV3BjkGplMpMiS/uA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDaYb32h9lf96C67EEc3wGrnDoZh+YzMGKfJhNyv1njrFKKH11
-	g+CaCf3CI79TWx9MMAhPpqLIdyZfJY7sRFGCC51tt3vGPj+tfJbD9ZaWpJOM3A==
-X-Gm-Gg: ASbGnctPy9ZxWUHAElgXEA5pjM+MTndu3rBfrQPIQPkiCFxzQbKytNaHPGFChKzIZn4
-	uEK8q135INPTMCu/ZoMwboGipvodFLa8xBK8WUfYJAHJvEZprg0g7aYFPwsz3bZvkG//f2+d4zL
-	ovLLi2V8oMd900x1dJt9XYWsSmMdtgger8o2oz6TKy+Ob264q0hCVazgmmVUiHqXzld8qgOMbC4
-	UGYVmbak59+La1dBuPqGWCHJ0tZTMPFUdKvSqIe6zhjqYpKdnUdzIqY06oPaQVXUtQJA/5JwpRa
-	nM+B/EHeobm6hWcYA4awaA1TzJo=
-X-Google-Smtp-Source: AGHT+IENOnfR6SSjOBhgQxo3L/XeWd+wkkORnG1gESsnoAjwgiA1eIzRjF76GYaTtPte8EUQzIdbFg==
-X-Received: by 2002:a17:903:1a2d:b0:220:c813:dfd1 with SMTP id d9443c01a7336-221040bd77bmr283520705ad.36.1739952882676;
-        Wed, 19 Feb 2025 00:14:42 -0800 (PST)
-Received: from thinkpad ([120.56.197.245])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22178514287sm4640175ad.175.2025.02.19.00.14.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2025 00:14:42 -0800 (PST)
-Date: Wed, 19 Feb 2025 13:44:36 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Shuai Xue <xueshuai@linux.alibaba.com>,
-	Jing Zhang <renyu.zj@linux.alibaba.com>,
-	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Shradha Todi <shradha.t@samsung.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 3/4] PCI: dwc: Add sysfs support for PTM
-Message-ID: <20250219081436.ivllsfctvjgtyu25@thinkpad>
-References: <20250218-pcie-qcom-ptm-v1-0-16d7e480d73e@linaro.org>
- <20250218-pcie-qcom-ptm-v1-3-16d7e480d73e@linaro.org>
- <qvkpasuxn54dpsvsq6vinuyjvnphvnvfcedqzvmhkpgbrgurvm@7e55l7rkkqo4>
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1739953088; x=1771489088;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=GEle0AMI9TZnPmLqLtWKOxCiEdnYwNG8Oa2g+WyN29o=;
+  b=AY4pmSJroVoZCN9zpxLvcprAkaVVLEx28OmnextWX3LTCgYwGVqv5lPr
+   vK68rtsnVcJMFavrSLG6hZuroccahx0ZGPY7n0wnhf6bpQJrwqxx16Jta
+   MhOtatA+e2Ha7IZpDc24zCainuPd5mCZnJ79KN45QXYnxYC3fQS2sSN57
+   8fyd+EIBQ5fCoA3wAGNLdjH46NxccE8DZPkL5Gp7ocI5nvLI1yZCsu+xr
+   vhMrVVM8yOin5fwfzjD+d+oaOrC9WGNkflQo5jcSJdos6ve35djdZBhFs
+   BI06Vdx2VmwpMLScLksIUQTV/bXY/VDzUvVEYRu0Tjmbbzur784YzrvgV
+   g==;
+X-CSE-ConnectionGUID: HKVTftLLQnC0kMdqN0dFGg==
+X-CSE-MsgGUID: xT5G+t3NRH2NJSZh7QtJ5A==
+X-IronPort-AV: E=Sophos;i="6.13,298,1732575600"; 
+   d="scan'208";a="41945124"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 19 Feb 2025 09:17:58 +0100
+X-CheckPoint: {67B593B6-18-C21CC984-D1047F1F}
+X-MAIL-CPID: C4A40FE5FEDCBC6ADCB4AA86A878E99E_5
+X-Control-Analysis: str=0001.0A002118.67B593B7.004A,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 552FD16CA0B;
+	Wed, 19 Feb 2025 09:17:52 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1739953074;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=GEle0AMI9TZnPmLqLtWKOxCiEdnYwNG8Oa2g+WyN29o=;
+	b=KAtWtUNtsuyZdaPlUXi9fjG4KmDJRl1KiiMc05jZGPB+ECUYwJjFMoseo5q+SsENHxLa2F
+	kkpWOLasZ9KLzvdBFL+E8Tb2SIFhV5rYt1AAJvhrr4cQfkhDiQW6Ir0DCcuNPP+TT/2rjS
+	PMsAlUtrjJAj/OeYQqtCxzvgiSvpEKuKZmZFutzYEuEwKujO6jGksMXoaPwj+moSEDMZxI
+	rCsf7oC/o0iyGfTH79a/vxMPsT0NKX97AilFPjQ240nA7Iwtx6rUs136DWQGy+A55u71J/
+	mvc/iJaYCQZR3Tcngki+7MPbv0doJEQXsOd+4sI46Vxt5US+vf60/GScwTSiSw==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+	linux@ew.tq-group.com,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/9] ARM: dts: TQMa6/6UL/7: DT cleanup
+Date: Wed, 19 Feb 2025 09:17:35 +0100
+Message-ID: <20250219081748.1181507-1-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <qvkpasuxn54dpsvsq6vinuyjvnphvnvfcedqzvmhkpgbrgurvm@7e55l7rkkqo4>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Tue, Feb 18, 2025 at 07:54:24PM +0200, Dmitry Baryshkov wrote:
-> On Tue, Feb 18, 2025 at 08:06:42PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
-> > From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > 
-> > Precision Time Management (PTM) mechanism defined in PCIe spec r6.0,
-> > sec 6.22 allows precise coordination of timing information across multiple
-> > components in a PCIe hierarchy with independent local time clocks.
-> > 
-> > While the PTM support itself is indicated by the presence of PTM Extended
-> > Capability structure, Synopsys Designware IPs expose the PTM context
-> > (timing information) through Vendor Specific Extended Capability (VSEC)
-> > registers.
-> > 
-> > Hence, add the sysfs support to expose the PTM context information to
-> > userspace from both PCIe RC and EP controllers. Below PTM context are
-> > exposed through sysfs:
-> > 
-> > PCIe RC
-> > =======
-> > 
-> > 1. PTM Local clock
-> > 2. PTM T2 timestamp
-> > 3. PTM T3 timestamp
-> > 4. PTM Context valid
-> > 
-> > PCIe EP
-> > =======
-> > 
-> > 1. PTM Local clock
-> > 2. PTM T1 timestamp
-> > 3. PTM T4 timestamp
-> > 4. PTM Master clock
-> > 5. PTM Context update
-> > 
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > ---
-> >  Documentation/ABI/testing/sysfs-platform-dwc-pcie  |  70 ++++++
-> >  MAINTAINERS                                        |   1 +
-> >  drivers/pci/controller/dwc/Makefile                |   2 +-
-> >  drivers/pci/controller/dwc/pcie-designware-ep.c    |   3 +
-> >  drivers/pci/controller/dwc/pcie-designware-host.c  |   4 +
-> >  drivers/pci/controller/dwc/pcie-designware-sysfs.c | 278 +++++++++++++++++++++
-> >  drivers/pci/controller/dwc/pcie-designware.c       |   6 +
-> >  drivers/pci/controller/dwc/pcie-designware.h       |  22 ++
-> >  include/linux/pcie-dwc.h                           |   8 +
-> >  9 files changed, 393 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/Documentation/ABI/testing/sysfs-platform-dwc-pcie b/Documentation/ABI/testing/sysfs-platform-dwc-pcie
-> > new file mode 100644
-> > index 000000000000..6b429108cd09
-> > --- /dev/null
-> > +++ b/Documentation/ABI/testing/sysfs-platform-dwc-pcie
-> 
-> Should be a class or just a ptm group in the PCIe controller device? How
-> generic are those attributes?
-> 
+Hi,
 
-Even though these are generic attributes, the way PTM support is exposed in
-kernel right now makes it harder to make these as generic attributes. These
-attributes are specific to RC/EP controllers and the generic PTM driver is for
-endpoint devices. Maybe I could think of exposing it for RC/EP controller
-drivers (not just DWC). But still then these would be exposed as a group under
-each platform device.
+this series addresses some DT issues for the TQMa6x, TQMa6ULx and TQMa7x
+series:
+* Ordering of nodes
+* Limiting PMIC rail voltage
+* Using PMIC rail instead of virtual regulator
+* Add fixed-partition node to "spi-nor" devices
+* Adding vcc-supply to "spi-nor" devices
 
-> > @@ -0,0 +1,70 @@
-> > +What:		/sys/devices/platform/*/dwc/ptm/ptm_local_clock
-> > +Date:		February 2025
-> > +Contact:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > +Description:
-> > +		(RO) PTM local clock in nanoseconds. Applicable for both Root
-> > +		Complex and Endpoint mode.
+Best regards,
+Alexander Stein
 
-[...]
+Alexander Stein (4):
+  ARM: dts: imx6qdl-tqma6: Order DT properties
+  ARM: dts: imx6ul-tqma6ul: Order DT properties
+  ARM: dts: imx6ul-tqma6ul: Add vcc-supply for spi-nor
+  ARM: dts: imx7-tqma7: Add vcc-supply for spi-nor
 
-> > +static umode_t ptm_attr_visible(struct kobject *kobj, struct attribute *attr,
-> > +				int n)
-> > +{
-> > +	struct device *dev = container_of(kobj, struct device, kobj);
-> > +	struct dw_pcie *pci = dev_get_drvdata(dev);
-> > +
-> > +	/* RC only needs local, t2 and t3 clocks and context_valid */
-> > +	if ((attr == &dev_attr_ptm_t1.attr && pci->mode == DW_PCIE_RC_TYPE) ||
-> > +	    (attr == &dev_attr_ptm_t4.attr && pci->mode == DW_PCIE_RC_TYPE) ||
-> > +	    (attr == &dev_attr_ptm_master_clock.attr && pci->mode == DW_PCIE_RC_TYPE) ||
-> > +	    (attr == &dev_attr_ptm_context_update.attr && pci->mode == DW_PCIE_RC_TYPE))
-> > +		return 0;
-> 
-> The pci->mode checks definitely can be refactored to a top-level instead
-> of being repeated on each line.
-> 
+Markus Niebel (5):
+  ARM: dts: imx6qdl-tqma6: limit PMIC SW4 to 3.3V
+  ARM: dts: imx6qdl-tqma6: use sw4_reg as 3.3V supply
+  ARM: dts: imx6qdl-tqma6: Add partitions subnode to spi-nor
+  ARM: dts: tqma6ul: Add partitions subnode to spi-nor
+  ARM: dts: tqma7: Add partitions subnode to spi-nor
 
-Ok.
-
-> > +
-> > +	/* EP only needs local, master, t1, and t4 clocks and context_update */
-> > +	if ((attr == &dev_attr_ptm_t2.attr && pci->mode == DW_PCIE_EP_TYPE) ||
-> > +	    (attr == &dev_attr_ptm_t3.attr && pci->mode == DW_PCIE_EP_TYPE) ||
-> > +	    (attr == &dev_attr_ptm_context_valid.attr && pci->mode == DW_PCIE_EP_TYPE))
-> > +		return 0;
-> > +
-> > +	return attr->mode;
-> 
-> I think it might be better to register two separate groups, one for RC,
-> one for EP and use presense of the corresponding capability in the
-> .is_visible callback to check if the PTM attributes should be visible at
-> all.
-> 
-
-What benefit does it provide? I did thought about this idea, but then I didn't
-find useful since the top level platform device (RC/EP) should itself
-distinguish between PTM requester and responder. So one more differentiation
-seemed overkill to me.
-
-> > +}
-> > +
-> > +static const struct attribute_group ptm_attr_group = {
-> > +	.name = "ptm",
-> > +	.attrs = ptm_attrs,
-> > +	.is_visible = ptm_attr_visible,
-> > +};
-> > +
-> > +static const struct attribute_group *dwc_pcie_attr_groups[] = {
-> > +	&ptm_attr_group,
-> > +	NULL,
-> > +};
-> > +
-> > +static void pcie_designware_sysfs_release(struct device *dev)
-> > +{
-> > +	kfree(dev);
-> > +}
-> > +
-> > +void pcie_designware_sysfs_init(struct dw_pcie *pci,
-> > +				    enum dw_pcie_device_mode mode)
-> > +{
-> > +	struct device *dev;
-> > +	int ret;
-> > +
-> > +	/* Check for capabilities before creating sysfs attrbutes */
-> > +	ret = dw_pcie_find_ptm_capability(pci);
-> > +	if (!ret) {
-> > +		dev_dbg(pci->dev, "PTM capability not present\n");
-> > +		return;
-> > +	}
-> > +
-> > +	pci->ptm_vsec_offset = ret;
-> > +	pci->mode = mode;
-> > +
-> > +	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
-> > +	if (!dev)
-> > +		return;
-> > +
-> > +	device_initialize(dev);
-> > +	dev->groups = dwc_pcie_attr_groups;
-> > +	dev->release = pcie_designware_sysfs_release;
-> > +	dev->parent = pci->dev;
-> > +	dev_set_drvdata(dev, pci);
-> > +
-> > +	ret = dev_set_name(dev, "dwc");
-> > +	if (ret)
-> > +		goto err_free;
-> > +
-> > +	ret = device_add(dev);
-> > +	if (ret)
-> > +		goto err_free;
-> > +
-> > +	pci->sysfs_dev = dev;
-> 
-> Why do you need to add a new device under the PCIe controller?
-> 
-
-Just because we cannot reference the 'struct dw_pcie' from the 'struct device'
-belonging to the platform device. All the controller drivers are already setting
-their own private structure as drvdata.
-
-> > +
-> > +	return;
-> > +
-> > +err_free:
-> > +	put_device(dev);
-> > +}
-> > +
-> > +void pcie_designware_sysfs_exit(struct dw_pcie *pci)
-> > +{
-> > +	if (pci->sysfs_dev)
-> > +		device_unregister(pci->sysfs_dev);
-> > +}
-> > diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-> > index a7c0671c6715..30825ec0648e 100644
-> > --- a/drivers/pci/controller/dwc/pcie-designware.c
-> > +++ b/drivers/pci/controller/dwc/pcie-designware.c
-> > @@ -323,6 +323,12 @@ static u16 dw_pcie_find_vsec_capability(struct dw_pcie *pci,
-> >  	return 0;
-> >  }
-> >  
-> > +u16 dw_pcie_find_ptm_capability(struct dw_pcie *pci)
-> > +{
-> > +	return dw_pcie_find_vsec_capability(pci, dwc_pcie_ptm_vsec_ids);
-> > +}
-> > +EXPORT_SYMBOL_GPL(dw_pcie_find_ptm_capability);
-> 
-> This API should go into the previous patch. Otherwise it will result in
-> unused function warnings.
-> 
-
-Yes, but that should be fine. Unused warnings are generally acceptable if the
-function is defined in subsequent patch. Only rule is that the build should not
-be broken when using defconfig.
-
-Moreover, the previous patch just adds the VSEC helpers and I inherited them
-from Shradha's patch. Clubbing PTM API would make it look like two separate
-changes in a single patch.
-
-- Mani
+ arch/arm/boot/dts/nxp/imx/imx6qdl-tqma6.dtsi  | 25 ++++++++-----------
+ arch/arm/boot/dts/nxp/imx/imx6qdl-tqma6a.dtsi |  4 +--
+ arch/arm/boot/dts/nxp/imx/imx6qdl-tqma6b.dtsi |  4 +--
+ .../dts/nxp/imx/imx6ul-tqma6ul-common.dtsi    | 11 +++++---
+ arch/arm/boot/dts/nxp/imx/imx7-tqma7.dtsi     |  7 ++++++
+ 5 files changed, 29 insertions(+), 22 deletions(-)
 
 -- 
-மணிவண்ணன் சதாசிவம்
+2.43.0
+
 
