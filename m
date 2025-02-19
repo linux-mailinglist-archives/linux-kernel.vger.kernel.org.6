@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-521790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 287B1A3C257
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:39:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE9D8A3C25C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:40:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF6FD1887075
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:39:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84B0B3A5520
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:40:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C987A1EEA31;
-	Wed, 19 Feb 2025 14:39:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4219F1F30A9;
+	Wed, 19 Feb 2025 14:40:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NVeoQbZx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qPzs/yLc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26D511F2B88;
-	Wed, 19 Feb 2025 14:39:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A64E1AA1DC;
+	Wed, 19 Feb 2025 14:40:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739975964; cv=none; b=hgYid5Qwd7rrJnC+U0amfp+GDQ/WF3ep3Q0SKYELHDknjlCPqCjWyRK8yQ5MnSVkhigigX+nK1is4iNqO/u6JnFPDMmXhP6W+2ZJs/msaj4wIRYuib1cxJttT+8A7lUamLkun0rltCveFTWnM/UeK+pUu/sCnK7udUS0MfDQ/MI=
+	t=1739976008; cv=none; b=jKMYFZH9JTvgIaIwopsy82nUCd0TEu9qAmjOSCjp5z1UZ0pqrLtuM7XKbDhUorKuPjWRsVOt4S0U5Z3/yPh8oALvfM9vu+d2aeH2bv30d6ph4bOOK2+l5873eSzRXsgyCQb6r3KODxdTLo94jN8fwUp2qB+2y8t8QOHqJP5lW/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739975964; c=relaxed/simple;
-	bh=zg41uxLeF1XqKwA/EMGTDy9ivzajg7Z1s3Ntido7yDE=;
+	s=arc-20240116; t=1739976008; c=relaxed/simple;
+	bh=jdFP+pG8eE/suF77w3qUAgnNowmIQyc6GvRrUtbVNdo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cA1pdF6o0xmln5yyoDNYhBr+XCuRDP/iicYnEWEhIdJDvxJBREDRO8vIATV+XgbxLsWiiaUqEYuiwtg3pEg+/yJ7bdUEvWc32K1jspovpjEUurRDxLnOgdEWVlpQBGLRVXt5DfBkWSZ8oOpqz1jvA4E7PyAEaQLaxjKfuTeI6Dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NVeoQbZx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E1ACC4CED1;
-	Wed, 19 Feb 2025 14:39:23 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=YXszeD2SmlDIMOkVp55D/WgDVYSlfmiUssX2C+R7gHQY7VKkayyj+bLiUYiQbhPScfQ65xZsJmrBDg+rBfHvhSO0H6tI5aLxEaay/NXyZkLgv/WLlVP50h3pjX9C/XwbkdDGnJiIg9Fu/rNqpJf9h66zBn47PA6tksJKjPnhRFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qPzs/yLc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D37ABC4CED1;
+	Wed, 19 Feb 2025 14:40:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739975963;
-	bh=zg41uxLeF1XqKwA/EMGTDy9ivzajg7Z1s3Ntido7yDE=;
+	s=k20201202; t=1739976008;
+	bh=jdFP+pG8eE/suF77w3qUAgnNowmIQyc6GvRrUtbVNdo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NVeoQbZxARTuIRRNLLoesbA03JgG5KpgfNhmlEu3lR68IBae4oYRHhWI94pSSWOy/
-	 AbhMSX7vQwNXOZ7ZYQ8rl/B8iZn9sp3FymfII5MdeRiv7vmb7RlDPNWCNsDFjFVrKD
-	 4EIWgbDJr7eyNPrSHARv0mOznmETq/Hjff9Pfrv5DSaZkQ+KbT+Ai7IqiAsSDe+1M5
-	 U9+sVQuoZe5BD7hPeM2Qj4wGe5hLxGWj9H3z2Xp+51EJmkV87TShPXWaH/iiz7LJ/A
-	 DKxZqFdufJYhkiNxvCIyli6Fm/0HbbR7j5Zzih+2MAZIteczEkZj6h8kVq/IAI1sL6
-	 Ou3HiYRiEI1nQ==
-Date: Wed, 19 Feb 2025 08:39:22 -0600
+	b=qPzs/yLc3PJbsymD8yQ3W+TRpyoMkqXsfki62C12C+KBAEml45hki0QRY5xgdwIQj
+	 gp3bOsPIm6TtaKIhPus0cyOgrSqbNPr/JqacRkCoOSUW5r9vbMyLR0SKVPRQBXI6q4
+	 86zsmmoJnn3R3DQpvGE6Rxt4EGDfHc6kgY9eVhUoiHxJ/j2x8JVzBvz+MJxCLbo8Qy
+	 9R2ncuTSSvEm4kwwhYAMEPIYhukY75xwUNLidYdLoP3pv1lRQ/7zNRVa7rPcC6J8k0
+	 0Q2t0aeAufMt/S4MOFuLGDBJE9t9UdbDweM5jdpWBqa1McsJL7fIIkneGF6YN4Oed3
+	 QKcHUO6LKQ9BA==
+Date: Wed, 19 Feb 2025 08:40:07 -0600
 From: Rob Herring <robh@kernel.org>
 To: Oleksij Rempel <o.rempel@pengutronix.de>
 Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -55,11 +55,10 @@ Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH v2 1/3] dt-bindings: sound: convert ICS-43432 binding to
- YAML
-Message-ID: <20250219143922.GA2527138-robh@kernel.org>
+Subject: Re: [PATCH v2 2/3] dt-bindings: arm: stm32: Add Plymovent AQM board
+Message-ID: <20250219144007.GA2550036-robh@kernel.org>
 References: <20250210104748.396399-1-o.rempel@pengutronix.de>
- <20250210104748.396399-2-o.rempel@pengutronix.de>
+ <20250210104748.396399-3-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,113 +67,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250210104748.396399-2-o.rempel@pengutronix.de>
+In-Reply-To: <20250210104748.396399-3-o.rempel@pengutronix.de>
 
-On Mon, Feb 10, 2025 at 11:47:46AM +0100, Oleksij Rempel wrote:
-> Convert the ICS-43432 MEMS microphone device tree binding from text format
-> to YAML.
+On Mon, Feb 10, 2025 at 11:47:47AM +0100, Oleksij Rempel wrote:
+> Add support for the Plymovent AQM board based on the ST STM32MP151 SoC
+> to the STM32 devicetree bindings.
 > 
 > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 > ---
-> changes v2:
-> - use "enum" instead "oneOf + const"
-> ---
->  .../devicetree/bindings/sound/ics43432.txt    | 19 -------
->  .../bindings/sound/invensense,ics43432.yaml   | 51 +++++++++++++++++++
->  2 files changed, 51 insertions(+), 19 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/sound/ics43432.txt
->  create mode 100644 Documentation/devicetree/bindings/sound/invensense,ics43432.yaml
+>  Documentation/devicetree/bindings/arm/stm32/stm32.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/sound/ics43432.txt b/Documentation/devicetree/bindings/sound/ics43432.txt
-> deleted file mode 100644
-> index e6f05f2f6c4e..000000000000
-> --- a/Documentation/devicetree/bindings/sound/ics43432.txt
-> +++ /dev/null
-> @@ -1,19 +0,0 @@
-> -Invensense ICS-43432-compatible MEMS microphone with I2S output.
-> -
-> -There are no software configuration options for this device, indeed, the only
-> -host connection is the I2S interface. Apart from requirements on clock
-> -frequency (460 kHz to 3.379 MHz according to the data sheet) there must be
-> -64 clock cycles in each stereo output frame; 24 of the 32 available bits
-> -contain audio data. A hardware pin determines if the device outputs data
-> -on the left or right channel of the I2S frame.
-> -
-> -Required properties:
-> -  - compatible: should be one of the following.
-> -     "invensense,ics43432": For the Invensense ICS43432
-> -     "cui,cmm-4030d-261": For the CUI CMM-4030D-261-I2S-TR
-> -
-> -Example:
-> -
-> -	ics43432: ics43432 {
-> -		compatible = "invensense,ics43432";
-> -	};
-> diff --git a/Documentation/devicetree/bindings/sound/invensense,ics43432.yaml b/Documentation/devicetree/bindings/sound/invensense,ics43432.yaml
-> new file mode 100644
-> index 000000000000..79ed8c8e8790
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sound/invensense,ics43432.yaml
-> @@ -0,0 +1,51 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/sound/invensense,ics43432.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Invensense ICS-43432-compatible MEMS Microphone with I2S Output
-> +
-> +maintainers:
-> +  - N/A
+> diff --git a/Documentation/devicetree/bindings/arm/stm32/stm32.yaml b/Documentation/devicetree/bindings/arm/stm32/stm32.yaml
+> index 2cea166641c5..734c4b8ac881 100644
+> --- a/Documentation/devicetree/bindings/arm/stm32/stm32.yaml
+> +++ b/Documentation/devicetree/bindings/arm/stm32/stm32.yaml
+> @@ -65,6 +65,7 @@ properties:
+>                - prt,prtt1a   # Protonic PRTT1A
+>                - prt,prtt1c   # Protonic PRTT1C
+>                - prt,prtt1s   # Protonic PRTT1S
+> +              - ply,plyaqm   # Plymovent AQM board
 
-If no one cares about this device, then we should just remove the 
-binding and driver.
+Alphabetical order please.
 
-> +
-> +description: |
-
-Don't need '|' if no formatting to preserve.
-
-> +  The ICS-43432 and compatible MEMS microphones output audio over an I2S
-> +  interface and require no software configuration. The only host connection
-> +  is the I2S bus. The microphone requires an I2S clock frequency between
-> +  460 kHz and 3.379 MHz and 64 clock cycles per stereo frame. Each frame
-> +  contains 32-bit slots per channel, with 24 bits carrying audio data.
-> +  A hardware pin determines whether the microphone outputs audio on the
-> +  left or right channel of the I2S frame.
-> +
-> +allOf:
-> +  - $ref: dai-common.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - invensense,ics43432
-> +      - cui,cmm-4030d-261
-> +
-> +  port:
-> +    $ref: audio-graph-port.yaml#
-> +    unevaluatedProperties: false
-> +
-> +required:
-> +  - compatible
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    ics43432: ics43432 {
-> +        compatible = "invensense,ics43432";
-> +
-> +        port {
-> +          endpoint {
-> +            remote-endpoint = <&i2s1_endpoint>;
-> +            dai-format = "i2s";
-> +          };
-> +        };
-> +
-> +    };
-> --
+>            - const: st,stm32mp151
+>  
+>        - description: DH STM32MP135 DHCOR SoM based Boards
+> -- 
 > 2.39.5
 > 
 
