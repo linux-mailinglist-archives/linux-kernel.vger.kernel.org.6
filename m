@@ -1,125 +1,116 @@
-Return-Path: <linux-kernel+bounces-522666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A32BA3CD10
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 00:09:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82178A3CD12
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 00:10:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FAFB189A59F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 23:09:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 620F57A74FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 23:09:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B8F325A334;
-	Wed, 19 Feb 2025 23:09:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB5FE22CBF3;
+	Wed, 19 Feb 2025 23:09:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XcCM8VYD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZsLGu7YK"
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CB2D2144C8
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 23:09:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8BC2144C8
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 23:09:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740006555; cv=none; b=CT7BAZ/M9QxaxK0sHTIWbcw5Zj08Zxk5Gx/aBetaCJU7WNgWyoZmwWVcJwhxeOLjKg8v1ON+f2k6pB/+4Zt04x2wm33/6FFBVRePDPMsYFCeIyTWkxSFPQjp6iX4qsYAiyGLchAs/i7IgrkoJOX5d5qf6WmLbqqxbYf7w/Qh1qc=
+	t=1740006599; cv=none; b=QmjPh+TgD9N7IgYevmWbExLTY/B8aKHWbjP0uNs9ylqZLT0G85ocxbmQ3SQniL3mHtr9FtV+xex3QE1lb2yj3CMvMDunkIXU32PXi1Kj4EayyrsztvV2y0lCcTAADFMOOHd02JvwSAKqYaSSV5nZSk6lhnaLOASN24tMEbYrHqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740006555; c=relaxed/simple;
-	bh=BHPfA7scL6aD43lk+kfJBreSZvIUi3wef4nJQKhdl0c=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=rle5FjCZq1JRzUEJAC0/2HRps2gRHN1rP/xpAVl35HyojDdTLe2jVOSh4hey6k+Bm6gCHmwhupkbTYFNpN3vzhZL+I0L0tg1osH+4xqXgpO+n8sARcqdejd1pfQanQrA+I22XYtzNPwDgofG3c8qJVEVwoyhBtxkwbmmZk2odmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XcCM8VYD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28399C4CED1;
-	Wed, 19 Feb 2025 23:09:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740006555;
-	bh=BHPfA7scL6aD43lk+kfJBreSZvIUi3wef4nJQKhdl0c=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=XcCM8VYDLETEgpvPPyUIEOzjM8w3ME4xDI7qQLjM1hqv9brigLN2obDgLIM3HYyK6
-	 6nR4MJQxd1GvSt6l57Y4y+dgXd3EbIQZHLR6cKaA8Bh1PiAbBgdvGqaB/utblKRq1Z
-	 1n4dChu/YZJQGYxagPSGi3+UNUYx09H5f3ALSMVK7WkT4UiWEclLXye5nnMzKh8f/j
-	 YXEalfhXjn6tH3lQxemYyj8sAqCsRgr2sOgMDWbIbRTd1gd911kCJWNFSs+oUNhunS
-	 zPeAQI2Q7uWFOSoy1XOg5HlJ57vMjkctopiaUn4Nl5KplzZgyM42bLCztfyTvEwbF/
-	 a6GElo3wxD8/A==
-Date: Thu, 20 Feb 2025 08:09:08 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Waiman Long <llong@redhat.com>, "Masami Hiramatsu (Google)"
- <mhiramat@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar
- <mingo@redhat.com>, Will Deacon <will@kernel.org>, Andrew Morton
- <akpm@linux-foundation.org>, Boqun Feng <boqun.feng@gmail.com>, Joel
- Granados <joel.granados@kernel.org>, Anna Schumaker
- <anna.schumaker@oracle.com>, Lance Yang <ioworker0@gmail.com>, Kent
- Overstreet <kent.overstreet@linux.dev>, Yongliang Gao
- <leonylgao@tencent.com>, Tomasz Figa <tfiga@chromium.org>, Sergey
- Senozhatsky <senozhatsky@chromium.org>, linux-kernel@vger.kernel.org, Linux
- Memory Management List <linux-mm@kvack.org>
-Subject: Re: [PATCH 1/2] hung_task: Show the blocker task if the task is
- hung on mutex
-Message-Id: <20250220080908.fc1494f0f7c611b48fbe0f8b@kernel.org>
-In-Reply-To: <20250219152435.35077ac3@gandalf.local.home>
-References: <173997003868.2137198.9462617208992136056.stgit@mhiramat.tok.corp.google.com>
-	<173997004932.2137198.7959507113210521328.stgit@mhiramat.tok.corp.google.com>
-	<20250219112308.5d905680@gandalf.local.home>
-	<0fa9dd8e-2d83-487e-bfb1-1f5d20cd9fe6@redhat.com>
-	<20250219152435.35077ac3@gandalf.local.home>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740006599; c=relaxed/simple;
+	bh=AQQz81U+/uQt8t1jtDfXn5ubKPfVZPZuQq0XA2aTtFw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iNjaUHumn9AZiR3wFS6pQAu4trbUG1hL5KpFiaH9bb2ZXqZkL3BCbTVOH6qM56/7oBZRzz2LipC7ZhydH3aKIZXbuaThDP4rFieF6N4dFwPuEuUVb/AmNKJikhaPpuK1kU4jFcDBGf2dhXj2Vuhw6Pocbu6dSxB1VUiDsVcLHkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZsLGu7YK; arc=none smtp.client-ip=209.85.166.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3d19702f977so27465ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 15:09:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740006596; x=1740611396; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AQQz81U+/uQt8t1jtDfXn5ubKPfVZPZuQq0XA2aTtFw=;
+        b=ZsLGu7YK9eF+Pcq7F4H+mjL16tNspFf2QQp0mJVOCiuIvzX0p0K87DF0KFMybbw45Z
+         p/cNOgPaqdODwjm9rxrIOjnaEv2Xfyvnt7873RWrzW/lXFAXQ5+b+RUz4Wmnw0uLjdJW
+         GXhdSpzSoC75nwf5WlU2tUCqOMUWkpjqLaz/cP3VT5Cj9P3erA9vmzFm2qwBN/xqchFP
+         OCjChEUeguKUUJ1HgI++wnnJyyQ/oMY/Vm/Y/8+vnUTp7ItCuhAFdksOMD0fi3sZfKx5
+         c2g5GaHcB+1p/JyDEL1JaH1W2QuluinBl4s05GTOpiO9lIHUzW6gg6GTBL6pyvYRYxj3
+         KSLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740006596; x=1740611396;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AQQz81U+/uQt8t1jtDfXn5ubKPfVZPZuQq0XA2aTtFw=;
+        b=g+v6H2Vnvfd+WwwcCGmycr6gPv/Y07uXli7odm3kiOkmNVTeDHr8YZOIS9iPrPjHD+
+         sg/Txnprp7no0BfahKfonwH1zO5LAj63mefe8TB4HbJkNTbe7IZSV2Il8LxuccK5FLyz
+         7f8tc9nbK28M6K2bhOtVBaoN8ln9b0Fp7xtML5ZZWHqyyHlpi64XqZs+EVIEMiJsVGA8
+         V3X98YgdM8ZlTdy+Kl7rYcUvRsoRngvy1MD0op1gFWyKjUJl+G9rSwr3bi2ffbTI5NEC
+         lkkfGLVZGSVyrVFOicZLku1DPw8Dnt/SMHudPJLmNIkOCTMg6vwa1YWO/F6BsJ1twQW+
+         u/bg==
+X-Forwarded-Encrypted: i=1; AJvYcCWlF5qLtrmrF1TP6iC6fBOqIpwLHw1BFOmI8KWgqu8w8yeLOK98HMSWeup2DiHXVF563n5jQ8X4j3j4goY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3kbaP3hwhD821ig+GYEIkbR4rckRyqWbcboVkgZoSJX8I7eB/
+	l5YwMD20Iwcc/aLJObMN2VIwh4aMzyfgyaso11toS4z3IVT6UDfzc2IHFZQbas/ZsDiLYtUNkkf
+	MgxOV2r4T+hA+QPNrsVEw58vVXum95ISrZnJe
+X-Gm-Gg: ASbGncs4xPhDB7gAyCFNaCA9XIKEQ0/K9JoR3cBbn61QUV9+UnuN8ZxMLNwwMg7Qd1o
+	cZXkym1ifjCmz4ZTkwczlLgaLAow1MdcVO9vbu557vIUNxGzQqXSjdj3xpRsAKA+0eThSorqw
+X-Google-Smtp-Source: AGHT+IEjLr482aJlHAAFBNSdvbSRICH9yurzAps08NVDvhZKsMsHZ4nAAaz9Lt8jjyW1wzcJ2bGnYSo/O/9OKcNCh0w=
+X-Received: by 2002:a05:6e02:144d:b0:3d0:4e5d:4782 with SMTP id
+ e9e14a558f8ab-3d2c09e9cbemr1292775ab.10.1740006595834; Wed, 19 Feb 2025
+ 15:09:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <20250219220826.2453186-1-yosry.ahmed@linux.dev> <20250219220826.2453186-6-yosry.ahmed@linux.dev>
+In-Reply-To: <20250219220826.2453186-6-yosry.ahmed@linux.dev>
+From: Jim Mattson <jmattson@google.com>
+Date: Wed, 19 Feb 2025 15:09:43 -0800
+X-Gm-Features: AWEUYZmIhUTZVLHPN2I1OKFIOPwRKrPuUJoTdwG1QAkz1q6QNSK1OOrLwbQj-NE
+Message-ID: <CALMp9eSUGYfyogSruFY_o7EXdKUB52EC3iOU4r+vyrnG3cW-4g@mail.gmail.com>
+Subject: Re: [PATCH 5/6] KVM: nVMX: Always use IBPB to properly virtualize IBRS
+To: Yosry Ahmed <yosry.ahmed@linux.dev>
+Cc: x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	"H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
+	Andy Lutomirski <luto@kernel.org>, Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 19 Feb 2025 15:24:35 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On Wed, Feb 19, 2025 at 2:11=E2=80=AFPM Yosry Ahmed <yosry.ahmed@linux.dev>=
+ wrote:
+>
+> On synthesized nested VM-exits in VMX, an IBPB is performed if IBRS is
+> advertised to the guest to properly provide separate prediction domains
+> for L1 and L2. However, this is currently conditional on
+> X86_FEATURE_USE_IBPB, which depends on the host spectre_v2_user
+> mitigation.
+>
+> In short, if spectre_v2_user=3Dno, IBRS is not virtualized correctly and
+> L1 becomes suspectible to attacks from L2. Fix this by performing the
 
-> On Wed, 19 Feb 2025 15:18:57 -0500
-> Waiman Long <llong@redhat.com> wrote:
-> 
-> > It is tricky to access the mutex_waiter structure which is allocated 
-> > from stack. So another way to work around this issue is to add a new 
-> > blocked_on_mutex field in task_struct to directly point to relevant 
-> > mutex. Yes, that increase the size of task_struct by 8 bytes, but it is 
-> > a pretty large structure anyway. Using READ_ONCE/WRITE_ONCE() to access 
-> 
-> And it's been on my TODO list for some time to try to make that structure
-> smaller again :-/
-> 
-> > this field, we don't need to take lock, though taking the wait_lock may 
-> > still be needed to examine other information inside the mutex.
-> 
-> But perhaps if we add a new config option for this feature, we could just
-> add the lock that a task is blocked on before it goes to sleep and
-> reference that instead. That would be easier than trying to play games
-> getting the lock owner from the blocked_on field.
+Nit: susceptible.
 
-So something like this?
+> IBPB regardless of X86_FEATURE_USE_IBPB.
+>
+> Fixes: 2e7eab81425a ("KVM: VMX: Execute IBPB on emulated VM-exit when gue=
+st has IBRS")
+> Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
 
-unsigned int	block_flags;
-union {
-	struct mutex	*mutex;
-	struct rwsem	+rwsem;
-	struct rtmutex	*rtmutex;
-} blocked_on;
+Argh! No doubt, I was burned once again by assuming that a function
+name (indirect_branch_prediction_barrier) was actually descriptive.
 
-enum {
-	BLOCKED_ON_MUTEX;
-	BLOCKED_ON_RWSEM;
-	BLOCKED_ON_RTMUTEX;
-	BLOCKED_ON_IO;
-} block_reason;
-
-For the safety, we may anyway lock the task anyway, but that is the
-same as stacktrace.
-
-Thank you,
-
-> 
-> -- Steve
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Reviewed-by: Jim Mattson <jmattson@google.com>
 
