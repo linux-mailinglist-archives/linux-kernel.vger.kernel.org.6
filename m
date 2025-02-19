@@ -1,137 +1,190 @@
-Return-Path: <linux-kernel+bounces-521384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4F3CA3BC86
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:16:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65729A3BC90
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:17:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9DBE3AB3B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:15:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B62416C0E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:16:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAED01D89EF;
-	Wed, 19 Feb 2025 11:15:54 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 909C91CAA6D;
+	Wed, 19 Feb 2025 11:16:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="vXM9f451"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD82A2862BA
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 11:15:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F01DB1BC062
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 11:16:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739963754; cv=none; b=I6F+n4R1n3Xs2AVNnnhiqs6qYP5fzXGY/Cnr8kim7Br66zaeMbuFzX5mAYH2u3Rr9TjlanVYPzYY2AvRWSrJLj4iwCDTMqrQSELHU9z78gkRoopC4tlOlbhndPTA9fzsG3zcftCl02DMoOaBwcbfLIDBSetIACFxiXwtonkicAo=
+	t=1739963788; cv=none; b=bf6MXge08mkanlO+Vh0a0Nsfg4XyiksdVvjq/yD2BZvbkL56O7svpXrzV5d/Aoj/JZzGY2vPKmDFj2M/f85N5J3Rk7n0dc40PRahDZfRUnFlCNwtEIIR1hT7rNXF3sovPZDIkGEED6nElyy/cHonKLTbCesZj172Ix9/Hgwg7js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739963754; c=relaxed/simple;
-	bh=bOVVUhjugw19Gfrb/l/6mPgJ8c9PnJ9LTdeHOKfiSvk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=hl3BUXcuBCmCoX+xtgcFw/yQmzh6Dv+VMgKMkCheO0X+oFuHYiGAwbYuw6jNzlefFtyIXLhYdUDrFQjhxgfiBS/GNHfQOp6gzqK5/B5jJBsOjVfNT4PJvrtOYQoNsgjIClVvTvn8U1+OR91kWu7qTcIx8QzTNaFe/UQWp3Z3pik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tki3T-0007ir-00
-	for linux-kernel@vger.kernel.org; Wed, 19 Feb 2025 12:15:51 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tki3S-001kvP-2Y
-	for linux-kernel@vger.kernel.org;
-	Wed, 19 Feb 2025 12:15:50 +0100
-Received: from dspam.blackshift.org (localhost [127.0.0.1])
-	by bjornoya.blackshift.org (Postfix) with SMTP id 7A3BD3C68B9
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 11:15:50 +0000 (UTC)
-Received: from hardanger.blackshift.org (unknown [172.20.34.65])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by bjornoya.blackshift.org (Postfix) with ESMTPS id 8761B3C68B1;
-	Wed, 19 Feb 2025 11:15:48 +0000 (UTC)
-Received: from [172.20.34.65] (localhost [::1])
-	by hardanger.blackshift.org (OpenSMTPD) with ESMTP id 6b31c62b;
-	Wed, 19 Feb 2025 11:15:47 +0000 (UTC)
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-Date: Wed, 19 Feb 2025 12:15:43 +0100
-Subject: [PATCH] can: rockchip_canfd: rkcanfd_chip_fifo_setup(): remove
- duplicated setup of RX FIFO
+	s=arc-20240116; t=1739963788; c=relaxed/simple;
+	bh=u3l09RemyGPuMvSAGX38x17/0rCKEy8W2n/M4DS2lNI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=jg/qmhqIgAn9tEKZobqP0JPlVJ+OeoIcDENZm5lHQ00Ny9jslV7DPBw54X5pxg9DbfgQNJbY4sQb96K7TfQ1RKSrSqz1Zt6i/Ag/KXgBMc91XBh3fUhElCUoMwH514N/qIwgtH7Dx7ffQoPw4jSQMGNF9SdpmF0xtU7BpRBHXG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=vXM9f451; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250219111625euoutp01b93d0ba5c175fbd2b7fa01b9e1d13233~ll9gDrwnG1952519525euoutp01H
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 11:16:25 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250219111625euoutp01b93d0ba5c175fbd2b7fa01b9e1d13233~ll9gDrwnG1952519525euoutp01H
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1739963785;
+	bh=JzQpVooeuRLGvV+H89HqexAwacGhVAMz5cSSBB4VyM4=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=vXM9f451Vp9qvUouT1wAL4wAGkveCbigyzsPPA/MRT3DM2fO43FLPHmy4lNC0fPuc
+	 Fpt0VU5EKsSDDG/gjHV+T0LrcNO93V03RWp93qDDo650CEPNoU0hKdEzVcEUyQzaxF
+	 Brfbwi6O+42mvMPYSNqvif94ycKzcKMUxN+d8MmM=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20250219111624eucas1p215437069f98fe6a911e818bf114088e7~ll9fd5-pK1957519575eucas1p2f;
+	Wed, 19 Feb 2025 11:16:24 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id E1.AE.20409.88DB5B76; Wed, 19
+	Feb 2025 11:16:24 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250219111624eucas1p2725578fdd6fa8733592c6e7e73c8e5a6~ll9fGH2bj1957519575eucas1p2e;
+	Wed, 19 Feb 2025 11:16:24 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250219111624eusmtrp1fdb9dbf4003a5667c78d8c76ed9cd24e~ll9fFSKYh1680016800eusmtrp1_;
+	Wed, 19 Feb 2025 11:16:24 +0000 (GMT)
+X-AuditID: cbfec7f4-c39fa70000004fb9-1c-67b5bd88836a
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id E3.5B.19920.78DB5B76; Wed, 19
+	Feb 2025 11:16:23 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250219111622eusmtip104a560fc5f8e7812003f1fe53d3a2517~ll9dmpjmV1237812378eusmtip1C;
+	Wed, 19 Feb 2025 11:16:22 +0000 (GMT)
+Message-ID: <a94c375a-baf9-4530-8425-762dc9adf35e@samsung.com>
+Date: Wed, 19 Feb 2025 12:16:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC/RFT PATCH] pinctrl: bcm2835: don't -EINVAL on alternate
+ funcs from get_direction()
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Linus Walleij
+	<linus.walleij@linaro.org>, Florian Fainelli
+	<florian.fainelli@broadcom.com>, Ray Jui <rjui@broadcom.com>, Scott Branden
+	<sbranden@broadcom.com>, Broadcom internal kernel review list
+	<bcm-kernel-feedback-list@broadcom.com>, Stefan Wahren <wahrenst@gmx.net>,
+	Liao Chen <liaochen4@huawei.com>, Chen-Yu Tsai <wens@csie.org>, Mark Brown
+	<broonie@kernel.org>
+Cc: linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Bartosz
+	Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20250219102750.38519-1-brgl@bgdev.pl>
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250219-rk3568-canfd-v1-1-453869358c72@pengutronix.de>
-X-B4-Tracking: v=1; b=H4sIAF69tWcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDI0NL3aJsY1MzC93kxLy0FN1EgzTLZEMDY3NTw1QloJaCotS0zAqwcdG
- xtbUAoxA+Ql4AAAA=
-X-Change-ID: 20250219-rk3568-canfd-a0f9c103751e
-To: kernel@pengutronix.de, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
- Heiko Stuebner <heiko@sntech.de>
-Cc: linux-can@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Robin van der Gracht <robin@protonic.nl>, 
- Marc Kleine-Budde <mkl@pengutronix.de>
-X-Mailer: b4 0.15-dev-42535
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1388; i=mkl@pengutronix.de;
- h=from:subject:message-id; bh=0jv/61mY47TiBPd7dSSwJFiyxZt74jw07+buK5Y0ayc=;
- b=owEBbQGS/pANAwAKAQx0Zd/5kJGcAcsmYgBntb1hbnXZkPMz9MY3Cfse6k0cP85QCzJJp31vP
- upyoPxOHZOJATMEAAEKAB0WIQSf+wzYr2eoX/wVbPMMdGXf+ZCRnAUCZ7W9YQAKCRAMdGXf+ZCR
- nDx2B/wMkgexjMLtIBIpBULLQeVoO4zztTTxqk7ktd02LkxjPIUwI38QEVc3Vz6jtzX3glN8l5L
- pJz15GesciFTiuy1BokVMkOHy0Lb7psPmunMBM/MdUSMMRVSh1Nu/Yt653ADtd5mkMi2WrsxndT
- 3TCUtUbeHBSeiMwzcs82KOIMnxM06R035C6mOl7B2rL+k2qya2j44KHM9RxOiF4gkla0EeB/MIw
- CygC8fSuYPNLojiahS8Ql9FOEiUlluPhEFivU4g8UBmiEDnXNSyFC77J+PDWUKahmw3RrguWKt5
- 5CervoNvuD7w/YeofUArG6ySVl8qwad6AeaB/RnWVt8QusTt
-X-Developer-Key: i=mkl@pengutronix.de; a=openpgp;
- fpr=C1400BA0B3989E6FBC7D5B5C2B5EE211C58AEA54
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrJKsWRmVeSWpSXmKPExsWy7djP87ode7emG6zaLG6x4tsaJou1vUdZ
+	LHY92MZmMfXhEzaLddvuMVuc+rWX1WLKn+VMFpseX2O12Dz/D6PF5V1z2Cwm3t7AbvF05mY2
+	i3ernzBaHD/RyWzx89B5Jgd+j8XXbrN6zLp/ls1jw6PVrB6LN+1n82g58pbVY9OqTjaPO9f2
+	sHlsXlLv8XmTXABnFJdNSmpOZllqkb5dAlfGzgbrggahirknJrE0MPbzdzFyckgImEg0X7nA
+	2sXIxSEksIJR4tX520wQzhdGiZmPm9ggnM+MElv/3WSHabm1vIcRIrGcUWLFq/VQ/R8ZJZa3
+	TwXKcHDwCthJzNwoB2KyCKhKLDxTAtLLKyAocXLmExYQW1RAXuL+rRlgM4UF0iT6duwEGyMi
+	sIRZ4tGt3WBnMAscYpSY8PMnE0gVs4C4xK0n88FsNgFDia63XWwgNqeAscTpH68YIWrkJba/
+	ncMM0iwhsJtTouFdLyvE2S4Sk8/8ZYGwhSVeHd8C9Y6MxOnJPSwQDe2MEgt+32eCcCYwSjQ8
+	v8UIUWUtcefcLzaQf5gFNCXW79KHCDtKTPnwnhkkLCHAJ3HjrSDEEXwSk7ZNhwrzSnS0CUFU
+	q0nMOr4Obu3BC5eYJzAqzUIKmFlI3pyF5J1ZCHsXMLKsYhRPLS3OTU8tNspLLdcrTswtLs1L
+	10vOz93ECEx9p/8d/7KDcfmrj3qHGJk4GIEhyMGsJMLbVr8lXYg3JbGyKrUoP76oNCe1+BCj
+	NAeLkjjvov2t6UIC6YklqdmpqQWpRTBZJg5OqQamjT+L4gyX5sx4ZRZzIVLHoXOT7RyHf4e0
+	HZ869QhtOv0nNLqvInSO6kqfCYcVXqTcTfiy3LGupF/Y7PnBTStyT2rHaApc/mP5QuTFV+Ev
+	8XprI5R5nl98aG+fetxLfo/Wr4ctQcvefVzJPrNYj6dC5Q//lq0vj7+/PeXUfXmx8/fqtMXr
+	BE4GrOIUdft6r11xq3VYll/TprvpMWeLy3kjpVxjfQ3P9F0MqJmwS9N+8lJzpv0KCWqR5a9f
+	Hyk/wtRn4Z72tfWEZFb0oZta3bNOneT89Ya3eELTA3mtfEk31SWFomd45yjPrVHsUC2b+e3r
+	9TXLU8rdLRNcby0ULD2mUjJjct69O8ujShK+s1QpsRRnJBpqMRcVJwIAqY1I/+wDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrNIsWRmVeSWpSXmKPExsVy+t/xu7rte7emG5ybaGWx4tsaJou1vUdZ
+	LHY92MZmMfXhEzaLddvuMVuc+rWX1WLKn+VMFpseX2O12Dz/D6PF5V1z2Cwm3t7AbvF05mY2
+	i3ernzBaHD/RyWzx89B5Jgd+j8XXbrN6zLp/ls1jw6PVrB6LN+1n82g58pbVY9OqTjaPO9f2
+	sHlsXlLv8XmTXABnlJ5NUX5pSapCRn5xia1StKGFkZ6hpYWekYmlnqGxeayVkamSvp1NSmpO
+	Zllqkb5dgl7GzgbrggahirknJrE0MPbzdzFyckgImEjcWt7D2MXIxSEksJRR4v3ioywQCRmJ
+	k9MaWCFsYYk/17rYIIreM0qsbjnG1MXIwcErYCcxc6MciMkioCqx8EwJSDmvgKDEyZlPwMaI
+	CshL3L81gx3EFhZIk+jbsZMVZIyIwDJmiddrNrCDOMwChxgl1h58C3VFG6PE1L03wTYzC4hL
+	3HoynwnEZhMwlOh6C3IFJwengLHE6R+vGCFqzCS6tnZB2fIS29/OYZ7AKDQLySWzkIyahaRl
+	FpKWBYwsqxhFUkuLc9Nziw31ihNzi0vz0vWS83M3MQJjfduxn5t3MM579VHvECMTByPQwRzM
+	SiK8bfVb0oV4UxIrq1KL8uOLSnNSiw8xmgJDYyKzlGhyPjDZ5JXEG5oZmBqamFkamFqaGSuJ
+	87pdPp8mJJCeWJKanZpakFoE08fEwSnVwGRg3BzA7PAjJOjxFXsJYWeXM6nyPa/1P8ff3NRf
+	fVDnzLwvSTv+NE3c2LPoem75V8Xrid/VG2v1nzyQOP1ZPkTq1pY7Hxb3vF1rzfVJ7v3b+ec0
+	k33Y/4sfYFl5uoB3W6zkxjmr26IcGY2eV1Se/5l4+GbyRPd1PY8vp0xpmmj0VKjomuylyDnn
+	flw7kPrBYWbEiwnh/Qo/7/+bvuFMm/TBMr31fhNO5Cht22fZLBV/mzM20UVNyCD9mkLU+43J
+	J466yLbKfDA8H232yLX+kopWbauFgCH3k3OVJ7cWs2ovOvHs/qR1n6yFVwnEVbKF5etEh3I5
+	sc8TvKCy6c+a3bOOv/3Qvk2rLpfRuCdLTE+JpTgj0VCLuag4EQC9In6TfgMAAA==
+X-CMS-MailID: 20250219111624eucas1p2725578fdd6fa8733592c6e7e73c8e5a6
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250219102802eucas1p11a9de63da00a6c76eaa79155764131ea
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20250219102802eucas1p11a9de63da00a6c76eaa79155764131ea
+References: <CGME20250219102802eucas1p11a9de63da00a6c76eaa79155764131ea@eucas1p1.samsung.com>
+	<20250219102750.38519-1-brgl@bgdev.pl>
 
-From: Robin van der Gracht <robin@protonic.nl>
+On 19.02.2025 11:27, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> Since commit 9d846b1aebbe ("gpiolib: check the return value of
+> gpio_chip::get_direction()") we check the return value of the
+> get_direction() callback as per its API contract. This driver returns
+> -EINVAL if the pin in question is set to one of the alternative
+> (non-GPIO) functions. This isn't really an error that should be
+> communicated to GPIOLIB so default to returning the "safe" value of
+> INPUT in this case. The GPIO subsystem does not have the notion of
+> "unknown" direction.
+>
+> Fixes: 9d846b1aebbe ("gpiolib: check the return value of gpio_chip::get_direction()")
+> Reported-by: Mark Brown <broonie@kernel.org>
+> Closes: https://lore.kernel.org/all/Z7VFB1nST6lbmBIo@finisterre.sirena.org.uk/
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Closes: 
+https://lore.kernel.org/all/dfe03f88-407e-4ef1-ad30-42db53bbd4e4@samsung.com/
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>   drivers/pinctrl/bcm/pinctrl-bcm2835.c | 14 +++++++-------
+>   1 file changed, 7 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+> index cc1fe0555e19..eaeec096bc9a 100644
+> --- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+> +++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+> @@ -346,14 +346,14 @@ static int bcm2835_gpio_get_direction(struct gpio_chip *chip, unsigned int offse
+>   	struct bcm2835_pinctrl *pc = gpiochip_get_data(chip);
+>   	enum bcm2835_fsel fsel = bcm2835_pinctrl_fsel_get(pc, offset);
+>   
+> -	/* Alternative function doesn't clearly provide a direction */
+> -	if (fsel > BCM2835_FSEL_GPIO_OUT)
+> -		return -EINVAL;
+> +	if (fsel == BCM2835_FSEL_GPIO_OUT)
+> +		return GPIO_LINE_DIRECTION_OUT;
+>   
+> -	if (fsel == BCM2835_FSEL_GPIO_IN)
+> -		return GPIO_LINE_DIRECTION_IN;
+> -
+> -	return GPIO_LINE_DIRECTION_OUT;
+> +	/*
+> +	 * Alternative function doesn't clearly provide a direction. Default
+> +	 * to INPUT.
+> +	 */
+> +	return GPIO_LINE_DIRECTION_IN;
+>   }
+>   
+>   static void bcm2835_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
 
-The rockchip_canfd driver doesn't make use of the TXE FIFO.
-
-Although the comment states that the TXE FIFO is setup, it's actually
-a setup of the RX FIFO. The regular setup of the RX FIFO follows.
-
-Remove the duplicated setup of the RX FIFO.
-
-Fixes: ff60bfbaf67f ("can: rockchip_canfd: add driver for Rockchip CAN-FD controller")
-Signed-off-by: Robin van der Gracht <robin@protonic.nl>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
----
- drivers/net/can/rockchip/rockchip_canfd-core.c | 5 -----
- 1 file changed, 5 deletions(-)
-
-diff --git a/drivers/net/can/rockchip/rockchip_canfd-core.c b/drivers/net/can/rockchip/rockchip_canfd-core.c
-index d9a937ba126c..46201c126703 100644
---- a/drivers/net/can/rockchip/rockchip_canfd-core.c
-+++ b/drivers/net/can/rockchip/rockchip_canfd-core.c
-@@ -236,11 +236,6 @@ static void rkcanfd_chip_fifo_setup(struct rkcanfd_priv *priv)
- {
- 	u32 reg;
- 
--	/* TXE FIFO */
--	reg = rkcanfd_read(priv, RKCANFD_REG_RX_FIFO_CTRL);
--	reg |= RKCANFD_REG_RX_FIFO_CTRL_RX_FIFO_ENABLE;
--	rkcanfd_write(priv, RKCANFD_REG_RX_FIFO_CTRL, reg);
--
- 	/* RX FIFO */
- 	reg = rkcanfd_read(priv, RKCANFD_REG_RX_FIFO_CTRL);
- 	reg |= RKCANFD_REG_RX_FIFO_CTRL_RX_FIFO_ENABLE;
-
----
-base-commit: aefd232de5eb2e77e3fc58c56486c7fe7426a228
-change-id: 20250219-rk3568-canfd-a0f9c103751e
-
-Best regards,
+Best regards
 -- 
-Marc Kleine-Budde <mkl@pengutronix.de>
-
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
 
