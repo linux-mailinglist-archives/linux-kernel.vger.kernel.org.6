@@ -1,68 +1,67 @@
-Return-Path: <linux-kernel+bounces-521939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B297A3C41C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:49:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34ECAA3C419
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:49:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 482113A8F91
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:47:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BC7C162A50
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:48:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 014B41FC7F7;
-	Wed, 19 Feb 2025 15:47:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6811F9413;
+	Wed, 19 Feb 2025 15:48:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F5SZ/Q8T"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="wYl0ItI6"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C6E21B983E;
-	Wed, 19 Feb 2025 15:47:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B31A13CA8A;
+	Wed, 19 Feb 2025 15:48:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739980061; cv=none; b=sNEB44uSt6V50r8curJhJP01xs+ZikhGyWVNkbV/1kj99P0DaZwK/iUATqHU7jKS8vmXHM7tv3175so7XGZWKdMegEppZxRtJdyr8cgaRlb+SXvpZQur8YrGWmuuLSUuIkw7Ze2EkJfLi54eBs5B2xsgDw+A/x0nL6+3fmavXWU=
+	t=1739980086; cv=none; b=bvYc52DzuAnT8lTaerCVpp0xMbUkoCsVSpsbBgiPPGymHz2ZxvpLtGLBKy72mwx0lf3LcFPUGpkaYil4nSGXVO4pLo3VyWb2LIQAYJlgOFOqmuOxR/1a+zly0Zbe6g+C3Jtz2dsApe57M9nvW3FgXHUtffTvVb/oW3SSVOsS1hM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739980061; c=relaxed/simple;
-	bh=Mv6lw/jGIKU2yqM0WT6dMZP0js12PkMDpy+2BlT3EXI=;
+	s=arc-20240116; t=1739980086; c=relaxed/simple;
+	bh=/Ak6AYaW+NREAHqINtVDyh4urTouMrWD675Mi2sSLPI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WBjWlFzVVER6/CWJj2whrbhA7h8HGhWVHjJi0iUABKPIjMQPxddkLyGyN6u+S3YWyZWFySdIYyYMM2714IPoq6PCok2uX+AFdSdBIcQ6gxfrpUuZa5Sfpa8jUdwWXYIQM4Eo05l1qs2CZ7/Mv8ZmNX3FOiWRH+PxF0PP9Ps0Uis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F5SZ/Q8T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8154C4CED6;
-	Wed, 19 Feb 2025 15:47:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739980059;
-	bh=Mv6lw/jGIKU2yqM0WT6dMZP0js12PkMDpy+2BlT3EXI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F5SZ/Q8TlTSym5axjkf4B0lABrOiAJSE+3+el4CHQbtqYyN/b/ilxkiY48sXr+Xsj
-	 cYpLq/2PqYLL2qdn6UrWRW1VzY5OugiKJ3bn5bZwzRda1j2DoZaW3T2iO8uztbXlGT
-	 VkMjEJrOcuWe6COfPz1qOXp8Qx7sZpSaI4bF7znbicNKtvrPXnohDtAwCUjDHSIbvu
-	 VA6NOM4aNe0Fyze72UVZ2FvouWj+R04uzRCNLZBg3Yngoqm/4Tm3tp4+sPzdvYXYTw
-	 x8MMPXpLulksa8cufMmh0mzaP112b4Nw7hYo4amSRjD7k2Bh+sHMG0Pho2dqs/3jih
-	 +/2vzZPWx3+qg==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1tkmIe-000000003ew-3yZ9;
-	Wed, 19 Feb 2025 16:47:49 +0100
-Date: Wed, 19 Feb 2025 16:47:48 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Akhil P Oommen <quic_akhilpo@quicinc.com>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH 4/4] arm64: dts: qcom: x1e80100: Drop unused passive
- thermal trip points for CPU
-Message-ID: <Z7X9JIDVMorYGuS1@hovoldconsulting.com>
-References: <20250219-x1e80100-thermal-fixes-v1-0-d110e44ac3f9@linaro.org>
- <20250219-x1e80100-thermal-fixes-v1-4-d110e44ac3f9@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=no/+dVLLpAmnKtZu1nC5RH/haSZmdkIjvfVTYNE7AyubtyN1pCEZMq/IqM4dkC/aLJ/ARWwunRiAemEP677H/Uct3YsO6inVEt4IHv8CRtQkCTF7SaAqXCUE6QOyPO4dbdqjP/t+kGYCA34veB8EmcgmZXUAtRzY64Sdgn9SyFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=wYl0ItI6; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=Gzj0SwPRaTNirTrm9WLzsRKYWUJkOtFVhEJhOoLZ8NU=; b=wYl0ItI6OysoRYTR2q06G8db9m
+	xrqJ+Qb/eBCyNzxAC5xNTOThx6DwY+l1zz0mkvDE1nW0Ef4+USboaTSwCkHkY62Awu71DRmFK/1lN
+	ZevniaXm6WXfyNWd/Nkl6CoJLI5K/f0jqwUbV2h58AxxTTDnM7bXkibhpQg+41z6r/js=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tkmIh-00Ffmc-UA; Wed, 19 Feb 2025 16:47:51 +0100
+Date: Wed, 19 Feb 2025 16:47:51 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Sky Huang <SkyLake.Huang@mediatek.com>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Qingfang Deng <dqfext@gmail.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Steven Liu <Steven.Liu@mediatek.com>
+Subject: Re: [PATCH net-next v2 3/3] net: phy: mediatek: add driver for
+ built-in 2.5G ethernet PHY on MT7988
+Message-ID: <724eff11-c6d1-40e1-a99f-205f5426a07d@lunn.ch>
+References: <20250219083910.2255981-1-SkyLake.Huang@mediatek.com>
+ <20250219083910.2255981-4-SkyLake.Huang@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,26 +70,128 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250219-x1e80100-thermal-fixes-v1-4-d110e44ac3f9@linaro.org>
+In-Reply-To: <20250219083910.2255981-4-SkyLake.Huang@mediatek.com>
 
-On Wed, Feb 19, 2025 at 12:36:21PM +0100, Stephan Gerhold wrote:
-> There are currently two passive trip points defined for the CPU, but no
-> cooling devices are attached to the thermal zones. We don't have support
-> for cpufreq upstream yet, but actually this is redundant anyway because the
-> CPU is throttled automatically when reaching high temperatures.
-> 
-> Drop the passive trip points and keep just the critical shutdown as safety
-> measure in case the throttling fails.
-> 
-> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+> +config MEDIATEK_2P5GE_PHY
+> +	tristate "MediaTek 2.5Gb Ethernet PHYs"
+> +	depends on (ARM64 && ARCH_MEDIATEK) || COMPILE_TEST
+> +	select MTK_NET_PHYLIB
+> +	help
+> +	  Supports MediaTek SoC built-in 2.5Gb Ethernet PHYs.
+> +
+> +	  This will load necessary firmware and add appropriate time delay.
+> +	  Accelerate this procedure through internal pbus instead of MDIO
+> +	  bus. Certain link-up issues will also be fixed here.
 
-Looks good. Perhaps we should backport this one as well in case the
-current passive trip points cause unnecessary work to done for no
-reason.
+Please keep the file sorted, this should be the first entry.
 
-Either way:
+> diff --git a/drivers/net/phy/mediatek/Makefile b/drivers/net/phy/mediatek/Makefile
+> index 814879d0abe5..c6db8abd2c9c 100644
+> --- a/drivers/net/phy/mediatek/Makefile
+> +++ b/drivers/net/phy/mediatek/Makefile
+> @@ -2,3 +2,4 @@
+>  obj-$(CONFIG_MTK_NET_PHYLIB)		+= mtk-phy-lib.o
+>  obj-$(CONFIG_MEDIATEK_GE_PHY)		+= mtk-ge.o
+>  obj-$(CONFIG_MEDIATEK_GE_SOC_PHY)	+= mtk-ge-soc.o
+> +obj-$(CONFIG_MEDIATEK_2P5GE_PHY)	+= mtk-2p5ge.o
 
-Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
+I suppose you could say this file is sorted in reverse order so is
+correct?
 
-Johan
+> diff --git a/drivers/net/phy/mediatek/mtk-2p5ge.c b/drivers/net/phy/mediatek/mtk-2p5ge.c
+> new file mode 100644
+> index 000000000000..adb03df331ab
+> --- /dev/null
+> +++ b/drivers/net/phy/mediatek/mtk-2p5ge.c
+> @@ -0,0 +1,346 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +#include <linux/bitfield.h>
+> +#include <linux/firmware.h>
+> +#include <linux/module.h>
+> +#include <linux/nvmem-consumer.h>
+
+Is this header needed?
+
+> +#include <linux/of_address.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/pinctrl/consumer.h>
+> +#include <linux/phy.h>
+> +#include <linux/pm_domain.h>
+> +#include <linux/pm_runtime.h>
+
+And these two? Please only use those that are needed.
+
+> +static int mt798x_2p5ge_phy_load_fw(struct phy_device *phydev)
+> +{
+> +
+> +	writew(reg & ~MD32_EN, mcu_csr_base + MD32_EN_CFG);
+> +	writew(reg | MD32_EN, mcu_csr_base + MD32_EN_CFG);
+> +	phy_set_bits(phydev, MII_BMCR, BMCR_RESET);
+> +	/* We need a delay here to stabilize initialization of MCU */
+> +	usleep_range(7000, 8000);
+
+Does the reset bit clear when the MCU is ready? That is what 802.3
+defines. phy_poll_reset() might do what you need.
+
+> +	dev_info(dev, "Firmware loading/trigger ok.\n");
+
+dev_dbg(), if at all. You have already spammed the log with the
+firmware version, so this adds nothing useful.
+
+> +		phydev->duplex = DUPLEX_FULL;
+> +		/* FIXME:
+> +		 * The current firmware always enables rate adaptation mode.
+> +		 */
+> +		phydev->rate_matching = RATE_MATCH_PAUSE;
+
+Can we tell current firmware for future firmware? Is this actually
+fixable?
+
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+
+
+
+> +static int mt798x_2p5ge_phy_probe(struct phy_device *phydev)
+> +{
+> +	struct mtk_i2p5ge_phy_priv *priv;
+> +
+> +	priv = devm_kzalloc(&phydev->mdio.dev,
+> +			    sizeof(struct mtk_i2p5ge_phy_priv), GFP_KERNEL);
+> +	if (!priv)
+> +		return -ENOMEM;
+> +
+> +	switch (phydev->drv->phy_id) {
+> +	case MTK_2P5GPHY_ID_MT7988:
+> +		/* The original hardware only sets MDIO_DEVS_PMAPMD */
+
+What do you mean by "original hardware"? 
+
+You use PHY_ID_MATCH_MODEL(MTK_2P5GPHY_ID_MT7988), so do you mean
+revision 0 is broken, but revision 1 fixed it?
+
+
+> +		phydev->c45_ids.mmds_present |= MDIO_DEVS_PCS |
+> +						MDIO_DEVS_AN |
+> +						MDIO_DEVS_VEND1 |
+> +						MDIO_DEVS_VEND2;
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	priv->fw_loaded = false;
+> +	phydev->priv = priv;
+> +
+> +	mtk_phy_leds_state_init(phydev);
+
+The LEDs work without firmware?
+
+    Andrew
+
+---
+pw-bot: cr
 
