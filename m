@@ -1,192 +1,110 @@
-Return-Path: <linux-kernel+bounces-521263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 609B6A3BAD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:52:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59D65A3BAC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:49:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F12B163797
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:43:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 370E63A2659
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:43:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 563291C6FE7;
-	Wed, 19 Feb 2025 09:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jmtUx3np"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9FD01C5F0C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 384D71C3F04;
 	Wed, 19 Feb 2025 09:43:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CUATjFqP"
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AB2E1B4F21;
+	Wed, 19 Feb 2025 09:43:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739958214; cv=none; b=uya15rHMUaHcE2twQrPEWUy2a+f5u5spZ42zEXNZd1N4t137m3omFuVsqxhRqw8wolAI0+/nETWsdj67+XAfGlbQFJ/TILiKk/bmU/Z7GNCKJ3/d+ubpmzTZON25ybXsWlxDnAJ5Xn59SxKIeKWeqZcir1Hf26wSAdHv+2iPpU0=
+	t=1739958211; cv=none; b=k5Mnr82cAcD2T9JE8ZWmnL92DC2oHMYm4nKUeYcGUQGc0NqSxeIUeHVO4jZOWDW4qMw5JtT8GMtXvFc0t3Q23ZacvcVfTbw2pZnPDAmy24iXskp/vtkfaE2zWggYqjvYmu1GXUO0yqi8AkXmE93NjiUnoc8csjPkSgtKxuCQGLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739958214; c=relaxed/simple;
-	bh=Jd/Y5vJ5sDHZ1WgGnceafzFojzCctHAlAM5qQ9Kamw0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=eVzn6CuSQq4Zh0inDQIc8aDSmquAeBewoqktLT+tGy3k7panqpxpcW7Wi3AAmpgZF9PXHcSRpQhid+wKKDbifsYW6GQnyyGKJtTWbyIWwjEuMxRdZj/pmK0XWuVeaV9aEaxHfUZnoQLA9bIrVnYY7AoI3J1a2cS+X5j8Z67JOEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jmtUx3np; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51J7e2GY002691;
-	Wed, 19 Feb 2025 09:43:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	BRmVuOElVxUTeRDyEZ3ekSWRHBkhEe7aS51JcoAJOjQ=; b=jmtUx3npP5Pl5qsG
-	TpVsj9sH4/ADHpNfABczpXPUAkxd3OJKnfWn8Jn2rMkdPLi0josfanIB4q5AGmKe
-	Ao+bpJT5ecZnKBzFochJbEck8KWrruBvykDmxSZUowVPCICBOZUjWTZt/XmG+PIA
-	zD0oOxUckkJC4SK1d+4m8r3Qq29uZ/JcDpiQ5bC4bvQp9BeW/dh0DY4l+kjm+hRN
-	GxMYMrFKte4sRlAIFKBnQgmBRuxRerpL9rb2LvQdRCnTr0A3qp7FXkr3e5K0XWwP
-	MMRZchP1nnMiqOgHTXC8bAa2EDbEOR2PdpwjxbROW1yGJ14Yn3Qq7YhYqeHYeuu6
-	nwWOGw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44vyy29yqh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Feb 2025 09:43:17 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51J9hHLe003295
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Feb 2025 09:43:17 GMT
-Received: from [10.64.68.119] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 19 Feb
- 2025 01:43:10 -0800
-Message-ID: <d45d9832-31b3-4a23-bcc2-8313d2fccec7@quicinc.com>
-Date: Wed, 19 Feb 2025 17:43:07 +0800
+	s=arc-20240116; t=1739958211; c=relaxed/simple;
+	bh=JbQfZE+vLsay+m41W/xExMvsph46lPBJtYHfkRyAxdw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Hh3pcf5buM7CrvEftLPQQIWHoNlkEAXBnIGBWGsKd6/VdIHHHKREpLBApm4YHP31BTEKX6+Ke1FzVFXH60CEdgGUFUzGQ2FzYpuAjOZo4GMKx5kCO1vfzNKBVv8PdTiFLIYBbrtCQMjljkt544F4Q08Ie+pqyWVLRSCd1flz8mQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CUATjFqP; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e4419a47887so4845296276.0;
+        Wed, 19 Feb 2025 01:43:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739958209; x=1740563009; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=JbQfZE+vLsay+m41W/xExMvsph46lPBJtYHfkRyAxdw=;
+        b=CUATjFqPhA43PvcqgI8KA79AiKj96IUELf7ndyZJWe+gD/y7uQ1vsQCexotvMEoopZ
+         OF4d9jXLaTFtsBwRpGrDH5TLieLmg/zW8foM4+MP26kn+nYhHbk5fkWacDoTYWwv+Nwl
+         wvHkWlefOY0mUGh6mg0QGFSYL/AxRCUvom8BblVQ19o3PzmI3SluDqlpPN4l/Pa0nuFz
+         YOdg/PTbyst2Qf+wEzjfI6EA1ACCRDi2Ruvg1DpLqmtlSXF7sJOArkLkFmRjmhjC7yeI
+         6eZU4zZlv/MFoTYhvFsIPhgfM1XXBLCcOFRvbieVt3JV8SLSA/k/UztDmHeXl88rBMBx
+         DNVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739958209; x=1740563009;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JbQfZE+vLsay+m41W/xExMvsph46lPBJtYHfkRyAxdw=;
+        b=sUkWwhjJRwzvZQ2ZfLy8A5kVbRWFBNmB43YKPONkJb8fqJLWIqMjwNptQvJiO2NlSu
+         1A/YzCbgxYFlLMED//e1t6xM9fK4RMCSRUHS2nX56TseC6Tm+q5B+LGh61KyJS4i7D22
+         apI5KMKDF5jXhmUvwArM/8dJITdAT+ZObxwBedikfBR/SBAolZLfdW92Vlv7X+HbBLBV
+         Q8y+u0k6DA7gu7B04pUtBf5K6E9tRgKZq2NIJ036WcvGt3kXVdR6a+/dm/5JBsABVQuK
+         hh7Jmr+7m5rvoQlxzZTGAgUQ9/dvVLQTniDDvdBDgYhhF8ABmIr50QcCfIXn8wm1Ro+l
+         Nqpg==
+X-Forwarded-Encrypted: i=1; AJvYcCV2a+luLmQg1Q3eqd3mZkke27Y8mDAapoQnCuIY7bCGAzwK4z0yd/CvJekgSa7x90t525UwZWgalLY=@vger.kernel.org, AJvYcCWn6tNUsb7DZAacG3x8ZpSZqDwRHLAEdZxthzyN5RgunaGnlPWkOzS9OKKgs9WECp7njSewSeg2jti1@vger.kernel.org, AJvYcCX0LSE9h3t8z08jCC03K8BVl3aJnQD33tN38BA7sMhgSlkfIURNdsQtnB5/X8XeKYY69Swp7oYLX2zjLCU=@vger.kernel.org, AJvYcCX5ei3+qQBOyd5gen1IHX6sll7fg6wEs6f/s0K07n8rjuKzTHp2nqKfcddp7sDBjiygrFeY14dTlGwqXEpG@vger.kernel.org
+X-Gm-Message-State: AOJu0YxR0gQ4qPVrIM0E763ZfDVXFlpS6A2yOWe9gkvGoMpdUcx8TTCQ
+	p4Bjziryxs7qYNsJ2vm741S2DfW6U1SfO//+9sYqbISCbJqVXPvXAMNI9+jIqLTBDAfjwdrh2LN
+	UwfM9ZsB647+dSlI5tlPZAs+8OCc=
+X-Gm-Gg: ASbGncudIUXCQyq+r9E5NHMkC6NlRbQkg5gRh2fy84H2Pc9NmKOi9jp8kWmCezGvbeL
+	PAEfwmM8iz2HS8sAzNhxlOIAR46t1TBopStrsmTqoMRhSm9n6LMjQWI72ykn10W7lOQOWqEYeLg
+	==
+X-Google-Smtp-Source: AGHT+IF4fhS5ToYgiyprNptli3rl/YWe/Sr8AbYoBe7Xa+PURKeBJb7TRkFTdB3HeJfB6d1BuGRjs+ziA08+lfNk/74=
+X-Received: by 2002:a05:6902:1509:b0:e5b:1453:d2e4 with SMTP id
+ 3f1490d57ef6-e5e0a09dcb1mr2433065276.11.1739958208906; Wed, 19 Feb 2025
+ 01:43:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] dt-bindings: display/msm: Redocument the
- dp-controller for QCS8300
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Krzysztof Kozlowski
-	<krzk@kernel.org>,
-        Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar
-	<quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard
-	<mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Kuogee Hsieh <quic_khsieh@quicinc.com>,
-        "Bjorn
- Andersson" <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250212-mst_qcs8300-v1-0-38a8aa08394b@quicinc.com>
- <20250212-mst_qcs8300-v1-1-38a8aa08394b@quicinc.com>
- <531a23fe-940a-4e9a-b023-5f1789ac65a5@kernel.org>
- <10d83c88-9f72-4577-95ba-bb1fd1ef36d1@quicinc.com>
- <5fd75e3d-ee87-439e-b6d4-dd0dd9a0ea2d@kernel.org>
- <c4850349-e0d7-4976-a6dc-9c690905abf3@oss.qualcomm.com>
-Content-Language: en-US
-From: Yongxing Mou <quic_yongmou@quicinc.com>
-In-Reply-To: <c4850349-e0d7-4976-a6dc-9c690905abf3@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: wiU1kxTL0LrvIcw-0lzCg0AnIbycbzrZ
-X-Proofpoint-GUID: wiU1kxTL0LrvIcw-0lzCg0AnIbycbzrZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-19_04,2025-02-18_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- lowpriorityscore=0 clxscore=1015 adultscore=0 phishscore=0 mlxlogscore=999
- bulkscore=0 malwarescore=0 impostorscore=0 priorityscore=1501 mlxscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502190077
+References: <20250219-isp-v1-0-6d3e89b67c31@gmail.com> <20250219-isp-v1-1-6d3e89b67c31@gmail.com>
+ <400d64ed-670a-4297-b43b-cdf4e8599c7b@kernel.org>
+In-Reply-To: <400d64ed-670a-4297-b43b-cdf4e8599c7b@kernel.org>
+From: Sasha Finkelstein <fnkl.kernel@gmail.com>
+Date: Wed, 19 Feb 2025 10:43:17 +0100
+X-Gm-Features: AWEUYZngFT_TlGtzAp7eDIc5jUmixD2xinxUmQy_lSABzD_u61AwBZNq6Cj2sCI
+Message-ID: <CAMT+MTSb2gdkfCZE3i+0ah8AgE_G8mH2MFTms=QgFwd-nbA8Ag@mail.gmail.com>
+Subject: Re: [PATCH 1/5] dt-bindings: power: apple,pmgr-pwrstate: Add
+ force-{disable,reset} properties
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Sven Peter <sven@svenpeter.dev>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Hector Martin <marcan@marcan.st>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, asahi@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-media@vger.kernel.org, imx@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
+On Wed, 19 Feb 2025 at 10:34, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> On 19/02/2025 10:26, Sasha Finkelstein via B4 Relay wrote:
+> > From: Sasha Finkelstein <fnkl.kernel@gmail.com>
+> >
+> > Add properties to set disable/reset bits when powering down
+> > certain domains
+>
+>
+> Please explain why and what problem are you solving. This looks too
+> close to SW policy or really arbitrary choice. Background would be useful.
 
-
-On 2025/2/12 21:44, Konrad Dybcio wrote:
-> On 12.02.2025 12:28 PM, Krzysztof Kozlowski wrote:
->> On 12/02/2025 12:13, Yongxing Mou wrote:
->>>
->>>
->>> On 2025/2/12 16:35, Krzysztof Kozlowski wrote:
->>>> On 12/02/2025 08:12, Yongxing Mou wrote:
->>>>> We need to enable mst for qcs8300, dp0 controller will support 2 streams
->>>>> output. So not reuse sm8650 dp controller driver and will add a new driver
->>>>> patch for qcs8300 mst feature. Modify the corresponding dt-bingding file
->>>>> to compatible with the qcs8300-dp.
->>>>>
->>>>> Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
->>>> NAK. You just said qcs8300 is compatible with sm8650. I did not ask
->>>> about drivers, I asked about hardware.
->>>>
->>>> This is messy approach. Describe properly the hardware first, instead of
->>>> sending two conflicting patchsets.
->>>>
->>>> Best regards,
->>>> Krzysztof
->>>
->>> Hi, Krzysztof, thanks for reviewing, i want to explain why i submitted
->>> this patch. Patch
->>> https://lore.kernel.org/all/20250114-dts_qcs8300-v3-1-d114cc5e4af9@quicinc.com/
->>> and
->>> https://lore.kernel.org/all/20250120-mdssdt_qcs8300-v4-2-1687e7842125@quicinc.com/
->>> is the qcs8300 display enablement changes. It base on current linux base
->>> code and it only support SST mode, so in the SST mode, qcs8300 dp
->>> controller driver is quite same with sm8650, struct msm_dp_desc only
->>> have 3 members(io_start, id and wide_bus_supported) and they are same
->>> both in qcs8300 and sm8650, so we reuse it. BTW, for dp phy hardware
->>> version, qcs8300 and sm8650 is different.
->>
->> No. In one patchset you claim hardware is like that, in other patchset
->> you say hardware is different.
->>
->> Sorry, hardware does not change based on your patchsets.
->>
->> Sort out this before posting new versions.
-> 
-> In other words, fallback compatibles must be chosen with features that
-> are present in hardware, but not yet supported upstream in mind.
-> 
-> It's totally fine (and even preferred/expected) to describe hardware resources
-> (such as MST clocks here) when initially creating bindings for a piece of hw,
-> even though the drivers don't use them yet at that moment.
-> 
-> dt-bindings are supposed to give the OS a complete representation of the
-> hardware and ideally be immutable (which is a struggle, but we're getting
-> better). Driver specifics should not influence your decisions (or at least
-> do so very minimally) when adding these.
-> 
-> Now you're in a """good""" position as the display bindings haven't been merged
-> yet, so you can still upload a new patchset where the description is more
-> accurate. If it was merged, we'd have to break the ABI or add some crazy
-> workarounds..
-> 
-> Please coalesce this patchset with the "add 8300 display support" one.
-> 
-> Please also describe all 4 MST clocks and whatever other clocks/resets that
-> may be necessary down the line.
->   
-> Konrad
-Thanks, will update it in this patch "add 8300 display support". Because 
-this will depend on this change: 
-https://patchwork.freedesktop.org/series/142016/. we will first fix our 
-dependecy comments and then repost it.
+The ISP block has some weird requirements where some of it's power domains
+will not power down correctly without using the "force disable" or "force reset"
+pmgr feature. Basically a hardware quirk.
 
