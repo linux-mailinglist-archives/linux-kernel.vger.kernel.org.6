@@ -1,129 +1,101 @@
-Return-Path: <linux-kernel+bounces-522095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5486A3C5E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:16:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5D7BA3C5D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:16:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05D7417A1E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:14:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63CD4177F9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:13:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8816E21423E;
-	Wed, 19 Feb 2025 17:14:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C76792144CE;
+	Wed, 19 Feb 2025 17:13:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lTjUL0gH"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EVJIOehH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C9121420A;
-	Wed, 19 Feb 2025 17:14:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 296BB214230;
+	Wed, 19 Feb 2025 17:13:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739985286; cv=none; b=nuuhEjXOb17TuhXeg+nXsg2Jl4kzOjSJxP0xZ95rt0rkx6HLxlnFtm6uu7YRTziRNtAfj/p4Ehgp7/iQDDSbzJEADppOQhawqqbvMOzthv3s4zXE5aCaFRsrTzo2c+PXIE7BbeDTg0TkX+DRp3zXVEHfehq1jQGWCR7lHCa030E=
+	t=1739985188; cv=none; b=Cl6IOLUew90ZxEKudCiv9tahpJtqrBZJPTwDE5/LmCAKVe5ADBWrp+7D0EoKWc9SmFp7iDJB4r4v5F/P6QC0o5fePX0pxVOJHTDeTDbKw3gftHVuUv0Yz6cPyXeWWTz9F0ErhuQIn5ds5A3+LvI/QLhhqt7uLHvrTm5F8TkRJBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739985286; c=relaxed/simple;
-	bh=Od+FBfOB+x7pT+x4vDKsZzziEAc6W/wj751OaJ9+uxA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ERIS2EqjihxOKAF1mr1nTE+ps/pA5thYmTZ+6q4glFcyLsfTkQw0kZBwdFYuiTQSOXW6WEnV11IQa8lq/zWawkdj95MLiM8BLEjQ0HOOuI7LIDabDRI12xTAEtyA97PxMhIPFvOEv47OzV6lEw6xTiZTDbOfWcYpsW19dX/g5CQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lTjUL0gH; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739985286; x=1771521286;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Od+FBfOB+x7pT+x4vDKsZzziEAc6W/wj751OaJ9+uxA=;
-  b=lTjUL0gHIXahoe06zU8KCdBNtlcJY7TaG2Cyk0E/CLilwPim5KciALB4
-   TI6pFswGurCefnSptfny+sVyUtUkOGjBgwl6b3ReJfzaQ5cRhfv+E1UuN
-   0SLh4eSpeYUsiFvcG9KDysfOgaCsnpV3Co/iI9JeThqkgDkR+Gvtmosh0
-   mGJ43g8+xy3/WvxW8kWakpMv4M7PjvbU12qZmrmGQ3ik1ATPD1TIljdIa
-   GQC1EHazxJ0j/u/D6pJE0YDn33zEvhOaAKIQB0LkLxxJbV9GzHknX14Gj
-   72dpoTGvhEFj86L7UTnKeqoMBEKcfqrbeqqTcx8VzEJIFXzcwmEZMuoh2
-   w==;
-X-CSE-ConnectionGUID: +Yioe6FsRwaiLtoac8zUDQ==
-X-CSE-MsgGUID: UpeUXpXATw2Ln/LKINCVcA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11350"; a="40448713"
-X-IronPort-AV: E=Sophos;i="6.13,299,1732608000"; 
-   d="scan'208";a="40448713"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 09:14:45 -0800
-X-CSE-ConnectionGUID: X2+0Pn9UQemUXt5F5t1BTg==
-X-CSE-MsgGUID: xk5Kc6bGT4KXULZj2LY64g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,299,1732608000"; 
-   d="scan'208";a="114711764"
-Received: from inaky-mobl1.amr.corp.intel.com (HELO [10.125.110.11]) ([10.125.110.11])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 09:13:02 -0800
-Message-ID: <77226007-502c-4e80-9ea3-62409a928e17@intel.com>
-Date: Wed, 19 Feb 2025 10:12:57 -0700
+	s=arc-20240116; t=1739985188; c=relaxed/simple;
+	bh=L/QYV+Qom79g9HuHBK43mFl7f5J5yQqARQ5i2sJ4WKY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JD0hkMfPTiVJ3bO/PjvxTBL8icNPTyl1u5tfFC/knx03MIX26wPXL1gj5j63d01XeEMgFTud+O9n7JANsfJQX4rozX16tABVjg/mMzrdIgeOmiRktUo1+b4zde1NKWVC0zG8mKwXntwcZJZREHTND8iamVdCQfUrrQSEM0drtlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EVJIOehH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8093CC4CED1;
+	Wed, 19 Feb 2025 17:13:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739985187;
+	bh=L/QYV+Qom79g9HuHBK43mFl7f5J5yQqARQ5i2sJ4WKY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EVJIOehHSqr8PKdEefVAoXdXxWoapJRSOxmVK3UoxthHWmfMSOMEMGCr7xaDzEF6o
+	 Is5xIokYrUnXoeRayJe7O2SZ42wr51wSr6SxMOhXttVT0KxLJuIohuHF6dlwMMx5Qj
+	 xCQdOVVGTq5rWzu0QYppjX1UM3PJxjjetCo6ozhsNGHe1QPbLp23NFx+9HCRMdTJH5
+	 eWYIa9cAcoSxHY1nmbzrXdGRgvTwDZhD5EMXwqlXf2jIZrko1nqOY9ZH0RdrHOSPnS
+	 eeFOFR2Ycd6Rz+cyS0qSWyak0G9/68xiw1Em0Fd7tWDFbbUnNjJ7gCq4PEZ+zOEOPQ
+	 y6DiYo85VJqFg==
+Date: Wed, 19 Feb 2025 09:13:04 -0800
+From: Kees Cook <kees@kernel.org>
+To: Sumya Hoque <sumyahoque2012@gmail.com>
+Cc: skhan@linuxfoundation.org, linux-kernel@vger.kernel.org,
+	shuah@kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel-mentees@lists.linuxfoundation.org
+Subject: Re: [PATCH] selftests:sysctl:Fix minor grammers in sysctl test
+Message-ID: <202502190912.CA03B56796@keescook>
+References: <20250219030451.39782-1-sumyahoque2012@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/7] cxl/core: cxl_mem_sanitize() cleanup
-To: Li Ming <ming.li@zohomail.com>, dave@stgolabs.net,
- jonathan.cameron@huawei.com, alison.schofield@intel.com,
- vishal.l.verma@intel.com, ira.weiny@intel.com, dan.j.williams@intel.com
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250217144828.30651-1-ming.li@zohomail.com>
- <20250217144828.30651-3-ming.li@zohomail.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250217144828.30651-3-ming.li@zohomail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250219030451.39782-1-sumyahoque2012@gmail.com>
 
-
-
-On 2/17/25 7:48 AM, Li Ming wrote:
-> In cxl_mem_sanitize(), the down_read() and up_read() for
-> cxl_region_rwsem can be simply replaced by a guard(rwsem_read), and the
-> local variable 'rc' can be removed.
+On Wed, Feb 19, 2025 at 03:04:51AM +0000, Sumya Hoque wrote:
+> Hello everyone,
+> Some minor grammer issues that I have fixed:
+> 1. echo "If an error every occurs -->  echo "If an error occurs, every execution
+> 2. Example uses --> Example Usage 
 > 
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Signed-off-by: Li Ming <ming.li@zohomail.com>
-
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> Signed-off-by: Sumya Hoque <sumyahoque2012@gmail.com>
 > ---
->  drivers/cxl/core/mbox.c | 10 +++-------
->  1 file changed, 3 insertions(+), 7 deletions(-)
+>  tools/testing/selftests/sysctl/sysctl.sh | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/cxl/core/mbox.c b/drivers/cxl/core/mbox.c
-> index 548564c770c0..0601297af0c9 100644
-> --- a/drivers/cxl/core/mbox.c
-> +++ b/drivers/cxl/core/mbox.c
-> @@ -1222,23 +1222,19 @@ int cxl_mem_sanitize(struct cxl_memdev *cxlmd, u16 cmd)
->  {
->  	struct cxl_memdev_state *mds = to_cxl_memdev_state(cxlmd->cxlds);
->  	struct cxl_port  *endpoint;
-> -	int rc;
->  
->  	/* synchronize with cxl_mem_probe() and decoder write operations */
->  	guard(device)(&cxlmd->dev);
->  	endpoint = cxlmd->endpoint;
-> -	down_read(&cxl_region_rwsem);
-> +	guard(rwsem_read)(&cxl_region_rwsem);
->  	/*
->  	 * Require an endpoint to be safe otherwise the driver can not
->  	 * be sure that the device is unmapped.
->  	 */
->  	if (endpoint && cxl_num_decoders_committed(endpoint) == 0)
-> -		rc = __cxl_mem_sanitize(mds, cmd);
-> -	else
-> -		rc = -EBUSY;
-> -	up_read(&cxl_region_rwsem);
-> +		return __cxl_mem_sanitize(mds, cmd);
->  
-> -	return rc;
-> +	return -EBUSY;
->  }
->  
->  static int add_dpa_res(struct device *dev, struct resource *parent,
+> diff --git a/tools/testing/selftests/sysctl/sysctl.sh b/tools/testing/selftests/sysctl/sysctl.sh
+> index 84472b436c07..a4d76147ed8a 100755
+> --- a/tools/testing/selftests/sysctl/sysctl.sh
+> +++ b/tools/testing/selftests/sysctl/sysctl.sh
+> @@ -891,11 +891,11 @@ usage()
+>  	echo "    -l      List all test ID list"
+>  	echo " -h|--help  Help"
+>  	echo
+> -	echo "If an error every occurs execution will immediately terminate."
+> +	echo "If an error occurs, every execution will immediately terminate."
 
+I think the typo here is just "every" -> "ever"
+
+>  	echo "If you are adding a new test try using -w <test-ID> first to"
+>  	echo "make sure the test passes a series of tests."
+>  	echo
+> -	echo Example uses:
+> +	echo Example usage:
+>  	echo
+>  	echo "$TEST_NAME.sh            -- executes all tests"
+>  	echo "$TEST_NAME.sh -t 0002    -- Executes test ID 0002 number of times is recomended"
+> -- 
+> 2.34.1
+> 
+
+-- 
+Kees Cook
 
