@@ -1,198 +1,135 @@
-Return-Path: <linux-kernel+bounces-520876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A49E3A3B053
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 05:21:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4EF3A3B05B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 05:29:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 549461892500
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 04:21:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5782F1895B96
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 04:29:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54A1D1ACED2;
-	Wed, 19 Feb 2025 04:21:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 058F11A7046;
+	Wed, 19 Feb 2025 04:29:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aUNQy1LQ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FcxhHo88"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D4433FD4;
-	Wed, 19 Feb 2025 04:21:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A418715746F
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 04:29:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739938868; cv=none; b=s3V40YNTkvbUXKZlEObTjpHwrCKS6Amr7C3x/w4VTkNNBcBQHBzCUPDv/WRQuS+gWcC1XgIvTh8VBN7HK6y3fU1xI281ruGl9nRufMChCYxo8zN+64j8hs34LtAoHG2dyzj07OaTGnV2/sThOPqAkfcEWvLLaSaGeJKCh6jg/LU=
+	t=1739939370; cv=none; b=OhefEzYrl+dBNAMrNQi43NdFT5ZBCSrdFajw8DV9KMtmlSCdTTy42GL33KxihxL/FO1Kto8zfaSy9rG1pGpETFr9a7JR3uDSiRpMBw/1sWQxtLpoKS5QUbWeMLgRF4HU36wFWzkFKZF42qJCK2XEc1zsbmMwkd724jr/rGrkHIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739938868; c=relaxed/simple;
-	bh=ckkrBzfsdso+T2awCaIUQiZvGU2IkHGhc+H4I3t65fk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C4dyvZhK23ZmjEgpQyF8XKIwn8g+ct4F79njVN5RQzoVUe9kvSqP7K0amKoOIshp9jSK1jSEHqZIC5f8qcGsA4Op/nMYN5YlqjDmmCWWyV8VUVkMacMY/SGc83vuQpGjxtL3nCuGi6vpwdZ5+6QtiDKc400zPK5pcc1oTBSsPcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aUNQy1LQ; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739938866; x=1771474866;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ckkrBzfsdso+T2awCaIUQiZvGU2IkHGhc+H4I3t65fk=;
-  b=aUNQy1LQbgusN+UJddcOhVHRX4DLb2DzY/qDOIRZggrE/pL0mG5DkdnF
-   TZdHNZ0ylAJ7h+AAAW7/U8y/WK8HLzNYYU7ZsqMllt9HKszmieLjGaipD
-   ruvaNJotIUZiaNWeN2Y1dvIEb7UjJJgaUXOXmjLGKtgD1Qgvc4/EsmFjs
-   SN0DfLo7/zOrS7s12RHA3CskNU1imrfwk7o+8aEOUUOh6+t5xEuzpKW/r
-   Hduu56YUy5yv03S7RA8QreGy9FteoUp8gISZNCRrYeAtj4UvqApsFPASi
-   p4i9YLxGtkRGpo6oj9AGdwImxwKftdtt0GXl+XpEC4SmrbCflgLHLypdp
-   Q==;
-X-CSE-ConnectionGUID: dkuShneJRg2y4fZiEKjyIQ==
-X-CSE-MsgGUID: XrkXwP7zQ+KEHxFspGr0ow==
-X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="58062440"
-X-IronPort-AV: E=Sophos;i="6.13,296,1732608000"; 
-   d="scan'208";a="58062440"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 20:21:05 -0800
-X-CSE-ConnectionGUID: V8xrp3+cQyG9v96azC7CMA==
-X-CSE-MsgGUID: xx5oaXeYT06QKPJpPoD3MA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="114450358"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by orviesa010.jf.intel.com with ESMTP; 18 Feb 2025 20:20:59 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tkbZB-0001EN-1J;
-	Wed, 19 Feb 2025 04:20:49 +0000
-Date: Wed, 19 Feb 2025 12:18:57 +0800
-From: kernel test robot <lkp@intel.com>
-To: Kyle Hendry <kylehendrydev@gmail.com>, Lee Jones <lee@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	=?iso-8859-1?Q?Fern=E1ndez?= Rojas <noltari@gmail.com>,
-	Jonas Gorski <jonas.gorski@gmail.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	netdev@vger.kernel.org, Kyle Hendry <kylehendrydev@gmail.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] net: phy: bcm63xx: add support for BCM63268 GPHY
-Message-ID: <202502191212.s0NqhQ3T-lkp@intel.com>
-References: <20250218013653.229234-2-kylehendrydev@gmail.com>
+	s=arc-20240116; t=1739939370; c=relaxed/simple;
+	bh=zb/9KgFfbpk6f/2smouuL+kG7zlSq7ptifNXDJHDfA4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ai/vzC9kidBpPaFicjvlwSjOvbDmATM6GzxPcW0sqaK0wop4dUO9TwfoyEGKjrHzsgrrZ7B2gxZstk66pdlmfPCgiByj3zx4H64o9SEo3VNHmez9+ris2rsA8fwUZPY6oVZpIhYzBIUJJxsOnKmWaFKfVHtZkrrj3Nl89P/0PVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=FcxhHo88; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5452ca02bdbso4576741e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 20:29:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1739939367; x=1740544167; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6VEqGe71O4B6jvfykXcb0jRrukuykdD7MfjxVd1svFc=;
+        b=FcxhHo88lA3YUC6lyZGCLtuE8o8haZuf05zOPMCMiChbPYAlGSs1rXu3phsaFt+/ud
+         FcHr6ild44OfnrLB0ubk5EDXNon5iyG0DPXR15poxsczeDqunu1ypeDyZlL+4V4IzhSW
+         xXqFxKH2fYCp815Oxtd1YMwJOkwDJ1+XZDbz8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739939367; x=1740544167;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6VEqGe71O4B6jvfykXcb0jRrukuykdD7MfjxVd1svFc=;
+        b=tz2GWdueX63wkeNia+/Fbv/4VdnmnBE5gWcUPZQyH2j8x5PzRZCth7M4Ghb7VCFawF
+         c7sOMH7ptk4s1CT4jHZsqwXmj/j9phbPpsyVU0gBu1qW06bOO1jCZICL4BoZJeQIzSxJ
+         MvlfNXLbJwa6JuvUfacAUZigjnQpY4EZe8b8QKVNkkKUMefS413XjjNmNhBFuLKGt/De
+         TJmM8zujgWnuwOx3tE70klS2XZS0BNIfcr/+hiJzH6RdSrnQP8iRDbht7EC1jinVFKdv
+         O5yuxH/VNkGrTFHpjtDw3oKQLGsHjzvH03579nO7P3Tl37TPmvPnELGNS09q9GeRjK3D
+         UGQw==
+X-Forwarded-Encrypted: i=1; AJvYcCU9ZmRiIGszeiUEI3bDWg/MUkl4fXa0VaNkyytzvCeQznV3N0mge5cCSyg9rCFm7q90yDmbhetL39ov1ds=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWmtEI1esCiFJ6WfQnnw+StpZd8v47vp79+eLUJJ1GjtxnJlht
+	4KCSj/gHgl7AlHkTTA57h1aGm0f5xIX/FaOZ28xpjazmhRfVwpKgAYVv0NhH052QzMp8FWQEM7X
+	fomOkgfkea0SPpwukUBbAdVchM7dJOLwvK0sQ
+X-Gm-Gg: ASbGncujPOSLoY2ZV6wnAVdpZAWBnDmHMTuAQQIcKek82U6Jc17bt4leXhhd+eWpvUS
+	p3giUt4Q0v04mTFrjMeqS+Yoolb4eaz9ng56wMx/Ij0liz6WQYEZmfUeiP6MUCdab9nmV7hac8M
+	oEaLgas6+MnFMIwH5+uqNXqRWl
+X-Google-Smtp-Source: AGHT+IFDON5BTBrIkCqYoruAW+GgEU4kzLUMfNza88SwUu5KL01SJq4OJVKPavaKWnoXBdabjUxCkcKdf2JVNhz5ek0=
+X-Received: by 2002:a05:6512:3d8a:b0:545:85f:4962 with SMTP id
+ 2adb3069b0e04-5452fe5bd65mr6877441e87.20.1739939366740; Tue, 18 Feb 2025
+ 20:29:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250218013653.229234-2-kylehendrydev@gmail.com>
+References: <20250218-genio700-dmic-v1-0-6bc653da60f7@collabora.com> <20250218-genio700-dmic-v1-6-6bc653da60f7@collabora.com>
+In-Reply-To: <20250218-genio700-dmic-v1-6-6bc653da60f7@collabora.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Wed, 19 Feb 2025 12:29:15 +0800
+X-Gm-Features: AWEUYZkGeDpr43jARxyOu4uYPJJwq5tj1ueAuV0HV6f4Jx2FAOS0QlcBYZWYQSE
+Message-ID: <CAGXv+5H1pfJMQPBTF_K72D3-JFsZDvZ277erZ449sc6FTkNFSA@mail.gmail.com>
+Subject: Re: [PATCH 6/6] arm64: dts: mediatek: mt8390-genio-common: Add routes
+ for DMIC
+To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, kernel@collabora.com, 
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	devicetree@vger.kernel.org, parkeryang <Parker.Yang@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Kyle,
+On Wed, Feb 19, 2025 at 5:27=E2=80=AFAM N=C3=ADcolas F. R. A. Prado
+<nfraprado@collabora.com> wrote:
+>
+> Add necessary routes for the onboard dual DMIC present on the Genio
+> 700/510 EVK. The dmic is supplied by micbias0 and micbias2, and inputs
+> into the MT8188 DMIC DAI.
+>
+> Co-developed-by: parkeryang <Parker.Yang@mediatek.com>
+> Signed-off-by: parkeryang <Parker.Yang@mediatek.com>
+> Signed-off-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
+> ---
+>  arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi b/arch=
+/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi
+> index a37cf102a6e928440cc88e7e8fe0225fc28ec962..efdeca88b8c4e58f0c1782515=
+6276babf19af145 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi
+> +++ b/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi
+> @@ -959,7 +959,11 @@ &sound {
+>         pinctrl-0 =3D <&audio_default_pins>;
+>         audio-routing =3D
+>                 "Headphone", "Headphone L",
+> -               "Headphone", "Headphone R";
+> +               "Headphone", "Headphone R",
+> +               "DMIC_INPUT", "AP DMIC",
+> +               "AP DMIC", "AUDGLB",
+> +               "AP DMIC", "MIC_BIAS_0",
+> +               "AP DMIC", "MIC_BIAS_2";
+>         mediatek,adsp =3D <&adsp>;
+>         status =3D "okay";
 
-kernel test robot noticed the following build warnings:
+Shouldn't there also be one or two new dmic-codecs, and a dai-link here?
 
-[auto build test WARNING on lee-mfd/for-mfd-next]
-[also build test WARNING on robh/for-next lee-leds/for-leds-next linus/master lee-mfd/for-mfd-fixes v6.14-rc3 next-20250218]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+ChenYu
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Kyle-Hendry/net-phy-bcm63xx-add-support-for-BCM63268-GPHY/20250218-094117
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git for-mfd-next
-patch link:    https://lore.kernel.org/r/20250218013653.229234-2-kylehendrydev%40gmail.com
-patch subject: [PATCH v2 1/5] net: phy: bcm63xx: add support for BCM63268 GPHY
-config: x86_64-buildonly-randconfig-004-20250219 (https://download.01.org/0day-ci/archive/20250219/202502191212.s0NqhQ3T-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250219/202502191212.s0NqhQ3T-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502191212.s0NqhQ3T-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/net/phy/bcm63xx.c:84:5: warning: no previous prototype for function 'bcm63268_gphy_set' [-Wmissing-prototypes]
-      84 | int bcm63268_gphy_set(struct phy_device *phydev, bool enable)
-         |     ^
-   drivers/net/phy/bcm63xx.c:84:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
-      84 | int bcm63268_gphy_set(struct phy_device *phydev, bool enable)
-         | ^
-         | static 
->> drivers/net/phy/bcm63xx.c:100:5: warning: no previous prototype for function 'bcm63268_gphy_resume' [-Wmissing-prototypes]
-     100 | int bcm63268_gphy_resume(struct phy_device *phydev)
-         |     ^
-   drivers/net/phy/bcm63xx.c:100:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
-     100 | int bcm63268_gphy_resume(struct phy_device *phydev)
-         | ^
-         | static 
->> drivers/net/phy/bcm63xx.c:115:5: warning: no previous prototype for function 'bcm63268_gphy_suspend' [-Wmissing-prototypes]
-     115 | int bcm63268_gphy_suspend(struct phy_device *phydev)
-         |     ^
-   drivers/net/phy/bcm63xx.c:115:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
-     115 | int bcm63268_gphy_suspend(struct phy_device *phydev)
-         | ^
-         | static 
-   3 warnings generated.
-
-
-vim +/bcm63268_gphy_set +84 drivers/net/phy/bcm63xx.c
-
-    83	
-  > 84	int bcm63268_gphy_set(struct phy_device *phydev, bool enable)
-    85	{
-    86		struct bcm_gphy_priv *priv = phydev->priv;
-    87		u32 pwr_bits;
-    88		int ret;
-    89	
-    90		pwr_bits = GPHY_CTRL_IDDQ_BIAS | GPHY_CTRL_LOW_PWR;
-    91	
-    92		if (enable)
-    93			ret = regmap_update_bits(priv->gphy_ctrl, 0, pwr_bits, 0);
-    94		else
-    95			ret = regmap_update_bits(priv->gphy_ctrl, 0, pwr_bits, pwr_bits);
-    96	
-    97		return ret;
-    98	}
-    99	
- > 100	int bcm63268_gphy_resume(struct phy_device *phydev)
-   101	{
-   102		int ret;
-   103	
-   104		ret = bcm63268_gphy_set(phydev, true);
-   105		if (ret)
-   106			return ret;
-   107	
-   108		ret = genphy_resume(phydev);
-   109		if (ret)
-   110			return ret;
-   111	
-   112		return 0;
-   113	}
-   114	
- > 115	int bcm63268_gphy_suspend(struct phy_device *phydev)
-   116	{
-   117		int ret;
-   118	
-   119		ret = genphy_suspend(phydev);
-   120		if (ret)
-   121			return ret;
-   122	
-   123		ret = bcm63268_gphy_set(phydev, false);
-   124		if (ret)
-   125			return ret;
-   126	
-   127		return 0;
-   128	}
-   129	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>
+> --
+> 2.48.1
+>
+>
 
