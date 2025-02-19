@@ -1,54 +1,39 @@
-Return-Path: <linux-kernel+bounces-521409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E01EA3BCD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:30:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F9DCA3BCD8
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:31:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 050473B275A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:30:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6DCB171D60
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:31:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 906501DF25D;
-	Wed, 19 Feb 2025 11:29:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="jLm6FONH"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 534B81E009F;
-	Wed, 19 Feb 2025 11:29:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C5CB1DEFE7;
+	Wed, 19 Feb 2025 11:31:24 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE4021BD9DB;
+	Wed, 19 Feb 2025 11:31:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739964579; cv=none; b=p02c9pZot85svVfWHnCnN53EyEDCUb9PUKf5ttj2iyQwtR/UbQZwj0NkpXssXJeqLF1zeAImPLgvZRe5ZgbhQlfBJMj3UXaAvUQ2io7JdmEpPMyZ/yWxrCk+VHo5v1r5ye08YE9vC4s3vzxkjFeLKEypUbs0a8LMVPrgZ3S0UGU=
+	t=1739964684; cv=none; b=K8Yco6CH1ADImSmgx/4pVwcroT/Qkw5Vev6wWP6xWNNsFWvmcUOQewraK/0RrUBQQf+s++MvwI0UQbBr2pPP51a88BYKbFed6u6ZUuOsvVHkPn5YHSHiyizA945iQNHCc+J2Wte+lL+cEdGzTweluD87/FpYyTWXBtCUOMmokc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739964579; c=relaxed/simple;
-	bh=fLHhSMY8IxHecTeaQUcHlc18bPsMku9zr3x/eSmTnW0=;
+	s=arc-20240116; t=1739964684; c=relaxed/simple;
+	bh=cx481ZLG93+LIkIdDk339k1GMF8rjYAWVKza/FNmGxc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AI3mDY/mgYIj6xKuEcUxFTSlswo10c8OqkLA8Atr3AInbifpVRSOCcWBqVLO6ztq1hK2VnGlh/N9b62u+hZLEFUt7vKg752PGsBa58+/ttow3MHKMR3hq+gKTb4AET2+XbaCSXVbdk2eJWdFkp1jQ3NXyiTtDo4nrvN1AW/BHFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=jLm6FONH; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1739964575;
-	bh=fLHhSMY8IxHecTeaQUcHlc18bPsMku9zr3x/eSmTnW0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jLm6FONHH0WpJHdbkHANqFxBABrZT6hs8sd7lukpE18QIcsNUOZxsI16oMi84mYj4
-	 RVg4j/POgbHqZGbj30EsNVpmUePSkMgwsIvxlgzjWhMVZl+a8yK8cwalo7zyb+XuNi
-	 fV/2vr1T2KSdN7619ma7rT36NNUvaS+Aing51hB56OlYYQtqbJusBJpqO72CGgxMWZ
-	 t8BZJ3B3G3Idkp+XALtAHMROqeoV2slFsVOaKiofiBvmPnaPwSfwVscJwj7EbI20o0
-	 poYIFG8YmD3TkJFiwp+6nlJ/1YIGGjcnkXl8dc3BzXTxRQ6ERKl/QDQ3kXWueZaVjC
-	 AhsPielz1Zdag==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 041BC17E0E92;
-	Wed, 19 Feb 2025 12:29:34 +0100 (CET)
-Message-ID: <ef5b7292-5036-41f5-9410-5e7394a1f583@collabora.com>
-Date: Wed, 19 Feb 2025 12:29:34 +0100
+	 In-Reply-To:Content-Type; b=uk7hde2d4hiFbUwR7oqL4Ucm1NJJTMGmS77xgq9xtbFLXYTz5xK7Z6ns7evvk9u+K/fWjMBwVLvK5Yhm20uA48EBzzpJkgYhTAA9Iu78YseivjfICq+d08Eb4zsZrlMEGk+3PXuOVLhVNkieymgZfI4Az9P4v7Egp29hgoTXqXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A0E46152B;
+	Wed, 19 Feb 2025 03:31:39 -0800 (PST)
+Received: from [192.168.7.252] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5BA773F6A8;
+	Wed, 19 Feb 2025 03:31:19 -0800 (PST)
+Message-ID: <f40a1c37-e088-45fb-9d8f-d04db6f50a79@arm.com>
+Date: Wed, 19 Feb 2025 11:30:58 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,38 +41,64 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/6] ASoC: mediatek: mt8188-mt6359: Add DMIC
-To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: kernel@collabora.com, linux-sound@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
- parkeryang <Parker.Yang@mediatek.com>
-References: <20250218-genio700-dmic-v1-0-6bc653da60f7@collabora.com>
- <20250218-genio700-dmic-v1-5-6bc653da60f7@collabora.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250218-genio700-dmic-v1-5-6bc653da60f7@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v5 2/8] dt-bindings: arm: Add Morello fvp compatibility
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>,
+ Sudeep Holla <sudeep.holla@arm.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Russell King <linux@armlinux.org.uk>, Will Deacon <will@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>
+References: <20250213180309.485528-1-vincenzo.frascino@arm.com>
+ <20250213180309.485528-3-vincenzo.frascino@arm.com>
+ <20250214-utopian-griffin-of-innovation-fabc40@krzk-bin>
+ <9570e9bd-0555-4abb-930d-3f393df2b4ca@arm.com>
+ <048edaab-253e-4823-9083-0e7fcc339fa5@kernel.org>
+Content-Language: en-GB
+From: Vincenzo Frascino <vincenzo.frascino@arm.com>
+In-Reply-To: <048edaab-253e-4823-9083-0e7fcc339fa5@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Il 18/02/25 21:52, Nícolas F. R. A. Prado ha scritto:
-> Add the DMIC backend, which connects to the DMIC DAI in the platform
-> driver, as well as a "AP DMIC" mic widget. On the Genio 700 EVK board
-> the dual DMIC on-board are wired through that DMIC DAI.
-> 
-> Co-developed-by: parkeryang <Parker.Yang@mediatek.com>
-> Signed-off-by: parkeryang <Parker.Yang@mediatek.com>
-> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
 
-Since you have to send a v2, perhaps you can also change the title to read
 
-ASoC: mediatek: mt8188-mt6359: Add DMIC support
+On 19/02/2025 07:13, Krzysztof Kozlowski wrote:
+> Don't duplicate, combine pieces which look like enumeration into one
+> enum entry.
 
-After which
+Is this what you mean exactly?
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+--->8---
+
+diff --git a/Documentation/devicetree/bindings/arm/arm,vexpress-juno.yaml
+b/Documentation/devicetree/bindings/arm/arm,vexpress-juno.yaml
+index 40e7910756c8..8de508b977b0 100644
+--- a/Documentation/devicetree/bindings/arm/arm,vexpress-juno.yaml
++++ b/Documentation/devicetree/bindings/arm/arm,vexpress-juno.yaml
+@@ -118,9 +118,11 @@ description: |+
+         items:
+           - const: arm,foundation-aarch64
+           - const: arm,vexpress
+-      - description: Arm Morello System Development Platform
++      - description: Arm Morello System Development/Fixed Virtual Platform
+         items:
+-          - const: arm,morello-sdp
++          - enum:
++	      - arm,morello-sdp
++	      - arm,morello-fvp
+           - const: arm,morello
+
+   arm,vexpress,position:
+-- 
+2.34.1
+
+--->8---
+
+-- 
+Regards,
+Vincenzo
+
 
