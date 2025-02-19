@@ -1,229 +1,138 @@
-Return-Path: <linux-kernel+bounces-520918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AC65A3B12B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 06:59:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53D55A3B11B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 06:53:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC6553AD3C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 05:57:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE50A167AA9
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 05:53:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 711A71B87D9;
-	Wed, 19 Feb 2025 05:57:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E00BC1AF0DC;
+	Wed, 19 Feb 2025 05:53:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="rBsELHd3"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mAh5ldSt"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F3B01AF0DC;
-	Wed, 19 Feb 2025 05:57:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EDCA1B4154;
+	Wed, 19 Feb 2025 05:53:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739944671; cv=none; b=HeR4p+oSUnxsNeB9UuOlQVfn3Q8A3HGIgKzmMk6E8MDJwrSTtR8L01Pf07wN8SpZV6NuutglqvShnZZMg6mdnORPXgd0UCl2tbjlCUkVkg0UHL074zj15+wY+cv5C9ylDgeqSAjksTEPPUmYhlhzWGHf1cmE5D9sbXjLRZM3PvM=
+	t=1739944428; cv=none; b=aLSh8ccCdQGCo4EBSqi0U2UoKy2rYgdpz2V/JaI4lbTIRrVZO7MSwrKu2KHggvAVFdCM/dyaaXrSO76aHrpmFlEDIPD5n6udGL4xARBhz7p96ONMbuKJXEZfmK2EqP3ZxSGw2sSSADdXvP80h0GXYDi1AFllF2lld3zcrKQ46Lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739944671; c=relaxed/simple;
-	bh=pfHqlSLud+JXl9D7n5BlEkHhIeYAhbebredddS+EqlM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=lzLlUyEQ0qaTEahHu5Jq+V+9z2vB6gr63uQGN606vlOwdnjBJD2YsVlnWK1pM4OX81H4un5Q6gKg2Q6vZIth/9JB91d3kT1XxOUt1GuJON/X9HMdK9jkjkjY5Dc1jfBsX0pGRV1AaFDvF2WeDGIp6m7Bvxp0+G2BpgUjiIK76os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=rBsELHd3; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1739944670; x=1771480670;
-  h=from:date:subject:mime-version:content-transfer-encoding:
-   message-id:to:cc;
-  bh=pfHqlSLud+JXl9D7n5BlEkHhIeYAhbebredddS+EqlM=;
-  b=rBsELHd3O8u2BDLTWlqnTm737daUqi7VfMQXjB6sj3o6Eyf1oxMiDv6B
-   N84QtODxV/hDlCMxwVcrF6geKPGFfv0xq7BkSOWYaE/dGhZOAPTcAvpWC
-   5R7Xe9Vg/DBA7sLdnVHIehkLeuNjWh3LgQ6QbmgrXeb30x1IJnKL+N5rW
-   vafH36nabrms9QvbJp4Z0CMmTM2/3DXn76MXpZV/uIGD791/+tV5mzCHi
-   lTVcVnmSDYhbYyg1XmddzV7Be+GHojG/JgznSOUtcGc/PUSqPR64/UqgY
-   EFm71BVCPOdlJ1W92xS2uhSy0ILo1wLAOGUzGyyIGwu1fMLaCeH3zTUkQ
-   w==;
-X-CSE-ConnectionGUID: H/CF0+SBQUK7yXSaxQ9BXA==
-X-CSE-MsgGUID: tuIP3dstSBa4Jp38XcbJ+Q==
-X-IronPort-AV: E=Sophos;i="6.13,298,1732604400"; 
-   d="scan'208";a="37849285"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 18 Feb 2025 22:57:49 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 18 Feb 2025 22:57:21 -0700
-Received: from [10.40.56.22] (10.10.85.11) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Tue, 18 Feb 2025 22:57:17 -0700
-From: Balakrishnan Sambath <balakrishnan.s@microchip.com>
-Date: Wed, 19 Feb 2025 11:22:27 +0530
-Subject: [PATCH v3] ASoC: dt-bindings: atmel-at91sam9g20ek: convert to
- json-schema
+	s=arc-20240116; t=1739944428; c=relaxed/simple;
+	bh=8w9lDl6R8vzWwfEIaXGD9eQE08gjr+XxPDBnLJ7uMSY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ANyiPkH6KiLVcDH5sgjdIkZE5Q49SrZTt0V4ibOLKDpqtF0oQy+38OXYwrjDlHmkiVsNyQECy119BdXrmgqiDNXJxl4B3jN2+9p0NGMjvi0NL7z28oJ9srk2yP5tvek5Qhii7vZ3610pkQvvU/jJwAKKKUVXT2/YKI7fg/p/D7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mAh5ldSt; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-abbb12bea54so377743666b.0;
+        Tue, 18 Feb 2025 21:53:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739944425; x=1740549225; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hoYubNUM/g2rCAi4UMr65fRF8j4p6OJUT/42WzZwWKc=;
+        b=mAh5ldStRmUs9TxM3gDfJY7TtdYRmxzS/QxcgX1930HvJgIBiUu6LsO3yQ8mq81HLZ
+         74MGJrVXpGADJecVJyju+EmrbEET4cnlSyiJ085d+NyXh6WzaB2Sib85+tGOltI+wNUE
+         7cXu2WWaH6CsjlrN5jhp4APyH8eDyvVSLvF6Yi2LU1tH/NgynHEOald28vVvwkcCdzmB
+         ittxHOzrrYKCpAoBpVZlBx0ChxhDPpDuX9HZoIyp701Z79XULlME69xeZ5EmxYkkp92b
+         Cv4sJQ1Yd2keStd8+pveVXvUbzJ6c+MUr0U7MpWajUK72trAXcXyHeLSJP42GZPKkZCe
+         sYdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739944425; x=1740549225;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hoYubNUM/g2rCAi4UMr65fRF8j4p6OJUT/42WzZwWKc=;
+        b=GIN+Eajn+v0j7glhbQhvFJAroM4WlHPKw1UXXMiPLOLH9a4gduuWG+BIO8m81OUqiA
+         yF2QVvO0UF5WRViRiOSbDqqYCAwLLYhMCFERuyG4SJavVAYTvibLqKFmCmjlJOWi1azi
+         0T4wSoKx3qjCIPiaosZnRq9sBdh92CeQ63+m5Sswahnb54nfU+UBAmZu7BmA2isa+vbe
+         4FXmEzsiZGDAijFrMYWpHNuEbJY29M2YcK/fwp7HXRsLirEqxnSMQ//cx4ZZkjfKIlKT
+         Ir9q2QD+435gadqUDArsJ78jPxfZw9QH9uUvco3TrCCMdpIogxCcyyNl34QLiuwS+DqS
+         xboA==
+X-Forwarded-Encrypted: i=1; AJvYcCVSV2MiH35JfDvVwyC5OC06gOTgjIL4iLkEOnWODtWK4/sXlVLzJKL558uSqrS0jcnDoSPhA9i+t+LDIT4vFnM=@vger.kernel.org, AJvYcCWlYzX9JYNDyH816a5oHs/CQbpDCzVOmQcRj7PJCdsQOwi6S0FWwu7txjUFBIq8FeUYEzOnI5dog260N0g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlrsT5Xxkumo5a98uulqby0fr4w/KfbLD5LMvOCg+DQsAVFqNz
+	UuKepDQ0MrfJN/WsQIS4zMhAe4XrA4YN8FFHjDZ5GKjjQF8+h9NNbTlV
+X-Gm-Gg: ASbGncszXGeAnHXboi9/bwOpfrpodLpYIQGwHHos4Q4Rm5TiMdHerompUH6yxEHsyuE
+	6kpQoCIsfUJLAmjZkI6Zik5nJzi54jg+uch/xhyF5uTsEb1PpcpitaN8m+UIAsNoe345HSkpWsP
+	zeAEBxUKFGspQv/aWE46Crv8ell1CVo56uCaL2E+z3sXcU6v1bzvfSWN/MMFAajdKJYZSt3nruH
+	gHYV+XI7BG/6P2yW5+g73ldj5+WcbhWXSTl1Do/TbLnuSAd/hjjqaojdQTlfqSpO+dx09pg2/A7
+	ZeNOxEbBBB5k6clJnUm73jZ+BcU3hPGZdF6OGt0YAG0UncyKrViz/ENFog==
+X-Google-Smtp-Source: AGHT+IELbGf/jgctoWR5SBQOWdjIhRQbBm1V/RRwJ/UxCtMTP7qhBsZEyQgnBj6aaSRi9z2h2/QvQw==
+X-Received: by 2002:a17:906:eb04:b0:abb:b092:dad9 with SMTP id a640c23a62f3a-abbb092de7fmr698590066b.37.1739944424725;
+        Tue, 18 Feb 2025 21:53:44 -0800 (PST)
+Received: from p183 (dynamic-vpdn-brest-46-53-133-68.brest.telecom.by. [46.53.133.68])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba532802a1sm1192544766b.76.2025.02.18.21.53.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2025 21:53:44 -0800 (PST)
+Date: Wed, 19 Feb 2025 08:53:42 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	rust-for-linux <rust-for-linux@vger.kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	David Airlie <airlied@gmail.com>, linux-kernel@vger.kernel.org,
+	ksummit@lists.linux.dev
+Subject: Re: Rust kernel policy
+Message-ID: <c0798016-b0e9-4af0-b6aa-48903b4718b3@p183>
+References: <CANiq72m-R0tOakf=j7BZ78jDHdy=9-fvZbAT8j91Je2Bxy0sFg@mail.gmail.com>
+ <Z7SwcnUzjZYfuJ4-@infradead.org>
+ <CANiq72myjaA3Yyw_yyJ+uvUrZQcSLY_jNp65iKH8Y5xGY5tXPQ@mail.gmail.com>
+ <326CC09B-8565-4443-ACC5-045092260677@zytor.com>
+ <CANiq72m+r1BZVdVHn2k8XeU37ZeY6VT2S9KswMuFA=ZO3e4uvQ@mail.gmail.com>
+ <a7c5973a-497c-4f31-a7be-b3123bddb6dd@zytor.com>
+ <Z7VKW3eul-kGaIT2@Mac.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250219-sound-atmel-at91sam9g20ek-v3-1-d7c082af4e14@microchip.com>
-X-B4-Tracking: v=1; b=H4sIAJpxtWcC/32NywrCMBREf6XctZE8ajGu+h/SRUxum4umKUktS
- um/Gwtu3QycgTmzQsZEmOFSrZBwoUxxLKAOFVhvxgEZucIguayFFJzl+BwdM3PAR0ktsgl6kBz
- v7MZRO8T6pJSFsp8S9vTa3deusKc8x/Terxb5bX9W8ce6SCbYuTEclcDG9LoNZFO0nqajjQG6b
- ds+vyWJRMYAAAA=
-X-Change-ID: 20241210-sound-atmel-at91sam9g20ek-b0e9dee4533c
-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>, Andrei Simion
-	<andrei.simion@microchip.com>, Liam Girdwood <lgirdwood@gmail.com>, "Mark
- Brown" <broonie@kernel.org>, Rob Herring <robh@kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "Nicolas
- Ferre" <nicolas.ferre@microchip.com>, Alexandre Belloni
-	<alexandre.belloni@bootlin.com>
-CC: <linux-sound@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	Balakrishnan Sambath <balakrishnan.s@microchip.com>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Z7VKW3eul-kGaIT2@Mac.home>
 
-Convert atmel-at91sam9g20ek-wm8731-audio DT binding to yaml
-based json-schema.Change file name to match json-scheme naming.
+On Tue, Feb 18, 2025 at 07:04:59PM -0800, Boqun Feng wrote:
+> On Tue, Feb 18, 2025 at 04:58:27PM -0800, H. Peter Anvin wrote:
+> [...]
+> > > > David Howells did a patch set in 2018 (I believe) to clean up the C code in the kernel so it could be compiled with either C or C++; the patchset wasn't particularly big and mostly mechanical in nature, something that would be impossible with Rust. Even without moving away from the common subset of C and C++ we would immediately gain things like type safe linkage.
+> > > 
+> > > That is great, but that does not give you memory safety and everyone
+> > > would still need to learn C++.
+> > 
+> > The point is that C++ is a superset of C, and we would use a subset of C++
+> > that is more "C+"-style. That is, most changes would occur in header files,
+> > especially early on. Since the kernel uses a *lot* of inlines and macros,
+> > the improvements would still affect most of the *existing* kernel code,
+> > something you simply can't do with Rust.
+> > 
+> 
+> I don't think that's the point of introducing a new language, the
+> problem we are trying to resolve is when writing a driver or some kernel
+> component, due to the complexity, memory safety issues (and other
+> issues) are likely to happen. So using a language providing type safety
+> can help that. Replacing inlines and macros with neat template tricks is
+> not the point,
 
-Signed-off-by: Balakrishnan Sambath <balakrishnan.s@microchip.com>
----
-Changes in v3:
-- Add recommended minItems and maxItems.
-- Fix commit subject and a typo in example.
-- Link to v2: https://lore.kernel.org/r/20241211-sound-atmel-at91sam9g20ek-v2-1-86a0e31e6af9@microchip.com
+In fact, this is the point.
 
-Changes in v2:
-- Add missing CODEC pin options to 'atmel,audio-routing' items.
-- Drop 'minItems' from 'atmel,audio-routing' since enum defines valid connections.
-- Add subsystem tag to subject.
-- Add blank line between properties and fix typo.
-- Add audio complex description.
-- Link to v1: https://lore.kernel.org/lkml/20240214-at91sam9g20ek-wm8731-yaml-v1-1-33333e17383b@microchip.com
----
- .../bindings/sound/atmel,at91sam9g20ek-wm8731.yaml | 72 ++++++++++++++++++++++
- .../sound/atmel-at91sam9g20ek-wm8731-audio.txt     | 26 --------
- 2 files changed, 72 insertions(+), 26 deletions(-)
+> at least from what I can tell, inlines and macros are not
+> the main source of bugs (or are they any source of bugs in production?).
+> Maybe you have an example?
 
-diff --git a/Documentation/devicetree/bindings/sound/atmel,at91sam9g20ek-wm8731.yaml b/Documentation/devicetree/bindings/sound/atmel,at91sam9g20ek-wm8731.yaml
-new file mode 100644
-index 0000000000000000000000000000000000000000..627da2d890b24a14e595d1752276c94b158451a8
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/atmel,at91sam9g20ek-wm8731.yaml
-@@ -0,0 +1,72 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/sound/atmel,at91sam9g20ek-wm8731.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Atmel at91sam9g20ek wm8731 audio complex
-+
-+maintainers:
-+  - Balakrishnan Sambath <balakrishnan.s@microchip.com>
-+
-+description:
-+  The audio complex configuration for Atmel at91sam9g20ek with WM8731 audio codec.
-+
-+properties:
-+  compatible:
-+    const: atmel,at91sam9g20ek-wm8731-audio
-+
-+  atmel,model:
-+    $ref: /schemas/types.yaml#/definitions/string
-+    description: The user-visible name of this sound complex.
-+
-+  atmel,audio-routing:
-+    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
-+    description: A list of the connections between audio components.
-+    minItems: 2
-+    maxItems: 4
-+    items:
-+      enum:
-+        # Board Connectors
-+        - Ext Spk
-+        - Int Mic
-+
-+        # CODEC Pins
-+        - LOUT
-+        - ROUT
-+        - LHPOUT
-+        - RHPOUT
-+        - LLINEIN
-+        - RLINEIN
-+        - MICIN
-+
-+  atmel,ssc-controller:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description: The phandle of the SSC controller.
-+
-+  atmel,audio-codec:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description: The phandle of WM8731 audio codec.
-+
-+required:
-+  - compatible
-+  - atmel,model
-+  - atmel,audio-routing
-+  - atmel,ssc-controller
-+  - atmel,audio-codec
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    sound {
-+        compatible = "atmel,at91sam9g20ek-wm8731-audio";
-+        pinctrl-names = "default";
-+        pinctrl-0 = <&pinctrl_pck0_as_mck>;
-+        atmel,model = "wm8731 @ AT91SAMG20EK";
-+        atmel,audio-routing =
-+            "Ext Spk", "LHPOUT",
-+            "Int Mic", "MICIN";
-+        atmel,ssc-controller = <&ssc0>;
-+        atmel,audio-codec = <&wm8731>;
-+    };
-diff --git a/Documentation/devicetree/bindings/sound/atmel-at91sam9g20ek-wm8731-audio.txt b/Documentation/devicetree/bindings/sound/atmel-at91sam9g20ek-wm8731-audio.txt
-deleted file mode 100644
-index 9c5a9947b64d454a892e1e4148ff06be7c33d6cd..0000000000000000000000000000000000000000
---- a/Documentation/devicetree/bindings/sound/atmel-at91sam9g20ek-wm8731-audio.txt
-+++ /dev/null
-@@ -1,26 +0,0 @@
--* Atmel at91sam9g20ek wm8731 audio complex
--
--Required properties:
--  - compatible: "atmel,at91sam9g20ek-wm8731-audio"
--  - atmel,model: The user-visible name of this sound complex.
--  - atmel,audio-routing: A list of the connections between audio components.
--  - atmel,ssc-controller: The phandle of the SSC controller
--  - atmel,audio-codec: The phandle of the WM8731 audio codec
--Optional properties:
--  - pinctrl-names, pinctrl-0: Please refer to pinctrl-bindings.txt
--
--Example:
--sound {
--	compatible = "atmel,at91sam9g20ek-wm8731-audio";
--	pinctrl-names = "default";
--	pinctrl-0 = <&pinctrl_pck0_as_mck>;
--
--	atmel,model = "wm8731 @ AT91SAMG20EK";
--
--	atmel,audio-routing =
--		"Ext Spk", "LHPOUT",
--		"Int MIC", "MICIN";
--
--	atmel,ssc-controller = <&ssc0>;
--	atmel,audio-codec = <&wm8731>;
--};
+C's weak type system forces people to use preprocessor which is much weaker
+language.
 
----
-base-commit: 0ad2507d5d93f39619fc42372c347d6006b64319
-change-id: 20241210-sound-atmel-at91sam9g20ek-b0e9dee4533c
+So instead of solving problems with more capable language people are forced
+to solve it will less capable one.
 
-Best regards,
--- 
-Balakrishnan Sambath <balakrishnan.s@microchip.com>
-
+This is not how it should be.
 
