@@ -1,97 +1,177 @@
-Return-Path: <linux-kernel+bounces-522104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41743A3C608
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:21:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19018A3C61F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:25:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8FC43B00BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:21:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 996F43B562A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:25:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC7862144A7;
-	Wed, 19 Feb 2025 17:21:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C52542144C9;
+	Wed, 19 Feb 2025 17:25:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Oec9H/gA"
-Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bUkMQ/Dx"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2AB8286284;
-	Wed, 19 Feb 2025 17:21:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CA1C286284;
+	Wed, 19 Feb 2025 17:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739985701; cv=none; b=HMC2di0GF4pYYw792aHM2oe/WprrjXffyHDNB2jdtPa18JtgXhomNJts/G+WDuZD4kKXWpp76NxIXdC0WrxN8okC+708ltKuvCHjNSBQuqs01H4X/YB9mCDhrD81k83AUpSgek6l3dJViqtrJ8xTiYIcv9Hf2Wuch11ryLOKyQc=
+	t=1739985952; cv=none; b=i/QXMsjWPYEYRt1Hv8k4eX16uXTNeaSdb+3tjE87zikQK8yn8wvCEwGOMedX3QyBMp0MHr5EMP9HYc5TtiD6mXaA8xhreiQv8F6p2SBDkV9Sq1qqp5IwqSoPjFpnpYjEYTpFSaC2TzZ2QG2HWtW6AwnAMkGQCxuxtUmssWXS+ME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739985701; c=relaxed/simple;
-	bh=1Me3lu0fX9NUSPq+Ggrr4DEAwkU4l3ce4Mld2GXKtg0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BYce3WBAjfXjpI+8r0FQv3NDprBDJIBahSS0rVG0rhUh1ZcE5qvw0X4IACDsTW/fueh4hT1DG5xW8fiVqjUn9bSLwnTTJlVQrvji0/MCnREvKN7UFzntUJVkWGY3qCxzZfITm6+UkZReUgkUHEVIV5rFVUzHebpZ4LqMw9imMtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Oec9H/gA; arc=none smtp.client-ip=80.12.242.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id knkEt082zsC0pknkHtl0HU; Wed, 19 Feb 2025 18:20:26 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1739985626;
-	bh=QW6x6Fz8XX5peZDa2MJO8SZhs7Tp8RyNuh/Nt9PBXRE=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=Oec9H/gAZMMuSXgE68f9B/TYvkhyYCZxwWie6NgYFH0TjbLCByUDa3Vx7BDcXSPgF
-	 HSoZn/z6jWtYw9sMKm1BuxGRC70Bw93hdBbF5yrprmV4/nZrGU6bVCmedccal8JVOk
-	 W7CK8OP7Qxpd750ShNiWHS5aQNGyaNrKB4LboofPf8Rk8rIpVfVhaxITnBgpD++Iy1
-	 CDClym/uMUSGPmXEEoWxJAYGzU/jbSyLJUsIYfN93078Way/gUF0RfQj6WMDB0vJcT
-	 EkNcj8b3Nif4ctnAPHE2N0b1GLTcRonx498ixCGMm9fyuUP+SQwA2fmrciBnELr9s9
-	 bM59H7wDOfXnQ==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 19 Feb 2025 18:20:26 +0100
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>,
-	Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-leds@vger.kernel.org
-Subject: [PATCH] leds: st1202: Fix an error handling path in st1202_probe()
-Date: Wed, 19 Feb 2025 18:20:20 +0100
-Message-ID: <4afa457713874729eb61eec533a4674a51d1d242.1739985599.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1739985952; c=relaxed/simple;
+	bh=9JHKrilHo2Kinz4pnuf983yiSc2MnI+9wUWr1Zn9CMk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H0jcKnuc6CbWe9kBoyFmwyPH0gSvYuVxohWvtt4Uo+10J/232i9hQ0Iu068iehuIBWKjunJ96mnWrmrNaoYd18vgO5k6MEtRTLSQvg9isdv1DPQ62BX4rF+siEEofRzTbXT5XUs0a5bgPAMKmbYGprYfueikuL9pKhygpSZzX1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bUkMQ/Dx; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739985951; x=1771521951;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=9JHKrilHo2Kinz4pnuf983yiSc2MnI+9wUWr1Zn9CMk=;
+  b=bUkMQ/DxVhwSw6LpqYroDF/uJ/Td4Rp/6F/lj+GbDpP7XlrCwr/X3RqD
+   02E2+P9aN5l7uPl8xl2JJTzxCpZzTQJEst20E0DpEZhpHv4L8hDxJdZ2H
+   b2Nndl0Y9Epgxuz9QecYyyj8UST0SPj0wmM9pucGqeZJut34P2opcaMTd
+   LpXqXHiQimrcrm7Hy2ir1sTXcSxdkzVEf0dy8lcHYxlMPejHt6dbsjRQD
+   HgsnzRzvR5Vqqy4M6EWo5jDQudphxdWK4UAC2fTzznre2ZXGHfzdJh80o
+   fKLeXlbfQjvOdqFmTFmcqVOcBjuhRhqGX3ijwbVbqSvonj3A7wmWEnOfj
+   Q==;
+X-CSE-ConnectionGUID: d6ObvQyZTsefWACBJmkTJw==
+X-CSE-MsgGUID: 3gyRxBb9Ruit187z+P3Xig==
+X-IronPort-AV: E=McAfee;i="6700,10204,11350"; a="58279437"
+X-IronPort-AV: E=Sophos;i="6.13,299,1732608000"; 
+   d="scan'208";a="58279437"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 09:25:50 -0800
+X-CSE-ConnectionGUID: HQJrQhxVRSuFpHD4Og5x0w==
+X-CSE-MsgGUID: szGNfWYnRDCIz4FZq7ecnw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,299,1732608000"; 
+   d="scan'208";a="115306445"
+Received: from inaky-mobl1.amr.corp.intel.com (HELO [10.125.110.11]) ([10.125.110.11])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 09:21:11 -0800
+Message-ID: <8cbe06d8-2715-497b-85eb-73a317cd2a42@intel.com>
+Date: Wed, 19 Feb 2025 10:21:02 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/7] cxl/core: Use guard() to drop goto pattern of
+ cxl_dpa_alloc()
+To: Li Ming <ming.li@zohomail.com>, dave@stgolabs.net,
+ jonathan.cameron@huawei.com, alison.schofield@intel.com,
+ vishal.l.verma@intel.com, ira.weiny@intel.com, dan.j.williams@intel.com
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250217144828.30651-1-ming.li@zohomail.com>
+ <20250217144828.30651-6-ming.li@zohomail.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250217144828.30651-6-ming.li@zohomail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-devm_mutex_init() may return -ENOMEM.
-So this error should be handled in st1202_probe().
 
-Fixes: 259230378c65 ("leds: Add LED1202 I2C driver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/leds/leds-st1202.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/leds/leds-st1202.c b/drivers/leds/leds-st1202.c
-index b691c4886993..4fc17d518292 100644
---- a/drivers/leds/leds-st1202.c
-+++ b/drivers/leds/leds-st1202.c
-@@ -356,7 +356,10 @@ static int st1202_probe(struct i2c_client *client)
- 	if (!chip)
- 		return -ENOMEM;
- 
--	devm_mutex_init(&client->dev, &chip->lock);
-+	ret = devm_mutex_init(&client->dev, &chip->lock);
-+	if (ret < 0)
-+		return ret;
-+
- 	chip->client = client;
- 
- 	ret = st1202_dt_init(chip);
--- 
-2.48.1
+On 2/17/25 7:48 AM, Li Ming wrote:
+> In cxl_dpa_alloc(), some checking and operations need to be protected by
+> a rwsem called cxl_dpa_rwsem, so there is a goto pattern in
+> cxl_dpa_alloc() to release the rwsem. The goto pattern can be optimized
+> by using guard() to hold the rwsem.
+> 
+> Creating a new function called __cxl_dpa_alloc() to include all checking
+> and operations needed to be procted by cxl_dpa_rwsem. Using
+s/procted/protected/
+
+> guard(rwsem_write()) to hold cxl_dpa_rwsem at the beginning of the new
+> function.
+> 
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: Li Ming <ming.li@zohomail.com>
+
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> ---
+>  drivers/cxl/core/hdm.c | 29 ++++++++++++++---------------
+>  1 file changed, 14 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/cxl/core/hdm.c b/drivers/cxl/core/hdm.c
+> index 874a791f8292..1edbf7873471 100644
+> --- a/drivers/cxl/core/hdm.c
+> +++ b/drivers/cxl/core/hdm.c
+> @@ -442,29 +442,25 @@ int cxl_dpa_set_mode(struct cxl_endpoint_decoder *cxled,
+>  	return 0;
+>  }
+>  
+> -int cxl_dpa_alloc(struct cxl_endpoint_decoder *cxled, unsigned long long size)
+> +static int __cxl_dpa_alloc(struct cxl_endpoint_decoder *cxled, unsigned long long size)
+>  {
+>  	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
+>  	resource_size_t free_ram_start, free_pmem_start;
+> -	struct cxl_port *port = cxled_to_port(cxled);
+>  	struct cxl_dev_state *cxlds = cxlmd->cxlds;
+>  	struct device *dev = &cxled->cxld.dev;
+>  	resource_size_t start, avail, skip;
+>  	struct resource *p, *last;
+> -	int rc;
+>  
+> -	down_write(&cxl_dpa_rwsem);
+> +	guard(rwsem_write)(&cxl_dpa_rwsem);
+>  	if (cxled->cxld.region) {
+>  		dev_dbg(dev, "decoder attached to %s\n",
+>  			dev_name(&cxled->cxld.region->dev));
+> -		rc = -EBUSY;
+> -		goto out;
+> +		return -EBUSY;
+>  	}
+>  
+>  	if (cxled->cxld.flags & CXL_DECODER_F_ENABLE) {
+>  		dev_dbg(dev, "decoder enabled\n");
+> -		rc = -EBUSY;
+> -		goto out;
+> +		return -EBUSY;
+>  	}
+>  
+>  	for (p = cxlds->ram_res.child, last = NULL; p; p = p->sibling)
+> @@ -504,21 +500,24 @@ int cxl_dpa_alloc(struct cxl_endpoint_decoder *cxled, unsigned long long size)
+>  		skip = skip_end - skip_start + 1;
+>  	} else {
+>  		dev_dbg(dev, "mode not set\n");
+> -		rc = -EINVAL;
+> -		goto out;
+> +		return -EINVAL;
+>  	}
+>  
+>  	if (size > avail) {
+>  		dev_dbg(dev, "%pa exceeds available %s capacity: %pa\n", &size,
+>  			cxl_decoder_mode_name(cxled->mode), &avail);
+> -		rc = -ENOSPC;
+> -		goto out;
+> +		return -ENOSPC;
+>  	}
+>  
+> -	rc = __cxl_dpa_reserve(cxled, start, size, skip);
+> -out:
+> -	up_write(&cxl_dpa_rwsem);
+> +	return __cxl_dpa_reserve(cxled, start, size, skip);
+> +}
+> +
+> +int cxl_dpa_alloc(struct cxl_endpoint_decoder *cxled, unsigned long long size)
+> +{
+> +	struct cxl_port *port = cxled_to_port(cxled);
+> +	int rc;
+>  
+> +	rc = __cxl_dpa_alloc(cxled, size);
+>  	if (rc)
+>  		return rc;
+>  
 
 
