@@ -1,207 +1,196 @@
-Return-Path: <linux-kernel+bounces-522522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86BF1A3CB69
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:28:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4709A3CB73
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:29:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 255013A7C2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:27:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF4987A8732
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:27:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 688CE257445;
-	Wed, 19 Feb 2025 21:27:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E4E6257431;
+	Wed, 19 Feb 2025 21:28:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U79KcDWr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="aJk34N3+"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11013043.outbound.protection.outlook.com [52.101.67.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA8AE22E019;
-	Wed, 19 Feb 2025 21:27:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740000478; cv=none; b=Qxv0D8493t7l7FxKx0Jqz2uog2udIS/EDBsSh0tBUAFyWHg9LDp9efCQPdAOlU0beIp47mqnhplVAQ9VtMAojkw8Zckpez/IrmO1mD8QDEcEIcCYxkq9HqFI7woNu4f+LPouu+BUBMV7dc9UMdoFjS4LWRK2cjfIM8hR80zYk1c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740000478; c=relaxed/simple;
-	bh=+SRVUUI/CLPjYoSRlwt+S9lIzhKegLOApCCjBNCkOp4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uxkGjdfpFQa6VgQk+P3yAE9kffUp6FG+fKVQ90Mjm2FyxAHtWWuve4/1N83FtZhNUoPsHzFrI43FIf9M4i6hxuNrR62swci2UJsDL67tHAMESALmtlB32Ge8atHhRZ2xmQ/yv3o5GjORlTXDtkpawv/Nvxljfa/yCtqCEhUVs2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U79KcDWr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EC91C4CEE0;
-	Wed, 19 Feb 2025 21:27:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740000478;
-	bh=+SRVUUI/CLPjYoSRlwt+S9lIzhKegLOApCCjBNCkOp4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=U79KcDWr1JlJzM2GIzr9cqRKknlocqgtkz3OWB83pxgliJufWQ+1+jA28gKPUXfAI
-	 YB7tg32tzDhc3tGrib7jH0EbXDhDLDgCFvAnHBrxjekWQSSaHPiTkl1uH60ygX2kFK
-	 wCz5RjB8qJXlPKTBLQTv8DoUN3+uL8Bd9X/q08bw2LhfemPTmGInxxqFU+hI7B5sNP
-	 MLu+EjBVyXbrrzqO/pbyU0lwPQRx1XCRzaeHLHBA07ZBnKIXWO4twXl3us7xNUrije
-	 Cd2D9TW1PsM6hGLmOngQO7kZUr939KkuSRUP8WMaE/Oo92CbHN9MzqbMIIOPRHl94K
-	 d+p4+7nRnloVQ==
-Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3f410c67037so180459b6e.0;
-        Wed, 19 Feb 2025 13:27:58 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUdDcz5yTm1tVUa5HMEamybVLQ0Uq1Azzx/7bV7b00nOqzaYv6F460fOt8iRiCJN7w4TNXwGRiSBHk=@vger.kernel.org, AJvYcCX/tMqFILusuKB3MOm6nfe75+5zb2L3dKOYfnzjqBnCIPWwPXB406fE27CYa1bpWeFNRwldCntFmvCF41zl@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQ6OgcHdTk3T26xVcMjhL6hgCr+wbpCWbPVwkZuBaLO6hf6/2b
-	ooE8y9P9Yq5xbww+ovBNIpsj0Pn2vpSeP57b5XJrnXj2KgST1LtVQ2L8lO59QnfKi/5BvIkYFQ0
-	aB0sS9+O3iETVKS72Rop7qqezB9w=
-X-Google-Smtp-Source: AGHT+IG6cr0hEWjXUQhqAK1qz5c7apM9oCnTnsKn/H5xMI3lWq47QIxtmlT516PEoKzSiePVRD9dBx5dno1gQC8rvc0=
-X-Received: by 2002:a05:6808:358a:b0:3f3:fc36:25b7 with SMTP id
- 5614622812f47-3f419f896e7mr499390b6e.19.1740000477482; Wed, 19 Feb 2025
- 13:27:57 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DF8122E019;
+	Wed, 19 Feb 2025 21:28:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740000494; cv=fail; b=fAxCWBk79McXkpJ7f/iS0WJ0tFiNZNPlh0m2soJnIA7RtC2l2sDm8O/Cj929RLOExeHsjhjImCJFtKErXIvgqStUMZ/rfGESxcYiUAZOwGXuDZyQcPwy/lKWu4Ez1aZmJQ0plIuVGn4CzOFINAcMXzcqyf2wBXU+4rxM55KVpdY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740000494; c=relaxed/simple;
+	bh=JQvTIMColSNn2XPmKl4T/gY8f48KM2a05vSVuzfaFHo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=eHhATvRDGv7S1U8zdhOYL1bIarcemdFsymqlwYGXuoB+6jRefAZ+bKYMsYaFYVXBLl+U/h9hTIkzJ28CoZwleDlZ6JF88bSaNEsyBY7boTUYhh3uigr5lO0VpmMRt9MeU+a9vnnhBFORSl71G9U1uNOZfsO0kx0LMSm6SyuxyoE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=aJk34N3+; arc=fail smtp.client-ip=52.101.67.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TY92P1XiRR/0Tu7dYMEy8qAZV2pUlo+vZC4iOr5/SGBFkkueSGaKTPY2Z0M7vNa9RUlYenN/7LgGUZsoDxd6ROQNvJ6i3eUiTsw6XUb1iqd0A4sjjPE7VjHrwFRYcnWZPIjw2XEIsTF0HAXjO5X9DEKc0YTqpYqP1N1lr+9hzTtCB5xRpPWncixz8ppUPPGZ9OkeEQ9oixIixBRbo+TYEoIiYnfsC4r3ERpL9zSUnPH5LTwIc0LqJN/EnK8u18g/EjqhJLe7brgAXZRCt5sM02iMD3x5UCpflfv1rQfUNvrGcUOgZWBkIyPKSQvPjMFzWRJVzHacf/kea/G+WqpmUA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=b4DAHrK4VdBkahKNkvFGOFbya0cGGNdjAhdQNuINnUI=;
+ b=ucVBPBhVk0njdThTOtIawpXOkQ2EB2zQ0yZUMOMtjFK+44sKFz8YXdHDNf3xTOpf+rceYhXDk6ylVdv0DnEuRhElqFsWCPTEloXdPhgy596r0i5DQgATWZS7nyHNWaHv29GR42kDDIxRuJDG4FUS7jBZinrRnGhywH6hBuUhO0bQPLLqtgNt7YIQHpg0Hmckl3/a30izwIn6ZtlzZIR82r1pS4fh0sHZOngc12MjHiUMOyPyUCGCsfrqddesONFOL4gIofyEedv//IMI4e3j1LSk4hrPBqDvp5suQ4k/X0CQ/+fzeUz7QASP3i9hJ6Tq6ty5bNGZGyeJIauA2CjESA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=b4DAHrK4VdBkahKNkvFGOFbya0cGGNdjAhdQNuINnUI=;
+ b=aJk34N3+iPPsm90O0se7/tb+JZIxSjX92BiJBChJbBagRV3ymA1RWTy4cCVESL/6vt9imqrtfPSNtDriITz5LKg++NfKjfRd8H8XXCIuwKgdZ+NySJgwLSgaMJO11OTWJ1iiowNUEpw29tgVD6ffY8hw1Gzxqf30nqy7lZ7rqyebfQ3c5/6BSGMkoBh46Y4Hg2g9vGt+/0RG+D6SyRXQIkwzAxqxSUM1/sRbL8tLXpoEyIUyw0S70gV7qMGBlxJN/WEeTVCj83yYcwYiINgleG3bFHTLUUMNjmoTFbESnLMoDGNmNyEg7UPPJALhA0VdGvHrsq52PFC0rE0a1BWfng==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by DBBPR04MB8026.eurprd04.prod.outlook.com (2603:10a6:10:1ed::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.15; Wed, 19 Feb
+ 2025 21:28:09 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8445.017; Wed, 19 Feb 2025
+ 21:28:09 +0000
+Date: Wed, 19 Feb 2025 16:28:00 -0500
+From: Frank Li <Frank.li@nxp.com>
+To: Daniel Baluta <daniel.baluta@nxp.com>
+Cc: p.zabel@pengutronix.de, robh@kernel.org, shawnguo@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, s.hauer@pengutronix.de,
+	kernel@pengutronix.de, festevam@gmail.com,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	mathieu.poirier@linaro.org, shengjiu.wang@nxp.com, peng.fan@nxp.com,
+	laurentiu.mihalcea@nxp.com, iuliana.prodan@nxp.com
+Subject: Re: [PATCH v2 3/8] arm64: dts: imx8mp: Add resets to dsp node
+Message-ID: <Z7ZM4F/wmG3+QvvX@lizhi-Precision-Tower-5810>
+References: <20250219192102.423850-1-daniel.baluta@nxp.com>
+ <20250219192102.423850-4-daniel.baluta@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250219192102.423850-4-daniel.baluta@nxp.com>
+X-ClientProxiedBy: SJ0PR13CA0164.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c7::19) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250128141139.2033088-1-darcari@redhat.com> <20250213160741.445351-1-darcari@redhat.com>
-In-Reply-To: <20250213160741.445351-1-darcari@redhat.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 19 Feb 2025 22:27:46 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0gUfp+ueLMr1arwgK0r3WAQmfbb7YB54oZP-ySkD0q6YQ@mail.gmail.com>
-X-Gm-Features: AWEUYZlsh_nh2T1mVOcQQwWbniiICYszafnHJEmUZbHWeCh7PAz-uqb-W87C0vs
-Message-ID: <CAJZ5v0gUfp+ueLMr1arwgK0r3WAQmfbb7YB54oZP-ySkD0q6YQ@mail.gmail.com>
-Subject: Re: [PATCH v4] intel_idle: introduce 'no_native' module parameter
-To: David Arcari <darcari@redhat.com>
-Cc: linux-pm@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Len Brown <lenb@kernel.org>, 
-	Artem Bityutskiy <dedekind1@gmail.com>, Prarit Bhargava <prarit@redhat.com>, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DBBPR04MB8026:EE_
+X-MS-Office365-Filtering-Correlation-Id: fa0b2116-a897-4c6f-297b-08dd512c4e5d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|376014|7416014|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?aZ8eLyuYuY08nN/QGTp6fi8lTeq9ei9rwtv7F0QoBxUN/fq/QWrkrRAfVWET?=
+ =?us-ascii?Q?CJxjewK2wqcOtnUUKT0LHDU2Wd0enqvJHwsloRY24UaNbbpWc9Pp86GmWvxr?=
+ =?us-ascii?Q?icTI0vPGs6J9RLQXFYUPd8d7w8kSzMWpslPCZjzzbDT/pBzepdFKbUmbTWSD?=
+ =?us-ascii?Q?v9JowFmhYiCZV1S7lT5+S+Igjt9FaLyZbbxREqiWXrkJpkV6htJXqf+ygRQv?=
+ =?us-ascii?Q?aAz9FojaCHHtC96/l0/EYn3WnW8U9knwmp3eLn2RP/p2w4W0wp/pa2vRbUM0?=
+ =?us-ascii?Q?ZvZc65puzwB2+2fhRXlcOMOaJ9wNOWcmI9UxmP5q31Y0d+pKmEdnZC/Y1dnm?=
+ =?us-ascii?Q?wU5XCFXmY9KbkSenyxBYNJkAIXUv1Unbfmy22GoSqA5FufIhrFwvNLSbJi8u?=
+ =?us-ascii?Q?G/YRW0TgeLlr8u55ktoW9/NuDkomae8bDN4im5v7pJAmPNTC8kRLNJ/89WjZ?=
+ =?us-ascii?Q?aBo06e1ieLEWuTZaAv7UNvA+bIKbRwJwMYPKKJwY32SxpMIOm2mfdsSp0MDP?=
+ =?us-ascii?Q?roKA4Oz43y3szxsYOkCz+UpYffpBc6I52Hp6EbR2Yn2TiMRYpe1i2bp5Cqs6?=
+ =?us-ascii?Q?U1wycRCI9EBaXnWZitYaMxK0Mwb43/sgN0JrHezDZI4Uo4bp6ACnYrRX0yiw?=
+ =?us-ascii?Q?DEwELRjOeOSyr3R/6lRo78SN7gPxqs5xul1xmkkgVYNJcSwUmXzB6e3iU0gy?=
+ =?us-ascii?Q?/r25ggX72dfi4+8oniCZT41RbyoPdNlwuHal5DtD1bSJFT05dyAhq9w+FnwB?=
+ =?us-ascii?Q?NDVymB6DUGg3ZwfCzSpuTBrKcYt3s4JWGEf3qCBb39DBA6Rx5BBJDaNuNbaa?=
+ =?us-ascii?Q?r/vCJSCsMXjmytC4GUwb1lRM9uqe33BWkl585QNwE8ir5xBqdmZ2A3F0lZ6j?=
+ =?us-ascii?Q?Yhs9DWJoJmJQJwGpoK5xhrxqD6IKvojVcFdfLe4+Eban/zBfN9kHgPPkHuhD?=
+ =?us-ascii?Q?lJVMJHBptYutwSWYiSekROHsR7J0u2+r5yUeYn9TFrXFq3SKh7RMmjXdeao2?=
+ =?us-ascii?Q?3YOp1t5w7dAdj1YC/sR3X1lje1MmLcKZmjp3qshXAMQTygDWYnZ2kDSPqEsZ?=
+ =?us-ascii?Q?Ce0UdwlkW0NTXZ2s909hpuauK8VOFy5rQ6M9pF0JRH9yekRT12ZRjae8I6cL?=
+ =?us-ascii?Q?ZjpjYN+ePFM17pk0xkJHnZ+ERS+b98F+ymP8wq755JIOYp1i5ZEtZlWXSOfn?=
+ =?us-ascii?Q?ktzWVvqAXcmT4aM81dXpEC3bwkxvXeVy/qjauCKEvg7EeJhN6JwbgXJ6OrQa?=
+ =?us-ascii?Q?mNkuNMAF68YMlMFHIsJgpAmA4/YCYgvJI2YoG9A6fGKj55yOF9ufe+AW5534?=
+ =?us-ascii?Q?5Q6fRQlzPiQF93xAOrLJvnuKuIIICosufGawrU1RAXPTf8qJoPe94KuAeOEE?=
+ =?us-ascii?Q?hZSRCPf6VVC9vX/WqSVRExZQsoS8nJPS01lZ2w9DU/F8ATnCWOz6ifTWqK8L?=
+ =?us-ascii?Q?B+UpawLaCJQEjS3idGZWnFiUj774L96t?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(7416014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?4W4TyQ2T76vtS5eLe7VPUsFu/eLtY/uUakqNnQPX3rXdFv/RMA4jbQ7aJnzx?=
+ =?us-ascii?Q?hEvYgMhRgSNuxGrqwkFtLP5c8CHoPi9ie9X3yZIq1TN+LIugIxMJd+4tYEzu?=
+ =?us-ascii?Q?guff5VMTpAGhyvAlbqZrtMYSK6zdQCu7FJYOXAEwTvbUOPAR0vfYX04Tbn1V?=
+ =?us-ascii?Q?x9Lle2DjL9mEXmfDCKRDvFksqWZIaWYWPhGcehth9em/P8L5QvJU905th99c?=
+ =?us-ascii?Q?8pdYA29mOikWVL6++UVBueoCdWZxuBv+qW32h4i3SHDa5ElisiKXfScfDgfd?=
+ =?us-ascii?Q?cNk+gpj1j/vcNoss7JcBaIOvHc6U8Rlr7kFm0RO87K561zGPVl3pA7yi616q?=
+ =?us-ascii?Q?bzvQ+Kw+uflVPNpUt+zSy8M2gKeL5/2VYHeHZIRaFbnWR96qPUGL8LeosFxp?=
+ =?us-ascii?Q?60YXyYdQ1AhBoTfuolnaLgoz6cZRcTHNFTRNYSI3JfVZf+NUo/i0D3xmsF3/?=
+ =?us-ascii?Q?EZJIVR6ZJuqV29Sr4Qw4X0VBSLpSzbmc1RUXaS5biM5CRLD7sXWzNDliMH5J?=
+ =?us-ascii?Q?PftJfXIccyejm6U1uRDjBgBfxqOMsbQC3DeMgFZZkicR9vgMpwdnvDJ0We7A?=
+ =?us-ascii?Q?uCuZA8o62rm3DFSJREEqz/DWnyA1sESqDnNFB7ux4UuDRi1jpn6/FJBJ/AIp?=
+ =?us-ascii?Q?ELq9zhGYFkqQyFZyFK6qEiOfg7sI0qwy1ksc53G6U4lztfcrNZKhIyvUfUp2?=
+ =?us-ascii?Q?d5ZZFOMog+UgR0dUh9TmUjnRpiIhkLwSzqeiqxP0Ctbho7YGNx8lRSuvcAuY?=
+ =?us-ascii?Q?wQqGfvYRDJjwnDgSaXNEnV9rA2QxKfF2MsWvxauzYy1biSJDsVPi3/vOVMPx?=
+ =?us-ascii?Q?Cuodq85b1VFhNWARoduIzX3nnszvXssnyWMwMDJZDuAj9/6liRaewUSpWFxa?=
+ =?us-ascii?Q?sP3HIvkaEvFMsasodILSZT+7x/8IiEaEQOKvp1RZOIvefMhUsXHOxzffZnI2?=
+ =?us-ascii?Q?uC96bvfMLqJY0HRJifVUBa9pbYT93syAT1JO9NAGVueTRI9A8EzAgaKefX2f?=
+ =?us-ascii?Q?qd5lKllfv2sj4AmTbXvTi/uLdcg+7dXB+pjO0aAbaUk3H2gIJK6LAPHpwDFq?=
+ =?us-ascii?Q?TOT8Pe4oifywjp8JeCx7Yk5EekbCHNYK8u/fM7hbKfzpKLqtplakhzEWB2bB?=
+ =?us-ascii?Q?5FbXuCXUvrniaFNTXyy99KP3fuJLIVhmkF47zkaZNqsAakAHHV4FPv+jeBvK?=
+ =?us-ascii?Q?T5fXgHvAZFk4jfSs6RtIUZ0K5ZNQIsmqInGsA6tl3k1S2BgkZ1HSvynnKE5D?=
+ =?us-ascii?Q?8UvT9Z7WQcfhHO/tlPdlEyHFq49uzQcKsTd6BjSi9U4XwZ23McnyOrq2NNKw?=
+ =?us-ascii?Q?D8LHO698yk48JtWc/XkEeldY8XQ83o3GLbqLKYarR6oJDcCBDR097xVY0ztn?=
+ =?us-ascii?Q?tUDD6mAyeJuHweqiHDoIhUVtwEB8C3iJBPcFPq/tok52rUeSpEdyAAhk9rYe?=
+ =?us-ascii?Q?8hxe0PSvqr9MmS/xuQIvYZbIV8+38CkpVJG39oCKzhyEOfixOB835LV3JJSF?=
+ =?us-ascii?Q?EIG6lyZdeG5i/dtV1aeyrPqQyXguuXbq+I8GKrMdywAwPy64DyUtI9HE+mqW?=
+ =?us-ascii?Q?sZNFgFk+KPaB+qINWYJlFpgVsFgxbqvMWynrQTnN?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fa0b2116-a897-4c6f-297b-08dd512c4e5d
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2025 21:28:09.2740
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: s46jeXNgfs4ISGAvan3eAdS7JJi8EhlLVOoyhW+k4Pe2m8RJILdDHz3dNaXU3LMTFa7MAXVdknrcFZY+D+TkgA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB8026
 
-On Thu, Feb 13, 2025 at 5:07=E2=80=AFPM David Arcari <darcari@redhat.com> w=
-rote:
+On Wed, Feb 19, 2025 at 09:20:57PM +0200, Daniel Baluta wrote:
+> This change adds resets to dsp node in order to be
+> able to control the dsp run/stall bit.
+
+Nit: Add resets to ... and wrap at 75 chars
+
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 >
-> Since commit 18734958e9bf ("intel_idle: Use ACPI _CST for processor model=
-s
-> without C-state tables") the intel_idle driver has had the ability to use
-> the ACPI _CST to populate C-states when the processor model is not
-> recognized. However, even when the processor model is recognized (native
-> mode) there are cases where it is useful to make the driver ignore the pe=
-r
-> cpu idle states in lieu of ACPI C-states (such as specific application
-> performance). Add the 'no_native' module parameter to provide this
-> functionality.
->
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> Cc: Len Brown <lenb@kernel.org>
-> Cc: David Arcari <darcari@redhat.com>
-> Cc: Artem Bityutskiy <dedekind1@gmail.com>
-> Cc: Prarit Bhargava <prarit@redhat.com>
-> Cc: linux-doc@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: David Arcari <darcari@redhat.com>
+> Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
 > ---
-> v4: fix !CONFIG_ACPI_PROCESSOR_CSTATE compilation issue
-> v3: more documentation cleanup
-> v2: renamed parameter, cleaned up documentation
+>  arch/arm64/boot/dts/freescale/imx8mp.dtsi | 2 ++
+>  1 file changed, 2 insertions(+)
 >
-> Documentation/admin-guide/pm/intel_idle.rst | 18 +++++++++++++-----
->  drivers/idle/intel_idle.c                   | 16 ++++++++++++++++
->  2 files changed, 29 insertions(+), 5 deletions(-)
->
-> diff --git a/Documentation/admin-guide/pm/intel_idle.rst b/Documentation/=
-admin-guide/pm/intel_idle.rst
-> index 39bd6ecce7de..5940528146eb 100644
-> --- a/Documentation/admin-guide/pm/intel_idle.rst
-> +++ b/Documentation/admin-guide/pm/intel_idle.rst
-> @@ -192,11 +192,19 @@ even if they have been enumerated (see :ref:`cpu-pm=
--qos` in
->  Documentation/admin-guide/pm/cpuidle.rst).
->  Setting ``max_cstate`` to 0 causes the ``intel_idle`` initialization to =
-fail.
->
-> -The ``no_acpi`` and ``use_acpi`` module parameters (recognized by ``inte=
-l_idle``
-> -if the kernel has been configured with ACPI support) can be set to make =
-the
-> -driver ignore the system's ACPI tables entirely or use them for all of t=
-he
-> -recognized processor models, respectively (they both are unset by defaul=
-t and
-> -``use_acpi`` has no effect if ``no_acpi`` is set).
-> +The ``no_acpi``, ``use_acpi`` and ``no_native`` module parameters are
-> +recognized by ``intel_idle`` if the kernel has been configured with ACPI
-> +support.  In the case that ACPI is not configured these flags have no im=
-pact
-> +on functionality.
-> +
-> +``no_acpi`` - Do not use ACPI at all.  Only native mode is available, no
-> +ACPI mode.
-> +
-> +``use_acpi`` - No-op in ACPI mode, the driver will consult ACPI tables f=
-or
-> +C-states on/off status in native mode.
-> +
-> +``no_native`` - Work only in ACPI mode, no native mode available (ignore
-> +all custom tables).
->
->  The value of the ``states_off`` module parameter (0 by default) represen=
-ts a
->  list of idle states to be disabled by default in the form of a bitmask.
-> diff --git a/drivers/idle/intel_idle.c b/drivers/idle/intel_idle.c
-> index 118fe1d37c22..b0be5ef43ffc 100644
-> --- a/drivers/idle/intel_idle.c
-> +++ b/drivers/idle/intel_idle.c
-> @@ -1695,6 +1695,10 @@ static bool force_use_acpi __read_mostly; /* No ef=
-fect if no_acpi is set. */
->  module_param_named(use_acpi, force_use_acpi, bool, 0444);
->  MODULE_PARM_DESC(use_acpi, "Use ACPI _CST for building the idle states l=
-ist");
->
-> +static bool no_native __read_mostly; /* No effect if no_acpi is set. */
-> +module_param_named(no_native, no_native, bool, 0444);
-> +MODULE_PARM_DESC(no_native, "Ignore cpu specific (native) idle states in=
- lieu of ACPI idle states");
-> +
->  static struct acpi_processor_power acpi_state_table __initdata;
->
->  /**
-> @@ -1834,6 +1838,11 @@ static bool __init intel_idle_off_by_default(unsig=
-ned int flags, u32 mwait_hint)
->         }
->         return true;
->  }
-> +
-> +static inline bool ignore_native(void)
-> +{
-> +       return no_native & !no_acpi;
-> +}
->  #else /* !CONFIG_ACPI_PROCESSOR_CSTATE */
->  #define force_use_acpi (false)
->
-> @@ -1843,6 +1852,7 @@ static inline bool intel_idle_off_by_default(unsign=
-ed int flags, u32 mwait_hint)
->  {
->         return false;
->  }
-> +static inline bool ignore_native(void) { return false; }
->  #endif /* !CONFIG_ACPI_PROCESSOR_CSTATE */
->
->  /**
-> @@ -2328,6 +2338,12 @@ static int __init intel_idle_init(void)
->         pr_debug("MWAIT substates: 0x%x\n", mwait_substates);
->
->         icpu =3D (const struct idle_cpu *)id->driver_data;
-> +       if (ignore_native()) {
-> +               if (icpu) {
-> +                       pr_debug("ignoring native cpu idle states\n");
-> +                       icpu =3D NULL;
-> +               }
-> +       }
-
-Why not
-
-+       if (icpu && ignore_native()) {
-+              pr_debug("disregarding built-in CPU idle states table\n");
-+              icpu =3D NULL;
-+       }
-
->         if (icpu) {
->                 if (icpu->state_table)
->                         cpuidle_state_table =3D icpu->state_table;
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> index e0d3b8cba221..780245d4ce61 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> @@ -6,6 +6,7 @@
+>  #include <dt-bindings/clock/imx8mp-clock.h>
+>  #include <dt-bindings/power/imx8mp-power.h>
+>  #include <dt-bindings/reset/imx8mp-reset.h>
+> +#include <dt-bindings/reset/imx8mp-reset-audiomix.h>
+>  #include <dt-bindings/gpio/gpio.h>
+>  #include <dt-bindings/input/input.h>
+>  #include <dt-bindings/interconnect/fsl,imx8mp.h>
+> @@ -2421,6 +2422,7 @@ dsp: dsp@3b6e8000 {
+>  			mboxes = <&mu2 2 0>, <&mu2 2 1>,
+>  				<&mu2 3 0>, <&mu2 3 1>;
+>  			memory-region = <&dsp_reserved>;
+> +			resets = <&audio_blk_ctrl IMX8MP_AUDIOMIX_DSP>;
+>  			status = "disabled";
+>  		};
+>  	};
 > --
+> 2.25.1
+>
 
