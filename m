@@ -1,57 +1,64 @@
-Return-Path: <linux-kernel+bounces-521596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64A8EA3BFB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:20:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4CD2A3BFC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:22:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 973941694CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:20:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D43F73A7EDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:21:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EA8E1DE4F1;
-	Wed, 19 Feb 2025 13:20:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C3791E231A;
+	Wed, 19 Feb 2025 13:21:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="VN6E63tF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="3oaR00oT"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABDC61C84A9;
-	Wed, 19 Feb 2025 13:20:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 685681DFE36;
+	Wed, 19 Feb 2025 13:21:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739971212; cv=none; b=H8T0V61L+RBYcpa5u5Ls21dmraaFnhWRFph1RWjHNtnb4SiuT4fUl6fmPShX8Myf/ZmQZEJeRLZPxDdFgYgxyysYPmKO73MS6DYXRd+nYR0xHdxAAro01dMDuTjTonECL+XzfnbaMd8DjUAEXB7DpiLBMWbaEObICVRSTO5Vi5g=
+	t=1739971300; cv=none; b=H+vQrr4Oe7R3ESTaE7I1aYTR3ZolJtwOP+t/mE/CpEWo8FbGojW1W17MfSebOWLmYy1+V8sLhiVpUhf9ChuKaXsZd8WqB7zb1EyLyeR7pGGKXwX04MY4CXXWorD3K7xvGQJSwrxrc0M/NSjCkqG9fOsfjbA+Vnx+orATXenpbCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739971212; c=relaxed/simple;
-	bh=iwz/3KbcNFHe2OflQmNBcT9Wd5TDScmLlAHS2b4bhpk=;
+	s=arc-20240116; t=1739971300; c=relaxed/simple;
+	bh=ibkqAzOOTpcKMN7n+mjZ+14f3KWphjHsh/YjVuefvqI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kzWmZPNk4mdesMdGYwHb8mz1rb/POY5LTKLKTu7r9jTNfGsUF0BfJV7ZGBSMNLMIOi8t33W+l9n/fBz/UXoc2WClOv9QSSf4CK3xVTeIdZvYTT22QQgrKlbxHnNSi13y3ZBeW9Z27ssZNWVDpyBipicsqRsdrIsp5s9teIIsA2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=VN6E63tF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0D6BC4CED1;
-	Wed, 19 Feb 2025 13:20:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1739971212;
-	bh=iwz/3KbcNFHe2OflQmNBcT9Wd5TDScmLlAHS2b4bhpk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VN6E63tFCNi7PIutUfSSECzx403ZRowSF9svdgD2wzjfL3lNoLs4QauUhfBwOmxvq
-	 L77Jrh3Bmq4TiaLoulqNFOWs5ldJDe0PFt2km6Dx/aREUDefVdqtRgou8TxuaLE/83
-	 VyQHPfLd9AEkgFKUKb796IIr6FytWBQTb7VYZWy8=
-Date: Wed, 19 Feb 2025 14:20:09 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
-	linux-tegra@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 6.12 000/230] 6.12.16-rc1 review
-Message-ID: <2025021938-prowling-semisoft-0d2b@gregkh>
-References: <20250219082601.683263930@linuxfoundation.org>
- <b5a72621-a76a-41a1-a415-5ab1cabf0108@rnnvmail201.nvidia.com>
- <9836adde-8d67-48b5-944b-1b9f107434a8@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SM+rlpo3GNVCbkFZHW4Qa3g8evng4zcfl5GkVkIh7T+o4u/0jnJTcvuBetci/AqgWzrfyPoXmT8bh1DjcbvtIZZElRYVdHjvapJ6Ql8ZrDSBPN4oxIZADGJMyOZxDNjXM/UhYKo2lBwDsrxIS7mUSPvUXRu0oGhzD5WjOko3h0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=3oaR00oT; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=DMyxvn+GQc/UyfWq8B+kAUMHY5C1ZEtJDA2H85+czpM=; b=3oaR00oTwj135TbO69imlcG5uT
+	hhjS3aq2tDRRGK+8kUm+YZe0MiEvqrgrI31hxY01IQS8eBHyC3eAl4Vda8dvQ1T9dMg3ITpN25FoH
+	tnXd9ImfDu5sjWTaKsA7itCfEw/lMfzNE5Ney9cTysCc4geC8XJELBy4fFu3Tomcy+LE=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tkk0x-00Fdb6-4V; Wed, 19 Feb 2025 14:21:23 +0100
+Date: Wed, 19 Feb 2025 14:21:23 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Dimitri Fedrau <dima.fedrau@gmail.com>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
+	Gregor Herburger <gregor.herburger@ew.tq-group.com>,
+	Stefan Eichenberger <eichest@gmail.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] net: phy: marvell-88q2xxx: Prevent reading
+ temperature with asserted reset
+Message-ID: <48c4cd14-be56-438e-9561-c85b0245178c@lunn.ch>
+References: <20250218-marvell-88q2xxx-hwmon-enable-at-probe-v1-0-999a304c8a11@gmail.com>
+ <20250218-marvell-88q2xxx-hwmon-enable-at-probe-v1-2-999a304c8a11@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,59 +67,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9836adde-8d67-48b5-944b-1b9f107434a8@nvidia.com>
+In-Reply-To: <20250218-marvell-88q2xxx-hwmon-enable-at-probe-v1-2-999a304c8a11@gmail.com>
 
-On Wed, Feb 19, 2025 at 01:12:41PM +0000, Jon Hunter wrote:
-> Hi Greg,
-> 
-> On 19/02/2025 13:10, Jon Hunter wrote:
-> > On Wed, 19 Feb 2025 09:25:17 +0100, Greg Kroah-Hartman wrote:
-> > > This is the start of the stable review cycle for the 6.12.16 release.
-> > > There are 230 patches in this series, all will be posted as a response
-> > > to this one.  If anyone has any issues with these being applied, please
-> > > let me know.
-> > > 
-> > > Responses should be made by Fri, 21 Feb 2025 08:25:11 +0000.
-> > > Anything received after that time might be too late.
-> > > 
-> > > The whole patch series can be found in one patch at:
-> > > 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.16-rc1.gz
-> > > or in the git tree and branch at:
-> > > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
-> > > and the diffstat can be found below.
-> > > 
-> > > thanks,
-> > > 
-> > > greg k-h
-> > 
-> > Failures detected for Tegra ...
-> > 
-> > Test results for stable-v6.12:
-> >      10 builds:	10 pass, 0 fail
-> >      26 boots:	26 pass, 0 fail
-> >      116 tests:	115 pass, 1 fail
-> > 
-> > Linux version:	6.12.16-rc1-gcf505a9aecb7
-> > Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-> >                  tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-> >                  tegra20-ventana, tegra210-p2371-2180,
-> >                  tegra210-p3450-0000, tegra30-cardhu-a04
-> > 
-> > Test failures:	tegra186-p2771-0000: pm-system-suspend.sh
-> 
-> 
-> The following appear to have crept in again ...
-> 
-> Juri Lelli <juri.lelli@redhat.com>
->     sched/deadline: Check bandwidth overflow earlier for hotplug
-> 
-> Juri Lelli <juri.lelli@redhat.com>
->     sched/deadline: Correctly account for allocated bandwidth during hotplug
+On Tue, Feb 18, 2025 at 07:33:10PM +0100, Dimitri Fedrau wrote:
+> If the PHYs reset is asserted it returns 0xffff for any read operation.
+> Prevent reading the temperature in this case and return with an I/O error.
+> Write operations are ignored by the device.
 
-Yes, but all of them are there this time.  Are you saying none should be
-there?  Does 6.14-rc work for you with these targets?
+I think the commit message could be improved. Explain why the PHY
+reset would be asserted. You are saying it is because the interface is
+admin down. That is a concept the user is more likely to understand.
 
-thanks,
+> Fixes: a197004cf3c2 ("net: phy: marvell-88q2xxx: Fix temperature measurement with reset-gpios")
 
-greg k-h
+Is this really a fix? My personal reason for this change was
+architecture, it seemed odd to probe the hwmon device in one spot and
+then enable it later. But is it really broken? Stable rules say:
+
+  It must either fix a real bug that bothers people or just add a device ID
+
+> Signed-off-by: Dimitri Fedrau <dima.fedrau@gmail.com>
+> ---
+>  drivers/net/phy/marvell-88q2xxx.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/net/phy/marvell-88q2xxx.c b/drivers/net/phy/marvell-88q2xxx.c
+> index 30d71bfc365597d77c34c48f05390db9d63c4af4..c1ae27057ee34feacb31c2e3c40b2b1769596408 100644
+> --- a/drivers/net/phy/marvell-88q2xxx.c
+> +++ b/drivers/net/phy/marvell-88q2xxx.c
+> @@ -647,6 +647,12 @@ static int mv88q2xxx_hwmon_read(struct device *dev,
+>  	struct phy_device *phydev = dev_get_drvdata(dev);
+>  	int ret;
+>  
+> +	/* If the PHYs reset is asserted it returns 0xffff for any read
+> +	 * operation. Return with an I/O error in this case.
+> +	 */
+> +	if (phydev->mdio.reset_state == 1)
+> +		return -EIO;
+
+Maybe ENETDOWN is better?
+
+	Andrew
 
