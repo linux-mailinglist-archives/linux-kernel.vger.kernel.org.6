@@ -1,135 +1,150 @@
-Return-Path: <linux-kernel+bounces-522601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF690A3CC35
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 23:22:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0904A3CC39
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 23:23:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06D6D7A8B60
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:22:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F8E4189CDAA
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:23:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD49F255E33;
-	Wed, 19 Feb 2025 22:22:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9723522B8B3;
+	Wed, 19 Feb 2025 22:23:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IzUFzE7P"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JT9G67YH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92158286280;
-	Wed, 19 Feb 2025 22:22:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8FA5286280;
+	Wed, 19 Feb 2025 22:23:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740003768; cv=none; b=keDd2gKIlqFPFHt8CbT2Vvi34uGxc/GMz6K10RUMajOfdi1ifr66JVLRBWaolWf7HWKVUllaq8om1XcxHCHNySb81BQ7ReqB45iBhdYMyt9/ssu+gFuNZgXnxWO4c70iPwSWTUOts1wZhgRbxD34j8qf1pOTZUK4g80ALFfXxFs=
+	t=1740003806; cv=none; b=JS6w3emvZi3jXByd/ELYK8fczbZov/74SFQu9stIJ1o8fNLhl91DEe8KsZ/EoxMSxoE5gtP5hSyBRUjWp1lwAn+r/kamf8Vqiz3szBAaDn/bIHGEt3v65UVf+GLl1jc1e2kDrfDBUSOVX/4v9C1nZQ/TVP66uELeteShsMVZlVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740003768; c=relaxed/simple;
-	bh=SHiBAOh0/DlDL8hUB3T6+LtKrV85BGIXTOwOLa6mnT0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZFVBiAs76nfQR99DKIll8HKovz7xyj+RsG+fUyJ0miXZzWr2bMu4ZD6yTM5rQZkLYurTqVTV0QCU6HMUsP3y+y4ox7SAgit3e4SVA+WeOTSmSrWOWvzaRGfSgBERyRNprmADb+M/LNZK0nYLxULjC7/AjvLWiKyGpEfyy9Jjrgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IzUFzE7P; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ab771575040so256219966b.1;
-        Wed, 19 Feb 2025 14:22:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740003765; x=1740608565; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Y0Ut+HC9eKHgdin8LIIS2Fjeny6qwex+kr1lgIMYN8w=;
-        b=IzUFzE7PQLYM68DP3mgiHA5tAAee5PS8TvEy6cys7cwZYHGw7YfkEGbN46zN8k90PS
-         oKhPZDiZw4lrsfAS43qv5zXkI5eJw4iACAfcPMawZWnS17yGZVMULSl1TAv9CvN8lgF2
-         xRfvi89HkG4PEIP493LL7StzHO3W5sPzgQ15WwjslMfmHdJHBZOLx7y8ZqVwTiHhPWKI
-         hRo2+PJJRKs3BLryMF4m/K2tfOegypQ+qpLizTN0uOqBRSSsr7qB3zjw7liEq6PhL29l
-         zyWaTppBHVaPQua52erXm6/4/wwZuqozGETfV5s0ewp9Zw+iW6GM49WpjqhEasKiSIli
-         +BLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740003765; x=1740608565;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y0Ut+HC9eKHgdin8LIIS2Fjeny6qwex+kr1lgIMYN8w=;
-        b=GegUAY7R0gTb9V5vukA6lJWNdCu9P1wwv79b29rLfb32UM75POaopCjGIJizr97+vU
-         AL0z7yGGmuBCzdXxtrXioZVvK5EjRpEZCLFc2rOPsQD0oPAokYt1l/AgcCH/Ki5YnuKz
-         e4gVgsCRBVJ1hIeALCBZNc7f+OJLIEQjv1Ps9/7fv0dsJO3eQplWWBKcDh9jvUQtQ1O5
-         nJ81anK6nLzOqyV/vsKMk0ydEZ4No8p40vGeDFz454KUF+TsXocciGDT/mtlI0OCyYBz
-         boNZKfB4Izt2/OXy5GwaEyAVllg39rf8iO+uugcsrntEwEHLJidm5hi8rz5a5XkDl6UL
-         TOdw==
-X-Forwarded-Encrypted: i=1; AJvYcCUkAtSJqTmWH0eRrJy8LDkGaCiiW4cNZpu8su+Qois6cM4irwJh8pknF/lQf9LBhJxf0T3lOKC5MFe5@vger.kernel.org, AJvYcCXLmnA5N+OWbMabLEzQ0QLFgzZ5tOuNlXDv8r1V0f7JxFTmevrr3aA2jtJXXQ3B85B09NFRHNuPjv8F4n69@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIk0gBUe/kJyU8NxkkKrq0l5uPsLyiLb9xfhOyrPgEScavVhL+
-	fifK51IsKX9Xcn5G2q0tGjGFRXRtzmOKS2RW0zOVobGf8s8j6XWY
-X-Gm-Gg: ASbGncvWt0EplT9BRHF/C1DHnuOsx+meysXtXsHfH1hzLamokMiifyewE7MRgly0aq6
-	jVhDGGC5jCQYTT1d/7trNvxtKh1gkMb2KTXAj1RrBienI+n/G0xccNY0k2yLMdrQMrv6zkDcyBA
-	9hSdlYc8mkOb0w4srfGIBo/EDAvpT1gZzplQKoLBT2cgMWew299Bn7YhM4tUX/Tcrwh4r1xZS6p
-	W4dEX0vHia8W7vyPkURb1s+MzXqQ4avQjlLaJOo2Gnw4EGnuj0iFuyIB65QMnIzrpGiqLbumtmt
-	wpgy8WexWw0Jy8H7pisvj65wKgFka+bgWrgTspZdNK9Q
-X-Google-Smtp-Source: AGHT+IHgZ/9o+/TaQRZkw3ZCR/vfHz3eRXJzfUy3azBJWNM0TELKM477HK5xLn7uBryQfbFCimYo+g==
-X-Received: by 2002:a17:907:890a:b0:ab9:76d7:574c with SMTP id a640c23a62f3a-abbeda27f98mr82689866b.1.1740003764658;
-        Wed, 19 Feb 2025 14:22:44 -0800 (PST)
-Received: from [192.168.1.130] ([82.79.237.175])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abbdf076360sm165470566b.110.2025.02.19.14.22.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Feb 2025 14:22:44 -0800 (PST)
-Message-ID: <c52e6c5c-f49e-4727-b669-086ae7cb0e1e@gmail.com>
-Date: Thu, 20 Feb 2025 00:22:41 +0200
+	s=arc-20240116; t=1740003806; c=relaxed/simple;
+	bh=jJj74kq2dXg5VOc0yCCKcirAapeCmvuLU0B0w4KuQQg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KcXm7XjPHgEYYBC7cwA+vXT0nY1CG68TbGP41hVi9/7ffQYXaNxjwzWjIAJZ/oCSfr9c8h0X+W6XDkdQAeYbA7HtpyK77h3Wd9VlruCGIYXOGJtWYVFmU+ASYYAyxR0GcTde5HYac7tOGgpj6CqUISoLqG+ATDSe2mJJfaFPFkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JT9G67YH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A904C4CED1;
+	Wed, 19 Feb 2025 22:23:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740003805;
+	bh=jJj74kq2dXg5VOc0yCCKcirAapeCmvuLU0B0w4KuQQg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JT9G67YHTPyWuV4c8g3Dviag3iI5OsJ0Aw1swxfwhD88uWVwhvFNF5T7AiEacq/Xi
+	 nQZyxf6GXzQTeqO373fjlM0MKOMoYBh63Pxd4nS024yIv1aGQul5wS7xo8Oeq4hJp2
+	 ImuoR0boWN/6Kj3u9lhZ/44GAByjDb/sTSvnkgx1TNbRziXwVTSnRDRlWbAOdXETru
+	 XRiTlXMxxE8VrxLaNYncx9TBcGEbyhxdpld06fKIuauccThdIJST7m/GbAZRm8gHF0
+	 hAp5NnxaQ04f13X1+NdAPGAvsiekKLplm9a9XKlb7hHlymIFAMjSqWBuLCyRJubHfK
+	 NwqEajbwKENgA==
+Date: Wed, 19 Feb 2025 16:23:23 -0600
+From: Rob Herring <robh@kernel.org>
+To: Dharma Balasubiramani <dharma.b@microchip.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] dt-bindings: mmc: atmel,hsmci: Convert to json
+ schema
+Message-ID: <20250219222323.GA3013450-robh@kernel.org>
+References: <20250212-mmc-slot-v3-0-2bf288207040@microchip.com>
+ <20250212-mmc-slot-v3-2-2bf288207040@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 8/8] imx_dsp_rproc: Use reset controller API to control
- the DSP
-Content-Language: en-US
-To: Daniel Baluta <daniel.baluta@nxp.com>, p.zabel@pengutronix.de,
- robh@kernel.org, shawnguo@kernel.org
-Cc: krzk+dt@kernel.org, conor+dt@kernel.org, s.hauer@pengutronix.de,
- kernel@pengutronix.de, festevam@gmail.com, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, mathieu.poirier@linaro.org,
- shengjiu.wang@nxp.com, Frank.Li@nxp.com, peng.fan@nxp.com,
- laurentiu.mihalcea@nxp.com, iuliana.prodan@nxp.com
-References: <20250219192102.423850-1-daniel.baluta@nxp.com>
- <20250219192102.423850-9-daniel.baluta@nxp.com>
-From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-In-Reply-To: <20250219192102.423850-9-daniel.baluta@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250212-mmc-slot-v3-2-2bf288207040@microchip.com>
 
-
-
-On 2/19/2025 9:21 PM, Daniel Baluta wrote:
-> Use the reset controller API to control the DSP on i.MX8MP. This way
-> we can have a better control of the resources and avoid using a syscon
-> to access the audiomix bits.
->
-> Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
-> Reviewed-by: Peng Fan <peng.fan@nxp.com>
+On Wed, Feb 12, 2025 at 02:52:11PM +0530, Dharma Balasubiramani wrote:
+> Convert atmel,hsmci documentation to yaml format. The new file will inherit
+> from mmc-controller.yaml.
+> 
+> Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
 > ---
->  drivers/remoteproc/imx_dsp_rproc.c | 25 +++++++++++++++++--------
->  drivers/remoteproc/imx_rproc.h     |  2 ++
->  2 files changed, 19 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
-> index ea5024919c2f..631563e4f86d 100644
-> --- a/drivers/remoteproc/imx_dsp_rproc.c
-> +++ b/drivers/remoteproc/imx_dsp_rproc.c
-> @@ -19,6 +19,7 @@
->  #include <linux/pm_runtime.h>
->  #include <linux/regmap.h>
->  #include <linux/remoteproc.h>
-> +#include <linux/reset.h>
->  #include <linux/slab.h>
->  
->  #include "imx_rproc.h"
-> @@ -111,6 +112,7 @@ enum imx_dsp_rp_mbox_messages {
->   */
->  struct imx_dsp_rproc {
->  	struct regmap				*regmap;
-> +	struct reset_control			*reset;
+>  .../devicetree/bindings/mmc/atmel,hsmci.yaml       | 106 +++++++++++++++++++++
+>  .../devicetree/bindings/mmc/atmel-hsmci.txt        |  73 --------------
+>  2 files changed, 106 insertions(+), 73 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/mmc/atmel,hsmci.yaml b/Documentation/devicetree/bindings/mmc/atmel,hsmci.yaml
+> new file mode 100644
+> index 000000000000..feaa98e44955
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mmc/atmel,hsmci.yaml
+> @@ -0,0 +1,106 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mmc/atmel,hsmci.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Atmel High-Speed MultiMedia Card Interface (HSMCI)
+> +
+> +description:
+> +  The Atmel HSMCI controller provides an interface for MMC, SD, and SDIO memory
+> +  cards.
+> +
+> +maintainers:
+> +  - Nicolas Ferre <nicolas.ferre@microchip.com>
+> +  - Aubin Constans <aubin.constans@microchip.com>
+> +
+> +allOf:
+> +  - $ref: mmc-controller.yaml
+> +
+> +properties:
+> +  compatible:
+> +    const: atmel,hsmci
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  dmas:
+> +    maxItems: 1
+> +
+> +  dma-names:
+> +    const: rxtx
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  clock-names:
+> +    const: mci_clk
+> +
+> +  "#address-cells":
+> +    const: 1
+> +    description: Used for slot IDs.
+> +
+> +  "#size-cells":
+> +    const: 0
+> +
+> +patternProperties:
+> +  "^slot@[0-9]+$":
 
-Maybe rename this to "stall"? There's also the DAP stuff that's actually used
-to reset the core so this might be a bit confusing?
+If reg can only be 0 or 1, then allowing 2-<infinity> is not valid.
+
+Otherwise,
+
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+
+> +    $ref: mmc-slot.yaml
+> +    description: A slot node representing an MMC, SD, or SDIO slot.
+> +
+> +    properties:
+> +      reg:
+> +        enum: [0, 1]
 
