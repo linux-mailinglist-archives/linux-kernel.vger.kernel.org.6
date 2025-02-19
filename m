@@ -1,190 +1,107 @@
-Return-Path: <linux-kernel+bounces-521385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65729A3BC90
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:17:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1694BA3BC91
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:17:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B62416C0E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:16:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA673170186
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:16:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 909C91CAA6D;
-	Wed, 19 Feb 2025 11:16:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B10061DEFD8;
+	Wed, 19 Feb 2025 11:16:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="vXM9f451"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z2581nYo"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F01DB1BC062
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 11:16:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C987D2862BA
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 11:16:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739963788; cv=none; b=bf6MXge08mkanlO+Vh0a0Nsfg4XyiksdVvjq/yD2BZvbkL56O7svpXrzV5d/Aoj/JZzGY2vPKmDFj2M/f85N5J3Rk7n0dc40PRahDZfRUnFlCNwtEIIR1hT7rNXF3sovPZDIkGEED6nElyy/cHonKLTbCesZj172Ix9/Hgwg7js=
+	t=1739963799; cv=none; b=UpwrZI+UCFROKth2V9MhpJAlU+N1jmV3vYL04MpQPwH87SOckXQb4osZ+9cf5e7AgYjUjgrU1g2Q6JsfTaSkpz1kRBTVCDB0r+T57Btzd+YlKHJgUvz1SfDvbyvYiCCWXVyKkIhTlbIypfn3u3egHPEALfZsNuOV+I21yE/vmMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739963788; c=relaxed/simple;
-	bh=u3l09RemyGPuMvSAGX38x17/0rCKEy8W2n/M4DS2lNI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=jg/qmhqIgAn9tEKZobqP0JPlVJ+OeoIcDENZm5lHQ00Ny9jslV7DPBw54X5pxg9DbfgQNJbY4sQb96K7TfQ1RKSrSqz1Zt6i/Ag/KXgBMc91XBh3fUhElCUoMwH514N/qIwgtH7Dx7ffQoPw4jSQMGNF9SdpmF0xtU7BpRBHXG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=vXM9f451; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250219111625euoutp01b93d0ba5c175fbd2b7fa01b9e1d13233~ll9gDrwnG1952519525euoutp01H
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 11:16:25 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250219111625euoutp01b93d0ba5c175fbd2b7fa01b9e1d13233~ll9gDrwnG1952519525euoutp01H
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1739963785;
-	bh=JzQpVooeuRLGvV+H89HqexAwacGhVAMz5cSSBB4VyM4=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=vXM9f451Vp9qvUouT1wAL4wAGkveCbigyzsPPA/MRT3DM2fO43FLPHmy4lNC0fPuc
-	 Fpt0VU5EKsSDDG/gjHV+T0LrcNO93V03RWp93qDDo650CEPNoU0hKdEzVcEUyQzaxF
-	 Brfbwi6O+42mvMPYSNqvif94ycKzcKMUxN+d8MmM=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20250219111624eucas1p215437069f98fe6a911e818bf114088e7~ll9fd5-pK1957519575eucas1p2f;
-	Wed, 19 Feb 2025 11:16:24 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges2new.samsung.com (EUCPMTA) with SMTP id E1.AE.20409.88DB5B76; Wed, 19
-	Feb 2025 11:16:24 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250219111624eucas1p2725578fdd6fa8733592c6e7e73c8e5a6~ll9fGH2bj1957519575eucas1p2e;
-	Wed, 19 Feb 2025 11:16:24 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250219111624eusmtrp1fdb9dbf4003a5667c78d8c76ed9cd24e~ll9fFSKYh1680016800eusmtrp1_;
-	Wed, 19 Feb 2025 11:16:24 +0000 (GMT)
-X-AuditID: cbfec7f4-c39fa70000004fb9-1c-67b5bd88836a
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id E3.5B.19920.78DB5B76; Wed, 19
-	Feb 2025 11:16:23 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250219111622eusmtip104a560fc5f8e7812003f1fe53d3a2517~ll9dmpjmV1237812378eusmtip1C;
-	Wed, 19 Feb 2025 11:16:22 +0000 (GMT)
-Message-ID: <a94c375a-baf9-4530-8425-762dc9adf35e@samsung.com>
-Date: Wed, 19 Feb 2025 12:16:21 +0100
+	s=arc-20240116; t=1739963799; c=relaxed/simple;
+	bh=uWOktcaedUBDqKd4C1NzqImpFID0KSF/Je2o+kES7iI=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Xg79mP5Nmd3lERjboOXllsWqpn8aVmAhxt6D7E/m/08vpqkw19D7lPqjqaK3SUws8+CWuuM98w6+aGedMDTMMyK5zPnO9OeZexTdRAifr0m4YQ6l7Il8Zv6zqxVGgKR6/n+xa80Ghq2/1UloBUxFOYc9fLKpqdRp4FlmzaiVGDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Z2581nYo; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43995b907cfso10670515e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 03:16:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739963795; x=1740568595; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uWOktcaedUBDqKd4C1NzqImpFID0KSF/Je2o+kES7iI=;
+        b=Z2581nYoZUdJioFE5Qe/WCZqp1jMbVtJxdc85r9YGhmkDG9ZDO/YX9XW4+YbcNqXk7
+         wPSGSB13j+VdtOCCANTniQcKOGgpXGQ0/0U0adRjifpr9iCMve7vFgBy/viWcyUZuIPc
+         9ztSo+N/b6XqBh8HX2SanjwS4p/ebg7SLRaeVqbWbEu1uekLQ0SAHTDruFBv0FKj6mhU
+         AZ7+6H/1TqQaer23ovbdYRngBNMODTIArItoTxgtZjD5EIz2CcpFbEs3YllrIhSF3yFI
+         1ZxpFGbk9HVDofkDVgTNZpxNrFmW6letGneRlByL2XS29ruV26OjCiKD4d49xDZyjHpp
+         KnzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739963795; x=1740568595;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=uWOktcaedUBDqKd4C1NzqImpFID0KSF/Je2o+kES7iI=;
+        b=I2d+YyfxNQVZLTA/w98Dut6TDhoWVkdgceAagj7cNTDPNsfQNz/4OykXvGnh4X5yHD
+         QynU4IRYMCW0DrxhSA+H0OTQ1J86puL9qHS6OnGE2/KYHLiZnqeUgSsCh/fF7jchNaic
+         YwAttxmBdg8tfzAXIRd6NYKfuWdcCJ2Bpfv5D+CfjICpiPKuV/wqB13Rltbsc2H6JRMO
+         l928Czl5zUZFBUd1MwcYYDmSjCeokRxrRpzDd1RlzrR76XsKsNjiibZIP25DYV3iUmaf
+         aOswWzVTn11N+f3OFjKAUo2VJKpZn7TDWzNRxCYpjHxz6jP99xcecfzzzSduK2Xp4u3G
+         aJrw==
+X-Forwarded-Encrypted: i=1; AJvYcCUcXTMDxRdw7XU+8rhAfiaO4AkJ44INQN/I6d9MtbPmpXioKrUrbKTSE21cEVW4CGobTItIt+sZYAPlgbI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzv4xwQdothK9oFZRDTqpF++bw4vUjpFI2Cmk3mUJ0rJl6D9yzv
+	D1LV8QB6p6ryUilytok+LpVo3kTHld41roV2N6rYtCKSdAgz7IggI6Ri0gV8Hyw=
+X-Gm-Gg: ASbGncvXuTq7iU9SMOLkMjBmLYk6HahD9XSrdwUO2nwGFoygLY3JTue0MTEJmmalvN8
+	fYLayiWE9bAkzzrSQ/sXb9U3e5NSPFDzmL4Mx6iPSa0TnMhLbYg3quimrlTxCqq1/Cy8n3ygGpa
+	Oh6V7bfV5bCf23Bb12SiFpdIhzb7w65mqShZiZVP0XGvFp8pX0H6yr0DIR4PV6M9GVC/BYKvRwf
+	oxEOCRldMSlQWja9U1EK7RaxpYogAhOwgSoYdkbaOLHE8P2QW04VYxZUJyYgFr3qqhZ71N32BLu
+	osXxIWDuGP9OJMT7QftI
+X-Google-Smtp-Source: AGHT+IEmDDRkG1uSwNL1pvVknqup0gDz43+E3qOgrQNfjOcr23dfo95v/reLZTyiBdBUjlLYYhhYOQ==
+X-Received: by 2002:adf:f205:0:b0:38f:2726:bc0e with SMTP id ffacd0b85a97d-38f3406cd88mr15712193f8f.44.1739963795144;
+        Wed, 19 Feb 2025 03:16:35 -0800 (PST)
+Received: from [10.1.1.109] ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258ccdabsm17536949f8f.28.2025.02.19.03.16.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2025 03:16:34 -0800 (PST)
+Message-ID: <b60fe253fdf581399c11cb7e23db0e9883c81255.camel@linaro.org>
+Subject: Re: [PATCH 1/2] arm64: dts: exynos: gs101: Change labels to
+ lower-case
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Peter Griffin
+ <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ linux-fsd@tesla.com, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+Date: Wed, 19 Feb 2025 11:16:33 +0000
+In-Reply-To: <20250219085726.70824-1-krzysztof.kozlowski@linaro.org>
+References: <20250219085726.70824-1-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC/RFT PATCH] pinctrl: bcm2835: don't -EINVAL on alternate
- funcs from get_direction()
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Linus Walleij
-	<linus.walleij@linaro.org>, Florian Fainelli
-	<florian.fainelli@broadcom.com>, Ray Jui <rjui@broadcom.com>, Scott Branden
-	<sbranden@broadcom.com>, Broadcom internal kernel review list
-	<bcm-kernel-feedback-list@broadcom.com>, Stefan Wahren <wahrenst@gmx.net>,
-	Liao Chen <liaochen4@huawei.com>, Chen-Yu Tsai <wens@csie.org>, Mark Brown
-	<broonie@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Bartosz
-	Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20250219102750.38519-1-brgl@bgdev.pl>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrJKsWRmVeSWpSXmKPExsWy7djP87ode7emG6zaLG6x4tsaJou1vUdZ
-	LHY92MZmMfXhEzaLddvuMVuc+rWX1WLKn+VMFpseX2O12Dz/D6PF5V1z2Cwm3t7AbvF05mY2
-	i3ernzBaHD/RyWzx89B5Jgd+j8XXbrN6zLp/ls1jw6PVrB6LN+1n82g58pbVY9OqTjaPO9f2
-	sHlsXlLv8XmTXABnFJdNSmpOZllqkb5dAlfGzgbrggahirknJrE0MPbzdzFyckgImEg0X7nA
-	2sXIxSEksIJR4tX520wQzhdGiZmPm9ggnM+MElv/3WSHabm1vIcRIrGcUWLFq/VQ/R8ZJZa3
-	TwXKcHDwCthJzNwoB2KyCKhKLDxTAtLLKyAocXLmExYQW1RAXuL+rRlgM4UF0iT6duwEGyMi
-	sIRZ4tGt3WBnMAscYpSY8PMnE0gVs4C4xK0n88FsNgFDia63XWwgNqeAscTpH68YIWrkJba/
-	ncMM0iwhsJtTouFdLyvE2S4Sk8/8ZYGwhSVeHd8C9Y6MxOnJPSwQDe2MEgt+32eCcCYwSjQ8
-	v8UIUWUtcefcLzaQf5gFNCXW79KHCDtKTPnwnhkkLCHAJ3HjrSDEEXwSk7ZNhwrzSnS0CUFU
-	q0nMOr4Obu3BC5eYJzAqzUIKmFlI3pyF5J1ZCHsXMLKsYhRPLS3OTU8tNspLLdcrTswtLs1L
-	10vOz93ECEx9p/8d/7KDcfmrj3qHGJk4GIEhyMGsJMLbVr8lXYg3JbGyKrUoP76oNCe1+BCj
-	NAeLkjjvov2t6UIC6YklqdmpqQWpRTBZJg5OqQamjT+L4gyX5sx4ZRZzIVLHoXOT7RyHf4e0
-	HZ869QhtOv0nNLqvInSO6kqfCYcVXqTcTfiy3LGupF/Y7PnBTStyT2rHaApc/mP5QuTFV+Ev
-	8XprI5R5nl98aG+fetxLfo/Wr4ctQcvefVzJPrNYj6dC5Q//lq0vj7+/PeXUfXmx8/fqtMXr
-	BE4GrOIUdft6r11xq3VYll/TprvpMWeLy3kjpVxjfQ3P9F0MqJmwS9N+8lJzpv0KCWqR5a9f
-	Hyk/wtRn4Z72tfWEZFb0oZta3bNOneT89Ya3eELTA3mtfEk31SWFomd45yjPrVHsUC2b+e3r
-	9TXLU8rdLRNcby0ULD2mUjJjct69O8ujShK+s1QpsRRnJBpqMRcVJwIAqY1I/+wDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrNIsWRmVeSWpSXmKPExsVy+t/xu7rte7emG5ybaGWx4tsaJou1vUdZ
-	LHY92MZmMfXhEzaLddvuMVuc+rWX1WLKn+VMFpseX2O12Dz/D6PF5V1z2Cwm3t7AbvF05mY2
-	i3ernzBaHD/RyWzx89B5Jgd+j8XXbrN6zLp/ls1jw6PVrB6LN+1n82g58pbVY9OqTjaPO9f2
-	sHlsXlLv8XmTXABnlJ5NUX5pSapCRn5xia1StKGFkZ6hpYWekYmlnqGxeayVkamSvp1NSmpO
-	Zllqkb5dgl7GzgbrggahirknJrE0MPbzdzFyckgImEjcWt7D2MXIxSEksJRR4v3ioywQCRmJ
-	k9MaWCFsYYk/17rYIIreM0qsbjnG1MXIwcErYCcxc6MciMkioCqx8EwJSDmvgKDEyZlPwMaI
-	CshL3L81gx3EFhZIk+jbsZMVZIyIwDJmiddrNrCDOMwChxgl1h58C3VFG6PE1L03wTYzC4hL
-	3HoynwnEZhMwlOh6C3IFJwengLHE6R+vGCFqzCS6tnZB2fIS29/OYZ7AKDQLySWzkIyahaRl
-	FpKWBYwsqxhFUkuLc9Nziw31ihNzi0vz0vWS83M3MQJjfduxn5t3MM579VHvECMTByPQwRzM
-	SiK8bfVb0oV4UxIrq1KL8uOLSnNSiw8xmgJDYyKzlGhyPjDZ5JXEG5oZmBqamFkamFqaGSuJ
-	87pdPp8mJJCeWJKanZpakFoE08fEwSnVwGRg3BzA7PAjJOjxFXsJYWeXM6nyPa/1P8ff3NRf
-	fVDnzLwvSTv+NE3c2LPoem75V8Xrid/VG2v1nzyQOP1ZPkTq1pY7Hxb3vF1rzfVJ7v3b+ec0
-	k33Y/4sfYFl5uoB3W6zkxjmr26IcGY2eV1Se/5l4+GbyRPd1PY8vp0xpmmj0VKjomuylyDnn
-	flw7kPrBYWbEiwnh/Qo/7/+bvuFMm/TBMr31fhNO5Cht22fZLBV/mzM20UVNyCD9mkLU+43J
-	J466yLbKfDA8H232yLX+kopWbauFgCH3k3OVJ7cWs2ovOvHs/qR1n6yFVwnEVbKF5etEh3I5
-	sc8TvKCy6c+a3bOOv/3Qvk2rLpfRuCdLTE+JpTgj0VCLuag4EQC9In6TfgMAAA==
-X-CMS-MailID: 20250219111624eucas1p2725578fdd6fa8733592c6e7e73c8e5a6
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250219102802eucas1p11a9de63da00a6c76eaa79155764131ea
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20250219102802eucas1p11a9de63da00a6c76eaa79155764131ea
-References: <CGME20250219102802eucas1p11a9de63da00a6c76eaa79155764131ea@eucas1p1.samsung.com>
-	<20250219102750.38519-1-brgl@bgdev.pl>
 
-On 19.02.2025 11:27, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> Since commit 9d846b1aebbe ("gpiolib: check the return value of
-> gpio_chip::get_direction()") we check the return value of the
-> get_direction() callback as per its API contract. This driver returns
-> -EINVAL if the pin in question is set to one of the alternative
-> (non-GPIO) functions. This isn't really an error that should be
-> communicated to GPIOLIB so default to returning the "safe" value of
-> INPUT in this case. The GPIO subsystem does not have the notion of
-> "unknown" direction.
->
-> Fixes: 9d846b1aebbe ("gpiolib: check the return value of gpio_chip::get_direction()")
-> Reported-by: Mark Brown <broonie@kernel.org>
-> Closes: https://lore.kernel.org/all/Z7VFB1nST6lbmBIo@finisterre.sirena.org.uk/
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Closes: 
-https://lore.kernel.org/all/dfe03f88-407e-4ef1-ad30-42db53bbd4e4@samsung.com/
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->   drivers/pinctrl/bcm/pinctrl-bcm2835.c | 14 +++++++-------
->   1 file changed, 7 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-> index cc1fe0555e19..eaeec096bc9a 100644
-> --- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-> +++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-> @@ -346,14 +346,14 @@ static int bcm2835_gpio_get_direction(struct gpio_chip *chip, unsigned int offse
->   	struct bcm2835_pinctrl *pc = gpiochip_get_data(chip);
->   	enum bcm2835_fsel fsel = bcm2835_pinctrl_fsel_get(pc, offset);
->   
-> -	/* Alternative function doesn't clearly provide a direction */
-> -	if (fsel > BCM2835_FSEL_GPIO_OUT)
-> -		return -EINVAL;
-> +	if (fsel == BCM2835_FSEL_GPIO_OUT)
-> +		return GPIO_LINE_DIRECTION_OUT;
->   
-> -	if (fsel == BCM2835_FSEL_GPIO_IN)
-> -		return GPIO_LINE_DIRECTION_IN;
-> -
-> -	return GPIO_LINE_DIRECTION_OUT;
-> +	/*
-> +	 * Alternative function doesn't clearly provide a direction. Default
-> +	 * to INPUT.
-> +	 */
-> +	return GPIO_LINE_DIRECTION_IN;
->   }
->   
->   static void bcm2835_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+On Wed, 2025-02-19 at 09:57 +0100, Krzysztof Kozlowski wrote:
+> DTS coding style expects labels to be lowercase.=C2=A0 No functional impa=
+ct.
+> Verified with comparing decompiled DTB (dtx_diff and fdtdump+diff).
+>=20
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Reviewed-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
 
 
