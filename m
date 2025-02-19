@@ -1,109 +1,126 @@
-Return-Path: <linux-kernel+bounces-522685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9976AA3CD48
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 00:18:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F098DA3CD2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 00:14:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FA8116E14B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 23:18:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91C181889E5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 23:14:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0729214A7C;
-	Wed, 19 Feb 2025 23:18:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46C9E25E449;
+	Wed, 19 Feb 2025 23:13:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="sOhnvKkv"
-Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="NBQFYdJV"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96FD71DE4D0
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 23:18:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740007104; cv=none; b=f5GSSJI74fEjZ85FhA66IHEjVBTLWYL0XKkZlAjj8g3vdO/ZCPkYLswjIp1jWB3duZ7OQPYw+LOmsyuhwq25WGvU6lRAfCBGJ0PchpMmcVBfYTHS298JVWsVaWHcFPlJD3xK70qrNDK2A2Z/KrdiyWJjNIElMa8cN8k5DCGFhxg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740007104; c=relaxed/simple;
-	bh=4IpTPQ5TXOtbKQMBzrWbzJwZmlxwtbHaHeYdoo9kmSc=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=RO792HlttNmO2s0SjJJ0e21IUKuat3hU1HNfRU/B9fzO9sMiIQkeAA31/ZSIn4G2sa2YJj+T0a/ixDznRdVS35TCqxdorjNKQE0A0bDNAVDd7/O1iHBweKEf4NWHKPqquzD5Q0XPGo4ZDnOV+mMnIm+X/buDrkq7tGuF7NwohsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=sOhnvKkv; arc=none smtp.client-ip=162.62.57.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1740006793; bh=MJUOyjdZuMzoAjYbJxeN7aB/+BN+k6oUQOA42HZaNVI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=sOhnvKkv/9wx57mrYxl35ik1ToVnc2ewZwWT0Rxaz/z9zp7KjCWxGcCWItsCWjv5d
-	 ERtHhQb522HR3u+n1caI6LZh4QrLkINd0UW2Xl+fHn7bOyln1XeizMo35zPUkvo/Ca
-	 CdxgnAx5VPm2NY3/rcegg/4Zqs5BjRnNXyeFDJpc=
-Received: from pek-lxu-l1.wrs.com ([114.244.57.157])
-	by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
-	id 34C05CB2; Thu, 20 Feb 2025 07:13:12 +0800
-X-QQ-mid: xmsmtpt1740006792tuqonxyca
-Message-ID: <tencent_14375A4BEC7483764966023C0136D4968209@qq.com>
-X-QQ-XMAILINFO: OJV4F5WcWfWaUa7PU7ZBC1YgAsNB3z51RdUGfs6cH3s+9/pbk0bsab+GhKh/eU
-	 XjC/vug9jDFYfGIzY9gsp02iL6D1z70he9uOuj07YvTwDt4/KCHXWo/UAFxxriHjJhslNcfkRbXA
-	 WSqXm9ykuJzTB0VzVMaJSI6LCSEPYD8t5bspt8DRiiVqj1QqY5gsDcS/PZz6NZzGCMNemMG8FdFj
-	 widLoW0Hj/15Sbg5wxrcWW59/r64wuW158U9YdZ3+g6qxLjsloo9Im5kS2Mfa6Lt49SashXa8X2o
-	 3xpGdAQJZdf16cH4QAMfS4oTz69ib/RzMyzH1+H8cpiv0QxFZ9lzjzbeQNLM+Jo0gxhS+kmYGMDN
-	 DQ+jccmcM18eWzQ5qY6wGUCsiqNfgyi0rSGBxQyhhJNs3QNwDSjdLbSilzTMlIqBlGOQWVB61lQN
-	 W8gFlO6q3wB6i3aQsW3DDoPXItBqsQ9qEIWxdH8DRMsr1B7q4JOS2aUeoB4MgEV6usdh8ecFMrFc
-	 y4V1Or0trthQpl+saDL7ZyRFWRq/OJuC5DGR5aj3VjE9M6Oyi/sYWgR+ew8fGQ2K8ldU5aY9leke
-	 MGehSbvVsqBx52+KFN99K1EkefHfxgat1kQETSVlW/nXX/6etCvzPXrgY1C0dBxWlXCT1Zl2e18l
-	 XXDJrxXUtokO95EUJeiNMvFspNSbsVLl0zjw4wn3G4EEcoPWZgSOWWR3q/2Q28OwaZRs2wa3lASF
-	 iglHg7yoOmsFhnYUBOdGy3UmzBs4lb5rhuC31Zql6hjZDIO/kj9CWSDXg7Q9f2O7pYSdM3bBuLlo
-	 pd9tTP5AKCvknZg3ynu0Efkv+1nhYIA9jwn0b9Rai/TXmn1WasTBPEOIgRWtiMVL6yJUcrFjwvPh
-	 YwR15ONaSqmKaR8v99q4cc5ExheUyWT4pXQme3XRopzZ9DMUk0DTA=
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+df6cdcb35904203d2b6d@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [jfs?] KMSAN: uninit-value in diFree
-Date: Thu, 20 Feb 2025 07:13:11 +0800
-X-OQ-MSGID: <20250219231310.1651557-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <67b5d07e.050a0220.14d86d.00e6.GAE@google.com>
-References: <67b5d07e.050a0220.14d86d.00e6.GAE@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C2425B664;
+	Wed, 19 Feb 2025 23:13:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740006825; cv=pass; b=J9VykJyuWaUCAHDIf5c67ShYk5QZxlLJRG8BU9SWGjsNnSQw/zTjVYdgYdElXIuRP3pd2KK/H+NMHiHu0laGUZwDAWKwIQkka+LZtb+ZCDmwRLzQZ89K3XuJvTAGwSwmW44X4LiSjw5Ec6h6OETdKuGqrXCXAaEP0RIXpKS7vT0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740006825; c=relaxed/simple;
+	bh=SwDmvvzK1Qn1frWQJvzXkHMRQJGUI0Oks7o4Oa3lN8I=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=T1CKXFtI+bmKhWnJV6hpPkfM7lsk/HlZ35k4zWy6z3eF6xc+yH1yX8QuBvJVE4p0Igx24THQ9Zx6G0vMfFiUpkHxz/tV2nVt3uwRFuetgE6wQ8PGoaASkmY0U2cWYI3Yb0TwfU60FiNZN4QsO70pO+cmahvak4ECcRszu4cv36Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=NBQFYdJV; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1740006814; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=d8aKRIxU3l8XlTRQEM9685tTMXH5AqKtOf6F87tkY9qm9vwsLiTZyCqysAx2InJs13/MgjYSrfli88xXpElB/rZ83iXRF7jkbmmQ4kCxmsu4tX3AHCi3jmOiyALjA9XD5PAOgjRNmbLwTXxNhdU1/UconIGTOtsJKspu2LOHoT0=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1740006814; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=yYsvej7hta50BXSo4O/kInYZNSTmLUgaMrj4n0kXVMA=; 
+	b=OVViB7v1dwUFhDrRdcbZ2766nsGflsj1tunY+Xw8sOE4Cc8xSgneCkiPLqSjp8G5MJ7Qg8uq9HwDQy5g+/BqZNx7Of5Smz09a8eEzUF8NFu9HF4HVanStqoT9D/KwmRdWA7UxfO01rK5KtNn+8Xv/41/GtNT+CE26/gfUKkpfp0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740006814;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=yYsvej7hta50BXSo4O/kInYZNSTmLUgaMrj4n0kXVMA=;
+	b=NBQFYdJVnDoiFp0z4H+BuyCpQDo0SKKYGuyeZ/UwkjGqSMHSxH50rWoRlOxzw6kO
+	VZVXqzLV5fbepi05sriU2H2OhtApWCevNMfCuRY4z8Zx5BidiHRJUxRqOpS9ynDYgQZ
+	XDferigcuF0iIJVt5WWy8Vx3nUAzQuRO99sFHxok=
+Received: by mx.zohomail.com with SMTPS id 1740006811017578.3153222760697;
+	Wed, 19 Feb 2025 15:13:31 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.300.87.4.3\))
+Subject: Re: [PATCH RFC 1/3] rust: add useful ops for u64
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <CAPM=9txmQWO+SHnZhr8zXHCZ=S8CNY=PryRVkWWuHyor-ajU6A@mail.gmail.com>
+Date: Wed, 19 Feb 2025 20:13:15 -0300
+Cc: John Hubbard <jhubbard@nvidia.com>,
+ Alexandre Courbot <acourbot@nvidia.com>,
+ Timur Tabi <ttabi@nvidia.com>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
+ "dakr@kernel.org" <dakr@kernel.org>,
+ Ben Skeggs <bskeggs@nvidia.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <1597EDB7-D91B-4660-ADDC-D2252B26CB22@collabora.com>
+References: <20250217-nova_timer-v1-0-78c5ace2d987@nvidia.com>
+ <20250217-nova_timer-v1-1-78c5ace2d987@nvidia.com>
+ <C1FF4314-C013-4AE1-A94E-444AFACDB4AC@collabora.com>
+ <D7VLMD31YB0V.OKHDSVUPAZTE@nvidia.com>
+ <1b8921d46f7d70c7467ea0940d60220f05cccc5d.camel@nvidia.com>
+ <D7W119MHCCWH.IS600FTIOV8O@nvidia.com>
+ <e6322f90-08bd-4e86-8dad-2ddbd7e5cece@nvidia.com>
+ <D7WFP99SMV3H.26AJWK17S0UPX@nvidia.com>
+ <fd920faf-a707-4c6d-8c0b-3d59c010da1d@nvidia.com>
+ <CAPM=9txmQWO+SHnZhr8zXHCZ=S8CNY=PryRVkWWuHyor-ajU6A@mail.gmail.com>
+To: Dave Airlie <airlied@gmail.com>
+X-Mailer: Apple Mail (2.3826.300.87.4.3)
+X-ZohoMailClient: External
 
-#syz test
 
-diff --git a/fs/jfs/jfs_imap.c b/fs/jfs/jfs_imap.c
-index a360b24ed320..0cedaccb7218 100644
---- a/fs/jfs/jfs_imap.c
-+++ b/fs/jfs/jfs_imap.c
-@@ -134,6 +134,10 @@ int diMount(struct inode *ipimap)
- 		imap->im_agctl[index].numfree =
- 		    le32_to_cpu(dinom_le->in_agctl[index].numfree);
- 	}
-+	imap->im_diskblock = 0;
-+	imap->im_maxag = 0;
-+	imap->im_enuminos = 0;
-+	imap->im_enumfree = 0;
- 
- 	/* release the buffer. */
- 	release_metapage(mp);
-diff --git a/fs/jfs/jfs_imap.h b/fs/jfs/jfs_imap.h
-index dd7409febe28..9af1da2e4591 100644
---- a/fs/jfs/jfs_imap.h
-+++ b/fs/jfs/jfs_imap.h
-@@ -144,6 +144,8 @@ struct inomap {
-  */
- #define	im_diskblock	im_imap.in_diskblock
- #define	im_maxag	im_imap.in_maxag
-+#define	im_enuminos	im_imap.in_numinos
-+#define	im_enumfree	im_imap.in_numfree
- 
- extern int diFree(struct inode *);
- extern int diAlloc(struct inode *, bool, struct inode *);
--- 
-2.43.0
 
+> On 19 Feb 2025, at 17:23, Dave Airlie <airlied@gmail.com> wrote:
+>=20
+> On Thu, 20 Feb 2025 at 06:22, John Hubbard <jhubbard@nvidia.com> =
+wrote:
+>>=20
+>> On 2/19/25 4:51 AM, Alexandre Courbot wrote:
+>>> Yes, that looks like the optimal way to do this actually. It also
+>>> doesn't introduce any overhead as the destructuring was doing both
+>>> high_half() and low_half() in sequence, so in some cases it might
+>>> even be more efficient.
+>>>=20
+>>> I'd just like to find a better naming. high() and low() might be =
+enough?
+>>> Or are there other suggestions?
+>>>=20
+>>=20
+>> Maybe use "32" instead of "half":
+>>=20
+>>     .high_32()  / .low_32()
+>>     .upper_32() / .lower_32()
+>>=20
+>=20
+> The C code currently does upper_32_bits and lower_32_bits, do we want
+> to align or diverge here?
+>=20
+> Dave.
+
+
+My humble suggestion here is to use the same nomenclature. =
+`upper_32_bits` and
+`lower_32_bits` immediately and succinctly informs the reader of what is =
+going on.
+
+=E2=80=94 Daniel=
 
