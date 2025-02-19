@@ -1,138 +1,266 @@
-Return-Path: <linux-kernel+bounces-521635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1017CA3C020
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:38:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26A50A3C024
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:39:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0271188A538
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:38:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA63C188D16E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:39:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B5C1EA7C0;
-	Wed, 19 Feb 2025 13:38:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E80271E5B67;
+	Wed, 19 Feb 2025 13:38:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nGkh5SJt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jyzTA/hk"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C01FF15B971;
-	Wed, 19 Feb 2025 13:38:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB45A19CD01;
+	Wed, 19 Feb 2025 13:38:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739972282; cv=none; b=e6Lc9VKXI5oEO0PErtqpQn14pozyYBbUaVnPbcO2Bnom58F1WvDsKO7jbdvcktpY1FMwSo8hJCeT4yXzHWC1U4dAJVajoX6gkb8Gmi5C4lWZrI5ibK5XujoZB5x28WFN0grSiT6q7g+IKJDtfGpmNfslchHC+PAM9sQQuQtgx1o=
+	t=1739972326; cv=none; b=ax0qWpQJtIMAvBfWTVpv0/GZZVbZsRVuU19HDHNsx7vUNwG+mX2nX0xhvAAuXdp7/Fgz5GuBss1gLsshoO2hj5WsRn0H0ItHZf6XzZGW6g0rvO3Q3MaCC6wcfc64cXewIi9JrmA7zxyqV/qt9aseIILH8RtysvFV2mtgJ8N+AdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739972282; c=relaxed/simple;
-	bh=UZOTZjAmK9GpEVopumc45bM7a93tdAVwiLa2wCKSe/k=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=cbxo1ViQX/FyPwTVNHpeyslieoAVjaAQKczJyWTTNhlbSacD7HoVwVEEFWZqA++4LX6gdTXTm7ZWKL33GowFl6CfFYx8QKc0ws2/skxzlXum/F0do8BuQoUDsUayyCw8WAISQbdjjWTHpOA9g1S03GyjYfEj4p5Q21tkSnmmzbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nGkh5SJt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D059C4CED1;
-	Wed, 19 Feb 2025 13:38:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739972282;
-	bh=UZOTZjAmK9GpEVopumc45bM7a93tdAVwiLa2wCKSe/k=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=nGkh5SJt2AfbLooasJ7aDYiL5IwRv0RrdZ6C6llXWNg1TMwY6t3WsWftaW6OeAk/m
-	 Vp246xypjQIJxyiIz3g2mkP7MGS6NPw1h9aKeVusjSHn4t48IN06VMjjtqjHfIpc4d
-	 0QtDT9WY/EdnlCnEz2g76nGL3m4F8OA0zPOubQ3HBTS6sRNLyjsxTcbmePZf5eyYVk
-	 uBzVgicyYQdX9i/j+LcfRO+Q87fpUx3ftjrL7r65GB49Wu+uUid2JOrRwufZbWGMBa
-	 Ud530pmz7LlHXpvLUn5uQ9Co2lxPTq7OpXZZh04FtNqDbeKdgInQOmFnv4sHLhFBus
-	 qRIfEEQ59l8MQ==
-Date: Wed, 19 Feb 2025 07:38:00 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1739972326; c=relaxed/simple;
+	bh=ss+b8WFJ460bWqkMhzwN0V/1Oxr3SxGisl0KFPLpS6I=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=p6cEV740g/TYG5qyXwfCyU4TGY905tMtYE3bEcda2Artra65hc/qpkMdne4WO3QgTNEET5ttIoqhquH/TAP8x+YSbbN7wbtgdP0kgCh9oVFNt94XPNt9dynDPpvQfzg7q/6WR/jmeReesxUtrkl+Pe8bXs78eFqT/ERkZyONZB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jyzTA/hk; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 8413A442F7;
+	Wed, 19 Feb 2025 13:38:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1739972322;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=40VQPDLl9432aUrN3sAc+VkJbcJXajTxhY3GmtVBO3o=;
+	b=jyzTA/hk2CspLLq+x9cJh7syK0+LIGn6EqqtqPFmwKa33Yy6M2hIK8NI0QM+3FKswz6lnL
+	HUn9JiMz3g0KpuYt2WUwT44yZrdJjnYVPM42NNqIIRARogu8Anb/leIeYVgAPxcAtu46eV
+	A5nXsUoVeSBoGUsSwlwtmhbZxZjDpNp7SxzGFAe/l2aC0W9U4Atz8OBIQvC77JksfpGP/O
+	frxXq6v9F+uP2pL9D+dIX8jPDaONdpqti6Z+Z0nBpVkgt2RNCSTZ+Wzeq6IHa9pZiGmpuH
+	rSif1XCrS+/T7NaBy+KxjsP5yMPOH4tnq2b9FvphL690g2mwt8Fttl3vqK9cdA==
+Date: Wed, 19 Feb 2025 14:38:40 +0100
+From: Herve Codina <herve.codina@bootlin.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>
+Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [RFC PATCH 0/3] i2c: Introduce i2c bus extensions
+Message-ID: <20250219143840.2730cddf@bootlin.com>
+In-Reply-To: <20250205173918.600037-1-herve.codina@bootlin.com>
+References: <20250205173918.600037-1-herve.codina@bootlin.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: shufan_lee@richtek.com, heikki.krogerus@linux.intel.com, 
- andre.draszik@linaro.org, kernel@collabora.com, linux@roeck-us.net, 
- linux-kernel@vger.kernel.org, pablo.sun@mediatek.com, 
- linux-usb@vger.kernel.org, gregkh@linuxfoundation.org
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20250219122206.46695-1-angelogioacchino.delregno@collabora.com>
-References: <20250219122206.46695-1-angelogioacchino.delregno@collabora.com>
-Message-Id: <173997222717.2335452.4745248344825352712.robh@kernel.org>
-Subject: Re: [PATCH v2 0/2] MediaTek MT8188 MTU3 USB and Genio 510/700
- TypeC
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeigeefkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthekredtredtjeenucfhrhhomhepjfgvrhhvvgcuvehoughinhgruceohhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeejueeggeehiedtvefhjedtveeugeehtdekteffkeeggeefkefhlefhfeetiedvheenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdhlphgtrdgvvhgvnhhtshdpghhithhhuhgsrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeelpdhrtghpthhtohepfihsrgdorhgvnhgvshgrshesshgrnhhgqdgvnhhgihhnvggvrhhinhhgrdgtohhmpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlr
+ dhorhhgpdhrtghpthhtoheplhhinhhugidqihdvtgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopeguvghvihgtvghtrhgvvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhm
+X-GND-Sasl: herve.codina@bootlin.com
 
+Hi Wolfram,
 
-On Wed, 19 Feb 2025 13:22:04 +0100, AngeloGioacchino Del Regno wrote:
-> This series adds MTU3 nodes to the MT8188 base devicetree, fixes the
-> Geralt Chromebooks to use it, and adds support for all of the USB
-> ports, including TypeC Power Delivery, Alternate Modes, etc, found
-> on the MediaTek Genio 510 and Genio 700 Evaluation Kits.
+In order for me to move forward on this new feature sending a patch for the
+binding or reworking my proposal can you provide feedback on the topic and
+the current implementation available in this RFC.
+
+Best regards,
+Hervé
+
+On Wed,  5 Feb 2025 18:39:13 +0100
+Herve Codina <herve.codina@bootlin.com> wrote:
+
+> The big picture behind this RFC series is to support a Linux device
+> with a connector to physically add and remove an add-on to/from the
+> main device to augment its features at runtime, adding devices on
+> non-discoverable busses, using device tree overlays.
 > 
+> The related big picture has been already presented in
+>   - the 'Add support for GE SUNH hot-pluggable connector' series [0]
+>   - the 'Runtime hotplug on non-discoverable busses with device tree
+>     overlays' talk at Linux Plumbers Conference 2024 [1].
 > 
-> AngeloGioacchino Del Regno (2):
->   arm64: dts: mediatek: mt8188: Add MTU3 nodes and correctly describe
->     USB
->   arm64: dts: mediatek: mt8390-genio: Add USB, TypeC Controller, MUX
+> This series focuses on the i2c related part.
 > 
->  .../boot/dts/mediatek/mt8188-geralt.dtsi      |  18 ++
->  arch/arm64/boot/dts/mediatek/mt8188.dtsi      | 121 +++++++++-----
->  .../dts/mediatek/mt8390-genio-common.dtsi     | 155 +++++++++++++++++-
->  3 files changed, 251 insertions(+), 43 deletions(-)
+> An i2c bus is wired to the connector and allows an add-on board to
+> connect additional i2c devices to this bus.
 > 
-> --
-> 2.48.1
+> When device tree nodes are added, the I2C core tries to probe client
+> devices based on the classic DT structure:
 > 
+>   i2c@abcd0000 {
+>       some-client@42 { compatible = "xyz,blah"; ... };
+>   };
 > 
+> However for hotplug connectors described via device tree overlays [0]
+> there is additional level of indirection, which is needed to decouple
+> the overlay and the base tree:
 > 
-
-
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/mediatek/' for 20250219122206.46695-1-angelogioacchino.delregno@collabora.com:
-
-arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dtb: usb@11201000: usb@0: 'port', 'vdd-supply' do not match any of the regexes: '@[0-9a-f]{1}$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/usb/mediatek,mtu3.yaml#
-arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dtb: usb@0: 'port', 'vdd-supply' do not match any of the regexes: '@[0-9a-f]{1}$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/usb/mediatek,mtk-xhci.yaml#
-arch/arm64/boot/dts/mediatek/mt8370-genio-510-evk.dtb: usb@11201000: usb@0: 'port', 'vdd-supply' do not match any of the regexes: '@[0-9a-f]{1}$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/usb/mediatek,mtu3.yaml#
-arch/arm64/boot/dts/mediatek/mt8370-genio-510-evk.dtb: usb@0: 'port', 'vdd-supply' do not match any of the regexes: '@[0-9a-f]{1}$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/usb/mediatek,mtk-xhci.yaml#
-arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dtb: usb@112a1000: usb@0: {'compatible': ['mediatek,mt8188-xhci', 'mediatek,mtk-xhci'], 'reg': [[0, 0, 0, 4096]], 'reg-names': ['mac'], 'interrupts': [[0, 536, 4, 0]], 'assigned-clocks': [[38, 46]], 'assigned-clock-parents': [[38, 118]], 'clocks': [[54, 8]], 'clock-names': ['sys_ck'], 'status': ['okay'], 'interrupts-extended': [[1, 0, 536, 4, 0], [35, 220, 4]], 'interrupt-names': ['host', 'wakeup'], 'vusb33-supply': [[74]], 'vbus-supply': [[104]]} is valid under each of {'required': ['interrupts-extended']}, {'required': ['interrupts']}
-	from schema $id: http://devicetree.org/schemas/usb/mediatek,mtu3.yaml#
-arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dtb: usb@0: {'compatible': ['mediatek,mt8188-xhci', 'mediatek,mtk-xhci'], 'reg': [[0, 0, 0, 4096]], 'reg-names': ['mac'], 'interrupts': [[0, 536, 4, 0]], 'assigned-clocks': [[38, 46]], 'assigned-clock-parents': [[38, 118]], 'clocks': [[54, 8]], 'clock-names': ['sys_ck'], 'status': ['okay'], 'interrupts-extended': [[1, 0, 536, 4, 0], [35, 220, 4]], 'interrupt-names': ['host', 'wakeup'], 'vusb33-supply': [[74]], 'vbus-supply': [[104]], '$nodename': ['usb@0']} is valid under each of {'required': ['interrupts-extended']}, {'required': ['interrupts']}
-	from schema $id: http://devicetree.org/schemas/usb/mediatek,mtk-xhci.yaml#
-arch/arm64/boot/dts/mediatek/mt8370-genio-510-evk.dtb: usb@112a1000: usb@0: {'compatible': ['mediatek,mt8188-xhci', 'mediatek,mtk-xhci'], 'reg': [[0, 0, 0, 4096]], 'reg-names': ['mac'], 'interrupts': [[0, 536, 4, 0]], 'assigned-clocks': [[36, 46]], 'assigned-clock-parents': [[36, 118]], 'clocks': [[52, 8]], 'clock-names': ['sys_ck'], 'status': ['okay'], 'interrupts-extended': [[1, 0, 536, 4, 0], [33, 220, 4]], 'interrupt-names': ['host', 'wakeup'], 'vusb33-supply': [[72]], 'vbus-supply': [[102]]} is valid under each of {'required': ['interrupts-extended']}, {'required': ['interrupts']}
-	from schema $id: http://devicetree.org/schemas/usb/mediatek,mtu3.yaml#
-arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dtb: usb@0: {'compatible': ['mediatek,mt8188-xhci', 'mediatek,mtk-xhci'], 'reg': [[0, 0, 0, 4096]], 'reg-names': ['mac'], 'interrupts': [[0, 536, 4, 0]], 'assigned-clocks': [[38, 46]], 'assigned-clock-parents': [[38, 118]], 'clocks': [[54, 8]], 'clock-names': ['sys_ck'], 'status': ['okay'], 'interrupts-extended': [[1, 0, 536, 4, 0], [35, 220, 4]], 'interrupt-names': ['host', 'wakeup'], 'vusb33-supply': [[74]], 'vbus-supply': [[104]], '$nodename': ['usb@0']} is valid under each of {'required': ['interrupts-extended']}, {'required': ['interrupts']}
-	from schema $id: http://devicetree.org/schemas/interrupts.yaml#
-arch/arm64/boot/dts/mediatek/mt8370-genio-510-evk.dtb: usb@0: {'compatible': ['mediatek,mt8188-xhci', 'mediatek,mtk-xhci'], 'reg': [[0, 0, 0, 4096]], 'reg-names': ['mac'], 'interrupts': [[0, 536, 4, 0]], 'assigned-clocks': [[36, 46]], 'assigned-clock-parents': [[36, 118]], 'clocks': [[52, 8]], 'clock-names': ['sys_ck'], 'status': ['okay'], 'interrupts-extended': [[1, 0, 536, 4, 0], [33, 220, 4]], 'interrupt-names': ['host', 'wakeup'], 'vusb33-supply': [[72]], 'vbus-supply': [[102]], '$nodename': ['usb@0']} is valid under each of {'required': ['interrupts-extended']}, {'required': ['interrupts']}
-	from schema $id: http://devicetree.org/schemas/usb/mediatek,mtk-xhci.yaml#
-arch/arm64/boot/dts/mediatek/mt8370-genio-510-evk.dtb: usb@0: {'compatible': ['mediatek,mt8188-xhci', 'mediatek,mtk-xhci'], 'reg': [[0, 0, 0, 4096]], 'reg-names': ['mac'], 'interrupts': [[0, 536, 4, 0]], 'assigned-clocks': [[36, 46]], 'assigned-clock-parents': [[36, 118]], 'clocks': [[52, 8]], 'clock-names': ['sys_ck'], 'status': ['okay'], 'interrupts-extended': [[1, 0, 536, 4, 0], [33, 220, 4]], 'interrupt-names': ['host', 'wakeup'], 'vusb33-supply': [[72]], 'vbus-supply': [[102]], '$nodename': ['usb@0']} is valid under each of {'required': ['interrupts-extended']}, {'required': ['interrupts']}
-	from schema $id: http://devicetree.org/schemas/interrupts.yaml#
-arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dtb: rt1715@4e: 'vbus-supply' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/usb/richtek,rt1711h.yaml#
-arch/arm64/boot/dts/mediatek/mt8370-genio-510-evk.dtb: rt1715@4e: 'vbus-supply' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/usb/richtek,rt1711h.yaml#
-arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dtb: jpeg-decoder@1a040000: iommus: [[139, 685], [139, 686], [139, 690], [139, 691], [139, 692], [139, 693]] is too long
-	from schema $id: http://devicetree.org/schemas/media/mediatek-jpeg-decoder.yaml#
-arch/arm64/boot/dts/mediatek/mt8370-genio-510-evk.dtb: jpeg-decoder@1a040000: iommus: [[137, 685], [137, 686], [137, 690], [137, 691], [137, 692], [137, 693]] is too long
-	from schema $id: http://devicetree.org/schemas/media/mediatek-jpeg-decoder.yaml#
-
-
-
-
-
+>   --- base device tree ---
+> 
+>   i2c1: i2c@abcd0000 {
+>       compatible = "xyz,i2c-ctrl";
+>       i2c-bus-extension@0 {
+>           i2c-bus = <&i2c_ctrl>;
+>       };
+>       ...
+>   };
+> 
+>   i2c5: i2c@cafe0000 {
+>       compatible = "xyz,i2c-ctrl";
+>       i2c-bus-extension@0 {
+>           i2c-bus = <&i2c-sensors>;
+>       };
+>       ...
+>   };
+> 
+>   connector {
+>       i2c_ctrl: i2c-ctrl {
+>           i2c-parent = <&i2c1>;
+>           #address-cells = <1>;
+>           #size-cells = <0>;
+>       };
+> 
+>       i2c-sensors {
+>           i2c-parent = <&i2c5>;
+>           #address-cells = <1>;
+>           #size-cells = <0>;
+>       };
+>   };
+> 
+>   --- device tree overlay ---
+> 
+>   ...
+>   // This node will overlay on the i2c-ctrl node of the base tree
+>   i2c-ctrl {
+>       eeprom@50 { compatible = "atmel,24c64"; ... };
+>   };
+>   ...
+> 
+>   --- resulting device tree ---
+> 
+>   i2c1: i2c@abcd0000 {
+>       compatible = "xyz,i2c-ctrl";
+>       i2c-bus-extension@0 {
+>           i2c-bus = <&i2c_ctrl>;
+>       };
+>       ...
+>   };
+> 
+>   i2c5: i2c@cafe0000 {
+>       compatible = "xyz,i2c-ctrl";
+>       i2c-bus-extension@0 {
+>           i2c-bus = <&i2c-sensors>;
+>       };
+>       ...
+>   };
+> 
+>   connector {
+>       i2c-ctrl {
+>           i2c-parent = <&i2c1>;
+>           #address-cells = <1>;
+>           #size-cells = <0>;
+> 
+>           eeprom@50 { compatible = "atmel,24c64"; ... };
+>       };
+> 
+>       i2c-sensors {
+>           i2c-parent = <&i2c5>;
+>           #address-cells = <1>;
+>           #size-cells = <0>;
+>       };
+>   };
+> 
+> Here i2c-ctrl (same goes for i2c-sensors) represent the part of I2C bus
+> that is on the hot-pluggable add-on. On hot-plugging it will physically
+> connect to the I2C adapter on the base board. Let's call the 'i2c-ctrl'
+> node an "extension node".
+> 
+> In order to decouple the overlay from the base tree, the I2C adapter
+> (i2c@abcd0000) and the extension node (i2c-ctrl) are separate nodes.
+> Rightfully, only the former will probe into an I2C adapter, and it will
+> do that perhaps during boot, long before overlay insertion or after the
+> overlay has been inserted for instance if the I2C adapter is remove and
+> re-probed for whatever reason after the overlay insertion.
+> 
+> The extension node won't probe into an I2C adapter or any other device
+> or bus, so its subnodes ('eeprom@50') won't be interpreted as I2C
+> clients by current I2C core code.
+> 
+> The extension node is linked to the adapter node in two ways. The first
+> one with the i2c-bus-extension adapter sub-node and the second one with
+> the i2c-parent property in the extension node itself.
+> 
+> The purpose of those two links is to handle device probing in several
+> cases.
+> 
+> - First case: Adapter already probed when add-on devices are added
+> 
+> When devices are added by the overlay, an OF change notification is
+> triggered so that busses can support those new devices.
+> 
+> Going from a newly added device node, the i2c-parent property allows to
+> find the corresponding I2C adapter and register the new I2C client with
+> this adapter.
+> 
+> The patch 1 in this series proposes modification to handle this case
+> and, by the nature of the modification, all cases where a phandle refers
+> an extension node instead of the adapter node itself.
+> 
+> - Second case: Add-on devices already present in device-tree when
+>   adapter is probed
+> 
+> In this case, everything is already described in the device-tree and
+> then the adapter is probed.
+> 
+> OF change notifications don't play a role in this case either because
+> they were never triggered (the overlay was applied by the bootloader)
+> or they were triggered before the adapter is probed and so were
+> missed/ignored.
+> 
+> The adapter probe process registers device already described at the
+> adapter node level (current code) and, thanks to i2c-bus-extension
+> adapter sub-node and its i2c-bus property, it can also follow the
+> extension and registers devices described in those extension nodes.
+> 
+> The patch 2 and 3 in this series proposes modifications to handle this
+> case.
+> 
+> I know device-tree bindings for i2c-bus-extension and i2c-parent are not
+> yet provided in this RFC series.
+> 
+> I would like to discuss the proposal before going further and write
+> those needed bindinds (i2c-bus-extension needs to be added in
+> i2c-controller.yaml available in dt-schema repository [2]).
+> 
+> Best regards,
+> Hervé Codina
+> 
+> [0] https://lore.kernel.org/all/20240917-hotplug-drm-bridge-v4-0-bc4dfee61be6@bootlin.com/
+> [1] https://lpc.events/event/18/contributions/1696/
+> [2] https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/i2c/i2c-controller.yaml
+> 
+> Herve Codina (3):
+>   i2c: core: Follow i2c-parent when retrieving an adapter from node
+>   i2c: i2c-core-of: Move children registration in a dedicated function
+>   i2c: i2c-core-of: Handle i2c bus extensions
+> 
+>  drivers/i2c/i2c-core-base.c | 43 ++++++++++++++++++++++++++++-
+>  drivers/i2c/i2c-core-of.c   | 54 +++++++++++++++++++++++++++++--------
+>  2 files changed, 85 insertions(+), 12 deletions(-)
+> 
 
