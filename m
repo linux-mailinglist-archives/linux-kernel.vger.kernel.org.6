@@ -1,125 +1,134 @@
-Return-Path: <linux-kernel+bounces-521474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED8A0A3BDD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:14:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED528A3BDDF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:16:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A48903AC794
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:14:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CE73165952
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:15:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6004A1E0080;
-	Wed, 19 Feb 2025 12:14:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 561081DFE25;
+	Wed, 19 Feb 2025 12:14:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ErDxbRHm"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nq4npW0I"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C0651DF756;
-	Wed, 19 Feb 2025 12:14:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E4B71DF756;
+	Wed, 19 Feb 2025 12:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739967283; cv=none; b=FBWS1pXAj4W27VG8R/isaJz1o7L51HhBTQBT+uf4jXANyMzZagcoq4E4PTjnn8AQmW0+itNKGryrZakyZBj9cFsKw7XGLen7uzmAxxzUPHKBy0wUXAKFqhi8AlCU7Gp/zwqWnA5ZAZ8dq/bz7S7RDfLswSUMp5hr/A3LjN7REBU=
+	t=1739967288; cv=none; b=tWDZ+3wcisRx06Z0LnqL7mBKgsPPwAStfnm45NZbt3GX9cIZar5jF1yA/eaUjXtp1S7MRWudG3iIxSphc3j9QlGgr+FaTlXBHUGI9y3CVHnHvWWCJs/MZ3ogf7EjNAtfJMQ9IctIz26pt9/Jnm6ul9FwMwKW2NRsbd6paMNgLQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739967283; c=relaxed/simple;
-	bh=OrCOpJddM6LIg95vdctyswCAmgotAgsL7ljevbXOtdo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F2+x7yqRcy8Cnd2hR9BbYZLGh0qUnyEE1LkqrUva/USctWQ8L05HKBQDHkzVepe8WT1752G4TzGsiDIjotw2tYdKwurHtq3RiWZ1eK8Md+idPEq9YImVSQPERUyueHUSt8DU0nI7/1MTBCA6DkPoItdtODsFHOCKWKo2QCMC+yE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ErDxbRHm; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43932b9b09aso72771335e9.3;
-        Wed, 19 Feb 2025 04:14:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739967280; x=1740572080; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ab22A3ykTONxROH1D8ihC1zZqBmC/DXSXlZBaAR5siw=;
-        b=ErDxbRHmVhQ+nAnJl6FfvPulT1E/WMP2GDK9HAR6wNoNGlKTLCZFVr8aFwplLabLqj
-         e3rqVyPWfnO6k/wSplJ+072VcK4+8Ems6qbBHshzTybKE7/316/k2E+NzbSfHniBxXK3
-         y2IfLmCZHQK6FiLkWIuKdt1wokBuiTxCSvoo3DBySB8ytzvu/IzGEpqehhIQROB4dTVK
-         ZbZ12VVXzWJ6ZL4N3fiTMg7WdGXHDmIOME14HgXOTB25XdbC+/0FbcgiPH66PoZeFpB9
-         ZEmc4vIVuo6nR8b67pmlPqHjm9+OEKqjbwMCxlPFO2KQp34iWI18KjDpFbORFG8TL6aB
-         okZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739967280; x=1740572080;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ab22A3ykTONxROH1D8ihC1zZqBmC/DXSXlZBaAR5siw=;
-        b=WFxKuVGtYMp0UHdzGh1t1ElWBSH+ecfDyyc1xCLYBRL2Kk+0L//S+BWXJWdyZfeRse
-         naeNr6EOi9IdOFKXWOfFbyIaDYOZDXNsEK9xgAgsrXaw5iO7x8ReOSTz49+pFbpv3DjW
-         eUW1qvJtsNab4eBpBAbdVR/xqbUuwP4vad3pTCNVfuTNIGbM6eh7zQYRCiXlYu0UzblY
-         VBpGtuDXhs0Zbf+Xb0trsikkkrcJsJYQmqIBQ33fx4pz/Vb7uUaM9Lt/Xe3VD1zeSGt1
-         9Dqpj0SBBVKMwbF2QtNo7q0mYufjAUqa9FgEXgikNNCXmU4eGzwbXcoTP7nmfzb/t2Wk
-         VO5A==
-X-Forwarded-Encrypted: i=1; AJvYcCU+jGt7qY+1ZKGQRD8zo28DCemGzgUCpr9b0TqLZhaW0JdDSa+BV4giBEs2PRMryYF562qD9/exjQzrqPEv@vger.kernel.org, AJvYcCVrO+22iRYmDe7YezX1AKX3SJB+RKcfZa34pFWl1s54tXGFpqXitKL3h/cSmOJIoEFX7vL53vybwzxV7Q==@vger.kernel.org, AJvYcCWBsTRvFW64ohC4dGe6WVE6ros03pJxK7YNVGjP0Pk4HpP1evXf/oezno7GeQUfpKDOk8/M084F88pUtq3ptoo=@vger.kernel.org, AJvYcCX8PY2aOSUuIqoHMQcfhGEIsCeUT8O0C/o4VfPuH0kPiBeRplGzHSQOybMJQAgcoImpa72jYR9C@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHtBtvWSshDYnfIn/52dCa1Rl7PCQJPFNWWhElgAkeTcese9PZ
-	6fD8FW3BUoV694hbUv4XFI20Vrc/5E3OQjE8rAml2pPqjqE7xhcU
-X-Gm-Gg: ASbGncsDjfVmqlCHubo6/miHM8W5ZqiScNM+S7ZZMVITY7lxDbgf7nthKxW0K7dq/2l
-	3ZR5FjY+l8aswnJBcoFwlEE7tz5d3XW6ESfaY6y4VNJ3wiCU1owy2oQlDs5WU3OgYwJECn26sCH
-	Fdh22pEyVaYW0PCFKV9W4fV+YpHcrQ0jk7G/NsR3VYomMDoHs7IhHvA0kdesWEsRmCKS7mzPen9
-	avJ488Jnw/Qocmv444xKFYHTer4dbba6VRFKIvWLQdRyKf1PAXQ0VDEekpusECYlzYEfwWoWfFf
-	JiGo/AwL5KD5XmDeg1NoPGfIcXkTl+88yiuJ
-X-Google-Smtp-Source: AGHT+IHdcRGrtJIfHWDw5Xxi+7H+Xxsa/a7hetSgJLdRQEFaqnW5KIwrD6cxhu8p4gfgESp/yZhb5A==
-X-Received: by 2002:a05:600c:450d:b0:439:9dec:b7a2 with SMTP id 5b1f17b1804b1-4399decb9a6mr16062575e9.2.1739967280042;
-        Wed, 19 Feb 2025 04:14:40 -0800 (PST)
-Received: from [172.27.59.237] ([193.47.165.251])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43982bcc607sm91022085e9.16.2025.02.19.04.14.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Feb 2025 04:14:39 -0800 (PST)
-Message-ID: <99543a40-2a57-4c10-8876-cde08cb15199@gmail.com>
-Date: Wed, 19 Feb 2025 14:14:35 +0200
+	s=arc-20240116; t=1739967288; c=relaxed/simple;
+	bh=QfZ0v+dm0txxFuSXcQ7ZmFbhN0JkYUAe5JBaOr2VZpI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UUvSUvM7hV1BGvBV0yXwene767WFxSwh1SYV42a4Nmb56AVlGA+nQHDmPVusogUuwMDimYpqD8IVetqCSuTm5Jvur2kOAliRX+7VVSeCSCT2ikXRCE7LCjZMqMG/eId66rS4dpqyaHVFJ9nqRjNyuSynMt1XP4r7qLM/j4G9ni8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nq4npW0I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E47BC4CEE7;
+	Wed, 19 Feb 2025 12:14:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739967288;
+	bh=QfZ0v+dm0txxFuSXcQ7ZmFbhN0JkYUAe5JBaOr2VZpI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Nq4npW0IvXTS1PaZ6aKnLlsx5RGuBxGgXQp8wd0+KQ09hGlgAU6/1yVWD+r7/yySh
+	 RA313a6nk9gBtL3TDO6XitYzzYxSSNVOzhtXpHeRqGLAqIxmQ4/TKkx8EfFHc/wjWt
+	 NdGyDKPmIBP5kbyKBfU8CKUORSq8zNo2Ko+LT2kDFnDDM3mSsDYWeL/LckEckiCPJk
+	 AU7Q6kEtPcqFddrHSUjUMCK5C06m4xSWJy64Zfq0zyKAg4PIA7ldSdq5wLUHtKWSO1
+	 mwxEzkDC/Jw8oiKNT6nxvtF/BBYj8lJuhqYzLXgs8fy58/Oagk+JQplKSRRBdRFA5z
+	 rptmUWpnCfuVg==
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-2bc71717d3fso3385130fac.2;
+        Wed, 19 Feb 2025 04:14:48 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVFeipiL9fVoUqQTc+75+1HU9+SkQAjzHn6c6hNYUqZQV/SpPKfiKrJRZx+sq0oTvyLfVB8JsqxM24v@vger.kernel.org, AJvYcCW9RPsr7eyDMvr8iC2ogimC7r7EjCK5ZVOaMx0Daeo45kOY0+b2dvkewKTjvsRTDewsJUceII5SGbU=@vger.kernel.org, AJvYcCWFLpcOhjMCq1kHG3Lfnx9XW3Ru1A+RyhDli5izEkFcvlSVIME+Ww1KJAkIHuZx7U1iFDMgaSdDXF0V@vger.kernel.org, AJvYcCXOXG3DpL+IauisV2yDALRaOAME94p0/XhmE78b9jO8yN80iM/lh/WxkxN1M8h0iPPUKQHaqby3uc+IXLj9@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx21OXwLIJ6Qp+6caR448D6meynS6GT3re8hkZx/q5XwJR71Qim
+	Fl3QH8jPtx4Z2Qv+M0eElkAEK723XfP/Ol+On1rtb10zWRAHWsQZEyfsYp76nPvdchJRaP+hQOZ
+	4bXKYu3ymxTE6FzmNKK9pWYIdMEU=
+X-Google-Smtp-Source: AGHT+IEUoSI0Fc7zR7MYZAXaDjdzeTDLLlHNwLYh1YC5thY6NZqntwxqLdCiIDWf8q2/2/9HH6Nri6Ta1Dc3MsDn4F0=
+X-Received: by 2002:a05:6870:af06:b0:2b8:e6f2:ba7e with SMTP id
+ 586e51a60fabf-2bd10236009mr2483334fac.12.1739967287437; Wed, 19 Feb 2025
+ 04:14:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] net/mlx5e: Avoid a hundred
- -Wflex-array-member-not-at-end warnings
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, "Gustavo A. R. Silva"
- <gustavo@embeddedor.com>, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
- Tariq Toukan <tariqt@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
- linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <Z6GCJY8G9EzASrwQ@kspp>
- <4e556977-c7b9-4d37-b874-4f3d60d54429@embeddedor.com>
- <8d06f07c-5bb4-473d-90af-5f57ce2b068f@gmail.com>
- <7ce8d318-584f-42c2-b88a-2597acd67029@embeddedor.com>
- <5f2ca37f-3f6d-44d2-9821-7d6b0655937d@gmail.com>
- <36ab1f42-b492-497f-a1dc-34631f594da6@lunn.ch>
- <59b075bc-f6e6-42f0-bc01-c8921922299d@gmail.com>
- <20250218131345.6bd558cb@kernel.org>
-Content-Language: en-US
-From: Tariq Toukan <ttoukan.linux@gmail.com>
-In-Reply-To: <20250218131345.6bd558cb@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <1914558.tdWV9SEqCh@rjwysocki.net> <20250218222011.GA196831@bhelgaas>
+In-Reply-To: <20250218222011.GA196831@bhelgaas>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 19 Feb 2025 13:14:36 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0iT5j3S=VtRo+uHEaiM+fYah=mRr7c3vZnvguNnOY3TPQ@mail.gmail.com>
+X-Gm-Features: AWEUYZnWiKdfQyoXdrKp3FO2qjuD_L6edyTQTacrmaW_C8alsdXkuKeuyqTt42A
+Message-ID: <CAJZ5v0iT5j3S=VtRo+uHEaiM+fYah=mRr7c3vZnvguNnOY3TPQ@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] PM: sleep: Use DPM_FLAG_SMART_SUSPEND conditionally
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Alan Stern <stern@rowland.harvard.edu>, 
+	Linux PCI <linux-pci@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Johan Hovold <johan@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Jon Hunter <jonathanh@nvidia.com>, Linux ACPI <linux-acpi@vger.kernel.org>, 
+	Mika Westerberg <mika.westerberg@linux.intel.com>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Feb 18, 2025 at 11:20=E2=80=AFPM Bjorn Helgaas <helgaas@kernel.org>=
+ wrote:
+>
+> On Tue, Feb 18, 2025 at 09:16:48PM +0100, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > A recent discussion has revealed that using DPM_FLAG_SMART_SUSPEND
+> > unconditionally is generally problematic because it may lead to
+> > situations in which the device's runtime PM information is internally
+> > inconsistent or does not reflect its real state [1].
+> >
+> > For this reason, change the handling of DPM_FLAG_SMART_SUSPEND so that
+> > it is only taken into account if it is consistently set by the drivers
+> > of all devices having any PM callbacks throughout dependency graphs in
+> > accordance with the following rules:
+> >
+> >  - The "smart suspend" feature is only enabled for devices whose driver=
+s
+> >    ask for it (that is, set DPM_FLAG_SMART_SUSPEND) and for devices
+> >    without PM callbacks unless they have never had runtime PM enabled.
+> >
+> >  - The "smart suspend" feature is not enabled for a device if it has no=
+t
+> >    been enabled for the device's parent unless the parent does not take
+> >    children into account or it has never had runtime PM enabled.
+> >
+> >  - The "smart suspend" feature is not enabled for a device if it has no=
+t
+> >    been enabled for one of the device's suppliers taking runtime PM int=
+o
+> >    account unless that supplier has never had runtime PM enabled.
+> >
+> > Namely, introduce a new device PM flag called smart_suspend that is onl=
+y
+> > set if the above conditions are met and update all DPM_FLAG_SMART_SUSPE=
+ND
+> > users to check power.smart_suspend instead of directly checking the
+> > latter.
+> >
+> > At the same time, drop the power.set_active flage introduced recently
+> > in commit 3775fc538f53 ("PM: sleep: core: Synchronize runtime PM status
+> > of parents and children") because it is now sufficient to check
+> > power.smart_suspend along with the dev_pm_skip_resume() return value
+> > to decide whether or not pm_runtime_set_active() needs to be called
+> > for the device.
+> >
+> > Link: https://lore.kernel.org/linux-pm/CAPDyKFroyU3YDSfw_Y6k3giVfajg3NQ=
+GwNWeteJWqpW29BojhQ@mail.gmail.com/  [1]
+> > Fixes: 7585946243d6 ("PM: sleep: core: Restrict power.set_active propag=
+ation")
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+>
+> Acked-by: Bjorn Helgaas <bhelgaas@google.com> # drivers/pci
 
-
-On 18/02/2025 23:13, Jakub Kicinski wrote:
-> On Tue, 18 Feb 2025 17:53:14 +0200 Tariq Toukan wrote:
->> Maybe it wasn't clear enough.
->> We prefer the original patch, and provided the Reviewed-by tag for it.
-> 
-> Can you explain what do you mean by "cleaner"?
-> I like the alternative much more.
-
-Cleaner in the sense that it doesn't touch existing code in en_rx.c 
-(datapath), and has shorter dereferences for the inner umr_wqe fields, like:
-umr_wqe->ctrl
-vs.
-umr_wqe->hdr.ctrl
-
-
+Thanks!
 
