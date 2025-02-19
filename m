@@ -1,183 +1,208 @@
-Return-Path: <linux-kernel+bounces-521089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09917A3B3F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:32:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BD31A3B431
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:35:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 137581674A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:32:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 080321883A45
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:33:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2F81C68A6;
-	Wed, 19 Feb 2025 08:31:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15B441DE3D2;
+	Wed, 19 Feb 2025 08:32:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GdVJB5Un"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rKP1bejj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C0A1C5F2F
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 08:31:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D04D1C5F18;
+	Wed, 19 Feb 2025 08:32:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739953918; cv=none; b=h6cbNe/042B5NkFyilNLULKxRofiq+kYyZpdYCPuBVU4+n/moRpModsgjvp8MMDjDls7bovvg7I+hppNmR6pMeir3d2IV17Ii7zbofMucHdUlQjw7F14rvuMBVnehXoxx+ctTSpWny1TsmjrypWhLX3lQLJDolbqA//LyeY57lY=
+	t=1739953972; cv=none; b=JEXHGWCAOt8x+Uy9V2n6voAGOUT4KqguYhrWSDUYzhqQ2wxzL8LHbLnsLuo/a76xR1kkXMX0ofRsdght2f+gHhAoAUr/yTUytCXZuwiL9zFOL6BFo3uEU3/77mhZO5vXP8XqSYROIKObQ7Nb5praw8ROKhi1o62a2iwkFDZHbYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739953918; c=relaxed/simple;
-	bh=UhnxOOWMxBvGlatftTNDMWcxd2JI+FJKndrlJr1K0X8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LBpwbM7g6NZDrI1sZm+rFl2WvuyKIPsX5HZ8e6MGjNdgeFmETaqZd3R5/qQg73cfB33BOYElvKcZ8p5agbZIQgSNe5MUd+uEVeTyeenCc0WjfTCvMf+Ga0tCLNL8GDzPygGeKqSOdcPB+EsPAJUcR52GyTuya73aUPgjvgX6Hzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GdVJB5Un; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739953915;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=4JbRdqdYJQdJMppsYc3IVc1lHy5Cz2pY+l6GdpwErAU=;
-	b=GdVJB5UnwpertiSqmtRWwTKnGy1AOEqkx2PmiwvuasDWQpLQq/MLpr7ulegQBNjwDvvqHL
-	10Smxi6M4mxiTrlepoX0tPPAXcAiAfKzPk+BphTGpCA4JWp7zKviTTE3rH5YES20danuR1
-	rJDHlAnecNd8bbtkY7k6Wl98tZTU39U=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-101-MrrjtE4qOy6dRvCBE_Kdiw-1; Wed, 19 Feb 2025 03:31:52 -0500
-X-MC-Unique: MrrjtE4qOy6dRvCBE_Kdiw-1
-X-Mimecast-MFC-AGG-ID: MrrjtE4qOy6dRvCBE_Kdiw_1739953911
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-38f443b4949so1481878f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 00:31:52 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739953911; x=1740558711;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=4JbRdqdYJQdJMppsYc3IVc1lHy5Cz2pY+l6GdpwErAU=;
-        b=XVaKwSLW8u/2UNS2uyB8eFb7V4YBgdGEpxkTYn7AYWoPQ3vEDnK9MPjflpoKWMNu17
-         GCtQEzd3QbDmSpgs6zvKWyvEFA1IoyXhpIF9iBClmdXm8tBpRwFQVBKXgTUvKqDhd3yW
-         8Ms7n3SR6lfCtEVDl9lbU0mEKQEu59c4FMeGBH3bc6t7rRCIZhkkQ4LIaJV0F8ySvmi1
-         vD1MiFb2PfCkFDrsJJ5qRT8TElWMgD2B4Pgi8Y1ZvPlPqlfbKXIQ6QF9yDvnZy4n8COa
-         daBwyu9YS1nLcd72vwDfd7z5DGaADkfBnDZk40xc/nDn9Ijm4rtCjGLWwHCb8rtlsI11
-         t+MQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWWU5IP1FHNStGjoAVahTrVO7+c7hL5MqfEszLZIPTt7Mng7fKNwPJEu2P2E8ghMR2TfjyCADvyVPzef2k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZTO15cBxAa87RzFzWNwAt+Hnlk1318ucuWZFMDAqTG3/8zJyQ
-	GEyTthzpQt5fHPC+grHeP6MgIhNR4fBx8jNg++9WJL/h4AA1hh3N3zjHYP/gr+aryGJ//aS2XIX
-	Jt4QZ1wQYArixKrnOny1l/WlE/YvuAvB4ctOSbyu+QVjAtoiWej8I6HlGWbLpDg==
-X-Gm-Gg: ASbGncuBxoMTQChQWf54KUrPDq5nOjAPGDCfBQST1oT7bTDiJ09u3N851jV05RLz3BG
-	2lA7Un3CN5Mv89Pd8RI7u91cmMgM1HXiQNUj4jFn/zKTlfOLYYKF8yBfcGO6STvjGe71rRipy4Q
-	jQ8SeOvQ3k4tkeFiQ7gBLsASmh9meRwahN31hzsQ+IkRFgTlllliPAvcwy9infsCyfuIriKdJ04
-	b7P+Se8l3/wBNPYU8T3/2D5cjQLH74iLf+EjONUC402Wy5H1oPUbgTVvOWOD4kq/tcAKg2v9hAf
-	Z7BAh5/+FWJzNK1fQro2HP4dIGTle0v2SyU=
-X-Received: by 2002:adf:ee92:0:b0:387:8752:5691 with SMTP id ffacd0b85a97d-38f34171107mr11521948f8f.47.1739953911493;
-        Wed, 19 Feb 2025 00:31:51 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFK2yPpWvl6gawDQ+6Z/O1hl+oXMmm08C5dns5ahFLa2iCT5uUa7byqQ4lD2sIg9VRBudkicA==
-X-Received: by 2002:adf:ee92:0:b0:387:8752:5691 with SMTP id ffacd0b85a97d-38f34171107mr11521934f8f.47.1739953911145;
-        Wed, 19 Feb 2025 00:31:51 -0800 (PST)
-Received: from [192.168.3.141] (p5b0c68c8.dip0.t-ipconnect.de. [91.12.104.200])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258dcf08sm17434852f8f.36.2025.02.19.00.31.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Feb 2025 00:31:50 -0800 (PST)
-Message-ID: <3d1315ab-ba94-46c2-8dbf-ef26454f7007@redhat.com>
-Date: Wed, 19 Feb 2025 09:31:48 +0100
+	s=arc-20240116; t=1739953972; c=relaxed/simple;
+	bh=blm26kWj5aQPEC4WfZGgw5G7lh0zITYqtzpGclMk880=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h3Eb1iQX5LQ8hdmfP6QbM0gJN6ycc8AUgfa9BXAuHO9wpin9jFi6OD6EkLAKEmviw60mF22BJZdshV0vbiDTcwhrG//awlVCsu1Cg2xaYCEFNHs2dBWIkdiRbki1xi00+CdZOn9Q9Zehut5El2ZRxGNKPtytZ4JSNoT3oe3L9dQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rKP1bejj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE268C4CEE9;
+	Wed, 19 Feb 2025 08:32:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739953971;
+	bh=blm26kWj5aQPEC4WfZGgw5G7lh0zITYqtzpGclMk880=;
+	h=From:To:Cc:Subject:Date:From;
+	b=rKP1bejjozwruOcYXC7DVtcNbc9dWLljp5JbRDFwx5MOQYoPN2YDgwfMfem/0otDe
+	 M72RCfVu1Rs1U0PeZOC76Kfw+lsYkS2p2EZj60tw6fb/ic7XQYyo2no1vJfaERqiJX
+	 1eSJzLrk1iNx7pjVXKn8rKKbpLR1JGc8xXVrwAtNTAMuaTOwSPVrUrbtQtLd0SviHO
+	 2MzdtWQSbPhHuVIfEZYRn2OWE450ZoM3/H4WHznjOz0yf7gjVcyd3BRAWWc6IRMtov
+	 WYmLwEbXo1IiLMORuB8MYBqto3mOsG6ciXL+uXI2yVYNsJUMEeUh6jCfA9W7GS/N0d
+	 UbkRWVTgdz57Q==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1tkfVh-0000000Gv4I-3tcj;
+	Wed, 19 Feb 2025 09:32:49 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <mchehab+huawei@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Bingbu Cao <bingbu.cao@intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Kees Cook <mchehab+huawei@kernel.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+	Tianshu Qiu <tian.shu.qiu@intel.com>,
+	Vegard Nossum <vegard.nossum@oracle.com>,
+	linux-arch@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	linux1394-devel@lists.sourceforge.net
+Subject: [PATCH 00/27] Implement kernel-doc in Python
+Date: Wed, 19 Feb 2025 09:32:16 +0100
+Message-ID: <cover.1739952783.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/6] mm: Provide address mask in struct
- follow_pfnmap_args
-To: Alex Williamson <alex.williamson@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, peterx@redhat.com,
- mitchell.augustin@canonical.com, clg@redhat.com, jgg@nvidia.com,
- akpm@linux-foundation.org, linux-mm@kvack.org
-References: <20250218222209.1382449-1-alex.williamson@redhat.com>
- <20250218222209.1382449-6-alex.williamson@redhat.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250218222209.1382449-6-alex.williamson@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-On 18.02.25 23:22, Alex Williamson wrote:
-> follow_pfnmap_start() walks the page table for a given address and
-> fills out the struct follow_pfnmap_args in pfnmap_args_setup().
-> The address mask of the page table level is already provided to this
-> latter function for calculating the pfn.  This address mask can also
-> be useful for the caller to determine the extent of the contiguous
-> mapping.
-> 
-> For example, vfio-pci now supports huge_fault for pfnmaps and is able
-> to insert pud and pmd mappings.  When we DMA map these pfnmaps, ex.
-> PCI MMIO BARs, we iterate follow_pfnmap_start() to get each pfn to test
-> for a contiguous pfn range.  Providing the mapping address mask allows
-> us to skip the extent of the mapping level.  Assuming a 1GB pud level
-> and 4KB page size, iterations are reduced by a factor of 256K.  In wall
-> clock time, mapping a 32GB PCI BAR is reduced from ~1s to <1ms.
-> 
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: linux-mm@kvack.org
-> Reviewed-by: Peter Xu <peterx@redhat.com>
-> Reviewed-by: "Mitchell Augustin" <mitchell.augustin@canonical.com>
-> Tested-by: "Mitchell Augustin" <mitchell.augustin@canonical.com>
-> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-> Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
-> ---
+Hi Jon,
 
-Acked-by: David Hildenbrand <david@redhat.com>
+This changeset contains the kernel-doc.py script to replace the verable
+kernel-doc originally written in Perl.
+
+As the previous versions, I tried to stay as close as possible of the original
+Perl implementation, as it helps to double check if each function was 
+properly translated to Python.  This have been helpful debugging troubles
+that happened during the conversion.
+
+I worked hard to make it bug-compatible with the original one. Still, its
+output has a couple of differences from the original one:
+
+- The tab expansion works better with the Python script. With that, some
+  outputs that contain tabs at kernel-doc markups are now different;
+
+- The new script  works better stripping blank lines. So, there are a couple
+  of empty new lines that are now stripped with this version;
+
+- There is a buggy logic at kernel-doc to strip empty description and
+  return sections. I was not able to replicate the exact behavior. So, I ended
+  adding an extra logic to strip empty sections with a different algorithm.
+
+Yet, on my tests, the results are compatible with the venerable script
+output for all .. kernel-doc tags found in Documentation/. I double-checked
+this by adding support to output the kernel-doc commands when V=1, and
+then I ran a diff between kernel-doc.pl and kernel-doc.py for the same
+command lines.
+
+This version uses a minimal integration scenario: it just replaces the
+exec file from the Perl to th Python version.
+
+This series contains:
+
+- 4 patches fixing some kernel-doc issues. One of them is for media, but
+   I prefer to have this merged via your tree, as it suppresses a warning
+   that happens after the changes;
+
+- 2 cleanup patches for Perl kernel-doc;
+
+- 2 patches renaming kernel-doc to kernel-doc.pl and adding a symlink.
+  I opted to have the symlink in separate to make easier to review, but
+  feel free to merge them on a single patch if you want;
+
+- 15 patches with the new script. The first one is the new tool on a single
+   file. The other ones split it into a library. Then, there are several bug
+   fixes to make its output compatible with the original script;
+
+- 1 patch adding a .pylintrc file to teach pylint about scripts/lib/* dirs;
+
+- 2 patches adding some extra functionality to Sphinx kerneldoc extension;
+
+- 1 patch switching Sphinx to use the new tool.
+
+What is missing:
+
+- a patch droping kernel-doc.pl;
+- a patch renaming kernel-doc.py to kernel-doc (or changing the symlink).
+
+I opted to not do those final changes here, as this way we can better
+test the tools.
+
+With such changes, if one wants to build docs with the old script,
+all it is needed is to use KERNELDOC parameter, e.g.:
+
+	$ make KERNELDOC=scripts/kernel-doc.pl htmldocs
+
+Will make Sphinx use the original version.
+
+Mauro Carvalho Chehab (27):
+  include/asm-generic/io.h: fix kerneldoc markup
+  drivers: media: intel-ipu3.h: fix identation on a kernel-doc markup
+  drivers: firewire: firewire-cdev.h: fix identation on a kernel-doc
+    markup
+  docs: driver-api/infiniband.rst: fix Kerneldoc markup
+  scripts/kernel-doc: don't add not needed new lines
+  scripts/kernel-doc: drop dead code for Wcontents_before_sections
+  scripts/kernel-doc: rename it to scripts/kernel-doc.pl
+  scripts/kernel-doc: add a symlink to the Perl version of kernel-doc
+  scripts/kernel-doc.py: add a Python parser
+  scripts/kernel-doc.py: output warnings the same way as kerneldoc
+  scripts/kernel-doc.py: better handle empty sections
+  scripts/kernel-doc.py: properly handle struct_group macros
+  scripts/kernel-doc.py: move regex methods to a separate file
+  scripts/kernel-doc.py: move KernelDoc class to a separate file
+  scripts/kernel-doc.py: move KernelFiles class to a separate file
+  scripts/kernel-doc.py: move output classes to a separate file
+  scripts/kernel-doc.py: convert message output to an interactor
+  scripts/kernel-doc.py: move file lists to the parser function
+  scripts/kernel-doc.py: implement support for -no-doc-sections
+  scripts/kernel-doc.py: fix line number output
+  scripts/kernel-doc.py: fix handling of doc output check
+  scripts/kernel-doc.py: properly handle out_section for ReST
+  scripts/kernel-doc.py: postpone warnings to the output plugin
+  docs: add a .pylintrc file with sys path for docs scripts
+  docs: sphinx: kerneldoc: verbose kernel-doc command if V=1
+  docs: sphinx: kerneldoc: ignore "\" characters from options
+  docs: sphinx: kerneldoc: use kernel-doc.py script
+
+ .pylintrc                                     |    2 +
+ Documentation/Makefile                        |    2 +-
+ Documentation/conf.py                         |    2 +-
+ Documentation/driver-api/infiniband.rst       |   16 +-
+ Documentation/sphinx/kerneldoc.py             |   46 +
+ .../media/ipu3/include/uapi/intel-ipu3.h      |    3 +-
+ include/asm-generic/io.h                      |    6 +-
+ include/uapi/linux/firewire-cdev.h            |    3 +-
+ scripts/kernel-doc                            | 2447 +----------------
+ scripts/kernel-doc.pl                         | 2439 ++++++++++++++++
+ scripts/kernel-doc.py                         |  224 ++
+ scripts/lib/kdoc/kdoc_files.py                |  274 ++
+ scripts/lib/kdoc/kdoc_output.py               |  753 +++++
+ scripts/lib/kdoc/kdoc_parser.py               | 1702 ++++++++++++
+ scripts/lib/kdoc/kdoc_re.py                   |  272 ++
+ 15 files changed, 5730 insertions(+), 2461 deletions(-)
+ create mode 100644 .pylintrc
+ mode change 100755 => 120000 scripts/kernel-doc
+ create mode 100755 scripts/kernel-doc.pl
+ create mode 100755 scripts/kernel-doc.py
+ create mode 100755 scripts/lib/kdoc/kdoc_files.py
+ create mode 100755 scripts/lib/kdoc/kdoc_output.py
+ create mode 100755 scripts/lib/kdoc/kdoc_parser.py
+ create mode 100755 scripts/lib/kdoc/kdoc_re.py
 
 -- 
-Cheers,
+2.48.1
 
-David / dhildenb
 
 
