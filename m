@@ -1,156 +1,140 @@
-Return-Path: <linux-kernel+bounces-521805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F853A3C277
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:48:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07E0CA3C279
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:48:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF804173529
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:47:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15C9E1761D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:47:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A88E18C008;
-	Wed, 19 Feb 2025 14:47:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C3AB1F3B83;
+	Wed, 19 Feb 2025 14:47:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="vVM30r7G"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IEwKX5Xk"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BD0040849
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 14:47:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A4543595B;
+	Wed, 19 Feb 2025 14:47:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739976452; cv=none; b=c8hhk4AGmBCcq3sNNKTETLVk3XGi+a4iTQob/kJEs8leV4X6w9kRBwX3xXSMxWCRNTVQhLUuhhtYiZTMtH0XBYcI5knTLaIxx7160a17C4+ADwOMkiahhhHtDnhnLqWboiFw3kFB++ez8NAg1UyDQgwcY0N9cjKXKfo8QngZMpY=
+	t=1739976464; cv=none; b=HXpkEZQHd0qChTn80Ni31BEY+oB61X05CJq7uqpZirn0OA8ZPZalW2Js3VV2wvjaXFdc0rdeewZZ7NJqv3a7s9l8SoxEgMga4bBCHv2RzmvyJ4usGcLi/DqHJlBxNZYUtPB+DPi9k0nD6Hqt5cLVvQSE8jGBIWowmJsj27pwHp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739976452; c=relaxed/simple;
-	bh=2f5cSEYBf1sN7jl2HwMNOO45vExGGYI6QygiPib49u8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a6r9CjFNjWmUQdywB652T/Jfr+4KCfNqrQ7jEVyi8PlKmDzxkEJ7ZHi1o44pALclR8VI8sMp4f5cFwLSqodfqbzYX2Vysh8V61+enO/rKr8P870el50JfzU8zatdvqZp1ECVuun4ALm8EbvvT/qoJ5NHo0KFFrnNZ8EjJNIkKjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=vVM30r7G; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5CB0D514;
-	Wed, 19 Feb 2025 15:46:06 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1739976367;
-	bh=2f5cSEYBf1sN7jl2HwMNOO45vExGGYI6QygiPib49u8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=vVM30r7GF8+j9L84t2B9lLirlue0PsDS7fLiHNUb3RbSLq5zcl+0M7Ud9BpZG8Y/c
-	 /NEP1BFFb2v6smPku15DitPpHBFdBxZmPpXps+NqAYasMYoOmb6k3HuhoBlPAwUBWK
-	 ncGF+DEsVMPcYuQZscd7C+BRVn59cbHoeJFPuW/Q=
-Message-ID: <23e71045-1ae2-4e02-9780-aa11a338d481@ideasonboard.com>
-Date: Wed, 19 Feb 2025 16:47:26 +0200
+	s=arc-20240116; t=1739976464; c=relaxed/simple;
+	bh=PWf83lHH1CbX7g4OE56Q3tOSzAlGY69s8uTYqC4rU/w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DjQazhMmrZiassMRlw0R5wZ9c8zkLitJ9H7euBizIPf2FD/O69VQgCo5L5GN0XKPatlHnfE3+QoOuKrS+D0HzsiwG6fl25AKCLpo+ORPh71k3XpVeLTnP6zTiTN+MGxsWCMqhL8Z5ZkBeVQYTZCd6fFGSu08n0ZRqre2nWNAmuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IEwKX5Xk; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2fc0bd358ccso13665118a91.2;
+        Wed, 19 Feb 2025 06:47:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739976461; x=1740581261; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=x5dsTYe1UcGt3x043SagaFh0jmczJ8yiUGL829wJKMw=;
+        b=IEwKX5XkeyPY87Cv8L+kv0M+MOCAtkxKznNLZEYFKQP2RjWSUQvdvDJKbm9J59m5ZP
+         FfsswcgiYCIkmmUIlQXEnPi+UjdmthgsqBh8auNtUpXZk4zkSpfupGHlOzTodjnH6OZ3
+         sMeaLIWP96KG6CdugB7qcTq5+eB4u7AwgcwSl2z9CKrzrof4ObMpnWQPhG46K7/lRZ2E
+         MzGF7tnADOz9c6gCVkx6ucll392eAOf5vpmhqcaL6mRKGLW21JuJAVq/eHQGTbJALTYW
+         mG0PXoyNvCrT3FKdnKBaWElsnLnDFET/0EHk+aQ+VZz5KUnHDrLJ7oXRzM7JWyA68PHK
+         ewvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739976461; x=1740581261;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=x5dsTYe1UcGt3x043SagaFh0jmczJ8yiUGL829wJKMw=;
+        b=OSHOz/RF7DssACIYqYskNAkImN2+zQ7dGxH7ZGaEPNKh5hfFECBFwFnlT9hBldMv2M
+         GXKJw/lO3HvqP6AiMayg929lZUaPpx983ORwsgDyY40yQOEod54BuJINWvALQ3BeHVtt
+         yRYeaPWUAq3+9gnvwMZdzmUsd5Nyido3rNqDUSduk8PGt7fnX7Irf/QZ1Q1ZGtcNuVDO
+         04wEbjSTJw5V3XA8AcI3Is9tc157q/HHkN+qv/mLg4W2cUp8KU9IS/NzDY3DeHbEG7k6
+         t6uGAo8Vz66zL+9/RQa8jUGRhbt+/85oE6eGMRjiiiz7aBG9oTc0LqHY2V2QR22w+ezS
+         ES6w==
+X-Forwarded-Encrypted: i=1; AJvYcCU3kbfx21qDYkFuqmRd8IxgQyR7NGYETfjeID074nnH2dRyj2gmoWPVW0H7Q5oQVYGbQj1NChmRlJvNKx8=@vger.kernel.org, AJvYcCU4qDAKu9ROdPAVkBs1ybq/k4eyZo+bZ3H0AnREpe2L4j+6loqzatkxZIr6L1pSwb2qLwtrbUVo@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9ALDd/qQL6cacWYnOVjB0s8/hEj2A4g+fEC3p/nmZ6FmnUxCE
+	4ZleeP8hZ+w9okyjU4J+IxNLYp7J0ZwPHGUisQlmLMquc/W41ERc+vXoQixhmuTOwiID6tJOoxn
+	RG91iP9fvOn2L3zEg8dRyaJDjDB40g0ZSnUs=
+X-Gm-Gg: ASbGncu8vzjeh/Y0Lu83HNvvqZdpxYsWXrk9niKBde/TRfC0LtYeRxBAyHcZgy6O1Be
+	gxpVu44QOEAO7dzEu9gQRIiJYem/kpK00RbfGMFY8BDm3q2JPcMYbuezAzqZpSMo44INGPmEavK
+	8=
+X-Google-Smtp-Source: AGHT+IGTm0/gDlwx71/Xw2OaMGDWR52C7tQCBQxrWVSO50CktdLR2VUPQbyX5z4L6RKXGSIhm5JkjyP9Mkosm9D0Eks=
+X-Received: by 2002:a17:90b:2241:b0:2ea:83a0:47a5 with SMTP id
+ 98e67ed59e1d1-2fc40d124c7mr28768178a91.4.1739976461283; Wed, 19 Feb 2025
+ 06:47:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 06/11] drm/fourcc: Add DRM_FORMAT_XVUY2101010
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Vishal Sagar <vishal.sagar@amd.com>,
- Anatoliy Klymenko <anatoliy.klymenko@amd.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Michal Simek <michal.simek@amd.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Geert Uytterhoeven <geert@linux-m68k.org>
-References: <20250212-xilinx-formats-v3-0-90d0fe106995@ideasonboard.com>
- <20250212-xilinx-formats-v3-6-90d0fe106995@ideasonboard.com>
- <bdpw2g65uor77tijlhpabodog7haqvdcemnr3wzqkooerzuib5@hfdn5zsrbkgg>
- <7674314f-d95a-433a-81d2-ca78bc199359@ideasonboard.com>
- <naw67daoyb2lfmq4jovlwanz5niaolptwnug3c3kkrtlfoh6dd@trkctqyzvtb5>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <naw67daoyb2lfmq4jovlwanz5niaolptwnug3c3kkrtlfoh6dd@trkctqyzvtb5>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250116160314.23873-1-aha310510@gmail.com> <20250117102920.GI6206@kernel.org>
+In-Reply-To: <20250117102920.GI6206@kernel.org>
+From: Jeongjun Park <aha310510@gmail.com>
+Date: Wed, 19 Feb 2025 23:47:34 +0900
+X-Gm-Features: AWEUYZnAUIyaru8MWqDKgk3-dUJ-t4E7Nz19GBkUaFwkxF4Klji97LxCaNQiA3k
+Message-ID: <CAO9qdTEmgdN2CyAJGyeSXMKbM1uZDRwZ-6vGu_ft4uHsNjgCqg@mail.gmail.com>
+Subject: Re: [PATCH net-next] net: sxgbe: change conditional statement from if
+ to switch
+To: Simon Horman <horms@kernel.org>
+Cc: bh74.an@samsung.com, andrew+netdev@lunn.ch, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	richardcochran@gmail.com, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+Simon Horman <horms@kernel.org> wrote:
+>
+> On Fri, Jan 17, 2025 at 01:03:14AM +0900, Jeongjun Park wrote:
+> > Change the if conditional statement in sxgbe_rx_ctxt_wbstatus() to a switch
+> > conditional statement to improve readability, and also add processing for
+> > cases where all conditions are not satisfied.
+> >
+> > Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+> > ---
+> >  .../net/ethernet/samsung/sxgbe/sxgbe_desc.c   | 43 +++++++++++++------
+> >  1 file changed, 30 insertions(+), 13 deletions(-)
+> >
+> > diff --git a/drivers/net/ethernet/samsung/sxgbe/sxgbe_desc.c b/drivers/net/ethernet/samsung/sxgbe/sxgbe_desc.c
+> > index b33ebf2dca47..5e69ab8a4b90 100644
+> > --- a/drivers/net/ethernet/samsung/sxgbe/sxgbe_desc.c
+> > +++ b/drivers/net/ethernet/samsung/sxgbe/sxgbe_desc.c
+> > @@ -421,31 +421,48 @@ static void sxgbe_rx_ctxt_wbstatus(struct sxgbe_rx_ctxt_desc *p,
+>
+> ...
+>
+> > +     default:
+> > +             pr_err("Invalid PTP Message type\n");
+> > +             break;
+> > +     }
+> >  }
+>
+> Hi Jeongjun,
+>
+> I was wondering if it would be best if the error message above should be
+> rate limited, or perhaps the callback enhanced to return an error in such
+> cases. But that depends on where sxgbe_rx_ctxt_wbstatus is called.
+> And I'm unable to find where the it called.
+>
+> I see that sxgbe_rx_ctxt_wbstatus is registered as a get_rx_ctxt_tstamp_status
+> callback. But is the get_rx_ctxt_tstamp_status callback called anywhere?
 
-On 18/02/2025 05:26, Dmitry Baryshkov wrote:
-> On Mon, Feb 17, 2025 at 10:27:56PM +0200, Tomi Valkeinen wrote:
->> Hi,
->>
->> On 17/02/2025 22:15, Dmitry Baryshkov wrote:
->>> On Wed, Feb 12, 2025 at 04:56:10PM +0200, Tomi Valkeinen wrote:
->>>> Add XVUY2101010, a 10 bits per component YCbCr format in a 32 bit
->>>> container.
->>>
->>> Is there a more common name for this format? Otherwise googling for it
->>> reveals only your series.
->>
->> In the cover letter I mention the gstreamer names where available (this
->> particular format is not in gstreamer). AMD has these in their zynqmp
->> documentation (https://docs.amd.com/r/en-US/ug1085-zynq-ultrascale-trm/Video-Packer-Format).
->>
->> XVUY2101010 is YUV444_10BPC in AMD docs.
->>
->> X403 is Y444_10LE32 in gstreamer, and YV24_10BPC in AMD docs.
->>
->> I'm not sure you'll have much more luck googling with those names, though
->> =).
-> 
-> I'm asking, because include/uapi/drm/drm_fourcc.h has a pretty explicit
-> waiver: GL, Vulkan or other open standards. Otherwise normal
-> requirements apply and it's required to have an open-source usespace
-> implementation, etc.
+Hello. Sorry for the late reply.
 
-I can drop DRM_FORMAT_XVUY2101010 until we get it to gstreamer. I just 
-had it ready, so I thought it's better to include it than leave out.
+I still don't know exactly where sxgbe_rx_ctxt_wbstatus() is called. What I
+do know is that I can't find a function that calls this function within the
+Linux kernel. When I wrote this patch, I thought it would be good to refactor
+this function, so I wrote the patch, but I didn't know exactly where
+this function
+was being used. I think it might be a function called from an external
+kernel driver
+written by Samsung itself.
 
-Is the current gstreamer support enough for the other formats to fulfill 
-the userspace requirement?
+Regards,
 
-  Tomi
-
-
+Jeongjun Park
 
