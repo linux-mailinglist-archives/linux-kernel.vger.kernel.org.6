@@ -1,130 +1,99 @@
-Return-Path: <linux-kernel+bounces-522081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A945FA3C5A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:06:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DAC2A3C5A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 18:07:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7D767A6E54
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:05:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E290B1767B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:07:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5E621422D;
-	Wed, 19 Feb 2025 17:06:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12C10214220;
+	Wed, 19 Feb 2025 17:07:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N3GT3MVn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AgEhFe1T"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D233214216;
-	Wed, 19 Feb 2025 17:06:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AD501FECAE;
+	Wed, 19 Feb 2025 17:07:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739984803; cv=none; b=giZujX1v9PcLaLUBSRLf9wca3k8OHVzTVAI9w+qv63T9etyx5GrRrb4E2GpdCDIQZN0E4Uw7gdKY6Bi7U54xSGuhIpUONuYpWcj0NwHfuOT37zDARIELyFbzxJla801A6OoXa5g5Iii2/bGONrm72eH6pVMS4GSRZ7EhNH/+vEQ=
+	t=1739984842; cv=none; b=dZRQNMnF4WMl4hqro+k2GrwBzfyXDSJDWYM5wzJ9f9loQYho3aB+Fim8aIBI8Dc07F7Q6/BnlCVYX7AMVz31QcYqYW5r61tYISVwtRfNGvMdG2Q6Xe3gGHkiBK+IJYUkI7kVqCf1LUZ1UtTT64iulQhSGWv2/TZVY5+l7jPqpnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739984803; c=relaxed/simple;
-	bh=MyfLEvfS7yxTS8fAcMru9YtZORPP55M03oOVf1wJwag=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=kGF4R4ivL5cPuYYMHOeN62bV+uZoua9l5HE/vWz/zrb7uGP/iXNWHOh7eKwZmpcuaBbMao50w8fPXDIUOfnpzJVphel55AyuLdI1SwXhjx9QkHEg2bVzYO28nrdmo6R/5QK3KSqKG5JLTNG+2v0S7/IispFUILwwf9EHmH3LXXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N3GT3MVn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93FBAC4CED1;
-	Wed, 19 Feb 2025 17:06:42 +0000 (UTC)
+	s=arc-20240116; t=1739984842; c=relaxed/simple;
+	bh=mszeOLwAgGw28J0wPyk8y9L30ojS+lvtF++TRW/F6sk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=n7vwMkU7glaCtjGMPtgf3BzqHu69poa1NjMeCwW+fWTCQe/ELeYr4/w0qarXawU0oPO/Z9Hc+YKLLoaxt/MCPaQiY85M5hg1K0OPLE8KO+fwKYMUEnWDmXUdrfIw3DrsHm67o0oFPhRiO9NoeIVS48YIGg4aANrr/wCPTcIIy7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AgEhFe1T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9ED9C4CED1;
+	Wed, 19 Feb 2025 17:07:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739984802;
-	bh=MyfLEvfS7yxTS8fAcMru9YtZORPP55M03oOVf1wJwag=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=N3GT3MVnRSqdikNeUBuH8nooDmDSlHq7qhQNbdzQQCBEGY3dgQF0c2xzPbt3cCgiA
-	 lhHU9ac9zww9+54xp2eKqSDGZxs75xiSiOssp9krqAWzxWE+s6Oe9DhqUR77zl4qrc
-	 A6EmmpD2rftmBbwBcwNpj0lgDLE1HXFvJl+Dd28ZnoM1iO2OC5HGl973pPhUaPIZlq
-	 0hmYPkmqrNwb1egOEbiaDPZ2azBpMG8b2a49onzyMIiRwc2pDpqLzb8M1DYWorRpPR
-	 b9JuBolf8uORmuCE3CnN2fH5FMWgUs0XAJCEvfHt/da38pNyBNJQOXY5+pBaG2Q7VS
-	 SkQqm5nFNM+jw==
-Date: Wed, 19 Feb 2025 11:06:40 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Naveen Kumar P <naveenkumar.parna@gmail.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernelnewbies <kernelnewbies@kernelnewbies.org>,
-	linux-acpi@vger.kernel.org
-Subject: Re: PCI: hotplug_event: PCIe PLDA Device BAR Reset
-Message-ID: <20250219170640.GA219612@bhelgaas>
+	s=k20201202; t=1739984841;
+	bh=mszeOLwAgGw28J0wPyk8y9L30ojS+lvtF++TRW/F6sk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=AgEhFe1TsdBHgwegDGfgqzVShSbWJE3FEsUIOZ4sDZ8LOkR2qtV1gPJElNQjDYXLe
+	 dyFYa+Er6TNkQkn2f+LVybnM7WMcxfrFfd1OTVBDeXZz5sYQ6IVelcEzFk4Ux8npaW
+	 fXemU9JDXlr4Qcrj2OsONinv79FsRa1jDOMWXVUPU/x4iOfZoEyEzaefBJ2YyfVxyA
+	 AlL5zh42Xun3wlrGPCe60UV3u6koi0fwAi5kqT948325BgW7RFowBCiMekoFnqg3hO
+	 A4XTulVjif0HBlslM1QoIJi6OtQw8EaxeGndEXkDBtQiVOJv+UKw8EhTaEvVGx5rE6
+	 iUbBpbTy8yA9g==
+From: Christian Brauner <brauner@kernel.org>
+To: Vasiliy Kovalev <kovalev@altlinux.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	syzbot+316db8a1191938280eb6@syzkaller.appspotmail.com,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Gao Xiang <xiang@kernel.org>,
+	linux-unionfs@vger.kernel.org
+Subject: Re: [PATCH] ovl: fix UAF in ovl_dentry_update_reval by moving dput() in ovl_link_up
+Date: Wed, 19 Feb 2025 18:07:05 +0100
+Message-ID: <20250219-erlitt-berappen-a4821fba4a83@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250214215148.761147-1-kovalev@altlinux.org>
+References: <20250214215148.761147-1-kovalev@altlinux.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMciSVU4vv7=WjVUhuP3PJHdpnYqrgMPCmz-HnijEbhyxk54eQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1274; i=brauner@kernel.org; h=from:subject:message-id; bh=mszeOLwAgGw28J0wPyk8y9L30ojS+lvtF++TRW/F6sk=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRv4z+y3n5FRmmPq6LJt+cO5X9fHc3Xlnv34IKSxvPTv 8/N6d0X3VHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRefMZGZq5Uznua256YDFb 6ewvj5Vxui8kbsjfVn8nsoPFbj+7firDX4m4O35+oWpyNb0uV3mWb+n6svon43aT2opZbJqbrxz ZwwQA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-[+cc linux-acpi]
+On Sat, 15 Feb 2025 00:51:48 +0300, Vasiliy Kovalev wrote:
+> The issue was caused by dput(upper) being called before
+> ovl_dentry_update_reval(), while upper->d_flags was still
+> accessed in ovl_dentry_remote().
+> 
+> Move dput(upper) after its last use to prevent use-after-free.
+> 
+> BUG: KASAN: slab-use-after-free in ovl_dentry_remote fs/overlayfs/util.c:162 [inline]
+> BUG: KASAN: slab-use-after-free in ovl_dentry_update_reval+0xd2/0xf0 fs/overlayfs/util.c:167
+> 
+> [...]
 
-On Wed, Feb 19, 2025 at 05:52:47PM +0530, Naveen Kumar P wrote:
-> Hi all,
-> 
-> I am writing to seek assistance with an issue we are experiencing with
-> a PCIe device (PLDA Device 5555) connected through PCI Express Root
-> Port 1 to the host bridge.
-> 
-> We have observed that after booting the system, the Base Address
-> Register (BAR0) memory of this device gets reset to 0x0 after
-> approximately one hour or more (the timing is inconsistent). This was
-> verified using the lspci output and the setpci -s 01:00.0
-> BASE_ADDRESS_0 command.
-> 
-> To diagnose the issue, we checked the dmesg log, but it did not
-> provide any relevant information. I then enabled dynamic debugging for
-> the PCI subsystem (drivers/pci/*) and noticed the following messages
-> related ACPI hotplug in the dmesg log:
-> 
-> [    0.465144] pci 0000:01:00.0: reg 0x10: [mem 0xb0400000-0xb07fffff]
-> ...
-> [ 6710.000355] ACPI: \_SB_.PCI0.RP01: acpiphp_glue: Bus check in hotplug_event()
-> [ 7916.250868] perf: interrupt took too long (4072 > 3601), lowering
-> kernel.perf_event_max_sample_rate to 49000
-> [ 7984.719647] perf: interrupt took too long (5378 > 5090), lowering
-> kernel.perf_event_max_sample_rate to 37000
-> [11051.409115] ACPI: \_SB_.PCI0.RP01: acpiphp_glue: Bus check in hotplug_event()
-> [11755.388727] ACPI: \_SB_.PCI0.RP01: acpiphp_glue: Bus check in hotplug_event()
-> [12223.885715] ACPI: \_SB_.PCI0.RP01: acpiphp_glue: Bus check in hotplug_event()
-> [14303.465636] ACPI: \_SB_.PCI0.RP01: acpiphp_glue: Bus check in hotplug_event()
-> After these messages appear, reading the device BAR memory results in
-> 0x0 instead of the expected value.
-> 
-> I would like to understand the following:
-> 
-> 1. What could be causing these hotplug_event debug messages?
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
-This is an ACPI Notify event.  Basically the platform is telling us to
-re-enumerate the hierarchy below RP01 because a device might have been
-added or removed.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-Unfortunately the only real information we get is the ACPI device
-(RP01) and the notification value (ACPI_NOTIFY_BUS_CHECK).
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-You could instrument acpiphp_check_bridge() to see what path we take.
-The main paths look like enable_slot() or disable_slot(), but those
-both include a pr_debug() than you apparently don't see.
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-A remove followed by add would definitely reset the device, including
-its BARs.  But you would normally see some messages related to
-enumerating a new device.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
 
-If this doesn't help, try to reproduce the problem with a recent
-kernel, e.g., v6.13, and post the complete dmesg log.
-
-> 2. Why does this result in the BAR memory being reset?
-> 3. How can we resolve this issue?
-> 
-> I have verified that the issue occurs even without loading the driver
-> for the PLDA Device 5555, so it does not appear to be related to the
-> device driver.
-> 
-> Any help or guidance on debugging this issue would be greatly appreciated.
-> 
-> Thank you for your assistance.
-> 
-> Best regards,
-> Naveen
+[1/1] ovl: fix UAF in ovl_dentry_update_reval by moving dput() in ovl_link_up
+      https://git.kernel.org/vfs/vfs/c/c84e125fff26
 
