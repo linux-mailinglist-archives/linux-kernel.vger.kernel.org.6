@@ -1,106 +1,175 @@
-Return-Path: <linux-kernel+bounces-521725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F847A3C141
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:07:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7B1BA3C195
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:13:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8BA5C7A7D11
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:05:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11D00169AFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:07:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4E0D1FE45C;
-	Wed, 19 Feb 2025 14:03:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C89720487E;
+	Wed, 19 Feb 2025 14:03:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="TZuXacvM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="TFExlLpO"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A881E1F4282;
-	Wed, 19 Feb 2025 14:03:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573441FDE03;
+	Wed, 19 Feb 2025 14:03:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739973791; cv=none; b=JlxXI0dlJR0KXOaOcdODGwKWSH8NC59nqjv6VN02mHx8KnKPBpsQIR5Lmes0k5LWmQKv46EspIGPlrHzMG0R0pxEAd9nvdNx7T+6hK/KQ7teX3q8WkZy6KlOEEdyjHOamtaBoTw8slMEhMa65676CjpVPpbZ1i4jDg4bKf14oLw=
+	t=1739973796; cv=none; b=uT7wATafTSRNE1LFHPyqdxogS2N7k6gLD/N+l9PffPj/V/nybwDOy3+qu4Qr9qTfD4JtQU5RAqNkqaOZpaKT+3mbEq6KmTSPmH00SUFDQwOrcT5qts0FiPQBpCZqnkyuMInIlGcLmQvUXlBh+NJmNyS2cF9iPcmV/5p0evlhhOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739973791; c=relaxed/simple;
-	bh=SfAIfh9gg1gimR0KP+9aUQefudfdjJawcYirIdCagfU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ep5eTPn5S26qdLrBviWXtOaeGLN1vaFosNgQYk3btPoEv7AaNT5ITdw7fxkJYunzPEKLh50u9M6TD4ubGD1QpxyutfsTuAj6TM2SbfgsDUFTQcrd+wmH5r/a8se765HhgOS8hllgVJVQgN8NWBwv80VKtWU5yf7AxRh0GK8VrVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=TZuXacvM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4546C4CEFE;
-	Wed, 19 Feb 2025 14:03:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1739973791;
-	bh=SfAIfh9gg1gimR0KP+9aUQefudfdjJawcYirIdCagfU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TZuXacvMi2IS2MDJ0/dZ1oJtrC9Bmnneh1sd54LILUI5ZVUJas+KmW31MQQsveqZj
-	 IA7aa/UKS2di8up/HoK43468WEtHW3ybVIryeD2tTP00DdWbS/zMhRg2DsUHPk1rAh
-	 tyGaFlVGRytiW4Wk50LkVVjIL4HQL8YmUs3TzQVQ=
-Date: Wed, 19 Feb 2025 15:03:08 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: adamsimonelli@gmail.com
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jiri Slaby <jirislaby@kernel.org>
-Subject: Re: [PATCH v2 2/2] tty: Change order of ttynull to be loaded sooner.
-Message-ID: <2025021957-babble-delivery-3035@gregkh>
-References: <20250217040748.2017975-1-adamsimonelli@gmail.com>
- <20250217040748.2017975-3-adamsimonelli@gmail.com>
+	s=arc-20240116; t=1739973796; c=relaxed/simple;
+	bh=+yoyTgslXEGlaSowE8SMsWkFERto3CdZJqou3uuI6Ok=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XRXub6Up4fVSgzNS1c3OP0556gDlhiXQpjD9NMDhPggFO9/qjcb9UfyLZRCToZB4+8PwtBAM/WgEdT3gVCCtyHutB/2E/uShYCmsSAmWRZX4KJSs5fbHnszLXny+oc0VncO5GcMSbif00FiiTGE8Z/zK9ETP2LW/40WpSIxdp2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=TFExlLpO; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1739973791;
+	bh=+yoyTgslXEGlaSowE8SMsWkFERto3CdZJqou3uuI6Ok=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TFExlLpOj3jsnWCm2u34v6V3QmBM165e/qPBc7wdqoPKkaAkfZWJS0t5LphRnbsIq
+	 49LT+aBrQ1rbAogEwlX7fOJOpgFUwZ5PIVU6z/JLjPGY5hzZMRwjRsXjE+ESCWQdj+
+	 5rdavkl1WwyCgYZe1jJBfjNr1XHZcsDJIBydJkC1r7+jb8xfQ6FnDtTowrRWoC4xsq
+	 naZGbKRUnSlDxZ6oLNlzlCCmGZ6scV1NAE2hxKwQi0DJrf8SHa0gui19+MTnLB3E3R
+	 7JmUQ4nAzY3cxsD1t4liVDbbOGx75GTc2x99/d+JwWApIDNDDz5+1Yq7/qXuyXNck9
+	 Rf4IsUiiQItTA==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 4EFDB17E0860;
+	Wed, 19 Feb 2025 15:03:10 +0100 (CET)
+Message-ID: <c534a79b-c253-4d7e-9bc1-9efa491d1db0@collabora.com>
+Date: Wed, 19 Feb 2025 15:03:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250217040748.2017975-3-adamsimonelli@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/3] dt-bindings: display: mediatek: Add compatibles
+ for MT8188 MDP3
+To: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+Cc: p.zabel@pengutronix.de, airlied@gmail.com, simona@ffwll.ch,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ mchehab@kernel.org, matthias.bgg@gmail.com, moudy.ho@mediatek.com,
+ dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ kernel@collabora.com, sebastian.fricke@collabora.com,
+ macpaul.lin@mediatek.com
+References: <20241218105320.38980-1-angelogioacchino.delregno@collabora.com>
+ <20241218105320.38980-2-angelogioacchino.delregno@collabora.com>
+ <CAAOTY_9J4TE=qo+00N7T6-daMET+eTt8psp+eV1DXdgrz+avEQ@mail.gmail.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <CAAOTY_9J4TE=qo+00N7T6-daMET+eTt8psp+eV1DXdgrz+avEQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sun, Feb 16, 2025 at 11:07:48PM -0500, adamsimonelli@gmail.com wrote:
-> From: Adam Simonelli <adamsimonelli@gmail.com>
+Il 19/02/25 14:49, Chun-Kuang Hu ha scritto:
+> AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com> 於
+> 2024年12月18日 週三 下午6:53寫道：
+>>
+>> Add compatible strings for the AAL, COLOR, MERGE and PADDING
+>> hardware components found in MediaTek's MT8188 SoC.
+>>
+>> This hardware is compatible with MT8195.
 > 
-> If CONFIG_NULL_TTY_CONSOLE is enabled, and CONFIG_VT is disabled, ttynull
-> will become the default primary console device, based on the load order.
+> Acked-by: Chun-Kuang Hu <chunkuang.hu@mediatek.com>
 
-You mean "link order" right?
+Thanks CK, much appreciated.
 
-> Users and distributions that are migrating away from CONFIG_VT will
-> benefit from this as /dev/console would not suddenly become /dev/ttyS0
-> which could otherwise cause some user space behavior changes, namely the
-> TCGETS ioctl failing, which causes libc's isatty() to incorrectly return
-> false when /dev/ttyS0 is disabled, and will prevent a device that is
-> connected to a user's /dev/ttyS0 to suddenly start getting kernel log
-> messages.
-
-I'm sorry, but I can not parse that very long sentance.  If CONFIG_VT is
-not enabled, this isn't going to change anything with ttynull, it will
-just happen to have this console loaded before all others, right?
-
-Which implies that this might break existing systems when this loads
-before the expected platform-specific drivers.  Was this tested on those
-systems?
+Cheers!
 
 > 
-> Signed-off-by: Adam Simonelli <adamsimonelli@gmail.com>
-> ---
->  drivers/tty/Makefile | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/tty/Makefile b/drivers/tty/Makefile
-> index 07aca5184a55..03bb47e11e1c 100644
-> --- a/drivers/tty/Makefile
-> +++ b/drivers/tty/Makefile
-> @@ -11,6 +11,8 @@ obj-$(CONFIG_N_HDLC)		+= n_hdlc.o
->  obj-$(CONFIG_N_GSM)		+= n_gsm.o
->  
->  obj-y				+= vt/
-> +obj-$(CONFIG_NULL_TTY)		+= ttynull.o
+>>
+>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> ---
+>>   .../bindings/display/mediatek/mediatek,aal.yaml        |  4 ++++
+>>   .../bindings/display/mediatek/mediatek,color.yaml      |  4 ++++
+>>   .../bindings/display/mediatek/mediatek,merge.yaml      |  4 ++++
+>>   .../bindings/display/mediatek/mediatek,padding.yaml    | 10 +++++++---
+>>   4 files changed, 19 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,aal.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,aal.yaml
+>> index cf24434854ff..1479035da409 100644
+>> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,aal.yaml
+>> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,aal.yaml
+>> @@ -25,6 +25,10 @@ properties:
+>>             - mediatek,mt8173-disp-aal
+>>             - mediatek,mt8183-disp-aal
+>>             - mediatek,mt8195-mdp3-aal
+>> +      - items:
+>> +          - enum:
+>> +              - mediatek,mt8188-mdp3-aal
+>> +          - const: mediatek,mt8195-mdp3-aal
+>>         - items:
+>>             - enum:
+>>                 - mediatek,mt2712-disp-aal
+>> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,color.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,color.yaml
+>> index 7df786bbad20..799c0b8fc1f9 100644
+>> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,color.yaml
+>> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,color.yaml
+>> @@ -27,6 +27,10 @@ properties:
+>>             - mediatek,mt8167-disp-color
+>>             - mediatek,mt8173-disp-color
+>>             - mediatek,mt8195-mdp3-color
+>> +      - items:
+>> +          - enum:
+>> +              - mediatek,mt8188-mdp3-color
+>> +          - const: mediatek,mt8195-mdp3-color
+>>         - items:
+>>             - enum:
+>>                 - mediatek,mt7623-disp-color
+>> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,merge.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,merge.yaml
+>> index dae839279950..415a25bc18fa 100644
+>> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,merge.yaml
+>> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,merge.yaml
+>> @@ -25,6 +25,10 @@ properties:
+>>             - mediatek,mt8173-disp-merge
+>>             - mediatek,mt8195-disp-merge
+>>             - mediatek,mt8195-mdp3-merge
+>> +      - items:
+>> +          - enum:
+>> +              - mediatek,mt8188-mdp3-merge
+>> +          - const: mediatek,mt8195-mdp3-merge
+>>         - items:
+>>             - const: mediatek,mt6795-disp-merge
+>>             - const: mediatek,mt8173-disp-merge
+>> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,padding.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,padding.yaml
+>> index be07bbdc54e3..86787866ced0 100644
+>> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,padding.yaml
+>> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,padding.yaml
+>> @@ -20,9 +20,13 @@ description:
+>>
+>>   properties:
+>>     compatible:
+>> -    enum:
+>> -      - mediatek,mt8188-disp-padding
+>> -      - mediatek,mt8195-mdp3-padding
+>> +    oneOf:
+>> +      - enum:
+>> +          - mediatek,mt8188-disp-padding
+>> +          - mediatek,mt8195-mdp3-padding
+>> +      - items:
+>> +          - const: mediatek,mt8188-mdp3-padding
+>> +          - const: mediatek,mt8195-mdp3-padding
+>>
+>>     reg:
+>>       maxItems: 1
+>> --
+>> 2.46.1
+>>
 
-If you are going to rely on link order here, and HAVE to have this above
-all other consoles, please document it as such so that people have a
-hint as to why you are doing this in the file so it dosn't change again.
-
-thanks,
-
-greg k-h
 
