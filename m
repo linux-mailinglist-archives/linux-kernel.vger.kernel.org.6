@@ -1,119 +1,205 @@
-Return-Path: <linux-kernel+bounces-521654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03E96A3C070
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:48:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 708D2A3C055
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 14:46:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5E793B9461
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:44:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3960189114C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:45:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD99A1EA7FC;
-	Wed, 19 Feb 2025 13:43:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 625151EFFA4;
+	Wed, 19 Feb 2025 13:44:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="dAWINYM6"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="bwaGPcOm"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 826441C3C11;
-	Wed, 19 Feb 2025 13:43:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0020C1EDA3B;
+	Wed, 19 Feb 2025 13:44:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739972632; cv=none; b=CXfYzpJVpevtzu3dMQMGIWSH8vxBDmSjYLKKvBrK2Md8pNIVGnfnDDYOmxqBAyf3ldf+DbPn+sNnrKDzZklhr4oFyMdRM7qvAFLeInk+8CJCRL76o/iNbryK6+WbEE9M5OyC9y0mJuC6gqNjud45EPxzxYTW/LbSeVjCfHb/zZ0=
+	t=1739972659; cv=none; b=IRacQdE0Xn1IHcSFFHE5Hjjgb3SzyYqOjIR5niElh67nFtCFDsekHUTCKuRaQjV645HilH9DznhcuQJFTlycJVYDOXiWnwnYHQbZoBLJtob908DhIwwA1tckgkqS6zqKyKsfPc/o7Cx2CL2Bbr5AURN50sAHUPvxHntjwHOQ5fY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739972632; c=relaxed/simple;
-	bh=AWOeMCIP6k+DdjeVem59jvHAY8phtfH/61lO07anvnQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QM+Ipyygbnq6A7mWoUmB17snnQ/unGinTyiBonZns91Peql6+VpJv/Qul8wljt+xCR0ro8si2h2K4RNyYaPe/o0qhTzEojBswHKrx5Rh4qenX82XvMg77bcTgbPSM7QaQqxSEu+tzb6eebE6zI4INrzrSpocP+MbtCHctc+YfOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=dAWINYM6; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1739972628;
-	bh=AWOeMCIP6k+DdjeVem59jvHAY8phtfH/61lO07anvnQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dAWINYM61MZADtGlLWmkm/IFpcjX4E0KXCvxozxCyciEcdp+Sq0J4Rwu1txzlB2gN
-	 oWmZ/2UzkdCAZKMt13Q5yYscplizcr/uHx6S8Fv1Kxuu3KnBaeZsL1H3vP2PilHRJY
-	 1fyRqK1SmPesLsGhNv7yeIHD4Wma5knfmojHEALD6ZLsAc9hfGI8NRSRebqwZJ1lFV
-	 Mx/wWETOXNCzYCTB62VNDVJLflr4AZqmB8oBEFHn5L958tHi3NwE7S3gzyIJ1caOWt
-	 h8tD3pEXyWZVy83DqXR2AaJWzxHIRX0Mz2pwOmOgOyosflYwT6N3AK2GFK7EcUFOG9
-	 nTTDWJO/e21mA==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id E1C4C17E14D5;
-	Wed, 19 Feb 2025 14:43:47 +0100 (CET)
-Message-ID: <8204f202-9af5-46f5-96f8-3cb32fe32179@collabora.com>
-Date: Wed, 19 Feb 2025 14:43:47 +0100
+	s=arc-20240116; t=1739972659; c=relaxed/simple;
+	bh=f9Zc5VG8pt57R7Xvh+xsVJ/ay+lEmys3EP79pZtRUO4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VLNfkBiOVshAZjWjcKL7/9vxRWlzI2BGUm2B8SXoAEwSIBwK5fu0OuPr8+H3+CM78dXcZMitpA2Xxg6zeN4ydMEBEa8yO4eLBPYce1WOREPej0rsPA1lrhWG6ar4sJD0N7VnLmw4OsF8awv7dZ3tBKgcbALIz8zg8qllY93DTd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=bwaGPcOm; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0413D169;
+	Wed, 19 Feb 2025 14:42:52 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1739972573;
+	bh=f9Zc5VG8pt57R7Xvh+xsVJ/ay+lEmys3EP79pZtRUO4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bwaGPcOm7pnNqi+CQD8qLP4ToxnVHXV10hly/kI1aDNTwG60yEFhQhehRuyOIlQ9F
+	 jBMwh0bfCjSJPotc9w+hrrMebIT0m2aRkPzhI6Ltu8PBo7Kz2IvmLFWV+DEBHT8IGS
+	 zayOXFdn5BasZk2mMIjOQ/MMSFzZxut1XfJGEmjU=
+Date: Wed, 19 Feb 2025 15:44:00 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Janne Grunau <j@jannau.net>
+Cc: Sasha Finkelstein <fnkl.kernel@gmail.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Sven Peter <sven@svenpeter.dev>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Hector Martin <marcan@marcan.st>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-media@vger.kernel.org, imx@lists.linux.dev
+Subject: Re: [PATCH 3/5] media: dt-bindings: Add Apple ISP
+Message-ID: <20250219134400.GC15114@pendragon.ideasonboard.com>
+References: <20250219-isp-v1-0-6d3e89b67c31@gmail.com>
+ <20250219-isp-v1-3-6d3e89b67c31@gmail.com>
+ <16f6d4a2-2102-48b9-a0ae-b8c6595975b8@kernel.org>
+ <CAMT+MTR7dhtt3SOMg0K3UakJQftqnc2S-rV41HdHtA+o9aSPug@mail.gmail.com>
+ <20250219105326.GA31383@pendragon.ideasonboard.com>
+ <20250219115737.GB26386@robin.jannau.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/6] ASoC: mediatek: mt8188: Support DMIC in AFE
-To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, kernel@collabora.com, linux-sound@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
- parkeryang <Parker.Yang@mediatek.com>
-References: <20250218-genio700-dmic-v1-0-6bc653da60f7@collabora.com>
- <20250218-genio700-dmic-v1-4-6bc653da60f7@collabora.com>
- <6cd2be03-a3e8-4bdc-b91e-51b3e1029782@collabora.com>
- <51ac7a72-9113-46c6-98d8-2924a9572966@notapiano>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <51ac7a72-9113-46c6-98d8-2924a9572966@notapiano>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250219115737.GB26386@robin.jannau.net>
 
-Il 19/02/25 14:40, Nícolas F. R. A. Prado ha scritto:
-> On Wed, Feb 19, 2025 at 12:29:13PM +0100, AngeloGioacchino Del Regno wrote:
->> Il 18/02/25 21:52, Nícolas F. R. A. Prado ha scritto:
->>> From: parkeryang <Parker.Yang@mediatek.com>
->>>
->>> Add the AFE routes that connect the DMIC (I004-I011) to the UL9 frontend
->>> (O002-O009) and register the mt8188-dmic DAI driver during probe.
->>>
->>> Signed-off-by: parkeryang <Parker.Yang@mediatek.com>
->>> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
->>> ---
->>>    sound/soc/mediatek/mt8188/Makefile            |  1 +
->>>    sound/soc/mediatek/mt8188/mt8188-afe-common.h |  1 +
->>>    sound/soc/mediatek/mt8188/mt8188-afe-pcm.c    | 24 ++++++++++++++++++++++++
->>>    3 files changed, 26 insertions(+)
->>>
->>> diff --git a/sound/soc/mediatek/mt8188/Makefile b/sound/soc/mediatek/mt8188/Makefile
->>> index 1178bce45c50ba252672a32b3877732a5a76c610..b9f3e4ad7b07ba9e21c846706371c53269f894db 100644
->>> --- a/sound/soc/mediatek/mt8188/Makefile
->>> +++ b/sound/soc/mediatek/mt8188/Makefile
->>> @@ -6,6 +6,7 @@ snd-soc-mt8188-afe-y := \
->>>    	mt8188-afe-pcm.o \
->>>    	mt8188-audsys-clk.o \
->>>    	mt8188-dai-adda.o \
->>> +	mt8188-dai-dmic.o \
->>>    	mt8188-dai-etdm.o \
->>>    	mt8188-dai-pcm.o
->>
->> The Makefile addition doesn't belong to this commit. Please fix.
+On Wed, Feb 19, 2025 at 12:57:37PM +0100, Janne Grunau wrote:
+> On Wed, Feb 19, 2025 at 12:53:26PM +0200, Laurent Pinchart wrote:
+> > On Wed, Feb 19, 2025 at 10:54:31AM +0100, Sasha Finkelstein wrote:
+> > > On Wed, 19 Feb 2025 at 10:37, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> > > > > +
+> > > > > +  apple,platform-id:
+> > > > > +    description: Platform id for firmware
+> > > > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > > >
+> > > >
+> > > > No, use firmware-name.
+> > > 
+> > > Not sure how is firmware-name an appropriate field, fw-name is a string
+> > > that references a firmware file, while this field is an id that is sent to the
+> > > coprocessor firmware in order to identify the platform.
+> > > 
+> > > > > +  apple,temporal-filter:
+> > > > > +    description: Whether temporal filter should be enabled in firmware
+> > > > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > > >
+> > > > And why is this not enabled always? Why this is board specific?
+> > > 
+> > > Not every board has support for this feature.
+> > > 
+> > > > You miss here ports or port. ISP usually gets signal from some camera or
+> > > > other block.
+> > > 
+> > > For complex cameras - yes, but this is closer to a UVC camera connected
+> > > via a bespoke protocol. We do not need to deal with the sensor access,
+> > > all of it is managed by the coprocessor firmware.
+> > > 
+> > > > > +        properties:
+> > > > > +          apple,config-index:
+> > > > > +            description: Firmware config index
+> > > > > +            $ref: /schemas/types.yaml#/definitions/uint32
+> > > >
+> > > >
+> > > > No duplicated indices. You have reg for this, assuming this is index.
+> > > 
+> > > There are duplicated indices, see isp-imx248.dtsi in patch 5 for an example.
+> > > 
+> > > > All these do not look like hardware properties but rather configuration
+> > > > of sensor which should be done runtime by OS, not by DT.
+> > > 
+> > > Those are board-specific and not discoverable via the ISP protocol.
+> > 
+> > But they are settable through the ISP protocol, aren't they ? For
+> > instance, looking at isp-imx248.dtsi, the first four entries are
+> > 
+> > 	/* 1280x720 */
+> > 	preset0 {
+> > 		apple,config-index = <0>;
+> > 		apple,input-size = <1296 736>;
+> > 		apple,output-size = <1280 720>;
+> > 		apple,crop = <8 8 1280 720>;
+> > 	};
+> > 
+> > 	/* 960x720 (4:3) */
+> > 	preset1 {
+> > 		apple,config-index = <0>;
+> > 		apple,input-size = <1296 736>;
+> > 		apple,output-size = <960 720>;
+> > 		apple,crop = <168 8 960 720>;
+> > 	};
+> > 
+> > 	/* 960x540 (16:9) */
+> > 	preset2 {
+> > 		apple,config-index = <0>;
+> > 		apple,input-size = <1296 736>;
+> > 		apple,output-size = <960 540>;
+> > 		apple,crop = <8 8 1280 720>;
+> > 	};
+> > 
+> > 	/* 640x480 (4:3) */
+> > 	preset3 {
+> > 		apple,config-index = <0>;
+> > 		apple,input-size = <1296 736>;
+> > 		apple,output-size = <640 480>;
+> > 		apple,crop = <168 8 960 720>;
+> > 	};
+> > 
+> > But I may be interested in capturing a 640x480 frame with cropping only
+> > and without scaling, with
+> > 
+> > input-size = 1296x736
+> > output-size = 640x480
+> > crop = (328,128)/640x480
+> > 
+> > Or I may want my cropped frame to be located in the upper-left corner:
+> > 
+> > input-size = 1296x736
+> > output-size = 640x480
+> > crop = (8,8)/640x480
+> > 
+> > If I set those parameters through the ISP protocol, won't it work ?
 > 
-> I was divided between adding it here or in the previous commit that adds the
-> dmic driver. Only in this commit is the mt8188_dai_dmic_register() added, so
-> this is the first commit in which any of the code from the dmic driver is
-> actually used, hence why I added it here. But adding the makefile entry together
-> with the driver code, even if it's not used, makes sense too, so I'll move it
-> there.
+> If my memory serves me right the presets wre added as workaround for
+> userspace not handling V4L2_FRMSIZE_TYPE_STEPWISE well (or at all) and
+> the added complexity of handling the qadratic sensor with partially
+> occluded or outside of the usable lens diameter corners.
 > 
+> It is a simplified description of the hardware to make it useable for
+> most software which is expected simple uvc cameras.
 
-You can even squash the two commits... after all, adding a piece that doesn't
-get used until a later time is practically useless... right?! :-)
+I understand that. Ideally userspace should be fixed, but in the
+meantime, I'm fine with the driver exposing a set of presets. They
+should however not be listed in DT, but computed by the driver based on
+properties that describe the device (such as, for instance, the full
+sensor resolution, or the visible area). Those properties could come
+from DT, or be hardcoded in the driver on a per-compatible basis.
+
+> There are still two common issues in user space software related to this
+> driver:
+> - software expects width == linesize
+> - resolution selection is based frame height, i.e. it prefers 1080x1920
+>   over 1920x1080 on devices with quadratic sensor.
+
+I share your pain, having to fix userspace when doing kernel work isn't
+always fun :-)
+
+-- 
+Regards,
+
+Laurent Pinchart
 
