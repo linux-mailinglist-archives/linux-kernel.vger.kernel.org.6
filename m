@@ -1,142 +1,128 @@
-Return-Path: <linux-kernel+bounces-521967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 720F1A3C46C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:05:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72726A3C466
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:05:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C89193B718C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:04:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0CAD47A69F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:04:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94B351FDA85;
-	Wed, 19 Feb 2025 16:04:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC8AE1FDA8E;
+	Wed, 19 Feb 2025 16:05:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Xn5XdH8Y";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="0k6/xkON"
-Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pSkIiARg"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A7AA14A91;
-	Wed, 19 Feb 2025 16:04:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 737BE1ACEBA
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 16:05:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739981054; cv=none; b=dd/zDg3DvNzqnhKCClYWQJq+gqX6coxx5fnBRZ0P8qI9RH6tFyKTEFBSUBKRQKOUC5ZWvK+TkRpKM0cp8aOMq9h7dtBu0CVXGFHFpuyroy5Tm5dIwFpmZdKYjo+Mv5jk1MTiXqywyTsKqXi8LaxDuXEjGcXkOm1Tmopb3QpW7YE=
+	t=1739981103; cv=none; b=LKNDGItEcbxUIOMkuRj+IylhqphptalEs8MSBX73ZeRP2Sz0BER18/8wdzksIf23cliIkAiEi7YI+H2jr7Nc+b4zQo+DKb8mklVRWmY1M02fEnKyj+x0fhGU/sVWvhJUIP4GtoMjI05OApPs1M//Ks5B8iWeTU9A7ekx5URSiRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739981054; c=relaxed/simple;
-	bh=U9aatbgVh/VMCxNBWMgVD08XxuyfLbPpwBTGGpC9/Cc=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=DNfDb74PomfEnt8WS4g/5gG06BzJaMZkP4GxVJ+bdeGjDwrQETRhwb8870podkAkfVlDR/CvngtKK4UnVi3Zf9Oaa7huhpegZEcIoVpV7y/uVysYoT+suCrkOkDVYLabtSTG++ZIXz1pz4IrSAVp3Qb++h/JphaAYf0aVHJ/QUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Xn5XdH8Y; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=0k6/xkON; arc=none smtp.client-ip=103.168.172.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 453361140121;
-	Wed, 19 Feb 2025 11:04:11 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-11.internal (MEProxy); Wed, 19 Feb 2025 11:04:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1739981051;
-	 x=1740067451; bh=Wepfq+N3jZTlBa40ZfQRXlCbCHPFRJLnW34nES6e8+c=; b=
-	Xn5XdH8YQHgGhH+Bor16ARPxvCJHtEgpCXY3fGUJCQdCXm3eiJMHBqijsYNUwLWo
-	i8WT2cQLQ5DUJMfjjFv8d7v0Cq3L1vS3VN1FlYZppf5Phl9RjdWJATZFrmCbXpNZ
-	MySmvVLZcjX1CrfB08SBESlVVuJMh9ekrW7XAuKGMNSKPmkLWZPSSXv7uXXGnCrO
-	F39vGqIm4OXkm2sSXnpUJkJdcxGRgnC/gpTx9uikkQj0sBLU5TF8F/nnzWE3arjA
-	dETcTXQCvzxquOD7hjK0XTZEuQlUNHV7I5ovkhRzexDBRgLHDEvsAdsk1OrGiaWA
-	2GIW3wahuJfrUTrXd54FuA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1739981051; x=
-	1740067451; bh=Wepfq+N3jZTlBa40ZfQRXlCbCHPFRJLnW34nES6e8+c=; b=0
-	k6/xkONKw0Qfjc8LB0UTfFqrwlHga+Ntk5rtqdpXZfkbffZ4xAM8VEBZrfjDjPDA
-	ZDnmBcbeFkt4Igp071O6JBuWC4VI1gwFEf3fOCL4HR8GRLasC+7FvSZpU9hdz/bz
-	cH/uwQxF4+pkf4shcI71FAl1+MhgUI++CP95ZnHAUhXwW622UPBeOyn5DtC6JNzX
-	C7VegSuQwcEY7HfaYsGLXF17YUQtUjdcjCq1RQYcEiLlc03XM2l+XsQIqEgvpA9L
-	zFYOgzOFgCuNn+0Oc0QmFsq8Mvp7VBLO755/sbi8lIUjxGofcW4VGY+gbNfntipg
-	J4KpaIZLt5bD36ngJY2Yg==
-X-ME-Sender: <xms:-gC2Z7G2Y87c__hqGNS_B4AmYZaWTaLIITtvJ5u_EJ7mv21dbbt68Q>
-    <xme:-gC2Z4XruaeQLw9iXaKdXbJkordVSQKmUkhRMWZTue7x_dlkuaSK2ha0-F6JMf-Cc
-    A32J5O3G_vFmRtG0m8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeigeeikecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
-    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedu
-    jedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhloh
-    hfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhr
-    tghpthhtoheprghrnhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehhohhrmhhsse
-    hkvghrnhgvlhdrohhrghdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhr
-    tghpthhtoheprghnughrvgifodhnvghtuggvvheslhhunhhnrdgthhdprhgtphhtthhope
-    gssghhuhhshhgrnhdvsehmrghrvhgvlhhlrdgtohhmpdhrtghpthhtohepghgrkhhulhgr
-    sehmrghrvhgvlhhlrdgtohhmpdhrtghpthhtohephhhkvghlrghmsehmrghrvhgvlhhlrd
-    gtohhm
-X-ME-Proxy: <xmx:-gC2Z9Idv999dSXvscrirp437WD8o0zbQS-3qX_u0Gwng24BuIX71Q>
-    <xmx:-gC2Z5HKpdcgHyVEWSFSPFQO_Tlz2KAr42U-bWtakXru49i8jx6qcg>
-    <xmx:-gC2ZxVKhX1hcWGVQGgYTb0y2seT6etGOqKIrQ6NZx52U7I-MKJYPg>
-    <xmx:-gC2Z0MFkjSbhLKPecczm8--VkjJc8IC5nB3akmjbSHw7AgvAX_yGg>
-    <xmx:-wC2Z1nKDjPhoLXrE8h5SL57RjT4UR2aYddZCquRcn4bmtLls1-kGdmB>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 533772220073; Wed, 19 Feb 2025 11:04:10 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1739981103; c=relaxed/simple;
+	bh=OiOSh7apz2kEsevABDPqv1dC0auMRoIYy9Zyi7ArObY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HpwAyx5vmqT46p3h8ZjfPfNuw7CBvvXgQwYoBBwJEWBsWhrG+8MNCtEWClYze9Kibk729PqevVHhOir+Pk3PFzoO29n9ka5wtiEHEvk+sY62xtPLL15vx2x6yed8BfTeVkJ2onTvvgNOmLOF7IPMzW7OyvvM/8/6SuBMZqI/q+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pSkIiARg; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5dca468c5e4so12694678a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 08:05:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739981100; x=1740585900; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ljkXhqkhG6hd6NRSsz5fArUZWBwAzxurIP4uHPf/TMY=;
+        b=pSkIiARg9ehMQbQZvMhCjBd8LbOHtgBn0IU8YKnrLL0SaKgx7kyFpTR52kH+FWcg7X
+         r3EAIIa+BQ9VPwf2KeGBel/2hVlaJZ883AbEerjSIB0TT45ep2+9/2x1KSsFHSp9j+Ej
+         CqVE0PeuePfa0UZ8kdJwA0UcyPZ7YJJm/6BiTyBR+AK9217mTb1i3KcuTi6bZ238v38Y
+         Fh0YPHxzsfrGedmZsBxyOA7G40gew1oO1YVh2pFEJtOhHlSC0UuLpoD9LoVDsLYzq81b
+         5DnRpwnwemUP55x5bwP1u92AAHXRNFVEYDU9+HNnPkIuuQWBkV5Z3VNoVLLRGyYVNIPr
+         7roA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739981100; x=1740585900;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ljkXhqkhG6hd6NRSsz5fArUZWBwAzxurIP4uHPf/TMY=;
+        b=eYybBiwEfxtGWf7hlgNdkTxq+iX7oKW+exSXXxuxKO6RvWHFSw1rL62W8/iCL6pkG0
+         wRlJ2ocysjehCKzLtNod3KvBU8ntM47w1xffCf0qaJoxewxrouiLdkNG9qmO9e1xAKM5
+         2W2sYuf2C8xvyGOD9Cqbw+soBwzbS/3ahMDgsZzMBdzcsZHW2rAYJ7HMONKbhFlmieDj
+         FrdUnyuBYxmy955KUWMS52Ez/K4zxbBZ3c8lzO2xnjODhD8w7g4XKMsbYHCA1HVI/AGO
+         xWHQCF20sIORAkVcA3boespWXA6y+ml4wiv5m3+RbejllezanyD0ydiXnXVhTaugGz/n
+         E59A==
+X-Forwarded-Encrypted: i=1; AJvYcCWpMKl/jUJFbQxa+APJdc7VlC0KwCg8J/tvR0+ddCsNXuP+916ONP4YNfRdgjfxganCw8WBzMbS42wdxXc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yydeg8USEBTCkY3UDKSE5FtzxMiiWORSDpt33M38E3IIkMSiNBj
+	onCnnhKib5HGHGP30fCgT9hSJB4TcfJ6PUyZn02IcCO+EbFnNHIKJ1IYNxq+5Kk=
+X-Gm-Gg: ASbGncv2+tMnzcTLbcjn/D+pr0W33oWN7edI6AJtYhv7P2/Ls3UkY0YGaH85deE4Uq1
+	uMOgGDJEKgcovCJXN82NZOJqm/drgGDAo4G1JSOGJJkfNsIhvgX8ayRQj+ndqhGIYLZ8lcYd/XL
+	+e2/keA3tnsv0vWX5a5A0ky7LIGkVnqnv1PjAjJIskvefGWVm+/gycytNqOG12c3mYNxo9LWcAI
+	VjX3oS5b+6RkxS4dnk04TFnAQHZ5kHBbTlNKZPZzwy6K2rfPWH+bTB8cqVuaLHtX1S7ZOxkbH6M
+	wJPN3QpqCxQlxFZhIR9W
+X-Google-Smtp-Source: AGHT+IGIOphoxeNaBbPBBYiv7n3xtBHBqQ7mynIC16IzmDF75ejyL2+ZcOWGMA4f93tnbTIyUvSjSw==
+X-Received: by 2002:a05:6402:234f:b0:5dc:72e1:63ee with SMTP id 4fb4d7f45d1cf-5e03605b765mr20641327a12.6.1739981099630;
+        Wed, 19 Feb 2025 08:04:59 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-5dece287d3fsm10511628a12.72.2025.02.19.08.04.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2025 08:04:59 -0800 (PST)
+Date: Wed, 19 Feb 2025 19:04:54 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: Jim Qu <Jim.Qu@amd.com>, Lukas Wunner <lukas@wunner.de>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Takashi Iwai <tiwai@suse.de>, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Su Hui <suhui@nfschina.com>
+Subject: Re: [PATCH] vgaswitcheroo: Fix error checking in
+ vga_switcheroo_register_audio_client()
+Message-ID: <f608a3b5-320a-4194-bd03-cf08be04c317@stanley.mountain>
+References: <ae24cd32-1e78-4656-b983-051ed22d86b9@stanley.mountain>
+ <87zfiim09n.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 19 Feb 2025 17:03:49 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Arnd Bergmann" <arnd@kernel.org>, "Sunil Goutham" <sgoutham@marvell.com>,
- "Geetha sowjanya" <gakula@marvell.com>,
- "Subbaraya Sundeep Bhatta" <sbhatta@marvell.com>,
- hariprasad <hkelam@marvell.com>, "Bharat Bhushan" <bbhushan2@marvell.com>,
- "Andrew Lunn" <andrew+netdev@lunn.ch>
-Cc: "David S . Miller" <davem@davemloft.net>,
- "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
- "Paolo Abeni" <pabeni@redhat.com>, "Simon Horman" <horms@kernel.org>,
- "Suman Ghosh" <sumang@marvell.com>,
- "Sai Krishna Gajula" <saikrishnag@marvell.com>,
- "Nithin Dabilpuram" <ndabilpuram@marvell.com>,
- Netdev <netdev@vger.kernel.org>, linux-kernel@vger.kernel.org
-Message-Id: <b7462eca-4900-4fb6-8ddc-7d27897ced7f@app.fastmail.com>
-In-Reply-To: <20250219142433.63312-1-arnd@kernel.org>
-References: <20250219142433.63312-1-arnd@kernel.org>
-Subject: Re: [PATCH net-next] octeontx2: hide unused label
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87zfiim09n.fsf@intel.com>
 
-On Wed, Feb 19, 2025, at 15:24, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> A previous patch introduces a build-time warning when CONFIG_DCB
-> is disabled:
->
-> drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c: In function 
-> 'otx2_probe':
-> drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c:3217:1: error: 
-> label 'err_free_zc_bmap' defined but not used [-Werror=unused-label]
-> drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c: In function 
-> 'otx2vf_probe':
-> drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c:740:1: error: 
-> label 'err_free_zc_bmap' defined but not used [-Werror=unused-label]
->
-> Add the same #ifdef check around it.
->
-> Fixes: efabce290151 ("octeontx2-pf: AF_XDP zero copy receive support")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+On Wed, Feb 19, 2025 at 05:17:56PM +0200, Jani Nikula wrote:
+> On Wed, 19 Feb 2025, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> > The "id" variable is an enum and in this context it's treated as an
+> > unsigned int so the error handling can never trigger.
+> 
+> When would that be true with GCC?
 
-Sorry, this version caused a different build failure a few randconfig
-builds in, please ignore and wait for v2.
+The C standard give compilers a lot of flexibility with regards to enums.
 
-      Arnd
+But in terms of GCC/Clang then enums default to unsigned int, if you
+declare one as negative then they become signed int.  If they don't fit
+in int, then they become u64 etc.
+
+enum u32_values {
+	zero,
+};
+
+enum s32_values {
+	minus_one = -1,
+	zero,
+};
+
+enum u64_values {
+	big = 0xfffffffffUL;
+};
+
+regards,
+dan carpenter
+
 
