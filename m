@@ -1,361 +1,192 @@
-Return-Path: <linux-kernel+bounces-522027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE94BA3C50D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:32:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C51BA3C509
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 17:31:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F2111889979
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:29:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3738C1744A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:29:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0505D1FDE2B;
-	Wed, 19 Feb 2025 16:28:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2ED21FE473;
+	Wed, 19 Feb 2025 16:29:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="T65cSBjJ"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fYQ5Ev10"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B4811FA267
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 16:28:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34E451FE443
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 16:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739982530; cv=none; b=fGKZmHKJ11cqKzMSNhbkto+xRQFoWnsfPOxJTHqpCs95DOu47axZ5nLdM9JcMzW3nDCj1mZtHcx2RRsYyNojgZAZDfxTXewRWGcHXjYAAZaJ9D7m5e/9BA1aQtTEfZL2T0wqaNnSgy0s8RInPW277O+gLxYPTGHrBlYRk3n0Nt4=
+	t=1739982542; cv=none; b=Rc8x9WL5MFlKSTE9gyaEVahTbNvsHy9DHZWfhRL/jHd1PAeYeqJvKmrzLL2+A6vF4mS9rphhX8BlGxR7UbZUJ9MxLaT3gq5XxJ1t/63jp0asjrSSttrrsgkRpLPiRZqNd9WZ/HxLeOHV/pC9NNqD7Qf/6nmaxHwrT+CqPgiamIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739982530; c=relaxed/simple;
-	bh=LhRApKNfdk4DBOShWE7FWjKR6OFHkuIC5BshC8nKQb0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=LeHCnbwn+Hdo2sW9l2fasueUm1xsk35eOm1wYaGSkItmVcwLMelHWEjVhONm+c6SMyi6CJZU0Q9je4GJNW8wOI7i2RYX195p6WSpqnJtwg0pbSfOuTSb3a3vetT8iZjkmKBuuf3mmhGGmSSB1jMzczNFkaglP6/bxbxUzi+7Jxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=T65cSBjJ; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id B70BA204D5;
-	Wed, 19 Feb 2025 16:28:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1739982526;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=r26FKGG+adt7uAn+1dqw1kypEE/sGGwT5qwvDLzxGGw=;
-	b=T65cSBjJKEDyb9iz/mmk3X5LoxaGaLx59ntwWk3wqzb9CVmEuAfOhNUNbb38+8khgIpWIv
-	NcoG1UocEn5vOxhEVfJwelgPX/AtXhCHVO1B8RYKQpFncQ5m7iYurFKDZUHBsHcXVB0VuQ
-	yXTe266iSfECJwxoTXZbAexXED9/8sRssfG1tmzrq0Ev+t+CA7PIp56oisdNEUkwzl+F80
-	frXlSwbK1MqfvHMp+iQ10t2xld9ErDZR5vOB/6IJf2EQbQvx5YdA4eUr6fuJd9UeCBbi0v
-	Is1k5ovnh7z57+B2Z1xxmvv2N2ChhnWGfzrE54yTKUrv98hYl0Sz5vD6FlUVxA==
-Message-ID: <4e0d66f7-6234-4265-bfbb-a919224ecb2a@bootlin.com>
-Date: Wed, 19 Feb 2025 17:28:37 +0100
+	s=arc-20240116; t=1739982542; c=relaxed/simple;
+	bh=emJwioSET82ma5wk2Wj8pD4x+CUD8+IT98gNrkXVzjc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c8dWNBzl4WuILxQEI6h4IBL/AuSBjQx1AjCcnrsaGWtLAVQGg74pEJxKj250Qqr0a+Wf8pI8IppJbiTvuqtMPk8oEIeOk4Ic93M2GhCFdQ55sIagmPHuTwNOUbOkffm9tFkRU41b85YzCb4GTxmG6I5VyQOfDsRIj8KWjSY/Ljg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fYQ5Ev10; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-38f3ac22948so2182366f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 08:28:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739982538; x=1740587338; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IFRbR48ppuOSqbaCOW7HIqpzgud5csABpIpz146ytiI=;
+        b=fYQ5Ev10eVsP5Sr2D1seGuqe7mqlEQO7yz/XkdDL0J4XsrXEBuNY7WQMi4UQdTQSlX
+         Kt9r2AaoC0DPd2e8BQOkWbIy9Ax2y7ln2U6SXa/sO1Ct3UJbKaXdXjvtNUkx2D7O+MAD
+         5uS8SXF6WS+Osy1Cbo9RSgbQFRwEOLUYIgROHCXsZmJqFJpOnS2KX3yBYXcM2J1VtiN0
+         aJatPAfA2bk7u7FikJYyWScnjf/EWWmsUEKPzoMHaNjq7llzdj2sPxZU6J8ObQsJrJ0l
+         Z7MRFAZAC0YHVB/+EtYfLAt+1ow6+uL5sijFRWLa0VYsTdgs1Gi27hoTKuxLfcJtxfJn
+         JjBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739982538; x=1740587338;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IFRbR48ppuOSqbaCOW7HIqpzgud5csABpIpz146ytiI=;
+        b=fhvzn7wmsiL2hDcQPD75QS9CcYGeThv1ZHVQEKlxcBqZdUNWmZLUbfBsu8/43qC8uu
+         j9VFWc90EQfeuzIVvOqaa4mmhQtIbbR6TT+CTRg8fZsf0nGG+7TOgzS8tJrAda/mtY9v
+         TUFmcm9GtVi7g4r6K7K9/zWCiXi4pn0wtrmU3SS7uP1y6uiWbHOmZR9iEi8UY1Bme9bq
+         YDxObAOt+VmykDOPEUMo0tahRMh8oPxUpLF9mpMOFJ1RE6rvF7x8udRTQnkezdfT6Mg6
+         NUfSxwFP+oLwBUi1jq+B0j4Fv23cuwcyaZG0mx9EneRzu27V/8mz3BM9WHmZvzxHzAyV
+         H+eA==
+X-Forwarded-Encrypted: i=1; AJvYcCUNbYE9JO6z4UL60PIT8Yq+tY2XV5geOw3CanyGTSqR6UIoFwrEJHUWf7cLj9TYk71DZfVKOExQboLyP7U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjE4Y55/CMcM7oy6vznMd903BXogd42aNlxqg+xbbqVk/+Yav1
+	DjgrcSxeCYnHGitw3NvYyawWi06vaBsKiiB9akMnjgm9QMve0jTD8M2t1jWeFekCYGZPvb4cQlL
+	0mKMBpWNGLB2EyNAEovT0cqPlplv2XA2WG+wL
+X-Gm-Gg: ASbGncusCWJEXmTUX5k9urhSufBN+8V2Zp8a7Jrj+7QosuIgxECSioTRDHR4KWkixAA
+	6nc3NBRYfIXzT8QAz99JEsSyBAp6EleYWFRknp92/RY3ekGjFGvhkRPgVLR2b4fv1AwuR+BDYZ4
+	Hw1j6xwQPmH918s1uA2SWoq5V1
+X-Google-Smtp-Source: AGHT+IG495bFTbE1P6h3BVXkY4LEgL34rIWGX80Z/ZM6WtwUQeIReUc06KCZ2SrkFKNMU2/Qx08kXHZdYYzMqhAy6s8=
+X-Received: by 2002:a5d:5888:0:b0:38f:27d3:1b3b with SMTP id
+ ffacd0b85a97d-38f33f11925mr15697927f8f.11.1739982538436; Wed, 19 Feb 2025
+ 08:28:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 00/16] drm/vkms: ConfigFS interface
-To: Maxime Ripard <mripard@kernel.org>,
- Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
- Melissa Wen <melissa.srw@gmail.com>, =?UTF-8?Q?Ma=C3=ADra_Canal?=
- <mairacanal@riseup.net>, Haneen Mohammed <hamohammed.sa@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, jose.exposito89@gmail.com,
- dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net,
- linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com,
- miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com,
- seanpaul@google.com, nicolejadeyee@google.com
-References: <20241122-google-config-fs-v2-0-4b7e6f183320@bootlin.com>
- <Z0DC8nd1ZFN4A82-@louis-chauvet-laptop>
- <20241126-overjoyed-knowing-cuttlefish-c8d0f6@houat>
- <Z2GqEOiVkdgB3IXy@louis-chauvet-laptop>
- <20250219-versatile-smilodon-of-felicity-cbcc4d@houat>
- <Z7XZYVs6LL1gEzIF@phenom.ffwll.local>
-Content-Language: en-US
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
- 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
-In-Reply-To: <Z7XZYVs6LL1gEzIF@phenom.ffwll.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeigeejgecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvfhfhjggtgfesthekredttddvjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefgheehgeevudekvdetfeeifeelveeffffhieevtefhueelheettdeuhfeugfeuueenucffohhmrghinhepfhhrvggvuggvshhkthhophdrohhrghdpghhithhhuhgsrdgtohhmpdhkvghrnhgvlhdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrddtrddvtdgnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudekpdhrtghpthhtohepmhhrihhprghrugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhoughrihhgohhsihhquhgvihhrrghmvghlohesghhmrghilhdrtghomhdprhgtphhtthhopehmvghlihhsshgrrdhsrhifsehgmhgrihhlr
- dgtohhmpdhrtghpthhtohepmhgrihhrrggtrghnrghlsehrihhsvghuphdrnhgvthdprhgtphhtthhopehhrghmohhhrghmmhgvugdrshgrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhgrrghrthgvnhdrlhgrnhhkhhhorhhstheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehtiihimhhmvghrmhgrnhhnsehsuhhsvgdruggvpdhrtghpthhtoheprghirhhlihgvugesghhmrghilhdrtghomh
-X-GND-Sasl: louis.chauvet@bootlin.com
+References: <20250219162517.278362-1-daniel.almeida@collabora.com>
+In-Reply-To: <20250219162517.278362-1-daniel.almeida@collabora.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Wed, 19 Feb 2025 16:28:46 +0000
+X-Gm-Features: AWEUYZnQJ9lIBvSmKT_baEuG0BJNmNaSDuOffAsZaEl1gqpYyNt5U2oDUDBg0Fw
+Message-ID: <CAH5fLgiErvnziU-hSCV6djNq7Q56ZfX9gZudmX7+r06hWoX0Tw@mail.gmail.com>
+Subject: Re: [PATCH] rust: regulator: add a bare minimum regulator abstraction
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: lgirdwood@gmail.com, broonie@kernel.org, sebastian.reichel@collabora.com, 
+	sjoerd.simons@collabora.co.uk, ojeda@kernel.org, alex.gaynor@gmail.com, 
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
+	a.hindborg@kernel.org, benno.lossin@proton.me, tmgross@umich.edu, 
+	dakr@kernel.org, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Feb 19, 2025 at 4:26=E2=80=AFPM Daniel Almeida
+<daniel.almeida@collabora.com> wrote:
+>
+> Add a bare minimum regulator abstraction to be used by Rust drivers.
+> This abstraction adds a small subset of the regulator API, which is
+> thought to be sufficient for the drivers we have now.
+>
+> Regulators provide the power needed by many hardware blocks and thus are
+> likely to be needed by a lot of drivers.
+>
+> It was tested on rk3588, where it was used to power up the "mali"
+> regulator in order to power up the GPU.
+>
+> Note that each instance of [`Regulator`] obtained from
+> `Regulator::get()` can only be enabled once. This ensures that the calls
+> to enable and disable are perfectly balanced before `regulator_put()` is
+> called, as mandated by the C API.
+>
+> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
+> ---
+>  rust/bindings/bindings_helper.h |   1 +
+>  rust/kernel/lib.rs              |   2 +
+>  rust/kernel/regulator.rs        | 120 ++++++++++++++++++++++++++++++++
+>  3 files changed, 123 insertions(+)
+>  create mode 100644 rust/kernel/regulator.rs
+>
+> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_hel=
+per.h
+> index 55354e4dec14..92504f19655e 100644
+> --- a/rust/bindings/bindings_helper.h
+> +++ b/rust/bindings/bindings_helper.h
+> @@ -28,6 +28,7 @@
+>  #include <linux/poll.h>
+>  #include <linux/property.h>
+>  #include <linux/refcount.h>
+> +#include <linux/regulator/consumer.h>
+>  #include <linux/sched.h>
+>  #include <linux/security.h>
+>  #include <linux/slab.h>
+> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+> index 496ed32b0911..0224f4c248c0 100644
+> --- a/rust/kernel/lib.rs
+> +++ b/rust/kernel/lib.rs
+> @@ -68,6 +68,8 @@
+>  pub mod prelude;
+>  pub mod print;
+>  pub mod rbtree;
+> +#[cfg(CONFIG_REGULATOR)]
+> +pub mod regulator;
+>  pub mod revocable;
+>  pub mod security;
+>  pub mod seq_file;
+> diff --git a/rust/kernel/regulator.rs b/rust/kernel/regulator.rs
+> new file mode 100644
+> index 000000000000..df6eb325d11a
+> --- /dev/null
+> +++ b/rust/kernel/regulator.rs
+> @@ -0,0 +1,120 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +//! Regulator abstractions.
+> +//!
+> +//! C header: [`include/linux/regulator/consumer.h`](srctree/include/lin=
+ux/regulator/consumer.h)
+> +
+> +use crate::{
+> +    bindings,
+> +    device::Device,
+> +    error::{from_err_ptr, to_result, Result},
+> +    prelude::*,
+> +};
+> +
+> +use core::ptr::NonNull;
+> +
+> +/// A `struct regulator` abstraction.
+> +///
+> +/// Note that each instance of [`Regulator`] obtained from `Regulator::g=
+et()`
+> +/// can only be enabled once. This ensures that the calls to enable and =
+disable
+> +/// are perfectly balanced before `regulator_put()` is called, as mandat=
+ed by
+> +/// the C API.
+> +///
+> +/// # Invariants
+> +///
+> +/// - [`Regulator`] is a non-null wrapper over a pointer to a `struct re=
+gulator`
+> +///   obtained from `regulator_get()`.
+> +/// - Each instance of [`Regulator`] obtained from `Regulator::get()` ca=
+n only
+> +///   be enabled once.
+> +pub struct Regulator {
+> +    inner: NonNull<bindings::regulator>,
+> +    enabled: bool,
+> +}
 
+I wonder if enabled vs disabled should be two different types?
 
-Le 19/02/2025 à 14:15, Simona Vetter a écrit :
-> On Wed, Feb 19, 2025 at 10:28:56AM +0100, Maxime Ripard wrote:
->> On Tue, Dec 17, 2024 at 05:42:56PM +0100, Louis Chauvet wrote:
->>> Hi,
->>>
->>>>> Hi all,
->>>>>
->>>>> I am also currently working on MST emulation for VKMS. If someone can read
->>>>> what I already did and at tell me if my implementation seems on the right
->>>>> track it could be nice.
->>>>>
->>>>> The current status is not very advanced: I can emulate a mst HUB, but not
->>>>> a screen. I am currently working on properly emulating the HUB by using an
->>>>> other hub.
->>>>>
->>>>> You can find the branch for this work here:
->>>>> https://gitlab.freedesktop.org/louischauvet/kernel/-/tree/b4/vkms-mst
-> 
-> Can't look at this because it's private.
-
-Hi Maxime, Sima,
-
-Normally, those should work:
-
-https://gitlab.freedesktop.org/louischauvet/kernel/-/tree/vkms-mst
-https://github.com/Fomys/linux/tree/vkms-mst
-
-I just re-tested, this is broken, probably because I never had the time 
-to properly finish my last idea: simplifying vkms_connector by creating 
-vkms_mst_emulator_root. With the rest of the code (i.e. 
-vkms_mst_hub/display_emulator + vkms_connector), I was able to make this 
-config working:
-
-HUB1 -> HUB2 -> DISPLAY1
-      |       -> DISPLAY2
-      -> DISPLAY3
-
-(working == it was listed properly by modetest + did not report any 
-issue when using a connector with modetest -s)
-
-Few things to note: no ConfigFS support, no eBPF support, poorly tested 
-(there are probably multithread/recursion issues)
-
-I had to stop working on it because I don't have anymore time, I plan to 
-at least rebase + send an RFC once the VKMS+ConfigFS work is done.
-
->>>> I think this is exactly the kind of things where we'll want eBPF I
->>>> think. There's no way you'll be able to model each possible test
->>>> scenarios for MST through configfs, even more so with a stable
->>>> interface.
->>>
->>> I just spent some time to think about it. I agree that eBPF seems
->>> applicable: we want to allows userspace to emulate any MST device, and we
->>> don't want to create huge uAPI + whole emulation in the kernel.
->>>
->>> As most of the protocol is similar accros device kind, I currently built
->>> my code around the struct vkms_mst_sideband_helpers to specify only the
->>> changed behavior (this way the "write to registers" "parse command"... is
->>> only done in one place). The choice of function is not definitive at all
->>> (it was just practical at this moment).
->>>
->>> With eBPF, I know three different way to attach programs to the kernel:
->>>   - Using a kprobe/attaching to a function: I can change the behavior of
->>>     all the device, there is no way "attach prog1 to hub" and "attach prog2
->>>     to screen1", it will be "attach prog1 to the function
->>>     `vkms_mst_emulator_handle_transfer_write`, and all the device will be
->>>     affected. This should be very easy to implement (maybe it already
->>>     works without modification?), but very limited / make userspace stuff
->>>     very ugly => Not ideal at all
->>>   - Creating a whole architecture to attach eBPF programs in vkms: VKMS
->>>     manage the list of attached eBPF programs, call them when it needs...
->>>     This is probably the "most flexible" option (in the sense "VKMS can do
->>>     whatever we need to fit our usecase"). This seems not trivial to
->>>     implement (drm complexity + MST complexity + BPF complexity in the same
->>>     driver seems a bad idea, espicially because VKMS don't have a lot of
->>>     maintainance and I don't feel confident introducing more complexity)
->>>     => Can work, require some work, but may bring more complexity in VKMS
->>>   - Using BPF struct_ops: I can "simply" create/complete a struct ops for
->>>     diverse mst callbacks (see the proposition bellow). I looked at some
->>>     example, this seems to be "easy" to do, and the work in VKMS should be
->>>     limited.
->>>     => Can work, a bit less flexible than the previous solution, but avoid
->>>     a lot of complexity
->>>
->>> I don't know if I will be able to finish the implementation but I imagine
->>> something like that may be a nice interface (may be not possible "as is"):
->>>
->>> // vkms_mst.c struct_ops that can be filled by userspace with custom
->>> // functions
->>> // Known limitation: maximum 64 functions in this table
->>> struct vkms_mst_ops {
->>> 	// Completly overide the transfer function, so the userspace can
->>> 	// do whatever he wants (even emulating a complex MST tree
->>> 	// without using stuff in vkms)
->>> 	handle_transfer(drm_dp_aux_msg);
->>>
->>> 	// If default transfer function is used, those are the callback
->>> 	// you can use (again, they will come with default
->>> 	// implementation)
->>> 	clear_payload_id_table(..);
->>> 	link_address(..);
->>> 	enum_path_ressources(..);
->>> 	[...]
->>>
->>> 	// Used to identify this kind of device, in my example the
->>> 	// userspace could register "LG_screen", "dell dock", "HP screen",
->>> 	// and then configure each mst device with the correct kind
->>> 	name = "<unique name for this device kind>",
->>>
->>> 	// If you want to use the default "hub" implementation, but only
->>> 	// tweak one specific behavior, you can use this
->>> 	base = "<name of the other structops>"
->>> }
->>>
->>>
->>> // Needed to implement eBPF struct_ops, called when userspace registers a
->>> // struct_ops of type vkms_mst_ops
->>> void register_struct_ops(new_ops...) {
->>> 	vkms_registered_ops.append(new_ops).
->>> }
->>>
->>> // In vkms_connector.c
->>> // Callback called by drm core to do transfer on the connector
->>> void vkms_mst_transfer(aux, msg) {
->>> 	mst_emulator = get_mst_emulator(aux);
->>>
->>> 	ops = vkms_registered_ops.search_for(mst_emulator.name);
->>> 	ops->handle_transfer(msg);
->>> }
->>>
->>> // mst_ebpf.c In the BPF program, userspace side
->>> void handle_transfer(...) {
->>> 	[...]
->>> }
->>> struct vkms_mst_ops {
->>> 	handle_transfer = handle_transfer;
->>> 	name = "lg-screen";
->>> 	base = "default-screen"
->>> }
->>
->> I don't think MST is the right abstraction there. We should have MST
->> related helper functions available to eBPF programs, but we should load
->> them at the connector level, ie, implement a full blown connector
->> atomic_check for example. It's more flexible and will allow to implement
->> other use-cases people have been interested in (like panels).
-> 
-> So since I can't look at the code I'll just drop my thoughts here.
-> 
-> - I think validating the MST helpers implementation should be done with
->    kunit tests. So these are out of scope for vkms testing I think
->    entirely.
-
-Yes, I agree with this, and it joins your last comment: the full dp-aux 
-emulation does not belong only to VKMS. I had this idea only because my 
-solution only use the normal core MST implementation (no special 
-handling in VKMS, just pure dp-aux emulation), so technically you could 
-also stress-test drm core with it.
-
-> - Next up are the driver implementations. There we might want to be able
->    to inject fake mst devices to stress-test driver corner cases. But I
->    don't think that's a job for vkms either.
-
-I agree, VKMS is not here to test other drivers.
-
-> - Now for vkms itself, I think the interesting case here is being able to
->    test compositors against funny mst corner-cases, but for that we don't
->    really need an mst operation at all. So no dp-aux or anything like that,
->    we just hotplug-create connectors with names and PATH property and MST
->    type, without any of the kernel-internal presentations for hubs/branch
->    points and all that stuff. Because userspace doesn't ever see that.
-
-I knew that user space don't really see the MST information (apart from 
-PATH), but I did not think about this solution. This may work well to 
-test user space, I agree!
-
-I think we are on the good track with José, he is trying to implement 
-connector hot-creation through ConfigFS [1]. To add "MST emulation", we 
-can "simply" add the PATH property through ConfigFS.
-
-[1]: Few discussions here 
-https://lore.kernel.org/all/Z5zJ1rEZyBEgd7DN@louis-chauvet-laptop/
-
-> - Next up is expressing all the funny constraints that can result in,
->    across different drivers. For that I think we want ebpf to implement the
->    various atomic_check hooks, so that you can implement all the funny
->    constraints of mst link bw limitations, but also host-side display
->    limitations. And I concur with Maxime that this ebpf support should be
->    entirely agnostic and just allow you to attach atomic_check
->    implementations to connectors, planes and crtcs. And then maybe one for
->    the overall commit, so that global constraints are easier to implement.
-
-If I understand correctly, this has nothing to do with VKMS + MST?
-I don't clearly understand the use case: why do we want the user space 
-to express hardware limitations? If you have already discussed this on 
-the mailing list, can you share the discussion?
-
-> So summary: MST testing in vkms only needs to look like MST to userspace.
-> Internally we'll just hand-roll the entire connector hotplug and leave out
-> everything else. Because testing driver dp mst implementations and the
-> helpers is better covered through different means.
- >
-> Eventually we might want to implement fake i2c and dp-aux implementations
-> for additional features like TV remote control and fun stuff like that (I
-> forgot the CEA/HDMI name for these). But I think that's waaaayyyyyy down
-> the road.
-
-I think I am not that far from a full dp-aux emulation, it is precisely 
-what I tried to do in VKMS. I don't have the time to transform it to 
-kunit tests.
-
-Thanks a lot for your feedback!
-Louis Chauvet
-
-> Cheers, Sima
-
--- 
-Louis Chauvet, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+Alice
 
