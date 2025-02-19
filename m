@@ -1,146 +1,112 @@
-Return-Path: <linux-kernel+bounces-521687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C533A3C0E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:00:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7E97A3C0EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:01:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D249E16DD63
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:55:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CF5B172DFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 13:56:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7846D1F460B;
-	Wed, 19 Feb 2025 13:53:17 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4185B1EDA3E;
-	Wed, 19 Feb 2025 13:53:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC1F21F5616;
+	Wed, 19 Feb 2025 13:53:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dlzi1D6z"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C2A61EFF87;
+	Wed, 19 Feb 2025 13:53:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739973196; cv=none; b=LC4lY7oPzaTNXcjN+PZzLvdHOJyRpHG5j2Mv4BQQ2IBHUWvFyl0TlXiKA0KWAT3FYHiWrAB+0ZnL0oBwS4mt2YOR+fEi91D3agKDztghd8J94abMdp3LLxZZequbTIAlQhy5PY0PqcFpCouanFFjHsgOScsy9DTnFp9j9IkbLMU=
+	t=1739973238; cv=none; b=mvM8HXAQ9qAKobtOdN9cbEMUCgXwtx6Q5V/LyHN3vg3juaf9k5sR6azsv9q2ybPtbxYZjwVz57ejODJ4HW6NUoJTfMmLNQQtduvb1sd+lKpxhge0q0IIGj2LJt42Ct3TLr6nbOqaBolkTvPLxX9E5futZVl7Xn6AjvzOTuc3bxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739973196; c=relaxed/simple;
-	bh=hed/3XtNqLZMF2TB+dNF2bvrISbRUf1HE0fX3n91muw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lrCSHAK3KdJS5nyNYOfxYR/4PQhy8z/yp6feUfHYnqyS5iwLWzMXYh1K2jDrFeWMHt0gP4oXc+qbfWCMd9CqqHcVjZIrUxHBf4hrayBW18HHOiJktlE1S4wUygfYyz5niJuQwDRIzJrdd0zNQxIJPbRrQM3aWpApcraaatLAAg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CBD2B1682;
-	Wed, 19 Feb 2025 05:53:31 -0800 (PST)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.43])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7533C3F59E;
-	Wed, 19 Feb 2025 05:53:09 -0800 (PST)
-Date: Wed, 19 Feb 2025 13:53:07 +0000
-From: Dave Martin <Dave.Martin@arm.com>
-To: Babu Moger <babu.moger@amd.com>
-Cc: corbet@lwn.net, reinette.chatre@intel.com, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	tony.luck@intel.com, peternewman@google.com, fenghua.yu@intel.com,
-	x86@kernel.org, hpa@zytor.com, paulmck@kernel.org,
-	akpm@linux-foundation.org, thuth@redhat.com, rostedt@goodmis.org,
-	xiongwei.song@windriver.com, pawan.kumar.gupta@linux.intel.com,
-	daniel.sneddon@linux.intel.com, jpoimboe@kernel.org,
-	perry.yuan@amd.com, sandipan.das@amd.com, kai.huang@intel.com,
-	xiaoyao.li@intel.com, seanjc@google.com, xin3.li@intel.com,
-	andrew.cooper3@citrix.com, ebiggers@google.com,
-	mario.limonciello@amd.com, james.morse@arm.com,
-	tan.shaopeng@fujitsu.com, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, maciej.wieczor-retman@intel.com,
-	eranian@google.com
-Subject: Re: [PATCH v11 22/23] x86/resctrl: Introduce interface to list
- assignment states of all the groups
-Message-ID: <Z7XiQ+u3Pc+uvJCK@e133380.arm.com>
-References: <cover.1737577229.git.babu.moger@amd.com>
- <52c66bf98480c0ab6bb0f0762497e328fcbdeaac.1737577229.git.babu.moger@amd.com>
+	s=arc-20240116; t=1739973238; c=relaxed/simple;
+	bh=EBGIkFOMA3Q9uBedxQ7Ytmbg+ijF5b4a8hOe1QEXg2g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IRlNgDVd6PTLhpt7sfnd8RBrv8j6KfE0t4YzbEyMxy6VpNmPtStF6swzNFH9qngTZdPAVmHCbMA6b0WtjabxQ0CBMa2IpkibdDVnaGfr9zYfl89K+QCb9Tk7zcn7TycAq/mdMWroCmfas1OLKQUuSYXipoUj/0OSKdmXeG2KfoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dlzi1D6z; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-543cc81ddebso7005377e87.1;
+        Wed, 19 Feb 2025 05:53:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739973234; x=1740578034; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Y6t37BQHYg5C29qODMPAidihVqNJ54EsapTzOiph9W0=;
+        b=dlzi1D6zZUzgoeYTFEcMSeq8gt96XSkCTevnMk7z+T/2i8BJiFxYPIiie6jhFYv4TT
+         ShuyGEhT4MsWQTXW3rOZh/x7T0B8zSFoRoS59/jh2GYdRa4FKaN3YCJKXYf5zg9jXgxA
+         ks+q41vyUNor/IjwgbDiHjTEAhJjzFCXiYSyOsz/U/o7/qA/6+mYbRXFzMMiTBTrVC2q
+         HvjiRnv4JEzg8DSvIb5E4mSxlUA/Plm4I6lsyT9Cj7QoOUTPm1niGSexnMvloonARwK/
+         jVap6QKWWm1ZcnhUDJoeTn0EndNeEtv6Lkb5wG4/DPnGVywC0UzNRgimUW2lJ1JHP6xf
+         thUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739973234; x=1740578034;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Y6t37BQHYg5C29qODMPAidihVqNJ54EsapTzOiph9W0=;
+        b=T/FIoZkHynHESNZL3VAmo6xOx9i6kYS7x/Y9PAGJKJCvTO7cJkZx25uwoEouA8+A/Y
+         UZLUUJjWLPQ6PBEP6o8m9+J+fpyvdDCVMxSTQD+4bu1cZkGhVXATdbGDvQnHlMKp+FU4
+         R/mAckEIlxtatsx6EJtujYFk0IjXZl8yXTz2NrpIzRTL2jT7tksUcScsohGW3TQ5EI2Y
+         epiRFuANmT8nQ4N5gh4e3Dfu+lbxVl14W/OcNQ4lfumCDESjeNlmk+dm1kGbzQc0lTCA
+         nmR0E7jp06cgZEuU6Crn01DSHDa0WGrht3OC+wTKUiMPwmMTPH/IQfa7fkmAAzKvcZ8F
+         V/Fw==
+X-Forwarded-Encrypted: i=1; AJvYcCUX8StiitTbRqlmSI8WQz5eFzrO8YRkuceM76COvx9Q/ByrHrqn/Ml3AicVSbE6lWKV8vDedkvp34OY@vger.kernel.org, AJvYcCV7ECdha9iRFqp//jP+xw+MGAK5gsSQKpW9KFouE/bpuOJhAgWqafSiuQjqLVMD+W4gwNn4say04Ru3yWFi@vger.kernel.org, AJvYcCXLExsfHhXPv8uyMlm0IgvJYHF9jD6i+GM5MK8xJYFkglqSVfstDxp4LKdSr8dWZC+1y/8+OfqCNSc5Oj0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7GttdBr0dmg4E7SuFeePv2CPAaSqmRDqAjh26XOfCivvDkHd+
+	vAab81FQp6sbx/d0J9m4cZzs/vftNxNRPeSS7fbC18oNcaje8OahUUtPyVL5dZ409AsezeCToec
+	evRYvyiDWkt1lEOJk/mZYBsH2WfI=
+X-Gm-Gg: ASbGnctdhFLVWc37ZJJvxSPUi6GOKfG2K5HTeGq8BnxbPwrlu7Mn056v+4OaxQcohMj
+	J6zzJVl5NR5TUXwnJSRa6ZmZN2t/V4ha75AVE3VLCU3+YLVd+6ObaLPvRLfBEToIGGHz7KIeRpj
+	vMuLbmICo1wxo+oeeGDKEUmQPRTos=
+X-Google-Smtp-Source: AGHT+IEfa6BU1Og4EYBhPdGzQ8AbNlSEs40TcyE4AyfYRci4Yh7JUHFGkcpocxJ2mslPN8Wgy1hRW5VA2U7L8Kutmic=
+X-Received: by 2002:a05:6512:3b9e:b0:545:2f6e:32fa with SMTP id
+ 2adb3069b0e04-5452fe55430mr5275021e87.21.1739973234258; Wed, 19 Feb 2025
+ 05:53:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <52c66bf98480c0ab6bb0f0762497e328fcbdeaac.1737577229.git.babu.moger@amd.com>
+References: <20250219133221.2641041-1-florin.leotescu@oss.nxp.com> <20250219133221.2641041-4-florin.leotescu@oss.nxp.com>
+In-Reply-To: <20250219133221.2641041-4-florin.leotescu@oss.nxp.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Wed, 19 Feb 2025 10:53:42 -0300
+X-Gm-Features: AWEUYZkJFhBHdwEt5veSqP7xF0ysRoigYMPW5u1lRGmZYIM_SaXIS4HOYQ74S6A
+Message-ID: <CAOMZO5AfsHqyo3a+hmfprOnNJEzMzC81GuzBxtrt_F9cHufAtg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] dt-bindings: hwmon: emc2305: Add YAML binding
+ documentation for emc2305 driver
+To: florin.leotescu@oss.nxp.com
+Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Shych <michaelsh@nvidia.com>, linux-hwmon@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	viorel.suman@nxp.com, carlos.song@nxp.com, 
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, 
+	Florin Leotescu <florin.leotescu@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jan 22, 2025 at 02:20:30PM -0600, Babu Moger wrote:
-> Provide the interface to list the assignment states of all the resctrl
-> groups in mbm_cntr_assign mode.
+On Wed, Feb 19, 2025 at 10:26=E2=80=AFAM <florin.leotescu@oss.nxp.com> wrot=
+e:
 
-[...]
-
-> diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-> index 5d305d0ac053..6e29827239e0 100644
-> --- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-> +++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-> @@ -975,6 +975,81 @@ static ssize_t resctrl_mbm_assign_mode_write(struct kernfs_open_file *of,
-
-[...]
-
-> +static int resctrl_mbm_assign_control_show(struct kernfs_open_file *of,
-> +					   struct seq_file *s, void *v)
-> +{
-
-[...]
-
-> +	list_for_each_entry(rdtg, &rdt_all_groups, rdtgroup_list) {
-> +		seq_printf(s, "%s//", rdtg->kn->name);
+> +description: |
+> +  The driver implements support for Microchip EMC2301/2/3/5 PWM Fan Cont=
+roller.
+> +  The EMC2301 Fan Controller supports only one controlled PWM fan channe=
+l.
+> +  The EMC2305 Fan Controller supports up to 5 independently
+> +  controlled PWM fan drives.
 > +
-> +		sep = false;
-> +		list_for_each_entry(dom, &r->mon_domains, hdr.list) {
-> +			if (sep)
-> +				seq_puts(s, ";");
-> +
-> +			seq_printf(s, "%d=%s", dom->hdr.id,
-> +				   rdtgroup_mon_state_to_str(r, dom, rdtg, str));
-> +
-> +			sep = true;
-> +		}
-> +		seq_putc(s, '\n');
-> +
-> +		list_for_each_entry(crg, &rdtg->mon.crdtgrp_list, mon.crdtgrp_list) {
-> +			seq_printf(s, "%s/%s/", rdtg->kn->name, crg->kn->name);
-> +
-> +			sep = false;
-> +			list_for_each_entry(dom, &r->mon_domains, hdr.list) {
-> +				if (sep)
-> +					seq_puts(s, ";");
-> +				seq_printf(s, "%d=%s", dom->hdr.id,
-> +					   rdtgroup_mon_state_to_str(r, dom, crg, str));
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - hwmon,emc2301
 
-Unlike the other resctrl files, it looks like the total size of this
-data will scale up with the number of existing monitoring groups
-and the lengths of the group names (in addition to the number of
-monitoring domains).
-
-So, this can easily be more than a page, overflowing internal limits
-in the seq_file and kernfs code.
-
-Do we need to track some state between read() calls?  This can be done
-by overriding the kernfs .open() and .release() methods and hanging
-some state data (or an rdtgroup_file pointer) on of->priv.
-
-Also, if we allow the data to be read out in chunks, then we would
-either have to snapshot all the data in one go and stash the unread
-tail in the kernel, or we would need to move over to RCU-based
-enumeration or similar -- otherwise releasing rdtgroup_mutex in the
-middle of the enumeration in order to return data to userspace is going
-to be a problem...
-
-> +				sep = true;
-> +			}
-> +			seq_putc(s, '\n');
-> +		}
-> +	}
-> +
-> +	mutex_unlock(&rdtgroup_mutex);
-> +	cpus_read_unlock();
-> +	return 0;
-> +}
-
-[...]
-
-Cheers
----Dave
+As Microchip is the manufacturer, this should be: microchip,emc2301
 
