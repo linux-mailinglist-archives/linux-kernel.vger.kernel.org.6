@@ -1,184 +1,97 @@
-Return-Path: <linux-kernel+bounces-522506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 452F1A3CB30
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:16:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 79189A3CB32
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 22:17:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61D1E3BD80A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:13:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 493D93A773B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 21:15:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8563E253F28;
-	Wed, 19 Feb 2025 21:13:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2814256C88;
+	Wed, 19 Feb 2025 21:15:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L0+nPVvr"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oD3zBl5C"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FA27215053;
-	Wed, 19 Feb 2025 21:13:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A43D2566F8;
+	Wed, 19 Feb 2025 21:15:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739999633; cv=none; b=H0ga5WI9zH5t+QfL9tnaBgYJwP4jZ/orLBrpCECtVUYoXQ4qr3ccPlm+7+huNkmD7pFwmEDeSfZlhXtKOXtqIlon3REokOZYFarY5CvEvzKVNPf2fgKM02rB6OzTtphfuzAmfw+UrjJ+puukCfZzNpT804h7aRpuRP0HWg6+DYE=
+	t=1739999748; cv=none; b=CTyW6gnA4MsLzvE/87DwCwODwlmowbRZkDDv5lTyUeBnxCwkGvVMZs+2kNpMoNIl1lcl5Rzaw5HAQRXGbGyxyGhIpV/FilQS0/hh6YlkR0+KKUhoZ0kkH3aOfgdpZb6BZLQaUt+3JMst85mqRq465UUwdeXHIgRpsylUSKPyGcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739999633; c=relaxed/simple;
-	bh=lSSbrTM+qaVy5gjzZWvFzr5yPEYw4GYtpL3eQRHOJtE=;
+	s=arc-20240116; t=1739999748; c=relaxed/simple;
+	bh=4MWGaUGndZEvN2swOVMHgXHMQYqR0wPMzXWRDv1AKSY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cf1VXv1gANm0bfHNDjQPStEir6VT8Ezk2znVepZIcrL0exkpEb8VwGMqNh4ZQY+KHlhrGSr1TB+vvpQJEBB3ZE8uwG4gXBTiC/dtiJoSBx0BGlpN6R/lMJ71bKWZV2V+i+rSbK6jtSXK7gPh3scDLaIG1K1pEtXN9qf4+ngKx2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L0+nPVvr; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-471f257f763so2375901cf.0;
-        Wed, 19 Feb 2025 13:13:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739999631; x=1740604431; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0UEtgtgjFKuU2mqNbLxQsl4J63Z11kUn2+Tov8KjoNU=;
-        b=L0+nPVvrW81FsfmWAdzoUtsj2emNUipIoOoDMZDfeMwF1NVl/UE+VWfYSKEwRpb4D4
-         YuhfBlERo/pVe0qAfu3i2pXUOZXyztZR7NVqimbMvD9XQkqXNF3RHkAbbqaDPYc1zpE6
-         bAuJQD08jAeYLzxjIyuvYQxGPdtiN43+47Feq4wLPlDOIyn4jH/a54WL1lcHh3rHcIpZ
-         49aUEQo52WL79b4yygGHtlKkemsdIVJ8nDBf4FuxN84aFf6qRXEBfOL2tBNoQZ/xH4O9
-         i/yH4/PrQx9g2xTol4z4zpgOp6k9uAq4KxYypCIX31OE5rQW/J32zRBtQArgrjEUQ4gD
-         mc+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739999631; x=1740604431;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0UEtgtgjFKuU2mqNbLxQsl4J63Z11kUn2+Tov8KjoNU=;
-        b=JYIO94+MsPhrkwpswxB+WTXehcsGp54hAqm/1Q9OzE7CnxxjZ+32vNZ7u2wWsgVtXV
-         ktxwKmKU7n+B8u821GkFWrrXusdjoeRZA0bKV8VB3XkHuBhAi9iwgMOia8PSrW244jse
-         bHsox83rcnkXyXyptZuep8QOIHykPOIiUgn4QsHFRfnSAnUfzOC2YZ179caKSZAQunJ0
-         06h+NsGhsjq6Xjh6d6yUeCQkjR3+mjeVsmm43mMss6njD1NJjlZMjXc0I66u1ItMDD34
-         k20s29jz3jiDK1Ai6sE2jSmgKjQcfEgqffSvo5T+1fdJhC/nBOMX2HnB5v3DdXotQ/9u
-         rnKg==
-X-Forwarded-Encrypted: i=1; AJvYcCUlXaJwzpglfg0Vx7U9cdGd/OyMEHJkEI3uaEZJUpwxuADVoe7BWdgIqtNv6K6ko+2zeQqmnXv3YoUiMHU=@vger.kernel.org, AJvYcCXAfcIaXBod6e3Ru5EgBupgpCims8ileI/HNpCDAUBxVneN7Rx4hExpvwrKeAZaM8M2sGh/6qzO/VgV3Ap1wOc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5no7lUtYOeu8aBJLIXyynAI3gRl36m/4HT6N8ICKcktbnLNuW
-	B0IPqxPT0sAb7D9vu13lInTB7Y94i5thC+6IsCbDza0LJFlEGxpJ
-X-Gm-Gg: ASbGncuxEo8LTPxqy7ZAryFbdGoLWOcoq2K7GON131mVI8fGgamWUbDFisIcfMyvcNO
-	eKdtF6c0SDfQ2IqyYboQ7vRe3UdPn4HUShXrVhN/JsEDUBrP2rYpbNcvzmXhAmCzd2VSWdJXtZj
-	/fq13wZc5Vlx1iKi2QxUSbjLDnXGNEFmKnAhANFXUFT0Obf5KhUc4qySEHlRjWDc0OAkVatFhn1
-	iXrOmf9FHTOEmB/YIDHm25odp/WiyINd8hVFi1bpz8yk9x+5ygvQhEdET+Rzx9jg16+jwlRTx5I
-	VtNznZZ7E1YK1lJMrDV7numhUDjTpVIZYmVN6W1YH8xyaYeoo8lMxkBPpHIW+2QI05drvhwPulJ
-	v4e0wwA==
-X-Google-Smtp-Source: AGHT+IH2Icwhd02IK9xmUcKRmTuo/4jpPveatuGNQiDPDt/Pa8YWoS+4QpPS8i7dTOQGGmRsN5nGVg==
-X-Received: by 2002:a05:622a:8f02:b0:471:f730:20bf with SMTP id d75a77b69052e-471f73027c9mr98505041cf.12.1739999631180;
-        Wed, 19 Feb 2025 13:13:51 -0800 (PST)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4720028b6c7sm24251061cf.49.2025.02.19.13.13.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2025 13:13:50 -0800 (PST)
-Received: from phl-compute-13.internal (phl-compute-13.phl.internal [10.202.2.53])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 190B71200076;
-	Wed, 19 Feb 2025 16:13:50 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-13.internal (MEProxy); Wed, 19 Feb 2025 16:13:50 -0500
-X-ME-Sender: <xms:jUm2Z312AZCp1KjzAS4IcXDcoREbWwG3SjiUp3uZpFsl74bZrC7nLw>
-    <xme:jkm2Z2HdRYrYNcAHTqf-2RS4M8NCwMVrRzkffAettKtxIInuq70iCC9mjaNz8-t7m
-    SkMHHOx2oeABvymKg>
-X-ME-Received: <xmr:jkm2Z37AcM9HsmSoQilQHs6aHkWhknLe_WUksBdDcUitjQUZQci1NNpDw6A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeiheefudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
-    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
-    drtghomheqnecuggftrfgrthhtvghrnhephedugfduffffteeutddvheeuveelvdfhleel
-    ieevtdeguefhgeeuveeiudffiedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghl
-    ihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepgh
-    hmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopeduhedpmhho
-    uggvpehsmhhtphhouhhtpdhrtghpthhtohepghgrrhihsehgrghrhihguhhordhnvghtpd
-    hrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghlvgig
-    rdhgrgihnhhorhesghhmrghilhdrtghomhdprhgtphhtthhopegsjhhorhhnfegpghhhse
-    hprhhothhonhhmrghilhdrtghomhdprhgtphhtthhopegsvghnnhhordhlohhsshhinhes
-    phhrohhtohhnrdhmvgdprhgtphhtthhopegrrdhhihhnuggsohhrgheskhgvrhhnvghlrd
-    horhhgpdhrtghpthhtoheprghlihgtvghrhihhlhesghhoohhglhgvrdgtohhmpdhrtghp
-    thhtohepthhmghhrohhsshesuhhmihgthhdrvgguuhdprhgtphhtthhopegurghkrheskh
-    gvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:jkm2Z82V_pyhzgwlMtDE01DB-NC4tWsqRbhFo8fa7Os4dwndqoEM4w>
-    <xmx:jkm2Z6G6O64s8VzMBUr6iEYpKuNCy7mgV591BbcJwpNnmnDivYLm1A>
-    <xmx:jkm2Z9-4bQRMpjve955ZuVQX6xbj3YA2ycLQ_n8rJDbSzn06sU1Blw>
-    <xmx:jkm2Z3miAbn_MpCjAsc0SaWpK7yqBt07uUaFJlB0qd4q1m1hI2T-SA>
-    <xmx:jkm2Z2Gw5_twPGDTa2k4G9eukneKokb9koPoBNBkZxZFCZMAinQuztf3>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 19 Feb 2025 16:13:49 -0500 (EST)
-Date: Wed, 19 Feb 2025 13:13:25 -0800
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Gary Guo <gary@garyguo.net>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, Will Deacon <will@kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=tTmD2keTFOOYthF5ywQCG+CjcUT5O15+pgmjMdnTO+/qMwSbMhiKFXbJNHAOEnzyU2GFDYXaeFT/ldF/XmSuis+/Ol42Apiiv1wNxVZ8h/XM2a5TfcRLNgGec7sVokdILDO+CAD4tep1cJS42GLx1QDW4M30cOlw39FVVcfLdVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oD3zBl5C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42FBEC4CED1;
+	Wed, 19 Feb 2025 21:15:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739999747;
+	bh=4MWGaUGndZEvN2swOVMHgXHMQYqR0wPMzXWRDv1AKSY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oD3zBl5CD7+4IBQeyehw+DWr7mUbD9rs04ZOLNCk4Bj0gQPDRfokTMdevrCuCeOoG
+	 GLMTCTC87vvX89+cxY/EZ9BZyNeJyCan5Yb7GTY4aSbZy+ezrqIzPV5aYCj8AENdWm
+	 LQrxwcF7wkeIPRy1ZC9ciOKgDG0W/v6CuSipzzSPNFVK1FysjxPzf5dCwLTv+UuHFI
+	 k0WxxDyr4ml6YYd20WasQM2UUZyzNkDSAEbeD1PVdQLwRiJCgS8G/hpPLZnAZ5jsDI
+	 C99ah9Z3pfbVkBAmsvlS9bRjltN9Nu9Sp0dR8Jm+y0CxznODHAB70vRGyR3z0F5YRk
+	 Gx45DqShhoP2g==
+Date: Wed, 19 Feb 2025 13:15:45 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Andi Kleen <ak@linux.intel.com>
+Cc: Stephen Brennan <stephen.s.brennan@oracle.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
 	Peter Zijlstra <peterz@infradead.org>,
-	Mark Rutland <mark.rutland@arm.com>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/4] MAINTAINERS: update atomic infrastructure entry
- to include Rust
-Message-ID: <Z7ZJdZpvhMii9y1L@boqun-archlinux>
-References: <20250219201602.1898383-1-gary@garyguo.net>
- <20250219201602.1898383-5-gary@garyguo.net>
+	linux-perf-users@vger.kernel.org,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+	linux-kernel@vger.kernel.org,
+	Chaitanya S Prakash <chaitanyas.prakash@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Ian Rogers <irogers@google.com>
+Subject: Re: [PATCH 1/1] tools: perf: support .gnu_debugdata for symbols
+Message-ID: <Z7ZKAYutejOOoBbQ@google.com>
+References: <20250213190542.3249050-1-stephen.s.brennan@oracle.com>
+ <20250213190542.3249050-2-stephen.s.brennan@oracle.com>
+ <871pw0gw8d.fsf@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250219201602.1898383-5-gary@garyguo.net>
+In-Reply-To: <871pw0gw8d.fsf@linux.intel.com>
 
-Hi,
+Hello,
 
-On Wed, Feb 19, 2025 at 08:15:33PM +0000, Gary Guo wrote:
-> Suggested-by: Boqun Feng <boqun.feng@gmail.com>
-> Signed-off-by: Gary Guo <gary@garyguo.net>
-
-Thanks for doing this! 
-
-Acked-by: Boqun Feng <boqun.feng@gmail.com>
-
-Maybe you could add a few things in the commit log, since you're adding
-yourself as a reviewer, feel free to add things like:
-
-"I would like to help review atomic related patches, especially Rust
-related ones, hence add myself as an reviewer".
-
-I.e. you could mention the areas you will help review ;-)
-
-Regards,
-Boqun
-
-> ---
->  MAINTAINERS | 2 ++
->  1 file changed, 2 insertions(+)
+On Fri, Feb 14, 2025 at 11:30:26AM -0800, Andi Kleen wrote:
+> Stephen Brennan <stephen.s.brennan@oracle.com> writes:
+> >  	DSO_BINARY_TYPE__GUEST_KMODULE_COMP,
+> > diff --git a/tools/perf/util/symbol-elf.c b/tools/perf/util/symbol-elf.c
+> > index 66fd1249660a3..e578b7d406a69 100644
+> > --- a/tools/perf/util/symbol-elf.c
+> > +++ b/tools/perf/util/symbol-elf.c
+> > @@ -6,6 +6,7 @@
+> >  #include <string.h>
+> >  #include <unistd.h>
+> >  #include <inttypes.h>
+> > +#include <lzma.h>
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index c8d9e8187eb0..55d303633598 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -3725,12 +3725,14 @@ M:	Will Deacon <will@kernel.org>
->  M:	Peter Zijlstra <peterz@infradead.org>
->  R:	Boqun Feng <boqun.feng@gmail.com>
->  R:	Mark Rutland <mark.rutland@arm.com>
-> +R:	Gary Guo <gary@garyguo.net>
->  L:	linux-kernel@vger.kernel.org
->  S:	Maintained
->  F:	Documentation/atomic_*.txt
->  F:	arch/*/include/asm/atomic*.h
->  F:	include/*/atomic*.h
->  F:	include/linux/refcount.h
-> +F:	rust/kernel/sync/refcount.rs
->  F:	scripts/atomic/
->  
->  ATTO EXPRESSSAS SAS/SATA RAID SCSI DRIVER
-> -- 
-> 2.47.2
-> 
+> This needs some ifdefs in case lzma.h is not available?
+
+Right, should be guarded by HAVE_LZMA_SUPPORT.
+
+Thanks,
+Namhyung
+
 
