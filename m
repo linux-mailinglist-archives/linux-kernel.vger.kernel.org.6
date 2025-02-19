@@ -1,155 +1,202 @@
-Return-Path: <linux-kernel+bounces-521157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAC6AA3B599
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:59:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0FD4A3B59D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 09:59:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6549C3BBA3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:52:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8364616FF84
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 08:52:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4AE81E5204;
-	Wed, 19 Feb 2025 08:45:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2DC1E8347;
+	Wed, 19 Feb 2025 08:45:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Wsn2lKd6"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C7151C3BE9;
-	Wed, 19 Feb 2025 08:45:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=ps.report@gmx.net header.b="PVSvwqaq"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BFA81E8322;
+	Wed, 19 Feb 2025 08:45:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739954719; cv=none; b=mczqoHtobOBbV8hI4msBUwlDiYHzb5tmzcgnM/jsUO8YH4kcx/uLcq/dVM6WE0i+6K5cvgT1yEXL45HikW3VeblDi6J9kVXhvilzwF20H2lVg3HJDbY917xNmWkY4+CAZFT8YGv3xwsEy0aTz2dLfhPRggLz+pLDN2/mq//l9P0=
+	t=1739954739; cv=none; b=OdhHTwMvkjS5YynwTP1d1eBoLmxuBsKedsXWvmY9PQNh3nc1Q8uWHiXZ9rLoKZKlXkdJUvf/oLCTYmBFC9zyWu1GgCFnDRuEPaJXsSeN/RQjQxf+UbmIveRBwG/daWOdYdeArB8tnKJBd9fAXlA4Bmwex95ae/M/iZJDwFROtOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739954719; c=relaxed/simple;
-	bh=uqDkMFscgjPk/BMHb/9eP3O3a+4r4MiJI9Q1LbjQu0k=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sMQzIpFDT2t3WmFn2vvev9bzrdJGBqx+k4eRwECnaFUVs4SmJClkx4OzY7gYnp2DBsUrHL0JvEWRYb9WfH2kT40PRwZlMJkZxsMNapbdxtBFxPgjzRRwY2tvUftvbrWy/+QfcOhnLbWGWHMf6j7f/vcSTTRP5a233fKsUfcMkuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Wsn2lKd6; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=guiet
-	ZmiXVKbF39X5NOgGjs2hx7xw8u9MtGsuFXnqDs=; b=Wsn2lKd6seRXMMgXZfJp5
-	VEn0CvfrvDhiNAIA0uN0NdHRncBhvUAOEmGqY1dc2N+Zw8qfgy58mIXPyDGGZ0Ek
-	DRChE1y7wH3WLXXyCMq/qLXmRh8l4Jv+1AxkMOXlTmAGNxtL4Z7Od/JOksYsUI3+
-	h5c1PC2bHgctiOIGFxyJh8=
-Received: from localhost.localdomain (unknown [116.128.244.169])
-	by gzsmtp5 (Coremail) with SMTP id QCgvCgCXXdnwmbVnvOLDOQ--.51003S2;
-	Wed, 19 Feb 2025 16:44:34 +0800 (CST)
-From: oushixiong1025@163.com
-To: Helge Deller <deller@gmx.de>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Lee Jones <lee@kernel.org>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Shixiong Ou <oushixiong@kylinos.cn>
-Subject: [PATCH] fbdev: lcdcfb: Register sysfs groups through driver core
-Date: Wed, 19 Feb 2025 16:44:27 +0800
-Message-Id: <20250219084427.244985-1-oushixiong1025@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1739954739; c=relaxed/simple;
+	bh=N8FKd1y9sx2kP6D+NpX8eCIKG+Qi7i1WGdQ3MQuOdIE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ed022N4eQVSyqN3tyHIBTzWtfh4HLVkb6Q7yKLr/DoWAh2y9RjGoeyZ+z2kNXOEcmSzOhiJp69pTm8tOAs2aBjarHvH08WzY4oJwV7a7vJ46LW5SZSZeHMNulnY3xeghWO4me3rE7QG2M8mgZuPYe7uQvsuJq6YnVqWXtSiqXBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=ps.report@gmx.net header.b=PVSvwqaq; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1739954733; x=1740559533; i=ps.report@gmx.net;
+	bh=N8FKd1y9sx2kP6D+NpX8eCIKG+Qi7i1WGdQ3MQuOdIE=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:
+	 MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=PVSvwqaqWxq+jCB+AtxPzPKKUFODgyMrZ7gt+K2NoBAWk/LrDDOaSzB4fGegAl+X
+	 rgmUGv7czPdp2a6bqiZI4cARsZGp/z/9Ub8aU0rTF21URu9PbvlVgwC2QXIROMWnc
+	 JI3VNKlqrryVpPzPFz1+yN6orm57JQKR9Jy81U3+3TmYdgcX8+lOCA/RzyRO2NtO/
+	 nWiuAdrDqmoZJ9rT14R44ZTlVvbH8jX61wOEy2oRlzXlBFAEyxg61m15KABOR9kr9
+	 1jsIFSS5zjySPYGJ9jp7EbDFzzj4RWsoE+bTHy9JJuxgLKTR3nTnOpTTe8eiBHywb
+	 SJxTob31coav4S7WGg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from localhost.fritz.box ([82.135.81.84]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1M72oH-1thcm22gQx-001O5Z; Wed, 19
+ Feb 2025 09:45:33 +0100
+From: Peter Seiderer <ps.report@gmx.net>
+To: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	Peter Seiderer <ps.report@gmx.net>,
+	Artem Chernyshev <artem.chernyshev@red-soft.ru>,
+	Frederic Weisbecker <frederic@kernel.org>
+Subject: [PATCH net-next v6 0/7] Some pktgen fixes/improvments (part I)
+Date: Wed, 19 Feb 2025 09:45:20 +0100
+Message-ID: <20250219084527.20488-1-ps.report@gmx.net>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:QCgvCgCXXdnwmbVnvOLDOQ--.51003S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxGFyrAF1kXr1fGFW8AF1rXrb_yoW5Cr48pF
-	4UAa4YgrW3ZwsxWrs8Aa17uFWru3WrtFyUZr10yw1rGasxAr1YqFyfJ397Jry3JFWkWr13
-	trWDA345CF47uw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jn2-5UUUUU=
-X-CM-SenderInfo: xrxvxxx0lr0wirqskqqrwthudrp/1tbiXAf4D2e1kK-QWQAAsI
+Content-Transfer-Encoding: base64
+X-Provags-ID: V03:K1:CU1ll5xGBegrW6P8sRPmNQW2NPo7XEfPHpUPvfxRXq7M88ncuA2
+ Hp+MjRwt+awObOF7FOSMPJh8Ug4rNKaKyd9Vh6vp1fqAaOrsTqwa3GY8kTHVNjNsnZRjyrQ
+ xqncPYjiyK3JpHrmnsXu8x2zL1npr1ewPZZGXUmcD0FQ1RIXBGLlpIX2OA6OA7RZy1ezjXU
+ sPexsr2e6OHli9wpoGUYQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Z5sx5iUzW30=;ziBqDdH42UmN0p2nBrl9K+I29Rf
+ XWU9+b882/YCmTNf4R7YpGQinXT8yGKXEr3NZC7EwSeiXBVZeJTZx3MjgDg3rApbEfqheyCGb
+ 7bZU0pD//6czmww1elfZh0IuNxu8mV7EO+l8i59Avtg4KJTvYzmXs3TDW/hyCQk12xKNbVk5z
+ VPkBQ5+PhIU0xy5X/ESMXs4S5AJnMzmPJ4oenpMes+SfxiWM2piA9McghfSPylLhDSuROxHob
+ 6uYrbwEoPNVn396RlyTGkoqz0MzpR0mHpI/K9UOPOyvbsUGyn1oXd4zRuWTfvijOu4upLiOzi
+ DSFU7lSUM3fPJH2SonND0D0m7vXjenYIZdizXqdQLO72Sttbtik3GVGSWihU3TNR2w40xPmZq
+ SNYh7vsmD8Z5utaKAnoYPNtJMxOuxDKMUxDDuUwUDZgF9I66pmtvMPcWZ2v0eYQDmJsmD0jQn
+ cDDv1SnFmojhpBpRp5ccR9/8ThWI2FFQNiWoUDjpADX9+CcfoFMOAop5qiSMlOBQB+jyr4no8
+ ULbb3XGokXwsfAJL3N3jgO9RlY3HLkeTEh7SHGvyNmjzEaS0bmND+ePFMlUORfKAGlQ9vYe5B
+ +07yWgLu7bxus8FEYngZt28S5QaYnD25MeG5o/8298tjFRVKuFLOBlZDNJQStuUCO5AEiye6C
+ v56dN2P/LMOgkWRn5aN7uJo+/O2LqOZYwYmJ3cZ7kNh3DUywRgrhB7q1uok6RvRWKgD1fBqdf
+ +q4QfCJUBjJfgzF1xnhvWQU4h0VKUHf+ldLB5yCLF6w5SmGBMCIt5nNUXhdkDaeVuOYdZDjID
+ 7XL36/rfcSlT8pJAiPpPpppicgVR9wLlrZAW+wgF5/STxiEWF0n4eJa5KOsoF9wZ3AhOU/L/w
+ 6b2MP4oOuYzCvMTPMT+wnFWfrz3UZEEWkz3u3/esam/1fvFci7GB9tdVFsenRocYoz82xC2d6
+ 6a/82tl0lr78JopktcoJYNeKrJNPzx8ZxmAXGHmiOQ1F3h8s+2iGrQZjsm7dQJDXdNqLOZVjI
+ Shqa1OPUR/wH+lf1guAmCv79KzRFRaRtcsF56sYCdMxgNOnXf50p6hMkQlKlDV5+VxQnzZZpR
+ DaYUW5UNUrzn6ir5+bdBx2nYXM4m8rYgxwEbtR7U369vVmh6/dZygYMFe9lIYkaL96vHJp8ED
+ K80e5zmuwOsQCFFItClgrv56PxkzgQnbscdEVHaq5EamaJkQtHj6DQCn1hXCzEsOU8O8WOdAH
+ hD9Z4a5cg06ypNbAO/3vocewMDX4kNH0Z3S1fihkVWw4ACBA2ux3PnPi2vILotpgRPQJjjF98
+ mAEPbgHXkdG9NkeuJkBHHz/kEUK2psmdzQ14Gds3Le1OuuTGeYzssDHSixvY55HQqKGq7N1XK
+ 2jk3eBbv74OSvL988OXGSaEdeaPukLByNh6utEGaU8WHc8oJByN0izvXKZ
 
-From: Shixiong Ou <oushixiong@kylinos.cn>
-
-[WHY]
-   1. The driver forgot to call device_remove_file()
-   in sh_mobile_lcdc_overlay_fb_unregister(), and there was
-   no error handling when calling device_create_file() failed.
-
-   2. This should probably use device_add_group() instead of
-   individual files to simplify both creation and removal. [Arnd]
-
-   3. The driver core can register and cleanup sysfs groups already.
-   as commit 95cdd538e0e5 ("fbdev: efifb: Register sysfs groups
-   through driver core").
-
-[HOW]
-   Register sysfs groups through driver core.
-
-Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
----
- drivers/video/fbdev/sh_mobile_lcdcfb.c | 29 ++++++++++++--------------
- 1 file changed, 13 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/video/fbdev/sh_mobile_lcdcfb.c b/drivers/video/fbdev/sh_mobile_lcdcfb.c
-index 4715dcb59811..dd950e4ab5ce 100644
---- a/drivers/video/fbdev/sh_mobile_lcdcfb.c
-+++ b/drivers/video/fbdev/sh_mobile_lcdcfb.c
-@@ -1338,16 +1338,19 @@ overlay_rop3_store(struct device *dev, struct device_attribute *attr,
- 	return count;
- }
- 
--static const struct device_attribute overlay_sysfs_attrs[] = {
--	__ATTR(ovl_alpha, S_IRUGO|S_IWUSR,
--	       overlay_alpha_show, overlay_alpha_store),
--	__ATTR(ovl_mode, S_IRUGO|S_IWUSR,
--	       overlay_mode_show, overlay_mode_store),
--	__ATTR(ovl_position, S_IRUGO|S_IWUSR,
--	       overlay_position_show, overlay_position_store),
--	__ATTR(ovl_rop3, S_IRUGO|S_IWUSR,
--	       overlay_rop3_show, overlay_rop3_store),
-+static DEVICE_ATTR_RW(overlay_alpha);
-+static DEVICE_ATTR_RW(overlay_mode);
-+static DEVICE_ATTR_RW(overlay_position);
-+static DEVICE_ATTR_RW(overlay_rop3);
-+
-+static struct attribute *overlay_sysfs_attrs[] = {
-+	&dev_attr_overlay_alpha.attr,
-+	&dev_attr_overlay_mode.attr,
-+	&dev_attr_overlay_position.attr,
-+	&dev_attr_overlay_rop3.attr,
-+	NULL,
- };
-+ATTRIBUTE_GROUPS(overlay_sysfs);
- 
- static const struct fb_fix_screeninfo sh_mobile_lcdc_overlay_fix  = {
- 	.id =		"SH Mobile LCDC",
-@@ -1516,7 +1519,6 @@ sh_mobile_lcdc_overlay_fb_register(struct sh_mobile_lcdc_overlay *ovl)
- {
- 	struct sh_mobile_lcdc_priv *lcdc = ovl->channel->lcdc;
- 	struct fb_info *info = ovl->info;
--	unsigned int i;
- 	int ret;
- 
- 	if (info == NULL)
-@@ -1530,12 +1532,6 @@ sh_mobile_lcdc_overlay_fb_register(struct sh_mobile_lcdc_overlay *ovl)
- 		 dev_name(lcdc->dev), ovl->index, info->var.xres,
- 		 info->var.yres, info->var.bits_per_pixel);
- 
--	for (i = 0; i < ARRAY_SIZE(overlay_sysfs_attrs); ++i) {
--		ret = device_create_file(info->dev, &overlay_sysfs_attrs[i]);
--		if (ret < 0)
--			return ret;
--	}
--
- 	return 0;
- }
- 
-@@ -2641,6 +2637,7 @@ static int sh_mobile_lcdc_probe(struct platform_device *pdev)
- static struct platform_driver sh_mobile_lcdc_driver = {
- 	.driver		= {
- 		.name		= "sh_mobile_lcdc_fb",
-+		.dev_groups	= overlay_sysfs_groups,
- 		.pm		= &sh_mobile_lcdc_dev_pm_ops,
- 	},
- 	.probe		= sh_mobile_lcdc_probe,
--- 
-2.25.1
-
+V2hpbGUgdGFraW5nIGEgbG9vayBhdCAnW1BBVENIIG5ldF0gcGt0Z2VuOiBBdm9pZCBvdXQtb2Yt
+cmFuZ2UgaW4KZ2V0X2ltaXhfZW50cmllcycgKFsxXSkgYW5kICdbUEFUQ0ggbmV0IHYyXSBwa3Rn
+ZW46IEF2b2lkIG91dC1vZi1ib3VuZHMKYWNjZXNzIGluIGdldF9pbWl4X2VudHJpZXMnIChbMl0s
+IFszXSkgYW5kIGRvaW5nIHNvbWUgdGVzdHMgYW5kIGNvZGUgcmV2aWV3CkkgZGV0ZWN0ZWQgdGhh
+dCB0aGUgL3Byb2MvbmV0L3BrdGdlbi8uLi4gcGFyc2luZyBsb2dpYyBkb2VzIG5vdCBob25vdXIg
+dGhlCnVzZXIgZ2l2ZW4gYnVmZmVyIGJvdW5kcyAocmVzdWx0aW5nIGluIG91dC1vZi1ib3VuZHMg
+YWNjZXNzKS4KClRoaXMgY2FuIGJlIG9ic2VydmVkIGUuZy4gYnkgdGhlIGZvbGxvd2luZyBzaW1w
+bGUgdGVzdCAoc29tZXRpbWVzIHRoZQpvbGQvJ2xvbmdlcicgcHJldmlvdXMgdmFsdWUgaXMgcmUt
+cmVhZCBmcm9tIHRoZSBidWZmZXIpOgoKICAgICAgICAkIGVjaG8gYWRkX2RldmljZSBsb0AwID4g
+L3Byb2MvbmV0L3BrdGdlbi9rcGt0Z2VuZF8wCgogICAgICAgICQgZWNobyAibWluX3BrdF9zaXpl
+IDEyMzQ1IiA+IC9wcm9jL25ldC9wa3RnZW4vbG9cQDAgJiYgZ3JlcCBtaW5fcGt0X3NpemUgL3By
+b2MvbmV0L3BrdGdlbi9sb1xAMApQYXJhbXM6IGNvdW50IDEwMDAgIG1pbl9wa3Rfc2l6ZTogMTIz
+NDUgIG1heF9wa3Rfc2l6ZTogMApSZXN1bHQ6IE9LOiBtaW5fcGt0X3NpemU9MTIzNDUgCgogICAg
+ICAgICQgZWNobyAtbiAibWluX3BrdF9zaXplIDEyMyIgPiAvcHJvYy9uZXQvcGt0Z2VuL2xvXEAw
+ICYmIGdyZXAgbWluX3BrdF9zaXplIC9wcm9jL25ldC9wa3RnZW4vbG9cQDAKUGFyYW1zOiBjb3Vu
+dCAxMDAwICBtaW5fcGt0X3NpemU6IDEyMzQ1ICBtYXhfcGt0X3NpemU6IDAKUmVzdWx0OiBPSzog
+bWluX3BrdF9zaXplPTEyMzQ1CgogICAgICAgICQgZWNobyAibWluX3BrdF9zaXplIDEyMyIgPiAv
+cHJvYy9uZXQvcGt0Z2VuL2xvXEAwICYmIGdyZXAgbWluX3BrdF9zaXplIC9wcm9jL25ldC9wa3Rn
+ZW4vbG9cQDAKUGFyYW1zOiBjb3VudCAxMDAwICBtaW5fcGt0X3NpemU6IDEyMyAgbWF4X3BrdF9z
+aXplOiAwClJlc3VsdDogT0s6IG1pbl9wa3Rfc2l6ZT0xMjMKClNvIGZpeCB0aGUgb3V0LW9mLWJv
+dW5kcyBhY2Nlc3MgKGFuZCBzb21lIG1pbm9yIGZpbmRpbmdzKSBhbmQgYWRkIGEgc2ltcGxlCnBy
+b2NfbmV0X3BrdGdlbiBzZWxmdGVzdC4uLgoKUGF0Y2ggc2V0IHNwbGl0ZWQgaW50byBwYXJ0IEkg
+KHRoaXMgb25lKQoKLSBuZXQ6IHBrdGdlbjogcmVwbGFjZSBFTk9UU1VQUCB3aXRoIEVPUE5PVFNV
+UFAKLSBuZXQ6IHBrdGdlbjogZW5hYmxlICdwYXJhbT12YWx1ZScgcGFyc2luZwotIG5ldDogcGt0
+Z2VuOiBmaXggaGV4MzJfYXJnIHBhcnNpbmcgZm9yIHNob3J0IHJlYWRzCi0gbmV0OiBwa3RnZW46
+IGZpeCAncmF0ZSAwJyBlcnJvciBoYW5kbGluZyAocmV0dXJuIC1FSU5WQUwpCi0gbmV0OiBwa3Rn
+ZW46IGZpeCAncmF0ZXAgMCcgZXJyb3IgaGFuZGxpbmcgKHJldHVybiAtRUlOVkFMKQotIG5ldDog
+cGt0Z2VuOiBmaXggY3RybCBpbnRlcmZhY2UgY29tbWFuZCBwYXJzaW5nCi0gbmV0OiBwa3RnZW46
+IGZpeCBhY2Nlc3Mgb3V0c2lkZSBvZiB1c2VyIGdpdmVuIGJ1ZmZlciBpbiBwa3RnZW5fdGhyZWFk
+X3dyaXRlKCkKCkFuZCBwYXJ0IElJICh3aWxsIGZvbGxvdyk6CgotIG5ldDogcGt0Z2VuOiBmaXgg
+bWl4IG9mIGludC9sb25nCi0gbmV0OiBwa3RnZW46IHJlbW92ZSBleHRyYSB0bXAgdmFyaWFibGUg
+KHJlLXVzZSBsZW4gaW5zdGVhZCkKLSBuZXQ6IHBrdGdlbjogcmVtb3ZlIHNvbWUgc3VwZXJmbHVv
+dXMgdmFyaWFibGUgaW5pdGlhbGl6aW5nCi0gbmV0OiBwa3RnZW46IGZpeCBtcGxzIG1heGltdW0g
+bGFiZWxzIGxpc3QgcGFyc2luZwotIG5ldDogcGt0Z2VuOiBmaXggYWNjZXNzIG91dHNpZGUgb2Yg
+dXNlciBnaXZlbiBidWZmZXIgaW4gcGt0Z2VuX2lmX3dyaXRlKCkKLSBuZXQ6IHBrdGdlbjogZml4
+IG1wbHMgcmVzZXQgcGFyc2luZwotIG5ldDogcGt0Z2VuOiByZW1vdmUgYWxsIHN1cGVyZmx1b3Vz
+IGluZGV4IGFzc2lnbmVtZW50cwotIHNlbGZ0ZXN0OiBuZXQ6IGFkZCBwcm9jX25ldF9wa3RnZW4K
+ClJlZ2FyZHMsClBldGVyCgpDaGFuZ2VzIHY1IC0+IHY2OgogLSBhZGQgcmV2LWJ5IFNpbW9uIEhv
+cm1hbgogLSBkcm9wIHBhdGNoICduZXQ6IHBrdGdlbjogdXNlIGRlZmluZXMgZm9yIHRoZSB2YXJp
+b3VzIGRlYy9oZXggbnVtYmVyCiAgIHBhcnNpbmcgZGlnaXRzIGxlbmd0aHMnCgpDaGFuZ2VzIHY0
+IC0+IHY1OgogLSBzcGxpdCB1cCBwYXRjaHNldCBpbnRvIHBhcnQgaS9paSAoc3VnZ2VzdGVkIGJ5
+IFNpbW9uIEhvcm1hbikKCkNoYW5nZXMgdjMgLT4gdjQ6CiAtIGFkZCByZXYtYnkgU2ltb24gSG9y
+bWFuCiAtIG5ldyBwYXRjaCAnbmV0OiBwa3RnZW46IHVzZSBkZWZpbmVzIGZvciB0aGUgdmFyaW91
+cyBkZWMvaGV4IG51bWJlciBwYXJzaW5nCiAgIGRpZ2l0cyBsZW5ndGhzJyAoc3VnZ2VzdGVkIGJ5
+IFNpbW9uIEhvcm1hbikKIC0gcmVwbGFjZSBDOTkgY29tbWVudCAoc3VnZ2VzdGVkIGJ5IFBhb2xv
+IEFiZW5pKQogLSBkcm9wIGF2YWlsYWJsZSBjaGFyYWN0ZXJzIGNoZWNrIGluIHN0cm5fbGVuKCkg
+KHN1Z2dlc3RlZCBieSBQYW9sbyBBYmVuaSkKIC0gZmFjdG9yZWQgb3V0IHBhdGNoICduZXQ6IHBr
+dGdlbjogYWxpZ24gc29tZSB2YXJpYWJsZSBkZWNsYXJhdGlvbnMgdG8gdGhlCiAgIG1vc3QgY29t
+bW9uIHBhdHRlcm4nIChzdWdnZXN0ZWQgYnkgUGFvbG8gQWJlbmkpCiAtIGZhY3RvcmVkIG91dCBw
+YXRjaCAnbmV0OiBwa3RnZW46IHJlbW92ZSBleHRyYSB0bXAgdmFyaWFibGUgKHJlLXVzZSBsZW4K
+ICAgaW5zdGVhZCknIChzdWdnZXN0ZWQgYnkgUGFvbG8gQWJlbmkpCiAtIGZhY3RvcmVkIG91dCBw
+YXRjaCAnbmV0OiBwa3RnZW46IHJlbW92ZSBzb21lIHN1cGVyZmx1b3VzIHZhcmlhYmxlCiAgIGlu
+aXRpYWxpemluZycgKHN1Z2dlc3RlZCBieSBQYW9sbyBBYmVuaSkKIC0gZmFjdG9yZWQgb3V0IHBh
+dGNoICduZXQ6IHBrdGdlbjogZml4IG1wbHMgbWF4aW11bSBsYWJlbHMgbGlzdCBwYXJzaW5nJwog
+ICAoc3VnZ2VzdGVkIGJ5IFBhb2xvIEFiZW5pKQogLSBmYWN0b3JlZCBvdXQgJ25ldDogcGt0Z2Vu
+OiBoZXgzMl9hcmcvbnVtX2FyZyBlcnJvciBvdXQgaW4gY2FzZSBubwogICBjaGFyYWN0ZXJzIGFy
+ZSBhdmFpbGFibGUnIChzdWdnZXN0ZWQgYnkgUGFvbG8gQWJlbmkpCiAtIGZhY3RvcmVkIG91dCAn
+bmV0OiBwa3RnZW46IG51bV9hcmcgZXJyb3Igb3V0IGluIGNhc2Ugbm8gdmFsaWQgY2hhcmFjdGVy
+CiAgIGlzIHBhcnNlZCcgKHN1Z2dlc3RlZCBieSBQYW9sbyBBYmVuaSkKCkNoYW5nZXMgdjIgLT4g
+djM6CiAtIG5ldyBwYXRjaDogJ25ldDogcGt0Z2VuOiBmaXggY3RybCBpbnRlcmZhY2UgY29tbWFu
+ZCBwYXJzaW5nJwogLSBuZXcgcGF0Y2g6ICduZXQ6IHBrdGdlbjogZml4IG1wbHMgcmVzZXQgcGFy
+c2luZycKIC0gdG9vbHMvdGVzdGluZy9zZWxmdGVzdHMvbmV0L3Byb2NfbmV0X3BrdGdlbi5jOgog
+ICAtIGZpeCB0eXBvIGluIGNoYW5nZSBkZXNjcmlwdGlvbiAoJ3YxIC0+IHYxJyBhbmQgdHlvcCkK
+ICAgLSByZW5hbWUgc29tZSB2YXJzIHRvIGJldHRlciBtYXRjaCB1c2FnZQogICAgIGFkZF9sb29w
+YmFja18wIC0+IHRocl9jbWRfYWRkX2xvb3BiYWNrXzAKICAgICBybV9sb29wYmFja18wIC0+IHRo
+cl9jbWRfcm1fbG9vcGJhY2tfMAogICAgIHdyb25nX2N0cmxfY21kIC0+IHdyb25nX3Rocl9jbWQK
+ICAgICBsZWdhY3lfY3RybF9jbWQgLT4gbGVnYWN5X3Rocl9jbWQKICAgICBjdHJsX2ZkIC0+IHRo
+cl9mZAogICAtIGFkZCBjdHJsIGludGVyZmFjZSB0ZXN0cwoKQ2hhbmdlcyB2MSAtPiB2MjoKIC0g
+bmV3IHBhdGNoOiAnbmV0OiBwa3RnZW46IGZpeCBoZXgzMl9hcmcgcGFyc2luZyBmb3Igc2hvcnQg
+cmVhZHMnCiAtIG5ldyBwYXRjaDogJ25ldDogcGt0Z2VuOiBmaXggJ3JhdGUgMCcgZXJyb3IgaGFu
+ZGxpbmcgKHJldHVybiAtRUlOVkFMKScKIC0gbmV3IHBhdGNoOiAnbmV0OiBwa3RnZW46IGZpeCAn
+cmF0ZXAgMCcgZXJyb3IgaGFuZGxpbmcgKHJldHVybiAtRUlOVkFMKScKIC0gbmV0L2NvcmUvcGt0
+Z2VuLmM6IGFkZGl0aW9uYWwgZml4IGdldF9pbWl4X2VudHJpZXMoKSBhbmQgZ2V0X2xhYmVscygp
+CiAtIHRvb2xzL3Rlc3Rpbmcvc2VsZnRlc3RzL25ldC9wcm9jX25ldF9wa3RnZW4uYzoKICAgLSBm
+aXggdHlvcCBub3QgdnMuIG5vZCAoc3VnZ2VzdGVkIGJ5IEpha3ViIEtpY2luc2tpKQogICAtIGZp
+eCBtaXNhbGlnbmVkIGxpbmUgKHN1Z2dlc3RlZCBieSBKYWt1YiBLaWNpbnNraSkKICAgLSBlbmFi
+bGUgZm9tZXJseSBjb21tZW50ZWQgb3V0IENPTkZJR19YRlJNIGRlcGVuZGVudCB0ZXN0IChjb21t
+YW5kIHNwaSksCiAgICAgYXMgQ09ORklHX1hGUk0gaXMgZW5hYmxlZCB2aWEgdG9vbHMvdGVzdGlu
+Zy9zZWxmdGVzdHMvbmV0L2NvbmZpZwogICAgIENPTkZJR19YRlJNX0lOVEVSRkFDRS9DT05GSUdf
+WEZSTV9VU0VSIChzdWdnZXN0ZXggYnkgSmFrdWIgS2ljaW5za2kpCiAgIC0gYWRkIENPTkZJR19O
+RVRfUEtUR0VOPW0gdG8gdG9vbHMvdGVzdGluZy9zZWxmdGVzdHMvbmV0L2NvbmZpZwogICAgIChz
+dWdnZXN0ZWQgYnkgSmFrdWIgS2ljaW5za2kpCiAgIC0gYWRkIG1vZHByb2JlIHBrdGdlbiB0byBG
+SVhUVVJFX1NFVFVQKCkgKHN1Z2dlc3RlZCBieSBKYWt1YiBLaWNpbnNraSkKICAgLSBmaXggc29t
+ZSBjaGVja3BhdGNoIHdhcm5pbmdzIChNaXNzaW5nIGEgYmxhbmsgbGluZSBhZnRlciBkZWNsYXJh
+dGlvbnMpCiAgIC0gc2hyaW5rIGxpbmUgbGVuZ3RoIGJ5IHJlLW5hbWluZyBzb21lIHZhcmlhYmxl
+cyAoY29tbWFuZCAtPiBjbWQsCiAgICAgZGV2aWNlIC0+IGRldikKICAgLSBhZGQgJ3JhdGUgMCcg
+dGVzdGNhc2UKICAgLSBhZGQgJ3JhdGVwIDAnIHRlc3RjYXNlCgpbMV0gaHR0cHM6Ly9sb3JlLmtl
+cm5lbC5vcmcvbmV0ZGV2LzIwMjQxMDA2MjIxMjIxLjM3NDQ5OTUtMS1hcnRlbS5jaGVybnlzaGV2
+QHJlZC1zb2Z0LnJ1LwpbMl0gaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvbmV0ZGV2LzIwMjUwMTA5
+MDgzMDM5LjE0MDA0LTEtcGNoZWxraW5AaXNwcmFzLnJ1LwpbM10gaHR0cHM6Ly9naXQua2VybmVs
+Lm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvdG9ydmFsZHMvbGludXguZ2l0L2NvbW1pdC8/
+aWQ9NzYyMDFiNTk3OTc2ODUwMGJjYTM2Mjg3MWRiNjZkNzdjYjRjMjI1ZQoKUGV0ZXIgU2VpZGVy
+ZXIgKDcpOgogIG5ldDogcGt0Z2VuOiByZXBsYWNlIEVOT1RTVVBQIHdpdGggRU9QTk9UU1VQUAog
+IG5ldDogcGt0Z2VuOiBlbmFibGUgJ3BhcmFtPXZhbHVlJyBwYXJzaW5nCiAgbmV0OiBwa3RnZW46
+IGZpeCBoZXgzMl9hcmcgcGFyc2luZyBmb3Igc2hvcnQgcmVhZHMKICBuZXQ6IHBrdGdlbjogZml4
+ICdyYXRlIDAnIGVycm9yIGhhbmRsaW5nIChyZXR1cm4gLUVJTlZBTCkKICBuZXQ6IHBrdGdlbjog
+Zml4ICdyYXRlcCAwJyBlcnJvciBoYW5kbGluZyAocmV0dXJuIC1FSU5WQUwpCiAgbmV0OiBwa3Rn
+ZW46IGZpeCBjdHJsIGludGVyZmFjZSBjb21tYW5kIHBhcnNpbmcKICBuZXQ6IHBrdGdlbjogZml4
+IGFjY2VzcyBvdXRzaWRlIG9mIHVzZXIgZ2l2ZW4gYnVmZmVyIGluCiAgICBwa3RnZW5fdGhyZWFk
+X3dyaXRlKCkKCiBuZXQvY29yZS9wa3RnZW4uYyB8IDM5ICsrKysrKysrKysrKysrKysrKysrKyst
+LS0tLS0tLS0tLS0tLS0tLQogMSBmaWxlIGNoYW5nZWQsIDIyIGluc2VydGlvbnMoKyksIDE3IGRl
+bGV0aW9ucygtKQoKLS0gCjIuNDguMQoK
 
