@@ -1,120 +1,127 @@
-Return-Path: <linux-kernel+bounces-520963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4503FA3B1C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:47:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6580AA3B1C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 07:47:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12B4016638E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 06:47:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE74E3A6753
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 06:47:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136251BD517;
-	Wed, 19 Feb 2025 06:47:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 228E01AF0C0;
+	Wed, 19 Feb 2025 06:47:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Eyq9PAKJ"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="OFXPhAWh";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="S8cN9Grw"
+Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3BEE16D9AF;
-	Wed, 19 Feb 2025 06:47:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADF5D1B87F8;
+	Wed, 19 Feb 2025 06:47:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739947635; cv=none; b=K5+9lJevKGlDuDjzGvxaJ4cV7vEtBp9nEaI7T91TtvpPOFn91p+PEQJNQ0FkyE5+MvKbg8K78/UCx+8H3P0sv2iY5c1j+0HXOWMD4vqCIMvtOQc21+onb25f8daS0/+ApPzh15/Z2jfjI/q0ATiFFBabeExoiU2M7khzVh6qsOs=
+	t=1739947663; cv=none; b=sZmpBdkPl2meWOOpoXe365WRcvgcf1EAlpGcrHyauPN3cncb1W4745gDGpzh5UCWdF+QcoEsMQenYsDk7um0Aef2YBSDqvAU+LFugoK16wT9n8C33zYkbGPyE30ZhvRPVIX5aUGmYB98fznpBberI8EoLN1pBjAE5Nm6OauU0sE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739947635; c=relaxed/simple;
-	bh=MYxLqKiBVCSV4EA6RHnM/JzZtNB2EIQInZuDvNCBosE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Tc7b1I/QW+OC7PsLC8zxbBniUWwohq7TJsKLn3uIVFuvMuAdzkvy6kmFq0qmPNdm9lQYfW27OpktSHcSRQtUKWg4Bue40nSOK+Tc8/M70GzvMudWT1kw95kColPifM+49cqHN6fsKHOubLnKXsiDEuOf1l6UQFBiDtGyo49uUTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Eyq9PAKJ; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51J1ubbQ009405;
-	Wed, 19 Feb 2025 06:47:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=corp-2023-11-20; bh=FEuUaF/SEFjtrbP1K05Imcw37t8jk
-	DE0hwRUENn2CnE=; b=Eyq9PAKJ4O8NqQvhtG2tpanbp4iCIj6KNDNPyd6qNw8qh
-	ISckGpEP+FgPle8TxBvyHLDgAVMR31l53jj33+LVfbfRhNs7ogNTCXJxcb8tH+7a
-	KdBjspdJBH7CByC74bMTMx7EszDAxOSdi2w1G4aBXvflyHxRQep8v830rTbwwGJC
-	0g7zoynyrOgC+77d7/gLtY8mFyc73Ny3q+T7xo87Kn72huBSVTntETqkgVi56Ln7
-	vU62DFIYCe8otWcwYStv0O5h5+5Y9LdabcLZgYXMGWJqzie/oiaJa36heGuYYAtz
-	PiOJgPYF4p49vJsSENJdYrmT2l6T4VNgCRk79yStQ==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 44w00kgytf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 19 Feb 2025 06:47:09 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 51J5EmRi012111;
-	Wed, 19 Feb 2025 06:47:08 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 44w0b22s4g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 19 Feb 2025 06:47:08 +0000
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 51J6l8LS007963;
-	Wed, 19 Feb 2025 06:47:08 GMT
-Received: from sishan-bugs.osdevelopmeniad.oraclevcn.com (sishan-bug36880967.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.254.109])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 44w0b22s3n-1;
-	Wed, 19 Feb 2025 06:47:08 +0000
-From: Sinadin Shan <sinadin.shan@oracle.com>
-To: shuah@kernel.org
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        chris.hyser@oracle.com, Sinadin Shan <sinadin.shan@oracle.com>
-Subject: [PATCH] selftests: sched: add sched as a default selftest target
-Date: Wed, 19 Feb 2025 06:46:58 +0000
-Message-ID: <20250219064658.449069-1-sinadin.shan@oracle.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1739947663; c=relaxed/simple;
+	bh=lLC828cf4EMsaJ1JTfrov2AKE1L5G0zPb43ehUPW7Yc=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=QjhpJ4D98qNmxAlJMNF8Lk5I/r6flL5GOP+afd3pA55T8fxjyrXVZ6nyPWw7vZ1FJpCY6OPB+CEwTqssEnrF+ioSzHXjD87oFp6fQ+SuHQPhOWZXVPZxZ9koyAEo1TNzQKI2pf+sIESBMG4etEonKLR63cRJjiS8GPfWjzsI/Ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=OFXPhAWh; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=S8cN9Grw; arc=none smtp.client-ip=103.168.172.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailfout.phl.internal (Postfix) with ESMTP id 7C4401380861;
+	Wed, 19 Feb 2025 01:47:39 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-11.internal (MEProxy); Wed, 19 Feb 2025 01:47:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1739947659;
+	 x=1740034059; bh=J36qZr4XlQJHghLHCEZehAHjZbscRnNTmQ9ugnTYxVo=; b=
+	OFXPhAWhRehitF6GSNzJuzWZoC9i+FkscVRs9xpeC0DjoI8ljDc2hB0HEdM+sfIh
+	xjXTMyLSXAPttxAu/Rbg5OlNq8KVnSBtRGj34virrlToENk9Yt1AI03oSr17GP/p
+	ItE6NA8QtriiHRFspzmdgWlOGL/BRcW6eNKuHkiJJW2W3E0NiyJ8AZQy5PT8VHlB
+	Af4zuEKF3lKXgZZaN6m9nqivj5Xr4a1+vYIW0Recnh1I3/DOeRNO2lgxoWV9HhIk
+	t1P3kyL3oDDjUtJ5nxIO8tsRHpeYkJoURtKdmsZEr0VOboByMV7L/p2WoQqnysDO
+	Qj7WjF+3yA/plTuYqxfqcA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1739947659; x=
+	1740034059; bh=J36qZr4XlQJHghLHCEZehAHjZbscRnNTmQ9ugnTYxVo=; b=S
+	8cN9GrwjiCFlRI4BSr7oLDPMvEOAMFRL0/lhW26MFviJ9W0LX7rWlZ/MAVbrX7+o
+	KXLCRFf4hnvRyU8JAj0OxmjeNzCBBXwxM03tCwNU+LKIbyDzWmVjxTBnvYC9Vyis
+	E7SZdc8aRTWjzh04UvyxKf43YSMFB0vFzFx3GxLb++rgsj3aHfAAp69SizicXllz
+	MC+Sj4xdIFf3DHnM3yUeLdR4Dna61+S13fjv9Gujzgbo9eqip08uBCbpDvXiAvj5
+	PXZYLjB378W4dT5AbvEGsuZwIMLa6t/hr0IQ9fVY3NWrHP7WaESxoTg5t1MWxUdG
+	d7yGQn9MDZkquAXmzpbzw==
+X-ME-Sender: <xms:iX61ZyPZshRIVa-De3lhnUd8ev5oTNVqwRG8IBT7N6jjeIJ4Jab8Lg>
+    <xme:iX61Zw8Cdk3v-pSafSh2TKhqROR0trG-RdXSjc_guD8jBzw_VnfLFoVmlypyK2JmP
+    75ncgaeToNeM3E8LWg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeifeehhecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
+    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedu
+    tddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepohhushhhihigihhonhhguddtvd
+    ehseduieefrdgtohhmpdhrtghpthhtohepuhdrkhhlvghinhgvqdhkohgvnhhighessggr
+    hihlihgsrhgvrdgtohhmpdhrtghpthhtohepuggvlhhlvghrsehgmhigrdguvgdprhgtph
+    htthhopehlrghurhgvnhhtrdhpihhntghhrghrthdorhgvnhgvshgrshesihguvggrshho
+    nhgsohgrrhgurdgtohhmpdhrtghpthhtoheplhgvvgeskhgvrhhnvghlrdhorhhgpdhrtg
+    hpthhtohepohhushhhihigihhonhhgsehkhihlihhnohhsrdgtnhdprhgtphhtthhopegu
+    rhhiqdguvghvvghlsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpth
+    htohepthiiihhmmhgvrhhmrghnnhesshhushgvrdguvgdprhgtphhtthhopehlihhnuhig
+    qdhfsgguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:iX61Z5SyTODmXICOp_WXU3NSDFy1s_FTtNbLc1gOCPdibSHLmS1lww>
+    <xmx:iX61ZyttbKacXZ9qlo-Pw5b8KuvM-yTc0w3qHB8Pw_eSJaraQFybbw>
+    <xmx:iX61Z6fhJnCSyXSQ6ZuOoUJdm596mkMwKo225NV-CHVuxl3TSNuOvw>
+    <xmx:iX61Z226JAg3E-s_OB-Nr0DNGmrggT029C1mUx7bTU02ok-QVsAbhA>
+    <xmx:i361Z64u886KwNja_d7rD4JlceV124kFry1zhn9OT4MmYloJ7kdd4R1O>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 9AACC2220072; Wed, 19 Feb 2025 01:47:37 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-19_02,2025-02-18_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxscore=0 spamscore=0
- adultscore=0 malwarescore=0 suspectscore=0 phishscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502100000
- definitions=main-2502190051
-X-Proofpoint-ORIG-GUID: PMe11uT95MgdSUQVfPVta_zzM2pE6qXT
-X-Proofpoint-GUID: PMe11uT95MgdSUQVfPVta_zzM2pE6qXT
+Date: Wed, 19 Feb 2025 07:47:06 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: oushixiong <oushixiong1025@163.com>, "Helge Deller" <deller@gmx.de>
+Cc: "Thomas Zimmermann" <tzimmermann@suse.de>,
+ "Laurent Pinchart" <laurent.pinchart+renesas@ideasonboard.com>,
+ "Lee Jones" <lee@kernel.org>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+ linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, oushixiong <oushixiong@kylinos.cn>
+Message-Id: <4f2ae439-1bdc-4593-9151-e15981509344@app.fastmail.com>
+In-Reply-To: <20250208092918.251733-1-oushixiong1025@163.com>
+References: <20250208092918.251733-1-oushixiong1025@163.com>
+Subject: Re: [PATCH v2] fbdev: lcdcfb: add missing device_remove_file()
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-The sched tests are missing a target entry and hence out-of-tree build
-support.
+On Sat, Feb 8, 2025, at 10:29, oushixiong1025@163.com wrote:
+> From: Shixiong Ou <oushixiong@kylinos.cn>
+>
+> 1. The device_remove_file() need to be called when driver is removing.
+> 2. The device_remove_file() need to be called if the call to
+>    device_create_file() fails.
 
-For instance:
-make -C tools/testing/selftests install INSTALL_LOCATION=/foo/bar
+This should probably use device_add_group() instead of
+individual files to simplify both creation and removal.
+It would also avoid the bug you introduced that gcc warns
+about.
 
-is expected to build the sched tests and place them at /foo/bar.
-But this is not observed since a TARGET entry is not present for sched.
-
-This was suggested by Shuah in this conversation
-Link: https://lore.kernel.org/linux-kselftest/60dd0240-8e45-4958-acf2-7eeee917785b@linuxfoundation.org/
-
-Add support for sched selftests by adding sched as a default TARGET
-
-Signed-off-by: Sinadin Shan <sinadin.shan@oracle.com>
----
- tools/testing/selftests/Makefile | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-index 8daac70c2f9d2..e2d0d389ad912 100644
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@ -91,6 +91,7 @@ TARGETS += rlimits
- TARGETS += rseq
- TARGETS += rtc
- TARGETS += rust
-+TARGETS += sched
- TARGETS += sched_ext
- TARGETS += seccomp
- TARGETS += sgx
--- 
-2.43.5
-
+      Arnd
 
