@@ -1,88 +1,158 @@
-Return-Path: <linux-kernel+bounces-521379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1948FA3BC87
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:16:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44FB1A3BC82
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 12:15:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F80E16BD6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:13:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F83F3B8CF4
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:13:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A79881DED49;
-	Wed, 19 Feb 2025 11:13:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A11D1DED5A;
+	Wed, 19 Feb 2025 11:13:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="jARdlX5C"
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="n6SRoUbC"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C67B51DE89A;
-	Wed, 19 Feb 2025 11:12:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 312231DE89A
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 11:13:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739963584; cv=none; b=RKgHnRjhdyl4tfRLA7df7uXKDI4aQtAigEA4URAcscsbnTKtDj5dGc7sdn3wsZHvfBzCD4OS2QJ5Ys7evDvcmVG3knkGkpcWfIo4VccUb8iggONyB96DyA6J1L10gek9hxs7dJrq3pal6E86VcFvBq7zA5JR1sRnQGH4pKM3ThM=
+	t=1739963626; cv=none; b=bZ2fgkNQoFNoSAr5z38rMB8x+8yhesHBgv+zfjAlUHo6SPLNnowM3ntSNMv+JalabTTp6VkeOHiPf6E12+7eI67/7rI8LeyVT12LcYNI+FFRe0LItrwa/SG2hnvCBhUKXQltNhmQmCM6TS27TL0mb0Im99NWaWmCq2O0o67RQTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739963584; c=relaxed/simple;
-	bh=eq0bO5AiKScgWknT2M0jtFi8rEe2UnYq/oIVfB8MlEc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MJ5pH8vEr1yny1TXVWa7fqoJ7bxBTHRGwXPRqHQ4eOGDFr/7upQ2Zg60IIKY/PkxxPlJGdFp0CLL2VBc4SCfDbAchXSyiKd835jjyjZsKcQl+u8zp1C09ZGVxygM/RsOQVII3yZmKI8y5dlUX6aRIASrviO/IpRXoLjVe9eEl7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=jARdlX5C; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1739963577; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-	bh=AOS3TxiSBim6IrLgI1TkSe7MBn0RikxAUdjypC+ZAt4=;
-	b=jARdlX5Ck4DR2iBG2A3Eqs4jsTpvfE2Q8npxWBEzRNVuXC2y+/UEJRdAofhst8Usia9UgbRKoGT8aMb0d21xl4RCsB6lBbFjRFn7J9zrHopfHy55wAVfR23Vq4g8zrutXQ3mJG91o+UG/v/+dhLRu0c1eX3PAyFyuoG6W6cDYO0=
-Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0WPpAZdk_1739963576 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 19 Feb 2025 19:12:56 +0800
-Date: Wed, 19 Feb 2025 19:12:54 +0800
-From: Feng Tang <feng.tang@linux.alibaba.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Lukas Wunner <lukas@wunner.de>,
-	Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	Liguang Zhang <zhangliguang@linux.alibaba.com>,
-	Guanghui Feng <guanghuifeng@linux.alibaba.com>, rafael@kernel.org,
-	Markus Elfring <Markus.Elfring@web.de>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	ilpo.jarvinen@linux.intel.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] PCI/portdrv: Add necessary wait for disabling
- hotplug events
-Message-ID: <Z7W8tlhd-Yw3snk4@U-2FWC9VHC-2323.local>
-References: <20250218034859.40397-1-feng.tang@linux.alibaba.com>
- <20250218223354.GA196886@bhelgaas>
- <Z7VHuOFxilan4LX_@U-2FWC9VHC-2323.local>
+	s=arc-20240116; t=1739963626; c=relaxed/simple;
+	bh=0dMvZpkMqAf5szJMQQWz9hZIxQuXcUu2H3721CUqrQs=;
+	h=From:To:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=kYDUEK1RRBLsxDRMWGlkgjtcfHlNRH13UGdVOKYxhjSqftLf2qpGW8CCyK7XoE4nap0rQ4GOQaBpwiM4cgvdebx1jRzIKCWQwqcUCIiYT3u4yvfXfRZAH+wqOTMui1Oh8mIg+D1rCFtgaxCFDwdrU0VkdSMADNumgnWlwoo98d4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=n6SRoUbC; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250219111342epoutp013db02fb4cd528f7bd4b3a08ec8fd0a85~ll7ITX91u2077720777epoutp01G
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 11:13:42 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250219111342epoutp013db02fb4cd528f7bd4b3a08ec8fd0a85~ll7ITX91u2077720777epoutp01G
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1739963622;
+	bh=0dMvZpkMqAf5szJMQQWz9hZIxQuXcUu2H3721CUqrQs=;
+	h=From:To:In-Reply-To:Subject:Date:References:From;
+	b=n6SRoUbCj2+tD/mL42uRULbQbROD/zyrjQyHTvsBjyvx9nSOTq/lPIqaGWs0jiBWE
+	 2b3L1PpiyrIxRtBCx4N3YtZzr8PF0Ri9GAXO4Fi0qqY+f5rPfOuJdARs7IHtJ+WPHa
+	 t+hjMeGkUF0fMdpKldRUZaHCzg+KxTEvew3V03wY=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20250219111341epcas5p2c4c156a585441c71a1d0353081da2f6c~ll7HmUk950392603926epcas5p28;
+	Wed, 19 Feb 2025 11:13:41 +0000 (GMT)
+Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.178]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4YyYfq67llz4x9Pw; Wed, 19 Feb
+	2025 11:13:39 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	12.07.19710.3ECB5B76; Wed, 19 Feb 2025 20:13:39 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250219111339epcas5p14e032bd5012501f1d233b8b3d1ad6787~ll7FvMJNa0313203132epcas5p1q;
+	Wed, 19 Feb 2025 11:13:39 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250219111339epsmtrp2e00d203ad34ab3cc0bda6149a7c59e4a~ll7FucTfk0712207122epsmtrp2F;
+	Wed, 19 Feb 2025 11:13:39 +0000 (GMT)
+X-AuditID: b6c32a44-36bdd70000004cfe-1b-67b5bce3a95f
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	54.DD.18729.3ECB5B76; Wed, 19 Feb 2025 20:13:39 +0900 (KST)
+Received: from INBRO002756 (unknown [107.111.84.9]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250219111337epsmtip262aef9ade6732725607180a6f93f56e5~ll7EBMYyO0205602056epsmtip2q;
+	Wed, 19 Feb 2025 11:13:37 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>, "'Peter
+ Griffin'" <peter.griffin@linaro.org>, =?UTF-8?Q?'Andr=C3=A9_Draszik'?=
+	<andre.draszik@linaro.org>, "'Tudor Ambarus'" <tudor.ambarus@linaro.org>,
+	"'Rob Herring'" <robh@kernel.org>, "'Krzysztof	Kozlowski'"
+	<krzk+dt@kernel.org>, "'Conor Dooley'" <conor+dt@kernel.org>,
+	<linux-fsd@tesla.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+In-Reply-To: <20250219085726.70824-1-krzysztof.kozlowski@linaro.org>
+Subject: RE: [PATCH 1/2] arm64: dts: exynos: gs101: Change labels to
+ lower-case
+Date: Wed, 19 Feb 2025 16:43:36 +0530
+Message-ID: <0a8c01db82bf$53954ee0$fabfeca0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Z7VHuOFxilan4LX_@U-2FWC9VHC-2323.local>
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQD7+/KmEPmGt2fnlavaRogKLr3OSgH4fj3DtP3Cb4A=
+Content-Language: en-us
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMJsWRmVeSWpSXmKPExsWy7bCmuu7jPVvTDb4t0bfY8mozi8WaveeY
+	LOYfOcdq8XLWPTaLva+3sltsenyN1eLhq3CLy7vmsFnMOL+PyWLDjH8sFv/37GC3+HQrzoHH
+	Y9OqTjaPO9f2sHlsXlLv8a9pLrvH501yAaxR2TYZqYkpqUUKqXnJ+SmZeem2St7B8c7xpmYG
+	hrqGlhbmSgp5ibmptkouPgG6bpk5QMcpKZQl5pQChQISi4uV9O1sivJLS1IVMvKLS2yVUgtS
+	cgpMCvSKE3OLS/PS9fJSS6wMDQyMTIEKE7IzZr6awlSwjati57HD7A2MPzm7GDk5JARMJE5e
+	6WTvYuTiEBLYzShx9/kjFgjnE6PEvx9LWSGcb4wSZxt/McO0PPjxmRkisZdR4tH+NqiWF4wS
+	1+7dB6tiE9CV2LG4jQ0kISLwj1midckeNpAEp4CLxPOX/ewgtrBAoMS9eTNZQGwWAVWJXTvu
+	MoLYvAKWEif2vGaGsAUlTs58AlbDLKAtsWzha6gzFCR+Pl3GCmKLCFhJrGm5zQRRIy7x8ugR
+	sI8kBJZySByY9JMdosFFYsuFNywQtrDEq+NboOJSEp/f7WWDsKsl1m+YB1XTwSjRuL0GwraX
+	2PnoJlCcA2iBpsT6XfoQu/gken8/YQIJSwjwSnS0CUFUq0o0v7sKNUVaYmJ3NyuE7SHxcNEu
+	aJBOZ5To2PKUZQKjwiwkb85C8uYsJO/MQti8gJFlFaNkakFxbnpqsmmBYV5qOTzKk/NzNzGC
+	U6+Wyw7GG/P/6R1iZOJgPMQowcGsJMLbVr8lXYg3JbGyKrUoP76oNCe1+BCjKTDsJzJLiSbn
+	A5N/Xkm8oYmlgYmZmZmJpbGZoZI4b/POlnQhgfTEktTs1NSC1CKYPiYOTqkGpoDbrLKtcl2m
+	6iuFDI+FB/6co9jWfzd7MfMut04ehoQn95c5XclbviEh6fm617wF8gtPZ0pMKxHKvGR31+HF
+	vuoNC7aouJmUnv77//tp2X++T5ZoB2W9P6sV6Zcz+8u22o8PRHosbuw4PW3bkdu77IumTZVM
+	Cnd8KX774fo9QTM+T//XW3zAKeTp6Yi0Vl3h/oKw7+waW7U/dL9e0zJt+ZNQlesam4xyP/pL
+	+It2Pl32sfk2V+7WjS1vNrVNmpYzNd7yEzvjieP3tR9Ybdy1QPIzt7RmS1PQ/F+fv+7I2v/g
+	009N9/C3Hyyin06dv0nWXnxK2oUHjq5vm56u2auWq29rJX3i80FZz92Mto/8JCWVWIozEg21
+	mIuKEwGMfY6hRgQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupjkeLIzCtJLcpLzFFi42LZdlhJXvfxnq3pBt3XBC22vNrMYrFm7zkm
+	i/lHzrFavJx1j81i7+ut7BabHl9jtXj4Ktzi8q45bBYzzu9jstgw4x+Lxf89O9gtPt2Kc+Dx
+	2LSqk83jzrU9bB6bl9R7/Guay+7xeZNcAGsUl01Kak5mWWqRvl0CV8bJLdOZCuZwVDzfupql
+	gXEiexcjJ4eEgInEgx+fmbsYuTiEBHYzSrz4/5oJIiEtcX3jBKgiYYmV/56zQxQ9Y5ToW74G
+	LMEmoCuxY3EbG4gtItDGIrFzYzZE0VRGifuvjzOCJDgFXCSev+wHaxAW8Jd4cWYv2AYWAVWJ
+	XTvugtXwClhKnNjzmhnCFpQ4OfMJC4jNLKAt0fuwlRHGXrYQokZCQEHi59NlrBCLrSTWtNxm
+	gqgRl3h59Aj7BEahWUhGzUIyahaSUbOQtCxgZFnFKJlaUJybnltsWGCYl1quV5yYW1yal66X
+	nJ+7iREcZVqaOxi3r/qgd4iRiYPxEKMEB7OSCG9b/ZZ0Id6UxMqq1KL8+KLSnNTiQ4zSHCxK
+	4rziL3pThATSE0tSs1NTC1KLYLJMHJxSDUyrvIzbxUWSl6tY71qj6GO/y9RhetbfJEvvaLaE
+	+a/TNumukTF8fbNnperMrqklcsY9bVZy0zpeZV4tsPu09o/mcouQbh3hC6diX+yVdglatDyn
+	+caJC48PHzzy5+71R2/WHu18zp1mmflvrcP+oD1fGvOVhf1nXb++tsFuRtti0bexS2KeM1qf
+	3vKl7GB3sUSDdTuvQbJ4mtvbK5sZFv+vP+s9MVVP/Cv7dW8WK+vbVyxvt+T+X9R5mu2f8mnu
+	sN1+HFEWLMttVgvou7Gn1Er8nNPRte+Y142E8nSbCfV/52z8yPFB9+TtjsuGEg5/GK9IST5u
+	PsSjUD9Ze7lKcSz3xcUC7Lc9FP5WzS6sOarEUpyRaKjFXFScCACocSW/IQMAAA==
+X-CMS-MailID: 20250219111339epcas5p14e032bd5012501f1d233b8b3d1ad6787
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250219085733epcas5p1daa87b1a68552e70bea4ae52f4bf1998
+References: <CGME20250219085733epcas5p1daa87b1a68552e70bea4ae52f4bf1998@epcas5p1.samsung.com>
+	<20250219085726.70824-1-krzysztof.kozlowski@linaro.org>
 
-On Wed, Feb 19, 2025 at 10:53:44AM +0800, Feng Tang wrote:
-[...] 
-> > 
-> > And IIUC this will add a one second delay for ports that don't need
-> > command completed events.  I don't think that's fair to those ports.
-> 
-> Good catch! So we should add a read of PCI_EXP_SLTCAP register and
-> check if PCI_EXP_SLTCAP_HPC bit is set.
+Hi Krzysztof
 
-Maybe something like this?
-
-	if (slot_cap & PCI_EXP_SLTCAP_HPC &&
-	    !(slot_cap & PCI_EXP_SLTCAP_NCCS) &&
-	    !pdev->broken_cmd_compl)
-	    do_the_wait();
-
-Thanks,
-Feng
-
-
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzysztof.kozlowski=40linaro.org>
+> Sent: Wednesday, February 19, 2025 2:27 PM
+> To: Peter Griffin <peter.griffin=40linaro.org>; Andr=C3=A9=20Draszik=0D=
+=0A>=20<andre.draszik=40linaro.org>;=20Tudor=20Ambarus=20<tudor.ambarus=40l=
+inaro.org>;=0D=0A>=20Rob=20Herring=20<robh=40kernel.org>;=20Krzysztof=20Koz=
+lowski=20<krzk+dt=40kernel.org>;=0D=0A>=20Conor=20Dooley=20<conor+dt=40kern=
+el.org>;=20Alim=20Akhtar=0D=0A>=20<alim.akhtar=40samsung.com>;=20linux-fsd=
+=40tesla.com;=20linux-arm-=0D=0A>=20kernel=40lists.infradead.org;=20linux-s=
+amsung-soc=40vger.kernel.org;=0D=0A>=20devicetree=40vger.kernel.org;=20linu=
+x-kernel=40vger.kernel.org=0D=0A>=20Cc:=20Krzysztof=20Kozlowski=20<krzyszto=
+f.kozlowski=40linaro.org>=0D=0A>=20Subject:=20=5BPATCH=201/2=5D=20arm64:=20=
+dts:=20exynos:=20gs101:=20Change=20labels=20to=20lower-case=0D=0A>=20=0D=0A=
+>=20DTS=20coding=20style=20expects=20labels=20to=20be=20lowercase.=20=20No=
+=20functional=20impact.=0D=0A>=20Verified=20with=20comparing=20decompiled=
+=20DTB=20(dtx_diff=20and=20fdtdump+diff).=0D=0A>=20=0D=0A>=20Signed-off-by:=
+=20Krzysztof=20Kozlowski=20<krzysztof.kozlowski=40linaro.org>=0D=0A>=20---=
+=0D=0A=0D=0AReviewed-by:=20Alim=20Akhtar=20<alim.akhtar=40samsung.com>=0D=
+=0A=0D=0A=0D=0A
 
