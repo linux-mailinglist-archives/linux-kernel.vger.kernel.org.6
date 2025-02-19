@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-521357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB591A3BC27
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:56:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CABF9A3BC29
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 11:56:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D7141782C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:56:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BE977A79BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 10:55:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE5EA1DED51;
-	Wed, 19 Feb 2025 10:56:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59C721DEFE3;
+	Wed, 19 Feb 2025 10:56:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JY6YUIY4"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ODZ6S9zt"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B4ED1CD210
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 10:56:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD6FE1DED4A
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 10:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739962568; cv=none; b=r4Je8izaH/qRU1GClaBa/1P73OGTzm3HpulwuHnItNkTRCXA7923Jkh+enT9vQBlokP+hm7L4EwiTrWmZFoFJVOugZiw3wUv0+WfD/c8bPubccK4WTuwpfiT5GrtwjqA8DNFysnu03lfjc/QYhQa9oR7mlrbqvpRZ1J3L2tfjrM=
+	t=1739962570; cv=none; b=GXawNeH4cARExVV6Tb5+x3F/M9NtqLZbWPnGiddxXyrBAmVYev2M/ommM7NAwWpzuJ1VsRwF6+ZyGcQgKHtAKlSGUP+uB0om+1c4TyyOK5i/B3hYDpONKpczJFFBe2kbaXbwZ3R8wUKvMGzvtA8HvHmFK93ETU/CDtieN+YCDrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739962568; c=relaxed/simple;
-	bh=eaG/GbWLBDk4/YJIcaFIY6f9h1iZspXbx7Ba+G69v9A=;
+	s=arc-20240116; t=1739962570; c=relaxed/simple;
+	bh=8HT9szvWR537IjOWnHm7i96sWfQ7h7a832H6q37R63o=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=sh1dla6WA3nTZHAfsJyALsVAIH9D5i7ebLOaoV5YjDIDIoCz8lvbuTLyzup73Y7B2s4almKGEzRV8Z+zbt9tXon5Qj0kBd1GwW9Y00QS1yjejDwhoAhIE4rXDG6k9BoU7qR7sVR2CS3K5WurLeetQKpn+FIH9DX6k9i44NKxW+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JY6YUIY4; arc=none smtp.client-ip=209.85.128.73
+	 To:Cc:Content-Type; b=X/R2q4LIF/G3gNJDzKuCw2fr/1jzTn38BSDlxr/5NzE8P31KEuwirmRnGH97Jt1Hy2m9l/lud9tTxeCSJxqcvdzUQqoGSAWWlpVeySTovQvQkLIpFmzco8yZB9IJUCt0qzjaVkqoMYqri42n5Wku69eSyWSPYLL7gVT0ny9DVhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ODZ6S9zt; arc=none smtp.client-ip=209.85.128.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-4394b8bd4e1so38212515e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 02:56:06 -0800 (PST)
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4393e8738b3so53099575e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 02:56:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739962565; x=1740567365; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1739962567; x=1740567367; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=r9qTS4Uc1tQ2R+88yELo0rnzGgf96mYUsGo/xuWB5/Y=;
-        b=JY6YUIY4xxn5OBFi3bijk9+3ydD7I2oES18JMesVCCO9RzYvX6MErobQig6j5y2uvC
-         ew6+yRb3MW82rUkrvBDn722JC26ateZbhJpDuW9JE9xxKDcpdZZiZtIu7iQ7/k5NvwsR
-         z1Ga2Y67+rvxWbz909HfX/Ze9QTi+0iKQZhfoKD+b2L+571wlfZwwUBYAu86Awm2SYxK
-         tZzR35u4FMuqp5K1/Dxi35rSGB44NvLsFged4j4NsrAfjH0qR4Yf+78+CgtxBptsNWby
-         NLgNLeC35xrghsVOby6jZSU0RTuo1d95Fac/D3e/jji3xtlRYnS98VgIvT3j/WXYqCKD
-         NwXw==
+        bh=NatB0GoxLeeegbtgoKFbIBnXjn7tKR7HZgq3FUQHxOs=;
+        b=ODZ6S9ztNho5hR8jzXljuENz+6ElQmTDyQrUNV0gucS8E8eel+KhNa80tuZXtqA4B0
+         g5QTR6ztah5XcTW8fxZVPv1K7ArLoPMIg+upV6NzIgyFEL6UOakgVuFKLE+AotIxq6w1
+         ZG9IYrL2nuT78fugGT1kts9QkUT+p4Wix8spkBVVdZUgG67QRv3a1N0d2o0+z5JdgpMF
+         7Fz7WU/n02xULjKQDiZ8fSSXM4Dtx6PlNaQOvdtnvACCz+sJmVutftBYgFOpxCTyfmZo
+         rWGqLm1VkyIXWA0kSJZluBqCe2nczixUphKhug3n7JEJdL0Ai2QagiVby9PA2KdNWRBZ
+         FHyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739962565; x=1740567365;
+        d=1e100.net; s=20230601; t=1739962567; x=1740567367;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=r9qTS4Uc1tQ2R+88yELo0rnzGgf96mYUsGo/xuWB5/Y=;
-        b=hUqEBBHxCz5R2N87wS6XF3ffXK8HR9MY1CW53DBGtbvUlSvmDq7YzTmQRbjgG++OX8
-         f26yo2jQOd+PdxyQzjzl39XS+R3B95qcrblGOgFItkf20SqcufcRgUMRyRIp0vuTkjrm
-         gA2d9C/VYrHG1z4D5zu/KUrI3NaSSnaW9rLFVVPSQ+SQBsTP0IaLRxQfnB86xYuCe1gm
-         1lIe9HAcjFiC4FTVu2a5MG3j0mFxmSnIUVY+8QXM5z1se5fbDxLnaVgsZLyA+iIC0QZX
-         yDVsNthB8z8DpALj6Lbox+9sPXovVkGsXg7gtJRfr7DqUC9g45Gi93p1fOzOFI3cVj3Y
-         7Png==
-X-Gm-Message-State: AOJu0YwzbQyjadXjJWm2yIxLtDoMOmOFAqZObUllcpw1RKcrVqdJS/c4
-	TzXGEAj3159LmQp7T2gCMifiiSbx0rNzXkkFbnB8UJL7Ej9EaZwYab4C4fKKO3Dpc+g/NuL+e8A
-	bkqhekXk59oQ1HkvvxA1+Cawsfz7oBzOFtnlvlVDgsCbmtRAIWFVIrOg0SwpiMyCCwJ3VQe21Ud
-	yD7n66IKmwipWHlfQagXbsJRTQut1q0Q==
-X-Google-Smtp-Source: AGHT+IHoREA2ePDbR8mhOuh0W0YArGHABmjjWj+HtOC3f43DWme5eakY/sEFJdfRLZliHhEDJEk89fAn
-X-Received: from wmbbi18.prod.google.com ([2002:a05:600c:3d92:b0:439:7d73:d8fc])
- (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:1f0f:b0:439:8653:20bb
- with SMTP id 5b1f17b1804b1-439865322ddmr103214025e9.14.1739962565036; Wed, 19
- Feb 2025 02:56:05 -0800 (PST)
-Date: Wed, 19 Feb 2025 11:55:44 +0100
+        bh=NatB0GoxLeeegbtgoKFbIBnXjn7tKR7HZgq3FUQHxOs=;
+        b=GrisTDNPWHkVX02nQ8nyQQW8VZ6Od+pPrg9QvjbkEjoFlVijMNbHP4rG4ip4N1jFLL
+         Nvu7Diaq3LUFO0Cgak+pwOjieWRDXM99hSftEutAmh6Zi6BR2d0NI5Cu5eGcKyXmUAs7
+         1WHpBETXXVoDKU/yQPoOm0nF52/sgJtv66DyOx3Wz4QTr8KtEyhUJUzgeiLlTS85Cu/q
+         1UIXTOcLHmkphycg9pFOAsNdXnnk7OFKFKPiicURTYwUl2ZlmNFX3ROIdhv5lj52goic
+         ktsHoHxr1k54YZMaozZ7tQhDOHc/BvNMgGQgnfTfDB0HpiW19dMSqTSORGDMuzAzTbws
+         qIaw==
+X-Gm-Message-State: AOJu0YyJgA7FjV7FuxHqKbqE2hYuEPGBCxtoIADWIyPViP07su2SPCqj
+	7860wPGJh18IjnrUBFlhBtpPkf/AYi/vVy0Li83s99GN3ZL3pL59KfcFiSCiPVGWT82bKWdk0Ur
+	69Rzx0k0HEhDH2mFk+EhywleB1fKiV/qGZ5D8iFza5jQAKVZcITnwtdnOFrk3lt7sJcJe/YCcIa
+	XmQFuOuFbNkawJk5i+v5ApKqkxd6/LDw==
+X-Google-Smtp-Source: AGHT+IFLcm9p0pvvZhlzSdMnVkq911EwhPuHFTm/rfMCU9R3UM8Gu2Hajk5yC4FIyDLBVb8LHLH3Qw7O
+X-Received: from wmbay13.prod.google.com ([2002:a05:600c:1e0d:b0:439:8dbb:a84f])
+ (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:46ca:b0:439:8185:4ad4
+ with SMTP id 5b1f17b1804b1-43999ddad86mr26513305e9.27.1739962567090; Wed, 19
+ Feb 2025 02:56:07 -0800 (PST)
+Date: Wed, 19 Feb 2025 11:55:45 +0100
 In-Reply-To: <20250219105542.2418786-4-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,55 +73,107 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250219105542.2418786-4-ardb+git@google.com>
 X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1436; i=ardb@kernel.org;
- h=from:subject; bh=HkjZ8co7JO5kD2Q6DjKKl8vHVJcbPC4E7rJMS59Tps8=;
- b=owGbwMvMwCFmkMcZplerG8N4Wi2JIX3rjg2sU0snRccvDPzP8KLlg0DiHoaknAi2kyuDbK0+H
- VkWVNXcUcrCIMbBICumyCIw+++7nacnStU6z5KFmcPKBDKEgYtTACbyYwkjw6UELeZFsydvv/f/
- YJ7bEfvgrKCv/esDw+r/b9i4eINo8xqG/8FHvQuVzKWbNj9+fExZZruTyRbjx/Vc63tm935gXbN IgBMA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3793; i=ardb@kernel.org;
+ h=from:subject; bh=A+DKa9Dw1lZtxprByQY5fMjGI5jp/Yz2HzvZK4YM/EA=;
+ b=owGbwMvMwCFmkMcZplerG8N4Wi2JIX3rjo39nlJTslIWHrz8e8Xk52+8+w1XxH682z3J7Kw29
+ 7HV4t+9OkpZGMQ4GGTFFFkEZv99t/P0RKla51myMHNYmUCGMHBxCsBEPuUw/E+9eZqnzcLtwTqd
+ 2hc/epM2rjvjpcg1OUdyUVfght5oeT1GhpVqO15v1dxy+f63P+0uG801D55rDjDmTH52N2RaSSH rDj4A
 X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
-Message-ID: <20250219105542.2418786-5-ardb+git@google.com>
-Subject: [PATCH v2 1/2] asm-generic/vmlinux.lds: Move .data.rel.ro input into
- .rodata segment
+Message-ID: <20250219105542.2418786-6-ardb+git@google.com>
+Subject: [PATCH v2 2/2] objtool: Use fPIE compatible ELF sections for C jump tables
 From: Ard Biesheuvel <ardb+git@google.com>
 To: linux-kernel@vger.kernel.org
 Cc: x86@kernel.org, Huacai Chen <chenhuacai@kernel.org>, Ard Biesheuvel <ardb@kernel.org>, 
-	stable@vger.kernel.org
+	Tiezhu Yang <yangtiezhu@loongson.cn>
 Content-Type: text/plain; charset="UTF-8"
 
 From: Ard Biesheuvel <ardb@kernel.org>
 
-When using -fPIE codegen, the compiler will emit const global objects
-(which are useless unless statically initialized) into .data.rel.ro
-rather than .rodata if the object contains fields that carry absolute
-addresses of other code or data objects. This permits the linker to
-annotate such regions as requiring read-write access only at load time,
-but not at execution time (in user space).
+A C jump table (such as the one used by the BPF interpreter) is a const
+global array of absolute code addresses, and this means that the actual
+values in the table may not be known until the kernel is booted (e.g.,
+when using KASLR or when the kernel VA space is sized dynamically).
 
-This distinction does not matter for the kernel, but it does imply that
-const data will end up in writable memory if the .data.rel.ro sections
-are not treated in a special way.
+When using -fPIE codegen, const global objects of this nature will
+generally be placed in .data.rel.ro rather than .rodata by the compiler,
+and forcing these C jump tables into .rodata like is done currently will
+trigger warnings from the linker about combining read-only and
+read-write input sections into the same output section.
 
-So emit .data.rel.ro into the .rodata segment.
+Avoid such warnings by unconditionally emitting C jump tables into
+.data.rel.ro, which will always be placed appropriately regardless of
+whether -fPIE is actually being used.
 
-Cc: <stable@vger.kernel.org>
+Note that, while possible in theory, compiler generated jump tables are
+unlikely to end up in .data.rel.ro, as the compiler will use relative
+references when using -fPIE, and these can be resolved at build time.
+
+This supersedes commit
+
+  c5b1184decc8 ("compiler.h: specify correct attribute for .rodata..c_jump_table")
+
+which addressed the linker warnings by injecting section attributes into
+the __attribute__((section(""))) name string, but this turns out not to
+work reliably across toolchains, and may result in missing ORC data in
+some cases.
+
+Fixes: c5b1184decc8 ("compiler.h: specify correct attribute for .rodata..c_jump_table")
+Tested-by: Tiezhu Yang <yangtiezhu@loongson.cn> # on LoongArch
 Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
 ---
- include/asm-generic/vmlinux.lds.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/compiler.h                | 2 +-
+ tools/objtool/check.c                   | 7 ++++---
+ tools/objtool/include/objtool/special.h | 2 +-
+ 3 files changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-index 02a4adb4a999..0d5b186abee8 100644
---- a/include/asm-generic/vmlinux.lds.h
-+++ b/include/asm-generic/vmlinux.lds.h
-@@ -457,7 +457,7 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
- 	. = ALIGN((align));						\
- 	.rodata           : AT(ADDR(.rodata) - LOAD_OFFSET) {		\
- 		__start_rodata = .;					\
--		*(.rodata) *(.rodata.*)					\
-+		*(.rodata) *(.rodata.*) *(.data.rel.ro*)		\
- 		SCHED_DATA						\
- 		RO_AFTER_INIT_DATA	/* Read only after init */	\
- 		. = ALIGN(8);						\
+diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+index 200fd3c5bc70..155385754824 100644
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -110,7 +110,7 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
+ /* Unreachable code */
+ #ifdef CONFIG_OBJTOOL
+ /* Annotate a C jump table to allow objtool to follow the code flow */
+-#define __annotate_jump_table __section(".rodata..c_jump_table,\"a\",@progbits #")
++#define __annotate_jump_table __section(".data.rel.ro.c_jump_table")
+ #else /* !CONFIG_OBJTOOL */
+ #define __annotate_jump_table
+ #endif /* CONFIG_OBJTOOL */
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index be18a0489303..ce973d9d8e6d 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -2472,13 +2472,14 @@ static void mark_rodata(struct objtool_file *file)
+ 	 *
+ 	 * - .rodata: can contain GCC switch tables
+ 	 * - .rodata.<func>: same, if -fdata-sections is being used
+-	 * - .rodata..c_jump_table: contains C annotated jump tables
++	 * - .data.rel.ro.c_jump_table: contains C annotated jump tables
+ 	 *
+ 	 * .rodata.str1.* sections are ignored; they don't contain jump tables.
+ 	 */
+ 	for_each_sec(file, sec) {
+-		if (!strncmp(sec->name, ".rodata", 7) &&
+-		    !strstr(sec->name, ".str1.")) {
++		if ((!strncmp(sec->name, ".rodata", 7) &&
++		     !strstr(sec->name, ".str1.")) ||
++		    !strncmp(sec->name, ".data.rel.ro", 12)) {
+ 			sec->rodata = true;
+ 			found = true;
+ 		}
+diff --git a/tools/objtool/include/objtool/special.h b/tools/objtool/include/objtool/special.h
+index e7ee7ffccefd..e049679bb17b 100644
+--- a/tools/objtool/include/objtool/special.h
++++ b/tools/objtool/include/objtool/special.h
+@@ -10,7 +10,7 @@
+ #include <objtool/check.h>
+ #include <objtool/elf.h>
+ 
+-#define C_JUMP_TABLE_SECTION ".rodata..c_jump_table"
++#define C_JUMP_TABLE_SECTION ".data.rel.ro.c_jump_table"
+ 
+ struct special_alt {
+ 	struct list_head list;
 -- 
 2.48.1.601.g30ceb7b040-goog
 
