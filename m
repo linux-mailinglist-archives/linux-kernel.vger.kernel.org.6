@@ -1,157 +1,130 @@
-Return-Path: <linux-kernel+bounces-521953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-521955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8336BA3C43A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:56:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 749ABA3C440
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 16:56:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9576218882EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:56:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 926C51888217
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 15:56:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF171FC7F7;
-	Wed, 19 Feb 2025 15:56:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mISS3099"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5504C1FAC31
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 15:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816351FDA6D;
+	Wed, 19 Feb 2025 15:56:32 +0000 (UTC)
+Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B2F71F8AE5;
+	Wed, 19 Feb 2025 15:56:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739980577; cv=none; b=u+T7JqZrNGwaFneDbMH/Njl+rcxAlSKOqCJb4D0ztPVnMZLyHF/mJcQoRLlJYnQFJyNl8crV8ziU8Sn9JdiYWUdTuUkpFCdPU565RNTg8RViZWU1fWh7ubHUSxg0ckPTgE5Nn3A4bOzyQQxAjMGGBdbMs/Ej20abCaXkh74vqhI=
+	t=1739980592; cv=none; b=lwY5kXw0SZaKPq9h/PSqZMmKKW2pK1NJp8ag4N8I3X5XJA26Bcy8kgRz6BQ/Y6387fMvmG1CutCd/t5AWkEbtuk9Zknus+nIJpAOlTZPseBtxf7iVyyBe1eqoup5UqqDBuCyOucESc3QOhp/Vw5j30A1ZwagvI/b4Z/5f7DvMig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739980577; c=relaxed/simple;
-	bh=ApwXho0m68u1DhlJYChvZUPmHHp6eWt+LncX53zYIXI=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rf3ur5D97OsozBsZjSMMhenj9QRnCHdChLAD1Z3QYvjRQN+n3q4k3r4hKI+WxSOZnvf1YgAqvY81P+UyvBFC8BZWW2OV8+XC8aHQCdivilXEuPV6b5Tzcx6uMSqNUdyNpG60hBP0CEYiXegPER4HeTeIv8DzzTpqm2zGUqvX3Iw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mISS3099; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CC1FC4CEDD;
-	Wed, 19 Feb 2025 15:56:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739980574;
-	bh=ApwXho0m68u1DhlJYChvZUPmHHp6eWt+LncX53zYIXI=;
-	h=Date:From:To:Subject:References:In-Reply-To:From;
-	b=mISS30994wcIvAuOdwpjHKaL+UA+kom7ml3E5EIh5kJeQz8nu+02ClvRYzhpwDwl+
-	 KdgB1zcrJXLxY15k7AzzQnEmoHySG8ZaOCuwzuf31dNESdhZ3dD1ERA8D8HH6QJnl5
-	 ON/zcdKXc2B9Bhy48gfqW2jfYRvlIB1SEQbu08peTk5vMG1VWctqAqWgoU2Dif5/tK
-	 wFfuh1r8Dbpb+6Jx1QCmBJjx1SBTxcnjySww9B+YsGMvseQtms/6uTOWgU999xzH4L
-	 ITr9hoJm5/g5Y7bOTlDJsTng5Ojxmz5Q+cgfTrzk1kYPt+FRr8tYEGARUmfKFqYZNc
-	 fgmhQ/l594oHg==
-Date: Wed, 19 Feb 2025 16:56:11 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Douglas Anderson <dianders@chromium.org>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 31/37] drm/bridge: Provide pointers to the connector
- and crtc in bridge state
-Message-ID: <20250219-gregarious-condor-of-prestige-a6ce0c@houat>
-References: <20250213-bridge-connector-v3-0-e71598f49c8f@kernel.org>
- <20250213-bridge-connector-v3-31-e71598f49c8f@kernel.org>
- <Z7NmtF83adILfasi@phenom.ffwll.local>
- <20250218-adamant-translucent-civet-aebcc5@houat>
- <Z7XeHaTmtS8ClOV-@phenom.ffwll.local>
+	s=arc-20240116; t=1739980592; c=relaxed/simple;
+	bh=qPZnrOyaKEYq5hbsMRbqV7X6oIhpSL4apigxMYTnzfo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OxsRfgfVZpt/q6cSm9c/mo5RcNPKl6YP6HR35ggfC8Ob07PBQIWDwvFr6QA+mwU84o+ooQpG0E6PymYrZF7C8OpInXaqpOjPKbNFL6F8EhKg5ujEMV44uyEtHNP5yz53ycr430LTGMdydqOqFvhnFMJmFbrw15/yed43aDuHjcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
+Received: (from willy@localhost)
+	by pcw.home.local (8.15.2/8.15.2/Submit) id 51JFuHFe022922;
+	Wed, 19 Feb 2025 16:56:17 +0100
+Date: Wed, 19 Feb 2025 16:56:17 +0100
+From: Willy Tarreau <w@1wt.eu>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Dan Carpenter <dan.carpenter@linaro.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        rust-for-linux <rust-for-linux@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>, David Airlie <airlied@gmail.com>,
+        linux-kernel@vger.kernel.org, ksummit@lists.linux.dev
+Subject: Re: Rust kernel policy
+Message-ID: <20250219155617.GH19203@1wt.eu>
+References: <CANiq72m-R0tOakf=j7BZ78jDHdy=9-fvZbAT8j91Je2Bxy0sFg@mail.gmail.com>
+ <Z7SwcnUzjZYfuJ4-@infradead.org>
+ <b7a3958e-7a0a-482e-823a-9d6efcb4b577@stanley.mountain>
+ <2bcf7cb500403cb26ad04934e664f34b0beafd18.camel@HansenPartnership.com>
+ <yq1mseim24a.fsf@ca-mkp.ca.oracle.com>
+ <c1693d15d0a9c8b7d194535f88cbc5b07b5740e5.camel@HansenPartnership.com>
+ <20250219153350.GG19203@1wt.eu>
+ <e42e8e79a539849419e475ef8041e87b3bccbbfe.camel@HansenPartnership.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="jbvhtr2ze3m7ltrg"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <Z7XeHaTmtS8ClOV-@phenom.ffwll.local>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e42e8e79a539849419e475ef8041e87b3bccbbfe.camel@HansenPartnership.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
+On Wed, Feb 19, 2025 at 10:46:03AM -0500, James Bottomley wrote:
+> > > > I like using cleanup attributes for some error handling. However,
+> > > > I'm finding that in many cases I want to do a bit more than a
+> > > > simple kfree(). And at that point things get syntactically messy
+> > > > in the variable declarations and harder to read than just doing a
+> > > > classic goto style unwind.
+> > > 
+> > > So the way systemd solves this is that they define a whole bunch of
+> > > _cleanup_<type>_ annotations which encode the additional logic.  It
+> > > does mean you need a globally defined function for each cleanup
+> > > type, but judicious use of cleanup types seems to mean they only
+> > > have a few dozen of these.
+> > 
+> > I may be missing something obvious, but this seems super dangerous to
+> > me to perform lightly without reference counting, as it increases the
+> > risks of use-after-free and double-free in case one of the allocated
+> > objects in question can sometimes be returned.
+> 
+> Who said anything about not reference counting?
 
---jbvhtr2ze3m7ltrg
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 31/37] drm/bridge: Provide pointers to the connector
- and crtc in bridge state
-MIME-Version: 1.0
+Nobody, but it was not said either that they were used at all!
 
-On Wed, Feb 19, 2025 at 02:35:25PM +0100, Simona Vetter wrote:
-> On Tue, Feb 18, 2025 at 11:23:00AM +0100, Maxime Ripard wrote:
-> > Hi,
-> >=20
-> > Thanks for your answer
-> >=20
-> > On Mon, Feb 17, 2025 at 05:41:24PM +0100, Simona Vetter wrote:
-> > > On Thu, Feb 13, 2025 at 03:43:50PM +0100, Maxime Ripard wrote:
-> > > > Now that connectors are no longer necessarily created by the bridges
-> > > > drivers themselves but might be created by drm_bridge_connector, it=
-'s
-> > > > pretty hard for bridge drivers to retrieve pointers to the connecto=
-r and
-> > > > CRTC they are attached to.
-> > > >=20
-> > > > Indeed, the only way to retrieve the CRTC is to follow the drm_brid=
-ge
-> > > > encoder field, and then the drm_encoder crtc field, both of them be=
-ing
-> > > > deprecated.
-> > >=20
-> > > Eh, this isn't quite how this works. So unless bridges have become ve=
-ry
-> > > dynamic and gained flexible routing the bridge(->bridge->...)->encoder
-> > > chain is static. And the crtc for an encoder you find by walking the
-> > > connector states in a drm_atomic_state, finding the right one that po=
-ints
-> > > at your encoder, and then return the ->crtc pointer from that connect=
-or
-> > > state.
-> > >=20
-> > > It's a bit bonkers, but I think it's better to compute this than addi=
-ng
-> > > more pointers that potentially diverge. Unless there's a grand plan h=
-ere,
-> > > but then I think we want some safety checks that all the pointers nev=
-er
-> > > get out of sync here.
-> >=20
-> > That work stemed from this series
-> > https://lore.kernel.org/all/20250210132620.42263-1-herve.codina@bootlin=
-=2Ecom/
-> >=20
-> > and in particular:
-> > https://lore.kernel.org/all/20250210132620.42263-5-herve.codina@bootlin=
-=2Ecom/
-> >=20
-> > Bridges, outside of the modesetting code path, don't have a way to
-> > access the drm_atomic_state since drm_bridge_state->state is typically
-> > cleared after swap_state. So accessing the connectors and CRTCs don't
-> > work anymore.
-> >=20
-> > In this particular case, we needed to access those from the bridge
-> > interrupt handler.
->=20
-> Uh for interrupt handler you can't use anything stored in state objects
-> anyway. So I'm even more confused.
+>  One the things the
+> _cleanup_X annotations can do is drop references (or even locks).
 
-Why not? As long as we're in a threaded handler, and take the proper
-locks, what's wrong with it, and how is it fundamentally different than,
-idk, cec or audio hooks?
+OK then!
 
-Maxime
+> >  Users of such mechanisms must be extremely cautious never to ever
+> > return a pointer derivated from a variable tagged as such, or to
+> > properly NULL-assign the original object for it not to double-free.
+> > So it might in the end require to be careful about null-setting on
+> > return instead of explicitly freeing what was explicitly allocated.
+> > I'm not sure about the overall benefit.
+> > Also I suspect it encourages to multiply the return points, which
+> > makes it even more difficult to possibly fix what needs to be fixed
+> > without coming from a locally allocated variable (e.g. restore a
+> > state in a parser etc). Maybe it's just me not seeing the whole
+> > picture, but as a general case I prefer to forget a free() call
+> > (worst case: memory leak) than forget a foo=NULL that may result in a
+> > double free, and the description here makes me think the latter might
+> > more easily happen.
+> 
+> Well we could all speculate about the mess we'll make with any new
+> tool.  All I'm saying is that another project with a large code base
+> (systemd), which you can go an look at, managed to use these
+> annotations very successfully to simplify their error legs. Perhaps
+> there are reasons why the kernel can't be as successful, but I think
+> assuming failure from the outset isn't the best way to flush these
+> reasons out.
 
---jbvhtr2ze3m7ltrg
-Content-Type: application/pgp-signature; name="signature.asc"
+I'm not trying to assume failure or anything, just saying that it's
+probably not always as simple as calling kfree() on anything locally
+allocated for error paths to be magically cleaned, and it actually is
+more subtle (and Laurent confirmed my concerns illustrating that this
+case is precisely covered in glib using transfer of ownership).
 
------BEGIN PGP SIGNATURE-----
+And the temptation to return from everywhere since it's the only
+required statement (instead of a goto to a collecting place) becomes
+great and should sometimes be resisted to.
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ7X/GwAKCRAnX84Zoj2+
-dovgAYDaLy95Szw0goSs4A8B0L9N2C1APQgenh1IO8cpT0qH1iB7t3rUUehtTnSu
-bpGAf58BfjylaF6OuSKoohRCcH5tlLojZeEqCylL3wLusZkZsJQRDyC59YdttQHr
-ABJcNZA+1w==
-=RX+0
------END PGP SIGNATURE-----
+Regardless I do understand how these cleanups can help in a number of
+case, at least to avoid some code duplication.
 
---jbvhtr2ze3m7ltrg--
+Regards,
+Willy
 
