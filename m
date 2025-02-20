@@ -1,244 +1,215 @@
-Return-Path: <linux-kernel+bounces-524540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F1F9A3E44A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:56:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2456A3E450
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:56:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D7687AA1E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:55:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D63864213FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:56:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9C7726388C;
-	Thu, 20 Feb 2025 18:55:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E1626462C;
+	Thu, 20 Feb 2025 18:55:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="r8bjeQvc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="qJ/H/7Rb"
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2049.outbound.protection.outlook.com [40.107.212.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6594262D3F;
-	Thu, 20 Feb 2025 18:55:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740077746; cv=none; b=TwKImzGimqeZgmuuzIjPEYOFaFjlXfyQ5un1/VjeUP62E+BI1J5HcwQkt+IhP9AQpJWBJN9aEkaY4g1SpGygAPF4UjB9sK/paOqo2TIBI3AzAkBoBxjLJcwDnV755pbVcGj5rdjikHFw2lkSczwuW6ikMumP8O2QE6DmrkF/hYA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740077746; c=relaxed/simple;
-	bh=WndaJvfa9ap2UrSfD6FG4qjtrHLbOmfjna8J1EtVtVI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Aupbzy1yDa1Hd5wCM+7f7nHlnVQYmxPmCUf7s1SskLmLu6wgh+5wYqHqeKyjyYhtKQMsTHk/dUk1xGnqrW99igT9JevDW5Jn947z18nx+Ne6pmpouh50hApPDve6sRCfOxGJM1BiBov4OG1MgI0diq3jXHD3ukHjmAkfb84/00A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=r8bjeQvc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5DBEC4CED1;
-	Thu, 20 Feb 2025 18:55:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1740077745;
-	bh=WndaJvfa9ap2UrSfD6FG4qjtrHLbOmfjna8J1EtVtVI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=r8bjeQvcRkDymICywYT9q7QL5RUGwa+PkIOjJmN8jrS0hbyLuHPFsX4eW9fBSAebZ
-	 vBMiptw8y7VcvOgVnTE9Bcn65kGPbAKYoao7aeHsLNlw+ZoSum9j7yQUap15a3+AhU
-	 5LKcIGaGdeDuf5aFE+WlzoJ8w3gLnGT19PduqGjs=
-Date: Thu, 20 Feb 2025 19:55:42 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: =?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Grant Likely <grant.likely@secretlab.ca>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>, Binbin Zhou <zhoubinbin@loongson.cn>,
-	linux-sound@vger.kernel.org,
-	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
-	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Tawfik Bayouk <tawfik.bayouk@mobileye.com>, stable@vger.kernel.org
-Subject: Re: [PATCH 0/2] driver core: platform: avoid use-after-free on
- device name
-Message-ID: <2025022017-tarot-harbor-965d@gregkh>
-References: <20250218-pdev-uaf-v1-0-5ea1a0d3aba0@bootlin.com>
- <2025022005-affluent-hardcore-c595@gregkh>
- <D7XB6MXRYVLY.3RM4EJEWD1IQM@bootlin.com>
- <2025022004-scheming-expend-b9b3@gregkh>
- <D7XE2DSESCHX.328BJ5KCEFH0A@bootlin.com>
- <2025022019-enigmatic-mace-60ca@gregkh>
- <D7XHGNJMMUMF.OUL1VHGK5KVM@bootlin.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33F94264608;
+	Thu, 20 Feb 2025 18:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740077752; cv=fail; b=jApnG0pLdNs02KRCQXQj8QdNh5y2p0DOPso8MGkdyXhMnrXpmP7DJUGplGIHXGzRGvBUMoCgGHSHZLCRaNLDIWvi0uZftbiaRST77TEU7ovxF8znFd5qtUs4GbRTtGrcQLnu27EsO5tIrjQ8JYDOya/e129wDqSynGhOPYdVXkg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740077752; c=relaxed/simple;
+	bh=lfIi8q+fpgCV6OodZ0AWmE7N8k8X4xHPQYwzpemleis=;
+	h=Message-ID:Date:To:Cc:References:From:Subject:In-Reply-To:
+	 Content-Type:MIME-Version; b=TjrLPcSfJRw6Ek0+psMCjBUKBuOyBEUyibqq3zf0yQc0/QtXN4ywvgSQ2I+6D0Z8tvaP+gPw9Mo8Qu+kVC6QX7ax+en6i/p5632sFLdzrwYcNv6Q0u3+WFIo+I9MkK20p5R5BS9E9tZliknYU090jimlA2++5UbqfC9IGZR9pqc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=qJ/H/7Rb; arc=fail smtp.client-ip=40.107.212.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=HGs+PYbxZ9xw96uUIJ6RUIuLlFzsOGFna/TR5wS/3k0rI3w1HaYc0asavsZzNXOtaYNeVkwehdB6FYWeMcKBis9vZM4zch4DpTT0ssTNAS46h+2M+zANbvySfyG/KIFRbQeLaaCRLwEsUnEqvbwQbJ19VsnEdlmwqd7kd4oJfOW92T41jmd5DU7dUyDrKWO9vm8gicH+e3d2Dwcgdr0CXpIKqVoHwt23fKqNFDc2JXEhsgJj+EwpPJdtufUOZ0GK0LpnwuTRVw7XyJzLNDDUNM57jfhWx7rdYbqWLUhurxLI+YClqQIpj70J37ESuH+Bb8L9Odn7rFoY2rwP9bHjvw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lE6QQFEAOTGYZTSwTVlZYISo/hOcBJG6eNZaXipyKqs=;
+ b=WK9qzCU29Ny83hqUk0Pco4L675wxxXNqKZEeXeeEh9KGlvOQoZfoGIxtkFLLxGOAuc8DlYMo07CWlp5H4jPHj4/BJSL7ouU9NZfeJ+ZKK62Q2F/ji/iBLA8PwUF7hHRCcv7ct8QYSoW2lefglIRfOUyBgcc9DvVnQIoqZ6jOIpNzZN4vT/71L81Q2A/khOSF8SB0nqK7npd7B3ONtVDEe+SuhVCxjwo5nkJJXdjWAXlS0YR0P/4HzzUvMfrlegEliKeVnqB6+zBHk0tszVcb8lhaJceV0TPnKDfUGpJwsAh0nI/VLF2L94kX6UwEG2f4wjk+J7mE+xEEb6tlx4NfGw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lE6QQFEAOTGYZTSwTVlZYISo/hOcBJG6eNZaXipyKqs=;
+ b=qJ/H/7RbUwpt11a0A+BCmch1yTKGiRMMHJc5liQGQKPhrznIY1UT30KN0dM+wRgceRgyWaXFqwi6EkUa3FfCHiN6P2Ne8eA0bj4K4n6qOIVaFnGrhC8QzEGL9J8WIzT2oGD4jQJnFH7/dUXt+uIGn2e9w/e8OL4aysVntSxwXQc=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
+ by PH8PR12MB7302.namprd12.prod.outlook.com (2603:10b6:510:221::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.15; Thu, 20 Feb
+ 2025 18:55:47 +0000
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e%7]) with mapi id 15.20.8466.016; Thu, 20 Feb 2025
+ 18:55:47 +0000
+Message-ID: <2d15480e-2782-89bf-4eec-681de812fa5e@amd.com>
+Date: Thu, 20 Feb 2025 12:55:44 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Content-Language: en-US
+To: Ashish Kalra <Ashish.Kalra@amd.com>, seanjc@google.com,
+ pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ john.allen@amd.com, herbert@gondor.apana.org.au
+Cc: michael.roth@amd.com, dionnaglaze@google.com, nikunj@amd.com,
+ ardb@kernel.org, kevinloughlin@google.com, Neeraj.Upadhyay@amd.com,
+ aik@amd.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-crypto@vger.kernel.org, linux-coco@lists.linux.dev
+References: <cover.1739997129.git.ashish.kalra@amd.com>
+ <e13263246be91e4e0073b4c81d4d9e2fc41a6e1d.1739997129.git.ashish.kalra@amd.com>
+From: Tom Lendacky <thomas.lendacky@amd.com>
+Subject: Re: [PATCH v4 3/7] crypto: ccp: Reset TMR size at SNP Shutdown
+In-Reply-To: <e13263246be91e4e0073b4c81d4d9e2fc41a6e1d.1739997129.git.ashish.kalra@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SN7PR04CA0008.namprd04.prod.outlook.com
+ (2603:10b6:806:f2::13) To DM4PR12MB5070.namprd12.prod.outlook.com
+ (2603:10b6:5:389::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <D7XHGNJMMUMF.OUL1VHGK5KVM@bootlin.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|PH8PR12MB7302:EE_
+X-MS-Office365-Filtering-Correlation-Id: 418cf175-754c-474b-e314-08dd51e02fa3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?emV1YTNwMTY3S1JiNHNTbGJWN1dhRHFvQ2lrL3N6VGUrYjEwU0lhRXhDaCto?=
+ =?utf-8?B?SXpMSWE1YVRyL21ZRTNRY3JwclBvekhCMTVnNzNTZitHNi9KcjBBb0RURDhk?=
+ =?utf-8?B?VHhEY2d2Y2JReVkyVWJxK1lGYUZnT1JDY1RTaEtpN3JHcUJWZnVubWV2ODg5?=
+ =?utf-8?B?U084ZXVaaHFleGFKT25qZUViZ1RseE5GNXJOWDh5ZVhwcVh3N0E4QjEyV2dT?=
+ =?utf-8?B?SkhvenpnTm9LeFlWRGRmbFBUN2h2VVluOCsxUy9yN0VpLzIxc0svSHQwdDNX?=
+ =?utf-8?B?aTMra1ptbUlYeUcxREhvNVBDZFd4QUtkL0ZDMmxBNlJPTmhwVlZQemhsSFhW?=
+ =?utf-8?B?SmxjcEJnRlJVTFZFUzlUcjBtRnVMOTdmME84VjI2cnVWbXRJL3ZHN01aSFJL?=
+ =?utf-8?B?NDNhKzV2Wlo4cHJwTm5hL0JnSk9rSm9nRi8zT0tEcllpUHNCZlFvRDkwUUw5?=
+ =?utf-8?B?Ujk4a2tmRHJhVUVjcjJKQUN0SWZpdnp5V2dHQ1dWbHJYYjlWVjBSYlVSN0da?=
+ =?utf-8?B?ZTM1aWFpTDB3RjhFY2R1ZDhJRHRKdlBJZE42NUpuL1RvK2ovNis2MHFGYVQr?=
+ =?utf-8?B?cDUwK0UreDhxcjdvdnY1VXR0c0FpdmRXVGtPeTlzbHY5djZsOEFrT2ZSRTcx?=
+ =?utf-8?B?S0k3WVNrSTh2T09IZGN2NkRUTWY3MktwR1Z2WTdFR3pYVkZhdEtKQ1pPeHNk?=
+ =?utf-8?B?Zk43U2lmdzkxTStDMXQrU1RBanRmTEY4ZDJyMkVhWWg5NVF0aUFSc3VrbEk2?=
+ =?utf-8?B?d29QbjNoODFwMllFdkl4MXRPOXVQd1cxSXlSK0xaREtvWkM5MUE1c21hWUM5?=
+ =?utf-8?B?d3FTTkhXZk9VaHVDajl2cStFeldxZGllNkkxU2tMeENCS0twLzdlNFpLdmtM?=
+ =?utf-8?B?MW1aNDBTNFpHYk0rVHg4OTF4V1diaGgreityc3BHd0dXZVVFNGxMb0ZJcEx5?=
+ =?utf-8?B?VzQyTndZZHBHSnpPZFZ4WStSU0w4TFpkUXJvMjh6VEltcHN1UjRpRkh2NFNi?=
+ =?utf-8?B?ME9GNHJ0aUl0bWJWKy9wYnk1RWFCTS9jb3c3cFQzSm9YeCtNcEt3eTF3L2g3?=
+ =?utf-8?B?SG5qTHBBbzl3cHRzSEFLVWVKYldKMzdZQ1Vxa2V6Z1ExZE9ORDJyL2Q3TnQy?=
+ =?utf-8?B?eUdCYmE4SkZuaFdsSzZrMlc2NXBib3d6bW44Q0pPeEVNeVM0SnhEeDFKWVpG?=
+ =?utf-8?B?bVN0Z0F1ZVBuanBVWmtxdGFrWG1pVDFQMStwc1lSLzd6OC94T3FvR0YrcFFq?=
+ =?utf-8?B?eXBtSFNmS1BOVlY1TWxZNjg5WElHUVpqWjk2dVVQaEVDQVRVVHRMYjFiNCt1?=
+ =?utf-8?B?VVM3Y2tkZlRQV0ZzNUwxZGFBNE5PRVhvZ0NjVzR2b1lNbzFpamMrUHNPdzAw?=
+ =?utf-8?B?eG1EVmpxQUZ0aVJSNHRZRXZKMW1GWHpoT1p2LzIrZFFBeHF3amdhU3ZENGpP?=
+ =?utf-8?B?ODMrcmhWRzRvNWtwYTIxMFh4T3lFY25rZVdCaEpkVGlnTDFRSjR2eHhvcmVu?=
+ =?utf-8?B?a0JhY2l4UUp6T05panJYeWRTY3h0L1BjOStVY1JkSmhNMVBRU2gyMjZBeldo?=
+ =?utf-8?B?dUNIT0pQSnFZeTNCRTh2Y3FUZVBnZzMvS2sxMGdaTVphS3JGTU9ISjk4ang4?=
+ =?utf-8?B?dHplcHV3MWUvNHdDOTFrV1JoSGMxWnhKYXp6dWVhMUpxdGowRUE1TFU0akZR?=
+ =?utf-8?B?OWdmWW1wcEM0dXFqcEZkS05zYmtVVHJxUXphSWlwUDhVWlI2bVVrTmZJOEVn?=
+ =?utf-8?B?emNNUHZEdzQ1REtCMnBNTnFXaGtPc3RZaERvaUlwYnlFUGYyWk54ZzU1K0pT?=
+ =?utf-8?B?Yi9xS3U0eXVzYU1FalUyYlMwL2RhNU5kcVFINTh5enFzRWVNQVJTY2Y1L3B3?=
+ =?utf-8?B?QnlVZWhLYXAxZWpQdnRxczBkU0U1SGpkNERtQnZrUDJLTVB1cWNqL215NVl3?=
+ =?utf-8?Q?XQdH+ym6NlY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TlBPbnJHNzBkQjRFTGk4M3Ayb3UrWGZJT2E2ckJ6WGNJbEV5R1d3RHd2UjN5?=
+ =?utf-8?B?eEU1RjRYZU40UlJtYzA0aTVqNWptQkRJajFhL05NelEyVzg0WFQweEJwZHlq?=
+ =?utf-8?B?TWNNSXNRMFdZSEZmaThXWllKNWJjRzdiUWVZTE9YOUFBN0dDaG8wZGVJeFMw?=
+ =?utf-8?B?aG1oRmRlcktYWSsrdHJ2LzhBMDRUMXdva215b1RodFRSc05Rankyd1hKUnpU?=
+ =?utf-8?B?NGFydEtMVjNsclVMN2M2SE9qYWFLNlRRV2oxSkkwRi9CNjlyZHV3UHFqRjRD?=
+ =?utf-8?B?V0FpWlBPNFhxc040YWNYTU84ZTZCUGlWaDBCd2NaRXhJL2V6RVRDUWw4M0pt?=
+ =?utf-8?B?ZThJNWYvNGU5VUlscjdNU3lVV21Ba3RLTHlKcTlxMVppMWRJUVNkS2h3dW9u?=
+ =?utf-8?B?Uk92UkM4RGJUc01KREFCUkp5ZktEMFB1QlhlYXpXVFpTZkNOdzVWSzAvT2Vx?=
+ =?utf-8?B?QWFzUFM2Tlp6aC9uU1BqMXlNVHdVZTB4V1MzUzBxV1FpRGw2MXBWbEloK3Ji?=
+ =?utf-8?B?UWNKKzRnSCtxdEczdmZuTTVsc3BmRmdiWTlMK3U5bFBKUlVFRU8zMmhQb2tH?=
+ =?utf-8?B?T1hZUjlQV2lyVlhDVTNUZWhzTHU2bTJMR1NoVjdNWlJmMTFjMXFPR0NrQ2lV?=
+ =?utf-8?B?RHlxcUxmNVdMYUlmM1VTSndMZEp0VEFvaTZwbmtLb2ZqNzliUjJvOEJkdUt0?=
+ =?utf-8?B?VE0xTnRhTFZpT3ljVmtxZ2pHa29Id2twMzluK3Fzbm4zNCsxeGlOS2FNQlcw?=
+ =?utf-8?B?M2lZZjJMaEFWRVUyTFI4VENWYWp2VkN0THh2eUowTnc1MUpJTTFCY05URjNN?=
+ =?utf-8?B?S3VDdzUwMHVycVlSMGdFS0NSeGhleDF2YW9XS1lFcGNDTkZrUGhxTURjcVB2?=
+ =?utf-8?B?M0V2eGhObFFTQi9qd25HcjdmZHc5RDA1ZVQ3U0pHNTdLNWtEWnpZaU1UTGxh?=
+ =?utf-8?B?Yk9KWjdqRk5zZzdpRWNQZUNwbXkvZjB4MEMwbFBoVjM5bVRhQzFGaDlVcWhU?=
+ =?utf-8?B?M1VqL0liQk00Nlk3aW1oMjQ0Z0FBeTVUZW5oRGN6TXEvTHBRSDRsZzVud0tD?=
+ =?utf-8?B?bzhCd1ZSUlRYSHpGbVdlZ2dZZUQyQ2R0VzdnaXlSRW1DeHExUUwxZ25relJL?=
+ =?utf-8?B?TEJnaUs2RVJYUmo0cUFKY3c4SmpVY2k0a05hUXpxaUgwSVl5MnNRV2Q2UFZV?=
+ =?utf-8?B?engycWxrUDQvRmtkbzB5RC82UnFlVmduUDkzbEo1KzBCUXNqeC9uTEpVaHZX?=
+ =?utf-8?B?T25MOXdnL1J0VzBPSTYzTkthdHlhZ2d1UEtoKzdHQkJDWTBLQ3UwQ3N3OGwx?=
+ =?utf-8?B?bVhUdC9iS2daUDhoeEhjUWJub1VucHAySmpCVW11ZTFYZmVTcDFiRldyWkxQ?=
+ =?utf-8?B?ZXhJL1VIR1plR3d5cnZtZ2JEanZQcmdVOXg5a2VkU2UxcDJDSllIM29OWkJo?=
+ =?utf-8?B?dGdRYURnK3I5U2FzM3NGRFEyaVMrWHhsSll1cjhwK01Sdy81eXBkN0NXTmNv?=
+ =?utf-8?B?a1VDalBzcDJtM1ZER3phUldMelVsMmZsa2hhcDIwVHR5ZGNzalY3cHowOE96?=
+ =?utf-8?B?LzVPSUljUmlOR1dMcnU4R0dqR1NIQlgyV2RyU3k1ekIxYTc1dzNOMjFMVlRq?=
+ =?utf-8?B?Sm9YYTl0MjRXK280cFBzR29EQmp3TzNUc3QzWFNHTElXUEgxNVdzUTR2VDZL?=
+ =?utf-8?B?bllZcnFSM1dSVDlBa3FFMmYwcnFxVTVsTmxyd1FXWkVtZlNMRVY3ajZ5cTU2?=
+ =?utf-8?B?OUxsak92VGtnNzVqSEt5d1N3TXdDcTZ3OFphRXVGb3YxMThSelROZEZEVjNI?=
+ =?utf-8?B?Zndvb2NzOUQzdGtqRmhWV2RSM1dPdlNvTjVKYVBjQ2xvRkNvYjJRL21jdmh1?=
+ =?utf-8?B?Z1Nqc1YvSU1XR0pTWVBCS0lmSTNyelJTY0RnakZaS3l6eUtvb3NqVzJxanA5?=
+ =?utf-8?B?Z1licVFlSlFjcTJGbk8vMWZnMDZwQVRJNWRuek5scWVZMEJRYTJBY3l0WjAw?=
+ =?utf-8?B?bUtod1UzdlpHL0lCUXBiN1E0bG50Rjd3bVpqYlpMeXFvZDFDZ2Z2TmNQajl4?=
+ =?utf-8?B?a0QwWVQ5RjlTOHFKaUVvZHlTemI4NUIwWVVIQXprUzdmV2ZiM3JydkNEeHpN?=
+ =?utf-8?Q?OCP6RUdqD5cOHUezPDkTre4Ia?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 418cf175-754c-474b-e314-08dd51e02fa3
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2025 18:55:47.2181
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qV8A+oGO7qkDGIQMvoB45poII+PM9HmzBK5URfEA8cn/7wQ/MEzRNhCupIlRCeeMZueVNkbLpRXi066omLQAOA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7302
 
-On Thu, Feb 20, 2025 at 07:26:41PM +0100, Théo Lebrun wrote:
-> On Thu Feb 20, 2025 at 5:19 PM CET, Greg Kroah-Hartman wrote:
-> > On Thu, Feb 20, 2025 at 04:46:59PM +0100, Théo Lebrun wrote:
-> >> On Thu Feb 20, 2025 at 3:06 PM CET, Greg Kroah-Hartman wrote:
-> >> > On Thu, Feb 20, 2025 at 02:31:29PM +0100, Théo Lebrun wrote:
-> >> >> On Thu Feb 20, 2025 at 1:41 PM CET, Greg Kroah-Hartman wrote:
-> >> >> > On Tue, Feb 18, 2025 at 12:00:11PM +0100, Théo Lebrun wrote:
-> >> >> >> The solution proposed is to add a flag to platform_device that tells if
-> >> >> >> it is responsible for freeing its name. We can then duplicate the
-> >> >> >> device name inside of_device_add() instead of copying the pointer.
-> >> >> >
-> >> >> > Ick.
-> >> >> >
-> >> >> >> What is done elsewhere?
-> >> >> >>  - Platform bus code does a copy of the argument name that is stored
-> >> >> >>    alongside the struct platform_device; see platform_device_alloc()[1].
-> >> >> >>  - Other busses duplicate the device name; either through a dynamic
-> >> >> >>    allocation [2] or through an array embedded inside devices [3].
-> >> >> >>  - Some busses don't have a separate name; when they want a name they
-> >> >> >>    take it from the device [4].
-> >> >> >
-> >> >> > Really ick.
-> >> >> >
-> >> >> > Let's do the right thing here and just get rid of the name pointer
-> >> >> > entirely in struct platform_device please.  Isn't that the correct
-> >> >> > thing that way the driver core logic will work properly for all of this.
-> >> >> 
-> >> >> I would agree, if it wasn't for this consideration that is found in the
-> >> >> commit message [0]:
-> >> >
-> >> > What, that the of code is broken?  Then it should be fixed, why does it
-> >> > need a pointer to a name at all anyway?  It shouldn't be needed there
-> >> > either.
-> >> 
-> >> I cannot guess why it originally has a separate pdev->name field.
-> >
-> > Many people got this wrong when we designed busses, it's not unique.
-> > But we should learn from our mistakes where we can :)
-> >
-> >> >> > It is important to duplicate! pdev->name must not change to make sure
-> >> >> > the platform_match() return value is stable over time. If we updated
-> >> >> > pdev->name alongside dev->name, once a device probes and changes its
-> >> >> > name then the platform_match() return value would change.
-> >> >> 
-> >> >> I'd be fine sending a V2 that removes the field *and the fallback* [1],
-> >> >> but I don't have the full scope in mind to know what would become broken.
-> >> >> 
-> >> >> [0]: https://lore.kernel.org/lkml/20250218-pdev-uaf-v1-2-5ea1a0d3aba0@bootlin.com/
-> >> >> [1]: https://elixir.bootlin.com/linux/v6.13.3/source/drivers/base/platform.c#L1357
-> >> >
-> >> > The fallback will not need to be removed, properly point to the name of
-> >> > the device and it should work correctly.
-> >> 
-> >> No, it will not work correctly, as the above quote indicates.
-> >
-> > I don't know which quote, sorry.
-> >
-> >> Let's assume we remove the field, this situation would be broken:
-> >>  - OF allocates platform devices and gives them names.
-> >>  - A device matches with a driver, which gets probed.
-> >>  - During the probe, driver does a dev_set_name().
-> >>  - Afterwards, the upcoming platform_match() against other drivers are
-> >>    called with another device name.
-> >> 
-> >> We should be safe as there are guardraids to not probe twice a device,
-> >> see __driver_probe_device() that checks dev->driver is NULL. But it
-> >> isn't a situation we should be in.
-> >
-> > The fragility of attempting to match a driver to a device purely by a
-> > name is a very week part of using platform devices.
+On 2/19/25 14:53, Ashish Kalra wrote:
+> From: Ashish Kalra <ashish.kalra@amd.com>
 > 
-> I never said the opposite, and I agree.
-> However the mechanism exists and I was focused on not breaking it.
-> 
-> > Why would a driver change the device name?  It's been given to the
-> > driver to "bind to" not to change its name.  That shouldn't be ok, fix
-> > those drivers.
-> 
-> I do get the argument that devices shouldn't change device names. I'll
-> take the devil's advocate and give at least one argument FOR allowing
-> changing names: prettier names, especially as device names leak into
-> userspace through pseudo filesystems.
+> When SEV-SNP is enabled the TMR needs to be 2MB aligned and 2MB sized,
+> ensure that TMR size is reset back to default when SNP is shutdown as
+> SNP initialization and shutdown as part of some SNP ioctls may leave
+> TMR size modified and cause subsequent SEV only initialization to fail.
 
-Then that same driver should have created a prettier name when it
-created the device and sent it to the driver core :)
+This is a long run-on sentence, please re-work this to make it more
+informative and clear as to what the issue is.
 
-> If we agree that device names shouldn't be changed one a device is
-> matched with a driver, then (1) we can remove the pdev->name field and
-> (2) `dev_set_name()` should warn when used too late.
-> 
-> Turn the implicit explicit.
-> 
-> 
-> diff --git a/drivers/base/core.c b/drivers/base/core.c
-> index 5a1f05198114..3532b068e32d 100644
-> --- a/drivers/base/core.c
-> +++ b/drivers/base/core.c
-> @@ -3462,10 +3462,13 @@ static void device_remove_class_symlinks(struct device *dev)
->  int dev_set_name(struct device *dev, const char *fmt, ...)
->  {
->         va_list vargs;
->         int err;
-> 
-> +       if (dev_WARN_ONCE(dev, dev->driver, "device name is static once matched"))
-> +               return -EPERM;
+Other than that,
 
-What?  No, this is a platform driver thing, not a driver core thing.
-Let's just remove the name pointer in the platform driver structure and
-then we can handle the rest from there.
+Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
 
+> 
+> Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
+> ---
+>  drivers/crypto/ccp/sev-dev.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/crypto/ccp/sev-dev.c b/drivers/crypto/ccp/sev-dev.c
+> index b06f43eb18f7..be8a84ce24c7 100644
+> --- a/drivers/crypto/ccp/sev-dev.c
+> +++ b/drivers/crypto/ccp/sev-dev.c
+> @@ -1751,6 +1751,9 @@ static int __sev_snp_shutdown_locked(int *error, bool panic)
+>  	sev->snp_initialized = false;
+>  	dev_dbg(sev->dev, "SEV-SNP firmware shutdown\n");
+>  
+> +	/* Reset TMR size back to default */
+> +	sev_es_tmr_size = SEV_TMR_SIZE;
 > +
->         va_start(vargs, fmt);
->         err = kobject_set_name_vargs(&dev->kobj, fmt, vargs);
->         va_end(vargs);
->         return err;
+>  	return ret;
 >  }
-> 
-> (Unsure about the exact error code to return.)
-> 
-> [...]
-> 
-> > Do we have examples today of platform drivers that like to rename
-> > devices?  I did a quick search and couldn't find any in-tree, but I
-> > might have missed some.
-> 
-> The cover letter expands on the quest for those drivers:
-> 
-> On Tue Feb 18, 2025 at 12:00 PM CET, Théo Lebrun wrote:
-> > Out of the 37 drivers that deal with platform devices and do a
-> > dev_set_name() call, only one might be affected. That driver is
-> > loongson-i2s-plat [0]. All other dev_set_name() calls are on children
-> > devices created on the spot. The issue was found on downstream kernels
-> > and we don't have what it takes to test loongson-i2s-plat.
-
-out-of-tree drivers don't matter to us :)
-
-
-> [...]
-> >
-> >    ⟩ # Finding potential trouble-makers:
-> >    ⟩ git grep -l 'struct platform_device' | xargs grep -l dev_set_name
-> >
-> [...]
-> > [0]: https://elixir.bootlin.com/linux/v6.13.2/source/sound/soc/loongson/loongson_i2s_plat.c#L155
-> 
-> [...]
-> 
-> > Or if this really is an issue, let's fix OF to not use the platform bus
-> > and have it's own bus for stuff like this.
-> 
-> That used to exist! I cannot see how it could be a good idea to
-> reintroduce the distinction though.
-> 
-> commit eca3930163ba8884060ce9d9ff5ef0d9b7c7b00f
-> Author: Grant Likely <grant.likely@secretlab.ca>
-> Date:   Tue Jun 8 07:48:21 2010 -0600
-> 
->     of: Merge of_platform_bus_type with platform_bus_type
-
-True, that was nice, but we shouldn't let one force bugs in the other :)
-
-Anyway try removing the name pointer and let's see what falls out.
-
-thanks,
-
-greg k-h
+>  
 
