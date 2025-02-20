@@ -1,194 +1,187 @@
-Return-Path: <linux-kernel+bounces-524437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18EA8A3E32A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:57:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37A10A3E31C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:54:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 313ED3AC11F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:54:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A342E17B7A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:54:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C7B7213E8B;
-	Thu, 20 Feb 2025 17:54:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA90A213E6E;
+	Thu, 20 Feb 2025 17:54:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="GCU/qqwr"
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="es5nTpLT"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4C0E1FF1AC
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 17:54:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E155213E60
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 17:54:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740074050; cv=none; b=lbpZPFj0qUxnxoxdxgz3j0d0+j+FsVVgV6ZxqABKYNyyV4ATil+Q4qhAIP2VexBUKJThxqObGV7Cdn+vhXaoMASBljTqd+DJauJgoLv+k1vTqISDrAxr3T7k/rG8L3T/Zw4A0ngtK4e5fLsEpvcQkAXk6dx04LkI8JudVeZxA2g=
+	t=1740074083; cv=none; b=EqnXCtdct5GumtRVdWgOOSn6uVa1epu+T+c03OSGJSjK7PSm9+XYdafDA1hudDhmS5sVwJq/AZ8SvbSzz4SaxJED7XIKdY+keAmtiNtSXu/z80qvxLlrV6Pb7mgDAa/PTN8o1IZywO06dwmFAsf9AbqyflPsSJ+1Q96Xl6NS0vM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740074050; c=relaxed/simple;
-	bh=v9o39KN4rf7J0rFTCHfTh5J71196URRoypu2r0Y2nUU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KBKGH2bu2tXFS9GODC9X/3YSjGpJh9sMq9NXyNrTXqPXff4WyYMlCJhme0PLp2C1DWbksXcQ+SjwF8geBjGLLPXXXE9LNgiTYsA0/BNZAL41SsSdGyiH6vbbgArtnOHOZzNYCyEsT2TBqqScG74ONIOkHcc5a5bEvoJg4HltV4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=GCU/qqwr; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6fb8de54da9so8062557b3.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:54:07 -0800 (PST)
+	s=arc-20240116; t=1740074083; c=relaxed/simple;
+	bh=ngtjcQl2dxY483rE2p8Q0D/5KvXvnzVLeK0XBQaaEwY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RDrZz3DofZX8+HZpuFedi0ZpUQbvUGVHHGCBIHHJvrMzM/LVvCcA4WOEkB/w3y5ShDnNgNykGveChBvosp0xxpgS8M8SetxTk+o6ROb+lP6DOKhxLxNA0rBhauJaBFjNiaZqU8w5IefxQLdVVDHrkQCr2yof7i5/fXJ0RILUoUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=es5nTpLT; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-220c92c857aso22765015ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:54:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1740074047; x=1740678847; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G1HtEq2i29q2cCGod66wbAEwSCdOwa+YaZodXQk7MLA=;
-        b=GCU/qqwr4ul3h2OA//qtA3Kg4HvKFJcc/I7Jpn7HUjvxUD/Z8pfsU24JR2YX/m+wLo
-         m4GDKc1AKm5wQlC84gG7KfZpB4T23bqcpMFSRaIkoQOA3ylfjBwQGTwqkiO2SfUjd/Br
-         JtC3+Bq2rvVy3CN3SQ3xAVIMcq/7Y5cvpyeGp8bmEf+2Ga9bPwDdJcjoglw27crknkrW
-         l2dVg86ssi5I73ii6at15dvVlvwzLMTYVcywcHXluEb2bjWYDs8Ik0B4Mc2exrpXGTa+
-         3t6jOLn5YAck5s38mmywQ4decwEscoGWei4hsR5/Ge8b3CGooQbIMUMVhKrUCdi8lt03
-         BzAg==
+        d=linaro.org; s=google; t=1740074081; x=1740678881; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zfm4+2wMHxBuEgR/pkI4Xb42FdK22RoBZq/RbEvYIX4=;
+        b=es5nTpLTwPe4BUKyvE9Stosc2s11SHjUw0HO0XFaHLGFrehU6LnjQgyeXEWwCa740A
+         gglD47jNN7TZO9mp4KIQcIa4G1XKxemGrhl3T9z1VqcU4+LBIaZXqqESNbamEk9kpdaV
+         aap9U+pck/TnjsrCCtWdY0w87Qqim2igYmjkbkuP8bmuxt/I8DIRs05mUQSxc3lx68iF
+         4wng4ICn/CuCx/RRvZCi/Wnz3RTAqykuen4GsVYZvsWNP6yZ+mdq58OFqgMIsNOCicZ0
+         ulrvGj+FSLVYGXEvNAQXeiDN/ahSXBL0xI0HvyH7DxMpSH6M9sFPjREldfQdtOgJCvi3
+         k88g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740074047; x=1740678847;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=G1HtEq2i29q2cCGod66wbAEwSCdOwa+YaZodXQk7MLA=;
-        b=PkTAWVqozS+QyhdHzxI+pXzr7FPQ9yXYql75rgqz44yAt6WvDdKqlIbrL9gCpXyRrM
-         T1C45/DOGc1zx2M/FgW9iMkahmFX/7PqAjgN7Zc59QAR+AcXphPXKXpJBTYjskXED8c4
-         QuM1RRVsDNbZ8IS/ntNvOHcL4ip2HNvy1d81xKqRJ/OzEVI+kR8XzsNRRtTvNkDxL/iR
-         cp6n8SzewPg1kXHCczHaCODA2+c2Nw40DFcBjLwIp1bHXe4BFnoiNWIqBn27Rev70z4K
-         SvZ7jAv4eqHKKjwy+c51UyHq8VBnVrBOGdBIi/Ul5uGwIzcNvvw8HasXaTnqeN/4UEIv
-         QR7w==
-X-Forwarded-Encrypted: i=1; AJvYcCWMFibY8/H3Wi+dCMnjR9mVENl6YxYp0tpu9IBkym4JGLL4ZSQF6Fmf36m6UQXvFr1787KRXF4/A+4odQE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0R2l5ZPqICHAnXy5cAgOmwsxhSf9hwUHnJtOR8g++6jRTx1QR
-	AjC7CS1U/PCgnGlmPrQ9E+rxgLgOPiG0LpKdz8/MLWHDsfVUCF8AbhXh1suXeREVS1TxFD3gqW8
-	1GY4DqD0rfRdouiM+2UoaFpWkpskEtjg/G3J1
-X-Gm-Gg: ASbGncuZ5eVFtuRcolVIxMnt8jUKmDhuXbQiKTv4Imq4PvoAIHLCY1uWHmrhAnfJLXh
-	kclIDKCBosz7msenr+N4LTudOmo62EqEkIZONZi4PcWTw+nU3jjAIdpNlN4CaLMst7SKe5tBv
-X-Google-Smtp-Source: AGHT+IHrPz3tW5dtSDxUsese0JE02d7KHywEHhvtKWjvvLDIJZskZ/lBY77itdhauU3533DejxGGJ4lZEYLYaXcdqdA=
-X-Received: by 2002:a05:690c:360b:b0:6ef:6d61:c254 with SMTP id
- 00721157ae682-6fb58355946mr175779697b3.38.1740074046600; Thu, 20 Feb 2025
- 09:54:06 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740074081; x=1740678881;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zfm4+2wMHxBuEgR/pkI4Xb42FdK22RoBZq/RbEvYIX4=;
+        b=ZPQ6xLlAZfDUPhiLW8dcTSHzX7UVcyh7YrelhzHyGqvnPhbDFYvtRHTLhEWr8v8KHv
+         NgbvP141w6u0uIPvnifjeANjU5epEWkvDgqlLW1avcqzdanzyZzYfNFGSO6S+eIZU2pl
+         +Rlgr4eTJH/PRTIqAU/PwLqOssgdHKk9oSW6lrtPCVzLiBvLwOrg/owBydPDe3iRXF1B
+         b7Wi2DCoYrdW+kW0hcHZLxljC9R7sxALvO1clVaYZ+ew8Pt1z1CmkGx/zFeAD+G9xBba
+         UJQ+Va+8jiTRJYanKLHoof0nfuAJKqu6iAIoSTR9+0EsNVWUkIHUTnqvzOd8YweulLIJ
+         w3NQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUeITS2OvY2hsPOjLbxu9cvSos+zq9b4vb1Dk3g5dCOD6KW2cQm6Ab5co7d4NpH4+u8/1O1E2u3JrFpLYo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOpjbpAnlXXapo9oDdcabERNYwLEZBJkcRYKxQ6RHmO5oLKOkm
+	7j/IOOHGLi7aFXubmX50DW1d88zQ+9cAXn85mbj26ir+NmlFCesp4hFQKkXVZSo=
+X-Gm-Gg: ASbGncvtq3gy9Jb8TXbeFQcCFE/Bi8b+R887Ti04MSOibRI8GoImGluFNvpDaTpNWOU
+	01dIN8okuIOwOhdMDzPQRyWza/sgMQgJBdzkojn7KN3yPxHXtMeVj36KC3no1wbSLu2ZZ88J2hl
+	2gPEwAVHePkzxsU/eiealzZL+iYqadmnHIkdQj/WFIldskRHwbIHlxkqH9JuPTeXHgyRv4C82hx
+	s5TcZXWKZliG+1pP2C7gMkIhwXLfJsNyUh1bobwyv9oEdI0PpHx2ZVbIaZZAWt/zAfk67IyNH7H
+	j0eHNs1wO47HGmA5PtpbrnJPOhDpG3yw3k+pZDJSLIgdSsJ/RJraC1M=
+X-Google-Smtp-Source: AGHT+IHfhNFiIjRnUDJ8pOyevkfFLBmf9HLRmR2xhgVM3ljK0tH9naWXCQaDCNRvY4VzVmepHx8rgg==
+X-Received: by 2002:a17:902:e846:b0:215:8847:4377 with SMTP id d9443c01a7336-2219ffa35a8mr654545ad.15.1740074080801;
+        Thu, 20 Feb 2025 09:54:40 -0800 (PST)
+Received: from [192.168.0.4] (71-212-39-66.tukw.qwest.net. [71.212.39.66])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d53491b3sm123234955ad.40.2025.02.20.09.54.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Feb 2025 09:54:40 -0800 (PST)
+Message-ID: <45155869-1490-49ab-8df1-7ad13f79c09a@linaro.org>
+Date: Thu, 20 Feb 2025 09:54:38 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241023212158.18718-1-casey@schaufler-ca.com>
- <20241023212158.18718-5-casey@schaufler-ca.com> <CAEjxPJ56H_Y-ObgNHrCggDK28NOARZ0CDmLDRvY5qgzu=YgE=A@mail.gmail.com>
- <CAHC9VhSSpLx=ku7ZJ7qVxHHyOZZPQWs_hoxVRZpTfhOJ=T2X9w@mail.gmail.com>
-In-Reply-To: <CAHC9VhSSpLx=ku7ZJ7qVxHHyOZZPQWs_hoxVRZpTfhOJ=T2X9w@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 20 Feb 2025 12:53:54 -0500
-X-Gm-Features: AWEUYZkT0XtBSwseF0EpgbYRnzcGcXTRcWyfKrtkB2GGxStsTDHjaiFMHWD25CU
-Message-ID: <CAHC9VhQUUOqh3j9mK5eaVOc6H7JXsjH8vajgrDOoOGOBTszWQw@mail.gmail.com>
-Subject: Re: [PATCH v3 4/5] LSM: lsm_context in security_dentry_init_security
-To: Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc: Casey Schaufler <casey@schaufler-ca.com>, linux-security-module@vger.kernel.org, 
-	jmorris@namei.org, serge@hallyn.com, keescook@chromium.org, 
-	john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp, 
-	linux-kernel@vger.kernel.org, selinux@vger.kernel.org, mic@digikod.net, 
-	ceph-devel@vger.kernel.org, linux-nfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Alpha: Emulate unaligned LDx_L/STx_C for data consistency
+To: "Maciej W. Rozycki" <macro@orcam.me.uk>,
+ Ivan Kokshaysky <ink@unseen.parts>, Matt Turner <mattst88@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ Magnus Lindholm <linmag7@gmail.com>, "Paul E. McKenney"
+ <paulmck@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>,
+ Al Viro <viro@zeniv.linux.org.uk>, linux-alpha@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <alpine.DEB.2.21.2502181912230.65342@angie.orcam.me.uk>
+Content-Language: en-US
+From: Richard Henderson <richard.henderson@linaro.org>
+In-Reply-To: <alpine.DEB.2.21.2502181912230.65342@angie.orcam.me.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Feb 20, 2025 at 12:40=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
-rote:
-> On Thu, Feb 20, 2025 at 11:43=E2=80=AFAM Stephen Smalley
-> <stephen.smalley.work@gmail.com> wrote:
-> > On Wed, Oct 23, 2024 at 5:23=E2=80=AFPM Casey Schaufler <casey@schaufle=
-r-ca.com> wrote:
-> > >
-> > > Replace the (secctx,seclen) pointer pair with a single lsm_context
-> > > pointer to allow return of the LSM identifier along with the context
-> > > and context length. This allows security_release_secctx() to know how
-> > > to release the context. Callers have been modified to use or save the
-> > > returned data from the new structure.
-> > >
-> > > Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> > > Cc: ceph-devel@vger.kernel.org
-> > > Cc: linux-nfs@vger.kernel.org
-> > > ---
-> > >  fs/ceph/super.h               |  3 +--
-> > >  fs/ceph/xattr.c               | 16 ++++++----------
-> > >  fs/fuse/dir.c                 | 35 ++++++++++++++++++---------------=
---
-> > >  fs/nfs/nfs4proc.c             | 20 ++++++++++++--------
-> > >  include/linux/lsm_hook_defs.h |  2 +-
-> > >  include/linux/security.h      | 26 +++-----------------------
-> > >  security/security.c           |  9 ++++-----
-> > >  security/selinux/hooks.c      |  9 +++++----
-> > >  8 files changed, 50 insertions(+), 70 deletions(-)
-> > >
-> >
-> > > diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
-> > > index 76776d716744..0b116ef3a752 100644
-> > > --- a/fs/nfs/nfs4proc.c
-> > > +++ b/fs/nfs/nfs4proc.c
-> > > @@ -114,6 +114,7 @@ static inline struct nfs4_label *
-> > >  nfs4_label_init_security(struct inode *dir, struct dentry *dentry,
-> > >         struct iattr *sattr, struct nfs4_label *label)
-> > >  {
-> > > +       struct lsm_context shim;
-> > >         int err;
-> > >
-> > >         if (label =3D=3D NULL)
-> > > @@ -128,21 +129,24 @@ nfs4_label_init_security(struct inode *dir, str=
-uct dentry *dentry,
-> > >         label->label =3D NULL;
-> > >
-> > >         err =3D security_dentry_init_security(dentry, sattr->ia_mode,
-> > > -                               &dentry->d_name, NULL,
-> > > -                               (void **)&label->label, &label->len);
-> > > -       if (err =3D=3D 0)
-> > > -               return label;
-> > > +                               &dentry->d_name, NULL, &shim);
-> > > +       if (err)
-> > > +               return NULL;
-> > >
-> > > -       return NULL;
-> > > +       label->label =3D shim.context;
-> > > +       label->len =3D shim.len;
-> > > +       return label;
-> > >  }
-> > >  static inline void
-> > >  nfs4_label_release_security(struct nfs4_label *label)
-> > >  {
-> > > -       struct lsm_context scaff; /* scaffolding */
-> > > +       struct lsm_context shim;
-> > >
-> > >         if (label) {
-> > > -               lsmcontext_init(&scaff, label->label, label->len, 0);
-> > > -               security_release_secctx(&scaff);
-> > > +               shim.context =3D label->label;
-> > > +               shim.len =3D label->len;
-> > > +               shim.id =3D LSM_ID_UNDEF;
-> >
-> > Is there a patch that follows this one to fix this? Otherwise, setting
-> > this to UNDEF causes SELinux to NOT free the context, which produces a
-> > memory leak for every NFS inode security context. Reported by kmemleak
-> > when running the selinux-testsuite NFS tests.
->
-> I don't recall seeing anything related to this, but patches are
-> definitely welcome.
+On 2/19/25 04:46, Maciej W. Rozycki wrote:
+> Complementing compiler support for the `-msafe-bwa' and `-msafe-partial'
+> code generation options slated to land in GCC 15,
 
-Looking at this quickly, this is an interesting problem as I don't
-believe we have enough context in nfs4_label_release_security() to
-correctly set the shim.id value.  If there is a positive, it is that
-lsm_context is really still just a string wrapped up with some
-metadata, e.g. length/ID, so we kfree()'ing shim.context is going to
-be okay-ish, at least for the foreseeable future.
+Pointer?  I can't find it on the gcc-patches list.
 
-I can think of two ways to fix this, but I'd love to hear other ideas too.
 
-1. Handle the LSM_ID_UNDEF case directly in security_release_secctx()
-and skip any individual LSM processing.
+> implement emulation
+> for unaligned LDx_L and STx_C operations for the unlikely case where an
+> alignment violation has resulted from improperly written code and caused
+> these operations to trap in atomic RMW memory access sequences made to
+> provide data consistency for non-BWX byte and word write operations, and
+> writes to unaligned data objects causing partial memory updates.
+> 
+> The principle of operation is as follows:
+> 
+> 1. A trapping unaligned LDx_L operation results in the pair of adjacent
+>     aligned whole data quantities spanned being read and stored for the
+>     reference with a subsequent STx_C operation, along with the width of
+>     the data accessed and its virtual address, and the task referring or
+>     NULL if the kernel.  The valitidy marker is set.
+> 
+> 2. Regular memory load operations are used to retrieve data because no
+>     atomicity is needed at this stage, and matching the width accessed,
+>     either LDQ_U or LDL even though the latter instruction requires extra
+>     operations, to avoid the case where an unaligned longword located
+>     entirely within an aligned quadword would complicate handling.
+> 
+> 3. Data is masked, shifted and merged appropriately and returned in the
+>     intended register as the result of the trapping LDx_L instruction.
+> 
+> 4. A trapping unaligned STx_C operation results in the valitidy marker
+>     being checked for being true, and the width of the data accessed
+>     along with the virtual address and the task referring or the kernel
+>     for a match.  The pair of whole data quantities previously read by
+>     LDx_L emulation is retrieved and the valitidy marker is cleared.
+> 
+> 5. If the checks succeeded, then in an atomic loop the location of the
+>     first whole data quantity is reread, and data retrieved compared with
+>     the value previously obtained.  If there's no match, then the loop is
+>     aborted and 0 is returned in the intended register as the result of
+>     the trapping STx_C instruction and emulation completes.  Otherwise
+>     new data obtained from the source operand of STx_C is combined with
+>     the data retrieved, replacing by byte insertion the part intended,
+>     and an atomic write of this new data is attempted.  If it fails, the
+>     loop continues from the beginning.  Otherwise processing proceeds to
+>     the next step.
+> 
+> 6. The same operations are performed on the second whole data quantity.
+> 
+> 7. At this point both whole data quantities have been written, ensuring
+>     that no third-party intervening write has changed them at the point
+>     of the write from the values held at previous LDx_L.  Therefore 1 is
+>     returned in the intended register as the result of the trapping STx_C
+>     instruction.
 
-2. Define a new LSM_ID_ANY value and update all of the LSMs to also
-process the ANY case as well as their own.
+I think general-purpose non-atomic emulation of STx_C is a really bad idea.
 
-I'm not finding either option very exciting, but option #2 looks
-particularly ugly, so I think I'd prefer to see someone draft a patch
-for option #1 assuming nothing better is presented.
+Without looking at your gcc patches, I can guess what you're after: you've generated a 
+ll/sc sequence for (aligned) short, and want to emulate if it happens to be unaligned.
 
---=20
-paul-moore.com
+Crucially, when emulating non-aligned, you should not strive to make it atomic.  No other 
+architecture promises atomic non-aligned stores, so why should you do that here?
+
+I suggest some sort of magic code sequence,
+
+	bic	addr_in, 6, addr_al
+loop:
+	ldq_l	t0, 0(addr_al)
+	magic-nop done - loop
+	inswl	data, addr_in, t1
+	mskwl	t0, addr_in, t0
+	bis	t0, t1, t0
+	stq_c	t0, 0(addr_al)
+	beq	t0, loop
+done:
+
+With the trap, match the magic-nop, pick out the input registers from the following inswl, 
+perform the two (atomic!) byte stores to accomplish the emulation, adjust the pc forward 
+to the done label.
+
+Choose anything you like for the magic-nop.  The (done - loop) displacement is small, so 
+any 8-bit immediate would suffice.  E.g. "eqv $31, disp, $31".  You might require the 
+displacement to be constant and not actually extract "disp"; just match the entire 
+uint32_t instruction pattern.
+
+
+r~
 
