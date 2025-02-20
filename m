@@ -1,81 +1,128 @@
-Return-Path: <linux-kernel+bounces-523172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26C94A3D30F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:24:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52BD7A3D301
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:22:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D5053BB9CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:22:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FD81189C0AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:22:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9F7A1EB1A9;
-	Thu, 20 Feb 2025 08:22:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D15211E8345;
+	Thu, 20 Feb 2025 08:21:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="lN0AghEy"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kd0iNM4M"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A811EB181;
-	Thu, 20 Feb 2025 08:22:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DC391B87D1;
+	Thu, 20 Feb 2025 08:21:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740039725; cv=none; b=ktGV5pMUJeeQRTtpl2klUN0tGbaufBv/VxYP7gzQ79kfZXUzoU0oAE5OCJBbSxlCHMemYhEvZZYJxeOL7s7Yb9AjizbZjI47Mzn/yOit0KkuFs9oEtTPQY0yUpbnzy22lCnc0RpEApRGq6lz6N6iyWeMr61kEGtAw1OhP+qzCIA=
+	t=1740039710; cv=none; b=Au6uDGDBWWlcvWXlyjY5Qmijo+oTfZlNaHDiGYVcgz5bPfKDqGAiOnwBrGPAMml+8FYfrNa6noqc+SezFSkY3emz2MB39Eb5U00o848GVn1wvKjWl+XhAhBjDf1NXAnW31Smh5bQh22A8mY9KcO5s+938eKY3QEYodeVqdA/k0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740039725; c=relaxed/simple;
-	bh=ngy4VSTw6cbr0NhLbcdeEVL5dA+MQxWppEmRRRV1CdI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=CakZ/htzeJsCniBX366EY5hcAWcl4G4g6kkgczXKgojfTDjdmHKKCe63LMlFukKmm0kC1oAi0aDkbk8vChyq99oinsKcGxhIVoUyrC/5BrQjCgk5gwchNeey2Fjf+GTzGeVI6W5RtaQllwYcVD5GyQGnKfOlgFFrDXGOXFzxJjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=lN0AghEy; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=ngy4VSTw6cbr0NhLbcdeEVL5dA+MQxWppEmRRRV1CdI=;
-	t=1740039723; x=1741249323; b=lN0AghEyo9itfdcb3uptqWHHxfNi4HvoB1DutXXxGD8EXom
-	o8bK6kMusRZYlcYUJFjiMCL1iMznsHOBEv2U19AJx9hNBG737n5h2Kn6GuYT6lx3wSDjYWOXSJv7X
-	9pb2sLyAKrwUjG78e10e1uV0bZ4spElEMo5ZSACOp8K69hZnLjGBYgrYV9YyRVBIOQ4a9i1DFWmCh
-	bvdPQPKgFdZmDt3NEglZgiMHYPddaS/N+/CdFJdqyHzg4r2ASl+Nmx1amZmOAiEtF6S75eb7/lygz
-	+ofk5XsyQRLknY5nn1KMMNvZZXkaYrcuSGyzymD7YsBmAGt88mONeq5oXSqWdmRA==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1tl1oV-00000003mf3-3XO1;
-	Thu, 20 Feb 2025 09:21:45 +0100
-Message-ID: <532b0a5081addd100d42642953347d09a29d1418.camel@sipsolutions.net>
-Subject: Re: [PATCH v3 0/2] Resolve the failure in downloading
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Jeff Chen <jeff.chen_1@nxp.com>, linux-wireless@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, briannorris@chromium.org, 
-	francesco@dolcini.it, tsung-hsien.hsieh@nxp.com, s.hauer@pengutronix.de
-Date: Thu, 20 Feb 2025 09:21:35 +0100
-In-Reply-To: <20250220061143.1417420-1-jeff.chen_1@nxp.com>
-References: <20250205012843.758714-1-jeff.chen_1@nxp.com>
-	 <20250220061143.1417420-1-jeff.chen_1@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1740039710; c=relaxed/simple;
+	bh=CbeXuoiGFZQ70AfXrqqYy0da8e+BHVxPbEhnsbE7NMw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FfwXljVcCjb2RnBzKIdz9oAXEFx8KUQxIdiqOPlU50GW6waTV/Nx+IiXM3g172j93imT51z+kTi8AVkgTsfFvRrgy6meP5TI6O7z8Bdpe0SarCOe/kPDQBBvdAixCxdEq33/amZamjaOffA1QA3jPQ5tf2hClBH6QhaDT8gzI4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kd0iNM4M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C196AC4CEE4;
+	Thu, 20 Feb 2025 08:21:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740039709;
+	bh=CbeXuoiGFZQ70AfXrqqYy0da8e+BHVxPbEhnsbE7NMw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=kd0iNM4MfN9Zm59iNyF9hyhGAmicRzHSrBealkIu37LlcEzJt0Vlu7qfFyi9el+Ks
+	 V587NKIBGzKERvKyfQmUpv59+ER2zcwzEGT7HR1WI0osRR4EspXrvhnQ01dz0wlDwr
+	 eq1wG7kwpg5tjT6Fj4ORZ1770Nli0hWQ1qDG+O9l7O62QwUuhoMA4c3B0uNxak/kOQ
+	 zHw4Sggo3T+6VGv9XnE++HcDq8/XCZmOKkZ2z3hPwPjiWkrWTeHx3LmPNdj1ibE+id
+	 /a+v7kf/NnNPPiHQSI+K9TSlNLmAz9UXGEdYnHIpqRF3m1dp3QAFlNvAR19J/sAB3N
+	 8YPnsshpBZnMA==
+Message-ID: <63f69d97-6a0a-4568-b3ac-d8dd320fb3b3@kernel.org>
+Date: Thu, 20 Feb 2025 09:21:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 1/2] dt-bindings: net: Add FSD EQoS device tree
+ bindings
+To: Swathi K S <swathi.ks@samsung.com>, krzk+dt@kernel.org,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, conor+dt@kernel.org,
+ richardcochran@gmail.com, mcoquelin.stm32@gmail.com,
+ alexandre.torgue@foss.st.com
+Cc: rmk+kernel@armlinux.org.uk, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ pankaj.dubey@samsung.com, ravi.patel@samsung.com, gost.dev@samsung.com
+References: <20250220043712.31966-1-swathi.ks@samsung.com>
+ <CGME20250220044128epcas5p1484d81bea4377bef4cbe7bc7b9f03713@epcas5p1.samsung.com>
+ <20250220043712.31966-2-swathi.ks@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250220043712.31966-2-swathi.ks@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, 2025-02-20 at 14:11 +0800, Jeff Chen wrote:
-> Hi Johannes,
->=20
-> Based on your feedback for the previous submission, split the
-> original patch into two separate patches.
->=20
+On 20/02/2025 05:37, Swathi K S wrote:
+> Add FSD Ethernet compatible in Synopsys dt-bindings document. Add FSD
+> Ethernet YAML schema to enable the DT validation.
+> 
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
+> Signed-off-by: Swathi K S <swathi.ks@samsung.com>
+> ---
 
-Thanks. I guess it really should have better subject lines now, and it
-doesn't need to (or shouldn't really) indicate in the commit messages
-that it was split (you can do that after a --- separator if you like.)
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-johannes
+Best regards,
+Krzysztof
 
