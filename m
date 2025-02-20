@@ -1,113 +1,144 @@
-Return-Path: <linux-kernel+bounces-524196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB81FA3E057
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:21:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ED6AA3E06E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:22:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 203CD167D5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:19:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8989A3BA4D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:19:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6793F1FFC6C;
-	Thu, 20 Feb 2025 16:19:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38FD820C024;
+	Thu, 20 Feb 2025 16:19:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="en1ePuD/";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ADOby/gp"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AM+bYgeN"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FED31DF265
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 16:19:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1F172040B5
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 16:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740068355; cv=none; b=I7Tn9/sw2FVXK2a8ivMDWrBbIzRFMBLATm2raAp3tSZbYi8jRKZy+GgnySu9ahtGalV6xvVu/yMpha70xsTe5gK2YqIQ+CirR/Dmc0VvxM8LxkMs5LsITZDgqKX6vzodYU88mJhnhPwoH9plnzjatGZVMxmBwiZAIs7P80tFwbw=
+	t=1740068358; cv=none; b=eGPxrsHCKNob1yPVAdr5xXA4b2H2aL6pBHRrcdY+WqUJ6SUKNJd9iMtI9wCBsHtqFzn1z1ym+aBpdbfZDQNMYcfiR5hjjSlBtlO1tsGPKb2oAG/f7z1rF5sDV/1OXLg7aNEYKDW+R9x3xaTEzTXyCU+ZmwLVNgyOXdPAx7npZ14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740068355; c=relaxed/simple;
-	bh=fFp8FJUokY1RmBp2mB7uX3L0RMS9vV9hiRF7+rlAn4c=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=rqGmIsON/Pen+PZ8u6zGcoas5jWF/lsDDQsS4wgwgm7oFJzqsZvPJeCGaA0/ENusjmOZ1Cpi0reXOof3gwFrIEhNy107DikXvDgb1DtpkDyJh6K4nUusNvj0jaWyPFZBA6tm0NZONmcor/XwO2O5r8uoB7Z/XECplQoyBI2f1Jk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=en1ePuD/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ADOby/gp; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740068352;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JZ8WaAnDe7dn++wovr9Ki58qKgf9SgP+VlQv0BT4iZA=;
-	b=en1ePuD/ennCbo3JTlznH30FweKS0IvBx8N2PLffzMcFvHhi/Vusd87M+qt4iydxhzaIVf
-	bi3/wS/iCXvhzsexurNnQ+ig0ZRDBCsuZRh9xS19GkOv4c8yt5M20RBHDm1ejEOI6Q06Cg
-	edYU5ZKtskXzIOc9jO0TAu9T9kdV99vZNWEgpRMvMnahfsRC/r6sN333kzD5Pr81cpacbz
-	8aDskQSACnKeoSNHuhYkrWPv48UaivREvNRzeKERdjMKvAi3URnUz+RjWiXlPGW164joU1
-	sFdskSNldy0KhdB7TnocN9o+t84rWsS7Xj8MVMt5ljkpdfSJzZ+w3NmD4jFsXg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740068352;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JZ8WaAnDe7dn++wovr9Ki58qKgf9SgP+VlQv0BT4iZA=;
-	b=ADOby/gpz3WJfQ3cu68XYbAr3xFAh5oM0wmO32oQlXaEgUrKzayNnuZ6psRDBqCP3XK3aR
-	rzrdE8qplNEwukAw==
-To: Eric Dumazet <edumazet@google.com>
-Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker
- <frederic@kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
- Benjamin Segall <bsegall@google.com>, Eric Dumazet
- <eric.dumazet@gmail.com>
-Subject: Re: [PATCH V2 1/4] posix-timers: Make next_posix_timer_id an atomic_t
-In-Reply-To: <CANn89iKAiJvOXLC4SkWnsKC-6m9HU1KoYAVPE_G_UhOb__Gj0g@mail.gmail.com>
-References: <20250219125522.2535263-1-edumazet@google.com>
- <20250219125522.2535263-2-edumazet@google.com> <87wmdlhwa8.ffs@tglx>
- <CANn89i+LJFHhA=VF2T5v_kN0=sFLeropuRERnhWdadj5w6kiyw@mail.gmail.com>
- <87h64oiuey.ffs@tglx> <8734g8it5m.ffs@tglx>
- <CANn89iKAiJvOXLC4SkWnsKC-6m9HU1KoYAVPE_G_UhOb__Gj0g@mail.gmail.com>
-Date: Thu, 20 Feb 2025 17:19:11 +0100
-Message-ID: <87wmdkh9mo.ffs@tglx>
+	s=arc-20240116; t=1740068358; c=relaxed/simple;
+	bh=/B922pkbs/U6oOvx+Im8KE0wQFfockKMJbcW42nwAlc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a18A03IXcj/rth//7jHFIB+Fv/MOu8ujbzdeJgxX+PNweqFsyZxlzBUDInANLkNBdjR4RNSCXScCYK6sFmFUb/93q4b20hXzFzyOTT7rZNfvbd0DwaH4DbQ7c0qSODtcmP5VqEnJ0bHnMMp2vMZdOWhTFsreu4zN+1rxyxbfwvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AM+bYgeN; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-545fed4642aso1200846e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 08:19:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740068355; x=1740673155; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=FbLGtpaYb7GP8BUC9A3SVhEyUFy/pRikzTZLrMMHtrI=;
+        b=AM+bYgeN4SwhHPFPi0pcnUOuqkooYXpe4KyS4TKkc2Y9wtMNfQsmedAey1C9a1rkPv
+         5Aq+D7N8zYCLLUMIl53fuzp44OYcZ05TrkIVBGqt+DdaSW9UiwmiOlbOiiMfMn1PfQ1P
+         yiG3X6vumX52Oqvzcx3TlCYnCLL7rRokCRMU77NrgKRvHtWoNyja6AA9TBgdZsDmRABD
+         nw2K+v/jq+ygCkvd9FlcvbxQ97S4JCy0nGUNL2THdm22syx3IcdX1aG2+9uWKOZbyHOi
+         +Bs9+Ygt3oHe4xuu+3tF3+Owq9j4S7RpC2yfV2nh/dYlmBlLAqNqSu6R7Js1/EFeqTMh
+         VAdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740068355; x=1740673155;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FbLGtpaYb7GP8BUC9A3SVhEyUFy/pRikzTZLrMMHtrI=;
+        b=fmxD4djOcsdA+/ioc721oqhriONSg6depXenWFlZ4Ng1by3Nw1W/3dPK4l2w1Jo1Q5
+         up2TsKTk0diht4pJtA4U2APmHaGYWhB8u43lApR0qg/vBjJGEjGhH3UWrqH1/Fg1w3LU
+         g9oi79FeIMAsxWKH8ctMGgL6dhuW15Zz4DBxx0MGNufOq5n+EmJY/H3zjhJzzj67LL1d
+         TAQPrZyPBtL8JqEpWhbPIFRfd76OJ4PwuogkurWNgZSYiGwVHUph4Qs7AvuEpKTpkx8Y
+         nLTnCOWPpt7Al7FMHA7FXERsZJ+kCpMR/f1l5kCbNV8GPEMiqKvDAFiUbKnuv2Lnwqjw
+         hVzg==
+X-Forwarded-Encrypted: i=1; AJvYcCUz8//JdQVaSGrq0oeckXjYJn/vMWMdGhiYCUX4pXYyRNx492GOqI4M84VUdjFXG1vuHKlLVM7Rovf5E+M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjJX4cE8UCp9D3MEv2G2nRhnAiqEw4sC4+XPvH/Ayo/shmvf4/
+	TF2627SXMgSoCz1cDQSA0Ds+febikwoKTzxpjcnURq6H5i6WiLAKQfixWSeyDVkhWJcIg0G+dGF
+	P
+X-Gm-Gg: ASbGncvY3GZzOBMb/T7zk++siMSO1+zY0N6YS1k7/i7r/ls6dqLx79GR9JPoSuqx5+M
+	01HPqScqzov5+hFOjZgLAmiw86jwNn53WlXj2OYq9lgAzct8cZtlq7K2rUvgq1+vEEsAw6D+pME
+	fS0pC0GcC7gSk4HpXVv3PRXzhtW6152ExzRu5t/RmQPsfXt47uP8Qr8J8o7c+2W14sv6foO9km9
+	TkPaSnsCF3yOMaPSyePTaBPqwEJQqPeuJKDRac+Bjs5na7FUdW3A6iIkwWVuuSJtMywm2FqwgmT
+	T8/e0+hXZhylGnP7dZur9ymm5IDvf1GFJQERRoPKgdpJMdDOSMrv1g82a+R9ZUtyLhIk47M=
+X-Google-Smtp-Source: AGHT+IGXy8UPjP+6V4rWOhniIYo8XO01HbjN5gyUL77WHLsu40hdggfhlw5BeDY+CUVIKw0g6aq+Vw==
+X-Received: by 2002:a05:6512:128b:b0:545:60b:f38b with SMTP id 2adb3069b0e04-54723e04635mr1484163e87.8.1740068354786;
+        Thu, 20 Feb 2025 08:19:14 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5461d1d8fcbsm1473583e87.83.2025.02.20.08.19.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 08:19:13 -0800 (PST)
+Date: Thu, 20 Feb 2025 18:19:12 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/4] arm64: dts: qcom: sm8750-mtp: Enable CDSP and
+ mention MPSS
+Message-ID: <dihnqsdjqxq7uhomceeiejey7dezfyvhpnyc3zyzhyuyfdjtec@d4ruo5xbxid3>
+References: <20250220-b4-sm8750-cdsp-v2-0-a70dd2d04419@linaro.org>
+ <20250220-b4-sm8750-cdsp-v2-3-a70dd2d04419@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250220-b4-sm8750-cdsp-v2-3-a70dd2d04419@linaro.org>
 
-On Thu, Feb 20 2025 at 16:55, Eric Dumazet wrote:
-> On Thu, Feb 20, 2025 at 3:32=E2=80=AFPM Thomas Gleixner <tglx@linutronix.=
-de> wrote:
->>
->> On Thu, Feb 20 2025 at 15:04, Thomas Gleixner wrote:
->> > On Thu, Feb 20 2025 at 09:49, Eric Dumazet wrote:
->> >> On Thu, Feb 20, 2025 at 9:09=E2=80=AFAM Thomas Gleixner <tglx@linutro=
-nix.de> wrote:
->> >>> > This allows the following patch to use RCU.
->> >>>
->> >>> Your patch ordering is slightly off by two :)
->> >>>
->> >>> And it fails to explain for what RCU can be used....
->> >>
->> >> This is explained in the following patches.
->> >
->> > The changelog of a patch has to be self contained. The 'following patc=
-h'
->> > has no meaning when the patch is merged.
->>
->> That said, please just fold this into the patch which actually does this=
- RCU
->> lookup upfront. The change is trivial enough that it does not really
->> require to be seperate. If the lockless increment would cause issues,
->> then the subsequent RCU lookup is the least of the worries :)
->
-> I can squash all patches into a single one if you prefer.
+On Thu, Feb 20, 2025 at 04:44:13PM +0100, Krzysztof Kozlowski wrote:
+> Enable the CDSP on MPT8750 board and add firmware for the modem, however
+> keep it as failed because modem crashes after booting for unknown
+> reasons.
 
-Please don't. The wraparound race prevention has nothing to do with the
-lookup optimization.
+So the modem crashes on MTP, but does not on QRD?
 
-Thanks,
+> 
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  arch/arm64/boot/dts/qcom/sm8750-mtp.dts | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sm8750-mtp.dts b/arch/arm64/boot/dts/qcom/sm8750-mtp.dts
+> index 8eeed7f2f7766326cfc7830002768087e9783b9b..72f081a890dfe49bfbee5e91b9e51da53b9d8baf 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8750-mtp.dts
+> +++ b/arch/arm64/boot/dts/qcom/sm8750-mtp.dts
+> @@ -791,6 +791,21 @@ &remoteproc_adsp {
+>  	status = "okay";
+>  };
+>  
+> +&remoteproc_cdsp {
+> +	firmware-name = "qcom/sm8750/cdsp.mbn",
+> +			"qcom/sm8750/cdsp_dtb.mbn";
+> +
+> +	status = "okay";
+> +};
+> +
+> +&remoteproc_mpss {
+> +	firmware-name = "qcom/sm8750/modem.mbn",
+> +			"qcom/sm8750/modem_dtb.mbn";
+> +
+> +	/* Modem crashes after some time with "DOG detects stalled initialization" */
+> +	status = "fail";
+> +};
+> +
+>  &tlmm {
+>  	/* reserved for secure world */
+>  	gpio-reserved-ranges = <36 4>, <74 1>;
+> 
+> -- 
+> 2.43.0
+> 
 
-        tglx
+-- 
+With best wishes
+Dmitry
 
