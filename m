@@ -1,173 +1,277 @@
-Return-Path: <linux-kernel+bounces-523858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B896CA3DC26
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:10:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD820A3DC2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:11:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA39C1656D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:08:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 162B5700FFE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:08:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3EFA1D432D;
-	Thu, 20 Feb 2025 14:08:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCBF81C3C07;
+	Thu, 20 Feb 2025 14:08:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R1TcKTdZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="NTznyQ7W"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28ABC1A8F94;
-	Thu, 20 Feb 2025 14:08:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 135321BBBF7;
+	Thu, 20 Feb 2025 14:08:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740060484; cv=none; b=oR2br47hbmZ5ILOayV2daGpPiiL1IQvOv1aM2KWwIfdDxgZhw4Um1E3248iTqgnNKk6Ua17sivt66kusTeBaWvfK7b5qyrAebcPOkFuM+J3QTeDGoaY6U6fnmw2n0q0YPsuqJpzcwzDP65/QfdfpodiDjTKYBR9JxGSFAjBeUJM=
+	t=1740060500; cv=none; b=uaE6yU0r2Wa6ASPBiiu9d4ES+nHbxAXL3N15hZjAe2n76uXEK5XkSXXYZWMJ2CdjY1pmOQGWyHzNajDW+ZnjGISfix4JzG6h1mgnknyutzp0lLvnVy9FRg8FMqPXAcMkYOAVQ9FanNT9kKZSXoV7LqNjIwOSFxpCYHTrgWmB8G8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740060484; c=relaxed/simple;
-	bh=BUAFupbmeOg5OQr/zoe76B/ATDMFC2NaHM0MAwh8poA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lBYxKKnILllAH3OGytTmy3dDLeuoq2W7AGwT1RK/cNHQBogSphxYorbUi8UlSKIK7U6qGlNdqEsKo/1HM/YbmVkCPVD0w4By9O5Fobbu4y7mzqdWOXXPw83U8z4DXvGPbXIl1nGzz5V5w7KV8A/xNAfzDD4ry3V1FFcpYKCiQ2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R1TcKTdZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17F65C4CEE2;
-	Thu, 20 Feb 2025 14:08:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740060483;
-	bh=BUAFupbmeOg5OQr/zoe76B/ATDMFC2NaHM0MAwh8poA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R1TcKTdZUzXz/x1a39o81aw14MuhGwJsF4M6GpI2JB2Sma+oDayeqIdc8JPt6g4TX
-	 IJTT9xJhJi++YRfIV+qqM6v/VXvPipQXSTAP37Jjs9kMmTOdJ5nuVLonKeiGgli3KH
-	 dVGbzBlgGoMJi0/Ic1gK1WlnbuM+vHjPWhlIf3rHm0rBs5gCocNPZR+EFycoQ+PFSE
-	 X+4AIRclvO796gbR3MvWtACI8dbCJafMPViKtcZRaL9VmRSGYETupJ+MZp/YwEs5hq
-	 kqs8y9dE8WQrXJmajXx9YkmPR6B1eFCE5nbvRJIXw2MJbP9HVDBAivtmMQV+9Du95K
-	 Z4FPKEzV2b1hg==
-Date: Thu, 20 Feb 2025 16:07:58 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Fiona Behrens <me@kloenk.dev>
-Cc: Bart Van Assche <bvanassche@acm.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Jason Gunthorpe <jgg@nvidia.com>, Kees Cook <kees@kernel.org>,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	rust-for-linux <rust-for-linux@vger.kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	David Airlie <airlied@gmail.com>, linux-kernel@vger.kernel.org,
-	ksummit@lists.linux.dev
-Subject: Re: Rust kernel policy
-Message-ID: <Z7c3PguDn-sEl3gm@kernel.org>
-References: <Z7SwcnUzjZYfuJ4-@infradead.org>
- <CANiq72myjaA3Yyw_yyJ+uvUrZQcSLY_jNp65iKH8Y5xGY5tXPQ@mail.gmail.com>
- <202502191026.8B6FD47A1@keescook>
- <20250219140821.27fa1e8a@gandalf.local.home>
- <202502191117.8E1BCD4615@keescook>
- <20250219202751.GA42073@nvidia.com>
- <20250219154610.30dc6223@gandalf.local.home>
- <97841173-1de8-4221-8bf3-3470a5ac98a7@acm.org>
- <89f2547edcaaba53d9965cab9133d809607330ac.camel@kernel.org>
- <87pljc6d7s.fsf@kloenk.dev>
+	s=arc-20240116; t=1740060500; c=relaxed/simple;
+	bh=CoHFlBoN0AcSa0D3D3bSPzTlGbRoOzu9bkMfziXLfYA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h7kxarMF5HjAJQnPoqJG705elk16wnh9GKB14jUjOvhQ4lJA9EGB8CZgFNOkpNyzjnqDU1QhaXzhvkMD/ht5J2tJTvplRFuc4qllS4WGk3mheQOLap/sg9xvY+AKvCPlV1a53YRQDhtUDIznZNejNKAtbuAqgxyhp3HCCg0j3r8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=NTznyQ7W; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=8K5p3TMW4brEw9zIKOr+aOV1W5N+3CjUyZ3AitePbPY=; b=NTznyQ7WxjSAYRJw
+	tlNpUoTjfxToIh1pxx4I4Fu2aNIScWk/KgtHSn3X9FYs3coL4AgrioDN3ZP/AUHe2vBzFkgi5tSv9
+	7ssLEV2AiPRQbZNLX8lDf/O4Zs3v/MXQxDfTD453FdOcue872nC2vTRxlj7U8pxV5Poq4UnmRyVN8
+	ZjIKDrVscpnBoYe+Gy+RGQDsf6CSj9DtHTN6TX0JaJpXwdA5dscnqzY+HHcIKonR3RhCE4EomcSz5
+	NQX88hKpvXSWUTQR7PI4kdYyaEC7z3iHPZpsURvk9QGlSsZGN+uT6viivvGg+LvwgDqpHMN5KkjuE
+	RSb5Ifv3qh0rOnVxOw==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1tl7Dl-00HBXK-0b;
+	Thu, 20 Feb 2025 14:08:09 +0000
+From: linux@treblig.org
+To: paul@paul-moore.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org
+Cc: linux-security-module@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH net-next] netlabel: Remove unused cfg_calipso funcs
+Date: Thu, 20 Feb 2025 14:08:08 +0000
+Message-ID: <20250220140808.71674-1-linux@treblig.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87pljc6d7s.fsf@kloenk.dev>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 20, 2025 at 12:57:11PM +0100, Fiona Behrens wrote:
-> Jarkko Sakkinen <jarkko@kernel.org> writes:
-> 
-> > On Wed, 2025-02-19 at 12:52 -0800, Bart Van Assche wrote:
-> >> On 2/19/25 12:46 PM, Steven Rostedt wrote:
-> >> > I do feel that new drivers written in Rust would help with the
-> >> > vulnerabilities that new drivers usually add to the kernel.
-> >> 
-> >> For driver developers it is easier to learn C than to learn Rust. I'm
-> >> not sure that all driver developers, especially the "drive by"
-> >> developers, have the skills to learn Rust.
-> >
-> > IMHO, Rust is not that difficult to learn but it is difficult to
-> > run.
-> >
-> > One point of difficulty for me still is the QA part, not really the
-> > code. QuickStart discusses on how to install all the shenanigans
-> > with distribution package managers.
-> >
-> > The reality of actual kernel development is that you almost never
-> > compile/run host-to-host, rendering that part of the documentation
-> > in the battlefield next to useless.
-> >
-> > Instead it should have instructions for BuildRoot, Yocto and
-> > perhaps NixOS (via podman). It should really explain this instead
-> > of dnf/apt-get etc.
-> 
-> What do you mean with via podman for NixOS?
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-I sometimes use NixOS to test more complex kernel configurations. See
+netlbl_cfg_calipso_map_add(), netlbl_cfg_calipso_add() and
+netlbl_cfg_calipso_del() were added in 2016 as part of
+commit 3f09354ac84c ("netlabel: Implement CALIPSO config functions for
+SMACK.")
 
-https://social.kernel.org/notice/ArHkwNIVWamGvUzktU
+Remove them.
 
-I'm planning to use this approach to check if I could use that to
-build efficiently kernels with Rust.
+(I see a few other changes in that original commit, whether they
+are reachable I'm not sure).
 
-I've not been so far successful to do it with BuildRoot, which has
-zeroed out any possible contributions for rust linux. Writing code
-is like 5% of kernel development. Edit-compile-run cycle is the
-95%.
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ include/net/netlabel.h       |  26 -------
+ net/netlabel/netlabel_kapi.c | 133 -----------------------------------
+ 2 files changed, 159 deletions(-)
 
-> I do still have on my ToDo list to build and publish a better nix
-> development shell for kernel with rust enabled, and could also add a
-> section on how to build a NixOS iso in the same nix code.
-> But sadly time is a finite resource and so did not yet got to it.
+diff --git a/include/net/netlabel.h b/include/net/netlabel.h
+index 02914b1df38b..37c9bcfd5345 100644
+--- a/include/net/netlabel.h
++++ b/include/net/netlabel.h
+@@ -435,14 +435,6 @@ int netlbl_cfg_cipsov4_map_add(u32 doi,
+ 			       const struct in_addr *addr,
+ 			       const struct in_addr *mask,
+ 			       struct netlbl_audit *audit_info);
+-int netlbl_cfg_calipso_add(struct calipso_doi *doi_def,
+-			   struct netlbl_audit *audit_info);
+-void netlbl_cfg_calipso_del(u32 doi, struct netlbl_audit *audit_info);
+-int netlbl_cfg_calipso_map_add(u32 doi,
+-			       const char *domain,
+-			       const struct in6_addr *addr,
+-			       const struct in6_addr *mask,
+-			       struct netlbl_audit *audit_info);
+ /*
+  * LSM security attribute operations
+  */
+@@ -561,24 +553,6 @@ static inline int netlbl_cfg_cipsov4_map_add(u32 doi,
+ {
+ 	return -ENOSYS;
+ }
+-static inline int netlbl_cfg_calipso_add(struct calipso_doi *doi_def,
+-					 struct netlbl_audit *audit_info)
+-{
+-	return -ENOSYS;
+-}
+-static inline void netlbl_cfg_calipso_del(u32 doi,
+-					  struct netlbl_audit *audit_info)
+-{
+-	return;
+-}
+-static inline int netlbl_cfg_calipso_map_add(u32 doi,
+-					     const char *domain,
+-					     const struct in6_addr *addr,
+-					     const struct in6_addr *mask,
+-					     struct netlbl_audit *audit_info)
+-{
+-	return -ENOSYS;
+-}
+ static inline int netlbl_catmap_walk(struct netlbl_lsm_catmap *catmap,
+ 				     u32 offset)
+ {
+diff --git a/net/netlabel/netlabel_kapi.c b/net/netlabel/netlabel_kapi.c
+index cd9160bbc919..13b4bc1c30ec 100644
+--- a/net/netlabel/netlabel_kapi.c
++++ b/net/netlabel/netlabel_kapi.c
+@@ -394,139 +394,6 @@ int netlbl_cfg_cipsov4_map_add(u32 doi,
+ 	return ret_val;
+ }
+ 
+-/**
+- * netlbl_cfg_calipso_add - Add a new CALIPSO DOI definition
+- * @doi_def: CALIPSO DOI definition
+- * @audit_info: NetLabel audit information
+- *
+- * Description:
+- * Add a new CALIPSO DOI definition as defined by @doi_def.  Returns zero on
+- * success and negative values on failure.
+- *
+- */
+-int netlbl_cfg_calipso_add(struct calipso_doi *doi_def,
+-			   struct netlbl_audit *audit_info)
+-{
+-#if IS_ENABLED(CONFIG_IPV6)
+-	return calipso_doi_add(doi_def, audit_info);
+-#else /* IPv6 */
+-	return -ENOSYS;
+-#endif /* IPv6 */
+-}
+-
+-/**
+- * netlbl_cfg_calipso_del - Remove an existing CALIPSO DOI definition
+- * @doi: CALIPSO DOI
+- * @audit_info: NetLabel audit information
+- *
+- * Description:
+- * Remove an existing CALIPSO DOI definition matching @doi.  Returns zero on
+- * success and negative values on failure.
+- *
+- */
+-void netlbl_cfg_calipso_del(u32 doi, struct netlbl_audit *audit_info)
+-{
+-#if IS_ENABLED(CONFIG_IPV6)
+-	calipso_doi_remove(doi, audit_info);
+-#endif /* IPv6 */
+-}
+-
+-/**
+- * netlbl_cfg_calipso_map_add - Add a new CALIPSO DOI mapping
+- * @doi: the CALIPSO DOI
+- * @domain: the domain mapping to add
+- * @addr: IP address
+- * @mask: IP address mask
+- * @audit_info: NetLabel audit information
+- *
+- * Description:
+- * Add a new NetLabel/LSM domain mapping for the given CALIPSO DOI to the
+- * NetLabel subsystem.  A @domain value of NULL adds a new default domain
+- * mapping.  Returns zero on success, negative values on failure.
+- *
+- */
+-int netlbl_cfg_calipso_map_add(u32 doi,
+-			       const char *domain,
+-			       const struct in6_addr *addr,
+-			       const struct in6_addr *mask,
+-			       struct netlbl_audit *audit_info)
+-{
+-#if IS_ENABLED(CONFIG_IPV6)
+-	int ret_val = -ENOMEM;
+-	struct calipso_doi *doi_def;
+-	struct netlbl_dom_map *entry;
+-	struct netlbl_domaddr_map *addrmap = NULL;
+-	struct netlbl_domaddr6_map *addrinfo = NULL;
+-
+-	doi_def = calipso_doi_getdef(doi);
+-	if (doi_def == NULL)
+-		return -ENOENT;
+-
+-	entry = kzalloc(sizeof(*entry), GFP_ATOMIC);
+-	if (entry == NULL)
+-		goto out_entry;
+-	entry->family = AF_INET6;
+-	if (domain != NULL) {
+-		entry->domain = kstrdup(domain, GFP_ATOMIC);
+-		if (entry->domain == NULL)
+-			goto out_domain;
+-	}
+-
+-	if (addr == NULL && mask == NULL) {
+-		entry->def.calipso = doi_def;
+-		entry->def.type = NETLBL_NLTYPE_CALIPSO;
+-	} else if (addr != NULL && mask != NULL) {
+-		addrmap = kzalloc(sizeof(*addrmap), GFP_ATOMIC);
+-		if (addrmap == NULL)
+-			goto out_addrmap;
+-		INIT_LIST_HEAD(&addrmap->list4);
+-		INIT_LIST_HEAD(&addrmap->list6);
+-
+-		addrinfo = kzalloc(sizeof(*addrinfo), GFP_ATOMIC);
+-		if (addrinfo == NULL)
+-			goto out_addrinfo;
+-		addrinfo->def.calipso = doi_def;
+-		addrinfo->def.type = NETLBL_NLTYPE_CALIPSO;
+-		addrinfo->list.addr = *addr;
+-		addrinfo->list.addr.s6_addr32[0] &= mask->s6_addr32[0];
+-		addrinfo->list.addr.s6_addr32[1] &= mask->s6_addr32[1];
+-		addrinfo->list.addr.s6_addr32[2] &= mask->s6_addr32[2];
+-		addrinfo->list.addr.s6_addr32[3] &= mask->s6_addr32[3];
+-		addrinfo->list.mask = *mask;
+-		addrinfo->list.valid = 1;
+-		ret_val = netlbl_af6list_add(&addrinfo->list, &addrmap->list6);
+-		if (ret_val != 0)
+-			goto cfg_calipso_map_add_failure;
+-
+-		entry->def.addrsel = addrmap;
+-		entry->def.type = NETLBL_NLTYPE_ADDRSELECT;
+-	} else {
+-		ret_val = -EINVAL;
+-		goto out_addrmap;
+-	}
+-
+-	ret_val = netlbl_domhsh_add(entry, audit_info);
+-	if (ret_val != 0)
+-		goto cfg_calipso_map_add_failure;
+-
+-	return 0;
+-
+-cfg_calipso_map_add_failure:
+-	kfree(addrinfo);
+-out_addrinfo:
+-	kfree(addrmap);
+-out_addrmap:
+-	kfree(entry->domain);
+-out_domain:
+-	kfree(entry);
+-out_entry:
+-	calipso_doi_putdef(doi_def);
+-	return ret_val;
+-#else /* IPv6 */
+-	return -ENOSYS;
+-#endif /* IPv6 */
+-}
+-
+ /*
+  * Security Attribute Functions
+  */
+-- 
+2.48.1
 
-Please do ping me if you move forward with this. IMHO, why wouldn't
-you contribute that straight to the kernel documentation? Right no
-there are exactly zero approaches in kernel documentation on how
-test all of this.
-
-The best known method I know is to extend this type of example I
-did year ago:
-
-#!/usr/bin/env bash
-
-set -e
-
-make defconfig
-scripts/config --set-str CONFIG_INITRAMFS_SOURCE "initramfs.txt"
-yes '' | make oldconfig
-
-cat > initramfs.txt << EOF
-dir /dev 755 0 0
-nod /dev/console 644 0 0 c 5 1
-nod /dev/loop0 644 0 0 b 7 0
-dir /bin 755 1000 1000
-slink /bin/sh busybox 777 0 0
-file /bin/busybox initramfs/busybox 755 0 0
-dir /proc 755 0 0
-dir /sys 755 0 0
-dir /mnt 755 0 0
-file /init initramfs/init.sh 755 0 0
-EOF
-
-mkdir initramfs
-
-curl -sSf https://dl-cdn.alpinelinux.org/alpine/edge/main/x86_64/busybox-static-1.36.1-r25.apk | tar zx --strip-components 1
-cp busybox.static initramfs/busybox
-
-cat > initramfs/init.sh << EOF
-#!/bin/sh
-mount -t proc none /proc
-mount -t sysfs none /sys
-sh
-EOF
-
-and then qemu-system-x86_64 -kernel arch/x86/boot/bzImage
-
-It's sad really.
-
-> 
-> Fiona
-
-BR, Jarkko
 
