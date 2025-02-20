@@ -1,127 +1,297 @@
-Return-Path: <linux-kernel+bounces-524282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 910ACA3E16C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:53:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26406A3E189
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:56:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C20981888AD7
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49E0C3B8D1C
 	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:50:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F0D4212D6E;
-	Thu, 20 Feb 2025 16:48:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D636A2139CF;
+	Thu, 20 Feb 2025 16:48:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sladewatkins.com header.i=@sladewatkins.com header.b="H/Y5QNnQ";
-	dkim=pass (2048-bit key) header.d=sladewatkins.net header.i=@sladewatkins.net header.b="UOOWd59+"
-Received: from dispatch1-us1.ppe-hosted.com (dispatch1-us1.ppe-hosted.com [67.231.154.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="aSiBQIAy"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF80F2116F4
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 16:48:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.154.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4CFF211712;
+	Thu, 20 Feb 2025 16:48:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740070093; cv=none; b=Fw5caDUVygEdEm1cgVBuuDf8paeTtjRC7yO8BaChpH5Io7rlBFHAwwx4NLvBpBQ9ITzYFesCXMHp/mfQL9AVi4M8z48JXoIaDV+bStMyFpH669oTH8vsYxNyLD2Fr/1WDsMkgFZT3+gkxiO5qvz81/qXOlejdJ/NbTNgAjxsiI4=
+	t=1740070099; cv=none; b=OuIT1lZq+yUNhsm13wbQjsEXOSdiNGCNFHfat75WVkTvziYVU8lx8EBZPX9aV5TyPUcM55ELsHqjNtjm/aGvqwvgDski3HI5/YYv1tKQkTZho4rKoQR/IHMg2KPeziutWN1J7L0Eu8XnyrVyQdN8xYkhjZVS6yTdTiRFfzd+x4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740070093; c=relaxed/simple;
-	bh=pbdR7nxvueo2TLaKE5sF10t2b+oN0pSH5FKcIBPg2yE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=c8ago8pRuWnPu2QfKG/RJbEUEEDZqBxZOTU44+2X4vfNOOPet4r4C09z7u0tmjruHuJ+NLeHbXKDLi+gh3+ToUwIiVpQTMUhU1EMEOahmWmN0vIwvlkJ/EMDXoOUxf0b+qyLagEUvTCp0LHDhuj7UjjltQZ3IxLvtCCxXybE6ag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sladewatkins.net; spf=pass smtp.mailfrom=sladewatkins.com; dkim=pass (2048-bit key) header.d=sladewatkins.com header.i=@sladewatkins.com header.b=H/Y5QNnQ; dkim=pass (2048-bit key) header.d=sladewatkins.net header.i=@sladewatkins.net header.b=UOOWd59+; arc=none smtp.client-ip=67.231.154.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sladewatkins.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sladewatkins.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sladewatkins.com;
- h=cc:cc:content-transfer-encoding:content-transfer-encoding:content-type:content-type:date:date:from:from:in-reply-to:in-reply-to:message-id:message-id:mime-version:mime-version:references:references:subject:subject:to:to;
- s=selector-1739986532; bh=UtFu/7rrHv4X5KOTvsXatoIKvP38Td4ByIZSHbNhxXM=;
- b=H/Y5QNnQSdKVkGKUBSTSBmttqgIjVEe22rsEDSKU8dDUSQA2Ftiza2zkwLPXL9vktGDaC2LrNl0/ph5AA31veXHm+rggUejAGdgcaxpupxnQimmgcg7b3da/nbKqbPcum2N8H+90iLmZyIqdQOWwQ3cNzzjleRgSi6F/2jU9DD8YEiSnxVS+8teeOG9aAZPmDofL2hk2yjPMcPAbylFakkwLqX1pgqMFyKgzjGViZnQtTTxv9cnMqkswVBQBfxN9m7hofdqlu7veQeunjTBF86TdA2Y0RgRHylX1Ib6O6dLIwycum0Qgvhvva3ilj1DMp3u3zbmsWsTGCcVDNmznWA==
-X-Virus-Scanned: Proofpoint Essentials engine
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com [209.85.128.72])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx1-us1.ppe-hosted.com (PPE Hosted ESMTP Server) with ESMTPS id 766576C0087
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 16:48:09 +0000 (UTC)
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4394b2c19ccso12457745e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 08:48:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sladewatkins.net; s=google; t=1740070088; x=1740674888; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UtFu/7rrHv4X5KOTvsXatoIKvP38Td4ByIZSHbNhxXM=;
-        b=UOOWd59+P3yQtU+IYbKge1b0W5670XnbgMRo7+aS3eA8mwSS04yH+s6Dp2BTas/Pv9
-         c7+SvQPz3n2KaGpJU8SVusdPt+P/nUT5CWucYrWwJ6DDHW1chWXolpOsS915CLHvVXCi
-         oZorGvH7q/sWZvtoDGXuuFOFfSRfMoQZMuXm9AIYuCkTt8Gse7dPXnoKAzl78Z3e71SG
-         bt4u2sztPbrbwQ6bR1/6igOTVCT1hTgBTkaneIiIIKNPaAJ+pZbwbZ7RMIBzia9LRX2O
-         cGoyA5eD/6K5F/MQnW8O+bHWsNzJq2cwSe2p6FqMOfHKf3iuhhLWfcq0O5Hmmztw38lX
-         sgsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740070088; x=1740674888;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UtFu/7rrHv4X5KOTvsXatoIKvP38Td4ByIZSHbNhxXM=;
-        b=bmFI86L34I1bmwHglgpJTQYrdz3dCS5gdYNzap6SbgIYGT6fgqX6YdCbPAKHT/MnmS
-         hHq1zUTwEjV9JCgAhbl7ueRy2EMfoR5gBlq8RTT/o2hrVuGoENStcXzu3R66RhmlZcJz
-         9isEA41IOIEcn3/iALKAG4bHs2TIBmCTaZ80Nb7W8yJXoZy0ChVM7EPP8YxqMBZv2gE/
-         /rzywKVVeluUyB/fyCfg21LuyNUavv/mdG1Jl257Ay/Ww5PPwdg9at66TWEZs3RwZ9IA
-         0eavnmZkn1vWbJPrxs3iq7CDCH0NKXJgE9wfUZ5M2XHQ8XJVHW82cs3Ctcg+oCW6Vu4F
-         xoiA==
-X-Forwarded-Encrypted: i=1; AJvYcCU2qcsGffpadY4DPZIlkHk0iAq7X8h4ipWm1/grDgEFJK4ahRGUkS/8bvYCOJ4sQA0nSo3vlb9Di2Glmb4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzM/F2dXzAVtgF+B9n2tUcFsKwHC1LYA3n2pkTcO6JEP/yyug4x
-	IHReFRMxAfOwYF3DS4u618QcaIAiBcFWaxvPkCKnCVhde6wLMB9AYuU/qwsloZdTZBpQ69pg/HP
-	tR15fJbi6gcgfrnclelT2PwghaW7JCGt1Cf4DTC105/lEMaQ06YMfL0pJ7qZrWhxciw82dtk78L
-	0espj8ttceShkLI5dWSmcTPqEoy5P58mCC0CYcokuFBrkXcCI6CPymbvDcsuiPVZBjM0mghf4=
-X-Gm-Gg: ASbGnctthjyi1tak2K6Llxt2HZBpMi3xhXmZdB2ihQVmfAennXrl+jFXv8ub0Bmgp7h
-	OkxH6Eeu8jBheQ1Y4QEpiKNGkYGO1z1aY2FLBzyiLgrRL9kaEazuHTBCUMM5GOA==
-X-Received: by 2002:adf:fa08:0:b0:38f:2a99:b377 with SMTP id ffacd0b85a97d-38f33f57459mr20939204f8f.53.1740070087968;
-        Thu, 20 Feb 2025 08:48:07 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFFt+whvKVaXX4I4RkLMql6Zr2BmHhgEb6V9Rei8o5LVi/60bat3GQTyh1ZxROF61Yi6yE/rBBG1TCfUYx/5lc=
-X-Received: by 2002:adf:fa08:0:b0:38f:2a99:b377 with SMTP id
- ffacd0b85a97d-38f33f57459mr20939161f8f.53.1740070087628; Thu, 20 Feb 2025
- 08:48:07 -0800 (PST)
+	s=arc-20240116; t=1740070099; c=relaxed/simple;
+	bh=n9Xbwl+fQoGnlHoZ6DhJpTxqftbyrczRb+VyfJeh9I8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KG4vlkfCe9H7HOzRUfhycen2Bfkgcpp5lmylKFOJtQb+/svKsoSoqk/RNfGjKq0CYx++G9XqR3FYcRDezbmZunFw/TT8dj9ZyDS1B9Pqp6d5uQM4sRGA79yuXmvAr2e/Pf4vVPnRHhi5P/w63zIX+j/Qo4ZtmLU3gpw6lrUbaZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=aSiBQIAy; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=82dqFK/+I+yQTkdCJUvoXC0E698TJBTXyRzhSQITprs=; b=aSiBQIAyWRInn5J6
+	2AlnzNRGerj1SpjtGOt/lUNc0KmzoUmVFTcns2rNreK2O0trQo8mmUPzt55i4lfaGCoHNaV3qwAgv
+	NCvD1QPTrY0TlrzT0VLcqbB/oD0GNf1IwpME1WKweamFNPZTQ9POa8fcqqFWxxxDVrhih1ay9wSRp
+	pWoxXpwJrVxi1qhX6i4LhUATHx5FwJxVHKDzWrMbiRxbliExqa6SR1J1LuN4KvbqVA/JNKQMvZ5YX
+	P23x4CoGzhatFn9x48CnX+aDdjljIJd1UgAS5qVDwJIAzotGTOsTULo2vI5x0mRAXcsSwj6RuOmR4
+	o53HzdS2e7cK/inTzg==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1tl9iW-00HF5U-1b;
+	Thu, 20 Feb 2025 16:48:04 +0000
+Date: Thu, 20 Feb 2025 16:48:04 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: paul@paul-moore.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] netlabel: Remove unused cfg_calipso funcs
+Message-ID: <Z7dcxAYj_jsG9WL6@gallifrey>
+References: <20250220140808.71674-1-linux@treblig.org>
+ <aa6c6f4c-7d46-4e7e-bafc-f042436f47b6@schaufler-ca.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250219082550.014812078@linuxfoundation.org>
-In-Reply-To: <20250219082550.014812078@linuxfoundation.org>
-From: Slade Watkins <srw@sladewatkins.net>
-Date: Thu, 20 Feb 2025 11:47:55 -0500
-X-Gm-Features: AWEUYZm2jJ2bUAqU74OstkcJ9PoKvhhiK-1kP45Z94_5LauCnETdKls3QCUt_rY
-Message-ID: <CA+pv=HM3XK=ceOVcTQJPQp2SH0KhU9pT0LwrWBwjobeq36B3NA@mail.gmail.com>
-Subject: Re: [PATCH 6.6 000/152] 6.6.79-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-MDID: 1740070090-4TocXbKuDb2d
-X-MDID-O:
- us5;at1;1740070090;4TocXbKuDb2d;<slade@sladewatkins.com>;c71d53d8b4bf163c84f4470b0e4d7294
-X-PPE-TRUSTED: V=1;DIR=OUT;
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <aa6c6f4c-7d46-4e7e-bafc-f042436f47b6@schaufler-ca.com>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 16:46:41 up 288 days,  4:00,  1 user,  load average: 0.02, 0.01,
+ 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-On Wed, Feb 19, 2025 at 3:58=E2=80=AFAM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.6.79 release.
-> There are 152 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+* Casey Schaufler (casey@schaufler-ca.com) wrote:
+> On 2/20/2025 6:08 AM, linux@treblig.org wrote:
+> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> >
+> > netlbl_cfg_calipso_map_add(), netlbl_cfg_calipso_add() and
+> > netlbl_cfg_calipso_del() were added in 2016 as part of
+> > commit 3f09354ac84c ("netlabel: Implement CALIPSO config functions for
+> > SMACK.")
+> >
+> > Remove them.
+> 
+> Please don't. The Smack CALIPSO implementation has been delayed
+> for a number of reasons, some better than others, but is still on
+> the roadmap.
 
-Hi Greg,
-No regressions or any sort of issues to speak of. Builds fine on my
-x86_64 test machine.
+Hmm OK.
+If it makes it to 10 years next year then perhaps it should hold
+a birthday party!
 
-Tested-by: Slade Watkins <srw@sladewatkins.net>
+Dave
 
-All the best,
-Slade
+> 
+> >
+> > (I see a few other changes in that original commit, whether they
+> > are reachable I'm not sure).
+> >
+> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> > ---
+> >  include/net/netlabel.h       |  26 -------
+> >  net/netlabel/netlabel_kapi.c | 133 -----------------------------------
+> >  2 files changed, 159 deletions(-)
+> >
+> > diff --git a/include/net/netlabel.h b/include/net/netlabel.h
+> > index 02914b1df38b..37c9bcfd5345 100644
+> > --- a/include/net/netlabel.h
+> > +++ b/include/net/netlabel.h
+> > @@ -435,14 +435,6 @@ int netlbl_cfg_cipsov4_map_add(u32 doi,
+> >  			       const struct in_addr *addr,
+> >  			       const struct in_addr *mask,
+> >  			       struct netlbl_audit *audit_info);
+> > -int netlbl_cfg_calipso_add(struct calipso_doi *doi_def,
+> > -			   struct netlbl_audit *audit_info);
+> > -void netlbl_cfg_calipso_del(u32 doi, struct netlbl_audit *audit_info);
+> > -int netlbl_cfg_calipso_map_add(u32 doi,
+> > -			       const char *domain,
+> > -			       const struct in6_addr *addr,
+> > -			       const struct in6_addr *mask,
+> > -			       struct netlbl_audit *audit_info);
+> >  /*
+> >   * LSM security attribute operations
+> >   */
+> > @@ -561,24 +553,6 @@ static inline int netlbl_cfg_cipsov4_map_add(u32 doi,
+> >  {
+> >  	return -ENOSYS;
+> >  }
+> > -static inline int netlbl_cfg_calipso_add(struct calipso_doi *doi_def,
+> > -					 struct netlbl_audit *audit_info)
+> > -{
+> > -	return -ENOSYS;
+> > -}
+> > -static inline void netlbl_cfg_calipso_del(u32 doi,
+> > -					  struct netlbl_audit *audit_info)
+> > -{
+> > -	return;
+> > -}
+> > -static inline int netlbl_cfg_calipso_map_add(u32 doi,
+> > -					     const char *domain,
+> > -					     const struct in6_addr *addr,
+> > -					     const struct in6_addr *mask,
+> > -					     struct netlbl_audit *audit_info)
+> > -{
+> > -	return -ENOSYS;
+> > -}
+> >  static inline int netlbl_catmap_walk(struct netlbl_lsm_catmap *catmap,
+> >  				     u32 offset)
+> >  {
+> > diff --git a/net/netlabel/netlabel_kapi.c b/net/netlabel/netlabel_kapi.c
+> > index cd9160bbc919..13b4bc1c30ec 100644
+> > --- a/net/netlabel/netlabel_kapi.c
+> > +++ b/net/netlabel/netlabel_kapi.c
+> > @@ -394,139 +394,6 @@ int netlbl_cfg_cipsov4_map_add(u32 doi,
+> >  	return ret_val;
+> >  }
+> >  
+> > -/**
+> > - * netlbl_cfg_calipso_add - Add a new CALIPSO DOI definition
+> > - * @doi_def: CALIPSO DOI definition
+> > - * @audit_info: NetLabel audit information
+> > - *
+> > - * Description:
+> > - * Add a new CALIPSO DOI definition as defined by @doi_def.  Returns zero on
+> > - * success and negative values on failure.
+> > - *
+> > - */
+> > -int netlbl_cfg_calipso_add(struct calipso_doi *doi_def,
+> > -			   struct netlbl_audit *audit_info)
+> > -{
+> > -#if IS_ENABLED(CONFIG_IPV6)
+> > -	return calipso_doi_add(doi_def, audit_info);
+> > -#else /* IPv6 */
+> > -	return -ENOSYS;
+> > -#endif /* IPv6 */
+> > -}
+> > -
+> > -/**
+> > - * netlbl_cfg_calipso_del - Remove an existing CALIPSO DOI definition
+> > - * @doi: CALIPSO DOI
+> > - * @audit_info: NetLabel audit information
+> > - *
+> > - * Description:
+> > - * Remove an existing CALIPSO DOI definition matching @doi.  Returns zero on
+> > - * success and negative values on failure.
+> > - *
+> > - */
+> > -void netlbl_cfg_calipso_del(u32 doi, struct netlbl_audit *audit_info)
+> > -{
+> > -#if IS_ENABLED(CONFIG_IPV6)
+> > -	calipso_doi_remove(doi, audit_info);
+> > -#endif /* IPv6 */
+> > -}
+> > -
+> > -/**
+> > - * netlbl_cfg_calipso_map_add - Add a new CALIPSO DOI mapping
+> > - * @doi: the CALIPSO DOI
+> > - * @domain: the domain mapping to add
+> > - * @addr: IP address
+> > - * @mask: IP address mask
+> > - * @audit_info: NetLabel audit information
+> > - *
+> > - * Description:
+> > - * Add a new NetLabel/LSM domain mapping for the given CALIPSO DOI to the
+> > - * NetLabel subsystem.  A @domain value of NULL adds a new default domain
+> > - * mapping.  Returns zero on success, negative values on failure.
+> > - *
+> > - */
+> > -int netlbl_cfg_calipso_map_add(u32 doi,
+> > -			       const char *domain,
+> > -			       const struct in6_addr *addr,
+> > -			       const struct in6_addr *mask,
+> > -			       struct netlbl_audit *audit_info)
+> > -{
+> > -#if IS_ENABLED(CONFIG_IPV6)
+> > -	int ret_val = -ENOMEM;
+> > -	struct calipso_doi *doi_def;
+> > -	struct netlbl_dom_map *entry;
+> > -	struct netlbl_domaddr_map *addrmap = NULL;
+> > -	struct netlbl_domaddr6_map *addrinfo = NULL;
+> > -
+> > -	doi_def = calipso_doi_getdef(doi);
+> > -	if (doi_def == NULL)
+> > -		return -ENOENT;
+> > -
+> > -	entry = kzalloc(sizeof(*entry), GFP_ATOMIC);
+> > -	if (entry == NULL)
+> > -		goto out_entry;
+> > -	entry->family = AF_INET6;
+> > -	if (domain != NULL) {
+> > -		entry->domain = kstrdup(domain, GFP_ATOMIC);
+> > -		if (entry->domain == NULL)
+> > -			goto out_domain;
+> > -	}
+> > -
+> > -	if (addr == NULL && mask == NULL) {
+> > -		entry->def.calipso = doi_def;
+> > -		entry->def.type = NETLBL_NLTYPE_CALIPSO;
+> > -	} else if (addr != NULL && mask != NULL) {
+> > -		addrmap = kzalloc(sizeof(*addrmap), GFP_ATOMIC);
+> > -		if (addrmap == NULL)
+> > -			goto out_addrmap;
+> > -		INIT_LIST_HEAD(&addrmap->list4);
+> > -		INIT_LIST_HEAD(&addrmap->list6);
+> > -
+> > -		addrinfo = kzalloc(sizeof(*addrinfo), GFP_ATOMIC);
+> > -		if (addrinfo == NULL)
+> > -			goto out_addrinfo;
+> > -		addrinfo->def.calipso = doi_def;
+> > -		addrinfo->def.type = NETLBL_NLTYPE_CALIPSO;
+> > -		addrinfo->list.addr = *addr;
+> > -		addrinfo->list.addr.s6_addr32[0] &= mask->s6_addr32[0];
+> > -		addrinfo->list.addr.s6_addr32[1] &= mask->s6_addr32[1];
+> > -		addrinfo->list.addr.s6_addr32[2] &= mask->s6_addr32[2];
+> > -		addrinfo->list.addr.s6_addr32[3] &= mask->s6_addr32[3];
+> > -		addrinfo->list.mask = *mask;
+> > -		addrinfo->list.valid = 1;
+> > -		ret_val = netlbl_af6list_add(&addrinfo->list, &addrmap->list6);
+> > -		if (ret_val != 0)
+> > -			goto cfg_calipso_map_add_failure;
+> > -
+> > -		entry->def.addrsel = addrmap;
+> > -		entry->def.type = NETLBL_NLTYPE_ADDRSELECT;
+> > -	} else {
+> > -		ret_val = -EINVAL;
+> > -		goto out_addrmap;
+> > -	}
+> > -
+> > -	ret_val = netlbl_domhsh_add(entry, audit_info);
+> > -	if (ret_val != 0)
+> > -		goto cfg_calipso_map_add_failure;
+> > -
+> > -	return 0;
+> > -
+> > -cfg_calipso_map_add_failure:
+> > -	kfree(addrinfo);
+> > -out_addrinfo:
+> > -	kfree(addrmap);
+> > -out_addrmap:
+> > -	kfree(entry->domain);
+> > -out_domain:
+> > -	kfree(entry);
+> > -out_entry:
+> > -	calipso_doi_putdef(doi_def);
+> > -	return ret_val;
+> > -#else /* IPv6 */
+> > -	return -ENOSYS;
+> > -#endif /* IPv6 */
+> > -}
+> > -
+> >  /*
+> >   * Security Attribute Functions
+> >   */
+> 
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
