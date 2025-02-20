@@ -1,208 +1,258 @@
-Return-Path: <linux-kernel+bounces-524774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE376A3E6F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:49:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBC12A3E6FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:50:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B36C91896777
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:49:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CDAE3BA699
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:50:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EA421EEA5C;
-	Thu, 20 Feb 2025 21:49:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D24A1EF0AE;
+	Thu, 20 Feb 2025 21:50:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ht+6jh6X"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="YTy2TBVC"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3455C1B4259;
-	Thu, 20 Feb 2025 21:49:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 861691EA7ED
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 21:50:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740088155; cv=none; b=E9gfWVv06jQtzGkVJdX5noaVCyuillhdRcOHTQ6WGCq2QIJGHl4g+dR45FDZBDhX8BwXu6OCRatfE5msNOUPT2Tl8bUscNY3LG+kHiViFVSj4cvFXazX0J8CQKPa9XQPeXzUYm5/04CbTqetdz9ZwYqb5H3y/eRzmvXjHfRQxmA=
+	t=1740088240; cv=none; b=f4kAS39v1la2wbKeE2pOBba5TkpKgWjc70tvFVEnzZhq6ajhD6vg40M4v5YGB+BT+T8xkOyHnaF9xm+woXOb6+Tcp/Xr2W2XKmT3sDXV9A1pmFQB1fYLKUPzIZm5NNC9Gx09/XNUHVm/26drEImYxVPjsW1+iqTfzsHtQxnkRXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740088155; c=relaxed/simple;
-	bh=AQYQMGpBWk2y9F/ajrYPRCHCpKiCNoJBOWBrz6bmQV4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dzCAxTb5B9zzp0/ozFag7xUymmphawzX/yRk7lRJY/Vk1bIiyYeeGKFnQ044aXmLK5KogMaWyp3k8Yp1g/lIpa/qLM5rno0D59k+F7Uug+pdGoQ/a3x+AsJ8XjSHFYgcrce2JZYC4ERuqHO/7jRIaTbVOAZVFuiNVcPiKLqX8wE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ht+6jh6X; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5e050b1491eso4457878a12.0;
-        Thu, 20 Feb 2025 13:49:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740088150; x=1740692950; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9whq2vsv/mk0BYyCs4wwDK57ulcjfcTEY+oV/RVpU7c=;
-        b=Ht+6jh6XQ1kzwkJto79NXFhTTPp8//lqhqAuRnrMBBgUwJ5IEsiiMb/birsdw6dpTn
-         q3a6r3BI4r0IfKYT7+WhtJhoQpo7YLGmltPuuSb28YRG1pBkuDKZCyGPj32U++nF1fwd
-         laHhxnF2aDvpprxxwlLWK/AqeZnRauSEv3eseihjm7+d523gwuffl/gUx4rkUdySc/Nq
-         gGYF5G7A3GpKyokLXfImKMSSKV6pWrJdlqHvWfCxOb/X1KJqa88Iyequ5789c2CmSlO0
-         wJvqUUeP6lrC5YJJo42ORFYCBjsN5YX/FAU0B0h0tGR4u1XL3S/wkfiGjud03CwfuKBV
-         jkJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740088150; x=1740692950;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9whq2vsv/mk0BYyCs4wwDK57ulcjfcTEY+oV/RVpU7c=;
-        b=a7HwjBwt5ZZPWScvaCwIexEyosky+NZQsMaeIZJ60/3WoJvBZueq2lghcFfmF5JfIN
-         /+dKFPUjgznVtME2OL3VajfUR8BPGe3YjrZAriDscG7PRqNLuhTROAlrkH3cRvOv3CGC
-         9T9/k91/F6ibv2nN5cx2kfW7JvFxZ4lJlUO9SIOK0O+pqy9gb6V/xo6fFPg9ffuJQr0v
-         6pr3tukLFhJcOq3IAtzYVpF1FC9CtrWaDzw7FEXNd1Mx/Z8Tb+syjiR8o3Qcdhco4KrZ
-         X1i3oO5kjNpSH/dfJcCPOxDqhepia7XJDIHKYXt8FGV6bkiYeBEq7yr0ii+hEGj/WK6F
-         DqrA==
-X-Forwarded-Encrypted: i=1; AJvYcCVVm6oYDFpEMjJij/tLIfi52NE/cG4f9Xwle+26SMB+aBR4ewIoJjBFComjNNVcKw1hCPqY3tUddCv5oQ==@vger.kernel.org, AJvYcCX3P1GX7OPC5x18vSsweXhbBuxe0pOcROF9exvKMxsYlgwirK6btAARXhxfnrC215tUg6ap3Unv7NwIsNgH@vger.kernel.org, AJvYcCXJ06afxLp3gCHaVTc/j/hofJwb3sT86hdIf4K+REffppYcfllf3kMEvYHhbk8oHwm7DBbtzkX3nqyPf5e1@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3h92HcCcC5EbI9V0KOZKkm3e4TU3jI66CACfPZFCB/UneDIMu
-	WY6T5lPjGtTvAL8Ybx7URlNVuRHHdcVI74Qe+bx4QBUwrqvLQNw0yu2W5SAWa6b7qPn2jwefsSA
-	J7kmZ04X9QsNSsVrOiKifnOSiYD0=
-X-Gm-Gg: ASbGncvicopHUxjWutfV5Tp3XvqaxH40EChyU3couflr2GLJBxq3VDhyHx5ozIxs21Z
-	PL5NqiEi28w8eu6v8q5byZj/50zlot5AjfwlDa8Z+StayNzlroL4RViD84GJQlZkrVD86Miy54w
-	==
-X-Google-Smtp-Source: AGHT+IGp1YX/C7wUL2w/hbQEIMyIpKqLWwYKkh80rJxbmnRkhytjom/CeUJs3l44pnaCNarIHAF0ds5LNTtIeMKwxa4=
-X-Received: by 2002:a17:907:1c0e:b0:abb:e048:4f5e with SMTP id
- a640c23a62f3a-abc0b14d715mr75893066b.29.1740088150181; Thu, 20 Feb 2025
- 13:49:10 -0800 (PST)
+	s=arc-20240116; t=1740088240; c=relaxed/simple;
+	bh=fr1hGc0vDLQUmpGdlBBC3TsNjFtQ1B0Hq/qKa2PlI0U=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=qreKXcDCOf7SSVaNT+IqnFIpdF0CYJE6vZB6FR2LpqVDi8uf+53wRQd5yDgWQXczdmV2lSHfH8vMNEA730E5E3Z6i6XDq23/MbsOlCUJ2gp0pLdE3tDMXZzL+dZFToHe+orFJ/NLe4AJil11c6HanOz431sbUfRZHet/Cq27Fng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=YTy2TBVC; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250220215035epoutp0116ccbc8ab8a1bafc869fb73d48a2bcf9~mCQfUtMdu0818708187epoutp01P
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 21:50:35 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250220215035epoutp0116ccbc8ab8a1bafc869fb73d48a2bcf9~mCQfUtMdu0818708187epoutp01P
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1740088235;
+	bh=ZxIkNIdFMGqUJaSZawzJpuNu+j+SCPH8m0XekEsle1E=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=YTy2TBVCj6/1wi7KjihshUesIqv22U2Nh3405xxDu7t+c4fy+6Fv+1BFKYVjl9BUX
+	 5Eq77SF5hzgKBLk75ZeE44amns5CybTX5V9JGwOPTlLR+q9r3I7SIfx0veA2gJDqK2
+	 iySQ9pNiTr454pwnbgswncZDbRxqwqlnUGzX5F8g=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTP id
+	20250220215034epcas2p44048ae7ff2398344c7109c347a15faea~mCQeoeMcG2049320493epcas2p4K;
+	Thu, 20 Feb 2025 21:50:34 +0000 (GMT)
+Received: from epsmges2p3.samsung.com (unknown [182.195.36.97]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4YzRlG1CyBz4x9Pv; Thu, 20 Feb
+	2025 21:50:34 +0000 (GMT)
+Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
+	epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+	1D.A4.22105.AA3A7B76; Fri, 21 Feb 2025 06:50:34 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250220215032epcas2p3c8635ea4e8948b8e4621a818664ba26b~mCQc6uf3_1045010450epcas2p3V;
+	Thu, 20 Feb 2025 21:50:32 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250220215032epsmtrp189e41f8ab5c93d44e9e0ff50259ee010~mCQc55cfL0493604936epsmtrp1H;
+	Thu, 20 Feb 2025 21:50:32 +0000 (GMT)
+X-AuditID: b6c32a47-fd1c970000005659-fd-67b7a3aa68fb
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	FD.64.18949.8A3A7B76; Fri, 21 Feb 2025 06:50:32 +0900 (KST)
+Received: from tiffany (unknown [10.229.95.142]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250220215032epsmtip2adcac8532ab4a0d663cc4f5d672bb34c~mCQcp26oi2747127471epsmtip2F;
+	Thu, 20 Feb 2025 21:50:32 +0000 (GMT)
+Date: Fri, 21 Feb 2025 06:49:04 +0900
+From: Hyesoo Yu <hyesoo.yu@samsung.com>
+To: Harry Yoo <harry.yoo@oracle.com>
+Cc: janghyuck.kim@samsung.com, vbabka@suse.cz, Christoph Lameter
+	<cl@linux.com>, Pekka Enberg <penberg@kernel.org>, David Rientjes
+	<rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, Andrew Morton
+	<akpm@linux-foundation.org>, Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] mm: slub: Print the broken data before restoring
+ slub.
+Message-ID: <20250220214904.GA1820313@tiffany>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250220111606.138045-1-jirislaby@kernel.org> <20250220111606.138045-21-jirislaby@kernel.org>
-In-Reply-To: <20250220111606.138045-21-jirislaby@kernel.org>
-From: Magnus Lindholm <linmag7@gmail.com>
-Date: Thu, 20 Feb 2025 22:48:59 +0100
-X-Gm-Features: AWEUYZlVB8Ilmwmyppyz3eSnc_9QchXf_BwskO6erv4yNirl5dmVaFDLRF_6T_E
-Message-ID: <CA+=Fv5RadC05i29h_geUq3Moyn3hGydoRu335T-q9vnfcwZqew@mail.gmail.com>
-Subject: Re: [PATCH 20/29] tty: srmcons: fix retval from srmcons_init()
-To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
-Cc: gregkh@linuxfoundation.org, linux-serial@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Richard Henderson <richard.henderson@linaro.org>, Matt Turner <mattst88@gmail.com>, 
-	linux-alpha@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <Z7cLpWNXSbuKKjpQ@harry>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGJsWRmVeSWpSXmKPExsWy7bCmme6qxdvTDe7+YraY2GNgMWf9GjaL
+	69/eMFrcX/aMxWJldzObxeY5xRaXd81hs7i35j+rRdvnf0BiyUYmi4lrRC1mN/YxOvB47Jx1
+	l91jwaZSj02rOtk8Nn2axO7R9fYKk8eJGb9ZPJ5cmc7ksbBhKrPHx6e3WDz6tqxi9Diz4Ai7
+	x+dNcgE8Udk2GamJKalFCql5yfkpmXnptkrewfHO8aZmBoa6hpYW5koKeYm5qbZKLj4Bum6Z
+	OUDnKymUJeaUAoUCEouLlfTtbIryS0tSFTLyi0tslVILUnIKzAv0ihNzi0vz0vXyUkusDA0M
+	jEyBChOyM/r+9bMUrFOq6G95ztrA+F+qi5GTQ0LARGLumjtMXYxcHEICOxgl/jY1s0I4nxgl
+	7s7ZwgbhfGOUmLG/hRGm5eWulVCJvYwS7xafZYZwnjJKzFr9jRWkikVAVeLbn36wDjYBdYkT
+	W5aB2SICKhJvjx0C62YW+Mok8evqBTaQhLBAiMTM6etYQGxeAT2JaRPvM0HYghInZz4Bi3MC
+	DZ3SMZcRpFlC4ACHxK7zn1ghbnKRWHPrPROELSzx6vgWdghbSuJlfxuUXSyxbfFhJojmBkaJ
+	zR33mSESxhKznrWDnccskCmxbP00oAYOoLiyxJFbLBBhPomOw3+hwrwSHW1CEJ3KEvuXzWOB
+	sCUlHq1thzrHQ+LCqa3QgLzDKLHuyASWCYxys5D8MwvJNghbR2LB7k9ss4BWMAtISyz/xwFh
+	akqs36W/gJF1FaNYakFxbnpqsVGBMTyOk/NzNzGCE7SW+w7GGW8/6B1iZOJgPMQowcGsJMLb
+	Vr8lXYg3JbGyKrUoP76oNCe1+BCjKTB2JjJLiSbnA3NEXkm8oYmlgYmZmaG5kamBuZI4b/WO
+	lnQhgfTEktTs1NSC1CKYPiYOTqkGplmP/7Xc2BvjnrJn0+H3L0MOM5/T31Hw1XGOcRWP51f3
+	vo0b9wiEuO+y/nrJav6XEw7JW0xuN3JuDInX/f4nNq/e6aSiurHjXX1eU8d0jyPrT3jGx05I
+	XXpz94k3/OY/NN/+VVs5q8gnjS+bMeFp36YPuxe+4O474VquzpKjMtu7lveoV6frBcGlL40T
+	NNb++nZMRzTji2J6/uNr1YlmpqK9le8e7WWIi1i06dTpo5sXHBLRW7pPwf6+S6rjmsRbYkEe
+	k/J//plQ7RT5p/Hg3W0TbNjcO9NbT+tET/A1Kc5pfZoy6cyCU/P/rbQ04RPpiGHd9uDfnflO
+	Ur/+SUwqlvfRYk8Lznw+md1HY7PRGSWW4oxEQy3mouJEAFl/Xm5ZBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkkeLIzCtJLcpLzFFi42LZdlhJXnfF4u3pBjd+yFtM7DGwmLN+DZvF
+	9W9vGC3uL3vGYrGyu5nNYvOcYovLu+awWdxb85/Vou3zPyCxZCOTxcQ1ohazG/sYHXg8ds66
+	y+6xYFOpx6ZVnWwemz5NYvfoenuFyePEjN8sHk+uTGfyWNgwldnj49NbLB59W1YxepxZcITd
+	4/MmuQCeKC6blNSczLLUIn27BK6Mi4uvsRe8lK94+3IhSwPjVYkuRk4OCQETiZe7VrJ1MXJx
+	CAnsZpS4NG8bK0RCUmLW55NMELawxP2WI6wQRY8ZJbY0PQMrYhFQlfj2p58RxGYTUJc4sWUZ
+	mC0ioCLx9tghNhCbWeAnk8TUhkwQW1ggRGLm9HUsIDavgJ7EtIn3wRYICdxjlHi0XRYiLihx
+	cuYTFoheLYkb/14C1XAA2dISy/9xgIQ5gdZO6ZjLOIFRYBaSjllIOmYhdCxgZF7FKJlaUJyb
+	nltsWGCUl1quV5yYW1yal66XnJ+7iREcW1paOxj3rPqgd4iRiYPxEKMEB7OSCG9b/ZZ0Id6U
+	xMqq1KL8+KLSnNTiQ4zSHCxK4rzfXvemCAmkJ5akZqemFqQWwWSZODilGpjE/hxovfNrP+OR
+	OLs9qdzZSW1r5pzvN7u6OmGj1rJg7tyfyxZc4OGuXycdJhzz4wZPybxTil7fF1z8/vTV1Y5Y
+	qZ5XzXWLA7YvCeSasFayK5618f2fxnNJebGHOUt7N2XZnPh16az32XyRRy/C2ywLeOs7at/2
+	nD6390LL2vKLPZGfJohM7dr6pMH07PQtlz77GHBxH3xw4UnhHT7FW9U7dofW7jjxJb/gs7Z3
+	j+Sf9n0Fx1UWvMmX/ZZj6aXyzTd459M4/4mhDSdm7PNLuL7g1qbmO+1KMl0fDokFHraeG5p7
+	+HPrroJSpd/rlU7dF58ry1TwrmDm6rORhqVWKU/PrXN5uujixGlPLPLZM44EKrEUZyQaajEX
+	FScCAPoaBzccAwAA
+X-CMS-MailID: 20250220215032epcas2p3c8635ea4e8948b8e4621a818664ba26b
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----2jehmUjxW0Gkbg46_GefLyBaSre4jpBnLPH4I-DC_hWbz.jz=_11514c_"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250220034153epcas2p286194dda687b47a3dec8fb89b868f96f
+References: <20250220033953.1606820-1-hyesoo.yu@samsung.com>
+	<CGME20250220034153epcas2p286194dda687b47a3dec8fb89b868f96f@epcas2p2.samsung.com>
+	<20250220033953.1606820-2-hyesoo.yu@samsung.com> <Z7cLpWNXSbuKKjpQ@harry>
 
-I've applied and verified this patch on an Alphaserver ES40 with
-serial console.
+------2jehmUjxW0Gkbg46_GefLyBaSre4jpBnLPH4I-DC_hWbz.jz=_11514c_
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
 
-Regarding the future use of label err_free_drv, is the intention to
-use it to break out early if tty_alloc_driver() fails?
+On Thu, Feb 20, 2025 at 08:01:57PM +0900, Harry Yoo wrote:
+> On Thu, Feb 20, 2025 at 12:39:43PM +0900, Hyesoo Yu wrote:
+> > Previously, the restore occured after printing the object in slub.
+> > After commit 47d911b02cbe ("slab: make check_object() more consistent"),
+> > the bytes are printed after the restore. This information about the bytes
+> > before the restore is highly valuable for debugging purpose.
+> > For instance, in a event of cache issue, it displays byte patterns
+> > by breaking them down into 64-bytes units. Without this information,
+> > we can only speculate on how it was broken. Hence the corrupted regions
+> > should be printed prior to the restoration process. However if an object
+> > breaks in multiple places, the same log may be output multiple times.
+> > Therefore the slub log is reported only once to prevent redundant printing,
+> > by sending a parameter indicating whether an error has occurred previously.
+> > 
+> > Changes in v3:
+> > - Change the parameter type of check_bytes_and_report.
+> > 
+> > Changes in v2:
+> > - Instead of using print_section every time on check_bytes_and_report,
+> > just print it once for the entire slub object before the restore.
+> >
+> > Signed-off-by: Hyesoo Yu <hyesoo.yu@samsung.com>
+> > Change-Id: I73cf76c110eed62506643913517c957c05a29520
+> 
+> As previously mentioned by others, Change-Id is not used in Linux
+> kernel development.
+>
+
+Oops, It is my mistake. I will remove it.
+
+> > ---
+> >  mm/slub.c | 29 ++++++++++++++---------------
+> >  1 file changed, 14 insertions(+), 15 deletions(-)
+> > 
+> > diff --git a/mm/slub.c b/mm/slub.c
+> > index b3969d63cc04..de62fed12236 100644
+> > --- a/mm/slub.c
+> > +++ b/mm/slub.c
+> > @@ -1192,12 +1192,13 @@ static void restore_bytes(struct kmem_cache *s, char *message, u8 data,
+> >  
+> >  static pad_check_attributes int
+> >  check_bytes_and_report(struct kmem_cache *s, struct slab *slab,
+> > -		       u8 *object, char *what,
+> > -		       u8 *start, unsigned int value, unsigned int bytes)
+> > +		       u8 *object, char *what, u8 *start, unsigned int value,
+> > +		       unsigned int bytes, bool slab_obj_print)
+> >  {
+> >  	u8 *fault;
+> >  	u8 *end;
+> >  	u8 *addr = slab_address(slab);
+> > +	char buf[100];
+> >  
+> >  	metadata_access_enable();
+> >  	fault = memchr_inv(kasan_reset_tag(start), value, bytes);
+> > @@ -1212,11 +1213,14 @@ check_bytes_and_report(struct kmem_cache *s, struct slab *slab,
+> >  	if (slab_add_kunit_errors())
+> >  		goto skip_bug_print;
+> >  
+> > -	slab_bug(s, "%s overwritten", what);
+> >  	pr_err("0x%p-0x%p @offset=%tu. First byte 0x%x instead of 0x%x\n",
+> >  					fault, end - 1, fault - addr,
+> >  					fault[0], value);
+> >  
+> > +	scnprintf(buf, 100, "%s overwritten", what);
+> 
+> How about moving this into the if block and changing 100 to sizeof(buf)?
+>
+
+That sounds good. I will change it.
+
+> > +	if (slab_obj_print)
+> > +		object_err(s, slab, object, buf);
+> > +
+> >  skip_bug_print:
+> >  	restore_bytes(s, what, value, fault, end);
+> >  	return 0;
+> > @@ -1279,7 +1283,7 @@ static int check_pad_bytes(struct kmem_cache *s, struct slab *slab, u8 *p)
+> >  		return 1;
+> >  
+> >  	return check_bytes_and_report(s, slab, p, "Object padding",
+> > -			p + off, POISON_INUSE, size_from_object(s) - off);
+> > +			p + off, POISON_INUSE, size_from_object(s) - off, true);
+> >  }
+> >  
+> >  /* Check the pad bytes at the end of a slab page */
+> > @@ -1329,11 +1333,11 @@ static int check_object(struct kmem_cache *s, struct slab *slab,
+> >  
+> >  	if (s->flags & SLAB_RED_ZONE) {
+> >  		if (!check_bytes_and_report(s, slab, object, "Left Redzone",
+> > -			object - s->red_left_pad, val, s->red_left_pad))
+> > +			object - s->red_left_pad, val, s->red_left_pad, !!ret))
+> 
+> I think you don't have to add !! to ret.
+> Converting from int to _Bool is legal in C99 and it will work as intended. 
+> 
+
+Thank you for informing me.
+I remove !! to next version.
+
+Thanks,
+Regards.
+
+> > 			ret = 0;
+> 
+> -- 
+> Cheers,
+> Harry
+> 
 
 
-Tested-by: Magnus Lindholm <linmag7@gmail.com>
 
 
 
+------2jehmUjxW0Gkbg46_GefLyBaSre4jpBnLPH4I-DC_hWbz.jz=_11514c_
+Content-Type: text/plain; charset="utf-8"
 
-On Thu, Feb 20, 2025 at 12:22=E2=80=AFPM Jiri Slaby (SUSE) <jirislaby@kerne=
-l.org> wrote:
->
-> The value returned from srmcons_init() was -ENODEV for over 2 decades.
-> But it does not matter, given device_initcall() ignores retvals.
->
-> But to be honest, return 0 in case the tty driver was registered
-> properly.
->
-> To do that, the condition is inverted and a short path taken in case of
-> error.
->
-> err_free_drv is introduced as it will be used from more places later.
->
-> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
-> Cc: Richard Henderson <richard.henderson@linaro.org>
-> Cc: Matt Turner <mattst88@gmail.com>
-> Cc: linux-alpha@vger.kernel.org
-> ---
->  arch/alpha/kernel/srmcons.c | 62 ++++++++++++++++++++-----------------
->  1 file changed, 33 insertions(+), 29 deletions(-)
->
-> diff --git a/arch/alpha/kernel/srmcons.c b/arch/alpha/kernel/srmcons.c
-> index 3e61073f4b30..b9cd364e814e 100644
-> --- a/arch/alpha/kernel/srmcons.c
-> +++ b/arch/alpha/kernel/srmcons.c
-> @@ -196,40 +196,44 @@ static const struct tty_operations srmcons_ops =3D =
-{
->  static int __init
->  srmcons_init(void)
->  {
-> +       struct tty_driver *driver;
-> +       int err;
-> +
->         timer_setup(&srmcons_singleton.timer, srmcons_receive_chars, 0);
-> -       if (srm_is_registered_console) {
-> -               struct tty_driver *driver;
-> -               int err;
-> -
-> -               driver =3D tty_alloc_driver(MAX_SRM_CONSOLE_DEVICES, 0);
-> -               if (IS_ERR(driver))
-> -                       return PTR_ERR(driver);
-> -
-> -               tty_port_init(&srmcons_singleton.port);
-> -
-> -               driver->driver_name =3D "srm";
-> -               driver->name =3D "srm";
-> -               driver->major =3D 0;      /* dynamic */
-> -               driver->minor_start =3D 0;
-> -               driver->type =3D TTY_DRIVER_TYPE_SYSTEM;
-> -               driver->subtype =3D SYSTEM_TYPE_SYSCONS;
-> -               driver->init_termios =3D tty_std_termios;
-> -               tty_set_operations(driver, &srmcons_ops);
-> -               tty_port_link_device(&srmcons_singleton.port, driver, 0);
-> -               err =3D tty_register_driver(driver);
-> -               if (err) {
-> -                       tty_driver_kref_put(driver);
-> -                       tty_port_destroy(&srmcons_singleton.port);
-> -                       return err;
-> -               }
-> -               srmcons_driver =3D driver;
-> -       }
->
-> -       return -ENODEV;
-> +       if (!srm_is_registered_console)
-> +               return -ENODEV;
-> +
-> +       driver =3D tty_alloc_driver(MAX_SRM_CONSOLE_DEVICES, 0);
-> +       if (IS_ERR(driver))
-> +               return PTR_ERR(driver);
-> +
-> +       tty_port_init(&srmcons_singleton.port);
-> +
-> +       driver->driver_name =3D "srm";
-> +       driver->name =3D "srm";
-> +       driver->major =3D 0;      /* dynamic */
-> +       driver->minor_start =3D 0;
-> +       driver->type =3D TTY_DRIVER_TYPE_SYSTEM;
-> +       driver->subtype =3D SYSTEM_TYPE_SYSCONS;
-> +       driver->init_termios =3D tty_std_termios;
-> +       tty_set_operations(driver, &srmcons_ops);
-> +       tty_port_link_device(&srmcons_singleton.port, driver, 0);
-> +       err =3D tty_register_driver(driver);
-> +       if (err)
-> +               goto err_free_drv;
-> +
-> +       srmcons_driver =3D driver;
-> +
-> +       return 0;
-> +err_free_drv:
-> +       tty_driver_kref_put(driver);
-> +       tty_port_destroy(&srmcons_singleton.port);
-> +
-> +       return err;
->  }
->  device_initcall(srmcons_init);
->
-> -
->  /*
->   * The console driver
->   */
-> --
-> 2.48.1
->
->
+
+------2jehmUjxW0Gkbg46_GefLyBaSre4jpBnLPH4I-DC_hWbz.jz=_11514c_--
 
