@@ -1,374 +1,261 @@
-Return-Path: <linux-kernel+bounces-522762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE2DCA3CE42
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 01:51:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC3A1A3CE49
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 01:55:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1AE8189AA0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 00:52:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C77C1189565C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 00:55:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CE86128819;
-	Thu, 20 Feb 2025 00:51:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9589130A73;
+	Thu, 20 Feb 2025 00:55:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HUA0S5hb"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WcZ1iVpH"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A73DA29;
-	Thu, 20 Feb 2025 00:51:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740012705; cv=none; b=YCd/oX+j5J9onUgFjwF5UZx9h+jPOv+bZEd7n30bCTTcBEUEp50z4r9YTY82sBwLlcyLn03pchWtUFPL2ldjM9V43G25CeMQul6DzKFUpKwQQm/1z0uqsp7mhpvtvDu/kbc4ktsmDw2BdjqfuggXVDUnZJPnZixioco3oDU2DUs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740012705; c=relaxed/simple;
-	bh=T737/KqgpzvfFXB4moRtcAQ7B2P9jYf39dQBMmwuVNk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=iLR2PlqbmLFnFuCvCgMHK+3wEEQikp5y51OMtHF3lKohR/bneOE1niXR4BvkExfno9kX0vBqLwkshyXhLqxQPGq/li9GOkoaQ45iKOB5qJC4451WdxzftQb3WgwzPMg1F6HtxvT+Dh68FAQZNc9wBdz2SU3MJ3ekH9p7XyBNHFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HUA0S5hb; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51JG2h05031359;
-	Thu, 20 Feb 2025 00:51:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Rvg5fJvypgLrOzA+G5gGGSW10ruIAatc3OG1H6Aso1Y=; b=HUA0S5hbBJIZuOpE
-	DJVeiFgbST1RqEFhxWWycq/MGZUr28zcgOa0v8IW03CLAznzu2wJkYwFTFlh90+q
-	x5MPQgiVe7tcbcTvuoAAARB36WKo0SO7SKxFuJINN1zA9YzNAe0VgeD3+jKNH/uH
-	AHgnvixVdZLDdUuVQpT5o4fX9h27bcddMVXDN9ulNUS53++J+c9TZCWUbR33Ix99
-	41M4e1jb6I08rrU1Lj7NvmQpgJUFzpfB7N0adDyJaHNtDcq+zZCjXOwvfzkqPq7O
-	Ngc5ElZFu3yzQIJ4sXn9QdEb0NgN+Fas99IHSKY81cAxxyoLLM88Um48TV056pCH
-	k2+1vw==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44vyy5cc2x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Feb 2025 00:51:26 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51K0pPE1022806
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Feb 2025 00:51:25 GMT
-Received: from [10.134.70.212] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 19 Feb
- 2025 16:50:58 -0800
-Message-ID: <e5b6b5cc-2afb-411d-903e-152a6a617d53@quicinc.com>
-Date: Wed, 19 Feb 2025 16:50:47 -0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43F4F33985
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 00:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740012904; cv=fail; b=f/gv1xiKNU82M5rO3RLGcUbvWl5cJbveoT7WIwGo9X7xZtLFCiqPEq1Dr+6J2EFLqsUJY/UlMoYrPqxOYEK8dqA1dQENRxgHUZEymhp5gACKgYcwe1gY5ZxiilQUKlBjEqXE/uH3tQRsZG6DQ0s20iXKAs/2F/jRiUlceGeiPM8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740012904; c=relaxed/simple;
+	bh=VXmRmrraySVXh0MOsyzU9s+M7+Pc8nmB7Bf4bxarDoA=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=m7+8yMT1KejO5wOXyYknegwZY7wtLb/+vTO2N3VaqQPIIhz+dfpp8gQbDd3pKj8lY//IyxADr/x8hzw1zDFw8McN4S8xZxSPLY/1sr3d/7evGEK0XH8zjj388Etjd2z/1zL8bXCtc3pFmmsLJGqPfN+1ehFW0O4R/3cdgNCBQtE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WcZ1iVpH; arc=fail smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740012903; x=1771548903;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=VXmRmrraySVXh0MOsyzU9s+M7+Pc8nmB7Bf4bxarDoA=;
+  b=WcZ1iVpHU5FWa3SGaOuXjW0SS0epWU0TsDMO9lnQz78P1ojimiweh+6A
+   MCINaPqzv0ymr2NlMYiCBoTQVdWFv6aFgG/VW67V1DO5pOBsFhVI2/nJ5
+   UVub7pkWtJSvaGQxdyPZK290Jtwg+wwEc63RNxM99iJSytloatlI5ksVp
+   TMUUgc9iE4Acw+py08V/wpRVUCKF9W8/PKWCtunhx7q95/pOsc7hss+nj
+   J5mueT9aWnrrusRtkmXCHkUxh9k4L7H4+2Ti9SdF9ebWl4ye1hefClBqy
+   tZeyMEDdm/bkz+6Kp/0swtLtDGKFJEEHaa6XwbAUSzC3HpVkalhAfG3+O
+   A==;
+X-CSE-ConnectionGUID: VGhC6nstQvWbGqnhJbUBQA==
+X-CSE-MsgGUID: JTsiFHDpRBa2t5z6AYlqDg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11350"; a="40631124"
+X-IronPort-AV: E=Sophos;i="6.13,300,1732608000"; 
+   d="scan'208";a="40631124"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 16:55:03 -0800
+X-CSE-ConnectionGUID: 4lgGLKyVQYqZFoVqS4lSpA==
+X-CSE-MsgGUID: af3pfitDRKagaBB41EAVWA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="118983497"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 16:55:01 -0800
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.1544.14; Wed, 19 Feb 2025 16:55:00 -0800
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44 via Frontend Transport; Wed, 19 Feb 2025 16:55:00 -0800
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (104.47.73.176)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Wed, 19 Feb 2025 16:54:58 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dWDc38mXF2KgQnJGBIZh1grcNFAe0WOfNdwSFvafmCFadzIwe66yl6CgFfumqR1bdeYryBiYPQ1B4Gv1KLZmxK1yxku27e1HDtGsSdR05Di9mnOGTBXZtWdPSr4CEcct2TrUtblzJcGJeGTMdqLc74w7Ja3CjrKc2ucEUpRRpuSydVxqrx810+M14nv50qz0tFD6E6PP14tiFGzq6tSAfz8/X0lFjVxCh3R+BJQRYfl7Ba6nJve1nZUhWs6zHGvrOTC5abE56kkbqScP1E8rWGrQxoU1gUGoDSrt3B34PPvRAZFpZ8b3T+p47oaXNKU1DT/C40nfK7DGdc5/grYsiA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Rq6HZwSNsMjThVQ94jSsbi6jlRWLwUEUCn5+/CZP6xQ=;
+ b=DESynqndZcsPvJce3XB+wGEjiW19FzyBTaFs3JfBILEzS6JpPKujt+m0r81ORSk0FUnmWrs5hc09QFu/hnFcwMDa/BY3ZCKUDsA6gnxx4x9G2/YXmpfYq0N1/Lw11mVH5BivzoWv6Oqc0lPW2b5udKCvrZl6aG7MAtTOAHwJWM8IIvcGzrsNDytGGRuvgjnmoW/yNpCzaqUR9TQFJtc289hDv4fwQWICWEJ8x3mcpiENspDYJwCmI8v8Vh52oL1ptWIpnuTM95gUYee/54fXMHiRrO8qbzuB9FvXDZW7Y2rCnjboLH3G7K2Z6BurNgYY9Not1V+91eA0Eb8Q+MUChA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by IA1PR11MB6122.namprd11.prod.outlook.com (2603:10b6:208:3ee::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Thu, 20 Feb
+ 2025 00:53:39 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%4]) with mapi id 15.20.8466.013; Thu, 20 Feb 2025
+ 00:53:39 +0000
+Message-ID: <2acf1b5b-1ada-4b52-a6af-8d8441fa66dd@intel.com>
+Date: Wed, 19 Feb 2025 16:53:36 -0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 23/42] x86/resctrl: Add resctrl_arch_ prefix to pseudo
+ lock functions
+To: James Morse <james.morse@arm.com>, <x86@kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>, H Peter Anvin <hpa@zytor.com>, Babu Moger
+	<Babu.Moger@amd.com>, <shameerali.kolothum.thodi@huawei.com>, "D Scott
+ Phillips OS" <scott@os.amperecomputing.com>, <carl@os.amperecomputing.com>,
+	<lcherian@marvell.com>, <bobo.shaobowang@huawei.com>,
+	<tan.shaopeng@fujitsu.com>, <baolin.wang@linux.alibaba.com>, Jamie Iles
+	<quic_jiles@quicinc.com>, Xin Hao <xhao@linux.alibaba.com>,
+	<peternewman@google.com>, <dfustini@baylibre.com>, <amitsinght@marvell.com>,
+	David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
+	"Dave Martin" <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>, Shanker
+ Donthineni <sdonthineni@nvidia.com>, Shaopeng Tan
+	<tan.shaopeng@jp.fujitsu.com>, "Tony Luck" <tony.luck@intel.com>
+References: <20250207181823.6378-1-james.morse@arm.com>
+ <20250207181823.6378-24-james.morse@arm.com>
+From: Reinette Chatre <reinette.chatre@intel.com>
+Content-Language: en-US
+In-Reply-To: <20250207181823.6378-24-james.morse@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW2PR16CA0064.namprd16.prod.outlook.com
+ (2603:10b6:907:1::41) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 11/16] drm/msm/dsi/phy: Add support for SM8750
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Rob Clark
-	<robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        "Dmitry
- Baryshkov" <dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        "Marijn Suijten" <marijn.suijten@somainline.org>,
-        David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Krishna Manikandan <quic_mkrishn@quicinc.com>,
-        Jonathan Marek
-	<jonathan@marek.ca>,
-        Kuogee Hsieh <quic_khsieh@quicinc.com>,
-        Neil Armstrong
-	<neil.armstrong@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Srini Kandagatla
-	<srinivas.kandagatla@linaro.org>
-References: <20250217-b4-sm8750-display-v2-0-d201dcdda6a4@linaro.org>
- <20250217-b4-sm8750-display-v2-11-d201dcdda6a4@linaro.org>
-Content-Language: en-US
-From: Jessica Zhang <quic_jesszhan@quicinc.com>
-In-Reply-To: <20250217-b4-sm8750-display-v2-11-d201dcdda6a4@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: VV-yU_mxzrB_kmmcSkyD8QBunU6gQzsD
-X-Proofpoint-GUID: VV-yU_mxzrB_kmmcSkyD8QBunU6gQzsD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-19_11,2025-02-19_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- mlxlogscore=999 spamscore=0 bulkscore=0 clxscore=1015 suspectscore=0
- adultscore=0 malwarescore=0 mlxscore=0 lowpriorityscore=0 impostorscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502200004
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|IA1PR11MB6122:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2317a056-bdd2-415d-7fa8-08dd5149038d
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?K0l1ZXpmbGRCeVhjZzIxQ2FEZ0ljdWQzNjBVcU53VDEzQXprUWxKWjBqUmJJ?=
+ =?utf-8?B?RzluL2I4enZtYkIyWnM3MUE2ZlBnckUydVRubHZCdS9ZMzZqVW5KLzNzT1hD?=
+ =?utf-8?B?dFNzSnhBK1BDUFdPR2RwNG16RGlDMXhJQ3FEbmp4M2pPaEhXTW5HQ0hMYnp2?=
+ =?utf-8?B?TUF0U2lRL0Q2NWN1K0xIc2JVd2didEtRMXJTeklzUUdabEFONkJKOGpDNTUv?=
+ =?utf-8?B?K3JhNS9HMURnaVlXbkc3R3NNbmRCYU5DL2Yva1FlSkVmdFphYnAvU2NZZ2VO?=
+ =?utf-8?B?OHZaVkZzYzZWVVB6cGZib3dadVAzeXFMYmUraFlSMW15RTNPSGxsMkt5S25Z?=
+ =?utf-8?B?a1l2cENGTjRSRDF0NU1SMXdIR0dka0ZyWkxvRFd3RzQ3UHFoSnd5czRjNWZW?=
+ =?utf-8?B?MXhNbDEyVCtaWnh4SnVyM3FNS3N2UlVDK0Q0ZC9keEh5SnRmY05Wb3orVWhm?=
+ =?utf-8?B?ZFFYOTFQbUk5TTNNRDlFYmpXTWhwZGxNUXN1UVJtbmZLd1JEUUQzQkRVeTdv?=
+ =?utf-8?B?NUFZdzdyeDdyZDlxdEpwOURhejhycVpMSUhnUnUvNzFHWWZqd21tci92bUts?=
+ =?utf-8?B?OHZyd3Z5TDJhTnpLcStyQ01RbmZxOFlOa3dmUVNCdmVCdWlUSU5aZ2Y4aFBi?=
+ =?utf-8?B?YjNyMGVsVTVhQ043UGVyNVE0YS9NaStkQWRZeEt1MWFJbm0xeDE3eGpleUk1?=
+ =?utf-8?B?bFV6M1dRMTZ3bmthRDdKblg3R0p6c09SNUZTUm85UDlnK1BjdkNkbmFCMmF4?=
+ =?utf-8?B?YXVNK1lUTXlkZTF2Vy9PNyt1Y2k1SllMUjRxME9CTGJKYnlkSXE2NkFWRDhm?=
+ =?utf-8?B?dGl1U3hiMG1qR3Y2bHpnS2pmaitIbVV2Q0xjNHlYWkFVdGI4UmVTRU00WjVi?=
+ =?utf-8?B?MTBndEx4cXpMUGxNNVozeFRaTkF6R3duTVcvbTgyNDkxQVJPMDhDeUpQUXF4?=
+ =?utf-8?B?WlBIWVo4c3lXbGlvaldPMkJMYmIxWGwzV2lCQzVuanRsemcwaW5rOUdIdTVI?=
+ =?utf-8?B?QnpmK09QYWxhSUVDbnJlNE1wTGtQU2NrTEthRUQzVFZ4RVlGdXlWQkJhQjU0?=
+ =?utf-8?B?cFRKWnVibEFoR0FhUE1oa3FWUTZiUkFMT3JaNUNtRjNJdzVkSU1Nd290TzRo?=
+ =?utf-8?B?Wklja2JjWGgxMEU1Q3VXYURjQU1HcTNjaG93Z0xrN0toWG9VSHlPR1oralpB?=
+ =?utf-8?B?d0VCRmlqd0lOVlRXTlhpakJXckVqWGI5R1pibnRyN1pCZm9wL1hHWFprTkxG?=
+ =?utf-8?B?YXB2NFNnK0NOcG14ODYrWUcxelBCZXNhditDdjltRWhqMG50cm14UFViTVoy?=
+ =?utf-8?B?MU8rUVNJWTRUQWR2UkpBUVQ1bDhyMExOcGE0NFNGTGxLNC8yN05pN2RkUUJT?=
+ =?utf-8?B?VU8rMmJhMHlzVk16ZmFJaVY4L2syd3VxVHZiKzJ4c2VDV0hVdGcyenA3ajlE?=
+ =?utf-8?B?OE9tVElBdXViTXNQeHl6RmxwajRYcUtySHpEalJNWDZpeUhYMjNQaVBIWVpl?=
+ =?utf-8?B?K3pKYTNkT3cxTXJPSDVwazdCSW8xc1NSU24yVkVVUHBsVnFNVk5BQ2FnaVh0?=
+ =?utf-8?B?dHRFbllIQ3ZNRnFKa0JaZTEvY00ybGhPV2o3T081OTc3NGlOZFM3K29xenZj?=
+ =?utf-8?B?WnpVOERSVWlUUkNrWTVyMWcxdlJtQUdxVjBqZGVCRTBPZjRBTHFrSWNreWZm?=
+ =?utf-8?B?VGNmMTdmUG4wN2wrZys3NzAwOEhIbEhMSXBaM1YwcEdXL0I1OHlpOXdIWXF2?=
+ =?utf-8?B?d2gwNHl6Z25WRjYwUmo2V2VXSWVaUVNPYVI5ZE8yVGNmcTRsclViMFVTWVV5?=
+ =?utf-8?B?cUlieXdDdnJ2N1hKTEVZcXM2YTd0SS9QMzJHZ3VTdUM1aDdkMnNYR09mSFN4?=
+ =?utf-8?Q?GC5ddrlJpE9F9?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?MnV3WXFyZmVORFZaVHlKUXMvUU90QkRXakw2d0FRc3FpYVBmTWlGQjhDalVk?=
+ =?utf-8?B?Z1k1K3lSNkdVT1piYVFJMjkydFZQeHJHVXo5NHpaWTM0ZTVoWndwVjhXYWtX?=
+ =?utf-8?B?T3NNK09YeUhFdWF0OXpDZWtpZUl5b2JORG1NTW9ZajNoWVE2Qmc3S3E0dlht?=
+ =?utf-8?B?VEl3aGQ4K095c2I4VldpU3JZWXM5SjhoZGtqUE5nbC9PTWxCaW5lRjNiazBl?=
+ =?utf-8?B?bGFhd2JtS1Bsa0w2aUwwaXpDVGpDMndiSG1uWllUdEZ0bTg1WXVyZWdIbVBq?=
+ =?utf-8?B?aG5zdmYvcExaZTFIeFdCVklvWnBDeWpEMUJnK21LT1NwTFl6QWgvUE1TS0RC?=
+ =?utf-8?B?aUNpZUxtTE9jUnh1Wm4xZ0lmUTBwd3MyM1diTGozbkU5ci8ySkwyekREUDI1?=
+ =?utf-8?B?TzN0ditUbVdMWnJ3a3BYeVFLNTlvcUYvWHZaL3pKb0dYS1F5aU1mVEczWVZM?=
+ =?utf-8?B?U2xSVklyRVNoT2lSS0dFSkR1UFE3OUhaNEJEdU12c2xEK0hIcWxqOUpLZy9t?=
+ =?utf-8?B?ZW9LNVVoc3Exb284b2hWY2hZWlVLVDZOalN3Q3MvL1QrbVFLQWVlMkNIcnZL?=
+ =?utf-8?B?SHg1di8yczVIdGdNTUJjcUFmYWpsOXo5aEVQV21aNHBjdFk5N3hZdG54T3R3?=
+ =?utf-8?B?dTZXTUx0b2hwUmtnRlFrbUdMM0VDS1ZVVVRDQk10STJWc1gxWm1MNVhUNTZr?=
+ =?utf-8?B?d1NQc0E2OXRUY0FNT1F4SGRWZGFvSHZrVll0Qk9EdzFWYnMya1hJUENMNEJJ?=
+ =?utf-8?B?b05XWTh3dXhNMnpSTkNhRkV4aHRNcE5YbWFmeDJvL0p6akRDSmRwdnBRU1NE?=
+ =?utf-8?B?aHdyNWFaNXRESWpRc0ZCS3JTUVdBWnZFdVUxdVUvWmNnY0V6QWVjZDlRMmc5?=
+ =?utf-8?B?UGFLUkE0Ri9xVzJNd0piY20zV1l3cHQybk9GTnBqdEk0OHlCRk9XbDgvaU92?=
+ =?utf-8?B?S01NTGwreCtKZUQrS01zRDA5L1JOMjB6RkplMWZaeUJRVjhUQ05xcGxiS3p1?=
+ =?utf-8?B?WkQzSnZTamJnNHdITTVjbTJSeitqYXNYQlg5bEthQUc5ci9vSGlIN04xaWYy?=
+ =?utf-8?B?d2JTaGZZRHNON0VneDJpaEI4bUpCLzk3RnQvK2ROYVovNVI1K1dMcFVJN1dl?=
+ =?utf-8?B?UjhRbVJHbWhKaG5Hbmg1akhieTRPUUh0YzFTZHdOYmtHaEpOZWtMdGltQzFi?=
+ =?utf-8?B?K1U3bVRlNkNsUGNWUUMzRllaa0l3by9VTjZmMzYvZnQvZld2Um1QYXloR3hG?=
+ =?utf-8?B?SkNJeHh6MkdXM010TjE5am9QMncxWXRaUVBwblk0RHRJWWF3NW9LVHpndWQ2?=
+ =?utf-8?B?KzdNVVVBQy84cFN6czN4T0ZOZ2p4dVk2WlFkZ0oreXlhS0EvbnMyVzE2ME1Z?=
+ =?utf-8?B?ejJjeDB2OVltR1owOTFxU3dIc0tTM1JSNEhlTHYzdUYweUhHTHFEY0FkWTNn?=
+ =?utf-8?B?QVRPdHVmNHpobEtkakFZQUlCb3hYenFDTWN0ZE9iNTV4bzFBWjZDelowMDFH?=
+ =?utf-8?B?bTFqeS9yNlNOUld0TWs2UTlFM0ZkTGYyZ0NQWU83cGRPNFB2MHBpc25PS3NV?=
+ =?utf-8?B?bkJaOG9xdFNRemowL005c2JJUDNyd0xWc25oNlB6NXJ0QWhFNkFtdXpwMklp?=
+ =?utf-8?B?R1N1M014eThyOXJDQUE5MitWQ2xhMlJYUVF4YzNpWVdGOGxFWklrV0d3NXM5?=
+ =?utf-8?B?VzVLbmdUdlJEa0dhU0hmYUtqYUVLOWpsWll2ZWdYZXBGQWVTNDBqdXFONGJY?=
+ =?utf-8?B?TC9HL05EaG41WnIrNlVLR0d4Zmk2MDJ3eXN0dE9Pdi9FeU9QUUI1dHdBN1hE?=
+ =?utf-8?B?eTFHZWZjVTZJNVh2bHZiUVhDRW1zOTY0UWVGa0VCSWVFbnNWcVhmYlZvbEl5?=
+ =?utf-8?B?UFhUMGFIRGllczN6RWdJQXY0a3ZmS0dmdVdJdjNqenIrbnJpK1JZRHp0VXVM?=
+ =?utf-8?B?L2psT0lUOE1mMHFocDhnTlZ0eWRzaEdLek5wcHVxcTlydDJ5M1hJMVVnQlhz?=
+ =?utf-8?B?VWZRbnlDMExHNm1pMUVreWh2YXdUYzY5SmhRTXpNVGNsRy9qMVdVNHhXS0l4?=
+ =?utf-8?B?MVNaYjgyY2JZQVdzTTR1cjRRSXZweS85MURxQU0yVUg5anZZOTZiNEhhRjEr?=
+ =?utf-8?B?bUpJczRCWUxyWXpoV1hsL0hHSTVrazBMSCtaM1RQSFhPdXhWeDJaU2h0RkNI?=
+ =?utf-8?B?Wmc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2317a056-bdd2-415d-7fa8-08dd5149038d
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2025 00:53:39.1510
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: VHkiWhmEXmgvn7Y3qBsL4rzviGu3+EYn6nQZodKhRZAg/muH+HMYgf0sCjMsWT7ruThcenTsfoM8rNEmzGvfGbmWCv8TI9uybUNReWAYdM0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB6122
+X-OriginatorOrg: intel.com
 
+Hi James,
 
-
-On 2/17/2025 8:41 AM, Krzysztof Kozlowski wrote:
-> Add support for DSI PHY v7.0 on Qualcomm SM8750 SoC which comes with an
-> incompatible hardware interface change:
+On 2/7/25 10:18 AM, James Morse wrote:
+> resctrl's pseudo lock has some copy-to-cache and measurement
+> functions that are micro-architecture specific.
 > 
-> ICODE_ACCUM_STATUS_LOW and ALOG_OBSV_BUS_STATUS_1 registers - their
-> offsets were just switched.  Currently these registers are not used in
-> the driver, so the easiest is to document both but keep them commented
-> out to avoid conflict.
+> For example, pseudo_lock_fn() is not at all portable.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Label these 'resctrl_arch_' so they stay under /arch/x86.
+> To expose these functions to the filesystem code they need an entry
+> in a header file, and can't be marked static.
 > 
+> Signed-off-by: James Morse <james.morse@arm.com>
+> Tested-by: Carl Worth <carl@os.amperecomputing.com> # arm64
+> Tested-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
+> Reviewed-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
+> Reviewed-by: Tony Luck <tony.luck@intel.com>
 > ---
-> 
-> Changes in v2:
-> 1.
-> ---
->   drivers/gpu/drm/msm/dsi/phy/dsi_phy.c              |  2 +
->   drivers/gpu/drm/msm/dsi/phy/dsi_phy.h              |  1 +
->   drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c          | 79 ++++++++++++++++++++--
->   .../gpu/drm/msm/registers/display/dsi_phy_7nm.xml  | 14 ++++
->   4 files changed, 90 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
-> index c0bcc68289633fd7506ce4f1f963655d862e8f08..60571237efc4d332959ac76ff1d6d6245f688469 100644
-> --- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
-> +++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
-> @@ -593,6 +593,8 @@ static const struct of_device_id dsi_phy_dt_match[] = {
->   	  .data = &dsi_phy_4nm_8550_cfgs },
->   	{ .compatible = "qcom,sm8650-dsi-phy-4nm",
->   	  .data = &dsi_phy_4nm_8650_cfgs },
-> +	{ .compatible = "qcom,sm8750-dsi-phy-3nm",
-> +	  .data = &dsi_phy_3nm_8750_cfgs },
->   #endif
->   	{}
->   };
-> diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h
-> index 8985818bb2e0934e9084a420c90e2269c2e1c414..fdb6c648e16f25812a2948053f31186d4c0d4413 100644
-> --- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h
-> +++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h
-> @@ -60,6 +60,7 @@ extern const struct msm_dsi_phy_cfg dsi_phy_5nm_8350_cfgs;
->   extern const struct msm_dsi_phy_cfg dsi_phy_5nm_8450_cfgs;
->   extern const struct msm_dsi_phy_cfg dsi_phy_4nm_8550_cfgs;
->   extern const struct msm_dsi_phy_cfg dsi_phy_4nm_8650_cfgs;
-> +extern const struct msm_dsi_phy_cfg dsi_phy_3nm_8750_cfgs;
->   
->   struct msm_dsi_dphy_timing {
->   	u32 clk_zero;
-> diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
-> index 6d287cfb0148bdb0b1c64675dfe7fa69d3faba2d..b626989cb3d505f1c53f212dba130e3d685fe59c 100644
-> --- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
-> +++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
-> @@ -50,6 +50,8 @@
->   #define DSI_PHY_7NM_QUIRK_V4_3		BIT(3)
->   /* Hardware is V5.2 */
->   #define DSI_PHY_7NM_QUIRK_V5_2		BIT(4)
-> +/* Hardware is V7.0 */
-> +#define DSI_PHY_7NM_QUIRK_V7_0		BIT(5)
->   
->   struct dsi_pll_config {
->   	bool enable_ssc;
-> @@ -128,9 +130,30 @@ static void dsi_pll_calc_dec_frac(struct dsi_pll_7nm *pll, struct dsi_pll_config
->   	dec_multiple = div_u64(pll_freq * multiplier, divider);
->   	dec = div_u64_rem(dec_multiple, multiplier, &frac);
->   
-> -	if (pll->phy->cfg->quirks & DSI_PHY_7NM_QUIRK_PRE_V4_1)
-> +	if (pll->phy->cfg->quirks & DSI_PHY_7NM_QUIRK_PRE_V4_1) {
->   		config->pll_clock_inverters = 0x28;
-> -	else if ((pll->phy->cfg->quirks & DSI_PHY_7NM_QUIRK_V5_2)) {
-> +	} else if ((pll->phy->cfg->quirks & DSI_PHY_7NM_QUIRK_V7_0)) {
-> +		if (pll_freq < 163000000ULL)
-> +			config->pll_clock_inverters = 0xa0;
-> +		else if (pll_freq < 175000000ULL)
-> +			config->pll_clock_inverters = 0x20;
-> +		else if (pll_freq < 325000000ULL)
-> +			config->pll_clock_inverters = 0xa0;
-> +		else if (pll_freq < 350000000ULL)
-> +			config->pll_clock_inverters = 0x20;
-> +		else if (pll_freq < 650000000ULL)
-> +			config->pll_clock_inverters = 0xa0;
-> +		else if (pll_freq < 700000000ULL)
-> +			config->pll_clock_inverters = 0x20;
-> +		else if (pll_freq < 1300000000ULL)
-> +			config->pll_clock_inverters = 0xa0;
-> +		else if (pll_freq < 2500000000ULL)
-> +			config->pll_clock_inverters = 0x20;
-> +		else if (pll_freq < 4000000000ULL)
-> +			config->pll_clock_inverters = 0x00;
-> +		else
-> +			config->pll_clock_inverters = 0x40;
-> +	} else if ((pll->phy->cfg->quirks & DSI_PHY_7NM_QUIRK_V5_2)) {
->   		if (pll_freq <= 1300000000ULL)
->   			config->pll_clock_inverters = 0xa0;
->   		else if (pll_freq <= 2500000000ULL)
-> @@ -249,7 +272,8 @@ static void dsi_pll_config_hzindep_reg(struct dsi_pll_7nm *pll)
->   			vco_config_1 = 0x01;
->   	}
->   
-> -	if ((pll->phy->cfg->quirks & DSI_PHY_7NM_QUIRK_V5_2)) {
-> +	if ((pll->phy->cfg->quirks & DSI_PHY_7NM_QUIRK_V5_2) ||
-> +	    (pll->phy->cfg->quirks & DSI_PHY_7NM_QUIRK_V7_0)) {
->   		if (pll->vco_current_rate < 1557000000ULL)
->   			vco_config_1 = 0x08;
->   		else
-> @@ -624,6 +648,7 @@ static int dsi_7nm_pll_restore_state(struct msm_dsi_phy *phy)
->   static int dsi_7nm_set_usecase(struct msm_dsi_phy *phy)
->   {
->   	struct dsi_pll_7nm *pll_7nm = to_pll_7nm(phy->vco_hw);
-> +	void __iomem *base = phy->base;
 
-Hi Krzysztof,
+...
 
-I see that this line was only previously removed in a patch that was in 
-an older revision of your PHY_CMN_CLK_CFG[01] improvements series 
-("drm/msm/dsi/phy: Do not overwite PHY_CMN_CLK_CFG1 when choosing bitclk 
-source").
+> -static int measure_l3_residency(void *_plr)
+> +int resctrl_arch_measure_l3_residency(void *_plr)
+>  {
+>  	struct pseudo_lock_region *plr = _plr;
+>  	struct residency_counts counts = {0};
+> @@ -1205,14 +1207,14 @@ static int pseudo_lock_measure_cycles(struct rdtgroup *rdtgrp, int sel)
+>  	plr->cpu = cpu;
+>  
+>  	if (sel == 1)
+> -		thread = kthread_run_on_cpu(measure_cycles_lat_fn, plr,
+> -					    cpu, "pseudo_lock_measure/%u");
+> +		thread = kthread_run_on_cpu(resctrl_arch_measure_cycles_lat_fn,
+> +					     plr, cpu, "pseudo_lock_measure/%u");
 
-Did you mean for this patch/series to be dependent on that patch? If so, 
-can you make a note of that in the cover letter?
+checkpatch.pl does not like this extra space that sneaked in.
 
-Thanks,
+With spacing fixed:
+| Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
 
-Jessica Zhang
+Reinette
 
->   	u32 data = 0x0;	/* internal PLL */
->   
->   	DBG("DSI PLL%d", pll_7nm->phy->id);
-> @@ -633,6 +658,9 @@ static int dsi_7nm_set_usecase(struct msm_dsi_phy *phy)
->   		break;
->   	case MSM_DSI_PHY_MASTER:
->   		pll_7nm->slave = pll_7nm_list[(pll_7nm->phy->id + 1) % DSI_MAX];
-> +		/* v7.0: Enable ATB_EN0 and alternate clock output to external phy */
-> +		if (phy->cfg->quirks & DSI_PHY_7NM_QUIRK_V7_0)
-> +			writel(0x07, base + REG_DSI_7nm_PHY_CMN_CTRL_5);
->   		break;
->   	case MSM_DSI_PHY_SLAVE:
->   		data = 0x1; /* external PLL */
-> @@ -914,7 +942,8 @@ static int dsi_7nm_phy_enable(struct msm_dsi_phy *phy,
->   
->   	/* Request for REFGEN READY */
->   	if ((phy->cfg->quirks & DSI_PHY_7NM_QUIRK_V4_3) ||
-> -	    (phy->cfg->quirks & DSI_PHY_7NM_QUIRK_V5_2)) {
-> +	    (phy->cfg->quirks & DSI_PHY_7NM_QUIRK_V5_2) ||
-> +	    (phy->cfg->quirks & DSI_PHY_7NM_QUIRK_V7_0)) {
->   		writel(0x1, phy->base + REG_DSI_7nm_PHY_CMN_GLBL_DIGTOP_SPARE10);
->   		udelay(500);
->   	}
-> @@ -948,7 +977,20 @@ static int dsi_7nm_phy_enable(struct msm_dsi_phy *phy,
->   		lane_ctrl0 = 0x1f;
->   	}
->   
-> -	if ((phy->cfg->quirks & DSI_PHY_7NM_QUIRK_V5_2)) {
-> +	if ((phy->cfg->quirks & DSI_PHY_7NM_QUIRK_V7_0)) {
-> +		if (phy->cphy_mode) {
-> +			/* TODO: different for second phy */
-> +			vreg_ctrl_0 = 0x57;
-> +			vreg_ctrl_1 = 0x41;
-> +			glbl_rescode_top_ctrl = 0x3d;
-> +			glbl_rescode_bot_ctrl = 0x38;
-> +		} else {
-> +			vreg_ctrl_0 = 0x56;
-> +			vreg_ctrl_1 = 0x19;
-> +			glbl_rescode_top_ctrl = less_than_1500_mhz ? 0x3c :  0x03;
-> +			glbl_rescode_bot_ctrl = less_than_1500_mhz ? 0x38 :  0x3c;
-> +		}
-> +	} else if ((phy->cfg->quirks & DSI_PHY_7NM_QUIRK_V5_2)) {
->   		if (phy->cphy_mode) {
->   			vreg_ctrl_0 = 0x45;
->   			vreg_ctrl_1 = 0x41;
-> @@ -1010,6 +1052,7 @@ static int dsi_7nm_phy_enable(struct msm_dsi_phy *phy,
->   
->   	/* program CMN_CTRL_4 for minor_ver 2 chipsets*/
->   	if ((phy->cfg->quirks & DSI_PHY_7NM_QUIRK_V5_2) ||
-> +	    (phy->cfg->quirks & DSI_PHY_7NM_QUIRK_V7_0) ||
->   	    (readl(base + REG_DSI_7nm_PHY_CMN_REVISION_ID0) & (0xf0)) == 0x20)
->   		writel(0x04, base + REG_DSI_7nm_PHY_CMN_CTRL_4);
->   
-> @@ -1124,7 +1167,8 @@ static void dsi_7nm_phy_disable(struct msm_dsi_phy *phy)
->   
->   	/* Turn off REFGEN Vote */
->   	if ((phy->cfg->quirks & DSI_PHY_7NM_QUIRK_V4_3) ||
-> -	    (phy->cfg->quirks & DSI_PHY_7NM_QUIRK_V5_2)) {
-> +	    (phy->cfg->quirks & DSI_PHY_7NM_QUIRK_V5_2) ||
-> +	    (phy->cfg->quirks & DSI_PHY_7NM_QUIRK_V7_0)) {
->   		writel(0x0, base + REG_DSI_7nm_PHY_CMN_GLBL_DIGTOP_SPARE10);
->   		wmb();
->   		/* Delay to ensure HW removes vote before PHY shut down */
-> @@ -1341,3 +1385,26 @@ const struct msm_dsi_phy_cfg dsi_phy_4nm_8650_cfgs = {
->   	.num_dsi_phy = 2,
->   	.quirks = DSI_PHY_7NM_QUIRK_V5_2,
->   };
-> +
-> +const struct msm_dsi_phy_cfg dsi_phy_3nm_8750_cfgs = {
-> +	.has_phy_lane = true,
-> +	.regulator_data = dsi_phy_7nm_98000uA_regulators,
-> +	.num_regulators = ARRAY_SIZE(dsi_phy_7nm_98000uA_regulators),
-> +	.ops = {
-> +		.enable = dsi_7nm_phy_enable,
-> +		.disable = dsi_7nm_phy_disable,
-> +		.pll_init = dsi_pll_7nm_init,
-> +		.save_pll_state = dsi_7nm_pll_save_state,
-> +		.restore_pll_state = dsi_7nm_pll_restore_state,
-> +		.set_continuous_clock = dsi_7nm_set_continuous_clock,
-> +	},
-> +	.min_pll_rate = 600000000UL,
-> +#ifdef CONFIG_64BIT
-> +	.max_pll_rate = 5000000000UL,
-> +#else
-> +	.max_pll_rate = ULONG_MAX,
-> +#endif
-> +	.io_start = { 0xae95000, 0xae97000 },
-> +	.num_dsi_phy = 2,
-> +	.quirks = DSI_PHY_7NM_QUIRK_V7_0,
-> +};
-> diff --git a/drivers/gpu/drm/msm/registers/display/dsi_phy_7nm.xml b/drivers/gpu/drm/msm/registers/display/dsi_phy_7nm.xml
-> index d2c8c46bb04159da6e539bfe80a4b5dc9ffdf367..d62411961f5673e0a7a37b90cfc99962de83659e 100644
-> --- a/drivers/gpu/drm/msm/registers/display/dsi_phy_7nm.xml
-> +++ b/drivers/gpu/drm/msm/registers/display/dsi_phy_7nm.xml
-> @@ -26,6 +26,7 @@ xsi:schemaLocation="https://gitlab.freedesktop.org/freedreno/ rules-fd.xsd">
->   	<reg32 offset="0x00028" name="CTRL_1"/>
->   	<reg32 offset="0x0002c" name="CTRL_2"/>
->   	<reg32 offset="0x00030" name="CTRL_3"/>
-> +	<reg32 offset="0x001b0" name="CTRL_5"/>
->   	<reg32 offset="0x00034" name="LANE_CFG0"/>
->   	<reg32 offset="0x00038" name="LANE_CFG1"/>
->   	<reg32 offset="0x0003c" name="PLL_CNTRL"/>
-> @@ -191,11 +192,24 @@ xsi:schemaLocation="https://gitlab.freedesktop.org/freedreno/ rules-fd.xsd">
->   	<reg32 offset="0x01b0" name="COMMON_STATUS_ONE"/>
->   	<reg32 offset="0x01b4" name="COMMON_STATUS_TWO"/>
->   	<reg32 offset="0x01b8" name="BAND_SEL_CAL"/>
-> +	<!--
-> +	Starting from SM8750, offset moved from 0x01bc to 0x01cc, however
-> +	we keep only one register map.  That's not a problem, so far,
-> +        because this register is not used.  The register map should be split
-> +        once it is going to be used.  Comment out the code to prevent
-> +	any misuse due to the change in the offset.
->   	<reg32 offset="0x01bc" name="ICODE_ACCUM_STATUS_LOW"/>
-> +	<reg32 offset="0x01cc" name="ICODE_ACCUM_STATUS_LOW"/>
-> +	-->
->   	<reg32 offset="0x01c0" name="ICODE_ACCUM_STATUS_HIGH"/>
->   	<reg32 offset="0x01c4" name="FD_OUT_LOW"/>
->   	<reg32 offset="0x01c8" name="FD_OUT_HIGH"/>
-> +	<!--
-> +	Starting from SM8750, offset moved from 0x01cc to 0x01bc, however
-> +	we keep only one register map.  See above comment.
->   	<reg32 offset="0x01cc" name="ALOG_OBSV_BUS_STATUS_1"/>
-> +	<reg32 offset="0x01bc" name="ALOG_OBSV_BUS_STATUS_1"/>
-> +	-->
->   	<reg32 offset="0x01d0" name="PLL_MISC_CONFIG"/>
->   	<reg32 offset="0x01d4" name="FLL_CONFIG"/>
->   	<reg32 offset="0x01d8" name="FLL_FREQ_ACQ_TIME"/>
-> 
-> -- 
-> 2.43.0
-> 
 
 
