@@ -1,100 +1,115 @@
-Return-Path: <linux-kernel+bounces-524366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27912A3E23D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:22:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C682DA3E241
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:22:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE81F1888835
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:18:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6121118846F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:19:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D3EB21324C;
-	Thu, 20 Feb 2025 17:18:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BD0D212B0B;
+	Thu, 20 Feb 2025 17:19:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dcmOzMvW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BuVhM3hZ"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E499C204875;
-	Thu, 20 Feb 2025 17:18:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E8081FF1A7;
+	Thu, 20 Feb 2025 17:19:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740071888; cv=none; b=nhBPryCukQCE+Sxm6C5css82NM756AalXoF/93Cl+r+OXDsmyJhK6C7JlOjLzeQNVRQSOSbuiK1NbA/uA7/HYIpWKF3+cs+EBUR7py0Mf/q5LzeYwxZrjF1rKoH/Hf1bSWqG3FBt5IHLtT29MZq2tl3o/b/YXSsXLUlBAcVI/JU=
+	t=1740071951; cv=none; b=Xg5xGQ2R/I0+WkE+1JiorcimddgIQ0lhOhf3aTwFDDVuS9JmkEbqCwESOa+Az/sY0aFZuBjftEIzP8RU9TYgl6iy2oCh6q5sM5j67RRHfxFk2BG76f7igN0/pYX2wt2roNmyn96//lFBA2c7wAN7WbPCpikt4rUJi0XDm0294G4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740071888; c=relaxed/simple;
-	bh=Z2dgO0/WumT0UHpa9g/06CqR8KBq3+iPEhbdAQlISMM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KaO042bwNv6BZTngBdLtDpc+cqsWHsfD8Vg4tTWl7jcrbg+PoXFPjn3lOQvooP3CZ/92qmA317v0rAH78gCGlQXTS8G6MgYAdQAyXlvwvsmjDBEW5CYLe52qnAXTMixD0k21yRk8TDN6qxa+82ii38Va/t33dWt1RGxmzMiNCbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dcmOzMvW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B913DC4CEE2;
-	Thu, 20 Feb 2025 17:18:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740071887;
-	bh=Z2dgO0/WumT0UHpa9g/06CqR8KBq3+iPEhbdAQlISMM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dcmOzMvW4JIwJparBiYVKIryFuiTlW2Pqv3d/5vZ9aqOGbSzX2myip7poZdKwQxF/
-	 kco7+x0wcGepCahG6fG0kJ+OX+2q6DDFFYRksccaPpTzcUSASKXlGr+6DGjPx3ti0L
-	 47IhkEtO1nGrTNLup+6HGfXnihDHyi+0n72UbxHTcyrDs6sg1PTdp2IzIzDZkG3Dur
-	 MUbJx9n0ZcRIGxSKiCheGaeoXS5Z+cSQhdrWXy2+XHij3t67Xc12I50Od96cKnkh1S
-	 wbXDmzuOmXXcv0PQiFkWqau/auRrUmJClFqqUkE3ogOx6lKLKIx46SiljExgCDS1aa
-	 NAZTXhuW/V3Vw==
-Date: Thu, 20 Feb 2025 17:18:02 +0000
-From: Conor Dooley <conor@kernel.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: chunfeng.yun@mediatek.com, gregkh@linuxfoundation.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com,
-	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel@collabora.com,
-	pablo.sun@mediatek.com
-Subject: Re: [PATCH v3 1/3] dt-bindings: usb: mediatek,mtk-xhci: Add port for
- SuperSpeed EP
-Message-ID: <20250220-travel-undercoat-339822407907@spud>
-References: <20250220105514.43107-1-angelogioacchino.delregno@collabora.com>
- <20250220105514.43107-2-angelogioacchino.delregno@collabora.com>
+	s=arc-20240116; t=1740071951; c=relaxed/simple;
+	bh=lbxp0U7nS6050w/dyFPx4V8itxpoYCb27lxROY6sU+E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OG1cOq7aLnU2Lc2ekFlfFk2CaJc2ngzU5zN5rdZdIwDpQmfIQmPqy3zxc6SyGT8EPkAedO0nYyfjTDPq0U+cNLJKoWXCwhMwkcuVl9rhFz285xilVRXR8oLvHJXIDQ3fi4JSaUygpgfNbKDTCYAaQRFwGeNvN716eM8RbIQIoRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BuVhM3hZ; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-220e6028214so26670675ad.0;
+        Thu, 20 Feb 2025 09:19:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740071949; x=1740676749; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nomDZP7UgjJM6LiqPmJ9pxSMIsyz19CUu75QblVwQ2E=;
+        b=BuVhM3hZaD3sINTjebnYeoM/4q3FrbyZGQCFZhxvVBwfpNzyrB0i9oCxzZ/mtJglCB
+         cRilem43V2Lz6t+CXN7os2E5GTLlybdWwYLZShaZuQWK6Bi7nMJKD8XyC15ckFd/X2z+
+         E83Cips3kTeTnPnoQILhVk96A6rdqtwQJy6MMzedvTA3UHTz0B0ftKBdrxlb2r9MLl6k
+         mBnNhwjoUg+GskFW0PefJYuoJoCieUZKElcWhwXkGlfU9cK4TOfzU+AZnw5R+jmvpCfX
+         N+G7jHv8GdXd5VGdQeacozL9pPdupwIkF+spyp3givbOoj3To3yCqwofKqI3QIVmEXcd
+         8YKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740071949; x=1740676749;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nomDZP7UgjJM6LiqPmJ9pxSMIsyz19CUu75QblVwQ2E=;
+        b=nvAzVf7WrQ2DO89jDW/Y62nNiezHmBiFfPbDr4FXpwtd+BeGEA+92nYXOq2QoODgcL
+         hL+IZgVu8G8vnQDETjZx1ls4rYR6J60e6+OxV6loFqAk438dS6QMWaWBZI8o6RhvXufr
+         BEZ7x/Zp4CkTFJAmCCCRAOQB8v5bp+4FlDhYBzhtiLyvqoJ7iwN5ZLJjPpZygFL729Nl
+         W+r85CTVSKvbqYrfbLXZVlQiZA7BPpL8zC6XyJr+ILtDYh/E2LkXlDcaTuK9mopdFiP1
+         +UrM6KMUaqz3EFolUSvTrnwoiIJdEd6oU9vzwamzdE6v4pAP+bbhdo5K8ezZ+Fe07rqb
+         nAOg==
+X-Forwarded-Encrypted: i=1; AJvYcCUddVhOuDYJr6PFyII1UgK0GzUjeXplZWAtFdeEoTSFE3EFmaF0YhKhAG6sBMLF1F28w02ALr1gSzU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHbWFCTpaZkodcmeWtfH0FbhlbJR5O5I1Yiht8mbN4tWfSuY4o
+	JfZbT2K4JIWze7Yw8STB+WTRbZxtcU0K6oF+pgRWKC91Yj+JHhEKkkGKpO7FgPs=
+X-Gm-Gg: ASbGnctJDcLKNQJLg2Ce+VFHdEJ3JHWV+l6ARhq5r2kh1YlzzX0B6nKHpLwO9tPAfGK
+	SdQPyY4qLgSA99JEFL908NCB3z75WEZ91jWR9ALqcwpyrbwrSIx2M+gg1wPqAF4NkWoX2jK6QtK
+	yiEssa86RObWVXEbSB5fQ+orZ2QZQ4Y4E2f2PNasR+tWfRYfo6Cnib0ZDrSQBcuOtetavV867C4
+	HhRJo/DGEbFMMIdwZSykMniolOc6S8cywNuGWgN4anu+u2Tws6Jp39nHj7iW9phU26LycP/dDvB
+	8Rq99B+IgOnCLKyCz16ulohI
+X-Google-Smtp-Source: AGHT+IGeGn7sAE0oh/LEmZ0Q9vohZZx4LORYi7li2Q40VP3JZ4WbLcXqVZcaR3HNoxG0ukBcPdb44w==
+X-Received: by 2002:a05:6a00:2e16:b0:730:927c:d451 with SMTP id d2e1a72fcca58-73417382ba1mr4907029b3a.20.1740071949258;
+        Thu, 20 Feb 2025 09:19:09 -0800 (PST)
+Received: from archlinux.nitk.ac.in ([2400:4f20:11:c00::101:920a])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7324273e324sm14101963b3a.88.2025.02.20.09.19.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 09:19:08 -0800 (PST)
+From: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+To: corbet@lwn.net,
+	linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev,
+	Suchit Karunakaran <suchitkarunakaran@gmail.com>
+Subject: [PATCH] docs: debugfs: fix spelling of "failure"
+Date: Thu, 20 Feb 2025 22:49:03 +0530
+Message-ID: <20250220171903.11321-1-suchitkarunakaran@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ZISaQ+/FlBvHadWX"
-Content-Disposition: inline
-In-Reply-To: <20250220105514.43107-2-angelogioacchino.delregno@collabora.com>
+Content-Transfer-Encoding: 8bit
 
+Fix a typo in debugfs documentation where "failure" was misspelled 
+as "failuer".
 
---ZISaQ+/FlBvHadWX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+---
+ Documentation/filesystems/debugfs.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Thu, Feb 20, 2025 at 11:55:12AM +0100, AngeloGioacchino Del Regno wrote:
-> Add a port used to connect the SuperSpeed output endpoint to a
-> Type-C connector.
->=20
-> Note that the MediaTek XHCI controllers are always in front of a
-> different controller handling the USB HS (usually, MTU3), so the
-> only port that this controller provides is SuperSpeed, while the
-> HighSpeed one comes from elsewhere.
->=20
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
-abora.com>
+diff --git a/Documentation/filesystems/debugfs.rst b/Documentation/filesystems/debugfs.rst
+index f7f977ffbf8d..610f718ef8b5 100644
+--- a/Documentation/filesystems/debugfs.rst
++++ b/Documentation/filesystems/debugfs.rst
+@@ -220,7 +220,7 @@ There are a couple of other directory-oriented helper functions::
+ 
+ A call to debugfs_change_name() will give a new name to an existing debugfs
+ file, always in the same directory.  The new_name must not exist prior
+-to the call; the return value is 0 on success and -E... on failuer.
++to the call; the return value is 0 on success and -E... on failure.
+ Symbolic links can be created with debugfs_create_symlink().
+ 
+ There is one important thing that all debugfs users must take into account:
+-- 
+2.48.1
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
---ZISaQ+/FlBvHadWX
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ7djygAKCRB4tDGHoIJi
-0pwNAP9LSza0fN2VrkokGvJROiNTsBtv8u28z6YZ0tVasE/wSQD9GZqsn3abIJ14
-wNsSo8xwfhXVj8RsgcZpEbcLFtCN+Ag=
-=OB/N
------END PGP SIGNATURE-----
-
---ZISaQ+/FlBvHadWX--
 
