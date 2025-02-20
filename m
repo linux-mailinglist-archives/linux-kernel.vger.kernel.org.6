@@ -1,271 +1,338 @@
-Return-Path: <linux-kernel+bounces-523701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E721A3DA22
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:33:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0C19A3DA27
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:34:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E1FD3BD6A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:31:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 811E43A565F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:33:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29E361F152B;
-	Thu, 20 Feb 2025 12:31:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95DF71F4606;
+	Thu, 20 Feb 2025 12:33:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="jzL//0u+"
-Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2086.outbound.protection.outlook.com [40.107.105.86])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WOAtIG6F"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C360134B0;
-	Thu, 20 Feb 2025 12:31:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.105.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740054667; cv=fail; b=ilcLY7nkbL8D0WITpSj0YVKlxq4kQpU0oSz5Kf+l8q/FIP8xvlpzcG8t419uswyTP/LNrIjQfuHCfEyXWFC2kwIl0UltEUAjzf16d+VhzRG/ykSA9R88ip9Kqi9xoD9QZdQCAZ/2C0kjIRxddL5/rzSHEarmH/NB8naEdr+OWgc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740054667; c=relaxed/simple;
-	bh=NPCbtsImtOh6IgyUhyUVBiZkZ5E7HPgGaVtiIY9gX8s=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=aCBZHRpBDavDiurmCuATdsp2h9JR5nKCVF1rh0HuQmPRwDMPreTJ/GMSbeMbnwGKAb1jJDATQpuNs2hmrDyOQpstFqzQQKkg+HocDYkoxqwO1YRonMZIMnGqxywsXdGkHNxcNHs+TP86zw19FjWWB5LNE+00WpZGfoZrs2ZX3KA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=jzL//0u+; arc=fail smtp.client-ip=40.107.105.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UQBbb5pCvEK2slKKxe0t9NRHorGMxNRWhhGaGoy9QJMhn/hUhEjp1O2uDVm82nO+vLqqpxGChyQ53VzIR1txWytMTGRctzJB+AozRRNd3DiowkHzxkNtymteXsHOxEsQa1Z0GI/Nu5TwRjX5UuInMSXNEvYoOddMA1vPnMrzufYoY5VjnuKx0b7yRbcDYIH3aOHwhf0UvbRWXmZ8qml118qNkkqh/ARdhH6ZauVwOOaGPI0plXGlS8b8b5j0ZN0JGwzjRV4jGW61TkbJu9Ar5SOd9GxIX2bpOy9O1Q14t/yuVg26AFAz/oDkIYsLwXXY/VKHmNMvAoKxNhoqSDkkvw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=C7OMH0y1VedvtPD97d7ZUfoG6LWwziAGF6xtHPZg6LM=;
- b=fud9nYDCwhlQ9CoXe+yve1xZKGRebehKI+dRNXYyTei7e+helzhwjvFA5PaW1LSSqYH57EOlnPveW3d54nYtC9pSGlX4593FDlEfrdPfN0VQPjgsKtHSvs4q6bz7KWgXrabgflNctzejqHx20kTqojgDFIehxU0XNtn+LV+i3u8VB4r56KQ6JpJZkojtphK1HmJRjxWlIDQ8KqGyh6A0n8W5FKVB1yKqnVwt46+xL8oNOKVfsM2brHqIGued6zE1DhRAQByzBjw0O61tDzQRCmD7G5Kjb4Vi0m4kcoQVX42ijFOzILwOh/QSUEg/cZvjoDHkYX0FvYIJE1FFoTJtaQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=C7OMH0y1VedvtPD97d7ZUfoG6LWwziAGF6xtHPZg6LM=;
- b=jzL//0u+gQVVp9cRCMauFaCJgXqhjqfpNLiIFl2vFk1uao43lZnURt1wNMgPT7OAvEt/r8Wt3RDlXsTi3HhaNoA0zWo8iLj95qPlLnfJaxX9I2dDqYLufOYFpt4+viHSmrceD1bo3/XWt9dJ11gX3L2V51CDQd/buhwZRUPFSwT0dhsQ9GTxBELtYfSXdj7xj/64D00rdRzvTEpT6NclAyC1hjl6R5OkIHUDiN0I9HM7csXcWC/SjTTz0pqISaFmlxWfpihoDvnlFrIPwjWRhF8vnGOhyIaJX6unN49YWp8RgGDK8AcrlTHLGG4jdSDzNeJ1CPz9IVSLaFtS8FmUoQ==
-Received: from AS4PR04MB9692.eurprd04.prod.outlook.com (2603:10a6:20b:4fe::20)
- by GVXPR04MB11020.eurprd04.prod.outlook.com (2603:10a6:150:227::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.15; Thu, 20 Feb
- 2025 12:30:58 +0000
-Received: from AS4PR04MB9692.eurprd04.prod.outlook.com
- ([fe80::a2bf:4199:6415:f299]) by AS4PR04MB9692.eurprd04.prod.outlook.com
- ([fe80::a2bf:4199:6415:f299%4]) with mapi id 15.20.8445.017; Thu, 20 Feb 2025
- 12:30:58 +0000
-From: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
-To: Paul Menzel <pmenzel@molgen.mpg.de>
-CC: "marcel@holtmann.org" <marcel@holtmann.org>, "luiz.dentz@gmail.com"
-	<luiz.dentz@gmail.com>, "robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, "linux-bluetooth@vger.kernel.org"
-	<linux-bluetooth@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, Amitkumar Karwar <amitkumar.karwar@nxp.com>,
-	Sherry Sun <sherry.sun@nxp.com>, Luke Wang <ziniu.wang_1@nxp.com>,
-	"johan.korsnes@remarkable.no" <johan.korsnes@remarkable.no>,
-	"kristian.krohn@remarkable.no" <kristian.krohn@remarkable.no>, Manjeet Gupta
-	<manjeet.gupta@nxp.com>
-Subject: Re: [PATCH v5 1/2] dt-bindings: net: bluetooth: nxp: Add support to
- set BD address
-Thread-Topic: [PATCH v5 1/2] dt-bindings: net: bluetooth: nxp: Add support to
- set BD address
-Thread-Index: AQHbg5NLufHtSaUyJ0GEN9n1ioVKHw==
-Date: Thu, 20 Feb 2025 12:30:58 +0000
-Message-ID:
- <AS4PR04MB96928A5C527D1720B9BE0AE0E7C42@AS4PR04MB9692.eurprd04.prod.outlook.com>
-References: <20250220114157.232997-1-neeraj.sanjaykale@nxp.com>
- <184919f9-25bd-4f65-9ed9-dc452a6f4418@molgen.mpg.de>
- <AS4PR04MB96921164DAA8A63B2C0841AAE7C42@AS4PR04MB9692.eurprd04.prod.outlook.com>
- <0e5f23a9-b1d7-4d8c-bb05-83f7a15a7285@molgen.mpg.de>
-In-Reply-To: <0e5f23a9-b1d7-4d8c-bb05-83f7a15a7285@molgen.mpg.de>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AS4PR04MB9692:EE_|GVXPR04MB11020:EE_
-x-ms-office365-filtering-correlation-id: b251b921-0eb1-45aa-11ef-08dd51aa6dae
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|7416014|366016|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?0J9z688HS8v8Nqv7zRzXCUEicMVS+FbnwkhzIEIEnzIYYQiXKLMdanglvpOr?=
- =?us-ascii?Q?o8h7NBZ0AdEFTLCwgAPR5E26FYcLriRb7uMPcOZjddTwEJNliaVuCGbLg8mr?=
- =?us-ascii?Q?AUbOI63scomfZxRMu90H3WF4TZWa2wCfxsmx7gJLkxFb3sVnkElz4LJEtZXG?=
- =?us-ascii?Q?laq+tQxU6JroTWd27uL1Ht9L2f7ur0tNbGcCIxfXrkaU9AfRtN0fbvl5qbOQ?=
- =?us-ascii?Q?XCelWgleJTscJ3W18S95a0Cn0m/QENn5qhfla/P4g0tC5OTEXFsDWArdLYT+?=
- =?us-ascii?Q?Qy9h/xEEPp9UIIXMWNHdCF2sBd4V3GAWAbsQW+/LutTJixuSXZPleFr7NH9R?=
- =?us-ascii?Q?aGZ8Hi/TjtErmLyYRTXvcDKxjt4fxVsNM0gm4ZDAHLWOrt16rlQr3zAbHcjr?=
- =?us-ascii?Q?W5BbGDZ4MULEKzrLR6q1XMl1RbAlmYj/J4inM/XwCE75rPmFnkpiZzo3p/Mc?=
- =?us-ascii?Q?2kq8FJbmchdrPoAtANFjTJ2UauBHxnx2vFQsOUvXbrsQK0oZJb5a0hPiguvE?=
- =?us-ascii?Q?IFigOtJqMZUBkfBJ8uagtSyxe4x+MBoST2iudM7Q+GnidSC2ZD3AuO0JT7Sd?=
- =?us-ascii?Q?/hF0VFzU9UvbZkB3FUtR8Dse08nXC+KeJCoOK6S2IHoFiP2xwdj3SGxogI6v?=
- =?us-ascii?Q?3SqJV9Ngre9tmDQkD5D76wyIv8d8m3BkLy8Tq4hIruEWzvqK5t4nY52I8D5B?=
- =?us-ascii?Q?peLmM6iJX4Tvc5hVqOF4YmUEC+66buCxRfm/e1srqwyG46ybOFLprfNhYx1V?=
- =?us-ascii?Q?BcdMriE/CxVuT1ft+tRw7Jl/n5BvYcm2NZ1d/bmkbxnVs2vBy9jkjuWLrPZN?=
- =?us-ascii?Q?SLqjV4zky65wb5otOEOl4FHAlK/uJFoVEIi08rHcFqpPk2eGBqjW54B2WDu5?=
- =?us-ascii?Q?dp1Bl8XfS/7g7zMicbIBnDhcnP1NLuWAO05F7k1lYSVdCK0BcWMjnfToIweF?=
- =?us-ascii?Q?VG9zjmDoCM7qXr1s9YfooWymR/tgB3m3izQ2+hF84lh0G6o2KsRHiFfDVsvf?=
- =?us-ascii?Q?JWR+HM3URnHu6ZaUbZ8Tq4efKoZP8RxBWzPfA59bfL4nPptSaB9tHFUhRM09?=
- =?us-ascii?Q?fRwcVlnJCwcWagvm0iRUjwcd/JXw3acKRfkaiOKctlL/0Skof+QL6AYCHufF?=
- =?us-ascii?Q?bbTh4gU48+PaIf5v5tVTH5kQ8yFfqD7j7mj3BmKH3kZWxQ1zXDeNSxWE6NRK?=
- =?us-ascii?Q?9ITR77dzloTQveTwreOivbSAKLY3OzoJIxb9udsmrzYFD7Y/ahHTeNJOcwtv?=
- =?us-ascii?Q?F+GKJEPoaDiiVdbff9K7EWK/8fO8inTT1uyxY+0jCy/2O3EVME3V5a2RGR6G?=
- =?us-ascii?Q?5SI5lQvBN0YAjRJmsYifnpL3WVZo27DwdCc+Wn6rPpxWTIuHF1ZRtdoDtalG?=
- =?us-ascii?Q?xCupMDAXMgiDqzi1EgIiuKGkPKltLjwyJJGKAJya9dsKz8q7Vf8/ltnLjDgf?=
- =?us-ascii?Q?yDOaiCf+srTV5e2eCZQdcgkP9JpDhl5m?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9692.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?4V07Mc5I7WI5gAxU+3Yu++30ZSn8wRYZo3A4UWx/tH4PDPT5/oVbpZE5nuqo?=
- =?us-ascii?Q?XbIt8jtUMOkR4tw0rW8Qk5NbIAcT0XjmYDrb4DrAFp981FJigCIButH7lfds?=
- =?us-ascii?Q?CH3IZO8VkXheMo8A/pPchuXwwzTaBUrtg+S6oTQFuJbdkwHDgaOgrLDp02yc?=
- =?us-ascii?Q?xzLNJEzx7+iZo1k5p3KzSIapc3hkqfse/gJm2N3Rk3WsL4qT/jS50aLuOZIo?=
- =?us-ascii?Q?fJMWBBcXTlL3dB2h01LwSSILl9Z3oETd7rVIP/mJBnxo4S2tu8+G6zDHt5qI?=
- =?us-ascii?Q?xanDMXsLPFJotJxpabABk/F6oBH3oSgKZxCFeFd83NhtQFOznMtWIht5WZkR?=
- =?us-ascii?Q?s884eiDUEnsrEQfn9qN/YlhPUNzY/1F5WefgeARaS0Uvr5oPGenjf8mZQS7i?=
- =?us-ascii?Q?XZyhnfcIYTg+kJ0BoQmauzaLUeucY04LEWBFpb+/XPOSKGcRCfTZT03o+Jzi?=
- =?us-ascii?Q?kqzU0NDaGXuouSNbML3ZXXjKFnhM1q1vAmalqqKegnpyLSUgLb168c8epx+2?=
- =?us-ascii?Q?B8ibXoBmbNAyZWxLK0TxMILK1EyD54Kn2FXaR7fbCXGaMxED/mzh4iCQC+bk?=
- =?us-ascii?Q?VIto3AIK02dAzp7kNkqVZ6lzvOO7IhiTIF1ot9/q+wjw/AeNqJoh10ZKU2S0?=
- =?us-ascii?Q?5BoaOI6s1euuD/hmd5TnUqM+44qepRWtf/Je+jWnOOOGE6tUniJ7di6m9s1e?=
- =?us-ascii?Q?hR8ILGw0cvdrRtayPcbIBXbo7QuW/TGjhONpf+DeT7WeAcbULJhUblwFXLqz?=
- =?us-ascii?Q?56zfX/M2OVAW8OMJ7iM5YC/4ALAz025nkyrZsv5cGJCE081HqjO+9489/DQm?=
- =?us-ascii?Q?AL0sOxvM8T3QM2otKcT0PvxTQcuYsa1JKF7sqDpdQxGIzS3dRIrsjYNwDivZ?=
- =?us-ascii?Q?jVKs0H1MM+GkG/wG2uEjCfHetLa4Pstd5i5afR7K2M8leZB9OGyFQizcOSwT?=
- =?us-ascii?Q?r+PiTld/xM3Qzbl0KAjhcoa1rG3TqqBM1TUHNEi0Cm2T+ICZucEYXXb+mUOK?=
- =?us-ascii?Q?q4oJ6bIY+Ay+46RoN6AkUxU68IAsLBRGZvRkYFiwxTB84mmdSnhtl4nZv4hn?=
- =?us-ascii?Q?ku+SwNUak4sXl+x/StB1tyWpI/zoEeSAV4H06hEiDHwqmn6iXZqwP5YjOcbE?=
- =?us-ascii?Q?+D4BLYw83GU4tIMU81UiXZ2stLlYqTuoXpd/0XQEv/vp+TpSyAcIkWlcNLaD?=
- =?us-ascii?Q?fT5r/tczrN3rUjd8IiYHP/lFwUlyOu4S0ybRFCKWLYEneF8LbZlf/i766ZzE?=
- =?us-ascii?Q?nHZZQkX4B7BlI5FWevZaN2H/YbtNqGbsBF9abHnxmoC0gbeeHRkH8l6aKsPg?=
- =?us-ascii?Q?Y5LmA9INz0k5gdgKHeL4zNNaZ4oKjymy5CnIK32Pr4GzK4wi4FJqhPjGCVPz?=
- =?us-ascii?Q?7bCH7qTfQlj90iXbkjbBHi1A7i9DLDHlxmCFit4lTVNP1vseRXjnohYBHsjf?=
- =?us-ascii?Q?g0yxp3+depCXLj1SoqRUH8Uk4NYsY1IATrxtK9t0fP1rJV+4zUgafTljzY4K?=
- =?us-ascii?Q?UkZcPhKsgEpp9ts06PiS9ITWL3VEYIhOPZuDp9fhpY24emORqYa4t5KZNR26?=
- =?us-ascii?Q?SBl54Aa7gpyEfki4ZbeeSccV6f84lfZSLleCusHH?=
-Content-Type: text/plain; charset="us-ascii"
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97A1C17BD9;
+	Thu, 20 Feb 2025 12:33:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740054837; cv=none; b=maK1sf4nm80vTgY1IPW4+72c+Pe+N0WOmVdnaMiEdGtOqKzI/CkJE0/1cSSxKm9Rkj7hIrzJZ1MBFdEXplVwiIngbGLGOK+fPqOQIYPTz4dLX/Khe2mOJKR3QomSj7sl2ogQy4R3l3suy/NkLpJaNCZRJLjhneCDystdT4VxC8g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740054837; c=relaxed/simple;
+	bh=ozvWNiGMPxz4w/NIo01gkSBXnD92ZLlJm8J6GPXIAs4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:Content-Type:
+	 MIME-Version; b=IfLU+w/VtIVH1i+xK2JxJEzzLqV5ToKf6UNRoxeZWrKmz27pjcoV2QZ46Tr0oudwQAL3swzTkMeEcKBr+RoI6ZI4/yU+02AWV1TkSV9Bm93CCVYf9GRkh7zI878aZi1gLvUJH8CzTvj1dO5Uc+iKdD4aK2v8MpCU4jr4dS5wZ64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WOAtIG6F; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5461a485aa2so838486e87.2;
+        Thu, 20 Feb 2025 04:33:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740054834; x=1740659634; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:in-reply-to:date
+         :cc:to:from:subject:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nYAXPliVGAauLvqXilBmcpYtEXaT1hnaJVJeOg5HwD0=;
+        b=WOAtIG6FJiqOLB/kCIJce6QcZdq8R5vHm/3Ty+HBOJ/xp8y23rS0e1wts6Okh3m0Xl
+         4r7XaLj0Y3O6NL+v3cDSE+W1hul+dAvQBJ1+dq/AcMb5r1VU6iLaZ+LbBVleNSF4Yvnr
+         /SqU6pqccq7ZAlO3Z3a3niov+nKzjC90Qr191l3EHrArVGVonouxHKEQFLpOpbF0zPF1
+         TpwyqSfrmVONfHUL1nKFMPgNrSS/7Tec+kXTKnsdxtvTTGwn5OHfMwIGCEYLyYCF0W0K
+         pkqgBVikKr1eOhtJzInKB9hE1gMAtLQHs6Z4g55FIigSoZUC+tx9xCrYcP+az8B0dbTY
+         GH3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740054834; x=1740659634;
+        h=mime-version:user-agent:content-transfer-encoding:in-reply-to:date
+         :cc:to:from:subject:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=nYAXPliVGAauLvqXilBmcpYtEXaT1hnaJVJeOg5HwD0=;
+        b=d+oO9WqCQDovd9mXwQ5dWdfSi6LnY0TNNWW4ICu3pSaI/nZkK57YQGbg5fINdt+ZIS
+         TirjHPGOCEwSACjBgv+q0Iz8xXSSvWOcgVqxNSuGtVTDQR0tq2g8nVGZVnbYglh0kDY4
+         Sk8JoOUTOS9W90bveb690s96NwzIsJqe0jrjOBTaMF3n4qxXuTzVLMg/tJFoOkFhizjw
+         azZEMve89NQumlAuKz9Ni2tjoBIWUgyPRxZAc7hOqRShDMjEO88MpGyhPl0Wzhn3lu2D
+         1jGyVcjR2/wyx1xxrQKdCIm38iOd2zKULRzXEwfO7XJktXDuQp+Brfcl09CBELOn9fMF
+         EyFg==
+X-Forwarded-Encrypted: i=1; AJvYcCW0qMqUhhs8+0BuMzJ0E6dICJ6jNViILnhQmkoe4BkU4V16ZcjvDagHE3y4xpTSfgYRJ+x1xQJgfPvAO6Y=@vger.kernel.org, AJvYcCX+VgzfwSjClrC3VfFse8CAf0JD/QDDZ9Ug+9e/d3uxDK+ezgz0e1wDcW3qmVdTuG/I7Kh81Wj3GJ3W5cfQB84=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9v1LWSzVsmlU7F+ipssGfssk6WIzwbdJZTBQHr0j9CoG9Atyr
+	+1RBqSyvG3++rl9YpDdPnR4DmlYot08Aftatq6kpa4mdq8i/nLIu
+X-Gm-Gg: ASbGncu4YlCHtZyjmfbAJebAJh2H4GiCsmNGfdT+IIfMc+S5gY0UXukitNMsxr56SJH
+	zlGB0lgZhqcIyRIDejq0uHb7d9eyJqZ8r0PlGL9YX8uJM+6HFSaHnRw+JzBXGz6OIU62Zx9hgMM
+	607oaRk9mTjkzrfhGyHRds7aGWOr4onh8RqRCmHnro3chSK9MCSPFBP9WKoCI9dnk+VMj99L4fI
+	XevEq/ylE9hOdQ7rPiSicMvguy2jzha1JeZ1HzsKW1iDpzR6tqEWh9tEBE8fZC8OLr9dvfc5GUD
+	oul7FsJcHWkBxYu4RQS9V5MOWzYxD/tjFFsTinySi2g70tEtP/NjJkixmVPJh86ZiCXYaw==
+X-Google-Smtp-Source: AGHT+IH1ejzRcUGwQ7tpWDXI2tDssHtf/tFe624MSGF77jilBq2ScDfgvkViwEk7KHUfCCFbU4aYJw==
+X-Received: by 2002:a05:6512:3e2a:b0:545:e2e:8443 with SMTP id 2adb3069b0e04-5462ef1c5femr3742717e87.32.1740054833155;
+        Thu, 20 Feb 2025 04:33:53 -0800 (PST)
+Received: from NB-1741-LNX.corp.1440.space (broadband-5-228-81-61.ip.moscow.rt.ru. [5.228.81.61])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54527f929e7sm2096560e87.44.2025.02.20.04.33.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 04:33:52 -0800 (PST)
+Message-ID: <757c92b484bb13172426644b5b5193bca391d14e.camel@gmail.com>
+Subject: Re: Rust kernel policy
+From: vpotach@gmail.com
+To: hpa@zytor.com
+Cc: airlied@gmail.com, gregkh@linuxfoundation.org, hch@infradead.org, 
+	ksummit@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	miguel.ojeda.sandonis@gmail.com, rust-for-linux@vger.kernel.org, 
+	torvalds@linux-foundation.org
+Date: Thu, 20 Feb 2025 15:33:51 +0300
+In-Reply-To: <326CC09B-8565-4443-ACC5-045092260677@zytor.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9692.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b251b921-0eb1-45aa-11ef-08dd51aa6dae
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Feb 2025 12:30:58.2507
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 7CAgkOjZstPq9sJYCUfQOq1jhiTEuL71KxRFpnkp250VwUYPk1WRZZSIS15Tx3BBFIMU0r3xaDr4mzMrwPOpaNWd4nYkY2xbrn4jumZ7zVs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB11020
 
-Hi Paul,
-=20
-> >> Am 20.02.25 um 12:41 schrieb Neeraj Sanjay Kale:
-> >>> Allow user to set custom BD address for NXP chipsets.
-> >>>
-> >>> Signed-off-by: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
-> >>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> >>> ---
-> >>> v2: Add allOf and unevaluatedProperties: false (Krzysztof)
-> >>> v3: Drop local-bd-address: true (Krzysztof)
-> >>> ---
-> >>>    .../devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml   | 6 ++=
-+++-
-> >>>    1 file changed, 5 insertions(+), 1 deletion(-)
-> >>>
-> >>> diff --git
-> >> a/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-
-> bt.yaml
-> >> b/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-
-> bt.yaml
-> >>> index 0a2d7baf5db3..a84c1c21b024 100644
-> >>> ---
-> >>> a/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-
-> bt.yam
-> >>> l
-> >>> +++ b/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-
-> bt
-> >>> +++ .yaml
-> >>> @@ -17,6 +17,9 @@ description:
-> >>>    maintainers:
-> >>>      - Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
-> >>>
-> >>> +allOf:
-> >>> +  - $ref: bluetooth-controller.yaml#
-> >>> +
-> >>>    properties:
-> >>>      compatible:
-> >>>        enum:
-> >>> @@ -43,7 +46,7 @@ properties:
-> >>>    required:
-> >>>      - compatible
-> >>>
-> >>> -additionalProperties: false
-> >>> +unevaluatedProperties: false
-> >>
-> >> How is this diff related to the change mentioned in the commit message=
-?
-> >
-> > This is based on review comment from Krzysztof in V1 DT patch.
-> > allOf ref will import all properties defined in bluetooth-controller.ya=
-ml,
-> including local-bd-address:
-> > https://eur01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Fgit=
-h
-> >
-> ub.com%2Ftorvalds%2Flinux%2Fblob%2Fmaster%2FDocumentation%2Fdevic
-> etree
-> > %2Fbindings%2Fnet%2Fbluetooth%2Fbluetooth-
-> controller.yaml%23L18&data=3D0
-> >
-> 5%7C02%7Cneeraj.sanjaykale%40nxp.com%7Cea6b9bba11954062a8ab08dd5
-> 1a7c28
-> >
-> 9%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C638756503156741
-> 597%7CUn
-> >
-> known%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAw
-> MCIsIlAiOi
-> >
-> JXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=3DNf
-> 5EkxiY
-> > rHPZQjCBa1XFeu8Y5T8cXpQwXHZ757YvGFw%3D&reserved=3D0
->=20
-> Thank you. I'd include this in the commit message, but my comment was
-> about the replacement of `additionalProperties` by `unevaluatedProperties=
-`.
-As per DT documentation, if we include other schemas, we must use "unevalua=
-tedProperties:false" instead of "additionalProperties:false"
+>On February 18, 2025 10:46:29 AM PST, Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>>On Tue, Feb 18, 2025 at 5:08=E2=80=AFPM Christoph Hellwig <hch@infradead.=
+org>
+wrote:
+>>>
+>>> I don't think having a web page in any form is useful.  If you want
+it
+>>> to be valid it has to be in the kernel tree and widely agreed on.
+>>
+>>Please let me reply with what I said a couple days ago in another
+thread:
+>>
+>>    Very happy to do so if others are happy with it.
+>>
+>>    I published it in the website because it is not a document the
+overall
+>>    kernel community signed on so far. Again, we do not have that
+>>    authority as far as I understand.
+>>
+>>    The idea was to clarify the main points, and gather consensus.
+The
+>>    FOSDEM 2025 keynote quotes were also intended in a similar way:
+>>
+>>      =20
+https://fosdem.org/2025/events/attachments/fosdem-2025-6507-rust-for-linux/=
+slides/236835/2025-02-0_iwSaMYM.pdf
+>>
+>>https://lore.kernel.org/rust-for-linux/CANiq72mFKNWfGmc5J_9apQaJMgRm6M7tv=
+VFG8xK+ZjJY+6d6Vg@mail.gmail.com/
+>>
+>>> It also states factually incorrect information.  E.g.
+>>>
+>>> "Some subsystems may decide they do not want to have Rust code for
+the
+>>> time being, typically for bandwidth reasons. This is fine and
+expected."
+>>>
+>>> while Linus in private said that he absolutely is going to merge
+Rust
+>>> code over a maintainers objection.  (He did so in private in case
+you
+>>> are looking for a reference).
+>>
+>>The document does not claim Linus cannot override maintainers
+anymore.
+>>That can happen for anything, as you very well know. But I think
+>>everyone agrees that it shouldn't come to that -- at least I hope so.
+>>
+>>The document just says that subsystems are asked about it, and decide
+>>whether they want to handle Rust code or not.
+>>
+>>For some maintainers, that is the end of the discussion -- and a few
+>>subsystems have indeed rejected getting involved with Rust so far.
+>>
+>>For others, like your case, flexibility is needed, because otherwise
+>>the entire thing is blocked.
+>>
+>>You were in the meeting that the document mentions in the next
+>>paragraph, so I am not sure why you bring this point up again. I know
+>>you have raised your concerns about Rust before; and, as we talked in
+>>private, I understand your reasoning, and I agree with part of it.
+But
+>>I still do not understand what you expect us to do -- we still think
+>>that, today, Rust is worth the tradeoffs for Linux.
+>>
+>>If the only option you are offering is dropping Rust completely, that
+>>is fine and something that a reasonable person could argue, but it is
+>>not on our plate to decide.
+>>
+>>What we hope is that you would accept someone else to take the bulk
+of
+>>the work from you, so that you don't have to "deal" with Rust, even
+if
+>>that means breaking the Rust side from time to time because you don't
+>>have time etc. Or perhaps someone to get you up to speed with Rust --
+>>in your case, I suspect it wouldn't take long.
+>>
+>>If there is anything that can be done, please tell us.
+>>
+>>> So as of now, as a Linux developer or maintainer you must deal with
+>>> Rust if you want to or not.
+>>
+>>It only affects those that maintain APIs that are needed by a Rust
+>>user, not every single developer.
+>>
+>>For the time being, it is a small subset of the hundreds of
+>>maintainers Linux has.
+>>
+>>Of course, it affects more those maintainers that maintain key
+>>infrastructure or APIs. Others that already helped us can perhaps can
+>>tell you their experience and how much the workload has been.
+>>
+>>And, of course, over time, if Rust keeps growing, then it means more
+>>and more developers and maintainers will be affected. It is what it
+>>is...
+>>
+>>> Where Rust code doesn't just mean Rust code [1] - the bindings look
+>>> nothing like idiomatic Rust code, they are very different kind of
+beast
+>>
+>>I mean, hopefully it is idiomatic unsafe Rust for FFI! :)
+>>
+>>Anyway, yes, we have always said the safe abstractions are the
+hardest
+>>part of this whole effort, and they are indeed a different kind of
+>>beast than "normal safe Rust". That is partly why we want to have
+more
+>>Rust experts around.
+>>
+>>But that is the point of that "beast": we are encoding in the type
+>>system a lot of things that are not there in C, so that then we can
+>>write safe Rust code in every user, e.g. drivers. So you should be
+>>able to write something way closer to userspace, safe, idiomatic Rust
+>>in the users than what you see in the abstractions.
+>>
+>>> So we'll have these bindings creep everywhere like a cancer and are
+>>> very quickly moving from a software project that allows for and
+strives
+>>> for global changes that improve the overall project to increasing
+>>> compartmentalization [2].  This turns Linux into a project written
+in
+>>> multiple languages with no clear guidelines what language is to be
+used
+>>> for where [3].  Even outside the bindings a lot of code isn't going
+to
+>>> be very idiomatic Rust due to kernel data structures that intrusive
+and
+>>> self referencing data structures like the ubiquitous linked lists.
+>>> Aren't we doing a disservice both to those trying to bring the
+existing
+>>> codebase into a better safer space and people doing systems
+programming
+>>> in Rust?
+>>
+>>We strive for idiomatic Rust for callers/users -- for instance, see
+>>the examples in our `RBTree` documentation:
+>>
+>>    https://rust.docs.kernel.org/kernel/rbtree/struct.RBTree.html
+>>
+>>> I'd like to understand what the goal of this Rust "experiment" is:
+If
+>>> we want to fix existing issues with memory safety we need to do
+that for
+>>> existing code and find ways to retrofit it.  A lot of work went
+into that
+>>> recently and we need much more.  But that also shows how core
+maintainers
+>>> are put off by trivial things like checking for integer overflows
+or
+>>> compiler enforced synchronization (as in the clang thread
+sanitizer).
+>>
+>>As I replied to you privately in the other thread, I agree we need to
+>>keep improving all the C code we have, and I support all those kinds
+>>of efforts (including the overflow checks).
+>>
+>>But even if we do all that, the gap with Rust would still be big.
+>>
+>>And, yes, if C (or at least GCC/Clang) gives us something close to
+>>Rust, great (I have supported doing something like that within the C
+>>committee for as long as I started Rust for Linux).
+>>
+>>But even if that happened, we would still need to rework our existing
+>>code, convince everyone that all this extra stuff is worth it, have
+>>them learn it, and so on. Sounds familiar... And we wouldn't get the
+>>other advantages of Rust.
+>>
+>>> How are we're going to bridge the gap between a part of the kernel
+that
+>>> is not even accepting relatively easy rules for improving safety vs
+>>> another one that enforces even strong rules.
+>>
+>>Well, that was part of the goal of the "experiment": can we actually
+>>enforce this sort of thing? Is it useful? etc.
+>>
+>>And, so far, it looks we can do it, and it is definitely useful, from
+>>the past experiences of those using the Rust support.
+>>
+>>> So I don't think this policy document is very useful.  Right now
+the
+>>> rules is Linus can force you whatever he wants (it's his project
+>>> obviously) and I think he needs to spell that out including the
+>>> expectations for contributors very clearly.
+>>
+>>I can support that.
+>>
+>>> For myself I can and do deal with Rust itself fine, I'd love
+bringing
+>>> the kernel into a more memory safe world, but dealing with an
+uncontrolled
+>>> multi-language codebase is a pretty sure way to get me to spend my
+>>> spare time on something else.  I've heard a few other folks mumble
+>>> something similar, but not everyone is quite as outspoken.
+>>
+>>I appreciate that you tell us all this in a frank way.
+>>
+>>But it is also true that there are kernel maintainers saying publicly
+>>that they want to proceed with this. Even someone with 20 years of
+>>experience saying "I don't ever want to go back to C based
+development
+>>again". Please see the slides above for the quotes.
+>>
+>>We also have a bunch of groups and companies waiting to use Rust.
+>>
+>>Cheers,
+>>Miguel
 
-https://docs.kernel.org/devicetree/bindings/writing-bindings.html
+>I have a few issues with Rust in the kernel:=20
+>1. It seems to be held to a *completely* different and much lower
+standard than the C code as far as stability. For C code we typically
+require that it can compile with a 10-year-old version of gcc, but from
+what I have seen there have been cases where Rust level code required
+not the latest bleeding edge compiler, not even a release version.
+>2. Does Rust even support all the targets for Linux?=20
+>3. I still feel that we should consider whether it would make sense to
+compile the *entire* kernel with a C++ compiler. I know there is a huge
+amount of hatred against C++, and I agree with a lot of it =E2=80=93 *but* =
+I
+feel that the last few C++ releases (C++14 at a minimum to be specific,
+with C++17 a strong want) actually resolved what I personally consider
+to have been the worst problems.
+>As far as I understand, Rust-style memory safety is being worked on
+for C++; I don't know if that will require changes to the core language
+or if it is implementable in library code.=20
+>David Howells did a patch set in 2018 (I believe) to clean up the C
+code in the kernel so it could be compiled with either C or C++; the
+patchset wasn't particularly big and mostly mechanical in nature,
+something that would be impossible with Rust. Even without moving away
+from the common subset of C and C++ we would immediately gain things
+like type safe linkage.=20
+>Once again, let me emphasize that I do *not* suggest that the kernel
+code should use STL, RTTI, virtual functions, closures, or C++
+exceptions. However, there are a *lot* of things that we do with really
+ugly macro code and GNU C extensions today that would be much cleaner =E2=
+=80=93
+and safer =E2=80=93 to implement as templates. I know ... I wrote a lot of =
+it
+:)
+>One particular thing that we could do with C++ would be to enforce
+user pointer safety.
 
-With "additionalProperties:false", make dt_binding_check fails as it is una=
-ble to find the 'local-bd-address' property.
-
->=20
-> >>>
-> >>>    examples:
-> >>>      - |
-> >>> @@ -54,5 +57,6 @@ examples:
-> >>>                fw-init-baudrate =3D <3000000>;
-> >>>                firmware-name =3D "uartuart8987_bt_v0.bin";
-> >>>                device-wakeup-gpios =3D <&gpio 11 GPIO_ACTIVE_HIGH>;
-> >>> +            local-bd-address =3D [66 55 44 33 22 11];
-> >>>            };
-> >>>        };
->=20
-
-Thanks,
-Neeraj
+why there is can't simplify kernel development by c++ without use std
+and others overhead features. C++ have ideal C binding, why not
 
