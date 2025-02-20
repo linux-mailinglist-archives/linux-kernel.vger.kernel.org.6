@@ -1,127 +1,165 @@
-Return-Path: <linux-kernel+bounces-523955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87AF9A3DD55
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:51:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B480A3DD58
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:52:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63A11174F8E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:51:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F085F1744E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:52:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A6E71CB332;
-	Thu, 20 Feb 2025 14:51:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 567B91CEAC3;
+	Thu, 20 Feb 2025 14:52:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="AwcfAU70"
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="CqyIWVv1"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C957E18A6CF
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 14:51:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAFE518A6CF
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 14:52:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740063097; cv=none; b=u2K1t7NHY4gZCPJZF+uNPx2Yib8/lzLLE+JnBdyIIyKXvMGfStBC9rpxWFcVbgtpqXfJ+I5Zl3X0i1XEosmfKwZD4Wv1yRFMamWwa/fA4JZC/7vYlyto94Moz5KYVvOYluW7zYvy3EUUbwQHaJ3n/RT8eeWyoPsqUp/AorcQRF4=
+	t=1740063166; cv=none; b=PLNm6HIUTvwfXrrWh3xZek649bv2gA768hyAiAkYhTHcegYMiU9h0zBqb5g1DZ9AtkjTDzHJgykWRj2n+72mZKIeHRJfOWzdrEoSVprKQ8Xwf6yyWVXRu1BGV/1m7IgYGsCiXtmiwh9razVAAwe4i691nG9K8PCwuqLQc01s/d4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740063097; c=relaxed/simple;
-	bh=3G1aWoHZCBKxjsr/eEd6Lg2OmBOk8NsGZmoz2Ik3DU4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=GZUxgndEdi95nSzRLvuPXPalZN+C1IBfN7Jod422bULGBQx3FMOX+OM7bSkA6HfC7Yd7UgmIhO2pvw6leF87ZD6DQrCdlKHnnCzXSQPyPH7XZuPPgA+vSre/AoQ/0lHsXEduhfZZAZKxgvur5HWeLygWeCh9oJTNg9Mb45KLjns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=AwcfAU70; arc=none smtp.client-ip=209.85.166.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-855a7e3be0eso27160839f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 06:51:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1740063093; x=1740667893; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8x+B4TU1R/TaOWmXY1vZ9LdmepwMb1xawtC/WEbMOlI=;
-        b=AwcfAU70c0WSRfH7dWmFWAoSIjWPRoAHifzuO6EiGhcxD23BejWxn/LlNMElihnmyq
-         9hsWnf2w7Z9/uNWSSX8nGzszWXvC8Fi5alXJHIgFRVNm2A/LL/43J/XlrkuhHZNqp/tm
-         xadZpi426RrV/FLJ4WEYwblAyj7SpUKGNggyLtV4rM0s8zx5iVY9a/TWEvWWr7Ur9h4i
-         51PxLqGcUSGc1V+ov+Dp0s6GqybcPRAp+WcvRtp4miAqb2SdOxkMZHbRQW8KdaBecIw5
-         T3fDa9am20FPNvTwxltLbdmHC38Gi053My0a2pUD1xUihUIgrqE7/6DS0g4t/gG9N//T
-         In9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740063093; x=1740667893;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8x+B4TU1R/TaOWmXY1vZ9LdmepwMb1xawtC/WEbMOlI=;
-        b=nr30MBXHA5oOCcmsMLNTMILJeKlwFrL2QKbNuWCkevbujoElFtrZ2ZMEM5Y+GLJpfR
-         mZnSZBix5TX29qOa/Ie7jBOkr9bwlQFFHdo8stcvxWQWPor39qfCJ9l6HBFzd21DYk3f
-         WXfyaq+eU4r07JWHvnLAluiIERxjVvUagIpDXQfsTWhUr5R+5QBddSQLTrvVLniQo8UO
-         GJvndM6uqNUKapSx1DbZds7m3wLvQbZl4umobQdRAArnpZRtKA9lPHIjpT66s1zNL21g
-         BF07r+dYn4GhHcDrkBaM2TsWdUyKK7bP4WpbuH5CQwmbXGM7xRIDaM2Bl9Dang+eNfcH
-         vxQw==
-X-Forwarded-Encrypted: i=1; AJvYcCWCp9IuOLsZf9ZUrK49iBXLufElYqySsQ91vPI6PTjN2loD8Qgwrl8nJs/j9C4E8bCg/YHxpO8Twt3RjZU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydNLAhb8Amw/MNDObW86Yv0YvJFGLPm74dl3ZoFTaN87sbpTTy
-	X5eWnn2o1+VZYxRB/d1XfslVjjTKIvjD2fxSZ0BzrKbGDX0JpKJOzL/dVx3IbCAOJu7u3S8kRg1
-	6
-X-Gm-Gg: ASbGncvTDgID6KX4FPG0u2fDWBUnjkBfybtdrF15bO7W6nfAtVsOE5Qa+8NgErWSnkw
-	KhuQJuQEhmfEpxdugwYIphp3reiSBoTSEgp4+wpOln6G03SY3uW2UJM4GJ3Cx9b25BxwRYQVU6D
-	juZsZzf0XKaMCEFpHIt0k/YsxRZESFqqTvkC96h+xZNTlplaR7NFVhGxVMPL6ZxJ0/pGLVUbeBv
-	90FFjGxTvxTNKbRPF3WJBY3dL+j4QeCb0LfeVjiIZspdjeJ8fBJIqEJp5+m5sVKKE+IGG2uldgH
-	DKMk7Hg=
-X-Google-Smtp-Source: AGHT+IEYYi1lQn/B+HL15BpZFo+i19+r8C+N661N0XWhxq/TtpuIkLpqZt1StiRfiPzIhrJPwPPndw==
-X-Received: by 2002:a05:6e02:1b09:b0:3cf:c7d3:e4b with SMTP id e9e14a558f8ab-3d280919df3mr261797085ab.21.1740063093591;
-        Thu, 20 Feb 2025 06:51:33 -0800 (PST)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d18f9a89a9sm33784445ab.10.2025.02.20.06.51.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 06:51:32 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Cc: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>, 
- io-uring Mailing List <io-uring@vger.kernel.org>, 
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
- GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>
-In-Reply-To: <20250220143422.3597245-1-ammarfaizi2@gnuweeb.org>
-References: <20250220143422.3597245-1-ammarfaizi2@gnuweeb.org>
-Subject: Re: [PATCH liburing v1 0/3] Fix Compilation Error on Android and
- Some Cleanup
-Message-Id: <174006309264.1672035.6610273505554694557.b4-ty@kernel.dk>
-Date: Thu, 20 Feb 2025 07:51:32 -0700
+	s=arc-20240116; t=1740063166; c=relaxed/simple;
+	bh=D5angpQQJR0qz9qpvNYAMzDWygBtBc/QA/VqOVkLSxQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D5JEOKLTQur21Fx9v7P255QIVriDb/sF60CBmUdHdDgQZwtper/fzIhYjnx4EMRy9PwU99JovqbYjFSoELYSwqWPfpv8HRO57PBCj10Dd6qrWyupmqieeFja58Dr9PGyzbOmL9Lqv+07rgE/nu7cSGl76s7YZW5JdKGN2ZOI/WU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=CqyIWVv1; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=hRdR2YgEdCrWMJfthrHGyyzG+URNUoUTUwHsNvS87ng=; b=CqyIWVv1etTM/2DBBKxYMWbxQw
+	zgMjJqzNIv+qGacw1U8H27g0r2iRkFONppgeetYY5hgfZ9Qk1C69PbkL8orG1Z0yXlAGZNryybD9R
+	vQegoZ8SCE7DtT4WC/T2jA4YrA/ga2lADolUuozmrUos55XmDFerhKPvDC6sBjobAr/vonIEcBWu6
+	owQzQF4UsgCyZ1jzcoD1PqA3oaedbTHp5J0FBgRxsqiIVy7hqi2G5oQRcuGYRTHeowFOrfAZsTybE
+	j6fnv/g1WAx3w53+6uiP9s8gAne1d4NqoN9RkX0WI8l7nPIt6QeduoJfUcV35rtuwbw/E7Z+VIjDt
+	NnSoXJxw==;
+Received: from 179-125-91-157-dinamico.pombonet.net.br ([179.125.91.157] helo=quatroqueijos)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1tl7uh-00FPSk-SG; Thu, 20 Feb 2025 15:52:38 +0100
+Date: Thu, 20 Feb 2025 11:52:31 -0300
+From: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Dirk VanDerMerwe <dirk.vandermerwe@sophos.com>,
+	Vimal Agrawal <vimal.agrawal@sophos.com>, kernel-dev@igalia.com
+Subject: Re: [PATCH 3/4] char: misc: restrict the dynamic range to exclude
+ reserved minors
+Message-ID: <Z7dBr2WJGH-XDL6d@quatroqueijos>
+References: <20250123123249.4081674-1-cascardo@igalia.com>
+ <20250123123249.4081674-4-cascardo@igalia.com>
+ <2025022007-rudder-refocus-5d45@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-14bd6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2025022007-rudder-refocus-5d45@gregkh>
 
-
-On Thu, 20 Feb 2025 21:34:19 +0700, Ammar Faizi wrote:
-> Another day in the thrilling world of cross-platform compatibility...
+On Thu, Feb 20, 2025 at 03:31:11PM +0100, Greg Kroah-Hartman wrote:
+> On Thu, Jan 23, 2025 at 09:32:48AM -0300, Thadeu Lima de Souza Cascardo wrote:
+> > When this was first reported [1], the possibility of having sufficient
+> > number of dynamic misc devices was theoretical.
+> > 
+> > What we know from commit ab760791c0cf ("char: misc: Increase the maximum
+> > number of dynamic misc devices to 1048448"), is that the miscdevice
+> > interface has been used for allocating more than the single-shot devices it
+> > was designed for.
 > 
-> Alviro discovered that some Android versions are missing `aligned_alloc()`
-> in `<stdlib.h>`, leading to a compilation error on Termux 0.118.0:
+> Do we have any in-kernel drivers that abuse it this way?  If so, let's
+> fix them up.
 > 
-> ```
-> cmd-discard.c:383:11: warning: call to undeclared library function \
-> 'aligned_alloc' with type 'void *(unsigned long, unsigned long)'; ISO \
-> C99 and later do not support implicit function declarations \
-> [-Wimplicit-function-declaration]
+
+From the discussion 15 years ago, though found only by code inspection, dlm
+was theoretically capable of creating such multiple devices. But, in
+practice, its user space never did create more than one. 
+
+But from commit ab760791c0cf ("char: misc: Increase the maximum number of
+dynamic misc devices to 1048448") description, we know at least
+coresight_tmc is abusing it like that.
+
+I can work on fixing coresight_tmc and any other abusers, but they will
+require their own class (though I thought about making it possible to
+create compatibility symlinks under /sys/class/misc/). So, this should take
+a bit longer. In the meantime, I think we shold apply something like this
+patch for v6.15 and even consider it for stable.
+
+> > On such systems, it is certain that the dynamic allocation will allocate
+> > certain reserved minor numbers, leading to failures when a later driver
+> > tries to claim its reserved number.
+> > 
+> > Fixing this is a simple matter of defining the IDA range to allocate from
+> > to exclude minors up to and including 15.
+> > 
+> > [1] https://lore.kernel.org/all/1257813017-28598-3-git-send-email-cascardo@holoscopio.com/
+> > 
+> > Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+> > ---
+> >  drivers/char/misc.c        | 4 +++-
+> >  include/linux/miscdevice.h | 1 +
+> >  2 files changed, 4 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/char/misc.c b/drivers/char/misc.c
+> > index 2cf595d2e10b..7a768775e558 100644
+> > --- a/drivers/char/misc.c
+> > +++ b/drivers/char/misc.c
+> > @@ -68,8 +68,10 @@ static int misc_minor_alloc(int minor)
+> >  	int ret = 0;
+> >  
+> >  	if (minor == MISC_DYNAMIC_MINOR) {
+> > +		int max = DYNAMIC_MINORS - 1 - MISC_STATIC_MAX_MINOR - 1;
+> >  		/* allocate free id */
+> > -		ret = ida_alloc_max(&misc_minors_ida, DYNAMIC_MINORS - 1, GFP_KERNEL);
+> > +		/* Minors from 0 to 15 are reserved. */
+> > +		ret = ida_alloc_max(&misc_minors_ida, max, GFP_KERNEL);
+> >  		if (ret >= 0) {
+> >  			ret = DYNAMIC_MINORS - ret - 1;
+> >  		} else {
+> > diff --git a/include/linux/miscdevice.h b/include/linux/miscdevice.h
+> > index 69e110c2b86a..911a294d17b5 100644
+> > --- a/include/linux/miscdevice.h
+> > +++ b/include/linux/miscdevice.h
+> > @@ -21,6 +21,7 @@
+> >  #define APOLLO_MOUSE_MINOR	7	/* unused */
+> >  #define PC110PAD_MINOR		9	/* unused */
+> >  /*#define ADB_MOUSE_MINOR	10	FIXME OBSOLETE */
+> > +#define MISC_STATIC_MAX_MINOR	15	/* Top of first reserved range */
 > 
-> [...]
+> I don't understand, why is 15 the magic number here?  All of those
+> "unused" values can just be removed, all systems should be using dynamic
+> /dev/ now for many many years, and even if they aren't, these minors
+> aren't being used by anyone else as the in-kernel users are long gone.
+> 
+> So why are we reserving this range if no one needs it?
 
-Applied, thanks!
+Because those were reserved historically. They are still documented under
+Documentation/admin-guide/devices.txt. What do we gain by not reserving
+those? Since we moved past 255 for dynamic allocation, we are not going to
+miss those 15 minors.
 
-[1/3] liburing.h: Remove redundant double negation
-      commit: 1d11475301931478bb35f2573e1741f5d9088132
-[2/3] liburing.h: Explain the history of `io_uring_get_sqe()`
-      commit: d1c100351ffb3483f5d3fc661b2d41d48062bec1
-[3/3] Fix missing `aligned_alloc()` on some Android devices
-      commit: 5c788d514b9ed6d1a3624150de8aa6db403c1c65
+One alternative is that we just disregard the 0-255 range entirely for
+dynamic allocation, which should also simplify the code a lot. If that
+would be preferable, I can work on that and submit it soon.
 
-Best regards,
--- 
-Jens Axboe
+Thanks.
+Cascardo.
 
-
-
+> 
+> confused,
+> 
+> greg k-h
+> 
 
