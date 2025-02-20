@@ -1,269 +1,182 @@
-Return-Path: <linux-kernel+bounces-524359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06E5DA3E21D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:19:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96AA6A3E206
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:16:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C39ED16D6C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:16:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEC9B7A072F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:15:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 584E02139D2;
-	Thu, 20 Feb 2025 17:13:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="edQjQSr/"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85ECB215055;
+	Thu, 20 Feb 2025 17:14:26 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE5A92135C0
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 17:12:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 600C21B0F33
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 17:14:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740071580; cv=none; b=s/Q+vdsluEWjFIS94BEx+Mgh2KBU4n8ARzkLPPYUIQ6NNdckxTzJZGAc/j8ePgiGiS2U/DZtZnI4kVkw+tcCG4nMm9j/oSj2fIW+JTn0RTGb7neRiZdaExcZmPFxrbKBmE91DzwFpLOsL4Yp+wlowTmD9uY3xQKMn386SN9ukDE=
+	t=1740071666; cv=none; b=fQZAHVL5zm8wh+mIFsZb6nPy+NI02zwLQFSvBtWJirLJIY2ooSdNLBsyIy6FizdVBxIey0UiygUtB+/BLjrepK4OwXFAJH2sFuX8F0NwB8Z4dEg3c6C/yhEdyKdcqRTdmMR/7oBQpw8ZT74xcQ2jn1aa6lqDe4u9WU5yBdAaSus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740071580; c=relaxed/simple;
-	bh=VjEUim42RSKuscI0z8MEmZMo+05s6Eo2c7LkAH8dkhA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EmcMETb16R54zlkt3JysGF6kdWXv3LIaEPEylG6R5upymVAJKx4kvuAilXqoENptBS9s7Sxzg1jedX6mn8tUkLVzu0goOO3Xanoj4LT0PsBHxOLpKs7lisP60p4DWhncEH6O5RVBoKHVddCiSIVMiIgEKpLC5ku7olz+uF6eJpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=edQjQSr/; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-219f6ca9a81so165545ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:12:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740071578; x=1740676378; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3KlGSfTFtzcO4Aa2rZfsye6/UvfCZdlGmKuoWZ/5IZs=;
-        b=edQjQSr/2QuSetj8LFn/jiq29CEC+88jyfaxrnzgmDUGtVZlFkhwlxomOi06CjtR7l
-         CupAhBkyqmIaWiJkLQ633knyPX9Xsyda7+UJsq+QslQm8GX0SwCcGx8/QRKztmUVG9Pq
-         9Pstest3rvki+J7MU2Cfr6+J+0n/FCIR4jlGVB1Q1W8BWm2DSj7zvKajDXOCFLj3QtR9
-         tvACjDftUF1Rd0RJ9aeyisj9tFgurTfZJYbsyp6ClJLIVR5+kIAQE8RYihMxYpJxNJuX
-         xkgJeKZgymhS8LLxH82PDr/YjrkiVlUOPNkJs0JiW8jZ3V3UW5N0ohEbcKu4N2KOwT+R
-         maEg==
+	s=arc-20240116; t=1740071666; c=relaxed/simple;
+	bh=igE47N6rb90fbi7jP/FYjggnIIIz98KFKnJXLr5mDJg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=g5SYtrhs4qghv19oVqP9h/U5ZbhWzviGbn+7UwP+V99Ob9YfTDx79VG8j2ZZtVmlWZE5j5G4N0IuLVVTt+4YltwOhTP9AUgSGHb3PJJSeLy55GXVLgI7r5n5HAh00T8+G3Z4GX7/t2g/Q94nTpKOTA+RUh2+heEDbdsl4kXN/fA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3d2b6d933baso25733215ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:14:24 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740071578; x=1740676378;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3KlGSfTFtzcO4Aa2rZfsye6/UvfCZdlGmKuoWZ/5IZs=;
-        b=ksKTcmFpORZqVpgDCuRdYIf3BztLBDgBVCZkKtRxTw7XgKiDoB5Dn/aKvNJDeuKszn
-         I4TCkVyw0Ws+g1JjE5f0cE/FLo0e9R5dAv/e1kPsrv33KY1YpJMJg0AvkT3aI7aTIfy3
-         2SYGZqZhpcVB/3oCJdepNqt7QNKlSne42aYYZeOJT6L3ceDWi6vsxTZpRK1mxdsahPoW
-         HKzT7GX8EST9NRlzYT/VdfcCipARD+/84I4UaOwUixb091/jP1rULfqVQtUdzwgh+nE2
-         037OvDcqCsqqgXtcMGcTUS2PltUQvhGZcZb/xncifygrmXTK/ZjMvaR/bKW6KbdV/zB1
-         UoXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV8h6/QtSg8HkV260cLNYkEvrlkEBInMGtvhubAXXUbbjJWa03Z5pLlfqzx4fOJSYLQxq7kAIVp7SH8mg0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwN4BKv+kOyMGq6+SI/vIYTpjEwV/DQmnGH7xCpJbOSwKZVmQVo
-	9gqi57Zs1dUJYzk8JBoWIXhx7rEF0EmREqnvBcorNR4R3xgMhQAdKyfKt93BVyFtSJ1Htij9kTx
-	CGlAx5n7s8FaE8WUsQSCymhVQ4m1Od1kzRKqk
-X-Gm-Gg: ASbGncvLvuw4nBCRigaMMOZSShuXCjiYK7wnXf0E9hHMXjc1NtWzUJIx6VFvyQzwsDS
-	8YCAD8nCDLhUG5CbJt+2Ut/hwD//Lcyu1XpOQ42hwtlpt92ejb+NCI/Ohp/1m8VbTmQR6VBLn1j
-	f+J5O+PlZE4/YsJ9ppv6nNP/EV
-X-Google-Smtp-Source: AGHT+IEbnyT8CyvE4wQCUwedgMi5/VDT/ZLkqjRx5/WhkkqXWj9ClL8T5083//YuVsgDBobfYp7KJ6NE8jO2P0CMQUE=
-X-Received: by 2002:a17:902:e54b:b0:216:6dab:803b with SMTP id
- d9443c01a7336-2218ddbe5admr3333875ad.18.1740071577879; Thu, 20 Feb 2025
- 09:12:57 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740071663; x=1740676463;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uxzcrVz1DPpv4NyrxYkFgPqltPj5eMB8f6b7VADP8sk=;
+        b=ilKQq4pZuOOq0HYE8FluBQssym8t8SwOLN7Fo0PnqFVBONn6+4DzSviuXe0qdvoiAw
+         7T72aN44ATyoZf9+iN0CNK4eU+cqM+TTSeUbS1fhPMU9kqY+VhreopTZN32zZUFYHuxv
+         nDNfjXxYxsWI0CpBTc67+zb6bo2kACbgvYhYJrRRCL15MeFX7l/YtUJnLwGIVPud5oI3
+         1szjdyktOCIcssY4PM1RUEi6qAiSt/9/Zqo7QW61PoRp4tHKe/W1gy68to0fd/1BKbt3
+         ksUIFnx7NmqN2GCNmvonPtMAsAAJQDAX/qSe6k5FOmDqhL5Am52mT6CTUDKmx3k3HMgo
+         WvXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWgUsKhXt/5kC+aOIPh5WI2MVuG18xAnUCliLtK9ORP5A6lN0Wo1/MIYgTSk+Aer7OlPODbP6T/QPBIHfU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywng47sP14lLweIWhY66BwWpBITniGyDGFeOl6csABdRNOH7upi
+	skUeSswypP9K36CKF44CsX1h6U2gnfSloGJtrDAyucKpSj8spGg66OVemRa9ORHkJ6+J1yJklEG
+	L5XCZIlsP2K/36t+cb2PxtMPw93Dpctga6ud9hpSUTpjgRTwptuZlCCo=
+X-Google-Smtp-Source: AGHT+IHdXIvN5gk3IYimZXexLjyS93xdfjq7LCu1lRf+/DKhODBCEWR9bWtFLZG+xnGrQefsB4cvF1v1Idcsx67jq+mxzA27VOnR
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Z60NFEAf2C8cL8Xh@x1> <Z60Ndm8VVI4Ao31U@x1> <CAP-5=fXw09MM5XyozJMM3FjMANJei1aNVmBghSEQFiCKAtJmXw@mail.gmail.com>
- <CAP-5=fUqcykMdApHVweETg9bp2EVPJhJOj_PR8cByOOA6OyQGw@mail.gmail.com>
- <Z6_CL0RpUUvw0lR7@x1> <Z7TvZGjVix2asYWI@x1> <Z7T1LVSLo8EEMmkM@x1>
- <Z7UDlZKnqXRqNqQa@google.com> <Z7XsltyqUWrdKma0@x1> <Z7XvEFEZtCRZKG7Y@x1> <Z7ZIqpwffQbibwL2@google.com>
-In-Reply-To: <Z7ZIqpwffQbibwL2@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Thu, 20 Feb 2025 09:12:46 -0800
-X-Gm-Features: AWEUYZlHGhRU4sD-1g0LIaOSDwZHHqpZNdXEVjobFcls9gKqATlprv-r84r9ah4
-Message-ID: <CAP-5=fWZXPjD3Ok5XmMwwaYt+9mL+V8t8fNSUdf-F5PPiEAvrg@mail.gmail.com>
-Subject: Re: [PATCH] perf report: Add 'tgid' sort key
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org, 
-	Stephane Eranian <eranian@google.com>
+X-Received: by 2002:a05:6e02:1849:b0:3ce:8ed9:ca94 with SMTP id
+ e9e14a558f8ab-3d2c25deed3mr34038625ab.14.1740071663454; Thu, 20 Feb 2025
+ 09:14:23 -0800 (PST)
+Date: Thu, 20 Feb 2025 09:14:23 -0800
+In-Reply-To: <67b74f01.050a0220.14d86d.02d8.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67b762ef.050a0220.14d86d.02f0.GAE@google.com>
+Subject: Re: [syzbot] [net?] KMSAN: uninit-value in __ipv6_addr_type
+From: syzbot <syzbot+93ab4a777bafb9d9f960@syzkaller.appspotmail.com>
+To: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
+	eric.dumazet@gmail.com, horms@kernel.org, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, maheshb@google.com, netdev@vger.kernel.org, 
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 19, 2025 at 1:10=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
-wrote:
->
-> On Wed, Feb 19, 2025 at 03:47:44PM +0100, Arnaldo Carvalho de Melo wrote:
-> > On Wed, Feb 19, 2025 at 03:37:10PM +0100, Arnaldo Carvalho de Melo wrot=
-e:
-> > > On Tue, Feb 18, 2025 at 02:03:01PM -0800, Namhyung Kim wrote:
-> > > > On Tue, Feb 18, 2025 at 10:01:33PM +0100, Arnaldo Carvalho de Melo =
-wrote:
-> > > > > On Tue, Feb 18, 2025 at 09:36:52PM +0100, Arnaldo Carvalho de Mel=
-o wrote:
-> > > > > > So the call to maps_fixup_end() will set maps->end_broken to fa=
-lse,
-> > > > > > since it fixed up the map ends, etc, but then we insert more ma=
-ps with
-> > > > > > broken ends:
-> > > > >
-> > > > > > #6  0x0000000000633d52 in check_invariants (maps=3D0xf967c0) at=
- util/maps.c:95
-> > > > > > 95                                            assert(map__end(p=
-rev) <=3D map__end(map));
-> > > > > > (gdb) p prev->dso->name
-> > > > > > $1 =3D 0xfc47ab "bpf_trampoline_6442522522"
-> > > > >
-> > > > > So the above map is created overlapping a previously existing map=
-:
-> > > > >
-> > > > > root@number:~# perf probe -l
-> > > > >   probe_perf:maps_fixup_end (on maps__fixup_end:1@util/maps.c in =
-/home/acme/bin/perf with maps)
-> > > > >   probe_perf:maps_insert (on maps__insert:1@util/maps.c in /home/=
-acme/bin/perf with maps name start end)
-> > > > > root@number:~#
-> > > > >
-> > > > > root@number:~# perf trace --lib -e probe_perf:maps* perf record s=
-leep
-> > > > > <SNIP>
-> > > > >    319.791 perf/1732173 probe_perf:maps_insert((634e5e) maps=3D0x=
-2d9715d0 name=3D"bpf_prog_6deef7357e7b4530_sd_fw_egress" start=3D0xffffffff=
-c0160788 end=3D0xffffffffc01607c8)
-> > > > >    319.810 perf/1732173 probe_perf:maps_insert((634e5e) maps=3D0x=
-2d9715d0 name=3D"bpf_prog_6deef7357e7b4530_sd_fw_ingress" start=3D0xfffffff=
-fc01647b8 end=3D0xffffffffc01647f8)
-> > > > >    319.822 perf/1732173 probe_perf:maps_insert((634e5e) maps=3D0x=
-2d9715d0 name=3D"bpf_prog_6deef7357e7b4530_sd_fw_egress" start=3D0xffffffff=
-c016482c end=3D0xffffffffc016486c)
-> > > > >    319.834 perf/1732173 probe_perf:maps_insert((634e5e) maps=3D0x=
-2d9715d0 name=3D"bpf_prog_6deef7357e7b4530_sd_fw_ingress" start=3D0xfffffff=
-fc01648ac end=3D0xffffffffc01648ec)
-> > > > >    319.845 perf/1732173 probe_perf:maps_insert((634e5e) maps=3D0x=
-2d9715d0 name=3D"bpf_prog_be31ae23198a0378_sd_devices" start=3D0xffffffffc0=
-186388 end=3D0xffffffffc01864b2)
-> > > > >    319.857 perf/1732173 probe_perf:maps_insert((634e5e) maps=3D0x=
-2d9715d0 name=3D"bpf_trampoline_6442522522" start=3D0xffffffffc0147640 end=
-=3D0xffffffffc0148640)
-> > > > > [ perf record: Captured and wrote 0.035 MB perf.data (7 samples) =
-]
-> > > > > perf: util/maps.c:95: check_invariants: Assertion `map__end(prev)=
- <=3D map__end(map)' failed.
-> > > > > root@number:~#
-> > > > >
-> > > > > So a PERF_RECORD_KSYMBOL processing will add a map for
-> > > > > "bpf_trampoline_6442522522" that has its start after before the
-> > > > > "bpf_prog_40ddf486530245f5_sd_devices" start, ok, but ends after
-> > > > > "bpf_prog_40ddf486530245f5_sd_devices", overlapping it.
-> > > > >
-> > > > > machine__process_ksymbol_register() does:
-> > > > >
-> > > > > 713                     map__set_start(map, event->ksymbol.addr);
-> > > > > 714                     map__set_end(map, map__start(map) + event=
-->ksymbol.len);
-> > > > > 715                     err =3D maps__insert(machine__kernel_maps=
-(machine), map);
-> > > > >
-> > > > > And:
-> > > > >
-> > > > > (gdb) p /x event->ksymbol.addr
-> > > > > $2 =3D 0xffffffffc0147a2c
-> > > > > (gdb) p event->ksymbol.len
-> > > > > $3 =3D 306
-> > > >
-> > > > Hmm.. so I think the situation is like below.
-> > > >
-> > > >                    (bpf_trampoline_6442522522)
-> > > >             +---------------------------------------+
-> > > >       |                                       |
-> > > >       |       +------------------------+      |
-> > > >       |       | (bpf_prog_40ddf486...) | <----+----  adding this
-> > > >       |       |                        |      |
-> > > >       |       |                        |      |
-> > > >       |   c0147a2c                            |
-> > > >       |                                       |
-> > > >         c0147640                                 c0148640
-> > > >
-> > > > And it failed to add bpf_prog_40ddf486... in check_invariants() bec=
-ause
-> > > > the end address is smaller than the previous map.
-> > >
-> > > No, it didn't fail to add, it managed to do it which left the kernel
-> > > maps in a broken state, with overlappings while it had a cleared
-> > > ends_broken, then, later, when the checks_invariant is finally called=
- at
-> > > perf record exit time:
-> >
-> > Nope, __maps__insert() should notice that the ends are broken and set
-> > it:
-> >
-> >         if (nr_maps =3D=3D 1) {
-> >                 /* If there's just 1 entry then maps are sorted. */
-> >                 maps__set_maps_by_address_sorted(maps, true);
-> >                 maps__set_maps_by_name_sorted(maps, maps_by_name !=3D N=
-ULL);
-> >         } else {
-> >                 /* Sorted if maps were already sorted and this map star=
-ts after the last one. */
-> >                 maps__set_maps_by_address_sorted(maps,
-> >                         maps__maps_by_address_sorted(maps) &&
-> >                         map__end(maps_by_address[nr_maps - 2]) <=3D map=
-__start(new));
-> >                 maps__set_maps_by_name_sorted(maps, false);
-> >         }
-> >         if (map__end(new) < map__start(new))
-> >                 RC_CHK_ACCESS(maps)->ends_broken =3D true;
-> >
-> >
-> > humm, RC_CHK_ACCESS(maps)->ends_broken should be set for the case we
-> > have and I think it isn't being... Then the bpf trampoline map that is
-> > the last entry to be added is before the last entry and thus
-> > maps_by_address_sorted is set to false, ends_broken continues false and
-> > at the end maps_by_address_sorted is set to true and the last
-> > check_invariants triggerrs the asserts...
->
-> Right, probably it needs to set the ends_broken when the end address of
-> the new map is smaller than the previous (but the start address is
-> bigger) and fixup the end address when it sorts the maps by address.
+syzbot has found a reproducer for the following issue on:
 
-Ugh, I get git blamed for ends_broken and I was wondering what the heck it =
-is:
-https://lore.kernel.org/all/20240210031746.4057262-2-irogers@google.com/
-My memory is that when the rb-tree was built the maps put in it could
-be broken and ends_broken was to capture we were in this state as the
-sorting would get broken, invariants be off, etc.. The rb-tree
-constructing code would then call maps__fixup_end. Having the caller
-call maps__fixup_end seems error prone, as does the whole
-"ends_broken" thing - remember I was in the code to fix memory leaks
-so modifying the maps API wasn't front of mind. I added ends_broken,
-the original rb-tree had no notion of it, because I was trying to get
-the invariants right for the testing I could do and ends_broken was
-the pragmatic thing to do for odd cases like kernel modules before
-maps__fixup_end is called.
+HEAD commit:    87a132e73910 Merge tag 'mm-hotfixes-stable-2025-02-19-17-4..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=109a5498580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8cf1217edc1cc7da
+dashboard link: https://syzkaller.appspot.com/bug?extid=93ab4a777bafb9d9f960
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=125b75b0580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14433ba4580000
 
-The maps API has evolved and we have a pretty robust, but possibly not
-fast, maps__fixup_overlap_and_insert:
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
-ee/tools/perf/util/maps.h?h=3Dperf-tools-next#n69
-I think ideally we'd make maps__insert uphold the invariants and not
-have ends_broken. I'm worried that making ends_broken more load
-bearing isn't the right thing to do, we may even be able to not have
-the variable for the "ifndef NDEBUG" case, which making it load
-bearing would completely defeat.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/21aef40bc697/disk-87a132e7.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/d449987c6c11/vmlinux-87a132e7.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/14c5f26d8765/bzImage-87a132e7.xz
 
-So I think the fix here should be to understand the maps construction
-code for the modules, try to work out why maps__fixup_end wasn't
-called, perhaps migrate the code to maps__fixup_overlap_and_insert or
-add a missed maps__fixup_end call.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+93ab4a777bafb9d9f960@syzkaller.appspotmail.com
 
-Given the blame I kind of feel responsible for this, but the real
-issue is adding the invariant checks has caught a latent bug that the
-rb-tree code would have just ignored and possibly been broken as a
-consequence. I lack bandwidth and a reproduction so thank you for
-digging into this.
+=====================================================
+BUG: KMSAN: uninit-value in __ipv6_addr_type+0xa2/0x490 net/ipv6/addrconf_core.c:47
+ __ipv6_addr_type+0xa2/0x490 net/ipv6/addrconf_core.c:47
+ ipv6_addr_type include/net/ipv6.h:555 [inline]
+ ip6_route_output_flags_noref net/ipv6/route.c:2616 [inline]
+ ip6_route_output_flags+0x51/0x720 net/ipv6/route.c:2651
+ ip6_route_output include/net/ip6_route.h:93 [inline]
+ ipvlan_route_v6_outbound+0x24e/0x520 drivers/net/ipvlan/ipvlan_core.c:476
+ ipvlan_process_v6_outbound drivers/net/ipvlan/ipvlan_core.c:491 [inline]
+ ipvlan_process_outbound drivers/net/ipvlan/ipvlan_core.c:541 [inline]
+ ipvlan_xmit_mode_l3 drivers/net/ipvlan/ipvlan_core.c:605 [inline]
+ ipvlan_queue_xmit+0xd72/0x1780 drivers/net/ipvlan/ipvlan_core.c:671
+ ipvlan_start_xmit+0x5b/0x210 drivers/net/ipvlan/ipvlan_main.c:223
+ __netdev_start_xmit include/linux/netdevice.h:5150 [inline]
+ netdev_start_xmit include/linux/netdevice.h:5159 [inline]
+ xmit_one net/core/dev.c:3735 [inline]
+ dev_hard_start_xmit+0x247/0xa20 net/core/dev.c:3751
+ __dev_queue_xmit+0x366a/0x57d0 net/core/dev.c:4584
+ dev_queue_xmit include/linux/netdevice.h:3311 [inline]
+ packet_xmit+0x9c/0x6c0 net/packet/af_packet.c:276
+ packet_snd net/packet/af_packet.c:3132 [inline]
+ packet_sendmsg+0x93e0/0xa7e0 net/packet/af_packet.c:3164
+ sock_sendmsg_nosec net/socket.c:718 [inline]
+ __sock_sendmsg+0x30f/0x380 net/socket.c:733
+ __sys_sendto+0x594/0x750 net/socket.c:2187
+ __do_sys_sendto net/socket.c:2194 [inline]
+ __se_sys_sendto net/socket.c:2190 [inline]
+ __x64_sys_sendto+0x125/0x1d0 net/socket.c:2190
+ x64_sys_call+0x346a/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:45
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Thanks,
-Ian
+Uninit was stored to memory at:
+ ipvlan_route_v6_outbound+0x18f/0x520 drivers/net/ipvlan/ipvlan_core.c:466
+ ipvlan_process_v6_outbound drivers/net/ipvlan/ipvlan_core.c:491 [inline]
+ ipvlan_process_outbound drivers/net/ipvlan/ipvlan_core.c:541 [inline]
+ ipvlan_xmit_mode_l3 drivers/net/ipvlan/ipvlan_core.c:605 [inline]
+ ipvlan_queue_xmit+0xd72/0x1780 drivers/net/ipvlan/ipvlan_core.c:671
+ ipvlan_start_xmit+0x5b/0x210 drivers/net/ipvlan/ipvlan_main.c:223
+ __netdev_start_xmit include/linux/netdevice.h:5150 [inline]
+ netdev_start_xmit include/linux/netdevice.h:5159 [inline]
+ xmit_one net/core/dev.c:3735 [inline]
+ dev_hard_start_xmit+0x247/0xa20 net/core/dev.c:3751
+ __dev_queue_xmit+0x366a/0x57d0 net/core/dev.c:4584
+ dev_queue_xmit include/linux/netdevice.h:3311 [inline]
+ packet_xmit+0x9c/0x6c0 net/packet/af_packet.c:276
+ packet_snd net/packet/af_packet.c:3132 [inline]
+ packet_sendmsg+0x93e0/0xa7e0 net/packet/af_packet.c:3164
+ sock_sendmsg_nosec net/socket.c:718 [inline]
+ __sock_sendmsg+0x30f/0x380 net/socket.c:733
+ __sys_sendto+0x594/0x750 net/socket.c:2187
+ __do_sys_sendto net/socket.c:2194 [inline]
+ __se_sys_sendto net/socket.c:2190 [inline]
+ __x64_sys_sendto+0x125/0x1d0 net/socket.c:2190
+ x64_sys_call+0x346a/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:45
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:4121 [inline]
+ slab_alloc_node mm/slub.c:4164 [inline]
+ kmem_cache_alloc_node_noprof+0x907/0xe00 mm/slub.c:4216
+ kmalloc_reserve+0x13d/0x4a0 net/core/skbuff.c:587
+ __alloc_skb+0x363/0x7b0 net/core/skbuff.c:678
+ alloc_skb include/linux/skbuff.h:1331 [inline]
+ alloc_skb_with_frags+0xc8/0xd00 net/core/skbuff.c:6612
+ sock_alloc_send_pskb+0xa81/0xbf0 net/core/sock.c:2897
+ packet_alloc_skb net/packet/af_packet.c:2981 [inline]
+ packet_snd net/packet/af_packet.c:3075 [inline]
+ packet_sendmsg+0x7722/0xa7e0 net/packet/af_packet.c:3164
+ sock_sendmsg_nosec net/socket.c:718 [inline]
+ __sock_sendmsg+0x30f/0x380 net/socket.c:733
+ __sys_sendto+0x594/0x750 net/socket.c:2187
+ __do_sys_sendto net/socket.c:2194 [inline]
+ __se_sys_sendto net/socket.c:2190 [inline]
+ __x64_sys_sendto+0x125/0x1d0 net/socket.c:2190
+ x64_sys_call+0x346a/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:45
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+CPU: 1 UID: 0 PID: 5864 Comm: syz-executor285 Not tainted 6.14.0-rc3-syzkaller-00079-g87a132e73910 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
+=====================================================
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
