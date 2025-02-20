@@ -1,158 +1,101 @@
-Return-Path: <linux-kernel+bounces-523997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 689D3A3DDE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:11:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 425AEA3DDB9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:06:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B2837AE0CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:05:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5BE33B45F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:06:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A6541FECA1;
-	Thu, 20 Feb 2025 15:04:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B29E81FCCFD;
+	Thu, 20 Feb 2025 15:04:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SKkVy39R"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="eZGl9Hgq"
+Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16D211FE46E;
-	Thu, 20 Feb 2025 15:03:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B96886FB9;
+	Thu, 20 Feb 2025 15:04:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740063839; cv=none; b=FLDHHizseJ8UgJC7QiMItz3tL9OeSFVFMDceDZ4ybUrM8B61WRWTcuF89lWoH8+X6lT19Vixm3wyYvRtv0wQ69y1TvOphlhPoTVu7b+GJCzaKAIx5q4T6Djid/ChqHYbo3NrC654hCD7rbWoPQ/SLSY5p2odC12lRJZlP1bjz3g=
+	t=1740063863; cv=none; b=p9z8nV0NagPwSxcBw+iORKHoJ3i5PRqBUgNR+awmRfGyOGozOSPtAgu2xZrbfLFe5bxNsbRFA0bPuv8zA+ZATrO8zjpQRL9EIRIDNEsBt+H+9KzWcRH3PJoR4yXW2XE2eK+ju2soo518Jvsm1TwoUcNDYGql6PtrF2nVMvcTn3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740063839; c=relaxed/simple;
-	bh=cfCaXEt/74qT6EZUMBQvgQi08gwx7VLMhdHsBd9X+cE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=McrYyvtid7TZlWccyGYbHcyVToUPeb+N07MTMjfvQwOZ6a+I3a4EEf0JNUY7F1HPRGzr0OR9iYcxCubaTpXPCEOkYMrBmBnXqgnyOXxFxEfyCxNVhnUY8RnFWXZrJlfxF0m+8FlODh1xr1m2WUXqlUZbAzWT1D/vluoNHKQuMhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SKkVy39R; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51K7DOI7011714;
-	Thu, 20 Feb 2025 15:03:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	+kt5qUh08tZEmrDWMdnJaEppHvBHOU5mlUNBrOzRVQg=; b=SKkVy39Ra6w80qUo
-	2o1JrbHXx4pZvEvdFiPyLvmfQwIovs84sH2p1aiN5CUIygdi21zZdtHtqnjyRhDA
-	EnJA+14krzEa+JnjujlY0OXW3sB+irrJ+Byug/nG6h+B829TRmAKCGxCLUJGlpQm
-	TdgRGZC/NY1WxXiEEeBTWVwIkZCBmazNKCvZoIBIuxtINZEhbsieOO2z4Vb+LHdD
-	HSLApbdcz8BHgmI9uYqDFalJIqDPI35VJlQt+v+QmGmiD1KXcno/fzdDqTN63MrQ
-	RR5aVQtRN978OKMWaoNLskClwDB6CWLZ3Fnd6XX9CG+W7PpleJchaq/a3M06Yz8B
-	f+v8zQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44vyy3pesd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Feb 2025 15:03:35 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51KF3YZh032712
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Feb 2025 15:03:34 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 20 Feb
- 2025 07:03:33 -0800
-Message-ID: <0ee862ec-4c36-4c3e-ae90-627c6b0e527b@quicinc.com>
-Date: Thu, 20 Feb 2025 08:03:32 -0700
+	s=arc-20240116; t=1740063863; c=relaxed/simple;
+	bh=A7/Yz6iPqpOl1AQaKSL6cMZJ1TR+XUEScQ1/Yddl1p4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=CEb2NC1Dig52Q7im9IMI8mWIFcNEAFQ/iqB6yIQ4wwf7HiMTEWMRhYFUusFJK7RpDdAxHzzcfKjg+gFMIMA4vp5NnY+qyiIpPPnoxMkVkVXQw1R0gyDNncRsOBrmwO6OtPcNV+ZtOBHhQ9l11rTwRQ4xYgA0TSbRJlyGU0Xit4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=eZGl9Hgq; arc=none smtp.client-ip=198.37.111.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1740063859;
+	bh=A7/Yz6iPqpOl1AQaKSL6cMZJ1TR+XUEScQ1/Yddl1p4=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=eZGl9HgqGOv4cwfgOfl62WrZM/Qo+Ayk0yF3FP92tKsygSY2mlvkHL4gVdne7euNH
+	 nmMjnr6NyzLVU07/LaxslNBd5txn1PBIkl+nxey3JB40SCq9SrQDdc+ENkO39uIfDK
+	 HQIBqLwlPCQ1y+NFvNlVtTs7Gypk9f4m9K2koKis=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id E67991C2581;
+	Thu, 20 Feb 2025 10:04:18 -0500 (EST)
+Message-ID: <58e70121aaee33679ac295847197c1e5511b2a81.camel@HansenPartnership.com>
+Subject: Re: [PATCH v8 1/7] ima: define and call ima_alloc_kexec_file_buf
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Mimi Zohar <zohar@linux.ibm.com>, steven chen
+ <chenste@linux.microsoft.com>,  stefanb@linux.ibm.com,
+ roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com, 
+ eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com, 
+ code@tyhicks.com, bauermann@kolabnow.com, linux-integrity@vger.kernel.org, 
+ kexec@lists.infradead.org, linux-security-module@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
+ bhe@redhat.com,  vgoyal@redhat.com, dyoung@redhat.com
+Date: Thu, 20 Feb 2025 10:04:18 -0500
+In-Reply-To: <8023fa50a84817cc911a117db9bd3757c34fddfb.camel@linux.ibm.com>
+References: <20250218225502.747963-1-chenste@linux.microsoft.com>
+	 <20250218225502.747963-2-chenste@linux.microsoft.com>
+	 <8023fa50a84817cc911a117db9bd3757c34fddfb.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] kbuild: slim down package for building external
- modules
-To: Nicolas Schier <n.schier@avm.de>
-CC: Masahiro Yamada <masahiroy@kernel.org>, <linux-kbuild@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Kees Cook <kees@kernel.org>,
-        Nathan
- Chancellor <nathan@kernel.org>,
-        Nicolas Schier <nicolas@fjasle.eu>,
-        Ben
- Hutchings <ben@decadent.org.uk>
-References: <20240727074526.1771247-1-masahiroy@kernel.org>
- <20240727074526.1771247-4-masahiroy@kernel.org>
- <b3a8816c-3846-83ab-9750-fd12041d9495@quicinc.com>
- <20250220-red-antelope-of-education-5417aa@l-nschier-nb>
-Content-Language: en-US
-From: Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <20250220-red-antelope-of-education-5417aa@l-nschier-nb>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 5BWmlVKLXkZL_GwcHt84WJzQPjy6p-81
-X-Proofpoint-GUID: 5BWmlVKLXkZL_GwcHt84WJzQPjy6p-81
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-20_06,2025-02-20_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 mlxlogscore=999 bulkscore=0 mlxscore=0 spamscore=0
- lowpriorityscore=0 phishscore=0 priorityscore=1501 clxscore=1011
- malwarescore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2502100000 definitions=main-2502200108
+Content-Transfer-Encoding: 8bit
 
-On 2/20/2025 3:03 AM, Nicolas Schier wrote:
-> On Tue, Feb 18, 2025 at 01:25:38PM -0700, Jeffrey Hugo wrote:
->> On 7/27/2024 1:42 AM, Masahiro Yamada wrote:
->>> Exclude directories and files unnecessary for building external modules:
->>>
->>>    - include/config/  (except include/config/auto.conf)
->>>    - scripts/atomic/
->>>    - scripts/dtc/
->>>    - scripts/kconfig/
->>>    - scripts/mod/mk_elfconfig
->>>    - scripts/package/
->>>    - scripts/unifdef
->>>    - .config
->>
->> Please revert this (the removal of .config).
->>
->> I got some strange reports that our external module install broke, and
->> traced it to this change.  Our external module references the .config
->> because we have different logic for the build depending on if other, related
->> modules are present or not.
->>
->> Also, it looks like this broke DKMS for some configurations, which not only
->> impacts DKMS itself [1] but also downstream projects [2].
->>
->> While DKMS may be updated going forward to avoid this issue, there are
->> plenty of affected version out in the wild.
->>
->> Also, I haven't surveyed every distro, but it looks like Ubuntu still
->> packages the .config with their headers in their upcoming "Plucky" release
->> based on 6.12.  I suspect they wouldn't do that if they didn't feel it was
->> needed/useful.
->>
->> -Jeff
->>
->> [1]: https://github.com/dell/dkms/issues/464
->> [2]: https://github.com/linux-surface/linux-surface/issues/1654
+On Thu, 2025-02-20 at 09:53 -0500, Mimi Zohar wrote:
+> On Tue, 2025-02-18 at 14:54 -0800, steven chen wrote:
+[...
+> > Author: Tushar Sugandhi <tusharsu@linux.microsoft.com>
 > 
-> Hi Jeff,
+> Steven, thank you again for picking up this patch set.
 > 
-> do you know the related thread [1]?  According to the last mail, DKMS
-> has fixed its issue already in December.
+> As previously explained, there is no tag named "Author" in
+> https://www.kernel.org/doc/Documentation/process/submitting-patches.rst
+> .  To give credit to the original author use "Co-developed-by".
 
-DKMS tip might be fixed, but production versions are in various distros, 
-which are not updated.  Therefore actual users are impacted by this.
+Just on this, only use the co-developed-by if you actually *modified*
+the patch.  If you're just transmitting the patch unmodified you can
+give original author credit by including a 
 
-What happened to the #1 rule of kernel, that we do not break users?
+From: original author <email>
 
-This still needs to be reverted.
+Followed by a blank line at the beginning of the email.  That makes the
+git author field contan whatever the From: line says.  You still need a
+signoff from yourself in the original patch because you transmitted it.
 
--Jeff
+Some people also consider minor modifications to be insufficient to
+disturb the original copyright ownership and simply document what they
+did in square brackets under their signoff, like this:
 
-> 
-> Kind regards,
-> Nicolas
-> 
-> [1]: https://lore.kernel.org/linux-kbuild/CAK7LNARqEOVOzP5vdUVF0KxQBNb9xtYs-COSXXWDMpBzGaLGow@mail.gmail.com/T/#m95f48caf46357a41c1df5e038e227a01ab89dbda
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=b5d1e6ee761a109400e97ac6a1b91c57d0f6a43a
+
+Regards,
+
+James
 
 
