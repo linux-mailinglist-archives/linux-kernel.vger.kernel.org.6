@@ -1,63 +1,63 @@
-Return-Path: <linux-kernel+bounces-523320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E1F0A3D505
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:43:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95132A3D504
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:43:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE6687A97A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:42:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D5C3189DDFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:43:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B41141F12FF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBAC01F1301;
 	Thu, 20 Feb 2025 09:42:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GNsLARMk"
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="htoHkTqe"
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2E3C1F12E7
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:42:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2F021F12E9
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:42:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740044541; cv=none; b=BMENT10LSoEQI5HN9SQymw9CU4y/VdhOHlwIx0/R2MVBVSfdReNX0l7lFkS6eANgWYrrdzMAxzMHGE89ZfqVfnw6eeE1ovdiqvVOdX2TLbxZ98IYh3S8dm57lg1MUaSYsESem0a38WcuqkPHhhIRgQOmu5hEQkiuP/s0/bBEMDo=
+	t=1740044541; cv=none; b=Nnh/eKeytqhO+TsVB7ibRy8J+e2F+9rN6HW8jtjJ8eb67I49aXnl0xUR94UwKmTFLLY1SWeOydP1sL1NHM6jjYuANspEY1OJqX8xrSswglpJp1nixx0a/pgC2T2OF3+Me/ufSBZHJBsIT/PQNra85GJQBBpqZqPyHgzP86m54Bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740044541; c=relaxed/simple;
-	bh=XbTCKvIMDyl2DMpRiyDboA4ABVpbG+2OBuCevF1YKhI=;
+	bh=D9nO0Rw8IFdx8/JC61W3qCybMF46rPTusGdMNvOiv98=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=WnnS3azTB37wJ0BTqX50b6qBEArf+rFgXtNk2SLIuK28Hpu7uIBkEwzsELsrSYW2EfKE//YMlflpsd6tRdTHVJKgGRuplvaQd4VyX2p9cX+UJVl6uxEDCphFQcRSxFzml52aVOxBNzOhORX9BLqz6C/oQTB4iCNsWLu8CR26tQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GNsLARMk; arc=none smtp.client-ip=205.220.168.131
+	 In-Reply-To:To:CC; b=CRlHCNbn2mgOGN+CKxF0iOpQZT5Dc+dlKiST/LXYNZVyrc93Aw9mOu3tgyd2dnv0pW6q62IzS/OTqiuHN4/i2CAc2lkA28BERB+lZDFiDm3X5k1iJclQE2NvWGViettTd8Ghwz0fvFGCoS2jQqVuX6u8gba5/EzyacVzK3lGsDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=htoHkTqe; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51K70UB1016821;
-	Thu, 20 Feb 2025 09:42:10 GMT
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51K6q7dM002872;
+	Thu, 20 Feb 2025 09:42:12 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ARB5psRXmL5x7dm7O2B78qjvJCsCcFRky0xfe+WKbYI=; b=GNsLARMkkwQ6ikwq
-	MRlsngqC/C7iulpf5qLTVJbV7MjLAvPzp3rJaM645tilCQ8nJrXKKkAi1fEsE62D
-	l0mrcxHeJOmVBFxIUFNrtAZTtkCLA1oyfB4fnwTSClFWslecxcj2dLU34V6UiqR9
-	6hAqxOR9Qbvw+qbSp3YYPaLzXDwpAkVFjdewjh58sXVF1f9h2hEfVrCXvBql48iO
-	5JUpu7z1xkAEf4t5/Tjq0hK2CN8OPyc+FCeN8gMs+uxrR2y+vhCbOlM/BWRtjF09
-	UmFlPtIiiYh6J+EvurjtqmqNLUDVeLMdlnbJgcaXx/+ma7pNT3GwXzVGci8rGVf/
-	OuE3ww==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44vyy0dkgq-1
+	IJyVAzse7xLFb8xCPnWRvVTtifhlIa8lHqL9vpKMvTY=; b=htoHkTqewfmaGjOo
+	dW53N/5j4HTrBOsS2f7HGFmNkTz/Fyaxa6L75W++F39UHaQcPtVMJXQpLhPgbqOy
+	fNRttGQVqV+sYcvQO2o90cXoXCL1kd/shfGamPSzZKDDLEdY1+UJ9luy0Y5q3383
+	aO11F7VW+yLM5yy7paiqhSJBJswnPfNuj9DCIX2YzuuNXDQ5U0ZGzzcFYKeLh/kZ
+	Mvtq3h5FImopJGeBBU80NyGgwkQwB8PjkTUpH1fn5a2EdZoboW1ma/lxK6tz2U8n
+	NDLdA+Y5DvKIxz9qI9/uI6VLxMBhJDOhDyd/SgWS02cFeCI5CX/yyP8LIKZAG9s8
+	9n9EBw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44vyy2dnqk-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Feb 2025 09:42:09 +0000 (GMT)
+	Thu, 20 Feb 2025 09:42:12 +0000 (GMT)
 Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51K9g9Mh015743
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51K9gBxk014611
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Feb 2025 09:42:09 GMT
+	Thu, 20 Feb 2025 09:42:11 GMT
 Received: from yuanfang4-gv.ap.qualcomm.com (10.80.80.8) by
  nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 20 Feb 2025 01:42:04 -0800
+ 15.2.1544.9; Thu, 20 Feb 2025 01:42:06 -0800
 From: Yuanfang Zhang <quic_yuanfang@quicinc.com>
-Date: Thu, 20 Feb 2025 17:41:24 +0800
-Subject: [PATCH 4/5] coresight-tnoc: add node to configure flag type
+Date: Thu, 20 Feb 2025 17:41:25 +0800
+Subject: [PATCH 5/5] coresight-tnoc: add nodes to configure freq packet
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,8 +65,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-ID: <20250220-trace-noc-driver-v1-4-15d78bd48e12@quicinc.com>
+Content-Transfer-Encoding: 7bit
+Message-ID: <20250220-trace-noc-driver-v1-5-15d78bd48e12@quicinc.com>
 References: <20250220-trace-noc-driver-v1-0-15d78bd48e12@quicinc.com>
 In-Reply-To: <20250220-trace-noc-driver-v1-0-15d78bd48e12@quicinc.com>
 To: Suzuki K Poulose <suzuki.poulose@arm.com>,
@@ -79,59 +79,61 @@ CC: <kernel@quicinc.com>, <linux-kernel@vger.kernel.org>,
         <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
         Yuanfang Zhang <quic_yuanfang@quicinc.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1740044514; l=2045;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1740044514; l=3505;
  i=quic_yuanfang@quicinc.com; s=20241209; h=from:subject:message-id;
- bh=XbTCKvIMDyl2DMpRiyDboA4ABVpbG+2OBuCevF1YKhI=;
- b=Pqu1/3bbvFLUYjPvJZO5lWaJKO3UxVsRxm5FRBy/v11wJCsNnVjFVEza1AOLl89N6DJFrQ6kR
- CJSVyYpgEgPD3JGs3zsSfiXUyc/skejDe8T2qZYTCSeXzsjhSLZBsXr
+ bh=D9nO0Rw8IFdx8/JC61W3qCybMF46rPTusGdMNvOiv98=;
+ b=ytz5uErs24gdEcmBxtu39+tZCkTaeRzPZqkFSIlGu3N5H9CtOudTsRJnlEculWU/ssPHawnR+
+ xqLzvW7E1mtCKwKVfl8Kw+cs2+1C1N6wX0DTNDJbc1E4lrTezhh8wpG
 X-Developer-Key: i=quic_yuanfang@quicinc.com; a=ed25519;
  pk=ZrIjRVq9LN8/zCQGbDEwrZK/sfnVjwQ2elyEZAOaV1Q=
 X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nalasex01b.na.qualcomm.com (10.47.209.197)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: aZgUy1ru-dBazPNIbWun75JTrcoi3lnP
-X-Proofpoint-ORIG-GUID: aZgUy1ru-dBazPNIbWun75JTrcoi3lnP
+X-Proofpoint-ORIG-GUID: 3bG4iI2z1IT3A49eBuqdkjYEGYgTiFwY
+X-Proofpoint-GUID: 3bG4iI2z1IT3A49eBuqdkjYEGYgTiFwY
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-02-20_04,2025-02-20_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- mlxlogscore=889 clxscore=1015 mlxscore=0 lowpriorityscore=0 adultscore=0
- phishscore=0 suspectscore=0 bulkscore=0 malwarescore=0 impostorscore=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ lowpriorityscore=0 clxscore=1015 adultscore=0 phishscore=0 mlxlogscore=999
+ bulkscore=0 malwarescore=0 impostorscore=0 priorityscore=1501 mlxscore=0
  spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.19.0-2502100000 definitions=main-2502200070
 
-flag_type：used to set the type of issued ATB FLAG packets.
-0: 'FLAG' packets; 1: 'FLAG_TS' packets.
+Three nodes for freq packet config are added here:
+
+1. freq_type: used to set the type of issued ATB FREQ packets.
+0: 'FREQ' packets; 1: 'FREQ_TS' packets.
+
+2. freq_req_val: used to set frequency values carried by 'FREQ'
+and 'FREQ_TS' packets.
+
+3. freq_ts_req: writing '1' to issue a 'FREQ' or 'FREQ_TS' packet.
 
 Signed-off-by: Yuanfang Zhang <quic_yuanfang@quicinc.com>
 ---
- drivers/hwtracing/coresight/coresight-tnoc.c | 42 +++++++++++++++++++++++++++-
- 1 file changed, 41 insertions(+), 1 deletion(-)
+ drivers/hwtracing/coresight/coresight-tnoc.c | 97 ++++++++++++++++++++++++++++
+ 1 file changed, 97 insertions(+)
 
 diff --git a/drivers/hwtracing/coresight/coresight-tnoc.c b/drivers/hwtracing/coresight/coresight-tnoc.c
-index 25962af3850af106f7a8b7e1738ad93d44b81ee7..3ff3504603f66bd595484374f1cdac90c528b665 100644
+index 3ff3504603f66bd595484374f1cdac90c528b665..629df98959d1bfb55771376fac2818a48cb9c259 100644
 --- a/drivers/hwtracing/coresight/coresight-tnoc.c
 +++ b/drivers/hwtracing/coresight/coresight-tnoc.c
-@@ -26,7 +26,7 @@ static ssize_t flush_req_store(struct device *dev,
- 	unsigned long val;
- 	u32 reg;
- 
--	if (kstrtoul(buf, 10, &val))
-+	if (kstrtoul(buf, 0, &val))
- 		return -EINVAL;
- 
- 	if (val != 1)
-@@ -73,9 +73,49 @@ static ssize_t flush_status_show(struct device *dev,
+@@ -112,10 +112,107 @@ static ssize_t flag_type_show(struct device *dev,
  }
- static DEVICE_ATTR_RO(flush_status);
+ static DEVICE_ATTR_RW(flag_type);
  
-+/*
-+ * Sets the type of issued ATB FLAG packets:
-+ * 0: 'FLAG' packets;
-+ * 1: 'FLAG_TS' packets.
-+ */
-+static ssize_t flag_type_store(struct device *dev,
++static ssize_t freq_type_show(struct device *dev,
++			      struct device_attribute *attr,
++			      char *buf)
++{
++	struct trace_noc_drvdata *drvdata = dev_get_drvdata(dev->parent);
++
++	return sysfs_emit(buf, "%u\n", drvdata->freq_type);
++}
++
++static ssize_t freq_type_store(struct device *dev,
 +			       struct device_attribute *attr,
 +			       const char *buf,
 +			       size_t size)
@@ -139,7 +141,7 @@ index 25962af3850af106f7a8b7e1738ad93d44b81ee7..3ff3504603f66bd595484374f1cdac90
 +	struct trace_noc_drvdata *drvdata = dev_get_drvdata(dev->parent);
 +	unsigned long val;
 +
-+	if (kstrtoul(buf, 10, &val))
++	if (kstrtoul(buf, 0, &val))
 +		return -EINVAL;
 +
 +	if (val != 1 && val != 0)
@@ -147,28 +149,82 @@ index 25962af3850af106f7a8b7e1738ad93d44b81ee7..3ff3504603f66bd595484374f1cdac90
 +
 +	spin_lock(&drvdata->spinlock);
 +	if (val)
-+		drvdata->flag_type = FLAG_TS;
++		drvdata->freq_type = FREQ_TS;
 +	else
-+		drvdata->flag_type = FLAG;
++		drvdata->freq_type = FREQ;
 +	spin_unlock(&drvdata->spinlock);
 +
 +	return size;
 +}
++static DEVICE_ATTR_RW(freq_type);
 +
-+static ssize_t flag_type_show(struct device *dev,
-+			      struct device_attribute *attr,
-+			      char *buf)
++static ssize_t freq_req_val_show(struct device *dev,
++				 struct device_attribute *attr,
++				char *buf)
 +{
 +	struct trace_noc_drvdata *drvdata = dev_get_drvdata(dev->parent);
 +
-+	return sysfs_emit(buf, "%u\n", drvdata->flag_type);
++	return sysfs_emit(buf, "%u\n", drvdata->freq_req_val);
 +}
-+static DEVICE_ATTR_RW(flag_type);
++
++static ssize_t freq_req_val_store(struct device *dev,
++				  struct device_attribute *attr,
++				  const char *buf,
++				  size_t size)
++{
++	struct trace_noc_drvdata *drvdata = dev_get_drvdata(dev->parent);
++	unsigned long val;
++
++	if (kstrtoul(buf, 0, &val))
++		return -EINVAL;
++
++	if (val) {
++		spin_lock(&drvdata->spinlock);
++		drvdata->freq_req_val = val;
++		spin_unlock(&drvdata->spinlock);
++	}
++
++	return size;
++}
++static DEVICE_ATTR_RW(freq_req_val);
++
++static ssize_t freq_ts_req_store(struct device *dev,
++				 struct device_attribute *attr,
++				 const char *buf,
++				 size_t size)
++{
++	struct trace_noc_drvdata *drvdata = dev_get_drvdata(dev->parent);
++	struct coresight_device	*csdev = drvdata->csdev;
++	unsigned long val;
++	u32 reg;
++
++	if (kstrtoul(buf, 0, &val))
++		return -EINVAL;
++
++	spin_lock(&drvdata->spinlock);
++	if (csdev->refcnt == 0) {
++		spin_unlock(&drvdata->spinlock);
++		return -EPERM;
++	}
++
++	if (val) {
++		reg = readl_relaxed(drvdata->base + TRACE_NOC_CTRL);
++		reg = reg | TRACE_NOC_CTRL_FREQTSREQ;
++		writel_relaxed(reg, drvdata->base + TRACE_NOC_CTRL);
++	}
++	spin_unlock(&drvdata->spinlock);
++
++	return size;
++}
++static DEVICE_ATTR_WO(freq_ts_req);
 +
  static struct attribute *trace_noc_attrs[] = {
  	&dev_attr_flush_req.attr,
  	&dev_attr_flush_status.attr,
-+	&dev_attr_flag_type.attr,
+ 	&dev_attr_flag_type.attr,
++	&dev_attr_freq_type.attr,
++	&dev_attr_freq_req_val.attr,
++	&dev_attr_freq_ts_req.attr,
  	NULL,
  };
  
