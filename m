@@ -1,332 +1,206 @@
-Return-Path: <linux-kernel+bounces-523102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C89ABA3D1FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:18:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ED22A3D202
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:19:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A52D61889029
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:15:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F8EC3A715B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:16:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 450A81E5B66;
-	Thu, 20 Feb 2025 07:15:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 590E31E5B66;
+	Thu, 20 Feb 2025 07:16:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Msicv1y0"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ieaiYHkZ"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2064.outbound.protection.outlook.com [40.107.93.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 983BB1E102D;
-	Thu, 20 Feb 2025 07:15:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740035738; cv=none; b=ayHLxlJLPqkTo3PXuTPIt4lw20blDZkHopgiKc2EVwXhpf53DaSv5aZMKpDWs+d6gouhBCuzzPnElSF0aDdPVIDOhEEGFcojRwQQgzMTKmAKbTvnZ/WgSTIP70wZ4yu27hfJ/t6KA6Ws2FAT8VidWBodnJqTMk9fBQkt0q6Z7So=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740035738; c=relaxed/simple;
-	bh=40HJ0dRq6K52XcX8jnJMfT31V2dwexY1upb79hP9Yj8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=rTTz2acg8vXCZV79Py/hNCu4dL/J60Yr6zEdEBUBleGyQyQy17yaH5AFuh04Y3LwUp4mGXD50TfAZ7N2mnPPYPgY+9GWqvlLg+deBpF3UuP4Qn4s2aXKkLSz1y7D0+8UyRFTUuUG6C6VnYRNMAHMJoWMhJPpb1XrCG0xveZttHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Msicv1y0; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51K6f5Hm011609;
-	Thu, 20 Feb 2025 07:15:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	5h0YFeqSDl2CEQfdgxgSQIeIMUoXRGIEr4UfNtOuXNY=; b=Msicv1y0mjbcqOPf
-	5ukefg+0h8KqIKyBhfdXN9kXztNyO6oGPOlf12r1D4ISjZaO4gsx9jyMdfVcFLq4
-	Lo+ZtUMBlPKj1CNesDEgqsXvmyjhfOhSq9bUbzUxcRbv3O5Q5mvglJVmnq7tuWjS
-	AV9PZTSc38PYmfRZVldipn8uzTsEodNKPpa5zNnqkcb4zTHBoWSXbujcnzMCL9TF
-	hA0GKe9VE57Td8H4M2L7JpjBMHg/F+pFYk5eaDxZW2j3Q6qdSKPWE4Abh1/NNzsL
-	nzxVmrLOOD179ebAIteya9c1HiympD5jBWrwwdzl91ApQ6IiiybsUQ8NCFTEvtv4
-	/8+EnA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44vyy3n7cr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Feb 2025 07:15:31 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51K7FURk020416
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Feb 2025 07:15:30 GMT
-Received: from [10.217.216.47] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 19 Feb
- 2025 23:15:25 -0800
-Message-ID: <3da96df2-1127-49bf-8114-282cc488c194@quicinc.com>
-Date: Thu, 20 Feb 2025 12:45:22 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 008E31E102D;
+	Thu, 20 Feb 2025 07:16:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740035812; cv=fail; b=Fc1AtHyzgSu4Vb4zainjyrex2JRs9BEFNStva6E1zHA9lsYRAkJEoXX2YbdI01CEFE8d5PoBAskR5Edg5bdVG6JOw6rhPQsAYO8VhWaPgWu19qVlFIswn9aXLZk8wJEYDxjiRm6vkHS0PkKUtlvAHnPYjkIrWxY8iajeyDwVrwU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740035812; c=relaxed/simple;
+	bh=rtzwZDKty5Vq4MOKpliucN9Iso4w41KpQqMkhHg1J4I=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oBh0cuSd4E3Eb7tSET6yfg1TxJnAfsxa8tFsW4uvjAxuCxATmNpDnXy5LZn7Q7ohIAWS0EMnqbThxWFzgFJ3nWv8D2ImWwOa2TjbOyrpcVY+2wr7bqKmCGY5CpLOYcpwa+Y/4BBQczm1cgqJaJSh5M/p6yd4VRNQnae/mlvfQSY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ieaiYHkZ; arc=fail smtp.client-ip=40.107.93.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=d+gPxoVcZNhpPrSDbpXk4EfgBZwM5BkfXIETn12Y5f9Vl8YeFdoGe7S89OBv3G00iNWPi3kwGq5VGf5MxHLQ1P6pjrdc1m3qowAe5Sd2rcolwCqyA2tZJ+uSlSszr4LOfnpc8C9Dg1DjH5kUS5ELN8xMxMaunqVh58rkT10baLG20erMNRNcSNWiLFIJezbM0IRFJwJwlXEZF+c9CMS16jh6+qXuA0K0c8fOV+7c+r7Jr3xby+tRenjUiO2BKGjfBqJyLpt+RHM/IHQjU4lJ5luwtvaPUhnvxRKRPf5leEpj8N1cTxsRGL48GxmCNgS+i8+qHgqTPNxpSAjDucV72w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=I4VshHN551NXd67vqkdLkGoHMp+bv3MoP9hgf3lulZo=;
+ b=i2hSDsxLRs8dm+JoOqXL++oNOzb5CmL/I7SteDO97aEW/C+X0X+Uqe6X6zmuwFYDC3zxArzY1iDsOHYTr1+Cyp+9URs4LaGQtHEDmQP8PMOWV63eULICN5MASxnA/1XQ7mDKpLiaQ54k+D74/HsnTVL21/Y+nCo/fLsUdGMSQx1rRvAS0gWckRaJd5TQYAtXLITT4nyE2D+P4mQHWupq7bWzaXGRMZcWdcAVsZSL4GAZ26tpsjFdXnlr2pwBf/LXdOQd7M19yzzlUSX8WzmfFhqJe2z73DDoft3SyBiW+A3X10Ij+pl4ND+PyrP6SBMAXEq2T8Xue/7UQ2XOcCl/2A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=redhat.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=I4VshHN551NXd67vqkdLkGoHMp+bv3MoP9hgf3lulZo=;
+ b=ieaiYHkZwKnOjbAiujJ3Uq7Uuu8k9MFqPa8VUH8kHtc7xojkS6yldB9f4c+O7GwfOTtGRvjuP2yUCYnelmWDPKmtwzIIferc8IVWKT1h66fB3kjqbZFbN1JixbI2yRm0ziEB7ucJ7AP1CyAWPRfU7OVHM5MiM5IEtxirJmZirt5Vk7jwU4K8tdt4t58MKAzx6eQj7eNw/DUjBvt0nVO8AeBXX/CaHxPjrFA4ESDsYmS7TPc+8ix5BM3AhWdDAragY1I0stfLb0rUkic7Mc53YfOY37NjHgZQE5NgTj4sluzIbIpmVxGvWTMX7iGhfrXtHzlqiHNw/Yje7+LPChc12w==
+Received: from CH0PR03CA0029.namprd03.prod.outlook.com (2603:10b6:610:b0::34)
+ by DM4PR12MB6470.namprd12.prod.outlook.com (2603:10b6:8:b8::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.15; Thu, 20 Feb
+ 2025 07:16:47 +0000
+Received: from CH2PEPF00000143.namprd02.prod.outlook.com
+ (2603:10b6:610:b0:cafe::6d) by CH0PR03CA0029.outlook.office365.com
+ (2603:10b6:610:b0::34) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.14 via Frontend Transport; Thu,
+ 20 Feb 2025 07:16:47 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CH2PEPF00000143.mail.protection.outlook.com (10.167.244.100) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8466.11 via Frontend Transport; Thu, 20 Feb 2025 07:16:47 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 19 Feb
+ 2025 23:16:38 -0800
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 19 Feb
+ 2025 23:16:37 -0800
+Received: from Asurada-Nvidia (10.127.8.10) by mail.nvidia.com (10.129.68.8)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Wed, 19 Feb 2025 23:16:36 -0800
+Date: Wed, 19 Feb 2025 23:16:35 -0800
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+CC: <kevin.tian@intel.com>, <corbet@lwn.net>, <will@kernel.org>,
+	<joro@8bytes.org>, <suravee.suthikulpanit@amd.com>, <robin.murphy@arm.com>,
+	<dwmw2@infradead.org>, <baolu.lu@linux.intel.com>, <shuah@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kselftest@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <eric.auger@redhat.com>,
+	<jean-philippe@linaro.org>, <mdf@kernel.org>, <mshavit@google.com>,
+	<shameerali.kolothum.thodi@huawei.com>, <smostafa@google.com>,
+	<ddutile@redhat.com>, <yi.l.liu@intel.com>, <patches@lists.linux.dev>
+Subject: Re: [PATCH v6 12/14] iommu/arm-smmu-v3: Introduce struct
+ arm_smmu_vmaster
+Message-ID: <Z7bW00+W1WkwtOLI@Asurada-Nvidia>
+References: <cover.1737754129.git.nicolinc@nvidia.com>
+ <d68ca2f38f28c50a3109bc5a84716ca79bc3d7f3.1737754129.git.nicolinc@nvidia.com>
+ <20250218170824.GF4099685@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] clk: qcom: videocc: Add support to attach multiple
- power domains
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Ajit Pandey
-	<quic_ajipan@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        "Taniya
- Das" <quic_tdas@quicinc.com>,
-        Satya Priya Kakitapalli
-	<quic_skakitap@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250218-videocc-pll-multi-pd-voting-v1-0-cfe6289ea29b@quicinc.com>
- <20250218-videocc-pll-multi-pd-voting-v1-4-cfe6289ea29b@quicinc.com>
- <eec2869a-fa8f-4aaf-9fc5-e7a8baf0f864@linaro.org>
- <huluiiaqmunvmffoqadrhssd3kl2toutqtcw7rzamv3sqdglsf@7lz66x4sj3gv>
- <d4c4ecf0-9094-4341-8711-78a48e5d1344@linaro.org>
- <d444f1fb-42a0-48ef-83bc-d5aab9282b22@quicinc.com>
- <gzjyyl2kzv52zsewn5zf6ei65fymyi4pspvsmsjaqj5sklfxvc@bkg46saulni5>
- <fcc31cc7-67bd-4102-a53f-ebe66b4fd1a7@linaro.org>
-Content-Language: en-US
-From: Jagadeesh Kona <quic_jkona@quicinc.com>
-In-Reply-To: <fcc31cc7-67bd-4102-a53f-ebe66b4fd1a7@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: hTeTU0mJOW4hzI_lWazKPOt-NhQQTkj6
-X-Proofpoint-GUID: hTeTU0mJOW4hzI_lWazKPOt-NhQQTkj6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-20_02,2025-02-20_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 mlxlogscore=999 bulkscore=0 mlxscore=0 spamscore=0
- lowpriorityscore=0 phishscore=0 priorityscore=1501 clxscore=1015
- malwarescore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2502100000 definitions=main-2502200050
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250218170824.GF4099685@nvidia.com>
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PEPF00000143:EE_|DM4PR12MB6470:EE_
+X-MS-Office365-Filtering-Correlation-Id: 98c7a189-cc4a-4be1-367c-08dd517e89cc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|1800799024|36860700013|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?mQqwrjZK3oi/x8yX9Q7Wm/fsBGrMtkyT0LXakQM7ULlGXIA5CNc6sHddn1D7?=
+ =?us-ascii?Q?/xPMQFNWn4iqnmyfpLbJxpoxwdRseZxqi5sWV9WRFWB+fqLDKF0BnyxGWdLE?=
+ =?us-ascii?Q?iJS87UqhGP7q4eNxoTLekzXh2EDc1bOu596mmJ+Rrl950Cin3tNxKMoHmhq2?=
+ =?us-ascii?Q?NoPwqpPHr20FLqi5c82PxlV10jZmY9bjHp1dZc9yw5UzmwgZvJtjVc6yOurr?=
+ =?us-ascii?Q?Yf1kR/efCGrHr6oNLVMWAkDM/lo6lZWvpmuLmffe9dAPHgVrlW+nok85qclk?=
+ =?us-ascii?Q?Lj5usWH61Qj7EwUeXazHFvDMO7DCjOM9hSg7n406qCxr5Kwu3Gzl8CgcscGQ?=
+ =?us-ascii?Q?mMLwyb6etxudB4/lefNowofFZgZYeB9OeugT0L4sVq1nPGdnjzGfElA+ctta?=
+ =?us-ascii?Q?FRKbE7E+rMnH89wave6h1jQK+4KN07inFsx1Tj4MX27NqM4AgXlhBu9iLBqG?=
+ =?us-ascii?Q?lhD227z5CK4dmfu8yuoTFkBXByKPXBbfDbMM6uOURL9Wd+HfGqwoXWBzZlq/?=
+ =?us-ascii?Q?Y9lZhaqFw/a7ZNhNfEqwyu40SgIrQ3V2Pe1xhu3h2PTlIf3sHkQLMAgRN+mK?=
+ =?us-ascii?Q?4FWdULepKrt/gldEp4v5Fp9Opxkoq5hlTQMrRgbGq3djlEkHlau9kIsscWKX?=
+ =?us-ascii?Q?wJCpomBW8jsUZDT8h6bNzIZ4hg6J9bCTPHS/apOLtwhwm0DoVqMOO1O6Wphj?=
+ =?us-ascii?Q?gzrwZ4ale3o/VKqlVUULW4zltLZwbsbLssc45DWh86fCuwEoEHfQXBlGpFBw?=
+ =?us-ascii?Q?qLORDLRpN7T9QofVIPlwa2MqXEHSKBjOynyCRriM8RoN3shyjZyIaGWw/MRf?=
+ =?us-ascii?Q?z4hRJ83TAMo57cHT2axxOvThCYD8ubpMgAonMoPq9yXv+cko8A8883kX0D8z?=
+ =?us-ascii?Q?bEXq8RZFdQ/eCPEPWLkHG0WXoLcqnquFByn+O0DJbfISVWX4cfXgxVPKY69n?=
+ =?us-ascii?Q?heizQ3qejGTk/WD5wD8bm3UQlHDm++XW5KF9ZTWdWczDh1iwjnA8ln9Y4lGo?=
+ =?us-ascii?Q?wg2y3CwubF6GO8Ygr5wx8Z8kPOLFcE/Bl+okVVmZI4z69xNgT07fJ+7NRw5D?=
+ =?us-ascii?Q?DJVAi+Zfo133AEpwqZu0/Fbc9xUvcLb3GVgDDLZXc0shIGrQmvie8/DOt+ge?=
+ =?us-ascii?Q?/60NA7qbrlQH+rIcMD8pT64v79qgrXTUdYNMFLMtXrGNAkyqSqkEfeON1x15?=
+ =?us-ascii?Q?ZvdcyrsfXtisABChAMo6fJtjekLPkP7P9YhvLlJc8dhC77q/5MytYZrCZWPI?=
+ =?us-ascii?Q?j/ZOVlzfq3Ul+dShEXtv8V0AnfJaXp5y+CfWrXfhWQkJLQq6kwe93Q+UjSy1?=
+ =?us-ascii?Q?TxlJY2OOZzplnjRu/kcF8lQ9xejWCgPPkHYWDWaUTsS6DI2G4jxAgVEiVjtP?=
+ =?us-ascii?Q?MJsAmu7jsNXQeF88CD7nqyZdMSCZYxJ1Hfu1DnxSMrIqmcE5jMwUgMtQRRPW?=
+ =?us-ascii?Q?VMbfGHGokr8aefRHwATq/NtvIYJzSeyxX0N2xgBkZwHHZS3dWb17Dh7rS9vj?=
+ =?us-ascii?Q?W6J3klr9/zrEbK0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(36860700013)(7416014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2025 07:16:47.4506
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 98c7a189-cc4a-4be1-367c-08dd517e89cc
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH2PEPF00000143.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6470
 
-
-
-On 2/19/2025 5:37 PM, Bryan O'Donoghue wrote:
-> On 19/02/2025 11:59, Dmitry Baryshkov wrote:
->> On Wed, Feb 19, 2025 at 05:11:03PM +0530, Jagadeesh Kona wrote:
->>>
->>>
->>> On 2/19/2025 6:51 AM, Bryan O'Donoghue wrote:
->>>> On 18/02/2025 17:19, Dmitry Baryshkov wrote:
->>>>> On Tue, Feb 18, 2025 at 03:46:15PM +0000, Bryan O'Donoghue wrote:
->>>>>> On 18/02/2025 14:26, Jagadeesh Kona wrote:
->>>>>>> During boot-up, the PLL configuration might be missed even after
->>>>>>> calling pll_configure() from the clock controller probe. This can
->>>>>>> happen because the PLL is connected to one or more rails that are
->>>>>>> turned off, and the current clock controller code cannot enable
->>>>>>> multiple rails during probe. Consequently, the PLL may be activated
->>>>>>> with suboptimal settings, causing functional issues.
->>>>>>>
->>>>>>> To properly configure the video PLLs in the probe on SM8450, SM8475,
->>>>>>> SM8550, and SM8650 platforms, the MXC rail must be ON along with MMCX.
->>>>>>> Therefore, add support to attach multiple power domains to videocc on
->>>>>>> these platforms.
->>>>>>>
->>>>>>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
->>>>>>> ---
->>>>>>>     drivers/clk/qcom/videocc-sm8450.c | 4 ++++
->>>>>>>     drivers/clk/qcom/videocc-sm8550.c | 4 ++++
->>>>>>>     2 files changed, 8 insertions(+)
->>>>>>>
->>>>>>> diff --git a/drivers/clk/qcom/videocc-sm8450.c b/drivers/clk/qcom/videocc-sm8450.c
->>>>>>> index f26c7eccb62e7eb8dbd022e2f01fa496eb570b3f..b50a14547336580de88a741f1d33b126e9daa848 100644
->>>>>>> --- a/drivers/clk/qcom/videocc-sm8450.c
->>>>>>> +++ b/drivers/clk/qcom/videocc-sm8450.c
->>>>>>> @@ -437,6 +437,10 @@ static int video_cc_sm8450_probe(struct platform_device *pdev)
->>>>>>>         struct regmap *regmap;
->>>>>>>         int ret;
->>>>>>> +    ret = qcom_cc_attach_pds(&pdev->dev, &video_cc_sm8450_desc);
->>>>>>> +    if (ret)
->>>>>>> +        return ret;
->>>>>>> +
->>>>>>>         ret = devm_pm_runtime_enable(&pdev->dev);
->>>>>>>         if (ret)
->>>>>>>             return ret;
->>>>>>> diff --git a/drivers/clk/qcom/videocc-sm8550.c b/drivers/clk/qcom/videocc-sm8550.c
->>>>>>> index 7c25a50cfa970dff55d701cb24bc3aa5924ca12d..d4b223d1392f0721afd1b582ed35d5061294079e 100644
->>>>>>> --- a/drivers/clk/qcom/videocc-sm8550.c
->>>>>>> +++ b/drivers/clk/qcom/videocc-sm8550.c
->>>>>>> @@ -542,6 +542,10 @@ static int video_cc_sm8550_probe(struct platform_device *pdev)
->>>>>>>         int ret;
->>>>>>>         u32 sleep_clk_offset = 0x8140;
->>>>>>> +    ret = qcom_cc_attach_pds(&pdev->dev, &video_cc_sm8550_desc);
->>>>>>> +    if (ret)
->>>>>>> +        return ret;
->>>>>>> +
->>>>>>>         ret = devm_pm_runtime_enable(&pdev->dev);
->>>>>>>         if (ret)
->>>>>>>             return ret;
->>>>>>>
->>>>>>
->>>>>> What's the difference between doing the attach here or doing it in
->>>>>> really_probe() ?
->>>>>
->>>>> I'd second this. If the domains are to be attached before calling any
->>>>> other functions, move the call to the qcom_cc_map(), so that all drivers
->>>>> get all domains attached before configuring PLLs instead of manually
->>>>> calling the function.
->>>>>
->>>>>> There doesn't seem to be any difference except that we will have an
->>>>>> additional delay introduced.
->>>>>>
->>>>>> Are you describing a race condition ?
->>>>>>
->>>>>> I don't see _logic_ here to moving the call into the controller's higher
->>>>>> level probe.
->>>>>>
->>>>>> Can you describe some more ?
->>>>>>
->>>>>> ---
->>>>>> bod
->>>>>
->>>>
->>>> Here's one way this could work
->>>>
->>>> Author: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
->>>> Date:   Tue Feb 18 19:46:55 2025 +0000
->>>>
->>>>      clk: qcom: common: Add configure_plls callback prototype
->>>>
->>>>      Add a configure_plls() callback so that we can stage qcom_cc_attach_pds()
->>>>      before configuring PLLs and ensure that the power-domain rail list is
->>>>      switched on prior to configuring PLLs.
->>>>
->>>>      Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
->>>>
->>>> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
->>>> index 9e3380fd71819..1924130814600 100644
->>>> --- a/drivers/clk/qcom/common.c
->>>> +++ b/drivers/clk/qcom/common.c
->>>> @@ -304,6 +304,9 @@ int qcom_cc_really_probe(struct device *dev,
->>>>          if (ret < 0 && ret != -EEXIST)
->>>>                  return ret;
->>>>
->>>> +       if (desc->configure_plls)
->>>> +               desc->configure_plls(regmap);
->>>> +
->>>>          reset = &cc->reset;
->>>>          reset->rcdev.of_node = dev->of_node;
->>>>          reset->rcdev.ops = &qcom_reset_ops;
->>>> diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
->>>> index 7ace5d7f5836a..4955085ff8669 100644
->>>> --- a/drivers/clk/qcom/common.h
->>>> +++ b/drivers/clk/qcom/common.h
->>>> @@ -38,6 +38,7 @@ struct qcom_cc_desc {
->>>>          const struct qcom_icc_hws_data *icc_hws;
->>>>          size_t num_icc_hws;
->>>>          unsigned int icc_first_node_id;
->>>> +       void (*configure_plls)(struct regmap *regmap);
->>>>   };
->>>>
->>>> and
->>>>
->>>> % git diff drivers/clk/qcom/camcc-x1e80100.c
->>>> diff --git a/drivers/clk/qcom/camcc-x1e80100.c b/drivers/clk/qcom/camcc-x1e80100.c
->>>> index b73524ae64b1b..c9748d1f8a15b 100644
->>>> --- a/drivers/clk/qcom/camcc-x1e80100.c
->>>> +++ b/drivers/clk/qcom/camcc-x1e80100.c
->>>> @@ -2426,6 +2426,21 @@ static const struct regmap_config cam_cc_x1e80100_regmap_config = {
->>>>          .fast_io = true,
->>>>   };
->>>>
->>>> +static void cam_cc_x1e80100_configure_plls(struct regmap *regmap)
->>>> +{
->>>> +       clk_lucid_ole_pll_configure(&cam_cc_pll0, regmap, &cam_cc_pll0_config);
->>>> +       clk_lucid_ole_pll_configure(&cam_cc_pll1, regmap, &cam_cc_pll1_config);
->>>> +       clk_rivian_evo_pll_configure(&cam_cc_pll2, regmap, &cam_cc_pll2_config);
->>>> +       clk_lucid_ole_pll_configure(&cam_cc_pll3, regmap, &cam_cc_pll3_config);
->>>> +       clk_lucid_ole_pll_configure(&cam_cc_pll4, regmap, &cam_cc_pll4_config);
->>>> +       clk_lucid_ole_pll_configure(&cam_cc_pll6, regmap, &cam_cc_pll6_config);
->>>> +       clk_lucid_ole_pll_configure(&cam_cc_pll8, regmap, &cam_cc_pll8_config);
->>>> +
->>>> +       /* Keep clocks always enabled */
->>>> +       qcom_branch_set_clk_en(regmap, 0x13a9c); /* CAM_CC_GDSC_CLK */
->>>> +       qcom_branch_set_clk_en(regmap, 0x13ab8); /* CAM_CC_SLEEP_CLK */
->>>> +}
->>>> +
->>>>   static const struct qcom_cc_desc cam_cc_x1e80100_desc = {
->>>>          .config = &cam_cc_x1e80100_regmap_config,
->>>>          .clks = cam_cc_x1e80100_clocks,
->>>> @@ -2434,6 +2449,7 @@ static const struct qcom_cc_desc cam_cc_x1e80100_desc = {
->>>>          .num_resets = ARRAY_SIZE(cam_cc_x1e80100_resets),
->>>>          .gdscs = cam_cc_x1e80100_gdscs,
->>>>          .num_gdscs = ARRAY_SIZE(cam_cc_x1e80100_gdscs),
->>>> +       .configure_plls = cam_cc_x1e80100_configure_plls,
->>>>   };
->>>>
->>>>   static const struct of_device_id cam_cc_x1e80100_match_table[] = {
->>>> @@ -2461,18 +2477,6 @@ static int cam_cc_x1e80100_probe(struct platform_device *pdev)
->>>>                  return PTR_ERR(regmap);
->>>>          }
->>>>
->>>> -       clk_lucid_ole_pll_configure(&cam_cc_pll0, regmap, &cam_cc_pll0_config);
->>>> -       clk_lucid_ole_pll_configure(&cam_cc_pll1, regmap, &cam_cc_pll1_config);
->>>> -       clk_rivian_evo_pll_configure(&cam_cc_pll2, regmap, &cam_cc_pll2_config);
->>>> -       clk_lucid_ole_pll_configure(&cam_cc_pll3, regmap, &cam_cc_pll3_config);
->>>> -       clk_lucid_ole_pll_configure(&cam_cc_pll4, regmap, &cam_cc_pll4_config);
->>>> -       clk_lucid_ole_pll_configure(&cam_cc_pll6, regmap, &cam_cc_pll6_config);
->>>> -       clk_lucid_ole_pll_configure(&cam_cc_pll8, regmap, &cam_cc_pll8_config);
->>>> -
->>>> -       /* Keep clocks always enabled */
->>>> -       qcom_branch_set_clk_en(regmap, 0x13a9c); /* CAM_CC_GDSC_CLK */
->>>> -       qcom_branch_set_clk_en(regmap, 0x13ab8); /* CAM_CC_SLEEP_CLK */
->>>> -
->>>>          ret = qcom_cc_really_probe(&pdev->dev, &cam_cc_x1e80100_desc, regmap);
->>>>
->>>>          pm_runtime_put(&pdev->dev);
->>>>
->>>> Or a least it works for me.
->>>>
->>>
->>> This patch will not work in all cases, maybe in your case required power domains might be ON
->>> from bootloaders so it might be working.
->>
->> But with his patch domains are attached before configuring the PLLs, are
->> they not?
+On Tue, Feb 18, 2025 at 01:08:24PM -0400, Jason Gunthorpe wrote:
+> On Fri, Jan 24, 2025 at 04:30:41PM -0800, Nicolin Chen wrote:
+> > +	int ret;
+> >  	struct arm_smmu_ste ste;
+> >  	struct arm_smmu_master *master = dev_iommu_priv_get(dev);
+> > +	struct arm_smmu_attach_state state = {
+> > +		.master = master,
+> > +	};
+> > +
+> > +	ret = arm_smmu_attach_prepare_vmaster(&state, domain);
+> > +	if (ret)
+> > +		return ret;
+> > +	arm_smmu_attach_commit_vmaster(&state);
 > 
-> Yes, its logically the same just done in core code.
-> 
+> I think you should make this into just a arm_smmu_clear_vmaster()
+> with less complication..
 
-Yes, this code attaches domains before configuring the PLLs, but it attaches PDs after get_sync()
-is called on device. As I mentioned in other patch earlier, if we attach PDS after get_sync() is
-already called on device, then power domains are not getting enabled during the probe, leading to
-the same improper PLL configuration issue. But the current patch series posted will fix this issue
+Ack:
 
->>>
->>>> New clock controllers would then use this callback mechanism and potentially all of the controllers to have uniformity.
->>>>
->>>
->>> No, above approach also requires changes in each individual clock driver to define the callback. So I don't see any advantage
->>> with this than the current approach.
->>
->> Bryan's proposal moves us towards having a common code, so it's better.
->>
-> 
-> I can take the time to do the whole sweep and publish a RFC.
-> 
++void arm_smmu_master_clear_vmaster(struct arm_smmu_master *master)
++{
++       mutex_lock(&master->smmu->streams_mutex);
++       kfree(master->vmaster);
++       master->vmaster = NULL;
++       mutex_unlock(&master->smmu->streams_mutex);
++}
+[...]
+@@ -3162,6 +3172,7 @@ static int arm_smmu_attach_dev_identity(struct iommu_domain *domain,
+        struct arm_smmu_ste ste;
+        struct arm_smmu_master *master = dev_iommu_priv_get(dev);
+ 
++       arm_smmu_master_clear_vmaster(master);
+        arm_smmu_make_bypass_ste(master->smmu, &ste);
+        arm_smmu_attach_dev_ste(domain, dev, &ste, STRTAB_STE_1_S1DSS_BYPASS);
+        return 0;
+@@ -3180,7 +3191,9 @@ static int arm_smmu_attach_dev_blocked(struct iommu_domain *domain,
+                                        struct device *dev)
+ {
+        struct arm_smmu_ste ste;
++       struct arm_smmu_master *master = dev_iommu_priv_get(dev);
+ 
++       arm_smmu_master_clear_vmaster(master);
+        arm_smmu_make_abort_ste(&ste);
+        arm_smmu_attach_dev_ste(domain, dev, &ste,
+                                STRTAB_STE_1_S1DSS_TERMINATE);
 
-Yes, but moving the PLL configuration to callback will not solve the actual PLL configuration
-issue being discussed here. 
-
-Thanks,
-Jagadeesh
-
-> ---
-> bod
+Thanks
+Nicolin
 
