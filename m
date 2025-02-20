@@ -1,299 +1,162 @@
-Return-Path: <linux-kernel+bounces-524431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E6C7A3E2FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:48:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A77B8A3E31D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:55:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 060591887ED8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:48:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF9473A99A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:50:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87C1F213E6D;
-	Thu, 20 Feb 2025 17:47:55 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B9FB213E60;
+	Thu, 20 Feb 2025 17:50:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LUoloyaR"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF86213E64;
-	Thu, 20 Feb 2025 17:47:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E0822B9AA;
+	Thu, 20 Feb 2025 17:50:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740073674; cv=none; b=DnkgUdcYOtTGnWFXo92R3RDHUKoox+ji+9Rj+i1OWtVp9RcV58FegFJww9ND0rSxYTCTpCkD4aU8LWH4yW9sAuytFk9K+40tF4tgTXe7QEkI3NVG2fTOWI/g2ZgfUlVI9FQKayRi/EEoVZ2efLaP2aML/NLeVsBVjMifoLQuC/M=
+	t=1740073823; cv=none; b=FR8HktQbCz4Z+6oKj3f4HQKCelZFG7iTnE63ltijFTI/Pdo+8MMOjqVays/i2oPrPUkvy35RlzUmGsYNvz6IETEakdug/Og3l/Y3kXexjhBgZNg66x05Y8EfIWNnuNQUQdzGe+vTCQh70PXhuOYsB06sY7vyTZ2juZfBIFDYmRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740073674; c=relaxed/simple;
-	bh=kMQJ57kA5Yur3dI+lzKDp2c8T/y2nrCq0BoU1i+qdrw=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fV3GmNS4+A9bCtUrHml37zfdN1vqSLkAIhui+xhMWtyWQZPwB1qGMjQznjzluc6Oyc/OYUhkkaO8CY2xzbCCHjbUbN4vEnrVr7NC/eefWPt12zXa8sZzZLnTKGNNhMkxkUsiYE8VF6r0S1pYJw+8bUGqIwnELRq6pxvU/5Q2Tvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4YzLKG2Hd5z6HJfV;
-	Fri, 21 Feb 2025 01:46:10 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5DFCD140257;
-	Fri, 21 Feb 2025 01:47:49 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 20 Feb
- 2025 18:47:48 +0100
-Date: Thu, 20 Feb 2025 17:47:47 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Lothar Rubusch <l.rubusch@gmail.com>
-CC: Jonathan Cameron <jic23@kernel.org>, <lars@metafoo.de>,
-	<Michael.Hennerich@analog.com>, <linux-iio@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <eraretuya@gmail.com>
-Subject: Re: [PATCH v2 07/14] iio: accel: adxl345: add double tap suppress
- bit
-Message-ID: <20250220174747.0000157a@huawei.com>
-In-Reply-To: <CAFXKEHY+ozW=r17fdvKYhyWDKkddZxptp5kFKdD9k4mwjutPbQ@mail.gmail.com>
-References: <20250210110119.260858-1-l.rubusch@gmail.com>
-	<20250210110119.260858-8-l.rubusch@gmail.com>
-	<20250216172845.2fe98ea1@jic23-huawei>
-	<CAFXKEHY+ozW=r17fdvKYhyWDKkddZxptp5kFKdD9k4mwjutPbQ@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1740073823; c=relaxed/simple;
+	bh=IJ7M86wMSdxXMV52jPqJQwN18In/Fq4MAFTJcpgW8sI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=t9p6UMcK4mY0hgXvq7V1Hf4UwtO1Zyu5xFMfbXW6KoC9vnOw+jhK3EaCoWWtg8x7QPvGgf956y9QAjhwz45+myY82w1NrPaUtZekT8YJuOqzeelQBkKQGV5kbRZYlliHJvccJo0RhklfWAjXHCBk4in2K3K6TzpdGAVcXWuKsGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LUoloyaR; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5e05780509dso1729841a12.2;
+        Thu, 20 Feb 2025 09:50:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740073820; x=1740678620; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ACbXZSJEeD7MSU+0ygnOG3CFUz1SHUqmj4uHUBUExvo=;
+        b=LUoloyaRwf4WbEzVHt2I7vgQHXLMv4P+EY5Z6KTiNkf6jabEDyVAGWc0IrNDIwCYYX
+         kddKaQr20gZ1t0jPtvbdo1wvgxptUtvvRmRBtnxQ3Jtid3mcCOk2I4vQmLz7q7Erov44
+         FzTbdn0Su3KnydPxhinoU34Ku7HzGXgQ/bCqJVnMk2fZiTkqMhna/KtFox3Kb8hymcuN
+         IhNZ/40gsuM8aTjxx9/Vf4EbKmC3GKF4/qlwUaVxR2YKA0xoDFZTrZLX6fjCNvrCBSiD
+         nA/aWKQ+JCJ7UCuEmQVsDA/p5cL7+Vd5VBdqfwTxJUK5NW6/nSBdBty6sWl2TWiaBVr5
+         0PAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740073820; x=1740678620;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ACbXZSJEeD7MSU+0ygnOG3CFUz1SHUqmj4uHUBUExvo=;
+        b=r5AeKplolqo28hFlwrmMLQg5Iaanv/pQ2V6jC/SNJ+iBgo3t6xqEIH5vaqNUahE12e
+         hM6oHmlS3KUKhLLVqlUPSkB8H+VALHCSeIRNbOe+wVUor84TyEAulXrO8BQJ4P9snYzS
+         PUBq3eMhZJn3Wv3OVvVBNGISOJf5t8gf/pjZ5eTb2zbWHf8IgU/jMnXXtGVPQ04HGYjt
+         OQvcKr3a3po5VUTHPTrCYd9s/Zm+01fyPc/YAmm4s/MNLJsbQL8mzlb5eyf3p6VnRGRJ
+         0JCOe7d/D6o0K/0bPIQFt0AzB/aOSN8XQw4hNj63FLTGegvaoN3oTBXoxpvwan3KQ2+o
+         xvBw==
+X-Forwarded-Encrypted: i=1; AJvYcCUQSPY1CJEFC2SWIqxSfZ09ZddxzYT9cBZlI7M72bpTrJsjs6p5Z4jnVu8gkwyyIQPYGaNpSEG8p54=@vger.kernel.org, AJvYcCWWov7Wm7gPMRZMSRwlGaGHgYkZwwTKvwgFBndsIFtCzdGbHGbkr2svLjz7WbDFg3hoQ4ANiwRwbIBuBbil@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqqAKj/HYXQPxawUS7YvW4IK5ZBQJK98pE/S2N6acuIqPQimrk
+	VdkLdi9mZYwo9hmhL90jWWp2eHnu8hH/KdP6IErczYmqPtgl+7AwXBWkUz1iGZn5IOv3ZsWlNoh
+	rAzVqS4sDjEkdm/FLL4rkzxcVdu4=
+X-Gm-Gg: ASbGncu1APAETMnKYY0D0uvNYnazH02p8Np82lwu8r9Gtyr/kpytkviLma1/IESuoB5
+	SbZ66No3zgUUlDCTbZGzAj+3CO7WmIbNTVbK9ukgyyTRryqkX2/F545PhufdrDCfGCPDZVkHe7J
+	c=
+X-Google-Smtp-Source: AGHT+IEoWXbWwTVuK2Nwv99J648YCts8QbcZyhvyRX5LPXJIREs0N43ohOkCkOhIjhQm5MU2a34de0JWy5oegIyzsg0=
+X-Received: by 2002:a05:6402:268a:b0:5d9:a62:32b with SMTP id
+ 4fb4d7f45d1cf-5e0360440a0mr26146606a12.7.1740073819559; Thu, 20 Feb 2025
+ 09:50:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <Z226PG9t-Ih7fJDL@gourry-fedora-PF4VCD3F> <Z7OWmDXEYhT0BB0X@gourry-fedora-PF4VCD3F>
+ <CAHbLzkq6Me6nRaL6b09YxJ_nFkxb+n+M3-q_aJwOs2ZO4q8VCg@mail.gmail.com>
+ <Z7TLwtQY3vGUw2bO@gourry-fedora-PF4VCD3F> <1b4c6442-a2b0-4290-8b89-c7b82a66d358@redhat.com>
+ <Z7TswQbpPV590ADr@gourry-fedora-PF4VCD3F> <bda4cf52-d81a-4935-b45a-09e9439e33b6@redhat.com>
+In-Reply-To: <bda4cf52-d81a-4935-b45a-09e9439e33b6@redhat.com>
+From: Yang Shi <shy828301@gmail.com>
+Date: Thu, 20 Feb 2025 09:50:07 -0800
+X-Gm-Features: AWEUYZkw36f3OEiXrlZX_cyPCOYpVkyNjb2lSz_Gn-SXQJshZlbv5FIQbCvDvP0
+Message-ID: <CAHbLzkqDQcrHLPzk8n0SMgkidH2ByCqdwfYXX=uBPQfOArWf8A@mail.gmail.com>
+Subject: Re: CXL Boot to Bash - Section 3: Memory (block) Hotplug
+To: David Hildenbrand <david@redhat.com>
+Cc: Gregory Price <gourry@gourry.net>, lsf-pc@lists.linux-foundation.org, 
+	linux-mm@kvack.org, linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml500010.china.huawei.com (7.191.174.240) To
- frapeml500008.china.huawei.com (7.182.85.71)
 
-On Tue, 18 Feb 2025 23:29:46 +0100
-Lothar Rubusch <l.rubusch@gmail.com> wrote:
-
-> Dear Jonathan, find my answer down below.
->=20
-> On Sun, Feb 16, 2025 at 6:28=E2=80=AFPM Jonathan Cameron <jic23@kernel.or=
-g> wrote:
+>
 > >
-> > On Mon, 10 Feb 2025 11:01:12 +0000
-> > Lothar Rubusch <l.rubusch@gmail.com> wrote:
-> > =20
-> > > Add the suppress bit feature to the double tap feature.
-> > >
-> > > Any tap event is defined by a rising signal edge above threshold, i.e.
-> > > duration time starts counting; and the falling edge under threshold
-> > > within duration time, i.e. then the tap event is issued. This means
-> > > duration is used individually for each tap event.
-> > >
-> > > For double tap detection after a single tap, a latency time needs to =
-be
-> > > specified. Usually tap events, i.e. spikes above and returning below
-> > > threshold will be ignored within latency. After latency, the window
-> > > time starts counting for a second tap detection which has to happen
-> > > within a duration time.
-> > >
-> > > If the suppress bit is not set, spikes within latency time are ignore=
-d.
-> > > Setting the suppress bit will invalidate the double tap function. The
-> > > sensor will thus be able to save the window time for double tap
-> > > detection, and follow a more strict definition of what signal qualifi=
-es
-> > > for a double tap. =20
+> > 2) if memmap_on_memory is on, and hotplug capacity (node1) is
+> >     zone_movable - then each memory block (256MB) should appear
+> >     as 252MB (-4MB of 64-byte page structs).  For 256GB (my system)
+> >     I should see a total of 252GB of onlined memory (-4GB of page struct)
+>
+> In memory_block_online(), we have:
+>
+>         /*
+>          * Account once onlining succeeded. If the zone was unpopulated, it is
+>          * now already properly populated.
+>          */
+>         if (nr_vmemmap_pages)
+>                 adjust_present_page_count(pfn_to_page(start_pfn), mem->group,
+>                                           nr_vmemmap_pages);
+>
+> So we'd add the vmemmap pages to
+> * zone->present_pages
+> * zone->zone_pgdat->node_present_pages
+>
+> (mhp_init_memmap_on_memory() moved the vmemmap pages to ZONE_MOVABLE)
+>
+> However, we don't add them to
+> * zone->managed_pages
+> * totalram pages
+>
+> /proc/zoneinfo would show them as present but not managed.
+> /proc/meminfo would not include them in MemTotal
+>
+> We could adjust the latter two, if there is a problem.
+> (just needs some adjust_managed_page_count() calls)
+>
+> So yes, staring at MemTotal, you should see an increase by 252 MiB right now.
+>
 > >
-> > Silly question.  Is there a reason this function would ever be
-> > turned off?   Seems like a sensible heuristic that would not stop
-> > genuine double taps being detected.  Maybe we just always leave it on?
+> >     2a) when dropping these memory blocks, I should see node0 memory use
+> >         stay the same - since it was vmemmap usage.
+>
+> Yes.
+>
 > >
-> > Sometimes the best ABI is the one that doesn't exist as userspace
-> > can't use it wrong.
+> > I will double check that this isn't working as expected, and i'll double
+> > check for a build option as well.
 > >
-> > Jonathan
-> > =20
->=20
-> hehehe..  you already mentioned this point, I guess. At least I tried
-> to put my understanding of it into the lengthy comment of the patch.
-> Well, patches with lengthy comments.... this seems to go into the same
-> direction as the wisdom of better limiting userspace interfaces in
-> general ;)
->=20
-> TBH you have probably seen far more sensors than me, as I'm doing this
-> just as hobbyist to learn and for fun. I only can provide my
-> understanding of the particular datasheet.
-> I think, to set or not to set this bit changes little. It influences a
-> bit how restrictive the latency period is handled at detection.
-> Doubletaps are detected with or without having the "suppress" bit set.
-> If set, AFAIK it could be harder to detect doubletaps. So to speak,
-> you could reduce "noise" in double tapping (?), or if one receives too
-> many double taps...(?) perhaps,  ..eh.. legal reasons?! Personally,
-> I'd liked to play with this sensor a bit, and I found it then useful
-> to have some kind of knob to change a bit and see what happens without
-> really messing things up.
-> As I'm not too familiar with the accelerometer scene and such kind of
-> "power user settings". I'm unsure if there are typical usecases here.
-> I would agree that usually one would leave that in one  setting,
-> turned on or off (unless he/she enters in obsession with double taps).
->=20
-> Perhaps I'll change this patch so that it's always set or not set (to
-> bring it initially into a defined state), but no sysfs is around.
-> Let's see. If you think I'd better just drop it entirly, let me know
-> then.
-I think default to always set.  We can revisit the ABI question later
-if turns out to have be something people change in practice!
+> > stupid question - it sorta seems like you'd want this as the default
+> > setting for driver-managed hotplug memory blocks, but I suppose for
+> > very small blocks there's problems (as described in the docs).
+>
+> The issue is that it is per-memblock. So you'll never have 1 GiB ranges
+> of consecutive usable memory (e.g., 1 GiB hugetlb page).
 
-Jonathan
+Regardless of ZONE_MOVABLE or ZONE_NORMAL, right?
 
->=20
-> Best,
-> L
->=20
-> > =20
-> > >
-> > > This brings in a new ABI functionality.
-> > > ---
-> > > Q: Perhaps there is already some IIO ABI for it? If not, please let me
-> > > know which ABI documentation to extend. There will be a documentation
-> > > patch also later in this series.
-> > >
-> > > Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
-> > > ---
-> > >  drivers/iio/accel/adxl345_core.c | 82 ++++++++++++++++++++++++++++++=
-++
-> > >  1 file changed, 82 insertions(+)
-> > >
-> > > diff --git a/drivers/iio/accel/adxl345_core.c b/drivers/iio/accel/adx=
-l345_core.c
-> > > index cf35a8f9f432..b6966fee3e3d 100644
-> > > --- a/drivers/iio/accel/adxl345_core.c
-> > > +++ b/drivers/iio/accel/adxl345_core.c
-> > > @@ -34,6 +34,7 @@
-> > >  #define ADXL345_INT2                 1
-> > >
-> > >  #define ADXL345_REG_TAP_AXIS_MSK     GENMASK(2, 0)
-> > > +#define ADXL345_REG_TAP_SUPPRESS_MSK BIT(3)
-> > >
-> > >  enum adxl345_axis {
-> > >       ADXL345_Z_EN =3D BIT(0),
-> > > @@ -81,6 +82,7 @@ struct adxl345_state {
-> > >       u32 tap_duration_us;
-> > >       u32 tap_latent_us;
-> > >       u32 tap_window_us;
-> > > +     bool tap_suppressed;
-> > >
-> > >       __le16 fifo_buf[ADXL345_DIRS * ADXL345_FIFO_SIZE + 1] __aligned=
-(IIO_DMA_MINALIGN);
-> > >  };
-> > > @@ -243,6 +245,31 @@ static int adxl345_set_doubletap_en(struct adxl3=
-45_state *st, bool en)
-> > >       return _adxl345_set_tap_int(st, ADXL345_DOUBLE_TAP, en);
-> > >  }
-> > >
-> > > +static int adxl345_is_suppressed_en(struct adxl345_state *st, bool *=
-en)
-> > > +{
-> > > +     *en =3D st->tap_suppressed;
-> > > +
-> > > +     return 0;
-> > > +}
-> > > +
-> > > +static int adxl345_set_suppressed_en(struct adxl345_state *st, bool =
-en)
-> > > +{
-> > > +     unsigned long regval =3D 0;
-> > > +     int ret;
-> > > +
-> > > +     en ? __set_bit(ilog2(ADXL345_TAP_SUPPRESS), &regval)
-> > > +             : __clear_bit(ilog2(ADXL345_TAP_SUPPRESS), &regval);
-> > > +
-> > > +     ret =3D regmap_update_bits(st->regmap, ADXL345_REG_TAP_AXIS,
-> > > +                              ADXL345_REG_TAP_SUPPRESS_MSK, regval);
-> > > +     if (ret)
-> > > +             return ret;
-> > > +
-> > > +     st->tap_suppressed =3D en;
-> > > +
-> > > +     return 0;
-> > > +}
-> > > +
-> > >  static int adxl345_set_tap_threshold(struct adxl345_state *st, u8 va=
-l)
-> > >  {
-> > >       int ret;
-> > > @@ -616,6 +643,60 @@ static int adxl345_write_raw_get_fmt(struct iio_=
-dev *indio_dev,
-> > >       }
-> > >  }
-> > >
-> > > +static ssize_t in_accel_gesture_doubletap_suppressed_en_show(struct =
-device *dev,
-> > > +                                                          struct dev=
-ice_attribute *attr,
-> > > +                                                          char *buf)
-> > > +{
-> > > +     struct iio_dev *indio_dev =3D dev_to_iio_dev(dev);
-> > > +     struct adxl345_state *st =3D iio_priv(indio_dev);
-> > > +     bool en;
-> > > +     int val, ret;
-> > > +
-> > > +     ret =3D adxl345_is_suppressed_en(st, &en);
-> > > +     if (ret)
-> > > +             return ret;
-> > > +     val =3D en ? 1 : 0;
-> > > +
-> > > +     return iio_format_value(buf, IIO_VAL_INT, 1, &val);
-> > > +}
-> > > +
-> > > +static ssize_t in_accel_gesture_doubletap_suppressed_en_store(struct=
- device *dev,
-> > > +                                                           struct de=
-vice_attribute *attr,
-> > > +                                                           const cha=
-r *buf, size_t len)
-> > > +{
-> > > +     struct iio_dev *indio_dev =3D dev_to_iio_dev(dev);
-> > > +     struct adxl345_state *st =3D iio_priv(indio_dev);
-> > > +     int val, ret;
-> > > +
-> > > +     ret =3D kstrtoint(buf, 0, &val);
-> > > +     if (ret)
-> > > +             return ret;
-> > > +
-> > > +     ret =3D adxl345_set_measure_en(st, false);
-> > > +     if (ret)
-> > > +             return ret;
-> > > +
-> > > +     ret =3D adxl345_set_suppressed_en(st, val > 0);
-> > > +     if (ret)
-> > > +             return ret;
-> > > +
-> > > +     ret =3D  adxl345_set_measure_en(st, true);
-> > > +     if (ret)
-> > > +             return ret;
-> > > +
-> > > +     return len;
-> > > +}
-> > > +static IIO_DEVICE_ATTR_RW(in_accel_gesture_doubletap_suppressed_en, =
-0);
-> > > +
-> > > +static struct attribute *adxl345_event_attrs[] =3D {
-> > > +     &iio_dev_attr_in_accel_gesture_doubletap_suppressed_en.dev_attr=
-.attr,
-> > > +     NULL
-> > > +};
-> > > +
-> > > +static const struct attribute_group adxl345_event_attrs_group =3D {
-> > > +     .attrs =3D adxl345_event_attrs,
-> > > +};
-> > > +
-> > >  static void adxl345_powerdown(void *ptr)
-> > >  {
-> > >       struct adxl345_state *st =3D ptr;
-> > > @@ -899,6 +980,7 @@ static irqreturn_t adxl345_irq_handler(int irq, v=
-oid *p)
-> > >
-> > >  static const struct iio_info adxl345_info =3D {
-> > >       .attrs          =3D &adxl345_attrs_group,
-> > > +     .event_attrs    =3D &adxl345_event_attrs_group,
-> > >       .read_raw       =3D adxl345_read_raw,
-> > >       .write_raw      =3D adxl345_write_raw,
-> > >       .write_raw_get_fmt      =3D adxl345_write_raw_get_fmt, =20
-> > =20
->=20
+Thanks,
+Yang
 
+>
+> >
+> > :thinking: - is it silly to suggest maybe a per-driver memmap_on_memory
+> > setting rather than just a global setting?  For CXL capacity, this seems
+> > like a no-brainer since blocks can't be smaller than 256MB (per spec).
+>
+> I thought we had that? See MHP_MEMMAP_ON_MEMORY set by dax/kmem.
+>
+> IIRC, the global toggle must be enabled for the driver option to be considered.
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
 
