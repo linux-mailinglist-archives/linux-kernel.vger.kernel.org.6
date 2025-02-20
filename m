@@ -1,279 +1,133 @@
-Return-Path: <linux-kernel+bounces-524704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73BB3A3E60F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:46:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CFC9A3E612
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:46:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F9133BD244
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:46:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15A1517D69A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:46:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4238262D39;
-	Thu, 20 Feb 2025 20:46:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DA0026388E;
+	Thu, 20 Feb 2025 20:46:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Br586DHA"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2042.outbound.protection.outlook.com [40.107.92.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=davidfrank-ch.20230601.gappssmtp.com header.i=@davidfrank-ch.20230601.gappssmtp.com header.b="B9vaSphN"
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D21541E4AB;
-	Thu, 20 Feb 2025 20:46:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740084378; cv=fail; b=S6LgWFrUPIjeV2F/BOefhAmr0z9RQNCqk37Val1U7uVttno1R0nhQZGCpdy6Iy7Y8VnGzL6J4Qlj4FISeHtcCvUA/IE2slBKI7N39vX9P0CTOy6ULWRS4qopB9yuT03AkvUrWiy+vo+CIyC98G/82ZbZV34K0fa+h9MnztFc9kA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740084378; c=relaxed/simple;
-	bh=thQbq7lsK7utedwJjQoAv8Sx0IALEbnU5EXlvnj/EFU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t6vJZnmBHZsC7AMfhvmwKqnkOqudYvTPblAF/EaGJCHVsMB9Ak/mmw1uwAhjUT5hYhIpLvoEsDHCnS+xsKaBIb4G+421zDJRqIuH19ArZdm9it8llpUdoLg1n/zVtxAbEiUswzKe6D2NCTGU5cMG8Hce5cw6MKiXxtSEqeiaEiw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Br586DHA; arc=fail smtp.client-ip=40.107.92.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lLh1tdYN78lfBXWsygoBEaKldEATjq8lMUBfLuC0SqCDOjBTNULN0pJgHQJ7IfX10L+58JRIv1Sl3W6uTaWOdSJ/eLZ7iNLYCdXNeSd5pA+2NO69ZvGkfMGRQw1wT70Kf2TAYN+o9zCyIBDOxEn8AGRMKVwUWnjXn82fVfIckT3QdP2Y5Epw3xwE9GPHLyInpMLo2w+peWBXlBDhP10U1ILGwOSATGRpjj1jQ5eWF42FiXlIssZ9umaJhMyKAHD4agm6/sMl76nvEarM0idfijKxgegcvmRBDECpK20K5SeXRfDZO0KgMJg+daWGn4P4Z8KIRSVCd5GH2gA6IMGj1A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rIgsBPUs1pAndce6o7L1w7JDUoloTdFqm3UKzTdqSpI=;
- b=sgz0BuieOCwhJW9mFUi5ac+FMWi1wFdymXK1shlbOreCtmvjXPSU9Cb4f5xHn+TsiG0gOmmkbRQoAix5J3xsdx/EEIYiDipnyIVDyqDmo4+/m/0o65Qx5LJ8Y6BiJpb68kZqOjsFuusgKDhVVDjgQZ3mPOzkNA0TAuj9lVXtbGCSCOteN2nlRl90EzwLPVXoZju8o+JkYDIgsdIT94tOZpHPZ0jfw07dD0mlGce+AAxHe6j8yHVxIWES+On4hi8mBgDS5T7CaIhzaEWzgQRZ3aWo/iG/SIJbwqEQmcfEEvNrOUBXnjgT7sZreVLYtmiIkpSEUTSPKbkGsjsvGEJ+jA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=redhat.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rIgsBPUs1pAndce6o7L1w7JDUoloTdFqm3UKzTdqSpI=;
- b=Br586DHAWklCRfViEadcPx8fz8L3oqYCm0OK0xYefDFEzUtBJnaoGf0w0T3r2+UMElOOIzT5nSKdATCO7zKf7bkI4c0Td8kxqrqkewmLCbp8zTSlYlhOB8i3AoErWdURhDR3HMF6GiWrBWVFDniPuLyI5vg2L/zXEQ4XzepE1955/EbO3BNUqiok25rpPruBUf6Mes4TRJ1gcK8Et0JD44ccWDt3NphPIonRwyVZ6WWL8cNE30y+Rbirg71C+viDOp7kJehX9ea0sdO5woy6JugSp7ee3kOrTQlLfQF/t9OoqVeQQ1x8mJVFKCIL4fz8igXHnbYJamWsZnEOoPqjKQ==
-Received: from BY5PR20CA0002.namprd20.prod.outlook.com (2603:10b6:a03:1f4::15)
- by LV2PR12MB5917.namprd12.prod.outlook.com (2603:10b6:408:175::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Thu, 20 Feb
- 2025 20:46:06 +0000
-Received: from SJ1PEPF000023D8.namprd21.prod.outlook.com
- (2603:10b6:a03:1f4:cafe::58) by BY5PR20CA0002.outlook.office365.com
- (2603:10b6:a03:1f4::15) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.14 via Frontend Transport; Thu,
- 20 Feb 2025 20:46:06 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- SJ1PEPF000023D8.mail.protection.outlook.com (10.167.244.73) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8489.2 via Frontend Transport; Thu, 20 Feb 2025 20:46:06 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 20 Feb
- 2025 12:45:49 -0800
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 20 Feb
- 2025 12:45:48 -0800
-Received: from Asurada-Nvidia (10.127.8.10) by mail.nvidia.com (10.129.68.10)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Thu, 20 Feb 2025 12:45:47 -0800
-Date: Thu, 20 Feb 2025 12:45:46 -0800
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Jason Gunthorpe <jgg@nvidia.com>, <robin.murphy@arm.com>,
-	<will@kernel.org>
-CC: <kevin.tian@intel.com>, <corbet@lwn.net>, <joro@8bytes.org>,
-	<suravee.suthikulpanit@amd.com>, <dwmw2@infradead.org>,
-	<baolu.lu@linux.intel.com>, <shuah@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kselftest@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <eric.auger@redhat.com>,
-	<jean-philippe@linaro.org>, <mdf@kernel.org>, <mshavit@google.com>,
-	<shameerali.kolothum.thodi@huawei.com>, <smostafa@google.com>,
-	<ddutile@redhat.com>, <yi.l.liu@intel.com>, <patches@lists.linux.dev>
-Subject: Re: [PATCH v6 13/14] iommu/arm-smmu-v3: Report events that belong to
- devices attached to vIOMMU
-Message-ID: <Z7eUeg/SmiJGTgbi@Asurada-Nvidia>
-References: <cover.1737754129.git.nicolinc@nvidia.com>
- <b71a5b132e8ba771998c5b810675f10b100d4ff3.1737754129.git.nicolinc@nvidia.com>
- <20250218171821.GG4099685@nvidia.com>
- <Z7TRNL0u0YmN30ax@nvidia.com>
- <20250218185046.GK4099685@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2473385C5E
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 20:46:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740084407; cv=none; b=VoTw9tq8PlOIw0z/nU7WAlZkaFRNfU6ExU322c4gbF89u3kRh4ldePsL2a2AZsUll2+2QieimkVCZAbt5T1XC9X6zqQIaBdpW+rWLZTr58J4Un0b3JXV7ix8b/ZcI9TwJ752TUjmQ074BCFLHqRa2QKFrfr+UJS4PV06/5YVNAA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740084407; c=relaxed/simple;
+	bh=m+FGt3B2sml78Z33NDEWBnEXJ2v72RFFLzbRmIFRHG0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BdlHE9CExRdcEKv5IrXwRT+OFkQreuCh631SbYO96PZ9IjFXEC4Vqx5mUkpY3x21UJj+QpGHP6hILnjlCv881L4qd+6Ik9c2YLs3sVJ8vMfP1TYtjTCVXvNN5PUMzlX5VGjXB0F+RQGlr352TCUSLGGjzQvnu2TYdfXHCxWqakM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidfrank.ch; spf=none smtp.mailfrom=davidfrank.ch; dkim=pass (2048-bit key) header.d=davidfrank-ch.20230601.gappssmtp.com header.i=@davidfrank-ch.20230601.gappssmtp.com header.b=B9vaSphN; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidfrank.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidfrank.ch
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e5dd7b439e3so1289804276.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 12:46:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=davidfrank-ch.20230601.gappssmtp.com; s=20230601; t=1740084405; x=1740689205; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ki4BqDr2jfoSCfBXflnZeD/HvCxdHbHAAIJAh4w+1oM=;
+        b=B9vaSphN4rKT6P8chejrc6Xs4h5Od6bX/gHzxSQOmdPzDX5q0fBkWnyGsq0zlhVXZM
+         K/7J+htVukqpm03mcKdinf2XhfCJcWlYNettbbYAdZCSfAVJIo/d8sszf2SWpIEcZTu1
+         ag11yVeU6fw++kmsbpzFj8DDxMx3HLM+dB/BILX8NVqktMyGxFrxMOvenL55kJdH27gB
+         WKxaKxqdfKRlOsa3hBeF9g05g/NRVL1/KmuqvfO4FoatNjhIxQTsuUrKTqEEymb4ctbh
+         9z4qF+Z25jwgIpwRbJHM7a1MM6aORQafQ8Ohj+hlEoEPrqPqkUMN2EPOwCqRloXHY2rZ
+         zhtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740084405; x=1740689205;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ki4BqDr2jfoSCfBXflnZeD/HvCxdHbHAAIJAh4w+1oM=;
+        b=XWI9levj3g0OrR8MrgGSVKU52gp5F37BDxZUcbnzE7AxiCVTkXC4ctjKylM6ccsjfr
+         QOx5OWWP6SLH+NePp0GSK7i/K7J7dyBHhtv1zEe5AvUstcfCNX+lQLvyAMi+APevOlys
+         2DlE/VKgVrS0i4NVifqC6c6Fpm0ERA2fSe+hahkb56PfdZKs8DfOOyLVgS9VnQir7T7e
+         Oe0YV4DB6rDVRJsAINiFpK17sVQdEY/l8CTR/OlpqYs8NFVog1QdnNzhSySIj4MuNHM6
+         +kpy+jLcMK9NJxZt88TeWpmdZf+GQNL43AsrNwKim1aezwd6Hu5ua8YavG8qym77tej6
+         yQQw==
+X-Forwarded-Encrypted: i=1; AJvYcCUUJeVpLM1cs+S3bBRJDfaXtIAn53Qw99mVb/+Boy0YsY8LqIbMFWLg+I7ggryER+fblrAQq+Mxs6V+npM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yydr0kzjpG6kPZGHnDq+fcRciOf1uZJIMQF49XpZ6vJNHBx07yb
+	wxaspwFUBPijMnTvnUIb+Y/5klYOl3yWrvJpHAnFsSwpCCotOA2aawnm+UL4bq2BdWY4o/wQu4I
+	nsYIoCju5xLB1fuRaqlxWUafnZp6azNQZ49QYGrkQP23AL7fhTsE=
+X-Gm-Gg: ASbGncvmHGX2VHFSb4AHNK2DS+9tE4a+U6gpCBtj0W4XHBSlul3u4QrQL+Esy0K04Zi
+	MHrZbiz4Ki7gBtDkJs/hEkTe6tkRPWyYjXtm6CYJIO8GPf9+jpN/DvoXtKgNSiEWmJcmQix7cGi
+	2VIIkWIDcAhl0zIOqo4ov5A7lvNA==
+X-Google-Smtp-Source: AGHT+IECScJWDOKRG/qBJ8UnxAsKCIAGMu+3ZEUFJrWLypTdYZOvw75h5GMNXvgZAYJhA00gHT0/bZsGQCVHkXM8isA=
+X-Received: by 2002:a05:6902:1ac3:b0:e5d:cdc6:7ad2 with SMTP id
+ 3f1490d57ef6-e5e8b067de6mr99742276.46.1740084405031; Thu, 20 Feb 2025
+ 12:46:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250218185046.GK4099685@nvidia.com>
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF000023D8:EE_|LV2PR12MB5917:EE_
-X-MS-Office365-Filtering-Correlation-Id: 31e65159-6a33-416b-1b6b-08dd51ef9923
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|376014|1800799024|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?cLTVXT9N7doFeE5P4/0yE7+DZS7RiisSRSidhCRiFcjl681Hea0ojidE+u1s?=
- =?us-ascii?Q?SKO6KKhizJiD7GEoK8vbiqM+BbG8Vey+CoY+sxLM5c2dw4qK8ArCnVdkKA76?=
- =?us-ascii?Q?9HeVJRETQmsxO0I2obi/hbFJ9aBF0sXvsiowwMR7Dt0bzTgVWFcNMqZrnWvG?=
- =?us-ascii?Q?sxpH/WOHk3WAZSCjdL5WDlbPcFTduIEyBc4qM3OMRc1Rhic4ty/Slr5stjTY?=
- =?us-ascii?Q?BB0RiNQ85Tma51Q755W7OcWcHJRFUj6mWqrybq8NzaEK0Nr+AP0sXJ6EyirF?=
- =?us-ascii?Q?+4H64ld2aukTEqcXeuFzUaq6sJ3bIhvh0xyVBzWqgmu1ryWqUemKJQ4wSjsD?=
- =?us-ascii?Q?uFILy1B3oGRNZKkqyZNNitlyOybYUJ8aPa0SYn7ShGjqNgR32yEQMWGZAOps?=
- =?us-ascii?Q?gWv/TDKJTnHiiRs2ZOgNpxul1KuS9+HgBVgKG+60F459Thks3F9bx0+id3h9?=
- =?us-ascii?Q?/dFxTZ6/1JKwVN5QcuhUUKYuZR2xxAezhmYw8Kh5KmS2Ed5gaQl05EAH1DCr?=
- =?us-ascii?Q?cdGwqh8T6drt/oqf/Q0AOltP8ksO6rr8UY0+wlJh4bJqlTV/gkvDvT4BBxsD?=
- =?us-ascii?Q?mPsM6pnS+IbQvsc9ZoAq/NcNkenVjU4ClvJ35WxZzQ7Bqru9NI9XVV7Ra4KQ?=
- =?us-ascii?Q?tIdBDClSs6hcIM4A05GlbGBrEC8L0BE5SSHyRduW/wV/vGGJSM4ecVzrQJV7?=
- =?us-ascii?Q?LbWLFzOemrWaWiuZ6tRe1v3CWN6h0OuZpqpQsC6P6yI40tlxJyfN/vjK6jDB?=
- =?us-ascii?Q?/F2cWygWU7vO/xeeG3osOmRQQpjqsNrLgKMUPagq7LdjVkpLG/RstrNq9WYe?=
- =?us-ascii?Q?XZYe9C+3oAC0PBzaO3SdkEpd22mAKLVcKQQtRLrx+5UHfF6ULyhzTbYXTVJ6?=
- =?us-ascii?Q?TcfF3ZwUOywtqXigHz8WuKFQNTqhRypT/S7BB0koDPHhvd6OanbCBjGJ6N2F?=
- =?us-ascii?Q?dxbvYU8CZIBiv3v35r0BI9je7owz7vVsKESaxVFxELUxkUBW6olankHusSmt?=
- =?us-ascii?Q?nCmBTzBCcbtl5vO6CA6HIE4DSRNYAbgs67Le9ZKc6abD8ZxMlDoWGrctpA3U?=
- =?us-ascii?Q?ZrQIMc4z11ThWehS8dE08VMbNDzZUW9kwy+QSOV5Sqrmatwemus9eWc7Htte?=
- =?us-ascii?Q?3+XVnUuU6RdnLNXAla6WxHQD+0F/kaH+pmQomJ/OKaTO+p/TBirEQZuY0+zL?=
- =?us-ascii?Q?cEDHeSvAS2GCE9jlJsvEx7oSbqileJIRYiANkO12peQ0i0Mkhnn9sb3cciyf?=
- =?us-ascii?Q?HtqdixpbW11vOf4Nl9oZJiUbt9UXsJ+c6BQ88Dgnc4h8lP0Lkd91MvCXS6Ph?=
- =?us-ascii?Q?UGPZmgJSd9OrM5wzsPugxufzWsG4XmGmvbvv5FAed18ddRiMjmnmySrfh3Zg?=
- =?us-ascii?Q?pVb8fQCUcAutUjw3wkiF0UWKkDbH8Ex+FQnw4XuFjfntdCVd8GkbnOj1OjR7?=
- =?us-ascii?Q?FEgaJ3d/VkVGvlvvUnh1OQITNSP3rXiCZ515vqrgoGCUq8++1wJswW1frogn?=
- =?us-ascii?Q?0Sj+Vv8llIZ9vdM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(376014)(1800799024)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2025 20:46:06.4570
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 31e65159-6a33-416b-1b6b-08dd51ef9923
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF000023D8.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5917
+References: <CAOR27cSr9yxodkctfp-Yjybh1NsKBeSkhdbZYeK7O5M87PfEYw@mail.gmail.com>
+ <Z7cygtpjGDJadgg0@casper.infradead.org>
+In-Reply-To: <Z7cygtpjGDJadgg0@casper.infradead.org>
+From: David Frank <david@davidfrank.ch>
+Date: Thu, 20 Feb 2025 21:46:08 +0100
+X-Gm-Features: AWEUYZlkfgrMYlKjcUpCPWBRs8CxAmJiDWQaTfFwzPjscJTOpGasU7i9OgJWXII
+Message-ID: <CAOR27cQ8oHmA8fWnmB7Wk5pTL4TRjMPzRuqT=uA1cVROYZH7UA@mail.gmail.com>
+Subject: Re: Efficient mapping of sparse file holes to zero-pages
+To: Matthew Wilcox <willy@infradead.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Feb 18, 2025 at 02:50:46PM -0400, Jason Gunthorpe wrote:
-> On Tue, Feb 18, 2025 at 10:28:04AM -0800, Nicolin Chen wrote:
-> > On Tue, Feb 18, 2025 at 01:18:21PM -0400, Jason Gunthorpe wrote:
-> > > On Fri, Jan 24, 2025 at 04:30:42PM -0800, Nicolin Chen wrote:
-> > > 
-> > > > @@ -1831,31 +1831,30 @@ static int arm_smmu_handle_event(struct arm_smmu_device *smmu,
-> > > >  		return -EOPNOTSUPP;
-> > > >  	}
-> > > 
-> > > There is still the filter at the top:
-> > > 
-> > > 	switch (event->id) {
-> > > 	case EVT_ID_TRANSLATION_FAULT:
-> > > 	case EVT_ID_ADDR_SIZE_FAULT:
-> > > 	case EVT_ID_ACCESS_FAULT:
-> > > 	case EVT_ID_PERMISSION_FAULT:
-> > > 		break;
-> > > 	default:
-> > > 		return -EOPNOTSUPP;
-> > > 	}
-> > > 
-> > > Is that right here or should more event types be forwarded to the
-> > > guest?
-> > 
-> > That doesn't seem to be right. Something like EVT_ID_BAD_CD_CONFIG
-> > should be forwarded too. I will go through the list.
-> 
-> I think the above should decode into a 'faultable' path because they
-> all decode to something with an IOVA
-> 
-> The rest should decode to things that include a SID and the SID decode
-> should always be forwarded to the VM. Maybe there are small
-> exclusions, but generally that is how I would see it..
+Thank you, Matthew, for your reply.
 
-I think we are safe to add these:
+What do you think about the complexity of this task? I'd be interested
+in taking a look but I don't have kernel development experience so I
+would need guidance.
 
-------------------------------------------------------------
-diff --git a/include/uapi/linux/iommufd.h b/include/uapi/linux/iommufd.h
-index fd2f13a63f27..be9746ecdc65 100644
---- a/include/uapi/linux/iommufd.h
-+++ b/include/uapi/linux/iommufd.h
-@@ -1067,7 +1067,16 @@ enum iommu_veventq_type {
-  * struct iommu_vevent_arm_smmuv3 - ARM SMMUv3 Virtual Event
-  *                                  (IOMMU_VEVENTQ_TYPE_ARM_SMMUV3)
-  * @evt: 256-bit ARM SMMUv3 Event record, little-endian.
-- *       (Refer to "7.3 Event records" in SMMUv3 HW Spec)
-+ *       Reported event records: (Refer to "7.3 Event records" in SMMUv3 HW Spec)
-+ *       - 0x02 C_BAD_STREAMID
-+ *       - 0x04 C_BAD_STE
-+ *       - 0x06 F_STREAM_DISABLED
-+ *       - 0x08 C_BAD_SUBSTREAMID
-+ *       - 0x0a C_BAD_STE
-+ *       - 0x10 F_TRANSLATION
-+ *       - 0x11 F_ADDR_SIZE
-+ *       - 0x12 F_ACCESS
-+ *       - 0x13 F_PERMISSION
-  *
-  * StreamID field reports a virtual device ID. To receive a virtual event for a
-  * device, a vDEVICE must be allocated via IOMMU_VDEVICE_ALLOC.
-diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-index 0efda55ad6bd..f3aa9ce16058 100644
---- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-+++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-@@ -1827,7 +1827,15 @@ static int arm_smmu_handle_event(struct arm_smmu_device *smmu, u64 *evt,
-        case EVT_ID_ADDR_SIZE_FAULT:
-        case EVT_ID_ACCESS_FAULT:
-        case EVT_ID_PERMISSION_FAULT:
-+       case EVT_ID_BAD_CD_CONFIG:
-+       case EVT_ID_BAD_STE_CONFIG:
-+       case EVT_ID_BAD_STREAMID_CONFIG:
-+       case EVT_ID_BAD_SUBSTREAMID_CONFIG:
-+       case EVT_ID_STREAM_DISABLED_FAULT:
-                break;
-+       case EVT_ID_STE_FETCH_FAULT:
-+       case EVT_ID_CD_FETCH_FAULT:
-+               /* FIXME need to replace fetch_addr with IPA? */
-        default:
-                return -EOPNOTSUPP;
-        }
-------------------------------------------------------------
-
-All of the supported events require vSID replacement. Those faults
-with addresses are dealing with stage-1 IOVA or IPA, i.e. IOVA and
-PA for a VM. So, they could be simply forwarded.
-
-But F_CD_FETCH and F_STE_FETCH seem to be complicated here, as both
-report PA in their FetchAddr fields, although the spec does mention
-both might be injected to a guest VM:
- - "Note: This event might be injected into a guest VM, as though
-    from a virtual SMMU, when a hypervisor receives a stage 2
-    Translation-related fault indicating CD fetch as a cause (with
-    CLASS == CD)."
- - "Note: This event might be injected into a guest VM, as though
-    from a virtual SMMU, when a hypervisor detects invalid guest
-    configuration that would cause a guest STE fetch from an illegal
-    IPA."
-
-For F_CD_FETCH, at least the CD table pointer in the nested STE is
-an IPA, and all the entries in the CD table that can be 2-level are
-IPAs as well. So, we need some kinda reverse translation from a PA
-to IPA using its stage-2 mapping. I am not sure what's the best way
-to do that...
-
-For F_STE_FETCH, the host prepared the nested STE, so there is no
-IPA involved. We would have to ask VMM to fill the field since an
-STE IPA should be just a piece of entry given the vSID. One thing
-that I am not sure is whether the FetchAddr is STE-size aligned or
-not, though we can carry the offset in the FetchAddr field via the
-vEVENT by masking away any upper bits...
-
-I wonder if @Robin or @Will may also shed some light on these two
-events.
-
-Otherwise, perhaps not-supporting them in this series might be a
-safer bet?
-
-Thanks
-Nicolin
+On Thu, 20 Feb 2025 at 14:47, Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Thu, Feb 20, 2025 at 01:48:18PM +0100, David Frank wrote:
+> > I'd like to efficiently mmap a large sparse file (ext4), 95% of which
+> > is holes. I was unsatisfied with the performance and after profiling,
+> > I found that most of the time is spent in filemap_add_folio and
+> > filemap_alloc_folio - much more than in my algorithm:
+> >
+> >  - 97.87% filemap_fault
+> >     - 97.57% do_sync_mmap_readahead
+> >        - page_cache_ra_order
+> >           - 97.28% page_cache_ra_unbounded
+> >              - 40.80% filemap_add_folio
+> >                 + 21.93% __filemap_add_folio
+> >                 + 8.88% folio_add_lru
+> >                 + 7.56% workingset_refault
+> >              + 28.73% filemap_alloc_folio
+> >              + 22.34% read_pages
+> >              + 3.29% xa_load
+>
+> Yes, this is expected.
+>
+> The fundamental problem is that we don't have the sparseness information
+> at the right point.  So the read request (or pagefault) comes in, the
+> VFS allocates a page, puts it in the pagecache, then asks the filesystem
+> to fill it.  The filesystem knows, so could theoretically tell the VFS
+> "Oh, this is a hole", but by this point the "damage" is done -- the page
+> has been allocated and added to the page cache.
+>
+> Of course, this is a soluble problem.  The VFS could ask the filesystem
+> for its sparseness information (as you do in userspace), but unlike your
+> particular usecase, the kernel must handle attackers who are trying to
+> make it do the wrong thing as well as ill-timed writes.  So the VFS has
+> to ensure it does not use stale data from the filesystem.
+>
+> This is a problem I'm somewhat interested in solving, but I'm a bit
+> busy with folios right now.  And once that project is done, improving
+> the page cache for reflinked files is next on my list, so I'm not likely
+> to get to this problem for a few years.
+>
 
