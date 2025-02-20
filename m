@@ -1,74 +1,58 @@
-Return-Path: <linux-kernel+bounces-522838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70EADA3CEF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 03:01:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E744A3CEF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 03:04:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3838D17A59B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 02:01:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAC44171ACC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 02:04:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F05DE1C5D67;
-	Thu, 20 Feb 2025 02:01:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC64614AD29;
+	Thu, 20 Feb 2025 02:04:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="hyqgyFgH"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="E6wGL2zM"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D2392862B7;
-	Thu, 20 Feb 2025 02:01:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE0B2862B7;
+	Thu, 20 Feb 2025 02:04:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740016903; cv=none; b=i9/SoziLOCSk1kc/KGNx1YcpaFe99sgEz8rjU8QEmV5wCWXwvw8lWTZkadfd0n1CWtM6iIUWgXxSGw3f19xr383YcLMXKTVNQzxSfCNXGrDVjqNfSVgGs/CUK9R1ue3x3akP70GSJvB+sWzbYfdeyclLLTpZq+a1oZfs7S66SQw=
+	t=1740017046; cv=none; b=J5xv6EKZSVcwrWJAIefPMe8oYlvRnexAc/xKlj8kxqLHfkHmKtqCbTDgzOvTVBqNKPRZeD/kH+Nj6d8xDdZFF0viXWlk+M0CaCKtYvBDUpZDaUURibvk/Hz+O/vcpWcInyHnwZ6sgQ0nvMIW2FFUs0sFmzSImes0CCvzNx+TQa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740016903; c=relaxed/simple;
-	bh=mNpEFORjBAbxT8VDCvgklG+lds95zlbjusQeEH/Pgi0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sHDO6RuEm8StmmVoioOKqdSpQN5QMFp1zmPpEt0QPK+rcocVuyEL0RHRzkpeuY073eGiKYHbhKPz8t7sDtLQfh9wqadEepli+7F9xFw5ga6ilFLlABQcN4YiNMVMlFgvnUE6UYkJ02AjtwZOoFgPH2+gRluL/mneVbz/JflZlLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=hyqgyFgH; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 9c225848ef2e11ef8eb9c36241bbb6fb-20250220
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=CRSfEf2M4ecLsopoPb2+M/Ujy7qVTEij8K5gI3vgVwo=;
-	b=hyqgyFgHxqVCjhoxjaa5ywG86sYuxseNOCMyHjEoaIo1M9p3VQ1qiw/VBcQfcyLB8/tdv1/Omaz24mqnwFvALLleJbNTusPPXqKH8+3ZDAnbQTqxIv2BIv5TtbGtTWRj3MO8eV8qulSCdyR49bmHDwdDx59ZNu2xMEBVmcX6cFQ=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.46,REQID:e4457e08-405e-4a58-bf54-fb9090de4eed,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:60aa074,CLOUDID:86e052a4-5c06-4e72-8298-91cabc9efadf,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:ni
-	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 9c225848ef2e11ef8eb9c36241bbb6fb-20250220
-Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw02.mediatek.com
-	(envelope-from <jiande.lu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1775267927; Thu, 20 Feb 2025 10:01:33 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Thu, 20 Feb 2025 10:01:32 +0800
-Received: from mtksitap99.mediatek.inc (10.233.130.16) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.28 via Frontend Transport; Thu, 20 Feb 2025 10:01:32 +0800
-From: Jiande Lu <jiande.lu@mediatek.com>
-To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
-	<johan.hedberg@gmail.com>, Luiz Von Dentz <luiz.dentz@gmail.com>
-CC: Sean Wang <sean.wang@mediatek.com>, Chris Lu <chris.lu@mediatek.com>,
-	Deren Wu <deren.Wu@mediatek.com>, Aaron Hou <aaron.hou@mediatek.com>, Steve
- Lee <steve.lee@mediatek.com>, linux-bluetooth
-	<linux-bluetooth@vger.kernel.org>, linux-kernel
-	<linux-kernel@vger.kernel.org>, linux-mediatek
-	<linux-mediatek@lists.infradead.org>, Jiande Lu <jiande.lu@mediatek.com>
-Subject: [PATCH] Bluetooth: btusb: Add 2 HWIDs for MT7922
-Date: Thu, 20 Feb 2025 10:01:28 +0800
-Message-ID: <20250220020129.2400730-1-jiande.lu@mediatek.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1740017046; c=relaxed/simple;
+	bh=x5cjDMDsv7w85Yapce22+pZzXw+ddrsPkbcqrguWU9E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m3CzwAiG7HbySWppnK2/fNXQlCf/mSe+K3+nBeQZKxibvdJjY8sw+JhIxy6rryrPIBrrPksMRwPlW8y51KTXuR+eU+XXo7zyrL9fSvIoJzWuA8ZlZhce73CJaTjnR3n4H67+sJHK3AIrKooCRc0gIRcwfxHAhM+PPlJFx3tZ7wI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=E6wGL2zM; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=61OljuFLi7l3nQhb+KjzkmEHrgBFPI8Hr7sRlq6rWZc=; b=E6wGL2zMpuMApSOS
+	5JL6u4TUBxWezXwjUp0eWrvq3CPF05dtqOkp7BppMHGvlWhMrL+CkCUv6ycEPScES0K5ATcCdavh3
+	ifFLSd/p/S4SAMxTX0whh7+pMacFysf9UfYbVhAoDeCKP/g9YYq18ePSQfqYz4eCPr2LARpfbCQ/V
+	yutZu//hGVWm3F32ypI0bqJBUQpHfqGmrlqNPrvlNtBUyn01oecKSAffXXeMLnzqOp6necBdHFQ5P
+	6gAGtAWzkqh9RkAREzuSV4f2ctwUciuxdFozHPTWdaJ5+Tm51/59lm0w5t4kD1EbrT5++CNAwwTzR
+	I6vCRG427UrSNXZgMQ==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1tkvuw-00H3Zg-1m;
+	Thu, 20 Feb 2025 02:03:58 +0000
+From: linux@treblig.org
+To: jdmason@kudzu.us,
+	dave.jiang@intel.com,
+	allenbh@gmail.com
+Cc: ntb@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] NTB/msi: Remove unused functions
+Date: Thu, 20 Feb 2025 02:03:57 +0000
+Message-ID: <20250220020357.122973-1-linux@treblig.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,55 +60,141 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
 
-Add below HWIDs for MediaTek MT7922 USB Bluetooth chip.
-VID 0x0489, PID 0xe152
-VID 0x0489, PID 0xe153
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-Patch has been tested successfully and controller is recognized
-device pair successfully.
+ntbm_msi_free_irq() and ntb_msi_peer_addr() were both added in 2019's
+commit 26b3a37b9284 ("NTB: Introduce MSI library")
+but have remained unused.
 
-MT7922 module bring up message as below.
-Bluetooth: Core ver 2.22
-Bluetooth: HCI device and connection manager initialized
-Bluetooth: HCI socket layer initialized
-Bluetooth: L2CAP socket layer initialized
-Bluetooth: SCO socket layer initialized
-Bluetooth: hci0: HW/SW Version: 0x008a008a, Build Time: 20241106163512
-Bluetooth: hci0: Device setup in 2284925 usecs
-Bluetooth: hci0: HCI Enhanced Setup Synchronous Connection command is advertised, but not supported.
-Bluetooth: hci0: AOSP extensions version v1.00
-Bluetooth: BNEP (Ethernet Emulation) ver 1.3
-Bluetooth: BNEP filters: protocol multicast
-Bluetooth: BNEP socket layer initialized
-Bluetooth: MGMT ver 1.22
-Bluetooth: RFCOMM TTY layer initialized
-Bluetooth: RFCOMM socket layer initialized
-Bluetooth: RFCOMM ver 1.11
+Remove them, and the ntbm_msi_callback_match() helper that
+was used by ntbm_msi_free_irq().
 
-Signed-off-by: Jiande Lu <jiande.lu@mediatek.com>
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 ---
- drivers/bluetooth/btusb.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/ntb/msi.c   | 64 ---------------------------------------------
+ include/linux/ntb.h | 14 ----------
+ 2 files changed, 78 deletions(-)
 
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index 1caf7a071a73..6db25b8d6d42 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -667,6 +667,10 @@ static const struct usb_device_id quirks_table[] = {
- 						     BTUSB_WIDEBAND_SPEECH },
- 	{ USB_DEVICE(0x0489, 0xe102), .driver_info = BTUSB_MEDIATEK |
- 						     BTUSB_WIDEBAND_SPEECH },
-+	{ USB_DEVICE(0x0489, 0xe152), .driver_info = BTUSB_MEDIATEK |
-+						     BTUSB_WIDEBAND_SPEECH },
-+	{ USB_DEVICE(0x0489, 0xe153), .driver_info = BTUSB_MEDIATEK |
-+						     BTUSB_WIDEBAND_SPEECH },
- 	{ USB_DEVICE(0x04ca, 0x3804), .driver_info = BTUSB_MEDIATEK |
- 						     BTUSB_WIDEBAND_SPEECH },
- 	{ USB_DEVICE(0x04ca, 0x38e4), .driver_info = BTUSB_MEDIATEK |
+diff --git a/drivers/ntb/msi.c b/drivers/ntb/msi.c
+index 6295e55ef85e..8ad9be95518f 100644
+--- a/drivers/ntb/msi.c
++++ b/drivers/ntb/msi.c
+@@ -321,37 +321,6 @@ int ntbm_msi_request_threaded_irq(struct ntb_dev *ntb, irq_handler_t handler,
+ }
+ EXPORT_SYMBOL(ntbm_msi_request_threaded_irq);
+ 
+-static int ntbm_msi_callback_match(struct device *dev, void *res, void *data)
+-{
+-	struct ntb_dev *ntb = dev_ntb(dev);
+-	struct ntb_msi_devres *dr = res;
+-
+-	return dr->ntb == ntb && dr->entry == data;
+-}
+-
+-/**
+- * ntbm_msi_free_irq() - free an interrupt
+- * @ntb:	NTB device context
+- * @irq:	Interrupt line to free
+- * @dev_id:	Device identity to free
+- *
+- * This function should be used to manually free IRQs allocated with
+- * ntbm_request_[threaded_]irq().
+- */
+-void ntbm_msi_free_irq(struct ntb_dev *ntb, unsigned int irq, void *dev_id)
+-{
+-	struct msi_desc *entry = irq_get_msi_desc(irq);
+-
+-	entry->write_msi_msg = NULL;
+-	entry->write_msi_msg_data = NULL;
+-
+-	WARN_ON(devres_destroy(&ntb->dev, ntbm_msi_callback_release,
+-			       ntbm_msi_callback_match, entry));
+-
+-	devm_free_irq(&ntb->dev, irq, dev_id);
+-}
+-EXPORT_SYMBOL(ntbm_msi_free_irq);
+-
+ /**
+  * ntb_msi_peer_trigger() - Trigger an interrupt handler on a peer
+  * @ntb:	NTB device context
+@@ -379,36 +348,3 @@ int ntb_msi_peer_trigger(struct ntb_dev *ntb, int peer,
+ 	return 0;
+ }
+ EXPORT_SYMBOL(ntb_msi_peer_trigger);
+-
+-/**
+- * ntb_msi_peer_addr() - Get the DMA address to trigger a peer's MSI interrupt
+- * @ntb:	NTB device context
+- * @peer:	Peer index
+- * @desc:	MSI descriptor data which triggers the interrupt
+- * @msi_addr:   Physical address to trigger the interrupt
+- *
+- * This function allows using DMA engines to trigger an interrupt
+- * (for example, trigger an interrupt to process the data after
+- * sending it). To trigger the interrupt, write @desc.data to the address
+- * returned in @msi_addr
+- *
+- * Return: Zero on success, otherwise a negative error number.
+- */
+-int ntb_msi_peer_addr(struct ntb_dev *ntb, int peer,
+-		      struct ntb_msi_desc *desc,
+-		      phys_addr_t *msi_addr)
+-{
+-	int peer_widx = ntb_peer_mw_count(ntb) - 1 - peer;
+-	phys_addr_t mw_phys_addr;
+-	int ret;
+-
+-	ret = ntb_peer_mw_get_addr(ntb, peer_widx, &mw_phys_addr, NULL);
+-	if (ret)
+-		return ret;
+-
+-	if (msi_addr)
+-		*msi_addr = mw_phys_addr + desc->addr_offset;
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL(ntb_msi_peer_addr);
+diff --git a/include/linux/ntb.h b/include/linux/ntb.h
+index 191b524e5c0d..8ff9d663096b 100644
+--- a/include/linux/ntb.h
++++ b/include/linux/ntb.h
+@@ -1647,12 +1647,8 @@ int ntbm_msi_request_threaded_irq(struct ntb_dev *ntb, irq_handler_t handler,
+ 				  irq_handler_t thread_fn,
+ 				  const char *name, void *dev_id,
+ 				  struct ntb_msi_desc *msi_desc);
+-void ntbm_msi_free_irq(struct ntb_dev *ntb, unsigned int irq, void *dev_id);
+ int ntb_msi_peer_trigger(struct ntb_dev *ntb, int peer,
+ 			 struct ntb_msi_desc *desc);
+-int ntb_msi_peer_addr(struct ntb_dev *ntb, int peer,
+-		      struct ntb_msi_desc *desc,
+-		      phys_addr_t *msi_addr);
+ 
+ #else /* not CONFIG_NTB_MSI */
+ 
+@@ -1674,21 +1670,11 @@ static inline int ntbm_msi_request_threaded_irq(struct ntb_dev *ntb,
+ {
+ 	return -EOPNOTSUPP;
+ }
+-static inline void ntbm_msi_free_irq(struct ntb_dev *ntb, unsigned int irq,
+-				     void *dev_id) {}
+ static inline int ntb_msi_peer_trigger(struct ntb_dev *ntb, int peer,
+ 				       struct ntb_msi_desc *desc)
+ {
+ 	return -EOPNOTSUPP;
+ }
+-static inline int ntb_msi_peer_addr(struct ntb_dev *ntb, int peer,
+-				    struct ntb_msi_desc *desc,
+-				    phys_addr_t *msi_addr)
+-{
+-	return -EOPNOTSUPP;
+-
+-}
+-
+ #endif /* CONFIG_NTB_MSI */
+ 
+ static inline int ntbm_msi_request_irq(struct ntb_dev *ntb,
 -- 
-2.45.2
+2.48.1
 
 
