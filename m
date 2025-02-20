@@ -1,117 +1,178 @@
-Return-Path: <linux-kernel+bounces-523867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31BB4A3DC3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:13:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1937A3DC46
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:15:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A443116B927
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:13:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AF0218940A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:15:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30DE31EFF8D;
-	Thu, 20 Feb 2025 14:13:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A9A31F709E;
+	Thu, 20 Feb 2025 14:14:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VgAojoQM";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="y49ISZ7+"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fmQ940Zh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C060433BE
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 14:13:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5CBE1C5D50;
+	Thu, 20 Feb 2025 14:14:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740060799; cv=none; b=UDmfiwdejnVATgxR/R2mFnT0tIGbcfWcN4hiTLBEz8uUF1EtpSEmZi1+whcfUbGW0KMp1pZRDrVcxgvBGsa8j+kPxL80QFszws0Fy9N1RkpGFDq7082KEpaUHmckdvs/30sghQwP71lzX5qJnxoO6HxJ/S586A3leC146TMr6bY=
+	t=1740060885; cv=none; b=NmmbsBJb0y25szzWongJfuFQwXpLg0HnrssdHkbgGMd+s9+/5uCrKYYlhuhcBQ1+YXCVIfScIPHVDC1MRQVSZO4c//5OvBEyb0SdRafDAoNb0UpO/7aroxhJjCdObiEFOD6bMnfCnpZXgEBkTQb47o3cADoNcvdIbF4i6YbxqpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740060799; c=relaxed/simple;
-	bh=kbByHq2PDdIX1qdJYEkBYyjnloFpLOyQh9aukGf5fAQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=D3EHG9aMMkFGBfJNNVLbPRGeXk9ZLfaz9jPs1WGlEkjydnUjDBBX62W2vUh0e+IohqhSvHvl7dvwfKYFb16GY7GF8Lp7rV1/zFXxtFeiv0f0m9IThsAkF+8qyo5FageGh9Qb9V3Hf0JCT8MPZtf69m/2tMUJCGXxS3+jepoXg2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VgAojoQM; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=y49ISZ7+; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740060794;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=v9pj6jjBEr5BnUCHZ9k7ZDBSaz2lWUx2dmnpfiugUrU=;
-	b=VgAojoQMzMmbJjyrER/8si5TAfNx1nyJCAkx/QtCYYapLKQOKlKFpgXLnYQCBM/smohyna
-	JnVbXq5mBLBreL3uAVqFG1buNY7beDST6DloHkIxYzGwoc+Gv0dIyGJxOfMZE+jnOoYajk
-	BUKxQUJIef9qFmTHP5UuZMJ2i1c7LpYpdHb86estGU51+MsLX2QHnVuSJymwpVfSwvMVjL
-	tlo8SVHrzcXlyN8sxoANYT3OUgRNa3zng1G5JYLgCUFDBfKZgyty4iX0rkC+NYVk61roPs
-	+RYJt6/Mp4ac+mnqLsfM5RFqMCQazy7XL3s+U0eLtm3IVubMjWNx1tG7aT60Cw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740060794;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=v9pj6jjBEr5BnUCHZ9k7ZDBSaz2lWUx2dmnpfiugUrU=;
-	b=y49ISZ7+OOOGDjIdokrOL/7AvVwgkq4GgMYApSoKQq5NEymD3VupABpsJbFPYmmB+PNKOp
-	lRb0wokLXqvHa6Ag==
-To: Eric Dumazet <edumazet@google.com>
-Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker
- <frederic@kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
- Benjamin Segall <bsegall@google.com>, Eric Dumazet
- <eric.dumazet@gmail.com>
-Subject: Re: [PATCH V2 3/4] posix-timers: Initialise timer->it_signal in
- posix_timer_add()
-In-Reply-To: <CANn89iKyxncwVioEHDqRBOTOrgnYoMcq+KAKqCzTadt68UP6yA@mail.gmail.com>
-References: <20250219125522.2535263-1-edumazet@google.com>
- <20250219125522.2535263-4-edumazet@google.com> <87r03thvu7.ffs@tglx>
- <CANn89iKyxncwVioEHDqRBOTOrgnYoMcq+KAKqCzTadt68UP6yA@mail.gmail.com>
-Date: Thu, 20 Feb 2025 15:13:14 +0100
-Message-ID: <87bjuwiu11.ffs@tglx>
+	s=arc-20240116; t=1740060885; c=relaxed/simple;
+	bh=tRvBsp0FoTr3Xw2gpKLC0wmeZR2OTTjOzu4hfQPoswY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KU/7/AaOwrCAgu2PtcBhkfYpjNUzplyFwmMGkOWUdr/eihFGDZF+tO95t1gUv5zdAOK9NOMK1jRWiqWzXn1Y6scowLOUv1vAA3v2rAIXiPlhEBuQWlsHweRQsAgIhjIGf+A5gJNDQrr7uD3JP2bwf+Zc2gWCk01qPf1vRJeOauU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fmQ940Zh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A720C4CED1;
+	Thu, 20 Feb 2025 14:14:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740060885;
+	bh=tRvBsp0FoTr3Xw2gpKLC0wmeZR2OTTjOzu4hfQPoswY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fmQ940ZhDJ9WVV7a49mjcrFFFKqur53Blpcjd7d/xN9S+aHr1siSXs0wralhMoehc
+	 Sag/gfBjLWaxlat4yMYzDBUx0q86F7zZouTPiWZUG5k6V/rvINkX9SUD9PE8sfrqgr
+	 4RFBXqkgT9K/O+FSdvaRgRWornmX/JKNmC/NmGtw+XG9yI+4BKUPl4Ludooqv7FiP0
+	 imFMpdQ9jyt7Q/oyHu8YuGe0BA1iiG5IV2STqTPl+l2Nvnm84sb79wlaFP8tDycDlG
+	 1//u4Lja0VI5G9D7Jx5Xllvvp1ANVTGKA3t3+/h8TDsfibnz2yIyCNw/nBHOsFIWpR
+	 tIxCdkLchVaww==
+Date: Thu, 20 Feb 2025 14:14:41 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, lgirdwood@gmail.com,
+	sebastian.reichel@collabora.com, sjoerd.simons@collabora.co.uk,
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@kernel.org,
+	benno.lossin@proton.me, tmgross@umich.edu, dakr@kernel.org,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rust: regulator: add a bare minimum regulator abstraction
+Message-ID: <Z7c40fpQVelj20gE@finisterre.sirena.org.uk>
+References: <20250219162517.278362-1-daniel.almeida@collabora.com>
+ <CAH5fLgiErvnziU-hSCV6djNq7Q56ZfX9gZudmX7+r06hWoX0Tw@mail.gmail.com>
+ <E24A1EA3-DC87-4A33-AD93-1E3B307942E8@collabora.com>
+ <Z7cbkfvJqkWaSwKR@finisterre.sirena.org.uk>
+ <53A50677-CB35-441F-8E58-0FB1EA577C4E@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="GQKO3yGFd7H6YRNI"
+Content-Disposition: inline
+In-Reply-To: <53A50677-CB35-441F-8E58-0FB1EA577C4E@collabora.com>
+X-Cookie: Editing is a rewording activity.
+
+
+--GQKO3yGFd7H6YRNI
 Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 20 2025 at 09:44, Eric Dumazet wrote:
-> On Thu, Feb 20, 2025 at 9:19=E2=80=AFAM Thomas Gleixner <tglx@linutronix.=
-de> wrote:
->> > This fixes a potential race, in the unlikely case a thread
->> > was preempted long enough that other threads created more than
->> > 2^31 itimers.
->>
->> and then what happens?
->
-> Two threads might get the same timer_id given back.
+On Thu, Feb 20, 2025 at 10:48:31AM -0300, Daniel Almeida wrote:
+> > On 20 Feb 2025, at 09:09, Mark Brown <broonie@kernel.org> wrote:
 
-I know that, but how will someone who reads that changelog without the
-knowledge and background information know?
+> > Having an enabled regulator object depend on a regulator object seems
+> > like a goal rather than a problem, surely it's common to need such
+> > relationships and there's an idiomatic way to do it?  It seems to be how
+> > Rust does mutexes=E2=80=A6
 
-That's the whole point of change logs to explain it for the uninformed
-reader, no?
+> Not when you need to store both of them at the same time.
 
->> >
->> >       spin_lock_irq(&current->sighand->siglock);
->> > -     /* This makes the timer valid in the hash table */
->> > +     /* This makes the timer valid in the hash table, clearing low or=
-der bit. */
->>
->> Clearing the low order bit of what? This is a full write and not a clear
->> low order bit operation.
->>
->
-> Prior value was (sig | 1L)
->
-> New value is (sig)
->
-> -> low order bit is cleared.
+> For Mutex<T>, for example, you don=E2=80=99t store both Mutex<T> and Mute=
+xGuard<'_,T>
+> at the same time. You store a Mutex<T>, and create MutexGuard<'_, T> on t=
+he
+> stack by locking the Mutex when you need to access T. When MutexGuard goe=
+s away,
+> the Mutex is automatically unlocked.
 
-Right I know, but again it's not obvious without figuring out from some
-other place what the logic behind this is.
+> The equivalent behavior for us here would be to enable a regulator on the
+> stack, perform some work, and then have this regulator be automatically
+> disabled. There would be no way to keep it enabled for a longer period.
 
-Thanks,
+Surely this need also exists with other lock types in Rust?  Holding a
+semaphore for a long lived series of operations or similar.  It seems
+surprising that this isn't a standard pattern.
 
-        tglx
+> >> ```
+> >> self.my_regulator.enable() // error, moves out of `&self`
+> >> ```
+
+> > Your second block of code doesn't look obviously painful there?
+
+> It is painful in the sense that it won=E2=80=99t even compile.
+
+> This example assumes a different API where EnabledRegulator consumes Regu=
+lator
+> to exist, instead of keeping an internal reference:
+
+As I mentioned that sounds like something users do want.
+
+> But this is extremely unergonomic because Option<T> is meant for cases wh=
+ere we
+> may or may not have something, but this is not the case here. We're simply
+> abusing its API to make our own Regulator API work.
+
+Are we?  We may or may not have enabled the regulator.
+
+> >> I am sure we can find ways around that, but a simple `bool` here seems=
+ to fix this problem.
+> >=20
+> >> Now you only have to store `Regulator`. If you need another part of yo=
+ur code to also keep
+> >> the regulator enabled, you store a `Regulator` there and enable that a=
+s well. All calls to
+> >> enable and disable will be automatically balanced for all instances of=
+ `Regulator` by
+> >> virtue of the `enabled` bool as well.
+
+> > What you're describing here with creating one Regulator object per
+> > enable sounds more like you want it to be an error to do multiple
+> > enables on a single regulator.  Instead of reference counting or
+> > silently ignoring duplicate enables it should error out on a duplicate
+> > enable.
+
+> The problem here isn't necessarily forbiding multiple enables, but figuri=
+ng out
+> a way to make sure they are balanced in Rust. Let me think this through s=
+ome
+> more, because I do not have a solution in hand right now.
+
+Right, what I'm saying is that when you talk above about each part of
+the code getting another Regulator for the same underlying regulator and
+doing it's enable there that sounds like a pattern where each Regulator
+has a maximum enable count of one - if it's idiomatic to have different
+Regulator objects for different uses then you can say that each use
+can have only one enable and needs to resolve it's own concurrency
+issues.  The C regulator API is perfectly happy with this (modulo
+exclusive regulators which you've not covered here) so if it simplifies
+things that should be fine.
+
+Your formatting here is still odd BTW, line lengths are too long (though
+less long than on the prior mail) and it looks like there's some '''
+formatting rather than indents around code that looks like one of the
+structured text formats?
+
+--GQKO3yGFd7H6YRNI
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAme3ONAACgkQJNaLcl1U
+h9BBlwf9FFGzDfZGnuMx586lEWURM6YNmL0aXnBnq/EnMUOchEdBRDcZ+RotXD5T
+OT75ha/HOrh5PMFv82jTj7mzZOt6WfgzAEUAP+EUHfx9OX1Iw3YVlFk7LyO9JHpK
+yqR4OtScz5aeFNZIMuICNz2M+sdV2VnDoBtcCKGuOeUCULD4BYU8wutnILCHXzXR
+U8HkLOIG030BB3t1CAYIxdX69cOADQV9WcbqQav2MNsrkdQi+Xdfw8r65ZqtkGHf
+raNmAXHJUk9n0YHhYp9PsPh5JFldYMRBfh91xV+D1oGnTla8DxEijwIDm3iRrKYX
+lK2ZsecW6icPU/6SXonl9XTSPU75IQ==
+=CDQq
+-----END PGP SIGNATURE-----
+
+--GQKO3yGFd7H6YRNI--
 
