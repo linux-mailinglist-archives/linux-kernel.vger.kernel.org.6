@@ -1,161 +1,187 @@
-Return-Path: <linux-kernel+bounces-524589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93869A3E4EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:19:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2F3AA3E4E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:18:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D62AD7A6796
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:18:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9C9E3BD3DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:18:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F222641F1;
-	Thu, 20 Feb 2025 19:18:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F03F24BD00;
+	Thu, 20 Feb 2025 19:18:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YsnlYSb6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="a2VYRko8"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66EB42641C2;
-	Thu, 20 Feb 2025 19:18:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D2115A858
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 19:18:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740079133; cv=none; b=VURyDzIjPksblULk2fKcpJVMNcdljW/IwSC34v/EKS+NZ85ca8BQ0ENaDHgglb7QpmPd2qBT3OVI5h3F8MS1w7+hQpB4q3vnXfhXuZyqsqDfDVOo4AuxbJY6QJDLGxQdt4FXEh9SFWLucL91384kGpb+Ij81AgbefRnWt7GyKNc=
+	t=1740079131; cv=none; b=r1UzED64jxnT/XwpLjChMA74FRZG8BKP+HGC14ugiPOXCroB0PMZdlIH7bBWted34ilkXHxaxq90QPD0HKlN9biZrhAtfUBfM+3PD6Di11uIZT4xBE+k3nuD1QSXAokyHFghyClZZb1ooTDFciSCG/3u2Dc4B06VDf8oJLZkCBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740079133; c=relaxed/simple;
-	bh=4d1KNIx+INvlRFOF2ii16MQOHOzRY+Sq2mlvYHJFWXE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=maPzpqCUNJlsUpmOLMceq+aFmpQZPsZZm9Lj3Nqn6rJbXZG1uiIzNf74wel+PktLxQh2wsNkxURa3FT45Fi8Abdo0vYLnObBPkqYfgpMMiHlxc66BmPMcQDK6mzjugvRz2AICpWTRs5/JSxUxbgpSeBDIHFO71i3SPVgcB90rZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YsnlYSb6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A43AEC4CED6;
-	Thu, 20 Feb 2025 19:18:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740079132;
-	bh=4d1KNIx+INvlRFOF2ii16MQOHOzRY+Sq2mlvYHJFWXE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=YsnlYSb63skk/fWlHJtmIfHJag4qUEnaxKf53MBGT67M9wYVeRLnpj5qniNRURqgl
-	 SgJDds7mUqBUsVOb22i9WI7MIK3EzSaSMvYgsBIh2u7hpvN2pauxVs3zWnMqxEJxnW
-	 Udp4wxHheMO0dg9qjGe+WkKaB+NhDLsfTpGv/dLuDwIk1XjN48XywcU/cTIaAg3/im
-	 dwqLYVWGz7mb5+Ma587cAwV6D4RavsJzBGsbvNRH+RTdPYSmlKVgEuGr3nA8vOg4ym
-	 WGvuPg+2dcCd3DpxFNs2zyxbtF0Wac+ZF+tWN3Sa9/waj+0BDW3pMIcwQlKGGySP3o
-	 9IXQaLGAEHWQg==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Gary Guo <gary@garyguo.net>,  Miguel Ojeda <ojeda@kernel.org>,  Alex
- Gaynor <alex.gaynor@gmail.com>,  Boqun Feng <boqun.feng@gmail.com>,
-  =?utf-8?Q?Bj=C3=B6rn?=
- Roy Baron <bjorn3_gh@protonmail.com>,  Benno Lossin
- <benno.lossin@proton.me>,  Alice Ryhl <aliceryhl@google.com>,  Trevor
- Gross <tmgross@umich.edu>,  Danilo Krummrich <dakr@kernel.org>,  Will
- Deacon <will@kernel.org>,  Peter Zijlstra <peterz@infradead.org>,  Mark
- Rutland <mark.rutland@arm.com>,  Jens Axboe <axboe@kernel.dk>,  Francesco
- Zardi <frazar00@gmail.com>,  rust-for-linux@vger.kernel.org,
-  linux-block@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/4] rust: block: convert `block::mq` to use `Refcount`
-In-Reply-To: <CAJ-ks9mEqo72Cwq5_BMtdLPjGSb_sQbm_p+TV_u=iNuYSnuPKQ@mail.gmail.com>
- (Tamir
-	Duberstein's message of "Wed, 19 Feb 2025 17:53:43 -0500")
-References: <20250219201602.1898383-1-gary@garyguo.net>
-	<20250219201602.1898383-4-gary@garyguo.net>
-	<CAJ-ks9=10h9ha403aqL20Yk+y0oXpgvR=hbxA2+6T_CvbXN2bA@mail.gmail.com>
-	<CAJ-ks9mEqo72Cwq5_BMtdLPjGSb_sQbm_p+TV_u=iNuYSnuPKQ@mail.gmail.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Thu, 20 Feb 2025 20:18:37 +0100
-Message-ID: <8734g8ifw2.fsf@kernel.org>
+	s=arc-20240116; t=1740079131; c=relaxed/simple;
+	bh=SJGd+oVoLiP7pwewFrj1oA983o4Z5c3b+UWS1r1r+F0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b/BUdRK7J/eyyHi5ssQhfcI62foHTVsg8QbXCwbk3uESo4LA0dgQVxu2OoBfWktkuvmYdV6w8P6x9eM0xXVgAoAyJYZG2I3hH+VchMK8ESh+X1VHio/3s0+uNFF8/2jRaAz+Rhyce/hK6p+4f1M9V3n1KrdLcNJs0F6jSRdCUmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=a2VYRko8; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 20 Feb 2025 19:18:40 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740079125;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lTJZmh7yY26uVk6h15hnLF5tyEUJH/rJ9jba2hgemVU=;
+	b=a2VYRko85aunYYIDWBd3A1Qw66J2pHDgKO2ffcglYtammcMKPNRPknzC6zplhDY/w5z6KW
+	dwJTKKC7yS7OcAMI+25jRRCD6YsGlpaYwHhqdbZNVRlYsSTepBBXE2TzbUZg/R8/k4W5rI
+	+fPV9uKRrAxragWGlAmLTmomi7BGceI=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Hillf Danton <hdanton@sina.com>, Kairui Song <ryncsn@gmail.com>,
+	Minchan Kim <minchan@kernel.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 11/17] zsmalloc: make zspage lock preemptible
+Message-ID: <Z7eAEKpZ7VnGsVej@google.com>
+References: <20250214045208.1388854-1-senozhatsky@chromium.org>
+ <20250214045208.1388854-12-senozhatsky@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250214045208.1388854-12-senozhatsky@chromium.org>
+X-Migadu-Flow: FLOW_OUT
 
-Tamir Duberstein <tamird@gmail.com> writes:
+On Fri, Feb 14, 2025 at 01:50:23PM +0900, Sergey Senozhatsky wrote:
+> In order to implement preemptible object mapping we need a zspage lock
+> that satisfies several preconditions:
+> - it should be reader-write type of a lock
+> - it should be possible to hold it from any context, but also being
+>   preemptible if the context allows it
+> - we never sleep while acquiring but can sleep while holding in read
+>   mode
+> 
+> An rwsemaphore doesn't suffice, due to atomicity requirements, rwlock
+> doesn't satisfy due to reader-preemptability requirement.  It's also
+> worth to mention, that per-zspage rwsem is a little too memory heavy
+> (we can easily have double digits megabytes used only on rwsemaphores).
+> 
+> Switch over from rwlock_t to a atomic_t-based implementation of a
+> reader-writer semaphore that satisfies all of the preconditions.
+> 
+> The spin-lock based zspage_lock is suggested by Hillf Danton.
+> 
+> Suggested-by: Hillf Danton <hdanton@sina.com>
+> Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+> ---
+>  mm/zsmalloc.c | 246 +++++++++++++++++++++++++++++++++++++++-----------
+>  1 file changed, 192 insertions(+), 54 deletions(-)
+> 
+> diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
+> index 2e338cde0d21..bc679a3e1718 100644
+> --- a/mm/zsmalloc.c
+> +++ b/mm/zsmalloc.c
+> @@ -226,6 +226,9 @@ struct zs_pool {
+>  	/* protect zspage migration/compaction */
+>  	rwlock_t lock;
+>  	atomic_t compaction_in_progress;
+> +#ifdef CONFIG_DEBUG_LOCK_ALLOC
+> +	struct lock_class_key lock_class;
+> +#endif
+>  };
+>  
+>  static inline void zpdesc_set_first(struct zpdesc *zpdesc)
+> @@ -257,6 +260,18 @@ static inline void free_zpdesc(struct zpdesc *zpdesc)
+>  	__free_page(page);
+>  }
+>  
+> +#define ZS_PAGE_UNLOCKED	0
+> +#define ZS_PAGE_WRLOCKED	-1
+> +
+> +struct zspage_lock {
+> +	spinlock_t lock;
+> +	int cnt;
+> +
+> +#ifdef CONFIG_DEBUG_LOCK_ALLOC
+> +	struct lockdep_map dep_map;
+> +#endif
+> +};
+> +
+>  struct zspage {
+>  	struct {
+>  		unsigned int huge:HUGE_BITS;
+> @@ -269,7 +284,7 @@ struct zspage {
+>  	struct zpdesc *first_zpdesc;
+>  	struct list_head list; /* fullness list */
+>  	struct zs_pool *pool;
+> -	rwlock_t lock;
+> +	struct zspage_lock zsl;
+>  };
+>  
+>  struct mapping_area {
+> @@ -279,6 +294,148 @@ struct mapping_area {
+>  	enum zs_mapmode vm_mm; /* mapping mode */
+>  };
+>  
+> +static void zspage_lock_init(struct zspage *zspage)
+> +{
+> +#ifdef CONFIG_DEBUG_LOCK_ALLOC
+> +	lockdep_init_map(&zspage->zsl.dep_map, "zspage->lock",
+> +			 &zspage->pool->lock_class, 0);
+> +#endif
+> +
+> +	spin_lock_init(&zspage->zsl.lock);
+> +	zspage->zsl.cnt = ZS_PAGE_UNLOCKED;
+> +}
+> +
+> +#ifdef CONFIG_DEBUG_LOCK_ALLOC
 
-> On Wed, Feb 19, 2025 at 5:26=E2=80=AFPM Tamir Duberstein <tamird@gmail.co=
-m> wrote:
->>
->> On Wed, Feb 19, 2025 at 3:17=E2=80=AFPM Gary Guo <gary@garyguo.net> wrot=
-e:
->> >
->> > Currently there's a custom reference counting in `block::mq`, which us=
-es
->> > `AtomicU64` Rust atomics, and this type doesn't exist on some 32-bit
->> > architectures. We cannot just change it to use 32-bit atomics, because
->> > doing so will make it vulnerable to refcount overflow. So switch it to
->> > use the kernel refcount `kernel::sync::Refcount` instead.
->> >
->> > There is an operation needed by `block::mq`, atomically decreasing
->> > refcount from 2 to 0, which is not available through refcount.h, so
->> > I exposed `Refcount::as_atomic` which allows accessing the refcount
->> > directly.
->> >
->> > Acked-by: Andreas Hindborg <a.hindborg@kernel.org>
->> > Signed-off-by: Gary Guo <gary@garyguo.net>
->> > ---
->> >  rust/kernel/block/mq/operations.rs |  7 +--
->> >  rust/kernel/block/mq/request.rs    | 70 ++++++++++--------------------
->> >  rust/kernel/sync/refcount.rs       | 14 ++++++
->> >  3 files changed, 40 insertions(+), 51 deletions(-)
->> >
->> > diff --git a/rust/kernel/block/mq/operations.rs b/rust/kernel/block/mq=
-/operations.rs
->> > index 864ff379dc91..c399dcaa6740 100644
->> > --- a/rust/kernel/block/mq/operations.rs
->> > +++ b/rust/kernel/block/mq/operations.rs
->> > @@ -10,9 +10,10 @@
->> >      block::mq::Request,
->> >      error::{from_result, Result},
->> >      prelude::*,
->> > +    sync::Refcount,
->> >      types::ARef,
->> >  };
->> > -use core::{marker::PhantomData, sync::atomic::AtomicU64, sync::atomic=
-::Ordering};
->> > +use core::marker::PhantomData;
->> >
->> >  /// Implement this trait to interface blk-mq as block devices.
->> >  ///
->> > @@ -78,7 +79,7 @@ impl<T: Operations> OperationsVTable<T> {
->> >          let request =3D unsafe { &*(*bd).rq.cast::<Request<T>>() };
->> >
->> >          // One refcount for the ARef, one for being in flight
->> > -        request.wrapper_ref().refcount().store(2, Ordering::Relaxed);
->> > +        request.wrapper_ref().refcount().set(2);
->> >
->> >          // SAFETY:
->> >          //  - We own a refcount that we took above. We pass that to `=
-ARef`.
->> > @@ -187,7 +188,7 @@ impl<T: Operations> OperationsVTable<T> {
->> >
->> >              // SAFETY: The refcount field is allocated but not initia=
-lized, so
->> >              // it is valid for writes.
->> > -            unsafe { RequestDataWrapper::refcount_ptr(pdu.as_ptr()).w=
-rite(AtomicU64::new(0)) };
->> > +            unsafe { RequestDataWrapper::refcount_ptr(pdu.as_ptr()).w=
-rite(Refcount::new(0)) };
->>
->> Could we just make the field pub and remove refcount_ptr? I believe a
->> few callers of `wrapper_ptr` could be replaced with `wrapper_ref`.
->
-> I took a stab at this to check it was possible:
-> https://gist.github.com/tamird/c9de7fa6e54529996f433950268f3f87
+Instead of the #ifdef and repeating all the functions, can't we do
+something like:
 
-The access method uses a raw pointer because it is not always safe to
-reference the field.
+#ifdef CONFIG_DEBUG_LOCK_ALLOC
+#define zspage_lock_map(zsl) (&zsl->dep_map)
+#else
+#define zspage_lock_map(zsl) /* empty or NULL */
+#endif
 
-I think line 25 in your patch is UB as the field is not initialized.
+Then we can just have one version of the functions and use
+zspage_lock_map() instead of zsl->dep_map, right?
 
-At any rate, such a change is orthogonal. You could submit a separate
-patch with that refactor.
+> +static inline void __read_lock(struct zspage *zspage)
+> +{
+> +	struct zspage_lock *zsl = &zspage->zsl;
+> +
+> +	rwsem_acquire_read(&zsl->dep_map, 0, 0, _RET_IP_);
+> +
+> +	spin_lock(&zsl->lock);
+> +	zsl->cnt++;
 
+Shouldn't we check if the lock is write locked?
 
-Best regards,
-Andreas Hindborg
-
-
-
+> +	spin_unlock(&zsl->lock);
+> +
+> +	lock_acquired(&zsl->dep_map, _RET_IP_);
+> +}
+> +
+> +static inline void __read_unlock(struct zspage *zspage)
+> +{
+> +	struct zspage_lock *zsl = &zspage->zsl;
+> +
+> +	rwsem_release(&zsl->dep_map, _RET_IP_);
+> +
+> +	spin_lock(&zsl->lock);
+> +	zsl->cnt--;
+> +	spin_unlock(&zsl->lock);
+> +}
 
