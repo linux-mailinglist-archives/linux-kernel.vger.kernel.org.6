@@ -1,162 +1,156 @@
-Return-Path: <linux-kernel+bounces-524472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED257A3E382
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:12:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FBDCA3E389
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:14:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3647179133
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:12:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CB141884BBA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:14:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC77214213;
-	Thu, 20 Feb 2025 18:12:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39D0421421E;
+	Thu, 20 Feb 2025 18:14:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VabyIUYV"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="LA80N+eI"
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D8F1FAC30;
-	Thu, 20 Feb 2025 18:12:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2CE7213E84
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 18:14:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740075169; cv=none; b=ttUTWhWfUieiRePl/+1oQdXsXSjXnbpflkX6qHw//e+F7HH9l7UI6E1+5+1tUXBjpouLdUaJ5D/NK29bwLNjaOGCofeLb3UP2aaCcjO3wU8JEb6hq+J6S1YA/KsGb6GwakXVXkJ9VJy034lC77UeIa20BOX9JtawawezR+aNhDY=
+	t=1740075264; cv=none; b=cXl3+GGih6wVugJmKqgh96hNxr4KTXIN3/nu3n3MvJx1O4SPEWpmk4jRdOnWCx+SHECDqJqxkkZAfEtSyf1y4tce6hAHzA7BNQC+DMTApcqEk41S/RbFhClw1JVMzyOfkbH5yS3/cl2rHeR3sbvDq0Z/Cf8YK5HFJhN/KsEiRG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740075169; c=relaxed/simple;
-	bh=RVJ0Ui+e4wiQwjjazPtlbUqFxh8TiHfnG0fw+upHVBE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YjOzCxot8W6bCl6UaqpZIuqlGIffwW2TAi8iaswnhWn74tOCn0tryAHjk2XLVrE/wpX60e+vFxP2HDhhP5Zq5UMoDGcP0BkVDLjAQILm/Hxye+VuahWQivN7NrfCcEtlERtFXraB0PiMrq+0r92Wu7K1x+wPDNbZ/rlyL+sO7/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VabyIUYV; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-38f286b5281so673262f8f.1;
-        Thu, 20 Feb 2025 10:12:47 -0800 (PST)
+	s=arc-20240116; t=1740075264; c=relaxed/simple;
+	bh=9LyArO1V6x/btSOf+YKP3+IhtB3t+HvWTzREOzTKzg4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=geoXKozCOMgFtRT46L2XDmZ/eQafUN3SFgba2wd6zf/2JQvF09CUZ7ZR7hQSPsvAaurmtTOF0+sWgGpHeXOwKJuZ9m2T2glkOpN5mITxTyeAHQ1MaKqWJeZji6RLvAjXzW0XrTqBP6YwN9i9aY4InVBxq0M4q+U60AXJBvTLWNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=LA80N+eI; arc=none smtp.client-ip=209.85.210.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-727118c4f9aso337397a34.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 10:14:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740075166; x=1740679966; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hf9BmegiktNtcY6HS4qZYakNRxia/v7+na1LdoL1VGI=;
-        b=VabyIUYV3sVDetbVm7sSECrrdTE8/kD4Tp77zlnSdgwp11QJ+Qs40xTCtC2TjWrdeK
-         /M+AfcrbRw8XB/mNrBjHaHB3S7TXMkGyABGt9ZOknh3MW06f3VQb6IYkqJEdxNvgOroz
-         0cmvEoC2UT1GfmU+89DMVUq5zcl0Va8k/DoqDTZD8s9sswXJAt26t0P9gTc9HsCHxqE7
-         aZ2VXaN10ccpKDCTiIqmiBD0tGOxanLhqYDoYiws4pqqmiTcZWlfXDkfO+7NwczVhuqx
-         3C+n3tIea7jh6DpVXaYAQbaWwHDkYNDbv85mrDueNBR1VzZCU/3/NuvR1uLCM4IZuZNm
-         ED0w==
+        d=broadcom.com; s=google; t=1740075262; x=1740680062; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=XFoKwRv8+iHXzA4sW8NR+HMTovNN52QXmnRE1AZkRlg=;
+        b=LA80N+eIlKgOT9AIRggsrqrCI2wD8OgsguhE4XSsey3V0NtA1NB28EbAXEpdBp7VqE
+         /gNlkYpFmDL2E/RLKQdeNTMAN9jIIuIhSAI6qq+k5r2DNb4jfo7iwq+0+WYX/6JsdLBH
+         s9+OVSGuavYM10nhV9MUmJRh71d85UpMrrhAQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740075166; x=1740679966;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hf9BmegiktNtcY6HS4qZYakNRxia/v7+na1LdoL1VGI=;
-        b=mbsgs33I0dNao/h5Vbl9CCN7U1GhyCwf1hKtXpYH9tN1by9m0z/QvXhh2s9o6qK/aw
-         l6PRN8oGxEPMv2giya9UmZj09oZBnUhXs/W7peFc9jd97H6ZTDwzXZJns2uRt4m0CXXW
-         yHtaGM2x5vsJhmiwd53qEgL4Vj1LsU5a6MkZt5YJXue2rFq+hJGljsvqxoKN7lfS2Aqv
-         mGxj//qtLS1DorWRKF2cBhM/3a6Ctn0qJnfvN3UorteNs+VwRH9WzCHLm8c1IRLIMGdr
-         x9iDj2zy1JoXl1hxR9y0GyNTzOSVoQJ/R6hxpPRVXuF7ugDg1zRGmK5KJ+QY5sewVf3e
-         u96A==
-X-Forwarded-Encrypted: i=1; AJvYcCVD7bligKGJArtFDKGAvwYfUOGFXMDS+3rBkkN6quuQZ/CJKMOJdN92s3sJ+5Q0PB6hl6757L8Rw3E=@vger.kernel.org, AJvYcCXYmUGJHiive6pwP8TVA21tz559i2xjpyBTQjusM1u2S24BttrQ/L/+qdzTWSZ6cT0qFvDAYzGDMXNST95s@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQLczEARdfIeSrJ+vH0q5E0CfO71G6rVqk8f8k5UTr3iSWEo4b
-	oloCv4cqoD4fBUTvI+CabqEVXSd/j4ZutMPyozDLzpFatTzT9mP1
-X-Gm-Gg: ASbGncudxbJS1bIiLK7DTc2lL1ZscNkB96Q4QKsf/SIZPuK5D3ET7AjTXUukVcSHOrB
-	im8vC9N1nErvQUkpo8Y2QpATzBlalA9wYnhn9smz7aYw7jlf0phJ5492y/tjoOjE4pqL3KvThR+
-	4SxPGYNhQ+l3vv5chf+Ux7DDeIhOkAthtVtRoDC615RdNNumKjvrW+VoUaRTQ5hx59Lb+XjLJdI
-	DbUcTW4mdwm24tnkjl6CYW4nUbnrGkOoiYVEQr/mGoKtXaxo90IPTrEnb5QuVc65dJqvndssKfh
-	qv8SSQJIE//YNWrFHCmHQDLJpfjfEqyArKpvFFtMQmkGaDcxII+0/0yHpzo73zjQOdE=
-X-Google-Smtp-Source: AGHT+IG8SxlEpGzhrbOAaMiZSLB6w/8BQXRpKpsCxpcNHWG6kyfbSzJtzHPfDd1frA7kH4B1Z2SqFw==
-X-Received: by 2002:a5d:6dd1:0:b0:38f:4f25:14a3 with SMTP id ffacd0b85a97d-38f6e979d1amr195111f8f.30.1740075166029;
-        Thu, 20 Feb 2025 10:12:46 -0800 (PST)
-Received: from jernej-laptop.localnet (86-58-6-171.dynamic.telemach.net. [86.58.6.171])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258f5efdsm21016778f8f.43.2025.02.20.10.12.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 10:12:45 -0800 (PST)
-From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To: Emilio =?UTF-8?B?TMOzcGV6?= <emilio@elopez.com.ar>,
- David Laight <david.laight.linux@gmail.com>,
- Anastasia Belova <abelova@astralinux.ru>
-Cc: Anastasia Belova <abelova@astralinux.ru>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Chen-Yu Tsai <wens@csie.org>, Samuel Holland <samuel@sholland.org>,
- Maxime Ripard <mripard@kernel.org>, Hans de Goede <hdegoede@redhat.com>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
- lvc-project@linuxtesting.org
-Subject: Re: [PATCH] clk: sunxi: clean up rate counting
-Date: Thu, 20 Feb 2025 19:12:43 +0100
-Message-ID: <2385242.n0HT0TaD9V@jernej-laptop>
-In-Reply-To: <20250203112930.650813-1-abelova@astralinux.ru>
-References: <20250203112930.650813-1-abelova@astralinux.ru>
+        d=1e100.net; s=20230601; t=1740075262; x=1740680062;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XFoKwRv8+iHXzA4sW8NR+HMTovNN52QXmnRE1AZkRlg=;
+        b=dqzptIj5A0ZHZ1VgalUeFp1m5mujZTBDMLD1Sqfxjgejn8xUJib8dm2TFYkTMho5VT
+         ff0/IJiB0mvQWqnD17H5wDD84ulEbG4kxWSfwO+D6NQGV5XSzQbxwWyKt/JJW/zc8+3V
+         Ak91hjcctxJ7V8WsV+m2BGlUW0nkIbq3jenhtshNwBAcTxsu/v+NylscOd02Gep3ZzhU
+         OSp/mui0Wr/8MWEYqlAY0rekDp4KtDzZXb2qEjZ6lR/o/NbXP9jabRngBFazvG2GOmq4
+         whOVYkkBIarZv0BtEjYFhQB/L7Y8pb1CJjodBwuX/qwtG+Qbzt2ok6HU8j+iek99fWU+
+         TBdg==
+X-Forwarded-Encrypted: i=1; AJvYcCUX+Jc23hZllq9G2odNxfGneIX4EWWrP4F/ppr4PSCdFyaHSrMnTn3w15D4/y/4zDJnxSMWYuZgi/Ys6B0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzg1Hdo/pOwSVBK6lJvvmm4+uekGsMPtG3aP5++tQ7f4eVRC8TN
+	1dscGgHuRuFD63gzZHes8P3jNt0YVd+2ZewHBNje0FVUbj1hpEqW39vDfIHRhw==
+X-Gm-Gg: ASbGncs0H79800I58be2XxFuinwWvT6XlD3it2fiQfikPhmAc+cB4q1ivZf2OZYCm4N
+	hzTUB7A/IYn3jyrIEqT40tG7ZmuhjpluESXNI1SC/rh8ryWvgzFgHo7paHoJhc3cu+y+qq6mjmU
+	E78ewJUmikKwVmkciypbjJ+pIT8J3X65rS5CeLYeo7wNGcNFMu/j5Waxl2+Q4uwhYGXWYB+5jiO
+	YTKQQ/kD4PGk8OSv1ZULiwe6GnGjg73hjL66GsfGUj0ozT9n55V8Fl8SmTRstmPp/H1IrRYQFHX
+	dL8fH9upUH+cYHZ6apn94flbnfUHY198gs7XbZH2Ku1/EvpvSWrB8Tvk0eKf0t7BUA==
+X-Google-Smtp-Source: AGHT+IEV44L/jP80xEFxHDxYslNjpr4vxk6yxSG6deheV670R1As9ApbDG8AlvPhEH38+8Glf9FKlg==
+X-Received: by 2002:a05:6830:210c:b0:727:345d:3b72 with SMTP id 46e09a7af769-7274c1ebaa7mr20788a34.16.1740075261611;
+        Thu, 20 Feb 2025 10:14:21 -0800 (PST)
+Received: from [192.168.1.3] (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-727329c37d0sm1563186a34.31.2025.02.20.10.14.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Feb 2025 10:14:20 -0800 (PST)
+Message-ID: <c67c10fe-e279-4b37-ac9d-20485e86fc8f@broadcom.com>
+Date: Thu, 20 Feb 2025 10:14:11 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-
-Dne ponedeljek, 3. februar 2025 ob 12:29:28 Srednjeevropski standardni =C4=
-=8Das je Anastasia Belova napisal(a):
-> If n =3D 255, the result of multiplication of n and 24000000
-> may not fit int type. Swap division and shift with multiplication.
->=20
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
->=20
-> Fixes: 6424e0aeebc4 ("clk: sunxi: rewrite sun9i_a80_get_pll4_factors()")
-> Signed-off-by: Anastasia Belova <abelova@astralinux.ru>
-
-While this should work, should we try to remove (old) sunxi clock drivers
-instead? Drivers we converted 8 years ago, except A20 GMAC and A80 PRCM clo=
-cks.
-Even if we convert them now, we need some transition time for them.
-
-Best regards,
-Jernej
-
-> ---
->  drivers/clk/sunxi/clk-sun9i-core.c | 14 +++++++++-----
->  1 file changed, 9 insertions(+), 5 deletions(-)
->=20
-> diff --git a/drivers/clk/sunxi/clk-sun9i-core.c b/drivers/clk/sunxi/clk-s=
-un9i-core.c
-> index d93c7a53c6c0..639c83ed63b8 100644
-> --- a/drivers/clk/sunxi/clk-sun9i-core.c
-> +++ b/drivers/clk/sunxi/clk-sun9i-core.c
-> @@ -25,12 +25,12 @@
-> =20
->  static void sun9i_a80_get_pll4_factors(struct factors_request *req)
->  {
-> -	int n;
-> -	int m =3D 1;
-> -	int p =3D 1;
-> +	unsigned int n;
-> +	unsigned int m =3D 1;
-> +	unsigned int p =3D 1;
-> =20
->  	/* Normalize value to a 6 MHz multiple (24 MHz / 4) */
-> -	n =3D DIV_ROUND_UP(req->rate, 6000000);
-> +	n =3D DIV_ROUND_UP(req->rate, 6000000ul);
-> =20
->  	/* If n is too large switch to steps of 12 MHz */
->  	if (n > 255) {
-> @@ -50,7 +50,11 @@ static void sun9i_a80_get_pll4_factors(struct factors_=
-request *req)
->  	else if (n < 12)
->  		n =3D 12;
-> =20
-> -	req->rate =3D ((24000000 * n) >> p) / (m + 1);
-> +	/* Division and shift should be done before multiplication to
-> +	 * avoid overflow. The result will be correct because '>> p' and
-> +	 * '/ (m + 1)' are both just conditional 'divide by 2'
-> +	 */
-> +	req->rate =3D ((24000000ul >> p) / (m + 1)) * n;
->  	req->n =3D n;
->  	req->m =3D m;
->  	req->p =3D p;
->=20
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 6/8] PCI: brcmstb: Use same constant table for config
+ space access
+To: Jim Quinlan <james.quinlan@broadcom.com>, linux-pci@vger.kernel.org,
+ Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+ Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>,
+ bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Rob Herring <robh@kernel.org>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-rpi-kernel@lists.infradead.org>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-arm-kernel@lists.infradead.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20250214173944.47506-1-james.quinlan@broadcom.com>
+ <20250214173944.47506-7-james.quinlan@broadcom.com>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20250214173944.47506-7-james.quinlan@broadcom.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
 
+On 2/14/2025 9:39 AM, Jim Quinlan wrote:
+> The constants EXT_CFG_DATA and EXT_CFG_INDEX vary by SOC. One of the
+> map_bus methods used these constants, the other used different constants.
+> Fortunately there was no problem because the SoCs that used the latter
+> map_bus method all had the same register constants.
+> 
+> Remove the redundant constants and adjust the code to use them.  In
+> addition, update EXT_CFG_DATA to use the 4k-page based config space access
+> system, which is what the second map_bus method was already using.
+> 
+> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
 
