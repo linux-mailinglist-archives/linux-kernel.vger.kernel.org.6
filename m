@@ -1,114 +1,169 @@
-Return-Path: <linux-kernel+bounces-524261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43508A3E135
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:46:47 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AE43A3E13C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:47:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E2847AC949
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:43:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BB947A79B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:43:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22D96211A1D;
-	Thu, 20 Feb 2025 16:43:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D583020C00D;
+	Thu, 20 Feb 2025 16:44:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gD1ElzAr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Fg2ZdEdZ"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73AF3204840;
-	Thu, 20 Feb 2025 16:43:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA8AE20B211;
+	Thu, 20 Feb 2025 16:44:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740069827; cv=none; b=WhcMePPDZrCPsYgEG9cKKPdFz5YlGJKGCBhMXN9zNLau4qQdvQNyDis8V60nHjaGx4xhxCSoMWeuf9175X6RVF2gCDMcifq9dglbmleflnIHb+uHwLMDFLMV2MYI+ndJ5FdXTGVB+dMaxQPePbSw7LzYsBxsaAyc9TPhka5ostg=
+	t=1740069881; cv=none; b=VtmhRjP6qgPteJ2pyGMxf/YVbk1ksm8icJnWzDtOP0dBr8Ue1qWcQNM/f9feZgLay/U9VbFXxEV7yvmySgVkAf2Mo7CFZIyAzXK3wKL48a05dCn3Ca5V/MPInErPfMGkKsJoK/cCsa7K1r/8KX7xYbfmXSz7XCkCRdBPfn3BJ/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740069827; c=relaxed/simple;
-	bh=agaBIrDK1n0Kan1E1UYRbKAbf9aZnrkrgIyeTlCVzvk=;
+	s=arc-20240116; t=1740069881; c=relaxed/simple;
+	bh=s+DTl6tU3kF08I2UyldTi/y0xQ6rl5/cP2qUtibkU/w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mDuifU9MG+mcnRNKVh84wWA/+f4tyu163XcdP4zbdqM6DK3fexw8Fg5E/MPkw0gDZGPmhyqK41pzgkclIoPbO15qNh1G3Ni2iKXgH6zvGXReyPVTOQ4cmL87juaEeg5wIhLT9D33gCFmqHmJkyuuPT5PBmSwHJIfwXC0FMDStFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gD1ElzAr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69619C4CEDD;
-	Thu, 20 Feb 2025 16:43:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740069827;
-	bh=agaBIrDK1n0Kan1E1UYRbKAbf9aZnrkrgIyeTlCVzvk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gD1ElzArVkSpKTBC3O/68z63VvDXMGrm2LqeH+QQ+iMrHGv3z7+6Ic+q6I4tD3FTq
-	 XS1p86MB07tN8Aif56Q0wrMdnUPJR6oDm5AMK5b2iRAQblVOmH9KUSFFnvuA+ExS7L
-	 3Mqmi6gMUZIBDIQNSSaTwlXmsxUv91Uhb2tITNri2+prLUp57wxov0RtApDX701WjQ
-	 Ws34qJN5D68ibJRq/ysQSJsVVTSnjm/PPVNyiuzad5bPj8n7/Ea8WDwFyuzaoO+c2S
-	 eTb/m5mwzBX2aOBHiVBFvrCbIbsRbhJag3qWAyFZGAO6f9MK5vkFVtjIrBQtJdsecQ
-	 Pu9g8sw+p9ZBg==
-Date: Thu, 20 Feb 2025 16:43:40 +0000
-From: Lee Jones <lee@kernel.org>
-To: Sebastian Reichel <sre@kernel.org>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Pavel Machek <pavel@ucw.cz>, Hans de Goede <hdegoede@redhat.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>,
-	Purism Kernel Team <kernel@puri.sm>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Dzmitry Sankouski <dsankouski@gmail.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-leds@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v17 0/7] Add support for Maxim Integrated MAX77705 PMIC
-Message-ID: <20250220164340.GD824852@google.com>
-References: <20250123-starqltechn_integration_upstream-v17-0-8b06685b6612@gmail.com>
- <174006961563.882548.1668950876404410080.b4-ty@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KloeYfNcHB1Bs8B2wbpjYfGlM/qg5KPEa/AJVFv/QjTQDJiV0F9AKZ/R72gRTqUoYuXz2hOUCOI+K5dPBvMfJ05R9nfEscMoIywj67f5+T3Wxq/WhZEmVUeEkphIZ2HKGyrF2Tw1SfV032QwVWkcVrVq5m+q1GuROujqnQLsnZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Fg2ZdEdZ; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51KBld33001689;
+	Thu, 20 Feb 2025 16:43:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=2phGq1PASew3t0QitT+lz7mcsTOMpz
+	4L7ee8QirsuZU=; b=Fg2ZdEdZwarsWS57pS+/6IXcUxTrTtCLnhG9CBGZ/7HGWi
+	4zAWb3M539K8KPS0Ajmb/PEzTqkGG38Ai+zL1gYVY4anEms/XTxHY28EJ4xlx/AF
+	IUn+cXfqtcI5hv4hzHC4AL7ugPq0hKMuYbyTtcKHIbdd6lb7tMPr95gbVbiNVJH+
+	yzBsnvN0hGYuWJxvHvbXddPIPPhMLHzGJxo+0NEWCwpR/A6b6JLE7YAgE1qftFmU
+	X8qdol1P5giI4dqT57n6qb3N89dOmr8ZV58kAi7tkbB+YnfIhyNfQnGQOLkoz4M2
+	sXSo3k/o/GFXMpo2IP6vEkxcgwZaMd1wbjpTThkQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44wtfa4552-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Feb 2025 16:43:55 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51KGhsmH028733;
+	Thu, 20 Feb 2025 16:43:54 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44wtfa454x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Feb 2025 16:43:54 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51KF7PST027113;
+	Thu, 20 Feb 2025 16:43:53 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 44w025b1sh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Feb 2025 16:43:53 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51KGhnA118088388
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 20 Feb 2025 16:43:49 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A8F0820043;
+	Thu, 20 Feb 2025 16:43:49 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4888520040;
+	Thu, 20 Feb 2025 16:43:49 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 20 Feb 2025 16:43:49 +0000 (GMT)
+Date: Thu, 20 Feb 2025 17:43:48 +0100
+From: Alexander Gordeev <agordeev@linux.ibm.com>
+To: Dave Young <dyoung@redhat.com>
+Cc: Alexander Graf <graf@amazon.com>, Mike Rapoport <rppt@kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Anthony Yznaga <anthony.yznaga@oracle.com>,
+        Arnd Bergmann <arnd@arndb.de>, Ashish Kalra <ashish.kalra@amd.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Eric Biederman <ebiederm@xmission.com>, Ingo Molnar <mingo@redhat.com>,
+        James Gowans <jgowans@amazon.com>, Jonathan Corbet <corbet@lwn.net>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Pratyush Yadav <ptyadav@amazon.de>, Rob Herring <robh+dt@kernel.org>,
+        Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
+        Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Usama Arif <usama.arif@bytedance.com>, Will Deacon <will@kernel.org>,
+        devicetree@vger.kernel.org, kexec@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+        linux-mm@kvack.org, x86@kernel.org, Philipp Rudo <prudo@redhat.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org
+Subject: Re: [PATCH v4 00/14] kexec: introduce Kexec HandOver (KHO)
+Message-ID: <Z7dbxJNxlW2EA_aa@tuxmaker.boeblingen.de.ibm.com>
+References: <20250206132754.2596694-1-rppt@kernel.org>
+ <CALu+AoRMQyRDFS_4L0KQkmrFT_S+yk=uZ-Mqt86JQYKKnj-5Ug@mail.gmail.com>
+ <Z7WJD6eBLuIRnLwk@kernel.org>
+ <CALu+AoSaEthfed1NOYPiQgm_g-dhibVMRAp0+=_+9qTT4_x=tg@mail.gmail.com>
+ <d8c43707-65a2-4176-85e2-acdb4c9d16ad@amazon.com>
+ <CALu+AoR0BbmbZeOkLU55OpD8kxGsVnFs+pXgEC9Y_MpB4=GMvQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <174006961563.882548.1668950876404410080.b4-ty@kernel.org>
+In-Reply-To: <CALu+AoR0BbmbZeOkLU55OpD8kxGsVnFs+pXgEC9Y_MpB4=GMvQ@mail.gmail.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 02CmlzRAvH6gUhNjDul_d5grRXN4j5Cf
+X-Proofpoint-GUID: vqtrf0KyRdj5sNl93G5J7u-LcnzQFqNz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-20_07,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 suspectscore=0
+ impostorscore=0 lowpriorityscore=0 priorityscore=1501 mlxlogscore=660
+ bulkscore=0 phishscore=0 malwarescore=0 mlxscore=0 adultscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502200116
 
-On Thu, 20 Feb 2025, Lee Jones wrote:
-
-> On Thu, 23 Jan 2025 18:04:25 +0300, Dzmitry Sankouski wrote:
-> > The Maxim MAX77705 is a Companion Power Management and Type-C
-> > interface IC which includes charger, fuelgauge, LED, haptic motor driver and
-> > Type-C management IC. It's used in Samsung S series smart phones
-> > starting from S9 model.
-> > 
-> > Add features:
-> >   - charger
-> >   - fuelgauge
-> >   - haptic
-> >   - led
-> > 
-> > [...]
+On Thu, Feb 20, 2025 at 09:49:52AM +0800, Dave Young wrote:
+> On Wed, 19 Feb 2025 at 21:55, Alexander Graf <graf@amazon.com> wrote:
+> > >>> What architecture exactly does this KHO work fine?   Device Tree
+> > >>> should be ok on arm*, x86 and power*, but how about s390?
+> > >> KHO does not use device tree as the boot protocol, it uses FDT as a data
+> > >> structure and adds architecture specific bits to the boot structures to
+> > >> point to that data, very similar to how IMA_KEXEC works.
+> > >>
+> > >> Currently KHO is implemented on arm64 and x86, but there is no fundamental
+> > >> reason why it wouldn't work on any architecture that supports kexec.
+> > > Well,  the problem is whether there is a way to  add dtb in the early
+> > > boot path,  for X86 it is added via setup_data,  if there is no such
+> > > way I'm not sure if it is doable especially for passing some info for
+> > > early boot use.  Then the KHO will be only for limited use cases.
+> >
+> >
+> > Every architecture has a platform specific way of passing data into the
+> > kernel so it can find its command line and initrd. S390x for example has
+> > struct parmarea. To enable s390x, you would remove some of its padding
+> > and replace it with a KHO base addr + size, so that the new kernel can
+> > find the KHO state tree.
 > 
-> Applied, thanks!
-> 
-> [1/7] dt-bindings: power: supply: add maxim,max77705 charger
->       commit: af280f29f32c885942f67edacfeae7d9b6e897a4
-> [2/7] dt-bindings: mfd: add maxim,max77705
->       commit: 2ae4ffff28bf48a7144591eed7081f746b98e130
-> [3/7] power: supply: max77705: Add charger driver for Maxim 77705
->       commit: a6a494c8e3ce1fe84aac538b087a4cab868ed83f
-> [4/7] mfd: simple-mfd-i2c: Add MAX77705 support
->       commit: 7b591ef98b3fc1ce20c3ccb86715429b72e2e6f0
-> [5/7] mfd: Add new driver for MAX77705 PMIC
->       commit: c8d50f029748b73313838b64b829992b66ccb704
-> [6/7] input: max77693: add max77705 haptic support
->       commit: eb79f3a5a51a1f484e2570d983dc9d8217e8f912
-> [7/7] leds: max77705: Add LEDs support
->       commit: aebb5fc9a0d87916133b911e1ef2cc04a7996335
+> Ok, thanks for the info,  I cced s390 people maybe they can provide inputs.
 
-I'll send out a PR once the build tests are complete.
+If I understand correctly, the parmarea would be used for passing the
+FDT address - which appears to be fine. However, s390 does not implement
+early_memremap()/early_memunmap(), which KHO needs.
 
-Note to self: ib-mfd-input-leds-power-6.15
-
--- 
-Lee Jones [李琼斯]
+Thanks, Dave!
 
