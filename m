@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-523036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8FC1A3D132
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:12:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A13CA3D133
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:12:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B95C1896264
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 06:11:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7334A188CE16
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 06:12:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01A241E47D9;
-	Thu, 20 Feb 2025 06:11:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CA5C1E7C08;
+	Thu, 20 Feb 2025 06:11:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="axQ49k7K"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cTIV3Jpa"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC3B1E5B66;
-	Thu, 20 Feb 2025 06:11:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FE071E25FA;
+	Thu, 20 Feb 2025 06:11:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740031881; cv=none; b=Yig+CMkbNmtDQDav5asq52QjW85wkT7VBGawuYDRBaVojWEot69FLYdFLvpzIvgfW43O77zHxMm15NYnNZZ0cGflEUURSV6eVD5m4Qs8wZNNN0KrtSXlebitVilNvUIV3B6pHoONCrv+kGXxdz21qeHpCU6RYBYL2m/QjY72R3U=
+	t=1740031882; cv=none; b=Ooz0B8sx36Hq/qhrHfkTv79nOcAs6+OvJ2XHdBzfrkqlXpu7JKzuZYVDNNWMoLDgU3GlaS7Lp5u7Ihq6u4Kznf8O9hozcXQ9STAgImzrGFbd+9gGQsKSw94RAOHIHwt2E5fXhvELDlhvPa8lV6ei5ZHtUNi8FwtLL+5rePhcFbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740031881; c=relaxed/simple;
-	bh=6U5XgCEy+ulJchyfM81frgddEG2ykLPjTr/ADmTTCe8=;
+	s=arc-20240116; t=1740031882; c=relaxed/simple;
+	bh=zKY0RPinE6Is/VtilEnqPd6rIm2aGTxiz+O6yjvOxdg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=I8UJOWUQzqOoYqGZZJYmtnVItPUZppahV8/519V8DkdffjHjwdZOVaU80fBcCu70XGyR/8GyaJtf6cmuow7pyOFIjx60gqZmOz+W1gJ4a9c/eg/cNQGmlBDnHEQP4MyLwMI+/+GyAH2O+9CywUNrZR8yF228KLl0zFukLJetnXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=axQ49k7K; arc=none smtp.client-ip=209.85.214.171
+	 MIME-Version; b=Goyktefd5r9UnFbQlwAvF0+ksU9+QRyVzk6jHrPLnQXttAwwVnlmKBjpIULbJAlmgtjCKNmHHgNqwx6sSD+hCnvpVE2TO3tGbv1axzM68os1I2/+lky95LfSA/qqrm/kcPbEX9d2Fl8JhdxztBgbg1elzWQ3g1EKUGPl+PjCDgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cTIV3Jpa; arc=none smtp.client-ip=209.85.214.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-220c8f38febso9597185ad.2;
-        Wed, 19 Feb 2025 22:11:18 -0800 (PST)
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-22104c4de96so7611775ad.3;
+        Wed, 19 Feb 2025 22:11:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740031878; x=1740636678; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1740031880; x=1740636680; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+j78yv7W1SEsENaFWTruZEdfPJNI2RZz4FriJMcOius=;
-        b=axQ49k7KCsq9rLQZxMzXEeBiVCsgWO9KSHRu6WQHMdbY3SmOA+gS2LGEzddGAUHHpF
-         +0+rluF5WD68BYtmmGeM1lv5TTptdkyVYsqJETn9mFeE7quUtFr3Fh8dt+AyD2NWKs/e
-         nCMA/biFbPRlLvUaRHan4Mn8qF6bga2FH/+/N7i+n/bDBpuSdmuGxHI2GUKtYvT2wglt
-         Q3yk0W/77EVHSf+ogrRwEpEJwKKqFDIJV6jczNFB/s5BVWdve7x5t3kQWmbfoLVX1pmO
-         7H67RG3g4oSRS8bZcdry1m8CPDXQsNKcjqiqcAcxNexRguevmQP9VOa0fys+FRPte2QN
-         goOw==
+        bh=/jyCgdWDKnjZQEA9Y1qdWuHJCZbETxV6ANCbypcoIhQ=;
+        b=cTIV3Jpa6lRAdbPDRq62N/j+6NNgYehHPexlskArN6Bw+sPZPCRIQqwIG04/XHbT84
+         0NRXyEDI5nzEsSL97AqFbnGDjdKtWR951xGTAtalTGmX6FfFiVq2tL5RM899kIW6Hqum
+         dhu2YdWnuXRcgmwcPPu42JhSylqVZxsxY4vAMAnw7ywUv9ew5VcZIfYvU/OO2GY8aJRZ
+         hmxuCimCxAgYtZ/Pp06dFGbmVvtu0E+bcfzGZu65ldPqSfO5c7iib2RDFyc+JxuSD+oY
+         BJAPjZkVlOhMKn37ZkKVo8DccIvY5Mq/kG3zUl9x5cNuuSfr+3assuz5o+2ClaFxdWen
+         F/4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740031878; x=1740636678;
+        d=1e100.net; s=20230601; t=1740031880; x=1740636680;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+j78yv7W1SEsENaFWTruZEdfPJNI2RZz4FriJMcOius=;
-        b=SovKMR4Nms8VODzY3vEsfODsVSBOCFXNgfj4ehjyNzQ7n1FbCzc4XiQ/+yvmjvG2iW
-         Fzxeh0m5szdBMY2AScQGYu65rHfVCsHLAUbg/iAzajFZKJllDFrSLFTBLK9tdsAZ9Sua
-         0mcVLmg7is9YF9Jx9QhQ1V1a8+/JP5y5qExqadYVi2OxMy+2CluGFJ4XT/WjOaSrJN80
-         9ojOs9rkeUYSJd0MzngnNesTTZASbj2rJWLbtIljlK+f5P0QToIA4issJUlX3ch1XU0S
-         N5J8Uahr1a7xtGcmR7cf7K6peviSuqq6INz9/l1no+mGiDZZe0oKz6tydd2v4jJ44/z6
-         WtEA==
-X-Forwarded-Encrypted: i=1; AJvYcCWLpjcT4MubZwrlkZLl5WZhpJR+hnhwE5ttVsjM0nu7KJvU179PdA54dnQfyMzYJmsiB26LJU+zfD3L@vger.kernel.org
-X-Gm-Message-State: AOJu0YznZ88FBiqq1Qz+vjNQ4662mgbaaxd8ofJrCplkCuWx5n7IFKkc
-	0vWxWRUTdj61T8bADS48p7h+cKHPnIPaZeQG+ExLK71jWiuYmN+a
-X-Gm-Gg: ASbGnct1mky0w8yxxzlDwLGzXfyR2EhMP582uBZntJpM1MOGyr7kPThrAxo6Sqz+735
-	5vWvd8O2mCgNYMe88i1r0Ey3HSPbpBhKtnz2/xqIOdSZvvfJYbYgjB/i9HrpaIht78bQLJc9pFJ
-	hKigNTVPr/Vq2Ex431fYxrFvXKTJPMrM/UoBU4X5L+4S41u8a5ZWkyuITKYgVnjzCEopRYu9XMp
-	z/W0Y8l6hGyC7Hu0UZpPY6dVlAnrQfFiHWgvtH+XNCXeBVgcU+FkZmGoWojEIUv7NhhgzNMBzMG
-	vqNhxtUCG7hEvxgfKPCQdL88/A==
-X-Google-Smtp-Source: AGHT+IFU3vxY9Ip1+CC3bff8XqxgjtFV+EfaOwsPv0Qbpgrftb/RcnRACrHbtb9fAqxl0J/+zKDiqA==
-X-Received: by 2002:a05:6a20:9148:b0:1ee:e2ac:5159 with SMTP id adf61e73a8af0-1eee5c95932mr2769361637.19.1740031877986;
-        Wed, 19 Feb 2025 22:11:17 -0800 (PST)
+        bh=/jyCgdWDKnjZQEA9Y1qdWuHJCZbETxV6ANCbypcoIhQ=;
+        b=nK0LRdFrwFKr/Q+fQIGOtrnmntzLRq1Wg0RRM/fBNqrOA9zBgvbcdYV98UvNZASDwh
+         eX+dPlTwiK19BnBthF8P7rcZu5sQgo5N04l7xixg/JsLXGGeJacAnHFW6Q5eDY7cl5lV
+         1kcfmqVzlqLHGPl3dqf3NFLai7G7+pZK6VqD7P7hCdgnOxTEDg0Ro7dA0J1il9u6hHmr
+         Jats6VosofrF8FAH17koXGM5C085NlZGfkKOBPjx3KPtASaOheLTqvpYeyXzW+CQQUED
+         ST2xNmyDiUA9TBxT76WJo0yyzSf5sVVcFylFOcHVZOdgrW9RgYw0x06QRGULwcnuYjjG
+         qDZA==
+X-Forwarded-Encrypted: i=1; AJvYcCWAMQdxWkte9dtIxQvmmzeYAQpW5gk6oYliwfMBHOD8yRli2YmaZNwGlJpLWR0uOXTxqTs0826f5Mga@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcaB5kg3QtWtGJgHfxL+dZsFz9cOhQeOL3+vPXUB6RUcX4A4w4
+	6bksSpYXtSkogsP6cpK3xVbQm1OuFzXkek2z8iPWNR+uB3TrzXLjI5LSfA==
+X-Gm-Gg: ASbGncvKQGSXgKxpt1alubGzRDWdODoeLZGxXMS0LpL6TJKwwzIDi6FibMAdgZ3hT+p
+	hWLfbuWGeWKLYayj6O5PZgBZevN3uNJxqWDo2IAylP+OESavECsnLHULh6XOjVTQWTEtr3YSgwW
+	WYWFcs0WOBK5RkqnueXe9x3CeWGFK+sBeSNjXcANKQfYQSSIsUChIqEvgir1gYRw6wnDAqT436h
+	hngZYvGE5OnKH0A+J6Ox4Uls1JZs+LWnJFsosBYhXheRGHKkyVApUOaYrgXv8dS81mfHSZsyZHA
+	TQjfXcNtFIXBduixD58Q67WlXA==
+X-Google-Smtp-Source: AGHT+IGobtb4ADu1SMowtReLDdqa/0G20bTrsNjtMYphroDuWxjEnuqenicfClU6Q1Oum3yt+48EaQ==
+X-Received: by 2002:a05:6a00:4f95:b0:730:794e:7aca with SMTP id d2e1a72fcca58-732618c1c26mr33817817b3a.16.1740031880466;
+        Wed, 19 Feb 2025 22:11:20 -0800 (PST)
 Received: from cs20-buildserver.lan ([2403:c300:dc0a:4fe5:2e0:4cff:fe68:863])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73271a02648sm8226823b3a.107.2025.02.19.22.11.15
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73271a02648sm8226823b3a.107.2025.02.19.22.11.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2025 22:11:17 -0800 (PST)
+        Wed, 19 Feb 2025 22:11:20 -0800 (PST)
 From: Stanley Chu <stanley.chuys@gmail.com>
 X-Google-Original-From: Stanley Chu <yschu@nuvoton.com>
 To: frank.li@nxp.com,
@@ -82,9 +82,9 @@ Cc: linux-kernel@vger.kernel.org,
 	tomer.maimon@nuvoton.com,
 	kwliu@nuvoton.com,
 	yschu@nuvoton.com
-Subject: [PATCH RESEND v2 2/4] i3c: master: svc: Add support for Nuvoton npcm845 i3c
-Date: Thu, 20 Feb 2025 14:11:05 +0800
-Message-Id: <20250220061107.1718239-3-yschu@nuvoton.com>
+Subject: [PATCH RESEND v2 3/4] i3c: master: svc: Fix npcm845 FIFO empty issue
+Date: Thu, 20 Feb 2025 14:11:06 +0800
+Message-Id: <20250220061107.1718239-4-yschu@nuvoton.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250220061107.1718239-1-yschu@nuvoton.com>
 References: <20250220061107.1718239-1-yschu@nuvoton.com>
@@ -98,89 +98,77 @@ Content-Transfer-Encoding: 8bit
 
 From: Stanley Chu <yschu@nuvoton.com>
 
-Nuvoton npcm845 SoC uses the same Silvico IP but an older version.
-Add npcm845 specific quirks.
+I3C HW stalls the write transfer if the transmit FIFO becomes empty,
+when new data is written to FIFO, I3C HW resumes the transfer but the
+first transmitted data bit may have the wrong value.
+Fill the FIFO in advance to prevent FIFO from becoming empty.
 
 Signed-off-by: Stanley Chu <yschu@nuvoton.com>
 ---
- drivers/i3c/master/svc-i3c-master.c | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+ drivers/i3c/master/svc-i3c-master.c | 22 ++++++++++++++++++----
+ 1 file changed, 18 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/i3c/master/svc-i3c-master.c b/drivers/i3c/master/svc-i3c-master.c
-index d6057d8c7dec..c58440061d5a 100644
+index c58440061d5a..2140da3f5187 100644
 --- a/drivers/i3c/master/svc-i3c-master.c
 +++ b/drivers/i3c/master/svc-i3c-master.c
-@@ -133,6 +133,22 @@
- #define SVC_I3C_EVENT_IBI	GENMASK(7, 0)
- #define SVC_I3C_EVENT_HOTJOIN	BIT(31)
+@@ -1196,8 +1196,8 @@ static int svc_i3c_master_read(struct svc_i3c_master *master,
+ 	return offset;
+ }
  
-+/*
-+ * SVC_I3C_QUIRK_FIFO_EMPTY:
-+ * I3C HW stalls the write transfer if the transmit FIFO becomes empty,
-+ * when new data is written to FIFO, I3C HW resumes the transfer but
-+ * the first transmitted data bit may have the wrong value.
-+ * Workaround:
-+ * Fill the FIFO in advance to prevent FIFO from becoming empty.
-+ */
-+#define SVC_I3C_QUIRK_FIFO_EMPTY	BIT(0)
-+/*
-+ * SVC_I3C_QUIRK_FLASE_SLVSTART:
-+ * I3C HW may generate an invalid SlvStart event when emitting a STOP.
-+ * If it is a true SlvStart, the MSTATUS state should be SLVREQ.
-+ */
-+#define SVC_I3C_QUIRK_FALSE_SLVSTART	BIT(1)
-+
- struct svc_i3c_cmd {
- 	u8 addr;
- 	bool rnw;
-@@ -216,6 +232,7 @@ struct svc_i3c_master {
- 	struct mutex lock;
- 	u32 enabled_events;
- 	u32 mctrl_config;
-+	u32 quirks;
- };
- 
- /**
-@@ -230,6 +247,14 @@ struct svc_i3c_i2c_dev_data {
- 	struct i3c_generic_ibi_pool *ibi_pool;
- };
- 
-+struct svc_i3c_drvdata {
-+	u32 quirks;
-+};
-+
-+const struct svc_i3c_drvdata npcm845_drvdata = {
-+	.quirks = SVC_I3C_QUIRK_FIFO_EMPTY | SVC_I3C_QUIRK_FALSE_SLVSTART,
-+};
-+
- static inline bool is_events_enabled(struct svc_i3c_master *master, u32 mask)
+-static int svc_i3c_master_write(struct svc_i3c_master *master,
+-				const u8 *out, unsigned int len)
++static int svc_i3c_master_write(struct svc_i3c_master *master, const u8 *out,
++				unsigned int len, bool last)
  {
- 	return !!(master->enabled_events & mask);
-@@ -1811,6 +1836,7 @@ static int svc_i3c_master_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct svc_i3c_master *master;
-+	const struct svc_i3c_drvdata *data = of_device_get_match_data(dev);
- 	int ret;
+ 	int offset = 0, ret;
+ 	u32 mdctrl;
+@@ -1214,7 +1214,7 @@ static int svc_i3c_master_write(struct svc_i3c_master *master,
+ 		 * The last byte to be sent over the bus must either have the
+ 		 * "end" bit set or be written in MWDATABE.
+ 		 */
+-		if (likely(offset < (len - 1)))
++		if (likely(offset < (len - 1)) || !last)
+ 			writel(out[offset++], master->regs + SVC_I3C_MWDATAB);
+ 		else
+ 			writel(out[offset++], master->regs + SVC_I3C_MWDATABE);
+@@ -1245,6 +1245,19 @@ static int svc_i3c_master_xfer(struct svc_i3c_master *master,
+ 		       SVC_I3C_MCTRL_RDTERM(*actual_len),
+ 		       master->regs + SVC_I3C_MCTRL);
  
- 	master = devm_kzalloc(dev, sizeof(*master), GFP_KERNEL);
-@@ -1868,6 +1894,8 @@ static int svc_i3c_master_probe(struct platform_device *pdev)
- 	}
++		if ((master->quirks & SVC_I3C_QUIRK_FIFO_EMPTY) && !rnw && xfer_len) {
++			unsigned int len = xfer_len;
++
++			if (xfer_len > SVC_I3C_FIFO_SIZE)
++				len = SVC_I3C_FIFO_SIZE;
++			ret = svc_i3c_master_write(master, out, len,
++						   xfer_len <= SVC_I3C_FIFO_SIZE);
++			if (ret < 0)
++				goto emit_stop;
++			xfer_len -= len;
++			out += len;
++		}
++
+ 		ret = readl_poll_timeout(master->regs + SVC_I3C_MSTATUS, reg,
+ 				 SVC_I3C_MSTATUS_MCTRLDONE(reg), 0, 1000);
+ 		if (ret)
+@@ -1306,7 +1319,7 @@ static int svc_i3c_master_xfer(struct svc_i3c_master *master,
+ 	if (rnw)
+ 		ret = svc_i3c_master_read(master, in, xfer_len);
+ 	else
+-		ret = svc_i3c_master_write(master, out, xfer_len);
++		ret = svc_i3c_master_write(master, out, xfer_len, true);
+ 	if (ret < 0)
+ 		goto emit_stop;
  
- 	platform_set_drvdata(pdev, master);
-+	if (data)
-+		master->quirks = data->quirks;
+@@ -1333,6 +1346,7 @@ static int svc_i3c_master_xfer(struct svc_i3c_master *master,
+ emit_stop:
+ 	svc_i3c_master_emit_stop(master);
+ 	svc_i3c_master_clear_merrwarn(master);
++	svc_i3c_master_flush_fifo(master);
  
- 	pm_runtime_set_autosuspend_delay(&pdev->dev, SVC_I3C_PM_TIMEOUT_MS);
- 	pm_runtime_use_autosuspend(&pdev->dev);
-@@ -1960,6 +1988,7 @@ static const struct dev_pm_ops svc_i3c_pm_ops = {
- 
- static const struct of_device_id svc_i3c_master_of_match_tbl[] = {
- 	{ .compatible = "silvaco,i3c-master-v1"},
-+	{ .compatible = "nuvoton,npcm845-i3c", .data = &npcm845_drvdata },
- 	{ /* sentinel */ },
- };
- MODULE_DEVICE_TABLE(of, svc_i3c_master_of_match_tbl);
+ 	return ret;
+ }
 -- 
 2.34.1
 
