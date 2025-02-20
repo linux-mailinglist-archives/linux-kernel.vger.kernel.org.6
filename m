@@ -1,168 +1,236 @@
-Return-Path: <linux-kernel+bounces-524314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AFBDA3E1C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:06:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD443A3E1CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:07:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E1553A5ED1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:59:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B430189D9A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:04:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D30E7212B02;
-	Thu, 20 Feb 2025 16:58:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D8EB212B02;
+	Thu, 20 Feb 2025 17:04:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="bcwEzSC2"
-Received: from AS8PR03CU001.outbound.protection.outlook.com (mail-westeuropeazon11012047.outbound.protection.outlook.com [52.101.71.47])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="NELb89ZN"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33B4720DD6E;
-	Thu, 20 Feb 2025 16:58:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.71.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 058D620D4E2;
+	Thu, 20 Feb 2025 17:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740070727; cv=fail; b=rYipx5j2MSi6hsx/Nrjko5/HifhjwrCxI/GaT4iF1PLIKP9Pz8UKy0PrgAtBRWbt84ye5CILiaXK7rZeqXg5ILo7ecXuu9p3A/FfPzKlirkdlxI4WwrxAVxJLI1fKDC3oO+4AeNbmK06+nzXu4mogtsKjAbiTvu/j0hy7Cig1Hg=
+	t=1740071067; cv=pass; b=ucUDCIlc05F7f9hTiaGaod7M2Du//2I7xyJOBreNDH0B76n6sxjeIA79dG53XmnPHsEnAXWbuydWCJxgWGL5r7tD7/upxSahDBb7btsaog7GlXP9ghuph2ljqegPwc82apdIz2gGOL+GXMw8XdZHRw+JE9hhAlbUvdz67oYPn5Y=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740070727; c=relaxed/simple;
-	bh=EZZX26aK5KeV8/wMGZkwekFtDahQ0NWgdhJdcMIOYTQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=U07DTmh3sR0nrRpac5jF26WHh0SY2ts3eHx04LsA49LOSHTNnN9jdnqEd9DvXxjJot9x9HEwnRPSg3SRooT4pNZTUIYwphRJI1ZYxygL1hDBht9o6kyTbwDBmFS1kqhOknR2Vm35uPjae+v01DmZMbwHowLuDT6zfZnHZS8yDbI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=bcwEzSC2; arc=fail smtp.client-ip=52.101.71.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MugfK4YwM3DeZGw7pk+YLdT111bZlx5v8pH46sMrTVgnQFELnoo8CuC9ftFrXUteaTfPf36OSy+FeYwc4JTC+hG6JTPXswYoSAlRNPR54znCUlPxmC/xu7bBMveYWW8J66m/vrdhNI3g3u5zmiNeG42YS160PU5JIgTcVjcTMLwKja18A5+0PNsVnn3eGg9LxrLp+stOx0vfgwLq73diYko1JvMGa8ndbFilAwANLBORHR6kZTad+eSjfMCfROvOvtbh0m7LwrhhXIoX5h9XgDvexfstZx633HRXcqhZf8H+pgqhDClNwJcmsN5tzWLILRhAfc9GKZPwDNjEPW5xnA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PjoIE2arwba55DhOJar8poeNfV2ijbaJ8T4d5stTSyk=;
- b=dIP4jzAFa8KgwDM/lRJnsKrRBJxlqDMpl7mzPap79nTkcmLGrxVIiFErauL4NeHVMSlH9+9C/MT07hZbEpqN25MBk5laAX4Mo7oO2XG1fQFub41TwgirOjGrH1THDuEICqimizFFBkCEVOzudvIs33k3QZkbaZUeGLbLM84ZXnWoM86S1eNCSTup43TOJ+axhTT4yYOIUn6o/q4O8LtrAvjzqRSGPru20BEuJ5ciorwbOwN9wkVyn9z/OJj9b6WJef+TgFF7SmGcNbGHee7D9nwuC0oai3Bzuxu9BKC4h1evKSEIWtXc1QY5FfLMnsLwHLMVHJUWwGjcVNAETCu98g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PjoIE2arwba55DhOJar8poeNfV2ijbaJ8T4d5stTSyk=;
- b=bcwEzSC2ZhwQjqVbZ0sqmWCgQPqKO2neg+c8LFtE4dqSsm+rx0aYPQFbO6WtAATI5/ernpi4snf1C63kEPTpeato/KrIp72u/nPv2rdJzanxT+pB4NSVtnp//fmK7tPnolVtA8HOPGtfuxowfdotlE/bCQNcxGhsR6aqA2r4MmiJuAeJCJhskv8ufYqq1907jRuIvl/XU6UrCSStNt/Hqif6FRyjPsyKsGeu/qOPELRv1cDiUt3FlKGyvA3pfs4X8CDmaeJTufgM2QIeaUpRkK5lhI5j3/VL/wdziwM7/LSyHFQwOIgIIWZCeGCD7POkWhobCMK9kToHHJKFfx9aTA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PA4PR04MB7790.eurprd04.prod.outlook.com (2603:10a6:102:cc::8)
- by GV1PR04MB10680.eurprd04.prod.outlook.com (2603:10a6:150:20c::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Thu, 20 Feb
- 2025 16:58:39 +0000
-Received: from PA4PR04MB7790.eurprd04.prod.outlook.com
- ([fe80::6861:40f7:98b3:c2bc]) by PA4PR04MB7790.eurprd04.prod.outlook.com
- ([fe80::6861:40f7:98b3:c2bc%5]) with mapi id 15.20.8466.015; Thu, 20 Feb 2025
- 16:58:39 +0000
-Date: Thu, 20 Feb 2025 18:58:35 +0200
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: claudiu.manoil@nxp.com, xiaoning.wang@nxp.com, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, ioana.ciornei@nxp.com, yangbo.lu@nxp.com,
-	michal.swiatkowski@linux.intel.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2 net 3/9] net: enetc: correct the xdp_tx statistics
-Message-ID: <20250220165835.3wrcl66lbxraz5u7@skbuf>
-References: <20250219054247.733243-1-wei.fang@nxp.com>
- <20250219054247.733243-4-wei.fang@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250219054247.733243-4-wei.fang@nxp.com>
-X-ClientProxiedBy: BE1P281CA0283.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:b10:84::9) To PA4PR04MB7790.eurprd04.prod.outlook.com
- (2603:10a6:102:cc::8)
+	s=arc-20240116; t=1740071067; c=relaxed/simple;
+	bh=1eFK9osyTJtbHiC66D0wNYp1jhfVBtNoPsaqtV7u2a8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Rm81m7lMkgB9pneTGLiPpWr5SfgMQMGgHY/XlsIeXphm8S2i7RKO9pnS6EmoppmTnz4vDbIJZd69utpv7Zu8/5E+PWy0aJwdOauoyOc1MgMkxfGRN6qGQo1GVANpYrHjqGYgMVUoUdN7cRbHpXDyYYeTyqXltxaQf3Grcm+NQ+Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=NELb89ZN; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1740070995; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=H89tZtPw7hGWA9a6QAt88m0WFcYXkG5Shk09kN07BWC4axWYt9GNDZVOo9cm8gqKdIuyxlp+eTDURTlCIanQuanEpv+yche0oDkjwz5c6eP0IQgbahG4lJxd694XY98EFGKvJchBOPyvsHbveZCZFX5JEsc7jNsldWYVrK/dYyk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1740070995; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=w2pzTobpi9TjSTtQRUPn0hmQfMoOEaBAec03sFh2SIY=; 
+	b=M3OpeGvfafnAuq6NV8y0Hhz6ZUI1aOEGkTngOe0sXIMQ4y7O4i5GresbkUnyO35KEt+eduI3r1HyHjKANSuBnn/8+PeY5v6fes2GuWOk7M1O59qsBIOnZdI6h7/2rssPSLwql77vZ0ao5qMazDEgfTS76c1UCIsRUbRLMiX2ty0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
+	dmarc=pass header.from=<detlev.casanova@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740070995;
+	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=w2pzTobpi9TjSTtQRUPn0hmQfMoOEaBAec03sFh2SIY=;
+	b=NELb89ZNA/vXF0KU9d+s8iAZUlWP1ItsG7o0stqFKUD5nWiCOsTLt9XovGPpdD/h
+	S+UrbkLBOPJawvm7CbURNWQk5ZNHga+QTdqIjkp7h5Pju5Se+rXy9RG6I0SY7wkyWIi
+	jxGaj47YWQDXlIlaxnKbaa63k5yd81xmDyncUIs4=
+Received: by mx.zohomail.com with SMTPS id 1740070993591486.8817863804003;
+	Thu, 20 Feb 2025 09:03:13 -0800 (PST)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Algea Cao <algea.cao@rock-chips.com>,
+ Heiko Stuebner <heiko@sntech.de>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ dri-devel@lists.freedesktop.org, Niklas Cassel <cassel@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>, kernel@collabora.com,
+ David Airlie <airlied@gmail.com>, Dragan Simic <dsimic@manjaro.org>,
+ Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>,
+ Robert Foss <rfoss@kernel.org>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Sugar Zhang <sugar.zhang@rock-chips.com>, linux-rockchip@lists.infradead.org,
+ Chen-Yu Tsai <wens@csie.org>, FUKAUMI Naoki <naoki@radxa.com>,
+ devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+ Jonas Karlman <jonas@kwiboo.se>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Johan Jonker <jbx6244@gmail.com>, linux-arm-kernel@lists.infradead.org,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Alexey Charkov <alchark@gmail.com>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+Subject: Re: [PATCH v7 0/3] Add HDMI audio on the rk3588 SoC
+Date: Thu, 20 Feb 2025 12:03:09 -0500
+Message-ID: <2357838.ElGaqSPkdT@earth>
+In-Reply-To: <B8EF5196-55FB-44EC-B93C-E327C791225B@gmail.com>
+References:
+ <20250217215641.372723-1-detlev.casanova@collabora.com>
+ <B8EF5196-55FB-44EC-B93C-E327C791225B@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PA4PR04MB7790:EE_|GV1PR04MB10680:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1e8f5f30-dbc2-466f-fc0f-08dd51cfd272
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?oph+C0HQ9/Ecz6epdE72slkU45ULUR/f/luOboc/U0mMg6if1376AtfXyITo?=
- =?us-ascii?Q?l0WXCDjMoeo5ESqmOoBYPYC4RuJ4OKgsCavyftNNYinhKHS+2+wPnyiap4q1?=
- =?us-ascii?Q?SitnWEYEqjWTdsQ6VjbzsP5hQJXQJ4igTVYhUNWxFA0mpK3NE87GsA28TTIU?=
- =?us-ascii?Q?QE55VH1lhYrKFHv1QzCRsNgU5TpsSjqb2ebXstFKM9UmAhRezthrVJ3n1+E2?=
- =?us-ascii?Q?lMoVvR0E9oS1d6N6MKLi8EI+YN637EFSLe0L0VLBcSVQysdGPmefFZtRiAwb?=
- =?us-ascii?Q?ABzcx1MiM7pCkb3uX8sG68S6JHLPb0PcxZTjY04bl8WpOwuxGuG1vAC+ryL+?=
- =?us-ascii?Q?2jw0xMa0h4fwKJP5ht72asyD1YVIPaMFVlz9eadO5pXZ1yhwZ2CchGuMsIYM?=
- =?us-ascii?Q?rl8wKSKk1lnm3RohnXHsHvf1wozuUhOrXX8R1Mxu+jG44LHUbvtjpgRuWljJ?=
- =?us-ascii?Q?Ea55KOyaQU2vSNUSxYknFh24joBWE1mUHDhIvvtpzSAB+JP+COlPAkybAkBT?=
- =?us-ascii?Q?+qi7bW1U4deVg/fSYfUTYCXkTk00103zbAVmf3ZTyJFyBbE+Gi/pVqkvKMnr?=
- =?us-ascii?Q?Ukr1DiTRdxpwRl6dfNvLv/UHA6egkWYCQ5e9qA+7fohO/o1FCbNTAGj+pNfi?=
- =?us-ascii?Q?gLSoaYj3WVdC+IUfNNLV/mWEX1yvZ9YR/v+9L3wTPnbWv4gyMqjzgFS6zYka?=
- =?us-ascii?Q?C4V19yvJfJWBFGXDFd9lvAFs3V/qBXeEXMrHn5K787hdz6UYICT/9u2nLtUv?=
- =?us-ascii?Q?/1ijMem9W9e6JhiWtXYQosW4F6akc73k6hNRIjQcjf262rvP0CHyB8badLRN?=
- =?us-ascii?Q?N18bs3jeHYuvdxfp7xwbAv7dekr//gi33WlWC7I0gHFen62IkOMFvq8I9cQN?=
- =?us-ascii?Q?gnZ5to76eZ+xBz9zCem86uWPDABSLilVTuhbcjpOa72gUOgNshJ4BLv4NADt?=
- =?us-ascii?Q?V7A3gb14uEkrY4OeTLvBAvCTeanj2k90z9vDLAC9x1hqRmUbj5YuoDObPvXN?=
- =?us-ascii?Q?3akLpq4xENkAtMs/bQFNLcxO+/bx3UMOGp/WZKGs0DfI6lvwrILJbcPmGhzb?=
- =?us-ascii?Q?YL971GSSLvY48PCVJ5dVQDnMUZ2a+Lb8C2dNsyWQppM5eRBll8Tcm2O7LdWD?=
- =?us-ascii?Q?6h38reYeW0AFAwmE8Ef11MdUYm6xjn9q3TGYOda1U8kMEHxde7za4Bh4lzbe?=
- =?us-ascii?Q?Coa/U8NeBrCJB8Nlmcd4yyjHUkrQV67aw/rkOB8jx7up1Mt8fClHpk7XS029?=
- =?us-ascii?Q?LZXdCIVT16pEINn7fUVjWHCqplujMmORBasWSFt1nzqtGkquIeUmSuRq72wh?=
- =?us-ascii?Q?AqAEfXUB69G+k65SU1ZPERKkAKGe8HGUdqnbqVV1X+UFBEjyKRayyYaVBE2v?=
- =?us-ascii?Q?AQ6lQbvX1L76e8WTAN1TR/TlqA8r?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB7790.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?qHe5v0jt1GEPL7ff5q26u5QUHR+822Bx3sTmDJtZYhNDf4k+1yyHHpmO/sm1?=
- =?us-ascii?Q?9xrsSU/GdQDXkPM4fNNGGDtHVPVX53lgwEMLyvGkYcNg7Ynj0+qPDV0POb+/?=
- =?us-ascii?Q?BW4H/O3f30hHY+1+y/JKxA26E7ExkEOHmGkD295jxf2Fpl6dyXDZ5NLEh7kg?=
- =?us-ascii?Q?0sMEobRuq4F7TBb5X7id1P9p1ySc2Rkhw2KykYwnYrgX9rWLxNdGMX4S+31L?=
- =?us-ascii?Q?bnEp5RIVHdwvyq9QbLy4jQ2DgcnDS0QWTw6xvSq6EiWyp1L6lY++2efs5O1l?=
- =?us-ascii?Q?kwRJOFMGIkNEmStCDf5GgwbxCrlgTdSIE6fhiPlZ7AoJMDNnTGRtLSbsOHqz?=
- =?us-ascii?Q?Gj9aJsGxSAHbE9uF71bKKAs//Dk2b165ZlSt4KAyGDg7DHe1cTSoZVuKeNpY?=
- =?us-ascii?Q?4zXtCO2P5BR1J0VqBGYdQDrqAq3cQAt4m/irUZiFwAqJPJ01vr2qOKylBkHj?=
- =?us-ascii?Q?5r1II5WNzuLjCqYB2zU2vLt6iFEN6TcDPjEbjsbxHbA7ZygHJgYnnl8L4H9G?=
- =?us-ascii?Q?DZspx8IO4W/nQUk3MmFtSeW/iGEh4Gr5qmBLOd6+dbEeefGuGEmF0zYyTXiw?=
- =?us-ascii?Q?RgYYRO8+6MS9VZgu/i2JPbgt2dvXcmJ/uaAV8jM28r4MDM1s6aZ0bDmFPdb6?=
- =?us-ascii?Q?VDkWZ+VGPcBLiBtEN9I7rdWWDdNOFwuHOBjkNN/BDmEiAjvMv8w2iYpC5P0a?=
- =?us-ascii?Q?rAfMQvGTWhziZ6II7mGPLZ5IR6EvFWYeqyToRk3EVDuKbkBhr+ZwudTKduVS?=
- =?us-ascii?Q?tyDyt1UMBcUBHnwB3Z1Ci4WKTkh6i3PdX+VbO6Fl3YyJfbUU90n8XqIwOqlX?=
- =?us-ascii?Q?2VIIwhw4M/43kKfl53ym1rVyHMChZjNpia7LyK1BMtJqj8epwj+ADIWb80D2?=
- =?us-ascii?Q?wzLVuaV4M1jviuUO3oqEtqCWDTfRgzsq6UenQdrcbYOKBKCGdXxDubnVVHNe?=
- =?us-ascii?Q?ahO9lvUHKlvYwWEMmovVpycjq6LFOTycIrn4SFsKgwrWRwU4PZRP8xSIWYIb?=
- =?us-ascii?Q?Kcik3qW+wFtuwGq9fWgPW4+QHaV3m0QgzIPBAsJ5ZBbTd5kUXYajoLMYOcDG?=
- =?us-ascii?Q?EWcPhAfWBXWULaX9siVzFn/y3kTksGFHFowESZViXbtrv/7x6lgRHwjmRcDN?=
- =?us-ascii?Q?c5sCeL6neRMv2dWF+N1KtBrnlh5Bm2nOjs3uAMiXz46zmrC944GwGK0+LQ/1?=
- =?us-ascii?Q?Eg2YHBK+oCG8f1M/eJBWtGh24YNFCtD7ksTdn0+9Rv8xEF8NjjFILGSaOhL1?=
- =?us-ascii?Q?9TImbvlhxjWF//FgCzQGJ6k+UmFc86D4/i3EUj7ZOfXXJWNMGU0Yl0ShIy/5?=
- =?us-ascii?Q?B2dmtpm3UJwkYHPSYS6sEYwEAPHpcz42ei2YDYm77BdO+Ns4K7lo7sPcoTt5?=
- =?us-ascii?Q?FC3boqOhfrKhOn5an8CNyfUpS/onwLohniGFvHpHjTwUtHGT9CwJ5WY6y2jT?=
- =?us-ascii?Q?A1RWxdXOkwoyrUH824Rk7wmLaN2Yu3h7fuFTeICXfapTH3d1yStr37R59S5A?=
- =?us-ascii?Q?vaAX5JYULiHX9GmgSgSCR+OMSiu8bgnbnhd8mNGM9YjDU3CL+MCRZhe8ETdd?=
- =?us-ascii?Q?0E0/cI2kCOgw9Te6aIUg1z5FlWVThZUFR/jWR6QDd4f0d4YZDTavsULaRzOD?=
- =?us-ascii?Q?yw=3D=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1e8f5f30-dbc2-466f-fc0f-08dd51cfd272
-X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB7790.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2025 16:58:38.9635
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: WHhoiuQCfWzbpAMmPQGP8m4vJvQxmjPagMzgs01XuXmBVLZq89Vj1IRErsv1tiVm9XFvfBViBXdWHW28WdLFRg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10680
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-ZohoMailClient: External
 
-On Wed, Feb 19, 2025 at 01:42:41PM +0800, Wei Fang wrote:
-> The 'xdp_tx' is used to count the number of XDP_TX frames sent, not the
-> number of Tx BDs.
-> 
-> Fixes: 7ed2bc80074e ("net: enetc: add support for XDP_TX")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Wei Fang <wei.fang@nxp.com>
-> ---
+Hi Piotr,
 
-Reviewed-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+On Thursday, 20 February 2025 06:16:20 EST Piotr Oniszczuk wrote:
+> > Wiadomo=C5=9B=C4=87 napisana przez Detlev Casanova <detlev.casanova@col=
+labora.com> w
+> > dniu 17 lut 2025, o godz. 22:47:
+> >=20
+> > To support HDMI audio on the rk3588 based devices, the generic HDMI
+> > Codec framework is used in the dw-hdmi-qp DRM bridge driver.
+> >=20
+> > The implementation is mainly based on the downstream driver, ported to =
+the
+> > generic HDMI Codec framework [1] recently merged in the master branch.
+> > The parameters computation has been kept as is and the data stored in t=
+he
+> > dw_hdmi_qp struct as been cleaned up.
+> >=20
+> > The table for the N values has been edited to reflect N recommended val=
+ues
+> > as well as CTS recommended values.
+> >=20
+> > The downstream kernel also implements a machine driver for HDMI audio b=
+ut
+> > it is doing exactly what the simple-audio-card driver does, so use that
+> > instead in the RK3588 SoC device tree.
+> >=20
+> > This adds HDMI audio support for both HDMI TX ports.
+> >=20
+> > *** Dependencies ***
+> >=20
+> > Based on Linus' master branch, but also needs Cristian's dts patches for
+> > HDMI1 support [2], which depends on Heiko's patchset for
+> > phy-rockchip-samsung-hdptx [3]. Patches will apply without [3], but HDMI
+> > will not work (at all).
+> >=20
+> > [1]:
+> > https://lore.kernel.org/all/20241224-drm-bridge-hdmi-connector-v10-0-dc=
+89
+> > 577cd438@linaro.org [2]:
+> > https://lore.kernel.org/linux-rockchip/20241211-rk3588-hdmi1-v2-0-02cdc=
+a2
+> > 2ff68@collabora.com [3]:
+> > https://lore.kernel.org/lkml/20241206103401.1780416-3-heiko@sntech.de/
+> >=20
+> > Changes since v6:
+> > - Fix arguments alignement (checkpatch --strict warnings)
+> > - Add hdmi1 audio support too
+> > - Move hdmi0_sound node under hdmi0_out_con
+> >=20
+> > Changes since v5:
+> > - Simplify audio math computation for N
+> > - Move hdmi0-sound node up with other address-less nodes
+> >=20
+> > Changes since v4:
+> > - Moved hdmi0_audio node the rk3588-base.dtsi
+> > - Enable hdmi0_audio in rk3588-rock-5b.dts
+> >=20
+> > Changes since v3:
+> > - Renamed function to start with dw_hdmi_qp
+> >=20
+> > Changes since v2:
+> > - Also clear the audio infoframe
+> > - Write AUDI_CONTENTS0 to its default value in case it gets overwritten.
+> > - Store tmds_char_rate in the dw_hdmi_qp struct in atomic_enable
+> > - Clear tmds_char_rate in atomic_disable and only write registers when
+> >=20
+> >   tmds_char_rate is not 0.
+> >=20
+> > - Do not use connector_state duplicates
+> >=20
+> > Changes since v1:
+> > - Remove useless audio_mutex (was used downstream for multiple drivers
+> > access>=20
+> >   to audio functions)
+> >=20
+> > - Let hdmi_codec build and setup audio infoframes
+> > - Only access audio registers when connector is connected
+> > - Rebased on master branch
+> >=20
+> > Detlev Casanova (2):
+> >  arm64: dts: rockchip: Add HDMI audio outputs for rk3588 SoC
+> >  arm64: dts: rockchip: Enable HDMI audio outputs for Rock 5B
+> >=20
+> > Sugar Zhang (1):
+> >  drm/bridge: synopsys: Add audio support for dw-hdmi-qp
+> >=20
+> > arch/arm64/boot/dts/rockchip/rk3588-base.dtsi |  17 +
+> > .../arm64/boot/dts/rockchip/rk3588-extra.dtsi |  17 +
+> > .../boot/dts/rockchip/rk3588-rock-5b.dts      |  16 +
+> > drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c  | 489 ++++++++++++++++++
+> > 4 files changed, 539 insertions(+)
+>=20
+> Detelv,
+>=20
+> Just curious of your opinion:
+>=20
+> I=E2=80=99m on 6.14-rc3 and using
+> https://gitlab.collabora.com/cristicc/linux-next/-/commits/rk3588-hdmi-br=
+id
+> ge + this v7 series.
+
+Do you have the branch available somewhere ?
+
+> On mine rock5b all works nicely but - at boot time - i=E2=80=99m getting =
+some oops
+> in kernel like this:
+> https://gist.github.com/warpme/e1668acbef7817e5d2a88a6840328722
+
+I did notice that at one point but it disappeard after a rebase on the the=
+=20
+latest master so I didn't look further into that.
+Could it be related to 2518a0e1b878042f9afa45ae063e544a16efc1a3 "ASoC: simp=
+le-
+card: use __free(device_node) for device node" ?
+
+I'm not exactly sure how __free(device_node) works though, but reverting th=
+at=20
+commit could fix the issue.
+
+> I=E2=80=99m not sure where issue is but it looks to me like kind of inter=
+ference
+> between analog audio and hdmi audio as commenting analog audio in dts (
+> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/arc=
+h/
+> arm64/boot/dts/rockchip/rk3588-rock-5b.dts?h=3Dv6.14-rc3#n24 ) stops kern=
+el
+> from oops=E2=80=99ing=E2=80=A6.
+
+I cannot reproduce anymore, so if you have a branch/config that you use, I=
+=20
+could try, looking into that.
+I don't see any relevant commits that would change this behavior on master=
+=20
+since v6.14-rc3, so I'm not sure what is going on.
+
+>  rock5b dts i=E2=80=99m using is like this:
+> https://gist.github.com/warpme/a8a32afd4a05d4b7f25d2808984b05ac
+
+Regards,
+Detlev.
+
+
 
