@@ -1,147 +1,157 @@
-Return-Path: <linux-kernel+bounces-523826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C858A3DBC6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:54:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 363DDA3DBC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:55:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D897D178F84
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:54:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27E62188BDAF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:56:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B91B1FA164;
-	Thu, 20 Feb 2025 13:54:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZXyZZiu6";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JOlYIair"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 068631FA167;
+	Thu, 20 Feb 2025 13:55:49 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFAE11F9A8B
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 13:54:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C1B21F63F5;
+	Thu, 20 Feb 2025 13:55:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740059689; cv=none; b=E5Q6R+8aXyp4/h/v9N8Epz0W67n3nzz+K62v8GuOOc6e/w5AQYwCZGHIUKSf1E1T1CpCjdngQBvSLhQHpXy3TIruFMAOqcqRCqh8XNtBFSmfFfHEZ4vkOHaBQ/bP6fZBcQzq12RViPRyO0ukk8iFqQRhzw4fOyOx6CWLh/aqxZY=
+	t=1740059748; cv=none; b=gDMXwXIjLOtqqKn7ovj3R2fhSVAEeiVkyfG4MH/95LR4sz05gUrADIHlE0x6STgwMMBhfC4t3s7aeYpy1QV/BWHbdqfBjJ6Fs04ucucLyPXIwluGsCjms8wm6FbLJFmNHkAVhRPVZ6JDcw073KteUeN9OrP7F0TECb7EFvzIjgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740059689; c=relaxed/simple;
-	bh=njYQI0JkqSG9nmZdfTM+SiQqXdo0ZB/2scswfcxNOq0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=rc1uDff80A6ua0M8CSLAyA1egCDEA5lIAkVQQbJ/6mwVAMrEYGadIGGG0lkpR9ONM8ncvDMHL4qgz1D2IPNTvTTQR+SWDAzbDph0vgDNt1LSQZmKBYLPOx/f5BOI7O/s79gzshTfCT45tJHQuy5353UNxCihO+Z9RYm3UERwemo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZXyZZiu6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JOlYIair; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740059685;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QD11Ne9DcKnhelWjnLTjIo907OByVtQIcZFYttKj9Mo=;
-	b=ZXyZZiu6fQzbxCFJQqDVVgundVzHGnEXcdeIqL8ClGR3W4b1Ey4eB+bTwF/enWU27f8iqb
-	6KyA7/MQ5+4mod88342BBvtXI+vCoBPYpCYRijL9dHXlnwtvDBBjL0UlnDDdTX10nwEXmW
-	jsYAhyvt6xLy9RlDs67Ql11fUBmelfip+FdZsakH1fprNWVgYX6++nHjJaPYloPBm4VA0v
-	IFuty6l3DyATYYOFxtg2zcjAW9Ds2GEw9k7nBYAhVx3ERa6N3DIbq2pGTCTvipVDRjp0gL
-	4kJQa5/yTN+Sfg7lfSZUTM6HSWCZzUaCTAp5bmp5CUkg6T9zSKhyM/B5zR7lhw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740059685;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QD11Ne9DcKnhelWjnLTjIo907OByVtQIcZFYttKj9Mo=;
-	b=JOlYIairSeSWXDphePdqMGRdnMIe0izKqy7x+haK/irgiQkE4fPAmmUH2rnIn+wrOo4/nr
-	pM3+j/mvSiuJWVCA==
-To: Mark Brown <broonie@kernel.org>, Anup Patel <apatel@ventanamicro.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave
- Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, hpa@zytor.com, Marc
- Zyngier <maz@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
- <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
- Andrew Lunn <andrew@lunn.ch>, Gregory Clement
- <gregory.clement@bootlin.com>, Sebastian Hesselbarth
- <sebastian.hesselbarth@gmail.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Atish Patra
- <atishp@atishpatra.org>, Andrew Jones <ajones@ventanamicro.com>, Sunil V L
- <sunilvl@ventanamicro.com>, Anup Patel <anup@brainfault.org>,
- linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, imx@lists.linux.dev
-Subject: Re: [PATCH v6 02/10] irqchip/irq-msi-lib: Optionally set default
- irq_eoi/irq_ack
-In-Reply-To: <Z7Xto0WZ-Crxunik@finisterre.sirena.org.uk>
-References: <20250217085657.789309-1-apatel@ventanamicro.com>
- <20250217085657.789309-3-apatel@ventanamicro.com>
- <Z7Xto0WZ-Crxunik@finisterre.sirena.org.uk>
-Date: Thu, 20 Feb 2025 14:54:45 +0100
-Message-ID: <87jz9kiuvu.ffs@tglx>
+	s=arc-20240116; t=1740059748; c=relaxed/simple;
+	bh=kAq/HYLtL9V56JsyiHkrDyP7zD0/m2fHT0iIr6/MOpg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MN+CCFaRy5DosAGZo/IUX/i0JoG9VYl8nInAA/WHuofEXlY+Pcs8i9dCi0FM70CzaFnyUWuS0tQC16Wnc9p1RscmaoMCsTRP/jGCmd7kYvQslQWjJsMqOtcP0+gyf9NWchRyWvWfLGjB7t5IiYhIS5DIZ+EJC1E5d2sWTVL5CEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D95B3C4CED1;
+	Thu, 20 Feb 2025 13:55:43 +0000 (UTC)
+Message-ID: <c896221c-5ff2-4a2b-b431-7c7f805b4f68@xs4all.nl>
+Date: Thu, 20 Feb 2025 14:55:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] media: cx231xx: Convert enum into a define
+Content-Language: en-US
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+ Ricardo Ribalda <ribalda@chromium.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
+ <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Andy Shevchenko <andy@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Tiffany Lin <tiffany.lin@mediatek.com>,
+ Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+ Yunfei Dong <yunfei.dong@mediatek.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev, linux-staging@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20241202-fix-llvm9-v1-0-2a50f5acfd0b@chromium.org>
+ <20241202-fix-llvm9-v1-1-2a50f5acfd0b@chromium.org>
+ <20241203093114.0ca49c01@foz.lan>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+In-Reply-To: <20241203093114.0ca49c01@foz.lan>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 19 2025 at 14:41, Mark Brown wrote:
-> On Mon, Feb 17, 2025 at 02:26:48PM +0530, Anup Patel wrote:
-> I'm seeing boot regressions with qemu on arm64 in -next which bisect
-> down to this patch.  We hit a NULL pointer dereference:
->
-> <6>[    0.898900] virtio_blk virtio1: 1/0/0 default/read/poll queues
-> <5>[    0.910197] virtio_blk virtio1: [vda] 3906250 512-byte logical blocks (2.00 GB/1.86 GiB)
-> <1>[    0.924459] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
-> <1>[    0.924508] Mem abort info:
-> <1>[    0.924521]   ESR = 0x000000008600002b
-> <1>[    0.924559]   EC = 0x21: IABT (current EL), IL = 32 bits
-> <1>[    0.924580]   SET = 0, FnV = 0
-> <1>[    0.924597]   EA = 0, S1PTW = 0
-> <1>[    0.924616]   FSC = 0x2b: level -1 translation fault
-> <1>[    0.924667] [0000000000000000] user address but active_mm is swapper
-> <0>[    0.924833] Internal error: Oops: 000000008600002b [#1] PREEMPT
-> SMP
+On 12/3/24 09:31, Mauro Carvalho Chehab wrote:
+> Em Mon, 02 Dec 2024 15:47:15 +0000
+> Ricardo Ribalda <ribalda@chromium.org> escreveu:
+> 
+>> The code is running arithmentics with the enum, which when not done with
+>> care makes the compiler a bit nervous.
+>>
+>> Because those enums are only used as defines (no argument or variable
+>> from that enumeration type), convert it into a define and move on.
+>>
+>> It is required to build with llvm 9 without these warnings:
+>> drivers/media/usb/cx231xx/cx231xx-pcb-cfg.c:673:17: warning: bitwise operation between different enumeration types ('enum TS_PORT' and 'enum POWE_TYPE') [-Wenum-enum-conversion]
+>> drivers/media/usb/cx231xx/cx231xx-pcb-cfg.c:680:21: warning: bitwise operation between different enumeration types ('enum AVDEC_STATUS' and 'enum POWE_TYPE') [-Wenum-enum-conversion]
+>> drivers/media/usb/cx231xx/cx231xx-pcb-cfg.c:687:21: warning: bitwise operation between different enumeration types ('enum AVDEC_STATUS' and 'enum POWE_TYPE') [-Wenum-enum-conversion]
+>> drivers/media/usb/cx231xx/cx231xx-pcb-cfg.c:702:17: warning: bitwise operation between different enumeration types ('enum TS_PORT' and 'enum POWE_TYPE') [-Wenum-enum-conversion]
+>> drivers/media/usb/cx231xx/cx231xx-pcb-cfg.c:709:21: warning: bitwise operation between different enumeration types ('enum TS_PORT' and 'enum POWE_TYPE') [-Wenum-enum-conversion]
+>> drivers/media/usb/cx231xx/cx231xx-pcb-cfg.c:718:21: warning: bitwise operation between different enumeration types ('enum AVDEC_STATUS' and 'enum POWE_TYPE') [-Wenum-enum-conversion]
+>> drivers/media/usb/cx231xx/cx231xx-pcb-cfg.c:727:21: warning: bitwise operation between different enumeration types ('enum AVDEC_STATUS' and 'enum TS_PORT') [-Wenum-enum-conversion]
+>> drivers/media/usb/cx231xx/cx231xx-pcb-cfg.c:737:21: warning: bitwise operation between different enumeration types ('enum AVDEC_STATUS' and 'enum TS_PORT') [-Wenum-enum-conversion]
+>> drivers/media/usb/cx231xx/cx231xx-pcb-cfg.c:749:21: warning: bitwise operation between different enumeration types ('enum AVDEC_STATUS' and 'enum TS_PORT') [-Wenum-enum-conversion]
+>>
+>> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+>> ---
+>>  drivers/media/usb/cx231xx/cx231xx-pcb-cfg.h | 18 +++++++-----------
+>>  1 file changed, 7 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/drivers/media/usb/cx231xx/cx231xx-pcb-cfg.h b/drivers/media/usb/cx231xx/cx231xx-pcb-cfg.h
+>> index 5bc44f194d0a..62ffa16bb82c 100644
+>> --- a/drivers/media/usb/cx231xx/cx231xx-pcb-cfg.h
+>> +++ b/drivers/media/usb/cx231xx/cx231xx-pcb-cfg.h
+>> @@ -57,19 +57,17 @@ enum USB_SPEED{
+>>  };
+>>  
+>>  #define TS_MASK         0x6
+>> -enum TS_PORT{
+>> -	NO_TS_PORT = 0x0,	/* 2'b00: Neither port used. PCB not a Hybrid,
+>> +#define NO_TS_PORT	0x0	/* 2'b00: Neither port used. PCB not a Hybrid,
+>>  				   only offers Analog TV or Video */
+>> -	TS1_PORT = 0x4,		/* 2'b10: TS1 Input (Hybrid mode :
+>> +#define TS1_PORT	0x4	/* 2'b10: TS1 Input (Hybrid mode :
+>>  				Digital or External Analog/Compressed source) */
+>> -	TS1_TS2_PORT = 0x6,	/* 2'b11: TS1 & TS2 Inputs
+>> +#define TS1_TS2_PORT	0x6	/* 2'b11: TS1 & TS2 Inputs
+>>  				(Dual inputs from Digital and/or
+>>  				External Analog/Compressed sources) */
+>> -	TS1_EXT_CLOCK = 0x6,	/* 2'b11: TS1 & TS2 as selector
+>> +#define TS1_EXT_CLOCK	0x6	/* 2'b11: TS1 & TS2 as selector
+>>  						to external clock */
+>> -	TS1VIP_TS2_PORT = 0x2	/* 2'b01: TS1 used as 656/VIP Output,
+>> +#define TS1VIP_TS2_PORT 0x2	/* 2'b01: TS1 used as 656/VIP Output,
+>>  				   TS2 Input (from Compressor) */
+>> -};
+>>  
+>>  #define EAVP_MASK       0x8
+>>  enum EAV_PRESENT{
+>> @@ -89,10 +87,8 @@ enum AT_MODE{
+>>  };
+>>  
+>>  #define PWR_SEL_MASK    0x40
+>> -enum POWE_TYPE{
+>> -	SELF_POWER = 0x0,	/* 0: self power */
+>> -	BUS_POWER = 0x40	/* 1: bus power */
+>> -};
+>> +#define SELF_POWER	0x0	/* 0: self power */
+>> +#define BUS_POWER	0x40	/* 1: bus power */
+>>  
+>>  enum USB_POWE_TYPE{
+>>  	USB_SELF_POWER = 0,
+>>
+> 
+> IMO keeping them into enums are a lot better than defines.
+> 
+> Perhaps the right thing would be to join both enums here.
 
-Uuurg. I wish I had double checked that the final submitted patch covers
-_ALL_ incarnations of this. The below delta patch should address it.
+ORing enums is really not a good idea: you would normally never do that, and the
+compiler warning is IMHO appropriate.
 
-Thanks,
+I think this is a good change and I plan to take this.
 
-        tglx
----
-diff --git a/drivers/irqchip/irq-gic-v3-its-msi-parent.c b/drivers/irqchip/irq-gic-v3-its-msi-parent.c
-index e150365fbe89..bdb04c808148 100644
---- a/drivers/irqchip/irq-gic-v3-its-msi-parent.c
-+++ b/drivers/irqchip/irq-gic-v3-its-msi-parent.c
-@@ -203,6 +203,7 @@ static bool its_init_dev_msi_info(struct device *dev, struct irq_domain *domain,
- const struct msi_parent_ops gic_v3_its_msi_parent_ops = {
- 	.supported_flags	= ITS_MSI_FLAGS_SUPPORTED,
- 	.required_flags		= ITS_MSI_FLAGS_REQUIRED,
-+	.chip_flags		= MSI_CHIP_FLAG_SET_EOI | MSI_CHIP_FLAG_SET_ACK,
- 	.bus_select_token	= DOMAIN_BUS_NEXUS,
- 	.bus_select_mask	= MATCH_PCI_MSI | MATCH_PLATFORM_MSI,
- 	.prefix			= "ITS-",
-diff --git a/drivers/irqchip/irq-gic-v3-mbi.c b/drivers/irqchip/irq-gic-v3-mbi.c
-index 3fe870f8ee17..3e1d8a1cda5e 100644
---- a/drivers/irqchip/irq-gic-v3-mbi.c
-+++ b/drivers/irqchip/irq-gic-v3-mbi.c
-@@ -201,6 +201,7 @@ static bool mbi_init_dev_msi_info(struct device *dev, struct irq_domain *domain,
- static const struct msi_parent_ops gic_v3_mbi_msi_parent_ops = {
- 	.supported_flags	= MBI_MSI_FLAGS_SUPPORTED,
- 	.required_flags		= MBI_MSI_FLAGS_REQUIRED,
-+	.chip_flags		= MSI_CHIP_FLAG_SET_EOI | MSI_CHIP_FLAG_SET_ACK,
- 	.bus_select_token	= DOMAIN_BUS_NEXUS,
- 	.bus_select_mask	= MATCH_PCI_MSI | MATCH_PLATFORM_MSI,
- 	.prefix			= "MBI-",
-diff --git a/drivers/irqchip/irq-loongson-pch-msi.c b/drivers/irqchip/irq-loongson-pch-msi.c
-index bd337ecddb40..9c62108b3ad5 100644
---- a/drivers/irqchip/irq-loongson-pch-msi.c
-+++ b/drivers/irqchip/irq-loongson-pch-msi.c
-@@ -146,6 +146,7 @@ static const struct irq_domain_ops pch_msi_middle_domain_ops = {
- static struct msi_parent_ops pch_msi_parent_ops = {
- 	.required_flags		= PCH_MSI_FLAGS_REQUIRED,
- 	.supported_flags	= PCH_MSI_FLAGS_SUPPORTED,
-+	.chip_flags		= MSI_CHIP_FLAG_SET_EOI | MSI_CHIP_FLAG_SET_ACK,
- 	.bus_select_mask	= MATCH_PCI_MSI,
- 	.bus_select_token	= DOMAIN_BUS_NEXUS,
- 	.prefix			= "PCH-",
+Regards,
 
+	Hans
 
+> 
+> 
+> Thanks,
+> Mauro
+> 
 
 
