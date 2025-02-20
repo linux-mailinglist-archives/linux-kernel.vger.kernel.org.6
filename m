@@ -1,165 +1,121 @@
-Return-Path: <linux-kernel+bounces-524097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00FB1A3DF29
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:47:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8FFBA3DF2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:48:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD80816D73C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:46:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99755421D7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:46:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 294541EEA27;
-	Thu, 20 Feb 2025 15:45:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ejpRHR0p"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD6A0204877;
+	Thu, 20 Feb 2025 15:45:52 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D67161CDA0B
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 15:45:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAEB51FE46E
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 15:45:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740066333; cv=none; b=o5byRqSHATEjnzm06Ke6Y0qJ/4hU9KspJ/chcp1g1DPZnLSP7qioooliVMk49ugW7ehXvEDvts/P78KijqQMjsllZLssW/nJv7S6jL1ZjrUMrmG6+4fjajEeI1IKqRt9fVdVCYPLpUstIrgr+K1i4Dq36yn7qPDr/lIFgFM32sI=
+	t=1740066352; cv=none; b=E6W+5I+/VqJhjC4r1lZBbTuLcC5sPEVhaLcd3uZy/wG6g6F/TAp/kaWviGrQl7dW5vsRWjcW2+bAuVTw4OYy+CMltYKQoxur7L0hqc1xRWgQqIE1tniwx/K8/tGigVgR8XV7zDEJgbuUeuQz4JWlRhxrV3+Dn/6D9IP1A1aP1qA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740066333; c=relaxed/simple;
-	bh=I5AKNyz1woS7lsaTJ5RrOa6I3nEatNmzHER7C9F0AFA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ESm2RlFF4Wq4PV4pDNXPDnXyzCKsqmVEwqcxlDOmzW6LzNsJ3+Z7R/gGq6s+ceIM3vxik1jCGV84n965g1y0kkf9msjK4wROY+F5JcojihBBWpv0YNfeYw6FdU32clT2ZaX+e+FbRSaqZs59tEFhpls0LDnlxu7Os276kuxb7lQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ejpRHR0p; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6f666c94285so9436437b3.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 07:45:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740066331; x=1740671131; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=caj6pSHnNXWHcTKHiPPWfy3wKXfZWUVBt2Cq5t/KZXw=;
-        b=ejpRHR0pXnPWoXKPeqFnjIclDgbVDmjx48KDaUr62YMc1J7JazJItorZJnaPDgF0eW
-         9k/43LXfMcyf3+GQDPJ1W36oSiOctqGidcoiAq8dY6NM9MB0o0jegkij9s7loMiBWDtj
-         EzeTk9FlKX4GP6QFh+BEIE0CNIA7TqIXkmAoRa4aiiPiKpON2qDZobyVEGMgHn5oMv5g
-         NlNcYIr35sqk71siXfFG67zjJHRtwWb0tTMlTHWJHvaF8VymMzWDVJuvqVf3ILpa7hIb
-         n7mrCPUP8FTWAWgPT+ONHV08bJWN74Xt+qPV1fAfIDTnLfQyogi/FtJzyuxIKVNleJZE
-         14Kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740066331; x=1740671131;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=caj6pSHnNXWHcTKHiPPWfy3wKXfZWUVBt2Cq5t/KZXw=;
-        b=C090gQUSwwk1vAUaLETRvql0ghI6NF7bmJYv4VDJbDnJnE6BYFV4sGexzmDqJeed7w
-         qcRLdfh3ZjfrGDrmgUlDaXJgOzglPSQvm40Q9Yvt6+0uUzU5LhEwNlZE0uOq/pWElM5X
-         idZ/aTLgA7LC6S7vGFzd2+Gyopi+J6tTfWhFex7UdSst1KdkCGsuxZ1QPwUidXwPye23
-         uEOUQVU9xRO5X3pSl5TXOHfNjwsV57caR6giWODF1tuNIPchMx4e3OOpzXc3vAYCFObj
-         sJqTnIhnUmusncJilUUiJGetRqrT+N8qrBj2eO0f16uAWiXTqCn8r8dzwOuw5uYOAYDl
-         FUBA==
-X-Forwarded-Encrypted: i=1; AJvYcCXNclsxJfOQ0Wv00HgEgc/c7VKjXVJr2M9OwAlVnLhSYfpBAU9tXC/iXsMbB2dJGo2PBHmHdI3C8Wo/YKs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHbqdVko2DLSeZuVeJdVsSnQBDmq9824Mf+5u4vQtE/xJfR7Cz
-	O9pdIf6iahgq7m6dhSbdPaWnW/bxuFdSKNLDwRZsdz9SSZQpv/cusU4YEz3Ww7gpmIGp4rKuZuI
-	Qx4bndXPcJPUxb2axAUvqDfID4nz2FIf151czNw==
-X-Gm-Gg: ASbGnctlsOX9g0sDY/gAxAvPqw+g4jqNmGTtWPgo97kZjuNikQxVJ0sHkpB3iyns+IZ
-	uq0CrnPlwYs8z1JVsMeLAlk/bcX1EZp47Po8hScNVuqujv/lP2NlKSpPnIux9LAN32n7oMkympJ
-	ZN
-X-Google-Smtp-Source: AGHT+IFG8SQEvQPyPA1X148UgsKK5bEmhiv/YocBv364w+iyBZWcNKIHT7rnzjN/l/ohIkB1RhFxo8T7boVqG1XXrxE=
-X-Received: by 2002:a05:690c:4482:b0:6fb:9822:bbd7 with SMTP id
- 00721157ae682-6fb9822be7dmr102049387b3.15.1740066330764; Thu, 20 Feb 2025
- 07:45:30 -0800 (PST)
+	s=arc-20240116; t=1740066352; c=relaxed/simple;
+	bh=Iq9T7pMioPdDOZz4aq2ZIvplirUsKKpBikVGevZ1iTU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=iB3nXMAwEoQWGWKKtX2FUtMQzikV6AouRfuPcM4UMYU3O8elmHwUAf5wXQ0ZRiXLYfmhoT5L6S3VKQN7zYFtP8E0fJXajDixblGyzLUp2YolJjC7EB88RXUn2pmSVDvkdYdVRF9dZH8WI0YqiMwqPD/+veuddrMbKhVx9B0PI8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tl8k7-0003MS-Ml; Thu, 20 Feb 2025 16:45:39 +0100
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tl8k7-001xUd-18;
+	Thu, 20 Feb 2025 16:45:39 +0100
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tl8k7-000Clm-0p;
+	Thu, 20 Feb 2025 16:45:39 +0100
+Message-ID: <6e03b0c09c4e6d222670025c6540f73a0a0a819d.camel@pengutronix.de>
+Subject: Re: [PATCH v2 8/8] imx_dsp_rproc: Use reset controller API to
+ control the DSP
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>, Daniel Baluta
+	 <daniel.baluta@nxp.com>, robh@kernel.org, shawnguo@kernel.org
+Cc: krzk+dt@kernel.org, conor+dt@kernel.org, s.hauer@pengutronix.de, 
+	kernel@pengutronix.de, festevam@gmail.com, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, mathieu.poirier@linaro.org, 
+	shengjiu.wang@nxp.com, Frank.Li@nxp.com, peng.fan@nxp.com, 
+	laurentiu.mihalcea@nxp.com, iuliana.prodan@nxp.com
+Date: Thu, 20 Feb 2025 16:45:39 +0100
+In-Reply-To: <c52e6c5c-f49e-4727-b669-086ae7cb0e1e@gmail.com>
+References: <20250219192102.423850-1-daniel.baluta@nxp.com>
+	 <20250219192102.423850-9-daniel.baluta@nxp.com>
+	 <c52e6c5c-f49e-4727-b669-086ae7cb0e1e@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250220-dual-dsi-v2-0-6c0038d5a2ef@linaro.org>
- <20250220-dual-dsi-v2-1-6c0038d5a2ef@linaro.org> <tu6aaz6whzkqz4at26o2h6pvcua53squfpgfmiw3i4qshojoij@2erqc3zmxmos>
-In-Reply-To: <tu6aaz6whzkqz4at26o2h6pvcua53squfpgfmiw3i4qshojoij@2erqc3zmxmos>
-From: Jun Nie <jun.nie@linaro.org>
-Date: Thu, 20 Feb 2025 23:45:18 +0800
-X-Gm-Features: AWEUYZmYsYjKrn2CbJfu7EO98jbyUBGJnmOHIdlgcyPvmpQCuWq9GXUcgPDpBig
-Message-ID: <CABymUCNYypP9h+r1mPhxtmJsFTfXW1DzvwRLk=6p+9qmY5ofFQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] drm/msm/dsi: add support VBIF_CTRL_PRIORITY to
- v2.8.0 controller
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Krishna Manikandan <quic_mkrishn@quicinc.com>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	Jonathan Marek <jonathan@marek.ca>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org> =E4=BA=8E2025=E5=B9=B42=E6=
-=9C=8820=E6=97=A5=E5=91=A8=E5=9B=9B 18:27=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Thu, Feb 20, 2025 at 06:07:52PM +0800, Jun Nie wrote:
-> > This change originates from the Qualcomm Android Linux driver. It is
-> > essential to support a dual-DSI configuration with two panels in
-> > some circumstances per testing. As the name suggests, this modification
-> > may enhance the bandwidth robustness of a bus.
->
-> Please start by describing the problem and the result of the changes.
-> Otherwise it reads as it "may enhance or may worsen" the robustness.
-
-OK, will re-test it with older branch. I remember it cause LCD to go
-to black without
-this patch, but not fully confident with my memory. With latest code,
-there is no
-difference to have this patch or not.
->
-> >
-> > Co-developed-by: Jonathan Marek <jonathan@marek.ca>
-> > Signed-off-by: Jonathan Marek <jonathan@marek.ca>
-> > Signed-off-by: Jun Nie <jun.nie@linaro.org>
+On Do, 2025-02-20 at 00:22 +0200, Laurentiu Mihalcea wrote:
+>=20
+> On 2/19/2025 9:21 PM, Daniel Baluta wrote:
+> > Use the reset controller API to control the DSP on i.MX8MP. This way
+> > we can have a better control of the resources and avoid using a syscon
+> > to access the audiomix bits.
+> >=20
+> > Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+> > Reviewed-by: Peng Fan <peng.fan@nxp.com>
 > > ---
-> >  drivers/gpu/drm/msm/dsi/dsi_host.c | 10 ++++++++++
-> >  1 file changed, 10 insertions(+)
-> >
-> > diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c b/drivers/gpu/drm/msm/d=
-si/dsi_host.c
-> > index 42e100a8adca09d7b55afce0e2553e76d898744f..f59c4cd6bc8cdb31c1302f8=
-e3ff395486c0b4898 100644
-> > --- a/drivers/gpu/drm/msm/dsi/dsi_host.c
-> > +++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
-> > @@ -2238,13 +2238,23 @@ int msm_dsi_host_cmd_rx(struct mipi_dsi_host *h=
-ost,
-> >       return ret;
-> >  }
-> >
-> > +#define DSI_VBIF_CTRL                        (0x01CC - 4)
-> > +#define DSI_VBIF_CTRL_PRIORITY               0x07
-> > +
-> >  void msm_dsi_host_cmd_xfer_commit(struct mipi_dsi_host *host, u32 dma_=
-base,
-> >                                 u32 len)
-> >  {
-> >       struct msm_dsi_host *msm_host =3D to_msm_dsi_host(host);
-> > +     const struct msm_dsi_cfg_handler *cfg_hnd =3D msm_host->cfg_hnd;
-> > +     u32 reg;
-> >
-> >       dsi_write(msm_host, REG_DSI_DMA_BASE, dma_base);
-> >       dsi_write(msm_host, REG_DSI_DMA_LEN, len);
-> > +     if (cfg_hnd->minor >=3D MSM_DSI_6G_VER_MINOR_V2_8_0) {
-> > +             reg =3D dsi_read(msm_host, DSI_VBIF_CTRL);
-> > +             reg |=3D (DSI_VBIF_CTRL_PRIORITY & 0x7);
-> > +             dsi_write(msm_host, DSI_VBIF_CTRL, reg);
-> > +     }
-> >       dsi_write(msm_host, REG_DSI_TRIG_DMA, 1);
-> >
-> >       /* Make sure trigger happens */
-> >
-> > --
-> > 2.34.1
-> >
->
-> --
-> With best wishes
-> Dmitry
+> >  drivers/remoteproc/imx_dsp_rproc.c | 25 +++++++++++++++++--------
+> >  drivers/remoteproc/imx_rproc.h     |  2 ++
+> >  2 files changed, 19 insertions(+), 8 deletions(-)
+> >=20
+> > diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/im=
+x_dsp_rproc.c
+> > index ea5024919c2f..631563e4f86d 100644
+> > --- a/drivers/remoteproc/imx_dsp_rproc.c
+> > +++ b/drivers/remoteproc/imx_dsp_rproc.c
+> > @@ -19,6 +19,7 @@
+> >  #include <linux/pm_runtime.h>
+> >  #include <linux/regmap.h>
+> >  #include <linux/remoteproc.h>
+> > +#include <linux/reset.h>
+> >  #include <linux/slab.h>
+> > =20
+> >  #include "imx_rproc.h"
+> > @@ -111,6 +112,7 @@ enum imx_dsp_rp_mbox_messages {
+> >   */
+> >  struct imx_dsp_rproc {
+> >  	struct regmap				*regmap;
+> > +	struct reset_control			*reset;
+>=20
+> Maybe rename this to "stall"? There's also the DAP stuff that's actually =
+used
+> to reset the core so this might be a bit confusing?
+
+So Run/Stall does not actually reset anything? Maybe then it should not
+be modeled as a reset control. It looks to me like the
+DAP_PWRCTL[CORERESET] bit in the Audio Processor Debug region would be
+a much better fit.
+
+regards
+Philipp
 
