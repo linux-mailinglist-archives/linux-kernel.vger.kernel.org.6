@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-523909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F297A3DCB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:28:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA2C9A3DCBF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:28:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE83C19C3AA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:27:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5575119C31B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:27:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF98B1FECCE;
-	Thu, 20 Feb 2025 14:26:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BDDE200108;
+	Thu, 20 Feb 2025 14:26:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YKPi8Qfy";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="R0P87Y6S"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dBf1z0VR";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qiuCTPuO"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A953D1FCCE9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB52E1FCF6B;
 	Thu, 20 Feb 2025 14:26:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740061604; cv=none; b=r9BBcbzguA1bMiogpMT8Xo9zQEGjJcfF1UaZhWxB/q/2OK223bZdurikwpogUcK0UAyP1ZWWWvjDTr9L6ar0eSmWqdrn7iBe+4H0hIQeJrURs/nEqZ5qmVwmc/+dRgzpOjNERA+jpcdPFZ9Mm0c6/xO6zlPdd/ADu1axI+IDLtU=
+	t=1740061605; cv=none; b=rfvXqgwtxScsoNEDxK176v0hFTK3RB27L0B/eqCWE/RAJ7C2EMMjh1XgyDkcJAvzlERY9PndzNFlA9bVBZcxBPO5Tbe5cwoQwKYo69UVg/rRpTCVnrYwe60AOfldlwodM+EKGGhNgUSYyHh6r1BTke66Rhfsx+Vw6Ga0vfkuILQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740061604; c=relaxed/simple;
-	bh=Iisxb+OwQGfSFXkHpfbSwKdDO3OT8ipY9twcwklG5dE=;
+	s=arc-20240116; t=1740061605; c=relaxed/simple;
+	bh=p1ryNSiXOYRbISfoRzmptUbG3GSr7Li69nDs9Butufw=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=MncVGxpvXytSMIAmJVZfERjIEFKtiZK+jzDxw3KDlsIvcmEUSE6Du2WSzVhjXzjeQN5tvQzJRg7hS4YshKvjBeChssUgaHhN0ilUZc/5c69ZClerSlg5SP8p8tpbnRBCyYDNSNJB50v6cKgKw3y5iYjbWRQY4Ndojf22abD6QfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YKPi8Qfy; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=R0P87Y6S; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=ehY/JVMViCgF4u3aOq8mGlch2N4TX9eiS8dK30XufyBTorx6wGQio1OAjbkR1nTZYtdhJD0ZZBeqU5dWFOzQMa+aAple3KUQ5QhvN2goZLK8EQmKEKtn8vo2+NeZx25ra8gB97zAi18/riH3lExp7yPqXqhLT1eTCYd8G7BsmwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dBf1z0VR; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qiuCTPuO; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 20 Feb 2025 14:26:39 -0000
+Date: Thu, 20 Feb 2025 14:26:40 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020; t=1740061600;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -39,12 +39,12 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=zBf38VYt0f7CFg7ZuVElbynQyaWCpqMyxiAG+opZXkM=;
-	b=YKPi8Qfy3tfmZLkCM7OFsqENmBLm2lkRRmL1hqUr1um0dqdwjDgyWjACcXZIttfIYR/ni+
-	yFuSX3V8EvPuS33DOdpIFTNm6f8Bx+QRDiAJYNY734IVvuksI6p0+aSgRqPtFblVzEp/9B
-	NrG+J+zu3Sf5p+UEMqefXQZd4R6IiXEcYH4GH+GgiFH2QSoZuF41UaEiqWmHFhBDvxkkkz
-	AIYNKw4zCDBWTDGCJHH0SxJiW8m1U1pZ2HsuMwpaUQjKBOkng4tRaa1PXjZC8ov3uRHZa0
-	sEpAjaAjWLmgwEudHPwWW/yzI4rxTmp8wPtu5iYF/UQkzbPbmz5yZsY1slXjdw==
+	bh=z9eS3oFs/KNQ1eeJtZK6VXdng0xJyGtwNqsn2/+xIU4=;
+	b=dBf1z0VR65h4dpT8667JP2eJSgpyOTID2uPLBv8TWjSwzzcY8aLO2x4vJgWGQDQSGF5SME
+	7VIzYaRv7/yhRCycXPCMztPgJZRVDyr11FO+gtYk14YEX4kFw4mFPHyu48RTyu+Ph4Ae3k
+	Oexwtdrkg0739CSRXvTVEYlSrxKBNsQgWMlp/2HBHPD0ezzgrzJgv9XbumgRDUzAEICVGq
+	K9nnt84PflIgaqg0WOJhc7OKacExSGVn3KNuQxj5NiafKENYISon8X5WceNSVVZGdpuErd
+	qI5EzaDVGqIecL4qcK76BLtGesjSvAI7f7JImmhZXAd+WQGckilowLVmC52g3g==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1740061600;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -52,26 +52,26 @@ DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=zBf38VYt0f7CFg7ZuVElbynQyaWCpqMyxiAG+opZXkM=;
-	b=R0P87Y6S2ZLBF9paLcj7w1tDBU7I/BI0bSU1BOrmxcSUKXQzSRMl3lOek7c6GjLxMmtQXT
-	ktGCLjprUwQYYlCA==
-From: "tip-bot2 for Anup Patel" <tip-bot2@linutronix.de>
+	bh=z9eS3oFs/KNQ1eeJtZK6VXdng0xJyGtwNqsn2/+xIU4=;
+	b=qiuCTPuOsIQHm72jg5L8VExdWWEiyH3IcxItVcNocSOt0SOQ5Z+tti8GUIX8GaBJPrsKgV
+	w1yeyYWce5qhH+BA==
+From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: irq/drivers] genirq: Introduce irq_can_move_in_process_context()
-Cc: Anup Patel <apatel@ventanamicro.com>, Thomas Gleixner <tglx@linutronix.de>,
+Subject: [tip: irq/drivers] genirq: Introduce common irq_force_complete_move()
+ implementation
+Cc: Thomas Gleixner <tglx@linutronix.de>, Anup Patel <apatel@ventanamicro.com>,
  x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250217085657.789309-6-apatel@ventanamicro.com>
-References: <20250217085657.789309-6-apatel@ventanamicro.com>
+In-Reply-To: <20250217085657.789309-5-apatel@ventanamicro.com>
+References: <20250217085657.789309-5-apatel@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174006159951.10177.14927239047948181862.tip-bot2@tip-bot2>
+Message-ID: <174006160011.10177.4380660981340509896.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -81,74 +81,374 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the irq/drivers branch of tip:
 
-Commit-ID:     e54b1b5e89ae765e6d71d41883a8f551fde8d0ab
-Gitweb:        https://git.kernel.org/tip/e54b1b5e89ae765e6d71d41883a8f551fde8d0ab
-Author:        Anup Patel <apatel@ventanamicro.com>
-AuthorDate:    Mon, 17 Feb 2025 14:26:51 +05:30
+Commit-ID:     751dc837dabd275d0ab165fc737c10f80e2e863a
+Gitweb:        https://git.kernel.org/tip/751dc837dabd275d0ab165fc737c10f80e2e863a
+Author:        Thomas Gleixner <tglx@linutronix.de>
+AuthorDate:    Mon, 17 Feb 2025 14:26:50 +05:30
 Committer:     Thomas Gleixner <tglx@linutronix.de>
 CommitterDate: Thu, 20 Feb 2025 15:19:26 +01:00
 
-genirq: Introduce irq_can_move_in_process_context()
+genirq: Introduce common irq_force_complete_move() implementation
 
-Interrupt controller drivers which enable CONFIG_GENERIC_PENDING_IRQ
-require to know whether an interrupt can be moved in process context or not
-to decide whether they need to invoke the work around for non-atomic MSI
-updates or not.
+CONFIG_GENERIC_PENDING_IRQ requires an architecture specific implementation
+of irq_force_complete_move() for CPU hotplug. At the moment, only x86
+implements this unconditionally, but for RISC-V irq_force_complete_move()
+is only needed when the RISC-V IMSIC driver is in use and not needed
+otherwise.
 
-This information can be retrieved via irq_can_move_pcntxt(). That helper
-requires access to the top-most interrupt domain data, but the driver which
-requires this is usually further down in the hierarchy.
+To allow runtime configuration of this mechanism, introduce a common
+irq_force_complete_move() implementation in the interrupt core code, which
+only invokes the completion function, when a interrupt chip in the
+hierarchy implements it.
 
-Introduce irq_can_move_in_process_context() which retrieves that
-information from the top-most interrupt domain data.
+Switch X86 over to the new mechanism. No functional change intended.
 
-[ tglx: Massaged change log ]
-
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Anup Patel <apatel@ventanamicro.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20250217085657.789309-6-apatel@ventanamicro.com
+Link: https://lore.kernel.org/all/20250217085657.789309-5-apatel@ventanamicro.com
+
 
 ---
- include/linux/irq.h    |  2 ++
- kernel/irq/migration.c | 10 ++++++++++
- 2 files changed, 12 insertions(+)
+ arch/x86/kernel/apic/vector.c | 231 +++++++++++++++------------------
+ include/linux/irq.h           |   5 +-
+ kernel/irq/internals.h        |   2 +-
+ kernel/irq/migration.c        |  10 +-
+ 4 files changed, 123 insertions(+), 125 deletions(-)
 
-diff --git a/include/linux/irq.h b/include/linux/irq.h
-index 56f6583..dd5df1e 100644
---- a/include/linux/irq.h
-+++ b/include/linux/irq.h
-@@ -615,6 +615,7 @@ extern int irq_affinity_online_cpu(unsigned int cpu);
+diff --git a/arch/x86/kernel/apic/vector.c b/arch/x86/kernel/apic/vector.c
+index 736f628..72fa4bb 100644
+--- a/arch/x86/kernel/apic/vector.c
++++ b/arch/x86/kernel/apic/vector.c
+@@ -888,8 +888,109 @@ static int apic_set_affinity(struct irq_data *irqd,
+ 	return err ? err : IRQ_SET_MASK_OK;
+ }
+ 
++static void free_moved_vector(struct apic_chip_data *apicd)
++{
++	unsigned int vector = apicd->prev_vector;
++	unsigned int cpu = apicd->prev_cpu;
++	bool managed = apicd->is_managed;
++
++	/*
++	 * Managed interrupts are usually not migrated away
++	 * from an online CPU, but CPU isolation 'managed_irq'
++	 * can make that happen.
++	 * 1) Activation does not take the isolation into account
++	 *    to keep the code simple
++	 * 2) Migration away from an isolated CPU can happen when
++	 *    a non-isolated CPU which is in the calculated
++	 *    affinity mask comes online.
++	 */
++	trace_vector_free_moved(apicd->irq, cpu, vector, managed);
++	irq_matrix_free(vector_matrix, cpu, vector, managed);
++	per_cpu(vector_irq, cpu)[vector] = VECTOR_UNUSED;
++	hlist_del_init(&apicd->clist);
++	apicd->prev_vector = 0;
++	apicd->move_in_progress = 0;
++}
++
++/*
++ * Called from fixup_irqs() with @desc->lock held and interrupts disabled.
++ */
++static void apic_force_complete_move(struct irq_data *irqd)
++{
++	unsigned int cpu = smp_processor_id();
++	struct apic_chip_data *apicd;
++	unsigned int vector;
++
++	guard(raw_spinlock)(&vector_lock);
++	apicd = apic_chip_data(irqd);
++	if (!apicd)
++		return;
++
++	/*
++	 * If prev_vector is empty or the descriptor is neither currently
++	 * nor previously on the outgoing CPU no action required.
++	 */
++	vector = apicd->prev_vector;
++	if (!vector || (apicd->cpu != cpu && apicd->prev_cpu != cpu))
++		return;
++
++	/*
++	 * This is tricky. If the cleanup of the old vector has not been
++	 * done yet, then the following setaffinity call will fail with
++	 * -EBUSY. This can leave the interrupt in a stale state.
++	 *
++	 * All CPUs are stuck in stop machine with interrupts disabled so
++	 * calling __irq_complete_move() would be completely pointless.
++	 *
++	 * 1) The interrupt is in move_in_progress state. That means that we
++	 *    have not seen an interrupt since the io_apic was reprogrammed to
++	 *    the new vector.
++	 *
++	 * 2) The interrupt has fired on the new vector, but the cleanup IPIs
++	 *    have not been processed yet.
++	 */
++	if (apicd->move_in_progress) {
++		/*
++		 * In theory there is a race:
++		 *
++		 * set_ioapic(new_vector) <-- Interrupt is raised before update
++		 *			      is effective, i.e. it's raised on
++		 *			      the old vector.
++		 *
++		 * So if the target cpu cannot handle that interrupt before
++		 * the old vector is cleaned up, we get a spurious interrupt
++		 * and in the worst case the ioapic irq line becomes stale.
++		 *
++		 * But in case of cpu hotplug this should be a non issue
++		 * because if the affinity update happens right before all
++		 * cpus rendezvous in stop machine, there is no way that the
++		 * interrupt can be blocked on the target cpu because all cpus
++		 * loops first with interrupts enabled in stop machine, so the
++		 * old vector is not yet cleaned up when the interrupt fires.
++		 *
++		 * So the only way to run into this issue is if the delivery
++		 * of the interrupt on the apic/system bus would be delayed
++		 * beyond the point where the target cpu disables interrupts
++		 * in stop machine. I doubt that it can happen, but at least
++		 * there is a theoretical chance. Virtualization might be
++		 * able to expose this, but AFAICT the IOAPIC emulation is not
++		 * as stupid as the real hardware.
++		 *
++		 * Anyway, there is nothing we can do about that at this point
++		 * w/o refactoring the whole fixup_irq() business completely.
++		 * We print at least the irq number and the old vector number,
++		 * so we have the necessary information when a problem in that
++		 * area arises.
++		 */
++		pr_warn("IRQ fixup: irq %d move in progress, old vector %d\n",
++			irqd->irq, vector);
++	}
++	free_moved_vector(apicd);
++}
++
+ #else
+-# define apic_set_affinity	NULL
++# define apic_set_affinity		NULL
++# define apic_force_complete_move	NULL
  #endif
  
- #if defined(CONFIG_SMP) && defined(CONFIG_GENERIC_PENDING_IRQ)
-+bool irq_can_move_in_process_context(struct irq_data *data);
- void __irq_move_irq(struct irq_data *data);
- static inline void irq_move_irq(struct irq_data *data)
+ static int apic_retrigger_irq(struct irq_data *irqd)
+@@ -923,39 +1024,16 @@ static void x86_vector_msi_compose_msg(struct irq_data *data,
+ }
+ 
+ static struct irq_chip lapic_controller = {
+-	.name			= "APIC",
+-	.irq_ack		= apic_ack_edge,
+-	.irq_set_affinity	= apic_set_affinity,
+-	.irq_compose_msi_msg	= x86_vector_msi_compose_msg,
+-	.irq_retrigger		= apic_retrigger_irq,
++	.name				= "APIC",
++	.irq_ack			= apic_ack_edge,
++	.irq_set_affinity		= apic_set_affinity,
++	.irq_compose_msi_msg		= x86_vector_msi_compose_msg,
++	.irq_force_complete_move	= apic_force_complete_move,
++	.irq_retrigger			= apic_retrigger_irq,
+ };
+ 
+ #ifdef CONFIG_SMP
+ 
+-static void free_moved_vector(struct apic_chip_data *apicd)
+-{
+-	unsigned int vector = apicd->prev_vector;
+-	unsigned int cpu = apicd->prev_cpu;
+-	bool managed = apicd->is_managed;
+-
+-	/*
+-	 * Managed interrupts are usually not migrated away
+-	 * from an online CPU, but CPU isolation 'managed_irq'
+-	 * can make that happen.
+-	 * 1) Activation does not take the isolation into account
+-	 *    to keep the code simple
+-	 * 2) Migration away from an isolated CPU can happen when
+-	 *    a non-isolated CPU which is in the calculated
+-	 *    affinity mask comes online.
+-	 */
+-	trace_vector_free_moved(apicd->irq, cpu, vector, managed);
+-	irq_matrix_free(vector_matrix, cpu, vector, managed);
+-	per_cpu(vector_irq, cpu)[vector] = VECTOR_UNUSED;
+-	hlist_del_init(&apicd->clist);
+-	apicd->prev_vector = 0;
+-	apicd->move_in_progress = 0;
+-}
+-
+ static void __vector_cleanup(struct vector_cleanup *cl, bool check_irr)
  {
-@@ -623,6 +624,7 @@ static inline void irq_move_irq(struct irq_data *data)
+ 	struct apic_chip_data *apicd;
+@@ -1068,99 +1146,6 @@ void irq_complete_move(struct irq_cfg *cfg)
+ 		__vector_schedule_cleanup(apicd);
+ }
+ 
+-/*
+- * Called from fixup_irqs() with @desc->lock held and interrupts disabled.
+- */
+-void irq_force_complete_move(struct irq_desc *desc)
+-{
+-	unsigned int cpu = smp_processor_id();
+-	struct apic_chip_data *apicd;
+-	struct irq_data *irqd;
+-	unsigned int vector;
+-
+-	/*
+-	 * The function is called for all descriptors regardless of which
+-	 * irqdomain they belong to. For example if an IRQ is provided by
+-	 * an irq_chip as part of a GPIO driver, the chip data for that
+-	 * descriptor is specific to the irq_chip in question.
+-	 *
+-	 * Check first that the chip_data is what we expect
+-	 * (apic_chip_data) before touching it any further.
+-	 */
+-	irqd = irq_domain_get_irq_data(x86_vector_domain,
+-				       irq_desc_get_irq(desc));
+-	if (!irqd)
+-		return;
+-
+-	raw_spin_lock(&vector_lock);
+-	apicd = apic_chip_data(irqd);
+-	if (!apicd)
+-		goto unlock;
+-
+-	/*
+-	 * If prev_vector is empty or the descriptor is neither currently
+-	 * nor previously on the outgoing CPU no action required.
+-	 */
+-	vector = apicd->prev_vector;
+-	if (!vector || (apicd->cpu != cpu && apicd->prev_cpu != cpu))
+-		goto unlock;
+-
+-	/*
+-	 * This is tricky. If the cleanup of the old vector has not been
+-	 * done yet, then the following setaffinity call will fail with
+-	 * -EBUSY. This can leave the interrupt in a stale state.
+-	 *
+-	 * All CPUs are stuck in stop machine with interrupts disabled so
+-	 * calling __irq_complete_move() would be completely pointless.
+-	 *
+-	 * 1) The interrupt is in move_in_progress state. That means that we
+-	 *    have not seen an interrupt since the io_apic was reprogrammed to
+-	 *    the new vector.
+-	 *
+-	 * 2) The interrupt has fired on the new vector, but the cleanup IPIs
+-	 *    have not been processed yet.
+-	 */
+-	if (apicd->move_in_progress) {
+-		/*
+-		 * In theory there is a race:
+-		 *
+-		 * set_ioapic(new_vector) <-- Interrupt is raised before update
+-		 *			      is effective, i.e. it's raised on
+-		 *			      the old vector.
+-		 *
+-		 * So if the target cpu cannot handle that interrupt before
+-		 * the old vector is cleaned up, we get a spurious interrupt
+-		 * and in the worst case the ioapic irq line becomes stale.
+-		 *
+-		 * But in case of cpu hotplug this should be a non issue
+-		 * because if the affinity update happens right before all
+-		 * cpus rendezvous in stop machine, there is no way that the
+-		 * interrupt can be blocked on the target cpu because all cpus
+-		 * loops first with interrupts enabled in stop machine, so the
+-		 * old vector is not yet cleaned up when the interrupt fires.
+-		 *
+-		 * So the only way to run into this issue is if the delivery
+-		 * of the interrupt on the apic/system bus would be delayed
+-		 * beyond the point where the target cpu disables interrupts
+-		 * in stop machine. I doubt that it can happen, but at least
+-		 * there is a theoretical chance. Virtualization might be
+-		 * able to expose this, but AFAICT the IOAPIC emulation is not
+-		 * as stupid as the real hardware.
+-		 *
+-		 * Anyway, there is nothing we can do about that at this point
+-		 * w/o refactoring the whole fixup_irq() business completely.
+-		 * We print at least the irq number and the old vector number,
+-		 * so we have the necessary information when a problem in that
+-		 * area arises.
+-		 */
+-		pr_warn("IRQ fixup: irq %d move in progress, old vector %d\n",
+-			irqd->irq, vector);
+-	}
+-	free_moved_vector(apicd);
+-unlock:
+-	raw_spin_unlock(&vector_lock);
+-}
+-
+ #ifdef CONFIG_HOTPLUG_CPU
+ /*
+  * Note, this is not accurate accounting, but at least good enough to
+diff --git a/include/linux/irq.h b/include/linux/irq.h
+index 8daa17f..56f6583 100644
+--- a/include/linux/irq.h
++++ b/include/linux/irq.h
+@@ -486,6 +486,7 @@ static inline irq_hw_number_t irqd_to_hwirq(struct irq_data *d)
+  * @ipi_send_mask:	send an IPI to destination cpus in cpumask
+  * @irq_nmi_setup:	function called from core code before enabling an NMI
+  * @irq_nmi_teardown:	function called from core code after disabling an NMI
++ * @irq_force_complete_move:	optional function to force complete pending irq move
+  * @flags:		chip specific flags
+  */
+ struct irq_chip {
+@@ -537,6 +538,8 @@ struct irq_chip {
+ 	int		(*irq_nmi_setup)(struct irq_data *data);
+ 	void		(*irq_nmi_teardown)(struct irq_data *data);
+ 
++	void		(*irq_force_complete_move)(struct irq_data *data);
++
+ 	unsigned long	flags;
+ };
+ 
+@@ -619,11 +622,9 @@ static inline void irq_move_irq(struct irq_data *data)
+ 		__irq_move_irq(data);
  }
  void irq_move_masked_irq(struct irq_data *data);
+-void irq_force_complete_move(struct irq_desc *desc);
  #else
-+static inline bool irq_can_move_in_process_context(struct irq_data *data) { return true; }
  static inline void irq_move_irq(struct irq_data *data) { }
  static inline void irq_move_masked_irq(struct irq_data *data) { }
+-static inline void irq_force_complete_move(struct irq_desc *desc) { }
  #endif
+ 
+ extern int no_irq_affinity;
+diff --git a/kernel/irq/internals.h b/kernel/irq/internals.h
+index a979523..d4e190e 100644
+--- a/kernel/irq/internals.h
++++ b/kernel/irq/internals.h
+@@ -442,6 +442,7 @@ static inline struct cpumask *irq_desc_get_pending_mask(struct irq_desc *desc)
+ 	return desc->pending_mask;
+ }
+ bool irq_fixup_move_pending(struct irq_desc *desc, bool force_clear);
++void irq_force_complete_move(struct irq_desc *desc);
+ #else /* CONFIG_GENERIC_PENDING_IRQ */
+ static inline bool irq_can_move_pcntxt(struct irq_data *data)
+ {
+@@ -467,6 +468,7 @@ static inline bool irq_fixup_move_pending(struct irq_desc *desc, bool fclear)
+ {
+ 	return false;
+ }
++static inline void irq_force_complete_move(struct irq_desc *desc) { }
+ #endif /* !CONFIG_GENERIC_PENDING_IRQ */
+ 
+ #if !defined(CONFIG_IRQ_DOMAIN) || !defined(CONFIG_IRQ_DOMAIN_HIERARCHY)
 diff --git a/kernel/irq/migration.c b/kernel/irq/migration.c
-index e110300..147cabb 100644
+index eb150af..e110300 100644
 --- a/kernel/irq/migration.c
 +++ b/kernel/irq/migration.c
-@@ -127,3 +127,13 @@ void __irq_move_irq(struct irq_data *idata)
- 	if (!masked)
- 		idata->chip->irq_unmask(idata);
+@@ -35,6 +35,16 @@ bool irq_fixup_move_pending(struct irq_desc *desc, bool force_clear)
+ 	return true;
  }
-+
-+bool irq_can_move_in_process_context(struct irq_data *data)
+ 
++void irq_force_complete_move(struct irq_desc *desc)
 +{
-+	/*
-+	 * Get the top level irq_data in the hierarchy, which is optimized
-+	 * away when CONFIG_IRQ_DOMAIN_HIERARCHY is disabled.
-+	 */
-+	data = irq_desc_get_irq_data(irq_data_to_desc(data));
-+	return irq_can_move_pcntxt(data);
++	for (struct irq_data *d = irq_desc_get_irq_data(desc); d; d = d->parent_data) {
++		if (d->chip && d->chip->irq_force_complete_move) {
++			d->chip->irq_force_complete_move(d);
++			return;
++		}
++	}
 +}
++
+ void irq_move_masked_irq(struct irq_data *idata)
+ {
+ 	struct irq_desc *desc = irq_data_to_desc(idata);
 
