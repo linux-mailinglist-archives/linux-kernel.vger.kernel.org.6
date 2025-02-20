@@ -1,304 +1,201 @@
-Return-Path: <linux-kernel+bounces-524620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59E46A3E533
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:37:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E381CA3E539
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:40:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E9EE423521
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:37:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E56B3BF392
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:40:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4936E2641FE;
-	Thu, 20 Feb 2025 19:37:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 532AD2641E0;
+	Thu, 20 Feb 2025 19:40:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DF1F4Bs1"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="TrATA7tw"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2082.outbound.protection.outlook.com [40.107.243.82])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD17214203;
-	Thu, 20 Feb 2025 19:37:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740080254; cv=none; b=OBCeJVrLc5UmtENwVtB3bHLe2F2Be6yj14+tuxMDRx1if8hn234lpCbaABgM75CS2twsR3k3Mw4m+EUHI3TD1zM2q4pc7B8ltz8RrRFhtFUW5wGc/SDf9YEv3rQVYckxl3o08BDi2iWccPInMw8Oh/v+mrSzokbJ3fnQfWODHFM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740080254; c=relaxed/simple;
-	bh=n9/74d6CBVjudaWDGkORu5hNcxEK3VAuW+zR9g+UojQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tYlGbtS15ePGj+bXStuFmKzJsZFFhGw1shB4ac2N85jasLViyCQof28poGdjNan2smFBNhC95cTfOV3vBPkD52rwNKkUkPk+psHcM1jXt/NG8lpo/h3zHJyzuYZWSSjpac6iV2qFAH3DifPzXBfL78QxeSQF+WSHFfe4P87lpYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DF1F4Bs1; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2fc291f7ddbso2172823a91.1;
-        Thu, 20 Feb 2025 11:37:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740080252; x=1740685052; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w9N0svtuDhebOkPAKKmeCwyMiQ3TBUCHeJ8JAArCKbo=;
-        b=DF1F4Bs1PDeUt0IRamWWsQyfgqTd0ZQ8u17zrsBn7yMsBF9ZOXAeBxcOQ/pydm0lk2
-         s04kgHqZuGU0N6CNxbTi6lTrEoP8XN4HHjZu1b9OxVQwWXVwBRcp2w7PKqopdVRl4+bN
-         WPFNLXzw0aI6LG3ficB7FUoD7bsDxiP66qvUY9O+Mf2cDV+radzCrcYCx920VkhCKI5G
-         esqhcLsE8JbxenmG0zHSIQRw8w1wWQ1UCnArixtPi8z8WXg2KXdD52Slz5GmTvBgMSH0
-         q/hClLBiKxMUi0jYGDXjk45wAfwRrZyPmqAIiiSBduQOWFs0i4Vc4/Tac5ZZla32g/r+
-         AXCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740080252; x=1740685052;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=w9N0svtuDhebOkPAKKmeCwyMiQ3TBUCHeJ8JAArCKbo=;
-        b=uWzcLYCF9w4E/QAow1BekvmNYX5S4fMfHd1/7dYRU4QtZJ16TE7wVr8wv3iO6GWpFg
-         WefaKW5X1WUks32zzDayOh9rLv2xfWjpMZBdhuvh3xYKe+7pByf8+DdAHUGVrXDMuLna
-         W5Xfoy3ZbqxtgsJEceqAYtxzGzAU2wKl+i1kh35I7vK87jGq6UvyZNk0xRUq5r0NsY2u
-         31VgNRX070XtElRjnlHbZ5tdMSJTSY36FgFg2zVwd9h3D3JkDSb37/N/J0xAPRk9RVrF
-         3IEpKfUI7PapQCNJAgNjWBOClYnpXv4PaPXf0Ws+xjk+hAqofZgUUI4JLLG8AHqqbmKk
-         XD8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUoohSwAziwMbd4inCAhiZrRpt4EPw6MrZbsMR5VHzk1WLa0ok5ne9eiRAm9VsX3tIDDX8jXi8inA==@vger.kernel.org, AJvYcCVE/kJnJUSFOfp9wBmufV36862J1FBp9DRI/LdTSbkiDnQXieqoPtxFBCT06ezRjIhiR+zIyV4HnNNNoPHO@vger.kernel.org, AJvYcCVrkETnZsGJMnES1/iJUGR5ivZFlt1M1ceYPOcSdZYg6AJB3isOkTfwTBIJDi9MFV58M1N2QjPd0eSm@vger.kernel.org, AJvYcCWkXVFxZeI8bCAJxS4EXQfvqJsZLCBuGU4S8PWOIbgnCCSdWcaRg+GnGlOlp4fHjBjktJZxwq4afdK2@vger.kernel.org, AJvYcCXVBjC9GluU0cG5aw7YRet7kx4jfZumXbw4950rrMhnj/O0frv3bShWs8lYsWiiR/D8byuHbfODvktoZQO77HO3H3JtvZFl@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7aQPh/yfAweT+N6fpreBCAfC6zAhEBt9bGveCAbAHJ4WL7+0o
-	gvZHHgKhkyYuSA498smHuehjuuYIqRg9DKdv2ku0y5JUS2oZ+7Fx7UIRRfwRyhg4kze2ArLfWwh
-	3+2dj2Y7+CfSWeu6+RYgQlso0QDekEg==
-X-Gm-Gg: ASbGnctDdcXphBfi9im9b5ZKpOwHK0nHky5Uebi1JMxYSXsu7KBtREm3sdRJimxHMgN
-	/Kb8MCmlfxJuLVJNwZFE1fjib2yIsGdusXY263pHe4A5scfV4fJzRhGb3bFkoX6ZbMZQHcSj+
-X-Google-Smtp-Source: AGHT+IGP4jRQs+KcqaHrKuRyBpknchLl3SDq4uE0OSI4WF5TGdo50Invw+UYJrE70+lFzsLo3ysuHyFsguXq1VyqXi4=
-X-Received: by 2002:a17:90b:2b8e:b0:2ef:19d0:2261 with SMTP id
- 98e67ed59e1d1-2fce78cbe94mr686477a91.16.1740080251781; Thu, 20 Feb 2025
- 11:37:31 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C67682135BB;
+	Thu, 20 Feb 2025 19:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.82
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740080412; cv=fail; b=m8yDMrZFcGzfUtLXQoHKa/DVhTsIeLe4F+7S2h6UQYon4w15n6Q9YxNx6Ru5Rw9rZVUo0yBGSiO772TdbJ0fIRyNyBtIgOY/aifHz1gd0l/fgunKV3HUyN6oWCxovhwOKLVVYsB976HrFE2XVzk2ziGib4Jf2S1EYvQ9lyI7yps=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740080412; c=relaxed/simple;
+	bh=CBqm1Fqk8jMIKNdea7uYXMQmcKuEctyOHf36PORjkpI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cFjKNuGvO9LcB7GkXoiCAcmK3pSCE1kFngTWLzWg240xrryKMuXaog83T6pH0okC1WN/u0tWeIVTCdC7ta3V5ap4NOEvcxM8n3kWlC/QpEU2jzFtdEyXAl0cum4U3VjIzo3CZZreJNyytaOfb2FI5EakEqYa8RZQHb+OM/Sly0Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=TrATA7tw; arc=fail smtp.client-ip=40.107.243.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TiOQ517m9lfDQPXE/9WycyZhtBSmNqtqDkcp6QfHRi2u8x5uDTNW7yix3zR8CUfMgliX/69drXLAgFvS5HvVZeRdxD3q8VxxQlBBMmvcaddIeM7dCddOpuI9wlXtS7+dCYgGUMAvZAOo7c+JV5mk1844gkzC7xFnTBbZkbTBBEtPdCaI9s79GJPrKqhBjdy1C8Gp0drpaedrVNNHrhQlh0quGMwUTQ/JQTenFezG584PVlPYoo4MVhIwlbJjFxRscpZLaKCksmFJVPJhomD/XmXOvrZPj2BHP9cDenC2abOjfidWsiUQnxSn62Qjpmn88NDV+pk3C69htux072kezQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lUVRy7wyUKTn/gJhDGGEBDKzDKhUk889JAGtm9Zd2bU=;
+ b=GBjiKPUAF+6ecmJ/DAwkV0iydHxIeSUDttWVRK3G3/18zdGiupC3g4BjIHklGv3Rp4Dplj/DYy/9p1EvqkP5foXtmlESUwlCX5SkmPl820Q9qqlOumFUL9uP5g3BdQCo4deYD90X1W0OxR6/wa+WiX+7BGUOxRSwxHY6Y0+DCaUsLEULK1VBmNb9Dywmx7htBliXT4RdXDkbuEt8RUf3F7gR0LgTzSDuNCpfn2CYR+6ZBPpNLXYzHWxu8WIfZv4fs9/s9PK5M9JDNEY5XJ46O7DSJ+3hIAp0kiYm1Pa97Q5nt5/PgSVAwzB9NbZGaw2OFi2EBF7gL8GbB3h6uD7c3w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=redhat.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lUVRy7wyUKTn/gJhDGGEBDKzDKhUk889JAGtm9Zd2bU=;
+ b=TrATA7twCrzFI1MLyQ00Y57ZKxsaoB2AosqPnh2tl/0eFu5txXzEJqVerTKKT4sOKoDH1Pj9BEYuOgd0RZZengAgjjlVHicUQsrh3wFQKflfCROS1iQzWrDqvmSXjD9b34BFWxkkANlkl4zC43epKxdLBK8Z+sDCZbEIyaWqqxDjiNKFzPYiU+/nor+nCO/3VsOWTToR5MJcrE015Jxcvu/v/N5a8GZWNMYHzW6hiu+0E6CEX4Dk40IFkWwbywBMi73oZ2QdCDeWoIKcDcHbK2RqdTTswhK+C/K5T/PsOgdRKzfd9KZjYbDuwDoyV06X6srvpqKOBAwaARwm6/gUEw==
+Received: from SJ0PR03CA0073.namprd03.prod.outlook.com (2603:10b6:a03:331::18)
+ by PH7PR12MB6444.namprd12.prod.outlook.com (2603:10b6:510:1f8::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.16; Thu, 20 Feb
+ 2025 19:40:04 +0000
+Received: from SJ1PEPF000026C7.namprd04.prod.outlook.com
+ (2603:10b6:a03:331:cafe::c9) by SJ0PR03CA0073.outlook.office365.com
+ (2603:10b6:a03:331::18) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.15 via Frontend Transport; Thu,
+ 20 Feb 2025 19:40:03 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ SJ1PEPF000026C7.mail.protection.outlook.com (10.167.244.104) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8466.11 via Frontend Transport; Thu, 20 Feb 2025 19:40:03 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 20 Feb
+ 2025 11:39:56 -0800
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Thu, 20 Feb 2025 11:39:56 -0800
+Received: from c-237-113-200-209.mtl.labs.mlnx (10.127.8.14) by
+ mail.nvidia.com (10.126.190.180) with Microsoft SMTP Server id 15.2.1544.14
+ via Frontend Transport; Thu, 20 Feb 2025 11:39:53 -0800
+From: Dragos Tatulea <dtatulea@nvidia.com>
+To: "Michael S . Tsirkin" <mst@redhat.com>, <virtualization@lists.linux.dev>
+CC: Dragos Tatulea <dtatulea@nvidia.com>, Jason Wang <jasowang@redhat.com>,
+	Eugenio Perez Martin <eperezma@redhat.com>, Si-Wei Liu
+	<si-wei.liu@oracle.com>, <kvm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Gal Pressman <gal@nvidia.com>, Xuan Zhuo
+	<xuanzhuo@linux.alibaba.com>, <stable@vger.kernel.org>, Cong Meng
+	<cong.meng@oracle.com>
+Subject: [PATCH vhost v2] vdpa/mlx5: Fix oversized null mkey longer than 32bit
+Date: Thu, 20 Feb 2025 21:37:33 +0200
+Message-ID: <20250220193732.521462-2-dtatulea@nvidia.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241023212158.18718-1-casey@schaufler-ca.com>
- <20241023212158.18718-5-casey@schaufler-ca.com> <CAEjxPJ56H_Y-ObgNHrCggDK28NOARZ0CDmLDRvY5qgzu=YgE=A@mail.gmail.com>
- <CAHC9VhSSpLx=ku7ZJ7qVxHHyOZZPQWs_hoxVRZpTfhOJ=T2X9w@mail.gmail.com>
- <CAHC9VhQUUOqh3j9mK5eaVOc6H7JXsjH8vajgrDOoOGOBTszWQw@mail.gmail.com>
- <CAEjxPJ6-jL=h-Djxp5MGRbTexQF1vRDPNcwpxCZwFM22Gja0dg@mail.gmail.com>
- <CAEjxPJ5KTJ1DDaAJ89sSdxUetbP_5nHB5OZ0qL18m4b_5N10-w@mail.gmail.com> <1b6af217-a84e-4445-a856-3c69222bf0ed@schaufler-ca.com>
-In-Reply-To: <1b6af217-a84e-4445-a856-3c69222bf0ed@schaufler-ca.com>
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-Date: Thu, 20 Feb 2025 14:37:19 -0500
-X-Gm-Features: AWEUYZlmMS7YZ4DHm18PX7FppH1AyRZ-zdw57vHXse-0c1wXMLEZfImxT7nx6Y4
-Message-ID: <CAEjxPJ44NNZU7u7vLN_Oj4jeptZ=Mb9RkKvJtL=xGciXOWDmKA@mail.gmail.com>
-Subject: Re: [PATCH v3 4/5] LSM: lsm_context in security_dentry_init_security
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org, 
-	jmorris@namei.org, serge@hallyn.com, keescook@chromium.org, 
-	john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp, 
-	linux-kernel@vger.kernel.org, selinux@vger.kernel.org, mic@digikod.net, 
-	ceph-devel@vger.kernel.org, linux-nfs@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF000026C7:EE_|PH7PR12MB6444:EE_
+X-MS-Office365-Filtering-Correlation-Id: ef044da4-09b1-4e11-70ba-08dd51e65f38
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|82310400026|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UDc5VGZ5dTQ2dFVwemlnQ3ZnZ3M4czFidnVZZXpGNjQ0aGhVeFBHU0cySTkw?=
+ =?utf-8?B?QzAxYkNPcE9oRnZqcjhjbGU3TGFFOS91V1ZxRWdPSlFmMFBXTnhIK29mNytY?=
+ =?utf-8?B?NXRjWVFhaHN0Vi9ISzgxWWo2VWxlMmo4bUNMWUorSEhoRzlaa1JvWTJRV0NH?=
+ =?utf-8?B?V1VTOVAyZThESS9LN1UyeU9xYlhpUE1kcTNkeHl0UjVKcTA3MlYzanhxQjQ5?=
+ =?utf-8?B?L3NvVVhrZFBsUVNDQVE0SXdnUzFnWlNZaE02WC9KOFFXUExoV2lidHQ4bTRz?=
+ =?utf-8?B?RjRvY2JycnpLV3JIaHNhdm1RUk9ZYm5WcnIydmFSNVJEcnBDNFVVRk5IdXd0?=
+ =?utf-8?B?RTIvdXpFNGFSS1FNMHVXd3oveXFaaWNmaU8vbmQ0TU9TNDNpQlg0cFVkUTBu?=
+ =?utf-8?B?cndjdzlETjZiT2dSenhqWW5qVFA3SnF3WVNzcm9XaWpwUmZZN3o2S1JGbTFR?=
+ =?utf-8?B?SC80aGtIWGxMSExveXM3cURXS0dNUWJTMXE0WU1YOXVJSmZnN3lrb1NWeGdM?=
+ =?utf-8?B?Y1JLOHFWaTlZRmV4aE0zOVNVUCtMQUdYdG5vTjNvcXJ5M3NvTTRCMEgrMGUw?=
+ =?utf-8?B?N1BzajJ6U0JhaXM4UmJqQTd6eWsrRFhxdTlXMDM4aCtlaURrM3NvRmFxQjVu?=
+ =?utf-8?B?bzJwM1V4UlRSdWx0bnRvNElqVTFqWFJzSG0xUlJmNDdzUnYyV1JBdGJ3dVVJ?=
+ =?utf-8?B?dEE5ODR1WWZraTVHSGM3RVBwQUhDdURoeE5hMUNoenVsSzlsN01FWXlzbVcy?=
+ =?utf-8?B?bSt2UkszK0ZiYWNPQ1ppNmNrNDZYaHdMTVdETklCWi9YVVRiNXIzVkxpdzdB?=
+ =?utf-8?B?UEJPU3M1Z1RjS3VzOUZYWm5tUVFSK0tXclhDYjNWOFhCNUdxTkgxQ1RTWTR4?=
+ =?utf-8?B?c2lVSFVETEFnSDZwOThPTHgrdG4wSGJDby9BVEtOUkQzN1BBUXdiZ1dvVkVr?=
+ =?utf-8?B?M2ZPV28yQ3oySXJJeCtMSVdIbVJlTEhRSG5IWTdBMTRBaU81eUs3MERWaDlB?=
+ =?utf-8?B?TndtTElscVRXa2YzWTRUc2RnaTF3d0MvaGhld2F0RXJRdzNXZ2lWZTZaMWUx?=
+ =?utf-8?B?d1FuZmJyRC9UUWltQlJybWIrMDMxejdWOTY5MEgyeDNOa0s1Wkh3TFMyWC9j?=
+ =?utf-8?B?NW1ETTZHSXd3RmNPUXB3dWNMM0VDU3k0Z0xTQzAwZmpSMTdyS1B2TDBVRDVr?=
+ =?utf-8?B?dnc2YVdjVWZoQndvWE8raEtrZC9KQkhHdTE1SmtEdHhwajhFR2F3OXNuMUdj?=
+ =?utf-8?B?aitpeDlrR0xJSzdqZ0M4ZHNuOUVwdHZvOHUyc01CSGh4Rzg2L2tITk0wTklX?=
+ =?utf-8?B?ZEZISk9MckNaaHJoRUV4cnRWNUhmK1hFYmt6N3UwcW1KcFdKUlpOdkVnSm5W?=
+ =?utf-8?B?WkoySTUrNlc4aWY1VWtHNnlmeUZyaDZvWkljaXRma0FOREZyNmtZSHFsZmxY?=
+ =?utf-8?B?UDN5eTkyVzlSRHRyRHA0Vmx1T1Nwam9EendqdHBQTzY4NHNDU0d5cGVKSC95?=
+ =?utf-8?B?S0lFVUdHRFl0cjVxeTA3eGVjRGpMNE5UemFkdTVoMHY1Q2hhbEdneHBJejRw?=
+ =?utf-8?B?WW9CWW1DbW1NR2FlWVBhanJ5ckpPL3ZuOWcxcDUwTGdUa2hhL3NSeXhUK25u?=
+ =?utf-8?B?Sno5WjhxWjJQOU9WN1VaM3RqTGZIaDFMTDQ2NlgzWjFZdDQ5djJud3ppbDdG?=
+ =?utf-8?B?NVU0REdoUUQyaWxKbDF3RTVqYzZoeDdJYVlEcXNFUHBKWHRFUHdXSytqTkdE?=
+ =?utf-8?B?ODBBalhaL25oZFptSkszK0g1cHdPQURkOEVvd09POVltTUY4WEc4K2lFK1k5?=
+ =?utf-8?B?emsrK2JtVEFxdy9pYTBwbFB4NXBVU3VUdWtlV092R0JYUHoxZ0RjalJSN0dO?=
+ =?utf-8?B?VVpRUk40MHh3K0ZlamxiUzBoSEdDeEJhRG5kb2dLcEhHK0RXa2IrenVpQXFV?=
+ =?utf-8?B?OUpMV2QxanJzZVI1NXhxMnFLNGRrcUY5aVN1eVo2eG8vd2cveU1oNGpPNkUw?=
+ =?utf-8?Q?80TnAw0IWLv0rayuN2Qj1BRbmz9XDU=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2025 19:40:03.7871
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ef044da4-09b1-4e11-70ba-08dd51e65f38
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF000026C7.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6444
 
-On Thu, Feb 20, 2025 at 2:33=E2=80=AFPM Casey Schaufler <casey@schaufler-ca=
-.com> wrote:
->
-> On 2/20/2025 10:16 AM, Stephen Smalley wrote:
-> > On Thu, Feb 20, 2025 at 1:02=E2=80=AFPM Stephen Smalley
-> > <stephen.smalley.work@gmail.com> wrote:
-> >> On Thu, Feb 20, 2025 at 12:54=E2=80=AFPM Paul Moore <paul@paul-moore.c=
-om> wrote:
-> >>> On Thu, Feb 20, 2025 at 12:40=E2=80=AFPM Paul Moore <paul@paul-moore.=
-com> wrote:
-> >>>> On Thu, Feb 20, 2025 at 11:43=E2=80=AFAM Stephen Smalley
-> >>>> <stephen.smalley.work@gmail.com> wrote:
-> >>>>> On Wed, Oct 23, 2024 at 5:23=E2=80=AFPM Casey Schaufler <casey@scha=
-ufler-ca.com> wrote:
-> >>>>>> Replace the (secctx,seclen) pointer pair with a single lsm_context
-> >>>>>> pointer to allow return of the LSM identifier along with the conte=
-xt
-> >>>>>> and context length. This allows security_release_secctx() to know =
-how
-> >>>>>> to release the context. Callers have been modified to use or save =
-the
-> >>>>>> returned data from the new structure.
-> >>>>>>
-> >>>>>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> >>>>>> Cc: ceph-devel@vger.kernel.org
-> >>>>>> Cc: linux-nfs@vger.kernel.org
-> >>>>>> ---
-> >>>>>>  fs/ceph/super.h               |  3 +--
-> >>>>>>  fs/ceph/xattr.c               | 16 ++++++----------
-> >>>>>>  fs/fuse/dir.c                 | 35 ++++++++++++++++++------------=
------
-> >>>>>>  fs/nfs/nfs4proc.c             | 20 ++++++++++++--------
-> >>>>>>  include/linux/lsm_hook_defs.h |  2 +-
-> >>>>>>  include/linux/security.h      | 26 +++-----------------------
-> >>>>>>  security/security.c           |  9 ++++-----
-> >>>>>>  security/selinux/hooks.c      |  9 +++++----
-> >>>>>>  8 files changed, 50 insertions(+), 70 deletions(-)
-> >>>>>>
-> >>>>>> diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
-> >>>>>> index 76776d716744..0b116ef3a752 100644
-> >>>>>> --- a/fs/nfs/nfs4proc.c
-> >>>>>> +++ b/fs/nfs/nfs4proc.c
-> >>>>>> @@ -114,6 +114,7 @@ static inline struct nfs4_label *
-> >>>>>>  nfs4_label_init_security(struct inode *dir, struct dentry *dentry=
-,
-> >>>>>>         struct iattr *sattr, struct nfs4_label *label)
-> >>>>>>  {
-> >>>>>> +       struct lsm_context shim;
-> >>>>>>         int err;
-> >>>>>>
-> >>>>>>         if (label =3D=3D NULL)
-> >>>>>> @@ -128,21 +129,24 @@ nfs4_label_init_security(struct inode *dir, =
-struct dentry *dentry,
-> >>>>>>         label->label =3D NULL;
-> >>>>>>
-> >>>>>>         err =3D security_dentry_init_security(dentry, sattr->ia_mo=
-de,
-> >>>>>> -                               &dentry->d_name, NULL,
-> >>>>>> -                               (void **)&label->label, &label->le=
-n);
-> >>>>>> -       if (err =3D=3D 0)
-> >>>>>> -               return label;
-> >>>>>> +                               &dentry->d_name, NULL, &shim);
-> >>>>>> +       if (err)
-> >>>>>> +               return NULL;
-> >>>>>>
-> >>>>>> -       return NULL;
-> >>>>>> +       label->label =3D shim.context;
-> >>>>>> +       label->len =3D shim.len;
-> >>>>>> +       return label;
-> >>>>>>  }
-> >>>>>>  static inline void
-> >>>>>>  nfs4_label_release_security(struct nfs4_label *label)
-> >>>>>>  {
-> >>>>>> -       struct lsm_context scaff; /* scaffolding */
-> >>>>>> +       struct lsm_context shim;
-> >>>>>>
-> >>>>>>         if (label) {
-> >>>>>> -               lsmcontext_init(&scaff, label->label, label->len, =
-0);
-> >>>>>> -               security_release_secctx(&scaff);
-> >>>>>> +               shim.context =3D label->label;
-> >>>>>> +               shim.len =3D label->len;
-> >>>>>> +               shim.id =3D LSM_ID_UNDEF;
-> >>>>> Is there a patch that follows this one to fix this? Otherwise, sett=
-ing
-> >>>>> this to UNDEF causes SELinux to NOT free the context, which produce=
-s a
-> >>>>> memory leak for every NFS inode security context. Reported by kmeml=
-eak
-> >>>>> when running the selinux-testsuite NFS tests.
-> >>>> I don't recall seeing anything related to this, but patches are
-> >>>> definitely welcome.
-> >>> Looking at this quickly, this is an interesting problem as I don't
-> >>> believe we have enough context in nfs4_label_release_security() to
-> >>> correctly set the shim.id value.  If there is a positive, it is that
-> >>> lsm_context is really still just a string wrapped up with some
-> >>> metadata, e.g. length/ID, so we kfree()'ing shim.context is going to
-> >>> be okay-ish, at least for the foreseeable future.
-> >>>
-> >>> I can think of two ways to fix this, but I'd love to hear other ideas=
- too.
-> >>>
-> >>> 1. Handle the LSM_ID_UNDEF case directly in security_release_secctx()
-> >>> and skip any individual LSM processing.
-> >>>
-> >>> 2. Define a new LSM_ID_ANY value and update all of the LSMs to also
-> >>> process the ANY case as well as their own.
-> >>>
-> >>> I'm not finding either option very exciting, but option #2 looks
-> >>> particularly ugly, so I think I'd prefer to see someone draft a patch
-> >>> for option #1 assuming nothing better is presented.
-> >> We could perhaps add a u32 lsmid to struct nfs4_label, save it from
-> >> the shim.id obtained in nfs4_label_init_security(), and use it in
-> >> nfs4_label_release_security(). Not sure why that wasn't done in the
-> >> first place.
-> > Something like this (not tested yet). If this looks sane, will submit
-> > separately.
-> >
-> > commit b530104f50e8 ("lsm: lsm_context in security_dentry_init_security=
-")
-> > did not preserve the lsm id for subsequent release calls, which results
-> > in a memory leak. Fix it by saving the lsm id in the nfs4_label and
-> > providing it on the subsequent release call.
-> >
-> > Fixes: b530104f50e8 ("lsm: lsm_context in security_dentry_init_security=
-")
-> > Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
->
-> I'm not a fan of adding secids into other subsystems, especially in cases
-> where they've tried to avoid them in the past.
->
-> The better solution, which I'm tracking down the patch for now, is for
-> the individual LSMs to always do their release, and for security_release_=
-secctx()
-> to check the lsm_id and call the appropriate LSM specific hook. Until the=
-re
-> are multiple LSMs with contexts, LSM_ID_UNDEF is as good as a match.
->
-> Please don't use this patch.
+From: Si-Wei Liu <si-wei.liu@oracle.com>
 
-It doesn't add a secid; it just saves the LSM id obtained from
-lsm_context populated by the security_dentry_init_security() hook call
-and passes it back in the lsm_context to the security_release_secctx()
-call.
+create_user_mr() has correct code to count the number of null keys
+used to fill in a hole for the memory map. However, fill_indir()
+does not follow the same to cap the range up to the 1GB limit
+correspondingly. Fill in more null keys for the gaps in between,
+so that null keys are correctly populated.
 
->
-> > ---
-> >  fs/nfs/nfs4proc.c    | 7 ++++---
-> >  include/linux/nfs4.h | 1 +
-> >  2 files changed, 5 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
-> > index df9669d4ded7..c0caaec7bd20 100644
-> > --- a/fs/nfs/nfs4proc.c
-> > +++ b/fs/nfs/nfs4proc.c
-> > @@ -133,6 +133,7 @@ nfs4_label_init_security(struct inode *dir, struct
-> > dentry *dentry,
-> >   if (err)
-> >   return NULL;
-> >
-> > + label->lsmid =3D shim.id;
-> >   label->label =3D shim.context;
-> >   label->len =3D shim.len;
-> >   return label;
-> > @@ -145,7 +146,7 @@ nfs4_label_release_security(struct nfs4_label *labe=
-l)
-> >   if (label) {
-> >   shim.context =3D label->label;
-> >   shim.len =3D label->len;
-> > - shim.id =3D LSM_ID_UNDEF;
-> > + shim.id =3D label->lsmid;
-> >   security_release_secctx(&shim);
-> >   }
-> >  }
-> > @@ -6269,7 +6270,7 @@ static int _nfs4_get_security_label(struct inode
-> > *inode, void *buf,
-> >   size_t buflen)
-> >  {
-> >   struct nfs_server *server =3D NFS_SERVER(inode);
-> > - struct nfs4_label label =3D {0, 0, buflen, buf};
-> > + struct nfs4_label label =3D {0, 0, 0, buflen, buf};
-> >
-> >   u32 bitmask[3] =3D { 0, 0, FATTR4_WORD2_SECURITY_LABEL };
-> >   struct nfs_fattr fattr =3D {
-> > @@ -6374,7 +6375,7 @@ static int nfs4_do_set_security_label(struct inod=
-e *inode,
-> >  static int
-> >  nfs4_set_security_label(struct inode *inode, const void *buf, size_t b=
-uflen)
-> >  {
-> > - struct nfs4_label ilabel =3D {0, 0, buflen, (char *)buf };
-> > + struct nfs4_label ilabel =3D {0, 0, 0, buflen, (char *)buf };
-> >   struct nfs_fattr *fattr;
-> >   int status;
-> >
-> > diff --git a/include/linux/nfs4.h b/include/linux/nfs4.h
-> > index 71fbebfa43c7..9ac83ca88326 100644
-> > --- a/include/linux/nfs4.h
-> > +++ b/include/linux/nfs4.h
-> > @@ -47,6 +47,7 @@ struct nfs4_acl {
-> >  struct nfs4_label {
-> >   uint32_t lfs;
-> >   uint32_t pi;
-> > + u32 lsmid;
-> >   u32 len;
-> >   char *label;
-> >  };
+Fixes: 94abbccdf291 ("vdpa/mlx5: Add shared memory registration code")
+Cc: stable@vger.kernel.org
+Reported-by: Cong Meng <cong.meng@oracle.com>
+Signed-off-by: Si-Wei Liu <si-wei.liu@oracle.com>
+Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
+Acked-by: Eugenio Pérez <eperezma@redhat.com>
+---
+Changes in v2:
+- Added Reported-by tag.
+- Fixed typo found during review.
+---
+ drivers/vdpa/mlx5/core/mr.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/vdpa/mlx5/core/mr.c b/drivers/vdpa/mlx5/core/mr.c
+index 8455f08f5d40..61424342c096 100644
+--- a/drivers/vdpa/mlx5/core/mr.c
++++ b/drivers/vdpa/mlx5/core/mr.c
+@@ -190,9 +190,12 @@ static void fill_indir(struct mlx5_vdpa_dev *mvdev, struct mlx5_vdpa_mr *mkey, v
+ 			klm->bcount = cpu_to_be32(klm_bcount(dmr->end - dmr->start));
+ 			preve = dmr->end;
+ 		} else {
++			u64 bcount = min_t(u64, dmr->start - preve, MAX_KLM_SIZE);
++
+ 			klm->key = cpu_to_be32(mvdev->res.null_mkey);
+-			klm->bcount = cpu_to_be32(klm_bcount(dmr->start - preve));
+-			preve = dmr->start;
++			klm->bcount = cpu_to_be32(klm_bcount(bcount));
++			preve += bcount;
++
+ 			goto again;
+ 		}
+ 	}
+-- 
+2.43.0
+
 
