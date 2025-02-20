@@ -1,128 +1,124 @@
-Return-Path: <linux-kernel+bounces-523662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D11FEA3D9CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:22:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CAA1A3D9CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:22:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E36BE3BFC70
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:20:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53AAF3BFF2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:20:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 778921F584E;
-	Thu, 20 Feb 2025 12:19:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DbzWuNxQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32D7B1F4632;
+	Thu, 20 Feb 2025 12:20:46 +0000 (UTC)
+Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [84.16.66.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 406791F236E;
-	Thu, 20 Feb 2025 12:19:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC3521F0E33
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 12:20:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740053978; cv=none; b=VD1dxvjhDUXrD1WMcnfhpF+vlGpBzEYOpq8AyAk+eWOuXaLsJ5tB3XKKFK11ZgWEsTjKGuio3zG0XS8nHCnzzWjstW+S9X3uaDXzrA5WknF3fv6wj4KfX8nhPZ3ImBk4sGOopLt5thZGJZDHYrgWXsqPMcuq/5IBkqLvNeHHiL0=
+	t=1740054045; cv=none; b=Oj8jFNPFZFQkX5R8t+Y+F/IocN8aAFXzgZNv3q5nFRHrT2KV52cgYm7Pa2+kbFFs0GaHIXsiDdlshnaZU/OSp/fa/FPyP+dWwMj1vlEd5Iev7ESBmIXrjRe2UdZUPlpgA2yitGftvYjaK8UoHff4HCKuYhSlg1UizD3uCvnYuT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740053978; c=relaxed/simple;
-	bh=tP/lrI/hGS2N+0F6CChethc1EFm2eSLcncvZeP8SRJo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rzfLdZrIrbi3U8438TEEXzlkQeKMSw4yL4kTMzmMzCai8Cng7MkiEAfGclP52a5qxTKIYjmna3z0MkbWRGAf0Qb5D0uyXZtC74loXhfQUUGr6KoDpKl0GbaKqHDI5L5OYcyqP84nVbeS4Tay1tUN8uXLT/LwP3qiW7tBvXKoFqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DbzWuNxQ; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740053977; x=1771589977;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=tP/lrI/hGS2N+0F6CChethc1EFm2eSLcncvZeP8SRJo=;
-  b=DbzWuNxQSxrlgnFMToo+yuJBfWZOqvzPoggbxULHsUDE9MueAJSO1pR+
-   rmQOPLsf25itQMbc5vRh/nLIg3TXU2lCpWMdkkTATkuJtfk2/eHPGkvBz
-   ySvJkHVa0f/xYAsSmKUYUO7f2wnX8gxFYRSddFoCB6HiUhbrvuF+9vyHa
-   Dk6V1MdMqQgGPX1KADLbMzIupkpZBdvpvZcY539jBCKjC5szrPvzD4dFH
-   xHXznqTJjw8AXYQGh+qoIK+May3rgGFJZJLevig1pOhBHESHiN0LnU1lD
-   QCHF6JRWsdRnTPdL9DlsWovwMlle4u+NjiBgwRypZ4LsbtQhBfueZVmyJ
-   A==;
-X-CSE-ConnectionGUID: Tbg1prMTRTinm5xL/TdwRA==
-X-CSE-MsgGUID: aSZZHJMkRqSjATekEhnfIA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11351"; a="40061245"
-X-IronPort-AV: E=Sophos;i="6.13,301,1732608000"; 
-   d="scan'208";a="40061245"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 04:19:37 -0800
-X-CSE-ConnectionGUID: E7ISxJ4DRGey/xI2cmAihA==
-X-CSE-MsgGUID: YgoXLhqOTAqm4U1QtjBxkg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,301,1732608000"; 
-   d="scan'208";a="115222212"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 04:19:33 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tl5Wc-0000000DKIh-3Mdu;
-	Thu, 20 Feb 2025 14:19:30 +0200
-Date: Thu, 20 Feb 2025 14:19:30 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Raag Jadav <raag.jadav@intel.com>
-Cc: arnd@arndb.de, gregkh@linuxfoundation.org, rafael@kernel.org,
-	linus.walleij@linaro.org, mika.westerberg@linux.intel.com,
-	dmitry.torokhov@gmail.com, jic23@kernel.org,
-	przemyslaw.kitszel@intel.com, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-iio@vger.kernel.org
-Subject: Re: [PATCH v5 00/12] Split devres APIs to device/devres.h and
- introduce devm_kmemdup_array()
-Message-ID: <Z7cd0q6-nO1rnUIm@smile.fi.intel.com>
-References: <20250212062513.2254767-1-raag.jadav@intel.com>
- <Z6yAbfVtm8nlZzqu@smile.fi.intel.com>
- <Z6zKrvdPYPKPcjk2@black.fi.intel.com>
- <Z6zYnt4-6KDwErjU@smile.fi.intel.com>
+	s=arc-20240116; t=1740054045; c=relaxed/simple;
+	bh=Ye21G1Ies9BNnh+Omm1baUJbD+H3Z24pSTrecx5w4Gg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=dqkdOn2t3Ay127EE95XPoZSgXWvBLH6nPxWqzCLxxo1z1F5TWSK9c1HFZ8Bmm389rujLnPdlvPUBpxaqjvKB9gRu9SU38+mLqFhfVuRnHDZwKDanfQYtIKfKbPjtb5NwrZ9NXRltHvztn1w/AW/czdK3MS6p8jH9yP0EmmnUKX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net; spf=pass smtp.mailfrom=0leil.net; arc=none smtp.client-ip=84.16.66.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0leil.net
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246b])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4YzC5b310fzrqS;
+	Thu, 20 Feb 2025 13:20:35 +0100 (CET)
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4YzC5Z2rLlzHNm;
+	Thu, 20 Feb 2025 13:20:34 +0100 (CET)
+From: Quentin Schulz <foss+kernel@0leil.net>
+Subject: [PATCH 0/5] arm64: dts: rockchip: pinmux fixes and support for 2
+ adapters for Theobroma boards
+Date: Thu, 20 Feb 2025 13:20:09 +0100
+Message-Id: <20250220-ringneck-dtbos-v1-0-25c97f2385e6@cherry.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z6zYnt4-6KDwErjU@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPkdt2cC/0XMSwqDMBSF4a1Ixr2Qh4let1Ic5HG1oahtYkUQ9
+ 16rgw7/A+fbWKYUKbOm2FiiJeY4jUeIW8H8w449QQxHM8ml5kLWkOLYj+SfEGY3ZcCam7JWqLQ
+ mdpxeibq4nuC9vTrR+3O48zX+2aY4USkQXt5iZVZIlGmGkOJCCTxai7o2WErTLOKnO5sJ/DQMc
+ W4KQ8Qd2qAQNZHurJTIlfYGuVCuCoEHZVTpWLvvX3Q8Y7DoAAAA
+X-Change-ID: 20250128-ringneck-dtbos-98064839355e
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+ Quentin Schulz <quentin.schulz@theobroma-systems.com>, 
+ Farouk Bouabid <farouk.bouabid@theobroma-systems.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Quentin Schulz <quentin.schulz@cherry.de>, stable@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Infomaniak-Routing: alpha
 
-On Wed, Feb 12, 2025 at 07:21:34PM +0200, Andy Shevchenko wrote:
-> On Wed, Feb 12, 2025 at 06:22:06PM +0200, Raag Jadav wrote:
-> > On Wed, Feb 12, 2025 at 01:05:17PM +0200, Andy Shevchenko wrote:
-> > > On Wed, Feb 12, 2025 at 11:55:01AM +0530, Raag Jadav wrote:
-> > > > This series
-> > > > 
-> > > > 1. Splits device/devres.h for the users that are only interested in devres APIs.
-> > > >    Original work by Andy Shevchenko:
-> > > >    https://lore.kernel.org/r/20241203195340.855879-1-andriy.shevchenko@linux.intel.com
-> > > > 
-> > > > 2. Introduces a more robust and cleaner devm_kmemdup_array() helper and uses it
-> > > >    across drivers.
-> > > > 
-> > > > The idea behind embedding both work into a single series is to make the review
-> > > > process easier and reduce conflicts while merging.
-> > > > 
-> > > > Current proposal is to merge initial patches with an immutable tag (volunteered
-> > > > by Andy) for other subsystems to use. Feel free to share a better alternative.
-> > > 
-> > > > v5: Move IOMEM_ERR_PTR() to err.h (Andy)
-> > > >     Reduce distribution to pinctrl/iio/input patches
-> > > 
-> > > Weren't there two more patches that were actually Acked by Jonathan?
-> > 
-> > Nope, iio only has one user each.
-> 
-> Okay, so we basically waiting then for Greg KH to review / ack the couple of
-> patches (2 and 4) and Dmitry and Jonathan one patch for each.
+This is based on top of
+https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git/log/?h=v6.15-armsoc/dts64
+6ee0b9ad3995 ("arm64: dts: rockchip: Add rng node to RK3588") as it
+depends on the (merged) series from
+https://lore.kernel.org/all/20250211-pre-ict-jaguar-v6-0-4484b0f88cfc@cherry.de/
 
-I'm going to apply this series to Intel pin control tree soon and share
-an immutable tag TWIMC, please tell me if it shouldn't be the case.
+Patches for Haikou Video Demo adapter for PX30 Ringneck and RK3399 Puma
+(patches 4 and 5) also depend on the following patch series:
+https://lore.kernel.org/linux-devicetree/20250220-pca976x-reset-driver-v1-0-6abbf043050e@cherry.de/
 
+This fixes incorrect pinmux on UART0 and UART5 for PX30 Ringneck on
+Haikou.
+
+This adds support for the HAIKOU-LVDS-9904379 adapter for PX30 Ringneck
+fitted on a Haikou carrierboard.
+
+Additionally, this adds support for Haikou Video Demo adapter on PX30
+Ringneck and RK3399 Puma fitted on a Haikou carrierboard. Notably
+missing from the overlay is the OV5675 camera module which expects
+19.2MHz which we cannot exactly feed right now. Modifications to the
+OV5675 drivers will be made so it's more flexible and then support for
+the camera module will be added. This adapter has a 720x1280 DSI display
+with a GT911 touchscreen, a GPIO-controllable LED and an I2C GPIO
+expander. Support for this adapter on RK3588 Tiger is being added in a
+separate patch series[1].
+
+Note that the DSI panel currently is glitchy on both PX30 Ringneck and
+RK3399 Puma but this is being tackled in another series[2]. Since this
+will not be fixed through DT properties for the panel, adding the DT
+nodes for the DSI panel even if not perfect right now seems acceptable
+to me.
+
+[1] https://lore.kernel.org/linux-rockchip/20241127143719.660658-1-heiko@sntech.de/
+[2] https://lore.kernel.org/r/20240626084722.832763-1-heiko@sntech.de
+
+Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
+---
+Quentin Schulz (5):
+      arm64: dts: rockchip: fix pinmux of UART0 for PX30 Ringneck on Haikou
+      arm64: dts: rockchip: fix pinmux of UART5 for PX30 Ringneck on Haikou
+      arm64: dts: rockchip: add support for HAIKOU-LVDS-9904379 adapter for PX30 Ringneck
+      arm64: dts: rockchip: add overlay for PX30 Ringneck Haikou Video Demo adapter
+      arm64: dts: rockchip: add overlay for RK3399 Puma Haikou Video Demo adapter
+
+ arch/arm64/boot/dts/rockchip/Makefile              |  15 ++
+ .../px30-ringneck-haikou-lvds-9904379.dtso         | 130 ++++++++++++++
+ .../rockchip/px30-ringneck-haikou-video-demo.dtso  | 190 +++++++++++++++++++++
+ .../boot/dts/rockchip/px30-ringneck-haikou.dts     |  10 +-
+ .../rockchip/rk3399-puma-haikou-video-demo.dtso    | 166 ++++++++++++++++++
+ 5 files changed, 510 insertions(+), 1 deletion(-)
+---
+base-commit: 6ee0b9ad3995ee5fa229035c69013b7dd0d3634b
+change-id: 20250128-ringneck-dtbos-98064839355e
+prerequisite-change-id: 20250219-pca976x-reset-driver-c9aa95869426:v1
+prerequisite-patch-id: 24af74693654b4a456aca0a1399ec8509e141c01
+prerequisite-patch-id: df17910ec117317f2f456f679a77ed60e9168fa3
+
+Best regards,
 -- 
-With Best Regards,
-Andy Shevchenko
-
+Quentin Schulz <quentin.schulz@cherry.de>
 
 
