@@ -1,133 +1,195 @@
-Return-Path: <linux-kernel+bounces-523805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D26E8A3DB79
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:39:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03169A3DB7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:40:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2342819C243A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:39:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DADC917D0A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:40:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD04F1F8F09;
-	Thu, 20 Feb 2025 13:39:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 179A81F8F09;
+	Thu, 20 Feb 2025 13:40:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="CYXwOHmy"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="mdoDf3rO"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A628E1F460D;
-	Thu, 20 Feb 2025 13:39:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7DF52BD11
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 13:40:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740058778; cv=none; b=p3KjyZtUhIe//ARDegUteP6KNcIhSQrjSmKnctyqc6wqJLYeLpYf9YHmLW9Gmj/ApHmaD7J3r5owGOFz41CnysMc9mQRwOjyMizd6xXRn3Je50NE/spdmkFoG/WJGLrYn1I0ttjKp/hk/Nhq6VyNX/t71f3R/+dk0RG2n/4Sflg=
+	t=1740058807; cv=none; b=rmOShwPQLayz4uxhW2dG+mjI2ysfzET7kht1AiUax4JOcvLZunzwNqdDtguMxOU4RIAuh9gYxs2zBIYEYzYU0hFiRbriJUD7N9c6YvMAomZdLVirnffa+vz4Ow5wqRUvVlz6CUXOb3inafWIusWGrosSdKQE/Yi0u2XoFXrWB0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740058778; c=relaxed/simple;
-	bh=2y5wrvPA3QtP637YQRd8Romn+Qri1JD1V/ToFZNDnFc=;
+	s=arc-20240116; t=1740058807; c=relaxed/simple;
+	bh=yjEUde99KgzakBJbQx6a/8UMTsQ+4EbwER2WXeBEkDU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nVlJJB5n7vSGb67B17JOhFHohAaIe0tI9SV6+lAuoSApQdZwqQh73PLfXgLC1U/alzmdmw/8zZjUO9svQgvdg6JJsxrdxjkctwcpzWwNh4Nmzt7Vo2I+clxC652luSmG3marRzV7ghehoaoFlrQ8kPmeJ7JNpthtbVycKMznIwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=CYXwOHmy; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=GQ45r65/eICG0K3oXWSgWL9Ap6Foqy+lEFou18SI24A=; b=CYXwOHmy+1GP64C83m4rlns27N
-	pEq8rW4Z/fLtOI8sMzqMjILB5WKu33wuRMYsFEBhwZfet4mFi/4IKt3DyQ/QE0LVwFp3IjaOTrsUw
-	doit/kIEHYq1LufuNCHrQevICeHbk6Eoz8AptY65evxvg9+uDhC2Fqofdw2F+VREn0Nc=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tl6lw-00FyQq-Nk; Thu, 20 Feb 2025 14:39:24 +0100
-Date: Thu, 20 Feb 2025 14:39:24 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Lukasz Majewski <lukma@denx.de>
-Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH] arm: clk: Add ETH switch clock description for vf610 SoC
-Message-ID: <5a9d9eef-f2ca-4168-aca4-4419dcfcacb6@lunn.ch>
-References: <20250219114936.3546530-1-lukma@denx.de>
- <3cebe152-6326-454c-9da6-5cf5a64f71c9@lunn.ch>
- <20250219233802.20ec53e5@wsk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=O+TxMEDefiJoMT6VrYf4fjt35dZcM/7YcWgdgAM6lXqZ1T+M/vpXz73RNI11f2MC7CExesBnZcLEyg+qiTQxx3bGRLuTl0FwBobDqvNJFaFVp28543TQKQE0/Zr9yE6uLIHl1SQA+rQzheh7jxy+AXP3N0VoWwwzoOoZxZNbnNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=mdoDf3rO; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 61A543F2CB
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 13:39:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1740058796;
+	bh=iiP50cFP789o1GE1IPKlebj+94gihSf8dowgIFkuU9c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:In-Reply-To;
+	b=mdoDf3rOlOPLil0eAov/FGr+AFELlzASq9UxPTbPU6f9aqKl2qTfO7n/l1seo6qEz
+	 HmRZ4/Lhl8kWdEVGEa20wTPzmuVH0sDiC633UpAAHHsUboczVJyjpNxpBA6aFVFykC
+	 1T3rclJWAjz85BndnCeoPYNMFvh9Dg912QaJMYnrK4IJ+ZFqyxstQIMHLAY6NWby4Z
+	 oZCsltIFCSFgbvNsW5XvWoQDKozm46JOWQ0QJpMnH6tSynrtspNWUzwVB1DPYjKD86
+	 ZMMZz4pvD1JBpEkldROE2qLsf6ljV63ZXuFt/WR2zGgQjh0AV54kybumLpWoGXbqEs
+	 Ot6q3e3lcRyig==
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-22114b800f0so28469515ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 05:39:56 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740058786; x=1740663586;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iiP50cFP789o1GE1IPKlebj+94gihSf8dowgIFkuU9c=;
+        b=Klui48vEgoJCcXtRumoqq7fb9SODLMxCn0kZQxkVcQUgDoqQdXW+ToXlxcPWT1FKLD
+         Kucxan1iCIKipFB63b1+N3tqhLpcFguMIoALEWULWlDKTMrtnGN2o4/dGvzs7dqf2Z24
+         g+mgbOwbk6m+i2mgMGUm4Sg/lhh/7qjiqoy/Ld8TzYowsRq1lmoUyJSnvZtAoCkz/H3u
+         IzXmewdSAbmL85Ozttwax+FQ1o9tXrBEUrg/gcidsMxXil9O6I5cmEjk4x/mVoIMPU7W
+         Z2ZyBp4oMbNrJc81Ves9pllQF+HZ1ByNA4wT7L3/baQf6UVtDFt5YNue+U8w+HwnAnRR
+         M5YQ==
+X-Forwarded-Encrypted: i=1; AJvYcCViDP/GyM1Liqh+NgkikQZ5UssEPWSTkI7SjI6lbq2445x1hPL/9lwvnoQpZoj4rM9rYnsrtD2qcHgmiac=@vger.kernel.org
+X-Gm-Message-State: AOJu0YweVP9ULbmI8YklZVaEGqBCBt4rKrc+jVyo25oVOrWOlDjsIjbu
+	uJVo6n4/S57d6Cjm3Q7uWCrN1O7AumeIPkIYaqdeV11UxB/OaPk8BycojGKbksB0LVxLAnTwqmK
+	KSZ8TP4/SMQLb5h7Sz1eOJogR53ltG4RMo31VGJ8WTB7S2E4JYKZxy5gWFJF5jz+iPoBv4NI9dp
+	CR8eJnT+RGHg==
+X-Gm-Gg: ASbGnctCWlQUblKEHK//L+yQ3gtGD79WcSX0Aqrd7b8DdSS8pWnlqPeaZvIrf5lFb39
+	kkEqaBSy6Nc/CXG0743R2MZQn+ZKuyl8O77p4TMaMCEowcpASIPzT+3fXS7/YQadATZTIM8BKfY
+	QHzU2SdPPtO72jaDf6JxV02Shn0PrMjRSebsawgxKppjpBFEukKq0C3ir7jxTkHW8mGgpyxUvn8
+	gRFC0DxRHkwB4uJ9Jtd0F8eXYfU804xFh6h8tgzoJVycV4c/ZxViTVE3hB0GFOeBMlg/XQxK7a+
+	29Jb7yo=
+X-Received: by 2002:a17:902:e801:b0:216:4064:53ad with SMTP id d9443c01a7336-221040bf829mr387389355ad.48.1740058786689;
+        Thu, 20 Feb 2025 05:39:46 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHhmAlPudojVgfawOJMuWdHGMWxc9h86if7RnadO0XpKZaLYbOxk06f6NJUmK9czRHJoKzPdQ==
+X-Received: by 2002:a17:902:e801:b0:216:4064:53ad with SMTP id d9443c01a7336-221040bf829mr387388975ad.48.1740058786301;
+        Thu, 20 Feb 2025 05:39:46 -0800 (PST)
+Received: from localhost ([240f:74:7be:1:256c:5029:b967:ebb0])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d534db68sm121209445ad.39.2025.02.20.05.39.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 05:39:46 -0800 (PST)
+Date: Thu, 20 Feb 2025 22:39:44 +0900
+From: Koichiro Den <koichiro.den@canonical.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-gpio@vger.kernel.org, geert+renesas@glider.be, 
+	linus.walleij@linaro.org, maciej.borzecki@canonical.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] gpio: introduce utilities for synchronous fake
+ device creation
+Message-ID: <fcfanp2bfokggj3dhzdceaza2bhxo7xrbru5cy36ciaumpfua2@kvabbos3znjt>
+References: <20250218160333.605829-1-koichiro.den@canonical.com>
+ <20250218160333.605829-2-koichiro.den@canonical.com>
+ <CAMRc=MfmG0okVjV1nH78Aw18dFcoOAZ-UwU-iFc1VKb-BVcTxQ@mail.gmail.com>
+ <wyicl2dgxkwxzfwd37cmhgshnqb3phmpeboz3gwqqfmbabaegy@tkjx56nj423u>
+ <CAMRc=MdhkiaDs8t9BYveYhy86+svQkHnPxhGx56AMOs=7n9mcQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250219233802.20ec53e5@wsk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=MdhkiaDs8t9BYveYhy86+svQkHnPxhGx56AMOs=7n9mcQ@mail.gmail.com>
 
-On Wed, Feb 19, 2025 at 11:38:02PM +0100, Lukasz Majewski wrote:
-> Hi Andrew,
+On Thu, Feb 20, 2025 at 02:13:42PM GMT, Bartosz Golaszewski wrote:
+> On Thu, Feb 20, 2025 at 2:07 PM Koichiro Den <koichiro.den@canonical.com> wrote:
+> >
+> > On Thu, Feb 20, 2025 at 12:06:33PM GMT, Bartosz Golaszewski wrote:
+> > > On Tue, Feb 18, 2025 at 5:04 PM Koichiro Den <koichiro.den@canonical.com> wrote:
+> > > >
+> > > > Both gpio-sim and gpio-virtuser share a mechanism to instantiate a
+> > > > platform device, wait for probe completion, and retrieve the probe
+> > > > success or error status synchronously. With gpio-aggregator planned to
+> > > > adopt this approach for its configfs interface, it's time to factor
+> > > > out the common code.
 > 
-> > On Wed, Feb 19, 2025 at 12:49:36PM +0100, Lukasz Majewski wrote:
-> > > The NXP's vf610 soc is equipped with L2 switch IP block from More
-> > > Than IP (MTIP) vendor.
-> > > 
-> > > It requires special clock (VF610_CLK_ESW) to be operational.  
-> > 
-> > So you have a driver for this switch? It has been talked about in the
-> > past, but nobody made any progress with it. Ah, it was you in 2020.
+> [snip]
 > 
-> Yes, I'm going to try another time to upstream it.... :-)
+> > > > +void dev_sync_probe_init(struct dev_sync_probe_data *data)
+> > > > +{
+> > > > +       memset(data, 0, sizeof(*data));
+> > > > +       init_completion(&data->probe_completion);
+> > > > +       data->bus_notifier.notifier_call = dev_sync_probe_notifier_call;
+> > > > +}
+> > > > +EXPORT_SYMBOL_GPL(dev_sync_probe_init);
+> > > > +
+> > > > +int dev_sync_probe_register(struct dev_sync_probe_data *data,
+> > > > +                           struct platform_device_info *pdevinfo)
+> > > > +{
+> > > > +       struct platform_device *pdev;
+> > > > +       char *name;
+> > > > +
+> > > > +       name = kasprintf(GFP_KERNEL, "%s.%u", pdevinfo->name, pdevinfo->id);
+> > >
+> > > pdevinfo->id is a signed integer
+> > >
+> > > I'm also wondering if we could avoid the allocation here and keep on
+> > > using snprintf() like in the existing drivers? On the other hand,
+> > > memory is cheap so no big deal.
+> >
+> > Are you assuming the following change?
+> >
+> >    struct dev_sync_probe_data {
+> >           struct platform_device *pdev;
+> >   -       const char *name;
+> >   +       char name[32];
+> >
+> >           /* Synchronize with probe */
+> >           struct notifier_block bus_notifier;
+> >
 > 
-> > It
-> > will be interesting to see what you came up with in the end, pure
-> > switchdev or a DSA driver.
+> No, I was thinking about a local buffer in the notifier handler, like
+> what we do currently in gpio-sim, but no worries, you can keep it this
+> way.
 > 
-> I think it would be:
+> > >
+> > > > +       if (!name)
+> > > > +               return -ENOMEM;
+> > > > +
+> > > > +       data->driver_bound = false;
+> > > > +       data->name = name;
+> > > > +       reinit_completion(&data->probe_completion);
+> > > > +       bus_register_notifier(&platform_bus_type, &data->bus_notifier);
+> > > > +
+> > > > +       pdev = platform_device_register_full(pdevinfo);
+> > > > +       if (IS_ERR(pdev)) {
+> > > > +               bus_unregister_notifier(&platform_bus_type, &data->bus_notifier);
+> > > > +               kfree(data->name);
+> > >
+> > > We could probably simplify it by using __free(kfree) with the name
+> > > variable and just setting it at the end with no_free_ptr().
+> >
+> > platform_device_register_full() call path might finish probe so before
+> > calling it, we need to make sure the 'name' is filled in. That's why I
+> > didn't used __free(kfree).
+> >
 > 
-> 1. Standalone driver, which would configure the L2 switch from the very
-> beginning to work (this is different from FEC on imx28/vf610 where
-> switch is bypassed)
-> 
-> 2. It will use the in-switch registers to have two network interfaces
-> separated. As a result - it may be slower than the fec_main.c in this
-> use case.
+> Not sure I understand this. Would you mind rephrasing?
 
-Seems like a reasonable compromise. You would only load this driver if
-you intend to make use of the switch...
+dev_sync_probe_notifier_call() references dev_sync_probe_data's 'name'
+field. In dev_sync_probe_register(), platform_device_register_full()
+invocation can possibly succeed in the initial probe, meaning that
+dev_sync_probe_notifier_call() can be invoked before
+platform_device_register_full() returns. So, 'name' field must be set
+beforehand, and I located 'data->name = name' as shown above;
 
-> 3. When somebody call "bridge ..." on it - then the in-switch
-> separation would be disabled. This is the "normal" state of operation
-> for L2 switch, which would be a HW accelerator for bridging.
+If I used __free(kfree), the number of which I needed to write
+'no_free_ptr(data->name);' would be the same (= 2 times). So I thought that
+calling kfree(data->name) without __free(kfree) was simpler and better.
+
 > 
-> 4. The switchdev would be used to manage it
-> 
-> 5. This would be just a very simple driver - just bridging and startup
-> of the L2 switch.
-> 
-> After we would have a consensus (i.e. it would be pulled to mainline) -
-> I would proceed further.
-> 
-> I will try to not touch fec_main.c driver - just write standalone, new
-> for MoreThanIP L2 switch driver.
-
-It might make sense to refactor the MDIO code into a helper which both
-can share? No point duplicating that.
-
-> If somebody would like to use FEC, then he will insert the proper
-> module. If switch, another one can be inserted, depending o the target
-> use case.
-
-This all seems like a reasonable way forward.
-
-MoreThanIP is now part of Synopsys. I wounder if this IP now exists in
-other SoCs? The press release however suggests Synopsys was
-interesting in the high speed interfaces, not a two ports Fast
-Ethernet switch.
-
-	Andrew
+> Bart
 
