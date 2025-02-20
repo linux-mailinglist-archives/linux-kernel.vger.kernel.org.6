@@ -1,311 +1,168 @@
-Return-Path: <linux-kernel+bounces-523489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D748A3D77E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:56:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAC68A3D781
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:56:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED3123AFF3F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:56:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E1E817A191
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:56:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0F121F3FC3;
-	Thu, 20 Feb 2025 10:55:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D151EA7FC;
+	Thu, 20 Feb 2025 10:56:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="cCHau766"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ix3QrfaD"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF1CD1F1517;
-	Thu, 20 Feb 2025 10:55:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1C6E1E0B7F;
+	Thu, 20 Feb 2025 10:56:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740048950; cv=none; b=CCmXWe8fjpKMs6eKiil3RegzVK4khdP67+7bUtT/Uml16aLbZr38gSsAAaHbbaxWt+/HqDpmL3Dyge0XVky58A5Px4GxHD15h8LtmuLHpa03jnDp99PDt3TLf+yM5nzB5yqb32JdnmAobWfI5vwtUyvAeGhySeqxT+EzapXhZg8=
+	t=1740048972; cv=none; b=LWNUr7xPrJ3r2Iv11hJjRpSJw2gIj8PBIsgwUDd0YOIQu1yoKZUzgAieowMzIkMKjcDtjmbcp65u/rShJtMslwalhTVuyNn0wrKvJgbzd4fYhSFrucQbOvjP2IWvUDUBcj9EQSPpQwk+nHajN1Y9fJYi7mIVXNIwTi1JW52Bka4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740048950; c=relaxed/simple;
-	bh=Z35cZXbC7YRfeFkNnzpPxiyQBC3KChpHkjPu5lnoNWc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=U2s1O5olpOamlyuWTeP2F94XSw5ZEKAMKiV/vEZA8ZoiqJ/R9bEGq8QE4rR9ttKfO78RZYYbXSw1MDLVmg2NrZF4Ia4Jdn06IyHPEl74G/t/JgLEX3WhFA3u973YRvFpJNgir1Yko92SwI18SkBAwWVi5vWnN85znHYvGg/vRYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=cCHau766; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1740048946;
-	bh=Z35cZXbC7YRfeFkNnzpPxiyQBC3KChpHkjPu5lnoNWc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=cCHau766hFtNy4LHmWAXPbzVkfOdjpeqNQujNy2JQcyn1DoQcholfDYTnctlZ3klk
-	 aLSnGJgbxb56wcv8iNcbk/lqaUm3J+Cp+pUKhazMN4ND63ITine7KqhObfUJuA7K7C
-	 MLIHPux2gCYMK59KBkV28Zo5ojJrlJVs2kNRp9O5DGwGhGgKoge507EEQ9jsZh5PKC
-	 3U9LqWKVXCp3WpugVa6nmMMMxD9sykmyygsfnvir1RGRujApI0WJkV62rEtRcXrCEF
-	 H0pJ3CNGzO3dosCKK8zDAra9o8vmqkMTVxPYAsFmHF0HAHR6SXlcoOrjFB7cQFkcLb
-	 YDqVxBU1UeVgA==
-Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 764F317E1570;
-	Thu, 20 Feb 2025 11:55:45 +0100 (CET)
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: chunfeng.yun@mediatek.com
-Cc: gregkh@linuxfoundation.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	linux-usb@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel@collabora.com,
-	pablo.sun@mediatek.com
-Subject: [PATCH v3 3/3] arm64: dts: mediatek: mt8390-genio-700: Add USB, TypeC Controller, MUX
-Date: Thu, 20 Feb 2025 11:55:14 +0100
-Message-ID: <20250220105514.43107-4-angelogioacchino.delregno@collabora.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250220105514.43107-1-angelogioacchino.delregno@collabora.com>
-References: <20250220105514.43107-1-angelogioacchino.delregno@collabora.com>
+	s=arc-20240116; t=1740048972; c=relaxed/simple;
+	bh=lPkMdd3qnMsSSfWgq+AdsUEb6rpVf2KxmeT9QHn1xy8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pfzayrv5QvdU3ZvGa0F9IOIEG/cmgNlNzpJ8z08pbGgUGqlaQamc0pPJ2LAi7UnL0qPGiNuXpNI0D76fv5pJ2VE+Y7VQY5O/GPLjC8qs3bECitv1ED4Q4WhiV9ec0TEJ0fdLL+MU0nROgy0w4QKNX/D0jTblzeg5Qd1BhgF7tAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ix3QrfaD; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=wMxjzD5AOVXLF2tcKGKIBkbHXfnF4c0ZwE+vKU4UHSA=; b=ix3QrfaDNukzRToNctPtQ2eo5R
+	x7mHnQpgZx91Di4/oU2/HAE0C0Bz3rMkmBYjsIhbYF4RqabjRF7Hzzq2JdRSPKi8LMDX8kCJsGfUo
+	00wHjZ/+FE7ZLzAg5t9I4Z0yOfldvka1GQAlHbywDCNYqlVbK9GUTNzSKRlcHtt9jFbqtTWuJzv4L
+	hEF/CvOvDSIcrdt2GcnbkaDFbWEJe4kECP55aVsQJSBVHPJKeH9DPaW9siaacSrsiDgwxNa4Y6kND
+	JBwaDnyCPy/HihiRcKW5ejyfitGnS5i9T8KajS/UtesXF9767JF7U+TENNq2ua9QluIiILYRAsYot
+	xrQJnJtA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tl4Dn-00000002Pcn-3yZm;
+	Thu, 20 Feb 2025 10:56:00 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 0072E300756; Thu, 20 Feb 2025 11:55:58 +0100 (CET)
+Date: Thu, 20 Feb 2025 11:55:58 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Ben Segall <bsegall@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andy Lutomirski <luto@kernel.org>, linux-kernel@vger.kernel.org,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Clark Williams <clrkwllms@kernel.org>,
+	linux-rt-devel@lists.linux.dev, Tejun Heo <tj@kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Barret Rhoden <brho@google.com>, Petr Mladek <pmladek@suse.com>,
+	Josh Don <joshdon@google.com>, Qais Yousef <qyousef@layalina.io>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	David Vernet <dvernet@meta.com>,
+	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+	Swapnil Sapkal <swapnil.sapkal@amd.com>
+Subject: Re: [RFC PATCH 00/22] sched/fair: Defer CFS throttling to exit to
+ user mode
+Message-ID: <20250220105558.GJ34567@noisy.programming.kicks-ass.net>
+References: <20250220093257.9380-1-kprateek.nayak@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250220093257.9380-1-kprateek.nayak@amd.com>
 
-This board features multiple USB connectors:
- * One Type-C connector with Power Delivery and Alt. Modes;
- * One MicroUSB connector, also used for bootloader SW download;
- * One USB through the RaspberryPi-compatible pins header.
+On Thu, Feb 20, 2025 at 09:32:35AM +0000, K Prateek Nayak wrote:
+> Proposed approach
+> =================
+> 
+> This approach builds on Ben Segall's proposal in [4] which marked the
+> task in schedule() when exiting to usermode by setting
+> "in_return_to_user" flag except this prototype takes it a step ahead and
+> marks a "kernel critical section" within the syscall boundary using a
+> per-task "kernel_cs_count".
+> 
+> The rationale behind this approach is that the task can only hold
+> kernel resources when running in kernel mode in preemptible context. In
+> this POC, the entire syscall boundary is marked as a kernel critical
+> section but in the future, the API can be used to mark fine grained
+> boundaries like between an up_read(), down_read() or up_write(),
+> down_write() pair.
+> 
+> Within a kernel critical section, throttling events are deferred until
+> the task's "kernel_cs_count" hits 0. Currently this count is an integer
+> to catch any cases where the count turns negative as a result of
+> oversights on my part but this could be changed to a preempt count like
+> mechanism to request a resched.
+> 
+>             cfs_rq throttled               picked again
+> 		  v                              v
+> 
+>     ----|*********| (preempted by tick / wakeup) |***********| (full throttle)
+> 
+>         ^                                                    ^
+> critical section   cfs_rq is throttled partially     critical section
+>       entry           since the task is still              exit
+>                   runnable as it was preempted in
+>                       kernel critical section
+> 
+> The EEVDF infrastructure is extended to tracks the avg_vruntime and the
+> avg_load of only those entities preempted in kernel mode. When a cfs_rq
+> is throttled, it uses these metrics to select among the kernel mode
+> preempted tasks and running them till they exit to user mode.
+> pick_eevdf() is made aware that it is operating on a throttled hierarchy
+> to only select among these tasks that were preempted in kernel mode (and
+> the sched entities of cfs_rq that lead to them). When a throttled
+> entity's "kernel_cs_count" hits 0, the entire hierarchy is frozen but
+> the hierarchy remains accessible for picking until that point.
+> 
+>           root
+>         /     \
+>        A       B * (throttled)
+>       ...    / | \
+>             0  1* 2*
+> 
+>     (*) Preempted in kernel mode
+> 
+>   o avg_kcs_vruntime = entity_key(1) * load(1) + entity_key(2) * load(2)
+>   o avg_kcs_load = load(1) + load(2)
+> 
+>   o throttled_vruntime_eligible:
+> 
+>       entity preempted in kernel mode &&
+>       entity_key(<>) * avg_kcs_load <= avg_kcs_vruntime
+> 
+>   o rbtree is augmented with a "min_kcs_vruntime" field in sched entity
+>     that propagates the smallest vruntime of the all the entities in
+>     the subtree that are preempted in kernel mode. If they were
+>     executing in usermode when preempted, this will be set to LLONG_MAX.
+> 
+>     This is used to construct a min-heap and select through the
+>     entities. Consider rbtree of B to look like:
+> 
+>          1*
+>        /   \
+>       2*    0
+> 
+>       min_kcs_vruntime = (se_in_kernel()) ? se->vruntime : LLONG_MAX:
+>       min_kcs_vruntime = min(se->min_kcs_vruntime,
+>                              __node_2_se(rb_left)->min_kcs_vruntime,
+>                              __node_2_se(rb_right)->min_kcs_vruntime);
+> 
+>    pick_eevdf() uses the min_kcs_vruntime on the virtual deadline sorted
+>    tree to first check the left subtree for eligibility, then the node
+>    itself, and then the right subtree.
+> 
 
-Add configuration for the MTU3 controllers providing OTG support
-with role switching both on the MicroUSB port, RPi pins header,
-and the Type-C port found on this board.
-
-Moreover, add the Richtek RT1715 Type-C Power Delivery Controller
-which manages current source/sink, linked to the iTE IT5205 Type-C
-Alternate Mode Passive Mux, handling both mode switching between
-USB (up to 3.1 Gen2 10Gbps) and DisplayPort (four lanes, DP1.4,
-op to 8.1Gbps) and plug orientation switching.
-
-All USB ports reside on different controller instances, and all of
-them support host or gadget and can be configured as desired at
-runtime.
-
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- .../dts/mediatek/mt8390-genio-common.dtsi     | 139 ++++++++++++++++--
- 1 file changed, 130 insertions(+), 9 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi b/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi
-index fd977daa4185..83828baa887b 100644
---- a/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi
-@@ -260,6 +260,22 @@ &i2c1 {
- 	pinctrl-0 = <&i2c1_pins>;
- 	clock-frequency = <400000>;
- 	status = "okay";
-+
-+	typec-mux@48 {
-+		compatible = "ite,it5205";
-+		reg = <0x48>;
-+
-+		mode-switch;
-+		orientation-switch;
-+
-+		vcc-supply = <&mt6359_vcn33_1_bt_ldo_reg>;
-+
-+		port {
-+			it5205_sbu_mux: endpoint {
-+				remote-endpoint = <&typec_sbu_out>;
-+			};
-+		};
-+	};
- };
- 
- &i2c2 {
-@@ -281,6 +297,66 @@ &i2c4 {
- 	pinctrl-0 = <&i2c4_pins>;
- 	clock-frequency = <1000000>;
- 	status = "okay";
-+
-+	rt1715@4e {
-+		compatible = "richtek,rt1715";
-+		reg = <0x4e>;
-+		interrupts-extended = <&pio 12 IRQ_TYPE_LEVEL_LOW>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&tcpci_int_pins>;
-+		vbus-supply = <&usb_p1_vbus>;
-+
-+		connector {
-+			compatible = "usb-c-connector";
-+			label = "USB-C";
-+			data-role = "dual";
-+			op-sink-microwatt = <10000000>;
-+			power-role = "dual";
-+			try-power-role  = "sink";
-+			pd-revision = /bits/ 8 <0x03 0x00 0x01 0x08>;
-+
-+			sink-pdos = <PDO_FIXED(5000, 2000,
-+					       PDO_FIXED_DUAL_ROLE |
-+					       PDO_FIXED_DATA_SWAP)>;
-+			source-pdos = <PDO_FIXED(5000, 2000,
-+						 PDO_FIXED_DUAL_ROLE |
-+						 PDO_FIXED_DATA_SWAP)>;
-+
-+			altmodes {
-+				displayport {
-+					svid = /bits/ 16 <0xff01>;
-+					vdo = <0x001c1c47>;
-+				};
-+			};
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					typec_con_hs: endpoint {
-+						remote-endpoint = <&mtu3_hs1_role_sw>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					typec_con_ss: endpoint {
-+						remote-endpoint = <&xhci_ss_ep>;
-+					};
-+				};
-+
-+				port@2 {
-+					reg = <2>;
-+					typec_sbu_out: endpoint {
-+						remote-endpoint = <&it5205_sbu_mux>;
-+					};
-+
-+				};
-+			};
-+		};
-+	};
- };
- 
- &i2c5 {
-@@ -849,6 +925,14 @@ pins-reset {
- 		};
- 	};
- 
-+	tcpci_int_pins: tcpci-int-pins {
-+		pins-int-n {
-+			pinmux = <PINMUX_GPIO12__FUNC_B_GPIO12>;
-+			bias-pull-up;
-+			input-enable;
-+		};
-+	};
-+
- 	uart0_pins: uart0-pins {
- 		pins {
- 			pinmux = <PINMUX_GPIO31__FUNC_O_UTXD0>,
-@@ -904,6 +988,14 @@ pins-usb-hub-3v3-en {
- 		};
- 	};
- 
-+	usb2_default_pins: usb2-default-pins {
-+		pins-iddig {
-+			pinmux = <PINMUX_GPIO89__FUNC_B_GPIO89>;
-+			input-enable;
-+			bias-pull-up;
-+		};
-+	};
-+
- 	wifi_pwrseq_pins: wifi-pwrseq-pins {
- 		pins-wifi-enable {
- 			pinmux = <PINMUX_GPIO127__FUNC_B_GPIO127>;
-@@ -1012,9 +1104,21 @@ &u3phy2 {
- };
- 
- &ssusb0 {
--	dr_mode = "host";
-+	dr_mode = "otg";
-+	maximum-speed = "high-speed";
-+	usb-role-switch;
-+	wakeup-source;
- 	vusb33-supply = <&mt6359_vusb_ldo_reg>;
-+	pinctrl-0 = <&usb_default_pins>;
-+	pinctrl-names = "default";
- 	status = "okay";
-+
-+	connector {
-+		compatible = "gpio-usb-b-connector", "usb-b-connector";
-+		type = "micro";
-+		id-gpios = <&pio 83 GPIO_ACTIVE_HIGH>;
-+		vbus-supply = <&usb_p0_vbus>;
-+	};
- };
- 
- &xhci0 {
-@@ -1022,14 +1126,23 @@ &xhci0 {
- };
- 
- &ssusb1 {
--	dr_mode = "host";
-+	dr_mode = "otg";
-+	usb-role-switch;
-+	wakeup-source;
- 	vusb33-supply = <&mt6359_vusb_ldo_reg>;
-+	pinctrl-0 = <&usb1_default_pins>;
-+	pinctrl-names = "default";
- 	status = "okay";
-+
-+	port {
-+		mtu3_hs1_role_sw: endpoint {
-+			remote-endpoint = <&typec_con_hs>;
-+		};
-+	};
- };
- 
- &xhci1 {
- 	status = "okay";
--	vdd-supply = <&usb_hub_fixed_3v3>;
- 	vusb33-supply = <&mt6359_vusb_ldo_reg>;
- 	#address-cells = <1>;
- 	#size-cells = <0>;
-@@ -1058,17 +1171,25 @@ xhci_ss_ep: endpoint {
- };
- 
- &ssusb2 {
--	interrupts-extended = <&gic GIC_SPI 536 IRQ_TYPE_LEVEL_HIGH 0>,
--			      <&pio 220 IRQ_TYPE_LEVEL_HIGH>;
--	interrupt-names = "host", "wakeup";
--
--	dr_mode = "host";
-+	dr_mode = "otg";
-+	maximum-speed = "high-speed";
-+	usb-role-switch;
- 	vusb33-supply = <&mt6359_vusb_ldo_reg>;
-+	wakeup-source;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&usb2_default_pins>;
- 	status = "okay";
-+
-+	connector {
-+		compatible = "gpio-usb-b-connector", "usb-b-connector";
-+		type = "micro";
-+		id-gpios = <&pio 89 GPIO_ACTIVE_HIGH>;
-+		vbus-supply = <&usb_p2_vbus>;
-+	};
- };
- 
- &xhci2 {
--	status = "okay";
- 	vusb33-supply = <&mt6359_vusb_ldo_reg>;
- 	vbus-supply = <&sdio_fixed_3v3>; /* wifi_3v3 */
-+	status = "okay";
- };
--- 
-2.48.1
-
+*groan*... why not actually dequeue the tasks and only retain those with
+non-zero cs_count? That avoids having to duplicate everything, no?
 
