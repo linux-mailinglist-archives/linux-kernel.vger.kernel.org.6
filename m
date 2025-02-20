@@ -1,94 +1,138 @@
-Return-Path: <linux-kernel+bounces-523871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B168A3DC62
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:17:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBD95A3DC54
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:17:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C2CE3A8198
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:16:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB562189B1F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:16:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7A9E1FBE8D;
-	Thu, 20 Feb 2025 14:16:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF1211FC7E8;
+	Thu, 20 Feb 2025 14:16:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="oVUZZN+0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="k+FnlPVz"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07CF81F150A;
-	Thu, 20 Feb 2025 14:16:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D496A29
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 14:16:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740060967; cv=none; b=Bdk2ld4zlIdMXcILZRMOmn1K/Z2E9YV7ylgOCkrIOzdMTL9GrNUHJG4ITOpanGMoa04LaP3noeR94cRa3RwNOqx6oJtFnGCWX7ID2++FOaP9KI0ST5qPhYDvnQpxaHrPxbNwW2WHLN7egRse4/cSX4vcUH35YZw70Ok0FazwIBQ=
+	t=1740060984; cv=none; b=MLMsSJT+JkdcNBzwmZpHs23L6SWUTvhPT1QeZHE3Ekd0q/foHEiopYR7upe1TjCkSx/I6ZU3Nv3B4lH0MyUmyUbYGDYkaQAWTJ9znItwWhzOqe0Lw7YBSKSUDI9n+iIiCwHHZDbPcNzU8OjLfhZRAhXOLPrB4ZsD7WKoocED5iI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740060967; c=relaxed/simple;
-	bh=noxCc47/1cJ0ZKN1i7l306cRmB9nXFyLc/NIL4/Irdg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OVY6bNMO935lNF1nFrNKwyzdvA7p3NBpqPQli4ptj/lSxLm/A2SfeEkIipQk0/A2QQ3TYfdC3h3Mmkn+XHwTEZOiEhyGtmnSZ3/IXaF7unRlkKwl2+WJEt/pINMDPcAQRTRv+xiYzIXW+B0579WNZcSrcPXxMtyiLhijgnEV2VE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=oVUZZN+0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25E6BC4CED1;
-	Thu, 20 Feb 2025 14:16:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1740060966;
-	bh=noxCc47/1cJ0ZKN1i7l306cRmB9nXFyLc/NIL4/Irdg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oVUZZN+0Vfm3hEyng0ZrSAmkunAX0OMZ3m6+hpyMcb7S0J4XTVD6T/0gD6GaQ/Wp8
-	 HCYFWkCaM/648x58pHp0xa1yR8B7gxwzwAQPYee5jmoIIAju26lzK8fi6mnfjvE8vy
-	 4gR+NT2DOjwwq0nuLpBAaTzSzdVB30QA7yb209so=
-Date: Thu, 20 Feb 2025 15:16:03 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Wentao Liang <vulab@iscas.ac.cn>
-Cc: alexander.usyskin@intel.com, arnd@arndb.de,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] mei: Add error logging in IRQ handler to prevent silent
- failures
-Message-ID: <2025022023-childlike-superjet-f096@gregkh>
-References: <20250220133435.1060-1-vulab@iscas.ac.cn>
+	s=arc-20240116; t=1740060984; c=relaxed/simple;
+	bh=YKoE3C8XckkPijkVeqGKcv6Cd5mV1W7QWYCHmbo0e3Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FW5uqeBncQhvKuN8NaZI6bigPlwoUtBWE02sBHc/WQrbdQBqDNAfr7nQBaUboiLzNr0BGOiBdHb01qF/ta4NOJF9YZiFDiPehBGgiOxskLj4uKm9LVw4xd9W+ESIQbkDEMHBUuAv/CYhzO6Ud/m8VYUrry8X+hLBfsAGoTm62J4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=k+FnlPVz; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51K7IEnR012548
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 14:16:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	JuYdE4dlbQ4IVCBmM2eClz9fsFF9FHokS9b6ozmwZV4=; b=k+FnlPVzYzdZ2PE6
+	Kroj/0BmRoWTMqyMDL74lahz3z0gUJEHra+1atu0vb92f2OmCzhuUwgwubYsaH9K
+	kZIijV8sXs4gJd9882zuZr9MDEh8UUUWfjgxceNdpuv0JkcEh1psJ72Vl57W8TET
+	6uX9aq//ihEVPSyatHS9FU4PpQjNzu61Ea94TK3akqkIXp3VKOi08OHQ0ftKO2x7
+	gFwI3B10Ahan1UtT6vu7pXJTpTM8rTP75+nznsOj+SdU7WYzjUDQ8dNc9e4JhVX7
+	qNssf5RV1Li7Ii6Dx4PWwnJOTpW4S03QSjt4nNqlZMn9+Nhk3tKlqe0RUzvnIE6I
+	1BiaYQ==
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44vyy1pd3t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 14:16:21 +0000 (GMT)
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6e19bfc2025so1864486d6.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 06:16:21 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740060980; x=1740665780;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JuYdE4dlbQ4IVCBmM2eClz9fsFF9FHokS9b6ozmwZV4=;
+        b=hr78atGHdHBcVDKcvYln5F2LNJcti2IRPD38HigHzPGeSeyb9ZY1q6N/Lvk5+0ZrvF
+         A4ZUziqy4KxiBNIOeAItqZbEMbDyoas4Paxe82QZXCF5fsTzIGDNu0ChyiIkfnNSTVSe
+         fDYjsL0LApHa3hFZwsfUZI5qAqSnZ98CVaSabsaLDoJLQ/fWgO7lcYhbUgZOqX6X2xjP
+         gYja/gKPRkykzR1a9RVJV9ukiKNDPftVftFkD2pIi+KMjppQxr0KAH3Lg3zD+OO/R1rd
+         V3G3mP/epFNGlSndBwRu3TVOoFvyzaoebRaKAPjzFfK1x6UKxvUK5LL843w/+UuiiD0z
+         bz9w==
+X-Forwarded-Encrypted: i=1; AJvYcCUZT0CI03AlZr9OSgUtt+fezltFGxZETL8FsLASQUQbxgolyHgE62AMNJzDxIlEfEp8l8qxymxdk84qfw4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLMaCEqretx4R4X4WTzn306E4GkeGBjSsBdw41Bb43GxFJ5M2i
+	1BcQ10g/oXT1ESSPvCcfHB0JIrJsJKRAfWK9c2uTI4229us/IZ2MkdzAPQpOcFr6tUrqmxZRQB8
+	Ef8Br1urtSh+Z4rwF0nraNh0XVZa8ZGTYn3xo4W8yLE/WFTzBKaEH6mi3lyuimao=
+X-Gm-Gg: ASbGncvJLEzCEH7qgZeTpp3ZtBQC0QyxXwkCQte7PMs5Cg/4D8Hxp5Pg+pPxaMgtB31
+	fSpUKuYW0Rvu7DgYc6fqmxPa38XY2Xc5LrfRAwtrIwLGAHYCLEyupKhHz4FQszi6EXVdzUgt0sP
+	3MdKeodP2nEcogXqTqdR5gCccPMsNmE+z0SVrHHcqHXcu1G/uVErMV5WpwiD4MtgugbTRrX7qM2
+	gSvwJjdMT8KJJ2bGFhL+AXeBoKGUxtdYQiPYbxDYArmj5dUWosbW/O6HZWPx7Szm1zh2YCjRq0M
+	i9BhwdZU1wR7rAst5RnCZtbaRaDQIzNoUix/1d1GEW99AuzhIPPbJyaiJLY=
+X-Received: by 2002:a05:6214:daa:b0:6d4:d1c:47d with SMTP id 6a1803df08f44-6e66cc81ee6mr117329786d6.2.1740060980166;
+        Thu, 20 Feb 2025 06:16:20 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IE/rtxy8V+ibsuKKWTYNnpHRyUUiiKw18tEiKCIKFtweF7nc0fiGiUTgniZ2kAyBjdw0RVwQA==
+X-Received: by 2002:a05:6214:daa:b0:6d4:d1c:47d with SMTP id 6a1803df08f44-6e66cc81ee6mr117329606d6.2.1740060979770;
+        Thu, 20 Feb 2025 06:16:19 -0800 (PST)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba532322e6sm1462102766b.1.2025.02.20.06.16.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Feb 2025 06:16:19 -0800 (PST)
+Message-ID: <bbb099ae-2389-4b7c-9161-83d8fe94b45d@oss.qualcomm.com>
+Date: Thu, 20 Feb 2025 15:16:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250220133435.1060-1-vulab@iscas.ac.cn>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/7] drm/msm/mdp4: drop mpd4_lvds_pll_init stub
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250220-fd-mdp4-lvds-v2-0-15afe5578a31@linaro.org>
+ <20250220-fd-mdp4-lvds-v2-2-15afe5578a31@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250220-fd-mdp4-lvds-v2-2-15afe5578a31@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: zDQiF9o9IReUlJEGwCiScjRcDOPpzaw6
+X-Proofpoint-ORIG-GUID: zDQiF9o9IReUlJEGwCiScjRcDOPpzaw6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-20_06,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1015
+ adultscore=0 malwarescore=0 mlxscore=0 priorityscore=1501
+ lowpriorityscore=0 mlxlogscore=806 suspectscore=0 phishscore=0 spamscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502200103
 
-On Thu, Feb 20, 2025 at 09:34:35PM +0800, Wentao Liang wrote:
-> Log mei_irq_write_handler() errors to prevent silent IRQ handling failures.
+On 20.02.2025 12:14 PM, Dmitry Baryshkov wrote:
+> Drop the !COMMON_CLK stub for mpd4_lvds_pll_init(), the DRM_MSM driver
+> depends on COMMON_CLK.
 > 
-> Fixes: 962ff7bcec24 ("mei: replace callback structures used as list head by list_head")
-> Cc: stable@vger.kernel.org # 4.11+
-> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > ---
->  drivers/misc/mei/hw-me.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/misc/mei/hw-me.c b/drivers/misc/mei/hw-me.c
-> index d11a0740b47c..5df42a64b4db 100644
-> --- a/drivers/misc/mei/hw-me.c
-> +++ b/drivers/misc/mei/hw-me.c
-> @@ -1415,6 +1415,8 @@ irqreturn_t mei_me_irq_thread_handler(int irq, void *dev_id)
->  	if (dev->pg_event != MEI_PG_EVENT_WAIT &&
->  	    dev->pg_event != MEI_PG_EVENT_RECEIVED) {
->  		rets = mei_irq_write_handler(dev, &cmpl_list);
-> +		if (rets)
-> +			dev_err(dev->dev, "mei_irq_write_handler ret = %d.\n", rets);
->  		dev->hbuf_is_ready = mei_hbuf_is_ready(dev);
->  	}
->  
-> -- 
-> 2.42.0.windows.2
-> 
 
-How was this found and tested?
+Ha, nice bit of archeology
 
-And why print an error message in an irq handler, isn't that going to be
-messy?  What can the user do with this message?
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-thanks,
-
-greg k-h
+Konrad
 
