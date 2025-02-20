@@ -1,45 +1,47 @@
-Return-Path: <linux-kernel+bounces-523690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4DC3A3DA0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:30:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69E25A3DA00
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:29:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E12A73BCAC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:26:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35FBA189FD7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:26:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B932E1F709E;
-	Thu, 20 Feb 2025 12:25:01 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B96BD1F542B;
+	Thu, 20 Feb 2025 12:25:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ALEwZhAx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1FD51F463E;
-	Thu, 20 Feb 2025 12:24:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E1771F1521
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 12:25:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740054301; cv=none; b=NvFg5/zHh15c2UMOe9aoo4CkmHLeTmH5FARbmS4on1LqC2pDKGp8EUHAKZEWrrLnLX1uoeR0CZ03xHfZv91Cz9fTrdM8Q3g5A/KdN5jwdesGbVshVTToa//EzCy6yTikDI2/mRF1ce0mfq6RMoQwThXojt67AnvGXL+2BzrrLwI=
+	t=1740054329; cv=none; b=pCLmlpqJfggTWraS5WIS+VJmE6AFPDC1ZND4fEz3Bd1lbF+1fy01Ik+PLg4Ng7Y2oF1e+uo+feZ9yXtLdMOHreQHu4tswh+G1KgZOi2EFt0yysXOc5w4h2ybEbeGtj3n5Ry8gTcrEKz7ctACifIYtZyl3z5NmMdpfxsN/jBvoqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740054301; c=relaxed/simple;
-	bh=9lDxV9SZANXBV7H7rNmJV5m4Mh5PQt86AdSh42FbJeg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=k8kmWX5pMIkG3PoorQuwz2py0rnyg1VPv72Fho4UmmmyXs4fKUBcG2xomDnWQwEMaGWQlWOMFUzSmh022LlGSxgepyZvXMczVxw0COdGTUV/ljxQJMjybydNl/DiMMIzPtzzSYmS6Wlmj3CPjEgFMilLYXA889PZwezc81rjU48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4YzC8j6JLvzWmMc;
-	Thu, 20 Feb 2025 20:23:17 +0800 (CST)
-Received: from kwepemf100007.china.huawei.com (unknown [7.202.181.221])
-	by mail.maildlp.com (Postfix) with ESMTPS id 12F7C140390;
-	Thu, 20 Feb 2025 20:24:51 +0800 (CST)
-Received: from [10.67.109.184] (10.67.109.184) by
- kwepemf100007.china.huawei.com (7.202.181.221) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 20 Feb 2025 20:24:50 +0800
-Message-ID: <c6a25b61-6545-4a03-b2f1-a38c07037d29@huawei.com>
-Date: Thu, 20 Feb 2025 20:24:49 +0800
+	s=arc-20240116; t=1740054329; c=relaxed/simple;
+	bh=bwt4JLJKdZcJ5UhgJheo0zVG9aIWXvxOCWLl4U9L4q8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FoJwcS7EFVqfRAnSYkLN3SzR2Y8cjSclltcJ4GBTMWXhDCp7wZEjmGJijAyoG8Susxv1YlvmtfS0JQdbZgxYxxuVFzYtIfAs81m/LFzxTfU3HxO1i+fgc2sucPBRaATqKkZ4jhp+Y19HVeUS+x8YCn9XgOAg1HX/0cTZrYsmZ6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ALEwZhAx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA2A8C4CED1;
+	Thu, 20 Feb 2025 12:25:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740054328;
+	bh=bwt4JLJKdZcJ5UhgJheo0zVG9aIWXvxOCWLl4U9L4q8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ALEwZhAxCtgHECp5w97Tz9QhBkAlGhyq9CJZWbmwFhYtOpdfG07curFgUlC0vfGDm
+	 v6SZUhM2m4wkjgzHScy5m4yn4Tq7z2kgXa5imUfU2hE5P9C48ffBq2Cly1yPqtzLAT
+	 Ro8Je4WsuaFl/BUOis+46vO1MQ7ty1s/CmwWAJXXGJzcYAmoGWL5iq1485/Lcz7Jsp
+	 j2+p2zbFrdtipKH9p/cpsYrn92nu2uPvVFgaCVyGdBG6xmqkJjttnRLPgSuaiJlP+J
+	 VOFv8QV5EXbMyad39fpyeUuhny+lE3DCK+IpcL5mCmsCAvEctvQmEr/55LP4472dOj
+	 ctaAfj3iB4ucg==
+Message-ID: <1bdf70d0-5011-4faa-88c2-96703d3907e7@kernel.org>
+Date: Thu, 20 Feb 2025 13:25:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,60 +49,149 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] btf: move kern_type_id to goto cand_cache_unlock
+Subject: Re: [PATCH 1/5] dt-bindings: arm: Add Coresight device Trace NOC
+ definition
+To: Yuanfang Zhang <quic_yuanfang@quicinc.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
+ <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: kernel@quicinc.com, linux-kernel@vger.kernel.org,
+ coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org
+References: <20250220-trace-noc-driver-v1-0-15d78bd48e12@quicinc.com>
+ <20250220-trace-noc-driver-v1-1-15d78bd48e12@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-To: Ethan Carter Edwards <ethan@ethancedwards.com>, Andrii Nakryiko
-	<andrii@kernel.org>
-CC: Martin KaFai Lau <martin.lau@linux.dev>, Alexei Starovoitov
-	<ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Eduard Zingerman
-	<eddyz87@gmail.com>, Song Liu <song@kernel.org>, Yonghong Song
-	<yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, KP
- Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo
-	<haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, <bpf@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-hardening@vger.kernel.org>
-References: <20250220-bpf-uninit-v1-1-af07a5a57e5b@ethancedwards.com>
-From: Pu Lehui <pulehui@huawei.com>
-In-Reply-To: <20250220-bpf-uninit-v1-1-af07a5a57e5b@ethancedwards.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250220-trace-noc-driver-v1-1-15d78bd48e12@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemf100007.china.huawei.com (7.202.181.221)
 
-On 2025/2/20 13:50, Ethan Carter Edwards wrote:
-> In most code paths variable move_kern_type_id remains uninitialized upon
-> return. By moving it to the goto, it is initialized in these code paths.
-> As well as others. Caught by Coverity.
+On 20/02/2025 10:41, Yuanfang Zhang wrote:
+> Adds new coresight-tnoc.yaml file describing the bindings required
+> to define Trace NOC in the device trees.
 > 
-> Closes: https://scan5.scan.coverity.com/#/project-view/63874/10063?selectedIssue=1595567
-> Fixes: e2b3c4ff5d183d ("bpf: add __arg_trusted global func arg tag")
-> Signed-off-by: Ethan Carter Edwards <ethan@ethancedwards.com>
+> Signed-off-by: Yuanfang Zhang <quic_yuanfang@quicinc.com>
+
+<form letter>
+Please use scripts/get_maintainers.pl to get a list of necessary people
+and lists to CC. It might happen, that command when run on an older
+kernel, gives you outdated entries. Therefore please be sure you base
+your patches on recent Linux kernel.
+
+Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+people, so fix your workflow. Tools might also fail if you work on some
+ancient tree (don't, instead use mainline) or work on fork of kernel
+(don't, instead use mainline). Just use b4 and everything should be
+fine, although remember about `b4 prep --auto-to-cc` if you added new
+patches to the patchset.
+
+You missed at least devicetree list (maybe more), so this won't be
+tested by automated tooling. Performing review on untested code might be
+a waste of time.
+
+Please kindly resend and include all necessary To/Cc entries.
+</form letter>
+
 > ---
->   kernel/bpf/btf.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>  .../bindings/arm/qcom,coresight-tnoc.yaml          | 107 +++++++++++++++++++++
+>  1 file changed, 107 insertions(+)
 > 
-> diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-> index 9de6acddd479b4f5e32a5e6ba43cf369de4cee29..8c82ced7da299ad1ad769024fe097898c269013b 100644
-> --- a/kernel/bpf/btf.c
-> +++ b/kernel/bpf/btf.c
-> @@ -7496,9 +7496,9 @@ static int btf_get_ptr_to_btf_id(struct bpf_verifier_log *log, int arg_idx,
->   		err = -EOPNOTSUPP;
->   		goto cand_cache_unlock;
->   	}
-> -	kern_type_id = cc->cands[0].id;
->   
->   cand_cache_unlock:
-> +	kern_type_id = cc->cands[0].id;
+> diff --git a/Documentation/devicetree/bindings/arm/qcom,coresight-tnoc.yaml b/Documentation/devicetree/bindings/arm/qcom,coresight-tnoc.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..b8c1aaf014fb483fd960ec55d1193fb3f66136d2
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/qcom,coresight-tnoc.yaml
+> @@ -0,0 +1,107 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/arm/qcom,coresight-tnoc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Ttrace NOC(Network On Chip)
+> +
+> +maintainers:
+> +  - yuanfang Zhang <quic_yuanfang@quicinc.com>
+> +
+> +description:
+> +  The Trace NoC is an integration hierarchy which is a replacement of Dragonlink tile configuration.
+> +  It brings together debug component like TPDA, funnel and interconnect Trace Noc which collects trace
 
-Hi, for goto's branches, it will always `return err`, no need to make 
-this move.
+Wrap according to coding style.
 
->   	mutex_unlock(&cand_cache_mutex);
->   	if (err)
->   		return err;
-> 
-> ---
-> base-commit: 87a132e73910e8689902aed7f2fc229d6908383b
-> change-id: 20250220-bpf-uninit-3323a4426da9
-> 
-> Best regards,
+> +  from subsystems and transfers to QDSS sink.
+> +
+> +  It sits in the different subsystem of SOC and aggregates the trace and transports it to Aggregation TNoC
+> +  or to QDSS trace sink eventually. Trace NoC embeds bridges for all the interfaces(APB, ATB, QPMDA & NTS).
+> +
+> +  Trace NoC can take inputs from different trace sources i.e. ATB, QPMDA.
+> +
+> +# Need a custom select here or 'arm,primecell' will match on lots of nodes
+> +select:
+> +  properties:
+> +    compatible:
+> +      contains:
+> +        enum:
+> +          - qcom,coresight-tnoc
+> +  required:
+> +    - compatible
+> +
+> +properties:
+> +  $nodename:
+> +    pattern: "^tn(@[0-9a-f]+)$"
+> +  compatible:
+> +    items:
+> +      - const: qcom,coresight-tnoc
+> +      - const: arm,primecell
+> +
+> +  reg:
+> +    minItems: 1
+> +    maxItems: 2
+
+Look how existing bindings do it. You need to list and describe the items.
+
+Best regards,
+Krzysztof
 
