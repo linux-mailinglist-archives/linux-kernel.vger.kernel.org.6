@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-522901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56352A3CFE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 04:10:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41937A3CFE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 04:10:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FA5F3BB56B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 03:09:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56FBF1895AC6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 03:10:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B35531DDC3E;
-	Thu, 20 Feb 2025 03:10:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0157B1DFE3B;
+	Thu, 20 Feb 2025 03:10:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VSoejoHx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cwPHTaBS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1063D10FD;
-	Thu, 20 Feb 2025 03:10:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B1941DF98B;
+	Thu, 20 Feb 2025 03:10:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740021002; cv=none; b=s2lQbEk7mhxWdvObVYUNF4Mhs6xpQMdLU/NkpC59G7RQcpRJRKLRWRvGk1UiN1FtUePQrk1NH0oobK2s+C08Wngfg8VubnvBKs0S6xo64NeST2iFKn38W0uv6JL7jRDbgjoSf7N/0X8HoLpbv7BNau8v6uCPn6wi2vukWB5U0uU=
+	t=1740021004; cv=none; b=QXBkB+ZHD/YTdZ8nPUL9qZp7CrVfQuGwKcg809yVXPC+KttjjIFfkDAw/roU0rjvAfpk54bNO3xxyb9idn4ILLIjGvR96lRoHHz7iKzwz0jtyum6l5HYZQrbuNAeQloz+mF9JzNUhDmImFkdQFUnWdx2t+afJLFYIFuaMvqohpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740021002; c=relaxed/simple;
-	bh=sQPO5yuAP9YNK0zeHKSGAGdpOKFDWLU/81x17qsIr5U=;
+	s=arc-20240116; t=1740021004; c=relaxed/simple;
+	bh=8Ek/lENxsqLvCr29S2YZBIuImLC7fMD7R8FfDhB2sms=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=rIZTF26pP7RJRZlz+UTIJp1ey/KjERwG9Cq8aK1E8RCP8Yv/PDbCBtPt7VeafCQ3F3fiufDNDYFVcs6dUhKNRfUpqqzeFW53iPCsQpHurmILz37x4N5HBAW9WvRkOsoJjZMo/Sgyp3wp4fCBdg3UlMQzCaKGb3KZGAAEs9PkvsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VSoejoHx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 745A3C4CED1;
-	Thu, 20 Feb 2025 03:10:01 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=Wh1922Od7hMoEpwfozWH62cn2yVWyaK9MiFloBnhQsiCzEZG3XwD4lYO0jB6tHzGm/LeLJLWRCb/BwG83yaboLukxZKHnME90DD/kFeunHxw/3TVKwlXr1yVWwrtkNlWn3wckD+2qsi5gVS29kCLCzo6B0SadVt90HUX8tSuGVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cwPHTaBS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 189D2C4CED1;
+	Thu, 20 Feb 2025 03:10:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740021001;
-	bh=sQPO5yuAP9YNK0zeHKSGAGdpOKFDWLU/81x17qsIr5U=;
+	s=k20201202; t=1740021004;
+	bh=8Ek/lENxsqLvCr29S2YZBIuImLC7fMD7R8FfDhB2sms=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=VSoejoHxbjpsTolzXUDNI61+xocZk0QFS2UnWIo8fIicAvwsH8USYVir+FVZZDCpj
-	 3iYj85KKzCdTSrlwnxJ/iuHg4SWT3rYw24C9D3O8u3A7Lwjngajp/jvVmHU9Usf8nZ
-	 i6QTcM0jOEwcFsC1MEUjPyaxGqYw56sIvNavCzIADWt5a3hzF0ld2P3vW4cQmsuXom
-	 JahTbaN7Tm5/Jl4ZjsgJly57IT+/KWJdbzY0JMzfqO+h1IaRo7V92/WOlsDP6aGMAD
-	 +azdfKsqk/4buk0Vu57iC+/QujoO1HZ6bGd1HQYrSY4ExJvcctX2rPOcnB95GNUA/y
-	 c/Ku6ZdsE7gfA==
+	b=cwPHTaBSnmwYn94lAFYw7o4xiNwt+r8RsgDNznb94TN90DPrc1WK8+FUmChuUUg9p
+	 TMggAwVcYn7tlmaYekheiWU+KcTfbB16Ct/UbTadcuZXmf/C3Gf2hAHrNHWo/D0eFD
+	 SeZrmR2uIR+pPoAKyToWho8c+iBgdrhxP+lQH0q7PeCQnwRMCXr33P9mmYdbiS/grI
+	 vTbK2l0ei620HYx0QLzki4IutVZxepR13Mv85/iSHuX2okLTAWC13C1NC7M0iyjnKc
+	 sONIsW/rDR24Oq0f9kxRwhpVXjXeo7pnCwj0nMdDsueYGVt5HDkvxf48J4oi+j9U7j
+	 ZbTjmOrVlQj3g==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33DAA380AAEC;
-	Thu, 20 Feb 2025 03:10:33 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAD1C380AAEC;
+	Thu, 20 Feb 2025 03:10:35 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,37 +51,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] sctp: Fix undefined behavior in left shift operation
+Subject: Re: [PATCH net v5 0/2] net: core: improvements to device lookup by
+ hardware address.
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <174002103182.825980.16973479436826416109.git-patchwork-notify@kernel.org>
-Date: Thu, 20 Feb 2025 03:10:31 +0000
-References: <20250218081217.3468369-1-eleanor15x@gmail.com>
-In-Reply-To: <20250218081217.3468369-1-eleanor15x@gmail.com>
-To: Yu-Chun Lin <eleanor15x@gmail.com>
-Cc: marcelo.leitner@gmail.com, lucien.xin@gmail.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- linux-sctp@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, jserv@ccns.ncku.edu.tw, visitorckw@gmail.com
+ <174002103449.825980.9357598791735948646.git-patchwork-notify@kernel.org>
+Date: Thu, 20 Feb 2025 03:10:34 +0000
+References: <20250218-arm_fix_selftest-v5-0-d3d6892db9e1@debian.org>
+In-Reply-To: <20250218-arm_fix_selftest-v5-0-d3d6892db9e1@debian.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, horms@kernel.org, andrew+netdev@lunn.ch,
+ dsahern@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ eric.dumazet@gmail.com, kuniyu@amazon.com, ushankar@purestorage.com
 
 Hello:
 
-This patch was applied to netdev/net.git (main)
+This series was applied to netdev/net.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Tue, 18 Feb 2025 16:12:16 +0800 you wrote:
-> According to the C11 standard (ISO/IEC 9899:2011, 6.5.7):
-> "If E1 has a signed type and E1 x 2^E2 is not representable in the result
-> type, the behavior is undefined."
+On Tue, 18 Feb 2025 05:49:29 -0800 you wrote:
+> The first patch adds a new dev_getbyhwaddr() helper function for
+> finding devices by hardware address when the rtnl lock is held. This
+> prevents PROVE_LOCKING warnings that occurred when rtnl lock was held
+> but the RCU read lock wasn't. The common address comparison logic is
+> extracted into dev_comp_addr() to avoid code duplication.
 > 
-> Shifting 1 << 31 causes signed integer overflow, which leads to undefined
-> behavior.
+> The second coverts arp_req_set_public() to the new helper.
 > 
 > [...]
 
 Here is the summary with links:
-  - [net] sctp: Fix undefined behavior in left shift operation
-    https://git.kernel.org/netdev/net/c/606572eb22c1
+  - [net,v5,1/2] net: Add non-RCU dev_getbyhwaddr() helper
+    https://git.kernel.org/netdev/net/c/4b5a28b38c4a
+  - [net,v5,2/2] arp: switch to dev_getbyhwaddr() in arp_req_set_public()
+    https://git.kernel.org/netdev/net/c/4eae0ee0f1e6
 
 You are awesome, thank you!
 -- 
