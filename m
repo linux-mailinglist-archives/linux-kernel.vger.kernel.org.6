@@ -1,268 +1,180 @@
-Return-Path: <linux-kernel+bounces-523047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 641E8A3D15B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:24:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B031A3D162
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:26:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3DF197A13E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 06:23:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48EF83B9CBB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 06:26:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09E481E2611;
-	Thu, 20 Feb 2025 06:23:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3D4D1E2611;
+	Thu, 20 Feb 2025 06:26:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b="RIOZeZlh"
-Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2085.outbound.protection.outlook.com [40.107.241.85])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="XsKVkrEV"
+Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 899751DE4EF;
-	Thu, 20 Feb 2025 06:23:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.85
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740032638; cv=fail; b=JhIF/4wyACHGh9ffqSs6vmlMKTLfpfdEl//MD89KVcmDfs1thuDbB8f93qw6wkkvG936MtYze8Q1GLsQxhgwZI7VEIwFD07ReXvgVYriLdkjM6HSrohV0Qer3vBaZo1pTHzMVNlmWwK85RDn2x+96tM7wcx53sjuW+WlrwHZ3YI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740032638; c=relaxed/simple;
-	bh=n1BGeQBRTS30uK51H7cxxGOV/NFtQn1Hn2TrUvsB0Bk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=bgxjxfOrE1mefWdH0+5xgzfKI2Sy+QGNt17dguCxjn9HGkKiKtR4EefpimoSZYSEYXjv3eCZZH4aLTXHigPgDm8/VoSVQSiNL//cegDObL+6+TW9cHbrmLHX0FXDCIHoCf3wrBrJPgVwQYBTjqgc722wU+dmmme63pf6M59vRK0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com; spf=pass smtp.mailfrom=de.bosch.com; dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b=RIOZeZlh; arc=fail smtp.client-ip=40.107.241.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=de.bosch.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ei9Qllv8rZ5Z0rNTwdU0MGCF55A78yZMTNIkvK3+wKLB8Q7MC+H6Ip3U8Cf0CruuAEhfIiSpXk7RH4UJyHG9ET1OIvzmwrVlpqV8NrLkB//m06uJZ0pGn6FqKazl2nPTk0rgtG6w/DWKY+LUqImijI5H87JsVWXHz9dfXyhczRIid5ktg9O9VlQ1C5QaYS/jBeZo8a2A3Z8NPbppAJQYuP13qE67022iVKoYrzHQ5jNHj4bm8IZl2KS7E2PxlEx1wAktU1B63j+B5ZHu4FWlW/UBbK4F251PweS62weAJlQ8vo+doz7L2ES87phyIYdbFu7mtAeS1xTXvBJ5zemraA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3s/D5YZOhh6AmuqgdpyWT9gp340ibbCmeMR9Gyf/BJw=;
- b=KjZgtI+iZYi5+LPnsTUyjXiFGVoxellORIl3MDXaql1oCj8d4zz1A/a7RtbRG3I7YmTr1dYuBdW+40Hi8OOUv48q80HiAIfy4LBU68TFdaIteeBSu6GF7QXH12MYhwinVprjV7XO6hHqbqB1iXl1EmY8/6Af+qMkNX0C94BOL65jl9j2y+cyOuuUf6FmscO1Yld4/eBqyO1eJcILQU/bj8VvIrbN7NDCiE53lI2OOY+oo8x7/r5btPEywDvovpOMbWoEPP4uv/SFrUhkSevJKVDghufc84T3CoXLfQeLDYKYvjvh7/lom7kxHhxL+jZIm3eL/dS8Pukhqb2vHn5yRQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 139.15.153.205) smtp.rcpttodomain=nvidia.com smtp.mailfrom=de.bosch.com;
- dmarc=pass (p=reject sp=none pct=100) action=none header.from=de.bosch.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=de.bosch.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3s/D5YZOhh6AmuqgdpyWT9gp340ibbCmeMR9Gyf/BJw=;
- b=RIOZeZlhn+JlYuJDligr4IQ7qgb2DgLbuD38JfU2ns6iVZjQjtViy94SOHHKL3rfUG3+K0WNqN7GI15f7i13I2F5Bsozbj/R9LQJFAy0CvBb40IHah6oooEJ0oKfT92J/VAo325PRJL6vJ6RAqOxykYcOQKlySjuG9z4l4a7iRmCATBLyV0aCnLckR5iYmYcQ0Cj5y4H5mRqdRV20FHr4xeJL1F1axOmmJH8N6bnYMHF+IUccc9TIEtoyQrCTp/s7rbA9WJ1VUDwrF/BtSM66mV6dgeIN+Q15bgkO7kShE6IBfVIEiq/PxUgcnZl6SGXSUAeph9zuJWDqZniuRtOOw==
-Received: from DU7PR01CA0014.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:50f::21) by AS2PR10MB7687.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:642::18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.13; Thu, 20 Feb
- 2025 06:23:47 +0000
-Received: from DB1PEPF000509E9.eurprd03.prod.outlook.com
- (2603:10a6:10:50f:cafe::76) by DU7PR01CA0014.outlook.office365.com
- (2603:10a6:10:50f::21) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.16 via Frontend Transport; Thu,
- 20 Feb 2025 06:24:04 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 139.15.153.205)
- smtp.mailfrom=de.bosch.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=de.bosch.com;
-Received-SPF: Pass (protection.outlook.com: domain of de.bosch.com designates
- 139.15.153.205 as permitted sender) receiver=protection.outlook.com;
- client-ip=139.15.153.205; helo=eop.bosch-org.com; pr=C
-Received: from eop.bosch-org.com (139.15.153.205) by
- DB1PEPF000509E9.mail.protection.outlook.com (10.167.242.59) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8466.11 via Frontend Transport; Thu, 20 Feb 2025 06:23:47 +0000
-Received: from SI-EXCAS2000.de.bosch.com (10.139.217.201) by eop.bosch-org.com
- (139.15.153.205) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.13; Thu, 20 Feb
- 2025 07:23:47 +0100
-Received: from [10.34.219.93] (10.139.217.196) by SI-EXCAS2000.de.bosch.com
- (10.139.217.201) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.43; Thu, 20 Feb
- 2025 07:23:46 +0100
-Message-ID: <af1afdfd-56fc-4101-812f-e33a370cc4e4@de.bosch.com>
-Date: Thu, 20 Feb 2025 07:23:41 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC6041DFE32;
+	Thu, 20 Feb 2025 06:26:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740032795; cv=none; b=jWxTydeMIYEPD0rHTRiDi46SfpoeJlaunzrzqIf/hJVjjwm67bsP4m2Co+eJZYF58Kg7oWt0qnqyK51x9/3tpeYh6l6womFi6DZvSDTFnihQAUwB9sosIpCc6WJzahcmHa7gIiAF/U42pNU9JzH44RpSlwAdjlnogqLR8bqwAKA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740032795; c=relaxed/simple;
+	bh=IlmwQnZ9eJ6+YruXTK4RZVqHu2Zggr5FCcSosA+gYC4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ej/Z2wbCzj4pRT0j5iZkse+z9VzGQip5tg4Q6aot1PyXRSEFGCv7o1bbH1bCBpdvVL0hChuVkjjsL8hKUiCctR/8gZ9KUofbN5QxmXVzt7Rd3OuWN3W+aluKIWKtj+jHRXJPbu0CFkPAjchkgFNxUUvBCkqIbDDqi09NC4Yfvtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=XsKVkrEV; arc=none smtp.client-ip=54.206.34.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1740032749;
+	bh=IlmwQnZ9eJ6+YruXTK4RZVqHu2Zggr5FCcSosA+gYC4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=XsKVkrEVmnIUB9K5RPoPwBUQxwbCdt7Xh8WH5YMsNyCbFqlyw/yB6XKxRE9m3w6iQ
+	 QTsU76hKsYnM8GKt5Ioo4k7HfGHpUWCtGsw4MGRsLSDf0hmHYN45pF0s14ylJTcw6h
+	 i1fanXXSN/xlfO/2zSF8NrDs3a7WYvaYjDwGqWrE=
+X-QQ-mid: bizesmtpip2t1740032736tufnqrx
+X-QQ-Originating-IP: q5kOyWnSAVN2XSxq8Dr39ImKWXv99DR1JJSXtBsmihw=
+Received: from [IPV6:240e:668:120a::212:156] ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 20 Feb 2025 14:25:34 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 16861979310175025258
+Message-ID: <13526D98D27F6E36+705ff063-e7f6-49ff-a29a-0f5e5101c000@uniontech.com>
+Date: Thu, 20 Feb 2025 14:25:33 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH RFC 1/3] rust: add useful ops for u64
-To: Alexandre Courbot <acourbot@nvidia.com>, Danilo Krummrich
-	<dakr@kernel.org>, David Airlie <airlied@gmail.com>, John Hubbard
-	<jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>
-CC: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
-	<nouveau@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>
-References: <20250217-nova_timer-v1-0-78c5ace2d987@nvidia.com>
- <20250217-nova_timer-v1-1-78c5ace2d987@nvidia.com>
- <8d95cfde-30bc-4937-99d3-0077df43867a@de.bosch.com>
- <D7VLEXCQ5VYN.3N0G7XXCVLH6L@nvidia.com>
-Content-Language: en-GB
-From: Dirk Behme <dirk.behme@de.bosch.com>
-In-Reply-To: <D7VLEXCQ5VYN.3N0G7XXCVLH6L@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB1PEPF000509E9:EE_|AS2PR10MB7687:EE_
-X-MS-Office365-Filtering-Correlation-Id: 81896265-b0f3-471b-d7b6-08dd5177224b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700013|1800799024|82310400026|7053199007|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?YnROZEdIRG1pb0kzN1FLM0IrdHB5bmxYc2xNaEpvQlg1RnZwR0tKcEMyY3M1?=
- =?utf-8?B?KzBUNjF4czU4enc0KzJJUUZkVkZZS0xYUVdka3k0NGtIVGNUUTJKWXozSkd4?=
- =?utf-8?B?UzhMKzUvZVhtU3BTVnZRVUoyaCtVUDN0UDBKcCtUaTFUZS9veG13WXBoOE5R?=
- =?utf-8?B?U2E2SkE5Mlp0ZkM4ak1CeExtTHhyeTRBTzVybDRvdUYvemgzb2JjcHRKcEE4?=
- =?utf-8?B?dVpsMldRdFVPSkdCY0ZHeVUrSFRaSEhVV2NEb0I4VmRWdDN4SEc5R1RkYWxn?=
- =?utf-8?B?TmQwUEVJU3pLNHBjeEFkUzd3UFRMRUF1Nmg1NzdieFB0OG5XZ2JrL2NINm9B?=
- =?utf-8?B?dmJWdW5WNitkd3g2N255MlNiRk9lVVJhdUQ1WU1RZTN6L2g3Y1pHbXU5U0w1?=
- =?utf-8?B?djY5WCtDVDNtUitaS3FiMGJhQ2twbVhmenVUYUZCTGJxbTBPUjI3NWFtTHBU?=
- =?utf-8?B?T0lZNTlRVWJVZkdjR0VFSXZzU1dDbzczMExTQ3E2L0VqcW5iallWQ1BNc2NU?=
- =?utf-8?B?dXk5Z3ZQOER5a1JaSDhNZUZjSFpoZk05TWFOdVhkT1BVdHFCUkFNV253dG9n?=
- =?utf-8?B?OENRTzBGTmJERmUyN1VHdzVCdnhDWDZRRDNzbjA5T1NkWUlwbTQ5R05NcGU4?=
- =?utf-8?B?QTVwYXF5V3U3Q2pxWWNIdksyY1RZS284WGxXOUZKNXIrd2RjeHBranJacFp3?=
- =?utf-8?B?SkhJZUhpL0hmaHZqRGJpRTJ0eWxpWklpdkk5eldOQ0c4cFNhbnVNb2VWL2VC?=
- =?utf-8?B?Z2x6Z1Fxbk5CdzFNUzZST3RnTHRxQlN2L2krUVUvYjc5NkdadWFoUG9mbWJQ?=
- =?utf-8?B?RzloOXhGSmVCaEl4SVpuaWJ4eWgwcUVsUzlnb29HVFAwRUJsZ1JiWWtpTHpo?=
- =?utf-8?B?Ymo2VllnbEtBbGVrdFJyT1pZSmtWVXhwbWZMaHFaVURQaGxvV0dlbjkrUHpx?=
- =?utf-8?B?V0M5T2JRUWl0Z1JrSVlWam9Od0E4cElMMDhiRVJoK29udzlWOXhHVTlwdm9Z?=
- =?utf-8?B?bGh5UTRqYlFwUEFUbksycC9KOUJrSTJmQ1NraXZSZ3k0aUVjTWdPU1haSUJB?=
- =?utf-8?B?WHR4NUk4b0ltVTRJNlRLQ0NYSFdiazJycXVzZnd1Y3pnZld3eHo1aEtPWjJF?=
- =?utf-8?B?WkdGVWdpTVl0eDNSRTFCTGFjeUdSeGNxTGRTU0VpUGVOTmRHclBzcGUzZjI4?=
- =?utf-8?B?KzVOdU51TlQxK3N2ZWhTSTB1bnBIdlI4eFRLMVJNQVFYNnBGY3V5UTBRSVFi?=
- =?utf-8?B?cWk5T2QxVE1MRmVSOG9UemkvUUhwZHhRWHI4SFRMRmdZOFkvRUdxRUFCQkhE?=
- =?utf-8?B?YUdneDRvWXZYSU5iMFNIdFYyY1g2aEI5OXpWaEtxaCtmcjVLNU1Xd01zQlFi?=
- =?utf-8?B?TkNGZUp1VXI0NER6QmpObCtJNE9rRU9ENUh4L2hVdUV0T0dyZEdDTnA5SHNr?=
- =?utf-8?B?blRrYWxuZlBBMnM5ZGpJL0V6MnJEOFRnRWpBYjRjNU9YeVdoNGlmSVNQM1hE?=
- =?utf-8?B?RElBT1E0aWRWdlozT3RCYzhaOTBQUkVjbyswMXlGLy9JSFRCNVBzbURLZ0VJ?=
- =?utf-8?B?ZGc5c0hnRjFzME03OHZQVzRMMnZwNnBmVUUvU0xyZTlYWHZMWjdoMVBwcFU5?=
- =?utf-8?B?b1NrRTUvVHRVOUNYc3dxR1RZWVJ4SEgxbmJob2tacGxIVFJXTjBodFBFRDlX?=
- =?utf-8?B?WERxcDZvTGFwN3EwMUtVOThrRnFJZGVuOXJiV2hFWE53SEpMK1VUMmJtcDhT?=
- =?utf-8?B?WnBwcWJHR2dnYXdiQ3hITk9ybFFqRUVpTHBZVVhlcFpTRWFtMXRJeENJL1Za?=
- =?utf-8?B?RDhmVmxZMmRoU0V3QWtheDNzNVVObzYwNUxlbFd5VGxoSEEyMDAxaXJ2OFZM?=
- =?utf-8?B?b2d3UU1ZTU5Fd0pPQ2JlbW5DL3g3a3praklrN21BME5GNkpCMGFUZzJDRnlk?=
- =?utf-8?Q?8CpODyr4F+I=3D?=
-X-Forefront-Antispam-Report:
-	CIP:139.15.153.205;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:eop.bosch-org.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026)(7053199007)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: de.bosch.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2025 06:23:47.3894
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 81896265-b0f3-471b-d7b6-08dd5177224b
-X-MS-Exchange-CrossTenant-Id: 0ae51e19-07c8-4e4b-bb6d-648ee58410f4
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0ae51e19-07c8-4e4b-bb6d-648ee58410f4;Ip=[139.15.153.205];Helo=[eop.bosch-org.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DB1PEPF000509E9.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR10MB7687
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ACPI: NUMA: Move get_numa_distances_cnt() helper to
+ needed location
+To: Mike Rapoport <rppt@kernel.org>
+Cc: chenhuacai@kernel.org, kernel@xen0n.name, rafael@kernel.org,
+ lenb@kernel.org, maobibo@loongson.cn, guanwentao@uniontech.com,
+ loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
+ Jonathan.Cameron@huawei.com, dan.j.williams@intel.com,
+ alison.schofield@intel.com, rrichter@amd.com, bfaccini@nvidia.com,
+ dave.jiang@intel.com, haibo1.xu@intel.com, linux-acpi@vger.kernel.org,
+ zhanjun@uniontech.com, niecheng1@uniontech.com, chenlinxuan@uniontech.com
+References: <D87315C93AF20D4E+20250220042037.942802-1-wangyuli@uniontech.com>
+ <Z7bHPVUH4lAezk0E@kernel.org>
+Content-Language: en-US
+From: WangYuli <wangyuli@uniontech.com>
+Autocrypt: addr=wangyuli@uniontech.com; keydata=
+ xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSKP+nX39DN
+ IVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAxFiEEa1GMzYeuKPkg
+ qDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMBAAAKCRDF2h8wRvQL7g0UAQCH
+ 3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfPbwD/SrncJwwPAL4GiLPEC4XssV6FPUAY
+ 0rA68eNNI9cJLArOOARmgSyJEgorBgEEAZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7
+ VTL0dvPDofBTjFYDAQgHwngEGBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIb
+ DAAKCRDF2h8wRvQL7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkU
+ o9ERi7qS/hbUdUgtitI89efbY0TVetgDsyeQiwU=
+In-Reply-To: <Z7bHPVUH4lAezk0E@kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------4Xf1bFP4e7EOaVC4MwmhhiXF"
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: Of/FyW07GPBTIGvQgbxpV03kkw25lnI4+WhcYZeqBlBRrF0iafPV43wJ
+	qRoIewfLFVGMW9zti25ZhnPtEFeqSgyYMz0jGItiAmqyd0hbDPSS4xV+brpuGEaHrjxVM9h
+	keJTcQeGCOxEL6aWGFNlbiHqHFZWdaCv6dEkfqCZwqEExxF0MXFVD0BQXQmEUe8cMBc++0w
+	n3Hx6T0fQOH94JMKNZ7Bp2CW9vsVRavWwOjVeZKqa0ueS5u3hJGqj66sVuVHL9c4Yu2KTNe
+	1iVmT7HfrG8KpPztCke1sgWOLsV2TKZuDhhpPFh94nHuPWdi2kXr8pVshyuDSuJbgleoN73
+	ADTm+K3ey4CVOigZEs8P3vLC6zCASWm64PGPLl6PUeDPdTCanJg3NkXvOBy1TZjWReoGI7M
+	Aw53ldWStoI/7iURKDMVy8ibFi3eMddHZ1X3wT2QFZ9AHTcEHYfra+OjWr2qr8uAKdZ1FyI
+	r9CaQikAdcyq8kD6tITeFA1VJdSWqSCZ2f84ReHdbR0BjFOnazar+WQ6o3kMZGCBTTHphZz
+	a8j8LUB8/mSOpPlsOuKR0aw346ODwQuHlZptOVM5cc96LpE5TebSgpAzz9CGFLdW0f6Twqi
+	FHCpWf6M2JFFXV76vejJxVY588Iar6aN44Ynef2Ipn5YSIy2z457NYNCzDPmgQJCVEH6bdL
+	SweCuwTssAvSaTuVbi7Ns4L78iz52apuht3RZgNnrCSygonkG1rKLOXgC4mHp7GQU14sLXD
+	GBWNSOpds9m9yjwt+ySsixLP+huBnNt9CU/R7S4uVCDwYm4+jFPWYAMzv9I7jO83gVLjdVg
+	s5UelftN7A4LCGWfeGSquSKgvnbvboElKZ+TDSWmOaJoSqjfAnXBFU2BW3qKL1OrGsPeM+v
+	g4cEuWRkBO6EXI7ZGC9R9FQ2jrjmGduqchhOVelutlS6XCSzsgt0JPR1csTDwXWqcWZudZQ
+	wLZ43p736r8OQSzCjGqHN6gjiYlyyQb1ki1MfojKUz9DI6YaeNVY9EnBE1e6g5scCXPLpWY
+	aukFcs2DqWfLGeWSk4tjiAYkNOrbt+B5GGFitxKKeH9Ov8fqeuMVc/zTXga3a3EhaWm3pTf
+	q1/XtUpQCV7
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+X-QQ-RECHKSPAM: 0
 
-On 18/02/2025 14:07, Alexandre Courbot wrote:
-> On Tue Feb 18, 2025 at 7:07 PM JST, Dirk Behme wrote:
->> On 17/02/2025 15:04, Alexandre Courbot wrote:
->>> It is common to build a u64 from its high and low parts obtained from
->>> two 32-bit registers. Conversely, it is also common to split a u64 into
->>> two u32s to write them into registers. Add an extension trait for u64
->>> that implement these methods in a new `num` module.
->>>
->>> It is expected that this trait will be extended with other useful
->>> operations, and similar extension traits implemented for other types.
->>>
->>> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
->>> ---
->>>  rust/kernel/lib.rs |  1 +
->>>  rust/kernel/num.rs | 32 ++++++++++++++++++++++++++++++++
->>>  2 files changed, 33 insertions(+)
->>>
->>> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
->>> index 496ed32b0911a9fdbce5d26738b9cf7ef910b269..8c0c7c20a16aa96e3d3e444be3e03878650ddf77 100644
->>> --- a/rust/kernel/lib.rs
->>> +++ b/rust/kernel/lib.rs
->>> @@ -59,6 +59,7 @@
->>>  pub mod miscdevice;
->>>  #[cfg(CONFIG_NET)]
->>>  pub mod net;
->>> +pub mod num;
->>>  pub mod of;
->>>  pub mod page;
->>>  #[cfg(CONFIG_PCI)]
->>> diff --git a/rust/kernel/num.rs b/rust/kernel/num.rs
->>> new file mode 100644
->>> index 0000000000000000000000000000000000000000..5e714cbda4575b8d74f50660580dc4c5683f8c2b
->>> --- /dev/null
->>> +++ b/rust/kernel/num.rs
->>> @@ -0,0 +1,32 @@
->>> +// SPDX-License-Identifier: GPL-2.0
->>> +
->>> +//! Numerical and binary utilities for primitive types.
->>> +
->>> +/// Useful operations for `u64`.
->>> +pub trait U64Ext {
->>> +    /// Build a `u64` by combining its `high` and `low` parts.
->>> +    ///
->>> +    /// ```
->>> +    /// use kernel::num::U64Ext;
->>> +    /// assert_eq!(u64::from_u32s(0x01234567, 0x89abcdef), 0x01234567_89abcdef);
->>> +    /// ```
->>> +    fn from_u32s(high: u32, low: u32) -> Self;
->>> +
->>> +    /// Returns the `(high, low)` u32s that constitute `self`.
->>> +    ///
->>> +    /// ```
->>> +    /// use kernel::num::U64Ext;
->>> +    /// assert_eq!(u64::into_u32s(0x01234567_89abcdef), (0x1234567, 0x89abcdef));
->>> +    /// ```
->>> +    fn into_u32s(self) -> (u32, u32);
->>> +}
->>> +
->>> +impl U64Ext for u64 {
->>> +    fn from_u32s(high: u32, low: u32) -> Self {
->>> +        ((high as u64) << u32::BITS) | low as u64
->>> +    }
->>> +
->>> +    fn into_u32s(self) -> (u32, u32) {
->>> +        ((self >> u32::BITS) as u32, self as u32)
->>> +    }
->>> +}
->> Just as a question: Would it make sense to make this more generic?
->>
->> For example
->>
->> u64 -> u32, u32 / u32, u32 -> u64 (as done here)
->> u32 -> u16, u16 / u16, u16 -> u32
->> u16 -> u8, u8 / u8, u8 -> u16
->>
->> Additionally, I wonder if this might be combined with the Integer trait
->> [1]? But the usize and signed ones might not make sense here...
->>
->> Dirk
->>
->> [1] E.g.
->>
->> https://github.com/senekor/linux/commit/7291dcc98e8ab74e34c1600784ec9ff3e2fa32d0
-> 
-> I agree something more generic would be nice. One drawback I see though
-> is that it would have to use more generic (and lengthy) method names -
-> i.e. `from_components(u32, u32)` instead of `from_u32s`.
-> 
-> I quickly tried to write a completely generic trait where the methods
-> are auto-implemented from constants and associated types, but got stuck
-> by the impossibility to use `as` in that context without a macro.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------4Xf1bFP4e7EOaVC4MwmhhiXF
+Content-Type: multipart/mixed; boundary="------------xNIKrkDhRc6nFHBYmEtPaU4Y";
+ protected-headers="v1"
+From: WangYuli <wangyuli@uniontech.com>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: chenhuacai@kernel.org, kernel@xen0n.name, rafael@kernel.org,
+ lenb@kernel.org, maobibo@loongson.cn, guanwentao@uniontech.com,
+ loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
+ Jonathan.Cameron@huawei.com, dan.j.williams@intel.com,
+ alison.schofield@intel.com, rrichter@amd.com, bfaccini@nvidia.com,
+ dave.jiang@intel.com, haibo1.xu@intel.com, linux-acpi@vger.kernel.org,
+ zhanjun@uniontech.com, niecheng1@uniontech.com, chenlinxuan@uniontech.com
+Message-ID: <705ff063-e7f6-49ff-a29a-0f5e5101c000@uniontech.com>
+Subject: Re: [PATCH] ACPI: NUMA: Move get_numa_distances_cnt() helper to
+ needed location
+References: <D87315C93AF20D4E+20250220042037.942802-1-wangyuli@uniontech.com>
+ <Z7bHPVUH4lAezk0E@kernel.org>
+In-Reply-To: <Z7bHPVUH4lAezk0E@kernel.org>
 
+--------------xNIKrkDhRc6nFHBYmEtPaU4Y
+Content-Type: multipart/mixed; boundary="------------WQssjZ2nzYFwkYfyO8RDeWq6"
 
-Being inspired by the Integer trait example [1] above, just as an idea,
-I wonder if anything like
+--------------WQssjZ2nzYFwkYfyO8RDeWq6
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
-impl_split_merge! {
-    (u64, u32),
-    (u32, u16),
-    (u16, u8),
-}
+SGkgTWlrZSwNCg0KT24gMjAyNS8yLzIwIDE0OjEwLCBNaWtlIFJhcG9wb3J0IHdyb3RlOg0K
+PiBUaGVyZSdzIG5vIG5lZWQgZm9yIHJlbG9jYXRpb24sIGp1c3QgZHJvcCB0aGUgdW51c2Vk
+IGZ1bmN0aW9uLg0KDQpPa2F5Lg0KDQpCdXTCoCBwbGVhc2UgdGFrZSBhIGxvb2sgYXQgbGlu
+ZSAyOTUgb2YgdGhlIG9yaWdpbmFsIHNyYXQuYy4gU2hvdWxkIHRoZSANCnR5cGUgb2YgdmFy
+aWFibGUgJ2QnIHRoZXJlIGJlIGNoYW5nZWQgdG8gdTY0LCBhcyBtZW50aW9uZWQgaW4gdGhl
+IGNvbW1pdCANCm1lc3NhZ2U/DQoNCklmIHllcywgSSBjYW4gcXVpY2tseSBwdXQgdXAgYW5v
+dGhlciBjb21taXQganVzdCB0byB0d2VhayB0aGlzIG9uZSBwbGFjZS4NCg0KVGhhbmtzLA0K
+DQotLSANCldhbmdZdWxpDQo=
+--------------WQssjZ2nzYFwkYfyO8RDeWq6
+Content-Type: application/pgp-keys; name="OpenPGP_0xC5DA1F3046F40BEE.asc"
+Content-Disposition: attachment; filename="OpenPGP_0xC5DA1F3046F40BEE.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
 
-would be implementable?
+-----BEGIN PGP PUBLIC KEY BLOCK-----
 
+xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSK
+P+nX39DNIVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAx
+FiEEa1GMzYeuKPkgqDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMB
+AAAKCRDF2h8wRvQL7g0UAQCH3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfP
+bwD/SrncJwwPAL4GiLPEC4XssV6FPUAY0rA68eNNI9cJLArOOARmgSyJEgorBgEE
+AZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7VTL0dvPDofBTjFYDAQgHwngE
+GBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIbDAAKCRDF2h8wRvQL
+7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkUo9ERi7qS
+/hbUdUgtitI89efbY0TVetgDsyeQiwU=3D
+=3DBlkq
+-----END PGP PUBLIC KEY BLOCK-----
 
-> Regardless, I was looking for an already existing trait/module to
-> leverage instead of introducing a whole new one, maybe the one you
-> linked is what I was looking for?
-Cheers,
+--------------WQssjZ2nzYFwkYfyO8RDeWq6--
 
-Dirk
+--------------xNIKrkDhRc6nFHBYmEtPaU4Y--
+
+--------------4Xf1bFP4e7EOaVC4MwmhhiXF
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+wnsEABYIACMWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZ7bK3QUDAAAAAAAKCRDF2h8wRvQL7jZf
+AQCFIqI4kZJxF0oUMvbXmVizZXKBnNcdw+kRxdO3KtiuWQD8DRbWry4c0K4Fd9QOvvSQr1tSEFXS
+KNZVM5Weo3GxDgs=
+=TlKM
+-----END PGP SIGNATURE-----
+
+--------------4Xf1bFP4e7EOaVC4MwmhhiXF--
+
 
