@@ -1,119 +1,99 @@
-Return-Path: <linux-kernel+bounces-523396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAD91A3D63F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:15:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C367A3D642
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:15:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18263189814E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:15:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E15F17BA18
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:15:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C19811F03FA;
-	Thu, 20 Feb 2025 10:15:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05CC81F12E9;
+	Thu, 20 Feb 2025 10:15:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="CPU7AKFS"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="cFOWwAL8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 627881EE034
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 10:15:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49EBA1F0E31;
+	Thu, 20 Feb 2025 10:15:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740046540; cv=none; b=XCc1bQ3+vIVRoBPOkajMAIfhLo9bOHEkmvhRm7LRHvTAyyVl6WKl6lX9FLNjEhTmT9il7unYXkhlUwmztSjCe2icZNQQiqT/1wshJ7QDk2PPDdIp37riIgK+odMEPeGchiGOUujfY5hfQlg8bz+rA2Fj+0OdWo6oCZtTZ+KwTwI=
+	t=1740046541; cv=none; b=XcFKbcUqXp33NFjzG69LiNPc5NWmezLXP0mWZkvnkqA08Fbgy1zIXvbSxOXZTL2JrYNITWo/hABmGE8axKoldo5x3jgLa8BcfA15OQPeiK9g6C1uK9hKaHWu72FLNImpsCMJFZL7oSgyAE1dGunmp5GRlwJO3Z6hgzeNvBw58ZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740046540; c=relaxed/simple;
-	bh=AwGIoFXUjlmwWgvEOb+I3Dk1NKxMqMQORiC+Kje6l6g=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PLlJ1dAi7YKdGHGRAV6zsUZwlQUJg0nvz/RCQQU1dHpH3X2gEIP8nW9Oddiqfg8KBdOBHlT+gTerrNjxpjJWxzg3WIPs7DLTf8xEC9hsX3k6xR1TbCMhdfHqL7xm7gKczcOgpOELDPB49tdgY5AKMLoyYnfXqQzEetQK6ntbbx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=CPU7AKFS; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2fc0d44a876so1143171a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 02:15:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1740046537; x=1740651337; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fi6x8ig5ZwKEmhmgwjg3TF1oaUzfpPBZi49wWEG256o=;
-        b=CPU7AKFS7lRvYok/OkJHSU+2gCOEHJsUPprKX2VVSAazOSgMwDJr6hzhymLXK02/oa
-         KQEiTjAkW9cHwG5SX3nIlVcnByKTsu2s2gjh6z7L01S3nfM0H1qa4SSdbizerCpbg9d8
-         bUNx3LSdm+AnWqQ9qI8P2XNNGCouOrD2/FlMED0vOlRMIwrh3SN6JHgd0tqKmScRNAYp
-         xhELua3O1/5OUTnAIUYNfwS8zRu2QS1TSLcUYepdzH+7kdyVjuLvbj7vTRcBWshv+33P
-         uqBdOgopOmpH9VZOrro4RubLzX/+W5CbSNJlUyT8xFFtz1EgqaprWMQINtuyGx/Pp7u6
-         LyUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740046537; x=1740651337;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fi6x8ig5ZwKEmhmgwjg3TF1oaUzfpPBZi49wWEG256o=;
-        b=sHAMmp/NPKzG51k0bAYtHBmcp16Cpubk5R9MGIc0SF2ywgNQYJQg9Q3O5wpk6Cr8v3
-         uyM422cOZOP+e4g1SYlsiJJVjZRcxRnEIJdw7z4YKF5g4ZLOLHta8sg6X4NGhslXik7S
-         XjayUqOA7dN/AEdvRTXP/FB05VGp4PRmHsOODnymHcv16WssopEp5KK5wdm85gLVGy3o
-         j+FciKXX8S1cx0NomI2lGl0D7Yz6lpHTb0HZtCkrNCi5DcseZ/IS0gcp0kdCzhJEb6wV
-         /LaofXU3p7ZzS9X/+mUcMXVPnhLA2lYq7qAT2E26ZbG9cofCkht121cRgg/+fGQpwXB8
-         T8NA==
-X-Forwarded-Encrypted: i=1; AJvYcCXqFAo4SYx0Mmy3RVYI+Hnw2OEgMmA9YzU0CSgydJfhiJzeSzQSFm407fhOKvkG/R+U1rWSEyWnQe23Vgk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+mEKDZwgeMw6cuud9kLdqwvV/fR+ak4aTuqiWnlPvbsFSZKSM
-	YaD2C4Ko7NFm2jetX0Gn8g02YhR0EAA06vkh1mCgm2oII22hZ73GcBqV2iWy/zQ=
-X-Gm-Gg: ASbGncsmFkxZG546iZ5sAdZvNKp3nf5o9nJHoOpx4beaNR9zEcE7aCXY2TcxIigC4U7
-	m8bIJ9/YtnMDLdDTCtSKd0B3gIMS/IjpBrGh0dI9xE7WqC5iyYuKoJfYk9v/JCRIm66ZB/6r67x
-	wtVHTs3XgDrR4RTYQXCfjKr/eAvAd2Hy2ngI2mM0z43Ff+6jqfJ6wrmgzgVZjSvHSVrb1zFQkaf
-	qih40oPHJFX3PFdCW6ZPl2nNDEFaTKCVyuKSh9mLaqGWaQ/6BVfwHpevCGFyLlafZL3cVQrWYT7
-	Tj99M1RSlsC1jBSVb+3SHwUf6P7CP39E8aei6kRvAOMrrLy/tg==
-X-Google-Smtp-Source: AGHT+IGr555DXR3ZVGi1n2qebDlBxN4jaHy47hIUyefBd3dK1itx6GoA15111YZSfPrtvWchGl6xUw==
-X-Received: by 2002:a05:6a00:124f:b0:732:5935:c219 with SMTP id d2e1a72fcca58-7326177d652mr37845583b3a.3.1740046537505;
-        Thu, 20 Feb 2025 02:15:37 -0800 (PST)
-Received: from L6YN4KR4K9.bytedance.net ([139.177.225.232])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73271a02648sm8707518b3a.107.2025.02.20.02.15.34
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 20 Feb 2025 02:15:37 -0800 (PST)
-From: Yunhui Cui <cuiyunhui@bytedance.com>
-To: dwmw2@infradead.org,
-	baolu.lu@linux.intel.com,
-	joro@8bytes.org,
-	will@kernel.org,
-	robin.murphy@arm.com,
-	iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: Yunhui Cui <cuiyunhui@bytedance.com>
-Subject: [PATCH] iommu/vt-d: fix system hang on reboot -f
-Date: Thu, 20 Feb 2025 18:15:11 +0800
-Message-Id: <20250220101511.37602-1-cuiyunhui@bytedance.com>
-X-Mailer: git-send-email 2.39.2 (Apple Git-143)
+	s=arc-20240116; t=1740046541; c=relaxed/simple;
+	bh=rylNYQvJkCq0zQelkwkvTaCw8K/90clQElFuELEdVbI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W2ETGjniz30Qc94G5PEvGWDZEK3ef7YZc7I75LhQLtksA8zdqeQkfom9k/Suu4Q1v2hJJQmcq46GodsLnlwXxKl/1O2jd8yogZlf+G/SOQh6d8YpDC03FgbQrI9L647Bc90Iw36eLjNL9va7E9S/d3MYI78ZVvHWOjvBtD2GYEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=cFOWwAL8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F795C4CEE4;
+	Thu, 20 Feb 2025 10:15:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1740046540;
+	bh=rylNYQvJkCq0zQelkwkvTaCw8K/90clQElFuELEdVbI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cFOWwAL8ibHEUsHg4wOijCGLCiHI2lR5YgmnBIMdR8Thwx6Zu9ncJnXVkPic7/5lt
+	 lgFCyZbOxSbEHC1qKFQPCOBT2mFDzJq+v9pdqBfq9a8muUEoGfU7JIHC5qAXewn4nV
+	 +LufDJuO5aSgWdnsSWuhfdpcJ4cHNsC7MfUKtDyM=
+Date: Thu, 20 Feb 2025 11:15:37 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Wentao Liang <vulab@iscas.ac.cn>
+Cc: stern@rowland.harvard.edu, christophe.jaillet@wanadoo.fr,
+	mka@chromium.org, make_ruc2021@163.com,
+	javier.carrasco@wolfvision.net, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] usb: core: Add error handling in usb_reset_device for
+ autoresume failure
+Message-ID: <2025022046-clinking-levitate-9fbf@gregkh>
+References: <20250220095218.970-1-vulab@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250220095218.970-1-vulab@iscas.ac.cn>
 
-When entering intel_iommu_shutdown, system interrupts are disabled,
-and the reboot process might be scheduled out by down_write(). If the
-scheduled process does not yield (e.g., while(1)), the system will hang.
+On Thu, Feb 20, 2025 at 05:52:18PM +0800, Wentao Liang wrote:
+> In usb_reset_device(),  the function continues execution and
+> calls usb_autosuspend_device() after usb_autosuspend_device fails.
+> 
+> To fix this, add error handling for usb_autoresume_device()
+> and return the error code immediately. This ensures that
+> usb_autosuspend_device() is not called when usb_autoresume_device()
+> fails, maintaining device state consistency.
+> 
+> Fixes: 94fcda1f8ab5 ("usbcore: remove unused argument in autosuspend")
+> Cc: stable@vger.kernel.org # 2.6.20+
+> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+> ---
+>  drivers/usb/core/hub.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+> index 21ac9b464696..f2efdbdd1533 100644
+> --- a/drivers/usb/core/hub.c
+> +++ b/drivers/usb/core/hub.c
+> @@ -6292,7 +6292,9 @@ int usb_reset_device(struct usb_device *udev)
+>  	noio_flag = memalloc_noio_save();
+>  
+>  	/* Prevent autosuspend during the reset */
+> -	usb_autoresume_device(udev);
 
-Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
----
- drivers/iommu/intel/iommu.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Have you ever seen this function fail?
 
-diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-index cc46098f875b..76a1d83b46bf 100644
---- a/drivers/iommu/intel/iommu.c
-+++ b/drivers/iommu/intel/iommu.c
-@@ -2871,7 +2871,8 @@ void intel_iommu_shutdown(void)
- 	if (no_iommu || dmar_disabled)
- 		return;
- 
--	down_write(&dmar_global_lock);
-+	if (!down_write_trylock(&dmar_global_lock))
-+		return;
- 
- 	/* Disable PMRs explicitly here. */
- 	for_each_iommu(iommu, drhd)
--- 
-2.39.2
+> +	ret = usb_autoresume_device(udev);
+> +	if (ret < 0)
 
+if (ret) please.
+
+Also, how was this tested?  How was it found?
+
+thanks,
+
+greg k-h
 
