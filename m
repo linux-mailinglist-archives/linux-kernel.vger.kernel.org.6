@@ -1,154 +1,178 @@
-Return-Path: <linux-kernel+bounces-523728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2FA3A3DA75
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:51:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3897FA3DA77
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:52:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFD1B17E6AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:51:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD0FF3AFCC8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:51:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC5BC1F6679;
-	Thu, 20 Feb 2025 12:51:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A66751F5836;
+	Thu, 20 Feb 2025 12:51:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jranXwu6"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="hjjfB0Q/"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73C86134B0;
-	Thu, 20 Feb 2025 12:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC7731F3FED
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 12:51:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740055891; cv=none; b=uNO9HbWwzuKgdSLuN9R15SkVHrQRRWs0e+UqyKP0LYfKrO8D+9tptR7y8TIkjifaTdgeamBOxmqd1L5hxK3RMmwxPQJOIUgA+wnTpbkoYT58VmUOexHyeKUqGtIksICRIIlA4b1shlZOXialHJRonggzn1g5yDjh5906lBKytjg=
+	t=1740055910; cv=none; b=izjojdcEChJJh9lEMvWEHxcWJcqrBV4UucnHyNLi+CAMLVxL0m3f3TlsDJPQB7tphe3p9bdul0zAh0MdG8an+9xQ7UsgStYo/JYH11uQmTDkE0RK1r2hFlP0CoaGfF0sCLuXd16P4xI2d9Ax/TWll1A0KCUcS8TPvybqq2c3vwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740055891; c=relaxed/simple;
-	bh=5ypdshPfI3nsJ88dlIy/T3H0ZdxophNkWHmQ430+TI8=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RWOsvp8C2kkBTjJYdFj1elT3LxJ96fdAWZkySBRUINidxHIlDzm38345qsexA2UAbHCSj754om13+umELcFOhfv4aZxls740jkptgkSISOS6vhpFQOUqfBNanexmF1FOIiRFb6GrNOSuvzmIRSeGIj6PjopgRya2GlfZic6ohMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jranXwu6; arc=none smtp.client-ip=217.70.183.200
+	s=arc-20240116; t=1740055910; c=relaxed/simple;
+	bh=tvq1vlgDZP6ZZHf0NtANO8DH0r0no+waSqAxyzWOPhU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kZO7YEigXj5ExD6RT8YZtPyosTT0FvBj0DUIbRt+TdTyvHZvK4u0N5klTBpZIfU38YlzId+Cuuqim3AHcDCslCzkCdx3Ao6/uah6i8RZSylyNv8kAf+q+GUZef9sfxW9VuVixnPW4AWr5vi6IJepTC4TDqo1pBYKJvKALFQL5Eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=hjjfB0Q/; arc=none smtp.client-ip=217.70.183.194
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id EE3BA431ED;
-	Thu, 20 Feb 2025 12:51:19 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 644B344117;
+	Thu, 20 Feb 2025 12:51:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740055881;
+	t=1740055901;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V12Yk4AP6w0Kz77u/6UMamy0PAJDxKPB8Crw7PN4YQw=;
-	b=jranXwu6S39ULr7tv8yQXi5n3abengdJa871FcQj+dJgjWtC3dajQGOATSbkHF2zEk+/vS
-	eZIFEIjX6HCRn9yISFCqVSadBjnXoNr9/uRMgrx9gKjOwZoXCpN3R73hyPWs2pSxQzEBMi
-	ZS0W4JNbwMT37dnOwmc7nG012BIJhdo07Cx2gl04xto8dIgKg4edkf6FghBbmqXKUOaNg6
-	4iR4s5h+7QlIP4SJDZ8LIa7pl6vP+S95Z8fDuabYpfzzksIoYGGQGwuCXNDQhMAoruckrH
-	ANDErgtjbtm/IlAVu7+FSa5I+dEIzg+UKBhTkgDrlBbg1hgJEfl6rFpKasQBVQ==
-From: Romain Gantois <romain.gantois@bootlin.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Romain Gantois <romain.gantois@bootlin.com>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>,
- Arnd Bergmann <arnd@arndb.de>, Mauro Carvalho Chehab <mchehab@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Kory Maincent <kory.maincent@bootlin.com>, linux-i2c@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-media@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v7 9/9] misc: add FPC202 dual port controller driver
-Date: Thu, 20 Feb 2025 13:51:13 +0100
-Message-ID: <6232449.lOV4Wx5bFT@fw-rgant>
-In-Reply-To: <Z7cbX5jX3NL4C2GR@shikoro>
-References:
- <20250204-fpc202-v7-0-78b4b8a35cf1@bootlin.com>
- <2025022038-hangnail-rehab-c145@gregkh> <Z7cbX5jX3NL4C2GR@shikoro>
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=QGnp1hPc4h8YmxgjCIlQSvQmEqv4VQlYn22ipnSzRrU=;
+	b=hjjfB0Q/MlPPOj88KiyDJYmA3pFIAZ8XhDTyMjboenGw0128l00/kuXeHUDQvf3fqfVk/8
+	xsli0X/W7hMVRUZdk6pD0XIYwmd0DQlucQSZLIQJOvxDHrhuZWTBcyybS8r0OR/ckp3uju
+	b0m4J/hrFIzjv9VYw+fDyAdR9zHAN/FYfLaN097aOJ5mOoNw+aoZpdkxpmsA4GKSMqjWol
+	VaGA0+8RRpWWJ8xbktRyHWVI4D0KwX5PdCTWqXxZsME2wFMKyTLgB/tQ9PWRXMD+hanMsL
+	hC7aRIzBLInOs+Xijat+NFra9g+ze/vawFS5/pJzmd0ZDJOgmt8U85NxgoJ3yw==
+Message-ID: <9efc1ba4-89ad-4aed-b4d5-b0a53b120fd4@bootlin.com>
+Date: Thu, 20 Feb 2025 13:51:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart5091325.31r3eYUQgx";
- micalg="pgp-sha256"; protocol="application/pgp-signature"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm: writeback: Fix kernel doc name
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: thomas.petazzoni@bootlin.com, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
+References: <20250207-b4-fix-warning-v1-1-b4964beb60a3@bootlin.com>
+Content-Language: en-US
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
+ 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
+In-Reply-To: <20250207-b4-fix-warning-v1-1-b4964beb60a3@bootlin.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 X-GND-State: clean
 X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeijedukecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufffkfgjfhggtgesghdtreertddtjeenucfhrhhomheptfhomhgrihhnucfirghnthhoihhsuceorhhomhgrihhnrdhgrghnthhoihhssegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeehleefieekgeetkeetieetveeitefhgfejhefggfdtfffgteefieeufeeuteegjeenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghlohepfhifqdhrghgrnhhtrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrohhmrghinhdrghgrnhhtohhishessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvddvpdhrtghpthhtohepfihsrgdorhgvnhgvshgrshesshgrnhhgqdgvnhhgihhnvggvrhhinhhgrdgtohhmpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheprhhomhgrihhnrdhgrghnthhoihhssegsohhothhlihhnrdgtohhmpdhrtghpthhtohepthhomhhirdhvr
- ghlkhgvihhnvghnsehiuggvrghsohhnsghorghrugdrtghomhdprhgtphhtthhopehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheprghnughirdhshhihthhisehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhg
-X-GND-Sasl: romain.gantois@bootlin.com
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeijedukecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpefnohhuihhsucevhhgruhhvvghtuceolhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepjeegjeeguddtkefhfffggeduuedttefgueevgeetfedttdefveeufffgvefgveeknecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrddtrddvtdgnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepledprhgtphhtthhopehmrggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepmhhrihhprghrugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthiiihhmmhgvrhhmrghnnhesshhushgvrdguvgdprhgtphhtthhopegrihhrlhhivggusehgmhgrihhlr
+ dgtohhmpdhrtghpthhtohepshhimhhonhgrsehffhiflhhlrdgthhdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhopegurhhiqdguvghvvghlsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-GND-Sasl: louis.chauvet@bootlin.com
 
---nextPart5091325.31r3eYUQgx
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
-From: Romain Gantois <romain.gantois@bootlin.com>
-Date: Thu, 20 Feb 2025 13:51:13 +0100
-Message-ID: <6232449.lOV4Wx5bFT@fw-rgant>
-In-Reply-To: <Z7cbX5jX3NL4C2GR@shikoro>
-MIME-Version: 1.0
 
-Hello Wolfram,
 
-On jeudi 20 f=C3=A9vrier 2025 13:09:03 heure normale d=E2=80=99Europe centr=
-ale Wolfram Sang=20
-wrote:
-> > as this is a i2c_driver, why isn't it in drivers/i2c/ somewhere?  Why
-> > misc?
->=20
-> Because drivers/i2c is only for I2C controllers and this is not a
-> controller. Other address translators also reside in their respective
-> subsystem, e.g. media for GMSL (de-)serializers. I don't know this chip,
-> maybe it has no "respective" subsystem and, thus, misc?
+Le 07/02/2025 à 18:35, Louis Chauvet a écrit :
+> During the creation of drmm_ variants for writeback connector, one
+> function was renamed, but not the kernel doc.
+> 
+> To remove the warning, use the proper name in kernel doc.
+> 
+> Fixes: 135d8fc7af44 ("drm: writeback: Create an helper for drm_writeback_connector initialization")
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Closes: https://lore.kernel.org/all/20250207142201.550ce870@canb.auug.org.au/
+> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
 
-That is correct, this chip acts both as an I2C address translator and as a=
-=20
-GPIO controller with LED control and prefetch capabilities. It's meant to=20
-aggregate control signals from multiple SFP cages (or other similar port=20
-types), which have both I2C and low-speed signals.
+Hi all,
 
-Moreover, the chip can be configured to use an SPI master interface instead=
- of=20
-an I2C one, although this isn't supported in this driver.
+Gentle ping on this patch. Can someone ack/review it so I can apply it 
+on drm-misc-next?
 
-Considering all of this, I didn't think that either the I2C subsystem or th=
-e=20
-GPIO subsystem were a good fit for this component, which is why I chose the=
-=20
-misc subsystem.
+Thanks,
+Louis Chauvet
 
-Best Regards,
+> ---
+>   drivers/gpu/drm/drm_writeback.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_writeback.c b/drivers/gpu/drm/drm_writeback.c
+> index 3628fbef77524a7390b3929896a20f1c0a82117d..b14dafe765a148bbde70fcfd1a49cfea9baa9fea 100644
+> --- a/drivers/gpu/drm/drm_writeback.c
+> +++ b/drivers/gpu/drm/drm_writeback.c
+> @@ -213,7 +213,7 @@ static void delete_writeback_properties(struct drm_device *dev)
+>   }
+>   
+>   /**
+> - * drm_writeback_connector_init_with_encoder - Initialize a writeback connector with
+> + * __drm_writeback_connector_init - Initialize a writeback connector with
+>    * a custom encoder
+>    *
+>    * @dev: DRM device
+> 
+> ---
+> base-commit: 2eca617f12586abff62038db1c14cb3aa60a15aa
+> change-id: 20250207-b4-fix-warning-431e0a7067ae
+> 
+> Best regards,
 
-=2D-=20
-Romain Gantois, Bootlin
+-- 
+Louis Chauvet, Bootlin
 Embedded Linux and Kernel engineering
 https://bootlin.com
-
---nextPart5091325.31r3eYUQgx
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEYFZBShRwOvLlRRy+3R9U/FLj284FAme3JUEACgkQ3R9U/FLj
-285XmQ/+JH6sTra2DHeFaZhXztjqmfO3by20dIZfJUrns3TrzJOsd8LMRdvKo7xu
-TqTrQ5E10KMNtVvu98HkF2Yhig2enCQxdlwpVEnbDA8lH+PjvV9sOA3Rz8n2fokC
-uPzgzVLAA7IOe5UyMdYPU2YmDgVn+kNUJCxJVHGM/qb/H7MUI2HH8QZxj6XNa3KS
-3ZWRMcc0XImISTzDpFC02Vwcfy+Q3wr+BtvWU8aT7OM5J96JBiyzvGWPYTNarSjg
-CTHXmGmRpLmvqfS2576qBV6XUfmUNqDAZhOoDm6zftIOOimUAentfKzFjdJ9Nlam
-ccf9WrWVbjgPsv78dX60N+9DpCsNLNeD7Vg2zHvgFRDs7l9NDztEX60vyAX1YLA7
-E2dMJ2NXgIx0+Co1IHFCBa3rYZLEflLHNem1TVloSZ9JvYNV2P/nlkM+JB3zc3mX
-h/jt/XYaXQvRmURW+kc+7NKYl9yVbBZQ7xt5b5ORxMITnrJjpfay3HEAxSh5oGDv
-7bjs2t9ti/7/JpA6FTbmjHfHiCfhF3FRajqq4JrP1f5i2CVFl9d/fEPFe45hBB4u
-vV1FUr1xOiGAFNO9IdcZKyiYtdcNAkCuzCJv19+bHth9eJL3oAA9caz67gEDtvrX
-YA9mCyW7ldjs3vScFnkZHzlWenElfk+WEPa1wvwOzIA0niWYMPc=
-=J7Vz
------END PGP SIGNATURE-----
-
---nextPart5091325.31r3eYUQgx--
-
-
 
 
