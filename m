@@ -1,182 +1,196 @@
-Return-Path: <linux-kernel+bounces-523961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE7C3A3DD61
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:54:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86BE5A3DD60
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:54:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE9557A1A56
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:53:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BD1E3A4100
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:54:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4D821FBEB0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C2F21FBC8E;
 	Thu, 20 Feb 2025 14:53:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BA25XDsT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YVRROzhR"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC691CEADB;
-	Thu, 20 Feb 2025 14:53:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EED81C6F70;
+	Thu, 20 Feb 2025 14:53:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740063234; cv=none; b=nZIiKmJgfwOSxhtQMRCRGMPlP9q1csU9Y1qAbm/fyrCE5RCnljbHguCVwvVMrn8WTaW3FakqlhKBL8ODJle+0MdRdH75tqcorAmB6C65RdZDW2YFQeYQ6KnXl323XeIVlpRUw2Jzn1sDCKs0qQYToK+GBbDGC+nSvHVvY6ZVNEQ=
+	t=1740063233; cv=none; b=aoIfninOekHnIcD6Xm5otD3Oy3i1Kw16Xz4mu2oM6ZnklG2wUPs9T+cQNP3hkgNw/gnep6r6wGgqEDzbkn/NKGizDPOUlkaW62crdcPIeeXWoBljKN0t0shIyj8BDYUUB9es8Hnb/GtXFIkuhsnwsEJTu8uzkJFejIxWzxjE2ys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740063234; c=relaxed/simple;
-	bh=Sh1gnYO1v4bmBmmM8gmqJJQ9lElifSTky1LxF8q7DSI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bvQIPFXcI0N6zDGSG69dFKBhfcBj/9Cc0VTUjWVsBV+RrKhn6C6ggbMpA9jTfb4dmhWKOMR7xvztMl0x5VMQ7DZ4CmIMOvrcibxk8DZ+rxiHB5mr9DnhxUEwjrj+4QkjpRMkOablqR9UQD1V/eXoEeTrdhHnDHMuewKlJmBBAms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BA25XDsT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C40A4C4CEE2;
-	Thu, 20 Feb 2025 14:53:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1740063233;
-	bh=Sh1gnYO1v4bmBmmM8gmqJJQ9lElifSTky1LxF8q7DSI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BA25XDsTHuzE8WV26EB6hHzVvzvnh0My5vPGh0vwnZ43dfZoAO6vm6mV+mftFWKg6
-	 zpi4orU+FK1lnsa4Gf3ASXKEHJyO9RD3Pf3kPLQh3/qcGtcJwilLABz6UbS5WgGosW
-	 bZ24nZuq857KsCyn19jP3zfU5cRKIdYgEgU7xrNY=
-Date: Thu, 20 Feb 2025 15:53:50 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Martin Uecker <uecker@tugraz.at>
-Cc: Boqun Feng <boqun.feng@gmail.com>, "H. Peter Anvin" <hpa@zytor.com>,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	rust-for-linux <rust-for-linux@vger.kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	David Airlie <airlied@gmail.com>, linux-kernel@vger.kernel.org,
-	ksummit@lists.linux.dev
-Subject: Re: Rust kernel policy
-Message-ID: <2025022042-jot-favored-e755@gregkh>
-References: <Z7SwcnUzjZYfuJ4-@infradead.org>
- <CANiq72myjaA3Yyw_yyJ+uvUrZQcSLY_jNp65iKH8Y5xGY5tXPQ@mail.gmail.com>
- <326CC09B-8565-4443-ACC5-045092260677@zytor.com>
- <CANiq72m+r1BZVdVHn2k8XeU37ZeY6VT2S9KswMuFA=ZO3e4uvQ@mail.gmail.com>
- <a7c5973a-497c-4f31-a7be-b3123bddb6dd@zytor.com>
- <Z7VKW3eul-kGaIT2@Mac.home>
- <2025021954-flaccid-pucker-f7d9@gregkh>
- <4e316b01634642cf4fbb087ec8809d93c4b7822c.camel@tugraz.at>
- <2025022024-blooper-rippling-2667@gregkh>
- <1d43700546b82cf035e24d192e1f301c930432a3.camel@tugraz.at>
+	s=arc-20240116; t=1740063233; c=relaxed/simple;
+	bh=4/pMzWx/e525LbJKFbze/lMI08yLnwEFOH20ty6Rm0w=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=WVk3a61PsJpOELhRmyrJuQ8R1U3mA8eK6TuByXCqg78AuKK+jvfw3+iH4jI71zm7uLgguXeVtoM491JeL4qWRsjxMM/+UBGdy9RTNd2CBjZh34Rs3O7TlkuCpbg0+qZ5Cign32H5Q1hmeyTXhcIj0TX1iu43BzBMrUcfipiMy5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YVRROzhR; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-439350f1a0bso6713775e9.0;
+        Thu, 20 Feb 2025 06:53:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740063230; x=1740668030; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VnF7DjHtaQEH3B1zrO6KsyD/Yfh+zOQ+dj+D2Kr1dck=;
+        b=YVRROzhRoCfdxYE8WAsBXBt/gjUOBTqeUKK235EgrHpHJ70SArMYKvACVAOM5QyzRr
+         IPJXsqoaAFtGA/MAggTFB+zqFAggFT6czuZuKutWRw7/VHrUTp+QBQNwN/X+EOr7WebA
+         hvgRsocIKBn+vatNsUcVEHMrr0vuP3KnJA7sciL2i28iZeb8SbrTv1z+zLtBAPSQKA7l
+         ttTAfGKSAmQTIED/7gzQj7wF5ym0oioUut99cj5QB38dL7pbA1XM4PfA3Xqv+j3l1eOs
+         DgUoDsMlSYb4HrjJgdiO86PYERSgI5hlb9P07EjDisSBryrOby5r5pi4o/ZWyDbDq3nL
+         2EsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740063230; x=1740668030;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=VnF7DjHtaQEH3B1zrO6KsyD/Yfh+zOQ+dj+D2Kr1dck=;
+        b=RMY5/T5pMs0FoBtnWcQqLo8WEfCZI7DPS+bGOLEALINCKIzLztTyuQJGQpRRmsvO82
+         y5279f1/vmqH2GwFzphoe6y6dCXT7gzHSPtFgeFTuB8LoJ9GB/Sh7sp9GmURntse5oRS
+         X91NVyA6TR0Q3djKbcyAfgyxt1/Ux+u8L2ev2wXsFRK+HvpU1LTOYGMADnxpG8A2TrXJ
+         l3V3cqdLKKoFXRVeAYQTpO6UuGKJcqjeak2sIC1SqBQfzbqvdDWISNImiBV6sZ/MqKCw
+         Aku90S0/i1kaFnBig5ev6ygzvVknM5P2FBiLJTYYAV9T1nV1kr3rNNie2hp+KEfttoia
+         6EWw==
+X-Forwarded-Encrypted: i=1; AJvYcCUXfWWSqxeQYZgziwIFz2jRJCNp73e53EqEnNdYm33IVJ+EmdbGM77hVSunU55I2j4wM037Xh5qm7LxfZFy@vger.kernel.org, AJvYcCXSdAlmDCpgbFOlUGNXwZbYiRRLXbKDz5q9orsk1qqkYiI5U+yoa2N9ahcrnZyp0HcC4jGacBD8SP3u@vger.kernel.org, AJvYcCXZ5b1r2gAsAhC2/mWVVduGyJRui+rHor96PqPfR6H3GjTzxvF8xLSqqMCGkfd3bZeQVMBY2NziMH2D@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0snVuqwknPblpOCpoAqwhOEAYGjbj1lbEXxOtbG/AbhFTWPZa
+	PJsTkSvE/+/2XG4lKoLjYsAYIbuSNg+38OKEtZ5kMBD7dIZXsfLm
+X-Gm-Gg: ASbGncvINCUal/nq6HKAYJ7yEV1rIr+dioaJPFVoHX9huWVI4nfDi0XOkAV2A3Xt0W1
+	pxsCpvxI5TGPgYqI2IqUid8DpLIHHZ2NVn1LTPCF7xXYH5bL77bGHM95SMFxBRRCcdiYJ1XQXf5
+	/emFKMq5Pq7AGeCV98D/hxUhh0jLxPr2+Dn3fHiK/OnxFyeJQ5krGAmcTxmgnk88RqyIBPpv4ni
+	6uC/ANMBJWy91o8eubObwgw4oYy24KzllTj3rDudaCdzZJfJ9YO/etKCEObt6JBCnhPyUHAzkxo
+	Uyd/0CZ56FaeoC5EZvburBbZfZR0kU7TV8/qZgtb5XH2h8eFzzx0q33oRGRATjU=
+X-Google-Smtp-Source: AGHT+IGzcQv6D79Z/HRxMUtj/i5EFZORo6aaJ85Q2wB0UdtwW9sqZZhHpWNotMoI9P55Xbeqiq29YQ==
+X-Received: by 2002:a05:600c:1d08:b0:439:8e95:796a with SMTP id 5b1f17b1804b1-439a30d38f4mr32497155e9.13.1740063229620;
+        Thu, 20 Feb 2025 06:53:49 -0800 (PST)
+Received: from ?IPv6:2001:818:ea8e:7f00:2575:914:eedd:620e? ([2001:818:ea8e:7f00:2575:914:eedd:620e])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a04f208sm242976455e9.6.2025.02.20.06.53.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 06:53:49 -0800 (PST)
+Message-ID: <8f588f4b88d122815df694660d19672e8ccd3d70.camel@gmail.com>
+Subject: Re: [PATCH 14/14] Documentation: ABI: testing: ad4080 docs
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>, jic23@kernel.org, 
+	robh@kernel.org, conor+dt@kernel.org, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 20 Feb 2025 14:53:52 +0000
+In-Reply-To: <20250220135429.8615-15-antoniu.miclaus@analog.com>
+References: <20250220135429.8615-1-antoniu.miclaus@analog.com>
+	 <20250220135429.8615-15-antoniu.miclaus@analog.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1d43700546b82cf035e24d192e1f301c930432a3.camel@tugraz.at>
 
-On Thu, Feb 20, 2025 at 09:57:29AM +0100, Martin Uecker wrote:
-> Am Donnerstag, dem 20.02.2025 um 08:10 +0100 schrieb Greg KH:
-> > On Thu, Feb 20, 2025 at 08:03:02AM +0100, Martin Uecker wrote:
-> > > Am Mittwoch, dem 19.02.2025 um 06:39 +0100 schrieb Greg KH:
-> > > > On Tue, Feb 18, 2025 at 07:04:59PM -0800, Boqun Feng wrote:
-> > > > > On Tue, Feb 18, 2025 at 04:58:27PM -0800, H. Peter Anvin wrote:
-> > > > > [...]
-> > > > > > > > 
-> > > ...
-> > > > 
-> > > > 
-> > > > I'm all for moving our C codebase toward making these types of problems
-> > > > impossible to hit, the work that Kees and Gustavo and others are doing
-> > > > here is wonderful and totally needed, we have 30 million lines of C code
-> > > > that isn't going anywhere any year soon.  That's a worthy effort and is
-> > > > not going to stop and should not stop no matter what.
-> > > 
-> > > It seems to me that these efforts do not see nearly as much attention
-> > > as they deserve.
-> > 
-> > What more do you think needs to be done here?  The LF, and other
-> > companies, fund developers explicitly to work on this effort.  Should we
-> > be doing more, and if so, what can we do better?
-> 
-> Kees communicates with the GCC side and sometimes this leads to
-> improvements, e.g. counted_by (I was peripherily involved in the
-> GCC implementation). But I think much much more could be done,
-> if there was a collaboration between compilers, the ISO C working
-> group, and the kernel community to design and implement such
-> extensions and to standardize them in ISO C.
+On Thu, 2025-02-20 at 15:54 +0200, Antoniu Miclaus wrote:
+> Add documentation for the ad4080 attributes.
+>=20
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> ---
+> =C2=A0.../ABI/testing/sysfs-bus-iio-adc-ad4080=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 | 55 +++++++++++++++++++
+> =C2=A01 file changed, 55 insertions(+)
+> =C2=A0create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-adc-ad40=
+80
+>=20
+> diff --git a/Documentation/ABI/testing/sysfs-bus-iio-adc-ad4080
+> b/Documentation/ABI/testing/sysfs-bus-iio-adc-ad4080
+> new file mode 100644
+> index 000000000000..e37bfba0e989
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/sysfs-bus-iio-adc-ad4080
+> @@ -0,0 +1,55 @@
+> +What:		/sys/bus/iio/devices/iio:deviceX/lvds_sync
+> +Date:		February 2025
+> +KernelVersion:
+> +Contact:	linux-iio@vger.kernel.org
+> +Description:
+> +		This attribute handles the data synchronization
+> process.Because the CNV
+> +		signal is not taken into account by the FPGA when capturing
+> the data, we
+> +		need a process that configures the ADC to output pattern
+> data, writes the
+> +		SYNC bit in the axi_adc register map, waits until the custom
+> HDL syncs the
+> +		data correctly, and then changes the output mode to analog
+> data instead of
+> +		the fixed pattern.
 
-Sorry, I was referring to the kernel work happening here by Kees and
-Gustavo and others.  Not ISO C stuff, I don't know of any company that
-wants to fund that :(
+I'll comment this one in the driver. I have some questions on how this work=
+s...
 
-> > > I also would like to point out that there is not much investments
-> > > done on C compiler frontends (I started to fix bugs in my spare time
-> > > in GCC because nobody fixed the bugs I filed), and the kernel 
-> > > community also is not currently involved in ISO C standardization.
-> > 
-> > There are kernel developers involved in the C standard committee work,
-> > one of them emails a few of us short summaries of what is going on every
-> > few months.  Again, is there something there that you think needs to be
-> > done better, and if so, what can we do?
-> > 
-> > But note, ISO standards work is really rough work, I wouldn't recommend
-> > it for anyone :)
-> 
-> I am a member of the ISO C working group. Yes it it can be painful, but
-> it is also interesting and people a generally very nice.
-> 
-> There is currently no kernel developer actively involved, but this would
-> be very helpful.
-> 
-> (Paul McKenney is involved in C++ regarding atomics and Miguel is
-> also following what we do.)
+> +
+> +What:		/sys/bus/iio/devices/iio:deviceX/lvds_lvds
+> +Date:		February 2025
+> +KernelVersion:
+> +Contact:	linux-iio@vger.kernel.org
+> +Description:
+> +		Configures the signal type of the CNV signal. The value can
+> be either CMOS
+> +		(lvds_cnv=3D0) or LVDS (lvds_cnv=3D1).
 
-Yes, some of us get reports from them and a few others at times as to
-what's going on, but finding people, and companies, that want to do this
-work is hard.  I recommend it for people that want to do this, and
-applaud those that do, and am involved in other specification work at
-the moment so I know the issues around all of this.
+The name seems to be wrong with what you have implemented. From this
+description, I would think of this as a DT property? Can the signal type re=
+ally
+change at runtime?
 
-> > > I find this strange, because to me it is very obvious that a lot more
-> > > could be done towards making C a lot safer (with many low hanging fruits),
-> > > and also adding a memory safe subset seems possible.
-> > 
-> > Are there proposals to C that you feel we should be supporting more?
-> 
-> There are many things.
-> 
-> For example, there is an effort to remove cases of UB.  There are about
-> 87 cases of UB in the core language (exlcuding preprocessor and library)
-> as of C23, and we have removed 17 already for C2Y (accepted by WG14 into
-> the working draft) and we have concrete propsoals for 12 more.  This
-> currently focusses on low-hanging fruits, and I hope we get most of the
-> simple cases removed this year to be able to focus on the harder issues.
-> 
-> In particulary, I have a relatively concrete plan to have a memory safe
-> mode for C that can be toggled for some region of code and would make
-> sure there is no UB or memory safety issues left (I am experimenting with
-> this in the GCC FE).  So the idea is that one could start to activate this
-> for certain critical regions of code to make sure there is no signed
-> integer overflow or OOB access in it.   This is still in early stages, but
-> seems promising. Temporal memory safety is harder and it is less clear
-> how to do this ergonomically, but Rust shows that this can be done.
+> +
+> +What:		/sys/bus/iio/devices/iio:deviceX/filter_sel
+> +Date:		February 2025
+> +KernelVersion:
+> +Contact:	linux-iio@vger.kernel.org
+> +Description:
+> +		This attribute enables the digital filter functionality of
+> the AD4080.In
+> +		order to capture data correctly, the function must configure
+> the ADC
+> +		through SPI to select the filter type and enable data capture
+> in filter
+> +		mode through axi_adc(In this mode, data is gated by a signal
+> generated by
+> +		the AD4080 (GPIO1 and is not continuous as it is when the
+> filter is
+> +		disabled).
+> +
+> +What:		/sys/bus/iio/devices/iio:deviceX/filter_sel_available
+> +Date:		February 2025
+> +KernelVersion:
+> +Contact:	linux-iio@vger.kernel.org
+> +Description:
+> +		Return the available filter modes that can be set.
 
-What do you mean by "memory safe" when it comes to C?  Any pointers to
-that (pun intended)?
+There's a standard attr for this. I think we settled=20
+> +
+> +What:		/sys/bus/iio/devices/iio:deviceX/sinc_dec_rate
+> +Date:		February 2025
+> +KernelVersion:
+> +Contact:	linux-iio@vger.kernel.org
+> +Description:
+> +		Set the filter=E2=80=99s decimation rate.
+> +
+> +What:		/sys/bus/iio/devices/iio:deviceX/sinc_dec_rate_available
+> +Date:		February 2025
+> +KernelVersion:
+> +Contact:	linux-iio@vger.kernel.org
+> +Description:
+> +		Return the available filter's decimation rates.
+> +
+> +
 
-> I also have a proposal for a length-prefixed string type and for 
-> polymorhic types / genericity, but this may not be so relevant to the
-> kernel at this point.
+I'm not yet convinced we need the dec_rate custom attr. I'll add more comme=
+nts
+in the driver.
 
-We have a string type in the kernel much like this, it's just going to
-take some work in plumbing it up everywhere.  Christoph touched on that
-in one of his emails in this thread many messages ago.  Just grinding
-out those patches is "all" that is needed, no need for us to wait for
-any standard committee stuff.
+- Nuno S=C3=A1
 
-> Even more important than ISO C proposals would be compiler extensions
-> that can be tested before standardization.
-
-We support a few already for gcc, and I don't think we've refused
-patches to add more in the past, but I might have missed them.
-
-thanks,
-
-greg k-h
 
