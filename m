@@ -1,120 +1,279 @@
-Return-Path: <linux-kernel+bounces-524023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7AE5A3DE12
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:17:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67056A3DE19
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:18:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BE933A67B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:16:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 782C83A2D35
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:16:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0864C1FCCF8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 738041FCFF0;
 	Thu, 20 Feb 2025 15:16:28 +0000 (UTC)
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 958321581F9;
-	Thu, 20 Feb 2025 15:16:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CEBD1CCEF0
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 15:16:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740064587; cv=none; b=jyXD6fFTX4e1M67VKJ35wJxnu3067Sp1nA7Emi4WX01Itn+LbCuA3X1LsVnUobk2BRW44X7Vjh5bka4BJpavU+y0nfLK+Cgz30DTitkbddeMrUwm/dCbxEEAdd5m2oSRXKTKtPfPFRtFRvo3fts1bsioEP7Klr7P8JcMtelTZHc=
+	t=1740064587; cv=none; b=I3kVJ3Cx339XVTdM6vWW6vTGgEZjIwSUUAobDrg2ECA3rVhOxrW4VM2GMg+P3ZNcuJ2dZlmQvyp6Hvrr9EnT698B5ooTz3q/Q/34kaRYc25+lRL1yje22DTFbLSGP1mcioyifz3iO/ytjkOqElKI7KoujGybM78A42QMqz70Sdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740064587; c=relaxed/simple;
-	bh=IhOY9/JCO1dbKVVIDtcJEfxOlSnCBKZ/CY5HwYzvdxU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DkKADMJuR9S6sCytl3STru2ifr4VEk3RbFJ0FnwQOQSjXR8JVILJ1mYOZys+zRMIwcyEOQKMCYVw2k6CIDbAqoUxl4ZRo01dBHFt+nTfdIjfFHjpk5rJwBgAadRkX3qBq+hmJ/l7Hw6osF9OV8ibSHUwLcujVuHxMGBiND6bsw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6dcd4f1aaccso14394326d6.2;
-        Thu, 20 Feb 2025 07:16:25 -0800 (PST)
+	bh=mpIumV6df1HTLH1lQVU3cyezvkk5CqcHW7wTLDrChE4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=lc6qMh+IZAT3cXWJEmafWymGvuCrd2pYLheKLrLDGTpkcSyB+w0IqwbvWkxjbt7OtvwA+Rei226DFkt+xODTo/RsukE4Bqgeigk27RzX12ZxENCtTvDf+0qHQ7nXngdX1SFV62GTF+k5Gb6gNUrlF4lVEqvB6tYhPmsC5xuvo6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3cfb20d74b5so8930895ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 07:16:25 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740064584; x=1740669384;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Yz9Aa4nJUKQ2wdIGmXFp1QwA03q1/SdQVCjd5FfHE7A=;
-        b=vF9f50vbAOIAbUT8kWo5JeFaMgzNBmVpcPfJ2Zm/Z3Wssb2QCT8OpfFyxZuwWwn/Qp
-         SlREVWCv5EFy9anoizlU8D2VG6ty2hL/8Qp7g4INZfj8AnTDr6zSVXwUTzPNeVZXmO17
-         MoYC0h8I9g7flsakDggDo4doeAzZ2p9PdJ+V9u3iY4tyRAsvlQirR8aX5RZRgzkCD/7n
-         /Q7pbQw/t1+u9PwGMPc2twl/zNOVemV9cszIYg0iLVh8r4koKgnXkGjROO5j7Q14LIuB
-         IeAP9ryrPeZD8wbJcxoOmEl9YNffKJiLIIKw3+erQs9P02TxRsYLt7gJBi/eeQ5qrLe1
-         reGw==
-X-Forwarded-Encrypted: i=1; AJvYcCU+/WsDt8F7lZ298uMGK9tCZevKGL8Xpta4eKEqZFLhptQ3gpcoXqOXfsnN0M3RnXijzzOgrbdrJYfX@vger.kernel.org, AJvYcCU1pElzI5ley2+QFCPc4/NAztbmzJNdCVmlt4uv2t7azvBfoRp5pdbWUPSUakbSpC7pYK0ztigJUdYFmi85@vger.kernel.org, AJvYcCXn088o0vtJl1/9p4y2Y1jl0mI9rHML89dIg2a65SSL6rIL7kOKNu4pQKtPMY4fq/sC8mCEpqOqqd0MqVYuAec=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGxjTDxWntN0logEU/i4FoihNye/rrDYXRSf7RhuS3Ud42uPHZ
-	Mo9EdFZ1ZaW3n1tQpdBFJjPiGo+nxCapTJbPruFKkWna6OZLarNLtEeBDoTO
-X-Gm-Gg: ASbGncuiylbYgeBQCOMnutA9CT3LHFZNZoS/CtehEYE4/cJUsk4gxNYGLX/Y546H43a
-	UgwkSQQhVucYS4UKky5y3X3ka3niCVaqVXNL6azTDpxVTF+6lG/Fi5amXXMoNhtCUeTEeMML/ov
-	JPwbBbplcwZI88CX2gXOGR9TGKdz696nUQeol0fMl5uzBazrotxyIgtXhVx6e8WVbsFwXXIseRN
-	eZTOjRim3YfOXxJ0V8F6puhRqFXSTEtSkAeF9mPA5a6L/ALNBuaNiSHgN0ROqCha3R0XVnVZ/de
-	SBzfah6n1XxIbhkZQolJgxMgKQDE61KB6UmYPmJzx/dNQh9clHfdg8UxTw==
-X-Google-Smtp-Source: AGHT+IEQlrzTiG6y/t+GMWF9pL1FKS/2u++uRzUK1lgYbNU+nId9lfuz8wAJHQmLJ2rdXWfFh+6ORA==
-X-Received: by 2002:a05:6214:dc8:b0:6d8:932a:eaa3 with SMTP id 6a1803df08f44-6e66cc8b647mr368939296d6.3.1740064583930;
-        Thu, 20 Feb 2025 07:16:23 -0800 (PST)
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com. [209.85.160.173])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e672c1e7f0sm57157276d6.114.2025.02.20.07.16.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Feb 2025 07:16:23 -0800 (PST)
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4720cfc35e9so16484171cf.2;
-        Thu, 20 Feb 2025 07:16:23 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUaNWZos6OKYsk9mONpKEHxziv92eBoAqQ5XTsjfO+uCRLjzfekEdJasa7QpbSziddnIsmg86+2I8zM3i7yVM4=@vger.kernel.org, AJvYcCVHQB7+BO8KfkVgz0vIkO1N0GjrCScltpqCmwISlbHSObUWLYxNvlEC7/RwGtXP6uM/yTGRL71Kmfeg@vger.kernel.org, AJvYcCWW7tefqffpeNpSU71sJOXk8qJzSndijRoJ573p25axWhHWa56MXE8WYjWFxCix0V2P9mdpWo8kYHVBsRIK@vger.kernel.org
-X-Received: by 2002:a05:622a:1892:b0:472:6f4:733a with SMTP id
- d75a77b69052e-47206f47ec1mr127522361cf.47.1740064583217; Thu, 20 Feb 2025
- 07:16:23 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740064585; x=1740669385;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=d04XvsEt73ru0PJ+SYLidx9fj6a1WnJYkkIkv2Z1Gek=;
+        b=hJTU4tO8cAe3NthrTr9K0WThAFkYkcmw7HDjgAIFC9thIlIUjw9M41/k9gm32aBS0+
+         VFxlLqFFrV6e6fsyYnmd7o6ARLwVFbT271BJxMDy9D76bBCX/mGtCWR5g0cUItDlmA/a
+         k1+rlM2kn/hEIVVigzI9mocPQESyBaTGpaEZxjvcXtJz93M2aTH/iSmdz6SHfffY9EeR
+         8og+MDOwh0bUX2V3JNFNV0y4NQ5p4zhULw/s6dJ2B8wxnfjG5mfDlCAO8IEArmIIWmfa
+         K3qeNJWhdGBY8j6V7A/PPT0zeq3oI4YN0pMEYAO+Gp+g0WnmC11eSOqwwPbPYwBtFbrO
+         Tisg==
+X-Forwarded-Encrypted: i=1; AJvYcCUCTTKCdqezNvRJTHqHuxDvYHE7K00ddHqJUdhaOMtafepMasqeI2khWe2/llwcd6yD+8W2xTfvsETHxUQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeIzysuFM1lmIu0DpW9DXiJpb0Ta0GDE7ka/6nFuDpmUCF8mES
+	XkBBRhmuAou7bzVyiCJAoYpddDkB1xb13vkYfMETbbfudpCnoivslIkV34TvV+v8SsBkH6bxl9S
+	eOLAweNNIDamOTtCnHNXle2XE8uQPUNvRh0hdAcawdMK1b6usfKjCPZg=
+X-Google-Smtp-Source: AGHT+IGB0ZhXUh/vPMBKKjAA9t2+1nH+70wn345yYz180PTDM8ZocwdhLNjLoG9FajSs+uzJKlnNQYKXWv/2TW6LzxzkCLgAxZ7H
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250210080217.2772467-1-suhui@nfschina.com>
-In-Reply-To: <20250210080217.2772467-1-suhui@nfschina.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 20 Feb 2025 16:16:11 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVdKvB1UWc0-opEoAwoOejcwmrFJtSB5EUqVqZD7-vP8A@mail.gmail.com>
-X-Gm-Features: AWEUYZkFZeSQptoyIGtmN3cwjufNCJhCIzkLaNlHZVq5Tc7_e1pALN-GSo40qPM
-Message-ID: <CAMuHMdVdKvB1UWc0-opEoAwoOejcwmrFJtSB5EUqVqZD7-vP8A@mail.gmail.com>
-Subject: Re: [PATCH] i2c: core: mark i2c_detect_address noinline_for_stack
-To: Su Hui <suhui@nfschina.com>
-Cc: wsa+renesas@sang-engineering.com, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+X-Received: by 2002:a05:6e02:20cb:b0:3d1:78c8:5ec8 with SMTP id
+ e9e14a558f8ab-3d2b52e0ce7mr63797825ab.13.1740064585034; Thu, 20 Feb 2025
+ 07:16:25 -0800 (PST)
+Date: Thu, 20 Feb 2025 07:16:25 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67b74749.050a0220.14d86d.02b4.GAE@google.com>
+Subject: [syzbot] [pm?] possible deadlock in lock_system_sleep
+From: syzbot <syzbot+ace60642828c074eb913@syzkaller.appspotmail.com>
+To: len.brown@intel.com, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, pavel@kernel.org, rafael@kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Sui,
+Hello,
 
-On Mon, 10 Feb 2025 at 09:03, Su Hui <suhui@nfschina.com> wrote:
-> When compile with CONFIG_FRAME_WARN=3D1024, there can be a warning:
->
-> drivers/i2c/i2c-core-base.c: In function =E2=80=98i2c_detect.isra=E2=80=
-=99:
-> drivers/i2c/i2c-core-base.c:2507:1: warning: the frame size of 1028 bytes
-> is larger than 1024 bytes [-Wframe-larger-than=3D].
->  2507 | }
->       | ^
->
-> Mark i2c_detect_address() noinline_for_stack to avoid this warning.
->
-> Signed-off-by: Su Hui <suhui@nfschina.com>
+syzbot found the following issue on:
 
-I have posted an alternative fix:
-"[PATCH] i2c: core: Allocate temporary client dynamically"
-https://lore.kernel.org/f9aa39362e918b62aec0567f899b37d8d3c44710.1740064176=
-.git.geert+renesas@glider.be/
+HEAD commit:    6537cfb395f3 Merge tag 'sound-6.14-rc4' of git://git.kerne..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1746afdf980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=61cbf5ac8a063ad4
+dashboard link: https://syzkaller.appspot.com/bug?extid=ace60642828c074eb913
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13e71498580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1432cba4580000
 
-Gr{oetje,eeting}s,
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/ae2568ec9e34/disk-6537cfb3.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/19be7179f649/vmlinux-6537cfb3.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/bd8a168d2027/bzImage-6537cfb3.xz
 
-                        Geert
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ace60642828c074eb913@syzkaller.appspotmail.com
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+======================================================
+WARNING: possible circular locking dependency detected
+6.14.0-rc3-syzkaller-00060-g6537cfb395f3 #0 Not tainted
+------------------------------------------------------
+syz-executor895/5833 is trying to acquire lock:
+ffffffff8e0828c8 (system_transition_mutex){+.+.}-{4:4}, at: lock_system_sleep+0x87/0xa0 kernel/power/main.c:56
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+but task is already holding lock:
+ffffffff8e07dc68 (param_lock){+.+.}-{4:4}, at: kernel_param_lock kernel/params.c:607 [inline]
+ffffffff8e07dc68 (param_lock){+.+.}-{4:4}, at: param_attr_store+0xe6/0x300 kernel/params.c:586
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #3 (param_lock){+.+.}-{4:4}:
+       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+       __mutex_lock+0x19b/0xb10 kernel/locking/mutex.c:730
+       ieee80211_rate_control_ops_get net/mac80211/rate.c:220 [inline]
+       rate_control_alloc net/mac80211/rate.c:266 [inline]
+       ieee80211_init_rate_ctrl_alg+0x18d/0x6b0 net/mac80211/rate.c:1015
+       ieee80211_register_hw+0x20cd/0x4060 net/mac80211/main.c:1531
+       mac80211_hwsim_new_radio+0x304e/0x54e0 drivers/net/wireless/virtual/mac80211_hwsim.c:5558
+       init_mac80211_hwsim+0x432/0x8c0 drivers/net/wireless/virtual/mac80211_hwsim.c:6910
+       do_one_initcall+0x128/0x700 init/main.c:1257
+       do_initcall_level init/main.c:1319 [inline]
+       do_initcalls init/main.c:1335 [inline]
+       do_basic_setup init/main.c:1354 [inline]
+       kernel_init_freeable+0x5c7/0x900 init/main.c:1568
+       kernel_init+0x1c/0x2b0 init/main.c:1457
+       ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:148
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+-> #2 (rtnl_mutex){+.+.}-{4:4}:
+       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+       __mutex_lock+0x19b/0xb10 kernel/locking/mutex.c:730
+       wg_pm_notification drivers/net/wireguard/device.c:80 [inline]
+       wg_pm_notification+0x49/0x180 drivers/net/wireguard/device.c:64
+       notifier_call_chain+0xb7/0x410 kernel/notifier.c:85
+       notifier_call_chain_robust kernel/notifier.c:120 [inline]
+       blocking_notifier_call_chain_robust kernel/notifier.c:345 [inline]
+       blocking_notifier_call_chain_robust+0xc9/0x170 kernel/notifier.c:333
+       pm_notifier_call_chain_robust+0x27/0x60 kernel/power/main.c:102
+       snapshot_open+0x189/0x2b0 kernel/power/user.c:77
+       misc_open+0x35a/0x420 drivers/char/misc.c:179
+       chrdev_open+0x237/0x6a0 fs/char_dev.c:414
+       do_dentry_open+0x735/0x1c40 fs/open.c:956
+       vfs_open+0x82/0x3f0 fs/open.c:1086
+       do_open fs/namei.c:3830 [inline]
+       path_openat+0x1e88/0x2d80 fs/namei.c:3989
+       do_filp_open+0x20c/0x470 fs/namei.c:4016
+       do_sys_openat2+0x17a/0x1e0 fs/open.c:1428
+       do_sys_open fs/open.c:1443 [inline]
+       __do_sys_openat fs/open.c:1459 [inline]
+       __se_sys_openat fs/open.c:1454 [inline]
+       __x64_sys_openat+0x175/0x210 fs/open.c:1454
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #1 ((pm_chain_head).rwsem){++++}-{4:4}:
+       down_read+0x9a/0x330 kernel/locking/rwsem.c:1524
+       blocking_notifier_call_chain_robust kernel/notifier.c:344 [inline]
+       blocking_notifier_call_chain_robust+0xa9/0x170 kernel/notifier.c:333
+       pm_notifier_call_chain_robust+0x27/0x60 kernel/power/main.c:102
+       snapshot_open+0x189/0x2b0 kernel/power/user.c:77
+       misc_open+0x35a/0x420 drivers/char/misc.c:179
+       chrdev_open+0x237/0x6a0 fs/char_dev.c:414
+       do_dentry_open+0x735/0x1c40 fs/open.c:956
+       vfs_open+0x82/0x3f0 fs/open.c:1086
+       do_open fs/namei.c:3830 [inline]
+       path_openat+0x1e88/0x2d80 fs/namei.c:3989
+       do_filp_open+0x20c/0x470 fs/namei.c:4016
+       do_sys_openat2+0x17a/0x1e0 fs/open.c:1428
+       do_sys_open fs/open.c:1443 [inline]
+       __do_sys_openat fs/open.c:1459 [inline]
+       __se_sys_openat fs/open.c:1454 [inline]
+       __x64_sys_openat+0x175/0x210 fs/open.c:1454
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (system_transition_mutex){+.+.}-{4:4}:
+       check_prev_add kernel/locking/lockdep.c:3163 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3282 [inline]
+       validate_chain kernel/locking/lockdep.c:3906 [inline]
+       __lock_acquire+0x249e/0x3c40 kernel/locking/lockdep.c:5228
+       lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5851
+       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+       __mutex_lock+0x19b/0xb10 kernel/locking/mutex.c:730
+       lock_system_sleep+0x87/0xa0 kernel/power/main.c:56
+       hibernate_compressor_param_set+0x1c/0x210 kernel/power/hibernate.c:1452
+       param_attr_store+0x18f/0x300 kernel/params.c:588
+       module_attr_store+0x55/0x80 kernel/params.c:924
+       sysfs_kf_write+0x117/0x170 fs/sysfs/file.c:139
+       kernfs_fop_write_iter+0x33d/0x500 fs/kernfs/file.c:334
+       new_sync_write fs/read_write.c:586 [inline]
+       vfs_write+0x5ae/0x1150 fs/read_write.c:679
+       ksys_write+0x12b/0x250 fs/read_write.c:731
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+Chain exists of:
+  system_transition_mutex --> rtnl_mutex --> param_lock
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(param_lock);
+                               lock(rtnl_mutex);
+                               lock(param_lock);
+  lock(system_transition_mutex);
+
+ *** DEADLOCK ***
+
+4 locks held by syz-executor895/5833:
+ #0: ffff8880335ec420 (sb_writers#8){.+.+}-{0:0}, at: ksys_write+0x12b/0x250 fs/read_write.c:731
+ #1: ffff88803398c488 (&of->mutex){+.+.}-{4:4}, at: kernfs_fop_write_iter+0x27b/0x500 fs/kernfs/file.c:325
+ #2: ffff8880307af788 (kn->active#4){.+.+}-{0:0}, at: kernfs_fop_write_iter+0x29e/0x500 fs/kernfs/file.c:326
+ #3: ffffffff8e07dc68 (param_lock){+.+.}-{4:4}, at: kernel_param_lock kernel/params.c:607 [inline]
+ #3: ffffffff8e07dc68 (param_lock){+.+.}-{4:4}, at: param_attr_store+0xe6/0x300 kernel/params.c:586
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 5833 Comm: syz-executor895 Not tainted 6.14.0-rc3-syzkaller-00060-g6537cfb395f3 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_circular_bug+0x490/0x760 kernel/locking/lockdep.c:2076
+ check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2208
+ check_prev_add kernel/locking/lockdep.c:3163 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3282 [inline]
+ validate_chain kernel/locking/lockdep.c:3906 [inline]
+ __lock_acquire+0x249e/0x3c40 kernel/locking/lockdep.c:5228
+ lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5851
+ __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+ __mutex_lock+0x19b/0xb10 kernel/locking/mutex.c:730
+ lock_system_sleep+0x87/0xa0 kernel/power/main.c:56
+ hibernate_compressor_param_set+0x1c/0x210 kernel/power/hibernate.c:1452
+ param_attr_store+0x18f/0x300 kernel/params.c:588
+ module_attr_store+0x55/0x80 kernel/params.c:924
+ sysfs_kf_write+0x117/0x170 fs/sysfs/file.c:139
+ kernfs_fop_write_iter+0x33d/0x500 fs/kernfs/file.c:334
+ new_sync_write fs/read_write.c:586 [inline]
+ vfs_write+0x5ae/0x1150 fs/read_write.c:679
+ ksys_write+0x12b/0x250 fs/read_write.c:731
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f5f71a94a79
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 c1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fffb2ae1de8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f5f71a94a79
+RDX: 00000000000040db RSI: 0000400000005900 RDI: 0000000000000004
+RBP: 00007f5f71b075f0 R08: 0000000000000006 R09: 0000000000000006
+R10: 0000000000000006 R11: 0000000000000246 R12: 0000000000000001
+R13: 431bde82d7b634db R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
