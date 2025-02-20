@@ -1,180 +1,268 @@
-Return-Path: <linux-kernel+bounces-523046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F355A3D15A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:23:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 641E8A3D15B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:24:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 671511894209
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 06:23:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3DF197A13E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 06:23:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 787E21E04A9;
-	Thu, 20 Feb 2025 06:23:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09E481E2611;
+	Thu, 20 Feb 2025 06:23:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dpDVkIfG"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b="RIOZeZlh"
+Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2085.outbound.protection.outlook.com [40.107.241.85])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EABD1632DF;
-	Thu, 20 Feb 2025 06:23:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740032624; cv=none; b=BhltIu2d1B+yJ2byBdc80JZn9zfz6zCFNCBTp968YYUVbCFy+PcGKRe+FAlnYgx++t0yfYbMF4QNYMyKvKSWCrJW7MAvhURBdvrLj8Sl55gqOVTSl7gzlE4So7jqvTSDa7ZUul0dyeyfDW70s+uJMswxFqa6BWdkT5nD2swHi2o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740032624; c=relaxed/simple;
-	bh=OeAKObEC1ELmSic1Gmxo/Jpyvka7NFTArvvfEjMLtaQ=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=G9cSW+erXrRbIzI59RYVq3JunqAm2l0okDAxmCHVWD5Md7VVNVsoExgLD24XoemO8HHhaPqueV7qlTfUPbzhMxgtrxN8SSj/bCrubSrAcxp8An02e81nEGoVaW/Kk6QgJ1twbvGYWJAwfWIKB269z/ZCePKn0g/CEmq0Rxcz8Bs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dpDVkIfG; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6f88509dad2so4707167b3.3;
-        Wed, 19 Feb 2025 22:23:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740032620; x=1740637420; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=XlUZDiO9LUz4j6hPlY1toz2JqwWzQZnCcPciqsBFfS8=;
-        b=dpDVkIfG6cxe6THMe/qSZ7Qqn9bdQCYgh8OJ2xBnuZxVak2PcR6Au3eMwb1pijI8B7
-         KGvD58M9fM7E052RUcPkzBvnWomIIivKLGOLdDXluSVV9UZAeGcuRjLGnmjvScR1uC+m
-         bVDxNIsPFrLsCqC1XjtB7zYXnC8ojs5RQri0h7xWfmzb0ZMRwvlqrFKdPVuBGSijLcvA
-         BHf0XWlH08jPRhkthEGu9AeS2h/ZMzo3PTvgTqy8wPzID6NRcGXUJYSfWP7A2uByMNXi
-         xaeCuRCwzXJMcsJVGpORybLxj2SB+SUUoH+577xily4GOHzFMEj2StbYlLDkeo66EIgp
-         VwCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740032620; x=1740637420;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XlUZDiO9LUz4j6hPlY1toz2JqwWzQZnCcPciqsBFfS8=;
-        b=blQuzCG4SOD5AzJ+YgtYD5eTIn+06eH1I+trtPKE6cTXexcIZbiX8IaaVvXW+hMjBK
-         a0AuallSRqZomJBezCLF/xg4V489Y+rNcirJHNQ5sE5xJ8PXw78ZqYO7TNSM3MWZWELG
-         xendnneJTqnhjDGjF3ttuzqLsMGiagmjw4kttfd3/eupPkmw6LApPWLGkxokZsIKQz1U
-         8TjnbLS5yvGrR67W07fCGtd92lYAYHufG3awoADqfVblE8VjEIkdJh0QJyFTU71wjg5o
-         g1tboE4ff37tiYj5ycavwyJM1KhipjBKr1IxUmt3AyvYnxBLM8RcOORF19fXmYun2Sfm
-         xkig==
-X-Forwarded-Encrypted: i=1; AJvYcCWnY+9q6gmnF5ADnHakTwLlVp0j+Grhxgl44NsDJTXZYQO41GJD4Q7bftU8rDe0ZizHNhICAZq2iLkCCYA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCALTpAbCDg5N/KOkIzS185KxQ4V2uvBeGgAR20Rx/sFUeJm0A
-	XNm/v0u2kdk2ztLf8TaYGByTZBkg3tzDvPHX+6Nj4Vku72utW6exfrgGpxceZ/THf4kHo68Qr5m
-	BcvmcE0lN/Vh+0iexzJ9EpNIQarw0t2Ux5+djeA==
-X-Gm-Gg: ASbGnctLyTETpTg6SvL1xZKYu9rW5TXHss+GQR895usqdyw0+scQ1r3gBLzRvdgoavI
-	F8Nwj/oKUA5sLRBpalCnYAd1Czu65O8jONOHHe55Jye1hk9YyQsr+w7blN3tPY+0zJvFzmY1rec
-	8zh/wZ8QSs9OA=
-X-Google-Smtp-Source: AGHT+IEAM9/39/mv6i/s+rtgJIVunf+g3NtbpiKTGslQI7o0dw9TYGS5OkXNIswUKaBXOAxnBBX+kinMKdiYx5W2a/Y=
-X-Received: by 2002:a05:690c:4447:b0:6ef:a4ec:f698 with SMTP id
- 00721157ae682-6fb58275a6dmr182728607b3.3.1740032619757; Wed, 19 Feb 2025
- 22:23:39 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 899751DE4EF;
+	Thu, 20 Feb 2025 06:23:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.85
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740032638; cv=fail; b=JhIF/4wyACHGh9ffqSs6vmlMKTLfpfdEl//MD89KVcmDfs1thuDbB8f93qw6wkkvG936MtYze8Q1GLsQxhgwZI7VEIwFD07ReXvgVYriLdkjM6HSrohV0Qer3vBaZo1pTHzMVNlmWwK85RDn2x+96tM7wcx53sjuW+WlrwHZ3YI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740032638; c=relaxed/simple;
+	bh=n1BGeQBRTS30uK51H7cxxGOV/NFtQn1Hn2TrUvsB0Bk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=bgxjxfOrE1mefWdH0+5xgzfKI2Sy+QGNt17dguCxjn9HGkKiKtR4EefpimoSZYSEYXjv3eCZZH4aLTXHigPgDm8/VoSVQSiNL//cegDObL+6+TW9cHbrmLHX0FXDCIHoCf3wrBrJPgVwQYBTjqgc722wU+dmmme63pf6M59vRK0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com; spf=pass smtp.mailfrom=de.bosch.com; dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b=RIOZeZlh; arc=fail smtp.client-ip=40.107.241.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=de.bosch.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ei9Qllv8rZ5Z0rNTwdU0MGCF55A78yZMTNIkvK3+wKLB8Q7MC+H6Ip3U8Cf0CruuAEhfIiSpXk7RH4UJyHG9ET1OIvzmwrVlpqV8NrLkB//m06uJZ0pGn6FqKazl2nPTk0rgtG6w/DWKY+LUqImijI5H87JsVWXHz9dfXyhczRIid5ktg9O9VlQ1C5QaYS/jBeZo8a2A3Z8NPbppAJQYuP13qE67022iVKoYrzHQ5jNHj4bm8IZl2KS7E2PxlEx1wAktU1B63j+B5ZHu4FWlW/UBbK4F251PweS62weAJlQ8vo+doz7L2ES87phyIYdbFu7mtAeS1xTXvBJ5zemraA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3s/D5YZOhh6AmuqgdpyWT9gp340ibbCmeMR9Gyf/BJw=;
+ b=KjZgtI+iZYi5+LPnsTUyjXiFGVoxellORIl3MDXaql1oCj8d4zz1A/a7RtbRG3I7YmTr1dYuBdW+40Hi8OOUv48q80HiAIfy4LBU68TFdaIteeBSu6GF7QXH12MYhwinVprjV7XO6hHqbqB1iXl1EmY8/6Af+qMkNX0C94BOL65jl9j2y+cyOuuUf6FmscO1Yld4/eBqyO1eJcILQU/bj8VvIrbN7NDCiE53lI2OOY+oo8x7/r5btPEywDvovpOMbWoEPP4uv/SFrUhkSevJKVDghufc84T3CoXLfQeLDYKYvjvh7/lom7kxHhxL+jZIm3eL/dS8Pukhqb2vHn5yRQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 139.15.153.205) smtp.rcpttodomain=nvidia.com smtp.mailfrom=de.bosch.com;
+ dmarc=pass (p=reject sp=none pct=100) action=none header.from=de.bosch.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=de.bosch.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3s/D5YZOhh6AmuqgdpyWT9gp340ibbCmeMR9Gyf/BJw=;
+ b=RIOZeZlhn+JlYuJDligr4IQ7qgb2DgLbuD38JfU2ns6iVZjQjtViy94SOHHKL3rfUG3+K0WNqN7GI15f7i13I2F5Bsozbj/R9LQJFAy0CvBb40IHah6oooEJ0oKfT92J/VAo325PRJL6vJ6RAqOxykYcOQKlySjuG9z4l4a7iRmCATBLyV0aCnLckR5iYmYcQ0Cj5y4H5mRqdRV20FHr4xeJL1F1axOmmJH8N6bnYMHF+IUccc9TIEtoyQrCTp/s7rbA9WJ1VUDwrF/BtSM66mV6dgeIN+Q15bgkO7kShE6IBfVIEiq/PxUgcnZl6SGXSUAeph9zuJWDqZniuRtOOw==
+Received: from DU7PR01CA0014.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:50f::21) by AS2PR10MB7687.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:642::18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.13; Thu, 20 Feb
+ 2025 06:23:47 +0000
+Received: from DB1PEPF000509E9.eurprd03.prod.outlook.com
+ (2603:10a6:10:50f:cafe::76) by DU7PR01CA0014.outlook.office365.com
+ (2603:10a6:10:50f::21) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.16 via Frontend Transport; Thu,
+ 20 Feb 2025 06:24:04 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 139.15.153.205)
+ smtp.mailfrom=de.bosch.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=de.bosch.com;
+Received-SPF: Pass (protection.outlook.com: domain of de.bosch.com designates
+ 139.15.153.205 as permitted sender) receiver=protection.outlook.com;
+ client-ip=139.15.153.205; helo=eop.bosch-org.com; pr=C
+Received: from eop.bosch-org.com (139.15.153.205) by
+ DB1PEPF000509E9.mail.protection.outlook.com (10.167.242.59) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8466.11 via Frontend Transport; Thu, 20 Feb 2025 06:23:47 +0000
+Received: from SI-EXCAS2000.de.bosch.com (10.139.217.201) by eop.bosch-org.com
+ (139.15.153.205) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.13; Thu, 20 Feb
+ 2025 07:23:47 +0100
+Received: from [10.34.219.93] (10.139.217.196) by SI-EXCAS2000.de.bosch.com
+ (10.139.217.201) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.43; Thu, 20 Feb
+ 2025 07:23:46 +0100
+Message-ID: <af1afdfd-56fc-4101-812f-e33a370cc4e4@de.bosch.com>
+Date: Thu, 20 Feb 2025 07:23:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Eliah Reeves <ereeclimb@gmail.com>
-Date: Wed, 19 Feb 2025 22:23:27 -0800
-X-Gm-Features: AWEUYZlNkH6Ro-o2g0nBz_seXpbdBzE5rMTy5lpntrhylez0_BRmgectToTxQXY
-Message-ID: <CAEvyrHnEY-ppdAN8gXPZu89_mqVvQgf3HLm16mF901Qp2kSoaQ@mail.gmail.com>
-Subject: [PATCH] input: revert commit 9140ce4 to fix ELAN1206 touchpad issues
-To: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH RFC 1/3] rust: add useful ops for u64
+To: Alexandre Courbot <acourbot@nvidia.com>, Danilo Krummrich
+	<dakr@kernel.org>, David Airlie <airlied@gmail.com>, John Hubbard
+	<jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>
+CC: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+	<nouveau@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>
+References: <20250217-nova_timer-v1-0-78c5ace2d987@nvidia.com>
+ <20250217-nova_timer-v1-1-78c5ace2d987@nvidia.com>
+ <8d95cfde-30bc-4937-99d3-0077df43867a@de.bosch.com>
+ <D7VLEXCQ5VYN.3N0G7XXCVLH6L@nvidia.com>
+Content-Language: en-GB
+From: Dirk Behme <dirk.behme@de.bosch.com>
+In-Reply-To: <D7VLEXCQ5VYN.3N0G7XXCVLH6L@nvidia.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB1PEPF000509E9:EE_|AS2PR10MB7687:EE_
+X-MS-Office365-Filtering-Correlation-Id: 81896265-b0f3-471b-d7b6-08dd5177224b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|36860700013|1800799024|82310400026|7053199007|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?YnROZEdIRG1pb0kzN1FLM0IrdHB5bmxYc2xNaEpvQlg1RnZwR0tKcEMyY3M1?=
+ =?utf-8?B?KzBUNjF4czU4enc0KzJJUUZkVkZZS0xYUVdka3k0NGtIVGNUUTJKWXozSkd4?=
+ =?utf-8?B?UzhMKzUvZVhtU3BTVnZRVUoyaCtVUDN0UDBKcCtUaTFUZS9veG13WXBoOE5R?=
+ =?utf-8?B?U2E2SkE5Mlp0ZkM4ak1CeExtTHhyeTRBTzVybDRvdUYvemgzb2JjcHRKcEE4?=
+ =?utf-8?B?dVpsMldRdFVPSkdCY0ZHeVUrSFRaSEhVV2NEb0I4VmRWdDN4SEc5R1RkYWxn?=
+ =?utf-8?B?TmQwUEVJU3pLNHBjeEFkUzd3UFRMRUF1Nmg1NzdieFB0OG5XZ2JrL2NINm9B?=
+ =?utf-8?B?dmJWdW5WNitkd3g2N255MlNiRk9lVVJhdUQ1WU1RZTN6L2g3Y1pHbXU5U0w1?=
+ =?utf-8?B?djY5WCtDVDNtUitaS3FiMGJhQ2twbVhmenVUYUZCTGJxbTBPUjI3NWFtTHBU?=
+ =?utf-8?B?T0lZNTlRVWJVZkdjR0VFSXZzU1dDbzczMExTQ3E2L0VqcW5iallWQ1BNc2NU?=
+ =?utf-8?B?dXk5Z3ZQOER5a1JaSDhNZUZjSFpoZk05TWFOdVhkT1BVdHFCUkFNV253dG9n?=
+ =?utf-8?B?OENRTzBGTmJERmUyN1VHdzVCdnhDWDZRRDNzbjA5T1NkWUlwbTQ5R05NcGU4?=
+ =?utf-8?B?QTVwYXF5V3U3Q2pxWWNIdksyY1RZS284WGxXOUZKNXIrd2RjeHBranJacFp3?=
+ =?utf-8?B?SkhJZUhpL0hmaHZqRGJpRTJ0eWxpWklpdkk5eldOQ0c4cFNhbnVNb2VWL2VC?=
+ =?utf-8?B?Z2x6Z1Fxbk5CdzFNUzZST3RnTHRxQlN2L2krUVUvYjc5NkdadWFoUG9mbWJQ?=
+ =?utf-8?B?RzloOXhGSmVCaEl4SVpuaWJ4eWgwcUVsUzlnb29HVFAwRUJsZ1JiWWtpTHpo?=
+ =?utf-8?B?Ymo2VllnbEtBbGVrdFJyT1pZSmtWVXhwbWZMaHFaVURQaGxvV0dlbjkrUHpx?=
+ =?utf-8?B?V0M5T2JRUWl0Z1JrSVlWam9Od0E4cElMMDhiRVJoK29udzlWOXhHVTlwdm9Z?=
+ =?utf-8?B?bGh5UTRqYlFwUEFUbksycC9KOUJrSTJmQ1NraXZSZ3k0aUVjTWdPU1haSUJB?=
+ =?utf-8?B?WHR4NUk4b0ltVTRJNlRLQ0NYSFdiazJycXVzZnd1Y3pnZld3eHo1aEtPWjJF?=
+ =?utf-8?B?WkdGVWdpTVl0eDNSRTFCTGFjeUdSeGNxTGRTU0VpUGVOTmRHclBzcGUzZjI4?=
+ =?utf-8?B?KzVOdU51TlQxK3N2ZWhTSTB1bnBIdlI4eFRLMVJNQVFYNnBGY3V5UTBRSVFi?=
+ =?utf-8?B?cWk5T2QxVE1MRmVSOG9UemkvUUhwZHhRWHI4SFRMRmdZOFkvRUdxRUFCQkhE?=
+ =?utf-8?B?YUdneDRvWXZYSU5iMFNIdFYyY1g2aEI5OXpWaEtxaCtmcjVLNU1Xd01zQlFi?=
+ =?utf-8?B?TkNGZUp1VXI0NER6QmpObCtJNE9rRU9ENUh4L2hVdUV0T0dyZEdDTnA5SHNr?=
+ =?utf-8?B?blRrYWxuZlBBMnM5ZGpJL0V6MnJEOFRnRWpBYjRjNU9YeVdoNGlmSVNQM1hE?=
+ =?utf-8?B?RElBT1E0aWRWdlozT3RCYzhaOTBQUkVjbyswMXlGLy9JSFRCNVBzbURLZ0VJ?=
+ =?utf-8?B?ZGc5c0hnRjFzME03OHZQVzRMMnZwNnBmVUUvU0xyZTlYWHZMWjdoMVBwcFU5?=
+ =?utf-8?B?b1NrRTUvVHRVOUNYc3dxR1RZWVJ4SEgxbmJob2tacGxIVFJXTjBodFBFRDlX?=
+ =?utf-8?B?WERxcDZvTGFwN3EwMUtVOThrRnFJZGVuOXJiV2hFWE53SEpMK1VUMmJtcDhT?=
+ =?utf-8?B?WnBwcWJHR2dnYXdiQ3hITk9ybFFqRUVpTHBZVVhlcFpTRWFtMXRJeENJL1Za?=
+ =?utf-8?B?RDhmVmxZMmRoU0V3QWtheDNzNVVObzYwNUxlbFd5VGxoSEEyMDAxaXJ2OFZM?=
+ =?utf-8?B?b2d3UU1ZTU5Fd0pPQ2JlbW5DL3g3a3praklrN21BME5GNkpCMGFUZzJDRnlk?=
+ =?utf-8?Q?8CpODyr4F+I=3D?=
+X-Forefront-Antispam-Report:
+	CIP:139.15.153.205;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:eop.bosch-org.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026)(7053199007)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: de.bosch.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2025 06:23:47.3894
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 81896265-b0f3-471b-d7b6-08dd5177224b
+X-MS-Exchange-CrossTenant-Id: 0ae51e19-07c8-4e4b-bb6d-648ee58410f4
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0ae51e19-07c8-4e4b-bb6d-648ee58410f4;Ip=[139.15.153.205];Helo=[eop.bosch-org.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DB1PEPF000509E9.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR10MB7687
 
-From: Eliah Reeves <ereeclimb@gmail.com>
-From dd4478d63b6a2b6891fcc1800eb26ce3f1ead1d4 Mon Sep 17 00:00:00 2001
-Date: Wed, 19 Feb 2025 20:58:52 -0800
-Subject: [PATCH] input: revert commit 9140ce4 to fix ELAN1206 touchpad issues
+On 18/02/2025 14:07, Alexandre Courbot wrote:
+> On Tue Feb 18, 2025 at 7:07 PM JST, Dirk Behme wrote:
+>> On 17/02/2025 15:04, Alexandre Courbot wrote:
+>>> It is common to build a u64 from its high and low parts obtained from
+>>> two 32-bit registers. Conversely, it is also common to split a u64 into
+>>> two u32s to write them into registers. Add an extension trait for u64
+>>> that implement these methods in a new `num` module.
+>>>
+>>> It is expected that this trait will be extended with other useful
+>>> operations, and similar extension traits implemented for other types.
+>>>
+>>> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+>>> ---
+>>>  rust/kernel/lib.rs |  1 +
+>>>  rust/kernel/num.rs | 32 ++++++++++++++++++++++++++++++++
+>>>  2 files changed, 33 insertions(+)
+>>>
+>>> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+>>> index 496ed32b0911a9fdbce5d26738b9cf7ef910b269..8c0c7c20a16aa96e3d3e444be3e03878650ddf77 100644
+>>> --- a/rust/kernel/lib.rs
+>>> +++ b/rust/kernel/lib.rs
+>>> @@ -59,6 +59,7 @@
+>>>  pub mod miscdevice;
+>>>  #[cfg(CONFIG_NET)]
+>>>  pub mod net;
+>>> +pub mod num;
+>>>  pub mod of;
+>>>  pub mod page;
+>>>  #[cfg(CONFIG_PCI)]
+>>> diff --git a/rust/kernel/num.rs b/rust/kernel/num.rs
+>>> new file mode 100644
+>>> index 0000000000000000000000000000000000000000..5e714cbda4575b8d74f50660580dc4c5683f8c2b
+>>> --- /dev/null
+>>> +++ b/rust/kernel/num.rs
+>>> @@ -0,0 +1,32 @@
+>>> +// SPDX-License-Identifier: GPL-2.0
+>>> +
+>>> +//! Numerical and binary utilities for primitive types.
+>>> +
+>>> +/// Useful operations for `u64`.
+>>> +pub trait U64Ext {
+>>> +    /// Build a `u64` by combining its `high` and `low` parts.
+>>> +    ///
+>>> +    /// ```
+>>> +    /// use kernel::num::U64Ext;
+>>> +    /// assert_eq!(u64::from_u32s(0x01234567, 0x89abcdef), 0x01234567_89abcdef);
+>>> +    /// ```
+>>> +    fn from_u32s(high: u32, low: u32) -> Self;
+>>> +
+>>> +    /// Returns the `(high, low)` u32s that constitute `self`.
+>>> +    ///
+>>> +    /// ```
+>>> +    /// use kernel::num::U64Ext;
+>>> +    /// assert_eq!(u64::into_u32s(0x01234567_89abcdef), (0x1234567, 0x89abcdef));
+>>> +    /// ```
+>>> +    fn into_u32s(self) -> (u32, u32);
+>>> +}
+>>> +
+>>> +impl U64Ext for u64 {
+>>> +    fn from_u32s(high: u32, low: u32) -> Self {
+>>> +        ((high as u64) << u32::BITS) | low as u64
+>>> +    }
+>>> +
+>>> +    fn into_u32s(self) -> (u32, u32) {
+>>> +        ((self >> u32::BITS) as u32, self as u32)
+>>> +    }
+>>> +}
+>> Just as a question: Would it make sense to make this more generic?
+>>
+>> For example
+>>
+>> u64 -> u32, u32 / u32, u32 -> u64 (as done here)
+>> u32 -> u16, u16 / u16, u16 -> u32
+>> u16 -> u8, u8 / u8, u8 -> u16
+>>
+>> Additionally, I wonder if this might be combined with the Integer trait
+>> [1]? But the usize and signed ones might not make sense here...
+>>
+>> Dirk
+>>
+>> [1] E.g.
+>>
+>> https://github.com/senekor/linux/commit/7291dcc98e8ab74e34c1600784ec9ff3e2fa32d0
+> 
+> I agree something more generic would be nice. One drawback I see though
+> is that it would have to use more generic (and lengthy) method names -
+> i.e. `from_components(u32, u32)` instead of `from_u32s`.
+> 
+> I quickly tried to write a completely generic trait where the methods
+> are auto-implemented from constants and associated types, but got stuck
+> by the impossibility to use `as` in that context without a macro.
 
-Reverting commit 9140ce47872bfd89fca888c2f992faa51d20c2bc fixes a
-regression that caused touchpad malfunctions. The original change
-introduced unintended behavior affecting touchpad input.
----
- drivers/dma/idma64.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/dma/idma64.c b/drivers/dma/idma64.c
-index d147353d47ab..afcce6f5a636 100644
---- a/drivers/dma/idma64.c
-+++ b/drivers/dma/idma64.c
-@@ -171,9 +171,10 @@ static irqreturn_t idma64_irq(int irq, void *dev)
-        u32 status_err;
-        unsigned short i;
+Being inspired by the Integer trait example [1] above, just as an idea,
+I wonder if anything like
 
-+       /* Commented to restore ELAN1206 Touchpad functionality */
-        /* Since IRQ may be shared, check if DMA controller is powered on */
--       if (status == GENMASK(31, 0))
--               return IRQ_NONE;
-+       /* if (status == GENMASK(31, 0))
-+             return IRQ_NONE; */
+impl_split_merge! {
+    (u64, u32),
+    (u32, u16),
+    (u16, u8),
+}
 
-        dev_vdbg(idma64->dma.dev, "%s: status=%#x\n", __func__, status);
+would be implementable?
 
---
-2.48.1
 
-1: Description
-===========
+> Regardless, I was looking for an already existing trait/module to
+> leverage instead of introducing a whole new one, maybe the one you
+> linked is what I was looking for?
+Cheers,
 
-Reverting commit 9140ce47872bfd89fca888c2f992faa51d20c2bc fixes a
-regression that caused touchpad malfunctions. The original change
-introduced unintended behavior affecting touchpad input with the
-ELAN1206.
-
-2: Touchpad Behavior with 9140ce47872bfd89fca888c2f992faa51d20c2bc
-===========
-The touchpad appears to send an event indicating touch up immediately
-after each touch down event. This prevents libinput from moving the
-cursor rendering the touchpad useless. It is also worth noting that in
-addition to incorrect events the touchpad also appears to send events
-much less frequently.
-
-evtest output:
-
-  Event: time 1738819278.422243, type 3 (EV_ABS), code 57
-(ABS_MT_TRACKING_ID), value 73
-  Event: time 1738819278.422243, type 3 (EV_ABS), code 53
-(ABS_MT_POSITION_X), value 1264
-  Event: time 1738819278.422243, type 3 (EV_ABS), code 54
-(ABS_MT_POSITION_Y), value 860
-  Event: time 1738819278.422243, type 1 (EV_KEY), code 330 (BTN_TOUCH), value 1
-  Event: time 1738819278.422243, type 1 (EV_KEY), code 325
-(BTN_TOOL_FINGER), value 1
-  Event: time 1738819278.422243, type 3 (EV_ABS), code 0 (ABS_X), value 1264
-  Event: time 1738819278.422243, type 3 (EV_ABS), code 1 (ABS_Y), value 860
-  Event: time 1738819278.422243, type 4 (EV_MSC), code 5
-(MSC_TIMESTAMP), value 0
-  Event: time 1738819278.422243, -------------- SYN_REPORT ------------
-  Event: time 1738819278.526021, type 3 (EV_ABS), code 57
-(ABS_MT_TRACKING_ID), value -1
-  Event: time 1738819278.526021, type 1 (EV_KEY), code 330 (BTN_TOUCH), value 0
-  Event: time 1738819278.526021, type 1 (EV_KEY), code 325
-(BTN_TOOL_FINGER), value 0
-  Event: time 1738819278.526021, -------------- SYN_REPORT ------------
-  Event: time 1738819278.630874, type 3 (EV_ABS), code 57
-(ABS_MT_TRACKING_ID), value 74
-  Event: time 1738819278.630874, type 3 (EV_ABS), code 53
-(ABS_MT_POSITION_X), value 1415
-  Event: time 1738819278.630874, type 3 (EV_ABS), code 54
-(ABS_MT_POSITION_Y), value 799
-
-3: Touchpad Behavior without 9140ce47872bfd89fca888c2f992faa51d20c2bc
-===========
-The touchpad functions smoothly and consistently.
-
-4: Fixes
-===========
-closes: https://bugzilla.kernel.org/show_bug.cgi?id=219799
-
-5: Impacts
-===========
-Reverting 9140ce47872bfd89fca888c2f992faa51d20c2bc would theoretically
-reopen https://lore.kernel.org/r/700bbb84-90e1-4505-8ff0-3f17ea8bc631@gmail.com
-
-6: Methods
-===========
-I bisected the Linux kernel and found that
-9140ce47872bfd89fca888c2f992faa51d20c2bc was the first commit where my
-touchpad didn't work. Building the latest kernel with 9140ce4 removed
-resulted in a working touchpad.
-
-Let me know if I can help.
-Signed-off-by: Eliah Reeves <ereeclimb@gmail.com>
+Dirk
 
