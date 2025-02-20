@@ -1,195 +1,133 @@
-Return-Path: <linux-kernel+bounces-524428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE232A3E2FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:47:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 501D0A3E2FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:47:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A11D6166B29
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:46:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B124421CC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:46:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF108213E64;
-	Thu, 20 Feb 2025 17:46:16 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5602E213E60;
-	Thu, 20 Feb 2025 17:46:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58616213E6D;
+	Thu, 20 Feb 2025 17:46:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ci02DAWs"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 627B12139C4;
+	Thu, 20 Feb 2025 17:46:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740073576; cv=none; b=pKO3wNSSU3Xlss9F+VBI8pBBraDFSlHLKjRqQ4LRkTTw0ckj4yWeFRCYPQnx8Tgx5TmsnTW/j15P4e052sJSnzJlZhGtRnUMJdt/1INEEzKHSD3qDILa+TI7koN54oDLUCgTNmT8b/ZGVORsVsAfx8581dH3ne1qBrUWvS1Nbp0=
+	t=1740073591; cv=none; b=pFUxkPmJgb8VY72xK0PGnF1eZvzErJFYIeLf94r/raTPEhbJA1ot9/pv9WOY9W+ai/KaJfHUIM1WcmyoHUT0Dl/PfScH0nmBFsr0FobICOZdUC0lao72W79H6iqWbad67ZoD32mDGV4BgeLt98mVWn1XJwO01nczq1q82i1kq7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740073576; c=relaxed/simple;
-	bh=K8pF/ngKr2xu3Uv+T441vpPH49v2IpaOUXbkcMyrnao=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RkS5ia7ETgJCPU4ypckoQLU7VstyglFtCScKj4f9YxSlNaeZXTCN7CEnUNapKKfiFIgv7VRcMOB6a4ApTssyQppU7YCvObSj+E1JNYAFmhJHnUm7IHVP3ZE7ycbf7tOoxM4cvYi+RMfFMe/dThlL0XrCBLTa8it0Nvbz0WUvtSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 812E116F3;
-	Thu, 20 Feb 2025 09:46:31 -0800 (PST)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.43])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C4D8A3F5A1;
-	Thu, 20 Feb 2025 09:46:08 -0800 (PST)
-Date: Thu, 20 Feb 2025 17:46:06 +0000
-From: Dave Martin <Dave.Martin@arm.com>
-To: Reinette Chatre <reinette.chatre@intel.com>
-Cc: Peter Newman <peternewman@google.com>, "Moger, Babu" <bmoger@amd.com>,
-	Babu Moger <babu.moger@amd.com>, corbet@lwn.net, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	tony.luck@intel.com, x86@kernel.org, hpa@zytor.com,
-	paulmck@kernel.org, akpm@linux-foundation.org, thuth@redhat.com,
-	rostedt@goodmis.org, xiongwei.song@windriver.com,
-	pawan.kumar.gupta@linux.intel.com, daniel.sneddon@linux.intel.com,
-	jpoimboe@kernel.org, perry.yuan@amd.com, sandipan.das@amd.com,
-	kai.huang@intel.com, xiaoyao.li@intel.com, seanjc@google.com,
-	xin3.li@intel.com, andrew.cooper3@citrix.com, ebiggers@google.com,
-	mario.limonciello@amd.com, james.morse@arm.com,
-	tan.shaopeng@fujitsu.com, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, maciej.wieczor-retman@intel.com,
-	eranian@google.com
-Subject: Re: [PATCH v11 00/23] x86/resctrl : Support AMD Assignable Bandwidth
- Monitoring Counters (ABMC)
-Message-ID: <Z7dqXlOMsw7Kb8F2@e133380.arm.com>
-References: <9e849476-7c4b-478b-bd2a-185024def3a3@intel.com>
- <Z64tw2NbJXbKpLrH@e133380.arm.com>
- <76b02daf-1b45-473e-9d75-5988a11c6887@intel.com>
- <8ef51f28-e01a-4a7d-ba86-059437edb60b@amd.com>
- <a07fca4c-c8fa-41a6-b126-59815b9a58f9@intel.com>
- <CALPaoCh7WpohzpXhSAbumjSZBv1_+1bXON7_V1pwG4bdEBr52Q@mail.gmail.com>
- <ccd9c5d7-0266-4054-879e-e084b6972ad5@intel.com>
- <CALPaoCj1TH+GN6+dFnt5xuN406u=tB-8mj+UuMRSm5KWPJW2wg@mail.gmail.com>
- <2b5a11e3-ee19-47ba-b47e-b7de2818f237@intel.com>
- <Z7dccLOTPzySYTXL@e133380.arm.com>
+	s=arc-20240116; t=1740073591; c=relaxed/simple;
+	bh=WTF4cLVsFmMS7choUjpmO9g9zNpFg3WXY45q8MWFYHk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rj9sQsCcUVlPDjKksNnTX9iXvP8sxgh+jTih5t0uYKVdeKf7sqXyHaEjfFGM0U/c8qwaXij2kusOaTLzvEIbO3F9MM5qY8j9Z5iI9monUPVO0X/Aek7sjtBkVC+dlqTdTgtYrf9BACHSqTsL32UlKDtzHku4uBy3i0xnbPU8WnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ci02DAWs; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2211acda7f6so26051485ad.3;
+        Thu, 20 Feb 2025 09:46:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740073589; x=1740678389; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TWAfEwgjW5n0g7O9PngxJaYTzxQet9B6fCRYbNkTchI=;
+        b=Ci02DAWsbdCMtTR35UJRdiheV5lxZe8vXRjWwMqC9SnHHOxHIBY+45UdINMbRE4YDu
+         PxoygAuFcVL68FZYYUBueykgGTvD3UHXJtUQbk6pWtDSEs3pPj930qmDnL/WM7ULVPWx
+         KQSonnEmwhaPDEBtZ72+FMyYE5LcTeFjuokkQofznvhGJ/1m3eTxoc/RvsqDLSuN5YoC
+         2CRV3tiF1Vmci+bkvnC6wnLj2PVzOVmQGxKcCkO691cM9JIs0qUL3ja1Mm4GJ+W8hV/9
+         tOdOavOXqvZ3rmt8pXiTfP8RIT+ca5EagI8cpzdtIulq+BizisZWG5yGwE7oZ8fdSRUi
+         O2Zg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740073589; x=1740678389;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TWAfEwgjW5n0g7O9PngxJaYTzxQet9B6fCRYbNkTchI=;
+        b=PEi67pQT+DUO7cqKdoksZqb60dCFlvKfywluiLkFDjyVdeqvR8sSeg9GyB3thDzSEb
+         E7+0wpjR5bOfT2x2/1vVBDxa/nfaujF6SkWJhPMbW3xh7B87a8kM87/LSZvwim9RzYW7
+         kfUHgrU9dCH/AaPy3oJGN8T1UUsrSEW9hWiLnuXsmeh5J/C9FMp+ZD8yO81kNswzW6Rv
+         gR5pXcrw2lkSSL79wVEJTp5U+r8JBmvnshIE263LEdrwwYzWQCwFQ9QEp+DvtuHdpQTO
+         PYhz15vRncykx4MjmutcKOBw8GNbmVQCBQHEfDg/7Io+2tQqU/YXO8TqJWEJAJFfLEYC
+         DHGg==
+X-Forwarded-Encrypted: i=1; AJvYcCVAwtiyyhqlelFzmTS9ZxNWtnKG2jv1iH+Awbq+iB3b1RHKYHYqtSup+XWOtpX+fcCaV2X0+zt6s8k=@vger.kernel.org, AJvYcCWJ/4h/Uhj+j2otFGDCy0NY8jQUHvoP75wTo5zUk/kY+Zz+YJDjsfH1xNoZRDfibq6AR4qvlJTOl4lsA5I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsC4Ph9+s2yVUze4C+TS3cOpMVgwEgIH2TpOYXiNnlFeG9M72m
+	clLyaoeUpltSOULQCWFRHjvYJ+QDHSbe5ODyGpDE/ALClUaLOrPu
+X-Gm-Gg: ASbGncsU5uDTuvjvVMd2uz63Ilp4seN/+D06r+DdQ2xZnb23MShl4uiFgvgBcxWL0HH
+	aZ6fuSGnr2CSFy+gjfMoQS+S2VZGf3Uqkgrm6JUkqQ/iN1pjc8s0C7CsS+DNWuoj/jl6OoNB7aE
+	RjWAvyLm+ue7J5/t1sd5MrpXFzfqqfTDyS+5s4EXBQbsD0xvL4qFkiQAEYazzSkWYdAqSyDYS0K
+	Ue6tZHij/qisb4MjuXotXXhRzk2jpC+RX717t88YKOOeGLPndsYopJuM6jmsGinw8vyDojujAyb
+	7pnHyIbmEQ/jquct6Bt5Tmn//qnBfIzNc903cuFH08l2taAxYDY2fcZVYGLgYnM=
+X-Google-Smtp-Source: AGHT+IFduRunIjVQ1KCO5LD7npVz+lWxT5h4YlwQYeUz8PqlZX3bQdUyYveUb1UicjTd2mesfrfsHw==
+X-Received: by 2002:a17:902:d54d:b0:220:fb23:48e0 with SMTP id d9443c01a7336-2219ffa7caamr135165ad.38.1740073589551;
+        Thu, 20 Feb 2025 09:46:29 -0800 (PST)
+Received: from [10.19.100.228] (59-124-78-18.hinet-ip.hinet.net. [59.124.78.18])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d53491d4sm124363205ad.4.2025.02.20.09.46.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Feb 2025 09:46:29 -0800 (PST)
+Message-ID: <c0c8505e-ceb4-4a82-8c3c-8043ee2ce256@gmail.com>
+Date: Fri, 21 Feb 2025 01:46:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z7dccLOTPzySYTXL@e133380.arm.com>
-
-Hi again,
-
-On Thu, Feb 20, 2025 at 04:46:40PM +0000, Dave Martin wrote:
-> Hi,
-> 
-> On Wed, Feb 19, 2025 at 09:56:29AM -0800, Reinette Chatre wrote:
-> > Hi Peter,
-> > 
-> > On 2/19/25 3:28 AM, Peter Newman wrote:
-> 
-> [...]
-> 
-> > > In the letters as events model, choosing the events assigned to a
-> > > group wouldn't be enough information, since we would want to control
-> > > which events should share a counter and which should be counted by
-> > > separate counters. I think the amount of information that would need
-> > > to be encoded into mbm_assign_control to represent the level of
-> > > configurability supported by hardware would quickly get out of hand.
-> > > 
-> > > Maybe as an example, one counter for all reads, one counter for all
-> > > writes in ABMC would look like...
-> > > 
-> > > (L3_QOS_ABMC_CFG.BwType field names below)
-> > > 
-> > > (per domain)
-> > > group 0:
-> > >  counter 0: LclFill,RmtFill,LclSlowFill,RmtSlowFill
-> > >  counter 1: VictimBW,LclNTWr,RmtNTWr
-> > > group 1:
-> > >  counter 2: LclFill,RmtFill,LclSlowFill,RmtSlowFill
-> > >  counter 3: VictimBW,LclNTWr,RmtNTWr
-> > > ...
-> > > 
-> > 
-> > I think this may also be what Dave was heading towards in [2] but in that
-> > example and above the counter configuration appears to be global. You do mention
-> > "configurability supported by hardware" so I wonder if per-domain counter
-> > configuration is a requirement?
-> > 
-> > Until now I viewed counter configuration separate from counter assignment,
-> > similar to how AMD's counters can be configured via mbm_total_bytes_config and
-> > mbm_local_bytes_config before they are assigned. That is still per-domain
-> > counter configuration though, not per-counter.
-> 
-> I hadn't tried to work the design through in any detail: it wasn't
-> intended as a suggestion for something we should definitely do right
-> now; rather, it was just an incomplete sketch of one possible future
-> evolution of the interface.
-> 
-> Either way these feel like future concerns, if the first iteration of
-> ABMC is just to provide the basics so that ABMC hardware can implement
-> resctrl without userspace seeing counters randomly stopping and
-> resetting...
-> 
-> Peter, can you give a view on whether the ABMC as proposed in this series
-> is a useful stepping-stone?  Or are there things that you need that you
-> feel could not be added as a later extension without ABI breakage?
-> 
-> [...]
-> 
-> > > I believe that shared assignments will take care of all the
-> > > high-frequency and performance-intensive batch configuration updates I
-> > > was originally concerned about, so I no longer see much benefit in
-> > > finding ways to textually encode all this information in a single file
-jjjk> > > when it would be more manageable to distribute it around the
-> > > filesystem hierarchy.
-> > 
-> > This is significant. The motivation for the single file was to support
-> > the "high-frequency and performance-intensive" usage. Would "shared assignments"
-> > not also depend on the same files that, if distributed, will require many
-> > filesystem operations? 
-> > Having the files distributed will be significantly simpler while also
-> > avoiding the file size issue that Dave Martin exposed. 
-> > 
-> > Reinette
-> 
-> I still haven't fully understood the "shared assignments" proposal;
-> I need to go back and look at it.
-
-Having taken a quick look at that now, this all seems to duplicate
-perf's design journey (again).
-
-"rate" events make some sense.  The perf equivalent is to keep an
-accumulated count of the amount of time a counter has been assigned to
-an event, and another accumulated count of the events counted by the
-counter during assignment.  Only userspace knows what it wants to do
-with this information: perf exposes the raw accumulated counts.
-
-Perf events can be also pinned so that they are prioritised for
-assignment to counters; that sounds a lot like the regular, non-shared
-resctrl counters.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] cpupower: monitor: Exit with error status if execvp()
+ fail
+To: Shuah Khan <skhan@linuxfoundation.org>, trenn@suse.com, shuah@kernel.org
+Cc: jwyatt@redhat.com, jkacur@redhat.com, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250220163846.2765-1-s921975628@gmail.com>
+ <929c1d63-e3e7-432c-b34a-8953662297ab@linuxfoundation.org>
+Content-Language: en-US
+From: Yiwei Lin <s921975628@gmail.com>
+In-Reply-To: <929c1d63-e3e7-432c-b34a-8953662297ab@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
-Playing devil's advocate:
+On 2/21/2025 1:37 AM, Shuah Khan wrote:
+> On 2/20/25 09:38, Yiwei Lin wrote:
+>> In the case that we give a invalid command to idle_monitor for
+>> monitoring, the execvp() will fail and thus go to the next line.
+>> As a result, we'll see two differnt monitoring output. For
+>> example, running `cpupower monitor -i 5 invalidcmd` which `invalidcmd`
+>> is not executable.
+>>
+>> ---
+>
+> Note that everything below this gets thrown away.
+>
+>> V3:
+>> - Modify output message content
+>>
+>> V2:
+>> - Check return value from execvp and print message for invalid command
+>> ---
+>
+> These version information goes after the --- below the Signed-off-by
+>
+> Note that everything below the
+>
+>>
+>> Signed-off-by: Yiwei Lin <s921975628@gmail.com>
+>> ---
+>
+> This where the patch version stuff goes. I fixed this for now.
+>
+Thank you to help for the fix! I'll be careful with the commit message 
+next time. I'm sorry if you experienced any inconvenience with this.
 
-It does feel like we are doomed to reinvent perf if we go too far down
-this road...
+All the best,
 
-> If we split the file, it will be more closely aligned with the design
-> of the rest of the resctrlfs interface.
-> 
-> OTOH, the current interface seems workable and I think the file size
-> issue can be addressed without major re-engineering.
-> 
-> So, from my side, I would not consider the current interface design
-> a blocker.
+Yiwei Lin
 
-...so, drawing a hard line around the use cases that we intend to
-address with this interface and avoiding feature creep seems desirable.
-
-resctrlfs is already in the wild, so providing reasonable baseline
-compatiblity with that interface for ABMC hardware is a sensible goal.
-The current series does that.
-
-But I wonder how much additional functionality we should really be
-adding via the mbm_assign_control interface, once this series is
-settled.
-
-Cheers
----Dave
 
