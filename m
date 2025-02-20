@@ -1,386 +1,182 @@
-Return-Path: <linux-kernel+bounces-524834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B5DDA3E7A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:40:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA70AA3E7A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:41:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E03319C5105
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:40:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 914C5422C30
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:41:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C32A264FA5;
-	Thu, 20 Feb 2025 22:40:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 118EF264F8A;
+	Thu, 20 Feb 2025 22:41:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KkTcK18a"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YEWe2GK/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1451264F8A
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 22:40:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A74B61E9B35
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 22:41:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740091208; cv=none; b=s14NPjnCaMdr60bTWEmdiFLYIuPer1PxlR3vK6VvfFVGAKvp+bw5ZJVIaYLfVCoG/B0jcABRqugSO1uX+XPP6evpnWVexlfNQccr2pEjtGsyk8po+ttg4kY3dJVqn0nTr6ZDlIZkCZbkMaTyV3cXPg495D3W84kTnC5Qorsbwd0=
+	t=1740091264; cv=none; b=di/crYYkAfpDTlKQIzAvuxPVT5HWNoRdNNIZvJfak4vexkxuPoGk0x2pYOSSGzGTJg9zvFSemzudZxgnFPyxh9A5MswK2rC0ji0ooIXqm7danZNvHo7gbrVSz4mSzSDy61e7ycEe+T8sX2M1M2FP4r4rhOAzvSma4DsBiJD5wVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740091208; c=relaxed/simple;
-	bh=MA+xHDdqUq1yk2Ez9s2XXu1J75s7bgUJ74/iEEmrWOM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RHSQNXeAnB9cWcLQXFY98YO6LNoz56jkqQlRDgdKnR8rBSG0L4ZE1SQKv4NjQQYq0VvUJ2AX8+UzTRmo25Lk65BO865/w011KkCPRJtB+u1lo1a6fzX8vUJWMOWncaDMOVLmXFCOQqJdDPvswbIUFi20HvwkL1AiPzDFmqBLzHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KkTcK18a; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5e04861e7a6so2755202a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 14:40:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740091204; x=1740696004; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/EvYv+aj8j+zTCkL7ssEiUCbMGAzEqKBKYb0x2hzdFs=;
-        b=KkTcK18aLdjPfPHwrO8RYr3X7+wR+jLEFyotyJTnwIsNaAxQ0YvSTe9JO/fJxvfAzb
-         AkRrpWoPk8oefTeMujZCpWzykCVjx2XwRjLN4koFTBoVTMNMqt0sx+OUvr7LzyTAa0Uo
-         6XiFvMZGRypRc/y4mzpWgJB4rNLL17B/BMDt6LmUY2goEPWmLcYufn8pvCjhcw6jbTGo
-         z7xQ48RJ0IxJ6iP8zM8ajZoDhvbKUIjK9yIns0gP2rn4exhtsdjTvTE4tu+nI2UDxP8v
-         t35UuPbG8rwbSX6o5+NI81YEKQI03YSQUSn5M7CzgE6hf3q0Wg4L19ZpI0JJr4syRckD
-         Lciw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740091204; x=1740696004;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/EvYv+aj8j+zTCkL7ssEiUCbMGAzEqKBKYb0x2hzdFs=;
-        b=YLriS9L+URwQo4YyRhllhEwL3lz9vp5QUqckfgN84QwuOrAn+eWiuytbNOPmdhfMhG
-         8DCpW3+P0+4WKT1qk7aWlt81KZFTgvW6kwxhz+ID1bOi/WPZCuBJBI89PxTufO/6Qwa/
-         Pl0PcQxF5vSJ/GzrlCsvBeISOFj7My8S6Emwq2Z2+uGcRzEss/GfHyNuMa/tRBA0p0bj
-         xYLGf6U2kuofL98YxSx9t8ryz8YQoJPb1YHaeaFZA/f7ZpxWTtl6xnyKxcoCa3KCTqX8
-         icg6EGpktFcm9ipov0aEuxLq/+aha7rW4wgIr2+Cx9nbPqfPVxNzkWZ+ZYjUbhrR+JVm
-         /mFw==
-X-Forwarded-Encrypted: i=1; AJvYcCXkphQinbQ624r8xb9hXkwv9KJzTTPbw+AuFWj9l4jWatkysXaie5lbr7hxYRzxxZfDSq1KOoBEsMZf0/E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywq/f6H+ekB8G2JPie9zOI/Nb7Elqq6I1bQISMkPv5obLJYD5Y3
-	hRV5J2p+zUD0Hzmk1eQLGDqz9CGBmct11X4N7YdholBctPqlN8fXyj7mtI+y7bwlW8LRCiPgTrD
-	V1jF9Iogydzg9vEh2glfHS3QQaj3t7mYSvuc/
-X-Gm-Gg: ASbGncud+w5sSO5qKejIC4sGGav7VTCy3cjfcIKrGDwcBHadoBnQmVHBN+ErzoPYcMT
-	It002L/ZzMTnv2bexqWtfryag9hfTQURPIhzxdymavoD0MlMzm18ibhe89Oy6fMuTndmEOAaXOn
-	Fe3d/PoluIu1czc52wtY1oeG31O8Q=
-X-Google-Smtp-Source: AGHT+IH4Qv0+6KZvpi+1uMXLZPhezmGXC7uR+1Xj4tehYbACfpkqO8/vS0CgMXXyCsoXJGBUSjhJxEbyphd2GOB9Mpc=
-X-Received: by 2002:a17:907:72c8:b0:ab7:e52a:1467 with SMTP id
- a640c23a62f3a-abc09aff659mr125332966b.30.1740091203960; Thu, 20 Feb 2025
- 14:40:03 -0800 (PST)
+	s=arc-20240116; t=1740091264; c=relaxed/simple;
+	bh=EIrBcICY0nrw3MiybWqAJxN/+0dIBBq+xKit13UVocY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=FgLuxFDVnEWtFn/txKyryfxyPuOiDpU13WZRETK2cXezcT4g787qSBHD+VtDe3+tq0XQZb31Qej3zT99ZlqJJqCurBPs5eE7cut4AKa3FM7CiMk9F3/rLTkT7SBqo0MisYJQGBAxwcQTzoJ1DV1jEEfKkpWyaFolh3vkpUHyEEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YEWe2GK/; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740091261;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=J5LpLD6cTC7YmXPFF3jLaaukEkMquqSf1+9EQ43LXwI=;
+	b=YEWe2GK/b4XN0I2H68HOyOl6zxo8tHATURWHDfoywC0qCdpCDG2POjTOSQ1Z9BZNY6KN2K
+	mL6Lmy4JPB02Z05bLnMe6sjyUWMihmJzwy6WRuFTMDGDrgfp0RnO5OTk5JCIaJLX9caN3x
+	FlyAX0K2LlAC7qNINELMAyJpRvOawrM=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-17-iANXzaygMg2TP7RitqHV-g-1; Thu,
+ 20 Feb 2025 17:40:58 -0500
+X-MC-Unique: iANXzaygMg2TP7RitqHV-g-1
+X-Mimecast-MFC-AGG-ID: iANXzaygMg2TP7RitqHV-g_1740091256
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DAFDC19373DC;
+	Thu, 20 Feb 2025 22:40:55 +0000 (UTC)
+Received: from [127.0.1.1] (unknown [10.44.32.26])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EF92E1800362;
+	Thu, 20 Feb 2025 22:40:47 +0000 (UTC)
+From: Sergio Lopez <slp@redhat.com>
+Subject: [RFC PATCH v4 0/4] virtio: obtain SHM page size from device
+Date: Thu, 20 Feb 2025 23:40:29 +0100
+Message-Id: <20250220-virtio-shm-page-size-v4-0-ddaed7b6f734@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1739997129.git.ashish.kalra@amd.com> <f1caff4423a46c50564e625fd98932fde2a9a3fc.1739997129.git.ashish.kalra@amd.com>
- <CAAH4kHab8rvWCPX2x8cvv6Dm+uhZQxpJgwrrn2GAKzn8sqS9Kg@mail.gmail.com>
- <27d63f0a-f840-42df-a31c-28c8cb457222@amd.com> <CAAH4kHYXGNTFABo7hWCQvvebiv4VkXfT8HvV-FPneyQcrHA-9w@mail.gmail.com>
- <f227fa9a-f609-41f3-a63b-1c37ded33134@amd.com>
-In-Reply-To: <f227fa9a-f609-41f3-a63b-1c37ded33134@amd.com>
-From: Dionna Amalie Glaze <dionnaglaze@google.com>
-Date: Thu, 20 Feb 2025 14:39:51 -0800
-X-Gm-Features: AWEUYZmXe-AfsDb9SasqOdujPJo2AOjKzPGzkt9ECuWbb2oibMH6xOtCbdo7MV8
-Message-ID: <CAAH4kHaM6BDD3Ry5KQJn0rVi7m+FCy2auQPnFNSxnMMeLziGhQ@mail.gmail.com>
-Subject: Re: [PATCH v4 2/7] crypto: ccp: Ensure implicit SEV/SNP init and
- shutdown in ioctls
-To: "Kalra, Ashish" <ashish.kalra@amd.com>
-Cc: seanjc@google.com, pbonzini@redhat.com, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
-	hpa@zytor.com, thomas.lendacky@amd.com, john.allen@amd.com, 
-	herbert@gondor.apana.org.au, michael.roth@amd.com, nikunj@amd.com, 
-	ardb@kernel.org, kevinloughlin@google.com, Neeraj.Upadhyay@amd.com, 
-	aik@amd.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, linux-coco@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAF2vt2cC/4XNSw7CIBCA4as0rMXw6ANceQ/jAssgs6htoCFq0
+ 7tLu6oxjct/JvPNRCIEhEhOxUQCJIzYP3KUh4K03jzuQNHmJoKJigkuacIwYk+j7+hg8jriG2g
+ N2jDVNhYsJ/l0CODwubKXa26PcezDa/2S+DL9AyZOGa0AuNNalbJi5wDWm/HY9h1ZxCS2Srmji
+ KwYw2uuodZM3X4UuVEE21FkVlRTOudqJ3Wjv5R5nj93Mzs9RQEAAA==
+X-Change-ID: 20250213-virtio-shm-page-size-6e9a08c7ded1
+To: "Michael S. Tsirkin" <mst@redhat.com>, 
+ Daniel Verkamp <dverkamp@chromium.org>, Jason Wang <jasowang@redhat.com>, 
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+ =?utf-8?q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+ David Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>, 
+ Gurchetan Singh <gurchetansingh@chromium.org>, 
+ Chia-I Wu <olvaffe@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Simona Vetter <simona@ffwll.ch>, Rob Clark <robdclark@gmail.com>, 
+ Dmitry Osipenko <dmitry.osipenko@collabora.com>, fnkl.kernel@gmail.com
+Cc: virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, Sergio Lopez <slp@redhat.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3549; i=slp@redhat.com;
+ h=from:subject:message-id; bh=EIrBcICY0nrw3MiybWqAJxN/+0dIBBq+xKit13UVocY=;
+ b=owEBbQKS/ZANAwAIAfRpJ40vDAI1AcsmYgBnt69qjlgonWU9HEStbjBbIjyYw0uN/m6xlT0Xi
+ gl3E7bgyviJAjMEAAEIAB0WIQS+1fz3US2GgJFC6KL0aSeNLwwCNQUCZ7evagAKCRD0aSeNLwwC
+ NbIkEACEE1+9IXPhjSFvatetiBQqLdx5UGlmuYMV1/kU25PHSvKTzrDfJkHYkhrRr1xY7l6WCow
+ kIPQyZacDGJnM6LnwXVen3p5L6/KlONB8bMY6gqKWqdswmeJkRQj+YgctanZzyz2GGh94o45p0H
+ uRnMOu+BcnmpcwIAo5dlHOfRA2eUDIjRoANeRowVfP66WqFhHugT4qccAKxZmtD08dS55eBIog7
+ uOBwBZ4Twjw5ecVVZlhJiQBW2I9xSUuNxILXJHnU7cDAmVLSVOHRUQ9Ye1aimifr8K+5i6vuO8i
+ BS/CSwMzljEmhRJWangGEQ/TR4F3EtEKjX10dUo2v1E9ucHzg7C1s+hlCWQtww73hfclun9SFKq
+ mk59upsekuZ7v0ucw4WyZFcUFiC4BdSWiqZoKb5aKgExs/WcXY7QIEfPXleQwiaoPwoK/VQI2f9
+ CDGIoURjN1nlZXy54syyaX9HxL8qbkPGZXlXOEwQlpDBhGOQiS7Qc16hh2UiC9DdPAXjAg85fH3
+ HynYL2FhGB6B9scXwZoGtOGqdDTViKSsxCBdTVUgLA+CFFOAPMPYGBlbJcwmB2NlkPbXqND5/cB
+ 71JmyEsW2FXYCGrxSPmyPXfiFqDIDcASd/oLAmgBaw+hQNJUJyN4A6ZdzcrevAzOXnkLQ9CKCKZ
+ blRpRhEN0VHolbQ==
+X-Developer-Key: i=slp@redhat.com; a=openpgp;
+ fpr=BED5FCF7512D86809142E8A2F469278D2F0C0235
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Thu, Feb 20, 2025 at 2:18=E2=80=AFPM Kalra, Ashish <ashish.kalra@amd.com=
-> wrote:
->
-> On 2/20/2025 3:37 PM, Dionna Amalie Glaze wrote:
-> > On Thu, Feb 20, 2025 at 12:07=E2=80=AFPM Kalra, Ashish <ashish.kalra@am=
-d.com> wrote:
-> >>
-> >> Hello Dionna,
-> >>
-> >> On 2/20/2025 10:44 AM, Dionna Amalie Glaze wrote:
-> >>> On Wed, Feb 19, 2025 at 12:53=E2=80=AFPM Ashish Kalra <Ashish.Kalra@a=
-md.com> wrote:
-> >>>>
-> >>>> From: Ashish Kalra <ashish.kalra@amd.com>
-> >>>>
-> >>>> Modify the behavior of implicit SEV initialization in some of the
-> >>>> SEV ioctls to do both SEV initialization and shutdown and add
-> >>>> implicit SNP initialization and shutdown to some of the SNP ioctls
-> >>>> so that the change of SEV/SNP platform initialization not being
-> >>>> done during PSP driver probe time does not break userspace tools
-> >>>> such as sevtool, etc.
-> >>>>
-> >>>> Prior to this patch, SEV has always been initialized before these
-> >>>> ioctls as SEV initialization is done as part of PSP module probe,
-> >>>> but now with SEV initialization being moved to KVM module load inste=
-ad
-> >>>> of PSP driver probe, the implied SEV INIT actually makes sense and g=
-ets
-> >>>> used and additionally to maintain SEV platform state consistency
-> >>>> before and after the ioctl SEV shutdown needs to be done after the
-> >>>> firmware call.
-> >>>>
-> >>>> It is important to do SEV Shutdown here with the SEV/SNP initializat=
-ion
-> >>>> moving to KVM, an implicit SEV INIT here as part of the SEV ioctls n=
-ot
-> >>>> followed with SEV Shutdown will cause SEV to remain in INIT state an=
-d
-> >>>> then a future SNP INIT in KVM module load will fail.
-> >>>>
-> >>>> Similarly, prior to this patch, SNP has always been initialized befo=
-re
-> >>>> these ioctls as SNP initialization is done as part of PSP module pro=
-be,
-> >>>> therefore, to keep a consistent behavior, SNP init needs to be done
-> >>>> here implicitly as part of these ioctls followed with SNP shutdown
-> >>>> before returning from the ioctl to maintain the consistent platform
-> >>>> state before and after the ioctl.
-> >>>>
-> >>>> Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
-> >>>> ---
-> >>>>  drivers/crypto/ccp/sev-dev.c | 117 ++++++++++++++++++++++++++++----=
+There's an incresing number of machines supporting multiple page sizes
+and, on these machines, the host and a guest can be running with
+different pages sizes.
+
+In addition to this, there might be devices that have a required and/or
+preferred page size for mapping memory.
+
+In this series, we extend virtio_shm_region with a field to hold the
+page size. The PCI and MMIO transports are updated to read the page
+shift for each region and derive the page size accordingly. For the PCI
+transport we're borrowing 8 bits from the 16 bit padding, so the
+transition is seamless. But for MMIO we need to access a new register,
+which could potentially be interpreted by the VMM as an error. For this
+reason we're gating this behavior, for every transport, behind the
+VIRTIO_F_SHM_PAGE_SIZE feature bit.
+
+How the SHM page size information is used depends on each device. Some
+may silently round up allocations, some may expose this information to
+userspace. This series includes a patch that extends virtio-gpu to
+expose the information via the VIRTGPU_GETPARAM ioctl, as an example of
+the second approach.
+
+This patch series is an RFC because it requires changes to the VIRTIO
+specifications. This patch series will be used as a reference to
+propose such changes.
+
+Signed-off-by: Sergio Lopez <slp@redhat.com>
 ---
-> >>>>  1 file changed, 93 insertions(+), 24 deletions(-)
-> >>>>
-> >>>> diff --git a/drivers/crypto/ccp/sev-dev.c b/drivers/crypto/ccp/sev-d=
-ev.c
-> >>>> index 8f5c474b9d1c..b06f43eb18f7 100644
-> >>>> --- a/drivers/crypto/ccp/sev-dev.c
-> >>>> +++ b/drivers/crypto/ccp/sev-dev.c
-> >>>> @@ -1461,7 +1461,8 @@ static int sev_ioctl_do_platform_status(struct=
- sev_issue_cmd *argp)
-> >>>>  static int sev_ioctl_do_pek_pdh_gen(int cmd, struct sev_issue_cmd *=
-argp, bool writable)
-> >>>>  {
-> >>>>         struct sev_device *sev =3D psp_master->sev_data;
-> >>>> -       int rc;
-> >>>> +       bool shutdown_required =3D false;
-> >>>> +       int rc, error;
-> >>>>
-> >>>>         if (!writable)
-> >>>>                 return -EPERM;
-> >>>> @@ -1470,19 +1471,26 @@ static int sev_ioctl_do_pek_pdh_gen(int cmd,=
- struct sev_issue_cmd *argp, bool wr
-> >>>>                 rc =3D __sev_platform_init_locked(&argp->error);
-> >>>>                 if (rc)
-> >>>>                         return rc;
-> >>>> +               shutdown_required =3D true;
-> >>>>         }
-> >>>>
-> >>>> -       return __sev_do_cmd_locked(cmd, NULL, &argp->error);
-> >>>> +       rc =3D __sev_do_cmd_locked(cmd, NULL, &argp->error);
-> >>>> +
-> >>>> +       if (shutdown_required)
-> >>>> +               __sev_platform_shutdown_locked(&error);
-> >>>
-> >>> This error is discarded. Is that by design? If so, It'd be better to
-> >>> call this ignored_error.
-> >>>
-> >>
-> >> This is by design, we cannot overwrite the error for the original comm=
-and being issued
-> >> here which in this case is do_pek_pdh_gen, hence we use a local error =
-for the shutdown command.
-> >> And __sev_platform_shutdown_locked() has it's own error logging code, =
-so it will be printing
-> >> the error message for the shutdown command failure, so the shutdown er=
-ror is not eventually
-> >> being ignored, that error log will assist in any inconsistent SEV/SNP =
-platform state and
-> >> subsequent errors.
-> >>
-> >>>> +
-> >>>> +       return rc;
-> >>>>  }
-> >>>>
-> >>>>  static int sev_ioctl_do_pek_csr(struct sev_issue_cmd *argp, bool wr=
-itable)
-> >>>>  {
-> >>>>         struct sev_device *sev =3D psp_master->sev_data;
-> >>>>         struct sev_user_data_pek_csr input;
-> >>>> +       bool shutdown_required =3D false;
-> >>>>         struct sev_data_pek_csr data;
-> >>>>         void __user *input_address;
-> >>>>         void *blob =3D NULL;
-> >>>> -       int ret;
-> >>>> +       int ret, error;
-> >>>>
-> >>>>         if (!writable)
-> >>>>                 return -EPERM;
-> >>>> @@ -1513,6 +1521,7 @@ static int sev_ioctl_do_pek_csr(struct sev_iss=
-ue_cmd *argp, bool writable)
-> >>>>                 ret =3D __sev_platform_init_locked(&argp->error);
-> >>>>                 if (ret)
-> >>>>                         goto e_free_blob;
-> >>>> +               shutdown_required =3D true;
-> >>>>         }
-> >>>>
-> >>>>         ret =3D __sev_do_cmd_locked(SEV_CMD_PEK_CSR, &data, &argp->e=
-rror);
-> >>>> @@ -1531,6 +1540,9 @@ static int sev_ioctl_do_pek_csr(struct sev_iss=
-ue_cmd *argp, bool writable)
-> >>>>         }
-> >>>>
-> >>>>  e_free_blob:
-> >>>> +       if (shutdown_required)
-> >>>> +               __sev_platform_shutdown_locked(&error);
-> >>>
-> >>> Another discarded error. This function is called in different
-> >>> locations in sev-dev.c with and without checking the result, which
-> >>> seems problematic.
-> >>
-> >> Not really, if shutdown fails for any reason, the error is printed.
-> >> The return value here reflects the value of the original command/funct=
-ion.
-> >> The command/ioctl could have succeeded but the shutdown failed, hence,
-> >> shutdown error is printed, but the return value reflects that the ioct=
-l succeeded.
-> >>
-> >> Additionally, in case of INIT before the command is issued, the comman=
-d may
-> >> have failed without the SEV state being in INIT state, hence the error=
- for the
-> >> INIT command failure is returned back from the ioctl.
-> >>
-> >>>
-> >>>> +
-> >>>>         kfree(blob);
-> >>>>         return ret;
-> >>>>  }
-> >>>> @@ -1747,8 +1759,9 @@ static int sev_ioctl_do_pek_import(struct sev_=
-issue_cmd *argp, bool writable)
-> >>>>         struct sev_device *sev =3D psp_master->sev_data;
-> >>>>         struct sev_user_data_pek_cert_import input;
-> >>>>         struct sev_data_pek_cert_import data;
-> >>>> +       bool shutdown_required =3D false;
-> >>>>         void *pek_blob, *oca_blob;
-> >>>> -       int ret;
-> >>>> +       int ret, error;
-> >>>>
-> >>>>         if (!writable)
-> >>>>                 return -EPERM;
-> >>>> @@ -1780,11 +1793,15 @@ static int sev_ioctl_do_pek_import(struct se=
-v_issue_cmd *argp, bool writable)
-> >>>>                 ret =3D __sev_platform_init_locked(&argp->error);
-> >>>>                 if (ret)
-> >>>>                         goto e_free_oca;
-> >>>> +               shutdown_required =3D true;
-> >>>>         }
-> >>>>
-> >>>>         ret =3D __sev_do_cmd_locked(SEV_CMD_PEK_CERT_IMPORT, &data, =
-&argp->error);
-> >>>>
-> >>>>  e_free_oca:
-> >>>> +       if (shutdown_required)
-> >>>> +               __sev_platform_shutdown_locked(&error);
-> >>>
-> >>> Again.
-> >>>
-> >>>> +
-> >>>>         kfree(oca_blob);
-> >>>>  e_free_pek:
-> >>>>         kfree(pek_blob);
-> >>>> @@ -1901,17 +1918,8 @@ static int sev_ioctl_do_pdh_export(struct sev=
-_issue_cmd *argp, bool writable)
-> >>>>         struct sev_data_pdh_cert_export data;
-> >>>>         void __user *input_cert_chain_address;
-> >>>>         void __user *input_pdh_cert_address;
-> >>>> -       int ret;
-> >>>> -
-> >>>> -       /* If platform is not in INIT state then transition it to IN=
-IT. */
-> >>>> -       if (sev->state !=3D SEV_STATE_INIT) {
-> >>>> -               if (!writable)
-> >>>> -                       return -EPERM;
-> >>>> -
-> >>>> -               ret =3D __sev_platform_init_locked(&argp->error);
-> >>>> -               if (ret)
-> >>>> -                       return ret;
-> >>>> -       }
-> >>>> +       bool shutdown_required =3D false;
-> >>>> +       int ret, error;
-> >>>>
-> >>>>         if (copy_from_user(&input, (void __user *)argp->data, sizeof=
-(input)))
-> >>>>                 return -EFAULT;
-> >>>> @@ -1952,6 +1960,16 @@ static int sev_ioctl_do_pdh_export(struct sev=
-_issue_cmd *argp, bool writable)
-> >>>>         data.cert_chain_len =3D input.cert_chain_len;
-> >>>>
-> >>>>  cmd:
-> >>>> +       /* If platform is not in INIT state then transition it to IN=
-IT. */
-> >>>> +       if (sev->state !=3D SEV_STATE_INIT) {
-> >>>> +               if (!writable)
-> >>>> +                       goto e_free_cert;
-> >>>> +               ret =3D __sev_platform_init_locked(&argp->error);
-> >>>
-> >>> Using argp->error for init instead of the ioctl-requested command
-> >>> means that the user will have difficulty distinguishing which process
-> >>> is at fault, no?
-> >>>
-> >>
-> >> Not really, in case the SEV command has still not been issued, argp->e=
-rror is still usable
-> >> and returned back to the caller (no need to use a local error here), w=
-e are not overwriting
-> >> the argp->error used for the original command/ioctl here.
-> >>
-> >
-> > I mean in the case that argp->error is set to a value shared by the
-> > command and init, it's hard to know what the problem was.
-> > I'd like to ensure that the documentation is updated to reflect that
-> > (in this case) if PDH_CERT_EXPORT returns INVALID_PLATFORM_STATE, then
-> > it's because the platform was not in PSTATE.UNINIT state.
-> > The new behavior of initializing when you need to now means that you
-> > should have ruled out INVALID_PLATFORM_STATE as a possible value from
-> > PDH_EXPORT_CERT. Same for SNP_CONFIG.
-> >
-> > There is not a 1-to-1 mapping between the ioctl commands and the SEV
-> > commands now, so I think you need extra documentation to clarify the
-> > new error space for at least pdh_export and set_config
-> >
-> > SNP_PLATFORM_STATUS, VLEK_LOAD, and SNP_COMMIT appear to not
-> > necessarily have a provenance confusion after looking closer.
-> >
-> >
->
-> I am more of less trying to match the current behavior of sev_ioctl_do_pe=
-k_import()
-> or sev_ioctl_do_pdh_export().
->
-> All this is implementation specific handling so we can't update SEV/SNP f=
-irmware
-> API specs documentation for this new error space, this is not a firmware =
-specific return code.
->
+Changes in v4:
+- Validate page_shift before deriving the page size from it
+  (thanks Daniel Verkamp).
+- Use an unsigned integer in left shift (thanks Daniel Verkamp).
+- Link to v3: https://lore.kernel.org/r/20250220-virtio-shm-page-size-v3-0-874fff6f3979@redhat.com
 
-I was just talking about the uapi for the ioctls, not AMD reference
-documentation.
+Changes in v3:
+- Merge patch 2 (virtio: introduce VIRTIO_F_SHM_PAGE_SIZE) into the
+  changes for virtio-pci (thanks Dmitry Osipenko).
+- In virtio_gpu_getparam_ioctl(), return ENOENT instead of EINVAL
+  if the device lacks a host visible region (thanks Dmitry Osipenko).
+- Link to v2: https://lore.kernel.org/r/20250214-virtio-shm-page-size-v2-0-aa1619e6908b@redhat.com
 
-> But to maintain 1-to-1 mapping between the ioctl commands and the SEV/SNP=
- commands,
-> i think it will be better to handle this INIT in the same way as SHUTDOWN=
-, which
-> is to use a local error for INIT and in case of implicit INIT failures, l=
-et the
-> error logs from __sev_platform_init_locked() OR __sev_snp_init_locked() b=
-e printed
-> and always return INVALID_PLATFORM_STATE as error back to the caller.
->
-> Thanks,
-> Ashish
->
+Changes in v2:
+- Use "page_shift" instead of "page_size" in the transport-related
+  structures to clarify its contents (thanks Daniel Verkamp).
+- Update the command for "page_shift" in "virtio_pci_cap" to clarify
+  that it's only relevant for VIRTIO_PCI_CAP_SHARED_MEMORY_CFG regions.
+  (thanks Daniel Verkamp).
+- Instead of a derived value, store page size in virtio_shm_region.
+- Update the cover page to reflect that the functionality is gated
+  behind the VIRTIO_F_SHM_PAGE_SIZE feature bit.
+- Link to v1: https://lore.kernel.org/r/20250213-virtio-shm-page-size-v1-0-5ee1f9984350@redhat.com
 
+---
+Sergio Lopez (4):
+      virtio: introduce VIRTIO_F_SHM_PAGE_SIZE
+      virtio-pci: extend virtio_pci_cap with page_shift
+      virtio-mmio: read shm region page size
+      drm/virtio: add VIRTGPU_PARAM_HOST_SHM_PAGE_SIZE to params
 
---=20
--Dionna Glaze, PhD, CISSP, CCSP (she/her)
+ drivers/gpu/drm/virtio/virtgpu_ioctl.c |  5 +++++
+ drivers/virtio/virtio_mmio.c           | 20 ++++++++++++++++++++
+ drivers/virtio/virtio_pci_modern.c     | 32 ++++++++++++++++++++++++++++----
+ drivers/virtio/virtio_ring.c           |  2 ++
+ include/linux/virtio_config.h          |  1 +
+ include/uapi/drm/virtgpu_drm.h         |  1 +
+ include/uapi/linux/virtio_config.h     |  7 ++++++-
+ include/uapi/linux/virtio_mmio.h       |  3 +++
+ include/uapi/linux/virtio_pci.h        |  3 ++-
+ 9 files changed, 68 insertions(+), 6 deletions(-)
+---
+base-commit: 4dc1d1bec89864d8076e5ab314f86f46442bfb02
+change-id: 20250213-virtio-shm-page-size-6e9a08c7ded1
+
+Best regards,
+-- 
+Sergio Lopez <slp@redhat.com>
+
 
