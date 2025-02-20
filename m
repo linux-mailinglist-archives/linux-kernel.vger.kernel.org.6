@@ -1,146 +1,162 @@
-Return-Path: <linux-kernel+bounces-522976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C457A3D0C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 06:28:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18D09A3D0CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 06:32:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE142175A87
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 05:28:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1035C189D7E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 05:32:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4F171DDA34;
-	Thu, 20 Feb 2025 05:28:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25E3D1E25F4;
+	Thu, 20 Feb 2025 05:32:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="lyqQEu99"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f+xcpIkP"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 659B0A926;
-	Thu, 20 Feb 2025 05:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7E8D524F;
+	Thu, 20 Feb 2025 05:32:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740029314; cv=none; b=O59jnOZyLWQ9Xbsx9J4MoMGJbckjYG3GhgtagNHOIUTbtA5Zp1D/ak6pRmIzclyJoNSkpR8F+LvOen5+jkZC8Vg99WmUjPUbBueRAkVdoJGAyYTOTuKSbITJzdVH12fohdjz88X2wyYu8Bc17kpYbF0W1AnIsc1adZOnvtTO++w=
+	t=1740029552; cv=none; b=VsEQAe3kY4Jl5m97DrDLbGV1JDIUYQE9PJcWZMPyJVUApJhQ1ELVj8W6a6kA0mVJaNi2wdiLNJrGAglh4VIp63brgV3JF7LpY6okU0b9Mb3T6/nHCO9yV4+1s85MXKzX53S1OYfklIMccLWpaPq41qCKWk/1qstSTq55pKjhqtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740029314; c=relaxed/simple;
-	bh=PxBUNi7p6iDDkHAY+V65ove/V7/T8JvwpzcumV7Pkf0=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=DP5WV9VB1OYln1woMEhJiawD5kwQ58AG89itPIEqpWVGeNARX3hm34ZIgArQKCRXVYgEBhnr2cz/qAQqHPuwlzgy5IvnqDDAANw1eywHx0tivB/LaNa1oh4PY5XkO7iOItY8vmxHPNwFVWpI5ZkYx6VUvx0wXYHvknxjKtAtsMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=lyqQEu99; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1740029552; c=relaxed/simple;
+	bh=3e9ITB0v0vv4TVkNHrbax69/+NT3q8n5gFLHHx7q1H4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uwHpVir8rZvuhfuIShtFy/CHg91m6/kR013ZV3uCj9hvd7Jj1UcyIfiindtpP3SJHFdG3LKuj2E90UnF5TtpoKvRX5qlq2bDEs8oz0G/hWkQpLdIaKzz5EvID7E81N1WrFsZ2sNqgoBhlCwYOEON1FOitSMq8a8i+8A7pBU8Kqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f+xcpIkP; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5debbced002so1058793a12.1;
+        Wed, 19 Feb 2025 21:32:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740029549; x=1740634349; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=t59XJ1OOcCF4nLjXJy5R2daGlLc6nwlV0JhixHTmrLs=;
+        b=f+xcpIkPMjAwzWyNdpRMWKu03myVdRhfHQYHeraQmnjNca8cLKBLrA+w9B4RXzPHpO
+         DjMdqs2WAZ4wNTOHoCVmQrSVqFiiqHsiUBf+UFf6pEndNB1YLrYlgRggE8OarkMOhspg
+         4e2u11OoIvTM5UjCp/UObGwQPD9uvKgzNeMOgH2Ay2FOist1LWDBNgC1g17HHpdIMA6A
+         5sAs6adSVV/A4CJ5NP8DFk6iJ5ILRyk8VdnBR2xKMhZJOg8qqqbNFGOENdjufr70FJg4
+         PMLOjYP6uy/2BQrvFFTLDfmpwoPAunOFiy2wVbNyMW3rfKsHosX7bcS2CalgUy28MHhE
+         WLeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740029549; x=1740634349;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t59XJ1OOcCF4nLjXJy5R2daGlLc6nwlV0JhixHTmrLs=;
+        b=iC+FKYxJ4luFUtb1WIdYoLwr90viBlQ8gr8OGr+K8YpRrSGHxt+dkOQDhzVPAd8TbR
+         6hGz84bKDqCITEWBH66nladgK9MgT5C6Gcca/cYxMSD/BMswXox5oGeJpS6vxd/Dgiha
+         1xWMOFQEP+uEXbh98R56WVIp1SfMY0OxuZOeK5nLr5psXoyl2GmdcSsndEdswEHODAyF
+         jJgxBRf4+zPz1TZvsPxqo6dAfWHuBbb8ewDtGS69gu5wk4DS9Aibux/Bh1fjw4m0TNaM
+         ej+m6NOJI67P4LhmFbBAeBGcfncrbimSBGsTjHg9OUAfqB4IMj6xV8owqLG50FiqCFaV
+         Flzg==
+X-Forwarded-Encrypted: i=1; AJvYcCW4GybqrEzhKI2wO6Gpyo4qk9afX7VD7i4dubZApZqJ5zlkDx8R0LmHnbYJyMt3o6BLmL5FtoXF@vger.kernel.org, AJvYcCWVut1s3LWjkfrXmuKqsycni3SQy08D7a1vNA15QFzJ0zUEN5mJiRuPeGzDQjl6YBf+EFVTxfSH2r4uTV0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwElIiQXvu+KBYnvBCetu8LQpq3OAfbs1Ikp4ptZ/lRrCww/KdO
+	6SQFCxLsqSrvSZmih9fUDBmp+4rY1V4FH+7L4QEpti0RgvzBTgF/
+X-Gm-Gg: ASbGnculMVmbhtpp3oFdKS6Wk8kWlofhu9TRlJu1zW6bvPXlpzTZASMh8rKfUAXnXuT
+	gYE+6CibE2yrRhKiJqWiKGpwN07GrfrdsWVAhaCKIKAN4zXnVpbL+WcJ+NwFSpbGhofRIsQkiT+
+	erhSMZYSEMJosZ4sZ5xRlK8wOMlPgSeATtO31uaIeUgM+EUPkYLA51B5jph2kLpisv4chH1EXVp
+	BSMMpYPMroyQL4/enSmI5WIQld5ZamjkEJ2Gnnwn0Si1NZ5HAJGLpiw4ExUNfbGtEr1RtZwZG4P
+	BRv5hw5N7q6J
+X-Google-Smtp-Source: AGHT+IG5X+Oirh4JKvNeSMlWoYa1IlfqRECBCeBBySZcsJ3c+Cct98CBZ/HOrW3zk4EV+wdO7JttHA==
+X-Received: by 2002:a05:6402:34c6:b0:5db:7353:2b5c with SMTP id 4fb4d7f45d1cf-5e0a1280fe2mr1684309a12.11.1740029548538;
+        Wed, 19 Feb 2025 21:32:28 -0800 (PST)
+Received: from debian ([2a00:79c0:604:ea00:45fb:7d1a:5e4d:9727])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e076048c05sm4121660a12.35.2025.02.19.21.32.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2025 21:32:26 -0800 (PST)
+Date: Thu, 20 Feb 2025 06:32:23 +0100
+From: Dimitri Fedrau <dima.fedrau@gmail.com>
+To: Stefan Eichenberger <eichest@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
+	Gregor Herburger <gregor.herburger@ew.tq-group.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] net: phy: marvell-88q2xxx: Enable temperature
+ measurement in probe again
+Message-ID: <20250220053223.GA3914@debian>
+References: <20250218-marvell-88q2xxx-hwmon-enable-at-probe-v1-0-999a304c8a11@gmail.com>
+ <20250218-marvell-88q2xxx-hwmon-enable-at-probe-v1-1-999a304c8a11@gmail.com>
+ <Z7V3Wsex1G7-zEYc@eichest-laptop>
+ <20250219104647.GC3888@debian>
+ <Z7YUG2RjpBImivqF@eichest-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1740029310;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8osLsKSgydSwhw4gROThJbyX6R2+o/ZDIgdC95qqlFk=;
-	b=lyqQEu992K0fRqvzMMznMfHvJVxZIkARIAsYxvNOSLBpmuFAOOLYGM40lZFqE91f8jeGt5
-	dYxW/14OwcULDLGcyv3qKv4JF/acKYOM3elq7XjDUeRzl5scbXtTs/CVqEdvriM4quqgoc
-	xEe9CDjLsIGccr9rMg3cXQABTI6E9gnlvzy3uDIyCPL0uKEtCZ5tpqEwYa7buay0HXS1bh
-	9N+HEP7PTvJ/4QpOLidlB4HtrnErluQWQ97+jHk4OM8ciA1gXT0Q7D4W6PSyQPojtfEyff
-	FRHFemAaIJDtC2PFv5Xdg1mUT2QpoHhSIQs+Lgzl2BZkggHvHy4BFyq7LWYI4g==
-Date: Thu, 20 Feb 2025 06:28:27 +0100
-From: Dragan Simic <dsimic@manjaro.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Kever Yang <kever.yang@rock-chips.com>, heiko@sntech.de,
- linux-rockchip@lists.infradead.org, Shaohan Yao
- <shaohan.yao@rock-chips.com>, linux-pm@vger.kernel.org, Lukasz Luba
- <lukasz.luba@arm.com>, linux-kernel@vger.kernel.org, Zhang Rui
- <rui.zhang@intel.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
- linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/2] thermal: rockchip: Support the rk3562 SoC in thermal
- driver
-In-Reply-To: <7f17cc55-a741-4bb8-9513-0580ca6fedd3@linaro.org>
-References: <20241224094015.3816301-1-kever.yang@rock-chips.com>
- <20241224094015.3816301-2-kever.yang@rock-chips.com>
- <7f17cc55-a741-4bb8-9513-0580ca6fedd3@linaro.org>
-Message-ID: <b4ab86b56177a234f3738c477693e858@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z7YUG2RjpBImivqF@eichest-laptop>
 
-Hello Daniel,
-
-On 2025-02-11 10:36, Daniel Lezcano wrote:
-> On 24/12/2024 10:40, Kever Yang wrote:
->> From: Shaohan Yao <shaohan.yao@rock-chips.com>
->> 
->> There are one Temperature Sensor on rk3562, channel 0 is for chip.
+Am Wed, Feb 19, 2025 at 06:25:47PM +0100 schrieb Stefan Eichenberger:
+> Hi Dimitri,
 > 
-> A bit stingy in terms of description, no ?
-
-[snip]
-
->> @@ -497,6 +509,45 @@ static const struct tsadc_table 
->> rk3399_code_table[] = {
->>   	{TSADCV3_DATA_MASK, 125000},
->>   };
->>   +static const struct tsadc_table rk3562_code_table[] = {
->> +	{0, -40000},
->> +	{1419, -40000},
->> +	{1428, -35000},
->> +	{1436, -30000},
->> +	{1445, -25000},
->> +	{1453, -20000},
->> +	{1462, -15000},
->> +	{1470, -10000},
->> +	{1479, -5000},
->> +	{1487, 0},
->> +	{1496, 5000},
->> +	{1504, 10000},
->> +	{1512, 15000},
->> +	{1521, 20000},
->> +	{1529, 25000},
->> +	{1538, 30000},
->> +	{1546, 35000},
->> +	{1555, 40000},
->> +	{1563, 45000},
->> +	{1572, 50000},
->> +	{1580, 55000},
->> +	{1589, 60000},
->> +	{1598, 65000},
->> +	{1606, 70000},
->> +	{1615, 75000},
->> +	{1623, 80000},
->> +	{1632, 85000},
->> +	{1640, 90000},
->> +	{1648, 95000},
->> +	{1657, 100000},
->> +	{1666, 105000},
->> +	{1674, 110000},
->> +	{1682, 115000},
->> +	{1691, 120000},
->> +	{1699, 125000},
->> +	{TSADCV2_DATA_MASK, 125000},
->> +};
+> On Wed, Feb 19, 2025 at 11:46:47AM +0100, Dimitri Fedrau wrote:
+> > Hi Stefan,
+> > 
+> > thanks for reviewing.
+> > 
+> > Am Wed, Feb 19, 2025 at 07:16:58AM +0100 schrieb Stefan Eichenberger:
+> > > Hi Dimitri,
+> > > 
+> > > On Tue, Feb 18, 2025 at 07:33:09PM +0100, Dimitri Fedrau wrote:
+> > > > Enabling of the temperature sensor was moved from mv88q2xxx_hwmon_probe to
+> > > > mv88q222x_config_init with the consequence that the sensor is only
+> > > > usable when the PHY is configured. Enable the sensor in
+> > > > mv88q2xxx_hwmon_probe as well to fix this.
+> > > > 
+> > > > Fixes: a197004cf3c2 ("net: phy: marvell-88q2xxx: Fix temperature measurement with reset-gpios")
+> > > > Signed-off-by: Dimitri Fedrau <dima.fedrau@gmail.com>
+> > > > ---
+> > > >  drivers/net/phy/marvell-88q2xxx.c | 7 +++++++
+> > > >  1 file changed, 7 insertions(+)
+> > > > 
+> > > > diff --git a/drivers/net/phy/marvell-88q2xxx.c b/drivers/net/phy/marvell-88q2xxx.c
+> > > > index a3996471a1c9a5d4060d5d19ce44aa70e902a83f..30d71bfc365597d77c34c48f05390db9d63c4af4 100644
+> > > > --- a/drivers/net/phy/marvell-88q2xxx.c
+> > > > +++ b/drivers/net/phy/marvell-88q2xxx.c
+> > > > @@ -718,6 +718,13 @@ static int mv88q2xxx_hwmon_probe(struct phy_device *phydev)
+> > > >  	struct device *dev = &phydev->mdio.dev;
+> > > >  	struct device *hwmon;
+> > > >  	char *hwmon_name;
+> > > > +	int ret;
+> > > > +
+> > > > +	/* Enable temperature sense */
+> > > > +	ret = phy_modify_mmd(phydev, MDIO_MMD_PCS, MDIO_MMD_PCS_MV_TEMP_SENSOR2,
+> > > > +			     MDIO_MMD_PCS_MV_TEMP_SENSOR2_DIS_MASK, 0);
+> > > > +	if (ret < 0)
+> > > > +		return ret;
+> > > >  
+> > > >  	priv->enable_temp = true;
+> > > >  	hwmon_name = devm_hwmon_sanitize_name(dev, dev_name(dev));
+> > > 
+> > > Is it necessary to have it enabled in probe and in config? Is that
+> > > because of the soft reset? Can it happen that the phy is reset but
+> > > config is not called, then we would end up in the same situation right?
+> > >
+> > Even if the phy is not configured yet, it is probed and the PHYs hard reset
+> > is deasserted, so I can read the temperature. I think the situation you
+> > mean is when the PHY is brought up and down again. In this case the hard
+> > reset of the PHY is asserted and I can't read the temperature. That's
+> > the second patch of the series that fixes this issue.
 > 
-> May be it is time to optimize all these tables out of the memory 
-> driver?
-> 
-> It is the 9th table introduced.
-
-FWIW, I'm also not a big fan of these tables, and I always feel like
-"meh" when I see them.  However, I'm also not a big fan of substituting
-them with some kind of formulas, because the SoC TRMs specify exactly
-these tables, with some additional notes that the values may change in
-future SoC revisions.  In other words, these values may even change at
-some point, at least in theory.
-
-With all that in mind, FWIW, I'd rather see these conversion tables
-included verbatim in the driver code, because such an approach reduces
-the possibilities for some hard-to-spot errors, allows easy, direct
-correlation with the TRMs, and should make possible changes to them
-in the future easier.
+> Okay I see, thanks for the explaination. So the code in
+> mv88q222x_config_init is required after a hard reset of the phy. I was
+> just thinking, if we could avoid the duplication but I guess both
+> enables are required. Could you maybe add a comment why we need to have
+> it enabled in both places?
+>
+Will add the comment.
 
