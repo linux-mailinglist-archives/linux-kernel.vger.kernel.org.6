@@ -1,275 +1,271 @@
-Return-Path: <linux-kernel+bounces-523702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50260A3DA24
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:33:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E721A3DA22
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:33:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB3D2179B01
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:31:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E1FD3BD6A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:31:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25F901EF01;
-	Thu, 20 Feb 2025 12:31:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29E361F152B;
+	Thu, 20 Feb 2025 12:31:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cixtech.com header.i=@cixtech.com header.b="AntMyIid"
-Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazon11020083.outbound.protection.outlook.com [52.101.128.83])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="jzL//0u+"
+Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2086.outbound.protection.outlook.com [40.107.105.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD9D1F584F;
-	Thu, 20 Feb 2025 12:31:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.128.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C360134B0;
+	Thu, 20 Feb 2025 12:31:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.105.86
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740054673; cv=fail; b=LaummBu/KC4gAcdjQ9k9DyoXFrCVex3yQT7iybMsLCN7st4LPSKtsnVb66qsZvh1zLRjPrG0eb4WOYjnMr+RDj0dQA0j/jG2+ZNkKihQhIfXdt4h8r5EzoY9PthclT2aecLKNMUvDkR7mQ0N4GKucHCvQM/k7Y2oePCziTkt9IE=
+	t=1740054667; cv=fail; b=ilcLY7nkbL8D0WITpSj0YVKlxq4kQpU0oSz5Kf+l8q/FIP8xvlpzcG8t419uswyTP/LNrIjQfuHCfEyXWFC2kwIl0UltEUAjzf16d+VhzRG/ykSA9R88ip9Kqi9xoD9QZdQCAZ/2C0kjIRxddL5/rzSHEarmH/NB8naEdr+OWgc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740054673; c=relaxed/simple;
-	bh=g+fc3C+ZOyEVFWYfUsPYv2upagsNXiT0uSBpb5nbjRE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ni61ItqTa1PrxPc5J2l84Voz3UAZ18juWrTwjxD7vslZQJkEtLUETBLy0HJQhkdWAOYxG/yWnMAARiJHBPjN4OiDbTmkNIZG7QDF5h4gOS2BlBihmvuVSc03MAokHkLLOaFPLaZCeKz1bsUA+2AmnSGw8+lB7AVnuMTo+AqcE8Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; dkim=pass (2048-bit key) header.d=cixtech.com header.i=@cixtech.com header.b=AntMyIid; arc=fail smtp.client-ip=52.101.128.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
+	s=arc-20240116; t=1740054667; c=relaxed/simple;
+	bh=NPCbtsImtOh6IgyUhyUVBiZkZ5E7HPgGaVtiIY9gX8s=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=aCBZHRpBDavDiurmCuATdsp2h9JR5nKCVF1rh0HuQmPRwDMPreTJ/GMSbeMbnwGKAb1jJDATQpuNs2hmrDyOQpstFqzQQKkg+HocDYkoxqwO1YRonMZIMnGqxywsXdGkHNxcNHs+TP86zw19FjWWB5LNE+00WpZGfoZrs2ZX3KA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=jzL//0u+; arc=fail smtp.client-ip=40.107.105.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DbQfH5lAc42d2VfO9DFSS8AgfxGbIR17PcUlw3wEsAHiJOOJ01cUQGM2H1rXrpNdQDL6EuoAn6qD7NKqu++X+mCBiJhYLTuew/4PeBlTIuSX8jrdV72SWn16qzbvgTUPZVoMB8QI6UwHO1rekObneL0kfyJ/oPxyIoijNhXBhPKapusztHV+b8QNcnbJACQuiujgLwqFVHZf/bW47At8v/bjaAZQKDkUbfvX8/hihMXinI3aydsetUNOzQiU8j4dPLBpI5Cy5JngspSVFbVZMETixz4mg61wPPHr8lcQatLd1tNM/ZGv+Ukp3s4059MpdvWCxKDo06GClks15d14Zg==
+ b=UQBbb5pCvEK2slKKxe0t9NRHorGMxNRWhhGaGoy9QJMhn/hUhEjp1O2uDVm82nO+vLqqpxGChyQ53VzIR1txWytMTGRctzJB+AozRRNd3DiowkHzxkNtymteXsHOxEsQa1Z0GI/Nu5TwRjX5UuInMSXNEvYoOddMA1vPnMrzufYoY5VjnuKx0b7yRbcDYIH3aOHwhf0UvbRWXmZ8qml118qNkkqh/ARdhH6ZauVwOOaGPI0plXGlS8b8b5j0ZN0JGwzjRV4jGW61TkbJu9Ar5SOd9GxIX2bpOy9O1Q14t/yuVg26AFAz/oDkIYsLwXXY/VKHmNMvAoKxNhoqSDkkvw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Yi43V5YG9gUuczc2/rOeuRYqRNtYrSrKuLwFZwDUMl8=;
- b=IQYzGynTaycPJ1KCXMUZbgp25HbGWiRpp5bjGCrGdTMblOkN3ij62saW/+HQD7SesbqtlnzXNU+kWX1vVNftjYwFOHfnaY5/KulSGqbU4mqFefwrhXRUMc31nkIqomINkTCMzlnxbV6/Aqv/rwaTNWrVaTPc1Oa/H9fEFX8dvXmse2Ig4Lt3U0lwuCZgn78ABBWsl+USnQ5C7iIeAJmCLC6FF8p/EmTU0bo5caBZZ4Zw0+Z/bDP3vkCWcSUFDcm1ydxErzNwU/y3Xe7wFC4UUcTaC5JBCbVuiXgEP1sX8zE+S7SVtpu3fvbg5IPB+fmQktsWOfjJkixX0lEmLAw7/w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 222.71.101.198) smtp.rcpttodomain=arm.com smtp.mailfrom=cixtech.com;
- dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
- not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cixtech.com;
- s=selector1;
+ bh=C7OMH0y1VedvtPD97d7ZUfoG6LWwziAGF6xtHPZg6LM=;
+ b=fud9nYDCwhlQ9CoXe+yve1xZKGRebehKI+dRNXYyTei7e+helzhwjvFA5PaW1LSSqYH57EOlnPveW3d54nYtC9pSGlX4593FDlEfrdPfN0VQPjgsKtHSvs4q6bz7KWgXrabgflNctzejqHx20kTqojgDFIehxU0XNtn+LV+i3u8VB4r56KQ6JpJZkojtphK1HmJRjxWlIDQ8KqGyh6A0n8W5FKVB1yKqnVwt46+xL8oNOKVfsM2brHqIGued6zE1DhRAQByzBjw0O61tDzQRCmD7G5Kjb4Vi0m4kcoQVX42ijFOzILwOh/QSUEg/cZvjoDHkYX0FvYIJE1FFoTJtaQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Yi43V5YG9gUuczc2/rOeuRYqRNtYrSrKuLwFZwDUMl8=;
- b=AntMyIid8N1cB0Kri0v69E6ASCpihdZqdkjY5GFXNnnxLMRLGJeNm84r+3/3DQdCseBx9JF+KIgo5vmwbH6cRw/CLb0mVdtENi+TKx6QQu5OEVK7OUrmaaVj8WNbhMwSslDqlZaDXz19OR5nx94GQo14d9SE71T76IhsxZIsdp9ZbGET02tqaMiau4khhm0nKOPWvZz63suyQ4669FLPIalMz2xZY+7SgVXmDKpRK1JtDsu6x0MzSk/RjiG6hPT2+YwU7Uz6wkPRdXJF0KhFpAGBxbU18WPAQUoB28Uj0D3f2uagLct4GmUHFKOpP1mCyKHNPzfjLCbPf44oFGlDnQ==
-Received: from SI2PR04CA0011.apcprd04.prod.outlook.com (2603:1096:4:197::10)
- by KL1PR0601MB5534.apcprd06.prod.outlook.com (2603:1096:820:b6::12) with
+ bh=C7OMH0y1VedvtPD97d7ZUfoG6LWwziAGF6xtHPZg6LM=;
+ b=jzL//0u+gQVVp9cRCMauFaCJgXqhjqfpNLiIFl2vFk1uao43lZnURt1wNMgPT7OAvEt/r8Wt3RDlXsTi3HhaNoA0zWo8iLj95qPlLnfJaxX9I2dDqYLufOYFpt4+viHSmrceD1bo3/XWt9dJ11gX3L2V51CDQd/buhwZRUPFSwT0dhsQ9GTxBELtYfSXdj7xj/64D00rdRzvTEpT6NclAyC1hjl6R5OkIHUDiN0I9HM7csXcWC/SjTTz0pqISaFmlxWfpihoDvnlFrIPwjWRhF8vnGOhyIaJX6unN49YWp8RgGDK8AcrlTHLGG4jdSDzNeJ1CPz9IVSLaFtS8FmUoQ==
+Received: from AS4PR04MB9692.eurprd04.prod.outlook.com (2603:10a6:20b:4fe::20)
+ by GVXPR04MB11020.eurprd04.prod.outlook.com (2603:10a6:150:227::18) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.14; Thu, 20 Feb
- 2025 12:30:44 +0000
-Received: from SG2PEPF000B66CF.apcprd03.prod.outlook.com
- (2603:1096:4:197:cafe::cf) by SI2PR04CA0011.outlook.office365.com
- (2603:1096:4:197::10) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.15 via Frontend Transport; Thu,
- 20 Feb 2025 12:30:44 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
- smtp.mailfrom=cixtech.com; dkim=none (message not signed)
- header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
-Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
- 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
-Received: from smtprelay.cixcomputing.com (222.71.101.198) by
- SG2PEPF000B66CF.mail.protection.outlook.com (10.167.240.23) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8466.11 via Frontend Transport; Thu, 20 Feb 2025 12:30:43 +0000
-Received: from nchen-desktop (unknown [172.16.64.25])
-	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 4CB6E4160CA0;
-	Thu, 20 Feb 2025 20:30:42 +0800 (CST)
-Date: Thu, 20 Feb 2025 20:30:35 +0800
-From: Peter Chen <peter.chen@cixtech.com>
-To: "Arnd Bergmann" <arnd@arndb.de>
-Cc: "Rob Herring" <robh@kernel.org>, krzk+dt@kernel.org,
-	"Conor Dooley" <conor+dt@kernel.org>,
-	"Catalin Marinas" <catalin.marinas@arm.com>,
-	"Will Deacon" <will@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, cix-kernel-upstream@cixtech.com,
-	"Fugang . duan" <fugang.duan@cixtech.com>
-Subject: Re: [PATCH 6/6] arm64: dts: cix: add initial CIX P1(SKY1) dts support
-Message-ID: <Z7cga0L6UYmPXoFw@nchen-desktop>
-References: <20250220084020.628704-1-peter.chen@cixtech.com>
- <20250220084020.628704-7-peter.chen@cixtech.com>
- <4add2867-8c09-454a-b3e2-b4baaeccfd44@app.fastmail.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.15; Thu, 20 Feb
+ 2025 12:30:58 +0000
+Received: from AS4PR04MB9692.eurprd04.prod.outlook.com
+ ([fe80::a2bf:4199:6415:f299]) by AS4PR04MB9692.eurprd04.prod.outlook.com
+ ([fe80::a2bf:4199:6415:f299%4]) with mapi id 15.20.8445.017; Thu, 20 Feb 2025
+ 12:30:58 +0000
+From: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+To: Paul Menzel <pmenzel@molgen.mpg.de>
+CC: "marcel@holtmann.org" <marcel@holtmann.org>, "luiz.dentz@gmail.com"
+	<luiz.dentz@gmail.com>, "robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, "linux-bluetooth@vger.kernel.org"
+	<linux-bluetooth@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, Amitkumar Karwar <amitkumar.karwar@nxp.com>,
+	Sherry Sun <sherry.sun@nxp.com>, Luke Wang <ziniu.wang_1@nxp.com>,
+	"johan.korsnes@remarkable.no" <johan.korsnes@remarkable.no>,
+	"kristian.krohn@remarkable.no" <kristian.krohn@remarkable.no>, Manjeet Gupta
+	<manjeet.gupta@nxp.com>
+Subject: Re: [PATCH v5 1/2] dt-bindings: net: bluetooth: nxp: Add support to
+ set BD address
+Thread-Topic: [PATCH v5 1/2] dt-bindings: net: bluetooth: nxp: Add support to
+ set BD address
+Thread-Index: AQHbg5NLufHtSaUyJ0GEN9n1ioVKHw==
+Date: Thu, 20 Feb 2025 12:30:58 +0000
+Message-ID:
+ <AS4PR04MB96928A5C527D1720B9BE0AE0E7C42@AS4PR04MB9692.eurprd04.prod.outlook.com>
+References: <20250220114157.232997-1-neeraj.sanjaykale@nxp.com>
+ <184919f9-25bd-4f65-9ed9-dc452a6f4418@molgen.mpg.de>
+ <AS4PR04MB96921164DAA8A63B2C0841AAE7C42@AS4PR04MB9692.eurprd04.prod.outlook.com>
+ <0e5f23a9-b1d7-4d8c-bb05-83f7a15a7285@molgen.mpg.de>
+In-Reply-To: <0e5f23a9-b1d7-4d8c-bb05-83f7a15a7285@molgen.mpg.de>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AS4PR04MB9692:EE_|GVXPR04MB11020:EE_
+x-ms-office365-filtering-correlation-id: b251b921-0eb1-45aa-11ef-08dd51aa6dae
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|7416014|366016|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?0J9z688HS8v8Nqv7zRzXCUEicMVS+FbnwkhzIEIEnzIYYQiXKLMdanglvpOr?=
+ =?us-ascii?Q?o8h7NBZ0AdEFTLCwgAPR5E26FYcLriRb7uMPcOZjddTwEJNliaVuCGbLg8mr?=
+ =?us-ascii?Q?AUbOI63scomfZxRMu90H3WF4TZWa2wCfxsmx7gJLkxFb3sVnkElz4LJEtZXG?=
+ =?us-ascii?Q?laq+tQxU6JroTWd27uL1Ht9L2f7ur0tNbGcCIxfXrkaU9AfRtN0fbvl5qbOQ?=
+ =?us-ascii?Q?XCelWgleJTscJ3W18S95a0Cn0m/QENn5qhfla/P4g0tC5OTEXFsDWArdLYT+?=
+ =?us-ascii?Q?Qy9h/xEEPp9UIIXMWNHdCF2sBd4V3GAWAbsQW+/LutTJixuSXZPleFr7NH9R?=
+ =?us-ascii?Q?aGZ8Hi/TjtErmLyYRTXvcDKxjt4fxVsNM0gm4ZDAHLWOrt16rlQr3zAbHcjr?=
+ =?us-ascii?Q?W5BbGDZ4MULEKzrLR6q1XMl1RbAlmYj/J4inM/XwCE75rPmFnkpiZzo3p/Mc?=
+ =?us-ascii?Q?2kq8FJbmchdrPoAtANFjTJ2UauBHxnx2vFQsOUvXbrsQK0oZJb5a0hPiguvE?=
+ =?us-ascii?Q?IFigOtJqMZUBkfBJ8uagtSyxe4x+MBoST2iudM7Q+GnidSC2ZD3AuO0JT7Sd?=
+ =?us-ascii?Q?/hF0VFzU9UvbZkB3FUtR8Dse08nXC+KeJCoOK6S2IHoFiP2xwdj3SGxogI6v?=
+ =?us-ascii?Q?3SqJV9Ngre9tmDQkD5D76wyIv8d8m3BkLy8Tq4hIruEWzvqK5t4nY52I8D5B?=
+ =?us-ascii?Q?peLmM6iJX4Tvc5hVqOF4YmUEC+66buCxRfm/e1srqwyG46ybOFLprfNhYx1V?=
+ =?us-ascii?Q?BcdMriE/CxVuT1ft+tRw7Jl/n5BvYcm2NZ1d/bmkbxnVs2vBy9jkjuWLrPZN?=
+ =?us-ascii?Q?SLqjV4zky65wb5otOEOl4FHAlK/uJFoVEIi08rHcFqpPk2eGBqjW54B2WDu5?=
+ =?us-ascii?Q?dp1Bl8XfS/7g7zMicbIBnDhcnP1NLuWAO05F7k1lYSVdCK0BcWMjnfToIweF?=
+ =?us-ascii?Q?VG9zjmDoCM7qXr1s9YfooWymR/tgB3m3izQ2+hF84lh0G6o2KsRHiFfDVsvf?=
+ =?us-ascii?Q?JWR+HM3URnHu6ZaUbZ8Tq4efKoZP8RxBWzPfA59bfL4nPptSaB9tHFUhRM09?=
+ =?us-ascii?Q?fRwcVlnJCwcWagvm0iRUjwcd/JXw3acKRfkaiOKctlL/0Skof+QL6AYCHufF?=
+ =?us-ascii?Q?bbTh4gU48+PaIf5v5tVTH5kQ8yFfqD7j7mj3BmKH3kZWxQ1zXDeNSxWE6NRK?=
+ =?us-ascii?Q?9ITR77dzloTQveTwreOivbSAKLY3OzoJIxb9udsmrzYFD7Y/ahHTeNJOcwtv?=
+ =?us-ascii?Q?F+GKJEPoaDiiVdbff9K7EWK/8fO8inTT1uyxY+0jCy/2O3EVME3V5a2RGR6G?=
+ =?us-ascii?Q?5SI5lQvBN0YAjRJmsYifnpL3WVZo27DwdCc+Wn6rPpxWTIuHF1ZRtdoDtalG?=
+ =?us-ascii?Q?xCupMDAXMgiDqzi1EgIiuKGkPKltLjwyJJGKAJya9dsKz8q7Vf8/ltnLjDgf?=
+ =?us-ascii?Q?yDOaiCf+srTV5e2eCZQdcgkP9JpDhl5m?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9692.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?4V07Mc5I7WI5gAxU+3Yu++30ZSn8wRYZo3A4UWx/tH4PDPT5/oVbpZE5nuqo?=
+ =?us-ascii?Q?XbIt8jtUMOkR4tw0rW8Qk5NbIAcT0XjmYDrb4DrAFp981FJigCIButH7lfds?=
+ =?us-ascii?Q?CH3IZO8VkXheMo8A/pPchuXwwzTaBUrtg+S6oTQFuJbdkwHDgaOgrLDp02yc?=
+ =?us-ascii?Q?xzLNJEzx7+iZo1k5p3KzSIapc3hkqfse/gJm2N3Rk3WsL4qT/jS50aLuOZIo?=
+ =?us-ascii?Q?fJMWBBcXTlL3dB2h01LwSSILl9Z3oETd7rVIP/mJBnxo4S2tu8+G6zDHt5qI?=
+ =?us-ascii?Q?xanDMXsLPFJotJxpabABk/F6oBH3oSgKZxCFeFd83NhtQFOznMtWIht5WZkR?=
+ =?us-ascii?Q?s884eiDUEnsrEQfn9qN/YlhPUNzY/1F5WefgeARaS0Uvr5oPGenjf8mZQS7i?=
+ =?us-ascii?Q?XZyhnfcIYTg+kJ0BoQmauzaLUeucY04LEWBFpb+/XPOSKGcRCfTZT03o+Jzi?=
+ =?us-ascii?Q?kqzU0NDaGXuouSNbML3ZXXjKFnhM1q1vAmalqqKegnpyLSUgLb168c8epx+2?=
+ =?us-ascii?Q?B8ibXoBmbNAyZWxLK0TxMILK1EyD54Kn2FXaR7fbCXGaMxED/mzh4iCQC+bk?=
+ =?us-ascii?Q?VIto3AIK02dAzp7kNkqVZ6lzvOO7IhiTIF1ot9/q+wjw/AeNqJoh10ZKU2S0?=
+ =?us-ascii?Q?5BoaOI6s1euuD/hmd5TnUqM+44qepRWtf/Je+jWnOOOGE6tUniJ7di6m9s1e?=
+ =?us-ascii?Q?hR8ILGw0cvdrRtayPcbIBXbo7QuW/TGjhONpf+DeT7WeAcbULJhUblwFXLqz?=
+ =?us-ascii?Q?56zfX/M2OVAW8OMJ7iM5YC/4ALAz025nkyrZsv5cGJCE081HqjO+9489/DQm?=
+ =?us-ascii?Q?AL0sOxvM8T3QM2otKcT0PvxTQcuYsa1JKF7sqDpdQxGIzS3dRIrsjYNwDivZ?=
+ =?us-ascii?Q?jVKs0H1MM+GkG/wG2uEjCfHetLa4Pstd5i5afR7K2M8leZB9OGyFQizcOSwT?=
+ =?us-ascii?Q?r+PiTld/xM3Qzbl0KAjhcoa1rG3TqqBM1TUHNEi0Cm2T+ICZucEYXXb+mUOK?=
+ =?us-ascii?Q?q4oJ6bIY+Ay+46RoN6AkUxU68IAsLBRGZvRkYFiwxTB84mmdSnhtl4nZv4hn?=
+ =?us-ascii?Q?ku+SwNUak4sXl+x/StB1tyWpI/zoEeSAV4H06hEiDHwqmn6iXZqwP5YjOcbE?=
+ =?us-ascii?Q?+D4BLYw83GU4tIMU81UiXZ2stLlYqTuoXpd/0XQEv/vp+TpSyAcIkWlcNLaD?=
+ =?us-ascii?Q?fT5r/tczrN3rUjd8IiYHP/lFwUlyOu4S0ybRFCKWLYEneF8LbZlf/i766ZzE?=
+ =?us-ascii?Q?nHZZQkX4B7BlI5FWevZaN2H/YbtNqGbsBF9abHnxmoC0gbeeHRkH8l6aKsPg?=
+ =?us-ascii?Q?Y5LmA9INz0k5gdgKHeL4zNNaZ4oKjymy5CnIK32Pr4GzK4wi4FJqhPjGCVPz?=
+ =?us-ascii?Q?7bCH7qTfQlj90iXbkjbBHi1A7i9DLDHlxmCFit4lTVNP1vseRXjnohYBHsjf?=
+ =?us-ascii?Q?g0yxp3+depCXLj1SoqRUH8Uk4NYsY1IATrxtK9t0fP1rJV+4zUgafTljzY4K?=
+ =?us-ascii?Q?UkZcPhKsgEpp9ts06PiS9ITWL3VEYIhOPZuDp9fhpY24emORqYa4t5KZNR26?=
+ =?us-ascii?Q?SBl54Aa7gpyEfki4ZbeeSccV6f84lfZSLleCusHH?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4add2867-8c09-454a-b3e2-b4baaeccfd44@app.fastmail.com>
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SG2PEPF000B66CF:EE_|KL1PR0601MB5534:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3ae8ac58-e45b-409d-981e-08dd51aa6503
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?HSJB7t/f05qA7/XpvAPyR+YKGNZlpPaeb2u2B25pQ0akOU/vdsaMMY30Ydfw?=
- =?us-ascii?Q?yd1BJRtDIhGdAR6bJYE6uqiOJkgYQNsL3aTjX8p7gMkrKp85RqOZzSpfrj1E?=
- =?us-ascii?Q?kd3kiC9JL4xiT+rluJkDcX9QR3JZNxRtR+P3stoeV8+RxfbGFfHxfXtDC+S4?=
- =?us-ascii?Q?RW+BH0kSuL4HWPktKQfHMV3ia4DK7OZGv48l8V0gFJzZCdVHqHJZ1NLq0yha?=
- =?us-ascii?Q?TVE5uIkJekPeMrTycSTgJiuSeLXmOCawoJ11BpBevCofSK03BW2iHP31984l?=
- =?us-ascii?Q?htycO8Z96jJv3TGjtZHhzyzW3vX+12tV0xkR2nMNHqVnp9mUzULKXSQdtBOA?=
- =?us-ascii?Q?b1DNApIC9var1SJ/mL4BhfVoT5wt64aro9+E1L3L/nmhDxklhW0CtsLBUkjP?=
- =?us-ascii?Q?tUw38tTuCN5h4nz3tN/VIfygsf1VeszOignZxQ6gm2MmTJIYOaTkkLq49CXG?=
- =?us-ascii?Q?2nAlLZob6pKgGk8Kr16+EpvEirTLoGZWbUS2kYsP/ftEM0FOHcPOafhio2Pm?=
- =?us-ascii?Q?E5cXuTzrX08aCedziOVIaBScHETPDIVDFK68kgPP9AspnyzCK27StItQho1q?=
- =?us-ascii?Q?mLud+VZqDmz8GbIDglRIsyHfE6X270oz2u5zox4isz9cwCq9mbkNgiLCN1NJ?=
- =?us-ascii?Q?7hY4w7buWfjjTMDo/o6SfQflcRPsP4oP43wCobMUQoc7aIMvrvyQrBLbCw6N?=
- =?us-ascii?Q?dirV6gQD4CVpSVODniL15jv0FO7reVlj/r+uPGMyCl68DNozPDiL19QFndrV?=
- =?us-ascii?Q?zkCv90rWPQTz2ReME5GZyZmGGVveB65GK5IfdY+Z0HYtPk/gG4MR5CgHJL1J?=
- =?us-ascii?Q?22pKhJhOeO2my1m41sfhJBwN/gU3vCyQV3zMSZhm6sH5sgjcbAkHshnvRaXx?=
- =?us-ascii?Q?831BfFdGXQGF8gihE944B/XQeQVaLKVGvgZ+tEKlqV2D7KWzWQb6vv4YCm6R?=
- =?us-ascii?Q?Gt1jxnNr+ANf/GQGvg5Vo/ggPTUUfJnc+iEJsFSDXlApQCCJheO+hB0DcwFf?=
- =?us-ascii?Q?VHbxCwtxyYPis0szkequCatGKtaWxX/Um0NyLoWSKMU9q6qsnZ8ZI9jZp2w4?=
- =?us-ascii?Q?31COt3S+fxsvTEcM1MYAeH3qj6TndTYQjfEnPzMhJSWDYOcn6eaA3tD9BbM/?=
- =?us-ascii?Q?w1++XyBbDwPbB5IxMWPrLnCOT56nIPQIBNAOY131Rls9VRaO6cC2cVcou27C?=
- =?us-ascii?Q?aIGthzRPjvqW0DMHXoyxlLEiFJTORltJcxFQaPEVviO3PtxnyHjlRAlLtYXO?=
- =?us-ascii?Q?azAFXbYDdXQALiYW92E2hE0O+gScQ3NBwmHMUeqbqr8iyjv72ZZFdNPUTL7U?=
- =?us-ascii?Q?hHVErw49aoBjCidcG4IpxnYBEvMZRWvx7FS5GHeBS7X2Jt9wueY2cxcea2Fz?=
- =?us-ascii?Q?O4kMENvgV9pk7VT9VpqHbcLmoaWXA5hEKd0MXQqI7UA/EnI0gJAgJ6ephOY8?=
- =?us-ascii?Q?PFv73BAJ3xPL0wQkt7h7kLNjkwCg5VzPfvH9IAhMDQlpKmA7WSj68g=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1102;
-X-OriginatorOrg: cixtech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2025 12:30:43.5784
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9692.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b251b921-0eb1-45aa-11ef-08dd51aa6dae
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Feb 2025 12:30:58.2507
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3ae8ac58-e45b-409d-981e-08dd51aa6503
-X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
-X-MS-Exchange-CrossTenant-AuthSource: SG2PEPF000B66CF.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR0601MB5534
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 7CAgkOjZstPq9sJYCUfQOq1jhiTEuL71KxRFpnkp250VwUYPk1WRZZSIS15Tx3BBFIMU0r3xaDr4mzMrwPOpaNWd4nYkY2xbrn4jumZ7zVs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB11020
 
-On 25-02-20 11:58:21, Arnd Bergmann wrote:
-> 
+Hi Paul,
+=20
+> >> Am 20.02.25 um 12:41 schrieb Neeraj Sanjay Kale:
+> >>> Allow user to set custom BD address for NXP chipsets.
+> >>>
+> >>> Signed-off-by: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+> >>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> >>> ---
+> >>> v2: Add allOf and unevaluatedProperties: false (Krzysztof)
+> >>> v3: Drop local-bd-address: true (Krzysztof)
+> >>> ---
+> >>>    .../devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml   | 6 ++=
++++-
+> >>>    1 file changed, 5 insertions(+), 1 deletion(-)
+> >>>
+> >>> diff --git
+> >> a/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-
+> bt.yaml
+> >> b/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-
+> bt.yaml
+> >>> index 0a2d7baf5db3..a84c1c21b024 100644
+> >>> ---
+> >>> a/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-
+> bt.yam
+> >>> l
+> >>> +++ b/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-
+> bt
+> >>> +++ .yaml
+> >>> @@ -17,6 +17,9 @@ description:
+> >>>    maintainers:
+> >>>      - Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+> >>>
+> >>> +allOf:
+> >>> +  - $ref: bluetooth-controller.yaml#
+> >>> +
+> >>>    properties:
+> >>>      compatible:
+> >>>        enum:
+> >>> @@ -43,7 +46,7 @@ properties:
+> >>>    required:
+> >>>      - compatible
+> >>>
+> >>> -additionalProperties: false
+> >>> +unevaluatedProperties: false
+> >>
+> >> How is this diff related to the change mentioned in the commit message=
+?
+> >
+> > This is based on review comment from Krzysztof in V1 DT patch.
+> > allOf ref will import all properties defined in bluetooth-controller.ya=
+ml,
+> including local-bd-address:
+> > https://eur01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Fgit=
+h
+> >
+> ub.com%2Ftorvalds%2Flinux%2Fblob%2Fmaster%2FDocumentation%2Fdevic
+> etree
+> > %2Fbindings%2Fnet%2Fbluetooth%2Fbluetooth-
+> controller.yaml%23L18&data=3D0
+> >
+> 5%7C02%7Cneeraj.sanjaykale%40nxp.com%7Cea6b9bba11954062a8ab08dd5
+> 1a7c28
+> >
+> 9%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C638756503156741
+> 597%7CUn
+> >
+> known%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAw
+> MCIsIlAiOi
+> >
+> JXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=3DNf
+> 5EkxiY
+> > rHPZQjCBa1XFeu8Y5T8cXpQwXHZ757YvGFw%3D&reserved=3D0
+>=20
+> Thank you. I'd include this in the commit message, but my comment was
+> about the replacement of `additionalProperties` by `unevaluatedProperties=
+`.
+As per DT documentation, if we include other schemas, we must use "unevalua=
+tedProperties:false" instead of "additionalProperties:false"
 
-Arnd, thanks for your review.
+https://docs.kernel.org/devicetree/bindings/writing-bindings.html
 
-> On Thu, Feb 20, 2025, at 09:40, Peter Chen wrote:
-> 
-> > +#include "sky1.dtsi"
-> > +/ {
-> > +       model = "Radxa Orion O6";
-> > +       compatible = "radxa,orion-o6";
-> 
-> This should list both the compatible string for the board and
-> the one for the SoC.
+With "additionalProperties:false", make dt_binding_check fails as it is una=
+ble to find the 'local-bd-address' property.
 
-Will change to compatible = "radxa,orion-o6", "cix,sky1";
+>=20
+> >>>
+> >>>    examples:
+> >>>      - |
+> >>> @@ -54,5 +57,6 @@ examples:
+> >>>                fw-init-baudrate =3D <3000000>;
+> >>>                firmware-name =3D "uartuart8987_bt_v0.bin";
+> >>>                device-wakeup-gpios =3D <&gpio 11 GPIO_ACTIVE_HIGH>;
+> >>> +            local-bd-address =3D [66 55 44 33 22 11];
+> >>>            };
+> >>>        };
+>=20
 
-> 
-> > +
-> > +       aliases {
-> > +               serial2 = &uart2;
-> > +       };
-> 
-> Please put the aliases in the .dts file, not the chip specific
-> .dtsi file, as each board typically wires these up differently.
-> 
-> Note that the 'serial2' alias names are meant to correspond
-> to whatever label you find on the board, not the internal
-> numbering inside of the chip they are wired up to. Usually
-> these start with 'serial0' for the first one that is enabled.
-
-In fact, we would like to alias the SoC UART controller index here,
-and amba-pl011.c will try to get it, see function pl011_probe_dt_alias.
-It is initial dtsi file, so I only add console one which needs
-to align the bootargs passed by UEFI.
-
-> 
-> > +               CPU0: cpu0@0 {
-> > +                       compatible = "arm,armv8";
-> > +                       enable-method = "psci";
-> 
-> This should list the actual identifier of the CPU core, not
-> just "arm,armv8" which is the generic string used in the
-> models for emulators that don't try to model a particular
-> core.
-
-Will change big core to 'compatible = "arm,cortex-a720";'
-and LITTLE core to 'compatible = "arm,cortex-a520";'
-
-> 
-> > +       memory@80000000 {
-> > +               #address-cells = <2>;
-> > +               #size-cells = <2>;
-> > +               device_type = "memory";
-> > +               reg = <0x00000000 0x80000000 0x1 0x00000000>;
-> > +       };
-> 
-> The memory size is not part of the SoC either, unless the only
-> way to use this SoC is with on-chip eDRAM or similar.
-> 
-> Normally this gets filled by the bootloader based on how
-> much RAM gets detected.
-
-Will move it to dts file.
-
-> 
-> > +               linux,cma {
-> > +                       compatible = "shared-dma-pool";
-> > +                       reusable;
-> > +                       size = <0x0 0x28000000>;
-> > +                       linux,cma-default;
-> > +               };
-> 
-> Same here, this is a setting from the firmware, not the
-> SoC.
-
-Will move it to dts file since our firmware has already released,
-and it needs to support different kernels.
-
-> 
-> > +       sky1_fixed_clocks: fixed-clocks {
-> > +               uartclk: uartclk {
-> > +                       compatible = "fixed-clock";
-> > +                       #clock-cells = <0>;
-> > +                       clock-frequency = <100000000>;
-> > +                       clock-output-names = "uartclk";
-> 
-> > +               uart_apb_pclk: uart_apb_pclk {
-> > +                       compatible = "fixed-clock";
-> > +                       #clock-cells = <0>;
-> > +                       clock-frequency = <200000000>;
-> > +                       clock-output-names = "apb_pclk";
-> 
-> 
-> Clock names don't need "clk" in them, and there should
-> be no underscore -- use '-' instead of '_' when separating
-> strings in DT.
-
-Will change to:
-uart_apb: clock-uart-apb {
-	...
-	clock-output-names = "uart_apb";
-
-};
-
-> 
-> > +       soc@0 {
-> > +               compatible = "simple-bus";
-> > +               #address-cells = <2>;
-> > +               #size-cells = <2>;
-> > +               ranges;
-> > +               dma-ranges;
-> > +
-> > +               uart2: uart@040d0000 {
-> > +                       compatible = "arm,pl011", "arm,primecell";
-> > +                       reg = <0x0 0x040d0000 0x0 0x1000>;
-> > +                       interrupts = <GIC_SPI 298 IRQ_TYPE_LEVEL_HIGH>;
-> > +                       clock-names = "uartclk", "apb_pclk";
-> > +                       clocks = <&uartclk>, <&uart_apb_pclk>;
-> > +                       status = "disabled";
-> > +               };
-> 
-> It seems strange to list only "uart2" -- usually the dtsi file contains
-> all of the instances that are present on the chip and leave it
-> up to the .dts file to enable the ones that are used.
-
-Since it is the first CIX SoC support patch series, I only added basic
-Kconfig build for booting minimum system for easy review. For device
-node, it relates to clock/reset/power domain binding which will add later.
-
-Regards,
-Peter
+Thanks,
+Neeraj
 
