@@ -1,122 +1,114 @@
-Return-Path: <linux-kernel+bounces-523573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9864DA3D895
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:28:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F197AA3D896
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:28:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FCFD1720E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:27:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3802B1886F31
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:27:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BCFD1FE46E;
-	Thu, 20 Feb 2025 11:23:21 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAECC1F584D;
-	Thu, 20 Feb 2025 11:23:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09C451F0E2C;
+	Thu, 20 Feb 2025 11:24:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="Ndgjq2lm"
+Received: from out162-62-57-64.mail.qq.com (out162-62-57-64.mail.qq.com [162.62.57.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C151D63C2;
+	Thu, 20 Feb 2025 11:24:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740050600; cv=none; b=oFGBTo32MWkemYUFh/+y0kFBigxyMKO615oDsg1VCjhXGTJpNALxH5kDgBrbGx45qxGMqSrFXj/7mPYL2qCIa2sEFIcIK3trbyvUXn8WdSpV1e6e9QcRXFGw95kZ/PPOmcyS2Pw26cxxjgZWZnYd+j4+TU/+YwPxQXqTqNadAGI=
+	t=1740050669; cv=none; b=duBDOxJdWscezMMKcErOYmR8xgBFoZWn8mxu742MHKf4jAhdpV5J4z7De8FHW0SjYsaNFXYDZFvHKNM+K/GUtDbdhHCMuhQlFQyMVb0Jqe7yYuTpuBgAwXQmiHd5WpdRoCXbqdmbS8MAEeYO/GmUsW6I1MyVBN4wqMyS6/6jH78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740050600; c=relaxed/simple;
-	bh=XJ1rfVBdFtGgkqiX+cJQ7kfGCpepKbDiOO8u/69LAOc=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=ubTZIisig3Ta+jmu5X/7zScWgq86FYLqERGrXQaJWdqLXWn1wmLnJYntdO7gRspDwDEkXn+aauNbwHkKPKbGlyJu+BFdKeAiUgTe64z6u5XcVMXzOWC5FMaFinPXHoWSu2X8GsaUlR5e/GmLpnqERPaAV2JA19gMh1sBQ9RBTqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.164])
-	by gateway (Coremail) with SMTP id _____8AxGHGjELdnYDp8AA--.17810S3;
-	Thu, 20 Feb 2025 19:23:15 +0800 (CST)
-Received: from [10.20.42.164] (unknown [10.20.42.164])
-	by front1 (Coremail) with SMTP id qMiowMDxDcehELdnODQeAA--.8092S2;
-	Thu, 20 Feb 2025 19:23:15 +0800 (CST)
-Subject: Re: [PATCH V3 5/6] tpm: Add a driver for Loongson TPM device
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: lee@kernel.org, herbert@gondor.apana.org.au, davem@davemloft.net,
- peterhuewe@gmx.de, linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
- linux-crypto@vger.kernel.org, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
- Yinggang Gu <guyinggang@loongson.cn>
-References: <20250219073350.16915-1-zhaoqunqin@loongson.cn>
- <20250219073350.16915-2-zhaoqunqin@loongson.cn> <Z7XgLNU1xXqgOBIL@kernel.org>
-From: Qunqin Zhao <zhaoqunqin@loongson.cn>
-Message-ID: <4e0a3b40-07b8-06bf-8814-a121308ebf69@loongson.cn>
-Date: Thu, 20 Feb 2025 19:23:42 +0800
-User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1740050669; c=relaxed/simple;
+	bh=3gQVsIaY1Gje2DshsrlMQvPw0RC6SxRb/rjXb4iKTPg=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=eWmcYxz0Q5i6VrSB+aTNk97ACbmpHKqu8hBVAb7NjASZ1B1mIp1AvbkDOtePMtvxyE7M2cfoNX0LpRXwFWFFjx4DiDbyLbB6cg0CnMm4hMNesBJnW2IUEjxtumPrgu+J698A5Pvj4cKtymp5X1QkveW5bN4DDS6bFkaz2vxZ52I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=Ndgjq2lm; arc=none smtp.client-ip=162.62.57.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1740050661; bh=I3AayOI06ZXPHvLQzbfOoOrK37jI1skTr6cV0Rb3/v8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=Ndgjq2lmRbWJUW8OQXs+K2fQmc4HrOeFiHInnbPdFDAZOPqc56vTwt1BN1HNLZPN5
+	 zom7da5/67nTyaJiY1l8/w1rHO+xadNL3kOcaBOK3DBcGijmcA0JUBD09sDQBN+sWI
+	 5KVHcIfG8BxshmpgVc1lzlFtqz4bpuALokZ+FYn4=
+Received: from pek-lxu-l1.wrs.com ([114.244.57.157])
+	by newxmesmtplogicsvrszb21-0.qq.com (NewEsmtp) with SMTP
+	id 612AF204; Thu, 20 Feb 2025 19:24:18 +0800
+X-QQ-mid: xmsmtpt1740050658te0mjy041
+Message-ID: <tencent_7E9E541BBE4B3C1BCD256EBA87BB8733E308@qq.com>
+X-QQ-XMAILINFO: Od8VqZhFMB3NpFN5jcht+OpGQADSv30N8aJjMena15vZCairXLfL/PdTwYJhcp
+	 tKjRWNc1neRQ4rxzCQndfoOtVHYFquYcLA6EvEI11E/ATQwbi6bC0f41S9J+8hsDRLX/NUxYxQdI
+	 mO7J4f1j7u2QGIg+t/0lHznHzZreP/2GmOPTgKrql/KBcikraHbJgM7uKVQBX8kwLyyZQG1YgjTH
+	 PAWL4YFXC017McrL2U4AjXrgBwAO1bLkdgEQpaW3XkeFwpbUnQT1XCitDSQh94l7hOau//b+u4u6
+	 x99G+3csNe/fOBXwsrAulkUD1zrmf3sTN9N/3K4LVCX3plFIOQd4CUZrJNQZbpHkhj+4eq78+pl/
+	 a6TFGlyojb029zxBECP8G8zW8BXDetUAev4rLdVfArP0CNBLY174FPMYdQh87PUS1fDibb40pdKQ
+	 oDdgDWXWNn5o4v0jT7k1ukUUwUIcLli7sEu5I5TiTeEuHAmCPaJiWt0C81CWzj+K+7NIHN/HZ+p1
+	 5aVX/T4kNAHMrhd5rXqyKtpWMRWXDlO6FREx0dykdeKjTOZACJG5I91/fJt4ANR2if1It2VZoZjE
+	 3f1+5j4MEwvgnOEvFNwbdQ0b6B8N2MkO8FPRfPf5kpTInByIQViBhHcXl3fxYOvG5Os2dpho3urK
+	 H5t5qeE3+5rjqYVY70sM7baWOwu9MiJnz/SVZu0jy9U07V+T27HlIVxit9ErvdRiCj3K6YOoU8ef
+	 m/EueJhmUnqdnNTJFmAzVgRh/zXif0/PsRK/dCEtS+K7W6ACdk1P0lKmQ7KStowI0q/qbHOK8CJF
+	 +bHbXnQ1E/eTJDLMk/Gxe6L9pw6Z1UVX941nVbDGIIbbzwHkCpqnN4Fl7aC2fwNlgvGvLqTFL7OZ
+	 2o42MhkZyK1zPVizgAE+Q118UizkrC9gpa/grncZ26rnMiA3tAYdpf790DPmmTZf33Oewx/vIRsK
+	 W0T7NDLjE=
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+From: Edward Adam Davis <eadavis@qq.com>
+To: dave.kleikamp@oracle.com
+Cc: axboe@kernel.dk,
+	jfs-discussion@lists.sourceforge.net,
+	kristian@klausen.dk,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	shaggy@kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH V2] jfs: add sanity check for agwidth in dbMount
+Date: Thu, 20 Feb 2025 19:24:19 +0800
+X-OQ-MSGID: <20250220112418.2310880-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <740c57ad-0cbd-4498-8ec9-46a54b204e3d@oracle.com>
+References: <740c57ad-0cbd-4498-8ec9-46a54b204e3d@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <Z7XgLNU1xXqgOBIL@kernel.org>
-Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-CM-TRANSID:qMiowMDxDcehELdnODQeAA--.8092S2
-X-CM-SenderInfo: 52kd01pxqtx0o6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj9xXoW7Gw17Kw1ktw4UKrWxAr4fWFX_yoWDAFc_Aa
-	12yF1xJr18uFyvgw4ruw13C3W2qayqyFnxt3WjyF4v93srJ345Z3Z8urn3Jay7Zr1kAFn8
-	AFnxGryfua4j9osvyTuYvTs0mTUanT9S1TB71UUUUj7qnTZGkaVYY2UrUUUUj1kv1TuYvT
-	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
-	cSsGvfJTRUUUbDkYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
-	vaj40_Wr0E3s1l1IIY67AEw4v_JrI_Jryl8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0
-	oVCq3wAaw2AFwI0_JF0_Jw1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa02
-	0Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jw0_Wryl
-	Yx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI
-	0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC2
-	0s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr
-	0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0E
-	wIxGrwCI42IY6xIIjxv20xvE14v26r4j6ryUMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JV
-	WxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAI
-	cVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8KNt3UUUUU==
 
+The width in dmapctl of the AG is zero, it trigger a divide error when
+calculating the control page level in dbAllocAG.
 
-ÔÚ 2025/2/19 ÏÂÎç9:44, Jarkko Sakkinen Ð´µÀ:
->> +
->> +static const struct tpm_class_ops lsse_tpm_ops = {
->> +	.flags = TPM_OPS_AUTO_STARTUP,
->> +	.recv = tpm_ls_recv,
->> +	.send = tpm_ls_send,
->> +};
->> +
->> +static int lsse_tpm_probe(struct platform_device *pdev)
-> tpm_lsse_
-OK.
-> +
-> +static struct platform_driver lsse_tpm_driver = {
-> +	.probe   = lsse_tpm_probe,
-> +	.driver  = {
-> +		.name  = "ls6000se-tpm",
-> +	},
-> +};
-> +module_platform_driver(lsse_tpm_driver);
-> +
-> +MODULE_ALIAS("platform:ls6000se-tpm");
-> +MODULE_LICENSE("GPL");
-> +MODULE_AUTHOR("Yinggang Gu <guyinggang@loongson.cn>");
-> +MODULE_AUTHOR("Qunqin Zhao <zhaoqunqin@loongson.cn>");
-> Remove MODULE_AUTHOR fields. Git encodes this already.
+To avoid this issue, add a check for agwidth in dbAllocAG.
 
-Do you mean that "modinfo" will still show the author after removing 
-MODULE_AUTHOR fields?
+Reported-and-tested-by: syzbot+7c808908291a569281a9@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=7c808908291a569281a9
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+V1 -> V2: move the check to dbMount
 
->
->> +MODULE_DESCRIPTION("Loongson TPM driver");
->> -- 
->> 2.43.0
->>
-> Prefix all with tpm_lsse instead of tpm
+ fs/jfs/jfs_dmap.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-OK, thanks for your comments.
-
-BR, Qunqin.
-
->
-> BR, Jarkko
+diff --git a/fs/jfs/jfs_dmap.c b/fs/jfs/jfs_dmap.c
+index f9009e4f9ffd..62f55e7ed840 100644
+--- a/fs/jfs/jfs_dmap.c
++++ b/fs/jfs/jfs_dmap.c
+@@ -204,6 +204,10 @@ int dbMount(struct inode *ipbmap)
+ 	bmp->db_aglevel = le32_to_cpu(dbmp_le->dn_aglevel);
+ 	bmp->db_agheight = le32_to_cpu(dbmp_le->dn_agheight);
+ 	bmp->db_agwidth = le32_to_cpu(dbmp_le->dn_agwidth);
++	if (!bmp->db_agwidth) {
++		err = -EINVAL;
++		goto err_release_metapage;
++	}
+ 	bmp->db_agstart = le32_to_cpu(dbmp_le->dn_agstart);
+ 	bmp->db_agl2size = le32_to_cpu(dbmp_le->dn_agl2size);
+ 	if (bmp->db_agl2size > L2MAXL2SIZE - L2MAXAG ||
+-- 
+2.43.0
 
 
