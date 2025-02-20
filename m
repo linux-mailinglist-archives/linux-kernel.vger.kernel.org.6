@@ -1,167 +1,144 @@
-Return-Path: <linux-kernel+bounces-523730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 914B9A3DA7A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:54:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12863A3DA7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:55:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 184E83AC7E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:53:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D77F517F54B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:54:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1DE91F5849;
-	Thu, 20 Feb 2025 12:53:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0F131F5836;
+	Thu, 20 Feb 2025 12:54:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="oU/Labut"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2085.outbound.protection.outlook.com [40.107.93.85])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Bs38ThKC"
+Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B495C1F3FED;
-	Thu, 20 Feb 2025 12:53:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.85
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740056036; cv=fail; b=n253RqcVww0e9RQmihvgodtmjtOKu+RUcAHbY7Fn2gG2zGyDTfcMSf3PPL+jjSw6loBgDovRISMaxkitUVUy9pe1khRjlRsxb2M1TVmsRwukuDdfegBl5XIKZnLtBDVMA8UDNjKh06gnDligftOeBmjt7NCKTxF3KUxDQsV5Hyo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740056036; c=relaxed/simple;
-	bh=KQ+0w2rmENQ9lSqdJjkaIP8Q7ZbPdI7raTd2w9Z4zCQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KJS2Z96YbiIVXsd/6qSNObKvvM+28uhfvh95rZsKxXs+MvL1RZaszc+x1kVcPLZ7ghZSh8ExjHJ40SKv0TvmUCa0BveGkvWUAHkhb2l3usQvZzMKxMLyzBseVpTQdHBuVTFRJl7igwRR93m9FnypdEU+E+UuJEcyG4QZedIBR6g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=oU/Labut; arc=fail smtp.client-ip=40.107.93.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Woq/uDRBfMCha+/8I5W7vcUwD7T6l/jnGpLXpGJIx8z9VxvW9Jm73CjKTF9ZI34oejZUpDFiTFiF9E7Ra/wpmwSm1c01iJZuFcuPFZ+JyNsHn8ePa5OXyoEIdSHoZ00y2LDPMcuPrwnYa0M+AfaePyK59zxPMtTVLOD+vYZLriMfS7YBTiV6YiAZU34wzHIu/wkMEKuY/Ove9G92Rh1WnNECHs7y6gaD3wOjNW7/KNZb2WfTaGkIi9AjffBAhCfpDeFN5UFqXbH0XRww0GB+oXCxG2axWIaB548CAbPp+MA9y11iftip7NRvbz8EQyAXXGPtjLpZ10MnTx48NTC/zQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iVrbPiR6EPYn5az92bcPLVyjEAW3VKkvPD6q3wbERNw=;
- b=qh/Ea1Qkw7pxVisD2CNMyrDh6U5SXVwqyXBYSUUYRLICBvC19VFMb9Vfr8t+ARlbRzsiLS+2OAdndxDxSqdJBsOb2bkfhuUjbH1YIAelMfNWhlHdoUBNRA6PH2ObNPZqKViU+PQyJcAVSAGc3AuxMiPWYsHIDPA0Z5NiBOCfOQuEvliMPE15vjdr4Ak5ixdMRiR5Yu08rBSYN47Ux5KKVEbrRB9PUxDi4lWi0+XrzoN5NYTe59/4zTvyZ2ZPoeXvGErK7km9Roj6otb886azAJ8G1ycPgC969dtDUpG4pT6ziFfX9bSCRwe/rFdii7X3WIArtGoOYC15JnHWGXeEhw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iVrbPiR6EPYn5az92bcPLVyjEAW3VKkvPD6q3wbERNw=;
- b=oU/LabutBoKBY6A3svPXFTZLPwhMn3OqnSlxugwDYfAivyoU4nNyvOs7tLWBSXmzt5DZQ8I9/wpRj13DuR+ijBgSQmE8lgj63eH8uB/OxRHjibI4Jt8yiNEDlPzc0rFeFmFRnQu7+VwbrCwhBRzpoKn/mql7vCT1JGB2/1+FG+E=
-Received: from CH0PR08CA0005.namprd08.prod.outlook.com (2603:10b6:610:33::10)
- by CY5PR12MB6155.namprd12.prod.outlook.com (2603:10b6:930:25::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Thu, 20 Feb
- 2025 12:53:51 +0000
-Received: from DS2PEPF00003445.namprd04.prod.outlook.com
- (2603:10b6:610:33:cafe::43) by CH0PR08CA0005.outlook.office365.com
- (2603:10b6:610:33::10) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.14 via Frontend Transport; Thu,
- 20 Feb 2025 12:53:51 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- DS2PEPF00003445.mail.protection.outlook.com (10.167.17.72) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8466.11 via Frontend Transport; Thu, 20 Feb 2025 12:53:51 +0000
-Received: from localhost (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 20 Feb
- 2025 06:53:47 -0600
-From: Michal Simek <michal.simek@amd.com>
-To: <linux-kernel@vger.kernel.org>, <monstr@monstr.eu>,
-	<michal.simek@xilinx.com>, <git@xilinx.com>
-CC: Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, "open list:OPEN FIRMWARE
- AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
-Subject: [PATCH] dt-bindings: trivial-devices: Add ti,tps546b24
-Date: Thu, 20 Feb 2025 13:53:43 +0100
-Message-ID: <c79f69d0d37e7eb61f93f5dea69148b7756a3ee5.1740056021.git.michal.simek@amd.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB101F4E37
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 12:54:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740056055; cv=none; b=bmLz9CB70w7AQJuBVxjGnPF+W/U2MgBXlaA/re4AaB/DGEUYBz/gA+OF9PtRTE2VfrFL/xLv7J3wUnpFH2P5QKdoTkG4DKHk/JHGrZv7evaUrouV5Op/SQ8qGGM5qcR1jmORijbu5nLe9CYcNAzrmo29JQLmMKPcJlU7etgnOdk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740056055; c=relaxed/simple;
+	bh=7ALyS9KrCUX9bH5WW4Aa+MDKHcdMoNhpAI9S1zryjOM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=bGqCaF1sXtnjmikhdhq+OfSMDpEbPkiozjh9CfY6whGrLCbG3wXVrp6PnWrhg13dNCDjBvIqJZUnIC0PGt859B37DPMVCKGUNEz+5oqef1CH93FwihSvk86wdEUMnF2ho2OFcrKG+d0UWHu9Y+qAPSUZ7SqHmm/7hqmCY4HDUYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Bs38ThKC; arc=none smtp.client-ip=209.85.161.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5fc6fe05460so617241eaf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 04:54:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1740056053; x=1740660853; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2MH37PuNdNK/TNpbApdmC6WP6Q7SzSxWOUdbOcTxyoM=;
+        b=Bs38ThKCaaaTw1cQtVuUhYveeA4Jpq7LkmwRq2+c7thN5EIHzT4/ILSgbeYoNqs1nX
+         cSrIpnmeKjGqqRrUo+ExeQzjhskMNo3NI/G+2DoxLeBaqQzKl1YuzCBEm/N3f9T364Tq
+         9ymyVP56SIUGEosWGDFd/RDj2UYqZAqgd3tXx10lqePpPkLBWJYR6NFmumzjE6raausV
+         ebVNnGWyj0U7EjRjtpBYPTzqnbbz1p1pCRaocnHM9OrhsPiDkI4y/PhKD6uyNrIzWQzV
+         UplUR6vO1z3uetFoYgN6sYW3ghWQ7R2Z4dwqexOWjqZW/+aSiJNCBCQco8c7G8WuqsxT
+         HnOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740056053; x=1740660853;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2MH37PuNdNK/TNpbApdmC6WP6Q7SzSxWOUdbOcTxyoM=;
+        b=Eubx1v+n5Uqugt/Mt//cSKjt+GZyajmANJfSgFt+LuMNUluZfeAwhxpeSNNaQS8sN7
+         Mln0pbarxzPdu3Ly1TrtWgFRa8RWxdfnFZ6YdlxbY2KO8iM//2JRKdwzZ4tEqfDGiqa5
+         NzpySXA4r+63fblbllFlR/VjCbCzOqYslQSGt6zuHc3cmzNxNtAQV6yIzcVFMN0/HlzM
+         vyIfHBfv65ypdkSKyTTqqx9BBbtVLrVl2k1kStXTuH4PVuvUxZXA5iKVEDe3F1afK65i
+         d9VFghsdeExYI8M6F4wgNs0jA/SwuXcz+QWZU9L746qLcIMSbCHGoNrhYqEU9PBnbajQ
+         3UOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXYL7wz+sDRUY6KYHQtbfhnu0RPA96j3ge4/t7h/cNEtDWEICSvvff+WTl78uZ2i2ROx/G2P1SbBA0HG9w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylzBeuUAaOIyudq2B8gyZ48RNJMO7JJecsEK5SYFZbq3cKZUMc
+	+RsuDU/BWkWdjBXrPmVsNbzkJn0YL8b785mtidAssailza7J6tMUfcpG/UmYK28sgvIsLg3FXBX
+	KOtctJFI1tcmp3mcVqYzSYoqAwMiSi14tzwWZ4Q==
+X-Gm-Gg: ASbGncutFw26VnTIfj+KhUC3Jymj0A3Lu9pwfTU2Mk1JWTN9gdkSizCaTk14R9LDfaM
+	Yr1aj0UOKGEeEVr0JpIJ7Lo4MuYDArKxwU2lRkemeIbBKd1T2VX/45myAKVx4lhsvyJZp1bAY+O
+	I=
+X-Google-Smtp-Source: AGHT+IE6AHLnXcnNaoX4Nr22F0xV34Vth2voEdt9B7/95wnKbTHnVuJFPRSBTJU3K4esXEhAaDOcYDtzEfpdF78woc0=
+X-Received: by 2002:a05:6871:216:b0:2b8:84d7:ddd5 with SMTP id
+ 586e51a60fabf-2bd104903b6mr5735450fac.39.1740056052647; Thu, 20 Feb 2025
+ 04:54:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=855; i=michal.simek@amd.com; h=from:subject:message-id; bh=KQ+0w2rmENQ9lSqdJjkaIP8Q7ZbPdI7raTd2w9Z4zCQ=; b=owGbwMvMwCR4yjP1tKYXjyLjabUkhvTtqjeE7VJutl4s+7jt7cYmydjNR7xdVvzjCm9YfyovY FZsiNLxjlgWBkEmBlkxRRZpmytn9lbOmCJ88bAczBxWJpAhDFycAjARPyOGOZyFTSc1//ZK/b63 PV7y5gsB4/8zChnmJ0yNmFpRXrjCNd5ldtk55cXf5Z/PAQA=
-X-Developer-Key: i=michal.simek@amd.com; a=openpgp; fpr=67350C9BF5CCEE9B5364356A377C7F21FE3D1F91
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PEPF00003445:EE_|CY5PR12MB6155:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0f132235-35a2-49a5-5caf-08dd51ada025
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|1800799024|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?CIUzCyczSseIWriwiIDYkeO/J8QxK5JSctlgIBYd3CLhd2PHa6bzm/N3VtKv?=
- =?us-ascii?Q?PSmxnU5j8V9WU2D0AyO+6OJhp8+vp+pVUHLx2mn24Cbm4bZ/LhqxZkJ72zdo?=
- =?us-ascii?Q?0vNJXFQc8AKDXjkSrLly3h11ghgv9fO6vPzsZhJETT4HuYV5saHADXdBT4HO?=
- =?us-ascii?Q?CV4OE8FI36FHN3TATqBazK94xzw+9yJpP3AzS+sO7t4p/ZH6T+ADe2vjFpu1?=
- =?us-ascii?Q?tsevM1gbx/18e/XdzJ6YnTTvLZQH66rOasnG7FH5YzHFAVkPKxYWhu4K6/wu?=
- =?us-ascii?Q?1U/8Dn+CYKjjg3foNn17IwHxfCyOAsg8Lj3iicvH/Nbo21zUYroMckV58J9W?=
- =?us-ascii?Q?Vas/l+oOJU+qNMm97+x0fH+Ho73XtbLO6lMLJsuptuPiZ2HhuPJLHycu0Njk?=
- =?us-ascii?Q?EcU8eNCPnV4HhlVOB/q22Xe4V8FK/gOgJu6KmFnwSwea3npWB0dSq1w22a9w?=
- =?us-ascii?Q?/QSMBFm0wAgC0qHjQ6cJRtjRx7kdIx56+EORaX3YkNgaJ2DccJqbIzWC0XwT?=
- =?us-ascii?Q?PKBqJPf45hvNal4Q07hOyxTw555UiJQSQKZAS4ke+OGb6yGXfBe+Ws2lIszf?=
- =?us-ascii?Q?MU97lLhTIoQDwhoc+hg78PwwiwJHCvtKPHTqPv5lYwb3B0gMwmGu7ECr7I+l?=
- =?us-ascii?Q?WzjftlboZOxG8EcTDs2bGcqVtpc9JiSgQG90siTEIO3ju32dAivFKeSm9MlR?=
- =?us-ascii?Q?6OmA2DpHNNg9zpMAIsG9TKk0hWylLah4SazRL7KjIQUxsEfeueuIblkV1VHa?=
- =?us-ascii?Q?PI16nimemg8j1ClZJlzhjyWQ8qldBk/KGFNuzhAv2Wx6iMHDhNXlD5Z/yijO?=
- =?us-ascii?Q?M4YJr62+zm8vUX0WSSWD6k7M2MjBc7qePZV/QDcoYfBPC4TMnuWmdeAS/WGK?=
- =?us-ascii?Q?PMU8nDIM7xKYdzPINIJvNjwUvvyo8vZYMgcDxnsYtCGuhpHhz5w8wkfflpBU?=
- =?us-ascii?Q?swCDIl2dQhBYIP4gsbJ2B6c6RKHzaWdv4GIl+p4j+3G947wBt1E9HmEuQdS7?=
- =?us-ascii?Q?D6RZ30xiUmXVzer7L5PwAzGImgb5TiXAbVIwRjfbfd13mYyZauyhI1n7nGKH?=
- =?us-ascii?Q?G4JoqIomb0H1sJHR3DiFPnI8AT5avUd/CeXc6HxedVjRqBOeb5jhnz5JHjoB?=
- =?us-ascii?Q?SAv2ZSx/Yq02PeVKHZSc44IVXla5GgeTyei8c4YLMAis4cklT5ODziOIbFwd?=
- =?us-ascii?Q?kdSSc40dX33OOgxfqOjWOV31XarC2/TNUb4PQsd+zh6iz69hTArEH1YIvvwz?=
- =?us-ascii?Q?fWR7ZfvVO4ZyOR5IXqgmq3/C6SHRTuFu3JAUQQ08w0TMPjdWIZsNxNe5Zkeg?=
- =?us-ascii?Q?KxaKMjiGGFzJwZSjFxd9FeCBwqfvWgHCb2EK1TEfOwk7OpKL+BK7Cqy0Z8S1?=
- =?us-ascii?Q?tyBSkQUWQIM6LHXxyQzQvThGzsSf74Qlm2qFJvT3qhVNqR8DwwDAm8CwhATs?=
- =?us-ascii?Q?A7uNe2hDycPrGLtpNQ7cgAarFdNXGY+NQmA4OdjiRcV865WdOu4C1vbDmvMg?=
- =?us-ascii?Q?wdFepMJ0UgszDmA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2025 12:53:51.3536
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0f132235-35a2-49a5-5caf-08dd51ada025
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS2PEPF00003445.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6155
+References: <20250201110607.34766-1-cuiyunhui@bytedance.com>
+In-Reply-To: <20250201110607.34766-1-cuiyunhui@bytedance.com>
+From: yunhui cui <cuiyunhui@bytedance.com>
+Date: Thu, 20 Feb 2025 20:54:01 +0800
+X-Gm-Features: AWEUYZlZmbedW8oazja7YV8FQbGYiYqk4bf7DN3jmBvkvPch_3_i3rkkftu0WUc
+Message-ID: <CAEEQ3w=uYad7UAedSU4M_L277v=RQGWHpJQwOW-p7W6=hcijsQ@mail.gmail.com>
+Subject: Re: [PATCH] riscv: print hartid on bringup
+To: apatel@ventanamicro.com, atishp@rivosinc.com, paul.walmsley@sifive.com, 
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, cuiyunhui@bytedance.com, 
+	samuel.holland@sifive.com, alexghiti@rivosinc.com, jassisinghbrar@gmail.com, 
+	takakura@valinux.co.jp, valentina.fernandezalanis@microchip.com, 
+	ruanjinjie@huawei.com, charlie@rivosinc.com, conor.dooley@microchip.com, 
+	haibo1.xu@intel.com, andybnac@gmail.com, ke.zhao@shingroup.cn, 
+	tglx@linutronix.de, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Describe TPS546B24 DC-DC converter which is very similar to tps546d24
-version. The difference is that B version handles up to 20A. D version up
-to 40A.
+Hi All,
 
-Signed-off-by: Michal Simek <michal.simek@amd.com>
----
+Gentle ping. Any comments on this patch?
 
- Documentation/devicetree/bindings/trivial-devices.yaml | 1 +
- 1 file changed, 1 insertion(+)
+On Sat, Feb 1, 2025 at 7:06=E2=80=AFPM Yunhui Cui <cuiyunhui@bytedance.com>=
+ wrote:
+>
+> Firmware randomly releases cores, so CPU numbers don't linearly map
+> to hartids. When the system has an exception, we care more about hartids.
+>
+> Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+> ---
+>  arch/riscv/kernel/smp.c     | 2 ++
+>  arch/riscv/kernel/smpboot.c | 4 ++++
+>  2 files changed, 6 insertions(+)
+>
+> diff --git a/arch/riscv/kernel/smp.c b/arch/riscv/kernel/smp.c
+> index d58b5e751286..e650dec44817 100644
+> --- a/arch/riscv/kernel/smp.c
+> +++ b/arch/riscv/kernel/smp.c
+> @@ -48,6 +48,8 @@ EXPORT_SYMBOL_GPL(__cpuid_to_hartid_map);
+>  void __init smp_setup_processor_id(void)
+>  {
+>         cpuid_to_hartid_map(0) =3D boot_cpu_hartid;
+> +
+> +       pr_info("Booting Linux on hartid %lu\n", boot_cpu_hartid);
+>  }
+>
+>  static DEFINE_PER_CPU_READ_MOSTLY(int, ipi_dummy_dev);
+> diff --git a/arch/riscv/kernel/smpboot.c b/arch/riscv/kernel/smpboot.c
+> index e36d20205bd7..beba0efb00b9 100644
+> --- a/arch/riscv/kernel/smpboot.c
+> +++ b/arch/riscv/kernel/smpboot.c
+> @@ -231,6 +231,10 @@ asmlinkage __visible void smp_callin(void)
+>         riscv_ipi_enable();
+>
+>         numa_add_cpu(curr_cpuid);
+> +
+> +       pr_info("CPU%u: Booted secondary hartid %lu\n", curr_cpuid,
+> +               cpuid_to_hartid_map(curr_cpuid));
+> +
+>         set_cpu_online(curr_cpuid, true);
+>
+>         /*
+> --
+> 2.39.2
+>
 
-diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
-index fd6389aefc30..91a19faa8d9a 100644
---- a/Documentation/devicetree/bindings/trivial-devices.yaml
-+++ b/Documentation/devicetree/bindings/trivial-devices.yaml
-@@ -389,6 +389,7 @@ properties:
-           - ti,tps544b25
-           - ti,tps544c20
-           - ti,tps544c25
-+          - ti,tps546b24
-           - ti,tps546d24
-             # I2C Touch-Screen Controller
-           - ti,tsc2003
--- 
-2.43.0
-
+Thanks,
+Yunhui
 
