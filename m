@@ -1,131 +1,114 @@
-Return-Path: <linux-kernel+bounces-523807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 108E3A3DB7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:40:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81682A3DB7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:40:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CACE53A7BFA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:40:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D666D19C2406
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:40:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4445C1FA14B;
-	Thu, 20 Feb 2025 13:40:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E03091F91E3;
+	Thu, 20 Feb 2025 13:40:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fQwd9XwM"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ECkvBnVU"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3158D1F942D
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 13:40:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F08C1F460D;
+	Thu, 20 Feb 2025 13:40:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740058810; cv=none; b=HvwIMhivlgBD5teHGhdaICZyijhSpXm2aev2srCzj3wWEGO7A9Xs2XBNc0PMCTdUvgqrjssVtoz0sLHCC8mOIFza8zIvfTEDno1MK2OdZtn6jT0l3T9vdlt29Khgi0KLUR7LOVFLJCu7ZFp3o6Q00E7oU+TaQJCKO9/JqDnmPkY=
+	t=1740058822; cv=none; b=dywdvpJkjbQ7Si1jymW1m0gaZeQQ8hLz4Deu+Vf1OhMs8b8eQjvPFXQId0igN26ssw7iEaetYJFt0TnOV3ciV3/RHuxnwCGaLAqmIoIbZq9XEzx9tfNG4yVJXgMsffCFqC+IPrZzzcXgbmCbhywJVNIx21+AQyRw2p/C3IS7ojU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740058810; c=relaxed/simple;
-	bh=YHiEwZjQAEX3AGU4xj8gssFAfSoCb1JqMeq59o4wcrE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=huulqyjIZMj+3+Vbfe+4MSub3w+8qMRA8H8QFslYjN/PnqO428pcLmXeRH51De68Md+QCPy0W0Cy/LH8aUvt3w4Ei3EQBp4HB1ppMPQbQ3rqxIRisTb8zEHypcjUDuTMliDIj6blKHWP5G31wD9HifE+Lg98rtOyzANhCrNPXII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=fQwd9XwM; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2f441791e40so1448743a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 05:40:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1740058808; x=1740663608; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ML1/0H9YV2GOwGv9BI0hsA2CQR0qo+3F7StWZRVvACg=;
-        b=fQwd9XwMqfCIIipFVA4Dm9eZYRqfXi7sPZ7dWCfKUCHVdgjDpAm8b44yu5RY4+8uEW
-         QGWBoFSRG3hT+I66RagVvtX5m3sY43KfBq4fvfCpz+8S56/RKc8yW+C/SjgQgTFZzQ0K
-         fWh6dcAyB9bTVzG6W8IdXB0sxYWh5PksE+b0w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740058808; x=1740663608;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ML1/0H9YV2GOwGv9BI0hsA2CQR0qo+3F7StWZRVvACg=;
-        b=wwUq6b8S0tBFM8rdQHrbpmDXQMuMqQUdoaNAAturUaLLcJzepBlNRhZUncttKfbpk9
-         gWbxmBcn+dhL9XF+qbzg+e20LUUc/X53HUutBAs+Cji8pg00ymIODWRrQaEQoYmyfZaW
-         YYu7XiRTPXQ0u3n01lHgOrI+gBRrlPKQBBLXfVoQreGVzrFGxiSmA7OioQK5LCLbHsk5
-         L8pvtMI4J+Sn3fbAU+txzGbSGQAK/tbDirZVjSFt8kQ1ujeDSl4HkaQmAT/huvuD6lQs
-         9PNaTsPnQz3UsaeRxGTKt3IvqptF2FSycLP+dgRiKH+NnF5l1A2y+Ss8NqBdzp2PD+fW
-         sJYg==
-X-Forwarded-Encrypted: i=1; AJvYcCUIZWfOrK6IMRu0Zezyfp40p6smhUJ0oneZj8um5KayGbooQwLBTwYzUTfRveab/15gSSzqltaCtF2PYvw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNfEdDHUNEoKE4iSM6QmJ+4VfnxIazNo1ArtsssJooLho6BIMc
-	svI8CS/CNKLEAvpXZvqXshsfalXwmTlFep+NHpp3zO8368rXmbp2xhBR6C5EI35OCOwQqkgyAn+
-	ifBlvDRfn8zD0XmCLItpf53et8LFdv90joPIV
-X-Gm-Gg: ASbGncs/6ymSudYHbfxdmCubRUwIhMUuloL/v+aDnbq7Q4hU+yhkAGXiE/ZPDxetz6q
-	gOpYT6aBQ6NIOOenBd31mRb9fQqUSmLUKoM9twFTBepqjrlIxqlDEytk39gudOrh776PFQOFEup
-	4UJjgFPbgzPEYygmR1/GA65uY=
-X-Google-Smtp-Source: AGHT+IEL5keA+PapFixcBrr6dT8RQR/4gBofNZ3DcuRjKbHdgZu0h93rSpNvZX8XRvTFUH8ttG3sMUe4HE8dka1DC4I=
-X-Received: by 2002:a17:90b:1e09:b0:2fa:1451:2d56 with SMTP id
- 98e67ed59e1d1-2fc41045074mr33941390a91.25.1740058808515; Thu, 20 Feb 2025
- 05:40:08 -0800 (PST)
+	s=arc-20240116; t=1740058822; c=relaxed/simple;
+	bh=0xdYAA6+DWqySxuO6drgGplF4cczXTQrd5HfR1XAN3w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IZIIfc5HkR9cH9PtkhAF6kjCQQG4dJhYeEqExcgoYzviNkU9/i9VrzD1KlN8+dTO2PBNI76djsNdZcnuKcjMPQEMCMPQMA791xYiPKbOCF8Ub3ykI064Tofq/82asrK055XO13Rj/s8XkxKxnMNF7mj87RGu6RFx1s5NVBFj180=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ECkvBnVU; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740058820; x=1771594820;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=0xdYAA6+DWqySxuO6drgGplF4cczXTQrd5HfR1XAN3w=;
+  b=ECkvBnVUNwBfvJuNVnjvbjix5p+OI+stZjT2ursaBQMOMnj0RRgEA7bj
+   BUgWS1eq6/spXxKEmUTk0IgjCj90d26OAsp6En1jisD5gYAoGHpVIsBVi
+   xERGWWvvPvrnl7bp1yGIJ/+t13oYK8pDEw7nSsN0/Q/OfvnQMaEgPjcEq
+   hBZrjKdqRelXTF/aY3ra+h8StqrjTfUh7YbAg6lFx+8bjxozGioA2vZTa
+   dqFGX0HAk4Lwq6p6QXoiEWjAszSBHX1WiUDGWFbDU7TNv+hM1VgJk3bMJ
+   QCnUQb2RspaTPQNxWR/zy9a+JB77p7D+jePASZNVLJ0nDuTMpjPTYW6gU
+   Q==;
+X-CSE-ConnectionGUID: JKewUSJJQ5ClfCC8+LWKHA==
+X-CSE-MsgGUID: AS/CdZOZQmS7uULuAWERIg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11351"; a="40026442"
+X-IronPort-AV: E=Sophos;i="6.13,301,1732608000"; 
+   d="scan'208";a="40026442"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 05:40:19 -0800
+X-CSE-ConnectionGUID: d4EYzsF+Q/GXIRdGXLB+lw==
+X-CSE-MsgGUID: 0vR/qgd7TbSxrzuOcT5GSg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,301,1732608000"; 
+   d="scan'208";a="115019243"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 05:40:18 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tl6ml-0000000DLcR-26xQ;
+	Thu, 20 Feb 2025 15:40:15 +0200
+Date: Thu, 20 Feb 2025 15:40:15 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Michael Walle <mwalle@kernel.org>,
+	athieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Subject: Re: [PATCH v1 0/5] gpio: regmap: Make use of 'ngpios' property
+Message-ID: <Z7cwv0gxRFFGBjR1@smile.fi.intel.com>
+References: <20250213195621.3133406-1-andriy.shevchenko@linux.intel.com>
+ <CACRpkdao27pu+9qFH2LBYNwYkBbWq1B-hE9nZGfTTCnQxhTiAQ@mail.gmail.com>
+ <Z7crrgl2iFn34gck@smile.fi.intel.com>
+ <CAMRc=MfSn6xB4eNkFG7E2gQPiF+AmnaidO5=FbvPtvW0N4iDjQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250210130419.4110130-1-akuchynski@chromium.org> <Z7SYg8HaSVx9QyH9@tzungbi-laptop>
-In-Reply-To: <Z7SYg8HaSVx9QyH9@tzungbi-laptop>
-From: Andrei Kuchynski <akuchynski@chromium.org>
-Date: Thu, 20 Feb 2025 13:39:57 +0000
-X-Gm-Features: AWEUYZldFkmbJpsZ2rH52bgIzXaIk8HNEGPbISy_CZuCvZhPJJ9k0ZHwzqAkiuE
-Message-ID: <CAMMMRMfYWqGEJDmMaPQFjQFeUhWJ4wVp-xy2TTdAhp3gRv-n8g@mail.gmail.com>
-Subject: Re: [PATCH] platform/chrome: cros_ec_typec: Add support for setting
- USB mode via sysfs
-To: Tzung-Bi Shih <tzungbi@kernel.org>
-Cc: Prashant Malani <pmalani@chromium.org>, Benson Leung <bleung@chromium.org>, 
-	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>, chrome-platform@lists.linux.dev, 
-	Jameson Thies <jthies@google.com>, =?UTF-8?Q?=C5=81ukasz_Bartosik?= <ukaszb@chromium.org>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=MfSn6xB4eNkFG7E2gQPiF+AmnaidO5=FbvPtvW0N4iDjQ@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, Feb 18, 2025 at 2:26=E2=80=AFPM Tzung-Bi Shih <tzungbi@kernel.org> =
-wrote:
->
-> On Mon, Feb 10, 2025 at 01:04:19PM +0000, Andrei Kuchynski wrote:
-> > +static int cros_typec_enter_usb_mode(struct typec_port *tc_port, enum =
-usb_mode mode)
-> > +{
-> > +     struct cros_typec_port *port =3D typec_get_drvdata(tc_port);
-> > +     struct ec_params_typec_control req =3D {
-> > +             .port =3D port->port_num,
-> > +             .command =3D (mode =3D=3D USB_MODE_USB4) ?
-> > +                     TYPEC_CONTROL_COMMAND_ENTER_MODE : TYPEC_CONTROL_=
-COMMAND_EXIT_MODES,
-> > +             .mode_to_enter =3D CROS_EC_ALTMODE_USB4
->
-> The symbol `CROS_EC_ALTMODE_USB4` doesn't exist.  On a related note, woul=
-dn't
-> it always enter CROS_EC_ALTMODE_USB4 if the value is hard-coded here?
->
+On Thu, Feb 20, 2025 at 02:22:29PM +0100, Bartosz Golaszewski wrote:
+> On Thu, Feb 20, 2025 at 2:18 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> > On Fri, Feb 14, 2025 at 11:50:53AM +0100, Linus Walleij wrote:
 
-CROS_EC_ALTMODE_USB4 is defined in drivers/platform/chrome/cros_ec_typec.h.
-TYPEC_CONTROL_COMMAND_ENTER_MODE command will be sent only if
-mode =3D=3D USB_MODE_USB4 because EC currently only supports entering USB4 =
-mode.
-Otherwise, TYPEC_CONTROL_COMMAND_EXIT_MODES is sent, and the mode_to_enter
-field is irrelevant for this command.
+...
 
-> > @@ -84,6 +102,13 @@ static int cros_typec_parse_port_props(struct typec=
-_capability *cap,
-> >               cap->prefer_role =3D ret;
-> >       }
-> >
-> > +     if (fwnode_property_present(fwnode, "usb2-port"))
-> > +             cap->usb_capability |=3D USB_CAPABILITY_USB2;
-> > +     if (fwnode_property_present(fwnode, "usb3-port"))
-> > +             cap->usb_capability |=3D USB_CAPABILITY_USB3;
-> > +     if (fwnode_property_present(fwnode, "usb4-port"))
-> > +             cap->usb_capability |=3D USB_CAPABILITY_USB4;
->
-> Are these defined somewhere?  E.g. the bindings?
+> > Bart, do you think it can be applied?
+> 
+> Andy,
+> 
+> I really rarely lose track of patches. It's been just under a week
+> since this was posted. Please don't ping me to pick things up unless
+> I'm not reacting for at least two weeks. I typically leave patches on
+> the list for some time to give bots some time to react.
 
-Unfortunately, property names are set in the ACPI firmware in the same way.
+I see, I thought your cadence is one week, that's why I have pinged you.
+Will try to keep this in mind for the future and sorry to interrupt!
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
