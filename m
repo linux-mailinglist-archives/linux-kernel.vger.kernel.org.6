@@ -1,208 +1,176 @@
-Return-Path: <linux-kernel+bounces-523493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A728A3D784
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:57:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D509CA3D78E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:58:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A2C27A5077
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:56:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BE623BB412
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:57:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13FED1F12EA;
-	Thu, 20 Feb 2025 10:56:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 580F21F190E;
+	Thu, 20 Feb 2025 10:56:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="hJrt2GmQ"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2083.outbound.protection.outlook.com [40.107.92.83])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KqPMuErv"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B171EFF9B
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 10:56:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.83
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740049011; cv=fail; b=YvNFbQQjNmWmMFtZf9fFSx8KOS1aZCcZHJllzEVV/weU9iHFLZV2rr7i5iQAak7N7m7Ue7S4WRT/h+uPRv+/HQBEQAvXdl63kGyHvcRc0L7cavrWaR5wH34Gymo9pOYpGkaDmvz1JrVA79u7yOBM/GSWIwacdlW0VDj4A13DHsU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740049011; c=relaxed/simple;
-	bh=CxtzJI9enoo4NyM/DlyABw9Ub7NBxZgtaHZTlulK1r8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=tKqxL7pnRS35kfZFztb9dsY8oW5CvDsh6AK/BSzlhtRWccdQW9c4nAn1GO0h4V1KijD3hTmEu7LQxlyfNJNwONannBxd5osv27OhkvOc/Y6g2OtXOsG3/v3+aJb73iU6yabVuuHuBp+Ajp9TjVQmgiJ/MADARKk9OmjUFt9PBc8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=hJrt2GmQ; arc=fail smtp.client-ip=40.107.92.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tSy/rY3PR8kaTLDiknCDYfp6EojxMANMFVBn2U1W/q+AAeSzrcO70kFvkB0uSyPm4awPOCth4pu51RaJNzGCq7cOrBv8vxGf9qfKfiFe6HijhiYkp+8NxoShUseGvB28kBCg3xSli0Zhi4tL7oqYat8wEH/39Y8+Dxowi23GeGWkmeGt+6Hib2YvpmMg3cKJ/xKMb0+lE5jLD74z38J49YJBG4ZItEv24vDfGi3FU0s1U5R80fXFSMpbaozZIdbX6rf9dRlo1VfvfKRQwRem2sF9D2XgoceXXNQfYyoBxynk510u9v2IO33e+70qhHpHQBucmjo1lGSGS3wli6AV1Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2Swhwgp7RA5vdRGKFE5K/EHYWItn6w9KAg6e32wqHiI=;
- b=j/uoMCtZKgeIqi38QFqRZRYSkdlfRt4P1hSt4bau8wXdhdXcAeHAVLbV9xroA9GBmOse3P6bcosl/7AkD/+YRIdZwA7yvLwDnVhXqMIea/3pg9rpu0MxSfxcpuKr03UUU6ZPvigGxqlJCLHRMh1lm1pUZudWayyhzFTlR6rbOcnN5DpDaFbli7ds3ZHD75GDUuWy/BCPYH9HNcc0/peF3e/WLi/tckPlFSdtNua2vSQrluKmojjGJgMBsEaTfvzV+JiYapOgN+MR3pV2GdUhJFykDy/l6/VExDDhMY3kbSzEYJuZfLnZvWcEYpB7fPDpQrTGJuleyTmMRWGRocvdlQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=infradead.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2Swhwgp7RA5vdRGKFE5K/EHYWItn6w9KAg6e32wqHiI=;
- b=hJrt2GmQT/Q3vrNW9CTgncwGG8SLGTnyh/10tnTrW7JJKUNeJy9K8usNK+34Y0bvpAel0ZHgaPUHJIbhDYT0Sd/23F5TjJMn84kcIBX94/Emqm/RcWGbIRAZffeA6ZOXgR79dOdeg4PUs96CcmZ2IvWegV2yqeGXTcfBWfNm1Ko=
-Received: from BN9PR03CA0055.namprd03.prod.outlook.com (2603:10b6:408:fb::30)
- by DM6PR12MB4388.namprd12.prod.outlook.com (2603:10b6:5:2a9::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.20; Thu, 20 Feb
- 2025 10:56:46 +0000
-Received: from BL6PEPF00022571.namprd02.prod.outlook.com
- (2603:10b6:408:fb:cafe::5c) by BN9PR03CA0055.outlook.office365.com
- (2603:10b6:408:fb::30) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.16 via Frontend Transport; Thu,
- 20 Feb 2025 10:56:45 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BL6PEPF00022571.mail.protection.outlook.com (10.167.249.39) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8466.11 via Frontend Transport; Thu, 20 Feb 2025 10:56:45 +0000
-Received: from [10.252.205.52] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 20 Feb
- 2025 04:56:38 -0600
-Message-ID: <5b4aa0d0-62b9-484d-a95f-316f5defbc28@amd.com>
-Date: Thu, 20 Feb 2025 16:26:15 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4DC01C6FE9
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 10:56:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740048996; cv=none; b=qky2jqg6sGgyynLjwQ8cc1+IkByFa2JoRes33Kvn53zb5SiR3APE1SWpRsnx0XdWowNWrSy/QZdCZAPWs8W0abVoRASTIcZj3RtL7q/hs9gmjMHpgu7NONgl2WbIRCQAhsHurSDbXo+HTCiqQIAQxQE6SMljK8wTJ/Jd9ZUiXQs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740048996; c=relaxed/simple;
+	bh=fRu8eUbZlr5WjUOyfFTKMd8WKBc7SWVXg5JE+CVhBFw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jifdhuP9garhgPhzGULhXRRlvO7Ov6rn3fnnnuxmHnTjKNBEhrwcf5Mv08HMg882NASIKkZWWVAiq0uVqbdc+TlFIpAFF4pjeaw5mkZXT4f8Q1FOe8C5ASUiPKEQ22ai8blkUVSMoMGSti1h/O3N+38nW3AO5IQD9rJcb69tm/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KqPMuErv; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-30a440effcfso19272791fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 02:56:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740048993; x=1740653793; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fRu8eUbZlr5WjUOyfFTKMd8WKBc7SWVXg5JE+CVhBFw=;
+        b=KqPMuErv3HRCkVp5lM8rv66hBFAIByefLjYyc8wU39MkenoNx2ER1NcihuHCjK0TRV
+         lLhUUTLFlizxpMkcNW+EyBZPQ1EwMiwbd+DuX4qfmox3GHT/Qk6D1brKWZQn7lAapgZB
+         J044HYP/2s+pCln0/lEPU7Hm4BD6+U3N3yUDdC+uQf76YAtVhSmPWKjq5TgrGGVtXMDg
+         U8VFDb9lWHxBLbn5h3dxYCSb2fqIXU/0DnCCHwXTCx7AyqaDWBiRPbKwwyAcjl1Ig9B0
+         iJvmmXDOHGqvoaEW+0xeeopXqfhuSMgme9DtzveB9txWDyLvSmxKRr3N48kan99Ot39x
+         RfbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740048993; x=1740653793;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fRu8eUbZlr5WjUOyfFTKMd8WKBc7SWVXg5JE+CVhBFw=;
+        b=eGsZWEzTAEdR5BMXuI4L+kM//bfQg3mGQSZdZz4yunfFb2IWSpWRqdc6XFX+Ad1W5L
+         CyqlOSzBrIKKDWf1jGXwHawZ4OiWTyrlFeyiwg71gLqU6t1WjuHXxCF0mdcCl6vT0iKZ
+         Fnymx9hzubXB2mUKUKVcAc9JsICDlVfkE2T+iRRJHwkaJEB2K6b6J4os2hsequptdcVu
+         TPOMCRYtGo08UH/O+UqdDmqf2vuWLmGvKeEAVvg6IguMGyRXDEgK6pIQYbaStMc1TncW
+         YEA4Q0t8qBP3I9ROkkAY1xkOyUT0vg4wMaSh1ZI8Nc4Fhmpb4Wyi27n6defqDTGa0PSV
+         wccA==
+X-Forwarded-Encrypted: i=1; AJvYcCXp3WjZCPOSyN1K56x2cSwAqF/Yb4qI5Gp8rB6y/lM/IhEpF0Nrtu6yrT/ZLhm4+/SkwMZroLCh20cT0v0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeHT/KnD484IEPqiZ7TVHI1YE08/CaJLG1lpW0jRtht00NzixH
+	DwL8bHoyvF5wIUBvi+fK1u0fPJ81WeTzzuMh6zZlfimTvdfG6ONhcwavucmzNUhruLsJVN68x6N
+	bX9hFew24stTsSVLjSBeQouUdygsIaqEo
+X-Gm-Gg: ASbGncvQf2KaqnOUDBvkj31QC4rYrFcishxjkpPAQQ+jLlcO2M3CBt/Z/0pnfBX5d+4
+	sASqJ2qY4hMis4skb7ahctSFEIuULOFu/wfjK8xt2XNfstQ7HhKc1QbHKL2nbKXxbAVTmtuum
+X-Google-Smtp-Source: AGHT+IFg16Cpi34Nx5OBZZj3UBP9+BvW4NSgYKS5HcY+H9ccmPPfkhdxLu3CL/Ze5+kyj/MWpUu3PhkPOeBDVIPYNDg=
+X-Received: by 2002:a05:6512:3d1b:b0:545:2e8b:5959 with SMTP id
+ 2adb3069b0e04-546e5f768bemr964670e87.24.1740048992642; Thu, 20 Feb 2025
+ 02:56:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 01/22] kernel/entry/common: Move
- syscall_enter_from_user_mode_work() out of header
-To: Peter Zijlstra <peterz@infradead.org>
-CC: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>, Valentin Schneider
-	<vschneid@redhat.com>, Ben Segall <bsegall@google.com>, Thomas Gleixner
-	<tglx@linutronix.de>, Andy Lutomirski <luto@kernel.org>,
-	<linux-kernel@vger.kernel.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
-	"Sebastian Andrzej Siewior" <bigeasy@linutronix.de>, Clark Williams
-	<clrkwllms@kernel.org>, <linux-rt-devel@lists.linux.dev>, Tejun Heo
-	<tj@kernel.org>, Frederic Weisbecker <frederic@kernel.org>, Barret Rhoden
-	<brho@google.com>, Petr Mladek <pmladek@suse.com>, Josh Don
-	<joshdon@google.com>, Qais Yousef <qyousef@layalina.io>, "Paul E. McKenney"
-	<paulmck@kernel.org>, David Vernet <dvernet@meta.com>, "Gautham R. Shenoy"
-	<gautham.shenoy@amd.com>, Swapnil Sapkal <swapnil.sapkal@amd.com>
-References: <20250220093257.9380-1-kprateek.nayak@amd.com>
- <20250220093257.9380-2-kprateek.nayak@amd.com>
- <20250220104355.GI34567@noisy.programming.kicks-ass.net>
-Content-Language: en-US
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <20250220104355.GI34567@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF00022571:EE_|DM6PR12MB4388:EE_
-X-MS-Office365-Filtering-Correlation-Id: de99e257-aec9-4ebd-bc94-08dd519d4477
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|7416014|376014|82310400026|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NTRNcm5PMUthanB1SHFvQ2R2dnJzWVVmSUNhbU5CcmsxMzAwZXdUM0ZGTUFj?=
- =?utf-8?B?aDBEZUpXZlI1aFpMNDVxT3FsNldXZkxyWnRYL0c1NllQN0plSkE3M0xpcjV0?=
- =?utf-8?B?OU51TWY3WDlhVVNkTG16MU9GQjUxaVlEWmZuN1N3dnlKVWR0eTFTa3B1NGRa?=
- =?utf-8?B?eGw0UTZXQjhDdC83dU4wb0Q5aTI4VzRsNmFNM3lybExFT3BzdUo4MlZEd0tv?=
- =?utf-8?B?bnF6cFVhcnRSRXBha0VLUGU2a09NNFRlY1JYZzlqdHRtUTkrZkNVRldwVlJk?=
- =?utf-8?B?ZlJxRzhYWWl3MW1haVc3aTc1ak9PR25Ud0EzQU5zenFHRmxMVWRQMDJGMDFQ?=
- =?utf-8?B?dHRON2R1eExVTXZsNVZxTCtGV1haaTRSSG5FYXBtNmx1MjBsaGNQSGgyaHRk?=
- =?utf-8?B?Sm94UkZER2ZodkYrRUpSb1ZwUVNZa0lIc2JUa29ycTZvZ05jRXQ5QlZ6Qzgz?=
- =?utf-8?B?Y3pnUkFYZTc0RnBrM0o3NHRkZTNBaitzT0hpSzY4b1ZvaElRZS96N2hFNHpj?=
- =?utf-8?B?bWN1eHdOOFo2SjJLRkgxWHYzZmxaWHVNTE83blZaS3ZoR0JTVHBXN2I1anVL?=
- =?utf-8?B?b21VTC94cVdGWDRNekVUWFZzS3pGVTIrSHZ0ZXJHeWZqL0JhODhqeUNpRTI1?=
- =?utf-8?B?RlR2UFBGS0ZiRklQdUxsVitYOGhFR0E1aGpRSzh4V3h2WER1cFB3M1RubTYr?=
- =?utf-8?B?TWlPM0NleGV1c1pseTJJOXorSCttNHFVakFTby9MZFZzOFBZU21uVS8reDRX?=
- =?utf-8?B?cWNIL0xkOUFETEJUQTVqMDFvcThVcVc2MjVLSkVha0luN2ducnVaZjZvV3A3?=
- =?utf-8?B?bzJVc2ZIVjN4YkdqKzhjZWpPbXVtT1d5Ulo2cmNkZVp6NkRnakl6RkdaRjdR?=
- =?utf-8?B?VHYzOGhZMUM1dEJqTG8rZU1rOFBjcEQ1d3lYcUZJcFdEb2lHU0ZBNG8xSjcv?=
- =?utf-8?B?RTBKMXJ5KytybmVoaDJ3bmJETUMyWHJoNEN0MUVaYm9nM0RuOHB1VzJEYUxW?=
- =?utf-8?B?ekRCQnJQOXJ3N2RjOWkzMkd4dXNRKzhnbGxRMzBHTDNDZXVLblRzMkF3cHZm?=
- =?utf-8?B?Z3dGK3JsSTJHa0J5Tk9yRXVISER5M1g3bzB2cEQwcnIxaGNUZi9nYmZtb05W?=
- =?utf-8?B?bkMzVkJMTk94dHFibDlaL3VpUGZQTU5uTldNNU9weDl2S1VSVGplNDh1Tjkv?=
- =?utf-8?B?dkxYdGo0RjFrOUhIS0x3ZXhxbDNROG8zM2FyUkhJMUVvTU5iSUkzWEdtM21I?=
- =?utf-8?B?aXhiZktTUDlJanhWakZCVEZyTXg3dC9VRnBGTitpWmFnaGVsSEpTUFlDZHl3?=
- =?utf-8?B?NjNpUWpZZUdxMTZmcUN4SjVPVHpITUxKZ2VDSG1lTkdRR1RiMm10MFVEQVgy?=
- =?utf-8?B?UUdwN2tqRVoxRkZ1OFdiUWsxdlBhZjN1bHNJYmtkTUROdEkzYXN5NG1VQ2kz?=
- =?utf-8?B?YVBWeXZub3BBQVJjcStVTVZnUFRMbldQeDBrZGN5SDY2SmV4UjZUUHNjdFRj?=
- =?utf-8?B?N0lxdnhQQTNxQ01MNkQwVFI4eXNxZzlCa1E3bHBNUkdUUGVKaUVCL0wzZVBV?=
- =?utf-8?B?eW5NRE1QbXZOY09abjlhbHZNZzQvNEZJOEFYamdhdU5aMitESTYwcGs1MG1Q?=
- =?utf-8?B?cEVpaUNTOC9LUmx6MVRxaGpYVUc1WDlkemNyZWhJaDBmQ0xNWXphVGE5aHdk?=
- =?utf-8?B?UWlPVWdTcWdWcW5JNm40dFl0d1d0RlFvUStDNG9nL1c0ZWUybS9EYzBNUGUx?=
- =?utf-8?B?ZUI3S0pGam4wMGZFeGJzKzhOU0FHYVZKQlZFc3p5QWpSejdSVFRuUTZuOEVM?=
- =?utf-8?B?dmpUYTQraElmZ2Z3UUVOOGFOQ0dJK3REbUkvaCtPa3UvbGZmaTZRNGdkWm9J?=
- =?utf-8?B?aWw0UzYrVDNKRlJ2ZmZTeVErTUhxRDJtV2szWmVuVTBBN2lwbDZTbmtLWWpJ?=
- =?utf-8?B?QnlKa0dJOVZIZUxzTHF4U1pPb3QrMnU2eEZ3Ky9iRHNPU2NxRGd1TU44cG9Z?=
- =?utf-8?Q?tPYRkg7JmpeyJCNaTTN7z4Ni2MC+c4=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(7416014)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2025 10:56:45.6422
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: de99e257-aec9-4ebd-bc94-08dd519d4477
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF00022571.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4388
+References: <20250123190747.745588-1-brgerst@gmail.com> <Z7RRZ0jdqsrADMm0@gmail.com>
+ <CAFULd4Z_QoOLKCOawyeFtRe6V4+oaaGxfQxav9dS-Di-Ne7tfw@mail.gmail.com>
+ <Z7XE0P6ZFHxtlYXw@gmail.com> <CAMzpN2gyhEnYsimxLhLNPc4HTpVdRGTiBfm9pXiFTL6_3-O=sg@mail.gmail.com>
+ <CAFULd4ZQ8VoKvQ7aOgcfeLNROM4-rDYn=wHo=FYMO8ZkuQeSAQ@mail.gmail.com>
+ <CAMj1kXFgfbLqVkcs2T8QHRKKJ0X7+mLd-bNjricfd_niY-dxRA@mail.gmail.com>
+ <CAFULd4aYjnWzWaN8WA0LetN1Li7F8MY3qnxbhY8=tNFxqHCP1w@mail.gmail.com> <CAMj1kXGG4J76o17d=e4jv-5jjzcSGyZdKRcNNB17SkCqD6+8qQ@mail.gmail.com>
+In-Reply-To: <CAMj1kXGG4J76o17d=e4jv-5jjzcSGyZdKRcNNB17SkCqD6+8qQ@mail.gmail.com>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Thu, 20 Feb 2025 11:56:21 +0100
+X-Gm-Features: AWEUYZnteaXMK8HgJJ6iL5SHU5Azq-Dcxyy5M3SLgdeblJ4cJF0EGkot4QPPSoI
+Message-ID: <CAFULd4b63uHvZs_tUjkiNRykThiztwn59jnZ-5JkTEXR16oVeg@mail.gmail.com>
+Subject: Re: [PATCH v6 00/15] x86-64: Stack protector and percpu improvements
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Brian Gerst <brgerst@gmail.com>, Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org, 
+	x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Borislav Petkov <bp@alien8.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Peter,
+On Thu, Feb 20, 2025 at 11:52=E2=80=AFAM Ard Biesheuvel <ardb@kernel.org> w=
+rote:
+>
+> On Thu, 20 Feb 2025 at 11:46, Uros Bizjak <ubizjak@gmail.com> wrote:
+> >
+> > On Thu, Feb 20, 2025 at 11:05=E2=80=AFAM Ard Biesheuvel <ardb@kernel.or=
+g> wrote:
+> > >
+> > > Hi Uros,
+> > >
+> > > On Thu, 20 Feb 2025 at 10:51, Uros Bizjak <ubizjak@gmail.com> wrote:
+> > > >
+> > > > On Wed, Feb 19, 2025 at 2:18=E2=80=AFPM Brian Gerst <brgerst@gmail.=
+com> wrote:
+> > > > >
+> > > > > On Wed, Feb 19, 2025 at 6:47=E2=80=AFAM Ingo Molnar <mingo@kernel=
+.org> wrote:
+> > > > > >
+> > > > > > * Uros Bizjak <ubizjak@gmail.com> wrote:
+> > > > > >
+> > > > > > > I wonder if there would be any benefit if stack canary is put=
+ into
+> > > > > > > struct pcpu_hot?
+> > > > > >
+> > > > > > It should definitely be one of the hottest data structures on x=
+86, so
+> > > > > > moving it there makes sense even if it cannot be measured expli=
+citly.
+> > > > > >
+> > > > >
+> > > > > It would have to be done with linker tricks, since you can't make=
+ the
+> > > > > compiler use a struct member directly.
+> > > >
+> > >
+> > > Interesting take. I'd have tried to put the canary at offset 0x0, and
+> > > simply use pcpu_hot as the guard symbol.
+> > >
+> > >
+> > > > It boots and runs without problems.
+> > > >
+> > > > However, when building the kernel, I get "Absolute relocations
+> > > > present" warning with thousands of locations:
+> > > >
+> ...
+> > >
+> > > The warning is about the type of __ref_stack_chk_guard, not about the
+> > > type of the relocation.
+> >
+> > Thanks, I got distracted by the text of the warning that mentions reloc=
+ation.
+> >
+> > > $ nm vmlinux |grep \\s__ref_sta
+> > > ffffffff8350c620 A __ref_stack_chk_guard
+> > >
+> > > Without your patch:
+> > >
+> > > $ nm vmlinux |grep \\s__ref_sta
+> > > ffffffff834fba10 D __ref_stack_chk_guard
+> >
+> > Is this a problem in our specific case?
+>
+> I don't think so - the whole notion of absolute ELF symbols is rather
+> flaky IME, so I don't think we should be pedantic here.
+>
+> > We can list the symbol in arch/x86/tools/relocs.c to quiet the
+> > warning, but I would need some help with auditing the symbol itself.
+> >
+> > OTOH, we could simply do it your way and put stack canary at the
+> > beginning of pcpu_hot structure, with
+> >
+> > static_assert(offsetof(struct pcpu_hot, stack_canary) =3D=3D 0));
+> >
+> > for good measure.
+>
+> I think this would be the most straight-forward if there are no other
+> locality concerns this might interfere with.
 
-Thank you for taking a look.
+OK, let me prepare a patch then.
 
-On 2/20/2025 4:13 PM, Peter Zijlstra wrote:
-> On Thu, Feb 20, 2025 at 09:32:36AM +0000, K Prateek Nayak wrote:
->> Retain the prototype of syscall_enter_from_user_mode_work() in
->> linux/entry-common.h and move the function definition to
->> kernel/entry/common.c in preparation to notify the scheduler of task
->> entering and exiting kernel mode for syscall. The two architectures that
->> use it directly (x86, s390) and the four that call it via
->> syscall_enter_from_user_mode() (x86, riscv, loongarch, s390) end up
->> selecting GENERIC_ENTRY, hence, no functional changes are intended.
->>
->> [..snip..]
->>
->> @@ -79,6 +79,16 @@ noinstr void syscall_enter_from_user_mode_prepare(struct pt_regs *regs)
->>   	instrumentation_end();
->>   }
->>   
->> +__always_inline long syscall_enter_from_user_mode_work(struct pt_regs *regs, long syscall)
->> +{
->> +	unsigned long work = READ_ONCE(current_thread_info()->syscall_work);
->> +
->> +	if (work & SYSCALL_WORK_ENTER)
->> +		syscall = syscall_trace_enter(regs, syscall, work);
->> +
->> +	return syscall;
->> +}
->> +
->>   /* Workaround to allow gradual conversion of architecture code */
->>   void __weak arch_do_signal_or_restart(struct pt_regs *regs) { }
-> 
-> This breaks s390. While you retain an external linkage, the function
-> looses the noinstr tag that's needed for correctness.
-> 
-> Also, extern __always_inline is flaky as heck. Please don't do this.
-
-Noted! I'll try to find another way around this.
-
--- 
-Thanks and Regards,
-Prateek
-
+Thanks,
+Uros.
 
