@@ -1,192 +1,174 @@
-Return-Path: <linux-kernel+bounces-522909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 501FCA3CFFC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 04:14:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F097A3D004
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 04:17:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20DC117C802
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 03:14:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 043397A072F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 03:16:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBEEF1DE885;
-	Thu, 20 Feb 2025 03:14:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 844711D9A70;
+	Thu, 20 Feb 2025 03:17:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="Djt0ewfI"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BjTWTymR"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E54A1D8A14
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 03:14:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740021272; cv=pass; b=TaI+CQteBHPDEL4rLvbVWvZ4WagzDFufPazVIDqy8+y2+xgs3WD3NN6n4iS8RRTfDNBfyAfKgK72KbXYKI9NwQLl7TRr/OJfEWH4eXfDBzTW6OOHE3YvQYOEQbSRNXpEdC3tAh8Ah4StRIpkip793A2oVPbQNgK9KQVtaH8uJqY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740021272; c=relaxed/simple;
-	bh=hjkPo301IwvKXCK8z0NV/UMtyhfvY8CN9AsypI043cA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GQrS6f9v4Qf1WNUA1cctfeHAfxtq1zBzZbE+yUOtmaA+oDgnt6dv4ArRF8XlFn8yyKcoVuTnNQRWEEj2hz/jaDJJq8dvcBgYEHpFfv0Aynp+E5QtuuvKCKx2XuiwgGWFlxecnNcjaJ3uQUPVO/n9/fxbF+nqpMEiNZtIBAJ86iw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=Djt0ewfI; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1740021249; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=mOCCBW4P+vHFK6bmftOr8KOfGSv5YxMfDmboA/aIH8B6bibBXsrcoLo/+sni94tWvHpf7ZA1XvnH2NWcEqz1XH3inqnRlvJ0oZ044SfzU0JMkFzGBXrm2PVXWGtcgZKeMixDnkGO/HJrScriKC0AGywM5jV+t0wP+n57XZR+n7c=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1740021249; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=z7+n+N2D09r6sO17RNYIc1mmndOABNK1IA6PGR36WYY=; 
-	b=TJQDd6GDXM5JDkkR6ctmFuAA504oEbr8tKi6tAHpxCxMZOJG6GXqd5M9bPfP7U2IOzyJJfkGdgzBLKQvlr26ppN3P+zZfBuxnc5mBK2f8RhQ67QlSMUD2o6z1ALJ9gWVIVHvhhZpIwI8UmXuXzOpEzqsuvpjFro8nallliAIllk=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
-	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740021249;
-	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=z7+n+N2D09r6sO17RNYIc1mmndOABNK1IA6PGR36WYY=;
-	b=Djt0ewfIgMHCKkVsBk7cZEFmHEXHZwpInEFhXO6tWf98ksRNCX8nVsj/Z7M8LToY
-	6d7+TpaLABsrHP61wxC0wGc94+Pvsq+XEBF8WDb1NaXm1frXURfvbEcAHGNSta5NeNG
-	HNrjP5CmPOAmD9YmU8zwt88PAvAO4CRel378nMp0=
-Received: by mx.zohomail.com with SMTPS id 1740021248065311.2995734910809;
-	Wed, 19 Feb 2025 19:14:08 -0800 (PST)
-Message-ID: <7f5a1552-f143-40c8-b796-20568d373d14@collabora.com>
-Date: Thu, 20 Feb 2025 06:14:02 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80C3410FD;
+	Thu, 20 Feb 2025 03:17:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740021426; cv=none; b=uhPt5v6Zml4gq3t6WuTuy0HDuenTQgl1YFbjSQq+RjRIWLa51U2uHAd+byc6G73ZefYHOW/dR60dWvVPZA7i5f1gT8EiMKEwGLeFy+zDpUXCgAVuqdxMDN6AlPmUNhutTv9DLa5TLzg6ka83dUSV79xXiyECSCq0wCoGwxwMzV8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740021426; c=relaxed/simple;
+	bh=9NI2gIBXNK0s7n/ljiTbibviNS/2GH4hHP3zf9R4Wo0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BbWGOR7Yg0Yn/MwMPnQPptB3cIKpJzCZvsWxnAUtEifwfVgCuntrK1YSLKlID7jOr++I8D4wky73IZ/gjlEp40Shd51cSu4WYiXB3XFmkVYpMXJGiK7/4zFWkjz/gvHfITE5L3rsjTCJNr2pubFmkQddMCJ54NEduNv6l2p2qcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BjTWTymR; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-22113560c57so7765675ad.2;
+        Wed, 19 Feb 2025 19:17:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740021425; x=1740626225; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RlnHXFPBKqev4q+6awl68HvHcTKpxS2Uwsz5JCoSit8=;
+        b=BjTWTymRb1GDE2W+NuR4aGJval67ro+xppvB2VddeWEvytsUWybzId4xkHaOwWoMFe
+         bhWxw5elCiA/Z2Dr1eMvJIzXLgmEZd9FygTML1Y61QWcliWb2/EJXNZULX/kKcMbK4v6
+         Oj/G2JMf2Op1GJmpY9jMFrKasGV/V1P/+sf5ROwqRvTkou9ult+0D7I4mWSZG3Fq3lL/
+         p85b5yY2oc/rU2XoKxv1F6YWK6lptSP8Ah0N7ltijEp7JtYo8eR3RBEMdQbWtW2G53ep
+         DW3I53bszs+Faz2KZtbMcrW4nHS5YyUJNHvyfDVD4fR9o+BymG81FiCwiA6nq9t/bCus
+         KV9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740021425; x=1740626225;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RlnHXFPBKqev4q+6awl68HvHcTKpxS2Uwsz5JCoSit8=;
+        b=oZISiPJpSPLrMIxhIfhB+Boz6HGwQaYb88VM7K01V9H2Q+orAaSXuCaPcl958X/XSl
+         sVhM/z9wPZ/7x26/4BbIQGOnL25Gq9HcKppcVv1T7cwjN6E8T1/Il66EwpvmrfDXdTXx
+         1dZpsxlcfZAJDBVdpUhtd8SgwAtWDYzXo16VFb5FuzN81uI7ahlXN8TI2OBGrnZ6DyaQ
+         3u29HEBdUclAwn1HMvrFqUl1JxH/jQHf60/VLsDpYLpVWYDlT1ww2KZQ1jKLTQ1QjjNX
+         lOopMMOT1AFpXu8jV/UMzHTUe2ZlIZeEHlKTEur+RzSFDkoro9Yg31qTFG/k5FR/4JZr
+         bmJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW6ewMxgyHXG8jvcLVFIjurzdtbgR2TNEI3UwK9w405cUzQsIz7/+fH2gRFbADnpAQKFt1jxMNePt7ihPc=@vger.kernel.org, AJvYcCWvfzdIxW7+J91DJ2qCwMpiJU4HyDd3VkROPCaANV/3x0LRO6ZOt4ST5vU1/0JuEFSPak1Uj27NGF/gHthPwf0DGgNt@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzt0l9OPkc8f0pMINo/cdcybneqeqJoptX2++11dsdF+JcHm+HT
+	1muWEDA02hSixwHFLf/NFopkgIaYYJxvclK08+P9qyimwZCSVrdhLE/IeqjF
+X-Gm-Gg: ASbGncshxDZC0iJMm2YL2QXNPBSWknanfbzho8HqG3obzobY4PeeLb74p6ikgFe7psu
+	C1rN9Ptd9/8IBKD2QsbXz3rAUJV2XAsZvQxpGaJuwIYwaSwXm+h+owP851jDl9wCm8DDWTOQqMu
+	FT+EV+n3/wt70EupXClw82VEZTTBO0p1XnM35PSkvnAz+tD+j5aBpqYTBU7ruWchPaSP5Jr8cZP
+	g7wTAkTFRZ55d7vQzMavKJ8sQEKldoYtifEROmsp/ob93H7nJhqLGsthG6j7by3IvZPFXPmoS45
+	Zm1zrIO6YnZAuTQL+qfz0h5X3g5Lgh9+jBx+FQ3YO6Im4h+rVEPAL/5lmC5+BP31E3N/Xu4=
+X-Google-Smtp-Source: AGHT+IF8YyAOUY9WFATxdYRRmi23UUSUFNHSvUKci7PiPXmGIYN05r2gp0Sz65gUYsf6PONsVp4r4g==
+X-Received: by 2002:a17:902:ce0d:b0:215:a179:14ca with SMTP id d9443c01a7336-22103ef5861mr318261255ad.2.1740021424652;
+        Wed, 19 Feb 2025 19:17:04 -0800 (PST)
+Received: from AHUANG12-3ZHH9X.lenovo.com (1-175-143-196.dynamic-ip.hinet.net. [1.175.143.196])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22105174c73sm79936015ad.216.2025.02.19.19.17.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2025 19:17:04 -0800 (PST)
+From: Adrian Huang <adrianhuang0701@gmail.com>
+X-Google-Original-From: Adrian Huang <ahuang12@lenovo.com>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	Adrian Huang <ahuang12@lenovo.com>
+Subject: [PATCH v2 1/1] tracing: Fix memory leak when reading set_event file
+Date: Thu, 20 Feb 2025 11:15:28 +0800
+Message-Id: <20250220031528.7373-1-ahuang12@lenovo.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 3/5] virtio-pci: extend virtio_pci_cap with
- page_shift
-To: Sergio Lopez <slp@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>,
- Daniel Verkamp <dverkamp@chromium.org>, Jason Wang <jasowang@redhat.com>,
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
- <eperezma@redhat.com>, David Airlie <airlied@redhat.com>,
- Gerd Hoffmann <kraxel@redhat.com>,
- Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu
- <olvaffe@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Simona Vetter <simona@ffwll.ch>, Rob Clark <robdclark@gmail.com>,
- fnkl.kernel@gmail.com
-Cc: virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org
-References: <20250214-virtio-shm-page-size-v2-0-aa1619e6908b@redhat.com>
- <20250214-virtio-shm-page-size-v2-3-aa1619e6908b@redhat.com>
-From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250214-virtio-shm-page-size-v2-3-aa1619e6908b@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
 
-On 2/14/25 18:16, Sergio Lopez wrote:
-> If VIRTIO_F_SHM_PAGE_SIZE has been negotiated and cfg_type is
-> VIRTIO_PCI_CAP_SHARED_MEMORY_CFG, the driver must read the page_shift
-> field, derive the supported page size from it, and honor it when
-> requesting the map of memory into the shared memory region to the
-> device.
-> 
-> Extend virtio_pci_cap to hold that field, and use it to feed
-> virtio_shm_region with the corresponding page size.
-> 
-> Signed-off-by: Sergio Lopez <slp@redhat.com>
-> ---
->  drivers/virtio/virtio_pci_modern.c | 22 +++++++++++++++++-----
->  include/uapi/linux/virtio_pci.h    |  3 ++-
->  2 files changed, 19 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/virtio/virtio_pci_modern.c b/drivers/virtio/virtio_pci_modern.c
-> index ab0e1d9148057c431676bfacfe5f68cc97eebb12..562a8e1c2bfe6876cffabe26f02cd61ad7fea2cd 100644
-> --- a/drivers/virtio/virtio_pci_modern.c
-> +++ b/drivers/virtio/virtio_pci_modern.c
-> @@ -770,14 +770,15 @@ static void del_vq(struct virtio_pci_vq_info *info)
->  	vring_del_virtqueue(vq);
->  }
->  
-> -static int virtio_pci_find_shm_cap(struct pci_dev *dev, u8 required_id,
-> -				   u8 *bar, u64 *offset, u64 *len)
-> +static int virtio_pci_find_shm_cap(struct virtio_device *vdev, struct pci_dev *dev,
-> +				   u8 required_id, u8 *bar, u64 *offset, u64 *len,
-> +				   u32 *page_size)
->  {
->  	int pos;
->  
->  	for (pos = pci_find_capability(dev, PCI_CAP_ID_VNDR); pos > 0;
->  	     pos = pci_find_next_capability(dev, pos, PCI_CAP_ID_VNDR)) {
-> -		u8 type, cap_len, id, res_bar;
-> +		u8 type, cap_len, id, res_bar, page_shift = 0;
->  		u32 tmp32;
->  		u64 res_offset, res_length;
->  
-> @@ -808,6 +809,15 @@ static int virtio_pci_find_shm_cap(struct pci_dev *dev, u8 required_id,
->  		 * Looks good.
->  		 */
->  
-> +		/* Read the page shift if supported. The page_shift variable is
-> +		 * initialized to zero above, so if this feature isn't supported it
-> +		 * will result in a page_size of 4096, a default safe value.
-> +		 */
-> +		if (__virtio_test_bit(vdev, VIRTIO_F_SHM_PAGE_SIZE)) {
-> +			pci_read_config_byte(dev, pos + offsetof(struct virtio_pci_cap,
-> +								 page_shift), &page_shift);
-> +		}
-> +
->  		/* Read the lower 32bit of length and offset */
->  		pci_read_config_dword(dev, pos + offsetof(struct virtio_pci_cap,
->  							  offset), &tmp32);
-> @@ -829,6 +839,7 @@ static int virtio_pci_find_shm_cap(struct pci_dev *dev, u8 required_id,
->  		*bar = res_bar;
->  		*offset = res_offset;
->  		*len = res_length;
-> +		*page_size = 1 << (page_shift + 12);
->  
->  		return pos;
->  	}
-> @@ -841,11 +852,12 @@ static bool vp_get_shm_region(struct virtio_device *vdev,
->  	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
->  	struct pci_dev *pci_dev = vp_dev->pci_dev;
->  	u8 bar;
-> +	u32 page_size;
->  	u64 offset, len;
->  	phys_addr_t phys_addr;
->  	size_t bar_len;
->  
-> -	if (!virtio_pci_find_shm_cap(pci_dev, id, &bar, &offset, &len))
-> +	if (!virtio_pci_find_shm_cap(vdev, pci_dev, id, &bar, &offset, &len, &page_size))
->  		return false;
->  
->  	phys_addr = pci_resource_start(pci_dev, bar);
-> @@ -865,7 +877,7 @@ static bool vp_get_shm_region(struct virtio_device *vdev,
->  
->  	region->len = len;
->  	region->addr = (u64) phys_addr + offset;
-> -	region->page_size = 4096;
-> +	region->page_size = page_size;
->  
->  	return true;
->  }
-> diff --git a/include/uapi/linux/virtio_pci.h b/include/uapi/linux/virtio_pci.h
-> index 8549d4571257142ac6c9dad5c01369923791a85a..1a76df52b4eccf548df78a8ee7d3a04591f55522 100644
-> --- a/include/uapi/linux/virtio_pci.h
-> +++ b/include/uapi/linux/virtio_pci.h
-> @@ -127,7 +127,8 @@ struct virtio_pci_cap {
->  	__u8 cfg_type;		/* Identifies the structure. */
->  	__u8 bar;		/* Where to find it. */
->  	__u8 id;		/* Multiple capabilities of the same type */
-> -	__u8 padding[2];	/* Pad to full dword. */
-> +	__u8 page_shift;	/* Page shift for VIRTIO_PCI_CAP_SHARED_MEMORY_CFG. */
-> +	__u8 padding[1];	/* Pad to full dword. */
->  	__le32 offset;		/* Offset within bar. */
->  	__le32 length;		/* Length of the structure, in bytes. */
->  };
-> 
+From: Adrian Huang <ahuang12@lenovo.com>
 
-Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+kmemleak reports the following memory leak after reading set_event file:
 
+  # cat /sys/kernel/tracing/set_event
+
+  # cat /sys/kernel/debug/kmemleak
+  unreferenced object 0xff110001234449e0 (size 16):
+  comm "cat", pid 13645, jiffies 4294981880
+  hex dump (first 16 bytes):
+    01 00 00 00 00 00 00 00 a8 71 e7 84 ff ff ff ff  .........q......
+  backtrace (crc c43abbc):
+    __kmalloc_cache_noprof+0x3ca/0x4b0
+    s_start+0x72/0x2d0
+    seq_read_iter+0x265/0x1080
+    seq_read+0x2c9/0x420
+    vfs_read+0x166/0xc30
+    ksys_read+0xf4/0x1d0
+    do_syscall_64+0x79/0x150
+    entry_SYSCALL_64_after_hwframe+0x76/0x7e
+
+The issue can be reproduced regardless of whether set_event is empty or
+not. Here is an example about the valid content of set_event.
+
+  # cat /sys/kernel/tracing/set_event
+  sched:sched_process_fork
+  sched:sched_switch
+  sched:sched_wakeup
+  *:*:mod:trace_events_sample
+
+The root cause is that s_next() returns NULL when nothing is found.
+This results in s_stop() attempting to free a NULL pointer because its
+parameter is NULL.
+
+Fix the issue by freeing the memory appropriately when s_next() fails
+to find anything.
+
+Fixes: b355247df104 ("tracing: Cache ":mod:" events for modules not loaded yet")
+Signed-off-by: Adrian Huang <ahuang12@lenovo.com>
+---
+Changelog v2:
+ - Per Steven's suggestion: Add a comment to describe why to free memory
+   in s_next().
+ - Per Steven's suggestion: Change the variable 'p' to 'v' in s_stop()
+
+---
+ kernel/trace/trace_events.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
+index 4cb275316e51..513de9ceb80e 100644
+--- a/kernel/trace/trace_events.c
++++ b/kernel/trace/trace_events.c
+@@ -1591,6 +1591,13 @@ s_next(struct seq_file *m, void *v, loff_t *pos)
+ 		return iter;
+ #endif
+ 
++	/*
++	 * The iter is allocated in s_start() and passed via the 'v'
++	 * parameter. To stop the iterator, NULL must be returned. But
++	 * the return value is what the 'v' parameter in s_stop() receives
++	 * and frees. Free iter here as it will no longer be used.
++	 */
++	kfree(iter);
+ 	return NULL;
+ }
+ 
+@@ -1667,9 +1674,9 @@ static int s_show(struct seq_file *m, void *v)
+ }
+ #endif
+ 
+-static void s_stop(struct seq_file *m, void *p)
++static void s_stop(struct seq_file *m, void *v)
+ {
+-	kfree(p);
++	kfree(v);
+ 	t_stop(m, NULL);
+ }
+ 
 -- 
-Best regards,
-Dmitry
+2.34.1
+
 
