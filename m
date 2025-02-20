@@ -1,170 +1,147 @@
-Return-Path: <linux-kernel+bounces-523841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 759E5A3DBF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:01:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C858A3DBC6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:54:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A3C0188307B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:59:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D897D178F84
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:54:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FBA0212B18;
-	Thu, 20 Feb 2025 13:56:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B91B1FA164;
+	Thu, 20 Feb 2025 13:54:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="c7QysMVJ"
-Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZXyZZiu6";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JOlYIair"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E894F2116F4;
-	Thu, 20 Feb 2025 13:56:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFAE11F9A8B
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 13:54:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740059790; cv=none; b=B2QjjLbZQZLZ9dyr/QyIpvWe9KgQhXXEvUmdtmkmhC1ONmxVs/sZYAzowdO4Rz+kn8QwhF2AK0AMcL4AuiM1Gp9AEpst/wD8AqxF7l/IEGdjJu2sMdQTWfCn/942ciJCAcSpbhGlhfzwuR+DCaTwrYb3e6h7GDZJ6f4pBZkmpUQ=
+	t=1740059689; cv=none; b=E5Q6R+8aXyp4/h/v9N8Epz0W67n3nzz+K62v8GuOOc6e/w5AQYwCZGHIUKSf1E1T1CpCjdngQBvSLhQHpXy3TIruFMAOqcqRCqh8XNtBFSmfFfHEZ4vkOHaBQ/bP6fZBcQzq12RViPRyO0ukk8iFqQRhzw4fOyOx6CWLh/aqxZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740059790; c=relaxed/simple;
-	bh=lnjWRDCKMMsRgpUtfDbsvcwCXp+CyGxfNXNlU5obMoE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MwZ+sZkwnmqx9MeQvG0YCoyzhQCWfsTiC4CDuKUrxlet5dcJX4MDkDOlotDTxmkmtUCurlfYhM3t/DOoIE2bzxcH6Sf7Jyz+co/QUamB6eSPg2+WIfMpjMz7W+dR5v1iHlM9/2TlBeYRor+MxbCQidCuph6WbO8p9PS+IMRTkws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=c7QysMVJ; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
-	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51KBLvWj023645;
-	Thu, 20 Feb 2025 08:56:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=jMP+A
-	uEu28ksfbMp/kG28vo8P5ePEEgpTSjga20FT80=; b=c7QysMVJ6CvBSVVgN5IYb
-	M7SlOimP338WB98i44BYAx8L7TPMc/2AM4J1ZqFaMb7yq4dE5xGYZhcPE25HSwVw
-	U49wpqxSsvIZFQjsg9ADqMOGtukTbSrGfbVXGJyGRkisJPjkWE7ENFZWA0G2Haap
-	59AaFAPdj2gYDkbolSMMpznzthxh3I+0BwW+wghKDp/Si+HmPGRHxg5HUgX5Imd8
-	O5e8m+yQ2IY9yyiVEA8hv3zI1N/SP+sSAxAONDoLMiwaGVcC6oUW92y3Y9HrRyS5
-	2tPo0osrpvykJl8Nc7tLHxOEV/5lp+n12DlCOZ9r27a+KP/N4O1Du6NX3P5kfQym
-	Q==
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 44x3f40hef-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Feb 2025 08:56:25 -0500 (EST)
-Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
-	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 51KDuOqU054164
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 20 Feb 2025 08:56:24 -0500
-Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Thu, 20 Feb
- 2025 08:56:24 -0500
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Thu, 20 Feb 2025 08:56:24 -0500
-Received: from amiclaus-VirtualBox.ad.analog.com (AMICLAUS-L02.ad.analog.com [10.48.65.155])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 51KDtxr3008409;
-	Thu, 20 Feb 2025 08:56:20 -0500
-From: Antoniu Miclaus <antoniu.miclaus@analog.com>
-To: <jic23@kernel.org>, <robh@kernel.org>, <conor+dt@kernel.org>,
-        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Subject: [PATCH 14/14] Documentation: ABI: testing: ad4080 docs
-Date: Thu, 20 Feb 2025 15:54:24 +0200
-Message-ID: <20250220135429.8615-15-antoniu.miclaus@analog.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250220135429.8615-1-antoniu.miclaus@analog.com>
-References: <20250220135429.8615-1-antoniu.miclaus@analog.com>
+	s=arc-20240116; t=1740059689; c=relaxed/simple;
+	bh=njYQI0JkqSG9nmZdfTM+SiQqXdo0ZB/2scswfcxNOq0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=rc1uDff80A6ua0M8CSLAyA1egCDEA5lIAkVQQbJ/6mwVAMrEYGadIGGG0lkpR9ONM8ncvDMHL4qgz1D2IPNTvTTQR+SWDAzbDph0vgDNt1LSQZmKBYLPOx/f5BOI7O/s79gzshTfCT45tJHQuy5353UNxCihO+Z9RYm3UERwemo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZXyZZiu6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JOlYIair; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740059685;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QD11Ne9DcKnhelWjnLTjIo907OByVtQIcZFYttKj9Mo=;
+	b=ZXyZZiu6fQzbxCFJQqDVVgundVzHGnEXcdeIqL8ClGR3W4b1Ey4eB+bTwF/enWU27f8iqb
+	6KyA7/MQ5+4mod88342BBvtXI+vCoBPYpCYRijL9dHXlnwtvDBBjL0UlnDDdTX10nwEXmW
+	jsYAhyvt6xLy9RlDs67Ql11fUBmelfip+FdZsakH1fprNWVgYX6++nHjJaPYloPBm4VA0v
+	IFuty6l3DyATYYOFxtg2zcjAW9Ds2GEw9k7nBYAhVx3ERa6N3DIbq2pGTCTvipVDRjp0gL
+	4kJQa5/yTN+Sfg7lfSZUTM6HSWCZzUaCTAp5bmp5CUkg6T9zSKhyM/B5zR7lhw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740059685;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QD11Ne9DcKnhelWjnLTjIo907OByVtQIcZFYttKj9Mo=;
+	b=JOlYIairSeSWXDphePdqMGRdnMIe0izKqy7x+haK/irgiQkE4fPAmmUH2rnIn+wrOo4/nr
+	pM3+j/mvSiuJWVCA==
+To: Mark Brown <broonie@kernel.org>, Anup Patel <apatel@ventanamicro.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave
+ Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, hpa@zytor.com, Marc
+ Zyngier <maz@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Andrew Lunn <andrew@lunn.ch>, Gregory Clement
+ <gregory.clement@bootlin.com>, Sebastian Hesselbarth
+ <sebastian.hesselbarth@gmail.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Atish Patra
+ <atishp@atishpatra.org>, Andrew Jones <ajones@ventanamicro.com>, Sunil V L
+ <sunilvl@ventanamicro.com>, Anup Patel <anup@brainfault.org>,
+ linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev
+Subject: Re: [PATCH v6 02/10] irqchip/irq-msi-lib: Optionally set default
+ irq_eoi/irq_ack
+In-Reply-To: <Z7Xto0WZ-Crxunik@finisterre.sirena.org.uk>
+References: <20250217085657.789309-1-apatel@ventanamicro.com>
+ <20250217085657.789309-3-apatel@ventanamicro.com>
+ <Z7Xto0WZ-Crxunik@finisterre.sirena.org.uk>
+Date: Thu, 20 Feb 2025 14:54:45 +0100
+Message-ID: <87jz9kiuvu.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-ORIG-GUID: 59Q0V9GJ0KgE-X8E2Wfx6Lufnhxvjgi6
-X-Proofpoint-GUID: 59Q0V9GJ0KgE-X8E2Wfx6Lufnhxvjgi6
-X-Authority-Analysis: v=2.4 cv=DuKs+H/+ c=1 sm=1 tr=0 ts=67b73489 cx=c_pps a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17 a=IkcTkHD0fZMA:10 a=T2h4t0Lz3GQA:10 a=gAnH3GRIAAAA:8 a=VwQbUJbxAAAA:8 a=isn6CkdhFtPCLzFFK64A:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=oVHKYsEdi7-vN-J5QA_j:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-20_05,2025-02-20_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
- mlxscore=0 phishscore=0 suspectscore=0 mlxlogscore=999 bulkscore=0
- adultscore=0 lowpriorityscore=0 spamscore=0 priorityscore=1501
- malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2502200101
+Content-Type: text/plain
 
-Add documentation for the ad4080 attributes.
+On Wed, Feb 19 2025 at 14:41, Mark Brown wrote:
+> On Mon, Feb 17, 2025 at 02:26:48PM +0530, Anup Patel wrote:
+> I'm seeing boot regressions with qemu on arm64 in -next which bisect
+> down to this patch.  We hit a NULL pointer dereference:
+>
+> <6>[    0.898900] virtio_blk virtio1: 1/0/0 default/read/poll queues
+> <5>[    0.910197] virtio_blk virtio1: [vda] 3906250 512-byte logical blocks (2.00 GB/1.86 GiB)
+> <1>[    0.924459] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
+> <1>[    0.924508] Mem abort info:
+> <1>[    0.924521]   ESR = 0x000000008600002b
+> <1>[    0.924559]   EC = 0x21: IABT (current EL), IL = 32 bits
+> <1>[    0.924580]   SET = 0, FnV = 0
+> <1>[    0.924597]   EA = 0, S1PTW = 0
+> <1>[    0.924616]   FSC = 0x2b: level -1 translation fault
+> <1>[    0.924667] [0000000000000000] user address but active_mm is swapper
+> <0>[    0.924833] Internal error: Oops: 000000008600002b [#1] PREEMPT
+> SMP
 
-Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Uuurg. I wish I had double checked that the final submitted patch covers
+_ALL_ incarnations of this. The below delta patch should address it.
+
+Thanks,
+
+        tglx
 ---
- .../ABI/testing/sysfs-bus-iio-adc-ad4080      | 55 +++++++++++++++++++
- 1 file changed, 55 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-adc-ad4080
+diff --git a/drivers/irqchip/irq-gic-v3-its-msi-parent.c b/drivers/irqchip/irq-gic-v3-its-msi-parent.c
+index e150365fbe89..bdb04c808148 100644
+--- a/drivers/irqchip/irq-gic-v3-its-msi-parent.c
++++ b/drivers/irqchip/irq-gic-v3-its-msi-parent.c
+@@ -203,6 +203,7 @@ static bool its_init_dev_msi_info(struct device *dev, struct irq_domain *domain,
+ const struct msi_parent_ops gic_v3_its_msi_parent_ops = {
+ 	.supported_flags	= ITS_MSI_FLAGS_SUPPORTED,
+ 	.required_flags		= ITS_MSI_FLAGS_REQUIRED,
++	.chip_flags		= MSI_CHIP_FLAG_SET_EOI | MSI_CHIP_FLAG_SET_ACK,
+ 	.bus_select_token	= DOMAIN_BUS_NEXUS,
+ 	.bus_select_mask	= MATCH_PCI_MSI | MATCH_PLATFORM_MSI,
+ 	.prefix			= "ITS-",
+diff --git a/drivers/irqchip/irq-gic-v3-mbi.c b/drivers/irqchip/irq-gic-v3-mbi.c
+index 3fe870f8ee17..3e1d8a1cda5e 100644
+--- a/drivers/irqchip/irq-gic-v3-mbi.c
++++ b/drivers/irqchip/irq-gic-v3-mbi.c
+@@ -201,6 +201,7 @@ static bool mbi_init_dev_msi_info(struct device *dev, struct irq_domain *domain,
+ static const struct msi_parent_ops gic_v3_mbi_msi_parent_ops = {
+ 	.supported_flags	= MBI_MSI_FLAGS_SUPPORTED,
+ 	.required_flags		= MBI_MSI_FLAGS_REQUIRED,
++	.chip_flags		= MSI_CHIP_FLAG_SET_EOI | MSI_CHIP_FLAG_SET_ACK,
+ 	.bus_select_token	= DOMAIN_BUS_NEXUS,
+ 	.bus_select_mask	= MATCH_PCI_MSI | MATCH_PLATFORM_MSI,
+ 	.prefix			= "MBI-",
+diff --git a/drivers/irqchip/irq-loongson-pch-msi.c b/drivers/irqchip/irq-loongson-pch-msi.c
+index bd337ecddb40..9c62108b3ad5 100644
+--- a/drivers/irqchip/irq-loongson-pch-msi.c
++++ b/drivers/irqchip/irq-loongson-pch-msi.c
+@@ -146,6 +146,7 @@ static const struct irq_domain_ops pch_msi_middle_domain_ops = {
+ static struct msi_parent_ops pch_msi_parent_ops = {
+ 	.required_flags		= PCH_MSI_FLAGS_REQUIRED,
+ 	.supported_flags	= PCH_MSI_FLAGS_SUPPORTED,
++	.chip_flags		= MSI_CHIP_FLAG_SET_EOI | MSI_CHIP_FLAG_SET_ACK,
+ 	.bus_select_mask	= MATCH_PCI_MSI,
+ 	.bus_select_token	= DOMAIN_BUS_NEXUS,
+ 	.prefix			= "PCH-",
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-iio-adc-ad4080 b/Documentation/ABI/testing/sysfs-bus-iio-adc-ad4080
-new file mode 100644
-index 000000000000..e37bfba0e989
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-bus-iio-adc-ad4080
-@@ -0,0 +1,55 @@
-+What:		/sys/bus/iio/devices/iio:deviceX/lvds_sync
-+Date:		February 2025
-+KernelVersion:
-+Contact:	linux-iio@vger.kernel.org
-+Description:
-+		This attribute handles the data synchronization process.Because the CNV
-+		signal is not taken into account by the FPGA when capturing the data, we
-+		need a process that configures the ADC to output pattern data, writes the
-+		SYNC bit in the axi_adc register map, waits until the custom HDL syncs the
-+		data correctly, and then changes the output mode to analog data instead of
-+		the fixed pattern.
-+
-+What:		/sys/bus/iio/devices/iio:deviceX/lvds_lvds
-+Date:		February 2025
-+KernelVersion:
-+Contact:	linux-iio@vger.kernel.org
-+Description:
-+		Configures the signal type of the CNV signal. The value can be either CMOS
-+		(lvds_cnv=0) or LVDS (lvds_cnv=1).
-+
-+What:		/sys/bus/iio/devices/iio:deviceX/filter_sel
-+Date:		February 2025
-+KernelVersion:
-+Contact:	linux-iio@vger.kernel.org
-+Description:
-+		This attribute enables the digital filter functionality of the AD4080.In
-+		order to capture data correctly, the function must configure the ADC
-+		through SPI to select the filter type and enable data capture in filter
-+		mode through axi_adc(In this mode, data is gated by a signal generated by
-+		the AD4080 (GPIO1 and is not continuous as it is when the filter is
-+		disabled).
-+
-+What:		/sys/bus/iio/devices/iio:deviceX/filter_sel_available
-+Date:		February 2025
-+KernelVersion:
-+Contact:	linux-iio@vger.kernel.org
-+Description:
-+		Return the available filter modes that can be set.
-+
-+What:		/sys/bus/iio/devices/iio:deviceX/sinc_dec_rate
-+Date:		February 2025
-+KernelVersion:
-+Contact:	linux-iio@vger.kernel.org
-+Description:
-+		Set the filter’s decimation rate.
-+
-+What:		/sys/bus/iio/devices/iio:deviceX/sinc_dec_rate_available
-+Date:		February 2025
-+KernelVersion:
-+Contact:	linux-iio@vger.kernel.org
-+Description:
-+		Return the available filter's decimation rates.
-+
-+
-+
--- 
-2.48.1
+
 
 
