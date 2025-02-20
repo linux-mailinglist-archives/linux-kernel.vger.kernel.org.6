@@ -1,120 +1,120 @@
-Return-Path: <linux-kernel+bounces-524128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C972A3DF9A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:59:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27D25A3DF8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:58:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C89497A4B27
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:55:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E6513AC684
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:57:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E32BE1FF1B5;
-	Thu, 20 Feb 2025 15:56:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEB041FF61D;
+	Thu, 20 Feb 2025 15:56:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="gvRfdxP1"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uc5iwXNz"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CF4F1FBC9E;
-	Thu, 20 Feb 2025 15:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B4F8F5B;
+	Thu, 20 Feb 2025 15:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740066966; cv=none; b=Vkq3/3pACjs9h9I9BqkegMOw6z2GZxFR+WIqpjqKwqZR8eOxRhRp0mJ68zL2nqPlkSkeRAC1W+YRA+0zwtUpxS1SD9/N93quLt4619u2F7dzJUcZIDZfgdKojwN/QwBH6ce7qqpGF7JoYxO0fYtLbQmLa0SMYeBOS1KG2R3Yit0=
+	t=1740067009; cv=none; b=A52ewjvE0IMJ72az5pSbGY6L7pj8TiasMZRgpMwUEVv+yKRdvQfEh1cA2ytU3oAFhiiwfy0v2GNFmIVRzxEvoemY4t+H/gtI2DPYpyHOu5YJdt6+nFlE2ezGOV068aTexCgCp/qldo6tfHQj8+tlJpp+f7SWLGPiJi4ULulHu2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740066966; c=relaxed/simple;
-	bh=Dd68mWyJibumUB8TwEojxnqCXZ3BFmtso9EvwgpCMTQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f4T9IZbZvyuc8j7G8ulIEmuMFfP6ClWKkpnTJsNH1QWEI4CCzeRc3hdin9VIRu237xHF694/Lw/Mr+Tit6YIVOM8gwuHumwnoaC4gX9i4CNNRwfbO7kIKhRfq50NF4zvQHGlc/sjACcGAnQsEbbyqDW0icIigswrUArywoypeQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=gvRfdxP1; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1740066962;
-	bh=Dd68mWyJibumUB8TwEojxnqCXZ3BFmtso9EvwgpCMTQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gvRfdxP1yjGqu7HQ7lttCRdMEE4nZ8PLonPHC5dan9B3mNW1GnHKIiDLkkjIj2v3g
-	 KHypzBBQk2cW9FHUWtjDzw4ryElrN1yujKOACsgkVW4B/QXOmrUs+LQ2BYG7Nli+hP
-	 O0K8W5n7G0IjxbxqSTYZ5XTCki04ysZiEtImkwyPARnqBIyobzZTex7ihtm7UrZYIC
-	 dgLhEjpr1FJs3EU81c5mxE81nm5/f+Ux4GfhYn9TGYAyIV/J6FDRpD8aNOLVWuJ+Bo
-	 A2j0WrGnX2umT9I3mFst3Ft6at+hoj4OMwnJV4mHWTPhnaZolCe5GyrsLCg/MWIV9A
-	 siui4kJs6qApQ==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3E4F617E0E95;
-	Thu, 20 Feb 2025 16:56:01 +0100 (CET)
-Message-ID: <ae34efcd-4fe1-4e45-a1e1-0744138a84b9@collabora.com>
-Date: Thu, 20 Feb 2025 16:56:00 +0100
+	s=arc-20240116; t=1740067009; c=relaxed/simple;
+	bh=nffl1SGgb9k0XBd8LUDc+D1JLkHpjuO5YPcb5/zg9yg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j2WhqGFNafoz6mI6ItXESX71Z1utftdqlemfVwd7N/0kU3mYuuXe1LOD94BkUf6RAeO/Lgs9uV7euic/yroOxkuKBAPmLsxjaQWWPLbyD+48AyhSPdDVPFubKHDqRou6xCDmxH6Xd6CZu8osbf/Mopk6nUzMP03ORizoFTEsfIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uc5iwXNz; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5e04064af07so351149a12.0;
+        Thu, 20 Feb 2025 07:56:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740067006; x=1740671806; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GsbE5OioLs2uyCIYYbmafxzSYqPUZVYTy2gzhJIQqy0=;
+        b=Uc5iwXNz2VoZ+RZnHH7Fc8l3u7B3agQeHeYPsFkbM1cKVEbVQrIkqmODbGIuy1oaQR
+         2RwC3yiTOWf1J/K0JEhTE1ESa/jisDXwxY+s1OKeTsCLGi2XXu7dxFdAKXb/ShffFFv0
+         azuu+kzxjXXFF766LEB97qZ8eerhD90oFgZ/AdyvgkRGadoEBGGJJWb2Gvi0bNfd68i0
+         uy0lwFKzepMYUwZc5zG/dze0u7t2hCd8/wykyZNx/Wczr1QrhHKdbwMVywkXXd9wF47h
+         WUrgj4TaukX0oop6/XKyzUNINibxH87DV1q2owbfs2NOob8608IAyzd/KM0vy+1bYR7v
+         0U8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740067006; x=1740671806;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GsbE5OioLs2uyCIYYbmafxzSYqPUZVYTy2gzhJIQqy0=;
+        b=gwo7fRxQjGvShJMW6/mo0T2dmgSQfnCsH9dghpa9DRDn8GrcNrk4O5/Y9EKzJrZjBr
+         maGc83t8+pBAX2M+3veLFTwcTh2gpI7QQ9CPZ+QOETASkcM5OwkIeNorwu6zQk5o1xpu
+         X6OxZr4svr0h7dIBywO6zYCg9XRb2S148TZoZNvRqD62vSut5Yv2QMjNlOai6RK40S2u
+         wXaA71bUb1Ol/4A0m9U0amuubefZpurkmp1TzYnWjhce6rogqULQ/HXu4TXHpuz/HDPK
+         ZFPTvjfJcAuFh0yzADo0fpLbNYz3Bozo7V88RiHASU08XaoHMluS+SWVQIW1tPJwqmLv
+         W80Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUAT7ldHsgGvpiinpUfCoa5XHpRyrRFIIVMQw5iYXS1j4ot8lZzvpV5hNSnBK7QpvI0mkwgt5l88YEO@vger.kernel.org, AJvYcCULyXqkgAnzqZKLDK+jH6PPXKz1ETFB1QedUIEMzyVe2pV/jc46zdejzEpJNu56o9wSBypE5sJuT79zn8M8@vger.kernel.org, AJvYcCWel0txuIpg4suINM+wmPWQBaOCpCBGPNul616ifffYzf2Zlolr3sGi5begTx86fpNWqGFWjLgPkjF3@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCI2u3IqoXXKpGMxPpuopL0sQcp5AX8jnq/uRicsNsV2zc7+E5
+	Im7xoa0Vc31oXrjK1jaiqsgUBRll6+Kq/MMpQtSB0QvzuZ5vmWiqyo4+0A==
+X-Gm-Gg: ASbGncuz8oqX8NkMiP3d9Zk7gU1f0KppjPbDzvnFGqLYdpOVCy+W4K9/a3eCphsvgKG
+	/1n4sKHeIfsHgkAV3y1+H5CQWj8Nl4l+iTJzSUoHnUhGHtmSBGIpd+1WjpeDzQlOnK1iC8dsZWm
+	khY2soP9TASxntUBMjEut3rID6VzlyJBYNiyTcpHmR2HVHh0Kqn0ALaTT5L4pTjTRlKk/7raqtF
+	pkuxM2HhMeWerAf7/lDAvxmZ0tVJDrd9Gj3PC62n93aKvtkL4a1eIMNCstuA6mlAZ9mqCY/hMFZ
+	sAQI3eilz8M0
+X-Google-Smtp-Source: AGHT+IGIujcWQDxo5qV8UJ8g4ZyLG5Wa9jYKSb9r73rJ517jMf8TRzcFwudi44KSrQwdSdCPdZ92FQ==
+X-Received: by 2002:a05:6402:5306:b0:5dc:c3c2:225e with SMTP id 4fb4d7f45d1cf-5e03607063fmr19939243a12.8.1740067005059;
+        Thu, 20 Feb 2025 07:56:45 -0800 (PST)
+Received: from debian ([2a00:79c0:604:ea00:45fb:7d1a:5e4d:9727])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dece270affsm12053072a12.54.2025.02.20.07.56.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 07:56:44 -0800 (PST)
+Date: Thu, 20 Feb 2025 16:56:42 +0100
+From: Dimitri Fedrau <dima.fedrau@gmail.com>
+To: Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: Dimitri Fedrau via B4 Relay <devnull+dimitri.fedrau.liebherr.com@kernel.org>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	Dimitri Fedrau <dimitri.fedrau@liebherr.com>,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: can: fsl,flexcan: add transceiver
+ capabilities
+Message-ID: <20250220155642.GA43726@debian>
+References: <20250220-flexcan-add-transceiver-caps-v2-0-a81970f11846@liebherr.com>
+ <20250220-flexcan-add-transceiver-caps-v2-1-a81970f11846@liebherr.com>
+ <20250220-tasteful-loud-firefly-1e2438-mkl@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: usb: mtu3: Add ports property
-To: Macpaul Lin <macpaul.lin@mediatek.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Chunfeng Yun <chunfeng.yun@mediatek.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org,
- Alexandre Mergnat <amergnat@baylibre.com>
-Cc: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
- Macpaul Lin <macpaul@gmail.com>,
- Project_Global_Chrome_Upstream_Group@mediatek.com,
- Chris-qj chen <chris-qj.chen@mediatek.com>
-References: <20250220142230.2530583-1-macpaul.lin@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250220142230.2530583-1-macpaul.lin@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250220-tasteful-loud-firefly-1e2438-mkl@pengutronix.de>
 
-Il 20/02/25 15:22, Macpaul Lin ha scritto:
-> Define the ports property in the mediatek,mtu3 device tree binding schema.
-> Include definitions for port@0 and port@1, specifying their roles as
-> High Speed (HS) and Super Speed (SS) data buses, respectively.
+Am Thu, Feb 20, 2025 at 09:44:50AM +0100 schrieb Marc Kleine-Budde:
+> On 20.02.2025 09:22:10, Dimitri Fedrau via B4 Relay wrote:
+> > From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+> > 
+> > Currently the flexcan driver does only support adding PHYs by using the
+> > "old" regulator bindings. Add support for CAN transceivers as a PHY.
+> > 
+> > Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> > Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
 > 
-> Suggested-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+> Is it possible express in the biding that we either want to have
+> xceiver-supply or phys?
+>
+I didn't found anything to express that in the binding.
 
-Some SoCs do have SuperSpeed peripheral mode, so for this commit
+Best regards,
+Dimitri Fedrau
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-
-> ---
->   .../devicetree/bindings/usb/mediatek,mtu3.yaml       | 12 ++++++++++++
->   1 file changed, 12 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/usb/mediatek,mtu3.yaml b/Documentation/devicetree/bindings/usb/mediatek,mtu3.yaml
-> index d4e187c78a0b..21fc6bbe954f 100644
-> --- a/Documentation/devicetree/bindings/usb/mediatek,mtu3.yaml
-> +++ b/Documentation/devicetree/bindings/usb/mediatek,mtu3.yaml
-> @@ -155,6 +155,18 @@ properties:
->         property is used. See graph.txt
->       $ref: /schemas/graph.yaml#/properties/port
->   
-> +  ports:
-> +    $ref: /schemas/graph.yaml#/properties/ports
-> +
-> +    properties:
-> +      port@0:
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +        description: High Speed (HS) data bus.
-> +
-> +      port@1:
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +        description: Super Speed (SS) data bus.
-> +
->     enable-manual-drd:
->       $ref: /schemas/types.yaml#/definitions/flag
->       description:
-
+[...]
 
 
