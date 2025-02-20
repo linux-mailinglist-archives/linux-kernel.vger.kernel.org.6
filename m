@@ -1,64 +1,46 @@
-Return-Path: <linux-kernel+bounces-524784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45172A3E711
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:57:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2664EA3E714
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:57:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37DFC3B9DA7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:56:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 126024217E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:57:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4DB926463E;
-	Thu, 20 Feb 2025 21:56:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F2312638A3;
+	Thu, 20 Feb 2025 21:57:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZcHIJhbh"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EFAA264606;
-	Thu, 20 Feb 2025 21:56:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="XtGknKWp"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1387213E8C;
+	Thu, 20 Feb 2025 21:57:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740088608; cv=none; b=YIkA68NyIBlPVEgbURItAAkYGPiiIFFKfDVWqCuB/DKoTT0sDgcrPJRE7Xzy7eDX1mPR3DT2JK0kJFCghJCv/dG8VLbxWpZ1d3TIk/NIsNKVId9AO9bFbaxLsyCxk4E20JQex3mht1e2kolJbU8iqceHtudrLDwLtzwd/HfMrOA=
+	t=1740088642; cv=none; b=NpKQB+rNFp/c9Cowz8y13XPmhu6+I+hlchrrC07EtI51G59XLS3LP9duXQmMrAyoQD8daJeyCPeuR1A2VxSBiG0HZ0DrdjeKv7JKHGxu4zi3H8hORMm/QiijbxQPCj5daSoTFdraxwfAZ0OEVCU8qKAyZZR04JuMK3UdH3eMdxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740088608; c=relaxed/simple;
-	bh=Q+CtP725yjzh3BVHN6CrzKBaYx2g+Bje7xEBNxgNamY=;
+	s=arc-20240116; t=1740088642; c=relaxed/simple;
+	bh=gMZs+9OrG5fzn9MS/2Mbfn4Nc4iUTMVd0t0TT/zYzk4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l6iwKkLxaeLgUnj8wq2bcExC32yWMGUlYrAPBx0uqHLk10SuSLknckGv2dOlfjb5JIi9WnScv84kA/aGGQFf8FJZGb9ASrBID6qpBjz4fthjdyyPoHxKaDPFalHrCZF7ffRDN7bSY3gCuwaMt8dcwAdpZ3TvYqSQ5URBIP+bRnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZcHIJhbh; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740088606; x=1771624606;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Q+CtP725yjzh3BVHN6CrzKBaYx2g+Bje7xEBNxgNamY=;
-  b=ZcHIJhbhqux/ozDIkab2vXAV2g8+bBMF1F9W8QhmNclOoF5ykS6om7kF
-   R8FFp4OLggf+2CYU6/57C4uhEph9yam9XZkRXnzg5tb0QBoiWoLG9Ohg1
-   3pteNyj1wGg2aHBwjhg6R5/0NJITpZDx/ETUCSETuFGGtzLgcYEnsObkG
-   +xHJmtCt3PwBM9P9ZJ80jcgighexeO/bVYzUXxxLS4TJzje9WUk56qz/1
-   K9G4Gs0S/nQkomwr9b49xnxzDgxVAgJ2hJuzm9IqI+Z08gmCuDYv52snb
-   ATFvb0M5O/zSS7Jirb7+GkQbsUPp+V12kneXFp57JsHjjBwk5dwdvjkZH
-   w==;
-X-CSE-ConnectionGUID: B3uZ/kvWR+aQQTYixYnc3g==
-X-CSE-MsgGUID: ZiIC+n7pS8+cEwo3xezrdw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11351"; a="52296156"
-X-IronPort-AV: E=Sophos;i="6.13,302,1732608000"; 
-   d="scan'208";a="52296156"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 13:56:45 -0800
-X-CSE-ConnectionGUID: FAig6Bl0SHOEI3bQxZ9k7g==
-X-CSE-MsgGUID: ZGayH2+4Ss+SlfTn5YNbug==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,302,1732608000"; 
-   d="scan'208";a="119787878"
-Received: from puneetse-mobl.amr.corp.intel.com (HELO [10.125.110.112]) ([10.125.110.112])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 13:56:44 -0800
-Message-ID: <0279dabe-1c2f-46b2-a5c3-9a712a2c7311@intel.com>
-Date: Thu, 20 Feb 2025 14:56:41 -0700
+	 In-Reply-To:Content-Type; b=If2JwhTP4l/IkJtVnzyvkj39nUQzggganT9s1Puf7T+pDlpa+1us7exqGX9GFZqh03mso1gPRIX5l7UcHpsPkJ9Afd1j8CoX4DfFnziP7I1Bu3jv8Ya7cVURuk8WmBVTSwvx1tmMVAaG0fOKtxC84V+IZlhRlMB+UbslvCJOnzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=XtGknKWp; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.0.0.114] (c-67-182-156-199.hsd1.wa.comcast.net [67.182.156.199])
+	by linux.microsoft.com (Postfix) with ESMTPSA id A2784203E3BD;
+	Thu, 20 Feb 2025 13:57:19 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A2784203E3BD
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1740088640;
+	bh=hXGH9Z+OdViyLyaeNdj+evSOC05tFiOwgQvPxQsepcw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=XtGknKWpWoB+evSUfsY6KBr3Lhb1Ju2CCc638EfX+cLZ0/PDofVE7HCnnownVNu6h
+	 4q03qcOPhOmEu8nMMTIoirXxamdOrA8OY90k3D6HNMHI2nfHmrb2v9C7eVGgeTUR9m
+	 kpqR+22342pJd/TO0Iag2Y5Yo5rxJLEmTX8xeSjk=
+Message-ID: <6e7d0116-82b5-4a39-997e-24143d7d3584@linux.microsoft.com>
+Date: Thu, 20 Feb 2025 13:57:19 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,98 +48,99 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 04/15] cxl/region: Calculate endpoint's region position
- during init
-To: Robert Richter <rrichter@amd.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Davidlohr Bueso <dave@stgolabs.net>
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
- Gregory Price <gourry@gourry.net>,
- "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
- Terry Bowman <terry.bowman@amd.com>
-References: <20250218132356.1809075-1-rrichter@amd.com>
- <20250218132356.1809075-5-rrichter@amd.com>
+Subject: Re: [PATCH v2 2/3] hyperv: Change hv_root_partition into a function
+To: Michael Kelley <mhklinux@outlook.com>,
+ "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+ "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+ "eahariha@linux.microsoft.com" <eahariha@linux.microsoft.com>
+Cc: "kys@microsoft.com" <kys@microsoft.com>,
+ "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+ "wei.liu@kernel.org" <wei.liu@kernel.org>,
+ "decui@microsoft.com" <decui@microsoft.com>,
+ "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+ "will@kernel.org" <will@kernel.org>, "tglx@linutronix.de"
+ <tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>,
+ "bp@alien8.de" <bp@alien8.de>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+ "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+ "joro@8bytes.org" <joro@8bytes.org>,
+ "robin.murphy@arm.com" <robin.murphy@arm.com>, "arnd@arndb.de"
+ <arnd@arndb.de>,
+ "jinankjain@linux.microsoft.com" <jinankjain@linux.microsoft.com>,
+ "muminulrussell@gmail.com" <muminulrussell@gmail.com>,
+ "skinsburskii@linux.microsoft.com" <skinsburskii@linux.microsoft.com>,
+ "mukeshrathor@microsoft.com" <mukeshrathor@microsoft.com>
+References: <1740076396-15086-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1740076396-15086-3-git-send-email-nunodasneves@linux.microsoft.com>
+ <SN6PR02MB415703DF0CD1EB3523E3C79AD4C42@SN6PR02MB4157.namprd02.prod.outlook.com>
 Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250218132356.1809075-5-rrichter@amd.com>
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+In-Reply-To: <SN6PR02MB415703DF0CD1EB3523E3C79AD4C42@SN6PR02MB4157.namprd02.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-
-
-On 2/18/25 6:23 AM, Robert Richter wrote:
-> The calculation of an endpoint's position in a region traverses all
-> ports up to the root port and determines the corresponding decoders
-> for that particular address range. For address translation the HPA
-> range must be recalculated between ports. In order to prepare the
-> implementation of address translation, move code to
-> cxl_endpoint_decoder_initialize() and reuse the existing iterator
-> there.
+On 2/20/2025 11:17 AM, Michael Kelley wrote:
+> From: Nuno Das Neves <nunodasneves@linux.microsoft.com> Sent: Thursday, February 20, 2025 10:33 AM
+>>
+>> Introduce hv_current_partition_type to store the partition type
+>> as an enum.
+>>
+>> Right now this is limited to guest or root partition, but there will
+>> be other kinds in future and the enum is easily extensible.
+>>
+>> Set up hv_current_partition_type early in Hyper-V initialization with
+>> hv_identify_partition_type(). hv_root_partition() just queries this
+>> value, and shouldn't be called before that.
+>>
+>> Making this check into a function sets the stage for adding a config
+>> option to gate the compilation of root partition code. In particular,
+>> hv_root_partition() can be stubbed out always be false if root
+>> partition support isn't desired.
+>>
+>>
 > 
-> Signed-off-by: Robert Richter <rrichter@amd.com>
-> ---
->  drivers/cxl/core/region.c | 25 +++++++++++++++++++++----
->  1 file changed, 21 insertions(+), 4 deletions(-)
+> [snip]
+>  
+>> +void hv_identify_partition_type(void)
+>> +{
+>> +	/* Assume guest role */
+>> +	hv_current_partition_type = HV_PARTITION_TYPE_GUEST;
+>> +	/*
+>> +	 * Check partition creation and cpu management privileges
+>> +	 *
+>> +	 * Hyper-V should never specify running as root and as a Confidential
+>> +	 * VM. But to protect against a compromised/malicious Hyper-V trying
+>> +	 * to exploit root behavior to expose Confidential VM memory, ignore
+>> +	 * the root partition setting if also a Confidential VM.
+>> +	 */
+>> +	if ((ms_hyperv.priv_high & HV_CREATE_PARTITIONS) &&
+>> +	    (ms_hyperv.priv_high & HV_CPU_MANAGEMENT) &&
+>> +	    !(ms_hyperv.priv_high & HV_ISOLATION)) {
+>> +		pr_info("Hyper-V: running as root partition\n");
+>> +		if (IS_ENABLED(CONFIG_MSHV_ROOT))
 > 
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index ad4a6ce37216..6f106bfa115f 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -1903,7 +1903,6 @@ static int cxl_region_sort_targets(struct cxl_region *cxlr)
->  	for (i = 0; i < p->nr_targets; i++) {
->  		struct cxl_endpoint_decoder *cxled = p->targets[i];
->  
-> -		cxled->pos = cxl_calc_interleave_pos(cxled);
->  		/*
->  		 * Record that sorting failed, but still continue to calc
->  		 * cxled->pos so that follow-on code paths can reliably
+> I'll have to rescind the "Reviewed-by:" that I just gave. There's a patch
+> sequencing problem in that CONFIG_MSHV_ROOT doesn't exist yet.
+> It's added in Patch 3 of the series.  Because it doesn't exist, the
+> IS_ENABLED() will always return 'false', which isn't fatal in the sense
+> of causing a compile error.  But the code won't run in the root partition
+> because hv_current_partition_type isn't set.
+> 
 
-Do the comments need to be updated here with the deletion of that line above?
+Oops! Thanks for catching that, I'll just move the check from this patch
+to patch 3.
 
-DJ
-
-> @@ -3264,10 +3263,22 @@ static int cxl_endpoint_decoder_initialize(struct cxl_endpoint_decoder *cxled)
->  	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
->  	struct cxl_port *iter = cxled_to_port(cxled);
->  	struct cxl_decoder *root, *cxld = &cxled->cxld;
-> -	struct range *hpa = &cxld->hpa_range;
-> +	struct range hpa = cxld->hpa_range;
-> +	struct cxl_interleave_context ctx;
-> +	int rc;
->  
-> -	while (iter && !is_cxl_root(iter))
-> -		iter = to_cxl_port(iter->dev.parent);
-> +	ctx = (struct cxl_interleave_context) {
-> +		.hpa_range = &hpa,
-> +	};
-> +
-> +	while (iter && !is_cxl_root(iter)) {
-> +		/* Convert interleave settings to next port upstream. */
-> +		rc = cxl_port_calc_interleave(iter, &ctx);
-> +		if (rc < 0)
-> +			return rc;
-> +
-> +		iter = parent_port_of(iter);
-> +	}
->  
->  	if (!iter)
->  		return -ENXIO;
-> @@ -3281,7 +3292,13 @@ static int cxl_endpoint_decoder_initialize(struct cxl_endpoint_decoder *cxled)
->  		return -ENXIO;
->  	}
->  
-> +	dev_dbg(cxld->dev.parent,
-> +		"%s:%s: range:%#llx-%#llx pos:%d\n",
-> +		dev_name(&cxled->cxld.dev), dev_name(&cxld->dev),
-> +		hpa.start, hpa.end, ctx.pos);
-> +
->  	cxled->cxlrd = to_cxl_root_decoder(&root->dev);
-> +	cxled->pos = ctx.pos;
->  
->  	return 0;
->  }
+> Michael
+> 
+>> +			hv_current_partition_type = HV_PARTITION_TYPE_ROOT;
+>> +		else
+>> +			pr_crit("Hyper-V: CONFIG_MSHV_ROOT not enabled!\n");
+>> +	}
+>> +}
 
 
