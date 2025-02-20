@@ -1,408 +1,185 @@
-Return-Path: <linux-kernel+bounces-523084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2514EA3D1C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:09:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7BF4A3D1CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:10:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C76D3B2B01
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:09:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FB16176C51
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:09:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C3C01E4928;
-	Thu, 20 Feb 2025 07:09:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901D31E5729;
+	Thu, 20 Feb 2025 07:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=m.fudan.edu.cn header.i=@m.fudan.edu.cn header.b="hxaf8t82"
-Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fosNQizh"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 501E81E3DEF;
-	Thu, 20 Feb 2025 07:09:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D9961E47A8;
+	Thu, 20 Feb 2025 07:09:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740035367; cv=none; b=DnrW9p+mY83efCSBLPl+Am3fzzZz5j/u6CJAc6vi1DoFXna/LVLKz+XAvBIw0JjN7JjUAsUGJvYNU70FBxEPqIYt/HOMGHgyH6KYoPTJL74mwh9CgxI5G6XEvI4FVZsOQTRIQF8LbY5ztkJdTuahpTLtVrF4+iw9r2EAoy/0bWY=
+	t=1740035361; cv=none; b=fAKjMN23nBgMNcgolbjAvtTOud+bWdhUggVLPuX5ubOj0Lf5uYc47WBxeE6UTCYtOonVrP61NENYA94bGGuonfU7kQsQyv6hLprqgHCB9Sn9a81CkFJQGRmLR2KIv9fA5QuAKQV6dJQG901yYRC0Y65V2IJO9lPLLHvmUwMW7O8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740035367; c=relaxed/simple;
-	bh=T2rVqvm4zBroEsOPvSBM8CrAORbDgr9+Kt/EHWp8+lU=;
-	h=From:Content-Type:Mime-Version:Subject:Message-Id:Date:Cc:To; b=IJhuPZf91sFqYqMhhOYynrA/U+T6sc+a7Xn4ORR6NuJQrkNYaWASUM7cajWJPULq66um/6pfOAlsb1W4JY0yOLqcU9J+diMa9X5NaqUO5d0qtb8fTVQHa3GQTJRN4aycyBLjPdXJUWi/jRw0IEPectv3E5aTgDlX02wbJDNFH40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn; spf=pass smtp.mailfrom=m.fudan.edu.cn; dkim=pass (1024-bit key) header.d=m.fudan.edu.cn header.i=@m.fudan.edu.cn header.b=hxaf8t82; arc=none smtp.client-ip=18.169.211.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=m.fudan.edu.cn
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=m.fudan.edu.cn;
-	s=sorc2401; t=1740035333;
-	bh=g2vHaIOAz4d5yt8VkIHIK73HFH3hA6hpTBt/zjEj4u4=;
-	h=From:Mime-Version:Subject:Message-Id:Date:To;
-	b=hxaf8t82flzmyJNliOTtvoXnJ4w9I+l9ZPQvdx4TFa7USI1pUiUuhxYmnTWoG2Ulz
-	 tV9aNRkPTBmNdHAVH1rdzo0e8lv8xNmMdUbNPKz9m4Z5420/2v2NHgoXTpe01afznO
-	 +p7TxaYGQxpa0jismfNv0sHbpxSjSs9fV/VvYi2U=
-X-QQ-mid: bizesmtpip2t1740035327t2cr158
-X-QQ-Originating-IP: EQmKbY0xtrJZswQcKG+cdPyDE3TgJwarTmkXYHDbnjQ=
-Received: from smtpclient.apple ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 20 Feb 2025 15:08:46 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 7114628657633862664
-From: Kun Hu <huk23@m.fudan.edu.cn>
-Content-Type: text/plain;
-	charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1740035361; c=relaxed/simple;
+	bh=DuHKVyAUSeH0AYeZxe02EjNiVrFQ9M67Vo/uZCOZ0Vo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=H9MuN0p7DHOiln9Oj0C9/EHYitU/aIOBNdGWlLNxTi5Q5jRn9BFICDlC0UwCexS8FmNq6YLymc+nurFXcj+Ii+OKCQ8Z4YIiV9zO/aMd+dYRgXXGgXlJubrHPczEDZvty6rmhkZLeDH7IB3NyaHEUyWZ0sC8zkEoopV6p/9Cn7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fosNQizh; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51K6fmgO011610;
+	Thu, 20 Feb 2025 07:09:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	jdRurz3BGPu1yPaTZwh+HKIzTOwhCAXUFtw2FUQjgpQ=; b=fosNQizhYn8vx50P
+	PodEVKZEzJ2Brz3QuxloD4yrYigWzekMQtrJVgnIZFCX8H1YloaqP563cU4IYyd7
+	2VIcLY8DTenuyrxWOC0F/Mkm0MrHJqnHuYn7lq4MFE5424qa/cK0qS4QjmrS8r0L
+	MGLYUH+ilI1WVZ5Gmilyo15XJwA9mrCQbTvdWtZWm52X/xl6lVknRl2WUapMRiTP
+	ZHVILhxZUbeZ8Wdx8YmAbeVuOMuuIzU6ROhaqOtG84yo6TiDpVtNAE9fHJOyZFnt
+	y3Uw4ltDOQXAFp3VAY6/k4ICB3ZSEH6xyuWFebTF7Lkjjv45bv7q3xERtF40krFq
+	TrL0hQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44vyy3n6ue-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Feb 2025 07:09:08 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51K7979m015781
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Feb 2025 07:09:07 GMT
+Received: from [10.217.216.47] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 19 Feb
+ 2025 23:09:02 -0800
+Message-ID: <c4f5c1fb-123d-4dd1-9885-031808f37419@quicinc.com>
+Date: Thu, 20 Feb 2025 12:38:59 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
-Subject: UBSAN_ shift-out-of-bounds in bch2_trans_iter_init_outlined
-Message-Id: <DB301B35-8966-4CB7-AE21-9A792CE4AC6C@m.fudan.edu.cn>
-Date: Thu, 20 Feb 2025 15:08:35 +0800
-Cc: syzkaller@googlegroups.com,
- linux-bcachefs@vger.kernel.org,
- "jjtan24@m.fudan.edu.cn" <jjtan24@m.fudan.edu.cn>,
- linux-kernel@vger.kernel.org
-To: kent.overstreet@linux.dev
-X-Mailer: Apple Mail (2.3818.100.11.1.3)
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:m.fudan.edu.cn:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: N2K7JO7TcIoE7X1ljt5Hm+PosNQPi5q19IZ0FPZwTVTrhqpCp9mxK9rW
-	7qSsMWBs6py/tgCEevq0glZ2mCW1VKawe2iwJB72I+STqlUAvx4xRs9Ym/vv7cpuH911T7k
-	QVWnki+sVTn5aRoO3o9FcoeXU5f+fQ+8XYxLarHt5eAo2MBNcPEzXIfwmn8JOuTUfpAZ3gF
-	lHwXlhMIclADu28YBD0AGENk+ojMvY+CdAmvN/E91hUaTSsITRXuNRYrc0yQgqBqRyy2qUD
-	dTa2p2TwnkFfSIkCbt4lZNQ4dNwS22Chnm52phWbyhx4IKd3eTnrZEp2H2f1vx68XeRLMG9
-	g/7D68wc1YW69hdLdt7A1+wMg/htEesqHv4y+5ffawdaVb7OCVzhCU00f2LA47DJioRnrdp
-	inXAITrUCJ8e6vpOgIBMFUR9Qa+jzq2RFYNlB4MZ5TLosumJhEvGGulvPQYK/sLGrNnIyvf
-	sdd/FHumHmkQjwvXEar4DLtJLlJQESDhZfBILHM0/5RTToP32IoXsQFS5pK6zWequfi1EMD
-	uEAhJqeuGafk1P/tHKw3HyRQ7swYURFp5onqs1WCAKUJ9238Pbvnfr7g/Br5E3hWLSfcpWB
-	v6uZXXEm9zrN7LRqexmxajs/7jkT6Bf8GqUF3ZmW6g+9b4d4Bohk+VrOqIiK8PZCua5YS/Y
-	sWcnkM0R6y85NYuqFRpZ7fuDk9d3njHBdNmgK4C/VqLCGF9eIxJVAQEaiUVnwehS3VS8nmS
-	bKzdZflfXNEDxd9WflFbliwGtPWMgGyg3YxeDHoGdLwnqKRe8esoBEQKq39qa4sICkYbbj2
-	eUBtZBjONTokcJoho8+xtoTdVhRx8JAOTg1v8iWpv+JcfziDtt+/f8Xb3OjZ98wPV+QW9x2
-	GPcfWFl/GQ8HKIP+lUAFqP8xyG1qsDdwXWdgz8Pkwjf8cjia2T4DRVTy8wtL7Lw5EDMFja6
-	PMcuWsEcX42ANp+T836HGkNgsC16yE3ciRZNN6Jgr0G9JOw==
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-X-QQ-RECHKSPAM: 0
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/5] arm64: dts: qcom: Add MXC power domain to videocc
+ nodes
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Ajit Pandey
+	<quic_ajipan@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        "Taniya
+ Das" <quic_tdas@quicinc.com>,
+        Satya Priya Kakitapalli
+	<quic_skakitap@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250218-videocc-pll-multi-pd-voting-v1-0-cfe6289ea29b@quicinc.com>
+ <20250218-videocc-pll-multi-pd-voting-v1-5-cfe6289ea29b@quicinc.com>
+ <dprxueuq5avpv3mek4kc4sy2mddydsoskqgbizi4lpyapuhg4t@zcdgm2wcsaco>
+Content-Language: en-US
+From: Jagadeesh Kona <quic_jkona@quicinc.com>
+In-Reply-To: <dprxueuq5avpv3mek4kc4sy2mddydsoskqgbizi4lpyapuhg4t@zcdgm2wcsaco>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: VUkyZPULRCPb9IyVEDHFvpl5aTncfrYv
+X-Proofpoint-GUID: VUkyZPULRCPb9IyVEDHFvpl5aTncfrYv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-20_02,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 mlxlogscore=672 bulkscore=0 mlxscore=0 spamscore=0
+ lowpriorityscore=0 phishscore=0 priorityscore=1501 clxscore=1015
+ malwarescore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2502100000 definitions=main-2502200050
 
-Hi Kent,
 
-When using our customized Syzkaller to fuzz the latest Linux kernel, the =
-following crash (76s)
-was triggered.
 
-HEAD commit: 6537cfb395f352782918d8ee7b7f10ba2cc3cbf2
-git tree: upstream
-Console output: =
-https://github.com/pghk13/Kernel-Bug/blob/main/0219_6.13rc7_todo/76-UBSAN_=
-%20shift-out-of-bounds%20in%20bch2_trans_iter_init_outlined/report%20on%20=
-6.14-r3.txt
-Kernel config: =
-https://github.com/pghk13/Kernel-Bug/blob/main/0219_6.13rc7_todo/config.tx=
-t=20
-C reproducer: =
-https://github.com/pghk13/Kernel-Bug/blob/main/0219_6.13rc7_todo/76-UBSAN_=
-%20shift-out-of-bounds%20in%20bch2_trans_iter_init_outlined/repro.c
-Syzlang reproducer: =
-https://github.com/pghk13/Kernel-Bug/blob/main/0219_6.13rc7_todo/76-UBSAN_=
-%20shift-out-of-bounds%20in%20bch2_trans_iter_init_outlined/repro.syz.txt
+On 2/18/2025 11:02 PM, Dmitry Baryshkov wrote:
+> On Tue, Feb 18, 2025 at 07:56:50PM +0530, Jagadeesh Kona wrote:
+>> Videocc requires both MMCX and MXC rails to be powered ON
+>> to configure the video PLLs on SM8450, SM8550 and SM8650
+>> platforms. Hence add MXC power domain to videocc node on
+>> these platforms.
+>>
+>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+>> ---
+>>  arch/arm64/boot/dts/qcom/sm8450.dtsi | 3 ++-
+>>  arch/arm64/boot/dts/qcom/sm8550.dtsi | 3 ++-
+>>  arch/arm64/boot/dts/qcom/sm8650.dtsi | 3 ++-
+>>  3 files changed, 6 insertions(+), 3 deletions(-)
+> 
+> Three separate patches, please. With that in mind:
+> 
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> 
 
-We have reproduced this issue repeatedly in 6.14-rc3. =46rom the syscall =
-reproducer, the syscall syz_mount_image mounts a constructed bcachefs =
-image. When the file system attempted to parse these parameters, it =
-caused the btree_id_is_extents, btree_type_has_snapshots, and =
-btree_type_has_snapshot_field functions in btree_types.h to shift out of =
-bounds. It is speculated that the constructed mirror may have caused the =
-btree_id to exceed the u64 bit width, which in turn triggered the shift =
-out-of-bounds. Also, the report shows that the bch2_time_to_timespec =
-function in bcachefs.h also undergoes a shift operation, but this does =
-not seem to be the case when I look at the source code. If you think =
-this issue has little impact on your system, please ignore it =E2=98=BA.
+Sure, will split this into separate patches.
 
-If you fix this issue, please add the following tag to the commit:
-Reported-by: Kun Hu <huk23@m.fudan.edu.cn>, Jiaji Qin =
-<jjtan24@m.fudan.edu.cn>
+Thanks,
+Jagadeesh
 
-2025/02/19 18:35:12 reproducing crash 'UBSAN: shift-out-of-bounds in =
-bch2_trans_iter_init_outlined': final repro crashed as =
-(corrupted=3Dfalse):
-  u64s 6 type extent 1610612736:24:U32_MAX len 24 ver 0: durability: 1 =
-ptr: 0:34:8 gen 0
-  u64s 6 type extent 1610612736:24:U32_MAX len 24 ver 0: durability: 1 =
-ptr: 0:34:8 gen 0
-------------[ cut here ]------------
-UBSAN: shift-out-of-bounds in fs/bcachefs/bcachefs.h:1193:41
-shift exponent 128 is too large for 32-bit type 'unsigned int'
-CPU: 2 UID: 0 PID: 877 Comm: syz.1.16 Not tainted 6.13.0-rc7 #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS =
-1.13.0-1ubuntu1.1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x180/0x1b0 lib/dump_stack.c:120
- ubsan_epilogue+0xa/0x40 lib/ubsan.c:231
- __ubsan_handle_shift_out_of_bounds+0xf2/0x1e0 lib/ubsan.c:468
- btree_id_cached fs/bcachefs/bcachefs.h:1193 [inline]
- bch2_btree_iter_flags fs/bcachefs/btree_iter.h:472 [inline]
- bch2_trans_iter_init_outlined.cold+0x55/0x78 =
-fs/bcachefs/btree_iter.c:2904
- bch2_trans_iter_init fs/bcachefs/btree_iter.h:520 [inline]
- bch2_btree_insert_trans+0x18c/0x290 fs/bcachefs/btree_update.c:647
- drop_dev_and_update+0x3d4/0x580 fs/bcachefs/backpointers.c:456
- check_bp_exists+0x1bd2/0x3140 fs/bcachefs/backpointers.c:603
- check_extent_to_backpointers+0x8d4/0x11f0 =
-fs/bcachefs/backpointers.c:688
- bch2_check_extents_to_backpointers_pass+0xa6f/0xf20 =
-fs/bcachefs/backpointers.c:884
- bch2_check_extents_to_backpointers+0x352/0xac0 =
-fs/bcachefs/backpointers.c:937
- bch2_run_recovery_pass+0x94/0x1a0 fs/bcachefs/recovery_passes.c:191
- bch2_run_recovery_passes+0x4a4/0x760 fs/bcachefs/recovery_passes.c:244
- bch2_fs_recovery+0x24d0/0x4f00 fs/bcachefs/recovery.c:861
- bch2_fs_start+0x2f6/0x610 fs/bcachefs/super.c:1037
- bch2_fs_get_tree+0x4b6/0x2020 fs/bcachefs/fs.c:2170
- vfs_get_tree+0x93/0x340 fs/super.c:1814
- do_new_mount fs/namespace.c:3511 [inline]
- path_mount+0x1272/0x1ba0 fs/namespace.c:3838
- do_mount+0xf8/0x110 fs/namespace.c:3851
- __do_sys_mount fs/namespace.c:4061 [inline]
- __se_sys_mount fs/namespace.c:4038 [inline]
- __x64_sys_mount+0x193/0x230 fs/namespace.c:4038
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xc3/0x1d0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f75b6feb51e
-Code: ff ff ff 64 c7 00 16 00 00 00 b8 ff ff ff ff c3 66 2e 0f 1f 84 00 =
-00 00 00 00 66 90 f3 0f 1e fa 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 =
-f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffceb0a77a8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0000000000005b13 RCX: 00007f75b6feb51e
-RDX: 0000000020005b00 RSI: 0000000020005b40 RDI: 00007ffceb0a7800
-RBP: 00007ffceb0a7840 R08: 00007ffceb0a7840 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000020005b00
-R13: 0000000020005b40 R14: 00007ffceb0a7800 R15: 0000000020000080
- </TASK>
----[ end trace ]---
-------------[ cut here ]------------
-UBSAN: shift-out-of-bounds in fs/bcachefs/btree_types.h:798:9
-shift exponent 129 is too large for 64-bit type 'long long unsigned int'
-CPU: 2 UID: 0 PID: 877 Comm: syz.1.16 Not tainted 6.13.0-rc7 #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS =
-1.13.0-1ubuntu1.1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x180/0x1b0 lib/dump_stack.c:120
- ubsan_epilogue+0xa/0x40 lib/ubsan.c:231
- __ubsan_handle_shift_out_of_bounds+0xf2/0x1e0 lib/ubsan.c:468
- btree_node_type_is_extents fs/bcachefs/btree_types.h:798 [inline]
- btree_id_is_extents fs/bcachefs/btree_types.h:803 [inline]
- __bch2_btree_iter_flags fs/bcachefs/btree_iter.h:451 [inline]
- bch2_btree_iter_flags fs/bcachefs/btree_iter.h:478 [inline]
- bch2_trans_iter_init_outlined.cold+0x37/0x78 =
-fs/bcachefs/btree_iter.c:2904
- bch2_trans_iter_init fs/bcachefs/btree_iter.h:520 [inline]
- bch2_btree_insert_trans+0x18c/0x290 fs/bcachefs/btree_update.c:647
- drop_dev_and_update+0x3d4/0x580 fs/bcachefs/backpointers.c:456
- check_bp_exists+0x1bd2/0x3140 fs/bcachefs/backpointers.c:603
- check_extent_to_backpointers+0x8d4/0x11f0 =
-fs/bcachefs/backpointers.c:688
- bch2_check_extents_to_backpointers_pass+0xa6f/0xf20 =
-fs/bcachefs/backpointers.c:884
- bch2_check_extents_to_backpointers+0x352/0xac0 =
-fs/bcachefs/backpointers.c:937
- bch2_run_recovery_pass+0x94/0x1a0 fs/bcachefs/recovery_passes.c:191
- bch2_run_recovery_passes+0x4a4/0x760 fs/bcachefs/recovery_passes.c:244
- bch2_fs_recovery+0x24d0/0x4f00 fs/bcachefs/recovery.c:861
- bch2_fs_start+0x2f6/0x610 fs/bcachefs/super.c:1037
- bch2_fs_get_tree+0x4b6/0x2020 fs/bcachefs/fs.c:2170
- vfs_get_tree+0x93/0x340 fs/super.c:1814
- do_new_mount fs/namespace.c:3511 [inline]
- path_mount+0x1272/0x1ba0 fs/namespace.c:3838
- do_mount+0xf8/0x110 fs/namespace.c:3851
- __do_sys_mount fs/namespace.c:4061 [inline]
- __se_sys_mount fs/namespace.c:4038 [inline]
- __x64_sys_mount+0x193/0x230 fs/namespace.c:4038
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xc3/0x1d0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f75b6feb51e
-Code: ff ff ff 64 c7 00 16 00 00 00 b8 ff ff ff ff c3 66 2e 0f 1f 84 00 =
-00 00 00 00 66 90 f3 0f 1e fa 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 =
-f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffceb0a77a8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0000000000005b13 RCX: 00007f75b6feb51e
-RDX: 0000000020005b00 RSI: 0000000020005b40 RDI: 00007ffceb0a7800
-RBP: 00007ffceb0a7840 R08: 00007ffceb0a7840 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000020005b00
-R13: 0000000020005b40 R14: 00007ffceb0a7800 R15: 0000000020000080
- </TASK>
----[ end trace ]---
-------------[ cut here ]------------
-UBSAN: shift-out-of-bounds in fs/bcachefs/btree_types.h:825:9
-shift exponent 128 is too large for 64-bit type 'long long unsigned int'
-CPU: 2 UID: 0 PID: 877 Comm: syz.1.16 Not tainted 6.13.0-rc7 #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS =
-1.13.0-1ubuntu1.1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x180/0x1b0 lib/dump_stack.c:120
- ubsan_epilogue+0xa/0x40 lib/ubsan.c:231
- __ubsan_handle_shift_out_of_bounds+0xf2/0x1e0 lib/ubsan.c:468
- btree_type_has_snapshot_field fs/bcachefs/btree_types.h:825 [inline]
- __bch2_btree_iter_flags fs/bcachefs/btree_iter.h:455 [inline]
- bch2_btree_iter_flags fs/bcachefs/btree_iter.h:478 [inline]
- bch2_trans_iter_init_outlined.cold+0x19/0x78 =
-fs/bcachefs/btree_iter.c:2904
- bch2_trans_iter_init fs/bcachefs/btree_iter.h:520 [inline]
- bch2_btree_insert_trans+0x18c/0x290 fs/bcachefs/btree_update.c:647
- drop_dev_and_update+0x3d4/0x580 fs/bcachefs/backpointers.c:456
- check_bp_exists+0x1bd2/0x3140 fs/bcachefs/backpointers.c:603
- check_extent_to_backpointers+0x8d4/0x11f0 =
-fs/bcachefs/backpointers.c:688
- bch2_check_extents_to_backpointers_pass+0xa6f/0xf20 =
-fs/bcachefs/backpointers.c:884
- bch2_check_extents_to_backpointers+0x352/0xac0 =
-fs/bcachefs/backpointers.c:937
- bch2_run_recovery_pass+0x94/0x1a0 fs/bcachefs/recovery_passes.c:191
- bch2_run_recovery_passes+0x4a4/0x760 fs/bcachefs/recovery_passes.c:244
- bch2_fs_recovery+0x24d0/0x4f00 fs/bcachefs/recovery.c:861
- bch2_fs_start+0x2f6/0x610 fs/bcachefs/super.c:1037
- bch2_fs_get_tree+0x4b6/0x2020 fs/bcachefs/fs.c:2170
- vfs_get_tree+0x93/0x340 fs/super.c:1814
- do_new_mount fs/namespace.c:3511 [inline]
- path_mount+0x1272/0x1ba0 fs/namespace.c:3838
- do_mount+0xf8/0x110 fs/namespace.c:3851
- __do_sys_mount fs/namespace.c:4061 [inline]
- __se_sys_mount fs/namespace.c:4038 [inline]
- __x64_sys_mount+0x193/0x230 fs/namespace.c:4038
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xc3/0x1d0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f75b6feb51e
-Code: ff ff ff 64 c7 00 16 00 00 00 b8 ff ff ff ff c3 66 2e 0f 1f 84 00 =
-00 00 00 00 66 90 f3 0f 1e fa 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 =
-f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffceb0a77a8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0000000000005b13 RCX: 00007f75b6feb51e
-RDX: 0000000020005b00 RSI: 0000000020005b40 RDI: 00007ffceb0a7800
-RBP: 00007ffceb0a7840 R08: 00007ffceb0a7840 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000020005b00
-R13: 0000000020005b40 R14: 00007ffceb0a7800 R15: 0000000020000080
- </TASK>
----[ end trace ]---
-------------[ cut here ]------------
-UBSAN: shift-out-of-bounds in fs/bcachefs/btree_types.h:814:9
-shift exponent 128 is too large for 64-bit type 'long long unsigned int'
-CPU: 2 UID: 0 PID: 877 Comm: syz.1.16 Not tainted 6.13.0-rc7 #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS =
-1.13.0-1ubuntu1.1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x180/0x1b0 lib/dump_stack.c:120
- ubsan_epilogue+0xa/0x40 lib/ubsan.c:231
- __ubsan_handle_shift_out_of_bounds+0xf2/0x1e0 lib/ubsan.c:468
- btree_type_has_snapshots fs/bcachefs/btree_types.h:814 [inline]
- __bch2_btree_iter_flags fs/bcachefs/btree_iter.h:459 [inline]
- bch2_btree_iter_flags fs/bcachefs/btree_iter.h:478 [inline]
- bch2_trans_iter_init_outlined.cold+0x73/0x78 =
-fs/bcachefs/btree_iter.c:2904
- bch2_trans_iter_init fs/bcachefs/btree_iter.h:520 [inline]
- bch2_btree_insert_trans+0x18c/0x290 fs/bcachefs/btree_update.c:647
- drop_dev_and_update+0x3d4/0x580 fs/bcachefs/backpointers.c:456
- check_bp_exists+0x1bd2/0x3140 fs/bcachefs/backpointers.c:603
- check_extent_to_backpointers+0x8d4/0x11f0 =
-fs/bcachefs/backpointers.c:688
- bch2_check_extents_to_backpointers_pass+0xa6f/0xf20 =
-fs/bcachefs/backpointers.c:884
- bch2_check_extents_to_backpointers+0x352/0xac0 =
-fs/bcachefs/backpointers.c:937
- bch2_run_recovery_pass+0x94/0x1a0 fs/bcachefs/recovery_passes.c:191
- bch2_run_recovery_passes+0x4a4/0x760 fs/bcachefs/recovery_passes.c:244
- bch2_fs_recovery+0x24d0/0x4f00 fs/bcachefs/recovery.c:861
- bch2_fs_start+0x2f6/0x610 fs/bcachefs/super.c:1037
- bch2_fs_get_tree+0x4b6/0x2020 fs/bcachefs/fs.c:2170
- vfs_get_tree+0x93/0x340 fs/super.c:1814
- do_new_mount fs/namespace.c:3511 [inline]
- path_mount+0x1272/0x1ba0 fs/namespace.c:3838
- do_mount+0xf8/0x110 fs/namespace.c:3851
- __do_sys_mount fs/namespace.c:4061 [inline]
- __se_sys_mount fs/namespace.c:4038 [inline]
- __x64_sys_mount+0x193/0x230 fs/namespace.c:4038
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xc3/0x1d0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f75b6feb51e
-Code: ff ff ff 64 c7 00 16 00 00 00 b8 ff ff ff ff c3 66 2e 0f 1f 84 00 =
-00 00 00 00 66 90 f3 0f 1e fa 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 =
-f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffceb0a77a8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0000000000005b13 RCX: 00007f75b6feb51e
-RDX: 0000000020005b00 RSI: 0000000020005b40 RDI: 00007ffceb0a7800
-RBP: 00007ffceb0a7840 R08: 00007ffceb0a7840 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000020005b00
-R13: 0000000020005b40 R14: 00007ffceb0a7800 R15: 0000000020000080
- </TASK>
----[ end trace ]---
-bcachefs (loop1): duplicate versions of same extent, deleting smaller
-  u64s 6 type extent 1610612736:24:U32_MAX len 24 ver 0: durability: 1 =
-ptr: 0:34:8 gen 0
-  u64s 6 type extent 1610612736:24:U32_MAX len 24 ver 0: durability: 1 =
-ptr: 0:34:8 gen 0
-------------[ cut here ]------------
-UBSAN: shift-out-of-bounds in fs/bcachefs/btree_types.h:814:9
-shift exponent 128 is too large for 64-bit type 'long long unsigned int'
-CPU: 0 UID: 0 PID: 877 Comm: syz.1.16 Not tainted 6.13.0-rc7 #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS =
-1.13.0-1ubuntu1.1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x180/0x1b0 lib/dump_stack.c:120
- ubsan_epilogue+0xa/0x40 lib/ubsan.c:231
- __ubsan_handle_shift_out_of_bounds+0xf2/0x1e0 lib/ubsan.c:468
- btree_type_has_snapshots fs/bcachefs/btree_types.h:814 [inline]
- bch2_trans_update_extent_overwrite.cold+0x1d/0x66 =
-fs/bcachefs/btree_update.c:254
- bch2_trans_update_extent+0x65d/0x1000 fs/bcachefs/btree_update.c:318
- bch2_trans_update+0x360/0x5b0 fs/bcachefs/btree_update.c:518
- bch2_btree_insert_trans+0x223/0x290 fs/bcachefs/btree_update.c:650
- drop_dev_and_update+0x3d4/0x580 fs/bcachefs/backpointers.c:456
- check_bp_exists+0x1bd2/0x3140 fs/bcachefs/backpointers.c:603
- check_extent_to_backpointers+0x8d4/0x11f0 =
-fs/bcachefs/backpointers.c:688
- bch2_check_extents_to_backpointers_pass+0xa6f/0xf20 =
-fs/bcachefs/backpointers.c:884
- bch2_check_extents_to_backpointers+0x352/0xac0 =
-fs/bcachefs/backpointers.c:937
- bch2_run_recovery_pass+0x94/0x1a0 fs/bcachefs/recovery_passes.c:191
- bch2_run_recovery_passes+0x4a4/0x760 fs/bcachefs/recovery_passes.c:244
- bch2_fs_recovery+0x24d0/0x4f00 fs/bcachefs/recovery.c:861
- bch2_fs_start+0x2f6/0x610 fs/bcachefs/super.c:1037
- bch2_fs_get_tree+0x4b6/0x2020 fs/bcachefs/fs.c:2170
- vfs_get_tree+0x93/0x340 fs/super.c:1814
- do_new_mount fs/namespace.c:3511 [inline]
- path_mount+0x1272/0x1ba0 fs/namespace.c:3838
- do_mount+0xf8/0x110 fs/namespace.c:3851
- __do_sys_mount fs/namespace.c:4061 [inline]
- __se_sys_mount fs/namespace.c:4038 [inline]
- __x64_sys_mount+0x193/0x230 fs/namespace.c:4038
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xc3/0x1d0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f75b6feb51e
-Code: ff ff ff 64 c7 00 16 00 00 00 b8 ff ff ff ff c3 66 2e 0f 1f 84 00 =
-00 00 00 00 66 90 f3 0f 1e fa 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 =
-f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffceb0a77a8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0000000000005b13 RCX: 00007f75b6feb51e
-RDX: 0000000020005b00 RSI: 0000000020005b40 RDI: 00007ffceb0a7800
-RBP: 00007ffceb0a7840 R08: 00007ffceb0a7840 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000020005b00
-R13: 0000000020005b40 R14: 00007ffceb0a7800 R15: 0000000020000080
- </TASK>
-
----------------
-thanks,
-Kun Hu=
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/sm8450.dtsi b/arch/arm64/boot/dts/qcom/sm8450.dtsi
+>> index 9c809fc5fa45a98ff5441a0b6809931588897243..4f8dca8fc64212191780067c5d8815e3a2bb137f 100644
+>> --- a/arch/arm64/boot/dts/qcom/sm8450.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/sm8450.dtsi
+>> @@ -3136,7 +3136,8 @@ videocc: clock-controller@aaf0000 {
+>>  			reg = <0 0x0aaf0000 0 0x10000>;
+>>  			clocks = <&rpmhcc RPMH_CXO_CLK>,
+>>  				 <&gcc GCC_VIDEO_AHB_CLK>;
+>> -			power-domains = <&rpmhpd RPMHPD_MMCX>;
+>> +			power-domains = <&rpmhpd RPMHPD_MMCX>,
+>> +					<&rpmhpd RPMHPD_MXC>;
+>>  			required-opps = <&rpmhpd_opp_low_svs>;
+>>  			#clock-cells = <1>;
+>>  			#reset-cells = <1>;
+>> diff --git a/arch/arm64/boot/dts/qcom/sm8550.dtsi b/arch/arm64/boot/dts/qcom/sm8550.dtsi
+>> index eac8de4005d82f246bc50f64f09515631d895c99..a039ae71e1b7bba8124128d19de5e00c65217770 100644
+>> --- a/arch/arm64/boot/dts/qcom/sm8550.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/sm8550.dtsi
+>> @@ -2889,7 +2889,8 @@ videocc: clock-controller@aaf0000 {
+>>  			reg = <0 0x0aaf0000 0 0x10000>;
+>>  			clocks = <&bi_tcxo_div2>,
+>>  				 <&gcc GCC_VIDEO_AHB_CLK>;
+>> -			power-domains = <&rpmhpd RPMHPD_MMCX>;
+>> +			power-domains = <&rpmhpd RPMHPD_MMCX>,
+>> +					<&rpmhpd RPMHPD_MXC>;
+>>  			required-opps = <&rpmhpd_opp_low_svs>;
+>>  			#clock-cells = <1>;
+>>  			#reset-cells = <1>;
+>> diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
+>> index 86684cb9a9325618ddb74458621cf4bbdc1cc0d1..32af2a0f7a0030f155b7d8c93faeffa384a42768 100644
+>> --- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
+>> @@ -3524,7 +3524,8 @@ videocc: clock-controller@aaf0000 {
+>>  			reg = <0 0x0aaf0000 0 0x10000>;
+>>  			clocks = <&bi_tcxo_div2>,
+>>  				 <&gcc GCC_VIDEO_AHB_CLK>;
+>> -			power-domains = <&rpmhpd RPMHPD_MMCX>;
+>> +			power-domains = <&rpmhpd RPMHPD_MMCX>,
+>> +					<&rpmhpd RPMHPD_MXC>;
+>>  			#clock-cells = <1>;
+>>  			#reset-cells = <1>;
+>>  			#power-domain-cells = <1>;
+>>
+>> -- 
+>> 2.34.1
+>>
+> 
 
