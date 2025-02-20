@@ -1,131 +1,170 @@
-Return-Path: <linux-kernel+bounces-523126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28F42A3D274
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:41:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 32152A3D277
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:41:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 933057A38F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:40:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72D1F7A2F68
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:40:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E8761E9B09;
-	Thu, 20 Feb 2025 07:41:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECDD51E9B07;
+	Thu, 20 Feb 2025 07:41:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SICnMiI7"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dWOcM0t1"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E280C1E5734;
-	Thu, 20 Feb 2025 07:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FCD31E990D
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 07:41:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740037275; cv=none; b=MsOr55OxGiOo+ac0Jx6NE7fdi0h00sA2Ep+dA2jSZu42uIJL22lKBDAsFg6GVEVlQGsPhLvd4kkpvIE7ApE8oGxhbugOCWK8hOoDvZynJiKRjnfdZ+pHp/USbX3PUY6WKjnO8GUvKC3rDcjAx3V0K/hl/FFaCHTUA0RsnbLhX+g=
+	t=1740037290; cv=none; b=rJNcf5bh4+KUVf9WcvNxMGtcp7Vge8EY0BuPeAhR0Sdj21OnJtUB8dkWqbAaKlSdZyMYdMBeuG1mdg4xXwtzNwNEONbnbiGejWMrMNdhtDxypxS38sMnXANkeETwQH1WE24FS4uK3AKMkXYrjHR9hy/7KlGvHFavpE9e2cZxMKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740037275; c=relaxed/simple;
-	bh=Y5kYSgfukTER1EK5fH9cMVwho5EJgWr6Kj/8SYChQEU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uJ3Qx5Y6UmEm5rBh9reY7KTuXfMbIWs87kzLKRYDLdgUhWRkRU7/pUh1OyX37OedGny6Mp9NVbtow8sdSSdH4EM0ttw3veXZfUG01NWzr+aSxHQkSOUceWvePApI10dEUMkHr3Qdq29ByQ5eEtZB6o5i+D+LOtBeZVRUTx6FmgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SICnMiI7; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-439a2780b44so3339975e9.1;
-        Wed, 19 Feb 2025 23:41:13 -0800 (PST)
+	s=arc-20240116; t=1740037290; c=relaxed/simple;
+	bh=FcvfMD+JBBVNDDsu7+aYWKzpf97y9eyX6wNGdgF4LxE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o0aOwLwmMLvhNQAXw5vNGdcbGJtQAVUon9cxbt1bBfZThVaHCWK5htLG4zSW4o2uoqnsKKym+MGEdQU2tlKINjW5Y67PzcO/kep8DT1HMsHpLG70quTfUoMIkgUwdK+MS4KIv1p3WZpH6TavaPfLn5+G79wzWwDKvdarRKwFej8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dWOcM0t1; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-220c92c857aso11174865ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 23:41:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740037272; x=1740642072; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MJYv7ynx+2KN3B5BBC3b4wZsS5Thp/vdHPKspluBDSY=;
-        b=SICnMiI7BPhcaPZngqawkSxFmW6RO8rXQ0Gd9nBJckm+jnclVIX1zmPklXzOY0OYCx
-         69ytKuiAThoMxe1ucJN5W/yh8R03oEqDwHvDNj9/KxR4yiBwaqscCZsxY/l6+ItQRGUu
-         2Oi8LVeK61NRB3ZkN5JTLDoTsYdUeas+zrfKY264gIpD1BqJ1jiq0f61KhhiYKR2VJE4
-         q0IhaxJTw4fgvRV4pDxwCWWnd+YGou5kBghoF8Yq5YfDpatWXv04kdwLTb2t4R5YmZsi
-         bByjidVy+Xg42V9U+T1W5aQ+MPL6pXmJPZXIdu5WZGRAg6pcitx60cNfBP66l09TcPdx
-         r4vA==
+        d=linaro.org; s=google; t=1740037288; x=1740642088; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=azToiCO+oZ/zxxr4mX51zUb1S/Hn5fc+tCyD7exrK9Y=;
+        b=dWOcM0t17tV11JLGEzr2KGJ3nNSjbcS/eN2UFGZ+d4Rv/hT+x1PYgB8I8JhJRPWEPM
+         2V0Cb9wxKJsY543PLSveE+4P05DuKp9GbFujxdExDtpXOZuSMktWiSSHRF9LUZZQWGra
+         hBKgf1KUYJ3nVoi1OiHvJLaZEMTx+Jeemf1f6MxFYYHXoHUj8GxmDWmKsYUHS7CvObI1
+         yEQmkCb2LN9qV1mItygMygEJ88p1Ds85aRukSwy/m3eWkmh3qBIDo6ISQpjK0H4j2Vkv
+         F1iBJLx6FrVebWHudPlozimDh1xqzbi7NQ3uGjqGjgT0R0YSe0U93D+0zEysHuU0wtdX
+         sgPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740037272; x=1740642072;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1740037288; x=1740642088;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MJYv7ynx+2KN3B5BBC3b4wZsS5Thp/vdHPKspluBDSY=;
-        b=iZXggKeofoI/vSMO38ArKNiHYN6ouj/B5X+x/vIg1O35oNBpewDVMNRORJk1/zjMXK
-         g4VCG/1I+Nx+U+u5LFqEYOmXrmgM6OKnY8IWmRm+yTyKtxA81kt0QP2UQYOhyneZumuv
-         oR5q9BM4XOUvNJDysiLp7B8lJ7Q9Hici5lCLEp/3m05pHvJgPN8BXZjC4uIO5irMOhdE
-         CK792T7Y7sK6A06gDOjOArD5udjxbVe9dckf2O0pOuLKDZGObuHedv5D0R1YgRDrYIdU
-         kpHLsJswouuODL8/46s8c2zQVXl8AbDTIv5dRGG/gtj0QkdRy3VIht0PElNA6o5ENqZ8
-         27AA==
-X-Forwarded-Encrypted: i=1; AJvYcCU5O6zC3wnFzVWFDSav33LOrdzFIer4+djAazt7IYgtYPi+kwsgGeP10QSrzGri7ahR31AMm9f563GAYQ==@vger.kernel.org, AJvYcCVGr7slGETc3Lvs10WxH95QXzvh3n//L6kRCxSk5vEfZ/N8SyfPsQIgzmbBd4EExNC1pb7KAPPI7csmQ4GiarU=@vger.kernel.org, AJvYcCVQ0iRmKLyQ2V9haVJ2qnlVZLAuEFe6rNFUeyBXOVm0yIWY7kop1zANaHdj2VMsg0NbDpceXZKZ@vger.kernel.org, AJvYcCX9WrfcLW7VyUpcP81kNoLi6PjmG+OzBhZCIBuUrUs9tWEtkMxsBbi7TS0wtN1hKGBSr5R2lCGOBrrHqhxw@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKVs5EnKGuOlPW6io510Hzyf9M2Ljq/4jxQ4iU3Z7nn0GL2zs0
-	OWnzc9bxQvqGRQ5QlRJq6vzan0BA9dR/Ml92Zu3vzDVRq98WxOYTeVWwSw==
-X-Gm-Gg: ASbGncs9/XzyPyGcEWwIaulmPvN2RJaUpf+3b1HvVyzR0W/d068axeZFRws1e4TkeAn
-	gfyuuQ1mEdY8aRo0ehbq3jrImcWAaphVAVUoFRIeqS1OhEKLo80CSTMeDXV28PHTBYW9UEPP0u4
-	W/55UYzEo6PZyEAcwm3i+9d+ooPwXV2LglKpiN0Lh7rwiZvPfShXtw5ZganAEDBp9BqroAfnNgg
-	T1Vp0gw2+DCYejDEXbprRRCttnYnSdk/KyrwKqVOLxFPofPi1yNKHQ2+pWIGDJjUhDekIgi77Nq
-	VLy7XlAlK+aAFJBn7cfaearKa2uQxbi8fyk=
-X-Google-Smtp-Source: AGHT+IEMwSqIIsc4ebzckcZJDzHWuZ55uljwt7+wfboUSZakp8qJiZNrd0ew7LhjiwbxKJKaQ4irLw==
-X-Received: by 2002:a05:600c:35c1:b0:439:9377:fa29 with SMTP id 5b1f17b1804b1-43999de1a26mr57522325e9.31.1740037271566;
-        Wed, 19 Feb 2025 23:41:11 -0800 (PST)
-Received: from [172.27.61.29] ([193.47.165.251])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43982a2f92esm114030585e9.17.2025.02.19.23.41.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Feb 2025 23:41:11 -0800 (PST)
-Message-ID: <98f1cc71-7699-40f5-909f-86e7317d8071@gmail.com>
-Date: Thu, 20 Feb 2025 09:41:06 +0200
+        bh=azToiCO+oZ/zxxr4mX51zUb1S/Hn5fc+tCyD7exrK9Y=;
+        b=cyRuT2PLjWPLsUSGmT7AvBuH8ooBOguMEg7iy+mk/cAIYTdnTHIgS4Dw0WzLJbAigX
+         ymbqzw+LF0ZzaHcKm3yWnwGORXgy7BSHmGUUyH8o82UYUUzzXZMni6kKovXRfvSNrKTH
+         ZpDw5Z5BMwFRLsLnoZLwZcw9JtQFht63hymTbQOjLsqBYj14DMoRsCnC3i6OPH7A67kl
+         E4WgAzulh/xTP2u/c3Mr6WO8kQtxUfTHVba7V0m4N70TdEpuzYZSoQV9bOJtalBxeOEw
+         5l+qdIPiiS2/gauqZjYHxno0enkJjeS1X9q0cozW9RTSE7QqAzTNhbgN60CGAGuNm8EA
+         FIPg==
+X-Forwarded-Encrypted: i=1; AJvYcCX36Uzf2v6xe+0bwiTDJxNM3wv2otgTuEHSCzzNju5W9+LllXDkBUJrnRTX/zmjV8TZuVLEtCIXtLTNQxQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMj8r5GnBadRl3fB5gIfdwxrhm7EgPNvPrpcP1NrzPgVYGDdpq
+	hJsIb3MKR+RNcm28sHsiD9nVaJaSNpdhx7lH/Bn39wiKLXQIXZ5tQ8aKMD/JzMQxN77sWTsA35c
+	=
+X-Gm-Gg: ASbGnctcLiW/FLUaofSjOFGQhzjlh/QDqXnerWMuWm2ZluCSKhlogm0OtZJM0ZSocuP
+	a8Q69OUvJ/gDHjdXsrEB6s52ukeu5gM0ITd/CEbbzzeffpiMoI/SSzMkBvqsbCQ/iVJzMBDIbnG
+	/wl+/dybM8fs9THP1kJRNwtkySYvd+YkN3XCw04lvYl31sz1ruhl+YMQK0mqN939w9kVnnddqVc
+	UTocL+/kn87IQywNta7AC8p0mjzeEeCKjfcLndkfHFEeJAWgFlUVyAW/iH1AuCcV7EADKC4SUc1
+	IPA8Yi6L6wxleIDJEaZa5eg8Fg==
+X-Google-Smtp-Source: AGHT+IH0RZscPfw2CZq9/P1TKqceXF2BijFi/n0CVEH6aHnPTW2U7yD19fJ4fdTDIp7uABus7lNjyg==
+X-Received: by 2002:a17:902:ea05:b0:215:9eac:1857 with SMTP id d9443c01a7336-2218c3d080amr32992605ad.5.1740037287863;
+        Wed, 19 Feb 2025 23:41:27 -0800 (PST)
+Received: from thinkpad ([120.60.70.244])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d545cf76sm115597885ad.131.2025.02.19.23.41.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2025 23:41:27 -0800 (PST)
+Date: Thu, 20 Feb 2025 13:11:22 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Cc: Krzysztof Wilczynski <kw@linux.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v3 3/5] misc: pci_endpoint_test: Fix irq_type to convey
+ the correct type
+Message-ID: <20250220074122.xaeefquqwh2xwsxz@thinkpad>
+References: <20250210075812.3900646-1-hayashi.kunihiko@socionext.com>
+ <20250210075812.3900646-4-hayashi.kunihiko@socionext.com>
+ <20250214172533.szrbreiv45c3g5lo@thinkpad>
+ <36cc27be-4ba7-4d65-b32b-2a1e0b03b161@socionext.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] net/mlx5e: Avoid a hundred
- -Wflex-array-member-not-at-end warnings
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, "Gustavo A. R. Silva"
- <gustavo@embeddedor.com>, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
- Tariq Toukan <tariqt@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
- linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <Z6GCJY8G9EzASrwQ@kspp>
- <4e556977-c7b9-4d37-b874-4f3d60d54429@embeddedor.com>
- <8d06f07c-5bb4-473d-90af-5f57ce2b068f@gmail.com>
- <7ce8d318-584f-42c2-b88a-2597acd67029@embeddedor.com>
- <5f2ca37f-3f6d-44d2-9821-7d6b0655937d@gmail.com>
- <36ab1f42-b492-497f-a1dc-34631f594da6@lunn.ch>
- <59b075bc-f6e6-42f0-bc01-c8921922299d@gmail.com>
- <20250218131345.6bd558cb@kernel.org>
- <99543a40-2a57-4c10-8876-cde08cb15199@gmail.com>
- <20250219174629.4791c1e9@kernel.org>
-Content-Language: en-US
-From: Tariq Toukan <ttoukan.linux@gmail.com>
-In-Reply-To: <20250219174629.4791c1e9@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <36cc27be-4ba7-4d65-b32b-2a1e0b03b161@socionext.com>
 
-
-
-On 20/02/2025 3:46, Jakub Kicinski wrote:
-> On Wed, 19 Feb 2025 14:14:35 +0200 Tariq Toukan wrote:
->> On 18/02/2025 23:13, Jakub Kicinski wrote:
->>> On Tue, 18 Feb 2025 17:53:14 +0200 Tariq Toukan wrote:
->>>> Maybe it wasn't clear enough.
->>>> We prefer the original patch, and provided the Reviewed-by tag for it.
->>>
->>> Can you explain what do you mean by "cleaner"?
->>> I like the alternative much more.
->>
->> Cleaner in the sense that it doesn't touch existing code in en_rx.c
->> (datapath), and has shorter dereferences for the inner umr_wqe fields, like:
->> umr_wqe->ctrl
->> vs.
->> umr_wqe->hdr.ctrl
+On Mon, Feb 17, 2025 at 08:26:44PM +0900, Kunihiko Hayashi wrote:
+> Hi Manivannan,
 > 
-> IMO that's minor, not sufficient to justify struct_group_tagged()
+> On 2025/02/15 2:25, Manivannan Sadhasivam wrote:
+> > On Mon, Feb 10, 2025 at 04:58:10PM +0900, Kunihiko Hayashi wrote:
+> > > There are two variables that indicate the interrupt type to be used
+> > > in the next test execution, "irq_type" as global and test->irq_type.
+> > > 
+> > > The global is referenced from pci_endpoint_test_get_irq() to preserve
+> > > the current type for ioctl(PCITEST_GET_IRQTYPE).
+> > > 
+> > > The type set in this function isn't reflected in the global "irq_type",
+> > > so ioctl(PCITEST_GET_IRQTYPE) returns the previous type.
+> > > As a result, the wrong type will be displayed in "pcitest" as follows:
+> > > 
+> > >      # pcitest -i 0
+> > >      SET IRQ TYPE TO LEGACY:         OKAY
+> > >      # pcitest -I
+> > >      GET IRQ TYPE:           MSI
+> > > 
+> > 
+> > Could you please post the failure with kselftest that got merged into
+> > v6.14-rc1?
+> 
+> The kselftest doesn't call GET_IRQTYPE, so current kselftest doesn't fail.
+> 
+> If necessary, I can add GET_IRQTYPE test after SET_IRQTYPE of each
+> interrupt test prior to this patch.
+> 
+>         pci_ep_ioctl(PCITEST_SET_IRQTYPE, 0);
+>         ASSERT_EQ(0, ret) TH_LOG("Can't set Legacy IRQ type");
+> 
+> +       pci_ep_ioctl(PCITEST_GET_IRQTYPE, 0);
+> +       ASSERT_EQ(0, ret) TH_LOG("Can't get Legacy IRQ type");
+> 
 
-No strong preference. I can accept both.
+Sure.
+
+> However, pci_ep_ioctl() returns zero if OK, the return value should be
+> changed to the actual return value.
+> 
+>  #define pci_ep_ioctl(cmd, arg)                 \
+>  ({                                             \
+>         ret = ioctl(self->fd, cmd, arg);        \
+> -       ret = ret < 0 ? -errno : 0;             \
+> +       ret = ret < 0 ? -errno : ret;           \
+>  })
+> 
+
+Ok.
+
+> Before applying the patch, this test fails.
+> 
+> #  RUN           pci_ep_basic.LEGACY_IRQ_TEST ...
+> # pci_endpoint_test.c:104:LEGACY_IRQ_TEST:Expected 0 (0) == ret (1)
+> # pci_endpoint_test.c:104:LEGACY_IRQ_TEST:Can't get Legacy IRQ type
+> # LEGACY_IRQ_TEST: Test terminated by assertion
+> #          FAIL  pci_ep_basic.LEGACY_IRQ_TEST
+> 
+
+Looks good to me.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
