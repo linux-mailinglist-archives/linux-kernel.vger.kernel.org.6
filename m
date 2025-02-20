@@ -1,94 +1,63 @@
-Return-Path: <linux-kernel+bounces-523966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DDFBA3DD77
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:57:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB3B1A3DD7B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:58:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01C831895417
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:56:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13E763AF1DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:56:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29C5A1D5CFB;
-	Thu, 20 Feb 2025 14:56:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F39A01D54D6;
+	Thu, 20 Feb 2025 14:56:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iqP9ND1I"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K+4m2CYp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B600F1D5144;
-	Thu, 20 Feb 2025 14:56:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 428D61D5160;
+	Thu, 20 Feb 2025 14:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740063400; cv=none; b=QfK/BJqmS6102ajTuaWc5m2nWXTfo9QI6yi4HDAzqz6HSbba5Bg7ukYU2/Nns9FtedHXPyK52GRwUJCIofTrfxUA/LmiwIpSjYePgzDzgl6oNm7AxMPKnxNQdg7U2czgg0pd2URZBep/NzKQ3ZFnvaGA7MCwBIHQpr+k6mNsooQ=
+	t=1740063407; cv=none; b=AGameXdXcMkGGR0ABzP91qmjgXfBeP95J1J9gWCYBySYsY7xymVl84FEofWFBtJYuJ9+/9e+92+qQ7OSxKJx+MQNimXjRyjfmCF9nAm78MYJdmNlL/RxaQc3gxxZVRPkmTk5wXjCfuyNFgTvr61ShhyjFxVUFdftMz4cAfBw4qQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740063400; c=relaxed/simple;
-	bh=YbwDdBsjti3If6R1AwRXFGvljRGPfJvCwZ3grv5CLiE=;
+	s=arc-20240116; t=1740063407; c=relaxed/simple;
+	bh=QiwnkF0UwAVnyULwhSlHoGTh1+lJb0Epz5yXz5sNWO0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gd9grvq2tI6Uu0Hwx7RLhaTzAosyUP4Schrnt8iv0+Av4LmYxHDVBa4910rTz+jMtdpqmebVcYTPP5zzyyPSk2mhJs34BGcLQu85lp8xB72wkOowGBifEqlJSYUV77ug4dk3FUZR9VLcou7ZHAtQecECb5BqxAwvFS+ShHCHvpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iqP9ND1I; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740063399; x=1771599399;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=YbwDdBsjti3If6R1AwRXFGvljRGPfJvCwZ3grv5CLiE=;
-  b=iqP9ND1I4iqJ8x9Jlcwv+TT458mjzOuVUzX2GbjmmiaMSCwVz3qJqikZ
-   BvURC4gVeBkNJtjd5sTQ65GvuWap/+cgCQWV9Wl2p2Bn0CGWXDYGL7CbR
-   IBj/WiGQVE0Jm6sLuAnVxuZGkFC5k3rlVWiCxcafEK6j91JFbVEUAM60X
-   E8w1JJKlv0Hp9fUzJuKs02l9WpkOgfg15cFnimyUwPgiz3R9gNJ5dqsVe
-   a95DpanRdNEDTe3TUdi5eq8iGRFobZyHemvAYklkPdV7rXPnWOqRQunMe
-   /+WL4YDGcxHtHxLsdbtEA5rTaWNzTOpFRZD/9n/hppCuPI1Qf3RTgmjj/
-   g==;
-X-CSE-ConnectionGUID: vIX8f8HqRmmyFIOWZsstkw==
-X-CSE-MsgGUID: oysxh224QZm3Wc2YnbpcRw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11351"; a="63318719"
-X-IronPort-AV: E=Sophos;i="6.13,301,1732608000"; 
-   d="scan'208";a="63318719"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 06:56:38 -0800
-X-CSE-ConnectionGUID: kEVuldFkQf6vlSbyMU3vxA==
-X-CSE-MsgGUID: DEsCk3iDTmePuyZP91z/Nw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,301,1732608000"; 
-   d="scan'208";a="145916713"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 06:56:34 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tl7yY-0000000DMq3-05wg;
-	Thu, 20 Feb 2025 16:56:30 +0200
-Date: Thu, 20 Feb 2025 16:56:29 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
-	Nuno Sa <nuno.sa@analog.com>, David Lechner <dlechner@baylibre.com>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH v3 2/9] iio: adc: add helpers for parsing ADC nodes
-Message-ID: <Z7dCnRzuQTaJXzmb@smile.fi.intel.com>
-References: <cover.1739967040.git.mazziesaccount@gmail.com>
- <6c5b678526e227488592d004c315a967b9809701.1739967040.git.mazziesaccount@gmail.com>
- <Z7ZB7RQhyI5Dohrq@smile.fi.intel.com>
- <b1c1ed68-2f4d-447c-9957-5a1bbc63ef6e@gmail.com>
- <Z7ci7tUlRQqZEZSN@smile.fi.intel.com>
- <ec76334b-bb13-4076-811d-9174170dd677@gmail.com>
- <Z7c2cBQpjoc9-Vyu@smile.fi.intel.com>
- <9018e23c-da28-41b0-b774-1598b946a2a1@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jWsivbEEQV/nvUtPeYvu/WTEZLPVgrF4sEb7sy/2pl9GNz2COfKM92oK7vtS82SiZW7tHi98++14A+sWCQaan39w2C7hqbTyFTefkflXgMJs1lerN/31MWcSON4kHRYshCBpfNt41IaHn36Nno/N5r9jk+flUqZWz1S/v9zTsrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K+4m2CYp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A59A0C4CED1;
+	Thu, 20 Feb 2025 14:56:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740063407;
+	bh=QiwnkF0UwAVnyULwhSlHoGTh1+lJb0Epz5yXz5sNWO0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=K+4m2CYpSkgijm+ur0lwT45RhojCSbFVS/e4S+PVccsAmjOE0DCvfiEWhqgKYLTlc
+	 LY/hEzRjK6a2UY1fyZwouKCHJLbGUxcUpv/szZgUW8k9sWUP+tr/acU320eBt/7zLh
+	 sEg5M3pzflsn0Gu99aZ/UcWR9A8Mjm/xroDvJhAO9Wp5bWtPgd8mbVxOJvy+59DtMy
+	 9EePASrsQ6iLZWq/ha3Gg2tQjmc60q81xaYEpazBpHR/86YqRDp/ZC0A03/WQtSlcC
+	 aRcvO7Fo5318UvaAX0rw4fVFOrouBm90EJCVDPHds30lEtCu/9iav7SzP56PUuBy21
+	 BT+2RvmPUII9g==
+Date: Thu, 20 Feb 2025 14:56:42 +0000
+From: Simon Horman <horms@kernel.org>
+To: Larysa Zaremba <larysa.zaremba@intel.com>
+Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
+	intel-wired-lan@lists.osuosl.org,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
+	Mateusz Pacuszka <mateuszx.pacuszka@intel.com>
+Subject: Re: [PATCH iwl-next v4 2/6] ice: do not add LLDP-specific filter if
+ not necessary
+Message-ID: <20250220145642.GZ1615191@kernel.org>
+References: <20250214085215.2846063-1-larysa.zaremba@intel.com>
+ <20250214085215.2846063-3-larysa.zaremba@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,97 +66,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9018e23c-da28-41b0-b774-1598b946a2a1@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20250214085215.2846063-3-larysa.zaremba@intel.com>
 
-On Thu, Feb 20, 2025 at 04:21:37PM +0200, Matti Vaittinen wrote:
-> On 20/02/2025 16:04, Andy Shevchenko wrote:
-> > On Thu, Feb 20, 2025 at 03:40:30PM +0200, Matti Vaittinen wrote:
-> > > On 20/02/2025 14:41, Andy Shevchenko wrote:
-> > > > On Thu, Feb 20, 2025 at 09:13:00AM +0200, Matti Vaittinen wrote:
-> > > > > On 19/02/2025 22:41, Andy Shevchenko wrote:
-> > > > > > On Wed, Feb 19, 2025 at 02:30:27PM +0200, Matti Vaittinen wrote:
+On Fri, Feb 14, 2025 at 09:50:36AM +0100, Larysa Zaremba wrote:
+> Commit 34295a3696fb ("ice: implement new LLDP filter command")
+> introduced the ability to use LLDP-specific filter that directs all
+> LLDP traffic to a single VSI. However, current goal is for all trusted VFs
+> to be able to see LLDP neighbors, which is impossible to do with the
+> special filter.
+> 
+> Make using the generic filter the default choice and fall back to special
+> one only if a generic filter cannot be added. That way setups with "NVMs
+> where an already existent LLDP filter is blocking the creation of a filter
+> to allow LLDP packets" will still be able to configure software Rx LLDP on
+> PF only, while all other setups would be able to forward them to VFs too.
+> 
+> Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+> Signed-off-by: Larysa Zaremba <larysa.zaremba@intel.com>
+
+Reviewed-by: Simon Horman <horms@kernel.org>
 
 ...
 
-> > > > > > > +EXPORT_SYMBOL_GPL(iio_adc_device_num_channels);
-> > > > > > 
-> > > > > > No namespace?
-> > > > > 
-> > > > > I was considering also this. The IIO core functions don't belong into a
-> > > > > namespace - so I followed the convention to keep these similar to other IIO
-> > > > > core stuff.
-> > > > 
-> > > > But it's historically. We have already started using namespaces
-> > > > in the parts of IIO, haven't we?
-> > > 
-> > > Yes. But as I wrote, I don't think adding new namespaces for every helper
-> > > file with a function or two exported will scale. We either need something
-> > > common for IIO (or IIO "subsystems" like "adc", "accel", "light", ... ), or
-> > > then we just keep these small helpers same as most of the IIO core.
-> > 
-> > It can be still pushed to IIO_CORE namespace. Do you see an issue with that?
-> 
-> No. I've missed the fact we have IIO_CORE O_o. Thanks for pointing it out!
-> 
-> > Or a new opaque namespace for the mentioned cases, something like IIO_HELPERS.
-> 
-> I am unsure if it really benefits to split this out of the IIO_CORE. I've a
-> feeling it falls into the category of making things harder for user with no
-> apparent reason. But yes, the IIO_CORE makes sense.
+> diff --git a/drivers/net/ethernet/intel/ice/ice_common.c b/drivers/net/ethernet/intel/ice/ice_common.c
+> index aaa592ffd2d8..f2e51bacecf8 100644
+> --- a/drivers/net/ethernet/intel/ice/ice_common.c
+> +++ b/drivers/net/ethernet/intel/ice/ice_common.c
+> @@ -6010,15 +6010,21 @@ bool ice_fw_supports_lldp_fltr_ctrl(struct ice_hw *hw)
+>  /**
+>   * ice_lldp_fltr_add_remove - add or remove a LLDP Rx switch filter
+>   * @hw: pointer to HW struct
+> - * @vsi_num: absolute HW index for VSI
+> + * @vsi: VSI to add the filter to
+>   * @add: boolean for if adding or removing a filter
+> + *
+> + * Return: 0 on success, -EOPNOTSUPP if the operation cannot be performed
+> + *	   with this HW or VSI, otherwise an error corresponding to
+> + *	   the AQ transaction result.
+>   */
 
-Probably I was not clear, I mean to put this under a given namespace. There is
-no a such, we have currently:
+Thanks for adding the Return section to the kernel doc.
 
-IIO_BACKEND
-IIO_DMA_BUFFER
-IIO_DMAENGINE_BUFFER
-IIO_GTS_HELPER
-IIO_RESCALE
-
-> > > > > (Sometimes I have a feeling that the trend today is to try make things
-> > > > > intentionally difficult in the name of the safety. Like, "more difficult I
-> > > > > make this, more experience points I gain in the name of the safety".)
-> > > > > 
-> > > > > Well, I suppose I could add a namespace for these functions - if this
-> > > > > approach stays - but I'd really prefer having all IIO core stuff in some
-> > > > > global IIO namespace and not to have dozens of fine-grained namespaces for
-> > > > > an IIO driver to use...
+> -int
+> -ice_lldp_fltr_add_remove(struct ice_hw *hw, u16 vsi_num, bool add)
+> +int ice_lldp_fltr_add_remove(struct ice_hw *hw, struct ice_vsi *vsi, bool add)
+>  {
+>  	struct ice_aqc_lldp_filter_ctrl *cmd;
+>  	struct ice_aq_desc desc;
+>  
+> +	if (vsi->type != ICE_VSI_PF || !ice_fw_supports_lldp_fltr_ctrl(hw))
+> +		return -EOPNOTSUPP;
+> +
+>  	cmd = &desc.params.lldp_filter_ctrl;
+>  
+>  	ice_fill_dflt_direct_cmd_desc(&desc, ice_aqc_opc_lldp_filter_ctrl);
 
 ...
-
-> > > foo &= (~bar);
-> > > 
-> > > is _much_ faster than seeing:
-> > 
-> > Strongly disagree. One need to parse an additional pair of parentheses,
-> > and especially when it's a big statement inside with nested ones along
-> > with understanding what the heck is going on that you need them in the
-> > first place.
-> > 
-> > On top of that, we have a common practices in the LK project and
-> > with our history of communication it seems you are trying to do differently
-> > from time to time. Sounds like a rebellion to me :-)
-> 
-> I only rebel when I (in my opinion) have a solid reason :)
-> 
-> > > foo &= ~bar;
-> > > 
-> > > and having to google the priorities.
-> > 
-> > Again, this is something a (regular) kernel developer keeps refreshed.
-> > Or even wider, C-language developer.
-> 
-> Ha. As I mentioned, I've been writing C on a daily bases for almost 25
-> years. I wonder if you intent to say I am not a kernel/C-language developer?
-> Bold claim.
-
-I'm just surprised by seeing that style from a 25y experienced C developer,
-that's all.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
 
