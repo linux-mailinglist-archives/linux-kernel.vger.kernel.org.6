@@ -1,100 +1,114 @@
-Return-Path: <linux-kernel+bounces-522857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E196A3CF4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 03:22:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87718A3CF4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 03:22:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E88D17503E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 02:22:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FC681895B81
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 02:22:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 292F213BACC;
-	Thu, 20 Feb 2025 02:22:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iPWAverB"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F1614A629;
+	Thu, 20 Feb 2025 02:22:41 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 825663987D;
-	Thu, 20 Feb 2025 02:21:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA61EEB1
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 02:22:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740018119; cv=none; b=YtKtNxAtWt4BQnhL+M2xUNMw7sAgpXBlSTYnKbiTVxXfxx851Kq9nMW88C5TtPNpl/IT+H2anEj1894KmoHw25R3r3PEe7NNZnsghN5ZECumt+mqxNHEtGJ2xlUNt8fqqlHxETE06jfVtZqeA0DkqyM+vTso5YLjVaBQdmTyAN8=
+	t=1740018161; cv=none; b=kmbscxNyLB6lEtEFzASzRuRjc/NDuI53MtG8wEdnxFYj0V8t2v6+xozI/jo7DFhrr9kx3Dy8bESyfpd1oM26oxallHUJz1Vx0rJTUtHIkS/JjOeA9F8y5i1tUD5gCAJ5zxMakwjN2yihayTN6x8qI4vdsLGY91k/pH39aywriB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740018119; c=relaxed/simple;
-	bh=CsKE1O38t52KiDz42xjoVchy3XbzTa/Ox6cYeUTmN2o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ie4hTrcO1a76m4Fxriisna8wkH9j03Z2Z1fq6T1huyu7uCE92gW6doqkfMY3InELSnCHmIoR6tpg5Q3iquvOrPXKEO7NkualsXfu27DmNIfs3Zm3nHgbRrzFH6p7/o1yAoQo9x8jGyFGVkEi1oEN18ytwdm5yJD/igkd9RPIcOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iPWAverB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03670C4CED1;
-	Thu, 20 Feb 2025 02:21:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740018119;
-	bh=CsKE1O38t52KiDz42xjoVchy3XbzTa/Ox6cYeUTmN2o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iPWAverBseQNUwurQ+ue9mcQ3yObYrdhiPCoGRhbnZFL/cAjTpWfe1AmIt50Pl7lZ
-	 rHt4QfEOkJ41lkhLfitj8NZYkWNtH2ZXBm/blLk4moFU6g8thv/kw3CSft4749/mqU
-	 N+YC6M74gTPmrQw2W5fOW1zzUUAtvLxUNDA4BH7FoycgihzdlYH9qJ2yP2PJ5Js7Lp
-	 YkHapP5/qyvdD61ksSS79UvIqpWwxFWyIYXseDXmnFFGovm2HryPsVc9TA3bTshn+Q
-	 b9n+jl89FoHDmeqrzJE5wqdL8RmidlxWBJV1LtmlBHx8xxFW81/Qa2KnbTTps5yGez
-	 3T9I+P5eP+0CQ==
-Date: Wed, 19 Feb 2025 18:21:54 -0800
-From: Kees Cook <kees@kernel.org>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>,
-	linux-hardening@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] m68k: mm: Replace deprecated strncpy() with strscpy()
-Message-ID: <202502191820.DA875C6@keescook>
-References: <20250213141037.50394-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1740018161; c=relaxed/simple;
+	bh=Si1mu4YyFEJR6YYE0Vfun5+KmBhUaDe9rCzk+Fksos0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Bw8AyG+OJJP0I2KYVrMq6WBMBni29LROxqdpMxdIjLpxlpolk0Kvfn8lc9ck8cAsHyG41OG9bEp5BbVOv05K5Q/UB4iLY2uCSkvGK5iUlackAJLDzzpWmbAlOe39NCCIjLxOeg3yHQPP8zN2k3J+6DOfXCdmKjiuT5to2U6oTt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0D92C4CED1;
+	Thu, 20 Feb 2025 02:22:38 +0000 (UTC)
+Date: Wed, 19 Feb 2025 21:23:03 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Waiman Long <llong@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Andrew
+ Morton <akpm@linux-foundation.org>, Boqun Feng <boqun.feng@gmail.com>, Joel
+ Granados <joel.granados@kernel.org>, Anna Schumaker
+ <anna.schumaker@oracle.com>, Lance Yang <ioworker0@gmail.com>, Kent
+ Overstreet <kent.overstreet@linux.dev>, Yongliang Gao
+ <leonylgao@tencent.com>, Tomasz Figa <tfiga@chromium.org>, Sergey
+ Senozhatsky <senozhatsky@chromium.org>, linux-kernel@vger.kernel.org, Linux
+ Memory Management List <linux-mm@kvack.org>
+Subject: Re: [PATCH 1/2] hung_task: Show the blocker task if the task is
+ hung on mutex
+Message-ID: <20250219212303.6a49c011@gandalf.local.home>
+In-Reply-To: <20250220110707.a314d394ccf68575047e75cb@kernel.org>
+References: <173997003868.2137198.9462617208992136056.stgit@mhiramat.tok.corp.google.com>
+	<173997004932.2137198.7959507113210521328.stgit@mhiramat.tok.corp.google.com>
+	<20250219112308.5d905680@gandalf.local.home>
+	<0fa9dd8e-2d83-487e-bfb1-1f5d20cd9fe6@redhat.com>
+	<20250219152435.35077ac3@gandalf.local.home>
+	<db4ee5e9-56bb-408c-85e7-f93e2c3226dc@redhat.com>
+	<20250220075639.298616eb494248d390417977@kernel.org>
+	<20250219185531.1140c3c4@gandalf.local.home>
+	<20250220110707.a314d394ccf68575047e75cb@kernel.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250213141037.50394-2-thorsten.blum@linux.dev>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Feb 13, 2025 at 03:10:36PM +0100, Thorsten Blum wrote:
-> strncpy() is deprecated for NUL-terminated destination buffers. Use
-> strscpy() instead and remove the manual NUL-termination.
+On Thu, 20 Feb 2025 11:07:07 +0900
+Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+
+> On Wed, 19 Feb 2025 18:55:31 -0500
+> Steven Rostedt <rostedt@goodmis.org> wrote:
 > 
-> Compile-tested only.
+> > On Thu, 20 Feb 2025 07:56:39 +0900
+> > Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+> >   
+> > > > >> this field, we don't need to take lock, though taking the wait_lock may
+> > > > >> still be needed to examine other information inside the mutex.    
+> > > 
+> > > Do we need to take it just for accessing owner, which is in an atomic?  
+> > 
+> > Updating the task_struct would be in the same location as the blocked_on is
+> > anyway. I would make it into a wrapper function that is a nop when disabled.  
 > 
-> Link: https://github.com/KSPP/linux/issues/90
-> Cc: linux-hardening@vger.kernel.org
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
->  arch/m68k/kernel/setup_mm.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+> Should we make it depends on DEBUG_MUTEXES too? I think no. We can introduce
+> a different kconfig and wrapper function which calls debug_mutex_*().
+
+No it should only depend on HUNG_TASKS.
+
 > 
-> diff --git a/arch/m68k/kernel/setup_mm.c b/arch/m68k/kernel/setup_mm.c
-> index 15c1a595a1de..48ce67947678 100644
-> --- a/arch/m68k/kernel/setup_mm.c
-> +++ b/arch/m68k/kernel/setup_mm.c
-> @@ -243,8 +243,7 @@ void __init setup_arch(char **cmdline_p)
->  	setup_initial_init_mm((void *)PAGE_OFFSET, _etext, _edata, _end);
->  
->  #if defined(CONFIG_BOOTPARAM)
-> -	strncpy(m68k_command_line, CONFIG_BOOTPARAM_STRING, CL_SIZE);
-> -	m68k_command_line[CL_SIZE - 1] = 0;
-> +	strscpy(m68k_command_line, CONFIG_BOOTPARAM_STRING, CL_SIZE);
->  #endif /* CONFIG_BOOTPARAM */
->  	process_uboot_commandline(&m68k_command_line[0], CL_SIZE);
->  	*cmdline_p = m68k_command_line;
+> >   
+> > >   
+> > > > > But perhaps if we add a new config option for this feature, we could just
+> > > > > add the lock that a task is blocked on before it goes to sleep and
+> > > > > reference that instead. That would be easier than trying to play games
+> > > > > getting the lock owner from the blocked_on field.    
+> > > > 
+> > > > Yes, it could be a new config option. This will be a useful feature that 
+> > > > I believe most distros will turn it on. Or we may just include that in 
+> > > > the core code without any option.    
+> > > 
+> > > Do we need another option? or just extend DETECT_HUNG_TASK?  
+> > 
+> > DETECT_HUNG_TASK is just that, for detecting hung tasks. This adds more
+> > information to that, which increases the size of the task_struct not to
+> > mention adds code in the mutex/rwsem handlers.
+> > 
+> > I would definitely make it a separate config that may depend on
+> > DETECT_HUNG_TASK.  
+> 
+> OK, what about CONFIG_TASK_BLOCKER?
 
-m68k_command_line lives in rwdata, so it should be 0-initialized by
-default, so there should be no behavioral difference here (i.e. it will
-be zero-padded), and it is used as a C String, so there was unlikely to
-be anything depending on the NUL-padding.
+I'm fine with whatever color you would like the bikeshed to be ;-)
 
-Reviewed-by: Kees Cook <kees@kernel.org>
-
--- 
-Kees Cook
+-- Steve
 
