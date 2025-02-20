@@ -1,204 +1,117 @@
-Return-Path: <linux-kernel+bounces-522811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BAC6A3CEB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 02:30:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 986FDA3CEB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 02:30:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A975A7A335B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 01:29:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2EAC3A9AB9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 01:30:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE0E192B82;
-	Thu, 20 Feb 2025 01:30:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZxNx5Ub7"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 361492AD16;
-	Thu, 20 Feb 2025 01:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740015000; cv=fail; b=XeK6Ie1TvH5nk9ggJcEA+ow6o4yljPLBH82MsY4kJGLWzxRFifuFb1d3KJ/y/ObYaONxENoYQcqLt7jGaTGq7A4tiR86bF4SE9AG+DFu43xiDjFLEHh+UxshJwaPY2AIkIru41GzmLretlYYH9XZ7QRir44ubyhGjtTNAGmokH0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740015000; c=relaxed/simple;
-	bh=LnOI8HKGV40qInwg3JMMrazJTCytR6frjCG9rVfLlzY=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=aGAlK5vUQTH7SeYUFpSo/6FB7iSofIgNxZJvQR0E3hTJG4jOdP78/I8Jv2d0WEnyBSvmM2eewW0p4jOeN3x9wcbhAXMmGPCWT4J+zYJeqmNmgK47TziWLUkaaQ2VHhShVSjC+Ro8ltVzMPNgxJw4hNMEsqQJy7l1+OHsyShfcQU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZxNx5Ub7; arc=fail smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740014999; x=1771550999;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=LnOI8HKGV40qInwg3JMMrazJTCytR6frjCG9rVfLlzY=;
-  b=ZxNx5Ub7J4QGrU3wezdt5mplPmCrCVS7hsIfEwN8EFTDZ79dqyOou7At
-   bJLXiIKpUwov/e6q9/+iH4le5225JK9uE9Rrin6HaOd+wKOff2fGYhZnF
-   0LlaAj8v8OVYpo3INu1fga9A7VmtAtxzqkaTW5nOkMNAORtMPJdxq6jtl
-   qUzAnxLwCpsDeA2O/Pj/JJJk0RwqPMdPdhb0jEUZXCjlpcKI3WbeU0/OI
-   xzXglrXgM6irai8Y2ViJ5yQy/kqFD+FfHNP6ZtHIzL4kmbmShT+yFIvaq
-   H7CkOMxtF/JDuE8TeBBxBqLZ6KSh+4WvprnZWauWNhKim2wQB8W6Oe7tU
-   A==;
-X-CSE-ConnectionGUID: W/nof8S2REyEMO+L41Ejtw==
-X-CSE-MsgGUID: ut/RYbkoQfSoCEq9lr9S9g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11350"; a="40634238"
-X-IronPort-AV: E=Sophos;i="6.13,300,1732608000"; 
-   d="scan'208";a="40634238"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 17:29:58 -0800
-X-CSE-ConnectionGUID: movBOjvrQti9wjdOXLUkMA==
-X-CSE-MsgGUID: H4RKmubXTI+vfbBrWdVuzg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,300,1732608000"; 
-   d="scan'208";a="114729684"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 19 Feb 2025 17:29:58 -0800
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Wed, 19 Feb 2025 17:29:57 -0800
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Wed, 19 Feb 2025 17:29:57 -0800
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (104.47.51.45) by
- edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Wed, 19 Feb 2025 17:29:56 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XGjA+M0Uscfau6QSnlYq/JpXlMOeugaGevoWMViF3yuwuTLnhBL4K+vbRE21rymImYay6TwxW1pVPsXOpFqbpEvT6dj+m5SKdEVUAbu4b2hIhcFOK4BkkZjOSxZAzfxdB0TzPQNdJcF1KeMVQuP3/l5s/kWmpQ6ueyeUObkQP4my0qtGcVjapbxBnn7FhoaHw7J/LL+iKXxTRZWCxVXkKK6qssdelTZ6fCfxMm5s01y78h2qx5Dto78oawLj3CPba7nYTfAyAaoj/X3VVMioPWXX3jkUNa49sPBJXsbrE0OCK8eQMKoKZdIBedfhOBuHUQq4rZAxe7KraG2AxqIPSw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4quAe9hFZ4WrrqBM0ZVKXelj0jsjYKzeWduMH3H/5+U=;
- b=bWyjBp0Fe3Fxw28auA8UFbViOn3HOfh3ww1Kfl8SYnPsAErztkCsrun+I9UZ4K3u4Q+YNdxz9UdrhHB4bhNtlhUkWfTBFPd7+JmaWfBjUEcq5Wq62AqLCG0+gaK7IqQmAsMKREEW1KlKYA0rmk9kLrORBa595wkqU2mZzd3+4+WXLzOvIAYHb87Y8xDUsybAix9TofA2mVweBj4hXyBfooUYzdQlc0zpQybNe56hUK2z/AhK0rf15Pafc0h5of990nDBbNjKMLpTJNrUENbb2uKf1hwWonP/IzaYb0mhNfuW3hfFjohKgu14+0Va2cVAer2SO+QH1JAVD3TLIMZC5w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
- by MN6PR11MB8194.namprd11.prod.outlook.com (2603:10b6:208:477::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.14; Thu, 20 Feb
- 2025 01:29:54 +0000
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8%4]) with mapi id 15.20.8445.017; Thu, 20 Feb 2025
- 01:29:54 +0000
-Date: Wed, 19 Feb 2025 17:29:52 -0800
-From: Dan Williams <dan.j.williams@intel.com>
-To: Li Ming <ming.li@zohomail.com>, Dan Williams <dan.j.williams@intel.com>
-CC: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<dave@stgolabs.net>, <jonathan.cameron@huawei.com>, <dave.jiang@intel.com>,
-	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
-	<ira.weiny@intel.com>
-Subject: Re: [PATCH v2 5/7] cxl/core: Use guard() to drop goto pattern of
- cxl_dpa_alloc()
-Message-ID: <67b6859048d26_2d1e29482@dwillia2-xfh.jf.intel.com.notmuch>
-References: <20250217144828.30651-1-ming.li@zohomail.com>
- <20250217144828.30651-6-ming.li@zohomail.com>
- <67b67f05f0a58_2d1e294c6@dwillia2-xfh.jf.intel.com.notmuch>
- <55f67727-ed24-4ac4-97c1-95b65d110daf@zohomail.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <55f67727-ed24-4ac4-97c1-95b65d110daf@zohomail.com>
-X-ClientProxiedBy: MW4PR04CA0287.namprd04.prod.outlook.com
- (2603:10b6:303:89::22) To PH8PR11MB8107.namprd11.prod.outlook.com
- (2603:10b6:510:256::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEF158615A;
+	Thu, 20 Feb 2025 01:30:46 +0000 (UTC)
+Received: from zg8tmtyylji0my4xnjqumte4.icoremail.net (zg8tmtyylji0my4xnjqumte4.icoremail.net [162.243.164.118])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ABE510FD;
+	Thu, 20 Feb 2025 01:30:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.164.118
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740015046; cv=none; b=GNGsXGv69VBUHBdGlOFLB8n5qhhil2Se6sW6aJQZd0eB+qvnzPzzAApFks+Byvo96TxeI4AUXV+pQ0c6unJasH3nWuhCqr3ApXtx0Z8KUQH5D3FLRBNick/NJ4NWvTlRxCr9tVcjvqXY0uSYzLbM7IFB7lGbpp6eyDNDZ/14CCs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740015046; c=relaxed/simple;
+	bh=CFHteqH5JuzuGRt5uAjjg7LwLdewMSv/qJaGd/TIRWE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=kAb1ln87LXouHyDYKa6BSVq+xSAaOWOcVqgyNc4ru0BoT1EnQPAF2oBj9V24TnzPPtgEIPjx9m3sjotkritYJeOv7YLdBZXiVwiqfzixrEeVLkCWq4k3Udr2Pz22gUlHKYgeol6MyX1BPkP+FADsxUIgUSaCO/ly6JDiH+YHJr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytium.com.cn; spf=pass smtp.mailfrom=phytium.com.cn; arc=none smtp.client-ip=162.243.164.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytium.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytium.com.cn
+Received: from prodtpl.icoremail.net (unknown [10.12.1.20])
+	by hzbj-icmmx-7 (Coremail) with SMTP id AQAAfwC3vq69hbZnP1kWBA--.49894S2;
+	Thu, 20 Feb 2025 09:30:38 +0800 (CST)
+Received: from localhost.localdomain (unknown [219.142.137.151])
+	by mail (Coremail) with SMTP id AQAAfwBHSYW7hbZnaMQsAA--.35S2;
+	Thu, 20 Feb 2025 09:30:36 +0800 (CST)
+From: Zhiyuan Dai <daizhiyuan@phytium.com.cn>
+To: helgaas@kernel.org
+Cc: bhelgaas@google.com,
+	christian.koenig@amd.com,
+	daizhiyuan@phytium.com.cn,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: [PATCH v3] PCI: Update Resizable BAR Capability Register fields
+Date: Thu, 20 Feb 2025 09:30:34 +0800
+Message-ID: <20250220013034.318848-1-daizhiyuan@phytium.com.cn>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250219183424.GA226683@bhelgaas>
+References: <20250219183424.GA226683@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|MN6PR11MB8194:EE_
-X-MS-Office365-Filtering-Correlation-Id: 90533d8b-ebc9-4878-7183-08dd514e144e
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?/y4aNYxIUFjNOumTggBzX8j6qxnPRxvzR5Z/HEn3tQGDulcoRZvccMkyNpZO?=
- =?us-ascii?Q?Ke/GJBIt/SG0MQSyAt6DercUSknKGUa8eAgqB8m6KR+aQVXdejMbUIsc9/tl?=
- =?us-ascii?Q?s9XFgkd7zb7Rak70znJ8GzkHYp83a1iKcAYb8uvqHtFh2OqJ8/3jisRqI5WJ?=
- =?us-ascii?Q?s579NPgjgA1IOkoh1eaHTnlpE6ltaWLZwAmu/z5AfgcFPWGIXSOnVTEOnEeD?=
- =?us-ascii?Q?GRV2jojhAOw6HSfTlp5NypKEy6NLL73xJ43FUz12G3ZMO/4rWH2Sm6rqC6jB?=
- =?us-ascii?Q?qiKKgaA0Goqi/VY3hufvAKDDChZJYdHK9Dpqt40pJ3nsM7AyLQ2YKoqv7FUq?=
- =?us-ascii?Q?YDFIvA4kOJ0N7QELS2jatZ+FnQRtuO0+/+E/Hk9lo16piSdZFhHoPaakHzaK?=
- =?us-ascii?Q?PPOE05rsT6/czSwZKme+s/siz/fZrOWGjVkkdrFaQ1ENK6nAuKzm/3gtTk02?=
- =?us-ascii?Q?38PBto8TwYelPmr8XEJirLU6JzbU6ATh0lNtN2oiKYz1oNwisozG33j/xN7M?=
- =?us-ascii?Q?YiMerxSD9tpDKZktDWdo6/5GewmLN51hSLLR8DJKyQT10E0OxAyi1uzxlk2l?=
- =?us-ascii?Q?QcSJhXOgeHx3s+sLuN2t4TxmwplDfhrwG1pFr1+fSUq4xVL2wVBkK2OOyaF5?=
- =?us-ascii?Q?ilIUMlbzXgU2oJqrRqvlDMOcn4119O7A+QmAdQH1kPYKvH+f8Cj0j0nMFhM4?=
- =?us-ascii?Q?jbz7V3/Shk9GPtZPMJI7MW2Xlm+39keNQzWxAKSc7k5EGT+uNP12kDyDoyMT?=
- =?us-ascii?Q?1E3AjUGQgJhpiCRQ7J6E4AHlPhKAXSkTUfipLc5Uvm4X8onlotU2zmGPv5oJ?=
- =?us-ascii?Q?7nNy/kblNQF+e1vzO+SWJeyR4IQInUpESXL1cKtZUkYgtxjyje+HCqkzxgk5?=
- =?us-ascii?Q?RZMsRRhChonrJJnXqgvJhHrGu3MlkuJltGTRKhZzYfcGOZly+P3GP6n7f1hW?=
- =?us-ascii?Q?frlKFh3Awm8YPpbIVV97//f6btyMckOb4GziZAnwDUaIzHU/2NFyZWKo/XQI?=
- =?us-ascii?Q?vn7CXhuuHtst2/r3OhYLkq8CFawd+FOXxeH1LkQuOQ7G4/kQ5dJ/EyKFrxtM?=
- =?us-ascii?Q?Kk0W8LLjubsTddX6bXXtLJvu/NY4fbBhyhY5o8KzZceto+w8uLZsBsmQiPgc?=
- =?us-ascii?Q?4oen7bFopgI4Qg4S4M21du5k5Z9yKPcEHAgunYWll87dvkeEv6DKyXkY+kLt?=
- =?us-ascii?Q?0YWACXS9JYu1BAmUSiWmcgqfRv4RQ0jhjSkikClfFUM8dqw19SfFO6JYyZCF?=
- =?us-ascii?Q?zoGH6rTP2eLbR0Jh2Eb0d0VMCZpdjEFvTUihLkeoonnpwP3kUIEfE87d3RvJ?=
- =?us-ascii?Q?jpp4yjB90qa0pQSzIfZyVFEh4LWuH9VilwIoUPgrsQqWZtfy1Ggfyr6l3ytF?=
- =?us-ascii?Q?ZWkA+RZKMR6UXpS0yYmL1hUKBwec?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Ir3CkXL3AN6EFqHXLXmvJeeQZ48ePw4HTiCN0eNNsD+phc0joyXMVjhL64lV?=
- =?us-ascii?Q?W8+xLZlCHu/Yz5Bz2fbF/voxDFUQWUDNrBaFtCQNKDE0O4auiNlEkIlcEZ76?=
- =?us-ascii?Q?rjLFyXkeiO8OgSjX1U0KGXduAk3xDAQ4g3zXf/W/FsJhs86kGT30rDLqq4pr?=
- =?us-ascii?Q?Ib5dg4gblff/iNmJVfax8pVEjpt3iw5ZfLxDEwPYJM4ICsb8t34tSaAm2qCf?=
- =?us-ascii?Q?72cO++5F9iJojXnYNeQscVRezp8KpK2yw9r4/Bsr0vt5LqpdhPj8Kwcsp5jo?=
- =?us-ascii?Q?bn5fw2IofnIUIKs5WCuaU6jBZs+WaXR7jXiQe5pqY0w95n+uoinKbuTR4/Oa?=
- =?us-ascii?Q?F7L7jyEBGnA1ZOJfuNnOs+e5Ywnv+Ub/v19MqeOfE71FV9eFlIv7jVNH5zg/?=
- =?us-ascii?Q?TouulXu7YI+zhqmWEInyLHqmnB9j5Pld0VRYpEjuTSnpoX932oUoyial/sf5?=
- =?us-ascii?Q?sZ05CULcFl+pKyfK8UlOcFSmHXKFunHjIr27cmWVKsnVNikgqtaZ/8Dqftrx?=
- =?us-ascii?Q?Uf07WuaFmDn+GCH5Bcfq6aR4t4YrZCVHPm1l0rlVZW7adM9E2EgkdhwjHF0h?=
- =?us-ascii?Q?G5Jykxzw7lxa8J69kOBaYTRuAAOfuC/sufkMXI6bxIjZdOEomvdSJPys+p9F?=
- =?us-ascii?Q?eefreZxesY/3C0FEd7/63n58dT973WjEc2gn2f9GnQK8+T3BY0yVb2zGoX1f?=
- =?us-ascii?Q?2CHRelQrsAU5bW/kGW+vI7g9c7VUSaufvaeVCUiATwM2s+GlpzkSGajp4Xpv?=
- =?us-ascii?Q?wtTc9VRyMrqwRcmaeNL3Mw3QExcfRUVHQxicTri0vfdBIfBB6ike8wtmuTsj?=
- =?us-ascii?Q?bco6nzToGNAY4AUjw34V+cHsvASzwtTqg8FNSZ33Rr1/dEO2jUiTi22CGSws?=
- =?us-ascii?Q?ES5X+EiaKmvnkhFews6FcxdchX2zNIURBEu44tNqGBftJfcqBfJxHNC2y/vv?=
- =?us-ascii?Q?kr8Iph/zrFG60v60B/2ojsF4z5lip1Nruyz23mUO5feKY/oXNbHJC+aZG3S/?=
- =?us-ascii?Q?xSixo3WxOch7gBdbXt4AMHDSu9UTD5mD6tkCltaFPq8cLhA+0rZ/xBlK1/bS?=
- =?us-ascii?Q?wr24WFYXli6Txkea8Nzhb7rmYktJmQ8avSPBCBGNYNwIaJs2s8R7M3B0lu5X?=
- =?us-ascii?Q?eAD7FWTjgtSdF/dkKRQd4Un7DYvVqrkjggISNYGYKSOZ2FaDw5avIxdEG8mo?=
- =?us-ascii?Q?lRtYK1mMwj4a+5DXmEXkghJcX6Qg/ZvuJYuiV8gnleKhBpj/NS7Vx5ReNzNt?=
- =?us-ascii?Q?BSsslUhxExdaCCsiGznUVVavvbgN9HUe9GFlmgd/7eC0sx7WeHNALtbNailS?=
- =?us-ascii?Q?klpL7XTW1r3BhOe+yv8bkk6J35MNlQEBhYbW/6L2Y6bNDphfjS2undkbq/iE?=
- =?us-ascii?Q?fhxOt4fOKGDO+tfsbVSxZo8ubhtLlYTFSkXgio9FYE5FhpeG36TXA8jdhqJf?=
- =?us-ascii?Q?HKNUFXweofkaGGxacNPb7KgMfoeLnGNP++wZf56302S4pNxa7ep+S0pQgeTP?=
- =?us-ascii?Q?sbd4IdoWyLHPLTbnDKLwhGiDnsZ891Kq4vVYpVXvgMC+XDPZnMS1pNlz+Uzk?=
- =?us-ascii?Q?Ma6Pl9qMuDJkEMi5j9hv6kTspTKO5fMXoXiLjNkWSd8ys0d3DN6PRH1telSp?=
- =?us-ascii?Q?KQ=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 90533d8b-ebc9-4878-7183-08dd514e144e
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2025 01:29:54.7594
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: bMLuWUEvGLgK0ZCGG7BctZ/JKn5RKJBusvgGpXfbQ3pXDSjTk7/iJtahJ1U3GxsqFXRvvUoWiWCJiMCFjBJLuG3CP33a9dgCGNWydgjPQOw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR11MB8194
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:AQAAfwBHSYW7hbZnaMQsAA--.35S2
+X-CM-SenderInfo: hgdl6xpl1xt0o6sk53xlxphulrpou0/
+Authentication-Results: hzbj-icmmx-7; spf=neutral smtp.mail=daizhiyuan
+	@phytium.com.cn;
+X-Coremail-Antispam: 1Uk129KBjvJXoW7ArWkArWDGF1kWw48Gr47XFb_yoW8try3pr
+	4DCa97Kr4rKFW29w4kZ3W0yw45K39rZFyrCrWI93sruFnIk3Z2qF4UKay5tasrJrs7ZF45
+	tFyqq345ur98XaUanT9S1TB71UUUUjUqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
+	DUYxn0WfASr-VFAU7a7-sFnT9fnUUIcSsGvfJ3UbIYCTnIWIevJa73UjIFyTuYvj4RJUUU
+	UUUUU
 
-Li Ming wrote:
-[..]
-> After __cxl_dpa_alloc(), a 'devm_add_action_or_reset(&port->dev,
-> cxl_dpa_release, cxled)' will be invoked, cxl_dpa_rwsem is possible to
-> be held in cxl_dpa_release() in devm_add_action_or_reset() failure
-> case.
-> 
-> So I create __cxl_dpa_alloc() to hold cxl_dpa_rwsem for the operations
-> needed cxl_dpa_resem protection, make sure that the cxl_dpa_rwsem is
-> released before devm_add_action_or_reset() invoking.
+PCI Express Base Spec r6.0 defines BAR size up to 8 EB (2^63 bytes),
+but supporting anything bigger than 128TB requires changes to pci_rebar_get_possible_sizes()
+to read the additional Capability bits from the Control register.
 
-Ah, got it, missing context, makes sense.
+If 8EB support is required, callers will need to be updated to handle u64 instead of u32.
+For now, support is limited to 128TB, and support for sizes greater than 128TB can be
+deferred to a later time.
+
+Signed-off-by: Zhiyuan Dai <daizhiyuan@phytium.com.cn>
+---
+ drivers/pci/pci.c             | 4 ++--
+ include/uapi/linux/pci_regs.h | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index 661f98c6c63a..77b9ceefb4e1 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -3752,7 +3752,7 @@ static int pci_rebar_find_pos(struct pci_dev *pdev, int bar)
+  * @bar: BAR to query
+  *
+  * Get the possible sizes of a resizable BAR as bitmask defined in the spec
+- * (bit 0=1MB, bit 19=512GB). Returns 0 if BAR isn't resizable.
++ * (bit 0=1MB, bit 31=128TB). Returns 0 if BAR isn't resizable.
+  */
+ u32 pci_rebar_get_possible_sizes(struct pci_dev *pdev, int bar)
+ {
+@@ -3800,7 +3800,7 @@ int pci_rebar_get_current_size(struct pci_dev *pdev, int bar)
+  * pci_rebar_set_size - set a new size for a BAR
+  * @pdev: PCI device
+  * @bar: BAR to set size to
+- * @size: new size as defined in the spec (0=1MB, 19=512GB)
++ * @size: new size as defined in the spec (0=1MB, 31=128TB)
+  *
+  * Set the new size of a BAR as defined in the spec.
+  * Returns zero if resizing was successful, error code otherwise.
+diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
+index 1601c7ed5fab..ce99d4f34ce5 100644
+--- a/include/uapi/linux/pci_regs.h
++++ b/include/uapi/linux/pci_regs.h
+@@ -1013,7 +1013,7 @@
+ 
+ /* Resizable BARs */
+ #define PCI_REBAR_CAP		4	/* capability register */
+-#define  PCI_REBAR_CAP_SIZES		0x00FFFFF0  /* supported BAR sizes */
++#define  PCI_REBAR_CAP_SIZES		0xFFFFFFF0  /* supported BAR sizes */
+ #define PCI_REBAR_CTRL		8	/* control register */
+ #define  PCI_REBAR_CTRL_BAR_IDX		0x00000007  /* BAR index */
+ #define  PCI_REBAR_CTRL_NBAR_MASK	0x000000E0  /* # of resizable BARs */
+-- 
+2.43.0
+
 
