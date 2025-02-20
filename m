@@ -1,160 +1,116 @@
-Return-Path: <linux-kernel+bounces-522950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74F59A3D078
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 05:28:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60DB0A3D07F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 05:34:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4536517B0E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 04:28:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30D4E3B1941
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 04:34:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A0F31DFE3B;
-	Thu, 20 Feb 2025 04:28:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDE3B3FD1;
+	Thu, 20 Feb 2025 04:34:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uR5/eQTh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iOYThNhB"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB07F286291;
-	Thu, 20 Feb 2025 04:28:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60B3C156885
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 04:34:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740025731; cv=none; b=ErO0kAbNBrzN/0LS43jFZeMnVoJ7e19WQw3llt7iiwONKqxEv2ci7PMlJeAn168BV41m7IIwwQsUsi+BzFOPnkj/1CnbN6/9sdWLnKkgyBQkwHWj++gOiIqOA+K/3laG/NDoFymjFCqO498UUKYvrUVoivw9PTEx/M5b+8TPrZ8=
+	t=1740026075; cv=none; b=V8TcFhqgXHIuVHUBjxq61hmnUWRN2aTjivPVp0v6KUU9p9kA7wwUJqaSSgCtcgQJS89m/6kJg6w9GbRSHxCqoCTKQ81h4yxg8S0iG5f44DLhamlhBZmMHu6HOzfriXJj+f4OiaEocXwEUEOsR1EzfwenVBVQg5cNEVvFe59E6v0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740025731; c=relaxed/simple;
-	bh=E72o+rqqTE8JfgJn/D0x7UAbb00J5LZDy4139aZCk9g=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=X05EJe5VWwCp3dP2+SO204FemViyNn9boCxU3WFqQD6Zapn3opYtIXVlevYZ0UkN7PlPR1sYjxHXdD+wlXUDZ9haCgErZL59SpJ1bfOl2vJe2yqg2Waxbms9Wv8eOaBeiZvv1yEbtjw+5DIS9h2RBEo8D0PajsADiMyO/lcjSNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uR5/eQTh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34135C4CED1;
-	Thu, 20 Feb 2025 04:28:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740025731;
-	bh=E72o+rqqTE8JfgJn/D0x7UAbb00J5LZDy4139aZCk9g=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=uR5/eQThy9LLj50nIGethKOOBFCvC4sO0nImncmiEJuTkbW0boby6Jt3P8pFRC8Wi
-	 bpAVBG0rpzc7LM/4ZPN6eT2xsN9lE5SEzlBiwc7svty7TxTQgjmaNAc3fKYwuxs87A
-	 rt7h5SjvHwe2TYGGpKy1TJB2tqvCPwUXK+/+zYSsYyyilKak0V/4aMbjSyJdwIsgxg
-	 wVUCY/5KoTytTrjS8YiV+NOvJiB0fu89fGUOyZHkzhLFQ+YHZvb/Tm0gpY4+WLNcBH
-	 ufROED8Q5+gZK0WyBHFfifyj1TBD8C9radsWW9daPcTPVRpXAPkryRpe6QfZuIZOph
-	 DOL8zebGkVssA==
-Date: Thu, 20 Feb 2025 13:28:48 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Adrian Huang <adrianhuang0701@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, Adrian Huang <ahuang12@lenovo.com>
-Subject: Re: [PATCH v2 1/1] tracing: Fix memory leak when reading set_event
- file
-Message-Id: <20250220132848.eafa42f94b25c6431d43a292@kernel.org>
-In-Reply-To: <20250220031528.7373-1-ahuang12@lenovo.com>
-References: <20250220031528.7373-1-ahuang12@lenovo.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740026075; c=relaxed/simple;
+	bh=jgwDoqy69Zoi+YVPD9FqEbg4CovWykgUn6vteBc7gB4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MSUZVlOe+/Q8q2mm5rw5I13QjV7Uq89XWNGm6uqBzhIzTjy84Zp2iWJjXqJH277PTjm9/N7cv9HtvRByKOEKpb5IlnHRuGU+ZIz11faJm+VKHu0RFCS4Ff7fF/RMmZTjrYbJ+bQHnoL8FZRkSsdB1Z3U6nnLypMkmMYLorFFpnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iOYThNhB; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-30737db1aa9so4219501fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 20:34:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740026071; x=1740630871; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zIgZ1R2fo/uZR08EAHjfTKiWP5NrtPRgl9O0Ta2Iyuo=;
+        b=iOYThNhBlRaeNob5B4Vf2Ah8E4Uqn3Iu64625cWrT8f1B4OGSvucl4/kACnwVnZHAJ
+         mff7LD6OwgqA8r7zKmTXUNOEwq5lwfUhtwD4a9UefC76FIVNc75ozwoV2pwicWccuupY
+         LRd2aaAudci0NJN1CtuTqvjGEYCX+bx4lmMH4pWqZHR1THgYK6JmU3FpADNm/7YpJXmn
+         OVFHrL+rXlGpkUX07dFzOoZG0F4z9a1piiJWrjCXHAPjfoM+SM3rj66FFVquzCOG8E8e
+         +lQ9dsV21U0vz+7NctUXlD93RQxdiegWlfdLCunMuRecVkhYuGSoKO/S/WJloafVEPpe
+         5NWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740026071; x=1740630871;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zIgZ1R2fo/uZR08EAHjfTKiWP5NrtPRgl9O0Ta2Iyuo=;
+        b=Fsx0WZGmU8pLUmPrGlrWGAsdb1QpdKLqRoh0IPo84D5oj4dFY30CIff+HscY2rtQah
+         Wir48W2DUMnn3QL6aW2TFuUrPWMmXV9ugvqstJqZGM1hj3gc3VHhs9b+ruEpAmEftsuY
+         xsFgNT74H+7+UcXMLafKj0UeqLhw+l8nDqypM28ppMTkzbcWZn/IYUUn/HeKS0RV4AM+
+         UgI5MNRJVX/YWKegY3L/HACHBiS1kNBJRnQ0Na4fPKv5gNBOpo46GpqMG6rn8ihdQjmC
+         drGHAXa556W1QQVR7BAaqkpViMwgYGA1R24BhvpmVgPHgovTbN1LeVMezrlchn2Z4TKd
+         vp5w==
+X-Forwarded-Encrypted: i=1; AJvYcCXeU+knecYABWeKpmhxVF/5r3FGHeLopG0R32u6ypSm2kjNyrwYkxJpr+NDUjbwUnUqoFGgZXkSScKuhOE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YweVCvpIVC5aIXcCkoUYhIYuIT3W51l3r1gaerF4NJbmeTRUSH/
+	bQA0rkATcF5nZkluZG5aYfWGTZ4fK9yxJPaYYYqMYKzg5q25Z2M3mORaS/28uP0=
+X-Gm-Gg: ASbGncslfXbfv/DsEL9mucaxGrMOSZMHbhNY73VVthynMnI2KXhsrF2NcF4f5uG5tgF
+	MEsU3s7RuoWpRKIktn9Am8edjydqHbuBU3JAnszFIXSDBSWBLC1ecXFJwOY3llQ+zcD8UhviDP7
+	T8l8o9D25Xk0E5LdeZDE2WxLlERsJwqOgJQz4YjINxHsiskSC9O7GMql7oIUnN5cqCWONUBCURf
+	/273NWsRgMRGa80t9zL8R3P1CSvxSHXJEBuyFCYwK0xkBp/PYJmaMJsc0ELPAHgI9DvXvnfsYqE
+	aRV1GdX0ecKRcxnNHiP4kAOFNrYp6tFDENyRvcnEITUlAo/r4Laf7NgZlIs8GTd9hhSVMac=
+X-Google-Smtp-Source: AGHT+IE/wbNVeqMIzJ0mRBTmf4NCpaNwWVzHs+1/sXMuy2O8j/XZA2bHjBHzaK7WJJplOVmy6+jcMg==
+X-Received: by 2002:a05:651c:20e:b0:306:124c:69d5 with SMTP id 38308e7fff4ca-30a450620b4mr22664261fa.34.1740026071154;
+        Wed, 19 Feb 2025 20:34:31 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30a2699d0f5sm15178761fa.78.2025.02.19.20.34.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2025 20:34:29 -0800 (PST)
+Date: Thu, 20 Feb 2025 06:34:27 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Taniya Das <quic_tdas@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>, 
+	Imran Shaik <quic_imrashai@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/4] clk: qcom: lpassaudiocc-sc7280: Add support for
+ LPASS resets for QCM6490
+Message-ID: <mtfck3p6touzlsogv7xu2sqstfi4tapee7dqdhx76ktpgqhw5e@g45ralchrf5l>
+References: <20250220-lpass_qcm6490_resets-v4-0-68dbed85c485@quicinc.com>
+ <20250220-lpass_qcm6490_resets-v4-2-68dbed85c485@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250220-lpass_qcm6490_resets-v4-2-68dbed85c485@quicinc.com>
 
-On Thu, 20 Feb 2025 11:15:28 +0800
-Adrian Huang <adrianhuang0701@gmail.com> wrote:
-
-> From: Adrian Huang <ahuang12@lenovo.com>
+On Thu, Feb 20, 2025 at 09:52:51AM +0530, Taniya Das wrote:
+> On the QCM6490 boards, the LPASS firmware controls the complete clock
+> controller functionalities and associated power domains. However, only
+> the LPASS resets required to be controlled by the high level OS. Thus,
+> add support for the resets in the clock driver to enable the Audio SW
+> driver to assert/deassert the audio resets as needed.
 > 
-> kmemleak reports the following memory leak after reading set_event file:
-> 
->   # cat /sys/kernel/tracing/set_event
-> 
->   # cat /sys/kernel/debug/kmemleak
->   unreferenced object 0xff110001234449e0 (size 16):
->   comm "cat", pid 13645, jiffies 4294981880
->   hex dump (first 16 bytes):
->     01 00 00 00 00 00 00 00 a8 71 e7 84 ff ff ff ff  .........q......
->   backtrace (crc c43abbc):
->     __kmalloc_cache_noprof+0x3ca/0x4b0
->     s_start+0x72/0x2d0
->     seq_read_iter+0x265/0x1080
->     seq_read+0x2c9/0x420
->     vfs_read+0x166/0xc30
->     ksys_read+0xf4/0x1d0
->     do_syscall_64+0x79/0x150
->     entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> 
-> The issue can be reproduced regardless of whether set_event is empty or
-> not. Here is an example about the valid content of set_event.
-> 
->   # cat /sys/kernel/tracing/set_event
->   sched:sched_process_fork
->   sched:sched_switch
->   sched:sched_wakeup
->   *:*:mod:trace_events_sample
-> 
-> The root cause is that s_next() returns NULL when nothing is found.
-> This results in s_stop() attempting to free a NULL pointer because its
-> parameter is NULL.
-> 
-> Fix the issue by freeing the memory appropriately when s_next() fails
-> to find anything.
-> 
-> Fixes: b355247df104 ("tracing: Cache ":mod:" events for modules not loaded yet")
-> Signed-off-by: Adrian Huang <ahuang12@lenovo.com>
-
-Looks good to me.
-
-Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-
-Thank you,
-
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
 > ---
-> Changelog v2:
->  - Per Steven's suggestion: Add a comment to describe why to free memory
->    in s_next().
->  - Per Steven's suggestion: Change the variable 'p' to 'v' in s_stop()
-> 
-> ---
->  kernel/trace/trace_events.c | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
-> index 4cb275316e51..513de9ceb80e 100644
-> --- a/kernel/trace/trace_events.c
-> +++ b/kernel/trace/trace_events.c
-> @@ -1591,6 +1591,13 @@ s_next(struct seq_file *m, void *v, loff_t *pos)
->  		return iter;
->  #endif
->  
-> +	/*
-> +	 * The iter is allocated in s_start() and passed via the 'v'
-> +	 * parameter. To stop the iterator, NULL must be returned. But
-> +	 * the return value is what the 'v' parameter in s_stop() receives
-> +	 * and frees. Free iter here as it will no longer be used.
-> +	 */
-> +	kfree(iter);
->  	return NULL;
->  }
->  
-> @@ -1667,9 +1674,9 @@ static int s_show(struct seq_file *m, void *v)
->  }
->  #endif
->  
-> -static void s_stop(struct seq_file *m, void *p)
-> +static void s_stop(struct seq_file *m, void *v)
->  {
-> -	kfree(p);
-> +	kfree(v);
->  	t_stop(m, NULL);
->  }
->  
-> -- 
-> 2.34.1
+>  drivers/clk/qcom/lpassaudiocc-sc7280.c | 23 +++++++++++++++++++----
+>  1 file changed, 19 insertions(+), 4 deletions(-)
 > 
 
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+With best wishes
+Dmitry
 
