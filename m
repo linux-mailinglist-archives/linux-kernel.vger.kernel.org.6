@@ -1,159 +1,199 @@
-Return-Path: <linux-kernel+bounces-523143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F6CBA3D2A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:50:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C612A3D2A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:56:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E99CA17906B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:50:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60E88177E56
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:56:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 388111E47B0;
-	Thu, 20 Feb 2025 07:50:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 558991E9B01;
+	Thu, 20 Feb 2025 07:56:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JzsMRm4X"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NVl/BmJi"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 217DE1E7660
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 07:50:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5E891ADC7D
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 07:56:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740037843; cv=none; b=QdoR8ZH3kjIl1T5tNUNHa51n+uUoeBng4pS8KGvQVDYW5YNftjeHiQYANvoMobFXH4Scb74AA9zrFRRjyRdIy1ssI5EOlvXgziQt0Qt9b8X/pMALamtTXcpgVbnKxAch8kViHLLoNtIdnbKAkID/3mBrnj17vwhTPWLhJNBbh3I=
+	t=1740038180; cv=none; b=D/UrODLD/Mxbve+ajqVOZdaN0MrZb+tev6EcRFiwMi60VcpbYoHF/6zgFv/73sb01zNioJeBkK0ibfwQocNEhiZ1708Qpw5p+wvkYP2aR7UIiGu4TO2Xl1lc8KzcgF7dOd4VX+96e2/1X5Kj74QtDEEeYrEQ7e4/hg28FGxhJok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740037843; c=relaxed/simple;
-	bh=8bW2YSdy1OJyn/FIkYV5qBmOPGJkHbh8jmBJ8DjbYAA=;
+	s=arc-20240116; t=1740038180; c=relaxed/simple;
+	bh=vGBT/xVYwXruBLvwiTsyM0K2w/4npJ1cJh6y4gdzD8Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hRBA2CS2VDkIchBHr7yg4xP3WFQq7NByfwRkqQwOfQBrZFnOcHBfky40YT52PseBkU2X7HDHDTja6X1ioXD7JdH73QjAr4eOTNTJpKyAqkMtOqRZ/6mELRk9ct3fZ+BPB7kJclQEKOfQzG3datjesy0HIVFQDY3pxM088tOvYVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JzsMRm4X; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-220d601886fso8387595ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 23:50:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740037841; x=1740642641; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=UV17Nt5yQKcSGgNfItNKNUGGyGE4aHh1b+X0vkMI1kU=;
-        b=JzsMRm4X90FmdBCfGSNoiaMZWYmWTrjf4i1YCNQcWTUBsmu70emqwO6rxC+QU8EiHC
-         KN/gRGHAmwZggT+6tlgAP47XF6nAz7S6eSV0X9KhkRNRe13LhSNFszLsBR24DP8D8Idr
-         LNcwn11H3+7DTb45849hQjuVTdvgebx4B3Orjbsx8YUGyD54W1CtzvqVHsiyNHfPMOjf
-         yRgkyvYRvRNRzFKL6hIoPXcCss8rpVXqiXPBdQkiu4QXTuPAX6hm/cLnyLVUSm4yWJo3
-         LfkLxhH5CC8K2O5uXLC5j7c496HM3HYVNKPLCQ+AsXxwLoiEpmnYnGWLIw70TYoYZ6eD
-         e95A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740037841; x=1740642641;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UV17Nt5yQKcSGgNfItNKNUGGyGE4aHh1b+X0vkMI1kU=;
-        b=Ba++lTe2Fvm+mJHu/dcOzX5Dw/sHc6K17BrRcKOhpg6WzwHWZF6zAkKwsjGZNwK/B7
-         OzQrHexoJWlPBWkzP7tJwnyiPliXKc+l80FKpDQzToC0RwQEl95+CLVYPDYPneGVYlWt
-         KlLH/VyYmN+qRbUjxkfMPny/9ircyW11dRZfcriNqgxEqUV6wpeMUUy/BQ1seHIdEa4P
-         tRtPMGx1asrGPrX76hoJzReKBs1glpjkcKdxE7WTMzRZHHb+7ADVdlDEbkDnB8KWCUs6
-         qFVyU+bDRjJrN6RT1M9Jh9vWVSRG2w6tWt0bL/OZjBlI1VV+a5gJStKlu/d+kvfXFAiC
-         SZwA==
-X-Forwarded-Encrypted: i=1; AJvYcCW/GDru5s+4mRHRrWlrxOllbhWlZdg6W0+x9g5FgDrwOqpP7ArOSXGW0YtWzQsHv66s7XKYxFUtNBxkHho=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrVgrF9pdkytxCORhomaKLjL1/Axvtwlutonvumlngxln/WtLi
-	/LsTD6SBXDXXn/yqtGjCFIMvZmUXFahpZExr5IT2BjFEQJCtpqS7QUCI0nZX0A==
-X-Gm-Gg: ASbGnct00AD4UqWqQZI7cSsT1VAaWGTAmSZEzeUVxpfGjlF4S+BAPs7xSmwzdhj/baO
-	l+y85iiM2D0AgGRqll/sxnUOOCHdzoCid+MnW9QVKKcK9/pZeBcDL4e5e7BTUMGnKmfXfMFBpAC
-	R9R0N3yQPBveNtMAre/CbkcI5HS3jWmDb47Z54xMe3cZDK+UB13uHkin8M5Und3LQAoWVb9qhGi
-	JJjtjzV+jdTg+QZjezlYLIlxukAOthvIZ26qNnSYy4wPCr0VegGAXKEnIssNlUzGj0ia4yiMdMh
-	wxEKUAijxsDf4kOHifnooRXNGQ==
-X-Google-Smtp-Source: AGHT+IFSN9+iiUzXPMS/UScQ00TgdpnN4eGzxEYaWLUw7fx9CjEDSYnibRHaiiO0jYuYJiu+yQKyaA==
-X-Received: by 2002:a05:6a00:2e82:b0:730:9567:c3d5 with SMTP id d2e1a72fcca58-7326177cbccmr34361814b3a.4.1740037841234;
-        Wed, 19 Feb 2025 23:50:41 -0800 (PST)
-Received: from thinkpad ([120.60.70.244])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73258b985c9sm10741321b3a.84.2025.02.19.23.50.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2025 23:50:40 -0800 (PST)
-Date: Thu, 20 Feb 2025 13:20:34 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Johan Hovold <johan@kernel.org>,
-	Loic Poulain <loic.poulain@linaro.org>,
-	linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mhi@lists.linux.dev,
-	kernel@collabora.com, ath11k@lists.infradead.org,
-	jjohnson@kernel.org
-Subject: Re: [BUG REPORT] MHI's resume from hibernate is broken
-Message-ID: <20250220075034.unsd5cq7xkip2by6@thinkpad>
-References: <59c036b6-a3d6-403b-8bb0-566a17f72abc@collabora.com>
- <20250214070447.scs6lpytjtecz3ko@thinkpad>
- <1cd4a1ed-f4e7-4c7b-a19f-f79afddbe310@collabora.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kkOZrVz9F1Hc2gwEUCTcxXyXfSde/9q8zQlrTG39kiCo9nyzIyGzEMQDo2czI9QuJAJi7kVC3ZjdiE0WXTUoiB0rQsCPg95TOxUJEFPsI/1px2K+FcqVN2i1WAEbKzLKsK68numJskC/vybiSj5K+Eqmo6Ni4+8BtGEUU2XGVdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NVl/BmJi; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740038176;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Q/q+cYyOUSWwYcE6Cpu7Ct2AeqH6ryENKC48JCkFcSg=;
+	b=NVl/BmJiYRRafpeo0ndVzQlTZgdPYIizaDjdKagnIZgZgcnCximHLtc8jBwzJJ5gler+Yc
+	746n4hjYIE/4M9SzNMOxrvdzWs2kLsVxhjdsDkCLxNXkX1YWN+0SmtLfYZ7W/FbnC6kqLe
+	tdClYZUSJjZgS21p3p3Ez5mOmiN+Gr0=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-527-6ufifHc2Mc-1S5GcnXcobg-1; Thu,
+ 20 Feb 2025 02:56:08 -0500
+X-MC-Unique: 6ufifHc2Mc-1S5GcnXcobg-1
+X-Mimecast-MFC-AGG-ID: 6ufifHc2Mc-1S5GcnXcobg_1740038166
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 535221955F28;
+	Thu, 20 Feb 2025 07:56:05 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.127])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2CA1519560A3;
+	Thu, 20 Feb 2025 07:56:02 +0000 (UTC)
+Date: Thu, 20 Feb 2025 15:55:58 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Kairui Song <kasong@tencent.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+	Chris Li <chrisl@kernel.org>, Barry Song <v-songbaohua@oppo.com>,
+	Hugh Dickins <hughd@google.com>,
+	Yosry Ahmed <yosryahmed@google.com>,
+	"Huang, Ying" <ying.huang@linux.alibaba.com>,
+	Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>,
+	Kalesh Singh <kaleshsingh@google.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/7] mm, swap: remove swap slot cache
+Message-ID: <Z7bgDhZmg9Vs+btw@MiWiFi-R3L-srv>
+References: <20250214175709.76029-1-ryncsn@gmail.com>
+ <20250214175709.76029-7-ryncsn@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1cd4a1ed-f4e7-4c7b-a19f-f79afddbe310@collabora.com>
+In-Reply-To: <20250214175709.76029-7-ryncsn@gmail.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Mon, Feb 17, 2025 at 07:35:50PM +0500, Muhammad Usama Anjum wrote:
-> On 2/14/25 12:04 PM, Manivannan Sadhasivam wrote:
-> > Hi,
-> Thank you so much for replying.
-> 
-> > 
-> > + ath11k list and Jeff
-> > 
-> > On Tue, Feb 11, 2025 at 01:15:55PM +0500, Muhammad Usama Anjum wrote:
-> >> Hi,
-> >>
-> >> I've been digging in the MHI code to find the reason behind broken
-> >> resume from hibernation for MHI. The same resume function is used
-> >> for both resume from suspend and resume from hibernation. The resume
-> >> from suspend works fine because at resume time the state of MHI is 
-> >> MHI_STATE_M3. On the other hand, the state is MHI_STATE_RESET when
-> >> we resume from hibernation.
-> >>
-> >> It seems resume from MHI_STATE_RESET state isn't correctly supported.
-> >> The channel state is MHI_CH_STATE_ENABLED at this point. We get error
-> >> while switching channel state from MHI_CH_STATE_ENABLE to
-> >> MHI_CH_STATE_RUNNING. Hence, channel state change fails and later mhi
-> >> resume fails as well. 
-> >>
-> >> I've put some debug prints to understand the issue. These may be
-> >> helpful:
-> >>
-> >> [  669.032683] mhi_update_channel_state: switch to MHI_CH_STATE_TYPE_START[2] channel state not possible cuzof channel current state[1]. mhi state: [0] Return -EINVAL
-> >> [  669.032685] mhi_prepare_channel: mhi_update_channel_state to MHI_CH_STATE_TYPE_START[2] returned -22
-> >> [  669.032693] qcom_mhi_qrtr mhi0_IPCR: failed to prepare for autoqueue transfer -22
-> >>
-> > 
-> > Thanks for the report!
-> > 
-> > Could you please enable the MHI and ath11k debug logs and share the full dmesg
-> > to help us understand the issue better?
-> The ath11k debug was already enabled. CONFIG_MHI_BUS_DEBUG wasn't enabled. 
+Hi Kairui,
 
-Sorry for not being clear. I asked you to enable the dev_dbg() logs in the MHI
-driver. But it is not required. See below.
+On 02/15/25 at 01:57am, Kairui Song wrote:
+......snip....  
+> -int get_swap_pages(int n_goal, swp_entry_t swp_entries[], int entry_order)
+> +swp_entry_t folio_alloc_swap(struct folio *folio)
+>  {
+> -	int order = swap_entry_order(entry_order);
+> -	unsigned long size = 1 << order;
+> +	unsigned int order = folio_order(folio);
+> +	unsigned int size = 1 << order;
+>  	struct swap_info_struct *si, *next;
+> -	int n_ret = 0;
+> +	swp_entry_t entry = {};
+> +	unsigned long offset;
+>  	int node;
+>  
+> +	if (order) {
+> +		/*
+> +		 * Should not even be attempting large allocations when huge
+> +		 * page swap is disabled. Warn and fail the allocation.
+> +		 */
+> +		if (!IS_ENABLED(CONFIG_THP_SWAP) || size > SWAPFILE_CLUSTER) {
+> +			VM_WARN_ON_ONCE(1);
+> +			return entry;
+> +		}
+> +	}
+> +
+>  	/* Fast path using percpu cluster */
+>  	local_lock(&percpu_swap_cluster.lock);
+> -	n_ret = swap_alloc_fast(swp_entries,
+> -				SWAP_HAS_CACHE,
+> -				order, n_goal);
+> -	if (n_ret == n_goal)
+> -		goto out;
+> +	if (swap_alloc_fast(&entry, SWAP_HAS_CACHE, order))
+> +		goto out_alloced;
+>  
+> -	n_goal = min_t(int, n_goal - n_ret, SWAP_BATCH);
+>  	/* Rotate the device and switch to a new cluster */
+>  	spin_lock(&swap_avail_lock);
+>  start_over:
+> @@ -1268,11 +1236,14 @@ int get_swap_pages(int n_goal, swp_entry_t swp_entries[], int entry_order)
+>  		plist_requeue(&si->avail_lists[node], &swap_avail_heads[node]);
+>  		spin_unlock(&swap_avail_lock);
+>  		if (get_swap_device_info(si)) {
+> -			n_ret += scan_swap_map_slots(si, SWAP_HAS_CACHE, n_goal,
+> -					swp_entries + n_ret, order);
+> +			offset = cluster_alloc_swap_entry(si, order, SWAP_HAS_CACHE);
+>  			put_swap_device(si);
+> -			if (n_ret || size > 1)
+> -				goto out;
+> +			if (offset) {
+> +				entry = swp_entry(si->type, offset);
+> +				goto out_alloced;
+> +			}
+> +			if (order)
+> +				goto out_failed;
 
-> I've
-> enabled it and now the hibernate is working without any issue. It is very strange
-> how can CONFIG_MHI_BUS_DEBUG make any difference. I don't have much background on
-> how it is helping.
-> 
+This is not related to this patch, do you know why non order-0 case
+can't start over on different devices?
 
-Probably some timing issue. But enabling the MHI debug logs could also hide the
-issue. So you should disable the CONFIG_MHI_BUS_DEBUG option and collect the MHI
-trace logs that we recently added.
+>  		}
+>  
+>  		spin_lock(&swap_avail_lock);
+> @@ -1291,10 +1262,20 @@ int get_swap_pages(int n_goal, swp_entry_t swp_entries[], int entry_order)
+>  			goto start_over;
+>  	}
+>  	spin_unlock(&swap_avail_lock);
+> -out:
+> +out_failed:
+> +	local_unlock(&percpu_swap_cluster.lock);
+> +	return entry;
+> +
+> +out_alloced:
+>  	local_unlock(&percpu_swap_cluster.lock);
+> -	atomic_long_sub(n_ret * size, &nr_swap_pages);
+> -	return n_ret;
+> +	if (mem_cgroup_try_charge_swap(folio, entry)) {
+> +		put_swap_folio(folio, entry);
+> +		entry.val = 0;
+> +	} else {
+> +		atomic_long_sub(size, &nr_swap_pages);
+> +	}
+> +
+> +	return entry;
+>  }
+>  
+>  static struct swap_info_struct *_swap_info_get(swp_entry_t entry)
+......snip....
+> @@ -2623,16 +2591,6 @@ static bool __has_usable_swap(void)
+>  	return !plist_head_empty(&swap_active_head);
+>  }
 
-Hope it will shed some light.
+seems the __has_usable_swap() function need be moved into the ifdeffery
+scope where __folio_throttle_swaprate() is located to fix the lkp
+warning.
 
-- Mani
+>  
+> -bool has_usable_swap(void)
+> -{
+> -	bool ret;
+> -
+> -	spin_lock(&swap_lock);
+> -	ret = __has_usable_swap();
+> -	spin_unlock(&swap_lock);
+> -	return ret;
+> -}
+> -
+>  /*
+>   * Called after clearing SWP_WRITEOK, ensures cluster_alloc_range
+>   * see the updated flags, so there will be no more allocations.
 
--- 
-மணிவண்ணன் சதாசிவம்
+Other than the test robot reported warning, this patch looks good to me.
+Thanks.
+
 
