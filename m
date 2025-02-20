@@ -1,96 +1,92 @@
-Return-Path: <linux-kernel+bounces-523286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96DD7A3D4CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:31:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 941ECA3D4D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:32:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3228188F268
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:31:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 129313A3D7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:31:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14DAB1EE7D6;
-	Thu, 20 Feb 2025 09:31:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2461E1F03DC;
+	Thu, 20 Feb 2025 09:31:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="T/PMmnlM"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ecUmiWhB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E646C2AEFE
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:31:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BD2B1F03D2;
+	Thu, 20 Feb 2025 09:31:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740043889; cv=none; b=Vw7v32tpuPumgNBoHVcaFNVG9usvLx9i4UUNI1wAIv/GLibCMBbWinAN9AMJKPGcvVsuESHOrN54bF7jk+qrv2j/bdSM1MwfMhfGENbWDQWjCTxw+z8r3QfkRbBZadSffsf33aCm6QEu/9oIl77sa3DY24Dy4RYuLOFAAEbLBjk=
+	t=1740043892; cv=none; b=BgA6ABv0kOHDNclIU0nYhaWS9ipq/D+//vu7MqPGAXZiRh4RYNRt6tiQj4rN+9aOvP+SBkSeWl0sd1WWidClgSDFE4S/q9yIFDZuIAGpcBxvsVBeZ9+dD632RaoQgj0SHz0s2n8ADCGO7wFL3p6NAGuWUfPm9+hHwHpyz+GWmXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740043889; c=relaxed/simple;
-	bh=d4+jKvkJJaIOmdujVUcDEyIJ/sZ1CKGmVkbuWSalcKg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aJ3EJtX4kBAD5KOb+uoaaQBUm6zBfNPIRGujdNEOu6ZBpwk7Z0DXLPekL5D+6wN7GEok+ibjQXfEzFhhDnn662JMCQnrH7aUwLRVpC3O+VU4fIpDDG/+lV87i9MVan3zMvsapCsexugxW9mSvBflLYgRm2msBQhPMTJzlGAhAOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=T/PMmnlM; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=lR8ijKB3JqpL8pV5Bk+/2fyVFlUM7QF+r6boQ5Lr92c=; b=T/PMmnlM7C/f0zTQljvckKyjoy
-	o37J4FXagT+NMydiD6D1ZY83KvKREVopGkgUSs3PqenRjdt1jPttBnqtnIP5itf/xh5Vf0d8ulH34
-	an+a02uWsUPNy8mngBiLFV6i19DvtB54Xs6RawBTeXeGFaAmWakp+Ljbohofqs1efOvCitovAjJza
-	+RAPJNxTviNbaKhIxpRb/9cyllCYzH7FIUWh/fRpKj0PFJqyOvjZfkM4mKfukr0twLPMID6Xmqmbt
-	DviMDaZEVOIhpFPbY5AIEBlz1tcuSjFhwv3LdiGizaJUxce8JT9ahFFZxCCRj2nrFT7K10uqI8S3/
-	opw/nKmQ==;
-Received: from i53875bc0.versanet.de ([83.135.91.192] helo=localhost.localdomain)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tl2tw-0003ew-Bj; Thu, 20 Feb 2025 10:31:24 +0100
-From: Heiko Stuebner <heiko@sntech.de>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: quentin.schulz@cherry.de,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	lukasz.czechowski@thaumatec.com,
-	Heiko Stuebner <heiko.stuebner@cherry.de>
-Subject: Re: [PATCH 1/2] arm64: dts: rockchip: remove supports-cqe from rk3588 jaguar
-Date: Thu, 20 Feb 2025 10:31:14 +0100
-Message-ID: <174004386808.2551340.16092707795307058059.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250219093303.2320517-1-heiko@sntech.de>
-References: <20250219093303.2320517-1-heiko@sntech.de>
+	s=arc-20240116; t=1740043892; c=relaxed/simple;
+	bh=ZKDliYiJAyWPwVHYoDQwmy8GedESgFshgP23qwEziT0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t0nBBET9QdMhd5CfidfCKjyTY/CUFUL4nf2yWCExouB1L04WQSxw1NVloa62m7ocCtF88wSrr66qJR7+/xUrPoeluRdYTCGr6rhBp36fHoYDyfsZhU8fJQityYXXExFZ8H6R2E8jMGLApxs0pCLhHoh2ISo6P2upiX0yp3txx30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ecUmiWhB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B79D3C4CEEA;
+	Thu, 20 Feb 2025 09:31:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740043892;
+	bh=ZKDliYiJAyWPwVHYoDQwmy8GedESgFshgP23qwEziT0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ecUmiWhByCMtNKUYHn1pEAIpFi5Q1aGwvYeiCEiAZ5wR3xm0ozcu63KhMvwHeWWa4
+	 2U+/PTJLI7J6NOn8JbptMfl98onLFBZeYBLcLgeI6tLTsxvfBqr2MQccIriqE41fc7
+	 bkusMWs9Q3kPvR3EotlyGCvBT4WH+xo2V/yGiQwjPFwB7ywy02Ztb06Fmyx2u/Sosb
+	 e03W6pz+yHSQ6QLAnonJ4kgFjoFWQ4V5K94HoYr40FeNrvJZ2N/bUaieS6OvSPaJDr
+	 JwsQ9JYanR9CaAFJ7rqPWR2xvhuJUbmjImXEmKFCNSOg4EYG3W0ZsIDi82o3zONrnu
+	 3wjU3p8MsUMOw==
+Date: Thu, 20 Feb 2025 11:31:27 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Stuart Yoder <stuart.yoder@arm.com>
+Cc: linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
+	sudeep.holla@arm.com, rafael@kernel.org, lenb@kernel.org,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 1/5] tpm_crb: implement driver compliant to CRB over
+ FF-A
+Message-ID: <Z7b2bwjzWbYE_Qjc@kernel.org>
+References: <20250219201014.174344-1-stuart.yoder@arm.com>
+ <20250219201014.174344-2-stuart.yoder@arm.com>
+ <Z7b11Kahh7JXDq9E@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z7b11Kahh7JXDq9E@kernel.org>
 
-
-On Wed, 19 Feb 2025 10:33:02 +0100, Heiko Stuebner wrote:
-> The sdhci controller supports cqe it seems and necessary code also is in
-> place - in theory.
+On Thu, Feb 20, 2025 at 11:28:58AM +0200, Jarkko Sakkinen wrote:
+> On Wed, Feb 19, 2025 at 02:10:10PM -0600, Stuart Yoder wrote:
+> > The Arm specification TPM Service CRB over FF-A specification
+> > defines the FF-A messages to interact with a CRB-based TPM
+> > implemented as an FF-A secure partition.
+> > 
+> > Spec URL:
+> > https://developer.arm.com/documentation/den0138/latest/
+> > 
+> > This driver is probed when a TPM Secure Partition is
+> > discovered by the FF-A subsystem. It exposes APIs
+> > used by the TPM CRB driver to send notifications to
+> > the TPM.
+> > 
+> > Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+> > Signed-off-by: Stuart Yoder <stuart.yoder@arm.com>
 > 
-> At this point Jaguar and Tiger are the only boards enabling cqe support
-> on the rk3588 and we are seeing reliability issues under load.
+> Cutting hairs now but as I cannot test this and this is 1/5:
+> can this patch be run without 2/5-4/5?
 > 
-> This can be caused by either a controller-, hw- or driver-issue and
-> definitly needs more investigation to work properly it seems.
-> 
-> [...]
+> The policy is that every patch should leave kernel tree to
+> a state where it compiles and runs.
 
-Applied, thanks!
+The root reason for this is that wrong ordered patch sets
+commited to Git add difficulty to bisection in the long-term.
 
-[1/2] arm64: dts: rockchip: remove supports-cqe from rk3588 jaguar
-      commit: 304b0a60d38dc24bfbfc9adc7d254d1cf8f98317
-[2/2] arm64: dts: rockchip: remove supports-cqe from rk3588 tiger
-      commit: 3e0711f89e5e7b0c7b2ab4843dc92dcbbdbba777
-
-Best regards,
--- 
-Heiko Stuebner <heiko@sntech.de>
+BR, Jarkko
 
