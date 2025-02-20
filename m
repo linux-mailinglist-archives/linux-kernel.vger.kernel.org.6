@@ -1,104 +1,81 @@
-Return-Path: <linux-kernel+bounces-523169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3899FA3D2FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:21:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26C94A3D30F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:24:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A55A16A90C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:21:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D5053BB9CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:22:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6898C1E991B;
-	Thu, 20 Feb 2025 08:21:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9F7A1EB1A9;
+	Thu, 20 Feb 2025 08:22:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b4luRZru"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="lN0AghEy"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31E0C1E47A9
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 08:21:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A811EB181;
+	Thu, 20 Feb 2025 08:22:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740039700; cv=none; b=Wl1S9V53C9HjUJaXvCy9xJwwT7s9L822sLHLtUT3iMVUFeQwiBnfQUTbn2sbypCFJdvWL4g1+QPKLI5smHRUxNFLrdyDcUt/eAHdPpqAzvy3HrZ3PRvN/mD+95EFGN/Xz3DV629SKVAril5VOGArygQKfS/Zbhh4oNiBhDzaqa4=
+	t=1740039725; cv=none; b=ktGV5pMUJeeQRTtpl2klUN0tGbaufBv/VxYP7gzQ79kfZXUzoU0oAE5OCJBbSxlCHMemYhEvZZYJxeOL7s7Yb9AjizbZjI47Mzn/yOit0KkuFs9oEtTPQY0yUpbnzy22lCnc0RpEApRGq6lz6N6iyWeMr61kEGtAw1OhP+qzCIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740039700; c=relaxed/simple;
-	bh=DhSWZ+LnqyXxtYIOPMoINYFhyYorGyErQ8agFapfXKs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CH5RDrY2H1fzaKEOWOziMGuS0TKXjS1+u7zwwoCtwCQ1BJ6R3lNM7MllNYSTMo8Mch/Y/Ok+ZHHX07xci5TnT9vq4LkwM57Hoeu6SE8cqb2ceYPb3n23M4jMyC98TC9NUkNM0SIxOoJm4BZ3bODOBUgRvn9PFNEwi24JUU0/C4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b4luRZru; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5dedae49c63so1230775a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 00:21:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740039697; x=1740644497; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j0My/IGnAu2uHnB18eW1eQLeiw1eTtEqdmu5EKWaXMI=;
-        b=b4luRZrudbjLTte7t83IvrSSkY1M7BqSLLWBlC7LeCoheLbsRV9G4neaqdHMkqKB+A
-         jYbn+CPxvwi3tgL72G9E7VPKtDJCQOFOmGm8cBipHAkyd2hlx10XXCsUTq2CXxoNvpZ6
-         6FLprdTFu5w0UerKOHqqwVQrUp/NNLTPtL0diPZ0SP+ueTi3RiO81R7Wff9U+InUzA0C
-         vfu4wyhyWF7VWEZE2F3zScUU4k7pz0zxWqrgTNfRNpkG46fGvKLRQRaC4+BFZjVuJiEP
-         c38lMLb66f3DGYxmreefnpaVYHSgNaHEdsdy6o8tjYw9IxHk5xH+DemXdPhx8vs4/ue8
-         Mycw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740039697; x=1740644497;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=j0My/IGnAu2uHnB18eW1eQLeiw1eTtEqdmu5EKWaXMI=;
-        b=m4JVsEK0zqCrb9lsrsBpqsSZjaFBKG/lV0gDZbgqV63EuZXHHX8R1Aphsi4albtdcR
-         RnVb+jKcGbbSEjeqGGD/fuBVpu1ZEm2mbTqJ6bf/T5VuuMgQsp4Ak2nDjWSlNETx37Ad
-         q1AaKHeT+qc55BpDfnPbvGSecYdlew4I8VBhzHLJG+7wzYGhU3kpUHqAPQ3OqmHN/wkk
-         anfWqspUQmXfFnKeansecsS5syBRY211rJSDt7kka1TD/jRMpZ1EOQ2BB7epBlUN1juY
-         M08EPh3EdG2W4pKYqtqAEZYSeb/UCQ4y917Y+dmCviTAhQeA2q/OClKqm4eAsbElOsrG
-         KMJw==
-X-Forwarded-Encrypted: i=1; AJvYcCXe6zt83qmX5tU8r7lRpXpnHKNSg87ZoP1eWT1AcyedfxDh63RL321I0Lq+ABbpwHE3XD4ml+0dnSMUcjg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMJVHxbUs7TOee/LklxAO7ZcLcXNjL9ZIjOPKZfVhPM76ngP9P
-	FRG2pRgHDqFoWFAgWQRLRuZ2btOlqlv4IyNf/BEIjuF7/5Xa6ybTAfHTYhQn96y8vJZjx/m9OvA
-	9cNSCo+0Zu9XA7+B9WbfyOVhEtMPEtci0OEs=
-X-Gm-Gg: ASbGncvA2ERLjvZdl0D3PebrEZXmbSTLq9yo2Xq+3UZLwLfqnPXcHupDCJG8ggP6rM+
-	vpAoK+HT43ER9qlVbgluIij2nMxGwbpFy6YRDxoURcPChFIhLksetHHH1EffTDIJFnIcaeLrl
-X-Google-Smtp-Source: AGHT+IHdcQTzN/ZyBxiJ2XxJrOj9cR/iZnDvdLIe7MJjIt7l9Sayz8tDNRoUzfXldl11nL9Ekj7qIe2XSwES1YuHN64=
-X-Received: by 2002:a17:906:6a0c:b0:ab7:db5d:44ea with SMTP id
- a640c23a62f3a-abb70b36c02mr2262813166b.27.1740039697170; Thu, 20 Feb 2025
- 00:21:37 -0800 (PST)
+	s=arc-20240116; t=1740039725; c=relaxed/simple;
+	bh=ngy4VSTw6cbr0NhLbcdeEVL5dA+MQxWppEmRRRV1CdI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=CakZ/htzeJsCniBX366EY5hcAWcl4G4g6kkgczXKgojfTDjdmHKKCe63LMlFukKmm0kC1oAi0aDkbk8vChyq99oinsKcGxhIVoUyrC/5BrQjCgk5gwchNeey2Fjf+GTzGeVI6W5RtaQllwYcVD5GyQGnKfOlgFFrDXGOXFzxJjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=lN0AghEy; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=ngy4VSTw6cbr0NhLbcdeEVL5dA+MQxWppEmRRRV1CdI=;
+	t=1740039723; x=1741249323; b=lN0AghEyo9itfdcb3uptqWHHxfNi4HvoB1DutXXxGD8EXom
+	o8bK6kMusRZYlcYUJFjiMCL1iMznsHOBEv2U19AJx9hNBG737n5h2Kn6GuYT6lx3wSDjYWOXSJv7X
+	9pb2sLyAKrwUjG78e10e1uV0bZ4spElEMo5ZSACOp8K69hZnLjGBYgrYV9YyRVBIOQ4a9i1DFWmCh
+	bvdPQPKgFdZmDt3NEglZgiMHYPddaS/N+/CdFJdqyHzg4r2ASl+Nmx1amZmOAiEtF6S75eb7/lygz
+	+ofk5XsyQRLknY5nn1KMMNvZZXkaYrcuSGyzymD7YsBmAGt88mONeq5oXSqWdmRA==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1tl1oV-00000003mf3-3XO1;
+	Thu, 20 Feb 2025 09:21:45 +0100
+Message-ID: <532b0a5081addd100d42642953347d09a29d1418.camel@sipsolutions.net>
+Subject: Re: [PATCH v3 0/2] Resolve the failure in downloading
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Jeff Chen <jeff.chen_1@nxp.com>, linux-wireless@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, briannorris@chromium.org, 
+	francesco@dolcini.it, tsung-hsien.hsieh@nxp.com, s.hauer@pengutronix.de
+Date: Thu, 20 Feb 2025 09:21:35 +0100
+In-Reply-To: <20250220061143.1417420-1-jeff.chen_1@nxp.com>
+References: <20250205012843.758714-1-jeff.chen_1@nxp.com>
+	 <20250220061143.1417420-1-jeff.chen_1@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <11603b392e2899b44fce61bbc8626a1aaa32b8f0.1740037706.git.geert@linux-m68k.org>
-In-Reply-To: <11603b392e2899b44fce61bbc8626a1aaa32b8f0.1740037706.git.geert@linux-m68k.org>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 20 Feb 2025 10:21:00 +0200
-X-Gm-Features: AWEUYZl4rQIYbMyfzqYq5tF3XFCtTFLr0W2jUlYHGwI2blIFaJ9vjMhs_t7KGFw
-Message-ID: <CAHp75VcMweeEa=oAsVOLefuUKx96YJVg4ifdqT-uySPLXWeAeg@mail.gmail.com>
-Subject: Re: [PATCH v2] auxdisplay: MAX6959 should select BITREVERSE
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Andy Shevchenko <andy@kernel.org>, linux-kernel@vger.kernel.org, 
-	kernel test robot <lkp@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-malware-bazaar: not-scanned
 
-On Thu, Feb 20, 2025 at 9:48=E2=80=AFAM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> If CONFIG_BITREVERSE is not enabled:
->
->     max6959.c:(.text+0x92): undefined reference to `byte_rev_table'
+On Thu, 2025-02-20 at 14:11 +0800, Jeff Chen wrote:
+> Hi Johannes,
+>=20
+> Based on your feedback for the previous submission, split the
+> original patch into two separate patches.
+>=20
 
-LGTM now, thanks.
-Do you think we are in an emergency to send it for v6.14?
-If possible, I would prefer to send this in PR for v6.15 as the
-problem was from day 1 and only bitbot found the configuration so far
-that fails to build.
+Thanks. I guess it really should have better subject lines now, and it
+doesn't need to (or shouldn't really) indicate in the commit messages
+that it was split (you can do that after a --- separator if you like.)
 
---=20
-With Best Regards,
-Andy Shevchenko
+johannes
 
