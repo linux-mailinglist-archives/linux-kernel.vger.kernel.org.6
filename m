@@ -1,40 +1,57 @@
-Return-Path: <linux-kernel+bounces-522939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DCA9A3D057
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 05:16:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EEDDA3CFD1
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 04:07:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E849177A5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 04:16:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BC953B6376
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 03:07:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A67041DEFFC;
-	Thu, 20 Feb 2025 04:16:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C85FB1D79A6;
+	Thu, 20 Feb 2025 03:07:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="fHN2jfFt"
-Received: from mail-m19731107.qiye.163.com (mail-m19731107.qiye.163.com [220.197.31.107])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="NzvX+TBd"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D44322AE74;
-	Thu, 20 Feb 2025 04:16:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.107
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740024979; cv=none; b=PhaiOMhZjydhxtZBnuVSF27rg8omOoh9lwTpd1OiUzhiivxZnOaeQkkul0Kwe9Za8l1tFijIW4AgF7ZnqHTPhA01LXF5DwhOIcUSH9uzbOnHdVH/FVG9ofGS6TgiJXKR+hp89/zggWxTAdN3A3rVHAH0plWYAHU5YJ2TrEmvs9E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740024979; c=relaxed/simple;
-	bh=kTVEpN6+LFzOeLE8CLLajgv8R95++2NW96EUIp7cVGY=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=LDrFvmHFtoQGorlcg9pbsr0XroR99vPGxf2LoKMjr64I2LiAxCawthu3x6PETkmqezIPBdCOfVkPaf0BBQYwwzRV9Eakv1bUuuzy8w5Eq2ZonpjrhYIf/K8VTDDRZCMked7ZjA8aPhFFmbhLLfoYAAk5J1orvt/gyLOsSZ+/tH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=fHN2jfFt; arc=none smtp.client-ip=220.197.31.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.12.45] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id b986b031;
-	Thu, 20 Feb 2025 09:53:44 +0800 (GMT+08:00)
-Message-ID: <4e07e570-25ef-4d03-b1b8-5acf8bc8bc8a@rock-chips.com>
-Date: Thu, 20 Feb 2025 09:53:44 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F74BEC5
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 03:07:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740020865; cv=pass; b=QCtsi1E8nIeTWrsihHR1KwuTDnIqEJeO/QvEmzKA3zKBX+D01u0juTdq4dCvTZsWtcqkdU8zZoYZ/gBWx0O3HHclyVMhdVr7WfGmqTI1HEXkI/qoToCLX4+qsUqmroS2Ks1Ckjp2RBuxmWoKEcv7HpbSdF2jXw8c+GKnUBt3jB8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740020865; c=relaxed/simple;
+	bh=E4JWbMuiJ1aOXMeomwMqViqYp812yAx6oUwT7BKClfc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jnV5LmY2asUsKX48yvuIxwEuzA+fQr08UR5glzpcMLBXOmzfLCSl+Mk9eSVL7nS7o+nEujW6Ff8RLWviRcYuYD70i5XazFwB8s2qOtB3Q811ouJw8GfnRHa8mUxfZyX7duqXf98i8xauthLdLFpNKqRLnZ5ClZLGtx/TxbvMX7M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=NzvX+TBd; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1740020837; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=ZXkPzyFtCdI7/MNx7P0a9vhMmGG09UuFiUeXiGJItJ4H+LHna5t6UKuhd0gRGy4jGpxZUdf6zUMDEN/hz6zH3q8L0DS6pEL9qu+YMmYRy+JTMlmeEce6SZGRpXiDqvc/gaoMmYDpEU6zZR8wIUSqBjfXqlgHQWb3/NaxTCnjGFY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1740020837; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=CZQfbH3KbzP7Bj9KoZzlxkG1srKiHYUm6CWgToaXURs=; 
+	b=jlg+tTbRUsQzW4tCn3//ZXZO/wllesz+Ly7AxxRZrhMQLhsd7k0e2ws77zeB3a2o6jZw/rCL8VRoEKol8VvnGygmgeBLPS/lfZyIKd8BqLppx6q+pa6AcTWpTxmAT5/sMF9He1VvaCZG4P/NlHZGeBRBOtpyt4lvKKL4+3hMzwI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
+	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740020837;
+	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=CZQfbH3KbzP7Bj9KoZzlxkG1srKiHYUm6CWgToaXURs=;
+	b=NzvX+TBdjBz6ujTn7H0GZSwo8XNBPwlwQd4EAUNhlG8JhE9K9X7GEm+5D5WIBwu3
+	mggAukPJn2+iqJbKphnnAQ6nUvXadoXI9KOUIQeH2UcdvqFuHQlrkX3sHOnwdoNzcwP
+	ef6DfCVW80B0L6z0pepTx8WKsmz/amXTc36AFzrU=
+Received: by mx.zohomail.com with SMTPS id 1740020835488353.06590206575595;
+	Wed, 19 Feb 2025 19:07:15 -0800 (PST)
+Message-ID: <29100f93-a7e6-4c81-ac83-af94ecd942a1@collabora.com>
+Date: Thu, 20 Feb 2025 06:07:09 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -42,71 +59,70 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: shawn.lin@rock-chips.com,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>,
- Heiko Stuebner <heiko@sntech.de>
-Subject: Re: linux-next: build failure after merge of the pmdomain tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
- Ulf Hansson <ulf.hansson@linaro.org>
-References: <20250220113338.60ba2290@canb.auug.org.au>
-Content-Language: en-GB
-From: Shawn Lin <shawn.lin@rock-chips.com>
-In-Reply-To: <20250220113338.60ba2290@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQkkYSVYaGEgaSUNCTBkZH01WFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-X-HM-Tid: 0a95210f95d809cckunmb986b031
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NT46Szo5ITIWCS0IEkoyLU4L
-	AgkaCRFVSlVKTE9LS0pNT0lOSUJCVTMWGhIXVQgTGgwVVRcSFTsJFBgQVhgTEgsIVRgUFkVZV1kS
-	C1lBWU5DVUlJVUxVSkpPWVdZCAFZQUpJTk43Bg++
-DKIM-Signature:a=rsa-sha256;
-	b=fHN2jfFtUOHW8HxjGan8tRKqKCIW1hgwEn91a/mKizUUx79Ikgh5RjdlmOWKu9nAeEG49sTX+keGPF/RM3hrWyKQ3aG7Wzw+BpzWWp7jaDuiUZW1fyvn9qS6p9GphAjhX0/SNqQvyoAj0tDKQvSTY0Nv9hmohFPfFLO45hRy/JY=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=kz2RbdNXW8q9JlPloKdddNUyjkRikvpmhR8YLFqMJdQ=;
-	h=date:mime-version:subject:message-id:from;
+Subject: Re: [PATCH RFC v2 1/5] virtio_config: add page_size field to
+ virtio_shm_region
+To: Sergio Lopez <slp@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>,
+ Daniel Verkamp <dverkamp@chromium.org>, Jason Wang <jasowang@redhat.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
+ <eperezma@redhat.com>, David Airlie <airlied@redhat.com>,
+ Gerd Hoffmann <kraxel@redhat.com>,
+ Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu
+ <olvaffe@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Simona Vetter <simona@ffwll.ch>, Rob Clark <robdclark@gmail.com>,
+ fnkl.kernel@gmail.com
+Cc: virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org
+References: <20250214-virtio-shm-page-size-v2-0-aa1619e6908b@redhat.com>
+ <20250214-virtio-shm-page-size-v2-1-aa1619e6908b@redhat.com>
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250214-virtio-shm-page-size-v2-1-aa1619e6908b@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-在 2025/2/20 8:33, Stephen Rothwell 写道:
-> Hi all,
-> 
-> After merging the pmdomain tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> x86_64-linux-gnu-ld: vmlinux.o: in function `rockchip_do_pmu_set_power_domain':
-> pm-domains.c:(.text+0x19aa103): undefined reference to `arm_smccc_1_1_get_conduit'
-> 
-> Caused by commit
-> 
->    61eeb9678789 ("pmdomain: rockchip: Check if SMC could be handled by TA")
-> 
-> $ grep CONFIG_HAVE_ARM_SMCCC_DISCOVERY .config
+On 2/14/25 18:16, Sergio Lopez wrote:
+> diff --git a/drivers/virtio/virtio_mmio.c b/drivers/virtio/virtio_mmio.c
+> index 5d78c2d572abfcfe2b84cdd82df622320fe97d5d..1f594b626d7a7734e8ec58766737a118c26bad94 100644
+> --- a/drivers/virtio/virtio_mmio.c
+> +++ b/drivers/virtio/virtio_mmio.c
+> @@ -560,6 +560,8 @@ static bool vm_get_shm_region(struct virtio_device *vdev,
+>  
+>  	region->addr = addr;
+>  
+> +	region->page_size = 4096;
+> +
+>  	return true;
+>  }
+>  
+> diff --git a/drivers/virtio/virtio_pci_modern.c b/drivers/virtio/virtio_pci_modern.c
+> index 5eaade7578606e4b02af0d66447417ad6aa11064..d7aeb2e50a3c499dfb68d58cb89b829ea2e50454 100644
+> --- a/drivers/virtio/virtio_pci_modern.c
+> +++ b/drivers/virtio/virtio_pci_modern.c
+> @@ -862,6 +862,7 @@ static bool vp_get_shm_region(struct virtio_device *vdev,
+>  
+>  	region->len = len;
+>  	region->addr = (u64) phys_addr + offset;
+> +	region->page_size = 4096;
+>  
+>  	return true;
+>  }
+> diff --git a/include/linux/virtio_config.h b/include/linux/virtio_config.h
+> index 169c7d367facb36dcabf9596068580ea8b8516c7..c1b2ce71ea55e81978e18db05494deab193fa4fb 100644
+> --- a/include/linux/virtio_config.h
+> +++ b/include/linux/virtio_config.h
+> @@ -14,6 +14,7 @@ struct irq_affinity;
+>  struct virtio_shm_region {
+>  	u64 addr;
+>  	u64 len;
+> +	u32 page_size;
+>  };
 
-It seems x86_64_defconfig did't enable  CONFIG_HAVE_ARM_SMCCC_DISCOVERY 
-which apparently belongs to ARM stuff.
+Nit: I'd squash this into patches #3/4, to not add code that is changed
+by a next patch.
 
-Selecting HAVE_ARM_SMCCC_DISCOVERY and ARM_PSCI_FW should pass the
-x86_64 allmodconfig compile.
-
---- a/drivers/pmdomain/rockchip/Kconfig
-+++ b/drivers/pmdomain/rockchip/Kconfig
-@@ -5,6 +5,8 @@ config ROCKCHIP_PM_DOMAINS
-         bool "Rockchip generic power domain"
-         depends on PM
-         select PM_GENERIC_DOMAINS
-+       select ARM_PSCI_FW
-+       select HAVE_ARM_SMCCC_DISCOVERY
-         help
-           Say y here to enable power domain support.
-           In order to meet high performance and low power requirements, 
-a power
-
-
-> $
-> 
-> I have used the pmdomain tree from next-20250219 for today.
-> 
-
+-- 
+Best regards,
+Dmitry
 
