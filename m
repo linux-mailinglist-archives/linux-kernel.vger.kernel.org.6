@@ -1,289 +1,149 @@
-Return-Path: <linux-kernel+bounces-524123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8FC7A3DF6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:55:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D92AAA3DFA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:01:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8F13700F98
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:53:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 000591883843
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:00:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 372751F9ED2;
-	Thu, 20 Feb 2025 15:52:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD17A1FF7D3;
+	Thu, 20 Feb 2025 16:00:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cmEBz/mi"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b="jDqO7kjd"
+Received: from mail.avm.de (mail.avm.de [212.42.244.120])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 454BD8F5B
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 15:52:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B08A1FECD8;
+	Thu, 20 Feb 2025 16:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.42.244.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740066764; cv=none; b=Rq3Doio6N6d+0TaMA0I+DcuRf4v1EoxuewG15zk8rRHo83YcyPO3MYPMAtyucVoTHSc7eZq/W0McIO928NagJQDplce/1m8KU7w0OExEb4N+2nTTYvWdMMxwWxIYM1TDZWJTMnxWxoo6+zIluwn4rdCd43BaP+HddxYtj6Qbc38=
+	t=1740067207; cv=none; b=iBTEM1WyXgCqOhhzNA8a6N4oaoIm0mTFA6KhsU9zD6GBZ8Bj5g10GlJUa4b9CBJ2T/jaufFkNRx4ip2bOFjRThLby4u0QLvRgMospPo1EesWdzOyElx2xn8ZoePPrvxZYXVeNaSEoDXyYDPWsKDP4BbyPVSQg4RHSs2Yb605Foc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740066764; c=relaxed/simple;
-	bh=nqMLoYyUSVteUWyDESp588+OG8stwgoB6g2nzJC/p08=;
+	s=arc-20240116; t=1740067207; c=relaxed/simple;
+	bh=GLKbcC3ae72AZ7nESSdOgYNj0ol85ebzOyHSvnHXZHQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pmP83BT44NWMjNF9JEDO28mhvzPDcMre3NomyQnr/EU/2/UHgfjGGoY8WZs5LBSINVcywWHWH6l3qE3FJY6KCAdGhx5mi3rMlvBZ2IC5RklATLV1Z2ajBgICEfFumG/rykNJbw+JQDMWeY4TMylNemPoz/T3WtCQGwHQ/93dDxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cmEBz/mi; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740066760;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vXixf/+e+DbNzE964SK6i49ancXo4iPqgPiTeOrCAsc=;
-	b=cmEBz/miRYA/FqknuaI6TtjNBlT6nhpITtQgqu2jOiSZ/0zmW1OftM28KK2diA/nJ49iHT
-	3hneWRCI3q+alTLBcMB8rf/6Eu3g5svG+ypDUIBz31IzoVMtqh4Qu2mawA2QKjv81XFPMx
-	XVsvd38i1MzyzA62BW6GLgdnwuVh0j8=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-84-bKOnWXlBNDqNLJT5yxcJGg-1; Thu,
- 20 Feb 2025 10:52:35 -0500
-X-MC-Unique: bKOnWXlBNDqNLJT5yxcJGg-1
-X-Mimecast-MFC-AGG-ID: bKOnWXlBNDqNLJT5yxcJGg_1740066754
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5BF0A1801A10;
-	Thu, 20 Feb 2025 15:52:34 +0000 (UTC)
-Received: from pauld.westford.csb (unknown [10.22.80.224])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 823281800D96;
-	Thu, 20 Feb 2025 15:52:32 +0000 (UTC)
-Date: Thu, 20 Feb 2025 10:52:29 -0500
-From: Phil Auld <pauld@redhat.com>
-To: Vishal Chourasia <vishalc@linux.ibm.com>
-Cc: Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Waiman Long <longman@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [CHANGE 1/2] sched/isolation: Make use of more than one
- housekeeping cpu
-Message-ID: <20250220155229.GB89684@pauld.westford.csb>
-References: <20250211140104.420739-1-pauld@redhat.com>
- <4a8d54e7-fa29-4ce4-9023-3cdffa0807e6@linux.ibm.com>
- <20250213142653.GA472203@pauld.westford.csb>
- <Z67Wy9Jjn0BZa01A@linux.ibm.com>
- <20250218150059.GC547103@pauld.westford.csb>
- <Z7bz6ECsSfpcqqkc@linux.ibm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mEc2+TRzMYpF78smf6cFIBNIjoQoX3soWeoGEQmIDWZKub+YenUDW2Ff4HYrXgOJiN6RDmSD/DlxNiaulu5YKGTciMIzF7Ipet3zvsgQVADuhi/bYkfFn2ytO8XsArVFAQEHb+TcEi83+vzg7oPdpVkn+olvVIPQI1dxtzytYNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de; spf=pass smtp.mailfrom=avm.de; dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b=jDqO7kjd; arc=none smtp.client-ip=212.42.244.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=avm.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=avm.de; s=mail;
+	t=1740066880; bh=GLKbcC3ae72AZ7nESSdOgYNj0ol85ebzOyHSvnHXZHQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jDqO7kjdUAwCYHOwrzNre8nXySaFwgR1XN+9uhYa9JKm3YsUFS/JC/diif4Pz+3fG
+	 5LvX8tp5JyQTQJFsGBz1+OOjNdc4JT0x8zlLQreb0QulHhPi4XHTxGVACn+kZ7ihrq
+	 7IvFPUSL589un9VtwLsqfAd5w7PdGEOGPmmTHU8o=
+Received: from [212.42.244.71] (helo=mail.avm.de)
+	by mail.avm.de with ESMTP (eXpurgate 4.52.1)
+	(envelope-from <n.schier@avm.de>)
+	id 67b75040-038b-7f0000032729-7f0000019174-1
+	for <multiple-recipients>; Thu, 20 Feb 2025 16:54:40 +0100
+Received: from mail-auth.avm.de (dovecot-mx-01.avm.de [212.42.244.71])
+	by mail.avm.de (Postfix) with ESMTPS;
+	Thu, 20 Feb 2025 16:54:40 +0100 (CET)
+Received: from l-nschier-nb (unknown [IPv6:2001:9e8:9e4:1f01:9fb7:d3c6:7f35:9b14])
+	by mail-auth.avm.de (Postfix) with ESMTPSA id 4DD318083B;
+	Thu, 20 Feb 2025 16:54:40 +0100 (CET)
+Date: Thu, 20 Feb 2025 16:54:39 +0100
+From: Nicolas Schier <n.schier@avm.de>
+To: Jeffrey Hugo <quic_jhugo@quicinc.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Kees Cook <kees@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Ben Hutchings <ben@decadent.org.uk>
+Subject: Re: [PATCH 3/4] kbuild: slim down package for building external
+ modules
+Message-ID: <20250220-kickass-famous-kittiwake-c11f5b@l-nschier-nb>
+References: <20240727074526.1771247-1-masahiroy@kernel.org>
+ <20240727074526.1771247-4-masahiroy@kernel.org>
+ <b3a8816c-3846-83ab-9750-fd12041d9495@quicinc.com>
+ <20250220-red-antelope-of-education-5417aa@l-nschier-nb>
+ <0ee862ec-4c36-4c3e-ae90-627c6b0e527b@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Z7bz6ECsSfpcqqkc@linux.ibm.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+In-Reply-To: <0ee862ec-4c36-4c3e-ae90-627c6b0e527b@quicinc.com>
+X-purgate-ID: 149429::1740066880-5220FE17-CD29D720/0/0
+X-purgate-type: clean
+X-purgate-size: 2696
+X-purgate-Ad: Categorized by eleven eXpurgate (R) https://www.eleven.de
+X-purgate: This mail is considered clean (visit https://www.eleven.de for further information)
+X-purgate: clean
 
-
-Hi Vishal,
-
-On Thu, Feb 20, 2025 at 02:50:40PM +0530 Vishal Chourasia wrote:
-> On Tue, Feb 18, 2025 at 10:00:59AM -0500, Phil Auld wrote:
-> > Hi Vishal.
-> > 
-> > On Fri, Feb 14, 2025 at 11:08:19AM +0530 Vishal Chourasia wrote:
-> > > Hi Phil, Vineeth
+On Thu, Feb 20, 2025 at 08:03:32AM -0700, Jeffrey Hugo wrote:
+> On 2/20/2025 3:03 AM, Nicolas Schier wrote:
+> > On Tue, Feb 18, 2025 at 01:25:38PM -0700, Jeffrey Hugo wrote:
+> > > On 7/27/2024 1:42 AM, Masahiro Yamada wrote:
+> > > > Exclude directories and files unnecessary for building external modules:
+> > > > 
+> > > >    - include/config/  (except include/config/auto.conf)
+> > > >    - scripts/atomic/
+> > > >    - scripts/dtc/
+> > > >    - scripts/kconfig/
+> > > >    - scripts/mod/mk_elfconfig
+> > > >    - scripts/package/
+> > > >    - scripts/unifdef
+> > > >    - .config
 > > > 
-> > > On Thu, Feb 13, 2025 at 09:26:53AM -0500, Phil Auld wrote:
-> > > > On Thu, Feb 13, 2025 at 10:14:04AM +0530 Madadi Vineeth Reddy wrote:
-> > > > > Hi Phil Auld,
-> > > > > 
-> > > > > On 11/02/25 19:31, Phil Auld wrote:
-> > > > > > The exising code uses housekeeping_any_cpu() to select a cpu for
-> > > > > > a given housekeeping task. However, this often ends up calling
-> > > > > > cpumask_any_and() which is defined as cpumask_first_and() which has
-> > > > > > the effect of alyways using the first cpu among those available.
-> > > > > > 
-> > > > > > The same applies when multiple NUMA nodes are involved. In that
-> > > > > > case the first cpu in the local node is chosen which does provide
-> > > > > > a bit of spreading but with multiple HK cpus per node the same
-> > > > > > issues arise.
-> > > > > > 
-> > > > > > Spread the HK work out by having housekeeping_any_cpu() and
-> > > > > > sched_numa_find_closest() use cpumask_any_and_distribute()
-> > > > > > instead of cpumask_any_and().
-> > > > > > 
-> > > > > 
-> > > > > Got the overall intent of the patch for better load distribution on
-> > > > > housekeeping tasks. However, one potential drawback could be that by
-> > > > > spreading HK work across multiple CPUs might reduce the time that
-> > > > > some cores can spend in deeper idle states which can be beneficial for
-> > > > > power-sensitive systems.
-> > > > > 
-> > > > > Thoughts?
-> > > > 
-> > > > NOHZ_full setups are not generally used in power sensitive systems I think.
-> > > > They aren't in our use cases at least. 
-> > > > 
-> > > > In cases with many cpus a single housekeeping cpu can not keep up. Having
-> > > > other HK cpus in deep idle states while the one in use is overloaded is
-> > > > not a win. 
+> > > Please revert this (the removal of .config).
 > > > 
-> > > To me, an overloaded CPU sounds like where more than one tasks are ready
-> > > to run, and a HK CPU is one receiving periodic scheduling clock
-> > > ticks, so HP CPU is bound to comes out of any power-saving state it is in.
-> > 
-> > If the overload is caused by HK and interrupts there is nothing in the
-> > system to help. Tasks, sure, can get load balanced.
-> > 
-> > And as you say, the HK cpus will have generally ticks happening anyway.
-> > 
-> > > > 
-> > > > If your single HK cpu can keep up then only configure that one HK cpu.
-> > > > The others will go idle and stay there.  And since they are nohz_full
-> > > > might get to stay idle even longer.
-> > > While it is good to distribute the load across each HK CPU in the HK 
-> > > cpumask (queuing jobs on different CPUs each time), this can cause
-> > > jitter in virtualized environments. Unnecessaryily evicting other
-> > > tenants, when it's better to overload a VP than to wake up other VPs of a
-> > > tenant.
+> > > I got some strange reports that our external module install broke, and
+> > > traced it to this change.  Our external module references the .config
+> > > because we have different logic for the build depending on if other, related
+> > > modules are present or not.
 > > > 
-> > 
-> > Sorry I'm not sure I understand your setup. Are your running virtual
-> > tenants on the HK cpus?  nohz_full in the guests? Maybe you only need
-> > on HK then it won't matter.
-> > 
-> Firstly, I am unaware if nohz_full is being used in virtualized environment.
-> Please correct me it is. I am not saying it can't or shouldn't be used, it's just
-> I don't know if anybody is using it.
->
-
-I've seen some people trying it in various ways and to varying degrees of
-success if I recall correctly.
-
-
-> nohz_full in guests would mean that tick is disabled inside the guest but
-> the host might still be getting ticks. So, I am unsure, whether it is a good
-> idea to have nohz_full in virtualized environment.
-> 
-> Nevertheless, the idea of nohz_full is to reduce to the kernel interference
-> for CPUs marked as nohz_full. And, it does help with guest interference.
-> 
-> I would like to mention, In SPLPAR environment, scheduling work on
-> different HK CPU each time can caused VM preemption in a multi-tenant
-> setup in cases where CPUs in HK cpumask spans across VPs, its better to
-> consolidate them within few VPs.
-> 
-> VP is virtual core/processor.
-
-I have a hard time reconciling you saying you are not using virtualization
-and then talking about VMs and VPs ;)
-
-Sometimes I forget how interesting PPC can be...
-
-> 
-> > My concern is that currently there is no point in having more than
-> > one HK cpu (per node in a NUMA case). The code as currently implemented
-> > is just not doing what it needs to.
-> > 
-> > We have numerous cases where a single HK cpu just cannot keep up and
-> > the remote_tick warning fires. It also can lead to the other things
-> > (orchastration sw, HA keepalives etc) on the HK cpus getting starved
-> > which leads to other issues.  In these cases we recommend increasing
-> > the number of HK cpus.  But... that only helps the userspace tasks
-> > somewhat. It does not help the actual housekeeping part.
-> > 
-> > It seems clear to me that the intent of the cpumask_any_and() calls
-> > is to pick _any_ cpu in the hk mask. Not just the first, otherwise
-> > it would just use cpumask_first_and().
-> > 
-> > I'm open to alternate suggestions of how to fix this.
-> Your approach looks good to me.
-> 
-> I wanted to mention the case of overcommitted multi-tenant setup
-> where this will cause noisy neighbour sort of situation, but this can be
-> avoided by carefully selecting HK CPUs.
-
-Yes, it can be configured away, hopefully.
-
-Still, this could easily be a sched feat if that make sense to people.
-
-
-Thanks for the review!
-
-
-Cheers,
-Phil
-
-
-
-> 
-> Thanks,
-> vishalc
-> > 
-> > 
-> > Cheers,
-> > Phil
-> > 
-> > > > 
-> > > > I do have a patch that has this controlled by a sched feature if that
-> > > > is of interest. Then it could be disabled if you don't want it.
+> > > Also, it looks like this broke DKMS for some configurations, which not only
+> > > impacts DKMS itself [1] but also downstream projects [2].
 > > > 
-> > > Vishal
-> > > > 
-> > > > Cheers,
-> > > > Phil
-> > > > 
-> > > > > 
-> > > > > Thanks,
-> > > > > Madadi Vineeth Reddy
-> > > > > 
-> > > > > > Signed-off-by: Phil Auld <pauld@redhat.com>
-> > > > > > Cc: Peter Zijlstra <peterz@infradead.org>
-> > > > > > Cc: Juri Lelli <juri.lelli@redhat.com>
-> > > > > > Cc: Frederic Weisbecker <frederic@kernel.org>
-> > > > > > Cc: Waiman Long <longman@redhat.com>
-> > > > > > Cc: linux-kernel@vger.kernel.org
-> > > > > > ---
-> > > > > >  kernel/sched/isolation.c | 2 +-
-> > > > > >  kernel/sched/topology.c  | 2 +-
-> > > > > >  2 files changed, 2 insertions(+), 2 deletions(-)
-> > > > > > 
-> > > > > > diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
-> > > > > > index 81bc8b329ef1..93b038d48900 100644
-> > > > > > --- a/kernel/sched/isolation.c
-> > > > > > +++ b/kernel/sched/isolation.c
-> > > > > > @@ -40,7 +40,7 @@ int housekeeping_any_cpu(enum hk_type type)
-> > > > > >  			if (cpu < nr_cpu_ids)
-> > > > > >  				return cpu;
-> > > > > >  
-> > > > > > -			cpu = cpumask_any_and(housekeeping.cpumasks[type], cpu_online_mask);
-> > > > > > +			cpu = cpumask_any_and_distribute(housekeeping.cpumasks[type], cpu_online_mask);
-> > > > > >  			if (likely(cpu < nr_cpu_ids))
-> > > > > >  				return cpu;
-> > > > > >  			/*
-> > > > > > diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-> > > > > > index c49aea8c1025..94133f843485 100644
-> > > > > > --- a/kernel/sched/topology.c
-> > > > > > +++ b/kernel/sched/topology.c
-> > > > > > @@ -2101,7 +2101,7 @@ int sched_numa_find_closest(const struct cpumask *cpus, int cpu)
-> > > > > >  	for (i = 0; i < sched_domains_numa_levels; i++) {
-> > > > > >  		if (!masks[i][j])
-> > > > > >  			break;
-> > > > > > -		cpu = cpumask_any_and(cpus, masks[i][j]);
-> > > > > > +		cpu = cpumask_any_and_distribute(cpus, masks[i][j]);
-> > > > > >  		if (cpu < nr_cpu_ids) {
-> > > > > >  			found = cpu;
-> > > > > >  			break;
-> > > > > 
-> > > > 
-> > > > -- 
-> > > > 
+> > > While DKMS may be updated going forward to avoid this issue, there are
+> > > plenty of affected version out in the wild.
 > > > 
+> > > Also, I haven't surveyed every distro, but it looks like Ubuntu still
+> > > packages the .config with their headers in their upcoming "Plucky" release
+> > > based on 6.12.  I suspect they wouldn't do that if they didn't feel it was
+> > > needed/useful.
+> > > 
+> > > -Jeff
+> > > 
+> > > [1]: https://github.com/dell/dkms/issues/464
+> > > [2]: https://github.com/linux-surface/linux-surface/issues/1654
 > > 
-> > -- 
+> > Hi Jeff,
 > > 
+> > do you know the related thread [1]?  According to the last mail, DKMS
+> > has fixed its issue already in December.
 > 
+> DKMS tip might be fixed, but production versions are in various distros,
+> which are not updated.  Therefore actual users are impacted by this.
+> 
+> What happened to the #1 rule of kernel, that we do not break users?
 
--- 
+I think, Masahiro already provided valid and profound reasons for
+keeping it the way it is.  Users of run-time kernel interfaces are not
+affected by the change.  Concretely reported issues were, as far as I
+know, only a matter of specific non-official way to work with .config
+for other reasons than just building external kernel modules in the way
+it is thought to work.
 
+Kind regards,
+Nicolas
+
+> This still needs to be reverted.
+> 
+> -Jeff
+> 
+> > 
+> > Kind regards,
+> > Nicolas
+> > 
+> > [1]: https://lore.kernel.org/linux-kbuild/CAK7LNARqEOVOzP5vdUVF0KxQBNb9xtYs-COSXXWDMpBzGaLGow@mail.gmail.com/T/#m95f48caf46357a41c1df5e038e227a01ab89dbda
+> 
 
