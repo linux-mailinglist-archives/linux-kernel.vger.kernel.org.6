@@ -1,72 +1,56 @@
-Return-Path: <linux-kernel+bounces-524136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A199BA3DF95
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:59:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34659A3DF9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:00:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BEAD188B0D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:58:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34AD73A54CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:58:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2942D1FBC9E;
-	Thu, 20 Feb 2025 15:58:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6551A1FF1B3;
+	Thu, 20 Feb 2025 15:58:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rsfQVd5p";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LTA3d9Z0"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="trpXHrN/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 349371FE46F
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 15:57:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0CC513BACC;
+	Thu, 20 Feb 2025 15:58:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740067080; cv=none; b=lig1jmaRaUzbgQpaHGqUbZDfracKxN6JaAwWByKTssDMJ2uAyXsI7sgBPwBrjgPhZQEFZ78eKvd3VMLeJhbbSPPZ+WPGMny95H1aSCHQBvrCjLB5Sk2kvjZpWqaLGZU6btcCem3853g7cvsqvQCDOXVyt3pSQxZtiqDr+lVxqrQ=
+	t=1740067118; cv=none; b=X+oCr1GhCdK0HkuQCMIEBh8SI0Bf8B9woH+qIBvMZVPZ4qCvzkqwjHWyAR+KjKHj4NB4FXpUn01/D1QDeG8JpeoJ9m5a8JslbPOBeA1aTQGK5RypxwkhcuITwJzF4yAJSFz/cuy8mZSjH8YpDpvrRwLEp9TlTB2dUFdsFTf5tkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740067080; c=relaxed/simple;
-	bh=ji3wK1761EdJc8zNaBYGgLOdH4v+xM36mjARw12TKiE=;
+	s=arc-20240116; t=1740067118; c=relaxed/simple;
+	bh=14rJoV0ANKQdFBTR+duDJVpDee6Cz/q0o6NV+rmiOU0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J8/sVlpeSK/7jio02wLcuvSTpRlXCbN0oVHfzT3XVBRWKgAGvmxjj7Bcy1N+l+iixV17v2EAH/MDolhxtlPNRtfxNmap63EO2Hmq48VwkxpJ14VAyTA4v90w8Ra1qOy0dYaj6rxU4FPNGIji53RkV9FKe5xmHA4Ho6MQX64sKFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rsfQVd5p; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LTA3d9Z0; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 20 Feb 2025 16:57:56 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740067077;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ji3wK1761EdJc8zNaBYGgLOdH4v+xM36mjARw12TKiE=;
-	b=rsfQVd5pd1Jdf+PEQ3wCwYIfAIf5gHP/rc2NS5HMrlkrhTXFaJx4G1wmH5/fXILegoPCp+
-	gbEKd59aibnLMBeC4EcRZNYDGMRbddyCNYdJsvwSYIWOyb8IZA6aXG7gzNfoDfIXly62Xo
-	xQ8LTCLQRS4kPvAuQmyUP4AiicFGRNA6d3gcakOLnDZ+43aE7oGd6aw7bpPWkV4whcrvYG
-	ZhEypWYEzJnivSlHuBOHPtjcoOOPSOEeo5qWzERPpcVGRaxUMVpX3+ugTcGJnZdmN2TmkP
-	qqb4yB4SzhwC0Gpvgn45BetM3Oxn1sFUeBRt6AxDIcNFSmkF2MhhswCCBCDvkQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740067077;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ji3wK1761EdJc8zNaBYGgLOdH4v+xM36mjARw12TKiE=;
-	b=LTA3d9Z0qpAYTMbXiCTkpO3zpHOQlrXLx+J7A3V4nnY9UtqB65FDcsRHw+9OS+amzqRMUx
-	uInjG/A3G1qSlHAQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org,
-	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH v8 00/15] futex: Add support task local hash maps.
-Message-ID: <20250220155756.A4uvp2T-@linutronix.de>
-References: <20250203135935.440018-1-bigeasy@linutronix.de>
- <20250204151405.GW7145@noisy.programming.kicks-ass.net>
- <20250205122026.l6AQ2lf7@linutronix.de>
- <20250220151206.GB11590@noisy.programming.kicks-ass.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YsvtgEyBsqHgr8Qg+RMu11R7//IKMo3escMEnJrcpywXOUI70Q7cu9//cAMIQRI10YTKU+ibYD+pss1lBf3QGqUt4k42dQAFFlqKYuMcBdTQJv2td3S1+kI2ZMjz9rj3wBZxm4gc7eUbiMkvMG1BXyShRtLPtMsXsdAM90MrYWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=trpXHrN/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2B24C4CED1;
+	Thu, 20 Feb 2025 15:58:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740067118;
+	bh=14rJoV0ANKQdFBTR+duDJVpDee6Cz/q0o6NV+rmiOU0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=trpXHrN/WRxpPIJd+Ki2aEBFIqN+k8UcruG6iXcDDywo9WlieD1+Bw2YKnzMJt69I
+	 O46Ae0Vk3LQQRmIT+kZdXWHpEYnkCdxcO5BEZSPjMB461rJk295ALffb9zLLPMC3FB
+	 If1aYim7UPVG1wVS2+lnMxyKWltMvhcWDpvhaKqk7ZZFi8W7d87vPxDgUSmoCWk1su
+	 p8WPtuH9y8IApUc7Jh0ylR5gC/GR/eRSYCki12I7sj35+7hHHsFhZS0o/MK8FMF8V5
+	 LXptJhQPF3K+R2ALxVqGeA9n+xq5yCkpet1LxmAobfpIqllQi2dEjjSfZJEmDOUVRc
+	 Pra3pEexReqTQ==
+Date: Thu, 20 Feb 2025 15:58:34 +0000
+From: Lee Jones <lee@kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Pavel Machek <pavel@kernel.org>,
+	Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-leds@vger.kernel.org
+Subject: Re: [PATCH] leds: st1202: Fix an error handling path in
+ st1202_probe()
+Message-ID: <20250220155834.GA824852@google.com>
+References: <4afa457713874729eb61eec533a4674a51d1d242.1739985599.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,11 +59,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250220151206.GB11590@noisy.programming.kicks-ass.net>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4afa457713874729eb61eec533a4674a51d1d242.1739985599.git.christophe.jaillet@wanadoo.fr>
 
-On 2025-02-20 16:12:06 [+0100], Peter Zijlstra wrote:
-> Sorry for the delay.. got distracted :/
-Thank you. I will digest it tomorrow.
+On Wed, 19 Feb 2025, Christophe JAILLET wrote:
 
-Sebastian
+> devm_mutex_init() may return -ENOMEM.
+> So this error should be handled in st1202_probe().
+
+The start of a new sentence shouldn't warrant a line break.
+
+> Fixes: 259230378c65 ("leds: Add LED1202 I2C driver")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/leds/leds-st1202.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/leds/leds-st1202.c b/drivers/leds/leds-st1202.c
+> index b691c4886993..4fc17d518292 100644
+> --- a/drivers/leds/leds-st1202.c
+> +++ b/drivers/leds/leds-st1202.c
+> @@ -356,7 +356,10 @@ static int st1202_probe(struct i2c_client *client)
+>  	if (!chip)
+>  		return -ENOMEM;
+>  
+> -	devm_mutex_init(&client->dev, &chip->lock);
+> +	ret = devm_mutex_init(&client->dev, &chip->lock);
+> +	if (ret < 0)
+
+My assumption is that anything but 0 would be bad, thus:
+
+	if (ret)
+
+> +		return ret;
+> +
+>  	chip->client = client;
+>  
+>  	ret = st1202_dt_init(chip);
+> -- 
+> 2.48.1
+> 
+
+-- 
+Lee Jones [李琼斯]
 
