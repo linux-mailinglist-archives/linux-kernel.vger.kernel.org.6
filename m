@@ -1,130 +1,173 @@
-Return-Path: <linux-kernel+bounces-524593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AD6CA3E4F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:20:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F5DCA3E4F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:20:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9DDF420271
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:20:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1D563B9529
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:20:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1401B2641F5;
-	Thu, 20 Feb 2025 19:20:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B622641D3;
+	Thu, 20 Feb 2025 19:20:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VGkh7s/H"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KpPscSdC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F06EA2641DB
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 19:20:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA76221421E;
+	Thu, 20 Feb 2025 19:20:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740079221; cv=none; b=sggwPeyayWgl9tJaWkkvZOkvB/YdMismCFbEkAR926ZnUCXlfOV4YrJrDW5LA2tUISQVnKstBp57a2VqES4nn6+VRyLO+0fVfQ8oqIDz1kYh1sPEQWNgBBth4lqT1wjmGaV4MmDViotxUmsL3Q1oBO6VB0Z6IyCD6gELVLv7nGQ=
+	t=1740079218; cv=none; b=cfF7thq5lqPS0KHJOxoVEJVI64HzWFb3s0lBH2UWmsMldHLrNLH02R7PV5TSvbHc1I4q3OlZVAZV7WzMHxMaOzK7tcfp4snAtNwUYfvlvx8kcIVqJ5BuCijtPk6ZyDhx15UqcmX9AZOjH5eT9oJoWMuXI3emnY+5c8G6Tgw88o4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740079221; c=relaxed/simple;
-	bh=BF/qm35P4uKsbrKBn/gLwoY0GozMrLl3uevc+2xL6YQ=;
+	s=arc-20240116; t=1740079218; c=relaxed/simple;
+	bh=eW/6EzbcporBkyLlJcaeoXZrQxrk9siNiuKHy0ERrCA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cr2/nuJWK7+eJiF1wCmB+EtBZWgecgRq6oa9bS+iS+g593RhsIHSnv/88/vp16T9OP6Ubfo3diJ/Q4C5yZKQPotRwVJ2S7TBqSGNlOnB1dyjmF9n2931bGOlDOfFiioEKiLTiawSpc6mD+xnGceoKxgKyzXh8NQTK3038wL+ayk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=VGkh7s/H; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2217875d103so2939065ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 11:20:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1740079219; x=1740684019; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RpS2FnqN2TDBERxg5I5MCZqVN24rvf9DEtZLCeAzcmo=;
-        b=VGkh7s/Hqx7a+052nW0gD2UVZ02YnIKSuosVjV4ZZs/Mu0+9eHlVQWAwtxxP5Rnffi
-         ve8F10WMwL5mQTFEefYFxjlhnAz5NpRyBImvji2j7E4e1Ou6GoZNPpzdbeRvsdhZFkJW
-         64Ou5UvdBCaNIs7KPhh70rXivjwfxNm40uW+Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740079219; x=1740684019;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RpS2FnqN2TDBERxg5I5MCZqVN24rvf9DEtZLCeAzcmo=;
-        b=mPPFNADTyFqo6sExJ9hZ3a/Wtvs4Bxj8Hvz1VZ+wjjoypfb0zHGtIqC/58hf3zHOOp
-         g2SmK4OkeT6w1Jdv8mHIaQjrLvY+ItIsZBJOy+/mQkNqk2WW5uQNWfqvxxetOazWVcgU
-         JCRHd4AuUQwPJfDPW/q/cQOWo6Q1nd83MoDE+XQ7tIUtE7nH/j9i5zbBa4vihVwRLOdk
-         wnnhepmz4LjDLTNeflXrFOf+zlhy8eCM/RbGN0QJUVWdmpcmhsQ1QpAq0hNkK5R7OUy3
-         thf3hlchmP/Hzb85LCvfd/bRgjT0Xsre0XK2pgztnjo3IdUfr9A8p1HZAQIi4aSBeAbN
-         Mc5A==
-X-Forwarded-Encrypted: i=1; AJvYcCWoOKIZR4QCDwBfawUpTzmDkxfJulHgfxNsolkxaGScK83yVFDEOUZM5PNiTJ6PcKEiFhWFzdNUpiVKFtk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8LN0icqKerBtiwMMvDH0Lh7wShJA5do2TQAq3hDN5jMlbSGMq
-	Q+5Y+a9hIang1Rr6CfeD1C5SOaDs8nK6l4JnKksQlXj6ERqvRClS12bgkZifBFo4RB535Ml5uZf
-	Dzg==
-X-Gm-Gg: ASbGncviejfRgXGbl0qlWS/BxNoq7ktjyvm8iMeBi7LN1XLvXXOQLpxOq9snpe63+K8
-	KKiwQBjKuRGBeG6gek2v8FJCI6qpzUbC5hbPrpP+NNOAyiJ6cIIWlSYW3P2HImY3IAAiwE0u2s/
-	rDBZIhuH30m4W5la0Mn03rQbsozH1ni0bAX+TMSsvYOatmIZ23TuJCYcYI+AI+Ga1cIvWmcnwQC
-	i799jWNbLE8grqJEEXZdQzPJ49NK42zkcVNtiLVujLGbmPM0Xs4POzB46mAG9LsHGXr1opYb5Sp
-	xYzygnV28PO6SvFzo/6kovxOMmE8/Mrug6k6dNYH7oSQ+hDuzTlGvbo=
-X-Google-Smtp-Source: AGHT+IG0Y0I5fPL9fPvLkpkMjjXiiYEpK2HEHGiBmLzrdPdiVZ6wQpOpotEJlIpKRFajhYScZYXDiQ==
-X-Received: by 2002:a17:902:cec6:b0:220:d71d:4666 with SMTP id d9443c01a7336-2219fff855emr1604355ad.13.1740079217625;
-        Thu, 20 Feb 2025 11:20:17 -0800 (PST)
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com. [209.85.216.51])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d556d473sm124614095ad.166.2025.02.20.11.20.15
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Feb 2025 11:20:16 -0800 (PST)
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2fc0bd358ccso2720418a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 11:20:15 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU7CcmTcC01t2l64eK0u7fR/WiLKQNGZJMXd6lBlWBZraNG+4xMgujRuWQOtpW6AakYiTlpVRYvnOAKcvM=@vger.kernel.org
-X-Received: by 2002:a17:90b:3946:b0:2f4:434d:c7ed with SMTP id
- 98e67ed59e1d1-2fce78c7fd8mr609023a91.16.1740079215301; Thu, 20 Feb 2025
- 11:20:15 -0800 (PST)
+	 To:Cc:Content-Type; b=PqK1Vbfc4Olyue3gPvtF7DLFNZrwUDsOE97jPdHugbf/v5IfBApgmwCxcIxtFuO9x2Tp0+Lf8HHx+THYYVDWZG6ShU6GUhNYS71WDPO6GaEsk8M+1IZhi1lBJtKdAeXZThEyDpsvSFLPSktce8qciD44pD0Iy1KKMb0jMcqxwRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KpPscSdC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2129FC4CEED;
+	Thu, 20 Feb 2025 19:20:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740079218;
+	bh=eW/6EzbcporBkyLlJcaeoXZrQxrk9siNiuKHy0ERrCA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=KpPscSdC77PJcDds3Sb3QPQ3KSEuyTfqCa5UE6SVRgFvdhVuiBF1TxAul/Pe1qapV
+	 NExxM6LcQ9OIePFJnlxb+naHiko5X4cUjSqG1P605tGjaK9n81l++GXYwHNJJvrFla
+	 mM1Bbz1m1YAEbb7xp1FCKW4XFyB+kJvIEbgXgQofbRecMUj7pHZ1s0KsKL/8vGbw88
+	 yCjZs54GPLcKpojvC/t8fNZBf4m6AQuzHeNWJOIj2/xfVnTAuRKD+ll++bWo/SvBAX
+	 HqBG5aFISe3kgZ4oHsoh6Cs0gnD6yLblYfvdWxcK6L/8Yv9Ni4rX8gW0YFPSxKEGYt
+	 ltSt/y9/4TlcA==
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-7272cc739f7so1295386a34.1;
+        Thu, 20 Feb 2025 11:20:18 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVG23FVA0yvh2oC7Dc/N2A6a4pRalUIkBt3bEuD/KRg6ca8OGZa78KrQ8YhnKtOjS3lnbK3N6AaGYIjcS30/QkNfA==@vger.kernel.org, AJvYcCW4jxQAPWWc+qgWv/TQr/cRjqGrWAjLaIqLF3On0UzIb1YAMkla/AuKn4ZNAPNDmgKP8ocSuUhSyPQO@vger.kernel.org, AJvYcCWN9nLb1cjkBOM73Wgl6MMuZ1b3yIF/nNs+8wNHGZiFmexcdmlDMc5QpDIBwl2UiL9ppGsw4IUyP31VcI0K@vger.kernel.org, AJvYcCWryDD2vSVyf6jWT0Z3vfl2fzM4Fnjf5rWGGbLx27Svvv6UXd091Atf3+afytKH3OdxuGgbLcYU1Go=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQh0FqmzZ3oa68wZ+Mo5PnzdWtkg+dwee8I4V+zC6Z3ThIKBz1
+	FrSibQif2kmJwI6k577FJjFCmUkqWHwDLjb43ga8/RLwux/RBx4IsjPu0XleUn5Pnk9y0tlLdcr
+	hEd7zL/X4vsTexFu6OU3GxWUTN9M=
+X-Google-Smtp-Source: AGHT+IFtnS7H25wVx2/d7TV4BBEAl89/Nsh8UjACXA0fSLmiZXsB9lLv52jTs/zoA8/wVyPENkWf8sIOSW/K78QcbJU=
+X-Received: by 2002:a05:6808:f0c:b0:3f4:7c4:ca27 with SMTP id
+ 5614622812f47-3f419f14e7amr3783387b6e.9.1740079217083; Thu, 20 Feb 2025
+ 11:20:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250220-virtio-shm-page-size-v3-0-874fff6f3979@redhat.com> <20250220-virtio-shm-page-size-v3-2-874fff6f3979@redhat.com>
-In-Reply-To: <20250220-virtio-shm-page-size-v3-2-874fff6f3979@redhat.com>
-From: Daniel Verkamp <dverkamp@chromium.org>
-Date: Thu, 20 Feb 2025 11:19:47 -0800
-X-Gmail-Original-Message-ID: <CABVzXA=_S2in+OzfwK6vGQR3VK3YhGRu4B+tp5oCZKHt0Qz=gw@mail.gmail.com>
-X-Gm-Features: AWEUYZlJc2Ri_gGb-xTYNfHBI9nY3KXtKqjPGrNSl2kv5ni8-vqVm6Z_S9XKcC4
-Message-ID: <CABVzXA=_S2in+OzfwK6vGQR3VK3YhGRu4B+tp5oCZKHt0Qz=gw@mail.gmail.com>
-Subject: Re: [PATCH RFC v3 2/4] virtio-pci: extend virtio_pci_cap with page_shift
-To: Sergio Lopez <slp@redhat.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	David Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>, 
-	Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu <olvaffe@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Simona Vetter <simona@ffwll.ch>, Rob Clark <robdclark@gmail.com>, 
-	Dmitry Osipenko <dmitry.osipenko@collabora.com>, fnkl.kernel@gmail.com, 
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org
+References: <20250219184133.816753-1-sohil.mehta@intel.com> <20250219184133.816753-9-sohil.mehta@intel.com>
+In-Reply-To: <20250219184133.816753-9-sohil.mehta@intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 20 Feb 2025 20:20:06 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0iRxdpr9Lc9XJDbN5KbO6Ch=TEG39PC53gQJOTW_L9hnw@mail.gmail.com>
+X-Gm-Features: AWEUYZkHa_18F7_XRL1v6sTvE25boM9CeaseQIQ_yIgYuXVNMo5-nm0iD0EOlkk
+Message-ID: <CAJZ5v0iRxdpr9Lc9XJDbN5KbO6Ch=TEG39PC53gQJOTW_L9hnw@mail.gmail.com>
+Subject: Re: [PATCH v3 08/15] x86/acpi/cstate: Improve Intel Family model checks
+To: Sohil Mehta <sohil.mehta@intel.com>
+Cc: x86@kernel.org, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Tony Luck <tony.luck@intel.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>, "Rafael J . Wysocki" <rafael@kernel.org>, 
+	Len Brown <lenb@kernel.org>, Andy Lutomirski <luto@kernel.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, Jean Delvare <jdelvare@suse.com>, 
+	Guenter Roeck <linux@roeck-us.net>, Zhang Rui <rui.zhang@intel.com>, 
+	Andrew Cooper <andrew.cooper3@citrix.com>, David Laight <david.laight.linux@gmail.com>, 
+	Dapeng Mi <dapeng1.mi@linux.intel.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	linux-pm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 20, 2025 at 6:30=E2=80=AFAM Sergio Lopez <slp@redhat.com> wrote=
-:
-[...]
-> @@ -829,6 +839,7 @@ static int virtio_pci_find_shm_cap(struct pci_dev *de=
-v, u8 required_id,
->                 *bar =3D res_bar;
->                 *offset =3D res_offset;
->                 *len =3D res_length;
-> +               *page_size =3D 1 << (page_shift + 12);
+On Wed, Feb 19, 2025 at 8:29=E2=80=AFPM Sohil Mehta <sohil.mehta@intel.com>=
+ wrote:
+>
+> Update the Intel Family checks to consistently use Family 15 instead of
+> Family 0xF. Also, get rid of one of last usages of x86_model by using
+> the new VFM checks.
+>
+> Update the incorrect comment since the check has changed[1][2] since the
+> initial commit ee1ca48fae7e ("ACPI: Disable ARB_DISABLE on platforms
+> where it is not needed").
+>
+> [1]: commit 3e2ada5867b7 ("ACPI: fix Compaq Evo N800c (Pentium 4m) boot
+> hang regression") removed the P4 - Family 15.
+>
+> [2]: commit 03a05ed11529 ("ACPI: Use the ARB_DISABLE for the CPU which
+> model id is less than 0x0f.") got rid of CORE_YONAH - Family 6, model E.
+>
+> Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
+> Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
 
-Maybe this should validate that page_shift is in range to avoid any
-funny business from the device; since page_size is u32, this needs
-page_shift + 12 < 32. (If it's out of range, I am not sure what this
-should do; maybe just warn and set it to the default 4096?)
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Also shifting into the sign bit is technically undefined (or
-implementation-defined? I don't recall) behavior, so perhaps make the
-constant unsigned, e.g. `1U << (page_shift + 12)`.
+and I'm assuming that this series will go in via x86.
 
-Other than that, looks reasonable to me:
-Reviewed-by: Daniel Verkamp <dverkamp@chromium.org>
+Thanks!
 
-Thanks,
--- Daniel
+> ---
+> v3: Pick up Dave's Ack.
+> v2: Improve commit message.
+> ---
+>  arch/x86/include/asm/intel-family.h | 3 +++
+>  arch/x86/kernel/acpi/cstate.c       | 8 ++++----
+>  2 files changed, 7 insertions(+), 4 deletions(-)
+>
+> diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/i=
+ntel-family.h
+> index 9e6a13f03f0e..deb17c9c21e5 100644
+> --- a/arch/x86/include/asm/intel-family.h
+> +++ b/arch/x86/include/asm/intel-family.h
+> @@ -187,6 +187,9 @@
+>  #define INTEL_XEON_PHI_KNL             IFM(6, 0x57) /* Knights Landing *=
+/
+>  #define INTEL_XEON_PHI_KNM             IFM(6, 0x85) /* Knights Mill */
+>
+> +/* Notational marker denoting the last Family 6 model */
+> +#define INTEL_FAM6_LAST                        IFM(6, 0xFF)
+> +
+>  /* Family 15 - NetBurst */
+>  #define INTEL_P4_WILLAMETTE            IFM(15, 0x01) /* Also Xeon Foster=
+ */
+>  #define INTEL_P4_PRESCOTT              IFM(15, 0x03)
+> diff --git a/arch/x86/kernel/acpi/cstate.c b/arch/x86/kernel/acpi/cstate.=
+c
+> index 5854f0b8f0f1..444602a0a3dd 100644
+> --- a/arch/x86/kernel/acpi/cstate.c
+> +++ b/arch/x86/kernel/acpi/cstate.c
+> @@ -13,6 +13,7 @@
+>  #include <linux/sched.h>
+>
+>  #include <acpi/processor.h>
+> +#include <asm/cpu_device_id.h>
+>  #include <asm/cpuid.h>
+>  #include <asm/mwait.h>
+>  #include <asm/special_insns.h>
+> @@ -47,12 +48,11 @@ void acpi_processor_power_init_bm_check(struct acpi_p=
+rocessor_flags *flags,
+>         /*
+>          * On all recent Intel platforms, ARB_DISABLE is a nop.
+>          * So, set bm_control to zero to indicate that ARB_DISABLE
+> -        * is not required while entering C3 type state on
+> -        * P4, Core and beyond CPUs
+> +        * is not required while entering C3 type state.
+>          */
+>         if (c->x86_vendor =3D=3D X86_VENDOR_INTEL &&
+> -           (c->x86 > 0xf || (c->x86 =3D=3D 6 && c->x86_model >=3D 0x0f))=
+)
+> -                       flags->bm_control =3D 0;
+> +           (c->x86 > 15 || (c->x86_vfm >=3D INTEL_CORE2_MEROM && c->x86_=
+vfm <=3D INTEL_FAM6_LAST)))
+> +               flags->bm_control =3D 0;
+>
+>         if (c->x86_vendor =3D=3D X86_VENDOR_CENTAUR) {
+>                 if (c->x86 > 6 || (c->x86 =3D=3D 6 && c->x86_model =3D=3D=
+ 0x0f &&
+> --
+> 2.43.0
+>
 
