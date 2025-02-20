@@ -1,110 +1,337 @@
-Return-Path: <linux-kernel+bounces-523896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 484EEA3DC7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:21:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14634A3DCAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:27:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89BB57ABDC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:20:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EEED3AA500
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:21:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 215AF1FBEB0;
-	Thu, 20 Feb 2025 14:21:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A445A1FBE8D;
+	Thu, 20 Feb 2025 14:21:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3oufnGd7";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="D9Knt0/Y"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z5wJgBhw"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC641DE4DB
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 14:21:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E1FE1FAC25;
+	Thu, 20 Feb 2025 14:21:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740061282; cv=none; b=MQ/df5JaK5RY/6xzWncaysQEG8U0NkxsvhiQsmGRU/oqrfO4/U3Krc+R0Yf0uN2U/81Omx0lSnFP+w7FqLfj5XdMfahJGYDy1B8okavxynFjK3x8wevoDmWHiacKepDCf9Ytxj6bCXXSvnCpTeRxi1L/Av9ywzd2tfgjPkdH4gs=
+	t=1740061306; cv=none; b=AyqfLkS0x40C4AQnYg5+pm8euO9FqLGHgQnhoiz8zow+NGpu3C/zZ2a10je17B0ibDZrQMNC/+onGErkcYoyxWjUSq27t/qYR/uXJUEryWIZchkZvWcgQDgRB8RD8NCboDY2Ci94pSim8MowHFH7AG0d0MGKtVDnrpc/Js10KtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740061282; c=relaxed/simple;
-	bh=lJ1fuL6wK8CkBl8tMlUZAzn0eYU+XWFjZX7mmgbguCc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=JNRvUYYnYoNXAWsjkNJ24zAgPtkMlC4gnfIeTirHSCHIIEgvRFQQNXTUSou0KDHcE6lvEoyAqYGynLgxTbiWlZGPnGlfBqZAFGIJYnvwDUveM0c06t1U7te8F/s8m6mk7nKEJ8iR+7LMrmpn7cH9215yz2w1cVpgwOcDL3hEgGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3oufnGd7; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=D9Knt0/Y; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740061279;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G/BmtFl2k81SUm/1VjrdU/jVgNub5nHsJ466sJIBSwU=;
-	b=3oufnGd79cXN4jTTMDZ7Z6srl8Ucj1sL35GTITM5ip/hhNfLdNEYBcfYEMW975QF6921cA
-	cciHlQX7+abbQrJT0TieGU8ctAA7wGO0cqj2/piqAaIcbrDv5L/4HeIGVwShaFC3Bq48YH
-	suiMDHR3vg34aEAzMe+BV0KSW9VSPNgdjwW63lvegZgL1TQ5UiPythFZ5KnPHQRHxJG2Xj
-	giFg2lDq21Vm2EoS1vuwvtqlttU4FdQYnquG8StF/7Qc2U1dMZXYRZ0FtVE75DzBMrzz/P
-	N3504pfJR4o/GLBBGIeWk5v9l0bJsYmm0QupTJ+nNCCVRtaoXf+P0gSK0HcClw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740061279;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G/BmtFl2k81SUm/1VjrdU/jVgNub5nHsJ466sJIBSwU=;
-	b=D9Knt0/YpIddKDTVG7BDrv4vvrba0CkVNAk6jPl1IKKFJVU+mQyOoOkRYYlV8EljvtiK2B
-	sr28C0ab+/lVqCAQ==
-To: Mark Brown <broonie@kernel.org>, Anup Patel <apatel@ventanamicro.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave
- Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, hpa@zytor.com, Marc
- Zyngier <maz@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
- <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
- Andrew Lunn <andrew@lunn.ch>, Gregory Clement
- <gregory.clement@bootlin.com>, Sebastian Hesselbarth
- <sebastian.hesselbarth@gmail.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Atish Patra
- <atishp@atishpatra.org>, Andrew Jones <ajones@ventanamicro.com>, Sunil V L
- <sunilvl@ventanamicro.com>, Anup Patel <anup@brainfault.org>,
- linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, imx@lists.linux.dev
-Subject: Re: [PATCH v6 02/10] irqchip/irq-msi-lib: Optionally set default
- irq_eoi/irq_ack
-In-Reply-To: <87jz9kiuvu.ffs@tglx>
-References: <20250217085657.789309-1-apatel@ventanamicro.com>
- <20250217085657.789309-3-apatel@ventanamicro.com>
- <Z7Xto0WZ-Crxunik@finisterre.sirena.org.uk> <87jz9kiuvu.ffs@tglx>
-Date: Thu, 20 Feb 2025 15:21:18 +0100
-Message-ID: <878qq0itnl.ffs@tglx>
+	s=arc-20240116; t=1740061306; c=relaxed/simple;
+	bh=PpVzdWc+hNukxIACDuAxZaeAROL3OgZe4+gSpyqxYFo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uuNngiy6+sXeuugJjoZWg6R0KhQ8JgodngFsdg4BcyIxhKlxyA8WOGrZbG+JuT7QELxhmrY/r1fljzCZbArfk+frjs53hljsf3Uy9binm/a/Y6Ix+0r+6xWzVR5VK9DUfNyEDGvdGbbKng9X1h6+1LOr0fsMjd5YS5PW0uRJe40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z5wJgBhw; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-54605bfcc72so2406007e87.0;
+        Thu, 20 Feb 2025 06:21:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740061303; x=1740666103; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mzmoiLCG8SAcHQOd7ewiQtwf2LHT2fH6DKF15WTZxJc=;
+        b=Z5wJgBhwdD+TzhkVluXL7JlBWzuZwO5hy+wlp4lfqzdQ2avgIN6DrE0hMGKV/te5LP
+         jLJNjq9/if86cG3RkvW1O8hFTr8lenVBnn7Vo5W0jWYzeJ51GvXGifkPAE4HgFbN6vT8
+         qKJBu9aATDiNBpfNfkokHFOdebQ2rGsg+P3kALz33b401buJsRa5Z5YQtc+PII7YRG2v
+         vsFPLILY+0zRNG3OA4WdcZtSWEjS2d4oDuIw+h4dz3i7gppzRDn9lblK3gj91XMJTi4Q
+         w/z9dbFZdOnTe8u9xrwmU0Yo7b2jQ/R9bWqBE4fwENtX9OluKjuifbrRjIiK+PkTcg2O
+         CPCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740061303; x=1740666103;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mzmoiLCG8SAcHQOd7ewiQtwf2LHT2fH6DKF15WTZxJc=;
+        b=Gi07b2nSjf1PRgkpo4rO8vQWHhEmIcFfSbAFzSEBP5v+hZTHGurlEu61JJVv3i+Fmq
+         NzXehb1Y1ST5SKBg6xU6rSWlTUVTreQay3KAc1azvm1R8JyDd0rMzJ6ker+sm1OAN49S
+         SHqrOfh+11Y+wMHjH2u6N5PlHc+i9F2toQTRtinjJ1wEOx2Ioj+L2ADAaoCIFgbR/xIB
+         A9p5O7nb+Q3Hee0ADAlplZh82wTDZ9vwiPFPu4cvFTGCgG1uZNWfkL5BnGtyCw0v+flS
+         bG92Q+IeiH5q1XVkuw2PRN5UfDqq0p7bmXZVY85hNE157Dap+/U/5vJw8NuF/QMT3F5V
+         QO2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUkLl4J8AGgTxr1KPBR0n9YfM4I77KZMqhEMdkB8WLx3HBFYfdwJDKfoNQBXwqUn1mSRAo/HC1O73BHbLmE@vger.kernel.org, AJvYcCVbn2Awi6+nZpXKcR6srsANstXGdP9LFq17RHK4f8fQzq82O8bJCAlElBRP7qAZXIGXlsqQYBAORcWH@vger.kernel.org, AJvYcCXZJNpKNhwYpZrjavHpki4lebiKzViIvd17/7eLD5sAdXleFKnReQpFWSQs0wHl99shA1fw6Ru/KjPqAAEybEaxaFE=@vger.kernel.org, AJvYcCXjkkCOigGd0frIaKpqm6094F98UbjnOV5RmuDZ9FoMxe4lUjeh61XCmlBBEVOXgdQal7h8gFAXQJ3P@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyfze3p3EbfIApoi+J/166a1ICAcjMB2dwWaSPIpXtHL/yKjCN1
+	snIeIOyD00016rNW0DHehjpDDQ3JqDyF7cGWmoSfhETqHeZZh/F8
+X-Gm-Gg: ASbGncvZjRn3kOVNyhKfqcAbHHC0im4e76iZyWGA28YIi2OOTK11i2wIFKlZZljUK2t
+	H7Auj5tSoU7WJR53MWAsMZQPy0ERy3zEcQzvMXQcnHfJS6JibwXC37RQxs8QgM/j3KAiil7yJOs
+	3RRrvhc3GXru8u+DkRiMqezpzhZls+auw00HZFIsCIThVr1UByz/B8ufxb1q0H79Usu9FY+bx0H
+	NseScM7SnspWkwXTEucuIOHktkZf3biYrkKeSnCO5eH3Fn2bMr7dDQQjl3/PRzQimEp1EgyEEVT
+	5Ed28vlGwDxPiVi1QnKC6IkmicOLHHn6QYz5y3U1k1fyi24UPjhU7ks2i6BXQd0tIbOjOiKt
+X-Google-Smtp-Source: AGHT+IEnorexehar0T56dUSxxROrZLAf2XndxCCWnC99AsuPb3902B0+uwY/QTJ7hoY8ePb04Bn4Lg==
+X-Received: by 2002:a05:6512:4010:b0:545:16a8:6a5d with SMTP id 2adb3069b0e04-546e3c9c9e0mr1209013e87.2.1740061302295;
+        Thu, 20 Feb 2025 06:21:42 -0800 (PST)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5452fcf6487sm1893226e87.137.2025.02.20.06.21.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Feb 2025 06:21:40 -0800 (PST)
+Message-ID: <9018e23c-da28-41b0-b774-1598b946a2a1@gmail.com>
+Date: Thu, 20 Feb 2025 16:21:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/9] iio: adc: add helpers for parsing ADC nodes
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>,
+ Hugo Villeneuve <hvilleneuve@dimonoff.com>, Nuno Sa <nuno.sa@analog.com>,
+ David Lechner <dlechner@baylibre.com>,
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev
+References: <cover.1739967040.git.mazziesaccount@gmail.com>
+ <6c5b678526e227488592d004c315a967b9809701.1739967040.git.mazziesaccount@gmail.com>
+ <Z7ZB7RQhyI5Dohrq@smile.fi.intel.com>
+ <b1c1ed68-2f4d-447c-9957-5a1bbc63ef6e@gmail.com>
+ <Z7ci7tUlRQqZEZSN@smile.fi.intel.com>
+ <ec76334b-bb13-4076-811d-9174170dd677@gmail.com>
+ <Z7c2cBQpjoc9-Vyu@smile.fi.intel.com>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <Z7c2cBQpjoc9-Vyu@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Feb 20 2025 at 14:54, Thomas Gleixner wrote:
-> On Wed, Feb 19 2025 at 14:41, Mark Brown wrote:
->> On Mon, Feb 17, 2025 at 02:26:48PM +0530, Anup Patel wrote:
->> I'm seeing boot regressions with qemu on arm64 in -next which bisect
->> down to this patch.  We hit a NULL pointer dereference:
+On 20/02/2025 16:04, Andy Shevchenko wrote:
+> On Thu, Feb 20, 2025 at 03:40:30PM +0200, Matti Vaittinen wrote:
+>> On 20/02/2025 14:41, Andy Shevchenko wrote:
+>>> On Thu, Feb 20, 2025 at 09:13:00AM +0200, Matti Vaittinen wrote:
+>>>> On 19/02/2025 22:41, Andy Shevchenko wrote:
+>>>>> On Wed, Feb 19, 2025 at 02:30:27PM +0200, Matti Vaittinen wrote:
+> 
+> ...
+> 
+>>>>>> +EXPORT_SYMBOL_GPL(iio_adc_device_num_channels);
+>>>>>
+>>>>> No namespace?
+>>>>
+>>>> I was considering also this. The IIO core functions don't belong into a
+>>>> namespace - so I followed the convention to keep these similar to other IIO
+>>>> core stuff.
+>>>
+>>> But it's historically. We have already started using namespaces
+>>> in the parts of IIO, haven't we?
 >>
->> <6>[    0.898900] virtio_blk virtio1: 1/0/0 default/read/poll queues
->> <5>[    0.910197] virtio_blk virtio1: [vda] 3906250 512-byte logical blocks (2.00 GB/1.86 GiB)
->> <1>[    0.924459] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
->> <1>[    0.924508] Mem abort info:
->> <1>[    0.924521]   ESR = 0x000000008600002b
->> <1>[    0.924559]   EC = 0x21: IABT (current EL), IL = 32 bits
->> <1>[    0.924580]   SET = 0, FnV = 0
->> <1>[    0.924597]   EA = 0, S1PTW = 0
->> <1>[    0.924616]   FSC = 0x2b: level -1 translation fault
->> <1>[    0.924667] [0000000000000000] user address but active_mm is swapper
->> <0>[    0.924833] Internal error: Oops: 000000008600002b [#1] PREEMPT
->> SMP
->
-> Uuurg. I wish I had double checked that the final submitted patch covers
-> _ALL_ incarnations of this. The below delta patch should address it.
+>> Yes. But as I wrote, I don't think adding new namespaces for every helper
+>> file with a function or two exported will scale. We either need something
+>> common for IIO (or IIO "subsystems" like "adc", "accel", "light", ... ), or
+>> then we just keep these small helpers same as most of the IIO core.
+> 
+> It can be still pushed to IIO_CORE namespace. Do you see an issue with that?
 
-I'll redo the branch accordingly.
+No. I've missed the fact we have IIO_CORE O_o. Thanks for pointing it out!
 
-Thanks,
+> Or a new opaque namespace for the mentioned cases, something like IIO_HELPERS.
 
-         tglx
+I am unsure if it really benefits to split this out of the IIO_CORE. 
+I've a feeling it falls into the category of making things harder for 
+user with no apparent reason. But yes, the IIO_CORE makes sense.
+
+>>>> (Sometimes I have a feeling that the trend today is to try make things
+>>>> intentionally difficult in the name of the safety. Like, "more difficult I
+>>>> make this, more experience points I gain in the name of the safety".)
+>>>>
+>>>> Well, I suppose I could add a namespace for these functions - if this
+>>>> approach stays - but I'd really prefer having all IIO core stuff in some
+>>>> global IIO namespace and not to have dozens of fine-grained namespaces for
+>>>> an IIO driver to use...
+> 
+> ...
+> 
+>>>>>> +	if (!allowed_types || allowed_types & (~IIO_ADC_CHAN_PROP_TYPE_ALL)) {
+>>>>>
+>>>>> Unneeded parentheses around negated value.
+>>>>>
+>>>>>> +	if (found_types & (~allowed_types)) {
+>>>>>
+>>>>> Ditto.
+>>>>>
+>>>>>> +		long unknown_types = found_types & (~allowed_types);
+>>>>>
+>>>>> Ditto and so on...
+>>>>>
+
+...
+
+>>>> during the moves I lost my printed list of operator precedences which I used
+>>>> to have on my desk. I've been writing C for 25 years or so, and I still
+>>>> don't remember the precedence rules for all bitwise operations - and I am
+>>>> fairly convinced I am not the only one.
+>>>
+>>> ~ (a.k.a. negation) is higher priority in bitops and it's idiomatic
+>>> (at least in LK project).
+>>
+>> I know there are well established, accurate rules. Problem is that I never
+>> remember these without looking.
+> 
+> There are very obvious cases like below.
+
+I think we just disagree on if this is obvious.
+
+>>>> What I understood is that I don't really have to have a printed list at
+>>>> home, or go googling when away from home. I can just make it very, very
+>>>> obvious :) Helps me a lot.
+>>>
+>>> Makes code harder to read, especially in the undoubtful cases like
+>>>
+>>> 	foo &= (~...);
+>>
+>> This is not undoubtful case for me :) And believe me, reading and
+>> deciphering the
+>>
+>> foo &= (~bar);
+>>
+>> is _much_ faster than seeing:
+> 
+> Strongly disagree. One need to parse an additional pair of parentheses,
+> and especially when it's a big statement inside with nested ones along
+> with understanding what the heck is going on that you need them in the
+> first place.
+> 
+> On top of that, we have a common practices in the LK project and
+> with our history of communication it seems you are trying to do differently
+> from time to time. Sounds like a rebellion to me :-)
+
+I only rebel when I (in my opinion) have a solid reason :)
+
+>> foo &= ~bar;
+>>
+>> and having to google the priorities.
+> 
+> Again, this is something a (regular) kernel developer keeps refreshed.
+> Or even wider, C-language developer.
+
+Ha. As I mentioned, I've been writing C on a daily bases for almost 25 
+years. I wonder if you intent to say I am not a kernel/C-language 
+developer? Bold claim.
+
+>>>>>> +		int type;
+>>>>>> +
+>>>>>> +		for_each_set_bit(type, &unknown_types,
+>>>>>> +				 IIO_ADC_CHAN_NUM_PROP_TYPES - 1) {
+>>>>>> +			dev_err(dev, "Unsupported channel property %s\n",
+>>>>>> +				iio_adc_type2prop(type));
+>>>>>> +		}
+>>>>>> +
+>>>>>> +		return -EINVAL;
+>>>>>> +	}
+> 
+> ...
+> 
+>>>>>> +		tmp.required &= (~BIT(IIO_ADC_CHAN_PROP_COMMON));
+>>>>>
+>>>>> Redundant outer parentheses. What's the point, please?
+>>>>
+>>>> Zero need to think of precedence.
+>>>
+>>> Huh? See above.
+>>> Everything with equal sign is less precedence than normal ops.
+>>
+>> Sure. It's obvious if you remember that "Everything with equal sign is less
+>> precedence than normal ops". But as I said, I truly have hard time
+>> remembering these rules. When I try "going by memory" I end up having odd
+>> errors and suggestions to add parenthesis from the compiler...
+> 
+> The hardest to remember probably the
+> 
+> 	foo && bar | baz
+> 
+> case and alike. These are the only ones that I totally agree on with you.
+> But negation.
+> 
+>> By the way, do you know why anyone has bothered to add these
+>> warnings/suggestions about adding the parenthesis to the compiler? My guess
+>> is that I am not only one who needs the precedence charts ;)
+> 
+> Maybe someone programmed too much in LISP?.. (it's a rhetorical one)
+> 
+> ...
+> 
+>>>>>> +		ret = fwnode_property_read_u32(child, "common-mode-channel",
+>>>>>> +					       &common);
+>>>>>
+>>>>> I believe this is okay to have on a single line,
+>>>>
+>>>> I try to keep things under 80 chars. It really truly helps me as I'd like to
+>>>> have 3 parallel terminals open when writing code. Furthermore, I hate to
+>>>> admit it but during the last two years my near vision has deteriorated... :/
+>>>> 40 is getting more distant and 50 is approaching ;)
+>>>
+>>> It's only 86 altogether with better readability.
+>>> We are in the second quarter of 21st century,
+>>> the 80 should be left in 80s...
+>>>
+>>> (and yes, I deliberately put the above too short).
+>>
+>> I didn't even notice you had squeezed the lines :)
+>>
+>> But yeah, I truly have problems fitting even 3 80 column terminals on screen
+>> with my current monitor. And when working on laptop screen it becomes
+>> impossible. Hence I strongly prefer keeping the 80 chars limit.
+> 
+> Maybe you need a bigger monitor after all? (lurking now :-)
+
+Wouldn't fit my table :)
+
+> ...
+> 
+>>>>>> +#include <linux/iio/iio.h>
+>>>>>
+>>>>> I'm failing to see how this is being used in this header.
+>>>>
+>>>> I suppose it was the struct iio_chan_spec. Yep, forward declaration could
+>>>> do, but I guess there would be no benefit because anyone using this header
+>>>> is more than likely to use the iio.h as well.
+>>>
+>>> Still, it will be a beast to motivate people not thinking about what they are
+>>> doing. I strongly prefer avoiding the use of the "proxy" or dangling headers.
+>>
+>> Ehh. There will be no IIO user who does not include the iio.h.
+> 
+> It's not your concern. That's the idea of making C units as much independent
+> and modular as possible (with common sense in mind). And in this case I see
+> no point of including this header. Again, the main problem is this will call
+> people to use the new header as a "proxy" and that's what I fully against to.
+> 
+>> And, I need the iio_chan_spec here.
+> 
+> Do you really need it or is it just a pointer?
+
+Just a pointer. Forward declaration could do it. Hmm. I didn't think of 
+people using this header as a proxy. I guess you have a point here :)
+
+> 
+> ...
+> 
+>> And as I said, I suggest saving some of the energy for reviewing the next
+>> version. I doubt the "property type" -flags and bitwise operations stay, and
+>> it may be all of this will be just meld in the bd79124 code - depending on
+>> what Jonathan & others think of it.
+> 
+> Whenever this code will be trying to land, the review comments still apply.
+
+Sure! But chances are plenty of this code gets erased :) I just wanted 
+to warn you that some of the effort on this version is likely to get 
+wasted. I did consider reverting this back to a RFC - but going back'n 
+forth with the RFC status felt odd...
+
+Yours,
+	-- Matti
+
 
