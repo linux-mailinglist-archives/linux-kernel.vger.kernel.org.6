@@ -1,97 +1,141 @@
-Return-Path: <linux-kernel+bounces-524829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74318A3E796
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:35:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D2A36A3E799
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:36:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11F2F7AA7DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:34:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E45377A9F67
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:35:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E408264A6E;
-	Thu, 20 Feb 2025 22:35:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B36FD264F81;
+	Thu, 20 Feb 2025 22:36:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="THyuoZEH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FDyKg2pu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5DE91EC01F;
-	Thu, 20 Feb 2025 22:35:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E99A1EC01F;
+	Thu, 20 Feb 2025 22:36:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740090932; cv=none; b=RMexlEA2KSCT2Fw6zl43d0NRxfFBt10C78+U0O7OEsDEtz2mH6jqsxFNH1YhfvrF2L23XuMSuN1Vy60KIP3X8MnHUFwTJwiOmRXmZ/Jth0mmZhPfvQomMisQwZcro05MhO9tf2h86errNaEwSnrTTYjgWTGg68B1YtHcB4JhiZ4=
+	t=1740090971; cv=none; b=V50qxolcWR9vZ9/EJ/JF0xQMlM/C1b4ZD+Y+ldJpGTn9KuZswzVRonYP6pJClRFnL8OuDWeq+Jn5BKo8IlcECjNS6904J/WSi6p3yTidOnBnhbaLQP9U94Hb2IP9YcNrXxaClH7VYw3eeiX4GBc0QsEb+L+Pr/ZL6eJ7dDt52K8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740090932; c=relaxed/simple;
-	bh=4OJg0oQ7N4XigOkvF4kaDEF/g5zSymWc9IjT0ma+hQY=;
+	s=arc-20240116; t=1740090971; c=relaxed/simple;
+	bh=NxbLe0M3BChvVfjcttKakBoKBCdnuodr8JnG2bwAuVg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZPIZzmIeb+BvGXZSFYjFsDSDGD+2fYEFopfV8O+LVDarWuH1xPjWPryx/ak62DFztU+lHHKRGMt04qVFfdpY/v+ndV+iDsAocTJFB+7zhyf2wYlF3o+NIxV6GwvCoUMHPBLY7ERz4q9jkc+rxzdF72vMy9PddsTtxzwnZnS5d9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=THyuoZEH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEE39C4CED1;
-	Thu, 20 Feb 2025 22:35:31 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=XEf3eczDy9KPOn5TO6coA9EaD9Oojv3TEzZP2AqrcqK9f+h4Xm9fHqbbta9Mdabg3SngwnpuRLMhXdWpYpXuui0F97MEE7O36TKCuf6LWtE3A1Z5KU2Wsr+PIl0x26QzdfBLTyb82jMh90Q7hOrF+rXNny7r1kn6VkyBxCtVCBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FDyKg2pu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1158C4CED1;
+	Thu, 20 Feb 2025 22:36:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740090932;
-	bh=4OJg0oQ7N4XigOkvF4kaDEF/g5zSymWc9IjT0ma+hQY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=THyuoZEHpLqWtVOC9CsvbfbVFtufYSHgkiq9Ic/LvkfTQt3N+EbWOwXhTYnfY9PcW
-	 3RMnSOij/q/EA4ubIop/D9NlptpCyC3aG0LVUaD3JHsZ13HktVKLgft+op/Nm9MgxB
-	 LytONxyOpCBd0zuKX38NUZEyqfJMUXO0KOt5fhhhNEHIrd3Radn1RO2DD6CuHmKk0+
-	 jMsLEOxYZdtiJSmD83sYhA8/t/4JnZF/pqOj2GW2emz/DcWcj+8bzi7czSXyxyBC7X
-	 nlm2A6YByIB57oh9IkMspEp89dhBlkWGMgjfBeuPAtYIdDMgcwwXkJ3CilrG9o5z0T
-	 3WuRHmAovUozw==
-Date: Thu, 20 Feb 2025 23:35:29 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	s=k20201202; t=1740090970;
+	bh=NxbLe0M3BChvVfjcttKakBoKBCdnuodr8JnG2bwAuVg=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=FDyKg2puhExOStHHCGZfQvF0OJ5i0wDNvhiSU1ndTj99/u1ULIkxjmxbhBkJbKSPD
+	 DIv1SBe9o77eIDEzgn1JThcHqDtktta6Ru/UtZHcqvgXwOV94od+7Hn+SrwX8anFiX
+	 ZL7XJk3OuMQs0CgHiB/Uiuck2W61xST6SIdHayOxjuxVdSoZcVZ08MwmY+mPAr8ToV
+	 rxscLQPcKml/GHQ3u9DY7PBkw/dIjdGpm481LCCt+wHTMwDWccSrTNV3j1Lh7/KH30
+	 BtTl89zqMsHO3OUFvWhEi5aAaPOs0fdqRPxXPbGJMMsdjYs3baERWvUBNDMfTOXxcM
+	 qnVeMw3xfmLow==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 5E986CE0B34; Thu, 20 Feb 2025 14:36:10 -0800 (PST)
+Date: Thu, 20 Feb 2025 14:36:10 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Marco Elver <elver@google.com>
+Cc: Alexander Potapenko <glider@google.com>,
+	Bart Van Assche <bvanassche@acm.org>,
+	Bill Wendling <morbo@google.com>, Boqun Feng <boqun.feng@gmail.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ingo Molnar <mingo@kernel.org>, Jann Horn <jannh@google.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Lyude Paul <lyude@redhat.com>, Guangbo Cui <2407018371@qq.com>,
-	Dirk Behme <dirk.behme@gmail.com>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Tamir Duberstein <tamird@gmail.com>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 00/14] hrtimer Rust API
-Message-ID: <Z7euMa5zYgHvWBsY@pavilion.home>
-References: <20250218-hrtimer-v3-v6-12-rc2-v8-0-48dedb015eb3@kernel.org>
+	Uladzislau Rezki <urezki@gmail.com>,
+	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
+	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, rcu@vger.kernel.org,
+	linux-crypto@vger.kernel.org
+Subject: Re: [PATCH RFC 15/24] rcu: Support Clang's capability analysis
+Message-ID: <3f255ebb-80ca-4073-9d15-fa814d0d7528@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250206181711.1902989-1-elver@google.com>
+ <20250206181711.1902989-16-elver@google.com>
+ <a1483cb1-13a5-4d6e-87b0-fda5f66b0817@paulmck-laptop>
+ <CANpmjNOPiZ=h69V207AfcvWOB=Q+6QWzBKoKk1qTPVdfKsDQDw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250218-hrtimer-v3-v6-12-rc2-v8-0-48dedb015eb3@kernel.org>
+In-Reply-To: <CANpmjNOPiZ=h69V207AfcvWOB=Q+6QWzBKoKk1qTPVdfKsDQDw@mail.gmail.com>
 
-Le Tue, Feb 18, 2025 at 02:27:05PM +0100, Andreas Hindborg a écrit :
-> This series adds support for using the `hrtimer` subsystem from Rust code.
+On Thu, Feb 20, 2025 at 11:11:04PM +0100, Marco Elver wrote:
+> On Thu, 20 Feb 2025 at 23:00, Paul E. McKenney <paulmck@kernel.org> wrote:
+> >
+> > On Thu, Feb 06, 2025 at 07:10:09PM +0100, Marco Elver wrote:
+> > > Improve the existing annotations to properly support Clang's capability
+> > > analysis.
+> > >
+> > > The old annotations distinguished between RCU, RCU_BH, and RCU_SCHED.
+> > > However, it does not make sense to acquire rcu_read_lock_bh() after
+> > > rcu_read_lock() - annotate the _bh() and _sched() variants to also
+> > > acquire 'RCU', so that Clang (and also Sparse) can warn about it.
+> >
+> > You lost me on this one.  What breaks if rcu_read_lock_bh() is invoked
+> > while rcu_read_lock() is in effect?
 > 
-> The series adds support for timer mode and clock source configuration during
-> timer initialization. Examples and functionality to execute closures at timer
-> expiration has been removed, as these depend on either atomics [3] or
-> `SpinLockIrq` [4], which are still being worked on.
+> I thought something like this does not make sense:
 > 
-> This series is a dependency for unmerged features of the Rust null block driver
-> [1], and for rkvms [2].
-> 
-> Link: https://git.kernel.org/pub/scm/linux/kernel/git/a.hindborg/linux.git/log/?h=rnull-v6.11-rc2 [1]
-> Link: https://gitlab.freedesktop.org/lyudess/linux/-/tree/rvkms-wip [2]
-> Link: https://lore.kernel.org/rust-for-linux/20240612223025.1158537-1-boqun.feng@gmail.com/ [3]
-> Link: https://lore.kernel.org/rust-for-linux/20240916213025.477225-1-lyude@redhat.com/ [4]
-> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+>   rcu_read_lock_bh();
+>   ..
+>   rcu_read_lock();
+>   ..
+>   rcu_read_unlock();
+>   ..
+>   rcu_read_unlock_bh();
 
-Let me repeat again that I have extremely limited understanding of this.
-But let's say I haven't spotted a major issue on the interface...
+If you have the choice, it is often better to do the rcu_read_lock()
+first and the rcu_read_lock_bh() second.
 
-	    Acked-by: Frederic Weisbecker <frederic@kernel.org>
+> However, the inverse may well be something we might find somewhere in
+> the kernel?
 
-Thanks!
+Suppose that one function walks an RCU-protected list, calling some
+function from some other subsystem on each element.  Suppose that each
+element has another RCU protected list.
+
+It would be good if the two subsystems could just choose their desired
+flavor of RCU reader, without having to know about each other.
+
+> Another problem was that if we want to indicate that "RCU" read lock
+> is held, then we should just be able to write
+> "__must_hold_shared(RCU)", and it shouldn't matter if rcu_read_lock()
+> or rcu_read_lock_bh() was used. Previously each of them acquired their
+> own capability "RCU" and "RCU_BH" respectively. But rather, we're
+> dealing with one acquiring a superset of the other, and expressing
+> that is also what I attempted to solve.
+> Let me rethink this...
+
+Would it work to have just one sort of RCU reader, relying on a separate
+BH-disable capability for the additional semantics of rcu_read_lock_bh()?
+
+							Thanx, Paul
 
