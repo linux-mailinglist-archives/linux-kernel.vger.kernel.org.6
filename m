@@ -1,99 +1,141 @@
-Return-Path: <linux-kernel+bounces-524777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87099A3E6FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:51:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7128A3E719
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:58:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1F7F189A63A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:51:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E23D7189D6A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:58:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC7A91EF0B5;
-	Thu, 20 Feb 2025 21:51:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cihh62xD"
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CAF52638B1;
+	Thu, 20 Feb 2025 21:57:57 +0000 (UTC)
+Received: from relay06.th.seeweb.it (relay06.th.seeweb.it [5.144.164.167])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CEA01EDA07
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 21:51:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC50D1EA7ED;
+	Thu, 20 Feb 2025 21:57:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.144.164.167
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740088275; cv=none; b=tQYQ/5jX1xncF3OM3xCdaoUrWQJ//wBtCPsAQmKh+3MmpWisd1yE22XFKIKnLbOxWY8aDmmFxoR0FE6Nyw09ejciT/VfDf0ooPdEaEBoAaiD1hxAy/gcSCfAM6naK1PLoPrjBJLlJh1YWJtYTH/U8XOKdM0OylJWHnU9xqtWJwU=
+	t=1740088676; cv=none; b=ijqD8NDUsPw+fsE/3BsJl3N3oGcVEIDOkkQCTrEk/o+oXqvxGOiCh+FUorV1rlAuHHaQIcYP+koyeADf6w8l3HLH95pRfuBf1c1UWiRM/m/UJclVxfsuiLI8+6YP7qwUX/uOCFBMfC9KaG5sMU3gB8us7u2AZN9aAtr39m83ddI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740088275; c=relaxed/simple;
-	bh=POCua1poOqTKX9IA12fXvyapJ0I0k4Fee3XNGMFyIz8=;
+	s=arc-20240116; t=1740088676; c=relaxed/simple;
+	bh=tBiT1zKiECuw9YCaCSN9G/JLtivloNtC5SEjSI7ILFA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qZcBRK8bT6o5/xCo6iY5kLN7md8RQhWF8QqRedVPkAdAbyZM1bdnKb1YQlx6RTbL97L2kKlNjxn5MJSFvvGnZKF4I+cf6VEx0n6RF2weKfCg/lTLMPyuHsC1CKhGS6bJre2KuMBaVGA2IDGWhfzUY7USPHFC1IdZhLImy2QPr7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cihh62xD; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 20 Feb 2025 21:50:54 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740088261;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gbpaDL5iHMBEhdVqgt+41QrD5QBpl3QLJHFsb3rcje4=;
-	b=cihh62xDjZi0fekPiSBQjw0zchMMygB0z6t5P8JOHvuSdrF4J3ouAiiDDeMapd3ict2H9o
-	bRXGYm26thKaxMgH9qyxctJxNDzsgMhVdXBTuWQvto/FQ/a0SaPVxMDxAQsl5dKSEvDOZe
-	07x6U1LLk/BbqVqooVATKGVvqC8XceQ=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/6] IBPB cleanups and a fixup
-Message-ID: <Z7ejvk31gYNCIwFv@google.com>
-References: <20250219220826.2453186-1-yosry.ahmed@linux.dev>
- <20250220190444.7ytrua37fszvuouy@jpoimboe>
- <Z7eJurYbxS2kAzvk@google.com>
- <20250220204724.y3b6wx7y2ks3fuct@jpoimboe>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mR57qtd/VcH9CvYME8OUfxZIGHPDqW31r5jnHpUyopRjJ/WKvYN9rYZqH1a413NfeueQDgof+N6UMK6nabRUaJ5+2J4Cufl5+HVFxyYBkzm3/Yho/qb2ga6YIHwUnsXHLMyVIkmU0icrhLekcCG6XWA0X90ht64t1yZjvSkwY+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org; spf=pass smtp.mailfrom=somainline.org; arc=none smtp.client-ip=5.144.164.167
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=somainline.org
+Received: from SoMainline.org (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 89B6A3ED61;
+	Thu, 20 Feb 2025 22:50:59 +0100 (CET)
+Date: Thu, 20 Feb 2025 22:50:57 +0100
+From: Marijn Suijten <marijn.suijten@somainline.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Jun Nie <jun.nie@linaro.org>, Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Krishna Manikandan <quic_mkrishn@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] drm/msm/dsi: Support DSC for dual panel case
+Message-ID: <cokgqc6qd26caz63lwoyjcfbewbh3zxagjedzy6o6tfkt7wgmp@fz2gquyxcxbu>
+References: <20250220-dual-dsi-v2-0-6c0038d5a2ef@linaro.org>
+ <20250220-dual-dsi-v2-5-6c0038d5a2ef@linaro.org>
+ <iibq3orsb7uf44luz2he2auox43ki42m2z4nnderyqlhypvfgo@pwqpvua6vuyo>
+ <CABymUCNajuc8WnWgf2JehFYUY-MqxCYmD=By8nY-JppxYHsyNw@mail.gmail.com>
+ <m7brftsrxdikfeumbjkubeeleezka7mwjbchxefqgs4ybtca5n@ge3ay2olagq2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250220204724.y3b6wx7y2ks3fuct@jpoimboe>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <m7brftsrxdikfeumbjkubeeleezka7mwjbchxefqgs4ybtca5n@ge3ay2olagq2>
 
-On Thu, Feb 20, 2025 at 12:47:24PM -0800, Josh Poimboeuf wrote:
-> On Thu, Feb 20, 2025 at 07:59:54PM +0000, Yosry Ahmed wrote:
-> > > static inline void indirect_branch_prediction_barrier(void)
-> > > {
-> > > 	asm volatile(ALTERNATIVE("", "call write_ibpb", X86_FEATURE_IBPB)
-> > > 		     : ASM_CALL_CONSTRAINT
-> > > 		     : : "rax", "rcx", "rdx", "memory");
-> > > }
-> > > 
-> > > I also renamed "entry_ibpb" -> "write_ibpb" since it's no longer just
-> > > for entry code.
+On 2025-02-20 18:06:01, Dmitry Baryshkov wrote:
+> On Thu, Feb 20, 2025 at 11:42:28PM +0800, Jun Nie wrote:
+> > Dmitry Baryshkov <dmitry.baryshkov@linaro.org> 于2025年2月20日周四 18:39写道：
+> > >
+> > > On Thu, Feb 20, 2025 at 06:07:56PM +0800, Jun Nie wrote:
+> > > > There is dual DSI case that every DSI link is connected to an independent
+
+There is a dual-DSI case where every DSI link ...
+
+> > > > panel. In this dual panel case, the frame width for DSC on each link should
+> > > > be halved to support the usage case.
+
+use* case.  Also, it shouldn't be "halved" just... because?  It should be
+"halved" because apparently hdisplay here is the width of the two panels
+together, while the width coded in pic_width should contain that of a single
+panel (since they're independent), which is equal to the width of a single
+interface.
+
+Tl;dr for below: this needs a *lot* more text to explain the setup and
+possibilities.  How is a DSI panel driver supposed to configure this on their
+end?  Hint: look at my previous drm/msm patches that explain how we expect to
+interface with the parameters set by the panel driver.
+
+> > >
+> > > Isn't it the case for the DSI panel utilizing two DSI links?
 > > 
-> > Do you want me to add this in this series or do you want to do it on top
-> > of it? If you have a patch lying around I can also include it as-is.
+> > The added case here is 2 DSI panel utilizing two DSI links, 1 DSI link
+> > in each panel.
+> > I assume default case is 1 panel with 2 DSI link, such as Marijn's case.
 > 
-> Your patches are already an improvement and can be taken as-is:
+> So it should be halved in your case, but not in Marijn's case? I can
+> suspect that if you are describing two DSI panels as a single instance,
+> you should also adjust drm_dsc_config accordingly (on the panel's side?)
 > 
-> Acked-by: Josh Poimboeuf <jpoimboe@kernel.org>
-> 
-> I'll try to dust off my patches soon and rebase them on yours.
+> Maybe drm_dsc_config.pic_width and drm_dsc_config.pic_height should be
+> set on the panel's side? But then, how will that function for the DSI
+> panels or bridges which can change the mode?
 
-SGTM, thanks!
+It appears that these patches are missing a proper description of the setup
+or use-case.  I previously NAK'd those "dual DSI" patches because of this, but
+reading between the lines I think I came to understand the reason without anyone
+else explaining it, unfortunately.  Needless to say that this needs very careful
+documentation and wording in both code (DT and/or header structs) and commit
+messages.
 
-> 
-> -- 
-> Josh
+In my case I have a single high-resolution high-refresh-rate panel that can
+simply not be driven over a single DSI link.  A dual-DSI link is used in bonded
+mode, most likely to keep the clocks and other things in sync, and to make it
+easier to be represented by one virtual encoder in DPU?  All control commands
+only need the sent over one DSI link, not over both.
+
+In this case pic_width is equal to the entire width of the panel, hence it is
+double the width of a single interface.
+
+Jun seems to have a strangely different use-case for bonded-DSI / dual-DSI that
+isn't explained: two "independent" panels.  It is clear to me that pic_width
+here has to contain the width of the entire panel, and is hence equal to the
+entire width of a single interface.
+(And in the future, it seems the quad setup can drive two "bonded" panels with
+ two DSI-merge's each)
+
+But what we're missing here is what the **advantages and limitations** are
+of this setup: why would one run two DSI links for "independent" panels in
+bonded-DSI mode?  Is it more power-optimal?  Will userspace see this as one
+panel that's simply twice as wide?  Do these panels have to be "identical"
+so that they behave and are clocked the same?  How is the driver expected to
+prepare the mode and DSC configuration parameters to make this work?
+
+Perhaps it's possible to scrape this info from [1] and prior commits but I
+rather have a more digestible description in the commit message, thanks.
+
+- Marijn
+
+[1]: https://gitlab.com/jun.nie/linux/-/commit/98c0f411a85d68a76be500f8421df467d6cc53f3
 
