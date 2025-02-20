@@ -1,134 +1,140 @@
-Return-Path: <linux-kernel+bounces-524324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AD15A3E1EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:13:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B707AA3E1E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:09:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABD663A48F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:05:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A83C18994B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:08:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57810212B02;
-	Thu, 20 Feb 2025 17:05:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5309E214A7A;
+	Thu, 20 Feb 2025 17:06:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pp1lqxQY"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MbxPtleo"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AF041C5F26
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 17:05:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0447A2144AD
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 17:06:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740071155; cv=none; b=N+IRPugeD9PSRTxKwLALqNPkxjYMiS7DvvCJs8AClyXcWnV5qCegH1gWHQ/2eL6LU3MU+9i+IdSFlSkLk9Cc0zk8zt7Sl4vIiUND6CBNMm3eX1kx4GsV817d2RSrugTswyrAYshJ+YgGlEJAR0BHTK1YNyOQyyo0qLTRMswJ1jk=
+	t=1740071186; cv=none; b=kwGtjsR6GDQkOWsPhJ2iyf/LFmnotI7J7Io77rOqG8ZnopO0Q3hhcacLDQ2V0mGO12kgnoktwZaslm1uJabkkGwxkxXlXZUnYsBftW9VUroiEKYAe6J4EsIo90QZZeDaTX5BX2FIeZDJshdtCQBEwZaEqiPQoVxs1Eyz1jguHVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740071155; c=relaxed/simple;
-	bh=bJlowZ0iSqUS6kngqAMlL3TU5kMrUs1Dk75f7qsjxBI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lOJqR4ChmZOY288WVsVfp5Th8HmPcAeA60k72n0rruFaY1QulVSb9yut/cf42v3w3gXt87lqIlvjMXAZG50W7DCU0svxNhGuftyfMJNc7xCKU++8cO8D9m+Y1+BVbu+N5H+lRXmW21BodabzHi12sEnsuoSEU/7ANIlGdWh2FYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pp1lqxQY; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5462ea9691cso1343356e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:05:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740071152; x=1740675952; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UfeMZTQKy6XPCUQt3DsDTx5q3kMNEgxvMLYJua1RFZE=;
-        b=Pp1lqxQY2F7AJDvFqFI2zEbeG+dXiPftL1r4uDHL4E5XZ3l0TkDXiSm9rl652edQ++
-         tc5CE0/4He4gRkFi1CgBZIf6baG4CCbJsyCczbcqha0tb7/iNZ8W6wlEXwj6hpM8MlGe
-         eU/QZopMwSlHgyAJt+rzmZuHZOijrnTzorIOfhRE5fXhSmNdliL0jLyCv2yIUiUQEoCp
-         xmL6BmFtdeqNe9gYt2seICKyktuTGwHT8KiZTGysc3m5Dd0mzgI9WiDw6Offc5bgvVvp
-         tDdLDLyinNlEW+4VtcTUsIux8zVLNNq4Z/ne0xg4Iy5SpWQKOo8tsUKPsYJNSLuamXJf
-         jHsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740071152; x=1740675952;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UfeMZTQKy6XPCUQt3DsDTx5q3kMNEgxvMLYJua1RFZE=;
-        b=riLoUXLroQawTsz1lmvambhRxNtr7ZY/OZIxj5lTBymBFCn2X5X+dU7zP1db8QFEsu
-         SsvVD6ln2F/dazi25v9j+tUQ90FDyV+AVsCNFfasjF7fd18vjNjfGRKaeO2yQ5SvOVkE
-         PBrN0TbjOM75Vok7f4uEVeX+G8Pib8wfTg6AWugZqYw8QLPu1bBt3YJVtZ4GSA9wPlgn
-         tMzUeFmUM4db9SCrnkU8cYxtY9cmEcRTcE+kAeX89A8VJbJnVVzn4BBJbY2Le6rIe2YM
-         g4uoGId4KjinZVpbH2laQughO3MWV5B+XBOj7yPhTZR45K6ZKiL2Yx9BpqVVywAWY4E1
-         Xa5g==
-X-Forwarded-Encrypted: i=1; AJvYcCVIqs7DyqEm6HP5wgma5vq9X50JJceVH/1UOD7E8GZ7SIoF7wNxUyYVRV5bkjak1vkG7B4t1UjXqnVOFzQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGDTHxMyMCm1Ynndud6oIOqw+H05Xt9e4TX7e5lA2OaOmYHoZy
-	hx2PCLHseIp+CDAJG/GGc2bicDHihy66iYlzpC4YkxM0QKg2fS/FtILA4j6df93f3o/wlno7aD0
-	Yg4825hEE2Co8VIf0wFpssMymyg==
-X-Gm-Gg: ASbGncuCzF1om82Zo7R4fSS0pHqRHdGzhbt5zpfdsuTc0R35b1vRyTVtvSH8ONTcVFV
-	gH9bKvPbHLBuiZa/cOxBNSjdgZqKSfQJ+E6ro7dwTNUp4oMbtTU+GltK1kWdaJqJSxzzOUZ7hHi
-	iY1X2D+xQShZE=
-X-Google-Smtp-Source: AGHT+IG/QuT9I+oIRm/lV434Pbkvz/uKTigRRlIyfuUfYHgcOCiIoKbrdl5ccikgSYnjygMag+JeT9KPzWd4+gpsiQ4=
-X-Received: by 2002:a05:6512:4004:b0:545:1e2d:6b8e with SMTP id
- 2adb3069b0e04-5462ef1588bmr3055735e87.42.1740071151966; Thu, 20 Feb 2025
- 09:05:51 -0800 (PST)
+	s=arc-20240116; t=1740071186; c=relaxed/simple;
+	bh=7o4MI2SWfvup5UD+qqNq6pDUDm+stiy6rOOP3Q809Qc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=n0UCCskbFz7UBLgrkcsBkl/D/8SCvIpcnVNp6xHt7Wu67+M/zXjcLbVdOkVsPTjEyhoHNExnOwOG1KKbVJFGlhJVqAyYMfXUJ+yuQG2LXlUZhNrT29gyDUkGoBG0YrRbzgCp3M9POUbI2bYSg/KzeTTb6V5qrNaZQKKPrK9J/Bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MbxPtleo; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740071183;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OKSKOdbW5lvB/N/H9qi5+SwkOKNYt+M8QNhPBs9dcO8=;
+	b=MbxPtleoUCzWkhApusw7/HRWdhV4X+XaQFN7zlDNMqDhkWnwduuOsL76zD3bHV5PE/dguk
+	xy0G0HtBCAK5LmhzIFAkgJIxk2W2/0+RxX/Zvu9GX3terQErVxmJFVt2mDYvbcxS/W7wH9
+	ia0NOd9uYXK3VEo+nnUoJTJaTxL6Fyw=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-403-T9jSxB5VMDKS2aKHpEQtYw-1; Thu,
+ 20 Feb 2025 12:06:19 -0500
+X-MC-Unique: T9jSxB5VMDKS2aKHpEQtYw-1
+X-Mimecast-MFC-AGG-ID: T9jSxB5VMDKS2aKHpEQtYw_1740071178
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AFEDD19560B9;
+	Thu, 20 Feb 2025 17:06:18 +0000 (UTC)
+Received: from virtlab1023.lab.eng.rdu2.redhat.com (virtlab1023.lab.eng.rdu2.redhat.com [10.8.1.187])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id BABE81800D9D;
+	Thu, 20 Feb 2025 17:06:17 +0000 (UTC)
+From: Paolo Bonzini <pbonzini@redhat.com>
+To: linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org
+Cc: seanjc@google.com,
+	Yan Zhao <yan.y.zhao@intel.com>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>
+Subject: [PATCH 07/30] x86/virt/tdx: allocate tdx_sys_info in static memory
+Date: Thu, 20 Feb 2025 12:05:41 -0500
+Message-ID: <20250220170604.2279312-8-pbonzini@redhat.com>
+In-Reply-To: <20250220170604.2279312-1-pbonzini@redhat.com>
+References: <20250220170604.2279312-1-pbonzini@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250123190747.745588-1-brgerst@gmail.com> <Z7RRZ0jdqsrADMm0@gmail.com>
- <CAFULd4Z_QoOLKCOawyeFtRe6V4+oaaGxfQxav9dS-Di-Ne7tfw@mail.gmail.com>
- <Z7XE0P6ZFHxtlYXw@gmail.com> <CAMzpN2gyhEnYsimxLhLNPc4HTpVdRGTiBfm9pXiFTL6_3-O=sg@mail.gmail.com>
- <Z7ctmL3HDGxzyX0g@gmail.com>
-In-Reply-To: <Z7ctmL3HDGxzyX0g@gmail.com>
-From: Brian Gerst <brgerst@gmail.com>
-Date: Thu, 20 Feb 2025 12:05:40 -0500
-X-Gm-Features: AWEUYZmB2DMqgpDKMaWCXoqygnfYCtjcXCZ6N0ZEa-r95zQrRTlmgnAtJjLIiCs
-Message-ID: <CAMzpN2iwtA2fuNgBU2rrQzuUUD57_=fVzngn7AaJo-UAnJvVoA@mail.gmail.com>
-Subject: Re: [PATCH v6 00/15] x86-64: Stack protector and percpu improvements
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Uros Bizjak <ubizjak@gmail.com>, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	"H . Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
-	Ard Biesheuvel <ardb@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Thu, Feb 20, 2025 at 8:26=E2=80=AFAM Ingo Molnar <mingo@kernel.org> wrot=
-e:
->
->
-> * Brian Gerst <brgerst@gmail.com> wrote:
->
-> > On Wed, Feb 19, 2025 at 6:47=E2=80=AFAM Ingo Molnar <mingo@kernel.org> =
-wrote:
-> > >
-> > >
-> > > * Uros Bizjak <ubizjak@gmail.com> wrote:
-> > >
-> > > > > Thank you for doing this series - it all looks pretty good from m=
-y
-> > > > > side and I've applied it experimentally to tip:x86/asm. I fixed u=
-p
-> > > > > the trivial details other reviewers and me noticed.
-> > > > >
-> > > > > Note that the merge is tentative, it might still need a rebase if
-> > > > > some fundamental problem comes up - but let's see how testing goe=
-s
-> > > > > in -next.
-> > > >
-> > > > I wonder if there would be any benefit if stack canary is put into
-> > > > struct pcpu_hot?
-> > >
-> > > It should definitely be one of the hottest data structures on x86, so
-> > > moving it there makes sense even if it cannot be measured explicitly.
-> > >
-> >
-> > It would have to be done with linker tricks, since you can't make the
-> > compiler use a struct member directly.
->
-> Probably not worth it then?
+Adding all the information that KVM needs increases the size of struct
+tdx_sys_info, to the point that you can get warnings about the stack
+size of init_tdx_module().  Since KVM also needs to read the TDX metadata
+after init_tdx_module() returns, make the variable a global.
 
-Actually it wasn't so bad since we already had the hack for
-__ref_stack_chk_guard.  Do you want the patches now or when the dust
-settles on the original series?
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+---
+ arch/x86/virt/vmx/tdx/tdx.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
+index 369b264f4d9b..578ad468634b 100644
+--- a/arch/x86/virt/vmx/tdx/tdx.c
++++ b/arch/x86/virt/vmx/tdx/tdx.c
+@@ -53,6 +53,8 @@ static DEFINE_MUTEX(tdx_module_lock);
+ /* All TDX-usable memory regions.  Protected by mem_hotplug_lock. */
+ static LIST_HEAD(tdx_memlist);
+ 
++static struct tdx_sys_info tdx_sysinfo;
++
+ typedef void (*sc_err_func_t)(u64 fn, u64 err, struct tdx_module_args *args);
+ 
+ static inline void seamcall_err(u64 fn, u64 err, struct tdx_module_args *args)
+@@ -1061,15 +1063,14 @@ static int init_tdmrs(struct tdmr_info_list *tdmr_list)
+ 
+ static int init_tdx_module(void)
+ {
+-	struct tdx_sys_info sysinfo;
+ 	int ret;
+ 
+-	ret = get_tdx_sys_info(&sysinfo);
++	ret = get_tdx_sys_info(&tdx_sysinfo);
+ 	if (ret)
+ 		return ret;
+ 
+ 	/* Check whether the kernel can support this module */
+-	ret = check_features(&sysinfo);
++	ret = check_features(&tdx_sysinfo);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -1090,12 +1091,12 @@ static int init_tdx_module(void)
+ 		goto out_put_tdxmem;
+ 
+ 	/* Allocate enough space for constructing TDMRs */
+-	ret = alloc_tdmr_list(&tdx_tdmr_list, &sysinfo.tdmr);
++	ret = alloc_tdmr_list(&tdx_tdmr_list, &tdx_sysinfo.tdmr);
+ 	if (ret)
+ 		goto err_free_tdxmem;
+ 
+ 	/* Cover all TDX-usable memory regions in TDMRs */
+-	ret = construct_tdmrs(&tdx_memlist, &tdx_tdmr_list, &sysinfo.tdmr);
++	ret = construct_tdmrs(&tdx_memlist, &tdx_tdmr_list, &tdx_sysinfo.tdmr);
+ 	if (ret)
+ 		goto err_free_tdmrs;
+ 
+-- 
+2.43.5
 
 
-Brian Gerst
 
