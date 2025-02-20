@@ -1,209 +1,94 @@
-Return-Path: <linux-kernel+bounces-524070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 471A7A3DEB5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:35:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0C22A3DECC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:37:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F267168DA9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:32:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E83C13B10E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:33:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26EBE1FDA83;
-	Thu, 20 Feb 2025 15:32:37 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC6611D5AA0;
-	Thu, 20 Feb 2025 15:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2551A1F9ED2;
+	Thu, 20 Feb 2025 15:33:44 +0000 (UTC)
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC151D5AA0;
+	Thu, 20 Feb 2025 15:33:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740065556; cv=none; b=s8kWUMskTuoAfc7gYJ87/VoUOeTF8MAbKuVyZuq0CssMRwehb7Ohw0zhu/o+zyMHaBTUBzyTTSFGRuYCjiXy/TlqPcirvXXoqfC+CH9kYqUd5XWsTQBH1CD/OUVBFstAVKa4fcPvNWT2MoZ+pqFYw/OnmJOgqOqkvRKch/lWCWk=
+	t=1740065623; cv=none; b=o0G8oQRK9SvkEnnaRll77W6Tc82LkyMGNnHSbjODvj6tr+JhUS36uEdtBYx3UlkHIJx5IjKmoag3UrOlociQrtv0aGh6AckllC/RyWwl+ekU79lO9z5XaImykIBhkRErcghmVwpBNkRkea/hJMuSvA7llYFdrFzC8GkhW+8xWu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740065556; c=relaxed/simple;
-	bh=Pi33kls6Ei68GLKOGLPPA9sBFFLRww40fx6lP4Kt8UQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L9CWyysyY7z6Gm3EHINXK3w95abIE77PcFbLiGIpjPzelSK2b7hobS3Gh//ptFvk+SjETvFniEJykpNHO5trZ+uisFN6CCLPtxfIRKLARA25XjhK+ljAUyovvxf9KCND16RfNWMTJawOkpLE3T+3fhVGklHFkWgG/Pnl3ITiz6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EC7BD16F3;
-	Thu, 20 Feb 2025 07:32:51 -0800 (PST)
-Received: from [10.163.39.71] (unknown [10.163.39.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2E5F93F59E;
-	Thu, 20 Feb 2025 07:32:30 -0800 (PST)
-Message-ID: <6d1a298f-6af9-4568-b171-cb4a83121a95@arm.com>
-Date: Thu, 20 Feb 2025 21:02:26 +0530
+	s=arc-20240116; t=1740065623; c=relaxed/simple;
+	bh=sf36f2W8jJ8MdC9oTXglCoDz6cA2telgyEFjOGRHKgc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JVfverfm8nZR4kuqfGdzME3fu/Jtu2Ok7vD6wEfO/ORQrLAAFHDFdfd4xSfOUSRmTKPnjpQz0VWNNZpiubZkqBdLq6ef3ANjYQNyWsB4l1HJ5ELisCWOdWuutnBORKp7Xp9YCyLhTq7q4Fkx98wSo+ybN9cHz4pcgOkbCbRbw+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-220f4dd756eso21640165ad.3;
+        Thu, 20 Feb 2025 07:33:42 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740065621; x=1740670421;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G0lXhDdruk8QUxXL0q8NP6qP4JGCF9C8FeXdpXFohxU=;
+        b=cTM61NfoKQ7pxCN1PAi5GDfxpryLPvdCTVPSe8trtewx59fL+sZ8T6MeDAPU8TJtwP
+         ls2+jquR0b4zNLkPkzJgEWheUSuW77VpWj20whs9pWAIK8ZTgGifAgRvjc4t/vXXCd2l
+         uZyOKoPMxCk81dbTJa+/wE6Hdlj0gGdvgJxkBsbMUrkEn9jUlC5YMdj2FctFykQw7auV
+         7TtEMECHnCIH8lpRq21YiATUuj/1y7m0AmTujFgVQaiX8sYgCUIiknLA4AiRnWb4tv2N
+         +OD7kPjkDg3BV4jik/umrhF5+O21ApQIzg8b04J+yAhXy/lWHaL50sP0s2XCWsauzgmH
+         Oyaw==
+X-Forwarded-Encrypted: i=1; AJvYcCVfW2UWARiMH5y2vbUmFl9uSIfqK7WaO8dtPX/TutqH9mhSzW/ZuOkyhBD93appcz6M9hMzXVfhH0FH@vger.kernel.org, AJvYcCVixLBhO3Ha5oQIK5JuCNEnaD3c5W+7YV2iWAXPhltYJn7aM/RnO5s2PCqqApyhEx/quNXesW6oaPf1CfhkwA==@vger.kernel.org, AJvYcCWvpnHNOqYb4QeGFHLerARoqkWKpB5Gm1uewGQYIGl9f8LJ6ICJpwaZ2IE4IKyws3O1cnFmTD6ZDTsIdfC0@vger.kernel.org, AJvYcCXI5iJ8TAiFRelUv7UBXr4HtTcg7GH6vM3jfZlsScQ2+GpRGVcT7recIrTm2bszanz0K2LeaMHxeQsF@vger.kernel.org
+X-Gm-Message-State: AOJu0YzB+rq6OacKeZ2VYZ5DUpqg1q8rF/FXiXHQDnESz7kpHNZRsVhG
+	+EMzUp89TF6NXXgVDsHU/96e8cS09QyxdMQjOvN8L4faajZHqQg/
+X-Gm-Gg: ASbGncuoFLdBJidPvGs9yqxCXa+UY/vo+G9/YCFr3P8j8JEC3c94E+vCkzg3KBA4r2J
+	iWomkkKLR1i3eTJ65hwXvvjGxte0vumdUw2mwwNHCVlBUWrqJBdHWsKvpDkrN64WgRARC/UXMS5
+	tN1p3toEDbtKMR4nMsik9xp5Cj4k72jy7uvbFcr9PdJ3j1uw75s6hmsvwR5lZmw5flPoN5777aY
+	3+HpGoZevpcVWpcMhbtWSHLyHHPZkK+cymM8YyJ62lZSyHjWwMnZKsESxCuvwIJ/oZ2qK20/Fmt
+	b+rMiKjpQf4T6xGGDyHh71V8fu/aTH4d6+1FfvQ+OR6MBxz5Sw==
+X-Google-Smtp-Source: AGHT+IFbyXv/IUOI5OO28alBQP35ioQSMOeP7pKvdALLP7ZoBNdNEI9ro/4JO1qR1JaXYM8PNyI/gw==
+X-Received: by 2002:a17:903:2cb:b0:21f:6cb2:e949 with SMTP id d9443c01a7336-221040d87c9mr358153305ad.52.1740065621580;
+        Thu, 20 Feb 2025 07:33:41 -0800 (PST)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-2fcb8571586sm1887051a91.0.2025.02.20.07.33.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 07:33:40 -0800 (PST)
+Date: Fri, 21 Feb 2025 00:33:37 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: lpieralisi@kernel.org, robh@kernel.org, bhelgaas@google.com,
+	andersson@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, stable+noautosel@kernel.org,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: Re: [PATCH 2/2] PCI: qcom-ep: Mark BAR0/BAR2 as 64bit BARs and
+ BAR1/BAR3 as RESERVED
+Message-ID: <20250220153337.GB2510987@rocinante>
+References: <20241231130224.38206-1-manivannan.sadhasivam@linaro.org>
+ <20241231130224.38206-3-manivannan.sadhasivam@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/6] selftests/mm: Report errno when things fail
-To: Brendan Jackman <jackmanb@google.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>
-Cc: Mateusz Guzik <mjguzik@gmail.com>, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250220-mm-selftests-v1-0-9bbf57d64463@google.com>
- <20250220-mm-selftests-v1-1-9bbf57d64463@google.com>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <20250220-mm-selftests-v1-1-9bbf57d64463@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241231130224.38206-3-manivannan.sadhasivam@linaro.org>
 
+Hello,
 
+> On all Qcom endpoint SoCs, BAR0/BAR2 are 64bit BARs by default and software
+> cannot change the type. So mark the those BARs as 64bit BARs and also mark
+> the successive BAR1/BAR3 as RESERVED BARs so that the EPF drivers cannot
+> use them.
 
-On 20/02/25 8:33 pm, Brendan Jackman wrote:
-> Just reporting failure doesn't tell you what went wrong. This can fail
-> in different ways so report errno to help the reader get started
-> debugging.
+Applied to controller/qcom, thank you!
 
-IMHO it would be even better if we reported strerror(errno).
-
-> 
-> Signed-off-by: Brendan Jackman <jackmanb@google.com>
-> ---
->   tools/testing/selftests/mm/gup_longterm.c | 32 +++++++++++++++----------------
->   1 file changed, 16 insertions(+), 16 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/mm/gup_longterm.c b/tools/testing/selftests/mm/gup_longterm.c
-> index 9423ad439a6140163bdef2974615bb86406a8c14..46a2139b3a646f6c050eb031a770f615be76c433 100644
-> --- a/tools/testing/selftests/mm/gup_longterm.c
-> +++ b/tools/testing/selftests/mm/gup_longterm.c
-> @@ -96,13 +96,13 @@ static void do_test(int fd, size_t size, enum test_type type, bool shared)
->   	int ret;
->   
->   	if (ftruncate(fd, size)) {
-> -		ksft_test_result_fail("ftruncate() failed\n");
-> +		ksft_test_result_fail("ftruncate() failed (%d)\n", errno);
->   		return;
->   	}
->   
->   	if (fallocate(fd, 0, 0, size)) {
->   		if (size == pagesize)
-> -			ksft_test_result_fail("fallocate() failed\n");
-> +			ksft_test_result_fail("fallocate() failed (%d)\n", errno);
->   		else
->   			ksft_test_result_skip("need more free huge pages\n");
->   		return;
-> @@ -112,7 +112,7 @@ static void do_test(int fd, size_t size, enum test_type type, bool shared)
->   		   shared ? MAP_SHARED : MAP_PRIVATE, fd, 0);
->   	if (mem == MAP_FAILED) {
->   		if (size == pagesize || shared)
-> -			ksft_test_result_fail("mmap() failed\n");
-> +			ksft_test_result_fail("mmap() failed (%d)\n", errno);
->   		else
->   			ksft_test_result_skip("need more free huge pages\n");
->   		return;
-> @@ -130,7 +130,7 @@ static void do_test(int fd, size_t size, enum test_type type, bool shared)
->   		 */
->   		ret = mprotect(mem, size, PROT_READ);
->   		if (ret) {
-> -			ksft_test_result_fail("mprotect() failed\n");
-> +			ksft_test_result_fail("mprotect() failed (%d)\n", errno);
->   			goto munmap;
->   		}
->   		/* FALLTHROUGH */
-> @@ -165,18 +165,18 @@ static void do_test(int fd, size_t size, enum test_type type, bool shared)
->   		args.flags |= rw ? PIN_LONGTERM_TEST_FLAG_USE_WRITE : 0;
->   		ret = ioctl(gup_fd, PIN_LONGTERM_TEST_START, &args);
->   		if (ret && errno == EINVAL) {
-> -			ksft_test_result_skip("PIN_LONGTERM_TEST_START failed\n");
-> +			ksft_test_result_skip("PIN_LONGTERM_TEST_START failed (EINVAL)n");
->   			break;
->   		} else if (ret && errno == EFAULT) {
->   			ksft_test_result(!should_work, "Should have failed\n");
->   			break;
->   		} else if (ret) {
-> -			ksft_test_result_fail("PIN_LONGTERM_TEST_START failed\n");
-> +			ksft_test_result_fail("PIN_LONGTERM_TEST_START failed (%d)\n", errno);
->   			break;
->   		}
->   
->   		if (ioctl(gup_fd, PIN_LONGTERM_TEST_STOP))
-> -			ksft_print_msg("[INFO] PIN_LONGTERM_TEST_STOP failed\n");
-> +			ksft_print_msg("[INFO] PIN_LONGTERM_TEST_STOP failed (%d)\n", errno);
->   
->   		/*
->   		 * TODO: if the kernel ever supports long-term R/W pinning on
-> @@ -202,7 +202,7 @@ static void do_test(int fd, size_t size, enum test_type type, bool shared)
->   		/* Skip on errors, as we might just lack kernel support. */
->   		ret = io_uring_queue_init(1, &ring, 0);
->   		if (ret < 0) {
-> -			ksft_test_result_skip("io_uring_queue_init() failed\n");
-> +			ksft_test_result_skip("io_uring_queue_init() failed (%d)\n", errno);
->   			break;
->   		}
->   		/*
-> @@ -215,13 +215,13 @@ static void do_test(int fd, size_t size, enum test_type type, bool shared)
->   		/* Only new kernels return EFAULT. */
->   		if (ret && (errno == ENOSPC || errno == EOPNOTSUPP ||
->   			    errno == EFAULT)) {
-> -			ksft_test_result(!should_work, "Should have failed\n");
-> +			ksft_test_result(!should_work, "Should have failed (%d)\n", errno);
->   		} else if (ret) {
->   			/*
->   			 * We might just lack support or have insufficient
->   			 * MEMLOCK limits.
->   			 */
-> -			ksft_test_result_skip("io_uring_register_buffers() failed\n");
-> +			ksft_test_result_skip("io_uring_register_buffers() failed (%d)\n", errno);
->   		} else {
->   			ksft_test_result(should_work, "Should have worked\n");
->   			io_uring_unregister_buffers(&ring);
-> @@ -249,7 +249,7 @@ static void run_with_memfd(test_fn fn, const char *desc)
->   
->   	fd = memfd_create("test", 0);
->   	if (fd < 0) {
-> -		ksft_test_result_fail("memfd_create() failed\n");
-> +		ksft_test_result_fail("memfd_create() failed (%d)\n", errno);
->   		return;
->   	}
->   
-> @@ -266,13 +266,13 @@ static void run_with_tmpfile(test_fn fn, const char *desc)
->   
->   	file = tmpfile();
->   	if (!file) {
-> -		ksft_test_result_fail("tmpfile() failed\n");
-> +		ksft_test_result_fail("tmpfile() failed (%d)\n", errno);
->   		return;
->   	}
->   
->   	fd = fileno(file);
->   	if (fd < 0) {
-> -		ksft_test_result_fail("fileno() failed\n");
-> +		ksft_test_result_fail("fileno() failed (%d)\n", errno);
->   		goto close;
->   	}
->   
-> @@ -290,12 +290,12 @@ static void run_with_local_tmpfile(test_fn fn, const char *desc)
->   
->   	fd = mkstemp(filename);
->   	if (fd < 0) {
-> -		ksft_test_result_fail("mkstemp() failed\n");
-> +		ksft_test_result_fail("mkstemp() failed (%d)\n", errno);
->   		return;
->   	}
->   
->   	if (unlink(filename)) {
-> -		ksft_test_result_fail("unlink() failed\n");
-> +		ksft_test_result_fail("unlink() failed (%d)\n", errno);
->   		goto close;
->   	}
->   
-> @@ -317,7 +317,7 @@ static void run_with_memfd_hugetlb(test_fn fn, const char *desc,
->   
->   	fd = memfd_create("test", flags);
->   	if (fd < 0) {
-> -		ksft_test_result_skip("memfd_create() failed\n");
-> +		ksft_test_result_skip("memfd_create() failed (%d)\n", errno);
->   		return;
->   	}
->   
-> 
-
+	Krzysztof
 
