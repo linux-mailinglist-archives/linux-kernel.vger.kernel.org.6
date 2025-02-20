@@ -1,90 +1,84 @@
-Return-Path: <linux-kernel+bounces-524412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16841A3E2AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:39:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EA0EA3E2A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:39:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA8C417E841
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:38:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0764817D2DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:38:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C0E6213E9A;
-	Thu, 20 Feb 2025 17:38:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F5P7BXnj"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7693213E76;
+	Thu, 20 Feb 2025 17:37:56 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24F8212B0A;
-	Thu, 20 Feb 2025 17:38:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FB162139D7;
+	Thu, 20 Feb 2025 17:37:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740073081; cv=none; b=FrjBvWI7+UjkcANo3nma/6KPPsWUuBi29B9s4NUjGvMLeuVphn+oj5Iplu1kew/BttnCIZ1yhyqVmjdEi/Ngq3Shr/e7U8UCpXWLAttAER0KG2NiCXLM1/ikJNCFR6t8626Fo1ihiSSTrNlSSrax6y1lWnu62mew0+S2047HEqY=
+	t=1740073076; cv=none; b=ONhJUh8oxQRDOQSQ8mTx8RY8OkAjKO0a0e/6sLVhxVjqwY1pDFNrFWeh029E+cHvnkKjeb3Y0nX/rTBwBR8B0blKa4UuHal9gAdWoCL4DJRHyFlIepV6rbojtWHFHxxhzI+19+xDbQs3IHwMItNxiGSQ7NqqAga1H3tPAlaf0YQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740073081; c=relaxed/simple;
-	bh=Q6mv3wC12R2i4rVWNsCzc8JGM+sJu0C3ob8GC6M5YIE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NPwf5oG3eQWXYQihtMA5zKn//EQSGR7GG1x5myKQ5JmTNdhg7mBMQEsJ2wpkxrAAMz5ikYd968pzc0vfEgdZPoDxO3liNPKNwjKawPg5AdTdNF1tAeK+lGGozozU2AgdxUtaZZ4ectxhNdT73MNxv5or6wLTmMrIQoE41BRz+lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F5P7BXnj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D851C4CED1;
-	Thu, 20 Feb 2025 17:38:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740073081;
-	bh=Q6mv3wC12R2i4rVWNsCzc8JGM+sJu0C3ob8GC6M5YIE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F5P7BXnjFl0hwqtUO2HoMhl26OfiT7PBAzOyx0RfsI3waezekRiZswaA1kD+SXpK/
-	 lEx7s1IA7wtLxkvpWx/VlrnqEhuS7fuyKiorCB0KZZoTUUks0VuEHnuvM1uKV+r8nb
-	 s/didwRe73lUkxCx5mdPxLM8g+4wgMvMkAoMRPAKebaTkcBKD7Y67FrrF2RoC+wiCg
-	 e0nhe4niDZZLLFzVsPyMd6BdQKxKgV8hPdtTO9wB7UiTjOPZGWPXD/EDAFEkUf9yts
-	 vb7q4z63+9Jc3X0ReAgU5O6qGrEqzAOFn2F9Jifvke9h5QCudgZvnUYOQc6TdFOh6I
-	 ELsTxivybBhBg==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1tlAV1-000000007lw-3opl;
-	Thu, 20 Feb 2025 18:38:12 +0100
-Date: Thu, 20 Feb 2025 18:38:11 +0100
-From: Johan Hovold <johan@kernel.org>
-To: srinivas.kandagatla@linaro.org
-Cc: broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
-	krzysztof.kozlowski@linaro.org, linux-sound@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dmitry.baryshkov@linaro.org, johan+linaro@kernel.org
-Subject: Re: [PATCH v2 0/5] ASoC: q6apm: fix under runs and fragment sizes
-Message-ID: <Z7dog3cWe4BroZdT@hovoldconsulting.com>
-References: <20250220162847.11994-1-srinivas.kandagatla@linaro.org>
+	s=arc-20240116; t=1740073076; c=relaxed/simple;
+	bh=MpLllEGAEHcOOYPUbbnTLlLfJ5xE1l1fr0Dnvk2wq5c=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Cnuo31R7bekOmmoZ/Lc20WTCYw5E2J6NoD60Pr0recWxJYRH5i3W17lf+KgUxM7MFmzEs6BWQ0BbPDCq8O2vG74/8Ka/+uoy+pIk4ulkSInpx1qh0NTkhRVMEKTJexahjP6Kaiqe7L9RL/+Yi4TcHbAyxS80K5TqaJp6Lg5Z70o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA741C4CEDD;
+	Thu, 20 Feb 2025 17:37:54 +0000 (UTC)
+Date: Thu, 20 Feb 2025 12:38:21 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>, linux-kselftest@vger.kernel.org,
+ Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Shuah Khan <shuah@kernel.org>
+Subject: Re: [PATCH] selftests/tracing: Test only toplevel README file not
+ the instances
+Message-ID: <20250220123821.495f1512@gandalf.local.home>
+In-Reply-To: <3ae6c7de-fb0a-4c65-afca-c0c91289650b@linuxfoundation.org>
+References: <20250115191758.35b62738@gandalf.local.home>
+	<20250115202607.00c6d353@gandalf.local.home>
+	<571133ce-b4ae-4a9f-8601-443774804d1e@linuxfoundation.org>
+	<20250123172530.474e873f@gandalf.local.home>
+	<d39de60f-c87f-4c59-9226-9080f9008f3e@linuxfoundation.org>
+	<3ae6c7de-fb0a-4c65-afca-c0c91289650b@linuxfoundation.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250220162847.11994-1-srinivas.kandagatla@linaro.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Srini,
+On Thu, 20 Feb 2025 09:18:09 -0700
+Shuah Khan <skhan@linuxfoundation.org> wrote:
 
-On Thu, Feb 20, 2025 at 04:28:42PM +0000, Srinivas Kandagatla wrote:
-
-> On Qualcomm Audioreach setup, some of the audio artifacts are seen in
-> both recording and playback. These patches fix issues by
-> 1. Adjusting the fragment size that dsp can service.
-> 2. schedule available playback buffers in time for dsp to not hit under runs 
-> 3. remove some of the manual calculations done to get hardware pointer.
+> On 1/23/25 16:54, Shuah Khan wrote:
+> > On 1/23/25 15:25, Steven Rostedt wrote:  
+> >> On Thu, 23 Jan 2025 14:56:55 -0700
+> >> Shuah Khan <skhan@linuxfoundation.org> wrote:
+> >>  
+> >>>>
+> >>>> Damn, I forgot to add Shuah and kselftests mailing list to that one though :-p  
+> >>>
+> >>> Do I need to do anything or is this taken care of?  
+> >>
+> >> I think you can take that series. If you want I can resend with you and the
+> >> mailing list Cc'd.
+> >>  
+> > 
+> > Yes please resend.
+> >   
 > 
-> With these patches, am able to see Audio quality improvements.
-> 
-> Any testing would be appreciated.
+> Steve, did you resend the series?
+>
 
-With this series, the choppy (robotic) capture when using pipewire
-appears to be fixed (pulseaudio worked before).
+I may have forgotten to. Let me do that just in case.
 
-Playback is still choppy (heavily distorted), though, and now it also
-appears to be too slow.
-
-I tested using pw-record and pw-play (and mpv) on the T14s (6.14-rc3).
-
-Johan
+-- Steve
 
