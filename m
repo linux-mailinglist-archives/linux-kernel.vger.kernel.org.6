@@ -1,141 +1,129 @@
-Return-Path: <linux-kernel+bounces-524786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7128A3E719
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:58:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD593A3E701
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:51:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E23D7189D6A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:58:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F49B17F902
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:51:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CAF52638B1;
-	Thu, 20 Feb 2025 21:57:57 +0000 (UTC)
-Received: from relay06.th.seeweb.it (relay06.th.seeweb.it [5.144.164.167])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94A55213E80;
+	Thu, 20 Feb 2025 21:51:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="jlzZSQ5e"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC50D1EA7ED;
-	Thu, 20 Feb 2025 21:57:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.144.164.167
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAA4E1EE03C;
+	Thu, 20 Feb 2025 21:51:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740088676; cv=none; b=ijqD8NDUsPw+fsE/3BsJl3N3oGcVEIDOkkQCTrEk/o+oXqvxGOiCh+FUorV1rlAuHHaQIcYP+koyeADf6w8l3HLH95pRfuBf1c1UWiRM/m/UJclVxfsuiLI8+6YP7qwUX/uOCFBMfC9KaG5sMU3gB8us7u2AZN9aAtr39m83ddI=
+	t=1740088302; cv=none; b=kvZVbhXFEjYQafUTnyIqvuH08iBqVR5buCsyjiO8LnU9Z8ZTYgJQQBSZDyK6jgyfh3wa9yYIoF30kOmzPHlxV6FFUdaLF0xGaSZpiZULy4Uraut03QHTfZsi/6dguGv0PGD2o/OpNVHNEZHL6P9InFmwVUgzCRxiJ4uzVVZktoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740088676; c=relaxed/simple;
-	bh=tBiT1zKiECuw9YCaCSN9G/JLtivloNtC5SEjSI7ILFA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mR57qtd/VcH9CvYME8OUfxZIGHPDqW31r5jnHpUyopRjJ/WKvYN9rYZqH1a413NfeueQDgof+N6UMK6nabRUaJ5+2J4Cufl5+HVFxyYBkzm3/Yho/qb2ga6YIHwUnsXHLMyVIkmU0icrhLekcCG6XWA0X90ht64t1yZjvSkwY+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org; spf=pass smtp.mailfrom=somainline.org; arc=none smtp.client-ip=5.144.164.167
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=somainline.org
-Received: from SoMainline.org (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 89B6A3ED61;
-	Thu, 20 Feb 2025 22:50:59 +0100 (CET)
-Date: Thu, 20 Feb 2025 22:50:57 +0100
-From: Marijn Suijten <marijn.suijten@somainline.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Jun Nie <jun.nie@linaro.org>, Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Krishna Manikandan <quic_mkrishn@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] drm/msm/dsi: Support DSC for dual panel case
-Message-ID: <cokgqc6qd26caz63lwoyjcfbewbh3zxagjedzy6o6tfkt7wgmp@fz2gquyxcxbu>
-References: <20250220-dual-dsi-v2-0-6c0038d5a2ef@linaro.org>
- <20250220-dual-dsi-v2-5-6c0038d5a2ef@linaro.org>
- <iibq3orsb7uf44luz2he2auox43ki42m2z4nnderyqlhypvfgo@pwqpvua6vuyo>
- <CABymUCNajuc8WnWgf2JehFYUY-MqxCYmD=By8nY-JppxYHsyNw@mail.gmail.com>
- <m7brftsrxdikfeumbjkubeeleezka7mwjbchxefqgs4ybtca5n@ge3ay2olagq2>
+	s=arc-20240116; t=1740088302; c=relaxed/simple;
+	bh=/WInj6KSFD9Eu7DaW+kzT33lE//eMMKTc6RI4U4iMZ4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mjOwGbE1nPSo7A9PohHQheF/B7Kuf20Ss9B+uL3MX03m7+cZ/tfwIhUnMvAK4V9vpAX+aujQFalau+D5MViPCR2Q3/ZHZsc8y7HininjB/CuWx60VCqjsK1S557SsFYtKEC5lPLnnmrb6nFrJwCTz+bTA/h2aggF9BJsUNgzbwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=jlzZSQ5e; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=6av8FgpFHpUL/5MXXeDrhtI4EyYOqK8IX0qcjEcFmuw=; b=jlzZSQ5eGVUY42qT2r0KjjlV+v
+	oviic2kKa4jyvgrJL4zbCKf0tWeZJX7Fe8miBNgNQfPzcEL/awPCdBB4d7B05bL5RGhtuurLxfNWC
+	KkFyKTvblpFgCbrgc+q6i8Hey5oY4Tq4vBzTZ6Rq+G1T/4NxaSfDKKdh9KFeZ2zeFn/MCMHrmWyKe
+	nUG/Oageoi4jm+HNcvFxIgh8VaXrEmDiwfPboXmPS5iqpM8U0tNF6S8gFgBUqxHVZY8h8pLscgPrd
+	VWZOFjbeO4YK4IaLwaPlq773YVzsXXYEGX0LkRnpO4Zkl2eYRxKOmgs0J2ho8eblRoaGrBOqTPu3Q
+	k1It5jbQ==;
+Received: from i53875bc0.versanet.de ([83.135.91.192] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tlES7-0003Gb-UW; Thu, 20 Feb 2025 22:51:27 +0100
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+ Quentin Schulz <foss+kernel@0leil.net>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Quentin Schulz <quentin.schulz@cherry.de>
+Subject: Re: [PATCH 1/2] dt-bindings: gpio: nxp,pcf8575: add reset GPIO
+Date: Thu, 20 Feb 2025 22:51:26 +0100
+Message-ID: <1797373.X513TT2pbd@diego>
+In-Reply-To: <20250220-pca976x-reset-driver-v1-1-6abbf043050e@cherry.de>
+References:
+ <20250220-pca976x-reset-driver-v1-0-6abbf043050e@cherry.de>
+ <20250220-pca976x-reset-driver-v1-1-6abbf043050e@cherry.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <m7brftsrxdikfeumbjkubeeleezka7mwjbchxefqgs4ybtca5n@ge3ay2olagq2>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-On 2025-02-20 18:06:01, Dmitry Baryshkov wrote:
-> On Thu, Feb 20, 2025 at 11:42:28PM +0800, Jun Nie wrote:
-> > Dmitry Baryshkov <dmitry.baryshkov@linaro.org> 于2025年2月20日周四 18:39写道：
-> > >
-> > > On Thu, Feb 20, 2025 at 06:07:56PM +0800, Jun Nie wrote:
-> > > > There is dual DSI case that every DSI link is connected to an independent
-
-There is a dual-DSI case where every DSI link ...
-
-> > > > panel. In this dual panel case, the frame width for DSC on each link should
-> > > > be halved to support the usage case.
-
-use* case.  Also, it shouldn't be "halved" just... because?  It should be
-"halved" because apparently hdisplay here is the width of the two panels
-together, while the width coded in pic_width should contain that of a single
-panel (since they're independent), which is equal to the width of a single
-interface.
-
-Tl;dr for below: this needs a *lot* more text to explain the setup and
-possibilities.  How is a DSI panel driver supposed to configure this on their
-end?  Hint: look at my previous drm/msm patches that explain how we expect to
-interface with the parameters set by the panel driver.
-
-> > >
-> > > Isn't it the case for the DSI panel utilizing two DSI links?
-> > 
-> > The added case here is 2 DSI panel utilizing two DSI links, 1 DSI link
-> > in each panel.
-> > I assume default case is 1 panel with 2 DSI link, such as Marijn's case.
+Am Donnerstag, 20. Februar 2025, 10:56:51 MEZ schrieb Quentin Schulz:
+> From: Quentin Schulz <quentin.schulz@cherry.de>
 > 
-> So it should be halved in your case, but not in Marijn's case? I can
-> suspect that if you are describing two DSI panels as a single instance,
-> you should also adjust drm_dsc_config accordingly (on the panel's side?)
+> A few of the I2C GPIO expander chips supported by this binding have a
+> RESETN pin to be able to reset the chip. The chip is held in reset while
+> the pin is low, therefore the polarity of reset-gpios is expected to
+> reflect that, i.e. a GPIO_ACTIVE_HIGH means the GPIO will be held low
+> for reset and released high, GPIO_ACTIVE_LOW means the GPIO will be held
+> high for reset and released low.
 > 
-> Maybe drm_dsc_config.pic_width and drm_dsc_config.pic_height should be
-> set on the panel's side? But then, how will that function for the DSI
-> panels or bridges which can change the mode?
+> Out of the supported chips, only PCA9670, PCA9671, PCA9672 and PCA9673
+> show a RESETN pin in their datasheets. They all share the same reset
+> timings, that is 4+us reset pulse[0] and 100+us reset time[0].
+> 
+> When performing a reset, "The PCA9670 registers and I2C-bus state
+> machine will be held in their default state until the RESET input is
+> once again HIGH."[1] meaning we now know the state of each line
+> controlled by the GPIO expander. Therefore, setting lines-initial-states
+> and reset-gpios both does not make sense and their presence is XOR'ed.
+> 
+> [0] https://www.nxp.com/docs/en/data-sheet/PCA9670.pdf Fig 22.
+> [1] https://www.nxp.com/docs/en/data-sheet/PCA9670.pdf 8.5
+> 
+> Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
+> ---
+>  .../devicetree/bindings/gpio/nxp,pcf8575.yaml      | 33 ++++++++++++++++++++++
+>  1 file changed, 33 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/nxp,pcf8575.yaml b/Documentation/devicetree/bindings/gpio/nxp,pcf8575.yaml
+> index 3718103e966a13e1d77f73335ff73c18a3199469..d08d3f848f82e74de949da16d26a810dc52a74e5 100644
+> --- a/Documentation/devicetree/bindings/gpio/nxp,pcf8575.yaml
+> +++ b/Documentation/devicetree/bindings/gpio/nxp,pcf8575.yaml
+[...]
+> +  # lines-initial-states XOR reset-gpios
+> +  # Performing a reset reinitializes all lines to a known state which
+> +  # may not match passed lines-initial-states
+> +  - if:
+> +      required:
+> +        - lines-initial-states
+> +    then:
+> +      properties:
+> +        reset-gpios: false
+> +
 
-It appears that these patches are missing a proper description of the setup
-or use-case.  I previously NAK'd those "dual DSI" patches because of this, but
-reading between the lines I think I came to understand the reason without anyone
-else explaining it, unfortunately.  Needless to say that this needs very careful
-documentation and wording in both code (DT and/or header structs) and commit
-messages.
+exclusion logic
+Tested-by: Heiko Stuebner <heiko@sntech.de>
 
-In my case I have a single high-resolution high-refresh-rate panel that can
-simply not be driven over a single DSI link.  A dual-DSI link is used in bonded
-mode, most likely to keep the clocks and other things in sync, and to make it
-easier to be represented by one virtual encoder in DPU?  All control commands
-only need the sent over one DSI link, not over both.
+dtbscheck is happy when either reset-gpios or lines-initial-states is
+present, but when both are present complains like
 
-In this case pic_width is equal to the entire width of the panel, hence it is
-double the width of a single interface.
+    rk3588-tiger-haikou-video-demo.dtb: gpio@27: reset-gpios: False schema does not allow [[205, 17, 1]]
 
-Jun seems to have a strangely different use-case for bonded-DSI / dual-DSI that
-isn't explained: two "independent" panels.  It is clear to me that pic_width
-here has to contain the width of the entire panel, and is hence equal to the
-entire width of a single interface.
-(And in the future, it seems the quad setup can drive two "bonded" panels with
- two DSI-merge's each)
+as expected.
 
-But what we're missing here is what the **advantages and limitations** are
-of this setup: why would one run two DSI links for "independent" panels in
-bonded-DSI mode?  Is it more power-optimal?  Will userspace see this as one
-panel that's simply twice as wide?  Do these panels have to be "identical"
-so that they behave and are clocked the same?  How is the driver expected to
-prepare the mode and DSC configuration parameters to make this work?
 
-Perhaps it's possible to scrape this info from [1] and prior commits but I
-rather have a more digestible description in the commit message, thanks.
-
-- Marijn
-
-[1]: https://gitlab.com/jun.nie/linux/-/commit/98c0f411a85d68a76be500f8421df467d6cc53f3
 
