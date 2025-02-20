@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-524745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA979A3E693
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:30:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D5E6A3E695
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:31:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 609D319C47A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:29:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5EB84244C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:30:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E2A4265616;
-	Thu, 20 Feb 2025 21:29:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE53C26563B;
+	Thu, 20 Feb 2025 21:29:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OAdeGOVR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FcuzNLQ5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85724213248;
-	Thu, 20 Feb 2025 21:29:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54A73265624;
+	Thu, 20 Feb 2025 21:29:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740086959; cv=none; b=Zqs3gD3wLOy0Au7ig/IYXeOrDT9TqlEqO2COiLsTUk8A5Q086A93bUEwdmVGwkDHVoK/57opPX6EhAv8FOis6e2taonlmOa7apbSWVD7k+fKRtimdS9kD+YTf5IHGv80UxhI+wRbkqXSuzgaE/pH2a1KXNNAzFVXGXcWit0/zCg=
+	t=1740086961; cv=none; b=rHUN1YkL7ybNAn1379dvyNxn827uTsnpuiE+4C47nDmWRkyyhzLRhno2L+TVlrMYjhgbscXp3RdP0XBWE/QGCbqkXeYX5xdnzwId8xnqr9UAkNNMv+3PlcgF8x4tMsI42/7UM3G8d/KqnktbUhiKDRit5oc0cgrisHfYxsBgqaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740086959; c=relaxed/simple;
-	bh=A3IOtWBEjqYwd1Ik7NqJ+fHSDWC0dHLIvijucwx1oG4=;
+	s=arc-20240116; t=1740086961; c=relaxed/simple;
+	bh=kfvzeMKrGQuu+01M2Wgm2/ThWI4eKODKRyAcGfYZ6CQ=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=uOyTeK92tUuxzpyvKkD1YNIhhvNIU5sZ49nbgVBayjCgfG2c4SBpb7Ts/C9nbD0hUviTEHLDnYEPDlzp6Sbz3wbJpNOIup+XgsmG7/LsJYXnA7axhwS7I5IUvSChTvlswR2uKPY8mqlQ2o7pPIx9rWm99HhPNREG4r+Dr7rGlMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OAdeGOVR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 138D3C4CED1;
-	Thu, 20 Feb 2025 21:29:18 +0000 (UTC)
+	 Message-Id:Subject; b=PPuIyM8Psjjg4Rvn7JKKjjqOyCsQY4tsqXdLnrBOM2wQyZbUh1V/BRUt4XefGbToTPSC3rXWSOWGJfr2IfDn3SZHi0WmFJRtfDudZ0cXNxPQv4x8pj6j/8Fs0fRsvfzAcv4V6sSvgxVizZYr0aNr6e4z/+pG60UeKkSdEATcKWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FcuzNLQ5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D77EAC4CED1;
+	Thu, 20 Feb 2025 21:29:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740086959;
-	bh=A3IOtWBEjqYwd1Ik7NqJ+fHSDWC0dHLIvijucwx1oG4=;
+	s=k20201202; t=1740086961;
+	bh=kfvzeMKrGQuu+01M2Wgm2/ThWI4eKODKRyAcGfYZ6CQ=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=OAdeGOVRdx64WfB9k0yHqlocXOVN6rl8Couf0rvfJWUkSFENgG/epeD4VMtf8Y/TN
-	 S54pP7Rqw8RXnJpTQtUKBywhk28n1frg2sCAJChNSP2t+bZkeSdNG5KumADWfxdgpO
-	 96AneZ4SZs9CmxFBxTv9kDfJ2UmO6eoGTpbNNCfDiky8aTgvcxsrYoSYKNFW1+0Erg
-	 hUB9zjSfAX40mUz0cXjxBXtgjg63NJuFRUepMpIqdCQK1X2+wptS94V2ctXVlgcb9N
-	 JMmrHvOhTAcFehJCuyEhBBRRtmNbkhUMuTDiTkjt+ZooDE96zY2oIFWmgkXsCEALF6
-	 CEIokj5qEjZag==
-Date: Thu, 20 Feb 2025 15:29:17 -0600
+	b=FcuzNLQ5WVZKv5WbLvImuWazV+d2CjJj4FpNf2RmqYN5Pbk75kP9Ya65yAVAbjKZa
+	 gxHuAWlMv74eZZ7ppU+Covz7UaFB8yPn9Ct56a2D/umtfcSGwW1Y9PNgmScip66FIi
+	 +Xnmq//rBAfzsMy34TuL8OjC7cXjSt9YEJMEElTBdzij3aWIpIRq7bwU31hjD44K0z
+	 f40deeAqSSHnw5oW/SfU1VLyrB6TFNNWN85Ui0atgu4Giap4uUN6uJdaPZ72v+Rdph
+	 +sYOCJVDNG5xNOGP9dd3/YUUbUWZzYVm0eKQgUgk1FOHI/4aauIuLvmDZDmep0eaGK
+	 WBLFoUJYHtXvQ==
+Date: Thu, 20 Feb 2025 15:29:19 -0600
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,64 +50,60 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, 
- Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
- Yow-Shin Liou <yow-shin.liou@mediatek.com>, 
- Project_Global_Chrome_Upstream_Group@mediatek.com, 
- Simon Sun <simon.sun@yunjingtech.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- Alexandre Mergnat <amergnat@baylibre.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Chris-qj chen <chris-qj.chen@mediatek.com>, devicetree@vger.kernel.org, 
- linux-mediatek@lists.infradead.org, Pablo Sun <pablo.sun@mediatek.com>, 
- Macpaul Lin <macpaul@gmail.com>, linux-usb@vger.kernel.org, 
- Fabien Parent <fparent@baylibre.com>, 
+Cc: Fabio Estevam <festevam@gmail.com>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Bear Wang <bear.wang@mediatek.com>
-To: Macpaul Lin <macpaul.lin@mediatek.com>
-In-Reply-To: <20250220143354.2532448-1-macpaul.lin@mediatek.com>
-References: <20250220143354.2532448-1-macpaul.lin@mediatek.com>
-Message-Id: <174008661763.4046766.2334410087090847223.robh@kernel.org>
-Subject: Re: [PATCH v4 1/2] arm64: dts: mediatek: mt8395-genio-1200-evk:
- add support for TCPC port
+ Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+ Conor Dooley <conor.dooley@microchip.com>, imx@lists.linux.dev, 
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>
+To: Frank Li <Frank.Li@nxp.com>
+In-Reply-To: <20250220-imx95_15x15-v3-0-247777ed91c4@nxp.com>
+References: <20250220-imx95_15x15-v3-0-247777ed91c4@nxp.com>
+Message-Id: <174008661875.4046844.10682813158644154393.robh@kernel.org>
+Subject: Re: [PATCH v3 0/4] arm64: dts: add imx95_15x15_evk boards support
 
 
-On Thu, 20 Feb 2025 22:33:53 +0800, Macpaul Lin wrote:
-> From: Fabien Parent <fparent@baylibre.com>
+On Thu, 20 Feb 2025 11:11:15 -0500, Frank Li wrote:
+> Add related binding doc.
 > 
-> Enable USB Type-C support on MediaTek MT8395 Genio 1200 EVK by adding
-> configuration for TCPC Port, USB-C connector, and related settings.
+> Add imx95_15x15_evk boards, which have big difference with imx95_19x19_evk
+> boards.
 > 
-> Configure dual role switch capability, set up PD (Power Delivery) profiles,
-> and establish endpoints for SS (SuperSpeed) and HS (HighSpeed) USB.
-> 
-> Update pinctrl configurations for U3 P0 VBus default pins and set dr_mode
-> to "otg" for OTG (On-The-Go) mode operation.
-> 
-> Signed-off-by: Fabien Parent <fparent@baylibre.com>
-> Signed-off-by: Yow-Shin Liou <yow-shin.liou@mediatek.com>
-> Signed-off-by: Simon Sun <simon.sun@yunjingtech.com>
-> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 > ---
->  .../dts/mediatek/mt8395-genio-1200-evk.dts    | 72 +++++++++++++++++++
->  1 file changed, 72 insertions(+)
+> Changes in v3:
+> - Add Rob and Conor's ack tags
+> - Remove undocument property (need doube check why dtb-check have not
+> report warning).
 > 
-> Changes for v2:
->  - Drop the no need '1/2' DT Schema update patch in the 1st version.
->  - Fix indent for 'ports' node, it should under the 'connector' node.
->  - Correct the index for 'port@0' and 'port@1' node.
+> - Link to v2: https://lore.kernel.org/r/20250114-imx95_15x15-v2-0-2457483bc99d@nxp.com
 > 
-> Changes for v3:
->  - Correct the order between new added nodes.
+> Changes in v2:
+> - fixed typo 'inctrl-names'.
+> - Link to v1: https://lore.kernel.org/r/20250113-imx95_15x15-v1-0-8c20cbaab9ed@nxp.com
 > 
-> Changes for v4:
->  - Reorder for property 'op-sink-microwatt'.
->  - Fix indentation for 'source-pdos' and 'sink-pdos' nodes.
->  - Correct node 'pin-cmd-dat' with 'pins-vbus'.
->  - Add both Highspeed and Superspeed ports to ssusb0 port.
->  - Set 'role-switch-default-mode' = "peripheral" for ssusb0 port.
->  - Rename endpoint of USB data port to 'mtu3_hs0_role_sw' and
->    'mtu3_ss0_role_sw'.
+> ---
+> Frank Li (4):
+>       dt-bindings: arm: fsl: add i.MX95 15x15 EVK board
+>       arm64: dts: imx95: Add #io-channel-cells = <1> for adc node
+>       arm64: dts: imx95: Add i3c1 and i3c2
+>       arm64: dts: imx95: Add imx95-15x15-evk support
+> 
+>  Documentation/devicetree/bindings/arm/fsl.yaml    |    1 +
+>  arch/arm64/boot/dts/freescale/Makefile            |    1 +
+>  arch/arm64/boot/dts/freescale/imx95-15x15-evk.dts | 1062 +++++++++++++++++++++
+>  arch/arm64/boot/dts/freescale/imx95.dtsi          |   27 +
+>  4 files changed, 1091 insertions(+)
+> ---
+> base-commit: 50a0c754714aa3ea0b0e62f3765eb666a1579f24
+> change-id: 20250110-imx95_15x15-6a64db8c0187
+> 
+> Best regards,
+> ---
+> Frank Li <Frank.Li@nxp.com>
+> 
+> 
 > 
 
 
@@ -125,10 +121,12 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/mediatek/' for 20250220143354.2532448-1-macpaul.lin@mediatek.com:
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/freescale/' for 20250220-imx95_15x15-v3-0-247777ed91c4@nxp.com:
 
-arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dtb: usb@11201000: 'ports' does not match any of the regexes: '^usb@[0-9a-f]+$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/usb/mediatek,mtu3.yaml#
+arch/arm64/boot/dts/freescale/imx95-15x15-evk.dtb: pcie@4c300000: clock-names: ['pcie', 'pcie_bus', 'pcie_phy', 'pcie_aux'] is too short
+	from schema $id: http://devicetree.org/schemas/pci/fsl,imx6q-pcie.yaml#
+arch/arm64/boot/dts/freescale/imx95-15x15-evk.dtb: pcie@4c380000: clock-names: ['pcie', 'pcie_bus', 'pcie_phy', 'pcie_aux'] is too short
+	from schema $id: http://devicetree.org/schemas/pci/fsl,imx6q-pcie.yaml#
 
 
 
