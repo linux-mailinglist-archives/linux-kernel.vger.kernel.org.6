@@ -1,117 +1,114 @@
-Return-Path: <linux-kernel+bounces-523890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7646BA3DC8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:22:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C1DDA3DC88
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:22:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9FEB422925
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:20:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADF8219C3A38
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:20:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E534212FBF;
-	Thu, 20 Feb 2025 14:18:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BCE01FC0ED;
+	Thu, 20 Feb 2025 14:19:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hfG7Hkzk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CPRzJH9l"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70AF91FBEA7;
-	Thu, 20 Feb 2025 14:18:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC3B71DE4DB
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 14:19:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740061090; cv=none; b=k4PylWCXcqix2HGhLZF7P02dxeR3/dqT3APWBykhtJEeHC9aUxtzvCSt+4yoehh20CimUKgrFaCLkuSDF4e/xJINe0zetpDyhjNgKhS6/9FiNagFYDMyr2O4rHuC0oIYlaq0lkKVNaUHUY5Wsd9Y4vyqck1vVBGQb03QxDyoANg=
+	t=1740061143; cv=none; b=EcrniWvhr2zbd5BrpZi6r0VseNnV7qclYPbKW0M0Z5LpF+0+709KipKOn0vfs2L1+u0rn/PiPd+J/e+H1vIgKiJKfNj29O41lnj2DY03ePBbtm22cLyEtW8qwXRN9l7F/JKWf2A0CTr3dD/bkivI6eQOZ1s7WzaRbkueitqR2F8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740061090; c=relaxed/simple;
-	bh=rxskcT7jKFiywspCy0YwO4Ukcf4MyTckgqpNNxukoSM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=loQuPxW6pZ4k0fQeWMJvKvafgpMGLXdZ8la0VlZ52gGUeHrtW2pDxk7NAeSNRFwC20kbUH6MNnHBnLeKGTB+/MpK1+5NvkMVQkViGLNSjHX98AtB7UmVQlCftO9v5L06VD7TDbHJR1pXleR05k4UYMXGREkEdLF0v+i0pdz/AK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hfG7Hkzk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78674C4CED1;
-	Thu, 20 Feb 2025 14:18:09 +0000 (UTC)
+	s=arc-20240116; t=1740061143; c=relaxed/simple;
+	bh=QDV5g8FGlk1PKGA8+qOmRMSnu6kXIaPu1NrxOeUEEus=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=V8DRmt4+crQvJSvoeiLw/SfgEg/VDNrLk4zzOls7AfsnKXl3pn3WPRUG9GPN64Huus4MWa9NiE8/rFHy6LOcsoyVrxXm56KhubU6CY4xDd/H1eleJxZd3ys1UFh4AtXKCe6Zad93BFFeqZwssY0olPX7/PYUz94kA1mb6QKVCRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CPRzJH9l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D753C4CED1;
+	Thu, 20 Feb 2025 14:18:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740061090;
-	bh=rxskcT7jKFiywspCy0YwO4Ukcf4MyTckgqpNNxukoSM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hfG7HkzkvQvZwqnCu4SLgT/iGxXcUE4dX1OScn7QGjZjmgz0PGS6HOjFhYLbrADC5
-	 /FCLE+6iq8fkYDJ/zduNZvkR8pJYFVPyxPrXv3vtkyS/iONdoxYGi3rZ6AOZm0oI6I
-	 kh2QQX3+PPrN7WDVdE7gbsvWPhrea5G/QiMSoA7O0Esz5+Vl2QEo/uxBC25tmIAdPs
-	 m5jNOja2cMHyxVbhRgSsaCOZzPZc6alWzG5Ump/8wAg1qAq1OI+dsz7KufPgYN0PdL
-	 jSnIylpEPAoREHCv2DYJAyV1sVxfgCo8QqkXQ61hCo0EproJM6gg/EfvzOyFwc0/DB
-	 bUjmhQjt6jsXw==
-Date: Thu, 20 Feb 2025 14:18:06 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Akhil P Oommen <quic_akhilpo@quicinc.com>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/5] nvmem: core: verify cell's raw_len
-Message-ID: <Z7c5niuwR3TVTQrj@finisterre.sirena.org.uk>
-References: <20250109-sar2130p-nvmem-v4-0-633739fe5f11@linaro.org>
- <20250109-sar2130p-nvmem-v4-2-633739fe5f11@linaro.org>
- <Z7Xv9lNc6ckJVtKc@finisterre.sirena.org.uk>
- <CAA8EJpp-mE2w_c3K08+8AR3Mn1r8X58FRXvAUFALQ-u2ppoKgw@mail.gmail.com>
+	s=k20201202; t=1740061142;
+	bh=QDV5g8FGlk1PKGA8+qOmRMSnu6kXIaPu1NrxOeUEEus=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=CPRzJH9lrL89V6GMsTdLhx5uSzTjLkgR4NcbDpLlxeN5/whY5+WadHOWnxq2xU5X9
+	 MJLqxOiGMBwVRiCxyGo8UJxa7u3OedspofMhEI5cpGZG4vecSvTioze9vhtED4yJSJ
+	 rugBuKxRhNaTSxtH6NsOAJQPZ6UV1L0fhe/JSG9A3kiRaq8CdiK+7hHoUAAQJTBGc6
+	 B04qJ3OgZlVaOUmtEOit08B65sZAjxI68TrQ0CX6u7H0LJqcp5Kkf7ppOBJCC3JFtf
+	 LPeOfC+QdL3A2D5hKjTi6mODWTvO7/WQSVPIHMfQvEp1QdOxwyRqWje4tesSxTcKRR
+	 Yu45u3fuZVLFw==
+Date: Thu, 20 Feb 2025 23:18:57 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Waiman Long <llong@redhat.com>
+Cc: Lance Yang <ioworker0@gmail.com>, mhiramat@kernel.org, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon
+ <will@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Boqun Feng
+ <boqun.feng@gmail.com>, Joel Granados <joel.granados@kernel.org>, Anna
+ Schumaker <anna.schumaker@oracle.com>, Kent Overstreet
+ <kent.overstreet@linux.dev>, Yongliang Gao <leonylgao@tencent.com>, Steven
+ Rostedt <rostedt@goodmis.org>, Tomasz Figa <tfiga@chromium.org>, Sergey
+ Senozhatsky <senozhatsky@chromium.org>, linux-kernel@vger.kernel.org, Linux
+ Memory Management List <linux-mm@kvack.org>
+Subject: Re: [PATCH 0/2] hung_task: Dump the blocking task stacktrace
+Message-Id: <20250220231857.6e377e5f208b60a7ba303cea@kernel.org>
+In-Reply-To: <8ca57548-4b18-401d-bfda-95bc12216adf@redhat.com>
+References: <173997003868.2137198.9462617208992136056.stgit@mhiramat.tok.corp.google.com>
+	<CAK1f24knkxX34hNLRjT20mjyyOwasmXgXJBbTDX=7WYwiw9S1g@mail.gmail.com>
+	<CAK1f24m-Ci3BvgfVYGW2tFSUEkPwiO9=0M_w4kpOt1qViiDXdg@mail.gmail.com>
+	<8ca57548-4b18-401d-bfda-95bc12216adf@redhat.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="1dVZm3pFhaNe1viM"
-Content-Disposition: inline
-In-Reply-To: <CAA8EJpp-mE2w_c3K08+8AR3Mn1r8X58FRXvAUFALQ-u2ppoKgw@mail.gmail.com>
-X-Cookie: Editing is a rewording activity.
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+On Wed, 19 Feb 2025 15:20:39 -0500
+Waiman Long <llong@redhat.com> wrote:
 
---1dVZm3pFhaNe1viM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> 
+> On 2/19/25 10:02 AM, Lance Yang wrote:
+> > On Wed, Feb 19, 2025 at 9:33 PM Lance Yang <ioworker0@gmail.com> wrote:
+> >> CC linux-mm
+> >>
+> >> On Wed, Feb 19, 2025 at 9:00 PM Masami Hiramatsu (Google)
+> >> <mhiramat@kernel.org> wrote:
+> >>> Hi,
+> >>>
+> >>> The hung_task detector is very useful for detecting the lockup.
+> >>> However, since it only dumps the blocked (uninterruptible sleep)
+> >>> processes, it is not enough to identify the root cause of that
+> >>> lockup.
+> >>>
+> >>> For example, if a process holds a mutex and sleep an event in
+> >>> interruptible state long time, the other processes will wait on
+> >>> the mutex in uninterruptible state. In this case, the waiter
+> >>> processes are dumped, but the blocker process is not shown
+> >>> because it is sleep in interruptible state.
+> > Cool! I just ran into something similar today, but with rwsem. In that
+> > case, the blocked process was locked up, and we could not identify
+> > the root cause either ;(
+> 
+> Once this patch series is settled down, we can extend rwsem to provide 
+> similar feature.
 
-On Wed, Feb 19, 2025 at 05:14:43PM +0200, Dmitry Baryshkov wrote:
-> On Wed, 19 Feb 2025 at 16:51, Mark Brown <broonie@kernel.org> wrote:
-> > On Thu, Jan 09, 2025 at 06:35:46AM +0200, Dmitry Baryshkov wrote:
+While discussing about rwsem with Sergey, he pointed that we can not
+identify a single blocker on rwsem, because several readers can block
+several writers. In this case, we need to dump all of them but we
+don't have such info.
 
-> > > Check that the NVMEM cell's raw_len is a aligned to word_size. Otherwise
-> > > Otherwise drivers might face incomplete read while accessing the last
-> > > part of the NVMEM cell.
+So anyway, I would like to start from mutex, which is the simplest one.
+For the other locks, we will discuss later. (or start with limited
+support, like showing only rwsem::owner)
 
-> > I'm seeing a bunch of failures on i.MX platforms in -next which bisect
-> > to this patch.  For example on the i.MX6q based UDOOq various things
-> > including the ethernet fail to come up due to the efuse not appearing:
+Thanks,
 
-> > [    1.735264] nvmem imx-ocotp0: cell mac-addr raw len 6 unaligned to nvmem word size 4
-> > [    1.735289] imx_ocotp 21bc000.efuse: probe with driver imx_ocotp failed with error -22
-
-> This looks like an error on the i.MX platforms. The raw_len must be
-> aligned to word size. I think the easiest fix is to implement the
-> .fixup_dt_cell_info() callback like I did for the qfprom driver.
-
-That sounds pluasible, but as things stand we've got a regression on
-these platforms - taking out ethernet breaks NFS boot apart from
-anything else.  I'd also be a bit concerned that there might be other
-users with issues, does this need an audit of users before trying to
-enforce this requirement?
-
---1dVZm3pFhaNe1viM
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAme3OZ0ACgkQJNaLcl1U
-h9CR9Af+PKScD+QrhJJPzXmYa5zvi8OWNOsVRYQHd0O+qVTxLf+g/JGZiazQ3twk
-CRFIipyBWKEPjZ/61m9GKEi57ITYQPh5bG3EZRXL5XAU1v99u11+dFS13dULOhGf
-3QQsV+rdfPNaGtZIjZJNycLdCckClq3yJpDuPREeIMKAu+mPy6HOT+n/3LAd350O
-dPs4Ql07ZjRw23USloCsuK0sLfsbKD0OWGi12YcKBd+Ck/BuaH1PV5bROiPokMf2
-dl7wyawZ/FL7/Ob30h53I0eaMNeyYGSMgWSDmvGtPfluuJcDNyO64pqsRB+MB2Yg
-aYfgKPWyJ2ZGDxvbLKjqXL4ZBfWIIw==
-=dMez
------END PGP SIGNATURE-----
-
---1dVZm3pFhaNe1viM--
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
