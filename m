@@ -1,105 +1,105 @@
-Return-Path: <linux-kernel+bounces-523160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C92EA3D2EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:15:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF3F3A3D37E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:43:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DC823B3F46
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:14:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9D47189ECCA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:43:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27D2C1EB1A7;
-	Thu, 20 Feb 2025 08:14:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UiyLPBMK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 397FE1EE7D9;
+	Thu, 20 Feb 2025 08:42:09 +0000 (UTC)
+Received: from thyestes.tartarus.org (thyestes.tartarus.org [5.196.91.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B54A1E9B2F;
-	Thu, 20 Feb 2025 08:14:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 230471E9B16;
+	Thu, 20 Feb 2025 08:42:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.196.91.86
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740039246; cv=none; b=B7lFfQRX9eFOSFokDlkmXf/+RT1ZJVI7OT6CMh3/9pmmx26hh8xX2rPRkBjqO0aJK4hKONOSP4dNG+vU/D92kmJGhgXDwrQ49CPPH6h0tpIEY1+9QDHpJNj/hrISXfFU47hBCn6hGRzMCjkscN+eUTZ0epa2Fc/KXnytSZtNJcY=
+	t=1740040928; cv=none; b=ZCkGaM5K8NIKQHyPsYXkfK0r0oU7AqkQn1OD8+/FdASN5w97YhN3h+26BrgAF6prY8WP7TuOZ8hH5xICeNj6uORaxQN7qXAOe2IKXz8BjZQiFNRhl7MgS7S/cqK7j6+0Wx0TQlU91B+RVKhzDCDHlChfPRWi22dUnAUKbzBErZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740039246; c=relaxed/simple;
-	bh=Eqe/Uvw96JVKBRs26wtSbq8i3q48ATm99ekOa48MCF4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=eP3OkaXgxYG8ygSomrls2qBeXT/kORggtbhLN3sh1PGsZ7sEOz3xXXMKOyGKZL7TVFjWW3VG+6HJth0yzRq7nm8GeFoHBZZNokYPyHL7hTmmz5oTubiOU+VQsikp7t/IGtOMTXUq7jBI025XkfZkbSM/kdmAk1q5+1kS0Lcs8tI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UiyLPBMK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EACDC4CED1;
-	Thu, 20 Feb 2025 08:14:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740039245;
-	bh=Eqe/Uvw96JVKBRs26wtSbq8i3q48ATm99ekOa48MCF4=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=UiyLPBMK4DnvdP0CZYEB+uBf6zae+8832jznC2KIn4/Vyo808acimOhvbf0Csn/Tu
-	 9rSitKXL6dKPqOpg4A0nKBDsZw3AGks1zBJjuzlwQo2N7txG318eOJ1SfZEmLv1Jwk
-	 xOvC8s/tU8wk9cc3wXS8Px3MeNCzhDXo8Bl81ST2sBm759YCgKYyRfwIpfV4mKFQf5
-	 JDr86yQH3BlXxolHKlWhomjQt5L4kfXE0xWp+fQhHuyr0gOnM2oaPAekmbw+1QlUXt
-	 wvTcsw1PZeT9/opFi4Ey62CRIQsAOl4TTnXXLRa6yb+ev575ZMXUeShUNSTI/z0wkx
-	 7R4+fwRttbdpg==
-Message-ID: <89f2547edcaaba53d9965cab9133d809607330ac.camel@kernel.org>
-Subject: Re: Rust kernel policy
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Bart Van Assche <bvanassche@acm.org>, Steven Rostedt
- <rostedt@goodmis.org>,  Jason Gunthorpe	 <jgg@nvidia.com>
-Cc: Kees Cook <kees@kernel.org>, Miguel Ojeda
- <miguel.ojeda.sandonis@gmail.com>,  Christoph Hellwig	 <hch@infradead.org>,
- rust-for-linux <rust-for-linux@vger.kernel.org>, Linus Torvalds
- <torvalds@linux-foundation.org>, Greg KH <gregkh@linuxfoundation.org>,
- David Airlie	 <airlied@gmail.com>, linux-kernel@vger.kernel.org,
- ksummit@lists.linux.dev
-Date: Thu, 20 Feb 2025 10:13:52 +0200
-In-Reply-To: <97841173-1de8-4221-8bf3-3470a5ac98a7@acm.org>
-References: 
-	<CANiq72m-R0tOakf=j7BZ78jDHdy=9-fvZbAT8j91Je2Bxy0sFg@mail.gmail.com>
-	 <Z7SwcnUzjZYfuJ4-@infradead.org>
-	 <CANiq72myjaA3Yyw_yyJ+uvUrZQcSLY_jNp65iKH8Y5xGY5tXPQ@mail.gmail.com>
-	 <202502191026.8B6FD47A1@keescook>
-	 <20250219140821.27fa1e8a@gandalf.local.home>
-	 <202502191117.8E1BCD4615@keescook> <20250219202751.GA42073@nvidia.com>
-	 <20250219154610.30dc6223@gandalf.local.home>
-	 <97841173-1de8-4221-8bf3-3470a5ac98a7@acm.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1740040928; c=relaxed/simple;
+	bh=oOY9pUPRU/LFLiFkT35A2NYgJ2ZtjzVml5WcxCpqw6E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YR0lRnO629Lk2Ll2VNru3pe4U7YYRTGahfxJFUv8+Ol9DXiqInmm/yscdk09ZFPqnKlSYDfkAI1rbwm+6kChSVYjAfuDuRYmI57G0yOt9bIgxC1S18wcmcmuomV6/CgX/zhrEyVcUfORw+CHTwKmGwALDd0DNyQQhSDG973mKbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=pobox.com; spf=pass smtp.mailfrom=thyestes.tartarus.org; arc=none smtp.client-ip=5.196.91.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=pobox.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thyestes.tartarus.org
+Received: from simon by thyestes.tartarus.org with local (Exim 4.92)
+	(envelope-from <simon@thyestes.tartarus.org>)
+	id 1tl1i6-0006oS-4s; Thu, 20 Feb 2025 08:15:06 +0000
+From: Simon Tatham <anakin@pobox.com>
+To: David Sterba <dsterba@suse.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Simon Tatham <anakin@pobox.com>
+Subject: [PATCH 1/2] affs: generate OFS sequence numbers starting at 1
+Date: Thu, 20 Feb 2025 08:14:43 +0000
+Message-ID: <20250220081444.3625446-1-anakin@pobox.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed, 2025-02-19 at 12:52 -0800, Bart Van Assche wrote:
-> On 2/19/25 12:46 PM, Steven Rostedt wrote:
-> > I do feel that new drivers written in Rust would help with the
-> > vulnerabilities that new drivers usually add to the kernel.
->=20
-> For driver developers it is easier to learn C than to learn Rust. I'm
-> not sure that all driver developers, especially the "drive by"
-> developers, have the skills to learn Rust.
+If I write a file to an OFS floppy image, and try to read it back on
+an emulated Amiga running Workbench 1.3, the Amiga reports a disk
+error trying to read the file. (That is, it's unable to read it _at
+all_, even to copy it to the NIL: device. It isn't a matter of getting
+the wrong data and being unable to parse the file format.)
 
-IMHO, Rust is not that difficult to learn but it is difficult to
-run.
+This is because the 'sequence number' field in the OFS data block
+header is supposed to be based at 1, but affs writes it based at 0.
+All three locations changed by this patch were setting the sequence
+number to a variable 'bidx' which was previously obtained by dividing
+a file position by bsize, so bidx will naturally use 0 for the first
+block. Therefore all three should add 1 to that value before writing
+it into the sequence number field.
 
-One point of difficulty for me still is the QA part, not really the
-code. QuickStart discusses on how to install all the shenanigans
-with distribution package managers.
+With this change, the Amiga successfully reads the file.
 
-The reality of actual kernel development is that you almost never
-compile/run host-to-host, rendering that part of the documentation
-in the battlefield next to useless.
+Signed-off-by: Simon Tatham <anakin@pobox.com>
+---
+ fs/affs/file.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Instead it should have instructions for BuildRoot, Yocto and
-perhaps NixOS (via podman). It should really explain this instead
-of dnf/apt-get etc.
-
->=20
-> Bart.
->=20
-
-BR, Jarkko
+diff --git a/fs/affs/file.c b/fs/affs/file.c
+index a5a861dd5223..226308f8627e 100644
+--- a/fs/affs/file.c
++++ b/fs/affs/file.c
+@@ -596,7 +596,7 @@ affs_extent_file_ofs(struct inode *inode, u32 newsize)
+ 		BUG_ON(tmp > bsize);
+ 		AFFS_DATA_HEAD(bh)->ptype = cpu_to_be32(T_DATA);
+ 		AFFS_DATA_HEAD(bh)->key = cpu_to_be32(inode->i_ino);
+-		AFFS_DATA_HEAD(bh)->sequence = cpu_to_be32(bidx);
++		AFFS_DATA_HEAD(bh)->sequence = cpu_to_be32(bidx + 1);
+ 		AFFS_DATA_HEAD(bh)->size = cpu_to_be32(tmp);
+ 		affs_fix_checksum(sb, bh);
+ 		bh->b_state &= ~(1UL << BH_New);
+@@ -746,7 +746,7 @@ static int affs_write_end_ofs(struct file *file, struct address_space *mapping,
+ 		if (buffer_new(bh)) {
+ 			AFFS_DATA_HEAD(bh)->ptype = cpu_to_be32(T_DATA);
+ 			AFFS_DATA_HEAD(bh)->key = cpu_to_be32(inode->i_ino);
+-			AFFS_DATA_HEAD(bh)->sequence = cpu_to_be32(bidx);
++			AFFS_DATA_HEAD(bh)->sequence = cpu_to_be32(bidx + 1);
+ 			AFFS_DATA_HEAD(bh)->size = cpu_to_be32(bsize);
+ 			AFFS_DATA_HEAD(bh)->next = 0;
+ 			bh->b_state &= ~(1UL << BH_New);
+@@ -780,7 +780,7 @@ static int affs_write_end_ofs(struct file *file, struct address_space *mapping,
+ 		if (buffer_new(bh)) {
+ 			AFFS_DATA_HEAD(bh)->ptype = cpu_to_be32(T_DATA);
+ 			AFFS_DATA_HEAD(bh)->key = cpu_to_be32(inode->i_ino);
+-			AFFS_DATA_HEAD(bh)->sequence = cpu_to_be32(bidx);
++			AFFS_DATA_HEAD(bh)->sequence = cpu_to_be32(bidx + 1);
+ 			AFFS_DATA_HEAD(bh)->size = cpu_to_be32(tmp);
+ 			AFFS_DATA_HEAD(bh)->next = 0;
+ 			bh->b_state &= ~(1UL << BH_New);
+-- 
+2.43.0
 
 
