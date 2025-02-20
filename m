@@ -1,134 +1,154 @@
-Return-Path: <linux-kernel+bounces-523727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F0DFA3DA70
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:51:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2FA3A3DA75
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:51:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FFE83A4E0B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:50:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFD1B17E6AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:51:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 074971F666B;
-	Thu, 20 Feb 2025 12:50:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC5BC1F6679;
+	Thu, 20 Feb 2025 12:51:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a4jCKz9g"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jranXwu6"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A67D6134B0;
-	Thu, 20 Feb 2025 12:50:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73C86134B0;
+	Thu, 20 Feb 2025 12:51:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740055852; cv=none; b=ASK+QlVRB55dU9kdW65TKJ2Ufgw9CfHu190lOJ/543AM0+2bcHudq/+jNUGlPfi41s4eUfZXqqCzNLneRq3Ul8VJfj3Fi5fgfwzzeSfh4pojyXhACfutCrg0oyXatsQN8eYzY+9Ks6q1jVgBVSwZ0pFNXeS4Zq0TnTJCV9GVas8=
+	t=1740055891; cv=none; b=uNO9HbWwzuKgdSLuN9R15SkVHrQRRWs0e+UqyKP0LYfKrO8D+9tptR7y8TIkjifaTdgeamBOxmqd1L5hxK3RMmwxPQJOIUgA+wnTpbkoYT58VmUOexHyeKUqGtIksICRIIlA4b1shlZOXialHJRonggzn1g5yDjh5906lBKytjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740055852; c=relaxed/simple;
-	bh=5CdqDe6a+TgCmrvpY0A7LzJCD1blyf0ZlG7AQjJyN4E=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XwJ7+IwSEZk+RaDEgJpwHz+5I2wb+dTCmlcIIa8ZWjpSooxE9mfG8/47vAkWA0PSVSEgr+1G4CLn4bXTWjja2D2czcZLSNMCA4EeMGAm7z+G77sUYkppYhEb3mupFMFjl89Ux8DuK6fm1tkrjodFC8+V4TQ7nSDAJYceKmLOZJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a4jCKz9g; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5e050b1491eso3557655a12.0;
-        Thu, 20 Feb 2025 04:50:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740055849; x=1740660649; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:reply-to:from:subject:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5CdqDe6a+TgCmrvpY0A7LzJCD1blyf0ZlG7AQjJyN4E=;
-        b=a4jCKz9g4DtMxh2XdqyZo1+IrgkwVuuM/SZk7M29dl2e7Iypu5gN8z6zwmftrZWerY
-         D9StLxWTSkN9pi9c2ZDgBpFI8WVBj5qzyKu9h9/AOFiyU9HFlnUC1mpjEmMjSM9BKhjE
-         BePuqA6DKi0lN74SiVRwyJVqcsPH9y+C46kuu2SNu1d8C0OiGJoFP3eKq1PtlWlqpP4F
-         V46VLUkOZ/DSDyTpLw9kfO1iEsVfVcd0WFXgshLr1JNUqmiYgrBz+wA15ke+8AURrS6N
-         F+CUN9al8JvIsEevuw0TQhUT3dCmK96i06+emmgzUTpNCcWlRGtH910iI0sKK9B73N9w
-         HPDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740055849; x=1740660649;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:reply-to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5CdqDe6a+TgCmrvpY0A7LzJCD1blyf0ZlG7AQjJyN4E=;
-        b=omFuU7uJZEJUOAZkxUtQc/eXQKwa60nQnS4f1nOAd6uA0fj8GyhW+GlEzJO2+I+dkd
-         n8N1OtTs1Jj1EAyu8QYOzviGYBTaupgU69fAXqWxVw3sx5IMQBxH7Pu+XGKr7WHBWF14
-         bBs+qUHWuIpzvK4yvv3Jexv0eGpYvKMg29qVzUuRz1Q9coDMrNNRuKZUNNJ84qyYc4Ei
-         1+YiZsTmHvsgMb7ryV+pCHuyXVbXpjpdaxP75tzxYCn2tz4FuYk1Q2lMj2ybO0CNloUx
-         IWUJ0FqTw+fn3+tO+KCBRRiRnlbR9gYMlWTPfn08R59cBPrZtsJUbJ1JbFlf8k+TjLx2
-         b3QA==
-X-Forwarded-Encrypted: i=1; AJvYcCUzEt3D/ERx0MGQa7pCbY5UT9nRqACsprR5+vbfZIYubqE3C8Q469gzcV+jnAtPoWACKB47evgQMK4yJiyw@vger.kernel.org, AJvYcCX333zdNLfySwDlg6l67jwxBApq4Fe2hGzcwZj6MoktBY8OUqtyIbBslhcyjknkLg6lkPXwe2ib6Jw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOLxcrODnGYeoa7AY+OTretRfwI1FoTEy4/17sewcCJ54K5/3n
-	AUuhLxa2vEpYUFgoFnHvMj00b6Xrz9I0JQUzhto+WvjjaJ14pJNgyMNIn/zoE7A=
-X-Gm-Gg: ASbGncuXWAeoY38ZQRryfqbtREUhDkUIWtBrubvVtBAYvNpzhCC0zsJp85v4FAhmnrV
-	SUau47r6GIm5sNN59v2Pvl9vpwdXdcqPR9Jb0SKkK+USgzd2qPh7hJ9CEWrtvLiKhRDAQfg6PHG
-	YgVoywIPzBuzIZ0X1C+EcNRNY6jJQ1urvXSwOQVQbw3MmsPrqAIGraGk/ztiyL9gaIOdhjgx1BU
-	3DcVNnAbN1zRWOdB1zDQK4EgRdObnr+dOhU2AOaC1dK/OjPZAhNT9meNoRgkLb/bfxRR9ZUd+1y
-	sbqzNyC3hFAiGJygUTOSrIcKz/TNt5W3mU+VjEFkQhfRaw==
-X-Google-Smtp-Source: AGHT+IHtm/rvi3VIjBkWuIExSB85ST7i+4B0cXT1pvysb3E5JpPYV5QDujzd5YmocYgA3XX2V8kIRQ==
-X-Received: by 2002:a17:907:d109:b0:ab3:3b92:8ca5 with SMTP id a640c23a62f3a-abbeddc5984mr305310166b.12.1740055848569;
-        Thu, 20 Feb 2025 04:50:48 -0800 (PST)
-Received: from abityuts-desk1.ger.corp.intel.com ([134.191.196.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb8eea4d65sm874370366b.161.2025.02.20.04.50.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 04:50:47 -0800 (PST)
-Message-ID: <9b67088de0b6a24a67cfe0a1860011d290307c08.camel@gmail.com>
-Subject: Re: [PATCH v4] intel_idle: introduce 'no_native' module parameter
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Reply-To: dedekind1@gmail.com
-To: "Rafael J. Wysocki" <rafael@kernel.org>, David Arcari
- <darcari@redhat.com>
-Cc: linux-pm@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Jacob Pan
- <jacob.jun.pan@linux.intel.com>, Len Brown <lenb@kernel.org>, Prarit
- Bhargava <prarit@redhat.com>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Date: Thu, 20 Feb 2025 14:50:44 +0200
-In-Reply-To: <CAJZ5v0g27Sutp_Ww7zGe0xB95kxFh-pzjd5-PpjR==h7-s8MLA@mail.gmail.com>
-References: <20250128141139.2033088-1-darcari@redhat.com>
-	 <20250213160741.445351-1-darcari@redhat.com>
-	 <CAJZ5v0g27Sutp_Ww7zGe0xB95kxFh-pzjd5-PpjR==h7-s8MLA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1740055891; c=relaxed/simple;
+	bh=5ypdshPfI3nsJ88dlIy/T3H0ZdxophNkWHmQ430+TI8=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RWOsvp8C2kkBTjJYdFj1elT3LxJ96fdAWZkySBRUINidxHIlDzm38345qsexA2UAbHCSj754om13+umELcFOhfv4aZxls740jkptgkSISOS6vhpFQOUqfBNanexmF1FOIiRFb6GrNOSuvzmIRSeGIj6PjopgRya2GlfZic6ohMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jranXwu6; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id EE3BA431ED;
+	Thu, 20 Feb 2025 12:51:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740055881;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V12Yk4AP6w0Kz77u/6UMamy0PAJDxKPB8Crw7PN4YQw=;
+	b=jranXwu6S39ULr7tv8yQXi5n3abengdJa871FcQj+dJgjWtC3dajQGOATSbkHF2zEk+/vS
+	eZIFEIjX6HCRn9yISFCqVSadBjnXoNr9/uRMgrx9gKjOwZoXCpN3R73hyPWs2pSxQzEBMi
+	ZS0W4JNbwMT37dnOwmc7nG012BIJhdo07Cx2gl04xto8dIgKg4edkf6FghBbmqXKUOaNg6
+	4iR4s5h+7QlIP4SJDZ8LIa7pl6vP+S95Z8fDuabYpfzzksIoYGGQGwuCXNDQhMAoruckrH
+	ANDErgtjbtm/IlAVu7+FSa5I+dEIzg+UKBhTkgDrlBbg1hgJEfl6rFpKasQBVQ==
+From: Romain Gantois <romain.gantois@bootlin.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Romain Gantois <romain.gantois@bootlin.com>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>,
+ Arnd Bergmann <arnd@arndb.de>, Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Kory Maincent <kory.maincent@bootlin.com>, linux-i2c@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v7 9/9] misc: add FPC202 dual port controller driver
+Date: Thu, 20 Feb 2025 13:51:13 +0100
+Message-ID: <6232449.lOV4Wx5bFT@fw-rgant>
+In-Reply-To: <Z7cbX5jX3NL4C2GR@shikoro>
+References:
+ <20250204-fpc202-v7-0-78b4b8a35cf1@bootlin.com>
+ <2025022038-hangnail-rehab-c145@gregkh> <Z7cbX5jX3NL4C2GR@shikoro>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="nextPart5091325.31r3eYUQgx";
+ micalg="pgp-sha256"; protocol="application/pgp-signature"
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeijedukecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufffkfgjfhggtgesghdtreertddtjeenucfhrhhomheptfhomhgrihhnucfirghnthhoihhsuceorhhomhgrihhnrdhgrghnthhoihhssegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeehleefieekgeetkeetieetveeitefhgfejhefggfdtfffgteefieeufeeuteegjeenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghlohepfhifqdhrghgrnhhtrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrohhmrghinhdrghgrnhhtohhishessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvddvpdhrtghpthhtohepfihsrgdorhgvnhgvshgrshesshgrnhhgqdgvnhhgihhnvggvrhhinhhgrdgtohhmpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheprhhomhgrihhnrdhgrghnthhoihhssegsohhothhlihhnrdgtohhmpdhrtghpthhtohepthhomhhirdhvr
+ ghlkhgvihhnvghnsehiuggvrghsohhnsghorghrugdrtghomhdprhgtphhtthhopehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheprghnughirdhshhihthhisehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhg
+X-GND-Sasl: romain.gantois@bootlin.com
 
-On Tue, 2025-02-18 at 20:57 +0100, Rafael J. Wysocki wrote:
-> On Thu, Feb 13, 2025 at 5:07=E2=80=AFPM David Arcari <darcari@redhat.com>=
- wrote:
-> >=20
-> > Since commit 18734958e9bf ("intel_idle: Use ACPI _CST for processor mod=
-els
-> > without C-state tables") the intel_idle driver has had the ability to u=
-se
-> > the ACPI _CST to populate C-states when the processor model is not
-> > recognized. However, even when the processor model is recognized (nativ=
-e
-> > mode) there are cases where it is useful to make the driver ignore the =
-per
-> > cpu idle states in lieu of ACPI C-states (such as specific application
-> > performance). Add the 'no_native' module parameter to provide this
-> > functionality.
-> >=20
-> > Cc: Jonathan Corbet <corbet@lwn.net>
-> > Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> > Cc: Len Brown <lenb@kernel.org>
-> > Cc: David Arcari <darcari@redhat.com>
-> > Cc: Artem Bityutskiy <dedekind1@gmail.com>
-> > Cc: Prarit Bhargava <prarit@redhat.com>
-> > Cc: linux-doc@vger.kernel.org
-> > Cc: linux-kernel@vger.kernel.org
-> > Signed-off-by: David Arcari <darcari@redhat.com>
-> > ---
-> > v4: fix !CONFIG_ACPI_PROCESSOR_CSTATE compilation issue
+--nextPart5091325.31r3eYUQgx
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Romain Gantois <romain.gantois@bootlin.com>
+Date: Thu, 20 Feb 2025 13:51:13 +0100
+Message-ID: <6232449.lOV4Wx5bFT@fw-rgant>
+In-Reply-To: <Z7cbX5jX3NL4C2GR@shikoro>
+MIME-Version: 1.0
+
+Hello Wolfram,
+
+On jeudi 20 f=C3=A9vrier 2025 13:09:03 heure normale d=E2=80=99Europe centr=
+ale Wolfram Sang=20
+wrote:
+> > as this is a i2c_driver, why isn't it in drivers/i2c/ somewhere?  Why
+> > misc?
 >=20
-> Artem, have all of your comments been addressed in this version?
+> Because drivers/i2c is only for I2C controllers and this is not a
+> controller. Other address translators also reside in their respective
+> subsystem, e.g. media for GMSL (de-)serializers. I don't know this chip,
+> maybe it has no "respective" subsystem and, thus, misc?
 
-Hi, I was away for few days. Yes, this patch looks good to me. Works, and
-useful. Granted your comment is also addressed:
+That is correct, this chip acts both as an I2C address translator and as a=
+=20
+GPIO controller with LED control and prefetch capabilities. It's meant to=20
+aggregate control signals from multiple SFP cages (or other similar port=20
+types), which have both I2C and low-speed signals.
 
-Reviewed-by: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
+Moreover, the chip can be configured to use an SPI master interface instead=
+ of=20
+an I2C one, although this isn't supported in this driver.
+
+Considering all of this, I didn't think that either the I2C subsystem or th=
+e=20
+GPIO subsystem were a good fit for this component, which is why I chose the=
+=20
+misc subsystem.
+
+Best Regards,
+
+=2D-=20
+Romain Gantois, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--nextPart5091325.31r3eYUQgx
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEYFZBShRwOvLlRRy+3R9U/FLj284FAme3JUEACgkQ3R9U/FLj
+285XmQ/+JH6sTra2DHeFaZhXztjqmfO3by20dIZfJUrns3TrzJOsd8LMRdvKo7xu
+TqTrQ5E10KMNtVvu98HkF2Yhig2enCQxdlwpVEnbDA8lH+PjvV9sOA3Rz8n2fokC
+uPzgzVLAA7IOe5UyMdYPU2YmDgVn+kNUJCxJVHGM/qb/H7MUI2HH8QZxj6XNa3KS
+3ZWRMcc0XImISTzDpFC02Vwcfy+Q3wr+BtvWU8aT7OM5J96JBiyzvGWPYTNarSjg
+CTHXmGmRpLmvqfS2576qBV6XUfmUNqDAZhOoDm6zftIOOimUAentfKzFjdJ9Nlam
+ccf9WrWVbjgPsv78dX60N+9DpCsNLNeD7Vg2zHvgFRDs7l9NDztEX60vyAX1YLA7
+E2dMJ2NXgIx0+Co1IHFCBa3rYZLEflLHNem1TVloSZ9JvYNV2P/nlkM+JB3zc3mX
+h/jt/XYaXQvRmURW+kc+7NKYl9yVbBZQ7xt5b5ORxMITnrJjpfay3HEAxSh5oGDv
+7bjs2t9ti/7/JpA6FTbmjHfHiCfhF3FRajqq4JrP1f5i2CVFl9d/fEPFe45hBB4u
+vV1FUr1xOiGAFNO9IdcZKyiYtdcNAkCuzCJv19+bHth9eJL3oAA9caz67gEDtvrX
+YA9mCyW7ldjs3vScFnkZHzlWenElfk+WEPa1wvwOzIA0niWYMPc=
+=J7Vz
+-----END PGP SIGNATURE-----
+
+--nextPart5091325.31r3eYUQgx--
+
+
+
 
