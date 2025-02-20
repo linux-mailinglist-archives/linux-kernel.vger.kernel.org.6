@@ -1,197 +1,127 @@
-Return-Path: <linux-kernel+bounces-523691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69E25A3DA00
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:29:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ECBAA3DA0F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:31:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35FBA189FD7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:26:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34EFD423CAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:26:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B96BD1F542B;
-	Thu, 20 Feb 2025 12:25:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65C451F4606;
+	Thu, 20 Feb 2025 12:26:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ALEwZhAx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ThizSWME"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E1771F1521
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 12:25:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 390E61F473A
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 12:26:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740054329; cv=none; b=pCLmlpqJfggTWraS5WIS+VJmE6AFPDC1ZND4fEz3Bd1lbF+1fy01Ik+PLg4Ng7Y2oF1e+uo+feZ9yXtLdMOHreQHu4tswh+G1KgZOi2EFt0yysXOc5w4h2ybEbeGtj3n5Ry8gTcrEKz7ctACifIYtZyl3z5NmMdpfxsN/jBvoqE=
+	t=1740054375; cv=none; b=sHvC0hbEIZuc0tWUrEFgAhrINhN4EDIKBewfriBOKgQzoB0+y+lRv6CZ96bN8daz/e4VmMjMyOv0WFOPfjQhY2lVvg9kYJFb09XG7VOPKeGctU24SDAVycHxnmVUvlB1zg0cBRsic3SRRS92y6JEWLfd0Z+ps8jVrVYJUYWhj9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740054329; c=relaxed/simple;
-	bh=bwt4JLJKdZcJ5UhgJheo0zVG9aIWXvxOCWLl4U9L4q8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FoJwcS7EFVqfRAnSYkLN3SzR2Y8cjSclltcJ4GBTMWXhDCp7wZEjmGJijAyoG8Susxv1YlvmtfS0JQdbZgxYxxuVFzYtIfAs81m/LFzxTfU3HxO1i+fgc2sucPBRaATqKkZ4jhp+Y19HVeUS+x8YCn9XgOAg1HX/0cTZrYsmZ6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ALEwZhAx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA2A8C4CED1;
-	Thu, 20 Feb 2025 12:25:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740054328;
-	bh=bwt4JLJKdZcJ5UhgJheo0zVG9aIWXvxOCWLl4U9L4q8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ALEwZhAxCtgHECp5w97Tz9QhBkAlGhyq9CJZWbmwFhYtOpdfG07curFgUlC0vfGDm
-	 v6SZUhM2m4wkjgzHScy5m4yn4Tq7z2kgXa5imUfU2hE5P9C48ffBq2Cly1yPqtzLAT
-	 Ro8Je4WsuaFl/BUOis+46vO1MQ7ty1s/CmwWAJXXGJzcYAmoGWL5iq1485/Lcz7Jsp
-	 j2+p2zbFrdtipKH9p/cpsYrn92nu2uPvVFgaCVyGdBG6xmqkJjttnRLPgSuaiJlP+J
-	 VOFv8QV5EXbMyad39fpyeUuhny+lE3DCK+IpcL5mCmsCAvEctvQmEr/55LP4472dOj
-	 ctaAfj3iB4ucg==
-Message-ID: <1bdf70d0-5011-4faa-88c2-96703d3907e7@kernel.org>
-Date: Thu, 20 Feb 2025 13:25:23 +0100
+	s=arc-20240116; t=1740054375; c=relaxed/simple;
+	bh=YvVj3Y+E/X9aMBDeF+0zodv5Y6r1iWhyl676Hl/yr5o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kuOX1mxSz5BPm64KUq6s6hGUBDF0v3n8HUEDk1qOVgM1S6sED9jxBM3kfns9mwuDd88SSw2JJJj292IUhSiPrCFjJb6QjMBHAzvdfjqBKnnRKD6uK8Dpamu35G+S5xCFMvTrkqtRI5LEhiVtFnRB5eqoovmqKDaxK6+BYJJkgtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ThizSWME; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740054373;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YvVj3Y+E/X9aMBDeF+0zodv5Y6r1iWhyl676Hl/yr5o=;
+	b=ThizSWMEOj58BAfXwZF+MrqwmFx1CIV5ALTv2GT52bhbYDcFZP/GE5dgjlM5Io0F+qocl0
+	zwgha6ITIX/7rUJsJ0FpAWkOUvO9EXMw0zrfZHtZWWEr1G2yR9Cnk9+nLDkCJVaAYMHbDV
+	Hc6XPiMb6qr/XfY6Dz/+3V8bFcvGSx0=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-427-Lpk1sia7P76NWT0yuqVEtQ-1; Thu,
+ 20 Feb 2025 07:26:09 -0500
+X-MC-Unique: Lpk1sia7P76NWT0yuqVEtQ-1
+X-Mimecast-MFC-AGG-ID: Lpk1sia7P76NWT0yuqVEtQ_1740054366
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 78AE419373C4;
+	Thu, 20 Feb 2025 12:26:05 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.147])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 9AE43180035F;
+	Thu, 20 Feb 2025 12:25:56 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Thu, 20 Feb 2025 13:25:36 +0100 (CET)
+Date: Thu, 20 Feb 2025 13:25:26 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Tong Tiangen <tongtiangen@huawei.com>
+Cc: David Hildenbrand <david@redhat.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org,
+	wangkefeng.wang@huawei.com, linux-mm <linux-mm@kvack.org>
+Subject: Re: Add Morton,Peter and David for discussion//Re: [PATCH -next]
+ uprobes: fix two zero old_folio bugs in __replace_page()
+Message-ID: <20250220122525.GA30669@redhat.com>
+References: <20250217123826.88503-1-tongtiangen@huawei.com>
+ <c2924e9e-1a42-a4f6-5066-ea2e15477c11@huawei.com>
+ <3b893634-5453-42d0-b8dc-e9d07988e9e9@redhat.com>
+ <24a61833-f389-b074-0d9c-d5ad9efc2046@huawei.com>
+ <20250219152237.GB5948@redhat.com>
+ <34e18c47-e536-48e4-80ca-7c7bbc75ecce@redhat.com>
+ <2fe4c4d1-c480-c250-1ba2-1a82caf5d7fa@huawei.com>
+ <196fc7d8-30a8-439a-89bd-57353fd98df8@redhat.com>
+ <85725388-180b-267c-e121-3af1f1b75f94@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] dt-bindings: arm: Add Coresight device Trace NOC
- definition
-To: Yuanfang Zhang <quic_yuanfang@quicinc.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
- <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: kernel@quicinc.com, linux-kernel@vger.kernel.org,
- coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org
-References: <20250220-trace-noc-driver-v1-0-15d78bd48e12@quicinc.com>
- <20250220-trace-noc-driver-v1-1-15d78bd48e12@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250220-trace-noc-driver-v1-1-15d78bd48e12@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <85725388-180b-267c-e121-3af1f1b75f94@huawei.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On 20/02/2025 10:41, Yuanfang Zhang wrote:
-> Adds new coresight-tnoc.yaml file describing the bindings required
-> to define Trace NOC in the device trees.
-> 
-> Signed-off-by: Yuanfang Zhang <quic_yuanfang@quicinc.com>
+On 02/20, Tong Tiangen wrote:
+>
+> 在 2025/2/20 16:38, David Hildenbrand 写道:
+> >On 20.02.25 03:31, Tong Tiangen wrote:
+> >>
+> >>@@ -506,6 +506,12 @@ int uprobe_write_opcode(struct arch_uprobe
+> >>*auprobe, struct mm_struct *mm,
+> >>          if (ret <= 0)
+> >>                  goto put_old;
+> >>
+> >>+       if (WARN(is_zero_page(old_page),
+> >
+> >This can likely be triggered by user space, so do not use WARN.
+>
+> OK,thanks.
+>
+> Hi Oleg, is that all right?
 
-<form letter>
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC. It might happen, that command when run on an older
-kernel, gives you outdated entries. Therefore please be sure you base
-your patches on recent Linux kernel.
+Thanks, LGTM.
 
-Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-people, so fix your workflow. Tools might also fail if you work on some
-ancient tree (don't, instead use mainline) or work on fork of kernel
-(don't, instead use mainline). Just use b4 and everything should be
-fine, although remember about `b4 prep --auto-to-cc` if you added new
-patches to the patchset.
+Oleg.
 
-You missed at least devicetree list (maybe more), so this won't be
-tested by automated tooling. Performing review on untested code might be
-a waste of time.
-
-Please kindly resend and include all necessary To/Cc entries.
-</form letter>
-
-> ---
->  .../bindings/arm/qcom,coresight-tnoc.yaml          | 107 +++++++++++++++++++++
->  1 file changed, 107 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/qcom,coresight-tnoc.yaml b/Documentation/devicetree/bindings/arm/qcom,coresight-tnoc.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..b8c1aaf014fb483fd960ec55d1193fb3f66136d2
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/qcom,coresight-tnoc.yaml
-> @@ -0,0 +1,107 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/arm/qcom,coresight-tnoc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Ttrace NOC(Network On Chip)
-> +
-> +maintainers:
-> +  - yuanfang Zhang <quic_yuanfang@quicinc.com>
-> +
-> +description:
-> +  The Trace NoC is an integration hierarchy which is a replacement of Dragonlink tile configuration.
-> +  It brings together debug component like TPDA, funnel and interconnect Trace Noc which collects trace
-
-Wrap according to coding style.
-
-> +  from subsystems and transfers to QDSS sink.
-> +
-> +  It sits in the different subsystem of SOC and aggregates the trace and transports it to Aggregation TNoC
-> +  or to QDSS trace sink eventually. Trace NoC embeds bridges for all the interfaces(APB, ATB, QPMDA & NTS).
-> +
-> +  Trace NoC can take inputs from different trace sources i.e. ATB, QPMDA.
-> +
-> +# Need a custom select here or 'arm,primecell' will match on lots of nodes
-> +select:
-> +  properties:
-> +    compatible:
-> +      contains:
-> +        enum:
-> +          - qcom,coresight-tnoc
-> +  required:
-> +    - compatible
-> +
-> +properties:
-> +  $nodename:
-> +    pattern: "^tn(@[0-9a-f]+)$"
-> +  compatible:
-> +    items:
-> +      - const: qcom,coresight-tnoc
-> +      - const: arm,primecell
-> +
-> +  reg:
-> +    minItems: 1
-> +    maxItems: 2
-
-Look how existing bindings do it. You need to list and describe the items.
-
-Best regards,
-Krzysztof
 
