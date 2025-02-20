@@ -1,348 +1,196 @@
-Return-Path: <linux-kernel+bounces-524758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9BF5A3E6C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:38:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E65BFA3E6CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:41:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3719C7A6702
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:37:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F2AA3BDEE6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:41:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FA21264624;
-	Thu, 20 Feb 2025 21:37:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C1FC264F8C;
+	Thu, 20 Feb 2025 21:41:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="E1OMq2Xq"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="dek5FiXo"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2075.outbound.protection.outlook.com [40.107.92.75])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5086420CCCA
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 21:37:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740087469; cv=none; b=e6s6A+X1MoeKdm3tvIC2NzLDGxJV92QxBXgwDNHpzCvTrTDWQVS20yj7qF90dYceJi0KbGaWzjxBqOTBVlexcLhFEzihDbQIPBE9WlsYpwmI6uTljVo7lDVqa8KquEAabIZI8vhbDhwLzl0+Rkl1NMLsICqZ737LPpCI730wXRk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740087469; c=relaxed/simple;
-	bh=88xel4ReXmml0Y0dgHmn02RadkL5KzYs1W8CvR4jbJo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V38tZoetrAIHkB1eNuKd5rPwg++2XdsVCISvruOe6cwnTaDyVaQffulVAjfzc8VlpbU1+Kei+glPBZRADPG2U0ZpkhdrK42O2/w3BZgqhKzBMGiSoXqAT8jf3QynefOxfbYXTdaYOw6KGSPc+EsNsAlJchUAGR9ZOscR2PNUca8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=E1OMq2Xq; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-abb8d63b447so190215866b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 13:37:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740087465; x=1740692265; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UJgY/DEAxcJuwoGxKe8jJ8rEYcAL/Pax8Zc7JijGPQM=;
-        b=E1OMq2XqIw5/ZO8mSSnaZsaif7vAgFMIgaOn7PhvvAY4clm0GgDXOQnhAmlkOq6kXd
-         vMHF8QG78PFKsQZLxA+I5SYYxjEdeo85M5SOZPXtGjjysBjT9Y1zt/n89eB67C++334T
-         /9QLBarLfPkOqdfMQ+4XyNCp1Wp6AwMeIyVAP8Qpcg1Cbc69dKXuvCHfHX1Ir1VEEdfW
-         itGao2LDQZG9aBFqyHq9yu0TP3fgiKINqWAd9szHC7HMfjkYl7Y17I7rfYGP+wEf9PoG
-         6ZWuItuD0zE5+BKUiVsYDtxb7GL1i3SPEhrVkWw7ZkryLA8tt9FONQFLLyzYwATxQN2n
-         PKXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740087465; x=1740692265;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UJgY/DEAxcJuwoGxKe8jJ8rEYcAL/Pax8Zc7JijGPQM=;
-        b=vq8cSq2iVQxqgMxTFHPGc4t0ivlyq4bIK3u2t+1RRNQOz+GfT7n0jYt5dfYbVI8F4d
-         23qSc9RuXBhgj24ixjgCk0CIVYoiGWe8YnldpqLOZj6zrGkQ1Bjb0w2zg4SXmcvt5kxs
-         zSMEcILX46C0gRRw3TOPboyrYoOJcDPUi4J+XJhu5mejJ7h78fnFUGKqvFBPpql7p1HQ
-         opz8ooJrmvyysU0vxyFlAUXutUHkhiLPTBtv3/nYO46vJIdc8f9/j0Q+RLdAW17cmbUK
-         qt/psXL4BjAcHcru3wJDIuiigSc9BCq64MuHH+xwPLuaRtp+ao4KhFhr9IqiM+hvYlaK
-         fyhA==
-X-Forwarded-Encrypted: i=1; AJvYcCWN77qYf49VDxofTI0sj3yopN0QFA9ax2pzNN5YpiXVI5b90SV3gFi3FXG9OeDtM0lWTAe0ME1QfNm679I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXE7o9gimaNFwpHHqO3qrB4gxGgt6YPo9RVZRELrXS7o2WYTuI
-	rjmPLCJeM1HbRhxayIZ9CBcEBOKnyI188vNszXYBQ97vvWgBiGxtuxl7GxIURSqjWxGlyY3YiHb
-	hNIRbnx7PqahttbYnnIsqUHnssWJGU0w8bk/q
-X-Gm-Gg: ASbGncvNZes8JDVnK+bWK33ZFD7BbhrJq+mIq9IXHMkqjIE9mRAj3A/PgYJOMC8mqEH
-	P/2mgGWAG7W4iIgemXl+sveW1mbRwaj+gvjsQxJTDK+v1UN5zvWwPMAC5n7Wtk+zE+DnCbhPGKt
-	pIIqruQsWwpnO5ozdEqVIGIRVMRjs=
-X-Google-Smtp-Source: AGHT+IHk8/fn5FhZEYC+B8X06zJ7j4NoHhOvN9+v3er2xxjzQYmLbruTLQB4WUbNewXmprb13+b2o7CIyIBuqIUXzPg=
-X-Received: by 2002:a17:906:308c:b0:ab7:ec7c:89e4 with SMTP id
- a640c23a62f3a-abc09a0a2c1mr77488566b.21.1740087464402; Thu, 20 Feb 2025
- 13:37:44 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23E132638B8;
+	Thu, 20 Feb 2025 21:41:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.75
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740087664; cv=fail; b=QfLGmzlS/PlAHNfYwe0s3OYvMWZkZTcfc1uuGFGmFM3chLVw/v79XVgyBCl/S+c6tZLGxLA2tHlTXFVgHeBWNGn9dbuyzKvXQT4h6Yhsn6B4OVHLsqicxsU6+K5uPsYYwfwPv9i/J6RL9+XPyCXxSQl7c8YgbXLSVoqRJyad28E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740087664; c=relaxed/simple;
+	bh=rhhVF5oHD97YHuWAIHw7c+umqMt0g2jvEeiO5jVUFos=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UOMWQlnOi9KR94C9j0cgXbypGlYyU8KbULhgwxuZzMHEnokXoJ/1zadDVE/zFkkfFmUBSXT/Y17I5fAPTbztvTohl29KEpK+CsSDVS5vSmEEvLToDL25cScIebs/BogWNhEC24YG87W8hBVaxmOvwUoXFGLAnee5KdubDSKdPNM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=dek5FiXo; arc=fail smtp.client-ip=40.107.92.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xtgUqxEUyITN3lqteqNivapAocn8mYyhtq26veP0KPEHZa87Q+l+ROvjCl2WDOTl1FCENLrcHaUF6wfOiRoaNtAOiaqX5CSziVXTAsP5tNCeqlc4IuGvEoHHRFOQag5HqP+98krh43H7xm2XG6gCoyXBHX2BhhLGBGLui21Kp1rIqsoY9auWQwjAvv9/y7pQ/FtZJPPdarN9mTJzrV6lcqvkN0L0TPblqvUsZgBKXzZOEaaZLfp+kfRwmtbAcXaagnQuffxdzJ2rvAn7kPSmr62rIzOtA1thNwddHfUgct2bLsxgh17Yy5Z1aFVsAluQQbS87XgsHXy26qObIeMlXw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=eZI4YGyeyBiOWEiiV5OuMBv0V24LtnJljyPE2c4Bslc=;
+ b=Qp7/N1NISAU4taPv/N4c/CXEs5tOexACz1One+7NuKE7uK5s09m/sk+YPZTnsdgR9O1ePA9IzPBVLUbi4onV5j0XvJSdPMtqWJkQO7aGWqVUcZLNd/2U4LsI8ixyywSTll+xqhm8luaKn+tEa9qivJCB2VK5N6Kbzqsoiht6+Yb3Ua6LAWn4fr78ANamNWppwKBL/LkH2fjhWZzVEFnEQ2r9WW34JEv4vu44QQGuWUq+IgmcNho3f5BfjPG4GB6SvNIg8bicvKkHvUxX+cQfGn1bnO2+NNKL+/j4nNtmuUPdRox4D1Tkwbn95C1RwbAZT2Omg/8ONtyyjNmd0PXqZA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=davemloft.net smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eZI4YGyeyBiOWEiiV5OuMBv0V24LtnJljyPE2c4Bslc=;
+ b=dek5FiXoeuDZm+VIaME/X6TQskUpzhx0vNzwf99aW/Mv1hGp89mMxS7h3RdNQto4/VutCumfNIOsSQVgJhFIulbZGs5UDWmaa3tUAQm7ljnM6ziUglEJKwKtw1zpOKb4RHPUVu6MeD2lOqf6hrqwOoxFQ2AkPSAiEmRNvpjfd6r8ag4TOHKALnO484sRdyJ6zSGVPXTrLkX14PUaQSe/PKTf3Ca8xoKZuyQi1OsbTq9bKJh0oqwN00CgcG4JntIWrW6qwDkwuS2EFATPm7kP4Xh7F+BlkuCaJHnRqwo/5NPDTmDzCZz6sQZnnPrYjTyXWX2GlAvKsS5gu4EtXG+vyA==
+Received: from SA0PR12CA0012.namprd12.prod.outlook.com (2603:10b6:806:6f::17)
+ by CY8PR12MB8411.namprd12.prod.outlook.com (2603:10b6:930:6e::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.16; Thu, 20 Feb
+ 2025 21:40:58 +0000
+Received: from SN1PEPF00026368.namprd02.prod.outlook.com
+ (2603:10b6:806:6f:cafe::1a) by SA0PR12CA0012.outlook.office365.com
+ (2603:10b6:806:6f::17) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.15 via Frontend Transport; Thu,
+ 20 Feb 2025 21:40:58 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ SN1PEPF00026368.mail.protection.outlook.com (10.167.241.133) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8466.11 via Frontend Transport; Thu, 20 Feb 2025 21:40:58 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 20 Feb
+ 2025 13:40:42 -0800
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Thu, 20 Feb 2025 13:40:41 -0800
+Received: from vdi.nvidia.com (10.127.8.10) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
+ Transport; Thu, 20 Feb 2025 13:40:38 -0800
+From: Tariq Toukan <tariqt@nvidia.com>
+To: "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>, "Andrew
+ Lunn" <andrew+netdev@lunn.ch>
+CC: Gal Pressman <gal@nvidia.com>, Mark Bloch <mbloch@nvidia.com>, "Saeed
+ Mahameed" <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, Tariq
+ Toukan <tariqt@nvidia.com>, <netdev@vger.kernel.org>,
+	<linux-rdma@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Jianbo Liu
+	<jianbol@nvidia.com>
+Subject: [PATCH net-next 0/8] net/mlx5e: Move IPSec policy check after decryption
+Date: Thu, 20 Feb 2025 23:39:50 +0200
+Message-ID: <20250220213959.504304-1-tariqt@nvidia.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1739997129.git.ashish.kalra@amd.com> <f1caff4423a46c50564e625fd98932fde2a9a3fc.1739997129.git.ashish.kalra@amd.com>
- <CAAH4kHab8rvWCPX2x8cvv6Dm+uhZQxpJgwrrn2GAKzn8sqS9Kg@mail.gmail.com> <27d63f0a-f840-42df-a31c-28c8cb457222@amd.com>
-In-Reply-To: <27d63f0a-f840-42df-a31c-28c8cb457222@amd.com>
-From: Dionna Amalie Glaze <dionnaglaze@google.com>
-Date: Thu, 20 Feb 2025 13:37:31 -0800
-X-Gm-Features: AWEUYZkw8JRzTMCWoOsQe1qrRf6TLzBp_lxe1iYiNlk4nmTmKATxQq-pAaeLENg
-Message-ID: <CAAH4kHYXGNTFABo7hWCQvvebiv4VkXfT8HvV-FPneyQcrHA-9w@mail.gmail.com>
-Subject: Re: [PATCH v4 2/7] crypto: ccp: Ensure implicit SEV/SNP init and
- shutdown in ioctls
-To: "Kalra, Ashish" <ashish.kalra@amd.com>
-Cc: seanjc@google.com, pbonzini@redhat.com, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
-	hpa@zytor.com, thomas.lendacky@amd.com, john.allen@amd.com, 
-	herbert@gondor.apana.org.au, michael.roth@amd.com, nikunj@amd.com, 
-	ardb@kernel.org, kevinloughlin@google.com, Neeraj.Upadhyay@amd.com, 
-	aik@amd.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, linux-coco@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF00026368:EE_|CY8PR12MB8411:EE_
+X-MS-Office365-Filtering-Correlation-Id: c4f37fb3-c47b-4470-81e2-08dd51f7432f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|376014|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NUJuVXhaek1ld2xlN3Y4KzY4RnhLZm00K1F4Qm10Q0RwbmtlRzNiSkVzZ3Vu?=
+ =?utf-8?B?bktaS0dOMHVrN0hDOEd6clpDV2w1aTc5dEtTVmtwaEJVWFBuQzhGeHBZT1dU?=
+ =?utf-8?B?MkhnNnhJTjUvVm5md3FrQ3hlY2UwWTRrSkQ4SXF5dEo4T2hoOU90YldtOWh1?=
+ =?utf-8?B?VHllZW03WFYvWFFyQVhWTDRhL1cyWURZRk9zSCtWTkZLcnd5RUVQb0krNW5k?=
+ =?utf-8?B?cUVrajBWQ1V2dUxZQVdCbDhzVDNucThJK0tLa3d4dy94Q3Y1emcyU1lxUE8z?=
+ =?utf-8?B?VVlOSDFPOXJ4ZDFXU3ZXaDh1b3ZOdjBwdC9LeWp1aGRnRERNMFRLTzBnbzRU?=
+ =?utf-8?B?aHVmMU1DOXl3TnFFR1JCY0VzcUpYSzN2VzhyVmRXMjgvc0EwYytDRlF6QkIw?=
+ =?utf-8?B?aFJ1YlNiQ3J3NWJna0ZnZGVNRzZKYUZvTXFocm5qYzBQdWxtSnZrempBQ3RS?=
+ =?utf-8?B?ekdZTmVhSUM0WHRQOXRrUDk3b0w5Z0kwQTJna1hTc3lGeWovdUtXL3BDdGlL?=
+ =?utf-8?B?TWVxenorN2hIL2MyVEtLOVY2ckh4ZzhmUDdXbWEzc2pBdTgxeDNYNFdRV2M1?=
+ =?utf-8?B?SnRiZXpyVHlXRk85WXhLVS90ZVRyMTFSVk9MMkxSejN1OFVpMWxkbUJuZlUx?=
+ =?utf-8?B?a0FSTDkxbFQwdDNTNDJVSU1YWVRHMmlzTUNZTm9tcHNKZmpHYXpjMXRibkRM?=
+ =?utf-8?B?eVpsaGtUYmVxY2wwejg0NmE3eXBQU3E5czgrVW90b1k2Tjl1M3NtT1dQZVlE?=
+ =?utf-8?B?MmN6emdQUXMxL05nNFk4N2NDK1Jad0xJejJha0xBK3M5RjdlcXNsWGFndXZ5?=
+ =?utf-8?B?cFI4VG5EalV4UklCNEhrRXk2cERrY0l3eElqbEpMc0RDSHQ1aWM2emYrcUhp?=
+ =?utf-8?B?MjZoOHFiTm12WWlFOVRuQWdmY1QwNFRJK084YkM3K01wV3B6M3Vxc3dURisv?=
+ =?utf-8?B?V1loQnNLc1ZtNDQ4S05UenhVK3pLdmFreDdzcEtybGxhMXpESitHVnB1T1FH?=
+ =?utf-8?B?UWtDWmNZb20wOVNHWFJDSlN4NDVZVHNNSEg4Zk9UTGZxWC81NCtuajhpZm1Z?=
+ =?utf-8?B?cDM2bzg1UmtSL3hBWXk3N2NqSXlxa0FSc2VjdGpPTU5JK0hMZkdTemY4MTlR?=
+ =?utf-8?B?N2ZONjgzdEJ1YTBEbkRWVmtLOFVSNzU1S2MyZ2ZIdmxYUWVnYVNzUW03bUlu?=
+ =?utf-8?B?U0lYb0JFeEN1YUJ3Qjh2cExxYXpkdFNlR09EdTZIbThvNDh1d2VwcWFXNXZ6?=
+ =?utf-8?B?bzBCbDB2THVrZCtZOTdZb2VVSm9WbmxMQ2pJYkxBQzJjSkNxaThvZWNyWkJo?=
+ =?utf-8?B?ZmZWbW5OTHBObFVwV0xxa1A4VzFhMUxkOXBWdERTZm04akJ3ekVtdWhvdHB6?=
+ =?utf-8?B?QUY4M3ZzaE9NOCtFc05FbXBrMUNNTXR5VFBzWDc0QTc4Q2RyNjJUdXIydDZ2?=
+ =?utf-8?B?SjlneEZySnQ4eHozQ29xRTZkektHYVNnRjhGdUY3ME1Pbks5Ry9Xb2tzZld5?=
+ =?utf-8?B?N2FUbFprc0NIQ1RUZDErZnpCQkZNaW9hOUZUVTdFaU5WQkxJRW9FSEJHOXQ2?=
+ =?utf-8?B?cEtSQjJsdThMRXJmR2Z2YmxCeUsxbjJ0dXp1czRZTmkwZVpqWm9DYkRFcjds?=
+ =?utf-8?B?bmtyS2hrdWRoUUt3Nk5TSmJWU0lyLzVlam41SFh4eUtHTmtPUVcwTXJoUG1v?=
+ =?utf-8?B?MjJUVkNkcnFuTG1naDBadXhIcVJ1Y0Z2MVlFckRaWDJOdzdqYmhhemlPS1Jq?=
+ =?utf-8?B?dklDVVFyN0pmbVhHSUJISmVMNUJ2ZUtMNXBOaWlkTS9RUmY0NEFVUEpIRWIz?=
+ =?utf-8?B?NnFGUDRjMVJWSWJQdk9kREVDaWZvb0YyOGg1RkxSNnA4TitGdDFrL3hTdzhE?=
+ =?utf-8?B?SDJTS1BRL2JmUWkwQ2NGUjkzYU9wMzcxMloybExWQmNpdWhRVGlZREtqWDV0?=
+ =?utf-8?B?cWkxbjZvZGdyLzVhQm9BMWNSaG9LaS9IZ0c4UFMxa1FGbnZhenhLSnJuUFF3?=
+ =?utf-8?Q?C7iub7foPQRwIvFHgeuDfdupbj9HjU=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(376014)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2025 21:40:58.1187
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c4f37fb3-c47b-4470-81e2-08dd51f7432f
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF00026368.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB8411
 
-On Thu, Feb 20, 2025 at 12:07=E2=80=AFPM Kalra, Ashish <ashish.kalra@amd.co=
-m> wrote:
->
-> Hello Dionna,
->
-> On 2/20/2025 10:44 AM, Dionna Amalie Glaze wrote:
-> > On Wed, Feb 19, 2025 at 12:53=E2=80=AFPM Ashish Kalra <Ashish.Kalra@amd=
-.com> wrote:
-> >>
-> >> From: Ashish Kalra <ashish.kalra@amd.com>
-> >>
-> >> Modify the behavior of implicit SEV initialization in some of the
-> >> SEV ioctls to do both SEV initialization and shutdown and add
-> >> implicit SNP initialization and shutdown to some of the SNP ioctls
-> >> so that the change of SEV/SNP platform initialization not being
-> >> done during PSP driver probe time does not break userspace tools
-> >> such as sevtool, etc.
-> >>
-> >> Prior to this patch, SEV has always been initialized before these
-> >> ioctls as SEV initialization is done as part of PSP module probe,
-> >> but now with SEV initialization being moved to KVM module load instead
-> >> of PSP driver probe, the implied SEV INIT actually makes sense and get=
-s
-> >> used and additionally to maintain SEV platform state consistency
-> >> before and after the ioctl SEV shutdown needs to be done after the
-> >> firmware call.
-> >>
-> >> It is important to do SEV Shutdown here with the SEV/SNP initializatio=
-n
-> >> moving to KVM, an implicit SEV INIT here as part of the SEV ioctls not
-> >> followed with SEV Shutdown will cause SEV to remain in INIT state and
-> >> then a future SNP INIT in KVM module load will fail.
-> >>
-> >> Similarly, prior to this patch, SNP has always been initialized before
-> >> these ioctls as SNP initialization is done as part of PSP module probe=
-,
-> >> therefore, to keep a consistent behavior, SNP init needs to be done
-> >> here implicitly as part of these ioctls followed with SNP shutdown
-> >> before returning from the ioctl to maintain the consistent platform
-> >> state before and after the ioctl.
-> >>
-> >> Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
-> >> ---
-> >>  drivers/crypto/ccp/sev-dev.c | 117 ++++++++++++++++++++++++++++------=
--
-> >>  1 file changed, 93 insertions(+), 24 deletions(-)
-> >>
-> >> diff --git a/drivers/crypto/ccp/sev-dev.c b/drivers/crypto/ccp/sev-dev=
-.c
-> >> index 8f5c474b9d1c..b06f43eb18f7 100644
-> >> --- a/drivers/crypto/ccp/sev-dev.c
-> >> +++ b/drivers/crypto/ccp/sev-dev.c
-> >> @@ -1461,7 +1461,8 @@ static int sev_ioctl_do_platform_status(struct s=
-ev_issue_cmd *argp)
-> >>  static int sev_ioctl_do_pek_pdh_gen(int cmd, struct sev_issue_cmd *ar=
-gp, bool writable)
-> >>  {
-> >>         struct sev_device *sev =3D psp_master->sev_data;
-> >> -       int rc;
-> >> +       bool shutdown_required =3D false;
-> >> +       int rc, error;
-> >>
-> >>         if (!writable)
-> >>                 return -EPERM;
-> >> @@ -1470,19 +1471,26 @@ static int sev_ioctl_do_pek_pdh_gen(int cmd, s=
-truct sev_issue_cmd *argp, bool wr
-> >>                 rc =3D __sev_platform_init_locked(&argp->error);
-> >>                 if (rc)
-> >>                         return rc;
-> >> +               shutdown_required =3D true;
-> >>         }
-> >>
-> >> -       return __sev_do_cmd_locked(cmd, NULL, &argp->error);
-> >> +       rc =3D __sev_do_cmd_locked(cmd, NULL, &argp->error);
-> >> +
-> >> +       if (shutdown_required)
-> >> +               __sev_platform_shutdown_locked(&error);
-> >
-> > This error is discarded. Is that by design? If so, It'd be better to
-> > call this ignored_error.
-> >
->
-> This is by design, we cannot overwrite the error for the original command=
- being issued
-> here which in this case is do_pek_pdh_gen, hence we use a local error for=
- the shutdown command.
-> And __sev_platform_shutdown_locked() has it's own error logging code, so =
-it will be printing
-> the error message for the shutdown command failure, so the shutdown error=
- is not eventually
-> being ignored, that error log will assist in any inconsistent SEV/SNP pla=
-tform state and
-> subsequent errors.
->
-> >> +
-> >> +       return rc;
-> >>  }
-> >>
-> >>  static int sev_ioctl_do_pek_csr(struct sev_issue_cmd *argp, bool writ=
-able)
-> >>  {
-> >>         struct sev_device *sev =3D psp_master->sev_data;
-> >>         struct sev_user_data_pek_csr input;
-> >> +       bool shutdown_required =3D false;
-> >>         struct sev_data_pek_csr data;
-> >>         void __user *input_address;
-> >>         void *blob =3D NULL;
-> >> -       int ret;
-> >> +       int ret, error;
-> >>
-> >>         if (!writable)
-> >>                 return -EPERM;
-> >> @@ -1513,6 +1521,7 @@ static int sev_ioctl_do_pek_csr(struct sev_issue=
-_cmd *argp, bool writable)
-> >>                 ret =3D __sev_platform_init_locked(&argp->error);
-> >>                 if (ret)
-> >>                         goto e_free_blob;
-> >> +               shutdown_required =3D true;
-> >>         }
-> >>
-> >>         ret =3D __sev_do_cmd_locked(SEV_CMD_PEK_CSR, &data, &argp->err=
-or);
-> >> @@ -1531,6 +1540,9 @@ static int sev_ioctl_do_pek_csr(struct sev_issue=
-_cmd *argp, bool writable)
-> >>         }
-> >>
-> >>  e_free_blob:
-> >> +       if (shutdown_required)
-> >> +               __sev_platform_shutdown_locked(&error);
-> >
-> > Another discarded error. This function is called in different
-> > locations in sev-dev.c with and without checking the result, which
-> > seems problematic.
->
-> Not really, if shutdown fails for any reason, the error is printed.
-> The return value here reflects the value of the original command/function=
-.
-> The command/ioctl could have succeeded but the shutdown failed, hence,
-> shutdown error is printed, but the return value reflects that the ioctl s=
-ucceeded.
->
-> Additionally, in case of INIT before the command is issued, the command m=
-ay
-> have failed without the SEV state being in INIT state, hence the error fo=
-r the
-> INIT command failure is returned back from the ioctl.
->
-> >
-> >> +
-> >>         kfree(blob);
-> >>         return ret;
-> >>  }
-> >> @@ -1747,8 +1759,9 @@ static int sev_ioctl_do_pek_import(struct sev_is=
-sue_cmd *argp, bool writable)
-> >>         struct sev_device *sev =3D psp_master->sev_data;
-> >>         struct sev_user_data_pek_cert_import input;
-> >>         struct sev_data_pek_cert_import data;
-> >> +       bool shutdown_required =3D false;
-> >>         void *pek_blob, *oca_blob;
-> >> -       int ret;
-> >> +       int ret, error;
-> >>
-> >>         if (!writable)
-> >>                 return -EPERM;
-> >> @@ -1780,11 +1793,15 @@ static int sev_ioctl_do_pek_import(struct sev_=
-issue_cmd *argp, bool writable)
-> >>                 ret =3D __sev_platform_init_locked(&argp->error);
-> >>                 if (ret)
-> >>                         goto e_free_oca;
-> >> +               shutdown_required =3D true;
-> >>         }
-> >>
-> >>         ret =3D __sev_do_cmd_locked(SEV_CMD_PEK_CERT_IMPORT, &data, &a=
-rgp->error);
-> >>
-> >>  e_free_oca:
-> >> +       if (shutdown_required)
-> >> +               __sev_platform_shutdown_locked(&error);
-> >
-> > Again.
-> >
-> >> +
-> >>         kfree(oca_blob);
-> >>  e_free_pek:
-> >>         kfree(pek_blob);
-> >> @@ -1901,17 +1918,8 @@ static int sev_ioctl_do_pdh_export(struct sev_i=
-ssue_cmd *argp, bool writable)
-> >>         struct sev_data_pdh_cert_export data;
-> >>         void __user *input_cert_chain_address;
-> >>         void __user *input_pdh_cert_address;
-> >> -       int ret;
-> >> -
-> >> -       /* If platform is not in INIT state then transition it to INIT=
-. */
-> >> -       if (sev->state !=3D SEV_STATE_INIT) {
-> >> -               if (!writable)
-> >> -                       return -EPERM;
-> >> -
-> >> -               ret =3D __sev_platform_init_locked(&argp->error);
-> >> -               if (ret)
-> >> -                       return ret;
-> >> -       }
-> >> +       bool shutdown_required =3D false;
-> >> +       int ret, error;
-> >>
-> >>         if (copy_from_user(&input, (void __user *)argp->data, sizeof(i=
-nput)))
-> >>                 return -EFAULT;
-> >> @@ -1952,6 +1960,16 @@ static int sev_ioctl_do_pdh_export(struct sev_i=
-ssue_cmd *argp, bool writable)
-> >>         data.cert_chain_len =3D input.cert_chain_len;
-> >>
-> >>  cmd:
-> >> +       /* If platform is not in INIT state then transition it to INIT=
-. */
-> >> +       if (sev->state !=3D SEV_STATE_INIT) {
-> >> +               if (!writable)
-> >> +                       goto e_free_cert;
-> >> +               ret =3D __sev_platform_init_locked(&argp->error);
-> >
-> > Using argp->error for init instead of the ioctl-requested command
-> > means that the user will have difficulty distinguishing which process
-> > is at fault, no?
-> >
->
-> Not really, in case the SEV command has still not been issued, argp->erro=
-r is still usable
-> and returned back to the caller (no need to use a local error here), we a=
-re not overwriting
-> the argp->error used for the original command/ioctl here.
->
+Hi,
 
-I mean in the case that argp->error is set to a value shared by the
-command and init, it's hard to know what the problem was.
-I'd like to ensure that the documentation is updated to reflect that
-(in this case) if PDH_CERT_EXPORT returns INVALID_PLATFORM_STATE, then
-it's because the platform was not in PSTATE.UNINIT state.
-The new behavior of initializing when you need to now means that you
-should have ruled out INVALID_PLATFORM_STATE as a possible value from
-PDH_EXPORT_CERT. Same for SNP_CONFIG.
+This series by Jianbo adds IPsec policy check after decryption.
 
-There is not a 1-to-1 mapping between the ioctl commands and the SEV
-commands now, so I think you need extra documentation to clarify the
-new error space for at least pdh_export and set_config
+In current mlx5 driver, the policy check is done before decryption for
+IPSec crypto and packet offload. This series changes that order to
+make it consistent with the processing in kernel xfrm. Besides, RX
+state with UPSPEC selector is supported correctly after new steering
+table is added after decryption and before the policy check.
 
-SNP_PLATFORM_STATUS, VLEK_LOAD, and SNP_COMMIT appear to not
-necessarily have a provenance confusion after looking closer.
+Regards,
+Tariq
+
+Jianbo Liu (8):
+  net/mlx5e: Add helper function to update IPSec default destination
+  net/mlx5e: Change the destination of IPSec RX SA miss rule
+  net/mlx5e: Add correct match to check IPSec syndromes for switchdev
+    mode
+  net/mlx5e: Move IPSec policy check after decryption
+  net/mlx5e: Skip IPSec RX policy check for crypto offload
+  net/mlx5e: Add num_reserved_entries param for ipsec_ft_create()
+  net/mlx5e: Add pass flow group for IPSec RX status table
+  net/mlx5e: Support RX xfrm state selector's UPSPEC for packet offload
+
+ .../net/ethernet/mellanox/mlx5/core/en/fs.h   |   4 +-
+ .../mellanox/mlx5/core/en_accel/ipsec.h       |   5 +
+ .../mellanox/mlx5/core/en_accel/ipsec_fs.c    | 620 +++++++++++++++---
+ .../mellanox/mlx5/core/en_accel/ipsec_stats.c |   1 +
+ .../mellanox/mlx5/core/esw/ipsec_fs.c         |  15 +-
+ .../mellanox/mlx5/core/esw/ipsec_fs.h         |   5 +
+ include/linux/mlx5/eswitch.h                  |   2 +
+ 7 files changed, 558 insertions(+), 94 deletions(-)
 
 
+base-commit: 5d6ba5ab8582aa35c1ee98e47af28e6f6772596c
+-- 
+2.45.0
 
---=20
--Dionna Glaze, PhD, CISSP, CCSP (she/her)
 
