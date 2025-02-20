@@ -1,137 +1,139 @@
-Return-Path: <linux-kernel+bounces-523354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B762A3D569
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:52:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A47CCA3D572
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:53:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58D0F7A7734
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:51:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CFB01898A51
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:53:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1AE41EF0B4;
-	Thu, 20 Feb 2025 09:52:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67EA11EE006;
+	Thu, 20 Feb 2025 09:52:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UEEW7DPz"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="dZYMHoki"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 926891CAA9C
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A501E9B36
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:52:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740045160; cv=none; b=a3zie/hBjacBcjjImjLPVxe4yriMtFB7UVeFYw4rRCAoC7eCbG5gLVfLx/qteo7sZk6gX7WC+fGP+Z/VLxrX+1PrCohG1rLZxlARKENMduKBs7ojV9J5RuMWdCzr/jAYR/y1oTDIi/ONT0U5pDa/vNXNHgx9Fg/G0oUkpKYuwqw=
+	t=1740045172; cv=none; b=DmNqjcuQ7kRPBT6bh/6GSCZELRJtv30hg4GngS9bnEDhyVOJDVKS4IaVo0en7D3pwf+kuiYS91rfXgoJvSqqHNpmgigkTnDONh0FeBIfeEPgwQYlsNbVcO/VeUasq686Tj3/n7XtrjblM054i47vtMknaN2tB7dt/HzOJ2cKj34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740045160; c=relaxed/simple;
-	bh=Yr8RMKXKdGV5oJjT0KPtw2wvX3kiO10N8z9eFC0ljUQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XoolrMYT6FaRGhKb86pVzwt3Lu0Ol1ehYOb9g7LjMT7jj3Sls13IIzQ67v87xVxE5dcFFH4CSltb+aPtgAhX3vJqQjKYsKGcrRiU9ULvnSeAmUrwKZI+CfxDzkNM/y1NVKGVcPMRIpnGrHiZICMfzZdmII0nN5ARiVF+jj535LU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UEEW7DPz; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-546267ed92fso905772e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 01:52:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740045156; x=1740649956; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=oYeH3hsiujJqSPD+ca7uJNb/p23dTbfjFDyBF22SX3c=;
-        b=UEEW7DPzE+s8zZ54kuRNk0krDYK5NzWz5exGjR7mcUJ7KB6DtYVPT7sONVFTZ0Gym+
-         r1XSinXprmX9N52UZdM63p9gM9HAq+REjHsRzKWT038JPJC890VinM7+gMbFPdVa8pNI
-         E9K5LWRcYuo8ZGXkvp69mUa9ioYUCdBtFiOASa+JUq1E4nFnJRbf04mDA3lFMoUHj3wG
-         e0Mv3lUD8J7Jv+YIq4qiSdqX04g0eMsxv6hgimlrFrOHG+sdr29SPMpFj6fWMHhQEq77
-         /eltjLxEyOYItIqVv5Pt4RbWpS/uzjvZR4zhK4g+OR1My5nfWZzSN/toPIJ+4UD6OXAQ
-         FjQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740045156; x=1740649956;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oYeH3hsiujJqSPD+ca7uJNb/p23dTbfjFDyBF22SX3c=;
-        b=t15GdjXZtJJLCTlFKwy/bu+RMPLeUx6BXskufkSVhSpNjq+RGltgGQ88twAxWhdbTL
-         gCv6xBIzNX3SKnilrHKpmQZPSLmP40cH/lsUS4lIN/jT49LBSSbiBIV77Kgolts+4xrt
-         Flr5rFulrqVgjh3D6AyTk4x/b9EvqnWH7gdHX+nxtzHi6Ysfm6Q/7uwvihFVsC/mOTex
-         iU2bTRypmfZPh+VXUN/ihoIOIbvVtF9OCp/qLXLbP36svta+sfiaxw2awOxKzT1Si0z7
-         vS1j/DUYc817fbC7U0raAX81w4MgnXGv6/bTofdUGTwInsbyqIzWDH7Adp0YzYTYWXwx
-         aMtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUk8TYGDBqNhbyGcrw9sJv/puRSXNaNrV1u+kMiewx4U8hNAc2cUNhasgMBX4jbmoD1/EEIUdDCDvn2Wek=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyDJTd6+8TILrLfGE+0Syd8lGbmef8RPkyBAyAglo7JF60rKez
-	QDyTbgwpHU4LDasuEP6hdRd8XQDC+IUPmbqTdTP6uiIz8lspRu11
-X-Gm-Gg: ASbGncvtK+IJNe50nbsDnYPfQ5JPSIHqfbLs44cMa5oqXg5x8lRSAyWdLmbBpet+qqB
-	OH2edChNMRFT1sVmRdQbNPuVVZu8++1f+/SMoJrkvA2aJ3m6l3bMud+VfatobBaZXqtVdk9+sdR
-	CHryUE/7NjWTF3OJW3HF3zaaDKX5YbtGZfzsqBVLRhy9niBWIeCmxKrK0K5v83OgR+lCQdKeTUb
-	19s3Q9OhnwFGFTbBWpwxxnVJ+jDD1VZavy3mbKwn07xVwXLoJLmwRQsOc0k8v0INyDosmI4OjF4
-	1qXRpFJlxBn4uFVx0nrH2DVYzdqOJcIRSk6KU096ihaJ9eVns3EcpEmkPw==
-X-Google-Smtp-Source: AGHT+IEs1WdJOsowbPu0y6P5M0ykiG0ZNKvSxS8Q3SxhJOnODBOR4GHwarRnsfe4nv6Bt0HQ2krh5Q==
-X-Received: by 2002:a05:6512:3dab:b0:545:11fa:caf0 with SMTP id 2adb3069b0e04-5452fe26518mr7080901e87.6.1740045156197;
-        Thu, 20 Feb 2025 01:52:36 -0800 (PST)
-Received: from rand-ubuntu-development.dl.local (mail.confident.ru. [85.114.29.218])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-545304defb0sm1741428e87.6.2025.02.20.01.52.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 01:52:35 -0800 (PST)
-From: Rand Deeb <rand.sec96@gmail.com>
-To: Dave Kleikamp <shaggy@kernel.org>,
-	jfs-discussion@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org
-Cc: deeb.rand@confident.ru,
-	lvc-project@linuxtesting.org,
-	voskresenski.stanislav@confident.ru,
-	Rand Deeb <rand.sec96@gmail.com>
-Subject: [PATCH] fs/jfs: Prevent integer overflow in AG size calculation
-Date: Thu, 20 Feb 2025 12:52:31 +0300
-Message-Id: <20250220095231.1686611-1-rand.sec96@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1740045172; c=relaxed/simple;
+	bh=6UUs/Jo7ZbJdxRb140Kxx2e+0xZg0ypRcjIrjXbe06w=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b1LKTxGKAQKF2WMsJ+KS1bGofhUxR/RGvJk3UR4NFJsSZoKdMCI6BwaGEB7RQGw7QTrY6k1cg4gToVZSujaeLYhFWAi2I3PDgz0zKCk+jXKaNCoFw/JL4vBuZ7jhYVllK0Kc7CuC0XvLAl2IvgqKhXQAQwh+DgUHCG3gYAppnL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=dZYMHoki; arc=none smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51K6O27F006861;
+	Thu, 20 Feb 2025 03:52:39 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	PODMain02222019; bh=yY+l2M/rIyGedVKpG4E7Aob3HsYRuTepJXAzAhoO6+U=; b=
+	dZYMHokiH2PG3fSTyficisHYbBMPyv8m7dU40dU996JdARnLGjlRLz4o8abSCP0l
+	i/bZbC5MNX7Jv64yPe2iquk3yaMshxvjaq4HP8UiiYu8gi09irG4jfb8p0w5VMiD
+	HFeaeLLJWDYa0uWpfjC5FpbJwogZT4VmXl3dASuGIGAUkX7mzaK0KKXvE/hQvJfP
+	/pL7w+AU8sVxtj81PLK5WZU6gteXR6rQDoyFETONieSZaDNlXmJoxeIOlNglkXgB
+	Pcttq22XSab1Zc8YvVB+9FuZL3c/5CltLQmnRg6PRvORkACHKnjyTpObl/S/ZbYH
+	rayIumwR8yXlBivD1YzH4A==
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 44vyywv5k4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Feb 2025 03:52:38 -0600 (CST)
+Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 20 Feb
+ 2025 09:52:35 +0000
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
+ 15.2.1544.14 via Frontend Transport; Thu, 20 Feb 2025 09:52:35 +0000
+Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id AE22482025A;
+	Thu, 20 Feb 2025 09:52:35 +0000 (UTC)
+Date: Thu, 20 Feb 2025 09:52:34 +0000
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: Richard Fitzgerald <rf@opensource.cirrus.com>
+CC: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
+        Mark Brown <broonie@kernel.org>,
+        Simon Trimmer
+	<simont@opensource.cirrus.com>,
+        <patches@opensource.cirrus.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/2] firmware: cs_dsp: Remove usage of GFP_DMA
+Message-ID: <Z7b7Ylk55D1LZ2WX@opensource.cirrus.com>
+References: <20250211-cs_dsp-gfp_dma-v1-0-afc346363832@linutronix.de>
+ <0e9c1cca-592f-4983-93f4-ab2f76a3c97e@opensource.cirrus.com>
+ <e93d1b72-43da-4e96-9523-e1bbf3853031@opensource.cirrus.com>
+ <1e251815-5d58-436b-9120-e88f75a7ecaa@sirena.org.uk>
+ <20250213161059-a4c53711-fdf6-480c-af49-f9f36227ba42@linutronix.de>
+ <8d15d138-658c-4083-885b-62495023bb9a@opensource.cirrus.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <8d15d138-658c-4083-885b-62495023bb9a@opensource.cirrus.com>
+X-Proofpoint-GUID: hh4Z1bQdNNYjCpIXScJUQhCzOajF4DKZ
+X-Proofpoint-ORIG-GUID: hh4Z1bQdNNYjCpIXScJUQhCzOajF4DKZ
+X-Authority-Analysis: v=2.4 cv=WOSFXmsR c=1 sm=1 tr=0 ts=67b6fb66 cx=c_pps a=uGhh+3tQvKmCLpEUO+DX4w==:117 a=uGhh+3tQvKmCLpEUO+DX4w==:17 a=8nJEP1OIZ-IA:10 a=T2h4t0Lz3GQA:10 a=0uJkZ3h_mcAHihPl4hIA:9 a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10
+X-Proofpoint-Spam-Reason: safe
 
-The JFS filesystem calculates allocation group (AG) size using 1 <<
-l2agsize in dbExtendFS(). When l2agsize exceeds 31 (possible with >2TB
-aggregates on 32-bit systems), this 32-bit shift operation causes undefined
-behavior and improper AG sizing.
+On Wed, Feb 19, 2025 at 04:26:55PM +0000, Richard Fitzgerald wrote:
+> On 13/02/2025 3:16 pm, Thomas Weißschuh wrote:
+> > On Thu, Feb 13, 2025 at 03:06:59PM +0000, Mark Brown wrote:
+> > > On Thu, Feb 13, 2025 at 02:28:06PM +0000, Richard Fitzgerald wrote:
+> > > > On 11/02/2025 5:21 pm, Richard Fitzgerald wrote:
+> > > 
+> > > > > > Not tested on real hardware.
+> > > > > > This came up while porting kunit to mips64.
+> > > > > > Apparently GFP_DMA does not work there, but IMO the usage of GFP_DMA by
+> > > 
+> > > > I would say that is a bug in mips64 that should be fixed in mips64.
+> > > > It is not reasonable to expect generic drivers to have special cases for
+> > > > platforms that don't handle GFP_DMA.
+> > 
+> > Indeed, I did that, too.
+> > 
+> > > What specifically is the issue?  If it's a build time issue I'd
+> > > definitely agree that we should just be able to assume that platforms at
+> > > least build.  IIRC there is a Kconfig you can depend on for DMA but it
+> > > seems more trouble than it's worth to fix all users.
+> > 
+> > More details in [0], It's only a runtime issue.
+> > 
+> > I'm still wondering how all the on-stack buffers used with regmap_raw_read()
+> > and regmap_raw_write() by cs_dsp are satisfying the DMA requirements.
+> > 
+> There are 3 suspicious regmap_raw_read(). The others are all integers,
+> which are guaranteed not to cross a page boundary.
+> 
+> However, it looks like it might be safe to remove the GFP_DMA flags
+> now. regmap_raw_read() calls spi_write_then_read() which specifically
+> says that the buffers do not need to be DMA-safe and internally uses a
+> DMA-safe buffer. regmap_raw_write() uses either a temporary physically
+> contiguous buffer or GFP_DMA buffer (the implementation is terrifyingly
+> complex so it's difficult to determine exactly what it does).
+> 
+> (Some older systems could only use certain special memory areas for DMA
+> but we haven't seen any of those used with cs_dsp.)
+> 
 
-On 32-bit architectures:
-- Left-shifting 1 by 32+ bits results in 0 due to integer overflow
-- This creates invalid AG sizes (0 or garbage values) in
-sbi->bmap->db_agsize
-- Subsequent block allocations would reference invalid AG structures
-- Could lead to:
-  - Filesystem corruption during extend operations
-  - Kernel crashes due to invalid memory accesses
-  - Security vulnerabilities via malformed on-disk structures
+We also need to consider what the I2C subsystem does, I have a
+vague memory of thinking the SPI system will attempt to remap
+buffers but I2C will just use them as is. cs_dsp will be used
+with both, although SPI is slightly more common for obvious
+reasons.
 
-Fix by casting to s64 before shifting:
-bmp->db_agsize = (s64)1 << l2agsize;
-
-This ensures 64-bit arithmetic even on 32-bit architectures. The cast
-matches the data type of db_agsize (s64) and follows similar patterns in
-JFS block calculation code.
-
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
-
-Signed-off-by: Rand Deeb <rand.sec96@gmail.com>
----
- fs/jfs/jfs_dmap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/jfs/jfs_dmap.c b/fs/jfs/jfs_dmap.c
-index f9009e4f9ffd..edb22cf9521a 100644
---- a/fs/jfs/jfs_dmap.c
-+++ b/fs/jfs/jfs_dmap.c
-@@ -3403,7 +3403,7 @@ int dbExtendFS(struct inode *ipbmap, s64 blkno,	s64 nblocks)
- 	oldl2agsize = bmp->db_agl2size;
- 
- 	bmp->db_agl2size = l2agsize;
--	bmp->db_agsize = 1 << l2agsize;
-+	bmp->db_agsize = (s64)1 << l2agsize;
- 
- 	/* compute new number of AG */
- 	agno = bmp->db_numag;
--- 
-2.34.1
-
+Thanks,
+Charles
 
