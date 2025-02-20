@@ -1,233 +1,279 @@
-Return-Path: <linux-kernel+bounces-523564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58EA4A3D86C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:24:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A223DA3D86D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:24:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C5E83A34CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:24:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6577D3AA6E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:24:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB6461F461B;
-	Thu, 20 Feb 2025 11:19:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 464AB1F4E49;
+	Thu, 20 Feb 2025 11:19:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="ctXKHDZX"
-Received: from EUR02-AM0-obe.outbound.protection.outlook.com (mail-am0eur02on2077.outbound.protection.outlook.com [40.107.247.77])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="bF+/65/c"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2044.outbound.protection.outlook.com [40.107.101.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8F61B87EE;
-	Thu, 20 Feb 2025 11:19:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.247.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DAED1F4701
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 11:19:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.44
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740050347; cv=fail; b=D4pz45up0wt6CyCnkgSPMecoTV7Cee71qq3bQD3Cg9M/X/ppt1M8X8lPxGKKEDmNoBByyLf0he33bcLU9KgmTPE7RgVnaRqFP0oqx81jqI9RsSIIP//fNfZ+pinBJe+Ux2lT9KI1E+pn4vIpTWuZ/5x/rTB2ryxn91tnzIvsfWM=
+	t=1740050352; cv=fail; b=tOrDp1fCoVim6v7ya7RhGnciRMCxP4ILUfStqKG0xfpgXf5aGiBdG8TBWdZLYthRA+fd4i188z8yApbYc62AHlQFhqvPbmjgufy2c4YmevNrSjogzn6IzOtgQjdm+NIrXlg/J+5ti4P9+HxW6oskUT8kkpyMRyD0MF4sVrdBYdM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740050347; c=relaxed/simple;
-	bh=cJCkD21zK3zn6o9xEH+68wujeSMjb/SRFQzu/sT9e3g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Rs1AnPpXSwYT8HcDNYS/ru8ZH6itVOb/HX4Ug9KOzqsdm3qCmQU7KFVVnuAJoGGkuktpVUreXNIldr1HNz7Sdpla9J9wZfvieIAWrR+bE7tmOAmLRvzDPctsZdRKd+DJMsMKpoqy9jnL0BEp42QKAjwtObRXvZmVHNOxl3KIqKw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=ctXKHDZX; arc=fail smtp.client-ip=40.107.247.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	s=arc-20240116; t=1740050352; c=relaxed/simple;
+	bh=ehVF2b0YfIl2xBtUJBLXRRlx9JiL+rbjGb+xgdfNZjs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=KriIgCVpyjZoSCJ29Ls++ZAdedOL1/5j12m8n8LJww35Zr9CD5CX1PQdvhp2jXz7xXvQLWlyvS4w3LQ5zIfnSwFf2s961KUvPFOJbuEyz19YcY8nhQOWvFD3Ko8qEY2DENyGHD3q0qXAwxuW8A4MzFxlcNdJ2cLQIYQeJAvPlwo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=bF+/65/c; arc=fail smtp.client-ip=40.107.101.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Bt3z8/bn5VT/RSpIyXUwfbhJv2SMsqH9Cv8619Pmw3PRyT/a6iAk90uTvEfbmmazRB7L1K3aOhYaA+UKQni60JN067oICNAtbBMWI35ccYgbF9Tvxi+BOKgWClNFX/3qg49M+c7JoSeL79h4KhE/hEsWm7j7SM5bGyjJyMtr3pPgDgEGAF8/AND5YR/fBoKfoRihV0QnBXuEzcV7CREQEhyx0Z6gNHJOoChZkbSGpI7KkS9WRp1GKQxQ7HbtzHgYvc777XK2MYH3xtbDWIEznNF3E/0a0vlrNGLZsxp4s4KknRCxaOOccTtOSAseTn1Qv4tCECjk2HcfM9/I7H7Q4w==
+ b=odZn6rUUe3t05HQ/NnJnTWash6HveaWACk2FLXWjvsksiDR0wigYHktIm3Go1EjENap+A4720h7sM5nlol12yKhCAo4DyvCUeWDYZtr+HplhAmfeA8DXed0A39OC8OOGf+faUI64abvR/4EenTXAAQnLvSShnhInm11n48PHBV8ZSEoMfB8aMQ0UUjywHlQoPqug0C0GAq1ImicYd01kxD9nASMxB070WKONtE6Szx+aPZHnSg0Pk19e7AnythkrEAVCv5XNKvr+1nZCXD7n2WzWYBe31DpN5sNz8k4IxwMvuZlKQGVAGG6tJYYd+wUG3Wd/fWHrMwX5+qQQiFrD/g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6+rfzP3k5MpjNbLUNINqrgfuop50Nd8Yp8NOMBp2znQ=;
- b=EqH2DSFyyG3GwR8ji9Sc9i42o8jtd/HATjSE+cmEaWtdHEn+P+GIQWpZIATiclKNDwF2lVaqWcXY1SnfxRbugDm2CORSe+TaIxyJJxCivHdsfPzPLQckqbe01bm7tHzfzTtMBsPyH4pKruChgXE0qisZsAlMNTrrgpL+bsYCWsKX68YCEPSm+iNqmTlg9/PvWfMG09QKVs6dGk/15FopEt2kRKcV/pJXEEhruwdzS087rqqRfFoPUow16tOCPI5haMQ/ctrZFcXhfK0vcLo+B5WsRTQaYRHsODdO7SveYgNI91DGvi95AmyLGU43OZkFsTESta8T+EVmfaLvXWnW9w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ bh=iY/a5eudWltG+fU4QS0hsgD1zK8MWp/oX/p5+S7akDY=;
+ b=OgTClsmJmXM+bY48Rblo9vEbPNJLe7mzELq7+kHuQy7kdTzP+G4mrDp4DLKTFf3rQT70xrsyYhBChhNyhpavbIpnNE7v5cjT7mGnrwJcadjd9oO3G+Uu0LvGPeUB6P5lUJhdOWC9FhH2iaMCMmInKFCyd7JMHOb5vjPZNYjjZHMFcfa8U/nBsGDAXWHkje13s9dHsqenqii2lhOMRR/gEf4wQYSyaUpR+n91Hxg6/9EwiMLpvJP4WOjkxF/9FzwQrI8phLGkxROvWk4CShbrRqaBjptt0yRvQArqe68n7YKsduINqhKicq3nklIpO10Tyf3SUqRDY+fXzQcJHUcqYw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=infradead.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6+rfzP3k5MpjNbLUNINqrgfuop50Nd8Yp8NOMBp2znQ=;
- b=ctXKHDZXDvc8Y87BIBA9QDTZTfZYtx9Vkhr63BxHRExMPzWSPQjm/RbFsD82dg/o0EJXqTGw4GxIPSYOA6rikqwt6//CLD5Vb1fUCYOcvgUcJQrFX+u0N7+lrHl26jRp3Jo7RsO1wF2Dn7V8wgQ5+UtayIxiOrvoRj4sDnJF99h6CKpYlMDv+IHygXXO4z7Iz9Z7vCRLcayck8B54B/2TA57Y1uOTubDxBX9bSfUQgpkwooDXg65ycPwFxadrZg0/iSE/f7BdTGHhO5szSoXJSMpelgGeKefEZ2lP2pWOnN4a/MjfjFpGqCDyyQDZcTw+wmuSZUR/P8ofy7JbWftgA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
- by PA2PR04MB10129.eurprd04.prod.outlook.com (2603:10a6:102:3ff::12) with
+ bh=iY/a5eudWltG+fU4QS0hsgD1zK8MWp/oX/p5+S7akDY=;
+ b=bF+/65/c9hEg/q7zJq8YAaw+rT3Qq8MO5bhQMdrtLgJS9BwzzMKHH1+p2NjNrCHFT216WRC66nsx/MzTkvjuEUp/saFDbf711nI7/vmDDCnIEH5l5PVrBlIcAWJaqBSBrofEUVEKh+9DmxbQ0Yrqx+K3SW0ars4k8l+6Mb/AuB0=
+Received: from MN2PR15CA0047.namprd15.prod.outlook.com (2603:10b6:208:237::16)
+ by IA1PR12MB8333.namprd12.prod.outlook.com (2603:10b6:208:3fe::15) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.14; Thu, 20 Feb
- 2025 11:19:02 +0000
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2%6]) with mapi id 15.20.8466.015; Thu, 20 Feb 2025
- 11:19:02 +0000
-Date: Thu, 20 Feb 2025 13:18:57 +0200
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
-To: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
-Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Simon Horman <horms@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Furong Xu <0x1207@gmail.com>,
-	Russell King <rmk+kernel@armlinux.org.uk>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Xiaolei Wang <xiaolei.wang@windriver.com>,
-	Suraj Jaiswal <quic_jsuraj@quicinc.com>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	Gal Pressman <gal@nvidia.com>,
-	Jesper Nilsson <jesper.nilsson@axis.com>,
-	Andrew Halaney <ahalaney@redhat.com>,
-	Choong Yong Liang <yong.liang.choong@linux.intel.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Vinicius Costa Gomes <vinicius.gomes@intel.com>,
-	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org
-Subject: Re: [PATCH iwl-next v5 5/9] igc: Add support for frame preemption
- verification
-Message-ID: <20250220111857.5ybdpr5rzm6htfjv@skbuf>
-References: <20250220025349.3007793-1-faizal.abdul.rahim@linux.intel.com>
- <20250220025349.3007793-6-faizal.abdul.rahim@linux.intel.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250220025349.3007793-6-faizal.abdul.rahim@linux.intel.com>
-X-ClientProxiedBy: VI1P195CA0054.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:802:5a::43) To AM8PR04MB7779.eurprd04.prod.outlook.com
- (2603:10a6:20b:24b::14)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.15; Thu, 20 Feb
+ 2025 11:19:08 +0000
+Received: from BN3PEPF0000B370.namprd21.prod.outlook.com
+ (2603:10b6:208:237:cafe::7f) by MN2PR15CA0047.outlook.office365.com
+ (2603:10b6:208:237::16) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.14 via Frontend Transport; Thu,
+ 20 Feb 2025 11:19:07 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN3PEPF0000B370.mail.protection.outlook.com (10.167.243.167) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8489.2 via Frontend Transport; Thu, 20 Feb 2025 11:19:07 +0000
+Received: from [10.252.205.52] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 20 Feb
+ 2025 05:19:00 -0600
+Message-ID: <b2386349-2879-4dce-afb0-f6486c24c117@amd.com>
+Date: Thu, 20 Feb 2025 16:48:58 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 00/22] sched/fair: Defer CFS throttling to exit to
+ user mode
+To: Peter Zijlstra <peterz@infradead.org>
+CC: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>, Valentin Schneider
+	<vschneid@redhat.com>, Ben Segall <bsegall@google.com>, Thomas Gleixner
+	<tglx@linutronix.de>, Andy Lutomirski <luto@kernel.org>,
+	<linux-kernel@vger.kernel.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
+	"Sebastian Andrzej Siewior" <bigeasy@linutronix.de>, Clark Williams
+	<clrkwllms@kernel.org>, <linux-rt-devel@lists.linux.dev>, Tejun Heo
+	<tj@kernel.org>, Frederic Weisbecker <frederic@kernel.org>, Barret Rhoden
+	<brho@google.com>, Petr Mladek <pmladek@suse.com>, Josh Don
+	<joshdon@google.com>, Qais Yousef <qyousef@layalina.io>, "Paul E. McKenney"
+	<paulmck@kernel.org>, David Vernet <dvernet@meta.com>, "Gautham R. Shenoy"
+	<gautham.shenoy@amd.com>, Swapnil Sapkal <swapnil.sapkal@amd.com>
+References: <20250220093257.9380-1-kprateek.nayak@amd.com>
+ <20250220105558.GJ34567@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <20250220105558.GJ34567@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|PA2PR04MB10129:EE_
-X-MS-Office365-Filtering-Correlation-Id: e170f9aa-6da0-4527-c3fa-08dd51a06115
+X-MS-TrafficTypeDiagnostic: BN3PEPF0000B370:EE_|IA1PR12MB8333:EE_
+X-MS-Office365-Filtering-Correlation-Id: 59202572-cc88-4749-28cb-08dd51a06467
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|1800799024|376014|36860700013|82310400026;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?wfoiaqGJuTrrTnCQHR9E/GgiyrOqh+cWGMXtxpZUO1mt41n0qb1/f8cOqL5r?=
- =?us-ascii?Q?GVMpcTOdJuMjko+SviZGlBgiZIVN9qd9zQIpowJRUWFCt7ywm2WayNUNALzw?=
- =?us-ascii?Q?NZTCnGwcWOHKPyrCQx+h9BZ0itd8UchjCtreC2m4jNv5gNK7l0bLUmBYAQdZ?=
- =?us-ascii?Q?tVlfbCx0OUiF802XjnOX7o7vtmZhPhs5+2KmY2EcGxihTf/LfbxMYu1lPQOF?=
- =?us-ascii?Q?AGsotKtRaupmC2mu7K7KcoBeIGAlDAa98dfXH3GZlldFfIVzKrEPmwi287L2?=
- =?us-ascii?Q?A3gftYc0cjNUahpE4r8N4QYmwCcNam+vvfyK/xhWQCaq9k2EFZdUhcH9eEzP?=
- =?us-ascii?Q?PxtjGjRjcnmDYmb8cpfsO8rQcCG0gNpvXSdX0GUvGzDTgsre/20+qAi9vLEZ?=
- =?us-ascii?Q?o84fmG1Zat2GXkSyy49KoXFdF2k8Kg4u9dWGn3uoVKN/xvg20rU/RGZZNcgP?=
- =?us-ascii?Q?K/0o42azgHfSc/cN39QoJh2GODvMUwVJRJ21xzCKACGo9m6OZ4i6X4t0BRcl?=
- =?us-ascii?Q?fu9aEm5JdOJqz9259PKkVOpYWH0pGlk3RsIMLMlq8Qg/sGVtRzmjYp84UGC1?=
- =?us-ascii?Q?1iaadMpRFmuNn3G3c03v783TVLi46bwoBob9wmgXGiZhSM4R742A0BaI/bvM?=
- =?us-ascii?Q?NXaTRFp1mGE6K5f8tTbPN5g8HPqSBK/b1ZgdnPKfNZw+Ctdh157JOkxRvIy2?=
- =?us-ascii?Q?ih4WpQ94fBOq2yP+d9xt1GoFfLLfadRg6PveubGpCS2+uxiHAWfoWSxaJHC/?=
- =?us-ascii?Q?CaVZmecgmzrD6xByIDtIOJGUBRtnsabzjZFbsiNhMkqfE/TmtC/Z0tCrkZWn?=
- =?us-ascii?Q?2IYVfl9Fqh2D5qHfoJ8oe6Ji56UjLLddiH+6JUrb3YbeH10wVjqO6HgO2JVg?=
- =?us-ascii?Q?RxI7r8gPyneux7TCQCqQajc+h3Wuz8cghj1MoycME8RTr9iNnCNmMRCCUfpE?=
- =?us-ascii?Q?MnFTGDGk88eWvyWYzKeJQaXljNb+ajclrQiF139T90xX36uIjtbvmPJ7Opvq?=
- =?us-ascii?Q?2nQBuZ9ze7sU314B1ue0c3+DwJrAanAee4dluzP+MklcBmawuNdMi/JBEG/V?=
- =?us-ascii?Q?vXqlIM4SYk5iycvl71Gg7vhXnPrIV289cnIEqope37bqxlWpMDzF+1vx/Yxg?=
- =?us-ascii?Q?ud0jCMtoVTp9qiHv411l15+htHX5jX2+xDYrW13sqyFnqiDoclA6Jv4+rmwW?=
- =?us-ascii?Q?Gvll0dH0hzLfI09O34CbXPn8lTuU4Na/IL5v66j73lZsCB+XxNJ7D3duq8Uz?=
- =?us-ascii?Q?rLndBTUwQJGYL/jKdNU5uXeRbYGlmHhMBlmwYnEQzvnheGsSsacshbGeMG2V?=
- =?us-ascii?Q?kSVepPjr40Ar1ON2McbGa6VKSqYUJwnEJWlU2OQYkyi3Wj+oAUD782pSO3+z?=
- =?us-ascii?Q?GMMkFMT+NjzyKvuQ3/s0EiRlaPcC?=
+	=?utf-8?B?c3hmeUhSK0xBK3FvdHhsT05TdjcwcVR5WkpVQUQ1clNxcm1tSUo2SE5HV2pH?=
+ =?utf-8?B?eHpsZkZhS01kbEkvTlVQTytvYW8rb2ppVFhObXd3RWVudlhEdDF4UTNHSUk3?=
+ =?utf-8?B?NGV5bHZxNnZGa3VONElzM0NsMU9xL3JyaG8xbGswTlRXNnlPc2NRNGtMMGRz?=
+ =?utf-8?B?cUwyZ1FGS1E4dGtxaFQzSElLSldOZm0ydUF4dWhUQWh3Q29UWU84dXVHQndM?=
+ =?utf-8?B?VktWZkIzZUFGTTczTXdiUnJzYnVMT2E3UjFFMlpiOGRBZDQ3dFd1VzJBY0ZF?=
+ =?utf-8?B?V2NEdkxvOEgrK2V6dTZJOU82ZnJxa1FoVjJEZTlGdVpHWEpPb2s1emJ3RDZi?=
+ =?utf-8?B?QXYvbkpCb1UzQ25iVG42dk5iQWZuUmYvMVBaa2YwTlltZkQwMUF5c3lNZ0pU?=
+ =?utf-8?B?Zm1zUEhHVThtZlNRZE94NE84dUgxS2JSNUdtVUtEaDJUeXUxVkZLL2UvWTVV?=
+ =?utf-8?B?M3MyRUl0UEllZ1VtMmFXTHlDRjlsc3VHNnFGWTlUOTVXTEVudjNaWDlQMkFr?=
+ =?utf-8?B?YlYrOGlKYTl3aE1MSGlMdHdLamRvcDN5Mm8wS3lXTUVGQmEyS2pKN3NSTHVZ?=
+ =?utf-8?B?c2VUVUFYVmRjVGtzakN1b0dlTThpNS9GSlBxaFczUEYvYStPVE5CcjV2Rllt?=
+ =?utf-8?B?dXFxYlVSbGMwalR3blI0dUZ2NzNESXluRDMzcURiclZMdS80bHltTU1wVFpO?=
+ =?utf-8?B?NC83N2Z3bEVuL2pEV3ZMUm1UTzE1RlI1R0djczN2YVhzbjUydzV5YWFIMEFJ?=
+ =?utf-8?B?RGtBU0F1UHdGSFNyRTJtNDVicXBsN0prZ2Z2VzkrUFJzZC9oNjlTcjJPMlE1?=
+ =?utf-8?B?ZnFDUTJIT3ZZTUlxZmlaRnpaY2tiRDlLU0pwaGVHMXhGNkVpaGpsSFpnYkg5?=
+ =?utf-8?B?TnZLVkNIVXNXVEpKMGV4ejJIajJOSlovREYreE5lOHlNUEc0NTF0RWQyRHNC?=
+ =?utf-8?B?VkQybGVQR3drMis2UEtzQ2hrZTlvTFVTUzBTbDNGR1dXdCs2ZitWakhBMGIz?=
+ =?utf-8?B?SEpaRWJwSFZ4SU5lWk5DL1VoM1FydGJxTi81SXg4d1l0NGZtc1lDeWRzVTZp?=
+ =?utf-8?B?Y2p3TTVJZTh4SkRROGdpRUcvUmxEMmRHMkxqVFZnZUJWTHI1U2JzMUFmSmNo?=
+ =?utf-8?B?V3RkTzRRU29KQ0g2MzBsd3lReHAzbWhZNnorRFc0WlR6Zm1oNi9kTXhDV3RJ?=
+ =?utf-8?B?UlJnRW1MeDA3angyem9qMkswQnkyemZscHF3cWNpQTJKZUx0MU8vZVZjRERF?=
+ =?utf-8?B?ODJsWW0zRXYyclVHc2p2SktjYUtnR0N0QmhtVXp5cnQ5d1F2eVhtbU5Valoz?=
+ =?utf-8?B?ZVEwM2cwM3hsaDlZa1QxOGE3UDlXYnZoblBWdFdzSUZEQytxZnV3NjMzOHVL?=
+ =?utf-8?B?NkpnUWU2bC9QVk1VUVRQT3hGeUY0WjlIMVlFS1BUM3k1UjB5ZndQVlJ4Ykhp?=
+ =?utf-8?B?Y21nL00xT3Z2a2lVMFJsbTFMKzZuQ1FhZ0RWdSt2c0NKOU1ETW5Bbk14NHRs?=
+ =?utf-8?B?bS9CUlZWZW1kWnpqRFR5Rlc2Q1pJVGNheFVKNWUyeHVjTUsrTmk1Q3VycmhI?=
+ =?utf-8?B?c29ZRXYyYzlqSlA0ZlR2d1FvTXhMbmhjdkt5eUJvakpzZFEyWW13b1dCa2ly?=
+ =?utf-8?B?dWNQRmZSQm5mSmp4amZTN2hFQ2NHT3NTT2g5Sk9uZUVnZ3dTT2RjTjk5ZVd1?=
+ =?utf-8?B?Rkl6K3JDWjQ5anFZaElwaU8reVNRL0dRVWp1UGp2ckFPS3UrZzFkWWg1VGxT?=
+ =?utf-8?B?MXRiaUNVaWtBVzJNRi90UlNxV0EwRkxOYmtHUXZOTTJtUk9TdmRVdWRJTFZC?=
+ =?utf-8?B?eU00d1dqSWVwNW8zcjVFSUZGSkVBOFlZNnU2WUxuaThaWVZwZkdJOTdVaVlw?=
+ =?utf-8?B?MjUxYkxWL0NTZ2pLYVk1dzM1b3gyYWRVc1pGOXgzaWpzR3FOem9zTFc4Z1d0?=
+ =?utf-8?B?T3dvU2xFeXcxaUdEdDd0eTRhQnBTQjEzaCsyeXduTW8wdGUrZTVlRTFUSXBT?=
+ =?utf-8?Q?h1eSpOHM3ymCbemwacX86+jL/dggFw=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?/RaxMmrqFcG8oGiErRtn/wXGqQL3s9JNvmelA+a/34ayxqdTPya0VbHbc6ni?=
- =?us-ascii?Q?2rQsb6bOVgJldAZ31ey5L8eKDLHgb8IaWJdcPkJM8aaB8IFosrvd4Rlz/2cv?=
- =?us-ascii?Q?V/AULPbUvcDm7VXi69R5f96aek9FqtI6MRzzCnsie20An5s+KhPNR3XAMkLc?=
- =?us-ascii?Q?bsX/pnsubhOemn39uEhybI2nfsVRKxUaM4Fs13nP5sDoWyEemF3elaADyuBW?=
- =?us-ascii?Q?3AZxoYIy1S3sn84fR/LfKqV0CMfT7TcFV9QwCdV9p6RCt6QZRz0WXZ4Uoxp3?=
- =?us-ascii?Q?u1qGEwrwUznooENHBJlwZTNVmgKxlQx89uhVR66vntpXeT0dR1x+VnW83c4J?=
- =?us-ascii?Q?KcyB4dj1YZtx66ceWUfZCwImqQ3lDqSvg3q7DiI2Q9R+tWPhm/R70GzsNUKC?=
- =?us-ascii?Q?TzTI9x3TpvPhkJ16HZsuNirEDdcYmypfxeCjkqQNla1VX4IG3ldcJ/6LvPur?=
- =?us-ascii?Q?M9iYHVO61xzIorHkxtH5d2twKDs7vKmVvz/f8Zp1fy1fx+5cFjMPDNyDGqSX?=
- =?us-ascii?Q?ILc5JHH6xCY6Pv9cVklv5KqsIwjkIhE197yAb7U/Dp1XoTZbbnyZ9A60PVGF?=
- =?us-ascii?Q?mbI1EKTpmuAC5M9r2CQrNikSzVSA7tjb0VFIC5buSz5eXHw519bnyhwbHDC7?=
- =?us-ascii?Q?jZARKrmqsg1JXisjdJJOfoDJS5o6406yWurr9QbIDIMd7V/iby3WS3c9GjPs?=
- =?us-ascii?Q?bSMSkGFvtUnvdiINV7R9h3Z3snQJ32WzkNhziOzRzrOT0KWBig8yMH+CCAI2?=
- =?us-ascii?Q?z9Yq4vduakCs79OYjq+l2sFrVnQOQ6czLZoDfTF/w+zwdYg5/ua2UOSza88H?=
- =?us-ascii?Q?DC2VNiunVMcRMso/yH4XxOOZRjELzZTwu47sPhlYfSa+kUlmY+je8rxwBRpf?=
- =?us-ascii?Q?r7lvjFoVCaHFirFlRHkzFWpxsBJ3VSDsJNKBKT3tVhC63AAhCMyh0ySutUM7?=
- =?us-ascii?Q?+Chu/P/AeCAygbZP7JQzAyZbZO40u3v5w6vFkYKBaBCn34vUJF3UQ3Z0EpxP?=
- =?us-ascii?Q?8LhWRGMGwerecjVoGsmdE5nb0+H3X1y7P9q03Z7EJjHcHvuQobuJuH3pcwK6?=
- =?us-ascii?Q?sSQb4JlMpwhjLt543Q8qomDy8PiOvMdutPwyv0Yr1eIQoW6/w4euh9CuNrSB?=
- =?us-ascii?Q?QvKfPbf+/oLh7nr9Wc/cOvZ+ErKZaSAcRAkK7XZKbS84RKNnrMnRQnX+IT8o?=
- =?us-ascii?Q?xJ6PbDgQONr7rhSOWQR7fgn4wLfGukTo1FyLnl5KxTsdTE0PCRfj/wfcsKcb?=
- =?us-ascii?Q?K6KnDsKYLTxdQKOCbbCT6oRm6UQi9s+zm2t1kiErxbdMsJtDnFsWy6kAZeh/?=
- =?us-ascii?Q?gONScWYFNe/mMM3JNEsxoQck49nPeYvti2E0euXFxrAZpp/jI45hjVx6GfxO?=
- =?us-ascii?Q?xHPDEKxhxRh6T5qdj/zdXTRw7q0R3UXoHGTCsN+9tj0lV/hRVfAwvK/cqxnh?=
- =?us-ascii?Q?SzolGjI4gbx1Qw5v8cpU21UF9ZG5JPs5CQ3DzwG0ZfkH8/VwC4quUpqXdnJQ?=
- =?us-ascii?Q?4PXkYfQJy+SnthOyGCQLzuxHeRLMjSO1Nxmn7EwErt6eCfUB7Uzn5HvR62Ff?=
- =?us-ascii?Q?LGwNgTe1EWSQR0Nog0dLqRE8Cyjhsoev3PRfSdLQ1eyoP/sqy5cswHGIQnCe?=
- =?us-ascii?Q?Pg=3D=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e170f9aa-6da0-4527-c3fa-08dd51a06115
-X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2025 11:19:02.4141
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2025 11:19:07.7109
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: IN4+IUwwR9eCUtbpDtx6X3jG6tOWgSG/T/GyQQ2WaWR6KyFBl1p3joUyyrMnzjdgd9dIs1SG4n0ZpPbWyGdTQw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA2PR04MB10129
+X-MS-Exchange-CrossTenant-Network-Message-Id: 59202572-cc88-4749-28cb-08dd51a06467
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN3PEPF0000B370.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8333
 
-On Wed, Feb 19, 2025 at 09:53:45PM -0500, Faizal Rahim wrote:
-> @@ -3956,6 +3970,30 @@ static int igc_uc_unsync(struct net_device *netdev, const unsigned char *addr)
->  	return 0;
->  }
->  
-> +/**
-> + * igc_enable_empty_addr_recv - Enable rx of packets with all-zeroes MAC address
-> + * @adapter: Pointer to the igc_adapter structure.
-> + *
-> + * Frame preemption verification requires that packets with the all-zeroes
-> + * MAC address are allowed to be received by IGC. This function adds the
-> + * all-zeroes destination address to the list of acceptable addresses.
-> + *
-> + * Return: 0 on success, negative value otherwise.
-> + */
-> +int igc_enable_empty_addr_recv(struct igc_adapter *adapter)
-> +{
-> +	u8 empty[ETH_ALEN] = { };
-> +
-> +	return igc_add_mac_filter(adapter, IGC_MAC_FILTER_TYPE_DST, empty, -1);
-> +}
-> +
-> +void igc_disable_empty_addr_recv(struct igc_adapter *adapter)
-> +{
-> +	u8 empty[ETH_ALEN] = { };
-> +
-> +	igc_del_mac_filter(adapter, IGC_MAC_FILTER_TYPE_DST, empty);
-> +}
-> +
->  /**
->   * igc_set_rx_mode - Secondary Unicast, Multicast and Promiscuous mode set
->   * @netdev: network interface device structure
-> @@ -434,6 +569,11 @@ int igc_tsn_reset(struct igc_adapter *adapter)
->  	unsigned int new_flags;
->  	int err = 0;
->  
-> +	if (adapter->fpe.mmsv.pmac_enabled)
-> +		igc_enable_empty_addr_recv(adapter);
-> +	else
-> +		igc_disable_empty_addr_recv(adapter);
-> +
->  	new_flags = igc_tsn_new_flags(adapter);
->  
->  	if (!(new_flags & IGC_FLAG_TSN_ANY_ENABLED))
+Hello Peter,
 
-Please monitor failures to add this MAC address filter somehow, don't
-let errors be silent. If it returns -ENOSPC, you won't be able to
-receive verification frames, but you'll never know it from the logs
-(assuming the netdev_dbg() on the igc_add_mac_filter() success path
-doesn't get printed anyway).
+On 2/20/2025 4:25 PM, Peter Zijlstra wrote:
+> On Thu, Feb 20, 2025 at 09:32:35AM +0000, K Prateek Nayak wrote:
+>> Proposed approach
+>> =================
+>>
+>> This approach builds on Ben Segall's proposal in [4] which marked the
+>> task in schedule() when exiting to usermode by setting
+>> "in_return_to_user" flag except this prototype takes it a step ahead and
+>> marks a "kernel critical section" within the syscall boundary using a
+>> per-task "kernel_cs_count".
+>>
+>> The rationale behind this approach is that the task can only hold
+>> kernel resources when running in kernel mode in preemptible context. In
+>> this POC, the entire syscall boundary is marked as a kernel critical
+>> section but in the future, the API can be used to mark fine grained
+>> boundaries like between an up_read(), down_read() or up_write(),
+>> down_write() pair.
+>>
+>> Within a kernel critical section, throttling events are deferred until
+>> the task's "kernel_cs_count" hits 0. Currently this count is an integer
+>> to catch any cases where the count turns negative as a result of
+>> oversights on my part but this could be changed to a preempt count like
+>> mechanism to request a resched.
+>>
+>>              cfs_rq throttled               picked again
+>> 		  v                              v
+>>
+>>      ----|*********| (preempted by tick / wakeup) |***********| (full throttle)
+>>
+>>          ^                                                    ^
+>> critical section   cfs_rq is throttled partially     critical section
+>>        entry           since the task is still              exit
+>>                    runnable as it was preempted in
+>>                        kernel critical section
+>>
+>> The EEVDF infrastructure is extended to tracks the avg_vruntime and the
+>> avg_load of only those entities preempted in kernel mode. When a cfs_rq
+>> is throttled, it uses these metrics to select among the kernel mode
+>> preempted tasks and running them till they exit to user mode.
+>> pick_eevdf() is made aware that it is operating on a throttled hierarchy
+>> to only select among these tasks that were preempted in kernel mode (and
+>> the sched entities of cfs_rq that lead to them). When a throttled
+>> entity's "kernel_cs_count" hits 0, the entire hierarchy is frozen but
+>> the hierarchy remains accessible for picking until that point.
+>>
+>>            root
+>>          /     \
+>>         A       B * (throttled)
+>>        ...    / | \
+>>              0  1* 2*
+>>
+>>      (*) Preempted in kernel mode
+>>
+>>    o avg_kcs_vruntime = entity_key(1) * load(1) + entity_key(2) * load(2)
+>>    o avg_kcs_load = load(1) + load(2)
+>>
+>>    o throttled_vruntime_eligible:
+>>
+>>        entity preempted in kernel mode &&
+>>        entity_key(<>) * avg_kcs_load <= avg_kcs_vruntime
+>>
+>>    o rbtree is augmented with a "min_kcs_vruntime" field in sched entity
+>>      that propagates the smallest vruntime of the all the entities in
+>>      the subtree that are preempted in kernel mode. If they were
+>>      executing in usermode when preempted, this will be set to LLONG_MAX.
+>>
+>>      This is used to construct a min-heap and select through the
+>>      entities. Consider rbtree of B to look like:
+>>
+>>           1*
+>>         /   \
+>>        2*    0
+>>
+>>        min_kcs_vruntime = (se_in_kernel()) ? se->vruntime : LLONG_MAX:
+>>        min_kcs_vruntime = min(se->min_kcs_vruntime,
+>>                               __node_2_se(rb_left)->min_kcs_vruntime,
+>>                               __node_2_se(rb_right)->min_kcs_vruntime);
+>>
+>>     pick_eevdf() uses the min_kcs_vruntime on the virtual deadline sorted
+>>     tree to first check the left subtree for eligibility, then the node
+>>     itself, and then the right subtree.
+>>
+> 
+> *groan*... why not actually dequeue the tasks and only retain those with
+> non-zero cs_count? That avoids having to duplicate everything, no?
+
+The rationale there was with growing number of tasks on cfs_rq, the
+throttle path has to perform a lot of dequeues and the unthrottle at
+distribution has to enqueue all the dequeued threads back.
+
+This is one way to keep all the tasks queued but allow pick to only
+select among those that are preempted in kernel mode.
+
+Since per-task throttling needs to tag, dequeue, and re-enqueue each
+task, I'm putting this out as an alternate approach that does not
+increase the complexities of tg_tree walks which Ben had noted on
+Valentin's series [1]. Instead we retain the per cfs_rq throttling
+at the cost of some stats tracking at enqueue and dequeue
+boundaries.
+
+If you have a strong feelings against any specific part, or the entirety
+of this approach, please do let me know, and I'll do my best to see if
+a tweaked approach or an alternate implementation can scale well with
+growing thread counts (or at least try to defend the bits in question if
+they hold merit still).
+
+Any and all feedback is appreciated :)
+
+[1] https://lore.kernel.org/lkml/xm26y15yz0q8.fsf@google.com/
+
+-- 
+Thanks and Regards,
+Prateek
+
 
