@@ -1,128 +1,111 @@
-Return-Path: <linux-kernel+bounces-523434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDB87A3D6B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:31:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D57CFA3D6B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:31:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78F36189F73B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:30:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF0ED7AAF07
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:29:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 603FE1F3D59;
-	Thu, 20 Feb 2025 10:28:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 297A41F1300;
+	Thu, 20 Feb 2025 10:28:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fcbsiCAy"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="S5vEYE2i"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 438DB1F12E9;
-	Thu, 20 Feb 2025 10:28:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E81681F12E9
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 10:28:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740047321; cv=none; b=NC5BNUnjV1moue2Kev5S7xXXsEVy1zUZN2mmdwQs6eEhDLAgQAQdH0ZwtTPKfXVja3Er938PMHVeb5ZKOZTzy/PfVPhjjStbrV4EdTPv4CdQN8YkxcnK8oIOixOeTJFVnrnbzUku67hAoljAhN+Jhf6Z0SfhozmQ3oQBhskGyZQ=
+	t=1740047312; cv=none; b=AXojdqiQaoLfdq6ijxXfE1vFmFa+VUKVjHUg9udmvQYe/Q9heaYmWnoP54wKRz5b8+7Jn48IRuHkGi61ch4ZgRBuHQiLWXDUx0aFt3wYGqok3MBpRsMcKaUw3kaxp74uTXADSxk01U8sXZrhFSxQuezLT/k1ozQ23gIM8AogTbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740047321; c=relaxed/simple;
-	bh=OEt8Aq7BoSOrCA2PCB6GJkHkAIJo0azxBVTNUyBIXSI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XXcjFawSB/d7a+PEUMYQoicWcQK5wiBNqPcP5ZEc9YvIS4rc5xUoP+ZNty1VAPh7hf3Ta/Md0qIf8xqqFTf5l6lWHLyhH625LCjM3Ikhufz5P44QVclRnVFzVUj0R4cy1J0121h5xTBzrW78CCT1MnF8H8sr2owlid4N/YIsXtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fcbsiCAy; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740047320; x=1771583320;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=OEt8Aq7BoSOrCA2PCB6GJkHkAIJo0azxBVTNUyBIXSI=;
-  b=fcbsiCAyn/AKdLcwvEkxJy5QlzKKNFVsGATxUVS8Ue4co8fX2635c1UQ
-   4T1rYksBUsYh0W0+bSrwo3jg0g9UE3a8iyoMvj1JV1217IE2K0t4v0wSX
-   6lUBbLGW2pbc/qpLdob+j8FBGAjbdefEPlx+PwXHYE+4q0Vwprxr+wuBm
-   F4OnbMUi2UZmPxnRxuq2A9H5hWfLFyzjeWzU/QaQqpO4jUwg8mU1sKeKT
-   z1j+HhZZ84Lc0k4IPSwDlQlO5juqD7IhZm62nkEe2FFYlif+UAA2MPMfh
-   nofIiMcCpQMy8T4ZvZgz0JAOYYSshVcfhSoS+GZxld7clUCKe85KMx+NV
-   g==;
-X-CSE-ConnectionGUID: iL6zt8dFQ5yKgC3BSx+aJg==
-X-CSE-MsgGUID: e1P/q9fVSJWIjTGkmwdkrg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11350"; a="58362474"
-X-IronPort-AV: E=Sophos;i="6.13,301,1732608000"; 
-   d="scan'208";a="58362474"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 02:28:39 -0800
-X-CSE-ConnectionGUID: ekKmtHWgSg63Jla+4MuHNg==
-X-CSE-MsgGUID: zwq9/3W7Rqu/7bQTOGx7zQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,301,1732608000"; 
-   d="scan'208";a="119624013"
-Received: from yzhao56-desk.sh.intel.com ([10.239.159.62])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 02:28:38 -0800
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: pbonzini@redhat.com,
-	seanjc@google.com
-Cc: rick.p.edgecombe@intel.com,
-	linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	Yan Zhao <yan.y.zhao@intel.com>
-Subject: [PATCH v2 2/2] KVM: x86/mmu: Bail out kvm_tdp_map_page() when VM dead
-Date: Thu, 20 Feb 2025 18:27:27 +0800
-Message-ID: <20250220102728.24546-1-yan.y.zhao@intel.com>
-X-Mailer: git-send-email 2.43.2
-In-Reply-To: <20250220102436.24373-1-yan.y.zhao@intel.com>
-References: <20250220102436.24373-1-yan.y.zhao@intel.com>
+	s=arc-20240116; t=1740047312; c=relaxed/simple;
+	bh=pbqCbnn3949AQ4E9A+0vVRKzntefI3rHN0xAk0SFsaE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EFzoWr9M1ivKX3s1mlmE1v+BWshMiSs76N1nngL5cdxHbmdvjS3AMC3exWFSTa8Diwd8XcIrxP4Y0pXjODcxAvKWbnAP6270qqi5TUYgH2kFfm66tncdMTr7cp/R9CL1jNSwispXs3FYRvLwrSgEEDSO8FNqSJaHnurMlkwMRJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=S5vEYE2i; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5452e6f2999so806350e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 02:28:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1740047309; x=1740652109; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pbqCbnn3949AQ4E9A+0vVRKzntefI3rHN0xAk0SFsaE=;
+        b=S5vEYE2iZs7zfqUnuG/NbJghV3PMYbcdJvqxWlGnw4mRohayyeJA27K8d6x4Ol8c/y
+         SxlpdNnLKk7WTpzizGExJ0LS0EIvmdEa3hUiTQ6m2l5yvVEz4Cgs+V+uJvRR0PqOqiic
+         5Uu4zOLPGjUXl6/uFcaMIBGlVqaPXMffdfxhiYJmQ11NtHt9rJqYZMsBdm9gY4cSb7cS
+         1zHDYqYp/uV4rHU3acOrq2FptSB4ZjjM2v3UsjK4g9O59/M2IQ8dxHzcmySlT64K0nAz
+         44DiWWYG/g8rfciYj3s6dXs68hDZqHMB7YidEIt0xcPmoh/gmEk5Opol8l7gIycX9OOy
+         mKZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740047309; x=1740652109;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pbqCbnn3949AQ4E9A+0vVRKzntefI3rHN0xAk0SFsaE=;
+        b=Sad+U4SIh+XVNAjnqSes6lvYqusR0tjN9+FOhpcW/DHSOSyEJDDi4/grQMCRWx3VVQ
+         k++sMoFC20s+//t9uM5cpart8/th6bJdwHKLCP5mPxJU/tMq2r45KaGxowNQoRLNBwDS
+         z4zsVA6P5xspjFTqr2Pf5dX7DuUccacs/v5/fUrijxVHY49HHVpt93WeBCw59csFUMRZ
+         XffwXKOHMUb4XwnYmxI+5a/MOO74Adx92slFOk4XCDtO3lO3elbpVMc3o/nltOhd06Ie
+         zuWVtX7yO2BxX78DzDTiSJEpRRx+Md6yj9Y0ZtbRVef94HBOcJXR0g6xbXA4/PBt5DO3
+         Ow6w==
+X-Forwarded-Encrypted: i=1; AJvYcCVXaadWNOS4xzxIYk+l4Pw5ArMFTAzTsHpAooaJWOXF8GjWOTK3bjtd0BhBPajkb++Z0GcpK7gH+6uOVpY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyasKu7BvaEU0c/Qw3oqug0rIqnauwO5ZCX53Ldk23Y9U5TGJJU
+	f26xteXFXDp+bERpwHdFVlr4euHfBEw4we5mYvwusQAC7FmNqwLQcjIKnHKoBHZnMbGxnKxDWHN
+	t3QWoBl66x7c5Gi/qLSQFchChLYC1jWj6FZT/LQ==
+X-Gm-Gg: ASbGncsqv7q6lcshS5BPSMp0TKqW5sL78VjFNdP8yUrX3uHwQBBmc0eA4MbMMhNi5kN
+	8akZXyTFIchabZBieACxbcedsFpo5KbpjwdOl8gOROWyxA25+Pp0IPpLaOnEhWnEzcwjica3Eel
+	ZU+0gnpMulIih3DrkfyQ8Lhryk2AY=
+X-Google-Smtp-Source: AGHT+IF0hQZ/o7X6oVYIqlG9AO4qIYWcUHjPU9+7r0G2SjwNswpvYumQDzBci9SP50JD992GaVeG7nqS05hEGDgUTbw=
+X-Received: by 2002:a05:6512:3d15:b0:545:ae6:d73f with SMTP id
+ 2adb3069b0e04-5452fe71c09mr7419846e87.46.1740047308933; Thu, 20 Feb 2025
+ 02:28:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250217-x1e80100-pwrseq-qcp-v3-1-a0525cc01666@linaro.org>
+In-Reply-To: <20250217-x1e80100-pwrseq-qcp-v3-1-a0525cc01666@linaro.org>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Thu, 20 Feb 2025 11:28:17 +0100
+X-Gm-Features: AWEUYZnBe24sPzSNetob_Hp5SUYrijNXBw3LzypTXZXkpFm_3GC1U29Nl3T-Itc
+Message-ID: <CAMRc=MeAYTz-z6PK8U9XmEdaxXNT2zN_sc+wybdp6GzxTgksBw@mail.gmail.com>
+Subject: Re: [PATCH v3] arm64: dts: qcom: x1e80100-qcp: Add WiFi/BT pwrseq
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>, 
+	Johan Hovold <johan@kernel.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Bail out of the loop in kvm_tdp_map_page() when a VM is dead. Otherwise,
-kvm_tdp_map_page() may get stuck in the kernel loop when there's only one
-vCPU in the VM (or if the other vCPUs are not executing ioctls), even if
-fatal errors have occurred.
+On Mon, Feb 17, 2025 at 6:55=E2=80=AFPM Stephan Gerhold
+<stephan.gerhold@linaro.org> wrote:
+>
+> Add the WiFi/BT nodes for QCP and describe the regulators for the WCN7850
+> combo chip using the new power sequencing bindings. All voltages are
+> derived from chained fixed regulators controlled using a single GPIO.
+>
+> The same setup also works for CRD (and likely most of the other X1E80100
+> laptops). However, unlike the QCP they use soldered or removable M.2 card=
+s
+> supplied by a single 3.3V fixed regulator. The other necessary voltages a=
+re
+> then derived inside the M.2 card. Describing this properly requires
+> new bindings, so this commit only adds QCP for now.
+>
+> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+> ---
 
-kvm_tdp_map_page() is called by the ioctl KVM_PRE_FAULT_MEMORY or the TDX
-ioctl KVM_TDX_INIT_MEM_REGION. It loops in the kernel whenever RET_PF_RETRY
-is returned. In the TDP MMU, kvm_tdp_mmu_map() always returns RET_PF_RETRY,
-regardless of the specific error code from tdp_mmu_set_spte_atomic(),
-tdp_mmu_link_sp(), or tdp_mmu_split_huge_page(). While this is acceptable
-in general cases where the only possible error code from these functions is
--EBUSY, TDX introduces an additional error code, -EIO, due to SEAMCALL
-errors.
-
-Since this -EIO error is also a fatal error, check for VM dead in the
-kvm_tdp_map_page() to avoid unnecessary retries until a signal is pending.
-
-The error -EIO is uncommon and has not been observed in real workloads.
-Currently, it is only hypothetically triggered by bypassing the real
-SEAMCALL and faking an error in the SEAMCALL wrapper.
-
-Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
----
-v2:
-Use kvm_check_request(KVM_REQ_VM_DEAD) over kvm->vm_dead. (Sean)
----
- arch/x86/kvm/mmu/mmu.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index 378428f4ae63..dd320d4a3b52 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -4704,6 +4704,10 @@ int kvm_tdp_map_page(struct kvm_vcpu *vcpu, gpa_t gpa, u64 error_code, u8 *level
- 	do {
- 		if (signal_pending(current))
- 			return -EINTR;
-+
-+		if (kvm_check_request(KVM_REQ_VM_DEAD, vcpu))
-+			return -EIO;
-+
- 		cond_resched();
- 		r = kvm_mmu_do_page_fault(vcpu, gpa, error_code, true, NULL, level);
- 	} while (r == RET_PF_RETRY);
--- 
-2.43.2
-
+Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
