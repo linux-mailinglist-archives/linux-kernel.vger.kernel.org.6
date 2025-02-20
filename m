@@ -1,159 +1,122 @@
-Return-Path: <linux-kernel+bounces-523898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4818A3DC94
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:23:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 702D3A3DCBC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:28:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A334519C12A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:22:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AFBC7001E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:22:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D141EEA3C;
-	Thu, 20 Feb 2025 14:22:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 069FF1FBE92;
+	Thu, 20 Feb 2025 14:22:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ClT12c+Y"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="BJNvxyah"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE56F1F03C9
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 14:22:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 926401DE4DB;
+	Thu, 20 Feb 2025 14:22:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740061349; cv=none; b=c/FJk+3fc+iU8mXOZNJsJEG7CPyzcpPAqTD/OYUfa2KN8NEOhl8Pes8qw61hu2napHRAFNIwOJj08IAfLqyvRcteIfx1If/3AUzsV5m/Wy133HRsZv+jycBB1b/Ut4vDW75BJ2b7wT3+7eHYc6XwMyjsSP8npFsDSq6Yxfus5FI=
+	t=1740061368; cv=none; b=CIMBS8H6EiWTh3w1R9DSEm+V/BCvHcK3BZl2VBnErHUveE3PO2rdp5VVd24DarFt6cVp7Dx+CwkI7HY9nWmvaK+k6qfuentMdd4TVcneoOSFyhQj/uKeNF4Lk3Uu0ODdThm6yliMutuUMc61YvAF+iGYQrOu6outSO+Tmhrrj84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740061349; c=relaxed/simple;
-	bh=RvMBdWtOp3DESzFvYDUh9x1/kB+bNsyJc9bwkbnB5Sc=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=occIhiXhmyVtQqrgzCa2r3ZZ8E+1PzjWJFpzwHnzhEKxkrPcZZTzFWAsbcBcBgCj9Ce4vf66pX8A6RFmcmLbnc2FCA4+5T3b5chcB0SRRBqo9iQpGyRvNPxOyDu+2nKhG2wut3I9/kxuC7AflM6sInfUX3HVg+HKlw+oNzAA2vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ClT12c+Y; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740061346;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H7r14EXjFIx3XwpfOuxJfMQcfssTHWQYqFB5E5YFqFI=;
-	b=ClT12c+YFB9RbXloR8eZe7Vq7v+ivtuojqHeuvGMSBU1Knw/H6lgtUHwjYSESbf+RnmDnN
-	cpP8K0UsFgriGVJ+gb5l9MW5spN1tY+5gwEvENF2TgvRLaZi6ZWkgF0EPusk80frKiipPH
-	SfT4lvjz/Gjw558pQ2UHZEp+Opxhs/E=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-606-pMri7GDjM6qd6tNHTPZ7VQ-1; Thu, 20 Feb 2025 09:22:25 -0500
-X-MC-Unique: pMri7GDjM6qd6tNHTPZ7VQ-1
-X-Mimecast-MFC-AGG-ID: pMri7GDjM6qd6tNHTPZ7VQ_1740061345
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-471ea7666c7so18957251cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 06:22:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740061345; x=1740666145;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=H7r14EXjFIx3XwpfOuxJfMQcfssTHWQYqFB5E5YFqFI=;
-        b=J7Y0i4K8SEpzONZ76uTDQYY9ofnqukTeA+JI3irCIHA9Q1+DZQn9fgMMq6noZVktHe
-         fH5RzUbmrv1HfuqmeTcU4YtkQkXCPYQRCKx9zzWtwy4pBHAqN2agyS5ZSAU9V85D2m0C
-         AO/bTiasUo8oqtNzw3CcXQkf04f4x2BgMcC4vKnqzwpq+FqwFzn5C8Vw5Fkv2t0Ygpku
-         sIC02bA4blTnaJlQBkpyCgXSVsgNUhn1gjXGNE9bX8Z9Ipo2D86vafFYPlq+hWMJHZ5Y
-         04+xCKjZzquShJ+Cau/qqxYre/aDW0dNkm1wq+I/gLAgvpGU7TRmnCtdgFYzm4ba2yn0
-         C8tA==
-X-Forwarded-Encrypted: i=1; AJvYcCXlhgZKyHpDM6aakTfN2Q2erUcdZKoIn0+hy5b7JWCQYerHySHbZBoXbvp8HmF8Cck6W2p4q5wLNWRSCmA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAucvoFiIMGPTDPYYS/6Cc3g6yqcPNkxLh6D8lNm6FCaO93oqm
-	1T/D+A72Jpkj9orJalztI9APlcz5n+Ve1GO3lUIbA3M0kK7nu+9FrxwvfWY5ebRpyIJZKUdi+Zv
-	NvpCPw29KjZeDcmUBRE3kLKyJikr9NChm0uh65c1ueGFOBm+yaiBDMiSj1PoEiQ==
-X-Gm-Gg: ASbGncsuqLFd7L2lm5LXhr0k947Yc3AfL5Bx+a61UT94Dq8Ut+Rr3OT4/1BBntkJ/0m
-	9BY0FtM5y4Yr+x22fshjCsiHSP8ak+ul2It58PInRUbidEQ/6aUfjzu9LHRtjdSr+7j++AeMJK5
-	cvXuPwyxn9WzDm+NkxS+Hzd/pSX3e/aeM3frq7Ic1Q1fpiY/i94jHV22dqPTmDMGq5smoEFXnbo
-	a1qKp6xwZV6priFMelPal4eygupjK2U1TZTccn+4lMW5NZFG+xmFOtAZvd8e2cutssIQYMfILNF
-	hOLr/DRiOUVThd5sMKtVACcAe2K4SXBPQJBYVIedjokO/zIm
-X-Received: by 2002:a05:622a:13cb:b0:471:fa92:9239 with SMTP id d75a77b69052e-471fa929817mr150698631cf.35.1740061344901;
-        Thu, 20 Feb 2025 06:22:24 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHHcKCnyjKgYMKC7pmhTIxMT9x10jSRgTftOyocqc0ie8YVpDcc0KW4B/4fFt77IpT4ToCA2g==
-X-Received: by 2002:a05:622a:13cb:b0:471:fa92:9239 with SMTP id d75a77b69052e-471fa929817mr150698401cf.35.1740061344576;
-        Thu, 20 Feb 2025 06:22:24 -0800 (PST)
-Received: from ?IPV6:2601:188:c100:5710:627d:9ff:fe85:9ade? ([2601:188:c100:5710:627d:9ff:fe85:9ade])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e65d7a3c20sm86544956d6.53.2025.02.20.06.22.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Feb 2025 06:22:23 -0800 (PST)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <edd2d160-e1ca-4d2e-be92-cb033d3b791f@redhat.com>
-Date: Thu, 20 Feb 2025 09:22:22 -0500
+	s=arc-20240116; t=1740061368; c=relaxed/simple;
+	bh=34E2uyxipqnXz/zSLXyThTnrnQw9zA58NwL7KiIJu38=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=F3Kl4U9PP+tGGqotGU6oY9p7RGedrZWrE4s91BpGRfMItc9J5wtIDOEs0b5Yx4nXF5Bp8dII9wjktj9P60eJchAjQNxDLYiELPpzZ+diMyg+o8p9DDzgvuBZgNi4NYt33VOs2cl2WACECpj6Ip2RGtbOz0Il8iQlkBjoUmh5sYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=BJNvxyah; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 2371d7b2ef9611ef8eb9c36241bbb6fb-20250220
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=GcvisJBlaHb60eTCRvfZzRziYBjU9GCsPsjapGIbpsM=;
+	b=BJNvxyahKDqIeAHuFqtX9QgihHu4UJCLL1wofi1PTb96oPD1a4+49QCI97iz6LTBivdTKwLVoKmPoRAod4akmsOIX6xUFo9TbiDfPUmEofoIztWkO3HKQEtaHfj+/rawMUtydVdDBgxkBe0EhMhcnT4fG9D6o3ePPlbLmyuRTYY=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.46,REQID:5ed9bcf4-67b6-470b-bcec-5941e1aeb7a3,IP:0,U
+	RL:0,TC:0,Content:0,EDM:-30,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:-30
+X-CID-META: VersionHash:60aa074,CLOUDID:708621dc-d480-4873-806f-0f365159227b,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:2,IP:nil
+	,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:
+	1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 2371d7b2ef9611ef8eb9c36241bbb6fb-20250220
+Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw02.mediatek.com
+	(envelope-from <macpaul.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 2140693216; Thu, 20 Feb 2025 22:22:39 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Thu, 20 Feb 2025 22:22:37 +0800
+Received: from mtksitap99.mediatek.inc (10.233.130.16) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.28 via Frontend Transport; Thu, 20 Feb 2025 22:22:37 +0800
+From: Macpaul Lin <macpaul.lin@mediatek.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>, Chunfeng Yun
+	<chunfeng.yun@mediatek.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<linux-usb@vger.kernel.org>, Alexandre Mergnat <amergnat@baylibre.com>
+CC: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
+	Macpaul Lin <macpaul.lin@mediatek.com>, Macpaul Lin <macpaul@gmail.com>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Chris-qj chen
+	<chris-qj.chen@mediatek.com>
+Subject: [PATCH] dt-bindings: usb: mtu3: Add ports property
+Date: Thu, 20 Feb 2025 22:22:30 +0800
+Message-ID: <20250220142230.2530583-1-macpaul.lin@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] hung_task: Dump the blocking task stacktrace
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
- Waiman Long <llong@redhat.com>
-Cc: Lance Yang <ioworker0@gmail.com>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>, Boqun Feng
- <boqun.feng@gmail.com>, Joel Granados <joel.granados@kernel.org>,
- Anna Schumaker <anna.schumaker@oracle.com>,
- Kent Overstreet <kent.overstreet@linux.dev>,
- Yongliang Gao <leonylgao@tencent.com>, Steven Rostedt <rostedt@goodmis.org>,
- Tomasz Figa <tfiga@chromium.org>,
- Sergey Senozhatsky <senozhatsky@chromium.org>, linux-kernel@vger.kernel.org,
- Linux Memory Management List <linux-mm@kvack.org>
-References: <173997003868.2137198.9462617208992136056.stgit@mhiramat.tok.corp.google.com>
- <CAK1f24knkxX34hNLRjT20mjyyOwasmXgXJBbTDX=7WYwiw9S1g@mail.gmail.com>
- <CAK1f24m-Ci3BvgfVYGW2tFSUEkPwiO9=0M_w4kpOt1qViiDXdg@mail.gmail.com>
- <8ca57548-4b18-401d-bfda-95bc12216adf@redhat.com>
- <20250220231857.6e377e5f208b60a7ba303cea@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20250220231857.6e377e5f208b60a7ba303cea@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
+Define the ports property in the mediatek,mtu3 device tree binding schema.
+Include definitions for port@0 and port@1, specifying their roles as
+High Speed (HS) and Super Speed (SS) data buses, respectively.
 
-On 2/20/25 9:18 AM, Masami Hiramatsu (Google) wrote:
-> On Wed, 19 Feb 2025 15:20:39 -0500
-> Waiman Long <llong@redhat.com> wrote:
->
->> On 2/19/25 10:02 AM, Lance Yang wrote:
->>> On Wed, Feb 19, 2025 at 9:33 PM Lance Yang <ioworker0@gmail.com> wrote:
->>>> CC linux-mm
->>>>
->>>> On Wed, Feb 19, 2025 at 9:00 PM Masami Hiramatsu (Google)
->>>> <mhiramat@kernel.org> wrote:
->>>>> Hi,
->>>>>
->>>>> The hung_task detector is very useful for detecting the lockup.
->>>>> However, since it only dumps the blocked (uninterruptible sleep)
->>>>> processes, it is not enough to identify the root cause of that
->>>>> lockup.
->>>>>
->>>>> For example, if a process holds a mutex and sleep an event in
->>>>> interruptible state long time, the other processes will wait on
->>>>> the mutex in uninterruptible state. In this case, the waiter
->>>>> processes are dumped, but the blocker process is not shown
->>>>> because it is sleep in interruptible state.
->>> Cool! I just ran into something similar today, but with rwsem. In that
->>> case, the blocked process was locked up, and we could not identify
->>> the root cause either ;(
->> Once this patch series is settled down, we can extend rwsem to provide
->> similar feature.
-> While discussing about rwsem with Sergey, he pointed that we can not
-> identify a single blocker on rwsem, because several readers can block
-> several writers. In this case, we need to dump all of them but we
-> don't have such info.
->
-> So anyway, I would like to start from mutex, which is the simplest one.
-> For the other locks, we will discuss later. (or start with limited
-> support, like showing only rwsem::owner)
+Suggested-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+---
+ .../devicetree/bindings/usb/mediatek,mtu3.yaml       | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-Yes, reader tracking is a problem as the rw_semaphore structure doesn't 
-store information about the reader-owners as the count can vary. That is 
-a limitation that we have to live with.
-
-Cheers,
-Longman
+diff --git a/Documentation/devicetree/bindings/usb/mediatek,mtu3.yaml b/Documentation/devicetree/bindings/usb/mediatek,mtu3.yaml
+index d4e187c78a0b..21fc6bbe954f 100644
+--- a/Documentation/devicetree/bindings/usb/mediatek,mtu3.yaml
++++ b/Documentation/devicetree/bindings/usb/mediatek,mtu3.yaml
+@@ -155,6 +155,18 @@ properties:
+       property is used. See graph.txt
+     $ref: /schemas/graph.yaml#/properties/port
+ 
++  ports:
++    $ref: /schemas/graph.yaml#/properties/ports
++
++    properties:
++      port@0:
++        $ref: /schemas/graph.yaml#/properties/port
++        description: High Speed (HS) data bus.
++
++      port@1:
++        $ref: /schemas/graph.yaml#/properties/port
++        description: Super Speed (SS) data bus.
++
+   enable-manual-drd:
+     $ref: /schemas/types.yaml#/definitions/flag
+     description:
+-- 
+2.45.2
 
 
