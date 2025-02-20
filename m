@@ -1,402 +1,180 @@
-Return-Path: <linux-kernel+bounces-523045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCF26A3D14A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:17:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F355A3D15A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:23:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC0F61897135
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 06:17:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 671511894209
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 06:23:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FADF1E04A9;
-	Thu, 20 Feb 2025 06:17:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 787E21E04A9;
+	Thu, 20 Feb 2025 06:23:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="W82X0e/q"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dpDVkIfG"
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B428C1632DF
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 06:17:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EABD1632DF;
+	Thu, 20 Feb 2025 06:23:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740032245; cv=none; b=PmHztmYMwyVLogKhiavHQkik6BG4tkCJBYGNM8Q+QmRgwm+tbgB3pcuBL/rSRKFF4OSxqAC+r3+dUXnubXOTdazhXqFWcasg1X8LN818qHw5hrDKyQrPVsAHdRwM3d4EnDVS3GZiHlXp/3uTjoCKgB4QIz+Z7KxMH+Ad1onFU5U=
+	t=1740032624; cv=none; b=BhltIu2d1B+yJ2byBdc80JZn9zfz6zCFNCBTp968YYUVbCFy+PcGKRe+FAlnYgx++t0yfYbMF4QNYMyKvKSWCrJW7MAvhURBdvrLj8Sl55gqOVTSl7gzlE4So7jqvTSDa7ZUul0dyeyfDW70s+uJMswxFqa6BWdkT5nD2swHi2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740032245; c=relaxed/simple;
-	bh=loAGvE1LogVZow+OeMmNWjVUuuN1XZNsVA/EPoAAjWE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m3q/tYQ3mm0UDo8iQ/6nHJq/cWhoJmvyg72NXseVlDk5SfVWHH9H9VvRTNaohOC0ODR5NQWpQMB1+CTt1qVut4yCfqljohKw9Or6kSPZGu+9CUuPwaSzGr035RjnekS8gIHJFTnfiWq5KAEQFV+/NEOWFSz21ur7tzTKZ5IG3gM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=W82X0e/q; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2fbfe16cc39so1120727a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 22:17:22 -0800 (PST)
+	s=arc-20240116; t=1740032624; c=relaxed/simple;
+	bh=OeAKObEC1ELmSic1Gmxo/Jpyvka7NFTArvvfEjMLtaQ=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=G9cSW+erXrRbIzI59RYVq3JunqAm2l0okDAxmCHVWD5Md7VVNVsoExgLD24XoemO8HHhaPqueV7qlTfUPbzhMxgtrxN8SSj/bCrubSrAcxp8An02e81nEGoVaW/Kk6QgJ1twbvGYWJAwfWIKB269z/ZCePKn0g/CEmq0Rxcz8Bs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dpDVkIfG; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6f88509dad2so4707167b3.3;
+        Wed, 19 Feb 2025 22:23:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740032242; x=1740637042; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=gJ+u5CFaxNoI8PCqD+CDfdqmiUgZuHbBRfRyiTK8C64=;
-        b=W82X0e/qvRGvk6cDvqlczyyDLKlOJUBTIpYOCaapKz7uc7S3wOszGx7ClLrPOTQ81V
-         7mBiqW5+0fbVvok1UYYRsRTnTirdPruF7z3TDPXC8cFXxl9hq7Wd6ewTlXCX2HYS6+l2
-         VtfWFmsmKRwFzgaJib4+KBL0eoojehXmax0kjzTKUnaOx5nQk2Jeu2SUEOLhbq6o3eKA
-         ejZplqarFVfyl2d+y1qikBhhADWHPh4gqoL4ZPrlSy3l3XVoTovjeg3Ned4hmiCXNroc
-         dvS5fNZtMoHtZjZSccykIh7lw4G1kWGqEzRskrL7Ed/szM7uzAk8GjuBZkPQCJXdEc3R
-         0onQ==
+        d=gmail.com; s=20230601; t=1740032620; x=1740637420; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=XlUZDiO9LUz4j6hPlY1toz2JqwWzQZnCcPciqsBFfS8=;
+        b=dpDVkIfG6cxe6THMe/qSZ7Qqn9bdQCYgh8OJ2xBnuZxVak2PcR6Au3eMwb1pijI8B7
+         KGvD58M9fM7E052RUcPkzBvnWomIIivKLGOLdDXluSVV9UZAeGcuRjLGnmjvScR1uC+m
+         bVDxNIsPFrLsCqC1XjtB7zYXnC8ojs5RQri0h7xWfmzb0ZMRwvlqrFKdPVuBGSijLcvA
+         BHf0XWlH08jPRhkthEGu9AeS2h/ZMzo3PTvgTqy8wPzID6NRcGXUJYSfWP7A2uByMNXi
+         xaeCuRCwzXJMcsJVGpORybLxj2SB+SUUoH+577xily4GOHzFMEj2StbYlLDkeo66EIgp
+         VwCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740032242; x=1740637042;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gJ+u5CFaxNoI8PCqD+CDfdqmiUgZuHbBRfRyiTK8C64=;
-        b=cJmNgWqw94XI/1fClPBlV4qE8GdJrEBgDZkJitVq2i8hLY/3J9ijNmJy60OqHGhWMO
-         XDOG4D51tzze0QbhyEDe6aAGADAF/u7CJbVO1JERwmZLhIfmu+d3zRvAhUYCwbyk46pq
-         aX0UFBsE+a9lQRd2iQhiebEP4gclX5kWthq5uZDKCmUGeJxJIHT80L/WIbLOll2/79+4
-         OpXenA2C31ppuu3eTI0GromZQlPczoxEdHKpciy0LCkebSEe4lKoSkt5LM4ZKJoFH7lN
-         F8AjvKMjZ8qK0S6hmpfmQ+HEH/ODwLtkyjSNKWNjmroUvor5LXEtLVUMakCfHVHSIVay
-         7FzQ==
-X-Gm-Message-State: AOJu0Yx0ITCtxdXgaKSH5M9JzbAIm0PQvCFFgWOUthdXWD3sfyLCL192
-	TgG+Yghrb/53PHuUyLrN3PkvnXXO5fklgrP/3mhZvwNRnFoNqQv9beCDMtRCLA==
-X-Gm-Gg: ASbGnctI46/eysk71OXDOHgztS2pCrGv0SiZy7/x4D4PmIPmtBKyr7YOqvVpP4oszO8
-	GXuK2A9ZZyL6gHaTb8/2UCcs9TL0qQtrfTFvzuuoymjYMp9m63nTCtLtMe83ZbuUdv5j4UbzQhT
-	1O+KgxbanFmS5A0QrGnnfXrxOY6IbtryEh0Il7bXK2KURNIMekNKGKn9IU5BELsUqEjwOszqspP
-	+vzk8T/Bya+fSdwofI9Jyf106JolphRsWHTWRouAwyfTf96x2uiUY7X77heeDyvm5XY6pRC2USk
-	dsGuH7+D8DoodpA+3yVJr8yhnQ==
-X-Google-Smtp-Source: AGHT+IFoXSLUnVw+J6T/mfE/SAmkl8aSxZJChVH8oTXgrNJbmBGohVtcI8iJzgZMuZJVTQ36qlZCkw==
-X-Received: by 2002:a17:90b:1b4b:b0:2ee:b26c:10a0 with SMTP id 98e67ed59e1d1-2fc410404b0mr34389488a91.24.1740032241944;
-        Wed, 19 Feb 2025 22:17:21 -0800 (PST)
-Received: from thinkpad ([120.60.70.244])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fbf999b602sm15182492a91.35.2025.02.19.22.17.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2025 22:17:21 -0800 (PST)
-Date: Thu, 20 Feb 2025 11:47:14 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Shradha Todi <shradha.t@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-	bhelgaas@google.com, jingoohan1@gmail.com,
-	Jonathan.Cameron@Huawei.com, fan.ni@samsung.com,
-	nifan.cxl@gmail.com, a.manzanares@samsung.com,
-	pankaj.dubey@samsung.com, cassel@kernel.org, 18255117159@163.com,
-	quic_nitegupt@quicinc.com, quic_krichai@quicinc.com,
-	gost.dev@samsung.com
-Subject: Re: [PATCH v6 4/4] Add debugfs based statistical counter support in
- DWC
-Message-ID: <20250220061714.kbadyamh4euqub6g@thinkpad>
-References: <20250214105007.97582-1-shradha.t@samsung.com>
- <CGME20250214105352epcas5p17fa94017786a363f4381c9b11ae43e24@epcas5p1.samsung.com>
- <20250214105007.97582-5-shradha.t@samsung.com>
+        d=1e100.net; s=20230601; t=1740032620; x=1740637420;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XlUZDiO9LUz4j6hPlY1toz2JqwWzQZnCcPciqsBFfS8=;
+        b=blQuzCG4SOD5AzJ+YgtYD5eTIn+06eH1I+trtPKE6cTXexcIZbiX8IaaVvXW+hMjBK
+         a0AuallSRqZomJBezCLF/xg4V489Y+rNcirJHNQ5sE5xJ8PXw78ZqYO7TNSM3MWZWELG
+         xendnneJTqnhjDGjF3ttuzqLsMGiagmjw4kttfd3/eupPkmw6LApPWLGkxokZsIKQz1U
+         8TjnbLS5yvGrR67W07fCGtd92lYAYHufG3awoADqfVblE8VjEIkdJh0QJyFTU71wjg5o
+         g1tboE4ff37tiYj5ycavwyJM1KhipjBKr1IxUmt3AyvYnxBLM8RcOORF19fXmYun2Sfm
+         xkig==
+X-Forwarded-Encrypted: i=1; AJvYcCWnY+9q6gmnF5ADnHakTwLlVp0j+Grhxgl44NsDJTXZYQO41GJD4Q7bftU8rDe0ZizHNhICAZq2iLkCCYA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCALTpAbCDg5N/KOkIzS185KxQ4V2uvBeGgAR20Rx/sFUeJm0A
+	XNm/v0u2kdk2ztLf8TaYGByTZBkg3tzDvPHX+6Nj4Vku72utW6exfrgGpxceZ/THf4kHo68Qr5m
+	BcvmcE0lN/Vh+0iexzJ9EpNIQarw0t2Ux5+djeA==
+X-Gm-Gg: ASbGnctLyTETpTg6SvL1xZKYu9rW5TXHss+GQR895usqdyw0+scQ1r3gBLzRvdgoavI
+	F8Nwj/oKUA5sLRBpalCnYAd1Czu65O8jONOHHe55Jye1hk9YyQsr+w7blN3tPY+0zJvFzmY1rec
+	8zh/wZ8QSs9OA=
+X-Google-Smtp-Source: AGHT+IEAM9/39/mv6i/s+rtgJIVunf+g3NtbpiKTGslQI7o0dw9TYGS5OkXNIswUKaBXOAxnBBX+kinMKdiYx5W2a/Y=
+X-Received: by 2002:a05:690c:4447:b0:6ef:a4ec:f698 with SMTP id
+ 00721157ae682-6fb58275a6dmr182728607b3.3.1740032619757; Wed, 19 Feb 2025
+ 22:23:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250214105007.97582-5-shradha.t@samsung.com>
+From: Eliah Reeves <ereeclimb@gmail.com>
+Date: Wed, 19 Feb 2025 22:23:27 -0800
+X-Gm-Features: AWEUYZlNkH6Ro-o2g0nBz_seXpbdBzE5rMTy5lpntrhylez0_BRmgectToTxQXY
+Message-ID: <CAEvyrHnEY-ppdAN8gXPZu89_mqVvQgf3HLm16mF901Qp2kSoaQ@mail.gmail.com>
+Subject: [PATCH] input: revert commit 9140ce4 to fix ELAN1206 touchpad issues
+To: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Feb 14, 2025 at 04:20:07PM +0530, Shradha Todi wrote:
-> Add support to provide statistical counter interface to userspace. This set
-> of debug registers are part of the RASDES feature present in DesignWare
-> PCIe controllers.
-> 
-> Signed-off-by: Shradha Todi <shradha.t@samsung.com>
-> ---
->  Documentation/ABI/testing/debugfs-dwc-pcie    |  61 +++++
->  .../controller/dwc/pcie-designware-debugfs.c  | 229 +++++++++++++++++-
->  2 files changed, 289 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/ABI/testing/debugfs-dwc-pcie b/Documentation/ABI/testing/debugfs-dwc-pcie
-> index 9eae0ab1dbea..01aa9d3a00c6 100644
-> --- a/Documentation/ABI/testing/debugfs-dwc-pcie
-> +++ b/Documentation/ABI/testing/debugfs-dwc-pcie
-> @@ -81,3 +81,64 @@ Description:	rasdes_err_inj is the directory which can be used to inject errors
->  
->  			<count>
->  				Number of errors to be injected
-> +
-> +What:		/sys/kernel/debug/dwc_pcie_<dev>/rasdes_event_counters/<event>/counter_enable
-> +Date:		Feburary 2025
-> +Contact:	Shradha Todi <shradha.t@samsung.com>
-> +Description:	rasdes_event_counters is the directory which can be used to collect
-> +		statistical data about the number of times a certain event has occurred
-> +		in the controller. The list of possible events are:
-> +
-> +		1) EBUF Overflow
-> +		2) EBUF Underrun
-> +		3) Decode Error
-> +		4) Running Disparity Error
-> +		5) SKP OS Parity Error
-> +		6) SYNC Header Error
-> +		7) Rx Valid De-assertion
-> +		8) CTL SKP OS Parity Error
-> +		9) 1st Retimer Parity Error
-> +		10) 2nd Retimer Parity Error
-> +		11) Margin CRC and Parity Error
-> +		12) Detect EI Infer
-> +		13) Receiver Error
-> +		14) RX Recovery Req
-> +		15) N_FTS Timeout
-> +		16) Framing Error
-> +		17) Deskew Error
-> +		18) Framing Error In L0
-> +		19) Deskew Uncompleted Error
-> +		20) Bad TLP
-> +		21) LCRC Error
-> +		22) Bad DLLP
-> +		23) Replay Number Rollover
-> +		24) Replay Timeout
-> +		25) Rx Nak DLLP
-> +		26) Tx Nak DLLP
-> +		27) Retry TLP
-> +		28) FC Timeout
-> +		29) Poisoned TLP
-> +		30) ECRC Error
-> +		31) Unsupported Request
-> +		32) Completer Abort
-> +		33) Completion Timeout
-> +		34) EBUF SKP Add
-> +		35) EBUF SKP Del
-> +
-> +		counter_enable is RW. Write 1 to enable the event counter and write 0 to
+From: Eliah Reeves <ereeclimb@gmail.com>
+From dd4478d63b6a2b6891fcc1800eb26ce3f1ead1d4 Mon Sep 17 00:00:00 2001
+Date: Wed, 19 Feb 2025 20:58:52 -0800
+Subject: [PATCH] input: revert commit 9140ce4 to fix ELAN1206 touchpad issues
 
-Please use (RW) pattern at the start as you did for other attributes.
+Reverting commit 9140ce47872bfd89fca888c2f992faa51d20c2bc fixes a
+regression that caused touchpad malfunctions. The original change
+introduced unintended behavior affecting touchpad input.
+---
+ drivers/dma/idma64.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-> +		disable the event counter. Read will return whether the counter is currently
-> +		enabled	or disabled. Counter is disabled by default.
-> +
-> +What:		/sys/kernel/debug/dwc_pcie_<dev>/rasdes_event_counters/<event>/counter_value
-> +Date:		Feburary 2025
-> +Contact:	Shradha Todi <shradha.t@samsung.com>
-> +Description:	(RO) Read will return the current value of the event counter. To reset the counter,
-> +		counter should be disabled and enabled back using the 'counter_enable' attribute.
-> +
-> +What:		/sys/kernel/debug/dwc_pcie_<dev>/rasdes_event_counters/<event>/lane_select
-> +Date:		Feburary 2025
-> +Contact:	Shradha Todi <shradha.t@samsung.com>
-> +Description:	(RW) Some lanes in the event list are lane specific events. These include
-> +		events 1) - 11) and 34) - 35).
-> +		Write lane number for which counter needs to be enabled/disabled/dumped.
-> +		Read will return the current selected lane number. Lane0 is selected by default.
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-debugfs.c b/drivers/pci/controller/dwc/pcie-designware-debugfs.c
-> index dfb0840390d3..2087185a1968 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-debugfs.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-debugfs.c
-> @@ -31,6 +31,17 @@
->  
->  #define ERR_INJ_ENABLE_REG		0x30
->  
-> +#define RAS_DES_EVENT_COUNTER_DATA_REG	0xc
-> +
-> +#define RAS_DES_EVENT_COUNTER_CTRL_REG	0x8
-> +#define EVENT_COUNTER_GROUP_SELECT	GENMASK(27, 24)
-> +#define EVENT_COUNTER_EVENT_SELECT	GENMASK(23, 16)
-> +#define EVENT_COUNTER_LANE_SELECT	GENMASK(11, 8)
-> +#define EVENT_COUNTER_STATUS		BIT(7)
-> +#define EVENT_COUNTER_ENABLE		GENMASK(4, 2)
-> +#define PER_EVENT_ON			0x3
-> +#define PER_EVENT_OFF			0x1
-> +
->  #define DWC_DEBUGFS_BUF_MAX		128
->  
->  struct dwc_pcie_vsec_id {
-> @@ -135,6 +146,61 @@ static const u32 err_inj_type_mask[] = {
->  	EINJ5_TYPE,
->  };
->  
-> +/**
-> + * struct dwc_pcie_event_counter - Store details about each event counter supported in DWC RASDES
-> + * @name: Name of the error counter
-> + * @group_no: Group number that the event belongs to. Value ranges from 0 - 4
-> + * @event_no: Event number of the particular event. Value ranges from -
-> + *		Group 0: 0 - 10
-> + *		Group 1: 5 - 13
-> + *		Group 2: 0 - 7
-> + *		Group 3: 0 - 5
-> + *		Group 4: 0 - 1
-> + */
-> +struct dwc_pcie_event_counter {
-> +	const char *name;
-> +	u32 group_no;
-> +	u32 event_no;
-> +};
-> +
-> +static const struct dwc_pcie_event_counter event_list[] = {
-> +	{"ebuf_overflow", 0x0, 0x0},
-> +	{"ebuf_underrun", 0x0, 0x1},
-> +	{"decode_err", 0x0, 0x2},
-> +	{"running_disparity_err", 0x0, 0x3},
-> +	{"skp_os_parity_err", 0x0, 0x4},
-> +	{"sync_header_err", 0x0, 0x5},
-> +	{"rx_valid_deassertion", 0x0, 0x6},
-> +	{"ctl_skp_os_parity_err", 0x0, 0x7},
-> +	{"retimer_parity_err_1st", 0x0, 0x8},
-> +	{"retimer_parity_err_2nd", 0x0, 0x9},
-> +	{"margin_crc_parity_err", 0x0, 0xA},
-> +	{"detect_ei_infer", 0x1, 0x5},
-> +	{"receiver_err", 0x1, 0x6},
-> +	{"rx_recovery_req", 0x1, 0x7},
-> +	{"n_fts_timeout", 0x1, 0x8},
-> +	{"framing_err", 0x1, 0x9},
-> +	{"deskew_err", 0x1, 0xa},
-> +	{"framing_err_in_l0", 0x1, 0xc},
-> +	{"deskew_uncompleted_err", 0x1, 0xd},
-> +	{"bad_tlp", 0x2, 0x0},
-> +	{"lcrc_err", 0x2, 0x1},
-> +	{"bad_dllp", 0x2, 0x2},
-> +	{"replay_num_rollover", 0x2, 0x3},
-> +	{"replay_timeout", 0x2, 0x4},
-> +	{"rx_nak_dllp", 0x2, 0x5},
-> +	{"tx_nak_dllp", 0x2, 0x6},
-> +	{"retry_tlp", 0x2, 0x7},
-> +	{"fc_timeout", 0x3, 0x0},
-> +	{"poisoned_tlp", 0x3, 0x1},
-> +	{"ecrc_error", 0x3, 0x2},
-> +	{"unsupported_request", 0x3, 0x3},
-> +	{"completer_abort", 0x3, 0x4},
-> +	{"completion_timeout", 0x3, 0x5},
-> +	{"ebuf_skp_add", 0x4, 0x0},
-> +	{"ebuf_skp_del", 0x4, 0x1},
-> +};
-> +
->  static ssize_t lane_detect_read(struct file *file, char __user *buf, size_t count, loff_t *ppos)
->  {
->  	struct dw_pcie *pci = file->private_data;
-> @@ -252,6 +318,127 @@ static ssize_t err_inj_write(struct file *file, const char __user *buf, size_t c
->  	return count;
->  }
->  
-> +static void set_event_number(struct dwc_pcie_rasdes_priv *pdata, struct dw_pcie *pci,
-> +			     struct dwc_pcie_rasdes_info *rinfo)
-> +{
-> +	u32 val;
-> +
-> +	val = dw_pcie_readl_dbi(pci, rinfo->ras_cap_offset + RAS_DES_EVENT_COUNTER_CTRL_REG);
-> +	val &= ~EVENT_COUNTER_ENABLE;
-> +	val &= ~(EVENT_COUNTER_GROUP_SELECT | EVENT_COUNTER_EVENT_SELECT);
-> +	val |= FIELD_PREP(EVENT_COUNTER_GROUP_SELECT, event_list[pdata->idx].group_no);
-> +	val |= FIELD_PREP(EVENT_COUNTER_EVENT_SELECT, event_list[pdata->idx].event_no);
-> +	dw_pcie_writel_dbi(pci, rinfo->ras_cap_offset + RAS_DES_EVENT_COUNTER_CTRL_REG, val);
-> +}
-> +
-> +static ssize_t counter_enable_read(struct file *file, char __user *buf, size_t count, loff_t *ppos)
-> +{
-> +	struct dwc_pcie_rasdes_priv *pdata = file->private_data;
-> +	struct dw_pcie *pci = pdata->pci;
-> +	struct dwc_pcie_rasdes_info *rinfo = pci->debugfs->rasdes_info;
-> +	char debugfs_buf[DWC_DEBUGFS_BUF_MAX];
-> +	ssize_t off = 0;
-> +	u32 val;
-> +
-> +	mutex_lock(&rinfo->reg_lock);
-> +	set_event_number(pdata, pci, rinfo);
-> +	val = dw_pcie_readl_dbi(pci, rinfo->ras_cap_offset + RAS_DES_EVENT_COUNTER_CTRL_REG);
-> +	mutex_unlock(&rinfo->reg_lock);
-> +	val = FIELD_GET(EVENT_COUNTER_STATUS, val);
-> +	if (val)
-> +		off += scnprintf(debugfs_buf, DWC_DEBUGFS_BUF_MAX - off, "Counter Enabled\n");
+diff --git a/drivers/dma/idma64.c b/drivers/dma/idma64.c
+index d147353d47ab..afcce6f5a636 100644
+--- a/drivers/dma/idma64.c
++++ b/drivers/dma/idma64.c
+@@ -171,9 +171,10 @@ static irqreturn_t idma64_irq(int irq, void *dev)
+        u32 status_err;
+        unsigned short i;
 
-Here also, adding 'off' doesn't make sense.
++       /* Commented to restore ELAN1206 Touchpad functionality */
+        /* Since IRQ may be shared, check if DMA controller is powered on */
+-       if (status == GENMASK(31, 0))
+-               return IRQ_NONE;
++       /* if (status == GENMASK(31, 0))
++             return IRQ_NONE; */
 
-> +	else
-> +		off += scnprintf(debugfs_buf, DWC_DEBUGFS_BUF_MAX - off, "Counter Disabled\n");
-> +
-> +	return simple_read_from_buffer(buf, count, ppos, debugfs_buf, off);
-> +}
-> +
-> +static ssize_t counter_enable_write(struct file *file, const char __user *buf,
-> +				    size_t count, loff_t *ppos)
-> +{
-> +	struct dwc_pcie_rasdes_priv *pdata = file->private_data;
-> +	struct dw_pcie *pci = pdata->pci;
-> +	struct dwc_pcie_rasdes_info *rinfo = pci->debugfs->rasdes_info;
-> +	u32 val, enable;
-> +
-> +	val = kstrtou32_from_user(buf, count, 0, &enable);
-> +	if (val)
-> +		return val;
-> +
-> +	mutex_lock(&rinfo->reg_lock);
-> +	set_event_number(pdata, pci, rinfo);
-> +	val = dw_pcie_readl_dbi(pci, rinfo->ras_cap_offset + RAS_DES_EVENT_COUNTER_CTRL_REG);
-> +	if (enable)
-> +		val |= FIELD_PREP(EVENT_COUNTER_ENABLE, PER_EVENT_ON);
-> +	else
-> +		val |= FIELD_PREP(EVENT_COUNTER_ENABLE, PER_EVENT_OFF);
-> +
-> +	dw_pcie_writel_dbi(pci, rinfo->ras_cap_offset + RAS_DES_EVENT_COUNTER_CTRL_REG, val);
-> +	mutex_unlock(&rinfo->reg_lock);
-> +
-> +	return count;
-> +}
-> +
-> +static ssize_t counter_lane_read(struct file *file, char __user *buf, size_t count, loff_t *ppos)
-> +{
-> +	struct dwc_pcie_rasdes_priv *pdata = file->private_data;
-> +	struct dw_pcie *pci = pdata->pci;
-> +	struct dwc_pcie_rasdes_info *rinfo = pci->debugfs->rasdes_info;
-> +	char debugfs_buf[DWC_DEBUGFS_BUF_MAX];
-> +	ssize_t off = 0;
-> +	u32 val;
-> +
-> +	mutex_lock(&rinfo->reg_lock);
-> +	set_event_number(pdata, pci, rinfo);
-> +	val = dw_pcie_readl_dbi(pci, rinfo->ras_cap_offset + RAS_DES_EVENT_COUNTER_CTRL_REG);
-> +	mutex_unlock(&rinfo->reg_lock);
-> +	val = FIELD_GET(EVENT_COUNTER_LANE_SELECT, val);
-> +	off += scnprintf(debugfs_buf, DWC_DEBUGFS_BUF_MAX - off, "Lane: %d\n", val);
+        dev_vdbg(idma64->dma.dev, "%s: status=%#x\n", __func__, status);
 
-Same here.
+--
+2.48.1
 
-> +
-> +	return simple_read_from_buffer(buf, count, ppos, debugfs_buf, off);
-> +}
-> +
-> +static ssize_t counter_lane_write(struct file *file, const char __user *buf,
-> +				  size_t count, loff_t *ppos)
-> +{
-> +	struct dwc_pcie_rasdes_priv *pdata = file->private_data;
-> +	struct dw_pcie *pci = pdata->pci;
-> +	struct dwc_pcie_rasdes_info *rinfo = pci->debugfs->rasdes_info;
-> +	u32 val, lane;
-> +
-> +	val = kstrtou32_from_user(buf, count, 0, &lane);
-> +	if (val)
-> +		return val;
-> +
-> +	mutex_lock(&rinfo->reg_lock);
-> +	set_event_number(pdata, pci, rinfo);
-> +	val = dw_pcie_readl_dbi(pci, rinfo->ras_cap_offset + RAS_DES_EVENT_COUNTER_CTRL_REG);
-> +	val &= ~(EVENT_COUNTER_LANE_SELECT);
-> +	val |= FIELD_PREP(EVENT_COUNTER_LANE_SELECT, lane);
-> +	dw_pcie_writel_dbi(pci, rinfo->ras_cap_offset + RAS_DES_EVENT_COUNTER_CTRL_REG, val);
-> +	mutex_unlock(&rinfo->reg_lock);
-> +
-> +	return count;
-> +}
-> +
-> +static ssize_t counter_value_read(struct file *file, char __user *buf, size_t count, loff_t *ppos)
-> +{
-> +	struct dwc_pcie_rasdes_priv *pdata = file->private_data;
-> +	struct dw_pcie *pci = pdata->pci;
-> +	struct dwc_pcie_rasdes_info *rinfo = pci->debugfs->rasdes_info;
-> +	char debugfs_buf[DWC_DEBUGFS_BUF_MAX];
-> +	ssize_t off = 0;
-> +	u32 val;
-> +
-> +	mutex_lock(&rinfo->reg_lock);
-> +	set_event_number(pdata, pci, rinfo);
-> +	val = dw_pcie_readl_dbi(pci, rinfo->ras_cap_offset + RAS_DES_EVENT_COUNTER_DATA_REG);
-> +	mutex_unlock(&rinfo->reg_lock);
-> +	off += scnprintf(debugfs_buf, DWC_DEBUGFS_BUF_MAX - off, "Counter value: %d\n", val);
+1: Description
+===========
 
-Here also.
+Reverting commit 9140ce47872bfd89fca888c2f992faa51d20c2bc fixes a
+regression that caused touchpad malfunctions. The original change
+introduced unintended behavior affecting touchpad input with the
+ELAN1206.
 
-- Mani
+2: Touchpad Behavior with 9140ce47872bfd89fca888c2f992faa51d20c2bc
+===========
+The touchpad appears to send an event indicating touch up immediately
+after each touch down event. This prevents libinput from moving the
+cursor rendering the touchpad useless. It is also worth noting that in
+addition to incorrect events the touchpad also appears to send events
+much less frequently.
 
--- 
-மணிவண்ணன் சதாசிவம்
+evtest output:
+
+  Event: time 1738819278.422243, type 3 (EV_ABS), code 57
+(ABS_MT_TRACKING_ID), value 73
+  Event: time 1738819278.422243, type 3 (EV_ABS), code 53
+(ABS_MT_POSITION_X), value 1264
+  Event: time 1738819278.422243, type 3 (EV_ABS), code 54
+(ABS_MT_POSITION_Y), value 860
+  Event: time 1738819278.422243, type 1 (EV_KEY), code 330 (BTN_TOUCH), value 1
+  Event: time 1738819278.422243, type 1 (EV_KEY), code 325
+(BTN_TOOL_FINGER), value 1
+  Event: time 1738819278.422243, type 3 (EV_ABS), code 0 (ABS_X), value 1264
+  Event: time 1738819278.422243, type 3 (EV_ABS), code 1 (ABS_Y), value 860
+  Event: time 1738819278.422243, type 4 (EV_MSC), code 5
+(MSC_TIMESTAMP), value 0
+  Event: time 1738819278.422243, -------------- SYN_REPORT ------------
+  Event: time 1738819278.526021, type 3 (EV_ABS), code 57
+(ABS_MT_TRACKING_ID), value -1
+  Event: time 1738819278.526021, type 1 (EV_KEY), code 330 (BTN_TOUCH), value 0
+  Event: time 1738819278.526021, type 1 (EV_KEY), code 325
+(BTN_TOOL_FINGER), value 0
+  Event: time 1738819278.526021, -------------- SYN_REPORT ------------
+  Event: time 1738819278.630874, type 3 (EV_ABS), code 57
+(ABS_MT_TRACKING_ID), value 74
+  Event: time 1738819278.630874, type 3 (EV_ABS), code 53
+(ABS_MT_POSITION_X), value 1415
+  Event: time 1738819278.630874, type 3 (EV_ABS), code 54
+(ABS_MT_POSITION_Y), value 799
+
+3: Touchpad Behavior without 9140ce47872bfd89fca888c2f992faa51d20c2bc
+===========
+The touchpad functions smoothly and consistently.
+
+4: Fixes
+===========
+closes: https://bugzilla.kernel.org/show_bug.cgi?id=219799
+
+5: Impacts
+===========
+Reverting 9140ce47872bfd89fca888c2f992faa51d20c2bc would theoretically
+reopen https://lore.kernel.org/r/700bbb84-90e1-4505-8ff0-3f17ea8bc631@gmail.com
+
+6: Methods
+===========
+I bisected the Linux kernel and found that
+9140ce47872bfd89fca888c2f992faa51d20c2bc was the first commit where my
+touchpad didn't work. Building the latest kernel with 9140ce4 removed
+resulted in a working touchpad.
+
+Let me know if I can help.
+Signed-off-by: Eliah Reeves <ereeclimb@gmail.com>
 
