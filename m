@@ -1,78 +1,128 @@
-Return-Path: <linux-kernel+bounces-522868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB359A3CF6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 03:37:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3559BA3CF6E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 03:40:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65EB07A53E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 02:36:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEDF0189AF97
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 02:40:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AE9C1D63F6;
-	Thu, 20 Feb 2025 02:37:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C03DA1D6DA9;
+	Thu, 20 Feb 2025 02:40:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mu1WOdtn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jy6oHLYv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5F2EDF58;
-	Thu, 20 Feb 2025 02:37:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A9FE1D63E3
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 02:40:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740019063; cv=none; b=qbwbx6KXWu6wTDDOfP653aS4mxW0yZpmg7QYgzTUVuXZqLQV5ms8itgU4C1VV8L84uu8kSFfKCuJYKyduiliJAFPBR5JY6DlpHZZO2DTw4qYoFR1RQlNH8AcLO98LQ0byoJhKpIAQSkb2rmOUHCvzo34qYlVa36bQu+YugRiz18=
+	t=1740019240; cv=none; b=qkT+9+Zht+9Ed5/k+Ez7pki3CR/YEUl2Jq1kdy4lf+V6H3n/wKBY4W8UpxL8lZ5fg/qELV5/UvwcMRcNlpltVM33tGC/E5S1E9TRAsDlHsktA8fdcEZFRbL75D4//Li8c4ts1p9UcXQlEIi5SR0Hc4g4HW9Fxx+pGlQNIKMbTFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740019063; c=relaxed/simple;
-	bh=P9QevZ90UgMsFakf7vnC+UQKcUvCUjnas7JjsG1Cb1Y=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=WCc+MGoMuK1Y7j0CRPLgi/+HHIZ8c81TvKRf3R7FK0Rjcc+B3LyEvzV8EsCWu7xiv6NQfltvzf0TCwX8NOrWX9E9e8XdU+oOxB0WJ/JVS8bmEkRGUGJ4EmMnjCk+g0Qk5G2vN/3We3n64zy6IWSw5wy8kBaKTHNjPfhShBJIhmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mu1WOdtn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EB01C4CED1;
-	Thu, 20 Feb 2025 02:37:43 +0000 (UTC)
+	s=arc-20240116; t=1740019240; c=relaxed/simple;
+	bh=cZem6vk8RIlTJW54kI3MHj6xqDgsVXPXhU+70B7Qt2o=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=XrLxuWBgmWNUz345sY71gc4idYDRkYCGLJFLP/PjDpTNFKug742AHCp24uFt4ESqdPA4y3Ditp3GidjmH3jGHOm2mIo+vGc5xPIDvy7O2xjzoqumovAu1EaeGokhlFLzogjEXK02B0GW71O1tM9JgRW15ufFpeV4v7HptI6lZAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jy6oHLYv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF0C6C4CED1;
+	Thu, 20 Feb 2025 02:40:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740019063;
-	bh=P9QevZ90UgMsFakf7vnC+UQKcUvCUjnas7JjsG1Cb1Y=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=mu1WOdtn8VpJ5nzTipnCBfxhs0PQCy3Lz8p6D+Stu62G6cqckrPMg3xVPOgEALYL0
-	 SQcS8AZ26hJBVBZwuVBToMAJcLArjkJroWsvQAZlZGW7EunTWujitZn/A74Wr8EaiO
-	 zl6qQQWWNVRP6w5r1Nu0Q+l5MJJUb1i5Je4EsQQo0uP9YdfGdIYtdxyg3R60MXB8U/
-	 9Rd3L8F8PMOFyBrZhHqtjVYX97VBJYUNtJ6LgQ7S8/IEF0vDLRllA9UafwpcvDoZGq
-	 6KtskqRr6ZXHOb4aJPV8+ZwMZClPF8jA1jYLLnH/ro5NjF85508cZmuKNPp0xjFf48
-	 MHFPQ4qGQJ0MA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB19E380AAEC;
-	Thu, 20 Feb 2025 02:38:14 +0000 (UTC)
-Subject: Re: [GIT PULL] hotfixes for 6.14-rc4
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20250219175311.7a5b47084de5ad0258526be2@linux-foundation.org>
-References: <20250219175311.7a5b47084de5ad0258526be2@linux-foundation.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20250219175311.7a5b47084de5ad0258526be2@linux-foundation.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2025-02-19-17-49
-X-PR-Tracked-Commit-Id: 8344017aaf32a7532cff293eb3df7fd2265ebafd
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 87a132e73910e8689902aed7f2fc229d6908383b
-Message-Id: <174001909346.819639.5428269679979433403.pr-tracker-bot@kernel.org>
-Date: Thu, 20 Feb 2025 02:38:13 +0000
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=k20201202; t=1740019240;
+	bh=cZem6vk8RIlTJW54kI3MHj6xqDgsVXPXhU+70B7Qt2o=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=jy6oHLYvMtwLtyLJXKmfTufWlyI2tx2InFfzV/vBCExBM3Jk9BHkPNZ1fMP0WQnhL
+	 dzS82FcU8WpM2+VJX7pFZTzpQujWozF7BKqtwYkc9yvvOWyfWTfjOPzj8s0bNewGLz
+	 lGIXdIYh6oJ0hVVAxmJiTNBTztUJg/G+2hgPilwS6MhXOCe7ZI6G4ffy2N1vmkzjx3
+	 S7CluCkVUzPTSQGpqpIKYrXSqahB7rL0+rA5vZRVgzvCP8t0VbBHtfIXs0gCetvVsh
+	 Ysm7/mbVwLPwKkXnAQ8aFeE7g0xR3m6uF/ADOawFDCgLovtzIRpCUQ/GFBQaSsLEar
+	 jjr0J5OjqGqhA==
+Date: Thu, 20 Feb 2025 11:40:36 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Waiman Long <llong@redhat.com>, "Masami Hiramatsu (Google)"
+ <mhiramat@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar
+ <mingo@redhat.com>, Will Deacon <will@kernel.org>, Andrew Morton
+ <akpm@linux-foundation.org>, Boqun Feng <boqun.feng@gmail.com>, Joel
+ Granados <joel.granados@kernel.org>, Anna Schumaker
+ <anna.schumaker@oracle.com>, Lance Yang <ioworker0@gmail.com>, Kent
+ Overstreet <kent.overstreet@linux.dev>, Yongliang Gao
+ <leonylgao@tencent.com>, Tomasz Figa <tfiga@chromium.org>, Sergey
+ Senozhatsky <senozhatsky@chromium.org>, linux-kernel@vger.kernel.org, Linux
+ Memory Management List <linux-mm@kvack.org>
+Subject: Re: [PATCH 1/2] hung_task: Show the blocker task if the task is
+ hung on mutex
+Message-Id: <20250220114036.e22e388402a00f7809a81dee@kernel.org>
+In-Reply-To: <20250219204153.65ed1f5e@gandalf.local.home>
+References: <173997003868.2137198.9462617208992136056.stgit@mhiramat.tok.corp.google.com>
+	<173997004932.2137198.7959507113210521328.stgit@mhiramat.tok.corp.google.com>
+	<20250219112308.5d905680@gandalf.local.home>
+	<0fa9dd8e-2d83-487e-bfb1-1f5d20cd9fe6@redhat.com>
+	<20250219152435.35077ac3@gandalf.local.home>
+	<db4ee5e9-56bb-408c-85e7-f93e2c3226dc@redhat.com>
+	<20250220075639.298616eb494248d390417977@kernel.org>
+	<d8c01f69-34c0-45cf-a532-83544a3a3efd@redhat.com>
+	<20250219204153.65ed1f5e@gandalf.local.home>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The pull request you sent on Wed, 19 Feb 2025 17:53:11 -0800:
+On Wed, 19 Feb 2025 20:41:53 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2025-02-19-17-49
+> On Wed, 19 Feb 2025 20:36:13 -0500
+> Waiman Long <llong@redhat.com> wrote:
+> 
+>  
+> > >>>> this field, we don't need to take lock, though taking the wait_lock may
+> > >>>> still be needed to examine other information inside the mutex.  
+> > > Do we need to take it just for accessing owner, which is in an atomic?  
+> > 
+> > Right. I forgot it is an atomic_long_t. In that case, no lock should be 
+> > needed.
+> 
+> Now if we have a two fields to read:
+> 
+> 	block_flags (for the type of lock) and blocked_on (for the lock)
+> 
+> We need a way to synchronize the two. What happens if we read the type, and
+> the task wakes up and and then blocks on a different type of lock?
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/87a132e73910e8689902aed7f2fc229d6908383b
+Hmm, right.
+Since the blocked_on must be NULL before setting flag, if we can ensure
+the writing order so that blocked_flags is always updated before
+blocked_on, may it be safe?
 
-Thank you!
+Or, (this may introduce more memory overhead) don't use union but
+use different blocked_on_mutex, blocked_on_rwsem, etc. 
+
+Another idea is to make the owner offset same, like introducing
+
+struct common_lock {
+	atomic_long_t owner;
+};
+
+But the problem is that rt_mutex does not use atomic for storing
+the owner. (we can make it atomic using wrapper)
+
+Thank you,
+
+> 
+> Then the lock read from blocked_on could be a different type of lock than
+> what is expected.
+> 
+> -- Steve
+
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
