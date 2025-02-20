@@ -1,78 +1,79 @@
-Return-Path: <linux-kernel+bounces-524116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C164BA3DF60
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:53:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A9CEA3DF70
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:55:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0849717E237
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:51:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2ACCB19C6544
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:52:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9EFA14A82;
-	Thu, 20 Feb 2025 15:51:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496CE8F5B;
+	Thu, 20 Feb 2025 15:51:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FVUxaFza"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gYBOvrYH"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98D071D5CD9;
-	Thu, 20 Feb 2025 15:51:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D03D1FECBA;
+	Thu, 20 Feb 2025 15:51:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740066706; cv=none; b=EnaAJmm+SYfxdvYJn3KLCRZfTSHHOp7o7/Y7TD0Fl4jnm/83GPsyn0UbeyPivS36+5Un1WIJsHbXi00vV06c86URPl+8u1GkrdDH6GE12Udp+plyFJe5N73PSvNpKvPLUVlbuV2ctxPYoOc/AGQXHR6Q+kPDkuR907uuza2e/ZE=
+	t=1740066708; cv=none; b=QaxpKqwz0QbAfg8nmoBT9K5b0XE0nSpILxR4hVWIYZQNoFtFtnz7OzNfPKFtwn6LvDoqe+1H2Gqw348lKr3ZWLKbCM47oDpXFrW5XwfRwS9/IPPsAB4jmG4NAG5QG9NtyIWwxjQIFuDy1IPtbLK/G2tlfVw01ypKBE3POriaWhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740066706; c=relaxed/simple;
-	bh=oYN3yBwKAFhDDm+1KS08ubJwkHA6hRvCCNjKCImv9Lo=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Ni7BQpp4LPUHyOlr4PI0LUuJiBUxPTg6SYwr4LR1dVN3PwrFkOWoUeDrqShswE7EI4G687KehZkE235VR6ztM96agk3I9fJLx6YNlGszCkLYkavF1su3XihVVRyVNznuw/MaXBkvZUZgoA16L6i5K9XI4VIMW0gsftuNSOxYOnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FVUxaFza; arc=none smtp.client-ip=209.85.214.173
+	s=arc-20240116; t=1740066708; c=relaxed/simple;
+	bh=uDPmflVJvnxOB1rw8vcGbu46t3L1/i8a/zN5ANyYz3k=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=pl3Y7pY99Sjh8xYBnZQ88NU0+UhpVgruqCw1ej+nHq86L/qyQjJJ8FcR6tdLWIz55Zp+l2PacW+SJyBaayEUelAmoXNq4I2/5TNdBIIGep8coMgudH5hkT6/wOKc2Gupiuwm3kcf7xmit6yo8rlKuc6POC7VTndoASDv+Lse0yY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gYBOvrYH; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-22128b7d587so21253225ad.3;
-        Thu, 20 Feb 2025 07:51:44 -0800 (PST)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-220e6028214so24264985ad.0;
+        Thu, 20 Feb 2025 07:51:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740066704; x=1740671504; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=NR8wjcpxYR1ODwGW2lEP9QG5C1p3MxomWI2/rfhGN4U=;
-        b=FVUxaFza+wAoyBd2M6qghrsn/x65ZuUW+kDzxUHKYsfu/pdUSCZLgQnJgNLmBN7dR4
-         TGT8y5KgcZKZf4HpKYcebG3na3OuDBmw7nAFCEjLUvEpc//juwi8aUVMJSkvherBIOr0
-         GnAd7EZUoy+1D+xazA9AN43CTOH81k6mtThgRibYZ/N38vZ7RMpnwJ6xZGXSB1WWWYTW
-         YH4GnAkxRqzVNFGUFAITKu5O9t0obhSsaumwGhw4ynC4GT+D13yzSfNzFqKkY+V1oN1e
-         Qe0j6cgOVEmtQhOGAoD8P9Gg1DMfPxNCY4BUDtaiOGqJ7koTRhFff6QG7lxhm7fy/CQS
-         dzDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740066704; x=1740671504;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1740066706; x=1740671506; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=NR8wjcpxYR1ODwGW2lEP9QG5C1p3MxomWI2/rfhGN4U=;
-        b=FdDDdeYH7neTEH9GQhzWeh0ZmRRMZjSFbVDikal3ypnsZT58Bx3q0rxOi7WHDiZYdY
-         lXY1asSBVm5QIKMjdLaW6Id6uIf9rDVNXgW/TrfwXK7IndDEUHRoo0E2TJqF89FzG+Zz
-         q6uVexObShpAZ/h9QICQcpw5Xu8KHUA0rnnsCBNT2WjUD0fA4D+1YPc9LFYBrFGdT5jJ
-         ZOdThUb19FScBSvG0lBExfRTB8cXAGXOLYyZA4hLcRku6XNlsNsE2wXEPSRtNG96iUKy
-         k2QaQI5/9wCWduiwPZa650DhNCfVpaieHD+DjYBcT65ET/DkelaqBeL3J0syu/F7pNDP
-         CVNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUyR7B56SanfdaWSuyWfm4GVE9SnNe3bmvJucy0YE8XVnUsePYzDtyxI6je0LYs1oWQnb0oou8pdDrsk1Ok@vger.kernel.org, AJvYcCXe8/PKkjRJw0P+5YSSek59bZzupjm/n/QNsE8Y8AhtqTvxjdtoyDRsipu1Dy4s+23ZchKBl5HB9/6d@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywm5lSX51BAun0P/6CNhguLCKoOJgwklW34J6YVVc6pRLAqAldl
-	sAX7R1Uxxl/XYuZWtoPQVUPj1qP44QnYZ4pahkfOP8Vqheonj+zp
-X-Gm-Gg: ASbGncsO/I83Hs0Md6ZpwnuzlR2sHZaonkjVjWkFCKsGIoxnz3k1Aqq9bcY/JFWPHbm
-	jOzhzy5ZDSEeGUrhcLFUtwCzsguUwVxtsyNnBwRUgFU2C1AoB2U7C5c0In6DCxROon5Vh3BLnbK
-	y3ZlUjW4rg8vwwO8SRhnlVJuEbmZ0r75fLLnyXcx9I98dM6Durmg7tt6ancUD4Z70KYnst2S8L5
-	Y2/8iSmADtms+qXYAUthdKKB7GGMcyQypQI+l67j9oUInbh8J3p/h8SUz+xkjSq1xoxYCxrIhUW
-	0YVgRgjHubz45TOwPw==
-X-Google-Smtp-Source: AGHT+IEPhTJ7Bb4lHaVGDGh+KJhL7uPvRBoISpPixnwur50FdUhQQiFL6DTY+T3N+joX7r91AEIt9Q==
-X-Received: by 2002:a17:902:da92:b0:221:7e36:b13e with SMTP id d9443c01a7336-2217e36e109mr106022935ad.12.1740066703713;
-        Thu, 20 Feb 2025 07:51:43 -0800 (PST)
+        bh=Y1NlfLag6cXRAi1RREWAXx7+nFLb5S0lG/vhce/4QOE=;
+        b=gYBOvrYHEsUp+6EoYGmM8bl8mmDRtRZDhBixgt78DWwoQBcPq8bkyh0qS6Z8NscxM0
+         la9OlGscmP4CjaGsFGxW5Z1orZjQeyfr07kGMvp9o0YoGs6d03aO+OsZDvc0szN0b/vF
+         S7uwGzzTOZSX19kwe/BmNdM8xkaTR/w9UI/KO9bkvNCK0ovvNvyYoUKCN3tjS++DkVGi
+         ggd6D+Zsbo4SDuqAz+UkdKwW76Dr9z9kNyGROsmDlHHg8NlWDwgFyWlpKwmeXJ3qY6rB
+         2pEu18gDFSS70htypfDEw7d8m/uNjFi6STddT2jSeBZg9pS7hvnEHuMklv0AkMXnDh++
+         4nIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740066706; x=1740671506;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Y1NlfLag6cXRAi1RREWAXx7+nFLb5S0lG/vhce/4QOE=;
+        b=dK+vrDwbAONs23aPQVi2PafayMrDkQAOGFDIbqucU62EcjKI8n+Ui4lZn1vmnnH3xw
+         GXUHuKSmcyHvne9eZa5T3tRj6gVnCv66iIiAYTSoDFTurqGD3/I+BowPrkreTWRXHD/y
+         4KQetAlHj/1TAI+UwKF47FEha6EsMn6CvJWPL2ROK9jdCfEO9FoibudUyXm3JqJQEvWx
+         CcpL3WihR9xyXyJ8Y/GH+vXL57npHE3jDv0X6zzxnGjIxsPoXu5iZyccy0vlqvL9y0qZ
+         M6W81UKF79t52FInHjRiZ8ygYb4R2o0BQqKvR1HVljg1BOnRQHWcylVXVLkK6EiZtnRm
+         Wh4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUjcVTySJBBEQ7ReCVU76t5wiw9jwtiVOS8HUMMg2jd2032JkOrTtDLS5Z5/9VYhOSBcqO2sJYiPdLM@vger.kernel.org, AJvYcCVrhaanGDIE+TF3DdllzAQjY1xmFwn8DRtc5VAUS4EL97GLuy14pdNQjXbeJrUXZpEt1wyRGo2k1OZVkkUS@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4ghweW6NB6NnRlZBLUD/lfIM5jQAyFGdlo1OvTSW7Nsm4ThXr
+	9HEXHmlWtkyi30zdqN9E1ZNvlvvZFg/SbnLd1i3mOHj+cN9y75SQ
+X-Gm-Gg: ASbGncv+6jwHYeyCCc081K3EpHiPJFWn0N7K6KsQ1aNeAFBhoohgwlP4CHTM7iMjnxe
+	6+/s1w+PktlWeSPjupIm4NBqCRT74g0leKZZ2lZshU+P7sIW+x9n6KfB2LcivEBIW2Wi5edce1o
+	pkcDl7sFZWT911nOao/O6VDnHmL/W42KmTeanPEP/3+qmVaOF2xgpVw+P+Q5mXPMZQtZqLLJDNd
+	qh+nYZhEbIZXYNyMIvUTdYbM9+HweafuoDcuf2jOwY3bYwfb+f+zYyIAYI55WTzodYDKC2qWBTi
+	B08JhLWmUbNQcnpSkg==
+X-Google-Smtp-Source: AGHT+IF5nb3qL/RD7OyYRMOZ8L+tw+d0s1Z5Bw8xKRR7akur52BeX2LWZzmSm2zFJMw6MwCvDDyQjw==
+X-Received: by 2002:a17:902:e5c6:b0:220:d256:d133 with SMTP id d9443c01a7336-221906111f4mr36757955ad.14.1740066706443;
+        Thu, 20 Feb 2025 07:51:46 -0800 (PST)
 Received: from [127.0.1.1] ([59.188.211.160])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-220d5349019sm123694345ad.36.2025.02.20.07.51.41
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-220d5349019sm123694345ad.36.2025.02.20.07.51.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 07:51:43 -0800 (PST)
+        Thu, 20 Feb 2025 07:51:46 -0800 (PST)
 From: Nick Chan <towinchenmi@gmail.com>
-Subject: [PATCH 0/5] arm64: dts: apple: Add DWI backlight dt nodes
-Date: Thu, 20 Feb 2025 23:51:02 +0800
-Message-Id: <20250220-dwi-dt-v1-0-d742431c7373@gmail.com>
+Date: Thu, 20 Feb 2025 23:51:03 +0800
+Subject: [PATCH 1/5] arm64: dts: apple: s5l8960x: Add backlight nodes
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,10 +82,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAGZPt2cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDIyMD3ZTyTN2UEt1ky2TzxDRj46QUQzMloOKCotS0zAqwQdGxtbUAUIX
- q01gAAAA=
-X-Change-ID: 20250220-dwi-dt-c9c7af33bd16
+Message-Id: <20250220-dwi-dt-v1-1-d742431c7373@gmail.com>
+References: <20250220-dwi-dt-v1-0-d742431c7373@gmail.com>
+In-Reply-To: <20250220-dwi-dt-v1-0-d742431c7373@gmail.com>
 To: Janne Grunau <j@jannau.net>, Sven Peter <sven@svenpeter.dev>, 
  Alyssa Rosenzweig <alyssa@rosenzweig.io>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -93,57 +93,67 @@ Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Nick Chan <towinchenmi@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1533; i=towinchenmi@gmail.com;
- h=from:subject:message-id; bh=oYN3yBwKAFhDDm+1KS08ubJwkHA6hRvCCNjKCImv9Lo=;
- b=owEBbQKS/ZANAwAIAQHKCLemxQgkAcsmYgBnt0+MA7ICfOW6+7b5FNbtbwzzWetcXXX3Ugu7b
- wy4NbpzBBeJAjMEAAEIAB0WIQRLUnh4XJes95w8aIMBygi3psUIJAUCZ7dPjAAKCRABygi3psUI
- JD9sD/0bhTf5uHb6Eivm89d6HiPlsmiSfNzME1MqWK/3RuukOjP0F9KRGyYTRV1X4EAjahNswEN
- eKiMl2Czugtw4m8N6udUQhbnHgeSRj5ztf6qy9aruaXVKt6WA0OTASzmzhCadhfl8E4oBWriZ8O
- oFMO0m/IHBI50Jhb8uv6EuOeng1HIBtW3oWFiKW99U5Gv6aM/WdOYkKZUUlIFmTkpHpAzBHjNIS
- 7zeS5OQnB9FMzTKqt2cQobcVV3wtc1hRg2i2l/hpTJD2MN3yKg/LRo6QTwgTPD1ntqNnFK3ol7G
- SAqq6cogOhqOXl2kFRZKQsIsUuhFZ2evgLJ5JPO/dBN1Fhz4R8o2udBxGoIWV9/o2NkXuBRd78U
- kRdzsMjRrPugHF5/bVlycF74hmNfBeqGT3IDA2ApEn7PtvZ5RY6E5J83aBsEFtPQPUc0yCcE7Oi
- TpcWzEnjJ6I7K88RJS2u65z/JSxmg7HvEKU3Ik8D9stTXpFZ2J6X8Cppx5yAJA3Cyid+b4GSBny
- f+KpBpsoyUoCgMiLkU2LgNhxmVA5+H7cEdxiNC23vzDU2m3ZIYUImQKvAxNtAn3XHd5uZtDWB52
- m06nV2Nbdj4naLaUMiu6bpFG3SZ8ZYwaAy1JMFra7SbCP9kGSgM7/LfniRYNTrEz6zUmZwoWnEo
- DcZhuh9XZ43nSFg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1482; i=towinchenmi@gmail.com;
+ h=from:subject:message-id; bh=uDPmflVJvnxOB1rw8vcGbu46t3L1/i8a/zN5ANyYz3k=;
+ b=owEBbQKS/ZANAwAIAQHKCLemxQgkAcsmYgBnt0+MO0zMTpQPauB/DSJytq3Q1Jtgk5jzXbhik
+ yG+F2AiJbiJAjMEAAEIAB0WIQRLUnh4XJes95w8aIMBygi3psUIJAUCZ7dPjAAKCRABygi3psUI
+ JPYbD/4uMyhSLygzQKP3tRNOkXR68uKYdbWUne6RZKdORb8nRY6IDKTkSHm1msNt+3k6yCSnY18
+ 3WYKTs02Dj0qFtD1EWGQBjbrFFUg5HopoF+bYSITupj0EX/9XO3Ln0Z/nkc0pOWNj+HgXwF21xK
+ +tvU1iH9nQklHoHgCRUA1RtQKxUjyRUg5+9zukwWwdz1Fq3CNswD49chIwhje5kci8Z54BrJLeR
+ hRc5uUTHy35LPKBrXnUKfuQdboR6+0aRrP4FYphRKYB7zQp1HYR+Hvkg2b+a8XJVCoNpAWeQHWQ
+ koMKbIaVBljKbT0XATmTdDnSeGjMAk+gFqUK+IGNJ1CrcUnhVomiasZ9R51uZod/AH227aM+Pnr
+ 2pajZ/GeiI3VEj5abSXGWSlumLfhVTi56aTRuBMPNZUOysKiHZkTjRFoaT129KEjk0TXp0MoJzS
+ auCiQgY9E7vcnHx2tyNj90Jcwoy7ighwhD/kdKjYdqBHfNAztGL1tp/h2AJQ5iwV1Rr/6ZexdKF
+ A8exgNFmdJTYT2aKbiNMx4NbnI8E7x9JFzPQbbznmFKtuateNcN0MSfGzKpiTekh3Vf5inajGwp
+ uuVlutt0uOYqJftBxvwz+ZaBxIdxSTmRZ+Q9yA2qrRYBdKrFHePJZi1qw41jqItp9LoepT/3SfE
+ 7IpGjYTS/CDB4RQ==
 X-Developer-Key: i=towinchenmi@gmail.com; a=openpgp;
  fpr=4B5278785C97ACF79C3C688301CA08B7A6C50824
 
-Add device tree nodes for DWI backlight found on some Apple iPhones, iPads
-and iPod touches. Not all devices have this feature, as some devices
-instead have their backlights directly connected to the WLED output of a
-PMU or use self-emissive panels.
-
-Devicetree bindings are in the driver series. Last version at:
-https://lore.kernel.org/asahi/20250214040306.16312-1-towinchenmi@gmail.com/
+Add DWI backlight controller nodes for Apple A7 SoC, and enable it for
+iPhone 5s.
 
 Signed-off-by: Nick Chan <towinchenmi@gmail.com>
 ---
-Nick Chan (5):
-      arm64: dts: apple: s5l8960x: Add backlight nodes
-      arm64: dts: apple: t7000: Add backlight nodes
-      arm64: dts: apple: s800-0-3: Add backlight nodes
-      arm64: dts: apple: t8010: Add backlight nodes
-      arm64: dts: apple: t8015: Add backlight nodes
+ arch/arm64/boot/dts/apple/s5l8960x-5s.dtsi | 4 ++++
+ arch/arm64/boot/dts/apple/s5l8960x.dtsi    | 7 +++++++
+ 2 files changed, 11 insertions(+)
 
- arch/arm64/boot/dts/apple/s5l8960x-5s.dtsi     | 4 ++++
- arch/arm64/boot/dts/apple/s5l8960x.dtsi        | 7 +++++++
- arch/arm64/boot/dts/apple/s800-0-3-common.dtsi | 4 ++++
- arch/arm64/boot/dts/apple/s800-0-3.dtsi        | 7 +++++++
- arch/arm64/boot/dts/apple/t7000-handheld.dtsi  | 4 ++++
- arch/arm64/boot/dts/apple/t7000.dtsi           | 7 +++++++
- arch/arm64/boot/dts/apple/t8010-common.dtsi    | 4 ++++
- arch/arm64/boot/dts/apple/t8010.dtsi           | 7 +++++++
- arch/arm64/boot/dts/apple/t8015-8.dtsi         | 4 ++++
- arch/arm64/boot/dts/apple/t8015.dtsi           | 7 +++++++
- 10 files changed, 55 insertions(+)
----
-base-commit: 3febe9de5ca5267618675650871a626d0901f8cb
-change-id: 20250220-dwi-dt-c9c7af33bd16
+diff --git a/arch/arm64/boot/dts/apple/s5l8960x-5s.dtsi b/arch/arm64/boot/dts/apple/s5l8960x-5s.dtsi
+index bfbd2629e206736822a157431ec959e1aa70f41b..8868df1538d68595cfe92c80b1fcecee42d348df 100644
+--- a/arch/arm64/boot/dts/apple/s5l8960x-5s.dtsi
++++ b/arch/arm64/boot/dts/apple/s5l8960x-5s.dtsi
+@@ -51,6 +51,10 @@ switch-mute {
+ 	};
+ };
+ 
++&dwi_bl {
++	status = "okay";
++};
++
+ &framebuffer0 {
+ 	power-domains = <&ps_disp0 &ps_mipi_dsi>;
+ };
+diff --git a/arch/arm64/boot/dts/apple/s5l8960x.dtsi b/arch/arm64/boot/dts/apple/s5l8960x.dtsi
+index 64dbae5c73515bb6a1651b9b26d349d0cfd0408a..b109a1e7fcdad4ee3caf0efd2c56d76c66706e9e 100644
+--- a/arch/arm64/boot/dts/apple/s5l8960x.dtsi
++++ b/arch/arm64/boot/dts/apple/s5l8960x.dtsi
+@@ -100,6 +100,13 @@ aic: interrupt-controller@20e100000 {
+ 			power-domains = <&ps_aic>;
+ 		};
+ 
++		dwi_bl: backlight@20e200010 {
++			compatible = "apple,s5l8960x-dwi-bl", "apple,dwi-bl";
++			reg = <0x2 0xe200010 0x0 0x8>;
++			power-domains = <&ps_dwi>;
++			status = "disabled";
++		};
++
+ 		pinctrl: pinctrl@20e300000 {
+ 			compatible = "apple,s5l8960x-pinctrl", "apple,pinctrl";
+ 			reg = <0x2 0x0e300000 0x0 0x100000>;
 
-Best regards,
 -- 
-Nick Chan <towinchenmi@gmail.com>
+2.48.1
 
 
