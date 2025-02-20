@@ -1,236 +1,84 @@
-Return-Path: <linux-kernel+bounces-523599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3F45A3D907
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:42:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10FA0A3D90B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:42:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D38716CA9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:40:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7010A188BC1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:41:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6D111F12F6;
-	Thu, 20 Feb 2025 11:40:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="O+8mHFMh"
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 514973C3C
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 11:40:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8ADB1F3FD0;
+	Thu, 20 Feb 2025 11:41:16 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AC761F30DE;
+	Thu, 20 Feb 2025 11:41:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740051611; cv=none; b=l5a6Lh+fNAPVSnNQHxrKdgFQo/dblimWfK5Z40aG7onEGiWKQLk86HpOPctLNLflrPl+adgR4ht1Dr6rNHr42OSubOklG5so3qa5DxtdUJxpSjxItaUrL5UxvM94bbRLsogj1MEFlZjcHVJBq1M8DY6CL5JPKETICXrx0oqomVs=
+	t=1740051676; cv=none; b=YIFCCyvQl+zVrwaMmiUwNqhgSr/o8scfwcK4oro0XMK6jmItbQ90AOinhsSAT9HeQHQEC91Z/jIaKwZCkF2yID0v1tUjxKuG+UXJKQ9r/gGKsr3ZeNEJ9MRNbinz7U16b/CfZRdu+dUxc6yaCFSi8+5wnAx2IWrNYFRhaqypzVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740051611; c=relaxed/simple;
-	bh=eAOfwsqQ8PG1lklb+kYxzDxtQNtsyazqKqe/WfuseOo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Wp4rPpnIgSivdTDOAe/NfZas+anMjXcUmWA+vbW+QSvnY7EXM3G3HcYuiasEkLPHJl9FvzIMKAqBSSeQqY2663Dlx+zf9xt9e57UP8NXXYNDECmid8P74hd18s90zyh90bhSpNizA3VoBLhCeFHDrbH0pB81ir+fAItnLutzgwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=O+8mHFMh; arc=none smtp.client-ip=209.85.222.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-866faa61728so453168241.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 03:40:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740051608; x=1740656408; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bzgTSWeHSpJRGiFSifmTH+Wfxn1Cdsi8xpzMCpPcT9U=;
-        b=O+8mHFMhTNFJcjs9ZFDCHddafJ037Xdz01O5pejYsPXsrut14I+A4bh7DmPwXxYg6E
-         hzD8Gq71+/pdW7hudfqEIROQYH9qxDdem8OwIirwTiPdVB+bnAVqGde+fRJ/piD4Izl7
-         KYGb9Yc11OqD49uzhcbgkHtohknZ9NW/gaszDKb85/6ulKLDkf3XmRBuIj9GHvJERuo5
-         Mvxa4xzHcQH7YQTJKfoNtNDZGfIqj9V/RVazkv5dCeJB0CMXUSTf3vpcHNk18bnP9U63
-         fIuhS5qYyj017NRp9ZbXNopNv2vMKjVNrGFKTvjo2SRZGHYrs1x60OSPtJQrVPVEw1zh
-         s7GQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740051608; x=1740656408;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bzgTSWeHSpJRGiFSifmTH+Wfxn1Cdsi8xpzMCpPcT9U=;
-        b=vgXwrZ+9w7xsHWs2gF3ZK7Bb//Aj7azNjLZcG7cu6qgAnCNvVTLsVHdTSMZ7XR2H1Z
-         PJYOHd1ry1fDi2zO/OruKTpK9DMRawPaVFxN39VejcizYjaFJd7/rD7HiSaDv6pWfmgA
-         ihIO4RsxcJqK1MDPWoAnIGttEWxe34DRI2TklKRgIW5qpXJuOu4NdXfcGNR9UuypIIO2
-         UWgW7G+KT6/0/OdQ2/pTDIXlqvnFBXH8JklR5yGRWbkFqfddGnZYCP6Fh+vEcCiwbz0g
-         sZCq+6qnC23KiRyLxAgD1CTtzC79EX2xn5msPGzn8eB1P5L0sQftaMJ+xgyOc8RUppg+
-         awMg==
-X-Forwarded-Encrypted: i=1; AJvYcCW4lLB5UkiYP4TFoNzuFsWigmmdlG95CTPQtjNGNUnIMmw1FvxkaWXl1q5QnVggjE9cZr+pkzo9+K0EQKU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3qjo7YoVFZDfAwdKwV47SuXQC4suQWNJVNwr1AdyaAs6rS8Sz
-	Lev8vGtnCNWFNQHUI+E+A9zmW8RLZTd6f9Nv6R5WelI6xhlUnZL53xthyFtAc4nYThKWibRalXu
-	tCw8piWbzXsz4fJaOpqMyCF534p5KD11BX7yWVA==
-X-Gm-Gg: ASbGnctxuXdWlIPV5y2q6KNovo4t36Jb23zhohtqgR1tuUBi3Oa/iGoz9BpG2oGB4P5
-	Db1m/gIhxcXx5I0HNIoK0+q9S/Npih+rJLcSKwnInL8ksVGtvq6GELWKv71v/v0rJz6DLH+PhXG
-	InglP1arDu1S0wwYeolc9R9v8bGjqL
-X-Google-Smtp-Source: AGHT+IFOkqN2CGqfVZbis2+W4/1tF03d2S0k+uTt1KOsy6VWfYfx+gU8hHMLO3g9P5SaEkbG8ZS1YKhD1cbkBS1nk5M=
-X-Received: by 2002:a05:6102:6cb:b0:4bb:dc3c:1b47 with SMTP id
- ada2fe7eead31-4be85c04e93mr4306655137.14.1740051608001; Thu, 20 Feb 2025
- 03:40:08 -0800 (PST)
+	s=arc-20240116; t=1740051676; c=relaxed/simple;
+	bh=9h8PRFrP+rKtBGmn8XUWSDuLjHDVpz4rwP+tyrfHvDA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gYiSQJ9UTvtN2XpJl7flF3nrSZl++Q0n2VK9u9AaIg0VPpwO+JljDID7dDYmQqEZpHMZ/UCuxP9TIb2VWXcF9WdeJFFFAOlaLllY+64m7W53jmlJNoysoj7sO3qy4nnvCsgs7O6P7OE7Ied4lCtbbuZ4hUoaNDWjnGJOtbQWRRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A04E416F3;
+	Thu, 20 Feb 2025 03:41:31 -0800 (PST)
+Received: from e129166.arm.com (unknown [10.57.77.59])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 457603F5A1;
+	Thu, 20 Feb 2025 03:41:12 -0800 (PST)
+From: Lukasz Luba <lukasz.luba@arm.com>
+To: linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	rafael@kernel.org
+Cc: lukasz.luba@arm.com,
+	dietmar.eggemann@arm.com
+Subject: [PATCH] MAINTAINERS: Add Energy Model framework as properly maintained
+Date: Thu, 20 Feb 2025 11:40:33 +0000
+Message-ID: <20250220114103.515278-1-lukasz.luba@arm.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250219082609.533585153@linuxfoundation.org>
-In-Reply-To: <20250219082609.533585153@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Thu, 20 Feb 2025 17:09:56 +0530
-X-Gm-Features: AWEUYZn47O1F-ZaWjo-DYedUH1Zw-C39d2YCRlVT-7kJbYIWuc5oy92wQ18eqoE
-Message-ID: <CA+G9fYuBdefC8Fmi7GZUGhj=fMEucoKJBi1E1NmHDCL_zFQj-w@mail.gmail.com>
-Subject: Re: [PATCH 6.13 000/274] 6.13.4-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, 19 Feb 2025 at 14:02, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.13.4 release.
-> There are 274 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Fri, 21 Feb 2025 08:25:11 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.13.4-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.13.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+The Energy Model framework had some recent grow and became a bit
+more complex. Add the proper contact points to maintainers so
+other developers can get the right support.
 
+Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
+---
+ MAINTAINERS | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index b9f7d2115b57d..2d0dd9100292c 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8529,6 +8529,15 @@ M:	Maxim Levitsky <maximlevitsky@gmail.com>
+ S:	Maintained
+ F:	drivers/media/rc/ene_ir.*
+ 
++ENERGY MODEL
++M:	Lukasz Luba <lukasz.luba@arm.com>
++M:	"Rafael J. Wysocki" <rafael@kernel.org>
++L:	linux-pm@vger.kernel.org
++S:	Maintained
++F:	kernel/power/energy_model.c
++F:	include/linux/energy_model.h
++F:	Documentation/power/energy-model.rst
++
+ EPAPR HYPERVISOR BYTE CHANNEL DEVICE DRIVER
+ M:	Laurentiu Tudor <laurentiu.tudor@nxp.com>
+ L:	linuxppc-dev@lists.ozlabs.org
+-- 
+2.48.1
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-## Build
-* kernel: 6.13.4-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: df042386d398b1dd18940b647ec2a78164ebfabf
-* git describe: v6.13.3-275-gdf042386d398
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.13.y/build/v6.13=
-.3-275-gdf042386d398
-
-## Test Regressions (compared to v6.13.2-443-gf10c3f62c5fd)
-
-## Metric Regressions (compared to v6.13.2-443-gf10c3f62c5fd)
-
-## Test Fixes (compared to v6.13.2-443-gf10c3f62c5fd)
-
-## Metric Fixes (compared to v6.13.2-443-gf10c3f62c5fd)
-
-
-## Test result summary
-total: 63316, pass: 51057, fail: 1685, skip: 10574, xfail: 0
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 137 total, 137 passed, 0 failed
-* arm64: 48 total, 48 passed, 0 failed
-* i386: 17 total, 17 passed, 0 failed
-* mips: 32 total, 32 passed, 0 failed
-* parisc: 3 total, 3 passed, 0 failed
-* powerpc: 38 total, 38 passed, 0 failed
-* riscv: 22 total, 22 passed, 0 failed
-* s390: 21 total, 20 passed, 1 failed
-* sh: 6 total, 5 passed, 1 failed
-* sparc: 3 total, 3 passed, 0 failed
-* x86_64: 44 total, 44 passed, 0 failed
-
-## Test suites summary
-* boot
-* commands
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-exec
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-rust
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-build-clang
-* log-parser-build-gcc
-* log-parser-test
-* ltp-capability
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-filecaps
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
 
