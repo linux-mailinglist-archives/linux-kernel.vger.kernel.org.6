@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-522789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44070A3CE86
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 02:20:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FBB8A3CE8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 02:21:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 813861896433
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 01:20:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE0D57A7237
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 01:20:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9C3C18E764;
-	Thu, 20 Feb 2025 01:19:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C76C41C7F;
+	Thu, 20 Feb 2025 01:20:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YwYCmzhz"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tD9ic9Vy"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E23F622F19
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 01:19:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 191BD22F19
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 01:20:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740014399; cv=none; b=gRw7VFxjrIOKB06hbaf8ejClc5OJKObKSlKWucvMOOmGIN6Zzqr9Rf705BF2ButIB0HhIxl5r8oysRRhuazhNyX3w5XYaaMoZB9VeecFhGgXxa2LuE+O3YzueU9nOKNHmKC8oeoc8lwV7GkhsrjgDwvY+2FU8G56/z1aqrz+QtY=
+	t=1740014453; cv=none; b=LuXEg/ZsGMvKM0ZW6zqqIDyL07xJj1nChplUrLy4Eyljlde1PDJGe9+liZs0V+8TJUIRCB+zr0/QwndWgorI59NDsxII2YL6AHVh4gfFaBnlFrOps9Ues5hOn8RdltBVDoUkZeAbCg1vSp9paso80PG0n/qT0PlV73OORCPwz+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740014399; c=relaxed/simple;
-	bh=y9TqtEwuxAM59+pRGkNPZtMDonN/O6t9RwUUNszlNTw=;
+	s=arc-20240116; t=1740014453; c=relaxed/simple;
+	bh=8BEtdyFL+la1SWhGjdvnuHQmk94dfd7pWP8oR4rmWzA=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=H9S4jrqtrpaYMf6L+Oz1oOPo+z63UZruKHJfnJBCIxlrX+cCooercHRQZ/QSBy4aQjwjGvqIRrkF8tWOhfQtiy3VLhWOiYUax4mzF8OcyG0n4aSH/vThWJlmX4fIwWiPkagZhxjQpVFfaupnctCccUQvcRJjQmSZn2E6Ui5M40g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yepeilin.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YwYCmzhz; arc=none smtp.client-ip=209.85.214.202
+	 To:Cc:Content-Type; b=T5fgwqP4Xy5eysyNpQRKQjVde7i+6Uv/YFE7CdBTS87TChOZgAkLzO0YXAHNCQLPE1BzWJdD/hkU5OF2ebDC2J6nu/3Do8osdpZ/8qgag4W34yumvRqhKrn1tswScZuTTXeapqI05FdrH0jkw3fv/yr94RQFAA9OjcI8SzHVsNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yepeilin.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tD9ic9Vy; arc=none smtp.client-ip=209.85.214.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yepeilin.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-220e1593b85so7231145ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 17:19:57 -0800 (PST)
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-220c1f88eb4so5434975ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 17:20:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740014397; x=1740619197; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1740014451; x=1740619251; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LUnHgSEounregn05uHGT75nqn32OY7tna6KiTBpIBWU=;
-        b=YwYCmzhzZWgCqBpx3vZER5zzlcVQ7m7ocpnsxeGGcvSoX37Sso43YH/QEThOgxoJRZ
-         gdnGmMTLgo+RzwcVTSDSb2+/iui9mlKQHpUj2kUdlrGFaUsHFHVWhLNdwy87YYVctg0d
-         5Ghx5zxCLA9Z1sPknlH8proQNJPzIVwLBT7L3cVa5Du57h0Oda0IsuSpUgMfakOTq/rZ
-         6phmWtnP2F1+1SxqWMgrhEr2pxL/as4dOhkmY48zPBO+kyjrAKZitAw7yC14udwx3RFr
-         leJX6kKrw4Ze9seyrhd8bsnhj1ARgZlKPOqmDkApPL6NPGsvZuvBHpKvrsabvo2UU+r4
-         oY4g==
+        bh=AVw9FAeQI7lCZwFZLEeeKDcfx7NZFxNIup/gnaKUq1Q=;
+        b=tD9ic9VyzQSbZsr3+usJdbzn6jBeZGgu62yH2EqklfdWkTkPsRPQvU9WJ0GnUuaU/t
+         YIJZrjSlHixsEPcaqMkZ7PdmVcy5n1aWH/H5byfayecgwZhnpU8YlLcH/IJYAlk32Cve
+         LcaYSBdZszb4PEMuMKSPf7IcSPVQu64siQEe6uyZhwQN6aT+850cHyJfpfb4cQ9IeLBz
+         R19/ZcEBiLje0LrbIm1s6bOTngS3AJuWVhunr9mHFCDiggzNarqt4Xx2oGuQqdavTRzp
+         /K//8E8KmaIER3D35J5ZWAx7jsh7b2B52/Drja7uy1iB5X00d+yDYTmmsmbXgmlwkP/j
+         LG6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740014397; x=1740619197;
+        d=1e100.net; s=20230601; t=1740014451; x=1740619251;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LUnHgSEounregn05uHGT75nqn32OY7tna6KiTBpIBWU=;
-        b=lpGX9ZT6pvAU7HzJJvhzdAzH/SCCNgWkj/svHrG0vgQdM5xofHuNX+qTcGZ587Xp+V
-         XcXcXBFwovR36jeG4MChvqDvRB1xobg2eSiEzYPyd4+N8QN7f2xaUANBc08sL6Vq2W0I
-         yRB1bJfaVPNTgi1D7NrbMVBW+iz//kJa8PlZFy79Ki722E2dP0KgpKWOk6O90u0gzcPe
-         MTtHw25i1ilE0HFmi2PLBXLId6UxCvbIUfPXAMgEwZZNNjJn0Dq5wuAbvHBAZYOahilC
-         ejtujipnDPDX7yjRNzMYdQWf4qaFmRO8hGxXemg7ob55wBufZqt0KeR0ny7g42MWOe/l
-         SFgw==
-X-Forwarded-Encrypted: i=1; AJvYcCXUMW8rtmkVCi6HjSBowI8cczaRqnHVxUq/EVIzb05tctdbAk2G/FL6aGWmv40f9MVzaWf3Z//ifdw0ipY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2icaqSW05K0nkgp4kFAZ39Z8OGwOp7juuNR+Vxlb6MvhxE7UJ
-	gLSswK1DcOiVoI+bGjisUTIKATye+hkjW5YEC+k9NjQ/wSYPbuMZZQYSVQ+nCJA0892GH3Ustya
-	NcYlZlzYy/Q==
-X-Google-Smtp-Source: AGHT+IGMFdx8KCQOyowQ5w7kdzLzapH1OG1g0TKzCE06XDnQiClJ/IBLT/uScVtfAiDmrUICsMmVFXpFWBIDzA==
-X-Received: from plky4.prod.google.com ([2002:a17:902:7004:b0:220:d272:cfbe])
+        bh=AVw9FAeQI7lCZwFZLEeeKDcfx7NZFxNIup/gnaKUq1Q=;
+        b=EvaQtWWWEUX+UFJpKEStVK5ykZazJLvE9hOaEmYNgIbaSVk/04xahAtQVRW8zYhAfu
+         QXfsc0r2Gil9wRkuKiRMRymWfEwhsjdv83SXSNHF+B2AzJhRztKi5IsjLxoYGC8nm7Jl
+         RsMUsYk+Xoex5QGihsURwGzgNl521VX3r/4VDV8R9ePV/34Dnu0K5X3NnMj019c3IWtS
+         eruCdWe2cyVPOGvzcnc+jl8VoC/EijHFVRUWDSyZJXMEEv6vbjLE79BhO3t1gogDM0LF
+         tJM3RdngDGw5I5ZkEyfHt+nJPE+dahb6ffvIC5IZ8OSQugU6sZqAm/8a3xae4vHhallJ
+         PLsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV/YfNFzznFwoGGVvBeWYBlPkPHYOKrf0xcMfeA401pV2/3QVeJmXCAgGsOeREK22iGddOasbT6Zo6e0hw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLIC9rPgDxKITpb683WMKHqYlT8ZgmWMrj2vmoVSkJS7QZ7nGE
+	0qsKLMMivCcSfI9pBgloMGxVo/FuS9hCpcIaUbhZKXM9sNzDdSTmsTGNKqgt+hfMJODvyZc77/2
+	tht+pywoYEA==
+X-Google-Smtp-Source: AGHT+IELkZhp3dnu1j1hrZyZSNzylf6/SsN58EX3cCnB9zawb1C1aTd09ns9uhXgPWFn3IcwfNEV46XMOLhkTw==
+X-Received: from plbbj7.prod.google.com ([2002:a17:902:8507:b0:221:7c80:aeff])
  (user=yepeilin job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:902:ec89:b0:215:6b4c:89fa with SMTP id d9443c01a7336-221040137ffmr260028595ad.8.1740014397157;
- Wed, 19 Feb 2025 17:19:57 -0800 (PST)
-Date: Thu, 20 Feb 2025 01:19:53 +0000
+ 2002:a17:903:41c3:b0:220:ef79:aca9 with SMTP id d9443c01a7336-221711c8dd8mr102260065ad.53.1740014451316;
+ Wed, 19 Feb 2025 17:20:51 -0800 (PST)
+Date: Thu, 20 Feb 2025 01:20:41 +0000
 In-Reply-To: <cover.1740009184.git.yepeilin@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <cover.1740009184.git.yepeilin@google.com>
 X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
-Message-ID: <58c5d8d587948922f257ca4735b4eb9518a191cd.1740009184.git.yepeilin@google.com>
-Subject: [PATCH bpf-next v3 1/9] bpf/verifier: Factor out atomic_ptr_type_ok()
+Message-ID: <91e99076cf23e75e4831c75b38f8cfa84d7da34b.1740009184.git.yepeilin@google.com>
+Subject: [PATCH bpf-next v3 2/9] bpf/verifier: Factor out check_atomic_rmw()
 From: Peilin Ye <yepeilin@google.com>
 To: bpf@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: Peilin Ye <yepeilin@google.com>, bpf@ietf.org, Xu Kuohai <xukuohai@huaweicloud.com>, 
@@ -93,57 +93,116 @@ Cc: Peilin Ye <yepeilin@google.com>, bpf@ietf.org, Xu Kuohai <xukuohai@huaweiclo
 	Benjamin Segall <bsegall@google.com>, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Factor out atomic_ptr_type_ok() as a helper function to be used later.
+Currently, check_atomic() only handles atomic read-modify-write (RMW)
+instructions.  Since we are planning to introduce other types of atomic
+instructions (i.e., atomic load/store), extract the existing RMW
+handling logic into its own function named check_atomic_rmw().
+
+Remove the @insn_idx parameter as it is not really necessary.  Use
+'env->insn_idx' instead, as in other places in verifier.c.
 
 Signed-off-by: Peilin Ye <yepeilin@google.com>
 ---
- kernel/bpf/verifier.c | 26 +++++++++++++++++++++-----
- 1 file changed, 21 insertions(+), 5 deletions(-)
+ kernel/bpf/verifier.c | 53 +++++++++++++++++++++++--------------------
+ 1 file changed, 29 insertions(+), 24 deletions(-)
 
 diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index e57b7c949860..21658bd5e6d8 100644
+index 21658bd5e6d8..63d810bbc26e 100644
 --- a/kernel/bpf/verifier.c
 +++ b/kernel/bpf/verifier.c
-@@ -6194,6 +6194,26 @@ static bool is_arena_reg(struct bpf_verifier_env *env, int regno)
- 	return reg->type == PTR_TO_ARENA;
+@@ -7615,28 +7615,12 @@ static int check_mem_access(struct bpf_verifier_env *env, int insn_idx, u32 regn
+ static int save_aux_ptr_type(struct bpf_verifier_env *env, enum bpf_reg_type type,
+ 			     bool allow_trust_mismatch);
+ 
+-static int check_atomic(struct bpf_verifier_env *env, int insn_idx, struct bpf_insn *insn)
++static int check_atomic_rmw(struct bpf_verifier_env *env,
++			    struct bpf_insn *insn)
+ {
+ 	int load_reg;
+ 	int err;
+ 
+-	switch (insn->imm) {
+-	case BPF_ADD:
+-	case BPF_ADD | BPF_FETCH:
+-	case BPF_AND:
+-	case BPF_AND | BPF_FETCH:
+-	case BPF_OR:
+-	case BPF_OR | BPF_FETCH:
+-	case BPF_XOR:
+-	case BPF_XOR | BPF_FETCH:
+-	case BPF_XCHG:
+-	case BPF_CMPXCHG:
+-		break;
+-	default:
+-		verbose(env, "BPF_ATOMIC uses invalid atomic opcode %02x\n", insn->imm);
+-		return -EINVAL;
+-	}
+-
+ 	if (BPF_SIZE(insn->code) != BPF_W && BPF_SIZE(insn->code) != BPF_DW) {
+ 		verbose(env, "invalid atomic operand size\n");
+ 		return -EINVAL;
+@@ -7698,12 +7682,12 @@ static int check_atomic(struct bpf_verifier_env *env, int insn_idx, struct bpf_i
+ 	/* Check whether we can read the memory, with second call for fetch
+ 	 * case to simulate the register fill.
+ 	 */
+-	err = check_mem_access(env, insn_idx, insn->dst_reg, insn->off,
++	err = check_mem_access(env, env->insn_idx, insn->dst_reg, insn->off,
+ 			       BPF_SIZE(insn->code), BPF_READ, -1, true, false);
+ 	if (!err && load_reg >= 0)
+-		err = check_mem_access(env, insn_idx, insn->dst_reg, insn->off,
+-				       BPF_SIZE(insn->code), BPF_READ, load_reg,
+-				       true, false);
++		err = check_mem_access(env, env->insn_idx, insn->dst_reg,
++				       insn->off, BPF_SIZE(insn->code),
++				       BPF_READ, load_reg, true, false);
+ 	if (err)
+ 		return err;
+ 
+@@ -7713,13 +7697,34 @@ static int check_atomic(struct bpf_verifier_env *env, int insn_idx, struct bpf_i
+ 			return err;
+ 	}
+ 	/* Check whether we can write into the same memory. */
+-	err = check_mem_access(env, insn_idx, insn->dst_reg, insn->off,
++	err = check_mem_access(env, env->insn_idx, insn->dst_reg, insn->off,
+ 			       BPF_SIZE(insn->code), BPF_WRITE, -1, true, false);
+ 	if (err)
+ 		return err;
+ 	return 0;
  }
  
-+/* Return false if @regno contains a pointer whose type isn't supported for
-+ * atomic instruction @insn.
-+ */
-+static bool atomic_ptr_type_ok(struct bpf_verifier_env *env, int regno,
-+			       struct bpf_insn *insn)
++static int check_atomic(struct bpf_verifier_env *env, struct bpf_insn *insn)
 +{
-+	if (is_ctx_reg(env, regno))
-+		return false;
-+	if (is_pkt_reg(env, regno))
-+		return false;
-+	if (is_flow_key_reg(env, regno))
-+		return false;
-+	if (is_sk_reg(env, regno))
-+		return false;
-+	if (is_arena_reg(env, regno))
-+		return bpf_jit_supports_insn(insn, true);
-+
-+	return true;
++	switch (insn->imm) {
++	case BPF_ADD:
++	case BPF_ADD | BPF_FETCH:
++	case BPF_AND:
++	case BPF_AND | BPF_FETCH:
++	case BPF_OR:
++	case BPF_OR | BPF_FETCH:
++	case BPF_XOR:
++	case BPF_XOR | BPF_FETCH:
++	case BPF_XCHG:
++	case BPF_CMPXCHG:
++		return check_atomic_rmw(env, insn);
++	default:
++		verbose(env, "BPF_ATOMIC uses invalid atomic opcode %02x\n",
++			insn->imm);
++		return -EINVAL;
++	}
 +}
 +
- static u32 *reg2btf_ids[__BPF_REG_TYPE_MAX] = {
- #ifdef CONFIG_NET
- 	[PTR_TO_SOCKET] = &btf_sock_ids[BTF_SOCK_TYPE_SOCK],
-@@ -7651,11 +7671,7 @@ static int check_atomic(struct bpf_verifier_env *env, int insn_idx, struct bpf_i
- 		return -EACCES;
- 	}
+ /* When register 'regno' is used to read the stack (either directly or through
+  * a helper function) make sure that it's within stack boundary and, depending
+  * on the access type and privileges, that all elements of the stack are
+@@ -19187,7 +19192,7 @@ static int do_check(struct bpf_verifier_env *env)
+ 			enum bpf_reg_type dst_reg_type;
  
--	if (is_ctx_reg(env, insn->dst_reg) ||
--	    is_pkt_reg(env, insn->dst_reg) ||
--	    is_flow_key_reg(env, insn->dst_reg) ||
--	    is_sk_reg(env, insn->dst_reg) ||
--	    (is_arena_reg(env, insn->dst_reg) && !bpf_jit_supports_insn(insn, true))) {
-+	if (!atomic_ptr_type_ok(env, insn->dst_reg, insn)) {
- 		verbose(env, "BPF_ATOMIC stores into R%d %s is not allowed\n",
- 			insn->dst_reg,
- 			reg_type_str(env, reg_state(env, insn->dst_reg)->type));
+ 			if (BPF_MODE(insn->code) == BPF_ATOMIC) {
+-				err = check_atomic(env, env->insn_idx, insn);
++				err = check_atomic(env, insn);
+ 				if (err)
+ 					return err;
+ 				env->insn_idx++;
 -- 
 2.48.1.601.g30ceb7b040-goog
 
