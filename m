@@ -1,104 +1,96 @@
-Return-Path: <linux-kernel+bounces-523260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3A4FA3D472
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:19:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97D57A3D473
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:19:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CD7D165570
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:19:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5B1D189466A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:19:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4331B1C3316;
-	Thu, 20 Feb 2025 09:19:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 318221C3C1F;
+	Thu, 20 Feb 2025 09:19:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="j0iRhFnH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="T/xVVx0m"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA8D8BF8;
-	Thu, 20 Feb 2025 09:19:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 050111BC09A;
+	Thu, 20 Feb 2025 09:19:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740043157; cv=none; b=H6/GXBgcoyd/FxxSUZ06XsbPjpPTXb+Sj1G4U2VCY0aqSzWuIC+Ve9AgQ3G+HaVV/+O0RvDXmb61VgZWeTvP5QvuvDGAiSb0rMoCF3cNnB6jMKViSVQvFIYbO9KVliB+UiI3iJWnZandcoSFjvLcjJCNxlAn3fZ8BcRzeVZuNms=
+	t=1740043174; cv=none; b=uNFVPf7t4l+DFvIpACAuiJtVd5qfmPas2gRITIaMtwd1sJtKUqNJ8p0Zkj9dRFqq9X0bGoIAaTjOBQ4+y3USIPXuwRcezCsxgFNFHmXbRt7LFdpVDalMuxdikmXocYUNTkYkHoOxYNAKIZ4Y32GjEQ3kok8KrNFznP80sRoOre8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740043157; c=relaxed/simple;
-	bh=l7VM8Qnv+yvJFBEiwVX+4DYl4O1wFRtSVAwgp1c4pbo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZkFDissCVjmEuMUD1DQfLWcbCcseX9TG7FsHpj8sooufk5jwp9FWeALZhgIskx7oNbo5gI3quPiF0sLB2g4cqD6PiWFDkHwcs3HQK+BjeucEo2tpCot4XgijI2HQwVIX2MV0Ipwfd+L75eo/+p1ILwfYJT1zNv45AKlO2i9lfC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=j0iRhFnH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1461C4CED1;
-	Thu, 20 Feb 2025 09:19:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1740043155;
-	bh=l7VM8Qnv+yvJFBEiwVX+4DYl4O1wFRtSVAwgp1c4pbo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j0iRhFnH5U63RClJ+XpfSJ/cDrqGjeV3jKm1nfl8CtTh4KNiGnnSzPm3YUv74M7h6
-	 0EZrn+u3g2Xt5DDIh7NxiF3+tRtxszHbeZK09iTm7sYLh6JoJEj+qVod1k2jUwm+uc
-	 ivkknIJKacAclxtgxFKHp83ef6TLvYY3yF08ST2M=
-Date: Thu, 20 Feb 2025 10:19:12 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Dave Penkler <dpenkler@gmail.com>
-Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/17] staging: gpib: Console messaging cleanup
-Message-ID: <2025022050-ramrod-dislodge-cba1@gregkh>
-References: <20250214114708.28947-1-dpenkler@gmail.com>
- <2025021923-leverage-endpoint-c06e@gregkh>
- <Z7buAACkugsEOa13@egonzo>
+	s=arc-20240116; t=1740043174; c=relaxed/simple;
+	bh=3rP7TAb0u+ZRptaXKAknV42oirdWm6E+vqJLe99bC1s=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XLTWQAH7CfAafAB6eHxW107rofd6TLJOwwM9uy74vz0/XwQniQ0eNzr/HgordxZPFcVY4wrUPes+WIuCAJ3/olUVIeoqjwu7CmP6BWciw7qaYdmar1yobLLQIVY8QqD/+i/cJ/j0LzqlzZMwLlOBxnQ83uQYM/C63jGEeo4R5DI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=T/xVVx0m; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id CD1754328A;
+	Thu, 20 Feb 2025 09:19:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740043170;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3rP7TAb0u+ZRptaXKAknV42oirdWm6E+vqJLe99bC1s=;
+	b=T/xVVx0mGjOl7ELVAzCD5pSvFSXkMjNZa7402DIZ+9ZILP+LVehVA4XrnACrPWtXcOtH8e
+	BWnDrqejayE9WjADFyPpdMU2AAZiaUnf7rJQ4e84DFY4pq08D9dlAiaTaZUWiVoU2vYtX0
+	YAqM4y8ObtkYLTLP1Y/4/R8JF9ykSXG5UtnCIzq56CgR3Y8Fty6pHQL/9vlJDo0B7/eBSo
+	260n94rDo7w8kuuaSG6/qNNErRQ9lcyvg9lG+aXpBkXicV/Fk/anF2amkN0dtTIkWyK8mr
+	vUnR7RZcwHClAF58U8z4mkTC0BYZOtkezRvkZ4F69+qCXCIaEs7F3wjc1qlKdg==
+Date: Thu, 20 Feb 2025 10:19:25 +0100
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Dimitri Fedrau <dima.fedrau@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+ Russell King <linux@armlinux.org.uk>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Niklas =?UTF-8?B?U8O2?=
+ =?UTF-8?B?ZGVybHVuZA==?= <niklas.soderlund+renesas@ragnatech.se>, Gregor
+ Herburger <gregor.herburger@ew.tq-group.com>, Stefan Eichenberger
+ <eichest@gmail.com>, Geert Uytterhoeven <geert@linux-m68k.org>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2 0/2] net: phy: marvell-88q2xxx: Enable
+ temperature measurement in probe again
+Message-ID: <20250220101925.5cd1d9d3@kmaincent-XPS-13-7390>
+In-Reply-To: <20250220-marvell-88q2xxx-hwmon-enable-at-probe-v2-0-78b2838a62da@gmail.com>
+References: <20250220-marvell-88q2xxx-hwmon-enable-at-probe-v2-0-78b2838a62da@gmail.com>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z7buAACkugsEOa13@egonzo>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeiieejlecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthhqredtredtjeenucfhrhhomhepmfhorhihucforghinhgtvghnthcuoehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefguddtfeevtddugeevgfevtdfgvdfhtdeuleetffefffffhffgteekvdefudeiieenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghlohepkhhmrghinhgtvghnthdqigfrufdqudefqdejfeeltddpmhgrihhlfhhrohhmpehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedugedprhgtphhtthhopeguihhmrgdrfhgvughrrghusehgmhgrihhlrdgtohhmpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohephhhkrghllhifvghithdusehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugiesrghrmhhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopegur
+ ghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomh
+X-GND-Sasl: kory.maincent@bootlin.com
 
-On Thu, Feb 20, 2025 at 09:55:28AM +0100, Dave Penkler wrote:
-> On Wed, Feb 19, 2025 at 04:48:39PM +0100, Greg KH wrote:
-> > On Fri, Feb 14, 2025 at 12:46:51PM +0100, Dave Penkler wrote:
-> > > The GPIB drivers printed a lot of spurious console messages. This
-> > > was linked to the level of code maturity, often using console
-> > > messages for debug.
-> > > 
-> > > This patch set cleans up the console messaging in the spirit of Greg's
-> > > recommendation: "When drivers are successful, they should be quiet"
-> > > 
-> > > All pr_info's have been removed except for one which is in the module
-> > > init of the common core driver indicating that the GPIB subsystem is
-> > > initialized.
-> > > 
-> > > All dev_info's have been removed or changed to dev_dbg except for the
-> > > attach and probe messages in the agilent and ni usb drivers. This is
-> > > to facilitate the creation of config and udev scripts to ensure that a
-> > > particular usb device is systematically attached to the same gpib
-> > > device file.
-> > > 
-> > > All custom debug and tty logging has been removed or replaced with
-> > > dev_dbg.
-> > > 
-> > > Error messages where the user can figure out what went wrong with
-> > > errno have also been removed, particularly timeouts and interrupts
-> > > during reads and writes which can occur quite frequently uneccessarily
-> > > cluttering up the console log.
-> > > 
-> > > The patches are 1 per driver.
-> > 
-> > All but 4 of these applied, can you rebase and resend the remaining
-> > ones?
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> Sure, thanks.
-> (Could only find 3 that were not applied, will send those)
+On Thu, 20 Feb 2025 09:11:10 +0100
+Dimitri Fedrau <dima.fedrau@gmail.com> wrote:
 
-Sorry, might have been three, my fault, it was a lot of me typing 'git
-am --skip'  :)
+> Patchset fixes these:
+> - Enable temperature measurement in probe again
+> - Prevent reading temperature with asserted reset
+>=20
+> Signed-off-by: Dimitri Fedrau <dima.fedrau@gmail.com>
 
-thanks,
+Reviewed-by: Kory Maincent <kory.maincent@bootlin.com>
 
-greg k-h
+Thank you!
+
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
