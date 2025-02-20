@@ -1,122 +1,152 @@
-Return-Path: <linux-kernel+bounces-523479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DC86A3D767
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:53:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D72DA3D75C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:52:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 855513AB470
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:51:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C2321893D1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:52:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C59601F0E2C;
-	Thu, 20 Feb 2025 10:51:43 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9275A1F1510
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 10:51:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5731EE7B6;
+	Thu, 20 Feb 2025 10:52:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VABwMt9B"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43DA11C6FE9
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 10:52:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740048703; cv=none; b=D/Xni6nc+neiRszR7C3/QeCDDmnTGl9kEcqJgAobWxCyvbtU2TjW1y52KwnPpFHZwTsHyEa5HIH4+5BwEW32WPLjru1PxcikypaFKvbhAUIj3eRKrBIF7XtcEIq0qL+e8Wfud/mrqVs4T64NF/mz5LpMgECXWtmv1DDGmnjpZ20=
+	t=1740048757; cv=none; b=XqMi7ejhem0/4fGseiV/pSUDKpZ/76ijGBi3LKXj0VNAkjpiKMafDStEc1zjv2NYPVffbCFXnFoE0+wTOkOLPY3Wtwb7cWgPTPW16EHKyMo6X/R6J3gwck47Zo+5CQEr5kqGQFXvI1vOo8//nX9aiS459rbUQHGFig5LfC2hL4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740048703; c=relaxed/simple;
-	bh=2kDN3nPBO25fmfYMhJbafNSKD40Rzjf4VVY+oJncUCs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WFdiyiTSWPzliaM51dbM1St0JviL8AlRpQ07HSHFxKpeH0GpQ7fCN23eKagyVXWzJYtsce+ETwhU+PfZft25bJpLwDyvSMlsOd3G4nCIqkxX9+1zaKzXHWxKx10NBRUqR5X2eqyoM0PyfLcTvzM0ukv+Y3sYrQJaIonsqbgfsis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-3c9ff7000001d7ae-92-67b709367d78
-Date: Thu, 20 Feb 2025 19:51:29 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: Hillf Danton <hdanton@sina.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	kernel_team@skhynix.com
-Subject: Re: [RFC PATCH v12 00/26] LUF(Lazy Unmap Flush) reducing tlb numbers
- over 90%
-Message-ID: <20250220105129.GA54095@system.software.com>
-References: <20250220052027.58847-1-byungchul@sk.com>
- <20250220103223.2360-1-hdanton@sina.com>
+	s=arc-20240116; t=1740048757; c=relaxed/simple;
+	bh=d0FbFIMlbroY4FrF/jdgx1U9OHINxOclg6SrAZCmkgI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pKoJlVMoHOMq5C7e6d+A6Wxw2B/lbX207pn/IrqCboeX4LPaVew/xzqdoRN19EFcejI5pUjSUGSz9XSZg5aMN6aSKW5gO29WS+OTbtXFO9v5n3CUqOIUinBmr7eZgsyMC5cX2IyYUxtCHaX87HFInBjnDkDmo0PH+YeIgj9CjXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VABwMt9B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBFF6C4CEE4
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 10:52:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740048756;
+	bh=d0FbFIMlbroY4FrF/jdgx1U9OHINxOclg6SrAZCmkgI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=VABwMt9BUXJ4AQs2Rl8pJx02BdBBO+O3ObO7ydFfspr5JEvjS/dr+1RLj9ftDoeb4
+	 scySqoyOmEPDT7Hq/j4tdN1yvPOVZHaPTejLmh2yneKroKK/SBPfzi1i/tBut+FOGP
+	 WW6UBLB+Z4coRQWVDtvfeKFRJ7w5cvNFuGfumqibetAWwOLbuwLJk/mTpF8l/z9eN3
+	 9iKk1EsnrsdOzjblm2mUyJf2/nHNIL92JPwsgP8VFahVxtrombp62CMG1qhUt0G7t/
+	 LM7t4PhN5utb2hd2zxOyJhxNvcPFj4T5irAiauAFfxdBf/y3DuvwjxmYnZDZgY7iRI
+	 ubatcmpAh4GdQ==
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-54529eeb38aso638546e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 02:52:36 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWbN9//s0fzIQLpJTCHMMI0TRyX/IqOYM/2+oB328tWV3UbhIQOO9Pubh0QC2O8IRCICbiE8TUlFo08Z4Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzc3rK+R/nXCbSYKTdOa5ToUlluXJD3I67lCRG+wRCJwBgjnKJU
+	+3Y/rkeQ8Zd+3XdmznPHG9TiIfLSDhEK0PAnNCYHc6vX86SxAGhFPIwVt060NUYuZcCYaik6Twv
+	4sGj4eBWb2fSEzKXo1AlNwZBt/PQ=
+X-Google-Smtp-Source: AGHT+IGkbFTpetv+pCCWNPc+krf9Mb+HkkaVVE8MfCzt6odv9tu918rBtGft7I72ftRi55cK45u/U1h5E74/7XcmbQA=
+X-Received: by 2002:a05:6512:281b:b0:545:1d96:d6f7 with SMTP id
+ 2adb3069b0e04-5462ef197d6mr3259244e87.32.1740048754912; Thu, 20 Feb 2025
+ 02:52:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250220103223.2360-1-hdanton@sina.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOLMWRmVeSWpSXmKPExsXC9ZZnka4Z5/Z0g0fbNC0O/HzOYnF51xw2
-	i3tr/rM6MHts+jSJ3WPSC3ePz5vkApijuGxSUnMyy1KL9O0SuDL+bPzEXHBLqOJs2wq2BsZN
-	fF2MnBwSAiYSFw+cZYWxX9/8B2azCKhKfNuxngnEZhNQl7hx4ycziC0ioCzReWEWWA2zgL/E
-	hFsbWEBsYYEIiSeHToDV8wpYSJxceg6sXkggQeL11P3sEHFBiZMzn7BA9GpJ3Pj3EqieA8iW
-	llj+jwMkzClgKtF4/ijYeFGgVQe2HQcq4QI67SerxM7rEHMkBCQlDq64wTKBUWAWkrGzkIyd
-	hTB2ASPzKkahzLyy3MTMHBO9jMq8zAq95PzcTYzA4FxW+yd6B+OnC8GHGAU4GJV4eGe0bksX
-	Yk0sK67MPcQowcGsJMLbVr8lXYg3JbGyKrUoP76oNCe1+BCjNAeLkjiv0bfyFCGB9MSS1OzU
-	1ILUIpgsEwenVANj7GHHQAlevSimp4vOvVvvZjXv0xRGuedWIdHX8yW6ahnaWd8dnXPOPza6
-	6o7CfM2qCyrC26pm5+y/98+Pee2jXQayu7jWevu3616Vdm+auNhI9uw2LdHJf9MvTWMpVHr5
-	Lzj54mSuuJj5N/cvfya3yEz4dOl6+bQzt2YnFFa2r7eR8VZncctQYinOSDTUYi4qTgQAPtGW
-	zEoCAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHLMWRmVeSWpSXmKPExsXC5WfdrGvGuT3d4NZzRYsDP5+zWByee5LV
-	4vKuOWwW99b8Z3Vg8dj0aRK7x6QX7h6LX3xg8vi8SS6AJYrLJiU1J7MstUjfLoEr48/GT8wF
-	t4QqzratYGtg3MTXxcjJISFgIvH65j9WEJtFQFXi2471TCA2m4C6xI0bP5lBbBEBZYnOC7PA
-	apgF/CUm3NrAAmILC0RIPDl0AqyeV8BC4uTSc2D1QgIJEq+n7meHiAtKnJz5hAWiV0vixr+X
-	QPUcQLa0xPJ/HCBhTgFTicbzR8HGiwKtOrDtONMERt5ZSLpnIemehdC9gJF5FaNIZl5ZbmJm
-	jqlecXZGZV5mhV5yfu4mRmCoLav9M3EH45fL7ocYBTgYlXh4Hzzemi7EmlhWXJl7iFGCg1lJ
-	hLetfku6EG9KYmVValF+fFFpTmrxIUZpDhYlcV6v8NQEIYH0xJLU7NTUgtQimCwTB6dUA6ND
-	xMPJh/P5XrDeMbBmajbhsvIP26z6uPpLU9HrU3/q7MRWtaWLX78WeXpTa6r73naO8Pn6f7l2
-	2ffrcRUd/Hy9ZLrsLKZjeqZHflkp/OORmfxZi0fy5xZO+TudR85aLb13TF79yhIP98QdU97l
-	xk5ubxe6+Pn+xRsmNS1FAnv5FFS3r3kv91qJpTgj0VCLuag4EQB+4dwpMQIAAA==
-X-CFilter-Loop: Reflected
+References: <20250123190747.745588-1-brgerst@gmail.com> <Z7RRZ0jdqsrADMm0@gmail.com>
+ <CAFULd4Z_QoOLKCOawyeFtRe6V4+oaaGxfQxav9dS-Di-Ne7tfw@mail.gmail.com>
+ <Z7XE0P6ZFHxtlYXw@gmail.com> <CAMzpN2gyhEnYsimxLhLNPc4HTpVdRGTiBfm9pXiFTL6_3-O=sg@mail.gmail.com>
+ <CAFULd4ZQ8VoKvQ7aOgcfeLNROM4-rDYn=wHo=FYMO8ZkuQeSAQ@mail.gmail.com>
+ <CAMj1kXFgfbLqVkcs2T8QHRKKJ0X7+mLd-bNjricfd_niY-dxRA@mail.gmail.com> <CAFULd4aYjnWzWaN8WA0LetN1Li7F8MY3qnxbhY8=tNFxqHCP1w@mail.gmail.com>
+In-Reply-To: <CAFULd4aYjnWzWaN8WA0LetN1Li7F8MY3qnxbhY8=tNFxqHCP1w@mail.gmail.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Thu, 20 Feb 2025 11:52:23 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXGG4J76o17d=e4jv-5jjzcSGyZdKRcNNB17SkCqD6+8qQ@mail.gmail.com>
+X-Gm-Features: AWEUYZkBvTy0wLkCBwjYlf_bns_v1P4pzDzo14JTk7nfgZmLh2JVd0DO1S9-P0o
+Message-ID: <CAMj1kXGG4J76o17d=e4jv-5jjzcSGyZdKRcNNB17SkCqD6+8qQ@mail.gmail.com>
+Subject: Re: [PATCH v6 00/15] x86-64: Stack protector and percpu improvements
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: Brian Gerst <brgerst@gmail.com>, Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org, 
+	x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Borislav Petkov <bp@alien8.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 20, 2025 at 06:32:22PM +0800, Hillf Danton wrote:
-> On Thu, 20 Feb 2025 14:20:01 +0900 Byungchul Park <byungchul@sk.com>
-> > To check luf's stability, I ran a heavy LLM inference workload consuming
-> > 210GiB over 7 days on a machine with 140GiB memory, and decided it's
-> > stable enough.
-> > 
-> > I'm posting the latest version so that anyone can try luf mechanism if
-> > wanted by any chance.  However, I tagged RFC again because there are
-> > still issues that should be resolved to merge to mainline:
-> > 
-> >    1. Even though system wide total cpu time for TLB shootdown is
-> >       reduced over 95%, page allocation paths should take additional cpu
-> >       time shifted from page reclaim to perform TLB shootdown.
-> > 
-> >    2. We need luf debug feature to detect when luf goes wrong by any
-> >       chance.  I implemented just a draft version that checks the sanity
-> >       on mkwrite(), kmap(), and so on.  I need to gather better ideas
-> >       to improve the debug feature.
-> > 
-> > ---
-> > 
-> > Hi everyone,
-> > 
-> > While I'm working with a tiered memory system e.g. CXL memory, I have
-> > been facing migration overhead esp. tlb shootdown on promotion or
-> > demotion between different tiers.  Yeah..  most tlb shootdowns on
-> > migration through hinting fault can be avoided thanks to Huang Ying's
-> > work, commit 4d4b6d66db ("mm,unmap: avoid flushing tlb in batch if PTE
-> > is inaccessible").
-> > 
-> > However, it's only for migration through hinting fault.  I thought it'd
-> > be much better if we have a general mechanism to reduce all the tlb
-> > numbers that we can apply to any unmap code, that we normally believe
-> > tlb flush should be followed.
-> > 
-> > I'm suggesting a new mechanism, LUF(Lazy Unmap Flush), that defers tlb
-> > flush until folios that have been unmapped and freed, eventually get
-> > allocated again.  It's safe for folios that had been mapped read-only
-> > and were unmapped, as long as the contents of the folios don't change
-> > while staying in pcp or buddy so we can still read the data through the
-> > stale tlb entries.
+On Thu, 20 Feb 2025 at 11:46, Uros Bizjak <ubizjak@gmail.com> wrote:
+>
+> On Thu, Feb 20, 2025 at 11:05=E2=80=AFAM Ard Biesheuvel <ardb@kernel.org>=
+ wrote:
 > >
-> Given pcp or buddy, you are opening window for use after free which makes
-> no sense in 99% cases.
+> > Hi Uros,
+> >
+> > On Thu, 20 Feb 2025 at 10:51, Uros Bizjak <ubizjak@gmail.com> wrote:
+> > >
+> > > On Wed, Feb 19, 2025 at 2:18=E2=80=AFPM Brian Gerst <brgerst@gmail.co=
+m> wrote:
+> > > >
+> > > > On Wed, Feb 19, 2025 at 6:47=E2=80=AFAM Ingo Molnar <mingo@kernel.o=
+rg> wrote:
+> > > > >
+> > > > > * Uros Bizjak <ubizjak@gmail.com> wrote:
+> > > > >
+> > > > > > I wonder if there would be any benefit if stack canary is put i=
+nto
+> > > > > > struct pcpu_hot?
+> > > > >
+> > > > > It should definitely be one of the hottest data structures on x86=
+, so
+> > > > > moving it there makes sense even if it cannot be measured explici=
+tly.
+> > > > >
+> > > >
+> > > > It would have to be done with linker tricks, since you can't make t=
+he
+> > > > compiler use a struct member directly.
+> > >
+> >
+> > Interesting take. I'd have tried to put the canary at offset 0x0, and
+> > simply use pcpu_hot as the guard symbol.
+> >
+> >
+> > > It boots and runs without problems.
+> > >
+> > > However, when building the kernel, I get "Absolute relocations
+> > > present" warning with thousands of locations:
+> > >
+...
+> >
+> > The warning is about the type of __ref_stack_chk_guard, not about the
+> > type of the relocation.
+>
+> Thanks, I got distracted by the text of the warning that mentions relocat=
+ion.
+>
+> > $ nm vmlinux |grep \\s__ref_sta
+> > ffffffff8350c620 A __ref_stack_chk_guard
+> >
+> > Without your patch:
+> >
+> > $ nm vmlinux |grep \\s__ref_sta
+> > ffffffff834fba10 D __ref_stack_chk_guard
+>
+> Is this a problem in our specific case?
 
-It's kinda 'use(= read only) after free' but luf ensures the data of the
-interesting pages doesn't change.  That's what luf works on.
+I don't think so - the whole notion of absolute ELF symbols is rather
+flaky IME, so I don't think we should be pedantic here.
 
-	Byungchul
+> We can list the symbol in arch/x86/tools/relocs.c to quiet the
+> warning, but I would need some help with auditing the symbol itself.
+>
+> OTOH, we could simply do it your way and put stack canary at the
+> beginning of pcpu_hot structure, with
+>
+> static_assert(offsetof(struct pcpu_hot, stack_canary) =3D=3D 0));
+>
+> for good measure.
+
+I think this would be the most straight-forward if there are no other
+locality concerns this might interfere with.
 
