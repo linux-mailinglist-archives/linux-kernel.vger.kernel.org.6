@@ -1,147 +1,92 @@
-Return-Path: <linux-kernel+bounces-524018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7120A3DE10
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:16:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 395F1A3DE0B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:15:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BB02188997F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:14:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 508A73B1018
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:14:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B061B1FA14B;
-	Thu, 20 Feb 2025 15:14:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 126AB1FBEA7;
+	Thu, 20 Feb 2025 15:14:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m4Eu4rpH"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RJndwkrS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A692F1FAC30
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 15:14:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CB901D54CF;
+	Thu, 20 Feb 2025 15:14:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740064461; cv=none; b=reHdnOvOaGSfc3ZkC4LQfCjrfNGn126XJVJg7qBIg3PWap9mIc8mqOtHRqmLcKgDn44WFNFI9rWpvcGzzMD8ueVJjqPK0J7CEgX9fd4iIM0jkMVmEi/bZyClel1gya4A7K8c4NvOrI0lWsCpap25JZ1Yd3h1AaJC118F4f0kQR4=
+	t=1740064486; cv=none; b=akuxeEawN3YJ3QkOu58g53eZnTEl3OWvmPqQK5aSCLE8czbEP9/QSkFKzniEU5FjeWLbMR/qpV5o4iAIXiV51Xc8nS25Iw0JGbyZbCv4h1XdFDFsMsqfYzZ4pgUVjJHagzPQu8sb7+Rz4fb/v93X9ZyN6AK/E70O9XFfoAv+uhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740064461; c=relaxed/simple;
-	bh=9eaCaq5y9D1r80+Z5+qGqUat+koJb6OIj9wcd+uQEiw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lj+Flnu8znBnDfoRNWeajjlR/Tj9ETAlvRQ7sqEHBuz+mvI+bby5PTGuJy5HqRQ3g7hEu4kFJmpBaPW/du31E2CDuiyLkUEB8A6uDAyTDEtCNEhHN44uh52LyqL5GHzhobyUhbhdMg/yw/KFcTegGjJ4k+PSAdAM0haCv1sH+F0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m4Eu4rpH; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-220d39a5627so16712245ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 07:14:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740064459; x=1740669259; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sqQpBY4aFk+b5TA2ZFF7XiX758vlnpBYffrh3Zwz7wU=;
-        b=m4Eu4rpHIU3sBybfKgfO30YkRDpuRsDF2BeERg4d8JL3oNBo+XAtwpNiL+U7oy0Sqo
-         BTeswGC8T/GFzOmTZ7NCWaVIlvEppVwzajfq8+iCkmxUJhQHnI3GMjhlxBGCq1O4AvYG
-         zgz6gyow6/IePWUznE9QAKrC+lZYOrTM1Id+px9FOMZdNlxRlZ7g4UPcAzTLm3NHxsyL
-         +MwtAatL+yAWh8gnLVGc6awKwUZkqJivEDhMZtMvRPobOgjyM3KWVMVY6/NJyef0UCVC
-         2F6OXoLs0iI6OzD8pazH+RVlen0Z23SJsZK2e7/Q7aiVxuWnbR5IV/ZRA+JRNzLF3Ojw
-         pHqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740064459; x=1740669259;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sqQpBY4aFk+b5TA2ZFF7XiX758vlnpBYffrh3Zwz7wU=;
-        b=J5FCBRUrCX8NqXm5faAH7dBmaRdSbL1+bBi4QnN37ypKsDjmlXEqhPn/R7j96a2Syf
-         iJA1glhU/3oDNv/LbjTDhZHhcqLAZWHjpPQUqg9p5dfG4b7ny/ehXd6lR6sK7x2ocSbh
-         9bQ+kvZLXQUiM5RKKtAqcCOVp97lM0M6Wy5uW+fKDninFYGyTtaV6GWgAJk2FMvmSect
-         q+8tpHGBAa/wSXx5i+gb5u7GI/vR8N0tJpEVtOWdvtPyHm2pQLXW/4lowfmreGD4labM
-         6zUpp0Wif9CwLeahcQmmx+IcVhNwzMBr+PlJnTIPZ1usKc1fL6iAN+UzyOhaHeQ2ZVBF
-         vSDQ==
-X-Gm-Message-State: AOJu0YwZB6HJPxFn70yvCkkJ1dXVg7gYWOOqRHU32z9UF2gev8UUWrQs
-	CiC4jj9p7Vtid0Oww2mqA8O6wjbnYmD/1L68f1rk/yFag0cqh6e5
-X-Gm-Gg: ASbGncsD5cFqumZ8s2VxRZq+3d98FDAfRiFE5kS7oNAKuMz3Z037trKUlZ9yukxsPGr
-	5pO+/AancoEk7m+RmcmlRs253wdLoJez6qFSWMQfKw2p2yNuy24r29V/FPcHCUKiiecVdEZMu4E
-	sz99eroSp12ZUT9f26usoanQvrv2m+T1WhphVgeKdiSzILFyxoAaYI8beQWG7nAgm+hUEXRUCWI
-	twMG1/SxtCO9p54oGOsVRJ/5pFuc7mYSeIFplVJJHnHOtFjxLRFlxxFD7+0lml+OmqJ+6pXUX+1
-	IS9pcgBOimkqE9CBz5rg7L+qfQptyixwVcWfh/g=
-X-Google-Smtp-Source: AGHT+IEBhHNkErGPHvUIGRDjQRfvuODqABxRCX5C2SR4N1tK6tuSLh2jC3rHExY/Aml3jqmJl8PUuw==
-X-Received: by 2002:a17:903:2f8e:b0:221:2f4:5446 with SMTP id d9443c01a7336-22190639e7cmr44995675ad.25.1740064458775;
-        Thu, 20 Feb 2025 07:14:18 -0800 (PST)
-Received: from ritvikos.localdomain ([49.36.192.37])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d5349389sm123310255ad.42.2025.02.20.07.14.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 07:14:18 -0800 (PST)
-Received: by ritvikos.localdomain (Postfix, from userid 1000)
-	id 1D910E7C4B5; Thu, 20 Feb 2025 20:44:15 +0530 (IST)
-From: ritvikfoss@gmail.com
-To: linux-kernel@vger.kernel.org,
-	ricardo@marliere.net
-Cc: skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linuxfoundation.org
-Subject: [PATCH v2] scripts/checksyscalls.sh: Add usage message, fix -Wno-error
-Date: Thu, 20 Feb 2025 20:44:14 +0530
-Message-ID: <20250220151414.8003-1-ritvikfoss@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250220105940.5241-1-ritvikfoss@gmail.com>
-References: <20250220105940.5241-1-ritvikfoss@gmail.com>
+	s=arc-20240116; t=1740064486; c=relaxed/simple;
+	bh=Jr4RZS/lLGSYYUJMf0yeHvt9Tqeg9FKGi1tgzkVvkgg=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=mkYciYDAwhWtzhLDvv6JJF+L5Q0B2tm+aewrW2x9w4QNCl7mexMxmEtKNelkH+3wdqmO8hCw2XMU6AcEcexgHYI/3ky9DMfAQI3kpIbYRXtFwm5F/FmxHPlzlJIWhpEOm+nmjxcH0sbRzM3/kSuouac/xuFVOA4ek182dtTD1FM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RJndwkrS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79472C4CED1;
+	Thu, 20 Feb 2025 15:14:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740064485;
+	bh=Jr4RZS/lLGSYYUJMf0yeHvt9Tqeg9FKGi1tgzkVvkgg=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=RJndwkrSKfX2mzgsQQfynKTyajKX/j2plUbo3YFVKpm6aUFT7VYdMyzN9qc34fllF
+	 7usoiCpSQRkDI2NbiDYsqOd0eh2mNUMaYXUCtamP42vvZ/ry+f90XctS7/3vs3KeNA
+	 1kSzKEL8di2BgD4lgYWeTWUvZ0EnXfU3XDtITFQDIGjVPovtntDywBA1ISKrizZWsR
+	 Q2kbp3LTNV7fOllQy2ZsHa2M4pXotics8y1Yoe0nOTBTXSBTEE/SqXNQehkXkPnvVk
+	 7cexNoowoVyRuleDw/cDnHkffNBKU8p8KVbqGcl/gXCxGx8DVB+ZWi2uJxWiE86JmD
+	 PFUoUjgDiOmeQ==
+From: Lee Jones <lee@kernel.org>
+To: Janne Grunau <j@jannau.net>, Sven Peter <sven@svenpeter.dev>, 
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, Lee Jones <lee@kernel.org>, 
+ Daniel Thompson <danielt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, 
+ Pavel Machek <pavel@ucw.cz>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>, 
+ asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-fbdev@vger.kernel.org, Nick Chan <towinchenmi@gmail.com>
+In-Reply-To: <20250214040306.16312-1-towinchenmi@gmail.com>
+References: <20250214040306.16312-1-towinchenmi@gmail.com>
+Subject: Re: [PATCH v6 0/3] Apple DWI backlight driver
+Message-Id: <174006448223.804925.7595809321241346941.b4-ty@kernel.org>
+Date: Thu, 20 Feb 2025 15:14:42 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15-dev-510f9
 
-From: Ritvik Gupta <ritvikfoss@gmail.com>
+On Fri, 14 Feb 2025 12:02:11 +0800, Nick Chan wrote:
+> Apple SoCs come with a 2-wire interface named DWI. On some iPhones, iPads
+> and iPod touches the backlight controller is connected via this interface.
+> This series adds a backlight driver for backlight controllers connected
+> this way.
+> 
+> Changes since v5:
+> - Remove default y from drivers/video/backlight/Kconfig
+> 
+> [...]
 
-Currently 'scripts/checksyscalls.sh' does not
-provide guidance when executed without specifying
-a compiler, instead it attempts to execute
-'-Wno-error' parameter as a command,
-resulting in 'Wno-error: Command not found' error.
+Applied, thanks!
 
-This patch adds a usage message that is displayed
-when no compiler is provided as parameter to
-improve clarity.
+[1/3] dt-bindings: leds: backlight: apple,dwi-bl: Add Apple DWI backlight
+      commit: 0508d17506fffb6d38df4c2dc737fb4f343a0840
+[2/3] backlight: apple_dwi_bl: Add Apple DWI backlight driver
+      commit: ea45d216dd4e5b389af984f8c9effa1312e3cd74
+[3/3] MAINTAINERS: Add entries for Apple DWI backlight controller
+      commit: d1ebaf003a065d5d337b8fa3d69f9b90d7bb759d
 
-Signed-off-by: Ritvik Gupta <ritvikfoss@gmail.com>
----
-Changes in v2:
-    - Make the script posix compliant
-    - Fixed formatting
-
-Thanks for reviewing!
-
- scripts/checksyscalls.sh | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
-
-diff --git a/scripts/checksyscalls.sh b/scripts/checksyscalls.sh
-index 1e5d2eeb726d..96cba9f79249 100755
---- a/scripts/checksyscalls.sh
-+++ b/scripts/checksyscalls.sh
-@@ -10,6 +10,22 @@
- # checksyscalls.sh gcc gcc-options
- #
- 
-+usage() {
-+cat << EOF
-+Usage: $0 <compiler> [compiler-options]
-+
-+Example:
-+  $0 gcc
-+EOF
-+
-+exit 1
-+}
-+
-+if [ $# -eq 0 ]; then
-+	echo "Error: No compiler provided."
-+	usage
-+fi
-+
- ignore_list() {
- cat << EOF
- #include <asm/types.h>
--- 
-2.48.1
+--
+Lee Jones [李琼斯]
 
 
