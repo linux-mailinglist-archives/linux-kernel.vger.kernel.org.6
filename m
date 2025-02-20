@@ -1,298 +1,130 @@
-Return-Path: <linux-kernel+bounces-524404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69133A3E2A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:37:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5DAAA3E29A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:35:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA5D77A58A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:34:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 157F01890E1B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:35:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3826A21323C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 787DA213E6B;
+	Thu, 20 Feb 2025 17:34:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PRqyBaJW"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5316821323F;
 	Thu, 20 Feb 2025 17:34:56 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E92291D63D9;
-	Thu, 20 Feb 2025 17:34:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740072895; cv=none; b=AdzjBzhb8AECxSAmkTEOK+mjaQ1Vuh4ueQP7gq3eqyvaDuqoBQCHdAdfGilLPOfN0yBDX+slFrfQRwbBdwkBT7XTpDG6zbI6h6NBztS31i+/29vZW0qfIlHNgTg7gK0Vkk1WHJEeHUW2wuTUW9J0VoKFvEBWJfdh+27udPUYHzA=
+	t=1740072897; cv=none; b=QCCvuBKlWDZVivZsqIIyRLvth3otiaRLpe1Zyzo+QHc2iK8Yw1b3Exf6WLUDfP7u8UNuUC4zkM+1cAh+QunnceuOPrTdNq5uUNfv5uahoPm0cRalgp6dP3uupQ2i+iWvisc7WUK/27ka6NahgPGDTbLvJJ8Z3sDWRsF24Q9YsSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740072895; c=relaxed/simple;
-	bh=v4RRrtRPTGJ4wM00sp+dZ79bWBJClYQwZFtoZghwpek=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NLlQt3fpyd/SXgBlgOVY+KxRW+0j4vWonwukP0AbkHpEbJYSLCyVvtUdLVF4rd1itEgpjVb0/BmFZpxvKLm6W3lDAZN0fYx28cYLOLGuS5QTzAY22UHLQIjQwBJNJiYWMiTiVAErzG/P+aQcNULUokNdazP5XWgIxIMT++rNGzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4642716F3;
-	Thu, 20 Feb 2025 09:35:10 -0800 (PST)
-Received: from [10.57.36.38] (unknown [10.57.36.38])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 6AF4D3F5A1;
-	Thu, 20 Feb 2025 09:34:49 -0800 (PST)
-Message-ID: <168c214a-38a5-45d4-a776-d7819cbab9f3@arm.com>
-Date: Thu, 20 Feb 2025 17:34:48 +0000
+	s=arc-20240116; t=1740072897; c=relaxed/simple;
+	bh=3j5meLBzlPzoYaZHYVuzGBPkwAKe4KxyEluapquIWYM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hLU5gJLkjhlf3SyRBJX0f73JVpDJbWODNifxUwZM4bJ02opxeR50TKojp7daGYcgCZZXvBOSrva2SyQBzAkhj6nJKV7K05gPfpYQn93g/L9NrmINPXiw5FebZpTBHllgXZlSIPSOh3IxVMU9lbIi/JmUzf46fGVrwwnHWzZSDFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PRqyBaJW; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4399deda4bfso8925505e9.0;
+        Thu, 20 Feb 2025 09:34:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740072894; x=1740677694; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3j5meLBzlPzoYaZHYVuzGBPkwAKe4KxyEluapquIWYM=;
+        b=PRqyBaJWkh3aRkpFd1+gt0nAYuY5VXK3pLsVmcN+akUbBWAqxBEzDFMSzkYhdbGd8n
+         4TQSi/Zr8lFkdB2gIwKSKUodhFhb/p25aPHMiSEQHRc/Tns0rYAX24Ca4m5jHN/Jghrr
+         uOR9NT24S1vJfAl2ieSEAThsI6OmvHjJHxVhSuyR0AQ6SnX37xEAHoSlAXTyqtfTpjIi
+         epajFG+4BD4s60M7UJbmPjafz0P1pABtTyfIxHQSujVDoqFgaQG5d5IJYvtAh3B4OkVZ
+         nOz/LvWtcmls4FgbKxCc13kL6lw2th+M90MiV/+cGO5ybYt4u1Kzsco0abji3UaOR1E5
+         40KA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740072894; x=1740677694;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3j5meLBzlPzoYaZHYVuzGBPkwAKe4KxyEluapquIWYM=;
+        b=OJbyGdKQiBoYxHSdCbjz0Eznmmga/z/850sMiI8i6XmurIjr1hKtfcFRm+BCzzywLH
+         jlx/YZIXsdz5r/G/RSePOzi5RybhlXhmykyicSiPHp77A+21KDdj9XYD/TzvhlMhSL9A
+         UkZlF+gTWPnUy51vR7RR00l1mEJtZHh6ItpRCy/+kxjlW3KrBGb7h/wLQwZavEu7jcyd
+         QHS5rQc7coCkqXhG5w4THl6zcEIF/nvJTmD4VomItyJ6L4UCPOOtshAbHKSIiJEBD7ZP
+         3c3gGgW3wI5pTRTtM2HKVZ10Z1jsWJXub7ZM+kb1SF2Zvy3TlXxB+qiryUMUJzsqdkgs
+         hnEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU5lfo6z2N7JwrT0YD1vesypqPUy8R85uLhMkyK13/vzvdBEvz8E0IMjiVobZKh7Uc1zQ2Ic8jUW7eoA5o=@vger.kernel.org, AJvYcCXzo7Tz8yge/Q4ZQ3nPERvImiur1MWZ31cM8+eO7FkSpAyRf8/pm/aWmgFCRKGNJUL8h6BQlx0EBCS5IPg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCOrviaQ0VHA8Q7cUNckHp/MwyHYmZhlWmbH6g7AGgVPgugHA5
+	Ytw8inccutnprkpqegGnF4lzf3j6oMEEJ4ZlntLCoDTOyqqn/i3K
+X-Gm-Gg: ASbGncv9uqiiI5RoCe8Hb9uCnHyO4tUK9O6Lew4MkcN/koXim0A4C69k2JDm3uT2pWj
+	CAbdaqMmFtRqJr3R5PKsO1w2Hk1iBokfCDocCHlOShZKkkyDFucpwB7rQ9ARMHV0AbmfnxczBhJ
+	UggeBso/OfxodLxwWWPU0hlKAYq3xU+ZnbeYKNfPaM+klX80nYOq0gyKKO5jfyMHWh5a8zGmXSn
+	LjzezEGBTCs8nwmb2VSPy3XdQDJBrmFZRNWcd3hgIA8fB8mtgghKqH0TWLrrVvbT9DxnjOpCe+N
+	aZATe6LlnkURFP9PkwwkmLF8w5uIVYM+Bm6htG9hfYT9GU8gg6rBA/811ChdwUeTAAI=
+X-Google-Smtp-Source: AGHT+IEPmmiKlS/ysPrkAIpR7/izG7EDUAs9G1mfa/hbF+C9JMVOv9VrwAD1oHez+9k3pqPo2/fSbg==
+X-Received: by 2002:a05:600c:5493:b0:439:9e8b:228e with SMTP id 5b1f17b1804b1-439ae21cdddmr609075e9.20.1740072894371;
+        Thu, 20 Feb 2025 09:34:54 -0800 (PST)
+Received: from jernej-laptop.localnet (86-58-6-171.dynamic.telemach.net. [86.58.6.171])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43987088ecbsm117191125e9.31.2025.02.20.09.34.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 09:34:53 -0800 (PST)
+From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To: Emmanuel Gil Peyrot <linkmauve@linkmauve.fr>,
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: linux-sunxi@lists.linux.dev, Maxime Ripard <mripard@kernel.org>,
+ Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Chen-Yu Tsai <wens@csie.org>, Samuel Holland <samuel@sholland.org>,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-staging@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 4/4] media: cedrus: Don't require requests for all codecs
+Date: Thu, 20 Feb 2025 18:34:52 +0100
+Message-ID: <2235304.C4sosBPzcN@jernej-laptop>
+In-Reply-To: <b3ab99a1-2e72-4b7e-8569-f7fe9beb3018@suswa.mountain>
+References:
+ <20240731164422.206503-1-linkmauve@linkmauve.fr>
+ <20240731164422.206503-5-linkmauve@linkmauve.fr>
+ <b3ab99a1-2e72-4b7e-8569-f7fe9beb3018@suswa.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 2/7] Coresight: Add trace_id function to retrieving
- the trace ID
-Content-Language: en-GB
-To: Jie Gan <quic_jiegan@quicinc.com>, Mike Leach <mike.leach@linaro.org>,
- James Clark <james.clark@linaro.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: Tingwei Zhang <quic_tingweiz@quicinc.com>,
- Jinlong Mao <quic_jinlmao@quicinc.com>, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com
-References: <20250217093024.1133096-1-quic_jiegan@quicinc.com>
- <20250217093024.1133096-3-quic_jiegan@quicinc.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20250217093024.1133096-3-quic_jiegan@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On 17/02/2025 09:30, Jie Gan wrote:
-> Add 'trace_id' function pointer in ops. It's responsible for
-> retrieving the device's trace ID.
-> 
-> Co-developed-by: James Clark <james.clark@linaro.org>
-> Signed-off-by: James Clark <james.clark@linaro.org>
-> Reviewed-by: James Clark <james.clark@linaro.org>
-> Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
+Dne sreda, 31. julij 2024 ob 18:56:15 Srednjeevropski standardni =C4=8Das j=
+e Dan Carpenter napisal(a):
+> On Wed, Jul 31, 2024 at 06:44:14PM +0200, Emmanuel Gil Peyrot wrote:
+> > From: Jernej Skrabec <jernej.skrabec@gmail.com>
+> >=20
+> > JPEG decoding doesn=E2=80=99t need it currently.
+> >=20
+> > Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+> > ---
+>=20
+> Does this change have an effect on runtime?
 
+Ideally, driver should allow only JPEG format to be used without request ap=
+i.
+Other codecs still require it (decoding doesn't work properly without it).
 
-minor nit: Given this is an optional callback, we could as well make
-this a generic ops and avoid checking if it is a link/source etc. We
-anyway check if the op is available before calling it.
+Best regards,
+Jernej
 
-i.e.:
-
-struct coresight_ops {
-+	int (*trace_id)(struct coresight *csdev,...);
-
-	...
-};
-
-
-Suzuki
+>=20
+> regards,
+> dan carpenter
+>=20
+>=20
+>=20
 
 
 
-> ---
->   drivers/hwtracing/coresight/coresight-core.c  | 27 +++++++++++++++++++
->   drivers/hwtracing/coresight/coresight-dummy.c | 11 ++++++++
->   .../coresight/coresight-etm3x-core.c          |  1 +
->   .../coresight/coresight-etm4x-core.c          |  1 +
->   drivers/hwtracing/coresight/coresight-stm.c   | 11 ++++++++
->   drivers/hwtracing/coresight/coresight-tpda.c  | 11 ++++++++
->   include/linux/coresight.h                     |  8 ++++++
->   7 files changed, 70 insertions(+)
-> 
-> diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
-> index 0a9380350fb5..6cad777757f3 100644
-> --- a/drivers/hwtracing/coresight/coresight-core.c
-> +++ b/drivers/hwtracing/coresight/coresight-core.c
-> @@ -23,6 +23,7 @@
->   #include "coresight-etm-perf.h"
->   #include "coresight-priv.h"
->   #include "coresight-syscfg.h"
-> +#include "coresight-trace-id.h"
->   
->   /*
->    * Mutex used to lock all sysfs enable and disable actions and loading and
-> @@ -1515,6 +1516,32 @@ void coresight_remove_driver(struct amba_driver *amba_drv,
->   }
->   EXPORT_SYMBOL_GPL(coresight_remove_driver);
->   
-> +int coresight_etm_get_trace_id(struct coresight_device *csdev, enum cs_mode mode,
-> +			       struct coresight_device *sink)
-> +{
-> +	int trace_id;
-> +	int cpu = source_ops(csdev)->cpu_id(csdev);
-> +
-> +	switch (mode) {
-> +	case CS_MODE_SYSFS:
-> +		trace_id = coresight_trace_id_get_cpu_id(cpu);
-> +		break;
-> +	case CS_MODE_PERF:
-> +		trace_id = coresight_trace_id_get_cpu_id_map(cpu, &sink->perf_sink_id_map);
-> +		break;
-> +	default:
-> +		trace_id = -EINVAL;
-> +		break;
-> +	}
-> +
-> +	if (!IS_VALID_CS_TRACE_ID(trace_id))
-> +		dev_err(&csdev->dev,
-> +			"Failed to allocate trace ID on CPU%d\n", cpu);
-> +
-> +	return trace_id;
-> +}
-> +EXPORT_SYMBOL_GPL(coresight_etm_get_trace_id);
-> +
->   MODULE_LICENSE("GPL v2");
->   MODULE_AUTHOR("Pratik Patel <pratikp@codeaurora.org>");
->   MODULE_AUTHOR("Mathieu Poirier <mathieu.poirier@linaro.org>");
-> diff --git a/drivers/hwtracing/coresight/coresight-dummy.c b/drivers/hwtracing/coresight/coresight-dummy.c
-> index 9be53be8964b..c47f0382b943 100644
-> --- a/drivers/hwtracing/coresight/coresight-dummy.c
-> +++ b/drivers/hwtracing/coresight/coresight-dummy.c
-> @@ -41,6 +41,16 @@ static void dummy_source_disable(struct coresight_device *csdev,
->   	dev_dbg(csdev->dev.parent, "Dummy source disabled\n");
->   }
->   
-> +static int dummy_source_trace_id(struct coresight_device *csdev, __maybe_unused enum cs_mode mode,
-> +				 __maybe_unused struct coresight_device *sink)
-> +{
-> +	struct dummy_drvdata *drvdata;
-> +
-> +	drvdata = dev_get_drvdata(csdev->dev.parent);
-> +
-> +	return drvdata->traceid;
-> +}
-> +
->   static int dummy_sink_enable(struct coresight_device *csdev, enum cs_mode mode,
->   				void *data)
->   {
-> @@ -59,6 +69,7 @@ static int dummy_sink_disable(struct coresight_device *csdev)
->   static const struct coresight_ops_source dummy_source_ops = {
->   	.enable	= dummy_source_enable,
->   	.disable = dummy_source_disable,
-> +	.trace_id = dummy_source_trace_id,
->   };
->   
->   static const struct coresight_ops dummy_source_cs_ops = {
-> diff --git a/drivers/hwtracing/coresight/coresight-etm3x-core.c b/drivers/hwtracing/coresight/coresight-etm3x-core.c
-> index c103f4c70f5d..a38e72ef8e79 100644
-> --- a/drivers/hwtracing/coresight/coresight-etm3x-core.c
-> +++ b/drivers/hwtracing/coresight/coresight-etm3x-core.c
-> @@ -701,6 +701,7 @@ static const struct coresight_ops_source etm_source_ops = {
->   	.cpu_id		= etm_cpu_id,
->   	.enable		= etm_enable,
->   	.disable	= etm_disable,
-> +	.trace_id	= coresight_etm_get_trace_id,
->   };
->   
->   static const struct coresight_ops etm_cs_ops = {
-> diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> index 2c1a60577728..1a993d5380e7 100644
-> --- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> +++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> @@ -1064,6 +1064,7 @@ static const struct coresight_ops_source etm4_source_ops = {
->   	.cpu_id		= etm4_cpu_id,
->   	.enable		= etm4_enable,
->   	.disable	= etm4_disable,
-> +	.trace_id	= coresight_etm_get_trace_id,
->   };
->   
->   static const struct coresight_ops etm4_cs_ops = {
-> diff --git a/drivers/hwtracing/coresight/coresight-stm.c b/drivers/hwtracing/coresight/coresight-stm.c
-> index b581a30a1cd9..64fcfa916562 100644
-> --- a/drivers/hwtracing/coresight/coresight-stm.c
-> +++ b/drivers/hwtracing/coresight/coresight-stm.c
-> @@ -281,9 +281,20 @@ static void stm_disable(struct coresight_device *csdev,
->   	}
->   }
->   
-> +static int stm_trace_id(struct coresight_device *csdev, __maybe_unused enum cs_mode mode,
-> +			__maybe_unused struct coresight_device *sink)
-> +{
-> +	struct stm_drvdata *drvdata;
-> +
-> +	drvdata = dev_get_drvdata(csdev->dev.parent);
-> +
-> +	return drvdata->traceid;
-> +}
-> +
->   static const struct coresight_ops_source stm_source_ops = {
->   	.enable		= stm_enable,
->   	.disable	= stm_disable,
-> +	.trace_id	= stm_trace_id,
->   };
->   
->   static const struct coresight_ops stm_cs_ops = {
-> diff --git a/drivers/hwtracing/coresight/coresight-tpda.c b/drivers/hwtracing/coresight/coresight-tpda.c
-> index 189a4abc2561..d80b6427e5a6 100644
-> --- a/drivers/hwtracing/coresight/coresight-tpda.c
-> +++ b/drivers/hwtracing/coresight/coresight-tpda.c
-> @@ -241,9 +241,20 @@ static void tpda_disable(struct coresight_device *csdev,
->   	dev_dbg(drvdata->dev, "TPDA inport %d disabled\n", in->dest_port);
->   }
->   
-> +static int tpda_trace_id(struct coresight_device *csdev, __maybe_unused enum cs_mode mode,
-> +			 __maybe_unused struct coresight_device *sink)
-> +{
-> +	struct tpda_drvdata *drvdata;
-> +
-> +	drvdata = dev_get_drvdata(csdev->dev.parent);
-> +
-> +	return drvdata->atid;
-> +}
-> +
->   static const struct coresight_ops_link tpda_link_ops = {
->   	.enable		= tpda_enable,
->   	.disable	= tpda_disable,
-> +	.trace_id	= tpda_trace_id,
->   };
->   
->   static const struct coresight_ops tpda_cs_ops = {
-> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
-> index 157c4bd009a1..70407d61262e 100644
-> --- a/include/linux/coresight.h
-> +++ b/include/linux/coresight.h
-> @@ -368,6 +368,7 @@ struct coresight_ops_sink {
->    * Operations available for links.
->    * @enable:	enables flow between iport and oport.
->    * @disable:	disables flow between iport and oport.
-> + * @trace_id:	alloc or read the traceid.
->    */
->   struct coresight_ops_link {
->   	int (*enable)(struct coresight_device *csdev,
-> @@ -376,6 +377,8 @@ struct coresight_ops_link {
->   	void (*disable)(struct coresight_device *csdev,
->   			struct coresight_connection *in,
->   			struct coresight_connection *out);
-> +	int (*trace_id)(struct coresight_device *csdev, enum cs_mode mode,
-> +			struct coresight_device *sink);
->   };
->   
->   /**
-> @@ -385,6 +388,7 @@ struct coresight_ops_link {
->    *		is associated to.
->    * @enable:	enables tracing for a source.
->    * @disable:	disables tracing for a source.
-> + * @trace_id:	alloc or read the traceid.
->    */
->   struct coresight_ops_source {
->   	int (*cpu_id)(struct coresight_device *csdev);
-> @@ -392,6 +396,8 @@ struct coresight_ops_source {
->   		      enum cs_mode mode, struct coresight_trace_id_map *id_map);
->   	void (*disable)(struct coresight_device *csdev,
->   			struct perf_event *event);
-> +	int (*trace_id)(struct coresight_device *csdev, enum cs_mode mode,
-> +			struct coresight_device *sink);
->   };
->   
->   /**
-> @@ -697,4 +703,6 @@ int coresight_init_driver(const char *drv, struct amba_driver *amba_drv,
->   
->   void coresight_remove_driver(struct amba_driver *amba_drv,
->   			     struct platform_driver *pdev_drv);
-> +int coresight_etm_get_trace_id(struct coresight_device *csdev, enum cs_mode mode,
-> +			       struct coresight_device *sink);
->   #endif		/* _LINUX_COREISGHT_H */
 
 
