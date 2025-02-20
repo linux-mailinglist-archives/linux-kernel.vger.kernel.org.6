@@ -1,81 +1,80 @@
-Return-Path: <linux-kernel+bounces-523971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 215EEA3DD84
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:59:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC70DA3DD81
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:59:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB1E33AFD05
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:58:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9015018826E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:58:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06B361D5160;
-	Thu, 20 Feb 2025 14:58:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF4741D63DA;
+	Thu, 20 Feb 2025 14:58:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CgtemQxb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GQGaiDz8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68ED9DF58
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 14:58:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38C041D5CFD;
+	Thu, 20 Feb 2025 14:58:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740063509; cv=none; b=GJEOaQL9E5oz5g41c7zMII8qfwzj+15wtPnoHLnu4VSpS6jUyl2iY3ve/g/tB70JC8klaz5aekxI0v5mtYEnYP7JPwgkE1hg1txIE8/ngY0HYs/e6sqQJ3kFaENCVkw09cde+p8dnAi/SdwXhuCjYMQ6dGDAMh3njaLuYi+PMIY=
+	t=1740063512; cv=none; b=V41yaG+JAqzim17tWHsysggatypv02044ZdZ4Pdy5O0TJvvWqSoogEpmXPgSNg3mGdSfhC8OVNcNGJhJfRR1MOf9Lm2p0MtWhgN4EqKJ+Ny81XeR2HEGhh5t3gvBiII3VlmgfCT8zw1C0CSOzOgiSbvJA9L3RbKNt1nPzSYDIZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740063509; c=relaxed/simple;
-	bh=6MFzkfW9uvZannGiDDbpy+c9W2mbwebkRYX+ehbCh+g=;
+	s=arc-20240116; t=1740063512; c=relaxed/simple;
+	bh=/tfx1qw2RHTeEteUmz3XyOvcWQ/CBxZI1aQubqaoy9k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LqseyfEzkqYG9gfO6a8IWZeWOegmjTcXhZVMdq37Ths+8myR3z82l1EWLyNOTiK4qgwOGswXHSSntU1BGuWoAKj/irx2eQ6pHuIxpJ7+QiBRgNvozjz3HBOhSNJ/znzW9y8OxhrPq+c9pxj0X+p8BybX44b84RNraWOSzi8TLfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CgtemQxb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9732C4CED1;
-	Thu, 20 Feb 2025 14:58:27 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=pq3/87Q5cJ7n5Mqqz9OaEMF4n/OR648FiaY1KB0rTaRVIsoAZtnDxOill7p8rNvU6sILO/2FMwUioCX5YUsWLImd64ud4Yduxl8mDhloLYx6bErKMi6gjfhsIm24Gf3PXLPmfGXZRbQHcQYKRqntlvRr3VOxbF4FU+smPJ3lYmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GQGaiDz8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C84EC4CED1;
+	Thu, 20 Feb 2025 14:58:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740063508;
-	bh=6MFzkfW9uvZannGiDDbpy+c9W2mbwebkRYX+ehbCh+g=;
+	s=k20201202; t=1740063512;
+	bh=/tfx1qw2RHTeEteUmz3XyOvcWQ/CBxZI1aQubqaoy9k=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CgtemQxbX0vGSFf6F62Qs9d8tJ3l49vaIZ+FLlP8j4sSAQcaEuasFZEbSSAaytCHa
-	 EtOYrs2ZlDDZkdjbrb4YRB/r/n2f3PVuOVpIxO/TYflrkCfPwSj11tmQJQ9hFnGRf+
-	 pZn35pGsPDfmf24zOkBujRhvjFf/W0mx0lbULES0b3aScauoSYqRbx75Glhd++AJF8
-	 +O48buHGN1/ajCIMb6gmRyHnk3HyZWn5DpGKWKSCgfQctl3xIOEMtoMjGugCtdQVqI
-	 g2UWyPE5PgVjuBv8k5j1JUpFb835ZLk17uSsNBK43I942yulnoyHtJmsh/qJ/UTBjP
-	 cjFnBKqT8busw==
-Date: Thu, 20 Feb 2025 14:58:25 +0000
-From: Lee Jones <lee@kernel.org>
-To: Chenyuan Yang <chenyuan0y@gmail.com>
-Cc: lkundrak@v3.sk, linux-kernel@vger.kernel.org, zzjas@gmail.com
-Subject: Re: [PATCH v2] mfd: ene-kb3930: Fix potential NULL pointer
- dereference
-Message-ID: <20250220145825.GB778229@google.com>
-References: <20250213022509.2154603-1-chenyuan0y@gmail.com>
+	b=GQGaiDz8BhXds1NsVdgsL5C5QKPMG2nNe3+dsJXy+s8MR0iMZZLsdM+YnCzeM/jwe
+	 eW/HWx/i1fTV8mbN7OQ1vv0nK4GdaWL0wNw4vvW7GW03tfWGZfmX80HjlM+cg44TC3
+	 XiGEJqJ+1iCvX0EE1iRhddMS97BAtY17/nG45aOfpAtK9V8Q+BMJ5i4pTD7Ke3IE/3
+	 OSCD10I3dQdyD8mbJU2KwyIdWsJ3YI3VeMr3soOiRGLiqL4p7Qh4Ne05/rfqCzFlyp
+	 rLbP6N2wk/eyeuADd5XRRo1LPgELVDjZEl6aoyk0N+DZC6S9UdIZ/U/k+XPUz48qWj
+	 gavE5LtITPd0Q==
+Date: Thu, 20 Feb 2025 14:58:27 +0000
+From: Simon Horman <horms@kernel.org>
+To: Larysa Zaremba <larysa.zaremba@intel.com>
+Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
+	intel-wired-lan@lists.osuosl.org,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
+	Mateusz Pacuszka <mateuszx.pacuszka@intel.com>
+Subject: Re: [PATCH iwl-next v4 4/6] ice: remove headers argument from
+ ice_tc_count_lkups
+Message-ID: <20250220145827.GB1615191@kernel.org>
+References: <20250214085215.2846063-1-larysa.zaremba@intel.com>
+ <20250214085215.2846063-5-larysa.zaremba@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250213022509.2154603-1-chenyuan0y@gmail.com>
+In-Reply-To: <20250214085215.2846063-5-larysa.zaremba@intel.com>
 
-On Wed, 12 Feb 2025, Chenyuan Yang wrote:
-
-> The off_gpios could be NULL. Add missing check in the kb3930_probe().
-> This is similar to the issue fixed in commit b1ba8bcb2d1f
-> ("backlight: hx8357: Fix potential NULL pointer dereference").
+On Fri, Feb 14, 2025 at 09:50:38AM +0100, Larysa Zaremba wrote:
+> Remove the headers argument from the ice_tc_count_lkups() function, because
+> it is not used anywhere.
 > 
-> Fixes: ede6b2d1dfc0 ("mfd: ene-kb3930: Add driver for ENE KB3930 Embedded Controller")
-> Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
-> Suggested-by: Lee Jones <lee@kernel.org>
-> ---
->  drivers/mfd/ene-kb3930.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+> Signed-off-by: Larysa Zaremba <larysa.zaremba@intel.com>
 
-Please submit one more time with the following line above the tags:
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-Cc: stable@vger.kernel.org
-
--- 
-Lee Jones [李琼斯]
 
