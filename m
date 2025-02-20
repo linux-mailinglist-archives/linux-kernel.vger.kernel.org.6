@@ -1,143 +1,116 @@
-Return-Path: <linux-kernel+bounces-522773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B95FA3CE61
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 02:03:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFDC5A3CE63
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 02:04:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C64C13A5F91
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 01:03:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8233B18959B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 01:03:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 320742E630;
-	Thu, 20 Feb 2025 01:03:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6C3C28F5;
+	Thu, 20 Feb 2025 01:03:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fVEmlWsR"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="eBKJbc4s"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14CBB28F5;
-	Thu, 20 Feb 2025 01:03:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD6BC130E58
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 01:03:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740013407; cv=none; b=unlVnryJPyrLh7IsOPciSISxomZPmDosvmV9rjdotkO6tAcFS3hMMJQbEGQSup3n28dvCeO6KwuciA1Rj01Jsheg4CkFSihFU6Mb7JELaJ81feu2IXl/owGPmf7rp3NRFvU0aU4xs6VbfUapzOHBX/sdAIKhR0TVGkQvwg2ZrHU=
+	t=1740013410; cv=none; b=a3Vd2KB09GkvYxijIWocSluM31S5lyFE+R+2kYvMGloCGrAh7HeaEvm3q8fIPJAzR64fwlGYJkiCzVP/IvUFnYny5/aAY1thZGuxoHYOkOcDqoeIMEvaX1N2FiSGa14pL8cikS+tyIPjBjCMWvddJ03JebIbODj7pJ4WFYHLxTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740013407; c=relaxed/simple;
-	bh=B0p1EXxnI6i4wyesOZtGNKWI3uZ3+W2ep12QIsrLF+0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i6ywRWEpWeQMN7UqhoRMcfErmbkl6QZc+juwZVGR1LEkTMEf9DAm0vB7oouHh7vQemS9EODL36vVWZ4v6rqSld/us98a+8M3IjAtFExnokcJdlXCyaTGgXYoYLmV0SJ1kWig6LBeiV0oc97gVDyrIJ5J8r4iypcUWzoVG3wGF/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fVEmlWsR; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740013406; x=1771549406;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=B0p1EXxnI6i4wyesOZtGNKWI3uZ3+W2ep12QIsrLF+0=;
-  b=fVEmlWsR1ZsM3iMjZSHm7VDzUtVq21r+DZVOOS5YZzrFPEWPjsPaagXp
-   bQRhr2p33SIsLTU9FZZbM6RaLD1VOmD+7FahMOFTXtMT9hcAOJoowPqvC
-   nQ4u1aPszwkdbrnC6LafbgQ0VYR3T5DVY0374Cq1H6SsPTqiKWqHPSY4t
-   zvZVQ4s/OOl5/tKVvN4xRzhvAyH+SXEMgy3OZ4kw5i3YLClnE7CrfZWYc
-   5GQT25DS1VfDoL6HGxz8hQlrqJpJyq+nSmPoNghqxyCoy45pdz+P12Dn/
-   fepjqJ1klmQdDMLdTBf6+DGPIHpSGBguMDilAEaCxY8Y5i5cA7pW7uUsZ
-   A==;
-X-CSE-ConnectionGUID: RY+OWawZRD2i5bqcOWuB/A==
-X-CSE-MsgGUID: mqfNhe3XQF+jHuqKEK/RlA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11350"; a="40632064"
-X-IronPort-AV: E=Sophos;i="6.13,300,1732608000"; 
-   d="scan'208";a="40632064"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 17:03:26 -0800
-X-CSE-ConnectionGUID: cNZN/oXSTjaumHTBV4AOnw==
-X-CSE-MsgGUID: UdJxh4+ORleyQAR64tZPlQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="118984759"
-Received: from inaky-mobl1.amr.corp.intel.com (HELO [10.125.110.11]) ([10.125.110.11])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 17:03:24 -0800
-Message-ID: <a953bded-10b9-47c6-a595-062ac86e489e@intel.com>
-Date: Wed, 19 Feb 2025 18:03:22 -0700
+	s=arc-20240116; t=1740013410; c=relaxed/simple;
+	bh=uoKT8mn2kqsuF35fq8S96ubypduruFZKYY1NqO9aO4w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eCKyC+ubqXEIjYpQa5v9/R3fFSIIW6tfEYiWwqoAFqiovTDIIPXT1kZndvQkzp1cvaBaMr1n+L01UGkaZiK+iBK6b+wRXusef7E9mv+Cjn4vbnDx9iGjDsa9UYeoYPYXtdegWM/O6MvYgy/oIU1P9Rrn2FVQQsodpYCdrOhv1lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=eBKJbc4s; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-46fee2b9c7aso2964401cf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 17:03:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1740013407; x=1740618207; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OJnHTfhhh5oO/5QVFdYosizxDAfM8S4m8Bge+zqnfMQ=;
+        b=eBKJbc4s2xP1CpyrJ4qOgnTqn/nLX+0WIGBUeRieOTKpJE5d3YhbdiSjPkxIWn1sTB
+         r8jpmyjx8ZM3XHbbs8hiOKHIskUpDBc4mjbsBLK3FHBYu48GLtbdXYZvOnSyT8HeFtgO
+         Q/nHCALf3R1SBtwb4hz1h2+Wq9M5DYZnQcXQGpfRDGIDiTbt3SkewLARIRP8PJUFeGBo
+         x6mj1Jhmehjgj5tDowoapI9cmpERwiAImVkvsDSJRrFxoPjsVNXE0ZTw0lraGyNC+dq4
+         5agXdPWrxH8yh1dQxKUNgHiiWuqADHo7ShedWjMv4O8g9URgXZOGM9KXnogBEDt+0TuO
+         y9Tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740013407; x=1740618207;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OJnHTfhhh5oO/5QVFdYosizxDAfM8S4m8Bge+zqnfMQ=;
+        b=qHIaOoQ04wU4Yp1rDet5sgvma3KgVbmjf/7oA7ZSbYX9znYLoPFoeMVWXGVqbzY4Hp
+         eO8YZdIUt5w6tnLxAZmDeiXvAbQ8AIcgaI+vsCCEzyjm+Sy+cr0ZUGFrF3sQjDKVSYuQ
+         TzLm2nmfNR9bbPSWYuv2Totprk5KZByxeeug79I9Q9uZKZmGYy/mLSpQ29ZmEBrVtpRW
+         c1S8UQg99PzmvKqtff0V1Ok0xYJS29BipzpkRQxh8fFF9mFFDqAt27Qc72yTxkK5Wu6F
+         y0jRByTXCFslhYYQaXLQuKVzOqgG7UvXi4DlC3hH6np/+qWXREaX5c4vXAXyzMAmE7y1
+         COoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUMwPdYHgu7m2kIBzeA1Y1GnBngtw4I6xLbycA+olhuRKjtLS0XAyrqUj4mHYzkiCyMhhVoWJvblmbiivI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDt9SpfPzAXPZ5vCgtB5JK9s5182oSGtLHtCSrVYZjDszSId5S
+	EFjSARH2OvCH/r5gBJa3hLhpATM4pJxjBJ6X/pWPHHftDL3sbdgIurHb5WOheJg=
+X-Gm-Gg: ASbGncv00AXies9Z3MirqeCaHV9pUrY40Q8rYS6W6uE5yoKrHwWa+UyoRmUFPtM58W6
+	70xqS/1qEbOV9I4/iQ4PcHg5PoUKJVnrapMTszvLDQyS8OqiEpA3p/IToIZaTlRQ3Vgooy6iXR9
+	3D5NAze/eLLbnhuvFysPc1OMCrlJlzUDxbhOCAbz7Z32fL1sdBWoiYuU/m+Xj9jyA5lsTOMa0TN
+	yZB3r+UOoFeaT6EH5LgthgZugi45zaSetvz03krb/QOVztp1w8yngUUmDVbGZkKzcXYnjtVH4He
+	geEaHbJxzuVW86YZKOIc8kPBSvyUaQTFgCoW+rv/3reBSOEg0zO2sMGgHwpf89yr
+X-Google-Smtp-Source: AGHT+IEP0SznMWngJV+XmUdphWVKwsCLb8oL7y9FuJxNV2MD0qkEQHKc4YBhbpTr5rtelyk7i+YEMg==
+X-Received: by 2002:a05:622a:302:b0:472:5ac:48bb with SMTP id d75a77b69052e-47217372cf5mr6048941cf.29.1740013407667;
+        Wed, 19 Feb 2025 17:03:27 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-472069c3482sm18629721cf.20.2025.02.19.17.03.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2025 17:03:26 -0800 (PST)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1tkuyL-00000000D7S-2awh;
+	Wed, 19 Feb 2025 21:03:25 -0400
+Date: Wed, 19 Feb 2025 21:03:25 -0400
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Lu Baolu <baolu.lu@linux.intel.com>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Fenghua Yu <fenghua.yu@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>, Vinod Koul <vkoul@kernel.org>,
+	Zhangfei Gao <zhangfei.gao@linaro.org>,
+	Zhou Wang <wangzhou1@hisilicon.com>, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 09/12] dmaengine: idxd: Remove unnecessary
+ IOMMU_DEV_FEAT_IOPF
+Message-ID: <20250220010325.GR3696814@ziepe.ca>
+References: <20250214061104.1959525-1-baolu.lu@linux.intel.com>
+ <20250214061104.1959525-10-baolu.lu@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 02/18] cxl/pci: Moving code in cxl_hdm_decode_init()
-To: Robert Richter <rrichter@amd.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Davidlohr Bueso <dave@stgolabs.net>
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
- Gregory Price <gourry@gourry.net>,
- "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
- Terry Bowman <terry.bowman@amd.com>
-References: <20250211095349.981096-1-rrichter@amd.com>
- <20250211095349.981096-3-rrichter@amd.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250211095349.981096-3-rrichter@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250214061104.1959525-10-baolu.lu@linux.intel.com>
 
-
-
-On 2/11/25 2:53 AM, Robert Richter wrote:
-> Commit 3f9e07531778 ("cxl/pci: simplify the check of mem_enabled in
-> cxl_hdm_decode_init()") changed the code flow in this function. The
-> root port is determined before a check to leave the function. Since
-> the root port is not used by the check it can be moved to run the
-> check first. This improves code readability and avoids unnesessary
-> code execution.
+On Fri, Feb 14, 2025 at 02:11:01PM +0800, Lu Baolu wrote:
+> The IOMMU_DEV_FEAT_IOPF implementation in the iommu driver is just a no-op.
+> It will also be removed from the iommu driver in the subsequent patch.
+> Remove it to avoid dead code.
 > 
-> Signed-off-by: Robert Richter <rrichter@amd.com>
-> Reviewed-by: Gregory Price <gourry@gourry.net>
-> Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
-> Tested-by: Gregory Price <gourry@gourry.net>
-
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
 > ---
->  drivers/cxl/core/pci.c | 16 ++++++++--------
->  1 file changed, 8 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
-> index 2ec8c97ab160..f8e22bc278c3 100644
-> --- a/drivers/cxl/core/pci.c
-> +++ b/drivers/cxl/core/pci.c
-> @@ -419,14 +419,6 @@ int cxl_hdm_decode_init(struct cxl_dev_state *cxlds, struct cxl_hdm *cxlhdm,
->  	if (!hdm)
->  		return -ENODEV;
->  
-> -	root = to_cxl_port(port->dev.parent);
-> -	while (!is_cxl_root(root) && is_cxl_port(root->dev.parent))
-> -		root = to_cxl_port(root->dev.parent);
-> -	if (!is_cxl_root(root)) {
-> -		dev_err(dev, "Failed to acquire root port for HDM enable\n");
-> -		return -ENODEV;
-> -	}
-> -
->  	if (!info->mem_enabled) {
->  		rc = devm_cxl_enable_hdm(&port->dev, cxlhdm);
->  		if (rc)
-> @@ -435,6 +427,14 @@ int cxl_hdm_decode_init(struct cxl_dev_state *cxlds, struct cxl_hdm *cxlhdm,
->  		return devm_cxl_enable_mem(&port->dev, cxlds);
->  	}
->  
-> +	root = to_cxl_port(port->dev.parent);
-> +	while (!is_cxl_root(root) && is_cxl_port(root->dev.parent))
-> +		root = to_cxl_port(root->dev.parent);
-> +	if (!is_cxl_root(root)) {
-> +		dev_err(dev, "Failed to acquire root port for HDM enable\n");
-> +		return -ENODEV;
-> +	}
-> +
->  	for (i = 0, allowed = 0; i < info->ranges; i++) {
->  		struct device *cxld_dev;
->  
+>  drivers/dma/idxd/init.c | 37 ++++++-------------------------------
+>  1 file changed, 6 insertions(+), 31 deletions(-)
 
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+
+Jason
 
