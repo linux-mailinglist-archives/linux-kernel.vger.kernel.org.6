@@ -1,196 +1,163 @@
-Return-Path: <linux-kernel+bounces-523960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86BE5A3DD60
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:54:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D583A3DD64
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:54:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BD1E3A4100
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:54:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 570ED16D8F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:54:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C2F21FBC8E;
-	Thu, 20 Feb 2025 14:53:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 770591D54CF;
+	Thu, 20 Feb 2025 14:54:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YVRROzhR"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="InovFzdw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EED81C6F70;
-	Thu, 20 Feb 2025 14:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C64595258;
+	Thu, 20 Feb 2025 14:54:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740063233; cv=none; b=aoIfninOekHnIcD6Xm5otD3Oy3i1Kw16Xz4mu2oM6ZnklG2wUPs9T+cQNP3hkgNw/gnep6r6wGgqEDzbkn/NKGizDPOUlkaW62crdcPIeeXWoBljKN0t0shIyj8BDYUUB9es8Hnb/GtXFIkuhsnwsEJTu8uzkJFejIxWzxjE2ys=
+	t=1740063280; cv=none; b=o7nQxrl1AT/PLcjx5CVmwnHVN1Jsfd38+VMGvMrnofiYaN65NwNp2aG1kJSSDOefpEsoQrZwTmbcgWRlXpN2Figdkf85kFGfydhml0zYehMNZDdWJBs1ApDhdal2CpoRa4Prh6VcTE30oPuHl2QK0u+P7by4rpGNvVraKHQnr8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740063233; c=relaxed/simple;
-	bh=4/pMzWx/e525LbJKFbze/lMI08yLnwEFOH20ty6Rm0w=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=WVk3a61PsJpOELhRmyrJuQ8R1U3mA8eK6TuByXCqg78AuKK+jvfw3+iH4jI71zm7uLgguXeVtoM491JeL4qWRsjxMM/+UBGdy9RTNd2CBjZh34Rs3O7TlkuCpbg0+qZ5Cign32H5Q1hmeyTXhcIj0TX1iu43BzBMrUcfipiMy5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YVRROzhR; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-439350f1a0bso6713775e9.0;
-        Thu, 20 Feb 2025 06:53:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740063230; x=1740668030; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VnF7DjHtaQEH3B1zrO6KsyD/Yfh+zOQ+dj+D2Kr1dck=;
-        b=YVRROzhRoCfdxYE8WAsBXBt/gjUOBTqeUKK235EgrHpHJ70SArMYKvACVAOM5QyzRr
-         IPJXsqoaAFtGA/MAggTFB+zqFAggFT6czuZuKutWRw7/VHrUTp+QBQNwN/X+EOr7WebA
-         hvgRsocIKBn+vatNsUcVEHMrr0vuP3KnJA7sciL2i28iZeb8SbrTv1z+zLtBAPSQKA7l
-         ttTAfGKSAmQTIED/7gzQj7wF5ym0oioUut99cj5QB38dL7pbA1XM4PfA3Xqv+j3l1eOs
-         DgUoDsMlSYb4HrjJgdiO86PYERSgI5hlb9P07EjDisSBryrOby5r5pi4o/ZWyDbDq3nL
-         2EsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740063230; x=1740668030;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=VnF7DjHtaQEH3B1zrO6KsyD/Yfh+zOQ+dj+D2Kr1dck=;
-        b=RMY5/T5pMs0FoBtnWcQqLo8WEfCZI7DPS+bGOLEALINCKIzLztTyuQJGQpRRmsvO82
-         y5279f1/vmqH2GwFzphoe6y6dCXT7gzHSPtFgeFTuB8LoJ9GB/Sh7sp9GmURntse5oRS
-         X91NVyA6TR0Q3djKbcyAfgyxt1/Ux+u8L2ev2wXsFRK+HvpU1LTOYGMADnxpG8A2TrXJ
-         l3V3cqdLKKoFXRVeAYQTpO6UuGKJcqjeak2sIC1SqBQfzbqvdDWISNImiBV6sZ/MqKCw
-         Aku90S0/i1kaFnBig5ev6ygzvVknM5P2FBiLJTYYAV9T1nV1kr3rNNie2hp+KEfttoia
-         6EWw==
-X-Forwarded-Encrypted: i=1; AJvYcCUXfWWSqxeQYZgziwIFz2jRJCNp73e53EqEnNdYm33IVJ+EmdbGM77hVSunU55I2j4wM037Xh5qm7LxfZFy@vger.kernel.org, AJvYcCXSdAlmDCpgbFOlUGNXwZbYiRRLXbKDz5q9orsk1qqkYiI5U+yoa2N9ahcrnZyp0HcC4jGacBD8SP3u@vger.kernel.org, AJvYcCXZ5b1r2gAsAhC2/mWVVduGyJRui+rHor96PqPfR6H3GjTzxvF8xLSqqMCGkfd3bZeQVMBY2NziMH2D@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0snVuqwknPblpOCpoAqwhOEAYGjbj1lbEXxOtbG/AbhFTWPZa
-	PJsTkSvE/+/2XG4lKoLjYsAYIbuSNg+38OKEtZ5kMBD7dIZXsfLm
-X-Gm-Gg: ASbGncvINCUal/nq6HKAYJ7yEV1rIr+dioaJPFVoHX9huWVI4nfDi0XOkAV2A3Xt0W1
-	pxsCpvxI5TGPgYqI2IqUid8DpLIHHZ2NVn1LTPCF7xXYH5bL77bGHM95SMFxBRRCcdiYJ1XQXf5
-	/emFKMq5Pq7AGeCV98D/hxUhh0jLxPr2+Dn3fHiK/OnxFyeJQ5krGAmcTxmgnk88RqyIBPpv4ni
-	6uC/ANMBJWy91o8eubObwgw4oYy24KzllTj3rDudaCdzZJfJ9YO/etKCEObt6JBCnhPyUHAzkxo
-	Uyd/0CZ56FaeoC5EZvburBbZfZR0kU7TV8/qZgtb5XH2h8eFzzx0q33oRGRATjU=
-X-Google-Smtp-Source: AGHT+IGzcQv6D79Z/HRxMUtj/i5EFZORo6aaJ85Q2wB0UdtwW9sqZZhHpWNotMoI9P55Xbeqiq29YQ==
-X-Received: by 2002:a05:600c:1d08:b0:439:8e95:796a with SMTP id 5b1f17b1804b1-439a30d38f4mr32497155e9.13.1740063229620;
-        Thu, 20 Feb 2025 06:53:49 -0800 (PST)
-Received: from ?IPv6:2001:818:ea8e:7f00:2575:914:eedd:620e? ([2001:818:ea8e:7f00:2575:914:eedd:620e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a04f208sm242976455e9.6.2025.02.20.06.53.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 06:53:49 -0800 (PST)
-Message-ID: <8f588f4b88d122815df694660d19672e8ccd3d70.camel@gmail.com>
-Subject: Re: [PATCH 14/14] Documentation: ABI: testing: ad4080 docs
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>, jic23@kernel.org, 
-	robh@kernel.org, conor+dt@kernel.org, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Thu, 20 Feb 2025 14:53:52 +0000
-In-Reply-To: <20250220135429.8615-15-antoniu.miclaus@analog.com>
-References: <20250220135429.8615-1-antoniu.miclaus@analog.com>
-	 <20250220135429.8615-15-antoniu.miclaus@analog.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 
+	s=arc-20240116; t=1740063280; c=relaxed/simple;
+	bh=BC0dhBX7Eg81uhggtuEZHVM8dUwnpQ+dA2ufHLGdn4c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=smtc9dhUTBEpcNFX4/RmRpXTYtGyTo7VxjGzZJE1Lnpa3o2fXIkD12G0ZDLiEdPRutEaGycYbCIp1xqPaWdhEaG1psqQ74mS8M33V2OHuJVnPLtYuz/yfqA+nUx6vbK0kkPjqJLWDQP4LIKgPHpWQYx2HldJn1KoMWLNHxzePOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=InovFzdw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63166C4CED1;
+	Thu, 20 Feb 2025 14:54:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740063280;
+	bh=BC0dhBX7Eg81uhggtuEZHVM8dUwnpQ+dA2ufHLGdn4c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=InovFzdwowCfkaS3mdofhqdbNRDT0QPSXwLh3w3Ks3gabjyfLh3ZoKBTtSmNarqnX
+	 NWSycHqGlN7yNd+0eWaOU0+ODeMj6drkyWUBF0F3RDCZrjku80gpxCYmc+kAAFUIhF
+	 cIdOH8Da91vYXQfiFliQAi78+0x05PEFtzKvkt3XktgkdC4Zn64/wMsF41e4w438lb
+	 73um6//H3gzH4CFINfnDIYtLDsWM0e8qrbcvmRP2pP+F9H/e6WTApFpXNGqIxMY23P
+	 l5ycIRreRRuogv2tc/sBZpVOPGfjbPnHoaxZx2Ce/d5jWstSBddCKPXyzlLKyYjqF8
+	 fPv0Kjhu6R8bQ==
+Date: Thu, 20 Feb 2025 16:54:19 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Wei Yang <richard.weiyang@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Alexander Graf <graf@amazon.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Anthony Yznaga <anthony.yznaga@oracle.com>,
+	Arnd Bergmann <arnd@arndb.de>, Ashish Kalra <ashish.kalra@amd.com>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Ingo Molnar <mingo@redhat.com>, James Gowans <jgowans@amazon.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Pratyush Yadav <ptyadav@amazon.de>,
+	Rob Herring <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Usama Arif <usama.arif@bytedance.com>,
+	Will Deacon <will@kernel.org>, devicetree@vger.kernel.org,
+	kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
+Subject: Re: [PATCH v4 01/14] mm/mm_init: rename init_reserved_page to
+ init_deferred_page
+Message-ID: <Z7dCG3ihTnDuJ8_c@kernel.org>
+References: <20250206132754.2596694-1-rppt@kernel.org>
+ <20250206132754.2596694-2-rppt@kernel.org>
+ <20250218145904.x57chhz3whvckzu3@master>
+ <Z7WEktyNoCPylytL@kernel.org>
+ <20250220083601.4p6ehmfhyvs5q5io@master>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250220083601.4p6ehmfhyvs5q5io@master>
 
-On Thu, 2025-02-20 at 15:54 +0200, Antoniu Miclaus wrote:
-> Add documentation for the ad4080 attributes.
->=20
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-> ---
-> =C2=A0.../ABI/testing/sysfs-bus-iio-adc-ad4080=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 | 55 +++++++++++++++++++
-> =C2=A01 file changed, 55 insertions(+)
-> =C2=A0create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-adc-ad40=
-80
->=20
-> diff --git a/Documentation/ABI/testing/sysfs-bus-iio-adc-ad4080
-> b/Documentation/ABI/testing/sysfs-bus-iio-adc-ad4080
-> new file mode 100644
-> index 000000000000..e37bfba0e989
-> --- /dev/null
-> +++ b/Documentation/ABI/testing/sysfs-bus-iio-adc-ad4080
-> @@ -0,0 +1,55 @@
-> +What:		/sys/bus/iio/devices/iio:deviceX/lvds_sync
-> +Date:		February 2025
-> +KernelVersion:
-> +Contact:	linux-iio@vger.kernel.org
-> +Description:
-> +		This attribute handles the data synchronization
-> process.Because the CNV
-> +		signal is not taken into account by the FPGA when capturing
-> the data, we
-> +		need a process that configures the ADC to output pattern
-> data, writes the
-> +		SYNC bit in the axi_adc register map, waits until the custom
-> HDL syncs the
-> +		data correctly, and then changes the output mode to analog
-> data instead of
-> +		the fixed pattern.
+On Thu, Feb 20, 2025 at 08:36:01AM +0000, Wei Yang wrote:
+> On Wed, Feb 19, 2025 at 09:13:22AM +0200, Mike Rapoport wrote:
+> >Hi,
+> >
+> >On Tue, Feb 18, 2025 at 02:59:04PM +0000, Wei Yang wrote:
+> >> On Thu, Feb 06, 2025 at 03:27:41PM +0200, Mike Rapoport wrote:
+> >> >From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+> >> >
+> >> >When CONFIG_DEFERRED_STRUCT_PAGE_INIT is enabled, init_reserved_page()
+> >> >function performs initialization of a struct page that would have been
+> >> >deferred normally.
+> >> >
+> >> >Rename it to init_deferred_page() to better reflect what the function does.
+> >> 
+> >> Would it be confused with deferred_init_pages()?
+> >
+> >Why? It initializes a single page, deferred_init_pages() initializes many.
+> >
+> 
+> See below.
+> 
+> >> And it still calls __init_reserved_page_zone(), even we __SetPageReserved()
+> >> after it. Current logic looks not clear.
+> >
+> >There's no __init_reserved_page_zone(). Currently init_reserved_page()
+> >detects the zone of the page and calls __init_single_page(), so essentially
+> >it initializes one struct page.
+> >
+> >And we __SetPageReserved() in reserve_bootmem_region() after call to
+> >init_reseved_page() because pages there are indeed reserved.
+> > 
+> 
+> Hmm... I am not sure we are looking at the same code. I take a look at current
+> mm-unstable, this patch set is not included.
 
-I'll comment this one in the driver. I have some questions on how this work=
-s...
+I was looking at Linus tree, it was not there yet :)
 
-> +
-> +What:		/sys/bus/iio/devices/iio:deviceX/lvds_lvds
-> +Date:		February 2025
-> +KernelVersion:
-> +Contact:	linux-iio@vger.kernel.org
-> +Description:
-> +		Configures the signal type of the CNV signal. The value can
-> be either CMOS
-> +		(lvds_cnv=3D0) or LVDS (lvds_cnv=3D1).
+> So I am looking at previous version with this last commit:
+> 
+>   8bf30f9d23eb 2025-02-06 Documentation: KHO: add memblock bindings
+> 
+> Here is what I see for init_deferred_page()'s definition:
+> 
+> init_deferred_page()
+>   __init_deferred_page()
+>     __init_reserved_page_zone()   <--- I do see this function, it is removed?
+>       __init_single_page()
+> 
+> What I want to say is __init_deferred_page() calls
+> __init_reserved_page_zone(). This sounds imply a deferred page is always
+> reserved page. But we know it is not.  deferred_init_pages() initialize the
+> pages are not reserved one. Or we want to have this context in
+> __init_deferred_page()?
 
-The name seems to be wrong with what you have implemented. From this
-description, I would think of this as a DT property? Can the signal type re=
-ally
-change at runtime?
+If the commit that introduced __init_reserved_page_zone goes in before KHO,
+I'll just rename both functions, there is nothing about reserved pages
+there.
+ 
+> >-- 
+> >Sincerely yours,
+> >Mike.
+> 
+> -- 
+> Wei Yang
+> Help you, Help me
 
-> +
-> +What:		/sys/bus/iio/devices/iio:deviceX/filter_sel
-> +Date:		February 2025
-> +KernelVersion:
-> +Contact:	linux-iio@vger.kernel.org
-> +Description:
-> +		This attribute enables the digital filter functionality of
-> the AD4080.In
-> +		order to capture data correctly, the function must configure
-> the ADC
-> +		through SPI to select the filter type and enable data capture
-> in filter
-> +		mode through axi_adc(In this mode, data is gated by a signal
-> generated by
-> +		the AD4080 (GPIO1 and is not continuous as it is when the
-> filter is
-> +		disabled).
-> +
-> +What:		/sys/bus/iio/devices/iio:deviceX/filter_sel_available
-> +Date:		February 2025
-> +KernelVersion:
-> +Contact:	linux-iio@vger.kernel.org
-> +Description:
-> +		Return the available filter modes that can be set.
-
-There's a standard attr for this. I think we settled=20
-> +
-> +What:		/sys/bus/iio/devices/iio:deviceX/sinc_dec_rate
-> +Date:		February 2025
-> +KernelVersion:
-> +Contact:	linux-iio@vger.kernel.org
-> +Description:
-> +		Set the filter=E2=80=99s decimation rate.
-> +
-> +What:		/sys/bus/iio/devices/iio:deviceX/sinc_dec_rate_available
-> +Date:		February 2025
-> +KernelVersion:
-> +Contact:	linux-iio@vger.kernel.org
-> +Description:
-> +		Return the available filter's decimation rates.
-> +
-> +
-
-I'm not yet convinced we need the dec_rate custom attr. I'll add more comme=
-nts
-in the driver.
-
-- Nuno S=C3=A1
-
+-- 
+Sincerely yours,
+Mike.
 
