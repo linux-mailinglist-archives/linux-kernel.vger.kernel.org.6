@@ -1,112 +1,148 @@
-Return-Path: <linux-kernel+bounces-524902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 997B0A3E88D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:33:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 187D1A3E892
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:34:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85F593B54F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:32:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0DA73BB20E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:34:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F401F26463B;
-	Thu, 20 Feb 2025 23:32:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="b885VKnk";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aEHPU3cz"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B99F265638;
+	Thu, 20 Feb 2025 23:34:19 +0000 (UTC)
+Received: from relay02.th.seeweb.it (relay02.th.seeweb.it [5.144.164.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF552B9AA;
-	Thu, 20 Feb 2025 23:32:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4A832B9AA;
+	Thu, 20 Feb 2025 23:34:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.144.164.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740094366; cv=none; b=icA7Aw9e5CpHYRvyAff7seJS32aenYFalIzIaZmHBANir4Hz6OUnz1BOmzG4zPOz/obarhUtKyTRfEkA8GnPx85hf38+ft2ZQrM3gRDsB38Km7xwaLZvsYeqCPAvE4Miv83nqwEAKGu/N5kp7oK+16VyNLLL+ciYQR+7oa3RX94=
+	t=1740094458; cv=none; b=Zw4ayuyMoOo1O+cq7PArui25+VIyhafnV77+txUP9nyI5WPRawPRx0rJ7AG0X3xa/BV16PM0QL3Gy4wTR/tjQ/4LwMCSVOBA3ZOqK+AyBsFgnLgQkJ2xv1V/FJqQnFh1fDzF73bu+Y5FIn0GoxK4csaNzsRYN6j7iFf6Vp0SuME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740094366; c=relaxed/simple;
-	bh=+nf1EcKnac5t8Vrhz2jYyT2lBWSLyiK8hgtfDB21mXQ=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=SSHDokmrTD2dCCbFhrTkdhosIRTcf1jx3ZO667veuwq/h4ui6DCZay+RlpNxs2b6Y5WzJ1TDKOSVVRE/EyaLDAvf/W50AmgLpFAmNi8RcHBefnif3SGFb05YhQvbMsRz3lxX8XLLxIwoMo7N0HXQDulNQdvpNkl+Zy0uTGpOdWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=b885VKnk; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aEHPU3cz; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 20 Feb 2025 23:32:38 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740094362;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=+MWq1NJY7fh5Cm36mR754lGRJLrn5yWoa4maosoIVbs=;
-	b=b885VKnkwJv7ToywskyolNOlXS7FwimkvqmvN9NrsuGAycymqxILjVtIk0OJFhJJPIDTmV
-	KfJTWPgxgI+l+aoZv/5xJhIFCjIglvqgPfG4sO0U/MZK3ZhTdxWtTQ7PU3rBYUMJw9y+C/
-	nDam0XrI7LB/jt6KZNnir6dmT/NbFuvdfaMT1mD7KbHp3In0IZeFmiMpYFBrDUh7T3fOxH
-	ZxdhdQOVArXcvd+YLBrQDG846LgrtCBIkQ/KPO37Ge/PDT+zV+x6VBhSoDk9mq6mbcoBA8
-	UYprqCFk/ziuiteUjB5fsv2Z9vs2mq5j2/h9ZLWmA+49lcz1YU+oynJ57tHZvw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740094362;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=+MWq1NJY7fh5Cm36mR754lGRJLrn5yWoa4maosoIVbs=;
-	b=aEHPU3cz6B+3zLI/s4FN18ut8Eq7U20V8e7TFFHpiOfE9+1W7cSSqYvutUuZA/m7vdZrjN
-	cSbrODMTsuj4B2AA==
-From: "tip-bot2 for Fenghua Yu" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] MAINTAINERS: Change maintainer for RDT
-Cc: Fenghua Yu <fenghua.yu@intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Reinette Chatre <reinette.chatre@intel.com>, Tony Luck <tony.luck@intel.com>,
- x86@kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1740094458; c=relaxed/simple;
+	bh=s0iZBvANHFL4ziCPH3pCpYHfFyxTqs8Dm2mcRvgM3xw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tUAxGg0cp6QIgePvZsITDo2vGN45DRoF730Jeumio97KDQV/fjCCpqqqzO8sbG8NvuYUoRgzzoNqBGY5l069ecg7Az/Ws7rAPwM2MjucSq9jTYANM6gjcUxL4hzrDeYFIwoU/Ia/vZk4qESMWliNpyi4PjQeDccvpCsYHguSpek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org; spf=pass smtp.mailfrom=somainline.org; arc=none smtp.client-ip=5.144.164.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=somainline.org
+Received: from SoMainline.org (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 5E7661FB92;
+	Fri, 21 Feb 2025 00:34:13 +0100 (CET)
+Date: Fri, 21 Feb 2025 00:34:12 +0100
+From: Marijn Suijten <marijn.suijten@somainline.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/7] drm/msm/dpu: allocate single CTL for DPU >= 5.0
+Message-ID: <4aix26abutkas2fpj6ubu2hbqeljpgr5e3m24akeb3jz33limj@c7rymwz6zmft>
+References: <20250220-dpu-active-ctl-v1-0-71ca67a564f8@linaro.org>
+ <20250220-dpu-active-ctl-v1-6-71ca67a564f8@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174009435948.10177.5732078884302490581.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250220-dpu-active-ctl-v1-6-71ca67a564f8@linaro.org>
 
-The following commit has been merged into the x86/urgent branch of tip:
+On 2025-02-20 12:26:23, Dmitry Baryshkov wrote:
+> Unlike previous generation, since DPU 5.0 it is possible to use just one
+> CTL to handle all INTF and WB blocks for a single output. And one has to
+> use single CTL to support bonded DSI config. Allocate single CTL for
+> these DPU versions.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c | 17 +++++++++++++----
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_rm.h |  2 ++
+>  2 files changed, 15 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
+> index 5baf9df702b84b74ba00e703ad3cc12afb0e94a4..4dbc9bc7eb4f151f83055220665ee5fd238ae7ba 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
+> @@ -53,6 +53,8 @@ int dpu_rm_init(struct drm_device *dev,
+>  	/* Clear, setup lists */
+>  	memset(rm, 0, sizeof(*rm));
+>  
+> +	rm->has_legacy_ctls = (cat->mdss_ver->core_major_ver < 5);
+> +
+>  	/* Interrogate HW catalog and create tracking items for hw blocks */
+>  	for (i = 0; i < cat->mixer_count; i++) {
+>  		struct dpu_hw_mixer *hw;
+> @@ -381,10 +383,16 @@ static int _dpu_rm_reserve_ctls(
+>  	int i = 0, j, num_ctls;
+>  	bool needs_split_display;
+>  
+> -	/* each hw_intf needs its own hw_ctrl to program its control path */
+> -	num_ctls = top->num_intf;
+> +	if (rm->has_legacy_ctls) {
+> +		/* each hw_intf needs its own hw_ctrl to program its control path */
+> +		num_ctls = top->num_intf;
+>  
+> -	needs_split_display = _dpu_rm_needs_split_display(top);
+> +		needs_split_display = _dpu_rm_needs_split_display(top);
+> +	} else {
+> +		/* use single CTL */
+> +		num_ctls = 1;
+> +		needs_split_display = false;
+> +	}
+>  
+>  	for (j = 0; j < ARRAY_SIZE(rm->ctl_blks); j++) {
+>  		const struct dpu_hw_ctl *ctl;
+> @@ -402,7 +410,8 @@ static int _dpu_rm_reserve_ctls(
+>  
+>  		DPU_DEBUG("ctl %d caps 0x%lX\n", j + CTL_0, features);
+>  
+> -		if (needs_split_display != has_split_display)
+> +		if (rm->has_legacy_ctls &&
+> +		    needs_split_display != has_split_display)
 
-Commit-ID:     b522f180ee2b264b771fcbd0ab67d84cdd9e580d
-Gitweb:        https://git.kernel.org/tip/b522f180ee2b264b771fcbd0ab67d84cdd9e580d
-Author:        Fenghua Yu <fenghua.yu@intel.com>
-AuthorDate:    Fri, 31 Jan 2025 11:07:31 -08:00
-Committer:     Dave Hansen <dave.hansen@linux.intel.com>
-CommitterDate: Thu, 20 Feb 2025 15:23:50 -08:00
+I deduced a long time ago that the check for rm->has_legacy_ctls is not needed.
 
-MAINTAINERS: Change maintainer for RDT
+needs_split_display is always false on DPU >= 5, and neither of those SoCs has
+DPU_CTRL_SPLIT_DISPLAY which means false != false is false, and this condition
+never triggers on active CTLs even without checking has_legacy_ctls.
 
-Due to job transition, I am stepping down as RDT maintainer.
-Add Tony as a co-maintainer.
+Other than that, this is all successfully tested and:
 
-Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Acked-by: Reinette Chatre <reinette.chatre@intel.com>
-Acked-by: Tony Luck <tony.luck@intel.com>
-Link: https://lore.kernel.org/all/20250131190731.3981085-1-fenghua.yu%40intel.com
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Marijn Suijten <marijn.suijten@somainline.org>
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index feed152..d1cbaeb 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19779,7 +19779,7 @@ F:	net/rds/
- F:	tools/testing/selftests/net/rds/
- 
- RDT - RESOURCE ALLOCATION
--M:	Fenghua Yu <fenghua.yu@intel.com>
-+M:	Tony Luck <tony.luck@intel.com>
- M:	Reinette Chatre <reinette.chatre@intel.com>
- L:	linux-kernel@vger.kernel.org
- S:	Supported
+>  			continue;
+>  
+>  		ctl_idx[i] = j;
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.h
+> index 99bd594ee0d1995eca5a1f661b15e24fdf6acf39..130f753c36338544e84a305b266c3b47fa028d84 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.h
+> @@ -24,6 +24,7 @@ struct dpu_global_state;
+>   * @dspp_blks: array of dspp hardware resources
+>   * @hw_sspp: array of sspp hardware resources
+>   * @cdm_blk: cdm hardware resource
+> + * @has_legacy_ctls: DPU uses pre-ACTIVE CTL blocks.
+>   */
+>  struct dpu_rm {
+>  	struct dpu_hw_blk *pingpong_blks[PINGPONG_MAX - PINGPONG_0];
+> @@ -37,6 +38,7 @@ struct dpu_rm {
+>  	struct dpu_hw_blk *dsc_blks[DSC_MAX - DSC_0];
+>  	struct dpu_hw_sspp *hw_sspp[SSPP_MAX - SSPP_NONE];
+>  	struct dpu_hw_blk *cdm_blk;
+> +	bool has_legacy_ctls;
+>  };
+>  
+>  struct dpu_rm_sspp_requirements {
+> 
+> -- 
+> 2.39.5
+> 
 
