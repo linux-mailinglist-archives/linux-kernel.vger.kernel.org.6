@@ -1,149 +1,142 @@
-Return-Path: <linux-kernel+bounces-523844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30D0CA3DBFE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:02:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4900DA3DC00
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:03:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00F14188E2FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:02:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51C7D18830E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:03:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 296CF1ADC9B;
-	Thu, 20 Feb 2025 14:01:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8F3D1A8F94;
+	Thu, 20 Feb 2025 14:03:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q+KTDZMh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZT608gIv"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83B3D5258;
-	Thu, 20 Feb 2025 14:01:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D8D1BC4E
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 14:03:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740060114; cv=none; b=OYJJ67qlqCGxriWcZAFrbxdP+obFEmvm4XGQ6g0P5oYidHd0cvFre+vnZzdJsshzEsp0fFKpUBItYy7cK6QbT4NuzG+OqXeEd1kWFs+Pomx8UbkpwmT4SldQQnWkq59u/ZWolumGOa2j/SU41eppiu3h8T52kOufFCVqbaUS39c=
+	t=1740060190; cv=none; b=ciGNm6/+nEqNBiCVIyYCUo5gEDAEIGBACqChKW0Usuab0Yh+gppzD3T8i2WdJ1j8SzBqey38gtRS6eXBp6Fh23ggaePbE/aNbo1c51RLdHnjaUwkrsGhW0rcMdfy0CMBcUR6CmChaMJhtWhyCdxf3p0qjHPljC2JCwhJ1M/ifE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740060114; c=relaxed/simple;
-	bh=b4AZKnm/4CW7chhpu6yQW9p0aspr3R6qCEzhfg2YT2I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fWlp6M7enon84rdA6RQswpf8o0DdG+i1CWE9z5qJNx8WfP/Bcrxku4cLyVX3e72RmnpEZd74RFktoCjaS+Bcr34h3f1MXOP+JapWsIcm7Ara7vnY39RxXDVX6yRBi8D8ayqaFcppvNaR+K1g9HMZsWkUEZtWoPMEVQBCY2ejzcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q+KTDZMh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03174C4CEDD;
-	Thu, 20 Feb 2025 14:01:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740060114;
-	bh=b4AZKnm/4CW7chhpu6yQW9p0aspr3R6qCEzhfg2YT2I=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Q+KTDZMhrGHww4kznoyoJFRb3olr8UODUOwgc0KY/L9KBdW9BoIXyszGXXv4Ynh6Z
-	 cO0HdO06VC3E/UqF/Jg8NUdTCasfU7SOTlMugQ16kiTF2vZGHhv7tudwRpKchBJDcY
-	 8VcxRDg9kr3ykokUeRV1/TPRR3+pN/SwC5fjv62+HwG3C4tb3DfGpdAHVb+l3BvvIW
-	 uo3aq8fCpm2E2YrplY+KvwQMHgVPbrsIVesZTtmr2Ku21/tlm46VDSYvvXMCK1jhVv
-	 XBzNMX4ScWWBxkf1CsgRWByYXYhUwiB7AuXrTU5hTSZIWGsL4ttlO1axyFx0nIeMiz
-	 Hr+pDlJKgKBOA==
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-220bfdfb3f4so20268185ad.2;
-        Thu, 20 Feb 2025 06:01:53 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXSNrv1zGAcD0mGHsoCJWvPwG/q+qiFTj6J+vuXbm7gqOdHSJkeKGX4vKBPg5GR0lep0hAM4NCguC5GyXbY@vger.kernel.org, AJvYcCXWezI28maPqoN+ITNcrorVmrpWM58U9tEh6yBAXhygNWQkVj+zZZ6usgcB3IHNGQbVNH8jpk9loDh3@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMsi1IihV342N5+eQ7DF1rxS8TyWWkrcrcUORtYuUpJaFHw5ZI
-	wYAZwe4kbECe1yHgYZo59jK9Ts9zXUMmJwLrN5VVj5sZ24ZiSvGAKiZL9MfJU9GUM3+MHbMlAcV
-	8rQxn8CCEssBSL0f1N9fSN/cWag==
-X-Google-Smtp-Source: AGHT+IFapzn+NKHW52s4K7DIT+hFK+iRpE1/gZU7kl7MdKEYaDixn7SWx5ZWS9wyFmn3w4NhHQTiw5+aDFJOtqZJANg=
-X-Received: by 2002:a17:902:f689:b0:220:bd01:6507 with SMTP id
- d9443c01a7336-22170988a48mr119225175ad.25.1740060113565; Thu, 20 Feb 2025
- 06:01:53 -0800 (PST)
+	s=arc-20240116; t=1740060190; c=relaxed/simple;
+	bh=gXzeW9ai2Guvh9itt6p63XE/2CTBTxu+cwAc1m7lmts=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:References:
+	 In-Reply-To:Content-Type; b=l4QkJuNfl+bmUGXtG9IyxLHBiME6KzO3CJb9Yso1nqhCfGv6vlZMfrRyAF6b+I+rB71MpTZDO2+BKkvh8GOpOnkh4TlCaC6UsX+bYXX4EhciEE03YtJz5iOg5Trz8vqGPN308h4buDHB6ZjGAA2IeRpezeDNTxShRPv8RJBuUHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZT608gIv; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740060187;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CImvjXTICIHMBGvZGwt/ho2nn0DU+r/iFE+ZRJOiir8=;
+	b=ZT608gIvl+yO7YetxTHeQDmWkJd0WtVoCzFOdJsQlAIung1fayml3rYBznRmMOLcizlosd
+	UwDMHJzbQ5OSfCrttINH3shLZEVnF5QSGorrSPiRAmhuLrEa+LOPryMEbgd7ihpTDdlyzc
+	wyimQunwZEGMY1Wn2E07fYESz3/b4G0=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-93-7l58sPZJNzC6zVRfozgVBQ-1; Thu, 20 Feb 2025 09:03:06 -0500
+X-MC-Unique: 7l58sPZJNzC6zVRfozgVBQ-1
+X-Mimecast-MFC-AGG-ID: 7l58sPZJNzC6zVRfozgVBQ_1740060186
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c09d661887so97482385a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 06:03:06 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740060186; x=1740664986;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CImvjXTICIHMBGvZGwt/ho2nn0DU+r/iFE+ZRJOiir8=;
+        b=Zcux9Dh7ZzrOyvwjN3zrMp8Bi7w1HHZhdS2Efza+FjmLVMvIy0owSRvSlURsHvJvoo
+         IJ1vMtpf+lT1t89oku+EEkQ8tBLT0BRgH3O6XqJQQvqIhl5ifDZl8NISVYWkoJl6ggVN
+         KX9+OI/0df5AOgi6E02Jo2kCgG8zNUtG2LQYSZ/nWo08vIb7Q+E50mYNRxCTkRHWad+S
+         rt+bcjQDSxh/w4Ni83ajWh6/mOC71W2uu1yVPN6GRjMHqASn7myP9CR8H5cAHe7D0EJ7
+         AGT+wdtXa+fmhXElmELMfo0Re1RrVFnqqKQzg95x9OgOlkXgGNBBtEr1PlL4bNpzof1R
+         qogA==
+X-Forwarded-Encrypted: i=1; AJvYcCUcwJ+BEPI+L2kU1ShS27JsIuJKkEzZA08DMk5hDWN7NyOsCEk0AtECEF6zF3G0uHgBMWXAucCVsXikMnI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3ANV7dHhc03VmynyqsAkZbpG7IZODsE8+dxgGFuVmCJppG/MG
+	bB/aH/FS8HaA0adjN0eoqo9VButVOPSECAgruNrs3A14ZcND0v3QTy3wnIcA6aG/3wgwvTvmEED
+	YxMAV/8QeTUdp1imgZgh2QGJ7B67oYPYqrDtX7NJk9mVqRLSLK8OqH4Udp4r9CA==
+X-Gm-Gg: ASbGncvw2YgmBNt1hcheSb6duWhX89VLf+ZefEoWXP4iD/awM641jNJhoFS/94BAQ29
+	avQuZt4ezO8oOnwd/RRTy25eh2rbUEs+5Fz74D3GnYpNOBp4wmg+v0jakJAdPGwDKHPDCWCBY4m
+	nMv0GV7BOjAwkhCEx0QsYmfi30yfF1TXbZtLiPN/aDKyH4cu/oxCLphzeENuBX/w7PMl0Omyel6
+	jG/5CMqeeMaW3bd/5nsIZh6GGHUPO1oZEI+Gwj8jAZSqU+KsvSPmVj8ayL2DySWTY3TD+AVJefR
+	XZoY/dRZBis3gn7mjRIBowrjQGS3V1Wp+YzA6UYfEXezpkGH
+X-Received: by 2002:a05:620a:298c:b0:7c0:aa35:c3b7 with SMTP id af79cd13be357-7c0b51d5234mr971500385a.12.1740060185549;
+        Thu, 20 Feb 2025 06:03:05 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IH42gERnMKf0oupG97P66/YsA/i4VDnJAXrFhXYRnk+HlcvSmhDenfdx1QansA6igg+3HuYDQ==
+X-Received: by 2002:a05:620a:298c:b0:7c0:aa35:c3b7 with SMTP id af79cd13be357-7c0b51d5234mr971497185a.12.1740060185195;
+        Thu, 20 Feb 2025 06:03:05 -0800 (PST)
+Received: from ?IPV6:2601:188:c100:5710:627d:9ff:fe85:9ade? ([2601:188:c100:5710:627d:9ff:fe85:9ade])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c0ad774f81sm321685485a.37.2025.02.20.06.03.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Feb 2025 06:03:04 -0800 (PST)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <fdc09769-0595-4d45-9d6c-18ce7e98535d@redhat.com>
+Date: Thu, 20 Feb 2025 09:03:03 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250217154836.108895-1-angelogioacchino.delregno@collabora.com> <20250217154836.108895-28-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20250217154836.108895-28-angelogioacchino.delregno@collabora.com>
-From: Chun-Kuang Hu <chunkuang.hu@kernel.org>
-Date: Thu, 20 Feb 2025 22:02:38 +0800
-X-Gmail-Original-Message-ID: <CAAOTY_8xmwncZUdjpfFNZdTc-xVm2tqE7yxFTOHK8=ihPfXL9g@mail.gmail.com>
-X-Gm-Features: AWEUYZlmnVy895-w6W37aRIYiIz5B_4hc6yNRSLEcLY9PIsmLv3U1pSvn8yAnCY
-Message-ID: <CAAOTY_8xmwncZUdjpfFNZdTc-xVm2tqE7yxFTOHK8=ihPfXL9g@mail.gmail.com>
-Subject: Re: [PATCH v7 27/43] drm/mediatek: mtk_hdmi: Remove unused members of
- struct mtk_hdmi
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: chunkuang.hu@kernel.org, p.zabel@pengutronix.de, airlied@gmail.com, 
-	simona@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
-	tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	matthias.bgg@gmail.com, ck.hu@mediatek.com, jitao.shi@mediatek.com, 
-	jie.qiu@mediatek.com, junzhi.zhao@mediatek.com, 
-	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, kernel@collabora.com, 
-	dmitry.baryshkov@linaro.org, lewis.liao@mediatek.com, 
-	ives.chenjh@mediatek.com, tommyyl.chen@mediatek.com, 
-	jason-jh.lin@mediatek.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] locking/mutex: add MUTEX_WARN_ON() into fast path
+To: yunhui cui <cuiyunhui@bytedance.com>, peterz@infradead.org,
+ mingo@redhat.com, will@kernel.org, boqun.feng@gmail.com,
+ linux-kernel@vger.kernel.org
+References: <20250126033243.53069-1-cuiyunhui@bytedance.com>
+ <CAEEQ3wmk5jBOPqD-5GUZ+463mcG919uuKVnBJrWedKLssVDBaA@mail.gmail.com>
+Content-Language: en-US
+In-Reply-To: <CAEEQ3wmk5jBOPqD-5GUZ+463mcG919uuKVnBJrWedKLssVDBaA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi, Angelo:
+On 2/20/25 7:49 AM, yunhui cui wrote:
+> Hi All,
+>
+> Gentle ping. Any comments on this patch?
+>
+> On Sun, Jan 26, 2025 at 11:32 AM Yunhui Cui <cuiyunhui@bytedance.com> wrote:
+>> Scenario: In platform_device_register, the driver misuses struct
+>> device as platform_data, making kmemdup duplicate a device. Accessing
+>> the duplicate may cause list corruption due to its mutex magic or list
+>> holding old content.
+>> It recurs randomly as the first mutex - getting process skips the slow
+>> path and mutex check. Adding MUTEX_WARN_ON(lock->magic!= lock) in
+>> __mutex_trylock_fast() makes it always happen.
+>>
+>> Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+>> ---
+>>   kernel/locking/mutex.c | 2 ++
+>>   1 file changed, 2 insertions(+)
+>>
+>> diff --git a/kernel/locking/mutex.c b/kernel/locking/mutex.c
+>> index b36f23de48f1..19b636f60a24 100644
+>> --- a/kernel/locking/mutex.c
+>> +++ b/kernel/locking/mutex.c
+>> @@ -143,6 +143,8 @@ static __always_inline bool __mutex_trylock_fast(struct mutex *lock)
+>>          unsigned long curr = (unsigned long)current;
+>>          unsigned long zero = 0UL;
+>>
+>> +       MUTEX_WARN_ON(lock->magic != lock);
+>> +
+>>          if (atomic_long_try_cmpxchg_acquire(&lock->owner, &zero, curr))
+>>                  return true;
+>>
+>> --
+>> 2.39.2
+>>
+LGTM
 
-AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com> =E6=96=
-=BC
-2025=E5=B9=B42=E6=9C=8817=E6=97=A5 =E9=80=B1=E4=B8=80 =E4=B8=8B=E5=8D=8811:=
-50=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> The hdmi_colorspace csp member of struct mtk_hdmi is initialized
-> once but then it's never used at all.
-> Remove said member and the only assignment to it as a cleanup.
->
-> Also remove the ibias, ibias_up, min_clock, max_clock, min_hdisplay
-> and max_vdisplay members, as those were really completely unused.
->
-> This commit brings no functional changes.
+Acked-by: Waiman Long <longman@redhat.com>
 
-Applied to mediatek-drm-next [1], thanks.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linux.git/=
-log/?h=3Dmediatek-drm-next
-
-Regards,
-Chun-Kuang.
-
->
-> Reviewed-by: CK Hu <ck.hu@mediatek.com>
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
-abora.com>
-> ---
->  drivers/gpu/drm/mediatek/mtk_hdmi.c | 8 --------
->  1 file changed, 8 deletions(-)
->
-> diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi.c b/drivers/gpu/drm/mediat=
-ek/mtk_hdmi.c
-> index eb3b1009c305..6e4900f99b51 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_hdmi.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_hdmi.c
-> @@ -162,16 +162,9 @@ struct mtk_hdmi {
->         struct clk *clk[MTK_HDMI_CLK_COUNT];
->         struct drm_display_mode mode;
->         bool dvi_mode;
-> -       u32 min_clock;
-> -       u32 max_clock;
-> -       u32 max_hdisplay;
-> -       u32 max_vdisplay;
-> -       u32 ibias;
-> -       u32 ibias_up;
->         struct regmap *sys_regmap;
->         unsigned int sys_offset;
->         struct regmap *regs;
-> -       enum hdmi_colorspace csp;
->         struct platform_device *audio_pdev;
->         struct hdmi_audio_param aud_param;
->         bool audio_enable;
-> @@ -1036,7 +1029,6 @@ static int mtk_hdmi_output_init(struct mtk_hdmi *hd=
-mi)
->  {
->         struct hdmi_audio_param *aud_param =3D &hdmi->aud_param;
->
-> -       hdmi->csp =3D HDMI_COLORSPACE_RGB;
->         aud_param->aud_codec =3D HDMI_AUDIO_CODING_TYPE_PCM;
->         aud_param->aud_sample_size =3D HDMI_AUDIO_SAMPLE_SIZE_16;
->         aud_param->aud_input_type =3D HDMI_AUD_INPUT_I2S;
-> --
-> 2.48.1
->
 
