@@ -1,108 +1,122 @@
-Return-Path: <linux-kernel+bounces-523480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83085A3D769
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:54:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DC86A3D767
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:53:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B3253BA272
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:52:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 855513AB470
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:51:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 104821F0E58;
-	Thu, 20 Feb 2025 10:52:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PN026PoY"
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B201C6FE9;
-	Thu, 20 Feb 2025 10:52:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C59601F0E2C;
+	Thu, 20 Feb 2025 10:51:43 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9275A1F1510
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 10:51:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740048727; cv=none; b=ALmocbgAYtdcTHpBBLzDpL3p/QoQZ0pPZCBP8PZu2jKMKJUgbOVaLCjTCmxdCeF/4jVEYu7/HDA+dk7CalKaXxICEGASnZuwwcrMgR5gApw0WFkP+eAgZOfqrTwNVdodRqLLP6B9ttl++8Y4cWom2vMrwyQopdHsH2PJAKqEsgc=
+	t=1740048703; cv=none; b=D/Xni6nc+neiRszR7C3/QeCDDmnTGl9kEcqJgAobWxCyvbtU2TjW1y52KwnPpFHZwTsHyEa5HIH4+5BwEW32WPLjru1PxcikypaFKvbhAUIj3eRKrBIF7XtcEIq0qL+e8Wfud/mrqVs4T64NF/mz5LpMgECXWtmv1DDGmnjpZ20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740048727; c=relaxed/simple;
-	bh=Hj8rjbo/gVN/i8pFWBGBMOAQRZnmKNy8TUBNnlxGBuo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IMZ3ZDw2Fbj30c5xqbxJEhWw0wxOtaEMCcGXPaL1D7EOsd7z9LBHIoFcZpegiXpQBRZpyvt0GYXKge077noW/JsFt/8+SmBb8BW+uQInIxO5rVlIN840K36+GzSyJoObYYKRZjbw6B0FGoP4K2k0IzK8nfJNNu3ryUSdma4XWMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PN026PoY; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6fb9dae0125so6498757b3.1;
-        Thu, 20 Feb 2025 02:52:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740048725; x=1740653525; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Hj8rjbo/gVN/i8pFWBGBMOAQRZnmKNy8TUBNnlxGBuo=;
-        b=PN026PoYVFq2tSUMqaJWMEiElJt0LnqGpmwmYXconyXxRBNaam5ZndYeoRdETU07SJ
-         gcrdy9mX96Ygs4fFUw4DRdpTIoEAI56Z/i1R4IxarIKkRdHhlGtUepZRZlLW3U3dG+IN
-         peIcg0hxBCG2Iu++fipG1kgveAjEapW4NTaI/uoCqk6NY/E8jMw2+rQc8USRRl0uvFU7
-         NoJ0n4/fOf4RFiVzJsc7h8DSvimUJMtzMJ+mNcYP4J1NX/0AY49/OGGJuyxP2Z6oK3Q0
-         PkrLrsaVB8Vdcdavnd9qpI1Oo7wH3+09Pz7Pxf2dTcfkNN2BbAxSWkJaevMy7tBXtoYe
-         UXRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740048725; x=1740653525;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Hj8rjbo/gVN/i8pFWBGBMOAQRZnmKNy8TUBNnlxGBuo=;
-        b=EzqT47C9GuBqz+myzcsJaVJ0stsMZuv8nE17Qz0gRLlY7VT0HOKow81MVJpzMD6y+C
-         hlICs75RrvU+0w38HPOwjkrNKrdf6tw0jmb8nehU5YI+Q3KB1oHaRiu3mENGdPC1b8t3
-         VnlIs7aTGHVByK+X7U4yD1b+WJjV9gvVO2tC7INEk4NZMEqFmGnB0Vb5YTwZI0OCbL7b
-         nsIVSuz8k97I8XFEqUcbJHKNzV4rGpD7i6olzfuPq01/w2TUibZ2gFOG2VIaM7IENU0H
-         zLhtXFVfl2nRyXJoh5OppUQdYYld1bPR0YlT2O2feRPtwgaRvriVphvu91Btg0pgwPaS
-         i4LA==
-X-Forwarded-Encrypted: i=1; AJvYcCUgb96cKkB6+/GUoYgXJi5v6N1hhy9zPJYL1js2A0Xy4Eu0QkzNUPr6I9nNp76CxX275jDKQ/qcMdCvlOc=@vger.kernel.org, AJvYcCWMr6ipfgGN9Ast0e4cSr/C3jmdN71cpoRhwu4xpPf/b6SKug2yD0TgzjOvPKrXSJK3mWUPOPTJAfdZIb4ebuO32A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfjFYqQTqeGghAjnH+H0MpB7afrYlEM0K6afmkih7PEsGS5w+N
-	pIZR7QN2i/MsISqhLaGdg+hEFKQklusXnVwwCNQj9xkyD4Oxz87WLkz32DH+eDdZtBe4RPubpqt
-	YDCU95JeLCD8kX+AiV0Ea9V6Y0STKBS1nqVk=
-X-Gm-Gg: ASbGncuuyDJ171UkCJMC8aqhTi5AUBGA5uNyXFNSa+RCjgWrgCrvYaGkmIeI2sTkAkI
-	rKD9JrPBYXmDnSNmYCgKnHr/qf2+DzM6pq4apBWxv2lN1e/fk50uUNtG3d19AW37RgA3gPU6lYg
-	==
-X-Google-Smtp-Source: AGHT+IF9+aS+ynBE5ue2zge/OhE/pa8hemMC3oWG6WvPFWkiUbJGQkTTOSAQWmSslbYENvfTgEdMM9Pf2lXBJvLmJdo=
-X-Received: by 2002:a05:690c:fcf:b0:6ef:6fef:4cb6 with SMTP id
- 00721157ae682-6fba53693ddmr68921587b3.0.1740048724665; Thu, 20 Feb 2025
- 02:52:04 -0800 (PST)
+	s=arc-20240116; t=1740048703; c=relaxed/simple;
+	bh=2kDN3nPBO25fmfYMhJbafNSKD40Rzjf4VVY+oJncUCs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WFdiyiTSWPzliaM51dbM1St0JviL8AlRpQ07HSHFxKpeH0GpQ7fCN23eKagyVXWzJYtsce+ETwhU+PfZft25bJpLwDyvSMlsOd3G4nCIqkxX9+1zaKzXHWxKx10NBRUqR5X2eqyoM0PyfLcTvzM0ukv+Y3sYrQJaIonsqbgfsis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-3c9ff7000001d7ae-92-67b709367d78
+Date: Thu, 20 Feb 2025 19:51:29 +0900
+From: Byungchul Park <byungchul@sk.com>
+To: Hillf Danton <hdanton@sina.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	kernel_team@skhynix.com
+Subject: Re: [RFC PATCH v12 00/26] LUF(Lazy Unmap Flush) reducing tlb numbers
+ over 90%
+Message-ID: <20250220105129.GA54095@system.software.com>
+References: <20250220052027.58847-1-byungchul@sk.com>
+ <20250220103223.2360-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250218161352.269237-1-simeddon@gmail.com> <20250218211200.GA991534-robh@kernel.org>
-In-Reply-To: <20250218211200.GA991534-robh@kernel.org>
-From: Siddharth Menon <simeddon@gmail.com>
-Date: Thu, 20 Feb 2025 16:21:28 +0530
-X-Gm-Features: AWEUYZnvxPMzu2JSXYZi9-VDvGcvoVv0K_ixyoZ1-_UtcfPD29hExXVJsI4K0qk
-Message-ID: <CAGd6pzMLQary4PYHN_7vc4xoS3SiAs_Rva+HymcXi_OFoGSakw@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: hwlock: Convert to dtschema
-To: Rob Herring <robh@kernel.org>
-Cc: devicetree@vger.kernel.org, andersson@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, baolin.wang@linux.alibaba.com, 
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250220103223.2360-1-hdanton@sina.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOLMWRmVeSWpSXmKPExsXC9ZZnka4Z5/Z0g0fbNC0O/HzOYnF51xw2
+	i3tr/rM6MHts+jSJ3WPSC3ePz5vkApijuGxSUnMyy1KL9O0SuDL+bPzEXHBLqOJs2wq2BsZN
+	fF2MnBwSAiYSFw+cZYWxX9/8B2azCKhKfNuxngnEZhNQl7hx4ycziC0ioCzReWEWWA2zgL/E
+	hFsbWEBsYYEIiSeHToDV8wpYSJxceg6sXkggQeL11P3sEHFBiZMzn7BA9GpJ3Pj3EqieA8iW
+	llj+jwMkzClgKtF4/ijYeFGgVQe2HQcq4QI67SerxM7rEHMkBCQlDq64wTKBUWAWkrGzkIyd
+	hTB2ASPzKkahzLyy3MTMHBO9jMq8zAq95PzcTYzA4FxW+yd6B+OnC8GHGAU4GJV4eGe0bksX
+	Yk0sK67MPcQowcGsJMLbVr8lXYg3JbGyKrUoP76oNCe1+BCjNAeLkjiv0bfyFCGB9MSS1OzU
+	1ILUIpgsEwenVANj7GHHQAlevSimp4vOvVvvZjXv0xRGuedWIdHX8yW6ahnaWd8dnXPOPza6
+	6o7CfM2qCyrC26pm5+y/98+Pee2jXQayu7jWevu3616Vdm+auNhI9uw2LdHJf9MvTWMpVHr5
+	Lzj54mSuuJj5N/cvfya3yEz4dOl6+bQzt2YnFFa2r7eR8VZncctQYinOSDTUYi4qTgQAPtGW
+	zEoCAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHLMWRmVeSWpSXmKPExsXC5WfdrGvGuT3d4NZzRYsDP5+zWByee5LV
+	4vKuOWwW99b8Z3Vg8dj0aRK7x6QX7h6LX3xg8vi8SS6AJYrLJiU1J7MstUjfLoEr48/GT8wF
+	t4QqzratYGtg3MTXxcjJISFgIvH65j9WEJtFQFXi2471TCA2m4C6xI0bP5lBbBEBZYnOC7PA
+	apgF/CUm3NrAAmILC0RIPDl0AqyeV8BC4uTSc2D1QgIJEq+n7meHiAtKnJz5hAWiV0vixr+X
+	QPUcQLa0xPJ/HCBhTgFTicbzR8HGiwKtOrDtONMERt5ZSLpnIemehdC9gJF5FaNIZl5ZbmJm
+	jqlecXZGZV5mhV5yfu4mRmCoLav9M3EH45fL7ocYBTgYlXh4Hzzemi7EmlhWXJl7iFGCg1lJ
+	hLetfku6EG9KYmVValF+fFFpTmrxIUZpDhYlcV6v8NQEIYH0xJLU7NTUgtQimCwTB6dUA6ND
+	xMPJh/P5XrDeMbBmajbhsvIP26z6uPpLU9HrU3/q7MRWtaWLX78WeXpTa6r73naO8Pn6f7l2
+	2ffrcRUd/Hy9ZLrsLKZjeqZHflkp/OORmfxZi0fy5xZO+TudR85aLb13TF79yhIP98QdU97l
+	xk5ubxe6+Pn+xRsmNS1FAnv5FFS3r3kv91qJpTgj0VCLuag4EQB+4dwpMQIAAA==
+X-CFilter-Loop: Reflected
 
-On Wed, 19 Feb 2025 at 02:42, Rob Herring <robh@kernel.org> wrote:
->
-> The consumer side lives in dtschema already. Please add the provider
-> side there too. Patches to devicetree-spec@vger.kernel.org or GH PR are
-> fine.
+On Thu, Feb 20, 2025 at 06:32:22PM +0800, Hillf Danton wrote:
+> On Thu, 20 Feb 2025 14:20:01 +0900 Byungchul Park <byungchul@sk.com>
+> > To check luf's stability, I ran a heavy LLM inference workload consuming
+> > 210GiB over 7 days on a machine with 140GiB memory, and decided it's
+> > stable enough.
+> > 
+> > I'm posting the latest version so that anyone can try luf mechanism if
+> > wanted by any chance.  However, I tagged RFC again because there are
+> > still issues that should be resolved to merge to mainline:
+> > 
+> >    1. Even though system wide total cpu time for TLB shootdown is
+> >       reduced over 95%, page allocation paths should take additional cpu
+> >       time shifted from page reclaim to perform TLB shootdown.
+> > 
+> >    2. We need luf debug feature to detect when luf goes wrong by any
+> >       chance.  I implemented just a draft version that checks the sanity
+> >       on mkwrite(), kmap(), and so on.  I need to gather better ideas
+> >       to improve the debug feature.
+> > 
+> > ---
+> > 
+> > Hi everyone,
+> > 
+> > While I'm working with a tiered memory system e.g. CXL memory, I have
+> > been facing migration overhead esp. tlb shootdown on promotion or
+> > demotion between different tiers.  Yeah..  most tlb shootdowns on
+> > migration through hinting fault can be avoided thanks to Huang Ying's
+> > work, commit 4d4b6d66db ("mm,unmap: avoid flushing tlb in batch if PTE
+> > is inaccessible").
+> > 
+> > However, it's only for migration through hinting fault.  I thought it'd
+> > be much better if we have a general mechanism to reduce all the tlb
+> > numbers that we can apply to any unmap code, that we normally believe
+> > tlb flush should be followed.
+> > 
+> > I'm suggesting a new mechanism, LUF(Lazy Unmap Flush), that defers tlb
+> > flush until folios that have been unmapped and freed, eventually get
+> > allocated again.  It's safe for folios that had been mapped read-only
+> > and were unmapped, as long as the contents of the folios don't change
+> > while staying in pcp or buddy so we can still read the data through the
+> > stale tlb entries.
+> >
+> Given pcp or buddy, you are opening window for use after free which makes
+> no sense in 99% cases.
 
-Thank you and Krzysztof for the feedback, I shall address the issues in the
-next patch set.
+It's kinda 'use(= read only) after free' but luf ensures the data of the
+interesting pages doesn't change.  That's what luf works on.
 
-> For the descriptions, you'll need to relicense the text in hwlock.txt to
-> dual GPL/BSD. You will need TI's permission for that.
-
-Regarding the relicensing, should I first submit a patch to relicense
-the hwlock.txt
-binding, then follow up with a patch to replace it with the YAML file
-and correct
-incorrect paths?
-
-Regards,
-Siddharth Menon
+	Byungchul
 
