@@ -1,257 +1,230 @@
-Return-Path: <linux-kernel+bounces-523273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50C01A3D492
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:23:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49F62A3D490
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:23:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B77337A8FD2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:22:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19E19189D087
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:23:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85D6F1EE7DF;
-	Thu, 20 Feb 2025 09:22:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FE761F03C0;
+	Thu, 20 Feb 2025 09:22:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="iXk3bBHp"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2046.outbound.protection.outlook.com [40.107.100.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cTABLWA1";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="GxwIFsMy";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cTABLWA1";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="GxwIFsMy"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF3D91EDA1F
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:22:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740043364; cv=fail; b=Q+jQ8Cf+oXvNRK7gbH9tW5QT2bxthq1RIuentwD19nzws77/W1uLzpQTbixIPAEl2plOXdEBU4/k1YXac8gO/T5Y2oWnyYyvDGLtKl2b6fMqWUzXL4RWk0ZmLCMxoV8o9TpdHqITiT1KaVdzPM+NwWtPSjq9Jwda3fYeVi6aXos=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740043364; c=relaxed/simple;
-	bh=UN1zIushQm8LHVHrmEL0mcOBbXOJ1mODB7pB9RszVzA=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=UV7mnivEVjaQI+P5tqk6xEIyADO91gPCpcWPdMCcVmn1AGtQUvasPYglBTRh+dx8TES8rkg2uZCUcTpc+phD9UT4n0t6vMvPl8CAWlPVPGnwCELtIfpKEGgT07ir8xeNqr1dy0ZCMZ1kZ3Tj+xR7QLbhcn5tckDgTlKalWYj3Ys=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=iXk3bBHp; arc=fail smtp.client-ip=40.107.100.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lscwgFOmzMI7EsCvjr1GIlGuc5/mhGuG85ailn9RwK5f5j2Jox1Twi0fc3o28BtMyZwAIRCM/9Fr3PIiwyZn7a5FPZ+ptJDsy+YxOhZkARupi8hLZvtwUdvtB+PqRqoYwMUtePi/v8c93tkleslde6VoW8ObEiMwoNPfaTnK67Ph9Qa9LVJbR8LdLxupMXWvL7w7g23bXt0YPe65vcVRlpnFKLFBwWeynhQ1Km5cl6fC4KscZ1TgJmD28+SqXqmJbJC5At5eKROYBq4asUz76jIsCjTwzhSCwUhFm3+RjT+VIntMtKqULwA+QIRcWTgKlfvceMSY37pcvX8QFoIRhg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=f3+BNuIHT3/MRMJMLS0lTsy5I/wQpWc1p3bKrrCcm1U=;
- b=UrEtka8lP3HtyizdV8FGGZRqPw+Vz7PiH+umRld74zB/jt5D+FBnnGurP2NuQrZOeafWGZVuM5sejXl9egx2o6uwmxuHkTP0DbRfdjxPHZ3tacsbLuFF3Ls/T2dnMJNf2WV6ubh+AJCg4Y0Fe4oT4AuyR/QWLQcf0cSVQsg76sll8+NPZjbIQr/lv0iwstKosoGniWba+DsWLDduAT/eMMxw7LkWOTOKH5N7vq//nwzrpnP2t/j38MBsnZLVwqzdsOMbpOnUeNWzxA3+djCWmMAkIuGXSveBIzLXAN6133ewSfDm6jGePJiAroUh3ZvNBOLy/adyY6MFxerwjhZigA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=f3+BNuIHT3/MRMJMLS0lTsy5I/wQpWc1p3bKrrCcm1U=;
- b=iXk3bBHpwVuyP1oUvbG2WlWq89jeWCfvQV1HiWcKvH2aJ/HtDIP2zRSA2R7ZO/0jm9kXRXI0AUODOg1dsXtO6Jur6+AZqoe2wi/0b0mh7TCM9icRbFVEDZ3X03lXYCnYQnWDJp5rwZr0UBSWucmwQNYkWP/OZEEuk8XwO9PSyLM=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by SJ1PR12MB6290.namprd12.prod.outlook.com (2603:10b6:a03:457::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.14; Thu, 20 Feb
- 2025 09:22:33 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%5]) with mapi id 15.20.8445.017; Thu, 20 Feb 2025
- 09:22:33 +0000
-Message-ID: <9b0a4a13-9d60-49a5-9166-6bb714f4dbfd@amd.com>
-Date: Thu, 20 Feb 2025 10:22:27 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] drm/amdgpu: Trigger a wedged event for every type of
- reset
-To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>,
- Alex Deucher <alexander.deucher@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>,
- amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, kernel-dev@igalia.com, siqueira@igalia.com
-References: <20250219213517.281556-1-andrealmeid@igalia.com>
- <20250219213517.281556-4-andrealmeid@igalia.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <20250219213517.281556-4-andrealmeid@igalia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: FR4P281CA0407.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:d0::16) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A06E1EDA1F
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:22:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740043353; cv=none; b=rv2Vsx4loIwrD8Qo4hWw9NUz3Vq6Lu1CE56KMbLfQ6QH5A8zl1KigkJJg3jIY2t4t8/LqW0z9VUX8N2KsdksbY0BOq6/Zg8gN9cJKwmurq9hTu/L39Yk13+TtEX311ybWSgekm3DCUfcDutEeS5dE3svuGH1PVGLDrWgtZdw3MI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740043353; c=relaxed/simple;
+	bh=xzg+zOCL9eXvDKwXM1Ze1Rmr5rHFnHN350xGkZdmSTg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TxhEpC924R5iUhjh6uvJQlHi2z1EnEIilGCEBI/c/JZMR8vtO13T3zyVLf6fBTpqZRHeERP1QjrPcPANevrA56JoMUheUcaFonDgu0nHJb1vHQqA2/ucAO5T6FJMNVb4oG3/TImi6K9xCqatKYHZoADr91ZxzgYMKRpkny+uPxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cTABLWA1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=GxwIFsMy; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cTABLWA1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=GxwIFsMy; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 8108521172;
+	Thu, 20 Feb 2025 09:22:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1740043349; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=7VfvyBLyGJBIuCnedMrhYstqeRSaOTT8ZfoDIjoIdoo=;
+	b=cTABLWA1W4wubC7UKoCdnrF1mI1WE5Ap0gWfSeHg7mjShVfQVVn7KuDp7wjOErgAn4c/kU
+	4IZZXBscd7SbErqKxRgGRkQ8CpEivnc7lPrV2pNgWgRklq3RswEm7jDLUYXdC57LHhB8Q9
+	QtzNX+7pfXAvj0CCnnuOaqi6JBJjThM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1740043349;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=7VfvyBLyGJBIuCnedMrhYstqeRSaOTT8ZfoDIjoIdoo=;
+	b=GxwIFsMyV2fbMWRwjaiB7RwVePq9xHEOleSGEy1FYsfBt+eVIS7/4XYahSeb5niVCvdmIr
+	j/g20BNmbVZ8PTBA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=cTABLWA1;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=GxwIFsMy
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1740043349; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=7VfvyBLyGJBIuCnedMrhYstqeRSaOTT8ZfoDIjoIdoo=;
+	b=cTABLWA1W4wubC7UKoCdnrF1mI1WE5Ap0gWfSeHg7mjShVfQVVn7KuDp7wjOErgAn4c/kU
+	4IZZXBscd7SbErqKxRgGRkQ8CpEivnc7lPrV2pNgWgRklq3RswEm7jDLUYXdC57LHhB8Q9
+	QtzNX+7pfXAvj0CCnnuOaqi6JBJjThM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1740043349;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=7VfvyBLyGJBIuCnedMrhYstqeRSaOTT8ZfoDIjoIdoo=;
+	b=GxwIFsMyV2fbMWRwjaiB7RwVePq9xHEOleSGEy1FYsfBt+eVIS7/4XYahSeb5niVCvdmIr
+	j/g20BNmbVZ8PTBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4E9F313A69;
+	Thu, 20 Feb 2025 09:22:29 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id J8usElX0tmeecgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 20 Feb 2025 09:22:29 +0000
+Message-ID: <5fe78422-f348-414c-9ff2-78812ba9a949@suse.cz>
+Date: Thu, 20 Feb 2025 10:22:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|SJ1PR12MB6290:EE_
-X-MS-Office365-Filtering-Correlation-Id: 197528e9-221c-4d07-ae51-08dd51901b5f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aHc3TnVTRGVLUDErT1RmK2NEYzVHczl1c002SVkwblV3Y3UwSDRNWDYweVlo?=
- =?utf-8?B?QVNFK0V5VUhSaGpqdTc5WnFzMk5zWVdMMjg2ZzZPa3B0bGgyeDQ2cnZmK043?=
- =?utf-8?B?ZjZjODc3dVU4VFpoUjkwVzBRc1ZKaW8wOFNycjRIYmxUeUhMcC84aWhuTGNt?=
- =?utf-8?B?NHByQVlSSUY2ZEMyQ1dEeVZLMXY4b3d3c0RNeW4xSThoUHk4cHUweSt1dWV1?=
- =?utf-8?B?MnB5NGxVcC9RL3pZbkxoUkJncEFETjN5eWpIbjhBT3lrSjc1REZURDdKZC9r?=
- =?utf-8?B?SnhPd2lMY3h4SU00SWxyUlI5NmZNMGZacjNwUWxNbEFZYjhTTXFzUVJxN1NQ?=
- =?utf-8?B?TFVQKzF6Z1RjbitOdEVFWWJZenJjR2k2M3ZESzNhakdtN005b00vRUp5MFJE?=
- =?utf-8?B?R0EvRC9QaXFDZkR5Mm56MHVGMnh0Rlc5NHcxcmJwd3I0WWhzdyt3ZUFiZ3ZK?=
- =?utf-8?B?NGxESWs0SkhXa2VZQ3ZkRzRyWS9iaXlKeVBQUkpZRGVKeU5qQ21CY04xeGg0?=
- =?utf-8?B?ZjVqTzAzUjBvL2pMSmJJM2p4akFRRHBmT1BHZW9qbnZNd1pGZ1UyTTNUWWho?=
- =?utf-8?B?ais5RlBGV1Z0a3NudWhJV0F5eCtUNUhoM0hIeEZ2bnNNNmxSc1JZQ0lTQWRm?=
- =?utf-8?B?TWgrMkczKzVwMlJQWTdvcWUrT3hzTDRxc1JHZW03QWhQTXRqMkNHY2dNUkNu?=
- =?utf-8?B?elk3Z3BFdCtTeWd4M3JOR0xIV0t5bE5QOEw4VHBWQWdiUThXVVVtdDRDcmU3?=
- =?utf-8?B?aVdJU1JWbzN6Q05PSUFYd0hEdlUxWkZzcEgzYUlkK1UxTTBTc2U4Rk9pUHh1?=
- =?utf-8?B?RHUzSzlzR3lncHU1SnRqMC9lemJCQjVUNUZkQjg1dHUyMjlEWXloRS9nK090?=
- =?utf-8?B?NFplbHc5TUhIcjFTNHQvR3lvRVhLdndIWFhjS09icS90WE9qaVhHK1JieTlT?=
- =?utf-8?B?QlBaMEYzNkRTSTVwdDNSZXkySUprcGJvbnZOSXJua1htNGJMT2NLYkFEalFG?=
- =?utf-8?B?R1U1RUQzeWMrOVI1cHBrTkprYkMwd2lET3VBMW9zYSttb2RHMGJTV0kyRkRw?=
- =?utf-8?B?dkVhK29HdnllUlYzYnp6L09TdWdSeGdaVXVYMk9FZTFOOFNCQTNjMHlBVXRO?=
- =?utf-8?B?S01Ba2ZLTkxLazVSRVRRaEdpLzYwOXJmVzNHSWNxSm8vbGxLQytBNjR4MFFQ?=
- =?utf-8?B?ZVdDc0gxMEtzVVVQSzRTbDR1OWNJekFEaHdDUDY3R3piRk5SRDBkVTR5SGdj?=
- =?utf-8?B?VjcxYzNVQjE0eXk2RkpHbnhLZFJGQTdxdDlJb3c2dlU1Zk54eGZjRTZubHp4?=
- =?utf-8?B?MENMdGd5N2lhR0ZBWlJKOFRDa2Z3S2JiZUNPTTJKdExIaW10L0F0L1VTbTA2?=
- =?utf-8?B?alV5aWVObEhTQ1REc1NNQ1JHaHIvUFMzSWJ2V0N1NVIxaWJIZ3J6NDV5OElk?=
- =?utf-8?B?bUZSci9nK2VFeG0xWkoxemM1blJQems1YmMvUzhBZlN0MXp3dDlsaVFnY3J2?=
- =?utf-8?B?Ump4dXB4dVc4eTRyd1pxSTVEcnc4SUZNRXN4ZjRNRHVWUEwrZ3NMVjcvTXBr?=
- =?utf-8?B?YW51ZVB6c1VVSGFXbVpvNHhYb2ZuaUJpQm1CRHp4YzFhd0J4RkZPaHhialZR?=
- =?utf-8?B?YzFFU0QzTVpHaE11YlBiSFJxNWtQbjJERGE1cVg4bE5QQkRwSWUvK1c5VTdV?=
- =?utf-8?B?cE8vOGJwa2RidWtVUWZVZVlJN1J5R2J0dUh3bVFaWSsyMjVLdk9xQVlNSnpq?=
- =?utf-8?B?MHpZaHVwVmhFL3ZsK1JLcWpHTEpQMTZ6MC92MSt1SWZwVEtsYk44RW5meDJr?=
- =?utf-8?B?U3QwV2xFd0hNcHQ2bUVTT1lqNWdnR1NrS09wMzVwZmRDYnVqRG84RU1ZNHYy?=
- =?utf-8?Q?HRbf81bykLHPM?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UnN2eE5LVVBhU2tJMkZRSVB6N3d3OTJ6TUVsSStCQlA5WFhRSm9PQkV0eVFO?=
- =?utf-8?B?Uk51VW9CUGhTbnJkaVMrMGoweC8wZjR4ZTBGRGN5K2ptU0V0eTdrZGtQWGJN?=
- =?utf-8?B?RnRBSjJaNGMyZXhXdk8wUlo3cENJSHZ5SytmS3N2NEszYUpqZkNiTldyYmlW?=
- =?utf-8?B?bEVQaWI5Zyt0MUhiK0VuSldNUERETU9LUERXTjZuVnZPUytCZnBwVTRKRnJx?=
- =?utf-8?B?cFdNODJtZ1VXeUQwQytiOTU2VmpZdFhCbzViL3htL0Q3L3A0anNnTGhkRHRD?=
- =?utf-8?B?Qkttc1ZpRnI2Z2tJbGZES1VKakRLUk1YaCtBRXdHTWlaSE5yT0lnZWxkbTRa?=
- =?utf-8?B?S0FXSXMxVjkrMWZQWDBncFVJVTY4dDEreDRuMjNmUGFXTldaRno5TmFuaW0x?=
- =?utf-8?B?QWl0c2dRL1JaU1RHOFlCc3lPUFgwNXFTMENSRXgwTnN4Yk1UK2JadUdvUDdB?=
- =?utf-8?B?eWQ3dWkzeVFlMTR3YmpHdWp2eFlnbjVlNW9ISllLTjRaMVNDTGdwb2ZFcXFl?=
- =?utf-8?B?Y1phVTlrRFZveUdXRkh5MElIS2pENXRnSU5FeElXY0VDOGJhVzFRT0k2dmVP?=
- =?utf-8?B?VU9TVGljdTJXdzBaU0hTTkZMcGpITXBvMTJnaXY5MS90c3BFK1NGTnA4QVli?=
- =?utf-8?B?QUdwYmlqWEgvYml3MFQ5U0FMZ2R1bFc3WVhoZW0zS0xsUjVFN0VYVVpMTDUy?=
- =?utf-8?B?RldFSHhQeVFuZWpLSE4vWlFxRjh3N2N4VmtVQ3VKNFVWckRCQjQ1aDlIQW1C?=
- =?utf-8?B?cVVYN2VILzZVRkp5dENiNzVVTjQ1VXVJaHR5MEJkYmlHeG9ncG9XNTBTWWpi?=
- =?utf-8?B?WjI1cUt5SDIxc3JwcWhNYVZDenh4WUVkVVJ4ZmY2WmQ4cGFkeW8xd3c0WFMy?=
- =?utf-8?B?Zjk1ZEF0b0VtNFUxYzNRVytIUGc5SG9weFR6MUtPSG1keFhSc1hLbHJZcmhJ?=
- =?utf-8?B?emlzb1FwMnI4QU1Na1JJODZPYzVuY2VKeCswK08yamFqd1ltSW5yWDBkRUlH?=
- =?utf-8?B?clB6RWdiSGNkNllGWkUyVFpkVGdVTWpVWW9UK1ZESGhuaWZPeVhZT0hPWmQ2?=
- =?utf-8?B?TWwxZGt6VmM2MUJVSVg2Y25IalpiT3RvK3hPWDJOcXBQbmhjNDgwcWlBQ2VZ?=
- =?utf-8?B?WW9mSVQ5bVNiQ2hudjZ3MTRZdDdtSFBtTFZmeVgzQTUrRXp4YkFBQ0lUWEx1?=
- =?utf-8?B?RC9BWk1MWnRieTNwNjZCaFNBbkwyWUN1NjBCWlhVMVhrMmQwSWNxU0VKY0hW?=
- =?utf-8?B?eE5zNTF1TDVkTUpDNlRUYnd5aW52VmhoSHZnM1hULzZHODY4eE5WNW1FNWtJ?=
- =?utf-8?B?MndrMjVrUEFNSko1TnViczJTaHZYN1BvaDVCcUdsUW5NRy9FK2VNMm4zR2sz?=
- =?utf-8?B?b095RXlLZnhRdnV3Qi9QWmNFL2xQQkFjSXN6YjhpSGwyK1A2WWdrTWo1b0Zr?=
- =?utf-8?B?N0pROTFoUlU4d0lzcWNaWHduWWtBOHRoTlYyNk9vOFh2UUg3R3dxU2pHVzdL?=
- =?utf-8?B?ZVYwbDE3UkRJTTlDWjl4dllwZ21kazVBajloQmZrcXBZOHBQcUw1cHJWZTB3?=
- =?utf-8?B?em5CWnhlMXkrMy9Yb1JzT21ML29CQXdaUTh5Y2ErbnlGQm9WbFI2NmVXUzZD?=
- =?utf-8?B?emo1THZJcHBZbldMOFRsUDllOFYwMERBZkZ0Q0VjOU1PejA1cXNqOXRYelBL?=
- =?utf-8?B?TFJoandhOHh5VGgrbHNBSTRtcHZ1dUxqZDBIMzdWR2o3YUUxLzRDYXA4UVVp?=
- =?utf-8?B?SHlWZzRBYkluVkJYYlFncWZKRHpOZ3JvaFBqS3kvekFPaTVzMWxKNWhrd1M5?=
- =?utf-8?B?aytNMjY1Q2l6VysvUzRpNUxSNFFwUTZQbDB3WXRZU3luYzZzVnlXR21WL01u?=
- =?utf-8?B?ZmxuRE94d1dIdS9EZ25wejNhOFQzeEdVMlpQWXkydDV4SWdkNGkrS2FUQURM?=
- =?utf-8?B?S1ZKeG0rL1hIbDdnblJoa0x3WnVicjZaVHdDTWIvZ0RFTW1VMGJIK1E3Y2Z2?=
- =?utf-8?B?QkVEZEhlbG9pNUFYcnR3TXREbUtDTUEzRjB1U2plY3ZYWHMrQ2RTYXgvUTY2?=
- =?utf-8?B?cElJNzZrTUZHREI1WENnRWJxRGdiSTBONHpFcEg4SWI1WCtvaE9zdHNrMzhD?=
- =?utf-8?Q?f8SZj70MjfnZJgM6V5c8LQYA7?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 197528e9-221c-4d07-ae51-08dd51901b5f
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2025 09:22:33.4075
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: aHUKwagsYuwTnnbYmqc2L6M//94Of01B8ibf9vo/k0QCjylkeGEqZo+iU2eoa/ZP
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6290
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] mm: permit guard regions for file-backed/shmem
+ mappings
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Kalesh Singh <kaleshsingh@google.com>
+Cc: David Hildenbrand <david@redhat.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Suren Baghdasaryan <surenb@google.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Matthew Wilcox <willy@infradead.org>, "Paul E . McKenney"
+ <paulmck@kernel.org>, Jann Horn <jannh@google.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+ linux-kselftest@vger.kernel.org, linux-api@vger.kernel.org,
+ John Hubbard <jhubbard@nvidia.com>, Juan Yescas <jyescas@google.com>
+References: <cover.1739469950.git.lorenzo.stoakes@oracle.com>
+ <CAC_TJveMB1_iAUt81D5-+z8gArbVcbfDM=djCZG_bRVaCEMRmg@mail.gmail.com>
+ <45297010-a0a4-4a42-84e8-6f4764eab3b3@lucifer.local>
+ <41af4ffb-0383-4d00-9639-0bf16e1f5f37@redhat.com>
+ <a2e12142-3eb2-48c9-b0d9-35a86cb56eec@lucifer.local>
+ <CAC_TJvf6fOACObzR0ANFFrD+ecrP8MbXEZ_ZdzRu0Lg4RunS9g@mail.gmail.com>
+ <e07dfd31-197c-49d0-92bd-12aad02daa7e@lucifer.local>
+ <CAC_TJvfBvZZc=xyB0jez2VCDit-rettfQf7H4xhQbN7bYxKw-A@mail.gmail.com>
+ <6e356431-5ac9-4363-b876-78a69ae7622a@lucifer.local>
+From: Vlastimil Babka <vbabka@suse.cz>
+Content-Language: en-US
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <6e356431-5ac9-4363-b876-78a69ae7622a@lucifer.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 8108521172
+X-Spam-Score: -4.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[16];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Am 19.02.25 um 22:35 schrieb André Almeida:
-> Instead of only triggering a wedged event for complete GPU resets,
-> trigger for all types, like soft resets and ring resets. Regardless of
-> the reset, it's useful for userspace to know that it happened because
-> the kernel will reject further submissions from that app.
->
-> Signed-off-by: André Almeida <andrealmeid@igalia.com>
-> ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_device.c |  3 ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_job.c    | 16 +++++++++-------
->  2 files changed, 9 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-> index 24ba52d76045..36738c1a5b59 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-> @@ -6123,9 +6123,6 @@ int amdgpu_device_gpu_recover(struct amdgpu_device *adev,
->  
->  	atomic_set(&adev->reset_domain->reset_res, r);
->  
-> -	if (!r)
-> -		drm_dev_wedged_event(adev_to_drm(adev), DRM_WEDGE_RECOVERY_NONE);
-> -
+On 2/20/25 09:51, Lorenzo Stoakes wrote:
+> On Wed, Feb 19, 2025 at 12:56:31PM -0800, Kalesh Singh wrote:
+> 
+> As I said to you earlier, the _best_ we could do in smaps would be to add a
+> flag like 'Grd' or something to indicate some part of the VMA is
 
-Feel free to add my rb to patch #1 and #2, but this here is a bad idea.
+In smaps we could say how many kB is covered by guard ptes and it would be
+in line with the current output, and the fact it's already scanning page
+tables, so virtually no new overhead. But it wouldn't tell you the address
+ranges, of course.
 
-We have resets which are not triggered by a submission timeout, but rather because of RAS (for example) and those would now not be raised any more.
+> guarded. But I won't do that unless somebody has an -actual use case- for
+> it.
 
-Regards,
-Christian.
+Right, we need to hear that first. Also I'm a bit confused about what's the
+issue with the existing Android apps and the proposals. Do the existing apps
+expect to see particular PROT_NONE regions, which would be gone (become part
+of the surrounding vma's) when using guards instead? Then clearly there's no
+way to use guards for them without breaking their assumptions.
 
->  	return r;
->  }
->  
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
-> index 698e5799e542..1082b957e7b1 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
-> @@ -91,8 +91,7 @@ static enum drm_gpu_sched_stat amdgpu_job_timedout(struct drm_sched_job *s_job)
->  	struct amdgpu_job *job = to_amdgpu_job(s_job);
->  	struct amdgpu_task_info *ti;
->  	struct amdgpu_device *adev = ring->adev;
-> -	int idx;
-> -	int r;
-> +	int idx, ret = 0;
->  
->  	if (!drm_dev_enter(adev_to_drm(adev), &idx)) {
->  		dev_info(adev->dev, "%s - device unplugged skipping recovery on scheduler:%s",
-> @@ -141,8 +140,8 @@ static enum drm_gpu_sched_stat amdgpu_job_timedout(struct drm_sched_job *s_job)
->  		 * we'll fall back to full GPU reset.
->  		 */
->  		drm_sched_wqueue_stop(&ring->sched);
-> -		r = amdgpu_ring_reset(ring, job->vmid);
-> -		if (!r) {
-> +		ret = amdgpu_ring_reset(ring, job->vmid);
-> +		if (!ret) {
->  			if (amdgpu_ring_sched_ready(ring))
->  				drm_sched_stop(&ring->sched, s_job);
->  			atomic_inc(&ring->adev->gpu_reset_counter);
-> @@ -170,9 +169,9 @@ static enum drm_gpu_sched_stat amdgpu_job_timedout(struct drm_sched_job *s_job)
->  		 */
->  		set_bit(AMDGPU_SKIP_COREDUMP, &reset_context.flags);
->  
-> -		r = amdgpu_device_gpu_recover(ring->adev, job, &reset_context);
-> -		if (r)
-> -			dev_err(adev->dev, "GPU Recovery Failed: %d\n", r);
-> +		ret = amdgpu_device_gpu_recover(ring->adev, job, &reset_context);
-> +		if (ret)
-> +			dev_err(adev->dev, "GPU Recovery Failed: %d\n", ret);
->  	} else {
->  		drm_sched_suspend_timeout(&ring->sched);
->  		if (amdgpu_sriov_vf(adev))
-> @@ -180,6 +179,9 @@ static enum drm_gpu_sched_stat amdgpu_job_timedout(struct drm_sched_job *s_job)
->  	}
->  
->  exit:
-> +	if (!ret)
-> +		drm_dev_wedged_event(adev_to_drm(adev), DRM_WEDGE_RECOVERY_NONE);
-> +
->  	drm_dev_exit(idx);
->  	return DRM_GPU_SCHED_STAT_NOMINAL;
->  }
+But assuming future versions of these apps for future android versions would
+have to adapt to guards instead of PROT_NONE, why do we have to promise them
+to represent the guards, if the point is just so they adapt to the new state
+of smaps in their dubious security checking code, and not break anymore?
+
+(but geez, if android apps are to use the android apis, which is java based
+(IIRC?) why were there ever allowed to read /proc in the first place? such a
+mistake, sigh)
+
+> David's /proc/$pid/pagemaps suggestion is excellent, avoids all the
+> pitfalls, exposes guard regions to anybody who really really wants to know
+> and doesn't interfere with anything else, so this is what we'll go with.
+> 
+> Regards, Lorenzo
 
 
