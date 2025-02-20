@@ -1,116 +1,102 @@
-Return-Path: <linux-kernel+bounces-523250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 271F4A3D447
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:12:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFF2EA3D449
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:12:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1D1E3B7CBF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:11:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78C1F189AB5D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:12:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECEAC1EE7BC;
-	Thu, 20 Feb 2025 09:10:46 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF79B8BF8;
-	Thu, 20 Feb 2025 09:10:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 400B41EBFE0;
+	Thu, 20 Feb 2025 09:12:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sRxrbO/y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DC7F1F19A
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:12:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740042646; cv=none; b=tj/w1I+llGMX2gkAVGckISoqcxOtnDsDLDVNRxhj7SkDuOCFxJXkoaPwl5iyMrx57zqB3LyGsIdk0RWF8IgXKE7uYYblUCo6ehK3pqVV6RHnkrrf3niW8WNCZt7jljJdbNr/ALhuoNjFRSjKQX7NidTnWwGnycPIOPWarTycGLw=
+	t=1740042724; cv=none; b=AxfzEXCMPAWudYVOUpR53mLVI9rWpEoTnFEjPZY7ECSy+X/8bJxAB8PXhYPPVWx9w0l51fXA7+N3C+1FA3hMgQWhrEqpNY9aMwcku2SFl9DjDX/5MT6cuSBRsdvNoJ0gbSAN4CA9GOx4ptvtPVdt0Q6U5ygwwqM6ujU9v2Iysq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740042646; c=relaxed/simple;
-	bh=9H9oeHUeHBLIXefM54SF3s2VJrEb43LbDnogiG+QqQg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qMMIiVUIudhCREaH50UfvA2PXJGbwBXkR4pJ4YQLNOYy/xUYbkqeM02yYG92WHxxPJ25K+5qHLEri5KWud0QfPlAwZgIfwu5d8k+k3Znmuref03GN6MLXRwqWcifeUQkKM9ev9gRRtVsiOBB/IvXVY/v6gVkK7l5TzvFV6hlirQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B04A81BB0;
-	Thu, 20 Feb 2025 01:10:55 -0800 (PST)
-Received: from e125905.cambridge.arm.com (e125905.cambridge.arm.com [10.1.194.73])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 675C43F6A8;
-	Thu, 20 Feb 2025 01:10:35 -0800 (PST)
-From: Beata Michalska <beata.michalska@arm.com>
-To: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	sudeep.holla@arm.com,
-	will@kernel.org,
-	catalin.marinas@arm.com,
-	sfr@canb.auug.org.au
-Cc: ionela.voinescu@arm.com,
-	yury.norov@gmail.com,
-	linux-next@vger.kernel.org,
-	sumitg@nvidia.com,
-	yang@os.amperecomputing.com,
-	vanshikonda@os.amperecomputing.com,
-	lihuisong@huawei.com,
-	zhanjie9@hisilicon.com,
-	ptsm@linux.microsoft.com
-Subject: [PATCH v2] arm64: Utilize for_each_cpu_wrap for reference lookup
-Date: Thu, 20 Feb 2025 09:10:15 +0000
-Message-Id: <20250220091015.2319901-1-beata.michalska@arm.com>
+	s=arc-20240116; t=1740042724; c=relaxed/simple;
+	bh=A3SDf2fynHoAQU2pLneF7+2O7A42EN25IHRWN76gv3I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HGvOqifCAGjhbISqMa7arvPfgEDSZn6ub4imOWOK/1cwnXX7ahesqeyl9A59tGqH5MV+u7x3NUvu7SwfrACiq7+yaUI6Y/QBZ1fnK47XdOUwgoq5PXdhq8vyUYgB3pLJu86zRId9ii9KQDm+9pbtQquZtdR+RsJlFCVsgY5Ui80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sRxrbO/y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBCCFC4CED1;
+	Thu, 20 Feb 2025 09:12:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740042724;
+	bh=A3SDf2fynHoAQU2pLneF7+2O7A42EN25IHRWN76gv3I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sRxrbO/yU1blb438TmWhKaRp1IYoyRPQ2ufyeK3PbmBEZG9o7j8NeNuYubhuBQHVR
+	 Gkd99dwVbV0Hh46/9zLBDfCJN12UJ2wiP9boodXNWAsflQpDrZJQhTDTYE7vBp81Zo
+	 Unm8ywXVULgp83Re1xSiFPV6qOX16vUSwlsRX8+BVOuO6XXz1JyQ+3P0Cn/0uLTvyo
+	 Rtfgont79qG74IqhnWzolZ81+za3Bt6mB8gcoRBzyayZz9VcUcKKqt6FPX3x/AHpAK
+	 BeKIQCwYrD/khMKSkB2Q114/slCPt2Q62+AQS6XXJZwmW8KXzaJP+PANHfoU+noN2/
+	 xCmX7+nnPdQQw==
+Date: Thu, 20 Feb 2025 10:12:01 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: oushixiong1025@163.com
+Cc: Liviu Dudau <liviu.dudau@arm.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, Shixiong Ou <oushixiong@kylinos.cn>
+Subject: Re: [PATCH] drm/arm/komeda: Add a condition check before removing
+ sysfs attribute
+Message-ID: <20250220-tiny-pragmatic-pug-5addfc@houat>
+References: <20250220085358.232883-1-oushixiong1025@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="nea7bbphka3uzfl4"
+Content-Disposition: inline
+In-Reply-To: <20250220085358.232883-1-oushixiong1025@163.com>
 
-While searching for a reference CPU within a given policy,
-arch_freq_get_on_cpu relies on cpumask_next_wrap to iterate over
-all available CPUs and to ensure each is verified only once.
-Recent changes to cpumask_next_wrap will handle the latter no more,
-so switching to for_each_cpu_wrap, which  preserves expected behavior
-while ensuring compatibility with the updates.
-Not to mention that when iterating over each CPU, using a dedicated
-iterator is preferable to an open-coded loop.
 
-Fixes: 16d1e27475f6 ("arm64: Provide an AMU-based version of arch_freq_get_on_cpu")
-Signed-off-by: Beata Michalska <beata.michalska@arm.com>
----
- v2:
- Updated commit message
+--nea7bbphka3uzfl4
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] drm/arm/komeda: Add a condition check before removing
+ sysfs attribute
+MIME-Version: 1.0
 
- arch/arm64/kernel/topology.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+On Thu, Feb 20, 2025 at 04:53:58PM +0800, oushixiong1025@163.com wrote:
+> From: Shixiong Ou <oushixiong@kylinos.cn>
+>=20
+> [WHY] If the call to sysfs_create_group() fails, there is
+>       no need to call function sysfs_remove_group().
+>=20
+> [HOW] Add a condition check before removing sysfs attribute.
+>=20
+> Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
 
-diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
-index a09b0551ec59..9e3583720668 100644
---- a/arch/arm64/kernel/topology.c
-+++ b/arch/arm64/kernel/topology.c
-@@ -254,7 +254,7 @@ int arch_freq_get_on_cpu(int cpu)
- 		if (!housekeeping_cpu(cpu, HK_TYPE_TICK) ||
- 		    time_is_before_jiffies(last_update + msecs_to_jiffies(AMU_SAMPLE_EXP_MS))) {
- 			struct cpufreq_policy *policy = cpufreq_cpu_get(cpu);
--			int ref_cpu = cpu;
-+			int ref_cpu;
- 
- 			if (!policy)
- 				return -EINVAL;
-@@ -265,11 +265,15 @@ int arch_freq_get_on_cpu(int cpu)
- 				return -EOPNOTSUPP;
- 			}
- 
--			do {
--				ref_cpu = cpumask_next_wrap(ref_cpu, policy->cpus,
--							    start_cpu, true);
--
--			} while (ref_cpu < nr_cpu_ids && idle_cpu(ref_cpu));
-+			for_each_cpu_wrap(ref_cpu, policy->cpus, cpu + 1) {
-+				if (ref_cpu == start_cpu) {
-+					/* Prevent verifying same CPU twice */
-+					ref_cpu = nr_cpu_ids;
-+					break;
-+				}
-+				if (!idle_cpu(ref_cpu))
-+					break;
-+			}
- 
- 			cpufreq_cpu_put(policy);
- 
--- 
-2.25.1
+What are you trying to fix exactly? AFAIK, there's no code path that
+calls komeda_dev_destroy() after komeda_dev_create() has failed.
 
+Maxime
+
+--nea7bbphka3uzfl4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ7bx3AAKCRAnX84Zoj2+
+dpsVAX4n5ug+XXtkZ7/jJB6mvF79+3TNFV6iuKF8Q5Lwgo/medK445plllzmD/yx
+zYttIVQBf3AtOn1ulefI/KDN0pfKXstNdRGFhg282mmQd24ZOcB9CetWOy1HO4RI
+7ta9fQR11w==
+=tf2W
+-----END PGP SIGNATURE-----
+
+--nea7bbphka3uzfl4--
 
