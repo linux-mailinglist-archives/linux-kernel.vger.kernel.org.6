@@ -1,206 +1,111 @@
-Return-Path: <linux-kernel+bounces-524654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98516A3E57B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:01:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 57C7BA3E57F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:02:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E3C51640B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:01:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33D3C16412C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:02:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ECD1264617;
-	Thu, 20 Feb 2025 20:01:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F7C9264608;
+	Thu, 20 Feb 2025 20:02:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Km2V4IiK"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="emRDzpyd"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5EE421480E;
-	Thu, 20 Feb 2025 20:01:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30166264605
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 20:02:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740081698; cv=none; b=Yz2iCvidgkSL2EkYWgt+K7Pf/MP79OfVAWVH15rhj0fYhyQ6/Cbo5PZCZcLb2MpiO2VEKe8S2ggu0EtGpjXyOv2ooqi8qR0tHOzslszlGyrZm405f0AxtJe2dtm13Bm5i7FL+nlu5P8SUh4U8FCRYiPkO/cUKWfYlr3vPhdiwjU=
+	t=1740081734; cv=none; b=UNYhoY+6FQ3IvQq50RS7FOGcFtVvhe9tM2kCGuugsikrbT7iw6zAah0nBoz0K3ae6p8+Jy0j1qtYlRMSLj7YKdmk9m+7hgbs/AyL8CogVHf+diesHHbhJNO2C0aPh99n7ElQOGCA6FmCFHGRIqIXs2O882gHHo+IePHmzhaLrWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740081698; c=relaxed/simple;
-	bh=GXCL6RSUSvS7HAMVCHd+mRQklIK6uRVePTBP+wR/0W4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W/f/rmjp278LRNGJeB9SRVUuIAF6g7Yickb01Qn/KZj5anwN3vMmGhIzbeoFloG97gXm5m/C+yzjhCYA8YYoRDJ2CQaswixR05tVMvv2dk+TzfiWMOL0k3/zfAW8MNcaeXCwcYnWxZ17d0QfDUm8dN4UoEkajH+fNpJD/KjKq94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Km2V4IiK; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2212a930001so36278175ad.0;
-        Thu, 20 Feb 2025 12:01:36 -0800 (PST)
+	s=arc-20240116; t=1740081734; c=relaxed/simple;
+	bh=0zUHcZLj6mDGJ5NV4Z2Bhyp+UHOT0+5i4Uzdr6zWfAU=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=QJAC3tlLSYg/szebEVaEZ8q1+CLEcCaaqd3qsZXBf/ufX5QvwJ4HES/Yb4bZVVfZJt2MhgLJxLOy7poBLDNoOpS8201V3lHL6n8Pk9RphIJZ05OhkF3L4Tgauu1zZs5T/g8Pc94RZfAAPpRjex768DeiG5zX49K3mDFfhNy/Frc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=emRDzpyd; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2217b4a48a4so26801945ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 12:02:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740081696; x=1740686496; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xXVAzd9z1Xkj/FF5pL9lHEU7EIbxtObnzcYt42L9wXI=;
-        b=Km2V4IiKN+8oyygJqnvSkXYk6PSpLi5nQISnNQXbmt4pDA75m2Bglpb7RgqVIiZmey
-         uqHdyrHCO+UM5M+7cn3OGdpseZDSdq1Kl8s6YiX1eLi/S1biySxPGs82ho2HBc9i/cp4
-         tzVSBgu/4bmmy+99leS1bOZMl2Mva84g7CzYLjJ28+UN7l6wDibyrfxcc8KJ1CnZ0rLC
-         rj7UBUxRytZN7QJamk6jTLhjaLXCN6NlABSm8G0Vgbe7CfBS+U+ZP4Kxt494sUTdfHYT
-         V5PcdrPDb1QXDiNLA+sI1wJBZ2xCs9a+LUd+zDDZ3Sg8wuUFP5opxeTooLqk6DV+6bwz
-         +C2g==
+        d=google.com; s=20230601; t=1740081732; x=1740686532; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Bs4ICV92lNNA+t7itNY/GyIOuvUFwmfXCBMREBnAmzs=;
+        b=emRDzpydxlA4C1GuEuMboXXaqwWV1bsdYeAwaFQ7lMwEG9UmKfPWMGatzXT3nEnqkk
+         WA2EdDUFDBk9heUXpf6WV1f3wIJWkMLvyd07bC3VfZBqfIOhl2itHmTx7v5KGsbGGZiO
+         RSD/2iDnwBI6uMhrr9A2ZTBBgNKckoxXD4S3LBSVCdoi+4nCoyAI4rh0RndmAtd0tJSa
+         N9d4WOvqk+aTipKQV3tRC4uwk98SU4JwaCmcybDIdtbYQ+Fz5Cm0llsXUuu/CSKp/9Jg
+         4uYkdA8zwdAQ/6B0TtrDh605KLVLSgJ1Jbh1oVJRqzdRjCDXP/pOrKIJJrVdmQp4684l
+         JAdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740081696; x=1740686496;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xXVAzd9z1Xkj/FF5pL9lHEU7EIbxtObnzcYt42L9wXI=;
-        b=ggrwfkFScaJLZZfM7Dred98mMpjioxWQxMYUWCnmdNg+AO/Zz4bWZkVb7IryKTw3cP
-         W8dud0r1InXw8EYPVUwOaY7A+ZPSg39AK/joAh/x6xyaNvKJcY/i8YOxBZh89kCkh4K9
-         z8BEkDRxgYu+Cg5WAbUoiIh9j6WMVNmPUOHkjnZkOpTmE4lBCApnjX8jBo3PUMDKs2ZA
-         677cpaywm5z/xDeRWRcY95c4futfuJ07H7w/w0p4LSKKcQ2ZLw87ImjPXYp9tEMZyGvD
-         CrkP40I47taiifAjMAno66sYhteqVRvieKQ8pwGRGJjHc9CV39pmqTzvbEKc1CVVRfT8
-         scEA==
-X-Forwarded-Encrypted: i=1; AJvYcCUrLyze1fS/90yu041bopIDQGnlojVUarAnxKyACb4T/sBfswg98L5GdhQJMZJcpywM3FY=@vger.kernel.org, AJvYcCVv3Aqlec0QOUXlTGdjgcTBREoSpvWeHhCMENi+1jNySCBQ8N+b1J/o9Zn+h5BNAVxQ7WM9J+CAyRHq@vger.kernel.org, AJvYcCWTyVP8hVrPJ92AadN8Ni619TXPtJir+pNAo2px/eZwJhIPr5EXc1ijAjRZSUlzkNKaAZ99zhF4fq0FaMkBTFez@vger.kernel.org, AJvYcCX+STVJ1nC7yjgI88iNsxmu0u8MLZ89M8qGelwEwQO5MpC3XpmCntaH9AqFqT0U5GnFTpDuHY+NfLeP4pu0@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6nnRG8PBW2TiF8r1TAu/MaaE0pXlFSdecfLwwXOVAtmwEkBLP
-	I0G44s2ktTo2qsinPLy68QaVgQpVSYzFm9rzIYgSo5PSl9xQPRM=
-X-Gm-Gg: ASbGnctqEVUbCvKr2i8zX/mfrj4HFyIo/MKJeuU1XhJYm8wm+5gXjWMOn89e9cefeO3
-	kh8HxLvXdndSE7Z/gVG3tbRnPQZU15rsPoI8UR5tRXYgqTW+p5cpUdVzKFM+/QF6vqk3lyWVGnE
-	5MqQVIanUpYa8iGa1lPinU+QJjML87lBKTDXI3ln9fnsGjL5a/xiiifkEh/hrh37WO+KGEMHuD4
-	9lLSoquQJJYQZyn8Xg+kYug4Ok6uSaL+Y/ErO7qiOUjpuc3fQb2hBg8pz3pY5FcLzWIsZNYEVWS
-	oMk+YaswGIQ8BMU=
-X-Google-Smtp-Source: AGHT+IG15zCfEBW31sU+1aRPB26CfUNNJjIKvAOSrUMtD5sMukp+5wmY0Gkb9qUidKnvxdpmpChoZA==
-X-Received: by 2002:a17:902:e5c5:b0:220:cd9a:a177 with SMTP id d9443c01a7336-221a0ec33d8mr457305ad.9.1740081696137;
-        Thu, 20 Feb 2025 12:01:36 -0800 (PST)
-Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-220d556e15esm126564135ad.190.2025.02.20.12.01.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 12:01:35 -0800 (PST)
-Date: Thu, 20 Feb 2025 12:01:34 -0800
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: Mina Almasry <almasrymina@google.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, virtualization@lists.linux.dev,
-	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Jeroen de Borst <jeroendb@google.com>,
-	Praveen Kaligineedi <pkaligineedi@google.com>,
-	Shailend Chand <shailend@google.com>,
-	Kuniyuki Iwashima <kuniyu@amazon.com>,
-	Willem de Bruijn <willemb@google.com>,
-	David Ahern <dsahern@kernel.org>,
-	Neal Cardwell <ncardwell@google.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>,
-	Stefan Hajnoczi <stefanha@redhat.com>,
-	Stefano Garzarella <sgarzare@redhat.com>,
-	Shuah Khan <shuah@kernel.org>, sdf@fomichev.me,
-	asml.silence@gmail.com, dw@davidwei.uk,
-	Jamal Hadi Salim <jhs@mojatatu.com>,
-	Victor Nogueira <victor@mojatatu.com>,
-	Pedro Tammela <pctammela@mojatatu.com>,
-	Samiullah Khawaja <skhawaja@google.com>
-Subject: Re: [PATCH net-next v4 9/9] selftests: ncdevmem: Implement devmem
- TCP TX
-Message-ID: <Z7eKHlA0rCF2Wgxb@mini-arch>
-References: <20250220020914.895431-1-almasrymina@google.com>
- <20250220020914.895431-10-almasrymina@google.com>
+        d=1e100.net; s=20230601; t=1740081732; x=1740686532;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Bs4ICV92lNNA+t7itNY/GyIOuvUFwmfXCBMREBnAmzs=;
+        b=RNIaCq1xbZjTjqv+4qnujAneaS6uUEUhvY73KSfqeXMQlWX5/qiPBlnx4VMwiGhi+B
+         2LjqaFe3gqDdY/zUDhjhdZYQKIFlajB2xt26gk8QgHqfowYQtnMW9Twss2mZMdYoNyP9
+         RoHubuyI7Tmfo3RhsG7YQ329PcKBaSKkGXjVb3mSqNnyyp/13ZYGFjnXEMNRqni9s+vL
+         n1fboDWNjJJ1BhUbnehM7hzh6+02ZLYd54uAq51pCpUbHYFa9/SGxPNvkYxos/RqkdG6
+         1et2y++1W/Aa8ZzH4AD7vQ8n4HfIzpEQq4FXsen4nExTXl16KTH2TxQQyfhpNwdhRkLG
+         9jxA==
+X-Forwarded-Encrypted: i=1; AJvYcCUP771MEjyaP7IQ3tTEj++XXtONInoJmlEHnXDVw1z2DzQqm5Avwy1MNEq9WioVAlVOkMIRSmDWGn3+iaM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVoILrd6RuB3ZYcneSUE/Xta6k481Tq/L8901+P04WLYZUpbDK
+	jsnEQzfQXxUM78wFIePcVAmkBVbGb/0LSUF8vE35JBnz1EbzrZf3TuvWV058JC30/Efs4hS8WQH
+	yJw==
+X-Google-Smtp-Source: AGHT+IGhnv/b9NKb1nCWT3Dat4UCewxN6QZHqaa7b5Lzmmmpxs45FNSKjTV31tV543Sx2LCzk8TNaJay418=
+X-Received: from pjbnd6.prod.google.com ([2002:a17:90b:4cc6:b0:2fa:284f:adae])
+ (user=surenb job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:d4c8:b0:21f:6dca:6932
+ with SMTP id d9443c01a7336-2219ffbba1bmr6717575ad.43.1740081732407; Thu, 20
+ Feb 2025 12:02:12 -0800 (PST)
+Date: Thu, 20 Feb 2025 12:02:08 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250220020914.895431-10-almasrymina@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
+Message-ID: <20250220200208.323769-1-surenb@google.com>
+Subject: [PATCH 1/1] fixup! mm: fix a crash due to vma_end_read() that should
+ have been removed
+From: Suren Baghdasaryan <surenb@google.com>
+To: akpm@linux-foundation.org
+Cc: sfr@canb.auug.org.au, hca@linux.ibm.com, surenb@google.com, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 02/20, Mina Almasry wrote:
-> Add support for devmem TX in ncdevmem.
-> 
-> This is a combination of the ncdevmem from the devmem TCP series RFCv1
-> which included the TX path, and work by Stan to include the netlink API
-> and refactored on top of his generic memory_provider support.
-> 
-> Signed-off-by: Mina Almasry <almasrymina@google.com>
-> Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
-> 
-> ---
-> 
-> v4:
-> - Add TX test to devmem.py (Paolo).
-> 
-> v3:
-> - Update ncdevmem docs to run validation with RX-only and RX-with-TX.
-> - Fix build warnings (Stan).
-> - Make the validation expect new lines in the pattern so we can have the
->   TX path behave like netcat (Stan).
-> - Change ret to errno in error() calls (Stan).
-> - Handle the case where client_ip is not provided (Stan).
-> - Don't assume mid is <= 2000 (Stan).
-> 
-> v2:
-> - make errors a static variable so that we catch instances where there
->   are less than 20 errors across different buffers.
-> - Fix the issue where the seed is reset to 0 instead of its starting
->   value 1.
-> - Use 1000ULL instead of 1000 to guard against overflow (Willem).
-> - Do not set POLLERR (Willem).
-> - Update the test to use the new interface where iov_base is the
->   dmabuf_offset.
-> - Update the test to send 2 iov instead of 1, so we get some test
->   coverage over sending multiple iovs at once.
-> - Print the ifindex the test is using, useful for debugging issues where
->   maybe the test may fail because the ifindex of the socket is different
->   from the dmabuf binding.
-> 
-> ---
->  .../selftests/drivers/net/hw/devmem.py        |  28 +-
->  .../selftests/drivers/net/hw/ncdevmem.c       | 300 +++++++++++++++++-
->  2 files changed, 312 insertions(+), 16 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/drivers/net/hw/devmem.py b/tools/testing/selftests/drivers/net/hw/devmem.py
-> index 1223f0f5c10c..3d4f7fc5e63f 100755
-> --- a/tools/testing/selftests/drivers/net/hw/devmem.py
-> +++ b/tools/testing/selftests/drivers/net/hw/devmem.py
-> @@ -1,6 +1,7 @@
->  #!/usr/bin/env python3
->  # SPDX-License-Identifier: GPL-2.0
->  
-> +from os import path
->  from lib.py import ksft_run, ksft_exit
->  from lib.py import ksft_eq, KsftSkipEx
->  from lib.py import NetDrvEpEnv
-> @@ -10,8 +11,7 @@ from lib.py import ksft_disruptive
->  
->  def require_devmem(cfg):
->      if not hasattr(cfg, "_devmem_probed"):
-> -        port = rand_port()
-> -        probe_command = f"./ncdevmem -f {cfg.ifname}"
-> +        probe_command = f"{cfg.bin_local} -f {cfg.ifname}"
->          cfg._devmem_supported = cmd(probe_command, fail=False, shell=True).ret == 0
->          cfg._devmem_probed = True
->  
-> @@ -25,18 +25,36 @@ def check_rx(cfg) -> None:
->      require_devmem(cfg)
->  
->      port = rand_port()
-> -    listen_cmd = f"./ncdevmem -l -f {cfg.ifname} -s {cfg.v6} -p {port}"
-> +    listen_cmd = f"{cfg.bin_local} -l -f {cfg.ifname} -s {cfg.v6} -p {port}"
->  
->      with bkg(listen_cmd) as socat:
->          wait_port_listen(port)
-> -        cmd(f"echo -e \"hello\\nworld\"| socat -u - TCP6:[{cfg.v6}]:{port}", host=cfg.remote, shell=True)
-> +        cmd(f"echo -e \"hello\\nworld\"| socat -u - TCP6:{cfg.v6}:{port},bind={cfg.remote_v6}:{port}", host=cfg.remote, shell=True)
+Handling a vma lock failure due to vma being detached from under us got
+changed but vma_end_read() in that path was left untouched while it should
+have been removed. Remove it.
 
-IPv6 address need to be wrapped into [], so has to be at least:
-	socat -u - TCP6:[{cfg.v6}]:{port},bind=[{cfg.remote_v6}]:{port}
+Fixes: 758f7664c3d1 ("mm: replace vm_lock and detached flag with a reference count")
+Reported-by: Heiko Carstens <hca@linux.ibm.com>
+Closes: https://lore.kernel.org/all/20250220185304.8313A7d-hca@linux.ibm.com/
+Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+---
+ mm/memory.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-But not sure why we care here about bind address here, let the kernel
-figure out the routing.
+diff --git a/mm/memory.c b/mm/memory.c
+index cacf6d53bdf3..567b45e5d149 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -6496,7 +6496,6 @@ struct vm_area_struct *lock_vma_under_rcu(struct mm_struct *mm,
+ 	if (IS_ERR_OR_NULL(vma)) {
+ 		/* Check if the VMA got isolated after we found it */
+ 		if (PTR_ERR(vma) == -EAGAIN) {
+-			vma_end_read(vma);
+ 			count_vm_vma_lock_event(VMA_LOCK_MISS);
+ 			/* The area was replaced with another one */
+ 			goto retry;
 
-Also, seems like "bkg(listen_cmd)" needs to be "bkg(listen_cmd,
-exit_wait=True)", otherwise sometimes I see racy empty result.
+base-commit: f7ed46277aaa8f848f18959ff68469f5186ba87c
+-- 
+2.48.1.601.g30ceb7b040-goog
+
 
