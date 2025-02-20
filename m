@@ -1,251 +1,167 @@
-Return-Path: <linux-kernel+bounces-523999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A356A3DDD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:09:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B020A3DDCD
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:08:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D70AF172F11
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:06:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 899FA3AF850
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:06:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E24EE1FCFD2;
-	Thu, 20 Feb 2025 15:05:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5221A1F9EC0;
+	Thu, 20 Feb 2025 15:05:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b="C9PECO/N"
-Received: from gimli.kloenk.de (gimli.kloenk.de [49.12.72.200])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="TjYvUwcG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E36231D61A3;
-	Thu, 20 Feb 2025 15:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.72.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA7DD1D5CFB
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 15:05:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740063900; cv=none; b=VpRutEiyV8zjsN8PWZ9O4p45zuZbLhDWHpmd3TFt2E5KtDDekUcmiK8W6V84DWAHS3jmOMjodWw3Wdp2VuRE3CAVgqtS57yfcKhe9MZd5Vz7PVrhC9vGl4U7tNu27G0ZcND+WEqGDbK0ovQnrvMSPvQQ04b3IfqalYAWYX4uf/8=
+	t=1740063942; cv=none; b=tItisTzOVpSD+wgLF5u4HWdiArPjIDVVIumBsxmx/akQ65yySvlqsYK19zYAJ5cJ6tgi+2DY/u/n9QPKnxxrOdr7A1Ztlhx/qYUWIqGRfmnYpxAVg3oqne8ZcyIu3kW81pjiMessObaLUq/Kv5tZxY+bGpSef7uL6Yp9kkIOMhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740063900; c=relaxed/simple;
-	bh=C725kGToJoPoK2G0Lb1yujtgeuzXvOOs4p8Mky4Q6Jo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=sRW7V0sg+ARmNvPEJQC/34r6q5yZIpumBCtyrdoY7IhQqWGingxAd5Torc0kwaRuyUsy9tH9We9RBhkaZBGjfDbLcVzr6A32IBVBZD6DRZyQ6c8brBDS25E872g4fjO9xK6VALVa/Z9ZajCftgRtw/nBbMPLEAR9zV5HlbSIooc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev; spf=pass smtp.mailfrom=kloenk.dev; dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b=C9PECO/N; arc=none smtp.client-ip=49.12.72.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kloenk.dev
-From: Fiona Behrens <me@kloenk.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kloenk.dev; s=mail;
-	t=1740063892; bh=xE7UPFqOCh2yzLVioDt6U+D3sE8g86i5EoCqXGfP4Os=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date;
-	b=C9PECO/NQF4RP2myoNM6V39SwYz0sLtIp0Ope7rh/jvYw36Qisepp3hljzprWD0Q8
-	 nTvaL3MqJNrKM3SLGaTzNxtUX5RT2Er4GFXZ5TLfsOJhI3ElsUxWcOO5NGA7p+oOTn
-	 px0grqC0IgbJFkwmzYkuNfz3UvjAP4g/aIgbFU1M=
-To: FUJITA Tomonori <fujita.tomonori@gmail.com>
-Cc: linux-kernel@vger.kernel.org,  Daniel Almeida
- <daniel.almeida@collabora.com>,  rust-for-linux@vger.kernel.org,
-  netdev@vger.kernel.org,  andrew@lunn.ch,  hkallweit1@gmail.com,
-  tmgross@umich.edu,  ojeda@kernel.org,  alex.gaynor@gmail.com,
-  gary@garyguo.net,  bjorn3_gh@protonmail.com,  benno.lossin@proton.me,
-  a.hindborg@samsung.com,  aliceryhl@google.com,  anna-maria@linutronix.de,
-  frederic@kernel.org,  tglx@linutronix.de,  arnd@arndb.de,
-  jstultz@google.com,  sboyd@kernel.org,  mingo@redhat.com,
-  peterz@infradead.org,  juri.lelli@redhat.com,
-  vincent.guittot@linaro.org,  dietmar.eggemann@arm.com,
-  rostedt@goodmis.org,  bsegall@google.com,  mgorman@suse.de,
-  vschneid@redhat.com,  tgunders@redhat.com,  david.laight.linux@gmail.com
-Subject: Re: [PATCH v11 7/8] rust: Add read_poll_timeout functions
-In-Reply-To: <20250220070611.214262-8-fujita.tomonori@gmail.com> (FUJITA
-	Tomonori's message of "Thu, 20 Feb 2025 16:06:09 +0900")
-References: <20250220070611.214262-1-fujita.tomonori@gmail.com>
-	<20250220070611.214262-8-fujita.tomonori@gmail.com>
-Date: Thu, 20 Feb 2025 16:04:50 +0100
-Message-ID: <878qq064j1.fsf@kloenk.dev>
+	s=arc-20240116; t=1740063942; c=relaxed/simple;
+	bh=1OmnHJey756nPxtDi6zG0cDjHDyotZZNc7pVj5Wdbig=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NT3wjjdow8QwqULh0wGNzCJr00RArM8qkQupUas4aSQDotpqNkzzlhO83AYh4k/vQVwQMglamsT/vYmTf3V6W36ZWthEO5FBMnlAdAw6E+Q3kR9m1aoGzc/Sovl18OGt+mjp0zJ56rw4OpAwAIL+5KOpqxxURZDgUbk8zNN4Eas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=TjYvUwcG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C70C2C4CED1;
+	Thu, 20 Feb 2025 15:05:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1740063942;
+	bh=1OmnHJey756nPxtDi6zG0cDjHDyotZZNc7pVj5Wdbig=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TjYvUwcGfwY5cNNSqVAEgnlOQV06rbRsvwgEBaZOUni8uFUWxwgPNpVBgDjoc+osN
+	 w59+Jjwg4c1AUCkQ5+/InPSwqMtGUCSEGWqBaGUFYY2gK0W/jdimkSHN37odJhdlKA
+	 jhwNFK01vJoKbVQWTKX4Ba/6ShvVUCUMWCN2cry4=
+Date: Thu, 20 Feb 2025 16:05:39 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+Cc: linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Dirk VanDerMerwe <dirk.vandermerwe@sophos.com>,
+	Vimal Agrawal <vimal.agrawal@sophos.com>, kernel-dev@igalia.com
+Subject: Re: [PATCH 3/4] char: misc: restrict the dynamic range to exclude
+ reserved minors
+Message-ID: <2025022010-next-engaging-5467@gregkh>
+References: <20250123123249.4081674-1-cascardo@igalia.com>
+ <20250123123249.4081674-4-cascardo@igalia.com>
+ <2025022007-rudder-refocus-5d45@gregkh>
+ <Z7dBr2WJGH-XDL6d@quatroqueijos>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z7dBr2WJGH-XDL6d@quatroqueijos>
 
-FUJITA Tomonori <fujita.tomonori@gmail.com> writes:
+On Thu, Feb 20, 2025 at 11:52:31AM -0300, Thadeu Lima de Souza Cascardo wrote:
+> On Thu, Feb 20, 2025 at 03:31:11PM +0100, Greg Kroah-Hartman wrote:
+> > On Thu, Jan 23, 2025 at 09:32:48AM -0300, Thadeu Lima de Souza Cascardo wrote:
+> > > When this was first reported [1], the possibility of having sufficient
+> > > number of dynamic misc devices was theoretical.
+> > > 
+> > > What we know from commit ab760791c0cf ("char: misc: Increase the maximum
+> > > number of dynamic misc devices to 1048448"), is that the miscdevice
+> > > interface has been used for allocating more than the single-shot devices it
+> > > was designed for.
+> > 
+> > Do we have any in-kernel drivers that abuse it this way?  If so, let's
+> > fix them up.
+> > 
+> 
+> >From the discussion 15 years ago, though found only by code inspection, dlm
+> was theoretically capable of creating such multiple devices. But, in
+> practice, its user space never did create more than one. 
+> 
+> But from commit ab760791c0cf ("char: misc: Increase the maximum number of
+> dynamic misc devices to 1048448") description, we know at least
+> coresight_tmc is abusing it like that.
 
-> Add read_poll_timeout functions which poll periodically until a
-> condition is met or a timeout is reached.
->
-> The C's read_poll_timeout (include/linux/iopoll.h) is a complicated
-> macro and a simple wrapper for Rust doesn't work. So this implements
-> the same functionality in Rust.
->
-> The C version uses usleep_range() while the Rust version uses
-> fsleep(), which uses the best sleep method so it works with spans that
-> usleep_range() doesn't work nicely with.
->
-> The sleep_before_read argument isn't supported since there is no user
-> for now. It's rarely used in the C version.
->
-> read_poll_timeout() can only be used in a nonatomic context. This
-> requirement is not checked by these abstractions, but it is intended
-> that klint [1] or a similar tool will be used to check it in the
-> future.
->
-> Link: https://rust-for-linux.com/klint [1]
-> Tested-by: Daniel Almeida <daniel.almeida@collabora.com>
-> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
+Ick.
 
-Reviewed-by: Fiona Behrens <me@kloenk.dev>
+> I can work on fixing coresight_tmc and any other abusers, but they will
+> require their own class (though I thought about making it possible to
+> create compatibility symlinks under /sys/class/misc/). So, this should take
+> a bit longer. In the meantime, I think we shold apply something like this
+> patch for v6.15 and even consider it for stable.
 
-> ---
->  rust/helpers/helpers.c |   1 +
->  rust/helpers/kernel.c  |  18 +++++++
->  rust/kernel/cpu.rs     |  13 +++++
->  rust/kernel/error.rs   |   1 +
->  rust/kernel/io.rs      |   2 +
->  rust/kernel/io/poll.rs | 120 +++++++++++++++++++++++++++++++++++++++++
->  rust/kernel/lib.rs     |   1 +
->  7 files changed, 156 insertions(+)
->  create mode 100644 rust/helpers/kernel.c
->  create mode 100644 rust/kernel/cpu.rs
->  create mode 100644 rust/kernel/io/poll.rs
->
-> diff --git a/rust/kernel/io/poll.rs b/rust/kernel/io/poll.rs
-> new file mode 100644
-> index 000000000000..5977b2082cc6
-> --- /dev/null
-> +++ b/rust/kernel/io/poll.rs
-> @@ -0,0 +1,120 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! IO polling.
-> +//!
-> +//! C header: [`include/linux/iopoll.h`](srctree/include/linux/iopoll.h).
-> +
-> +use crate::{
-> +    cpu::cpu_relax,
-> +    error::{code::*, Result},
-> +    time::{delay::fsleep, Delta, Instant},
-> +};
-> +
-> +/// Polls periodically until a condition is met or a timeout is reached.
-> +///
-> +/// The function repeatedly executes the given operation `op` closure and
-> +/// checks its result using the condition closure `cond`.
-> +/// If `cond` returns `true`, the function returns successfully with the result of `op`.
-> +/// Otherwise, it waits for a duration specified by `sleep_delta`
-> +/// before executing `op` again.
-> +/// This process continues until either `cond` returns `true` or the timeout,
-> +/// specified by `timeout_delta`, is reached. If `timeout_delta` is `None`,
-> +/// polling continues indefinitely until `cond` evaluates to `true` or an error occurs.
-> +///
-> +/// # Examples
-> +///
-> +/// ```rust,ignore
-> +/// fn wait_for_hardware(dev: &mut Device) -> Result<()> {
-> +///     // The `op` closure reads the value of a specific status register.
-> +///     let op = || -> Result<u16> { dev.read_ready_register() };
-> +///
-> +///     // The `cond` closure takes a reference to the value returned by `op`
-> +///     // and checks whether the hardware is ready.
-> +///     let cond = |val: &u16| *val == HW_READY;
-> +///
-> +///     match read_poll_timeout(op, cond, Delta::from_millis(50), Some(Delta::from_secs(3))) {
-> +///         Ok(_) => {
-> +///             // The hardware is ready. The returned value of the `op`` closure isn't used.
-> +///             Ok(())
-> +///         }
-> +///         Err(e) => Err(e),
-> +///     }
-> +/// }
-> +/// ```
-> +///
-> +/// ```rust
-> +/// use kernel::io::poll::read_poll_timeout;
-> +/// use kernel::time::Delta;
-> +/// use kernel::sync::{SpinLock, new_spinlock};
-> +///
-> +/// let lock = KBox::pin_init(new_spinlock!(()), kernel::alloc::flags::GFP_KERNEL)?;
-> +/// let g = lock.lock();
-> +/// read_poll_timeout(|| Ok(()), |()| true, Delta::from_micros(42), Some(Delta::from_micros(42)));
-> +/// drop(g);
-> +///
-> +/// # Ok::<(), Error>(())
-> +/// ```
-> +#[track_caller]
-> +pub fn read_poll_timeout<Op, Cond, T>(
-> +    mut op: Op,
-> +    mut cond: Cond,
-> +    sleep_delta: Delta,
-> +    timeout_delta: Option<Delta>,
+No such need for compatibility symlinks, devices should be able to be
+found in the correct location no matter where they are in the system,
+right?
 
-Fun idea I just had, though not sure it is of actuall use (probably not).
-Instead of `Option<Delta> we could use `impl Into<Option<Delta>>`,
-that enables to use both, so not having to write Some if we have a value.
+But yes, a class is needed, thanks!
 
-> +) -> Result<T>
-> +where
-> +    Op: FnMut() -> Result<T>,
-> +    Cond: FnMut(&T) -> bool,
-> +{
-> +    let start = Instant::now();
-> +    let sleep = !sleep_delta.is_zero();
-> +
-> +    if sleep {
-> +        might_sleep();
-> +    }
-> +
-> +    loop {
-> +        let val = op()?;
-> +        if cond(&val) {
-> +            // Unlike the C version, we immediately return.
-> +            // We know the condition is met so we don't need to check again.
-> +            return Ok(val);
-> +        }
-> +        if let Some(timeout_delta) = timeout_delta {
-> +            if start.elapsed() > timeout_delta {
-> +                // Unlike the C version, we immediately return.
-> +                // We have just called `op()` so we don't need to call it again.
-> +                return Err(ETIMEDOUT);
-> +            }
-> +        }
-> +        if sleep {
-> +            fsleep(sleep_delta);
-> +        }
-> +        // fsleep() could be busy-wait loop so we always call cpu_relax().
-> +        cpu_relax();
-> +    }
-> +}
-> +
-> +/// Annotation for functions that can sleep.
-> +///
-> +/// Equivalent to the C side [`might_sleep()`], this function serves as
-> +/// a debugging aid and a potential scheduling point.
-> +///
-> +/// This function can only be used in a nonatomic context.
-> +#[track_caller]
-> +fn might_sleep() {
-> +    #[cfg(CONFIG_DEBUG_ATOMIC_SLEEP)]
-> +    {
-> +        let loc = core::panic::Location::caller();
-> +        // SAFETY: FFI call.
-> +        unsafe {
-> +            crate::bindings::__might_sleep_precision(
-> +                loc.file().as_ptr().cast(),
-> +                loc.file().len() as i32,
-> +                loc.line() as i32,
-> +            )
-> +        }
-> +    }
-> +
-> +    // SAFETY: FFI call.
-> +    unsafe { crate::bindings::might_resched() }
-> +}
-> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> index 496ed32b0911..415c500212dd 100644
-> --- a/rust/kernel/lib.rs
-> +++ b/rust/kernel/lib.rs
-> @@ -40,6 +40,7 @@
->  pub mod block;
->  #[doc(hidden)]
->  pub mod build_assert;
-> +pub mod cpu;
->  pub mod cred;
->  pub mod device;
->  pub mod device_id;
+> > > On such systems, it is certain that the dynamic allocation will allocate
+> > > certain reserved minor numbers, leading to failures when a later driver
+> > > tries to claim its reserved number.
+> > > 
+> > > Fixing this is a simple matter of defining the IDA range to allocate from
+> > > to exclude minors up to and including 15.
+> > > 
+> > > [1] https://lore.kernel.org/all/1257813017-28598-3-git-send-email-cascardo@holoscopio.com/
+> > > 
+> > > Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+> > > ---
+> > >  drivers/char/misc.c        | 4 +++-
+> > >  include/linux/miscdevice.h | 1 +
+> > >  2 files changed, 4 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/char/misc.c b/drivers/char/misc.c
+> > > index 2cf595d2e10b..7a768775e558 100644
+> > > --- a/drivers/char/misc.c
+> > > +++ b/drivers/char/misc.c
+> > > @@ -68,8 +68,10 @@ static int misc_minor_alloc(int minor)
+> > >  	int ret = 0;
+> > >  
+> > >  	if (minor == MISC_DYNAMIC_MINOR) {
+> > > +		int max = DYNAMIC_MINORS - 1 - MISC_STATIC_MAX_MINOR - 1;
+> > >  		/* allocate free id */
+> > > -		ret = ida_alloc_max(&misc_minors_ida, DYNAMIC_MINORS - 1, GFP_KERNEL);
+> > > +		/* Minors from 0 to 15 are reserved. */
+> > > +		ret = ida_alloc_max(&misc_minors_ida, max, GFP_KERNEL);
+> > >  		if (ret >= 0) {
+> > >  			ret = DYNAMIC_MINORS - ret - 1;
+> > >  		} else {
+> > > diff --git a/include/linux/miscdevice.h b/include/linux/miscdevice.h
+> > > index 69e110c2b86a..911a294d17b5 100644
+> > > --- a/include/linux/miscdevice.h
+> > > +++ b/include/linux/miscdevice.h
+> > > @@ -21,6 +21,7 @@
+> > >  #define APOLLO_MOUSE_MINOR	7	/* unused */
+> > >  #define PC110PAD_MINOR		9	/* unused */
+> > >  /*#define ADB_MOUSE_MINOR	10	FIXME OBSOLETE */
+> > > +#define MISC_STATIC_MAX_MINOR	15	/* Top of first reserved range */
+> > 
+> > I don't understand, why is 15 the magic number here?  All of those
+> > "unused" values can just be removed, all systems should be using dynamic
+> > /dev/ now for many many years, and even if they aren't, these minors
+> > aren't being used by anyone else as the in-kernel users are long gone.
+> > 
+> > So why are we reserving this range if no one needs it?
+> 
+> Because those were reserved historically. They are still documented under
+> Documentation/admin-guide/devices.txt. What do we gain by not reserving
+> those? Since we moved past 255 for dynamic allocation, we are not going to
+> miss those 15 minors.
+
+True, but it turns out we don't need to reserve them anymore, so let's
+not.
+
+> One alternative is that we just disregard the 0-255 range entirely for
+> dynamic allocation, which should also simplify the code a lot. If that
+> would be preferable, I can work on that and submit it soon.
+
+I'm all for that, that might just make things much simpler, as a dynamic
+number shouldn't care what it's set at, right?  Try it and see?
+
+thanks,
+
+greg k-h
 
