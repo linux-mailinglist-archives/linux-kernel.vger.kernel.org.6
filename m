@@ -1,96 +1,140 @@
-Return-Path: <linux-kernel+bounces-523261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97D57A3D473
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:19:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BED87A3D479
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:20:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5B1D189466A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:19:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC26418914CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:20:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 318221C3C1F;
-	Thu, 20 Feb 2025 09:19:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E96891EC01E;
+	Thu, 20 Feb 2025 09:20:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="T/xVVx0m"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cr3iWc/q"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 050111BC09A;
-	Thu, 20 Feb 2025 09:19:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B31FD1BC09A;
+	Thu, 20 Feb 2025 09:20:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740043174; cv=none; b=uNFVPf7t4l+DFvIpACAuiJtVd5qfmPas2gRITIaMtwd1sJtKUqNJ8p0Zkj9dRFqq9X0bGoIAaTjOBQ4+y3USIPXuwRcezCsxgFNFHmXbRt7LFdpVDalMuxdikmXocYUNTkYkHoOxYNAKIZ4Y32GjEQ3kok8KrNFznP80sRoOre8=
+	t=1740043245; cv=none; b=g1hGQzHX13pE4t21REtnknwmTdwDvr47STQDGZ4OwwC5eze/sJszsZ5Ws4gmuCZ4sQ1NVcQBO6QbVWKQJWW5sk5xDP0/EVWQLeFwV8Y3v87RwOKmyvfmaciEJLh4ioKMcFafA3NZlPfirpwmet6/4xWWhrllXRkjhrtmb0SLb8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740043174; c=relaxed/simple;
-	bh=3rP7TAb0u+ZRptaXKAknV42oirdWm6E+vqJLe99bC1s=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XLTWQAH7CfAafAB6eHxW107rofd6TLJOwwM9uy74vz0/XwQniQ0eNzr/HgordxZPFcVY4wrUPes+WIuCAJ3/olUVIeoqjwu7CmP6BWciw7qaYdmar1yobLLQIVY8QqD/+i/cJ/j0LzqlzZMwLlOBxnQ83uQYM/C63jGEeo4R5DI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=T/xVVx0m; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id CD1754328A;
-	Thu, 20 Feb 2025 09:19:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740043170;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3rP7TAb0u+ZRptaXKAknV42oirdWm6E+vqJLe99bC1s=;
-	b=T/xVVx0mGjOl7ELVAzCD5pSvFSXkMjNZa7402DIZ+9ZILP+LVehVA4XrnACrPWtXcOtH8e
-	BWnDrqejayE9WjADFyPpdMU2AAZiaUnf7rJQ4e84DFY4pq08D9dlAiaTaZUWiVoU2vYtX0
-	YAqM4y8ObtkYLTLP1Y/4/R8JF9ykSXG5UtnCIzq56CgR3Y8Fty6pHQL/9vlJDo0B7/eBSo
-	260n94rDo7w8kuuaSG6/qNNErRQ9lcyvg9lG+aXpBkXicV/Fk/anF2amkN0dtTIkWyK8mr
-	vUnR7RZcwHClAF58U8z4mkTC0BYZOtkezRvkZ4F69+qCXCIaEs7F3wjc1qlKdg==
-Date: Thu, 20 Feb 2025 10:19:25 +0100
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Dimitri Fedrau <dima.fedrau@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
- Russell King <linux@armlinux.org.uk>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Niklas =?UTF-8?B?U8O2?=
- =?UTF-8?B?ZGVybHVuZA==?= <niklas.soderlund+renesas@ragnatech.se>, Gregor
- Herburger <gregor.herburger@ew.tq-group.com>, Stefan Eichenberger
- <eichest@gmail.com>, Geert Uytterhoeven <geert@linux-m68k.org>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 0/2] net: phy: marvell-88q2xxx: Enable
- temperature measurement in probe again
-Message-ID: <20250220101925.5cd1d9d3@kmaincent-XPS-13-7390>
-In-Reply-To: <20250220-marvell-88q2xxx-hwmon-enable-at-probe-v2-0-78b2838a62da@gmail.com>
-References: <20250220-marvell-88q2xxx-hwmon-enable-at-probe-v2-0-78b2838a62da@gmail.com>
-Organization: bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740043245; c=relaxed/simple;
+	bh=KwTxzj8EU6mJ8ad9IUkHxV6TfA/e+UVoHR9+ftJvD74=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=g2tI/fS1RDUo2svUY+DSdF2MN9YOkxvsuB3kv9M5v+yqOEQ4WGWXg3rvgGi5VBNPG8QplT/PavJPgdzy7JlCRKpyar+KX4qg3zvkkmat0ab9Kn0hczrtCo98YYjTcDYXO/9OyZknmJnTM8rPVyEIMJgXTo1RbcTTBl8xz0LtEbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cr3iWc/q; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-aaeec07b705so113254466b.2;
+        Thu, 20 Feb 2025 01:20:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740043242; x=1740648042; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TJFLBjsE/w48uQWEE/sJf25WWFt47cr8Ziom4yxnO9I=;
+        b=Cr3iWc/qq1aXx6rZ+I55++uHNAOr1yxNuHMTSH/GWJA/lJbFw0Ll2MLvzk6Gki/Sff
+         Ynj6Sn8AsIGIdZdAh6zMgz8AP8Lua38BHqgQopzrMM4jGi/GLEskkeAnhd0psUjNEGOY
+         U5OABA0rNzNzTKwWK+Fznc6a+6J6gBwmRW88ZsKqdiv/IimJlvjyTT0J5bZ5m5P5KCb4
+         X2Fq+2rgO3rCQIAvu03XMaicT/G7h4nCT6h3rOBEfFln0Aq8QaENhAyvbUFhqjrOFKY5
+         LtO8eBQ7vZuVYnqyDF/nLu0X0QesgQ2HX3vSc5qx62EiC4X8aEgGUp03sWUTE6kHXgod
+         UYdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740043242; x=1740648042;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TJFLBjsE/w48uQWEE/sJf25WWFt47cr8Ziom4yxnO9I=;
+        b=LNWUs0IZKf2qlwbq+eLJJdeanNV3QaSxj27TsFlcoNenty9GAmCkGSXA+5rI5hSpbO
+         EEQDhdDYwG2q2qBcSNWmUhX9zi5WXCyQ66JU+cQqqJJK8c5Uqjs5BSGE2ygpgKtjZ03z
+         zDNF/Mm1p97A3DbUW9Dzbxgl6LZGmcpAi0kWcs44TOzSpkBxUca3LX6JN8r7U/qEgUiX
+         6Dw0Qu7pt55l6AE6vlKUrKvfSy06CVq4zitKpJXTMzobrQav00GfDsB38MoxWCfmE77V
+         dKWK/AIWY5A8SlUCN9di0mwsGR9Tceay1IrUwHxQaGoLz/erhTvy8hhxgLsuPGgz+bW5
+         w73g==
+X-Forwarded-Encrypted: i=1; AJvYcCUJVstJZK2V2fGl4dfEQdPi1ikLk+2gyX5TQkXB33PhN6y0pw1YWl0SUBnCkK36D2yu7X2Ms1LS6fB3F4k=@vger.kernel.org, AJvYcCX66dGIBwT4rlE08Q4NyIu6SDYxc1OVPlIBJ2Hw21pdlm5LGBfWkPvjtJZH9S26ED8Oapp7aODqh/kjqBI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgxBUepBn4uJksj9l7DOXVoMSp+uYYucMuzwwWqfT3Q44AMSnG
+	rNthyfxQkHQt20Z+7Eym0F5z25MwacftZuXgRLpJ83i9rTzkDCMD
+X-Gm-Gg: ASbGncsZVvlvFDhV4tRkuha8LDlBunCr+3dIXtDZyG2SQxZLP5Z7hy61H4dZ4H78N2A
+	9WKlR6ClFOWvPLIhuMluFCTbzes9dR+w3qf1ZlcjIJFzxED6W3OrQ1eolzNExh/xJtLIyKqKYZz
+	a5JBLirJhHx2FZ3HiRfcICXhPgJ378MTs36I5D04tMqniqIF/hzWIGWxKL0pnqwcAjpEv+2Tidu
+	a9Z2mTcognFtyvl7t7zYnJ+IYsc/HsxQKK6cMRdVI1ZikmymvaObWg7qcr6w1aTZEubBmAtx3cz
+	uM2FmjAJAUuDtkGy/MVcqqa/8tjy
+X-Google-Smtp-Source: AGHT+IFH77Toh5BLoa/DoGQILLeWN9qsNu4stk384IN/rlsikDaMIRUYzdJmJUURfmK0ptNDuRXjEA==
+X-Received: by 2002:a17:907:930a:b0:ab7:e7c5:b373 with SMTP id a640c23a62f3a-abb70e3b378mr2010338266b.55.1740043241671;
+        Thu, 20 Feb 2025 01:20:41 -0800 (PST)
+Received: from demon-pc.localdomain ([188.27.130.21])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abba358ec3asm665574866b.35.2025.02.20.01.20.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 01:20:41 -0800 (PST)
+From: Cosmin Tanislav <demonsingur@gmail.com>
+To: 
+Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Julien Massot <julien.massot@collabora.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Bingbu Cao <bingbu.cao@intel.com>,
+	Tianshu Qiu <tian.shu.qiu@intel.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Umang Jain <umang.jain@ideasonboard.com>,
+	Cosmin Tanislav <demonsingur@gmail.com>,
+	=?UTF-8?q?Pawe=C5=82=20Anikiel?= <panikiel@google.com>,
+	linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 0/3] media: add v4l2_subdev_state_xlate_streams()
+Date: Thu, 20 Feb 2025 11:20:32 +0200
+Message-ID: <20250220092036.6757-1-demonsingur@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeiieejlecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthhqredtredtjeenucfhrhhomhepmfhorhihucforghinhgtvghnthcuoehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefguddtfeevtddugeevgfevtdfgvdfhtdeuleetffefffffhffgteekvdefudeiieenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghlohepkhhmrghinhgtvghnthdqigfrufdqudefqdejfeeltddpmhgrihhlfhhrohhmpehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedugedprhgtphhtthhopeguihhmrgdrfhgvughrrghusehgmhgrihhlrdgtohhmpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohephhhkrghllhifvghithdusehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugiesrghrmhhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopegur
- ghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomh
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-On Thu, 20 Feb 2025 09:11:10 +0100
-Dimitri Fedrau <dima.fedrau@gmail.com> wrote:
+Currently, the v4l2_subdev_state_xlate_streams() function is used
+to translate streams from one pad to another.
+This function takes the entire subdev state as argument, but only makes
+use of the routing.
 
-> Patchset fixes these:
-> - Enable temperature measurement in probe again
-> - Prevent reading temperature with asserted reset
->=20
-> Signed-off-by: Dimitri Fedrau <dima.fedrau@gmail.com>
+Introduce a v4l2_subdev_routing_xlate_streams() function which can be
+used without the entire subdev state, to avoid passing the entire state
+around when not needed.
 
-Reviewed-by: Kory Maincent <kory.maincent@bootlin.com>
+Convert all usages of v4l2_subdev_state_xlate_streams() to
+v4l2_subdev_routing_xlate_streams().
 
-Thank you!
+Remove v4l2_subdev_state_xlate_streams().
 
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+V2:
+  * Fix description of parameters
+
+Cosmin Tanislav (3):
+  media: v4l: subdev: add v4l2_subdev_routing_xlate_streams()
+  media: use v4l2_subdev_routing_xlate_streams()
+  media: v4l: subdev: remove v4l2_subdev_state_xlate_streams()
+
+ drivers/media/i2c/ds90ub913.c                 | 14 ++++++-----
+ drivers/media/i2c/ds90ub953.c                 | 14 ++++++-----
+ drivers/media/i2c/max96714.c                  | 16 ++++++-------
+ drivers/media/i2c/max96717.c                  | 23 ++++++++++---------
+ drivers/media/pci/intel/ipu6/ipu6-isys-csi2.c | 14 ++++++-----
+ .../platform/nxp/imx8-isi/imx8-isi-crossbar.c |  2 +-
+ drivers/media/v4l2-core/v4l2-subdev.c         |  7 +++---
+ include/media/v4l2-subdev.h                   | 10 ++++----
+ 8 files changed, 53 insertions(+), 47 deletions(-)
+
+-- 
+2.48.1
+
 
