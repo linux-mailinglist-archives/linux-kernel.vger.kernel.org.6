@@ -1,47 +1,51 @@
-Return-Path: <linux-kernel+bounces-524880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D14ACA3E853
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:23:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76EBBA3E855
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:24:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B416719C0307
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:23:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A309B17E9E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:23:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57C36266F1D;
-	Thu, 20 Feb 2025 23:23:42 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A6141D5CDD
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 23:23:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 586FC2673AB;
+	Thu, 20 Feb 2025 23:23:51 +0000 (UTC)
+Received: from relay02.th.seeweb.it (relay02.th.seeweb.it [5.144.164.163])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0C021D5CDD;
+	Thu, 20 Feb 2025 23:23:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.144.164.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740093822; cv=none; b=TPqiejyc6TJ7suCVNjJlvH+AVpUIzWtjQcv2pp2bD5nZkxCgAbZq0lCm20mwnyUYKc+nhjD6togqRZBQLrwgqbeddgElA55OrOnfJJuWcsz6MVMBZ4pwBEV0FVSq/Gx40zVOqVtlwld6uPXj/Jtc8Uqp4lrQCu+tyqMLd+OMNCA=
+	t=1740093831; cv=none; b=Yc2tkUVw/zBpvhSKhXmYSXpIeMbyITXZCz6rliFssxcj5PDpNOFCfJmDcsq5sZMdxBJCsWknoX1R9BAFfw/v7fvk/UaRo66m9u+a3Q79gxiOC8ko97+pbLj8S3JCnHmE5cDa3OAyas0pjruIF8+rYg8ziRt/m1YMa76r8H1EzOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740093822; c=relaxed/simple;
-	bh=Hr+P/lUTONRuYGjGw07pt5nCppUo+OK5T7GMh7oyyKk=;
+	s=arc-20240116; t=1740093831; c=relaxed/simple;
+	bh=7plj6L20Gxo9cVQKw8RCUxWVe+D0ww3+RbiYkw7G20A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GLaVXwDX1f+DzOE5Km5+oouf7jOXxtifvvJPTTSs6ik2zTo7RG0xivCauYHCkKZV4juBw0SCvg8kxrdFyrgvsv5fJG9px7lqQgU/jd643CPSRxerwMRWCeDQjV3sOT/vvfyFLCTEx2x1DMWu2PivXHk2XlAZrd0WfC++AdPhjK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-3e1ff7000001d7ae-17-67b7b976c54b
-Date: Fri, 21 Feb 2025 08:23:29 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	kernel_team@skhynix.com, akpm@linux-foundation.org,
-	ying.huang@intel.com, vernhao@tencent.com,
-	mgorman@techsingularity.net, hughd@google.com, willy@infradead.org,
-	david@redhat.com, peterz@infradead.org, luto@kernel.org,
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, rjgolo@gmail.com
-Subject: Re: [RFC PATCH v12 00/26] LUF(Lazy Unmap Flush) reducing tlb numbers
- over 90%
-Message-ID: <20250220232329.GA39373@system.software.com>
-References: <20250220052027.58847-1-byungchul@sk.com>
- <8accbd91-ca59-43f8-b190-7e1ac3df5e11@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sjDCr6xiuxaA+GuafOYCJ0jgXm1PbxCyOIMV6d8kjeNUbor3oiFfmAmXxpyEd0C/srSXctkj2klUpwl8MV+pDPJ5OJVEjTpVOYAupQeNkShNkLs2GzlC7OLW/bn96i6c7RKkjoVCtrxO0o83ObNwyg9gVBH6sj0SBILPcj6djLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org; spf=pass smtp.mailfrom=somainline.org; arc=none smtp.client-ip=5.144.164.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=somainline.org
+Received: from SoMainline.org (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by m-r1.th.seeweb.it (Postfix) with ESMTPSA id CA2941FB6F;
+	Fri, 21 Feb 2025 00:23:40 +0100 (CET)
+Date: Fri, 21 Feb 2025 00:23:39 +0100
+From: Marijn Suijten <marijn.suijten@somainline.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/7] drm/msm/dpu: pass master interface to CTL
+ configuration
+Message-ID: <plurs7xfefclro5cw7c5hcd3akryzx6p75owbrkntsbwzxz26n@ac2dxrbcej6w>
+References: <20250220-dpu-active-ctl-v1-0-71ca67a564f8@linaro.org>
+ <20250220-dpu-active-ctl-v1-3-71ca67a564f8@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,68 +54,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8accbd91-ca59-43f8-b190-7e1ac3df5e11@intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrAIsWRmVeSWpSXmKPExsXC9ZZnkW7Zzu3pBguPKlrMWb+GzeLzhn9s
-	Fp9ePmC0eLGhndHi6/pfzBZPP/WxWFzeNYfN4t6a/6wW53etZbXYsXQfk8WlAwuYLI73HmCy
-	mH/vM5vF5k1TmS2OT5nKaPH7B1DxyVmTWRwEPb639rF47Jx1l91jwaZSj80rtDwW73nJ5LFp
-	VSebx6ZPk9g93p07x+5xYsZvFo95JwM93u+7yuax9ZedR+PUa2wenzfJBfBFcdmkpOZklqUW
-	6dslcGVMfrWCveARd8W2lj+sDYwLOLsYOTkkBEwkWnbfY+5i5ACzn/Skg4RZBFQllj7pZQax
-	2QTUJW7c+AlmiwDZp1YuZ+9i5OJgFvjPJHH/YStYQlggQuLJoRNMIDavgIXE74lLGUFsIYEM
-	iWkbHrNAxAUlTs58AmYzC2hJ3Pj3kglkL7OAtMTyfxwgYU4BW4k77Z/BxogKKEsc2HacCeLM
-	bewSyz9wQdiSEgdX3GCZwCgwC8nUWUimzkKYuoCReRWjUGZeWW5iZo6JXkZlXmaFXnJ+7iZG
-	YDwuq/0TvYPx04XgQ4wCHIxKPLwJptvThVgTy4orcw8xSnAwK4nwttVvSRfiTUmsrEotyo8v
-	Ks1JLT7EKM3BoiTOa/StPEVIID2xJDU7NbUgtQgmy8TBKdXAmG0Rxv+pv9xomd0fK64bSX6b
-	b7x+2NLLXPXJLF+nQ0L9/PNVfQn8L98IVLpa22lVMKRvbnuQVxkntLTldaY0r1CJ9qYtKXG9
-	ZlMe/TT+35n5rNSo6svkwG5/c9bC+3Ne3OyvlP0Zdn+57Alz3u21fj+Lj0idSE+M1P+20PKL
-	efT+OyViCsuUWIozEg21mIuKEwFFwUxXwwIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBIsWRmVeSWpSXmKPExsXC5WfdrFu2c3u6wYfn4hZz1q9hs/i84R+b
-	xaeXDxgtXmxoZ7T4uv4Xs8XTT30sFofnnmS1uLxrDpvFvTX/WS3O71rLarFj6T4mi0sHFjBZ
-	HO89wGQx/95nNovNm6YyWxyfMpXR4vcPoOKTsyazOAh5fG/tY/HYOesuu8eCTaUem1doeSze
-	85LJY9OqTjaPTZ8msXu8O3eO3ePEjN8sHvNOBnq833eVzWPxiw9MHlt/2Xk0Tr3G5vF5k1wA
-	fxSXTUpqTmZZapG+XQJXxuRXK9gLHnFXbGv5w9rAuICzi5GDQ0LAROJJT3oXIycHi4CqxNIn
-	vcwgNpuAusSNGz/BbBEg+9TK5exdjFwczAL/mSTuP2wFSwgLREg8OXSCCcTmFbCQ+D1xKSOI
-	LSSQITFtw2MWiLigxMmZT8BsZgEtiRv/XjKB7GUWkJZY/o8DJMwpYCtxp/0z2BhRAWWJA9uO
-	M01g5J2FpHsWku5ZCN0LGJlXMYpk5pXlJmbmmOoVZ2dU5mVW6CXn525iBMbXsto/E3cwfrns
-	fohRgINRiYc3wXR7uhBrYllxZe4hRgkOZiUR3rb6LelCvCmJlVWpRfnxRaU5qcWHGKU5WJTE
-	eb3CUxOEBNITS1KzU1MLUotgskwcnFINjNKbX24SE1x3fcu1I8/nshUfv2nX8FZ5gdUb6Q28
-	d8oU9qc35zpu8H3X22R27c2MBUXy5Q199bfWhwp0pUr/698z8Upor9T7z5LJX/ecmcGzaYPy
-	7FN/rBlOzd/gZZ+zNZphWb37jerETsGfX6Ywi6zT8Co3n3th6sq33LEpPqsnXzaeWzhVx1+J
-	pTgj0VCLuag4EQDIkqvyqwIAAA==
-X-CFilter-Loop: Reflected
+In-Reply-To: <20250220-dpu-active-ctl-v1-3-71ca67a564f8@linaro.org>
 
-On Thu, Feb 20, 2025 at 07:15:44AM -0800, Dave Hansen wrote:
-> On 2/19/25 21:20, Byungchul Park wrote:
-> > I'm posting the latest version so that anyone can try luf mechanism if
-> > wanted by any chance.  However, I tagged RFC again because there are
-> > still issues that should be resolved to merge to mainline:
+On 2025-02-20 12:26:20, Dmitry Baryshkov wrote:
+> Active controls require setup of the master interface. Pass the selected
+> interface to CTL configuration.
 > 
-> I don't see anything fundamentally different here from the last 11
-> versions. I think the entire approach is dangerous and basically makes
-> things impossible to debug. It's not clear that some of the failure
-> scenarios that I've brought up in the past have actually been fixed.
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Respect your opinion.
+Reviewed-by: Marijn Suijten <marijn.suijten@somainline.org>
 
-> What I've said here still stands:
+> ---
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c | 2 ++
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c | 2 ++
+>  2 files changed, 4 insertions(+)
 > 
-> > https://lore.kernel.org/all/fab1dd64-c652-4160-93b4-7b483a8874da@intel.com/
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c
+> index e9bbccc44dad8b391cd51daf902307105b2598fc..d1e16da00529de35cf4e205077c4264bdb70de16 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c
+> @@ -59,6 +59,8 @@ static void _dpu_encoder_phys_cmd_update_intf_cfg(
+>  		return;
+>  
+>  	intf_cfg.intf = phys_enc->hw_intf->idx;
+> +	if (phys_enc->split_role == ENC_ROLE_MASTER)
+> +		intf_cfg.intf_master = phys_enc->hw_intf->idx;
+>  	intf_cfg.intf_mode_sel = DPU_CTL_MODE_SEL_CMD;
+>  	intf_cfg.stream_sel = cmd_enc->stream_sel;
+>  	intf_cfg.mode_3d = dpu_encoder_helper_get_3d_blend_mode(phys_enc);
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
+> index abd6600046cb3a91bf88ca240fd9b9c306b0ea2e..232055473ba55998b79dd2e8c752c129bbffbff4 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
+> @@ -298,6 +298,8 @@ static void dpu_encoder_phys_vid_setup_timing_engine(
+>  	if (phys_enc->hw_cdm)
+>  		intf_cfg.cdm = phys_enc->hw_cdm->idx;
+>  	intf_cfg.intf = phys_enc->hw_intf->idx;
+> +	if (phys_enc->split_role == ENC_ROLE_MASTER)
+> +		intf_cfg.intf_master = phys_enc->hw_intf->idx;
+>  	intf_cfg.intf_mode_sel = DPU_CTL_MODE_SEL_VID;
+>  	intf_cfg.stream_sel = 0; /* Don't care value for video mode */
+>  	intf_cfg.mode_3d = dpu_encoder_helper_get_3d_blend_mode(phys_enc);
 > 
-> > I think tglx would call all of this "tinkering".  The approach to this
-> > series is to "fix" narrow, specific cases that reviewers point out, make
-> > it compile, then send it out again, hoping someone will apply it.
-> > 
-> > So, for me, until the approach to this series changes: NAK, for x86.
-> > Andrew, please don't take this series.  Or, if you do, please drop the
-> > patch enabling it on x86.
+> -- 
+> 2.39.5
 > 
-> I think I'd also like to stop being cc'd on this. If LUF is merged into
-
-I will un-cc you from the next spin.
-
-	Byungchul
-
-> mainline and proven to work on arm64 or riscv for a year, I'd be happy
-> to take another look at enabling it on x86. I think that's just about
-> the only thing that would make me reconsider.
 
