@@ -1,120 +1,188 @@
-Return-Path: <linux-kernel+bounces-524671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60FE3A3E5A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:12:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C916A3E5A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:13:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A11A188A9DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:12:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A5DD188DE03
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:13:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 726FE214A8B;
-	Thu, 20 Feb 2025 20:12:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEF6F2641F1;
+	Thu, 20 Feb 2025 20:13:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="UgiSYnzY"
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="d2zKj+ZE"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 838B0262D39
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 20:12:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE032212B02;
+	Thu, 20 Feb 2025 20:13:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740082332; cv=none; b=EeNVcW5eYyOPYGoSpPSkRY9ToZKKXJAHgSmM2I/IqDHTXVO0U4ENMatPG6NwP7SJsdv/kQ8A/Fe6uu1mCxam72x/j4kMRXR9Hx/xHN1Yzz9xpbdgZ9qPu2rc9tfrIyv+0Xmzc1IDf0f+M8+fpxOxHjEfF7zBLCgojpsND+8Yco0=
+	t=1740082397; cv=none; b=M0V8Vp2M3joCQKydGeSlCgMA9SVy8nHF1fPsB0C6UOhhGABfquE07S2aesikhw19Dr9dvMMt99aCQBIDIMV+OGaQOcmO8PiFPd8HvLIwqi0u5oPVHkSRDT5Z/K9XIyXKvDzoFdsK3g0UPCpdZMFHsN2BEg3GtjZ5YjECA7gumoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740082332; c=relaxed/simple;
-	bh=LiLaY47ptzEOL9s852ObKqchaffB6bEYE6g2HwhyeVI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ChA4G0Bsb1WI/NqBDFf4cGa0aEJS1HnYLHF6RdUe8wGbbdlg9kna/eb2xRhRJQPQ2KvBwlYiW52yZPKfBZ6KVwDwnwoU7gi7R0yeIsEO2gGKkTaNKzqQnUNyzdcWqPBZ5JQoHvtKEj0h8sIoA8Nu0OgpC6sWSeVRwgMcPXCl7Vc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=UgiSYnzY; arc=none smtp.client-ip=209.85.160.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-2bca6017608so915034fac.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 12:12:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1740082329; x=1740687129; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=/P/yPrR/A9HckFg8NDpGWQQ83Dwa//epZsJwfz6xX2o=;
-        b=UgiSYnzYShZXZRMd3K48ATtvBsXPBUVbqFRhPb2DbZaqzwdgF2x5qfxjLGgQrXY73R
-         no8CKY8zjoM8P00AeoYtva1MR32RIjBZDdSQSYZos+CW/+5TAox9gNKZfIGe7eXGipGI
-         V/QrMDA9GfHeLSUCcveosclNTcK3pET+eQPG/bp5ox4AOCPBcJ80fOo7CRycGOIoxZnl
-         MZ2kOnTgZvQOGAIE1QfOZ4gVJz+t1/49Om+fDJeF80gkWQsV68suZFrEY4gW3ytYi/NV
-         Jq6/Wpp1HkMQlASqssUzC0zrr0PHbqDXvtX6ZGo+Y5Wkwdj/5NVOtbUZ4BfHhQ5hdtsd
-         CN+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740082329; x=1740687129;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/P/yPrR/A9HckFg8NDpGWQQ83Dwa//epZsJwfz6xX2o=;
-        b=mYVD1UXWAreGl01pn4+CZjP667u99ErXP0yyUwNzuh7jNzTiTROwp/6dQ4PGYfWIbv
-         mtkKPL+x8JZb7sEKcEqhLJSwH12F6ACo0bOLnfb1YQjIViQxzDAWyhbDlHWCDpUlMJQw
-         HvXlhpJdnj6Xs+l//zC98/sWOmIbBTDk6Rj6c9HNgZYF3Mp4fIPK0CSqE7hSpCaC4NOD
-         3sYbXPH/vxbtf3kCRnLPm2hjtwp7qNlRGTc3Fs5GVv4HFzTPKHrQbh3vEMtVG/Tq7KKn
-         BQHbIuT6/tMvKgJWQeuee7+KGut5AG0Q7GOjSjqQyEoO0Hr+0T3KqKt5RLU6Xmrnl35q
-         7FEA==
-X-Forwarded-Encrypted: i=1; AJvYcCW3ewglBkuUFw5bK7vZPD96ZC4jYBM+77EzdmsXdTchLeAQqT2rp61GrMUnrhaYnzOb10faoNcubHnb2n4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNJIoIyebLPruC7kNc2xQ96cpLpmSFb6HlsVXpgOBz0BEFCa9L
-	lcNdxaWTfaEs15wlFfLJcghsKprDTKd0+Jt8jiJRLe0rRtt/JTvfzG4SZKqrVco=
-X-Gm-Gg: ASbGncsN11yqgVjPyd3JVp02ns1pp52+GeEOaM7Hi69mD8+rw5mipWrX/xyOiq/Niue
-	JY+CQjO29CvhuiLHFIex7sNbi+copZvWVZdzglZwW+TurDlYQtQOYsgYGLS6ICvWi5MkPz1idGk
-	JJlFgNHFWfnnWwl6c5vJQBZo+6l4lt66PYc0nf1lN+NQyXjn5mgtIHVmc4YfhVK134/SI9FHp4F
-	mNwR1jkDRtIOhf7IcyAs41/MsFi/PhOpgr5dSPoP3yCCBKlRLc7KeiX4BlSy+gxnkr8I9G/xPBD
-	q6QRjSbXNLJX3wf4M3VC9S8yKh7HAxA9nUSok8PjrfxmgJ5aqDxv
-X-Google-Smtp-Source: AGHT+IHtNExzuBCpI3aT6N9xaZhGItg913lty18yZz2F1e8Bv7HevKzEtGiBwXMthiOqYSepUFM7xA==
-X-Received: by 2002:a05:6870:1e8e:b0:296:a1fc:91b5 with SMTP id 586e51a60fabf-2bd50c5679fmr373634fac.8.1740082329523;
-        Thu, 20 Feb 2025 12:12:09 -0800 (PST)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2b954868591sm6475964fac.12.2025.02.20.12.12.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Feb 2025 12:12:08 -0800 (PST)
-Message-ID: <bc8b0004-6eef-43c0-a07d-a07d2e332737@baylibre.com>
-Date: Thu, 20 Feb 2025 14:12:06 -0600
+	s=arc-20240116; t=1740082397; c=relaxed/simple;
+	bh=rPMZsZQ/f5XM8ZG+qBG6oki5T3WjncRONAEhW1vp4KA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PYh8LUucvDUrR9F7UeLWLsw9i0XIxoNIiVKeVeAO6r6vfJo2qLM/eVjmncbIw1uc1gQ2oqF6IpJA2QaM+IhcGYNf4/J/9cDyyvYKjucNaiyPnswxBesZUdMTiEv7fHL6q4mHAvL30od7I1Cogd1h4tr8u7Dg0ZjUFGb9H1fbJQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=d2zKj+ZE; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.1)
+ id eb3119b8c62ee698; Thu, 20 Feb 2025 21:13:12 +0100
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 635267F624E;
+	Thu, 20 Feb 2025 21:13:12 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1740082392;
+	bh=rPMZsZQ/f5XM8ZG+qBG6oki5T3WjncRONAEhW1vp4KA=;
+	h=From:Subject:Date;
+	b=d2zKj+ZEolohJ5yuwPueQpkrA3kuR+o43CIDd4pDGvVRT6ORjmpSIQJijPn0RlsMD
+	 YYMBvyh1EwCC31rwBu/DQ0rMK+msVfeFq/oNYHsDO85Wtj5hM9qnHKxTNfUCSWxaUO
+	 QKxXLE64S+CesExXmpgtpG8ud87VP87/oP+d5qHhmcE9mXaLYZOKRmmh0D1C2Siwvf
+	 0YX/e/WR4poTwKC/JiA9jcS1tDvZB4sVlAt79kuLyhZmcX2O/pWOX+k7QkSfTt0tkO
+	 KAUrwCSU+ct7+eJPIEp7MHqbYIeVfeKSyDlgU5/GZPopiyhGTC0GJSwgOkQi1nDFi0
+	 c2Z1SD3mcVpiw==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Christian Loehle <christian.loehle@arm.com>,
+ Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
+ Doug Smythies <dsmythies@telus.net>
+Subject: [PATCH v1] cpuidle: menu: Update documentation after previous changes
+Date: Thu, 20 Feb 2025 21:13:12 +0100
+Message-ID: <4998484.31r3eYUQgx@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/14] Add support for AD4080 ADC
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>, jic23@kernel.org,
- robh@kernel.org, conor+dt@kernel.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250220135429.8615-1-antoniu.miclaus@analog.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20250220135429.8615-1-antoniu.miclaus@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeikedthecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeffffffkefgheehffelteeiveeffeevhfelteejvddvieejjeelvdeiheeuveeuffenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopeeipdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrnhhivghlrdhlvgiitggrnhhosehlihhnrghrohdrohhrghdprhgtphhtthhopegthhhrihhsthhirghnrdhlohgvhhhlvgesrghrmhdrtghomhdprhgtphhtthhopegrrhhtvghmrdgsihhthihuthhskhhihieslhhinhh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=6 Fuz1=6 Fuz2=6
 
-On 2/20/25 7:54 AM, Antoniu Miclaus wrote:
-> The AD4080 is a high-speed, low noise, low distortion, 20-bit, Easy
-> Drive, successive approximation register (SAR) analog-to-digital
-> converter (ADC). Maintaining high performance (signal-to-noise and
-> distortion (SINAD) ratio > 90 dBFS) at signal frequencies in excess
-> of 1 MHz enables the AD4080 to service a wide variety of precision,
-> wide bandwidth data acquisition applications. Simplification of the
-> input anti-alias filter design can be accomplished by applying over-
-> sampling along with the integrated digital filtering and decimation to
-> reduce noise and lower the output data rate for applications that do
-> not require the lowest latency of the AD4080.
-> 
-It looks like this was just copied from the datasheet, so not useful
-at all for a cover letter. We can read it in the datasheet.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Instead, please spend some time to explain the interesting and
-unusual things about this driver that will help reviewers understand
-*why* you are doing what you are doing. This is a very complex driver!
+The documentaion of the menu cpuidle governor needs to be updated
+to match the code bevavior after some changes made recently.
 
-In particular, on this one, the documentation on the FPGA IP block isn't
-very detailed. So it will be very helpful to know more about how all of
-the sync stuff is supposed to work and what kind of filtering is the
-FPGA doing in addition to the filtering done in the ADC chip.
+No functional impact.
 
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ Documentation/admin-guide/pm/cpuidle.rst |   27 ++++++++++++++++-----------
+ drivers/cpuidle/governors/menu.c         |   29 ++++++++++-------------------
+ 2 files changed, 26 insertions(+), 30 deletions(-)
+
+--- a/Documentation/admin-guide/pm/cpuidle.rst
++++ b/Documentation/admin-guide/pm/cpuidle.rst
+@@ -275,20 +275,25 @@
+ and variance of them.  If the variance is small (smaller than 400 square
+ milliseconds) or it is small relative to the average (the average is greater
+ that 6 times the standard deviation), the average is regarded as the "typical
+-interval" value.  Otherwise, the longest of the saved observed idle duration
++interval" value.  Otherwise, either the longest or the shortest (depending on
++which one is farther from the average) of the saved observed idle duration
+ values is discarded and the computation is repeated for the remaining ones.
++
+ Again, if the variance of them is small (in the above sense), the average is
+ taken as the "typical interval" value and so on, until either the "typical
+-interval" is determined or too many data points are disregarded, in which case
+-the "typical interval" is assumed to equal "infinity" (the maximum unsigned
+-integer value).
++interval" is determined or too many data points are disregarded.  In the latter
++case, if the size of the set of data points still under consideration is
++sufficiently large, the next idle duration is not likely to be above the largest
++idle duration value still in that set, so that value is taken as the predicted
++next idle duration.  Finally, if the set of data points still under
++consideration is too small, no prediction is made.
+ 
+-If the "typical interval" computed this way is long enough, the governor obtains
+-the time until the closest timer event with the assumption that the scheduler
+-tick will be stopped.  That time, referred to as the *sleep length* in what follows,
+-is the upper bound on the time before the next CPU wakeup.  It is used to determine
+-the sleep length range, which in turn is needed to get the sleep length correction
+-factor.
++If the preliminary prediction of the next idle duration computed this way is
++long enough, the governor obtains the time until the closest timer event with
++the assumption that the scheduler tick will be stopped.  That time, referred to
++as the *sleep length* in what follows, is the upper bound on the time before the
++next CPU wakeup.  It is used to determine the sleep length range, which in turn
++is needed to get the sleep length correction factor.
+ 
+ The ``menu`` governor maintains an array containing several correction factor
+ values that correspond to different sleep length ranges organized so that each
+@@ -302,7 +307,7 @@
+ The sleep length is multiplied by the correction factor for the range that it
+ falls into to obtain an approximation of the predicted idle duration that is
+ compared to the "typical interval" determined previously and the minimum of
+-the two is taken as the idle duration prediction.
++the two is taken as the final idle duration prediction.
+ 
+ If the "typical interval" value is small, which means that the CPU is likely
+ to be woken up soon enough, the sleep length computation is skipped as it may
+--- a/drivers/cpuidle/governors/menu.c
++++ b/drivers/cpuidle/governors/menu.c
+@@ -41,7 +41,7 @@
+  * the  C state is required to actually break even on this cost. CPUIDLE
+  * provides us this duration in the "target_residency" field. So all that we
+  * need is a good prediction of how long we'll be idle. Like the traditional
+- * menu governor, we start with the actual known "next timer event" time.
++ * menu governor, we take the actual known "next timer event" time.
+  *
+  * Since there are other source of wakeups (interrupts for example) than
+  * the next timer event, this estimation is rather optimistic. To get a
+@@ -50,30 +50,21 @@
+  * duration always was 50% of the next timer tick, the correction factor will
+  * be 0.5.
+  *
+- * menu uses a running average for this correction factor, however it uses a
+- * set of factors, not just a single factor. This stems from the realization
+- * that the ratio is dependent on the order of magnitude of the expected
+- * duration; if we expect 500 milliseconds of idle time the likelihood of
+- * getting an interrupt very early is much higher than if we expect 50 micro
+- * seconds of idle time. A second independent factor that has big impact on
+- * the actual factor is if there is (disk) IO outstanding or not.
+- * (as a special twist, we consider every sleep longer than 50 milliseconds
+- * as perfect; there are no power gains for sleeping longer than this)
+- *
+- * For these two reasons we keep an array of 12 independent factors, that gets
+- * indexed based on the magnitude of the expected duration as well as the
+- * "is IO outstanding" property.
++ * menu uses a running average for this correction factor, but it uses a set of
++ * factors, not just a single factor. This stems from the realization that the
++ * ratio is dependent on the order of magnitude of the expected duration; if we
++ * expect 500 milliseconds of idle time the likelihood of getting an interrupt
++ * very early is much higher than if we expect 50 micro seconds of idle time.
++ * For this reason, menu keeps an array of 6 independent factors, that gets
++ * indexed based on the magnitude of the expected duration.
+  *
+  * Repeatable-interval-detector
+  * ----------------------------
+  * There are some cases where "next timer" is a completely unusable predictor:
+  * Those cases where the interval is fixed, for example due to hardware
+- * interrupt mitigation, but also due to fixed transfer rate devices such as
+- * mice.
++ * interrupt mitigation, but also due to fixed transfer rate devices like mice.
+  * For this, we use a different predictor: We track the duration of the last 8
+- * intervals and if the stand deviation of these 8 intervals is below a
+- * threshold value, we use the average of these intervals as prediction.
+- *
++ * intervals and use them to estimate the duration of the next one.
+  */
+ 
+ struct menu_device {
 
 
 
