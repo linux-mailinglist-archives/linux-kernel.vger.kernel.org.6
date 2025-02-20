@@ -1,189 +1,191 @@
-Return-Path: <linux-kernel+bounces-522800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE471A3CE9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 02:23:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1119FA3CE9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 02:23:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A114189A2DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 01:23:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B832189AC14
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 01:23:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FAF71B5EB5;
-	Thu, 20 Feb 2025 01:22:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8C731BBBFD;
+	Thu, 20 Feb 2025 01:22:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="dTEtMozW"
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="jDPkX9yb"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D8F119004A;
-	Thu, 20 Feb 2025 01:22:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0CD21AC88B
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 01:22:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740014539; cv=none; b=jGbC77xWUKaMlnfDvzVZhxlcUWrDdGrepEuEtLTXY+wljb+oxCsDaZwJXC6+oO9Y+Kl3ml0wT/HJl07pkuG1YCsLKcWI0dX60JosAmQJDvdyeeaPaSpV70r/ZZ2Z28dsK/cVTC9dJ9ogKEvm9vURbshG4/JmN5xqoZzMZvfGCEc=
+	t=1740014558; cv=none; b=uaOZDse+XIag4v26/IBIRWU+SOl28DyH2Q5c0eW+HdW0L3Od+wVoBOYc+7Xt9sMboqN66ELDXW0Ay7ytDzfQZlQfSuDSCCsaHyXUMF6GEZhjG+LG1ld704O1+uTium1jfjuSSUwzvCf5+i1nFsbPpLDD7VJDrP9pTMjIBC9TthA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740014539; c=relaxed/simple;
-	bh=47LozXBDeDeKx5iIZ5bkORbFclygfcZB5PqcdmS7rK0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hf+G+bk4UJgn88ZaA740A/FB9DFLz8/+63SpAKzns44Ry9XDUTShchXazUZ8Ns7wzhZTVNOf/9ZYbm3S7YMMDOjcp/Glcdz3Pc3x3135D0yDwgraboNPjUFRRzeFIFDM36/o4YS+DswTMgYhfZtKjrzKrp8ZRrCFuaH/F9Jq8i0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=dTEtMozW; arc=none smtp.client-ip=115.124.30.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1740014532; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-	bh=dnINxmCtGqEdX8HnW+sZ9JU8eei8c7pxZRZ9qAGcAcU=;
-	b=dTEtMozW2G42hnVrcSFJMyOi/O8/lXGgSqhGNr23gszcNl03VJIkgMzS47fvXE7MjafxgiBSseM5+pTGRjT/LCHRIIxs3hg0zzGgCULhqfMym3/c/3i19LzD/Po39xBHxg4OORII7Xa2J2k6cBXK3J4U/OvENLUGhmbjBW0rcIo=
-Received: from U-V2QX163P-2032.local(mailfrom:fengwei_yin@linux.alibaba.com fp:SMTPD_---0WPqf0Tf_1740014531 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 20 Feb 2025 09:22:11 +0800
-Date: Thu, 20 Feb 2025 09:22:10 +0800
-From: YinFengwei <fengwei_yin@linux.alibaba.com>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: will@kernel.org, mark.rutland@arm.com, 
-	linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	jie.li.linux@linux.alibaba.com, renyu.zj@linux.alibaba.com
-Subject: Re: [PATCH] perf/arm-cmn: don't claim resource during ioremap() for
- CMN700 with ACPI
-Message-ID: <har3enfw6i4nidve42gz6ser5esghn4jalvjhi5sajav2mcuyn@fjw53tb57h3n>
-References: <20250218012111.30068-1-fengwei_yin@linux.alibaba.com_quarantine>
- <d5040b5c-564d-4abf-be22-d2aa1183b633@arm.com>
- <hfip42i45jkumuvgdthxm2bk6qylqyqh6erzaq43yiqygvn6uu@dcui675lwtkm>
- <73af368a-52a9-4922-876b-7a6e2d32a94e@arm.com>
- <gfgtxwe3fmh4unleypyrp2qxchrqcz7wqzyoy7om2zjqev6ggf@gnnqnmusecc3>
- <a94c0622-ae31-46f1-b51e-a344b86aa47c@arm.com>
+	s=arc-20240116; t=1740014558; c=relaxed/simple;
+	bh=/aBZNCva4WH3GgF1JWE0vCHAorP1a+UaOp78AtPSvIs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=cWRvNlwjRM1RElnVLN5/wD1tD4uxORBwEbwq0kN5XW/vyot0dGIrONXKteydMbBDoY8w37y0oL5lHfkA0nZ9/+4WIcqCwZwg3Knuqrn22wmxlWg54ar1rZdIFRet3U+IdEhr7+Zx9JqQfFLa6htobf4n1jTLn4K9oNC0a/sCnLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=jDPkX9yb; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1740014547;
+	bh=/aBZNCva4WH3GgF1JWE0vCHAorP1a+UaOp78AtPSvIs=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=jDPkX9ybPVbYrZwggfWgeyoBnY0mjGJ8ASBUDf5oFON4YnflN9naB/3vgG1afQQTX
+	 GFOY0t7ZJXkBgeTkXiIHwYp5gpVuZeyntuTHe2jtjNvTj2qsIJ0YID9Oiv7KHwN179
+	 +QBCsAliWT8EV1jf7Tu1XH0aEpdTiy/ajFd05daKgIqqx7uUEitI/7FsZqjH8lPE47
+	 6jrlxSBjvY+DLtPHKQPSpTWcQpoyrERhBrRk7egdOetj5VnlsamurHTeqv8zo+zCf/
+	 Y9souM03kgD780Kvvnknx8NQjYG+QSKUAU7QV+NpR74yIvrzptt9jkgBBDuuLWCtHv
+	 +/o4S0PDEWLGw==
+Received: from [192.168.68.112] (ppp118-210-187-53.adl-adc-lon-bras34.tpg.internode.on.net [118.210.187.53])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id E1E3C76942;
+	Thu, 20 Feb 2025 09:22:23 +0800 (AWST)
+Message-ID: <ba2757fd02b3e7c8f9c862c76f2cfcd2b6bfb41b.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v1 3/3] soc: aspeed: lpc-pcc: Add PCC controller support
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Kevin Chen <kevin_chen@aspeedtech.com>, "joel@jms.id.au"
+ <joel@jms.id.au>,  Z-ChiaWei Wang <chiawei_wang@aspeedtech.com>,
+ "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>, 
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, Mo Elbadry <elbadrym@google.com>
+Cc: "tomer.maimon" <tomer.maimon@nuvoton.com>, Krzysztof Kozlowski
+	 <krzk@kernel.org>, "lee@kernel.org" <lee@kernel.org>, "robh@kernel.org"
+	 <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>, 
+	"conor+dt@kernel.org"
+	 <conor+dt@kernel.org>
+Date: Thu, 20 Feb 2025 11:52:23 +1030
+In-Reply-To: <TY0PR06MB4960EA7255DF0BDF235F0D9689C52@TY0PR06MB4960.apcprd06.prod.outlook.com>
+References: <20250217114831.3225970-1-kevin_chen@aspeedtech.com>
+	 <20250217114831.3225970-4-kevin_chen@aspeedtech.com>
+	 <e43b5f8f-37e4-4468-b3ca-5059a5e6f3c3@kernel.org>
+	 <6fd7cd57261ddf9831f57dc4c637b24e9f8982d9.camel@codeconstruct.com.au>
+	 <PSAPR06MB4949C65DF5C034BD6B40C9B589FA2@PSAPR06MB4949.apcprd06.prod.outlook.com>
+	 <d4945482509cad0bf3e8cd93c1fb21bac2e0c7f2.camel@codeconstruct.com.au>
+	 <TY0PR06MB4960EA7255DF0BDF235F0D9689C52@TY0PR06MB4960.apcprd06.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a94c0622-ae31-46f1-b51e-a344b86aa47c@arm.com>
 
-On Wed, Feb 19, 2025 at 01:16:13PM +0800, Robin Murphy wrote:
-> On 2025-02-19 1:50 am, YinFengwei wrote:
-> > Add Jing Zhang as we will continue discussion in this thread.
-> > 
-> > On Tue, Feb 18, 2025 at 12:31:10PM +0800, Robin Murphy wrote:
-> > > On 2025-02-18 10:58 am, YinFengwei wrote:
-> > > > On Tue, Feb 18, 2025 at 10:31:42AM +0800, Robin Murphy wrote:
-> > > > > On 2025-02-18 1:21 am, Yin Fengwei wrote:
-> > > > > > Currently, arm-cmn PMU driver assumes ACPI claim resource
-> > > > > > for CMN600 + ACPI. But with CMN700 + ACPI, the device probe
-> > > > > > failed because of resource claim failes when ioremap() is
-> > > > > > called:
-> > > > > > [   10.837300] arm-cmn ARMHC700:00: error -EBUSY: can't request region for resource [mem 0x40000000-0x4fffffff]
-> > > > > > [   10.847310] arm-cmn ARMHC700:00: probe with driver arm-cmn failed with error -16
-> > > > > > [   10.854726] arm-cmn ARMHC700:02: error -EBUSY: can't request region for resource [mem 0x40040000000-0x4004fffffff]
-> > > > > > [   10.865085] arm-cmn ARMHC700:02: probe with driver arm-cmn failed with error -16
-> > > > > > 
-> > > > > > Let CMN700 + ACPI do same as CMN600 + ACPI to allow CMN700
-> > > > > > work in ACPI env.
-> > > > > 
-> > > > > No, the CMN-600 routine is a special case for CMN-600 having two nested
-> > > > > memory resources of its own. CMN-700 and everything else only have one
-> > > > > memory resource, so that is not appropriate. What else is claiming the
-> > > > > region to cause a conflict?
-> > > > Sorry. Forgot the link for the new proposed fix:
-> > > > https://lore.kernel.org/all/Z7QYlUP6nfBNMXsv@U-V2QX163P-2032.local/
-> > > 
-> > > Yes, I saw that. It's a broken diff that won't even compile, with no
-> > > explanation of what it's supposed to be trying to achieve or why. I'm not
-> > > sure what you're asking me to comment on.
-> > My bad. I will attatch the full patch at the end of this mail.
-> > 
-> > > 
-> > > > My understanding is that there are two problems here:
-> > > > 1. ACPI claim the memory range and that's why we see this -EBUSY error
-> > > >      with correct code path for CMN700 + ACPI table.
-> > > 
-> > > No, it's fine to claim the exact *same* range that the ACPI companion owns;
-> > > the identical requests just nest inside each other. I don't have a CMN-700
-> > > to hand but here's a selection of other drivers doing just that from
-> > > /proc/iomem on my system:
-> > > 
-> > > 12600000-12600fff : ARMH0011:00
-> > >    12600000-12600fff : ARMH0011:00 ARMH0011:00
-> > > 12610000-12610fff : ARMH0011:01
-> > >    12610000-12610fff : ARMH0011:01 ARMH0011:01
-> > > 126b0000-126b0fff : APMC0D0F:00
-> > >    126b0000-126b0fff : APMC0D0F:00 APMC0D0F:00
-> > > 126f0000-126f0fff : APMC0D81:00
-> > >    126f0000-126f0fff : APMC0D81:00 APMC0D81:00
-> > I believe this works only for parents/children resource node. Otherwise,
-> > there will be conflict.
-> 
-> I don't understand what you mean by that. The point here is that these
-> are simple devices with a single memory resource (just like CMN-700),
-> where in each case, a driver using devm_{platform_}ioremap_resource()
-> (just like arm-cmn) has happily claimed (2nd line) the same resource
-> already defined by the ACPI layer (1st line). Admittedly it's a little
-> unclear since they both use the same name, but still.
-> 
-> > > 
-> > > And I know people are using the CMN-700 PMU on other ACPI systems without
-> > > issue, so there's nothing wrong with the binding or the driver in general.
-> > > 
-> > > The resource conflict only arises when a request overlaps an existing region
-> > > inexactly. Either your firmware is describing the CMN incorrectly, or some
-> > > other driver is claiming conflicting iomem regions for some reason.
-> > No. It's not ACPI table problem. The problem is mentioned in comments of
-> > function arm_cmn600_acpi_probe():
-> >          /*
-> >           * Note that devm_ioremap_resource() is dumb and won't let the platform
-> >           * device claim cfg when the ACPI companion device has already claimed
-> >           * root within it. But since they *are* already both claimed in the
-> >           * appropriate name, we don't really need to do it again here anyway.
-> >           */
-> 
-> Sigh... No, this is unique to CMN-600, because only the CMN-600 ACPI
-> binding depends on nested resources, such that the resource tree
-> starts off looking like this:
-> 
-> 50000000-5fffffff : ARMHC600:00
->   50d00000-50d03fff : ARMHC600:00
-> 
-> If we wanted to, we can still quite happily claim the root node
-> resource:
-> 
-> --- a/drivers/perf/arm-cmn.c
-> +++ b/drivers/perf/arm-cmn.c
-> @@ -2410,6 +2410,8 @@ static int arm_cmn600_acpi_probe(struct platform_device *pdev, struct arm_cmn *c
-> 
->         if (!resource_contains(cfg, root))
->                 swap(cfg, root);
-> +
-> +       devm_request_mem_region(cmn->dev, root->start, resource_size(root), "arm-cmn!");
->         /*
->          * Note that devm_ioremap_resource() is dumb and won't let the platform
->          * device claim cfg when the ACPI companion device has already claimed
-> 
-> 
-> ...which then nests like so:
-> 
-> 50000000-5fffffff : ARMHC600:00
->   50d00000-50d03fff : ARMHC600:00
->     50d00000-50d03fff : arm-cmn!
-Yes. You are correct. This demo explains thing clearly to me. Thanks.
+On Wed, 2025-02-19 at 11:59 +0000, Kevin Chen wrote:
+> > On Tue, 2025-02-18 at 11:11 +0000, Kevin Chen wrote:
+> > > > On Mon, 2025-02-17 at 13:00 +0100, Krzysztof Kozlowski wrote:
+> > > > > On 17/02/2025 12:48, Kevin Chen wrote:
+> > > > > > +
+> > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0pcc->mdev.parent =3D=
+ dev;
+> > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0pcc->mdev.minor =3D =
+MISC_DYNAMIC_MINOR;
+> > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0pcc->mdev.name =3D d=
+evm_kasprintf(dev, GFP_KERNEL,
+> > > > > > "%s%d",
+> > > > > > DEVICE_NAME,
+> > > > > >=20
+> > > >=20
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0pcc->mdev_id);
+> > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0pcc->mdev.fops =3D &=
+pcc_fops;
+> > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0rc =3D misc_register=
+(&pcc->mdev);
+> > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (rc) {
+> > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0dev_err(dev, "Couldn't register misc
+> > > > > > device\n");
+> > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0goto err_free_kfifo;
+> > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
+> > > > >=20
+> > > > > You cannot expose user-space interfaces from SoC drivers. Use
+> > > > > appropriate subsystem for this with proper ABI documentation.
+> > > > >=20
+> > > > > See:
+> > > > > https://lore.kernel.org/all/bc5118f2-8982-46ff-bc75-d0c71475e909@=
+a
+> > > > > pp.f
+> > > > > astmail.com/
+> > > > > and more discussions on LKML
+> > > >=20
+> > > > Further, drivers/misc/aspeed-lpc-snoop.c already exists:
+> > > >=20
+> > > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/=
+c
+> > > > ommit/?id=3D
+> > > > 9f4f9ae81d0affc182f54dd00285ddb90e0b3ae1
+> > > >=20
+> > > > Kevin: Did you consider reworking it?
+> > > Andrew: No, I do not rework it but add the post code capture
+> > > driver
+> > > using the SNOOP registers. As a result, I add some code in
+> > > aspeed_a2600_15 to check the SNOOP enable bit. PCC driver probe
+> > > abort
+> > > if snoop is enabled.
+> >=20
+> > Hmm, I think OpenBMC's history regarding POST code support caused
+> > some
+> > confusion on my part. For whatever reason, the snoop device was
+> > used as a
+> > source of POST codes despite the existence of the dedicated POST
+> > code
+> > hardware since at least the AST2400, but...
+> What I know about the dedicated POST code hardware in ASPEED should
+> be the same one in LPC module.
+>=20
+> >=20
+> > > PCC is used for port I/O byte snooping over eSPI.
+> >=20
+> > ... it seems that they're largely interchangeable, just with
+> > different hardware
+> > features (PCC has DMA)? My impression is that the snoop device
+> > could also be
+> > used over eSPI?
+> Yes, PCC has DMA to capture the POST code.
+> And snoop device also can be used over eSPI.
+>=20
+> These two devices of PCC and snoop use the same port I/O of 80h and
+> 81h.
+> But, in current usage of PCC, it can support a continuous, 4-bytes
+> maximum region from port I/O 80h to 83h.
+> What I know about PCC or snoop usage, depends on INTEL platform or
+> AMD platform.
+>=20
+> For ASPEED, we want to upstream the PCC driver for the PCC usage.
 
-Regards
-Yin, Fengwei
+Yeah, that's fine, but I think some work needs to be done to provide
+coherence in the devicetree binding and userspace APIs across both the
+ASPEED snoop and PCC bits, as well as the Nuvoton BPC. Bespoke designs
+create pain.
 
-> 
-> but what we cannot do is claim the whole 50000000-5fffffff region again
-> because that cannot nest within the existing 50d00000-50d03fff region.
-> 
-> > So I suppose for ACPI env, we should use devm_ioremap() as cmn600 does.
-> > And make CMN700 handling follow spec exactly.
-> 
-> As I said, the driver already supports the CMN-700 APCI binding
-> perfectly well. If your CMN is described correctly then you need to
-> answer my question of what *other* driver is claiming conflicting
-> resources and why (and if so, also why that should be specific to ACPI).
-> 
-> Thanks,
-> Robin.
+The PCC driver above reads the data out of the DMA ring-buffer straight
+into the kfifo hooked up the the miscdev read callback. The datasheet
+notes: "the data structure of the FIFO is mode dependent" in the
+description of PCCR3, but no in-band or out-of-band mechanism (sysfs,
+ioctl) is provided for userspace to query whether it's 1B, 2B, 4B or
+"full" mode.
+
+The situation with the snoop driver is similar (1 or 2 1B channels
+multiplexed into the one data stream). It also looks a bit quirky with
+multiple channels enabled, as what userspace reads will depend on the
+host access patterns, but no metadata is provided to userspace about
+what it's reading.
+
+This should be fixed so userspace can have some certainty and a useful
+API to work against (one that provides a direct description of what's
+being read out).
+
+I expect we could similarly consolidate the devicetree bindings,
+covering what IO port range to attach to.
+
+Andrew
 
