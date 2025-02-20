@@ -1,100 +1,162 @@
-Return-Path: <linux-kernel+bounces-524028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DED44A3DE33
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:21:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3904A3DE2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:20:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40AFD3B7CD5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:17:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6873C19C4FBC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:18:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93EEC1FDA99;
-	Thu, 20 Feb 2025 15:17:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F06721FE45B;
+	Thu, 20 Feb 2025 15:17:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UWFTYJUD"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="f7c0XOqT"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F8741FCCFF
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 313FB1FCFD2
 	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 15:17:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740064654; cv=none; b=k+xEAzvy2FevnTF2WAiRacCfmdUZyx67ViZs3t0bTUct5jR55qDkx/BANtYE8MHE53yy16teo6s3bxt8epCClonAz2uHU8NBcD6gcND49sc06J7dYxR634D/IDaB6+jw3HjnRP8ooxWA1zBbKLwtJsvfjmyvBOkUV+dHeUJbpxM=
+	t=1740064655; cv=none; b=ansyjbrY3WaVWR4q902hhMFm+VkZ/nYTSwpS1zudVYKvvpmg8Kdtf35wS76k1X2O6kCOYohE1UGViIIJR5mCA1aDcPV7GEanq9udDeMoUw4r/Q0X4UjxR8rgFTQLm0EfylPsnEDBMKPswGLCmCPrbyliGd0Yp1Rba0h06hAzwNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740064654; c=relaxed/simple;
-	bh=hjbVevJDsAnw9R1jKzAcMVdMe+e0Cb/Fj4Olj9+4LeI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gQoYhJRe7xFhAeS1YaRk+SSvA5wlxQVo3M1d0zIbeu/+oQcyz0har/SQFHQ82L5f/ZfY8G/7Axj/9f5+dt4t54oijtcKuxiXLnRgCjKLUY6KrLw5dQal5VEf+VvLHLoc3dqQfmU+LX2WCUdTkBXHJqGgczadRzkD1qalDPDR+xs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UWFTYJUD; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-472098e6e75so286451cf.1
+	s=arc-20240116; t=1740064655; c=relaxed/simple;
+	bh=P0iL1ed1wNflMW0E42G2MgHAm9SEY1NPeHARBn5PyFU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ft3d74iTyRMYciOHZnlxe/C2ISIe1uhPXP25eWTOZOvsPF0TnCUcNdHjOyV0PKWosZYcxEhhKn0Fc26AkEiciGDMTxkHINusb+z0jbdLoUBgXMAITZgcAsrokc2IDhFS+irR6jcQHjuGvz0k3jcWbwHEHhKExkSbAicdeVxzzmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=f7c0XOqT; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7c0ade6036aso207547985a.0
         for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 07:17:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740064651; x=1740669451; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=nfqLAf2Bt1MZOxsTzROGpX4mEJpPOhYETeaZVqIiLtY=;
-        b=UWFTYJUD7pS3GoygUk9JfskGqEhvOeau99u+wB6fxkIyLvLz7Ht5/VbFnPYHYPeQ+e
-         dugAJzBy5hRVyXjm3yztp/bOiwOUitjvSgnjSNWa50amsQSt83thDkabxv7h5bgpNlG0
-         dWIkBCpi+rgqdYLifERzQ5ZaFdIBhceNNYuyfm9AUPeOLzxi40QfmiKkgpTl7V5R5+mn
-         6yBVAHAL8cg3junqRA8dVe1EKIlfhnOfPMEHWLU5os/W+6clQEh7D/gPTd+3ajWpopgw
-         9A2CnVpJ566AhDMI3hor1u+7eG5+bfV9odbUkqDbNGHcsqKzWz2GB6I4EkE878iV5Psu
-         FA+w==
+        d=gourry.net; s=google; t=1740064652; x=1740669452; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bT7wEbyY1NyR2XOZMCsNefoHjaTOzZ5cgeVIHxgcfE8=;
+        b=f7c0XOqTGg3O2wyFxioCsewI0pRGyOAwRFIdkk9Dx/keRDhkwi/yKU58q1cU/UJ2xk
+         7sYfZx2TJm2d/qK9kNxEt+549pdRvZF4c3MsYHFOZNetOQkK172sP5LVTQlWe0rXSQsi
+         HbA8A+tn5tKy8zK4SLGxhOfYcJCJDEEYX+o76VzBgBOmqlZt/gvqNyCiqOwdQUsilzAy
+         VhO2CGCVKOpE+lfW0EkV0KV5/jmELnvmYsfS5gsVDJeBkNuKOszGTbJLUIrzj8xwc28J
+         3wqDvQ4KN06K1wlQYy0JU+bbf+Ts+axj2Ua67Qe17Xhr1nJbVsnUO3sdsILICsSDWPGU
+         lmMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740064651; x=1740669451;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nfqLAf2Bt1MZOxsTzROGpX4mEJpPOhYETeaZVqIiLtY=;
-        b=qIT+mQ0MnzZvSBZ/cUo585j9qsA2rElRLVuIyhijHe0zQNaF5oCViEIdVpEIZv5qz9
-         tCHOuIZID9WEPgo9MWsu2au8881SQgzY4NhCRVM4atFwVmPSCxLrR0T5ss5mF8VDl/aK
-         WS2/3oEsPD9ARc6/4E3m5Daf7vLU2iJ8NxNr8wrYplQMvHjyX2xT3FZZX/N92e0LwtxM
-         TVyKxCBlxDrvz7vI96AuTOglyr9zI6HLrQuvRPu0Ef9zgtMmlhbPhzEsjZqme33ah1kS
-         XRFnGZl8b7fIpLPPi+9VjAFmwDqXedshEp3xxn7kbL9aLJtEgnQ8NJzW2VGHDsEbfwOM
-         /EGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV9pjUgpvHh/dHkzgWV4T/eKWfVuz1YO2KoFadSAck9+i9g6VGRyhl8GQgAWu2Kvy+fMH3y8ppSSmf1gy4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw79ZEdQxBqZ+mKXycR37R745rxUQmp9Z1n7itSQl0nb1fE3TtC
-	gQyqjKRTIo1UWDZeJ5M7O/shqwlXcYsxhdDSq/oj47ygkdkrFORXgodUnmDfdqiA7OtmSOMknrQ
-	d2Q0wDll/7MqJ073+wTrSr5A/HKe/bKYWkW8A
-X-Gm-Gg: ASbGncsSmoRoM/GWtfkaTkuJRV6CnT8DGh5q4MSn4QqS23R7n/8K+lr5gHM5fLyJjXL
-	HYdEsTofrM1UV/mVcnJhHkhZpYIYQrRbxUL3Ts8UgJH2ZoPMQTRQWgs3HLuT9IdAjI3RSQfgsaI
-	hs/V0Gi0gpu/EPxXSZ81VH/pi1l9g=
-X-Google-Smtp-Source: AGHT+IGhyGVmDHiveCYislzBLpxmEyFf8bbj2ICmMKfXu+YhRG0z57YQ28qadOmItdhl4ZLbIN/D33o1DiOb1WYbGYM=
-X-Received: by 2002:a05:622a:1a88:b0:471:9ece:b13b with SMTP id
- d75a77b69052e-4721708fbf4mr3622511cf.1.1740064651173; Thu, 20 Feb 2025
- 07:17:31 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740064652; x=1740669452;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bT7wEbyY1NyR2XOZMCsNefoHjaTOzZ5cgeVIHxgcfE8=;
+        b=fOmo5kqOdDcHWSZXrNQhPWHZCID7q/knxV7kTOMu2x2YpFBjTPOweFvjlgdOBEFJyV
+         uwKVtirKuu6P2RmDojEzcBHu/qd4CklS3NUIZBHMNL5gbr2ZvpbvmgdhqayCoCDz0COA
+         vMC47HidDKOZBjvY7YaNSGUiicaSW1ln2R5GPGZZ3E4/2lTcoeE6s2/MPxAMcr0PwOPE
+         8idgALDFwah2qCQRm7ckSfhquqy5kIcvF5OFxM9yWmFeKtFI26/OQVQE5ucWKmAP3Ncq
+         Kh8CgmDfnWf3yrGchzWEoIhKQclL1rP5pfIuEtnWkGBpDin83NWl46alofnN/wCwyWFc
+         FrsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXADh9Ci6yg6sEt2NNsH5JMOJjhv8PK47de408m4RBMkTjTPzfdE3ZTL5TgNlq+AC1GYwxKF+SMxknneOA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNGjxvRnqPf2iNf0yYAGboUsF7VAPvZi+WM3wGQex7nkPw08nH
+	pi+wgZ0b3TwHYFef+luqhbDKycFtMWFgQecpraEaNUuyeTIKW09BeWYeYCa2IXE=
+X-Gm-Gg: ASbGncsEJjCmubtkKQlHGbSR/FwC3SdIFk5a+zquddvsBGAM2TBpjRqOdFbFfTSdMvh
+	UcVizLNTrcjMtyMF1Axf6mL8w3s3xexKC6aT02B9bduslOqSGzQYPmhpAYFxvMW1tTU3e8iyvAy
+	TbDwxc1II40Ny3Z+NZMwiL+QcJ7wsly7WW8d5hD3KRReMsl1/17jwIaOr8oxlv9aCCgehcCigYL
+	87fcweJDGRseSwKfcnD5nZWLwoAXses0Lr1mqgzkZYTDLXCR0+6zlSQ3lB/VT3Pyh1Q8fHdrohq
+	NTESSlvX/FikTapa1QA7pWsgEt9FZPMIEvRTpOFnuxI8TAmLAIIY7Dq+ax+cXl7+lawRzFUPUw=
+	=
+X-Google-Smtp-Source: AGHT+IG1rJFrfiErv1L0BH8ZXpdfN5KFcuiSpX43XZSrCsBflYFgWd7IJTSIHk/2gw4qW1vhdByGdw==
+X-Received: by 2002:a05:620a:4687:b0:7b6:d7be:2e4 with SMTP id af79cd13be357-7c0c229bd0cmr480083285a.26.1740064651343;
+        Thu, 20 Feb 2025 07:17:31 -0800 (PST)
+Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c09bc8819bsm508356785a.74.2025.02.20.07.17.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 07:17:30 -0800 (PST)
+Date: Thu, 20 Feb 2025 10:17:29 -0500
+From: Gregory Price <gourry@gourry.net>
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: krisman@collabora.com, tglx@linutronix.de, luto@kernel.org,
+	peterz@infradead.org, keescook@chromium.org,
+	gregory.price@memverge.com, Marco Elver <elver@google.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] selftests: Extend syscall_user_dispatch test to
+ check allowed range
+Message-ID: <Z7dHid-IL7OAPmUa@gourry-fedora-PF4VCD3F>
+References: <cover.1739894594.git.dvyukov@google.com>
+ <5e105b1382cd43d05f1d3a80958e4f50f32144c8.1739894594.git.dvyukov@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250220-mm-selftests-v1-0-9bbf57d64463@google.com> <20250220-mm-selftests-v1-5-9bbf57d64463@google.com>
-In-Reply-To: <20250220-mm-selftests-v1-5-9bbf57d64463@google.com>
-From: Brendan Jackman <jackmanb@google.com>
-Date: Thu, 20 Feb 2025 16:17:19 +0100
-X-Gm-Features: AWEUYZkyoMHZt5wOSmW4C7MoQ1154jjgu5NFAI7r6rF-taWxuY5uZ_vFpxeDUv8
-Message-ID: <CA+i-1C3K=Fm=OfNy_5a40HYDwp_FBy4BBV9+4L0gF3S1grE5sw@mail.gmail.com>
-Subject: Re: [PATCH 5/6] selftests/mm: Print some details when uffd-stress
- gets bad params
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Shuah Khan <shuah@kernel.org>
-Cc: Mateusz Guzik <mjguzik@gmail.com>, linux-mm@kvack.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5e105b1382cd43d05f1d3a80958e4f50f32144c8.1739894594.git.dvyukov@google.com>
 
-On Thu, 20 Feb 2025 at 16:03, Brendan Jackman <jackmanb@google.com> wrote:
->         nr_pages_per_cpu = bytes / page_size / nr_cpus;
->         if (!nr_pages_per_cpu) {
-> -               _err("invalid MiB");
-> +               _err("invalid MiB %lu (%lu / %lu / %lu)",
-> +                       nr_pages_per_cpu, bytes, page_size, nr_cpus);
+On Tue, Feb 18, 2025 at 05:04:36PM +0100, Dmitry Vyukov wrote:
+> diff --git a/tools/testing/selftests/syscall_user_dispatch/sud_test.c b/tools/testing/selftests/syscall_user_dispatch/sud_test.c
+> index b0969925ec64c..fa40e46e6d3e9 100644
+> --- a/tools/testing/selftests/syscall_user_dispatch/sud_test.c
+> +++ b/tools/testing/selftests/syscall_user_dispatch/sud_test.c
+... snip ...
+> @@ -110,31 +111,15 @@ TEST(bad_prctl_param)
+>  	/* PR_SYS_DISPATCH_ON */
+>  	op = PR_SYS_DISPATCH_ON;
+>  
+> -	/* Dispatcher region is bad (offset > 0 && len == 0) */
+> -	EXPECT_EQ(-1, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x1, 0x0, &sel));
+> -	EXPECT_EQ(EINVAL, errno);
+> -	EXPECT_EQ(-1, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, -1L, 0x0, &sel));
+> -	EXPECT_EQ(EINVAL, errno);
+> +	/* All ranges are allowed */
+> +	EXPECT_EQ(0, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x1, 0x0, &sel));
+> +	EXPECT_EQ(0, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, -1L, 0x0, &sel));
 
-Oh this is actually wrong - the number it's printing isn't MiB.
+A 0 length is ambiguous and nonsensical in every other context, not sure
+why you'd allow it here.
 
-Assuming there's a v2 I'll fix that up. Otherwise honestly this patch
-could just be dropped, it's not important.
+... snip ...
+
+> +bool test_range(unsigned long offset, unsigned long length)
+> +{
+> +	nr_syscalls_emulated = 0;
+> +	if (prctl(PR_SET_SYSCALL_USER_DISPATCH, PR_SYS_DISPATCH_ON, offset, length, &glob_sel))
+> +		return false;
+
+This creates an ambiguous failure state for your test. Is it failing
+because the range is bad or because you didn't intercept a syscall?
+
+Better to be more explicit here. It makes it difficult to understand
+what each individual test is doing at a glance.
+
+> +	SYSCALL_DISPATCH_ON(glob_sel);
+> +	return syscall(MAGIC_SYSCALL_1) == MAGIC_SYSCALL_1 && nr_syscalls_emulated == 1;
+> +}
+> +
+> +TEST(dispatch_range)
+> +{
+> +	ASSERT_EQ(0, setup_sigsys_handler());
+> +	ASSERT_EQ(0, prctl(PR_SET_SYSCALL_USER_DISPATCH, PR_SYS_DISPATCH_ON, 0, 0, &glob_sel));
+> +	SYSCALL_DISPATCH_ON(glob_sel);
+> +	ASSERT_EQ(MAGIC_SYSCALL_1, syscall(MAGIC_SYSCALL_1));
+> +	TH_LOG("syscall_addr=0x%lx", syscall_addr);
+> +	EXPECT_FALSE(test_range(syscall_addr, 1));
+> +	EXPECT_FALSE(test_range(syscall_addr-100, 200));
+> +	EXPECT_TRUE(test_range(syscall_addr+1, 100));
+> +	EXPECT_TRUE(test_range(syscall_addr-100, 100));
+> +	/* Wrap-around tests for everything except for a single PC. */
+> +	EXPECT_TRUE(test_range(syscall_addr+1, -1));
+> +	EXPECT_FALSE(test_range(syscall_addr, -1));
+> +	EXPECT_FALSE(test_range(syscall_addr+2, -1));
+
+If you are planning to include 0 as an allowed length, you need to
+demonstrate what it does.
+
+> +	SYSCALL_DISPATCH_OFF(glob_sel);
+> +}
+> +
+>  TEST_HARNESS_MAIN
+> -- 
+> 2.48.1.601.g30ceb7b040-goog
+> 
 
