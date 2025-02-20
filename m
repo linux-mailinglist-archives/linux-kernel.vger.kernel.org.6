@@ -1,55 +1,53 @@
-Return-Path: <linux-kernel+bounces-523556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4279CA3D861
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:23:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E790DA3D85C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:23:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FD2D17DB9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:22:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DEB73AD3C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:22:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65F36212D83;
-	Thu, 20 Feb 2025 11:16:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 062592135A2;
+	Thu, 20 Feb 2025 11:16:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VgQ/lWkG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UMdWy1gp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEA5A212B1F;
-	Thu, 20 Feb 2025 11:16:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5173D213220;
+	Thu, 20 Feb 2025 11:16:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740050211; cv=none; b=BibDw9QCkduzOiVajUUhtcFSj3gIQKR0sIwxaDN23iZiCSXDeJCwRuImo1JTL2ALfGl7NFf/B+rLI8WMk6cvKayXhvOewQ+oLVcSskfJhhd8Ws401RYkqMJPkeTycN6kE92aWPq9qpMXwGPSJ8WgFSiDIFTvjX8AZWQU14TXsV0=
+	t=1740050213; cv=none; b=E18V/4xTYr5mj2xf4cT2bPuqHuXeHxJJBAd2LPEl19SFajmAXS2We6gZbeUMFqXugSWD8RDt2nHgQf/7GIEwKvGwKXOw6g5o+Okx0y6mQrB9bOaw6ty/nEwkq/cK+GFJJb4XHZWTP2zSH5LoiBL4B4RhNiAGfTIZyX7ehHvziTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740050211; c=relaxed/simple;
-	bh=nZIkuJjMtnyrI9ew1aqrnJpKE9/wdKdxSn4kFieyw2c=;
+	s=arc-20240116; t=1740050213; c=relaxed/simple;
+	bh=JJKCDyoUI49ul5goAoSRKGA9x8DCTFWq3J5//jDxDjQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Y1UhE7kDcYQLTnm+7gbPU/qY6FsrfTdQOLgz8/FypPopHv6jMmOozkj5XaogzDqi2JTaaMJGK86/pT705BMWfd57PL1O7XQMTh/5GSHgimmv5pXICZm6k6YB4PTV/tb6DPCLe7PHwVsyO0XuhROMX1H6LSqlaRD9J+ZgmJNsVto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VgQ/lWkG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 356C3C4CEE3;
-	Thu, 20 Feb 2025 11:16:50 +0000 (UTC)
+	 MIME-Version; b=fam0+Jpr1jWVPOJd7q9WVw3hErzg2fnw3JIHh494YMP1VoQ/SnPSs2YyG8hxoz+q2Jd39QK6/Refkm8MnukuYqZuMZ/9CokMoKLfAND0eqPModxDiQBVG1wD0cU2odfFlzNPzyskFM5DpkU7lbib0smUwfN7gE8BVsVpp/hThEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UMdWy1gp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C0FCC4CEDD;
+	Thu, 20 Feb 2025 11:16:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740050211;
-	bh=nZIkuJjMtnyrI9ew1aqrnJpKE9/wdKdxSn4kFieyw2c=;
+	s=k20201202; t=1740050213;
+	bh=JJKCDyoUI49ul5goAoSRKGA9x8DCTFWq3J5//jDxDjQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VgQ/lWkG9sGpiuSDUa3pXetNFATsu9YPLjw/2n3/XmGguMe6CLUr3L/fKDTvWvGMY
-	 yO4ltLQy5OeltFDudR9z3wmQI+fPCEGqJyieyFm1YhjjGS9taegzyDoDe/4t3BJvYZ
-	 qLN4GEuYAuqYFb937mMt7q/OopIQvZVYIXB+RJ30fKctMoFVt7xGY/QVihU/6OR4Qt
-	 pvGS/LgNl2Cq6bPOYKtByz6n0Fpr9P8mwjnB7zbDIxHNYw+gq3w84f6y4sL8NAZw8P
-	 921l+qaPrJNn7o95ABm09dSpOCU525WMx4IPd0icHMEkVbtT18JdngoEcC2ZoGzPUI
-	 Ey4EnaV1VRkQQ==
+	b=UMdWy1gpn32bSWxPGo3mySZvFZ2rRlzYQAJMQfSCLL9xKO/j//hBnlEMjwmKV2/Iq
+	 Lph/8bGB8TPXIrvVUt+rjQ0KZzQQa6Ubt9xHK5jNLvfHvmOg+S8/zeuI9NB3uHP8ua
+	 jXMCtWrUtSKUCK6nKfHkMXzkyLz7hQIjYrP1SLvcLFGQGyoSAxInrbUsSqSmggp2tQ
+	 W5acqCUgFiG7YsV2254jVzIpi5Q80yZEM6irvvqoVwbLs9wQ4JRiG/tLeOZU2l5Wwk
+	 wYc4EjLI0SZCDx8dgwBv5VgmCyRsm6yATkapcalI+Rr+fwxsa9qLnUUDKW7gMsZy9f
+	 Rh5CvRuH9cGzw==
 From: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
 To: gregkh@linuxfoundation.org
 Cc: linux-serial@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	sparclinux@vger.kernel.org
-Subject: [PATCH 23/29] tty: sunsu: remove unused serial_icr_read()
-Date: Thu, 20 Feb 2025 12:16:00 +0100
-Message-ID: <20250220111606.138045-24-jirislaby@kernel.org>
+	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>
+Subject: [PATCH 24/29] serial: remove redundant tty_port_link_device()
+Date: Thu, 20 Feb 2025 12:16:01 +0100
+Message-ID: <20250220111606.138045-25-jirislaby@kernel.org>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250220111606.138045-1-jirislaby@kernel.org>
 References: <20250220111606.138045-1-jirislaby@kernel.org>
@@ -61,40 +59,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-It is commented and never used.
+The linking is done implicitly by tty_port_register_device_attr_serdev()
+few lines below. So drop this explicit tty_port_link_device().
 
 Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: sparclinux@vger.kernel.org
 ---
- drivers/tty/serial/sunsu.c | 14 --------------
- 1 file changed, 14 deletions(-)
+ drivers/tty/serial/serial_core.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/tty/serial/sunsu.c b/drivers/tty/serial/sunsu.c
-index 2dc68b3201a4..383141fe7ba0 100644
---- a/drivers/tty/serial/sunsu.c
-+++ b/drivers/tty/serial/sunsu.c
-@@ -159,20 +159,6 @@ static void serial_icr_write(struct uart_sunsu_port *up, int offset, int value)
- 	serial_out(up, UART_ICR, value);
- }
+diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
+index f24d8edf1bee..2a6453891801 100644
+--- a/drivers/tty/serial/serial_core.c
++++ b/drivers/tty/serial/serial_core.c
+@@ -3156,7 +3156,6 @@ static int serial_core_add_one_port(struct uart_driver *drv, struct uart_port *u
+ 	if (uport->cons && uport->dev)
+ 		of_console_check(uport->dev->of_node, uport->cons->name, uport->line);
  
--#if 0 /* Unused currently */
--static unsigned int serial_icr_read(struct uart_sunsu_port *up, int offset)
--{
--	unsigned int value;
--
--	serial_icr_write(up, UART_ACR, up->acr | UART_ACR_ICRRD);
--	serial_out(up, UART_SCR, offset);
--	value = serial_in(up, UART_ICR);
--	serial_icr_write(up, UART_ACR, up->acr);
--
--	return value;
--}
--#endif
--
- #ifdef CONFIG_SERIAL_8250_RSA
- /*
-  * Attempts to turn on the RSA FIFO.  Returns zero on failure.
+-	tty_port_link_device(port, drv->tty_driver, uport->line);
+ 	uart_configure_port(drv, state, uport);
+ 
+ 	port->console = uart_console(uport);
 -- 
 2.48.1
 
