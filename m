@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-523134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF553A3D287
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:45:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65AACA3D28D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:46:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 871073B2288
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:45:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2637A179226
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:45:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C41E1EB195;
-	Thu, 20 Feb 2025 07:44:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FA1D1EC00F;
+	Thu, 20 Feb 2025 07:44:39 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA851E9B00
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DAD01E9B01
 	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 07:44:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740037477; cv=none; b=hRO1uaVgAHcarq5OVRX7zf8FwkgRP7r4tdFaZNQqEfuAoqVd6g7dwyrnT563B+CAA5jZPmaJGXv/ky8y6emYJNcD+mONmDgy5GJRXdDLwyFcqHhD36HFuMTu5UzSFPsYjUbGtctvqVjGPGaBRv5nB2ZxZXmNkeysjsBDUYNEIpU=
+	t=1740037478; cv=none; b=I92sZIF5aZcfhwDHIaowtPTM2dxQ9H7hGtx/3uGeI8LBIikelJpFgnYSge3e5Q6a7t59rPysFEnWFzMfH3QpP7C+bMdXsIidw0u8WNQQhi6vP3GpLb6qdVCkCzDZZPaovyaitfwtPwmltyVICFEfB7wuchDW0iPQ9+Js+uhWKOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740037477; c=relaxed/simple;
-	bh=Pajo6n58YQjMYvbXjpmcT2nx5LNJ3QUBwJ7/2kJOKqM=;
+	s=arc-20240116; t=1740037478; c=relaxed/simple;
+	bh=Adh/Q3rnUh98xXUXofXQcb8ZYwFqHSH9eh8GRfjl3Jg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=FowogYRIHy/Ym9dIvlkQftZY6GOaEJtDXmgC6a7dO5tBAxHFeBb8iNyjbzjh1eCfO4SSqhxrOkPWvMjdOvWq/VeKCc+972h6/cX8Ep/JEqtSFi5gGJNDsRKXAmxqFopKxRQXZE8bvk3JIPOz9XV7ka1SB6zE4n0VpxhwTJXd3MM=
+	 MIME-Version; b=esD9oZnGrrbG8BGKJ2wwB96DLI+95rSDuYZv51X0wjfYGmHIGzojXYZ+OHdwjzs7sHUODTSrKi3pMX9zCMPvZvs5Te61SjBuKkt4aZoB09xQ/eOVUeWkEzF/qCBhNb0C8RDIcVRH39oFfgBnvKfLrE1VqB1DWVhM/8fh52ljr6M=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -32,16 +32,16 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <ore@pengutronix.de>)
-	id 1tl1EV-0004TP-1C; Thu, 20 Feb 2025 08:44:31 +0100
+	id 1tl1EV-0004TQ-1C; Thu, 20 Feb 2025 08:44:31 +0100
 Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <ore@pengutronix.de>)
-	id 1tl1EU-001tqO-1t;
+	id 1tl1EU-001tqP-1y;
 	Thu, 20 Feb 2025 08:44:30 +0100
 Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
 	(envelope-from <ore@pengutronix.de>)
-	id 1tl1EU-00CC1u-1g;
+	id 1tl1EU-00CC24-1l;
 	Thu, 20 Feb 2025 08:44:30 +0100
 From: Oleksij Rempel <o.rempel@pengutronix.de>
 To: Ulf Hansson <ulf.hansson@linaro.org>
@@ -54,9 +54,9 @@ Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
 	"Rafael J. Wysocki" <rafael@kernel.org>,
 	=?UTF-8?q?S=C3=B8ren=20Andersen?= <san@skov.dk>,
 	Christian Loehle <christian.loehle@arm.com>
-Subject: [PATCH v2 1/6] mmc: core: Handle undervoltage events and register regulator notifiers
-Date: Thu, 20 Feb 2025 08:44:24 +0100
-Message-Id: <20250220074429.2906141-2-o.rempel@pengutronix.de>
+Subject: [PATCH v2 2/6] mmc: core: make mmc_interrupt_hpi() global
+Date: Thu, 20 Feb 2025 08:44:25 +0100
+Message-Id: <20250220074429.2906141-3-o.rempel@pengutronix.de>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250220074429.2906141-1-o.rempel@pengutronix.de>
 References: <20250220074429.2906141-1-o.rempel@pengutronix.de>
@@ -72,284 +72,40 @@ X-SA-Exim-Mail-From: ore@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Extend the MMC core to handle undervoltage events by implementing
-infrastructure to notify the MMC bus about voltage drops.
-
-Background & Decision at LPC24:
-
-This solution was proposed and refined during LPC24 in the talk
-"Graceful Under Pressure: Prioritizing Shutdown to Protect Your Data in
-Embedded Systems," which aimed to address how Linux should handle power
-fluctuations in embedded devices to prevent data corruption or storage
-damage.
-
-At the time, multiple possible solutions were considered:
-1. Triggering a system-wide suspend or shutdown: when undervoltage is
-   detected, with device-specific prioritization to ensure critical
-   components shut down first.
-   - This approach was disliked by Greg Kroah-Hartman, as it introduced
-     complexity and was not suitable for all use cases.
-
-2. Notifying relevant devices through the regulator framework: to allow
-   graceful per-device handling.
-   - This approach was agreed upon as the most acceptable by participants
-     in the discussion, including Greg Kroah-Hartman, Mark Brown,
-     and Rafael J. Wysocki.
-   - This patch implements that decision by integrating undervoltage
-     handling into the MMC subsystem.
+Make mmc_interrupt_hpi() non-static. This enables usage of HPI outside
+mmc_ops.c and will be used in a follow-up patch.
 
 Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 ---
- drivers/mmc/core/core.c      |  20 ++++++
- drivers/mmc/core/core.h      |   2 +
- drivers/mmc/core/regulator.c | 115 +++++++++++++++++++++++++++++++++++
- include/linux/mmc/host.h     |   8 +++
- 4 files changed, 145 insertions(+)
+ drivers/mmc/core/mmc_ops.c | 2 +-
+ drivers/mmc/core/mmc_ops.h | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
-index 5241528f8b90..3ee6d83eb354 100644
---- a/drivers/mmc/core/core.c
-+++ b/drivers/mmc/core/core.c
-@@ -1399,6 +1399,26 @@ void mmc_power_cycle(struct mmc_host *host, u32 ocr)
- 	mmc_power_up(host, ocr);
- }
- 
-+/**
-+ * mmc_handle_undervoltage - Handle an undervoltage event on the MMC bus
-+ * @host: The MMC host that detected the undervoltage condition
-+ *
-+ * This function is called when an undervoltage event is detected on one of
-+ * the MMC regulators.
-+ *
-+ * Returns: 0 on success or a negative error code on failure.
-+ */
-+int mmc_handle_undervoltage(struct mmc_host *host)
-+{
-+	if (!host->bus_ops->handle_undervoltage)
-+		return 0;
-+
-+	dev_warn(mmc_dev(host), "%s: Undervoltage detected, initiating emergency stop\n",
-+		 mmc_hostname(host));
-+
-+	return host->bus_ops->handle_undervoltage(host);
-+}
-+
- /*
-  * Assign a mmc bus handler to a host. Only one bus handler may control a
-  * host at any given time.
-diff --git a/drivers/mmc/core/core.h b/drivers/mmc/core/core.h
-index fc9c066e6468..b77f053039ab 100644
---- a/drivers/mmc/core/core.h
-+++ b/drivers/mmc/core/core.h
-@@ -31,6 +31,7 @@ struct mmc_bus_ops {
- 	int (*sw_reset)(struct mmc_host *);
- 	bool (*cache_enabled)(struct mmc_host *);
- 	int (*flush_cache)(struct mmc_host *);
-+	int (*handle_undervoltage)(struct mmc_host *host);
- };
- 
- void mmc_attach_bus(struct mmc_host *host, const struct mmc_bus_ops *ops);
-@@ -59,6 +60,7 @@ void mmc_power_off(struct mmc_host *host);
- void mmc_power_cycle(struct mmc_host *host, u32 ocr);
- void mmc_set_initial_state(struct mmc_host *host);
- u32 mmc_vddrange_to_ocrmask(int vdd_min, int vdd_max);
-+int mmc_handle_undervoltage(struct mmc_host *host);
- 
- static inline void mmc_delay(unsigned int ms)
+diff --git a/drivers/mmc/core/mmc_ops.c b/drivers/mmc/core/mmc_ops.c
+index 5c8e62e8f331..dbb1b5ec4132 100644
+--- a/drivers/mmc/core/mmc_ops.c
++++ b/drivers/mmc/core/mmc_ops.c
+@@ -903,7 +903,7 @@ static int mmc_send_hpi_cmd(struct mmc_card *card)
+  *	Issued High Priority Interrupt, and check for card status
+  *	until out-of prg-state.
+  */
+-static int mmc_interrupt_hpi(struct mmc_card *card)
++int mmc_interrupt_hpi(struct mmc_card *card)
  {
-diff --git a/drivers/mmc/core/regulator.c b/drivers/mmc/core/regulator.c
-index 3dae2e9b7978..d3f3eb8ea3d7 100644
---- a/drivers/mmc/core/regulator.c
-+++ b/drivers/mmc/core/regulator.c
-@@ -7,6 +7,7 @@
- #include <linux/err.h>
- #include <linux/log2.h>
- #include <linux/regulator/consumer.h>
-+#include <linux/workqueue.h>
- 
- #include <linux/mmc/host.h>
- 
-@@ -262,6 +263,98 @@ static inline int mmc_regulator_get_ocrmask(struct regulator *supply)
- 
- #endif /* CONFIG_REGULATOR */
- 
-+static void mmc_undervoltage_workfn(struct work_struct *work)
-+{
-+	struct mmc_supply *supply;
-+	struct mmc_host *mmc;
-+
-+	supply = container_of(work, struct mmc_supply, uv_work);
-+	mmc = container_of(supply, struct mmc_host, supply);
-+
-+	mmc_handle_undervoltage(mmc);
-+}
-+
-+static int mmc_handle_regulator_event(struct mmc_host *mmc,
-+				      const char *regulator_name,
-+				      unsigned long event)
-+{
-+	switch (event) {
-+	case REGULATOR_EVENT_UNDER_VOLTAGE:
-+		if (mmc->undervoltage)
-+			return NOTIFY_OK;
-+
-+		mmc->undervoltage = true;
-+		queue_work(system_highpri_wq, &mmc->supply.uv_work);
-+		break;
-+	default:
-+		return NOTIFY_DONE;
-+	}
-+
-+	return NOTIFY_OK;
-+}
-+
-+static int mmc_vmmc_notifier_callback(struct notifier_block *nb,
-+				      unsigned long event, void *data)
-+{
-+	struct mmc_supply *supply;
-+	struct mmc_host *mmc;
-+
-+	supply = container_of(nb, struct mmc_supply, vmmc_nb);
-+	mmc = container_of(supply, struct mmc_host, supply);
-+
-+	return mmc_handle_regulator_event(mmc, "vmmc", event);
-+}
-+
-+static int mmc_vqmmc_notifier_callback(struct notifier_block *nb,
-+				       unsigned long event, void *data)
-+{
-+	struct mmc_supply *supply;
-+	struct mmc_host *mmc;
-+
-+	supply = container_of(nb, struct mmc_supply, vqmmc_nb);
-+	mmc = container_of(supply, struct mmc_host, supply);
-+
-+	return mmc_handle_regulator_event(mmc, "vqmmc", event);
-+}
-+
-+static int mmc_vqmmc2_notifier_callback(struct notifier_block *nb,
-+					unsigned long event, void *data)
-+{
-+	struct mmc_supply *supply;
-+	struct mmc_host *mmc;
-+
-+	supply = container_of(nb, struct mmc_supply, vqmmc2_nb);
-+	mmc = container_of(supply, struct mmc_host, supply);
-+
-+	return mmc_handle_regulator_event(mmc, "vqmmc2", event);
-+}
-+
-+static void
-+mmc_register_regulator_notifier(struct mmc_host *mmc,
-+				struct regulator *regulator,
-+				struct notifier_block *nb,
-+				int (*callback)(struct notifier_block *,
-+						unsigned long, void *),
-+				const char *name)
-+{
-+	struct device *dev = mmc_dev(mmc);
-+	int ret;
-+
-+	nb->notifier_call = callback;
-+	ret = devm_regulator_register_notifier(regulator, nb);
-+	if (ret)
-+		dev_warn(dev, "Failed to register %s notifier: %pe\n", name,
-+			 ERR_PTR(ret));
-+}
-+
-+static void mmc_undervoltage_work_cleanup(void *data)
-+{
-+	struct mmc_supply *supply = data;
-+
-+	/* Ensure the work is canceled or flushed here */
-+	cancel_work_sync(&supply->uv_work);
-+}
-+
- /**
-  * mmc_regulator_get_supply - try to get VMMC and VQMMC regulators for a host
-  * @mmc: the host to regulate
-@@ -281,6 +374,13 @@ int mmc_regulator_get_supply(struct mmc_host *mmc)
- 	mmc->supply.vqmmc = devm_regulator_get_optional(dev, "vqmmc");
- 	mmc->supply.vqmmc2 = devm_regulator_get_optional(dev, "vqmmc2");
- 
-+	INIT_WORK(&mmc->supply.uv_work, mmc_undervoltage_workfn);
-+
-+	ret = devm_add_action_or_reset(dev, mmc_undervoltage_work_cleanup,
-+				       &mmc->supply);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Failed to add cleanup action\n");
-+
- 	if (IS_ERR(mmc->supply.vmmc)) {
- 		if (PTR_ERR(mmc->supply.vmmc) == -EPROBE_DEFER)
- 			return dev_err_probe(dev, -EPROBE_DEFER,
-@@ -293,6 +393,11 @@ int mmc_regulator_get_supply(struct mmc_host *mmc)
- 			mmc->ocr_avail = ret;
- 		else
- 			dev_warn(dev, "Failed getting OCR mask: %d\n", ret);
-+
-+		mmc_register_regulator_notifier(mmc, mmc->supply.vmmc,
-+						&mmc->supply.vmmc_nb,
-+						mmc_vmmc_notifier_callback,
-+						"vmmc");
- 	}
- 
- 	if (IS_ERR(mmc->supply.vqmmc)) {
-@@ -301,12 +406,22 @@ int mmc_regulator_get_supply(struct mmc_host *mmc)
- 					     "vqmmc regulator not available\n");
- 
- 		dev_dbg(dev, "No vqmmc regulator found\n");
-+	} else {
-+		mmc_register_regulator_notifier(mmc, mmc->supply.vqmmc,
-+						&mmc->supply.vqmmc_nb,
-+						mmc_vqmmc_notifier_callback,
-+						"vqmmc");
- 	}
- 
- 	if (IS_ERR(mmc->supply.vqmmc2)) {
- 		if (PTR_ERR(mmc->supply.vqmmc2) == -EPROBE_DEFER)
- 			return -EPROBE_DEFER;
- 		dev_dbg(dev, "No vqmmc2 regulator found\n");
-+	} else {
-+		mmc_register_regulator_notifier(mmc, mmc->supply.vqmmc2,
-+						&mmc->supply.vqmmc2_nb,
-+						mmc_vqmmc2_notifier_callback,
-+						"vqmmc2");
- 	}
- 
- 	return 0;
-diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
-index 68f09a955a90..4e147ad82804 100644
---- a/include/linux/mmc/host.h
-+++ b/include/linux/mmc/host.h
-@@ -11,6 +11,7 @@
- #include <linux/device.h>
- #include <linux/fault-inject.h>
- #include <linux/debugfs.h>
-+#include <linux/workqueue.h>
- 
- #include <linux/mmc/core.h>
- #include <linux/mmc/card.h>
-@@ -342,6 +343,12 @@ struct mmc_supply {
- 	struct regulator *vmmc;		/* Card power supply */
- 	struct regulator *vqmmc;	/* Optional Vccq supply */
- 	struct regulator *vqmmc2;	/* Optional supply for phy */
-+
-+	struct notifier_block vmmc_nb;		/* Notifier for vmmc */
-+	struct notifier_block vqmmc_nb;		/* Notifier for vqmmc */
-+	struct notifier_block vqmmc2_nb;	/* Notifier for vqmmc2 */
-+
-+	struct work_struct uv_work;		/* Undervoltage work */
- };
- 
- struct mmc_ctx {
-@@ -493,6 +500,7 @@ struct mmc_host {
- 	unsigned int		retune_crc_disable:1; /* don't trigger retune upon crc */
- 	unsigned int		can_dma_map_merge:1; /* merging can be used */
- 	unsigned int		vqmmc_enabled:1; /* vqmmc regulator is enabled */
-+	unsigned int		undervoltage:1;	 /* Undervoltage state */
- 
- 	int			rescan_disable;	/* disable card detection */
- 	int			rescan_entered;	/* used with nonremovable devices */
+ 	int err;
+ 	u32 status;
+diff --git a/drivers/mmc/core/mmc_ops.h b/drivers/mmc/core/mmc_ops.h
+index 0df3ebd900d1..a16361dc5909 100644
+--- a/drivers/mmc/core/mmc_ops.h
++++ b/drivers/mmc/core/mmc_ops.h
+@@ -37,6 +37,7 @@ int mmc_send_cid(struct mmc_host *host, u32 *cid);
+ int mmc_spi_read_ocr(struct mmc_host *host, int highcap, u32 *ocrp);
+ int mmc_spi_set_crc(struct mmc_host *host, int use_crc);
+ int mmc_bus_test(struct mmc_card *card, u8 bus_width);
++int mmc_interrupt_hpi(struct mmc_card *card);
+ int mmc_can_ext_csd(struct mmc_card *card);
+ int mmc_switch_status(struct mmc_card *card, bool crc_err_fatal);
+ bool mmc_prepare_busy_cmd(struct mmc_host *host, struct mmc_command *cmd,
 -- 
 2.39.5
 
