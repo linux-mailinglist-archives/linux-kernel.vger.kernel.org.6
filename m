@@ -1,78 +1,130 @@
-Return-Path: <linux-kernel+bounces-523117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E47BCA3D225
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:24:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0094BA3D22E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:26:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55E967A7ACC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:23:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B70583BDDD8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:23:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DDEE1E0B8A;
-	Thu, 20 Feb 2025 07:23:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9704C1E5B66;
+	Thu, 20 Feb 2025 07:23:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="HtZulXJv"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.17])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBDE319AD8D;
-	Thu, 20 Feb 2025 07:23:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.17
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="agtM5qoz"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87B7C15A85E
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 07:23:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740036225; cv=none; b=YB3c6+x3GvbZnr6WoVxc7QsYBdniLB8Vk3gIFGMHCxMCETF31VXNXCLUv6Ut6DVXIGJTrnlIc7CnxJ4cqtlKOxnSMylZrAXZhKp6tiNDmpWrGSb9+0qNEMwTyfcRzxNhgSEw7qmjcBlXhKrmZOGjrfnDp1XP/NIlWWOOwi5jdxc=
+	t=1740036203; cv=none; b=olOOhcrUZXgQKPCRB2AQx9iKoSWcVT/P09OHBZqtqFteLcRUeCxKePHMF4xYDyFAD0JboibA7W0c2AQrsCWyTa3O1KcGDkDVBfz0JmQrh6Ck7sPYmoKqlCbkORxkKVMCpavcGGyRkTs8lxFXgsIYSXfngKsXQOCi62Tif5hcThE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740036225; c=relaxed/simple;
-	bh=coKTrJXRY5YJVty/ywvDgaPfSuPlIir5d4ohg0YS5i0=;
+	s=arc-20240116; t=1740036203; c=relaxed/simple;
+	bh=K9ZzoyM+1e7NO7J3zZUXwBhWI7XOqAzjHQnjtaar3Do=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qaRgOqrkKZ0BBLEZuhK8jgyhAeYm2qwID1iiAR4oog3pBg60BaUecfMcQftyAgW+jApSBZD/4Cylgv14eIArbpUv+a5rOlgEYhIhFe43wdtpuaVWGrKivigeSibS6O5NcJNG010FE1lns1AI7fcJHtnseYrCLsGR99MeiDvaqWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=HtZulXJv; arc=none smtp.client-ip=1.95.21.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=eZakjKfpdd5q/kOY1YxjEFOCLh8Mn5U9WJBrLFqWMoU=;
-	b=HtZulXJvCYpp6bfr1Cb1q57qdDU/Er9FqWwOrtMwATooCFvidhbTNuZJX9gL7O
-	KXUV9PwUIrDoEOLYsQ2V/h7z2ntDNgBQewP+JB0TK50V2pS6Tpd/MMY5yLPrYLyt
-	evbjfJGlwDs5IBZkFZwkhijtRW95OeRGmq+2tn7D9JGk4=
-Received: from dragon (unknown [])
-	by gzsmtp1 (Coremail) with SMTP id Mc8vCgDHrBFK2LZnqKBgCQ--.19831S3;
-	Thu, 20 Feb 2025 15:22:52 +0800 (CST)
-Date: Thu, 20 Feb 2025 15:22:50 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Stefan Agner <stefan@agner.ch>, Rob Herring <robh@kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=ph4Bs8W0C7/eLgLtIPQKWQ3faT/Yotz0BpE+8HcyMXNdWu1mftIy7U5x0lkV2fvspHO6bX2PzQOlMHR1vauXOGW4TCsv+WSNWPgPcRHJt0aBp1SRz8qaybDZx/gASaNVZmdVURgkrwNNgf+YXdPIOPyF1PbOkrWIUWZDTlEc2C4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=agtM5qoz; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-22114b800f7so9651455ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 23:23:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740036201; x=1740641001; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=MBR10xYOtbIjIrHbSQCuv8sZHXeBgnoMVNUybGZJ2DI=;
+        b=agtM5qozeRV1lBkKO8JEekz8289DS0m1DLp0uFYMR9rAJOJw3bZB5H1vYUcZ0OOyqd
+         YX/5aPXLMgwb/JTmZ9PB+dDjUQa6f1MO3a7ST7jCUvHF+SqcBEWykwqtLpsyHILyxg2K
+         wE+cgorKR7jMmQGHOnPM2rGHp7BrqyVAJb3mKVLzRkbvonI/xIz9YKsN3lgghMxe8hd9
+         Wty+AixQLkbAg019zbSleNakrQwFaiN8fGswDJJbwA212EDCMAkzQ1C1aIDTXwScAD9B
+         3uPESW7AvdDE5sMBBW/3HoMBefDngooH2bMoL1XyTpGnyEXB94fP8FVpHmvrgnC49owt
+         80fg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740036201; x=1740641001;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MBR10xYOtbIjIrHbSQCuv8sZHXeBgnoMVNUybGZJ2DI=;
+        b=rhv9RlHrqjOS1CjvTuq98HI72m/sC9BPIoAzLD5+VeEaS3RjVEVmKHGmz12roWdstZ
+         +ne8JgugWDuTUaaJWKlaP3pJAIjh3xxw3SNhoM0gofH5H8Km5IZ6ALi/rpGZArbls4CU
+         o8G6ty3JJ6bOVOnlCij6mpV+kcgdu3NpwRK1E66OaaP8UKVvV4Uw6mITilJAMLU8XR5M
+         8CPBfPzdOD9gdjWrxereklNMKiF3q71SXjWFdfZSu4tI+OlcIqThlTPV8+21tFNhnzxj
+         5mtC2XEuD5w1rhyiSXaDlxfz/8AmPj8UA2vc+atwsrmm7fzpenOuBNwjgSb/obFdn1Yo
+         rbdA==
+X-Forwarded-Encrypted: i=1; AJvYcCWTLjebgzMQfQ5GdTZtAq3TqoGl0P8d7AX5MO+joAk7vXQNEvJuVfrAcEA9/bLjTTcNmdkliDqdCHf/oBk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy++EVfEo2ayp2P2ewpu3htAZRPHJDxyvvw9+mvpPcylycpCdeU
+	1/5dBR0+HtM5RBsYZ8DSbn8DVZYSBE/iTHAbN97jb5ovfRbLE3vAEZCXwaVK/w==
+X-Gm-Gg: ASbGncvOTElvzZ+3CGAal5ouInyNprudxeqocYJlc7y2vuky1wTHbNECIi6TifG8fC3
+	5AdBQ9LSUf9fKFoS/5xBgVsZowgupYuk6ncagrXNhfRtfibIBQKeu21qwfb9ieaMbvEp21mi8oX
+	Zadg8iAO/wHJ/x3uEGw5r7pM761uw5uQjN6G6QO9F7BtyY6ffAvOb9jjMQ3/p+pjTDcYc2rMg7x
+	AZDjQllswZIlsgJUoyfzqSgwwe8eblOez/LttHviQYuacVYyDiWOEvB2IxuiCtij4qjVWun/tgJ
+	5KuqQpnE4zgvaRaZmyigcq7Hcw==
+X-Google-Smtp-Source: AGHT+IH9J0UpkJyiDrwNycJp/VSjSgTQ57aAkzHJRzuBfh3r1oEjseg2xJjXQ71AdNSHN8VrWOQlLw==
+X-Received: by 2002:a17:903:1d0:b0:21f:3e2d:7d58 with SMTP id d9443c01a7336-22170773856mr86334165ad.13.1740036200747;
+        Wed, 19 Feb 2025 23:23:20 -0800 (PST)
+Received: from thinkpad ([120.60.70.244])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d5348f1esm115522325ad.51.2025.02.19.23.23.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2025 23:23:20 -0800 (PST)
+Date: Thu, 20 Feb 2025 12:53:10 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Tony Lindgren <tony@atomide.com>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
-Subject: Re: [PATCH] ARM: dts: nxp: vf: Align GPIO hog name with bindings
-Message-ID: <Z7bYShssqtqLusX0@dragon>
-References: <20250115211659.194072-1-krzysztof.kozlowski@linaro.org>
+	Mrinmay Sarkar <quic_msarkar@quicinc.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/6] PCI: dwc: pcie-qcom-ep: enable EP support for
+ SAR2130P
+Message-ID: <20250220072310.kahf4w4u43slbwke@thinkpad>
+References: <20250217-sar2130p-pci-v1-0-94b20ec70a14@linaro.org>
+ <20250217-sar2130p-pci-v1-4-94b20ec70a14@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250115211659.194072-1-krzysztof.kozlowski@linaro.org>
-X-CM-TRANSID:Mc8vCgDHrBFK2LZnqKBgCQ--.19831S3
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUVcTmUUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiEgr5ZWe202UXKgAAse
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250217-sar2130p-pci-v1-4-94b20ec70a14@linaro.org>
 
-On Wed, Jan 15, 2025 at 10:16:58PM +0100, Krzysztof Kozlowski wrote:
-> Bindings expect GPIO hog names to end with 'hog' suffix, so correct it
-> to fix dtbs_check warning:
+On Mon, Feb 17, 2025 at 08:56:16PM +0200, Dmitry Baryshkov wrote:
+> Enable PCIe endpoint support for the Qualcomm SAR2130P platform.
 > 
->   vf610-zii-dev-rev-c.dtb: eth0_intrp: $nodename:0: 'eth0_intrp' does not match '^.+-hog(-[0-9]+)?$'
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  drivers/pci/controller/dwc/pcie-qcom-ep.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom-ep.c b/drivers/pci/controller/dwc/pcie-qcom-ep.c
+> index c08f64d7a825fa5da22976c8020f96ee5faa5462..dec5675c7c9d52b77f084ae139845b488fa02d2c 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom-ep.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom-ep.c
+> @@ -933,6 +933,7 @@ static const struct of_device_id qcom_pcie_ep_match[] = {
+>  	{ .compatible = "qcom,sa8775p-pcie-ep", .data = &cfg_1_34_0},
+>  	{ .compatible = "qcom,sdx55-pcie-ep", },
+>  	{ .compatible = "qcom,sm8450-pcie-ep", },
+> +	{ .compatible = "qcom,sar2130p-pcie-ep", },
 
-Applied, thanks!
+Could you please use a fallback? I'd prefer to not add compatible to the driver
+unless it requires special config.
 
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
