@@ -1,84 +1,122 @@
-Return-Path: <linux-kernel+bounces-524193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13E20A3E05A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:21:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85E15A3E064
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:22:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3AB63B01DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:17:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C7383B97A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:18:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CFAB20C028;
-	Thu, 20 Feb 2025 16:17:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 479E4204840;
+	Thu, 20 Feb 2025 16:18:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="M9vRRCbA"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 845D31FF5FE;
-	Thu, 20 Feb 2025 16:17:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VNlekTg7"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 934621DF265;
+	Thu, 20 Feb 2025 16:18:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740068253; cv=none; b=GP1gizp5nR4jQdIwykO7NXNhOw4qUGrp8EWrEQGUlcHStrWZO4+QcPHEtrdgjtWG5sAUPbFsZu2e6cUdp99b5Zd3qTq4F60FKcDffqAMs5D2b7lpQ9nMDCr0nmal4YaLxCBo6CihZfkTNU4RM0qJMeQL7ny6fOaLb/9Ide9RHjU=
+	t=1740068308; cv=none; b=CZIasIHr7wutXH5ivN6Za0kGg71ozj+q5Mzpii4JkyhjlXgkL5QRU9ZbOSp6rS8z0vZAfDtcOG0wdhZ+Fc4tgIJ6xd+YGkNV/FFX9bS5BJAJGeioYy2s9OgASsgxWcD7UEgQyJuniP9YNPPzltEu3RJTYcTlkP0NBV4ENfBmUPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740068253; c=relaxed/simple;
-	bh=S2Cp2QeCTboIPkqp369Oo0lo+0M7cZnbKd+wHZSVx9k=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=TEth15fjnl2V4FdWB7oQSKrbB6NI5j6HU5js2Unj3262HcTOkwvvO8bxeMsklZZol/+MUEaDFpSGcy2ZVlQepmVa4bxKyQVrJ2Q/z8Eum9jFVjb5eNCDVI5vviDyd0Jro4wzH5k02e6SgwIYRSQxaWmCnlPnC3D4RLebrpshd30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=M9vRRCbA; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [192.168.35.166] (c-24-22-154-137.hsd1.wa.comcast.net [24.22.154.137])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 9D0E220376CD;
-	Thu, 20 Feb 2025 08:17:30 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 9D0E220376CD
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1740068250;
-	bh=GkPk3vpo3fjZ76nSYEcI8RaFBSu99lnwsP2xmX+YLqI=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=M9vRRCbA4t8agc57RtPDTlFanjsd1kyMTIKmtK0WIEi0jKc0MN5zrDxWFmqHcc2tN
-	 QxaJA7UOEH+zXoIs/YyoFF9eyPOwTmc4dCP8PHrdqd0QLuLGdNEYqNV675HZa6V7S4
-	 JGi5ZSgtld/s2UCGDlFjmzsQK/iWwwlNhfL2haSc=
-Message-ID: <bfd711f3-2de6-44d0-afe9-e24470448011@linux.microsoft.com>
-Date: Thu, 20 Feb 2025 08:17:31 -0800
+	s=arc-20240116; t=1740068308; c=relaxed/simple;
+	bh=9RlNbYnLFzVjYgxQyd9KBfI9XCJfe/tCHW00K82XgB4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b1jIcgyOHaTZHMqxegMdWefN1Sb3Up534prgLAA1DDBxYV+wXowFWNdRpQjlKU4CvdoCbclJK4n3GsAJTRE/McgjbavR0JN2eHc6nwUSwRZA0RYzWfICLr6AwMnKW6iR8pRmCBIxnuJBdLpVNiEaRqcFG39MisTVBOKoL5Cd8xI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VNlekTg7; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740068307; x=1771604307;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=9RlNbYnLFzVjYgxQyd9KBfI9XCJfe/tCHW00K82XgB4=;
+  b=VNlekTg75J0qAfGXfCvz0vp9dqZZQvGYx1+ARWw+GevfDx2ZXEEsqZnY
+   EP12CT5KYU2m5qe/J5UdIeollr3MxqD8LeOG46/PH5IlfUSQv1TT5bNTR
+   oN1bDImQ7RLyF2Wt4+7LndeRXNa5rtyqrnQfWe6DeM1CqnB0co3wmKq/B
+   /rufj10FsJRtDmVRPq4jy/wkk8gWpU1aBcjP++YIz7VNKE6hAK2LTJXaR
+   wLsxEJ6u4j9zZzcyzZauVn4+Xu1botvPUdM5oxzgpK4C4w7g2pPzllIq0
+   rM2mkWK0OWKRhgpbL4pakdx4bF+W7dYCVlJ7mOj4miR39qMoy08g/L31b
+   g==;
+X-CSE-ConnectionGUID: PgqEARegRjyuSKZrIoJggA==
+X-CSE-MsgGUID: aXyg0+ITTbWTTroNejoE6Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11351"; a="63329824"
+X-IronPort-AV: E=Sophos;i="6.13,302,1732608000"; 
+   d="scan'208";a="63329824"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 08:18:26 -0800
+X-CSE-ConnectionGUID: MUBFVS80SV+FEOQ9rn5jww==
+X-CSE-MsgGUID: 0PpoekXBQF2IG16mnDk74Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,302,1732608000"; 
+   d="scan'208";a="138294951"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa002.fm.intel.com with ESMTP; 20 Feb 2025 08:18:21 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tl9Fj-0004UJ-01;
+	Thu, 20 Feb 2025 16:18:19 +0000
+Date: Fri, 21 Feb 2025 00:17:33 +0800
+From: kernel test robot <lkp@intel.com>
+To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+	Nuno Sa <nuno.sa@analog.com>, David Lechner <dlechner@baylibre.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH v3 7/9] iio: adc: sun20i-gpadc: Use adc-helpers
+Message-ID: <202502210037.162FN3PM-lkp@intel.com>
+References: <21b9af362b64a1d9c2a13cc46242dd6955996c46.1739967040.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: eahariha@linux.microsoft.com, Yishai Hadas <yishaih@nvidia.com>,
- Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] rdma: Converge on using secs_to_jiffies()
-To: Leon Romanovsky <leon@kernel.org>
-References: <20250219-rdma-secs-to-jiffies-v1-0-b506746561a9@linux.microsoft.com>
- <20250220070729.GK53094@unreal>
-From: Easwar Hariharan <eahariha@linux.microsoft.com>
-Content-Language: en-US
-In-Reply-To: <20250220070729.GK53094@unreal>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <21b9af362b64a1d9c2a13cc46242dd6955996c46.1739967040.git.mazziesaccount@gmail.com>
 
-On 2/19/2025 11:07 PM, Leon Romanovsky wrote:
-> On Wed, Feb 19, 2025 at 09:36:38PM +0000, Easwar Hariharan wrote:
->> This series converts users of msecs_to_jiffies() that either use the
->> multiply pattern of either of:
->> - msecs_to_jiffies(N*1000) or
->> - msecs_to_jiffies(N*MSEC_PER_SEC)
->>
->> where N is a constant or an expression, to avoid the multiplication.
-> 
-> Can you please provide justification for that? What is wrong with current code?
-> 
+Hi Matti,
 
-There is nothing specifically wrong with the current code, it just does an unnecessary
-multiplication for what it does, as the cover letter mentions. IMHO, it's also more readable
-to just see secs_to_jiffies(30) and understand that it's a 30 second timeout.
+kernel test robot noticed the following build errors:
 
-Thanks,
-Easwar (he/him)
+[auto build test ERROR on 5bc55a333a2f7316b58edc7573e8e893f7acb532]
 
+url:    https://github.com/intel-lab-lkp/linux/commits/Matti-Vaittinen/dt-bindings-ROHM-BD79124-ADC-GPO/20250219-203748
+base:   5bc55a333a2f7316b58edc7573e8e893f7acb532
+patch link:    https://lore.kernel.org/r/21b9af362b64a1d9c2a13cc46242dd6955996c46.1739967040.git.mazziesaccount%40gmail.com
+patch subject: [PATCH v3 7/9] iio: adc: sun20i-gpadc: Use adc-helpers
+config: i386-buildonly-randconfig-002-20250220 (https://download.01.org/0day-ci/archive/20250221/202502210037.162FN3PM-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250221/202502210037.162FN3PM-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502210037.162FN3PM-lkp@intel.com/
+
+All errors (new ones prefixed by >>, old ones prefixed by <<):
+
+>> ERROR: modpost: "devm_iio_adc_device_alloc_chaninfo" [drivers/iio/adc/sun20i-gpadc-iio.ko] undefined!
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
