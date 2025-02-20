@@ -1,94 +1,243 @@
-Return-Path: <linux-kernel+bounces-524601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC781A3E509
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:30:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 796EEA3E50C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:30:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A04B5421AFA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:30:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BDD819C1661
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:30:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4E56263F45;
-	Thu, 20 Feb 2025 19:30:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1C33264602;
+	Thu, 20 Feb 2025 19:30:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codeweavers.com header.i=@codeweavers.com header.b="UVAQw/A9"
-Received: from mail.codeweavers.com (mail.codeweavers.com [4.36.192.163])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="hsLqFX2v"
+Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6BB6214A71
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 19:30:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=4.36.192.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 552CB1DDC3F
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 19:30:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740079817; cv=none; b=ePi05eoWs6Ewm5bGQlAhAHTZqxktGn5POvblo5l8TRj1caJq6OF38+vmD++HmDoLsnZgU9DBsICI4zP9tL/lTJTYFuka4iIiMrKPIsWMj1OgGz+6Jde7BPlNgp1rEjkeKRzTjw+GSpvx0nJeAu7YpS7+QM91s0lVzxOXG8voXl0=
+	t=1740079819; cv=none; b=SUWGMC4CCHAT+uanmTNiNdBRmqifPaQiSuXBTBoDSQvzzlh7BeiQeYRoCQbeYTjvAUZNM47YOxKCZif1lROR6ZQfsVI6WRf1i17Ov9R3THo67Jgjrcqfl10bf2VJPt1zH97VIM1nqc7Ta8HLL09o6fmOLPAoo3VqDcIfGppQ8jM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740079817; c=relaxed/simple;
-	bh=dJWPLnJj21wCkBU29uSZIaQFMB0QkeAeIIcb/URACOc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NzjI8Si47c8HT4koVSFnUPjMcMTLdcYXVdklCzYscWplWnff59/YOxOPgRLp5TTITKuLt9FLPEIpkq0DS9aRaywT7KhpOWyCXFELAIa6CFs8lPnfG0xJJa0QC0/79zy7XwgJKqrGBkhV4kd4A9AYHyYzdlNGTwaDxy3YGHVxvLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeweavers.com; spf=pass smtp.mailfrom=codeweavers.com; dkim=pass (2048-bit key) header.d=codeweavers.com header.i=@codeweavers.com header.b=UVAQw/A9; arc=none smtp.client-ip=4.36.192.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeweavers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeweavers.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=codeweavers.com; s=s1; h=Content-Type:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=LaebbR1fCHrbWS1c8WrqBMyWgAWMf7qIWq68odFW7yE=; b=UVAQw/A9FTJCao5zNaaYOlbV4+
-	kkiCgbk79XfFh/bm18zaH+B+jaCi8GkjSaRn4ovKfID/mJyFSPpbYv68uSaDjhiKYcTXJYoWjvDh7
-	x4pLp12iVSkrafmM1/eq8ynlVSCGWoVMThCsq0QR1WgvbwzVsyGvCMvY+vR4s5+MDdOfpi2J3TEz0
-	lHQFRylqHNnnueqVCU5o93VlmOBdetq1BWjO3MjjjHv5gpxUqbWpnft9x9bWJ+i4Bz686lPsoaSbp
-	i47k/slOYBycwRt7ycqXvOn5/DxSbgaV2bD4kh+T5WyFkLzY1KguQGnJSHJ3s61CD6jceZ2D3l2IW
-	RZrqz+zA==;
-Received: from cw137ip160.mn.codeweavers.com ([10.69.137.160] helo=camazotz.localnet)
-	by mail.codeweavers.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <zfigura@codeweavers.com>)
-	id 1tlCFO-00HTga-2f;
-	Thu, 20 Feb 2025 13:30:14 -0600
-From: Elizabeth Figura <zfigura@codeweavers.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
- wine-devel@winehq.org, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] ntsync: Check wait count based on byte size.
-Date: Thu, 20 Feb 2025 13:30:10 -0600
-Message-ID: <2297779.iZASKD2KPV@camazotz>
-In-Reply-To: <2025021906-retainer-trustless-bd1d@gregkh>
-References:
- <20250219001920.210847-1-zfigura@codeweavers.com>
- <2025021906-retainer-trustless-bd1d@gregkh>
+	s=arc-20240116; t=1740079819; c=relaxed/simple;
+	bh=+zPvV+cP0eDo5IjH2NxFqShcpgfy+iZmEoIrCjnmSAc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=bnX/eV3XYkBaDDoZJCE3o3y+xIln6Jx7VrNBb0MQwYGoEitQUqsxTj/1UEaMrwGbM0xRPBOY9tOimYz0WEL6Ogix6CZApGfx9D7ejgX/2TsZQf9S5kjxFgf0+yjasp0owWtaagdw/MEeyAlavmsgPVv7hbaeKfY7vEyZnzI+e+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=hsLqFX2v; arc=none smtp.client-ip=209.85.160.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-2b5acf00c5bso486789fac.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 11:30:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1740079814; x=1740684614; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=rVGpcVgrbn8fCoi86uWuObdsUh5NH2AKYBrd+9ofOEc=;
+        b=hsLqFX2vXS3uLF6Fi1BymtkXh82s7WRFzxh2jJmZ3ryvPa8yhSGYpnkEL8PbeOM+31
+         t6tGWgBD68HE1JnZ+wCWuZskykwc7LUTQCGp2/pykKHK/wgNhPrirKtmMi71iOdR3O2f
+         pQcA9LrWCSZVAq0k8B8UlNZpRDqesKNQyeyT8ZESEx16wT1Ia6OSO+YJP/UW10AT4xnQ
+         YmgABGjeis57D2qDZzJOyi6uCU+83Tg7gDWnrUCg0hArJ2Z4F8gK0tPO/qm5OomQ2iOT
+         SKFOp7hqjQ7a0r2i22vEaCiejUNQorQfGdzRU2he9sgkWz5A8U+4l82/D9Yot5IWIezA
+         Aw2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740079814; x=1740684614;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rVGpcVgrbn8fCoi86uWuObdsUh5NH2AKYBrd+9ofOEc=;
+        b=dPAoxd9Kz/wBcpIVCHkpK0HCGY7Vy7SmfWvkN98q7kzuQ+8DuMUCzLROfrlmXH4k24
+         g1O8Un2siE611k29vy3HnvUXWnoVe023DKhH+IUYRq9I9Dn9daxqNwjvYyAf8jq3A1SI
+         s3wnLO7QFofrVLCJvQ7cW63/u6VWHgblmagi4v+FGT8BJ6ZSIv2ScE8LjOn4VR8p1OJG
+         Ntb3gYvvxLrnPdUASkUtKKC/p2apVbGVziWKRcPOqNAiX1FC/QBVsYO0XZAkDi+moTBS
+         qiDIn7E5M5RJEhv7pRhQDOkS2IMKkuG5/PRMfpGHjtBuwwWl2GSPkIoK2Hjkhvw5KkFX
+         wZiw==
+X-Forwarded-Encrypted: i=1; AJvYcCVnGKhfOWhix+WR+DnsJtPaGVJtQeOswgivSzw/QAPHSEEkBMOMP+3Lvob1d/B9gffMWGThEWSCg94nVPo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtNjUdtfPGS0Jc5N5xxQcHEWuFQcH2Eb8cauCwWRB1JsPnU/Jc
+	5t5U5k1flVMvD0LQ2tkgaA0UPqha+gaa/TP1+87ky8W2eI5bCw8umAG0V+yzyZ8=
+X-Gm-Gg: ASbGncvh6D9zSHBJ2eJf2YQYKMJUIPT/lBb3hbsWBV0O2OPO5nl75xdsFqY4JeVRz3e
+	PVMiTOWHYtgEXmNu5CgaHIb2/6Bj93Nc0FlNkyeBJ5R8bMa5cp/du8UoR1gg7HiaTmQpmD/epFW
+	SvhmOpiQ6Y7y1MC4lsfkm/oB+S3d/OOVyylkujmcpE/2CsX2z/Dr/AlVvcjQfBJxCH63CZFttJO
+	60roTPUFw+R3Rv70lw4btzTR8LPCZhzt7IoZbDbev//0NVmoCBYQuDWWOgy53DARnc1WxKHecgY
+	/RZ3p0uvNeU4cQeAat7/PUZq4fhkuGG3cq2VB/SkfPTpUkupXENl
+X-Google-Smtp-Source: AGHT+IGEq8Y0tcbFZh65z/dXPKbs0wOrzDYh3YzYrf60tIwUskcAt4CJ59H/gVbMadc56t800wQChA==
+X-Received: by 2002:a05:6870:ac27:b0:2a3:c59f:4cba with SMTP id 586e51a60fabf-2bd50d8bd03mr197030fac.17.1740079814165;
+        Thu, 20 Feb 2025 11:30:14 -0800 (PST)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2b954875ce0sm6511893fac.15.2025.02.20.11.30.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Feb 2025 11:30:12 -0800 (PST)
+Message-ID: <6d4e65b9-1392-46e9-ac2e-0c4ef2239fa0@baylibre.com>
+Date: Thu, 20 Feb 2025 13:30:11 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 12/14] dt-bindings: iio: adc: add ad4080
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>, jic23@kernel.org,
+ robh@kernel.org, conor+dt@kernel.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250220135429.8615-1-antoniu.miclaus@analog.com>
+ <20250220135429.8615-13-antoniu.miclaus@analog.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20250220135429.8615-13-antoniu.miclaus@analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wednesday, 19 February 2025 08:25:27 CST Greg Kroah-Hartman wrote:
-> On Tue, Feb 18, 2025 at 06:19:20PM -0600, Elizabeth Figura wrote:
-> > GCC versions below 13 incorrectly detect the copy size as being static and too
-> > small to fit in the "fds" array. Work around this by explicitly calculating the
-> > size and returning EINVAL based on that, instead of based on the object count.
-> > 
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Closes: https://lore.kernel.org/oe-kbuild-all/202502072019.LYoCR9bF-lkp@intel.com/
-> > Suggested-by: Arnd Bergmann <arnd@arndb.de>
-> > 
-> > --
-> > 
-> > Suggested-by as per Arnd's request, but the only thing I changed was preserving
-> > array_size() [as noted by Geert in the linked thread]. I tested and found no
-> > regressions.
+On 2/20/25 7:54 AM, Antoniu Miclaus wrote:
+> Add devicetree bindings for ad4080 family.
 > 
-> You forgot to sign-off on this commit :(
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> ---
+>  .../bindings/iio/adc/adi,ad4080.yaml          | 92 +++++++++++++++++++
+>  1 file changed, 92 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad4080.yaml
 > 
-> Can you resend it please with that fixed?
+> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad4080.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad4080.yaml
+> new file mode 100644
+> index 000000000000..e0ea712b8457
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad4080.yaml
+> @@ -0,0 +1,92 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +# Copyright 2025 Analog Devices Inc.
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/adc/adi,ad4080.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Analog Devices AD4080 20-Bit, 40 MSPS, Differential SAR ADC
+> +
+> +maintainers:
+> +  - Antoniu Miclaus <antoniu.miclaus@analog.com>
+> +
+> +description: |
+> +  The AD4080 is a high speed, low noise, low distortion, 20-bit, Easy Drive,
+> +  successive approximation register (SAR) analog-to-digital converter (ADC).
+> +  Maintaining high performance (signal-to-noise and distortion (SINAD) ratio
+> +  > 90 dBFS) at signal frequencies in excess of 1 MHz enables the AD4080 to
+> +  service a wide variety of precision, wide bandwidth data acquisition
+> +  applications.
+> +
+> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ad4080.pdf
+> +
+> +$ref: /schemas/spi/spi-peripheral-props.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - adi,ad4080
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  spi-max-frequency:
+> +    maximum: 50000000
 
-Done, thanks. I used to have format.signOff=true but lost that somewhere...
+Since there are potentially two independent SPI busses on this chip
+(one for configuration, one for data) it might be a good idea to put
+in a description somewhere that these SPI properties are for the
+configuration SPI bus.
 
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  clock-names:
+> +    items:
+> +      - const: adc-clk
+
+Clocks don't need a name if there is only one clock.
+
+But the description of clocks should say which pin you mean.
+Is the the CLK+/- pins or the CNV+/- pins?
+
+> +
+> +  vdd33-supply: true
+> +
+> +  vdd11-supply: true
+> +
+> +  vddldo-supply: true
+> +
+> +  iovdd-supply: true
+> +
+> +  vrefin-supply: true
+
+I would expect we need a vendor boolean property to say if the
+DCO+/- pins are wired or not for the echoed clock.
+
+And what does the CNV trigger get wired to? We probably need a
+vendor boolean property to say if it is wired to something CMOS
+or LVDS. Plus maybe a pwms property or whatever makes sense for
+whatever kind of signal generator it is connected to.
+
+> +
+> +  adi,num-lanes:
+> +    description:
+> +      Nmber of lanes on which the data is sent on the output (DA, DB pins).
+
+s/Nmber/Number/
+
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [1, 2]
+> +    default: 1
+> +
+
+Also, don't we need io-backends for the data interface?
+
+We can also add gpio-controller and #gpio-cells since this
+chips provides GPIOs.
+
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+
+Assuming clocks is CLK+/- pins, this should be optional since
+the pins are used for a different function in SPI mode.
+
+> +  - clock-names
+> +  - vdd33-supply
+> +  - vdd11-supply
+> +  - vddldo-supply
+> +  - iovdd-supply
+> +  - vrefin-supply
+
+The datasheet says things like, "If VDDLDO is connected to a
+voltage source, neither VDD11 nor IOVDD should be connected to
+any external voltage source.". So making all supplies required
+doesn't seem correct.
+
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    spi {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        adc@0 {
+> +          compatible = "adi,ad4080";
+> +          reg = <0>;
+> +          spi-max-frequency = <10000000>;
+> +          vdd33-supply = <&vdd33>;
+> +          vdd11-supply = <&vdd11>;
+> +          vddldo-supply = <&vddldo>;
+> +          iovdd-supply = <&iovdd>;
+> +          vrefin-supply = <&vrefin>;
+> +          clocks = <&adc_clk>;
+> +          clock-names = "adc-clk";
+> +        };
+> +    };
+> +...
 
 
