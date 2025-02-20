@@ -1,79 +1,77 @@
-Return-Path: <linux-kernel+bounces-524118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3E27A3DF5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:53:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C8FC7A3DF6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:55:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 874E23B857B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:52:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8F13700F98
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:53:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70454204698;
-	Thu, 20 Feb 2025 15:51:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 372751F9ED2;
+	Thu, 20 Feb 2025 15:52:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k0d33Cp7"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cmEBz/mi"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26CD81FF1B3;
-	Thu, 20 Feb 2025 15:51:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 454BD8F5B
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 15:52:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740066709; cv=none; b=Bqisw05aZBMQawkXA7DPBHwdm9fdlcH0uQFCIcwrL/bni/AKKkJlDPX3NqJINqAtm2VBVMwE6J23lI4uaAa2L08ftuik+quQR+j7xuT2BYHDifWPfm8vFYn1xXk7DtdA/zF3SU3jErOvhKsxoGINVOgZdznXY5//0Vvn4phpOfU=
+	t=1740066764; cv=none; b=Rq3Doio6N6d+0TaMA0I+DcuRf4v1EoxuewG15zk8rRHo83YcyPO3MYPMAtyucVoTHSc7eZq/W0McIO928NagJQDplce/1m8KU7w0OExEb4N+2nTTYvWdMMxwWxIYM1TDZWJTMnxWxoo6+zIluwn4rdCd43BaP+HddxYtj6Qbc38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740066709; c=relaxed/simple;
-	bh=feMzcpwBjTp17Xb4J1txFS9+ar+CDecWQnXd+IlpMyM=;
+	s=arc-20240116; t=1740066764; c=relaxed/simple;
+	bh=nqMLoYyUSVteUWyDESp588+OG8stwgoB6g2nzJC/p08=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BH27u6jZuzA+Ec00mYG5xrZ1YiuxfBRhaGiCC9h+tgC2htG13mNssHkpmTzO+f655UQZfnbvAh/tL9zb8ISTCvF75+UdbMuuTwS681bGs+lxWU+mrFWMEgr/KjqIwee+ycYhbd7WxqIL8oD+3ft7x7X9szmMz2fRryt1g8UvkYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k0d33Cp7; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740066708; x=1771602708;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=feMzcpwBjTp17Xb4J1txFS9+ar+CDecWQnXd+IlpMyM=;
-  b=k0d33Cp7APpik2iMYwDKj3ZeGd/0rgoRZcvIXqX7V1HQCmfzhsaxjd2v
-   veo1KraBRUCNdx8ap1Y8GvVoDaSDRVn9A+LcHqzQ3cH4tcMcpXFVV09aO
-   r9FBM8YvXQZZJtPp5qKlCbvuSbKpW/hI4cKgBREbFIG2KHzUyDGtvGEFX
-   sgqMRn+Oa7pgUzNDRtWIkMZeMVuGNUErZ++BtB+eRb1nEylpJq3LCJPnD
-   UDSeVZooi64MAnxKwt1X12RjfOWDVKBvAQpz8IIotsczaktK2Wiv578Zu
-   RvSPAbu9CetRaVxZclY838NdVt9DhmBwStBuQQ54NBvHEye5X+DvsXM8/
-   Q==;
-X-CSE-ConnectionGUID: I4qy+2u7SPeTsFwOVudziQ==
-X-CSE-MsgGUID: jXzTDJo/SjS4WEzFkkNBzA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11351"; a="40717904"
-X-IronPort-AV: E=Sophos;i="6.13,302,1732608000"; 
-   d="scan'208";a="40717904"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 07:51:47 -0800
-X-CSE-ConnectionGUID: POCzWv0eSkSgRGbmG19wdA==
-X-CSE-MsgGUID: pNZ1xGTITdmYiJmYHq+mgw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,302,1732608000"; 
-   d="scan'208";a="114913486"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 07:51:46 -0800
-Date: Thu, 20 Feb 2025 17:51:42 +0200
-From: Raag Jadav <raag.jadav@intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Zijun Hu <quic_zijuhu@quicinc.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH v1 3/4] devres: Add devm_remove_action_optional() helper
-Message-ID: <Z7dPjp4t0MrhulSt@black.fi.intel.com>
-References: <20250220141645.2694039-1-andriy.shevchenko@linux.intel.com>
- <20250220141645.2694039-4-andriy.shevchenko@linux.intel.com>
- <Z7dKfwOrAuhuZvQt@black.fi.intel.com>
- <Z7dM6B-SFQ5Q77zy@smile.fi.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pmP83BT44NWMjNF9JEDO28mhvzPDcMre3NomyQnr/EU/2/UHgfjGGoY8WZs5LBSINVcywWHWH6l3qE3FJY6KCAdGhx5mi3rMlvBZ2IC5RklATLV1Z2ajBgICEfFumG/rykNJbw+JQDMWeY4TMylNemPoz/T3WtCQGwHQ/93dDxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cmEBz/mi; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740066760;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vXixf/+e+DbNzE964SK6i49ancXo4iPqgPiTeOrCAsc=;
+	b=cmEBz/miRYA/FqknuaI6TtjNBlT6nhpITtQgqu2jOiSZ/0zmW1OftM28KK2diA/nJ49iHT
+	3hneWRCI3q+alTLBcMB8rf/6Eu3g5svG+ypDUIBz31IzoVMtqh4Qu2mawA2QKjv81XFPMx
+	XVsvd38i1MzyzA62BW6GLgdnwuVh0j8=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-84-bKOnWXlBNDqNLJT5yxcJGg-1; Thu,
+ 20 Feb 2025 10:52:35 -0500
+X-MC-Unique: bKOnWXlBNDqNLJT5yxcJGg-1
+X-Mimecast-MFC-AGG-ID: bKOnWXlBNDqNLJT5yxcJGg_1740066754
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5BF0A1801A10;
+	Thu, 20 Feb 2025 15:52:34 +0000 (UTC)
+Received: from pauld.westford.csb (unknown [10.22.80.224])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 823281800D96;
+	Thu, 20 Feb 2025 15:52:32 +0000 (UTC)
+Date: Thu, 20 Feb 2025 10:52:29 -0500
+From: Phil Auld <pauld@redhat.com>
+To: Vishal Chourasia <vishalc@linux.ibm.com>
+Cc: Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Waiman Long <longman@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [CHANGE 1/2] sched/isolation: Make use of more than one
+ housekeeping cpu
+Message-ID: <20250220155229.GB89684@pauld.westford.csb>
+References: <20250211140104.420739-1-pauld@redhat.com>
+ <4a8d54e7-fa29-4ce4-9023-3cdffa0807e6@linux.ibm.com>
+ <20250213142653.GA472203@pauld.westford.csb>
+ <Z67Wy9Jjn0BZa01A@linux.ibm.com>
+ <20250218150059.GC547103@pauld.westford.csb>
+ <Z7bz6ECsSfpcqqkc@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,40 +80,210 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z7dM6B-SFQ5Q77zy@smile.fi.intel.com>
+In-Reply-To: <Z7bz6ECsSfpcqqkc@linux.ibm.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Thu, Feb 20, 2025 at 05:40:24PM +0200, Andy Shevchenko wrote:
-> On Thu, Feb 20, 2025 at 05:30:07PM +0200, Raag Jadav wrote:
-> > On Thu, Feb 20, 2025 at 03:44:59PM +0200, Andy Shevchenko wrote:
-> 
-> ...
-> 
-> > > +/* Same as devm_remove_action(), but doesn't WARN() if action wasn't added before */
-> > > +static inline
-> > > +void devm_remove_action_optional(struct device *dev, void (*action)(void *), void *data)
-> > > +{
-> > > +	int ret;
-> > > +
-> > > +	ret = devm_remove_action_nowarn(dev, action, data);
-> > > +	if (ret == -ENOENT)
-> > > +		return;
-> > > +
-> > > +	WARN_ON(ret);
-> > > +}
+
+Hi Vishal,
+
+On Thu, Feb 20, 2025 at 02:50:40PM +0530 Vishal Chourasia wrote:
+> On Tue, Feb 18, 2025 at 10:00:59AM -0500, Phil Auld wrote:
+> > Hi Vishal.
 > > 
-> > Trying to wrap my head around this one, can't the user simply do
+> > On Fri, Feb 14, 2025 at 11:08:19AM +0530 Vishal Chourasia wrote:
+> > > Hi Phil, Vineeth
+> > > 
+> > > On Thu, Feb 13, 2025 at 09:26:53AM -0500, Phil Auld wrote:
+> > > > On Thu, Feb 13, 2025 at 10:14:04AM +0530 Madadi Vineeth Reddy wrote:
+> > > > > Hi Phil Auld,
+> > > > > 
+> > > > > On 11/02/25 19:31, Phil Auld wrote:
+> > > > > > The exising code uses housekeeping_any_cpu() to select a cpu for
+> > > > > > a given housekeeping task. However, this often ends up calling
+> > > > > > cpumask_any_and() which is defined as cpumask_first_and() which has
+> > > > > > the effect of alyways using the first cpu among those available.
+> > > > > > 
+> > > > > > The same applies when multiple NUMA nodes are involved. In that
+> > > > > > case the first cpu in the local node is chosen which does provide
+> > > > > > a bit of spreading but with multiple HK cpus per node the same
+> > > > > > issues arise.
+> > > > > > 
+> > > > > > Spread the HK work out by having housekeeping_any_cpu() and
+> > > > > > sched_numa_find_closest() use cpumask_any_and_distribute()
+> > > > > > instead of cpumask_any_and().
+> > > > > > 
+> > > > > 
+> > > > > Got the overall intent of the patch for better load distribution on
+> > > > > housekeeping tasks. However, one potential drawback could be that by
+> > > > > spreading HK work across multiple CPUs might reduce the time that
+> > > > > some cores can spend in deeper idle states which can be beneficial for
+> > > > > power-sensitive systems.
+> > > > > 
+> > > > > Thoughts?
+> > > > 
+> > > > NOHZ_full setups are not generally used in power sensitive systems I think.
+> > > > They aren't in our use cases at least. 
+> > > > 
+> > > > In cases with many cpus a single housekeeping cpu can not keep up. Having
+> > > > other HK cpus in deep idle states while the one in use is overloaded is
+> > > > not a win. 
+> > > 
+> > > To me, an overloaded CPU sounds like where more than one tasks are ready
+> > > to run, and a HK CPU is one receiving periodic scheduling clock
+> > > ticks, so HP CPU is bound to comes out of any power-saving state it is in.
 > > 
-> > 	if (devm_is_action_added())
-> > 		devm_remove_action/_nowarn();
+> > If the overload is caused by HK and interrupts there is nothing in the
+> > system to help. Tasks, sure, can get load balanced.
+> > 
+> > And as you say, the HK cpus will have generally ticks happening anyway.
+> > 
+> > > > 
+> > > > If your single HK cpu can keep up then only configure that one HK cpu.
+> > > > The others will go idle and stay there.  And since they are nohz_full
+> > > > might get to stay idle even longer.
+> > > While it is good to distribute the load across each HK CPU in the HK 
+> > > cpumask (queuing jobs on different CPUs each time), this can cause
+> > > jitter in virtualized environments. Unnecessaryily evicting other
+> > > tenants, when it's better to overload a VP than to wake up other VPs of a
+> > > tenant.
+> > > 
+> > 
+> > Sorry I'm not sure I understand your setup. Are your running virtual
+> > tenants on the HK cpus?  nohz_full in the guests? Maybe you only need
+> > on HK then it won't matter.
+> > 
+> Firstly, I am unaware if nohz_full is being used in virtualized environment.
+> Please correct me it is. I am not saying it can't or shouldn't be used, it's just
+> I don't know if anybody is using it.
+>
+
+I've seen some people trying it in various ways and to varying degrees of
+success if I recall correctly.
+
+
+> nohz_full in guests would mean that tick is disabled inside the guest but
+> the host might still be getting ticks. So, I am unsure, whether it is a good
+> idea to have nohz_full in virtualized environment.
 > 
-> Hmm... Actually it sounds like a good point. I will check
-> (and I like the idea of dropping this patch).
+> Nevertheless, the idea of nohz_full is to reduce to the kernel interference
+> for CPUs marked as nohz_full. And, it does help with guest interference.
+> 
+> I would like to mention, In SPLPAR environment, scheduling work on
+> different HK CPU each time can caused VM preemption in a multi-tenant
+> setup in cases where CPUs in HK cpumask spans across VPs, its better to
+> consolidate them within few VPs.
+> 
+> VP is virtual core/processor.
 
-And perhaps
+I have a hard time reconciling you saying you are not using virtualization
+and then talking about VMs and VPs ;)
 
-s/devm_is_action_added/devm_action_is_added
+Sometimes I forget how interesting PPC can be...
 
-But whichever you think _is best_ ;)
+> 
+> > My concern is that currently there is no point in having more than
+> > one HK cpu (per node in a NUMA case). The code as currently implemented
+> > is just not doing what it needs to.
+> > 
+> > We have numerous cases where a single HK cpu just cannot keep up and
+> > the remote_tick warning fires. It also can lead to the other things
+> > (orchastration sw, HA keepalives etc) on the HK cpus getting starved
+> > which leads to other issues.  In these cases we recommend increasing
+> > the number of HK cpus.  But... that only helps the userspace tasks
+> > somewhat. It does not help the actual housekeeping part.
+> > 
+> > It seems clear to me that the intent of the cpumask_any_and() calls
+> > is to pick _any_ cpu in the hk mask. Not just the first, otherwise
+> > it would just use cpumask_first_and().
+> > 
+> > I'm open to alternate suggestions of how to fix this.
+> Your approach looks good to me.
+> 
+> I wanted to mention the case of overcommitted multi-tenant setup
+> where this will cause noisy neighbour sort of situation, but this can be
+> avoided by carefully selecting HK CPUs.
 
-Raag
+Yes, it can be configured away, hopefully.
+
+Still, this could easily be a sched feat if that make sense to people.
+
+
+Thanks for the review!
+
+
+Cheers,
+Phil
+
+
+
+> 
+> Thanks,
+> vishalc
+> > 
+> > 
+> > Cheers,
+> > Phil
+> > 
+> > > > 
+> > > > I do have a patch that has this controlled by a sched feature if that
+> > > > is of interest. Then it could be disabled if you don't want it.
+> > > 
+> > > Vishal
+> > > > 
+> > > > Cheers,
+> > > > Phil
+> > > > 
+> > > > > 
+> > > > > Thanks,
+> > > > > Madadi Vineeth Reddy
+> > > > > 
+> > > > > > Signed-off-by: Phil Auld <pauld@redhat.com>
+> > > > > > Cc: Peter Zijlstra <peterz@infradead.org>
+> > > > > > Cc: Juri Lelli <juri.lelli@redhat.com>
+> > > > > > Cc: Frederic Weisbecker <frederic@kernel.org>
+> > > > > > Cc: Waiman Long <longman@redhat.com>
+> > > > > > Cc: linux-kernel@vger.kernel.org
+> > > > > > ---
+> > > > > >  kernel/sched/isolation.c | 2 +-
+> > > > > >  kernel/sched/topology.c  | 2 +-
+> > > > > >  2 files changed, 2 insertions(+), 2 deletions(-)
+> > > > > > 
+> > > > > > diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
+> > > > > > index 81bc8b329ef1..93b038d48900 100644
+> > > > > > --- a/kernel/sched/isolation.c
+> > > > > > +++ b/kernel/sched/isolation.c
+> > > > > > @@ -40,7 +40,7 @@ int housekeeping_any_cpu(enum hk_type type)
+> > > > > >  			if (cpu < nr_cpu_ids)
+> > > > > >  				return cpu;
+> > > > > >  
+> > > > > > -			cpu = cpumask_any_and(housekeeping.cpumasks[type], cpu_online_mask);
+> > > > > > +			cpu = cpumask_any_and_distribute(housekeeping.cpumasks[type], cpu_online_mask);
+> > > > > >  			if (likely(cpu < nr_cpu_ids))
+> > > > > >  				return cpu;
+> > > > > >  			/*
+> > > > > > diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+> > > > > > index c49aea8c1025..94133f843485 100644
+> > > > > > --- a/kernel/sched/topology.c
+> > > > > > +++ b/kernel/sched/topology.c
+> > > > > > @@ -2101,7 +2101,7 @@ int sched_numa_find_closest(const struct cpumask *cpus, int cpu)
+> > > > > >  	for (i = 0; i < sched_domains_numa_levels; i++) {
+> > > > > >  		if (!masks[i][j])
+> > > > > >  			break;
+> > > > > > -		cpu = cpumask_any_and(cpus, masks[i][j]);
+> > > > > > +		cpu = cpumask_any_and_distribute(cpus, masks[i][j]);
+> > > > > >  		if (cpu < nr_cpu_ids) {
+> > > > > >  			found = cpu;
+> > > > > >  			break;
+> > > > > 
+> > > > 
+> > > > -- 
+> > > > 
+> > > 
+> > 
+> > -- 
+> > 
+> 
+
+-- 
+
 
