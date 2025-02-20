@@ -1,115 +1,105 @@
-Return-Path: <linux-kernel+bounces-524127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 348D2A3DF88
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:57:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46A15A3DF89
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:57:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20CED170F99
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:56:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 627A5189D571
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:56:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62B231FECBA;
-	Thu, 20 Feb 2025 15:55:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947571FFC71;
+	Thu, 20 Feb 2025 15:56:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PNwqK2ba"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="thybdZfO"
+Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5510D1FFC78
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 15:55:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83DA51DF75D
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 15:56:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740066948; cv=none; b=XCpQDh2/5Y1+ydWWuGV4TVADGPH82Rrmo/RIenSNHas/VYkhi1OJZ7AslZb61zfybvS6mjieXgxrubi28SGWEVlGfYGpam5+dGnkMgH88arEn1zbgArurn22lNsVHnvWs5wlnNvyB5MRS11YmYXv6WMTTAHXXtX38IEzoR57SOE=
+	t=1740066966; cv=none; b=aLM9Wn3OAl8i5QiM4xwK7ZNWnur3e5WOrhKDkiwICtHMVCA2YrcK1QvnabKTnd3Y8HhEKgzwcqpNh0ARfUU4uuhKy1/uXmiDdwJ71ZkeeB1c3bJ62mOrLUTGJYK1KwUZFxvqNhZsHrcKaXkutUmSIGtH5M3iN7Se+o3wkJzywco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740066948; c=relaxed/simple;
-	bh=nGjY0pcALgantTol9y3eDcS8ift8hVBdT5A0SWQDHUg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IXBesTRiEqATZ6w13EycS0wMEA+9lD1No+CmnADZJRwC5QCdjpU8nsPFl5/2yAsCPWrf8JTg2Toe8wjM5p0sNaqqN+x5/SxZzEUWf1YAtDucWQ6TL/Yxe7coXz65X6i4++SjZ1bFnkGY53zaoWspEUqPnN5oSI3OAcGmx4irB8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PNwqK2ba; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-472098e6e75so300111cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 07:55:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740066946; x=1740671746; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xqf65nED3NYJwmlnVPTvXBomckILIduk3AQAFu4O9k0=;
-        b=PNwqK2baPDmaRfZtyCmk1BJ6kk3baSK4E16rOBF/bIHfe4lkGs5XNVDXGNVkRgIfjt
-         stKA9To9oVOE8LvHh0AAVIYguoBxSmE3DnV84MFxcaJw5046bze+eM5A+jWASaqPtfG8
-         KEdnQoDTKMd7nDNOzz2nWsNnljOPXExVdHmAgiA+bjktH9eGjWFwqxG/SWz+yoiButaU
-         FUkZX0QEB7apg2yPundG0d/M34Ms3KIGq+LEHUvKum7rYbQvx06ZART0ztJefGX4uLpb
-         2dQ2qZPM661rXQzpy8zgFy77z6jsKSHV1NgR3UVGqZaqYAYzFBOu2gjc/WLP5acxCvgK
-         c1zA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740066946; x=1740671746;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Xqf65nED3NYJwmlnVPTvXBomckILIduk3AQAFu4O9k0=;
-        b=FfhVeyp9SM77Qq65RBTgyjITzH9vYqogXTwCMRebbxf9Gz+ziThOMzVXUMWJLH/mdP
-         Hir0S/ert7iRUJdxUss4Fn0S4CzbhOU9KmnNxnqpULDaiZIvG/DLeHln9zsQt4HTppS8
-         Z10n46smr2ZmhAkmxW76pP5N8bm3TOtIqyHlQnydBaBksNH0auhHh9ltJutn9H1fKvfM
-         vbdfzMlaj2LR4iaJ6cAkCkHP10xNgCh5ReteeDGRBfe4fEXZSw+lW1+NyeUw+uJYq4HB
-         0Adx7TFupsdY5VHZL/MokYdlSPOSjr/w2XxfDSO5CuXHNHRGdQD8FpcqTX3e2GdIJNpn
-         mELg==
-X-Forwarded-Encrypted: i=1; AJvYcCXQsYQ0Zk5wRLfOOvWLKu7RP2/jaQ5UC68muxt7/EIbh6ydzTT5A8orA4WcmmQTDdx9kjlbIyizKIwwexg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsHQAQ+p3XgaJzwntkxTFf5YnR3uc/FwjT7C/4WHrQRL3pWZ2D
-	0Q8tJZzTpWe6AA+0STsCaFoUHvVlHrQ1lPkfVreRodPEyIjuP3ApAGfrqNS/+id8aKT2h+1mqFR
-	8Pikplepb2UrPa0UOcNAJ2PR5swR87lPFh/kL7+UQeJitViL3FWh4
-X-Gm-Gg: ASbGncs2caZn+foMcm8yIMSTbMmnokzpo5XZI265T2k6gXe/7gVteclk0v/WyAzq9W2
-	ZDqbiQRMB2fVDnzbxcZpyAlUqSO6BxwZvDeirT86A9dg2mPDI4LsAQk2S4ndN4ygSYG5UTeiZZm
-	DHmsYJ+EwICPdlrLoqfd0S3rGY2Bc=
-X-Google-Smtp-Source: AGHT+IHOdWO/3Z/ofouQMFSA/yPXXraLlaV7hAkItx8s9YCocwCXJATlNZf0CcBawq4mps1HDugVCO75m47tbi/iLio=
-X-Received: by 2002:a05:622a:428a:b0:471:f257:7a5f with SMTP id
- d75a77b69052e-4721711149bmr4179751cf.13.1740066946034; Thu, 20 Feb 2025
- 07:55:46 -0800 (PST)
+	s=arc-20240116; t=1740066966; c=relaxed/simple;
+	bh=nhYN2GbUzsXa4cjLPXbV4eUQPu/IKKaTnKG8XoaoATY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iPOVTcma9Zzh++HCXzFfx/8jiOUPP6f30TU0kF6lR2okijfr3RO/EDuq2+UHw2DHR1STQXrb2zQAIWw3IeQnLekyn0+IAQLCmAWlqWdVVDjvE8OLvVQsIERiw90jQUShWgoQe5cN8yEZ4IHibbZVhYAiNjgUnMAQxe/G7nzkCX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=thybdZfO; arc=none smtp.client-ip=95.215.58.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <10a50a6c-a6be-4723-80b3-62119f667977@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740066960;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Up76eQNOfacddlQs6IG6ddJKmIeZ0tEzsFl4x96svGY=;
+	b=thybdZfO1kWLW7dneUHxK3W2lJuskGvpikEy0T7i1mCJVlui2m7i/emTde1TfrM5woF6Nn
+	e9agtZ9W5YY941OvQTRP/7VFbwclmcLpMA8eLehw253qrTKxGEb1yz2c7g8QbgqgYhjkyj
+	Cs5Pj6HLKRHHyipCxzgd+B2AT1pxqHo=
+Date: Thu, 20 Feb 2025 10:55:45 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250220-mm-selftests-v1-0-9bbf57d64463@google.com>
- <20250220-mm-selftests-v1-6-9bbf57d64463@google.com> <da1c3dcb-5296-47bd-b5ed-9cb8833377cf@arm.com>
-In-Reply-To: <da1c3dcb-5296-47bd-b5ed-9cb8833377cf@arm.com>
-From: Brendan Jackman <jackmanb@google.com>
-Date: Thu, 20 Feb 2025 16:55:34 +0100
-X-Gm-Features: AWEUYZlPMDgaqu__QrVZ4KFp2sTS1uCxjoo7b3B-CAxYQcbUHy2R1SAZIvagXmU
-Message-ID: <CA+i-1C1VjdMb6YLEvORkZhiqVCE_G5BphJmAcr00U6KCfC7xtw@mail.gmail.com>
-Subject: Re: [PATCH 6/6] selftests/mm: Don't fail uffd-stress if too many CPUs
-To: Dev Jain <dev.jain@arm.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Shuah Khan <shuah@kernel.org>, Mateusz Guzik <mjguzik@gmail.com>, linux-mm@kvack.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH net-next] net: cadence: macb: Implement BQL
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, netdev@vger.kernel.org,
+ "David S . Miller" <davem@davemloft.net>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, linux-kernel@vger.kernel.org,
+ Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>
+References: <20250214211643.2617340-1-sean.anderson@linux.dev>
+ <20250218175700.4493dc49@kernel.org>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <20250218175700.4493dc49@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, 20 Feb 2025 at 16:48, Dev Jain <dev.jain@arm.com> wrote:
->
->
->
-> On 20/02/25 8:33 pm, Brendan Jackman wrote:
-> > This calculation divides a fixed parameter by an environment-dependent
-> > parameter i.e. the number of CPUs.
-> >
-> > The simple way to avoid machine-specific failures here is to just put a
-> > cap on the max value of the latter.
->
-> I haven't read the test, but if nr_cpus is being computed, then this
-> value must be important to the test somehow? Would it potentially be
-> wrong to let the test run for nr_cpus != actual number of cpus?
+On 2/18/25 20:57, Jakub Kicinski wrote:
+> On Fri, 14 Feb 2025 16:16:43 -0500 Sean Anderson wrote:
+>> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+>> index 48496209fb16..63c65b4bb348 100644
+>> --- a/drivers/net/ethernet/cadence/macb_main.c
+>> +++ b/drivers/net/ethernet/cadence/macb_main.c
+>> @@ -1081,6 +1081,9 @@ static void macb_tx_error_task(struct work_struct *work)
+>>  						      tx_error_task);
+>>  	bool			halt_timeout = false;
+>>  	struct macb		*bp = queue->bp;
+>> +	u32			queue_index = queue - bp->queues;
+> 
+> nit: breaking reverse xmas tree here
 
-Based on my _extremely hasty_ reading, the variable is misnamed and
-it's actually a thread count not a CPU count. I can double check
-that's the case and rename it.
+It has to happen here since bp isn't available earlier.
 
-> Also, if the patch is correct then will it be better to also print a
-> diagnostic telling the user that the number of cpus is going to be
-> capped for the test to run?
+>> +	u32			packets = 0;
+>> +	u32			bytes = 0;
+>>  	struct macb_tx_skb	*tx_skb;
+>>  	struct macb_dma_desc	*desc;
+>>  	struct sk_buff		*skb;
+> 
+> 
+>> @@ -3019,6 +3033,7 @@ static int macb_close(struct net_device *dev)
+>>  	netif_tx_stop_all_queues(dev);
+>>  
+>>  	for (q = 0, queue = bp->queues; q < bp->num_queues; ++q, ++queue) {
+>> +		netdev_tx_reset_queue(netdev_get_tx_queue(dev, q));
+>>  		napi_disable(&queue->napi_rx);
+>>  		napi_disable(&queue->napi_tx);
+> 
+> I think you should reset after napi_disable()? 
+> Lest NAPI runs after the reset and tries to complete on an empty queue..
 
-Sure. The level of detail in the  logging and error messages is
-extremely low here so I didn't feel like being too anomalous, but why
-not.
+OK.
+
+--Sean
 
