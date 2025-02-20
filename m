@@ -1,131 +1,151 @@
-Return-Path: <linux-kernel+bounces-523613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C6A6A3D93B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:54:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58636A3D941
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:55:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A32643AF697
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:53:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C22211890A9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:55:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1BAC1F4188;
-	Thu, 20 Feb 2025 11:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SKorP5qD"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 961491F4288;
+	Thu, 20 Feb 2025 11:55:28 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B824C1DDC3A;
-	Thu, 20 Feb 2025 11:53:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C59601EE01B;
+	Thu, 20 Feb 2025 11:55:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740052394; cv=none; b=DHyz5yfxXWRY5FDphI4IgZmhmJ+zDjRhURjj/sa4KMf3idQqL+yFNWA858+UXqIQ9Dhoe17005fPBfHoLGE52HSBaYXTjMbhmETWXGQChr7yxog8bj4hNqtVZ6JrhsWlj6wNS8xqjmgCORXzlYsn6dcoETMgXsLZdcgoisR45z0=
+	t=1740052528; cv=none; b=lh1KwVSVmIA2HMJatf5XV1z2CKbFtGW+Ag/3MIvsv39oUygZqMGZxSpZhapUH9+x2U7hINQKxI2V4hV51NE0MvONCpT9w+e1gt1dAAlBAaWT9s5AIwT9P+oJt3ZtyWilFifXqF7vb67hkAnIuRG37fO5/NhCXSGPjotFhCuMC+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740052394; c=relaxed/simple;
-	bh=tpyBoxI5qMXzINsVgoVISpA2J5RByzXnSUPMqHuNecU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GkA/1ao9aeuQfZtgaT2tt9sPxVlHytwplVyx7Q8BGxXXHmm/WyYNls4hBj1rF/lDo/BRUwPU8QpR3oiOwG4BFbA8Vf7LNMFpeu4D7tZ2a79qkJjeLbeqcMT2GXdjLPA0a5m1vFYR2gMT7byTqT3JnrEjpbKB8efi5T4yOvkyiL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=SKorP5qD; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51K9P5R7007707;
-	Thu, 20 Feb 2025 11:53:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=qOTIXEgZBdBPbP5wfG94fNSYaqQcZk
-	oqvNhtqiQLdwo=; b=SKorP5qDur+VyH4yz+WCL5dWRAb+oHbOz2my0W0fXs7BTh
-	f+/JJhJJbB2/Fkj7y76VKRENKdc6B8tZpzRvK2Usl7lIl8qvXfNSLclYorP0Uh4H
-	Xjgwx1dzIcSYvKFoAyo02H50DB1AozzB5vhUpSIz7blg+1DCuan/RWRS4owHtdrs
-	q0zNZB8Mi6218PBcyv8SpnHByxFG4NlGi/odrEtHqA6HsdzWek4ZBc3iu2Vw0p2g
-	FCPA/TRY/nctoXGuyW58VA3brA/klgEyqZhHdAOFkefW3eJWM59mbaIICD7twGqo
-	xYuibX5C4ZDPHIBxCjGi5z/bdjbxT9qSX/IKt7KQ==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44x1qy8nrg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Feb 2025 11:53:04 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51KBPV2q030147;
-	Thu, 20 Feb 2025 11:53:04 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44w01x9u0u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Feb 2025 11:53:04 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51KBr0GL31260980
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 20 Feb 2025 11:53:00 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8CA2E20043;
-	Thu, 20 Feb 2025 11:53:00 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 58AD420040;
-	Thu, 20 Feb 2025 11:53:00 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.60])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu, 20 Feb 2025 11:53:00 +0000 (GMT)
-Date: Thu, 20 Feb 2025 12:52:58 +0100
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Sven Schnelle <svens@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>
-Subject: Re: [PATCH v2 0/5] ftrace: Fix fprobe with function graph accounting
-Message-ID: <20250220115258.7558Aa9-hca@linux.ibm.com>
-References: <20250219220436.498041541@goodmis.org>
+	s=arc-20240116; t=1740052528; c=relaxed/simple;
+	bh=Ff+J4nhissGW/HsxnmSTk5OwvjE7yZEQW/HdeRKavPo=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=GmiVHVmxInY1CSRpgv1ijwcyDDcgkdsm/fbK5NmaiohcvQERqhOop7WVvrP/iunQDG3G0wH0iCBjoF4+v7npuujWwCjtLZyjm3jW6taPq1HUtjUjMNkC1JPPAcVpK4SQ8ssaxwpnmSuS/vLEztqQiGzFvgQ2bzUTZaMzNqaODh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4YzBWx4mpDz4f3jcm;
+	Thu, 20 Feb 2025 19:54:53 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 4F0AD1A16A8;
+	Thu, 20 Feb 2025 19:55:15 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgCnCl8hGLdncWGMEQ--.55453S3;
+	Thu, 20 Feb 2025 19:55:15 +0800 (CST)
+Subject: Re: [BUG] possible race between md_free_disk and md_notify_reboot
+To: Yu Kuai <yukuai1@huaweicloud.com>, Guillaume Morin <guillaume@morinfr.org>
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
+ song@kernel.org, "yukuai (C)" <yukuai3@huawei.com>
+References: <ad286d5c-fd60-682f-bd89-710a79a710a0@huaweicloud.com>
+ <82BF5B2B-7508-47DB-9845-8A5F19E0D0E5@morinfr.org>
+ <53e93d6e-7b73-968b-c5f2-92d1b124ecd5@huawei.com>
+ <Z7alWBZfQLlP-EO7@bender.morinfr.org>
+ <1e288eb5-c67b-c9ca-c57e-2855b18785b1@huaweicloud.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <6748f138-ad52-b7c5-ac53-1c7fa6fab9b7@huaweicloud.com>
+Date: Thu, 20 Feb 2025 19:55:13 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250219220436.498041541@goodmis.org>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: PnCLRCC862pKH9cvgqtn4oeWul4Fd7J2
-X-Proofpoint-ORIG-GUID: PnCLRCC862pKH9cvgqtn4oeWul4Fd7J2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-20_04,2025-02-20_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
- phishscore=0 impostorscore=0 bulkscore=0 mlxlogscore=436 adultscore=0
- suspectscore=0 lowpriorityscore=0 priorityscore=1501 malwarescore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502200086
+In-Reply-To: <1e288eb5-c67b-c9ca-c57e-2855b18785b1@huaweicloud.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCnCl8hGLdncWGMEQ--.55453S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7WryfWryUtFy7tFyfCFWDtwb_yoW8tFyDpF
+	WkXF4UCryUJry8J34UJr4DuFyrtr1UJw4DJr1xW3WUJr1DJrnFqr13Xr1qgr1jqa18Jr15
+	ta1UKryUZr1UJ37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvG14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7Mxk0xIA0c2IEe2xFo4CEbIxv
+	r21lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr
+	0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY
+	17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcV
+	C0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY
+	6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa
+	73UjIFyTuYvjfUYCJmUUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Wed, Feb 19, 2025 at 05:04:36PM -0500, Steven Rostedt wrote:
-> Heiko Carstens reported[1] a bug when running the ftrace selftests.
-> After running them, he noticed that the enabled_functions file had
-> all functions enabled in it. That means something was registered to
-> ftrace that shouldn't be.
+Hi,
+
+在 2025/02/20 12:06, Yu Kuai 写道:
+> Hi,
 > 
-> The issue was with the accounting of the new fprobe logic which was
-> built on top of the function graph infrastructure. Patch 3 of this
-> series is the fix for that bug, but while debugging that, 3 other
-> accounting bugs were discovered.
-...
-> Steven Rostedt (5):
->       ftrace: Fix accounting of adding subops to a manager ops
->       ftrace: Do not add duplicate entries in subops manager ops
->       fprobe: Always unregister fgraph function from ops
->       fprobe: Fix accounting of when to unregister from function graph
->       selftests/ftrace: Update fprobe test to check enabled_functions file
+> 在 2025/02/20 11:45, Guillaume Morin 写道:
+>> On 20 Feb 11:19, Yu Kuai wrote:
+>>>
+>>> Hi,
+>>>
+>>> 在 2025/02/20 11:05, Guillaume Morin 写道:
+>>>> how it was guaranteed that mddev_get() would fail as mddev_free() 
+>>>> does not check or synchronize with the active atomic
+>>>
+>>> Please check how mddev is freed, start from mddev_put(). There might be
+>>> something wrong, but it's not what you said.
+>>
+>> I will take a look. Though if you're confident that this logic protects
+>> any uaf, that makes sense to me.
+>>
+>> However as I mentioned this is not what the crash was about (I mentioned
+>> the UAF in passing). The GPF seems to be about deleting the _next_
+>> pointer while iterating over all mddevs. The mddev_get on the
+>> current item is not going to help with this.
+>>
 > 
-> ----
->  kernel/trace/fprobe.c                              | 12 ++---
->  kernel/trace/ftrace.c                              | 33 +++++++++----
->  .../ftrace/test.d/dynevent/add_remove_fprobe.tc    | 54 ++++++++++++++++++++++
->  3 files changed, 82 insertions(+), 17 deletions(-)
+> You don't need to emphasize this, it is still speculate without solid
+> theoretical analysis. The point about mddev_get() is that it's done
+> inside the lock, it shoud gurantee continue iterating should be fine.
+> 
+> I just take a quick look, the problem looks obviously to me, see how
+> md_seq_show() handle the iteration.
+> 
+> diff --git a/drivers/md/md.c b/drivers/md/md.c
+> index 465ca2af1e6e..7c7a58f618c1 100644
+> --- a/drivers/md/md.c
+> +++ b/drivers/md/md.c
+> @@ -9911,8 +9911,11 @@ static int md_notify_reboot(struct notifier_block 
+> *this,
+>                          mddev_unlock(mddev);
+>                  }
+>                  need_delay = 1;
+> -               mddev_put(mddev);
+> -               spin_lock(&all_mddevs_lock);
+> +
+> +               spin_lock(&all_mddevs_lock)
+> +               if (atomic_dec_and_test(&mddev->active))
+> +                       __mddev_put(mddev);
+> +
+>          }
+>          spin_unlock(&all_mddevs_lock);
 
-FWIW, I can confirm that this fixes the bug I reported.
-Feel free to add
+While cooking the patch, this is not enough, list_for_each_entry_safe()
+should be replaced with list_for_each_entry() as well.
 
-Tested-by: Heiko Carstens <hca@linux.ibm.com>
+Will send the patch soon, with:
+
+Reported-by: Guillaume Morin <guillaume@morinfr.org>
+
+Thanks,
+Kuai
+> 
+> 
+> Thanks,
+> Kuai
+> 
+> .
+> 
+
 
