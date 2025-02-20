@@ -1,235 +1,131 @@
-Return-Path: <linux-kernel+bounces-523130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACE61A3D27D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:42:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28F42A3D274
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:41:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A5123B0025
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:42:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 933057A38F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:40:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB6C71EB9EB;
-	Thu, 20 Feb 2025 07:41:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E8761E9B09;
+	Thu, 20 Feb 2025 07:41:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="modqC0LJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SICnMiI7"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF5F1EB1AA;
-	Thu, 20 Feb 2025 07:41:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E280C1E5734;
+	Thu, 20 Feb 2025 07:41:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740037308; cv=none; b=ilY0rniJUwKiCzJt9oe7HpAkp8DXxZwoxcMbeTYF8H8WT6uWFIjda/g3tSwwS7zTDwt6LuHRXEdYrzYceZn6x7KciB1HsLvxVg/+F395kxlCogYvDnc6Jj/uvZRMoqvCePjvUUFkaWGlQJLS4yQN5tJRK9f+Z4lSozSPVZku0/U=
+	t=1740037275; cv=none; b=MsOr55OxGiOo+ac0Jx6NE7fdi0h00sA2Ep+dA2jSZu42uIJL22lKBDAsFg6GVEVlQGsPhLvd4kkpvIE7ApE8oGxhbugOCWK8hOoDvZynJiKRjnfdZ+pHp/USbX3PUY6WKjnO8GUvKC3rDcjAx3V0K/hl/FFaCHTUA0RsnbLhX+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740037308; c=relaxed/simple;
-	bh=2m5fMq0w89y2cVxObSFljzgnxj6ecbAOXIvZHg3WaRs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=M2B62/dn4xflWPIQ0ymQRxMwJxtK4heh2C5jCX9H++hL4lml3g3DYCeNSvVkWLe7OW6HOTFVvFL3eqaGCOp+q98y6zHh1vIbUXMWSZXawCkevby1CAKtWKgu5DBjAVqCOb/x1G6RXXpd3JJ3TZ5mlfEWo1B9QY6DYPU9idMQIy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=modqC0LJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07757C4CED1;
-	Thu, 20 Feb 2025 07:41:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740037307;
-	bh=2m5fMq0w89y2cVxObSFljzgnxj6ecbAOXIvZHg3WaRs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=modqC0LJcC7bgfBYPaLE7oc1nMfrcxeR9HtewLJuggSQgluMo4oLcOKZRiYIYdzBj
-	 izRGFZ2toDIfcJPUdARSICdfjOyCgWpS88Mdz8ZXEvRhc22HWiApgQbc/LfKuf/o8c
-	 /dz+u+jgE0S7Y8wHxJkfCu+82oxSybafr2be6P6KwJ/82CNQ8umdvMAK8yknswXUtk
-	 jbInxR+lE4cKDlhfmof10kzeRrjGsrnhuzcYnFwFOkUABvC33n9J7f6NQUV9EXD7SX
-	 bJxeXGTk+1DYvfG38uuTBIbytQikn8P/Aqu3S9nTefbr3YEu6qsUXdOAkHnRzdP+wO
-	 NwWLVeMqMVfkQ==
-From: "Naveen N Rao (AMD)" <naveen@kernel.org>
-To: <kvm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Cc: Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-	Vasant Hegde <vasant.hegde@amd.com>
-Subject: [PATCH v3 2/2] KVM: SVM: Limit AVIC physical max index based on configured max_vcpu_ids
-Date: Thu, 20 Feb 2025 13:08:03 +0530
-Message-ID: <f4c832aef2f1bfb0eae314380171ece4693a67b2.1740036492.git.naveen@kernel.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <cover.1740036492.git.naveen@kernel.org>
-References: <cover.1740036492.git.naveen@kernel.org>
+	s=arc-20240116; t=1740037275; c=relaxed/simple;
+	bh=Y5kYSgfukTER1EK5fH9cMVwho5EJgWr6Kj/8SYChQEU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uJ3Qx5Y6UmEm5rBh9reY7KTuXfMbIWs87kzLKRYDLdgUhWRkRU7/pUh1OyX37OedGny6Mp9NVbtow8sdSSdH4EM0ttw3veXZfUG01NWzr+aSxHQkSOUceWvePApI10dEUMkHr3Qdq29ByQ5eEtZB6o5i+D+LOtBeZVRUTx6FmgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SICnMiI7; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-439a2780b44so3339975e9.1;
+        Wed, 19 Feb 2025 23:41:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740037272; x=1740642072; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MJYv7ynx+2KN3B5BBC3b4wZsS5Thp/vdHPKspluBDSY=;
+        b=SICnMiI7BPhcaPZngqawkSxFmW6RO8rXQ0Gd9nBJckm+jnclVIX1zmPklXzOY0OYCx
+         69ytKuiAThoMxe1ucJN5W/yh8R03oEqDwHvDNj9/KxR4yiBwaqscCZsxY/l6+ItQRGUu
+         2Oi8LVeK61NRB3ZkN5JTLDoTsYdUeas+zrfKY264gIpD1BqJ1jiq0f61KhhiYKR2VJE4
+         q0IhaxJTw4fgvRV4pDxwCWWnd+YGou5kBghoF8Yq5YfDpatWXv04kdwLTb2t4R5YmZsi
+         bByjidVy+Xg42V9U+T1W5aQ+MPL6pXmJPZXIdu5WZGRAg6pcitx60cNfBP66l09TcPdx
+         r4vA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740037272; x=1740642072;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MJYv7ynx+2KN3B5BBC3b4wZsS5Thp/vdHPKspluBDSY=;
+        b=iZXggKeofoI/vSMO38ArKNiHYN6ouj/B5X+x/vIg1O35oNBpewDVMNRORJk1/zjMXK
+         g4VCG/1I+Nx+U+u5LFqEYOmXrmgM6OKnY8IWmRm+yTyKtxA81kt0QP2UQYOhyneZumuv
+         oR5q9BM4XOUvNJDysiLp7B8lJ7Q9Hici5lCLEp/3m05pHvJgPN8BXZjC4uIO5irMOhdE
+         CK792T7Y7sK6A06gDOjOArD5udjxbVe9dckf2O0pOuLKDZGObuHedv5D0R1YgRDrYIdU
+         kpHLsJswouuODL8/46s8c2zQVXl8AbDTIv5dRGG/gtj0QkdRy3VIht0PElNA6o5ENqZ8
+         27AA==
+X-Forwarded-Encrypted: i=1; AJvYcCU5O6zC3wnFzVWFDSav33LOrdzFIer4+djAazt7IYgtYPi+kwsgGeP10QSrzGri7ahR31AMm9f563GAYQ==@vger.kernel.org, AJvYcCVGr7slGETc3Lvs10WxH95QXzvh3n//L6kRCxSk5vEfZ/N8SyfPsQIgzmbBd4EExNC1pb7KAPPI7csmQ4GiarU=@vger.kernel.org, AJvYcCVQ0iRmKLyQ2V9haVJ2qnlVZLAuEFe6rNFUeyBXOVm0yIWY7kop1zANaHdj2VMsg0NbDpceXZKZ@vger.kernel.org, AJvYcCX9WrfcLW7VyUpcP81kNoLi6PjmG+OzBhZCIBuUrUs9tWEtkMxsBbi7TS0wtN1hKGBSr5R2lCGOBrrHqhxw@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKVs5EnKGuOlPW6io510Hzyf9M2Ljq/4jxQ4iU3Z7nn0GL2zs0
+	OWnzc9bxQvqGRQ5QlRJq6vzan0BA9dR/Ml92Zu3vzDVRq98WxOYTeVWwSw==
+X-Gm-Gg: ASbGncs9/XzyPyGcEWwIaulmPvN2RJaUpf+3b1HvVyzR0W/d068axeZFRws1e4TkeAn
+	gfyuuQ1mEdY8aRo0ehbq3jrImcWAaphVAVUoFRIeqS1OhEKLo80CSTMeDXV28PHTBYW9UEPP0u4
+	W/55UYzEo6PZyEAcwm3i+9d+ooPwXV2LglKpiN0Lh7rwiZvPfShXtw5ZganAEDBp9BqroAfnNgg
+	T1Vp0gw2+DCYejDEXbprRRCttnYnSdk/KyrwKqVOLxFPofPi1yNKHQ2+pWIGDJjUhDekIgi77Nq
+	VLy7XlAlK+aAFJBn7cfaearKa2uQxbi8fyk=
+X-Google-Smtp-Source: AGHT+IEMwSqIIsc4ebzckcZJDzHWuZ55uljwt7+wfboUSZakp8qJiZNrd0ew7LhjiwbxKJKaQ4irLw==
+X-Received: by 2002:a05:600c:35c1:b0:439:9377:fa29 with SMTP id 5b1f17b1804b1-43999de1a26mr57522325e9.31.1740037271566;
+        Wed, 19 Feb 2025 23:41:11 -0800 (PST)
+Received: from [172.27.61.29] ([193.47.165.251])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43982a2f92esm114030585e9.17.2025.02.19.23.41.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Feb 2025 23:41:11 -0800 (PST)
+Message-ID: <98f1cc71-7699-40f5-909f-86e7317d8071@gmail.com>
+Date: Thu, 20 Feb 2025 09:41:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] net/mlx5e: Avoid a hundred
+ -Wflex-array-member-not-at-end warnings
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, "Gustavo A. R. Silva"
+ <gustavo@embeddedor.com>, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+ Tariq Toukan <tariqt@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+ linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+References: <Z6GCJY8G9EzASrwQ@kspp>
+ <4e556977-c7b9-4d37-b874-4f3d60d54429@embeddedor.com>
+ <8d06f07c-5bb4-473d-90af-5f57ce2b068f@gmail.com>
+ <7ce8d318-584f-42c2-b88a-2597acd67029@embeddedor.com>
+ <5f2ca37f-3f6d-44d2-9821-7d6b0655937d@gmail.com>
+ <36ab1f42-b492-497f-a1dc-34631f594da6@lunn.ch>
+ <59b075bc-f6e6-42f0-bc01-c8921922299d@gmail.com>
+ <20250218131345.6bd558cb@kernel.org>
+ <99543a40-2a57-4c10-8876-cde08cb15199@gmail.com>
+ <20250219174629.4791c1e9@kernel.org>
+Content-Language: en-US
+From: Tariq Toukan <ttoukan.linux@gmail.com>
+In-Reply-To: <20250219174629.4791c1e9@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-KVM allows VMMs to specify the maximum possible APIC ID for a virtual
-machine through KVM_CAP_MAX_VCPU_ID capability so as to limit data
-structures related to APIC/x2APIC. Utilize the same to set the AVIC
-physical max index in the VMCB, similar to VMX. This helps hardware
-limit the number of entries to be scanned in the physical APIC ID table
-speeding up IPI broadcasts for virtual machines with smaller number of
-vcpus.
 
-The minimum allocation required for the Physical APIC ID table is one 4k
-page supporting up to 512 entries. With AVIC support for 4096 vcpus
-though, it is sufficient to only allocate memory to accommodate the
-AVIC physical max index that will be programmed into the VMCB. Limit
-memory allocated for the Physical APIC ID table accordingly.
 
-Signed-off-by: Naveen N Rao (AMD) <naveen@kernel.org>
----
- arch/x86/kvm/svm/avic.c | 53 ++++++++++++++++++++++++++++++-----------
- arch/x86/kvm/svm/svm.c  |  6 +++++
- arch/x86/kvm/svm/svm.h  |  1 +
- 3 files changed, 46 insertions(+), 14 deletions(-)
+On 20/02/2025 3:46, Jakub Kicinski wrote:
+> On Wed, 19 Feb 2025 14:14:35 +0200 Tariq Toukan wrote:
+>> On 18/02/2025 23:13, Jakub Kicinski wrote:
+>>> On Tue, 18 Feb 2025 17:53:14 +0200 Tariq Toukan wrote:
+>>>> Maybe it wasn't clear enough.
+>>>> We prefer the original patch, and provided the Reviewed-by tag for it.
+>>>
+>>> Can you explain what do you mean by "cleaner"?
+>>> I like the alternative much more.
+>>
+>> Cleaner in the sense that it doesn't touch existing code in en_rx.c
+>> (datapath), and has shorter dereferences for the inner umr_wqe fields, like:
+>> umr_wqe->ctrl
+>> vs.
+>> umr_wqe->hdr.ctrl
+> 
+> IMO that's minor, not sufficient to justify struct_group_tagged()
 
-diff --git a/arch/x86/kvm/svm/avic.c b/arch/x86/kvm/svm/avic.c
-index 1fb322d2ac18..dac4a6648919 100644
---- a/arch/x86/kvm/svm/avic.c
-+++ b/arch/x86/kvm/svm/avic.c
-@@ -85,6 +85,17 @@ struct amd_svm_iommu_ir {
- 	void *data;		/* Storing pointer to struct amd_ir_data */
- };
- 
-+static inline u32 avic_get_max_physical_id(struct kvm *kvm, bool is_x2apic)
-+{
-+	u32 avic_max_physical_id = is_x2apic ? x2avic_max_physical_id : AVIC_MAX_PHYSICAL_ID;
-+
-+	/*
-+	 * Assume vcpu_id is the same as APIC ID. Per KVM_CAP_MAX_VCPU_ID, max_vcpu_ids
-+	 * represents the max APIC ID for this vm, rather than the max vcpus.
-+	 */
-+	return min(kvm->arch.max_vcpu_ids - 1, avic_max_physical_id);
-+}
-+
- static void avic_activate_vmcb(struct vcpu_svm *svm)
- {
- 	struct vmcb *vmcb = svm->vmcb01.ptr;
-@@ -103,7 +114,7 @@ static void avic_activate_vmcb(struct vcpu_svm *svm)
- 	 */
- 	if (x2avic_enabled && apic_x2apic_mode(svm->vcpu.arch.apic)) {
- 		vmcb->control.int_ctl |= X2APIC_MODE_MASK;
--		vmcb->control.avic_physical_id |= x2avic_max_physical_id;
-+		vmcb->control.avic_physical_id |= avic_get_max_physical_id(svm->vcpu.kvm, true);
- 		/* Disabling MSR intercept for x2APIC registers */
- 		svm_set_x2apic_msr_interception(svm, false);
- 	} else {
-@@ -114,7 +125,7 @@ static void avic_activate_vmcb(struct vcpu_svm *svm)
- 		kvm_make_request(KVM_REQ_TLB_FLUSH_CURRENT, &svm->vcpu);
- 
- 		/* For xAVIC and hybrid-xAVIC modes */
--		vmcb->control.avic_physical_id |= AVIC_MAX_PHYSICAL_ID;
-+		vmcb->control.avic_physical_id |= avic_get_max_physical_id(svm->vcpu.kvm, false);
- 		/* Enabling MSR intercept for x2APIC registers */
- 		svm_set_x2apic_msr_interception(svm, true);
- 	}
-@@ -174,6 +185,12 @@ int avic_ga_log_notifier(u32 ga_tag)
- 	return 0;
- }
- 
-+static inline int avic_get_physical_id_table_order(struct kvm *kvm)
-+{
-+	/* Limit to the maximum physical ID supported in x2avic mode */
-+	return get_order((avic_get_max_physical_id(kvm, true) + 1) * sizeof(u64));
-+}
-+
- void avic_vm_destroy(struct kvm *kvm)
- {
- 	unsigned long flags;
-@@ -186,7 +203,7 @@ void avic_vm_destroy(struct kvm *kvm)
- 		__free_page(kvm_svm->avic_logical_id_table_page);
- 	if (kvm_svm->avic_physical_id_table_page)
- 		__free_pages(kvm_svm->avic_physical_id_table_page,
--			     get_order(sizeof(u64) * (x2avic_max_physical_id + 1)));
-+			     avic_get_physical_id_table_order(kvm));
- 
- 	spin_lock_irqsave(&svm_vm_data_hash_lock, flags);
- 	hash_del(&kvm_svm->hnode);
-@@ -199,22 +216,12 @@ int avic_vm_init(struct kvm *kvm)
- 	int err = -ENOMEM;
- 	struct kvm_svm *kvm_svm = to_kvm_svm(kvm);
- 	struct kvm_svm *k2;
--	struct page *p_page;
- 	struct page *l_page;
--	u32 vm_id, entries;
-+	u32 vm_id;
- 
- 	if (!enable_apicv)
- 		return 0;
- 
--	/* Allocating physical APIC ID table */
--	entries = x2avic_max_physical_id + 1;
--	p_page = alloc_pages(GFP_KERNEL_ACCOUNT | __GFP_ZERO,
--			     get_order(sizeof(u64) * entries));
--	if (!p_page)
--		goto free_avic;
--
--	kvm_svm->avic_physical_id_table_page = p_page;
--
- 	/* Allocating logical APIC ID table (4KB) */
- 	l_page = alloc_page(GFP_KERNEL_ACCOUNT | __GFP_ZERO);
- 	if (!l_page)
-@@ -265,6 +272,24 @@ void avic_init_vmcb(struct vcpu_svm *svm, struct vmcb *vmcb)
- 		avic_deactivate_vmcb(svm);
- }
- 
-+int avic_alloc_physical_id_table(struct kvm *kvm)
-+{
-+	struct kvm_svm *kvm_svm = to_kvm_svm(kvm);
-+	struct page *p_page;
-+
-+	if (kvm_svm->avic_physical_id_table_page || !enable_apicv || !irqchip_in_kernel(kvm))
-+		return 0;
-+
-+	p_page = alloc_pages(GFP_KERNEL_ACCOUNT | __GFP_ZERO,
-+			     avic_get_physical_id_table_order(kvm));
-+	if (!p_page)
-+		return -ENOMEM;
-+
-+	kvm_svm->avic_physical_id_table_page = p_page;
-+
-+	return 0;
-+}
-+
- static u64 *avic_get_physical_id_entry(struct kvm_vcpu *vcpu,
- 				       unsigned int index)
- {
-diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index b8aa0f36850f..3cb23298cdc3 100644
---- a/arch/x86/kvm/svm/svm.c
-+++ b/arch/x86/kvm/svm/svm.c
-@@ -1423,6 +1423,11 @@ void svm_switch_vmcb(struct vcpu_svm *svm, struct kvm_vmcb_info *target_vmcb)
- 	svm->vmcb = target_vmcb->ptr;
- }
- 
-+static int svm_vcpu_precreate(struct kvm *kvm)
-+{
-+	return avic_alloc_physical_id_table(kvm);
-+}
-+
- static int svm_vcpu_create(struct kvm_vcpu *vcpu)
- {
- 	struct vcpu_svm *svm;
-@@ -5007,6 +5012,7 @@ static struct kvm_x86_ops svm_x86_ops __initdata = {
- 	.emergency_disable_virtualization_cpu = svm_emergency_disable_virtualization_cpu,
- 	.has_emulated_msr = svm_has_emulated_msr,
- 
-+	.vcpu_precreate = svm_vcpu_precreate,
- 	.vcpu_create = svm_vcpu_create,
- 	.vcpu_free = svm_vcpu_free,
- 	.vcpu_reset = svm_vcpu_reset,
-diff --git a/arch/x86/kvm/svm/svm.h b/arch/x86/kvm/svm/svm.h
-index 5b159f017055..b4670afe0034 100644
---- a/arch/x86/kvm/svm/svm.h
-+++ b/arch/x86/kvm/svm/svm.h
-@@ -694,6 +694,7 @@ bool avic_hardware_setup(void);
- int avic_ga_log_notifier(u32 ga_tag);
- void avic_vm_destroy(struct kvm *kvm);
- int avic_vm_init(struct kvm *kvm);
-+int avic_alloc_physical_id_table(struct kvm *kvm);
- void avic_init_vmcb(struct vcpu_svm *svm, struct vmcb *vmcb);
- int avic_incomplete_ipi_interception(struct kvm_vcpu *vcpu);
- int avic_unaccelerated_access_interception(struct kvm_vcpu *vcpu);
--- 
-2.48.1
-
+No strong preference. I can accept both.
 
