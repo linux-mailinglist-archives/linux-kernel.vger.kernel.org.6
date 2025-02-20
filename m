@@ -1,82 +1,95 @@
-Return-Path: <linux-kernel+bounces-524830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2A36A3E799
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:36:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2E43A3E79A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:37:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E45377A9F67
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:35:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC95D19C46D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:37:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B36FD264F81;
-	Thu, 20 Feb 2025 22:36:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A32E1214801;
+	Thu, 20 Feb 2025 22:37:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FDyKg2pu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="llI1Gf7i"
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E99A1EC01F;
-	Thu, 20 Feb 2025 22:36:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 744931E9B35
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 22:37:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740090971; cv=none; b=V50qxolcWR9vZ9/EJ/JF0xQMlM/C1b4ZD+Y+ldJpGTn9KuZswzVRonYP6pJClRFnL8OuDWeq+Jn5BKo8IlcECjNS6904J/WSi6p3yTidOnBnhbaLQP9U94Hb2IP9YcNrXxaClH7VYw3eeiX4GBc0QsEb+L+Pr/ZL6eJ7dDt52K8=
+	t=1740091048; cv=none; b=JjvQS8Umr31CbOLNueBQK4AuyYkH2g4bYpob+0OeetjUpW9PZ2atu/dcbELLfiHSNUdQ4ZQzv86EWfqAXZFdH2wh5wFdfjAsxxaigqu9kUFU0ufmAG2hqWEUfdfQ+HTnIO4naM8lIzAAusLLH/08YOPOiwe5KBlfuxxwCiEMdZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740090971; c=relaxed/simple;
-	bh=NxbLe0M3BChvVfjcttKakBoKBCdnuodr8JnG2bwAuVg=;
+	s=arc-20240116; t=1740091048; c=relaxed/simple;
+	bh=aeh7OcMPYkl6w3gYelF2VL8aafx+DdFmxv2lt96VTxM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XEf3eczDy9KPOn5TO6coA9EaD9Oojv3TEzZP2AqrcqK9f+h4Xm9fHqbbta9Mdabg3SngwnpuRLMhXdWpYpXuui0F97MEE7O36TKCuf6LWtE3A1Z5KU2Wsr+PIl0x26QzdfBLTyb82jMh90Q7hOrF+rXNny7r1kn6VkyBxCtVCBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FDyKg2pu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1158C4CED1;
-	Thu, 20 Feb 2025 22:36:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740090970;
-	bh=NxbLe0M3BChvVfjcttKakBoKBCdnuodr8JnG2bwAuVg=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=FDyKg2puhExOStHHCGZfQvF0OJ5i0wDNvhiSU1ndTj99/u1ULIkxjmxbhBkJbKSPD
-	 DIv1SBe9o77eIDEzgn1JThcHqDtktta6Ru/UtZHcqvgXwOV94od+7Hn+SrwX8anFiX
-	 ZL7XJk3OuMQs0CgHiB/Uiuck2W61xST6SIdHayOxjuxVdSoZcVZ08MwmY+mPAr8ToV
-	 rxscLQPcKml/GHQ3u9DY7PBkw/dIjdGpm481LCCt+wHTMwDWccSrTNV3j1Lh7/KH30
-	 BtTl89zqMsHO3OUFvWhEi5aAaPOs0fdqRPxXPbGJMMsdjYs3baERWvUBNDMfTOXxcM
-	 qnVeMw3xfmLow==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 5E986CE0B34; Thu, 20 Feb 2025 14:36:10 -0800 (PST)
-Date: Thu, 20 Feb 2025 14:36:10 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Marco Elver <elver@google.com>
-Cc: Alexander Potapenko <glider@google.com>,
-	Bart Van Assche <bvanassche@acm.org>,
-	Bill Wendling <morbo@google.com>, Boqun Feng <boqun.feng@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ingo Molnar <mingo@kernel.org>, Jann Horn <jannh@google.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
-	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, rcu@vger.kernel.org,
-	linux-crypto@vger.kernel.org
-Subject: Re: [PATCH RFC 15/24] rcu: Support Clang's capability analysis
-Message-ID: <3f255ebb-80ca-4073-9d15-fa814d0d7528@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20250206181711.1902989-1-elver@google.com>
- <20250206181711.1902989-16-elver@google.com>
- <a1483cb1-13a5-4d6e-87b0-fda5f66b0817@paulmck-laptop>
- <CANpmjNOPiZ=h69V207AfcvWOB=Q+6QWzBKoKk1qTPVdfKsDQDw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BCF6KemYANnRKg5QPDvefTvfnRfrZuJffT2WlvZkvq1mGIaL6rPUDg362XEtYh4SYJG3rQ/khRKwV2J+6Oar92MTziXQcWtpEH5DQQxk3+v0j0VJ0a1aPGZ0q88RTQu38Zh5cdv6BSft+bYhT/lsr5hQs7sDvSzyFnuDS9Dsr3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=llI1Gf7i; arc=none smtp.client-ip=209.85.219.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6e67ce516efso12192376d6.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 14:37:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1740091044; x=1740695844; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QQeLa18sMIqd5ll6IHo4VMf9DcsVrnxNmwvubrqEs9g=;
+        b=llI1Gf7i+lHse5kAtp1LtvDP8gMrgv63inxXM9aMc7IH4Bn4s5KhSxvXOU+0mOYVsp
+         Gtq1IBaNYhd88+UtI/jQlX0e+GsU+GdDvQprPB/Kg9ME1t0AlL3jTLDMjuMULg70IQOo
+         YREGIb+6X80bi/5FZ2mBFDQiFcNKzOuqjzBxGP+hIQ+XaB6IYhaMG66Ld9bd7pL8o7mQ
+         fp2XeSgS7RoWjcYjSlNG1a0y9mwxn1RgxPhz9+SRsXt6d5XPsJ1oKQ6UMsmuo4Cf2eDM
+         1OaijywKPWSeaGkZIS8vyBML2fmoX+vCoOOlJD+fhxrGQhcDx7SpmY3MxwQxWMr6gGSL
+         QOoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740091044; x=1740695844;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QQeLa18sMIqd5ll6IHo4VMf9DcsVrnxNmwvubrqEs9g=;
+        b=HzZvHxbHEqRjF3UErY8BLuO9EiNVrLDLR5UHuVoJjjVCOdoSdcZYI9CIW8BHacDhhL
+         ovO89quuLwYTop1NNIEu8c+L6401I9BdonrQYxO3AsvXHXdI29VqoLfCI1pvctyJpJjK
+         9EdCrbwmb8H4XFwLv3DpNMC4mTADTz/iQ6nu8e18MLuwqKn1MWoYMqvI//irGDjAkKTk
+         JRpjusK5UrR1fpokfdzKH3vPLOjcFnAnIr6wKtS93vBw0E2CyyN35tS+CEQwKc5qYcb/
+         MEXwyl/W95WBZfgpyAl4IMheRBDoC++JAgUfFNywlsPPi5zvousKWOeTBX14kuMvjdut
+         mbOg==
+X-Forwarded-Encrypted: i=1; AJvYcCXDPs+JulUMvL3+JUT6mbHzEcKdOogfR/yU/0tPxbKDpHlqQGmm9cTTC/qg1W9mo1aits/IBnsciicTmGk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmvxX/f17Lc4q7JeKuDrR4zBdYLv97swS/YZPlQAfVOLr0HICf
+	+5AOpoIkC40AvLqDwWVSJRCWqwJaMisjLlLUOX5BK0w8ePIOqxL8Fupxx5wNKbU=
+X-Gm-Gg: ASbGncus1x4RLXYmh5RmO6dYre/iocvVWJqegYMNKJLYaaDKjV1UZ+0mOsG84UAvgBS
+	tGdqSnzUxrrxxUYFwAnYgRh0CN83aa/DfspT0o3+kDegyiWfUOcsvWoPQeEpglagqz6JWo72ofI
+	ryhQIKcBb3aQSiwlojMq5H5eyFsJHQNzyH5m6S796UN4n/ua31eerogv88LkC8vgSS1QZTzZrgT
+	P9pygj9GWf/zgVwVarXJuetLonCwvlE3QlHyRbfwMWsGIdGkxGkumVM23pdOIFfHka0Wzkk9Rfm
+	/DNUWzsVSc3iPQibMtkB+dOV4fssSDg3lht6ARJHFMHqa1oSkqYY5hAvCvcvZzJh8gwUn0/4lg=
+	=
+X-Google-Smtp-Source: AGHT+IGkX1BVkOFxcGXRzhZIaESN8QXQksTx19whpdhUSusCfTIWV5/fyiIBR4vnjNYznVFgbP5DUw==
+X-Received: by 2002:a05:6214:5190:b0:6e6:6240:afb with SMTP id 6a1803df08f44-6e6ae7c9e48mr14916666d6.3.1740091044308;
+        Thu, 20 Feb 2025 14:37:24 -0800 (PST)
+Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e65d7a4430sm90953856d6.65.2025.02.20.14.37.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 14:37:23 -0800 (PST)
+Date: Thu, 20 Feb 2025 17:37:22 -0500
+From: Gregory Price <gourry@gourry.net>
+To: Dave Jiang <dave.jiang@intel.com>
+Cc: Robert Richter <rrichter@amd.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Davidlohr Bueso <dave@stgolabs.net>, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
+	Terry Bowman <terry.bowman@amd.com>
+Subject: Re: [PATCH v2 05/15] cxl/region: Calculate and store the SPA range
+ of an endpoint
+Message-ID: <Z7euop4i-6orzTMU@gourry-fedora-PF4VCD3F>
+References: <20250218132356.1809075-1-rrichter@amd.com>
+ <20250218132356.1809075-6-rrichter@amd.com>
+ <af32c954-76a4-4328-a016-62248dd68815@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,57 +98,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CANpmjNOPiZ=h69V207AfcvWOB=Q+6QWzBKoKk1qTPVdfKsDQDw@mail.gmail.com>
+In-Reply-To: <af32c954-76a4-4328-a016-62248dd68815@intel.com>
 
-On Thu, Feb 20, 2025 at 11:11:04PM +0100, Marco Elver wrote:
-> On Thu, 20 Feb 2025 at 23:00, Paul E. McKenney <paulmck@kernel.org> wrote:
-> >
-> > On Thu, Feb 06, 2025 at 07:10:09PM +0100, Marco Elver wrote:
-> > > Improve the existing annotations to properly support Clang's capability
-> > > analysis.
-> > >
-> > > The old annotations distinguished between RCU, RCU_BH, and RCU_SCHED.
-> > > However, it does not make sense to acquire rcu_read_lock_bh() after
-> > > rcu_read_lock() - annotate the _bh() and _sched() variants to also
-> > > acquire 'RCU', so that Clang (and also Sparse) can warn about it.
-> >
-> > You lost me on this one.  What breaks if rcu_read_lock_bh() is invoked
-> > while rcu_read_lock() is in effect?
+On Thu, Feb 20, 2025 at 03:31:45PM -0700, Dave Jiang wrote:
+> >  	for (iter = cxled_to_port(cxled); pos >= 0 && iter;
+> >  	     iter = parent_port_of(iter))
+> >  		pos = cxl_port_calc_interleave(iter, &ctx);
+> > @@ -3262,7 +3305,8 @@ static int cxl_endpoint_decoder_initialize(struct cxl_endpoint_decoder *cxled)
+> >  {
+> >  	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
+> >  	struct cxl_port *iter = cxled_to_port(cxled);
+> > -	struct cxl_decoder *root, *cxld = &cxled->cxld;
+> > +	struct cxl_port *parent = parent_port_of(iter);
+> > +	struct cxl_decoder *cxld = &cxled->cxld;
+> >  	struct range hpa = cxld->hpa_range;
+> >  	struct cxl_interleave_context ctx;
+> >  	int rc;
+> > @@ -3271,25 +3315,33 @@ static int cxl_endpoint_decoder_initialize(struct cxl_endpoint_decoder *cxled)
+> >  		.hpa_range = &hpa,
+> >  	};
+> >  
+> > -	while (iter && !is_cxl_root(iter)) {
+> > +	if (!iter || !parent)
 > 
-> I thought something like this does not make sense:
+> While parent_port_of() will check NULL and return NULL, it just seems icky checking the pointer after use.
 > 
->   rcu_read_lock_bh();
->   ..
->   rcu_read_lock();
->   ..
->   rcu_read_unlock();
->   ..
->   rcu_read_unlock_bh();
 
-If you have the choice, it is often better to do the rcu_read_lock()
-first and the rcu_read_lock_bh() second.
+I briefly had the same thought and dug into parent_port_of, erred on the
+side of "How many places is cxl_endpoint_decoder_initialize going to be
+called?" - but you're probably right, we probably should do the null
+check if only for style. 
 
-> However, the inverse may well be something we might find somewhere in
-> the kernel?
-
-Suppose that one function walks an RCU-protected list, calling some
-function from some other subsystem on each element.  Suppose that each
-element has another RCU protected list.
-
-It would be good if the two subsystems could just choose their desired
-flavor of RCU reader, without having to know about each other.
-
-> Another problem was that if we want to indicate that "RCU" read lock
-> is held, then we should just be able to write
-> "__must_hold_shared(RCU)", and it shouldn't matter if rcu_read_lock()
-> or rcu_read_lock_bh() was used. Previously each of them acquired their
-> own capability "RCU" and "RCU_BH" respectively. But rather, we're
-> dealing with one acquiring a superset of the other, and expressing
-> that is also what I attempted to solve.
-> Let me rethink this...
-
-Would it work to have just one sort of RCU reader, relying on a separate
-BH-disable capability for the additional semantics of rcu_read_lock_bh()?
-
-							Thanx, Paul
+~Gregory
 
