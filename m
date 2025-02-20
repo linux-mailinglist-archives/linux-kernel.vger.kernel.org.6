@@ -1,239 +1,152 @@
-Return-Path: <linux-kernel+bounces-524354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16301A3E210
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:17:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 215A9A3E212
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:18:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4A18175057
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:14:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6380D4232B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:15:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EC3A22A7E8;
-	Thu, 20 Feb 2025 17:06:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70DAB213220;
+	Thu, 20 Feb 2025 17:08:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dtEWnFbR"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W/213mEP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF6E229B2E
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 17:06:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C18CD1E0B66;
+	Thu, 20 Feb 2025 17:08:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740071218; cv=none; b=PKgwIx3wOUWigZi+RZLSn1PIuE96GUJq+s2J1arbBhgQAZlzo7z5nawJBKiiYF01aSV20C/2hEkFqNfuPDvy8E4UxbnqLDb7VfkxcUHn1vPFIHQ14yLrKsCyjJte5hljhLfw9qxyVJu8Z3ilZoiGK99TcdAj0nK84cuKW/JJhk0=
+	t=1740071301; cv=none; b=gnEeBt5telSgC8rTA/hfJ/ytpFkfOuP0j0Jl19ZU2Ex8bqlWAMisGMuNoACDUQJX/MLBTVdFyFDA3pjuNxovs4SsBC0FQOcxeunOo4v5xZdotf34vU/h46PuZX1F6ElQyQL5V57VixFrE1Ysb+SqzXMSEpYs0YUgDodTs4z6dXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740071218; c=relaxed/simple;
-	bh=zwW1fa4b2WOaXd0TSba/wk7mWtshg3WgjRIrZ7ypJmE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sip+iEqlp6h9I79WNYrlBirUMAtRtvCYnaI7iHtBCVedpLNJfedJ6/T0Zq1eiCkrN2H8VzsFNz6076ryr4aJh7A7iA5X1hDHyuYhffv0E9mNNtLqLIZ7gGYVcWgJdfT7V4YjiBNqrytl4LkCfxTINgjUXrrbYX07LQPu5w2U9Kc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dtEWnFbR; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740071215;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9A7fliY0YRXdz2jG0qB4m1rYmz3YhV2HEkf3OmiphRo=;
-	b=dtEWnFbRuaBmU08enQ5aIHd2PC4/2kXb83W6x1VEljudM7Dhq9/0wM6I48U5IothQpSofw
-	6siFYLA2GDtPNgEMdLK5tNCmegmp9O7LwfbXRBBP+f0L5bp2z2EvumOdpkjEglqB4o0WBE
-	/g8R52LIY27ch/myx3j97E18Whj5y0I=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-313-_gPyy4IXOjSlbdXdp0wBig-1; Thu,
- 20 Feb 2025 12:06:52 -0500
-X-MC-Unique: _gPyy4IXOjSlbdXdp0wBig-1
-X-Mimecast-MFC-AGG-ID: _gPyy4IXOjSlbdXdp0wBig_1740071211
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 08DB01800982;
-	Thu, 20 Feb 2025 17:06:51 +0000 (UTC)
-Received: from virtlab1023.lab.eng.rdu2.redhat.com (virtlab1023.lab.eng.rdu2.redhat.com [10.8.1.187])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E9F6C180087E;
-	Thu, 20 Feb 2025 17:06:49 +0000 (UTC)
-From: Paolo Bonzini <pbonzini@redhat.com>
-To: linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org
-Cc: seanjc@google.com,
-	Yan Zhao <yan.y.zhao@intel.com>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Zhiming Hu <zhiming.hu@intel.com>,
-	Isaku Yamahata <isaku.yamahata@intel.com>
-Subject: [PATCH 30/30] KVM: TDX: Register TDX host key IDs to cgroup misc controller
-Date: Thu, 20 Feb 2025 12:06:04 -0500
-Message-ID: <20250220170604.2279312-31-pbonzini@redhat.com>
-In-Reply-To: <20250220170604.2279312-1-pbonzini@redhat.com>
-References: <20250220170604.2279312-1-pbonzini@redhat.com>
+	s=arc-20240116; t=1740071301; c=relaxed/simple;
+	bh=zlAXRsJeJIm22gl5gl92JVR7nBolZAa4T8bMv6g+yE0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mvuawHdtmGODIbG+Kbt5cVph4btx8FRZKFGHKSJzi5NTgg5dmPTYW1TjKqYpVlxBjNEO3O1Y4snFTmRCPMUXzOSqWRit0Vg3R1JtuvpkyDuVDl6+nhwjIakhHdv/xzfl/REACsBg4Sup2Vy89cqwlpN1BktO/v4qL8XnKs0tLPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W/213mEP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E869C4CED1;
+	Thu, 20 Feb 2025 17:08:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740071301;
+	bh=zlAXRsJeJIm22gl5gl92JVR7nBolZAa4T8bMv6g+yE0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=W/213mEPCMdWwJbimZg3N/GiPzMA6A5uG7RTBiKkmfI5lseq78POsQdNmEwqhmHkr
+	 fgjfqJtips7gSJp1OxBYUPljXrtpEw9ntElkrOf37zRvI8B7/1kiFNFLtXcyZx2CCW
+	 fTwI3sf+9lLv+rrGsOj40w2c2paMDZfCXnCgMdn4WXJhNvOKtauVz1/E11X0l27JKS
+	 DHbtfauSLsQLRdqk21t7MKO/halXwSf2dz5PWHXVkFM/75giHmiWSD3N9A3J4YAHe4
+	 WsEm4KjkZHvaVVSo+JCGLVRjgtul/IOkunYchzceAwwULy/sjg1MXCLNIB9t/+fpMo
+	 RqsA3Zcb+Hu3w==
+Date: Thu, 20 Feb 2025 17:08:15 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Paul Menzel <pmenzel@molgen.mpg.de>
+Cc: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>, marcel@holtmann.org,
+	luiz.dentz@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
+	Conor Dooley <conor+dt@kernel.org>, linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	Amitkumar Karwar <amitkumar.karwar@nxp.com>,
+	Sherry Sun <sherry.sun@nxp.com>, Luke Wang <ziniu.wang_1@nxp.com>,
+	johan.korsnes@remarkable.no, kristian.krohn@remarkable.no,
+	Manjeet Gupta <manjeet.gupta@nxp.com>
+Subject: Re: [PATCH v5 1/2] dt-bindings: net: bluetooth: nxp: Add support to
+ set BD address
+Message-ID: <20250220-oversweet-dominoes-1661eca0c96c@spud>
+References: <20250220114157.232997-1-neeraj.sanjaykale@nxp.com>
+ <184919f9-25bd-4f65-9ed9-dc452a6f4418@molgen.mpg.de>
+ <AS4PR04MB96921164DAA8A63B2C0841AAE7C42@AS4PR04MB9692.eurprd04.prod.outlook.com>
+ <0e5f23a9-b1d7-4d8c-bb05-83f7a15a7285@molgen.mpg.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ZONTg+LTYUZHcXVT"
+Content-Disposition: inline
+In-Reply-To: <0e5f23a9-b1d7-4d8c-bb05-83f7a15a7285@molgen.mpg.de>
 
-From: Zhiming Hu <zhiming.hu@intel.com>
 
-TDX host key IDs (HKID) are limit resources in a machine, and the misc
-cgroup lets the machine owner track their usage and limits the possibility
-of abusing them outside the owner's control.
+--ZONTg+LTYUZHcXVT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The cgroup v2 miscellaneous subsystem was introduced to control the
-resource of AMD SEV & SEV-ES ASIDs.  Likewise introduce HKIDs as a misc
-resource.
+On Thu, Feb 20, 2025 at 01:11:41PM +0100, Paul Menzel wrote:
+> Dear Neeraj,
+>=20
+>=20
+> Thank you for your prompt reply.
+>=20
+> Am 20.02.25 um 12:59 schrieb Neeraj Sanjay Kale:
+>=20
+> > > Am 20.02.25 um 12:41 schrieb Neeraj Sanjay Kale:
+> > > > Allow user to set custom BD address for NXP chipsets.
+> > > >=20
+> > > > Signed-off-by: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+> > > > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> > > > ---
+> > > > v2: Add allOf and unevaluatedProperties: false (Krzysztof)
+> > > > v3: Drop local-bd-address: true (Krzysztof)
+> > > > ---
+> > > >    .../devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml   | 6 =
++++++-
+> > > >    1 file changed, 5 insertions(+), 1 deletion(-)
+> > > >=20
+> > > > diff --git
+> > > a/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml
+> > > b/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml
+> > > > index 0a2d7baf5db3..a84c1c21b024 100644
+> > > > --- a/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-b=
+t.yaml
+> > > > +++ b/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-b=
+t.yaml
+> > > > @@ -17,6 +17,9 @@ description:
+> > > >    maintainers:
+> > > >      - Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+> > > >=20
+> > > > +allOf:
+> > > > +  - $ref: bluetooth-controller.yaml#
+> > > > +
+> > > >    properties:
+> > > >      compatible:
+> > > >        enum:
+> > > > @@ -43,7 +46,7 @@ properties:
+> > > >    required:
+> > > >      - compatible
+> > > >=20
+> > > > -additionalProperties: false
+> > > > +unevaluatedProperties: false
+> > >=20
+> > > How is this diff related to the change mentioned in the commit messag=
+e?
+> >=20
+> > This is based on review comment from Krzysztof in V1 DT patch.
+> > allOf ref will import all properties defined in bluetooth-controller.ya=
+ml, including local-bd-address:
+> > https://github.com/torvalds/linux/blob/master/Documentation/devicetree/=
+bindings/net/bluetooth/bluetooth-controller.yaml#L18
+>=20
+> Thank you. I=E2=80=99d include this in the commit message, but my comment=
+ was about
+> the replacement of `additionalProperties` by `unevaluatedProperties`.
 
-Signed-off-by: Zhiming Hu <zhiming.hu@intel.com>
-Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
----
- arch/x86/include/asm/tdx.h  |  2 ++
- arch/x86/kvm/vmx/tdx.c      | 14 ++++++++++++++
- arch/x86/kvm/vmx/tdx.h      |  1 +
- arch/x86/virt/vmx/tdx/tdx.c |  6 ++++++
- include/linux/misc_cgroup.h |  4 ++++
- kernel/cgroup/misc.c        |  4 ++++
- 6 files changed, 31 insertions(+)
+The change is needed to permit the property defined in
+bluetooth-controller.yaml to be used.
 
-diff --git a/arch/x86/include/asm/tdx.h b/arch/x86/include/asm/tdx.h
-index 52a21075c0a6..7dd71ca3eb57 100644
---- a/arch/x86/include/asm/tdx.h
-+++ b/arch/x86/include/asm/tdx.h
-@@ -124,6 +124,7 @@ const char *tdx_dump_mce_info(struct mce *m);
- const struct tdx_sys_info *tdx_get_sysinfo(void);
- 
- int tdx_guest_keyid_alloc(void);
-+u32 tdx_get_nr_guest_keyids(void);
- void tdx_guest_keyid_free(unsigned int keyid);
- 
- struct tdx_td {
-@@ -179,6 +180,7 @@ u64 tdh_phymem_page_wbinvd_tdr(struct tdx_td *td);
- static inline void tdx_init(void) { }
- static inline int tdx_cpu_enable(void) { return -ENODEV; }
- static inline int tdx_enable(void)  { return -ENODEV; }
-+static u32 tdx_get_nr_guest_keyids(void) { return 0; }
- static inline const char *tdx_dump_mce_info(struct mce *m) { return NULL; }
- static inline const struct tdx_sys_info *tdx_get_sysinfo(void) { return NULL; }
- #endif	/* CONFIG_INTEL_TDX_HOST */
-diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-index 1c88f577ec2b..a2355eed8f5a 100644
---- a/arch/x86/kvm/vmx/tdx.c
-+++ b/arch/x86/kvm/vmx/tdx.c
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- #include <linux/cpu.h>
- #include <asm/cpufeature.h>
-+#include <linux/misc_cgroup.h>
- #include <asm/tdx.h>
- #include "capabilities.h"
- #include "mmu.h"
-@@ -143,6 +144,9 @@ static inline void tdx_hkid_free(struct kvm_tdx *kvm_tdx)
- 	tdx_guest_keyid_free(kvm_tdx->hkid);
- 	kvm_tdx->hkid = -1;
- 	atomic_dec(&nr_configured_hkid);
-+	misc_cg_uncharge(MISC_CG_RES_TDX, kvm_tdx->misc_cg, 1);
-+	put_misc_cg(kvm_tdx->misc_cg);
-+	kvm_tdx->misc_cg = NULL;
- }
- 
- static inline bool is_hkid_assigned(struct kvm_tdx *kvm_tdx)
-@@ -684,6 +688,10 @@ static int __tdx_td_init(struct kvm *kvm, struct td_params *td_params,
- 	if (ret < 0)
- 		return ret;
- 	kvm_tdx->hkid = ret;
-+	kvm_tdx->misc_cg = get_current_misc_cg();
-+	ret = misc_cg_try_charge(MISC_CG_RES_TDX, kvm_tdx->misc_cg, 1);
-+	if (ret)
-+		goto free_hkid;
- 
- 	ret = -ENOMEM;
- 
-@@ -1465,6 +1473,11 @@ static int __init __tdx_bringup(void)
- 		goto get_sysinfo_err;
- 	}
- 
-+	if (misc_cg_set_capacity(MISC_CG_RES_TDX, tdx_get_nr_guest_keyids())) {
-+		r = -EINVAL;
-+		goto get_sysinfo_err;
-+	}
-+
- 	/*
- 	 * Leave hardware virtualization enabled after TDX is enabled
- 	 * successfully.  TDX CPU hotplug depends on this.
-@@ -1481,6 +1494,7 @@ static int __init __tdx_bringup(void)
- void tdx_cleanup(void)
- {
- 	if (enable_tdx) {
-+		misc_cg_set_capacity(MISC_CG_RES_TDX, 0);
- 		__do_tdx_cleanup();
- 		kvm_disable_virtualization();
- 	}
-diff --git a/arch/x86/kvm/vmx/tdx.h b/arch/x86/kvm/vmx/tdx.h
-index c3bde94c19dc..5fea072b4f56 100644
---- a/arch/x86/kvm/vmx/tdx.h
-+++ b/arch/x86/kvm/vmx/tdx.h
-@@ -21,6 +21,7 @@ enum kvm_tdx_state {
- struct kvm_tdx {
- 	struct kvm kvm;
- 
-+	struct misc_cg *misc_cg;
- 	int hkid;
- 	enum kvm_tdx_state state;
- 
-diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
-index 9f0c482c1a03..3a272e9ff2ca 100644
---- a/arch/x86/virt/vmx/tdx/tdx.c
-+++ b/arch/x86/virt/vmx/tdx/tdx.c
-@@ -1476,6 +1476,12 @@ const struct tdx_sys_info *tdx_get_sysinfo(void)
- }
- EXPORT_SYMBOL_GPL(tdx_get_sysinfo);
- 
-+u32 tdx_get_nr_guest_keyids(void)
-+{
-+	return tdx_nr_guest_keyids;
-+}
-+EXPORT_SYMBOL_GPL(tdx_get_nr_guest_keyids);
-+
- int tdx_guest_keyid_alloc(void)
- {
- 	return ida_alloc_range(&tdx_guest_keyid_pool, tdx_guest_keyid_start,
-diff --git a/include/linux/misc_cgroup.h b/include/linux/misc_cgroup.h
-index 49eef10c8e59..8c0e4f4d71be 100644
---- a/include/linux/misc_cgroup.h
-+++ b/include/linux/misc_cgroup.h
-@@ -17,6 +17,10 @@ enum misc_res_type {
- 	MISC_CG_RES_SEV,
- 	/** @MISC_CG_RES_SEV_ES: AMD SEV-ES ASIDs resource */
- 	MISC_CG_RES_SEV_ES,
-+#endif
-+#ifdef CONFIG_INTEL_TDX_HOST
-+	/* Intel TDX HKIDs resource */
-+	MISC_CG_RES_TDX,
- #endif
- 	/** @MISC_CG_RES_TYPES: count of enum misc_res_type constants */
- 	MISC_CG_RES_TYPES
-diff --git a/kernel/cgroup/misc.c b/kernel/cgroup/misc.c
-index 0e26068995a6..264aad22c967 100644
---- a/kernel/cgroup/misc.c
-+++ b/kernel/cgroup/misc.c
-@@ -24,6 +24,10 @@ static const char *const misc_res_name[] = {
- 	/* AMD SEV-ES ASIDs resource */
- 	"sev_es",
- #endif
-+#ifdef CONFIG_INTEL_TDX_HOST
-+	/* Intel TDX HKIDs resource */
-+	"tdx",
-+#endif
- };
- 
- /* Root misc cgroup */
--- 
-2.43.5
+--ZONTg+LTYUZHcXVT
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ7dhfwAKCRB4tDGHoIJi
+0qowAQDJqiC9gO011LY1RwVtMuwshi6ln8BiwMUgXiIZWRVH0wD+Mq9pmPDdKqn4
+BOQOd7lVprKNQNq5Hn83ESn4eWMmzAk=
+=FRXl
+-----END PGP SIGNATURE-----
+
+--ZONTg+LTYUZHcXVT--
 
