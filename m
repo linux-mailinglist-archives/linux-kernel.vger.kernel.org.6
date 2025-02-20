@@ -1,166 +1,123 @@
-Return-Path: <linux-kernel+bounces-523571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A048AA3D881
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:26:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A60A4A3D890
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:28:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 691113AD3A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:26:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26EEB168323
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:26:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9FF41FCCF7;
-	Thu, 20 Feb 2025 11:22:51 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B447E1F3BA4;
-	Thu, 20 Feb 2025 11:22:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 705231FCFF5;
+	Thu, 20 Feb 2025 11:23:03 +0000 (UTC)
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4972C1FCF60;
+	Thu, 20 Feb 2025 11:23:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740050571; cv=none; b=IYBQOtViEfi1kzgVrVO1njbKqqpJsf4g8X1BUdGBttViBi6xcbiUoz8+NJEtgaaniY9zAHLB4aw5h01O1Smmn8kJlKxeAUTELXt+yJtD2kQF5MzJG2MegQw+UY7ODnpaj3yOAn/F9Qa9oCjoc7QBOC93W1BK8BgleJbBHRUxxJk=
+	t=1740050583; cv=none; b=Gyv7LF2wnCrl/KauB0Ax3peMEE5AmX586jBuuqFAfqCrp+lIZSoiRj3ihMwsB+qTPFjk/hZnNQQMK6FP6jCSTcuX7M9iSsXy1YsnWkJXjc224qNuyGW5Ab22sZMAisKT4jj5DcpvYFDDYxl5m38ec30HRobR78t1/gX7GHpcyt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740050571; c=relaxed/simple;
-	bh=4sLQ0bJVxX1dx3hT7ZZrtPOfhhCKSRg32U8w5kmhGWo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PnhGv5r58U9hvhBexs75JX0Ll/6GL6oldYm0pCJvnB4w5Qll/nJNxm0EhvPyfvRyQHgwLzn6CS054txfWYG4bM9/J773t+mvwn6x/vbrc2GZhAAwSuGKH40WeFo4xWr+ZEK20BWgELUMt8un2JITA80R3BW8RmAiLGQ47HrxJyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 361AE16F3;
-	Thu, 20 Feb 2025 03:23:07 -0800 (PST)
-Received: from [10.1.35.44] (e127648.arm.com [10.1.35.44])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2E41F3F5A1;
-	Thu, 20 Feb 2025 03:22:47 -0800 (PST)
-Message-ID: <4bdc8cef-60cc-466e-986e-46cf23d96556@arm.com>
-Date: Thu, 20 Feb 2025 11:22:45 +0000
+	s=arc-20240116; t=1740050583; c=relaxed/simple;
+	bh=937swDBv/4tESpJoLAiVpvmztTsdxbMeFlQ3HC4lwKI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OUcv8RGEPjl4qoUXrO4GFMQ3Wy/u+dy2JvuXt/fQOo/NorTx9MKa6SU5PccEVWDOV8dUbeL74lkKsJOrVcoLH5kcTA5PU1j1ovWhvz9zmgDNrxqXHfKFzySMWwBSO1uQFxWnQ9XFuD9tnbJqoVm6f2vj28xZ3LToX5cl3whP+cA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5e0573a84fcso1080559a12.2;
+        Thu, 20 Feb 2025 03:23:00 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740050579; x=1740655379;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XD9odAiTaOoZIvBUhB+j1xV7nylcFW+OianwZ8HY0v8=;
+        b=o5o2vApjkBfAvorVgX+xcBMVBSwdUSFfYHHawyxJYWcIhKRb1kp5wOqt8Xxy0aNvVn
+         vbA5UNFjmWM4gI9vNPNFUKiyqDryQ4mY/6/eRa28ucxExbOCboJNKwgBeZ3edh94NRH2
+         zgJ+y++Jx86WOSi/PgOE7bBHH2my1KP4/MI4t/KW8Rfo7kdS8sp/NpeA72r5ht37zfX3
+         M+8bnX/aOuLdOBTwcGdDY3y77/RrQsWnb9qE9kZf3h3ZrPdtc2PY7k+v2KWmeIcZxQ0i
+         VMPl7FaFW6mXEKJ6Yv/r+QlckmL47Csx7h8hnPe54rBvXvSvjrx+JJyw6KbTCQQSxvDL
+         bk0g==
+X-Forwarded-Encrypted: i=1; AJvYcCU3nKK4JHkdu3X/2yIU2eXzfqa7eX8fEVLf2hDAb6/vAtqcY3A6iOT1bBwJ7Jx0oynyR/j+/OWLMQdpoUs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBNNl66DuXk/s5aTeTM67clyEImGDEHwP8w7XN1HiaU4uu4hEI
+	3qMqTRJmdGcHoUiT2b7vn+OznhrvCeWNZYsBZj9etB6tvM19S3LR
+X-Gm-Gg: ASbGncvYY36ejR1lZLeQhYg17X7/LJla72aL0wlb2Tv6do52/Zb+4qTvIGcBqzhJQNw
+	o+A9DY/i6L/KZLxlfSfzu5v468jV6uh8SIDZW1DOLCvpSUiACuN9GEQbxE61KBUkFsDB8SMh2X4
+	suxxCAapqKKPv36PP1h3NtuKabtLy3d/XaP4/opxQ4esAqjIkX+eS2XOht4niRtiuXcurJxYb/U
+	VjYEAEk+IFahJE7CZLpxUalqL3YoS1giDYLgKrI7qBFX1gWbi7tKBVoC87thsQMeWaGwM5Z+RZb
+	Wcg16A==
+X-Google-Smtp-Source: AGHT+IHT5LXolvtX2+Vm9JGvTxa3pFzLchGGSykVFvDSmRcx7IyyW9y2kALsn2C/3qJ5lwGFuTKviA==
+X-Received: by 2002:a17:907:72c8:b0:ab7:f245:fbc1 with SMTP id a640c23a62f3a-abb7091d9d6mr2190619566b.3.1740050579019;
+        Thu, 20 Feb 2025 03:22:59 -0800 (PST)
+Received: from gmail.com ([2a03:2880:30ff:2::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb9b81aacdsm755900766b.104.2025.02.20.03.22.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 03:22:58 -0800 (PST)
+Date: Thu, 20 Feb 2025 03:22:56 -0800
+From: Breno Leitao <leitao@debian.org>
+To: Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	David Wei <dw@davidwei.uk>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v3] netdevsim: call napi_schedule from a timer
+ context
+Message-ID: <20250220-spotted-obedient-chameleon-2cda9b@leitao>
+References: <20250219-netdevsim-v3-1-811e2b8abc4c@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/6] mmc: core: add undervoltage handler for MMC/eMMC
- devices
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, kernel@pengutronix.de,
- linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Mark Brown <broonie@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- =?UTF-8?Q?S=C3=B8ren_Andersen?= <san@skov.dk>
-References: <20250220074429.2906141-1-o.rempel@pengutronix.de>
- <20250220074429.2906141-5-o.rempel@pengutronix.de>
- <be715535-8931-489f-a2be-50aa6ec423a1@arm.com>
- <Z7cKSuKWOedGVZ5G@pengutronix.de>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <Z7cKSuKWOedGVZ5G@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250219-netdevsim-v3-1-811e2b8abc4c@debian.org>
 
-On 2/20/25 10:56, Oleksij Rempel wrote:
-> On Thu, Feb 20, 2025 at 10:47:01AM +0000, Christian Loehle wrote:
->> On 2/20/25 07:44, Oleksij Rempel wrote:
->>> Introduce _mmc_handle_undervoltage() to handle undervoltage events for
->>> MMC/eMMC devices. This function interrupts ongoing operations using HPI
->>> and performs a controlled suspend. After completing the sequence, the card
->>> is marked as removed to prevent further interactions.
->>>
->>> To support this, introduce __mmc_suspend() and __mmc_resume() as internal
->>> helpers that omit mmc_claim_host()/mmc_release_host(), allowing them to be
->>> called when the host is already claimed. Update mmc_shutdown() to skip the
->>> normal shutdown sequence if the host is flagged as undervoltage to avoid
->>> repeating of the shutdown procedure.
->>
->> "of" can be removed here.
->>
->> Given that this introduces large parts of the mmc handling IMO this commit
->> deserves a lot more explanation of what steps exactly do for which cards
->> and why.
+On Wed, Feb 19, 2025 at 08:41:20AM -0800, Breno Leitao wrote:
+> The netdevsim driver was experiencing NOHZ tick-stop errors during packet
+> transmission due to pending softirq work when calling napi_schedule().
+> This issue was observed when running the netconsole selftest, which
+> triggered the following error message:
 > 
-> ack
+>   NOHZ tick-stop error: local softirq work is pending, handler #08!!!
 > 
->>>
->>> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
->>> ---
->>>  drivers/mmc/core/mmc.c | 81 +++++++++++++++++++++++++++++++++++-------
->>>  1 file changed, 68 insertions(+), 13 deletions(-)
->>>
->>> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
->>> index 86b608843232..e626213e7a52 100644
->>> --- a/drivers/mmc/core/mmc.c
->>> +++ b/drivers/mmc/core/mmc.c
->>> @@ -2104,8 +2104,8 @@ static int _mmc_flush_cache(struct mmc_host *host)
->>>  	return err;
->>>  }
->>>  
->>> -static int _mmc_suspend(struct mmc_host *host, bool is_suspend,
->>> -			bool is_undervoltage)
->>> +static int __mmc_suspend(struct mmc_host *host, bool is_suspend,
->>> +			 bool is_undervoltage)
->>
->> The is_undervoltage doesn't do anything? Did you forget something here?
+> To fix this issue, introduce a timer that schedules napi_schedule()
+> from a timer context instead of calling it directly from the TX path.
 > 
-> This was done in the previous patch "mmc: core: refactor _mmc_suspend()
-> for undervoltage handling"
+> Create an hrtimer for each queue and kick it from the TX path,
+> which then schedules napi_schedule() from the timer context.
+> 
+> Suggested-by: Jakub Kicinski <kuba@kernel.org>
+> Signed-off-by: Breno Leitao <leitao@debian.org>
+> ---
 
-Sorry!
+Looking at the tests, 3 of them are failing:
 
-> 
->>> @@ -2189,6 +2205,9 @@ static int mmc_shutdown(struct mmc_host *host)
->>>  {
->>>  	int err = 0;
->>>  
->>> +	if (host->undervoltage)
->>> +		return 0;
->>> +
->>
->> Probably deserves a comment.
-> 
-> ack
-> 
->>>  	/*
->>>  	 * In a specific case for poweroff notify, we need to resume the card
->>>  	 * before we can shutdown it properly.
->>> @@ -2280,6 +2299,41 @@ static int _mmc_hw_reset(struct mmc_host *host)
->>>  	return mmc_init_card(host, card->ocr, card);
->>>  }
->>>  
->>> +static int _mmc_handle_undervoltage(struct mmc_host *host)
->>> +{
->>> +	struct mmc_card *card = host->card;
->>> +	int err = 0;
->>> +
->>> +	mmc_claim_host(host);
->>> +
->>> +	if (!host->card)
->>> +		goto out;
->>> +
->>> +	if (mmc_can_poweroff_notify(host->card) &&
->>> +		!(host->caps2 & MMC_CAP2_FULL_PWR_CYCLE))
->>> +		err = __mmc_resume(host);
->>
->> I'm not sure I follow this.
->> Why would we power-up a card that currently doesn't have power when we
->> know we are about to powerfail it?
-> 
-> It is part of the mmc_shutdown, but it is not used on my HW. So, can be
-> skip it.
-> 
->>> +
->>> +	if (!err) {
->>> +		err = mmc_interrupt_hpi(card);
->>> +		if (err)
->>> +			pr_err("%s: Interrupt HPI failed, error %d\n",
->>> +				mmc_hostname(host), err);
->>
->> There's no point in calling this for SD but I don't see why it currently
->> wouldn't be called for SD.
-> 
-> I tried to keep budget low, until we agree that it is the way to go.
-> After this patch stack is accepted, i can try to request more time to
-> add and test the SD handler.
-If you're not implementing this for now, why not just drop the undervoltage
-event at patch 1/6 if host doesn't have an eMMC attached?
+https://netdev.bots.linux.dev/flakes.html
+
+
+2/3 passed when retried and just one of them (ip6gre-custom-multipath-hash-sh) failed
+also on the retry.
+
+Looking at the flakes, I see that ip6gre-custom-multipath-hash-sh was
+flake during yesterday:
+
+	https://netdev.bots.linux.dev/flakes.html?min-flip=0&tn-needle=ip6gre-custom-multipath-hash-sh
+
+I've testd manually it, and the tests is passing:
+
+	# vng -v --run . --user root --cpus 4 --
+		make -C tools/testing/selftests TARGETS=net/forwarding TEST_PROGS=ip6gre_custom_multipath_hash.sh TEST_GEN_PROGS="" run_tests
+
+	...
+
+	ok 1 selftests: net/forwarding: ip6gre_custom_multipath_hash.sh
+
+
+So, from a NIPA testing perspective, it seems the patch is good
 
