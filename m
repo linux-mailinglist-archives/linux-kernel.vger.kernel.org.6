@@ -1,185 +1,172 @@
-Return-Path: <linux-kernel+bounces-524257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23717A3E140
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:47:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 63B88A3E145
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:48:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B2A0861D2B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:42:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF7A78623DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:43:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB8C520B81B;
-	Thu, 20 Feb 2025 16:42:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A62ED208989;
+	Thu, 20 Feb 2025 16:43:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=ps.report@gmx.net header.b="AAH6RtOs"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JgTLL5R6"
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B82A204F94;
-	Thu, 20 Feb 2025 16:42:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88EFF204F94
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 16:43:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740069773; cv=none; b=g8O3K+wD7VOUaWh94ZEnzzU0RaEm3TtVIO3G2rdPX+pQmiUpVawXFkqH5B0ALCoUyRZhcg/D9AFf8OOX9QediXdHmyUyZ/gO9sJwoEIivPjTERzRxphgj6xzg29L+LZkQ+MicPuu18L9ZH54r03KQAteu2w3QP2A8b6MRoOOUu4=
+	t=1740069788; cv=none; b=i04dESmdjl7jwCNLjWS6un/KZBMp0g+AoeG50gHufzixY6MtoGXnbNRR7b1JQUpYJE1GR/OfkwntLhp/zcm2jJb+rI434KfHcxKF486PVi21FC0Fq10jZYoE3W/Ag82ZbrJfV5eKAGuYRoY8gLgCYp+rpNuXjY7ww5WKWQodNR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740069773; c=relaxed/simple;
-	bh=TyF2ayKpMm46GfD1uhuhdbmEN9rqSGiJuim9sc9YwYI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=h1NI0YvNdzO0sCeRVqSCxweOhG+dOm48lA8GeH2SnT3aTha6+lm8ilOCtQ+0ZMQppv027nph5jJkhhqAIFloIHxgjMLOMBUZOIddbtkQzB9SI3Uo3gsKoP3DJrx0IpSIutoKHQO68rZz4ueMjpDkNlfNxQ8ajvHZly7i7jY2NEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=ps.report@gmx.net header.b=AAH6RtOs; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1740069764; x=1740674564; i=ps.report@gmx.net;
-	bh=3gIHR+1Hskw6PNg4oX6KHQBcDIh4fTIr6P2sgTgzBQM=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:In-Reply-To:
-	 References:MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=AAH6RtOsjXxBJ5DafzdmNZKNGXj5RlL9hZ7dW/G1ZmOnXn3bCDH3AcJxxHsEbyOs
-	 JWHNYEbjeTApONOeZqFpA0PL0kjAAxI5QHvMGxPWFicGkJT5c1tu/mBdo6wsD5aXi
-	 IFKWsZknztFxRz1D0tfzIX4lS3Kbra2yo5g4vq/RrsyvhUlIFuPZAOvSr5KxDKkdi
-	 3mIvM/KWXdZ6ws7pB/UtXSSNd/zjmzAXUYZ5JQOXjCIlLc7xoAAo/YrVmoYW5/Yzy
-	 6VcFNpy4k4nnX8zFApqi8XhcRIY+zk3hG6m2TLjMDaQ8brNQ7/1+7mKo9AMOF33Gm
-	 gM3Facv+GYfXGpU9eA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from localhost ([82.135.81.223]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1N33Ib-1tLg8k47vZ-00u5U2; Thu, 20
- Feb 2025 17:42:44 +0100
-Date: Thu, 20 Feb 2025 17:42:43 +0100
-From: Peter Seiderer <ps.report@gmx.net>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Alessandro Zanni <alessandro.zanni87@gmail.com>, brauner@kernel.org,
- shuah@kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH] selftests: pid_namespace and pidfd missing include
-Message-ID: <20250220174243.3be95c89@gmx.net>
-In-Reply-To: <f189e844-7d3c-4bca-9006-c949963e74b3@linuxfoundation.org>
-References: <20250128170447.12918-1-alessandro.zanni87@gmail.com>
-	<CABq9Dx53aaX1t2Jidi_zDtR6VDB4UvWo1LkO5GYhCnwfs3ycsQ@mail.gmail.com>
-	<f189e844-7d3c-4bca-9006-c949963e74b3@linuxfoundation.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-suse-linux-gnu)
+	s=arc-20240116; t=1740069788; c=relaxed/simple;
+	bh=CETFckSGLagswl0Pqfs57UFAtqcIvAdVoYsbh8b7tPc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ue+hLS4yMEd5KpfmFwhLHXQsckkrF0L2m/UHxN7A11T1SDKYYN04Lf3TGiawJ+6MlSo7Q6gNs6k1eFgzrFXNJWIYSmJR09BGJuOT0qDHOYZclSCJzKJsioMKTie8qYqr1w1JbwMIJF7o8HZPtb62hL+DEgT6eYwCaf5WM5pvMHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JgTLL5R6; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740069783;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=2EPvTSWtCKlN86g9+N+uYkxsZa3IluO/QJHLmqnQGwE=;
+	b=JgTLL5R6XUz4U+PfdujS2vMn1wjtV0gVZO6rqKXmZ/7W72pDRE8AIcvp5uozE7B6jnGZnv
+	f0XJCGACVuz+pDyK8Dx0I+R7dmaM0GkyZtnxlW9W05ilnEn2uL+0HiLiPMfuMfzWvk7EIF
+	kSj4Wy19C56PM9ZK0bB1MF5sTfc3sp4=
+From: Sean Anderson <sean.anderson@linux.dev>
+To: Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	netdev@vger.kernel.org
+Cc: Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	linux-kernel@vger.kernel.org,
+	"David S . Miller" <davem@davemloft.net>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Sean Anderson <sean.anderson@linux.dev>
+Subject: [PATCH net-next v2] net: cadence: macb: Implement BQL
+Date: Thu, 20 Feb 2025 11:42:57 -0500
+Message-Id: <20250220164257.96859-1-sean.anderson@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Y5a3ffvbeuM0UPQlpnbyR51Snw6JI+PydHLnCB/7kTGgj9yBNoP
- v0gnfaZpSkqQJ++wVReTkYPEBlCMQRpizo2oy8mAu40fpb6F0S6Dcsmi0wogwS/iCP/T5NB
- Ru/qq+lQFtDNn2yRhortBX09mS7JGTEiu4i+Y6vjYP1cWmqjmW92ofJgj23+Rs/HjFWkCRp
- FG9ku5ILiF8QfKP8ZqLMw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:R9KunLk4sUU=;pVGBljgvBmXIZUtuxbSjRzzMApJ
- pxt/ridXDCKnFGz5pNVzaFU6wXA08M9DavdJmFTkKbV0vkhbZ2W+aGm3Sc+frj4UedSThKZ8V
- /bSplENmXkRXSTIzGxb5l2QcGm3lGcWxftKG4rN3dnGf4bXsw0M9t88nYyX0CPW2KFS0QfZG8
- AXPZisSwasXN+LvqsAmow6bzeLhF3BPF4C6kSPmxK9rTAfLQ4YHuixd8yRntM/esZsklm7D6c
- +FBeaR5vU69oVkRMrEm0+xur1ZqxoWQcs6fE7ssd0Jto1KwycvCrGhPwrgDycxjhW04yX7UGn
- vknQOVCKKq5OkqEMIqQiObxoMfC3VpOUWuhAKeK+Z59en/iJ2911ubHhfZpJe+jeiquUBUWeU
- kcc0YPvRTHXCS2r0dPCZPy51STs77wOp0XitrtLVH+vS4iAwGqxPc4ipAyEFhizvp8U52h34k
- 5GvC1utyZqVzCPbPxbCrBi6RLL2D2n50bTLYJpK2KMX+TyAItJYQ8hor6TplyYyGvluuFo/wL
- szMiNjWgDEGUVajxU5aJfIAuhNEybo5nsuYac4y7Ee+9L+mE2skvhZbhBB0var0BWSBJemiIo
- rCCFLMHypeSOGoC2ekv5ZaNzckytaEi8sr/VKXj6Kus2FnjEOtUy7Cvi04XLegDxRB5uz+0vC
- Y4uIIr6NxgzWdTJczDRIjo0WUa4gUWPL/LdMXgUKtqo9syUDWCsEMq0oHbaaDqsi8YF3lYBYB
- pXoij11Gh4YsWp0/tcqOseotzwAePbiWzDWg2ZZu42nrY3iQyWjp+XwP0hSoz/s3rCdOi8aJb
- DcGeKUSo1iJeFfJOMsKP6VrFAuq4Zcv2ISVcxnR5GTqCL9m+QIS9N5Ry7py3HddrsWRzpORSR
- KFQQ/Z+oTytORaIrG8CSVQ+VxxNv1Zl0rqHg7sSU7U1Uah89DjGbCm7QeHAtNdwZ8TVy7sn5s
- /sI6fmgHkkvxZ1Af7koBPqDknqpwC1oJqFgp3UqDNojZY56A/7XeSPqftKjzA2YZyoFOIOSLo
- gOXs4K8asRdThjXVIMSh9+b0+kE5x7LsIP9DJSIgSV+tBAHBAY44i3ACaicUcPQSkgZyqxIbw
- h9dxAabl0evBVQk8i7gplpK6Xhu1Ob/T7XiuFtH4rTMuE0miNKOimxR4ir45N5eHm2X918hok
- /5IE8Bz/wLC7kfbZ7xLOkYLnDA0dh5NAjvEIUZJUrbdoQrFu/ZyaDC7Wi9Rw884eB5ecgd0bZ
- R1YjQaxo3MQNWENUSxPGEz60q5fMad5aCOA8BUnCETJiR8eetXa8ev5O1iyDEAlDpSg/K93Ps
- RE5OaoUqxXyAUm4UAoZtYJPDxKPQ1yoQHHDjiUSOaAJJgHxTMVqEqq1MOCsGZt8Ltp1tN6IQD
- ep9oHvc+3hlcpt8DkQ9YdZAG5+KjaOBO0bHyzdK29Rxg2A2gywv2pYmlpj
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, 18 Feb 2025 17:26:19 -0700, Shuah Khan <skhan@linuxfoundation.org> =
-wrote:
+Implement byte queue limits to allow queuing disciplines to account for
+packets enqueued in the ring buffer but not yet transmitted. There are a
+separate set of transmit functions for AT91 that I haven't touched since
+I don't have hardware to test on.
 
-> On 2/12/25 17:24, Alessandro Zanni wrote:
-> >> Running "make kselftest" results in several errors like these:
-> >>
-> >> pidfd_fdinfo_test.c:231:36: error: =E2=80=98MS_REC=E2=80=99 undeclared=
- (first use in
-> >> this function)
-> >>    231 |         r =3D mount(NULL, "/", NULL, MS_REC | MS_PRIVATE, 0);
-> >>
-> >> pidfd_fdinfo_test.c:231:45: error: =E2=80=98MS_PRIVATE=E2=80=99 undecl=
-ared (first use
-> >> in this function); did you mean =E2=80=98MAP_PRIVATE=E2=80=99?
-> >>    231 |         r =3D mount(NULL, "/", NULL, MS_REC | MS_PRIVATE, 0);
-> >>
-> >> pid_max.c:48:9: warning: implicit declaration of function =E2=80=98umo=
-unt2=E2=80=99;
-> >> did you mean =E2=80=98SYS_umount2=E2=80=99? [-Wimplicit-function-decla=
-ration]
-> >>     48 |         umount2("/proc", MNT_DETACH);
-> >>
-> >> This patch adds the <sys/mount.h> include in pidfd_fdinfo_test.c and
-> >> pid_max.c files to find the variables MS_REC, MS_PRIVATE, MNT_DETACH.
-> >>
-> >> Signed-off-by: Alessandro Zanni <alessandro.zanni87@gmail.com>
-> >> ---
-> >>   tools/testing/selftests/pid_namespace/pid_max.c   | 1 +
-> >>   tools/testing/selftests/pidfd/pidfd_fdinfo_test.c | 1 +
-> >>   2 files changed, 2 insertions(+)
-> >>
-> >> diff --git a/tools/testing/selftests/pid_namespace/pid_max.c b/tools/t=
-esting/selftests/pid_namespace/pid_max.c
-> >> index 51c414faabb0..972bedc475f1 100644
-> >> --- a/tools/testing/selftests/pid_namespace/pid_max.c
-> >> +++ b/tools/testing/selftests/pid_namespace/pid_max.c
-> >> @@ -11,6 +11,7 @@
-> >>   #include <string.h>
-> >>   #include <syscall.h>
-> >>   #include <sys/wait.h>
-> >> +#include <sys/mount.h>
-> >>
-> >>   #include "../kselftest_harness.h"
-> >>   #include "../pidfd/pidfd.h"
-> >> diff --git a/tools/testing/selftests/pidfd/pidfd_fdinfo_test.c b/tools=
-/testing/selftests/pidfd/pidfd_fdinfo_test.c
-> >> index f062a986e382..f718aac75068 100644
-> >> --- a/tools/testing/selftests/pidfd/pidfd_fdinfo_test.c
-> >> +++ b/tools/testing/selftests/pidfd/pidfd_fdinfo_test.c
-> >> @@ -13,6 +13,7 @@
-> >>   #include <syscall.h>
-> >>   #include <sys/wait.h>
-> >>   #include <sys/mman.h>
-> >> +#include <sys/mount.h>
-> >>
-> >>   #include "pidfd.h"
-> >>   #include "../kselftest.h"
-> >> --
-> >> 2.43.0 =20
+Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+---
 
-Predated patches already available, see
+Changes in v2:
+- Reset BQL after disabling NAPI
+- Adjust variable ordering for improved aesthetics
 
-        https://lore.kernel.org/linux-kselftest/20250115105211.390370-1-ps.=
-report@gmx.net/
-        https://lore.kernel.org/linux-kselftest/20250115105211.390370-2-ps.=
-report@gmx.net/
-	https://lore.kernel.org/linux-kselftest/20250115105211.390370-3-ps.report@=
-gmx.net/
+ drivers/net/ethernet/cadence/macb_main.c | 20 ++++++++++++++++++--
+ 1 file changed, 18 insertions(+), 2 deletions(-)
 
-Regards,
-Peter
-
-~                                                                          =
-    =20
-~                    =20
-> >=20
-> > Hello,
-> >=20
-> > I'm reaching out to know if you have any comments or
-> > feedbacks about this patch.
-> >  =20
->=20
-> Christian, would you like me to pick this patch up?
->=20
-> thanks,
-> -- Shuah
+diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+index 48496209fb16..d0eac42d9ae0 100644
+--- a/drivers/net/ethernet/cadence/macb_main.c
++++ b/drivers/net/ethernet/cadence/macb_main.c
+@@ -1081,15 +1081,18 @@ static void macb_tx_error_task(struct work_struct *work)
+ 						      tx_error_task);
+ 	bool			halt_timeout = false;
+ 	struct macb		*bp = queue->bp;
++	u32			queue_index;
++	u32			packets = 0;
++	u32			bytes = 0;
+ 	struct macb_tx_skb	*tx_skb;
+ 	struct macb_dma_desc	*desc;
+ 	struct sk_buff		*skb;
+ 	unsigned int		tail;
+ 	unsigned long		flags;
+ 
++	queue_index = queue - bp->queues;
+ 	netdev_vdbg(bp->dev, "macb_tx_error_task: q = %u, t = %u, h = %u\n",
+-		    (unsigned int)(queue - bp->queues),
+-		    queue->tx_tail, queue->tx_head);
++		    queue_index, queue->tx_tail, queue->tx_head);
+ 
+ 	/* Prevent the queue NAPI TX poll from running, as it calls
+ 	 * macb_tx_complete(), which in turn may call netif_wake_subqueue().
+@@ -1142,8 +1145,10 @@ static void macb_tx_error_task(struct work_struct *work)
+ 					    skb->data);
+ 				bp->dev->stats.tx_packets++;
+ 				queue->stats.tx_packets++;
++				packets++;
+ 				bp->dev->stats.tx_bytes += skb->len;
+ 				queue->stats.tx_bytes += skb->len;
++				bytes += skb->len;
+ 			}
+ 		} else {
+ 			/* "Buffers exhausted mid-frame" errors may only happen
+@@ -1160,6 +1165,9 @@ static void macb_tx_error_task(struct work_struct *work)
+ 		macb_tx_unmap(bp, tx_skb, 0);
+ 	}
+ 
++	netdev_tx_completed_queue(netdev_get_tx_queue(bp->dev, queue_index),
++				  packets, bytes);
++
+ 	/* Set end of TX queue */
+ 	desc = macb_tx_desc(queue, 0);
+ 	macb_set_addr(bp, desc, 0);
+@@ -1230,6 +1238,7 @@ static int macb_tx_complete(struct macb_queue *queue, int budget)
+ 	unsigned int tail;
+ 	unsigned int head;
+ 	int packets = 0;
++	u32 bytes = 0;
+ 
+ 	spin_lock(&queue->tx_ptr_lock);
+ 	head = queue->tx_head;
+@@ -1271,6 +1280,7 @@ static int macb_tx_complete(struct macb_queue *queue, int budget)
+ 				bp->dev->stats.tx_bytes += skb->len;
+ 				queue->stats.tx_bytes += skb->len;
+ 				packets++;
++				bytes += skb->len;
+ 			}
+ 
+ 			/* Now we can safely release resources */
+@@ -1285,6 +1295,9 @@ static int macb_tx_complete(struct macb_queue *queue, int budget)
+ 		}
+ 	}
+ 
++	netdev_tx_completed_queue(netdev_get_tx_queue(bp->dev, queue_index),
++				  packets, bytes);
++
+ 	queue->tx_tail = tail;
+ 	if (__netif_subqueue_stopped(bp->dev, queue_index) &&
+ 	    CIRC_CNT(queue->tx_head, queue->tx_tail,
+@@ -2386,6 +2399,8 @@ static netdev_tx_t macb_start_xmit(struct sk_buff *skb, struct net_device *dev)
+ 	/* Make newly initialized descriptor visible to hardware */
+ 	wmb();
+ 	skb_tx_timestamp(skb);
++	netdev_tx_sent_queue(netdev_get_tx_queue(bp->dev, queue_index),
++			     skb->len);
+ 
+ 	spin_lock_irq(&bp->lock);
+ 	macb_writel(bp, NCR, macb_readl(bp, NCR) | MACB_BIT(TSTART));
+@@ -3021,6 +3036,7 @@ static int macb_close(struct net_device *dev)
+ 	for (q = 0, queue = bp->queues; q < bp->num_queues; ++q, ++queue) {
+ 		napi_disable(&queue->napi_rx);
+ 		napi_disable(&queue->napi_tx);
++		netdev_tx_reset_queue(netdev_get_tx_queue(dev, q));
+ 	}
+ 
+ 	phylink_stop(bp->phylink);
+-- 
+2.35.1.1320.gc452695387.dirty
 
 
