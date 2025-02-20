@@ -1,121 +1,131 @@
-Return-Path: <linux-kernel+bounces-523230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F22B2A3D3C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:54:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E25EA3D3CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:56:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BD6E1771FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:54:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33A8A189FACE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:55:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481081EB9F3;
-	Thu, 20 Feb 2025 08:54:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4381DF962;
+	Thu, 20 Feb 2025 08:55:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="HVTauNK1"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7329E1B3927
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 08:54:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="J5zTtCwA";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="DWEMX6AD"
+Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A1C1BE251
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 08:54:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740041682; cv=none; b=TAJ8GNoiBm0IbUxJ1o0B/5OACNOvzElfxJ+1s0dBQZdD2JhePPFoR9Kz6U325W7Np7J04mLXwTpXd407ZpArerlrgW2OQn2ng3kTfnRk0DZU7G0KWc81VlKWku8VP4gowUFk0Rmi740OvY63IFPG0xhZyYusfPEKmo34ZWgs/1w=
+	t=1740041701; cv=none; b=lN4tB17IApDAqon+S432C4XSM3wsYP4zZanFu3RInKrI1d4dqdYHEarUpS02rNPV5desHx1/xmv5a5BUaApCvoZ7Qcjpgb3CebOBQ7Mo1JT+eSBgxvUaSCb6o7RTQZaEinjW4n4hQIKaDapQinAXV1vcAZ1qFmK0NSrwyOJNZ6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740041682; c=relaxed/simple;
-	bh=XuBYkqKTh1TJ8ljtBKLvAKKsI9mJGYCYOnlqLVE2wdc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gNkU2PcAwdOD+pMS5LookwSEI4DpwES3/U+oNn58gC7ywSLch9r5IVsShQZ2KjyOnku3I7ya0jKpV9o2yG8/8+xbxTbFo6CffaCKZxtgKPAd+2hAUAsfgWINnVLgsGyqFRcs/ZiT3LPPCAWSmeo+NemrkYaP+ahbh8SznV2AUVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=HVTauNK1; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=tR6HK
-	7BPrCbBvCzg+WZMBSOfkdZaQhKpZsbhz6ow2Vs=; b=HVTauNK1y44q7bM8/Pohf
-	BKz69UW8HYcPFVzf1WXvs9y0Ir2xzkbXbRwwJCu/jYMrMyGrdtY3jv7SgbiZ82GQ
-	zp1TlyRu3Kpn5KosQWjAM4DC3xnhj8QsHbxjgjBzp88mzA74myaRtm6DlEKf+ghu
-	TfzzptIPP5VFAiAguPouxo=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wDnLwmn7bZnUN9jNQ--.46079S2;
-	Thu, 20 Feb 2025 16:54:01 +0800 (CST)
-From: oushixiong1025@163.com
-To: Liviu Dudau <liviu.dudau@arm.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Shixiong Ou <oushixiong@kylinos.cn>
-Subject: [PATCH] drm/arm/komeda: Add a condition check before removing sysfs attribute
-Date: Thu, 20 Feb 2025 16:53:58 +0800
-Message-Id: <20250220085358.232883-1-oushixiong1025@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1740041701; c=relaxed/simple;
+	bh=OEGWZVbsLWuvgh0co4wT1Nb31YSZICtLKNGQ+KuQhMs=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=WixhL3q1HzzZkc5lMkgK8HStXcqRSdC9LrEuElFPCt5HxPT3Z9g/zfyIob0KhxSTi3vy6CwSboqHJU73B7nzkF8EEmfT8KyRRRGrEjL6fPagkEry6iK+2nxFlHwqZnkpwDIZ8zwi1kS7p73Z401W4BUshBXTgYy/aW5WQXh1hUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=J5zTtCwA; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=DWEMX6AD; arc=none smtp.client-ip=103.168.172.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailfout.phl.internal (Postfix) with ESMTP id C297F1380990;
+	Thu, 20 Feb 2025 03:54:57 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-11.internal (MEProxy); Thu, 20 Feb 2025 03:54:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1740041697;
+	 x=1740128097; bh=98fWG4BoRmHvBUIB75tbyVaOGVodq0S3xsdfrIhruNE=; b=
+	J5zTtCwAuk+pWPNCDB9y1J1gXbOsO6TBZK9ic8GZxeZaMQ9yU1wr4v8AWVXLv8rK
+	CSWYsRR+5YwLK0nlra97Gr1k6Nz1qbSZnxucy8EN48h59eFL3Ym3pZ1jOcQgV3pi
+	aZMZjq7GnkqINth2Y3d+tCoaeOOTk4iFIcaL/JppyGAO/6m1BqiPy7peOWfKcwq+
+	aYfafN2QvhaluVIZ26QBIv0DvpCbeNGt8dSkBLSPYAdHB5tvoCLESeB9qGWzKzvP
+	3gxELYwSX4h3UkfGgazjxXCu1Gg4YYk+kMuv1r8Yxf+JG9FjlqDOtI8UbCJ3QVp3
+	2GVnkJoOrBZlgQwhUIXbuw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1740041697; x=
+	1740128097; bh=98fWG4BoRmHvBUIB75tbyVaOGVodq0S3xsdfrIhruNE=; b=D
+	WEMX6ADtsBv1fVomxLfUbnD3rxmv6ql8NbZmJihNCDn/kA476hEXlqHz0hb4Xzs1
+	pRDZZcTKY5EBfJwfhfUQJVF41WcnHH8KCqHdpg3HOCarlK30PRFFqENR2vV3PWIY
+	cJmlyCC2FY0hyz5ZOkwZx7jd7IrdBisX8CP+yPHZsqmukvj0Psj7GyCKjFvaYHqU
+	V1htbUYNiPOESzUN3XoTiPqz4wrkBsNv/nv5P5YsrNlMoqy0kRYiudmrXX05JEHx
+	fNMkOc5pwzJG5SFQ7U2GLdBfS1Vi5+jNLadfcycS4PIcwZ/0OvQEVjYupRMqh3P0
+	g/LEBeOa+bzwUgpaaofig==
+X-ME-Sender: <xms:4e22Z8hBu0rBuEVt7olWVFsxtBSJVA5aGva2DqQxXQOc3I2J9yNPjA>
+    <xme:4e22Z1DOKmtozoRhhw4HRvZ0BQTZTgCynnF_xX2_hQr2Gz3fIb7elEsMUrvPcQD6K
+    epHBDabTHkGIywznKI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeiieejfecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
+    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeej
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrlhgvgigrnhgurhgvrdgsvghllh
+    honhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheprghrnhgusehkvghrnhgvlhdr
+    ohhrghdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorh
+    hgpdhrtghpthhtohepthhglhigsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtohep
+    nhhitgholhgrshdrfhgvrhhrvgesmhhitghrohgthhhiphdrtghomhdprhgtphhtthhope
+    gtlhgruhguihhurdgsvgiinhgvrgesthhugihonhdruggvvhdprhgtphhtthhopehlihhn
+    uhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:4e22Z0EQtp-TOBKdDOpCv0BSP5MlVsVQxIt6Ed-XgqA6TkRR-pJYbQ>
+    <xmx:4e22Z9S97jF3hHmmsf1E-XtmOAMpJdbKZFaVnZZtEnD3H0fuGnLhvQ>
+    <xmx:4e22Z5wP59TLWXNYyPUQDtgtHRKbZgmBYJUoXbO41rAA3r-WBqSG8A>
+    <xmx:4e22Z75pHmsSSDx2murSg8YXrx9ATtxBR_d5JStXIX-43BUlmYUClA>
+    <xmx:4e22ZwmpHOqYlgmgSeLZLO8dqcxFMpBDzgKOEf_meTN-L4wXJqg4RhZ8>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 524E12220072; Thu, 20 Feb 2025 03:54:57 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDnLwmn7bZnUN9jNQ--.46079S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7WFyUWr1xGF4xAr1kKw17Jrb_yoW8ZF1Upa
-	nrJ3WjqryUKanIyr9rAa1UuF1rGw4fWw4xGryUuw13u343AF18KF95XFWqyrZrJFWfCF1a
-	qrs7XrW7WFs3Kr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jncTPUUUUU=
-X-CM-SenderInfo: xrxvxxx0lr0wirqskqqrwthudrp/1tbiXRD5D2e25TahOwAAsj
+Date: Thu, 20 Feb 2025 09:54:36 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Arnd Bergmann" <arnd@kernel.org>,
+ "Daniel Lezcano" <daniel.lezcano@linaro.org>,
+ "Thomas Gleixner" <tglx@linutronix.de>
+Cc: "Nicolas Ferre" <nicolas.ferre@microchip.com>,
+ "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
+ "Claudiu Beznea" <claudiu.beznea@tuxon.dev>, linux-kernel@vger.kernel.org
+Message-Id: <cdce709e-b54a-4f06-9c67-b1e1a2fc8dbe@app.fastmail.com>
+In-Reply-To: <20250220085231.1719249-1-arnd@kernel.org>
+References: <20250220085231.1719249-1-arnd@kernel.org>
+Subject: Re: [PATCH] clocksource: atmel_tcb: fix kconfig dependency
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-From: Shixiong Ou <oushixiong@kylinos.cn>
+On Thu, Feb 20, 2025, at 09:52, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> Build-testing this driver on arm without CONFIG_OF produces a warning:
+>
+> drivers/clocksource/timer-atmel-tcb.c:368:34: error: 
+> 'atmel_tcb_of_match' defined but not used 
+> [-Werror=unused-const-variable=]
+>   368 | static const struct of_device_id atmel_tcb_of_match[] = {
+>       |                                  ^~~~~~~~~~~~~~~~~~
+>
+> Change the dependency to allow build-testing on all architectures but
+> instead require CONFIG_OF to be present.
+>
 
-[WHY] If the call to sysfs_create_group() fails, there is
-      no need to call function sysfs_remove_group().
+And the second I send this out, another failure pops up, please
+disregard this version as the CONFIG_ARM dependency is still needed
+for register_current_timer_delay().
 
-[HOW] Add a condition check before removing sysfs attribute.
-
-Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
----
- drivers/gpu/drm/arm/display/komeda/komeda_dev.c | 7 ++++++-
- drivers/gpu/drm/arm/display/komeda/komeda_dev.h | 2 ++
- 2 files changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_dev.c b/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
-index 5ba62e637a61..7d646f978640 100644
---- a/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
-+++ b/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
-@@ -259,6 +259,8 @@ struct komeda_dev *komeda_dev_create(struct device *dev)
- 		goto err_cleanup;
- 	}
- 
-+	mdev->sysfs_attr_enabled = true;
-+
- 	mdev->err_verbosity = KOMEDA_DEV_PRINT_ERR_EVENTS;
- 
- 	komeda_debugfs_init(mdev);
-@@ -278,7 +280,10 @@ void komeda_dev_destroy(struct komeda_dev *mdev)
- 	const struct komeda_dev_funcs *funcs = mdev->funcs;
- 	int i;
- 
--	sysfs_remove_group(&dev->kobj, &komeda_sysfs_attr_group);
-+	if (mdev->sysfs_attr_enabled) {
-+		sysfs_remove_group(&dev->kobj, &komeda_sysfs_attr_group);
-+		mdev->sysfs_attr_enabled = false;
-+	}
- 
- 	debugfs_remove_recursive(mdev->debugfs_root);
- 
-diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_dev.h b/drivers/gpu/drm/arm/display/komeda/komeda_dev.h
-index 5b536f0cb548..af087540325c 100644
---- a/drivers/gpu/drm/arm/display/komeda/komeda_dev.h
-+++ b/drivers/gpu/drm/arm/display/komeda/komeda_dev.h
-@@ -216,6 +216,8 @@ struct komeda_dev {
- #define KOMEDA_DEV_PRINT_DUMP_STATE_ON_EVENT BIT(8)
- 	/* Disable rate limiting of event prints (normally one per commit) */
- #define KOMEDA_DEV_PRINT_DISABLE_RATELIMIT BIT(12)
-+
-+	bool sysfs_attr_enabled;
- };
- 
- static inline bool
--- 
-2.17.1
-
+     Arnd
 
