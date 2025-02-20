@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-523655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F079A3D9AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:19:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B79A2A3D9B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:20:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24FC117EAD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:18:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BDDE17F2A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:19:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 882171F63EA;
-	Thu, 20 Feb 2025 12:18:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8C091F560E;
+	Thu, 20 Feb 2025 12:18:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XpOACJ58"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bUlqDIbb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E09AA1F4E25;
-	Thu, 20 Feb 2025 12:18:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DDDC1F4E25;
+	Thu, 20 Feb 2025 12:18:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740053895; cv=none; b=iOZvBcuKyAfS7cYha9fQwEogpDuCGIpNzmR3vewYg/X8VZk4WYDit++7PjVk3O5JQMDEr4F5v8+ZdR8FShB50B9+LU0m+s14vTKhYleVfMOCVHxSv6K2PDh3nDU/DKGAX/ATenXdxPiigE2NJ9oXF+5oJt+Vh1KELbACJTmIyv4=
+	t=1740053900; cv=none; b=Pupj6yo41NkYO4a7kNDILF8YJmQJ4NeU5cztoyfuI7bArBsmHZw9KnVBD9vG89XM5JPHU1z2GWKY6rf0dJZoOnUr3sZWTL4CxZ95hzTKQtihb+t5jJStobxs+AvjRGYcNuBUMFCK0yX5rwFd298sVuCK+Xf1TP0/ZXKRz65VEnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740053895; c=relaxed/simple;
-	bh=3ky5e9/hBYItOtNk1Ohc97k0Tb0nPrYkxWcANY0vaVo=;
+	s=arc-20240116; t=1740053900; c=relaxed/simple;
+	bh=yNSeJy3CpUGw4ovfflW5haOU1XUKVgd06qENB0lldt8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V99mu35bhZr6sDV0ABZttJvP5WIOnr+Tbo5LoBwglRwmRkQot8YOcmpx+CIi/aXd2G5H5a5Mr+W4zPCtoBrx4vfzMoBp2FBFJSa1GJS62SDD+v9hXiW0zLv0Ex0NBxQ4egC7sJjzJ6r8Fec9m4E4JLplSjQg9bacsEUdyQtz9vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XpOACJ58; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1DAFC4CED6;
-	Thu, 20 Feb 2025 12:18:10 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=Jvs3qLC1DaPfKkRIOq9moZdkgtscyTVX4mkYcqUV8UCYzSsSediDlSGH0G5WRZKx/jzWaItFQ8lPAbiYUlvw8f9/jrpZzzbW8Y+pjJjT0LKQvoHH3SXASgy6P2lAzf2ZE67p+gdj5LZVkg4ujmC8D+ulvyLo/WyaEas1i05unGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bUlqDIbb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C47FC4CED1;
+	Thu, 20 Feb 2025 12:18:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740053894;
-	bh=3ky5e9/hBYItOtNk1Ohc97k0Tb0nPrYkxWcANY0vaVo=;
+	s=k20201202; t=1740053899;
+	bh=yNSeJy3CpUGw4ovfflW5haOU1XUKVgd06qENB0lldt8=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=XpOACJ58jPAVnzyesspHPG2mVzxfCZpYEJK5D3wNa+QSfOC4/UpiZh2OwSq3hDQUt
-	 u9uw65GKmfFbfbFj95TTzGsqxW5ZKBTL/x2BQZDwVEBpaIspuzOHIY3WiEBuibjcVC
-	 lBCq8bSslOCQMMQK/VVi0+iHb2bbx2dCMxHF5E3OoKQF+i16xGfbrqSi5YYeqgeJ2t
-	 soZM88wGbHyHKvW0NPWXjTHnCY+N7L3aTXCMHysySKH4e6wHhYW57OZ+icjxfP+c4J
-	 ElX3b88SAMoGpA6eFbUrYG8qFBk57XLDmaOcZrBCf/DUHKcSWQgLdQ0nc+dLTPFKuS
-	 Zfi1ATz8KYgtQ==
-Message-ID: <2955e9ad-f97a-44b0-be9c-d6bac90a8f9d@kernel.org>
-Date: Thu, 20 Feb 2025 13:18:07 +0100
+	b=bUlqDIbb02kaPJPe/Z2kDHQwqpylHmhgOxbYOmRhliHbpQ5kxehQqYf2xjI0jFPVS
+	 E+zyEeSLCIIuHlUcxcxHjsNtCeW5tIffMn6uWgJTvCvutI/9tBME/X6ZcfZFGm/Du8
+	 bmPPM7kpnoEJ5aAOP3yDQyWiWEb2pt6qGzkJgC1AJfmGR8lR4bRamnnb0WOcMzs+Hp
+	 xWm9jh+xqEEJ5wX3VaVYhbeX88GGImqiG7++jhE423I4S6EnPuSxefuHLqNbf3fKhc
+	 Rd74Y7DVY8PzPxQg92GBmxxscK5Y5ICWSFO7LZVM7zjnUQoZ1yESh9bO4wZ16i4ICD
+	 jam/JmfPdbjAw==
+Message-ID: <ac6c4a8b-a6bd-44a9-993b-3b743a172dcc@kernel.org>
+Date: Thu, 20 Feb 2025 13:18:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,15 +49,14 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/6] dt-bindings: vendor-prefixes: Add CIX Technology
- Group Co., Ltd.
+Subject: Re: [PATCH 1/6] dt-bindings: arm: add CIX P1 (SKY1) SoC
 To: Peter Chen <peter.chen@cixtech.com>, robh@kernel.org, krzk+dt@kernel.org,
  conor+dt@kernel.org, catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de
 Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, cix-kernel-upstream@cixtech.com,
  Fugang Duan <fugang.duan@cixtech.com>
 References: <20250220084020.628704-1-peter.chen@cixtech.com>
- <20250220084020.628704-3-peter.chen@cixtech.com>
+ <20250220084020.628704-2-peter.chen@cixtech.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -103,25 +102,23 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250220084020.628704-3-peter.chen@cixtech.com>
+In-Reply-To: <20250220084020.628704-2-peter.chen@cixtech.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 20/02/2025 09:40, Peter Chen wrote:
-> CIX Technology Group Co., Ltd. is a high performance Arm SoC design
-> company. Link: https://www.cixtech.com/.
+> Add device tree bindings for CIX P1 (Internal name sky1) Arm SoC,
+> it consists several SoC models like CP8180, CD8180, etc.
 > 
 > Acked-by: Fugang Duan <fugang.duan@cixtech.com>
 > Signed-off-by: Peter Chen <peter.chen@cixtech.com>
 > ---
->  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
->  1 file changed, 2 insertions(+)
+>  .../devicetree/bindings/arm/cix.yaml          | 26 +++++++++++++++++++
+>  1 file changed, 26 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/cix.yaml
+> 
 
-
-Please re-order the patches, because your previous patch uses
-undocumented prefix.
-
-
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
