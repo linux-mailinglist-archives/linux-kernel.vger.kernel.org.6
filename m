@@ -1,168 +1,114 @@
-Return-Path: <linux-kernel+bounces-524259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5D48A3E126
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:44:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43508A3E135
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:46:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42E6118880BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:43:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E2847AC949
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:43:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F3A0211A38;
-	Thu, 20 Feb 2025 16:43:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22D96211A1D;
+	Thu, 20 Feb 2025 16:43:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IRzEymQz"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gD1ElzAr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C5E820C00D;
-	Thu, 20 Feb 2025 16:43:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73AF3204840;
+	Thu, 20 Feb 2025 16:43:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740069808; cv=none; b=EfiHvV36kl2GodIMT3S3BChxRScBlH0PTCIEiBJpf6JGcmNsm6AvnOxhpU5O0ue1t/pBWCNY3rJQmA6sxNaGlGy6WXjN3+yI4eUuqYcKXNDJ3ZlF3oqWd0by9C6QT5f7rUWg3zQLMcOO51I1h2tQfRvwuXc1kkahATdv6ph7Y14=
+	t=1740069827; cv=none; b=WhcMePPDZrCPsYgEG9cKKPdFz5YlGJKGCBhMXN9zNLau4qQdvQNyDis8V60nHjaGx4xhxCSoMWeuf9175X6RVF2gCDMcifq9dglbmleflnIHb+uHwLMDFLMV2MYI+ndJ5FdXTGVB+dMaxQPePbSw7LzYsBxsaAyc9TPhka5ostg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740069808; c=relaxed/simple;
-	bh=vVECa4utTX4xbUhcnJWoWLUVHp/KMDoJ9zPavXCFBLE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ekUH/UimQ5T4+8c8T71IF9Y14fZfUw93GV+j31yINhdsT1yyds59ttasQd7plh7eqtnT0GrF4NuN5GI+rvIZ4+oo5jqraIQLytmHknr5RJfuPse+XA8+2Sp3fMEDaGltc7ahaNv5i5X4v69lIhlV1PP3h8iY5k4icpmE2Ygf4EM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IRzEymQz; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2fc4418c0e1so4005513a91.1;
-        Thu, 20 Feb 2025 08:43:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740069806; x=1740674606; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TGKStiuvmu6PZ8iLcfPINnLEtELIaRoHYvov97O+LS8=;
-        b=IRzEymQzOj9QOg7SyFdfAictqfazKy2RYm2Tv58CbPI8i1RS4TFQQD/Omw9qfU3gPa
-         ePuZdhTVv3SjyKJS6lxm4wRAY+Mo6u5FtZ6awXGIZ9Gj+h86Fdn6lIpee21MACG3gaeG
-         77jnyncXD3YNCy6piVffOPYVltJ+j9Vv7rZzDIDo7FSnP2zMJkwl2ILvtybcBwusZ49B
-         188wj8UdlnXKmQIQABmn7VRF1mIiPAPr/gakgcqtxtN4i0JppJ7mOMZDp7NcZY0JHrXF
-         SzqVdjO6BpekgAXljpuUbrJH3r6y98490+7QJ7dqLQu81OfODHYsn0QI3jwpIdvw6qyc
-         uxmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740069806; x=1740674606;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TGKStiuvmu6PZ8iLcfPINnLEtELIaRoHYvov97O+LS8=;
-        b=GdeUqfxt+ENqZH6v/NbNC49xvMowj+nRwOE3EwZUvsx/YJ3Olb9TBtBguGkMdER4JR
-         QCGUEpqH06V3c/Pu4Pv1cyuzMlbL+4QWcMA+6sLHkv5ifK28qt8YcQSfaBerSjzV+JMA
-         wGVimMbZWB32obGchImKWOqVw/o6hLPAKWPN2BNu10JGnVdnoWrAuAepBpPyMhQSRaqU
-         YPyQe6xtBLi1vvpbFIWXmSBJ94RPtPh+G+DtMQzuM1W4jK4/W7U+KEtuBhonqipMC3n1
-         WOX6fMVzz5nb9Lyu2Ymbe8Nk3lV3uMJ4U9lkB0XGza22wb+zRY6/NKBoD+er/+OsojCS
-         nWbA==
-X-Forwarded-Encrypted: i=1; AJvYcCVAoq8ohybFccddFxRNqwdFzBZH5yQduaLH/hSIy9bvBCwbXjYuiByJ2NR2X3OAhQTGGz9vYQbJhPKNpVQAVTmcHqrNBntd@vger.kernel.org, AJvYcCVUnfWeWNvjLwSg0rpQ+LNqLqaeQET/WGHzZluvLNRT3zy58HVcrrDakopXlHM8WCKcyxRt/AXwBXG0@vger.kernel.org, AJvYcCVWPW3Kp75ZlCYM4vUc8tNBu0kq/mVA/VdIMo4XzLUTdOtdcHs3cF+ro/LTcdtDWc6hoiIBe9dLTTpz@vger.kernel.org, AJvYcCWxbZqBmWxHeZV1CgNzsfUbiZHqG6uSfcreonewHxdUWoLRQBo+mpmZYI3B5+10q16VmeE08EPJrI1XcB+5@vger.kernel.org, AJvYcCX6bfJmksfn/IubZ47/ZxUCCWxL9WreeXl2oanaLxG4KQBG3Rr4cknZXkuc88RWg0v3VKtMcDYWmg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxW8GIbYUMJsIBBIKFXyhTPErtihLU4mjmnjEMaaqscL0ym/hbG
-	Ya6VKAWMBlz1xaCEutoH2lHQJxxVVUXXs8njWxwv5Ey7qcYnBC09vmR3Sv0Asvr3CliuNEoB5qw
-	9gmwcAykLUtlzJpJs4HyxXa7GwaE=
-X-Gm-Gg: ASbGnctRQmWH2lAwzmYgrYZYOqY/ab1PgpM0aU1HpFfXt5ZVqM1oF2aWTq2GZXvXnWk
-	h5YCEQ9lgHCsnxdKnam6ufKHo3vnm72U0Nstqm4ThyMa+T3tKGMfWrnVZJRZhuVNJ+yxImvWb
-X-Google-Smtp-Source: AGHT+IGbA2Q+XEnVZAQ4NEP7BEgN3IdARfcH5GHq6FTupNzUVVzv1CrxmhQmgth2w7JIYa+zxno9NRI2IlvxRC+uy/8=
-X-Received: by 2002:a17:90b:2d46:b0:2ee:8cbb:de28 with SMTP id
- 98e67ed59e1d1-2fccc1287e9mr7457400a91.8.1740069806451; Thu, 20 Feb 2025
- 08:43:26 -0800 (PST)
+	s=arc-20240116; t=1740069827; c=relaxed/simple;
+	bh=agaBIrDK1n0Kan1E1UYRbKAbf9aZnrkrgIyeTlCVzvk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mDuifU9MG+mcnRNKVh84wWA/+f4tyu163XcdP4zbdqM6DK3fexw8Fg5E/MPkw0gDZGPmhyqK41pzgkclIoPbO15qNh1G3Ni2iKXgH6zvGXReyPVTOQ4cmL87juaEeg5wIhLT9D33gCFmqHmJkyuuPT5PBmSwHJIfwXC0FMDStFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gD1ElzAr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69619C4CEDD;
+	Thu, 20 Feb 2025 16:43:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740069827;
+	bh=agaBIrDK1n0Kan1E1UYRbKAbf9aZnrkrgIyeTlCVzvk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gD1ElzArVkSpKTBC3O/68z63VvDXMGrm2LqeH+QQ+iMrHGv3z7+6Ic+q6I4tD3FTq
+	 XS1p86MB07tN8Aif56Q0wrMdnUPJR6oDm5AMK5b2iRAQblVOmH9KUSFFnvuA+ExS7L
+	 3Mqmi6gMUZIBDIQNSSaTwlXmsxUv91Uhb2tITNri2+prLUp57wxov0RtApDX701WjQ
+	 Ws34qJN5D68ibJRq/ysQSJsVVTSnjm/PPVNyiuzad5bPj8n7/Ea8WDwFyuzaoO+c2S
+	 eTb/m5mwzBX2aOBHiVBFvrCbIbsRbhJag3qWAyFZGAO6f9MK5vkFVtjIrBQtJdsecQ
+	 Pu9g8sw+p9ZBg==
+Date: Thu, 20 Feb 2025 16:43:40 +0000
+From: Lee Jones <lee@kernel.org>
+To: Sebastian Reichel <sre@kernel.org>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Pavel Machek <pavel@ucw.cz>, Hans de Goede <hdegoede@redhat.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>,
+	Purism Kernel Team <kernel@puri.sm>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Dzmitry Sankouski <dsankouski@gmail.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v17 0/7] Add support for Maxim Integrated MAX77705 PMIC
+Message-ID: <20250220164340.GD824852@google.com>
+References: <20250123-starqltechn_integration_upstream-v17-0-8b06685b6612@gmail.com>
+ <174006961563.882548.1668950876404410080.b4-ty@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241023212158.18718-1-casey@schaufler-ca.com> <20241023212158.18718-5-casey@schaufler-ca.com>
-In-Reply-To: <20241023212158.18718-5-casey@schaufler-ca.com>
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-Date: Thu, 20 Feb 2025 11:43:15 -0500
-X-Gm-Features: AWEUYZk5wAy-pDKUyIeTJwZ9O0NtnaTtHtgvwhFaZG6kHfsbWwV584YyTGAvgfs
-Message-ID: <CAEjxPJ56H_Y-ObgNHrCggDK28NOARZ0CDmLDRvY5qgzu=YgE=A@mail.gmail.com>
-Subject: Re: [PATCH v3 4/5] LSM: lsm_context in security_dentry_init_security
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: paul@paul-moore.com, linux-security-module@vger.kernel.org, 
-	jmorris@namei.org, serge@hallyn.com, keescook@chromium.org, 
-	john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp, 
-	linux-kernel@vger.kernel.org, selinux@vger.kernel.org, mic@digikod.net, 
-	ceph-devel@vger.kernel.org, linux-nfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <174006961563.882548.1668950876404410080.b4-ty@kernel.org>
 
-On Wed, Oct 23, 2024 at 5:23=E2=80=AFPM Casey Schaufler <casey@schaufler-ca=
-.com> wrote:
->
-> Replace the (secctx,seclen) pointer pair with a single lsm_context
-> pointer to allow return of the LSM identifier along with the context
-> and context length. This allows security_release_secctx() to know how
-> to release the context. Callers have been modified to use or save the
-> returned data from the new structure.
->
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> Cc: ceph-devel@vger.kernel.org
-> Cc: linux-nfs@vger.kernel.org
-> ---
->  fs/ceph/super.h               |  3 +--
->  fs/ceph/xattr.c               | 16 ++++++----------
->  fs/fuse/dir.c                 | 35 ++++++++++++++++++-----------------
->  fs/nfs/nfs4proc.c             | 20 ++++++++++++--------
->  include/linux/lsm_hook_defs.h |  2 +-
->  include/linux/security.h      | 26 +++-----------------------
->  security/security.c           |  9 ++++-----
->  security/selinux/hooks.c      |  9 +++++----
->  8 files changed, 50 insertions(+), 70 deletions(-)
->
+On Thu, 20 Feb 2025, Lee Jones wrote:
 
-> diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
-> index 76776d716744..0b116ef3a752 100644
-> --- a/fs/nfs/nfs4proc.c
-> +++ b/fs/nfs/nfs4proc.c
-> @@ -114,6 +114,7 @@ static inline struct nfs4_label *
->  nfs4_label_init_security(struct inode *dir, struct dentry *dentry,
->         struct iattr *sattr, struct nfs4_label *label)
->  {
-> +       struct lsm_context shim;
->         int err;
->
->         if (label =3D=3D NULL)
-> @@ -128,21 +129,24 @@ nfs4_label_init_security(struct inode *dir, struct =
-dentry *dentry,
->         label->label =3D NULL;
->
->         err =3D security_dentry_init_security(dentry, sattr->ia_mode,
-> -                               &dentry->d_name, NULL,
-> -                               (void **)&label->label, &label->len);
-> -       if (err =3D=3D 0)
-> -               return label;
-> +                               &dentry->d_name, NULL, &shim);
-> +       if (err)
-> +               return NULL;
->
-> -       return NULL;
-> +       label->label =3D shim.context;
-> +       label->len =3D shim.len;
-> +       return label;
->  }
->  static inline void
->  nfs4_label_release_security(struct nfs4_label *label)
->  {
-> -       struct lsm_context scaff; /* scaffolding */
-> +       struct lsm_context shim;
->
->         if (label) {
-> -               lsmcontext_init(&scaff, label->label, label->len, 0);
-> -               security_release_secctx(&scaff);
-> +               shim.context =3D label->label;
-> +               shim.len =3D label->len;
-> +               shim.id =3D LSM_ID_UNDEF;
+> On Thu, 23 Jan 2025 18:04:25 +0300, Dzmitry Sankouski wrote:
+> > The Maxim MAX77705 is a Companion Power Management and Type-C
+> > interface IC which includes charger, fuelgauge, LED, haptic motor driver and
+> > Type-C management IC. It's used in Samsung S series smart phones
+> > starting from S9 model.
+> > 
+> > Add features:
+> >   - charger
+> >   - fuelgauge
+> >   - haptic
+> >   - led
+> > 
+> > [...]
+> 
+> Applied, thanks!
+> 
+> [1/7] dt-bindings: power: supply: add maxim,max77705 charger
+>       commit: af280f29f32c885942f67edacfeae7d9b6e897a4
+> [2/7] dt-bindings: mfd: add maxim,max77705
+>       commit: 2ae4ffff28bf48a7144591eed7081f746b98e130
+> [3/7] power: supply: max77705: Add charger driver for Maxim 77705
+>       commit: a6a494c8e3ce1fe84aac538b087a4cab868ed83f
+> [4/7] mfd: simple-mfd-i2c: Add MAX77705 support
+>       commit: 7b591ef98b3fc1ce20c3ccb86715429b72e2e6f0
+> [5/7] mfd: Add new driver for MAX77705 PMIC
+>       commit: c8d50f029748b73313838b64b829992b66ccb704
+> [6/7] input: max77693: add max77705 haptic support
+>       commit: eb79f3a5a51a1f484e2570d983dc9d8217e8f912
+> [7/7] leds: max77705: Add LEDs support
+>       commit: aebb5fc9a0d87916133b911e1ef2cc04a7996335
 
-Is there a patch that follows this one to fix this? Otherwise, setting
-this to UNDEF causes SELinux to NOT free the context, which produces a
-memory leak for every NFS inode security context. Reported by kmemleak
-when running the selinux-testsuite NFS tests.
+I'll send out a PR once the build tests are complete.
 
-> +               security_release_secctx(&shim);
->         }
->  }
->  static inline u32 *nfs4_bitmask(struct nfs_server *server, struct nfs4_l=
-abel *label)
+Note to self: ib-mfd-input-leds-power-6.15
+
+-- 
+Lee Jones [李琼斯]
 
