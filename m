@@ -1,129 +1,208 @@
-Return-Path: <linux-kernel+bounces-524523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 024E3A3E419
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:40:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75E64A3E41F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:42:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BBE21889A14
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:41:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25EC33B58DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:42:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2760724BD07;
-	Thu, 20 Feb 2025 18:40:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C77024BD11;
+	Thu, 20 Feb 2025 18:42:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SlgLDOiI"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=morinfr.org header.i=@morinfr.org header.b="mmVao0ba"
+Received: from smtp2-g21.free.fr (smtp2-g21.free.fr [212.27.42.2])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D47247DF0;
-	Thu, 20 Feb 2025 18:40:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9D8F24BCF5;
+	Thu, 20 Feb 2025 18:42:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.27.42.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740076848; cv=none; b=DC0O/jTFZe1Qlqs5WaV4yo0A12DyIxvicwPTUvGxPYqdX2n6Lf4hOBaVknmKrvBTeifX1XGmcqb/EB42GiYvG/fzuVodO0EIUu1Tj347cNEoADD902q1qf9c3y/6vIor5beZ17xKopZnnCuAtiZmQVwZs/egu9JFNn6swKzE4Dc=
+	t=1740076932; cv=none; b=tZtddSJeLu2u0sswXIVI7ML6004+kxJZJMVtWlrAAcx8DOjk3nU0d8OA07esz4Y1oAR/Rf/CUCw4yex+uC9q82gnafS+7WmMokfwtiNQUAkNOIvXLbGxsriIofYeSEsM1i7RUwEumSnHbmbPKHmkyY/9wXysOGuMeoo0OG7Z7xI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740076848; c=relaxed/simple;
-	bh=E2DR+BJJfXCSeI1cfeXIx9bKllVF0rrNynMBB0GIgg8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mlR+OBExcUiECcGtGCQ5ojKxxY6Ce0F76tbGaOR8FUTtsnzOOF9mYeasEuzTaUrsGA3EFGb/kCgbp1fc1svS9AozEkB8rWBuCfKfbrmlksRDbcDgLSKmZvYObTh0OcXbEB7Nx0pZ3BtR6HymLPBHi+VSRNxuNDs0oDlNS1AAZrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SlgLDOiI; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-38dd9b3419cso675304f8f.0;
-        Thu, 20 Feb 2025 10:40:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740076845; x=1740681645; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LDpYiKzs73InvLQsXoENmuSiu34F9WT8BsmsAiGCuxQ=;
-        b=SlgLDOiIHLaD88Koa2EGuQBDk+VokO/3IXgsXGNtPLki9hn0ql89e7yHlWJ7BTV5ea
-         Ptiprus3iBJSAuV04Wefnp0wfmkxXInhshga/Qrs6OQuLjoHTvYqOiIQUycWgOTb7x4I
-         qNM8GHuwvl7qQHtLG71Y84PVRqYSUuQDaV9EwEpLPYzsa8Xe5wwaFewsrE2c/sio4R+i
-         fwjoWNP/lScZhmyr3rjURH9uPdygGapuN7iN6F50rBr6N7CvfD6wr/nEOIxuu6xADARW
-         b8TCErVykQ+YB6BiCujaYK2+YTIX9mtnsVVLTKJ6nMHAdyRzbFi0Qhlau5lDs9+bm32m
-         PBeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740076845; x=1740681645;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LDpYiKzs73InvLQsXoENmuSiu34F9WT8BsmsAiGCuxQ=;
-        b=jrV4jJ3eIwfscmVEjY40IndMvG+3yKTqyPGbLfg+YzFQjh+8ptTfok79igHwDINH0Z
-         Cy+/kIbLz7j/b9VgQgo//yQtJKxUOIn16mpsYibQOMPiKnSIzdueLYbtBipvdAwcd88K
-         nLMyYkz0rpo6vlFQewhhHYTA0Hz6M5UmGCK1jolTz1wmXmUXcbLpHXb90kQt+ZBQKRz3
-         RaDQRme2uozsgcnRXenFMfO8JzJf2Pe1vSk8hr7boECpRqzh1pNK6pAdyZMA8zLB8IQy
-         k67VH0dNZgVHGZq4OLqs3gMlhrfof2M0ldANh4T3afj8x3C79evDZULPRqdF7CmAq+2U
-         cdUw==
-X-Forwarded-Encrypted: i=1; AJvYcCUlx0L4swRv0beZLw0iexJeMkhf572bDHPUUfrVYN9upVswrjSz5MpoK9TpzsWahs1IqAMiCFuA2Lr99+MoVxc=@vger.kernel.org, AJvYcCVzQ09I4mcr6462Ki4YBjFuT6RyrTARLabPC3u4w5oLmzS4fxAKshUMS6g4qX9YY+JhOIMz3blgW7IFDMw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxt01uRyZUe1/ARHriSE0vY7sO3dAN2et6JRqv1Pjzd7/1CjN6b
-	/KXAkWFBJDPy7ro2CU2yGFTFxpTdbXod7e+M4iT7EY10/vWzCNoRU2ce8/1Lpwad4qj8ClXB8Fn
-	WvpVb+wjWfIsoxpz6cJlmOEew2+U=
-X-Gm-Gg: ASbGncur/lWmnBo17GRROo5/KIGVIVf5kePd1TVmukvR80lLHMm2Z8qTrNJu0fpQOY9
-	g3JEAugBcCOMXJYME47cR5a93vHLsk2PErBrNOqUNbKaYZXdORDbd+a1fngPLxEoPWEP4VW0C1N
-	Z87vGomZddiuNf
-X-Google-Smtp-Source: AGHT+IHkfgnrV+BJNL4baF5nekJSwGBo3ZopJ8YNhxStsP2Hf7g6+UzEp276HXeTQtpo/E5x2POhhtXsLL4/gCTqORA=
-X-Received: by 2002:adf:f3c9:0:b0:38f:2b59:3f78 with SMTP id
- ffacd0b85a97d-38f6f0ac5a3mr257914f8f.45.1740076844972; Thu, 20 Feb 2025
- 10:40:44 -0800 (PST)
+	s=arc-20240116; t=1740076932; c=relaxed/simple;
+	bh=wtnnZPkOf7BrsKB8Z/mdzevF6TxC5hF2ePYSpdm6h0Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V4js7nZo5PoWJ5eGxFdQB5m6dhiTU9QGUC3Mf0/FgVBwsl8zhNZu+ZWWp1t6ir4sjGY7eNs9+L+KuoDRUDcNysnUmUe80+AA6S1QNHBP2a1upGx6huuGxeel/zIvrU6SQ0GMD4nl87kIe0SCsWDwFhOjkTld7ICTbHViowyHIWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=morinfr.org; spf=pass smtp.mailfrom=morinfr.org; dkim=pass (1024-bit key) header.d=morinfr.org header.i=@morinfr.org header.b=mmVao0ba; arc=none smtp.client-ip=212.27.42.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=morinfr.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=morinfr.org
+Received: from bender.morinfr.org (unknown [82.66.66.112])
+	by smtp2-g21.free.fr (Postfix) with ESMTPS id AAB4A2003EF;
+	Thu, 20 Feb 2025 19:41:50 +0100 (CET)
+Authentication-Results: smtp2-g21.free.fr;
+	dkim=pass (1024-bit key; unprotected) header.d=morinfr.org header.i=@morinfr.org header.a=rsa-sha256 header.s=20170427 header.b=mmVao0ba;
+	dkim-atps=neutral
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=morinfr.org
+	; s=20170427; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=uLVen2E3RvhESJ8F8MBdYo2bGGGeVIqkqKDEqDdgtGQ=; b=mmVao0baO+xoUcVvp5rDnrVvkF
+	dQwWxlr39sUrAt4F7QoJNAku6XY+MjjSGy45QStx1pNW+VkBR54NCpA+pauZ9aWqKFHWZaMURyYnd
+	XMgCaluaqWdCvVpF+lFbo0aj8ID7T1BKCgZwk5Hkuhl7yGrT/LThiZsV6TbJ0PV1jD3E=;
+Received: from guillaum by bender.morinfr.org with local (Exim 4.96)
+	(envelope-from <guillaume@morinfr.org>)
+	id 1tlBUb-000f4t-2f;
+	Thu, 20 Feb 2025 19:41:49 +0100
+Date: Thu, 20 Feb 2025 19:41:49 +0100
+From: Guillaume Morin <guillaume@morinfr.org>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: song@kernel.org, yukuai3@huawei.com, hare@suse.de, axboe@kernel.dk,
+	logang@deltatee.com, linux-raid@vger.kernel.org,
+	linux-kernel@vger.kernel.org, yi.zhang@huawei.com,
+	yangerkun@huawei.com, hch@lst.de, guillaume@morinfr.org
+Subject: Re: [PATCH v3] md: fix mddev uaf while iterating all_mddevs list
+Message-ID: <Z7d3bY2EoScBIk4k@bender.morinfr.org>
+References: <20250220124348.845222-1-yukuai1@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Z7SwcnUzjZYfuJ4-@infradead.org> <45rpsr92-4416-9no4-8o26-r0998nr77nr8@xreary.bet>
- <Z7bMnpq1cUezsNDl@infradead.org>
-In-Reply-To: <Z7bMnpq1cUezsNDl@infradead.org>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Thu, 20 Feb 2025 10:40:32 -0800
-X-Gm-Features: AWEUYZlQ2ngnBUpsPvZmt-IUjjrYChxu8xuPgnYSqjT2MUxJIeYsrj1qt7MyBZU
-Message-ID: <CAADnVQ+cX_oH_0GcdYkixrMxyvwAKrvSnzx1uofD3BM2E+L6eg@mail.gmail.com>
-Subject: Re: Rust kernel policy
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Jiri Kosina <jikos@kernel.org>, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, 
-	rust-for-linux <rust-for-linux@vger.kernel.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Greg KH <gregkh@linuxfoundation.org>, 
-	David Airlie <airlied@gmail.com>, LKML <linux-kernel@vger.kernel.org>, 
-	ksummit@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250220124348.845222-1-yukuai1@huaweicloud.com>
 
-On Wed, Feb 19, 2025 at 10:33=E2=80=AFPM Christoph Hellwig <hch@infradead.o=
-rg> wrote:
+On 20 Feb 20:43, Yu Kuai wrote:
 >
-> On Tue, Feb 18, 2025 at 06:36:55PM +0100, Jiri Kosina wrote:
-> > > [2] The idea of drivers in eBPF as done by HID also really doesn't he=
-lp
-> > > with that as much as I like eBPF for some use cases
-> >
-> > I don't necessarily agree on this specific aspect, but what (at least t=
-o
-> > me personally) is the crucial point here -- if we at some point decide
-> > that HID-eBPF is somehow potentially unhealthy for the project /
-> > ecosystem, we can just drop it and convert the existing eBPF snippets t=
-o a
-> > proper simple HID bus drivers trivially (I'd even dare to say that to s=
-ome
-> > extent perhaps programatically).
->
-> Well, Linus declared any bpf kfunc / helper program type change that
-> breaks userspace as a no-go.  And such a change very much does.
+> From: Yu Kuai <yukuai3@huawei.com>
+> 
+> While iterating all_mddevs list from md_notify_reboot() and md_exit(),
+> list_for_each_entry_safe is used, and this can race with deletint the
+> next mddev, causing UAF:
+> 
+> t1:
+> spin_lock
+> //list_for_each_entry_safe(mddev, n, ...)
+>  mddev_get(mddev1)
+>  // assume mddev2 is the next entry
+>  spin_unlock
+>             t2:
+>             //remove mddev2
+>             ...
+>             mddev_free
+>             spin_lock
+>             list_del
+>             spin_unlock
+>             kfree(mddev2)
+>  mddev_put(mddev1)
+>  spin_lock
+>  //continue dereference mddev2->all_mddevs
+> 
+> The old helper for_each_mddev() actually grab the reference of mddev2
+> while holding the lock, to prevent from being freed. This problem can be
+> fixed the same way, however, the code will be complex.
+> 
+> Hence switch to use list_for_each_entry, in this case mddev_put() can free
+> the mddev1 and it's not safe as well. Refer to md_seq_show(), also factor
+> out a helper mddev_put_locked() to fix this problem.
+> 
+> Cc: Christoph Hellwig <hch@lst.de>
+> Fixes: f26514342255 ("md: stop using for_each_mddev in md_notify_reboot")
+> Fixes: 16648bac862f ("md: stop using for_each_mddev in md_exit")
+> Reported-by: Guillaume Morin <guillaume@morinfr.org>
+> Closes: https://lore.kernel.org/all/Z7Y0SURoA8xwg7vn@bender.morinfr.org/
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> ---
+>  drivers/md/md.c | 22 +++++++++++++---------
+>  1 file changed, 13 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/md/md.c b/drivers/md/md.c
+> index 827646b3eb59..f501bc5f68f1 100644
+> --- a/drivers/md/md.c
+> +++ b/drivers/md/md.c
+> @@ -629,6 +629,12 @@ static void __mddev_put(struct mddev *mddev)
+>  	queue_work(md_misc_wq, &mddev->del_work);
+>  }
+>  
+> +static void mddev_put_locked(struct mddev *mddev)
+> +{
+> +	if (atomic_dec_and_test(&mddev->active))
+> +		__mddev_put(mddev);
+> +}
+> +
+>  void mddev_put(struct mddev *mddev)
+>  {
+>  	if (!atomic_dec_and_lock(&mddev->active, &all_mddevs_lock))
+> @@ -8461,9 +8467,7 @@ static int md_seq_show(struct seq_file *seq, void *v)
+>  	if (mddev == list_last_entry(&all_mddevs, struct mddev, all_mddevs))
+>  		status_unused(seq);
+>  
+> -	if (atomic_dec_and_test(&mddev->active))
+> -		__mddev_put(mddev);
+> -
+> +	mddev_put_locked(mddev);
+>  	return 0;
+>  }
+>  
+> @@ -9895,11 +9899,11 @@ EXPORT_SYMBOL_GPL(rdev_clear_badblocks);
+>  static int md_notify_reboot(struct notifier_block *this,
+>  			    unsigned long code, void *x)
+>  {
+> -	struct mddev *mddev, *n;
+> +	struct mddev *mddev;
+>  	int need_delay = 0;
+>  
+>  	spin_lock(&all_mddevs_lock);
+> -	list_for_each_entry_safe(mddev, n, &all_mddevs, all_mddevs) {
+> +	list_for_each_entry(mddev, &all_mddevs, all_mddevs) {
+>  		if (!mddev_get(mddev))
+>  			continue;
+>  		spin_unlock(&all_mddevs_lock);
+> @@ -9911,8 +9915,8 @@ static int md_notify_reboot(struct notifier_block *this,
+>  			mddev_unlock(mddev);
+>  		}
+>  		need_delay = 1;
+> -		mddev_put(mddev);
+>  		spin_lock(&all_mddevs_lock);
+> +		mddev_put_locked(mddev);
+>  	}
+>  	spin_unlock(&all_mddevs_lock);
+>  
+> @@ -10245,7 +10249,7 @@ void md_autostart_arrays(int part)
+>  
+>  static __exit void md_exit(void)
+>  {
+> -	struct mddev *mddev, *n;
+> +	struct mddev *mddev;
+>  	int delay = 1;
+>  
+>  	unregister_blkdev(MD_MAJOR,"md");
+> @@ -10266,7 +10270,7 @@ static __exit void md_exit(void)
+>  	remove_proc_entry("mdstat", NULL);
+>  
+>  	spin_lock(&all_mddevs_lock);
+> -	list_for_each_entry_safe(mddev, n, &all_mddevs, all_mddevs) {
+> +	list_for_each_entry(mddev, &all_mddevs, all_mddevs) {
+>  		if (!mddev_get(mddev))
+>  			continue;
+>  		spin_unlock(&all_mddevs_lock);
+> @@ -10278,8 +10282,8 @@ static __exit void md_exit(void)
+>  		 * the mddev for destruction by a workqueue, and the
+>  		 * destroy_workqueue() below will wait for that to complete.
+>  		 */
+> -		mddev_put(mddev);
+>  		spin_lock(&all_mddevs_lock);
+> +		mddev_put_locked(mddev);
+>  	}
+>  	spin_unlock(&all_mddevs_lock);
+>  
+> -- 
+> 2.39.2
+> 
 
-Have to chime in into this rust thread to correct the facts.
+I confirm that this patch fixes our reproducer for the GPF
 
-See the doc:
-https://github.com/torvalds/linux/blob/master/Documentation/bpf/kfuncs.rst#=
-3-kfunc-lifecycle-expectations
-TLDR:
-"A kfunc will never have any hard stability guarantees. BPF APIs
-cannot and will not ever hard-block a change in the kernel..."
+Thanks
 
-git log proves the history of changing/removing kfuncs.
+Tested-by: Guillaume Morin <guillaume@morinfr.org>
 
-hid-bpf iself is another example of that policy.
-It was redesigned from one way of hooking into hid core to
-a completely different approach.
-It may happen again, if necessary.
+-- 
+Guillaume Morin <guillaume@morinfr.org>
 
