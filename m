@@ -1,46 +1,78 @@
-Return-Path: <linux-kernel+bounces-524009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C10DA3DDE5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:11:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DC12A3DDF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:12:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 737F63BB4CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:09:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E8B019C449F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:10:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B80A1D5CF8;
-	Thu, 20 Feb 2025 15:09:55 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E67781D6194;
+	Thu, 20 Feb 2025 15:10:02 +0000 (UTC)
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30A3C1CEACB
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 15:09:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 277C21D5CFB;
+	Thu, 20 Feb 2025 15:10:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740064195; cv=none; b=Tr9Tn9NqHeCcXByjiHOGK4Rbfz1LO9xmjktEKDZpYXmsqu2K8wXAv8qGakbOCz3jLwTy8qFVcaJyv8OgJfg/YCr784gQ7lfeP7Ac4hYKbIX4VSyDVM8DJKiNuLLC+PNJij6RFSbG3s24Wndv4T+2OYONDxqdhUnUfFwrPtNCtNE=
+	t=1740064202; cv=none; b=OeP1JBdwkVxR+UNpLXL/4sCCciMMDwx6AFEpaovYOlIuOXrUsywicrxgdp8s1p0MhqF3tOtAT9mZK01EDVzUNWzuTTq3NyncAglX127520811zwuvHiMuhSZt/I0E6IybMoquBBICSloHVXuIVsH+dy8+0XdiChKgnqHFre0BDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740064195; c=relaxed/simple;
-	bh=FH0XKG9X6v3LuhvharSMWHtZJNFYUBJX11tCfAOvnIc=;
+	s=arc-20240116; t=1740064202; c=relaxed/simple;
+	bh=PQ9TqHjXPaKCOqp9eGBWmX6NMKQFiTQRXd3oz+R7xuY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nWF17al2O9TdnbQZD3cIxezQ8a67ktwqg/A4wWqhhURqcVZUWfmiSMXsIv33NoeTIzlyAI4gdZaFrMIYBTrtNOObfyxVg06erG0ST4MIAFF/djqj5BzQrJExBZfVh9IEA7EJTPTSMxEfp9jTefg2eQaqSvoQgbmWeMUr/qE1QeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B131BC4CED1;
-	Thu, 20 Feb 2025 15:09:52 +0000 (UTC)
-Date: Thu, 20 Feb 2025 10:09:45 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Hillf Danton <hdanton@sina.com>, Byungchul Park <byungchul@sk.com>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	kernel_team@skhynix.com, conduct@kernel.org
-Subject: Re: [RFC PATCH v12 00/26] LUF(Lazy Unmap Flush) reducing tlb numbers
- over 90%
-Message-ID: <Z7dFuTkdQ7PmP7sY@home.goodmis.org>
-References: <20250220052027.58847-1-byungchul@sk.com>
- <20250220103223.2360-1-hdanton@sina.com>
- <20250220114920.2383-1-hdanton@sina.com>
- <Z7c0BTteQoZKcSmJ@casper.infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AZ0juqD7/GvvBcOfnzlvlsM7idbELMVewZBN0nqJR4lF9vopJBSb7UneMFzGzWDh31dqsyPK1yaHciJBzqeheods1s7ycd5h0GZa6U+BpdsONqBfNnCQEK5p+ur58R6bf4fGq/zLeiSqZG7EQ6ezrrGBCk1KjNQoLeJfBdSRPmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-221057b6ac4so19398905ad.2;
+        Thu, 20 Feb 2025 07:10:00 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740064200; x=1740669000;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IpVZCzAXEsFLdSd6AYC5NkhKgANf/LjtJUQLY81yGwY=;
+        b=VQKvlVibxHTtXGufx3weVILCnNg1TCl4Qi5CrNu2+W1rR+RdpX5ajpPg/g+4DsPNKg
+         Jl5GshZr2/I+x85OJbZygi71R0mIqSK7NAccEJbArlFV5NPt5gM+5d37qz+ITvSI/oyK
+         WaQIgGaBtxS30u03SMM2J20kk9Qr2uVBKzivqP12B0swiPQRDQ4PJgk5+eO4UHfPDfS5
+         cnRcDRaEJ/gIB9bDiNBj6WNuW2wvvI6eHVFg1nKO+V6sNPAdZgsPLgvJhA1bz95r9u2u
+         Lv60kzaoU6w4xgpagrE1RifJJJHZyUfHF0eJHP3r87dnAlgGdjDvqLwnGHLkE0GbqLad
+         hT7A==
+X-Forwarded-Encrypted: i=1; AJvYcCUV57kROLxWYdbDXWPPdr1IeButnOvYRtOKy9zg4/MJWDjKRo5MmMFU2fOpht8iRvL/0RykXPCuLM3Jzn7q@vger.kernel.org, AJvYcCVM9rOk0IYNkBCdLWNp7FHkQd8V6BYU+XkgJ0NkohnqaNKga/KmkaHdEfbt1IrSkW04is5J/zAJjyjd@vger.kernel.org, AJvYcCX99k5ndlkRDGbSErp6RYHw3ECmiGYxDB5uavqfVL4rW1sgAL64V/sujQFsF11aCwGVPXlSLvwh9j///34=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCChT9iv1Xl9GJjOsY/BwkQ5QkQmDtku3I649oL2JdaDRLsVjR
+	0vBFEUB1mMunhfbrtnQEgXNMnL2ZkBZjYFeJ8Klv7/kuiOs3C72u
+X-Gm-Gg: ASbGncv7MsRSyzNQlUxWByIs4Eg6sOvwn57tt3LSJ5WY5KtOrFKlida+ilrURT/Prt/
+	8Y3m1YwNqFAJ0hMumJq4JVmr7MGdfVPhC5oHAWNgamMqi0s93X2NKXiSharlJjl1LSJ73byixBK
+	08ilIufhKM/NYSmm/HUFZ3e8dd8lUe1gGGyuSYZE64VKzgBY38abgmIH4ZbWgg2aPhUE/9tRKDH
+	pnHDZ13/pmKbYcmHFty2uyA/9WzES6Vy2C7KVG/AV+6NiJNndQowjmjGe/hFVtrpcMnAdgjsiT1
+	SRfKCIraPQHFvv28byBEGUvhf2RJiJ7Zo68K5p5Z/v74LmoyFw==
+X-Google-Smtp-Source: AGHT+IFS0DcQBikerTWWmL+rghCj2fPTlb1aiY8LCt2DdSKLv2v7xr031giMn7394UTBcKAh2mrG/g==
+X-Received: by 2002:a17:902:e5d0:b0:220:d601:a6dc with SMTP id d9443c01a7336-2210405ccbamr364431485ad.22.1740064200251;
+        Thu, 20 Feb 2025 07:10:00 -0800 (PST)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-220d545cf8fsm122041715ad.152.2025.02.20.07.09.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 07:09:59 -0800 (PST)
+Date: Fri, 21 Feb 2025 00:09:57 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Wei Liu <wei.liu@kernel.org>
+Cc: Easwar Hariharan <eahariha@linux.microsoft.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Dexuan Cui <decui@microsoft.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	linux-hyperv@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] PCI: hv: Correct a comment
+Message-ID: <20250220150957.GE1777078@rocinante>
+References: <20250207190716.89995-1-eahariha@linux.microsoft.com>
+ <Z6wGdTXExwcTh051@liuwe-devbox-debian-v2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,25 +81,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z7c0BTteQoZKcSmJ@casper.infradead.org>
+In-Reply-To: <Z6wGdTXExwcTh051@liuwe-devbox-debian-v2>
 
-On Thu, Feb 20, 2025 at 01:54:13PM +0000, Matthew Wilcox wrote:
-> On Thu, Feb 20, 2025 at 07:49:19PM +0800, Hillf Danton wrote:
-> > On Thu, 20 Feb 2025 20:09:35 +0900 Byungchul Park wrote:
-> > > Just in case that I don't understand what you meant and for better
-> > > understanding, can you provide a simple and problematic example from
-> > > the u-a-f?
-> > > 
-> > Tell us if it is illegal to commit rape without pregnancy in your home town?
+Hello,
+
+> > The VF driver controls an endpoint attached to the pci-hyperv
+> > controller. An invalidation sent by the PF driver in the host would be
+> > delivered *to* the endpoint driver by the controller driver.
+> > 
+> > Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
 > 
-> Hillf, this is unacceptable language.  You need to apologise.
+> Applied. Thanks.
 
-Agreed. WTF Hillf?  Where did that come from? Is this how you talk to your
-co-workers?
+Would you mind if I take this via the PCI tree?
 
-I'll tell you what would happen in my home town. If someone said
-that to a co-worker, they would likely be terminated.
+Thank you!
 
--- Steve
-
+	Krzysztof
 
