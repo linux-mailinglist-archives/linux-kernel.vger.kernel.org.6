@@ -1,253 +1,183 @@
-Return-Path: <linux-kernel+bounces-524382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31F2EA3E283
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:30:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E6DBA3E282
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:30:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A6AC3B73E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:24:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A5B93A7BEC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:24:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F10921324F;
-	Thu, 20 Feb 2025 17:24:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77657211A0E;
+	Thu, 20 Feb 2025 17:24:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ULt7bKc8"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G9XwV5Oa"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CAB1212FAB;
-	Thu, 20 Feb 2025 17:24:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AAF91C0DED
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 17:24:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740072295; cv=none; b=FuCpI8B7LJfKGE7JbEZGxp8b/sq3rKPtbrIAkAVna5KJ7tG5e7Z4oeOK+T/q67TPifwYx3oJn9VQSAdZ+aRoFh49f+aZ9/u8ETAEyJs6UbAJIsghj9ydfZPaYkl2hGOEZHMrzLnroQsAgjDn4lYZQuaQNvuf+53kIAMBxBpLS8A=
+	t=1740072291; cv=none; b=tI1bAeu/ZhOIzrb7Iks6G6cuJAOaTs0v5YytBmH7sFAlGX0fqxAriBtt7qe47G+fWG9RZonVDRzv9Ps3Hz7tgVyxmFqMMHjiGBsoWKRmq6pDY5i29jzC6Eg1L/+NBpaTqSgeYn0A0xs0AItaqe2CkCAkQFpXOxD9l0eFAcIzoRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740072295; c=relaxed/simple;
-	bh=V3GmBcN8YE8IHVrrXD6nC9PTliXoW8/RyWlVeLRfJ6w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=cA2137isUjEHRzkveD9NCblX+rgcgIdEQjpS9t+CU8b1lqtFSCSIWGzpfLSLM2QW7qR9zjjZacGpIJK4gN2Wr6SOu0uBROENwDMpOlhoLahP4+haAigugt1rAf/kh+ou49tGpJlNedHIfwmJSL0urVqXvG1RrW1081T2GpY06Ik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ULt7bKc8; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51KFX7E6011183;
-	Thu, 20 Feb 2025 17:24:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	UAGKZ5JANWIeNTajjuONb7IEuwa0lhGS00SbVblForI=; b=ULt7bKc8DzLoalNy
-	JdALeHPomDnBZGUSNgnwK/WUlC2Zlx75yFiwDx0+Ba4wuMkgFzbhP7AAAZjOQqkg
-	tc0RP/b5uhQC4VpwPYIP4K+CYUOu8q5ti6V8RLF8xroc/oxHZu0cQPRAMCCzASFA
-	kcg9BxdPz+7tw+ZkgyBipd/FeOSAnLGeWtuot4AvQ/PzNn1/EFySWYU6JRQ+K6TY
-	et/tmJ4mISAHcodSja2/hx+JcumTqZiHxsxu8YQv9kCgJR6gkVEnFnjp4BwdXpb2
-	jQa55ACb341hlqS1YA2vgc1P0vkIdXlWGvi6f9rrxW2Yz0ieSV7JJ1KC5ZTJD1bv
-	Cry8Tg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44vyy1xxxx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Feb 2025 17:24:35 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51KHOY3P021133
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Feb 2025 17:24:34 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 20 Feb
- 2025 09:24:33 -0800
-Message-ID: <13fac9ee-cad9-466b-9216-8c0516600b03@quicinc.com>
-Date: Thu, 20 Feb 2025 10:24:32 -0700
+	s=arc-20240116; t=1740072291; c=relaxed/simple;
+	bh=uYSHKsrKSduGu7avLSE4e6T1A5acNPfUzU821FxZCx8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nQZi4SKgrraXWn7ynP3qjm12G6ArILDv24+DyU7ewX1zyqwwV0GoYlcq36WOJNfmRJEKNf6KWhtwEAcO/6IGz5JHLYiBOpoNC6ZHCgCY3ZYHr5s/QHgOUH5hrKR0l9r0LuzcGdnm6u0PmHWtBTf+8M4a+UZfYWcWb6Nd8OBj4J8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G9XwV5Oa; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30930b0b420so10627551fa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:24:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740072288; x=1740677088; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UNpHCgrAsfe1/rNKxXBxQmjwPCLk6Ox/gTQr0wh0duw=;
+        b=G9XwV5OaMyDh2AUM7NocMVHEldDLdus8BtyP3zuyIe1GHu+tZSBMf9S2FY6H8vWQL1
+         9ECkUA6MPc+OvZCA4GIxZj/4lBnJE4xRXRp+GS0EdDk3lByCZtHdZir2FZBftsDhrC2d
+         glzj3aiGff0mf6lj6ZBDK1KGH6tivjGG2fFDeCXrnx4RtDfdf3N12L8sVaRmcoMZY/KC
+         iDupe6dQF3k4Q0WvL2pO+R6WcR67CPbm9kJQemgWgBCQ8htHNE3JTKhl8eQUO5ZvTWtx
+         eg6PwoyZEAcgb/81H4kP5ve+ekpwZYhbFlDssrCg187OEPnRfqO8du+EUd7Cv6uvRq9i
+         FTLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740072288; x=1740677088;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UNpHCgrAsfe1/rNKxXBxQmjwPCLk6Ox/gTQr0wh0duw=;
+        b=oCRcM21IKZiJz5WE8C8hi8HqOfXABxcGjNZBXThrITANfhsuS/tIFSM6F+suYvArtW
+         XGVeMdLTCQOAfnsr+vy8K0RwYz+CTUPglTwz7N7VJMvprbbs16KzOqoms9wDvfJ1gzEt
+         sIB6JTxUHBVeJVBh5r+vdwcK2CR4migEUzqkgNgDS3CLqCCR/+1qmWHzCm0p4uXzR9Py
+         lJVRlqOWm9qkBJfi+qo8VzDfk23pckd9/eID8J0KMuQtKzaIri1V2ulQNb0Sv6gtQEfU
+         dNEovKSwS/WkL1Jmd7t7mpkXYyDri9C5TN/qqimKs+LiTPtNV6STzq6TqF/1E82KoxGW
+         zqog==
+X-Forwarded-Encrypted: i=1; AJvYcCUNnWH3lscosaHO7JnoKVHLXJ9LvyN9t2KlA71vRlPsJHEnvcLvXKQY+teudMjzUW+p+qDSrx00EGhxzg8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywzk+do8O0MTttgSmNqph5882rgewpBmqxybmEjthGtynNQ6pcr
+	ZiLefaswW1oltSwh9eqTflGBQyGd3YG3OT+EjWJcViKmDoIblL32Y7MOB9LjhY8bydbuZ+gPGKg
+	ktPQKGi7LhFfipFeBpVW29OPBYw==
+X-Gm-Gg: ASbGncsCD2wxRlJRBM9VmVteCBMui+QQWkr12LZRZHduytbcfg4fCpg19j8IyxKrRnZ
+	36TxP7NbU6Ff3rVEGDSbgBZy2QNhw81ek+63uqjQvX8nvfms7BgfSwa3znjbIzXpWOM0EXVYHGJ
+	7X6BVF61NC/UM=
+X-Google-Smtp-Source: AGHT+IHtyPkaLWiwHP7cVO8/NHrjUkfBzrUOUinht4KKl/1eDjJDFb5a4Fqb3n8hIe396bSVazzrBh34TzxEvyDmtcc=
+X-Received: by 2002:a05:6512:224e:b0:545:b28:2fa9 with SMTP id
+ 2adb3069b0e04-5462eee7034mr3961922e87.16.1740072287801; Thu, 20 Feb 2025
+ 09:24:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] kbuild: slim down package for building external
- modules
-To: Greg KH <gregkh@linuxfoundation.org>
-CC: Nicolas Schier <n.schier@avm.de>, Masahiro Yamada <masahiroy@kernel.org>,
-        <linux-kbuild@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Kees Cook
-	<kees@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
-        Ben Hutchings
-	<ben@decadent.org.uk>, <regressions@lists.linux.dev>
-References: <20240727074526.1771247-1-masahiroy@kernel.org>
- <20240727074526.1771247-4-masahiroy@kernel.org>
- <b3a8816c-3846-83ab-9750-fd12041d9495@quicinc.com>
- <20250220-red-antelope-of-education-5417aa@l-nschier-nb>
- <0ee862ec-4c36-4c3e-ae90-627c6b0e527b@quicinc.com>
- <20250220-kickass-famous-kittiwake-c11f5b@l-nschier-nb>
- <80cf4e9a-5d49-4bc3-8160-1b23c31d4d36@quicinc.com>
- <2025022020-armband-clock-69af@gregkh>
-Content-Language: en-US
-From: Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <2025022020-armband-clock-69af@gregkh>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: bBtmwgokvliz69lGfhsNu5aPHIGYoAnB
-X-Proofpoint-ORIG-GUID: bBtmwgokvliz69lGfhsNu5aPHIGYoAnB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-20_07,2025-02-20_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 adultscore=0
- bulkscore=0 phishscore=0 suspectscore=0 malwarescore=0 spamscore=0
- priorityscore=1501 impostorscore=0 lowpriorityscore=0 mlxscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502200121
+References: <20250123190747.745588-1-brgerst@gmail.com> <Z7RRZ0jdqsrADMm0@gmail.com>
+ <CAFULd4Z_QoOLKCOawyeFtRe6V4+oaaGxfQxav9dS-Di-Ne7tfw@mail.gmail.com>
+ <Z7XE0P6ZFHxtlYXw@gmail.com> <CAMzpN2gyhEnYsimxLhLNPc4HTpVdRGTiBfm9pXiFTL6_3-O=sg@mail.gmail.com>
+ <CAFULd4ZQ8VoKvQ7aOgcfeLNROM4-rDYn=wHo=FYMO8ZkuQeSAQ@mail.gmail.com>
+ <CAMj1kXFgfbLqVkcs2T8QHRKKJ0X7+mLd-bNjricfd_niY-dxRA@mail.gmail.com>
+ <CAFULd4aYjnWzWaN8WA0LetN1Li7F8MY3qnxbhY8=tNFxqHCP1w@mail.gmail.com> <CAMj1kXGG4J76o17d=e4jv-5jjzcSGyZdKRcNNB17SkCqD6+8qQ@mail.gmail.com>
+In-Reply-To: <CAMj1kXGG4J76o17d=e4jv-5jjzcSGyZdKRcNNB17SkCqD6+8qQ@mail.gmail.com>
+From: Brian Gerst <brgerst@gmail.com>
+Date: Thu, 20 Feb 2025 12:24:34 -0500
+X-Gm-Features: AWEUYZmb9Cv2tk-6mhKPGrwEmsqOxI-dklBrg2aZrNdpWFvtgV0zyPFnizlBS5M
+Message-ID: <CAMzpN2h=Mc_7MNg5RiqxEvchV_BGAiThG4a5_Xt_HHB=0+vmEg@mail.gmail.com>
+Subject: Re: [PATCH v6 00/15] x86-64: Stack protector and percpu improvements
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Uros Bizjak <ubizjak@gmail.com>, Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org, 
+	x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Borislav Petkov <bp@alien8.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2/20/2025 9:49 AM, Greg KH wrote:
-> On Thu, Feb 20, 2025 at 09:31:14AM -0700, Jeffrey Hugo wrote:
->> On 2/20/2025 8:54 AM, Nicolas Schier wrote:
->>> On Thu, Feb 20, 2025 at 08:03:32AM -0700, Jeffrey Hugo wrote:
->>>> On 2/20/2025 3:03 AM, Nicolas Schier wrote:
->>>>> On Tue, Feb 18, 2025 at 01:25:38PM -0700, Jeffrey Hugo wrote:
->>>>>> On 7/27/2024 1:42 AM, Masahiro Yamada wrote:
->>>>>>> Exclude directories and files unnecessary for building external modules:
->>>>>>>
->>>>>>>      - include/config/  (except include/config/auto.conf)
->>>>>>>      - scripts/atomic/
->>>>>>>      - scripts/dtc/
->>>>>>>      - scripts/kconfig/
->>>>>>>      - scripts/mod/mk_elfconfig
->>>>>>>      - scripts/package/
->>>>>>>      - scripts/unifdef
->>>>>>>      - .config
->>>>>>
->>>>>> Please revert this (the removal of .config).
->>>>>>
->>>>>> I got some strange reports that our external module install broke, and
->>>>>> traced it to this change.  Our external module references the .config
->>>>>> because we have different logic for the build depending on if other, related
->>>>>> modules are present or not.
->>>>>>
->>>>>> Also, it looks like this broke DKMS for some configurations, which not only
->>>>>> impacts DKMS itself [1] but also downstream projects [2].
->>>>>>
->>>>>> While DKMS may be updated going forward to avoid this issue, there are
->>>>>> plenty of affected version out in the wild.
->>>>>>
->>>>>> Also, I haven't surveyed every distro, but it looks like Ubuntu still
->>>>>> packages the .config with their headers in their upcoming "Plucky" release
->>>>>> based on 6.12.  I suspect they wouldn't do that if they didn't feel it was
->>>>>> needed/useful.
->>>>>>
->>>>>> -Jeff
->>>>>>
->>>>>> [1]: https://github.com/dell/dkms/issues/464
->>>>>> [2]: https://github.com/linux-surface/linux-surface/issues/1654
->>>>>
->>>>> Hi Jeff,
->>>>>
->>>>> do you know the related thread [1]?  According to the last mail, DKMS
->>>>> has fixed its issue already in December.
->>>>
->>>> DKMS tip might be fixed, but production versions are in various distros,
->>>> which are not updated.  Therefore actual users are impacted by this.
->>>>
->>>> What happened to the #1 rule of kernel, that we do not break users?
->>>
->>> I think, Masahiro already provided valid and profound reasons for
->>> keeping it the way it is.  Users of run-time kernel interfaces are not
->>> affected by the change.  Concretely reported issues were, as far as I
->>> know, only a matter of specific non-official way to work with .config
->>> for other reasons than just building external kernel modules in the way
->>> it is thought to work.
->>
->> I'm CCing the regressions list, which I probably should have done initially.
->>
->> I'm pretty sure Linus has indicated that as soon as users start doing
->> something, that becomes the "official way".  I believe your response is not
->> consistent with the precedent set by Linus.
->>
->> Quoting from [1]:
->> It’s a regression if some application or practical use case running fine
->> with one Linux kernel works worse or not at all with a newer version
->> compiled using a similar configuration. The “no regressions” rule forbids
->> this to take place; if it happens by accident, developers that caused it are
->> expected to quickly fix the issue."
-> 
-> Regressions are at runtime, not with how external tools poke around in
-> kernel source trees and try to make decisions.  If we were to never be
-> able to change our source just because there might be an external user
-> that we don't know of, that would be crazy.
+On Thu, Feb 20, 2025 at 5:52=E2=80=AFAM Ard Biesheuvel <ardb@kernel.org> wr=
+ote:
+>
+> On Thu, 20 Feb 2025 at 11:46, Uros Bizjak <ubizjak@gmail.com> wrote:
+> >
+> > On Thu, Feb 20, 2025 at 11:05=E2=80=AFAM Ard Biesheuvel <ardb@kernel.or=
+g> wrote:
+> > >
+> > > Hi Uros,
+> > >
+> > > On Thu, 20 Feb 2025 at 10:51, Uros Bizjak <ubizjak@gmail.com> wrote:
+> > > >
+> > > > On Wed, Feb 19, 2025 at 2:18=E2=80=AFPM Brian Gerst <brgerst@gmail.=
+com> wrote:
+> > > > >
+> > > > > On Wed, Feb 19, 2025 at 6:47=E2=80=AFAM Ingo Molnar <mingo@kernel=
+.org> wrote:
+> > > > > >
+> > > > > > * Uros Bizjak <ubizjak@gmail.com> wrote:
+> > > > > >
+> > > > > > > I wonder if there would be any benefit if stack canary is put=
+ into
+> > > > > > > struct pcpu_hot?
+> > > > > >
+> > > > > > It should definitely be one of the hottest data structures on x=
+86, so
+> > > > > > moving it there makes sense even if it cannot be measured expli=
+citly.
+> > > > > >
+> > > > >
+> > > > > It would have to be done with linker tricks, since you can't make=
+ the
+> > > > > compiler use a struct member directly.
+> > > >
+> > >
+> > > Interesting take. I'd have tried to put the canary at offset 0x0, and
+> > > simply use pcpu_hot as the guard symbol.
+> > >
+> > >
+> > > > It boots and runs without problems.
+> > > >
+> > > > However, when building the kernel, I get "Absolute relocations
+> > > > present" warning with thousands of locations:
+> > > >
+> ...
+> > >
+> > > The warning is about the type of __ref_stack_chk_guard, not about the
+> > > type of the relocation.
+> >
+> > Thanks, I got distracted by the text of the warning that mentions reloc=
+ation.
+> >
+> > > $ nm vmlinux |grep \\s__ref_sta
+> > > ffffffff8350c620 A __ref_stack_chk_guard
+> > >
+> > > Without your patch:
+> > >
+> > > $ nm vmlinux |grep \\s__ref_sta
+> > > ffffffff834fba10 D __ref_stack_chk_guard
+> >
+> > Is this a problem in our specific case?
+>
+> I don't think so - the whole notion of absolute ELF symbols is rather
+> flaky IME, so I don't think we should be pedantic here.
 
-As a kernel developer, I get this.  The MAX_ORDER thing from a few 
-versions ago seemed to make this a grey area.  Perhaps it a case by case 
-thing.  In which case, what is the harm in sharing the kernel's .config 
-which has been a thing since I started kernel development back in the 
-2.6.X times?
+From what I understand it stayed relative because there wasn't a
+constant added.  As soon as you add a constant (which the linker
+treats as absolute), it becomes absolute.
 
-> We want users to not be afraid to upgrade their kernel, that has nothing
-> to do with how the kernel build is interacted with external stuff.
- > >> As far as I understand its not acceptable to force users to change 
-(the DKMS
->> fix) or update userspace to work with a new kernel.  You could make a change
->> if userspace updated, and all old versions needing the previous behavior
->> were phased out of use, but we have 2 reports indicating that is not the
->> case.
-> 
-> You are attempting to build kernel modules outside of the kernel tree,
-> and as such, have to adapt to things when they change.  That's always
-> been the case, you've had to change things many times over the years,
-> right?
+> > We can list the symbol in arch/x86/tools/relocs.c to quiet the
+> > warning, but I would need some help with auditing the symbol itself.
+> >
+> > OTOH, we could simply do it your way and put stack canary at the
+> > beginning of pcpu_hot structure, with
+> >
+> > static_assert(offsetof(struct pcpu_hot, stack_canary) =3D=3D 0));
+> >
+> > for good measure.
+>
+> I think this would be the most straight-forward if there are no other
+> locality concerns this might interfere with.
 
-While true, its possible to build an external module against 6.11 and 
-6.12 and still hit a failure because of this change (see below about DKMS).
-
-> 
->>  From the thread you pointed out, it looks like Masahiro recommends
->> ${kernel_source_dir}/include/config/auto.conf as a replacement for the
->> .config.  Ignoring that such a suggestion seems to violate the regressions
->> rule, doing a diff of that and the .config on a 6.11 build (before the
->> change we are discussing), there are many changes.  It does not look like
->> that is an equivalent replacement.
-> 
-> What do you need/want to parse the .config file in the first place?  Why
-> not rely on the generated .h files instead as those can be parsed the
-> same way as before, right?
-
-Two usecases -
-
-First when secure boot is enabled, DKMS looks for CONFIG_MODULE_SIG_HASH 
-to figure out signing the modules so that they can be loaded.  Removing 
-.config causes an error in DKMS and the module signing process will 
-fail.  The resulting modules (already compiled successfully) will fail 
-to load.  Whatever the user needed those modules for will no longer work.
-
-If the user is on Ubuntu, and has built a kernel 6.12 or later, they 
-need to build upstream DKMS and use it as none of the Canonical provided 
-DKMS builds have the fix.  This feels like a situation that would make 
-the user afraid to upgrade their kernel (to your point above).
-
-This feels very much like an "at runtime" issue, assuming external 
-modules are supported.  I may be wrong here.
-
-I'm not a DKMS developer, but I do use it, and find it extremely handy 
-to take latest upstream code and apply it older kernels that customers 
-seem to want to use.
-
-Second, our usecase is that we look at the .config to tell if a 
-particular driver is included in the kernel build (config =y or =m). 
-This driver provides diagnostic information which is useful to our 
-product, but not required for operation.  It does not have headers that 
-are exposed to the rest of the kernel, so checking the generated .h 
-files does not work.  If the driver is not built, we provide a 
-backported version that is then built out of tree.
-
-I can, with effort, extend the logic to first look for a .config (since 
-the distros provide that), and if not, then look for the auto.conf 
-(assuming that doesn't get determined to be not useful) to kick off our 
-logic.  We'd still face the DKMS issue above so my preference would be a 
-revert since it addresses both problems.
-
--Jeff
+I'd prefer it at the end of pcpu_hot, that way the disassembler
+doesn't latch on to the __stack_chk_guard symbol when referencing the
+other fields of pcpu_hot.
 
 
-
+Brian Gerst
 
