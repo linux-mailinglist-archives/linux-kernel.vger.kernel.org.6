@@ -1,214 +1,99 @@
-Return-Path: <linux-kernel+bounces-524779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AD2AA3E704
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:51:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85362A3E707
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:52:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5247C17F53A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:51:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 882CB189BA69
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:52:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C56802641C3;
-	Thu, 20 Feb 2025 21:51:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E619213E8C;
+	Thu, 20 Feb 2025 21:52:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="VmRvqU1Y"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="ayV79j/B"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CC651EA7ED;
-	Thu, 20 Feb 2025 21:51:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD211EA7ED;
+	Thu, 20 Feb 2025 21:52:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740088303; cv=none; b=KK1yAsuTVcbrqPxTMeEiSjQpqqX17WKTWUQMMupA+XVHS25JOGXncFLKm9ZGoyS7QX09kHqtj3ZMmVhZbBuUgR1XuhNldnXuVP5lJLx46LcfBctGyrafruiBwmX6MP7IjxtDkY2dFHYx0JcMu2EUrelBd/K/SLd859Ywxe/3sro=
+	t=1740088359; cv=none; b=dQHnLSut5l6ceTGsyJMiOy5C1XWjQLkHVKMvmuQUS8xEuUQs6vqbL4IPHX3zZv9EKtoAQinWwhXQS0ObcqgE6j8kab/1DakbQulqDI9do0AQIYWOMzXdy5tlyOsFtdpiiPATvTAwLliBYcOxYshBt624q9LhYnmiFLI9d95wgjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740088303; c=relaxed/simple;
-	bh=TNZ3qsbVdqL4Fe+x4ZUF0GPYQAyac6RoxiwkW8Ut+Ig=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HA57CwyVuA4hjb0wah4YPobyCP0JLnxMsyPM7iC8oqgCusyS0fc8o1dMTYqg/6fieNfo9uiYRSmFouT3aILWUxqixMPD0DABrB3TYFpJop4aBhkLkrUECoEJvsrrOlRn3CdIaqWEhRMLhV8yrZ/Vx/508nzBc9HFSNLswIKu1aA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=VmRvqU1Y; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=wdWJVChJiK1pkKARKzPKElyiL0rYciXwsXROkxihDGM=; b=VmRvqU1YzDEp3TDk
-	IaB6OxYj38GHPTr+gwavi7Jr3hJssuKri32pz+pipXPVHlzqYvl4xVS1hylAvJikD4hi4e95m7i05
-	c/K5n9b4Xy1PjkvCHn4ugSA46v9fOUalYT/70H5xmBAMl63/lFqiB3JNDv6GkA7i3pNH+xb6pHNn8
-	EO6DaoQTsOXXcpTSXr4HTW0pekWgrftP1Ps3GBeOzRMh6H8lMYtjeXIkX5W0ExPVdvi46xNZmdGRW
-	zpOnhV2E5LhBs73IhqKnXAsqKf+TB4lZOeO5aGgGuvc8b1OCLNTG3O/KpehUO2YuCIaHdLP2CAKEU
-	xPVP4CZroH3q8gHC8w==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1tlESI-00HJKh-0W;
-	Thu, 20 Feb 2025 21:51:38 +0000
-Date: Thu, 20 Feb 2025 21:51:38 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Alison Schofield <alison.schofield@intel.com>
-Cc: dan.j.williams@intel.com, vishal.l.verma@intel.com,
-	dave.jiang@intel.com, ira.weiny@intel.com, nvdimm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] nvdimm deadcoding
-Message-ID: <Z7ej6lBOfRATYhER@gallifrey>
-References: <20250220004538.84585-1-linux@treblig.org>
- <Z7eSmfcdNeYr1rWa@aschofie-mobl2.lan>
+	s=arc-20240116; t=1740088359; c=relaxed/simple;
+	bh=hkYlpMcQ4hjR1sAyKjYb41aAUN4ndAHMbj3Q4Y7pvjE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aap9vwG+VuaUHn8xVFnGWEYAW9rcmC/b0Ah/IwGVBoXTV5eDL9t8fRAK+VwCrRIauznDk69SbOnd1Gciqy7XzeqaKS1MZXum2wNmBRoV37GqimJv434HW0PrAeRtXOst6vF22ua9xrDvJ8R84YWfRAGHBPlg6jLmtXAG2PmPNWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=ayV79j/B; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=a/47VmsCW+/vWlcxtFseGk9lbQ/93FjGlNds+Bzw9AI=; b=ayV79j/Be8/8rhQCeszDDda11d
+	2Yxlk8FKh6OU6gR6NVvkjKcHua7lRM6fe+mBkWsQLFGrEEKrLnHcKAT0T4FWCea5k9WKEbaS7FsrL
+	vxHZ4rxkTHuvOR31xxiKvkjsDCsrcfyt8Bn0bHFqqUGzUFf9Qh6g9nMSftDOGUemeUcuPDI9tFSB8
+	cXq+Q1oe3ZujlL/FAn84pbMTVtoofn2UHSgPvR/MkSODuA5h5bTyfvIksCMQQZrSItDGwbc8+mXPQ
+	tfQ4MzvwZNebJOM74u+dXnw2ycS5n0pt1sbYmScP8GYDlHTK7fH/mg/ERBbeTtItk2ytdxh6BjmSc
+	bcv3p9gQ==;
+Received: from i53875bc0.versanet.de ([83.135.91.192] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tlETB-0003Hh-NX; Thu, 20 Feb 2025 22:52:33 +0100
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+ Quentin Schulz <foss+kernel@0leil.net>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Quentin Schulz <quentin.schulz@cherry.de>
+Subject:
+ Re: [PATCH 2/2] gpio: pcf857x: add support for reset-gpios on (most) PCA967x
+Date: Thu, 20 Feb 2025 22:52:32 +0100
+Message-ID: <2590885.4XsnlVU6TS@diego>
+In-Reply-To: <20250220-pca976x-reset-driver-v1-2-6abbf043050e@cherry.de>
+References:
+ <20250220-pca976x-reset-driver-v1-0-6abbf043050e@cherry.de>
+ <20250220-pca976x-reset-driver-v1-2-6abbf043050e@cherry.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <Z7eSmfcdNeYr1rWa@aschofie-mobl2.lan>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 21:14:01 up 288 days,  8:28,  1 user,  load average: 0.00, 0.00,
- 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-* Alison Schofield (alison.schofield@intel.com) wrote:
-> On Thu, Feb 20, 2025 at 12:45:36AM +0000, linux@treblig.org wrote:
-> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> > 
-> > Hi,
-> >   A couple of nvdimm dead coding patches; they just
-> > remove entirely unused functions.
+Am Donnerstag, 20. Februar 2025, 10:56:52 MEZ schrieb Quentin Schulz:
+> From: Quentin Schulz <quentin.schulz@cherry.de>
 > 
-> I see you've been sending patches for dead code removal
-> for several months. What tool are you using for discovery?
-
-Hi Alison,
-  Thanks for noticing.
-
-  I'm using my own very very hacky scripts; notes below.
-The problem is they generate lots of false-positives
-so I've got this big output file from one run of the scripts
-and I then have to go through finding the useful ones.
-I start with an all-yes-config build on x86, then the
-script dumps all the relocations using readelf and finds
-symbols that are defined but don't have any apparent
-use.
-(Actually not quite all-yes-config, but close)
-
-Then for each of those symbols I grep the whole tree
-for the symbol and get myself a huge debug file.
-That means that for each symbol I'm hopefully left where
-it's defined and declared, and if there are actually any
-uses that weren't built in my world they show up.
-
-Then I gently work through these, look them up with git log -G
-to find when they were added/stopped being used.
-
-On one side there are false positives (stuff only in other
-builds, so that's why I grep for the symbol name, also
-symbols that are defined but only used locally in a .o
-file)
-There are lots of false negatives as well.
-But then I have to second guess from the git output
-  a) If it was recently added don't bother, someone is
-probably about to use it.
-  b) If it's actually a bug and it *should* be called.
-  c) If it's a trivial one liner I don't bother
-  d) If it looks like it's really a wrapper of every
-firmware call for that device I leave it.
-  e) Skip anything __init etc marked, or look magic
-(bpf etc)
-
-It's tricky because they're all over, so you fall
-into the preferences of each maitainers oddities of
-what they care about.
-
-My debug file is alphabetically searched; I'm just near
-the end of the n's - a while to go!
-
-I'm hoping once I get to the end, then it'll be a bit
-cleaner and I can tidy the scripts up and watch for
-new entries in each release.
-
-For reference for the nvdimm symbols my output file looks
-like:
----- nd_attach_ndns[^A-Z_a-z] ----
-drivers/nvdimm/claim.c:44:bool __nd_attach_ndns(struct device *dev, struct nd_namespace_common *attach,
-drivers/nvdimm/claim.c:59:bool nd_attach_ndns(struct device *dev, struct nd_namespace_common *attach,
-drivers/nvdimm/claim.c:65:  claimed = __nd_attach_ndns(dev, attach, _ndns);
-drivers/nvdimm/claim.c:216: if (!__nd_attach_ndns(dev, ndns, _ndns)) { 
-drivers/nvdimm/nd-core.h:139:bool nd_attach_ndns(struct device *dev, struct nd_namespace_common *attach,
-drivers/nvdimm/nd-core.h:141:bool __nd_attach_ndns(struct device *dev, struct nd_namespace_common *attach,
-drivers/nvdimm/btt_devs.c:211:  if (ndns && !__nd_attach_ndns(&nd_btt->dev, ndns, &nd_btt->ndns)) {
-drivers/nvdimm/pfn_devs.c:311:  if (ndns && !__nd_attach_ndns(&nd_pfn->dev, ndns, &nd_pfn->ndns)) {
----- nd_region_conflict[^A-Z_a-z] ----
-drivers/nvdimm/nd-core.h:130:int nd_region_conflict(struct nd_region *nd_region, resource_size_t start,
-drivers/nvdimm/region_devs.c:1260:int nd_region_conflict(struct nd_region *nd_region, resource_size_t start,
-
-
-Scripts
-  (Which I've not run for a few months, I'm still working through
-the first main run)
-
-I start with:
-  find . -name \*.o -exec ~/sym/dosyms {} \;
-of which dosyms is:
---------
-  echo $1
-  DIR=$(dirname $1)
-  NEWN=$DIR/$(basename -s .o $1).x
-
-  readelf -W -s -r $1 | awk -f ~/sym/relocs.awk |sort|uniq > $NEWN
---------
-so that gets me a load of .x files, which I run through
-  awk -f ~/sym/collate.awk $(find . -name \*.x) > col
-of which collate.awk is:
---------
-  { if (($1=="u") || ($1=="U")) {
-      use[$2]=use[$2] "," FILENAME
-      usecount[$2]++
-    } else {
-      def[$2]=def[$2] ",:" $1 ":" FILENAME
-      defcount[$2]++
-    }
-  }
-  END {
-    for (s in def) {
-      if (usecount[s] == 0) {
-        printf("%s:%d: %s from %s\n", s, usecount[s], use[s], def[s]) 
-      }
-    }
-  }
---------
-Then the following magic:
-  cut -d' ' -f1 col | sed -e 's/:.*/[^A-Z_a-z]/' | while read SYM; do echo $SYM; ag -s --ignore '*.x' --ignore col --ignore col2 "$SYM" < /dev/null; done > search.out
-
-which gives the output shown above.
-(ag is a fast parallel grep, 'the-silver-searcher' )
-
-> Thanks,
-> Alison
-
-Have fun,
-
-Dave
+> The PCA9670, PCA9671, PCA9672 and PCA9673 all have a RESETN input pin
+> that is used to reset the I2C GPIO expander.
 > 
-> > 
-> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> > 
-> > 
-> > Dr. David Alan Gilbert (2):
-> >   libnvdimm: Remove unused nd_region_conflict
-> >   libnvdimm: Remove unused nd_attach_ndns
-> > 
-> >  drivers/nvdimm/claim.c       | 11 ----------
-> >  drivers/nvdimm/nd-core.h     |  4 ----
-> >  drivers/nvdimm/region_devs.c | 41 ------------------------------------
-> >  3 files changed, 56 deletions(-)
-> > 
-> > -- 
-> > 2.48.1
-> > 
-> > 
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+> One needs to hold this pin low for at least 4us and the reset should be
+> finished after about 100us according to the datasheet[1]. Once the reset
+> is done, the "registers and I2C-bus state machine will be held in their
+> default state until the RESET input is once again HIGH.".
+> 
+> Because the logic is reset, the latch values eventually provided in the
+> Device Tree via lines-initial-states property are inapplicable so they
+> are simply ignored if a reset GPIO is provided.
+> 
+> [1] https://www.nxp.com/docs/en/data-sheet/PCA9670.pdf 8.5 and fig 22.
+> Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
+
+With the gpio-consumer fixed, reset-gpio handling works nicely
+on my rk3588-tiger-haikou with the DSI display overlay, so
+
+Tested-by: Heiko Stuebner <heiko@sntech.de>
+
+
 
