@@ -1,108 +1,212 @@
-Return-Path: <linux-kernel+bounces-524402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B398A3E2E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:45:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABDDEA3E292
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:33:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BEE170103A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:33:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0242A177804
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:33:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D10E820E003;
-	Thu, 20 Feb 2025 17:33:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D03A51D5CDD;
+	Thu, 20 Feb 2025 17:33:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fgDxBYTZ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="YBA/LN7t"
+Received: from mail-ed1-f65.google.com (mail-ed1-f65.google.com [209.85.208.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61E5F1CEEB2
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 17:33:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EEF41D63D9
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 17:33:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740072821; cv=none; b=ISfOCvVI3KAQzNY0iJMQZX/pozHlo8Y3The5t35OEQX3srVPJAA5+JZMKWfklNE34h6BNIQOQImtKajCZ+fcF9zCRRhIydTkiEIw5NC3uJ2Gg+ouEDhScMXayAJ08mXuNIhP4gn2p+myVuPsjd+icS3t786H/M9QqCQrdBdSoQQ=
+	t=1740072801; cv=none; b=ORQBz7uWmt2zirVJKAWSSyTpI+lvUC2AEP1u6oc2U0TEaIAdo+f0jycDat4O/kYHEcDvnSo4B9fRgM0j84jJY74uKrdQoWSwdYRHBKLoP5/f36dY9WMZY6WpChi0dzVYSTv7LuP1P/5EWimjZznG5GG9A3Smjy5tZPhTN8JeixA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740072821; c=relaxed/simple;
-	bh=dbuwHJBNxpYNJ5MrycXe8mX1VtRsWYiMT043Qy3MLtQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WZDfZ/5VqrSGDyTZTUWcVyMH96TbIvMUWEzUnCRqDrm8FFHUZZZq/Kg/O01qTO+koqiqOpATANbEJIoXEpdMUnBxU4dNAklIZYBNZ4Ggz3XKb1AgXVKVojnw1/qhPp1DhpS0evYg+qa/2NjjW+k8UWE/d8Gm1SKw3xdzKRsrnpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fgDxBYTZ; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740072819; x=1771608819;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=dbuwHJBNxpYNJ5MrycXe8mX1VtRsWYiMT043Qy3MLtQ=;
-  b=fgDxBYTZUBeeYpc93QvtVd2soEVCta9ujukaYCC0gM30IDpudMs9EDMD
-   rI2wpPl48i6gUROiRLZidX4lM+mju81HhNXFtMk4aQRzbcKx83fLZRFwT
-   mMeevu+oG0X1Gqp4eWTix68EB9TgPekKgt9w0pArkjcMYARxIJGtFwVc2
-   7EymtHGhaLknnvMGmp0mYPG+AP1Wx2h3kFUfjoycJ0pBY6+pTAn/KSQnE
-   /IC79nKqqqb67soZReSfImt2XrjUIclRZmQblpKureQotynrbewQygAE/
-   rOn0P2cZ9l+GOfTPrMMChjXM4x+9kOXOrny4G3gbQ8FNk2CoxEnbiBTfL
-   w==;
-X-CSE-ConnectionGUID: wZjkjGKUT1y+Xrf12m5GuA==
-X-CSE-MsgGUID: 9axaM8pNRyyueurHlq5k5A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11351"; a="40789041"
-X-IronPort-AV: E=Sophos;i="6.13,302,1732608000"; 
-   d="scan'208";a="40789041"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 09:33:38 -0800
-X-CSE-ConnectionGUID: d2u1NfQuQj+2QisgyghA4A==
-X-CSE-MsgGUID: Ku4x6sndQBu0Mn31l26Aew==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="116004764"
-Received: from jraag-z790m-itx-wifi.iind.intel.com ([10.190.239.23])
-  by orviesa008.jf.intel.com with ESMTP; 20 Feb 2025 09:33:38 -0800
-From: Raag Jadav <raag.jadav@intel.com>
-To: arnd@arndb.de,
-	andriy.shevchenko@linux.intel.com
-Cc: linux-kernel@vger.kernel.org,
-	Raag Jadav <raag.jadav@intel.com>
-Subject: [PATCH v1] io.h: drop unused headers
-Date: Thu, 20 Feb 2025 23:03:05 +0530
-Message-Id: <20250220173305.2752125-1-raag.jadav@intel.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1740072801; c=relaxed/simple;
+	bh=tdSgk07Qmyb1E0a1lw0F1X8xB3gcZzChTJbUZHLvlvw=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CXNi/96+G+l9ph3tQjTPwQKXIE6SsQajmc3fSYCrZygFhZp++AwszbMxiU/rb/ahpADF4jQmodUPVmpyZQDkSwtuPgqA8C5pPyws6ImWSBWBwYZ7VwzBSp2PHwQYSImTJcgY/jf+W+mlRBUSvX8jkXRgoWZENLf5Ta1YYlccTnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=YBA/LN7t; arc=none smtp.client-ip=209.85.208.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f65.google.com with SMTP id 4fb4d7f45d1cf-5e050b1491eso4081696a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:33:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1740072797; x=1740677597; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ANYY81S4UUbSzxGp9vX0hw/u/obOtXq2bTCgGH3coGw=;
+        b=YBA/LN7thNd0kfJi6YUgXpWSohTH4hfKCGstG7P6rVOIvoqYVImMOkWF2SLD/TvS3l
+         zpzriDHW07QsPXQXaeYTV7dArcZpAMR00SnpouK21pHa8IZMfcHCKN9aIW0tYLBti9nL
+         8TcxgOH9SH9ZtwiVdF78otXhfJo0Db4W2ZMF41U/afSvTQIYgGrNe3dk6luNCA2iE42X
+         G0IfBQ4yS/WJwvG6cnMYDSRA4b7cl4AVk0fLBiedZQkYQdjIaBUZE6rSUso+xS9LIAf9
+         tllmocprm5GBV2KAAwnWvpRF5cqADPVnBL/l7qrNdktdMSYVjojg4vzhoU0OCcwZLthF
+         3HOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740072797; x=1740677597;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ANYY81S4UUbSzxGp9vX0hw/u/obOtXq2bTCgGH3coGw=;
+        b=Ca3y5Kaw/xrndkFgDNSPVpnsEeKkjX0dAAcdtsC5hep/AMqWF3lALqP4fw+I1PdpMv
+         gi2aXcnYbZnoES/evPrmrusNtvbjZlf+L7O9u0ZDYasdVzKmmAMzwztmAVObKXnxbfBn
+         3BjegghHcPYFpn1CDMf5IyuRcoIiBh1vGCIPN6EwrtIGdLgYjubrRzdYpqAG1U1wUyEV
+         qiLe4SuOBwX8Wyji0EEzdlhOnrrEiY9jRu67+YAlXPrP5M80Nt96vlB4coRdGdEy0Nv7
+         EzwDfJRfWiHvm+tpAtl/jI3XYLu+8nh4Bqez5BTt0qDMOnibI4e+JfA2BRXZ9pkRsOVH
+         vWMA==
+X-Forwarded-Encrypted: i=1; AJvYcCUE4l5dagEoKTq9BD8KSULrCC8wrtm55orEOZDmrC60LbIy7WISgpYpA9bB3Z8+1Bz6/I3C/tf5jEoHd8s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxzhibpa9UPFn/8mtiEV8OtVE5ivRBWQjWN4kwcmwcVkplcTIOx
+	AqXBTl+5hgFbQF9qG8BgGI0/wjxOpzqRo8LPu6Mz6w+zJn9GtzqgiOqvYeNNrxc=
+X-Gm-Gg: ASbGnctHrFa7RTvu4XjyGHT0ZGtXSlWzIpxv7Sbn+w2ewHsb4s0CrdEVELcGCUey2rU
+	/B6S/Y5HuQc26bjwiGXxAEGQ3D3nsscInSCYrAXy+psP2F0qA7d4ZFScNBICyANdUPbumz3bavt
+	qTXE4yA80eOUKutKbA2EIgXb8ItIKV2BdCHZUip9b/CBbIVKH9QacA/VUJ+UZE7arW/kiWimM2k
+	dZbWBElReKWbt+DEvCa2/ygwjC+pqZNnW8C2Fx5ivax0PXNdqicea55OnjkNVCFrqiD2iUrNlN8
+	UIoEGI3KS0FOMIMkGQmuyTtEdIn7noI+H49n2TQIvw9vLNQDSOoaswG7yUY=
+X-Google-Smtp-Source: AGHT+IFcZuFtypbIC0ocwrn0UjtnE5zIzW4WQOLazDAdOMAwrDA8BDnjnnZ6hgx+i5rr6QtaeBrAFg==
+X-Received: by 2002:a05:6402:524b:b0:5de:50b4:b71f with SMTP id 4fb4d7f45d1cf-5e0a12baa86mr3394933a12.12.1740072797358;
+        Thu, 20 Feb 2025 09:33:17 -0800 (PST)
+Received: from localhost (host-79-41-239-37.retail.telecomitalia.it. [79.41.239.37])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e076048c05sm5023923a12.35.2025.02.20.09.33.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 09:33:16 -0800 (PST)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Thu, 20 Feb 2025 18:34:21 +0100
+To: Stefan Wahren <wahrenst@gmx.net>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v7 08/11] misc: rp1: RaspberryPi RP1 misc driver
+Message-ID: <Z7dnnW4npJmfOVE0@apocalypse>
+References: <cover.1738963156.git.andrea.porta@suse.com>
+ <d1362766e3e966f78591129de918046a4b892c18.1738963156.git.andrea.porta@suse.com>
+ <87525350-b432-40b3-927c-60cd74228ea4@gmx.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87525350-b432-40b3-927c-60cd74228ea4@gmx.net>
 
-Drop unused headers and type declaration from io.h.
+Hi Stefan,
 
-Signed-off-by: Raag Jadav <raag.jadav@intel.com>
----
-PS: I'm not very confident about this but thought I'd give it a try.
+On 15:21 Sat 08 Feb     , Stefan Wahren wrote:
+> Hi Andrea,
+> 
+> Am 07.02.25 um 22:31 schrieb Andrea della Porta:
+> > The RaspberryPi RP1 is a PCI multi function device containing
+> > peripherals ranging from Ethernet to USB controller, I2C, SPI
+> > and others.
 
- include/linux/io.h | 3 ---
- 1 file changed, 3 deletions(-)
+...
 
-diff --git a/include/linux/io.h b/include/linux/io.h
-index 40cb2de73f5e..6a6bc4d46d0a 100644
---- a/include/linux/io.h
-+++ b/include/linux/io.h
-@@ -9,13 +9,10 @@
- #include <linux/sizes.h>
- #include <linux/types.h>
- #include <linux/init.h>
--#include <linux/bug.h>
--#include <linux/err.h>
- #include <asm/io.h>
- #include <asm/page.h>
- 
- struct device;
--struct resource;
- 
- #ifndef __iowrite32_copy
- void __iowrite32_copy(void __iomem *to, const void *from, size_t count);
+> > +static int rp1_irq_set_type(struct irq_data *irqd, unsigned int type)
+> > +{
+> > +	struct rp1_dev *rp1 = irqd->domain->host_data;
+> > +	unsigned int hwirq = (unsigned int)irqd->hwirq;
+> > +
+> > +	switch (type) {
+> > +	case IRQ_TYPE_LEVEL_HIGH:
+> > +		dev_dbg(&rp1->pdev->dev, "MSIX IACK EN for irq %d\n", hwirq);
+> This looks a little bit inconsistent. Only this type has a debug
+> message. So either we drop this or add at least a message for
 
-base-commit: b16e9f8547a328b19af59afc213ce323124d11e9
--- 
-2.34.1
+I think that this is indeed asymmetric. That warning says
+that the 'special' IACK management is engaged for level triggered
+interrupt, which is mandatory in order to avoid missing further
+interrupts without the performance loss of busy-polling for 
+active interrupts. This is explained in par. 6.2 of:
 
+https://datasheets.raspberrypi.com/rp1/rp1-peripherals.pdf
+
+The point is that we're not stating the type of the interrupt
+(edge/level triggered), but we warn that we're enabling a mechanism
+useful for one type only (level triggered).
+
+> IRQ_TYPE_EDGE_RISING, too. Btw the format specifier looks wrong
+> (unsigned int vs %d).
+
+Ack.
+
+> > +		msix_cfg_set(rp1, hwirq, MSIX_CFG_IACK_EN);
+> > +		rp1->level_triggered_irq[hwirq] = true;
+> > +	break;
+> > +	case IRQ_TYPE_EDGE_RISING:
+> > +		msix_cfg_clr(rp1, hwirq, MSIX_CFG_IACK_EN);
+> > +		rp1->level_triggered_irq[hwirq] = false;
+> > +		break;
+> > +	default:
+> > +		return -EINVAL;
+> It would be nice to document why only IRQ_TYPE_LEVEL_HIGH and
+> IRQ_TYPE_EDGE_RISING are supported. In case it's a software limitation,
+> this function would be a good place. In case this is a hardware
+> limitation this should be in the binding.
+
+All ints are level-triggered. I guess I should add a short comment in
+the bindings.
+
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static struct irq_chip rp1_irq_chip = {
+> > +	.name		= "rp1_irq_chip",
+> > +	.irq_mask	= rp1_mask_irq,
+> > +	.irq_unmask	= rp1_unmask_irq,
+> > +	.irq_set_type	= rp1_irq_set_type,
+> > +};
+
+...
+
+> > +		irq_set_chip_and_handler(irq, &rp1_irq_chip, handle_level_irq);
+> > +		irq_set_probe(irq);
+> > +		irq_set_chained_handler_and_data(pci_irq_vector(pdev, i),
+> > +						 rp1_chained_handle_irq, rp1);
+> > +	}
+> > +
+> > +	err = of_overlay_fdt_apply(dtbo_start, dtbo_size, &rp1->ovcs_id, rp1_node);
+> > +	if (err)
+> > +		goto err_unregister_interrupts;
+> > +
+> > +	err = of_platform_default_populate(rp1_node, NULL, dev);
+> > +	if (err)
+> > +		goto err_unload_overlay;
+> I think in this case it's worth to add a suitable dev_err() here.
+
+Ack.
+
+Many thanks,
+Andrea
+
+> 
+> Thanks
 
