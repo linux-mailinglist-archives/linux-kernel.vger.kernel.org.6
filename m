@@ -1,94 +1,167 @@
-Return-Path: <linux-kernel+bounces-523237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E586A3D407
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:00:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 256AEA3D40B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:01:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 084FD16E737
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:00:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE5473AF859
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:00:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EEEE1EDA09;
-	Thu, 20 Feb 2025 09:00:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB2391DDC0F;
+	Thu, 20 Feb 2025 09:00:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="o5RK3r4R"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="arxK8sDK"
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED9C81EBFE0;
-	Thu, 20 Feb 2025 09:00:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADABB179BC;
+	Thu, 20 Feb 2025 09:00:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740042005; cv=none; b=cayHqF/sfMi+H334UeR6OMMVk6XZxXS0C+pImjU590l0ZQ3s8NYR7+LayrS1Sv2OJuurA/epCbNd+XaIyuSdfRq721g2FNj6yMi9WqH/qA0IBqYZkUVz5HpJG+F7X8RskNVToDfaTQgEjFVCH1bxs2xI6A35Oyp6S8cHhFCwZGw=
+	t=1740042057; cv=none; b=b95FlEcaByrEVPsQqXFIJ5XZSFgiZg/ol7izbf/0TEr8GPNRd8jHzr859rHyJBiI4bVwYx/r8mBYesnzCfZDX8tBkrXovGVJoh+JBJhc5MvQmJcKxjmPiXpI+OGLk4ii9AVQIuZ/0EYukQT/fFnik5NY2VgcVJ8XQzU/D5tBci4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740042005; c=relaxed/simple;
-	bh=5A0WJvrt3x58g4nbFzK9ZSfFmD/sJiUvrzE2dXSE80E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LuZntdp6Tnz7Ig7n5sQnW9egNxPjY70eF7oqE8MKTEtMeH7tj2Jwv6CDvdSavLvLlzVFl9MlVAhlYqdErQX0O7YCJDI/Lwc8SETbW6VMcUnNdNQmXoe4VJXsIU2biyGSoCbqMQGDx1EbTSzE4jiIxRmhcVEh6wGXoE0q9Ow/fvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=o5RK3r4R; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1740042001;
-	bh=5A0WJvrt3x58g4nbFzK9ZSfFmD/sJiUvrzE2dXSE80E=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=o5RK3r4Rk9WuvoZOwJfe9Bu4c2+bFvpTfB8Lp7FMchF966NYGq3kXX8uZRvTpAI/q
-	 Dwfe6h34fU5aOjsijyu0VYbWRO0FUSr7H49ARLQyUa0TjBKJtBo2Zt/uITT8SJMzRn
-	 WjryCNBtusogoc+S67rQF/PN6pnd8zi+Ksto9eIxPrfFibUssDiT7SlEw1sX/t833+
-	 8Y7C/G/6SMRN6vVliSe1hO1382MY9OBR9LYXeqOoUDQZK1X6RMlVC2hWSYDNyNBm5I
-	 1YXRY/8LRBaoj2/Vf08lBbSH4QZfhsksmA/OISb8ROElksWNnSPow/RXgRijH53bwR
-	 /AbUPWxZD2SHQ==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6D2A417E1560;
-	Thu, 20 Feb 2025 10:00:00 +0100 (CET)
-Message-ID: <71767679-057b-4d4b-be3f-3c21bb9877b6@collabora.com>
-Date: Thu, 20 Feb 2025 09:59:59 +0100
+	s=arc-20240116; t=1740042057; c=relaxed/simple;
+	bh=k1RPRZKDI8/Bp3aYAsa2oz9j2Jw8i8GJfERP0AXGqkA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uXUtPN85HbhpJJvn1d1RLyNhhn3KKL+T8y81o7x0KVhDsVVHIDIBXhK4hPLLXzgdn2UY131nYzMhwkpXCg8kiFOzT9fjAwKKwedPSfVzRpqDUXxtT2LJnEAaG6jeaw4l+AYMokHFqwe/Q85RJgLUzydtEu7smQe2IDIy0YVxQSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=arxK8sDK; arc=none smtp.client-ip=209.85.166.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-85598a3e64bso62567039f.1;
+        Thu, 20 Feb 2025 01:00:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740042053; x=1740646853; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pBGc9kjWvcTT8TmY8LuieFVJI4yuvG9ph/k+PfRmzSM=;
+        b=arxK8sDKxK9lfOIyAilvfmUl9rO1LoME12lMTEEpw2CrZtki2BBbY/QNJBcHYlXi9T
+         cXk4xJStmH6DVq7/QbW8ETC7eYWTtTOOy0/V6VBuewyXWCz6XPhNWpq04/TmUKTDo4Fs
+         UDiszFTHlxZiDoxhA2diIASUMCi7Qn7r5WsSIjdQz/XY5QAEb622RvuEu0GMnH3Asyp2
+         6d0i4cLp3B4lYWKQbXr9R1b368yoca25Ag6eaYy6dAhwW7oqELif8d3PkVJyHUNS0Qqy
+         PxsKK8U+qtYZl1+nivzAEJLj59Jt1Zuiq4Imdo6jmFuIABJEnEyqz5/TzJYDOfFJVh8z
+         tnAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740042053; x=1740646853;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pBGc9kjWvcTT8TmY8LuieFVJI4yuvG9ph/k+PfRmzSM=;
+        b=JEYHj/R4+kVDdzBBX0qds7I5tzoky9V2qng01yUlKKxrS5Ab9nr4FvD2CvnMkuW/+i
+         qB3gcFxUStC/xHWSgAo5/OZAitMkqkJ0jvSjQXbtl/SN3DTiLly4RIPudoeN5z/NuEzM
+         EACwY+sZIwGVqu6yml7TPp8HzpI90E6Q6vdTdoNR61rat27FQzdLCox3GG/v/8yzVokR
+         eRjjxL9/nyWM0s2MC4a28zbNbqO279hOZ1FJkTv3TLzV+NXDSGHCgfh3Zyc6EUlrD68a
+         5fGv9rpOKARgRYgsKJpoP91xW8qB/uBd4L5/Li0OoV+Us24lKiaL90Gqo66ipcZm/IJf
+         no+A==
+X-Forwarded-Encrypted: i=1; AJvYcCVaeiRoNd0WoXozSCZAieiF/kDXXUaqc8JISvQlW0sN3YFFetU5W3Vr9NoZlP9mTrDfgZ0pqXJ0LLk1bB0=@vger.kernel.org, AJvYcCXYO/kdL4bLDrKYatLVIGFkELzPfjU14UnoyhYDnEh4su+lSKT1ymMR0qrSVKo1xfHN+eZgg/+7I2RLbO4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyN/unHnKYr2hArMdGqPyv2SutqBc7moyXyUguV93IeO6+bCk3p
+	c+HGwWDb+jwN2JnYOwYHrSIOuylNnghk0tEOyKDETRp1kX5UB6JOm5GM0XEY/+7dy6GBopRrcOn
+	P0Z0qcVLEonhTSQKjEdvhfMoEzqg=
+X-Gm-Gg: ASbGncuAfK6d0j4j2LKLzYFlEjY5xgfGr6eezlNheJ3fuM9LWWQauuEG8q4Ld6TjO6S
+	WVMhx0bz8NQyrs2gPCZ+krUFWkBjvC9qmE0yfNCGgo6OxYkdr1rqoOM1qqlq4aqR6exmliGRs
+X-Google-Smtp-Source: AGHT+IG7gp55gI6T7N19LupIXyNXuZGTOg7Z9WUU+BixH82XpixCePwY1tGVPmmyOmTvSK8jIL5m5WxoGCqGVuGTA9A=
+X-Received: by 2002:a92:c26c:0:b0:3d2:b72d:a507 with SMTP id
+ e9e14a558f8ab-3d2c25f4dcbmr17357385ab.19.1740042053529; Thu, 20 Feb 2025
+ 01:00:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v3] arm64: dts: mediatek: mt8183: Switch to Elan
- touchscreen driver
-To: Hsin-Te Yuan <yuanhsinte@chromium.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Enric Balletbo i Serra <eballetbo@kernel.org>,
- Hsin-Yi Wang <hsinyi@chromium.org>, Benjamin Tissoires <bentiss@kernel.org>,
- Hans de Goede <hdegoede@redhat.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <20250120-post-reset-v3-1-8f394bb25c8f@chromium.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250120-post-reset-v3-1-8f394bb25c8f@chromium.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250217010437.258621-1-chancel.liu@nxp.com>
+In-Reply-To: <20250217010437.258621-1-chancel.liu@nxp.com>
+From: Shengjiu Wang <shengjiu.wang@gmail.com>
+Date: Thu, 20 Feb 2025 17:00:40 +0800
+X-Gm-Features: AWEUYZnC1Oj7Zc6v49m8gK1mM0DpiY64mpQR7L7KBjSe2s7uidTWDyh3xmP5pP0
+Message-ID: <CAA+D8ANJR7rVo5e8jA5wk=rZmoPpJS-=9qZw9s2aSWadzWPEmg@mail.gmail.com>
+Subject: Re: [PATCH v3] ASoC: fsl: Rename stream name of SAI DAI driver
+To: Chancel Liu <chancel.liu@nxp.com>
+Cc: Xiubo.Lee@gmail.com, festevam@gmail.com, nicoleotsuka@gmail.com, 
+	lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, 
+	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	linux-sound@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Il 20/01/25 04:35, Hsin-Te Yuan ha scritto:
-> After commit 2be404486c05 ("HID: i2c-hid-of: Add reset GPIO support to
-> i2c-hid-of"), the i2c-hid-of driver used by some mt8183 devices resets
-> the touchscreen without having enough post-reset delay. This makes those
-> touchscreen fail to get probed.
-> 
-> Switch to Elan touchscreen driver, which has enough post-reset delay.
-> 
-> Fixes: 2be404486c05 ("HID: i2c-hid-of: Add reset GPIO support to i2c-hid-of")
-> Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
+On Mon, Feb 17, 2025 at 9:05=E2=80=AFAM Chancel Liu <chancel.liu@nxp.com> w=
+rote:
+>
+> If stream names of DAI driver are duplicated there'll be warnings when
+> machine driver tries to add widgets on a route:
+>
+> [    8.831335] fsl-asoc-card sound-wm8960: ASoC: sink widget CPU-Playback=
+ overwritten
+> [    8.839917] fsl-asoc-card sound-wm8960: ASoC: source widget CPU-Captur=
+e overwritten
+>
+> Use different stream names to avoid such warnings.
+> DAI names in AUDMIX are also updated accordingly.
+>
+> Fixes: 15c958390460 ("ASoC: fsl_sai: Add separate DAI for transmitter and=
+ receiver")
+> Signed-off-by: Chancel Liu <chancel.liu@nxp.com>
 
-Applied after fixing a merge issue.
+Acked-by: Shengjiu Wang <shengjiu.wang@gmail.com>
 
-Thanks!
-
-Regards,
-Angelo
-
+Best regards
+Shengjiu Wang
+> ---
+> - changes in v3
+> Squash two fix patches in one commit
+>
+>  sound/soc/fsl/fsl_sai.c    | 6 +++---
+>  sound/soc/fsl/imx-audmix.c | 4 ++--
+>  2 files changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/sound/soc/fsl/fsl_sai.c b/sound/soc/fsl/fsl_sai.c
+> index c4eb87c5d39e..9f33dd11d47f 100644
+> --- a/sound/soc/fsl/fsl_sai.c
+> +++ b/sound/soc/fsl/fsl_sai.c
+> @@ -994,10 +994,10 @@ static struct snd_soc_dai_driver fsl_sai_dai_templa=
+te[] =3D {
+>         {
+>                 .name =3D "sai-tx",
+>                 .playback =3D {
+> -                       .stream_name =3D "CPU-Playback",
+> +                       .stream_name =3D "SAI-Playback",
+>                         .channels_min =3D 1,
+>                         .channels_max =3D 32,
+> -                               .rate_min =3D 8000,
+> +                       .rate_min =3D 8000,
+>                         .rate_max =3D 2822400,
+>                         .rates =3D SNDRV_PCM_RATE_KNOT,
+>                         .formats =3D FSL_SAI_FORMATS,
+> @@ -1007,7 +1007,7 @@ static struct snd_soc_dai_driver fsl_sai_dai_templa=
+te[] =3D {
+>         {
+>                 .name =3D "sai-rx",
+>                 .capture =3D {
+> -                       .stream_name =3D "CPU-Capture",
+> +                       .stream_name =3D "SAI-Capture",
+>                         .channels_min =3D 1,
+>                         .channels_max =3D 32,
+>                         .rate_min =3D 8000,
+> diff --git a/sound/soc/fsl/imx-audmix.c b/sound/soc/fsl/imx-audmix.c
+> index 50ecc5f51100..dac5d4ddacd6 100644
+> --- a/sound/soc/fsl/imx-audmix.c
+> +++ b/sound/soc/fsl/imx-audmix.c
+> @@ -119,8 +119,8 @@ static const struct snd_soc_ops imx_audmix_be_ops =3D=
+ {
+>  static const char *name[][3] =3D {
+>         {"HiFi-AUDMIX-FE-0", "HiFi-AUDMIX-FE-1", "HiFi-AUDMIX-FE-2"},
+>         {"sai-tx", "sai-tx", "sai-rx"},
+> -       {"AUDMIX-Playback-0", "AUDMIX-Playback-1", "CPU-Capture"},
+> -       {"CPU-Playback", "CPU-Playback", "AUDMIX-Capture-0"},
+> +       {"AUDMIX-Playback-0", "AUDMIX-Playback-1", "SAI-Capture"},
+> +       {"SAI-Playback", "SAI-Playback", "AUDMIX-Capture-0"},
+>  };
+>
+>  static int imx_audmix_probe(struct platform_device *pdev)
+> --
+> 2.47.1
+>
 
