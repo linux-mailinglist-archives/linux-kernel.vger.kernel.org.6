@@ -1,124 +1,207 @@
-Return-Path: <linux-kernel+bounces-523713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7FC2A3DA48
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:43:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95C1CA3DA5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:48:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27D2A160425
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:43:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 041003B5C9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:47:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34E11F4628;
-	Thu, 20 Feb 2025 12:42:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W/5Iyl2A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CB7B1F4628;
+	Thu, 20 Feb 2025 12:47:40 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DEA1286298;
-	Thu, 20 Feb 2025 12:42:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 606D979CD;
+	Thu, 20 Feb 2025 12:47:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740055375; cv=none; b=uBtK8YHHCZKAYAHMx70vod/fYUplRQzPKh1Sp9N+8hb4f6D9y4Qy4s/hmoBtV+Ejfs6FGlDiucx8/OHUY/SESx+B/+icm5ywYaZ1p5QXSyxFOIc4H0pop2iEvLR4mC5diAmFUU0a0QANGNkN2TEgsHG0puI8G1dCXYEOgC7ChZk=
+	t=1740055659; cv=none; b=t7BFHEcCeCmXD7qf/1hf0PvYq7zVPdAPgQazOQ/nux65LWPU6T9b3QVzpPEs7jrcQjQP1JmhiPuzqXfprUN00GARtukCGPA9pskwXhhCCr8wlbj32G2CSzDi5yvAak7R6caZM0+dydtstxvSQN3SYwTSaIPWsCIQnX7dGQ2IqFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740055375; c=relaxed/simple;
-	bh=RVZ/swUs318iSPWUVj9+byY1sTALGlfS4yGzHO5zGEY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XFRBLrx1z/q8OizLY/eG6eGBmrAlfywliUzcGdwQ9jEIZkTMkdRaMHQWUnkcRvAvmZEsyEXvR1KkdUqYqDmP153s5M1fDxuk21b3hQ8Qo7RYlMtlHWZvZMTHcNfT4hRECXeAXWA6SPTGkHqw2gsRab2rmTfs23hiv8jZMHWrNk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W/5Iyl2A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67A97C4CED6;
-	Thu, 20 Feb 2025 12:42:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740055374;
-	bh=RVZ/swUs318iSPWUVj9+byY1sTALGlfS4yGzHO5zGEY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=W/5Iyl2A8LrY2JUM0IzIQPtoJ4yKX40TTq/3WN9psph4YCrW5Q3J8Eam2+D7L7MwZ
-	 PnXhOanXHE2SEmQ/auErLnmPpXIJH1Gnl01cVp2IOSUdrioRNlb26J56L2VHQy8zVJ
-	 xsWy6p6hh9tqBqRNOc7sGl7BESkIIn+T8U8NGC4kGmXoZP7T8c/aZWmQ2wAngH7tsq
-	 TfQNZC5abXf3hI45pxg3Yvuk5cJ2Bv4KXTFwAqWNj15zt3agjKqxWXkGV20GIXw1gK
-	 Ta3Hjp1PFsa6OITZ6+ZcL7rvi/Lw3oQbRFYQgFWMSfI+MIhMcClUGKzZKGu3XRTNPf
-	 Wdga0gXIWjfTA==
-Date: Thu, 20 Feb 2025 13:42:51 +0100
-From: Niklas Cassel <cassel@kernel.org>
-To: Zhiyuan Dai <daizhiyuan@phytium.com.cn>
-Cc: helgaas@kernel.org, bhelgaas@google.com, christian.koenig@amd.com,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH v3] PCI: Update Resizable BAR Capability Register fields
-Message-ID: <Z7cjS7iuX655O7b3@ryzen>
-References: <20250219183424.GA226683@bhelgaas>
- <20250220013034.318848-1-daizhiyuan@phytium.com.cn>
+	s=arc-20240116; t=1740055659; c=relaxed/simple;
+	bh=DzsGVY7B3W9qUDARt5o5KYc/6ezxGdKjkMX5DdP5NOY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=N4LtWj75/6h8BbaqICNWUX5BBWbFefIZisvn8D8SlJr/r7nHZgq2z6mLOu+aCUdv8ntqQAZblY9/sW/lK7bHV0JcIBqnIOC93yiZbM+WWyh47SMBA8vz+pN4g5i5Lj6AMlxQBdJOff1H1fIMkbNGoNsuvNdcJkrzrHyVzj0snc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4YzChF5m56z4f3kvv;
+	Thu, 20 Feb 2025 20:47:09 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id D17A21A0D5C;
+	Thu, 20 Feb 2025 20:47:32 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgBHq19gJLdn4NmPEQ--.56042S4;
+	Thu, 20 Feb 2025 20:47:30 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: song@kernel.org,
+	yukuai3@huawei.com,
+	hare@suse.de,
+	axboe@kernel.dk,
+	logang@deltatee.com
+Cc: linux-raid@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	hch@lst.de,
+	guillaume@morinfr.org
+Subject: [PATCH v3] md: fix mddev uaf while iterating all_mddevs list
+Date: Thu, 20 Feb 2025 20:43:48 +0800
+Message-Id: <20250220124348.845222-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250220013034.318848-1-daizhiyuan@phytium.com.cn>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgBHq19gJLdn4NmPEQ--.56042S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxWFW7urW3AryxCw4ktrW3GFg_yoWrGr1kpF
+	WagFWfGr48Xr93XF4DGa1kuFy5Ww18trWDtry7Ka1rCr15twn5Wr1Sqr15XFyY9ayrXrn0
+	ya1UJ345Zr1UWwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUonmRUUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Thu, Feb 20, 2025 at 09:30:34AM +0800, Zhiyuan Dai wrote:
-> PCI Express Base Spec r6.0 defines BAR size up to 8 EB (2^63 bytes),
-> but supporting anything bigger than 128TB requires changes to pci_rebar_get_possible_sizes()
-> to read the additional Capability bits from the Control register.
-> 
-> If 8EB support is required, callers will need to be updated to handle u64 instead of u32.
-> For now, support is limited to 128TB, and support for sizes greater than 128TB can be
-> deferred to a later time.
+From: Yu Kuai <yukuai3@huawei.com>
 
-Did you run ./scripts/checkpatch.pl on this?
+While iterating all_mddevs list from md_notify_reboot() and md_exit(),
+list_for_each_entry_safe is used, and this can race with deletint the
+next mddev, causing UAF:
 
-I'm guessing that you will see:
-Prefer a maximum 75 chars per line (possible unwrapped commit description?)
+t1:
+spin_lock
+//list_for_each_entry_safe(mddev, n, ...)
+ mddev_get(mddev1)
+ // assume mddev2 is the next entry
+ spin_unlock
+            t2:
+            //remove mddev2
+            ...
+            mddev_free
+            spin_lock
+            list_del
+            spin_unlock
+            kfree(mddev2)
+ mddev_put(mddev1)
+ spin_lock
+ //continue dereference mddev2->all_mddevs
 
-With that fixed:
-Reviewed-by: Niklas Cassel <cassel@kernel.org>
+The old helper for_each_mddev() actually grab the reference of mddev2
+while holding the lock, to prevent from being freed. This problem can be
+fixed the same way, however, the code will be complex.
 
-> 
-> Signed-off-by: Zhiyuan Dai <daizhiyuan@phytium.com.cn>
-> ---
->  drivers/pci/pci.c             | 4 ++--
->  include/uapi/linux/pci_regs.h | 2 +-
->  2 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index 661f98c6c63a..77b9ceefb4e1 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -3752,7 +3752,7 @@ static int pci_rebar_find_pos(struct pci_dev *pdev, int bar)
->   * @bar: BAR to query
->   *
->   * Get the possible sizes of a resizable BAR as bitmask defined in the spec
-> - * (bit 0=1MB, bit 19=512GB). Returns 0 if BAR isn't resizable.
-> + * (bit 0=1MB, bit 31=128TB). Returns 0 if BAR isn't resizable.
->   */
->  u32 pci_rebar_get_possible_sizes(struct pci_dev *pdev, int bar)
->  {
-> @@ -3800,7 +3800,7 @@ int pci_rebar_get_current_size(struct pci_dev *pdev, int bar)
->   * pci_rebar_set_size - set a new size for a BAR
->   * @pdev: PCI device
->   * @bar: BAR to set size to
-> - * @size: new size as defined in the spec (0=1MB, 19=512GB)
-> + * @size: new size as defined in the spec (0=1MB, 31=128TB)
->   *
->   * Set the new size of a BAR as defined in the spec.
->   * Returns zero if resizing was successful, error code otherwise.
-> diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
-> index 1601c7ed5fab..ce99d4f34ce5 100644
-> --- a/include/uapi/linux/pci_regs.h
-> +++ b/include/uapi/linux/pci_regs.h
-> @@ -1013,7 +1013,7 @@
->  
->  /* Resizable BARs */
->  #define PCI_REBAR_CAP		4	/* capability register */
-> -#define  PCI_REBAR_CAP_SIZES		0x00FFFFF0  /* supported BAR sizes */
-> +#define  PCI_REBAR_CAP_SIZES		0xFFFFFFF0  /* supported BAR sizes */
->  #define PCI_REBAR_CTRL		8	/* control register */
->  #define  PCI_REBAR_CTRL_BAR_IDX		0x00000007  /* BAR index */
->  #define  PCI_REBAR_CTRL_NBAR_MASK	0x000000E0  /* # of resizable BARs */
-> -- 
-> 2.43.0
-> 
+Hence switch to use list_for_each_entry, in this case mddev_put() can free
+the mddev1 and it's not safe as well. Refer to md_seq_show(), also factor
+out a helper mddev_put_locked() to fix this problem.
+
+Cc: Christoph Hellwig <hch@lst.de>
+Fixes: f26514342255 ("md: stop using for_each_mddev in md_notify_reboot")
+Fixes: 16648bac862f ("md: stop using for_each_mddev in md_exit")
+Reported-by: Guillaume Morin <guillaume@morinfr.org>
+Closes: https://lore.kernel.org/all/Z7Y0SURoA8xwg7vn@bender.morinfr.org/
+Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+---
+ drivers/md/md.c | 22 +++++++++++++---------
+ 1 file changed, 13 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/md/md.c b/drivers/md/md.c
+index 827646b3eb59..f501bc5f68f1 100644
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@ -629,6 +629,12 @@ static void __mddev_put(struct mddev *mddev)
+ 	queue_work(md_misc_wq, &mddev->del_work);
+ }
+ 
++static void mddev_put_locked(struct mddev *mddev)
++{
++	if (atomic_dec_and_test(&mddev->active))
++		__mddev_put(mddev);
++}
++
+ void mddev_put(struct mddev *mddev)
+ {
+ 	if (!atomic_dec_and_lock(&mddev->active, &all_mddevs_lock))
+@@ -8461,9 +8467,7 @@ static int md_seq_show(struct seq_file *seq, void *v)
+ 	if (mddev == list_last_entry(&all_mddevs, struct mddev, all_mddevs))
+ 		status_unused(seq);
+ 
+-	if (atomic_dec_and_test(&mddev->active))
+-		__mddev_put(mddev);
+-
++	mddev_put_locked(mddev);
+ 	return 0;
+ }
+ 
+@@ -9895,11 +9899,11 @@ EXPORT_SYMBOL_GPL(rdev_clear_badblocks);
+ static int md_notify_reboot(struct notifier_block *this,
+ 			    unsigned long code, void *x)
+ {
+-	struct mddev *mddev, *n;
++	struct mddev *mddev;
+ 	int need_delay = 0;
+ 
+ 	spin_lock(&all_mddevs_lock);
+-	list_for_each_entry_safe(mddev, n, &all_mddevs, all_mddevs) {
++	list_for_each_entry(mddev, &all_mddevs, all_mddevs) {
+ 		if (!mddev_get(mddev))
+ 			continue;
+ 		spin_unlock(&all_mddevs_lock);
+@@ -9911,8 +9915,8 @@ static int md_notify_reboot(struct notifier_block *this,
+ 			mddev_unlock(mddev);
+ 		}
+ 		need_delay = 1;
+-		mddev_put(mddev);
+ 		spin_lock(&all_mddevs_lock);
++		mddev_put_locked(mddev);
+ 	}
+ 	spin_unlock(&all_mddevs_lock);
+ 
+@@ -10245,7 +10249,7 @@ void md_autostart_arrays(int part)
+ 
+ static __exit void md_exit(void)
+ {
+-	struct mddev *mddev, *n;
++	struct mddev *mddev;
+ 	int delay = 1;
+ 
+ 	unregister_blkdev(MD_MAJOR,"md");
+@@ -10266,7 +10270,7 @@ static __exit void md_exit(void)
+ 	remove_proc_entry("mdstat", NULL);
+ 
+ 	spin_lock(&all_mddevs_lock);
+-	list_for_each_entry_safe(mddev, n, &all_mddevs, all_mddevs) {
++	list_for_each_entry(mddev, &all_mddevs, all_mddevs) {
+ 		if (!mddev_get(mddev))
+ 			continue;
+ 		spin_unlock(&all_mddevs_lock);
+@@ -10278,8 +10282,8 @@ static __exit void md_exit(void)
+ 		 * the mddev for destruction by a workqueue, and the
+ 		 * destroy_workqueue() below will wait for that to complete.
+ 		 */
+-		mddev_put(mddev);
+ 		spin_lock(&all_mddevs_lock);
++		mddev_put_locked(mddev);
+ 	}
+ 	spin_unlock(&all_mddevs_lock);
+ 
+-- 
+2.39.2
+
 
