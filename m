@@ -1,131 +1,91 @@
-Return-Path: <linux-kernel+bounces-523642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CD55A3D992
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:12:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACE90A3D995
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:13:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F24917B4B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:12:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 897043BA90E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:13:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 538681F4E34;
-	Thu, 20 Feb 2025 12:11:59 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6ABB1F4E5D;
+	Thu, 20 Feb 2025 12:13:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="M1EUOTwB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C96601F4626;
-	Thu, 20 Feb 2025 12:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA1D1F4626;
+	Thu, 20 Feb 2025 12:13:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740053519; cv=none; b=ceYiEFxe9ZBAju0ci9xd7XzT2T7hA1RP3OSp2a2DUS1VpQ20nd+jt6p8OJYHwp+MyqjzFLLl5zO+2gHhedc8BFeWRyS0Gl3n8/AEYX7W15sL0ybOMEiPU4AS1IoHvCkNMdldy2FguRJZ5qeOs2ZTPM8rt6kFhF93h8vi3yJGOQs=
+	t=1740053588; cv=none; b=My21RlElZSssFkiPG4nMBTUmMLKxjrxMdckiLf9HbNbxXaoUKb4H3anNp4QdPjfY9a6cubnnIZz0n65RH0MKgrCt2Ye/xO0hP5m0OYob/FnP8KWOIus/5oGhX5X735aRW3bW/jqx4SfonSzl8FigxxagY1WD542gkbPuEDcJ2D0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740053519; c=relaxed/simple;
-	bh=H5E5SeieaLpNYPhpuYc6b4Ta1whQtBEq0NatzVE9X6k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NHswvRHOcTdYCRZrCn79GpQuYtCe5ASpgC3kMtzz5q71ow72O8+D9hgZNPvArq9WsKoPIGGkIK2DjRXdSQTIK8ZezxhEa+hpp8S9fX9QohN8LYcBQvH1rO7AmqOPCgGVCmeCAoFKTqTygFirGJjFb4zj3TpuUVwMPrgxgZVNDA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.0.2] (ip5f5af4d1.dynamic.kabel-deutschland.de [95.90.244.209])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 3FDE061E6478A;
-	Thu, 20 Feb 2025 13:11:42 +0100 (CET)
-Message-ID: <0e5f23a9-b1d7-4d8c-bb05-83f7a15a7285@molgen.mpg.de>
-Date: Thu, 20 Feb 2025 13:11:41 +0100
+	s=arc-20240116; t=1740053588; c=relaxed/simple;
+	bh=F/ZhQptyqhlA1rUIjafEGjNVjIHdHZ613QjmYwbyorU=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZKtpgzz2ExpH4pBFRORTovlOwViGRPdqQpCB4N4e4ISNasWN3+OG50IBYrMfx1uxP/7hvA1tVba4pYnIswoWGRbRH9uTyUJ+DWrwyND7FV5c8/VMs8u1LAh3fz3dFknKIkJXxmq1pJ63fuc0+MVg3nIO53S9/sUAjL1UkAnC6tE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=M1EUOTwB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE504C4CED1;
+	Thu, 20 Feb 2025 12:13:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1740053587;
+	bh=F/ZhQptyqhlA1rUIjafEGjNVjIHdHZ613QjmYwbyorU=;
+	h=Date:From:To:Subject:References:In-Reply-To:From;
+	b=M1EUOTwBvT5J3sVQKbSteoOHUc7tnfah3gfKK7ulq2DVmbGjK4OJ8DpHVSuWDzNDU
+	 xabfsuWAuPG7wNyj69S08HXtJRLUYEoXKqSdAdblbrtPB8DeNQeo6Np47FZFVMx3SJ
+	 c/sp7HIRrrv0CIilOs9R92lLD+HobkohAUeFsrC0=
+Date: Thu, 20 Feb 2025 13:13:04 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Romain Gantois <romain.gantois@bootlin.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Kory Maincent <kory.maincent@bootlin.com>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v7 9/9] misc: add FPC202 dual port controller driver
+Message-ID: <2025022049-shrink-worrisome-2872@gregkh>
+References: <20250204-fpc202-v7-0-78b4b8a35cf1@bootlin.com>
+ <20250204-fpc202-v7-9-78b4b8a35cf1@bootlin.com>
+ <2025022038-hangnail-rehab-c145@gregkh>
+ <Z7cbX5jX3NL4C2GR@shikoro>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/2] dt-bindings: net: bluetooth: nxp: Add support to
- set BD address
-To: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
-Cc: marcel@holtmann.org, luiz.dentz@gmail.com, robh@kernel.org,
- krzk+dt@kernel.org, Conor Dooley <conor+dt@kernel.org>,
- linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, Amitkumar Karwar <amitkumar.karwar@nxp.com>,
- Sherry Sun <sherry.sun@nxp.com>, Luke Wang <ziniu.wang_1@nxp.com>,
- johan.korsnes@remarkable.no, kristian.krohn@remarkable.no,
- Manjeet Gupta <manjeet.gupta@nxp.com>
-References: <20250220114157.232997-1-neeraj.sanjaykale@nxp.com>
- <184919f9-25bd-4f65-9ed9-dc452a6f4418@molgen.mpg.de>
- <AS4PR04MB96921164DAA8A63B2C0841AAE7C42@AS4PR04MB9692.eurprd04.prod.outlook.com>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <AS4PR04MB96921164DAA8A63B2C0841AAE7C42@AS4PR04MB9692.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z7cbX5jX3NL4C2GR@shikoro>
 
-Dear Neeraj,
-
-
-Thank you for your prompt reply.
-
-Am 20.02.25 um 12:59 schrieb Neeraj Sanjay Kale:
-
->> Am 20.02.25 um 12:41 schrieb Neeraj Sanjay Kale:
->>> Allow user to set custom BD address for NXP chipsets.
->>>
->>> Signed-off-by: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
->>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>> ---
->>> v2: Add allOf and unevaluatedProperties: false (Krzysztof)
->>> v3: Drop local-bd-address: true (Krzysztof)
->>> ---
->>>    .../devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml   | 6 +++++-
->>>    1 file changed, 5 insertions(+), 1 deletion(-)
->>>
->>> diff --git
->> a/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml
->> b/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml
->>> index 0a2d7baf5db3..a84c1c21b024 100644
->>> --- a/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml
->>> +++ b/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml
->>> @@ -17,6 +17,9 @@ description:
->>>    maintainers:
->>>      - Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
->>>
->>> +allOf:
->>> +  - $ref: bluetooth-controller.yaml#
->>> +
->>>    properties:
->>>      compatible:
->>>        enum:
->>> @@ -43,7 +46,7 @@ properties:
->>>    required:
->>>      - compatible
->>>
->>> -additionalProperties: false
->>> +unevaluatedProperties: false
->>
->> How is this diff related to the change mentioned in the commit message?
+On Thu, Feb 20, 2025 at 01:09:03PM +0100, Wolfram Sang wrote:
 > 
-> This is based on review comment from Krzysztof in V1 DT patch.
-> allOf ref will import all properties defined in bluetooth-controller.yaml, including local-bd-address:
-> https://github.com/torvalds/linux/blob/master/Documentation/devicetree/bindings/net/bluetooth/bluetooth-controller.yaml#L18
+> > as this is a i2c_driver, why isn't it in drivers/i2c/ somewhere?  Why
+> > misc?
+> 
+> Because drivers/i2c is only for I2C controllers and this is not a
+> controller. Other address translators also reside in their respective
+> subsystem, e.g. media for GMSL (de-)serializers. I don't know this chip,
+> maybe it has no "respective" subsystem and, thus, misc?
 
-Thank you. I’d include this in the commit message, but my comment was 
-about the replacement of `additionalProperties` by `unevaluatedProperties`.
+Ok, but that should be explained in the changelog please :)
 
->>>
->>>    examples:
->>>      - |
->>> @@ -54,5 +57,6 @@ examples:
->>>                fw-init-baudrate = <3000000>;
->>>                firmware-name = "uartuart8987_bt_v0.bin";
->>>                device-wakeup-gpios = <&gpio 11 GPIO_ACTIVE_HIGH>;
->>> +            local-bd-address = [66 55 44 33 22 11];
->>>            };
->>>        };
+thanks,
 
-Kind regards,
-
-Paul
+greg k-h
 
