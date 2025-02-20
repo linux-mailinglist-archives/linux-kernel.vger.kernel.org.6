@@ -1,63 +1,98 @@
-Return-Path: <linux-kernel+bounces-523335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74C83A3D542
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:48:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 062F9A3D550
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:50:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EEC2189FEBA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:47:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4CBA3AB7AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:47:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E4B31F130A;
-	Thu, 20 Feb 2025 09:44:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3F2B1F03D7;
+	Thu, 20 Feb 2025 09:45:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="LxQLSg+p"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kj79DufO"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8C1B1B87EE;
-	Thu, 20 Feb 2025 09:44:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D75F1EDA36;
+	Thu, 20 Feb 2025 09:45:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740044689; cv=none; b=LNrGadGlqALuxeGHlCVUi9Q7+SBc7YoueEX+MjNvEDzWYEi32QQff0OlwbdZlKfiOKVnBOlvvVcHegxX+HzsACPgApdiJMqx2MWl2NQmXYo372HBPFInEuiaNgZQ/YLlCR34wqng+zPPvtUsBwwyeRZJrOYzyn/kIljnzUvGhsY=
+	t=1740044722; cv=none; b=InRLUfcTnnmOlNAw+M3WyWUkfmPIa5gfPmRx5qqXOJK93hykh9iR2v1DKE9JrrnobmLTNQqSDPnhQXqQFFlwgjCdcbDNGiMlTjklN6xA/dHqZDwaozV+QUQBAPPMCJwvJzPWXdYm2HEiPQ6b0EDFxlee0dNeAt2VrF2QP6/KU14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740044689; c=relaxed/simple;
-	bh=O+NWxy4b1KytTcS0ZHrugC8vxmfgabRh5HNWwRO/Ks8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bANa6q0KlUg1P5WcJs9+Yy0pBuKHddboKBIAf/MR3fmfoJbor02dloK4z5OY9rpHmhYJ5UUZpblSvH3tniJBWSOwBDaLiEo5Rmp2cL+3BvJfqXMvY4b+X5VLMZSHSPy65U8LtFAQJRptRcLoyWvdMT04expkB/FWC5gX0692tGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=LxQLSg+p; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from fedora.intra.ispras.ru (unknown [10.10.165.14])
-	by mail.ispras.ru (Postfix) with ESMTPSA id 788AD407853D;
-	Thu, 20 Feb 2025 09:44:44 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 788AD407853D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1740044684;
-	bh=VSyXhzk/oou5dN2ui5up8lh68VSTsNSjPW0MQf8saxc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=LxQLSg+pO5Zrb++WnEfFMOLfDZlylCRorRX+hy2M9oknFiuIyqIHGquos+7adQrwl
-	 GZI7LQHFDCnKBBhOjeyUStOZWPzlz6g14FBc5mv9BAY7C04Ly/sxONUGRozxwZKcvl
-	 1KKN5d5kdwuClDc0TQXyWy6rauU5cRtimHlKGk9c=
-From: Fedor Pchelkin <pchelkin@ispras.ru>
-To: Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>,
-	Kashyap Desai <kashyap.desai@broadcom.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Ranjan Kumar <ranjan.kumar@broadcom.com>
-Cc: Fedor Pchelkin <pchelkin@ispras.ru>,
-	Sumit Saxena <sumit.saxena@broadcom.com>,
-	Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	mpi3mr-linuxdrv.pdl@broadcom.com,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	stable@vger.kernel.org
-Subject: [PATCH] scsi: mpi3mr: fix invalid 64-bit phy bitmask calculation
-Date: Thu, 20 Feb 2025 12:44:31 +0300
-Message-ID: <20250220094431.38185-1-pchelkin@ispras.ru>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1740044722; c=relaxed/simple;
+	bh=ya5qMwjmclNr4enz3hByQfjnU925cHW/z3EnJLCX/1w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QEX8Pk0rQpw9/Kt1HUK48EB6q/hCr5qJQ5VDFeg6758P2ugcTU9m9PYvb4a/FbUw5vTUZ2KljbIfk1qjyb3StVNhSeMGKQhXf10cVaDjOoHB54OZvuGuUZcciLpazxV5TJ4mZoThrYm/QwEaOWEkL9We79F551FOSg+aLfH/Knw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kj79DufO; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30613802a59so7379111fa.0;
+        Thu, 20 Feb 2025 01:45:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740044718; x=1740649518; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=blYcjFq51G/DEAKYPys0HB89RJktg5VIFc2I1DNAbtQ=;
+        b=kj79DufO1DQvt/G0aDzFwwfCZCsrm9JDyxi+mBAimdmogwnVNSAvFcdJxptQ5Dzjtm
+         iLIWJAQpt4Wz7P4dnO6UBQ4NsQi9IlXYH0x/ONXC6QI4JJKdB95JlQBkh5M7tR0N+fI/
+         IGX/wczHa46j2IRY+7enA91/+R/f6V7SLUDV9AQpq2A3AgcLM5Rn8oKm2TsyKjvyP0HY
+         Ed+WM/W5oSuRizeMzZ+7mJ1urUoGWaInU1MdjQi8f29ujUxGlJ1xwD5cQJrB5Bqkzp26
+         aBrJaz7JsqwiJoEtD4FlXlKfRBaN0vmjcR3RW0j+tp5CRu+gANEbTJCMfCUoGADsYymS
+         3Tvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740044718; x=1740649518;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=blYcjFq51G/DEAKYPys0HB89RJktg5VIFc2I1DNAbtQ=;
+        b=ONWdksVCkb86U2Zz3HFnvwS7DZfREcYnk0tL9CpM3XDPJkYZoUK2hH340+NSsgtoma
+         LufUH16vIps/kNnmCNsY1V44Kt+bqeC1wUUES+4sLhm3tCUUz+WmuR+mqKm5gfLvsgNT
+         YQCHqB6rLTgzoLvicaUMUVwsWPc7gvco995tKuEb9am3YzE5lel+yfMSLH6WGXeU8gh0
+         wEqTtt9IyB4MvEu3JqGTp5LwcvYoYnFNNd+5TDf+JfBsxIIV0p+0+tDcIub5gU0fB665
+         CqCmOcMPwPDRcOjcphnzZ6fjp1uYBGz5uvNiyjwmasiR4yXRJXRbFO+w747HVhN40+YF
+         Trlw==
+X-Forwarded-Encrypted: i=1; AJvYcCUf6M1Mi30F6yPyh0WKTLWipTAFPrMxxSMVOkPv2FsLFtWWzFoCG53MjAGtug7GNvfGMjWfo+hgIILs@vger.kernel.org, AJvYcCX5dAbCrwpXVfzPNDQT5LBHF68eBVFkHcvcbYUwCIQVtYeuZ++/6rvEiUaou7Tk4ZZa1AwuUNLkmoWtJ+S6@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuiH2OT1g7271+GoO+Ll4V0gZpTQRPnRQ+JWC0dPUR+FwON/aG
+	eTxzPfA232ccJwA9t84egcKRaHfSw/CUB0d660Vk2QByveWMJYJW
+X-Gm-Gg: ASbGnctgDTvxmzk/jjfe5bEhG46AHTAAr7KdWmocBV6+Q3fJrUcmbA9n1koWEF4OP84
+	FgTyKYFbH1nhOXhNB7FQ7Mas1zKRhOK8A0MBiHxGdhm8lO4ajI5BvkJ3JY4ujbvKnMziQvM5OdZ
+	kik6WhxhoThhBsucrjh7Z/xp20rZ0GKOiLSM8pvrvbARDketXHKvi+LF9f4wq2OM7Xr34OxoxLA
+	wSWM2/oxft8Pbj+0/vPpTu2inFVeGEQF1UL7zS8+pZoyJ/AFQhQkhmqUU6Ef5Kqr1zHLnrsUKvM
+	EXaeps8=
+X-Google-Smtp-Source: AGHT+IGOCrIcTZo/Z0lOIkDRiiD2nCB5lUrezU00sbuHHzxGiGFKWgEHDlp9N95obv3h9+sUy6i88A==
+X-Received: by 2002:a05:651c:8a:b0:301:12:1ef3 with SMTP id 38308e7fff4ca-30a44db994amr20609101fa.4.1740044718218;
+        Thu, 20 Feb 2025 01:45:18 -0800 (PST)
+Received: from xeon.. ([188.163.112.51])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30a3a0d1c2bsm9574311fa.11.2025.02.20.01.45.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 01:45:17 -0800 (PST)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Svyatoslav Ryhel <clamor95@gmail.com>,
+	Maxim Schwalm <maxim.schwalm@gmail.com>
+Cc: dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/3] drm: bridge: add support for Triple 10-BIT
+Date: Thu, 20 Feb 2025 11:44:53 +0200
+Message-ID: <20250220094456.32818-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,106 +101,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-ffs() operates on arguments of type 'int', not generally considered to be
-64-bit values.
+Triple 10-BIT LVDS Transmitter is used in Microsoft Surface RT and
+MStar TSUMU88ADT3-LF-1 HDMI bridge is used in ASUS Transformer AiO
+P1801-T.
 
-Shifts like (1 << i) can also only be helpful for calculations that are
-expected to have a range equal to the width of type 'int'. When the left
-operand is of type 'int', valid values of the shift argument should not
-exceed the width of this type (almost always 32 bits), otherwise it is
-considered as undefined behavior.
+David Heidelberg (1):
+  dt-bindigs: display: extend the LVDS codec with Triple 10-BIT LVDS
+    Transmitter
 
-Since there is a need for manipulating the phy mask bits higher than that,
-perform the calculations directly in 64 bits.
+Maxim Schwalm (1):
+  drm/bridge: simple-bridge: Add support for MStar TSUMU88ADT3-LF-1
 
-Found by Linux Verification Center (linuxtesting.org).
+Svyatoslav Ryhel (1):
+  dt-bindigs: display: extend the simple bridge with MStar
+    TSUMU88ADT3-LF-1
 
-Fixes: cb5b60894602 ("scsi: mpi3mr: Increase maximum number of PHYs to 64 from 32")
-Cc: stable@vger.kernel.org
-Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
----
- drivers/scsi/mpi3mr/mpi3mr_transport.c | 22 +++++++++++++---------
- 1 file changed, 13 insertions(+), 9 deletions(-)
+ .../devicetree/bindings/display/bridge/lvds-codec.yaml       | 1 +
+ .../devicetree/bindings/display/bridge/simple-bridge.yaml    | 1 +
+ drivers/gpu/drm/bridge/simple-bridge.c                       | 5 +++++
+ 3 files changed, 7 insertions(+)
 
-diff --git a/drivers/scsi/mpi3mr/mpi3mr_transport.c b/drivers/scsi/mpi3mr/mpi3mr_transport.c
-index 0ba9e6a6a13c..f0da8c0dc55d 100644
---- a/drivers/scsi/mpi3mr/mpi3mr_transport.c
-+++ b/drivers/scsi/mpi3mr/mpi3mr_transport.c
-@@ -7,6 +7,7 @@
-  *
-  */
- 
-+#include <linux/bits.h>
- #include <linux/vmalloc.h>
- 
- #include "mpi3mr.h"
-@@ -608,10 +609,12 @@ static void mpi3mr_delete_sas_phy(struct mpi3mr_ioc *mrioc,
- 	mr_sas_port->num_phys--;
- 
- 	if (host_node) {
--		mr_sas_port->phy_mask &= ~(1 << mr_sas_phy->phy_id);
-+		mr_sas_port->phy_mask &= ~BIT_ULL(mr_sas_phy->phy_id);
- 
--		if (mr_sas_port->lowest_phy == mr_sas_phy->phy_id)
--			mr_sas_port->lowest_phy = ffs(mr_sas_port->phy_mask) - 1;
-+		if (mr_sas_port->lowest_phy == mr_sas_phy->phy_id &&
-+		    mr_sas_port->phy_mask)
-+			mr_sas_port->lowest_phy =
-+				__ffs64(mr_sas_port->phy_mask) - 1;
- 	}
- 	sas_port_delete_phy(mr_sas_port->port, mr_sas_phy->phy);
- 	mr_sas_phy->phy_belongs_to_port = 0;
-@@ -639,10 +642,11 @@ static void mpi3mr_add_sas_phy(struct mpi3mr_ioc *mrioc,
- 	list_add_tail(&mr_sas_phy->port_siblings, &mr_sas_port->phy_list);
- 	mr_sas_port->num_phys++;
- 	if (host_node) {
--		mr_sas_port->phy_mask |= (1 << mr_sas_phy->phy_id);
-+		mr_sas_port->phy_mask |= BIT_ULL(mr_sas_phy->phy_id);
- 
- 		if (mr_sas_phy->phy_id < mr_sas_port->lowest_phy)
--			mr_sas_port->lowest_phy = ffs(mr_sas_port->phy_mask) - 1;
-+			mr_sas_port->lowest_phy =
-+				__ffs64(mr_sas_port->phy_mask) - 1;
- 	}
- 	sas_port_add_phy(mr_sas_port->port, mr_sas_phy->phy);
- 	mr_sas_phy->phy_belongs_to_port = 1;
-@@ -1396,7 +1400,7 @@ static struct mpi3mr_sas_port *mpi3mr_sas_port_add(struct mpi3mr_ioc *mrioc,
- 		    &mr_sas_port->phy_list);
- 		mr_sas_port->num_phys++;
- 		if (mr_sas_node->host_node)
--			mr_sas_port->phy_mask |= (1 << i);
-+			mr_sas_port->phy_mask |= BIT_ULL(i);
- 	}
- 
- 	if (!mr_sas_port->num_phys) {
-@@ -1406,7 +1410,7 @@ static struct mpi3mr_sas_port *mpi3mr_sas_port_add(struct mpi3mr_ioc *mrioc,
- 	}
- 
- 	if (mr_sas_node->host_node)
--		mr_sas_port->lowest_phy = ffs(mr_sas_port->phy_mask) - 1;
-+		mr_sas_port->lowest_phy = __ffs64(mr_sas_port->phy_mask) - 1;
- 
- 	if (mr_sas_port->remote_identify.device_type == SAS_END_DEVICE) {
- 		tgtdev = mpi3mr_get_tgtdev_by_addr(mrioc,
-@@ -1738,7 +1742,7 @@ mpi3mr_refresh_sas_ports(struct mpi3mr_ioc *mrioc)
- 		found = 0;
- 		for (j = 0; j < host_port_count; j++) {
- 			if (h_port[j].handle == attached_handle) {
--				h_port[j].phy_mask |= (1 << i);
-+				h_port[j].phy_mask |= BIT_ULL(i);
- 				found = 1;
- 				break;
- 			}
-@@ -1765,7 +1769,7 @@ mpi3mr_refresh_sas_ports(struct mpi3mr_ioc *mrioc)
- 		port_idx = host_port_count;
- 		h_port[port_idx].sas_address = le64_to_cpu(sasinf->sas_address);
- 		h_port[port_idx].handle = attached_handle;
--		h_port[port_idx].phy_mask = (1 << i);
-+		h_port[port_idx].phy_mask = BIT_ULL(i);
- 		h_port[port_idx].iounit_port_id = sas_io_unit_pg0->phy_data[i].io_unit_port;
- 		h_port[port_idx].lowest_phy = sasinf->phy_num;
- 		h_port[port_idx].used = 0;
 -- 
-2.48.1
+2.43.0
 
 
