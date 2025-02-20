@@ -1,193 +1,170 @@
-Return-Path: <linux-kernel+bounces-523951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A795A3DD41
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:48:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9C0BA3DD4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:50:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87A7117335C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:48:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A37937AA466
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:49:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11BAF1C6F70;
-	Thu, 20 Feb 2025 14:48:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 345C81D54FE;
+	Thu, 20 Feb 2025 14:50:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="iWtjEsLy"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="D9isSpvt"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93A0F19D06E;
-	Thu, 20 Feb 2025 14:48:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CACF18A6CF;
+	Thu, 20 Feb 2025 14:50:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740062920; cv=none; b=aFl+9DwTa7ElR1Ta0jyKOchfHfTfJgxuVGjoG29sH5EpAtXR17IEUjMEmPST+59Wm7JyNIwsJU8Kr3FUsBKot/k7DEibpsPrcWOXU7oUQXtYFVMh/Glg4Q12VuCp+PAJAr9ey/6qNPf5zQ1ffPk8MAjAq6x0Caa2ozx1Q4qYj+8=
+	t=1740063034; cv=none; b=YK/zRHPqFZvVibRIfbRZZ1UMndkrgx17te51k58sqHYzZGCbzLLQ8Ah7ypMASjWO4dkxybquXmoO7T9UTJ2XQNyH9o9jUFPeAo3Y1r/XcZ4UMbyX2zV/+vW72Nx6iXPaBRyUYKdeHPQNs2yy+l1hqjNWS79R9OBb1WfwS5UZF9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740062920; c=relaxed/simple;
-	bh=PzEer1mTGvGb2m+KD/jgWxiPMBT75xyrk+ydbLeYI3Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aVxv3SOy3mpiiJX2+KbuhTNOaZp3S4Bc/ayN7kfXzz99jH+5qd8ZDg3/I4GOBx9r1qO+E/e3leTP/KdE4MBKN/vmAO4kr4pLK1YdF2mLS5I/6AlwrjhtMKjVmyj2vQ8BzTAdYlJ/nT3MvoN1jto32wqykcEVqu8LIpfEuV8ehLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=iWtjEsLy; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8F81210382D37;
-	Thu, 20 Feb 2025 15:48:27 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1740062910;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ldqI1Le+GNbE+uBRLkLvuLrordSQ/bU414re+PDqRgg=;
-	b=iWtjEsLylFgr2+ddtCwYOKZnorICgZLXMimUifa+okc9WQqYoo6+u6UKCRYO1RI10IL3Di
-	46+qHJXpjf3Z43lYHQM2qvPZ3Ivnu2Kq7LTgrbBFi2ZopTitbRaImYsWZL5dodu7p0JW0N
-	h9BjrlQElNSaPiQLSlfeCMOnzRYNURThGfezcLWolcaueVQzlMQ+ZvAAg2ZGESCmNC92x0
-	mbQIDRlR2lMHYQ4Ary2yPugSaa7wIOsVdwNNhZQ2Nij0WKSk2EaUlB1N6QK5RjCbiUyz6h
-	4UU3C+wlpwa22XeoR9XVKXNwpPsbdIZ4iCt5fP8kV7//a2Zil6r/dxf1LhqsAw==
-Date: Thu, 20 Feb 2025 15:48:26 +0100
-From: Lukasz Majewski <lukma@denx.de>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Shawn
- Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
- <festevam@gmail.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- linux-clk@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-Subject: Re: [PATCH] arm: clk: Add ETH switch clock description for vf610
- SoC
-Message-ID: <20250220154826.3455b15e@wsk>
-In-Reply-To: <5a9d9eef-f2ca-4168-aca4-4419dcfcacb6@lunn.ch>
-References: <20250219114936.3546530-1-lukma@denx.de>
-	<3cebe152-6326-454c-9da6-5cf5a64f71c9@lunn.ch>
-	<20250219233802.20ec53e5@wsk>
-	<5a9d9eef-f2ca-4168-aca4-4419dcfcacb6@lunn.ch>
-Organization: denx.de
-X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740063034; c=relaxed/simple;
+	bh=7ODVJoWcxbVhSMxjP97wQSd4lRfo/v0mxOOLT6X5bqk=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
+	 In-Reply-To:Content-Type; b=PaC5IY6GDoXr+FJFtBk6+zRctWRtm1yM5Vwd65nvYxPifSX70Mu73snklfCJ1jSEyQ42ixJcAQ0prxp3x56gKRqd6bl/fFAJTils/7045s0wIVkPtIFnJtl6FJZOmeU8NqwPsh4icU2ciJr+anzB98tXlM7JWn0rV9l6J5eyHyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=D9isSpvt; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51K6YqQk014997;
+	Thu, 20 Feb 2025 14:50:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	p7ZxLcaLU0fXupOi2fwh6hh7LMaX89KYoIfbFDMpISs=; b=D9isSpvtZkW2kXUg
+	MU8ZaVE+gmUzqca2mlYsXtpu0XfMdeBQwQ0TBcJauEvHnutfy+GObD1/v7dPgtMr
+	2Abv1z4RAox+Rm+VZ8bqoXOwfBjplIVk6/nIM9+Z3JQqSlaSFKFABLPavF2aWdn0
+	OTuoYdWu/nzW6LK9/JUE4nykh82VwLImBAfUc2mfFf99gGW+XbZx09eEOUEmRg/8
+	yU9yBXZgOyyZVrlQflbNqMgH7/9R7vG6VCAFLaUrJOd4FNZX1P3ZNSmFfKxt9WfA
+	vxmmzDeMY2tJru2Qsq3DcV/tpieVmXXFg8y21Wzhr3iVbumA0GHwKRm3t1UuHOOU
+	xJlAYA==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44vyy16dq5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Feb 2025 14:50:17 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51KEoGD1011425
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Feb 2025 14:50:16 GMT
+Received: from [10.253.79.77] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 20 Feb
+ 2025 06:50:10 -0800
+Message-ID: <877b3796-3afc-4f3e-a0f5-ec1a6174a921@quicinc.com>
+Date: Thu, 20 Feb 2025 22:50:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/EoF.xD3edO+ut3CeLCKvgE3";
- protocol="application/pgp-signature"; micalg=pgp-sha512
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla Thunderbird
+From: Jie Luo <quic_luoj@quicinc.com>
+Subject: Re: [PATCH net-next v3 06/14] net: ethernet: qualcomm: Initialize the
+ PPE scheduler settings
+To: Andrew Lunn <andrew@lunn.ch>
+CC: Andrew Lunn <andrew+netdev@lunn.ch>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>, Lei Wei <quic_leiwei@quicinc.com>,
+        Suruchi Agarwal
+	<quic_suruchia@quicinc.com>,
+        Pavithra R <quic_pavir@quicinc.com>,
+        "Simon
+ Horman" <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook
+	<kees@kernel.org>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        "Philipp
+ Zabel" <p.zabel@pengutronix.de>,
+        <linux-arm-msm@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
+        <quic_kkumarcs@quicinc.com>, <quic_linchen@quicinc.com>,
+        <srinivas.kandagatla@linaro.org>, <bartosz.golaszewski@linaro.org>,
+        <john@phrozen.org>
+References: <20250209-qcom_ipq_ppe-v3-0-453ea18d3271@quicinc.com>
+ <20250209-qcom_ipq_ppe-v3-6-453ea18d3271@quicinc.com>
+ <f8d30195-1ee9-42f2-be82-819c7f7bd219@lunn.ch>
+Content-Language: en-US
+In-Reply-To: <f8d30195-1ee9-42f2-be82-819c7f7bd219@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: UqlydHCOZGvsAx6NFK3-EGLfOY31OCHO
+X-Proofpoint-ORIG-GUID: UqlydHCOZGvsAx6NFK3-EGLfOY31OCHO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-20_06,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ priorityscore=1501 lowpriorityscore=0 phishscore=0 clxscore=1015
+ suspectscore=0 spamscore=0 mlxlogscore=999 mlxscore=0 bulkscore=0
+ malwarescore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2502100000 definitions=main-2502200106
 
---Sig_/EoF.xD3edO+ut3CeLCKvgE3
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
 
-> On Wed, Feb 19, 2025 at 11:38:02PM +0100, Lukasz Majewski wrote:
-> > Hi Andrew,
-> >  =20
-> > > On Wed, Feb 19, 2025 at 12:49:36PM +0100, Lukasz Majewski wrote: =20
-> > > > The NXP's vf610 soc is equipped with L2 switch IP block from
-> > > > More Than IP (MTIP) vendor.
-> > > >=20
-> > > > It requires special clock (VF610_CLK_ESW) to be operational.   =20
-> > >=20
-> > > So you have a driver for this switch? It has been talked about in
-> > > the past, but nobody made any progress with it. Ah, it was you in
-> > > 2020. =20
-> >=20
-> > Yes, I'm going to try another time to upstream it.... :-)
-> >  =20
-> > > It
-> > > will be interesting to see what you came up with in the end, pure
-> > > switchdev or a DSA driver. =20
-> >=20
-> > I think it would be:
-> >=20
-> > 1. Standalone driver, which would configure the L2 switch from the
-> > very beginning to work (this is different from FEC on imx28/vf610
-> > where switch is bypassed)
-> >=20
-> > 2. It will use the in-switch registers to have two network
-> > interfaces separated. As a result - it may be slower than the
-> > fec_main.c in this use case. =20
->=20
-> Seems like a reasonable compromise. You would only load this driver if
-> you intend to make use of the switch...
+On 2/11/2025 9:32 PM, Andrew Lunn wrote:
+>> +/* Scheduler configuration for the assigning and releasing buffers for the
+>> + * packet passing through PPE, which is different per SoC.
+>> + */
+>> +static const struct ppe_scheduler_bm_config ipq9574_ppe_sch_bm_config[] = {
+>> +	{1, 0, 0, 0, 0},
+>> +	{1, 1, 0, 0, 0},
+>> +	{1, 0, 5, 0, 0},
+>> +	{1, 1, 5, 0, 0},
+>> +	{1, 0, 6, 0, 0},
+>> +	{1, 1, 6, 0, 0},
+>> +	{1, 0, 1, 0, 0},
+>> +	{1, 1, 1, 0, 0},
+> 
+> Rather than add a comment what it is, add a comment what it means.
 
-Yes, the main use case would be the switch (after bridge ... command
-called).
+Sure, I will enhance the comment to describe the functionality for
+this table better.
 
-However, until then we shall? have port separation.
-
->=20
-> > 3. When somebody call "bridge ..." on it - then the in-switch
-> > separation would be disabled. This is the "normal" state of
-> > operation for L2 switch, which would be a HW accelerator for
-> > bridging.
-> >=20
-> > 4. The switchdev would be used to manage it
-> >=20
-> > 5. This would be just a very simple driver - just bridging and
-> > startup of the L2 switch.
-> >=20
-> > After we would have a consensus (i.e. it would be pulled to
-> > mainline) - I would proceed further.
-> >=20
-> > I will try to not touch fec_main.c driver - just write standalone,
-> > new for MoreThanIP L2 switch driver. =20
->=20
-> It might make sense to refactor the MDIO code into a helper which both
-> can share? No point duplicating that.
-
-This is a latter step (common MDIO library code), IMHO.=20
-
->=20
-> > If somebody would like to use FEC, then he will insert the proper
-> > module. If switch, another one can be inserted, depending o the
-> > target use case. =20
->=20
-> This all seems like a reasonable way forward.
-
-+1
-
->=20
-> MoreThanIP is now part of Synopsys. I wounder if this IP now exists in
-> other SoCs? The press release however suggests Synopsys was
-> interesting in the high speed interfaces, not a two ports Fast
-> Ethernet switch.
-
-I would need some detailed documentation....
-
->=20
+> 
+> It also looks like the first, 3 and 4 value are fixed, so do they even
+> need to be in the table? And the second value flip-flops?
+> 
 > 	Andrew
 
+This array is defined to closely reflect the layout of the scheduler
+BM configuration table in the PPE hardware. The value at index 0
+indicates whether the entry is valid or not. In this case (for IPQ9574),
+all the entries are marked as 'enabled', but for a different IPQ SoC,
+some of these entries may be marked as disabled (Note: the table
+structure is same for all IPQ SoCs that support PPE).
 
+The values at index 3 and 4 indicate whether there is any backup port
+configured for assigning these buffers, in the case when the primary
+port is down. This option is disabled by default by the hardware
+for this SoC and hence the values are marked '0'.
 
+The value at index 1 flip flops, because for the same port, we have two
+entries - one for ingress port buffer assignment (value 0) and one for
+egress port buffer release (value 1).
 
-Best regards,
+The value at index 2 is the port number.
 
-Lukasz Majewski
+As a general rule, we have tried to keep the data structure definition
+accurately mirror the hardware table design, for easier understanding
+and debug ability of the code.
 
---
-
-DENX Software Engineering GmbH,      Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
-
---Sig_/EoF.xD3edO+ut3CeLCKvgE3
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAme3QLoACgkQAR8vZIA0
-zr2Zzgf9HtLGK3Ux7Xf80L6yo2vvKfPiWZ/RuxE4tCAf9yjd5vk2Wfg9EizNIaaX
-ILs8pKZkCxVRQxUqQ7Cx2k02jDSZiHJ30GFYlE6EtUFGgk00siH1uUZA5ScSsHPj
-DZfO/gVB4MW+ofwapPvYEGyUdKQmyB2IOt5OfusD4f9p869BqoskJQpsESHDP16m
-qcDpAwgne46YXCHFpfzDFTEDmriOa0/iY04iTFAV/kbxGu+OwW23X7c5CJFE79KP
-AWxzzSzuu9iNAGcKEW1u9rH6H1iEb0GW9dVBDE/dX5VHwAqRct6S+tZonQGQzQab
-eNojXymqBTXSfY5w/1xzbDX5z4WPGw==
-=A4R8
------END PGP SIGNATURE-----
-
---Sig_/EoF.xD3edO+ut3CeLCKvgE3--
+I will change the values of array index 0/1/3 to true/false to make it
+more readable, thanks.
 
