@@ -1,181 +1,288 @@
-Return-Path: <linux-kernel+bounces-524133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF7A4A3DFB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:03:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BFF5A3DF96
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:59:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3DEF07A3B68
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:56:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 795CC3A9389
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:57:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A67FA1FF1AD;
-	Thu, 20 Feb 2025 15:57:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30B6420B817;
+	Thu, 20 Feb 2025 15:57:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U9K8ubvx"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="W/1NciUT";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Nz3TbVgT"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 497551DF75D;
-	Thu, 20 Feb 2025 15:57:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6951FCFF0;
+	Thu, 20 Feb 2025 15:57:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740067040; cv=none; b=EHHiYcfNQ1IqufckdgVZ++IkJbJCqG9ZveCpST4jesqWhVI8R2U9KAUxVk/vInCiRggl3S8Y0BlKJiLgPucEusRiuYpAPgkAYlJmTQ7kOBUWqI08XGkKjDhx1s44wZxDjnP8BKgeia6C0D3+KBBMQeZdi0zPJnBiTzV1eIcUlvU=
+	t=1740067047; cv=none; b=sWP0nwxCQB7h1bSKZ5TWcHuFKIWT/Qfx697gAIAw6QEbOr1qTTGqt5BNCDRniXUNyDsOPXWcFqvj2D3uz11l/Bc5WSQxM9PMsXoS9iH2GTkWLpky/rQVwRymTorYtI1zRZUqcATB6e/2ouifPlvrCeLk1i2bMFYzySL7QzLTTpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740067040; c=relaxed/simple;
-	bh=qgqI6Yx4pkbvJzvbgweusfjlfpWLNMLohQYFjHIfDRc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n+q1lQ8lpnG+n1UmtsWr6ndMkQJR+62dNmtzOuINiUlf6AEV+cVAYW26siP01vFugpOnF6ZE6OAqU7s/xZ+sQWkRtpV81OH96szMCkXDPS9fkfN50/HCziMbPkN0/RrCqf0ZljJtrJWYvp2JhrO7Pdw+U4IAT9lU9ze8585r5jk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U9K8ubvx; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-abbc38adeb1so199152966b.1;
-        Thu, 20 Feb 2025 07:57:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740067035; x=1740671835; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mrH2Exi5lgYYO9KhuM65AVtP/mrtwiIHocHcMAGs1Dc=;
-        b=U9K8ubvxilibBWy1zYiir+QRzXsOY7f/sKmHi8S4ymCo5bPPeOk57RaNzDtnEfXprv
-         PWkCvXJuUMpCLpY2n/YrNMr+Cry+FjVD1XIXR3sdEukz8YNdNo/InAgC+GjfsdIRCMC5
-         /Kyh4dRNloPReHO3ii76lqICKhwk8IZ3uXgTsNbGt58Zw+Z1lwj4Hm1idHVyZ5xT9Dor
-         4Nvb9+acqQUTHI2xvROVK1uwnduYcAtJNsk4zzX1knac9oUqS1pHKfJUEk4BA3im7rfz
-         rlGKt/IFCsVoux0SggTuwhzLFb0qSvpgOQKwCZynMx8hZyL4RuuSaA/W4qTEQRMGE0KB
-         umTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740067035; x=1740671835;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mrH2Exi5lgYYO9KhuM65AVtP/mrtwiIHocHcMAGs1Dc=;
-        b=JYlW9KANnjivcp1o55VQ6Ri3NjLuiK1Mq4hCKrPX/0XLLWKi7RJViNgKwdLtbs3+Rf
-         B1JcKfUih9awnK/6Nyp6nrqKLpbWrSsBL3FM6dIBqsw24ZwI5JftQKFEqEguo9gQyVJ0
-         P9PeJJ9iA4ioTY39gIG0PioirdgNXkopin59wCtyNYPA0jxYL2+CaD5G2o+F4hmcCFhm
-         DSA7mfl5GNT89NhwEZmS+xypXwRMIw/R83PeayJsqnyjLK9yFLFOlpr9dNkBbuvyRjM/
-         mN8X3lOWAYrTpRJxdZa23YoKnqh7GfuvRqpxmKNOxfn0cwXzRKb1wQ8a+MNfghH6zEFT
-         XzYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUGj/sd0TT22U4abpRMzOGDLGSeScpfwXwQ+MFRS5I5HyXq3es/YcKnFWHeRXEPTOnTyT7weByDaJwV@vger.kernel.org, AJvYcCUU/FTKvgO8Wqy+sbnFb95yEfovCzwfr393HRpZNskLpk2adLyltKXh2eI0ncWQ0MphhTDYtD2V2Do4@vger.kernel.org, AJvYcCXPe2NQjn5naNoChVtcJRSkI0Vrd90ngTOYHS6+JyAd+3Gs5qEq+dzqGNk5PAoETrkm04l5umnJBumZhzVw@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGC7BI7w4PYIxv+JecIYZqGXRa+u4haWg3LD/8Jv0gOZ3g8Cqs
-	GKr8RAywhNxCgiynqghhpkXr0XvkXvMkjkErAPXlJMUJ0h75kP96
-X-Gm-Gg: ASbGncsUv5bGGlL4bk0Kz2epfuGznTyDm7o0OXRCVZziFOoz4P5q2tvGHzcP2tSPLNs
-	vJB5MNiwlyjII8wokD7xqVGzldX1kPNFlHzLsNlh9tXUOS1fa40Fb4LpkBsx3xs8DDfSNYlJK2y
-	f+0WYBQXD6AwLuZXw12jtGBUom20RB1dgw1zkTMvMUswlzYGJ6zStqynckv6AItIfnPl1kR+Inx
-	wFczDyzpli7IGfbjAiOX30RQRcz1dcV099tPZIsyOtItE2eqv0chZ+uji4DMdRKlTVVBayBs04V
-	qfOxyxj4Aeol
-X-Google-Smtp-Source: AGHT+IEr1TcuzpdbJIjgDo+D69B4/MMmm/vyWh3fj47pTFCZoY0xptHE8m4rjkLgkInw8pA8FPJ2Lw==
-X-Received: by 2002:a17:906:f1d9:b0:abb:e259:2a64 with SMTP id a640c23a62f3a-abbe2592c7amr540851666b.33.1740067035161;
-        Thu, 20 Feb 2025 07:57:15 -0800 (PST)
-Received: from debian ([2a00:79c0:604:ea00:45fb:7d1a:5e4d:9727])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb843451b1sm980092166b.42.2025.02.20.07.57.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 07:57:14 -0800 (PST)
-Date: Thu, 20 Feb 2025 16:57:12 +0100
-From: Dimitri Fedrau <dima.fedrau@gmail.com>
-To: Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: Dimitri Fedrau via B4 Relay <devnull+dimitri.fedrau.liebherr.com@kernel.org>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-Subject: Re: [PATCH v2 2/2] can: flexcan: add transceiver capabilities
-Message-ID: <20250220155712.GB43726@debian>
-References: <20250220-flexcan-add-transceiver-caps-v2-0-a81970f11846@liebherr.com>
- <20250220-flexcan-add-transceiver-caps-v2-2-a81970f11846@liebherr.com>
- <20250220-rugged-solid-gopher-541299-mkl@pengutronix.de>
+	s=arc-20240116; t=1740067047; c=relaxed/simple;
+	bh=CpYsGqHtn0E0TROwwhqeRxs7muVqX2BBmFbCFHP7OWU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=bqAeblje7UryITfKv2lXZSyizE3w3L3akIxfUy2xxO+oiTmn1cJ/54JoohE/wt41kUWAKKd9uVqWby1Nu2VF64fl207K11qATc//zUBfEnX0uNPRf5A1x02P6YjntiNMUFqIiu1/NZO3M5v1M4BjZi3LfTJr2h6mwbX3092qVTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=W/1NciUT; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Nz3TbVgT; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 20 Feb 2025 16:57:22 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740067043;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:  in-reply-to:in-reply-to;
+	bh=wH1m/nQDxdTsgKnO7n/1Ar9PnOVnrrN+8IoQkhMntlU=;
+	b=W/1NciUTYXaN4rJT/RcXXdqXaE2/NbrS6DN+U65v2eGth4omfm69LHroohFFPoU6zZIzSK
+	7kG04jX9kS4A783W3FAl42T7dXRZ3rf7eUAjPqmIjcfWSUd3cd6DCCq2VIOz0343E1cw6u
+	BRaJBhXpzOX2nWrNsCSZTxQypgGnrv8+eWlC5ZxlCI7y/UzHhrzqkkrfnL+RXfz4F0PrbH
+	4crMDoiDvWUmouT7ub/+1pkYpu9CHnP/C2pUHuOH5cR1Egvgf4itR01i9xNEzPCkbkR1Up
+	wQPaGYNVqKqsqRTiA7DwPaXk8eTrMBJ2Dr7cetCPVtVq0sU25hMHUJMIqmBIlw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740067043;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:  in-reply-to:in-reply-to;
+	bh=wH1m/nQDxdTsgKnO7n/1Ar9PnOVnrrN+8IoQkhMntlU=;
+	b=Nz3TbVgTI5KJVYGEKreH2vy2/nKSBQIOl4iGxHHgvsAwUtvPXz1nee7SWr7PbT4YKxBdjc
+	1/tS0Zwz//bUZuBQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Oliver Sang <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, Petr Pavlu <petr.pavlu@suse.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	kasan-dev@googlegroups.com, linux-hardening@vger.kernel.org,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Kees Cook <kees@kernel.org>,
+	Alexander Potapenko <glider@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Dmitry Vyukov <dvyukov@google.com>, Marco Elver <elver@google.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>
+Subject: Re: [linux-next:master] [x86]  66fbf67705:
+ kernel-selftests.kvm.hardware_disable_test.fail
+Message-ID: <20250220155722.2Z2a-3z0@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250220-rugged-solid-gopher-541299-mkl@pengutronix.de>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <Z7bUC9QY815Cv6nb@xsang-OptiPlex-9020>
 
-Am Thu, Feb 20, 2025 at 09:43:13AM +0100 schrieb Marc Kleine-Budde:
-> On 20.02.2025 09:22:11, Dimitri Fedrau via B4 Relay wrote:
-> > From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-> > 
-> > Currently the flexcan driver does only support adding PHYs by using the
-> > "old" regulator bindings. Add support for CAN transceivers as a PHY. Add
-> > the capability to ensure that the PHY is in operational state when the link
-> > is set to an "up" state.
-> > 
-> > Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-> > ---
-> >  drivers/net/can/flexcan/flexcan-core.c | 30 ++++++++++++++++++++++++------
-> >  drivers/net/can/flexcan/flexcan.h      |  1 +
-> >  2 files changed, 25 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/drivers/net/can/flexcan/flexcan-core.c b/drivers/net/can/flexcan/flexcan-core.c
-> > index b347a1c93536d54efaa5f7d3347bd47c20860b3e..45d9a6957d9a806ed80d810a6a5f7eb99fcc702c 100644
-> > --- a/drivers/net/can/flexcan/flexcan-core.c
-> > +++ b/drivers/net/can/flexcan/flexcan-core.c
-> > @@ -30,6 +30,7 @@
-> >  #include <linux/property.h>
-> >  #include <linux/regmap.h>
-> >  #include <linux/regulator/consumer.h>
-> > +#include <linux/phy/phy.h>
-> >  
-> >  #include "flexcan.h"
-> >  
-> > @@ -644,18 +645,22 @@ static void flexcan_clks_disable(const struct flexcan_priv *priv)
-> >  
-> >  static inline int flexcan_transceiver_enable(const struct flexcan_priv *priv)
-> >  {
-> > -	if (!priv->reg_xceiver)
-> > -		return 0;
-> > +	if (priv->reg_xceiver)
-> > +		return regulator_enable(priv->reg_xceiver);
-> > +	else if (priv->transceiver)
-> > +		return phy_power_on(priv->transceiver);
-> >  
-> > -	return regulator_enable(priv->reg_xceiver);
-> > +	return 0;
-> >  }
-> >  
-> >  static inline int flexcan_transceiver_disable(const struct flexcan_priv *priv)
-> >  {
-> > -	if (!priv->reg_xceiver)
-> > -		return 0;
-> > +	if (priv->reg_xceiver)
-> > +		return regulator_disable(priv->reg_xceiver);
-> > +	else if (priv->transceiver)
-> > +		return phy_power_off(priv->transceiver);
-> >  
-> > -	return regulator_disable(priv->reg_xceiver);
-> > +	return 0;
-> >  }
-> >  
-> >  static int flexcan_chip_enable(struct flexcan_priv *priv)
-> > @@ -2086,6 +2091,7 @@ static int flexcan_probe(struct platform_device *pdev)
-> >  	struct net_device *dev;
-> >  	struct flexcan_priv *priv;
-> >  	struct regulator *reg_xceiver;
-> > +	struct phy *transceiver;
-> >  	struct clk *clk_ipg = NULL, *clk_per = NULL;
-> >  	struct flexcan_regs __iomem *regs;
-> >  	struct flexcan_platform_data *pdata;
-> > @@ -2101,6 +2107,14 @@ static int flexcan_probe(struct platform_device *pdev)
-> >  	else if (IS_ERR(reg_xceiver))
-> >  		return PTR_ERR(reg_xceiver);
-> >  
-> > +	transceiver = devm_phy_optional_get(&pdev->dev, NULL);
-> > +	if (PTR_ERR(transceiver) == -EPROBE_DEFER) {
-> > +		return -EPROBE_DEFER;
-> > +	} else if (IS_ERR(transceiver)) {
-> > +		dev_err(&pdev->dev, "failed to get phy\n");
-> > +		return PTR_ERR(transceiver);
-> > +	}
-> 
-> Please use dev_err_probe(), it will be silent in case of EPROBE_DEFER.
+On 2025-02-20 15:04:43 [+0800], Oliver Sang wrote:
+> hi, Sebastian,
+Hi Oliver,
 
-Will fix it.
++ UBSAN & KASAN + STACK unwind people. The commit question is
+    e9d25b42bde5a ("x86: Use RCU in all users of __module_address().")
+  in -next.
 
-Best regards,
-Dimitri Fedrau
+> just FYI. we rebuild the kernel, and run the tests more times upon this c=
+ommit
+> and its parent, still see the issue persistent:
+>=20
+=E2=80=A6
+>=20
+> f985e39203090cc6 66fbf677051818b9b5339fa8bfe
+> ---------------- ---------------------------
+>        fail:runs  %reproduction    fail:runs
+>            |             |             |
+>            :20         105%          20:20    kernel-selftests.kvm.hardwa=
+re_disable_test.fail
+>          %stddev     %change         %stddev
+>              \          |                \
+>     580.92           +17.4%     682.06        kernel-selftests.time.elaps=
+ed_time
+>     580.92           +17.4%     682.06        kernel-selftests.time.elaps=
+ed_time.max
+>     550.23           +13.1%     622.20        kernel-selftests.time.syste=
+m_time
 
+this is +~100 secs?
+
+> as above, the time spent is also longer, though it's not only for
+> kvm.hardware_disable_test (the time is for whole kernel-selftests.kvm)
+=E2=80=A6
+> it seems to us that the commit really causes some slow down and it happen=
+s to
+> make kvm.hardware_disable_test timeout on the older machine for our origi=
+nal
+
+I made it slower, why is that so, let me look. On my HW
+#1 patched (as of 66fbf677051818b9b5339fa8bfe)
+| ~# time ./hardware_disable_test
+| Random seed: 0x6b8b4567
+|=20
+| real    0m43.242s
+| user    0m0.635s
+| sys     0m18.292s
+
+#2 use preempt_disable instead of rcu_read_lock() in unwind_orc.c (=3Drever=
+t)
+| ~# time ./hardware_disable_test
+| Random seed: 0x6b8b4567
+|=20
+| real    0m30.212s
+| user    0m0.448s
+| sys     0m12.939s
+
+#3 replace preempt_disable with __rcu_read_lock() [slim without debug]
+| ~# time ./hardware_disable_test
+| Random seed: 0x6b8b4567
+|
+| real    0m29.953s
+| user    0m0.436s
+| sys     0m12.789s
+
+#4 replace preempt_disable with __rcu_read_lock() + lockdep [RCU watching
+  test is missing]
+| ~# time ./hardware_disable_test
+| Random seed: 0x6b8b4567
+|=20
+| real    0m41.497s
+| user    0m0.639s
+| sys     0m17.112s
+
+#5 Using rcu_read_lock() only if orc_module_find() is invoked.
+Lost the output but it was more or less at #2 level meaning it does not
+lookup modules to the point that it matters.
+
+#6 CONFIG_UBSAN -CONFIG_KASAN +revert
+| ~# time ./hardware_disable_test
+| Random seed: 0x6b8b4567
+|
+| real    0m9.318s
+| user    0m0.207s
+| sys     0m3.395s
+
+#7 -CONFIG_UBSAN -CONFIG_KASAN with RCU
+| ~# time ./hardware_disable_test
+| Random seed: 0x6b8b4567
+|=20
+| real    0m9.249s
+| user    0m0.196s
+| sys     0m3.332s
+
+#8 -CONFIG_UBSAN -CONFIG_KASAN -LOCKDEP
+| ~# time ./hardware_disable_test
+| Random seed: 0x6b8b4567
+| ^[[A
+|=20
+| real    0m4.416s
+| user    0m0.120s
+| sys     0m1.426s
+
+#9 -CONFIG_UBSAN -CONFIG_KASAN -LOCKDEP +revert
+| ~# time ./hardware_disable_test
+| Random seed: 0x6b8b4567
+|=20
+| real    0m4.391s
+| user    0m0.137s
+| sys     0m1.415s
+
+
+Now. Based on this:
+The RCU read section increased the runtime (on my hardware) for the test
+=66rom 30 to 43 seconds which is roughly 43%.
+This is due to the lockdep annotation within rcu_read_lock() and
+unlock() which is not existing in preempt_disable(). After disabling
+UBSAN + KASAN  the lockdep annotation has no effect. My guess that
+UBSAN/ KASAN is in charge of countless backtraces while enabled. Those
+backtraces seem to be limited to the core kernel.
+
+How much do we care here? Is this something that makes UBSAN + KASAN
+folks uncomfortable? Or is lockdep slowing things down anyway?
+
+If so, we could either move the RCU section down (as in #5) so it is not
+used that often or go the other direction and move it up. I got this:
+| ~# time ./hardware_disable_test
+| Random seed: 0x6b8b4567
+|=20
+| real    0m32.618s
+| user    0m0.537s
+| sys     0m13.942s
+
+which is almost the pre-level with the hunk below after figuring out
+that most callers are from arch_stack_walk().=20
+
+diff --git a/arch/x86/include/asm/unwind.h b/arch/x86/include/asm/unwind.h
+index 7cede4dc21f0..f20e3613942f 100644
+--- a/arch/x86/include/asm/unwind.h
++++ b/arch/x86/include/asm/unwind.h
+@@ -42,6 +42,7 @@ struct unwind_state {
+ void __unwind_start(struct unwind_state *state, struct task_struct *task,
+ 		    struct pt_regs *regs, unsigned long *first_frame);
+ bool unwind_next_frame(struct unwind_state *state);
++bool unwind_next_frame_unlocked(struct unwind_state *state);
+ unsigned long unwind_get_return_address(struct unwind_state *state);
+ unsigned long *unwind_get_return_address_ptr(struct unwind_state *state);
+=20
+diff --git a/arch/x86/kernel/stacktrace.c b/arch/x86/kernel/stacktrace.c
+index ee117fcf46ed..4df346b11f1e 100644
+--- a/arch/x86/kernel/stacktrace.c
++++ b/arch/x86/kernel/stacktrace.c
+@@ -21,8 +21,9 @@ void arch_stack_walk(stack_trace_consume_fn consume_entry=
+, void *cookie,
+ 	if (regs && !consume_entry(cookie, regs->ip))
+ 		return;
+=20
++	guard(rcu)();
+ 	for (unwind_start(&state, task, regs, NULL); !unwind_done(&state);
+-	     unwind_next_frame(&state)) {
++	     unwind_next_frame_unlocked(&state)) {
+ 		addr =3D unwind_get_return_address(&state);
+ 		if (!addr || !consume_entry(cookie, addr))
+ 			break;
+diff --git a/arch/x86/kernel/unwind_orc.c b/arch/x86/kernel/unwind_orc.c
+index 977ee75e047c..402779b3e90a 100644
+--- a/arch/x86/kernel/unwind_orc.c
++++ b/arch/x86/kernel/unwind_orc.c
+@@ -465,7 +465,7 @@ static bool get_reg(struct unwind_state *state, unsigne=
+d int reg_off,
+ 	return false;
+ }
+=20
+-bool unwind_next_frame(struct unwind_state *state)
++bool unwind_next_frame_unlocked(struct unwind_state *state)
+ {
+ 	unsigned long ip_p, sp, tmp, orig_ip =3D state->ip, prev_sp =3D state->sp;
+ 	enum stack_type prev_type =3D state->stack_info.type;
+@@ -475,9 +475,6 @@ bool unwind_next_frame(struct unwind_state *state)
+ 	if (unwind_done(state))
+ 		return false;
+=20
+-	/* Don't let modules unload while we're reading their ORC data. */
+-	guard(rcu)();
+-
+ 	/* End-of-stack check for user tasks: */
+ 	if (state->regs && user_mode(state->regs))
+ 		goto the_end;
+@@ -678,6 +675,13 @@ bool unwind_next_frame(struct unwind_state *state)
+ 	state->stack_info.type =3D STACK_TYPE_UNKNOWN;
+ 	return false;
+ }
++
++bool unwind_next_frame(struct unwind_state *state)
++{
++	/* Don't let modules unload while we're reading their ORC data. */
++	guard(rcu)();
++	return unwind_next_frame_unlocked(state);
++}
+ EXPORT_SYMBOL_GPL(unwind_next_frame);
+=20
+ void __unwind_start(struct unwind_state *state, struct task_struct *task,
+
+Sebastian
 
