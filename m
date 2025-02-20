@@ -1,195 +1,131 @@
-Return-Path: <linux-kernel+bounces-523806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03169A3DB7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:40:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 108E3A3DB7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:40:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DADC917D0A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:40:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CACE53A7BFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:40:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 179A81F8F09;
-	Thu, 20 Feb 2025 13:40:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4445C1FA14B;
+	Thu, 20 Feb 2025 13:40:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="mdoDf3rO"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fQwd9XwM"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7DF52BD11
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 13:40:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3158D1F942D
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 13:40:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740058807; cv=none; b=rmOShwPQLayz4uxhW2dG+mjI2ysfzET7kht1AiUax4JOcvLZunzwNqdDtguMxOU4RIAuh9gYxs2zBIYEYzYU0hFiRbriJUD7N9c6YvMAomZdLVirnffa+vz4Ow5wqRUvVlz6CUXOb3inafWIusWGrosSdKQE/Yi0u2XoFXrWB0Q=
+	t=1740058810; cv=none; b=HvwIMhivlgBD5teHGhdaICZyijhSpXm2aev2srCzj3wWEGO7A9Xs2XBNc0PMCTdUvgqrjssVtoz0sLHCC8mOIFza8zIvfTEDno1MK2OdZtn6jT0l3T9vdlt29Khgi0KLUR7LOVFLJCu7ZFp3o6Q00E7oU+TaQJCKO9/JqDnmPkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740058807; c=relaxed/simple;
-	bh=yjEUde99KgzakBJbQx6a/8UMTsQ+4EbwER2WXeBEkDU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O+TxMEDefiJoMT6VrYf4fjt35dZcM/7YcWgdgAM6lXqZ1T+M/vpXz73RNI11f2MC7CExesBnZcLEyg+qiTQxx3bGRLuTl0FwBobDqvNJFaFVp28543TQKQE0/Zr9yE6uLIHl1SQA+rQzheh7jxy+AXP3N0VoWwwzoOoZxZNbnNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=mdoDf3rO; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 61A543F2CB
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 13:39:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1740058796;
-	bh=iiP50cFP789o1GE1IPKlebj+94gihSf8dowgIFkuU9c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:In-Reply-To;
-	b=mdoDf3rOlOPLil0eAov/FGr+AFELlzASq9UxPTbPU6f9aqKl2qTfO7n/l1seo6qEz
-	 HmRZ4/Lhl8kWdEVGEa20wTPzmuVH0sDiC633UpAAHHsUboczVJyjpNxpBA6aFVFykC
-	 1T3rclJWAjz85BndnCeoPYNMFvh9Dg912QaJMYnrK4IJ+ZFqyxstQIMHLAY6NWby4Z
-	 oZCsltIFCSFgbvNsW5XvWoQDKozm46JOWQ0QJpMnH6tSynrtspNWUzwVB1DPYjKD86
-	 ZMMZz4pvD1JBpEkldROE2qLsf6ljV63ZXuFt/WR2zGgQjh0AV54kybumLpWoGXbqEs
-	 Ot6q3e3lcRyig==
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-22114b800f0so28469515ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 05:39:56 -0800 (PST)
+	s=arc-20240116; t=1740058810; c=relaxed/simple;
+	bh=YHiEwZjQAEX3AGU4xj8gssFAfSoCb1JqMeq59o4wcrE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=huulqyjIZMj+3+Vbfe+4MSub3w+8qMRA8H8QFslYjN/PnqO428pcLmXeRH51De68Md+QCPy0W0Cy/LH8aUvt3w4Ei3EQBp4HB1ppMPQbQ3rqxIRisTb8zEHypcjUDuTMliDIj6blKHWP5G31wD9HifE+Lg98rtOyzANhCrNPXII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=fQwd9XwM; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2f441791e40so1448743a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 05:40:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1740058808; x=1740663608; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ML1/0H9YV2GOwGv9BI0hsA2CQR0qo+3F7StWZRVvACg=;
+        b=fQwd9XwMqfCIIipFVA4Dm9eZYRqfXi7sPZ7dWCfKUCHVdgjDpAm8b44yu5RY4+8uEW
+         QGWBoFSRG3hT+I66RagVvtX5m3sY43KfBq4fvfCpz+8S56/RKc8yW+C/SjgQgTFZzQ0K
+         fWh6dcAyB9bTVzG6W8IdXB0sxYWh5PksE+b0w=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740058786; x=1740663586;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iiP50cFP789o1GE1IPKlebj+94gihSf8dowgIFkuU9c=;
-        b=Klui48vEgoJCcXtRumoqq7fb9SODLMxCn0kZQxkVcQUgDoqQdXW+ToXlxcPWT1FKLD
-         Kucxan1iCIKipFB63b1+N3tqhLpcFguMIoALEWULWlDKTMrtnGN2o4/dGvzs7dqf2Z24
-         g+mgbOwbk6m+i2mgMGUm4Sg/lhh/7qjiqoy/Ld8TzYowsRq1lmoUyJSnvZtAoCkz/H3u
-         IzXmewdSAbmL85Ozttwax+FQ1o9tXrBEUrg/gcidsMxXil9O6I5cmEjk4x/mVoIMPU7W
-         Z2ZyBp4oMbNrJc81Ves9pllQF+HZ1ByNA4wT7L3/baQf6UVtDFt5YNue+U8w+HwnAnRR
-         M5YQ==
-X-Forwarded-Encrypted: i=1; AJvYcCViDP/GyM1Liqh+NgkikQZ5UssEPWSTkI7SjI6lbq2445x1hPL/9lwvnoQpZoj4rM9rYnsrtD2qcHgmiac=@vger.kernel.org
-X-Gm-Message-State: AOJu0YweVP9ULbmI8YklZVaEGqBCBt4rKrc+jVyo25oVOrWOlDjsIjbu
-	uJVo6n4/S57d6Cjm3Q7uWCrN1O7AumeIPkIYaqdeV11UxB/OaPk8BycojGKbksB0LVxLAnTwqmK
-	KSZ8TP4/SMQLb5h7Sz1eOJogR53ltG4RMo31VGJ8WTB7S2E4JYKZxy5gWFJF5jz+iPoBv4NI9dp
-	CR8eJnT+RGHg==
-X-Gm-Gg: ASbGnctCWlQUblKEHK//L+yQ3gtGD79WcSX0Aqrd7b8DdSS8pWnlqPeaZvIrf5lFb39
-	kkEqaBSy6Nc/CXG0743R2MZQn+ZKuyl8O77p4TMaMCEowcpASIPzT+3fXS7/YQadATZTIM8BKfY
-	QHzU2SdPPtO72jaDf6JxV02Shn0PrMjRSebsawgxKppjpBFEukKq0C3ir7jxTkHW8mGgpyxUvn8
-	gRFC0DxRHkwB4uJ9Jtd0F8eXYfU804xFh6h8tgzoJVycV4c/ZxViTVE3hB0GFOeBMlg/XQxK7a+
-	29Jb7yo=
-X-Received: by 2002:a17:902:e801:b0:216:4064:53ad with SMTP id d9443c01a7336-221040bf829mr387389355ad.48.1740058786689;
-        Thu, 20 Feb 2025 05:39:46 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHhmAlPudojVgfawOJMuWdHGMWxc9h86if7RnadO0XpKZaLYbOxk06f6NJUmK9czRHJoKzPdQ==
-X-Received: by 2002:a17:902:e801:b0:216:4064:53ad with SMTP id d9443c01a7336-221040bf829mr387388975ad.48.1740058786301;
-        Thu, 20 Feb 2025 05:39:46 -0800 (PST)
-Received: from localhost ([240f:74:7be:1:256c:5029:b967:ebb0])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d534db68sm121209445ad.39.2025.02.20.05.39.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 05:39:46 -0800 (PST)
-Date: Thu, 20 Feb 2025 22:39:44 +0900
-From: Koichiro Den <koichiro.den@canonical.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-gpio@vger.kernel.org, geert+renesas@glider.be, 
-	linus.walleij@linaro.org, maciej.borzecki@canonical.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] gpio: introduce utilities for synchronous fake
- device creation
-Message-ID: <fcfanp2bfokggj3dhzdceaza2bhxo7xrbru5cy36ciaumpfua2@kvabbos3znjt>
-References: <20250218160333.605829-1-koichiro.den@canonical.com>
- <20250218160333.605829-2-koichiro.den@canonical.com>
- <CAMRc=MfmG0okVjV1nH78Aw18dFcoOAZ-UwU-iFc1VKb-BVcTxQ@mail.gmail.com>
- <wyicl2dgxkwxzfwd37cmhgshnqb3phmpeboz3gwqqfmbabaegy@tkjx56nj423u>
- <CAMRc=MdhkiaDs8t9BYveYhy86+svQkHnPxhGx56AMOs=7n9mcQ@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1740058808; x=1740663608;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ML1/0H9YV2GOwGv9BI0hsA2CQR0qo+3F7StWZRVvACg=;
+        b=wwUq6b8S0tBFM8rdQHrbpmDXQMuMqQUdoaNAAturUaLLcJzepBlNRhZUncttKfbpk9
+         gWbxmBcn+dhL9XF+qbzg+e20LUUc/X53HUutBAs+Cji8pg00ymIODWRrQaEQoYmyfZaW
+         YYu7XiRTPXQ0u3n01lHgOrI+gBRrlPKQBBLXfVoQreGVzrFGxiSmA7OioQK5LCLbHsk5
+         L8pvtMI4J+Sn3fbAU+txzGbSGQAK/tbDirZVjSFt8kQ1ujeDSl4HkaQmAT/huvuD6lQs
+         9PNaTsPnQz3UsaeRxGTKt3IvqptF2FSycLP+dgRiKH+NnF5l1A2y+Ss8NqBdzp2PD+fW
+         sJYg==
+X-Forwarded-Encrypted: i=1; AJvYcCUIZWfOrK6IMRu0Zezyfp40p6smhUJ0oneZj8um5KayGbooQwLBTwYzUTfRveab/15gSSzqltaCtF2PYvw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNfEdDHUNEoKE4iSM6QmJ+4VfnxIazNo1ArtsssJooLho6BIMc
+	svI8CS/CNKLEAvpXZvqXshsfalXwmTlFep+NHpp3zO8368rXmbp2xhBR6C5EI35OCOwQqkgyAn+
+	ifBlvDRfn8zD0XmCLItpf53et8LFdv90joPIV
+X-Gm-Gg: ASbGncs/6ymSudYHbfxdmCubRUwIhMUuloL/v+aDnbq7Q4hU+yhkAGXiE/ZPDxetz6q
+	gOpYT6aBQ6NIOOenBd31mRb9fQqUSmLUKoM9twFTBepqjrlIxqlDEytk39gudOrh776PFQOFEup
+	4UJjgFPbgzPEYygmR1/GA65uY=
+X-Google-Smtp-Source: AGHT+IEL5keA+PapFixcBrr6dT8RQR/4gBofNZ3DcuRjKbHdgZu0h93rSpNvZX8XRvTFUH8ttG3sMUe4HE8dka1DC4I=
+X-Received: by 2002:a17:90b:1e09:b0:2fa:1451:2d56 with SMTP id
+ 98e67ed59e1d1-2fc41045074mr33941390a91.25.1740058808515; Thu, 20 Feb 2025
+ 05:40:08 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MdhkiaDs8t9BYveYhy86+svQkHnPxhGx56AMOs=7n9mcQ@mail.gmail.com>
+References: <20250210130419.4110130-1-akuchynski@chromium.org> <Z7SYg8HaSVx9QyH9@tzungbi-laptop>
+In-Reply-To: <Z7SYg8HaSVx9QyH9@tzungbi-laptop>
+From: Andrei Kuchynski <akuchynski@chromium.org>
+Date: Thu, 20 Feb 2025 13:39:57 +0000
+X-Gm-Features: AWEUYZldFkmbJpsZ2rH52bgIzXaIk8HNEGPbISy_CZuCvZhPJJ9k0ZHwzqAkiuE
+Message-ID: <CAMMMRMfYWqGEJDmMaPQFjQFeUhWJ4wVp-xy2TTdAhp3gRv-n8g@mail.gmail.com>
+Subject: Re: [PATCH] platform/chrome: cros_ec_typec: Add support for setting
+ USB mode via sysfs
+To: Tzung-Bi Shih <tzungbi@kernel.org>
+Cc: Prashant Malani <pmalani@chromium.org>, Benson Leung <bleung@chromium.org>, 
+	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>, chrome-platform@lists.linux.dev, 
+	Jameson Thies <jthies@google.com>, =?UTF-8?Q?=C5=81ukasz_Bartosik?= <ukaszb@chromium.org>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 20, 2025 at 02:13:42PM GMT, Bartosz Golaszewski wrote:
-> On Thu, Feb 20, 2025 at 2:07 PM Koichiro Den <koichiro.den@canonical.com> wrote:
-> >
-> > On Thu, Feb 20, 2025 at 12:06:33PM GMT, Bartosz Golaszewski wrote:
-> > > On Tue, Feb 18, 2025 at 5:04 PM Koichiro Den <koichiro.den@canonical.com> wrote:
-> > > >
-> > > > Both gpio-sim and gpio-virtuser share a mechanism to instantiate a
-> > > > platform device, wait for probe completion, and retrieve the probe
-> > > > success or error status synchronously. With gpio-aggregator planned to
-> > > > adopt this approach for its configfs interface, it's time to factor
-> > > > out the common code.
-> 
-> [snip]
-> 
-> > > > +void dev_sync_probe_init(struct dev_sync_probe_data *data)
-> > > > +{
-> > > > +       memset(data, 0, sizeof(*data));
-> > > > +       init_completion(&data->probe_completion);
-> > > > +       data->bus_notifier.notifier_call = dev_sync_probe_notifier_call;
-> > > > +}
-> > > > +EXPORT_SYMBOL_GPL(dev_sync_probe_init);
-> > > > +
-> > > > +int dev_sync_probe_register(struct dev_sync_probe_data *data,
-> > > > +                           struct platform_device_info *pdevinfo)
-> > > > +{
-> > > > +       struct platform_device *pdev;
-> > > > +       char *name;
-> > > > +
-> > > > +       name = kasprintf(GFP_KERNEL, "%s.%u", pdevinfo->name, pdevinfo->id);
-> > >
-> > > pdevinfo->id is a signed integer
-> > >
-> > > I'm also wondering if we could avoid the allocation here and keep on
-> > > using snprintf() like in the existing drivers? On the other hand,
-> > > memory is cheap so no big deal.
-> >
-> > Are you assuming the following change?
-> >
-> >    struct dev_sync_probe_data {
-> >           struct platform_device *pdev;
-> >   -       const char *name;
-> >   +       char name[32];
-> >
-> >           /* Synchronize with probe */
-> >           struct notifier_block bus_notifier;
-> >
-> 
-> No, I was thinking about a local buffer in the notifier handler, like
-> what we do currently in gpio-sim, but no worries, you can keep it this
-> way.
-> 
-> > >
-> > > > +       if (!name)
-> > > > +               return -ENOMEM;
-> > > > +
-> > > > +       data->driver_bound = false;
-> > > > +       data->name = name;
-> > > > +       reinit_completion(&data->probe_completion);
-> > > > +       bus_register_notifier(&platform_bus_type, &data->bus_notifier);
-> > > > +
-> > > > +       pdev = platform_device_register_full(pdevinfo);
-> > > > +       if (IS_ERR(pdev)) {
-> > > > +               bus_unregister_notifier(&platform_bus_type, &data->bus_notifier);
-> > > > +               kfree(data->name);
-> > >
-> > > We could probably simplify it by using __free(kfree) with the name
-> > > variable and just setting it at the end with no_free_ptr().
-> >
-> > platform_device_register_full() call path might finish probe so before
-> > calling it, we need to make sure the 'name' is filled in. That's why I
-> > didn't used __free(kfree).
-> >
-> 
-> Not sure I understand this. Would you mind rephrasing?
+On Tue, Feb 18, 2025 at 2:26=E2=80=AFPM Tzung-Bi Shih <tzungbi@kernel.org> =
+wrote:
+>
+> On Mon, Feb 10, 2025 at 01:04:19PM +0000, Andrei Kuchynski wrote:
+> > +static int cros_typec_enter_usb_mode(struct typec_port *tc_port, enum =
+usb_mode mode)
+> > +{
+> > +     struct cros_typec_port *port =3D typec_get_drvdata(tc_port);
+> > +     struct ec_params_typec_control req =3D {
+> > +             .port =3D port->port_num,
+> > +             .command =3D (mode =3D=3D USB_MODE_USB4) ?
+> > +                     TYPEC_CONTROL_COMMAND_ENTER_MODE : TYPEC_CONTROL_=
+COMMAND_EXIT_MODES,
+> > +             .mode_to_enter =3D CROS_EC_ALTMODE_USB4
+>
+> The symbol `CROS_EC_ALTMODE_USB4` doesn't exist.  On a related note, woul=
+dn't
+> it always enter CROS_EC_ALTMODE_USB4 if the value is hard-coded here?
+>
 
-dev_sync_probe_notifier_call() references dev_sync_probe_data's 'name'
-field. In dev_sync_probe_register(), platform_device_register_full()
-invocation can possibly succeed in the initial probe, meaning that
-dev_sync_probe_notifier_call() can be invoked before
-platform_device_register_full() returns. So, 'name' field must be set
-beforehand, and I located 'data->name = name' as shown above;
+CROS_EC_ALTMODE_USB4 is defined in drivers/platform/chrome/cros_ec_typec.h.
+TYPEC_CONTROL_COMMAND_ENTER_MODE command will be sent only if
+mode =3D=3D USB_MODE_USB4 because EC currently only supports entering USB4 =
+mode.
+Otherwise, TYPEC_CONTROL_COMMAND_EXIT_MODES is sent, and the mode_to_enter
+field is irrelevant for this command.
 
-If I used __free(kfree), the number of which I needed to write
-'no_free_ptr(data->name);' would be the same (= 2 times). So I thought that
-calling kfree(data->name) without __free(kfree) was simpler and better.
+> > @@ -84,6 +102,13 @@ static int cros_typec_parse_port_props(struct typec=
+_capability *cap,
+> >               cap->prefer_role =3D ret;
+> >       }
+> >
+> > +     if (fwnode_property_present(fwnode, "usb2-port"))
+> > +             cap->usb_capability |=3D USB_CAPABILITY_USB2;
+> > +     if (fwnode_property_present(fwnode, "usb3-port"))
+> > +             cap->usb_capability |=3D USB_CAPABILITY_USB3;
+> > +     if (fwnode_property_present(fwnode, "usb4-port"))
+> > +             cap->usb_capability |=3D USB_CAPABILITY_USB4;
+>
+> Are these defined somewhere?  E.g. the bindings?
 
-> 
-> Bart
+Unfortunately, property names are set in the ACPI firmware in the same way.
 
