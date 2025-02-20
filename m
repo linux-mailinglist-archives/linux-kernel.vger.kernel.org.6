@@ -1,201 +1,176 @@
-Return-Path: <linux-kernel+bounces-524659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D16EAA3E586
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:03:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AFC3A3E591
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:05:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86B6118999EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:03:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B4AA1752E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:05:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E856264617;
-	Thu, 20 Feb 2025 20:02:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E460262D39;
+	Thu, 20 Feb 2025 20:05:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Edi3n9/F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Eq8IBVWo"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C93E264606;
-	Thu, 20 Feb 2025 20:02:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 002B320CCCA
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 20:04:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740081762; cv=none; b=TdDrJfJMU62q2IrClhOuct8GS6ErvKiPBsVv6M1oNqj0KQGvJFxv97LuMeIdsm5Zgnxw5zSZuBJNbaFt2aNq/PWxyCWyt29n6MFGTyipePQTpEHaBfFRmcT5yEcdkZFhY6EIP1sAk4w2rBogwuVY4rPA7V0/zBtgRN4RGiyZetI=
+	t=1740081900; cv=none; b=LzwnlzOZhITbOlzPUlxFQFO7VVC5xBx0dkptbYbVRY0ulEyjQ5/WQINjd+CnpEFf9P/gLfuSkl/e5ArhKNgdHz+h9zMXe0veLgd7rfNfh/+mN8rKaVVlfA9wbecn6AlNfApn1490X5pY+8LkBhjfGwTdzYBtFWXUkGowVCVkj5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740081762; c=relaxed/simple;
-	bh=MEtRL1Z7JIGfjc9N5PY4VR2QlXBUQPig7OqiInxSM14=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lfsLiWzV2PbfJbE2bm5pGDY95EiLTUfiSbgLGDMbA7MtZ9ij33TsS0eAP0V+/E89eyjlJXNUPQuL2bsYkQ6j/8wxy1H8D061WpTZpqyzsxeUi7V1lP+hVUDctHgEUHwAxQpbc5hVaaqy3fOOLPo6Ynf372RiUEOeWFt5TWayRmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Edi3n9/F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7ABFC4CEE4;
-	Thu, 20 Feb 2025 20:02:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740081761;
-	bh=MEtRL1Z7JIGfjc9N5PY4VR2QlXBUQPig7OqiInxSM14=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Edi3n9/F5Sqmer9A9JH5DnvCNDuFrfmbH/avLGcrUT3bS/m2dGYhL2lokuu7tRX/9
-	 R5p/w/g4NujlW6gR9iYkNjB4dmSc66LFQ1kS8FAyZj2CasEr4pwlccRHWHy/uWBfQb
-	 d1PUN+bvOtDwZPbVMkBHUNT0evMAKDX1go7pJKZ+6M7uO1O0t31toSmoBRKlJVuJmS
-	 rlDWIPt2OysYsTClolKBTWuIFb6yNUm3Vx879ACNHLXb71oqD2wQ7oOcfbiPOZL4Db
-	 X28hOzgQ1Hd3+GmYBjxTTw5VE5oykgjruoXVOWROHtGaPU4yuZWxwoJ6fQNBeZNZk9
-	 jZUfAn8XaLnWA==
-Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-3f3edbef7d2so412837b6e.2;
-        Thu, 20 Feb 2025 12:02:41 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUgN5/tzukbfehzOlE8dVkYdX/Eu299HdgsZSpzyIKggeVxRpa4MJxyA3lgDIH7r+5qzhX9zsJYbn7y5hJ/@vger.kernel.org, AJvYcCXgzOIH6iQ6JH1Gos2xnyz2pi+H1E+AGr/9LA9qS0vPgIUJ6e9kzO32YXldm1uhC5tqlhWGzxe9aqk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWKJoDxKd0bjf+9Q2GJjl9JI/FkskbP9BMtzFKcQD7iL8wMeue
-	cyLYC0tiB7AzNaZB1haD9QpidmN1KjWLFgzAOyI+3ygZekaS1E4An7cih2GmOsWnRnp4zlKNbPz
-	ralSvjAfaQblYtFUf25lOb8b5atQ=
-X-Google-Smtp-Source: AGHT+IFd4ofgG10nIb4ge4yUIS0Xn3TLKVX9zmKZXE2NDkUTJnyKOJOVT28x87WH+SooSDrKqsftlDw5K0GunUHcBzg=
-X-Received: by 2002:a05:6808:229e:b0:3f3:ff78:e5e4 with SMTP id
- 5614622812f47-3f4247c1ed5mr561834b6e.38.1740081761081; Thu, 20 Feb 2025
- 12:02:41 -0800 (PST)
+	s=arc-20240116; t=1740081900; c=relaxed/simple;
+	bh=5D0l0EHGuYRW1vnDBrTA8vI6rKK54axf9kwxMgNk/8o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tuIGpsFpvySFYA+zh8gcIjbl+IOZRsbpD4dzRqP8HG6/G3hTD0owXvQdWlhkWoxhWk6JpDPvlki89j8niLlXiNkUSd2uzKXThAdye68qh8ABw3G9FkJa3+j64+LeVoCt9EFQC/5ziuSa64uvWGcCCD2l+RlgEpXlP0VcE2+c9oQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Eq8IBVWo; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-aaec61d0f65so287742266b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 12:04:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740081897; x=1740686697; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=s4V3ArSdqVvQaM3uil1Ub13DDLpOJj96oHPRMTSyzyU=;
+        b=Eq8IBVWogN6cgruMuqdroUa9x0vQwFUM/T91ehRRuWvhe8G1ERvNxBoim1GvBbopME
+         ctQq3zWwBmLGkpBkw0XeefuPzqYTLwUNu44/TbmP1P4VaEVAb04qyBmT3yKALCo0+zK+
+         7HIyJ3vK+SJUtA9lRysaQD5rZCDaF18CX0k/XElnJi/a/c3U394drZ/HxzHZgOc5zmmE
+         PwQkerz5wWb0XPfKQrc4AmEEOSxQE4hsJ9KiXcLiqleSriRNQBocPS2oFrGKAxcLQeED
+         5Vwvg6Zvg+BbYfN8icsOib1EUrE/iTZQNgH1SUDW+xMyqYXFZFkHZUgljGTdpjNOqDAd
+         sRMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740081897; x=1740686697;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=s4V3ArSdqVvQaM3uil1Ub13DDLpOJj96oHPRMTSyzyU=;
+        b=mohaBXm2jPWTazfmdDaSmiQmCgYIffA4PeXFSswF1FyQ/gVVVjFQW68yYssd3klnOa
+         OHBgq1sfEaPsKb+p+meNeyptu79iRmeO7o+WEPi+o7y464xJ8MYMYLMj3+KXoxDl4XQb
+         GKIld1ziRT1r1obw+OTpanNUb+cowh7I63R4GUVBRbx3IAOTpl4XzT8OWjvgNS10dDFS
+         YvQ5O34UoG6qvdURYJcMVWV2Y+uGDac9+iSeBNEcXQnH4m7zshjkJ0Dk2oNjjpubMHXV
+         jsy8TBkeBq1M9NapNcSTR2RGZECW6/uXRT4tE8NjTV+VPV5E5f3eaHMI72pQuwZbs2wr
+         ZCyA==
+X-Forwarded-Encrypted: i=1; AJvYcCVbLLPnwz0GRnaZbigziHuK0E6BcMimZCeQ5qz5AmOSnNYS8Z0RHB7lx+xgvAAo61yEXsabjzif2mYd0oI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yys/W/zRUnFQ9HKu29Qc2JQAAFJSkUlq+q9VWtBABq9tiCrBaxp
+	aDKQSoe+gQjfnlqNTZsHAIwQTHpeA33ZfRxggXQCzPRD8DcwScYa
+X-Gm-Gg: ASbGncvxNl6Bbz/eKFLRdLHLTi9Wq3CfP+llnCW6QjGPxaq1XQ4jz6Gzbik6w1vi3Zh
+	3IArMxWH3Z3X7SjDbnYu4eoPgGQYeSsuWzOpVcs2rsd5NVN2eX6YFIYe20+Cr3R5vhD03Y9p9ve
+	eXnwiOCn9hgy46dZ8qvSz48ekR5GAKJ6b0FO5elBenaTVTI9IuPDI4z/bukWiEuTkBA+o2E5T6q
+	/xHsfuLcqqXdoe/p2WzMnnY7zfifIkC6kLjn/CCHTQcUYcHzfLmmCQuwBpzxS4gZEV6N9VRmqOV
+	m7dAKMmNlQ8PAZhVCu+dOqTv
+X-Google-Smtp-Source: AGHT+IGnbzcgWMoTkE/dPFx+oqeVJZeos+nCwLlyZ3P6qVbVbpIwDYhOqBXdafMqyQmtMRNNi/s0Zw==
+X-Received: by 2002:a17:907:9406:b0:ab7:c424:fb12 with SMTP id a640c23a62f3a-abc09d35652mr63400266b.51.1740081897002;
+        Thu, 20 Feb 2025 12:04:57 -0800 (PST)
+Received: from localhost.localdomain ([46.248.82.114])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb9d19feaesm812897766b.48.2025.02.20.12.04.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 12:04:56 -0800 (PST)
+From: Uros Bizjak <ubizjak@gmail.com>
+To: x86@kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Uros Bizjak <ubizjak@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Brian Gerst <brgerst@gmail.com>,
+	Ard Biesheuvel <ardb@kernel.org>
+Subject: [PATCH -tip] x86/stackprotector: Move stack canary to struct pcpu_hot
+Date: Thu, 20 Feb 2025 21:02:30 +0100
+Message-ID: <20250220200439.4458-1-ubizjak@gmail.com>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250128141139.2033088-1-darcari@redhat.com> <20250220151120.1131122-1-darcari@redhat.com>
-In-Reply-To: <20250220151120.1131122-1-darcari@redhat.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 20 Feb 2025 21:02:28 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0jjoZq+cm=jHOJ4hPhXKK5iSRCrpCYh80-6FhdSjYPMUA@mail.gmail.com>
-X-Gm-Features: AWEUYZlnhgw-RkABbxhcGjKUkKJcNFucHCdfxJqeWCJjzmq85_pPtsemizOpRz4
-Message-ID: <CAJZ5v0jjoZq+cm=jHOJ4hPhXKK5iSRCrpCYh80-6FhdSjYPMUA@mail.gmail.com>
-Subject: Re: [PATCH v5] intel_idle: introduce 'no_native' module parameter
-To: David Arcari <darcari@redhat.com>
-Cc: linux-pm@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, 
-	Jacob Pan <jacob.jun.pan@linux.intel.com>, Len Brown <lenb@kernel.org>, 
-	Artem Bityutskiy <dedekind1@gmail.com>, Prarit Bhargava <prarit@redhat.com>, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 20, 2025 at 4:11=E2=80=AFPM David Arcari <darcari@redhat.com> w=
-rote:
->
-> Since commit 18734958e9bf ("intel_idle: Use ACPI _CST for processor model=
-s
-> without C-state tables") the intel_idle driver has had the ability to use
-> the ACPI _CST to populate C-states when the processor model is not
-> recognized. However, even when the processor model is recognized (native
-> mode) there are cases where it is useful to make the driver ignore the pe=
-r
-> cpu idle states in lieu of ACPI C-states (such as specific application
-> performance). Add the 'no_native' module parameter to provide this
-> functionality.
->
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> Cc: Len Brown <lenb@kernel.org>
-> Cc: David Arcari <darcari@redhat.com>
-> Cc: Artem Bityutskiy <dedekind1@gmail.com>
-> Cc: Prarit Bhargava <prarit@redhat.com>
-> Cc: linux-doc@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: David Arcari <darcari@redhat.com>
-> ---
-> v5: if statement simplication, also add missing '&' to ignore_native()
-> v4: fix !CONFIG_ACPI_PROCESSOR_CSTATE compilation issue
-> v3: more documentation cleanup
-> v2: renamed parameter, cleaned up documentation
->
->  Documentation/admin-guide/pm/intel_idle.rst | 18 +++++++++++++-----
->  drivers/idle/intel_idle.c                   | 14 ++++++++++++++
->  2 files changed, 27 insertions(+), 5 deletions(-)
->
-> diff --git a/Documentation/admin-guide/pm/intel_idle.rst b/Documentation/=
-admin-guide/pm/intel_idle.rst
-> index 39bd6ecce7de..5940528146eb 100644
-> --- a/Documentation/admin-guide/pm/intel_idle.rst
-> +++ b/Documentation/admin-guide/pm/intel_idle.rst
-> @@ -192,11 +192,19 @@ even if they have been enumerated (see :ref:`cpu-pm=
--qos` in
->  Documentation/admin-guide/pm/cpuidle.rst).
->  Setting ``max_cstate`` to 0 causes the ``intel_idle`` initialization to =
-fail.
->
-> -The ``no_acpi`` and ``use_acpi`` module parameters (recognized by ``inte=
-l_idle``
-> -if the kernel has been configured with ACPI support) can be set to make =
-the
-> -driver ignore the system's ACPI tables entirely or use them for all of t=
-he
-> -recognized processor models, respectively (they both are unset by defaul=
-t and
-> -``use_acpi`` has no effect if ``no_acpi`` is set).
-> +The ``no_acpi``, ``use_acpi`` and ``no_native`` module parameters are
-> +recognized by ``intel_idle`` if the kernel has been configured with ACPI
-> +support.  In the case that ACPI is not configured these flags have no im=
-pact
-> +on functionality.
-> +
-> +``no_acpi`` - Do not use ACPI at all.  Only native mode is available, no
-> +ACPI mode.
-> +
-> +``use_acpi`` - No-op in ACPI mode, the driver will consult ACPI tables f=
-or
-> +C-states on/off status in native mode.
-> +
-> +``no_native`` - Work only in ACPI mode, no native mode available (ignore
-> +all custom tables).
->
->  The value of the ``states_off`` module parameter (0 by default) represen=
-ts a
->  list of idle states to be disabled by default in the form of a bitmask.
-> diff --git a/drivers/idle/intel_idle.c b/drivers/idle/intel_idle.c
-> index 118fe1d37c22..d0b23ea03e6f 100644
-> --- a/drivers/idle/intel_idle.c
-> +++ b/drivers/idle/intel_idle.c
-> @@ -1695,6 +1695,10 @@ static bool force_use_acpi __read_mostly; /* No ef=
-fect if no_acpi is set. */
->  module_param_named(use_acpi, force_use_acpi, bool, 0444);
->  MODULE_PARM_DESC(use_acpi, "Use ACPI _CST for building the idle states l=
-ist");
->
-> +static bool no_native __read_mostly; /* No effect if no_acpi is set. */
-> +module_param_named(no_native, no_native, bool, 0444);
-> +MODULE_PARM_DESC(no_native, "Ignore cpu specific (native) idle states in=
- lieu of ACPI idle states");
-> +
->  static struct acpi_processor_power acpi_state_table __initdata;
->
->  /**
-> @@ -1834,6 +1838,11 @@ static bool __init intel_idle_off_by_default(unsig=
-ned int flags, u32 mwait_hint)
->         }
->         return true;
->  }
-> +
-> +static inline bool ignore_native(void)
-> +{
-> +       return no_native && !no_acpi;
-> +}
->  #else /* !CONFIG_ACPI_PROCESSOR_CSTATE */
->  #define force_use_acpi (false)
->
-> @@ -1843,6 +1852,7 @@ static inline bool intel_idle_off_by_default(unsign=
-ed int flags, u32 mwait_hint)
->  {
->         return false;
->  }
-> +static inline bool ignore_native(void) { return false; }
->  #endif /* !CONFIG_ACPI_PROCESSOR_CSTATE */
->
->  /**
-> @@ -2328,6 +2338,10 @@ static int __init intel_idle_init(void)
->         pr_debug("MWAIT substates: 0x%x\n", mwait_substates);
->
->         icpu =3D (const struct idle_cpu *)id->driver_data;
-> +       if (icpu && ignore_native()) {
-> +               pr_debug("ignoring native cpu idle states\n");
-> +               icpu =3D NULL;
-> +       }
->         if (icpu) {
->                 if (icpu->state_table)
->                         cpuidle_state_table =3D icpu->state_table;
-> --
+Move stack canary from __stack_chk_guard to struct pcpu_hot and
+alias __stack_chk_guard to point to the new location in the
+linker script.
 
-Applied as 6.15 material, thanks!
+__stack_chk_guard is one of the hottest data structures on x86, so
+moving it there makes sense even if its benefit cannot be measured
+explicitly.
+
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Ard Biesheuvel <ardb@kernel.org>
+---
+ arch/x86/include/asm/current.h | 13 +++++++++++++
+ arch/x86/kernel/cpu/common.c   |  1 -
+ arch/x86/kernel/vmlinux.lds.S  |  2 ++
+ 3 files changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/include/asm/current.h b/arch/x86/include/asm/current.h
+index bf5953883ec3..e4ff1d15b465 100644
+--- a/arch/x86/include/asm/current.h
++++ b/arch/x86/include/asm/current.h
+@@ -15,6 +15,9 @@ struct task_struct;
+ struct pcpu_hot {
+ 	union {
+ 		struct {
++#ifdef CONFIG_STACKPROTECTOR
++			unsigned long		stack_canary;
++#endif
+ 			struct task_struct	*current_task;
+ 			int			preempt_count;
+ 			int			cpu_number;
+@@ -35,6 +38,16 @@ struct pcpu_hot {
+ };
+ static_assert(sizeof(struct pcpu_hot) == 64);
+ 
++/*
++ * stack_canary should be at the beginning of struct pcpu_hot to avoid:
++ *
++ * Invalid absolute R_X86_64_32S relocation: __stack_chk_guard
++ *
++ * error when aliasing __stack_chk_guard to struct pcpu_hot
++ * - see arch/x86/kernel/vmlinux.lds.S.
++ */
++static_assert(offsetof(struct pcpu_hot, stack_canary) == 0);
++
+ DECLARE_PER_CPU_ALIGNED(struct pcpu_hot, pcpu_hot);
+ 
+ /* const-qualified alias to pcpu_hot, aliased by linker. */
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 21078907af57..9e54c1b585d2 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -2088,7 +2088,6 @@ void syscall_init(void)
+ #endif /* CONFIG_X86_64 */
+ 
+ #ifdef CONFIG_STACKPROTECTOR
+-DEFINE_PER_CPU(unsigned long, __stack_chk_guard);
+ #ifndef CONFIG_SMP
+ EXPORT_PER_CPU_SYMBOL(__stack_chk_guard);
+ #endif
+diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
+index 1769a7126224..cabb86d505fc 100644
+--- a/arch/x86/kernel/vmlinux.lds.S
++++ b/arch/x86/kernel/vmlinux.lds.S
+@@ -467,6 +467,8 @@ SECTIONS
+ . = ASSERT((_end - LOAD_OFFSET <= KERNEL_IMAGE_SIZE),
+ 	   "kernel image bigger than KERNEL_IMAGE_SIZE");
+ 
++PROVIDE(__stack_chk_guard = pcpu_hot);
++
+ /* needed for Clang - see arch/x86/entry/entry.S */
+ PROVIDE(__ref_stack_chk_guard = __stack_chk_guard);
+ 
+-- 
+2.42.0
+
 
