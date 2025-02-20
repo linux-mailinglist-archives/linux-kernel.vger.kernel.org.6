@@ -1,190 +1,122 @@
-Return-Path: <linux-kernel+bounces-524065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BA56A3DECA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:37:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AAE7A3DE93
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:31:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A39617AD8D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:29:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F99A188A0D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:31:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AD621E9B12;
-	Thu, 20 Feb 2025 15:29:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85C771DA62E;
+	Thu, 20 Feb 2025 15:30:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LXDuCBOw";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="YADQiCNc";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LXDuCBOw";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="YADQiCNc"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bkXd8DgQ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E521FFC78
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 15:29:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A6871DE4C4;
+	Thu, 20 Feb 2025 15:30:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740065397; cv=none; b=HhLb/VCf7gKPQ94edQ+eX8sveg1JnMhvkU7GbuYTFJi/7tuCZ/Lt99PDgReSK6lWejo3QQdjIotXnkIS2//kF3S7eLeFX1dVwQBu1w0m9lXqZhcwXoSL9JMpxplyagqoKAyXXx/ZiX+LGdsTbCnJ5uu1AFrAVo2IlBUQSFFOtrM=
+	t=1740065415; cv=none; b=nBy1VFn2jNjXex1Gz8EujhrJP32zHDjmFiBFK/QVWQ39W1bcNG1vS1OyLJjzNpHHENQJt1j8L4zBkRCMFfe5CsEfd9RB/NpRYP9jNzb0VJ7ylAAf7HypvhR3YF5RUo88GiueFDfRpEAh9KYKVn4qFE8Mwvr5F4X3HqqAP0/VFfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740065397; c=relaxed/simple;
-	bh=aM+odtDBrmWA9iDXbZQjn7jaxdEI23bVhQD5HhLw4aQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NGRkyZU9mQkX67MX4TMgCJyFtjZE7DpdAcIKGkkNWoWT1Rl6f+xpLTcXB2utwOP+Ky7zWJiHnnY8545VhkRNg+IUm+DafKITLg9jgnfgNVySM7FgdlsdGypZbCFu6q2WG2gBvl+yy0kcYQadIrEECARA2M+rlHyWA6dc1L+2Mrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LXDuCBOw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=YADQiCNc; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LXDuCBOw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=YADQiCNc; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id C976A1F388;
-	Thu, 20 Feb 2025 15:29:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740065391; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Jb/RiXD5g13iqlSAPF/HYk9tHqQ8XfmsjURlIeRYP/Q=;
-	b=LXDuCBOwLJdOU9mRDC8iZyUj4WjiNAYn0c7Ns1bnPyI6/2I+8XU7iuidBMvNd3xgXc6Y/a
-	rcozu9trtwVN1pPTmo/BWRP9yxOEdK4kTISj6+VOFyjWCjQ9UGKm/S5F48p59xSty9oRke
-	oGc5iMCeF4skiF17wt1dIVk8DqjztWU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740065391;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Jb/RiXD5g13iqlSAPF/HYk9tHqQ8XfmsjURlIeRYP/Q=;
-	b=YADQiCNc2q6Bb7vt9PEO8WgpwL4fzRBf1RbCsPMM1EDvMgo7UQWJv9Gs+HU26YTA4zKkA9
-	bstIXxngQXRAO7Cg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=LXDuCBOw;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=YADQiCNc
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740065391; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Jb/RiXD5g13iqlSAPF/HYk9tHqQ8XfmsjURlIeRYP/Q=;
-	b=LXDuCBOwLJdOU9mRDC8iZyUj4WjiNAYn0c7Ns1bnPyI6/2I+8XU7iuidBMvNd3xgXc6Y/a
-	rcozu9trtwVN1pPTmo/BWRP9yxOEdK4kTISj6+VOFyjWCjQ9UGKm/S5F48p59xSty9oRke
-	oGc5iMCeF4skiF17wt1dIVk8DqjztWU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740065391;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Jb/RiXD5g13iqlSAPF/HYk9tHqQ8XfmsjURlIeRYP/Q=;
-	b=YADQiCNc2q6Bb7vt9PEO8WgpwL4fzRBf1RbCsPMM1EDvMgo7UQWJv9Gs+HU26YTA4zKkA9
-	bstIXxngQXRAO7Cg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A240213A42;
-	Thu, 20 Feb 2025 15:29:51 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id P6hJJ29Kt2ficAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Thu, 20 Feb 2025 15:29:51 +0000
-Message-ID: <fc94c383-5788-43c8-beb3-2fd76acae7bd@suse.cz>
-Date: Thu, 20 Feb 2025 16:29:51 +0100
+	s=arc-20240116; t=1740065415; c=relaxed/simple;
+	bh=r/M/bPndAlP+GNlFaTADgHs3OA6x8a7RY+1cjmuo+W0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=swFDy/jZ7bRJfjnloxug2ToviMcAypykFK2fg6URXjOcuFTcAdLzrlu/kGEQrJuPeP4vuimd4WhvbZr+u2mm5iHONeur1WMqI3GznI0IXMv0QWbe6/YVeI7RIDRwmA0jnx8Ku0InzDY6SSk72ShugnCa/7tvwesFduY3pTY4+yc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bkXd8DgQ; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740065413; x=1771601413;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=r/M/bPndAlP+GNlFaTADgHs3OA6x8a7RY+1cjmuo+W0=;
+  b=bkXd8DgQJJdz7Dca4ijNGTblrsHph7unIIxTapGCV+nVSNE3Ll8zvN8U
+   PMh8P4Im7Yja7xXauNdStoafWWsZcu83xvkXWY1XQSBYIKv/FWIy+VgyQ
+   wEYXVIE4FYBcuW8U4cV+GsQ/PuiOu6Kl6mqX9PiWw4JkHa1X205ivje7k
+   kloNS9bj4ihT62P7cPMAV6NEDuFF+Z+MaajTumnNNItD4PqnqGnBWbORA
+   PGR6KCOct/ZOgElIg2EifIr/Tqa/jgYs31Xaw1Erl2aoj7bu7LTyiYsyo
+   QhuWUKwdLBTkb7oY2pOg8PetBbpw2s2ljxcuDiYH9ZO+JSQ8TpakReqeH
+   w==;
+X-CSE-ConnectionGUID: wIxpCY57Tp+TlVfcogkmtg==
+X-CSE-MsgGUID: KRitf4w7QwK3M++tC/f8vA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11351"; a="40705935"
+X-IronPort-AV: E=Sophos;i="6.13,302,1732608000"; 
+   d="scan'208";a="40705935"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 07:30:13 -0800
+X-CSE-ConnectionGUID: g7I2XIQPTC64sXjXrpKBKA==
+X-CSE-MsgGUID: k4xD1jSdRKulTt44LzFVjQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,302,1732608000"; 
+   d="scan'208";a="145924731"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 07:30:10 -0800
+Date: Thu, 20 Feb 2025 17:30:07 +0200
+From: Raag Jadav <raag.jadav@intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Zijun Hu <quic_zijuhu@quicinc.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH v1 3/4] devres: Add devm_remove_action_optional() helper
+Message-ID: <Z7dKfwOrAuhuZvQt@black.fi.intel.com>
+References: <20250220141645.2694039-1-andriy.shevchenko@linux.intel.com>
+ <20250220141645.2694039-4-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v12 00/26] LUF(Lazy Unmap Flush) reducing tlb numbers
- over 90%
-Content-Language: en-US
-To: Dave Hansen <dave.hansen@intel.com>, Byungchul Park <byungchul@sk.com>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Cc: kernel_team@skhynix.com, akpm@linux-foundation.org, ying.huang@intel.com,
- vernhao@tencent.com, mgorman@techsingularity.net, hughd@google.com,
- willy@infradead.org, david@redhat.com, peterz@infradead.org,
- luto@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, rjgolo@gmail.com
-References: <20250220052027.58847-1-byungchul@sk.com>
- <8accbd91-ca59-43f8-b190-7e1ac3df5e11@intel.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <8accbd91-ca59-43f8-b190-7e1ac3df5e11@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: C976A1F388
-X-Spam-Score: -4.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[19];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_CC(0.00)[skhynix.com,linux-foundation.org,intel.com,tencent.com,techsingularity.net,google.com,infradead.org,redhat.com,kernel.org,linutronix.de,alien8.de,linux.intel.com,gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250220141645.2694039-4-andriy.shevchenko@linux.intel.com>
 
-On 2/20/25 16:15, Dave Hansen wrote:
-> On 2/19/25 21:20, Byungchul Park wrote:
->> I'm posting the latest version so that anyone can try luf mechanism if
->> wanted by any chance.  However, I tagged RFC again because there are
->> still issues that should be resolved to merge to mainline:
+On Thu, Feb 20, 2025 at 03:44:59PM +0200, Andy Shevchenko wrote:
+> Add a new helper to remove an action that was added via devm_add_action()
+> family of calls, but not warn in the cases where action wasn't found since
+> it is optional and wasn't even added.
 > 
-> I don't see anything fundamentally different here from the last 11
-> versions. I think the entire approach is dangerous and basically makes
-> things impossible to debug. It's not clear that some of the failure
-> scenarios that I've brought up in the past have actually been fixed.
-
-Yes, and it's still an invasive change to the buddy allocator.
-IIRC at Plumbers the opinion in the audience was that there might be ways to
-improve the batching on unmap to reduce the flushes without such an invasive
-and potentially dangerous change? Has that been investigated?
-
-Also "Rebase on akpm/mm.git mm-unstable(5a7056135b) as of Nov 22, 2024." is
-very outdated at this point?
-
-Thanks,
-Vlastimil
-
-> What I've said here still stands:
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  include/linux/device/devres.h | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
 > 
->> https://lore.kernel.org/all/fab1dd64-c652-4160-93b4-7b483a8874da@intel.com/
-> 
->> I think tglx would call all of this "tinkering".  The approach to this
->> series is to "fix" narrow, specific cases that reviewers point out, make
->> it compile, then send it out again, hoping someone will apply it.
->> 
->> So, for me, until the approach to this series changes: NAK, for x86.
->> Andrew, please don't take this series.  Or, if you do, please drop the
->> patch enabling it on x86.
-> 
-> I think I'd also like to stop being cc'd on this. If LUF is merged into
-> mainline and proven to work on arm64 or riscv for a year, I'd be happy
-> to take another look at enabling it on x86. I think that's just about
-> the only thing that would make me reconsider.
-> 
+> diff --git a/include/linux/device/devres.h b/include/linux/device/devres.h
+> index ae696d10faff..4daebbf7f227 100644
+> --- a/include/linux/device/devres.h
+> +++ b/include/linux/device/devres.h
+> @@ -145,6 +145,19 @@ void devm_remove_action(struct device *dev, void (*action)(void *), void *data)
+>  	WARN_ON(devm_remove_action_nowarn(dev, action, data));
+>  }
+>  
+> +/* Same as devm_remove_action(), but doesn't WARN() if action wasn't added before */
+> +static inline
+> +void devm_remove_action_optional(struct device *dev, void (*action)(void *), void *data)
+> +{
+> +	int ret;
+> +
+> +	ret = devm_remove_action_nowarn(dev, action, data);
+> +	if (ret == -ENOENT)
+> +		return;
+> +
+> +	WARN_ON(ret);
+> +}
 
+Trying to wrap my head around this one, can't the user simply do
+
+	if (devm_is_action_added())
+		devm_remove_action/_nowarn();
+
+Raag
 
