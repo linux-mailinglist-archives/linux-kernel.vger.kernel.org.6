@@ -1,89 +1,127 @@
-Return-Path: <linux-kernel+bounces-524281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31015A3E186
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:56:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 910ACA3E16C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:53:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09DEF86171D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:50:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C20981888AD7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:50:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 252F820DD4C;
-	Thu, 20 Feb 2025 16:47:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F0D4212D6E;
+	Thu, 20 Feb 2025 16:48:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FEy4ALXX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sladewatkins.com header.i=@sladewatkins.com header.b="H/Y5QNnQ";
+	dkim=pass (2048-bit key) header.d=sladewatkins.net header.i=@sladewatkins.net header.b="UOOWd59+"
+Received: from dispatch1-us1.ppe-hosted.com (dispatch1-us1.ppe-hosted.com [67.231.154.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FBFF2135A3
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 16:47:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF80F2116F4
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 16:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.154.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740070075; cv=none; b=FwKpViNdrI5209vAdP3ncdADlnxLdWCScoQrmMdhsZ7wOTxztywcI9s2r+AyEvdGgLInSAfDk8EyaCNOfZuOH8tWjkf29GwD37YCxUXOfMN35Nof+pp7PCnj1uBzNFh5PnqJ0+0Qj2Kv0PgQjZka3OVPAQye2j3pvsrNXyny8TM=
+	t=1740070093; cv=none; b=Fw5caDUVygEdEm1cgVBuuDf8paeTtjRC7yO8BaChpH5Io7rlBFHAwwx4NLvBpBQ9ITzYFesCXMHp/mfQL9AVi4M8z48JXoIaDV+bStMyFpH669oTH8vsYxNyLD2Fr/1WDsMkgFZT3+gkxiO5qvz81/qXOlejdJ/NbTNgAjxsiI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740070075; c=relaxed/simple;
-	bh=GPxVw7bQtiLeaIrP4s1aOjzx0JOUy8nLHSb5iM03rnA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AlVDqPxjrrKjBiC5dVYVCYTULziQslDmyO4f7tvkcq+wiW0uI2arn658DG8QowK23A+u6jxB+RAkZl6eYIdr8XUC7Q75Sn9BI5zLkTTQQnMQUv7yQ9d5n2ekFMKklaonMRFr15tTzEkSdcoDDKAxN28q6NS2s2frkkXeObihSPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FEy4ALXX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52E67C4CEDD;
-	Thu, 20 Feb 2025 16:47:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740070075;
-	bh=GPxVw7bQtiLeaIrP4s1aOjzx0JOUy8nLHSb5iM03rnA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FEy4ALXXi5x5DdpYEXT/bOE4Baii5ouVVCl6e+/eZkE/JS3e4/lxwhSm5N5TfKbo1
-	 8mZ9dRky7Rb4Q3Y4BKSS44o1R7iPbmeApCnxsZ1VFMMo99CwJdfCMPprTpg45L/La5
-	 R2rKOCXYFGxn7rn6fbD6LahlCe7qfQBlEHCqYBK+vUnvUvN+yPKRx4X5tybUUjH1ai
-	 cW4RiYbPtNaAZ7AxeF1h7JwnF6geZDjAalpqQyMwIz7U/8kWAJBfu2ENR4xClAdORu
-	 adRm7E+26bNhYMRz6qliCz+ByRlKAm1W01sO7LMaoi1m9TMVVYzn+/XGv0kRkt26O+
-	 a12DBHz41M7Kg==
-Date: Thu, 20 Feb 2025 09:47:51 -0700
-From: Keith Busch <kbusch@kernel.org>
-To: Sagi Grimberg <sagi@grimberg.me>
-Cc: Nilay Shroff <nilay@linux.ibm.com>,
-	John Meneghini <jmeneghi@redhat.com>, hch@lst.de,
-	bmarzins@redhat.com, Bryan Gurney <bgurney@redhat.com>,
-	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Marco Patalano <mpatalan@redhat.com>, axboe@kernel.dk
-Subject: Re: [PATCH] nvme: remove multipath module parameter
-Message-ID: <Z7dct_AbaSO7uZ2h@kbusch-mbp>
-References: <20250204211158.43126-1-bgurney@redhat.com>
- <7c588344-f019-4939-8a93-0a450481d4bc@redhat.com>
- <Z7Sh-3yHbXVmRbNL@kbusch-mbp>
- <8a1730a1-1faf-4722-99e1-c3a85257b6f4@redhat.com>
- <Z7TARX-tFY3mnuU7@kbusch-mbp>
- <2ff87386-c6db-4f2e-be91-213504d99a78@linux.ibm.com>
- <0656b66c-dd9c-495d-b1fc-4f09e763fa66@grimberg.me>
+	s=arc-20240116; t=1740070093; c=relaxed/simple;
+	bh=pbdR7nxvueo2TLaKE5sF10t2b+oN0pSH5FKcIBPg2yE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c8ago8pRuWnPu2QfKG/RJbEUEEDZqBxZOTU44+2X4vfNOOPet4r4C09z7u0tmjruHuJ+NLeHbXKDLi+gh3+ToUwIiVpQTMUhU1EMEOahmWmN0vIwvlkJ/EMDXoOUxf0b+qyLagEUvTCp0LHDhuj7UjjltQZ3IxLvtCCxXybE6ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sladewatkins.net; spf=pass smtp.mailfrom=sladewatkins.com; dkim=pass (2048-bit key) header.d=sladewatkins.com header.i=@sladewatkins.com header.b=H/Y5QNnQ; dkim=pass (2048-bit key) header.d=sladewatkins.net header.i=@sladewatkins.net header.b=UOOWd59+; arc=none smtp.client-ip=67.231.154.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sladewatkins.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sladewatkins.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sladewatkins.com;
+ h=cc:cc:content-transfer-encoding:content-transfer-encoding:content-type:content-type:date:date:from:from:in-reply-to:in-reply-to:message-id:message-id:mime-version:mime-version:references:references:subject:subject:to:to;
+ s=selector-1739986532; bh=UtFu/7rrHv4X5KOTvsXatoIKvP38Td4ByIZSHbNhxXM=;
+ b=H/Y5QNnQSdKVkGKUBSTSBmttqgIjVEe22rsEDSKU8dDUSQA2Ftiza2zkwLPXL9vktGDaC2LrNl0/ph5AA31veXHm+rggUejAGdgcaxpupxnQimmgcg7b3da/nbKqbPcum2N8H+90iLmZyIqdQOWwQ3cNzzjleRgSi6F/2jU9DD8YEiSnxVS+8teeOG9aAZPmDofL2hk2yjPMcPAbylFakkwLqX1pgqMFyKgzjGViZnQtTTxv9cnMqkswVBQBfxN9m7hofdqlu7veQeunjTBF86TdA2Y0RgRHylX1Ib6O6dLIwycum0Qgvhvva3ilj1DMp3u3zbmsWsTGCcVDNmznWA==
+X-Virus-Scanned: Proofpoint Essentials engine
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com [209.85.128.72])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx1-us1.ppe-hosted.com (PPE Hosted ESMTP Server) with ESMTPS id 766576C0087
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 16:48:09 +0000 (UTC)
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4394b2c19ccso12457745e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 08:48:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sladewatkins.net; s=google; t=1740070088; x=1740674888; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UtFu/7rrHv4X5KOTvsXatoIKvP38Td4ByIZSHbNhxXM=;
+        b=UOOWd59+P3yQtU+IYbKge1b0W5670XnbgMRo7+aS3eA8mwSS04yH+s6Dp2BTas/Pv9
+         c7+SvQPz3n2KaGpJU8SVusdPt+P/nUT5CWucYrWwJ6DDHW1chWXolpOsS915CLHvVXCi
+         oZorGvH7q/sWZvtoDGXuuFOFfSRfMoQZMuXm9AIYuCkTt8Gse7dPXnoKAzl78Z3e71SG
+         bt4u2sztPbrbwQ6bR1/6igOTVCT1hTgBTkaneIiIIKNPaAJ+pZbwbZ7RMIBzia9LRX2O
+         cGoyA5eD/6K5F/MQnW8O+bHWsNzJq2cwSe2p6FqMOfHKf3iuhhLWfcq0O5Hmmztw38lX
+         sgsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740070088; x=1740674888;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UtFu/7rrHv4X5KOTvsXatoIKvP38Td4ByIZSHbNhxXM=;
+        b=bmFI86L34I1bmwHglgpJTQYrdz3dCS5gdYNzap6SbgIYGT6fgqX6YdCbPAKHT/MnmS
+         hHq1zUTwEjV9JCgAhbl7ueRy2EMfoR5gBlq8RTT/o2hrVuGoENStcXzu3R66RhmlZcJz
+         9isEA41IOIEcn3/iALKAG4bHs2TIBmCTaZ80Nb7W8yJXoZy0ChVM7EPP8YxqMBZv2gE/
+         /rzywKVVeluUyB/fyCfg21LuyNUavv/mdG1Jl257Ay/Ww5PPwdg9at66TWEZs3RwZ9IA
+         0eavnmZkn1vWbJPrxs3iq7CDCH0NKXJgE9wfUZ5M2XHQ8XJVHW82cs3Ctcg+oCW6Vu4F
+         xoiA==
+X-Forwarded-Encrypted: i=1; AJvYcCU2qcsGffpadY4DPZIlkHk0iAq7X8h4ipWm1/grDgEFJK4ahRGUkS/8bvYCOJ4sQA0nSo3vlb9Di2Glmb4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzM/F2dXzAVtgF+B9n2tUcFsKwHC1LYA3n2pkTcO6JEP/yyug4x
+	IHReFRMxAfOwYF3DS4u618QcaIAiBcFWaxvPkCKnCVhde6wLMB9AYuU/qwsloZdTZBpQ69pg/HP
+	tR15fJbi6gcgfrnclelT2PwghaW7JCGt1Cf4DTC105/lEMaQ06YMfL0pJ7qZrWhxciw82dtk78L
+	0espj8ttceShkLI5dWSmcTPqEoy5P58mCC0CYcokuFBrkXcCI6CPymbvDcsuiPVZBjM0mghf4=
+X-Gm-Gg: ASbGnctthjyi1tak2K6Llxt2HZBpMi3xhXmZdB2ihQVmfAennXrl+jFXv8ub0Bmgp7h
+	OkxH6Eeu8jBheQ1Y4QEpiKNGkYGO1z1aY2FLBzyiLgrRL9kaEazuHTBCUMM5GOA==
+X-Received: by 2002:adf:fa08:0:b0:38f:2a99:b377 with SMTP id ffacd0b85a97d-38f33f57459mr20939204f8f.53.1740070087968;
+        Thu, 20 Feb 2025 08:48:07 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFFt+whvKVaXX4I4RkLMql6Zr2BmHhgEb6V9Rei8o5LVi/60bat3GQTyh1ZxROF61Yi6yE/rBBG1TCfUYx/5lc=
+X-Received: by 2002:adf:fa08:0:b0:38f:2a99:b377 with SMTP id
+ ffacd0b85a97d-38f33f57459mr20939161f8f.53.1740070087628; Thu, 20 Feb 2025
+ 08:48:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0656b66c-dd9c-495d-b1fc-4f09e763fa66@grimberg.me>
+References: <20250219082550.014812078@linuxfoundation.org>
+In-Reply-To: <20250219082550.014812078@linuxfoundation.org>
+From: Slade Watkins <srw@sladewatkins.net>
+Date: Thu, 20 Feb 2025 11:47:55 -0500
+X-Gm-Features: AWEUYZm2jJ2bUAqU74OstkcJ9PoKvhhiK-1kP45Z94_5LauCnETdKls3QCUt_rY
+Message-ID: <CA+pv=HM3XK=ceOVcTQJPQp2SH0KhU9pT0LwrWBwjobeq36B3NA@mail.gmail.com>
+Subject: Re: [PATCH 6.6 000/152] 6.6.79-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-MDID: 1740070090-4TocXbKuDb2d
+X-MDID-O:
+ us5;at1;1740070090;4TocXbKuDb2d;<slade@sladewatkins.com>;c71d53d8b4bf163c84f4470b0e4d7294
+X-PPE-TRUSTED: V=1;DIR=OUT;
 
-On Thu, Feb 20, 2025 at 01:05:04PM +0200, Sagi Grimberg wrote:
-> This discussion is not specific to RHEL, if there is a real use-case
-> that we are interested in supporting, we can change our minds and keep
-> it (and simply remove the log msg), but I haven't heard any real life
-> use-cases thus far.
+On Wed, Feb 19, 2025 at 3:58=E2=80=AFAM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.6.79 release.
+> There are 152 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-One use case: ublk.
+Hi Greg,
+No regressions or any sort of issues to speak of. Builds fine on my
+x86_64 test machine.
 
-Other use cases are manufacturing and debugging. Linux has been a great
-environment for both, which don't want anything hidden behind virtual
-devices.
+Tested-by: Slade Watkins <srw@sladewatkins.net>
 
-The module parameter makes it possible to do this with your distro's
-stock kernel that came with the CONFIG option enabled.
-
-The device mapper multipath needed some layering violations out of the
-driver to make failover work correctly/better. That's one reason it's
-not supported here, and that's an appropriate place to draw the line on
-what kinds of patches should be accepted.
+All the best,
+Slade
 
