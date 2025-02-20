@@ -1,117 +1,148 @@
-Return-Path: <linux-kernel+bounces-522803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3E18A3CEA7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 02:26:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA381A3CEA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 02:26:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DFEA7A5BF7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 01:25:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BD64179529
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 01:26:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 357D21922FB;
-	Thu, 20 Feb 2025 01:26:05 +0000 (UTC)
-Received: from zg8tmja5ljk3lje4ms43mwaa.icoremail.net (zg8tmja5ljk3lje4ms43mwaa.icoremail.net [209.97.181.73])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8027B3C0C;
-	Thu, 20 Feb 2025 01:25:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.97.181.73
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740014764; cv=none; b=tHI1G/R5FqSK9+LCkiEardBa3pJ+XKKFEnPi/SC7k4aPlKP1Q7mUVAf9bBpbDMOT0r97hhJOWJJC22ffxA43r7RWwCgGl8lJkaq19Ltnks0PUslwFhTPEc1upeTzTMSoIaSTVU1TOwn7zdHwLz5d9r0NAE9YoP1/QVfYit73Vlg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740014764; c=relaxed/simple;
-	bh=CFHteqH5JuzuGRt5uAjjg7LwLdewMSv/qJaGd/TIRWE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HEVpwLNYFL0Q64LBI1Yuv41f78GzYz6SJgHxXNjBekW55SuQqyK+UeS7j24gAmZaSlPRXfYh+93ZkSmdI3RrDEkwarPHv4dpDhqDzh4iZasUvbTsc1seFcYuMwhhXwYXbl9J/7t7PVdL4M6OsGp+UtWoFSskpj6Q5RzBNEtEVT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytium.com.cn; spf=pass smtp.mailfrom=phytium.com.cn; arc=none smtp.client-ip=209.97.181.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytium.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytium.com.cn
-Received: from prodtpl.icoremail.net (unknown [10.12.1.20])
-	by hzbj-icmmx-7 (Coremail) with SMTP id AQAAfwAHl8mihLZnrikWBA--.45269S2;
-	Thu, 20 Feb 2025 09:25:54 +0800 (CST)
-Received: from localhost.localdomain (unknown [219.142.137.151])
-	by mail (Coremail) with SMTP id AQAAfwA3PIichLZnsMMsAA--.23595S2;
-	Thu, 20 Feb 2025 09:25:52 +0800 (CST)
-From: Zhiyuan Dai <daizhiyuan@phytium.com.cn>
-To: helgaas@kernel.org
-Cc: bhelgaas@google.com,
-	christian.koenig@amd.com,
-	daizhiyuan@phytium.com.cn,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: [PATCH v3] PCI: Update Resizable BAR Capability Register fields
-Date: Thu, 20 Feb 2025 09:25:46 +0800
-Message-ID: <20250220012546.318577-1-daizhiyuan@phytium.com.cn>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250219183424.GA226683@bhelgaas>
-References: <20250219183424.GA226683@bhelgaas>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D1BF19D06E;
+	Thu, 20 Feb 2025 01:26:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b="WLpxDii7"
+Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA8212FF69;
+	Thu, 20 Feb 2025 01:26:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740014786; cv=pass; b=aYMD6OF0/wKy/c9Ys3p6cCsimfQRs6NlOAk1FMuWEQ3sPO0+NIVzDgoRdAOyTV79DNB50jDTlDabGqRKSNIdRMTPxF0P642GCd8sroBenCpo49ChBJVa93iun+0aW/GsyYJ/jhYgKuBq+bcSVoj6agbo2kgw8OH8Ur2nu5MqWlQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740014786; c=relaxed/simple;
+	bh=9uRLRTvNQAfO7e/XzvTvEkPAnHESpfWdkaBYvdDCGx4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rna6VKb8fIehl3i3uuK7xN+tx5dV+hsaGLrC00Z8zN3F7kLCLn1YouIUWp8/WRC+YTRoiUH9Wf14toQhoIgqlYUXGSZlOTbVxZ2vE9+ekc4TFddgIUG3oT1sZqHNY+ZuTYdvYV/5+wliTGvErOvOmwMTTsuaKmvXoQaApPo5a5Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b=WLpxDii7; arc=pass smtp.client-ip=136.143.188.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1740014772; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=X9YmXD5VU4Cq5iV3XCcVKEQzTzdqCjb/iQg9+/CgSsfguSanlCF6lSX2ER/w7iMQFJ3vp2FmguyNwkyw+p8SNmBh/EUJenp5+BbmVHAzJ5Za7hOL8UsxX+lnflIVsVNLMLnQZF2nAsE/6RsNbqLHlVI2ANC1sKuO92Mmb3+Fyvc=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1740014772; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=v9ZcB0DU1C9TnPXVQqwgiiKUCT4jhoFiq6zlHbZLgPo=; 
+	b=eysCiRkfyvRpYxYY7fAhfuaU3keOcJIpUyikbohxpUjh+MLdOS/r44sk/+pexciho53lacJW3w5sdZKt92hyLRTgSwA8zSMRKlay4LDDWzNcae9hzc8Einre5orjhErYjs/ADiL5YPBQeUzu98WPkgCiKeSip6UusOuQDSOK4IU=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=ming.li@zohomail.com;
+	dmarc=pass header.from=<ming.li@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740014772;
+	s=zm2022; d=zohomail.com; i=ming.li@zohomail.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=v9ZcB0DU1C9TnPXVQqwgiiKUCT4jhoFiq6zlHbZLgPo=;
+	b=WLpxDii7CMhVWdG9LREXykfxgtAq4LU6LNxMKnHNd2eoN3nNQIPWA9XYftF9fXd8
+	L6A1gSfFuVjTKvDAugdV47+IbEENllcOR29WjPiqTR/KI+drhs8g451j3oOW3Fn4xyy
+	trxIRKEzBkNN8fSZUCdvo2pDMtfWEpE8vK0R4qdM=
+Received: by mx.zohomail.com with SMTPS id 174001477005914.717016759812168;
+	Wed, 19 Feb 2025 17:26:10 -0800 (PST)
+Message-ID: <55f67727-ed24-4ac4-97c1-95b65d110daf@zohomail.com>
+Date: Thu, 20 Feb 2025 09:26:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAfwA3PIichLZnsMMsAA--.23595S2
-X-CM-SenderInfo: hgdl6xpl1xt0o6sk53xlxphulrpou0/
-Authentication-Results: hzbj-icmmx-7; spf=neutral smtp.mail=daizhiyuan
-	@phytium.com.cn;
-X-Coremail-Antispam: 1Uk129KBjvJXoW7ArWkArWDGF1kWw48Gr47XFb_yoW8try3pr
-	4DCa97Kr4rKFW29w4kZ3W0yw45K39rZFyrCrWI93sruFnIk3Z2qF4UKay5tasrJrs7ZF45
-	tFyqq345ur98XaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
-	DUYxn0WfASr-VFAU7a7-sFnT9fnUUIcSsGvfJ3UbIYCTnIWIevJa73UjIFyTuYvj4RJUUU
-	UUUUU
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/7] cxl/core: Use guard() to drop goto pattern of
+ cxl_dpa_alloc()
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com,
+ alison.schofield@intel.com, vishal.l.verma@intel.com, ira.weiny@intel.com
+References: <20250217144828.30651-1-ming.li@zohomail.com>
+ <20250217144828.30651-6-ming.li@zohomail.com>
+ <67b67f05f0a58_2d1e294c6@dwillia2-xfh.jf.intel.com.notmuch>
+From: Li Ming <ming.li@zohomail.com>
+In-Reply-To: <67b67f05f0a58_2d1e294c6@dwillia2-xfh.jf.intel.com.notmuch>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Feedback-ID: rr080112274efb791aa1f6577bac6a4606000006ca0f243d08b0c7a583df7ce4591796e04fb222e503f2fba2:zu08011227c32ea96bed4d230e86654b990000ba68c7a88cd3144e351cc11bafc0142708823fa43e6962da8e:rf0801122d416bb6e4157a848dfbd4345c0000acbefb76e3754d4db3220833132d687f0f973645196a8e0ce909ee0a3b1c40:ZohoMail
+X-ZohoMailClient: External
 
-PCI Express Base Spec r6.0 defines BAR size up to 8 EB (2^63 bytes),
-but supporting anything bigger than 128TB requires changes to pci_rebar_get_possible_sizes()
-to read the additional Capability bits from the Control register.
+On 2/20/2025 9:01 AM, Dan Williams wrote:
+> Li Ming wrote:
+>> In cxl_dpa_alloc(), some checking and operations need to be protected by
+>> a rwsem called cxl_dpa_rwsem, so there is a goto pattern in
+>> cxl_dpa_alloc() to release the rwsem. The goto pattern can be optimized
+>> by using guard() to hold the rwsem.
+>>
+>> Creating a new function called __cxl_dpa_alloc() to include all checking
+>> and operations needed to be procted by cxl_dpa_rwsem. Using
+>> guard(rwsem_write()) to hold cxl_dpa_rwsem at the beginning of the new
+>> function.
+>>
+>> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+>> Signed-off-by: Li Ming <ming.li@zohomail.com>
+>> ---
+>>  drivers/cxl/core/hdm.c | 29 ++++++++++++++---------------
+>>  1 file changed, 14 insertions(+), 15 deletions(-)
+>>
+>> diff --git a/drivers/cxl/core/hdm.c b/drivers/cxl/core/hdm.c
+>> index 874a791f8292..1edbf7873471 100644
+>> --- a/drivers/cxl/core/hdm.c
+>> +++ b/drivers/cxl/core/hdm.c
+> [..]
+>> @@ -504,21 +500,24 @@ int cxl_dpa_alloc(struct cxl_endpoint_decoder *cxled, unsigned long long size)
+>>  		skip = skip_end - skip_start + 1;
+>>  	} else {
+>>  		dev_dbg(dev, "mode not set\n");
+>> -		rc = -EINVAL;
+>> -		goto out;
+>> +		return -EINVAL;
+>>  	}
+>>  
+>>  	if (size > avail) {
+>>  		dev_dbg(dev, "%pa exceeds available %s capacity: %pa\n", &size,
+>>  			cxl_decoder_mode_name(cxled->mode), &avail);
+>> -		rc = -ENOSPC;
+>> -		goto out;
+>> +		return -ENOSPC;
+>>  	}
+>>  
+>> -	rc = __cxl_dpa_reserve(cxled, start, size, skip);
+>> -out:
+>> -	up_write(&cxl_dpa_rwsem);
+>> +	return __cxl_dpa_reserve(cxled, start, size, skip);
+>> +}
+>> +
+>> +int cxl_dpa_alloc(struct cxl_endpoint_decoder *cxled, unsigned long long size)
+>> +{
+>> +	struct cxl_port *port = cxled_to_port(cxled);
+> Am I missing something? This @port variable is unused?
+@port will be used after below __cxl_dpa_alloc().
+>
+>> +	int rc;
+>>  
+>> +	rc = __cxl_dpa_alloc(cxled, size);
+>>  	if (rc)
+>>  		return rc;
+>>  
+> So I think you can drop this new cxl_dpa_alloc + __cxl_dpa_alloc scheme?
 
-If 8EB support is required, callers will need to be updated to handle u64 instead of u32.
-For now, support is limited to 128TB, and support for sizes greater than 128TB can be
-deferred to a later time.
+After __cxl_dpa_alloc(), a 'devm_add_action_or_reset(&port->dev, cxl_dpa_release, cxled)' will be invoked, cxl_dpa_rwsem is possible to be held in cxl_dpa_release() in devm_add_action_or_reset() failure case.
 
-Signed-off-by: Zhiyuan Dai <daizhiyuan@phytium.com.cn>
----
- drivers/pci/pci.c             | 4 ++--
- include/uapi/linux/pci_regs.h | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+So I create __cxl_dpa_alloc() to hold cxl_dpa_rwsem for the operations needed cxl_dpa_resem protection, make sure that the cxl_dpa_rwsem is released before devm_add_action_or_reset() invoking.
 
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index 661f98c6c63a..77b9ceefb4e1 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -3752,7 +3752,7 @@ static int pci_rebar_find_pos(struct pci_dev *pdev, int bar)
-  * @bar: BAR to query
-  *
-  * Get the possible sizes of a resizable BAR as bitmask defined in the spec
-- * (bit 0=1MB, bit 19=512GB). Returns 0 if BAR isn't resizable.
-+ * (bit 0=1MB, bit 31=128TB). Returns 0 if BAR isn't resizable.
-  */
- u32 pci_rebar_get_possible_sizes(struct pci_dev *pdev, int bar)
- {
-@@ -3800,7 +3800,7 @@ int pci_rebar_get_current_size(struct pci_dev *pdev, int bar)
-  * pci_rebar_set_size - set a new size for a BAR
-  * @pdev: PCI device
-  * @bar: BAR to set size to
-- * @size: new size as defined in the spec (0=1MB, 19=512GB)
-+ * @size: new size as defined in the spec (0=1MB, 31=128TB)
-  *
-  * Set the new size of a BAR as defined in the spec.
-  * Returns zero if resizing was successful, error code otherwise.
-diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
-index 1601c7ed5fab..ce99d4f34ce5 100644
---- a/include/uapi/linux/pci_regs.h
-+++ b/include/uapi/linux/pci_regs.h
-@@ -1013,7 +1013,7 @@
- 
- /* Resizable BARs */
- #define PCI_REBAR_CAP		4	/* capability register */
--#define  PCI_REBAR_CAP_SIZES		0x00FFFFF0  /* supported BAR sizes */
-+#define  PCI_REBAR_CAP_SIZES		0xFFFFFFF0  /* supported BAR sizes */
- #define PCI_REBAR_CTRL		8	/* control register */
- #define  PCI_REBAR_CTRL_BAR_IDX		0x00000007  /* BAR index */
- #define  PCI_REBAR_CTRL_NBAR_MASK	0x000000E0  /* # of resizable BARs */
--- 
-2.43.0
+>
+> After that you can add:
+>
+> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+
 
 
