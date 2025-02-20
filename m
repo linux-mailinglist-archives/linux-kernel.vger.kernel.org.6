@@ -1,224 +1,346 @@
-Return-Path: <linux-kernel+bounces-524910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0192A3E8A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:37:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD567A3E8A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:37:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76C1917D70D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:37:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE1DF189CCC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:38:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3634426771F;
-	Thu, 20 Feb 2025 23:37:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nxr8cao3"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3652626463B;
+	Thu, 20 Feb 2025 23:37:48 +0000 (UTC)
+Received: from relay04.th.seeweb.it (relay04.th.seeweb.it [5.144.164.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AE3F26389E;
-	Thu, 20 Feb 2025 23:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740094654; cv=fail; b=DhL7NVkeeammQinTP9SDnLsmlhQFxd0Tn/wKNna2Sz5xteeJodTMdfXyzUF6lABoZxrUBeIq3eg3hs0fCxQUXrYzkYTmUtMgsJ1pb3/CUJQqoBX4kg+esyx28OKUN+uOpWbRgTO28OPg/mw2iXW5EVkzplTJ5CrhLo7uYlp7Y0U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740094654; c=relaxed/simple;
-	bh=tqyyASa3gxC3FRRl4qPU7MTpKPdNPknQYmw4kOga9cQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=YeiXgL0hz2gUXPM7F4/W8tboXBjw4BfDFTUP8ks+Yp9tuwhMlBFz4vkHx2C4FU7a2yrC7rjLS0/r1SGX32XNWHaLn1lbJhbjOf8KYpq15ykZ1HUCdkdIvNRh0Onu/YvsnzUEZRE7m546B9SjYB4RFvJtD60dVmqAg1FgYlkEgMk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nxr8cao3; arc=fail smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740094652; x=1771630652;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=tqyyASa3gxC3FRRl4qPU7MTpKPdNPknQYmw4kOga9cQ=;
-  b=nxr8cao3GRDjv676IqdzHwjFxKiWv4zsMDnXxeijZNYUToGy6DSvsIFQ
-   K6CxNFGdy5rSjrXkJTwsDyhKHwaZXNjngcOJcOgCG7dzsnXNh1MHTPUZm
-   x5xofoAMYYcJmya6vzb7ZIcSTZhqbbwwafMDMzAufETiMvpzGEV8yhTrD
-   YobvabISBZHm/YvLEqpu8ARWhU9sGpuxO5kZ1aQ17m75/xYsDHsQ/e/40
-   1K5e5lZGvCka+OsyuGh2FanpgWKT4+mG7cvK/D+P12suGRQwuEqFYMCEP
-   VPeO4Agr/Y+APOHUsJADxr+h/Lq9oVKG5wDzwxzkF9xotIhhssqnXBiYj
-   g==;
-X-CSE-ConnectionGUID: fTdAcp3ORraeOOIrdPrZCA==
-X-CSE-MsgGUID: pykjCsfTTw2vvN26K4yLNQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11351"; a="51115615"
-X-IronPort-AV: E=Sophos;i="6.13,303,1732608000"; 
-   d="scan'208";a="51115615"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 15:37:31 -0800
-X-CSE-ConnectionGUID: +jL1lqr3RcWf9ILfNLX4Lg==
-X-CSE-MsgGUID: fpzaOhjUTYS9XDtPv7d1rw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="115050374"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 15:37:30 -0800
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Thu, 20 Feb 2025 15:37:30 -0800
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Thu, 20 Feb 2025 15:37:30 -0800
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.46) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Thu, 20 Feb 2025 15:37:30 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VUHy7wBuAPow5r6rkJTY30RT939pJK8zw7cLG0vds0wttiw1sDPnnpaCHqp5BgZ9KjBU9PCW5KNLLZkxyW7mcHZCpqsm8AcOQcTtmbA4ACrgkwKLAwDuODrITNdxJ7y08K3Q/y6WEl2GHttctCBchPGfy4h78bQs6+3PLAwXJtRMwdb5DNQr4mwZb51CaUYFOUjrnn63Mw/ZSiKGSGPCDqicd9877n1FZhG01uXAsMNpgzweItoaOWT24RsOC56fgMvQMqznjKWO2+WfRBLXuDV7YmRkFrCE5zfafV8R6KBGqa2HDImuhEpL5ZZJGO6WPW1PZL1i3AgXfF37WvWAMg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tqyyASa3gxC3FRRl4qPU7MTpKPdNPknQYmw4kOga9cQ=;
- b=aOFyAQb89bbdaslTN3FJ1bH1up4i2gVwDstaEBVxoLo4+U2ElzZsB6Q0qR+cdEQlgRBVPxlmoYeqxrQKmwREUXUHIMvJJqs6R2hndiqv2MQDQWb9JlOj6zJltMochseNZcG7W44ftKlpKEZSBIDrE0OvO+Q+mZ5jLdT5FIZeTRyvykhEQgZGLXnsySWjCZ8jtV6jG4fDH+i2vTe1yGINqch1ph5yivWiIKkWqDhX790fxavD60atoSh6RKOetH/ilo28Kx1AjaYwIirJqrh6ojC5fSWDB1z260YG0OkCn8IhsdgAN0dOz5X/ITRnw40RDKKi+BsWLtjo2+S2TJfKTg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from MN0PR11MB5963.namprd11.prod.outlook.com (2603:10b6:208:372::10)
- by SA1PR11MB8490.namprd11.prod.outlook.com (2603:10b6:806:3a7::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.18; Thu, 20 Feb
- 2025 23:37:22 +0000
-Received: from MN0PR11MB5963.namprd11.prod.outlook.com
- ([fe80::edb2:a242:e0b8:5ac9]) by MN0PR11MB5963.namprd11.prod.outlook.com
- ([fe80::edb2:a242:e0b8:5ac9%6]) with mapi id 15.20.8466.013; Thu, 20 Feb 2025
- 23:37:22 +0000
-From: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-To: "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "pbonzini@redhat.com"
-	<pbonzini@redhat.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-CC: "seanjc@google.com" <seanjc@google.com>, "Zhao, Yan Y"
-	<yan.y.zhao@intel.com>
-Subject: Re: [PATCH 07/30] x86/virt/tdx: allocate tdx_sys_info in static
- memory
-Thread-Topic: [PATCH 07/30] x86/virt/tdx: allocate tdx_sys_info in static
- memory
-Thread-Index: AQHbg7nVjp6n3G5FU0mwAOULIapY1LNQ2VGA
-Date: Thu, 20 Feb 2025 23:37:22 +0000
-Message-ID: <b907fce640fb893cf76f6aff4031d5ea501f6a74.camel@intel.com>
-References: <20250220170604.2279312-1-pbonzini@redhat.com>
-	 <20250220170604.2279312-8-pbonzini@redhat.com>
-In-Reply-To: <20250220170604.2279312-8-pbonzini@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Evolution 3.44.4-0ubuntu2 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MN0PR11MB5963:EE_|SA1PR11MB8490:EE_
-x-ms-office365-filtering-correlation-id: be21e692-c0a2-4c60-cf59-08dd5207864e
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?M3BmdTZKTUlJVW1ob2xFY1l3M3l2RVlGUE5NeGVyQk56bW4vLzVOSzZSS1Bs?=
- =?utf-8?B?bG1vV2dmeUN6bWFHZXNnVk5jVzNxUTZ2OTRPWDlncDFIOHpSOWh4T1dNejRu?=
- =?utf-8?B?Q0RVRnd4MXlkSlJGWUwvZjBQd1FDczVXMEh6MkZZMDVQNEJyOHNGamxzSUYr?=
- =?utf-8?B?S1RlTis2N0J1SER6cXhueWxyNitRQ0pHYXlRMDYzYUZoaWdEYTNVMlNHOWFm?=
- =?utf-8?B?VkhVMUk5WXowT1VvQnVsZVY5MGQzU2prbnArWmNFd0t3aFpKS29iTXVQSzV1?=
- =?utf-8?B?S1Z5dlNmZzJ1OFJxdlRjejE1M3JPM0FxajM2bXlXTml3c0drUEIwVTB1WVVE?=
- =?utf-8?B?dEdYOVlzZDFNQWZ6SlBZQko4eFVROXMxQ2c3eEEyTUJPTHhPV2ZhL1JJRjQ4?=
- =?utf-8?B?bDBhb1RMakdFL1JYWUhxY01MRS9yK2M1MklHYmpFNk42TW96Y1RNUVdiMnd0?=
- =?utf-8?B?WGVaTU0vaU12UnNFMDNHRmV2dk9peG5nVExkWHJ4ZXhyVmhxU0NPbnNMZFpr?=
- =?utf-8?B?ZHQ1bWdMRHpYWkM0WkFkZW13UERQSEVNc2ptcW1xTmlpWTJ0WFBTYnpMeEN1?=
- =?utf-8?B?c0FtSFFOQitoZjEyWlFVV3VwVVZqMFNIdDdTTmtoTTN5Q0hRWUFmZWdKaWlO?=
- =?utf-8?B?OXpjb1E5NEZaRHAvdFpqbGcyVDhZSzFFUVVuRHF6VU5CSHgwR01mS1haSXZl?=
- =?utf-8?B?YURwK1Q2OURzRktKUDdmek5HNCtkRWVvWFlCbWpLZXk5T1hXQ2Z4UDN5bncx?=
- =?utf-8?B?bkQrVkFXUEExcDBXdHF4eEJ4K3BaYUE3enpweDgwWXFMYmRLZG5XbjR5Wlg4?=
- =?utf-8?B?K0hkTWp3Mk5JWlBLTmRCeE9uRW5XMlVCZUxXbjlVN1I2S3JGdDBkY3BTaXJt?=
- =?utf-8?B?WUdDTzQ3TE1BUHlsdWZVVkl1eXFkWVJZeEJyQVZiM1JjZkxTOXQzUnA0NC9h?=
- =?utf-8?B?cUdra0U4L3hkSElydlR0ZS85SG5jZmxEeTNFUjVCOUM2dTdRWVhGeWlDSHkz?=
- =?utf-8?B?ek51bkFoaW1nMFZWbmZKTVdpOG80dDVqK0pONGJEUmlySVcwTWYyaFRiYURO?=
- =?utf-8?B?QlJEVDY3aTJha0NncW9lQ3VlNUUxanhXeXpzdFU0VzhoV21kMUlOTnVSL09q?=
- =?utf-8?B?VjY5TDJiV2FlSUlrVDNoUFV5dG5UMmljUEZLdnJ5V0taOXVVdVlSbjZKUzZH?=
- =?utf-8?B?cmowUmRmQ3BHS1hzQ3gzWFVSUmJCQ1MyVzh3RDJnRXJmK1Fta2tIcE9NRDBV?=
- =?utf-8?B?SFMydkZ4SEF2anVENUcwWTc4a1ZHTmZUWkhWcTZCMjh0R2d5Vzh3UHZTNkxq?=
- =?utf-8?B?U2FRNFYwenJSYmI5bE01TXA4dXhpUmlDSzVrSHU0VTVGaFBrQktuTHJKdTVE?=
- =?utf-8?B?RGVmZW9KK3FCNHBYeXg5L2ZZRTRrVmZYbHF4Y3I4RnJFQVN3QXd5ZDNaRGFU?=
- =?utf-8?B?VW16ZXNWV2x1Mzc0MG05OFI2T0dQMWZQQk5sVENBRGZQZ1lTcHhCWWozcnpB?=
- =?utf-8?B?aGQzaEx0YlpDVWtoNFB6WlcrZVhLVGEzKzZVM1hCQnVhQ0ZSYkxNeGozdWpn?=
- =?utf-8?B?VkxGaXh0aGVUMTdlUW1ySWNNWlIyYnpUK2RuYXgxbVUvSFl0U081SHEzdXJz?=
- =?utf-8?B?cDdGVDhUeVAwaVViVkxqUzlGR2hGVWJEcDN1SVVZTDVlMWpCZUR2N2RnTWtm?=
- =?utf-8?B?dEFmeWtuQ1lyTC9HV1NVOWdKdlJhbmpuWEdNcUw3L05aclh0eEtKZkR0Z1Iy?=
- =?utf-8?B?TjZkZjM0bXpwcTI0MjZoRFFLWEVjVjN0UFBBRjd1dytJK1YvYWdOWHFRUHVT?=
- =?utf-8?B?OTdXdnZ4WGU5cVRlS3A2Q1hFNExaYUE1SUZDTGlXVitlU0Fodzg4cnpuU2Q0?=
- =?utf-8?B?TjkvVUwrK2hMSyt3VThZZ1dZU0pIUGE4V0ptSmJLMkc4VzBBd0tuMk5KMC8y?=
- =?utf-8?Q?BS7KeXwhsYphfMLvrMEMzhlrX03z+MDJ?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB5963.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?a1hKZFdzaXhEemg5UVdGTXM1SFVId0xHSlhFREk3OWN5dnNUS1cwaEFSeGtP?=
- =?utf-8?B?eUliaFNXaGpJamtpWUdpUys3bEZIV3VKZkd2YTJ0T0xpdFRVSVR1enVhQ01q?=
- =?utf-8?B?SXAza2JINmZKOFgzckJMR2tnaktZS2pwcmlCTXpxTXRMc2pBWm5nMVRzL2ht?=
- =?utf-8?B?OFltTzZzVUluMWZPNFNkTGdSckdRY0x6cXF4OXUzSmN2VXhvZW9ydVgwTzg2?=
- =?utf-8?B?TG5KM0RLRCtWWjRwN1hiMDROR0N5RlFKZnNSNUdJWXZDczA1RTh3TXBocFZj?=
- =?utf-8?B?QUVMNytVZmJrY3pYYlMxejZGeTBpT093MGRIYlhhSmtEeTZESzhOalh0VTE1?=
- =?utf-8?B?OTY0NFc2ZVZQeUFaV09keW42N1ZWZWlTbkJxZnV4eFlDdEF2TGNhOG5zc3JR?=
- =?utf-8?B?Lys0Z3lDOU9NNG1DRTVHa1hETW9xNGE3RVo3b2htdUswQ0lhY0pUdmxFc2FF?=
- =?utf-8?B?SVVMclRQSWcwQ0w3U29Xd0ZRU3hUSTJ3V3o2VzFEVDd1dzZTdFJxL0l5NzRI?=
- =?utf-8?B?cThwRXppcWx2TjM5dW9NTkQ2clF2cExjeWFRaFp1bUpCTnVXcEZ5SXVWYzl3?=
- =?utf-8?B?MjI1RnRCUlMvc0tFSHJoZVpwaGlEWk1PcU1oU0k4OGt2Tlo4ek1PSnVzQnd0?=
- =?utf-8?B?SllmRlZiUldreG1IVUhsOTFpQm1OS1BNd1hBUzViU3oveEFGaWFSVFVEc0hB?=
- =?utf-8?B?YjFJaGJGWGp2TWRNY3J3SWxRSzhtYzhTQzhTcVdpbjNYMld4dHU4T01UaHpW?=
- =?utf-8?B?emRrMEdKYVViYlBiaDk0cXIxQUR5SnovNldQQTJQS0dDSXJ5ZmlXaVExaW1J?=
- =?utf-8?B?ZVdGcFpjbGNLYTdaMFIzVmU5UnE0cWZGbUt5ejFWR1J6Q05vTklZQ3dwcmtR?=
- =?utf-8?B?SkU4cXN5RWRxZG1OWStQRElnbXFxYUwzUzhVMXRNVTQ1dXAwaURYaWg3WTJB?=
- =?utf-8?B?VjhNdzZUdWtGWU5LTi9TdHovRGN5MDBuc0VDekJZN3NzM2RSeHlGdkZMSVhG?=
- =?utf-8?B?YXh4bmZYbzZrL2tNaHZYRzl4cmVtSkdnc2x4OEQ3dnJoRm83OE5aY2Q0ZExI?=
- =?utf-8?B?UGZEL3liS3ZqblV4ZFBMQWY3dWRqNUJzVkt1QXVUS2xzSERKWmYyMlUxZGIx?=
- =?utf-8?B?N1o0TUgrSGx2Z3lBWDRGR1kzY2lvZmNJbWdPWDQzaThuZDVxNzlHZE02Zzly?=
- =?utf-8?B?VFZwbTVaZjQwc3FNYmwwWkdHdVhpaWZIcC9XaHNsencvVnhQNmp1eVZ3S2xu?=
- =?utf-8?B?eHRzMWJMUE4vU0pQSFBaemQ5am9jVm9POUZ5MjNwZ25jalJDOGgyNTJZdVVI?=
- =?utf-8?B?OGN3ZmpvRUJpVmFjRXVOMkpWdmhlR1dhbVFLSzVHWkZNemhYL1BpQnBvUFBn?=
- =?utf-8?B?OGN5SkFqeXROQllYbmNvbnZOTmo0bDBoalViN0dram9pczZRUnJLZ3c3VWRE?=
- =?utf-8?B?S0JOWTB4VjIwaTRTSTh5WHF5NFJJbGlGOGRJd1VJemNLZmJsWWlCdEZmWG1i?=
- =?utf-8?B?MmNKdWZOK3k1dHN0TS9TVzF1YUxRSWp4NWF2L2dKcmNZNXNrSnY4bTZpMy9y?=
- =?utf-8?B?d2ZsaHdvdEdueW92bVc4SnRHYUNBQjVKaTQzMGZOQkdOOU1xaGNqQ24yQzNZ?=
- =?utf-8?B?Sk5DRVFIbEtoand6empwQU10ckh4ZTF3OUVwa3lzTVV4MEdMQm1rRCs2ZDJX?=
- =?utf-8?B?b09qZVoxaVFwanUxQ2RkWWFDWTJ5aUFLaHJ3cDVrTFNSTXA1UVFoMlNRTjJC?=
- =?utf-8?B?RVlUakp4VW80bUcvL2tyR2REMm1RaGdKM3RSajFPSHp0aitsNjROZ3JROTRI?=
- =?utf-8?B?S3FMQmlMVEpCSVNNTk4vd1pTdzBYTGhOcWV4NHdlN2hhb1dqQUJJS3NoUy9C?=
- =?utf-8?B?TVBwUU0wZkxPeEdYbDhoMmpXVEc5aC9Zd3ZKWWNkNHpUTEtyZVFQWm90TTVI?=
- =?utf-8?B?clMzSjdOYTB1OEZwUWxScUhYOHRxbXVFREc5RXI4cVc3R2VteHdTYVFqTXhF?=
- =?utf-8?B?T0lJUE50V1BIY2cwT3M5TndNVGJQWnhHZGNZSU5PdkhwdWRObnhyaytLK0tI?=
- =?utf-8?B?R1crZXNacXhRWGcvdk5kTW1wY1plYmkwQ2NyOVdOZWtIYjE1SFRpU3VsWTVC?=
- =?utf-8?B?dDd3NnYvQlozeHM1QTVXazVFVnV0YUlXTzVPcUxUQy9KYlA2MUxjR2ZuTE1K?=
- =?utf-8?B?cGc9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <E517BA56B4ACC54EA08B81E1934A0CBA@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 124CD2676CA;
+	Thu, 20 Feb 2025 23:37:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.144.164.165
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740094667; cv=none; b=PtGI3UMdxHV/ehIp2YLsJgdsiR0l9O24XGpcOWsDtOy9baK0lD3q66m3aYc9Nc8Mds1xl8eVTgkvfIQaz+XWMJRaPZjaJyJZuwANEWg3DNt63eBYVQTu7sAO/rXpNzkAo4bL4OWZDASfyY9Ec68QbqinJ99XBFr3AT2VS0NcrdU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740094667; c=relaxed/simple;
+	bh=TgaIkXf7hfN2T0N/mAqyrN4TIxHOV9mkadMuc3wJ5F8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L9FKoNNfSPRxm9H5g634i4rZn2UK3oLoCQVoxX1GUH+dy4SqrOQdQwluE3KImdG8qekUHrOYRYfN0iJUfesHMcK/Aq8XjaZb93I/SdDnn5CjwHEphOmrzNhRq2bukQlQaeHUdntfOnD7LUonTw6dua76diLMnB8uiy3cDcbNNXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org; spf=pass smtp.mailfrom=somainline.org; arc=none smtp.client-ip=5.144.164.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=somainline.org
+Received: from SoMainline.org (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by m-r1.th.seeweb.it (Postfix) with ESMTPSA id E10301F8D8;
+	Fri, 21 Feb 2025 00:37:41 +0100 (CET)
+Date: Fri, 21 Feb 2025 00:37:40 +0100
+From: Marijn Suijten <marijn.suijten@somainline.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 7/7] drm/msm/dpu: remove DPU_CTL_SPLIT_DISPLAY from CTL
+ blocks on DPU >= 5.0
+Message-ID: <45evxcbkcenkoiufh6vqpq5ngfz3mz62evvjxehmqgp5sd4lo3@a5swxugzf4fm>
+References: <20250220-dpu-active-ctl-v1-0-71ca67a564f8@linaro.org>
+ <20250220-dpu-active-ctl-v1-7-71ca67a564f8@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB5963.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: be21e692-c0a2-4c60-cf59-08dd5207864e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Feb 2025 23:37:22.7837
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: h8w0EnHQfE5QIrfbnf3/1XXzLkjC6WV8N7U6YtqNB028fxshu++vmtJTvFHJRu8g9xLE2F/7PSwtbUP89FQpRhnuA/m0fUXCUMs3gR2fJpU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB8490
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250220-dpu-active-ctl-v1-7-71ca67a564f8@linaro.org>
 
-T24gVGh1LCAyMDI1LTAyLTIwIGF0IDEyOjA1IC0wNTAwLCBQYW9sbyBCb256aW5pIHdyb3RlOg0K
-PiBBZGRpbmcgYWxsIHRoZSBpbmZvcm1hdGlvbiB0aGF0IEtWTSBuZWVkcyBpbmNyZWFzZXMgdGhl
-IHNpemUgb2Ygc3RydWN0DQo+IHRkeF9zeXNfaW5mbywgdG8gdGhlIHBvaW50IHRoYXQgeW91IGNh
-biBnZXQgd2FybmluZ3MgYWJvdXQgdGhlIHN0YWNrDQo+IHNpemUgb2YgaW5pdF90ZHhfbW9kdWxl
-KCkuwqAgU2luY2UgS1ZNIGFsc28gbmVlZHMgdG8gcmVhZCB0aGUgVERYIG1ldGFkYXRhDQo+IGFm
-dGVyIGluaXRfdGR4X21vZHVsZSgpIHJldHVybnMsIG1ha2UgdGhlIHZhcmlhYmxlIGEgZ2xvYmFs
-Lg0KPiANCj4gU2lnbmVkLW9mZi1ieTogUGFvbG8gQm9uemluaSA8cGJvbnppbmlAcmVkaGF0LmNv
-bT4NCg0KSXQgbG9va3MgbGlrZSB0aGUgc2FtZSBjb2RlIGp1c3QgbGlmdGVkIGFuZCBtb3ZlZCBl
-YXJsaWVyIG91dCBvZiB0aGUgYWxyZWFkeQ0KYWNrZWQgcGF0Y2guDQoNClJldmlld2VkLWJ5OiBS
-aWNrIEVkZ2Vjb21iZSA8cmljay5wLmVkZ2Vjb21iZUBpbnRlbC5jb20+DQo=
+On 2025-02-20 12:26:24, Dmitry Baryshkov wrote:
+> Since DPU 5.0 CTL blocks do not require DPU_CTL_SPLIT_DISPLAY, as single
+> CTL is used for both interfaces. As both RM and encoder now handle
+> active CTLs, drop that feature bit.
+
+I was wondering if this bit only existed to ensure the right "pair" of CTLs
+exist: not on DPU 4.0, but on DPU 3.0 we see that CTL_0 and CTL_2 have this bit
+but not CTL_1.  Meaning that split display can only work when that specific pair
+of CTL_0 and CTL_2 is used in conjunction?
+
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
+Reviewed-by: Marijn Suijten <marijn.suijten@somainline.org>
+
+> ---
+>  drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_10_0_sm8650.h  | 5 ++---
+>  drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h   | 5 ++---
+>  drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_1_sc8180x.h  | 4 ++--
+>  drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_2_sm7150.h   | 4 ++--
+>  drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_0_sm8250.h   | 5 ++---
+>  drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_7_0_sm8350.h   | 5 ++---
+>  drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_0_sc8280xp.h | 5 ++---
+>  drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_1_sm8450.h   | 5 ++---
+>  drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h  | 5 ++---
+>  drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_0_sm8550.h   | 5 ++---
+>  drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_2_x1e80100.h | 5 ++---
+>  11 files changed, 22 insertions(+), 31 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_10_0_sm8650.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_10_0_sm8650.h
+> index bcb39807fe61e231d6e318d8729ed86f213fb06a..a705e3e761d9a578777cd03011e90df8002127a6 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_10_0_sm8650.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_10_0_sm8650.h
+> @@ -27,17 +27,16 @@ static const struct dpu_mdp_cfg sm8650_mdp = {
+>  	},
+>  };
+>  
+> -/* FIXME: get rid of DPU_CTL_SPLIT_DISPLAY in favour of proper ACTIVE_CTL support */
+>  static const struct dpu_ctl_cfg sm8650_ctl[] = {
+>  	{
+>  		.name = "ctl_0", .id = CTL_0,
+>  		.base = 0x15000, .len = 0x1000,
+> -		.features = CTL_SM8550_MASK | BIT(DPU_CTL_SPLIT_DISPLAY),
+> +		.features = CTL_SM8550_MASK,
+>  		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 9),
+>  	}, {
+>  		.name = "ctl_1", .id = CTL_1,
+>  		.base = 0x16000, .len = 0x1000,
+> -		.features = CTL_SM8550_MASK | BIT(DPU_CTL_SPLIT_DISPLAY),
+> +		.features = CTL_SM8550_MASK,
+>  		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 10),
+>  	}, {
+>  		.name = "ctl_2", .id = CTL_2,
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h
+> index 421afacb7248039abd9fb66bcb73b756ae0d640a..bf4ff275bba4320e70acf516cb784b1bdd0cf966 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h
+> @@ -37,17 +37,16 @@ static const struct dpu_mdp_cfg sm8150_mdp = {
+>  	},
+>  };
+>  
+> -/* FIXME: get rid of DPU_CTL_SPLIT_DISPLAY in favour of proper ACTIVE_CTL support */
+>  static const struct dpu_ctl_cfg sm8150_ctl[] = {
+>  	{
+>  		.name = "ctl_0", .id = CTL_0,
+>  		.base = 0x1000, .len = 0x1e0,
+> -		.features = BIT(DPU_CTL_ACTIVE_CFG) | BIT(DPU_CTL_SPLIT_DISPLAY),
+> +		.features = BIT(DPU_CTL_ACTIVE_CFG),
+>  		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 9),
+>  	}, {
+>  		.name = "ctl_1", .id = CTL_1,
+>  		.base = 0x1200, .len = 0x1e0,
+> -		.features = BIT(DPU_CTL_ACTIVE_CFG) | BIT(DPU_CTL_SPLIT_DISPLAY),
+> +		.features = BIT(DPU_CTL_ACTIVE_CFG),
+>  		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 10),
+>  	}, {
+>  		.name = "ctl_2", .id = CTL_2,
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_1_sc8180x.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_1_sc8180x.h
+> index 641023b102bf59352546f0782d9264986367de78..7ec4fd702fd2f37e2e6a5758154d14967ba11504 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_1_sc8180x.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_1_sc8180x.h
+> @@ -41,12 +41,12 @@ static const struct dpu_ctl_cfg sc8180x_ctl[] = {
+>  	{
+>  		.name = "ctl_0", .id = CTL_0,
+>  		.base = 0x1000, .len = 0x1e0,
+> -		.features = BIT(DPU_CTL_ACTIVE_CFG) | BIT(DPU_CTL_SPLIT_DISPLAY),
+> +		.features = BIT(DPU_CTL_ACTIVE_CFG),
+>  		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 9),
+>  	}, {
+>  		.name = "ctl_1", .id = CTL_1,
+>  		.base = 0x1200, .len = 0x1e0,
+> -		.features = BIT(DPU_CTL_ACTIVE_CFG) | BIT(DPU_CTL_SPLIT_DISPLAY),
+> +		.features = BIT(DPU_CTL_ACTIVE_CFG),
+>  		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 10),
+>  	}, {
+>  		.name = "ctl_2", .id = CTL_2,
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_2_sm7150.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_2_sm7150.h
+> index 2fe674d1e05988f39f66a01fedee96113437ea65..0d102888741a0c61ac547ec568e44c1e91350835 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_2_sm7150.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_2_sm7150.h
+> @@ -38,12 +38,12 @@ static const struct dpu_ctl_cfg sm7150_ctl[] = {
+>  	{
+>  		.name = "ctl_0", .id = CTL_0,
+>  		.base = 0x1000, .len = 0x1e0,
+> -		.features = BIT(DPU_CTL_ACTIVE_CFG) | BIT(DPU_CTL_SPLIT_DISPLAY),
+> +		.features = BIT(DPU_CTL_ACTIVE_CFG),
+>  		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 9),
+>  	}, {
+>  		.name = "ctl_1", .id = CTL_1,
+>  		.base = 0x1200, .len = 0x1e0,
+> -		.features = BIT(DPU_CTL_ACTIVE_CFG) | BIT(DPU_CTL_SPLIT_DISPLAY),
+> +		.features = BIT(DPU_CTL_ACTIVE_CFG),
+>  		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 10),
+>  	}, {
+>  		.name = "ctl_2", .id = CTL_2,
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_0_sm8250.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_0_sm8250.h
+> index e8916ae826a6daf30eb08de53521dae89c07636c..3da26970426f9672c34f213064cdb8eff8c18da5 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_0_sm8250.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_0_sm8250.h
+> @@ -35,17 +35,16 @@ static const struct dpu_mdp_cfg sm8250_mdp = {
+>  	},
+>  };
+>  
+> -/* FIXME: get rid of DPU_CTL_SPLIT_DISPLAY in favour of proper ACTIVE_CTL support */
+>  static const struct dpu_ctl_cfg sm8250_ctl[] = {
+>  	{
+>  		.name = "ctl_0", .id = CTL_0,
+>  		.base = 0x1000, .len = 0x1e0,
+> -		.features = BIT(DPU_CTL_ACTIVE_CFG) | BIT(DPU_CTL_SPLIT_DISPLAY),
+> +		.features = BIT(DPU_CTL_ACTIVE_CFG),
+>  		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 9),
+>  	}, {
+>  		.name = "ctl_1", .id = CTL_1,
+>  		.base = 0x1200, .len = 0x1e0,
+> -		.features = BIT(DPU_CTL_ACTIVE_CFG) | BIT(DPU_CTL_SPLIT_DISPLAY),
+> +		.features = BIT(DPU_CTL_ACTIVE_CFG),
+>  		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 10),
+>  	}, {
+>  		.name = "ctl_2", .id = CTL_2,
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_7_0_sm8350.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_7_0_sm8350.h
+> index f7c08e89c882038aa658955ca1202bda3d928e80..16fbfea01e3272229c817db480b86c1a715d5c4a 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_7_0_sm8350.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_7_0_sm8350.h
+> @@ -35,17 +35,16 @@ static const struct dpu_mdp_cfg sm8350_mdp = {
+>  	},
+>  };
+>  
+> -/* FIXME: get rid of DPU_CTL_SPLIT_DISPLAY in favour of proper ACTIVE_CTL support */
+>  static const struct dpu_ctl_cfg sm8350_ctl[] = {
+>  	{
+>  		.name = "ctl_0", .id = CTL_0,
+>  		.base = 0x15000, .len = 0x1e8,
+> -		.features = BIT(DPU_CTL_SPLIT_DISPLAY) | CTL_SC7280_MASK,
+> +		.features = CTL_SC7280_MASK,
+>  		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 9),
+>  	}, {
+>  		.name = "ctl_1", .id = CTL_1,
+>  		.base = 0x16000, .len = 0x1e8,
+> -		.features = BIT(DPU_CTL_SPLIT_DISPLAY) | CTL_SC7280_MASK,
+> +		.features = CTL_SC7280_MASK,
+>  		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 10),
+>  	}, {
+>  		.name = "ctl_2", .id = CTL_2,
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_0_sc8280xp.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_0_sc8280xp.h
+> index 0d143e390eca964b1c81f835d0904a2079b0b941..e6f2a8665ea2598ca5a813158ba1cdd9f491a41f 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_0_sc8280xp.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_0_sc8280xp.h
+> @@ -35,17 +35,16 @@ static const struct dpu_mdp_cfg sc8280xp_mdp = {
+>  	},
+>  };
+>  
+> -/* FIXME: get rid of DPU_CTL_SPLIT_DISPLAY in favour of proper ACTIVE_CTL support */
+>  static const struct dpu_ctl_cfg sc8280xp_ctl[] = {
+>  	{
+>  		.name = "ctl_0", .id = CTL_0,
+>  		.base = 0x15000, .len = 0x204,
+> -		.features = BIT(DPU_CTL_SPLIT_DISPLAY) | CTL_SC7280_MASK,
+> +		.features = CTL_SC7280_MASK,
+>  		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 9),
+>  	}, {
+>  		.name = "ctl_1", .id = CTL_1,
+>  		.base = 0x16000, .len = 0x204,
+> -		.features = BIT(DPU_CTL_SPLIT_DISPLAY) | CTL_SC7280_MASK,
+> +		.features = CTL_SC7280_MASK,
+>  		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 10),
+>  	}, {
+>  		.name = "ctl_2", .id = CTL_2,
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_1_sm8450.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_1_sm8450.h
+> index 08742472f9cc812fbaf8f842ff7bd78f597e2b8d..bac75783063fd5588bc1cc19cb79f11cb0431bb8 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_1_sm8450.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_1_sm8450.h
+> @@ -36,17 +36,16 @@ static const struct dpu_mdp_cfg sm8450_mdp = {
+>  	},
+>  };
+>  
+> -/* FIXME: get rid of DPU_CTL_SPLIT_DISPLAY in favour of proper ACTIVE_CTL support */
+>  static const struct dpu_ctl_cfg sm8450_ctl[] = {
+>  	{
+>  		.name = "ctl_0", .id = CTL_0,
+>  		.base = 0x15000, .len = 0x204,
+> -		.features = BIT(DPU_CTL_SPLIT_DISPLAY) | CTL_SC7280_MASK,
+> +		.features = CTL_SC7280_MASK,
+>  		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 9),
+>  	}, {
+>  		.name = "ctl_1", .id = CTL_1,
+>  		.base = 0x16000, .len = 0x204,
+> -		.features = BIT(DPU_CTL_SPLIT_DISPLAY) | CTL_SC7280_MASK,
+> +		.features = CTL_SC7280_MASK,
+>  		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 10),
+>  	}, {
+>  		.name = "ctl_2", .id = CTL_2,
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h
+> index 76ec72a323781363d37b62fec752ea1232bbd75b..2b36c438bc8a22e2650f1d546d0259f8c6e747b4 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h
+> @@ -35,17 +35,16 @@ static const struct dpu_mdp_cfg sa8775p_mdp = {
+>  	},
+>  };
+>  
+> -/* FIXME: get rid of DPU_CTL_SPLIT_DISPLAY in favour of proper ACTIVE_CTL support */
+>  static const struct dpu_ctl_cfg sa8775p_ctl[] = {
+>  	{
+>  		.name = "ctl_0", .id = CTL_0,
+>  		.base = 0x15000, .len = 0x204,
+> -		.features = BIT(DPU_CTL_SPLIT_DISPLAY) | CTL_SC7280_MASK,
+> +		.features = CTL_SC7280_MASK,
+>  		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 9),
+>  	}, {
+>  		.name = "ctl_1", .id = CTL_1,
+>  		.base = 0x16000, .len = 0x204,
+> -		.features = BIT(DPU_CTL_SPLIT_DISPLAY) | CTL_SC7280_MASK,
+> +		.features = CTL_SC7280_MASK,
+>  		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 10),
+>  	}, {
+>  		.name = "ctl_2", .id = CTL_2,
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_0_sm8550.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_0_sm8550.h
+> index 4d3787fceb72fb3641057a7ea04ae6503b671042..5e0d2e8aabbaa406e332024676c5eb8205fec177 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_0_sm8550.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_0_sm8550.h
+> @@ -27,17 +27,16 @@ static const struct dpu_mdp_cfg sm8550_mdp = {
+>  	},
+>  };
+>  
+> -/* FIXME: get rid of DPU_CTL_SPLIT_DISPLAY in favour of proper ACTIVE_CTL support */
+>  static const struct dpu_ctl_cfg sm8550_ctl[] = {
+>  	{
+>  		.name = "ctl_0", .id = CTL_0,
+>  		.base = 0x15000, .len = 0x290,
+> -		.features = CTL_SM8550_MASK | BIT(DPU_CTL_SPLIT_DISPLAY),
+> +		.features = CTL_SM8550_MASK,
+>  		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 9),
+>  	}, {
+>  		.name = "ctl_1", .id = CTL_1,
+>  		.base = 0x16000, .len = 0x290,
+> -		.features = CTL_SM8550_MASK | BIT(DPU_CTL_SPLIT_DISPLAY),
+> +		.features = CTL_SM8550_MASK,
+>  		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 10),
+>  	}, {
+>  		.name = "ctl_2", .id = CTL_2,
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_2_x1e80100.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_2_x1e80100.h
+> index 6b112e3d17da6a4423851525262b66aa6c8622e3..a500a38ce07b84c2c9ad51aaf5847ee0bbcc72a5 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_2_x1e80100.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_2_x1e80100.h
+> @@ -26,17 +26,16 @@ static const struct dpu_mdp_cfg x1e80100_mdp = {
+>  	},
+>  };
+>  
+> -/* FIXME: get rid of DPU_CTL_SPLIT_DISPLAY in favour of proper ACTIVE_CTL support */
+>  static const struct dpu_ctl_cfg x1e80100_ctl[] = {
+>  	{
+>  		.name = "ctl_0", .id = CTL_0,
+>  		.base = 0x15000, .len = 0x290,
+> -		.features = CTL_SM8550_MASK | BIT(DPU_CTL_SPLIT_DISPLAY),
+> +		.features = CTL_SM8550_MASK,
+>  		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 9),
+>  	}, {
+>  		.name = "ctl_1", .id = CTL_1,
+>  		.base = 0x16000, .len = 0x290,
+> -		.features = CTL_SM8550_MASK | BIT(DPU_CTL_SPLIT_DISPLAY),
+> +		.features = CTL_SM8550_MASK,
+>  		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 10),
+>  	}, {
+>  		.name = "ctl_2", .id = CTL_2,
+> 
+> -- 
+> 2.39.5
+> 
 
