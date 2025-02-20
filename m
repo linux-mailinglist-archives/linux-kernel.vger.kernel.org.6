@@ -1,53 +1,59 @@
-Return-Path: <linux-kernel+bounces-523533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C0BEA3D82F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:18:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57EBDA3D829
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:18:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ADB9C7AAA4B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:16:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E88719C0677
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:18:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 512421F460F;
-	Thu, 20 Feb 2025 11:16:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0E7C1F63F0;
+	Thu, 20 Feb 2025 11:16:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pP+I+EtN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q2yjMtzj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB9901F4265;
-	Thu, 20 Feb 2025 11:16:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BB3B1F4703;
+	Thu, 20 Feb 2025 11:16:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740050176; cv=none; b=MFCOvOaBi/sYaMGh2KkKrOeH2SMFJ4Oaa0jBD2wybLkFbEPk061B32wyQE84E0ODwq9HFdONt/aRnN8YHuFqWUxfGfezmWlqFew+B+M57HA2PW233sMURGp4jc4D3aipxIc8b6J3MJbhnGGu4h37xacQhEBlB23XQYt5QIjK1mI=
+	t=1740050179; cv=none; b=tYwmNvCTKuFp3Of3rUOifyUcRcC0prJDF52iQTEiNYyBjRg/xmgK33O45d+pUzlSiviYQHjgDlKRfZWpSKqaTYEdGAuyk8COKNM17b02RFUtxkW/jp9hjsbCGRhSG6mrR55bdkgrftc873H9J5gHeYj/Z/mNwCHNgl105KxACNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740050176; c=relaxed/simple;
-	bh=O19YTMIm9L4XBACdObvLfyV9RoqxzulC5kKd2UrlfCo=;
+	s=arc-20240116; t=1740050179; c=relaxed/simple;
+	bh=WbIbJP8V1uaYvMyiXLy9rg/qAp/4D3SlYH4GG3NpwO4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Dt/uUxpvZQncw0pJ5D9SQcTFzucoVkHubcxvVEd/iyWjgUdq0G8qJf/xMCALSnOshUnF+6q8drU8A0etwsLBjM8cEumagomlL5jPk+PHZlf7Fpso+iJgYRbGHUNjZCjFpBf5gH832/3a2mGFU6EJLWHd7pnO8l6CBwQFpSw4E9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pP+I+EtN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F2CFC4CEE4;
-	Thu, 20 Feb 2025 11:16:14 +0000 (UTC)
+	 MIME-Version; b=SkL9c3c9GfpSTNemyXHu6l8NMnD2pAumNe5tXa3drh8wAmbS5DJcs73QQUBZ/yyZtfbguiwcLQ0ZY1e3l2qTIVoPAQkqDEv8a5C2wHlawHfsrmJY0NdtmT4eZHABWhtUXmVC5V+2SobSF/Fp/b5rxWHu5ww4wlQWMlyDPvmSmvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q2yjMtzj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F49CC4CEE3;
+	Thu, 20 Feb 2025 11:16:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740050176;
-	bh=O19YTMIm9L4XBACdObvLfyV9RoqxzulC5kKd2UrlfCo=;
+	s=k20201202; t=1740050178;
+	bh=WbIbJP8V1uaYvMyiXLy9rg/qAp/4D3SlYH4GG3NpwO4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=pP+I+EtN56CYByyi2xlyXsXtrPWqCKSlJBrDPx2Jk2yux2mfEKYSto0eNSicz5a+E
-	 QGiAKx9JnkJDJjjTIzGCdmoizlnU45W1f1+AN5qOQ5y1WBPRpDeiKXQSYGXlOIlfFr
-	 anTRet/b8AG4Lv4/JcUsFnk8Ks0WzgLcJI5tea2yFHNT6aMCI9PR5vJnBTYaLDgTz+
-	 927tkxxgjuzbKuse4Rf8D32nC3HgBbw98mCiNsaAvRvVL1VDYw4oD3Ho6CHMHAV7l3
-	 r77r4qCYnrq53oH31dLXXQjDfM0zajGGqlWs91jTL4ttRrMvuhvvxbTyp5bkOqYbrb
-	 hU+mRqxcrPLIA==
+	b=q2yjMtzjXSeVJC7h5fsIgqV1EUf5vIiYqndGU4VC/zqRISxdGNXUnyIBFqgSZlhbL
+	 dltiA0Iqs70r/w3SU7LnYOA+c/Z7ssyC71hBktYxAirrszteC+oIeW746Y+lDEyq/I
+	 oG4ZTigA0sl05+Q5oqNoi/DpWpGQkbwo+VDEN7lv61sGPVZbObYuB+4qLWdThggn+N
+	 uFamXbLqScpRtulGiCgFnak0PuWUpEuL+OtR+uHS7K/RmGAEDS7O4mJT+HdC0rwFn7
+	 oNIthpYIt/di4XYOH+ZjgtB8vaKFpze2GB+A7zFsynxF9jWd92rrSNXypjs0Ht6J/A
+	 8s1g/GIpnWU8A==
 From: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
 To: gregkh@linuxfoundation.org
 Cc: linux-serial@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>
-Subject: [PATCH 02/29] tty: audit: do not use N_TTY_BUF_SIZE
-Date: Thu, 20 Feb 2025 12:15:39 +0100
-Message-ID: <20250220111606.138045-3-jirislaby@kernel.org>
+	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org
+Subject: [PATCH 03/29] tty: caif: do not use N_TTY_BUF_SIZE
+Date: Thu, 20 Feb 2025 12:15:40 +0100
+Message-ID: <20250220111606.138045-4-jirislaby@kernel.org>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250220111606.138045-1-jirislaby@kernel.org>
 References: <20250220111606.138045-1-jirislaby@kernel.org>
@@ -60,62 +66,36 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
 N_TTY_BUF_SIZE -- as the name suggests -- is the N_TTY's buffer size.
-There is no reason to couple that to audit's buffer size, so define an
-own TTY_AUDIT_BUF_SIZE macro (with the same size).
+There is no reason to couple that to caif's tty->receive_room. Use 4096
+directly -- even though, it should be some sort of "SKB_MAX_ALLOC" or
+alike. But definitely not N_TTY_BUF_SIZE.
 
 N_TTY_BUF_SIZE is private and will be moved to n_tty.c later.
 
 Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org
 ---
- drivers/tty/tty_audit.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/net/caif/caif_serial.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/tty/tty_audit.c b/drivers/tty/tty_audit.c
-index 1d81eeefb068..75542333c54a 100644
---- a/drivers/tty/tty_audit.c
-+++ b/drivers/tty/tty_audit.c
-@@ -12,12 +12,14 @@
- #include <linux/tty.h>
- #include "tty.h"
- 
-+#define TTY_AUDIT_BUF_SIZE	4096
-+
- struct tty_audit_buf {
- 	struct mutex mutex;	/* Protects all data below */
- 	dev_t dev;		/* The TTY which the data is from */
- 	bool icanon;
- 	size_t valid;
--	u8 *data;		/* Allocated size N_TTY_BUF_SIZE */
-+	u8 *data;		/* Allocated size TTY_AUDIT_BUF_SIZE */
- };
- 
- static struct tty_audit_buf *tty_audit_buf_ref(void)
-@@ -37,7 +39,7 @@ static struct tty_audit_buf *tty_audit_buf_alloc(void)
- 	if (!buf)
- 		goto err;
- 
--	buf->data = kmalloc(N_TTY_BUF_SIZE, GFP_KERNEL);
-+	buf->data = kmalloc(TTY_AUDIT_BUF_SIZE, GFP_KERNEL);
- 	if (!buf->data)
- 		goto err_buf;
- 
-@@ -235,14 +237,14 @@ void tty_audit_add_data(const struct tty_struct *tty, const void *data,
- 	do {
- 		size_t run;
- 
--		run = N_TTY_BUF_SIZE - buf->valid;
-+		run = TTY_AUDIT_BUF_SIZE - buf->valid;
- 		if (run > size)
- 			run = size;
- 		memcpy(buf->data + buf->valid, data, run);
- 		buf->valid += run;
- 		data += run;
- 		size -= run;
--		if (buf->valid == N_TTY_BUF_SIZE)
-+		if (buf->valid == TTY_AUDIT_BUF_SIZE)
- 			tty_audit_buf_push(buf);
- 	} while (size != 0);
- 	mutex_unlock(&buf->mutex);
+diff --git a/drivers/net/caif/caif_serial.c b/drivers/net/caif/caif_serial.c
+index ed3a589def6b..e7d1b9301fde 100644
+--- a/drivers/net/caif/caif_serial.c
++++ b/drivers/net/caif/caif_serial.c
+@@ -344,7 +344,7 @@ static int ldisc_open(struct tty_struct *tty)
+ 	ser->tty = tty_kref_get(tty);
+ 	ser->dev = dev;
+ 	debugfs_init(ser, tty);
+-	tty->receive_room = N_TTY_BUF_SIZE;
++	tty->receive_room = 4096;
+ 	tty->disc_data = ser;
+ 	set_bit(TTY_DO_WRITE_WAKEUP, &tty->flags);
+ 	rtnl_lock();
 -- 
 2.48.1
 
