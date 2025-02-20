@@ -1,162 +1,98 @@
-Return-Path: <linux-kernel+bounces-524996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 017C8A3E9A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:04:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B106BA3EAE5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 03:51:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1058179B2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:04:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAD244228C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:51:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E61643597E;
-	Fri, 21 Feb 2025 01:04:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A47A61D63DF;
+	Fri, 21 Feb 2025 02:51:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uyc25Qeo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B25C7080D;
-	Fri, 21 Feb 2025 01:04:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="dCl5jRC+"
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ABB2442F;
+	Fri, 21 Feb 2025 02:51:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740099851; cv=none; b=YMCpn3K5fqw+mUET+PHD6KEzvZRhH8v41Vj3FWEynhTP1l5lO+A6HE3VOZyx3Bfn6HoaPYfduaIxpwrIEqTtye3klilnfJIKmMQ3vklG3AKLaC+SrX45VXHtvr1gM3Fj/NQYX2PIJx01igquqjyWKg8G+223gvkeEZXbxAMtwv4=
+	t=1740106306; cv=none; b=JgYp0CHk1UlMuIKUe9fB4Prx6mfdXW+8vHk0HKEMq2R1Or7WzuC8d2Cv/ijr5t1Ita3/BD0WdCZXsVgiUIf5rrqhdge7BDZFIRGahVfHRdWE1bBarh08f+acvA22RE4PlpN2nWaDjGv+z/d1lg/B9GWchIY4BlWk1OslLRo9Zpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740099851; c=relaxed/simple;
-	bh=XDOcSSu0rDcbE3pPzb8t2eP2JuFEMVZB5io3X9ORrmE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=adixGZaSfFSSfODsNzEusqMylpu4Gs81xzicGTx/0eNGXSty32X7O+3brbVr1eLlH8REXggQGSSgKdbNKQjkDe4eLCBBOXjOvDFribgbALXHRjXDtNDVLL7+tgzo2bKvbfhlV89LJSGi/kl0D378umDZvsVeFCMOIKX/mIamGR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uyc25Qeo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6033CC4CED1;
-	Fri, 21 Feb 2025 01:04:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740099850;
-	bh=XDOcSSu0rDcbE3pPzb8t2eP2JuFEMVZB5io3X9ORrmE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=uyc25QeobqYnzKDgAhcZ9cLZwGYw/jAYJpZBhYLRSFQeAGzVa6tuuqlHMtvJt2NWc
-	 u8hJPnbQkE2bkB5l0vE9t2vQ/Canbq6h3d2haPKU6LbrAnhiCDXuO31z7GDrSrsN0n
-	 fQBeTaCUmQGIajV80zqhSA3G52FSksAHegUimUDEy0hgxwLQEZ0vy5EnHIFIV8/O2x
-	 MmSfGckrhP7SFZhzxQeuP66+bSEU69oJJgO9tB+e9hPQtOcdTanG1hZ+5PVfCLSFlL
-	 rIBT2+JcKr6f4VuDVDAKjkvfEUCg0SPb7Ng5tCGHqPdn2PLV0JkMIq7JYqjgPxAWVr
-	 1yMN2K8NuMQpw==
-Date: Thu, 20 Feb 2025 17:04:09 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Kevin Krakauer <krakauer@google.com>
-Cc: netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
- Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Shuah Khan
- <shuah@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftests/net: deflake GRO tests and fix return value
- and output
-Message-ID: <20250220170409.42cce424@kernel.org>
-In-Reply-To: <20250218164555.1955400-1-krakauer@google.com>
-References: <20250218164555.1955400-1-krakauer@google.com>
+	s=arc-20240116; t=1740106306; c=relaxed/simple;
+	bh=AEVqJje+U/dlYf1eeame0lCbwtleOMiyWF4wKhvGhlk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MOiSmIH7ek1wC36hOgLK8MdJPNYAwiZULNqqru35+CX1SIpom3kf1VKkY7qOnQFEnuYRNp7YqUSR2AF6mCJ+7l1tDl/6kWbFq/1Y0aRXlx7BB+Xd/itrLu369/cbV3sax1I69xF6TS//oNzN5kCIGbKByAF7Vcx8XBjkDNMO+oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=dCl5jRC+; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id C807914C2DB;
+	Fri, 21 Feb 2025 03:41:54 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1740105717;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NNcc6KqdVu2nSV8k3rLKueper8Fe7B+V1orHMollzx8=;
+	b=dCl5jRC+GxQ5RPQm/4sx5ZFxY8gLFJD5qdZ3wzn3yrDMXS5jrpI5rlSoKd5CmqX+yZ6SMX
+	m1e/gsuiBpM0jGWHcjWdSLybmW6NTUIYjjhCA0poC+CYo5BYYTQQ8ciRYXLvLqHj7hggBk
+	daBN+L/aV11DQDPy6e8B9fi1HH6Y58/xs/DeZeysPjCsFPWbBCT6Z7T5Zz6guxJfHYG9U/
+	sE27G8BQPX7MPQ37qUnrnmEjYMXjnBwPXK8fT3s6Oyqbe7B7IGhWlQ6wndVxrdz1M2KEz/
+	jW5aj55riEt8jx5mYeLxN1+XaaqEumPFkFrMqMZB6iqGoDDrz/TG1Hd/D5dWyA==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 56f7ec9c;
+	Thu, 20 Feb 2025 22:06:01 +0000 (UTC)
+Date: Fri, 21 Feb 2025 07:05:46 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: syzbot <syzbot+c0dc46208750f063d0e0@syzkaller.appspotmail.com>,
+	v9fs@lists.linux.dev, dhowells@redhat.com, jlayton@kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	netfs@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [netfs?] kernel BUG in folio_unlock (3)
+Message-ID: <Z7enOheevlbS1xpH@codewreck.org>
+References: <67b75198.050a0220.14d86d.02e2.GAE@google.com>
+ <Z7dVOaTWTVCojNzr@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Z7dVOaTWTVCojNzr@casper.infradead.org>
 
-On Tue, 18 Feb 2025 08:45:55 -0800 Kevin Krakauer wrote:
-> GRO tests are timing dependent and can easily flake. This is partially
-> mitigated in gro.sh by giving each subtest 3 chances to pass. However,
-> this still flakes on some machines.
-
-To be clear - are you running this over veth or a real device?
-
-> Set the device's napi_defer_hard_irqs to 50 so that GRO is less likely
-> to immediately flush. This already happened in setup_loopback.sh, but
-> wasn't added to setup_veth.sh. This accounts for most of the reduction
-> in flakiness.
-
-That doesn't make intuitive sense to me. If we already defer flushes
-why do we need to also defer IRQs?
-
-> We also increase the number of chances for success from 3 to 6.
+Matthew Wilcox wrote on Thu, Feb 20, 2025 at 04:15:53PM +0000:
+> On Thu, Feb 20, 2025 at 08:00:24AM -0800, syzbot wrote:
+> > ------------[ cut here ]------------
+> > kernel BUG at mm/filemap.c:1499!
 > 
-> `gro.sh -t <test>` now returns a passing/failing exit code as expected.
+> Tried to unlock a folio that wasn't locked.
 > 
-> gro.c:main no longer erroneously claims a test passes when running as a
-> server.
+> The entire log is interesting:
 > 
-> Tested: Ran `gro.sh -t large` 100 times with and without this change.
-> Passed 100/100 with and 64/100 without. Ran inside strace to increase
-> flakiness.
+> https://syzkaller.appspot.com/x/log.txt?x=12af2fdf980000
 > 
-> Signed-off-by: Kevin Krakauer <krakauer@google.com>
-> ---
->  tools/testing/selftests/net/gro.c         | 8 +++++---
->  tools/testing/selftests/net/gro.sh        | 5 +++--
->  tools/testing/selftests/net/setup_veth.sh | 1 +
->  3 files changed, 9 insertions(+), 5 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/net/gro.c b/tools/testing/selftests/net/gro.c
-> index b2184847e388..d5824eadea10 100644
-> --- a/tools/testing/selftests/net/gro.c
-> +++ b/tools/testing/selftests/net/gro.c
-> @@ -1318,11 +1318,13 @@ int main(int argc, char **argv)
->  	read_MAC(src_mac, smac);
->  	read_MAC(dst_mac, dmac);
->  
-> -	if (tx_socket)
-> +	if (tx_socket) {
->  		gro_sender();
-> -	else
-> +	} else {
-> +		/* Only the receiver exit status determines test success. */
->  		gro_receiver();
-> +		fprintf(stderr, "Gro::%s test passed.\n", testname);
-> +	}
->  
-> -	fprintf(stderr, "Gro::%s test passed.\n", testname);
+> It injects a failure which hits p9_tag_alloc() (so adding the 9p people
+> to the cc)
 
+9p is calling iov_iter_revert() in p9_client_write() on failure, but at
+this point of the failure copy_from_iter_full (which advanced the iter)
+wasn't called yet because the format processing happens after
+allocation...
 
-That seems quite separate to the stability fix?
+This was changed by Al Viro in 2015 so it's a "fairly old" bug, but it's
+a bug on 9p side alright - thanks for the cc
 
->  	return 0;
->  }
-> diff --git a/tools/testing/selftests/net/gro.sh b/tools/testing/selftests/net/gro.sh
-> index 02c21ff4ca81..703173f8c8a9 100755
-> --- a/tools/testing/selftests/net/gro.sh
-> +++ b/tools/testing/selftests/net/gro.sh
-> @@ -21,7 +21,7 @@ run_test() {
->    # Each test is run 3 times to deflake, because given the receive timing,
->    # not all packets that should coalesce will be considered in the same flow
->    # on every try.
-> -  for tries in {1..3}; do
-> +  for tries in {1..6}; do
->      # Actual test starts here
->      ip netns exec $server_ns ./gro "${ARGS[@]}" "--rx" "--iface" "server" \
->        1>>log.txt &  
-> @@ -100,5 +100,6 @@ trap cleanup EXIT
->  if [[ "${test}" == "all" ]]; then
->    run_all_tests
->  else
-> -  run_test "${proto}" "${test}"
-> +  exit_code=$(run_test "${proto}" "${test}")
-> +  exit $exit_code
+Now to figure out how to decide if we want to revert or not... I
+honestly don't have any bright idea, but I don't know the iov API well
+at all -- perhaps it's possible to copy without advancing and only
+advance the iov if IO worked?
 
-Also separate from stability?
-
-Let's split the patch up into logically separate changes.
-
->  fi;
-> diff --git a/tools/testing/selftests/net/setup_veth.sh b/tools/testing/selftests/net/setup_veth.sh
-> index 1f78a87f6f37..9882ad730c24 100644
-> --- a/tools/testing/selftests/net/setup_veth.sh
-> +++ b/tools/testing/selftests/net/setup_veth.sh
-> @@ -12,6 +12,7 @@ setup_veth_ns() {
->  
->  	[[ -e /var/run/netns/"${ns_name}" ]] || ip netns add "${ns_name}"
->  	echo 1000000 > "/sys/class/net/${ns_dev}/gro_flush_timeout"
-> +	echo 50 > "/sys/class/net/${ns_dev}/napi_defer_hard_irqs"
->  	ip link set dev "${ns_dev}" netns "${ns_name}" mtu 65535
->  	ip -netns "${ns_name}" link set dev "${ns_dev}" up
->  
 -- 
-pw-bot: cr
+Dominique Martinet | Asmadeus
 
