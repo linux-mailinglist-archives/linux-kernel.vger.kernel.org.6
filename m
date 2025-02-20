@@ -1,91 +1,99 @@
-Return-Path: <linux-kernel+bounces-522905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 023EEA3CFF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 04:11:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22BD4A3CFF4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 04:12:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31AB33BAEE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 03:11:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5580E189940D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 03:12:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C12861E5B63;
-	Thu, 20 Feb 2025 03:10:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iqRWR8Jn"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B51B1DC991;
+	Thu, 20 Feb 2025 03:11:21 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1533B1E3793;
-	Thu, 20 Feb 2025 03:10:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A666D1D7E30
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 03:11:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740021019; cv=none; b=bbq1RgaijEM3kL1kwmRG/vs/xiMIrkOW81RsCfhWACPIiF0cQ/ak4b1I0CRVZx4F5qmj5nxnf7fuoS86M0fvBvpACiYOfMVhjUYpOm7aQTEA2rJj+LimBqQ5ABjgkJz8ryqrY+B2M1pD85eWPGECHrMRHQQ7ITyOMuBRLaf9fg0=
+	t=1740021080; cv=none; b=ieUPCo96ghsUIvoIa0GjpU5W19N2YKOh+j5CJuGoakKFAIgfIY62n/EJQb624k/foUzWzVemRIStI7AFK7Zp/S1SYvOTVRVduMuDtAPWoASBMKMPhqWV7c/JtK8DhuJdSyIXQYfP9Wkj2me4fOhhgFAJeWEgGDAiJszkJPcac40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740021019; c=relaxed/simple;
-	bh=6c1X4TEPxSY/fEZfB4I5XbwylzMAZ7aJTvTLzG/oHhM=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=bFxXxk1vF2GtK4IU5CxCgSSHYtV8qEEtLsHBgCBFmDG4JCjhq1Do5fO/l8oAg8SZF7C+6nMU/RnpjYMukC+m/5XOc93kcFSuocZBDiB7apqv04DifEs7zlxSFRrA6hFCe4DNAuTwffwP3LfBgNjeQ86hdrmZQ8IhCYOo+vk/A0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iqRWR8Jn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93F54C4CEE4;
-	Thu, 20 Feb 2025 03:10:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740021018;
-	bh=6c1X4TEPxSY/fEZfB4I5XbwylzMAZ7aJTvTLzG/oHhM=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=iqRWR8Jn+EKBmffZEwZIEb8TeUNhHNlasJe44WdC/sXMmB00AStzge5fGuzMcbFi6
-	 DgAupt6JKaXioW/Rm9SDYI0bNEr/J1QDnPmZwEb0T7nfJLcY98gaIti5qRS6jv8KWe
-	 VebV+4NDQHgY1nrgct9BiMApjO4bXbw8HmVV53Qvb8pZgA7iYsXwf32eIY1UB9E9KB
-	 Yi+SWyz+QWCHxcmtmU9b6mdYMNUbsj3UvNmjNyu3lRm2m1b7ExnsHTb3cS7c79t4ii
-	 1ZucupZD3zMV4D6Zlxczz/3stQa6XiQ6iwzhiQ+oUmPqLA/wLU9gti/I4A6cgGpGXV
-	 fYeqULiJb+5pA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70F27380AAEC;
-	Thu, 20 Feb 2025 03:10:50 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1740021080; c=relaxed/simple;
+	bh=wUWP3fDsHHSizt/qcvRdRHUGTjHDHORenMJRrzhVPAk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XWKcgfr8dhgIAq/Awz6YgBciO12jZPe6TVdl5otu1CZYYDoEGGCqewOtWb4v6UQ57nqlePXnndqcsGWcXhuu4OTeOMYDmdBZGmRzi3+sZYxgR/HBxODVXKWRcsLwQbF7KF70YSMkW8k1bmDPC7Quq+1Cii5WHm/tZiCN+k8l4I4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72CEFC4CED1;
+	Thu, 20 Feb 2025 03:11:16 +0000 (UTC)
+Date: Wed, 19 Feb 2025 22:11:41 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Waiman Long <llong@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Andrew
+ Morton <akpm@linux-foundation.org>, Boqun Feng <boqun.feng@gmail.com>, Joel
+ Granados <joel.granados@kernel.org>, Anna Schumaker
+ <anna.schumaker@oracle.com>, Lance Yang <ioworker0@gmail.com>, Kent
+ Overstreet <kent.overstreet@linux.dev>, Yongliang Gao
+ <leonylgao@tencent.com>, Tomasz Figa <tfiga@chromium.org>, Sergey
+ Senozhatsky <senozhatsky@chromium.org>, linux-kernel@vger.kernel.org, Linux
+ Memory Management List <linux-mm@kvack.org>
+Subject: Re: [PATCH 1/2] hung_task: Show the blocker task if the task is
+ hung on mutex
+Message-ID: <20250219221141.09f9fe48@gandalf.local.home>
+In-Reply-To: <20250220114036.e22e388402a00f7809a81dee@kernel.org>
+References: <173997003868.2137198.9462617208992136056.stgit@mhiramat.tok.corp.google.com>
+	<173997004932.2137198.7959507113210521328.stgit@mhiramat.tok.corp.google.com>
+	<20250219112308.5d905680@gandalf.local.home>
+	<0fa9dd8e-2d83-487e-bfb1-1f5d20cd9fe6@redhat.com>
+	<20250219152435.35077ac3@gandalf.local.home>
+	<db4ee5e9-56bb-408c-85e7-f93e2c3226dc@redhat.com>
+	<20250220075639.298616eb494248d390417977@kernel.org>
+	<d8c01f69-34c0-45cf-a532-83544a3a3efd@redhat.com>
+	<20250219204153.65ed1f5e@gandalf.local.home>
+	<20250220114036.e22e388402a00f7809a81dee@kernel.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] nfc: hci: Remove unused nfc_llc_unregister
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174002104899.825980.12756293699855359450.git-patchwork-notify@kernel.org>
-Date: Thu, 20 Feb 2025 03:10:48 +0000
-References: <20250219020258.297995-1-linux@treblig.org>
-In-Reply-To: <20250219020258.297995-1-linux@treblig.org>
-To: Dr. David Alan Gilbert <linux@treblig.org>
-Cc: krzk@kernel.org, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello:
+On Thu, 20 Feb 2025 11:40:36 +0900
+Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Wed, 19 Feb 2025 02:02:58 +0000 you wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> Hmm, right.
+> Since the blocked_on must be NULL before setting flag, if we can ensure
+> the writing order so that blocked_flags is always updated before
+> blocked_on, may it be safe?
 > 
-> nfc_llc_unregister() has been unused since it was added in 2012's
-> commit 67cccfe17d1b ("NFC: Add an LLC Core layer to HCI")
+> Or, (this may introduce more memory overhead) don't use union but
+> use different blocked_on_mutex, blocked_on_rwsem, etc. 
 > 
-> Remove it.
+> Another idea is to make the owner offset same, like introducing
 > 
-> [...]
+> struct common_lock {
+> 	atomic_long_t owner;
+> };
+> 
+> But the problem is that rt_mutex does not use atomic for storing
+> the owner. (we can make it atomic using wrapper)
 
-Here is the summary with links:
-  - [net-next] nfc: hci: Remove unused nfc_llc_unregister
-    https://git.kernel.org/netdev/net-next/c/9a6c2b2bdd5e
+Either that, or add to the task_struct:
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+	struct mutex	*blocked_on_mutex;
+	struct rwsem	*blocked_on_rwsem;
+	struct rtlock	*blocked_on_rtlock;
 
+And just have each type assign to its own type. Then you only need to look
+at each one. But yeah, this adds even more bloat to task_struct.
 
+  :-/
+
+-- Steve
 
