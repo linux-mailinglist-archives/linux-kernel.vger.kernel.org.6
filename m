@@ -1,50 +1,86 @@
-Return-Path: <linux-kernel+bounces-523356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC585A3D580
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:55:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B762A3D569
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:52:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26D6C16D02F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:53:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58D0F7A7734
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:51:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F0091F0E23;
-	Thu, 20 Feb 2025 09:52:56 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1AE41EF0B4;
+	Thu, 20 Feb 2025 09:52:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UEEW7DPz"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AE621E9912;
-	Thu, 20 Feb 2025 09:52:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 926891CAA9C
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:52:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740045176; cv=none; b=IvLB0hlrQ19ZD0a47EFzCgHDvv3+Ahx2fr1mPA/qHJzplfKaqtxn8PgfTONnnp5IsF/MboO7AA1SPgK7yGpNbYXfh6Q8o44iUY4V5ewNMlkmmrUWvhHUHIGTU8M9Ulba5JMCoA5OZ6Rwbm2n7oLhZuEE1kERM6d5Hor0OLkaIIU=
+	t=1740045160; cv=none; b=a3zie/hBjacBcjjImjLPVxe4yriMtFB7UVeFYw4rRCAoC7eCbG5gLVfLx/qteo7sZk6gX7WC+fGP+Z/VLxrX+1PrCohG1rLZxlARKENMduKBs7ojV9J5RuMWdCzr/jAYR/y1oTDIi/ONT0U5pDa/vNXNHgx9Fg/G0oUkpKYuwqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740045176; c=relaxed/simple;
-	bh=p3jUliwfLRPcDyQ9R4QDPtRJjUXusVtL9hqIDKIUrGo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r1HDN0Ksl4WzK5bIRsM9Q4ChzGptJPTm/5b+NtRz3yvTPWXu2buvBTDA/U8L82Dc4kGSFwHtbY5N1BFrehcnvXpLLznASLUWxZGLpwIqa9rf1judliIOgwhXqQxD41eRUQN9i/H6lMDfLWisKmozXLQRXHxzIGTfjFk62ytv4/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [124.16.141.245])
-	by APP-01 (Coremail) with SMTP id qwCowAD3n_pj+7Zn_87hDg--.4050S2;
-	Thu, 20 Feb 2025 17:52:40 +0800 (CST)
-From: Wentao Liang <vulab@iscas.ac.cn>
-To: gregkh@linuxfoundation.org
-Cc: stern@rowland.harvard.edu,
-	christophe.jaillet@wanadoo.fr,
-	mka@chromium.org,
-	make_ruc2021@163.com,
-	javier.carrasco@wolfvision.net,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Wentao Liang <vulab@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH] usb: core: Add error handling in usb_reset_device for autoresume failure
-Date: Thu, 20 Feb 2025 17:52:18 +0800
-Message-ID: <20250220095218.970-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.42.0.windows.2
+	s=arc-20240116; t=1740045160; c=relaxed/simple;
+	bh=Yr8RMKXKdGV5oJjT0KPtw2wvX3kiO10N8z9eFC0ljUQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XoolrMYT6FaRGhKb86pVzwt3Lu0Ol1ehYOb9g7LjMT7jj3Sls13IIzQ67v87xVxE5dcFFH4CSltb+aPtgAhX3vJqQjKYsKGcrRiU9ULvnSeAmUrwKZI+CfxDzkNM/y1NVKGVcPMRIpnGrHiZICMfzZdmII0nN5ARiVF+jj535LU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UEEW7DPz; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-546267ed92fso905772e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 01:52:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740045156; x=1740649956; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oYeH3hsiujJqSPD+ca7uJNb/p23dTbfjFDyBF22SX3c=;
+        b=UEEW7DPzE+s8zZ54kuRNk0krDYK5NzWz5exGjR7mcUJ7KB6DtYVPT7sONVFTZ0Gym+
+         r1XSinXprmX9N52UZdM63p9gM9HAq+REjHsRzKWT038JPJC890VinM7+gMbFPdVa8pNI
+         E9K5LWRcYuo8ZGXkvp69mUa9ioYUCdBtFiOASa+JUq1E4nFnJRbf04mDA3lFMoUHj3wG
+         e0Mv3lUD8J7Jv+YIq4qiSdqX04g0eMsxv6hgimlrFrOHG+sdr29SPMpFj6fWMHhQEq77
+         /eltjLxEyOYItIqVv5Pt4RbWpS/uzjvZR4zhK4g+OR1My5nfWZzSN/toPIJ+4UD6OXAQ
+         FjQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740045156; x=1740649956;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oYeH3hsiujJqSPD+ca7uJNb/p23dTbfjFDyBF22SX3c=;
+        b=t15GdjXZtJJLCTlFKwy/bu+RMPLeUx6BXskufkSVhSpNjq+RGltgGQ88twAxWhdbTL
+         gCv6xBIzNX3SKnilrHKpmQZPSLmP40cH/lsUS4lIN/jT49LBSSbiBIV77Kgolts+4xrt
+         Flr5rFulrqVgjh3D6AyTk4x/b9EvqnWH7gdHX+nxtzHi6Ysfm6Q/7uwvihFVsC/mOTex
+         iU2bTRypmfZPh+VXUN/ihoIOIbvVtF9OCp/qLXLbP36svta+sfiaxw2awOxKzT1Si0z7
+         vS1j/DUYc817fbC7U0raAX81w4MgnXGv6/bTofdUGTwInsbyqIzWDH7Adp0YzYTYWXwx
+         aMtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUk8TYGDBqNhbyGcrw9sJv/puRSXNaNrV1u+kMiewx4U8hNAc2cUNhasgMBX4jbmoD1/EEIUdDCDvn2Wek=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyDJTd6+8TILrLfGE+0Syd8lGbmef8RPkyBAyAglo7JF60rKez
+	QDyTbgwpHU4LDasuEP6hdRd8XQDC+IUPmbqTdTP6uiIz8lspRu11
+X-Gm-Gg: ASbGncvtK+IJNe50nbsDnYPfQ5JPSIHqfbLs44cMa5oqXg5x8lRSAyWdLmbBpet+qqB
+	OH2edChNMRFT1sVmRdQbNPuVVZu8++1f+/SMoJrkvA2aJ3m6l3bMud+VfatobBaZXqtVdk9+sdR
+	CHryUE/7NjWTF3OJW3HF3zaaDKX5YbtGZfzsqBVLRhy9niBWIeCmxKrK0K5v83OgR+lCQdKeTUb
+	19s3Q9OhnwFGFTbBWpwxxnVJ+jDD1VZavy3mbKwn07xVwXLoJLmwRQsOc0k8v0INyDosmI4OjF4
+	1qXRpFJlxBn4uFVx0nrH2DVYzdqOJcIRSk6KU096ihaJ9eVns3EcpEmkPw==
+X-Google-Smtp-Source: AGHT+IEs1WdJOsowbPu0y6P5M0ykiG0ZNKvSxS8Q3SxhJOnODBOR4GHwarRnsfe4nv6Bt0HQ2krh5Q==
+X-Received: by 2002:a05:6512:3dab:b0:545:11fa:caf0 with SMTP id 2adb3069b0e04-5452fe26518mr7080901e87.6.1740045156197;
+        Thu, 20 Feb 2025 01:52:36 -0800 (PST)
+Received: from rand-ubuntu-development.dl.local (mail.confident.ru. [85.114.29.218])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-545304defb0sm1741428e87.6.2025.02.20.01.52.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 01:52:35 -0800 (PST)
+From: Rand Deeb <rand.sec96@gmail.com>
+To: Dave Kleikamp <shaggy@kernel.org>,
+	jfs-discussion@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org
+Cc: deeb.rand@confident.ru,
+	lvc-project@linuxtesting.org,
+	voskresenski.stanislav@confident.ru,
+	Rand Deeb <rand.sec96@gmail.com>
+Subject: [PATCH] fs/jfs: Prevent integer overflow in AG size calculation
+Date: Thu, 20 Feb 2025 12:52:31 +0300
+Message-Id: <20250220095231.1686611-1-rand.sec96@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,64 +88,50 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowAD3n_pj+7Zn_87hDg--.4050S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Zry8Wr48GrWxtFWxCrW5trb_yoW8GF1fpw
-	48Aayqkry8Gr1rCa1jy34kuFy5Zw4Sy3y3JF93Ww1Igr97A345JFyrAFy3ta4rArZ5tF9x
-	tFW3K3yF9Fy7AFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9E14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFylc2xSY4AK67AK6r4fMxAIw28IcxkI7VAKI4
-	8JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xv
-	wVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjx
-	v20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20E
-	Y4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267
-	AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUjAsqtUUUUU==
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBwsTA2e22-l9yQAAsb
 
-In usb_reset_device(),  the function continues execution and
-calls usb_autosuspend_device() after usb_autosuspend_device fails.
+The JFS filesystem calculates allocation group (AG) size using 1 <<
+l2agsize in dbExtendFS(). When l2agsize exceeds 31 (possible with >2TB
+aggregates on 32-bit systems), this 32-bit shift operation causes undefined
+behavior and improper AG sizing.
 
-To fix this, add error handling for usb_autoresume_device()
-and return the error code immediately. This ensures that
-usb_autosuspend_device() is not called when usb_autoresume_device()
-fails, maintaining device state consistency.
+On 32-bit architectures:
+- Left-shifting 1 by 32+ bits results in 0 due to integer overflow
+- This creates invalid AG sizes (0 or garbage values) in
+sbi->bmap->db_agsize
+- Subsequent block allocations would reference invalid AG structures
+- Could lead to:
+  - Filesystem corruption during extend operations
+  - Kernel crashes due to invalid memory accesses
+  - Security vulnerabilities via malformed on-disk structures
 
-Fixes: 94fcda1f8ab5 ("usbcore: remove unused argument in autosuspend")
-Cc: stable@vger.kernel.org # 2.6.20+
-Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+Fix by casting to s64 before shifting:
+bmp->db_agsize = (s64)1 << l2agsize;
+
+This ensures 64-bit arithmetic even on 32-bit architectures. The cast
+matches the data type of db_agsize (s64) and follows similar patterns in
+JFS block calculation code.
+
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
+
+Signed-off-by: Rand Deeb <rand.sec96@gmail.com>
 ---
- drivers/usb/core/hub.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ fs/jfs/jfs_dmap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-index 21ac9b464696..f2efdbdd1533 100644
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -6292,7 +6292,9 @@ int usb_reset_device(struct usb_device *udev)
- 	noio_flag = memalloc_noio_save();
+diff --git a/fs/jfs/jfs_dmap.c b/fs/jfs/jfs_dmap.c
+index f9009e4f9ffd..edb22cf9521a 100644
+--- a/fs/jfs/jfs_dmap.c
++++ b/fs/jfs/jfs_dmap.c
+@@ -3403,7 +3403,7 @@ int dbExtendFS(struct inode *ipbmap, s64 blkno,	s64 nblocks)
+ 	oldl2agsize = bmp->db_agl2size;
  
- 	/* Prevent autosuspend during the reset */
--	usb_autoresume_device(udev);
-+	ret = usb_autoresume_device(udev);
-+	if (ret < 0)
-+		goto error_autoresume;
+ 	bmp->db_agl2size = l2agsize;
+-	bmp->db_agsize = 1 << l2agsize;
++	bmp->db_agsize = (s64)1 << l2agsize;
  
- 	if (config) {
- 		for (i = 0; i < config->desc.bNumInterfaces; ++i) {
-@@ -6341,6 +6343,7 @@ int usb_reset_device(struct usb_device *udev)
- 	}
- 
- 	usb_autosuspend_device(udev);
-+error_autoresume:
- 	memalloc_noio_restore(noio_flag);
- 	udev->reset_in_progress = 0;
- 	return ret;
+ 	/* compute new number of AG */
+ 	agno = bmp->db_numag;
 -- 
-2.42.0.windows.2
+2.34.1
 
 
